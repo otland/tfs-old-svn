@@ -2089,17 +2089,17 @@ BlockType_t Player::blockHit(Creature* attacker, CombatType_t combatType, int32_
 				continue;
 
 			const ItemType& it = Item::items[item->getID()];
-			if(it.abilities.absorbPercent[combatType])
+			if(it.abilities.absorb[combatType])
 			{
-				blocked += (int32_t)std::ceil((double)(damage * it.abilities.absorbPercent[combatType]) / 100.);
+				blocked += (int32_t)std::ceil((double)(damage * it.abilities.absorb[combatType]) / 100.);
 				if(item->hasCharges())
 					g_game.transformItem(item, item->getID(), std::max((int32_t)0, (int32_t)item->getCharges() - 1));
 			}
 
-			if(it.abilities.reflectPercent[combatType])
+			if(it.abilities.reflect[REFLECT_PERCENT][combatType] && it.abilities.reflect[REFLECT_CHANCE][combatType] < random_range(0, 100))
 			{
-				reflected += (int32_t)std::ceil((double)(damage * it.abilities.reflectPercent[combatType]) / 100.);
-				if(item->hasCharges() && !it.abilities.absorbPercent[combatType])
+				reflected += (int32_t)std::ceil((double)(damage * it.abilities.reflect[REFLECT_PERCENT][combatType]) / 100.);
+				if(item->hasCharges() && !it.abilities.absorb[combatType])
 					g_game.transformItem(item, item->getID(), std::max((int32_t)0, (int32_t)item->getCharges() - 1));
 			}
 		}
@@ -2110,16 +2110,16 @@ BlockType_t Player::blockHit(Creature* attacker, CombatType_t combatType, int32_
 			if(tmp)
 				blocked += (int32_t)std::ceil((double)(damage * tmp) / 100.);
 
-			tmp = Outfits::getIntance()->getOutfitReflect(defaultOutfit.lookType, sex, combatType);
+			tmp = Outfits::getInstance()->getOutfitReflect(defaultOutfit.lookType, sex, combatType);
 			if(tmp)
 				reflected += (int32_t)std::ceil((double)(damage * tmp) / 100.);
 		}
 
-		if(vocation->getAbsorbPercent(combatType))
-			blocked += (int32_t)std::ceil((double)(damage * vocation->getAbsorbPercent(combatType)) / 100.);
+		if(vocation->getAbsorb(combatType))
+			blocked += (int32_t)std::ceil((double)(damage * vocation->getAbsorb(combatType)) / 100.);
 
-		if(vocation->getReflectPercent(combatType))
-			reflected += (int32_t)std::ceil((double)(damage * vocation->getReflectPercent(combatType)) / 100.);
+		if(vocation->getReflect(combatType))
+			reflected += (int32_t)std::ceil((double)(damage * vocation->getReflect(combatType)) / 100.);
 
 		damage -= blocked;
 		if(damage <= 0)

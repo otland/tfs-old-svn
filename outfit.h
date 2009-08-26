@@ -41,8 +41,9 @@ struct Outfit
 		memset(stats, 0 , sizeof(stats));
 		memset(statsPercent, 0, sizeof(statsPercent));
 
-		memset(absorbPercent, 0, sizeof(absorbPercent));
-		memset(reflectPercent, 0, sizeof(reflectPercent));
+		memset(absorb, 0, sizeof(absorb));
+		memset(reflect[REFLECT_PERCENT], 0, sizeof(reflect[REFLECT_PERCENT]));
+		memset(reflect[REFLECT_CHANCE], 0, sizeof(reflect[REFLECT_CHANCE]));
 
 		isDefault = true;
 		requirement = REQUIREMENT_BOTH;
@@ -53,7 +54,7 @@ struct Outfit
 
 	bool isDefault, isPremium, manaShield, invisible, regeneration;
 	AddonRequirement_t requirement;
-	int16_t absorbPercent[COMBAT_LAST + 1], reflectPercent[COMBAT_LAST + 1];
+	int16_t absorb[COMBAT_LAST + 1], reflect[REFLECT_LAST + 1][COMBAT_LAST + 1];
 
 	uint16_t accessLevel, addons;
 	int32_t skills[SKILL_LAST + 1], skillsPercent[SKILL_LAST + 1], stats[STAT_LAST + 1], statsPercent[STAT_LAST + 1],

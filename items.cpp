@@ -1072,90 +1072,90 @@ void Items::parseItemNode(xmlNodePtr itemNode, uint32_t id)
 				if(readXMLInteger(itemAttributesNode, "value", intValue))
 				{
 					for(uint32_t i = COMBAT_FIRST; i <= COMBAT_LAST; i++)
-						it.abilities.absorbPercent[i] += intValue;
+						it.abilities.absorb[i] += intValue;
 				}
 			}
 			else if(tmpStrValue == "absorbpercentelements")
 			{
 				if(readXMLInteger(itemAttributesNode, "value", intValue))
 				{
-					it.abilities.absorbPercent[COMBAT_ENERGYDAMAGE] += intValue;
-					it.abilities.absorbPercent[COMBAT_FIREDAMAGE] += intValue;
-					it.abilities.absorbPercent[COMBAT_EARTHDAMAGE] += intValue;
-					it.abilities.absorbPercent[COMBAT_ICEDAMAGE] += intValue;
+					it.abilities.absorb[COMBAT_ENERGYDAMAGE] += intValue;
+					it.abilities.absorb[COMBAT_FIREDAMAGE] += intValue;
+					it.abilities.absorb[COMBAT_EARTHDAMAGE] += intValue;
+					it.abilities.absorb[COMBAT_ICEDAMAGE] += intValue;
 				}
 			}
 			else if(tmpStrValue == "absorbpercentmagic")
 			{
 				if(readXMLInteger(itemAttributesNode, "value", intValue))
 				{
-					it.abilities.absorbPercent[COMBAT_ENERGYDAMAGE] += intValue;
-					it.abilities.absorbPercent[COMBAT_FIREDAMAGE] += intValue;
-					it.abilities.absorbPercent[COMBAT_EARTHDAMAGE] += intValue;
-					it.abilities.absorbPercent[COMBAT_ICEDAMAGE] += intValue;
-					it.abilities.absorbPercent[COMBAT_HOLYDAMAGE] += intValue;
-					it.abilities.absorbPercent[COMBAT_DEATHDAMAGE] += intValue;
+					it.abilities.absorb[COMBAT_ENERGYDAMAGE] += intValue;
+					it.abilities.absorb[COMBAT_FIREDAMAGE] += intValue;
+					it.abilities.absorb[COMBAT_EARTHDAMAGE] += intValue;
+					it.abilities.absorb[COMBAT_ICEDAMAGE] += intValue;
+					it.abilities.absorb[COMBAT_HOLYDAMAGE] += intValue;
+					it.abilities.absorb[COMBAT_DEATHDAMAGE] += intValue;
 				}
 			}
 			else if(tmpStrValue == "absorbpercentenergy")
 			{
 				if(readXMLInteger(itemAttributesNode, "value", intValue))
-					it.abilities.absorbPercent[COMBAT_ENERGYDAMAGE] += intValue;
+					it.abilities.absorb[COMBAT_ENERGYDAMAGE] += intValue;
 			}
 			else if(tmpStrValue == "absorbpercentfire")
 			{
 				if(readXMLInteger(itemAttributesNode, "value", intValue))
-					it.abilities.absorbPercent[COMBAT_FIREDAMAGE] += intValue;
+					it.abilities.absorb[COMBAT_FIREDAMAGE] += intValue;
 			}
 			else if(tmpStrValue == "absorbpercentpoison" ||	tmpStrValue == "absorbpercentearth")
 			{
 				if(readXMLInteger(itemAttributesNode, "value", intValue))
-					it.abilities.absorbPercent[COMBAT_EARTHDAMAGE] += intValue;
+					it.abilities.absorb[COMBAT_EARTHDAMAGE] += intValue;
 			}
 			else if(tmpStrValue == "absorbpercentice")
 			{
 				if(readXMLInteger(itemAttributesNode, "value", intValue))
-					it.abilities.absorbPercent[COMBAT_ICEDAMAGE] += intValue;
+					it.abilities.absorb[COMBAT_ICEDAMAGE] += intValue;
 			}
 			else if(tmpStrValue == "absorbpercentholy")
 			{
 				if(readXMLInteger(itemAttributesNode, "value", intValue))
-					it.abilities.absorbPercent[COMBAT_HOLYDAMAGE] += intValue;
+					it.abilities.absorb[COMBAT_HOLYDAMAGE] += intValue;
 			}
 			else if(tmpStrValue == "absorbpercentdeath")
 			{
 				if(readXMLInteger(itemAttributesNode, "value", intValue))
-					it.abilities.absorbPercent[COMBAT_DEATHDAMAGE] += intValue;
+					it.abilities.absorb[COMBAT_DEATHDAMAGE] += intValue;
 			}
 			else if(tmpStrValue == "absorbpercentlifedrain")
 			{
 				if(readXMLInteger(itemAttributesNode, "value", intValue))
-					it.abilities.absorbPercent[COMBAT_LIFEDRAIN] += intValue;
+					it.abilities.absorb[COMBAT_LIFEDRAIN] += intValue;
 			}
 			else if(tmpStrValue == "absorbpercentmanadrain")
 			{
 				if(readXMLInteger(itemAttributesNode, "value", intValue))
-					it.abilities.absorbPercent[COMBAT_MANADRAIN] += intValue;
+					it.abilities.absorb[COMBAT_MANADRAIN] += intValue;
 			}
 			else if(tmpStrValue == "absorbpercentdrown")
 			{
 				if(readXMLInteger(itemAttributesNode, "value", intValue))
-					it.abilities.absorbPercent[COMBAT_DROWNDAMAGE] += intValue;
+					it.abilities.absorb[COMBAT_DROWNDAMAGE] += intValue;
 			}
 			else if(tmpStrValue == "absorbpercentphysical")
 			{
 				if(readXMLInteger(itemAttributesNode, "value", intValue))
-					it.abilities.absorbPercent[COMBAT_PHYSICALDAMAGE] += intValue;
+					it.abilities.absorb[COMBAT_PHYSICALDAMAGE] += intValue;
 			}
 			else if(tmpStrValue == "absorbpercenthealing")
 			{
 				if(readXMLInteger(itemAttributesNode, "value", intValue))
-					it.abilities.absorbPercent[COMBAT_HEALING] += intValue;
+					it.abilities.absorb[COMBAT_HEALING] += intValue;
 			}
 			else if(tmpStrValue == "absorbpercentundefined")
 			{
 				if(readXMLInteger(itemAttributesNode, "value", intValue))
-					it.abilities.absorbPercent[COMBAT_UNDEFINEDDAMAGE] += intValue;
+					it.abilities.absorb[COMBAT_UNDEFINEDDAMAGE] += intValue;
 			}
 			else if(tmpStrValue == "suppressshock" || tmpStrValue == "suppressenergy")
 			{

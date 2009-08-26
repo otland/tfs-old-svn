@@ -208,48 +208,48 @@ bool Vocations::parseVocationNode(xmlNodePtr p)
 			if(readXMLInteger(configNode, "percentAll", intValue))
 			{
 				for(uint32_t i = COMBAT_FIRST; i <= COMBAT_LAST; i++)
-					voc->increaseAbsorbPercent((CombatType_t)i, intValue);
+					voc->increaseAbsorb((CombatType_t)i, intValue);
 			}
 			else if(readXMLInteger(configNode, "percentElements", intValue))
 			{
-				voc->increaseAbsorbPercent(COMBAT_ENERGYDAMAGE, intValue);
-				voc->increaseAbsorbPercent(COMBAT_FIREDAMAGE, intValue);
-				voc->increaseAbsorbPercent(COMBAT_EARTHDAMAGE, intValue);
-				voc->increaseAbsorbPercent(COMBAT_ICEDAMAGE, intValue);
+				voc->increaseAbsorb(COMBAT_ENERGYDAMAGE, intValue);
+				voc->increaseAbsorb(COMBAT_FIREDAMAGE, intValue);
+				voc->increaseAbsorb(COMBAT_EARTHDAMAGE, intValue);
+				voc->increaseAbsorb(COMBAT_ICEDAMAGE, intValue);
 			}
 			else if(readXMLInteger(configNode, "percentMagic", intValue))
 			{
-				voc->increaseAbsorbPercent(COMBAT_ENERGYDAMAGE, intValue);
-				voc->increaseAbsorbPercent(COMBAT_FIREDAMAGE, intValue);
-				voc->increaseAbsorbPercent(COMBAT_EARTHDAMAGE, intValue);
-				voc->increaseAbsorbPercent(COMBAT_ICEDAMAGE, intValue);
-				voc->increaseAbsorbPercent(COMBAT_HOLYDAMAGE, intValue);
-				voc->increaseAbsorbPercent(COMBAT_DEATHDAMAGE, intValue);
+				voc->increaseAbsorb(COMBAT_ENERGYDAMAGE, intValue);
+				voc->increaseAbsorb(COMBAT_FIREDAMAGE, intValue);
+				voc->increaseAbsorb(COMBAT_EARTHDAMAGE, intValue);
+				voc->increaseAbsorb(COMBAT_ICEDAMAGE, intValue);
+				voc->increaseAbsorb(COMBAT_HOLYDAMAGE, intValue);
+				voc->increaseAbsorb(COMBAT_DEATHDAMAGE, intValue);
 			}
 			else if(readXMLInteger(configNode, "percentEnergy", intValue))
-				voc->increaseAbsorbPercent(COMBAT_ENERGYDAMAGE, intValue);
+				voc->increaseAbsorb(COMBAT_ENERGYDAMAGE, intValue);
 			else if(readXMLInteger(configNode, "percentFire", intValue))
-				voc->increaseAbsorbPercent(COMBAT_FIREDAMAGE, intValue);
+				voc->increaseAbsorb(COMBAT_FIREDAMAGE, intValue);
 			else if(readXMLInteger(configNode, "percentPoison", intValue) || readXMLInteger(configNode, "percentEarth", intValue))
-				voc->increaseAbsorbPercent(COMBAT_EARTHDAMAGE, intValue);
+				voc->increaseAbsorb(COMBAT_EARTHDAMAGE, intValue);
 			else if(readXMLInteger(configNode, "percentIce", intValue))
-				voc->increaseAbsorbPercent(COMBAT_ICEDAMAGE, intValue);
+				voc->increaseAbsorb(COMBAT_ICEDAMAGE, intValue);
 			else if(readXMLInteger(configNode, "percentHoly", intValue))
-				voc->increaseAbsorbPercent(COMBAT_HOLYDAMAGE, intValue);
+				voc->increaseAbsorb(COMBAT_HOLYDAMAGE, intValue);
 			else if(readXMLInteger(configNode, "percentDeath", intValue))
-				voc->increaseAbsorbPercent(COMBAT_DEATHDAMAGE, intValue);
+				voc->increaseAbsorb(COMBAT_DEATHDAMAGE, intValue);
 			else if(readXMLInteger(configNode, "percentLifeDrain", intValue))
-				voc->increaseAbsorbPercent(COMBAT_LIFEDRAIN, intValue);
+				voc->increaseAbsorb(COMBAT_LIFEDRAIN, intValue);
 			else if(readXMLInteger(configNode, "percentManaDrain", intValue))
-				voc->increaseAbsorbPercent(COMBAT_MANADRAIN, intValue);
+				voc->increaseAbsorb(COMBAT_MANADRAIN, intValue);
 			else if(readXMLInteger(configNode, "percentDrown", intValue))
-				voc->increaseAbsorbPercent(COMBAT_DROWNDAMAGE, intValue);
+				voc->increaseAbsorb(COMBAT_DROWNDAMAGE, intValue);
 			else if(readXMLInteger(configNode, "percentPhysical", intValue))
-				voc->increaseAbsorbPercent(COMBAT_PHYSICALDAMAGE, intValue);
+				voc->increaseAbsorb(COMBAT_PHYSICALDAMAGE, intValue);
 			else if(readXMLInteger(configNode, "percentHealing", intValue))
-				voc->increaseAbsorbPercent(COMBAT_HEALING, intValue);
+				voc->increaseAbsorb(COMBAT_HEALING, intValue);
 			else if(readXMLInteger(configNode, "percentUndefined", intValue))
-				voc->increaseAbsorbPercent(COMBAT_UNDEFINEDDAMAGE, intValue);
+				voc->increaseAbsorb(COMBAT_UNDEFINEDDAMAGE, intValue);
 		}
 
 		configNode = configNode->next;
@@ -329,8 +329,9 @@ Vocation::~Vocation()
 
 void Vocation::reset()
 {
-	memset(absorbPercent, 0, sizeof(absorbPercent));
-	memset(reflectPercent, 0, sizeof(reflectPercent));
+	memset(absorb, 0, sizeof(absorb));
+	memset(reflect[REFLECT_PERCENT], 0, sizeof(reflect[REFLECT_PERCENT]));
+	memset(reflect[REFLECT_CHANCE], 0, sizeof(reflect[REFLECT_CHANCE]));
 
 	needPremium = false;
 	attackable = true;
@@ -360,6 +361,14 @@ void Vocation::reset()
 	formulaMultipliers[MULTIPLIER_MANA] = 4.0f;
 	for(int32_t i = MULTIPLIER_FIRST; i < MULTIPLIER_LAST; i++)
 		formulaMultipliers[i] = 1.0f;
+}
+
+int16_t Vocation::getReflect(CombatType_t combat) const
+{
+	if(reflect[REFLECT_CHANCE][combat] < random_range(0, 100))
+		return reflect[REFLECT_PERCENT][combat];
+
+	return 0;
 }
 
 uint32_t Vocation::getReqSkillTries(int32_t skill, int32_t level)

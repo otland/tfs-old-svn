@@ -977,10 +977,10 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 			s << "magic level " << std::showpos << (int32_t)it.abilities.stats[STAT_MAGICLEVEL] << std::noshowpos;
 		}
 
-		int32_t show = it.abilities.absorbPercent[COMBAT_FIRST];
+		int32_t show = it.abilities.absorb[COMBAT_FIRST];
 		for(uint32_t i = (COMBAT_FIRST + 1); i <= COMBAT_LAST; i++)
 		{
-			if(it.abilities.absorbPercent[i] == show)
+			if(it.abilities.absorb[i] == show)
 				continue;
 
 			show = 0;
@@ -992,7 +992,7 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 			bool tmp = true;
 			for(uint32_t i = COMBAT_FIRST; i <= COMBAT_LAST; i++)
 			{
-				if(!it.abilities.absorbPercent[i])
+				if(!it.abilities.absorb[i])
 					continue;
 
 				if(tmp)
@@ -1011,7 +1011,7 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 				else
 					s << ", ";
 
-				s << getCombatName((CombatType_t)i) << " " << std::showpos << it.abilities.absorbPercent[i] << std::noshowpos << "%";
+				s << getCombatName((CombatType_t)i) << " " << std::showpos << it.abilities.absorb[i] << std::noshowpos << "%";
 			}
 		}
 		else
@@ -1085,10 +1085,10 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 			s << "magic level " << std::showpos << (int32_t)it.abilities.stats[STAT_MAGICLEVEL] << std::noshowpos;
 		}
 
-		int32_t show = it.abilities.absorbPercent[COMBAT_FIRST];
+		int32_t show = it.abilities.absorb[COMBAT_FIRST];
 		for(uint32_t i = (COMBAT_FIRST + 1); i <= COMBAT_LAST; i++)
 		{
-			if(it.abilities.absorbPercent[i] == show)
+			if(it.abilities.absorb[i] == show)
 				continue;
 
 			show = 0;
@@ -1100,7 +1100,7 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 			bool tmp = true;
 			for(uint32_t i = COMBAT_FIRST; i <= COMBAT_LAST; i++)
 			{
-				if(!it.abilities.absorbPercent[i])
+				if(!it.abilities.absorb[i])
 					continue;
 
 				if(tmp)
@@ -1119,7 +1119,7 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 				else
 					s << ", ";
 
-				s << getCombatName((CombatType_t)i) << " " << std::showpos << it.abilities.absorbPercent[i] << std::noshowpos << "%";
+				s << getCombatName((CombatType_t)i) << " " << std::showpos << it.abilities.absorb[i] << std::noshowpos << "%";
 			}
 		}
 		else

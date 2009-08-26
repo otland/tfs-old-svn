@@ -188,6 +188,13 @@ enum BlockType_t
 	BLOCK_IMMUNITY
 };
 
+enum Reflect_t
+{
+	REFLECT_PERCENT = 0,
+	REFLECT_CHANCE = 1,
+	REFLECT_LAST = REFLECT_CHANCE
+}
+
 enum skills_t
 {
 	SKILL_FIRST = 0,

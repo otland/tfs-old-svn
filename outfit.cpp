@@ -166,62 +166,62 @@ bool Outfits::parseOutfitNode(xmlNodePtr p)
 				if(readXMLInteger(configNode, "percentAll", intValue))
 				{
 					for(uint32_t i = COMBAT_FIRST; i <= COMBAT_LAST; i++)
-						outfit.absorbPercent[(CombatType_t)i] += intValue;
+						outfit.absorb[(CombatType_t)i] += intValue;
 				}
 
 				if(readXMLInteger(configNode, "percentElements", intValue))
 				{
-					outfit.absorbPercent[COMBAT_ENERGYDAMAGE] += intValue;
-					outfit.absorbPercent[COMBAT_FIREDAMAGE] += intValue;
-					outfit.absorbPercent[COMBAT_EARTHDAMAGE] += intValue;
-					outfit.absorbPercent[COMBAT_ICEDAMAGE] += intValue;
+					outfit.absorb[COMBAT_ENERGYDAMAGE] += intValue;
+					outfit.absorb[COMBAT_FIREDAMAGE] += intValue;
+					outfit.absorb[COMBAT_EARTHDAMAGE] += intValue;
+					outfit.absorb[COMBAT_ICEDAMAGE] += intValue;
 				}
 
 				if(readXMLInteger(configNode, "percentMagic", intValue))
 				{
-					outfit.absorbPercent[COMBAT_ENERGYDAMAGE] += intValue;
-					outfit.absorbPercent[COMBAT_FIREDAMAGE] += intValue;
-					outfit.absorbPercent[COMBAT_EARTHDAMAGE] += intValue;
-					outfit.absorbPercent[COMBAT_ICEDAMAGE] += intValue;
-					outfit.absorbPercent[COMBAT_HOLYDAMAGE] += intValue;
-					outfit.absorbPercent[COMBAT_DEATHDAMAGE] += intValue;
+					outfit.absorb[COMBAT_ENERGYDAMAGE] += intValue;
+					outfit.absorb[COMBAT_FIREDAMAGE] += intValue;
+					outfit.absorb[COMBAT_EARTHDAMAGE] += intValue;
+					outfit.absorb[COMBAT_ICEDAMAGE] += intValue;
+					outfit.absorb[COMBAT_HOLYDAMAGE] += intValue;
+					outfit.absorb[COMBAT_DEATHDAMAGE] += intValue;
 				}
 
 				if(readXMLInteger(configNode, "percentEnergy", intValue))
-					outfit.absorbPercent[COMBAT_ENERGYDAMAGE] += intValue;
+					outfit.absorb[COMBAT_ENERGYDAMAGE] += intValue;
 
 				if(readXMLInteger(configNode, "percentFire", intValue))
-					outfit.absorbPercent[COMBAT_FIREDAMAGE] += intValue;
+					outfit.absorb[COMBAT_FIREDAMAGE] += intValue;
 
 				if(readXMLInteger(configNode, "percentPoison", intValue) || readXMLInteger(configNode, "percentEarth", intValue))
-					outfit.absorbPercent[COMBAT_EARTHDAMAGE] += intValue;
+					outfit.absorb[COMBAT_EARTHDAMAGE] += intValue;
 
 				if(readXMLInteger(configNode, "percentIce", intValue))
-					outfit.absorbPercent[COMBAT_ICEDAMAGE] += intValue;
+					outfit.absorb[COMBAT_ICEDAMAGE] += intValue;
 
 				if(readXMLInteger(configNode, "percentHoly", intValue))
-					outfit.absorbPercent[COMBAT_HOLYDAMAGE] += intValue;
+					outfit.absorb[COMBAT_HOLYDAMAGE] += intValue;
 
 				if(readXMLInteger(configNode, "percentDeath", intValue))
-					outfit.absorbPercent[COMBAT_DEATHDAMAGE] += intValue;
+					outfit.absorb[COMBAT_DEATHDAMAGE] += intValue;
 
 				if(readXMLInteger(configNode, "percentLifeDrain", intValue))
-					outfit.absorbPercent[COMBAT_LIFEDRAIN] += intValue;
+					outfit.absorb[COMBAT_LIFEDRAIN] += intValue;
 
 				if(readXMLInteger(configNode, "percentManaDrain", intValue))
-					outfit.absorbPercent[COMBAT_MANADRAIN] += intValue;
+					outfit.absorb[COMBAT_MANADRAIN] += intValue;
 
 				if(readXMLInteger(configNode, "percentDrown", intValue))
-					outfit.absorbPercent[COMBAT_DROWNDAMAGE] += intValue;
+					outfit.absorb[COMBAT_DROWNDAMAGE] += intValue;
 
 				if(readXMLInteger(configNode, "percentPhysical", intValue))
-					outfit.absorbPercent[COMBAT_PHYSICALDAMAGE] += intValue;
+					outfit.absorb[COMBAT_PHYSICALDAMAGE] += intValue;
 
 				if(readXMLInteger(configNode, "percentHealing", intValue))
-					outfit.absorbPercent[COMBAT_HEALING] += intValue;
+					outfit.absorb[COMBAT_HEALING] += intValue;
 
 				if(readXMLInteger(configNode, "percentUndefined", intValue))
-					outfit.absorbPercent[COMBAT_UNDEFINEDDAMAGE] += intValue;
+					outfit.absorb[COMBAT_UNDEFINEDDAMAGE] += intValue;
 			}
 			else if(!xmlStrcmp(configNode->name, (const xmlChar*)"skills"))
 			{
@@ -654,7 +654,7 @@ int16_t Outfits::getOutfitAbsorb(uint32_t lookType, uint16_t sex, CombatType_t c
 	for(OutfitMap::iterator it = map.begin(); it != map.end(); ++it)
 	{
 		if(it->second.lookType == lookType)
-			return it->second.absorbPercent[combat];
+			return it->second.absorb[combat];
 	}
 
 	return 0;
@@ -668,8 +668,11 @@ int16_t Outfits::getOutfitReflect(uint32_t lookType, uint16_t sex, CombatType_t 
 
 	for(OutfitMap::iterator it = map.begin(); it != map.end(); ++it)
 	{
-		if(it->second.lookType == lookType)
-			return it->second.reflectPercent[combat];
+		if(it->second.lookType != lookType)
+			continue;
+
+		if(it->second.reflect[REFLECT_CHANCE][combat] < random_range(0, 100))
+			return it->second.reflect[REFLECT_PERCENT][combat];
 	}
 
 	return 0;
