@@ -36,6 +36,9 @@ if(Modules == nil) then
 
 	-- Used in outfit module
 	OUTFITMODULE_FUNCTION = OUTFITMODULE_FUNCTION_NEW
+	if(OUTFITMODULE_FUNCTION == nil) then
+		OUTFITMODULE_FUNCTION = OUTFITMODULE_FUNCTION_OLD
+	end
 
 	Modules = {
 		parseableModules = {}
@@ -226,8 +229,6 @@ if(Modules == nil) then
 			obj.callback = FOCUS_FAREWELLWORDS.callback or FocusModule.messageMatcher
 			handler.keywordHandler:addKeyword(obj, FocusModule.onFarewell, {module = self})
 		end
-
-		return true
 	end
 
 	-- Greeting callback function.
@@ -238,12 +239,12 @@ if(Modules == nil) then
 
 	-- UnGreeting callback function.
 	function FocusModule.onFarewell(cid, message, keywords, parameters)
-		if(parameters.module.npcHandler:isFocused(cid)) then
-			parameters.module.npcHandler:onFarewell(cid)
-			return true
-		else
+		if(not parameters.module.npcHandler:isFocused(cid)) then
 			return false
 		end
+
+		parameters.module.npcHandler:onFarewell(cid)
+		return true
 	end
 
 	-- Custom message matching callback function for greeting messages.
@@ -285,7 +286,6 @@ if(Modules == nil) then
 
 	function KeywordModule:init(handler)
 		self.npcHandler = handler
-		return true
 	end
 
 	-- Parses all known parameters.
@@ -328,7 +328,7 @@ if(Modules == nil) then
 
 	TravelModule = {
 		npcHandler = nil,
-		destinations = nil,
+		destinations = {},
 		yesNode = nil,
 		noNode = nil,
 	}
@@ -346,9 +346,6 @@ if(Modules == nil) then
 		self.npcHandler = handler
 		self.yesNode = KeywordNode:new(SHOP_YESWORD, TravelModule.onConfirm, {module = self})
 		self.noNode = KeywordNode:new(SHOP_NOWORD, TravelModule.onDecline, {module = self})
-
-		self.destinations = {}
-		return true
 	end
 
 	-- Parses all known parameters.
@@ -504,7 +501,7 @@ if(Modules == nil) then
 
 	OutfitModule = {
 		npcHandler = nil,
-		outfits = nil,
+		outfits = {},
 		yesNode = nil,
 		noNode = nil,
 	}
@@ -512,6 +509,10 @@ if(Modules == nil) then
 	Modules.parseableModules['module_outfit'] = OutfitModule
 
 	function OutfitModule:new()
+		if(OUTFITMODULE_FUNCTION == nil) then
+			return nil
+		end
+
 		local obj = {}
 		setmetatable(obj, self)
 		self.__index = self
@@ -522,9 +523,6 @@ if(Modules == nil) then
 		self.npcHandler = handler
 		self.yesNode = KeywordNode:new(SHOP_YESWORD, OutfitModule.onConfirm, {module = self})
 		self.noNode = KeywordNode:new(SHOP_NOWORD, OutfitModule.onDecline, {module = self})
-
-		self.outfits = {}
-		return true
 	end
 
 	-- Parses all known parameters.
@@ -934,18 +932,17 @@ if(Modules == nil) then
 		self.npcHandler = handler
 		self.yesNode = KeywordNode:new(SHOP_YESWORD, ShopModule.onConfirm, {module = self})
 		self.noNode = KeywordNode:new(SHOP_NOWORD, ShopModule.onDecline, {module = self})
-		self.noText = handler:getMessage(MESSAGE_DECLINE)
 
+		self.noText = handler:getMessage(MESSAGE_DECLINE)
 		if(SHOPMODULE_MODE ~= SHOPMODULE_MODE_TALK) then
 			for i, word in pairs(SHOP_TRADEREQUEST) do
 				local obj = {}
 				table.insert(obj, word)
+
 				obj.callback = SHOP_TRADEREQUEST.callback or ShopModule.messageMatcher
 				handler.keywordHandler:addKeyword(obj, ShopModule.requestTrade, {module = self})
 			end
 		end
-
-		return true
 	end
 
 	-- Custom message matching callback function for requesting trade messages.

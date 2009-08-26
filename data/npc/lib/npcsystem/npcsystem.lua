@@ -157,10 +157,8 @@ if(NpcSystem == nil) then
 			local ret = NpcSystem.getParameter(parameter)
 			if(ret ~= nil) then
 				local number = tonumber(ret)
-				if(number ~= 0 and module.parseParameters ~= nil) then
-					local instance = module:new()
-					npcHandler:addModule(instance)
-					instance:parseParameters()
+				if(number ~= nil and number ~= 0) then
+					npcHandler:addModule(module:new())
 				end
 			end
 		end

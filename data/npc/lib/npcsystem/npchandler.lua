@@ -231,10 +231,17 @@ if(NpcHandler == nil) then
 
 	-- Adds a module to this npchandler and inits it.
 	function NpcHandler:addModule(module)
-		if(self.modules ~= nil) then
-			table.insert(self.modules, module)
-			module:init(self)
+		if(self.modules == nil or module == nil) then
+			return false
 		end
+
+		module:init(self)
+		if(module:parseParameters ~= nil) then
+			module:parseParameters()
+		end
+
+		table.insert(self.modules, module)
+		return true
 	end
 
 	-- Calls the callback function represented by id for all modules added to this npchandler with the given arguments.
