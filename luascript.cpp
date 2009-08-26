@@ -4149,7 +4149,11 @@ int32_t LuaScriptInterface::luaGetItemOwner(lua_State* L)
 	//getItemOwner(uid)
 	ScriptEnviroment* env = getScriptEnv();
 	if(const Item* item = env->getItemByUID(popNumber(L)))
-		lua_pushnumber(L, item->getOwner());
+	{
+		if(Creature* creature = g_game.getCreatureByID(item->getOwner()))
+			lua_pushnumber(L, env->addThing(creature));
+		else
+			lua_pushnumber(L, 0);
 	else
 	{
 		reportErrorFunc(getErrorDesc(LUA_ERROR_ITEM_NOT_FOUND));
