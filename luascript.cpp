@@ -7924,7 +7924,6 @@ int32_t LuaScriptInterface::luaCanPlayerWearOutfit(lua_State* L)
 
 int32_t LuaScriptInterface::luaCanPlayerWearOutfitId(lua_State* L)
 {
-
 	//canPlayerWearOutfitId(cid, outfitId[, addon = 0])
 	uint32_t addon = 0;
 	if(lua_gettop(L) > 2)
