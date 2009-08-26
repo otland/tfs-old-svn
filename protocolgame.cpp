@@ -1433,19 +1433,14 @@ void ProtocolGame::parseDebugAssert(NetworkMessage& msg)
 	if(m_debugAssertSent)
 		return;
 
-	std::string assertLine = msg.GetString(), date = msg.GetString(),
-		description = msg.GetString(), comment = msg.GetString();
+	std::stringstream s;
+	s << "----- " << formatDate() << " - " << player->getName() << " (" << convertIPAddress(getIP())
+		<< ") -----" << std::endl << msg.GetString() << std::endl << msg.GetString()
+		<< std::endl << msg.GetString() << std::endl << msg.GetString()
+		<< std::endl << std::endl;
+
 	m_debugAssertSent = true;
-
-	std::stringstream ss;
-	ss << "----- " << formatDate() << " - " << player->getName()
-		<< " (" << convertIPAddress(getIP()) << ") -----\n"
-		<< assertLine << "\n"
-		<< date << "\n"
-		<< description << "\n"
-		<< comment << "\n\n";
-
-	Loggar::getInstance()->iFile(ss.str(), LOGFILE_CLIENT_ASSERTION, false);
+	Loggar::getInstance()->iFile(LOGFILE_CLIENT_ASSERTION, s.str(), false);
 }
 
 void ProtocolGame::parseBugReport(NetworkMessage& msg)
