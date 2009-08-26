@@ -802,9 +802,11 @@ bool Admin::allowIP(uint32_t ip)
 	if(ip == 0x0100007F) //127.0.0.1
 		return true;
 
-	if(g_config.getBool(ConfigManager::ADMIN_LOGS_ENABLED))
-		LOG_MESSAGE(LOGTYPE_EVENT, "forbidden connection try", "ADMIN " + convertIPAddress(ip))
+	if(!g_config.getBool(ConfigManager::ADMIN_LOGS_ENABLED))
+		return false;
 
+	std::string tmp = "ADMIN" + convertIPAddress(ip);
+	LOG_MESSAGE(LOGTYPE_EVENT, "forbidden connection try", tmp)
 	return false;
 }
 
@@ -819,7 +821,10 @@ bool Admin::passwordMatch(const std::string& password)
 
 void ProtocolAdmin::addLogLine(LogType_t type, std::string message)
 {
-	if(g_config.getBool(ConfigManager::ADMIN_LOGS_ENABLED))
-		LOG_MESSAGE(type, message, "ADMIN " + convertIPAddress(protocol->getIP()))
+	if(!g_config.getBool(ConfigManager::ADMIN_LOGS_ENABLED))
+		return;
+
+	std::string tmp = "ADMIN" + convertIPAddress(protocol->getIP());
+	LOG_MESSAGE(type, message, tmp)
 }
 #endif
