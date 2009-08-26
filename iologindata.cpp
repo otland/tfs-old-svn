@@ -681,7 +681,7 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool preLo
 	//load vip
 	query.str("");
 	if(!g_config.getBool(ConfigManager::VIPLIST_PER_PLAYER))
-		query << "SELECT `t`.`player_id` AS `vip` FROM `account_viplist` t LEFT JOIN `players` c ON `t`.`player_id` = `c`.`id` WHERE `t`.`account_id` = " << acc.number << " AND `c`.`world_id` = " << g_config.getNumber(ConfigManager::WORLD_ID);
+		query << "SELECT `player_id` AS `vip` FROM `account_viplist` WHERE `account_id` = " << acc.number << " AND `world_id` = " << g_config.getNumber(ConfigManager::WORLD_ID);
 	else
 		query << "SELECT `vip_id` AS `vip` FROM `player_viplist` WHERE `player_id` = " << player->getGUID();
 
@@ -969,22 +969,18 @@ bool IOLoginData::savePlayer(Player* player, bool preSave/* = true*/, bool shall
 			return false;
 	}
 
-	//save vip list
+	//save vip list- FIXME: merge it to one config query?
 	query.str("");
 	if(!g_config.getBool(ConfigManager::VIPLIST_PER_PLAYER))
-		query << "DELETE FROM `account_viplist` WHERE `account_id` = " << player->getAccount();
+		query << "DELETE FROM `account_viplist` WHERE `account_id` = " << player->getAccount() << " AND `world_id` = " << g_config.getNumber(ConfigManager::WORLD_ID);
 	else
 		query << "DELETE FROM `player_viplist` WHERE `player_id` = " << player->getGUID();
 
 	if(!db->executeQuery(query.str()))
 		return false;
 
-	uint32_t key = player->getGUID();
 	if(!g_config.getBool(ConfigManager::VIPLIST_PER_PLAYER))
-	{
-		query_insert.setQuery("INSERT INTO `account_viplist` (`account_id`, `player_id`) VALUES ");
-		key = player->getAccount();
-	}
+		query_insert.setQuery("INSERT INTO `account_viplist` (`account_id`, `world_id`, `player_id`) VALUES ");
 	else
 		query_insert.setQuery("INSERT INTO `player_viplist` (`player_id`, `vip_id`) VALUES ");
 
@@ -993,7 +989,11 @@ bool IOLoginData::savePlayer(Player* player, bool preSave/* = true*/, bool shall
 		if(!playerExists(*it, false, false))
 			continue;
 
-		sprintf(buffer, "%d, %d", key, *it);
+		if(!g_config.getBool(ConfigManager::VIPLIST_PER_PLAYER))
+			sprintf(buffer, "%d, %d, %d", key, g_config.getNumber(ConfigManager::WORLD_ID), *it);
+		else
+			sprintf(buffer, "%d, %d", key, *it);
+
 		if(!query_insert.addRow(buffer))
 			return false;
 	}

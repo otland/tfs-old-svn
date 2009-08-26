@@ -52,6 +52,7 @@ CREATE TABLE "accounts" (
 
 CREATE TABLE "account_viplist" (
 	"account_id" INTEGER NOT NULL,
+	"world_id" INTEGER NOT NULL DEFAULT 0,
 	"player_id" INTEGER NOT NULL,
 	UNIQUE ("account_id", "player_id"),
 	FOREIGN KEY "account_id" REFERENCES "accounts" ("id"),

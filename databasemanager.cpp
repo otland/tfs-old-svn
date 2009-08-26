@@ -1010,10 +1010,10 @@ uint32_t DatabaseManager::updateDatabase()
 			switch(db->getDatabaseEngine())
 			{
 				case DATABASE_ENGINE_MYSQL:
-					db->executeQuery("CREATE TABLE `account_viplist` (`account_id` INT NOT NULL, `player_id` INT NOT NULL, KEY (`account_id`), KEY (`player_id`), UNIQUE (`account_id`, `player_id`), FOREIGN KEY (`account_id`) REFERENCES `accounts`(`id`) ON DELETE CASCADE, FOREIGN KEY (`player_id`) REFERENCES `players`(`id`) ON DELETE CASCADE) ENGINE = InnoDB;");
+					db->executeQuery("CREATE TABLE `account_viplist` (`account_id` INT NOT NULL, `world_id` TINYINT(2) UNSIGNED NOT NULL DEFAULT 0, `player_id` INT NOT NULL, KEY (`account_id`), KEY (`player_id`), UNIQUE (`account_id`, `player_id`), FOREIGN KEY (`account_id`) REFERENCES `accounts`(`id`) ON DELETE CASCADE, FOREIGN KEY (`player_id`) REFERENCES `players`(`id`) ON DELETE CASCADE) ENGINE = InnoDB;");
 					break;
 				case DATABASE_ENGINE_SQLITE:
-					db->executeQuery("CREATE TABLE `account_viplist` (`account_id` INTEGER NOT NULL, `player_id` INTEGER NOT NULL, UNIQUE (`account_id`, `player_id`), FOREIGN KEY `account_id` REFERENCES `accounts` (`id`), FOREIGN KEY `player_id` REFERENCES `players` (`id`));");
+					db->executeQuery("CREATE TABLE `account_viplist` (`account_id` INTEGER NOT NULL, `world_id` INTEGER NOT NULL DEFAULT 0, `player_id` INTEGER NOT NULL, UNIQUE (`account_id`, `player_id`), FOREIGN KEY `account_id` REFERENCES `accounts` (`id`), FOREIGN KEY `player_id` REFERENCES `players` (`id`));");
 					break;
 				default:
 					break;
