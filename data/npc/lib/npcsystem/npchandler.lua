@@ -236,7 +236,7 @@ if(NpcHandler == nil) then
 		end
 
 		module:init(self)
-		if(module:parseParameters ~= nil) then
+		if(module.parseParameters ~= nil) then
 			module:parseParameters()
 		end
 

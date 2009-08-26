@@ -574,6 +574,8 @@ if(Modules == nil) then
 				else
 					print('[Warning] NpcSystem:', 'Unknown parameter found in outfit list while parsing ' .. (outfit == nil and 'outfit' or 'item') .. '.', tmp, list)
 				end
+
+				e = e + 1
 			end
 
 			if(outfit == nil) then
@@ -653,7 +655,7 @@ if(Modules == nil) then
 			items = items .. v[3]
 		end
 	
-		module.npcHandler:say('Do you want ' .. keywords[1] .. ' ' .. (addon ~= 0 and "addon" or "outfit") .. ' for ' .. items .. '?', cid)
+		module.npcHandler:say('Do you want ' .. keywords[1] .. ' ' .. (addon == 0 and "outfit" or "addon") .. ' for ' .. items .. '?', cid)
 		return true
 
 	end
@@ -666,8 +668,8 @@ if(Modules == nil) then
 
 		local parent = node:getParent():getParameters()
 		if(isPlayerPremiumCallback(cid) or not parent.premium) then
-			if(not canPlayerWearOutfitId(parent.outfit, parent.addons)) then
-				if(parent.addons == 0 or canPlayerWearOutfitId(parent.outfit, 0)) then
+			if(not canPlayerWearOutfitId(cid, parent.outfit, parent.addon)) then
+				if(parent.addon == 0 or canPlayerWearOutfitId(cid, parent.outfit)) then
 					if(parent.gender == nil or parent.gender == getPlayerSex(cid)) then
 						local found = true
 						for k, v in pairs(parent.items) do
@@ -693,13 +695,13 @@ if(Modules == nil) then
 							module.npcHandler:say('You don\'t have these items!', cid)
 						end
 					else
-						module.npcHandler:say('Sorry, this ' .. (parent.addons == 0 and 'outfit' or 'addon') .. ' is not for your gender.', cid)
+						module.npcHandler:say('Sorry, this ' .. (parent.addon == 0 and 'outfit' or 'addon') .. ' is not for your gender.', cid)
 					end
 				else
 					module.npcHandler:say('I will not dress you with addon of outfit you cannot wear!', cid)
 				end
 			else
-				module.npcHandler:say('You alrady have this ' .. (parent.addons == 0 and 'outfit' or 'addon') .. '!', cid)
+				module.npcHandler:say('You alrady have this ' .. (parent.addon == 0 and 'outfit' or 'addon') .. '!', cid)
 			end
 		else
 			module.npcHandler:say('Sorry, I dress only premium players.', cid)
