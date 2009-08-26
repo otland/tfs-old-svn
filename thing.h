@@ -22,6 +22,7 @@
 /*Notice: remember to add new error codes to global.lua*/
 enum ReturnValue
 {
+	RET_DONTSHOWMESSAGE = 0,
 	RET_NOERROR = 1,
 	RET_NOTPOSSIBLE = 2,
 	RET_NOTENOUGHROOM = 3,
@@ -85,8 +86,7 @@ enum ReturnValue
 	RET_CANONLYUSEONESHIELD = 61,
 	RET_YOUARENOTTHEOWNER = 62,
 	RET_YOUMAYNOTCASTAREAONBLACKSKULL = 63,
-	RET_DONTSHOWMESSAGE = 64,
-	RET_TILEISFULL = 65
+	RET_TILEISFULL = 64
 };
 
 class Tile;
