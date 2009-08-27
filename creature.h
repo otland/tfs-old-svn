@@ -436,7 +436,6 @@ class Creature : public AutoID, virtual public Thing
 		Tile* _tile;
 		uint32_t id;
 		bool removed;
-		bool dead;
 		bool isMapLoaded;
 		bool isUpdatingPath;
 		bool checked;

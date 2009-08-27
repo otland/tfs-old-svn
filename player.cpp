@@ -2303,6 +2303,8 @@ void Player::dropCorpse(DeathList deathList)
 		sendStats();
 		sendIcons();
 		onIdleStatus();
+
+		g_game.addCreatureHealth(this);
 		g_game.internalTeleport(this, getTemplePosition(), true);
 	}
 	else

@@ -71,7 +71,6 @@ Creature::Creature()
 	followCreature = NULL;
 	hasFollowPath = false;
 	removed = false;
-	dead = false;
 	eventWalk = 0;
 	forceUpdateFollowPath = false;
 	isMapLoaded = false;
@@ -660,9 +659,6 @@ void Creature::onCreatureMove(const Creature* creature, const Tile* newTile, con
 
 bool Creature::onDeath()
 {
-	if(dead)
-		return true;
-
 	DeathList deathList = getKillers();
 	bool deny = false;
 
@@ -725,7 +721,6 @@ bool Creature::onDeath()
 	}
 
 	dropCorpse(deathList);
-	dead = true;
 	return true;
 }
 
@@ -1271,12 +1266,12 @@ void Creature::addSummon(Creature* creature)
 void Creature::removeSummon(const Creature* creature)
 {
 	std::list<Creature*>::iterator it = std::find(summons.begin(), summons.end(), creature);
-	if(it != summons.end())
-	{
-		(*it)->setMaster(NULL);
-		(*it)->releaseThing2();
-		summons.erase(it);
-	}
+	if(it == summons.end())
+		return;
+
+	(*it)->setMaster(NULL);
+	(*it)->releaseThing2();
+	summons.erase(it);
 }
 
 void Creature::destroySummons()
@@ -1285,9 +1280,7 @@ void Creature::destroySummons()
 	{
 		(*it)->setAttackedCreature(NULL);
 		(*it)->changeHealth(-(*it)->getHealth());
-
-		(*it)->setMaster(NULL);
-		(*it)->releaseThing2();
+		g_game.removeCreature(*it);
 	}
 
 	summons.clear();

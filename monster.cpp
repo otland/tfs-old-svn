@@ -187,7 +187,6 @@ void Monster::onCreatureMove(const Creature* creature, const Tile* newTile, cons
 			isMasterInRange = true;
 		
 		updateIdleStatus();
-
 		if(!followCreature && !isSummon() && isOpponent(creature)) //we have no target lets try pick this one
 			selectTarget(const_cast<Creature*>(creature));
 	}
@@ -573,11 +572,8 @@ void Monster::onThink(uint32_t interval)
 	{
 		if(!followCreature || !hasFollowPath)
 			searchTarget();
-		else if(isFleeing())
-		{
-			if(attackedCreature && !canUseAttack(getPosition(), attackedCreature))
-				searchTarget(TARGETSEARCH_ATTACKRANGE);
-		}
+		else if(isFleeing() && attackedCreature && !canUseAttack(getPosition(), attackedCreature))
+			searchTarget(TARGETSEARCH_ATTACKRANGE);
 	}
 
 	onThinkTarget(interval);
@@ -1104,12 +1100,11 @@ bool Monster::onDeath()
 	if(!Creature::onDeath())
 		return false;
 
+	setAttackedCreature(NULL);
 	clearTargetList();
 	clearFriendList();
 
 	setIdle(true);
-	setAttackedCreature(NULL);
-
 	g_game.removeCreature(this, false);
 	if(!raid)
 		return true;
