@@ -1280,7 +1280,9 @@ void Creature::destroySummons()
 	{
 		(*it)->setAttackedCreature(NULL);
 		(*it)->changeHealth(-(*it)->getHealth());
-		g_game.removeCreature(*it);
+
+		(*it)->setMaster(NULL);
+		(*it)->releaseThing2();
 	}
 
 	summons.clear();

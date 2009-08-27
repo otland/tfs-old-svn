@@ -1105,12 +1105,13 @@ bool Monster::onDeath()
 	clearFriendList();
 
 	setIdle(true);
-	g_game.removeCreature(this, false);
-	if(!raid)
-		return true;
+	if(raid)
+	{
+		raid->unRef();
+		raid = NULL;
+	}
 
-	raid->unRef();
-	raid = NULL;
+	g_game.removeCreature(this, false);
 	return true;
 }
 
