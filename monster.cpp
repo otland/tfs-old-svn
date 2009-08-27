@@ -1100,10 +1100,11 @@ bool Monster::onDeath()
 	if(!Creature::onDeath())
 		return false;
 
-	setAttackedCreature(NULL);
+	destroySummons();
 	clearTargetList();
 	clearFriendList();
 
+	setAttackedCreature(NULL);
 	setIdle(true);
 	if(raid)
 	{

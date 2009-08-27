@@ -474,7 +474,6 @@ void Creature::onCreatureDisappear(const Creature* creature, bool isLogout)
 
 void Creature::onRemovedCreature()
 {
-	destroySummons();
 	if(master && !master->isRemoved())
 		master->removeSummon(this);
 
@@ -721,6 +720,9 @@ bool Creature::onDeath()
 	}
 
 	dropCorpse(deathList);
+	if(master && !master->isRemoved())
+		master->removeSummon(this);
+
 	return true;
 }
 

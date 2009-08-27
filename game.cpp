@@ -916,6 +916,9 @@ bool Game::removeCreature(Creature* creature, bool isLogout /*= true*/)
 		(*it)->onCreatureDisappear(creature, isLogout);
 
 	creature->getParent()->postRemoveNotification(NULL, creature, NULL, oldIndex, true);
+	for(CreatureVector::iterator it = creature->summons.begin(); it != summons.end(); ++it)
+		removeCreature(*it);
+
 	creature->onRemovedCreature();
 	listCreature.removeList(creature->getID());
 
