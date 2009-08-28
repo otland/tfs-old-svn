@@ -916,14 +916,15 @@ bool Game::removeCreature(Creature* creature, bool isLogout /*= true*/)
 		(*it)->onCreatureDisappear(creature, isLogout);
 
 	creature->getParent()->postRemoveNotification(NULL, creature, NULL, oldIndex, true);
-	for(std::list<Creature*>::const_iterator it = creature->summons.begin(); it != creature->summons.end(); ++it)
+	creature->onRemovedCreature();
+
+	listCreature.removeList(creature->getID());
+	FreeThing(creature);
+
+	removeCreatureCheck(creature);
+	for(std::list<Creature*>::iterator it = creature->summons.begin(); it != creature->summons.end(); ++it)
 		removeCreature(*it);
 
-	creature->onRemovedCreature();
-	listCreature.removeList(creature->getID());
-
-	FreeThing(creature);
-	removeCreatureCheck(creature);
 	return true;
 }
 

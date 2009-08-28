@@ -474,11 +474,10 @@ void Creature::onCreatureDisappear(const Creature* creature, bool isLogout)
 
 void Creature::onRemovedCreature()
 {
-	if(master && !master->isRemoved())
-		master->removeSummon(this);
-
 	setRemoved();
 	removeList();
+	if(master && !master->isRemoved())
+		master->removeSummon(this);
 }
 
 void Creature::onChangeZone(ZoneType_t zone)
@@ -720,7 +719,7 @@ bool Creature::onDeath()
 	}
 
 	dropCorpse(deathList);
-	if(master && !master->isRemoved())
+	if(master)
 		master->removeSummon(this);
 
 	return true;
