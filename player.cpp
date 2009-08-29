@@ -1583,8 +1583,7 @@ void Player::onCreatureMove(const Creature* creature, const Tile* newTile, const
 		int32_t ticks = g_config.getNumber(ConfigManager::STAIRHOP_DELAY);
 		if(ticks > 0)
 		{
-			addExhaust(ticks, EXHAUST_COMBAT); // Aggressive spells
-			addExhaust(ticks, EXHAUST_WEAPON);
+			addExhaust(ticks, EXHAUST_COMBAT);
 			if(Condition* condition = Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_PACIFIED, ticks))
 				addCondition(condition);
 		}
@@ -1756,15 +1755,12 @@ void Player::onThink(uint32_t interval)
 			setAttackedCreature(NULL);
 	}
 
-	if(canLogout())
+	if(canLogout() && (timeNow - lastPong) >= 60000)
 	{
-		if(!client)
-		{
-			if(g_creatureEvents->playerLogout(this, true))
-				g_game.removeCreature(this, true);
-		}
-		else if(timeNow - lastPong >= 60000)
+		if(client)
 			client->logout(true, true);
+		else if(g_creatureEvents->playerLogout(this, true))
+			g_game.removeCreature(this, true);
 	}
 
 	messageTicks += interval;
@@ -3319,12 +3315,16 @@ void Player::getPathSearchParams(const Creature* creature, FindPathParams& fpp) 
 
 void Player::doAttacking(uint32_t interval)
 {
-	if(lastAttack == 0)
+	if(!lastAttack)
 		lastAttack = OTSYS_TIME() - getAttackSpeed() - 1;
-
-	if((OTSYS_TIME() - lastAttack) < getAttackSpeed() || (hasCondition(CONDITION_PACIFIED)
-		&& !hasCustomFlag(PlayerCustomFlag_IgnorePacification)))
+	else if((OTSYS_TIME() - lastAttack) < getAttackSpeed())
 		return;
+
+	if(hasCondition(CONDITION_PACIFIED) && !hasCustomFlag(PlayerCustomFlag_IgnorePacification))
+	{
+		lastAttack = OTSYS_TIME();
+		return;
+	}
 
 	Item* tool = getWeapon();
 	if(const Weapon* weapon = g_weapons->getWeapon(tool))
@@ -3334,7 +3334,7 @@ void Player::doAttacking(uint32_t interval)
 			SchedulerTask* task = createSchedulerTask(getNextActionTime(), boost::bind(&Game::checkCreatureAttack, &g_game, getID()));
 			setNextActionTask(task);
 		}
-		else if((!hasCondition(CONDITION_EXHAUST, EXHAUST_WEAPON) || !weapon->hasExhaustion()) && weapon->useWeapon(this, tool, attackedCreature))
+		else if((!weapon->hasExhaustion() || !hasCondition(CONDITION_EXHAUST, EXHAUST_COMBAT)) && weapon->useWeapon(this, tool, attackedCreature))
 			lastAttack = OTSYS_TIME();
 	}
 	else if(Weapon::useFist(this, attackedCreature))
@@ -3826,7 +3826,7 @@ void Player::changeSoul(int32_t soulChange)
 
 bool Player::canLogout()
 {
-	return !isConnecting && !hasCondition(CONDITION_INFIGHT) && !getTile()->hasFlag(TILESTATE_NOLOGOUT);
+	return !isConnecting && !pzLocked && !getTile()->hasFlag(TILESTATE_NOLOGOUT);
 }
 
 bool Player::changeOutfit(Outfit_t outfit, bool checkList)

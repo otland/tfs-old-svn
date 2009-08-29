@@ -961,7 +961,6 @@ bool Game::playerMoveThing(uint32_t playerId, const Position& fromPos,
 		{
 			SchedulerTask* task = createSchedulerTask(delay, boost::bind(&Game::playerMoveCreature, this,
 				player->getID(), movingCreature->getID(), movingCreature->getPosition(), toCylinder->getPosition()));
-
 			player->setNextActionTask(task);
 		}
 		else
@@ -991,10 +990,7 @@ bool Game::playerMoveCreature(uint32_t playerId, uint32_t movingCreatureId,
 	}
 
 	Creature* movingCreature = getCreatureByID(movingCreatureId);
-	if(!movingCreature || movingCreature->isRemoved())
-		return false;
-
-	if(movingCreature->getNoMove())
+	if(!movingCreature || movingCreature->isRemoved() || movingCreature->getNoMove())
 		return false;
 
 	player->setNextActionTask(NULL);
@@ -1006,7 +1002,7 @@ bool Game::playerMoveCreature(uint32_t playerId, uint32_t movingCreatureId,
 		{
 			Dispatcher::getDispatcher().addTask(createTask(boost::bind(&Game::playerAutoWalk,
 				this, player->getID(), listDir)));
-			SchedulerTask* task = createSchedulerTask(1500, boost::bind(&Game::playerMoveCreature, this,
+			SchedulerTask* task = createSchedulerTask(player->getStepDuration(), boost::bind(&Game::playerMoveCreature, this,
 				playerId, movingCreatureId, movingCreaturePos, toPos));
 
 			player->setNextWalkActionTask(task);
@@ -1024,8 +1020,7 @@ bool Game::playerMoveCreature(uint32_t playerId, uint32_t movingCreatureId,
 		return false;
 	}
 
-	if((!movingCreature->isPushable() && !player->hasFlag(PlayerFlag_CanPushAllCreatures))
-		|| !player->canSeeCreature(movingCreature))
+	if((!movingCreature->isPushable() && !player->hasFlag(PlayerFlag_CanPushAllCreatures)) || !player->canSeeCreature(movingCreature))
 	{
 		player->sendCancelMessage(RET_NOTMOVEABLE);
 		return false;
@@ -1050,8 +1045,8 @@ bool Game::playerMoveCreature(uint32_t playerId, uint32_t movingCreatureId,
 		}
 
 		if((movingCreature->getZone() == ZONE_PROTECTION || movingCreature->getZone() == ZONE_NOPVP)
-			&& !toTile->hasFlag(TILESTATE_NOPVPZONE) && !toTile->hasFlag(TILESTATE_PROTECTIONZONE) &&
-			!player->hasFlag(PlayerFlag_CanPushAllCreatures) && !player->hasFlag(PlayerFlag_IgnoreProtectionZone))
+			&& !toTile->hasFlag(TILESTATE_NOPVPZONE) && !toTile->hasFlag(TILESTATE_PROTECTIONZONE)
+			&& !player->hasFlag(PlayerFlag_IgnoreProtectionZone))
 		{
 			player->sendCancelMessage(RET_NOTPOSSIBLE);
 			return false;
@@ -1059,11 +1054,20 @@ bool Game::playerMoveCreature(uint32_t playerId, uint32_t movingCreatureId,
 	}
 
 	ReturnValue ret = internalMoveCreature(player, movingCreature, movingCreature->getTile(), toTile);
-	if(ret == RET_NOERROR)
-		return true;
+	if(ret != RET_NOERROR)
+	{
+		player->sendCancelMessage(ret);
+		return false;
+	}
 
-	player->sendCancelMessage(ret);
-	return false;
+	if(Player* movingPlayer = movingCreature->getPlayer())
+	{
+		uint64_t delay = OTSYS_TIME() + movingPlayer->getStepDuration();
+		if(delay > movingPlayer->getNextActionTime())
+			movingPlayer->setNextAction(delay);
+	}
+
+	return true;
 }
 
 ReturnValue Game::internalMoveCreature(Creature* creature, Direction direction, uint32_t flags/* = 0*/)
@@ -1152,6 +1156,7 @@ bool Game::playerMoveItem(uint32_t playerId, const Position& fromPos,
 		uint32_t delay = player->getNextActionTime();
 		SchedulerTask* task = createSchedulerTask(delay, boost::bind(&Game::playerMoveItem, this,
 			playerId, fromPos, spriteId, fromStackpos, toPos, count));
+
 		player->setNextActionTask(task);
 		return false;
 	}
@@ -1226,7 +1231,7 @@ bool Game::playerMoveItem(uint32_t playerId, const Position& fromPos,
 		{
 			Dispatcher::getDispatcher().addTask(createTask(boost::bind(&Game::playerAutoWalk,
 				this, player->getID(), listDir)));
-			SchedulerTask* task = createSchedulerTask(400, boost::bind(&Game::playerMoveItem, this,
+			SchedulerTask* task = createSchedulerTask(player->getStepDuration(), boost::bind(&Game::playerMoveItem, this,
 				playerId, fromPos, spriteId, fromStackpos, toPos, count));
 
 			player->setNextWalkActionTask(task);
@@ -1290,8 +1295,7 @@ bool Game::playerMoveItem(uint32_t playerId, const Position& fromPos,
 			{
 				Dispatcher::getDispatcher().addTask(createTask(boost::bind(&Game::playerAutoWalk,
 					this, player->getID(), listDir)));
-
-				SchedulerTask* task = createSchedulerTask(400, boost::bind(&Game::playerMoveItem, this,
+				SchedulerTask* task = createSchedulerTask(player->getStepDuration(), boost::bind(&Game::playerMoveItem, this,
 					playerId, itemPos, spriteId, itemStackpos, toPos, count));
 
 				player->setNextWalkActionTask(task);
@@ -1393,7 +1397,7 @@ ReturnValue Game::internalMoveItem(Creature* actor, Cylinder* fromCylinder, Cyli
 	//check how much we can move
 	uint32_t maxQueryCount = 0;
 	ReturnValue retMaxCount = toCylinder->__queryMaxCount(index, item, count, maxQueryCount, flags);
-	if(retMaxCount != RET_NOERROR && maxQueryCount == 0)
+	if(retMaxCount != RET_NOERROR && !maxQueryCount)
 		return retMaxCount;
 
 	uint32_t m = maxQueryCount, n = 0;

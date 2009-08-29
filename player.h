@@ -117,10 +117,8 @@ enum GamemasterCondition_t
 
 enum Exhaust_t
 {
-	EXHAUST_OTHER = 0,
 	EXHAUST_COMBAT = 1,
-	EXHAUST_HEALING = 2,
-	EXHAUST_WEAPON = 3
+	EXHAUST_HEALING = 2
 };
 
 typedef std::set<uint32_t> VIPListSet;
