@@ -43,7 +43,7 @@ extern Game g_game;
 
 Account IOLoginData::loadAccount(uint32_t accountId, bool preLoad/* = false*/)
 {
-	Account acc;
+	Account account;
 	Database* db = Database::getInstance();
 	DBQuery query;
 
@@ -52,13 +52,13 @@ Account IOLoginData::loadAccount(uint32_t accountId, bool preLoad/* = false*/)
 	if(!(result = db->storeQuery(query.str())))
 		return acc;
 
-	acc.number = result->getDataInt("id");
-	acc.name = result->getDataString("name");
-	acc.password = result->getDataString("password");
-	acc.premiumDays = result->getDataInt("premdays");
-	acc.lastDay = result->getDataInt("lastday");
-	acc.recoveryKey = result->getDataString("key");
-	acc.warnings = result->getDataInt("warnings");
+	account.number = result->getDataInt("id");
+	account.name = result->getDataString("name");
+	account.password = result->getDataString("password");
+	account.premiumDays = result->getDataInt("premdays");
+	account.lastDay = result->getDataInt("lastday");
+	account.recoveryKey = result->getDataString("key");
+	account.warnings = result->getDataInt("warnings");
 
 	query.str("");
 	result->free();
@@ -77,10 +77,10 @@ Account IOLoginData::loadAccount(uint32_t accountId, bool preLoad/* = false*/)
 	{
 		std::string ss = result->getDataString("name");
 #ifndef __LOGIN_SERVER__
-		acc.charList.push_back(ss.c_str());
+		account.charList.push_back(ss.c_str());
 #else
 		if(GameServer* server = GameServers::getInstance()->getServerById(result->getDataInt("world_id")))
-			acc.charList[ss] = server;
+			account.charList[ss] = server;
 		else
 			std::cout << "[Warning - IOLoginData::loadAccount] Invalid server for player '" << ss << "'." << std::endl;
 #endif
@@ -89,16 +89,16 @@ Account IOLoginData::loadAccount(uint32_t accountId, bool preLoad/* = false*/)
 	result->free();
 #ifndef __LOGIN_SERVER__
 
-	acc.charList.sort();
+	account.charList.sort();
 #endif
 	return acc;
 }
 
-bool IOLoginData::saveAccount(Account acc)
+bool IOLoginData::saveAccount(Account account)
 {
 	Database* db = Database::getInstance();
 	DBQuery query;
-	query << "UPDATE `accounts` SET `premdays` = " << acc.premiumDays << ", `warnings` = " << acc.warnings << ", `lastday` = " << acc.lastDay << " WHERE `id` = " << acc.number << db->getUpdateLimiter();
+	query << "UPDATE `accounts` SET `premdays` = " << account.premiumDays << ", `warnings` = " << account.warnings << ", `lastday` = " << account.lastDay << " WHERE `id` = " << account.number << db->getUpdateLimiter();
 	return db->executeQuery(query.str());
 }
 
@@ -270,7 +270,7 @@ bool IOLoginData::getPassword(uint32_t accountId, std::string& password, std::st
 
 bool IOLoginData::setPassword(uint32_t accountId, std::string newPassword)
 {
-	encrypt(newPassword, false);
+	_encrypt(newPassword, false);
 	Database* db = Database::getInstance();
 
 	DBQuery query;
@@ -280,7 +280,7 @@ bool IOLoginData::setPassword(uint32_t accountId, std::string newPassword)
 
 bool IOLoginData::validRecoveryKey(uint32_t accountId, const std::string recoveryKey)
 {
-	encrypt(recoveryKey, false);
+	_encrypt(recoveryKey, false);
 	Database* db = Database::getInstance();
 
 	DBQuery query;
@@ -297,7 +297,7 @@ bool IOLoginData::validRecoveryKey(uint32_t accountId, const std::string recover
 
 bool IOLoginData::setRecoveryKey(uint32_t accountId, std::string newRecoveryKey)
 {
-	encrypt(newRecoveryKey, false);
+	_encrypt(newRecoveryKey, false);
 	Database* db = Database::getInstance();
 
 	DBQuery query;
@@ -307,18 +307,8 @@ bool IOLoginData::setRecoveryKey(uint32_t accountId, std::string newRecoveryKey)
 
 uint64_t IOLoginData::createAccount(std::string name, std::string password)
 {
+	_encrypt(password, false);
 	Database* db = Database::getInstance();
-	switch(g_config.getNumber(ConfigManager::PASSWORDTYPE))
-	{
-		case PASSWORD_TYPE_MD5:
-			password = transformToMD5(password);
-			break;
-		case PASSWORD_TYPE_SHA1:
-			password = transformToSHA1(password);
-			break;
-		default:
-			break;
-	}
 
 	DBQuery query;
 	query << "INSERT INTO `accounts` (`id`, `name`, `password`) VALUES (NULL, " << db->escapeString(name) << ", " << db->escapeString(password) << ")";
@@ -392,13 +382,13 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool preLo
 
 	Account account = loadAccount(accountId, true);
 	player->accountId = accountId;
-	player->account = acc.name;
+	player->account = account.name;
 
 	Group* group = Groups::getInstance()->getGroup(result->getDataInt("group_id"));
 	player->setGroup(group);
 
 	player->setGUID(result->getDataInt("id"));
-	player->premiumDays = acc.premiumDays;
+	player->premiumDays = account.premiumDays;
 
 	nameCacheMap[player->getGUID()] = name;
 	guidCacheMap[name] = player->getGUID();
@@ -682,7 +672,7 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool preLo
 	//load vip
 	query.str("");
 	if(!g_config.getBool(ConfigManager::VIPLIST_PER_PLAYER))
-		query << "SELECT `player_id` AS `vip` FROM `account_viplist` WHERE `account_id` = " << acc.number << " AND `world_id` = " << g_config.getNumber(ConfigManager::WORLD_ID);
+		query << "SELECT `player_id` AS `vip` FROM `account_viplist` WHERE `account_id` = " << account.number << " AND `world_id` = " << g_config.getNumber(ConfigManager::WORLD_ID);
 	else
 		query << "SELECT `vip_id` AS `vip` FROM `player_viplist` WHERE `player_id` = " << player->getGUID();
 

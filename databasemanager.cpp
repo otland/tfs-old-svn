@@ -1039,7 +1039,7 @@ uint32_t DatabaseManager::updateDatabase()
 				do
 				{
 					std::string key = result->getDataString("key");
-					encrypt(key, false);
+					_encrypt(key, false);
 
 					query << "UPDATE `accounts` SET `key` = " << db->escapeString(key) << " WHERE `id` = " << result->getDataInt("id") << db->getUpdateLimiter();
 					db->executeQuery(query.str());

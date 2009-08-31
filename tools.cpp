@@ -66,7 +66,7 @@ std::string transformToMD5(std::string plainText, bool upperCase)
 	return hexStr;
 }
 
-void encrypt(std::string& str, bool upperCase)
+void _encrypt(std::string& str, bool upperCase)
 {
 	switch(g_config.getNumber(ConfigManager::ENCRYPTION))
 	{
@@ -89,7 +89,7 @@ void encrypt(std::string& str, bool upperCase)
 bool encryptTest(const std::string &plain, std::string& hash)
 {
 	std::transform(hash.begin(), hash.end(), hash.begin(), upchar);
-	encrypt(plain, true);
+	_encrypt(plain, true);
 	return plain == hash;
 }
 
