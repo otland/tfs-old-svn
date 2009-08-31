@@ -4787,7 +4787,7 @@ bool Game::playerViolationWindow(uint32_t playerId, std::string name, uint8_t re
 		{
 			StringVec tmp = explodeString(",", *it);
 			uint32_t count = 1;
-			if(tmp[1])
+			if(tmp.size() > 1)
 			{
 				count = atoi(tmp[1].c_str());
 				if(!count)
@@ -5012,7 +5012,7 @@ bool Game::playerViolationWindow(uint32_t playerId, std::string name, uint8_t re
 		if(!length[pos])
 			length[pos] = time(NULL) + g_config.getNumber(ConfigManager::IPBANISHMENT_LENGTH);
 
-		IOBan::getInstance()->addIpBanishment(ip, banTime, reason, comment, player->getGUID(), 0xFFFFFFFF);
+		IOBan::getInstance()->addIpBanishment(ip, length[pos], reason, comment, player->getGUID(), 0xFFFFFFFF);
 	}
 
 	if(kickAction == FULL_KICK)
