@@ -280,8 +280,11 @@ class Combat
 		}
 		bool hasArea() const {return area != NULL;}
 		void setCondition(const Condition* _condition) {params.conditionList.push_back(_condition);}
-		void setPlayerCombatValues(formulaType_t _type, double _mina, double _minb, double _maxa, double _maxb);
-		void postCombatEffects(Creature* caster, const Position& pos) const {Combat::postCombatEffects(caster, pos, params);}
+		void setPlayerCombatValues(formulaType_t _type, double _mina, double _minb, double _maxa,
+			double _maxb, double _minl, double _maxl, double _minm, double _maxm, int32_t _minc,
+			int32_t maxc);
+		void postCombatEffects(Creature* caster, const Position& pos) const
+			{Combat::postCombatEffects(caster, pos, params);}
 
 	protected:
 		static void doCombatDefault(Creature* caster, Creature* target, const CombatParams& params);
@@ -303,7 +306,8 @@ class Combat
 
 		//formula variables
 		formulaType_t formulaType;
-		double mina, minb, maxa, maxb;
+		double mina, minb, maxa, maxb, minl, maxl, minm, maxm;
+		int32_t minc, maxc;
 
 		AreaCombat* area;
 };

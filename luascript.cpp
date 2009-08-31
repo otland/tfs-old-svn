@@ -1866,7 +1866,7 @@ void LuaScriptInterface::registerFunctions()
 	//setCombatCallBack(combat, key, function_name)
 	lua_register(m_luaState, "setCombatCallback", LuaScriptInterface::luaSetCombatCallBack);
 
-	//setCombatFormula(combat, type, mina, minb, maxa, maxb)
+	//setCombatFormula(combat, type, mina, minb, maxa, maxb[, minl, maxl[, minm, maxm[, minc, maxc]]])
 	lua_register(m_luaState, "setCombatFormula", LuaScriptInterface::luaSetCombatFormula);
 
 	//setConditionFormula(combat, mina, minb, maxa, maxb)
@@ -5860,7 +5860,7 @@ int32_t LuaScriptInterface::luaSetCombatCallBack(lua_State* L)
 
 int32_t LuaScriptInterface::luaSetCombatFormula(lua_State* L)
 {
-	//setCombatFormula(combat, type, mina, minb, maxa, maxb)
+	//setCombatFormula(combat, type, mina, minb, maxa, maxb[, minl, maxl[, minm, maxm[, minc, maxc]]])
 	ScriptEnviroment* env = getScriptEnv();
 	if(env->getScriptId() != EVENT_ID_LOADING)
 	{
@@ -5869,13 +5869,33 @@ int32_t LuaScriptInterface::luaSetCombatFormula(lua_State* L)
 		return 1;
 	}
 
+	int32_t params = lua_gettop(L), minc = 0, maxc = 0;
+	if(params > 10)
+	{
+		maxc = popNumber(L);
+		minc = popNumber(L);
+	}
+
+	double minm = 4.0, maxm = 4.0;
+	if(params > 8)
+	{
+		maxm = popFloatNumber(L);
+		minm = popFloatNumber(L);
+	}
+
+	double minl = 1.0, maxl = 1.0;
+	if(params > 6)
+	{
+		maxl = popFloatNumber(L);
+		minl = popFloatNumber(L);
+	}
+
 	double maxb = popFloatNumber(L), maxa = popFloatNumber(L),
 		minb = popFloatNumber(L), mina = popFloatNumber(L);
 	formulaType_t type = (formulaType_t)popNumber(L);
-
 	if(Combat* combat = env->getCombatObject(popNumber(L)))
 	{
-		combat->setPlayerCombatValues(type, mina, minb, maxa, maxb);
+		combat->setPlayerCombatValues(type, mina, minb, maxa, maxb, minl, maxl, minm, maxm, minc, maxc);
 		lua_pushboolean(L, true);
 	}
 	else
