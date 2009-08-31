@@ -4773,16 +4773,27 @@ bool Game::playerViolationWindow(uint32_t playerId, std::string name, uint8_t re
 
 	time_t length[3];
 	int32_t pos = 0, start = comment.find("{");
-	while((start = comment.find("{")) > 0 && pos < 3)
+	while((start = comment.find("{")) > 0 && pos < 4)
 	{
 		std::string::size_type end = comment.find("}", start);
 		if(end == std::string::npos)
 			break;
 
-		time_t banTime = time(NULL);
-		StringVec vec = explodeString(";", comment.substr(start + 1));
-
+		std::string data = comment.substr(start + 1, end - 1);
 		comment = comment.substr(end + 1);
+
+		++pos;
+		if(data.empty())
+			continue;
+
+		if(data == "delete")
+		{
+			action = ACTION_DELETION;
+			continue;
+		}
+
+		time_t banTime = time(NULL);
+		StringVec vec = explodeString(";", data);
 		for(StringVec::iterator it = vec.begin(); it != vec.end(); ++it)
 		{
 			StringVec tmp = explodeString(",", *it);
@@ -4810,7 +4821,10 @@ bool Game::playerViolationWindow(uint32_t playerId, std::string name, uint8_t re
 				banTime += count * 31536000;
 		}
 
-		length[pos++] = banTime;
+		if(action == ACTION_DELETION)
+			length[pos - 2] = banTime;
+		else
+			length[pos - 1] = banTime;
 	}
 
 	pos = 1;
@@ -4833,7 +4847,7 @@ bool Game::playerViolationWindow(uint32_t playerId, std::string name, uint8_t re
 	}
 
 	uint32_t accountId = 0, ip = 0;
-	Player* targetPlayer = getPlayerByName(name);
+	Player* targetPlayer = getPlayerByNameEx(name);
 	if(targetPlayer)
 	{
 		if(targetPlayer->hasFlag(PlayerFlag_CannotBeBanned))
@@ -4844,17 +4858,11 @@ bool Game::playerViolationWindow(uint32_t playerId, std::string name, uint8_t re
 
 		accountId = targetPlayer->getAccount();
 		ip = targetPlayer->getIP();
-	}
-	else
-	{
-		if(IOLoginData::getInstance()->hasFlag(PlayerFlag_CannotBeBanned, guid))
+		if(player->isVirtual())
 		{
-			player->sendCancel("You do not have authorization for this action.");
-			return false;
+			delete targetPlayer;
+			targetPlayer = NULL;
 		}
-
-		accountId = IOLoginData::getInstance()->getAccountIdByName(name);
-		ip = IOLoginData::getInstance()->getLastIP(guid);
 	}
 
 	Account account = IOLoginData::getInstance()->loadAccount(accountId, true);
@@ -4931,8 +4939,8 @@ bool Game::playerViolationWindow(uint32_t playerId, std::string name, uint8_t re
 		{
 			bool deny = action != ACTION_BANREPORT;
 			int64_t banTime = -1;
-
 			pos = 2;
+
 			account.warnings++;
 			if(account.warnings >= g_config.getNumber(ConfigManager::WARNINGS_TO_DELETION))
 				action = ACTION_DELETION;
@@ -4998,6 +5006,21 @@ bool Game::playerViolationWindow(uint32_t playerId, std::string name, uint8_t re
 				IOBan::getInstance()->addPlayerBanishment(guid, -1, reason, action, comment,
 					player->getGUID(), (PlayerBan_t)g_config.getNumber(
 					ConfigManager::NAME_REPORT_TYPE));
+
+			break;
+		}
+
+		case ACTION_DELETION:
+		{
+			//completely internal
+			account.warnings++;
+			if(!IOBan::getInstance()->addAccountBanishment(account.number, -1, reason, ACTION_DELETION,
+				comment, player->getGUID(), guid))
+			{
+				account.warnings--;
+				player->sendCancel("Account is currently banned or already deleted.");
+				return false;
+			}
 
 			break;
 		}

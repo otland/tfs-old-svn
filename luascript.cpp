@@ -10373,7 +10373,7 @@ int32_t LuaScriptInterface::luaHashSHA1(lua_State* L)
 	if(lua_gettop(L) > 1)
 		upperCase = popNumber(L);
 
-	lua_pushstring(L, transformToSHA1(popString(L, upperCase)).c_str());
+	lua_pushstring(L, transformToSHA1(popString(L), upperCase).c_str());
 	return 1;
 }
 
