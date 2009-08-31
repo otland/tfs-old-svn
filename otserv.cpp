@@ -635,7 +635,7 @@ ServiceManager* services)
 		}
 
 		DatabaseManager::getInstance()->checkTriggers();
-		DatabaseManager::getInstance()->checkPasswordType();
+		DatabaseManager::getInstance()->checkEncryption();
 		if(g_config.getBool(ConfigManager::OPTIMIZE_DB_AT_STARTUP) && !DatabaseManager::getInstance()->optimizeTables())
 			std::cout << "> No tables were optimized." << std::endl;
 	}
