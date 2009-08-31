@@ -50,7 +50,7 @@ Account IOLoginData::loadAccount(uint32_t accountId, bool preLoad/* = false*/)
 	query << "SELECT `id`, `name`, `password`, `premdays`, `lastday`, `key`, `warnings` FROM `accounts` WHERE `id` = " << accountId << " LIMIT 1";
 	DBResult* result;
 	if(!(result = db->storeQuery(query.str())))
-		return acc;
+		return account;
 
 	account.number = result->getDataInt("id");
 	account.name = result->getDataString("name");
@@ -63,7 +63,7 @@ Account IOLoginData::loadAccount(uint32_t accountId, bool preLoad/* = false*/)
 	query.str("");
 	result->free();
 	if(preLoad)
-		return acc;
+		return account;
 
 #ifndef __LOGIN_SERVER__
 	query << "SELECT `name` FROM `players` WHERE `account_id` = " << accountId << " AND `world_id` = " << g_config.getNumber(ConfigManager::WORLD_ID) << " AND `deleted` = 0";
@@ -71,7 +71,7 @@ Account IOLoginData::loadAccount(uint32_t accountId, bool preLoad/* = false*/)
 	query << "SELECT `name`, `world_id` FROM `players` WHERE `account_id` = " << accountId << " AND `deleted` = 0";
 #endif
 	if(!(result = db->storeQuery(query.str())))
-		return acc;
+		return account;
 
 	do
 	{
@@ -91,7 +91,7 @@ Account IOLoginData::loadAccount(uint32_t accountId, bool preLoad/* = false*/)
 
 	account.charList.sort();
 #endif
-	return acc;
+	return account;
 }
 
 bool IOLoginData::saveAccount(Account account)
