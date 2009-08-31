@@ -412,7 +412,7 @@ bool Combat::isProtected(Player* attacker, Player* target)
 	return attacker->checkLoginDelay(target->getID());
 }
 
-void Combat::setPlayerCombatValues(formulaType_t _type, double _mina, double _minb, double _maxa, double _maxb, double _minl, double _maxl, double _minm, double _maxm, int32_t minc, int32_t maxc)
+void Combat::setPlayerCombatValues(formulaType_t _type, double _mina, double _minb, double _maxa, double _maxb, double _minl, double _maxl, double _minm, double _maxm, int32_t _minc, int32_t _maxc)
 {
 	formulaType = _type; mina = _mina; minb = _minb; maxa = _maxa; maxb = _maxb;
 	minl = _minl; maxl = _maxl; minm = _minm; maxm = _maxm; minc = _minc; maxc = _maxc;

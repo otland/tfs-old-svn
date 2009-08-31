@@ -255,13 +255,15 @@ class Combat
 
 		static bool isInPvpZone(const Creature* attacker, const Creature* target);
 		static bool isProtected(Player* attacker, Player* target);
+
 		static CombatType_t ConditionToDamageType(ConditionType_t type);
 		static ConditionType_t DamageToConditionType(CombatType_t type);
+
 		static ReturnValue canTargetCreature(const Player* attacker, const Creature* target);
 		static ReturnValue canDoCombat(const Creature* caster, const Tile* tile, bool isAggressive);
 		static ReturnValue canDoCombat(const Creature* attacker, const Creature* target);
-		static void postCombatEffects(Creature* caster, const Position& pos, const CombatParams& params);
 
+		static void postCombatEffects(Creature* caster, const Position& pos, const CombatParams& params);
 		static void addDistanceEffect(Creature* caster, const Position& fromPos, const Position& toPos, uint8_t effect);
 
 		void doCombat(Creature* caster, Creature* target) const;
@@ -270,7 +272,6 @@ class Combat
 		bool setCallback(CallBackParam_t key);
 		CallBack* getCallback(CallBackParam_t key);
 
-		bool setParam(CombatParam_t param, uint32_t value);
 		void setArea(AreaCombat* _area)
 		{
 			if(area)
@@ -279,16 +280,18 @@ class Combat
 			area = _area;
 		}
 		bool hasArea() const {return area != NULL;}
+
+		bool setParam(CombatParam_t param, uint32_t value);
 		void setCondition(const Condition* _condition) {params.conditionList.push_back(_condition);}
 		void setPlayerCombatValues(formulaType_t _type, double _mina, double _minb, double _maxa,
 			double _maxb, double _minl, double _maxl, double _minm, double _maxm, int32_t _minc,
-			int32_t maxc);
+			int32_t _maxc);
+
 		void postCombatEffects(Creature* caster, const Position& pos) const
 			{Combat::postCombatEffects(caster, pos, params);}
 
 	protected:
 		static void doCombatDefault(Creature* caster, Creature* target, const CombatParams& params);
-
 		static void CombatFunc(Creature* caster, const Position& pos,
 			const AreaCombat* area, const CombatParams& params, COMBATFUNC func, void* data);
 
