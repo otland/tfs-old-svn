@@ -4753,7 +4753,7 @@ bool Game::playerReportBug(uint32_t playerId, std::string comment)
 }
 
 bool Game::playerViolationWindow(uint32_t playerId, std::string name, uint8_t reason, ViolationAction_t action,
-	const std::string& comment, std::string statement, uint32_t statementId, bool ipBanishment)
+	std::string comment, std::string statement, uint32_t statementId, bool ipBanishment)
 {
 	Player* player = getPlayerByID(playerId);
 	if(!player || player->isRemoved())
@@ -4771,11 +4771,55 @@ bool Game::playerViolationWindow(uint32_t playerId, std::string name, uint8_t re
 		return false;
 	}
 
+	time_t length[3];
+	int32_t pos = 0, start = comment.find("{");
+	while((start = comment.find("{")) > 0 && pos < 3)
+	{
+		std::string::size_type end = comment.find("}", start);
+		if(end == std::string::npos)
+			break;
+
+		time_t banTime = time(NULL);
+		StringVec vec = explodeString(";", comment.substr(start + 1));
+
+		comment = comment.substr(end + 1);
+		for(StringVec::iterator it = vec.begin(); it != vec.end(); ++it)
+		{
+			StringVec tmp = explodeString(",", *it);
+			uint32_t count = 1;
+			if(tmp[1])
+			{
+				count = atoi(tmp[1].c_str());
+				if(!count)
+					count = 1;
+			}
+
+			if(tmp[0][0] == 's')
+				banTime += count;
+			if(tmp[0][0] == 'm')
+				banTime += count * 60;
+			if(tmp[0][0] == 'h')
+				banTime += count * 3600;
+			if(tmp[0][0] == 'd')
+				banTime += count * 86400;
+			if(tmp[0][0] == 'w')
+				banTime += count * 604800;
+			if(tmp[0][0] == 'm')
+				banTime += count * 2592000;
+			if(tmp[0][0] == 'y')
+				banTime += count * 31536000;
+		}
+
+		length[pos++] = banTime;
+	}
+
+	pos = 1;
 	uint32_t commentSize = g_config.getNumber(ConfigManager::MAX_VIOLATIONCOMMENT_SIZE);
 	if(comment.size() > commentSize)
 	{
 		char buffer[90];
 		sprintf(buffer, "The comment may not exceed limit of %d characters.", commentSize);
+
 		player->sendCancel(buffer);
 		return false;
 	}
@@ -4843,7 +4887,12 @@ bool Game::playerViolationWindow(uint32_t playerId, std::string name, uint8_t re
 			int64_t banTime = -1;
 			PlayerBan_t tmp = (PlayerBan_t)g_config.getNumber(ConfigManager::NAME_REPORT_TYPE);
 			if(tmp == PLAYERBAN_BANISHMENT)
-				banTime = time(NULL) + g_config.getNumber(ConfigManager::BAN_LENGTH);
+			{
+				if(!length[0])
+					banTime = time(NULL) + g_config.getNumber(ConfigManager::BAN_LENGTH);
+				else
+					banTime = length[0];
+			}
 
 			if(!IOBan::getInstance()->addPlayerBanishment(guid, banTime, reason, action,
 				comment, player->getGUID(), tmp))
@@ -4883,9 +4932,12 @@ bool Game::playerViolationWindow(uint32_t playerId, std::string name, uint8_t re
 			bool deny = action != ACTION_BANREPORT;
 			int64_t banTime = -1;
 
+			pos = 2;
 			account.warnings++;
 			if(account.warnings >= g_config.getNumber(ConfigManager::WARNINGS_TO_DELETION))
 				action = ACTION_DELETION;
+			else if(length[0])
+				banTime = length[0];
 			else if(account.warnings >= g_config.getNumber(ConfigManager::WARNINGS_TO_FINALBAN))
 				banTime = time(NULL) + g_config.getNumber(ConfigManager::FINALBAN_LENGTH);
 			else
@@ -4905,7 +4957,12 @@ bool Game::playerViolationWindow(uint32_t playerId, std::string name, uint8_t re
 			banTime = -1;
 			PlayerBan_t tmp = (PlayerBan_t)g_config.getNumber(ConfigManager::NAME_REPORT_TYPE);
 			if(tmp == PLAYERBAN_BANISHMENT)
-				banTime = time(NULL) + g_config.getNumber(ConfigManager::FINALBAN_LENGTH);
+			{
+				if(!length[1])
+					banTime = time(NULL) + g_config.getNumber(ConfigManager::FINALBAN_LENGTH);
+				else
+					banTime = length[1];
+			}
 
 			IOBan::getInstance()->addPlayerBanishment(guid, banTime, reason, action, comment,
 				player->getGUID(), tmp);
@@ -4921,6 +4978,8 @@ bool Game::playerViolationWindow(uint32_t playerId, std::string name, uint8_t re
 			account.warnings++;
 			if(account.warnings >= g_config.getNumber(ConfigManager::WARNINGS_TO_DELETION))
 				action = ACTION_DELETION;
+			else if(length[0])
+				banTime = length[0];
 			else
 				banTime = time(NULL) + g_config.getNumber(ConfigManager::FINALBAN_LENGTH);
 
@@ -4949,8 +5008,12 @@ bool Game::playerViolationWindow(uint32_t playerId, std::string name, uint8_t re
 	}
 
 	if(ipBanishment && ip)
-		IOBan::getInstance()->addIpBanishment(ip, (time(NULL) + g_config.getNumber(
-			ConfigManager::IPBANISHMENT_LENGTH)), reason, comment, player->getGUID(), 0xFFFFFFFF);
+	{
+		if(!length[pos])
+			length[pos] = time(NULL) + g_config.getNumber(ConfigManager::IPBANISHMENT_LENGTH);
+
+		IOBan::getInstance()->addIpBanishment(ip, banTime, reason, comment, player->getGUID(), 0xFFFFFFFF);
+	}
 
 	if(kickAction == FULL_KICK)
 		IOBan::getInstance()->removeNotations(account.number);
