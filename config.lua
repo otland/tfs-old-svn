@@ -118,6 +118,7 @@
 	mysqlReadTimeout = 10
 	mysqlWriteTimeout = 10
 	encryptionType = "plain"
+	passwordSalt = ""
 
 	-- Deathlist
 	deathListEnabled = "yes"

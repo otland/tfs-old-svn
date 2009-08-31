@@ -6,7 +6,7 @@ function onSay(cid, words, param, channel)
 
 	local t = string.explode(param, ",")
 	local ret = RETURNVALUE_NOERROR
-	local tmp = getCreaturePosition(cid)
+	local pos = getCreaturePosition(cid)
 
 	local id = tonumber(t[1])
 	if(not id) then
@@ -25,10 +25,10 @@ function onSay(cid, words, param, channel)
 	local item = doCreateItemEx(id, amount)
 	if(t[3] and getBooleanFromString(t[3])) then
 		if(t[4] and getBooleanFromString(t[4])) then
-			tmp = getPlayerLookPos(cid)
+			pos = getCreatureLookPosition(cid)
 		end
 
-		ret = doTileAddItemEx(tmp, item)
+		ret = doTileAddItemEx(pos, item)
 	else
 		ret = doPlayerAddItemEx(cid, item, true)
 	end
@@ -38,6 +38,9 @@ function onSay(cid, words, param, channel)
 		return true
 	end
 
-	doSendMagicEffect(tmp, CONST_ME_MAGIC_RED)
+	if(not isPlayerGhost(cid)) then
+		doSendMagicEffect(pos, CONST_ME_MAGIC_RED)
+	end
+
 	return true
 end

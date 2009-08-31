@@ -873,7 +873,6 @@ uint32_t DatabaseManager::updateDatabase()
 						"ALTER TABLE `tiles` ADD `house_id` INTEGER NOT NULL;",
 						"ALTER TABLE `tiles` ADD FOREIGN KEY (`house_id`, `world_id`) REFERENCES `houses`(`id`, `world_id`);",
 						"ALTER TABLE `houses` ADD `clear` BOOLEAN NOT NULL DEFAULT FALSE;"
-						
 					};
 					for(uint32_t i = 0; i < sizeof(queryList) / sizeof(std::string); i++)
 						db->executeQuery(queryList[i]);

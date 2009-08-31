@@ -59,8 +59,6 @@
 	<talkaction log="yes" access="1" words="/pos" event="script" value="position.lua"/>
 
 	<!-- Players -->
-	<talkaction words="!createguild" event="function" value="guildCreate"/>
-	<talkaction words="!joinguild" event="function" value="guildJoin"/>
 	<talkaction words="!frags" event="script" value="frags.lua"/>
 	<talkaction words="!online" event="script" value="online.lua"/>
 	<talkaction words="!uptime" event="script" value="uptime.lua"/>
@@ -78,6 +76,10 @@
 	<talkaction words="aleta sio" filter="word-spaced" event="function" value="houseGuestList"/>
 	<talkaction words="aleta som" filter="word-spaced" event="function" value="houseSubOwnerList"/>
 	<talkaction words="alana som" filter="word-spaced" event="script" value="leavehouse.lua"/>
+
+	<!-- Guilds -->
+	<talkaction words="!createguild" event="function" value="guildCreate"/>
+	<talkaction words="!joinguild" event="function" value="guildJoin"/>
 
 	<!-- (Deprecated) Redirect old '/' to '!' -->
 	<talkaction words="/online" hide="yes" event="script" value="online.lua"/>

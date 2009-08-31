@@ -387,7 +387,7 @@ bool Items::loadFromXml()
 	itemNode = itemRoot->children;
 	while(itemNode)
 	{
-		if(xmlStrcmp(itemNode->name,(const xmlChar*)"item") == 0)
+		if(!xmlStrcmp(itemNode->name,(const xmlChar*)"item"))
 		{
 			if(readXMLInteger(itemNode, "id", intValue))
 				parseItemNode(itemNode, intValue);

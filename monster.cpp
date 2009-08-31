@@ -83,11 +83,10 @@ Monster::Monster(MonsterType* _mType):
 	extraMeleeAttack = false;
 
 	// register creature events
-	MonsterScriptList::iterator it;
-	for(it = mType->scriptList.begin(); it != mType->scriptList.end(); ++it)
+	for(StringVec::iterator it = mType->scriptList.begin(); it != mType->scriptList.end(); ++it)
 	{
 		if(!registerCreatureEvent(*it))
-			std::cout << "Warning: [Monster::Monster]. Unknown event name - " << *it << std::endl;
+			std::cout << "[Warning - Monster::Monster] Unknown event name - " << *it << std::endl;
 	}
 
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
@@ -185,7 +184,7 @@ void Monster::onCreatureMove(const Creature* creature, const Tile* newTile, cons
 
 		if(isSummon() && getMaster() == creature && canSeeNewPos) //Turn the summon on again
 			isMasterInRange = true;
-		
+
 		updateIdleStatus();
 		if(!followCreature && !isSummon() && isOpponent(creature)) //we have no target lets try pick this one
 			selectTarget(const_cast<Creature*>(creature));

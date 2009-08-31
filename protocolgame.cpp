@@ -2454,9 +2454,9 @@ void ProtocolGame::sendOutfitWindow()
 		{
 			msg->AddByte((size_t)std::min((size_t)OUTFITS_MAX_NUMBER, outfitList.size()));
 			std::list<Outfit>::iterator it = outfitList.begin();
- 			for(int32_t i = 0; it != outfitList.end() && i < OUTFITS_MAX_NUMBER; ++it, ++i)
+			for(int32_t i = 0; it != outfitList.end() && i < OUTFITS_MAX_NUMBER; ++it, ++i)
 			{
- 				msg->AddU16(it->lookType);
+				msg->AddU16(it->lookType);
 				msg->AddString(it->name);
 				if(player->hasCustomFlag(PlayerCustomFlag_CanWearAllAddons))
 	 				msg->AddByte(0x03);
