@@ -143,7 +143,7 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 		&& g_config.getBool(ConfigManager::ACCOUNT_MANAGER)))
 	{
 		account = IOLoginData::getInstance()->loadAccount(id);
-		if(id < 1 || id != account.number || !passwordTest(password, account.password))
+		if(id < 1 || id != account.number || !encryptTest(password, account.password))
 			account.number = 0;
 	}
 

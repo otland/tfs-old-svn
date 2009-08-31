@@ -13108,11 +13108,14 @@
 		<attribute key="description" value="It contains the fourth verse of a hymn."/>
 		<attribute key="weight" value="50"/>
 	</item>
-	<item id="6091" article="a" name="watch">
+	<item id="6091" article="a" name="very noble-looking watch">
+		<attribute key="description" value="Unfortunately it seems to be broken"/>
 		<attribute key="weight" value="50"/>
 	</item>
-	<item id="6092" article="a" name="watch">
+	<item id="6092" article="a" name="very noble-looking watch">
 		<attribute key="weight" value="50"/>
+		<attribute key="duration" value="259200"/>
+		<attribute key="decayTo" value="6091"/>
 	</item>
 	<item id="6093" article="a" name="crystal ring">
 		<attribute key="description" value="The initials E.S. are engraved on it."/>

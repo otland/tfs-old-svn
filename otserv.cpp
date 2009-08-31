@@ -505,21 +505,21 @@ ServiceManager* services)
 
 	if(!nice(g_config.getNumber(ConfigManager::NICE_LEVEL))) {}
 	#endif
-	std::string passwordType = asLowerCaseString(g_config.getString(ConfigManager::PASSWORD_TYPE));
-	if(passwordType == "md5")
+	std::string encryptionType = asLowerCaseString(g_config.getString(ConfigManager::ENCRYPTION_TYPE));
+	if(encryptionType == "md5")
 	{
-		g_config.setNumber(ConfigManager::PASSWORDTYPE, PASSWORD_TYPE_MD5);
-		std::cout << "> Using MD5 passwords" << std::endl;
+		g_config.setNumber(ConfigManager::ENCRYPTION, ENCRYPTION_MD5);
+		std::cout << "> Using MD5 encryption" << std::endl;
 	}
-	else if(passwordType == "sha1")
+	else if(encryptionType == "sha1")
 	{
-		g_config.setNumber(ConfigManager::PASSWORDTYPE, PASSWORD_TYPE_SHA1);
-		std::cout << "> Using SHA1 passwords" << std::endl;
+		g_config.setNumber(ConfigManager::ENCRYPTION, ENCRYPTION_SHA1);
+		std::cout << "> Using SHA1 encryption" << std::endl;
 	}
 	else
 	{
-		g_config.setNumber(ConfigManager::PASSWORDTYPE, PASSWORD_TYPE_PLAIN);
-		std::cout << "> Using plaintext passwords" << std::endl;
+		g_config.setNumber(ConfigManager::ENCRYPTION, ENCRYPTION_PLAIN);
+		std::cout << "> Using plaintext encryption" << std::endl;
 	}
 	
 	std::cout << ">> Checking software version... ";

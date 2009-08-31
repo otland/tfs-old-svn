@@ -117,7 +117,7 @@
 	sqlKeepAlive = 0
 	mysqlReadTimeout = 10
 	mysqlWriteTimeout = 10
-	passwordType = "plain"
+	encryptionType = "plain"
 
 	-- Deathlist
 	deathListEnabled = "yes"

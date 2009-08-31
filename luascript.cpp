@@ -2355,10 +2355,10 @@ void LuaScriptInterface::registerFunctions()
 	//domodlib(libName)
 	lua_register(m_luaState, "domodlib", LuaScriptInterface::luaL_domodlib);
 
-	//md5(string)
+	//md5(string[, upperCase])
 	lua_register(m_luaState, "md5", LuaScriptInterface::luaHashMD5);
 
-	//sha1(string)
+	//sha1(string[, upperCase])
 	lua_register(m_luaState, "sha1", LuaScriptInterface::luaHashSHA1);
 
 	//print(text)
@@ -10338,24 +10338,37 @@ int32_t LuaScriptInterface::luaL_domodlib(lua_State* L)
 
 int32_t LuaScriptInterface::luaHashMD5(lua_State* L)
 {
-	//md5(string)
-	lua_pushstring(L, transformToMD5(popString(L)).c_str());
+	//md5(string[, upperCase])
+	bool upperCase = false;
+	if(lua_gettop(L) > 1)
+		upperCase = popNumber(L);
+
+	lua_pushstring(L, transformToMD5(popString(L), upperCase).c_str());
 	return 1;
 }
 
 int32_t LuaScriptInterface::luaHashSHA1(lua_State* L)
 {
-	//sha1(string)
-	lua_pushstring(L, transformToSHA1(popString(L)).c_str());
+	//sha1(string[, upperCase])
+	bool upperCase = false;
+	if(lua_gettop(L) > 1)
+		upperCase = popNumber(L);
+
+	lua_pushstring(L, transformToSHA1(popString(L, uppserCase)).c_str());
 	return 1;
 }
 
 int32_t LuaScriptInterface::luaPrint(lua_State* L)
 {
+	//print(text)
+	StringVec data;
 	for(int32_t i = 0, params = lua_gettop(L); i < params; ++i)
-		std::cout << popString(L) << std::endl;
+		data.push_back(popString(L));
 
-	lua_pushnil(L);
+	for(StringVec::reverse_iterator it = data.rbegin(); it != data.rend(); ++it)
+		std::cout << (*it) << std::endl;
+
+	lua_pushnumber(L, data.size());
 	return 1;
 }
 

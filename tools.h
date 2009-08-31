@@ -48,9 +48,11 @@ enum FileType_t
 	FILE_TYPE_MOD
 };
 
-std::string transformToMD5(std::string plainText, bool upperCase = false);
-std::string transformToSHA1(std::string plainText, bool upperCase = false);
-bool passwordTest(const std::string &plain, std::string &hash);
+std::string transformToMD5(std::string plainText, bool upperCase);
+std::string transformToSHA1(std::string plainText, bool upperCase);
+
+void encrypt(std::string& str, bool upperCase);
+bool encryptTest(const std::string &plain, std::string& hash);
 
 void replaceString(std::string& text, const std::string key, const std::string value);
 void trim_right(std::string& source, const std::string& t);

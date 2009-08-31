@@ -107,8 +107,8 @@ bool ConfigManager::load()
 		#ifndef __LOGIN_SERVER__
 		m_confBool[LOGIN_ONLY_LOGINSERVER] = getGlobalBool("loginOnlyWithLoginServer", false);
 		#endif
-		m_confString[PASSWORD_TYPE] = getGlobalString("passwordType", "plain");
-		m_confNumber[PASSWORDTYPE] = PASSWORD_TYPE_PLAIN;
+		m_confString[ENCRYPTION_TYPE] = getGlobalString("encryptionType", "plain");
+		m_confNumber[ENCRYPTION] = ENCRYPTION_PLAIN;
 	}
 
 	m_confString[MAP_AUTHOR] = getGlobalString("mapAuthor", "Unknown");

@@ -4354,7 +4354,7 @@ void Player::manageAccount(const std::string &text)
 				for(int8_t i = 2; i <= 12; i++)
 					talkState[i] = false;
 
-				IOLoginData::getInstance()->setNewPassword(managerNumber, managerString);
+				IOLoginData::getInstance()->setPassword(managerNumber, managerString);
 				msg << "Your password has been changed.";
 			}
 			else if(checkText(text, "no") && talkState[5])
@@ -4700,7 +4700,7 @@ void Player::manageAccount(const std::string &text)
 				if(IOLoginData::getInstance()->validRecoveryKey(managerNumber, managerString2) && managerString2 != "0")
 				{
 					sprintf(managerChar, "%s%d", g_config.getString(ConfigManager::SERVER_NAME).c_str(), random_range(100, 999));
-					IOLoginData::getInstance()->setNewPassword(managerNumber, managerChar);
+					IOLoginData::getInstance()->setPassword(managerNumber, managerChar);
 					msg << "Correct! Your new password is: " << managerChar << ".";
 				}
 				else

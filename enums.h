@@ -30,11 +30,11 @@ enum DatabaseEngine_t
 	DATABASE_ENGINE_ODBC = 4
 };
 
-enum PasswordType_t
+enum Encryption_t
 {
-	PASSWORD_TYPE_PLAIN = 0,
-	PASSWORD_TYPE_MD5 = 1,
-	PASSWORD_TYPE_SHA1 = 2
+	ENCRYPTION_PLAIN = 0,
+	ENCRYPTION_MD5 = 1,
+	ENCRYPTION_SHA1 = 2
 };
 
 enum GuildLevel_t
