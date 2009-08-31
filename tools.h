@@ -52,7 +52,7 @@ std::string transformToMD5(std::string plainText, bool upperCase);
 std::string transformToSHA1(std::string plainText, bool upperCase);
 
 void _encrypt(std::string& str, bool upperCase);
-bool encryptTest(const std::string &plain, std::string& hash);
+bool encryptTest(std::string plain, std::string& hash);
 
 void replaceString(std::string& text, const std::string key, const std::string value);
 void trim_right(std::string& source, const std::string& t);

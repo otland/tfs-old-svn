@@ -86,7 +86,7 @@ void _encrypt(std::string& str, bool upperCase)
 	}
 }
 
-bool encryptTest(const std::string &plain, std::string& hash)
+bool encryptTest(std::string plain, std::string& hash)
 {
 	std::transform(hash.begin(), hash.end(), hash.begin(), upchar);
 	_encrypt(plain, true);
