@@ -1035,21 +1035,24 @@ uint32_t DatabaseManager::updateDatabase()
 			query << " '0';";
 			if(DBResult* result = db->storeQuery(query.str()))
 			{
+				query.str(""):
 				do
 				{
 					std::string key = result->getDataString("key");
 					encrypt(key, false);
-					db->executeQuery("UPDATE `accounts` SET `key` = " << db->escapeString(key) << " WHERE `id` = " << result->getDataInt("id") << getUpdateLimiter();
+
+					query << "UPDATE `accounts` SET `key` = " << db->escapeString(key) << " WHERE `id` = " << result->getDataInt("id") << db->getUpdateLimiter();
+					db->executeQuery(query.str());
+					query.str("");
 				}
 				while(result->next());
 				result->free();
 			}
 
-			query.str("");
 			query << "DELETE FROM `server_config` WHERE `config` " << db->getStringComparison() << "'password_type';";
 			db->executeQuery(query.str());
-
 			query.str("");
+
 			registerDatabaseConfig("encryption", g_config.getNumber(ConfigManager::ENCRYPTION));
 			registerDatabaseConfig("db_version", 23);
 			return 23;
@@ -1119,7 +1122,7 @@ void DatabaseManager::checkEncryption()
 						{
 							do
 							{
-								query << "UPDATE `accounts` SET `password` = " << db->escapeString(transformToMD5(result->getDataString("password"))) << ", `key` = " << db->escapeString(transformToMD5(result->getDataString("key"))) << " WHERE `id` = " << result->getDataInt("id") << ";";
+								query << "UPDATE `accounts` SET `password` = " << db->escapeString(transformToMD5(result->getDataString("password"), false)) << ", `key` = " << db->escapeString(transformToMD5(result->getDataString("key"), false)) << " WHERE `id` = " << result->getDataInt("id") << ";";
 								db->executeQuery(query.str());
 							}
 							while(result->next());
@@ -1150,7 +1153,7 @@ void DatabaseManager::checkEncryption()
 						{
 							do
 							{
-								query << "UPDATE `accounts` SET `password` = " << db->escapeString(transformToSHA1(result->getDataString("password"))) << ", `key` = " << db->escapeString(transformToSHA1(result->getDataString("key"))) << " WHERE `id` = " << result->getDataInt("id") << ";";
+								query << "UPDATE `accounts` SET `password` = " << db->escapeString(transformToSHA1(result->getDataString("password"), false)) << ", `key` = " << db->escapeString(transformToSHA1(result->getDataString("key"), false)) << " WHERE `id` = " << result->getDataInt("id") << ";";
 								db->executeQuery(query.str());
 							}
 							while(result->next());
@@ -1184,7 +1187,7 @@ void DatabaseManager::checkEncryption()
 				{
 					Database* db = Database::getInstance();
 					DBQuery query;
-					query << "UPDATE `accounts` SET `password` = " << db->escapeString(transformToMD5("1")) << " WHERE `id` = 1 AND `password` = '1';";
+					query << "UPDATE `accounts` SET `password` = " << db->escapeString(transformToMD5("1"), false) << " WHERE `id` = 1 AND `password` = '1';";
 					db->executeQuery(query.str());
 					break;
 				}
@@ -1193,7 +1196,7 @@ void DatabaseManager::checkEncryption()
 				{
 					Database* db = Database::getInstance();
 					DBQuery query;
-					query << "UPDATE `accounts` SET `password` = " << db->escapeString(transformToSHA1("1")) << " WHERE `id` = 1 AND `password` = '1';";
+					query << "UPDATE `accounts` SET `password` = " << db->escapeString(transformToSHA1("1"), false) << " WHERE `id` = 1 AND `password` = '1';";
 					db->executeQuery(query.str());
 					break;
 				}
