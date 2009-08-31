@@ -1035,7 +1035,7 @@ uint32_t DatabaseManager::updateDatabase()
 			query << " '0';";
 			if(DBResult* result = db->storeQuery(query.str()))
 			{
-				query.str(""):
+				query.str("");
 				do
 				{
 					std::string key = result->getDataString("key");
@@ -1187,7 +1187,7 @@ void DatabaseManager::checkEncryption()
 				{
 					Database* db = Database::getInstance();
 					DBQuery query;
-					query << "UPDATE `accounts` SET `password` = " << db->escapeString(transformToMD5("1"), false) << " WHERE `id` = 1 AND `password` = '1';";
+					query << "UPDATE `accounts` SET `password` = " << db->escapeString(transformToMD5("1", false)) << " WHERE `id` = 1 AND `password` = '1';";
 					db->executeQuery(query.str());
 					break;
 				}
@@ -1196,7 +1196,7 @@ void DatabaseManager::checkEncryption()
 				{
 					Database* db = Database::getInstance();
 					DBQuery query;
-					query << "UPDATE `accounts` SET `password` = " << db->escapeString(transformToSHA1("1"), false) << " WHERE `id` = 1 AND `password` = '1';";
+					query << "UPDATE `accounts` SET `password` = " << db->escapeString(transformToSHA1("1", false)) << " WHERE `id` = 1 AND `password` = '1';";
 					db->executeQuery(query.str());
 					break;
 				}
