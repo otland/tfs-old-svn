@@ -278,7 +278,7 @@ bool IOLoginData::setPassword(uint32_t accountId, std::string newPassword)
 	return db->executeQuery(query.str());
 }
 
-bool IOLoginData::validRecoveryKey(uint32_t accountId, const std::string recoveryKey)
+bool IOLoginData::validRecoveryKey(uint32_t accountId, std::string recoveryKey)
 {
 	_encrypt(recoveryKey, false);
 	Database* db = Database::getInstance();
