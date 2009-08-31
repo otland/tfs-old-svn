@@ -4763,14 +4763,6 @@ bool Game::playerViolationWindow(uint32_t playerId, std::string name, uint8_t re
 	if(!group)
 		return false;
 
-	uint8_t nameFlags = group->getNameViolationFlags(), statementFlags = group->getStatementViolationFlags();
-	if((ipBanishment && ((nameFlags & 128) != 128 || (statementFlags & 128) != 128)) || !(nameFlags & (1 << action)
-		|| statementFlags & (1 << action)) || reason > group->getViolationReasons()) //128 = IP Banishment
-	{
-		player->sendCancel("You do not have authorization for this action.");
-		return false;
-	}
-
 	time_t length[3];
 	int32_t pos = 0, start = comment.find("{");
 	while((start = comment.find("{")) > 0 && pos < 4)
@@ -4827,7 +4819,14 @@ bool Game::playerViolationWindow(uint32_t playerId, std::string name, uint8_t re
 			length[pos - 1] = banTime;
 	}
 
-	pos = 1;
+	int16_t nameFlags = group->getNameViolationFlags(), statementFlags = group->getStatementViolationFlags();
+	if((ipBanishment && ((nameFlags & IPBAN_FLAG) != IPBAN_FLAG || (statementFlags & IPBAN_FLAG) != IPBAN_FLAG)) ||
+		!(nameFlags & (1 << action) || statementFlags & (1 << action)) || reason > group->getViolationReasons())
+	{
+		player->sendCancel("You do not have authorization for this action.");
+		return false;
+	}
+
 	uint32_t commentSize = g_config.getNumber(ConfigManager::MAX_VIOLATIONCOMMENT_SIZE);
 	if(comment.size() > commentSize)
 	{
@@ -4871,6 +4870,8 @@ bool Game::playerViolationWindow(uint32_t playerId, std::string name, uint8_t re
 		KICK = 2,
 		FULL_KICK = 3,
 	} kickAction = FULL_KICK;
+
+	pos = 1;
 	switch(action)
 	{
 		case ACTION_STATEMENT:

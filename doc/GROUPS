@@ -44,4 +44,5 @@
 	* Name Report + Banishment + Final Warning = 32
 	* Statement Report = 64
 	* IP Banishment = 128
+	* Deletion = 256
 ]
