@@ -74,22 +74,29 @@ bool Combat::getMinMaxValues(Creature* creature, Creature* target, int32_t& min,
 		{
 			case FORMULA_LEVELMAGIC:
 			{
+				min = (int32_t)((player->getLevel() / minl + player->getMagicLevel() * minm) * mina + minb);
+				max = (int32_t)((player->getLevel() / maxl + player->getMagicLevel() * maxm) * maxa + maxb);
+				if(min > max)
+				{
+					int32_t tmp = min;
+					min = max;
+					max = tmp;
+				}
+
+				if(minc && min < minc)
+					min = minc;
+
+				if(maxc && max > maxc)
+					max = maxc;
+
 				Vocation* vocation = player->getVocation();
 				float multiplier = 1.0f;
 				if(max > 0)
 					multiplier = vocation->getMultiplier(MULTIPLIER_MAGICHEALING);
 				else
-					multiplier = vocation->getMultiplier(MULIiPLIER_MAGIC);
-
-				min = (int32_t)((player->getLevel() / minl + player->getMagicLevel() * minm) * mina + minb);
-				if(minc && min < minb)
-					min = minc;
+					multiplier = vocation->getMultiplier(MULTIPLIER_MAGIC);
 
 				min = (int32_t)(min * multiplier);
-				max = (int32_t)((player->getLevel() / maxl + player->getMagicLevel() * maxm) * maxa + maxb);
-				if(maxc && max > maxc)
-					max = maxc;
-
 				max = (int32_t)(max * multiplier);
 				return true;
 			}
@@ -100,9 +107,6 @@ bool Combat::getMinMaxValues(Creature* creature, Creature* target, int32_t& min,
 				if(const Weapon* weapon = g_weapons->getWeapon(tool))
 				{
 					max = (int32_t)(weapon->getWeaponDamage(player, target, tool, true) * maxa + maxb);
-					if(maxc && max > maxc)
-						max = maxc;
-
 					if(params.useCharges && tool->hasCharges() && g_config.getBool(ConfigManager::REMOVE_WEAPON_CHARGES))
 						g_game.transformItem(tool, tool->getID(), std::max((int32_t)0, ((int32_t)tool->getCharges()) - 1));
 				}
@@ -110,6 +114,15 @@ bool Combat::getMinMaxValues(Creature* creature, Creature* target, int32_t& min,
 					max = (int32_t)maxb;
 
 				min = (int32_t)minb;
+				if(min > max)
+				{
+					min = max;
+					max = (int32_t)minb;
+				}
+
+				if(maxc && max > maxc)
+					max = maxc;
+
 				return true;
 			}
 

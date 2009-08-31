@@ -462,3 +462,7 @@ function doRemoveThing(uid)
 
 	return doRemoveItem(uid)
 end
+
+function setCombatFormulaEx(combat, type, minl, maxl, minm, maxm, min, max)
+	return setCombatFormula(combat, type, 0, 0, 0, 0, minl, maxl, minm, maxm, min, max)
+end
