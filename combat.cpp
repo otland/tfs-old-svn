@@ -77,11 +77,7 @@ bool Combat::getMinMaxValues(Creature* creature, Creature* target, int32_t& min,
 				min = (int32_t)((player->getLevel() / minl + player->getMagicLevel() * minm) * mina + minb);
 				max = (int32_t)((player->getLevel() / maxl + player->getMagicLevel() * maxm) * maxa + maxb);
 				if(min > max)
-				{
-					int32_t tmp = min;
-					min = max;
-					max = tmp;
-				}
+					std::swap(min, max);
 
 				if(minc && min < minc)
 					min = minc;
