@@ -381,7 +381,7 @@ int32_t random_range(int32_t lowestNumber, int32_t highestNumber, DistributionTy
 		return lowestNumber;
 
 	if(lowestNumber > highestNumber)
-		std::swap(lowestNumber, highestNumber)
+		std::swap(lowestNumber, highestNumber);
 
 	switch(type)
 	{
