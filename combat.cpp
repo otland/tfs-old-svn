@@ -74,8 +74,8 @@ bool Combat::getMinMaxValues(Creature* creature, Creature* target, int32_t& min,
 		{
 			case FORMULA_LEVELMAGIC:
 			{
-				min = (int32_t)((player->getLevel() / minl + player->getMagicLevel() * minm) * mina * 1. + minb);
-				max = (int32_t)((player->getLevel() / maxl + player->getMagicLevel() * maxm) * maxa * 1. + maxb);
+				min = (int32_t)((player->getLevel() / minl + player->getMagicLevel() * minm) * 1. * mina + minb);
+				max = (int32_t)((player->getLevel() / maxl + player->getMagicLevel() * maxm) * 1. * maxa + maxb);
 				if(min > max)
 					std::swap(min, max);
 
