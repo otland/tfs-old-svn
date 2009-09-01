@@ -463,6 +463,10 @@ function doRemoveThing(uid)
 	return doRemoveItem(uid)
 end
 
-function setCombatFormulaEx(combat, type, minl, maxl, minm, maxm, min, max)
+function setAttackFormula(combat, type, minl, maxl, minm, maxm, min, max)
+	return setCombatFormula(combat, type, -1, 0, -1, 0, minl, maxl, minm, maxm, min, max)
+end
+
+function setHealingFormula(combat, type, minl, maxl, minm, maxm, min, max)
 	return setCombatFormula(combat, type, 1, 0, 1, 0, minl, maxl, minm, maxm, min, max)
 end
