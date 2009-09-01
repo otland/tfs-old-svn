@@ -3,17 +3,7 @@ setCombatParam(combat, COMBAT_PARAM_TYPE, COMBAT_HEALING)
 setCombatParam(combat, COMBAT_PARAM_EFFECT, CONST_ME_MAGIC_BLUE)
 setCombatParam(combat, COMBAT_PARAM_AGGRESSIVE, false)
 setCombatParam(combat, COMBAT_PARAM_DISPEL, CONDITION_PARALYZE)
-
-function onGetFormulaValues(cid, level, maglevel)
-	min = (level * 1 + maglevel * 4) * 2.08
-	max = (level * 1 + maglevel * 4) * 2.7
-	if min < 250 then
-		min = 250
-	end
-	return min, max
-end
-
-setCombatCallback(combat, CALLBACK_PARAM_LEVELMAGICVALUE, "onGetFormulaValues")
+setHealingFormula(combat, COMBAT_FORMULA_LEVELMAGIC, 5, 5, 10, 12)
 
 function onCastSpell(cid, var)
 	return doCombat(cid, combat, var)
