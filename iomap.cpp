@@ -219,7 +219,7 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 
 	std::cout << "> Map descriptions: " << std::endl;
 	for(StringVec::iterator it = map->descriptions.begin(); it != map->descriptions.end(); ++it)
-		std::cout << (*it) << std::endl;
+		std::cout << "> \"" << (*it) << "\"" << std::endl;
 
 	NODE nodeMapData = f.getChildNode(nodeMap, type);
 	while(nodeMapData != NO_NODE)

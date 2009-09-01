@@ -125,7 +125,7 @@ bool ScriptingManager::loadMods()
 		if(!boost::filesystem::is_directory(it->status()) && name.find(".xml") != std::string::npos)
 		{
 			bool enabled;
-			std::cout << "Loading " << name << "...";
+			std::cout << "> Loading " << name << "...";
 			if(loadFromXml(name, enabled))
 			{
 				std::cout << " done";
