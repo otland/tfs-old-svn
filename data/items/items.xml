@@ -15745,7 +15745,7 @@
 		<attribute key="attack" value="65"/>
 		<attribute key="weaponType" value="distance"/>
 		<attribute key="shootType" value="redstar"/>
-		<attribute key="range" value="5"/>
+		<attribute key="range" value="4"/>
 		<attribute key="breakChance" value="33"/>
 		<attribute key="ammoAction" value="moveback"/>
 	</item>

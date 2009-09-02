@@ -8,7 +8,7 @@ function doPlayerGiveItem(cid, itemid, amount, subType)
 	else
 		for i = 1, amount do
 			item = doCreateItemEx(itemid, subType)
-		if(doPlayerAddItemEx(cid, item, true) ~= RETURNVALUE_NOERROR) then
+			if(doPlayerAddItemEx(cid, item, true) ~= RETURNVALUE_NOERROR) then
 				return false
 			end
 		end
