@@ -85,47 +85,36 @@ bool Combat::getMinMaxValues(Creature* creature, Creature* target, int32_t& min,
 					max = maxc;
 
 				Vocation* vocation = player->getVocation();
-				float multiplier = vocation->getMultiplier(MULTIPLIER_MAGIC);
-				if(min > 0 || max > 0)
-					multiplier = vocation->getMultiplier(MULTIPLIER_HEALING);
+				float magic = vocation->getMultiplier(MULTIPLIER_MAGIC), healing = vocation->getMultiplier(MULTIPLIER_HEALING);
+				if(min > 0)
+					min = (int32_t)(min * healing);
+				else
+					min = (int32_t)(min * magic);
 
-				min = (int32_t)(min * multiplier);
-				max = (int32_t)(max * multiplier);
+				if(max > 0)
+					max = (int32_t)(max * healing);
+				else
+					max = (int32_t)(max * magic);
+
 				return true;
 			}
 
 			case FORMULA_SKILL:
 			{
-				min = (int32_t)minb;
-				max = (int32_t)maxb;
-				if(Item* tool = player->getWeapon())
+				Item* tool = player->getWeapon())
+				if(const Weapon* weapon = g_weapons->getWeapon(tool))
 				{
-					double tmp = player->getWeaponSkill(tool), mind = tool->getAttack(), maxd = mind;
-					if(minb)
-						mind = minb;
-
-					min = (int32_t)((tmp + mind * minm) * mina + (player->getLevel() / minl));
-					if(minc && std::abs(min) < std::abs(minc))
-						min = minc;
-
-					if(maxb)
-						maxd = maxb;
-
-					max = (int32_t)((tmp + maxd * maxm) * maxa + (player->getLevel() / maxl));
-					if(maxc && std::abs(max) < std::abs(maxc))
-						max = maxc;
-
+					max = (int32_t)(weapon->getWeaponDamage(player, target, tool, true) * maxa + maxb);
 					if(params.useCharges && tool->hasCharges() && g_config.getBool(ConfigManager::REMOVE_WEAPON_CHARGES))
 						g_game.transformItem(tool, tool->getID(), std::max((int32_t)0, ((int32_t)tool->getCharges()) - 1));
 				}
+				else
+					max = (int32_t)maxb;
 
-				Vocation* vocation = player->getVocation();
-				float multiplier = vocation->getMultiplier(MULTIPLIER_MAGIC);
-				if(min > 0 || max > 0)
-					multiplier = vocation->getMultiplier(MULTIPLIER_HEALING);
+				min = (int32_t)minb;
+				if(maxc && std::abs(max) < std::abs(maxc))
+					max = maxc;
 
-				min = (int32_t)(min * multiplier);
-				max = (int32_t)(max * multiplier);
 				return true;
 			}
 
@@ -1010,13 +999,20 @@ void ValueCallback::getMinMaxValues(Player* player, int32_t& min, int32_t& max, 
 		int32_t params = lua_gettop(L);
 		if(!lua_pcall(L, parameters, 2, 0))
 		{
-			Vocation* vocation = player->getVocation();
-			float multiplier = vocation->getMultiplier(MULTIPLIER_MAGIC);
-			if(min > 0 || max > 0)
-				multiplier = vocation->getMultiplier(MULTIPLIER_HEALING);
+			min = LuaScriptInterface::popNumber(L);
+			max = LuaScriptInterface::popNumber(L);
 
-			min = (int32_t)(LuaScriptInterface::popNumber(L) * multiplier);
-			max = (int32_t)(LuaScriptInterface::popNumber(L) * multiplier);
+			Vocation* vocation = player->getVocation();
+			float magic = vocation->getMultiplier(MULTIPLIER_MAGIC), healing = vocation->getMultiplier(MULTIPLIER_HEALING);
+			if(min > 0)
+				min = (int32_t)(min * healing);
+			else
+				min = (int32_t)(min * magic);
+
+			if(max > 0)
+				max = (int32_t)(max * healing);
+			else
+				max = (int32_t)(max * magic);
 		}
 		else
 			LuaScriptInterface::reportError(NULL, std::string(LuaScriptInterface::popString(L)));
