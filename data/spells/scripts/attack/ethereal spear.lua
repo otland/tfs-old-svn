@@ -3,10 +3,7 @@ setCombatParam(combat, COMBAT_PARAM_TYPE, COMBAT_PHYSICALDAMAGE)
 setCombatParam(combat, COMBAT_PARAM_BLOCKARMOR, true)
 setCombatParam(combat, COMBAT_PARAM_DISTANCEEFFECT, CONST_ANI_ETHEREALSPEAR)
 
-function onGetFormulaValues(cid, attackSkill, attackValue, attackFactor)
-	local level = getPlayerLevel(cid)
-	local skill = getPlayerSkill(cid, SKILL_DISTANCE)
-
+function onGetFormulaValues(cid, level, skill, attack, factor)
 	return -(((skill + 25) / 3) + (level / 5)), -((skill + 25) + (level / 5))
 end
 
