@@ -48,10 +48,11 @@ Combat::~Combat()
 		delete (*it);
 
 	params.conditionList.clear();
+	delete area;
+
 	delete params.valueCallback;
 	delete params.tileCallback;
 	delete params.targetCallback;
-	delete area;
 }
 
 bool Combat::getMinMaxValues(Creature* creature, Creature* target, int32_t& min, int32_t& max) const
@@ -99,10 +100,14 @@ bool Combat::getMinMaxValues(Creature* creature, Creature* target, int32_t& min,
 
 			case FORMULA_SKILL:
 			{
-				Item* tool = player->getWeapon();
-				if(const Weapon* weapon = g_weapons->getWeapon(tool))
+				if(Item* tool = player->getWeapon())
 				{
-					max = (int32_t)(weapon->getWeaponDamage(player, target, tool, true) * maxa + maxb);
+					Vocation* vocation = player->getVocation();
+					float multiplier = vocation->getMultiplier(MULTIPLIER_MELEE);
+					if(tool->getWeaponType() == WEAPON_DISTANCE)
+						multiplier = vocation->getMultiplier(MULTIPLIER_DISTANCE);
+
+					max = (int32_t)(((player->getWeaponSkill(tool) + tool->getAttack() + maxb) * maxa + (player->getLevel() / maxl)) * multiplier);
 					if(params.useCharges && tool->hasCharges() && g_config.getBool(ConfigManager::REMOVE_WEAPON_CHARGES))
 						g_game.transformItem(tool, tool->getID(), std::max((int32_t)0, ((int32_t)tool->getCharges()) - 1));
 				}
@@ -963,7 +968,7 @@ void ValueCallback::getMinMaxValues(Player* player, int32_t& min, int32_t& max, 
 		{
 			case FORMULA_LEVELMAGIC:
 			{
-				//"onGetPlayerMinMaxValues"(cid, level, maglevel)
+				//"onGetPlayerMinMaxValues"(cid, level, magLevel)
 				lua_pushnumber(L, player->getLevel());
 				lua_pushnumber(L, player->getMagicLevel());
 
@@ -986,7 +991,7 @@ void ValueCallback::getMinMaxValues(Player* player, int32_t& min, int32_t& max, 
 				}
 
 				lua_pushnumber(L, attackValue);
-				lua_pushnumber(L, (float)player->getAttackFactor());
+				lua_pushnumber(L, player->getAttackFactor());
 
 				parameters += 3;
 				break;
