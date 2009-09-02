@@ -15725,7 +15725,6 @@
 	<item id="7366" article="a" name="viper star" plural="viper stars">
 		<attribute key="weight" value="200"/>
 		<attribute key="attack" value="28"/>
-		<attribute key="hitChance" value="80"/>
 		<attribute key="weaponType" value="distance"/>
 		<attribute key="shootType" value="greenstar"/>
 		<attribute key="range" value="5"/>
