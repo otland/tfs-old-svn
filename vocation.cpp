@@ -192,7 +192,7 @@ bool Vocations::parseVocationNode(xmlNodePtr p)
 				voc->setMultiplier(MULTIPLIER_MAGIC, floatValue);
 
 			if(readXMLFloat(configNode, "magHealingDamage", floatValue) || readXMLFloat(configNode, "magicHealingDamage", floatValue))
-				voc->setMultiplier(MULTIPLIER_MAGICHEALING, floatValue);
+				voc->setMultiplier(MULTIPLIER_HEALING, floatValue);
 
 			if(readXMLFloat(configNode, "defense", floatValue))
 				voc->setMultiplier(MULTIPLIER_DEFENSE, floatValue);
