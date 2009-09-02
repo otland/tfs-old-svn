@@ -538,7 +538,7 @@ bool Combat::CombatHealthFunc(Creature* caster, Creature* target, const CombatPa
 	{
 		change = var->change;
 		if(!change)
-			change = random_range(var->minChange, var->maxChange, DISTRO_NORMAL);
+			change = (var->minChange + var->maxChange) / 2;
 	}
 
 	if(g_game.combatBlockHit(params.combatType, caster, target, change, params.blockedByShield, params.blockedByArmor))
@@ -562,7 +562,7 @@ bool Combat::CombatManaFunc(Creature* caster, Creature* target, const CombatPara
 	{
 		change = var->change;
 		if(!change)
-			change = random_range(var->minChange, var->maxChange, DISTRO_NORMAL);
+			change = (var->minChange + var->maxChange) / 2;
 	}
 
 	if(change < 0 && caster && caster->getPlayer() && target->getPlayer() && target->getPlayer()->getSkull() != SKULL_BLACK)
@@ -723,7 +723,7 @@ void Combat::CombatFunc(Creature* caster, const Position& pos, const AreaCombat*
 
 	Combat2Var* var = (Combat2Var*)data;
 	if(var && !params.differentAreaDamage)
-		var->change = random_range(var->minChange, var->maxChange, DISTRO_NORMAL);
+		var->change = (var->minChange + var->maxChange) / 2;
 
 	uint32_t maxX = 0, maxY = 0, diff;
 	//calculate the max viewable range
