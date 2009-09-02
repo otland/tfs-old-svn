@@ -6,6 +6,7 @@ local config = {
 function onUse(cid, item, fromPosition, itemEx, toPosition)
 	if(item.itemid == 2147 and itemEx.itemid == 2342) then
 		doTransformItem(itemEx.uid, 2343)
+		doDecayItem(itemEx.uid)
 		doRemoveItem(item.uid, 1)
 
 		doSendMagicEffect(toPosition, CONST_ME_MAGIC_RED)
@@ -47,6 +48,7 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 		doPlayerAddMana(cid, -mana)
 		doPlayerAddSoul(cid, -soul)
 
+		doPlayerAddSpentMana(cid, mana)
 		doSendMagicEffect(fromPosition, CONST_ME_HOLYDAMAGE)
 		return true
 	end
