@@ -10,7 +10,6 @@ function onGetFormulaValues(cid, level, skill, attack, factor)
 end
 
 setCombatCallback(combat, CALLBACK_PARAM_SKILLVALUE, "onGetFormulaValues")
-
 function onCastSpell(cid, var)
 	return doCombat(cid, combat, var)
 end
