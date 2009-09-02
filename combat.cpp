@@ -71,15 +71,13 @@ bool Combat::getMinMaxValues(Creature* creature, Creature* target, int32_t& min,
 			return true;
 		}
 
+		min = max = 0;
 		switch(formulaType)
 		{
 			case FORMULA_LEVELMAGIC:
 			{
 				min = (int32_t)((player->getLevel() / minl + player->getMagicLevel() * minm) * 1. * mina + minb);
 				max = (int32_t)((player->getLevel() / maxl + player->getMagicLevel() * maxm) * 1. * maxa + maxb);
-				if(min > max)
-					std::swap(min, max);
-
 				if(minc && std::abs(min) < std::abs(minc))
 					min = minc;
 
@@ -87,11 +85,9 @@ bool Combat::getMinMaxValues(Creature* creature, Creature* target, int32_t& min,
 					max = maxc;
 
 				Vocation* vocation = player->getVocation();
-				float multiplier = 1.0f;
-				if(max > 0)
-					multiplier = vocation->getMultiplier(MULTIPLIER_MAGICHEALING);
-				else
-					multiplier = vocation->getMultiplier(MULTIPLIER_MAGIC);
+				float multiplier = vocation->getMultiplier(MULTIPLIER_MAGIC);
+				if(min > 0 || max > 0)
+					multiplier = vocation->getMultiplier(MULTIPLIER_HEALING);
 
 				min = (int32_t)(min * multiplier);
 				max = (int32_t)(max * multiplier);
@@ -100,53 +96,52 @@ bool Combat::getMinMaxValues(Creature* creature, Creature* target, int32_t& min,
 
 			case FORMULA_SKILL:
 			{
+				min = (int32_t)minb;
+				max = (int32_t)maxb;
 				if(Item* tool = player->getWeapon())
 				{
-					Vocation* vocation = player->getVocation();
-					float multiplier = vocation->getMultiplier(MULTIPLIER_MELEE);
-					if(tool->getWeaponType() == WEAPON_DISTANCE)
-						multiplier = vocation->getMultiplier(MULTIPLIER_DISTANCE);
+					min = (int32_t)(((player->getWeaponSkill(tool) + tool->getAttack() + minb) * mina + (player->getLevel() / minl)) * multiplier);
+					if(minc && std::abs(min) < std::abs(minc))
+						min = minc;
 
 					max = (int32_t)(((player->getWeaponSkill(tool) + tool->getAttack() + maxb) * maxa + (player->getLevel() / maxl)) * multiplier);
+					if(maxc && std::abs(max) < std::abs(maxc))
+						max = maxc;
+
 					if(params.useCharges && tool->hasCharges() && g_config.getBool(ConfigManager::REMOVE_WEAPON_CHARGES))
 						g_game.transformItem(tool, tool->getID(), std::max((int32_t)0, ((int32_t)tool->getCharges()) - 1));
 				}
-				else
-					max = (int32_t)maxb;
 
-				min = (int32_t)minb;
-				if(min > max)
-					std::swap(min, max);
+				Vocation* vocation = player->getVocation();
+				float multiplier = vocation->getMultiplier(MULTIPLIER_MAGIC);
+				if(min > 0 || max > 0)
+					multiplier = vocation->getMultiplier(MULTIPLIER_HEALING);
 
-				if(maxc && std::abs(max) < std::abs(maxc))
-					max = maxc;
-
+				min = (int32_t)(min * multiplier);
+				max = (int32_t)(max * multiplier);
 				return true;
 			}
 
 			case FORMULA_VALUE:
 			{
-				min = (int32_t)mina + minb;
-				max = (int32_t)maxa + maxb;
+				min = (int32_t)minb;
+				max = (int32_t)maxb;
 				return true;
 			}
 
 			default:
-				min = max = 0;
 				break;
 		}
 
 		return false;
 	}
 
-	if(formulaType == FORMULA_VALUE)
-	{
-		min = (int32_t)mina;
-		max = (int32_t)maxa;
-		return true;
-	}
+	if(formulaType != FORMULA_VALUE)
+		return false;
 
-	return false;
+	min = (int32_t)mina;
+	max = (int32_t)maxa;
+	return true;
 }
 
 void Combat::getCombatArea(const Position& centerPos, const Position& targetPos, const AreaCombat* area, std::list<Tile*>& list)
@@ -978,22 +973,23 @@ void ValueCallback::getMinMaxValues(Player* player, int32_t& min, int32_t& max, 
 
 			case FORMULA_SKILL:
 			{
-				//"onGetPlayerMinMaxValues"(cid, attackSkill, attackValue, attackFactor)
+				//"onGetPlayerMinMaxValues"(cid, level, skill, attack, factor)
 				Item* tool = player->getWeapon();
+				lua_pushnumber(L, player->getLevel());
 				lua_pushnumber(L, player->getWeaponSkill(tool));
 
-				int32_t attackValue = 7;
+				int32_t attack = 7;
 				if(tool)
 				{
-					attackValue = tool->getAttack();
+					attack = tool->getAttack();
 					if(useCharges && tool->hasCharges() && g_config.getBool(ConfigManager::REMOVE_WEAPON_CHARGES))
 						g_game.transformItem(tool, tool->getID(), std::max(0, tool->getCharges() - 1));
 				}
 
-				lua_pushnumber(L, attackValue);
+				lua_pushnumber(L, attack);
 				lua_pushnumber(L, player->getAttackFactor());
 
-				parameters += 3;
+				parameters += 4;
 				break;
 			}
 
@@ -1008,11 +1004,9 @@ void ValueCallback::getMinMaxValues(Player* player, int32_t& min, int32_t& max, 
 		if(!lua_pcall(L, parameters, 2, 0))
 		{
 			Vocation* vocation = player->getVocation();
-			float multiplier = 1.0;
-			if(max > 0)
-				multiplier = vocation->getMultiplier(MULTIPLIER_MAGICHEALING);
-			else
-				multiplier = vocation->getMultiplier(MULTIPLIER_MAGIC);
+			float multiplier = vocation->getMultiplier(MULTIPLIER_MAGIC);
+			if(min > 0 || max > 0)
+				multiplier = vocation->getMultiplier(MULTIPLIER_HEALING);
 
 			min = (int32_t)(LuaScriptInterface::popNumber(L) * multiplier);
 			max = (int32_t)(LuaScriptInterface::popNumber(L) * multiplier);
