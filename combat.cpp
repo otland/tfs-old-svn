@@ -100,11 +100,11 @@ bool Combat::getMinMaxValues(Creature* creature, Creature* target, int32_t& min,
 				max = (int32_t)maxb;
 				if(Item* tool = player->getWeapon())
 				{
-					min = (int32_t)((player->getWeaponSkill(tool) + tool->getAttack() + minb) * mina + (player->getLevel() / minl));
+					min = (int32_t)((player->getWeaponSkill(tool) + tool->getAttack() * minm + minb) * mina + (player->getLevel() / minl));
 					if(minc && std::abs(min) < std::abs(minc))
 						min = minc;
 
-					max = (int32_t)((player->getWeaponSkill(tool) + tool->getAttack() + maxb) * maxa + (player->getLevel() / maxl));
+					max = (int32_t)((player->getWeaponSkill(tool) + tool->getAttack() * maxm + maxb) * maxa + (player->getLevel() / maxl));
 					if(maxc && std::abs(max) < std::abs(maxc))
 						max = maxc;
 

@@ -5876,7 +5876,7 @@ int32_t LuaScriptInterface::luaSetCombatFormula(lua_State* L)
 	if(params > 10)
 		minc = popNumber(L);
 
-	double minm = 4.0, maxm = 4.0, minl = 1.0, maxl = 1.0;
+	double minm = 5.0, maxm = 5.0, minl = 1.0, maxl = 1.0;
 	if(params > 8)
 	{
 		maxm = popFloatNumber(L);
