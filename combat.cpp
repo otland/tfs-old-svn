@@ -101,7 +101,7 @@ bool Combat::getMinMaxValues(Creature* creature, Creature* target, int32_t& min,
 
 			case FORMULA_SKILL:
 			{
-				Item* tool = player->getWeapon())
+				Item* tool = player->getWeapon();
 				if(const Weapon* weapon = g_weapons->getWeapon(tool))
 				{
 					max = (int32_t)(weapon->getWeaponDamage(player, target, tool, true) * maxa + maxb);
