@@ -35,11 +35,7 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 		return false
 	end
 
-	if(not config.usableOnTarget and cid ~= itemEx.uid) then
-		return false
-	end
-
-	if(not isPlayer(itemEx.uid)) then
+	if(not isPlayer(itemEx.uid) or (not config.usableOnTarget and cid ~= itemEx.uid)) then
 		if(not config.splashable) then
 			return false
 		end
