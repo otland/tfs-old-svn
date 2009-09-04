@@ -250,8 +250,8 @@ bool ProtocolGame::login(const std::string& name, uint32_t accnumber, const std:
 		player->setClientVersion(version);
 
 		player->lastIP = player->getIP();
-		player->lastLogin = OTSYS_TIME();
-		player->lastLoginSaved = std::max(time(NULL), player->lastLoginSaved + 1);
+		player->lastLoad = OTSYS_TIME();
+		player->lastLogin = std::max(time(NULL), player->lastLogin + 1);
 
 		m_acceptPackets = true;
 		return true;
@@ -347,8 +347,8 @@ bool ProtocolGame::connect(uint32_t playerId, OperatingSystem_t operatingSystem,
 	player->setClientVersion(version);
 
 	player->lastIP = player->getIP();
-	player->lastLogin = OTSYS_TIME();
-	player->lastLoginSaved = std::max(time(NULL), player->lastLoginSaved + 1);
+	player->lastLoad = OTSYS_TIME();
+	player->lastLogin = std::max(time(NULL), player->lastLogin + 1);
 
 	m_acceptPackets = true;
 	return true;

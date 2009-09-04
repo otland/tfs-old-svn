@@ -236,6 +236,8 @@
 	rateMagic = 3.0
 	rateLoot = 2.0
 	rateSpawn = 1
+
+	-- Monster rates
 	rateMonsterHealth = 1.0
 	rateMonsterMana = 1.0
 	rateMonsterAttack = 1.0

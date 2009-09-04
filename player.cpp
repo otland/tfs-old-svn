@@ -76,7 +76,7 @@ Player::Player(const std::string& _name, ProtocolGame *p):
 	lastAttack = idleTime = marriage = blessings = balance = premiumDays = mana = manaMax = manaSpent = 0;
 	soul = guildId = levelPercent = magLevelPercent = magLevel = experience = damageImmunities = 0;
 	conditionImmunities = conditionSuppressions = groupId = vocation_id = managerNumber2 = town = skullEnd = 0;
-	lastLoginSaved = lastLogout = lastIP = messageTicks = messageBuffer = nextAction = 0;
+	lastLogin = lastLogout = lastIP = messageTicks = messageBuffer = nextAction = 0;
 	editListId = maxWriteLen = windowTextId = rankId = 0;
 
 	purchaseCallback = saleCallback = -1;
@@ -85,7 +85,7 @@ Player::Player(const std::string& _name, ProtocolGame *p):
 	soulMax = 100;
 	capacity = 400.00;
 	stamina = STAMINA_MAX;
-	lastPing = lastPong = OTSYS_TIME();
+	lastLoad = lastPing = lastPong = OTSYS_TIME();
 
 	writeItem = NULL;
 	group = NULL;
@@ -3627,7 +3627,7 @@ void Player::onAttacked()
 
 bool Player::checkLoginDelay(uint32_t playerId) const
 {
-	return (!hasCustomFlag(PlayerCustomFlag_IgnoreLoginDelay) && OTSYS_TIME() <= (lastLogin + g_config.getNumber(
+	return (!hasCustomFlag(PlayerCustomFlag_IgnoreLoginDelay) && OTSYS_TIME() <= (lastLoad + g_config.getNumber(
 		ConfigManager::LOGIN_PROTECTION)) && !hasBeenAttacked(playerId));
 }
 

@@ -287,8 +287,8 @@ class Player : public Creature, public Cylinder
 		void useStamina(int64_t value) {stamina = std::min((int64_t)STAMINA_MAX, (int64_t)std::max((int64_t)0, ((int64_t)stamina + value)));}
 		uint64_t getSpentStamina() {return (uint64_t)STAMINA_MAX - stamina;}
 
-		int64_t getLastLogin() const {return lastLogin;}
-		time_t getLastLoginSaved() const {return lastLoginSaved;}
+		int64_t getLastLoad() const {return lastLoad;}
+		time_t getLastLogin() const {return lastLogin;}
 		time_t getLastLogout() const {return lastLogout;}
 
 		const Position& getLoginPosition() const {return loginPosition;}
@@ -835,9 +835,9 @@ class Player : public Creature, public Cylinder
 		uint32_t town;
 
 		time_t skullEnd;
-		time_t lastLoginSaved;
+		time_t lastLogin;
 		time_t lastLogout;
-		int64_t lastLogin;
+		int64_t lastLoad;
 		int64_t lastPong;
 		int64_t lastPing;
 		int64_t nextAction;

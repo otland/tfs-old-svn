@@ -4830,15 +4830,15 @@ bool Game::playerViolationWindow(uint32_t playerId, std::string name, uint8_t re
 			if(tmp[0][0] == 'm')
 				banTime += count * 60;
 			if(tmp[0][0] == 'h')
-				banTime += count * 60 * 60;
+				banTime += count * 3600;
 			if(tmp[0][0] == 'd')
-				banTime += count * 60 * 60 * 24;
+				banTime += count * 86400;
 			if(tmp[0][0] == 'w')
-				banTime += count * 60 * 60 * 24 * 7;
+				banTime += count * 604800;
 			if(tmp[0][0] == 'm')
-				banTime += count * 60 * 60 * 24 * 30;
+				banTime += count * 2592000;
 			if(tmp[0][0] == 'y')
-				banTime += count * 60 * 60 * 24 * 365;
+				banTime += count * 31536000;
 		}
 
 		if(action == ACTION_DELETION)
@@ -4865,34 +4865,21 @@ bool Game::playerViolationWindow(uint32_t playerId, std::string name, uint8_t re
 		return false;
 	}
 
-	uint32_t guid = 0;
 	toLowerCaseString(name);
-	if(!IOLoginData::getInstance()->getGuidByName(guid, name) || name == "account manager")
+	Player* target = getPlayerByNameEx(name);
+	if(!target || name == "account manager")
 	{
 		player->sendCancel("A player with this name does not exist.");
 		return false;
 	}
 
-	uint32_t accountId = 0, ip = 0;
-	Player* targetPlayer = getPlayerByNameEx(name);
-	if(targetPlayer)
+	if(target->hasFlag(PlayerFlag_CannotBeBanned))
 	{
-		if(targetPlayer->hasFlag(PlayerFlag_CannotBeBanned))
-		{
-			player->sendCancel("You do not have authorization for this action.");
-			return false;
-		}
-
-		accountId = targetPlayer->getAccount();
-		ip = targetPlayer->getIP();
-		if(player->isVirtual())
-		{
-			delete targetPlayer;
-			targetPlayer = NULL;
-		}
+		player->sendCancel("You do not have authorization for this action.");
+		return false;
 	}
 
-	Account account = IOLoginData::getInstance()->loadAccount(accountId, true);
+	Account account = IOLoginData::getInstance()->loadAccount(target->getAccount(), true);
 	enum KickAction {
 		NONE = 1,
 		KICK = 2,
@@ -4911,7 +4898,7 @@ bool Game::playerViolationWindow(uint32_t playerId, std::string name, uint8_t re
 				return false;
 			}
 
-			IOBan::getInstance()->addStatement(guid, reason, comment,
+			IOBan::getInstance()->addStatement(target->getGUID(), reason, comment,
 				player->getGUID(), -1, statement);
 			g_chat.statementMap.erase(it);
 
@@ -4931,7 +4918,7 @@ bool Game::playerViolationWindow(uint32_t playerId, std::string name, uint8_t re
 					banTime = length[0];
 			}
 
-			if(!IOBan::getInstance()->addPlayerBanishment(guid, banTime, reason, action,
+			if(!IOBan::getInstance()->addPlayerBanishment(target->getGUID(), banTime, reason, action,
 				comment, player->getGUID(), tmp))
 			{
 				player->sendCancel("Player has been already reported.");
@@ -4947,7 +4934,7 @@ bool Game::playerViolationWindow(uint32_t playerId, std::string name, uint8_t re
 		case ACTION_NOTATION:
 		{
 			if(!IOBan::getInstance()->addNotation(account.number, reason,
-				comment, player->getGUID(), guid))
+				comment, player->getGUID(), target->getGUID()))
 			{
 				player->sendCancel("Unable to perform action.");
 				return false;
@@ -4981,7 +4968,7 @@ bool Game::playerViolationWindow(uint32_t playerId, std::string name, uint8_t re
 				banTime = time(NULL) + g_config.getNumber(ConfigManager::BAN_LENGTH);
 
 			if(!IOBan::getInstance()->addAccountBanishment(account.number, banTime, reason, action,
-				comment, player->getGUID(), guid))
+				comment, player->getGUID(), target->getGUID()))
 			{
 				account.warnings--;
 				player->sendCancel("Account is already banned.");
@@ -5001,7 +4988,7 @@ bool Game::playerViolationWindow(uint32_t playerId, std::string name, uint8_t re
 					banTime = length[1];
 			}
 
-			IOBan::getInstance()->addPlayerBanishment(guid, banTime, reason, action, comment,
+			IOBan::getInstance()->addPlayerBanishment(target->getGUID(), banTime, reason, action, comment,
 				player->getGUID(), tmp);
 			break;
 		}
@@ -5021,7 +5008,7 @@ bool Game::playerViolationWindow(uint32_t playerId, std::string name, uint8_t re
 				banTime = time(NULL) + g_config.getNumber(ConfigManager::FINALBAN_LENGTH);
 
 			if(!IOBan::getInstance()->addAccountBanishment(account.number, banTime, reason, action,
-				comment, player->getGUID(), guid))
+				comment, player->getGUID(), target->getGUID()))
 			{
 				account.warnings--;
 				player->sendCancel("Account is already banned.");
@@ -5032,7 +5019,7 @@ bool Game::playerViolationWindow(uint32_t playerId, std::string name, uint8_t re
 				account.warnings += (g_config.getNumber(ConfigManager::WARNINGS_TO_FINALBAN) - 1);
 
 			if(allow)
-				IOBan::getInstance()->addPlayerBanishment(guid, -1, reason, action, comment,
+				IOBan::getInstance()->addPlayerBanishment(target->getGUID(), -1, reason, action, comment,
 					player->getGUID(), (PlayerBan_t)g_config.getNumber(
 					ConfigManager::NAME_REPORT_TYPE));
 
@@ -5044,7 +5031,7 @@ bool Game::playerViolationWindow(uint32_t playerId, std::string name, uint8_t re
 			//completely internal
 			account.warnings++;
 			if(!IOBan::getInstance()->addAccountBanishment(account.number, -1, reason, ACTION_DELETION,
-				comment, player->getGUID(), guid))
+				comment, player->getGUID(), target->getGUID()))
 			{
 				account.warnings--;
 				player->sendCancel("Account is currently banned or already deleted.");
@@ -5059,12 +5046,12 @@ bool Game::playerViolationWindow(uint32_t playerId, std::string name, uint8_t re
 			return false;
 	}
 
-	if(ipBanishment && ip)
+	if(ipBanishment && target->getIP())
 	{
 		if(!length[pos])
 			length[pos] = time(NULL) + g_config.getNumber(ConfigManager::IPBANISHMENT_LENGTH);
 
-		IOBan::getInstance()->addIpBanishment(ip, length[pos], reason, comment, player->getGUID(), 0xFFFFFFFF);
+		IOBan::getInstance()->addIpBanishment(target->getIP(), length[pos], reason, comment, player->getGUID(), 0xFFFFFFFF);
 	}
 
 	if(kickAction == FULL_KICK)
@@ -5101,15 +5088,20 @@ bool Game::playerViolationWindow(uint32_t playerId, std::string name, uint8_t re
 	else
 		player->sendTextMessage(MSG_STATUS_CONSOLE_RED, ss.str());
 
-	if(targetPlayer && kickAction > NONE)
+	if(target->isVirtual())
+	{
+		delete target;
+		target = NULL;
+	}
+	else if(kickAction > NONE)
 	{
 		char buffer[30];
 		sprintf(buffer, "You have been %s.", (kickAction > KICK ? "banished" : "namelocked"));
-		targetPlayer->sendTextMessage(MSG_INFO_DESCR, buffer);
+		target->sendTextMessage(MSG_INFO_DESCR, buffer);
 
-		addMagicEffect(targetPlayer->getPosition(), NM_ME_MAGIC_POISON);
+		addMagicEffect(target->getPosition(), NM_ME_MAGIC_POISON);
 		Scheduler::getScheduler().addEvent(createSchedulerTask(1000, boost::bind(
-			&Game::kickPlayer, this, targetPlayer->getID(), false)));
+			&Game::kickPlayer, this, target->getID(), false)));
 	}
 
 	IOLoginData::getInstance()->saveAccount(account);

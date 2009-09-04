@@ -49,9 +49,9 @@ class Group
 		void setGhostAccess(uint16_t v) {m_ghostAccess = v;}
 		uint8_t getViolationReasons() const {return m_violationReasons;}
 		void setViolationReasons(uint8_t v) {m_violationReasons = v;}
-		uint8_t getStatementViolationFlags() const {return m_statementViolationFlags;}
+		int16_t getStatementViolationFlags() const {return m_statementViolationFlags;}
 		void setStatementViolationFlags(uint8_t v) {m_statementViolationFlags = v;}
-		uint8_t getNameViolationFlags() const {return m_nameViolationFlags;}
+		int16_t getNameViolationFlags() const {return m_nameViolationFlags;}
 		void setNameViolationFlags(uint8_t v) {m_nameViolationFlags = v;}
 		uint16_t getOutfit() const {return m_outfit;}
 		void setOutfit(uint16_t v) {m_outfit = v;}
@@ -73,7 +73,8 @@ class Group
 
 	private:
 		std::string m_name, m_fullName;
-		uint8_t m_violationReasons, m_nameViolationFlags, m_statementViolationFlags;
+		uint8_t m_violationReasons;
+		int16_t m_nameViolationFlags, m_statementViolationFlags;
 		uint16_t m_access, m_ghostAccess, m_outfit;
 		uint32_t m_id, m_depotLimit, m_maxVips;
 		uint64_t m_flags, m_customFlags;

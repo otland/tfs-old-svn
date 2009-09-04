@@ -506,8 +506,9 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool preLo
 	player->setLossPercent(LOSS_ITEMS, result->getDataInt("loss_items"));
 
 	player->loginPosition = Position(result->getDataInt("posx"), result->getDataInt("posy"), result->getDataInt("posz"));
-	player->lastLoginSaved = result->getDataLong("lastlogin");
+	player->lastLogin = result->getDataLong("lastlogin");
 	player->lastLogout = result->getDataLong("lastlogout");
+	player->lastIP = result->getDataInt("lastip");
 
 	Position loginPos = player->loginPosition;
 	if(!loginPos.x || !loginPos.y)
@@ -747,7 +748,7 @@ bool IOLoginData::savePlayer(Player* player, bool preSave/* = true*/, bool shall
 		return false;
 
 	query.str("");
-	query << "UPDATE `players` SET `lastlogin` = " << player->lastLoginSaved << ", `lastip` = " << player->lastIP;
+	query << "UPDATE `players` SET `lastlogin` = " << player->lastLogin << ", `lastip` = " << player->lastIP;
 	if(!save || !player->isSaving())
 	{
 		query << " WHERE `id` = " << player->getGUID() << db->getUpdateLimiter();
@@ -762,7 +763,7 @@ bool IOLoginData::savePlayer(Player* player, bool preSave/* = true*/, bool shall
 	query << "`group_id` = " << player->groupId << ", ";
 	query << "`health` = " << player->health << ", ";
 	query << "`healthmax` = " << player->healthMax << ", ";
-	query << "`experience` = " << std::max((uint64_t)0, player->getExperience()) << ", ";
+	query << "`experience` = " << player->getExperience() << ", ";
 	query << "`lookbody` = " << (uint32_t)player->defaultOutfit.lookBody << ", ";
 	query << "`lookfeet` = " << (uint32_t)player->defaultOutfit.lookFeet << ", ";
 	query << "`lookhead` = " << (uint32_t)player->defaultOutfit.lookHead << ", ";
