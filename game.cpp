@@ -1028,9 +1028,9 @@ bool Game::playerMoveCreature(uint32_t playerId, uint32_t movingCreatureId,
 
 	//check throw distance
 	const Position& pos = movingCreature->getPosition();
-	if((std::abs(pos.x - toPos.x) > movingCreature->getThrowRange()) || (std::abs(
+	if(!player->hasCustomFlag(PlayerCustomFlag_CanThrowAnywhere) && ((std::abs(pos.x - toPos.x) > movingCreature->getThrowRange()) || (std::abs(
 		pos.y - toPos.y) > movingCreature->getThrowRange()) || (std::abs(
-		pos.z - toPos.z) * 4 > movingCreature->getThrowRange()))
+		pos.z - toPos.z) * 4 > movingCreature->getThrowRange())))
 	{
 		player->sendCancelMessage(RET_DESTINATIONOUTOFREACH);
 		return false;
@@ -1056,9 +1056,22 @@ bool Game::playerMoveCreature(uint32_t playerId, uint32_t movingCreatureId,
 	ReturnValue ret = internalMoveCreature(player, movingCreature, movingCreature->getTile(), toTile);
 	if(ret != RET_NOERROR)
 	{
-		player->sendCancelMessage(ret);
-		return false;
+		if(!player->hasCustomFlag(PlayerCustomFlag_CanMoveFromFar) || !player->hasCustomFlag(PlayerCustomFlag_CanMoveAnywhere))
+		{
+			player->sendCancelMessage(ret);
+			return false;
+		}
+
+		if(!toTile->ground)
+		{
+			player->sendCancelMessage(RET_NOTPOSSIBLE);
+			return true;
+		}
+
+		internalTeleport(movingCreature, toTile->getPosition(), true);
+		return true;
 	}
+
 
 	if(Player* movingPlayer = movingCreature->getPlayer())
 	{
