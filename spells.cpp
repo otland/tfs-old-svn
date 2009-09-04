@@ -1346,7 +1346,7 @@ bool InstantSpell::SummonMonster(const InstantSpell* spell, Creature* creature, 
 		return false;
 	}
 
-	int32_t manaCost = mType->manaCost;
+	int32_t manaCost = (int32_t)std::ceil(mType->manaCost * g_config.getDouble(ConfigManager::RATE_MONSTER_MANA));
 	if(!player->hasFlag(PlayerFlag_CanSummonAll))
 	{
 		if(player->getSkull() == SKULL_BLACK)
@@ -1826,7 +1826,7 @@ bool RuneSpell::Convince(const RuneSpell* spell, Creature* creature, Item* item,
 
 	int32_t manaCost = 0;
 	if(convinceCreature->getMonster())
-		manaCost = convinceCreature->getMonster()->getManaCost();
+		manaCost = (int32_t)std::ceil(convinceCreature->getMonster()->getManaCost() * g_config.getDouble(ConfigManager::RATE_MONSTER_MANA));
 
 	if(!player->hasFlag(PlayerFlag_HasInfiniteMana) && player->getMana() < manaCost)
 	{

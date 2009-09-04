@@ -4802,15 +4802,15 @@ bool Game::playerViolationWindow(uint32_t playerId, std::string name, uint8_t re
 			if(tmp[0][0] == 'm')
 				banTime += count * 60;
 			if(tmp[0][0] == 'h')
-				banTime += count * 3600;
+				banTime += count * 60 * 60;
 			if(tmp[0][0] == 'd')
-				banTime += count * 86400;
+				banTime += count * 60 * 60 * 24;
 			if(tmp[0][0] == 'w')
-				banTime += count * 604800;
+				banTime += count * 60 * 60 * 24 * 7;
 			if(tmp[0][0] == 'm')
-				banTime += count * 2592000;
+				banTime += count * 60 * 60 * 24 * 30;
 			if(tmp[0][0] == 'y')
-				banTime += count * 31536000;
+				banTime += count * 60 * 60 * 24 * 365;
 		}
 
 		if(action == ACTION_DELETION)

@@ -236,6 +236,10 @@
 	rateMagic = 3.0
 	rateLoot = 2.0
 	rateSpawn = 1
+	rateMonsterHealth = 1.0
+	rateMonsterMana = 1.0
+	rateMonsterAttack = 1.0
+	rateMonsterDefense = 1.0
 
 	-- Experience from players
 	-- NOTE: min~Threshold* set to 0 will disable the minimum threshold:

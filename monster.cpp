@@ -61,8 +61,10 @@ Monster::Monster(MonsterType* _mType):
 	defaultOutfit = mType->outfit;
 	currentOutfit = mType->outfit;
 
-	health = mType->health;
-	healthMax = mType->healthMax;
+	double multiplier = g_config.getDouble(ConfigManager::RATE_MONSTER_HEALTH);
+	health = (int32_t)std::ceil(mType->health * multiplier);
+	healthMax = (int32_t)std::ceil(mType->healthMax * multiplier);
+
 	baseSpeed = mType->baseSpeed;
 	internalLight.level = mType->lightLevel;
 	internalLight.color = mType->lightColor;
@@ -607,8 +609,14 @@ void Monster::doAttacking(uint32_t interval)
 					updateLook = false;
 				}
 
-				minCombatValue = it->minCombatValue;
-				maxCombatValue = it->maxCombatValue;
+				double multiplier;
+				if(maxCombatValue > 0) //defense
+					multiplier = g_config.getDouble(ConfigManager::RATE_MONSTER_DEFENSE);
+				else //attack
+					multiplier = g_config.getDouble(ConfigManager::RATE_MONSTER_ATTACK);
+
+				minCombatValue = (int32_t)std::ceil(it->minCombatValue * multiplier);
+				maxCombatValue = (int32_t)std::ceil(it->maxCombatValue * multiplier);
 				it->spell->castSpell(this, attackedCreature);
 				if(it->isMelee)
 					extraMeleeAttack = false;
@@ -1173,8 +1181,14 @@ bool Monster::getCombatValues(int32_t& min, int32_t& max)
 	if(!minCombatValue && !maxCombatValue)
 		return false;
 
-	min = minCombatValue;
-	max = maxCombatValue;
+	double multiplier;
+	if(maxCombatValue > 0) //defense
+		multiplier = g_config.getDouble(ConfigManager::RATE_MONSTER_DEFENSE);
+	else //attack
+		multiplier = g_config.getDouble(ConfigManager::RATE_MONSTER_ATTACK);
+
+	min = (int32_t)std::ceil(minCombatValue * multiplier);
+	max = (int32_t)std::ceil(maxCombatValue * multiplier);
 	return true;
 }
 

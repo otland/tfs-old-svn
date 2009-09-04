@@ -281,6 +281,10 @@ bool ConfigManager::load()
 	m_confBool[ALLOW_FIGHTBACK] = getGlobalBool("allowFightback", true);
 	m_confNumber[HOUSE_CLEAN_OLD] = getGlobalNumber("houseCleanOld", 0);
 	m_confBool[VIPLIST_PER_PLAYER] = getGlobalBool("separateViplistPerCharacter", false);
+	m_confDouble[RATE_MONSTER_HEALTH] = getGlobalDouble("rateMonsterHealth", 1);
+	m_confDouble[RATE_MONSTER_MANA] = getGlobalDouble("rateMonsterMana", 1);
+	m_confDouble[RATE_MONSTER_ATTACK] = getGlobalDouble("rateMonsterAttack", 1);
+	m_confDouble[RATE_MONSTER_DEFENSE] = getGlobalDouble("rateMonsterDefense", 1);
 
 	m_loaded = true;
 	return true;

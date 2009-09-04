@@ -11,7 +11,7 @@ local coins = {
 }
 
 function onUse(cid, item, fromPosition, itemEx, toPosition)
-	if(getPlayerFlagValue(cid, PlayerFlag_CannotPickupItem)) then
+	if(getPlayerFlagValue(cid, PLAYERFLAG_CANNOTPICKUPITEM)) then
 		return false
 	end
 

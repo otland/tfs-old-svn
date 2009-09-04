@@ -2459,7 +2459,7 @@ void ProtocolGame::sendOutfitWindow()
 				msg->AddU16(it->lookType);
 				msg->AddString(it->name);
 				if(player->hasCustomFlag(PlayerCustomFlag_CanWearAllAddons))
-	 				msg->AddByte(0x03);
+					msg->AddByte(0x03);
 				else if(player->isPremium())
 					msg->AddByte(it->addons);
 				else

@@ -766,6 +766,25 @@
 		rateSpawn
 			Default: 1
 
+		rateMonsterHealth
+			Monster health multiplier.
+			For example, if monster have 1000 health points by default,
+				and you set this value to 2.0 - then monster will have 2000 health points.
+			Default: 1.0
+
+		rateMonsterMana
+			Monster mana cost multiplier.
+			Means how much more mana points player need to summon/convince a monster.
+			Default: 1.0
+
+		rateMonsterAttack
+			Monster attack strength multiplier.
+			Default: 1.0
+
+		rateMonsterDefense
+			Monster defense multiplier.
+			Default: 1.0
+
 	*EXPERIENCE FROM PLAYERS
 		minLevelThresholdForKilledPlayer
 			Default: 0.9
