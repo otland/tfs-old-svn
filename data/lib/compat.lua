@@ -102,6 +102,7 @@ setPlayerBalance = doPlayerSetBalance
 doAddMapMark = doPlayerAddMapMark
 doSendTutorial = doPlayerSendTutorial
 getWaypointsList = getWaypointList
+getPlayerLastLoginSaved = getPlayerLastLogin
 db.updateQueryLimitOperator = db.updateLimiter
 db.stringComparisonOperator = db.stringComparison
 
