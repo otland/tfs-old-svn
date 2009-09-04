@@ -2142,7 +2142,7 @@ uint32_t Player::getIP() const
 	if(client)
 		return client->getIP();
 
-	return 0;
+	return lastIP;
 }
 
 bool Player::onDeath()

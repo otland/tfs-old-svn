@@ -929,7 +929,7 @@ bool Houses::payHouse(House* house, time_t _time, uint32_t bid)
 	}
 
 	uint32_t loginClean = g_config.getNumber(ConfigManager::HOUSE_CLEAN_OLD);
-	if(loginClean && (_time - loginClean) >= player->getLastLoginSaved())
+	if(loginClean && (_time - loginClean) >= player->getLastLogin())
 	{
 		house->setHouseOwnerEx(0, true);
 		return false;

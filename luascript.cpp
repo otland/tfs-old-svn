@@ -1006,15 +1006,12 @@ void LuaScriptInterface::pushCallback(lua_State* L, int32_t callback)
 
 LuaVariant LuaScriptInterface::popVariant(lua_State* L)
 {
-	uint32_t type = getField(L, "type");
-
 	LuaVariant var;
-	var.type = (LuaVariantType_t)type;
-
-	switch(type)
+	var.type = (LuaVariantType_t)getField(L, "type");
+	switch(var.type)
 	{
 		case VARIANT_NUMBER:
-			var.number = getFieldU32(L, "number");
+			var.number = getFieldUnsigned(L, "number");
 			break;
 		case VARIANT_STRING:
 			var.text = getField(L, "string");
@@ -1033,7 +1030,6 @@ LuaVariant LuaScriptInterface::popVariant(lua_State* L)
 	}
 
 	lua_pop(L, 1); //table
-
 	return var;
 }
 
@@ -1042,8 +1038,8 @@ void LuaScriptInterface::popPosition(lua_State* L, PositionEx& position)
 	position.z = getField(L, "z");
 	position.y = getField(L, "y");
 	position.x = getField(L, "x");
-	position.stackpos = getField(L, "stackpos");
 
+	position.stackpos = getField(L, "stackpos");
 	lua_pop(L, 1); //table
 }
 
@@ -1052,6 +1048,7 @@ void LuaScriptInterface::popPosition(lua_State* L, Position& position, uint32_t&
 	position.z = getField(L, "z");
 	position.y = getField(L, "y");
 	position.x = getField(L, "x");
+
 	stackpos = getField(L, "stackpos");
 	lua_pop(L, 1); //table
 }
@@ -1059,33 +1056,33 @@ void LuaScriptInterface::popPosition(lua_State* L, Position& position, uint32_t&
 bool LuaScriptInterface::popBoolean(lua_State* L)
 {
 	lua_pop(L, 1);
-	if(lua_isnumber(L, 0) == 1)
-		return (bool)lua_tonumber(L, 0);
+	if(lua_isnumber(L, 0))
+		return lua_tonumber(L, 0);
 
-	return (bool)lua_toboolean(L, 0);
+	return lua_toboolean(L, 0);
 }
 
 int64_t LuaScriptInterface::popNumber(lua_State* L)
 {
 	lua_pop(L, 1);
-	if(lua_isboolean(L, 0) == 1)
-		return (int64_t)lua_toboolean(L, 0);
+	if(lua_isboolean(L, 0))
+		return lua_toboolean(L, 0);
 
-	return (int64_t)lua_tonumber(L, 0);
+	return lua_tonumber(L, 0);
 }
 
 double LuaScriptInterface::popFloatNumber(lua_State* L)
 {
 	lua_pop(L, 1);
-	if(lua_isboolean(L, 0) == 1)
-		return (int64_t)lua_toboolean(L, 0);
+	if(lua_isboolean(L, 0))
+		return lua_toboolean(L, 0);
 
-	return (double)lua_tonumber(L, 0);
+	return lua_tonumber(L, 0);
 }
 
 std::string LuaScriptInterface::popString(lua_State* L)
 {
-	lua_pop(L,1);
+	lua_pop(L, 1);
 	const char* str = lua_tostring(L, 0);
 	if(!str || !strlen(str))
 		return "";
@@ -1098,10 +1095,24 @@ int32_t LuaScriptInterface::popCallback(lua_State* L)
 	return luaL_ref(L, LUA_REGISTRYINDEX);
 }
 
+Outfit_t LuaScriptInterface::popOutfit(lua_State* L)
+{
+	Outfit_t outfit;
+	outfit.lookFeet = getField(L, "lookFeet");
+	outfit.lookLegs = getField(L, "lookLegs");
+	outfit.lookBody = getField(L, "lookBody");
+	outfit.lookHead = getField(L, "lookHead");
+
+	outfit.lookTypeEx = getField(L, "lookTypeEx");
+	outfit.lookType = getField(L, "lookType");
+	lua_pop(L, 1); //table
+	return outfit;
+}
+
 void LuaScriptInterface::setField(lua_State* L, const char* index, int32_t val)
 {
 	lua_pushstring(L, index);
-	lua_pushnumber(L, (double)val);
+	lua_pushnumber(L, val);
 	lua_settable(L, -3);
 }
 
@@ -1119,49 +1130,49 @@ void LuaScriptInterface::setFieldBool(lua_State* L, const char* index, bool val)
 	lua_settable(L, -3);
 }
 
-void LuaScriptInterface::setFieldDouble(lua_State* L, const char* index, double val)
+void LuaScriptInterface::setFieldFloat(lua_State* L, const char* index, double val)
 {
 	lua_pushstring(L, index);
 	lua_pushnumber(L, val);
 	lua_settable(L, -3);
 }
 
-int32_t LuaScriptInterface::getField(lua_State* L, const char* key)
+int64_t LuaScriptInterface::getField(lua_State* L, const char* key)
 {
-	int32_t result;
 	lua_pushstring(L, key);
 	lua_gettable(L, -2); // get table[key]
-	result = (int32_t)lua_tonumber(L, -1);
+
+	int32_t result = (int64_t)lua_tonumber(L, -1);
 	lua_pop(L, 1); // remove number and key
 	return result;
 }
 
-uint32_t LuaScriptInterface::getFieldU32(lua_State* L, const char* key)
+uint64_t LuaScriptInterface::getFieldUnsigned(lua_State* L, const char* key)
 {
-	uint32_t result;
 	lua_pushstring(L, key);
 	lua_gettable(L, -2); // get table[key]
-	result = (uint32_t)lua_tonumber(L, -1);
+
+	uint32_t result = (uint64_t)lua_tonumber(L, -1);
 	lua_pop(L, 1); // remove number and key
 	return result;
 }
 
 bool LuaScriptInterface::getFieldBool(lua_State* L, const char* key)
 {
-	bool result;
 	lua_pushstring(L, key);
 	lua_gettable(L, -2); // get table[key]
-	result = lua_toboolean(L, -1);
+
+	bool result = lua_toboolean(L, -1);
 	lua_pop(L, 1); // remove number and key
 	return result;
 }
 
 std::string LuaScriptInterface::getFieldString(lua_State* L, const char* key)
 {
-	std::string result;
 	lua_pushstring(L, key);
 	lua_gettable(L, -2); // get table[key]
-	result = lua_tostring(L, -1);
+
+	std::string result = lua_tostring(L, -1);
 	lua_pop(L, 1); // remove number and key
 	return result;
 }
@@ -1880,7 +1891,7 @@ void LuaScriptInterface::registerFunctions()
 	//addDamageCondition(condition, rounds, time, value)
 	lua_register(m_luaState, "addDamageCondition", LuaScriptInterface::luaAddDamageCondition);
 
-	//addOutfitCondition(condition, lookTypeEx, lookType, lookHead, lookBody, lookLegs, lookFeet)
+	//addOutfitCondition(condition, outfit)
 	lua_register(m_luaState, "addOutfitCondition", LuaScriptInterface::luaAddOutfitCondition);
 
 	//setCombatCallBack(combat, key, function_name)
@@ -2189,11 +2200,11 @@ void LuaScriptInterface::registerFunctions()
 	//doPlayerSetIdleTime(cid, amount)
 	lua_register(m_luaState, "doPlayerSetIdleTime", LuaScriptInterface::luaDoPlayerSetIdleTime);
 
+	//getPlayerLastLoad(cid)
+	lua_register(m_luaState, "getPlayerLastLoad", LuaScriptInterface::luaGetPlayerLastLoad);
+
 	//getPlayerLastLogin(cid)
 	lua_register(m_luaState, "getPlayerLastLogin", LuaScriptInterface::luaGetPlayerLastLogin);
-
-	//getPlayerLastLoginSaved(cid)
-	lua_register(m_luaState, "getPlayerLastLoginSaved", LuaScriptInterface::luaGetPlayerLastLoginSaved);
 
 	//getPlayerAccountManager(cid)
 	lua_register(m_luaState, "getPlayerAccountManager", LuaScriptInterface::luaGetPlayerAccountManager);
@@ -2593,11 +2604,11 @@ int32_t LuaScriptInterface::internalGetPlayerInfo(lua_State* L, PlayerInfo_t inf
 		case PlayerInfoClient:
 			lua_pushboolean(L, player->hasClient());
 			return 1;
+		case PlayerInfoLastLoad:
+			value = player->getLastLoad();
+			break;
 		case PlayerInfoLastLogin:
 			value = player->getLastLogin();
-			break;
-		case PlayerInfoLastLoginSaved:
-			value = player->getLastLoginSaved();
 			break;
 		case PlayerInfoAccountManager:
 			value = player->accountManager;
@@ -2788,14 +2799,14 @@ int32_t LuaScriptInterface::luaHasClient(lua_State* L)
 	return internalGetPlayerInfo(L, PlayerInfoClient);
 }
 
+int32_t LuaScriptInterface::luaGetPlayerLastLoad(lua_State* L)
+{
+	return internalGetPlayerInfo(L, PlayerInfoLastLoad);
+}
+
 int32_t LuaScriptInterface::luaGetPlayerLastLogin(lua_State* L)
 {
 	return internalGetPlayerInfo(L, PlayerInfoLastLogin);
-}
-
-int32_t LuaScriptInterface::luaGetPlayerLastLoginSaved(lua_State* L)
-{
-	return internalGetPlayerInfo(L, PlayerInfoLastLoginSaved);
 }
 
 int32_t LuaScriptInterface::luaGetPlayerAccountManager(lua_State* L)
@@ -5802,15 +5813,8 @@ int32_t LuaScriptInterface::luaAddDamageCondition(lua_State* L)
 
 int32_t LuaScriptInterface::luaAddOutfitCondition(lua_State* L)
 {
-	//addOutfitCondition(condition, lookTypeEx, lookType, lookHead, lookBody, lookLegs, lookFeet)
-	Outfit_t outfit;
-	outfit.lookFeet = popNumber(L);
-	outfit.lookLegs = popNumber(L);
-	outfit.lookBody = popNumber(L);
-	outfit.lookHead = popNumber(L);
-	outfit.lookType = popNumber(L);
-	outfit.lookTypeEx = popNumber(L);
-
+	//addOutfitCondition(condition, outfit)
+	Outfit_t outfit = popOutfit(L);
 	ScriptEnviroment* env = getScriptEnv();
 	if(env->getScriptId() != EVENT_ID_LOADING)
 	{
@@ -6839,7 +6843,7 @@ int32_t LuaScriptInterface::luaGetExperienceStageList(lua_State* L)
 		lua_newtable(L);
 
 		setField(L, "level", it->first);
-		setFieldDouble(L, "multiplier", it->second);
+		setFieldFloat(L, "multiplier", it->second);
 		lua_settable(L, -3);
 	}
 
@@ -7029,24 +7033,11 @@ int32_t LuaScriptInterface::luaSetCreatureOutfit(lua_State* L)
 {
 	//doSetCreatureOutfit(cid, outfit, time)
 	int32_t time = (int32_t)popNumber(L);
-	Outfit_t outfit;
-	outfit.lookType = getField(L, "lookType");
-	outfit.lookHead = getField(L, "lookHead");
-	outfit.lookBody = getField(L, "lookBody");
-	outfit.lookLegs = getField(L, "lookLegs");
-	outfit.lookFeet = getField(L, "lookFeet");
-	outfit.lookAddons = getField(L, "lookAddons");
-	lua_pop(L, 1);
+	Outfit_t outfit = popOutfit(L);
 
 	ScriptEnviroment* env = getScriptEnv();
 	if(Creature* creature = env->getCreatureByUID(popNumber(L)))
-	{
-		ReturnValue ret = Spell::CreateIllusion(creature, outfit, time);
-		if(ret == RET_NOERROR)
-			lua_pushboolean(L, true);
-		else
-			lua_pushboolean(L, false);
-	}
+		lua_pushboolean(L, Spell::CreateIllusion(creature, outfit, time) == RET_NOERROR);
 	else
 	{
 		reportErrorFunc(getErrorDesc(LUA_ERROR_CREATURE_NOT_FOUND));
@@ -7060,17 +7051,7 @@ int32_t LuaScriptInterface::luaGetCreatureOutfit(lua_State* L)
 	//getCreatureOutfit(cid)
 	ScriptEnviroment* env = getScriptEnv();
 	if(const Creature* creature = env->getCreatureByUID(popNumber(L)))
-	{
-		const Outfit_t outfit = creature->getCurrentOutfit();
-
-		lua_newtable(L);
-		setField(L, "lookType", outfit.lookType);
-		setField(L, "lookHead", outfit.lookHead);
-		setField(L, "lookBody", outfit.lookBody);
-		setField(L, "lookLegs", outfit.lookLegs);
-		setField(L, "lookFeet", outfit.lookFeet);
-		setField(L, "lookAddons", outfit.lookAddons);
-	}
+		pushOutfit(L, creature->getCurrentOutfit());
 	else
 	{
 		reportErrorFunc(getErrorDesc(LUA_ERROR_CREATURE_NOT_FOUND));
@@ -8011,15 +7992,7 @@ int32_t LuaScriptInterface::luaCanPlayerWearOutfitId(lua_State* L)
 int32_t LuaScriptInterface::luaDoCreatureChangeOutfit(lua_State* L)
 {
 	//doCreatureChangeOutfit(cid, outfit)
-	Outfit_t outfit;
-	outfit.lookType = getField(L, "lookType");
-	outfit.lookHead = getField(L, "lookHead");
-	outfit.lookBody = getField(L, "lookBody");
-	outfit.lookLegs = getField(L, "lookLegs");
-	outfit.lookFeet = getField(L, "lookFeet");
-	outfit.lookAddons = getField(L, "lookAddons");
-
-	lua_pop(L, 1);
+	Outfit_t outfit = popOutfit(L);
 	ScriptEnviroment* env = getScriptEnv();
 	if(Creature* creature = env->getCreatureByUID(popNumber(L)))
 	{
@@ -8918,7 +8891,7 @@ int32_t LuaScriptInterface::luaGetVocationInfo(lua_State* L)
 	setField(L, "capacity", voc->getGainCap());
 	setFieldBool(L, "attackable", voc->isAttackable());
 	setFieldBool(L, "needPremium", voc->isPremiumNeeded());
-	setFieldDouble(L, "experienceMultiplier", voc->getExperienceMultiplier());
+	setFieldFloat(L, "experienceMultiplier", voc->getExperienceMultiplier());
 	return 1;
 }
 

@@ -221,8 +221,8 @@ enum PlayerInfo_t
 	PlayerInfoSpecialDescription,
 	PlayerInfoIdleTime,
 	PlayerInfoClient,
+	PlayerInfoLastLoad,
 	PlayerInfoLastLogin,
-	PlayerInfoLastLoginSaved,
 	PlayerInfoAccountManager
 };
 
@@ -317,20 +317,23 @@ class LuaScriptInterface
 		static double popFloatNumber(lua_State* L);
 		static std::string popString(lua_State* L);
 		static int32_t popCallback(lua_State* L);
+		static Outfit_t popOutfit(lua_State* L);
 
-		static int32_t getField(lua_State* L, const char* key);
-		static uint32_t getFieldU32(lua_State* L, const char* key);
+		static int64_t getField(lua_State* L, const char* key);
+		static uint64_t getFieldUnsigned(lua_State* L, const char* key);
+		static std::string getFieldString(lua_State* L, const char* key);
+		static bool getFieldBool(lua_State* L, const char* key);
+
 		static void setField(lua_State* L, const char* index, int32_t val);
 		static void setField(lua_State* L, const char* index, const std::string& val);
-		static std::string getFieldString(lua_State* L, const char* key);
 		static void setFieldBool(lua_State* L, const char* index, bool val);
-		static bool getFieldBool(lua_State* L, const char* key);
-		static void setFieldDouble(lua_State* L, const char* index, double val);
+		static void setFieldFloat(lua_State* L, const char* index, double val);
 
 		static std::string getGlobalString(lua_State* L, const std::string& _identifier, const std::string& _default = "");
 		static bool getGlobalBool(lua_State* L, const std::string& _identifier, bool _default = false);
 		static int32_t getGlobalNumber(lua_State* L, const std::string& _identifier, const int32_t _default = 0);
 		static double getGlobalDouble(lua_State* L, const std::string& _identifier, const double _default = 0);
+
 		static void getValue(const std::string& key, lua_State* L, lua_State* _L);
 		static void moveValue(lua_State* from, lua_State* to);
 
@@ -539,8 +542,8 @@ class LuaScriptInterface
 		static int32_t luaGetPlayerRequiredMana(lua_State* L);
 		static int32_t luaGetPlayerRequiredSkillTries(lua_State* L);
 		static int32_t luaGetPlayerIp(lua_State* L);
+		static int32_t luaGetPlayerLastLoad(lua_State* L);
 		static int32_t luaGetPlayerLastLogin(lua_State* L);
-		static int32_t luaGetPlayerLastLoginSaved(lua_State* L);
 		static int32_t luaGetPlayerAccountManager(lua_State* L);
 		static int32_t luaGetPlayerAccountId(lua_State* L);
 		static int32_t luaGetPlayerAccount(lua_State* L);
