@@ -996,7 +996,6 @@ uint32_t CreatureEvent::executeOutfit(Creature* creature, const Outfit_t& old, c
 			env->streamOutfit(scriptstream, "current", current);
 
 			scriptstream << m_scriptData;
-			std::cout << scriptstream.str();
 			bool result = true;
 			if(m_scriptInterface->loadBuffer(scriptstream.str()) != -1)
 			{
