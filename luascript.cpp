@@ -4756,6 +4756,8 @@ int32_t LuaScriptInterface::luaGetTileInfo(lua_State* L)
 		setFieldBool(L, "refresh", tile->hasFlag(TILESTATE_REFRESH));
 		setFieldBool(L, "trashed", tile->hasFlag(TILESTATE_TRASHED));
 		setFieldBool(L, "house", tile->hasFlag(TILESTATE_HOUSE));
+		setFieldBool(L, "bed", tile->hasFlag(TILESTATE_BED));
+		setFieldBool(L, "depot", tile->hasFlag(TILESTATE_DEPOT));
 		setField(L, "things", tile->getThingCount());
 		setField(L, "creatures", tile->getCreatureCount());
 		setField(L, "items", tile->getItemCount());

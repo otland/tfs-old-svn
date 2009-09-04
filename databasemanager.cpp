@@ -1025,27 +1025,30 @@ uint32_t DatabaseManager::updateDatabase()
 		case 22:
 		{
 			std::cout << "> Updating database to version 23..." << std::endl;
-			query << "SELECT `id`, `key` FROM `accounts` WHERE `key` ";
-			if(db->getDatabaseEngine() == DATABASE_ENGINE_SQLITE)
-				query << "NOT LIKE";
-			else
-				query << "!=";
-
-			query << " '0';";
-			if(DBResult* result = db->storeQuery(query.str()))
+			if(g_config.getBool(ConfigManager::ACCOUNT_MANAGER))
 			{
-				query.str("");
-				do
-				{
-					std::string key = result->getDataString("key");
-					_encrypt(key, false);
+				query << "SELECT `id`, `key` FROM `accounts` WHERE `key` ";
+				if(db->getDatabaseEngine() == DATABASE_ENGINE_SQLITE)
+					query << "NOT LIKE";
+				else
+					query << "!=";
 
-					query << "UPDATE `accounts` SET `key` = " << db->escapeString(key) << " WHERE `id` = " << result->getDataInt("id") << db->getUpdateLimiter();
-					db->executeQuery(query.str());
+				query << " '0';";
+				if(DBResult* result = db->storeQuery(query.str()))
+				{
 					query.str("");
+					do
+					{
+						std::string key = result->getDataString("key");
+						_encrypt(key, false);
+
+						query << "UPDATE `accounts` SET `key` = " << db->escapeString(key) << " WHERE `id` = " << result->getDataInt("id") << db->getUpdateLimiter();
+						db->executeQuery(query.str());
+						query.str("");
+					}
+					while(result->next());
+					result->free();
 				}
-				while(result->next());
-				result->free();
 			}
 
 			query << "DELETE FROM `server_config` WHERE `config` " << db->getStringComparison() << "'password_type';";

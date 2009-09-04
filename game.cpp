@@ -1134,8 +1134,10 @@ ReturnValue Game::internalMoveCreature(Creature* actor, Creature* creature, Cyli
 	while((subCylinder = toCylinder->__queryDestination(tmp, creature, &toItem, flags)) != toCylinder)
 	{
 		toCylinder->getTile()->moveCreature(actor, creature, subCylinder);
-		toCylinder = subCylinder;
+		if(creature->getParent() != subCylinder) //could happen if a script move the creature
+			 break;
 
+		toCylinder = subCylinder;
 		flags = 0;
 		if(++n >= MAP_MAX_LAYERS) //to prevent infinite loop
 			break;

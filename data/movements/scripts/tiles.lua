@@ -105,6 +105,10 @@ function onStepIn(cid, item, position, fromPosition)
 		local depotPos, depot = getCreatureLookPosition(cid), {}
 		depotPos.stackpos = STACKPOS_GROUND
 		while(true) do
+			if(not getTileInfo(depotPos).depot) then
+				break
+			end
+
 			depotPos.stackpos = depotPos.stackpos + 1
 			depot = getThingFromPos(depotPos)
 			if(depot.uid == 0) then
