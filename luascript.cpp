@@ -536,12 +536,7 @@ void ScriptEnviroment::streamThing(std::stringstream& stream, const std::string&
 
 void ScriptEnviroment::streamPosition(std::stringstream& stream, const std::string& local, const PositionEx& position)
 {
-	stream << "local " << local << " = {" << std::endl;
-	stream << "x = " << position.x << "," << std::endl;
-	stream << "y = " << position.y << "," << std::endl;
-	stream << "z = " << position.z << "," << std::endl;
-	stream << "stackpos = " << position.stackpos << std::endl;
-	stream << "}" << std::endl;
+	streamPosition(stream, local, position, position.stackpos);
 }
 
 void ScriptEnviroment::streamPosition(std::stringstream& stream, const std::string& local, const Position& position, uint32_t stackpos)
@@ -551,6 +546,19 @@ void ScriptEnviroment::streamPosition(std::stringstream& stream, const std::stri
 	stream << "y = " << position.y << "," << std::endl;
 	stream << "z = " << position.z << "," << std::endl;
 	stream << "stackpos = " << stackpos << std::endl;
+	stream << "}" << std::endl;
+}
+
+void ScriptEnviroment::streamOutfit(std::stringstream& stream, const std::string& local, const Outfit_t& outfit)
+{
+	stream << "local " << local << " = {" << std::endl;
+	stream << "lookType = " << outfit.lookType << "," << std::endl;
+	stream << "lookTypeEx = " << outfit.lookTypeEx << "," << std::endl;
+	stream << "lookHead = " << outfit.lookHead << "," << std::endl;
+	stream << "lookBody = " << outfit.lookBody << "," << std::endl;
+	stream << "lookLegs = " << outfit.lookLegs << "," << std::endl;
+	stream << "lookFeet = " << outfit.lookFeet << "," << std::endl;
+	stream << "lookAddons = " << outfit.lookAddons << std::endl;
 	stream << "}" << std::endl;
 }
 
@@ -977,6 +985,18 @@ void LuaScriptInterface::pushPosition(lua_State* L, const Position& position, ui
 	setField(L, "y", position.y);
 	setField(L, "x", position.x);
 	setField(L, "stackpos", stackpos);
+}
+
+void LuaScriptInterface::pushOutfit(lua_State* L, const Outfit_t& outfit)
+{
+	lua_newtable(L);
+	setField(L, "lookType", outfit.lookType);
+	setField(L, "lookTypeEx", outfit.lookTypeEx);
+	setField(L, "lookHead", outfit.lookHead);
+	setField(L, "lookBody", outfit.lookBody);
+	setField(L, "lookLegs", outfit.lookLegs);
+	setField(L, "lookFeet", outfit.lookFeet);
+	setField(L, "lookAddons", outfit.lookAddons);
 }
 
 void LuaScriptInterface::pushCallback(lua_State* L, int32_t callback)

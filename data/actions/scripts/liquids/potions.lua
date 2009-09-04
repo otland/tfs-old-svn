@@ -1,5 +1,6 @@
 local config = {
 	removeOnUse = "no",
+	usableOnTarget = "yes", -- can be used on target? (fe. healing friend)
 	splashable = "no",
 	realAnimation = "no", -- make text effect visible only for players in range 1x1
 	healthMultiplier = 1.0,
@@ -7,6 +8,7 @@ local config = {
 }
 
 config.removeOnUse = getBooleanFromString(config.removeOnUse)
+config.usableOnTarget = getBooleanFromString(config.usableOnTarget)
 config.splashable = getBooleanFromString(config.splashable)
 config.realAnimation = getBooleanFromString(config.realAnimation)
 
@@ -30,6 +32,10 @@ setConditionParam(exhaust, CONDITION_PARAM_TICKS, (getConfigInfo('timeBetweenExA
 function onUse(cid, item, fromPosition, itemEx, toPosition)
 	local potion = POTIONS[item.itemid]
 	if(not potion) then
+		return false
+	end
+
+	if(not config.usableOnTarget and cid ~= itemEx.uid) then
 		return false
 	end
 

@@ -114,6 +114,7 @@ class ScriptEnviroment
 		void streamThing(std::stringstream& stream, const std::string& local, Thing* thing, uint32_t thingId);
 		void streamPosition(std::stringstream& stream, const std::string& local, const PositionEx& position);
 		void streamPosition(std::stringstream& stream, const std::string& local, const Position& position, uint32_t stackpos);
+		void streamOutfit(std::stringstream& stream, const std::string& local, const Outfit_t& outfit);
 
 		void setRealPos(const Position& realPos) {m_realPos = realPos;}
 		Position getRealPos() {return m_realPos;}
@@ -305,6 +306,7 @@ class LuaScriptInterface
 		static void pushVariant(lua_State* L, const LuaVariant& var);
 		static void pushPosition(lua_State* L, const PositionEx& position);
 		static void pushPosition(lua_State* L, const Position& position, uint32_t stackpos);
+		static void pushOutfit(lua_State* L, const Outfit_t& outfit);
 		static void pushCallback(lua_State* L, int32_t callback);
 
 		static LuaVariant popVariant(lua_State* L);

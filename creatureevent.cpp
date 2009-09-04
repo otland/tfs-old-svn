@@ -174,6 +174,8 @@ bool CreatureEvent::configureEvent(xmlNodePtr p)
 		m_type = CREATURE_EVENT_THINK;
 	else if(tmpStr == "direction")
 		m_type = CREATURE_EVENT_DIRECTION;
+	else if(tmpStr == "outfit")
+		m_type = CREATURE_EVENT_OUTFIT;
 	else if(tmpStr == "statschange")
 		m_type = CREATURE_EVENT_STATSCHANGE;
 	else if(tmpStr == "areacombat")
@@ -224,6 +226,8 @@ std::string CreatureEvent::getScriptEventName() const
 			return "onLook";
 		case CREATURE_EVENT_DIRECTION:
 			return "onDirection";
+		case CREATURE_EVENT_OUTFIT:
+			return "onOutfit";
 		case CREATURE_EVENT_MAIL_SEND:
 			return "onSendMail";
 		case CREATURE_EVENT_MAIL_RECEIVE:
@@ -293,6 +297,7 @@ std::string CreatureEvent::getScriptEventParams() const
 		case CREATURE_EVENT_THINK:
 			return "cid, interval";
 		case CREATURE_EVENT_DIRECTION:
+		case CREATURE_EVENT_OUTFIT:
 			return "cid, old, current";
 		case CREATURE_EVENT_STATSCHANGE:
 			return "cid, attacker, type, combat, value";
@@ -971,6 +976,63 @@ uint32_t CreatureEvent::executeDirection(Creature* creature, Direction old, Dire
 	else
 	{
 		std::cout << "[Error - CreatureEvent::executeDirection] Call stack overflow." << std::endl;
+		return 0;
+	}
+}
+
+uint32_t CreatureEvent::executeOutfit(Creature* creature, const Outfit_t& old, const Outfit_t& current)
+{
+	//onOutfit(cid, old, current)
+	if(m_scriptInterface->reserveScriptEnv())
+	{
+		ScriptEnviroment* env = m_scriptInterface->getScriptEnv();
+		if(m_scripted == EVENT_SCRIPT_BUFFER)
+		{
+			env->setRealPos(creature->getPosition());
+			std::stringstream scriptstream;
+			scriptstream << "local cid = " << env->addThing(creature) << std::endl;
+
+			env->streamOutfit(scriptstream, "old", old);
+			env->streamOutfit(scriptstream, "current", current);
+
+			scriptstream << m_scriptData;
+			std::cout << scriptstream.str();
+			bool result = true;
+			if(m_scriptInterface->loadBuffer(scriptstream.str()) != -1)
+			{
+				lua_State* L = m_scriptInterface->getLuaState();
+				result = m_scriptInterface->getGlobalBool(L, "_result", true);
+			}
+
+			m_scriptInterface->releaseScriptEnv();
+			return result;
+		}
+		else
+		{
+			#ifdef __DEBUG_LUASCRIPTS__
+			char desc[30];
+			sprintf(desc, "%s", creature->getName().c_str());
+			env->setEventDesc(desc);
+			#endif
+
+			env->setScriptId(m_scriptId, m_scriptInterface);
+			env->setRealPos(creature->getPosition());
+
+			lua_State* L = m_scriptInterface->getLuaState();
+			m_scriptInterface->pushFunction(m_scriptId);
+
+			lua_pushnumber(L, env->addThing(creature));
+			LuaScriptInterface::pushOutfit(L, old);
+			LuaScriptInterface::pushOutfit(L, current);
+
+			bool result = m_scriptInterface->callFunction(3);
+			m_scriptInterface->releaseScriptEnv();
+			return result;
+		}
+	}
+	else
+	{
+		std::cout << "[Error - CreatureEvent::executeOutfit] Call stack overflow." << std::endl;
 		return 0;
 	}
 }

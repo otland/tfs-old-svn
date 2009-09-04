@@ -32,6 +32,7 @@ enum CreatureEventType_t
 	CREATURE_EVENT_ADVANCE,
 	CREATURE_EVENT_LOOK,
 	CREATURE_EVENT_DIRECTION,
+	CREATURE_EVENT_OUTFIT,
 	CREATURE_EVENT_MAIL_SEND,
 	CREATURE_EVENT_MAIL_RECEIVE,
 	CREATURE_EVENT_TRADE_REQUEST,
@@ -121,6 +122,7 @@ class CreatureEvent : public Event
 		uint32_t executeReportBug(Player* player, std::string comment);
 		uint32_t executeThink(Creature* creature, uint32_t interval);
 		uint32_t executeDirection(Creature* creature, Direction old, Direction current);
+		uint32_t executeOutfit(Creature* creature, const Outfit_t& old, const Outfit_t& current);
 		uint32_t executeStatsChange(Creature* creature, Creature* attacker, StatsChange_t type, CombatType_t combat, int32_t value);
 		uint32_t executeCombatArea(Creature* creature, Tile* tile, bool isAggressive);
 		uint32_t executeTarget(Creature* creature, Creature* target);

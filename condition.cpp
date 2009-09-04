@@ -1526,13 +1526,13 @@ void ConditionOutfit::changeOutfit(Creature* creature, int32_t index/* = -1*/)
 	if(index == -1)
 		index = random_range(0, outfits.size() - 1);
 
-	g_game.internalCreatureChangeOutfit(creature, outfits[index]);
+	g_game.internalCreatureChangeOutfit(creature, outfits[index], true);
 }
 
 void ConditionOutfit::endCondition(Creature* creature, ConditionEnd_t reason)
 {
 	if(!outfits.empty())
-		g_game.internalCreatureChangeOutfit(creature, creature->getDefaultOutfit());
+		g_game.internalCreatureChangeOutfit(creature, creature->getDefaultOutfit(), true);
 }
 
 void ConditionOutfit::addCondition(Creature* creature, const Condition* addCondition)

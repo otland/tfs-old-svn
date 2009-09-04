@@ -3962,8 +3962,22 @@ void Game::changeSpeed(Creature* creature, int32_t varSpeedDelta)
 	}
 }
 
-void Game::internalCreatureChangeOutfit(Creature* creature, const Outfit_t& outfit)
+void Game::internalCreatureChangeOutfit(Creature* creature, const Outfit_t& outfit, bool forced/* = false*/)
 {
+	if(!forced)
+	{
+		bool deny = false;
+		CreatureEventList outfitEvents = creature->getCreatureEvents(CREATURE_EVENT_OUTFIT);
+		for(CreatureEventList::iterator it = outfitEvents.begin(); it != outfitEvents.end(); ++it)
+		{
+			if(!(*it)->executeOutfit(creature, creature->getCurrentOutfit(), outfit) && !deny)
+				deny = true;
+		}
+
+		if(deny || creature->getCurrentOutfit() == outfit)
+			return;
+	}
+
 	creature->setCurrentOutfit(outfit);
 	const SpectatorVec& list = getSpectators(creature->getPosition());
 	SpectatorVec::const_iterator it;

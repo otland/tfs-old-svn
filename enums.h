@@ -271,6 +271,19 @@ struct Outfit_t
 	Outfit_t() {lookHead = lookBody = lookLegs = lookFeet = lookType = lookTypeEx = lookAddons = 0;}
 	uint16_t lookType, lookTypeEx;
 	uint8_t lookHead, lookBody, lookLegs, lookFeet, lookAddons;
+
+	bool operator==(const Outfit_t o) const
+	{
+		return (o.lookAddons == lookAddons
+			&& o.lookType == lookType && o.lookTypeEx == lookTypeEx
+			&& o.lookHead == lookHead && o.lookBody == lookBody
+			&& o.lookLegs == lookLegs && o.lookFeet == lookFeet);
+	}
+
+	bool operator!=(const Outfit_t o) const
+	{
+		return !(*this == o);
+	}
 };
 
 struct LightInfo
