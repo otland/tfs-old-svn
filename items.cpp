@@ -130,7 +130,7 @@ ItemType::~ItemType()
 	delete condition;
 }
 
-Items::Items()
+Items::Items() // : items(35000)
 {
 	this->items = new Array<ItemType*>(16000);
 }
@@ -148,20 +148,11 @@ void Items::clear()
 
 bool Items::reload()
 {
-	//TODO?
-	/*
-	for (ItemMap::iterator it = items->begin(); it != items->end(); it++)
-		delete it->second->condition;
-	return loadFromXml();
-	*/
-
 	// TODO: make this atomic somehow.
-
 	if(!this->items)
 		return false;
 
 	this->items->reset();
-
 	loadFromOtb("data/items/items.otb");
 	return loadFromXml();
 }
@@ -367,7 +358,6 @@ int32_t Items::loadFromOtb(std::string file)
 		// store the found item
 		items->addElement(iType, iType->id);
 
-		//items[iType->id] = iType;
 		node = f.getNextNode(node, type);
 	}
 	return ERROR_NONE;
@@ -376,7 +366,6 @@ int32_t Items::loadFromOtb(std::string file)
 bool Items::loadFromXml()
 {
 	std::string filename = "data/items/items.xml";
-
 	xmlDocPtr doc = xmlParseFile(filename.c_str());
 
 	std::string strValue;
@@ -418,7 +407,7 @@ bool Items::loadFromXml()
 					for(size_t i = 0; i < vec_size; i++)
 					{
 						while(intVector[i] < endVector[i])
-							parseItemNode(itemNode, intVector[i]++);
+							parseItemNode(itemNode, ++intVector[i]);
 					}
 				}
 			}
@@ -1183,13 +1172,13 @@ bool Items::parseItemNode(xmlNodePtr itemNode, uint32_t id)
 								if(tmpStrValue == "count")
 								{
 									if(readXMLInteger(fieldAttributesNode, "value", intValue))
-										intValue = std::max(1, intValue);
+										count = std::max(1, intValue);
 								}
 
 								if(tmpStrValue == "start")
 								{
 									if(readXMLInteger(fieldAttributesNode, "value", intValue))
-										intValue = std::max(0, intValue);
+										start = std::max(0, intValue);
 								}
 
 								if(tmpStrValue == "damage")
@@ -1329,8 +1318,6 @@ const ItemType& Items::getItemType(int32_t id) const
 
 const ItemType& Items::getItemIdByClientId(int32_t spriteId) const
 {
-	static ItemType dummyItemType; // use this for invalid ids
-
 	uint32_t i = 100;
 	ItemType* iType;
 	do
@@ -1342,6 +1329,7 @@ const ItemType& Items::getItemIdByClientId(int32_t spriteId) const
 	}
 	while(iType);
 
+	static ItemType dummyItemType; // use this for invalid ids
 	return dummyItemType;
 }
 

@@ -89,6 +89,7 @@ class Spawn
 		void stopEvent();
 
 		bool isInSpawnZone(const Position& pos);
+		void cleanup();
 
 	private:
 		Position centerPos;

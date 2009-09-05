@@ -208,7 +208,7 @@ class _Database
 
 		virtual std::string escapeBlob(const char* s, uint32_t length){return "";}
 
-		static std::string getUpdateQueryLimit();
+		static std::string getUpdateQueryLimit(uint32_t limit = 1);
 
 		/** Escape the special characters in a string for no problems with the query
 		*\returns The string modified

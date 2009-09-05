@@ -70,7 +70,7 @@ class Quest
 
 		bool isCompleted(Player* player);
 		bool isStarted(Player* player) const;
-		void getMissionList(Player* player, NetworkMessage* msg);
+		void getMissionList(Player* player, NetworkMessage_ptr msg);
 		uint16_t getID() {return id;}
 		std::string getName() {return name;}
 		uint16_t getMissionsCount(Player* player);
@@ -96,7 +96,7 @@ class Quests
 
 		bool loadFromXml();
 		Quest* getQuestByID(uint16_t id);
-		void getQuestsList(Player* player, NetworkMessage* msg);
+		void getQuestsList(Player* player, NetworkMessage_ptr msg);
 		uint16_t getQuestsCount(Player* player);
 		QuestsList quests;
 		bool reload();

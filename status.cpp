@@ -87,7 +87,7 @@ void ProtocolStatus::onRecvFirstMessage(NetworkMessage& msg)
 		{
 			if(msg.GetRaw() == "info")
 			{
-				OutputMessage* output = OutputMessagePool::getInstance()->getOutputMessage(this, false);
+				OutputMessage_ptr output = OutputMessagePool::getInstance()->getOutputMessage(this, false);
 				if(output)
 				{
 					TRACK_MESSAGE(output);
@@ -105,7 +105,7 @@ void ProtocolStatus::onRecvFirstMessage(NetworkMessage& msg)
 		case 0x01:
 		{
 			uint32_t requestedInfo = msg.GetU16(); //Only a Byte is necessary, though we could add new infos here
-			OutputMessage* output = OutputMessagePool::getInstance()->getOutputMessage(this, false);
+			OutputMessage_ptr output = OutputMessagePool::getInstance()->getOutputMessage(this, false);
 			if(output)
 			{
 				TRACK_MESSAGE(output);
@@ -220,7 +220,7 @@ std::string Status::getStatusString() const
 	return xml;
 }
 
-void Status::getInfo(uint32_t requestedInfo, OutputMessage* output, NetworkMessage& msg) const
+void Status::getInfo(uint32_t requestedInfo, OutputMessage_ptr output, NetworkMessage& msg) const
 {
 	if(requestedInfo & REQUEST_BASIC_SERVER_INFO)
 	{

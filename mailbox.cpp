@@ -131,6 +131,7 @@ bool Mailbox::sendItem(Item* item)
 				item, item->getItemCount(), NULL, FLAG_NOLIMIT) == RET_NOERROR)
 			{
 				g_game.transformItem(item, item->getID() + 1);
+				player->onReceiveMail(dp);
 				player->setDepotChange(true);
 				return true;
 			}
@@ -223,13 +224,16 @@ bool Mailbox::getReceiver(Item* item, std::string& name, uint32_t& dp)
 		++curLine;
 	}
 
+	trimString(name);
+	trimString(strTown);
+
 	Town* town = Towns::getInstance().getTown(strTown);
 	if(town)
+	{
 		dp = town->getTownID();
-	else
-		return false;
-
-	return true;
+		return true;
+	}
+	return false;
 }
 
 bool Mailbox::canSend(const Item* item) const

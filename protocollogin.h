@@ -38,7 +38,7 @@ class ProtocolLogin : public Protocol
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
 		static uint32_t protocolLoginCount;
 #endif
-		ProtocolLogin(Connection* connection) : Protocol(connection)
+		ProtocolLogin(Connection_ptr connection) : Protocol(connection)
 		{
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
 			protocolLoginCount++;

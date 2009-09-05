@@ -883,6 +883,48 @@ bool Player::canSeeCreature(const Creature* creature) const
 	return true;
 }
 
+void Player::onReceiveMail(uint32_t depotId)
+{
+	if(isNearDepotBox(depotId)){
+		sendTextMessage(MSG_INFO_DESCR, "New mail has arrived.");
+	}
+}
+
+bool Player::isNearDepotBox(uint32_t depotId)
+{
+	Position pos = getPosition();
+	for(int32_t cx = -1; cx <= 1; ++cx)
+	{
+		for(int32_t cy = -1; cy <= 1; ++cy)
+		{
+			Tile* tile = g_game.getTile(pos.x + cx, pos.y + cy, pos.z);
+			if(!tile)
+				return false;
+
+			if(!tile->hasFlag(TILESTATE_DEPOT))
+				continue;
+
+			for(uint32_t i = 0; i < tile->getThingCount(); ++i)
+			{
+				if(Item* item = tile->__getThing(i)->getItem())
+				{
+					const ItemType& it = Item::items[item->getID()];
+					if(it.type == ITEM_TYPE_DEPOT)
+					{
+						Depot* depot = NULL;
+						if(item->getContainer() && (depot = item->getContainer()->getDepot()))
+						{
+							if(depot->getDepotId() == depotId)
+								return true;
+						}
+					}
+				}
+			}
+		}
+	}
+	return false;
+}
+
 Depot* Player::getDepot(uint32_t depotId, bool autoCreateDepot)
 {
 	DepotMap::iterator it = depots.find(depotId);
@@ -1191,14 +1233,14 @@ void Player::sendPing(uint32_t interval)
 			client->sendPing();
 	}
 
-	if(canLogout())
+	if(canLogout() && npings > 12)
 	{
 		if(!client)
 		{
 			g_creatureEvents->playerLogout(this);
 			g_game.removeCreature(this, true);
 		}
-		else if(npings > 24)
+		else
 			client->logout(true, true);
 	}
 }
@@ -1456,6 +1498,8 @@ void Player::onCreatureDisappear(const Creature* creature, uint32_t stackpos, bo
 		if(tradePartner)
 			g_game.internalCloseTrade(this);
 
+		closeShopWindow();
+
 		clearPartyInvitations();
 		if(getParty())
 			getParty()->leaveParty(this);
@@ -1510,35 +1554,27 @@ void Player::onCreatureDisappear(const Creature* creature, uint32_t stackpos, bo
 	}
 }
 
-void Player::openShopWindow()
+void Player::openShopWindow(const std::list<ShopInfo>& shop)
 {
-	for(ShopInfoList::iterator it = shopOffer.begin(); it != shopOffer.end(); ++it)
-	{
-		uint32_t itemCount = __getItemTypeCount((*it).itemId);
-		if(itemCount > 0)
-			goodsMap[(*it).itemId] = itemCount;
-	}
-
+	shopItemList = shop;
 	sendShop();
-	sendGoods();
+	sendSaleItemList();
 }
 
-void Player::closeShopWindow(Npc* npc/* = NULL*/, int32_t onBuy/* = -1*/, int32_t onSell/* = -1*/)
+void Player::closeShopWindow()
 {
-	if(!npc)
-		npc = getShopOwner(onBuy, onSell);
+	//unreference callbacks
+	int32_t onBuy;
+	int32_t onSell;
 
+	Npc* npc = getShopOwner(onBuy, onSell);
 	if(npc)
+	{
+		setShopOwner(NULL, -1, -1);
 		npc->onPlayerEndTrade(this, onBuy, onSell);
-
-	if(shopOwner)
 		sendCloseShop();
-
-	shopOwner = NULL;
-	purchaseCallback = -1;
-	saleCallback = -1;
-	shopOffer.clear();
-	goodsMap.clear();
+	}
+	shopItemList.clear();
 }
 
 void Player::onWalk(Direction& dir)
@@ -1844,7 +1880,7 @@ void Player::drainMana(Creature* attacker, int32_t manaLoss)
 
 void Player::addManaSpent(uint64_t amount)
 {
-	if(amount != 0 && !hasFlag(PlayerFlag_NotGainMana))
+	if(amount > 0 && !hasFlag(PlayerFlag_NotGainMana))
 	{
 		uint64_t currReqMana = vocation->getReqMana(magLevel);
 		uint64_t nextReqMana = vocation->getReqMana(magLevel + 1);
@@ -1884,7 +1920,7 @@ void Player::addManaSpent(uint64_t amount)
 	}
 }
 
-void Player::addExperience(uint64_t exp)
+void Player::addExperience(uint64_t exp, bool useMult/* = false*/, bool sendText/* = false*/)
 {
 	int32_t newLevel = getLevel();
 
@@ -1896,7 +1932,15 @@ void Player::addExperience(uint64_t exp)
 		sendStats();
 		return;
 	}
-	experience += exp;
+
+	uint64_t gainExp = exp * (useMult ? g_game.getExperienceStage(level) : 1);
+	experience += gainExp;
+	if(sendText)
+	{
+		std::stringstream strExp;
+		strExp << gainExp;
+		g_game.addAnimatedText(getPosition(), TEXTCOLOR_WHITE_EXP, strExp.str());
+	}
 
 	while(experience >= nextLevelExp)
 	{
@@ -2952,6 +2996,28 @@ uint32_t Player::__getItemTypeCount(uint16_t itemId, int32_t subType /*= -1*/, b
 	return count;
 }
 
+std::map<uint32_t, uint32_t>& Player::__getAllItemTypeCount(
+	std::map<uint32_t, uint32_t>& countMap, bool itemCount /*= true*/) const
+{
+	for(int i = SLOT_FIRST; i < SLOT_LAST; i++)
+	{
+		Item* item = inventory[i];
+		if(item)
+		{
+			countMap[item->getID()] += Item::countByType(item, -1, itemCount);
+
+			Container* container = item->getContainer();
+			if(container)
+			{
+				for(ContainerIterator iter = container->begin(), end = container->end(); iter != end; ++iter)
+					countMap[(*iter)->getID()] += Item::countByType(*iter, -1, itemCount);
+			}
+		}
+	}
+
+	return countMap;
+}
+
 Thing* Player::__getThing(uint32_t index) const
 {
 	if(index >= SLOT_FIRST && index < SLOT_LAST)
@@ -2993,7 +3059,7 @@ void Player::postAddNotification(Thing* thing, const Cylinder* oldParent, int32_
 			onSendContainer(container);
 
 		if(shopOwner && requireListUpdate)
-			postUpdateGoods(item->getID());
+			updateSaleShopList(item->getID());
 	}
 	else if(const Creature* creature = thing->getCreature())
 	{
@@ -3072,37 +3138,36 @@ void Player::postRemoveNotification(Thing* thing, const Cylinder* newParent, int
 		}
 
 		if(shopOwner && requireListUpdate)
-			postUpdateGoods(item->getID());
+			updateSaleShopList(item->getID());
 	}
 }
 
-void Player::postUpdateGoods(uint32_t itemId)
+void Player::updateSaleShopList(uint32_t itemId)
 {
-	uint32_t amount = 0;
-	for(ShopInfoList::iterator it = shopOffer.begin(); it != shopOffer.end(); ++it)
+	for(std::list<ShopInfo>::const_iterator it = shopItemList.begin(); it != shopItemList.end(); ++it)
 	{
-		if((*it).itemId == itemId)
+		if(it->itemId == itemId)
 		{
-			uint32_t itemCount = __getItemTypeCount((*it).itemId);
-			if(itemCount > 0)
-				goodsMap[(*it).itemId] = itemCount;
-			else
-				goodsMap.erase((*it).itemId);
+			if(client)
+				client->sendSaleItemList(shopItemList);
 
-			amount++;
+			break;
 		}
 	}
-
-	if(amount > 0)
-		sendGoods();
 }
 
-bool Player::hasShopItemForSale(uint32_t itemId)
+bool Player::hasShopItemForSale(uint32_t itemId, uint8_t subType)
 {
-	for(ShopInfoList::const_iterator it = shopOffer.begin(); it != shopOffer.end(); ++it)
+	for(std::list<ShopInfo>::const_iterator it = shopItemList.begin(); it != shopItemList.end(); ++it)
 	{
-		if((*it).itemId == itemId && (*it).buyPrice > 0)
+		if(it->itemId == itemId && (*it).buyPrice > 0)
+		{
+			const ItemType& iit = Item::items[itemId];
+			if(iit.isFluidContainer() || iit.isSplash() || iit.isRune())
+				return it->subType == subType;
+
 			return true;
+		}
 	}
 	return false;
 }
@@ -3568,7 +3633,8 @@ void Player::onKilledCreature(Creature* target, bool lastHit/* = true*/)
 			if(!isPartner(targetPlayer) &&
 				!Combat::isInPvpZone(this, targetPlayer) &&
 				!targetPlayer->hasAttacked(this) &&
-				targetPlayer->getSkull() == SKULL_NONE)
+				targetPlayer->getSkull() == SKULL_NONE &&
+				targetPlayer != this)
 			{
 				addUnjustifiedDead(targetPlayer);
 			}
@@ -3682,7 +3748,7 @@ bool Player::canLogout()
 	if(isConnecting)
 		return false;
 
-	if(hasCondition(CONDITION_INFIGHT))
+	if(isPzLocked() || hasCondition(CONDITION_INFIGHT))
 		return false;
 
 	if(getTile()->hasFlag(TILESTATE_NOLOGOUT))

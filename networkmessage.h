@@ -21,6 +21,7 @@
 #ifndef __OTSERV_NETWORK_MESSAGE_H__
 #define __OTSERV_NETWORK_MESSAGE_H__
 
+#include <boost/shared_ptr.hpp>
 
 #include "definitions.h"
 #include "otsystem.h"
@@ -45,10 +46,11 @@ class NetworkMessage
 		{
 			Reset();
 		}
-		virtual ~NetworkMessage(){}
+		virtual ~NetworkMessage() {}
+
+		// resets the internal buffer to an empty message
 
 	protected:
-		// resets the internal buffer to an empty message
 		void Reset()
 		{
 			m_MsgSize = 0;
@@ -57,17 +59,14 @@ class NetworkMessage
 
 	public:
 		// simply read functions for incoming message
-		uint8_t  GetByte(){return m_MsgBuf[m_ReadPos++];}
+		uint8_t  GetByte() {return m_MsgBuf[m_ReadPos++];}
 		uint16_t GetU16()
 		{
 			uint16_t v = *(uint16_t*)(m_MsgBuf + m_ReadPos);
 			m_ReadPos += 2;
 			return v;
 		}
-		uint16_t GetSpriteId()
-		{
-			return GetU16();
-		}
+		uint16_t GetSpriteId() {return GetU16();}
 		uint32_t GetU32()
 		{
 			uint32_t v = *(uint32_t*)(m_MsgBuf + m_ReadPos);
@@ -91,6 +90,7 @@ class NetworkMessage
 		{
 			if(!canAdd(1))
 				return;
+
 			m_MsgBuf[m_ReadPos++] = value;
 			m_MsgSize++;
 		}
@@ -98,6 +98,7 @@ class NetworkMessage
 		{
 			if(!canAdd(2))
 				return;
+
 			*(uint16_t*)(m_MsgBuf + m_ReadPos) = value;
 			m_ReadPos += 2; m_MsgSize += 2;
 		}
@@ -105,6 +106,7 @@ class NetworkMessage
 		{
 			if(!canAdd(4))
 				return;
+
 			*(uint32_t*)(m_MsgBuf + m_ReadPos) = value;
 			m_ReadPos += 4; m_MsgSize += 4;
 		}
@@ -125,23 +127,30 @@ class NetworkMessage
 		int32_t getMessageLength() const { return m_MsgSize; }
 		void setMessageLength(int32_t newSize) { m_MsgSize = newSize; }
 		int32_t getReadPos() const { return m_ReadPos; }
-		void setReadPos(int32_t newPos) { m_ReadPos = newPos; }
+		void setReadPos(int32_t pos) {m_ReadPos = pos; }
 
 		int32_t decodeHeader();
 
 		char* getBuffer() { return (char*)&m_MsgBuf[0]; }
-		char* getBodyBuffer(int32_t header = header_length) {m_ReadPos = 2; return (char*)&m_MsgBuf[header];}
+		char* getBodyBuffer() { m_ReadPos = 2; return (char*)&m_MsgBuf[header_length]; }
+
+#ifdef __TRACK_NETWORK__
+		virtual void Track(std::string file, long line, std::string func) {}
+		virtual void clearTrack() {}
+#endif
 
 	protected:
 		inline bool canAdd(uint32_t size)
 		{
 			return (size + m_ReadPos < max_body_length);
-		};
+		}
 
 		int32_t m_MsgSize;
 		int32_t m_ReadPos;
 
 		uint8_t m_MsgBuf[NETWORKMESSAGE_MAXSIZE];
 };
+
+typedef boost::shared_ptr<NetworkMessage> NetworkMessage_ptr;
 
 #endif // #ifndef __NETWORK_MESSAGE_H__

@@ -848,7 +848,6 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance,
 	if(it.showCharges)
 		s << " that has " << subType << " charge" << (subType != 1 ? "s" : "") << " left";
 
-
 	if(it.showDuration)
 	{
 		if(item && item->hasAttribute(ATTR_ITEM_DURATION))
@@ -867,7 +866,21 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance,
 			s << " that is brand-new";
 	}
 
-	s << ".";
+	bool dot = true;
+	if(item)
+	{
+		std::string itemText = item->getText();
+		if(itemText != "")
+		{
+			char lastChar = itemText[itemText.length() - 1];
+			if(lastChar == '?' || lastChar == '!' || lastChar == '.')
+				dot = false;
+		}
+	}
+
+	if(dot)
+		s << ".";
+
 	if(it.wieldInfo != 0)
 	{
 		s << std::endl << "It can only be wielded properly by ";
@@ -898,8 +911,11 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance,
 	if(lookDistance <= 1)
 	{
 		double weight = (item == NULL ? it.weight : item->getWeight());
-		if(weight > 0)
-			s << std::endl << getWeightDescription(it, weight);
+		if(weight > 0 && it.pickupable)
+		{
+			int32_t count = (int32_t)floor(weight / it.weight);
+			s << std::endl << getWeightDescription(it, weight, count);
+		}
 	}
 
 	if(it.abilities.elementType != COMBAT_NONE && it.decayTo > 0)

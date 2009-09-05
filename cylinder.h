@@ -21,6 +21,8 @@
 #ifndef __OTSERV_CYLINDER_H__
 #define __OTSERV_CYLINDER_H__
 
+#include <map>
+
 #include "definitions.h"
 #include "thing.h"
 
@@ -184,6 +186,14 @@ class Cylinder : virtual public Thing
 		  * \param returns the amount of items of the asked item type
 		  */
 		virtual uint32_t __getItemTypeCount(uint16_t itemId, int32_t subType = -1, bool itemCount = true) const;
+
+		/**
+		  * Get the amount of items of a all types
+		  * \param countMap a map to put the itemID:count mapping in
+		  * \param itemCount if set to true it will only count items and not other subtypes like charges
+		  * \param returns a map mapping item id to count (same as first argument)
+		  */
+		virtual std::map<uint32_t, uint32_t>& __getAllItemTypeCount(std::map<uint32_t, uint32_t>& countMap, bool itemCount = true) const;
 
 		/**
 		  * Adds an object to the cylinder without sending to the client(s)

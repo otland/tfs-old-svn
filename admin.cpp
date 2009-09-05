@@ -33,7 +33,7 @@
 
 #include "logger.h"
 
-static void addLogLine(ProtocolAdmin* conn, log_type type, int level, std::string message);
+static void addLogLine(ProtocolAdmin* conn, eLogType type, int level, std::string message);
 
 extern Game g_game;
 extern ConfigManager g_config;
@@ -45,7 +45,7 @@ AdminProtocolConfig* g_adminConfig = NULL;
 uint32_t ProtocolAdmin::protocolAdminCount = 0;
 #endif
 
-ProtocolAdmin::ProtocolAdmin(Connection* connection) :
+ProtocolAdmin::ProtocolAdmin(Connection_ptr connection) :
 Protocol(connection)
 {
 	m_state = NO_CONNECTED;
@@ -92,7 +92,7 @@ void ProtocolAdmin::onRecvFirstMessage(NetworkMessage& msg)
 
 	addLogLine(this, LOGTYPE_EVENT, 1, "sending HELLO");
 	//send hello
-	OutputMessage* output = OutputMessagePool::getInstance()->getOutputMessage(this, false);
+	OutputMessage_ptr output = OutputMessagePool::getInstance()->getOutputMessage(this, false);
 	if(output)
 	{
 		TRACK_MESSAGE(output);
@@ -127,7 +127,7 @@ void ProtocolAdmin::parsePacket(NetworkMessage& msg)
 
 	OutputMessagePool* outputPool = OutputMessagePool::getInstance();
 
-	OutputMessage* output = outputPool->getOutputMessage(this, false);
+	OutputMessage_ptr output = outputPool->getOutputMessage(this, false);
 	if(output)
 	{
 		TRACK_MESSAGE(output);
@@ -140,7 +140,6 @@ void ProtocolAdmin::parsePacket(NetworkMessage& msg)
 				{
 					if((time(NULL) - m_startTime) > 30000)
 					{
-						outputPool->releaseMessage(output);
 						getConnection()->closeConnection();
 						addLogLine(this, LOGTYPE_WARNING, 1, "encryption timeout");
 						return;
@@ -168,7 +167,6 @@ void ProtocolAdmin::parsePacket(NetworkMessage& msg)
 					if((time(NULL) - m_startTime) > 30000)
 					{
 						//login timeout
-						outputPool->releaseMessage(output);
 						getConnection()->closeConnection();
 						addLogLine(this, LOGTYPE_WARNING, 1, "login timeout");
 						return;
@@ -206,7 +204,6 @@ void ProtocolAdmin::parsePacket(NetworkMessage& msg)
 			}
 
 			default:
-				outputPool->releaseMessage(output);
 				getConnection()->closeConnection();
 				return;
 		}
@@ -383,10 +380,8 @@ void ProtocolAdmin::parsePacket(NetworkMessage& msg)
 					case CMD_SHUTDOWN_SERVER:
 					{
 						g_dispatcher.addTask(createTask(boost::bind(&ProtocolAdmin::adminCommandShutdownServer, this)));
-						outputPool->releaseMessage(output);
 						getConnection()->closeConnection();
 						return;
-						break;
 					}
 
 					case CMD_KICK:
@@ -426,8 +421,6 @@ void ProtocolAdmin::parsePacket(NetworkMessage& msg)
 
 		if(output->getMessageLength() > 0)
 			outputPool->send(output);
-		else
-			outputPool->releaseMessage(output);
 	}
 }
 
@@ -437,7 +430,7 @@ void ProtocolAdmin::adminCommandCloseServer()
 
 	addLogLine(this, LOGTYPE_EVENT, 1, "close server ok");
 
-	OutputMessage* output = OutputMessagePool::getInstance()->getOutputMessage(this, false);
+	OutputMessage_ptr output = OutputMessagePool::getInstance()->getOutputMessage(this, false);
 	if(output)
 	{
 		TRACK_MESSAGE(output);
@@ -448,7 +441,7 @@ void ProtocolAdmin::adminCommandCloseServer()
 
 void ProtocolAdmin::adminCommandPayHouses()
 {
-	OutputMessage* output = OutputMessagePool::getInstance()->getOutputMessage(this, false);
+	OutputMessage_ptr output = OutputMessagePool::getInstance()->getOutputMessage(this, false);
 	if(output)
 	{
 		TRACK_MESSAGE(output);
@@ -475,7 +468,7 @@ void ProtocolAdmin::adminCommandOpenServer()
 
 	addLogLine(this, LOGTYPE_EVENT, 1, "open server ok");
 
-	OutputMessage* output = OutputMessagePool::getInstance()->getOutputMessage(this, false);
+	OutputMessage_ptr output = OutputMessagePool::getInstance()->getOutputMessage(this, false);
 	if(output)
 	{
 		TRACK_MESSAGE(output);
@@ -490,7 +483,7 @@ void ProtocolAdmin::adminCommandShutdownServer()
 
 	addLogLine(this, LOGTYPE_EVENT, 1, "starting server shutdown");
 
-	OutputMessage* output = OutputMessagePool::getInstance()->getOutputMessage(this, false);
+	OutputMessage_ptr output = OutputMessagePool::getInstance()->getOutputMessage(this, false);
 	if(output)
 	{
 		TRACK_MESSAGE(output);
@@ -501,7 +494,7 @@ void ProtocolAdmin::adminCommandShutdownServer()
 
 void ProtocolAdmin::adminCommandKickPlayer(const std::string& name)
 {
-	OutputMessage* output = OutputMessagePool::getInstance()->getOutputMessage(this, false);
+	OutputMessage_ptr output = OutputMessagePool::getInstance()->getOutputMessage(this, false);
 	if(output)
 	{
 		TRACK_MESSAGE(output);
@@ -528,7 +521,7 @@ void ProtocolAdmin::adminCommandKickPlayer(const std::string& name)
 
 void ProtocolAdmin::adminCommandSetOwner(const std::string& param)
 {
-	OutputMessage* output = OutputMessagePool::getInstance()->getOutputMessage(this, false);
+	OutputMessage_ptr output = OutputMessagePool::getInstance()->getOutputMessage(this, false);
 	if(output)
 	{
 		TRACK_MESSAGE(output);
@@ -785,7 +778,7 @@ RSA* AdminProtocolConfig::getRSAKey(uint8_t type)
 
 /////////////////////////////////////////////
 
-static void addLogLine(ProtocolAdmin* conn, log_type type, int level, std::string message)
+static void addLogLine(ProtocolAdmin* conn, eLogType type, int level, std::string message)
 {
 	if(g_config.getBoolean(ConfigManager::ADMIN_LOGS_ENABLED))
 	{

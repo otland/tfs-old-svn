@@ -1731,6 +1731,9 @@ void Tile::updateTileFlags(Item* item, bool removing)
 
 		if(item->getBed())
 			setFlag(TILESTATE_BED);
+
+		if(item->getContainer() && item->getContainer()->getDepot())
+			setFlag(TILESTATE_DEPOT);
 	}
 	else
 	{
@@ -1808,5 +1811,8 @@ void Tile::updateTileFlags(Item* item, bool removing)
 
 		if(item->getBed())
 			resetFlag(TILESTATE_BED);
+
+		if(item->getContainer() && item->getContainer()->getDepot())
+			resetFlag(TILESTATE_DEPOT);
 	}
 }

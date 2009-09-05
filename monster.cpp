@@ -184,12 +184,10 @@ void Monster::onCreatureMove(const Creature* creature, const Tile* newTile, cons
 		if(isSummon() && getMaster() == creature)
 		{
 			if(canSeeNewPos)
-			{
-				//Turn the summon on again
-				isMasterInRange = true;
-				updateIdleStatus();
-			}
+				isMasterInRange = true;	//Turn the summon on again
 		}
+
+		updateIdleStatus();
 
 		if(!followCreature && !isSummon())
 		{
@@ -271,10 +269,10 @@ void Monster::onCreatureFound(Creature* creature, bool pushFront /*= false*/)
 				targetList.push_front(creature);
 			else
 				targetList.push_back(creature);
-
-			updateIdleStatus();
 		}
 	}
+
+	updateIdleStatus();
 }
 
 void Monster::onCreatureEnter(Creature* creature)
@@ -514,12 +512,17 @@ bool Monster::selectTarget(Creature* creature)
 
 void Monster::setIdle(bool _idle)
 {
+	if(isRemoved() || getHealth() <= 0)
+		return;
+
 	isIdle = _idle;
 	if(!isIdle)
 		g_game.addCreatureCheck(this);
 	else
 	{
 		onIdleStatus();
+		clearTargetList();
+		clearFriendList();
 		g_game.removeCreatureCheck(this);
 	}
 }
@@ -527,8 +530,7 @@ void Monster::setIdle(bool _idle)
 void Monster::updateIdleStatus()
 {
 	bool idle = false;
-
-	if(conditions.empty() && getHealth() > 0)
+	if(conditions.empty())
 	{
 		if(isSummon())
 		{
@@ -1170,7 +1172,7 @@ void Monster::death()
 
 	clearTargetList();
 	clearFriendList();
-	setIdle(true);
+	onIdleStatus();
 }
 
 Item* Monster::getCorpse()
@@ -1315,10 +1317,9 @@ void Monster::drainHealth(Creature* attacker, CombatType_t combatType, int32_t d
 
 void Monster::changeHealth(int32_t healthChange)
 {
-	Creature::changeHealth(healthChange);
-
 	//In case a player with ignore flag set attacks the monster
 	setIdle(false);
+	Creature::changeHealth(healthChange);
 }
 
 bool Monster::challengeCreature(Creature* creature)

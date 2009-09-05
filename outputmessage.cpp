@@ -20,8 +20,14 @@
 #include "otpch.h"
 
 #include "outputmessage.h"
-#include "connection.h"
 #include "protocol.h"
+#include "scheduler.h"
+
+extern Dispatcher g_dispatcher;
+
+#ifdef __ENABLE_SERVER_DIAGNOSTIC__
+uint32_t OutputMessagePool::OutputMessagePoolCount = OUTPUT_POOL_SIZE;
+#endif
 
 OutputMessage::OutputMessage()
 {
@@ -32,7 +38,6 @@ OutputMessage::OutputMessage()
 
 OutputMessagePool::OutputMessagePool()
 {
-	OTSYS_THREAD_LOCKVARINIT(m_outputPoolLock);
 	for(uint32_t i = 0; i < OUTPUT_POOL_SIZE; ++i)
 	{
 		OutputMessage* msg = new OutputMessage();
@@ -41,31 +46,30 @@ OutputMessagePool::OutputMessagePool()
 		m_allOutputMessages.push_back(msg);
 #endif
 	}
-
 	m_frameTime = OTSYS_TIME();
 }
 
 void OutputMessagePool::startExecutionFrame()
 {
+	//boost::recursive_mutex::scoped_lock lockClass(m_outputPoolLock);
 	m_frameTime = OTSYS_TIME();
 	m_isOpen = true;
 }
 
 OutputMessagePool::~OutputMessagePool()
 {
-	OutputMessageVector::iterator it;
+	InternalOutputMessageList::iterator it;
 	for(it = m_outputMessages.begin(); it != m_outputMessages.end(); ++it)
 		delete *it;
 
 	m_outputMessages.clear();
-	OTSYS_THREAD_LOCKVARRELEASE(m_outputPoolLock);
 }
 
-void OutputMessagePool::send(OutputMessage* msg)
+void OutputMessagePool::send(OutputMessage_ptr msg)
 {
-	OTSYS_THREAD_LOCK(m_outputPoolLock, "");
+	m_outputPoolLock.lock();
 	OutputMessage::OutputMessageState state = msg->getState();
-	OTSYS_THREAD_UNLOCK(m_outputPoolLock, "");
+	m_outputPoolLock.unlock();
 
 	if(state == OutputMessage::STATE_ALLOCATED_NO_AUTOSEND)
 	{
@@ -75,18 +79,11 @@ void OutputMessagePool::send(OutputMessage* msg)
 
 		if(msg->getConnection())
 		{
-			if(msg->getConnection()->send(msg))
+			if(!msg->getConnection()->send(msg))
 			{
-				//Note: if we ever decide to change how the pool works this will have to change
-				OTSYS_THREAD_LOCK(m_outputPoolLock, "");
-				if(msg->getState() != OutputMessage::STATE_FREE)
-					msg->setState(OutputMessage::STATE_WAITING);
-				OTSYS_THREAD_UNLOCK(m_outputPoolLock, "");
-			}
-			else
-			{
+				// Send only fails when connection is closing (or in error state)
+				// This call will free the message
 				msg->getProtocol()->onSendMessage(msg);
-				internalReleaseMessage(msg);
 			}
 		}
 		else
@@ -106,13 +103,13 @@ void OutputMessagePool::send(OutputMessage* msg)
 
 void OutputMessagePool::sendAll()
 {
-	OTSYS_THREAD_LOCK_CLASS lockClass(m_outputPoolLock);
-	OutputMessageVector::iterator it;
+	boost::recursive_mutex::scoped_lock lockClass(m_outputPoolLock);
+	OutputMessageMessageList::iterator it;
 
 	for(it = m_toAddQueue.begin(); it != m_toAddQueue.end();)
 	{
 		//drop messages that are older than 10 seconds
-		if(OTSYS_TIME() - (*it)->getFrame() > 10000)
+		if(OTSYS_TIME() - (*it)->getFrame() > 10 * 1000)
 		{
 			(*it)->getProtocol()->onSendMessage(*it);
 			it = m_toAddQueue.erase(it);
@@ -123,35 +120,31 @@ void OutputMessagePool::sendAll()
 		m_autoSendOutputMessages.push_back(*it);
 		++it;
 	}
+
 	m_toAddQueue.clear();
 
-	for(it = m_autoSendOutputMessages.begin(); it != m_autoSendOutputMessages.end(); )
+	for(it = m_autoSendOutputMessages.begin(); it != m_autoSendOutputMessages.end();)
 	{
+		OutputMessage_ptr omsg = *it;
 		#ifdef __NO_PLAYER_SENDBUFFER__
 		//use this define only for debugging
 		bool v = 1;
 		#else
 		//It will send only messages bigger then 1 kb or with a lifetime greater than 10 ms
-		bool v = (*it)->getMessageLength() > 1024 || (m_frameTime - (*it)->getFrame() > 10);
+		bool v = omsg->getMessageLength() > 1024 || (m_frameTime - omsg->getFrame() > 10);
 		#endif
 		if(v)
 		{
 			#ifdef __DEBUG_NET_DETAIL__
 			std::cout << "Sending message - ALL" << std::endl;
 			#endif
-
-			if((*it)->getConnection())
+			if(omsg->getConnection())
 			{
-				if((*it)->getConnection()->send(*it))
+				if(!omsg->getConnection()->send(omsg))
 				{
-					// Note: if we ever decide to change how the pool works this will have to change
-					if((*it)->getState() != OutputMessage::STATE_FREE)
-						(*it)->setState(OutputMessage::STATE_WAITING);
-				}
-				else
-				{
-					(*it)->getProtocol()->onSendMessage((*it));
-					internalReleaseMessage(*it);
+					// Send only fails when connection is closing (or in error state)
+					// This call will free the message
+					omsg->getProtocol()->onSendMessage(omsg);
 				}
 			}
 			else
@@ -160,11 +153,17 @@ void OutputMessagePool::sendAll()
 				std::cout << "Error: [OutputMessagePool::send] NULL connection." << std::endl;
 				#endif
 			}
-			m_autoSendOutputMessages.erase(it++);
+			it = m_autoSendOutputMessages.erase(it);
 		}
 		else
 			++it;
 	}
+}
+
+void OutputMessagePool::releaseMessage(OutputMessage* msg)
+{
+	g_dispatcher.addTask(
+		createTask(boost::bind(&OutputMessagePool::internalReleaseMessage, this, msg)));
 }
 
 void OutputMessagePool::internalReleaseMessage(OutputMessage* msg)
@@ -190,76 +189,57 @@ void OutputMessagePool::internalReleaseMessage(OutputMessage* msg)
 		std::cout << "No connection found." << std::endl;
 
 	msg->freeMessage();
+
+#ifdef __TRACK_NETWORK__
+	msg->clearTrack();
+#endif
+
+	m_outputPoolLock.lock();
 	m_outputMessages.push_back(msg);
+	m_outputPoolLock.unlock();
 }
 
-void OutputMessagePool::releaseMessage(OutputMessage* msg, bool sent /*= false*/)
-{
-	OTSYS_THREAD_LOCK_CLASS lockClass(m_outputPoolLock);
-	switch(msg->getState())
-	{
-		case OutputMessage::STATE_ALLOCATED:
-		{
-			OutputMessageVector::iterator it =
-				std::find(m_autoSendOutputMessages.begin(), m_autoSendOutputMessages.end(), msg);
-			if(it != m_autoSendOutputMessages.end())
-				m_autoSendOutputMessages.erase(it);
-			internalReleaseMessage(msg);
-			break;
-		}
-		case OutputMessage::STATE_ALLOCATED_NO_AUTOSEND:
-			internalReleaseMessage(msg);
-			break;
-		case OutputMessage::STATE_WAITING:
-			if(!sent)
-				std::cout << "Error: [OutputMessagePool::releaseMessage] Releasing STATE_WAITING OutputMessage." << std::endl;
-			else
-				internalReleaseMessage(msg);
-			break;
-		case OutputMessage::STATE_FREE:
-			std::cout << "Error: [OutputMessagePool::releaseMessage] Releasing STATE_FREE OutputMessage." << std::endl;
-			break;
-		default:
-			std::cout << "Error: [OutputMessagePool::releaseMessage] Releasing STATE_?(" << msg->getState() <<") OutputMessage." << std::endl;
-			break;
-	}
-}
-
-OutputMessage* OutputMessagePool::getOutputMessage(Protocol* protocol, bool autosend /*= true*/)
+OutputMessage_ptr OutputMessagePool::getOutputMessage(Protocol* protocol, bool autosend /*= true*/)
 {
 	#ifdef __DEBUG_NET_DETAIL__
 	std::cout << "request output message - auto = " << autosend << std::endl;
 	#endif
 
 	if(!m_isOpen)
-		return NULL;
+		return OutputMessage_ptr();
 
-	OTSYS_THREAD_LOCK_CLASS lockClass(m_outputPoolLock);
+	boost::recursive_mutex::scoped_lock lockClass(m_outputPoolLock);
 
 	if(protocol->getConnection() == NULL)
-		return NULL;
+		return OutputMessage_ptr();
 
 	if(m_outputMessages.empty())
 	{
 		OutputMessage* msg = new OutputMessage();
 		m_outputMessages.push_back(msg);
+
+#ifdef __ENABLE_SERVER_DIAGNOSTIC__
+		OutputMessagePoolCount++;
+#endif
+
 #ifdef __TRACK_NETWORK__
 		m_allOutputMessages.push_back(msg);
 #endif
 	}
 
-	OutputMessage* outputmessage;
-	outputmessage = m_outputMessages.back();
+	OutputMessage_ptr outputmessage;
+	outputmessage.reset(m_outputMessages.back(),
+		boost::bind(&OutputMessagePool::releaseMessage, this, _1));
+
 	m_outputMessages.pop_back();
 
 	configureOutputMessage(outputmessage, protocol, autosend);
 	return outputmessage;
 }
 
-void OutputMessagePool::configureOutputMessage(OutputMessage* msg, Protocol* protocol, bool autosend)
+void OutputMessagePool::configureOutputMessage(OutputMessage_ptr msg, Protocol* protocol, bool autosend)
 {
 	TRACK_MESSAGE(msg);
-
 	msg->Reset();
 	if(autosend)
 	{
@@ -269,7 +249,7 @@ void OutputMessagePool::configureOutputMessage(OutputMessage* msg, Protocol* pro
 	else
 		msg->setState(OutputMessage::STATE_ALLOCATED_NO_AUTOSEND);
 
-	Connection* connection = protocol->getConnection();
+	Connection_ptr connection = protocol->getConnection();
 	assert(connection != NULL);
 
 	msg->setProtocol(protocol);
@@ -285,7 +265,9 @@ void OutputMessagePool::configureOutputMessage(OutputMessage* msg, Protocol* pro
 	msg->setFrame(m_frameTime);
 }
 
-void OutputMessagePool::addToAutoSend(OutputMessage* msg)
+void OutputMessagePool::addToAutoSend(OutputMessage_ptr msg)
 {
+	m_outputPoolLock.lock();
 	m_toAddQueue.push_back(msg);
+	m_outputPoolLock.unlock();
 }

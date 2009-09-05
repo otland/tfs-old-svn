@@ -33,7 +33,7 @@
 
 extern RSA g_RSA;
 
-void Protocol::onSendMessage(OutputMessage* msg)
+void Protocol::onSendMessage(OutputMessage_ptr msg)
 {
 	#ifdef __DEBUG_NET_DETAIL__
 	std::cout << "Protocol::onSendMessage" << std::endl;
@@ -53,7 +53,7 @@ void Protocol::onSendMessage(OutputMessage* msg)
 	}
 
 	if(msg == m_outputBuffer)
-		m_outputBuffer = NULL;
+		m_outputBuffer.reset();
 }
 
 void Protocol::onRecvMessage(NetworkMessage& msg)
@@ -72,7 +72,7 @@ void Protocol::onRecvMessage(NetworkMessage& msg)
 	parsePacket(msg);
 }
 
-OutputMessage* Protocol::getOutputBuffer()
+OutputMessage_ptr Protocol::getOutputBuffer()
 {
 	if(m_outputBuffer && m_outputBuffer->getMessageLength() < NETWORKMESSAGE_MAXSIZE - 4096)
 		return m_outputBuffer;
@@ -82,7 +82,7 @@ OutputMessage* Protocol::getOutputBuffer()
 		return m_outputBuffer;
 	}
 	else
-		return NULL;
+		return OutputMessage_ptr();
 }
 
 void Protocol::releaseProtocol()
@@ -101,10 +101,7 @@ void Protocol::deleteProtocolTask()
 {
 	//dispather thread
 	assert(m_refCount == 0);
-	setConnection(NULL);
-
-	if(m_outputBuffer)
-		OutputMessagePool::getInstance()->releaseMessage(m_outputBuffer);
+	setConnection(Connection_ptr());
 
 	delete this;
 }

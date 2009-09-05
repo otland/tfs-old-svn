@@ -148,7 +148,7 @@ void ServicePort::onAccept(boost::asio::ip::tcp::socket* socket, const boost::sy
 
 		if(remote_ip != 0/* && g_bans.acceptConnection(remote_ip)*/)
 		{
-			Connection* connection = ConnectionManager::getInstance()->createConnection(socket, m_io_service, shared_from_this());
+			Connection_ptr connection = ConnectionManager::getInstance()->createConnection(socket, m_io_service, shared_from_this());
 			if(m_services.front()->is_single_socket())
 				connection->acceptConnection(m_services.front()->make_protocol(connection));
 			else
@@ -161,27 +161,23 @@ void ServicePort::onAccept(boost::asio::ip::tcp::socket* socket, const boost::sy
 			socket->close(error);
 			delete socket;
 		}
-
 		accept();
+	}
+	else if(error != boost::asio::error::operation_aborted)
+	{
+		if(!m_pendingStart)
+		{
+			close();
+			m_pendingStart = true;
+			g_scheduler.addEvent(createSchedulerTask(15000,
+				boost::bind(&ServicePort::openAcceptor, boost::weak_ptr<ServicePort>(shared_from_this()), m_serverPort)));
+		}
 	}
 	else
 	{
-		if(error != boost::asio::error::operation_aborted)
-		{
-			if(!m_pendingStart)
-			{
-				close();
-				m_pendingStart = true;
-				g_scheduler.addEvent(createSchedulerTask(15000,
-					boost::bind(&ServicePort::open, this, m_serverPort)));
-			}
-		}
-		else
-		{
-			#ifdef __DEBUG_NET__
-			std::cout << "Error: [ServicePort::onAccept] Operation aborted." << std::endl;
-			#endif
-		}
+		#ifdef __DEBUG_NET__
+		std::cout << "Error: [ServicePort::onAccept] Operation aborted." << std::endl;
+		#endif
 	}
 }
 
@@ -197,10 +193,10 @@ Protocol* ServicePort::make_protocol(bool checksummed, NetworkMessage& msg) cons
 		if(checksummed)
 		{
 			if(service->is_checksummed())
-				return service->make_protocol(NULL);
+				return service->make_protocol(Connection_ptr());
 		}
 		else if(!service->is_checksummed())
-			return service->make_protocol(NULL);
+			return service->make_protocol(Connection_ptr());
 	}
 	return NULL;
 }
@@ -208,6 +204,15 @@ Protocol* ServicePort::make_protocol(bool checksummed, NetworkMessage& msg) cons
 void ServicePort::onStopServer()
 {
 	close();
+}
+
+void ServicePort::openAcceptor(boost::weak_ptr<ServicePort> weak_service, uint16_t port)
+{
+	if(weak_service.expired())
+		return;
+
+	if(ServicePort_ptr service = weak_service.lock())
+		service->open(port);
 }
 
 void ServicePort::open(uint16_t port)
@@ -229,7 +234,7 @@ void ServicePort::open(uint16_t port)
 
 		m_pendingStart = true;
 		g_scheduler.addEvent(createSchedulerTask(15000,
-			boost::bind(&ServicePort::open, this, port)));
+			boost::bind(&ServicePort::openAcceptor, boost::weak_ptr<ServicePort>(shared_from_this()), port)));
 	}
 }
 

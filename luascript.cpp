@@ -1129,6 +1129,9 @@ void LuaScriptInterface::registerFunctions()
 	//getPlayerLookDir(cid)
 	lua_register(m_luaState, "getPlayerLookDir", LuaScriptInterface::luaGetPlayerLookDir);
 
+	//setCreatureLookDir(cid, dir)
+	lua_register(m_luaState, "doCreatureSetLookDir", LuaScriptInterface::luaDoCreatureSetLookDir);
+
 	//getPlayerGUID(cid)
 	lua_register(m_luaState, "getPlayerGUID", LuaScriptInterface::luaGetPlayerGUID);
 
@@ -1363,7 +1366,7 @@ void LuaScriptInterface::registerFunctions()
 	//doPlayerRemoveItem(cid, itemid, count, <optional> subtype)
 	lua_register(m_luaState, "doPlayerRemoveItem", LuaScriptInterface::luaDoPlayerRemoveItem);
 
-	//doPlayerAddExp(cid, exp)
+	//doPlayerAddExp(cid, exp, <optional> usemultiplier, <optional> sendtext)
 	lua_register(m_luaState, "doPlayerAddExp", LuaScriptInterface::luaDoPlayerAddExp);
 
 	//doPlayerSetGuildId(cid, id)
@@ -2646,7 +2649,7 @@ int32_t LuaScriptInterface::luaDoPlayerAddItem(lua_State* L)
 	if(parameters > 4)
 	{
 		//subtype already supplied, count then is the amount
-		itemCount = count;
+		itemCount = std::max((int32_t)1, (int32_t)count);
 	}
 	else
 	{
@@ -2658,7 +2661,7 @@ int32_t LuaScriptInterface::luaDoPlayerAddItem(lua_State* L)
 			subType = count;
 		}
 		else
-			itemCount = count;
+			itemCount = std::max((int32_t)1, (int32_t)count);
 	}
 
 	while(itemCount > 0)
@@ -3395,7 +3398,7 @@ int32_t LuaScriptInterface::luaDoCreateItem(lua_State* L)
 		subType = count;
 	}
 	else
-		itemCount = count;
+		itemCount = std::max((int32_t)1, (int32_t)count);
 
 	while(itemCount > 0)
 	{
@@ -3819,6 +3822,28 @@ int32_t LuaScriptInterface::luaDoPlayerAddMoney(lua_State* L)
 	else
 	{
 		reportErrorFunc(getErrorDesc(LUA_ERROR_PLAYER_NOT_FOUND));
+		lua_pushnumber(L, LUA_ERROR);
+	}
+	return 1;
+}
+
+int32_t LuaScriptInterface::luaDoCreatureSetLookDir(lua_State* L)
+{
+	//doCreatureSetLookDir(cid, dir)
+	Direction dir = (Direction)popNumber(L);
+	uint32_t cid = popNumber(L);
+
+	ScriptEnviroment* env = getScriptEnv();
+
+	Creature* creature = env->getCreatureByUID(cid);
+	if(creature)
+	{
+		g_game.internalCreatureTurn(creature, dir);
+		lua_pushnumber(L, LUA_NO_ERROR);
+	}
+	else
+	{
+		reportErrorFunc(getErrorDesc(LUA_ERROR_CREATURE_NOT_FOUND));
 		lua_pushnumber(L, LUA_ERROR);
 	}
 	return 1;
@@ -4260,7 +4285,17 @@ int32_t LuaScriptInterface::luaGetPlayerLight(lua_State* L)
 
 int32_t LuaScriptInterface::luaDoPlayerAddExp(lua_State* L)
 {
-	//doPlayerAddExp(cid,exp)
+	//doPlayerAddExp(cid,exp,usemultiplier,sendtext)
+	int32_t parameters = lua_gettop(L);
+
+	bool sendText = false;
+	if(parameters > 3)
+		sendText = popNumber(L) == 1;
+
+	bool useMult = false;
+	if(parameters > 2)
+		useMult = popNumber(L) == 1;
+
 	uint64_t exp = popNumber(L);
 	uint32_t cid = popNumber(L);
 
@@ -4270,7 +4305,7 @@ int32_t LuaScriptInterface::luaDoPlayerAddExp(lua_State* L)
 	{
 		if(exp > 0)
 		{
-			player->addExperience(exp);
+			player->addExperience(exp, useMult, sendText);
 			lua_pushnumber(L, LUA_TRUE);
 		}
 		else
@@ -6367,7 +6402,7 @@ int32_t LuaScriptInterface::luaDoAddContainerItem(lua_State* L)
 		subType = count;
 	}
 	else
-		itemCount = count;
+		itemCount = std::max((int32_t)1, (int32_t)count);
 
 	while(itemCount > 0)
 	{
@@ -7323,6 +7358,16 @@ int32_t LuaScriptInterface::luaGetPartyMembers(lua_State* L)
 
 	lua_pushboolean(L, LUA_ERROR);
 	return 1;
+}
+
+std::string LuaScriptInterface::escapeString(const std::string& string)
+{
+	std::string s = string;
+	replaceString(s, "\\", "\\\\");
+	replaceString(s, "\"", "\\\"");
+	replaceString(s, "'", "\\'");
+	replaceString(s, "[[", "\\[[");
+	return s;
 }
 
 const luaL_Reg LuaScriptInterface::luaBitReg[] =

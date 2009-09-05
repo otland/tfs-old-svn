@@ -197,7 +197,7 @@ class Map
 		  * Set a single tile.
 		  * \param a tile to set for the position
 		  */
-		void setTile(uint16_t _x, uint16_t _y, uint16_t _z, Tile* newTile);
+		void setTile(int32_t _x, int32_t _y, int32_t _z, Tile* newTile);
 		void setTile(const Position& pos, Tile* newTile)
 		{
 			setTile(pos.x, pos.y, pos.z, newTile);

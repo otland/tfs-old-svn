@@ -140,6 +140,7 @@ void mainLoader(
 #endif
 	ServiceManager* servicer
 );
+void badAllocationHandler();
 
 #ifndef __CONSOLE__
 void serverMain(void* param)
@@ -147,6 +148,9 @@ void serverMain(void* param)
 int main(int argc, char *argv[])
 #endif
 {
+	// Setup bad allocation handler
+	std::set_new_handler(badAllocationHandler);
+
 	#ifdef WIN32
 	#ifndef __CONSOLE__
 	std::cout.rdbuf(&logger);
@@ -156,6 +160,7 @@ int main(int argc, char *argv[])
 	OTSYS_CREATE_THREAD(allocatorStatsThread, NULL);
 	#endif
 
+	// Provides stack traces when the server crashes, if compiled in.
 	#ifdef __EXCEPTION_TRACER__
 	ExceptionHandler mainExceptionHandler;
 	mainExceptionHandler.InstallHandler();
@@ -208,6 +213,15 @@ int main(int argc, char *argv[])
 #else
 	return 0;
 #endif
+}
+
+void badAllocationHandler()
+{
+	// Use functions that only use stack allocation
+	puts("Allocation failed, server out of memory.\nDecrese the size of your map or compile in 64-bit mode.");
+	char buf[1024];
+	fgets(buf, 1024, stdin);
+	exit(-1);
 }
 
 #ifdef __CONSOLE__

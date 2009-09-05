@@ -690,6 +690,29 @@ uint32_t Container::__getItemTypeCount(uint16_t itemId, int32_t subType /*= -1*/
 	return count;
 }
 
+std::map<uint32_t, uint32_t>& Container::__getAllItemTypeCount(
+	std::map<uint32_t, uint32_t>& countMap, bool itemCount /*= true*/) const
+{
+	Item* item = NULL;
+
+	for(ItemList::const_iterator it = itemlist.begin(); it != itemlist.end(); ++it)
+	{
+		item = (*it);
+
+		if(itemCount)
+			countMap[item->getID()] += item->getItemCount();
+		else
+		{
+			if(item->isRune())
+				countMap[item->getID()] += item->getCharges();
+			else
+				countMap[item->getID()] += item->getItemCount();
+		}
+	}
+
+	return countMap;
+}
+
 Thing* Container::__getThing(uint32_t index) const
 {
 	if(index < 0 || index > size())

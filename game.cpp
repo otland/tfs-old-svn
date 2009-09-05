@@ -1011,6 +1011,13 @@ ReturnValue Game::internalMoveCreature(Creature* creature, Cylinder* fromCylinde
 	while((subCylinder = toCylinder->__queryDestination(index, creature, &toItem, flags)) != toCylinder)
 	{
 		toCylinder->getTile()->moveCreature(creature, subCylinder);
+
+		if(creature->getParent() != subCylinder)
+		{
+			//could happen if a script move the creature
+			break;
+		}
+
 		toCylinder = subCylinder;
 		flags = 0;
 
@@ -2857,7 +2864,7 @@ bool Game::playerLookInTrade(uint32_t playerId, bool lookAtCounterOffer, int ind
 	int32_t lookDistance = std::max(std::abs(player->getPosition().x - tradeItem->getPosition().x),
 		std::abs(player->getPosition().y - tradeItem->getPosition().y));
 
-	char buffer[600];
+	char buffer[800];
 	if(index == 0)
 	{
 		sprintf(buffer, "You see %s", tradeItem->getDescription(lookDistance).c_str());
@@ -2979,7 +2986,7 @@ bool Game::playerPurchaseItem(uint32_t playerId, uint16_t spriteId, uint8_t coun
 		return false;
 
 	const ItemType& it = Item::items.getItemIdByClientId(spriteId);
-	if(it.id == 0 || !player->hasShopItemForSale(it.id))
+	if(it.id == 0)
 		return false;
 
 	uint8_t subType = 0;
@@ -2991,6 +2998,9 @@ bool Game::playerPurchaseItem(uint32_t playerId, uint16_t spriteId, uint8_t coun
 	}
 	else
 		subType = count;
+
+	if(!player->hasShopItemForSale(it.id, subType))
+		return false;
 
 	merchant->onPlayerTrade(player, SHOPEVENT_BUY, onBuy, it.id, subType, amount, ignoreCap, inBackpacks);
 	return true;
@@ -3713,6 +3723,9 @@ void Game::checkCreatureAttack(uint32_t creatureId)
 
 void Game::addCreatureCheck(Creature* creature)
 {
+	if(creature->isRemoved())
+		return;
+
 	creature->creatureCheck = true;
 	if(creature->checkCreatureVectorIndex >= 0)
 		return; //Already in a vector
@@ -3738,20 +3751,10 @@ void Game::checkCreatures()
 	std::vector<Creature*>::iterator it;
 
 	//add any new creatures
-	for(it = toAddCheckCreatureVector.begin(); it != toAddCheckCreatureVector.end();)
+	for(it = toAddCheckCreatureVector.begin(); it != toAddCheckCreatureVector.end(); ++it)
 	{
 		creature = (*it);
-		if(creature->creatureCheck)
-		{
-			checkCreatureVectors[creature->checkCreatureVectorIndex].push_back(creature);
-			++it;
-		}
-		else
-		{
-			FreeThing(creature);
-			creature->checkCreatureVectorIndex = -1;
-			it = toAddCheckCreatureVector.erase(it);
-		}
+		checkCreatureVectors[creature->checkCreatureVectorIndex].push_back(creature);
 	}
 	toAddCheckCreatureVector.clear();
 
@@ -3778,9 +3781,9 @@ void Game::checkCreatures()
 		}
 		else
 		{
-			FreeThing(creature);
 			creature->checkCreatureVectorIndex = -1;
 			it = checkCreatureVector.erase(it);
+			FreeThing(creature);
 		}
 	}
 	cleanup();
@@ -4939,6 +4942,7 @@ bool Game::violationWindow(uint32_t playerId, std::string targetPlayerName, int3
 			}
 			else
 				isNotation = true;
+
 			break;
 		}
 
@@ -4950,6 +4954,7 @@ bool Game::violationWindow(uint32_t playerId, std::string targetPlayerName, int3
 
 		case 3:
 		{
+			account.warnings++;
 			if(account.warnings > 3)
 			{
 				action = 7;
@@ -4957,11 +4962,11 @@ bool Game::violationWindow(uint32_t playerId, std::string targetPlayerName, int3
 			}
 			else
 			{
-				account.warnings++;
 				if(account.warnings == 3)
 					IOBan::getInstance()->addAccountBan(account.accnumber, (time(NULL) + (g_config.getNumber(ConfigManager::FINAL_BAN_DAYS) * 86400)), reason, action, banComment, player->getGUID());
 				else
 					IOBan::getInstance()->addAccountBan(account.accnumber, (time(NULL) + (g_config.getNumber(ConfigManager::BAN_DAYS) * 86400)), reason, action, banComment, player->getGUID());
+
 				IOBan::getInstance()->addPlayerNamelock(guid, time(NULL), reason, action, banComment, player->getGUID());
 			}
 			break;
@@ -4977,6 +4982,7 @@ bool Game::violationWindow(uint32_t playerId, std::string targetPlayerName, int3
 			else
 			{
 				action = 7;
+				account.warnings++;
 				IOBan::getInstance()->addAccountDeletion(account.accnumber, time(NULL), reason, action, banComment, player->getGUID());
 			}
 			break;
@@ -4993,6 +4999,7 @@ bool Game::violationWindow(uint32_t playerId, std::string targetPlayerName, int3
 			else
 			{
 				action = 7;
+				account.warnings++;
 				IOBan::getInstance()->addAccountDeletion(account.accnumber, time(NULL), reason, action, banComment, player->getGUID());
 			}
 			break;

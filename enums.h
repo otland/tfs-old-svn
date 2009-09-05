@@ -214,6 +214,19 @@ enum PlayerSex_t
 	PLAYERSEX_MALE = 1
 };
 
+enum Vocation_t
+{
+	VOCATION_NONE = 0,
+	VOCATION_SORCERER = 1,
+	VOCATION_DRUID = 2,
+	VOCATION_PALADIN = 3,
+	VOCATION_KNIGHT = 4,
+	VOCATION_MASTERSORCERER = 5,
+	VOCATION_ELDERDRUID = 6,
+	VOCATION_ROYALPALADIN = 7,
+	VOCATION_ELITEKNIGHT = 8
+};
+
 enum CharacterTypes_t
 {
 	PLAYER_MALE_1 = 0x80,
@@ -273,10 +286,9 @@ struct LightInfo
 struct ShopInfo
 {
 	uint32_t itemId;
-	uint32_t subType;
+	int32_t subType;
 	uint32_t buyPrice;
 	uint32_t sellPrice;
-	std::string itemName;
 
 	ShopInfo()
 	{
@@ -284,12 +296,16 @@ struct ShopInfo
 		subType = 1;
 		buyPrice = 0;
 		sellPrice = 0;
-		itemName = "";
-	}
+	};
 
-	ShopInfo(uint32_t _itemId, int32_t _subType = 0, uint32_t _buyPrice = 0, uint32_t _sellPrice = 0,
-		const std::string& _itemName = "") : itemId(_itemId), subType(_subType), buyPrice(_buyPrice),
-		sellPrice(_sellPrice), itemName(_itemName) {}
+	ShopInfo(uint32_t _itemId, int32_t _subType = 0,
+		uint32_t _buyPrice = 0, uint32_t _sellPrice = 0)
+	{
+		itemId = _itemId;
+		subType = _subType;
+		buyPrice = _buyPrice;
+		sellPrice = _sellPrice;
+	};
 };
 
 typedef std::list<ShopInfo> ShopInfoList;

@@ -56,7 +56,7 @@ std::string IOGuild::getGuildNameById(uint32_t id)
 {
 	Database* db = Database::getInstance();
 	if(!db->connect())
-		return false;
+		return "";
 
 	DBQuery query;
 	DBResult result;
@@ -100,14 +100,14 @@ std::string IOGuild::getRankName(int16_t guildLevel, uint32_t guildId)
 {
 	Database* db = Database::getInstance();
 	if(!db->connect())
-		return false;
+		return "";
 
 	DBQuery query;
 	DBResult result;
 
 	query << "SELECT `name` FROM `guild_ranks` WHERE `level` = " << guildLevel << " AND `guild_id` = " << guildId << " LIMIT 1;";
 	if(!db->storeQuery(query, result))
-		return false;
+		return "";
 
 	return result.getDataString("name");
 }

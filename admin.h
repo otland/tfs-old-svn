@@ -188,7 +188,7 @@ class ProtocolAdmin : public Protocol
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
 		static uint32_t protocolAdminCount;
 #endif
-		ProtocolAdmin(Connection* connection);
+		ProtocolAdmin(Connection_ptr connection);
 		virtual ~ProtocolAdmin();
 
 		virtual int32_t getProtocolId() {return 0xFE;}

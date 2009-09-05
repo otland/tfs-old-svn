@@ -776,7 +776,7 @@ bool IOLoginData::savePlayer(Player* player, bool preSave)
 		query << ", `guildnick` = '" << Database::escapeString(player->guildNick) << "', ";
 		query << "`rank_id` = " << IOGuild::getInstance()->getRankIdByGuildIdAndLevel(player->getGuildId(), player->getGuildLevel()) << " ";
 	}
-	query << " WHERE `id` = " << player->getGUID() << " LIMIT 1;";
+	query << " WHERE `id` = " << player->getGUID() << db->getUpdateQueryLimit() << ";";
 
 	if(!db->executeQuery(query))
 		return false;
@@ -1238,22 +1238,18 @@ bool IOLoginData::createCharacter(uint32_t accountNumber, std::string characterN
 	uint16_t healthMax = 150, manaMax = 0, capMax = 400, lookType = 136;
 	if(sex == PLAYERSEX_MALE)
 		lookType = 128;
-	uint32_t level = g_config.getNumber(ConfigManager::START_LEVEL);
 
 	uint64_t exp = 0;
+	const uint32_t level = g_config.getNumber(ConfigManager::START_LEVEL);
 	if(level > 1)
 		exp = Player::getExpForLevel(level);
 
-	uint32_t tmpLevel = level - 1;
+	uint32_t tmpLevel = std::min((uint32_t)7, level - 1);
 	if(tmpLevel > 0)
 	{
-		if(tmpLevel > 7)
-			tmpLevel = 7;
-
 		healthMax += rookVoc->getHPGain() * tmpLevel;
 		manaMax += rookVoc->getManaGain() * tmpLevel;
 		capMax += rookVoc->getCapGain() * tmpLevel;
-
 		if(level > 8)
 		{
 			tmpLevel = level - 8;

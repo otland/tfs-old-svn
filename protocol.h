@@ -22,16 +22,19 @@
 #define __OTSERV_PROTOCOL_H__
 
 #include <boost/utility.hpp>
+#include <boost/shared_ptr.hpp>
 
 class NetworkMessage;
 class OutputMessage;
 class Connection;
+typedef boost::shared_ptr<OutputMessage> OutputMessage_ptr;
+typedef boost::shared_ptr<Connection> Connection_ptr;
 class RSA;
 
 class Protocol : boost::noncopyable
 {
 	public:
-		Protocol(Connection* connection)
+		Protocol(Connection_ptr connection)
 		{
 			m_connection = connection;
 			m_encryptionEnabled = false;
@@ -41,7 +44,6 @@ class Protocol : boost::noncopyable
 			m_key[1] = 0;
 			m_key[2] = 0;
 			m_key[3] = 0;
-			m_outputBuffer = NULL;
 			m_refCount = 0;
 		}
 
@@ -51,14 +53,14 @@ class Protocol : boost::noncopyable
 
 		virtual void parsePacket(NetworkMessage& msg){}
 
-		void onSendMessage(OutputMessage* msg);
+		void onSendMessage(OutputMessage_ptr msg);
 		void onRecvMessage(NetworkMessage& msg);
 		virtual void onRecvFirstMessage(NetworkMessage& msg) = 0;
 		virtual void onConnect() {}
 
-		Connection* getConnection() { return m_connection;}
-		const Connection* getConnection() const { return m_connection;}
-		void setConnection(Connection* connection) { m_connection = connection;}
+		Connection_ptr getConnection() { return m_connection;}
+		const Connection_ptr getConnection() const { return m_connection;}
+		void setConnection(Connection_ptr connection) { m_connection = connection;}
 
 		uint32_t getIP() const;
 
@@ -67,7 +69,7 @@ class Protocol : boost::noncopyable
 
 	protected:
 		//Use this function for autosend messages only
-		OutputMessage* getOutputBuffer();
+		OutputMessage_ptr getOutputBuffer();
 
 		void enableXTEAEncryption() { m_encryptionEnabled = true; }
 		void disableXTEAEncryption() { m_encryptionEnabled = false; }
@@ -87,8 +89,8 @@ class Protocol : boost::noncopyable
 		friend class Connection;
 
 	private:
-		OutputMessage* m_outputBuffer;
-		Connection* m_connection;
+		OutputMessage_ptr m_outputBuffer;
+		Connection_ptr m_connection;
 		bool m_encryptionEnabled;
 		bool m_checksumEnabled;
 		bool m_rawMessages;

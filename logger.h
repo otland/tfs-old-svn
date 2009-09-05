@@ -42,7 +42,7 @@
 #include <string>
 #include <map>
 
-enum log_type
+enum eLogType
 {
 	LOGTYPE_EVENT,
 	LOGTYPE_WARNING,
@@ -58,7 +58,7 @@ public:
 		return &instance;
 	}
 
-	void logMessage(const char* channel, log_type type, int32_t level, std::string message, const char* func);
+	void logMessage(const char* channel, eLogType type, int32_t level, std::string message, const char* func);
 private:
 	FILE* m_file;
 	Logger();

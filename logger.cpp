@@ -20,15 +20,13 @@
 
 #include "otpch.h"
 
-#include <iostream>
-
 #include "logger.h"
+#include <iostream>
 #include "tools.h"
 
 Logger::Logger()
 {
 	m_file = fopen("data/logs/otadmin.log", "a");
-
 	if(!m_file)
 		m_file = stderr;
 }
@@ -39,7 +37,7 @@ Logger::~Logger()
 		fclose(m_file);
 }
 
-void Logger::logMessage(const char* channel, log_type type, int32_t level, std::string message, const char* func)
+void Logger::logMessage(const char* channel, eLogType type, int32_t level, std::string message, const char* func)
 {
 	fprintf(m_file, "%s", formatDate(time(NULL)).c_str());
 

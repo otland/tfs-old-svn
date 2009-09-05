@@ -25,7 +25,7 @@
 
 #include <string>
 #include <iostream>
-#include <cmath>
+#include <sstream>
 
 #include "networkmessage.h"
 
@@ -57,7 +57,7 @@ std::string NetworkMessage::GetString()
 
 std::string NetworkMessage::GetRaw()
 {
-	uint16_t stringlen = m_MsgSize - m_ReadPos;
+	uint16_t stringlen = m_MsgSize- m_ReadPos;
 	if(stringlen >= (NETWORKMESSAGE_MAXSIZE - m_ReadPos))
 		return std::string();
 
@@ -74,13 +74,12 @@ Position NetworkMessage::GetPosition()
 	pos.z = GetByte();
 	return pos;
 }
-
 /******************************************************************************/
 
 void NetworkMessage::AddString(const char* value)
 {
 	uint32_t stringlen = (uint32_t)strlen(value);
-	if(!canAdd(stringlen + 2) || stringlen > 8192)
+	if(!canAdd(stringlen+2) || stringlen > 8192)
 		return;
 
 	AddU16(stringlen);
@@ -133,6 +132,7 @@ void NetworkMessage::AddItem(uint16_t id, uint8_t count)
 void NetworkMessage::AddItem(const Item* item)
 {
 	const ItemType &it = Item::items[item->getID()];
+
 	AddU16(it.clientId);
 
 	if(it.stackable || it.isRune())

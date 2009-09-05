@@ -330,6 +330,7 @@ class LuaScriptInterface
 		static std::string getFieldString(lua_State* L, const char* key);
 		static void setFieldBool(lua_State* L, const char* index, bool val);
 		static bool getFieldBool(lua_State* L, const char* key);
+		static std::string escapeString(const std::string& string);
 
 	protected:
 		virtual bool closeState();
@@ -472,6 +473,7 @@ class LuaScriptInterface
 		static int32_t luaGetPlayerGuildNick(lua_State* L);
 		static int32_t luaGetPlayerSex(lua_State* L);
 		static int32_t luaGetPlayerLookDir(lua_State* L);
+		static int32_t luaDoCreatureSetLookDir(lua_State* L);
 		static int32_t luaGetPlayerBlessing(lua_State* L);
 		static int32_t luaDoPlayerAddBlessing(lua_State* L);
 		static int32_t luaGetPlayerGUID(lua_State* L);

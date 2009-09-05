@@ -130,11 +130,11 @@ Tile* Map::getTile(const Position& pos)
 	return getTile(pos.x, pos.y, pos.z);
 }
 
-void Map::setTile(uint16_t x, uint16_t y, uint16_t z, Tile* newTile)
+void Map::setTile(int32_t x, int32_t y, int32_t z, Tile* newTile)
 {
-	if(z >= MAP_MAX_LAYERS)
+	if(x < 0 || x >= 0xFFFF || y < 0 || y >= 0xFFFF || z  < 0 || z >= MAP_MAX_LAYERS)
 	{
-		std::cout << "ERROR: Attempt to set tile on invalid Z coordinate " << int(z) << "!" << std::endl;
+		std::cout << "ERROR: Attempt to set tile on invalid coordinate " << Position(x, y, z) << "!" << std::endl;
 		return;
 	}
 
@@ -600,7 +600,7 @@ bool Map::checkSightLine(const Position& fromPos, const Position& toPos) const
 	y = start.y;
 	z = start.z;
 
-	int32_t lastrx = x, lastry = y, lastrz = z;
+	int32_t lastrx = 0, lastry = 0, lastrz = 0;
 
 	for(; x != end.x + sx; x += sx)
 	{
@@ -620,8 +620,15 @@ bool Map::checkSightLine(const Position& fromPos, const Position& toPos) const
 				break;
 		}
 
-		if(!(toPos.x == rx && toPos.y == ry && toPos.z == rz) &&
-			!(fromPos.x == rx && fromPos.y == ry && fromPos.z == rz))
+		if(lastrx == 0 && lastry == 0 && lastrz == 0)
+		{
+			//first time initialization
+			lastrx = rx; lastry = ry; lastrz = rz;
+		}
+
+		if(lastrz != rz ||
+			(!(toPos.x == rx && toPos.y == ry && toPos.z == rz) &&
+			!(fromPos.x == rx && fromPos.y == ry && fromPos.z == rz)))
 		{
 			if(lastrz != rz)
 			{
