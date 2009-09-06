@@ -1116,7 +1116,7 @@ bool Monster::onDeath()
 	clearFriendList();
 
 	setAttackedCreature(NULL);
-	setIdle(true);
+	onIdleStatus();
 	if(raid)
 	{
 		raid->unRef();
