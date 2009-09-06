@@ -43,6 +43,17 @@ typedef boost::shared_ptr<ServicePort> ServicePort_ptr;
 #define PRINT_ASIO_ERROR(x)
 #endif
 
+struct LoginBlock
+{
+	int32_t lastLogin, lastProtocol, loginsAmount;
+};
+
+struct ConnectBlock
+{
+	uint32_t count;
+	uint64_t startTime, blockTime;
+};
+
 class Protocol;
 class ConnectionManager
 {
@@ -57,6 +68,11 @@ class ConnectionManager
 		Connection_ptr createConnection(boost::asio::ip::tcp::socket* socket,
 			boost::asio::io_service& io_service, ServicePort_ptr servicers);
 		void releaseConnection(Connection_ptr connection);
+
+		bool isDisabled(uint32_t clientIp, int32_t protocolId);
+		void addAttempt(uint32_t clientIp, int32_t protocolId, bool success);
+
+		bool acceptConnection(uint32_t clientIp); 
 		void shutdown();
 
 	protected:
