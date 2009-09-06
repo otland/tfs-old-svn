@@ -3655,12 +3655,11 @@ bool Player::onKilledCreature(Creature* target, uint32_t& flags)
 		g_config.getNumber(ConfigManager::HUNTING_DURATION))))
 		addCondition(condition);
 
-	if(hasFlag(PlayerFlag_NotGainInFight) || !hasBitSet((uint32_t)KILLFLAG_JUSTIFY, flags))
+	if(hasFlag(PlayerFlag_NotGainInFight) || !hasBitSet((uint32_t)KILLFLAG_JUSTIFY, flags) || getZone() != target->getZone())
 		return true;
 
 	Player* targetPlayer = target->getPlayer();
-	if(!targetPlayer || Combat::isInPvpZone(this, targetPlayer) || getZone() != target->getZone()
-		|| !hasCondition(CONDITION_INFIGHT) || isPartner(targetPlayer))
+	if(!targetPlayer || Combat::isInPvpZone(this, targetPlayer) || !hasCondition(CONDITION_INFIGHT) || isPartner(targetPlayer))
 		return true;
 
 	if(!targetPlayer->hasAttacked(this) && target->getSkull() == SKULL_NONE
