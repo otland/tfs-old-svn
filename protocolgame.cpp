@@ -1806,17 +1806,17 @@ void ProtocolGame::sendContainer(uint32_t cid, const Container* container, bool 
 	}
 }
 
-void ProtocolGame::sendShop(const ShopInfoList& itemList)
+void ProtocolGame::sendShop(const ShopInfoList& shop)
 {
 	NetworkMessage_ptr msg = getOutputBuffer();
 	if(msg)
 	{
 		TRACK_MESSAGE(msg);
 		msg->AddByte(0x7A);
-		msg->AddByte(std::min(itemList.size(), (size_t)255));
+		msg->AddByte(std::min(shop.size(), (size_t)255));
 
-		ShopInfoList::const_iterator it = itemList.begin();
-		for(uint32_t i = 0; it != itemList.end() && i < 255; ++it, ++i)
+		ShopInfoList::const_iterator it = shop.begin();
+		for(uint32_t i = 0; it != shop.end() && i < 255; ++it, ++i)
 			AddShopItem(msg, (*it));
 	}
 }
@@ -1831,17 +1831,65 @@ void ProtocolGame::sendCloseShop()
 	}
 }
 
-void ProtocolGame::sendGoods(const std::map<uint32_t, uint32_t>& itemMap)
+void ProtocolGame::sendGoods(const ShopInfoList& shop)
 {
 	NetworkMessage_ptr msg = getOutputBuffer();
 	if(msg)
 	{
 		TRACK_MESSAGE(msg);
 		msg->AddByte(0x7B);
-
 		msg->AddU32(g_game.getMoney(player));
-		msg->AddByte(std::min(itemMap.size(), (size_t)255));
 
+		std::map<uint32_t, uint32_t> goodsMap;
+		if(shop.size() >= 5)
+		{
+			for(ShopInfoList::iterator sit = shop.begin(); sit != shop.end(); ++sit)
+			{
+				if(sit->sellPrice < 0)
+					continue;
+				
+				int8_t subType = -1;
+				if(sit->subType)
+				{
+					const ItemType& it = Item::items[sit->itemId];
+					if(it.hasSubType() && !it.stackable)
+						subType = sit->subType
+				}
+
+				uint32_t count = __getItemTypeCount(sit->itemId, subType);
+				if(count > 0)
+					goodsMap[sit->itemId] = count;
+			}
+		}
+		else
+		{
+			std::map<uint32_t, uint32_t> tmpMap;
+			player->__getAllItemTypeCount(tmpMap);
+			for(ShopInfoList::iterator sit = shop.begin(); sit != shop.end(); ++sit)
+			{
+				if(sit->sellPrice < 0)
+					continue;
+				
+				int8_t subType = -1;
+				if(sit->subType)
+				{
+					const ItemType& it = Item::items[sit->itemId];
+					if(it.hasSubType() && !it.stackable)
+						subType = sit->subType
+				}
+				
+				if(subType != -1)
+				{
+					uint32_t count = __getItemTypeCount(sit->itemId, subType);
+					if(count > 0)
+						goodsMap[sit->itemId] = count;
+				}
+				else
+					goodsMap[sit->itemId] = tmpMap[sit->itemId];
+			}
+		}
+
+		msg->AddByte(std::min(goodsMap.size(), (size_t)255));
 		std::map<uint32_t, uint32_t>::const_iterator it = itemMap.begin();
 		for(uint32_t i = 0; it != itemMap.end() && i < 255; ++it, ++i)
 		{

@@ -1,25 +1,22 @@
-//////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////
 // OpenTibia - an opensource roleplaying game
-//////////////////////////////////////////////////////////////////////
-//
-//////////////////////////////////////////////////////////////////////
-// This program is free software; you can redistribute it and/or
-// modify it under the terms of the GNU General Public License
-// as published by the Free Software Foundation; either version 2
-// of the License, or (at your option) any later version.
+////////////////////////////////////////////////////////////////////////
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
 //
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software Foundation,
-// Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-//////////////////////////////////////////////////////////////////////
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+////////////////////////////////////////////////////////////////////////
 
-#ifndef __OTSERV_CONNECTION_H__
-#define __OTSERV_CONNECTION_H__
+#ifndef __CONNECTION_H__
+#define __CONNECTION_H__
 #include "otsystem.h"
 
 #include "networkmessage.h"
@@ -72,10 +69,6 @@ class ConnectionManager
 class Connection : public boost::enable_shared_from_this<Connection>, boost::noncopyable
 {
 	public:
-#ifdef __ENABLE_SERVER_DIAGNOSTIC__
-		static uint32_t connectionCount;
-#endif
-
 		enum {writeTimeout = 30};
 		enum {readTimeout = 30};
 
@@ -88,6 +81,9 @@ class Connection : public boost::enable_shared_from_this<Connection>, boost::non
 		};
 
 	private:
+#ifdef __ENABLE_SERVER_DIAGNOSTIC__
+		static uint32_t connectionCount;
+#endif
 		Connection(boost::asio::ip::tcp::socket* socket, boost::asio::io_service& io_service, ServicePort_ptr servicePort):
 			m_socket(socket), m_readTimer(io_service), m_writeTimer(io_service), m_service(io_service), m_servicePort(servicePort)
 		{
@@ -100,6 +96,7 @@ class Connection : public boost::enable_shared_from_this<Connection>, boost::non
 			connectionCount++;
 #endif
 		}
+
 		friend class ConnectionManager;
 
 	public:
@@ -151,7 +148,7 @@ class Connection : public boost::enable_shared_from_this<Connection>, boost::non
 		boost::asio::ip::tcp::socket* m_socket;
 		boost::asio::deadline_timer m_readTimer, m_writeTimer;
 
-		boost::asio::io_service& m_io_service;
+		boost::asio::io_service& m_service;
 		ServicePort_ptr m_servicePort;
 		bool m_receivedFirst, m_writeError, m_readError;
 

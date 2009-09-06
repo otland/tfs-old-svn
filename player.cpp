@@ -536,52 +536,14 @@ void Player::updateInventoryGoods(uint32_t itemId)
 		return;
 	}
 
-	bool send = false;
-	if(shopOffer.size() <= 5)
+	for(ShopInfoList::iterator it = shopOffer.begin(); it != shopOffer.end(); ++it)
 	{
-		for(ShopInfoList::iterator it = shopOffer.begin(); it != shopOffer.end(); ++it)
-		{
-			if(it->sellPrice > -1 && it->itemId == itemId)
-			{
-				uint32_t count = __getItemTypeCount(it->itemId, (it->subType ? it->subType : -1));
-				if(count > 0)
-					goodsMap[it->itemId] = count;
-				else
-					goodsMap.erase(it->itemId);
+		if(it->itemId != itemId)
+			continue;
 
-				if(!send)
-					send = true;
-			}
-		}
-	}
-	else
-	{
-		std::map<uint32_t, uint32_t> tmpMap;
-		__getAllItemTypeCount(tmpMap);
-		for(ShopInfoList::iterator it = shopOffer.begin(); it != shopOffer.end(); ++it)
-		{
-			if(it->sellPrice > -1 && it->itemId == itemId)
-			{
-				int8_t subType = (it->subType ? it->subType : -1);
-				if(subType != -1)
-				{
-					uint32_t count = __getItemTypeCount(it->itemId, subType);
-					if(count > 0)
-						goodsMap[it->itemId] = count;
-					else
-						goodsMap.erase(it->itemId);
-				}
-				else
-					goodsMap[it->itemId] = tmpMap[it->itemId];
-
-				if(!send)
-					send = true;
-			}
-		}
-	}
-
-	if(send)
 		sendGoods();
+		break;
+	}
 }
 
 int32_t Player::getPlayerInfo(playerinfo_t playerinfo) const
@@ -1517,16 +1479,6 @@ void Player::onCreatureDisappear(const Creature* creature, bool isLogout)
 
 void Player::openShopWindow()
 {
-	for(ShopInfoList::iterator it = shopOffer.begin(); it != shopOffer.end(); ++it)
-	{
-		if((*it).sellPrice > 0)
-		{
-			uint32_t itemCount = __getItemTypeCount((*it).itemId, ((*it).subType ? (*it).subType : -1));
-			if(itemCount > 0)
-				goodsMap[(*it).itemId] = itemCount;
-		}
-	}
-
 	sendShop();
 	sendGoods();
 }
@@ -1542,7 +1494,6 @@ void Player::closeShopWindow(Npc* npc/* = NULL*/, int32_t onBuy/* = -1*/, int32_
 	shopOwner = NULL;
 	purchaseCallback = saleCallback = -1;
 	shopOffer.clear();
-	goodsMap.clear();
 }
 
 bool Player::canShopItem(uint16_t itemId, uint8_t subType, ShopEvent_t event)

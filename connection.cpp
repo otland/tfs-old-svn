@@ -1,8 +1,6 @@
 //////////////////////////////////////////////////////////////////////
 // OpenTibia - an opensource roleplaying game
 //////////////////////////////////////////////////////////////////////
-//
-//////////////////////////////////////////////////////////////////////
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
 // as published by the Free Software Foundation; either version 2
@@ -43,11 +41,11 @@ Connection_ptr ConnectionManager::createConnection(boost::asio::ip::tcp::socket*
 	boost::asio::io_service& io_service, ServicePort_ptr servicer)
 {
 	#ifdef __DEBUG_NET_DETAIL__
-	std::cout << "Create new Connection" << std::endl;
-
+	std::cout << "Creating new Connection" << std::endl;
 	#endif
 	boost::recursive_mutex::scoped_lock lockClass(m_connectionManagerLock);
 	Connection_ptr connection = boost::shared_ptr<Connection>(new Connection(socket, io_service, servicer));
+
 	m_connections.push_back(connection);
 	return connection;
 }
@@ -56,12 +54,10 @@ void ConnectionManager::releaseConnection(Connection_ptr connection)
 {
 	#ifdef __DEBUG_NET_DETAIL__
 	std::cout << "Releasing connection" << std::endl;
-
 	#endif
 	boost::recursive_mutex::scoped_lock lockClass(m_connectionManagerLock);
-	std::list<Connection_ptr>::iterator it =
-		std::find(m_connections.begin(), m_connections.end(), connection);
 
+	std::list<Connection_ptr>::iterator it =std::find(m_connections.begin(), m_connections.end(), connection);
 	if(it != m_connections.end())
 		m_connections.erase(it);
 	else
@@ -89,8 +85,6 @@ void ConnectionManager::shutdown()
 	m_connections.clear();
 }
 
-//*****************
-
 void Connection::close()
 {
 	//any thread
@@ -103,6 +97,87 @@ void Connection::close()
 
 	m_connectionState = CONNECTION_STATE_REQUEST_CLOSE;
 	Dispatcher::getDispatcher().addTask(createTask(boost::bind(&Connection::closeConnection, this)));
+}
+
+bool ConnectionManager::isDisabled(uint32_t clientIp, int32_t protocolId)
+{
+        OTSYS_THREAD_LOCK_CLASS lockClass(m_connectionManagerLock);
+        int32_t maxLoginTries = g_config.getNumber(ConfigManager::LOGIN_TRIES);
+        if(maxLoginTries == 0 || clientIp == 0)
+                return false;
+
+        IpLoginMap::const_iterator it = ipLoginMap.find(clientIp);
+        return it != ipLoginMap.end() && it->second.lastProtocol != protocolId && it->second.loginsAmount > maxLoginTries
+                && (int32_t)time(NULL) < it->second.lastLogin + g_config.getNumber(ConfigManager::LOGIN_TIMEOUT) / 1000;
+}
+
+void ConnectionManager::addAttempt(uint32_t clientIp, int32_t protocolId, bool success)
+{
+        OTSYS_THREAD_LOCK_CLASS lockClass(m_connectionManagerLock);
+        if(!clientIp)
+                return;
+
+        IpLoginMap::iterator it = ipLoginMap.find(clientIp);
+        if(it == ipLoginMap.end())
+        {
+                LoginBlock tmp;
+                tmp.lastLogin = tmp.loginsAmount = 0;
+                tmp.lastProtocol = 0x00;
+
+                ipLoginMap[clientIp] = tmp;
+                it = ipLoginMap.find(clientIp);
+        }
+
+        if(it->second.loginsAmount > g_config.getNumber(ConfigManager::LOGIN_TRIES))
+                it->second.loginsAmount = 0;
+
+        int32_t currentTime = time(NULL);
+        if(!success || (currentTime < it->second.lastLogin + (int32_t)g_config.getNumber(ConfigManager::RETRY_TIMEOUT) / 1000))
+                it->second.loginsAmount++;
+        else
+                it->second.loginsAmount = 0;
+
+        it->second.lastLogin = currentTime;
+        it->second.lastProtocol = protocolId;
+}
+
+bool ConnectionManager::acceptConnection(uint32_t clientIp)
+{
+        if(!clientIp)
+                return false;
+
+        OTSYS_THREAD_LOCK_CLASS lockClass(m_connectionManagerLock);
+        uint64_t currentTime = OTSYS_TIME();
+
+        IpConnectMap::iterator it = ipConnectMap.find(clientIp);
+        if(it == ipConnectMap.end())
+        {
+                ConnectBlock tmp;
+                tmp.startTime = currentTime;
+                tmp.blockTime = 0;
+                tmp.count = 1;
+
+                ipConnectMap[clientIp] = tmp;
+                return true;
+        }
+
+        it->second.count++;
+        if(it->second.blockTime > currentTime)
+                return false;
+
+        if(currentTime - it->second.startTime > 1000)
+        {
+                uint32_t tmp = it->second.count;
+                it->second.startTime = currentTime;
+                it->second.count = it->second.blockTime = 0;
+                if(tmp > 10)
+                {
+                        it->second.blockTime = currentTime + 10000;
+                        return false;
+                }
+        }
+
+        return true;
 }
 
 void Connection::closeConnection()

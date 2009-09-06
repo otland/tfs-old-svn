@@ -621,7 +621,7 @@ class Player : public Creature, public Cylinder
 		void sendShop() const
 			{if(client) client->sendShop(shopOffer);}
 		void sendGoods() const
-			{if(client) client->sendGoods(goodsMap);}
+			{if(client) client->sendGoods(shopOffer);}
 		void sendCloseShop() const
 			{if(client) client->sendCloseShop();}
 		void sendTradeItemRequest(const Player* player, const Item* item, bool ack) const
@@ -877,7 +877,6 @@ class Player : public Creature, public Cylinder
 		OutfitMap outfits;
 		LearnedInstantSpellList learnedInstantSpellList;
 		StorageMap storageMap;
-		std::map<uint32_t, uint32_t> goodsMap;
 
 		friend class Game;
 		friend class LuaScriptInterface;

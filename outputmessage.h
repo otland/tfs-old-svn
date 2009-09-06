@@ -166,11 +166,11 @@ class OutputMessagePool
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
 		size_t getTotalMessageCount() const {return (size_t)OutputMessagePoolCount;}
 #else
-		size_t getTotalMessageCount() const {return m_allOutputMessages.size();}
+		size_t getTotalMessageCount() const {return m_allMessages.size();}
 #endif
 		size_t getAvailableMessageCount() const {return m_outputMessages.size();}
-		size_t getAutoMessageCount() const {return m_autoSendOutputMessages.size();}
-		size_t getQueuedMessageCount() const {return m_toAddQueue.size();}
+		size_t getAutoMessageCount() const {return m_autoSend.size();}
+		size_t getQueuedMessageCount() const {return m_addQueue.size();}
 
 	protected:
 		void configureOutputMessage(OutputMessage_ptr msg, Protocol* protocol, bool autoSend);
