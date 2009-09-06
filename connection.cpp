@@ -396,7 +396,7 @@ void Connection::parsePacket(const boost::system::error_code& error)
 
 	--m_pendingRead;
 	uint32_t length = m_msg.getMessageLength() - m_msg.getReadPos() - 4, checksumReceived = m_msg.PeekU32(), checksum = 0;
-	if(len > 0)
+	if(length > 0)
 		checksum = adlerChecksum((uint8_t*)(m_msg.getBuffer() + m_msg.getReadPos() + 4), length);
 
 	bool checksumEnabled = false;
@@ -413,7 +413,7 @@ void Connection::parsePacket(const boost::system::error_code& error)
 		if(!m_protocol)
 		{
 			// Game protocol has already been created at this point
-			m_protocol = m_servicePort->make_protocol(checksumEnabled, m_msg);
+			m_protocol = m_servicePort->makeProtocol(checksumEnabled, m_msg);
 			if(!m_protocol)
 			{
 				close();
