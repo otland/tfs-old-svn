@@ -1126,26 +1126,25 @@ bool IOLoginData::updateOnlineStatus(uint32_t guid, bool login)
 	Database* db = Database::getInstance();
 	DBQuery query;
 
-	uint16_t onlineValue = login;
-	if(g_config.getBool(ConfigManager::ALLOW_CLONES))
+	uint16_t value = login;
+	if(g_config.getNumber(ConfigManager::ALLOW_CLONES))
 	{
 		query << "SELECT `online` FROM `players` WHERE `id` = " << guid << " AND `deleted` = 0 LIMIT 1";
-
 		DBResult* result;
 		if(!(result = db->storeQuery(query.str())))
 			return false;
 
-		onlineValue = result->getDataInt("online");
+		value = result->getDataInt("online");
 		result->free();
-		query.str("");
 
+		query.str("");
 		if(login)
-			onlineValue++;
-		else if(onlineValue > 0)
-			onlineValue--;
+			value++;
+		else if(value > 0)
+			value--;
 	}
 
-	query << "UPDATE `players` SET `online` = " << onlineValue << " WHERE `id` = " << guid << db->getUpdateLimiter();
+	query << "UPDATE `players` SET `online` = " << value << " WHERE `id` = " << guid << db->getUpdateLimiter();
 	return db->executeQuery(query.str());
 }
 

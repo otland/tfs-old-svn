@@ -33,7 +33,6 @@
 #include "weapons.h"
 
 #include "configmanager.h"
-#include "status.h"
 #ifndef __CONSOLE__
 #include "gui.h"
 #endif
@@ -2395,7 +2394,6 @@ void Player::addDefaultRegeneration(uint32_t addTicks)
 
 void Player::removeList()
 {
-	Status::getInstance()->removePlayer();
 	listPlayer.removeList(getID());
 	if(!isGhost())
 	{
@@ -2429,7 +2427,6 @@ void Player::addList()
 	}
 
 	listPlayer.addList(this);
-	Status::getInstance()->addPlayer();
 }
 
 void Player::kickPlayer(bool displayEffect, bool forceLogout)

@@ -122,7 +122,6 @@ void ProtocolStatus::deleteProtocolTask()
 std::string Status::getStatusString(bool sendPlayers) const
 {
 	char buffer[90];
-
 	xmlDocPtr doc;
 	xmlNodePtr p, root;
 
@@ -152,11 +151,11 @@ std::string Status::getStatusString(bool sendPlayers) const
 	xmlAddChild(root, p);
 
 	p = xmlNewNode(NULL,(const xmlChar*)"players");
-	sprintf(buffer, "%d", m_playersOnline);
+	sprintf(buffer, "%d", g_game.getPlayersOnline());
 	xmlSetProp(p, (const xmlChar*)"online", (const xmlChar*)buffer);
-	sprintf(buffer, "%d", m_playersMax);
+	sprintf(buffer, "%d", g_config.getNumber(ConfigManager::MAX_PLAYERS));
 	xmlSetProp(p, (const xmlChar*)"max", (const xmlChar*)buffer);
-	sprintf(buffer, "%d", g_game.getLastPlayersRecord());
+	sprintf(buffer, "%d", g_game.getPlayersRecord());
 	xmlSetProp(p, (const xmlChar*)"peak", (const xmlChar*)buffer);
 	if(sendPlayers)
 	{
@@ -184,7 +183,8 @@ std::string Status::getStatusString(bool sendPlayers) const
 
 	p = xmlNewNode(NULL,(const xmlChar*)"map");
 	xmlSetProp(p, (const xmlChar*)"name", (const xmlChar*)m_mapName.c_str());
-	xmlSetProp(p, (const xmlChar*)"author", (const xmlChar*)m_mapAuthor.c_str());
+	xmlSetProp(p, (const xmlChar*)"author", (const xmlChar*)g_config.getString(ConfigManager::MAP_AUTHOR).c_str());
+
 	uint32_t mapWidth, mapHeight;
 	g_game.getMapDimensions(mapWidth, mapHeight);
 	sprintf(buffer, "%u", mapWidth);
@@ -199,6 +199,7 @@ std::string Status::getStatusString(bool sendPlayers) const
 	xmlChar* s = NULL;
 	int32_t len = 0;
 	xmlDocDumpMemory(doc, (xmlChar**)&s, &len);
+
 	std::string xml;
 	if(s)
 		xml = std::string((char*)s, len);
@@ -243,9 +244,9 @@ void Status::getInfo(uint32_t requestedInfo, OutputMessage_ptr output, NetworkMe
 	if(requestedInfo & REQUEST_PLAYERS_INFO)
 	{
 		output->AddByte(0x20);
-		output->AddU32(m_playersOnline);
-		output->AddU32(m_playersMax);
-		output->AddU32(g_game.getLastPlayersRecord());
+		output->AddU32(g_game.getPlayersOnline());
+		output->AddU32(g_config.getNumber(ConfigManager::MAX_PLAYERS));
+		output->AddU32(g_game.getPlayersRecord());
 	}
 
 	if(requestedInfo & REQUEST_SERVER_MAP_INFO)
@@ -297,6 +298,4 @@ void Status::getInfo(uint32_t requestedInfo, OutputMessage_ptr output, NetworkMe
 		output->AddString(STATUS_SERVER_VERSION);
 		output->AddString(STATUS_SERVER_PROTOCOL);
 	}
-
-	return;
 }

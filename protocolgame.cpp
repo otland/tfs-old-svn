@@ -92,12 +92,16 @@ void ProtocolGame::deleteProtocolTask()
 	Protocol::deleteProtocolTask();
 }
 
-bool ProtocolGame::login(const std::string& name, uint32_t accnumber, const std::string& password,
-	OperatingSystem_t operatingSystem, uint16_t version, bool gamemasterLogin)
+bool ProtocolGame::login(const std::string& name, uint32_t id, const std::string& password,
+	OperatingSystem_t operatingSystem, uint16_t version, bool gamemaster)
 {
 	//dispatcher thread
-	Player* _player = g_game.getPlayerByName(name);
-	if(!_player || name == "Account Manager" || g_config.getBool(ConfigManager::ALLOW_CLONES))
+	PlayerVector players = g_game.getPlayersByName(name);
+	Player* _player = NULL;
+	if(!players.empty())
+		_player = players[random_range(0, players.size())];
+
+	if(!_player || name == "account manager" || g_config.getNumber(ConfigManager::ALLOW_CLONES) > players.size())
 	{
 		player = new Player(name, this);
 		player->useThing2();
@@ -118,7 +122,7 @@ bool ProtocolGame::login(const std::string& name, uint32_t accnumber, const std:
 		{
 			bool deletion = ban.expires < 0;
 			std::string name_ = "Automatic ";
-			if(ban.adminId == 0)
+			if(!ban.adminId)
 				name_ += (deletion ? "deletion" : "banishment");
 			else
 				IOLoginData::getInstance()->getNameByGuid(ban.adminId, name_, true);
@@ -134,13 +138,14 @@ bool ProtocolGame::login(const std::string& name, uint32_t accnumber, const std:
 			return false;
 		}
 
-		if(IOBan::getInstance()->isPlayerBanished(player->getGUID(), PLAYERBAN_LOCK) && accnumber != 1)
+		if(IOBan::getInstance()->isPlayerBanished(player->getGUID(), PLAYERBAN_LOCK) && id != 1)
 		{
 			if(g_config.getBool(ConfigManager::NAMELOCK_MANAGER))
 			{
 				player->name = "Account Manager";
 				player->accountManager = MANAGER_NAMELOCK;
-				player->managerNumber = accnumber;
+
+				player->managerNumber = id;
 				player->managerString2 = name;
 			}
 			else
@@ -151,18 +156,18 @@ bool ProtocolGame::login(const std::string& name, uint32_t accnumber, const std:
 		}
 		else if(player->getName() == "Account Manager" && g_config.getBool(ConfigManager::ACCOUNT_MANAGER))
 		{
-			if(accnumber != 1)
+			if(id != 1)
 			{
 				player->accountManager = MANAGER_ACCOUNT;
-				player->managerNumber = accnumber;
+				player->managerNumber = id;
 			}
 			else
 				player->accountManager = MANAGER_NEW;
 		}
 
-		if(gamemasterLogin && !player->hasCustomFlag(PlayerCustomFlag_GamemasterPrivileges) && !player->isAccountManager())
+		if(gamemaster && !player->hasCustomFlag(PlayerCustomFlag_GamemasterPrivileges))
 		{
-			disconnectClient(0x14, "You are not a gamemaster!");
+			disconnectClient(0x14, "You are not a gamemaster! Turn off the gamemaster mode in your IP changer.");
 			return false;
 		}
 
@@ -182,14 +187,17 @@ bool ProtocolGame::login(const std::string& name, uint32_t accnumber, const std:
 		}
 
 		if(g_config.getBool(ConfigManager::ONE_PLAYER_ON_ACCOUNT) && !player->isAccountManager() &&
-			!IOLoginData::getInstance()->hasCustomFlag(accnumber, PlayerCustomFlag_CanLoginMultipleCharacters))
+			!IOLoginData::getInstance()->hasCustomFlag(id, PlayerCustomFlag_CanLoginMultipleCharacters))
 		{
 			bool found = false;
-			PlayerVector tmp = g_game.getPlayersByAccount(accnumber);
+			PlayerVector tmp = g_game.getPlayersByAccount(id);
 			for(PlayerVector::iterator it = tmp.begin(); it != tmp.end(); ++it)
 			{
-				if((*it)->getName() == name)
-					found = true;
+				if((*it)->getName() != name)
+					continue;
+
+				found = true;
+				break;
 			}
 
 			if(tmp.size() > 0 && !found)
@@ -204,11 +212,11 @@ bool ProtocolGame::login(const std::string& name, uint32_t accnumber, const std:
 			if(OutputMessage_ptr output = OutputMessagePool::getInstance()->getOutputMessage(this, false))
 			{
 				TRACK_MESSAGE(output);
-				int32_t slot = WaitingList::getInstance()->getClientSlot(player);
-
 				std::stringstream ss;
 				ss << "Too many players online.\n" << "You are ";
-				if(slot != 0)
+
+				int32_t slot = WaitingList::getInstance()->getClientSlot(player);
+				if(slot)
 				{
 					ss << "at ";
 					if(slot > 0)
@@ -237,13 +245,11 @@ bool ProtocolGame::login(const std::string& name, uint32_t accnumber, const std:
 			return false;
 		}
 
-		if(!g_game.placeCreature(player, player->getLoginPosition()))
+		if(!g_game.placeCreature(player, player->getLoginPosition()) && !g_game.placeCreature(player, player->getTemplePosition(), false, true))
 		{
-			if(!g_game.placeCreature(player, player->getTemplePosition(), false, true))
-			{
-				disconnectClient(0x14, "Temple position is wrong. Contact the administrator.");
-				return false;
-			}
+			disconnectClient(0x14, "Temple position is wrong. Contact with the administration.");
+			return false;
+
 		}
 
 		player->setOperatingSystem(operatingSystem);
@@ -418,21 +424,19 @@ bool ProtocolGame::parseFirstPacket(NetworkMessage& msg)
 	enableXTEAEncryption();
 	setXTEAKey(key);
 
-	bool gamemasterLogin = msg.GetByte();
-	std::string accName = msg.GetString();
-	toLowerCaseString(accName);
-	const std::string name = msg.GetString();
+	bool gamemaster = msg.GetByte();
+	std::string name = msg.GetString();
+	const std::string player = msg.GetString();
+
 	std::string password = msg.GetString();
 	msg.SkipBytes(6); //841- wtf?
-	uint32_t accId = 1;
-
 	if(version < CLIENT_VERSION_MIN || version > CLIENT_VERSION_MAX)
 	{
 		disconnectClient(0x14, CLIENT_VERSION_STRING);
 		return false;
 	}
 
-	if(!accName.length())
+	if(name.empty())
 	{
 		if(!g_config.getBool(ConfigManager::ACCOUNT_MANAGER))
 		{
@@ -440,6 +444,7 @@ bool ProtocolGame::parseFirstPacket(NetworkMessage& msg)
 			return false;
 		}
 
+		name = "1";
 		password = "1";
 	}
 
@@ -467,25 +472,29 @@ bool ProtocolGame::parseFirstPacket(NetworkMessage& msg)
 		return false;
 	}
 
-	std::string accPass;
-	if(((accName.length() && !IOLoginData::getInstance()->getAccountId(accName, accId)) ||
-		!IOLoginData::getInstance()->getPassword(accId, accPass, name) || !encryptTest(
-		password, accPass)) && name != "Account Manager")
+	uint32_t id = 1;
+	toLowerCaseString(player);
+	if(id != "1" || password != "1" || player != "account manager") //avoid unecessary queries
 	{
-		ConnectionManager::getInstance()->addAttempt(getIP(), protocolId, false);
-		disconnectClient(0x14, "Account name or password is not correct.");
-		return false;
+		std::string hash;
+		if(!IOLoginData::getInstance()->getAccountId(name, id)) || !IOLoginData::getInstance()->getPassword(
+			id, hash, player) || !encryptTest(password, hash))
+		{
+			ConnectionManager::getInstance()->addAttempt(getIP(), protocolId, false);
+			disconnectClient(0x14, "Invalid account name or password.");
+			return false;
+		}
 	}
 
 	Ban ban;
-	ban.value = accId;
+	ban.value = id;
 
 	ban.type = BAN_ACCOUNT;
-	if(IOBan::getInstance()->getData(ban) && !IOLoginData::getInstance()->hasFlag(accId, PlayerFlag_CannotBeBanned))
+	if(IOBan::getInstance()->getData(ban) && !IOLoginData::getInstance()->hasFlag(id, PlayerFlag_CannotBeBanned))
 	{
 		bool deletion = ban.expires < 0;
 		std::string name_ = "Automatic ";
-		if(ban.adminId == 0)
+		if(!ban.adminId)
 			name_ += (deletion ? "deletion" : "banishment");
 		else
 			IOLoginData::getInstance()->getNameByGuid(ban.adminId, name_, true);
@@ -503,7 +512,7 @@ bool ProtocolGame::parseFirstPacket(NetworkMessage& msg)
 
 	ConnectionManager::getInstance()->addAttempt(getIP(), protocolId, true);
 	Dispatcher::getDispatcher().addTask(createTask(boost::bind(
-		&ProtocolGame::login, this, name, accId, password, operatingSystem, version, gamemasterLogin)));
+		&ProtocolGame::login, this, player, id, password, operatingSystem, version, gamemaster)));
 	return true;
 }
 

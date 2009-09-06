@@ -76,7 +76,7 @@ Game::Game()
 	gameState = GAME_STATE_NORMAL;
 	worldType = WORLD_TYPE_PVP;
 	map = NULL;
-	lastPlayersRecord = lastStageLevel = 0;
+	playersRecord = lastStageLevel = 0;
 	for(int32_t i = 0; i < 3; i++)
 		globalSaveMessage[i] = false;
 
@@ -648,27 +648,30 @@ Player* Game::getPlayerByID(uint32_t id)
 	return NULL; //just in case the player doesnt exist
 }
 
-Creature* Game::getCreatureByName(const std::string& s)
+Creature* Game::getCreatureByName(std::string s)
 {
-	std::string tmp = asLowerCaseString(s);
+	if(s.empty())
+		return NULL;
+
+	toLowerCaseString(s);
 	for(AutoList<Creature>::listiterator it = listCreature.list.begin(); it != listCreature.list.end(); ++it)
 	{
-		if(!it->second->isRemoved() && tmp == asLowerCaseString(it->second->getName()))
+		if(!it->second->isRemoved() && asLowerCaseString(it->second->getName()) == s)
 			return it->second;
 	}
 
 	return NULL; //just in case the creature doesnt exist
 }
 
-Player* Game::getPlayerByName(const std::string& s)
+Player* Game::getPlayerByName(std::string s)
 {
 	if(s.empty())
 		return NULL;
 
-	std::string ss = asLowerCaseString(s);
+	toLowerCaseString(s);
 	for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
 	{
-		if(!it->second->isRemoved() && asLowerCaseString(it->second->getName()) == ss)
+		if(!it->second->isRemoved() && asLowerCaseString(it->second->getName()) == s)
 			return it->second;
 	}
 
@@ -731,13 +734,14 @@ Player* Game::getPlayerByGuidEx(uint32_t guid)
 	return NULL;
 }
 
-ReturnValue Game::getPlayerByNameWildcard(const std::string& s, Player*& player)
+ReturnValue Game::getPlayerByNameWildcard(std::string s, Player*& player)
 {
 	player = NULL;
 	if(s.empty())
 		return RET_PLAYERWITHTHISNAMEISNOTONLINE;
 
-	if((*s.rbegin()) != '~')
+	char tmp = *s.rbegin();
+	if(tmp != '~' && tmp != '*')
 	{
 		player = getPlayerByName(s);
 		if(!player)
@@ -746,27 +750,27 @@ ReturnValue Game::getPlayerByNameWildcard(const std::string& s, Player*& player)
 		return RET_NOERROR;
 	}
 
-	Player* lastFound = NULL;
-	std::string name, tmp = asLowerCaseString(s.substr(0, s.length() - 1));
+	Player* last = NULL;
+	toLowerCaseString(s.substr(0, s.length() - 1));
 	for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
 	{
 		if(it->second->isRemoved())
 			continue;
 
-		name = asLowerCaseString(it->second->getName());
+		std::string name = asLowerCaseString(it->second->getName());
 		if(name.substr(0, tmp.length()) != tmp)
 			continue;
 
-		if(lastFound)
+		if(last)
 			return RET_NAMEISTOOAMBIGUOUS;
 
-		lastFound = it->second;
+		last = it->second;
 	}
 
-	if(!lastFound)
+	if(!last)
 		return RET_PLAYERWITHTHISNAMEISNOTONLINE;
 
-	player = lastFound;
+	player = last;
 	return RET_NOERROR;
 }
 
@@ -779,6 +783,19 @@ Player* Game::getPlayerByAccount(uint32_t acc)
 	}
 
 	return NULL;
+}
+
+PlayerVector Game::getPlayersByName(std::string s)
+{
+	toLowerCaseString(s);
+	PlayerVector players;
+	for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
+	{
+		if(!it->second->isRemoved() && asLowerCaseString(it->second->getName()) == s)
+			players.push_back(it->second);
+	}
+
+	return players;
 }
 
 PlayerVector Game::getPlayersByAccount(uint32_t acc)
@@ -807,7 +824,7 @@ PlayerVector Game::getPlayersByIP(uint32_t ip, uint32_t mask)
 
 bool Game::internalPlaceCreature(Creature* creature, const Position& pos, bool extendedPos /*= false*/, bool forced /*= false*/)
 {
-	if(creature->getParent() != NULL)
+	if(creature->getParent())
 		return false;
 
 	if(!map->placeCreature(pos, creature, extendedPos, forced))
@@ -3726,7 +3743,7 @@ bool Game::playerSpeakToNpc(Player* player, const std::string& text)
 bool Game::playerReportRuleViolation(Player* player, const std::string& text)
 {
 	//Do not allow reports on multiclones worlds since reports are name-based
-	if(g_config.getBool(ConfigManager::ALLOW_CLONES))
+	if(g_config.getNumber(ConfigManager::ALLOW_CLONES))
 	{
 		player->sendTextMessage(MSG_INFO_DESCR, "Rule violation reports are disabled.");
 		return false;
@@ -5630,66 +5647,69 @@ Highscore Game::getHighscore(uint16_t skill)
 	return hs;
 }
 
-int32_t Game::getMotdNum()
+int32_t Game::getMotdId()
 {
-	if(lastMotdText != g_config.getString(ConfigManager::MOTD))
-	{
-		Database* db = Database::getInstance();
-		lastMotdText = g_config.getString(ConfigManager::MOTD);
+	if(lastMotd == g_config.getString(ConfigManager::MOTD))
+		return lastMotdId;
 
-		DBQuery query;
-		query << "INSERT INTO `server_motd` (`id`, `world_id`, `text`) VALUES (" << ++lastMotdNum << ", " << g_config.getNumber(ConfigManager::WORLD_ID) << ", " << db->escapeString(lastMotdText) << ")";
-		db->executeQuery(query.str());
-	}
+	lastMotd = g_config.getString(ConfigManager::MOTD);
+	Database* db = Database::getInstance();
 
-	return lastMotdNum;
+	DBQuery query;
+	query << "INSERT INTO `server_motd` (`id`, `world_id`, `text`) VALUES (" << ++lastMotdId << ", " << g_config.getNumber(ConfigManager::WORLD_ID) << ", " << db->escapeString(lastMotd) << ")";
+	if(db->executeQuery(query.str()))
+		return lastMotdId;
+
+	return --lastMotdId;
 }
 
 void Game::loadMotd()
 {
 	Database* db = Database::getInstance();
 	DBQuery query;
-
 	query << "SELECT `id`, `text` FROM `server_motd` WHERE `world_id` = " << g_config.getNumber(ConfigManager::WORLD_ID) << " ORDER BY `id` DESC LIMIT 1";
-	if(DBResult* result = db->storeQuery(query.str()))
-	{
-		lastMotdNum = result->getDataInt("id");
-		lastMotdText = result->getDataString("text");
 
-		result->free();
+	DBResult* result;
+	if(!(result = db->storeQuery(query.str())))
+	{
+		std::cout << "> ERROR: Failed to load motd!" << std::endl;
+		lastMotdId = random_range(5, 500);
 		return;
 	}
 
-	std::cout << "> ERROR: Failed to load motd!" << std::endl;
-	lastMotdNum = random_range(5, 500);
+	lastMotdId = result->getDataInt("id");
+	lastMotd = result->getDataString("text");
+	result->free();
 }
 
 void Game::checkPlayersRecord(Player* player)
 {
-	if(getPlayersOnline() > lastPlayersRecord)
-	{
-		uint32_t newPlayersRecord = getPlayersOnline();
-		GlobalEventMap recordEvents = g_globalEvents->getEventMap(GLOBAL_EVENT_RECORD);
-		for(GlobalEventMap::iterator it = recordEvents.begin(); it != recordEvents.end(); ++it)
-			it->second->executeRecord(newPlayersRecord, lastPlayersRecord, player);
+	uint32_t count = getPlayersOnline();
+	if(count <= playersRecord)
+		return;
 
-		lastPlayersRecord = newPlayersRecord;
-	}
+	GlobalEventMap recordEvents = g_globalEvents->getEventMap(GLOBAL_EVENT_RECORD);
+	for(GlobalEventMap::iterator it = recordEvents.begin(); it != recordEvents.end(); ++it)
+		it->second->executeRecord(count, playersRecord, player);
+
+	playersRecord = count;
 }
 
 void Game::loadPlayersRecord()
 {
 	Database* db = Database::getInstance();
 	DBQuery query;
-
 	query << "SELECT `record` FROM `server_record` WHERE `world_id` = " << g_config.getNumber(ConfigManager::WORLD_ID) << " ORDER BY `timestamp` DESC LIMIT 1";
-	if(DBResult* result = db->storeQuery(query.str()))
+
+	DBResult* result;
+	if(!(result = db->storeQuery(query.str())))
 	{
-		lastPlayersRecord = result->getDataInt("record");
-		result->free();
+		std::cout << "> ERROR: Failed to load players record!" << std::endl;
+		return;
 	}
-	else
-		std::cout << "> ERROR: Failed to load online record!" << std::endl;
+
+	playersRecord = result->getDataInt("record");
+	result->free();
 }
 
 bool Game::reloadInfo(ReloadInfo_t reload, uint32_t playerId/* = 0*/)

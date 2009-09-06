@@ -810,14 +810,8 @@ ServiceManager* services)
 	}
 
 	serverIps.push_back(std::make_pair(resolvedIp, 0));
-	if(Status* status = Status::getInstance())
-	{
-		status->setMaxPlayersOnline(g_config.getNumber(ConfigManager::MAX_PLAYERS));
-		status->setMapAuthor(g_config.getString(ConfigManager::MAP_AUTHOR));
-		status->setMapName(g_config.getString(ConfigManager::MAP_NAME));
-
-		services->add<ProtocolStatus>(g_config.getNumber(ConfigManager::STATUS_PORT));
-	}
+	Status::getInstance()->setMapName(g_config.getString(ConfigManager::MAP_NAME));
+	services->add<ProtocolStatus>(g_config.getNumber(ConfigManager::STATUS_PORT));
 
 	//services->add<ProtocolHTTP>(8080);
 	if(

@@ -224,14 +224,14 @@ class Game
 		  * \param s is the name identifier
 		  * \returns A Pointer to the creature
 		  */
-		Creature* getCreatureByName(const std::string& s);
+		Creature* getCreatureByName(std::string s);
 
 		/**
 		  * Returns a player based on a string name identifier
 		  * \param s is the name identifier
 		  * \returns A Pointer to the player
 		  */
-		Player* getPlayerByName(const std::string& s);
+		Player* getPlayerByName(std::string s);
 
 		/**
 		  * Returns a player based on a string name identifier
@@ -268,7 +268,7 @@ class Game
 		  * \param player will point to the found player (if any)
 		  * \return "RET_PLAYERWITHTHISNAMEISNOTONLINE" or "RET_NAMEISTOOAMBIGUOUS"
 		  */
-		ReturnValue getPlayerByNameWildcard(const std::string& s, Player*& player);
+		ReturnValue getPlayerByNameWildcard(std::string s, Player*& player);
 
 		/**
 		  * Returns a player based on an account number identifier
@@ -276,6 +276,13 @@ class Game
 		  * \returns A Pointer to the player
 		  */
 		Player* getPlayerByAccount(uint32_t acc);
+
+		/**
+		  * Returns all players based on their name
+		  * \param s is the player name
+		  * \return A vector of all players with the selected name
+		  */
+		PlayerVector getPlayersByName(std::string s);
 
 		/**
 		  * Returns all players based on their account number identifier
@@ -324,7 +331,7 @@ class Game
 		uint32_t getNpcsOnline() {return (uint32_t)Npc::listNpc.list.size();}
 		uint32_t getCreaturesOnline() {return (uint32_t)listCreature.list.size();}
 
-		uint32_t getLastPlayersRecord() {return lastPlayersRecord;}
+		uint32_t getPlayersRecord() {return playersRecord;}
 		void getWorldLightInfo(LightInfo& lightInfo);
 
 		void getSpectators(SpectatorVec& list, const Position& centerPos, bool checkforduplicate = false, bool multifloor = false,
@@ -507,7 +514,7 @@ class Game
 		bool broadcastMessage(const std::string& text, MessageClasses type);
 		void showHotkeyUseMessage(Player* player, Item* item);
 
-		int32_t getMotdNum();
+		int32_t getMotdId();
 		void loadMotd();
 		void loadPlayersRecord();
 		void checkPlayersRecord(Player* player);
@@ -645,9 +652,9 @@ class Game
 		ServiceManager* services;
 		Map* map;
 
-		std::string lastMotdText;
-		int32_t lastMotdNum;
-		uint32_t lastPlayersRecord;
+		std::string lastMotd;
+		int32_t lastMotdId;
+		uint32_t playersRecord;
 		uint32_t checkLightEvent, checkCreatureEvent, checkDecayEvent, saveEvent;
 		bool globalSaveMessage[2];
 
