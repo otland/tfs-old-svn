@@ -207,7 +207,7 @@ bool ProtocolGame::login(const std::string& name, uint32_t id, const std::string
 			}
 		}
 
-		if(!WaitingList::getInstance()->clientLogin(player))
+		if(!WaitingList::getInstance()->login(player))
 		{
 			if(OutputMessage_ptr output = OutputMessagePool::getInstance()->getOutputMessage(this, false))
 			{
@@ -215,7 +215,7 @@ bool ProtocolGame::login(const std::string& name, uint32_t id, const std::string
 				std::stringstream ss;
 				ss << "Too many players online.\n" << "You are ";
 
-				int32_t slot = WaitingList::getInstance()->getClientSlot(player);
+				int32_t slot = WaitingList::getInstance()->getSlot(player);
 				if(slot)
 				{
 					ss << "at ";

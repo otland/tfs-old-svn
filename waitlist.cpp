@@ -23,7 +23,7 @@
 extern ConfigManager g_config;
 extern Game g_game;
 
-WaitList::iterator WaitingList::findClient(const Player* player, uint32_t& slot)
+WaitList::iterator WaitingList::find(const Player* player, uint32_t& slot)
 {
 	slot = 1;
 	std::string name = asLowerCaseString(player->getName());
@@ -52,7 +52,7 @@ int32_t WaitingList::getTime(int32_t slot)
 	return 120;
 }
 
-bool WaitingList::clientLogin(const Player* player)
+bool WaitingList::login(const Player* player)
 {
 	uint32_t online = g_game.getPlayersOnline(), max = g_config.getNumber(ConfigManager::MAX_PLAYERS);
 	if(player->hasFlag(PlayerFlag_CanAlwaysLogin) || player->isAccountManager() || (waitList.empty()
@@ -62,7 +62,7 @@ bool WaitingList::clientLogin(const Player* player)
 	cleanup();
 	uint32_t slot = 0;
 
-	WaitList::iterator it = findClient(player, slot);
+	WaitList::iterator it = find(player, slot);
 	if(it != waitList.end())
 	{
 		if((online + slot) > max)
@@ -110,10 +110,10 @@ bool WaitingList::clientLogin(const Player* player)
 	return false;
 }
 
-int32_t WaitingList::getClientSlot(const Player* player)
+int32_t WaitingList::getSlot(const Player* player)
 {
 	uint32_t slot = 0;
-	WaitList::iterator it = findClient(player, slot);
+	WaitList::iterator it = find(player, slot);
 	if(it != waitList.end())
 		return slot;
 

@@ -253,7 +253,7 @@ void Status::getInfo(uint32_t requestedInfo, OutputMessage_ptr output, NetworkMe
 	{
 		output->AddByte(0x30);
 		output->AddString(m_mapName.c_str());
-		output->AddString(m_mapAuthor.c_str());
+		output->AddString(g_config.getString(ConfigManager::MAP_AUTHOR).c_str());
 
 		uint32_t mapWidth, mapHeight;
 		g_game.getMapDimensions(mapWidth, mapHeight);

@@ -23,23 +23,22 @@
 class GameServer
 {
 	public:
-		GameServer(): name("TheForgottenServer"), address("localhost"),
-			versionMin(CLIENT_VERSION_MIN), versionMax(CLIENT_VERSION_MAX),
-			port(7172) {}
-		GameServer(std::string _name, uint32_t _versionMin, uint32_t _versionMax, std::string _address, uint32_t _port):
-			name(_name), address(_address), versionMin(_versionMin), versionMax(_versionMax), port(_port) {}
+		GameServer(): name("TheForgottenServer"), address(2130706433), port(7172)
+			versionMin(CLIENT_VERSION_MIN), versionMax(CLIENT_VERSION_MAX) {}
+		GameServer(std::string _name, uint32_t _versionMin, uint32_t _versionMax, uint32_t _address, uint32_t _port):
+			name(_name), address(_address), port(_port), versionMin(_versionMin), versionMax(_versionMax) {}
 		virtual ~GameServer() {}
 
 		std::string getName() const {return name;}
 		uint32_t getVersionMin() const {return versionMin;}
 		uint32_t getVersionMax() const {return versionMax;}
 
-		std::string getAddress() const {return address;}
+		uint32_t getAddress() const {return address;}
 		uint32_t getPort() const {return port;}
 
 	protected:
-		std::string name, address;
-		uint32_t versionMin, versionMax, port;
+		std::string name;
+		uint32_t address, port, versionMin, versionMax;
 };
 
 typedef std::map<uint32_t, GameServer*> GameServersMap;

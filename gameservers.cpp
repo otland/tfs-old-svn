@@ -124,7 +124,7 @@ bool GameServers::loadFromXml(bool showResult/* = true*/)
 			std::cout << "[Warning - GameServers::loadFromXml] Missing port for server " << id << ", using default" << std::endl;
 		}
 
-		if(GameServer* server = new GameServer(name, versionMin, versionMax, address, port))
+		if(GameServer* server = new GameServer(name, versionMin, versionMax, inet_addr(address.c_str()), port))
 			serverList[id] = server;
 		else
 			std::cout << "[Error - GameServers::loadFromXml] Couldn't add server " << name << std::endl;
@@ -133,7 +133,6 @@ bool GameServers::loadFromXml(bool showResult/* = true*/)
 	}
 
 	xmlFreeDoc(doc);
-
 	if(showResult)
 	{
 		std::cout << "> Servers loaded:" << std::endl;
