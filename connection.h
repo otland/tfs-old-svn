@@ -102,10 +102,10 @@ class Connection : public boost::enable_shared_from_this<Connection>, boost::non
 			CONNECTION_STATE_CLOSED
 		};
 
-	private:
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
 		static uint32_t connectionCount;
 #endif
+	private:
 		Connection(boost::asio::ip::tcp::socket* socket, boost::asio::io_service& io_service, ServicePort_ptr servicePort):
 			m_socket(socket), m_readTimer(io_service), m_writeTimer(io_service), m_service(io_service), m_servicePort(servicePort)
 		{

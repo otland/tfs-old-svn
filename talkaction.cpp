@@ -1194,8 +1194,6 @@ bool TalkAction::ghost(Creature* creature, const std::string& cmd, const std::st
 	{
 		player->sendTextMessage(MSG_INFO_DESCR, "You are visible again.");
 		IOLoginData::getInstance()->updateOnlineStatus(player->getGUID(), true);
-
-		Status::getInstance()->addPlayer();
 		for(AutoList<Player>::listiterator pit = Player::listPlayer.list.begin(); pit != Player::listPlayer.list.end(); ++pit)
 		{
 			if(!pit->second->canSeeCreature(player))
@@ -1227,7 +1225,6 @@ bool TalkAction::ghost(Creature* creature, const std::string& cmd, const std::st
 				pit->second->notifyLogOut(player);
 		}
 
-		Status::getInstance()->removePlayer();
 		IOLoginData::getInstance()->updateOnlineStatus(player->getGUID(), false);
 		player->sendTextMessage(MSG_INFO_DESCR, "You are now invisible.");
 	}

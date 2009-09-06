@@ -21,7 +21,7 @@
 #include "protocol.h"
 
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
-uint32_t OutputMessagePool::OutputMessagePoolCount = OUTPUT_POOL_SIZE;
+uint32_t OutputMessagePool::outputMessagePoolCount = OUTPUT_POOL_SIZE;
 #endif
 
 OutputMessagePool::OutputMessagePool()
@@ -176,7 +176,7 @@ OutputMessage_ptr OutputMessagePool::getOutputMessage(Protocol* protocol, bool a
 	if(m_outputMessages.empty())
 	{
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
-		OutputMessagePoolCount++;
+		outputMessagePoolCount++;
 #endif
 		OutputMessage* msg = new OutputMessage();
 		m_outputMessages.push_back(msg);

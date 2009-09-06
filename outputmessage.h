@@ -145,7 +145,7 @@ class OutputMessagePool
 
 	public:
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
-		static uint32_t OutputMessagePoolCount;
+		static uint32_t outputMessagePoolCount;
 #endif
 		virtual ~OutputMessagePool();
 		static OutputMessagePool* getInstance()
@@ -164,7 +164,7 @@ class OutputMessagePool
 		void autoSend(OutputMessage_ptr msg);
 
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
-		size_t getTotalMessageCount() const {return (size_t)OutputMessagePoolCount;}
+		size_t getTotalMessageCount() const {return (size_t)outputMessagePoolCount;}
 #else
 		size_t getTotalMessageCount() const {return m_allMessages.size();}
 #endif

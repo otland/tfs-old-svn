@@ -472,7 +472,7 @@ bool ProtocolGame::parseFirstPacket(NetworkMessage& msg)
 
 	uint32_t id = 1;
 	toLowerCaseString(character);
-	if(id != "1" || password != "1" || character != "account manager") //avoid unecessary queries
+	if(name != "1" || password != "1" || character != "account manager") //avoid unecessary queries
 	{
 		std::string hash;
 		if(!IOLoginData::getInstance()->getAccountId(name, id) || !IOLoginData::getInstance()->getPassword(
@@ -1851,7 +1851,7 @@ void ProtocolGame::sendGoods(const ShopInfoList& shop)
 				{
 					const ItemType& it = Item::items[sit->itemId];
 					if(it.hasSubType() && !it.stackable)
-						subType = sit->subType
+						subType = sit->subType;
 				}
 
 				uint32_t count = player->__getItemTypeCount(sit->itemId, subType);
@@ -1873,7 +1873,7 @@ void ProtocolGame::sendGoods(const ShopInfoList& shop)
 				{
 					const ItemType& it = Item::items[sit->itemId];
 					if(it.hasSubType() && !it.stackable)
-						subType = sit->subType
+						subType = sit->subType;
 				}
 				
 				if(subType != -1)
@@ -1889,7 +1889,7 @@ void ProtocolGame::sendGoods(const ShopInfoList& shop)
 
 		msg->AddByte(std::min(goodsMap.size(), (size_t)255));
 		std::map<uint32_t, uint32_t>::const_iterator it = goodsMap.begin();
-		for(uint32_t i = 0; it != goodsMapMap.end() && i < 255; ++it, ++i)
+		for(uint32_t i = 0; it != goodsMap.end() && i < 255; ++it, ++i)
 		{
 			msg->AddItemId(it->first);
 			msg->AddByte(std::min(it->second, (uint32_t)255));

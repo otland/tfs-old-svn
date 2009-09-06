@@ -208,7 +208,7 @@ Protocol* ServicePort::makeProtocol(bool checksum, NetworkMessage& msg) const
 	for(ServiceVec::const_iterator it = m_services.begin(); it != m_services.end(); ++it)
 	{
 		if((*it)->getProtocolId() == protocolId && ((checksum && (*it)->hasChecksum()) || !(*it)->hasChecksum()))
-			return (*it)->makeProtocol(NULL);
+			return (*it)->makeProtocol(Connection_ptr());
 	}
 
 	return NULL;
