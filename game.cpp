@@ -758,7 +758,7 @@ ReturnValue Game::getPlayerByNameWildcard(std::string s, Player*& player)
 			continue;
 
 		std::string name = asLowerCaseString(it->second->getName());
-		if(name.substr(0, tmp.length()) != tmp)
+		if(name.substr(0, s.length()) != s)
 			continue;
 
 		if(last)
@@ -3199,7 +3199,7 @@ bool Game::playerSellItem(uint32_t playerId, uint16_t spriteId, uint8_t count, u
 	if(it.isFluidContainer() && count < uint8_t(sizeof(reverseFluidMap) / sizeof(int8_t)))
 		subType = reverseFluidMap[count];
 
-	if(!player->canShopItem(id.id, subType, SHOPEVENT_SELL))
+	if(!player->canShopItem(it.id, subType, SHOPEVENT_SELL))
 		return false;
 
 	merchant->onPlayerTrade(player, SHOPEVENT_SELL, onSell, it.id, subType, amount);

@@ -99,7 +99,7 @@ bool ProtocolGame::login(const std::string& name, uint32_t id, const std::string
 	PlayerVector players = g_game.getPlayersByName(name);
 	Player* _player = NULL;
 	if(!players.empty())
-		_player = players[random_range(0, players.size())];
+		_player = players[random_range(0, (players.size() - 1))];
 
 	if(!_player || name == "account manager" || g_config.getNumber(ConfigManager::ALLOW_CLONES) > players.size())
 	{
