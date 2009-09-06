@@ -151,7 +151,7 @@ void Combat::getCombatArea(const Position& centerPos, const Position& targetPos,
 		Tile* tile = g_game.getTile(targetPos);
 		if(!tile)
 		{
-			tile = new StaticTile(targetPos);
+			tile = new StaticTile(targetPos.x, targetPos.y, targetPos.z);
 			g_game.setTile(tile);
 		}
 
