@@ -101,7 +101,7 @@ bool ProtocolGame::login(const std::string& name, uint32_t id, const std::string
 	if(!players.empty())
 		_player = players[random_range(0, (players.size() - 1))];
 
-	if(!_player || name == "account manager" || g_config.getNumber(ConfigManager::ALLOW_CLONES) > players.size())
+	if(!_player || name == "account manager" || g_config.getNumber(ConfigManager::ALLOW_CLONES) > (int32_t)players.size())
 	{
 		player = new Player(name, this);
 		player->useThing2();
@@ -324,7 +324,7 @@ bool ProtocolGame::logout(bool displayEffect, bool forceLogout)
 	if(displayEffect && !player->isGhost())
 		g_game.addMagicEffect(player->getPosition(), NM_ME_POFF);
 
-	if(Connection* connection = getConnection())
+	if(Connection_ptr connection = getConnection())
 		connection->close();
 
 	return g_game.removeCreature(player);
@@ -425,10 +425,8 @@ bool ProtocolGame::parseFirstPacket(NetworkMessage& msg)
 	setXTEAKey(key);
 
 	bool gamemaster = msg.GetByte();
-	std::string name = msg.GetString();
-	const std::string player = msg.GetString();
+	std::string name = msg.GetString(), character = msg.GetString(), password = msg.GetString();
 
-	std::string password = msg.GetString();
 	msg.SkipBytes(6); //841- wtf?
 	if(version < CLIENT_VERSION_MIN || version > CLIENT_VERSION_MAX)
 	{
@@ -473,12 +471,12 @@ bool ProtocolGame::parseFirstPacket(NetworkMessage& msg)
 	}
 
 	uint32_t id = 1;
-	toLowerCaseString(player);
-	if(id != "1" || password != "1" || player != "account manager") //avoid unecessary queries
+	toLowerCaseString(character);
+	if(id != "1" || password != "1" || character != "account manager") //avoid unecessary queries
 	{
 		std::string hash;
-		if(!IOLoginData::getInstance()->getAccountId(name, id)) || !IOLoginData::getInstance()->getPassword(
-			id, hash, player) || !encryptTest(password, hash))
+		if(!IOLoginData::getInstance()->getAccountId(name, id) || !IOLoginData::getInstance()->getPassword(
+			id, hash, character) || !encryptTest(password, hash))
 		{
 			ConnectionManager::getInstance()->addAttempt(getIP(), protocolId, false);
 			disconnectClient(0x14, "Invalid account name or password.");
@@ -512,7 +510,7 @@ bool ProtocolGame::parseFirstPacket(NetworkMessage& msg)
 
 	ConnectionManager::getInstance()->addAttempt(getIP(), protocolId, true);
 	Dispatcher::getDispatcher().addTask(createTask(boost::bind(
-		&ProtocolGame::login, this, player, id, password, operatingSystem, version, gamemaster)));
+		&ProtocolGame::login, this, character, id, password, operatingSystem, version, gamemaster)));
 	return true;
 }
 
@@ -1843,7 +1841,7 @@ void ProtocolGame::sendGoods(const ShopInfoList& shop)
 		std::map<uint32_t, uint32_t> goodsMap;
 		if(shop.size() >= 5)
 		{
-			for(ShopInfoList::iterator sit = shop.begin(); sit != shop.end(); ++sit)
+			for(ShopInfoList::const_iterator sit = shop.begin(); sit != shop.end(); ++sit)
 			{
 				if(sit->sellPrice < 0)
 					continue;
@@ -1856,7 +1854,7 @@ void ProtocolGame::sendGoods(const ShopInfoList& shop)
 						subType = sit->subType
 				}
 
-				uint32_t count = __getItemTypeCount(sit->itemId, subType);
+				uint32_t count = player->__getItemTypeCount(sit->itemId, subType);
 				if(count > 0)
 					goodsMap[sit->itemId] = count;
 			}
@@ -1865,7 +1863,7 @@ void ProtocolGame::sendGoods(const ShopInfoList& shop)
 		{
 			std::map<uint32_t, uint32_t> tmpMap;
 			player->__getAllItemTypeCount(tmpMap);
-			for(ShopInfoList::iterator sit = shop.begin(); sit != shop.end(); ++sit)
+			for(ShopInfoList::const_iterator sit = shop.begin(); sit != shop.end(); ++sit)
 			{
 				if(sit->sellPrice < 0)
 					continue;
@@ -1880,7 +1878,7 @@ void ProtocolGame::sendGoods(const ShopInfoList& shop)
 				
 				if(subType != -1)
 				{
-					uint32_t count = __getItemTypeCount(sit->itemId, subType);
+					uint32_t count = player->__getItemTypeCount(sit->itemId, subType);
 					if(count > 0)
 						goodsMap[sit->itemId] = count;
 				}
@@ -1890,8 +1888,8 @@ void ProtocolGame::sendGoods(const ShopInfoList& shop)
 		}
 
 		msg->AddByte(std::min(goodsMap.size(), (size_t)255));
-		std::map<uint32_t, uint32_t>::const_iterator it = itemMap.begin();
-		for(uint32_t i = 0; it != itemMap.end() && i < 255; ++it, ++i)
+		std::map<uint32_t, uint32_t>::const_iterator it = goodsMap.begin();
+		for(uint32_t i = 0; it != goodsMapMap.end() && i < 255; ++it, ++i)
 		{
 			msg->AddItemId(it->first);
 			msg->AddByte(std::min(it->second, (uint32_t)255));

@@ -30,7 +30,7 @@ class ProtocolHTTP : public Protocol
 #endif
 		virtual void onRecvFirstMessage(NetworkMessage& msg) {parseFirstPacket(msg);}
 
-		ProtocolHTTP(Connection* connection) : Protocol(connection)
+		ProtocolHTTP(Connection_ptr connection) : Protocol(connection)
 		{
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
 			protocolHTTPCount++;

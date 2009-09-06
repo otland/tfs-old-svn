@@ -1431,7 +1431,7 @@ bool IOLoginData::createCharacter(uint32_t accountId, std::string characterName,
 	if(sex % 2)
 		lookType = 128;
 
-	uint32_t level = g_config.getNumber(ConfigManager::START_LEVEL), tmpLevel = std::min(7, (level - 1));
+	uint32_t level = g_config.getNumber(ConfigManager::START_LEVEL), tmpLevel = std::min((uint32_t)7, (level - 1));
 	uint64_t exp = 0;
 	if(level > 1)
 		exp = Player::getExpForLevel(level);

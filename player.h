@@ -399,7 +399,7 @@ class Player : public Creature, public Cylinder
 		void stopWalk();
 		void openShopWindow();
 		void closeShopWindow(Npc* npc = NULL, int32_t onBuy = -1, int32_t onSell = -1);
-		bool canShopItem(uint32_t itemId, uint8_t subType, ShopEvent_t event);
+		bool canShopItem(uint16_t itemId, uint8_t subType, ShopEvent_t event);
 
 		void setChaseMode(chaseMode_t mode);
 		void setFightMode(fightMode_t mode) {fightMode = mode;}

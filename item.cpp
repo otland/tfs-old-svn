@@ -1189,10 +1189,11 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 				else
 					s << "You read: ";
 
-				s << item->getText();
-				if(!item->getText().empty())
+				std::string text = item->getText();
+				s << text;
+				if(!text.empty())
 				{
-					char tmp = *item->getText().rbegin();
+					char tmp = *text.rbegin();
 					if(tmp == '?' || char == '!' || char == '.')
 						dot = false;
 				}
