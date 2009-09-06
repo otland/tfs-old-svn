@@ -471,8 +471,7 @@ bool ProtocolGame::parseFirstPacket(NetworkMessage& msg)
 	}
 
 	uint32_t id = 1;
-	toLowerCaseString(character);
-	if(name != "1" || password != "1" || character != "account manager") //avoid unecessary queries
+	if(name != "1" || password != "1" || asLowerCaseString(character) != "account manager") //avoid unecessary queries
 	{
 		std::string hash;
 		if(!IOLoginData::getInstance()->getAccountId(name, id) || !IOLoginData::getInstance()->getPassword(
