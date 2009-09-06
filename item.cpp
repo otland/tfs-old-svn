@@ -1193,8 +1193,8 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 				s << text;
 				if(!text.empty())
 				{
-					char tmp = *text.rbegin();
-					if(tmp == '?' || char == '!' || char == '.')
+					char end = *text.rbegin();
+					if(end == '?' || end == '!' || end == '.')
 						dot = false;
 				}
 			}
