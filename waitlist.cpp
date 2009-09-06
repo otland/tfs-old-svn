@@ -94,7 +94,7 @@ bool WaitingList::login(const Player* player)
 			++slot;
 		}
 
-		waitList.insert(wit, wait);
+		waitList.insert(it, wait);
 	}
 	else
 	{
