@@ -570,10 +570,10 @@ Thing* Game::internalGetThing(Player* player, const Position& pos, int32_t index
 		if(Container* parentcontainer = player->getContainer(fromCid))
 			return parentcontainer->getItem(slot);
 	}
-	else if(pos.y == 0 && pos.z == 0)
+	else if(!pos.y && !pos.z)
 	{
 		const ItemType& it = Item::items.getItemIdByClientId(spriteId);
-		if(it.id == 0)
+		if(!it.id)
 			return NULL;
 
 		int32_t subType = -1;
@@ -582,10 +582,8 @@ Thing* Game::internalGetThing(Player* player, const Position& pos, int32_t index
 
 		return findItemOfType(player, it.id, true, subType);
 	}
-	else
-		return player->getInventoryItem((slots_t)static_cast<uint8_t>(pos.y));
 
-	return NULL;
+	return player->getInventoryItem((slots_t)static_cast<uint8_t>(pos.y));
 }
 
 void Game::internalGetPosition(Item* item, Position& pos, int16_t& stackpos)
@@ -751,7 +749,9 @@ ReturnValue Game::getPlayerByNameWildcard(std::string s, Player*& player)
 	}
 
 	Player* last = NULL;
-	toLowerCaseString(s.substr(0, s.length() - 1));
+	s = s.substr(0, s.length() - 1);
+
+	toLowerCaseString(s);
 	for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
 	{
 		if(it->second->isRemoved())
@@ -3157,21 +3157,24 @@ bool Game::playerPurchaseItem(uint32_t playerId, uint16_t spriteId, uint8_t coun
 	bool ignoreCap/* = false*/, bool inBackpacks/* = false*/)
 {
 	Player* player = getPlayerByID(playerId);
-	if(player == NULL || player->isRemoved())
+	if(!player || player->isRemoved())
 		return false;
 
 	int32_t onBuy, onSell;
 	Npc* merchant = player->getShopOwner(onBuy, onSell);
-	if(merchant == NULL)
+	if(!merchant)
 		return false;
 
 	const ItemType& it = Item::items.getItemIdByClientId(spriteId);
-	if(it.id == 0 || !player->canShopItem(it.id, SHOPEVENT_BUY))
+	if(!it.id)
 		return false;
 
 	uint8_t subType = count;
 	if(it.isFluidContainer() && count < uint8_t(sizeof(reverseFluidMap) / sizeof(int8_t)))
 		subType = reverseFluidMap[count];
+
+	if(!player->canShopItem(it.id, subType, SHOPEVENT_BUY))
+		return false;
 
 	merchant->onPlayerTrade(player, SHOPEVENT_BUY, onBuy, it.id, subType, amount, ignoreCap, inBackpacks);
 	return true;
@@ -3180,21 +3183,24 @@ bool Game::playerPurchaseItem(uint32_t playerId, uint16_t spriteId, uint8_t coun
 bool Game::playerSellItem(uint32_t playerId, uint16_t spriteId, uint8_t count, uint8_t amount)
 {
 	Player* player = getPlayerByID(playerId);
-	if(player == NULL || player->isRemoved())
+	if(!player || player->isRemoved())
 		return false;
 
 	int32_t onBuy, onSell;
 	Npc* merchant = player->getShopOwner(onBuy, onSell);
-	if(merchant == NULL)
+	if(!merchant)
 		return false;
 
 	const ItemType& it = Item::items.getItemIdByClientId(spriteId);
-	if(it.id == 0 || !player->canShopItem(it.id, SHOPEVENT_SELL))
+	if(!it.id)
 		return false;
 
 	uint8_t subType = count;
 	if(it.isFluidContainer() && count < uint8_t(sizeof(reverseFluidMap) / sizeof(int8_t)))
 		subType = reverseFluidMap[count];
+
+	if(!player->canShopItem(id.id, subType, SHOPEVENT_SELL))
+		return false;
 
 	merchant->onPlayerTrade(player, SHOPEVENT_SELL, onSell, it.id, subType, amount);
 	return true;
@@ -3924,6 +3930,9 @@ void Game::checkCreatureAttack(uint32_t creatureId)
 
 void Game::addCreatureCheck(Creature* creature)
 {
+	if(creature->isRemoved())
+		return;
+
 	creature->checked = true;
 	if(creature->checkVector >= 0) //already in a vector, or about to be added
 		return;

@@ -190,7 +190,7 @@ class ProtocolAdmin : public Protocol
 #endif
 		virtual void onRecvFirstMessage(NetworkMessage& msg);
 
-		ProtocolAdmin(Connection* connection): Protocol(connection)
+		ProtocolAdmin(Connection_ptr connection): Protocol(connection)
 		{
 			m_state = NO_CONNECTED;
 			m_loginTries = m_lastCommand = 0;

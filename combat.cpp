@@ -142,15 +142,16 @@ bool Combat::getMinMaxValues(Creature* creature, Creature* target, int32_t& min,
 
 void Combat::getCombatArea(const Position& centerPos, const Position& targetPos, const AreaCombat* area, std::list<Tile*>& list)
 {
-	uint16_t tmpX = targetPos.x, tmpY = targetPos.y;
 	if(area)
 		area->getList(centerPos, targetPos, list);
-	else if(targetPos.z < MAP_MAX_LAYERS)
+	else if(targetPos.x >= 0 && targetPos.x <= 0xFFFF &&
+		targetPos.y >= 0 && targetPos.y <= 0xFFFF &&
+		targetPos.z >= 0 && targetPos.z < MAP_MAX_LAYERS)
 	{
-		Tile* tile = g_game.getTile(tmpX, tmpY, targetPos.z);
+		Tile* tile = g_game.getTile(targetPos);
 		if(!tile)
 		{
-			tile = new StaticTile(tmpX, tmpY, targetPos.z);
+			tile = new StaticTile(targetPos);
 			g_game.setTile(tile);
 		}
 
@@ -1126,7 +1127,8 @@ bool AreaCombat::getList(const Position& centerPos, const Position& targetPos, s
 		{
 			if(area->getValue(y, x) != 0)
 			{
-				if(targetPos.z < MAP_MAX_LAYERS && g_game.isSightClear(targetPos, Position(tmpX, tmpY, targetPos.z), true))
+				if(tmpX >= 0 && tmpX <= 0xFFFF && tmpY >= 0 && tmpX <= 0xFFFF && targetPos.z >= 0 && targetPos.z < MAP_MAX_LAYERS
+					&& g_game.isSightClear(targetPos, Position(tmpX, tmpY, targetPos.z), true))
 				{
 					if(!(tile = g_game.getTile(tmpX, tmpY, targetPos.z)))
 					{

@@ -1587,7 +1587,6 @@ const ItemType& Items::getItemIdByClientId(int32_t spriteId) const
 		i++;
 	}
 	while(iType);
-
 	static ItemType dummyItemType; // use this for invalid ids
 	return dummyItemType;
 }

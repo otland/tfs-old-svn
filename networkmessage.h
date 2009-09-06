@@ -30,8 +30,8 @@ class RSA;
 class NetworkMessage
 {
 	public:
-		enum {header_length = 2};
-		enum {max_body_length = NETWORKMESSAGE_MAXSIZE - header_length};
+		enum {headerLength = 2};
+		enum {bodyLength = NETWORKMESSAGE_MAXSIZE - headerLength};
 
 		// constructor/destructor
 		NetworkMessage() {Reset();}
@@ -127,7 +127,7 @@ class NetworkMessage
 		void setReadPos(int32_t newPos) {m_ReadPos = newPos;}
 
 		char* getBuffer() {return (char*)&m_MsgBuf[0];}
-		char* getBodyBuffer() {m_ReadPos = 2; return (char*)&m_MsgBuf[header_length];}
+		char* getBodyBuffer() {m_ReadPos = 2; return (char*)&m_MsgBuf[headerLength];}
 
 		int32_t decodeHeader();
 

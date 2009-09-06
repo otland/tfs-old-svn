@@ -225,6 +225,14 @@ void runfileHandler(void)
 }
 #endif
 
+void allocationHandler()
+{
+	puts("Allocation failed, server out of memory!\nDecrease size of your map or compile in a 64-bit mode.");
+	char buffer[1024];
+	fgets(buffer, 1024, stdin);
+	exit(1);
+}
+
 void startupErrorMessage(const std::string& error)
 {
 	if(error.length() > 0)
@@ -257,7 +265,9 @@ void serverMain(void* param)
 {
 	std::cout.rdbuf(&g_logger);
 	std::cerr.rdbuf(&g_logger);
+
 #endif
+	std::set_new_handler(allocationHandler);
 	ServiceManager servicer;
 	g_config.startup();
 

@@ -3677,7 +3677,7 @@ int32_t LuaScriptInterface::luaDoPlayerAddItem(lua_State* L)
 	const ItemType& it = Item::items[itemId];
 	int32_t itemCount = 1;
 	if(params > 4)
-		itemCount = count;
+		itemCount = std::max(1, count);
 	else if(it.hasSubType())
 	{
 		if(it.stackable)
@@ -4478,7 +4478,7 @@ int32_t LuaScriptInterface::luaDoCreateItem(lua_State* L)
 		subType = count;
 	}
 	else
-		itemCount = count;
+		itemCount = std::max(1, count);
 
 	while(itemCount > 0)
 	{
@@ -7698,7 +7698,7 @@ int32_t LuaScriptInterface::luaDoAddContainerItem(lua_State* L)
 		subType = count;
 	}
 	else
-		itemCount = count;
+		itemCount = std::max(1, count);
 
 	while(itemCount > 0)
 	{

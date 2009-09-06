@@ -42,7 +42,7 @@ class ProtocolStatus : public Protocol
 #endif
 		virtual void onRecvFirstMessage(NetworkMessage& msg);
 
-		ProtocolStatus(Connection* connection): Protocol(connection)
+		ProtocolStatus(Connection_ptr connection): Protocol(connection)
 		{
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
 			protocolStatusCount++;

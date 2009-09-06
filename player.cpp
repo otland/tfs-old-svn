@@ -1464,6 +1464,7 @@ void Player::onCreatureDisappear(const Creature* creature, bool isLogout)
 	if(eventWalk)
 		setFollowCreature(NULL);
 
+	closeShopWindow();
 	if(tradePartner)
 		g_game.internalCloseTrade(this);
 
@@ -1544,12 +1545,22 @@ void Player::closeShopWindow(Npc* npc/* = NULL*/, int32_t onBuy/* = -1*/, int32_
 	goodsMap.clear();
 }
 
-bool Player::canShopItem(uint32_t itemId, ShopEvent_t event)
+bool Player::canShopItem(uint16_t itemId, uint8_t subType, ShopEvent_t event)
 {
-	for(ShopInfoList::iterator it = shopOffer.begin(); it != shopOffer.end(); ++it)
+	for(ShopInfoList::iterator sit = shopOffer.begin(); sit != shopOffer.end(); ++sit)
 	{
-		if((*it).itemId == itemId && ((event == SHOPEVENT_BUY && (*it).buyPrice > -1) || (event == SHOPEVENT_SELL && (*it).sellPrice > -1)))
+		if(sit->itemId != itemId || ((event != SHOPEVENT_BUY || sit->buyPrice < 0)
+			&& (event != SHOPEVENT_SELL || sit->sellPrice < 0)))
+			continue;
+
+		if(event == SHOPEVENT_SELL)
 			return true;
+
+		const ItemType& it = Item::items[id];
+		if(it.isFluidContainer() || it.isSplash() || it.isRune())
+			return sit->subType == subType;
+
+		return true;
 	}
 
 	return false;
@@ -3702,7 +3713,7 @@ bool Player::onKilledCreature(Creature* target, uint32_t& flags)
 		return true;
 
 	if(!targetPlayer->hasAttacked(this) && target->getSkull() == SKULL_NONE
-		&& addUnjustifiedKill(targetPlayer))
+		&& targetPlayer != this && addUnjustifiedKill(targetPlayer))
 		flags |= (uint32_t)KILLFLAG_UNJUSTIFIED;
 
 	pzLocked = true;

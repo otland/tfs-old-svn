@@ -325,11 +325,11 @@ class Item : virtual public Thing, public ItemAttributes
 
 		static std::string getDescription(const ItemType& it, int32_t lookDistance, const Item* item = NULL, int32_t subType = -1, bool addArticle = true);
 		static std::string getNameDescription(const ItemType& it, const Item* item = NULL, int32_t subType = -1, bool addArticle = true);
-		static std::string getWeightDescription(const ItemType& it, double weight, uint32_t count = 1);
+		static std::string getWeightDescription(double weight, bool stackable, uint32_t count = 1);
 
 		virtual std::string getDescription(int32_t lookDistance) const {return getDescription(items[id], lookDistance, this);}
 		std::string getNameDescription() const {return getNameDescription(items[id], this);}
-		std::string getWeightDescription() const;
+		std::string getWeightDescription() const {return getWeightDescription(getWeight(), items[id].stackable, count);}
 
 		//serialization
 		virtual Attr_ReadValue readAttr(AttrTypes_t attr, PropStream& propStream);
@@ -459,8 +459,6 @@ class Item : virtual public Thing, public ItemAttributes
 		static uint32_t countByType(const Item* item, int32_t checkType, bool multiCount);
 
 	protected:
-		std::string getWeightDescription(double weight) const {return getWeightDescription(Item::items[id], weight, count);}
-
 		uint16_t id;
 		uint8_t count;
 		Raid* raid;

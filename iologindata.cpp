@@ -1431,16 +1431,13 @@ bool IOLoginData::createCharacter(uint32_t accountId, std::string characterName,
 	if(sex % 2)
 		lookType = 128;
 
-	uint32_t level = g_config.getNumber(ConfigManager::START_LEVEL), tmpLevel = level - 1;
+	uint32_t level = g_config.getNumber(ConfigManager::START_LEVEL), tmpLevel = std::min(7, (level - 1));
 	uint64_t exp = 0;
 	if(level > 1)
 		exp = Player::getExpForLevel(level);
 
 	if(tmpLevel > 0)
 	{
-		if(tmpLevel > 7)
-			tmpLevel = 7;
-
 		healthMax += rookVoc->getGain(GAIN_HEALTH) * tmpLevel;
 		manaMax += rookVoc->getGain(GAIN_MANA) * tmpLevel;
 		capMax += rookVoc->getGainCap() * tmpLevel;

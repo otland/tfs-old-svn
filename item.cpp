@@ -1173,11 +1173,11 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 	else if(it.allowDistRead)
 	{
 		s << std::endl;
-		if(item && item->getText() != "")
+		if(item && !item->getText().empty())
 		{
 			if(lookDistance <= 4)
 			{
-				if(item->getWriter().length())
+				if(!item->getWriter().empty())
 				{
 					s << item->getWriter() << " wrote";
 					time_t date = item->getDate();
@@ -1190,7 +1190,12 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 					s << "You read: ";
 
 				s << item->getText();
-				dot = false;
+				if(!item->getText().empty())
+				{
+					char tmp = *item->getText().rbegin();
+					if(tmp == '?' || char == '!' || char == '.')
+						dot = false;
+				}
 			}
 			else
 				s << "You are too far away to read it";
@@ -1253,11 +1258,13 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 		s << ".";
 	}
 
-	if(lookDistance <= 1)
+	if(lookDistance <= 1 && it.pickupable)
 	{
-		double weight = (!item ? it.weight : item->getWeight());
-		if(weight > 0)
-			s << std::endl << getWeightDescription(it, weight);
+		s << std::endl;
+		if(!item)
+			s << getWeightDescription(it.weight, it.stackable, subType);
+		else
+			s << item->getWeightDescription();
 	}
 
 	if(it.abilities.elementType != COMBAT_NONE && it.decayTo > 0)
@@ -1373,21 +1380,18 @@ std::string Item::getNameDescription(const ItemType& it, const Item* item/* = NU
 	return s.str();
 }
 
-std::string Item::getWeightDescription(const ItemType& it, double weight, uint32_t count/* = 1*/)
+std::string Item::getWeightDescription(double weight, bool stackable, uint32_t count/* = 1*/)
 {
+	if(weight > 0)
+		return "";
+
 	std::stringstream s;
-	if(it.stackable && count > 1)
+	if(stackable && count > 1)
 		s << "They weigh " << std::fixed << std::setprecision(2) << weight << " oz.";
 	else
 		s << "It weighs " << std::fixed << std::setprecision(2) << weight << " oz.";
 
 	return s.str();
-}
-
-std::string Item::getWeightDescription() const
-{
-	double weight = getWeight();
-	return (weight > 0 ? getWeightDescription(weight) : "");
 }
 
 void Item::setUniqueId(uint16_t n)
