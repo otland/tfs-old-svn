@@ -101,83 +101,84 @@ void Connection::close()
 
 bool ConnectionManager::isDisabled(uint32_t clientIp, int32_t protocolId)
 {
-        OTSYS_THREAD_LOCK_CLASS lockClass(m_connectionManagerLock);
-        int32_t maxLoginTries = g_config.getNumber(ConfigManager::LOGIN_TRIES);
-        if(maxLoginTries == 0 || clientIp == 0)
-                return false;
+	boost::recursive_mutex::scoped_lock lockClass(m_connectionManagerLock);
+	int32_t maxLoginTries = g_config.getNumber(ConfigManager::LOGIN_TRIES);
+	if(!maxLoginTries || !clientIp)
+		return false;
 
-        IpLoginMap::const_iterator it = ipLoginMap.find(clientIp);
-        return it != ipLoginMap.end() && it->second.lastProtocol != protocolId && it->second.loginsAmount > maxLoginTries
-                && (int32_t)time(NULL) < it->second.lastLogin + g_config.getNumber(ConfigManager::LOGIN_TIMEOUT) / 1000;
+	IpLoginMap::const_iterator it = ipLoginMap.find(clientIp);
+	return it != ipLoginMap.end() && it->second.lastProtocol != protocolId && it->second.loginsAmount > maxLoginTries
+		&& (int32_t)time(NULL) < it->second.lastLogin + g_config.getNumber(ConfigManager::LOGIN_TIMEOUT) / 1000;
 }
 
 void ConnectionManager::addAttempt(uint32_t clientIp, int32_t protocolId, bool success)
 {
-        OTSYS_THREAD_LOCK_CLASS lockClass(m_connectionManagerLock);
-        if(!clientIp)
-                return;
+	boost::recursive_mutex::scoped_lock lockClass(m_connectionManagerLock);
+	if(!clientIp)
+		return;
 
-        IpLoginMap::iterator it = ipLoginMap.find(clientIp);
-        if(it == ipLoginMap.end())
-        {
-                LoginBlock tmp;
-                tmp.lastLogin = tmp.loginsAmount = 0;
-                tmp.lastProtocol = 0x00;
+	IpLoginMap::iterator it = ipLoginMap.find(clientIp);
+	if(it == ipLoginMap.end())
+	{
+		LoginBlock tmp;
+		tmp.lastLogin = tmp.loginsAmount = 0;
+		tmp.lastProtocol = 0x00;
 
-                ipLoginMap[clientIp] = tmp;
-                it = ipLoginMap.find(clientIp);
+		ipLoginMap[clientIp] = tmp;
+		it = ipLoginMap.find(clientIp);
         }
 
-        if(it->second.loginsAmount > g_config.getNumber(ConfigManager::LOGIN_TRIES))
-                it->second.loginsAmount = 0;
+	if(it->second.loginsAmount > g_config.getNumber(ConfigManager::LOGIN_TRIES))
+		it->second.loginsAmount = 0;
 
-        int32_t currentTime = time(NULL);
-        if(!success || (currentTime < it->second.lastLogin + (int32_t)g_config.getNumber(ConfigManager::RETRY_TIMEOUT) / 1000))
-                it->second.loginsAmount++;
-        else
-                it->second.loginsAmount = 0;
+	int32_t currentTime = time(NULL);
+	if(!success || (currentTime < it->second.lastLogin + (int32_t)g_config.getNumber(ConfigManager::RETRY_TIMEOUT) / 1000))
+		it->second.loginsAmount++;
+	else
+		it->second.loginsAmount = 0;
 
-        it->second.lastLogin = currentTime;
-        it->second.lastProtocol = protocolId;
+	it->second.lastLogin = currentTime;
+	it->second.lastProtocol = protocolId;
 }
 
 bool ConnectionManager::acceptConnection(uint32_t clientIp)
 {
-        if(!clientIp)
-                return false;
+	if(!clientIp)
+		return false;
 
-        OTSYS_THREAD_LOCK_CLASS lockClass(m_connectionManagerLock);
-        uint64_t currentTime = OTSYS_TIME();
+	boost::recursive_mutex::scoped_lock lockClass(m_connectionManagerLock);
+	uint64_t currentTime = OTSYS_TIME();
 
-        IpConnectMap::iterator it = ipConnectMap.find(clientIp);
-        if(it == ipConnectMap.end())
-        {
-                ConnectBlock tmp;
-                tmp.startTime = currentTime;
-                tmp.blockTime = 0;
-                tmp.count = 1;
+	IpConnectMap::iterator it = ipConnectMap.find(clientIp);
+	if(it == ipConnectMap.end())
+	{
+		ConnectBlock tmp;
+		tmp.startTime = currentTime;
+		tmp.blockTime = 0;
+		tmp.count = 1;
 
-                ipConnectMap[clientIp] = tmp;
-                return true;
+		ipConnectMap[clientIp] = tmp;
+		return true;
         }
 
-        it->second.count++;
-        if(it->second.blockTime > currentTime)
-                return false;
+	it->second.count++;
+	if(it->second.blockTime > currentTime)
+		return false;
 
-        if(currentTime - it->second.startTime > 1000)
-        {
-                uint32_t tmp = it->second.count;
-                it->second.startTime = currentTime;
-                it->second.count = it->second.blockTime = 0;
-                if(tmp > 10)
-                {
-                        it->second.blockTime = currentTime + 10000;
-                        return false;
-                }
-        }
+	if(currentTime - it->second.startTime > 1000)
+	{
+		uint32_t tmp = it->second.count;
+		it->second.startTime = currentTime;
 
-        return true;
+		it->second.count = it->second.blockTime = 0;
+		if(tmp > 10)
+		{
+			it->second.blockTime = currentTime + 10000;
+			return false;
+		}
+	}
+
+	return true;
 }
 
 void Connection::closeConnection()
@@ -242,7 +243,7 @@ void Connection::write()
 		{
 			if(m_logError)
 			{
-				LOG_MESSAGE("NETWORK", LOGTYPE_ERROR, 1, e.what());
+				LOG_MESSAGE(LOGTYPE_ERROR, e.what(), "NETWORK");
 				m_logError = false;
 			}
 		}
@@ -297,7 +298,7 @@ void Connection::deleteConnection()
 	{
 		if(m_logError)
 		{
-			LOG_MESSAGE("NETWORK", LOGTYPE_ERROR, 1, e.what());
+			LOG_MESSAGE(LOGTYPE_ERROR, e.what(), "NETWORK");
 			m_logError = false;
 		}
 	}
@@ -328,7 +329,7 @@ void Connection::accept()
 	{
 		if(m_logError)
 		{
-			LOG_MESSAGE("NETWORK", LOGTYPE_ERROR, 1, e.what());
+			LOG_MESSAGE(LOGTYPE_ERROR, e.what(), "NETWORK");
 			m_logError = false;
 			close();
 		}
@@ -368,7 +369,7 @@ void Connection::parseHeader(const boost::system::error_code& error)
 	{
 		if(m_logError)
 		{
-			LOG_MESSAGE("NETWORK", LOGTYPE_ERROR, 1, e.what());
+			LOG_MESSAGE(LOGTYPE_ERROR, e.what(), "NETWORK");
 			m_logError = false;
 			close();
 		}
@@ -444,7 +445,7 @@ void Connection::parsePacket(const boost::system::error_code& error)
 	{
 		if(m_logError)
 		{
-			LOG_MESSAGE("NETWORK", LOGTYPE_ERROR, 1, e.what());
+			LOG_MESSAGE(LOGTYPE_ERROR, e.what(), "NETWORK");
 			m_logError = false;
 			close();
 		}
@@ -505,7 +506,7 @@ void Connection::internalSend(OutputMessage_ptr msg)
 	{
 		if(m_logError)
 		{
-			LOG_MESSAGE("NETWORK", LOGTYPE_ERROR, 1, e.what());
+			LOG_MESSAGE(LOGTYPE_ERROR, e.what(), "NETWORK");
 			m_logError = false;
 		}
 	}

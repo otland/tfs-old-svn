@@ -78,6 +78,12 @@ class ConnectionManager
 	protected:
 		ConnectionManager() {}
 
+		typedef std::map<uint32_t, LoginBlock> IpLoginMap;
+		IpLoginMap ipLoginMap;
+
+		typedef std::map<uint32_t, ConnectBlock> IpConnectMap;
+		IpConnectMap ipConnectMap; 
+
 		std::list<Connection_ptr> m_connections;
 		boost::recursive_mutex m_connectionManagerLock;
 };
