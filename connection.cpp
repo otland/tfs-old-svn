@@ -29,8 +29,10 @@
 #include "scheduler.h"
 
 #include "server.h"
+#include "config.h"
 #include "tools.h"
 
+extern ConfigManager g_config;
 bool Connection::m_logError = true;
 
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
@@ -292,7 +294,7 @@ void Connection::deleteConnection()
 	assert(!m_refCount);
 	try
 	{
-		m_io_service.dispatch(boost::bind(&Connection::onStop, this));
+		m_service.dispatch(boost::bind(&Connection::onStop, this));
 	}
 	catch(boost::system::system_error& e)
 	{
@@ -395,7 +397,7 @@ void Connection::parsePacket(const boost::system::error_code& error)
 	--m_pendingRead;
 	uint32_t length = m_msg.getMessageLength() - m_msg.getReadPos() - 4, checksumReceived = m_msg.PeekU32(), checksum = 0;
 	if(len > 0)
-		checksum = adlerChecksum((uint8_t*)(m_msg.getBuffer() + m_msg.getReadPos() + 4), len);
+		checksum = adlerChecksum((uint8_t*)(m_msg.getBuffer() + m_msg.getReadPos() + 4), length);
 
 	bool checksumEnabled = false;
 	if(checksumReceived == checksum)
@@ -411,7 +413,7 @@ void Connection::parsePacket(const boost::system::error_code& error)
 		if(!m_protocol)
 		{
 			// Game protocol has already been created at this point
-			m_protocol = m_service_port->make_protocol(checksumEnabled, m_msg);
+			m_protocol = m_servicePort->make_protocol(checksumEnabled, m_msg);
 			if(!m_protocol)
 			{
 				close();
