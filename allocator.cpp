@@ -62,7 +62,7 @@ void operator delete[](void* p, int32_t dummy)
 #endif
 
 #ifdef __OTSERV_ALLOCATOR_STATS__
-OTSYS_THREAD_RETURN allocatorStatsThread(void* a)
+void allocatorStatsThread(void* a)
 {
 	while(true)
 	{
