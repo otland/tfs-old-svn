@@ -370,9 +370,6 @@ void serverMain(void* param)
 	mainExceptionHandler.RemoveHandler();
 #endif
 	exit(0);
-#ifdef __CONSOLE__
-	return 0;
-#endif
 }
 
 void otserv(
