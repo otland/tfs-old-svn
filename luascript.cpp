@@ -1057,7 +1057,7 @@ bool LuaScriptInterface::popBoolean(lua_State* L)
 {
 	lua_pop(L, 1);
 	if(lua_isnumber(L, 0))
-		return lua_tonumber(L, 0);
+		return (bool)lua_tonumber(L, 0);
 
 	return lua_toboolean(L, 0);
 }
@@ -1066,7 +1066,7 @@ int64_t LuaScriptInterface::popNumber(lua_State* L)
 {
 	lua_pop(L, 1);
 	if(lua_isboolean(L, 0))
-		return lua_toboolean(L, 0);
+		return (int64_t)lua_toboolean(L, 0);
 
 	return (int64_t)lua_tonumber(L, 0);
 }
@@ -1075,7 +1075,7 @@ double LuaScriptInterface::popFloatNumber(lua_State* L)
 {
 	lua_pop(L, 1);
 	if(lua_isboolean(L, 0))
-		return lua_toboolean(L, 0);
+		return (double)lua_toboolean(L, 0);
 
 	return lua_tonumber(L, 0);
 }
