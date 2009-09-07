@@ -90,19 +90,21 @@ Game g_game;
 Monsters g_monsters;
 Npcs g_npcs;
 
-Chat g_chat;
 RSA g_RSA;
+Chat g_chat;
 #if defined(WIN32) && not defined(__CONSOLE__)
 TextLogger g_logger;
 NOTIFYICONDATA NID;
 #endif
 
 IpList serverIps;
+boost::mutex g_loaderLock;
+boost::condition_variable g_loaderSignal;
+
+boost::unique_lock<boost::mutex> g_loaderUniqueLock(g_loaderLock);
 #ifdef __REMOTE_CONTROL__
 extern Admin* g_admin;
 #endif
-OTSYS_THREAD_LOCKVAR_PTR g_loaderLock;
-OTSYS_THREAD_SIGNALVAR g_loaderSignal;
 
 #if not defined(WIN32) || defined(__CONSOLE__)
 bool argumentsHandler(StringVec args)
@@ -272,7 +274,7 @@ void serverMain(void* param)
 	g_config.startup();
 
 	#ifdef __OTSERV_ALLOCATOR_STATS__
-	OTSYS_CREATE_THREAD(allocatorStatsThread, NULL);
+	boost::thread(boost::bind(&allocatorStatsThread, (void*)NULL));
 	#endif
 	#ifdef __EXCEPTION_TRACER__
 	ExceptionHandler mainExceptionHandler;
@@ -298,16 +300,13 @@ void serverMain(void* param)
 	signal(SIGTERM, signalHandler); //shutdown
 	#endif
 
-	OTSYS_THREAD_LOCKVARINIT(g_loaderLock);
-	OTSYS_THREAD_SIGNALVARINIT(g_loaderSignal);
 	Dispatcher::getDispatcher().addTask(createTask(boost::bind(otserv,
 	#if not defined(WIN32) || defined(__CONSOLE__)
 	args,
 	#endif
 	&servicer)));
 
-	OTSYS_THREAD_LOCK(g_loaderLock, "otserv()");
-	OTSYS_THREAD_WAITSIGNAL(g_loaderSignal, g_loaderLock);
+	g_loaderSignal.wait(g_loaderUniqueLock);
 	if(servicer.isRunning())
 	{
 		std::cout << ">> " << g_config.getString(ConfigManager::SERVER_NAME) << " server Online!" << std::endl << std::endl;
@@ -851,7 +850,7 @@ ServiceManager* services)
 	g_game.setGameState(GAME_STATE_NORMAL);
 
 	g_game.start(services);
-	OTSYS_THREAD_SIGNAL_SEND(g_loaderSignal);
+	g_loaderSignal.notify_all();
 }
 
 #ifndef __CONSOLE__
@@ -866,20 +865,26 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 				WS_CHILD | WS_VSCROLL | WS_HSCROLL | WS_VISIBLE | ES_MULTILINE | DS_CENTER, 0, 0, 640, 450, hwnd, (HMENU)ID_LOG, NULL, NULL);
 			GUI::getInstance()->m_statusBar = CreateWindowEx(0, STATUSCLASSNAME, NULL,
 				WS_CHILD | WS_VISIBLE | SBARS_SIZEGRIP, 0, 0, 0, 0, hwnd, (HMENU)ID_STATUS_BAR, GetModuleHandle(NULL), NULL);
+
 			int32_t statusBarWidthLine[] = {150, -1};
 			GUI::getInstance()->m_lineCount = 0;
+
 			SendMessage(GUI::getInstance()->m_statusBar, SB_SETPARTS, sizeof(statusBarWidthLine) / sizeof(int32_t), (LPARAM)statusBarWidthLine);
 			SendMessage(GUI::getInstance()->m_statusBar, SB_SETTEXT, 0, (LPARAM)"Not loaded");
+
 			GUI::getInstance()->m_minimized = false;
 			GUI::getInstance()->m_pBox.setParent(hwnd);
 			SendMessage(GUI::getInstance()->m_logWindow, WM_SETFONT, (WPARAM)GUI::getInstance()->m_font, 0);
+
 			NID.hWnd = hwnd;
 			NID.hIcon = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(ID_ICON));
 			NID.uCallbackMessage = WM_USER + 1;
 			NID.uFlags = NIF_TIP | NIF_ICON | NIF_MESSAGE;
+
 			strcpy(NID.szTip, STATUS_SERVER_NAME);
 			Shell_NotifyIcon(NIM_ADD, &NID);
-			OTSYS_CREATE_THREAD(serverMain, hwnd);
+
+			boost::thread(boost::bind(&serverMain, (void*)hwnd));
 			break;
 		}
 
