@@ -20,9 +20,7 @@
 
 #include "admin.h"
 #include "rsa.h"
-
 #include "tools.h"
-#include "textlogger.h"
 
 #include "configmanager.h"
 #include "game.h"

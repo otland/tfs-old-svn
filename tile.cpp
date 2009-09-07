@@ -905,7 +905,7 @@ void Tile::__addThing(Creature* actor, int32_t index, Thing* thing)
 	}
 
 	TileItemVector* items = getItemList();
-	if(items && items->size() > 0xFFFF)
+	if(items && items->size() >= 0xFFFF)
 		return/* RET_NOTPOSSIBLE*/;
 
 	if(g_config.getBool(ConfigManager::STORE_TRASH) && !hasFlag(TILESTATE_TRASHED))

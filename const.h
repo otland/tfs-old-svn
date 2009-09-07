@@ -550,6 +550,7 @@ enum PlayerCustomFlags
 
 #define NETWORKMESSAGE_MAXSIZE 15360
 #define IPBAN_FLAG 128
+#define LOCALHOST 2130706433
 
 #define IS_IN_KEYRANGE(key, range) (key >= PSTRG_##range##_START && ((key - PSTRG_##range##_START) < PSTRG_##range##_SIZE))
 #endif

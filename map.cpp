@@ -106,7 +106,7 @@ bool Map::saveMap()
 
 Tile* Map::getTile(int32_t x, int32_t y, int32_t z)
 {
-	if(x < 0 || x >= 0xFFFF || y < 0 || y >= 0xFFFF || z < 0 || z >= MAP_MAX_LAYERS)
+	if(x < 0 || x > 0xFFFF || y < 0 || y > 0xFFFF || z < 0 || z >= MAP_MAX_LAYERS)
 		return NULL;
 
 	QTreeLeafNode* leaf = QTreeNode::getLeafStatic(&root, x, y);
@@ -122,7 +122,7 @@ Tile* Map::getTile(int32_t x, int32_t y, int32_t z)
 
 void Map::setTile(uint16_t x, uint16_t y, uint16_t z, Tile* newTile)
 {
-	if(x >= 0xFFFF || y >= 0xFFFF || z >= MAP_MAX_LAYERS)
+	if(z >= MAP_MAX_LAYERS)
 	{
 		std::cout << "[Error - Map::setTile]: Attempt to set tile on invalid Z coordinate - " << z << "!" << std::endl;
 		return;

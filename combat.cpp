@@ -144,9 +144,7 @@ void Combat::getCombatArea(const Position& centerPos, const Position& targetPos,
 {
 	if(area)
 		area->getList(centerPos, targetPos, list);
-	else if(targetPos.x >= 0 && targetPos.x <= 0xFFFF &&
-		targetPos.y >= 0 && targetPos.y <= 0xFFFF &&
-		targetPos.z >= 0 && targetPos.z < MAP_MAX_LAYERS)
+	else if(targetPos.z < MAP_MAX_LAYERS)
 	{
 		Tile* tile = g_game.getTile(targetPos);
 		if(!tile)
@@ -1127,8 +1125,7 @@ bool AreaCombat::getList(const Position& centerPos, const Position& targetPos, s
 		{
 			if(area->getValue(y, x) != 0)
 			{
-				if(tmpX >= 0 && tmpX <= 0xFFFF && tmpY >= 0 && tmpX <= 0xFFFF && targetPos.z >= 0 && targetPos.z < MAP_MAX_LAYERS
-					&& g_game.isSightClear(targetPos, Position(tmpX, tmpY, targetPos.z), true))
+				if(targetPos.z < MAP_MAX_LAYERS && g_game.isSightClear(targetPos, Position(tmpX, tmpY, targetPos.z), true))
 				{
 					if(!(tile = g_game.getTile(tmpX, tmpY, targetPos.z)))
 					{

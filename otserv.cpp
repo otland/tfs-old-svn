@@ -796,7 +796,7 @@ ServiceManager* services)
 
 	std::string ip = g_config.getString(ConfigManager::IP);
 	std::cout << "> Global address: " << ip << std::endl;
-	serverIps.push_back(std::make_pair(inet_addr("127.0.0.1"), 0xFFFFFFFF));
+	serverIps.push_back(std::make_pair(LOCALHOST, 0xFFFFFFFF));
 
 	char hostName[128];
 	hostent* host = NULL;
