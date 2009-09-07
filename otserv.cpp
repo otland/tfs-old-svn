@@ -370,6 +370,9 @@ void serverMain(void* param)
 	mainExceptionHandler.RemoveHandler();
 #endif
 	exit(0);
+#if not defined(WIN32) || defined(__CONSOLE__)
+	return 0;
+#endif
 }
 
 void otserv(
