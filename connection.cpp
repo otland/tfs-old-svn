@@ -193,7 +193,7 @@ void Connection::closeConnection()
 	m_connectionLock.lock();
 	if(m_connectionState != CONNECTION_STATE_REQUEST_CLOSE)
 	{
-		//std::cout << "[Error - Connection::closeConnection] m_connectionState = " << m_connectionState << std::endl;
+		std::cout << "[Error - Connection::closeConnection] m_connectionState = " << m_connectionState << std::endl;
 		m_connectionLock.unlock();
 		return;
 	}
@@ -208,7 +208,7 @@ void Connection::closeConnection()
 	m_connectionState = CONNECTION_STATE_CLOSING;
 	if(!m_pendingWrite || m_writeError)
 	{
-		close();
+		closeSocket();
 		releaseConnection();
 		m_connectionState = CONNECTION_STATE_CLOSED;
 	}
@@ -216,10 +216,10 @@ void Connection::closeConnection()
 	m_connectionLock.unlock();
 }
 
-void Connection::write()
+void Connection::closeSocket()
 {
 	#ifdef __DEBUG_NET_DETAIL__
-	std::cout << "Connection::write" << std::endl;
+	std::cout << "Connection::closeSocket" << std::endl;
 	#endif
 	m_connectionLock.lock();
 	if(m_socket->is_open())
@@ -266,7 +266,7 @@ void Connection::releaseConnection()
 
 void Connection::onStop()
 {
-	//io_service thread
+	//service thread
 	m_connectionLock.lock();
 	m_readTimer.cancel();
 	m_writeTimer.cancel();
@@ -281,7 +281,6 @@ void Connection::onStop()
 		}
 	}
 	catch(boost::system::system_error&) {}
-
 	delete m_socket;
 	m_socket = NULL;
 
@@ -472,7 +471,9 @@ bool Connection::send(OutputMessage_ptr msg)
 	TRACK_MESSAGE(msg);
 	if(!m_pendingWrite)
 	{
-		msg->getProtocol()->onSendMessage(msg);
+		if(msg->getProtocol())
+			msg->getProtocol()->onSendMessage(msg);
+
 		#ifdef __DEBUG_NET_DETAIL__
 		std::cout << "Connection::send " << msg->getMessageLength() << std::endl;
 		#endif
@@ -517,7 +518,7 @@ void Connection::internalSend(OutputMessage_ptr msg)
 
 uint32_t Connection::getIP() const
 {
-	// ip is expressed in network byte order
+	//ip is expressed in network byte order
 	boost::system::error_code error;
 	const boost::asio::ip::tcp::endpoint ip = m_socket->remote_endpoint(error);
 	if(!error)
@@ -542,7 +543,7 @@ void Connection::onWrite(OutputMessage_ptr msg, const boost::system::error_code&
 
 	if(m_connectionState != CONNECTION_STATE_OPEN || m_writeError)
 	{
-		write();
+		closeSocket();
 		close();
 
 		m_connectionLock.unlock();
@@ -582,7 +583,7 @@ void Connection::onReadTimeout()
 	boost::recursive_mutex::scoped_lock lockClass(m_connectionLock);
 	if(m_pendingRead > 0 || m_readError)
 	{
-		write();
+		closeSocket();
 		close();
 	}
 }
@@ -592,7 +593,7 @@ void Connection::onWriteTimeout()
 	boost::recursive_mutex::scoped_lock lockClass(m_connectionLock);
 	if(m_pendingWrite > 0 || m_writeError)
 	{
-		write();
+		closeSocket();
 		close();
 	}
 }

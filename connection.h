@@ -161,8 +161,8 @@ class Connection : public boost::enable_shared_from_this<Connection>, boost::non
 		void onReadTimeout();
 		void onWriteTimeout();
 
-		void write();
 		void internalSend(OutputMessage_ptr msg);
+		void closeSocket();
 
 		NetworkMessage m_msg;
 		Protocol* m_protocol;
