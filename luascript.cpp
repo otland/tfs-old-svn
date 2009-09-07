@@ -1068,7 +1068,7 @@ int64_t LuaScriptInterface::popNumber(lua_State* L)
 	if(lua_isboolean(L, 0))
 		return lua_toboolean(L, 0);
 
-	return lua_tonumber(L, 0);
+	return (int64_t)lua_tonumber(L, 0);
 }
 
 double LuaScriptInterface::popFloatNumber(lua_State* L)

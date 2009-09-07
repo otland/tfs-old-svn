@@ -163,7 +163,7 @@ GameServer* GameServers::getServerByName(std::string name) const
 	return NULL;
 }
 
-GameServer* GameServers::getServerByAddress(std::string address) const
+GameServer* GameServers::getServerByAddress(uint32_t address) const
 {
 	for(GameServersMap::const_iterator it = serverList.begin(); it != serverList.end(); ++it)
 	{

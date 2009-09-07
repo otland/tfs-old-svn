@@ -23,7 +23,7 @@
 class GameServer
 {
 	public:
-		GameServer(): name("TheForgottenServer"), address(2130706433), port(7172)
+		GameServer(): name("TheForgottenServer"), address(2130706433), port(7172), 
 			versionMin(CLIENT_VERSION_MIN), versionMax(CLIENT_VERSION_MAX) {}
 		GameServer(std::string _name, uint32_t _versionMin, uint32_t _versionMax, uint32_t _address, uint32_t _port):
 			name(_name), address(_address), port(_port), versionMin(_versionMin), versionMax(_versionMax) {}
@@ -59,7 +59,7 @@ class GameServers
 
 		GameServer* getServerById(uint32_t id) const;
 		GameServer* getServerByName(std::string name) const;
-		GameServer* getServerByAddress(std::string address) const;
+		GameServer* getServerByAddress(uint32_t address) const;
 		GameServer* getServerByPort(uint32_t port) const;
 
 	protected:
