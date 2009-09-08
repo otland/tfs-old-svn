@@ -66,7 +66,7 @@ class Loggar
 };
 
 #define LOG_MESSAGE(type, message, channel) \
-	Loggar::getInstance()->log(__OTSERV_PRETTY_FUNCTION__, type, message, channel);
+	Loggar::getInstance()->log(__OTSERV_FUNCTION__, type, message, channel);
 
 #if defined(WIN32) && not defined(__CONSOLE__)
 class TextLogger : public std::streambuf

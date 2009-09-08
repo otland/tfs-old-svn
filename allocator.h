@@ -25,7 +25,6 @@
 #include <memory>
 #include <cstdlib>
 #include <fstream>
-#include <limits>
 
 template<typename T>
 class dummyallocator

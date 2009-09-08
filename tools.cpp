@@ -146,85 +146,73 @@ bool booleanString(std::string source)
 bool readXMLInteger(xmlNodePtr node, const char* tag, int& value)
 {
 	char* nodeValue = (char*)xmlGetProp(node, (xmlChar*)tag);
-	if(nodeValue)
-	{
-		value = atoi(nodeValue);
-		xmlFreeOTSERV(nodeValue);
-		return true;
-	}
+	if(!nodeValue)
+		return false;
 
-	return false;
+	value = atoi(nodeValue);
+	xmlFree(nodeValue);
+	return true;
 }
 
 #if (defined __WINDOWS__ || defined WIN32) && !defined __GNUC__
 bool readXMLInteger(xmlNodePtr node, const char* tag, int32_t& value)
 {
 	char* nodeValue = (char*)xmlGetProp(node, (xmlChar*)tag);
-	if(nodeValue)
-	{
-		value = atoi(nodeValue);
-		xmlFreeOTSERV(nodeValue);
-		return true;
-	}
+	if(!nodeValue)
+		return false;
 
-	return false;
+	value = atoi(nodeValue);
+	xmlFree(nodeValue);
+	return true;
 }
 #endif
 
 bool readXMLInteger64(xmlNodePtr node, const char* tag, int64_t& value)
 {
 	char* nodeValue = (char*)xmlGetProp(node, (xmlChar*)tag);
-	if(nodeValue)
-	{
-		value = ATOI64(nodeValue);
-		xmlFreeOTSERV(nodeValue);
-		return true;
-	}
+	if(!nodeValue)
+		return false;
 
-	return false;
+	value = ATOI64(nodeValue);
+	xmlFree(nodeValue);
+	return true;
 }
 
 bool readXMLFloat(xmlNodePtr node, const char* tag, float& value)
 {
 	char* nodeValue = (char*)xmlGetProp(node, (xmlChar*)tag);
-	if(nodeValue)
-	{
-		value = atof(nodeValue);
-		xmlFreeOTSERV(nodeValue);
-		return true;
-	}
+	if(!nodeValue)
+		return false;
 
-	return false;
+	value = atof(nodeValue);
+	xmlFree(nodeValue);
+	return true;
 }
 
 bool readXMLString(xmlNodePtr node, const char* tag, std::string& value)
 {
 	char* nodeValue = (char*)xmlGetProp(node, (xmlChar*)tag);
-	if(nodeValue)
-	{
-		if(!utf8ToLatin1(nodeValue, value))
-			value = nodeValue;
+	if(!nodeValue)
+		return false;
 
-		xmlFreeOTSERV(nodeValue);
-		return true;
-	}
+	if(!utf8ToLatin1(nodeValue, value))
+		value = nodeValue;
 
-	return false;
+	xmlFree(nodeValue);
+	return true;
 }
 
 bool readXMLContentString(xmlNodePtr node, std::string& value)
 {
 	char* nodeValue = (char*)xmlNodeGetContent(node);
-	if(nodeValue)
-	{
-		if(!utf8ToLatin1(nodeValue, value))
-			value = nodeValue;
+	if(!nodeValue)
+		return false;
 
-		xmlFreeOTSERV(nodeValue);
-		return true;
-	}
+	if(!utf8ToLatin1(nodeValue, value))
+		value = nodeValue;
 
-	return false;
+	xmlFree(nodeValue);
+	return true;
 }
 
 bool parseXMLContentString(xmlNodePtr node, std::string& value)

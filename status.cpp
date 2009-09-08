@@ -204,7 +204,7 @@ std::string Status::getStatusString(bool sendPlayers) const
 	if(s)
 		xml = std::string((char*)s, len);
 
-	xmlFreeOTSERV(s);
+	xmlFree(s);
 	xmlFreeDoc(doc);
 	return xml;
 }

@@ -28,9 +28,7 @@
 #endif
 
 #ifdef XML_GCC_FREE
-	#define xmlFreeOTSERV(s)	free(s)
-#else
-	#define xmlFreeOTSERV(s)	xmlFree(s)
+	#define xmlFree(s) free(s)
 #endif
 
 #ifdef __USE_MINIDUMP__
@@ -67,8 +65,6 @@
 	#define	__FUNCTION__ __func__
 #endif
 
-#define OTSYS_THREAD_RETURN void
-
 #ifdef _WIN32_WINNT
 #undef _WIN32_WINNT
 #endif
@@ -80,37 +76,11 @@
 #define _WIN32_WINNT 0x0501
 
 #ifdef __GNUC__
-	#if __GNUC__ >= 4
-		#ifndef __GXX_EXPERIMENTAL_CXX0X__
-			#include <tr1/unordered_map>
-			#include <tr1/unordered_set>
-		#else
-			#include <unordered_map>
-			#include <unordered_set>
-		#endif
-
-		#define OTSERV_HASH_MAP std::tr1::unordered_map
-		#define OTSERV_HASH_SET std::tr1::unordered_set
-	#else
-		#include <ext/hash_map>
-		#include <ext/hash_set>
-		#define OTSERV_HASH_MAP __gnu_cxx::hash_map
-		#define OTSERV_HASH_SET __gnu_cxx::hash_set
-	#endif
-
-	#include <assert.h>
 	#define ATOI64 atoll
 #else
 	#ifndef NOMINMAX
 		#define NOMINMAX
 	#endif
-
-	#include <hash_map>
-	#include <hash_set>
-	#include <limits>
-	#include <assert.h>
-	#define OTSERV_HASH_MAP stdext::hash_map
-	#define OTSERV_HASH_SET stdext::hash_set
 
 	#include <cstring>
 	inline int strcasecmp(const char *s1, const char *s2)
@@ -143,30 +113,6 @@
 #endif
 //*nix systems
 #else
-	#define OTSYS_THREAD_RETURN void*
-
-	#include <stdint.h>
-	#include <string.h>
-	#if __GNUC__ >= 4
-		#ifndef __GXX_EXPERIMENTAL_CXX0X__
-			#include <tr1/unordered_map>
-			#include <tr1/unordered_set>
-		#else
-			#include <unordered_map>
-			#include <unordered_set>
-		#endif
-
-		#define OTSERV_HASH_MAP std::tr1::unordered_map
-		#define OTSERV_HASH_SET std::tr1::unordered_set
-	#else
-		#include <ext/hash_map>
-		#include <ext/hash_set>
-		#define OTSERV_HASH_MAP __gnu_cxx::hash_map
-		#define OTSERV_HASH_SET __gnu_cxx::hash_set
-	#endif
-	#include <assert.h>
-	#include <time.h>
-
 	#define ATOI64 atoll
 #endif
 #endif

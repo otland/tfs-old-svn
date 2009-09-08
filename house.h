@@ -20,10 +20,10 @@
 #include "otsystem.h"
 
 #include <boost/regex.hpp>
+#include <boost/tr1/unordered_set.hpp>
 
 #include "position.h"
 #include "housetile.h"
-
 #include "player.h"
 
 class House;
@@ -73,7 +73,7 @@ class AccessList
 		void getList(std::string& _list) const;
 
 	private:
-		typedef OTSERV_HASH_SET<uint32_t> PlayerList;
+		typedef std::tr1::unordered_set<uint32_t> PlayerList;
 		typedef std::list<std::pair<uint32_t, int32_t> > GuildList;
 		typedef std::list<std::string> ExpressionList;
 		typedef std::list<std::pair<boost::regex, bool> > RegExList;
