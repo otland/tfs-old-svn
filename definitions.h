@@ -75,9 +75,7 @@
 //Windows Vista	0x0600
 #define _WIN32_WINNT 0x0501
 
-#ifdef __GNUC__
-	#define ATOI64 atoll
-#else
+#ifndef __GNUC__
 	#ifndef NOMINMAX
 		#define NOMINMAX
 	#endif
@@ -102,7 +100,7 @@
 	typedef unsigned char uint8_t;
 	typedef signed char int8_t;
 
-	#define ATOI64 _atoi64
+	#define atoll _atoi64
 
 	#pragma warning(disable:4786) // msvc too long debug names in stl
 	#pragma warning(disable:4250) // 'class1' : inherits 'class2::member' via dominance
@@ -111,9 +109,6 @@
 	#pragma warning(disable:4018)
 
 #endif
-//*nix systems
-#else
-	#define ATOI64 atoll
 #endif
 #endif
 

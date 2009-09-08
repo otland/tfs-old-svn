@@ -260,7 +260,7 @@ int64_t MySQLResult::getDataLong(const std::string &s)
 		if(!m_row[it->second])
 			return 0;
 
-		return ATOI64(m_row[it->second]);
+		return atoll(m_row[it->second]);
 	}
 
 	if(refetch())

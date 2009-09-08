@@ -148,7 +148,7 @@ uint64_t DatabasePgSQL::getLastInsertId()
 		return 0;
 	}
 
-	const uint64_t id = ATOI64(PQgetvalue(res, 0, PQfnumber(res, "last")));
+	const uint64_t id = atoll(PQgetvalue(res, 0, PQfnumber(res, "last")));
 	PGClear(res);
 	return id;
 }
