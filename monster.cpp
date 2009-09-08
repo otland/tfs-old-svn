@@ -30,7 +30,7 @@ extern Game g_game;
 extern ConfigManager g_config;
 extern Monsters g_monsters;
 
-AutoList<Monster>Monster::listMonster;
+AutoList<Monster>Monster::autoList;
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
 uint32_t Monster::monsterCount = 0;
 #endif
@@ -200,7 +200,7 @@ void Monster::updateTargetList()
 	{
 		if((*it)->getHealth() <= 0 || !canSee((*it)->getPosition()))
 		{
-			(*it)->releaseThing2();
+			(*it)->unRef();
 			it = friendList.erase(it);
 		}
 		else
@@ -211,7 +211,7 @@ void Monster::updateTargetList()
 	{
 		if((*it)->getHealth() <= 0 || !canSee((*it)->getPosition()))
 		{
-			(*it)->releaseThing2();
+			(*it)->unRef();
 			it = targetList.erase(it);
 		}
 		else
@@ -229,7 +229,7 @@ void Monster::updateTargetList()
 void Monster::clearTargetList()
 {
 	for(CreatureList::iterator it = targetList.begin(); it != targetList.end(); ++it)
-		(*it)->releaseThing2();
+		(*it)->unRef();
 
 	targetList.clear();
 }
@@ -237,7 +237,7 @@ void Monster::clearTargetList()
 void Monster::clearFriendList()
 {
 	for(CreatureList::iterator it = friendList.begin(); it != friendList.end(); ++it)
-		(*it)->releaseThing2();
+		(*it)->unRef();
 
 	friendList.clear();
 }
@@ -249,7 +249,7 @@ void Monster::onCreatureFound(Creature* creature, bool pushFront /*= false*/)
 		assert(creature != this);
 		if(std::find(friendList.begin(), friendList.end(), creature) == friendList.end())
 		{
-			creature->useThing2();
+			creature->addRef();
 			friendList.push_back(creature);
 		}
 	}
@@ -259,7 +259,7 @@ void Monster::onCreatureFound(Creature* creature, bool pushFront /*= false*/)
 		assert(creature != this);
 		if(std::find(targetList.begin(), targetList.end(), creature) == targetList.end())
 		{
-			creature->useThing2();
+			creature->addRef();
 			if(pushFront)
 				targetList.push_front(creature);
 			else
@@ -339,7 +339,7 @@ void Monster::onCreatureLeave(Creature* creature)
 		CreatureList::iterator it = std::find(friendList.begin(), friendList.end(), creature);
 		if(it != friendList.end())
 		{
-			(*it)->releaseThing2();
+			(*it)->unRef();
 			friendList.erase(it);
 		}
 #ifdef __DEBUG__
@@ -354,7 +354,7 @@ void Monster::onCreatureLeave(Creature* creature)
 		CreatureList::iterator it = std::find(targetList.begin(), targetList.end(), creature);
 		if(it != targetList.end())
 		{
-			(*it)->releaseThing2();
+			(*it)->unRef();
 			targetList.erase(it);
 			if(targetList.empty())
 				updateIdleStatus();
@@ -427,7 +427,7 @@ void Monster::onFollowCreatureComplete(const Creature* creature)
 		else if(!isSummon()) //push target we have not found a path to the back
 			targetList.push_back(target);
 		else //Since we removed the creature from the targetList (and not put it back) we have to release it too
-			target->releaseThing2();
+			target->unRef();
 	}
 }
 

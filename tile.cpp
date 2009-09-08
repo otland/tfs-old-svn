@@ -924,7 +924,7 @@ void Tile::__addThing(Creature* actor, int32_t index, Thing* thing)
 			Item* oldGround = ground;
 
 			ground->setParent(NULL);
-			g_game.FreeThing(ground);
+			g_game.freeThing(ground);
 			ground = item;
 
 			updateTileFlags(oldGround, true);
@@ -957,7 +957,7 @@ void Tile::__addThing(Creature* actor, int32_t index, Thing* thing)
 
 					__removeThing(oldSplash, 1);
 					oldSplash->setParent(NULL);
-					g_game.FreeThing(oldSplash);
+					g_game.freeThing(oldSplash);
 
 					postRemoveNotification(actor, oldSplash, NULL, oldSplashIndex, true);
 					break;
@@ -1011,7 +1011,7 @@ void Tile::__addThing(Creature* actor, int32_t index, Thing* thing)
 						__removeThing(oldField, 1);
 
 						oldField->setParent(NULL);
-						g_game.FreeThing(oldField);
+						g_game.freeThing(oldField);
 
 						postRemoveNotification(actor, oldField, NULL, oldFieldIndex, true);
 						break;
@@ -1019,7 +1019,7 @@ void Tile::__addThing(Creature* actor, int32_t index, Thing* thing)
 
 					//This magic field cannot be replaced.
 					item->setParent(NULL);
-					g_game.FreeThing(item);
+					g_game.freeThing(item);
 					return;
 				}
 			}
@@ -1508,7 +1508,7 @@ void Tile::postAddNotification(Creature* actor, Thing* thing, const Cylinder* ol
 	}
 
 	//add a reference to this item, it may be deleted after being added (mailbox for example)
-	thing->useThing2();
+	thing->addRef();
 	if(link == LINK_OWNER)
 	{
 		//calling movement scripts
@@ -1544,7 +1544,7 @@ void Tile::postAddNotification(Creature* actor, Thing* thing, const Cylinder* ol
 	}
 
 	//release the reference to this item onces we are finished
-	g_game.FreeThing(thing);
+	g_game.freeThing(thing);
 }
 
 void Tile::postRemoveNotification(Creature* actor, Thing* thing, const Cylinder* newParent,

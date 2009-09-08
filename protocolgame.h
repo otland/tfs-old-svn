@@ -303,10 +303,10 @@ class ProtocolGame : public Protocol
 		//shop
 		void AddShopItem(NetworkMessage_ptr msg, const ShopInfo item);
 
-		#define addGameTask(f, ...) addGameTaskInternal(false, 0, boost::bind(f, &g_game, __VA_ARGS__))
-		#define addGameTaskTimed(delay, f, ...) addGameTaskInternal(true, delay, boost::bind(f, &g_game, __VA_ARGS__))
+		#define addGameTask(f, ...) addGameTaskInternal(0, boost::bind(f, &g_game, __VA_ARGS__))
+		#define addGameTaskTimed(delay, f, ...) addGameTaskInternal(delay, boost::bind(f, &g_game, __VA_ARGS__))
 		template<class FunctionType>
-		void addGameTaskInternal(bool droppable, uint32_t delay, const FunctionType&);
+		void addGameTaskInternal(uint32_t delay, const FunctionType&);
 
 		friend class Player;
 		Player* player;

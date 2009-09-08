@@ -44,22 +44,17 @@ extern MoveEvents* g_moveEvents;
 extern Weapons* g_weapons;
 extern CreatureEvents* g_creatureEvents;
 
-AutoList<Player> Player::listPlayer;
+AutoList<Player> Player::autoList;
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
 uint32_t Player::playerCount = 0;
 #endif
 MuteCountMap Player::muteCountMap;
 
-Player::Player(const std::string& _name, ProtocolGame *p):
-	Creature(), transferContainer(ITEM_LOCKER1)
+Player::Player(const std::string& _name, ProtocolGame* p):
+	Creature(), transferContainer(ITEM_LOCKER1), name(_name), nameDescription(_name), client(p)
 {
-	client = p;
 	if(client)
 		client->setPlayer(this);
-
-	name = _name;
-	nameDescription = _name;
-	specialDescription = "";
 
 	pzLocked = isConnecting = addAttackSkillPoint = requestedOutfit = false;
 	saving = true;
@@ -139,7 +134,7 @@ Player::~Player()
 		if(inventory[i])
 		{
 			inventory[i]->setParent(NULL);
-			inventory[i]->releaseThing2();
+			inventory[i]->unRef();
 
 			inventory[i] = NULL;
 			inventoryAbilities[i] = false;
@@ -149,7 +144,7 @@ Player::~Player()
 	setNextWalkActionTask(NULL);
 	transferContainer.setParent(NULL);
 	for(DepotMap::iterator it = depots.begin(); it != depots.end(); it++)
-		it->second.first->releaseThing2();
+		it->second.first->unRef();
 }
 
 void Player::setVocation(uint32_t vocId)
@@ -893,7 +888,7 @@ Depot* Player::getDepot(uint32_t depotId, bool autoCreateDepot)
 			}
 		}
 
-		g_game.FreeThing(locker);
+		g_game.freeThing(locker);
 		std::cout << "Failure: Creating a new depot with id: " << depotId <<
 			", for player: " << getName() << std::endl;
 	}
@@ -1190,13 +1185,13 @@ void Player::setWriteItem(Item* item, uint16_t _maxWriteLen/* = 0*/)
 {
 	windowTextId++;
 	if(writeItem)
-		writeItem->releaseThing2();
+		writeItem->unRef();
 
 	if(item)
 	{
 		writeItem = item;
 		maxWriteLen = _maxWriteLen;
-		writeItem->useThing2();
+		writeItem->addRef();
 	}
 	else
 	{
@@ -2356,15 +2351,15 @@ void Player::addDefaultRegeneration(uint32_t addTicks)
 
 void Player::removeList()
 {
-	listPlayer.removeList(getID());
+	autoList.erase(id);
 	if(!isGhost())
 	{
-		for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
+		for(AutoList<Player>::iterator it = autoList.begin(); it != autoList.end(); ++it)
 			it->second->notifyLogOut(this);
 	}
 	else
 	{
-		for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
+		for(AutoList<Player>::iterator it = autoList.begin(); it != autoList.end(); ++it)
 		{
 			if(it->second->canSeeCreature(this))
 				it->second->notifyLogOut(this);
@@ -2376,19 +2371,19 @@ void Player::addList()
 {
 	if(!isGhost())
 	{
-		for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
+		for(AutoList<Player>::iterator it = autoList.begin(); it != autoList.end(); ++it)
 			it->second->notifyLogIn(this);
 	}
 	else
 	{
-		for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
+		for(AutoList<Player>::iterator it = autoList.begin(); it != autoList.end(); ++it)
 		{
 			if(it->second->canSeeCreature(this))
 				it->second->notifyLogIn(this);
 		}
 	}
 
-	listPlayer.addList(this);
+	autoList[id] = this;
 }
 
 void Player::kickPlayer(bool displayEffect, bool forceLogout)

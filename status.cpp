@@ -160,7 +160,7 @@ std::string Status::getStatusString(bool sendPlayers) const
 	if(sendPlayers)
 	{
 		std::stringstream ss;
-		for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
+		for(AutoList<Player>::iterator it = Player::autoList.begin(); it != Player::autoList.end(); ++it)
 		{
 			if(!it->second->isGhost())
 				ss << it->second->getName() << "," << it->second->getVocationId() << "," << it->second->getLevel() << ";";
@@ -265,7 +265,7 @@ void Status::getInfo(uint32_t requestedInfo, OutputMessage_ptr output, NetworkMe
 	{
 		output->AddByte(0x21);
 		std::list<std::pair<std::string, uint32_t> > players;
-		for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
+		for(AutoList<Player>::iterator it = Player::autoList.begin(); it != Player::autoList.end(); ++it)
 		{
 			if(!it->second->isGhost())
 				players.push_back(std::make_pair(it->second->getName(), it->second->getLevel()));

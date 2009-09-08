@@ -196,11 +196,11 @@ void Game::setGameState(GameState_t newState)
 			case GAME_STATE_SHUTDOWN:
 			{
 				g_globalEvents->execute(GLOBAL_EVENT_SHUTDOWN);
-				AutoList<Player>::listiterator it = Player::listPlayer.list.begin();
-				while(it != Player::listPlayer.list.end()) //kick all players that are still online
+				AutoList<Player>::iterator it = Player::autoList.begin();
+				while(it != Player::autoList.end()) //kick all players that are still online
 				{
 					it->second->kickPlayer(true, true);
-					it = Player::listPlayer.list.begin();
+					it = Player::autoList.begin();
 				}
 
 				Houses::getInstance().payHouses();
@@ -214,13 +214,13 @@ void Game::setGameState(GameState_t newState)
 
 			case GAME_STATE_CLOSED:
 			{
-				AutoList<Player>::listiterator it = Player::listPlayer.list.begin();
-				while(it != Player::listPlayer.list.end()) //kick all players who not allowed to stay
+				AutoList<Player>::iterator it = Player::autoList.begin();
+				while(it != Player::autoList.end()) //kick all players who not allowed to stay
 				{
 					if(!it->second->hasFlag(PlayerFlag_CanAlwaysLogin))
 					{
 						it->second->kickPlayer(true, true);
-						it = Player::listPlayer.list.begin();
+						it = Player::autoList.begin();
 					}
 					else
 						++it;
@@ -248,7 +248,7 @@ void Game::saveGameState(bool shallow)
 		setGameState(GAME_STATE_MAINTAIN);
 
 	IOLoginData* io = IOLoginData::getInstance();
-	for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
+	for(AutoList<Player>::iterator it = Player::autoList.begin(); it != Player::autoList.end(); ++it)
 	{
 		it->second->loginPosition = it->second->getPosition();
 		io->savePlayer(it->second, false, shallow);
@@ -618,30 +618,24 @@ void Game::internalGetPosition(Item* item, Position& pos, int16_t& stackpos)
 
 Creature* Game::getCreatureByID(uint32_t id)
 {
-	if(id == 0)
+	if(!id)
 		return NULL;
 
-	AutoList<Creature>::listiterator it = listCreature.list.find(id);
-	if(it != listCreature.list.end())
-	{
-		if(!it->second->isRemoved())
-			return it->second;
-	}
+	AutoList<Creature>::iterator it = autoList.find(id);
+	if(it != autoList.end() && !it->second->isRemoved())
+		return it->second;
 
 	return NULL; //just in case the player doesnt exist
 }
 
 Player* Game::getPlayerByID(uint32_t id)
 {
-	if(id == 0)
+	if(!id)
 		return NULL;
 
-	AutoList<Player>::listiterator it = Player::listPlayer.list.find(id);
-	if(it != Player::listPlayer.list.end())
-	{
-		if(!it->second->isRemoved())
-			return it->second;
-	}
+	AutoList<Player>::iterator it = Player::autoList.find(id);
+	if(it != Player::autoList.end() && !it->second->isRemoved())
+		return it->second;
 
 	return NULL; //just in case the player doesnt exist
 }
@@ -652,7 +646,7 @@ Creature* Game::getCreatureByName(std::string s)
 		return NULL;
 
 	toLowerCaseString(s);
-	for(AutoList<Creature>::listiterator it = listCreature.list.begin(); it != listCreature.list.end(); ++it)
+	for(AutoList<Creature>::iterator it = autoList.begin(); it != autoList.end(); ++it)
 	{
 		if(!it->second->isRemoved() && asLowerCaseString(it->second->getName()) == s)
 			return it->second;
@@ -667,7 +661,7 @@ Player* Game::getPlayerByName(std::string s)
 		return NULL;
 
 	toLowerCaseString(s);
-	for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
+	for(AutoList<Player>::iterator it = Player::autoList.begin(); it != Player::autoList.end(); ++it)
 	{
 		if(!it->second->isRemoved() && asLowerCaseString(it->second->getName()) == s)
 			return it->second;
@@ -702,7 +696,7 @@ Player* Game::getPlayerByGuid(uint32_t guid)
 	if(!guid)
 		return NULL;
 
-	for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
+	for(AutoList<Player>::iterator it = Player::autoList.begin(); it != Player::autoList.end(); ++it)
 	{
 		if(!it->second->isRemoved() && it->second->getGUID() == guid)
 			return it->second;
@@ -752,7 +746,7 @@ ReturnValue Game::getPlayerByNameWildcard(std::string s, Player*& player)
 	s = s.substr(0, s.length() - 1);
 
 	toLowerCaseString(s);
-	for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
+	for(AutoList<Player>::iterator it = Player::autoList.begin(); it != Player::autoList.end(); ++it)
 	{
 		if(it->second->isRemoved())
 			continue;
@@ -776,7 +770,7 @@ ReturnValue Game::getPlayerByNameWildcard(std::string s, Player*& player)
 
 Player* Game::getPlayerByAccount(uint32_t acc)
 {
-	for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
+	for(AutoList<Player>::iterator it = Player::autoList.begin(); it != Player::autoList.end(); ++it)
 	{
 		if(!it->second->isRemoved() && it->second->getAccount() == acc)
 			return it->second;
@@ -789,7 +783,7 @@ PlayerVector Game::getPlayersByName(std::string s)
 {
 	toLowerCaseString(s);
 	PlayerVector players;
-	for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
+	for(AutoList<Player>::iterator it = Player::autoList.begin(); it != Player::autoList.end(); ++it)
 	{
 		if(!it->second->isRemoved() && asLowerCaseString(it->second->getName()) == s)
 			players.push_back(it->second);
@@ -801,7 +795,7 @@ PlayerVector Game::getPlayersByName(std::string s)
 PlayerVector Game::getPlayersByAccount(uint32_t acc)
 {
 	PlayerVector players;
-	for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
+	for(AutoList<Player>::iterator it = Player::autoList.begin(); it != Player::autoList.end(); ++it)
 	{
 		if(!it->second->isRemoved() && it->second->getAccount() == acc)
 			players.push_back(it->second);
@@ -813,7 +807,7 @@ PlayerVector Game::getPlayersByAccount(uint32_t acc)
 PlayerVector Game::getPlayersByIP(uint32_t ip, uint32_t mask)
 {
 	PlayerVector players;
-	for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
+	for(AutoList<Player>::iterator it = Player::autoList.begin(); it != Player::autoList.end(); ++it)
 	{
 		if(!it->second->isRemoved() && (it->second->getIP() & mask) == (ip & mask))
 			players.push_back(it->second);
@@ -830,10 +824,10 @@ bool Game::internalPlaceCreature(Creature* creature, const Position& pos, bool e
 	if(!map->placeCreature(pos, creature, extendedPos, forced))
 		return false;
 
-	creature->useThing2();
+	creature->addRef();
 	creature->setID();
 
-	listCreature.addList(creature);
+	autoList[creature->getID()] = creature;
 	creature->addList();
 	return true;
 }
@@ -935,8 +929,8 @@ bool Game::removeCreature(Creature* creature, bool isLogout /*= true*/)
 	creature->getParent()->postRemoveNotification(NULL, creature, NULL, oldIndex, true);
 	creature->onRemovedCreature();
 
-	listCreature.removeList(creature->getID());
-	FreeThing(creature);
+	autoList.erase(creature->getID());
+	freeThing(creature);
 
 	removeCreatureCheck(creature);
 	for(std::list<Creature*>::iterator it = creature->summons.begin(); it != creature->summons.end(); ++it)
@@ -1463,7 +1457,7 @@ ReturnValue Game::internalMoveItem(Creature* actor, Cylinder* fromCylinder, Cyli
 			moveItem = NULL;
 
 		if(item->isRemoved())
-			FreeThing(item);
+			freeThing(item);
 	}
 
 	//add item
@@ -1540,7 +1534,7 @@ ReturnValue Game::internalAddItem(Creature* actor, Cylinder* toCylinder, Item* i
 			{
 				moveItem = NULL;
 				if(item->getParent() != VirtualCylinder::virtualCylinder)
-					FreeThing(item);
+					freeThing(item);
 			}
 		}
 
@@ -1589,7 +1583,7 @@ ReturnValue Game::internalRemoveItem(Creature* actor, Item* item, int32_t count 
 		if(item->isRemoved())
 		{
 			isCompleteRemoval = true;
-			FreeThing(item);
+			freeThing(item);
 		}
 
 		cylinder->postRemoveNotification(actor, item, NULL, index, isCompleteRemoval);
@@ -1999,7 +1993,7 @@ Item* Game::transformItem(Item* item, uint16_t newId, int32_t newCount /*= -1*/)
 	item->setParent(NULL);
 	cylinder->postRemoveNotification(NULL, item, cylinder, itemIndex, true);
 
-	FreeThing(item);
+	freeThing(item);
 	return newItem;
 }
 
@@ -2068,7 +2062,7 @@ bool Game::playerBroadcastMessage(Player* player, SpeakClasses type, const std::
 		return false;
 
 	//const Position& pos = player->getPosition();
-	for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
+	for(AutoList<Player>::iterator it = Player::autoList.begin(); it != Player::autoList.end(); ++it)
 	{
 		it->second->sendCreatureSay(player, type, text);
 		//TODO: event handling - onCreatureSay
@@ -2849,7 +2843,7 @@ bool Game::internalStartTrade(Player* player, Player* tradePartner, Item* tradeI
 	player->tradeItem = tradeItem;
 	player->tradeState = TRADE_INITIATED;
 
-	tradeItem->useThing2();
+	tradeItem->addRef();
 	tradeItems[tradeItem] = player->getID();
 
 	player->sendTradeItemRequest(player, tradeItem, true);
@@ -2905,14 +2899,14 @@ bool Game::playerAcceptTrade(uint32_t playerId)
 	std::map<Item*, uint32_t>::iterator it = tradeItems.find(tradeItem1);
 	if(it != tradeItems.end())
 	{
-		FreeThing(it->first);
+		freeThing(it->first);
 		tradeItems.erase(it);
 	}
 
 	it = tradeItems.find(tradeItem2);
 	if(it != tradeItems.end())
 	{
-		FreeThing(it->first);
+		freeThing(it->first);
 		tradeItems.erase(it);
 	}
 
@@ -3115,7 +3109,7 @@ bool Game::internalCloseTrade(Player* player)
 		std::map<Item*, uint32_t>::iterator it = tradeItems.find(player->getTradeItem());
 		if(it != tradeItems.end())
 		{
-			FreeThing(it->first);
+			freeThing(it->first);
 			tradeItems.erase(it);
 		}
 
@@ -3135,7 +3129,7 @@ bool Game::internalCloseTrade(Player* player)
 			std::map<Item*, uint32_t>::iterator it = tradeItems.find(tradePartner->getTradeItem());
 			if(it != tradeItems.end())
 			{
-				FreeThing(it->first);
+				freeThing(it->first);
 				tradeItems.erase(it);
 			}
 
@@ -3939,7 +3933,7 @@ void Game::addCreatureCheck(Creature* creature)
 
 	toAddCheckCreatureVector.push_back(creature);
 	creature->checkVector = random_range(0, EVENT_CREATURECOUNT - 1);
-	creature->useThing2();
+	creature->addRef();
 }
 
 void Game::removeCreatureCheck(Creature* creature)
@@ -3976,7 +3970,7 @@ void Game::checkCreatures()
 		else
 		{
 			(*it)->checkVector = -1;
-			FreeThing(*it);
+			freeThing(*it);
 			it = checkCreatureVector.erase(it);
 		}
 	}
@@ -4503,7 +4497,7 @@ void Game::startDecay(Item* item)
 
 		if(item->getDuration() > 0)
 		{
-			item->useThing2();
+			item->addRef();
 			item->setDecaying(DECAYING_TRUE);
 			toDecayItems.push_back(item);
 		}
@@ -4545,7 +4539,7 @@ void Game::checkDecay()
 		if(!item->canDecay())
 		{
 			item->setDecaying(DECAYING_FALSE);
-			FreeThing(item);
+			freeThing(item);
 			it = decayItems[bucket].erase(it);
 			continue;
 		}
@@ -4555,7 +4549,7 @@ void Game::checkDecay()
 		{
 			it = decayItems[bucket].erase(it);
 			internalDecayItem(item);
-			FreeThing(item);
+			freeThing(item);
 		}
 		else if(dur < EVENT_DECAYINTERVAL * EVENT_DECAYBUCKETS)
 		{
@@ -4564,7 +4558,7 @@ void Game::checkDecay()
 			if(newBucket == bucket)
 			{
 				internalDecayItem(item);
-				FreeThing(item);
+				freeThing(item);
 			}
 			else
 				decayItems[newBucket].push_back(item);
@@ -4628,7 +4622,7 @@ void Game::checkLight()
 	{
 		LightInfo lightInfo;
 		getWorldLightInfo(lightInfo);
-		for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
+		for(AutoList<Player>::iterator it = Player::autoList.begin(); it != Player::autoList.end(); ++it)
 			it->second->sendWorldLight(lightInfo);
 	}
 }
@@ -5149,7 +5143,7 @@ bool Game::broadcastMessage(const std::string& text, MessageClasses type)
 		return false;
 
 	std::cout << "> Broadcasted message: \"" << text << "\"." << std::endl;
-	for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
+	for(AutoList<Player>::iterator it = Player::autoList.begin(); it != Player::autoList.end(); ++it)
 		it->second->sendTextMessage(type, text);
 
 	return true;
@@ -6074,10 +6068,10 @@ void Game::shutdown()
 void Game::cleanup()
 {
 	//free memory
-	for(std::vector<Thing*>::iterator it = ToReleaseThings.begin(); it != ToReleaseThings.end(); ++it)
-		(*it)->releaseThing2();
+	for(std::vector<Thing*>::iterator it = releaseThings.begin(); it != releaseThings.end(); ++it)
+		(*it)->unRef();
 
-	ToReleaseThings.clear();
+	releaseThings.clear();
 	for(DecayList::iterator it = toDecayItems.begin(); it != toDecayItems.end(); ++it)
 	{
 		int32_t dur = (*it)->getDuration();
@@ -6090,9 +6084,9 @@ void Game::cleanup()
 	toDecayItems.clear();
 }
 
-void Game::FreeThing(Thing* thing)
+void Game::freeThing(Thing* thing)
 {
-	ToReleaseThings.push_back(thing);
+	releaseThings.push_back(thing);
 }
 
 void Game::showHotkeyUseMessage(Player* player, Item* item)

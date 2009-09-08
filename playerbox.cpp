@@ -98,8 +98,8 @@ LRESULT CALLBACK PlayerBox::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPAR
 			SendMessage(list, WM_SETFONT, (WPARAM)GUI::getInstance()->m_font, 0);
 			SendMessage(online, WM_SETFONT, (WPARAM)GUI::getInstance()->m_font, 0);
 
-			AutoList<Player>::listiterator it;
-			for(it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
+			AutoList<Player>::iterator it;
+			for(it = Player::autoList.begin(); it != Player::autoList.end(); ++it)
 				SendMessage(list, CB_ADDSTRING, 0, (LPARAM)(*it).second->getName().c_str());
 
 			break;

@@ -56,7 +56,7 @@ void House::addBed(BedItem* bed)
 
 void House::addDoor(Door* door)
 {
-	door->useThing2();
+	door->addRef();
 	doorList.push_back(door);
 
 	door->setHouse(this);
@@ -68,7 +68,7 @@ void House::removeDoor(Door* door)
 	HouseDoorList::iterator it = std::find(doorList.begin(), doorList.end(), door);
 	if(it != doorList.end())
 	{
-		(*it)->releaseThing2();
+		(*it)->unRef();
 		doorList.erase(it);
 	}
 }
@@ -414,7 +414,7 @@ void House::setAccessList(uint32_t listId, const std::string& textlist, bool tel
 HouseTransferItem* HouseTransferItem::createHouseTransferItem(House* house)
 {
 	HouseTransferItem* transferItem = new HouseTransferItem(house);
-	transferItem->useThing2();
+	transferItem->addRef();
 	transferItem->setID(ITEM_HOUSE_TRANSFER);
 
 	char buffer[150];
@@ -444,7 +444,7 @@ bool HouseTransferItem::onTradeEvent(TradeEvents_t event, Player* owner, Player*
 			owner->transferContainer.setParent(NULL);
 			owner->transferContainer.__removeThing(this, getItemCount());
 
-			g_game.FreeThing(this);
+			g_game.freeThing(this);
 			break;
 		}
 
@@ -991,7 +991,7 @@ bool Houses::payHouse(House* house, time_t _time, uint32_t bid)
 
 				letter->setText(s.str().c_str());
 				if(g_game.internalAddItem(NULL, depot, letter, INDEX_WHEREEVER, FLAG_NOLIMIT) != RET_NOERROR)
-					g_game.FreeThing(letter);
+					g_game.freeThing(letter);
 				else
 					savePlayer = true;
 			}

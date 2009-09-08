@@ -8954,10 +8954,10 @@ int32_t LuaScriptInterface::luaGetPlayersOnline(lua_State* L)
 {
 	//getPlayersOnline()
 	ScriptEnviroment* env = getScriptEnv();
-	AutoList<Player>::listiterator it = Player::listPlayer.list.begin();
+	AutoList<Player>::iterator it = Player::autoList.begin();
 
 	lua_newtable(L);
-	for(int32_t i = 1; it != Player::listPlayer.list.end(); ++it, ++i)
+	for(int32_t i = 1; it != Player::autoList.end(); ++it, ++i)
 	{
 		lua_pushnumber(L, i);
 		lua_pushnumber(L, env->addThing(it->second));

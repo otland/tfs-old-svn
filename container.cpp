@@ -36,7 +36,7 @@ Container::~Container()
 	for(ItemList::iterator cit = itemlist.begin(); cit != itemlist.end(); ++cit)
 	{
 		(*cit)->setParent(NULL);
-		(*cit)->releaseThing2();
+		(*cit)->unRef();
 	}
 
 	itemlist.clear();

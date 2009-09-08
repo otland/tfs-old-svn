@@ -163,8 +163,9 @@ class Player : public Creature, public Cylinder
 		void setGUID(uint32_t _guid) {guid = _guid;}
 		uint32_t getGUID() const {return guid;}
 
-		static AutoList<Player> listPlayer;
-		virtual uint32_t idRange() {return 0x10000000;}
+		static AutoList<Player> autoList;
+		virtual uint32_t rangeId() {return 0x10000000;}
+
 		void addList();
 		void removeList();
 

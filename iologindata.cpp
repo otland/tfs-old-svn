@@ -1493,7 +1493,7 @@ DeleteCharacter_t IOLoginData::deleteCharacter(uint32_t accountId, const std::st
 	query << "DELETE FROM `player_viplist` WHERE `vip_id` = " << id;
 	db->executeQuery(query.str());
 
-	for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
+	for(AutoList<Player>::iterator it = Player::autoList.begin(); it != Player::autoList.end(); ++it)
 	{
 		VIPListSet::iterator it_ = it->second->VIPList.find(id);
 		if(it_ != it->second->VIPList.end())

@@ -38,7 +38,7 @@ extern ConfigManager g_config;
 extern Game g_game;
 extern Spells* g_spells;
 
-AutoList<Npc> Npc::listNpc;
+AutoList<Npc> Npc::autoList;
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
 uint32_t Npc::npcCount = 0;
 #endif
@@ -46,12 +46,12 @@ NpcScriptInterface* Npc::m_scriptInterface = NULL;
 
 void Npcs::reload()
 {
-	for(AutoList<Npc>::listiterator it = Npc::listNpc.list.begin(); it != Npc::listNpc.list.end(); ++it)
+	for(AutoList<Npc>::iterator it = Npc::autoList.begin(); it != Npc::autoList.end(); ++it)
 		it->second->closeAllShopWindows();
 
 	delete Npc::m_scriptInterface;
 	Npc::m_scriptInterface = NULL;
-	for(AutoList<Npc>::listiterator it = Npc::listNpc.list.begin(); it != Npc::listNpc.list.end(); ++it)
+	for(AutoList<Npc>::iterator it = Npc::autoList.begin(); it != Npc::autoList.end(); ++it)
 		it->second->reload();
 }
 

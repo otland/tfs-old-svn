@@ -56,9 +56,9 @@ extern CreatureEvents* g_creatureEvents;
 extern Chat g_chat;
 
 template<class FunctionType>
-void ProtocolGame::addGameTaskInternal(bool droppable, uint32_t delay, const FunctionType& func)
+void ProtocolGame::addGameTaskInternal(uint32_t delay, const FunctionType& func)
 {
-	if(droppable)
+	if(delay > 0)
 		Dispatcher::getDispatcher().addTask(createTask(delay, func));
 	else
 		Dispatcher::getDispatcher().addTask(createTask(func));
@@ -85,7 +85,7 @@ void ProtocolGame::deleteProtocolTask()
 {
 	if(player)
 	{
-		g_game.FreeThing(player);
+		g_game.freeThing(player);
 		player = NULL;
 	}
 
@@ -104,7 +104,7 @@ bool ProtocolGame::login(const std::string& name, uint32_t id, const std::string
 	if(!_player || name == "account manager" || g_config.getNumber(ConfigManager::ALLOW_CLONES) > (int32_t)players.size())
 	{
 		player = new Player(name, this);
-		player->useThing2();
+		player->addRef();
 
 		player->setID();
 		if(!IOLoginData::getInstance()->loadPlayer(player, name, true))
@@ -343,7 +343,7 @@ bool ProtocolGame::connect(uint32_t playerId, OperatingSystem_t operatingSystem,
 	}
 
 	player = _player;
-	player->useThing2();
+	player->addRef();
 	player->isConnecting = false;
 
 	player->client = this;
@@ -1401,9 +1401,9 @@ void ProtocolGame::parseAcceptTrade(NetworkMessage& msg)
 
 void ProtocolGame::parseLookInTrade(NetworkMessage& msg)
 {
-	bool counterOffer = (msg.GetByte() == 0x01);
+	bool counter = msg.GetByte();
 	int32_t index = msg.GetByte();
-	addGameTaskTimed(DISPATCHER_TASK_EXPIRATION, &Game::playerLookInTrade, player->getID(), counterOffer, index);
+	addGameTaskTimed(DISPATCHER_TASK_EXPIRATION, &Game::playerLookInTrade, player->getID(), counter, index);
 }
 
 void ProtocolGame::parseCloseTrade()

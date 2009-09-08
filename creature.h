@@ -151,7 +151,7 @@ class FrozenPathingConditionCall
 		Position targetPos;
 };
 
-class Creature : public AutoID, virtual public Thing
+class Creature : public AutoId, virtual public Thing
 {
 	protected:
 		Creature();
@@ -172,6 +172,7 @@ class Creature : public AutoID, virtual public Thing
 		virtual const std::string& getNameDescription() const = 0;
 		virtual std::string getDescription(int32_t lookDistance) const;
 
+		void getID() const {return id;}
 		void setID()
 		{
 			/*
@@ -179,14 +180,14 @@ class Creature : public AutoID, virtual public Thing
 			 * 0x40000000 - Monster
 			 * 0x80000000 - NPC
 			 */
-			if(this->id == 0)
-				this->id = auto_id | this->idRange();
+			if(!id)
+				id = autoId | rangeId();
 		}
-		void setRemoved() {removed = true;}
-		void getPathToFollowCreature();
 
-		virtual uint32_t idRange() = 0;
-		uint32_t getID() const {return id;}
+		void setRemoved() {removed = true;}
+		virtual bool isRemoved() const {return removed;}
+
+		virtual uint32_t rangeId() = 0;
 		virtual void removeList() = 0;
 		virtual void addList() = 0;
 
@@ -194,7 +195,6 @@ class Creature : public AutoID, virtual public Thing
 		virtual bool canSeeCreature(const Creature* creature) const;
 		virtual bool canWalkthrough(const Creature* creature) const {return creature->isWalkable() || creature->isGhost();}
 
-		virtual RaceType_t getRace() const {return RACE_NONE;}
 		Direction getDirection() const {return direction;}
 		void setDirection(Direction dir) {direction = dir;}
 
@@ -210,8 +210,9 @@ class Creature : public AutoID, virtual public Thing
 		void setMasterPos(const Position& pos, uint32_t radius = 1) {masterPos = pos; masterRadius = radius;}
 
 		virtual int32_t getThrowRange() const {return 1;}
+		virtual RaceType_t getRace() const {return RACE_NONE;}
+
 		virtual bool isPushable() const {return getWalkDelay() <= 0;}
-		virtual bool isRemoved() const {return removed;}
 		virtual bool canSeeInvisibility() const {return false;}
 
 		int32_t getWalkDelay(Direction dir) const;
@@ -219,6 +220,7 @@ class Creature : public AutoID, virtual public Thing
 		int32_t getStepDuration(Direction dir) const;
 		int32_t getStepDuration() const;
 
+		void getPathToFollowCreature();
 		int64_t getEventStepTicks() const;
 		int64_t getTimeSinceLastMove() const;
 		virtual int32_t getStepSpeed() const {return getSpeed();}

@@ -1194,7 +1194,7 @@ bool TalkAction::ghost(Creature* creature, const std::string& cmd, const std::st
 	{
 		player->sendTextMessage(MSG_INFO_DESCR, "You are visible again.");
 		IOLoginData::getInstance()->updateOnlineStatus(player->getGUID(), true);
-		for(AutoList<Player>::listiterator pit = Player::listPlayer.list.begin(); pit != Player::listPlayer.list.end(); ++pit)
+		for(AutoList<Player>::iterator pit = Player::autoList.begin(); pit != Player::autoList.end(); ++pit)
 		{
 			if(!pit->second->canSeeCreature(player))
 				pit->second->notifyLogIn(player);
@@ -1219,7 +1219,7 @@ bool TalkAction::ghost(Creature* creature, const std::string& cmd, const std::st
 				tmpPlayer->sendMagicEffect(player->getPosition(), NM_ME_POFF);
 		}
 
-		for(AutoList<Player>::listiterator pit = Player::listPlayer.list.begin(); pit != Player::listPlayer.list.end(); ++pit)
+		for(AutoList<Player>::iterator pit = Player::autoList.begin(); pit != Player::autoList.end(); ++pit)
 		{
 			if(!pit->second->canSeeCreature(player))
 				pit->second->notifyLogOut(player);

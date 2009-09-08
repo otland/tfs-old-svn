@@ -326,10 +326,10 @@ class Game
 		void addCreatureCheck(Creature* creature);
 		void removeCreatureCheck(Creature* creature);
 
-		uint32_t getPlayersOnline() {return (uint32_t)Player::listPlayer.list.size();}
-		uint32_t getMonstersOnline() {return (uint32_t)Monster::listMonster.list.size();}
-		uint32_t getNpcsOnline() {return (uint32_t)Npc::listNpc.list.size();}
-		uint32_t getCreaturesOnline() {return (uint32_t)listCreature.list.size();}
+		uint32_t getPlayersOnline() {return (uint32_t)Player::autoList.size();}
+		uint32_t getMonstersOnline() {return (uint32_t)Monster::autoList.size();}
+		uint32_t getNpcsOnline() {return (uint32_t)Npc::autoList.size();}
+		uint32_t getCreaturesOnline() {return (uint32_t)autoList.size();}
 
 		uint32_t getPlayersRecord() {return playersRecord;}
 		void getWorldLightInfo(LightInfo& lightInfo);
@@ -522,7 +522,7 @@ class Game
 		bool reloadInfo(ReloadInfo_t reload, uint32_t playerId = 0);
 		void cleanup();
 		void shutdown();
-		void FreeThing(Thing* thing);
+		void freeThing(Thing* thing);
 
 		bool canThrowObjectTo(const Position& fromPos, const Position& toPos, bool checkLineOfSight = true,
 			int32_t rangex = Map::maxClientViewportX, int32_t rangey = Map::maxClientViewportY);
@@ -622,9 +622,9 @@ class Game
 			void* data;
 		};
 
-		std::vector<Thing*> ToReleaseThings;
+		std::vector<Thing*> releaseThings;
 		std::map<Item*, uint32_t> tradeItems;
-		AutoList<Creature> listCreature;
+		AutoList<Creature> autoList;
 		RuleViolationsMap ruleViolations;
 
 		size_t checkCreatureLastIndex;

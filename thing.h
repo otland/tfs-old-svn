@@ -97,16 +97,16 @@ class Creature;
 class Thing
 {
 	protected:
-		Thing(): parent(NULL), useCount(0) {}
+		Thing(): parent(NULL), refCount(0) {}
 
 	public:
 		virtual ~Thing() {}
 
-		void useThing2() {++useCount;}
-		void releaseThing2()
+		void addRef() {++refCount;}
+		void unRef()
 		{
-			--useCount;
-			if(useCount <= 0)
+			--refCount;
+			if(refCount <= 0)
 				delete this;
 		}
 
@@ -136,6 +136,6 @@ class Thing
 
 	private:
 		Cylinder* parent;
-		int32_t useCount;
+		int32_t refCount;
 };
 #endif

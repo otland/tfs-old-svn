@@ -387,10 +387,11 @@ class Npc : public Creature
 		virtual Npc* getNpc() {return this;}
 		virtual const Npc* getNpc() const {return this;}
 
-		virtual uint32_t idRange() {return 0x80000000;}
-		static AutoList<Npc> listNpc;
-		void removeList() {listNpc.removeList(getID());}
-		void addList() {listNpc.addList(this);}
+		virtual uint32_t rangeId() {return 0x80000000;}
+		static AutoList<Npc> autoList;
+
+		void removeList() {autoList[id] = this;}
+		void addList() {autoList.erase(id);}
 
 		virtual bool isPushable() const {return false;}
 		virtual bool isAttackable() const {return attackable;}

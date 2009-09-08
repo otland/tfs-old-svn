@@ -169,7 +169,7 @@ bool IOGuild::changeRank(uint32_t guild, const std::string& oldName, const std::
 	if(!db->executeQuery(query.str()))
 		return false;
 
-	for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
+	for(AutoList<Player>::iterator it = Player::autoList.begin(); it != Player::autoList.end(); ++it)
 	{
 		if(it->second->getRankId() == id)
 			it->second->setRankName(newName);
@@ -249,7 +249,7 @@ bool IOGuild::disbandGuild(uint32_t guildId)
 	if(!db->executeQuery(query.str()))
 		return false;
 
-	for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
+	for(AutoList<Player>::iterator it = Player::autoList.begin(); it != Player::autoList.end(); ++it)
 	{
 		if(it->second->getGuildId() == guildId)
 			it->second->leaveGuild();

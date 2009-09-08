@@ -275,7 +275,7 @@ Spawn::~Spawn()
 
 		monster->setSpawn(NULL);
 		if(!monster->isRemoved())
-			g_game.FreeThing(monster);
+			g_game.freeThing(monster);
 	}
 
 	spawnedMap.clear();
@@ -322,7 +322,7 @@ bool Spawn::spawnMonster(uint32_t spawnId, MonsterType* mType, const Position& p
 	}
 
 	monster->setSpawn(this);
-	monster->useThing2();
+	monster->addRef();
 
 	monster->setMasterPos(pos, radius);
 	monster->setDirection(dir);
@@ -361,7 +361,7 @@ void Spawn::checkSpawn()
 			if(spawnId != 0)
 				spawnMap[spawnId].lastSpawn = OTSYS_TIME();
 
-			monster->releaseThing2();
+			monster->unRef();
 			spawnedMap.erase(it++);
 		}
 		else if(!isInSpawnZone(monster->getPosition()) && spawnId != 0)
@@ -441,7 +441,7 @@ void Spawn::removeMonster(Monster* monster)
 	{
 		if(it->second == monster)
 		{
-			monster->releaseThing2();
+			monster->unRef();
 			spawnedMap.erase(it);
 			break;
 		}
