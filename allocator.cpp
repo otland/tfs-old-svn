@@ -66,7 +66,7 @@ void allocatorStatsThread(void* a)
 {
 	while(true)
 	{
-		OTSYS_SLEEP(30000);
+		boost::this_thread::sleep(boost::posix_time::milliseconds(30000));
 		PoolManager::getInstance().dumpStats();
 	}
 }
