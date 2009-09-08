@@ -80,7 +80,7 @@ inline int64_t OTSYS_TIME()
 
 #ifdef __GNUC__
 	#define __OTSERV_FUNCTION__ __PRETTY_FUNCTION__
-#elifdef _MSC_VER
+#elif def _MSC_VER
 	#define __OTSERV_FUNCTION__ __FUNCDNAME__
 #endif
 
