@@ -252,11 +252,11 @@ class DBQuery : public std::stringstream
 {
 	friend class _Database;
 	public:
-		DBQuery() {OTSYS_THREAD_LOCK(databaseLock, "");}
-		virtual ~DBQuery() {str(""); OTSYS_THREAD_UNLOCK(databaseLock, "");}
+		DBQuery() {databaseLock.lock();}
+		virtual ~DBQuery() {str(""); databaseLock.unlock();}
 
 	protected:
-		static OTSYS_THREAD_LOCKVAR databaseLock;
+		static boost::recursive_mutex databaseLock;
 };
 
 /**

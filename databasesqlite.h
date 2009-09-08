@@ -51,7 +51,7 @@ class DatabaseSQLite : public _Database
 		DATABASE_VIRTUAL DatabaseEngine_t getDatabaseEngine() {return DATABASE_ENGINE_SQLITE;}
 
 	protected:
-		OTSYS_THREAD_LOCKVAR sqliteLock;
+		boost::recursive_mutex sqliteLock;
 
 		std::string _parse(const std::string &s);
 		sqlite3* m_handle;

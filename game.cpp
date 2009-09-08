@@ -56,7 +56,6 @@
 
 #ifdef __EXCEPTION_TRACER__
 #include "exception.h"
-extern OTSYS_THREAD_LOCKVAR maploadlock;
 #endif
 
 extern ConfigManager g_config;
@@ -79,11 +78,6 @@ Game::Game()
 	playersRecord = lastStageLevel = 0;
 	for(int32_t i = 0; i < 3; i++)
 		globalSaveMessage[i] = false;
-
-	OTSYS_THREAD_LOCKVARINIT(AutoID::autoIDLock);
-	#ifdef __EXCEPTION_TRACER__
-	OTSYS_THREAD_LOCKVARINIT(maploadlock);
-	#endif
 
 	//(1440 minutes/day) * 10 seconds event interval / (3600 seconds/day)
 	lightHourDelta = 1440 * 10 / 3600;

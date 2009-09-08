@@ -36,7 +36,7 @@ class RSA
 		void getPublicKey(char* buffer);
 
 	protected:
-		OTSYS_THREAD_LOCKVAR rsaLock;
+		boost::recursive_mutex rsaLock;
 
 		bool m_keySet;
 		//use only GMP
