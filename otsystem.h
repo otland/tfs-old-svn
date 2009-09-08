@@ -32,6 +32,7 @@
 #include <boost/utility.hpp>
 #include <boost/asio.hpp>
 #include <boost/thread.hpp>
+#include <boost/foreach.hpp>
 #include <boost/shared_ptr.hpp>
 
 #include <stddef.h>
@@ -78,11 +79,13 @@ inline int64_t OTSYS_TIME()
 #endif
 
 #ifdef __GNUC__
-#define __OTSERV_FUNCTION__ __PRETTY_FUNCTION__
+	#define __OTSERV_FUNCTION__ __PRETTY_FUNCTION__
+#elifdef _MSC_VER
+	#define __OTSERV_FUNCTION__ __FUNCDNAME__
 #endif
-#ifdef _MSC_VER
-#define __OTSERV_FUNCTION__ __FUNCDNAME__
-#endif
+
+#define foreach BOOST_FOREACH
+#define reverse_foreach BOOST_REVERSE_FOREACH
 
 typedef std::vector<std::pair<uint32_t, uint32_t> > IpList;
 #endif
