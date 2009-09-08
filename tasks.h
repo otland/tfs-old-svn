@@ -25,24 +25,25 @@
 class Task
 {
 	public:
-		Task(const boost::function<void (void)>& f): m_expiration(-1), m_f(f) {}
-		Task(uint32_t ms, const boost::function<void (void)>& f):
-			m_expiration(OTSYS_TIME() + ms), m_f(f) {}
+		Task(const boost::function<void (void)>& f): m_expiration(
+			boost::date_time::not_a_date_time), m_f(f) {}
+		Task(uint32_t ms, const boost::function<void (void)>& f): m_expiration(
+			boost::get_system_time() + boost::posix_time::milliseconds(ms)), m_f(f) {}
 
 		virtual ~Task() {}
 		void operator()() {m_f();}
 
-		void setDontExpire() {m_expiration = -1;}
+		void unsetExpiration() {m_expiration = boost::date_time::not_a_date_time;}
 		bool hasExpired() const
 		{
-			if(m_expiration < 0)
+			if(m_expiration == boost::date_time::not_a_date_time)
 				return false;
 
-			return m_expiration < OTSYS_TIME();
+			return m_expiration < boost::get_system_time();
 		}
 
 	protected:
-		int64_t m_expiration;
+		boost::system_time m_expiration;
 		boost::function<void (void)> m_f;
 };
 
@@ -70,7 +71,7 @@ class Dispatcher
 		void stop();
 		void shutdown();
 
-		static OTSYS_THREAD_RETURN dispatcherThread(void* p);
+		static void dispatcherThread(void* p);
 
 	protected:
 		void flush();
@@ -83,8 +84,8 @@ class Dispatcher
 			STATE_TERMINATED
 		};
 
-		OTSYS_THREAD_LOCKVAR_PTR m_taskLock;
-		OTSYS_THREAD_SIGNALVAR m_taskSignal;
+		boost::mutex m_taskLock;
+		boost::condition_variable m_taskSignal;
 
 		std::list<Task*> m_taskList;
 		static DispatcherState m_threadState;
