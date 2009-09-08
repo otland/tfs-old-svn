@@ -19,8 +19,7 @@
 #define __TEMPLATES__
 #include "otsystem.h"
 
-template<class T>
-class AutoList : public std::map<uint32_t, T*>
+template<class T> class AutoList : public std::map<uint32_t, T*>
 {
 	public:
 		AutoList() {}
@@ -61,6 +60,6 @@ class AutoId
 
 	protected:
 		static uint32_t count;
-		static boost::recursive_mutex list;
+		static std::set<uint32_t> list;
 };
 #endif
