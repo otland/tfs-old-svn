@@ -32,9 +32,9 @@
 #include "configmanager.h"
 #include "game.h"
 
-OTSYS_THREAD_LOCKVAR AutoID::autoIDLock;
-uint32_t AutoID::count = 1000;
-AutoID::list_type AutoID::list;
+boost::recursive_mutex AutoId::lock;
+uint32_t AutoId::count = 1000;
+AutoId::List AutoId::list;
 
 extern Game g_game;
 extern ConfigManager g_config;
