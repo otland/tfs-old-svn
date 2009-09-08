@@ -172,7 +172,7 @@ class Creature : public AutoId, virtual public Thing
 		virtual const std::string& getNameDescription() const = 0;
 		virtual std::string getDescription(int32_t lookDistance) const;
 
-		void getID() const {return id;}
+		uint32_t getID() const {return id;}
 		void setID()
 		{
 			/*

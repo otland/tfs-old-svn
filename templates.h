@@ -23,8 +23,8 @@ template<class T> class AutoList : public std::map<uint32_t, T*>
 {
 	public:
 		AutoList() {}
-		virtual ~AutoList() {clear();}
-}
+		virtual ~AutoList() {}
+};
 
 class AutoId
 {
