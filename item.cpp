@@ -1261,11 +1261,14 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 
 	if(lookDistance <= 1 && it.pickupable)
 	{
-		s << std::endl;
+		std::string tmp;
 		if(!item)
-			s << getWeightDescription(it.weight, it.stackable, subType);
+			tmp = getWeightDescription(it.weight, it.stackable, subType);
 		else
-			s << item->getWeightDescription();
+			tmp item->getWeightDescription();
+
+		if(!tmp.empty())
+			s << std::endl << tmp;
 	}
 
 	if(it.abilities.elementType != COMBAT_NONE && it.decayTo > 0)
@@ -1383,7 +1386,7 @@ std::string Item::getNameDescription(const ItemType& it, const Item* item/* = NU
 
 std::string Item::getWeightDescription(double weight, bool stackable, uint32_t count/* = 1*/)
 {
-	if(weight > 0)
+	if(weight <= 0)
 		return "";
 
 	std::stringstream s;
