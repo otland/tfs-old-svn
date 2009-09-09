@@ -1265,7 +1265,7 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 		if(!item)
 			tmp = getWeightDescription(it.weight, it.stackable, subType);
 		else
-			tmp item->getWeightDescription();
+			tmp = item->getWeightDescription();
 
 		if(!tmp.empty())
 			s << std::endl << tmp;
