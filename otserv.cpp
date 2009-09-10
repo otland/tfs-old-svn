@@ -232,7 +232,7 @@ void allocationHandler()
 	puts("Allocation failed, server out of memory!\nDecrease size of your map or compile in a 64-bit mode.");
 	char buffer[1024];
 	fgets(buffer, 1024, stdin);
-	exit(1);
+	exit(-1);
 }
 
 void startupErrorMessage(const std::string& error)
@@ -246,7 +246,7 @@ void startupErrorMessage(const std::string& error)
 	#else
 	getchar();
 	#endif
-	exit(1);
+	exit(-1);
 }
 
 void otserv(
@@ -369,7 +369,7 @@ void serverMain(void* param)
 #ifdef __EXCEPTION_TRACER__
 	mainExceptionHandler.RemoveHandler();
 #endif
-	exit(0);
+	exit(-1);
 #if not defined(WIN32) || defined(__CONSOLE__)
 	return 0;
 #endif

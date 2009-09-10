@@ -6056,7 +6056,7 @@ void Game::shutdown()
 	std::cout << "." << std::endl;
 	cleanup();
 	std::cout << "Exiting" << std::endl;
-	exit(1);
+	exit(-1);
 }
 
 void Game::cleanup()
