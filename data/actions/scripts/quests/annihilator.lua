@@ -1,5 +1,5 @@
 local config = {
-	daily = "no",
+	daily = "no", -- allow only one enter per day? (like in global Tibia)
 	level = 100,
 	storage = 30015
 }
@@ -20,15 +20,11 @@ local newPosition =
 	{x = 189, y = 653, z = 13}
 }
 
--- Do not modify the declaration lines below.
-local players = {}
-local failed = true
 config.daily = getBooleanFromString(config.daily)
-
 function onUse(cid, item, fromPosition, itemEx, toPosition)
 	if(item.itemid == 1946) then
 		if(config.daily) then
-			doPlayerSendCancel(cid, "Sorry, not possible.")
+			doPlayerSendDefaultCancel(cid, RETURNVALUE_NOTPOSSIBLE)
 		else
 			doTransformItem(item.uid, item.itemid - 1)
 		end
@@ -40,23 +36,15 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 		return true
 	end
 
-	for i, pos in ipairs(playerPosition) do
-		pos.stackpos = STACKPOS_TOP_CREATURE
-		players[i] = getThingFromPos(playerPosition[i]).uid
-		if(players[i] > 0 and
-			isPlayer(players[i]) and
-			getPlayerStorageValue(players[i].uid, config.storage) == -1 and
-			getPlayerLevel(players[i].uid) >= config.level)
-		then
-			failed = false
-		end
-
-		if(failed) then
-			doPlayerSendCancel(cid, "Sorry, not possible.")
+	local players = {}
+	for _, pos in ipairs(playerPosition) do
+		local pid = getTopCreature(pos).uid
+		if(pid == 0 or not isPlayer(pid) or getPlayerStorageValue(pid, config.storage) > 0 or getPlayerLevel(pid) < config.level) then
+			doPlayerSendDefaultCancel(cid, RETURNVALUE_NOTPOSSIBLE)
 			return true
 		end
 
-		failed = true
+		players[i] = pid
 	end
 
 	for i, pid in ipairs(players) do

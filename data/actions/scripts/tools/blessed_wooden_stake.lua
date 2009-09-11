@@ -1,3 +1,7 @@
+local config = {
+	level = 2
+}
+
 local DUSTS = {
 	-- Demons
 	[2956] = {25000, 5905},
@@ -7,14 +11,14 @@ local DUSTS = {
 }
 
 function onUse(cid, item, fromPosition, itemEx, toPosition)
-	if(getPlayerLevel(cid) <= 1) then
-		doPlayerSendCancel(cid, "You have to be at least Level 2 to use this tool.")
+	if(getPlayerLevel(cid) < config.level) then
+		doPlayerSendCancel(cid, "You have to be at least Level " .. config.level .. " to use this tool.")
 		return true
 	end
 
 	local dust = DUSTS[itemEx.itemid]
 	if(not dust) then
-		doPlayerSendCancel(cid, "Sorry, not possible.")
+		doPlayerSendDefaultCancel(cid, RETURNVALUE_NOTPOSSIBLE)
 		return true
 	end
 

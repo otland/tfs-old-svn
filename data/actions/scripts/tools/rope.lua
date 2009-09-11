@@ -14,7 +14,7 @@ local holeId = {
 
 function onUse(cid, item, fromPosition, itemEx, toPosition)
 	if(toPosition.x == CONTAINER_POSITION) then
-		doPlayerSendCancel(cid, "Sorry, not possible.")
+		doPlayerSendDefaultCancel(cid, RETURNVALUE_NOTPOSSIBLE)
 		return true
 	end
 
