@@ -215,6 +215,7 @@ enum PlayerInfo_t{
 	PlayerInfoName,
 	PlayerInfoPosition,
 	PlayerInfoVocation,
+	PlayerInfoMasterPos,
 	PlayerInfoTown,
 	PlayerInfoSoul,
 	PlayerInfoFreeCap,
@@ -411,6 +412,7 @@ class LuaScriptInterface
 		static int32_t luaGetTileItemById(lua_State* L);
 		static int32_t luaGetTileItemByType(lua_State* L);
 		static int32_t luaGetTileThingByPos(lua_State* L);
+		static int32_t luaGetTileThingByTopOrder(lua_State* L);
 		static int32_t luaGetTopCreature(lua_State* L);
 		static int32_t luaHasProperty(lua_State* L);
 		static int32_t luaGetDepotId(lua_State* L);
@@ -455,6 +457,7 @@ class LuaScriptInterface
 		static int32_t luaGetPlayerPosition(lua_State* L);
 		static int32_t luaGetPlayerSkill(lua_State* L);
 		static int32_t luaGetPlayerVocation(lua_State* L);
+		static int32_t luaGetPlayerMasterPos(lua_State* L);
 		static int32_t luaGetPromotedVocation(lua_State* L);
 		static int32_t luaGetPlayerTown(lua_State* L);
 		static int32_t luaGetPlayerItemCount(lua_State* L);

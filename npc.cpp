@@ -1528,11 +1528,10 @@ void Npc::processResponse(Player* player, NpcState* npcState, const NpcResponse*
 
 		if(response->getAmount() != -1)
 		{
-			const ItemType& it = Item::items[npcState->itemId];
-			if(it.stackable || npcState->amount <= 100)
-				npcState->amount = response->getAmount();
+			if(npcState->itemId > 0)
+				npcState->amount = (int32_t)std::min((int32_t)response->getAmount(), (int32_t)100);
 			else
-				npcState->amount = 100;
+				npcState->amount = response->getAmount();
 		}
 
 		for(ActionList::const_iterator it = response->getFirstAction(); it != response->getEndAction(); ++it)
@@ -1616,12 +1615,8 @@ void Npc::processResponse(Player* player, NpcState* npcState, const NpcResponse*
 					else
 						amount = (*it).intValue;
 
-					if(npcState->itemId > 0)
-					{
-						const ItemType& it = Item::items[npcState->itemId];
-						if(!it.stackable && amount > 100)
-							amount = 100;
-					}
+					if(npcState->itemId > 0 && amount > 100)
+						amount = 100;
 
 					npcState->amount = amount;
 					break;
@@ -2629,7 +2624,7 @@ int32_t Npc::matchKeywords(NpcResponse* response, std::vector<std::string> wordL
 				//TODO: Should iterate through each word until a number or a new keyword is found.
 				int32_t amount = atoi(lastWordMatchIter->c_str());
 				if(amount > 0)
-					response->setAmount(std::min((int32_t)amount, (int32_t)500));
+					response->setAmount(amount);
 				else
 				{
 					response->setAmount(1);

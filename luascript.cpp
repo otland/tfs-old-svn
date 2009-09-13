@@ -1081,6 +1081,9 @@ void LuaScriptInterface::registerFunctions()
 	//getPlayerSkill(cid, skillid)
 	lua_register(m_luaState, "getPlayerSkill", LuaScriptInterface::luaGetPlayerSkill);
 
+	//getPlayerMasterPos(cid)
+	lua_register(m_luaState, "getPlayerMasterPos", LuaScriptInterface::luaGetPlayerMasterPos);
+
 	//getPlayerTown(cid)
 	lua_register(m_luaState, "getPlayerTown", LuaScriptInterface::luaGetPlayerTown);
 
@@ -1129,8 +1132,10 @@ void LuaScriptInterface::registerFunctions()
 	//getPlayerLookDir(cid)
 	lua_register(m_luaState, "getPlayerLookDir", LuaScriptInterface::luaGetPlayerLookDir);
 
-	//setCreatureLookDir(cid, dir)
+	//doCreatureSetLookDir(cid, direction)
 	lua_register(m_luaState, "doCreatureSetLookDir", LuaScriptInterface::luaDoCreatureSetLookDir);
+	//doSetCreatureDirection(cid, direction)
+	lua_register(m_luaState, "doSetCreatureDirection", LuaScriptInterface::luaDoCreatureSetLookDir);
 
 	//getPlayerGUID(cid)
 	lua_register(m_luaState, "getPlayerGUID", LuaScriptInterface::luaGetPlayerGUID);
@@ -1217,6 +1222,9 @@ void LuaScriptInterface::registerFunctions()
 
 	//getTileThingByPos(pos)
 	lua_register(m_luaState, "getTileThingByPos", LuaScriptInterface::luaGetTileThingByPos);
+
+	//getTileThingByTopOrder(pos, topOrder)
+	lua_register(m_luaState, "getTileThingByTopOrder", LuaScriptInterface::luaGetTileThingByTopOrder);
 
 	//getTopCreature(pos)
 	lua_register(m_luaState, "getTopCreature", LuaScriptInterface::luaGetTopCreature);
@@ -1781,6 +1789,14 @@ int32_t LuaScriptInterface::internalGetPlayerInfo(lua_State* L, PlayerInfo_t inf
 				value = player->getMaxMana();
 				break;
 
+			case PlayerInfoMasterPos:
+			{
+				Position pos;
+				pos = player->masterPos;
+				pushPosition(L, pos, 0);
+				return 1;
+			}
+
 			case PlayerInfoName:
 				lua_pushstring(L, player->name.c_str());
 				return 1;
@@ -1896,64 +1912,67 @@ int32_t LuaScriptInterface::internalGetPlayerInfo(lua_State* L, PlayerInfo_t inf
 }
 //getPlayer[Info](uid)
 int32_t LuaScriptInterface::luaGetPlayerFood(lua_State* L){
-	return internalGetPlayerInfo(L,PlayerInfoFood);}
+	return internalGetPlayerInfo(L, PlayerInfoFood);}
 
 int32_t LuaScriptInterface::luaGetPlayerAccess(lua_State* L){
-	return internalGetPlayerInfo(L,PlayerInfoAccess);}
+	return internalGetPlayerInfo(L, PlayerInfoAccess);}
 
 int32_t LuaScriptInterface::luaGetPlayerLevel(lua_State* L){
-	return internalGetPlayerInfo(L,PlayerInfoLevel);}
+	return internalGetPlayerInfo(L, PlayerInfoLevel);}
 
 int32_t LuaScriptInterface::luaGetPlayerMagLevel(lua_State* L){
-	return internalGetPlayerInfo(L,PlayerInfoMagLevel);}
+	return internalGetPlayerInfo(L, PlayerInfoMagLevel);}
 
 int32_t LuaScriptInterface::luaGetPlayerMana(lua_State* L){
-	return internalGetPlayerInfo(L,PlayerInfoMana);}
+	return internalGetPlayerInfo(L, PlayerInfoMana);}
 
 int32_t LuaScriptInterface::luaGetPlayerMaxMana(lua_State* L){
 	return internalGetPlayerInfo(L, PlayerInfoMaxMana);}
 
 int32_t LuaScriptInterface::luaGetPlayerName(lua_State* L){
-	return internalGetPlayerInfo(L,PlayerInfoName);}
+	return internalGetPlayerInfo(L, PlayerInfoName);}
 
 int32_t LuaScriptInterface::luaGetPlayerPosition(lua_State* L){
-	return internalGetPlayerInfo(L,PlayerInfoPosition);}
+	return internalGetPlayerInfo(L, PlayerInfoPosition);}
 
 int32_t LuaScriptInterface::luaGetPlayerVocation(lua_State* L){
-	return internalGetPlayerInfo(L,PlayerInfoVocation);}
+	return internalGetPlayerInfo(L, PlayerInfoVocation);}
+
+int32_t LuaScriptInterface::luaGetPlayerMasterPos(lua_State* L){
+	return internalGetPlayerInfo(L, PlayerInfoMasterPos);}
 
 int32_t LuaScriptInterface::luaGetPlayerSoul(lua_State* L){
-	return internalGetPlayerInfo(L,PlayerInfoSoul);}
+	return internalGetPlayerInfo(L, PlayerInfoSoul);}
 
 int32_t LuaScriptInterface::luaGetPlayerFreeCap(lua_State* L){
-	return internalGetPlayerInfo(L,PlayerInfoFreeCap);}
+	return internalGetPlayerInfo(L, PlayerInfoFreeCap);}
 
 int32_t LuaScriptInterface::luaGetPlayerGuildId(lua_State* L){
-	return internalGetPlayerInfo(L,PlayerInfoGuildId);}
+	return internalGetPlayerInfo(L, PlayerInfoGuildId);}
 
 int32_t LuaScriptInterface::luaGetPlayerGuildLevel(lua_State* L){
-	return internalGetPlayerInfo(L,PlayerInfoGuildLevel);}
+	return internalGetPlayerInfo(L, PlayerInfoGuildLevel);}
 
 int32_t LuaScriptInterface::luaGetPlayerGuildName(lua_State* L){
-	return internalGetPlayerInfo(L,PlayerInfoGuildName);}
+	return internalGetPlayerInfo(L, PlayerInfoGuildName);}
 
 int32_t LuaScriptInterface::luaGetPlayerGuildRank(lua_State* L){
-	return internalGetPlayerInfo(L,PlayerInfoGuildRank);}
+	return internalGetPlayerInfo(L, PlayerInfoGuildRank);}
 
 int32_t LuaScriptInterface::luaGetPlayerGuildNick(lua_State* L){
-	return internalGetPlayerInfo(L,PlayerInfoGuildNick);}
+	return internalGetPlayerInfo(L, PlayerInfoGuildNick);}
 
 int32_t LuaScriptInterface::luaGetPlayerSex(lua_State* L){
-	return internalGetPlayerInfo(L,PlayerInfoSex);}
+	return internalGetPlayerInfo(L, PlayerInfoSex);}
 
 int32_t LuaScriptInterface::luaGetPlayerLookDir(lua_State* L){
 	return internalGetPlayerInfo(L, PlayerInfoLookDirection);}
 
 int32_t LuaScriptInterface::luaGetPlayerTown(lua_State* L){
-	return internalGetPlayerInfo(L,PlayerInfoTown);}
+	return internalGetPlayerInfo(L, PlayerInfoTown);}
 
 int32_t LuaScriptInterface::luaGetPlayerGroupId(lua_State* L){
-	return internalGetPlayerInfo(L,PlayerInfoGroupId);}
+	return internalGetPlayerInfo(L, PlayerInfoGroupId);}
 
 int32_t LuaScriptInterface::luaGetPlayerGUID(lua_State* L){
 	return internalGetPlayerInfo(L, PlayerInfoGUID);}
@@ -3321,6 +3340,34 @@ int32_t LuaScriptInterface::luaGetTileThingByPos(lua_State* L)
 	}
 
 	Thing* thing = tile->__getThing(pos.stackpos);
+	if(!thing)
+	{
+		pushThing(L, NULL, 0);
+		return 1;
+	}
+
+	uint32_t uid = env->addThing(thing);
+	pushThing(L, thing, uid);
+	return 1;
+}
+
+int32_t LuaScriptInterface::luaGetTileThingByTopOrder(lua_State* L)
+{
+	//getTileThingByTopOrder(pos, topOrder)
+	uint32_t topOrder = popNumber(L);
+	PositionEx pos;
+	popPosition(L, pos);
+
+	ScriptEnviroment* env = getScriptEnv();
+
+	Tile* tile = g_game.getTile(pos.x, pos.y, pos.z);
+	if(!tile)
+	{
+		pushThing(L, NULL, 0);
+		return 1;
+	}
+
+	Thing* thing = tile->getItemByTopOrder(topOrder);
 	if(!thing)
 	{
 		pushThing(L, NULL, 0);

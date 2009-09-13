@@ -801,7 +801,18 @@ MagicEffectNames magicEffectNames[] =
 	{"watersplash",		NM_ME_WATERSPLASH},
 	{"plantattack",		NM_ME_PLANTATTACK},
 	{"tutorialarrow",	NM_ME_TUTORIALARROW},
-	{"tutorialsquare",	NM_ME_TUTORIALSQUARE}
+	{"tutorialsquare",	NM_ME_TUTORIALSQUARE},
+	{"mirrorhorizontal",	NM_ME_MIRRORHORIZONTAL},
+	{"mirrorvertical",	NM_ME_MIRRORVERTICAL},
+	{"skullhorizontal",	NM_ME_SKULLHORIZONTAL},
+	{"skullvertical",	NM_ME_SKULLVERTICAL},
+	{"assassin",		NM_ME_ASSASSIN},
+	{"stepshorizontal",	NM_ME_STEPSHORIZONTAL},
+	{"bloodysteps",		NM_ME_BLOODYSTEPS},
+	{"stepsvertical",	NM_ME_STEPSVERTICAL},
+	{"yalaharighost",	NM_ME_YALAHARIGHOST},
+	{"bats",		NM_ME_BATS},
+	{"smoke",		NM_ME_SMOKE}
 };
 
 ShootTypeNames shootTypeNames[] =
@@ -967,34 +978,33 @@ std::string getSkillName(uint16_t skillid)
 	{
 		case SKILL_FIST:
 			return "fist fighting";
-			break;
+
 		case SKILL_CLUB:
 			return "club fighting";
-			break;
+
 		case SKILL_SWORD:
 			return "sword fighting";
-			break;
+
 		case SKILL_AXE:
 			return "axe fighting";
-			break;
+
 		case SKILL_DIST:
 			return "distance fighting";
-			break;
+
 		case SKILL_SHIELD:
 			return "shielding";
-			break;
+
 		case SKILL_FISH:
 			return "fishing";
-			break;
+
 		case MAGLEVEL:
 			return "magic level";
-			break;
+
 		case LEVEL:
 			return "level";
-			break;
+
 		default:
 			return "unknown";
-			break;
 	}
 }
 
@@ -1022,28 +1032,28 @@ std::string getReason(int32_t reasonId)
 {
 	switch(reasonId)
 	{
-		case 0: return "Offensive Name"; break;
-		case 1: return "Invalid Name Format"; break;
-		case 2: return "Unsuitable Name"; break;
-		case 3: return "Name Inciting Rule Violation"; break;
-		case 4: return "Offensive Statement"; break;
-		case 5: return "Spamming"; break;
-		case 6: return "Illegal Advertising"; break;
-		case 7: return "Off-Topic Public Statement"; break;
-		case 8: return "Non-English Public Statement"; break;
-		case 9: return "Inciting Rule Violation"; break;
-		case 10: return "Bug Abuse"; break;
-		case 11: return "Game Weakness Abuse"; break;
-		case 12: return "Using Unofficial Software to Play"; break;
-		case 13: return "Hacking"; break;
-		case 14: return "Multi-Clienting"; break;
-		case 15: return "Account Trading or Sharing"; break;
-		case 16: return "Threatening Gamemaster"; break;
-		case 17: return "Pretending to Have Influence on Rule Enforcement"; break;
-		case 18: return "False Report to Gamemaster"; break;
-		case 19: return "Destructive Behaviour"; break;
-		case 20: return "Excessive Unjustified Player Killing"; break;
-		default: return "Unknown Reason"; break;
+		case 0: return "Offensive Name";
+		case 1: return "Invalid Name Format";
+		case 2: return "Unsuitable Name";
+		case 3: return "Name Inciting Rule Violation";
+		case 4: return "Offensive Statement";
+		case 5: return "Spamming";
+		case 6: return "Illegal Advertising";
+		case 7: return "Off-Topic Public Statement";
+		case 8: return "Non-English Public Statement";
+		case 9: return "Inciting Rule Violation";
+		case 10: return "Bug Abuse";
+		case 11: return "Game Weakness Abuse";
+		case 12: return "Using Unofficial Software to Play";
+		case 13: return "Hacking";
+		case 14: return "Multi-Clienting";
+		case 15: return "Account Trading or Sharing";
+		case 16: return "Threatening Gamemaster";
+		case 17: return "Pretending to Have Influence on Rule Enforcement";
+		case 18: return "False Report to Gamemaster";
+		case 19: return "Destructive Behaviour";
+		case 20: return "Excessive Unjustified Player Killing";
+		default: return "Unknown Reason";
 	}
 }
 
