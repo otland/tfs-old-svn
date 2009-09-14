@@ -7552,15 +7552,10 @@ int32_t LuaScriptInterface::luaRegisterCreatureEvent(lua_State* L)
 {
 	//registerCreatureEvent(cid, name)
 	std::string name = popString(L);
-	uint32_t cid = popNumber(L);
-	ScriptEnviroment* env = getScriptEnv();
 
-	Creature* creature = env->getCreatureByUID(cid);
-	if(creature)
-	{
-		creature->registerCreatureEvent(name);
-		lua_pushboolean(L, true);
-	}
+	ScriptEnviroment* env = getScriptEnv();
+	if(Creature* creature = env->getCreatureByUID(popNumber(L)))
+		lua_pushboolean(L, creature->registerCreatureEvent(name));
 	else
 	{
 		reportErrorFunc(getErrorDesc(LUA_ERROR_CREATURE_NOT_FOUND));

@@ -381,31 +381,59 @@ bool Monster::searchTarget(TargetSearchType_t searchType /*= TARGETSEARCH_DEFAUL
 			resultList.push_back(*it);
 	}
 
-	if(!resultList.empty())
+	switch(searchType)
 	{
-		uint32_t index = random_range(0, resultList.size() - 1);
-		CreatureList::iterator it = resultList.begin();
+		case TARGETSEARCH_NEAREST:
+		{
+			Creature* target = NULL;
+			int32_t range = -1;
+			for(CreatureList::iterator it = resultList.begin(); it != resultList.end(); ++it)
+			{
+				uint32_t tmp = std::max(std::abs(myPos.x - (*it)->getPosition().x),
+					std::abs(myPos.y - (*it)->getPosition().y));
+				if(range >= 0 && tmp >= range)
+					continue;
 
-		std::advance(it, index);
+				target = *it;
+				range = tmp;
+			}
+
+			if(target && selectTarget(target))
+				return target;
+
+			break;
+		}
+		default:
+		{
+			if(!resultList.empty())
+			{
+				CreatureList::iterator it = resultList.begin();
+				std::advance(it, random_range(0, resultList.size() - 1));
 #ifdef __DEBUG__
-		std::cout << "Selecting target " << (*it)->getName() << std::endl;
+
+				std::cout << "Selecting target " << (*it)->getName() << std::endl;
 #endif
-		return selectTarget(*it);
+				return selectTarget(*it);
+			}
+
+			if(searchType == TARGETSEARCH_ATTACKRANGE)
+				return false;
+
+			break;
+		}
 	}
 
-	if(searchType == TARGETSEARCH_ATTACKRANGE)
-		return false;
 
 	//lets just pick the first target in the list
 	for(CreatureList::iterator it = targetList.begin(); it != targetList.end(); ++it)
 	{
-		if(followCreature != (*it) && selectTarget(*it))
-		{
+		if(followCreature == (*it) || !selectTarget(*it))
+			continue;
+
 #ifdef __DEBUG__
-			std::cout << "Selecting target " << (*it)->getName() << std::endl;
+		std::cout << "Selecting target " << (*it)->getName() << std::endl;
 #endif
-			return true;
-		}
+		return true;
 	}
 
 	return false;
@@ -710,8 +738,13 @@ void Monster::onThinkTarget(uint32_t interval)
 
 	targetChangeTicks = 0;
 	targetChangeCooldown = (uint32_t)mType->changeTargetSpeed;
-	if(mType->changeTargetChance >= random_range(1, 100))
+	if(mType->changeTargetChance < random_range(1, 100))
+		return;
+
+	if(mType->targetDistance <= 1)
 		searchTarget(TARGETSEARCH_RANDOM);
+	else
+		searchTarget(TARGETSEARCH_NEAREST);
 }
 
 void Monster::onThinkDefense(uint32_t interval)

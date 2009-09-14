@@ -112,7 +112,7 @@ char* getFunctionName(unsigned long addr, unsigned long& start)
 
 	for(FunctionMap::iterator functions = functionMap.begin(); functions != functionMap.end(); ++functions)
 	{
-		if(functions->first > addr && functions != functionMap.begin())
+		if(functions->first <= addr || functions == functionMap.begin())
 			continue;
 
 		functions--;
@@ -342,7 +342,7 @@ bool ExceptionHandler::LoadMap()
 	//read until found .text		   0x00401000
 	while(fgets(line, 1024, input))
 	{
-		if(memcmp(line, ".text",5) == 0)
+		if(!memcmp(line, ".text",5))
 			break;
 	}
 

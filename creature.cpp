@@ -1519,10 +1519,16 @@ void Creature::setNormalCreatureLight()
 bool Creature::registerCreatureEvent(const std::string& name)
 {
 	CreatureEvent* event = g_creatureEvents->getEventByName(name);
-	if(!event)
+	if(!event) //check for existance
 		return false;
 
-	if(!hasEventRegistered(event->getEventType())) //wasn't added, so set the bit in the bitfield
+	for(CreatureEventList::iterator it = eventsList.begin(); it != eventsList.end(); ++it)
+	{
+		if((*it) == event) //do not allow registration of same event more than once
+			return false;
+	}
+
+	if(!hasEventRegistered(event->getEventType())) //there's no such type registered yet, so set the bit in the bitfield
 		scriptEventsBitField |= ((uint32_t)1 << event->getEventType());
 
 	eventsList.push_back(event);
@@ -1532,13 +1538,13 @@ bool Creature::registerCreatureEvent(const std::string& name)
 CreatureEventList Creature::getCreatureEvents(CreatureEventType_t type)
 {
 	CreatureEventList retList;
-	if(hasEventRegistered(type))
+	if(!hasEventRegistered(type))
+		return retList;
+
+	for(CreatureEventList::iterator it = eventsList.begin(); it != eventsList.end(); ++it)
 	{
-		for(CreatureEventList::iterator it = eventsList.begin(); it != eventsList.end(); ++it)
-		{
-			if((*it)->getEventType() == type)
-				retList.push_back(*it);
-		}
+		if((*it)->getEventType() == type)
+			retList.push_back(*it);
 	}
 
 	return retList;
