@@ -468,7 +468,6 @@ ServiceManager* services)
 		startupErrorMessage("Unable to load " + g_config.getString(ConfigManager::CONFIG_FILE) + "!");
 
 	Loggar::getInstance()->open();
-
 	IntegerVec cores = vectorAtoi(explodeString(g_config.getString(ConfigManager::CORES_USED), ","));
 	if(cores[0] != -1)
 	{
@@ -482,6 +481,7 @@ ServiceManager* services)
 
 	std::stringstream mutexName;
 	mutexName << "forgottenserver_" << g_config.getNumber(ConfigManager::WORLD_ID);
+
 	CreateMutex(NULL, FALSE, mutexName.str().c_str());
 	if(GetLastError() == ERROR_ALREADY_EXISTS)
 		startupErrorMessage("Another instance of The Forgotten Server is already running with the same worldId.\nIf you want to run multiple servers, please change the worldId in configuration file.");
