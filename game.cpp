@@ -6048,7 +6048,7 @@ void Game::shutdown()
 	if(services)
 		services->stop();
 
-	std::cout << " done." << std::endl
+	std::cout << " done." << std::endl;
 }
 
 void Game::cleanup()
