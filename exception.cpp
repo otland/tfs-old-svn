@@ -305,7 +305,7 @@ EXCEPTION_DISPOSITION __cdecl _SEHHandler(struct _EXCEPTION_RECORD *ExceptionRec
 	}
 
 	std::cout << "> Crash report generated, killing server." << std::endl;
-	exit(-1);
+	exit(1);
 	return ExceptionContinueSearch;
 }
 
@@ -335,7 +335,7 @@ bool ExceptionHandler::LoadMap()
 	{
 		MessageBoxA(NULL, "Failed loading symbols, forgottenserver.map file not found.", "Error", MB_OK | MB_ICONERROR);
 		std::cout << "Failed loading symbols, forgottenserver.map file not found. " << std::endl;
-		exit(-1);
+		exit(1);
 		return false;
 	}
 

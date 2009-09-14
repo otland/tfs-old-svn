@@ -6034,29 +6034,21 @@ void Game::globalSave()
 
 void Game::shutdown()
 {
-	std::cout << "Pre";
-	Scheduler::getScheduler().stopEvent(checkLightEvent);
-	std::cout << "pa";
-	Scheduler::getScheduler().stopEvent(checkCreatureEvent);
-	std::cout << "ring";
-	Scheduler::getScheduler().stopEvent(checkDecayEvent);
+	std::cout << "Prepaparing";
+	Scheduler::getScheduler().shutdown();
 	std::cout << " to";
-	Scheduler::getScheduler().stopEvent(saveEvent);
+	Dispatcher::getDispatcher().shutdown();
 	std::cout << " shutdown";
+	Spawns::getInstance()->clear();
+	std::cout << " the";
+	Raids::getInstance()->clear();
+	std::cout << " server";
+	cleanup();
+	std::cout << "-" << std::endl;
 	if(services)
 		services->stop();
 
-	Scheduler::getScheduler().shutdown();
-	std::cout << " server";
-	Dispatcher::getDispatcher().shutdown();
-	std::cout << ".";
-	Spawns::getInstance()->clear();
-	std::cout << "." << std::endl;
-	Raids::getInstance()->clear();
-	std::cout << "." << std::endl;
-	cleanup();
-	std::cout << "Exiting" << std::endl;
-	exit(-1);
+	std::cout << " done." << std::endl
 }
 
 void Game::cleanup()

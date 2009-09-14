@@ -369,7 +369,7 @@ void serverMain(void* param)
 #ifdef __EXCEPTION_TRACER__
 	mainExceptionHandler.RemoveHandler();
 #endif
-	exit(-1);
+	exit(0);
 #if not defined(WIN32) || defined(__CONSOLE__)
 	return 0;
 #endif
