@@ -280,32 +280,35 @@ boost::any ItemAttribute::get() const
 bool ItemAttributes::unserializeMap(PropStream& stream)
 {
 	uint16_t n;
-	if(stream.GET_USHORT(n))
+	if(!stream.GET_USHORT(n))
+		return true;
+
+	std::string key;
+	ItemAttribute attr;
+
+	createAttributes();
+	while(n--)
 	{
-		std::string key;
-		ItemAttribute attr;
+		if(!stream.GET_STRING(key))
+			return false;
 
-		createAttributes();
-		while(n--)
-		{
-			if(!stream.GET_STRING(key))
-				return false;
+		if(!attr.unserialize(stream))
+			return false;
 
-			if(!attr.unserialize(stream))
-				return false;
-
-			(*attributes)[key] = attr;
-		}
+		(*attributes)[key] = attr;
 	}
+
 	return true;
 }
 
 void ItemAttributes::serializeMap(PropWriteStream& stream) const
 {
 	// Maximum of 65535 attributes per item
-	stream.ADD_USHORT(std::min((size_t)0xFFFF, attributes->size()));
+	int32_t size = (int32_t)std::min((size_t)0xFFFF, attributes->size());
+	stream.ADD_USHORT((uint16_t)size);
+
 	AttributeMap::const_iterator it = attributes->begin();
-	for(int32_t i = 0; it != attributes->end() && i <= 0xFFFF; ++it, ++i)
+	for(int32_t i = 0; i < size; ++i, ++it)
 	{
 		const std::string& key = it->first;
 		if(key.size() > 0xFFFF)
