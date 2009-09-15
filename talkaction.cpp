@@ -857,6 +857,7 @@ bool TalkAction::thingProporties(Creature* creature, const std::string& cmd, con
 					invalid += ", ";
 
 				invalid += action;
+				std::advance(it, 2);
 			}
 		}
 		else if(Creature* _creature = thing->getCreature())
@@ -925,6 +926,7 @@ bool TalkAction::thingProporties(Creature* creature, const std::string& cmd, con
 						invalid += ", ";
 
 					invalid += action;
+					std::advance(it, 2);
 				}
 			}
 			/*else if(Npc* _npc = _creature->getNpc())
@@ -939,6 +941,7 @@ bool TalkAction::thingProporties(Creature* creature, const std::string& cmd, con
 					invalid += ", ";
 
 				invalid += action;
+				std::advance(it, 2);
 			}
 		}
 	}

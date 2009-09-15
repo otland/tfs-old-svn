@@ -3239,10 +3239,11 @@ int32_t LuaScriptInterface::luaDoTransformItem(lua_State* L)
 	if(lua_gettop(L) > 2)
 		count = popNumber(L);
 
-	uint16_t newId = (uint16_t)popNumber(L);
+	uint16_t newId = popNumber(L);
+	uint32_t uid = popNumber(L);
 	ScriptEnviroment* env = getScriptEnv();
 
-	Item* item = env->getItemByUID(popNumber(L));
+	Item* item = env->getItemByUID(uid);
 	if(!item)
 	{
 		reportErrorFunc(getErrorDesc(LUA_ERROR_ITEM_NOT_FOUND));
@@ -4842,13 +4843,6 @@ int32_t LuaScriptInterface::luaDoPlayerSetSex(lua_State* L)
 		lua_pushboolean(L, false);
 	}
 	return 1;
-}
-
-int32_t LuaScriptInterface::luaDebugPrint(lua_State* L)
-{
-	//debugPrint(text)
-	reportErrorFunc(popString(L));
-	return 0;
 }
 
 int32_t LuaScriptInterface::luaDoPlayerAddSoul(lua_State* L)
@@ -9262,7 +9256,7 @@ int32_t LuaScriptInterface::luaGetItemAttribute(lua_State* L)
 	if(value.empty())
 		lua_pushnil(L);
 	else if(value.type() == typeid(std::string))
-		lua_pushstring(L, boost::any_cast<std::string>(value));
+		lua_pushstring(L, boost::any_cast<std::string>(value).c_str());
 	else if(value.type() == typeid(int32_t))
 		lua_pushnumber(L, boost::any_cast<int32_t>(value));
 	else if(value.type() == typeid(float))

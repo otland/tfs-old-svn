@@ -234,7 +234,7 @@ class Item : virtual public Thing, public ItemAttributes
 		void setCorpseOwner(uint32_t corpseOwner) {setAttribute("corpseOwner", (int32_t)corpseOwner);}
 		uint32_t getCorpseOwner();
 
-		void setDecaying(ItemDecayState_t decayState) {setAttribute("decayState", (int32_t)decayState);}
+		void setDecaying(ItemDecayState_t state) {setAttribute("decaying", (int32_t)state);}
 		ItemDecayState_t getDecaying() const;
 
 		std::string getName() const;
