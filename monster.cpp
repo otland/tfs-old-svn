@@ -389,7 +389,7 @@ bool Monster::searchTarget(TargetSearchType_t searchType /*= TARGETSEARCH_DEFAUL
 			int32_t range = -1;
 			for(CreatureList::iterator it = resultList.begin(); it != resultList.end(); ++it)
 			{
-				uint32_t tmp = std::max(std::abs(myPos.x - (*it)->getPosition().x),
+				int32_t tmp = std::max(std::abs(myPos.x - (*it)->getPosition().x),
 					std::abs(myPos.y - (*it)->getPosition().y));
 				if(range >= 0 && tmp >= range)
 					continue;

@@ -832,11 +832,11 @@ bool TalkAction::thingProporties(Creature* creature, const std::string& cmd, con
 				else
 					item->setAttribute(key, value);
 			}
-			else if(action == "erase")
+			else if(action == "erase" || action == "remove")
 				item->eraseAttribute(parseParams(it, tokens.end()));
-			else if(action == "action" || action == "actionid") || action == "aid")
+			else if(action == "action" || action == "actionid" || action == "aid")
 				item->setActionId(atoi(parseParams(it, tokens.end()).c_str()));
-			else if(action == "unique" || action == "uniqueid") || action == "uid")
+			else if(action == "unique" || action == "uniqueid" || action == "uid")
 				item->setUniqueId(atoi(parseParams(it, tokens.end()).c_str()));
 			else if(action == "depot" || action == "depotid")
 			{
@@ -844,7 +844,8 @@ bool TalkAction::thingProporties(Creature* creature, const std::string& cmd, con
 					item->getContainer()->getDepot()->setDepotId(
 						atoi(parseParams(it, tokens.end()).c_str()));
 			}
-			else if(action == "destination" || action == "position" || action == "pos" || action == "dest") //TODO: doesn't work
+			else if(action == "destination" || action == "position"
+				|| action == "pos" || action == "dest") //TODO: doesn't work
 			{
 				if(item->getTeleport())
 					item->getTeleport()->setDestPos(Position(atoi(parseParams(it,
@@ -887,38 +888,38 @@ bool TalkAction::thingProporties(Creature* creature, const std::string& cmd, con
 				_creature->setSpeakType((SpeakClasses)atoi(parseParams(it, tokens.end()).c_str()));
 			else if(Player* _player = _creature->getPlayer())
 			{
-				if(action == "fyi"))
+				if(action == "fyi")
 					_player->sendFYIBox(parseParams(it, tokens.end()).c_str());
-				else if(action == "tutorial"))
+				else if(action == "tutorial")
 					_player->sendTutorial(atoi(parseParams(it, tokens.end()).c_str()));
-				else if(action == "guildlevel"))
+				else if(action == "guildlevel")
 					_player->setGuildLevel((GuildLevel_t)atoi(parseParams(it, tokens.end()).c_str()));
-				else if(action == "guildrank"))
+				else if(action == "guildrank")
 					_player->setRankId(atoi(parseParams(it, tokens.end()).c_str()));
-				else if(action == "guildnick"))
+				else if(action == "guildnick")
 					_player->setGuildNick(parseParams(it, tokens.end()).c_str());
-				else if(action == "group"))
+				else if(action == "group")
 					_player->setGroupId(atoi(parseParams(it, tokens.end()).c_str()));
-				else if(action == "vocation"))
+				else if(action == "vocation")
 					_player->setVocation(atoi(parseParams(it, tokens.end()).c_str()));
-				else if(action == "sex") || action == "gender"))
+				else if(action == "sex" || action == "gender")
 					_player->setSex(atoi(parseParams(it, tokens.end()).c_str()));
-				else if(action == "stamina"))
+				else if(action == "stamina")
 					_player->setStaminaMinutes(atoi(parseParams(it, tokens.end()).c_str()));
-				else if(action == "town")) //TODO: doesn't work
+				else if(action == "town" || action == "temple") //TODO: doesn't work
 					_player->setTown(atoi(parseParams(it, tokens.end()).c_str()));
-				else if(action == "balance"))
+				else if(action == "balance")
 					_player->balance = atoi(parseParams(it, tokens.end()).c_str());
-				else if(action == "marriage"))
+				else if(action == "marriage" || action == "partner")
 					_player->marriage = atoi(parseParams(it, tokens.end()).c_str());
-				else if(action == "rates"))
+				else if(action == "rates")
 					_player->rates[atoi(parseParams(it, tokens.end()).c_str())] = atof(
 						parseParams(it, tokens.end()).c_str());
-				else if(action == "idle"))
+				else if(action == "idle")
 					_player->setIdleTime(atoi(parseParams(it, tokens.end()).c_str()));
-				else if(action == "capacity"))
+				else if(action == "capacity" || action == "cap")
 					_player->setCapacity(atoi(parseParams(it, tokens.end()).c_str()));
-				else if(action == "saving"))
+				else if(action == "saving" || action == "save")
 					_player->switchSaving();
 				else
 				{
