@@ -811,7 +811,7 @@ bool Player::addStorageValue(const uint32_t key, const std::string& value)
 				return addOutfit(outfit.outfitId, addons);
 		}
 		else
-			std::cout << "[Warning - Player::addStorageValue]: Invalid addons value key: " << key
+			std::cout << "[Warning - Player::addStorageValue] Invalid addons value key: " << key
 				<< ", value: " << value << " for player: " << getName() << std::endl;
 	}
 	else if(IS_IN_KEYRANGE(key, OUTFITSID_RANGE))
@@ -821,11 +821,11 @@ bool Player::addStorageValue(const uint32_t key, const std::string& value)
 		if(addons < 4)
 			return addOutfit(outfitId, addons);
 		else
-			std::cout << "[Warning - Player::addStorageValue]: Invalid addons value key: " << key
+			std::cout << "[Warning - Player::addStorageValue] Invalid addons value key: " << key
 				<< ", value: " << value << " for player: " << getName() << std::endl;
 	}
 	else
-		std::cout << "[Warning - Player::addStorageValue]: Unknown reserved key: " << key << " for player: " << getName() << std::endl;
+		std::cout << "[Warning - Player::addStorageValue] Unknown reserved key: " << key << " for player: " << getName() << std::endl;
 
 	return false;
 }
@@ -833,7 +833,7 @@ bool Player::addStorageValue(const uint32_t key, const std::string& value)
 bool Player::eraseStorageValue(const uint32_t key)
 {
 	if(IS_IN_KEYRANGE(key, RESERVED_RANGE))
-		std::cout << "[Warning - Player::eraseStorageValue]: Unknown reserved key: " << key << " for player: " << getName() << std::endl;
+		std::cout << "[Warning - Player::eraseStorageValue] Unknown reserved key: " << key << " for player: " << getName() << std::endl;
 
 	return storageMap.erase(key);
 }

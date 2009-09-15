@@ -355,7 +355,6 @@ class LuaScriptInterface
 		static int32_t luaDoTeleportThing(lua_State* L);
 		static int32_t luaDoTransformItem(lua_State* L);
 		static int32_t luaDoSendMagicEffect(lua_State* L);
-		static int32_t luaDoChangeTypeItem(lua_State* L);
 		static int32_t luaDoSendAnimatedText(lua_State* L);
 		static int32_t luaDoSendDistanceShoot(lua_State* L);
 		static int32_t luaDoShowTextWindow(lua_State* L);
@@ -475,26 +474,17 @@ class LuaScriptInterface
 		//get item info
 		static int32_t luaGetItemWeaponType(lua_State* L);
 		static int32_t luaGetItemRWInfo(lua_State* L);
-		static int32_t luaGetItemOwner(lua_State* L);
-		static int32_t luaGetItemProtection(lua_State* L);
-		static int32_t luaGetThingFromPos(lua_State* L);
 		static int32_t luaGetThing(lua_State* L);
 		static int32_t luaGetThingPos(lua_State* L);
+		static int32_t luaDoItemRaidUnref(lua_State* L);
+		static int32_t luaHasProperty(lua_State* L);
+
+		//get tile info
+		static int32_t luaGetThingFromPos(lua_State* L);
 		static int32_t luaGetTileItemById(lua_State* L);
 		static int32_t luaGetTileItemByType(lua_State* L);
 		static int32_t luaGetTileThingByPos(lua_State* L);
 		static int32_t luaGetTopCreature(lua_State* L);
-		static int32_t luaHasProperty(lua_State* L);
-		static int32_t luaHasClient(lua_State* L);
-
-		//set item
-		static int32_t luaDoSetItemActionId(lua_State* L);
-		static int32_t luaDoSetItemText(lua_State* L);
-		static int32_t luaDoSetItemSpecialDescription(lua_State* L);
-		static int32_t luaDoSetItemProtection(lua_State* L);
-		static int32_t luaDoItemRaidUnref(lua_State* L);
-
-		//get tile info
 		static int32_t luaGetTileInfo(lua_State* L);
 		static int32_t luaDoTileQueryAdd(lua_State* L);
 
@@ -560,6 +550,7 @@ class LuaScriptInterface
 		static int32_t luaGetPlayerFlagValue(lua_State* L);
 		static int32_t luaGetPlayerCustomFlagValue(lua_State* L);
 		static int32_t luaGetCreatureCondition(lua_State* L);
+		static int32_t luaHasClient(lua_State* L);
 
 		static int32_t luaGetDepotId(lua_State* L);
 		static int32_t luaGetVocationInfo(lua_State* L);
@@ -688,15 +679,11 @@ class LuaScriptInterface
 		static int32_t luaIsItemContainer(lua_State* L);
 		static int32_t luaIsItemMovable(lua_State* L);
 		static int32_t luaIsItemDoor(lua_State* L);
-		static int32_t luaGetItemLevelDoor(lua_State* L);
-		static int32_t luaGetItemIdByName(lua_State* L);
 
-		static int32_t luaIsSightClear(lua_State* L);
-		static int32_t luaDebugPrint(lua_State* L);
 		static int32_t luaGetFluidSourceType(lua_State* L);
 		static int32_t luaGetHighscoreString(lua_State* L);
+		static int32_t luaIsSightClear(lua_State* L);
 		static int32_t luaIsInArray(lua_State* L);
-		static int32_t luaWait(lua_State* L);
 		static int32_t luaAddEvent(lua_State* L);
 		static int32_t luaStopEvent(lua_State* L);
 		static int32_t luaRegisterCreatureEvent(lua_State* L);
@@ -729,29 +716,15 @@ class LuaScriptInterface
 		static int32_t luaDoRefreshMap(lua_State* L);
 		static int32_t luaDoUpdateHouseAuctions(lua_State* L);
 
+		static int32_t luaGetItemIdByName(lua_State* L);
 		static int32_t luaGetItemDescriptionsById(lua_State* L);
 		static int32_t luaGetItemWeightById(lua_State* L);
 		static int32_t luaGetItemDescriptions(lua_State* L);
 		static int32_t luaGetItemWeight(lua_State* L);
-		static int32_t luaSetItemName(lua_State* L);
-		static int32_t luaSetItemPluralName(lua_State* L);
-		static int32_t luaSetItemArticle(lua_State* L);
-		static int32_t luaGetItemAttack(lua_State* L);
-		static int32_t luaSetItemAttack(lua_State* L);
-		static int32_t luaGetItemExtraAttack(lua_State* L);
-		static int32_t luaSetItemExtraAttack(lua_State* L);
-		static int32_t luaGetItemDefense(lua_State* L);
-		static int32_t luaSetItemDefense(lua_State* L);
-		static int32_t luaGetItemExtraDefense(lua_State* L);
-		static int32_t luaSetItemExtraDefense(lua_State* L);
-		static int32_t luaGetItemArmor(lua_State* L);
-		static int32_t luaSetItemArmor(lua_State* L);
-		static int32_t luaGetItemAttackSpeed(lua_State* L);
-		static int32_t luaSetItemAttackSpeed(lua_State* L);
-		static int32_t luaGetItemHitChance(lua_State* L);
-		static int32_t luaSetItemHitChance(lua_State* L);
-		static int32_t luaGetItemShootRange(lua_State* L);
-		static int32_t luaSetItemShootRange(lua_State* L);
+		static int32_t luaGetItemAttribute(lua_State* L);
+		static int32_t luaDoSetItemAttribute(lua_State* L);
+		static int32_t luaDoEraseItemAttribute(lua_State* L);
+		static int32_t luaGetItemLevelDoor(lua_State* L);
 
 		static int32_t luaGetTalkActionList(lua_State* L);
 		static int32_t luaGetExperienceStageList(lua_State* L);
