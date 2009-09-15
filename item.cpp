@@ -116,7 +116,7 @@ bool Item::loadItem(xmlNodePtr node, Container* parent)
 
 	if(readXMLString(node, "attributes", strValue))
 	{
-		StringVec v, attr = explodeString(";", strValue)€;
+		StringVec v, attr = explodeString(";", strValue);
 		for(StringVec::iterator it = attr.begin(); it != attr.end(); ++it)
 		{
 			v = explodeString(",", (*it));
@@ -315,7 +315,7 @@ Attr_ReadValue Item::readAttr(AttrTypes_t attr, PropStream& propStream)
 			if(!propStream.GET_UCHAR(_count))
 				return ATTR_READ_ERROR;
 
-			setSubType(_count);
+			setSubType((uint16_t)_count);
 			break;
 		}
 
@@ -345,7 +345,7 @@ Attr_ReadValue Item::readAttr(AttrTypes_t attr, PropStream& propStream)
 			if(!propStream.GET_STRING(name))
 				return ATTR_READ_ERROR;
 
-			setName(name);
+			setAttribute("name", name);
 			break;
 		}
 
@@ -355,7 +355,7 @@ Attr_ReadValue Item::readAttr(AttrTypes_t attr, PropStream& propStream)
 			if(!propStream.GET_STRING(name))
 				return ATTR_READ_ERROR;
 
-			setPluralName(name);
+			setAttribute("pluralName", name);
 			break;
 		}
 
@@ -365,7 +365,7 @@ Attr_ReadValue Item::readAttr(AttrTypes_t attr, PropStream& propStream)
 			if(!propStream.GET_STRING(article))
 				return ATTR_READ_ERROR;
 
-			setArticle(article);
+			setAttribute("article", article);
 			break;
 		}
 
@@ -375,7 +375,7 @@ Attr_ReadValue Item::readAttr(AttrTypes_t attr, PropStream& propStream)
 			if(!propStream.GET_ULONG((uint32_t&)attack))
 				return ATTR_READ_ERROR;
 
-			setAttack(attack);
+			setAttribute("attack", attack);
 			break;
 		}
 
@@ -385,7 +385,7 @@ Attr_ReadValue Item::readAttr(AttrTypes_t attr, PropStream& propStream)
 			if(!propStream.GET_ULONG((uint32_t&)attack))
 				return ATTR_READ_ERROR;
 
-			setExtraAttack(attack);
+			setAttribute("extraAttack", attack);
 			break;
 		}
 
@@ -395,7 +395,7 @@ Attr_ReadValue Item::readAttr(AttrTypes_t attr, PropStream& propStream)
 			if(!propStream.GET_ULONG((uint32_t&)defense))
 				return ATTR_READ_ERROR;
 
-			setDefense(defense);
+			setAttribute("defense", defense);
 			break;
 		}
 
@@ -405,7 +405,7 @@ Attr_ReadValue Item::readAttr(AttrTypes_t attr, PropStream& propStream)
 			if(!propStream.GET_ULONG((uint32_t&)defense))
 				return ATTR_READ_ERROR;
 
-			setExtraDefense(defense);
+			setAttribute("extraDefense", defense);
 			break;
 		}
 
@@ -415,7 +415,7 @@ Attr_ReadValue Item::readAttr(AttrTypes_t attr, PropStream& propStream)
 			if(!propStream.GET_ULONG((uint32_t&)armor))
 				return ATTR_READ_ERROR;
 
-			setArmor(armor);
+			setAttribute("armor", armor);
 			break;
 		}
 
@@ -425,7 +425,7 @@ Attr_ReadValue Item::readAttr(AttrTypes_t attr, PropStream& propStream)
 			if(!propStream.GET_ULONG((uint32_t&)attackSpeed))
 				return ATTR_READ_ERROR;
 
-			setAttackSpeed(attackSpeed);
+			setAttribute("attackSpeed", attackSpeed);
 			break;
 		}
 
@@ -435,7 +435,7 @@ Attr_ReadValue Item::readAttr(AttrTypes_t attr, PropStream& propStream)
 			if(!propStream.GET_ULONG((uint32_t&)hitChance))
 				return ATTR_READ_ERROR;
 
-			setHitChance(hitChance);
+			setAttribute("hitChance", hitChance);
 			break;
 		}
 
@@ -445,7 +445,7 @@ Attr_ReadValue Item::readAttr(AttrTypes_t attr, PropStream& propStream)
 			if(!propStream.GET_UCHAR(protection))
 				return ATTR_READ_ERROR;
 
-			setScriptProtected(protection);
+			setAttribute("scriptProtected", protection != 0);
 			break;
 		}
 
@@ -455,17 +455,17 @@ Attr_ReadValue Item::readAttr(AttrTypes_t attr, PropStream& propStream)
 			if(!propStream.GET_STRING(text))
 				return ATTR_READ_ERROR;
 
-			setText(text);
+			setAttribute("text", text);
 			break;
 		}
 
 		case ATTR_WRITTENDATE:
 		{
-			uint32_t date;
-			if(!propStream.GET_ULONG(date))
+			int32_t date;
+			if(!propStream.GET_ULONG((uint32_t&)date))
 				return ATTR_READ_ERROR;
 
-			setDate((time_t)date);
+			setAttribute("date", date);
 			break;
 		}
 
@@ -475,7 +475,7 @@ Attr_ReadValue Item::readAttr(AttrTypes_t attr, PropStream& propStream)
 			if(!propStream.GET_STRING(writer))
 				return ATTR_READ_ERROR;
 
-			setWriter(writer);
+			setAttribute("writer", writer);
 			break;
 		}
 
@@ -485,7 +485,7 @@ Attr_ReadValue Item::readAttr(AttrTypes_t attr, PropStream& propStream)
 			if(!propStream.GET_STRING(text))
 				return ATTR_READ_ERROR;
 
-			setSpecialDescription(text);
+			setAttribute("description", text);
 			break;
 		}
 
@@ -501,7 +501,7 @@ Attr_ReadValue Item::readAttr(AttrTypes_t attr, PropStream& propStream)
 
 		case ATTR_CHARGES:
 		{
-			uint16_t _charges;
+			uint16_t charges;
 			if(!propStream.GET_USHORT(charges))
 				return ATTR_READ_ERROR;
 
@@ -511,11 +511,11 @@ Attr_ReadValue Item::readAttr(AttrTypes_t attr, PropStream& propStream)
 
 		case ATTR_DURATION:
 		{
-			uint32_t duration;
-			if(!propStream.GET_ULONG(duration))
+			int32_t duration;
+			if(!propStream.GET_ULONG((uint32_t&)duration))
 				return ATTR_READ_ERROR;
 
-			setDuration(duration);
+			setAttribute("duration", duration);
 			break;
 		}
 
@@ -525,8 +525,8 @@ Attr_ReadValue Item::readAttr(AttrTypes_t attr, PropStream& propStream)
 			if(!propStream.GET_UCHAR(state))
 				return ATTR_READ_ERROR;
 
-			if(state != DECAYING_FALSE)
-				setDecaying(DECAYING_PENDING);
+			if((ItemDecayState_t)state != DECAYING_FALSE)
+				setAttribute("decaying", (int32_t)DECAYING_PENDING);
 
 			break;
 		}
@@ -1084,8 +1084,9 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 		else
 			s << "Nothing is written on it";
 	}
-	else if(it.levelDoor && item && item->getActionId() >= it.levelDoor &&
-		item->getActionId() <= (it.levelDoor + g_config.getNumber(ConfigManager::MAXIMUM_DOOR_LEVEL)))
+	else if(it.levelDoor && item && item->getActionId() >= (int32_t)it.levelDoor &&
+		(int32_t)item->getActionId() <= (it.levelDoor + g_config.getNumber(
+		ConfigManager::MAXIMUM_DOOR_LEVEL)))
 		s << " for level " << item->getActionId() - it.levelDoor;
 
 	if(it.showCharges)
@@ -1305,7 +1306,7 @@ bool Item::canDecay()
 		return false;
 
 	const ItemType& it = Item::items[id];
-	return it.decayTo >= 0 && it.decayTime
+	return it.decayTo >= 0 && it.decayTime;
 }
 
 void Item::getLight(LightInfo& lightInfo)

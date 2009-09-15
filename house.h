@@ -99,12 +99,12 @@ class Door : public Item
 		//serialization
 		virtual Attr_ReadValue readAttr(AttrTypes_t attr, PropStream& propStream);
 
-		void setDoorId(uint32_t _doorId){ setIntAttr(ATTR_ITEM_DOORID, (uint32_t)_doorId); }
-		uint32_t getDoorId() const{ return getIntAttr(ATTR_ITEM_DOORID); }
+		void setDoorId(uint32_t doorId) {setAttribute("doorId", (int32_t)doorId);}
+		uint32_t getDoorId() const;
 
 		bool canUse(const Player* player);
 
-		void setAccessList(const std::string& textlist);
+		void setAccessList(const std::string& textList);
 		bool getAccessList(std::string& list) const;
 
 		//overrides
@@ -115,10 +115,20 @@ class Door : public Item
 		void setHouse(House* _house);
 
 	private:
+		friend class House;
+
 		House* house;
 		AccessList* accessList;
-		friend class House;
 };
+
+inline uint32_t Door::getDoorId() const
+{
+	const int32_t* v = getIntegerAttribute("doorId");
+	if(v)
+		return (uint32_t)*v;
+
+	return 0;
+}
 
 class HouseTransferItem : public Item
 {

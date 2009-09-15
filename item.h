@@ -204,11 +204,11 @@ class Item : virtual public Thing, public ItemAttributes
 		void resetSpecialDescription() {eraseAttribute("description");}
 		std::string getSpecialDescription() const;
 
-		void setText(const std::string& text) {setAttribute("text", description);}
+		void setText(const std::string& text) {setAttribute("text", text);}
 		void resetText() {eraseAttribute("text");}
 		std::string getText() const;
 
-		void setDate(time_t date) {setAttribute("date", date);}
+		void setDate(time_t date) {setAttribute("date", (int32_t)date);}
 		void resetDate() {eraseAttribute("date");}
 		time_t getDate() const;
 
@@ -228,10 +228,10 @@ class Item : virtual public Thing, public ItemAttributes
 		void setFluidType(uint16_t fluidType) {setAttribute("fluidType", fluidType);}
 		uint16_t getFluidType() const;
 
-		void setOwner(uint32_t owner) {setAttribute("owner", owner);}
+		void setOwner(uint32_t owner) {setAttribute("owner", (int32_t)owner);}
 		uint32_t getOwner() const;
 
-		void setCorpseOwner(uint32_t corpseOwner) {setAttribute("corpseOwner", corpseOwner);}
+		void setCorpseOwner(uint32_t corpseOwner) {setAttribute("corpseOwner", (int32_t)corpseOwner);}
 		uint32_t getCorpseOwner();
 
 		void setDecaying(ItemDecayState_t decayState) {setAttribute("decayState", (int32_t)decayState);}
@@ -364,7 +364,7 @@ inline std::string Item::getArticle() const
 	return items[id].article;
 }
 
-inlin bool Item::isScriptProtected() const
+inline bool Item::isScriptProtected() const
 {
 	const bool* v = getBooleanAttribute("scriptProtected");
 	if(v)
@@ -483,7 +483,7 @@ inline time_t Item::getDate() const
 {
 	const int32_t* v = getIntegerAttribute("date");
 	if(v)
-		return (time_t)*date;
+		return (time_t)*v;
 
 	return 0;
 }
