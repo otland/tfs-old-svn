@@ -201,25 +201,25 @@ void ItemAttribute::set(bool b)
 void ItemAttribute::set(boost::any a)
 {
 	clear();
-	if(value.empty())
+	if(a.empty())
 		return;
 
-	if(value.type() == typeid(std::string))
+	if(a.type() == typeid(std::string))
 	{
 		type = STRING;
 		new(data) std::string(boost::any_cast<std::string>(a));
 	}
-	else if(value.type() == typeid(int32_t))
+	else if(a.type() == typeid(int32_t))
 	{
 		type = INTEGER;
 		*reinterpret_cast<int32_t*>(&data) = boost::any_cast<int32_t>(a);
 	}
-	else if(value.type() == typeid(float))
+	else if(a.type() == typeid(float))
 	{
 		type = FLOAT;
 		*reinterpret_cast<float*>(&data) = boost::any_cast<float>(a);
 	}
-	else if(value.type() == typeid(bool))
+	else if(a.type() == typeid(bool))
 	{
 		type = BOOLEAN;
 		*reinterpret_cast<bool*>(&data) = boost::any_cast<bool>(a);
