@@ -2033,6 +2033,9 @@ void LuaScriptInterface::registerFunctions()
 
 	//doPlayerSendTutorial(cid, id)
 	lua_register(m_luaState, "doPlayerSendTutorial", LuaScriptInterface::luaDoPlayerSendTutorial);
+	
+	//doPlayerSendMailByName(name, item[, town[, actor]])
+	lua_register(m_luaState, "doPlayerSendTutorial", LuaScriptInterface::luaDoPlayerSendTutorial);
 
 	//doPlayerAddMapMark(cid, pos, type[, description])
 	lua_register(m_luaState, "doPlayerAddMapMark", LuaScriptInterface::luaDoPlayerAddMapMark);
@@ -7712,6 +7715,38 @@ int32_t LuaScriptInterface::luaDoPlayerSendTutorial(lua_State* L)
 
 	player->sendTutorial(id);
 	lua_pushboolean(L, true);
+	return 1;
+}
+
+int32_t LuaScriptInterface::luaDoPlayerSendMailByName(lua_State* L)
+{
+	//doPlayerSendMailByName(name, item[, town[, actor]])
+	ScriptEnviroment* env = getScriptEnv();
+	int32_t params = lua_gettop(L);
+
+	Creature* actor = NULL;
+	if(params > 3)
+		actor = env->getCreatureByUID(popNumber(L));
+
+	uint32_t town = 0;
+	if(params > 2)
+		town = popNumber(L);
+
+	Item* item = env->getItemByUID(popNumber(L));
+	if(!item)
+	{
+		reportErrorFunc(getErrorDesc(LUA_ERROR_ITEM_NOT_FOUND));
+		lua_pushboolean(L, false);
+		return 1;
+	}
+
+	if(item->getParent() != VirtualCylinder::virtualCylinder)
+	{
+		lua_pushboolean(L, false);
+		return 1;
+	}
+
+	lua_pushboolean(L, IOLoginData::getInstance()->playerMail(actor, popString(L), town, item));
 	return 1;
 }
 

@@ -197,13 +197,25 @@ Item::Item(const uint16_t type, uint16_t amount/* = 0*/):
 Item* Item::clone() const
 {
 	Item* tmp = Item::CreateItem(id, count);
-	tmp->attributes = attributes;
+	if(!tmp)
+		return NULL;
+
+	if(!attributes)
+		return tmp;
+
+	tmp->createAttributes();
+	*tmp->attributes = *attributes;
 	return tmp;
 }
 
 void Item::copyAttributes(Item* item)
 {
-	*(ItemAttribute*)(this) = *(ItemAttribute*)(item);
+	if(item && item->attributes)
+	{
+		createAttributes();
+		*attributes = *item->attributes;
+	}
+
 	eraseAttribute("decaying");
 	eraseAttribute("duration");
 }
@@ -966,7 +978,7 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 		}
 
 		int32_t show = it.abilities.absorb[COMBAT_FIRST];
-		for(uint32_t i = (COMBAT_FIRST + 1); i <= COMBAT_LAST; i++)
+		for(int32_t i = (COMBAT_FIRST + 1); i <= COMBAT_LAST; i++)
 		{
 			if(it.abilities.absorb[i] == show)
 				continue;
@@ -978,7 +990,7 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 		if(!show)
 		{
 			bool tmp = true;
-			for(uint32_t i = COMBAT_FIRST; i <= COMBAT_LAST; i++)
+			for(int32_t i = COMBAT_FIRST; i <= COMBAT_LAST; i++)
 			{
 				if(!it.abilities.absorb[i])
 					continue;
@@ -1015,6 +1027,71 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 			s << "protection all " << std::showpos << show << std::noshowpos << "%";
 		}
 
+		show = it.abilities.reflect[REFLECT_CHANCE][COMBAT_FIRST];
+		for(int32_t i = (COMBAT_FIRST + 1); i <= COMBAT_LAST; i++)
+		{
+			if(it.abilities.reflect[REFLECT_CHANCE][i] == show)
+				continue;
+
+			show = 0;
+			break;
+		}
+
+		if(!show)
+		{
+			bool tmp = true;
+			for(int32_t i = COMBAT_FIRST; i <= COMBAT_LAST; i++)
+			{
+				if(!it.abilities.reflect[REFLECT_CHANCE][i])
+					continue;
+
+				if(tmp)
+				{
+					tmp = false;
+					if(begin)
+					{
+						begin = false;
+						s << " (";
+					}
+					else
+						s << ", ";
+
+					s << "reflect ";
+				}
+				else
+					s << ", ";
+
+				std::string ss = "no";
+				if(it.abilities.reflect[REFLECT_CHANCE][i] > 99)
+					ss = "whole";
+				else if(it.abilities.reflect[REFLECT_CHANCE][i] > 80)
+					ss = "huge";
+				else if(it.abilities.reflect[REFLECT_CHANCE][i] > 50)
+					ss = "medium";
+				else if(it.abilities.reflect[REFLECT_CHANCE][i] > 20)
+					ss = "small";
+				else if(it.abilities.reflect[REFLECT_CHANCE][i] > 0)
+					ss = "tiny";
+
+				s << getCombatName((CombatType_t)i) << " " << std::showpos << it.abilities.reflect[REFLECT_PERCENT][i] << std::noshowpos << "% for " << ss;
+			}
+
+			if(!tmp)
+				s << " damage";
+		}
+		else
+		{
+			if(begin)
+			{
+				begin = false;
+				s << " (";
+			}
+			else
+				s << ", ";
+
+			s << "reflect all " << std::showpos << show << std::noshowpos << "% for mixed damage";
+		}
+
 		if(it.abilities.speed)
 		{
 			if(begin)
@@ -1034,7 +1111,7 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 	else if(it.isContainer())
 		s << " (Vol:" << (int32_t)it.maxItems << ")";
 	else if(it.isKey())
-		s << " (Key:" << (item ? (int32_t)item->getActionId() : 0) << ")";
+		s << " (Key:" << (item ? (int32_t)item->getActionId() : "?") << ")";
 	else if(it.isFluidContainer())
 	{
 		if(subType > 0)

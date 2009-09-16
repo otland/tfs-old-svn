@@ -62,63 +62,10 @@ bool Mailbox::sendItem(Creature* actor, Item* item)
 {
 	uint32_t depotId = 0;
 	std::string name;
-	if(!getRecipient(item, name, depotId))
+	if(!getRecipient(item, name, depotId) || name.empty() || !depotId)
 		return false;
 
-	if(name.empty() || !depotId)
-		return false;
-
-	return sendAddressedItem(actor, name, depotId, item);
-}
-
-bool Mailbox::sendAddressedItem(Creature* actor, const std::string& name, uint32_t depotId, Item* item)
-{
-	std::string tmpName = name;
-	Player* player = g_game.getPlayerByNameEx(tmpName);
-	if(!player)
-		return false;
-
-	Depot* depot = player->getDepot(depotId, true);
-	if(!depot || g_game.internalMoveItem(actor, item->getParent(), depot, INDEX_WHEREEVER,
-		item, item->getItemCount(), NULL, FLAG_NOLIMIT) != RET_NOERROR)
-	{
-		if(player->isVirtual())
-			delete player;
-
-		return false;
-	}
-
-	g_game.transformItem(item, item->getID() + 1);
-	bool result = true, opened = player->getContainerID(depot) != -1;
-
-	Player* tmp = NULL;
-	if(actor)
-		tmp = actor->getPlayer();
-
-	CreatureEventList mailEvents = player->getCreatureEvents(CREATURE_EVENT_MAIL_RECEIVE);
-	for(CreatureEventList::iterator it = mailEvents.begin(); it != mailEvents.end(); ++it)
-	{
-		if(!(*it)->executeMailReceive(player, tmp, item, opened) && result)
-			result = false;
-	}
-
-	if(tmp)
-	{
-		mailEvents = tmp->getCreatureEvents(CREATURE_EVENT_MAIL_SEND);
-		for(CreatureEventList::iterator it = mailEvents.begin(); it != mailEvents.end(); ++it)
-		{
-			if(!(*it)->executeMailSend(tmp, player, item, opened) && result)
-				result = false;
-		}
-	}
-
-	if(player->isVirtual())
-	{
-		IOLoginData::getInstance()->savePlayer(player);
-		delete player;
-	}
-
-	return result;
+	return IOLoginData::getInstance()->playerMail(actor, name, depotId, item);
 }
 
 bool Mailbox::getDepotId(const std::string& townString, uint32_t& depotId)

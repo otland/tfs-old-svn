@@ -1121,31 +1121,56 @@ bool IOLoginData::playerDeath(Player* player, const DeathList& dl)
 	return trans.commit();
 }
 
-bool IOLoginData::updateOnlineStatus(uint32_t guid, bool login)
+bool IOLoginData::playerMail(Creature* actor, std::string name, uint32_t townId, Item* item)
 {
-	Database* db = Database::getInstance();
-	DBQuery query;
+	Player* player = g_game.getPlayerByNameEx(name);
+	if(!player)
+		return false;
 
-	uint16_t value = login;
-	if(g_config.getNumber(ConfigManager::ALLOW_CLONES))
+	if(!townId)
+		townId = player->getTown();
+
+	Depot* depot = player->getDepot(townId, true);
+	if(!depot || g_game.internalMoveItem(actor, item->getParent(), depot, INDEX_WHEREEVER,
+		item, item->getItemCount(), NULL, FLAG_NOLIMIT) != RET_NOERROR)
 	{
-		query << "SELECT `online` FROM `players` WHERE `id` = " << guid << " AND `deleted` = 0 LIMIT 1";
-		DBResult* result;
-		if(!(result = db->storeQuery(query.str())))
-			return false;
+		if(player->isVirtual())
+			delete player;
 
-		value = result->getDataInt("online");
-		result->free();
-
-		query.str("");
-		if(login)
-			value++;
-		else if(value > 0)
-			value--;
+		return false;
 	}
 
-	query << "UPDATE `players` SET `online` = " << value << " WHERE `id` = " << guid << db->getUpdateLimiter();
-	return db->executeQuery(query.str());
+	g_game.transformItem(item, item->getID() + 1);
+	bool result = true, opened = player->getContainerID(depot) != -1;
+
+	Player* tmp = NULL;
+	if(actor)
+		tmp = actor->getPlayer();
+
+	CreatureEventList mailEvents = player->getCreatureEvents(CREATURE_EVENT_MAIL_RECEIVE);
+	for(CreatureEventList::iterator it = mailEvents.begin(); it != mailEvents.end(); ++it)
+	{
+		if(!(*it)->executeMailReceive(player, tmp, item, opened) && result)
+			result = false;
+	}
+
+	if(tmp)
+	{
+		mailEvents = tmp->getCreatureEvents(CREATURE_EVENT_MAIL_SEND);
+		for(CreatureEventList::iterator it = mailEvents.begin(); it != mailEvents.end(); ++it)
+		{
+			if(!(*it)->executeMailSend(tmp, player, item, opened) && result)
+				result = false;
+		}
+	}
+
+	if(player->isVirtual())
+	{
+		IOLoginData::getInstance()->savePlayer(player);
+		delete player;
+	}
+
+	return result;
 }
 
 bool IOLoginData::hasFlag(const std::string& name, PlayerFlags value)
@@ -1618,6 +1643,33 @@ bool IOLoginData::updatePremiumDays()
 
 	query.str("");
 	return trans.commit();
+}
+
+bool IOLoginData::updateOnlineStatus(uint32_t guid, bool login)
+{
+	Database* db = Database::getInstance();
+	DBQuery query;
+
+	uint16_t value = login;
+	if(g_config.getNumber(ConfigManager::ALLOW_CLONES))
+	{
+		query << "SELECT `online` FROM `players` WHERE `id` = " << guid << " AND `deleted` = 0 LIMIT 1";
+		DBResult* result;
+		if(!(result = db->storeQuery(query.str())))
+			return false;
+
+		value = result->getDataInt("online");
+		result->free();
+
+		query.str("");
+		if(login)
+			value++;
+		else if(value > 0)
+			value--;
+	}
+
+	query << "UPDATE `players` SET `online` = " << value << " WHERE `id` = " << guid << db->getUpdateLimiter();
+	return db->executeQuery(query.str());
 }
 
 bool IOLoginData::resetGuildInformation(uint32_t guid)

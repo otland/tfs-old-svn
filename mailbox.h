@@ -55,12 +55,10 @@ class Mailbox : public Item, public Cylinder
 			int32_t index, bool isCompleteRemoval, cylinderlink_t link = LINK_OWNER)
 			{getParent()->postRemoveNotification(actor, thing, newParent, index, isCompleteRemoval, LINK_PARENT);}
 
+		static bool canSend(const Item* item) {return (item->getID() == ITEM_PARCEL || item->getID() == ITEM_LETTER);}
 		static bool sendItem(Creature* actor, Item* item);
-		static bool sendAddressedItem(Creature* actor, const std::string& name, uint32_t depotId, Item* item);
 
 		static bool getDepotId(const std::string& townString, uint32_t& depotId);
 		static bool getRecipient(Item* item, std::string& name, uint32_t& depotId);
-
-		static bool canSend(const Item* item) {return (item->getID() == ITEM_PARCEL || item->getID() == ITEM_LETTER);}
 };
 #endif

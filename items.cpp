@@ -1071,7 +1071,7 @@ void Items::parseItemNode(xmlNodePtr itemNode, uint32_t id)
 			{
 				if(readXMLInteger(itemAttributesNode, "value", intValue))
 				{
-					for(uint32_t i = COMBAT_FIRST; i <= COMBAT_LAST; i++)
+					for(int32_t i = COMBAT_FIRST; i <= COMBAT_LAST; i++)
 						it.abilities.absorb[i] += intValue;
 				}
 			}
@@ -1156,6 +1156,186 @@ void Items::parseItemNode(xmlNodePtr itemNode, uint32_t id)
 			{
 				if(readXMLInteger(itemAttributesNode, "value", intValue))
 					it.abilities.absorb[COMBAT_UNDEFINEDDAMAGE] += intValue;
+			}
+			else if(tmpStrValue == "reflectpercentall")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+				{
+					for(int32_t i = COMBAT_FIRST; i <= COMBAT_LAST; i++)
+						it.abilities.reflect[REFLECT_PERCENT][i] += intValue;
+				}
+			}
+			else if(tmpStrValue == "reflectpercentelements")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+				{
+					it.abilities.reflect[REFLECT_PERCENT][COMBAT_ENERGYDAMAGE] += intValue;
+					it.abilities.reflect[REFLECT_PERCENT][COMBAT_FIREDAMAGE] += intValue;
+					it.abilities.reflect[REFLECT_PERCENT][COMBAT_EARTHDAMAGE] += intValue;
+					it.abilities.reflect[REFLECT_PERCENT][COMBAT_ICEDAMAGE] += intValue;
+				}
+			}
+			else if(tmpStrValue == "reflectpercentmagic")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+				{
+					it.abilities.reflect[REFLECT_PERCENT][COMBAT_ENERGYDAMAGE] += intValue;
+					it.abilities.reflect[REFLECT_PERCENT][COMBAT_FIREDAMAGE] += intValue;
+					it.abilities.reflect[REFLECT_PERCENT][COMBAT_EARTHDAMAGE] += intValue;
+					it.abilities.reflect[REFLECT_PERCENT][COMBAT_ICEDAMAGE] += intValue;
+					it.abilities.reflect[REFLECT_PERCENT][COMBAT_HOLYDAMAGE] += intValue;
+					it.abilities.reflect[REFLECT_PERCENT][COMBAT_DEATHDAMAGE] += intValue;
+				}
+			}
+			else if(tmpStrValue == "reflectpercentenergy")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+					it.abilities.reflect[REFLECT_PERCENT][COMBAT_ENERGYDAMAGE] += intValue;
+			}
+			else if(tmpStrValue == "reflectpercentfire")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+					it.abilities.reflect[REFLECT_PERCENT][COMBAT_FIREDAMAGE] += intValue;
+			}
+			else if(tmpStrValue == "reflectpercentpoison" ||	tmpStrValue == "reflectpercentearth")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+					it.abilities.reflect[REFLECT_PERCENT][COMBAT_EARTHDAMAGE] += intValue;
+			}
+			else if(tmpStrValue == "reflectpercentice")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+					it.abilities.reflect[REFLECT_PERCENT][COMBAT_ICEDAMAGE] += intValue;
+			}
+			else if(tmpStrValue == "reflectpercentholy")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+					it.abilities.reflect[REFLECT_PERCENT][COMBAT_HOLYDAMAGE] += intValue;
+			}
+			else if(tmpStrValue == "reflectpercentdeath")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+					it.abilities.reflect[REFLECT_PERCENT][COMBAT_DEATHDAMAGE] += intValue;
+			}
+			else if(tmpStrValue == "reflectpercentlifedrain")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+					it.abilities.reflect[REFLECT_PERCENT][COMBAT_LIFEDRAIN] += intValue;
+			}
+			else if(tmpStrValue == "reflectpercentmanadrain")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+					it.abilities.reflect[REFLECT_PERCENT][COMBAT_MANADRAIN] += intValue;
+			}
+			else if(tmpStrValue == "reflectpercentdrown")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+					it.abilities.reflect[REFLECT_PERCENT][COMBAT_DROWNDAMAGE] += intValue;
+			}
+			else if(tmpStrValue == "reflectpercentphysical")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+					it.abilities.reflect[REFLECT_PERCENT][COMBAT_PHYSICALDAMAGE] += intValue;
+			}
+			else if(tmpStrValue == "reflectpercenthealing")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+					it.abilities.reflect[REFLECT_PERCENT][COMBAT_HEALING] += intValue;
+			}
+			else if(tmpStrValue == "reflectpercentundefined")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+					it.abilities.reflect[REFLECT_PERCENT][COMBAT_UNDEFINEDDAMAGE] += intValue;
+			}
+			else if(tmpStrValue == "reflectchanceall")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+				{
+					for(int32_t i = COMBAT_FIRST; i <= COMBAT_LAST; i++)
+						it.abilities.reflect[REFLECT_CHANCE][i] += intValue;
+				}
+			}
+			else if(tmpStrValue == "reflectchanceelements")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+				{
+					it.abilities.reflect[REFLECT_CHANCE][COMBAT_ENERGYDAMAGE] += intValue;
+					it.abilities.reflect[REFLECT_CHANCE][COMBAT_FIREDAMAGE] += intValue;
+					it.abilities.reflect[REFLECT_CHANCE][COMBAT_EARTHDAMAGE] += intValue;
+					it.abilities.reflect[REFLECT_CHANCE][COMBAT_ICEDAMAGE] += intValue;
+				}
+			}
+			else if(tmpStrValue == "reflectchancemagic")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+				{
+					it.abilities.reflect[REFLECT_CHANCE][COMBAT_ENERGYDAMAGE] += intValue;
+					it.abilities.reflect[REFLECT_CHANCE][COMBAT_FIREDAMAGE] += intValue;
+					it.abilities.reflect[REFLECT_CHANCE][COMBAT_EARTHDAMAGE] += intValue;
+					it.abilities.reflect[REFLECT_CHANCE][COMBAT_ICEDAMAGE] += intValue;
+					it.abilities.reflect[REFLECT_CHANCE][COMBAT_HOLYDAMAGE] += intValue;
+					it.abilities.reflect[REFLECT_CHANCE][COMBAT_DEATHDAMAGE] += intValue;
+				}
+			}
+			else if(tmpStrValue == "reflectchanceenergy")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+					it.abilities.reflect[REFLECT_CHANCE][COMBAT_ENERGYDAMAGE] += intValue;
+			}
+			else if(tmpStrValue == "reflectchancefire")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+					it.abilities.reflect[REFLECT_CHANCE][COMBAT_FIREDAMAGE] += intValue;
+			}
+			else if(tmpStrValue == "reflectchancepoison" ||	tmpStrValue == "reflectchanceearth")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+					it.abilities.reflect[REFLECT_CHANCE][COMBAT_EARTHDAMAGE] += intValue;
+			}
+			else if(tmpStrValue == "reflectchanceice")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+					it.abilities.reflect[REFLECT_CHANCE][COMBAT_ICEDAMAGE] += intValue;
+			}
+			else if(tmpStrValue == "reflectchanceholy")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+					it.abilities.reflect[REFLECT_CHANCE][COMBAT_HOLYDAMAGE] += intValue;
+			}
+			else if(tmpStrValue == "reflectchancedeath")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+					it.abilities.reflect[REFLECT_CHANCE][COMBAT_DEATHDAMAGE] += intValue;
+			}
+			else if(tmpStrValue == "reflectchancelifedrain")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+					it.abilities.reflect[REFLECT_CHANCE][COMBAT_LIFEDRAIN] += intValue;
+			}
+			else if(tmpStrValue == "reflectchancemanadrain")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+					it.abilities.reflect[REFLECT_CHANCE][COMBAT_MANADRAIN] += intValue;
+			}
+			else if(tmpStrValue == "reflectchancedrown")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+					it.abilities.reflect[REFLECT_CHANCE][COMBAT_DROWNDAMAGE] += intValue;
+			}
+			else if(tmpStrValue == "reflectchancephysical")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+					it.abilities.reflect[REFLECT_CHANCE][COMBAT_PHYSICALDAMAGE] += intValue;
+			}
+			else if(tmpStrValue == "reflectchancehealing")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+					it.abilities.reflect[REFLECT_CHANCE][COMBAT_HEALING] += intValue;
+			}
+			else if(tmpStrValue == "reflectchanceundefined")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+					it.abilities.reflect[REFLECT_CHANCE][COMBAT_UNDEFINEDDAMAGE] += intValue;
 			}
 			else if(tmpStrValue == "suppressshock" || tmpStrValue == "suppressenergy")
 			{
