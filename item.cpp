@@ -1111,7 +1111,7 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 	else if(it.isContainer())
 		s << " (Vol:" << (int32_t)it.maxItems << ")";
 	else if(it.isKey())
-		s << " (Key:" << (item ? (int32_t)item->getActionId() : "?") << ")";
+		s << " (Key:" << (item ? (int32_t)item->getActionId() : 0) << ")";
 	else if(it.isFluidContainer())
 	{
 		if(subType > 0)
@@ -1161,9 +1161,8 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 		else
 			s << "Nothing is written on it";
 	}
-	else if(it.levelDoor && item && item->getActionId() >= (int32_t)it.levelDoor &&
-		(int32_t)item->getActionId() <= (it.levelDoor + g_config.getNumber(
-		ConfigManager::MAXIMUM_DOOR_LEVEL)))
+	else if(it.levelDoor && item && item->getActionId() >= (int32_t)it.levelDoor && item->getActionId()
+		<= ((int32_t)it.levelDoor + g_config.getNumber(ConfigManager::MAXIMUM_DOOR_LEVEL)))
 		s << " for level " << item->getActionId() - it.levelDoor;
 
 	if(it.showCharges)
