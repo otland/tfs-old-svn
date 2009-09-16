@@ -1068,9 +1068,9 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 					ss = "huge";
 				else if(it.abilities.reflect[REFLECT_PERCENT][i] >= 50)
 					ss = "medium";
-				else if(it.abilities.reflect[REFLECT_CHANCE][i] >= 25)
+				else if(it.abilities.reflect[REFLECT_PERCENT][i] >= 25)
 					ss = "small";
-				else if(it.abilities.reflect[REFLECT_CHANCE][i] > 0)
+				else if(it.abilities.reflect[REFLECT_PERCENT][i] > 0)
 					ss = "tiny";
 
 				s << getCombatName((CombatType_t)i) << " " << std::showpos << it.abilities.reflect[REFLECT_PERCENT][i] << std::noshowpos << "% for " << ss;

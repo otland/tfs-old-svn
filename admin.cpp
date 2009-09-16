@@ -585,7 +585,7 @@ void ProtocolAdmin::adminCommandSendMail(const std::string& xmlData)
 	TRACK_MESSAGE(output);
 	if(Item* mailItem = Admin::createMail(xmlData, name, depotId))
 	{
-		if(Mailbox::sendAddressedItem(NULL, name, depotId, mailItem))
+		if(IOLoginData::getInstance()->playerMail(NULL, name, depotId, mailItem))
 		{
 			addLogLine(LOGTYPE_EVENT, "sent mailbox to " + name);
 			output->AddByte(AP_MSG_COMMAND_OK);
