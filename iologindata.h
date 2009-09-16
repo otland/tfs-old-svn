@@ -109,11 +109,6 @@ class IOLoginData
 
 	protected:
 		IOLoginData() {}
-		bool storeNameByGuid(uint32_t guid);
-
-		void loadItems(ItemMap& itemMap, DBResult* result);
-		bool saveItems(const Player* player, const ItemBlockList& itemList, DBInsert& query_insert);
-
 		struct StringCompareCase
 		{
 			bool operator()(const std::string& l, const std::string& r) const
@@ -122,12 +117,17 @@ class IOLoginData
 			}
 		};
 
-		typedef std::map<uint32_t, std::string> NameCacheMap;
-		NameCacheMap nameCacheMap;
-
 		typedef std::map<std::string, uint32_t, StringCompareCase> GuidCacheMap;
 		GuidCacheMap guidCacheMap;
 
+		typedef std::map<uint32_t, std::string> NameCacheMap;
+		NameCacheMap nameCacheMap;
+
 		typedef std::map<int32_t, std::pair<Item*, int32_t> > ItemMap;
+
+		bool saveItems(const Player* player, const ItemBlockList& itemList, DBInsert& query_insert);
+		void loadItems(ItemMap& itemMap, DBResult* result);
+
+		bool storeNameByGuid(uint32_t guid);
 };
 #endif
