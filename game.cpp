@@ -4805,7 +4805,7 @@ bool Game::playerViolationWindow(uint32_t playerId, std::string name, uint8_t re
 	if(!group)
 		return false;
 
-	time_t length[3];
+	time_t length[3] = {0, 0, 0};
 	int32_t pos = 0, start = comment.find("{");
 	while((start = comment.find("{")) > 0 && pos < 4)
 	{
