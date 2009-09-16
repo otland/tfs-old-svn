@@ -1062,13 +1062,13 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 					s << ", ";
 
 				std::string ss = "no";
-				if(it.abilities.reflect[REFLECT_CHANCE][i] > 99)
+				if(it.abilities.reflect[REFLECT_PERCENT][i] > 99)
 					ss = "whole";
-				else if(it.abilities.reflect[REFLECT_CHANCE][i] > 80)
+				else if(it.abilities.reflect[REFLECT_PERCENT][i] >= 75)
 					ss = "huge";
-				else if(it.abilities.reflect[REFLECT_CHANCE][i] > 50)
+				else if(it.abilities.reflect[REFLECT_PERCENT][i] >= 50)
 					ss = "medium";
-				else if(it.abilities.reflect[REFLECT_CHANCE][i] > 20)
+				else if(it.abilities.reflect[REFLECT_CHANCE][i] >= 25)
 					ss = "small";
 				else if(it.abilities.reflect[REFLECT_CHANCE][i] > 0)
 					ss = "tiny";
