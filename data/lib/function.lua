@@ -479,6 +479,6 @@ function doChangeTypeItem(uid, subtype)
 		return false
 	end
 
-	local subtype = subtype or item.type - 1
+	local subtype = subtype or 1
 	return doTransformItem(item.uid, item.itemid, subtype)
 end
