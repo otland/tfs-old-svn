@@ -1498,8 +1498,8 @@ void LuaScriptInterface::registerFunctions()
 	//doItemRaidUnref(uid)
 	lua_register(m_luaState, "doItemRaidUnref", LuaScriptInterface::luaDoItemRaidUnref);
 
-	//getThingPos(uid)
-	lua_register(m_luaState, "getThingPos", LuaScriptInterface::luaGetThingPos);
+	//getThingPosition(uid)
+	lua_register(m_luaState, "getThingPosition", LuaScriptInterface::luaGetThingPosition);
 
 	//getTileItemById(pos, itemId[, subType = -1])
 	lua_register(m_luaState, "getTileItemById", LuaScriptInterface::luaGetTileItemById);
@@ -1958,9 +1958,6 @@ void LuaScriptInterface::registerFunctions()
 
 	//getCreatureOutfit(cid)
 	lua_register(m_luaState, "getCreatureOutfit", LuaScriptInterface::luaGetCreatureOutfit);
-
-	//getCreaturePosition(cid)
-	lua_register(m_luaState, "getCreaturePosition", LuaScriptInterface::luaGetCreaturePosition);
 
 	//getCreatureLastPosition(cid)
 	lua_register(m_luaState, "getCreatureLastPosition", LuaScriptInterface::luaGetCreatureLastPosition);
@@ -5308,23 +5305,27 @@ int32_t LuaScriptInterface::luaDoItemRaidUnref(lua_State* L)
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaGetThingPos(lua_State* L)
+int32_t LuaScriptInterface::luaGetThingPosition(lua_State* L)
 {
-	//getThingPos(uid)
-	ScriptEnviroment* env = getScriptEnv();
-
+	//getThingPosition(uid)
 	Position pos(0, 0, 0);
 	uint32_t stackpos = 0;
+
+	ScriptEnviroment* env = getScriptEnv();
 	if(Thing* thing = env->getThingByUID(popNumber(L)))
 	{
 		pos = thing->getPosition();
 		if(Tile* tile = thing->getTile())
 			stackpos = tile->__getIndexOfThing(thing);
+
+		pushPosition(L, pos, stackpos);
 	}
 	else
+	{
 		reportErrorFunc(getErrorDesc(LUA_ERROR_THING_NOT_FOUND));
+		lua_pushboolean(L, false);
+	}
 
-	pushPosition(L, pos, stackpos);
 	return 1;
 }
 
@@ -7803,27 +7804,6 @@ int32_t LuaScriptInterface::luaDoPlayerAddPremiumDays(lua_State* L)
 	else
 	{
 		reportErrorFunc(getErrorDesc(LUA_ERROR_PLAYER_NOT_FOUND));
-		lua_pushboolean(L, false);
-	}
-	return 1;
-}
-
-int32_t LuaScriptInterface::luaGetCreaturePosition(lua_State* L)
-{
-	//getCreaturePosition(cid)
-	ScriptEnviroment* env = getScriptEnv();
-	if(Creature* creature = env->getCreatureByUID(popNumber(L)))
-	{
-		Position pos = creature->getPosition();
-		uint32_t stackpos = 0;
-		if(Tile* tile = creature->getTile())
-			stackpos = tile->__getIndexOfThing(creature);
-
-		pushPosition(L, pos, stackpos);
-	}
-	else
-	{
-		reportErrorFunc(getErrorDesc(LUA_ERROR_CREATURE_NOT_FOUND));
 		lua_pushboolean(L, false);
 	}
 	return 1;

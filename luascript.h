@@ -475,7 +475,7 @@ class LuaScriptInterface
 		static int32_t luaGetItemWeaponType(lua_State* L);
 		static int32_t luaGetItemRWInfo(lua_State* L);
 		static int32_t luaGetThing(lua_State* L);
-		static int32_t luaGetThingPos(lua_State* L);
+		static int32_t luaGetThingPosition(lua_State* L);
 		static int32_t luaDoItemRaidUnref(lua_State* L);
 		static int32_t luaHasProperty(lua_State* L);
 
@@ -667,7 +667,6 @@ class LuaScriptInterface
 		static int32_t luaGetCreatureOutfit(lua_State* L);
 		static int32_t luaSetMonsterOutfit(lua_State* L);
 		static int32_t luaSetItemOutfit(lua_State* L);
-		static int32_t luaGetCreaturePosition(lua_State* L);
 		static int32_t luaGetCreatureLastPosition(lua_State* L);
 		static int32_t luaGetCreatureName(lua_State* L);
 		static int32_t luaGetCreatureMaster(lua_State* L);

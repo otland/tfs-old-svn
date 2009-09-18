@@ -472,3 +472,13 @@ function setHealingFormula(combat, type, minl, maxl, minm, maxm, min, max)
 	local min, max = min or 0, max or 0
 	return setCombatFormula(combat, type, 1, 0, 1, 0, minl, maxl, minm, maxm, min, max)
 end
+
+function doChangeTypeItem(uid, subtype)
+	local item = getThing(uid)
+	if(item.itemid == 0) then
+		return false
+	end
+
+	local subtype = subtype or item.type - 1
+	return doTransformItem(item.uid, item.itemid, subtype)
+end
