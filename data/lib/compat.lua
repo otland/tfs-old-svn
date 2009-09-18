@@ -103,6 +103,7 @@ doAddMapMark = doPlayerAddMapMark
 doSendTutorial = doPlayerSendTutorial
 getWaypointsList = getWaypointList
 getPlayerLastLoginSaved = getPlayerLastLogin
+doChangeTypeItem = doTransformItem
 db.updateQueryLimitOperator = db.updateLimiter
 db.stringComparisonOperator = db.stringComparison
 
