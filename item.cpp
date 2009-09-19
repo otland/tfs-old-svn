@@ -337,7 +337,7 @@ Attr_ReadValue Item::readAttr(AttrTypes_t attr, PropStream& propStream)
 			if(!propStream.GET_USHORT(aid))
 				return ATTR_READ_ERROR;
 
-			setActionId(aid);
+			setAttribute("aid", aid);
 			break;
 		}
 
