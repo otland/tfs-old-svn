@@ -5308,13 +5308,11 @@ int32_t LuaScriptInterface::luaDoItemRaidUnref(lua_State* L)
 int32_t LuaScriptInterface::luaGetThingPosition(lua_State* L)
 {
 	//getThingPosition(uid)
-	Position pos(0, 0, 0);
-	uint32_t stackpos = 0;
-
 	ScriptEnviroment* env = getScriptEnv();
 	if(Thing* thing = env->getThingByUID(popNumber(L)))
 	{
-		pos = thing->getPosition();
+		Position pos = thing->getPosition();
+		uint32_t stackpos = 0;
 		if(Tile* tile = thing->getTile())
 			stackpos = tile->__getIndexOfThing(thing);
 
