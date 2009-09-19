@@ -51,6 +51,7 @@ doPlayerRemOutfit = doPlayerRemoveOutfit
 pay = doPlayerRemoveMoney
 broadcastMessage = doBroadcastMessage
 getPlayerName = getCreatureName
+getCreaturePosition = getThingPosition
 getPlayerPosition = getCreaturePosition
 getCreaturePos = getCreaturePosition
 creatureGetPosition = getCreaturePosition
@@ -104,7 +105,6 @@ doSendTutorial = doPlayerSendTutorial
 getWaypointsList = getWaypointList
 getPlayerLastLoginSaved = getPlayerLastLogin
 getThingPos = getThingPosition
-getCreaturePosition = getThingPosition
 db.updateQueryLimitOperator = db.updateLimiter
 db.stringComparisonOperator = db.stringComparison
 
