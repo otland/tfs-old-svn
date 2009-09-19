@@ -607,7 +607,8 @@ Attr_ReadValue Item::readAttr(AttrTypes_t attr, PropStream& propStream)
 
 bool Item::unserializeAttr(PropStream& propStream)
 {
-	for(uint8_t attrType = 0; attrType != ATTR_END; propStream.GET_UCHAR(attrType))
+	uint8_t attrType = ATTR_END;
+	while(propStream.GET_UCHAR(attrType) && attrType != ATTR_END)
 	{
 		if(attrType == ATTR_ATTRIBUTE_MAP)
 		{
