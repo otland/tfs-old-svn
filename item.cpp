@@ -200,7 +200,7 @@ Item* Item::clone() const
 	if(!tmp)
 		return NULL;
 
-	if(!attributes)
+	if(!attributes || attributes->empty())
 		return tmp;
 
 	tmp->createAttributes();
@@ -210,7 +210,7 @@ Item* Item::clone() const
 
 void Item::copyAttributes(Item* item)
 {
-	if(item && item->attributes)
+	if(item && item->attributes && !item->attributes->empty())
 	{
 		createAttributes();
 		*attributes = *item->attributes;

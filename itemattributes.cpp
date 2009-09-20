@@ -303,14 +303,11 @@ bool ItemAttributes::unserializeMap(PropStream& stream)
 
 void ItemAttributes::serializeMap(PropWriteStream& stream) const
 {
-	// Maximum of 65535 attributes per item
-	int32_t size = (int32_t)std::min((size_t)0xFFFF, attributes->size());
-	stream.ADD_USHORT((uint16_t)size);
-
+	stream.ADD_USHORT((uint16_t)std::min((size_t)0xFFFF, attributes->size()));
 	AttributeMap::const_iterator it = attributes->begin();
-	for(int32_t i = 0; i < size; ++i, ++it)
+	for(int32_t i = 0; it != attributes->end() && i < 0xFFFF; ++it, ++i)
 	{
-		const std::string& key = it->first;
+		std::string key = it->first;
 		if(key.size() > 0xFFFF)
 			stream.ADD_STRING(key.substr(0, 65535));
 		else
