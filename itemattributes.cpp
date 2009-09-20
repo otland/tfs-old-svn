@@ -163,11 +163,9 @@ ItemAttribute& ItemAttribute::operator=(const ItemAttribute& o)
 
 void ItemAttribute::clear()
 {
-	if(type != STRING)
-		return;
-
-	(reinterpret_cast<std::string*>(&data))->~basic_string();
 	type = NONE;
+	if(type == STRING)
+		(reinterpret_cast<std::string*>(&data))->~basic_string();
 }
 
 void ItemAttribute::set(const std::string& s)
@@ -305,11 +303,11 @@ void ItemAttributes::serializeMap(PropWriteStream& stream) const
 {
 	stream.ADD_USHORT((uint16_t)std::min((size_t)0xFFFF, attributes->size()));
 	AttributeMap::const_iterator it = attributes->begin();
-	for(int32_t i = 0; it != attributes->end() && i < 0xFFFF; ++it, ++i)
+	for(int32_t i = 0; it != attributes->end() && i <= 0xFFFF; ++it, ++i)
 	{
 		std::string key = it->first;
 		if(key.size() > 0xFFFF)
-			stream.ADD_STRING(key.substr(0, 65535));
+			stream.ADD_STRING(key.substr(0, 0xFFFF));
 		else
 			stream.ADD_STRING(key);
 
@@ -319,10 +317,9 @@ void ItemAttributes::serializeMap(PropWriteStream& stream) const
 
 bool ItemAttribute::unserialize(PropStream& stream)
 {
-	// Read type
 	uint8_t type;
 	stream.GET_UCHAR(type);
-	// Read contents
+
 	switch(type)
 	{
 		case STRING:
@@ -359,6 +356,7 @@ bool ItemAttribute::unserialize(PropStream& stream)
 				return false;
 
 			set(v != 0);
+			break;
 		}
 		default:
 			break;
@@ -369,9 +367,7 @@ bool ItemAttribute::unserialize(PropStream& stream)
 
 void ItemAttribute::serialize(PropWriteStream& stream) const
 {
-	// Write type
 	stream.ADD_UCHAR((uint8_t)type);
-	// Write contents
 	switch(type)
 	{
 		case STRING:
@@ -385,6 +381,7 @@ void ItemAttribute::serialize(PropWriteStream& stream) const
 			break;
 		case BOOLEAN:
 			stream.ADD_UCHAR(*(uint8_t*)getBoolean());
+			break;
 		default:
 			break;
 	}
