@@ -607,6 +607,14 @@ Attr_ReadValue Item::readAttr(AttrTypes_t attr, PropStream& propStream)
 
 		//Container class
 		case ATTR_CONTAINER_ITEMS:
+		{
+			uint32_t _count;
+			if(!propStream.GET_ULONG(_count))
+				return ATTR_READ_ERROR;
+
+			return ATTR_READ_ERROR;
+		}
+
 		default:
 			return ATTR_READ_ERROR;
 	}
@@ -640,7 +648,7 @@ bool Item::serializeAttr(PropWriteStream& propWriteStream) const
 	if(isStackable() || isFluidContainer() || isSplash())
 	{
 		propWriteStream.ADD_UCHAR(ATTR_COUNT);
-		propWriteStream.ADD_UCHAR(getSubType());
+		propWriteStream.ADD_UCHAR((uint8_t)getSubType());
 	}
 
 	if(attributes && !attributes->empty())
