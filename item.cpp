@@ -596,6 +596,15 @@ Attr_ReadValue Item::readAttr(AttrTypes_t attr, PropStream& propStream)
 			return ATTR_READ_CONTINUE;
 		}
 
+		//ItemAttributes class
+		case ATTR_ATTRIBUTE_MAP:
+		{
+			if(!unserializeMap(propStream))
+				return ATTR_READ_ERROR;
+
+			return ATTR_READ_CONTINUE;
+		}
+
 		//Container class
 		case ATTR_CONTAINER_ITEMS:
 		default:
@@ -610,14 +619,6 @@ bool Item::unserializeAttr(PropStream& propStream)
 	uint8_t attrType = ATTR_END;
 	while(propStream.GET_UCHAR(attrType) && attrType != ATTR_END)
 	{
-		if(attrType == ATTR_ATTRIBUTE_MAP)
-		{
-			if(!unserializeMap(propStream))
-				return false;
-
-			continue;
-		}
-
 		switch(readAttr((AttrTypes_t)attrType, propStream))
 		{
 			case ATTR_READ_ERROR:
