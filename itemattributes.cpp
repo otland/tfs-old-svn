@@ -281,15 +281,14 @@ bool ItemAttributes::unserializeMap(PropStream& stream)
 	if(!stream.GET_USHORT(n))
 		return true;
 
-	std::string key;
-	ItemAttribute attr;
-
 	createAttributes();
 	while(n--)
 	{
+		std::string key;
 		if(!stream.GET_STRING(key))
 			return false;
 
+		ItemAttribute attr;
 		if(!attr.unserialize(stream))
 			return false;
 
@@ -319,7 +318,6 @@ bool ItemAttribute::unserialize(PropStream& stream)
 {
 	uint8_t type;
 	stream.GET_UCHAR(type);
-
 	switch(type)
 	{
 		case STRING:
