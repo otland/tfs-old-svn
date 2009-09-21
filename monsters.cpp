@@ -44,7 +44,7 @@ void MonsterType::reset()
 
 	outfit.lookHead = outfit.lookBody = outfit.lookLegs = outfit.lookFeet = outfit.lookType = outfit.lookTypeEx = outfit.lookAddons = 0;
 	runAwayHealth = manaCost = lightLevel = lightColor = yellSpeedTicks = yellChance = changeTargetSpeed = changeTargetChance = 0;
-	experience = defense = armor = lookCorpse = corpseUnique = conditionImmunities = damageImmunities = 0;
+	experience = defense = armor = lookCorpse = corpseUnique = corpseAction = conditionImmunities = damageImmunities = 0;
 
 	maxSummons = -1;
 	targetDistance = 1;
@@ -1120,6 +1120,9 @@ bool Monsters::loadMonster(const std::string& file, const std::string& monsterNa
 
 			if(readXMLInteger(p, "corpseUniqueId", intValue) || readXMLInteger(p, "corpseUid", intValue))
 				mType->corpseUnique = intValue;
+
+			if(readXMLInteger(P, "corpseActionId", intValue) || readXMLInteger(P, "corpseAid", intValue))
+				mType->corpseAction = intValue;
 		}
 		else if(!xmlStrcmp(p->name, (const xmlChar*)"attacks"))
 		{

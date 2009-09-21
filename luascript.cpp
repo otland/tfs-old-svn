@@ -189,28 +189,27 @@ void ScriptEnviroment::getEventInfo(int32_t& scriptId, std::string& desc, LuaScr
 void ScriptEnviroment::addUniqueThing(Thing* thing)
 {
 	Item* item = thing->getItem();
-	if(item && item->getUniqueId())
+	if(!item || !item->getUniqueId())
+		return;
+
+	if(m_globalMap[item->getUniqueId()])
 	{
-		int32_t uid = item->getUniqueId();
-		if(m_globalMap[uid])
-		{
-			if(item->getActionId() != 2000)
-				std::cout << "Duplicate uniqueId " << uid << std::endl;
-		}
-		else
-			m_globalMap[uid] = thing;
+		if(item->getActionId() != 2000) //scripted quest system
+			std::cout << "Duplicate uniqueId " << item->getUniqueId() << std::endl;
 	}
+	else
+		m_globalMap[item->getUniqueId()] = thing;
 }
 
 void ScriptEnviroment::removeUniqueThing(Thing* thing)
 {
 	Item* item = thing->getItem();
-	if(item && item->getUniqueId())
-	{
-		ThingMap::iterator it = m_globalMap.find(item->getUniqueId());
-		if(it != m_globalMap.end())
-			m_globalMap.erase(it);
-	}
+	if(!item || !item->getUniqueId())
+		return;
+
+	ThingMap::iterator it = m_globalMap.find(item->getUniqueId());
+	if(it != m_globalMap.end())
+		m_globalMap.erase(it);
 }
 
 uint32_t ScriptEnviroment::addThing(Thing* thing)

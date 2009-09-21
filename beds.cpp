@@ -54,11 +54,11 @@ Attr_ReadValue BedItem::readAttr(AttrTypes_t attr, PropStream& propStream)
 
 		case ATTR_SLEEPSTART:
 		{
-			uint32_t _sleepStart;
-			if(!propStream.GET_ULONG(_sleepStart))
+			uint32_t sleepStart;
+			if(!propStream.GET_ULONG(sleepStart))
 				return ATTR_READ_ERROR;
 
-			sleepStart = (time_t)_sleepStart;
+			setAttribute("sleepstart", sleepStart);
 			return ATTR_READ_CONTINUE;
 		}
 
@@ -71,19 +71,13 @@ Attr_ReadValue BedItem::readAttr(AttrTypes_t attr, PropStream& propStream)
 
 bool BedItem::serializeAttr(PropWriteStream& propWriteStream) const
 {
-	if(sleeper)
-	{
-		propWriteStream.ADD_UCHAR(ATTR_SLEEPERGUID);
-		propWriteStream.ADD_ULONG(sleeper);
-	}
+	bool ret = Item::serializeAttr(propWriteStream);
+	if(!sleeper)
+		return ret;
 
-	if(sleepStart)
-	{
-		propWriteStream.ADD_UCHAR(ATTR_SLEEPSTART);
-		propWriteStream.ADD_ULONG((int32_t)sleepStart);
-	}
-
-	return true;
+	propWriteStream.ADD_UCHAR(ATTR_SLEEPERGUID);
+	propWriteStream.ADD_ULONG(sleeper);
+	return ret;
 }
 
 BedItem* BedItem::getNextBedItem()
@@ -179,7 +173,8 @@ void BedItem::wakeUp()
 
 void BedItem::regeneratePlayer(Player* player) const
 {
-	int32_t sleptTime = int32_t(time(NULL) - sleepStart);
+	const int32_t* sleepStart = getIntegerAttribute("sleepstart");
+	int32_t sleptTime = (int32_t)time(NULL) - (sleepStart ? *sleepStart : 0);
 	if(Condition* condition = player->getCondition(CONDITION_REGENERATION, CONDITIONID_DEFAULT))
 	{
 		int32_t amount = sleptTime / 30;
@@ -222,15 +217,15 @@ void BedItem::updateAppearance(const Player* player)
 
 void BedItem::internalSetSleeper(const Player* player)
 {
-	setSleeper(player->getGUID());
-	setSleepStart(time(NULL));
-	setSpecialDescription(std::string(player->getName() + " is sleeping there."));
+	sleeper = player->getGUID();
+	setAttribute("sleepstart", (int32_t)time(NULL));
+	setSpecialDescriptiion(player->getName() + " is sleeping there.");
 }
 
 void BedItem::internalRemoveSleeper()
 {
-	setSleeper(0);
-	setSleepStart(0);
+	sleeper = 0;
+	eraseAttribute("sleepstart");
 	setSpecialDescription("Nobody is sleeping there.");
 }
 

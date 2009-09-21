@@ -91,47 +91,38 @@ Attr_ReadValue Container::readAttr(AttrTypes_t attr, PropStream& propStream)
 
 bool Container::unserializeItemNode(FileLoader& f, NODE node, PropStream& propStream)
 {
-	if(Item::unserializeItemNode(f, node, propStream))
+	if(!Item::unserializeItemNode(f, node, propStream))
+		return false;
+
+	uint32_t type;
+	for(NODE nodeItem = f.getChildNode(node, type); nodeItem; nodeItem = f.getNextNode(nodeItem, type))
 	{
-		uint32_t type;
-		NODE nodeItem = f.getChildNode(node, type);
-		while(nodeItem)
-		{
-			//load container items
-			if(type == OTBM_ITEM)
-			{
-				PropStream itemPropStream;
-				f.getProps(nodeItem, itemPropStream);
+		//load container items
+		if(type != OTBM_ITEM)
+			return false;
 
-				Item* item = Item::CreateItem(itemPropStream);
-				if(!item)
-					return false;
+		PropStream itemPropStream;
+		f.getProps(nodeItem, itemPropStream);
 
-				if(!item->unserializeItemNode(f, nodeItem, itemPropStream))
-					return false;
+		Item* item = Item::CreateItem(itemPropStream);
+		if(!item)
+			return false;
 
-				addItem(item);
-				totalWeight += item->getWeight();
-				if(Container* parent = getParentContainer())
-					parent->updateItemWeight(item->getWeight());
-			}
-			else/*unknown type*/
-				return false;
+		if(!item->unserializeItemNode(f, nodeItem, itemPropStream))
+			return false;
 
-			nodeItem = f.getNextNode(nodeItem, type);
-		}
-
-		return true;
+		addItem(item);
+		updateItemWeight(item->getWeight());
 	}
 
-	return false;
+	return true;
 }
 
 void Container::updateItemWeight(double diff)
 {
 	totalWeight += diff;
-	if(Container* parentContainer = getParentContainer())
-		parentContainer->updateItemWeight(diff);
+	if(Container* parent = getParentContainer())
+		parent->updateItemWeight(diff);
 }
 
 double Container::getWeight() const

@@ -253,7 +253,7 @@ void Item::setID(uint16_t newId)
 		eraseAttribute("duration");
 	}
 
-	eraseAttribute("corpseOwner");
+	eraseAttribute("corpseowner");
 	if(newDuration > 0 && (!pit.stopTime || !hasIntegerAttribute("duration")))
 	{
 		setDecaying(DECAYING_FALSE);
@@ -367,7 +367,7 @@ Attr_ReadValue Item::readAttr(AttrTypes_t attr, PropStream& propStream)
 			if(!propStream.GET_STRING(name))
 				return ATTR_READ_ERROR;
 
-			setAttribute("pluralName", name);
+			setAttribute("pluralname", name);
 			break;
 		}
 
@@ -397,7 +397,7 @@ Attr_ReadValue Item::readAttr(AttrTypes_t attr, PropStream& propStream)
 			if(!propStream.GET_ULONG((uint32_t&)attack))
 				return ATTR_READ_ERROR;
 
-			setAttribute("extraAttack", attack);
+			setAttribute("extraattack", attack);
 			break;
 		}
 
@@ -417,7 +417,7 @@ Attr_ReadValue Item::readAttr(AttrTypes_t attr, PropStream& propStream)
 			if(!propStream.GET_ULONG((uint32_t&)defense))
 				return ATTR_READ_ERROR;
 
-			setAttribute("extraDefense", defense);
+			setAttribute("extradefense", defense);
 			break;
 		}
 
@@ -437,7 +437,7 @@ Attr_ReadValue Item::readAttr(AttrTypes_t attr, PropStream& propStream)
 			if(!propStream.GET_ULONG((uint32_t&)attackSpeed))
 				return ATTR_READ_ERROR;
 
-			setAttribute("attackSpeed", attackSpeed);
+			setAttribute("attackspeed", attackSpeed);
 			break;
 		}
 
@@ -447,7 +447,7 @@ Attr_ReadValue Item::readAttr(AttrTypes_t attr, PropStream& propStream)
 			if(!propStream.GET_ULONG((uint32_t&)hitChance))
 				return ATTR_READ_ERROR;
 
-			setAttribute("hitChance", hitChance);
+			setAttribute("hitchance", hitChance);
 			break;
 		}
 
@@ -457,7 +457,7 @@ Attr_ReadValue Item::readAttr(AttrTypes_t attr, PropStream& propStream)
 			if(!propStream.GET_UCHAR(protection))
 				return ATTR_READ_ERROR;
 
-			setAttribute("scriptProtected", protection != 0);
+			setAttribute("scriptprotected", protection != 0);
 			break;
 		}
 
@@ -554,7 +554,7 @@ Attr_ReadValue Item::readAttr(AttrTypes_t attr, PropStream& propStream)
 			if(!propStream.GET_USHORT(depot))
 				return ATTR_READ_ERROR;
 
-			return ATTR_READ_CONTINUE;
+			break;
 		}
 
 		//Door class
@@ -564,17 +564,17 @@ Attr_ReadValue Item::readAttr(AttrTypes_t attr, PropStream& propStream)
 			if(!propStream.GET_UCHAR(door))
 				return ATTR_READ_ERROR;
 
-			return ATTR_READ_CONTINUE;
+			break;
 		}
 
 		//Teleport class
 		case ATTR_TELE_DEST:
 		{
-			TeleportDest* destination;
-			if(!propStream.GET_STRUCT(destination))
+			TeleportDest* dest;
+			if(!propStream.GET_STRUCT(dest))
 				return ATTR_READ_ERROR;
 
-			return ATTR_READ_CONTINUE;
+			break;
 		}
 
 		//Bed class
@@ -584,7 +584,7 @@ Attr_ReadValue Item::readAttr(AttrTypes_t attr, PropStream& propStream)
 			if(!propStream.GET_ULONG(sleeper))
 				return ATTR_READ_ERROR;
 
-			return ATTR_READ_CONTINUE;
+			break;
 		}
 
 		case ATTR_SLEEPSTART:
@@ -593,26 +593,26 @@ Attr_ReadValue Item::readAttr(AttrTypes_t attr, PropStream& propStream)
 			if(!propStream.GET_ULONG(sleepStart))
 				return ATTR_READ_ERROR;
 
-			return ATTR_READ_CONTINUE;
+			break;
 		}
 
 		//Container class
 		case ATTR_CONTAINER_ITEMS:
 		{
 			uint32_t _count;
-			if(!propStream.GET_ULONG(_count))
-				return ATTR_READ_ERROR;
-
+			propStream.GET_ULONG(_count);
 			return ATTR_READ_ERROR;
 		}
 
 		//ItemAttributes class
 		case ATTR_ATTRIBUTE_MAP:
 		{
-			if(!unserializeMap(propStream))
-				return ATTR_READ_ERROR;
+			bool unique = hasIntegerAttribute("uid"), ret = unserializeMap(propStream);
+			if(!unique && hasIntegerAttribute("uid"))
+				ScriptEnviroment::addUniqueThing(this);
 
-			return ATTR_READ_CONTINUE;
+			if(ret)
+				break;
 		}
 
 		default:

@@ -99,7 +99,7 @@ class Door : public Item
 		//serialization
 		virtual Attr_ReadValue readAttr(AttrTypes_t attr, PropStream& propStream);
 
-		void setDoorId(uint32_t doorId) {setAttribute("doorId", (int32_t)doorId);}
+		void setDoorId(uint32_t doorId) {setAttribute("doorid", (int32_t)doorId);}
 		uint32_t getDoorId() const;
 
 		bool canUse(const Player* player);
@@ -123,7 +123,7 @@ class Door : public Item
 
 inline uint32_t Door::getDoorId() const
 {
-	const int32_t* v = getIntegerAttribute("doorId");
+	const int32_t* v = getIntegerAttribute("doorid");
 	if(v)
 		return (uint32_t)*v;
 

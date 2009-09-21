@@ -41,9 +41,6 @@ class BedItem : public Item
 		uint32_t getSleeper() const {return sleeper;}
 		void setSleeper(uint32_t guid) {sleeper = guid;}
 
-		uint64_t getSleepStart() const {return sleepStart;}
-		void setSleepStart(uint64_t now) {sleepStart = now;}
-
 		House* getHouse() const {return house;}
 		void setHouse(House* h) {house = h;}
 
@@ -61,7 +58,7 @@ class BedItem : public Item
 		void internalSetSleeper(const Player* player);
 		void internalRemoveSleeper();
 
-		uint32_t sleeper, sleepStart;
+		uint32_t sleeper;
 		House* house;
 };
 

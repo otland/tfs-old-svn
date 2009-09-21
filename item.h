@@ -226,13 +226,13 @@ class Item : virtual public Thing, public ItemAttributes
 		void setCharges(uint16_t charges) {setAttribute("charges", charges);}
 		uint16_t getCharges() const;
 
-		void setFluidType(uint16_t fluidType) {setAttribute("fluidType", fluidType);}
+		void setFluidType(uint16_t fluidType) {setAttribute("fluidtype", fluidType);}
 		uint16_t getFluidType() const;
 
 		void setOwner(uint32_t owner) {setAttribute("owner", (int32_t)owner);}
 		uint32_t getOwner() const;
 
-		void setCorpseOwner(uint32_t corpseOwner) {setAttribute("corpseOwner", (int32_t)corpseOwner);}
+		void setCorpseOwner(uint32_t corpseOwner) {setAttribute("corpseowner", (int32_t)corpseOwner);}
 		uint32_t getCorpseOwner();
 
 		void setDecaying(ItemDecayState_t state) {setAttribute("decaying", (int32_t)state);}
@@ -349,7 +349,7 @@ inline std::string Item::getName() const
 
 inline std::string Item::getPluralName() const
 {
-	const std::string* v = getStringAttribute("pluralName");
+	const std::string* v = getStringAttribute("pluralname");
 	if(v)
 		return *v;
 
@@ -367,7 +367,7 @@ inline std::string Item::getArticle() const
 
 inline bool Item::isScriptProtected() const
 {
-	const bool* v = getBooleanAttribute("scriptProtected");
+	const bool* v = getBooleanAttribute("scriptprotected");
 	if(v)
 		return *v;
 
@@ -385,7 +385,7 @@ inline int32_t Item::getAttack() const
 
 inline int32_t Item::getExtraAttack() const
 {
-	const int32_t* v = getIntegerAttribute("extraAttack");
+	const int32_t* v = getIntegerAttribute("extraattack");
 	if(v)
 		return *v;
 
@@ -403,7 +403,7 @@ inline int32_t Item::getDefense() const
 
 inline int32_t Item::getExtraDefense() const
 {
-	const int32_t* v = getIntegerAttribute("extraDefense");
+	const int32_t* v = getIntegerAttribute("extradefense");
 	if(v)
 		return *v;
 
@@ -421,7 +421,7 @@ inline int32_t Item::getArmor() const
 
 inline int32_t Item::getAttackSpeed() const
 {
-	const int32_t* v = getIntegerAttribute("attackSpeed");
+	const int32_t* v = getIntegerAttribute("attackspeed");
 	if(v)
 		return *v;
 
@@ -430,7 +430,7 @@ inline int32_t Item::getAttackSpeed() const
 
 inline int32_t Item::getHitChance() const
 {
-	const int32_t* v = getIntegerAttribute("hitChance");
+	const int32_t* v = getIntegerAttribute("hitchance");
 	if(v)
 		return *v;
 
@@ -439,7 +439,7 @@ inline int32_t Item::getHitChance() const
 
 inline int32_t Item::getShootRange() const
 {
-	const int32_t* v = getIntegerAttribute("shootRange");
+	const int32_t* v = getIntegerAttribute("shootrange");
 	if(v)
 		return *v;
 
@@ -527,7 +527,7 @@ inline uint16_t Item::getCharges() const
 
 inline uint16_t Item::getFluidType() const
 {
-	const int32_t* v = getIntegerAttribute("fluidType");
+	const int32_t* v = getIntegerAttribute("fluidtype");
 	if(v && *v >= 0)
 		return (uint16_t)*v;
 
@@ -545,7 +545,7 @@ inline uint32_t Item::getOwner() const
 
 inline uint32_t Item::getCorpseOwner()
 {
-	const int32_t* v = getIntegerAttribute("corpseOwner");
+	const int32_t* v = getIntegerAttribute("corpseowner");
 	if(v)
 		return (uint32_t)*v;
 
@@ -554,7 +554,7 @@ inline uint32_t Item::getCorpseOwner()
 
 inline ItemDecayState_t Item::getDecaying() const
 {
-	const int32_t* v = getIntegerAttribute("decayState");
+	const int32_t* v = getIntegerAttribute("decaying");
 	if(v)
 		return (ItemDecayState_t)*v;
 

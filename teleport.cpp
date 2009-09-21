@@ -31,13 +31,13 @@ Teleport::Teleport(uint16_t _type):
 
 Attr_ReadValue Teleport::readAttr(AttrTypes_t attr, PropStream& propStream)
 {
-	if(ATTR_TELE_DEST == attr)
+	if(attr == ATTR_TELE_DEST)
 	{
-		TeleportDest* teleDest;
-		if(!propStream.GET_STRUCT(teleDest))
+		TeleportDest* dest;
+		if(!propStream.GET_STRUCT(dest))
 			return ATTR_READ_ERROR;
 
-		setDestPos(Position(teleDest->_x, teleDest->_y, teleDest->_z));
+		setDestPos(Position(dest->_x, dest->_y, dest->_z));
 		return ATTR_READ_CONTINUE;
 	}
 
@@ -49,12 +49,12 @@ bool Teleport::serializeAttr(PropWriteStream& propWriteStream) const
 	bool ret = Item::serializeAttr(propWriteStream);
 	propWriteStream.ADD_UCHAR(ATTR_TELE_DEST);
 
-	TeleportDest tmpDest;
-	tmpDest._x = destPos.x;
-	tmpDest._y = destPos.y;
-	tmpDest._z = destPos.z;
+	TeleportDest dest;
+	dest._x = destPos.x;
+	dest._y = destPos.y;
+	dest._z = destPos.z;
 
-	propWriteStream.ADD_VALUE(tmpDest);
+	propWriteStream.ADD_VALUE(dest);
 	return ret;
 }
 

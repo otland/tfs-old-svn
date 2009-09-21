@@ -99,9 +99,9 @@ class MonsterType
 		PartyShields_t partyShield;
 		LootMessage_t lootMessage;
 
-		int32_t defense, armor, health, healthMax, baseSpeed, lookCorpse, corpseUnique, maxSummons,
-			targetDistance, runAwayHealth, conditionImmunities, damageImmunities, lightLevel,
-			lightColor, changeTargetSpeed, changeTargetChance;
+		int32_t defense, armor, health, healthMax, baseSpeed, lookCorpse, corpseUnique, corpseAction,
+			maxSummons, targetDistance, runAwayHealth, conditionImmunities, damageImmunities,
+			lightLevel, lightColor, changeTargetSpeed, changeTargetChance;
 		uint32_t yellChance, yellSpeedTicks, staticAttackChance, manaCost;
 		uint64_t experience;
 
