@@ -1121,7 +1121,7 @@ bool Monsters::loadMonster(const std::string& file, const std::string& monsterNa
 			if(readXMLInteger(p, "corpseUniqueId", intValue) || readXMLInteger(p, "corpseUid", intValue))
 				mType->corpseUnique = intValue;
 
-			if(readXMLInteger(P, "corpseActionId", intValue) || readXMLInteger(P, "corpseAid", intValue))
+			if(readXMLInteger(p, "corpseActionId", intValue) || readXMLInteger(p, "corpseAid", intValue))
 				mType->corpseAction = intValue;
 		}
 		else if(!xmlStrcmp(p->name, (const xmlChar*)"attacks"))
