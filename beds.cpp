@@ -58,7 +58,7 @@ Attr_ReadValue BedItem::readAttr(AttrTypes_t attr, PropStream& propStream)
 			if(!propStream.GET_ULONG(sleepStart))
 				return ATTR_READ_ERROR;
 
-			setAttribute("sleepstart", sleepStart);
+			setAttribute("sleepstart", (int32_t)sleepStart);
 			return ATTR_READ_CONTINUE;
 		}
 
@@ -219,7 +219,7 @@ void BedItem::internalSetSleeper(const Player* player)
 {
 	sleeper = player->getGUID();
 	setAttribute("sleepstart", (int32_t)time(NULL));
-	setSpecialDescriptiion(player->getName() + " is sleeping there.");
+	setSpecialDescription(player->getName() + " is sleeping there.");
 }
 
 void BedItem::internalRemoveSleeper()
