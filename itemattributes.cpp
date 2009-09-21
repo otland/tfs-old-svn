@@ -354,7 +354,6 @@ bool ItemAttribute::unserialize(PropStream& stream)
 				return false;
 
 			set(v != 0);
-			break;
 		}
 		default:
 			break;
@@ -379,7 +378,6 @@ void ItemAttribute::serialize(PropWriteStream& stream) const
 			break;
 		case BOOLEAN:
 			stream.ADD_UCHAR(*(uint8_t*)getBoolean());
-			break;
 		default:
 			break;
 	}
