@@ -817,12 +817,8 @@ bool MoveEvent::loadFunction(const std::string& functionName)
 	std::string tmpFunctionName = asLowerCaseString(functionName);
 	if(tmpFunctionName == "onstepinfield")
 		stepFunction = StepInField;
-	else if(tmpFunctionName == "onstepoutfield")
-		stepFunction = StepOutField;
 	else if(tmpFunctionName == "onaddfield")
 		moveFunction = AddItemField;
-	else if(tmpFunctionName == "onremovefield")
-		moveFunction = RemoveItemField;
 	else if(tmpFunctionName == "onequipitem")
 		equipFunction = EquipItem;
 	else if(tmpFunctionName == "ondeequipitem")
@@ -864,11 +860,6 @@ uint32_t MoveEvent::StepInField(Creature* creature, Item* item)
 	return LUA_ERROR_ITEM_NOT_FOUND;
 }
 
-uint32_t MoveEvent::StepOutField(Creature* creature, Item* item)
-{
-	return 1;
-}
-
 uint32_t MoveEvent::AddItemField(Item* item)
 {
 	if(MagicField* field = item->getMagicField())
@@ -886,11 +877,6 @@ uint32_t MoveEvent::AddItemField(Item* item)
 	}
 
 	return LUA_ERROR_ITEM_NOT_FOUND;
-}
-
-uint32_t MoveEvent::RemoveItemField(Item* item)
-{
-	return 1;
 }
 
 uint32_t MoveEvent::EquipItem(MoveEvent* moveEvent, Player* player, Item* item, slots_t slot, bool isCheck)

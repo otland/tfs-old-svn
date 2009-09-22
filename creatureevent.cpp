@@ -306,7 +306,7 @@ std::string CreatureEvent::getScriptEventParams() const
 		case CREATURE_EVENT_STATSCHANGE:
 			return "cid, attacker, type, combat, value";
 		case CREATURE_EVENT_COMBAT_AREA:
-			return "cid, tileItem, tilePosition, isAggressive";
+			return "cid, ground, position, aggressive";
 		case CREATURE_EVENT_PUSH:
 		case CREATURE_EVENT_TARGET:
 		case CREATURE_EVENT_FOLLOW:
@@ -1157,9 +1157,9 @@ uint32_t CreatureEvent::executeStatsChange(Creature* creature, Creature* attacke
 	}
 }
 
-uint32_t CreatureEvent::executeCombatArea(Creature* creature, Tile* tile, bool isAggressive)
+uint32_t CreatureEvent::executeCombatArea(Creature* creature, Tile* tile, bool aggressive)
 {
-	//onAreaCombat(cid, tileItem, tilePosition, isAggressive)
+	//onAreaCombat(cid, ground, position, aggressive)
 	if(m_scriptInterface->reserveScriptEnv())
 	{
 		ScriptEnviroment* env = m_scriptInterface->getScriptEnv();
@@ -1169,9 +1169,9 @@ uint32_t CreatureEvent::executeCombatArea(Creature* creature, Tile* tile, bool i
 			std::stringstream scriptstream;
 			scriptstream << "local cid = " << env->addThing(creature) << std::endl;
 
-			env->streamThing(scriptstream, "tileItem", tile, env->addThing(tile));
-			env->streamPosition(scriptstream, "tilePosition", tile->getPosition(), 0);
-			scriptstream << "local isAggressive = " << (isAggressive ? "true" : "false") << std::endl;
+			env->streamThing(scriptstream, "ground", tile->ground, env->addThing(tile->ground));
+			env->streamPosition(scriptstream, "position", tile->getPosition(), 0);
+			scriptstream << "local aggressive = " << (aggressive ? "true" : "false") << std::endl;
 
 			scriptstream << m_scriptData;
 			bool result = true;
@@ -1199,10 +1199,10 @@ uint32_t CreatureEvent::executeCombatArea(Creature* creature, Tile* tile, bool i
 			m_scriptInterface->pushFunction(m_scriptId);
 
 			lua_pushnumber(L, env->addThing(creature));
-			LuaScriptInterface::pushThing(L, tile, env->addThing(tile));
+			LuaScriptInterface::pushThing(L, tile->ground, env->addThing(tile->ground));
 
 			LuaScriptInterface::pushPosition(L, tile->getPosition(), 0);
-			lua_pushboolean(L, isAggressive);
+			lua_pushboolean(L, aggressive);
 
 			bool result = m_scriptInterface->callFunction(4);
 			m_scriptInterface->releaseScriptEnv();

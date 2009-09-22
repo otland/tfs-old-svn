@@ -1456,7 +1456,7 @@ void Npc::executeResponse(Player* player, NpcState* npcState, const NpcResponse*
 				case ACTION_SETSTORAGE:
 				{
 					if(it->key > 0)
-						player->addStorageValue(it->key, it->strValue);
+						player->setStorage(it->key, it->strValue);
 
 					break;
 				}
@@ -2150,10 +2150,10 @@ const NpcResponse* Npc::getResponse(const ResponseList& list, const Player* play
 		if((*it)->getStorageId() != -1)
 		{
 			std::string value;
-			if(!player->getStorageValue((*it)->getStorageId(), value))
+			if(!player->getStorage((*it)->getStorageId(), value))
 				continue;
 
-			std::string storageValue = (*it)->getStorageValue();
+			std::string storageValue = (*it)->getStorage();
 			if(asLowerCaseString(storageValue) == "_time")
 			{
 				std::stringstream s;

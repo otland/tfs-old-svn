@@ -71,7 +71,7 @@ ScriptEnviroment::ConditionMap ScriptEnviroment::m_conditionMap;
 uint32_t ScriptEnviroment::m_lastConditionId = 0;
 
 ScriptEnviroment::ThingMap ScriptEnviroment::m_globalMap;
-ScriptEnviroment::StorageMap ScriptEnviroment::m_globalStorageMap;
+ScriptEnviroment::StorageMap ScriptEnviroment::m_storageMap;
 
 ScriptEnviroment::ScriptEnviroment()
 {
@@ -131,7 +131,7 @@ bool ScriptEnviroment::saveGameState()
 
 	DBInsert query_insert(db);
 	query_insert.setQuery("INSERT INTO `global_storage` (`key`, `world_id`, `value`) VALUES ");
-	for(StorageMap::const_iterator it = m_globalStorageMap.begin(); it != m_globalStorageMap.end(); ++it)
+	for(StorageMap::const_iterator it = m_storageMap.begin(); it != m_storageMap.end(); ++it)
 	{
 		char buffer[25 + it->second.length()];
 		sprintf(buffer, "%u, %u, %s", it->first, g_config.getNumber(ConfigManager::WORLD_ID), db->escapeString(it->second).c_str());
@@ -152,7 +152,7 @@ bool ScriptEnviroment::loadGameState()
 	if((result = db->storeQuery(query.str())))
 	{
 		do
-			m_globalStorageMap[result->getDataInt("key")] = result->getDataString("value");
+			m_storageMap[result->getDataInt("key")] = result->getDataString("value");
 		while(result->next());
 		result->free();
 	}
@@ -231,18 +231,15 @@ uint32_t ScriptEnviroment::addThing(Thing* thing)
 
 	if(Item* item = thing->getItem())
 	{
-		if(item->getUniqueId() && item->getTile() == item->getParent())
+		uint32_t tmp = item->getUniqueId();
+		if(tmp)
 		{
-			m_localMap[item->getUniqueId()] = thing;
-			return item->getUniqueId();
+			m_localMap[tmp] = thing;
+			return tmp;
 		}
 	}
 
-	++m_lastUID;
-	if(m_lastUID < 70000)
-		m_lastUID = 70000;
-
-	while(m_localMap[m_lastUID])
+	while(m_localMap.find(m_lastUID]) != m_localMap.end())
 		++m_lastUID;
 
 	m_localMap[m_lastUID] = thing;
@@ -437,10 +434,10 @@ DBResult* ScriptEnviroment::getResult(uint32_t rid)
 	return NULL;
 }
 
-bool ScriptEnviroment::getGlobalStorageValue(const uint32_t key, std::string& value) const
+bool ScriptEnviroment::getStorage(const uint32_t key, std::string& value) const
 {
-	StorageMap::const_iterator it = m_globalStorageMap.find(key);
-	if(it != m_globalStorageMap.end())
+	StorageMap::const_iterator it = m_storageMap.find(key);
+	if(it != m_storageMap.end())
 	{
 		value = it->second;
 		return true;
@@ -450,20 +447,11 @@ bool ScriptEnviroment::getGlobalStorageValue(const uint32_t key, std::string& va
 	return false;
 }
 
-bool ScriptEnviroment::addGlobalStorageValue(const uint32_t key, const std::string& value)
-{
-	m_globalStorageMap[key] = value;
-	return true;
-}
-
-bool ScriptEnviroment::eraseGlobalStorageValue(const uint32_t key)
-{
-	return m_globalStorageMap.erase(key);
-}
-
 void ScriptEnviroment::streamVariant(std::stringstream& stream, const std::string& local, const LuaVariant& var)
 {
-	stream << "local " << local << " = {" << std::endl;
+	if(!local.empty())
+		stream << "local " << local << " = {" << std::endl;
+
 	stream << "type = " << var.type;
 	switch(var.type)
 	{
@@ -485,18 +473,23 @@ void ScriptEnviroment::streamVariant(std::stringstream& stream, const std::strin
 			break;
 	}
 
-	stream << std::endl << "}" << std::endl;
+	if(!local.empty())
+		stream << std::endl << "}" << std::endl;
 }
 
-void ScriptEnviroment::streamThing(std::stringstream& stream, const std::string& local, Thing* thing, uint32_t thingId)
+void ScriptEnviroment::streamThing(std::stringstream& stream, const std::string& local, Thing* thing, uint32_t id/* = 0*/)
 {
-	stream << "local " << local << " = {" << std::endl;
+	if(!local.empty())
+		stream << "local " << local << " = {" << std::endl;
+
 	if(thing && thing->getItem())
 	{
 		const Item* item = thing->getItem();
+		if(!id)
+			id = item->getID();
+
 		stream << "uid = " << thingId << "," << std::endl;
 		stream << "itemid = " << item->getID() << "," << std::endl;
-
 		if(item->hasSubType())
 			stream << "type = " << item->getSubType() << "," << std::endl;
 		else
@@ -507,18 +500,18 @@ void ScriptEnviroment::streamThing(std::stringstream& stream, const std::string&
 	else if(thing && thing->getCreature())
 	{
 		const Creature* creature = thing->getCreature();
+		if(!id)
+			id = item->getID();
+
 		stream << "uid = " << thingId << "," << std::endl;
 		stream << "itemid = 1," << std::endl;
-
-		char type;
 		if(creature->getPlayer())
-			type = 1;
+			stream << "type = 1," << std::endl;
 		else if(creature->getMonster())
-			type = 2;
+			stream << "type = 2," << std::endl;
 		else
-			type = 3; //npc
+			stream << "type = 3," << std::endl;
 
-		stream << "type = " << type << "," << std::endl;
 		stream << "actionid = 0" << std::endl;
 	}
 	else
@@ -529,35 +522,40 @@ void ScriptEnviroment::streamThing(std::stringstream& stream, const std::string&
 		stream << "actionid = 0" << std::endl;
 	}
 
-	stream << "}" << std::endl;
-}
-
-void ScriptEnviroment::streamPosition(std::stringstream& stream, const std::string& local, const PositionEx& position)
-{
-	streamPosition(stream, local, position, position.stackpos);
+	if(!local.empty())
+		stream << "}" << std::endl;
 }
 
 void ScriptEnviroment::streamPosition(std::stringstream& stream, const std::string& local, const Position& position, uint32_t stackpos)
 {
-	stream << "local " << local << " = {" << std::endl;
+	if(!local.empty())
+		stream << "local " << local << " = {" << std::endl;
+
 	stream << "x = " << position.x << "," << std::endl;
 	stream << "y = " << position.y << "," << std::endl;
 	stream << "z = " << position.z << "," << std::endl;
+
 	stream << "stackpos = " << stackpos << std::endl;
-	stream << "}" << std::endl;
+	if(!local.empty())
+		stream << "}" << std::endl;
 }
 
-void ScriptEnviroment::streamOutfit(std::stringstream& stream, const std::string& local, const Outfit_t& outfit)
+void ScriptEnviroment::streamOutfit(std::stringstream& stream, const std::string& local, const Outfit_t& outfit, bool locale/* = true*/)
 {
-	stream << "local " << local << " = {" << std::endl;
+	if(!local.empty())
+		stream << "local " << local << " = {" << std::endl;
+
 	stream << "lookType = " << outfit.lookType << "," << std::endl;
 	stream << "lookTypeEx = " << outfit.lookTypeEx << "," << std::endl;
+
 	stream << "lookHead = " << outfit.lookHead << "," << std::endl;
 	stream << "lookBody = " << outfit.lookBody << "," << std::endl;
 	stream << "lookLegs = " << outfit.lookLegs << "," << std::endl;
 	stream << "lookFeet = " << outfit.lookFeet << "," << std::endl;
+
 	stream << "lookAddons = " << outfit.lookAddons << std::endl;
-	stream << "}" << std::endl;
+	if(!local.empty())
+		stream << "}" << std::endl;
 }
 
 std::string LuaScriptInterface::getErrorDesc(ErrorCode_t code)
@@ -930,15 +928,17 @@ void LuaScriptInterface::pushVariant(lua_State* L, const LuaVariant& var)
 	}
 }
 
-void LuaScriptInterface::pushThing(lua_State* L, Thing* thing, uint32_t thingid)
+void LuaScriptInterface::pushThing(lua_State* L, Thing* thing, uint32_t id/* = 0*/)
 {
 	lua_newtable(L);
 	if(thing && thing->getItem())
 	{
 		const Item* item = thing->getItem();
-		setField(L, "uid", thingid);
-		setField(L, "itemid", item->getID());
+		if(!id)
+			id = item->getID();
 
+		setField(L, "uid", id);
+		setField(L, "itemid", item->getID());
 		if(item->hasSubType())
 			setField(L, "type", item->getSubType());
 		else
@@ -949,17 +949,18 @@ void LuaScriptInterface::pushThing(lua_State* L, Thing* thing, uint32_t thingid)
 	else if(thing && thing->getCreature())
 	{
 		const Creature* creature = thing->getCreature();
-		setField(L, "uid", thingid);
-		setField(L, "itemid", 1);
-		char type;
-		if(creature->getPlayer())
-			type = 1;
-		else if(creature->getMonster())
-			type = 2;
-		else
-			type = 3; //npc
+		if(!id)
+			id = creature->getID();
 
-		setField(L, "type", type);
+		setField(L, "uid", id);
+		setField(L, "itemid", 1);
+		if(creature->getPlayer())
+			setField(L, "type", 1);
+		else if(creature->getMonster())
+			setField(L, "type", 2);
+		else
+			setField(L, "type", 3);
+
 		setField(L, "actionid", 0);
 	}
 	else
@@ -971,17 +972,12 @@ void LuaScriptInterface::pushThing(lua_State* L, Thing* thing, uint32_t thingid)
 	}
 }
 
-void LuaScriptInterface::pushPosition(lua_State* L, const PositionEx& position)
-{
-	pushPosition(L, position, position.stackpos);
-}
-
 void LuaScriptInterface::pushPosition(lua_State* L, const Position& position, uint32_t stackpos)
 {
 	lua_newtable(L);
-	setField(L, "z", position.z);
-	setField(L, "y", position.y);
 	setField(L, "x", position.x);
+	setField(L, "y", position.y);
+	setField(L, "z", position.z);
 	setField(L, "stackpos", stackpos);
 }
 
@@ -1033,9 +1029,9 @@ LuaVariant LuaScriptInterface::popVariant(lua_State* L)
 
 void LuaScriptInterface::popPosition(lua_State* L, PositionEx& position)
 {
-	position.z = getField(L, "z");
-	position.y = getField(L, "y");
 	position.x = getField(L, "x");
+	position.y = getField(L, "y");
+	position.z = getField(L, "z");
 
 	position.stackpos = getField(L, "stackpos");
 	lua_pop(L, 1); //table
@@ -1043,9 +1039,9 @@ void LuaScriptInterface::popPosition(lua_State* L, PositionEx& position)
 
 void LuaScriptInterface::popPosition(lua_State* L, Position& position, uint32_t& stackpos)
 {
-	position.z = getField(L, "z");
-	position.y = getField(L, "y");
 	position.x = getField(L, "x");
+	position.y = getField(L, "y");
+	position.z = getField(L, "z");
 
 	stackpos = getField(L, "stackpos");
 	lua_pop(L, 1); //table
@@ -1096,6 +1092,8 @@ int32_t LuaScriptInterface::popCallback(lua_State* L)
 Outfit_t LuaScriptInterface::popOutfit(lua_State* L)
 {
 	Outfit_t outfit;
+	outfit.lookAddons = getField(L, "lookAddons");
+
 	outfit.lookFeet = getField(L, "lookFeet");
 	outfit.lookLegs = getField(L, "lookLegs");
 	outfit.lookBody = getField(L, "lookBody");
@@ -1458,17 +1456,17 @@ void LuaScriptInterface::registerFunctions()
 	//getInstantSpellInfo(cid, name)
 	lua_register(m_luaState, "getInstantSpellInfo", LuaScriptInterface::luaGetInstantSpellInfo);
 
-	//getPlayerStorageValue(uid, key)
-	lua_register(m_luaState, "getPlayerStorageValue", LuaScriptInterface::luaGetPlayerStorageValue);
+	//getCreatureStorage(uid, key)
+	lua_register(m_luaState, "getCreatureStorage", LuaScriptInterface::luaGetCreatureStorage);
 
-	//doPlayerSetStorageValue(uid, key, value)
-	lua_register(m_luaState, "doPlayerSetStorageValue", LuaScriptInterface::luaDoPlayerSetStorageValue);
+	//doCreatureSetStorage(uid, key, value)
+	lua_register(m_luaState, "doCreatureSetStorage", LuaScriptInterface::luaDoCreatureSetStorage);
 
-	//getGlobalStorageValue(key)
-	lua_register(m_luaState, "getGlobalStorageValue", LuaScriptInterface::luaGetGlobalStorageValue);
+	//getStorage(key)
+	lua_register(m_luaState, "getStorage", LuaScriptInterface::luaGetStorage);
 
-	//setGlobalStorageValue(key, value)
-	lua_register(m_luaState, "setGlobalStorageValue", LuaScriptInterface::luaSetGlobalStorageValue);
+	//doSetStorage(key, value)
+	lua_register(m_luaState, "doSetStorage", LuaScriptInterface::luaDoSetStorage);
 
 	//getChannelUsers(channelId)
 	lua_register(m_luaState, "getChannelUsers", LuaScriptInterface::luaGetChannelUsers);
@@ -2171,11 +2169,11 @@ void LuaScriptInterface::registerFunctions()
 	//getItemAttribute(uid, key)
 	lua_register(m_luaState, "getItemAttribute", LuaScriptInterface::luaGetItemAttribute);
 
-	//doSetItemAttribute(uid, key, value)
-	lua_register(m_luaState, "doSetItemAttribute", LuaScriptInterface::luaDoSetItemAttribute);
+	//doItemSetAttribute(uid, key, value)
+	lua_register(m_luaState, "doItemSetAttribute", LuaScriptInterface::luaDoItemSetAttribute);
 
-	//doEraseItemAttribute(uid, key)
-	lua_register(m_luaState, "doEraseItemAttribute", LuaScriptInterface::luaDoEraseItemAttribute);
+	//doItemEraseAttribute(uid, key)
+	lua_register(m_luaState, "doItemEraseAttribute", LuaScriptInterface::luaDoItemEraseAttribute);
 
 	//getItemLevelDoor(itemid)
 	lua_register(m_luaState, "getItemLevelDoor", LuaScriptInterface::luaGetItemLevelDoor);
@@ -4466,16 +4464,15 @@ int32_t LuaScriptInterface::luaDoCreateTeleport(lua_State* L)
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaGetPlayerStorageValue(lua_State* L)
+int32_t LuaScriptInterface::luaGetCreatureStorage(lua_State* L)
 {
-	//getPlayerStorageValue(cid, key)
+	//getCreatureStorage(cid, key)
 	uint32_t key = popNumber(L);
-
 	ScriptEnviroment* env = getScriptEnv();
-	if(Player* player = env->getPlayerByUID(popNumber(L)))
+	if(Creature* creature = env->getCreatureByUID(popNumber(L)))
 	{
 		std::string strValue;
-		if(player->getStorageValue(key, strValue))
+		if(creature->getStorage(key, strValue))
 		{
 			int32_t intValue = atoi(strValue.c_str());
 			if(intValue || strValue == "0")
@@ -4488,16 +4485,16 @@ int32_t LuaScriptInterface::luaGetPlayerStorageValue(lua_State* L)
 	}
 	else
 	{
-		reportErrorFunc(getErrorDesc(LUA_ERROR_PLAYER_NOT_FOUND));
+		reportErrorFunc(getErrorDesc(LUA_ERROR_CREATURE_NOT_FOUND));
 		lua_pushboolean(L, false);
 	}
 
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaDoPlayerSetStorageValue(lua_State* L)
+int32_t LuaScriptInterface::luaDoCreatureSetStorage(lua_State* L)
 {
-	//doPlayerSetStorageValue(cid, key[, value])
+	//doCreatureSetStorage(cid, key[, value])
 	std::string value;
 	bool nil = true;
 	if(lua_gettop(L) > 2)
@@ -4511,30 +4508,20 @@ int32_t LuaScriptInterface::luaDoPlayerSetStorageValue(lua_State* L)
 			lua_pop(L, 1);
 	}
 
-	uint32_t key = popNumber(L), cid = popNumber(L);
-	if(IS_IN_KEYRANGE(key, RESERVED_RANGE))
-	{
-		std::stringstream ss;
-		ss << key;
-
-		reportErrorFunc("Accessing reserved range: " + ss.str());
-		lua_pushboolean(L, false);
-		return 1;
-	}
-
+	uint32_t key = popNumber(L);
 	ScriptEnviroment* env = getScriptEnv();
-	if(Player* player = env->getPlayerByUID(cid))
+	if(Creature* creature = env->getCreatureByUID(popNumber(L)))
 	{
 		if(!nil)
-			nil = player->addStorageValue(key, value);
+			nil = creature->setStorage(key, value);
 		else
-			player->eraseStorageValue(key);
+			creature->eraseStorage(key);
 
 		lua_pushboolean(L, nil);
 	}
 	else
 	{
-		reportErrorFunc(getErrorDesc(LUA_ERROR_PLAYER_NOT_FOUND));
+		reportErrorFunc(getErrorDesc(LUA_ERROR_CREATURE_NOT_FOUND));
 		lua_pushboolean(L, false);
 	}
 
@@ -4548,7 +4535,9 @@ int32_t LuaScriptInterface::luaGetTileInfo(lua_State* L)
 	popPosition(L, pos);
 	if(Tile* tile = g_game.getMap()->getTile(pos))
 	{
-		lua_newtable(L);
+		ScriptEnviroment* env = getScriptEnv();
+		pushThing(L, tile->ground, env->addThing(tile->ground));
+
 		setFieldBool(L, "protection", tile->hasFlag(TILESTATE_PROTECTIONZONE));
 		setFieldBool(L, "nopvp", tile->hasFlag(TILESTATE_NOPVPZONE));
 		setFieldBool(L, "nologout", tile->hasFlag(TILESTATE_NOLOGOUT));
@@ -4558,6 +4547,7 @@ int32_t LuaScriptInterface::luaGetTileInfo(lua_State* L)
 		setFieldBool(L, "house", tile->hasFlag(TILESTATE_HOUSE));
 		setFieldBool(L, "bed", tile->hasFlag(TILESTATE_BED));
 		setFieldBool(L, "depot", tile->hasFlag(TILESTATE_DEPOT));
+
 		setField(L, "things", tile->getThingCount());
 		setField(L, "creatures", tile->getCreatureCount());
 		setField(L, "items", tile->getItemCount());
@@ -6858,13 +6848,12 @@ int32_t LuaScriptInterface::luaSetItemOutfit(lua_State* L)
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaGetGlobalStorageValue(lua_State* L)
+int32_t LuaScriptInterface::luaGetStorage(lua_State* L)
 {
-	//getGlobalStorageValue(key)
+	//getStorage(key)
 	ScriptEnviroment* env = getScriptEnv();
-
 	std::string strValue;
-	if(env->getGlobalStorageValue(popNumber(L), strValue))
+	if(env->getStorage(popNumber(L), strValue))
 	{
 		int32_t intValue = atoi(strValue.c_str());
 		if(intValue || strValue == "0")
@@ -6878,9 +6867,9 @@ int32_t LuaScriptInterface::luaGetGlobalStorageValue(lua_State* L)
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaSetGlobalStorageValue(lua_State* L)
+int32_t LuaScriptInterface::luaDoSetStorage(lua_State* L)
 {
-	//setGlobalStorageValue(value, key)
+	//doSetStorage(value, key)
 	std::string value;
 	bool nil = false;
 	if(lua_isnil(L, -1))
@@ -6893,11 +6882,11 @@ int32_t LuaScriptInterface::luaSetGlobalStorageValue(lua_State* L)
 
 	ScriptEnviroment* env = getScriptEnv();
 	if(!nil)
-		nil = env->addGlobalStorageValue(popNumber(L), value);
+		env->setStorage(popNumber(L), value);
 	else
-		nil = env->eraseGlobalStorageValue(popNumber(L));
+		env->eraseStorage(popNumber(L));
 
-	lua_pushboolean(L, nil);
+	lua_pushboolean(L, true);
 	return 1;
 }
 
@@ -9259,8 +9248,9 @@ int32_t LuaScriptInterface::luaGetItemAttribute(lua_State* L)
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaDoSetItemAttribute(lua_State* L)
+int32_t LuaScriptInterface::luaDoItemSetAttribute(lua_State* L)
 {
+	//doItemSetAttribute(uid, key, value)
 	boost::any value;
 	if(lua_isboolean(L, -1) == 1)
 		value = (bool)popNumber(L);
@@ -9295,7 +9285,17 @@ int32_t LuaScriptInterface::luaDoSetItemAttribute(lua_State* L)
 	if(value.type() == typeid(int32_t))
 	{
 		if(key == "uid")
-			item->setUniqueId(boost::any_cast<int32_t>(value));
+		{
+			int32_t tmp = boost::any_cast<int32_t>(value);
+			if(tmp < 1000 || tmp > 0xFFFF)
+			{
+				reportErrorFunc("Value for protected key \"uid\" must be in range of 1000 to 65535");
+				lua_pushboolean(L, false);
+				return 1;
+			}
+
+			item->setUniqueId((uint16_t)tmp);
+		}		
 		else if(key == "aid")
 			item->setActionId(boost::any_cast<int32_t>(value));
 		else
@@ -9308,9 +9308,9 @@ int32_t LuaScriptInterface::luaDoSetItemAttribute(lua_State* L)
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaDoEraseItemAttribute(lua_State* L)
+int32_t LuaScriptInterface::luaDoItemEraseAttribute(lua_State* L)
 {
-	//doEraseItemAttribute(uid, key)
+	//doItemEraseAttribute(uid, key)
 	std::string key = popString(L);
 	ScriptEnviroment* env = getScriptEnv();
 
@@ -9322,8 +9322,17 @@ int32_t LuaScriptInterface::luaDoEraseItemAttribute(lua_State* L)
 		return 1;
 	}
 
-	item->eraseAttribute(key);
-	lua_pushboolean(L, true);
+	if(key == "uid")
+	{
+		reportErrorFunc("Attempt to erase protected key \"uid\".");
+		lua_pushboolean(L, false);
+	}
+	else
+	{
+		item->eraseAttribute(key);
+		lua_pushboolean(L, true);
+	}
+
 	return 1;
 }
 

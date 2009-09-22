@@ -779,10 +779,10 @@ void Player::dropLoot(Container* corpse)
 	}
 }
 
-bool Player::addStorageValue(const uint32_t key, const std::string& value)
+bool Player::setStorage(const uint32_t key, const std::string& value)
 {
 	if(!IS_IN_KEYRANGE(key, RESERVED_RANGE))
-		return Creature::addStorageValue(key, value);
+		return Creature::setStorage(key, value);
 
 	if(IS_IN_KEYRANGE(key, OUTFITS_RANGE))
 	{
@@ -795,7 +795,7 @@ bool Player::addStorageValue(const uint32_t key, const std::string& value)
 				return addOutfit(outfit.outfitId, addons);
 		}
 		else
-			std::cout << "[Warning - Player::addStorageValue] Invalid addons value key: " << key
+			std::cout << "[Warning - Player::setStorage] Invalid addons value key: " << key
 				<< ", value: " << value << " for player: " << getName() << std::endl;
 	}
 	else if(IS_IN_KEYRANGE(key, OUTFITSID_RANGE))
@@ -805,20 +805,20 @@ bool Player::addStorageValue(const uint32_t key, const std::string& value)
 		if(addons < 4)
 			return addOutfit(outfitId, addons);
 		else
-			std::cout << "[Warning - Player::addStorageValue] Invalid addons value key: " << key
+			std::cout << "[Warning - Player::setStorage] Invalid addons value key: " << key
 				<< ", value: " << value << " for player: " << getName() << std::endl;
 	}
 	else
-		std::cout << "[Warning - Player::addStorageValue] Unknown reserved key: " << key << " for player: " << getName() << std::endl;
+		std::cout << "[Warning - Player::setStorage] Unknown reserved key: " << key << " for player: " << getName() << std::endl;
 
 	return false;
 }
 
-void Player::eraseStorageValue(const uint32_t key)
+void Player::eraseStorage(const uint32_t key)
 {
-	Creature::eraseStorageValue(key);
+	Creature::eraseStorage(key);
 	if(IS_IN_KEYRANGE(key, RESERVED_RANGE))
-		std::cout << "[Warning - Player::eraseStorageValue] Unknown reserved key: " << key << " for player: " << name << std::endl;
+		std::cout << "[Warning - Player::eraseStorage] Unknown reserved key: " << key << " for player: " << name << std::endl;
 }
 
 bool Player::canSee(const Position& pos) const
@@ -3794,7 +3794,7 @@ bool Player::canWearOutfit(uint32_t outfitId, uint32_t addons)
 		return true;
 
 	std::string value;
-	return getStorageValue(it->second.storageId, value) && value == it->second.storageValue;
+	return getStorage(it->second.storageId, value) && value == it->second.storageValue;
 }
 
 bool Player::addOutfit(uint32_t outfitId, uint32_t addons)

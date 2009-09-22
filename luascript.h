@@ -106,13 +106,14 @@ class ScriptEnviroment
 		bool removeResult(uint32_t rid);
 		DBResult* getResult(uint32_t rid);
 
-		bool getGlobalStorageValue(const uint32_t key, std::string& value) const;
-		bool addGlobalStorageValue(const uint32_t key, const std::string& value);
-		bool eraseGlobalStorageValue(const uint32_t key);
+		bool getStorage(const uint32_t key, std::string& value) const;
+		void setStorage(const uint32_t key, const std::string& value) {m_storageMap[key] = value;}
+		void eraseStorage(const uint32_t key) {m_storageMap.erase(key);}
 
 		void streamVariant(std::stringstream& stream, const std::string& local, const LuaVariant& var);
-		void streamThing(std::stringstream& stream, const std::string& local, Thing* thing, uint32_t thingId);
-		void streamPosition(std::stringstream& stream, const std::string& local, const PositionEx& position);
+		void streamThing(std::stringstream& stream, const std::string& local, Thing* thing, uint32_t id = 0);
+		void streamPosition(std::stringstream& stream, const std::string& local, const PositionEx& position)
+			{streamPosition(stream, local, position, position.stackpo);}
 		void streamPosition(std::stringstream& stream, const std::string& local, const Position& position, uint32_t stackpos);
 		void streamOutfit(std::stringstream& stream, const std::string& local, const Outfit_t& outfit);
 
@@ -158,7 +159,7 @@ class ScriptEnviroment
 		bool m_timerEvent;
 		//script event desc
 
-		static StorageMap m_globalStorageMap;
+		static StorageMap m_storageMap;
 		static ThingMap m_globalMap;
 
 		ThingMap m_localMap;
@@ -302,9 +303,9 @@ class LuaScriptInterface
 		void dumpLuaStack();
 
 		//push/pop common structures
-		static void pushThing(lua_State* L, Thing* thing, uint32_t thingid);
+		static void pushThing(lua_State* L, Thing* thing, uint32_t id = 0);
 		static void pushVariant(lua_State* L, const LuaVariant& var);
-		static void pushPosition(lua_State* L, const PositionEx& position);
+		static void pushPosition(lua_State* L, const PositionEx& position) {pushPosition(L, position, position.stackpos);}
 		static void pushPosition(lua_State* L, const Position& position, uint32_t stackpos);
 		static void pushOutfit(lua_State* L, const Outfit_t& outfit);
 		static void pushCallback(lua_State* L, int32_t callback);
@@ -579,13 +580,13 @@ class LuaScriptInterface
 		static int32_t luaDoPlayerJoinParty(lua_State* L);
 		static int32_t luaGetPartyMembers(lua_State* L);
 
-		static int32_t luaGetPlayerStorageValue(lua_State* L);
-		static int32_t luaDoPlayerSetStorageValue(lua_State* L);
+		static int32_t luaGetCreatureStorage(lua_State* L);
+		static int32_t luaDoCreatureSetStorage(lua_State* L);
 		static int32_t luaDoPlayerAddBlessing(lua_State* L);
 		static int32_t luaGetPlayerBlessing(lua_State* L);
 
-		static int32_t luaGetGlobalStorageValue(lua_State* L);
-		static int32_t luaSetGlobalStorageValue(lua_State* L);
+		static int32_t luaGetStorage(lua_State* L);
+		static int32_t luaDoSetStorage(lua_State* L);
 
 		static int32_t luaDoPlayerAddOutfit(lua_State* L);
 		static int32_t luaDoPlayerRemoveOutfit(lua_State* L);

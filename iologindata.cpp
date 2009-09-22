@@ -665,7 +665,7 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool preLo
 	if((result = db->storeQuery(query.str())))
 	{
 		do
-			player->addStorageValue((uint32_t)result->getDataInt("key"), result->getDataString("value"));
+			player->setStorage((uint32_t)result->getDataInt("key"), result->getDataString("value"));
 		while(result->next());
 		result->free();
 	}
