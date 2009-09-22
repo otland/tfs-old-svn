@@ -294,15 +294,11 @@ bool IOMapSerialize::loadMapRelational(Map* map)
 					else
 					{
 						Position pos(result->getDataInt("x"), result->getDataInt("y"), result->getDataInt("z"));
-						Tile* tile = map->getTile(pos);
-						if(!tile)
-						{
+						if(Tile* tile = map->getTile(pos))
+							loadItems(db, itemsResult, tile, false);
+						else
 							std::cout << "[Error - IOMapSerialize::loadMapRelational] Unserialization"
 								<< " of invalid tile at position "<< pos << std::endl;
-							continue;
-						}
-
-						loadItems(db, itemsResult, tile, false);
 					}
 
 					itemsResult->free();
@@ -378,7 +374,7 @@ bool IOMapSerialize::saveMapRelational(Map* map)
 	{
 		//save house items
 		for(HouseTileList::iterator tit = it->second->getHouseTileBegin(); tit != it->second->getHouseTileEnd(); ++tit)
-			saveItems(db, tileId, it->second->getHouseId(), *tit);
+			saveItems(db, tileId, it->second->getHouseId(), (*tit));
 	}
 
 	//End the transaction
@@ -414,10 +410,11 @@ bool IOMapSerialize::loadMapBinary(Map* map)
 			propStream.GET_USHORT(x);
 			propStream.GET_USHORT(y);
 			propStream.GET_UCHAR(z);
-			Position pos(x, y, (int16_t)z);
 
 			uint32_t itemCount = 0;
 			propStream.GET_ULONG(itemCount);
+
+			Position pos(x, y, (int16_t)z);
 			if(house && house->hasPendingTransfer())
 			{
 				if(Player* player = g_game.getPlayerByGuidEx(house->getHouseOwner()))
@@ -440,8 +437,8 @@ bool IOMapSerialize::loadMapBinary(Map* map)
 			}
 			else
 			{
-				std::cout << "[Error - IOMapSerialize::loadMapBinary] Unserialization of invalid tile at position ";
-				std::cout << pos << std::endl;
+				std::cout << "[Error - IOMapSerialize::loadMapBinary] Unserialization of invalid tile"
+					<< " at position " << pos << std::endl;
 				break;
 			}
  		}
@@ -478,8 +475,8 @@ bool IOMapSerialize::saveMapBinary(Map* map)
 
 		uint32_t attributesSize = 0;
 		const char* attributes = stream.getStream(attributesSize);
-
 		query.str("");
+
 		query << it->second->getHouseId() << ", " << g_config.getNumber(ConfigManager::WORLD_ID)
 			<< ", " << db->escapeBlob(attributes, attributesSize);
 		if(!stmt.addRow(query))
@@ -511,13 +508,13 @@ bool IOMapSerialize::loadItems(Database* db, DBResult* result, Cylinder* parent,
 		id = result->getDataInt("itemtype");
 		count = result->getDataInt("count");
 
+		item = NULL;
 		uint64_t attrSize = 0;
 		const char* attr = result->getDataStream("attributes", attrSize);
 
 		PropStream propStream;
 		propStream.init(attr, attrSize);
 
-		item = NULL;
 		const ItemType& iType = Item::items[id];
 		if(iType.moveable || iType.forceSerialize || pid)
 		{
@@ -617,13 +614,11 @@ bool IOMapSerialize::saveItems(Database* db, uint32_t& tileId, uint32_t houseId,
 	if(!thingCount)
 		return true;
 
-	bool stored = false;
-	int32_t runningId = 0, parentId = 0;
-
 	Item* item = NULL;
+	int32_t runningId = 0, parentId = 0;
 	ContainerStackList containerStackList;
-	Container* container = NULL;
 
+	bool stored = false;
 	DBInsert query_insert(db);
 	query_insert.setQuery("INSERT INTO `tile_items` (`tile_id`, `world_id`, `sid`, `pid`, `itemtype`, `count`, `attributes`) VALUES ");
 
@@ -635,7 +630,7 @@ bool IOMapSerialize::saveItems(Database* db, uint32_t& tileId, uint32_t houseId,
 
 		if(!stored)
 		{
-			const Position& tilePosition = tile->getPosition();
+			Position tilePosition = tile->getPosition();
 			query << "INSERT INTO `tiles` (`id`, `world_id`, `house_id`, `x`, `y`, `z`) VALUES ("
 			<< tileId << ", " << g_config.getNumber(ConfigManager::WORLD_ID) << ", " << houseId << ", "
 			<< tilePosition.x << ", " << tilePosition.y << ", " << tilePosition.z << ")";
@@ -662,6 +657,7 @@ bool IOMapSerialize::saveItems(Database* db, uint32_t& tileId, uint32_t houseId,
 			containerStackList.push_back(std::make_pair(item->getContainer(), runningId));
 	}
 
+	Container* container = NULL;
 	for(ContainerStackList::iterator cit = containerStackList.begin(); cit != containerStackList.end(); ++cit)
 	{
 		container = cit->first;
@@ -707,7 +703,7 @@ bool IOMapSerialize::loadContainer(PropStream& propStream, Container* container)
 		container->serializationCount--;
 	}
 
-	uint8_t endAttr = 0;
+	uint8_t endAttr = ATTR_END;
 	propStream.GET_UCHAR(endAttr);
 	if(endAttr == ATTR_END)
 		return true;
@@ -724,39 +720,37 @@ bool IOMapSerialize::loadItem(PropStream& propStream, Cylinder* parent, bool dep
 
 	uint16_t id = 0;
 	propStream.GET_USHORT(id);
-
 	Item* item = NULL;
+
 	const ItemType& iType = Item::items[id];
 	if(iType.moveable || iType.forceSerialize || (!depotTransfer && !tile))
 	{
-		if((item = Item::CreateItem(id)))
-		{
-			if(item->unserializeAttr(propStream))
-			{
-				if(Container* container = item->getContainer())
-				{
-					if(!loadContainer(propStream, container))
-					{
-						delete item;
-						return false;
-					}
-				}
+		if(!(item = Item::CreateItem(id)))
+			return true;
 
-				if(parent)
-				{
-					parent->__internalAddThing(item);
-					item->__startDecaying();
-				}
-				else
-					delete item;
-			}
-			else
+		if(!item->unserializeAttr(propStream))
+		{
+			std::cout << "[Warning - IOMapSerialize::loadItem] Unserialization error [0] for item type " << id << std::endl;
+			delete item;
+			return false;
+		}
+
+		if(Container* container = item->getContainer())
+		{
+			if(!loadContainer(propStream, container))
 			{
-				std::cout << "[Warning - IOMapSerialize::loadItem] Unserialization error [0] for item type " << id << std::endl;
 				delete item;
 				return false;
 			}
 		}
+
+		if(parent)
+		{
+			parent->__internalAddThing(item);
+			item->__startDecaying();
+		}
+		else
+			delete item;
 
 		return true;
 	}
@@ -847,7 +841,7 @@ bool IOMapSerialize::saveTile(PropWriteStream& stream, const Tile* tile)
 			items.push_back(item);
 	}
 
-	tileCount = items.size(); //lame, but at least we don't need new variable
+	tileCount = items.size(); //lame, but at least we don't need a new variable
 	if(tileCount > 0)
 	{
 		stream.ADD_USHORT(tile->getPosition().x);
