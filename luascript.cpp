@@ -501,10 +501,14 @@ void ScriptEnviroment::streamThing(std::stringstream& stream, const std::string&
 	{
 		const Creature* creature = thing->getCreature();
 		if(!id)
-			id = item->getID();
+			id = creature->getID();
 
 		stream << "uid = " << id << "," << std::endl;
-		stream << "itemid = 1," << std::endl;
+		if(const Player* player = creature->getPlayer())
+			stream << "itemid = " << player->getGUID() << "," << std::endl;
+		else
+			stream << "itemid = 1," << std::endl;
+
 		if(creature->getPlayer())
 			stream << "type = 1," << std::endl;
 		else if(creature->getMonster())
