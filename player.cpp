@@ -2215,7 +2215,7 @@ bool Player::onDeath()
 		}
 
 		blessings = 0;
-		loginPosition = masterPos;
+		loginPosition = masterPosition;
 		if(!inventory[SLOT_BACKPACK])
 			__internalAddThing(SLOT_BACKPACK, Item::CreateItem(g_config.getNumber(ConfigManager::DEATH_CONTAINER)));
 
@@ -2232,7 +2232,7 @@ bool Player::onDeath()
 		setLossSkill(true);
 		if(preventLoss)
 		{
-			loginPosition = masterPos;
+			loginPosition = masterPosition;
 			sendReLoginWindow();
 			g_game.removeCreature(this, false);
 		}
@@ -2257,7 +2257,7 @@ void Player::dropCorpse(DeathList deathList)
 		onIdleStatus();
 
 		g_game.addCreatureHealth(this);
-		g_game.internalTeleport(this, getTemplePosition(), true);
+		g_game.internalTeleport(this, masterPosition, true);
 	}
 	else
 	{

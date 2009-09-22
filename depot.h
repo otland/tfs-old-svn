@@ -32,7 +32,6 @@ class Depot : public Container
 		virtual Attr_ReadValue readAttr(AttrTypes_t attr, PropStream& propStream);
 
 		uint32_t getDepotId() const;
-		void setDepotId(uint32_t id) {setAttribute("depotid", (int32_t)id);}
 
 		void setMaxDepotLimit(uint32_t count) {depotLimit = count;}
 

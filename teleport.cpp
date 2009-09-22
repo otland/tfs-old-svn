@@ -17,31 +17,22 @@
 #include "otpch.h"
 #include "teleport.h"
 
-#include <libxml/xmlmemory.h>
-#include <libxml/parser.h>
-
+#include "tile.h"
 #include "game.h"
-extern Game g_game;
 
-Teleport::Teleport(uint16_t _type):
-	Item(_type)
-{
-	destPos = Position();
-}
+extern Game g_game;
 
 Attr_ReadValue Teleport::readAttr(AttrTypes_t attr, PropStream& propStream)
 {
-	if(attr == ATTR_TELE_DEST)
-	{
-		TeleportDest* dest;
-		if(!propStream.GET_STRUCT(dest))
-			return ATTR_READ_ERROR;
+	if(attr != ATTR_TELE_DEST)
+		return Item::readAttr(attr, propStream);
 
-		setDestPos(Position(dest->_x, dest->_y, dest->_z));
-		return ATTR_READ_CONTINUE;
-	}
+	TeleportDest* dest;
+	if(!propStream.GET_STRUCT(dest))
+		return ATTR_READ_ERROR;
 
-	return Item::readAttr(attr, propStream);
+	setDestination(Position(dest->_x, dest->_y, dest->_z));
+	return ATTR_READ_CONTINUE;
 }
 
 bool Teleport::serializeAttr(PropWriteStream& propWriteStream) const
@@ -50,9 +41,9 @@ bool Teleport::serializeAttr(PropWriteStream& propWriteStream) const
 	propWriteStream.ADD_UCHAR(ATTR_TELE_DEST);
 
 	TeleportDest dest;
-	dest._x = destPos.x;
-	dest._y = destPos.y;
-	dest._z = destPos.z;
+	dest._x = destination.x;
+	dest._y = destination.y;
+	dest._z = destination.z;
 
 	propWriteStream.ADD_VALUE(dest);
 	return ret;
@@ -60,7 +51,7 @@ bool Teleport::serializeAttr(PropWriteStream& propWriteStream) const
 
 void Teleport::__addThing(Creature* actor, int32_t index, Thing* thing)
 {
-	Tile* destTile = g_game.getTile(getDestPos());
+	Tile* destTile = g_game.getTile(destination);
 	if(!destTile)
 		return;
 
@@ -76,12 +67,14 @@ void Teleport::__addThing(Creature* actor, int32_t index, Thing* thing)
 void Teleport::postAddNotification(Creature* actor, Thing* thing, const Cylinder* oldParent,
 	int32_t index, cylinderlink_t link /*= LINK_OWNER*/)
 {
-	getParent()->postAddNotification(actor, thing, oldParent, index, LINK_PARENT);
+	if(parent)
+		parent->postAddNotification(actor, thing, oldParent, index, LINK_PARENT);
 }
 
 void Teleport::postRemoveNotification(Creature* actor, Thing* thing, const Cylinder* newParent,
 	int32_t index, bool isCompleteRemoval, cylinderlink_t link /*= LINK_OWNER*/)
 {
-	getParent()->postRemoveNotification(actor, thing, newParent,
-		index, isCompleteRemoval, LINK_PARENT);
+	if(parent)
+		parent->postRemoveNotification(actor, thing, newParent,
+			index, isCompleteRemoval, LINK_PARENT);
 }

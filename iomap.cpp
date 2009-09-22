@@ -355,7 +355,7 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 
 								if(house && item->isMoveable())
 								{
-									std::cout << "[Warning - IOMap::loadMap] Movable item in house: " << house->getHouseId();
+									std::cout << "[Warning - IOMap::loadMap] Movable item in house: " << house->getId();
 									std::cout << ", item type: " << item->getID() << ", at position " << px << "/" << py << "/";
 									std::cout << pz << std::endl;
 
@@ -421,7 +421,7 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 								if(house && item->isMoveable())
 								{
 									std::cout << "[Warning - IOMap::loadMap] Movable item in house: ";
-									std::cout << house->getHouseId() << ", item type: " << item->getID();
+									std::cout << house->getId() << ", item type: " << item->getID();
 									std::cout << ", pos " << px << "/" << py << "/" << pz << std::endl;
 
 									delete item;
@@ -512,7 +512,7 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 						Towns::getInstance().addTown(townId, town);
 					}
 
-					std::string townName = "";
+					std::string townName;
 					if(!propStream.GET_STRING(townName))
 					{
 						setLastErrorString("Could not read town name.");
@@ -520,14 +520,14 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 					}
 
 					town->setName(townName);
-					OTBM_Destination_coords *town_coords;
+					OTBM_Destination_coords *townCoords;
 					if(!propStream.GET_STRUCT(town_coords))
 					{
 						setLastErrorString("Could not read town coordinates.");
 						return false;
 					}
 
-					town->setTemplePos(Position(town_coords->_x, town_coords->_y, town_coords->_z));
+					town->setPosition(Position(townCoords->_x, townCoords->_y, townCoords->_z));
 				}
 				else
 				{

@@ -19,11 +19,11 @@
 #define __TRASHHOLDER__
 #include "const.h"
 
-#include "tile.h"
+class Tile;
 class TrashHolder : public Item, public Cylinder
 {
 	public:
-		TrashHolder(uint16_t _type, MagicEffectClasses _effect = NM_ME_NONE);
+		TrashHolder(uint16_t type, MagicEffectClasses _effect = NM_ME_NONE): Item(type), effect(_effect) {}
 		virtual ~TrashHolder() {}
 
 		virtual TrashHolder* getTrashHolder() {return this;}

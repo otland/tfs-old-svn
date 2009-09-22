@@ -482,3 +482,12 @@ function doChangeTypeItem(uid, subtype)
 	local subtype = subtype or 1
 	return doTransformItem(item.uid, item.itemid, subtype)
 end
+
+function getDepotId(uid)
+	local ret = getItemAttribute(uid, "depotid")
+	if(ret == nil) then
+		return false
+	end
+
+	return ret
+end

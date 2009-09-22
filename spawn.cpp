@@ -204,7 +204,7 @@ bool Spawns::parseSpawnNode(xmlNodePtr p, bool checkDuplicate)
 				continue;
 			}
 
-			npc->setMasterPos(placePos, radius);
+			npc->setMasterPosition(placePos, radius);
 			npc->setDirection(direction);
 			npcList.push_back(npc);
 		}
@@ -221,7 +221,7 @@ void Spawns::startup()
 		return;
 
 	for(NpcList::iterator it = npcList.begin(); it != npcList.end(); ++it)
-		g_game.placeCreature((*it), (*it)->getMasterPos(), false, true);
+		g_game.placeCreature((*it), (*it)->getMasterPosition(), false, true);
 
 	npcList.clear();
 	for(SpawnList::iterator it = spawnList.begin(); it != spawnList.end(); ++it)
@@ -324,7 +324,7 @@ bool Spawn::spawnMonster(uint32_t spawnId, MonsterType* mType, const Position& p
 	monster->setSpawn(this);
 	monster->addRef();
 
-	monster->setMasterPos(pos, radius);
+	monster->setMasterPosition(pos, radius);
 	monster->setDirection(dir);
 
 	spawnedMap.insert(SpawnedPair(spawnId, monster));

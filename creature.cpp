@@ -64,9 +64,7 @@ Creature::Creature()
 	varSpeed = 0;
 
 	masterRadius = -1;
-	masterPos.x = 0;
-	masterPos.y = 0;
-	masterPos.z = 0;
+	masterPosition = Position();
 
 	followCreature = NULL;
 	hasFollowPath = false;

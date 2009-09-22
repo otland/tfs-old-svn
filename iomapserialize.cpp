@@ -67,7 +67,7 @@ bool IOMapSerialize::updateAuctions()
 			continue;
 		}
 
-		house->setHouseOwner(result->getDataInt("player_id"));
+		house->setOwner(result->getDataInt("player_id"));
 		Houses::getInstance().payHouse(house, now, result->getDataInt("bid"));
 	}
 	while(result->next());
@@ -95,7 +95,7 @@ bool IOMapSerialize::loadHouses()
 		house->setLastWarning(result->getDataInt("lastwarning"));
 		house->setPaidUntil(result->getDataInt("paid"));
 
-		house->setHouseOwner(result->getDataInt("owner"));
+		house->setOwner(result->getDataInt("owner"));
 		if(result->getDataInt("clear"))
 			house->setPendingTransfer(true);
 	}
@@ -104,11 +104,11 @@ bool IOMapSerialize::loadHouses()
 
 	for(HouseMap::iterator it = Houses::getInstance().getHouseBegin(); it != Houses::getInstance().getHouseEnd(); ++it)
 	{
-		if(!(house = it->second) || !house->getHouseId() || !house->getHouseOwner())
+		if(!(house = it->second) || !house->getId() || !house->getOwner())
 			continue;
 
 		query.str("");
-		query << "SELECT `listid`, `list` FROM `house_lists` WHERE `house_id` = " << house->getHouseId();
+		query << "SELECT `listid`, `list` FROM `house_lists` WHERE `house_id` = " << house->getId();
 		query << " AND `world_id` = " << g_config.getNumber(ConfigManager::WORLD_ID);
 		if(!(result = db->storeQuery(query.str())))
 			continue;
@@ -133,7 +133,7 @@ bool IOMapSerialize::updateHouses()
 		if(!(house = it->second))
 			continue;
 
-		query << "SELECT `id` FROM `houses` WHERE `id` = " << house->getHouseId() << " AND `world_id` = "
+		query << "SELECT `id` FROM `houses` WHERE `id` = " << house->getId() << " AND `world_id` = "
 			<< g_config.getNumber(ConfigManager::WORLD_ID) << " LIMIT 1";
 		if(DBResult* result = db->storeQuery(query.str()))
 		{
@@ -161,14 +161,14 @@ bool IOMapSerialize::updateHouses()
 			if(house->hasSyncFlag(House::HOUSE_SYNC_GUILD))
 				query << ", `guild` = " << house->isGuild();
 
-			query << " WHERE `id` = " << house->getHouseId() << " AND `world_id` = "
+			query << " WHERE `id` = " << house->getId() << " AND `world_id` = "
 				<< g_config.getNumber(ConfigManager::WORLD_ID) << db->getUpdateLimiter();
 		}
 		else
 		{
 			query.str("");
 			query << "INSERT INTO `houses` (`id`, `world_id`, `owner`, `name`, `town`, `size`, `price`, `rent`, `doors`, `beds`, `tiles`, `guild`) VALUES ("
-				<< house->getHouseId() << ", " << g_config.getNumber(ConfigManager::WORLD_ID) << ", 0, "
+				<< house->getId() << ", " << g_config.getNumber(ConfigManager::WORLD_ID) << ", 0, "
 				//we need owner for compatibility reasons (field doesn't have a default value)
 				<< db->escapeString(house->getName()) << ", " << house->getTownId() << ", "
 				<< house->getSize() << ", " << house->getPrice() << ", " << house->getRent() << ", "
@@ -201,15 +201,15 @@ bool IOMapSerialize::saveHouses()
 bool IOMapSerialize::saveHouse(Database* db, House* house)
 {
 	DBQuery query;
-	query << "UPDATE `houses` SET `owner` = " << house->getHouseOwner() << ", `paid` = "
+	query << "UPDATE `houses` SET `owner` = " << house->getOwner() << ", `paid` = "
 		<< house->getPaidUntil() << ", `warnings` = " << house->getRentWarnings() << ", `lastwarning` = "
-		<< house->getLastWarning() << ", `clear` = 0 WHERE `id` = " << house->getHouseId() << " AND `world_id` = "
+		<< house->getLastWarning() << ", `clear` = 0 WHERE `id` = " << house->getId() << " AND `world_id` = "
 		<< g_config.getNumber(ConfigManager::WORLD_ID) << db->getUpdateLimiter();
 	if(!db->executeQuery(query.str()))
 		return false;
 
 	query.str("");
-	query << "DELETE FROM `house_lists` WHERE `house_id` = " << house->getHouseId() << " AND `world_id` = "
+	query << "DELETE FROM `house_lists` WHERE `house_id` = " << house->getId() << " AND `world_id` = "
 		<< g_config.getNumber(ConfigManager::WORLD_ID);
 	if(!db->executeQuery(query.str()))
 		return false;
@@ -221,7 +221,7 @@ bool IOMapSerialize::saveHouse(Database* db, House* house)
 	if(house->getAccessList(GUEST_LIST, listText) && !listText.empty())
 	{
 		query.str("");
-		query << house->getHouseId() << ", " << g_config.getNumber(ConfigManager::WORLD_ID) << ", "
+		query << house->getId() << ", " << g_config.getNumber(ConfigManager::WORLD_ID) << ", "
 			<< GUEST_LIST << ", " << db->escapeString(listText);
 		if(!queryInsert.addRow(query.str()))
 			return false;
@@ -230,7 +230,7 @@ bool IOMapSerialize::saveHouse(Database* db, House* house)
 	if(house->getAccessList(SUBOWNER_LIST, listText) && !listText.empty())
 	{
 		query.str("");
-		query << house->getHouseId() << ", " << g_config.getNumber(ConfigManager::WORLD_ID) << ", "
+		query << house->getId() << ", " << g_config.getNumber(ConfigManager::WORLD_ID) << ", "
 			<< SUBOWNER_LIST << ", " << db->escapeString(listText);
 		if(!queryInsert.addRow(query.str()))
 			return false;
@@ -245,7 +245,7 @@ bool IOMapSerialize::saveHouse(Database* db, House* house)
 		if(door->getAccessList(listText) && !listText.empty())
 		{
 			query.str("");
-			query << house->getHouseId() << ", " << g_config.getNumber(ConfigManager::WORLD_ID) << ", "
+			query << house->getId() << ", " << g_config.getNumber(ConfigManager::WORLD_ID) << ", "
 				<< door->getDoorId() << ", " << db->escapeString(listText);
 			if(!queryInsert.addRow(query.str()))
 				return false;
@@ -267,7 +267,7 @@ bool IOMapSerialize::loadMapRelational(Map* map)
 			continue;
 
 		query.str("");
-		query << "SELECT * FROM `tiles` WHERE `house_id` = " << house->getHouseId() <<
+		query << "SELECT * FROM `tiles` WHERE `house_id` = " << house->getId() <<
 			" AND `world_id` = " << g_config.getNumber(ConfigManager::WORLD_ID);
 		if(DBResult* result = db->storeQuery(query.str()))
 		{
@@ -280,7 +280,7 @@ bool IOMapSerialize::loadMapRelational(Map* map)
 				{
 					if(house->hasPendingTransfer())
 					{
-						if(Player* player = g_game.getPlayerByGuidEx(house->getHouseOwner()))
+						if(Player* player = g_game.getPlayerByGuidEx(house->getOwner()))
 						{
 							Depot* depot = player->getDepot(house->getTownId(), true);
 							loadItems(db, itemsResult, depot, true);
@@ -324,7 +324,7 @@ bool IOMapSerialize::loadMapRelational(Map* map)
 					{
 						if(house->hasPendingTransfer())
 						{
-							if(Player* player = g_game.getPlayerByGuidEx(house->getHouseOwner()))
+							if(Player* player = g_game.getPlayerByGuidEx(house->getOwner()))
 							{
 								Depot* depot = player->getDepot(house->getTownId(), true);
 								loadItems(db, itemsResult, depot, true);
@@ -374,7 +374,7 @@ bool IOMapSerialize::saveMapRelational(Map* map)
 	{
 		//save house items
 		for(HouseTileList::iterator tit = it->second->getHouseTileBegin(); tit != it->second->getHouseTileEnd(); ++tit)
-			saveItems(db, tileId, it->second->getHouseId(), (*tit));
+			saveItems(db, tileId, it->second->getId(), (*tit));
 	}
 
 	//End the transaction
@@ -417,7 +417,7 @@ bool IOMapSerialize::loadMapBinary(Map* map)
 			Position pos(x, y, (int16_t)z);
 			if(house && house->hasPendingTransfer())
 			{
-				if(Player* player = g_game.getPlayerByGuidEx(house->getHouseOwner()))
+				if(Player* player = g_game.getPlayerByGuidEx(house->getOwner()))
 				{
 					Depot* depot = player->getDepot(player->getTown(), true);
 					while(itemCount--)
@@ -477,7 +477,7 @@ bool IOMapSerialize::saveMapBinary(Map* map)
 		const char* attributes = stream.getStream(attributesSize);
 		query.str("");
 
-		query << it->second->getHouseId() << ", " << g_config.getNumber(ConfigManager::WORLD_ID)
+		query << it->second->getId() << ", " << g_config.getNumber(ConfigManager::WORLD_ID)
 			<< ", " << db->escapeBlob(attributes, attributesSize);
 		if(!stmt.addRow(query))
 			return false;

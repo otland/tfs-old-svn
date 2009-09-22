@@ -292,8 +292,8 @@ class Player : public Creature, public Cylinder
 		time_t getLastLogin() const {return lastLogin;}
 		time_t getLastLogout() const {return lastLogout;}
 
-		const Position& getLoginPosition() const {return loginPosition;}
-		const Position& getTemplePosition() const {return masterPos;}
+		Position getLoginPosition() const {return loginPosition;}
+
 		uint32_t getTown() const {return town;}
 		void setTown(uint32_t _town) {town = _town;}
 

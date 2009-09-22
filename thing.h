@@ -19,7 +19,6 @@
 #define __THING__
 #include "position.h"
 
-/*Notice: remember to add new error codes to global.lua*/
 enum ReturnValue
 {
 	RET_DONTSHOWMESSAGE = 0,

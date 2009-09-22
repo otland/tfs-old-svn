@@ -22,13 +22,16 @@
 #include "cylinder.h"
 #include "item.h"
 
-class Creature;
 class Teleport;
 class TrashHolder;
 class Mailbox;
 class MagicField;
-class QTreeLeafNode;
 class BedItem;
+
+class Player;
+class Creature;
+class HouseTile;
+class QTreeLeafNode;
 
 typedef std::list<Player*> PlayerList;
 typedef std::list<Creature*> SpectatorVec;
@@ -83,7 +86,6 @@ enum ZoneType_t
 	ZONE_NORMAL
 };
 
-class HouseTile;
 class TileItemVector
 {
 	public:

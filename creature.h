@@ -206,8 +206,8 @@ class Creature : public AutoId, virtual public Thing
 		SpeakClasses getSpeakType() const {return speakType;}
 		void setSpeakType(SpeakClasses type) {speakType = type;}
 
-		const Position& getMasterPos() const {return masterPos;}
-		void setMasterPos(const Position& pos, uint32_t radius = 1) {masterPos = pos; masterRadius = radius;}
+		Position getMasterPosition() const {return masterPosition;}
+		void setMasterPosition(const Position& pos, uint32_t radius = 1) {masterPosition = pos; masterRadius = radius;}
 
 		virtual int32_t getThrowRange() const {return 1;}
 		virtual RaceType_t getRace() const {return RACE_NONE;}
@@ -452,7 +452,7 @@ class Creature : public AutoId, virtual public Thing
 		Outfit_t currentOutfit;
 		Outfit_t defaultOutfit;
 
-		Position masterPos;
+		Position masterPosition;
 		Position lastPosition;
 		int32_t masterRadius;
 		uint64_t lastStep;

@@ -79,12 +79,12 @@ bool Mailbox::getDepotId(const std::string& townString, uint32_t& depotId)
 	{	
 		for(IntegerVec::iterator it = disabledTowns.begin(); it != disabledTowns.end(); ++it)
 		{
-			if(town->getTownID() == uint32_t(*it))
+			if(town->getID() == uint32_t(*it))
 				return false;
 		}
 	}
 
-	depotId = town->getTownID();
+	depotId = town->getID();
 	return true;
 }
 

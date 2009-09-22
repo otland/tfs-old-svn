@@ -497,7 +497,7 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool preLo
 	player->setSkullEnd((time_t)result->getDataInt("skulltime"), true, skull);
 	player->town = result->getDataInt("town_id");
 	if(Town* town = Towns::getInstance().getTown(player->town))
-		player->masterPos = town->getTemplePosition();
+		player->setMasterPosition(town->getPosition());
 
 	player->setLossPercent(LOSS_EXPERIENCE, result->getDataInt("loss_experience"));
 	player->setLossPercent(LOSS_MANA, result->getDataInt("loss_mana"));
@@ -512,7 +512,7 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool preLo
 
 	Position loginPos = player->loginPosition;
 	if(!loginPos.x || !loginPos.y)
-		player->loginPosition = player->masterPos;
+		player->loginPosition = player->getMasterPosition();
 
 	const uint32_t rankId = result->getDataInt("rank_id");
 	const std::string nick = result->getDataString("guildnick");

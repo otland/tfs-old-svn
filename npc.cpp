@@ -1376,7 +1376,7 @@ void Npc::executeResponse(Player* player, NpcState* npcState, const NpcResponse*
 				{
 					Position teleportTo = it->pos;
 					if(it->strValue == "|TEMPLE|")
-						teleportTo = player->getTemplePosition();
+						teleportTo = player->getMasterPosition();
 
 					g_game.internalTeleport(player, teleportTo, true);
 					break;
@@ -1907,7 +1907,7 @@ bool Npc::canWalkTo(const Position& fromPos, Direction dir)
 
 	Position toPos = fromPos;
 	toPos = getNextPosition(dir, toPos);
-	if(!Spawns::getInstance()->isInZone(masterPos, masterRadius, toPos))
+	if(!Spawns::getInstance()->isInZone(masterPosition, masterRadius, toPos))
 		return false;
 
 	Tile* tile = g_game.getTile(toPos);

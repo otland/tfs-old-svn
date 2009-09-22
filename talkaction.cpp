@@ -27,9 +27,11 @@
 #include "npc.h"
 
 #include "house.h"
-#include "chat.h"
+#include "town.h"
+
 #include "teleport.h"
 #include "status.h"
+#include "textlogger.h"
 
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
 #include "outputmessage.h"
@@ -41,12 +43,13 @@
 
 #include "configmanager.h"
 #include "game.h"
-#include "textlogger.h"
+#include "chat.h"
+#include "tools.h"
 
 extern ConfigManager g_config;
-extern TalkActions* g_talkActions;
 extern Game g_game;
 extern Chat g_chat;
+extern TalkActions* g_talkActions;
 
 TalkActions::TalkActions() :
 m_scriptInterface("TalkAction Interface")
@@ -440,7 +443,7 @@ bool TalkAction::houseBuy(Creature* creature, const std::string& cmd, const std:
 		}
 	}
 
-	if(house->getHouseOwner())
+	if(house->getOwner())
 	{
 		player->sendCancel("This flat is already owned by someone else.");
 		g_game.addMagicEffect(player->getPosition(), NM_ME_POFF);
@@ -454,7 +457,7 @@ bool TalkAction::houseBuy(Creature* creature, const std::string& cmd, const std:
 		return false;
 	}
 
-	house->setHouseOwnerEx(player->getGUID(), true);
+	house->setOwnerEx(player->getGUID(), true);
 	std::string ret = "You have successfully bought this ";
 	if(house->isGuild())
 		ret += "hall";
@@ -838,17 +841,11 @@ bool TalkAction::thingProporties(Creature* creature, const std::string& cmd, con
 				item->setActionId(atoi(parseParams(it, tokens.end()).c_str()));
 			else if(action == "unique" || action == "uniqueid" || action == "uid")
 				item->setUniqueId(atoi(parseParams(it, tokens.end()).c_str()));
-			else if(action == "depot" || action == "depotid")
-			{
-				if(item->getContainer() && item->getContainer()->getDepot())
-					item->getContainer()->getDepot()->setDepotId(
-						atoi(parseParams(it, tokens.end()).c_str()));
-			}
 			else if(action == "destination" || action == "position"
 				|| action == "pos" || action == "dest") //TODO: doesn't work
 			{
-				if(item->getTeleport())
-					item->getTeleport()->setDestPos(Position(atoi(parseParams(it,
+				if(Teleport* teleport = item->getTeleport())
+					teleport->setDestination(Position(atoi(parseParams(it,
 						tokens.end()).c_str()), atoi(parseParams(it, tokens.end()).c_str()),
 						atoi(parseParams(it, tokens.end()).c_str())));
 			}
@@ -906,8 +903,14 @@ bool TalkAction::thingProporties(Creature* creature, const std::string& cmd, con
 					_player->setSex(atoi(parseParams(it, tokens.end()).c_str()));
 				else if(action == "stamina")
 					_player->setStaminaMinutes(atoi(parseParams(it, tokens.end()).c_str()));
-				else if(action == "town" || action == "temple") //TODO: doesn't work
-					_player->setTown(atoi(parseParams(it, tokens.end()).c_str()));
+				else if(action == "town" || action == "temple")
+				{
+					if(Town* town = Towns::getInstance().getTown(parseParams(it, tokens.end()))
+					{
+						_player->setMasterPosition(town->getPosition());
+						_player->setTown(town->getID());
+					}
+				}
 				else if(action == "balance")
 					_player->balance = atoi(parseParams(it, tokens.end()).c_str());
 				else if(action == "marriage" || action == "partner")

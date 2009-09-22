@@ -34,7 +34,7 @@ Attr_ReadValue Depot::readAttr(AttrTypes_t attr, PropStream& propStream)
 	if(!propStream.GET_USHORT(depotId))
 		return ATTR_READ_ERROR;
 
-	setDepotId(depotId);
+	setAttribute("depotid", depotId);
 	return ATTR_READ_CONTINUE;
 }
 

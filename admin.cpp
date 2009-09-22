@@ -530,7 +530,7 @@ void ProtocolAdmin::adminCommandSetOwner(const std::string& param)
 				uint32_t guid;
 				if(IOLoginData::getInstance()->getGuidByName(guid, name))
 				{
-					if(house->setHouseOwnerEx(guid, clean))
+					if(house->setOwnerEx(guid, clean))
 					{
 						addLogLine(LOGTYPE_EVENT, "Set " + name + " as new owner of house with id " + house->getName());
 						output->AddByte(AP_MSG_COMMAND_OK);

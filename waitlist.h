@@ -18,9 +18,6 @@
 #ifndef __WAITLIST__
 #define __WAITLIST__
 
-#include "game.h"
-#include "networkmessage.h"
-
 struct Wait
 {
 	uint32_t ip;
@@ -30,6 +27,7 @@ struct Wait
 };
 typedef std::list<Wait*> WaitList;
 
+class Player;
 class WaitingList
 {
 	public:

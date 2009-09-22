@@ -1816,9 +1816,6 @@ void LuaScriptInterface::registerFunctions()
 	//setHouseAccessList(houseid, listid, listtext)
 	lua_register(m_luaState, "setHouseAccessList", LuaScriptInterface::luaSetHouseAccessList);
 
-	//getDepotId(uid)
-	lua_register(m_luaState, "getDepotId", LuaScriptInterface::luaGetDepotId);
-
 	//setHouseOwner(houseId, owner[, clean])
 	lua_register(m_luaState, "setHouseOwner", LuaScriptInterface::luaSetHouseOwner);
 
@@ -4451,7 +4448,7 @@ int32_t LuaScriptInterface::luaDoCreateTeleport(lua_State* L)
 		return 1;
 	}
 
-	newTeleport->setDestPos(toPos);
+	newTeleport->setDestination(toPos);
 	if(g_game.internalAddItem(NULL, tile, newTeleport, INDEX_WHEREEVER, FLAG_NOLIMIT) != RET_NOERROR)
 	{
 		delete newItem;
@@ -4604,7 +4601,7 @@ int32_t LuaScriptInterface::luaGetHouseFromPos(lua_State* L)
 		return 1;
 	}
 
-	lua_pushnumber(L, house->getHouseId());
+	lua_pushnumber(L, house->getId());
 	return 1;
 }
 
@@ -4791,7 +4788,7 @@ int32_t LuaScriptInterface::luaDoPlayerSetTown(lua_State* L)
 	{
 		if(Town* town = Towns::getInstance().getTown(townid))
 		{
-			player->masterPos = town->getTemplePosition();
+			player->setMasterPosition(town->getPosition());
 			player->setTown(townid);
 			lua_pushboolean(L, true);
 		}
@@ -4914,12 +4911,12 @@ int32_t LuaScriptInterface::luaGetHouseInfo(lua_State* L)
 	}
 
 	lua_newtable(L);
-	setField(L, "id", house->getHouseId());
+	setField(L, "id", house->getId());
 	setField(L, "name", house->getName().c_str());
-	setField(L, "owner", house->getHouseOwner());
+	setField(L, "owner", house->getOwner());
 
 	lua_pushstring(L, "entry");
-	pushPosition(L, house->getEntryPosition(), 0);
+	pushPosition(L, house->getEntry(), 0);
 	lua_settable(L, -3);
 
 	setField(L, "rent", house->getRent());
@@ -4962,7 +4959,7 @@ int32_t LuaScriptInterface::luaGetHouseByPlayerGUID(lua_State* L)
 {
 	//getHouseByPlayerGUID(guid)
 	if(House* house = Houses::getInstance().getHouseByPlayerId(popNumber(L)))
-		lua_pushnumber(L, house->getHouseId());
+		lua_pushnumber(L, house->getId());
 	else
 		lua_pushnil(L);
 	return 1;
@@ -4987,26 +4984,6 @@ int32_t LuaScriptInterface::luaSetHouseAccessList(lua_State* L)
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaGetDepotId(lua_State* L)
-{
-	//getDepotId(uid)
-	ScriptEnviroment* env = getScriptEnv();
-	if(Container* container = env->getContainerByUID(popNumber(L)))
-	{
-		if(Depot* depot = container->getDepot())
-			lua_pushnumber(L, depot->getDepotId());
-		else
-			lua_pushboolean(L, false);
-	}
-	else
-	{
-		reportErrorFunc(getErrorDesc(LUA_ERROR_CONTAINER_NOT_FOUND));
-		lua_pushboolean(L, false);
-	}
-
-	return 1;
-}
-
 int32_t LuaScriptInterface::luaSetHouseOwner(lua_State* L)
 {
 	//setHouseOwner(houseId, owner[, clean])
@@ -5016,7 +4993,7 @@ int32_t LuaScriptInterface::luaSetHouseOwner(lua_State* L)
 
 	uint32_t owner = popNumber(L);
 	if(House* house = Houses::getInstance().getHouse(popNumber(L)))
-		lua_pushboolean(L, house->setHouseOwnerEx(owner, clean));
+		lua_pushboolean(L, house->setOwnerEx(owner, clean));
 	else
 	{
 		reportErrorFunc(getErrorDesc(LUA_ERROR_HOUSE_NOT_FOUND));
@@ -8849,7 +8826,7 @@ int32_t LuaScriptInterface::luaGetTownId(lua_State* L)
 	//getTownId(townName)
 	std::string townName = popString(L);
 	if(Town* town = Towns::getInstance().getTown(townName))
-		lua_pushnumber(L, town->getTownID());
+		lua_pushnumber(L, town->getID());
 	else
 		lua_pushboolean(L, false);
 
@@ -8877,7 +8854,7 @@ int32_t LuaScriptInterface::luaGetTownTemplePosition(lua_State* L)
 
 	uint32_t townId = popNumber(L);
 	if(Town* town = Towns::getInstance().getTown(townId))
-		pushPosition(L, town->getTemplePosition(), 255);
+		pushPosition(L, town->getPosition(), 255);
 	else
 		lua_pushboolean(L, false);
 
@@ -8899,7 +8876,7 @@ int32_t LuaScriptInterface::luaGetTownHouses(lua_State* L)
 			continue;
 
 		lua_pushnumber(L, i);
-		lua_pushnumber(L, it->second->getHouseId());
+		lua_pushnumber(L, it->second->getId());
 		lua_settable(L, -3);
 	}
 

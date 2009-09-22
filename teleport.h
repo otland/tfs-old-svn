@@ -17,12 +17,12 @@
 
 #ifndef __TELEPORT__
 #define __TELEPORT__
-#include "tile.h"
 
+class Tile;
 class Teleport : public Item, public Cylinder
 {
 	public:
-		Teleport(uint16_t _type);
+		Teleport(uint16_t type): Item(type) {}
 		virtual ~Teleport() {}
 
 		virtual Teleport* getTeleport() {return this;}
@@ -32,8 +32,8 @@ class Teleport : public Item, public Cylinder
 		virtual Attr_ReadValue readAttr(AttrTypes_t attr, PropStream& propStream);
 		virtual bool serializeAttr(PropWriteStream& propWriteStream) const;
 
-		void setDestPos(const Position& pos) {destPos = pos;}
-		const Position& getDestPos() const {return destPos;}
+		void setDestination(const Position& pos) {destination = pos;}
+		Position getDestination() const {return destination;}
 
 		//cylinder implementations
 		virtual ReturnValue __queryAdd(int32_t index, const Thing* thing, uint32_t count,
@@ -59,6 +59,6 @@ class Teleport : public Item, public Cylinder
 			int32_t index, bool isCompleteRemoval, cylinderlink_t link = LINK_OWNER);
 
 	private:
-		Position destPos;
+		Position destination;
 };
 #endif
