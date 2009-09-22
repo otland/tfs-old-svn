@@ -4112,7 +4112,7 @@ int32_t LuaScriptInterface::luaGetThingFromPos(lua_State* L)
 			if(!(thing = tile->getTopCreature()))
 			{
 				Item* item = tile->getTopDownItem();
-				if(item && !item->isNotMoveable())
+				if(item && item->isMoveable())
 					thing = item;
 			}
 		}
@@ -4151,7 +4151,7 @@ int32_t LuaScriptInterface::luaGetTileItemById(lua_State* L)
 	PositionEx pos;
 	popPosition(L, pos);
 
-	Tile* tile = g_game.getTile(pos.x, pos.y, pos.z);
+	Tile* tile = g_game.getTile(pos);
 	if(!tile)
 	{
 		pushThing(L, NULL, 0);
@@ -4528,7 +4528,7 @@ int32_t LuaScriptInterface::luaDoPlayerSetStorageValue(lua_State* L)
 		if(!nil)
 			nil = player->addStorageValue(key, value);
 		else
-			nil = player->eraseStorageValue(key);
+			player->eraseStorageValue(key);
 
 		lua_pushboolean(L, nil);
 	}

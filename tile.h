@@ -156,9 +156,6 @@ class Tile : public Cylinder
 		const HouseTile* getHouseTile() const;
 		bool isHouseTile() const {return hasFlag(TILESTATE_HOUSE);}
 
-		virtual int32_t getThrowRange() const {return 0;}
-		virtual bool isPushable() const {return false;}
-
 		MagicField* getFieldItem() const;
 		Teleport* getTeleportItem() const;
 		TrashHolder* getTrashHolder() const;
@@ -235,12 +232,22 @@ class Tile : public Cylinder
 
 		bool isSwimmingPool(bool checkPz = true) const;
 		bool hasHeight(uint32_t n) const;
-		virtual std::string getDescription(int32_t lookDistance) const;
 
 		void moveCreature(Creature* actor, Creature* creature, Cylinder* toCylinder, bool forceTeleport = false);
 		int32_t getClientIndexOfThing(const Player* player, const Thing* thing) const;
 
 		//cylinder implementations
+		virtual Cylinder* getParent() {return NULL;}
+		virtual const Cylinder* getParent() const {return NULL;}
+		virtual bool isRemoved() const {return false;}
+		virtual Position getPosition() const {return pos;}
+		virtual Tile* getTile() {return this;}
+		virtual const Tile* getTile() const {return this;}
+		virtual Item* getItem() {return NULL;}
+		virtual const Item* getItem() const {return NULL;}
+		virtual Creature* getCreature() {return NULL;}
+		virtual const Creature* getCreature() const {return NULL;}
+
 		virtual ReturnValue __queryAdd(int32_t index, const Thing* thing, uint32_t count,
 			uint32_t flags) const;
 		virtual ReturnValue __queryMaxCount(int32_t index, const Thing* thing, uint32_t count,
@@ -271,11 +278,6 @@ class Tile : public Cylinder
 		virtual void __internalAddThing(Thing* thing) {__internalAddThing(0, thing);}
 		virtual void __internalAddThing(uint32_t index, Thing* thing);
 
-		virtual Position getPosition() const {return tilePos;}
-		const Position& getTilePosition() const {return tilePos;}
-
-		virtual bool isRemoved() const {return false;}
-
 	private:
 		void onAddTileItem(Item* item);
 		void onUpdateTileItem(Item* oldItem, const ItemType& oldType, Item* newItem, const ItemType& newType);
@@ -292,7 +294,7 @@ class Tile : public Cylinder
 		Item* ground;
 
 	protected:
-		Position tilePos;
+		Position pos;
 		uint32_t m_flags, thingCount;
 };
 

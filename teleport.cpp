@@ -66,14 +66,12 @@ void Teleport::__addThing(Creature* actor, int32_t index, Thing* thing)
 void Teleport::postAddNotification(Creature* actor, Thing* thing, const Cylinder* oldParent,
 	int32_t index, cylinderlink_t link /*= LINK_OWNER*/)
 {
-	if(parent)
-		parent->postAddNotification(actor, thing, oldParent, index, LINK_PARENT);
+	getParent()->postAddNotification(actor, thing, oldParent, index, LINK_PARENT);
 }
 
 void Teleport::postRemoveNotification(Creature* actor, Thing* thing, const Cylinder* newParent,
 	int32_t index, bool isCompleteRemoval, cylinderlink_t link /*= LINK_OWNER*/)
 {
-	if(parent)
-		parent->postRemoveNotification(actor, thing, newParent,
-			index, isCompleteRemoval, LINK_PARENT);
+	getParent()->postRemoveNotification(actor, thing, newParent,
+		index, isCompleteRemoval, LINK_PARENT);
 }

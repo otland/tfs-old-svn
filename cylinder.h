@@ -18,8 +18,6 @@
 #ifndef __CYLINDER__
 #define __CYLINDER__
 #include "otsystem.h"
-
-#include "thing.h"
 #define INDEX_WHEREEVER -1
 
 class Item;
@@ -27,13 +25,13 @@ class Creature;
 
 enum cylinderflags_t
 {
-	FLAG_NOLIMIT = 1,		//Bypass limits like capacity/container limits, blocking items/creatures etc.
-	FLAG_IGNOREBLOCKITEM = 2,	//Bypass moveable blocking item checks
+	FLAG_NOLIMIT = 1,				//Bypass limits like capacity/container limits, blocking items/creatures etc.
+	FLAG_IGNOREBLOCKITEM = 2,		//Bypass moveable blocking item checks
 	FLAG_IGNOREBLOCKCREATURE = 4,	//Bypass creature checks
-	FLAG_CHILDISOWNER = 8,		//Used by containers to query capacity of the carrier (player)
-	FLAG_PATHFINDING = 16,		//An additional check is done for floor changing/teleport items
+	FLAG_CHILDISOWNER = 8,			//Used by containers to query capacity of the carrier (player)
+	FLAG_PATHFINDING = 16,			//An additional check is done for floor changing/teleport items
 	FLAG_IGNOREFIELDDAMAGE = 32,	//Bypass field damage checks
-	FLAG_IGNORENOTMOVEABLE = 64	//Bypass check for movability
+	FLAG_IGNORENOTMOVEABLE = 64		//Bypass check for movability
 };
 
 enum cylinderlink_t
@@ -44,9 +42,20 @@ enum cylinderlink_t
 	LINK_NEAR
 };
 
-class Cylinder : virtual public Thing
+class Cylinder
 {
 	public:
+		virtual Cylinder* getParent() = 0;
+		virtual const Cylinder* getParent() const = 0;
+		virtual bool isRemoved() const = 0;
+		virtual Position getPosition() const = 0;
+		virtual Tile* getTile() = 0;
+		virtual const Tile* getTile() const = 0;
+		virtual Item* getItem() = 0;
+		virtual const Item* getItem() const = 0;
+		virtual Creature* getCreature() = 0;
+		virtual const Creature* getCreature() const = 0;
+
 		/**
 		  * Query if the cylinder can add an object
 		  * \param index points to the destination index (inventory slot/container position)
@@ -218,6 +227,17 @@ class VirtualCylinder : public Cylinder
 	public:
 		static VirtualCylinder* virtualCylinder;
 
+		virtual Cylinder* getParent() {return NULL;}
+		virtual const Cylinder* getParent() const {return NULL;}
+		virtual bool isRemoved() const {return false;}
+		virtual Position getPosition() const {return Position();}
+		virtual Tile* getTile() {return NULL;}
+		virtual const Tile* getTile() const {return NULL;}
+		virtual Item* getItem() {return NULL;}
+		virtual const Item* getItem() const {return NULL;}
+		virtual Creature* getCreature() {return NULL;}
+		virtual const Creature* getCreature() const {return NULL;}
+
 		virtual ReturnValue __queryAdd(int32_t index, const Thing* thing, uint32_t count,
 			uint32_t flags) const {return RET_NOTPOSSIBLE;}
 		virtual ReturnValue __queryMaxCount(int32_t index, const Thing* thing, uint32_t count,
@@ -238,11 +258,5 @@ class VirtualCylinder : public Cylinder
 		virtual void postRemoveNotification(Creature* actor, Thing* thing, const Cylinder* oldParent,
 			int32_t index, bool isCompleteRemoval,
 			cylinderlink_t link = LINK_OWNER) {}
-
-		virtual bool isPushable() const {return false;}
-		virtual int getThrowRange() const {return 1;}
-		virtual std::string getDescription(int32_t lookDistance) const {return "";}
-
-		virtual bool isRemoved() const {return false;}
 };
 #endif

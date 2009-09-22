@@ -779,26 +779,10 @@ void Player::dropLoot(Container* corpse)
 	}
 }
 
-bool Player::getStorageValue(const uint32_t key, std::string& value) const
-{
-	StorageMap::const_iterator it = storageMap.find(key);
-	if(it != storageMap.end())
-	{
-		value = it->second;
-		return true;
-	}
-
-	value = "-1";
-	return false;
-}
-
 bool Player::addStorageValue(const uint32_t key, const std::string& value)
 {
 	if(!IS_IN_KEYRANGE(key, RESERVED_RANGE))
-	{
-		storageMap[key] = value;
-		return true;
-	}
+		return Creature::addStorageValue(key, value);
 
 	if(IS_IN_KEYRANGE(key, OUTFITS_RANGE))
 	{
@@ -830,12 +814,11 @@ bool Player::addStorageValue(const uint32_t key, const std::string& value)
 	return false;
 }
 
-bool Player::eraseStorageValue(const uint32_t key)
+void Player::eraseStorageValue(const uint32_t key)
 {
+	Creature::eraseStorageValue(key);
 	if(IS_IN_KEYRANGE(key, RESERVED_RANGE))
-		std::cout << "[Warning - Player::eraseStorageValue] Unknown reserved key: " << key << " for player: " << getName() << std::endl;
-
-	return storageMap.erase(key);
+		std::cout << "[Warning - Player::eraseStorageValue] Unknown reserved key: " << key << " for player: " << name << std::endl;
 }
 
 bool Player::canSee(const Position& pos) const
@@ -3843,7 +3826,7 @@ bool Player::removeOutfit(uint32_t outfitId, uint32_t addons)
 	return true;
 }
 
-void Player::genReservedStorageRange()
+void Player::generateReservedStorage()
 {
 	uint32_t baseKey = PSTRG_OUTFITSID_RANGE_START + 1;
 	const OutfitMap& defaultOutfits = Outfits::getInstance()->getOutfits(sex);

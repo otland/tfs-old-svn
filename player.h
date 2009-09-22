@@ -124,7 +124,6 @@ enum Exhaust_t
 typedef std::set<uint32_t> VIPListSet;
 typedef std::vector<std::pair<uint32_t, Container*> > ContainerVector;
 typedef std::map<uint32_t, std::pair<Depot*, bool> > DepotMap;
-typedef std::map<uint32_t, std::string> StorageMap;
 typedef std::map<uint32_t, uint32_t> MuteCountMap;
 typedef std::list<std::string> LearnedInstantSpellList;
 typedef std::list<uint32_t> InvitedToGuildsList;
@@ -239,15 +238,11 @@ class Player : public Creature, public Cylinder
 		void addContainer(uint32_t cid, Container* container);
 		void closeContainer(uint32_t cid);
 
-		bool getStorageValue(const uint32_t key, std::string& value) const;
 		bool addStorageValue(const uint32_t key, const std::string& value);
-		bool eraseStorageValue(const uint32_t key);
-		void genReservedStorageRange();
+		void eraseStorageValue(const uint32_t key);
 
+		void generateReservedStorage();
 		bool transferMoneyTo(const std::string& name, uint64_t amount);
-
-		inline StorageMap::const_iterator getStorageIteratorBegin() const {return storageMap.begin();}
-		inline StorageMap::const_iterator getStorageIteratorEnd() const {return storageMap.end();}
 
 		void setGroupId(int32_t newId);
 		int32_t getGroupId() const {return groupId;}
@@ -717,6 +712,17 @@ class Player : public Creature, public Cylinder
 		virtual void dropLoot(Container* corpse);
 
 		//cylinder implementations
+		virtual Cylinder* getParent() {return Creature::getParent();}
+		virtual const Cylinder* getParent() const {return Creature::getParent();}
+		virtual bool isRemoved() const {return Creature::isRemoved();}
+		virtual Position getPosition() const {return Creature::getPosition();}
+		virtual Tile* getTile() {return Creature::getTile();}
+		virtual const Tile* getTile() const {return Creature::getTile();}
+		virtual Item* getItem() {return NULL;}
+		virtual const Item* getItem() const {return NULL;}
+		virtual Creature* getCreature() {return this;}
+		virtual const Creature* getCreature() const {return this;}
+
 		virtual ReturnValue __queryAdd(int32_t index, const Thing* thing, uint32_t count,
 			uint32_t flags) const;
 		virtual ReturnValue __queryMaxCount(int32_t index, const Thing* thing, uint32_t count, uint32_t& maxQueryCount,
@@ -877,7 +883,6 @@ class Player : public Creature, public Cylinder
 		PartyList invitePartyList;
 		OutfitMap outfits;
 		LearnedInstantSpellList learnedInstantSpellList;
-		StorageMap storageMap;
 
 		friend class Game;
 		friend class LuaScriptInterface;

@@ -849,6 +849,25 @@ void Creature::changeMana(int32_t manaChange)
 		mana = std::max((int32_t)0, mana + manaChange);
 }
 
+bool Creature::getStorageValue(const uint32_t key, std::string& value) const
+{
+	StorageMap::const_iterator it = storageMap.find(key);
+	if(it != storageMap.end())
+	{
+		value = it->second;
+		return true;
+	}
+
+	value = "-1";
+	return false;
+}
+
+bool Creature::addStorageValue(const uint32_t key, const std::string& value)
+{
+	storageMap[key] = value;
+	return true;
+}
+
 void Creature::gainHealth(Creature* caster, int32_t healthGain)
 {
 	if(healthGain > 0)

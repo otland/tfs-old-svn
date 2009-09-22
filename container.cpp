@@ -24,9 +24,9 @@
 
 extern Game g_game;
 
-Container::Container(uint16_t _type) : Item(_type)
+Container::Container(uint16_t type) : Item(type)
 {
-	maxSize = items[_type].maxItems;
+	maxSize = items[type].maxItems;
 	serializationCount = 0;
 	totalWeight = 0.0;
 }
@@ -53,9 +53,9 @@ Item* Container::clone() const
 
 Container* Container::getParentContainer()
 {
-	if(Thing* thing = getParent())
+	if(Cylinder* cylinder = getParent())
 	{
-		if(Item* item = thing->getItem())
+		if(Item* item = cylinder->getItem())
 			return item->getContainer();
 	}
 
@@ -283,13 +283,13 @@ ReturnValue Container::__queryAdd(int32_t index, const Thing* thing, uint32_t co
 	if(item == this)
 		return RET_THISISIMPOSSIBLE;
 
-	const Cylinder* cylinder = getParent();
-	while(cylinder)
+	if(const Container* container = item->getContainer())
 	{
-		if(cylinder == thing)
-			return RET_THISISIMPOSSIBLE;
-
-		cylinder = cylinder->getParent();
+		for(const Cylinder* cylinder = getParent(); cylinder; cylinder = cylinder->getParent())
+		{
+			if(cylinder == container)
+				return RET_THISISIMPOSSIBLE;
+		}
 	}
 
 	if(index == INDEX_WHEREEVER && !((flags & FLAG_NOLIMIT) == FLAG_NOLIMIT) && full())

@@ -119,6 +119,7 @@ struct DeathLessThan
 typedef std::vector<DeathEntry> DeathList;
 typedef std::list<CreatureEvent*> CreatureEventList;
 typedef std::list<Condition*> ConditionList;
+typedef std::map<uint32_t, std::string> StorageMap;
 
 class Map;
 class Tile;
@@ -320,6 +321,13 @@ class Creature : public AutoId, virtual public Thing
 		virtual void changeMana(int32_t manaChange);
 		void changeMaxMana(uint32_t manaChange) {manaMax = manaChange;}
 
+		bool getStorageValue(const uint32_t key, std::string& value) const;
+		bool addStorageValue(const uint32_t key, const std::string& value);
+		void eraseStorageValue(const uint32_t key) {storageMap.erase(key);}
+
+		inline StorageMap::const_iterator getStorageBegin() const {return storageMap.begin();}
+		inline StorageMap::const_iterator getStorageEnd() const {return storageMap.end();}
+
 		virtual void gainHealth(Creature* caster, int32_t amount);
 		virtual void drainHealth(Creature* attacker, CombatType_t combatType, int32_t damage);
 		virtual void drainMana(Creature* attacker, CombatType_t combatType, int32_t damage);
@@ -419,7 +427,7 @@ class Creature : public AutoId, virtual public Thing
 			Thing::setParent(cylinder);
 		}
 
-		virtual Position getPosition() const {return _tile->getTilePosition();}
+		virtual Position getPosition() const {return _tile->getPosition();}
 		virtual Tile* getTile() {return _tile;}
 		virtual const Tile* getTile() const {return _tile;}
 		int32_t getWalkCache(const Position& pos) const;
@@ -441,6 +449,7 @@ class Creature : public AutoId, virtual public Thing
 		bool isMapLoaded;
 		bool isUpdatingPath;
 		bool checked;
+		StorageMap storageMap;
 
 		int32_t checkVector;
 		int32_t health, healthMax;

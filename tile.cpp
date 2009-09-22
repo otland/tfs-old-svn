@@ -160,11 +160,6 @@ uint32_t Tile::getDownItemCount() const
 	return 0;
 }
 
-std::string Tile::getDescription(int32_t lookDistance) const
-{
-	return "You don't know why, but you cannot see anything!";
-}
-
 Teleport* Tile::getTeleportItem() const
 {
 	if(!hasFlag(TILESTATE_TELEPORT))
@@ -771,7 +766,7 @@ Cylinder* Tile::__queryDestination(int32_t& index, const Thing* thing, Item** de
 	Tile* destTile = NULL;
 	*destItem = NULL;
 
-	Position pos = getTilePosition();
+	Position pos = getPosition();
 	if(floorChange(CHANGE_DOWN))
 	{
 		pos.z++;
