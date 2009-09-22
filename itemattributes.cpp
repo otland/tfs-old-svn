@@ -316,7 +316,7 @@ void ItemAttributes::serializeMap(PropWriteStream& stream) const
 
 bool ItemAttribute::unserialize(PropStream& stream)
 {
-	uint8_t type;
+	uint8_t type = 0;
 	stream.GET_UCHAR(type);
 	switch(type)
 	{
