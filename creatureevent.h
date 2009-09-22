@@ -42,6 +42,7 @@ enum CreatureEventType_t
 	CREATURE_EVENT_THINK,
 	CREATURE_EVENT_STATSCHANGE,
 	CREATURE_EVENT_COMBAT_AREA,
+	CREATURE_EVENT_PUSH,
 	CREATURE_EVENT_TARGET,
 	CREATURE_EVENT_FOLLOW,
 	CREATURE_EVENT_COMBAT,
@@ -125,6 +126,7 @@ class CreatureEvent : public Event
 		uint32_t executeOutfit(Creature* creature, const Outfit_t& old, const Outfit_t& current);
 		uint32_t executeStatsChange(Creature* creature, Creature* attacker, StatsChange_t type, CombatType_t combat, int32_t value);
 		uint32_t executeCombatArea(Creature* creature, Tile* tile, bool isAggressive);
+		uint32_t executePush(Creature* creature, Creature* target);
 		uint32_t executeTarget(Creature* creature, Creature* target);
 		uint32_t executeFollow(Creature* creature, Creature* target);
 		uint32_t executeCombat(Creature* creature, Creature* target);

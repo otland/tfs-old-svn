@@ -1058,6 +1058,17 @@ bool Game::playerMoveCreature(uint32_t playerId, uint32_t movingCreatureId,
 		}
 	}
 
+	bool deny = false;
+	CreatureEventList pushEvents = getCreatureEvents(CREATURE_EVENT_PUSH);
+	for(CreatureEventList::iterator it = pushEvents.begin(); it != pushEvents.end(); ++it)
+	{
+		if(creature && !(*it)->executePush(this, creature))
+			deny = true;
+	}
+
+	if(deny)
+		return false;
+
 	ReturnValue ret = internalMoveCreature(player, movingCreature, movingCreature->getTile(), toTile);
 	if(ret != RET_NOERROR)
 	{

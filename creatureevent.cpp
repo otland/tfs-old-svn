@@ -180,6 +180,8 @@ bool CreatureEvent::configureEvent(xmlNodePtr p)
 		m_type = CREATURE_EVENT_STATSCHANGE;
 	else if(tmpStr == "areacombat")
 		m_type = CREATURE_EVENT_COMBAT_AREA;
+	else if(tmpStr == "push")
+		m_type = CREATURE_EVENT_PUSH;
 	else if(tmpStr == "target")
 		m_type = CREATURE_EVENT_TARGET;
 	else if(tmpStr == "follow")
@@ -244,6 +246,8 @@ std::string CreatureEvent::getScriptEventName() const
 			return "onStatsChange";
 		case CREATURE_EVENT_COMBAT_AREA:
 			return "onAreaCombat";
+		case CREATURE_EVENT_PUSH:
+			return "onPush";
 		case CREATURE_EVENT_TARGET:
 			return "onTarget";
 		case CREATURE_EVENT_FOLLOW:
@@ -303,6 +307,7 @@ std::string CreatureEvent::getScriptEventParams() const
 			return "cid, attacker, type, combat, value";
 		case CREATURE_EVENT_COMBAT_AREA:
 			return "cid, tileItem, tilePosition, isAggressive";
+		case CREATURE_EVENT_PUSH:
 		case CREATURE_EVENT_TARGET:
 		case CREATURE_EVENT_FOLLOW:
 		case CREATURE_EVENT_COMBAT:
@@ -1694,6 +1699,60 @@ uint32_t CreatureEvent::executeReportBug(Player* player, std::string comment)
 	else
 	{
 		std::cout << "[Error - CreatureEvent::executeReportBug] Call stack overflow." << std::endl;
+		return 0;
+	}
+}
+
+uint32_t CreatureEvent::executePush(Creature* creature, Creature* target)
+{
+	//onPush(cid, target)
+	if(m_scriptInterface->reserveScriptEnv())
+	{
+		ScriptEnviroment* env = m_scriptInterface->getScriptEnv();
+		if(m_scripted == EVENT_SCRIPT_BUFFER)
+		{
+			env->setRealPos(creature->getPosition());
+			std::stringstream scriptstream;
+
+			scriptstream << "local cid = " << env->addThing(creature) << std::endl;
+			scriptstream << "local target = " << env->addThing(target) << std::endl;
+
+			scriptstream << m_scriptData;
+			bool result = true;
+			if(m_scriptInterface->loadBuffer(scriptstream.str()) != -1)
+			{
+				lua_State* L = m_scriptInterface->getLuaState();
+				result = m_scriptInterface->getGlobalBool(L, "_result", true);
+			}
+
+			m_scriptInterface->releaseScriptEnv();
+			return result;
+		}
+		else
+		{
+			#ifdef __DEBUG_LUASCRIPTS__
+			std::stringstream desc;
+			desc << creature->getName();
+			env->setEventDesc(desc.str());
+			#endif
+
+			env->setScriptId(m_scriptId, m_scriptInterface);
+			env->setRealPos(creature->getPosition());
+
+			lua_State* L = m_scriptInterface->getLuaState();
+			m_scriptInterface->pushFunction(m_scriptId);
+
+			lua_pushnumber(L, env->addThing(creature));
+			lua_pushnumber(L, env->addThing(target));
+
+			bool result = m_scriptInterface->callFunction(2);
+			m_scriptInterface->releaseScriptEnv();
+			return result;
+		}
+	}
+	else
+	{
+		std::cout << "[Error - CreatureEvent::executePush] Call stack overflow." << std::endl;
 		return 0;
 	}
 }

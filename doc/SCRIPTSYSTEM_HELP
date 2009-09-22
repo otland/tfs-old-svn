@@ -54,7 +54,7 @@
 					traderequest, tradeaccept
 					joinchannel, leavechannel
 					look, think, textedit, reportbug
-					target, follow
+					push, target, follow
 					attack, combat, areacombat, cast
 					kill, death, preparedeath
 		Functions:
@@ -75,6 +75,7 @@
 			onTextEdit(cid, item, newText)
 			onReportBug(cid, comment)
 			onAreaCombat(cid, tileItem, tilePosition, isAggressive)
+			onPush(cid, target)
 			onTarget(cid, target)
 			onFollow(cid, target)
 			onCombat(cid, target)
