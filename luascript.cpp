@@ -239,7 +239,7 @@ uint32_t ScriptEnviroment::addThing(Thing* thing)
 		}
 	}
 
-	while(m_localMap.find(m_lastUID]) != m_localMap.end())
+	while(m_localMap.find(m_lastUID) != m_localMap.end())
 		++m_lastUID;
 
 	m_localMap[m_lastUID] = thing;
