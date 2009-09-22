@@ -1711,7 +1711,7 @@ uint32_t CreatureEvent::executePush(Player* player, Creature* target)
 		ScriptEnviroment* env = m_scriptInterface->getScriptEnv();
 		if(m_scripted == EVENT_SCRIPT_BUFFER)
 		{
-			env->setRealPos(plaer->getPosition());
+			env->setRealPos(player->getPosition());
 			std::stringstream scriptstream;
 
 			scriptstream << "local cid = " << env->addThing(player) << std::endl;

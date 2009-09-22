@@ -271,7 +271,7 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 					}
 
 					Tile* tile = NULL;
-					Item* groundItem = NULL;
+					Item* ground = NULL;
 					uint32_t tileflags = 0;
 
 					uint16_t px = base_x + tileCoord->_x, py = base_y + tileCoord->_y, pz = base_z;
@@ -370,14 +370,14 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 								}
 								else if(item->isGroundTile())
 								{
-									if(groundItem)
-										delete groundItem;
+									if(ground)
+										delete ground;
 
-									groundItem = item;
+									ground = item;
 								}
 								else
 								{
-									tile = createTile(groundItem, item, px, py, pz);
+									tile = createTile(ground, item, px, py, pz);
 									tile->__internalAddThing(item);
 
 									item->__startDecaying();
@@ -435,14 +435,14 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 								}
 								else if(item->isGroundTile())
 								{
-									if(groundItem)
-										delete groundItem;
+									if(ground)
+										delete ground;
 
-									groundItem = item;
+									ground = item;
 								}
 								else
 								{
-									tile = createTile(groundItem, item, px, py, pz);
+									tile = createTile(ground, item, px, py, pz);
 									tile->__internalAddThing(item);
 
 									item->__startDecaying();
@@ -471,7 +471,7 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 					}
 
 					if(!tile)
-						tile = createTile(groundItem, NULL, px, py, pz);
+						tile = createTile(ground, NULL, px, py, pz);
 
 					tile->setFlag((tileflags_t)tileflags);
 					map->setTile(px, py, pz, tile);
