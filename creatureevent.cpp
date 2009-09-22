@@ -1703,7 +1703,7 @@ uint32_t CreatureEvent::executeReportBug(Player* player, std::string comment)
 	}
 }
 
-uint32_t CreatureEvent::executePush(Creature* creature, Creature* target)
+uint32_t CreatureEvent::executePush(Player* player, Creature* target)
 {
 	//onPush(cid, target)
 	if(m_scriptInterface->reserveScriptEnv())
@@ -1711,10 +1711,10 @@ uint32_t CreatureEvent::executePush(Creature* creature, Creature* target)
 		ScriptEnviroment* env = m_scriptInterface->getScriptEnv();
 		if(m_scripted == EVENT_SCRIPT_BUFFER)
 		{
-			env->setRealPos(creature->getPosition());
+			env->setRealPos(plaer->getPosition());
 			std::stringstream scriptstream;
 
-			scriptstream << "local cid = " << env->addThing(creature) << std::endl;
+			scriptstream << "local cid = " << env->addThing(player) << std::endl;
 			scriptstream << "local target = " << env->addThing(target) << std::endl;
 
 			scriptstream << m_scriptData;
@@ -1732,17 +1732,17 @@ uint32_t CreatureEvent::executePush(Creature* creature, Creature* target)
 		{
 			#ifdef __DEBUG_LUASCRIPTS__
 			std::stringstream desc;
-			desc << creature->getName();
+			desc << player->getName();
 			env->setEventDesc(desc.str());
 			#endif
 
 			env->setScriptId(m_scriptId, m_scriptInterface);
-			env->setRealPos(creature->getPosition());
+			env->setRealPos(player->getPosition());
 
 			lua_State* L = m_scriptInterface->getLuaState();
 			m_scriptInterface->pushFunction(m_scriptId);
 
-			lua_pushnumber(L, env->addThing(creature));
+			lua_pushnumber(L, env->addThing(player));
 			lua_pushnumber(L, env->addThing(target));
 
 			bool result = m_scriptInterface->callFunction(2);

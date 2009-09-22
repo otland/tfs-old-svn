@@ -1059,10 +1059,10 @@ bool Game::playerMoveCreature(uint32_t playerId, uint32_t movingCreatureId,
 	}
 
 	bool deny = false;
-	CreatureEventList pushEvents = getCreatureEvents(CREATURE_EVENT_PUSH);
+	CreatureEventList pushEvents = player->getCreatureEvents(CREATURE_EVENT_PUSH);
 	for(CreatureEventList::iterator it = pushEvents.begin(); it != pushEvents.end(); ++it)
 	{
-		if(creature && !(*it)->executePush(this, creature))
+		if(!(*it)->executePush(player, movingCreature) && !deny)
 			deny = true;
 	}
 
