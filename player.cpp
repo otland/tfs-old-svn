@@ -1786,7 +1786,8 @@ void Player::drainMana(Creature* attacker, CombatType_t combatType, int32_t dama
 
 void Player::addManaSpent(uint64_t amount, bool ignoreFlag/* = false*/, bool useMultiplier/* = true*/)
 {
-	if(!amount || (!ignoreFlag && hasFlag(PlayerFlag_NotGainMana)))
+	if(!amount || (!ignoreFlag && hasFlag(PlayerFlag_NotGainMana)) || (!g_config.getBool(
+		ConfigManager::PVPZONE_ADDMANASPENT) && getZone() == ZONE_PVP))
 		return;
 
 	uint64_t currReqMana = vocation->getReqMana(magLevel), nextReqMana = vocation->getReqMana(magLevel + 1);
