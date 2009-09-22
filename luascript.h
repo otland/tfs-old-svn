@@ -723,8 +723,8 @@ class LuaScriptInterface
 		static int32_t luaGetItemDescriptions(lua_State* L);
 		static int32_t luaGetItemWeight(lua_State* L);
 		static int32_t luaGetItemAttribute(lua_State* L);
-		static int32_t luaDoSetItemAttribute(lua_State* L);
-		static int32_t luaDoEraseItemAttribute(lua_State* L);
+		static int32_t luaDoItemSetAttribute(lua_State* L);
+		static int32_t luaDoItemEraseAttribute(lua_State* L);
 		static int32_t luaGetItemLevelDoor(lua_State* L);
 
 		static int32_t luaGetTalkActionList(lua_State* L);

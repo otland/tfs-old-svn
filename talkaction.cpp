@@ -840,7 +840,11 @@ bool TalkAction::thingProporties(Creature* creature, const std::string& cmd, con
 			else if(action == "action" || action == "actionid" || action == "aid")
 				item->setActionId(atoi(parseParams(it, tokens.end()).c_str()));
 			else if(action == "unique" || action == "uniqueid" || action == "uid")
-				item->setUniqueId(atoi(parseParams(it, tokens.end()).c_str()));
+			{
+				int32_t tmp = parseParams(it, tokens.end()).c_str());
+				if(tmp >= 1000 || tmp <= 0xFFFF)
+					item->setUniqueId(tmp);
+			}
 			else if(action == "destination" || action == "position"
 				|| action == "pos" || action == "dest") //TODO: doesn't work
 			{

@@ -488,7 +488,7 @@ void ScriptEnviroment::streamThing(std::stringstream& stream, const std::string&
 		if(!id)
 			id = item->getID();
 
-		stream << "uid = " << thingId << "," << std::endl;
+		stream << "uid = " << id << "," << std::endl;
 		stream << "itemid = " << item->getID() << "," << std::endl;
 		if(item->hasSubType())
 			stream << "type = " << item->getSubType() << "," << std::endl;
@@ -503,7 +503,7 @@ void ScriptEnviroment::streamThing(std::stringstream& stream, const std::string&
 		if(!id)
 			id = item->getID();
 
-		stream << "uid = " << thingId << "," << std::endl;
+		stream << "uid = " << id << "," << std::endl;
 		stream << "itemid = 1," << std::endl;
 		if(creature->getPlayer())
 			stream << "type = 1," << std::endl;
@@ -540,7 +540,7 @@ void ScriptEnviroment::streamPosition(std::stringstream& stream, const std::stri
 		stream << "}" << std::endl;
 }
 
-void ScriptEnviroment::streamOutfit(std::stringstream& stream, const std::string& local, const Outfit_t& outfit, bool locale/* = true*/)
+void ScriptEnviroment::streamOutfit(std::stringstream& stream, const std::string& local, const Outfit_t& outfit)
 {
 	if(!local.empty())
 		stream << "local " << local << " = {" << std::endl;
@@ -9294,7 +9294,7 @@ int32_t LuaScriptInterface::luaDoItemSetAttribute(lua_State* L)
 				return 1;
 			}
 
-			item->setUniqueId((uint16_t)tmp);
+			item->setUniqueId(tmp);
 		}		
 		else if(key == "aid")
 			item->setActionId(boost::any_cast<int32_t>(value));
