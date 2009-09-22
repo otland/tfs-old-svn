@@ -113,7 +113,7 @@ class ScriptEnviroment
 		void streamVariant(std::stringstream& stream, const std::string& local, const LuaVariant& var);
 		void streamThing(std::stringstream& stream, const std::string& local, Thing* thing, uint32_t id = 0);
 		void streamPosition(std::stringstream& stream, const std::string& local, const PositionEx& position)
-			{streamPosition(stream, local, position, position.stackpo);}
+			{streamPosition(stream, local, position, position.stackpos);}
 		void streamPosition(std::stringstream& stream, const std::string& local, const Position& position, uint32_t stackpos);
 		void streamOutfit(std::stringstream& stream, const std::string& local, const Outfit_t& outfit);
 
