@@ -555,6 +555,18 @@ class Player : public Creature, public Cylinder
 		virtual void onAttackedCreatureDisappear(bool isLogout);
 		virtual void onFollowCreatureDisappear(bool isLogout);
 
+		//cylinder implementations
+		virtual Cylinder* getParent() {return Creature::getParent();}
+		virtual const Cylinder* getParent() const {return Creature::getParent();}
+		virtual bool isRemoved() const {return Creature::isRemoved();}
+		virtual Position getPosition() const {return Creature::getPosition();}
+		virtual Tile* getTile() {return Creature::getTile();}
+		virtual const Tile* getTile() const {return Creature::getTile();}
+		virtual Item* getItem() {return NULL;}
+		virtual const Item* getItem() const {return NULL;}
+		virtual Creature* getCreature() {return this;}
+		virtual const Creature* getCreature() const {return this;}
+
 		//container
 		void onAddContainerItem(const Container* container, const Item* item);
 		void onUpdateContainerItem(const Container* container, uint8_t slot,
@@ -712,17 +724,6 @@ class Player : public Creature, public Cylinder
 		virtual void dropLoot(Container* corpse);
 
 		//cylinder implementations
-		virtual Cylinder* getParent() {return Creature::getParent();}
-		virtual const Cylinder* getParent() const {return Creature::getParent();}
-		virtual bool isRemoved() const {return Creature::isRemoved();}
-		virtual Position getPosition() const {return Creature::getPosition();}
-		virtual Tile* getTile() {return Creature::getTile();}
-		virtual const Tile* getTile() const {return Creature::getTile();}
-		virtual Item* getItem() {return NULL;}
-		virtual const Item* getItem() const {return NULL;}
-		virtual Creature* getCreature() {return this;}
-		virtual const Creature* getCreature() const {return this;}
-
 		virtual ReturnValue __queryAdd(int32_t index, const Thing* thing, uint32_t count,
 			uint32_t flags) const;
 		virtual ReturnValue __queryMaxCount(int32_t index, const Thing* thing, uint32_t count, uint32_t& maxQueryCount,

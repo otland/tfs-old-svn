@@ -338,7 +338,7 @@ class StaticTile : public Tile
 };
 
 inline Tile::Tile(uint16_t x, uint16_t y, uint16_t z): qt_node(NULL),
-	ground(NULL), tilePos(x, y, z), m_flags(0), thingCount(0) {}
+	ground(NULL), pos(x, y, z), m_flags(0), thingCount(0) {}
 
 inline Tile::~Tile() {}
 
