@@ -17,9 +17,10 @@
 
 #ifndef __TRASHHOLDER__
 #define __TRASHHOLDER__
+
+#include "tile.h"
 #include "const.h"
 
-class Tile;
 class TrashHolder : public Item, public Cylinder
 {
 	public:

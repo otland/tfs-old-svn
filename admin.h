@@ -18,8 +18,8 @@
 #ifdef __REMOTE_CONTROL__
 #ifndef __ADMIN__
 #define __ADMIN__
-
 #include "otsystem.h"
+
 #include "textlogger.h"
 #include "player.h"
 

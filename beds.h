@@ -17,9 +17,7 @@
 
 #ifndef __BEDS__
 #define __BEDS__
-
 #include "item.h"
-#include "position.h"
 
 class House;
 class Player;

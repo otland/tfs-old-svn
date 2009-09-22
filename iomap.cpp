@@ -521,7 +521,7 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 
 					town->setName(townName);
 					OTBM_Destination_coords *townCoords;
-					if(!propStream.GET_STRUCT(town_coords))
+					if(!propStream.GET_STRUCT(townCoords))
 					{
 						setLastErrorString("Could not read town coordinates.");
 						return false;

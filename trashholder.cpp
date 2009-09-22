@@ -17,7 +17,6 @@
 #include "otpch.h"
 #include "trashholder.h"
 
-#include "tile.h"
 #include "game.h"
 #include "spells.h"
 

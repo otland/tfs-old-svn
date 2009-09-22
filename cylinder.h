@@ -20,11 +20,10 @@
 #include "otsystem.h"
 
 #include "thing.h"
+#define INDEX_WHEREEVER -1
 
 class Item;
 class Creature;
-
-#define INDEX_WHEREEVER -1
 
 enum cylinderflags_t
 {

@@ -18,7 +18,8 @@
 #ifndef __TELEPORT__
 #define __TELEPORT__
 
-class Tile;
+#include "tile.h"
+
 class Teleport : public Item, public Cylinder
 {
 	public:

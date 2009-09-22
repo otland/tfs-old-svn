@@ -9151,6 +9151,7 @@ int32_t LuaScriptInterface::luaGetItemDescriptionsById(lua_State* L)
 	setField(L, "name", it.name.c_str());
 	setField(L, "article", it.article.c_str());
 	setField(L, "plural", it.pluralName.c_str());
+	setField(L, "description", it.description.c_str());
 	return 1;
 }
 
