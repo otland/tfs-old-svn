@@ -584,7 +584,7 @@ bool TalkAction::houseSell(Creature* creature, const std::string& cmd, const std
 		return false;
 	}
 
-	Item* transferItem = HouseTransferItem::createHouseTransferItem(house);
+	Item* transferItem = TransferItem::createTransferItem(house);
 	player->transferContainer.__addThing(NULL, transferItem);
 
 	player->transferContainer.setParent(player);
