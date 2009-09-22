@@ -101,6 +101,7 @@ class Door : public Item
 		uint32_t getDoorId() const;
 
 		House* getHouse() {return house;}
+		void setHouse(House* _house);
 
 		void setAccessList(const std::string& textList);
 		bool getAccessList(std::string& list) const;
@@ -110,9 +111,6 @@ class Door : public Item
 		//overrides
 		virtual void onRemoved();
 		virtual void copyAttributes(Item* item);
-
-	protected:
-		void setHouse(House* _house);
 
 	private:
 		House* house;

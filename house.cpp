@@ -243,7 +243,7 @@ void House::clean()
 {
 	transferToDepot();
 	removePlayers(true);
-	for(HouseBedItemList::iterator bit = bedsList.begin(); bit != bedsList.end(); ++bit)
+	for(HouseBedList::iterator bit = bedsList.begin(); bit != bedsList.end(); ++bit)
 	{
 		if((*bit)->getSleeper())
 			(*bit)->wakeUp();
