@@ -841,7 +841,7 @@ bool TalkAction::thingProporties(Creature* creature, const std::string& cmd, con
 				item->setActionId(atoi(parseParams(it, tokens.end()).c_str()));
 			else if(action == "unique" || action == "uniqueid" || action == "uid")
 			{
-				int32_t tmp = parseParams(it, tokens.end()).c_str());
+				int32_t tmp = atoi(parseParams(it, tokens.end()).c_str());
 				if(tmp >= 1000 || tmp <= 0xFFFF)
 					item->setUniqueId(tmp);
 			}
@@ -909,7 +909,7 @@ bool TalkAction::thingProporties(Creature* creature, const std::string& cmd, con
 					_player->setStaminaMinutes(atoi(parseParams(it, tokens.end()).c_str()));
 				else if(action == "town" || action == "temple")
 				{
-					if(Town* town = Towns::getInstance().getTown(parseParams(it, tokens.end()))
+					if(Town* town = Towns::getInstance().getTown(parseParams(it, tokens.end())))
 					{
 						_player->setMasterPosition(town->getPosition());
 						_player->setTown(town->getID());
