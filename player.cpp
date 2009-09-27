@@ -581,54 +581,54 @@ int32_t Player::getSkill(skills_t skilltype, skillsid_t skillinfo) const
 
 void Player::addSkillAdvance(skills_t skill, uint32_t count, bool useMultiplier/* = true*/)
 {
+	if(!count)
+		return;
+
 	//player has reached max skill
-	if(vocation->getReqSkillTries(skill, skills[skill][SKILL_LEVEL]) > vocation->getReqSkillTries(
-		skill, skills[skill][SKILL_LEVEL] + 1))
+	uint32_t currReqTries = vocation->getReqSkillTries(skill, skills[skill][SKILL_LEVEL]),
+		nextReqTries = vocation->getReqSkillTries(skill, skills[skill][SKILL_LEVEL] + 1);
+	if(currReqTries > nextReqTries)
 		return;
 
 	if(useMultiplier)
-		count += uint32_t((double)count * rates[skill]);
+		count = uint32_t((double)count * rates[skill] * g_config.getDouble(ConfigManager::RATE_SKILL));
 
-	count = uint32_t((double)count * g_config.getDouble(ConfigManager::RATE_SKILL));
-	bool advance = false;
-	while(skills[skill][SKILL_TRIES] + count >= vocation->getReqSkillTries(skill, skills[skill][SKILL_LEVEL] + 1))
+	std::stringstream s;
+	while(skills[skill][SKILL_TRIES] + count >= nextReqTries)
 	{
-		count -= vocation->getReqSkillTries(skill, skills[skill][SKILL_LEVEL] + 1) - skills[skill][SKILL_TRIES];
-	 	skills[skill][SKILL_LEVEL]++;
-	 	skills[skill][SKILL_TRIES] = 0;
-		skills[skill][SKILL_PERCENT] = 0;
+		count -= nextReqTries - skills[skill][SKILL_TRIES];
+	 	skills[skill][SKILL_TRIES] = skills[skill][SKILL_PERCENT] = 0;
+		skills[skill][SKILL_LEVEL]++;
 
-		char buffer[10];
-		if(g_config.getBool(ConfigManager::ADVANCING_SKILL_LEVEL))
-			sprintf(buffer, " [%u]", skills[skill][SKILL_LEVEL]);
-		else
-			sprintf(buffer, "%s", "");
+		s.str("");
+		s << "You advanced in " << getSkillName(skill) << (g_config.getBool(ConfigManager::ADVANCING_SKILL_LEVEL) ?
+			" [" << skills[skill][SKILL_LEVEL] << "]" : "") << ".";
+		sendTextMessage(MSG_EVENT_ADVANCE, s.str().c_str());
 
-		char advMsg[45];
-		sprintf(advMsg, "You advanced in %s%s.", getSkillName(skill).c_str(), buffer);
-		sendTextMessage(MSG_EVENT_ADVANCE, advMsg);
-
-		advance = true;
 		CreatureEventList advanceEvents = getCreatureEvents(CREATURE_EVENT_ADVANCE);
 		for(CreatureEventList::iterator it = advanceEvents.begin(); it != advanceEvents.end(); ++it)
 			(*it)->executeAdvance(this, skill, (skills[skill][SKILL_LEVEL] - 1), skills[skill][SKILL_LEVEL]);
 
-		if(vocation->getReqSkillTries(skill, skills[skill][SKILL_LEVEL]) > vocation->getReqSkillTries(skill, skills[skill][SKILL_LEVEL] + 1))
+		currReqTries = nextReqTries;
+		nextReqTries = vocation->getReqSkillTries(skill, skills[skill][SKILL_LEVEL] + 1);
+		if(currReqTries > nextReqTries)
 		{
 			count = 0;
 			break;
 		}
 	}
 
-	skills[skill][SKILL_TRIES] += count;
+	if(count)
+		skills[skill][SKILL_TRIES] += count;
+
 	//update percent
-	uint32_t newPercent = Player::getPercentLevel(skills[skill][SKILL_TRIES], vocation->getReqSkillTries(skill, skills[skill][SKILL_LEVEL] + 1));
+	uint32_t newPercent = Player::getPercentLevel(skills[skill][SKILL_TRIES], nextReqTries);
  	if(skills[skill][SKILL_PERCENT] != newPercent)
 	{
 		skills[skill][SKILL_PERCENT] = newPercent;
 		sendSkills();
  	}
-	else if(advance)
+	else if(!s.str().empty())
 		sendSkills();
 }
 
@@ -1784,10 +1784,9 @@ void Player::drainMana(Creature* attacker, CombatType_t combatType, int32_t dama
 	sendTextMessage(MSG_EVENT_DEFAULT, buffer);
 }
 
-void Player::addManaSpent(uint64_t amount, bool ignoreFlag/* = false*/, bool useMultiplier/* = true*/)
+void Player::addManaSpent(uint64_t amount, bool useMultiplier/* = true*/)
 {
-	if(!amount || (!ignoreFlag && hasFlag(PlayerFlag_NotGainMana)) || (!g_config.getBool(
-		ConfigManager::PVPZONE_ADDMANASPENT) && getZone() == ZONE_PVP))
+	if(!amount)
 		return;
 
 	uint64_t currReqMana = vocation->getReqMana(magLevel), nextReqMana = vocation->getReqMana(magLevel + 1);
@@ -1795,18 +1794,20 @@ void Player::addManaSpent(uint64_t amount, bool ignoreFlag/* = false*/, bool use
 		return;
 
 	if(useMultiplier)
-		amount = uint64_t((double)amount * rates[SKILL__MAGLEVEL]);
+		amount = uint64_t((double)amount * rates[SKILL__MAGLEVEL] * g_config.getDouble(ConfigManager::RATE_MAGIC));
 
-	amount = uint64_t((double)amount * g_config.getDouble(ConfigManager::RATE_MAGIC));
+	bool advance = false;
 	while(manaSpent + amount >= nextReqMana)
 	{
 		amount -= nextReqMana - manaSpent;
 		manaSpent = 0;
 		magLevel++;
+
 		char advMsg[50];
 		sprintf(advMsg, "You advanced to magic level %d.", magLevel);
 		sendTextMessage(MSG_EVENT_ADVANCE, advMsg);
 
+		advance = true;
 		CreatureEventList advanceEvents = getCreatureEvents(CREATURE_EVENT_ADVANCE);
 		for(CreatureEventList::iterator it = advanceEvents.begin(); it != advanceEvents.end(); ++it)
 			(*it)->executeAdvance(this, SKILL__MAGLEVEL, (magLevel - 1), magLevel);
@@ -1820,13 +1821,17 @@ void Player::addManaSpent(uint64_t amount, bool ignoreFlag/* = false*/, bool use
 		}
 	}
 
-	manaSpent += amount;
-	if(nextReqMana > currReqMana)
-		magLevelPercent = Player::getPercentLevel(manaSpent, nextReqMana);
-	else
-		magLevelPercent = 0;
+	if(amount)
+		manaSpent += amount;
 
-	sendStats();
+	uint32_t newPercent = Player::getPercentLevel(manaSpent, nextReqMana);
+	if(magLevelPercent != newPercent)
+	{
+		magLevelPercent = newPercent;
+		sendStats();
+	}
+	else if(advance)
+		sendStats();
 }
 
 void Player::addExperience(uint64_t exp)

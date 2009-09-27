@@ -1550,7 +1550,7 @@ void LuaScriptInterface::registerFunctions()
 	//doSendAnimatedText(pos, text, color[, player])
 	lua_register(m_luaState, "doSendAnimatedText", LuaScriptInterface::luaDoSendAnimatedText);
 
-	//doPlayerAddSkillTry(cid, skillid, n)
+	//doPlayerAddSkillTry(cid, skillid, n[, useMultiplier])
 	lua_register(m_luaState, "doPlayerAddSkillTry", LuaScriptInterface::luaDoPlayerAddSkillTry);
 
 	//doCreatureAddHealth(cid, health[, force])
@@ -1568,7 +1568,7 @@ void LuaScriptInterface::registerFunctions()
 	//doPlayerSetMaxCapacity(cid, cap)
 	lua_register(m_luaState, "doPlayerSetMaxCapacity", LuaScriptInterface::luaDoPlayerSetMaxCapacity);
 
-	//doPlayerAddSpentMana(cid, amount)
+	//doPlayerAddSpentMana(cid, amount[, useMultiplier])
 	lua_register(m_luaState, "doPlayerAddSpentMana", LuaScriptInterface::luaDoPlayerAddSpentMana);
 
 	//doPlayerAddSoul(cid, soul)
@@ -3384,13 +3384,16 @@ int32_t LuaScriptInterface::luaDoSendDistanceShoot(lua_State* L)
 
 int32_t LuaScriptInterface::luaDoPlayerAddSkillTry(lua_State* L)
 {
-	//doPlayerAddSkillTry(uid, skillid, n)
-	uint32_t n = popNumber(L), skillid = popNumber(L);
+	//doPlayerAddSkillTry(uid, skillid, n[, useMultiplier])
+	bool multiplier = true;
+	if(lua_gettop(L) > 3)
+		multiplier = popNumber(L);
 
+	uint32_t n = popNumber(L), skillid = popNumber(L);
 	ScriptEnviroment* env = getScriptEnv();
 	if(Player* player = env->getPlayerByUID(popNumber(L)))
 	{
-		player->addSkillAdvance((skills_t)skillid, n);
+		player->addSkillAdvance((skills_t)skillid, n, multiplier);
 		lua_pushboolean(L, true);
 	}
 	else
@@ -3527,13 +3530,16 @@ int32_t LuaScriptInterface::luaDoCreatureAddMana(lua_State* L)
 
 int32_t LuaScriptInterface::luaDoPlayerAddSpentMana(lua_State* L)
 {
-	//doPlayerAddSpentMana(cid, amount)
-	uint32_t amount = popNumber(L);
+	//doPlayerAddSpentMana(cid, amount[, useMultiplier])
+	bool multiplier = true;
+	if(lua_gettop(L) > 2)
+		multiplier = popNumber(L);
 
+	uint32_t amount = popNumber(L);
 	ScriptEnviroment* env = getScriptEnv();
 	if(Player* player = env->getPlayerByUID(popNumber(L)))
 	{
-		player->addManaSpent(amount);
+		player->addManaSpent(amount, multiplier);
 		lua_pushboolean(L, true);
 	}
 	else

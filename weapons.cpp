@@ -427,8 +427,10 @@ void Weapon::onUsedWeapon(Player* player, Item* item, Tile* destTile) const
 	int32_t manaCost = getManaCost(player);
 	if(manaCost > 0)
 	{
-		player->addManaSpent(manaCost);
 		player->changeMana(-manaCost);
+		if(!player->hasFlag(PlayerFlag_NotGainMana) && (player->getZone() != ZONE_PVP
+			|| !g_config.getBool(ConfigManager::PVPZONE_ADDMANASPENT))
+			player->addManaSpent(manaCost);
 	}
 
 	if(!player->hasFlag(PlayerFlag_HasInfiniteSoul) && soul > 0)

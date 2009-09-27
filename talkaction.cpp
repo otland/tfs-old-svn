@@ -1153,7 +1153,7 @@ bool TalkAction::addSkill(Creature* creature, const std::string& cmd, const std:
 		target->addExperience(uint64_t(Player::getExpForLevel(target->getLevel() + amount) - target->getExperience()));
 	else if(skill[0] == 'm')
 		target->addManaSpent((uint64_t)std::ceil(double(target->getVocation()->getReqMana(target->getMagicLevel() +
-			amount) - target->getSpentMana()) / g_config.getDouble(ConfigManager::RATE_MAGIC)), true, false);
+			amount) - target->getSpentMana()) / g_config.getDouble(ConfigManager::RATE_MAGIC)), false);
 	else
 	{
 		skills_t skillId = getSkillId(skill);

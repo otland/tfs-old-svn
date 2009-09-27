@@ -950,8 +950,10 @@ void Spell::postCastSpell(Player* player, uint32_t manaCost, uint32_t soulCost) 
 {
 	if(manaCost > 0)
 	{
-		player->addManaSpent(manaCost);
 		player->changeMana(-(int32_t)manaCost);
+		if(!player->hasFlag(PlayerFlag_NotGainMana) && (player->getZone() != ZONE_PVP
+			|| !g_config.getBool(ConfigManager::PVPZONE_ADDMANASPENT))
+			player->addManaSpent(manaCost);
 	}
 
 	if(soulCost > 0)
@@ -960,13 +962,10 @@ void Spell::postCastSpell(Player* player, uint32_t manaCost, uint32_t soulCost) 
 
 int32_t Spell::getManaCost(const Player* player) const
 {
-	if(mana)
-		return mana;
-
 	if(player && manaPercent)
 		return (int32_t)std::floor(double(player->getMaxMana() * manaPercent) / 100);
 
-	return 0;
+	return mana;
 }
 
 ReturnValue Spell::CreateIllusion(Creature* creature, const Outfit_t outfit, int32_t time)
