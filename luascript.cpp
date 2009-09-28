@@ -9267,7 +9267,7 @@ int32_t LuaScriptInterface::luaDoItemSetAttribute(lua_State* L)
 	else if(lua_isnumber(L, -1) == 1)
 	{
 		float tmp = popFloatNumber(L);
-		if((float)std::floor(tmp) < tmp)
+		if(std::floor(tmp) < tmp)
 			value = tmp;
 		else
 			value = (int32_t)tmp;
