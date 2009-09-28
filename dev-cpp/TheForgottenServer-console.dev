@@ -1739,6 +1739,26 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
+[Unit172]
+FileName=..\itemattributes.cpp
+CompileCpp=1
+Folder=TheForgottenServer
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=0
+
+[Unit173]
+FileName=..\itemattributes.h
+CompileCpp=1
+Folder=TheForgottenServer
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=0
+
 [VersionInfo]
 Major=0
 Minor=3

@@ -601,8 +601,11 @@ void Player::addSkillAdvance(skills_t skill, uint32_t count, bool useMultiplier/
 		skills[skill][SKILL_LEVEL]++;
 
 		s.str("");
-		s << "You advanced in " << getSkillName(skill) << (g_config.getBool(ConfigManager::ADVANCING_SKILL_LEVEL) ?
-			" [" << skills[skill][SKILL_LEVEL] << "]" : "") << ".";
+		s << "You advanced in " << getSkillName(skill);
+		if(g_config.getBool(ConfigManager::ADVANCING_SKILL_LEVEL))
+			s << " [" << skills[skill][SKILL_LEVEL] << "]";
+
+		s << ".";
 		sendTextMessage(MSG_EVENT_ADVANCE, s.str().c_str());
 
 		CreatureEventList advanceEvents = getCreatureEvents(CREATURE_EVENT_ADVANCE);
