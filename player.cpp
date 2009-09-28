@@ -1694,7 +1694,7 @@ void Player::onThink(uint32_t interval)
 			setAttackedCreature(NULL);
 	}
 
-	if(canLogout() && (timeNow - lastPong) >= 60000)
+	if((timeNow - lastPong) >= 60000 && canLogout(true))
 	{
 		if(client)
 			client->logout(true, true);
@@ -3766,8 +3766,11 @@ void Player::changeSoul(int32_t soulChange)
 	sendStats();
 }
 
-bool Player::canLogout()
+bool Player::canLogout(bool checkInfight)
 {
+	if(checkInfight && hasCondition(CONDITION_INFIGHT))
+		return false;
+
 	return !isConnecting && !pzLocked && !getTile()->hasFlag(TILESTATE_NOLOGOUT);
 }
 
