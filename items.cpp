@@ -97,8 +97,7 @@ ItemType::ItemType()
 	transformToFree = 0;
 	levelDoor = 0;
 
-	for(int32_t i = CHANGE_PRE_FIRST; i < CHANGE_LAST; ++i)
-		floorChange[i] = false;
+	memset(floorChange, 0, sizeof(floorChange));
 }
 
 ItemType::~ItemType()
@@ -135,7 +134,7 @@ int32_t Items::loadFromOtb(std::string file)
 	NODE node = f.getChildNode(NO_NODE, type);
 
 	PropStream props;
-	if(f.getProps(node,props))
+	if(f.getProps(node, props))
 	{
 		//4 byte flags
 		//attributes
@@ -150,11 +149,11 @@ int32_t Items::loadFromOtb(std::string file)
 
 		if(attr == ROOT_ATTR_VERSION)
 		{
-			datasize_t datalen = 0;
-			if(!props.GET_VALUE(datalen))
+			datasize_t length = 0;
+			if(!props.GET_VALUE(length))
 				return ERROR_INVALID_FORMAT;
 
-			if(datalen != sizeof(VERSIONINFO))
+			if(length != sizeof(VERSIONINFO))
 				return ERROR_INVALID_FORMAT;
 
 			VERSIONINFO *vi;
@@ -189,12 +188,13 @@ int32_t Items::loadFromOtb(std::string file)
 	while(node != NO_NODE)
 	{
 		PropStream props;
-		if(!f.getProps(node,props))
+		if(!f.getProps(node, props))
 			return f.getError();
 
-		flags_t flags;
 		ItemType* iType = new ItemType();
 		iType->group = (itemgroup_t)type;
+
+		flags_t flags;
 		switch(type)
 		{
 			case ITEM_GROUP_CONTAINER:
@@ -246,22 +246,22 @@ int32_t Items::loadFromOtb(std::string file)
 		iType->clientCharges = hasBitSet(FLAG_CLIENTCHARGES, flags);
 		iType->lookThrough = hasBitSet(FLAG_LOOKTHROUGH, flags);
 
-		attribute_t attrib;
-		datasize_t datalen = 0;
-		while(props.GET_VALUE(attrib))
+		attribute_t attr;
+		while(props.GET_VALUE(attr))
 		{
 			//size of data
-			if(!props.GET_VALUE(datalen))
+			datasize_t length = 0;
+			if(!props.GET_VALUE(length))
 			{
 				delete iType;
 				return ERROR_INVALID_FORMAT;
 			}
 
-			switch(attrib)
+			switch(attr)
 			{
 				case ITEM_ATTR_SERVERID:
 				{
-					if(datalen != sizeof(uint16_t))
+					if(length != sizeof(uint16_t))
 						return ERROR_INVALID_FORMAT;
 
 					uint16_t serverid;
@@ -276,7 +276,7 @@ int32_t Items::loadFromOtb(std::string file)
 				}
 				case ITEM_ATTR_CLIENTID:
 				{
-					if(datalen != sizeof(uint16_t))
+					if(length != sizeof(uint16_t))
 						return ERROR_INVALID_FORMAT;
 
 					uint16_t clientid;
@@ -288,7 +288,7 @@ int32_t Items::loadFromOtb(std::string file)
 				}
 				case ITEM_ATTR_SPEED:
 				{
-					if(datalen != sizeof(uint16_t))
+					if(length != sizeof(uint16_t))
 						return ERROR_INVALID_FORMAT;
 
 					uint16_t speed;
@@ -300,34 +300,35 @@ int32_t Items::loadFromOtb(std::string file)
 				}
 				case ITEM_ATTR_LIGHT2:
 				{
-					if(datalen != sizeof(lightBlock2))
+					if(length != sizeof(lightBlock2))
 						return ERROR_INVALID_FORMAT;
 
-					lightBlock2* lb2;
-					if(!props.GET_STRUCT(lb2))
+					lightBlock2* block;
+					if(!props.GET_STRUCT(block))
 						return ERROR_INVALID_FORMAT;
 
-					iType->lightLevel = lb2->lightLevel;
-					iType->lightColor = lb2->lightColor;
+					iType->lightLevel = block->lightLevel;
+					iType->lightColor = block->lightColor;
 					break;
 				}
 				case ITEM_ATTR_TOPORDER:
 				{
-					if(datalen != sizeof(uint8_t))
+					if(length != sizeof(uint8_t))
 						return ERROR_INVALID_FORMAT;
 
-					uint8_t v;
-					if(!props.GET_UCHAR(v))
+					uint8_t toporder;
+					if(!props.GET_UCHAR(toporder))
 						return ERROR_INVALID_FORMAT;
 
-					iType->alwaysOnTopOrder = v;
+					iType->alwaysOnTopOrder = toporder;
 					break;
 				}
 				default:
 				{
 					//skip unknown attributes
-					if(!props.SKIP_N(datalen))
+					if(!props.SKIP_N(length))
 						return ERROR_INVALID_FORMAT;
+
 					break;
 				}
 			}
@@ -360,7 +361,7 @@ bool Items::loadFromXml()
 		return false;
 	}
 
-	xmlNodePtr itemNode, paletteNode, itemRoot = xmlDocGetRootElement(itemDoc), paletteRoot = xmlDocGetRootElement(paletteDoc);
+	xmlNodePtr itemRoot = xmlDocGetRootElement(itemDoc), paletteRoot = xmlDocGetRootElement(paletteDoc);
 	if(xmlStrcmp(itemRoot->name,(const xmlChar*)"items"))
 	{
 		xmlFreeDoc(itemDoc);
@@ -379,43 +380,37 @@ bool Items::loadFromXml()
 		return false;
 	}
 
-	int32_t intValue, id = 0, endId = 0, fromId = 0, toId = 0;
-	IntegerVec intVector, endIntVector;
-	std::string strValue, endStrValue;
+	IntegerVec intVector, endVector;
+	std::string strValue, endValue;
 	StringVec strVector;
 
-	itemNode = itemRoot->children;
-	while(itemNode)
+	int32_t intValue, id = 0, endId = 0, fromId = 0, toId = 0;
+	for(xmlNodePtr itemNode = itemRoot->children; itemNode; itemNode = itemNode->next)
 	{
-		if(!xmlStrcmp(itemNode->name,(const xmlChar*)"item"))
+		if(xmlStrcmp(itemNode->name,(const xmlChar*)"item"))
+			continue;
+
+		if(readXMLInteger(itemNode, "id", intValue))
+			parseItemNode(itemNode, intValue);
+		else if(readXMLString(itemNode, "fromid", strValue) && readXMLString(itemNode, "toid", endValue))
 		{
-			if(readXMLInteger(itemNode, "id", intValue))
-				parseItemNode(itemNode, intValue);
-			else if(readXMLString(itemNode, "fromid", strValue) && readXMLString(itemNode, "toid", endStrValue))
+			intVector = vectorAtoi(explodeString(strValue, ";"));
+			endVector = vectorAtoi(explodeString(endValue, ";"));
+			if(intVector[0] && endVector[0] && intVector.size() == endVector.size())
 			{
-				intVector = vectorAtoi(explodeString(strValue, ";"));
-				endIntVector = vectorAtoi(explodeString(endStrValue, ";"));
-				if(intVector[0] && endIntVector[0] && intVector.size() == endIntVector.size())
+				size_t size = intVector.size();
+				for(size_t i = 0; i < size; ++i)
 				{
-					size_t size = intVector.size();
-					for(size_t i = 0; i < size; ++i)
-					{
-						parseItemNode(itemNode, intVector[i]);
-						while(intVector[i] < endIntVector[i])
-						{
-							intVector[i]++;
-							parseItemNode(itemNode, intVector[i]);
-						}
-					}
+					parseItemNode(itemNode, intVector[i]);
+					while(intVector[i] < endVector[i])
+						parseItemNode(itemNode, ++intVector[i]);
 				}
-				else
-					std::cout << "[Warning - Items::loadFromXml] Malformed entry (from: \"" << strValue << "\", to: \"" << endStrValue << "\")" << std::endl;
 			}
 			else
-				std::cout << "[Warning - Items::loadFromXml] No itemid found" << std::endl;
+				std::cout << "[Warning - Items::loadFromXml] Malformed entry (from: \"" << strValue << "\", to: \"" << endValue << "\")" << std::endl;
 		}
-
-		itemNode = itemNode->next;
+		else
+			std::cout << "[Warning - Items::loadFromXml] No itemid found" << std::endl;
 	}
 
 	xmlFreeDoc(itemDoc);
@@ -426,12 +421,11 @@ bool Items::loadFromXml()
 			continue;
 
 		//check bed items
-		if((it->transformToFree != 0 || it->transformToOnUse[PLAYERSEX_FEMALE] != 0 || it->transformToOnUse[PLAYERSEX_MALE] != 0) && it->type != ITEM_TYPE_BED)
+		if((it->transformToFree || it->transformToOnUse[PLAYERSEX_FEMALE] || it->transformToOnUse[PLAYERSEX_MALE]) && it->type != ITEM_TYPE_BED)
 			std::cout << "[Warning - Items::loadFromXml] Item " << it->id << " is not set as a bed-type." << std::endl;
 	}
 
-	paletteNode = paletteRoot->children;
-	while(paletteNode)
+	for(xmlNodePtr paletteNode = paletteRoot->children; paletteNode; paletteNode = paletteNode->next)
 	{
 		if(!xmlStrcmp(paletteNode->name, (const xmlChar*)"config"))
 		{
@@ -450,19 +444,19 @@ bool Items::loadFromXml()
 		{
 			if(readXMLString(paletteNode, "randomize", strValue))
 			{
-				std::vector<int32_t> idList = vectorAtoi(explodeString(strValue, ";"));
-				if(idList.size() >= 2)
+				std::vector<int32_t> itemList = vectorAtoi(explodeString(strValue, ";"));
+				if(itemList.size() >= 2)
 				{
-					if(idList[0] < idList[1])
+					if(itemList[0] < itemList[1])
 					{
-						fromId = idList[0];
-						toId = idList[1];
+						fromId = itemList[0];
+						toId = itemList[1];
 					}
 					else
 						std::cout << "[Warning - Items::loadFromXml] Randomize min cannot be higher than max." << std::endl;
 				}
 
-				int32_t chance;
+				int32_t chance = getRandomizationChance();
 				if(readXMLInteger(paletteNode, "chance", intValue))
 				{
 					if(intValue > 100)
@@ -473,8 +467,6 @@ bool Items::loadFromXml()
 
 					chance = intValue;
 				}
-				else
-					chance = getRandomizationChance();
 
 				if(readXMLInteger(paletteNode, "itemid", id))
 					parseRandomizationBlock(id, fromId, toId, chance);
@@ -486,8 +478,6 @@ bool Items::loadFromXml()
 				}
 			}
 		}
-
-		paletteNode = paletteNode->next;
 	}
 
 	xmlFreeDoc(paletteDoc);
@@ -1066,6 +1056,26 @@ void Items::parseItemNode(xmlNodePtr itemNode, uint32_t id)
 			{
 				if(readXMLInteger(itemAttributesNode, "value", intValue))
 					it.abilities.statsPercent[STAT_MAGICLEVEL] = intValue;
+			}
+			else if(tmpStrValue == "increasemagicvalue")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+					it.abilities.increment[MAGIC_VALUE] = intValue;
+			}
+			else if(tmpStrValue == "increasemagicpercent")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+					it.abilities.increment[MAGIC_PERCENT] = intValue;
+			}
+			else if(tmpStrValue == "increasehealingvalue")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+					it.abilities.increment[HEALING_VALUE] = intValue;
+			}
+			else if(tmpStrValue == "increasehealingpercent")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+					it.abilities.increment[HEALING_PERCENT] = intValue;
 			}
 			else if(tmpStrValue == "absorbpercentall")
 			{

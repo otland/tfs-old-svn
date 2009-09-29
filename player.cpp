@@ -4841,6 +4841,77 @@ void Player::clearPartyInvitations()
 		(*it)->removeInvite(this);
 }
 
+void Player::increaseCombatValues(int32_t& min, int32_t& max, bool useCharges, bool countWeapon)
+{
+	if(min > 0)
+		min = (int32_t)(min * vocation->getMultiplier(MULTIPLIER_HEALING));
+	else
+		min = (int32_t)(min * vocation->getMultiplier(MULTIPLIER_MAGIC));
+
+	if(max > 0)
+		max = (int32_t)(max * vocation->getMultiplier(MULTIPLIER_HEALING));
+	else
+		max = (int32_t)(max * vocation->getMultiplier(MULTIPLIER_MAGIC));
+
+	Item* weapon = NULL;
+	if(!countWeapon)
+		weapon = getWeapon();
+
+	int32_t minValue = 0, maxValue = 0;
+	for(int32_t i = SLOT_FIRST; i < SLOT_LAST; ++i)
+	{
+		if(!isItemAbilityEnabled((slots_t)i))
+			continue;
+
+		Item* item = getInventoryItem((slots_t)i);
+		if(!item)
+			continue;
+
+		const ItemType& it = Item::items[item->getID()];
+		if(min > 0)
+		{
+			minValue += it.abilities.increment[HEALING_VALUE];
+			if(it.abilities.increment[HEALING_PERCENT])
+				min = (int32_t)std::ceil((double)(min * it.abilities.increment[HEALING_PERCENT]) / 100.);
+		}
+		else
+		{
+			minValue -= it.abilities.increment[MAGIC_VALUE];
+			if(it.abilities.increment[MAGIC_PERCENT])
+				min = (int32_t)std::ceil((double)(min * it.abilities.increment[MAGIC_PERCENT]) / 100.);
+		}
+
+		if(max > 0)
+		{
+			maxValue += it.abilities.increment[HEALING_VALUE];
+			if(it.abilities.increment[HEALING_PERCENT])
+				max = (int32_t)std::ceil((double)(max * it.abilities.increment[HEALING_PERCENT]) / 100.);
+		}
+		else
+		{
+			maxValue -= it.abilities.increment[MAGIC_VALUE];
+			if(it.abilities.increment[MAGIC_PERCENT])
+				max = (int32_t)std::ceil((double)(max * it.abilities.increment[MAGIC_PERCENT]) / 100.);
+		}
+
+		bool removeCharges = false;
+		for(int32_t j = INCREMENT_FIRST; j <= INCREMENT_LAST; ++j)
+		{
+			if(!it.abilities.increment[(Increment_t)j])
+				continue;
+
+			removeCharges = true;
+			break;
+		}
+
+		if(useCharges && removeCharges && item != weapon && item->hasCharges())
+			g_game.transformItem(item, item->getID(), std::max((int32_t)0, (int32_t)item->getCharges() - 1));
+	}
+
+	min += minValue;
+	max += maxValue;
+}
+
 bool Player::transferMoneyTo(const std::string& name, uint64_t amount)
 {
 	if(!g_config.getBool(ConfigManager::BANK_SYSTEM) || amount > balance)

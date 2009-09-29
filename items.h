@@ -85,6 +85,7 @@ struct Abilities
 		memset(statsPercent, 0, sizeof(statsPercent));
 
 		memset(absorb, 0, sizeof(absorb));
+		memset(increment, 0, sizeof(increment));
 		memset(reflect[REFLECT_PERCENT], 0, sizeof(reflect[REFLECT_PERCENT]));
 		memset(reflect[REFLECT_CHANCE], 0, sizeof(reflect[REFLECT_CHANCE]));
 
@@ -96,7 +97,7 @@ struct Abilities
 	bool manaShield, invisible, regeneration, preventLoss, preventDrop;
 	CombatType_t elementType;
 
-	int16_t elementDamage, absorb[COMBAT_LAST + 1], reflect[REFLECT_LAST + 1][COMBAT_LAST + 1];
+	int16_t elementDamage, absorb[COMBAT_LAST + 1], increment[INCREMENT_LAST + 1], reflect[REFLECT_LAST + 1][COMBAT_LAST + 1];
 	int32_t skills[SKILL_LAST + 1], skillsPercent[SKILL_LAST + 1], stats[STAT_LAST + 1], statsPercent[STAT_LAST + 1],
 		speed, healthGain, healthTicks, manaGain, manaTicks, conditionSuppressions;
 };

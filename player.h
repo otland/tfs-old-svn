@@ -243,6 +243,7 @@ class Player : public Creature, public Cylinder
 
 		void generateReservedStorage();
 		bool transferMoneyTo(const std::string& name, uint64_t amount);
+		void increaseCombatValues(int32_t& min, int32_t& max, bool useCharges, bool countWeapon);
 
 		void setGroupId(int32_t newId);
 		int32_t getGroupId() const {return groupId;}

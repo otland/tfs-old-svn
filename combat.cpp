@@ -84,18 +84,7 @@ bool Combat::getMinMaxValues(Creature* creature, Creature* target, int32_t& min,
 				if(maxc && std::abs(max) < std::abs(maxc))
 					max = maxc;
 
-				Vocation* vocation = player->getVocation();
-				float magic = vocation->getMultiplier(MULTIPLIER_MAGIC), healing = vocation->getMultiplier(MULTIPLIER_HEALING);
-				if(min > 0)
-					min = (int32_t)(min * healing);
-				else
-					min = (int32_t)(min * magic);
-
-				if(max > 0)
-					max = (int32_t)(max * healing);
-				else
-					max = (int32_t)(max * magic);
-
+				player->increaseCombatValues(min, max, params.useCharges, true);
 				return true;
 			}
 
@@ -943,87 +932,77 @@ void Combat::doCombatDefault(Creature* caster, Creature* target, const CombatPar
 void ValueCallback::getMinMaxValues(Player* player, int32_t& min, int32_t& max, bool useCharges) const
 {
 	//"onGetPlayerMinMaxValues"(cid, ...)
-	if(m_scriptInterface->reserveScriptEnv())
+	if(!m_scriptInterface->reserveScriptEnv())
 	{
-		ScriptEnviroment* env = m_scriptInterface->getScriptEnv();
-		if(!env->setCallbackId(m_scriptId, m_scriptInterface))
+		std::cout << "[Error - ValueCallback::getMinMaxValues] Callstack overflow." << std::endl;
+		return;
+	}
+
+	ScriptEnviroment* env = m_scriptInterface->getScriptEnv();
+	if(!env->setCallbackId(m_scriptId, m_scriptInterface))
+		return;
+
+	m_scriptInterface->pushFunction(m_scriptId);
+	lua_State* L = m_scriptInterface->getLuaState();
+	lua_pushnumber(L, env->addThing(player));
+
+	int32_t parameters = 1;
+	switch(type)
+	{
+		case FORMULA_LEVELMAGIC:
+		{
+			//"onGetPlayerMinMaxValues"(cid, level, magLevel)
+			lua_pushnumber(L, player->getLevel());
+			lua_pushnumber(L, player->getMagicLevel());
+
+			parameters += 2;
+			break;
+		}
+
+		case FORMULA_SKILL:
+		{
+			//"onGetPlayerMinMaxValues"(cid, level, skill, attack, factor)
+			Item* tool = player->getWeapon();
+			lua_pushnumber(L, player->getLevel());
+			lua_pushnumber(L, player->getWeaponSkill(tool));
+
+			int32_t attack = 7;
+			if(tool)
+			{
+				attack = tool->getAttack();
+				if(useCharges && tool->hasCharges() && g_config.getBool(ConfigManager::REMOVE_WEAPON_CHARGES))
+					g_game.transformItem(tool, tool->getID(), std::max(0, tool->getCharges() - 1));
+			}
+
+			lua_pushnumber(L, attack);
+			lua_pushnumber(L, player->getAttackFactor());
+
+			parameters += 4;
+			break;
+		}
+
+		default:
+		{
+			std::cout << "[Warning - ValueCallback::getMinMaxValues] Unknown callback type" << std::endl;
 			return;
-
-		m_scriptInterface->pushFunction(m_scriptId);
-		lua_State* L = m_scriptInterface->getLuaState();
-
-		lua_pushnumber(L, env->addThing(player));
-		int32_t parameters = 1;
-		switch(type)
-		{
-			case FORMULA_LEVELMAGIC:
-			{
-				//"onGetPlayerMinMaxValues"(cid, level, magLevel)
-				lua_pushnumber(L, player->getLevel());
-				lua_pushnumber(L, player->getMagicLevel());
-
-				parameters += 2;
-				break;
-			}
-
-			case FORMULA_SKILL:
-			{
-				//"onGetPlayerMinMaxValues"(cid, level, skill, attack, factor)
-				Item* tool = player->getWeapon();
-				lua_pushnumber(L, player->getLevel());
-				lua_pushnumber(L, player->getWeaponSkill(tool));
-
-				int32_t attack = 7;
-				if(tool)
-				{
-					attack = tool->getAttack();
-					if(useCharges && tool->hasCharges() && g_config.getBool(ConfigManager::REMOVE_WEAPON_CHARGES))
-						g_game.transformItem(tool, tool->getID(), std::max(0, tool->getCharges() - 1));
-				}
-
-				lua_pushnumber(L, attack);
-				lua_pushnumber(L, player->getAttackFactor());
-
-				parameters += 4;
-				break;
-			}
-
-			default:
-			{
-				std::cout << "[Warning - ValueCallback::getMinMaxValues] Unknown callback type" << std::endl;
-				return;
-			}
 		}
+	}
 
-		int32_t params = lua_gettop(L);
-		if(!lua_pcall(L, parameters, 2, 0))
-		{
-			min = LuaScriptInterface::popNumber(L);
-			max = LuaScriptInterface::popNumber(L);
-
-			Vocation* vocation = player->getVocation();
-			float magic = vocation->getMultiplier(MULTIPLIER_MAGIC), healing = vocation->getMultiplier(MULTIPLIER_HEALING);
-			if(min > 0)
-				min = (int32_t)(min * healing);
-			else
-				min = (int32_t)(min * magic);
-
-			if(max > 0)
-				max = (int32_t)(max * healing);
-			else
-				max = (int32_t)(max * magic);
-		}
-		else
-			LuaScriptInterface::reportError(NULL, std::string(LuaScriptInterface::popString(L)));
-
-		if((lua_gettop(L) + parameters + 1) != params)
-			LuaScriptInterface::reportError(NULL, "Stack size changed!");
-
-		env->resetCallback();
-		m_scriptInterface->releaseScriptEnv();
+	int32_t params = lua_gettop(L);
+	if(!lua_pcall(L, parameters, 2, 0))
+	{
+		min = LuaScriptInterface::popNumber(L);
+		max = LuaScriptInterface::popNumber(L);
+		player->increaseCombatValues(min, max, useCharges, type != FORMULA_SKILL);
 	}
 	else
-		std::cout << "[Error - ValueCallback::getMinMaxValues] Call stack overflow." << std::endl;
+		LuaScriptInterface::reportError(NULL, std::string(LuaScriptInterface::popString(L)));
+
+	if((lua_gettop(L) + parameters + 1) != params)
+		LuaScriptInterface::reportError(NULL, "Stack size changed!");
+
+	env->resetCallback();
+	m_scriptInterface->releaseScriptEnv();
 }
 
 //**********************************************************
