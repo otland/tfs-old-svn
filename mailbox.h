@@ -61,10 +61,12 @@ class Mailbox : public Item, public Cylinder
 
 		virtual void postAddNotification(Creature* actor, Thing* thing, const Cylinder* oldParent,
 			int32_t index, cylinderlink_t link = LINK_OWNER)
-			{getParent()->postAddNotification(actor, thing, oldParent, index, LINK_PARENT);}
+			{if(getParent()) getParent()->postAddNotification(actor, thing,
+				oldParent, index, LINK_PARENT);}
 		virtual void postRemoveNotification(Creature* actor, Thing* thing, const Cylinder* newParent,
 			int32_t index, bool isCompleteRemoval, cylinderlink_t link = LINK_OWNER)
-			{getParent()->postRemoveNotification(actor, thing, newParent, index, isCompleteRemoval, LINK_PARENT);}
+			{if(getParent()) getParent()->postRemoveNotification(actor, thing,
+				newParent, index, isCompleteRemoval, LINK_PARENT);}
 
 		bool canSend(const Item* item) const {return (item->getID() == ITEM_PARCEL || item->getID() == ITEM_LETTER);}
 		bool sendItem(Creature* actor, Item* item);
