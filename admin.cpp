@@ -30,7 +30,7 @@
 #include "networkmessage.h"
 
 #include "house.h"
-#include "mailbox.h"
+#include "town.h"
 #include "iologindata.h"
 
 extern Game g_game;
@@ -740,7 +740,7 @@ RSA* Admin::getRSAKey(uint8_t type)
 
 Item* Admin::createMail(const std::string xmlData, std::string& name, uint32_t& depotId)
 {
-	xmlDocPtr doc = xmlParseMemory(xmlData.c_str(), strlen(xmlData.c_str()));
+	xmlDocPtr doc = xmlParseMemory(xmlData.c_str(), xmlData.length());
 	if(!doc)
 		return NULL;
 
@@ -757,8 +757,11 @@ Item* Admin::createMail(const std::string xmlData, std::string& name, uint32_t& 
 
 	if(readXMLString(root, "town", strValue))
 	{
-		if(!Mailbox::getDepotId(strValue, depotId))
+		Town* town = Towns::getInstance().getTown(strValue);
+		if(!town)
 			return false;
+
+		depotId = town->getID();
 	}
 	else if(!IOLoginData::getInstance()->getDefaultTownByName(name, depotId)) //use the players default town
 		return false;

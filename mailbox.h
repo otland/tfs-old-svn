@@ -71,7 +71,7 @@ class Mailbox : public Item, public Cylinder
 		bool canSend(const Item* item) const {return (item->getID() == ITEM_PARCEL || item->getID() == ITEM_LETTER);}
 		bool sendItem(Creature* actor, Item* item);
 
-		static bool getDepotId(const std::string& townString, uint32_t& depotId);
+		bool getDepotId(const std::string& townString, uint32_t& depotId);
 		bool getRecipient(Item* item, std::string& name, uint32_t& depotId);
 };
 #endif
