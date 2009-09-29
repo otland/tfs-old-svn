@@ -223,6 +223,7 @@ class PropStream
 			char* str = new char[strLen + 1];
 			memcpy(str, p, strLen);
 			str[strLen] = 0;
+
 			ret.assign(str, strLen);
 			delete[] str;
 			p = p + strLen;
@@ -241,6 +242,7 @@ class PropStream
 			char* str = new char[strLen + 1];
 			memcpy(str, p, strLen);
 			str[strLen] = 0;
+
 			ret.assign(str, strLen);
 			delete[] str;
 			p = p + strLen;
@@ -255,6 +257,7 @@ class PropStream
 			char* str = new char[strLen + 1];
 			memcpy(str, p, strLen);
 			str[strLen] = 0;
+
 			ret.assign(str, strLen);
 			delete[] str;
 			p += strLen;
@@ -341,7 +344,7 @@ class PropWriteStream
 		inline void ADD_LSTRING(const std::string& add)
 		{
 			uint16_t strLen = add.size();
-			ADD_USHORT(strLen);
+			ADD_ULONG(strLen);
 			if((bufferSize - size) < strLen)
 			{
 				bufferSize += ((strLen + 0x1F) & 0xFFFFFFE0);
