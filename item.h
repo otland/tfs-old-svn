@@ -218,6 +218,7 @@ class Item : virtual public Thing, public ItemAttributes
 		std::string getWriter() const;
 
 		void setActionId(int32_t aid);
+		void resetActionId();
 		int32_t getActionId() const;
 
 		void setUniqueId(int32_t uid);

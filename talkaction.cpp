@@ -838,7 +838,13 @@ bool TalkAction::thingProporties(Creature* creature, const std::string& cmd, con
 			else if(action == "erase" || action == "remove")
 				item->eraseAttribute(parseParams(it, tokens.end()));
 			else if(action == "action" || action == "actionid" || action == "aid")
-				item->setActionId(atoi(parseParams(it, tokens.end()).c_str()));
+			{
+				int32_t tmp = atoi(parseParams(it, tokens.end()).c_str());
+				if(tmp > 0)
+					item->setActionId(tmp);
+				else
+					item->resetActionId();
+			}
 			else if(action == "unique" || action == "uniqueid" || action == "uid")
 			{
 				int32_t tmp = atoi(parseParams(it, tokens.end()).c_str());

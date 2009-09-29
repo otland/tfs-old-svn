@@ -439,7 +439,7 @@ function doCopyItem(item, attributes)
 	local ret = doCreateItemEx(item.itemid, item.type)
 	if(attributes) then
 		if(item.actionid > 0) then
-			doSetItemActionId(ret, item.actionid)
+			doItemSetAttribute(ret, "aid", item.actionid)
 		end
 	end
 

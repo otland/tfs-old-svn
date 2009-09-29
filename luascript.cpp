@@ -9332,17 +9332,18 @@ int32_t LuaScriptInterface::luaDoItemEraseAttribute(lua_State* L)
 		return 1;
 	}
 
+	bool ret = true;
 	if(key == "uid")
 	{
 		reportErrorFunc("Attempt to erase protected key \"uid\".");
-		lua_pushboolean(L, false);
+		ret = false;
 	}
+	else if(key != "aid")
+		item->eraseAttribute();
 	else
-	{
-		item->eraseAttribute(key);
-		lua_pushboolean(L, true);
-	}
+		item->resetActionId();
 
+	lua_pushboolean(L, ret);
 	return 1;
 }
 

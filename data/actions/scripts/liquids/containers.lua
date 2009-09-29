@@ -92,8 +92,8 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 		if(item.type == TYPE_EMPTY) then
 			if(item.itemid == ITEM_RUM_FLASK and isInArray(DISTILLERY, itemEx.itemid)) then
 				if(itemEx.actionid == 100) then
-					doSetItemSpecialDescription(itemEx.uid, '')
-					doSetItemActionId(itemEx.uid, 0)
+					doItemEraseAttribute(itemEx.uid, "description")
+					doItemEraseAttribute(itemEx.uid, "aid")
 					doChangeTypeItem(item.uid, TYPE_RUM)
 				else
 					doPlayerSendCancel(cid, "You have to process the bunch into the distillery to get rum.")
