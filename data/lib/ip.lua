@@ -113,5 +113,5 @@ function doRevertIp(str)
 		return nil
 	end
 
-	return ip[1] .. "." .. ip[2] .. "." .. ip[3] .. "." .. ip[4]
+	return table.concat(ip, ".")
 end

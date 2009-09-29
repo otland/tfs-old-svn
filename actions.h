@@ -17,11 +17,9 @@
 
 #ifndef __ACTIONS__
 #define __ACTIONS__
-
 #include "baseevents.h"
-#include "luascript.h"
 
-#include "position.h"
+#include "luascript.h"
 #include "thing.h"
 
 class Action;

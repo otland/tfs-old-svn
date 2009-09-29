@@ -32,6 +32,7 @@ enum CreatureEventType_t
 	CREATURE_EVENT_ADVANCE,
 	CREATURE_EVENT_LOOK,
 	CREATURE_EVENT_DIRECTION,
+	CREATURE_EVENT_OUTFIT,
 	CREATURE_EVENT_MAIL_SEND,
 	CREATURE_EVENT_MAIL_RECEIVE,
 	CREATURE_EVENT_TRADE_REQUEST,
@@ -41,6 +42,7 @@ enum CreatureEventType_t
 	CREATURE_EVENT_THINK,
 	CREATURE_EVENT_STATSCHANGE,
 	CREATURE_EVENT_COMBAT_AREA,
+	CREATURE_EVENT_PUSH,
 	CREATURE_EVENT_TARGET,
 	CREATURE_EVENT_FOLLOW,
 	CREATURE_EVENT_COMBAT,
@@ -68,7 +70,7 @@ class CreatureEvents : public BaseEvents
 
 		// global events
 		bool playerLogin(Player* player);
-		bool playerLogout(Player* player);
+		bool playerLogout(Player* player, bool forceLogout);
 
 		CreatureEvent* getEventByName(const std::string& name, bool forceLoaded = true);
 
@@ -108,7 +110,7 @@ class CreatureEvent : public Event
 
 		//scripting
 		uint32_t executeLogin(Player* player);
-		uint32_t executeLogout(Player* player);
+		uint32_t executeLogout(Player* player, bool forceLogout);
 		uint32_t executeChannelJoin(Player* player, uint16_t channelId, UsersMap usersMap);
 		uint32_t executeChannelLeave(Player* player, uint16_t channelId, UsersMap usersMap);
 		uint32_t executeAdvance(Player* player, skills_t skill, uint32_t oldLevel, uint32_t newLevel);
@@ -121,8 +123,10 @@ class CreatureEvent : public Event
 		uint32_t executeReportBug(Player* player, std::string comment);
 		uint32_t executeThink(Creature* creature, uint32_t interval);
 		uint32_t executeDirection(Creature* creature, Direction old, Direction current);
+		uint32_t executeOutfit(Creature* creature, const Outfit_t& old, const Outfit_t& current);
 		uint32_t executeStatsChange(Creature* creature, Creature* attacker, StatsChange_t type, CombatType_t combat, int32_t value);
 		uint32_t executeCombatArea(Creature* creature, Tile* tile, bool isAggressive);
+		uint32_t executePush(Player* player, Creature* target);
 		uint32_t executeTarget(Creature* creature, Creature* target);
 		uint32_t executeFollow(Creature* creature, Creature* target);
 		uint32_t executeCombat(Creature* creature, Creature* target);

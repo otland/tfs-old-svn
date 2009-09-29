@@ -17,31 +17,21 @@
 #include "otpch.h"
 #include "teleport.h"
 
-#include <libxml/xmlmemory.h>
-#include <libxml/parser.h>
-
 #include "game.h"
-extern Game g_game;
 
-Teleport::Teleport(uint16_t _type):
-	Item(_type)
-{
-	destPos = Position();
-}
+extern Game g_game;
 
 Attr_ReadValue Teleport::readAttr(AttrTypes_t attr, PropStream& propStream)
 {
-	if(ATTR_TELE_DEST == attr)
-	{
-		TeleportDest* teleDest;
-		if(!propStream.GET_STRUCT(teleDest))
-			return ATTR_READ_ERROR;
+	if(attr != ATTR_TELE_DEST)
+		return Item::readAttr(attr, propStream);
 
-		setDestPos(Position(teleDest->_x, teleDest->_y, teleDest->_z));
-		return ATTR_READ_CONTINUE;
-	}
+	TeleportDest* dest;
+	if(!propStream.GET_STRUCT(dest))
+		return ATTR_READ_ERROR;
 
-	return Item::readAttr(attr, propStream);
+	setDestination(Position(dest->_x, dest->_y, dest->_z));
+	return ATTR_READ_CONTINUE;
 }
 
 bool Teleport::serializeAttr(PropWriteStream& propWriteStream) const
@@ -49,18 +39,18 @@ bool Teleport::serializeAttr(PropWriteStream& propWriteStream) const
 	bool ret = Item::serializeAttr(propWriteStream);
 	propWriteStream.ADD_UCHAR(ATTR_TELE_DEST);
 
-	TeleportDest tmpDest;
-	tmpDest._x = destPos.x;
-	tmpDest._y = destPos.y;
-	tmpDest._z = destPos.z;
+	TeleportDest dest;
+	dest._x = destination.x;
+	dest._y = destination.y;
+	dest._z = destination.z;
 
-	propWriteStream.ADD_VALUE(tmpDest);
+	propWriteStream.ADD_VALUE(dest);
 	return ret;
 }
 
 void Teleport::__addThing(Creature* actor, int32_t index, Thing* thing)
 {
-	Tile* destTile = g_game.getTile(getDestPos());
+	Tile* destTile = g_game.getTile(destination);
 	if(!destTile)
 		return;
 

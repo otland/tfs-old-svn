@@ -19,9 +19,9 @@
 #define __THING__
 #include "position.h"
 
-/*Notice: remember to add new error codes to global.lua*/
 enum ReturnValue
 {
+	RET_DONTSHOWMESSAGE = 0,
 	RET_NOERROR = 1,
 	RET_NOTPOSSIBLE = 2,
 	RET_NOTENOUGHROOM = 3,
@@ -85,8 +85,7 @@ enum ReturnValue
 	RET_CANONLYUSEONESHIELD = 61,
 	RET_YOUARENOTTHEOWNER = 62,
 	RET_YOUMAYNOTCASTAREAONBLACKSKULL = 63,
-	RET_DONTSHOWMESSAGE = 64,
-	RET_TILEISFULL = 65
+	RET_TILEISFULL = 64
 };
 
 class Tile;
@@ -97,16 +96,16 @@ class Creature;
 class Thing
 {
 	protected:
-		Thing(): parent(NULL), useCount(0) {}
+		Thing(): parent(NULL), refCount(0) {}
 
 	public:
 		virtual ~Thing() {}
 
-		void useThing2() {++useCount;}
-		void releaseThing2()
+		void addRef() {++refCount;}
+		void unRef()
 		{
-			--useCount;
-			if(useCount <= 0)
+			--refCount;
+			if(refCount <= 0)
 				delete this;
 		}
 
@@ -136,6 +135,6 @@ class Thing
 
 	private:
 		Cylinder* parent;
-		int32_t useCount;
+		int32_t refCount;
 };
 #endif

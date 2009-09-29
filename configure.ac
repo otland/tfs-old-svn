@@ -52,13 +52,6 @@ AC_ARG_ENABLE(root-permission, [  --enable-root-permission	enable running on roo
 	[OPTIONAL_FLAGS="$OPTIONAL_FLAGS -D__ROOT_PERMISSION__"]
 	rootPermission=yes
 )
-
-# check do we want to compile with boost_thread
-boostThread=no
-AC_ARG_ENABLE(boost-thread, [  --enable-boost-thread		enable usage of libboost_thread],
-	[OPTIONAL_FLAGS="$OPTIONAL_FLAGS -D__USE_BOOST_THREAD__"]
-	boostThread=yes
-)
 AC_SUBST(OPTIONAL_FLAGS)
 
 # check if we want a debug build
@@ -148,7 +141,6 @@ AC_CHECK_HEADERS([gmp.h], ,[AC_MSG_ERROR("GMP header not found.")])
 AC_CHECK_LIB(gmp, __gmpz_init2, ,[AC_MSG_ERROR("Linking against GMP failed.")])
 
 #check for boost
-if test "$boostThread" = "yes" ; then
 AC_CHECK_LIB(boost_thread-gcc-mt, main, , [
 	AC_CHECK_LIB(boost_thread-mt, main, , [
 		AC_CHECK_LIB(boost_thread, main, , [
@@ -156,7 +148,6 @@ AC_CHECK_LIB(boost_thread-gcc-mt, main, , [
 		])
 	])
 ])
-fi
 
 AC_CHECK_LIB(boost_regex-gcc-mt, main, , [
 	AC_CHECK_LIB(boost_regex-mt, main, , [
@@ -244,7 +235,6 @@ echo Home-directory configuration : $homedirConf
 echo OTServ custom allocator..... : $otservAllocator
 echo Debug build................. : $debugBuild
 echo
-#echo Build with libboost_thread.. : $boostThread
 echo Build with MySQL............ : $useMySQL
 echo Build with SQLite........... : $useSQLite
 echo Build with PostgreSQL....... : $usePostgreSQL

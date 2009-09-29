@@ -20,6 +20,7 @@
 	<action itemid="2442" event="script" value="tools/machete.lua"/>
 	<action itemid="2550" event="script" value="tools/scythe.lua"/>
 	<action itemid="2580" event="script" value="tools/fishing.lua" allowfaruse="1"/>
+	<action itemid="10223" event="script" value="tools/fishing.lua" allowfaruse="1"/>
 	<action itemid="2554" event="script" value="tools/shovel.lua"/>
 	<action itemid="5710" event="script" value="tools/shovel.lua"/>
 	<action itemid="2120" event="script" value="tools/rope.lua"/>
@@ -53,14 +54,13 @@
 	<action itemid="3941" event="script" value="liquids/containers.lua"/>
 	<action itemid="3942" event="script" value="liquids/containers.lua"/>
 	<action itemid="5553" event="script" value="liquids/containers.lua"/>
+	<action itemid="10150" event="script" value="liquids/containers.lua"/>
 	<action itemid="6558" event="script" value="liquids/demonic_blood.lua"/>
-
-	<!-- Potions -->
-	<action itemid="7588-7591;8472-8473;7618;7620;8704" event="script" value="liquids/potions.lua" allowfaruse="1"/>
-	<action itemid="7439" event="script" value="liquids/berserk_potion.lua" allowfaruse="1"/>
-	<action itemid="7440" event="script" value="liquids/mastermind_potion.lua" allowfaruse="1"/>
-	<action itemid="7443" event="script" value="liquids/bullseye_potion.lua" allowfaruse="1"/>
-	<action itemid="8474" event="script" value="liquids/antidote_potion.lua" allowfaruse="1"/>
+	<action itemid="7588-7591;8472-8473;7618;7620;8704" event="script" value="liquids/potions.lua"/>
+	<action itemid="7439" event="script" value="liquids/berserk_potion.lua"/>
+	<action itemid="7440" event="script" value="liquids/mastermind_potion.lua"/>
+	<action itemid="7443" event="script" value="liquids/bullseye_potion.lua"/>
+	<action itemid="8474" event="script" value="liquids/antidote_potion.lua"/>
 
 	<!-- Food -->
 	<action fromid="2362" toid="2363" event="script" value="other/food.lua"/>
@@ -260,12 +260,17 @@
 	<action itemid="2036" event="script" value="other/watch.lua"/>
 	<action fromid="1728" toid="1731" event="script" value="other/watch.lua"/>
 	<action itemid="1877" event="script" value="other/watch.lua"/>
+	<action fromid="6091" toid="6092" event="script" value="other/watch.lua"/>
+	<action itemid="8187" event="script" value="other/watch.lua"/>
 
 	<!-- Decay To -->
 	<action fromid="2041" toid="2042" event="script" value="other/decayto.lua"/>
 	<action fromid="2044" toid="2045" event="script" value="other/decayto.lua"/>
 	<action fromid="2047" toid="2048" event="script" value="other/decayto.lua"/>
 	<action fromid="2050" toid="2055" event="script" value="other/decayto.lua"/>
+	<action fromid="5812" toid="5813" event="script" value="other/decayto.lua"/>
+	<action itemid="7183" event="script" value="other/decayto.lua"/>
+	<action itemid="9006" event="script" value="other/decayto.lua"/>
 	<action fromid="9976" toid="9979" event="script" value="other/decayto.lua"/>
 
 	<!-- Other -->

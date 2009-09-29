@@ -44,7 +44,7 @@ void MonsterType::reset()
 
 	outfit.lookHead = outfit.lookBody = outfit.lookLegs = outfit.lookFeet = outfit.lookType = outfit.lookTypeEx = outfit.lookAddons = 0;
 	runAwayHealth = manaCost = lightLevel = lightColor = yellSpeedTicks = yellChance = changeTargetSpeed = changeTargetChance = 0;
-	experience = defense = armor = lookCorpse = corpseUnique = conditionImmunities = damageImmunities = 0;
+	experience = defense = armor = lookCorpse = corpseUnique = corpseAction = conditionImmunities = damageImmunities = 0;
 
 	maxSummons = -1;
 	targetDistance = 1;
@@ -304,11 +304,7 @@ bool Monsters::deserializeSpell(xmlNodePtr node, spellBlock_t& sb, const std::st
 		sb.maxCombatValue = intValue;
 		//normalize values
 		if(std::abs(sb.minCombatValue) > std::abs(sb.maxCombatValue))
-		{
-			int32_t value = sb.maxCombatValue;
-			sb.maxCombatValue = sb.minCombatValue;
-			sb.minCombatValue = value;
-		}
+			std::swap(sb.minCombatValue, sb.maxCombatValue);
 	}
 
 	if((sb.spell = g_spells->getSpellByName(name)))
@@ -338,7 +334,7 @@ bool Monsters::deserializeSpell(xmlNodePtr node, spellBlock_t& sb, const std::st
 
 		}
 
-		combatSpell->getCombat()->setPlayerCombatValues(FORMULA_VALUE, sb.minCombatValue, 0, sb.maxCombatValue, 0);
+		combatSpell->getCombat()->setPlayerCombatValues(FORMULA_VALUE, sb.minCombatValue, 0, sb.maxCombatValue, 0, 0, 0, 0, 0, 0, 0);
 	}
 	else
 	{
@@ -783,7 +779,7 @@ bool Monsters::deserializeSpell(xmlNodePtr node, spellBlock_t& sb, const std::st
 			}
 			else if(tmpName == "dazzlecondition")
 			{
-				conditionType = CONDITION_CURSED;
+				conditionType = CONDITION_DAZZLED;
 				tickInterval = 10000;
 			}
 			else if(tmpName == "drowncondition")
@@ -820,7 +816,7 @@ bool Monsters::deserializeSpell(xmlNodePtr node, spellBlock_t& sb, const std::st
 			return false;
 		}
 
-		combat->setPlayerCombatValues(FORMULA_VALUE, sb.minCombatValue, 0, sb.maxCombatValue, 0);
+		combat->setPlayerCombatValues(FORMULA_VALUE, sb.minCombatValue, 0, sb.maxCombatValue, 0, 0, 0, 0, 0, 0, 0);
 		combatSpell = new CombatSpell(combat, needTarget, needDirection);
 
 		xmlNodePtr attributeNode = node->children;
@@ -1124,6 +1120,9 @@ bool Monsters::loadMonster(const std::string& file, const std::string& monsterNa
 
 			if(readXMLInteger(p, "corpseUniqueId", intValue) || readXMLInteger(p, "corpseUid", intValue))
 				mType->corpseUnique = intValue;
+
+			if(readXMLInteger(p, "corpseActionId", intValue) || readXMLInteger(p, "corpseAid", intValue))
+				mType->corpseAction = intValue;
 		}
 		else if(!xmlStrcmp(p->name, (const xmlChar*)"attacks"))
 		{

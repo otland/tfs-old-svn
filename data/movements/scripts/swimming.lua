@@ -8,7 +8,7 @@ local BORDERS = {
 	[7947] = {x = 2, y = 1, back = WEST},
 	[7948] = {x = -2, y = 1, back = NORTH},
 	[7949] = {x = 2, y = -1, back = WEST},
-	[7950] = {x = -2, y = -1, back = WEST},
+	[7950] = {x = -2, y = -1, back = EAST},
 	[7951] = {x = 2, y = 2, back = WEST},
 	[7952] = {x = -2, y = 2, back = NORTH},
 	[7953] = {x = 2, y = -2, back = WEST},
@@ -43,12 +43,15 @@ function onStepIn(cid, item, position, lastPosition, fromPosition, toPosition, a
 			return false
 		end
 
-		doRemoveConditions(cid, true)
-
-		doSendMagicEffect(pos, CONST_ME_POFF)
+		local tmp = getCreaturePosition(cid)
 		doTeleportThing(cid, newPos)
-		doSendMagicEffect(pos, CONST_ME_WATERSPLASH)
 
+		if(not isPlayerGhost(cid)) then
+			doSendMagicEffect(tmp, CONST_ME_POFF)
+			doSendMagicEffect(newPos, CONST_ME_WATERSPLASH)
+		end
+
+		doRemoveConditions(cid, true)
 		doSetCreatureOutfit(cid, outfit, -1)
 	end
 

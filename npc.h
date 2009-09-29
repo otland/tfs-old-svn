@@ -329,7 +329,7 @@ class NpcResponse
 		int32_t getTopic() const {return prop.topic;}
 		int32_t getFocusState() const {return prop.focusStatus;}
 		int32_t getStorageId() const {return prop.storageId;}
-		std::string getStorageValue() const {return prop.storageValue;}
+		std::string getStorage() const {return prop.storageValue;}
 		ResponseType_t getResponseType() const {return prop.responseType;}
 		InteractType_t getInteractType() const {return prop.interactType;}
 		StorageComparision_t getStorageComp() const {return prop.storageComp;}
@@ -387,10 +387,11 @@ class Npc : public Creature
 		virtual Npc* getNpc() {return this;}
 		virtual const Npc* getNpc() const {return this;}
 
-		virtual uint32_t idRange() {return 0x80000000;}
-		static AutoList<Npc> listNpc;
-		void removeList() {listNpc.removeList(getID());}
-		void addList() {listNpc.addList(this);}
+		virtual uint32_t rangeId() {return 0x80000000;}
+		static AutoList<Npc> autoList;
+
+		void removeList() {autoList[id] = this;}
+		void addList() {autoList.erase(id);}
 
 		virtual bool isPushable() const {return false;}
 		virtual bool isAttackable() const {return attackable;}

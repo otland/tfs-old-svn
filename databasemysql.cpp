@@ -206,7 +206,6 @@ bool DatabaseMySQL::connect()
 	{
 		m_connected = false;
 		mysql_close(&m_handle);
-		OTSYS_SLEEP(1000);
 	}
 
 	if(!mysql_real_connect(&m_handle, g_config.getString(ConfigManager::SQL_HOST).c_str(), g_config.getString(ConfigManager::SQL_USER).c_str(),
@@ -240,7 +239,7 @@ int32_t MySQLResult::getDataInt(const std::string &s)
 	listNames_t::iterator it = m_listNames.find(s);
 	if(it != m_listNames.end())
 	{
-		if(m_row[it->second] == NULL)
+		if(!m_row[it->second])
 			return 0;
 
 		return atoi(m_row[it->second]);
@@ -258,10 +257,10 @@ int64_t MySQLResult::getDataLong(const std::string &s)
 	listNames_t::iterator it = m_listNames.find(s);
 	if(it != m_listNames.end())
 	{
-		if(m_row[it->second] == NULL)
+		if(!m_row[it->second])
 			return 0;
 
-		return ATOI64(m_row[it->second]);
+		return atoll(m_row[it->second]);
 	}
 
 	if(refetch())
@@ -276,7 +275,7 @@ std::string MySQLResult::getDataString(const std::string &s)
 	listNames_t::iterator it = m_listNames.find(s);
 	if(it != m_listNames.end())
 	{
-		if(m_row[it->second] == NULL)
+		if(!m_row[it->second])
 			return "";
 
 		return std::string(m_row[it->second]);
@@ -294,7 +293,7 @@ const char* MySQLResult::getDataStream(const std::string &s, uint64_t &size)
 	listNames_t::iterator it = m_listNames.find(s);
 	if(it != m_listNames.end())
 	{
-		if(m_row[it->second] == NULL)
+		if(!m_row[it->second])
 		{
 			size = 0;
 			return NULL;
@@ -329,7 +328,7 @@ void MySQLResult::free()
 bool MySQLResult::next()
 {
 	m_row = mysql_fetch_row(m_handle);
-	return m_row != NULL;
+	return m_row;
 }
 
 void MySQLResult::fetch()
@@ -348,7 +347,7 @@ bool MySQLResult::refetch()
 		return false;
 
 	fetch();
-	m_attempts++;
+	++m_attempts;
 	return true;
 }
 

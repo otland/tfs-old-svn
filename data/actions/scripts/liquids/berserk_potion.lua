@@ -4,12 +4,8 @@ setConditionParam(condition, CONDITION_PARAM_SKILL_MELEE, 5)
 setConditionParam(condition, CONDITION_PARAM_SKILL_SHIELD, -10)
 
 function onUse(cid, item, fromPosition, itemEx, toPosition)
-	if(not isPlayer(itemEx.uid)) then
-		return true
-	end
-
-	if(doAddCondition(itemEx.uid, condition)) then
-		doSendMagicEffect(getCreaturePosition(itemEx.uid), CONST_ME_MAGIC_RED)
+	if(doAddCondition(cid, condition)) then
+		doSendMagicEffect(fromPosition, CONST_ME_MAGIC_RED)
 		doRemoveItem(item.uid)
 	end
 

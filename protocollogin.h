@@ -30,7 +30,7 @@ class ProtocolLogin : public Protocol
 #endif
 		virtual void onRecvFirstMessage(NetworkMessage& msg) {parseFirstPacket(msg);}
 
-		ProtocolLogin(Connection* connection) : Protocol(connection)
+		ProtocolLogin(Connection_ptr connection) : Protocol(connection)
 		{
 			enableChecksum();
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__

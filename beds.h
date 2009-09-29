@@ -17,9 +17,7 @@
 
 #ifndef __BEDS__
 #define __BEDS__
-
 #include "item.h"
-#include "position.h"
 
 class House;
 class Player;
@@ -36,13 +34,10 @@ class BedItem : public Item
 		virtual Attr_ReadValue readAttr(AttrTypes_t attr, PropStream& propStream);
 		virtual bool serializeAttr(PropWriteStream& propWriteStream) const;
 
-		virtual bool canRemove() const {return (house == NULL);}
+		virtual bool canRemove() const {return house;}
 
 		uint32_t getSleeper() const {return sleeper;}
 		void setSleeper(uint32_t guid) {sleeper = guid;}
-
-		uint64_t getSleepStart() const {return sleepStart;}
-		void setSleepStart(uint64_t now) {sleepStart = now;}
 
 		House* getHouse() const {return house;}
 		void setHouse(House* h) {house = h;}
@@ -61,7 +56,7 @@ class BedItem : public Item
 		void internalSetSleeper(const Player* player);
 		void internalRemoveSleeper();
 
-		uint32_t sleeper, sleepStart;
+		uint32_t sleeper;
 		House* house;
 };
 

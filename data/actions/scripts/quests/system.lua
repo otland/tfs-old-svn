@@ -7,7 +7,7 @@ local questsExperience = {
 }
 
 function onUse(cid, item, fromPosition, itemEx, toPosition)
-	if(getPlayerCustomFlagValue(cid, PlayerCustomFlag_GamemasterPrivileges)) then
+	if(getPlayerCustomFlagValue(cid, PLAYERCUSTOMFLAG_GAMEMASTERPRIVILEGES)) then
 		doSendMagicEffect(getCreaturePosition(cid), CONST_ME_POFF, cid)
 		return true
 	end

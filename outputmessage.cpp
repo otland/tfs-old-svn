@@ -20,17 +20,18 @@
 #include "outputmessage.h"
 #include "protocol.h"
 
-//*********** OutputMessagePool ****************//
+#ifdef __ENABLE_SERVER_DIAGNOSTIC__
+uint32_t OutputMessagePool::outputMessagePoolCount = OUTPUT_POOL_SIZE;
+#endif
 
 OutputMessagePool::OutputMessagePool()
 {
-	OTSYS_THREAD_LOCKVARINIT(m_outputPoolLock);
 	for(uint32_t i = 0; i < OUTPUT_POOL_SIZE; ++i)
 	{
 		OutputMessage* msg = new OutputMessage();
 		m_outputMessages.push_back(msg);
 #ifdef __TRACK_NETWORK__
-		m_allOutputMessages.push_back(msg);
+		m_allMessages.push_back(msg);
 #endif
 	}
 
@@ -39,25 +40,25 @@ OutputMessagePool::OutputMessagePool()
 
 void OutputMessagePool::startExecutionFrame()
 {
+	//boost::recursive_mutex::scoped_lock lockClass(m_outputPoolLock);
 	m_frameTime = OTSYS_TIME();
 	m_shutdown = false;
 }
 
 OutputMessagePool::~OutputMessagePool()
 {
-	for(InternalOutputMessageList::iterator it = m_outputMessages.begin(); it != m_outputMessages.end(); ++it)
+	for(InternalList::iterator it = m_outputMessages.begin(); it != m_outputMessages.end(); ++it)
 		delete (*it);
 
 	m_outputMessages.clear();
-	OTSYS_THREAD_LOCKVARRELEASE(m_outputPoolLock);
 }
 
 void OutputMessagePool::send(OutputMessage_ptr msg)
 {
-	OTSYS_THREAD_LOCK(m_outputPoolLock, "");
+	m_outputPoolLock.lock();
 	OutputMessage::OutputMessageState state = msg->getState();
 
-	OTSYS_THREAD_UNLOCK(m_outputPoolLock, "");
+	m_outputPoolLock.unlock();
 	if(state == OutputMessage::STATE_ALLOCATED_NO_AUTOSEND)
 	{
 		#ifdef __DEBUG_NET_DETAIL__
@@ -81,9 +82,9 @@ void OutputMessagePool::send(OutputMessage_ptr msg)
 
 void OutputMessagePool::sendAll()
 {
-	OTSYS_THREAD_LOCK_CLASS lockClass(m_outputPoolLock);
+	boost::recursive_mutex::scoped_lock lockClass(m_outputPoolLock);
 	OutputMessageList::iterator it;
-	for(it = m_toAddQueue.begin(); it != m_toAddQueue.end();)
+	for(it = m_addQueue.begin(); it != m_addQueue.end();)
 	{
 		//drop messages that are older than 10 seconds
 		if(OTSYS_TIME() - (*it)->getFrame() > 10000)
@@ -91,17 +92,17 @@ void OutputMessagePool::sendAll()
 			if((*it)->getProtocol())
 				(*it)->getProtocol()->onSendMessage(*it);
 
-			it = m_toAddQueue.erase(it);
+			it = m_addQueue.erase(it);
 			continue;
 		}
 
 		(*it)->setState(OutputMessage::STATE_ALLOCATED);
-		m_autoSendOutputMessages.push_back(*it);
+		m_autoSend.push_back(*it);
 		++it;
 	}
 
-	m_toAddQueue.clear();
-	for(it = m_autoSendOutputMessages.begin(); it != m_autoSendOutputMessages.end(); )
+	m_addQueue.clear();
+	for(it = m_autoSend.begin(); it != m_autoSend.end();)
 	{
 		OutputMessage_ptr omsg = (*it);
 		#ifdef __NO_PLAYER_SENDBUFFER__
@@ -125,7 +126,7 @@ void OutputMessagePool::sendAll()
 				std::cout << "Error: [OutputMessagePool::send] NULL connection." << std::endl;
 			#endif
 
-			it = m_autoSendOutputMessages.erase(it);
+			it = m_autoSend.erase(it);
 		}
 		else
 			++it;
@@ -155,29 +156,32 @@ void OutputMessagePool::internalReleaseMessage(OutputMessage* msg)
 	msg->clearTrack();
 #endif
 
-	OTSYS_THREAD_LOCK(m_outputPoolLock, "");
+	m_outputPoolLock.lock();
 	m_outputMessages.push_back(msg);
-	OTSYS_THREAD_UNLOCK(m_outputPoolLock, "");
+	m_outputPoolLock.unlock();
 }
 
-OutputMessage_ptr OutputMessagePool::getOutputMessage(Protocol* protocol, bool autosend /*= true*/)
+OutputMessage_ptr OutputMessagePool::getOutputMessage(Protocol* protocol, bool autoSend /*= true*/)
 {
 	#ifdef __DEBUG_NET_DETAIL__
-	std::cout << "request output message - auto = " << autosend << std::endl;
+	std::cout << "request output message - auto = " << autoSend << std::endl;
 	#endif
 	if(m_shutdown)
 		return OutputMessage_ptr();
 
-	OTSYS_THREAD_LOCK_CLASS lockClass(m_outputPoolLock);
+	boost::recursive_mutex::scoped_lock lockClass(m_outputPoolLock);
 	if(!protocol->getConnection())
 		return OutputMessage_ptr();
 
 	if(m_outputMessages.empty())
 	{
+#ifdef __ENABLE_SERVER_DIAGNOSTIC__
+		outputMessagePoolCount++;
+#endif
 		OutputMessage* msg = new OutputMessage();
 		m_outputMessages.push_back(msg);
 #ifdef __TRACK_NETWORK__
-		m_allOutputMessages.push_back(msg);
+		m_allMessages.push_back(msg);
 #endif
 	}
 
@@ -186,23 +190,23 @@ OutputMessage_ptr OutputMessagePool::getOutputMessage(Protocol* protocol, bool a
 		boost::bind(&OutputMessagePool::releaseMessage, this, _1));
 
 	m_outputMessages.pop_back();
-	configureOutputMessage(omsg, protocol, autosend);
+	configureOutputMessage(omsg, protocol, autoSend);
 	return omsg;
 }
 
-void OutputMessagePool::configureOutputMessage(OutputMessage_ptr msg, Protocol* protocol, bool autosend)
+void OutputMessagePool::configureOutputMessage(OutputMessage_ptr msg, Protocol* protocol, bool autoSend)
 {
 	TRACK_MESSAGE(msg);
 	msg->Reset();
-	if(autosend)
+	if(autoSend)
 	{
 		msg->setState(OutputMessage::STATE_ALLOCATED);
-		m_autoSendOutputMessages.push_back(msg);
+		m_autoSend.push_back(msg);
 	}
 	else
 		msg->setState(OutputMessage::STATE_ALLOCATED_NO_AUTOSEND);
 
-	Connection* connection = protocol->getConnection();
+	Connection_ptr connection = protocol->getConnection();
 	assert(connection);
 
 	msg->setProtocol(protocol);
@@ -211,4 +215,11 @@ void OutputMessagePool::configureOutputMessage(OutputMessage_ptr msg, Protocol* 
 	connection->addRef();
 
 	msg->setFrame(m_frameTime);
+}
+
+void OutputMessagePool::autoSend(OutputMessage_ptr msg)
+{
+	m_outputPoolLock.lock();
+	m_addQueue.push_back(msg);
+	m_outputPoolLock.unlock();
 }

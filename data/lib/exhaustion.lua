@@ -1,7 +1,7 @@
 exhaustion =
 {
 	check = function (cid, storage)
-		if(getPlayerFlagValue(cid, PlayerFlag_HasNoExhaustion)) then
+		if(getPlayerFlagValue(cid, PLAYERFLAG_HASNOEXHAUSTION)) then
 			return false
 		end
 
@@ -9,7 +9,7 @@ exhaustion =
 	end,
 
 	get = function (cid, storage)
-		if(getPlayerFlagValue(cid, PlayerFlag_HasNoExhaustion)) then
+		if(getPlayerFlagValue(cid, PLAYERFLAG_HASNOEXHAUSTION)) then
 			return false
 		end
 

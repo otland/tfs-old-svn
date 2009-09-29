@@ -1,16 +1,16 @@
 -- The Forgotten Server Config
 
 	-- Account manager
-	accountManager = "yes"
-	namelockManager = "yes"
-	newPlayerChooseVoc = "no"
+	accountManager = true
+	namelockManager = true
+	newPlayerChooseVoc = false
 	newPlayerSpawnPosX = 95
 	newPlayerSpawnPosY = 117
 	newPlayerSpawnPosZ = 7
 	newPlayerTownId = 1
 	newPlayerLevel = 1
 	newPlayerMagicLevel = 0
-	generateAccountNumber = "no"
+	generateAccountNumber = false
 
 	-- Unjustified kills
 	-- NOTE: *Banishment and *BlackSkull variables are >summed up<
@@ -30,21 +30,23 @@
 	monthlyFragsToBanishment = monthlyFragsToRedSkull
 	blackSkulledDeathHealth = 40
 	blackSkulledDeathMana = 0
-	useBlackSkull = "yes"
-	advancedFragList = "no"
+	useBlackSkull = true
+	advancedFragList = false
 
 	-- Banishments
 	-- violationNameReportActionType 1 = just a report, 2 = name lock, 3 = player banishment
+	-- killsBanLength works only if useBlackSkull option is disabled.
 	notationsToBan = 3
 	warningsToFinalBan = 4
 	warningsToDeletion = 5
 	banLength = 7 * 24 * 60 * 60
+	killsBanLength = 7 * 24 * 60 * 60
 	finalBanLength = 30 * 24 * 60 * 60
 	ipBanishmentLength = 1 * 24 * 60 * 60
-	broadcastBanishments = "yes"
+	broadcastBanishments = true
 	maxViolationCommentSize = 200
 	violationNameReportActionType = 2
-	autoBanishUnknownBytes = "no"
+	autoBanishUnknownBytes = false
 
 	-- Battle
 	-- NOTE: showHealingDamageForMonsters inheritates from showHealingDamage.
@@ -52,36 +54,36 @@
 	-- deathLostPercent set to nil enables manual mode.
 	worldType = "pvp"
 	protectionLevel = 1
-	pvpTileIgnoreLevelAndVocationProtection = "yes"
+	pvpTileIgnoreLevelAndVocationProtection = true
 	pzLocked = 60 * 1000
 	huntingDuration = 60 * 1000
 	criticalHitChance = 7
 	criticalHitMultiplier = 1
-	displayCriticalHitNotify = "no"
-	removeWeaponAmmunition = "yes"
-	removeWeaponCharges = "yes"
-	removeRuneCharges = "yes"
+	displayCriticalHitNotify = false
+	removeWeaponAmmunition = true
+	removeWeaponCharges = true
+	removeRuneCharges = true
 	whiteSkullTime = 15 * 60 * 1000
-	noDamageToSameLookfeet = "no"
-	showHealingDamage = "no"
-	showHealingDamageForMonsters = "no"
+	noDamageToSameLookfeet = false
+	showHealingDamage = false
+	showHealingDamageForMonsters = false
 	fieldOwnershipDuration = 5 * 1000
-	stopAttackingAtExit = "no"
-	oldConditionAccuracy = "no"
+	stopAttackingAtExit = false
+	oldConditionAccuracy = false
 	loginProtectionPeriod = 10 * 1000
 	deathLostPercent = 10
 	stairhopDelay = 2 * 1000
 	pushCreatureDelay = 2 * 1000
 	deathContainerId = 1987
 	gainExperienceColor = 215
-	addManaSpentInPvPZone = "yes"
+	addManaSpentInPvPZone = true
 	squareColor = 0
-	allowFightback = "yes"
+	allowFightback = true
 
 	-- Connection config
 	worldId = 0
 	ip = "127.0.0.1"
-	bindOnlyConfiguredIpAddress = "no"
+	bindOnlyConfiguredIpAddress = false
 	loginPort = 7171
 	gamePort = 7172
 	adminPort = 7171
@@ -91,16 +93,16 @@
 	loginTimeout = 60 * 1000
 	maxPlayers = 1000
 	motd = "Welcome to the Forgotten Server!"
-	displayOnOrOffAtCharlist = "no"
-	onePlayerOnlinePerAccount = "yes"
-	allowClones = "no"
+	displayOnOrOffAtCharlist = false
+	onePlayerOnlinePerAccount = true
+	allowClones = false
 	serverName = "Forgotten"
 	loginMessage = "Welcome to the Forgotten Server!"
 	statusTimeout = 5 * 60 * 1000
-	replaceKickOnLogin = "yes"
-	forceSlowConnectionsToDisconnect = "no"
-	loginOnlyWithLoginServer = "no"
-	premiumPlayerSkipWaitList = "no"
+	replaceKickOnLogin = true
+	forceSlowConnectionsToDisconnect = false
+	loginOnlyWithLoginServer = false
+	premiumPlayerSkipWaitList = false
 
 	-- Database
 	-- NOTE: sqlFile is used only by sqlite database, and sqlKeepAlive by mysql database.
@@ -115,16 +117,16 @@
 	sqlKeepAlive = 0
 	mysqlReadTimeout = 10
 	mysqlWriteTimeout = 10
-	passwordType = "plain"
+	encryptionType = "plain"
 
 	-- Deathlist
-	deathListEnabled = "yes"
+	deathListEnabled = true
 	deathListRequiredTime = 1 * 60 * 1000
 	deathAssistCount = 19
 	maxDeathRecords = 5
 
 	-- Guilds
-	ingameGuildManagement = "yes"
+	ingameGuildManagement = true
 	levelToFormGuild = 8
 	premiumDaysToFormGuild = 0
 	guildNameMinLength = 4
@@ -135,22 +137,23 @@
 	updateHighscoresAfterMinutes = 60
 
 	-- Houses
-	buyableAndSellableHouses = "yes"
-	houseNeedPremium = "yes"
-	bedsRequirePremium = "yes"
+	buyableAndSellableHouses = true
+	houseNeedPremium = true
+	bedsRequirePremium = true
 	levelToBuyHouse = 1
 	housesPerAccount = 0
-	houseRentAsPrice = "no"
-	housePriceAsRent = "no"
+	houseRentAsPrice = false
+	housePriceAsRent = false
 	housePriceEachSquare = 1000
 	houseRentPeriod = "never"
-	guildHalls = "no"
+	houseCleanOld = 0
+	guildHalls = false
 
 	-- Item usage
 	timeBetweenActions = 200
 	timeBetweenExActions = 1000
-	checkCorpseOwner = "yes"
-	hotkeyAimbotEnabled = "yes"
+	checkCorpseOwner = true
+	hotkeyAimbotEnabled = true
 	maximumDoorLevel = 500
 
 	-- Map
@@ -158,10 +161,10 @@
 	-- useHouseDataStorage usage may be found at README.
 	mapName = "forgotten"
 	mapAuthor = "Komic"
-	randomizeTiles = "yes"
-	useHouseDataStorage = "no"
-	storeTrash = "yes"
-	cleanProtectedZones = "yes"
+	randomizeTiles = true
+	useHouseDataStorage = false
+	storeTrash = true
+	cleanProtectedZones = true
 	mailboxDisabledTowns = "-1"
 
 	-- Startup
@@ -171,36 +174,37 @@
 	defaultPriority = "high"
 	niceLevel = 5
 	coresUsed = "-1"
-	optimizeDatabaseAtStartup = "yes"
-	removePremiumOnInit = "yes"
-	confirmOutdatedVersion = "no"
+	optimizeDatabaseAtStartup = true
+	removePremiumOnInit = true
+	confirmOutdatedVersion = false
 
 	-- Muted buffer
 	maxMessageBuffer = 4
-	bufferMutedOnSpellFailure = "no"
+	bufferMutedOnSpellFailure = false
 
 	-- Miscellaneous
 	-- NOTE: promptExceptionTracerErrorBox works only with precompiled support feature,
 	-- called "exception tracer" (__EXCEPTION_TRACER__ flag).
 	-- monsterLootMessage 0 to disable, 1 - only party, 2 - only player, 3 - party or player (like Tibia's)
 	dataDirectory = "data/"
-	allowChangeOutfit = "yes"
-	allowChangeColors = "yes"
-	allowChangeAddons = "yes"
-	disableOutfitsForPrivilegedPlayers = "no"
-	bankSystem = "yes"
-	saveGlobalStorage = "yes"
-	displaySkillLevelOnAdvance = "no"
-	spellNameInsteadOfWords = "no"
-	emoteSpells = "no"
-	promptExceptionTracerErrorBox = "yes"
-	storePlayerDirection = "no"
+	allowChangeOutfit = true
+	allowChangeColors = true
+	allowChangeAddons = true
+	disableOutfitsForPrivilegedPlayers = false
+	bankSystem = true
+	saveGlobalStorage = true
+	displaySkillLevelOnAdvance = false
+	spellNameInsteadOfWords = false
+	emoteSpells = false
+	promptExceptionTracerErrorBox = true
+	storePlayerDirection = false
 	monsterLootMessage = 3
 	monsterLootMessageType = 25
+	separateViplistPerCharacter = false
 
 	-- Ghost mode
-	ghostModeInvisibleEffect = "no"
-	ghostModeSpellEffects = "yes"
+	ghostModeInvisibleEffect = false
+	ghostModeSpellEffects = true
 
 	-- Limits
 	idleWarningTime = 14 * 60 * 1000
@@ -211,13 +215,13 @@
 	maxItemsPerHouseTile = 0
 
 	-- Premium-related
-	freePremium = "no"
-	premiumForPromotion = "yes"
+	freePremium = false
+	premiumForPromotion = true
 
 	-- Blessings
 	-- NOTE: blessingReduction* regards items/containers loss.
 	-- eachBlessReduction is how much each bless reduces the experience/magic/skills loss.
-	blessingsOnlyPremium = "yes"
+	blessingsOnlyPremium = true
 	blessingReductionBase = 30
 	blessingReductionDecreament = 5
 	eachBlessReduction = 8
@@ -225,13 +229,19 @@
 	-- Rates
 	-- NOTE: experienceStages configuration is located in data/XML/stages.xml.
 	-- rateExperienceFromPlayers 0 to disable.
-	experienceStages = "no"
+	experienceStages = false
 	rateExperience = 5.0
 	rateExperienceFromPlayers = 0
 	rateSkill = 3.0
 	rateMagic = 3.0
 	rateLoot = 2.0
 	rateSpawn = 1
+
+	-- Monster rates
+	rateMonsterHealth = 1.0
+	rateMonsterMana = 1.0
+	rateMonsterAttack = 1.0
+	rateMonsterDefense = 1.0
 
 	-- Experience from players
 	-- NOTE: min~Threshold* set to 0 will disable the minimum threshold:
@@ -258,7 +268,7 @@
 	staminaRatingLimitBottom = 14 * 60
 	rateStaminaAboveNormal = 1.5
 	rateStaminaUnderNormal = 0.5
-	staminaThresholdOnlyPremium = "yes"
+	staminaThresholdOnlyPremium = true
 
 	-- Party
 	-- NOTE: experienceShareLevelDifference is float number.
@@ -274,10 +284,10 @@
 	-- Global save
 	-- NOTE: globalSaveHour means like 03:00, not that it will save every 3 hours,
 	-- if you want such a system please check out data/globalevents/globalevents.xml.
-	globalSaveEnabled = "no"
+	globalSaveEnabled = false
 	globalSaveHour = 8
-	shutdownAtGlobalSave = "yes"
-	cleanMapAtGlobalSave = "no"
+	shutdownAtGlobalSave = true
+	cleanMapAtGlobalSave = false
 
 	-- Spawns
 	deSpawnRange = 2
@@ -285,23 +295,23 @@
 
 	-- Summons
 	maxPlayerSummons = 2
-	teleportAllSummons = "no"
-	teleportPlayerSummons = "no"
+	teleportAllSummons = false
+	teleportPlayerSummons = false
 
 	-- Status
 	ownerName = ""
 	ownerEmail = "@otland.net"
 	url = "http://otland.net/"
 	location = "Europe"
-	displayGamemastersWithOnlineCommand = "no"
+	displayGamemastersWithOnlineCommand = false
 
 	-- Logs
 	-- NOTE: This kind of logging does not work in GUI version.
 	-- For such, please compile the software with __GUI_LOGS__ flag.
-	adminLogsEnabled = "no"
-	displayPlayersLogging = "yes"
+	adminLogsEnabled = false
+	displayPlayersLogging = true
 	prefixChannelLogs = ""
 	runFile = ""
 	outLogName = ""
 	errorLogName = ""
-	truncateLogsOnStartup = "no"
+	truncateLogsOnStartup = false

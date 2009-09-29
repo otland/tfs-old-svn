@@ -179,8 +179,8 @@ class _Database
 		*
 		* @return the case insensitive operator
 		*/
-		DATABASE_VIRTUAL std::string getStringComparison() {return "=";}
-		DATABASE_VIRTUAL std::string getUpdateLimiter() {return " LIMIT 1";}
+		DATABASE_VIRTUAL std::string getStringComparison() {return "= ";}
+		DATABASE_VIRTUAL std::string getUpdateLimiter() {return " LIMIT 1;";}
 
 		/**
 		* Get database engine
@@ -252,11 +252,11 @@ class DBQuery : public std::stringstream
 {
 	friend class _Database;
 	public:
-		DBQuery() {OTSYS_THREAD_LOCK(databaseLock, "");}
-		virtual ~DBQuery() {str(""); OTSYS_THREAD_UNLOCK(databaseLock, "");}
+		DBQuery() {databaseLock.lock();}
+		virtual ~DBQuery() {str(""); databaseLock.unlock();}
 
 	protected:
-		static OTSYS_THREAD_LOCKVAR databaseLock;
+		static boost::recursive_mutex databaseLock;
 };
 
 /**
@@ -302,8 +302,8 @@ class DBInsert
 
 	protected:
 		Database* m_db;
-
 		bool m_multiLine;
+
 		uint32_t m_rows;
 		std::string m_query, m_buf;
 };
@@ -352,6 +352,8 @@ class DBTransaction
 		}
 
 	private:
+		Database* m_database;
+
 		enum TransactionStates_t
 		{
 			STATE_NO_START,
@@ -360,7 +362,6 @@ class DBTransaction
 		};
 
 		TransactionStates_t m_state;
-		Database* m_database;
 };
 #endif
 #endif

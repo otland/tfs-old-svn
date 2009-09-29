@@ -160,11 +160,6 @@ uint32_t Tile::getDownItemCount() const
 	return 0;
 }
 
-std::string Tile::getDescription(int32_t lookDistance) const
-{
-	return "You don't know why, but you cannot see anything!";
-}
-
 Teleport* Tile::getTeleportItem() const
 {
 	if(!hasFlag(TILESTATE_TELEPORT))
@@ -370,7 +365,7 @@ const Creature* Tile::getTopVisibleCreature(const Creature* creature) const
 void Tile::onAddTileItem(Item* item)
 {
 	updateTileFlags(item, false);
-	const Position& cylinderMapPos = getPosition();
+	const Position& cylinderMapPos = pos;
 
 	const SpectatorVec& list = g_game.getSpectators(cylinderMapPos);
 	SpectatorVec::const_iterator it;
@@ -390,7 +385,7 @@ void Tile::onAddTileItem(Item* item)
 
 void Tile::onUpdateTileItem(Item* oldItem, const ItemType& oldType, Item* newItem, const ItemType& newType)
 {
-	const Position& cylinderMapPos = getPosition();
+	const Position& cylinderMapPos = pos;
 
 	const SpectatorVec& list = g_game.getSpectators(cylinderMapPos);
 	SpectatorVec::const_iterator it;
@@ -411,7 +406,7 @@ void Tile::onUpdateTileItem(Item* oldItem, const ItemType& oldType, Item* newIte
 void Tile::onRemoveTileItem(const SpectatorVec& list, std::vector<uint32_t>& oldStackposVector, Item* item)
 {
 	updateTileFlags(item, true);
-	const Position& cylinderMapPos = getPosition();
+	const Position& cylinderMapPos = pos;
 
 	const ItemType& iType = Item::items[item->getID()];
 	SpectatorVec::const_iterator it;
@@ -432,7 +427,7 @@ void Tile::onRemoveTileItem(const SpectatorVec& list, std::vector<uint32_t>& old
 
 void Tile::onUpdateTile()
 {
-	const Position& cylinderMapPos = getPosition();
+	const Position& cylinderMapPos = pos;
 
 	const SpectatorVec& list = g_game.getSpectators(cylinderMapPos);
 	SpectatorVec::const_iterator it;
@@ -456,14 +451,12 @@ void Tile::moveCreature(Creature* actor, Creature* creature, Cylinder* toCylinde
 	SpectatorVec list;
 	SpectatorVec::iterator it;
 
-	Position oldPos = getPosition();
-	g_game.getSpectators(list, oldPos, false, true);
-
+	g_game.getSpectators(list, pos, false, true);
 	Position newPos = newTile->getPosition();
 	g_game.getSpectators(list, newPos, true, true);
 
 	bool teleport = false;
-	if(forceTeleport || !newTile->ground || !Position::areInRange<1,1,0>(oldPos, newPos))
+	if(forceTeleport || !newTile->ground || !Position::areInRange<1,1,0>(pos, newPos))
 		teleport = true;
 
 	std::vector<uint32_t> oldStackposVector;
@@ -489,13 +482,13 @@ void Tile::moveCreature(Creature* actor, Creature* creature, Cylinder* toCylinde
 	int32_t newStackpos = newTile->__getIndexOfThing(creature);
 	if(!teleport)
 	{
-		if(oldPos.y > newPos.y)
+		if(pos.y > newPos.y)
 			creature->setDirection(NORTH);
-		else if(oldPos.y < newPos.y)
+		else if(pos.y < newPos.y)
 			creature->setDirection(SOUTH);
-		if(oldPos.x < newPos.x)
+		if(pos.x < newPos.x)
 			creature->setDirection(EAST);
-		else if(oldPos.x > newPos.x)
+		else if(pos.x > newPos.x)
 			creature->setDirection(WEST);
 	}
 
@@ -504,12 +497,12 @@ void Tile::moveCreature(Creature* actor, Creature* creature, Cylinder* toCylinde
 	for(it = list.begin(); it != list.end(); ++it)
 	{
 		if((tmpPlayer = (*it)->getPlayer()) && tmpPlayer->canSeeCreature(creature))
-			tmpPlayer->sendCreatureMove(creature, newTile, newPos, this, oldPos, oldStackposVector[i++], teleport);
+			tmpPlayer->sendCreatureMove(creature, newTile, newPos, this, pos, oldStackposVector[i++], teleport);
 	}
 
 	//event method
 	for(it = list.begin(); it != list.end(); ++it)
-		(*it)->onCreatureMove(creature, newTile, newPos, this, oldPos, teleport);
+		(*it)->onCreatureMove(creature, newTile, newPos, this, pos, teleport);
 
 	postRemoveNotification(actor, creature, toCylinder, oldStackpos, true);
 	newTile->postAddNotification(actor, creature, this, newStackpos);
@@ -771,38 +764,38 @@ Cylinder* Tile::__queryDestination(int32_t& index, const Thing* thing, Item** de
 	Tile* destTile = NULL;
 	*destItem = NULL;
 
-	Position pos = getTilePosition();
+	Position _pos = pos;
 	if(floorChange(CHANGE_DOWN))
 	{
-		pos.z++;
+		_pos.z++;
 		for(int32_t i = CHANGE_FIRST_EX; i < CHANGE_LAST; ++i)
 		{
-			Position tmpPos = pos;
+			Position __pos = _pos;
 			Tile* tmpTile = NULL;
 			switch(i)
 			{
 				case CHANGE_NORTH_EX:
-					tmpPos.y++;
-					if((tmpTile = g_game.getTile(tmpPos)))
-						tmpPos.y++;
+					__pos.y++;
+					if((tmpTile = g_game.getTile(__pos)))
+						__pos.y++;
 
 					break;
 				case CHANGE_SOUTH_EX:
-					tmpPos.y--;
-					if((tmpTile = g_game.getTile(tmpPos)))
-						tmpPos.y--;
+					__pos.y--;
+					if((tmpTile = g_game.getTile(__pos)))
+						__pos.y--;
 
 					break;
 				case CHANGE_EAST_EX:
-					tmpPos.x--;
-					if((tmpTile = g_game.getTile(tmpPos)))
-						tmpPos.x--;
+					__pos.x--;
+					if((tmpTile = g_game.getTile(__pos)))
+						__pos.x--;
 
 					break;
 				case CHANGE_WEST_EX:
-					tmpPos.x++;
-					if((tmpTile = g_game.getTile(tmpPos)))
-						tmpPos.x++;
+					__pos.x++;
+					if((tmpTile = g_game.getTile(__pos)))
+						__pos.x++;
 
 					break;
 				default:
@@ -812,58 +805,58 @@ Cylinder* Tile::__queryDestination(int32_t& index, const Thing* thing, Item** de
 			if(!tmpTile || !tmpTile->floorChange((FloorChange_t)i))
 				continue;
 
-			destTile = g_game.getTile(tmpPos);
+			destTile = g_game.getTile(__pos);
 			break;
 		}
 
 		if(!destTile)
 		{
-			if(Tile* downTile = g_game.getTile(pos))
+			if(Tile* downTile = g_game.getTile(_pos))
 			{
 				if(downTile->floorChange(CHANGE_NORTH) || downTile->floorChange(CHANGE_NORTH_EX))
-					pos.y++;
+					_pos.y++;
 
 				if(downTile->floorChange(CHANGE_SOUTH) || downTile->floorChange(CHANGE_SOUTH_EX))
-					pos.y--;
+					_pos.y--;
 
 				if(downTile->floorChange(CHANGE_EAST) || downTile->floorChange(CHANGE_EAST_EX))
-					pos.x--;
+					_pos.x--;
 
 				if(downTile->floorChange(CHANGE_WEST) || downTile->floorChange(CHANGE_WEST_EX))
-					pos.x++;
+					_pos.x++;
 
-				destTile = g_game.getTile(pos);
+				destTile = g_game.getTile(_pos);
 			}
 		}
 	}
 	else if(floorChange())
 	{
-		pos.z--;
+		_pos.z--;
 		if(floorChange(CHANGE_NORTH))
-			pos.y--;
+			_pos.y--;
 
 		if(floorChange(CHANGE_SOUTH))
-			pos.y++;
+			_pos.y++;
 
 		if(floorChange(CHANGE_EAST))
-			pos.x++;
+			_pos.x++;
 
 		if(floorChange(CHANGE_WEST))
-			pos.x--;
+			_pos.x--;
 
 		if(floorChange(CHANGE_NORTH_EX))
-			pos.y -= 2;
+			_pos.y -= 2;
 
 		if(floorChange(CHANGE_SOUTH_EX))
-			pos.y += 2;
+			_pos.y += 2;
 
 		if(floorChange(CHANGE_EAST_EX))
-			pos.x += 2;
+			_pos.x += 2;
 
 		if(floorChange(CHANGE_WEST_EX))
-			pos.x -= 2;
+			_pos.x -= 2;
 
-		destTile = g_game.getTile(pos);
+		destTile = g_game.getTile(_pos);
 	}
 
 	if(!destTile)
@@ -905,12 +898,12 @@ void Tile::__addThing(Creature* actor, int32_t index, Thing* thing)
 	}
 
 	TileItemVector* items = getItemList();
-	if(items && items->size() > 0xFFFF)
+	if(items && items->size() >= 0xFFFF)
 		return/* RET_NOTPOSSIBLE*/;
 
 	if(g_config.getBool(ConfigManager::STORE_TRASH) && !hasFlag(TILESTATE_TRASHED))
 	{
-		g_game.addTrash(tilePos);
+		g_game.addTrash(pos);
 		setFlag(TILESTATE_TRASHED);
 	}
 
@@ -924,7 +917,7 @@ void Tile::__addThing(Creature* actor, int32_t index, Thing* thing)
 			Item* oldGround = ground;
 
 			ground->setParent(NULL);
-			g_game.FreeThing(ground);
+			g_game.freeThing(ground);
 			ground = item;
 
 			updateTileFlags(oldGround, true);
@@ -957,7 +950,7 @@ void Tile::__addThing(Creature* actor, int32_t index, Thing* thing)
 
 					__removeThing(oldSplash, 1);
 					oldSplash->setParent(NULL);
-					g_game.FreeThing(oldSplash);
+					g_game.freeThing(oldSplash);
 
 					postRemoveNotification(actor, oldSplash, NULL, oldSplashIndex, true);
 					break;
@@ -1011,7 +1004,7 @@ void Tile::__addThing(Creature* actor, int32_t index, Thing* thing)
 						__removeThing(oldField, 1);
 
 						oldField->setParent(NULL);
-						g_game.FreeThing(oldField);
+						g_game.freeThing(oldField);
 
 						postRemoveNotification(actor, oldField, NULL, oldFieldIndex, true);
 						break;
@@ -1019,7 +1012,7 @@ void Tile::__addThing(Creature* actor, int32_t index, Thing* thing)
 
 					//This magic field cannot be replaced.
 					item->setParent(NULL);
-					g_game.FreeThing(item);
+					g_game.freeThing(item);
 					return;
 				}
 			}
@@ -1215,7 +1208,7 @@ void Tile::__removeThing(Thing* thing, uint32_t count)
 
 	if(item == ground)
 	{
-		const SpectatorVec& list = g_game.getSpectators(getPosition());
+		const SpectatorVec& list = g_game.getSpectators(pos);
 		std::vector<uint32_t> oldStackposVector;
 
 		Player* tmpPlayer = NULL;
@@ -1244,7 +1237,7 @@ void Tile::__removeThing(Thing* thing, uint32_t count)
 			if(*it != item)
 				continue;
 
-			const SpectatorVec& list = g_game.getSpectators(getPosition());
+			const SpectatorVec& list = g_game.getSpectators(pos);
 			std::vector<uint32_t> oldStackposVector;
 
 			Player* tmpPlayer = NULL;
@@ -1282,7 +1275,7 @@ void Tile::__removeThing(Thing* thing, uint32_t count)
 			}
 			else
 			{
-				const SpectatorVec& list = g_game.getSpectators(getPosition());
+				const SpectatorVec& list = g_game.getSpectators(pos);
 				std::vector<uint32_t> oldStackposVector;
 
 				Player* tmpPlayer = NULL;
@@ -1495,7 +1488,7 @@ Thing* Tile::__getThing(uint32_t index) const
 void Tile::postAddNotification(Creature* actor, Thing* thing, const Cylinder* oldParent,
 	int32_t index, cylinderlink_t link/* = LINK_OWNER*/)
 {
-	const Position& cylinderMapPos = getPosition();
+	const Position& cylinderMapPos = pos;
 
 	const SpectatorVec& list = g_game.getSpectators(cylinderMapPos);
 	SpectatorVec::const_iterator it;
@@ -1508,7 +1501,7 @@ void Tile::postAddNotification(Creature* actor, Thing* thing, const Cylinder* ol
 	}
 
 	//add a reference to this item, it may be deleted after being added (mailbox for example)
-	thing->useThing2();
+	thing->addRef();
 	if(link == LINK_OWNER)
 	{
 		//calling movement scripts
@@ -1544,13 +1537,13 @@ void Tile::postAddNotification(Creature* actor, Thing* thing, const Cylinder* ol
 	}
 
 	//release the reference to this item onces we are finished
-	g_game.FreeThing(thing);
+	g_game.freeThing(thing);
 }
 
 void Tile::postRemoveNotification(Creature* actor, Thing* thing, const Cylinder* newParent,
 	int32_t index, bool isCompleteRemoval, cylinderlink_t link/* = LINK_OWNER*/)
 {
-	const Position& cylinderMapPos = getPosition();
+	const Position& cylinderMapPos = pos;
 
 	const SpectatorVec& list = g_game.getSpectators(cylinderMapPos);
 	SpectatorVec::const_iterator it;
@@ -1716,6 +1709,9 @@ void Tile::updateTileFlags(Item* item, bool removed)
 		if(item->getBed())
 			setFlag(TILESTATE_BED);
 
+		if(item->getContainer() && item->getContainer()->getDepot())
+			setFlag(TILESTATE_DEPOT);
+
 		if(item->hasProperty(BLOCKSOLID))
 			setFlag(TILESTATE_BLOCKSOLID);
 
@@ -1801,6 +1797,9 @@ void Tile::updateTileFlags(Item* item, bool removed)
 
 		if(item->getBed())
 			resetFlag(TILESTATE_BED);
+
+		if(item->getContainer() && item->getContainer()->getDepot())
+			resetFlag(TILESTATE_DEPOT);
 
 		if(item->hasProperty(BLOCKSOLID) && !hasProperty(item, BLOCKSOLID))
 			resetFlag(TILESTATE_BLOCKSOLID);

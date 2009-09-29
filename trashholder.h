@@ -17,19 +17,31 @@
 
 #ifndef __TRASHHOLDER__
 #define __TRASHHOLDER__
-#include "const.h"
 
 #include "tile.h"
+#include "const.h"
+
 class TrashHolder : public Item, public Cylinder
 {
 	public:
-		TrashHolder(uint16_t _type, MagicEffectClasses _effect = NM_ME_NONE);
+		TrashHolder(uint16_t type, MagicEffectClasses _effect = NM_ME_NONE): Item(type), effect(_effect) {}
 		virtual ~TrashHolder() {}
 
 		virtual TrashHolder* getTrashHolder() {return this;}
 		virtual const TrashHolder* getTrashHolder() const {return this;}
 
 		//cylinder implementations
+		virtual Cylinder* getParent() {return Item::getParent();}
+		virtual const Cylinder* getParent() const {return Item::getParent();}
+		virtual bool isRemoved() const {return Item::isRemoved();}
+		virtual Position getPosition() const {return Item::getPosition();}
+		virtual Tile* getTile() {return Item::getTile();}
+		virtual const Tile* getTile() const {return Item::getTile();}
+		virtual Item* getItem() {return this;}
+		virtual const Item* getItem() const {return this;}
+		virtual Creature* getCreature() {return NULL;}
+		virtual const Creature* getCreature() const {return NULL;}
+
 		virtual ReturnValue __queryAdd(int32_t index, const Thing* thing, uint32_t count,
 			uint32_t flags) const {return RET_NOERROR;}
 		virtual ReturnValue __queryMaxCount(int32_t index, const Thing* thing, uint32_t count,

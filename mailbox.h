@@ -25,13 +25,24 @@
 class Mailbox : public Item, public Cylinder
 {
 	public:
-		Mailbox(uint16_t _type): Item(_type) {}
+		Mailbox(uint16_t type): Item(type) {}
 		virtual ~Mailbox() {}
 
 		virtual Mailbox* getMailbox() {return this;}
 		virtual const Mailbox* getMailbox() const {return this;}
 
 		//cylinder implementations
+		virtual Cylinder* getParent() {return Item::getParent();}
+		virtual const Cylinder* getParent() const {return Item::getParent();}
+		virtual bool isRemoved() const {return Item::isRemoved();}
+		virtual Position getPosition() const {return Item::getPosition();}
+		virtual Tile* getTile() {return Item::getTile();}
+		virtual const Tile* getTile() const {return Item::getTile();}
+		virtual Item* getItem() {return this;}
+		virtual const Item* getItem() const {return this;}
+		virtual Creature* getCreature() {return NULL;}
+		virtual const Creature* getCreature() const {return NULL;}
+
 		virtual ReturnValue __queryAdd(int32_t index, const Thing* thing, uint32_t count,
 			uint32_t flags) const;
 		virtual ReturnValue __queryMaxCount(int32_t index, const Thing* thing, uint32_t count,
@@ -55,12 +66,10 @@ class Mailbox : public Item, public Cylinder
 			int32_t index, bool isCompleteRemoval, cylinderlink_t link = LINK_OWNER)
 			{getParent()->postRemoveNotification(actor, thing, newParent, index, isCompleteRemoval, LINK_PARENT);}
 
-		static bool sendItem(Creature* actor, Item* item);
-		static bool sendAddressedItem(Creature* actor, const std::string& name, uint32_t depotId, Item* item);
+		bool canSend(const Item* item) const {return (item->getID() == ITEM_PARCEL || item->getID() == ITEM_LETTER);}
+		bool sendItem(Creature* actor, Item* item);
 
 		static bool getDepotId(const std::string& townString, uint32_t& depotId);
-		static bool getRecipient(Item* item, std::string& name, uint32_t& depotId);
-
-		static bool canSend(const Item* item) {return (item->getID() == ITEM_PARCEL || item->getID() == ITEM_LETTER);}
+		bool getRecipient(Item* item, std::string& name, uint32_t& depotId);
 };
 #endif

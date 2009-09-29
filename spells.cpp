@@ -950,10 +950,10 @@ void Spell::postCastSpell(Player* player, uint32_t manaCost, uint32_t soulCost) 
 {
 	if(manaCost > 0)
 	{
-		if(g_config.getBool(ConfigManager::PVPZONE_ADDMANASPENT) || player->getZone() != ZONE_PVP)
-			player->addManaSpent(manaCost);
-
 		player->changeMana(-(int32_t)manaCost);
+		if(!player->hasFlag(PlayerFlag_NotGainMana) && (player->getZone() != ZONE_PVP
+			|| !g_config.getBool(ConfigManager::PVPZONE_ADDMANASPENT)))
+			player->addManaSpent(manaCost);
 	}
 
 	if(soulCost > 0)
@@ -962,13 +962,10 @@ void Spell::postCastSpell(Player* player, uint32_t manaCost, uint32_t soulCost) 
 
 int32_t Spell::getManaCost(const Player* player) const
 {
-	if(mana)
-		return mana;
-
 	if(player && manaPercent)
 		return (int32_t)std::floor(double(player->getMaxMana() * manaPercent) / 100);
 
-	return 0;
+	return mana;
 }
 
 ReturnValue Spell::CreateIllusion(Creature* creature, const Outfit_t outfit, int32_t time)
@@ -1346,7 +1343,7 @@ bool InstantSpell::SummonMonster(const InstantSpell* spell, Creature* creature, 
 		return false;
 	}
 
-	int32_t manaCost = mType->manaCost;
+	int32_t manaCost = (int32_t)(mType->manaCost * g_config.getDouble(ConfigManager::RATE_MONSTER_MANA));
 	if(!player->hasFlag(PlayerFlag_CanSummonAll))
 	{
 		if(player->getSkull() == SKULL_BLACK)
@@ -1650,7 +1647,7 @@ bool ConjureSpell::ConjureFood(const ConjureSpell* spell, Creature* creature, co
 	if(!player)
 		return false;
 
-	static uint32_t foodType[8] =
+	static uint32_t foodType[] =
 	{
 		ITEM_MEAT,
 		ITEM_HAM,
@@ -1658,12 +1655,14 @@ bool ConjureSpell::ConjureFood(const ConjureSpell* spell, Creature* creature, co
 		ITEM_APPLE,
 		ITEM_BREAD,
 		ITEM_CHEESE,
-		ITEM_ROLL,
-		ITEM_BREAD
+		ITEM_ROLL
 	};
 
-	if(internalConjureItem(player, foodType[random_range(0, 7)], 1) == RET_NOERROR)
+	if(internalConjureItem(player, foodType[random_range(0, (sizeof(foodType) / sizeof(uint32_t)) - 1)], 1) == RET_NOERROR)
 	{
+		if(random_range(0, 100) > 50)
+			internalConjureItem(player, foodType[random_range(0, (sizeof(foodType) / sizeof(uint32_t)) - 1)], 1);
+
 		spell->postCastSpell(player);
 		g_game.addMagicEffect(player->getPosition(), NM_ME_MAGIC_POISON);
 		return true;
@@ -1823,8 +1822,8 @@ bool RuneSpell::Convince(const RuneSpell* spell, Creature* creature, Item* item,
 	}
 
 	int32_t manaCost = 0;
-	if(convinceCreature->getMonster())
-		manaCost = convinceCreature->getMonster()->getManaCost();
+	if(Monster* monster = convinceCreature->getMonster())
+		manaCost = (int32_t)(monster->getManaCost() * g_config.getDouble(ConfigManager::RATE_MONSTER_MANA));
 
 	if(!player->hasFlag(PlayerFlag_HasInfiniteMana) && player->getMana() < manaCost)
 	{

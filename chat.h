@@ -18,8 +18,8 @@
 #ifndef __CHAT__
 #define __CHAT__
 #include "otsystem.h"
-#include <fstream>
 
+#include <fstream>
 #include "const.h"
 #include "party.h"
 
@@ -139,6 +139,7 @@ class Chat
 		ChannelList getChannelList(Player* player);
 
 		PrivateChatChannel* getPrivateChannel(Player* player);
+		bool isPrivateChannel(uint16_t channelId) const {return m_privateChannels.find(channelId) != m_privateChannels.end();}
 
 		uint32_t statement;
 		StatementMap statementMap;

@@ -78,10 +78,10 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 	}
 
 	uint32_t clientIp = getConnection()->getIP();
-	/*uint16_t operatingSystem = */msg.GetU16();
+	/*uint16_t operatingSystem = msg.GetU16();*/msg.SkipBytes(2);
 	uint16_t version = msg.GetU16();
-	msg.SkipBytes(12);
 
+	msg.SkipBytes(12);
 	if(!RSA_decrypt(msg))
 	{
 		getConnection()->close();
@@ -92,20 +92,17 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 	enableXTEAEncryption();
 	setXTEAKey(key);
 
-	std::string name = msg.GetString();
-	toLowerCaseString(name);
-	std::string password = msg.GetString();
-	uint32_t id = 1;
-
-	if(!name.length())
+	std::string name = msg.GetString(), password = msg.GetString();
+	if(name.empty())
 	{
-		if(g_config.getBool(ConfigManager::ACCOUNT_MANAGER))
-			password = "1";
-		else
+		if(!g_config.getBool(ConfigManager::ACCOUNT_MANAGER))
 		{
 			disconnectClient(0x0A, "Invalid account name.");
 			return false;
 		}
+
+		name = "1";
+		password = "1";
 	}
 
 	if(version < CLIENT_VERSION_MIN || version > CLIENT_VERSION_MAX)
@@ -138,19 +135,19 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 		return false;
 	}
 
-	Account account;
-	if(IOLoginData::getInstance()->getAccountId(name, id) || (!name.length()
-		&& g_config.getBool(ConfigManager::ACCOUNT_MANAGER)))
-	{
-		account = IOLoginData::getInstance()->loadAccount(id);
-		if(id < 1 || id != account.number || !passwordTest(password, account.password))
-			account.number = 0;
-	}
-
-	if(!account.number)
+	uint32_t id = 1;
+	if(!IOLoginData::getInstance()->getAccountId(name, id))
 	{
 		ConnectionManager::getInstance()->addAttempt(clientIp, protocolId, false);
-		disconnectClient(0x0A, "Account name or password is not correct.");
+		disconnectClient(0x0A, "Invalid account name.");
+		return false;
+	}
+
+	Account account = IOLoginData::getInstance()->loadAccount(id);
+	if(!encryptTest(password, account.password))
+	{
+		ConnectionManager::getInstance()->addAttempt(clientIp, protocolId, false);
+		disconnectClient(0x0A, "Invalid password.");
 		return false;
 	}
 
@@ -162,7 +159,7 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 	{
 		bool deletion = ban.expires < 0;
 		std::string name_ = "Automatic ";
-		if(ban.adminId == 0)
+		if(!ban.adminId)
 			name_ += (deletion ? "deletion" : "banishment");
 		else
 			IOLoginData::getInstance()->getNameByGuid(ban.adminId, name_, true);
@@ -194,7 +191,7 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 		output->AddByte(0x14);
 
 		char motd[1300];
-		sprintf(motd, "%d\n%s", g_game.getMotdNum(), g_config.getString(ConfigManager::MOTD).c_str());
+		sprintf(motd, "%d\n%s", g_game.getMotdId(), g_config.getString(ConfigManager::MOTD).c_str());
 		output->AddString(motd);
 
 		uint32_t serverIp = serverIps[0].first;
@@ -211,7 +208,7 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 		output->AddByte(0x64);
 		if(g_config.getBool(ConfigManager::ACCOUNT_MANAGER) && id != 1)
 		{
-			output->AddByte((uint8_t)account.charList.size() + 1);
+			output->AddByte(account.charList.size() + 1);
 			output->AddString("Account Manager");
 			output->AddString(g_config.getString(ConfigManager::SERVER_NAME));
 			output->AddU32(serverIp);
@@ -242,7 +239,7 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 
 			output->AddString(it->first);
 			output->AddString(it->second->getName());
-			output->AddU32(inet_addr(it->second->getAddress().c_str()));
+			output->AddU32(it->second->getAddress());
 			output->AddU16(it->second->getPort());
 			#endif
 		}

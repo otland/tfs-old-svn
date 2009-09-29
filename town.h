@@ -19,24 +19,25 @@
 #define __TOWN__
 #include "otsystem.h"
 
-#include "position.h"
+class Position;
 class Town
 {
 	public:
-		Town(uint32_t _townId) {townId = _townId;}
+		Town(uint32_t townId) {id = townId;}
 		virtual ~Town() {}
 
-		const Position& getTemplePosition() const {return templePosition;}
-		const std::string& getName() const {return townName;}
+		Position getPosition() const {return position;}
+		std::string getName() const {return name;}
 
-		void setTemplePos(const Position& pos) {templePosition = pos;}
-		void setName(std::string _townName) {townName = _townName;}
-		uint32_t getTownID() const {return townId;}
+		void setPosition(const Position& pos) {position = pos;}
+		void setName(const std::string& townName) {name = townName;}
+
+		uint32_t getID() const {return id;}
 
 	private:
-		uint32_t townId;
-		std::string townName;
-		Position templePosition;
+		uint32_t id;
+		std::string name;
+		Position position;
 };
 
 typedef std::map<uint32_t, Town*> TownMap;
@@ -49,38 +50,35 @@ class Towns
 			return instance;
 		}
 
-		bool addTown(uint32_t _townid, Town* town)
+		bool addTown(uint32_t townId, Town* town)
 		{
-			TownMap::iterator it = townMap.find(_townid);
+			TownMap::iterator it = townMap.find(townId);
 			if(it != townMap.end())
 				return false;
 
-			townMap[_townid] = town;
+			townMap[townId] = town;
 			return true;
 		}
 
-		Town* getTown(const std::string& townname)
+		Town* getTown(const std::string& townName)
 		{
 			for(TownMap::iterator it = townMap.begin(); it != townMap.end(); ++it)
 			{
-				if(!strcasecmp(it->second->getName().c_str(), townname.c_str()))
+				if(!strcasecmp(it->second->getName().c_str(), townName.c_str()))
 					return it->second;
 			}
 
 			return NULL;
 		}
 
-		Town* getTown(uint32_t _townid)
+		Town* getTown(uint32_t townId)
 		{
-			TownMap::iterator it = townMap.find(_townid);
+			TownMap::iterator it = townMap.find(townId);
 			if(it != townMap.end())
 				return it->second;
 
 			return NULL;
 		}
-
-		TownMap::const_iterator getFirstTown() const {return townMap.begin();}
-		TownMap::const_iterator getLastTown() const {return townMap.end();}
 
 	private:
 		TownMap townMap;

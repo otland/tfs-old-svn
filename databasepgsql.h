@@ -56,7 +56,7 @@ class PgSQLResult : public _DBResult
 	public:
 		DATABASE_VIRTUAL int32_t getDataInt(const std::string& s) {return atoi(
 			PQgetvalue(m_handle, m_cursor, PQfnumber(m_handle, s.c_str())));}
-		DATABASE_VIRTUAL int64_t getDataLong(const std::string& s) {return ATOI64(
+		DATABASE_VIRTUAL int64_t getDataLong(const std::string& s) {return atoll(
 			PQgetvalue(m_handle, m_cursor, PQfnumber(m_handle, s.c_str())));}
 		DATABASE_VIRTUAL std::string getDataString(const std::string& s) {return std::string(
 			PQgetvalue(m_handle, m_cursor, PQfnumber(m_handle, s.c_str())));}

@@ -42,7 +42,7 @@ class ProtocolStatus : public Protocol
 #endif
 		virtual void onRecvFirstMessage(NetworkMessage& msg);
 
-		ProtocolStatus(Connection* connection): Protocol(connection)
+		ProtocolStatus(Connection_ptr connection): Protocol(connection)
 		{
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
 			protocolStatusCount++;
@@ -75,33 +75,23 @@ class Status
 			return &status;
 		}
 
-		void addPlayer() {m_playersOnline++;}
-		void removePlayer() {m_playersOnline--;}
-		bool hasSlot() const {return m_playersMax > m_playersOnline;}
-
 		std::string getStatusString(bool sendPlayers) const;
 		void getInfo(uint32_t requestedInfo, OutputMessage_ptr output, NetworkMessage& msg) const;
 
-		uint32_t getPlayersOnline() const {return m_playersOnline;}
-		uint32_t getMaxPlayersOnline() const {return m_playersMax;}
-		void setMaxPlayersOnline(uint32_t max) {m_playersMax = max;}
-
 		const std::string& getMapName() const {return m_mapName;}
 		void setMapName(std::string mapName) {m_mapName = mapName;}
-		void setMapAuthor(std::string mapAuthor) {m_mapAuthor = mapAuthor;}
 
-		uint64_t getUptime() const {return (OTSYS_TIME() - m_start) / 1000;}
+		uint32_t getUptime() const {return (OTSYS_TIME() - m_start) / 1000;}
+		int64_t getStart() const {return m_start;}
 
 	protected:
 		Status()
 		{
 			m_start = OTSYS_TIME();
-			m_playersOnline = m_playersMax = 0;
 		}
 
 	private:
-		uint64_t m_start;
-		uint32_t m_playersMax, m_playersOnline;
-		std::string m_mapName, m_mapAuthor;
+		int64_t m_start;
+		std::string m_mapName;
 };
 #endif

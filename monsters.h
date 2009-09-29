@@ -76,7 +76,6 @@ struct voiceBlock_t
 typedef std::list<summonBlock_t> SummonList;
 typedef std::list<spellBlock_t> SpellList;
 typedef std::vector<voiceBlock_t> VoiceVector;
-typedef std::list<std::string> MonsterScriptList;
 typedef std::map<CombatType_t, int32_t> ElementMap;
 
 class MonsterType
@@ -100,14 +99,13 @@ class MonsterType
 		PartyShields_t partyShield;
 		LootMessage_t lootMessage;
 
-		int32_t defense, armor, health, healthMax, baseSpeed, lookCorpse, corpseUnique, maxSummons,
-			targetDistance, runAwayHealth, conditionImmunities, damageImmunities, lightLevel,
-			lightColor, changeTargetSpeed, changeTargetChance;
+		int32_t defense, armor, health, healthMax, baseSpeed, lookCorpse, corpseUnique, corpseAction,
+			maxSummons, targetDistance, runAwayHealth, conditionImmunities, damageImmunities,
+			lightLevel, lightColor, changeTargetSpeed, changeTargetChance;
 		uint32_t yellChance, yellSpeedTicks, staticAttackChance, manaCost;
 		uint64_t experience;
 
-		std::string name;
-		std::string nameDescription;
+		std::string name, nameDescription;
 
 		SummonList summonList;
 		LootItems lootItems;
@@ -115,7 +113,7 @@ class MonsterType
 		SpellList spellAttackList;
 		SpellList spellDefenseList;
 		VoiceVector voiceVector;
-		MonsterScriptList scriptList;
+		StringVec scriptList;
 };
 
 class Monsters

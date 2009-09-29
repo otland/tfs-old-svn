@@ -78,12 +78,12 @@
 #define CLIENT_VERSION_STRING "Only clients with protocol 8.5 allowed!"
 
 #define STATUS_SERVER_NAME "The Forgotten Server"
-#define STATUS_SERVER_VERSION "0.3.5"
+#define STATUS_SERVER_VERSION "0.3.6_SVN"
 #define STATUS_SERVER_CODENAME "Crying Damson"
 #define STATUS_SERVER_PROTOCOL "8.5"
 
 #define VERSION_CHECK "http://forgottenserver.otland.net/version.xml"
-#define VERSION_PATCH 1
-#define VERSION_TIMESTAMP 1249584126
-#define VERSION_BUILD 2576
-#define VERSION_DATABASE 21
+#define VERSION_PATCH 0
+#define VERSION_TIMESTAMP 0
+#define VERSION_BUILD 0
+#define VERSION_DATABASE 23

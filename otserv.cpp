@@ -90,19 +90,21 @@ Game g_game;
 Monsters g_monsters;
 Npcs g_npcs;
 
-Chat g_chat;
 RSA g_RSA;
+Chat g_chat;
 #if defined(WIN32) && not defined(__CONSOLE__)
 TextLogger g_logger;
 NOTIFYICONDATA NID;
 #endif
 
 IpList serverIps;
+boost::mutex g_loaderLock;
+boost::condition_variable g_loaderSignal;
+
+boost::unique_lock<boost::mutex> g_loaderUniqueLock(g_loaderLock);
 #ifdef __REMOTE_CONTROL__
 extern Admin* g_admin;
 #endif
-OTSYS_THREAD_LOCKVAR_PTR g_loaderLock;
-OTSYS_THREAD_SIGNALVAR g_loaderSignal;
 
 #if not defined(WIN32) || defined(__CONSOLE__)
 bool argumentsHandler(StringVec args)
@@ -225,6 +227,14 @@ void runfileHandler(void)
 }
 #endif
 
+void allocationHandler()
+{
+	puts("Allocation failed, server out of memory!\nDecrease size of your map or compile in a 64-bit mode.");
+	char buffer[1024];
+	fgets(buffer, 1024, stdin);
+	exit(-1);
+}
+
 void startupErrorMessage(const std::string& error)
 {
 	if(error.length() > 0)
@@ -236,7 +246,7 @@ void startupErrorMessage(const std::string& error)
 	#else
 	getchar();
 	#endif
-	exit(1);
+	exit(-1);
 }
 
 void otserv(
@@ -257,12 +267,14 @@ void serverMain(void* param)
 {
 	std::cout.rdbuf(&g_logger);
 	std::cerr.rdbuf(&g_logger);
+
 #endif
+	std::set_new_handler(allocationHandler);
 	ServiceManager servicer;
 	g_config.startup();
 
 	#ifdef __OTSERV_ALLOCATOR_STATS__
-	OTSYS_CREATE_THREAD(allocatorStatsThread, NULL);
+	boost::thread(boost::bind(&allocatorStatsThread, (void*)NULL));
 	#endif
 	#ifdef __EXCEPTION_TRACER__
 	ExceptionHandler mainExceptionHandler;
@@ -288,16 +300,13 @@ void serverMain(void* param)
 	signal(SIGTERM, signalHandler); //shutdown
 	#endif
 
-	OTSYS_THREAD_LOCKVARINIT(g_loaderLock);
-	OTSYS_THREAD_SIGNALVARINIT(g_loaderSignal);
 	Dispatcher::getDispatcher().addTask(createTask(boost::bind(otserv,
 	#if not defined(WIN32) || defined(__CONSOLE__)
 	args,
 	#endif
 	&servicer)));
 
-	OTSYS_THREAD_LOCK(g_loaderLock, "otserv()");
-	OTSYS_THREAD_WAITSIGNAL(g_loaderSignal, g_loaderLock);
+	g_loaderSignal.wait(g_loaderUniqueLock);
 	if(servicer.isRunning())
 	{
 		std::cout << ">> " << g_config.getString(ConfigManager::SERVER_NAME) << " server Online!" << std::endl << std::endl;
@@ -361,7 +370,7 @@ void serverMain(void* param)
 	mainExceptionHandler.RemoveHandler();
 #endif
 	exit(0);
-#ifdef __CONSOLE__
+#if not defined(WIN32) || defined(__CONSOLE__)
 	return 0;
 #endif
 }
@@ -459,7 +468,6 @@ ServiceManager* services)
 		startupErrorMessage("Unable to load " + g_config.getString(ConfigManager::CONFIG_FILE) + "!");
 
 	Loggar::getInstance()->open();
-
 	IntegerVec cores = vectorAtoi(explodeString(g_config.getString(ConfigManager::CORES_USED), ","));
 	if(cores[0] != -1)
 	{
@@ -473,6 +481,7 @@ ServiceManager* services)
 
 	std::stringstream mutexName;
 	mutexName << "forgottenserver_" << g_config.getNumber(ConfigManager::WORLD_ID);
+
 	CreateMutex(NULL, FALSE, mutexName.str().c_str());
 	if(GetLastError() == ERROR_ALREADY_EXISTS)
 		startupErrorMessage("Another instance of The Forgotten Server is already running with the same worldId.\nIf you want to run multiple servers, please change the worldId in configuration file.");
@@ -505,21 +514,21 @@ ServiceManager* services)
 
 	if(!nice(g_config.getNumber(ConfigManager::NICE_LEVEL))) {}
 	#endif
-	std::string passwordType = asLowerCaseString(g_config.getString(ConfigManager::PASSWORD_TYPE));
-	if(passwordType == "md5")
+	std::string encryptionType = asLowerCaseString(g_config.getString(ConfigManager::ENCRYPTION_TYPE));
+	if(encryptionType == "md5")
 	{
-		g_config.setNumber(ConfigManager::PASSWORDTYPE, PASSWORD_TYPE_MD5);
-		std::cout << "> Using MD5 passwords" << std::endl;
+		g_config.setNumber(ConfigManager::ENCRYPTION, ENCRYPTION_MD5);
+		std::cout << "> Using MD5 encryption" << std::endl;
 	}
-	else if(passwordType == "sha1")
+	else if(encryptionType == "sha1")
 	{
-		g_config.setNumber(ConfigManager::PASSWORDTYPE, PASSWORD_TYPE_SHA1);
-		std::cout << "> Using SHA1 passwords" << std::endl;
+		g_config.setNumber(ConfigManager::ENCRYPTION, ENCRYPTION_SHA1);
+		std::cout << "> Using SHA1 encryption" << std::endl;
 	}
 	else
 	{
-		g_config.setNumber(ConfigManager::PASSWORDTYPE, PASSWORD_TYPE_PLAIN);
-		std::cout << "> Using plaintext passwords" << std::endl;
+		g_config.setNumber(ConfigManager::ENCRYPTION, ENCRYPTION_PLAIN);
+		std::cout << "> Using plaintext encryption" << std::endl;
 	}
 	
 	std::cout << ">> Checking software version... ";
@@ -635,7 +644,7 @@ ServiceManager* services)
 		}
 
 		DatabaseManager::getInstance()->checkTriggers();
-		DatabaseManager::getInstance()->checkPasswordType();
+		DatabaseManager::getInstance()->checkEncryption();
 		if(g_config.getBool(ConfigManager::OPTIMIZE_DB_AT_STARTUP) && !DatabaseManager::getInstance()->optimizeTables())
 			std::cout << "> No tables were optimized." << std::endl;
 	}
@@ -786,7 +795,7 @@ ServiceManager* services)
 
 	std::string ip = g_config.getString(ConfigManager::IP);
 	std::cout << "> Global address: " << ip << std::endl;
-	serverIps.push_back(std::make_pair(inet_addr("127.0.0.1"), 0xFFFFFFFF));
+	serverIps.push_back(std::make_pair(LOCALHOST, 0xFFFFFFFF));
 
 	char hostName[128];
 	hostent* host = NULL;
@@ -810,14 +819,8 @@ ServiceManager* services)
 	}
 
 	serverIps.push_back(std::make_pair(resolvedIp, 0));
-	if(Status* status = Status::getInstance())
-	{
-		status->setMaxPlayersOnline(g_config.getNumber(ConfigManager::MAX_PLAYERS));
-		status->setMapAuthor(g_config.getString(ConfigManager::MAP_AUTHOR));
-		status->setMapName(g_config.getString(ConfigManager::MAP_NAME));
-
-		services->add<ProtocolStatus>(g_config.getNumber(ConfigManager::STATUS_PORT));
-	}
+	Status::getInstance()->setMapName(g_config.getString(ConfigManager::MAP_NAME));
+	services->add<ProtocolStatus>(g_config.getNumber(ConfigManager::STATUS_PORT));
 
 	//services->add<ProtocolHTTP>(8080);
 	if(
@@ -847,7 +850,7 @@ ServiceManager* services)
 	g_game.setGameState(GAME_STATE_NORMAL);
 
 	g_game.start(services);
-	OTSYS_THREAD_SIGNAL_SEND(g_loaderSignal);
+	g_loaderSignal.notify_all();
 }
 
 #ifndef __CONSOLE__
@@ -862,20 +865,26 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 				WS_CHILD | WS_VSCROLL | WS_HSCROLL | WS_VISIBLE | ES_MULTILINE | DS_CENTER, 0, 0, 640, 450, hwnd, (HMENU)ID_LOG, NULL, NULL);
 			GUI::getInstance()->m_statusBar = CreateWindowEx(0, STATUSCLASSNAME, NULL,
 				WS_CHILD | WS_VISIBLE | SBARS_SIZEGRIP, 0, 0, 0, 0, hwnd, (HMENU)ID_STATUS_BAR, GetModuleHandle(NULL), NULL);
+
 			int32_t statusBarWidthLine[] = {150, -1};
 			GUI::getInstance()->m_lineCount = 0;
+
 			SendMessage(GUI::getInstance()->m_statusBar, SB_SETPARTS, sizeof(statusBarWidthLine) / sizeof(int32_t), (LPARAM)statusBarWidthLine);
 			SendMessage(GUI::getInstance()->m_statusBar, SB_SETTEXT, 0, (LPARAM)"Not loaded");
+
 			GUI::getInstance()->m_minimized = false;
 			GUI::getInstance()->m_pBox.setParent(hwnd);
 			SendMessage(GUI::getInstance()->m_logWindow, WM_SETFONT, (WPARAM)GUI::getInstance()->m_font, 0);
+
 			NID.hWnd = hwnd;
 			NID.hIcon = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(ID_ICON));
 			NID.uCallbackMessage = WM_USER + 1;
 			NID.uFlags = NIF_TIP | NIF_ICON | NIF_MESSAGE;
+
 			strcpy(NID.szTip, STATUS_SERVER_NAME);
 			Shell_NotifyIcon(NIM_ADD, &NID);
-			OTSYS_CREATE_THREAD(serverMain, hwnd);
+
+			boost::thread(boost::bind(&serverMain, (void*)hwnd));
 			break;
 		}
 

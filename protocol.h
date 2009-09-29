@@ -23,14 +23,16 @@
 class OutputMessage;
 typedef boost::shared_ptr<OutputMessage> OutputMessage_ptr;
 
-class RSA;
 class Connection;
+typedef boost::shared_ptr<Connection> Connection_ptr;
+
+class RSA;
 class NetworkMessage;
 
 class Protocol : boost::noncopyable
 {
 	public:
-		Protocol(Connection* connection)
+		Protocol(Connection_ptr connection)
 		{
 			m_connection = connection;
 			m_refCount = 0;
@@ -50,9 +52,9 @@ class Protocol : boost::noncopyable
 		virtual void parsePacket(NetworkMessage& msg) {}
 		uint32_t getIP() const;
 
-		Connection* getConnection() {return m_connection;}
-		const Connection* getConnection() const {return m_connection;}
-		void setConnection(Connection* connection) {m_connection = connection;}
+		Connection_ptr getConnection() {return m_connection;}
+		const Connection_ptr getConnection() const {return m_connection;}
+		void setConnection(Connection_ptr connection) {m_connection = connection;}
 
 		int32_t addRef() {return ++m_refCount;}
 		int32_t unRef() {return --m_refCount;}
@@ -81,7 +83,7 @@ class Protocol : boost::noncopyable
 
 	private:
 		OutputMessage_ptr m_outputBuffer;
-		Connection* m_connection;
+		Connection_ptr m_connection;
 		uint32_t m_refCount;
 
 		bool m_rawMessages, m_encryptionEnabled, m_checksumEnabled;

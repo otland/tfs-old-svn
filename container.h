@@ -53,7 +53,7 @@ class ContainerIterator
 class Container : public Item, public Cylinder
 {
 	public:
-		Container(uint16_t _type);
+		Container(uint16_t type);
 		virtual ~Container();
 		virtual Item* clone() const;
 
@@ -67,10 +67,17 @@ class Container : public Item, public Cylinder
 		bool unserializeItemNode(FileLoader& f, NODE node, PropStream& propStream);
 
 		std::string getContentDescription() const;
+		uint32_t getItemHoldingCount() const;
+		virtual double getWeight() const;
 
+		uint32_t capacity() const {return maxSize;}
 		uint32_t size() const {return (uint32_t)itemlist.size();}
 		bool full() const {return itemlist.size() >= maxSize;}
 		bool empty() const {return itemlist.empty();}
+
+		void addItem(Item* item);
+		Item* getItem(uint32_t index);
+		bool isHoldingItem(const Item* item) const;
 
 		ContainerIterator begin();
 		ContainerIterator end();
@@ -84,15 +91,18 @@ class Container : public Item, public Cylinder
 		ItemList::const_reverse_iterator getReversedItems() const {return itemlist.rbegin();}
 		ItemList::const_reverse_iterator getReversedEnd() const {return itemlist.rend();}
 
-		void addItem(Item* item);
-		Item* getItem(uint32_t index);
-		bool isHoldingItem(const Item* item) const;
-
-		uint32_t capacity() const {return maxSize;}
-		uint32_t getItemHoldingCount() const;
-		virtual double getWeight() const;
-
 		//cylinder implementations
+		virtual Cylinder* getParent() {return Thing::getParent();}
+		virtual const Cylinder* getParent() const {return Thing::getParent();}
+		virtual bool isRemoved() const {return Thing::isRemoved();}
+		virtual Position getPosition() const {return Thing::getPosition();}
+		virtual Tile* getTile() {return Thing::getTile();}
+		virtual const Tile* getTile() const {return Thing::getTile();}
+		virtual Item* getItem() {return this;}
+		virtual const Item* getItem() const {return this;}
+		virtual Creature* getCreature() {return NULL;}
+		virtual const Creature* getCreature() const {return NULL;}
+
 		virtual ReturnValue __queryAdd(int32_t index, const Thing* thing, uint32_t count,
 			uint32_t flags) const;
 		virtual ReturnValue __queryMaxCount(int32_t index, const Thing* thing, uint32_t count, uint32_t& maxQueryCount,

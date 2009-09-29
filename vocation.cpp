@@ -111,8 +111,7 @@ bool Vocations::parseVocationNode(xmlNodePtr p)
 	if(readXMLInteger(p, "lessloss", intValue))
 		voc->setLessLoss(intValue);
 
-	xmlNodePtr configNode = p->children;
-	while(configNode)
+	for(xmlNodePtr configNode = p->children; configNode; configNode = configNode->next)
 	{
 		if(!xmlStrcmp(configNode->name, (const xmlChar*)"skill"))
 		{
@@ -192,7 +191,7 @@ bool Vocations::parseVocationNode(xmlNodePtr p)
 				voc->setMultiplier(MULTIPLIER_MAGIC, floatValue);
 
 			if(readXMLFloat(configNode, "magHealingDamage", floatValue) || readXMLFloat(configNode, "magicHealingDamage", floatValue))
-				voc->setMultiplier(MULTIPLIER_MAGICHEALING, floatValue);
+				voc->setMultiplier(MULTIPLIER_HEALING, floatValue);
 
 			if(readXMLFloat(configNode, "defense", floatValue))
 				voc->setMultiplier(MULTIPLIER_DEFENSE, floatValue);
@@ -207,52 +206,186 @@ bool Vocations::parseVocationNode(xmlNodePtr p)
 		{
 			if(readXMLInteger(configNode, "percentAll", intValue))
 			{
-				for(uint32_t i = COMBAT_FIRST; i <= COMBAT_LAST; i++)
-					voc->increaseAbsorbPercent((CombatType_t)i, intValue);
+				for(int32_t i = COMBAT_FIRST; i <= COMBAT_LAST; i++)
+					voc->increaseAbsorb((CombatType_t)i, intValue);
 			}
-			else if(readXMLInteger(configNode, "percentElements", intValue))
-			{
-				voc->increaseAbsorbPercent(COMBAT_ENERGYDAMAGE, intValue);
-				voc->increaseAbsorbPercent(COMBAT_FIREDAMAGE, intValue);
-				voc->increaseAbsorbPercent(COMBAT_EARTHDAMAGE, intValue);
-				voc->increaseAbsorbPercent(COMBAT_ICEDAMAGE, intValue);
-			}
-			else if(readXMLInteger(configNode, "percentMagic", intValue))
-			{
-				voc->increaseAbsorbPercent(COMBAT_ENERGYDAMAGE, intValue);
-				voc->increaseAbsorbPercent(COMBAT_FIREDAMAGE, intValue);
-				voc->increaseAbsorbPercent(COMBAT_EARTHDAMAGE, intValue);
-				voc->increaseAbsorbPercent(COMBAT_ICEDAMAGE, intValue);
-				voc->increaseAbsorbPercent(COMBAT_HOLYDAMAGE, intValue);
-				voc->increaseAbsorbPercent(COMBAT_DEATHDAMAGE, intValue);
-			}
-			else if(readXMLInteger(configNode, "percentEnergy", intValue))
-				voc->increaseAbsorbPercent(COMBAT_ENERGYDAMAGE, intValue);
-			else if(readXMLInteger(configNode, "percentFire", intValue))
-				voc->increaseAbsorbPercent(COMBAT_FIREDAMAGE, intValue);
-			else if(readXMLInteger(configNode, "percentPoison", intValue) || readXMLInteger(configNode, "percentEarth", intValue))
-				voc->increaseAbsorbPercent(COMBAT_EARTHDAMAGE, intValue);
-			else if(readXMLInteger(configNode, "percentIce", intValue))
-				voc->increaseAbsorbPercent(COMBAT_ICEDAMAGE, intValue);
-			else if(readXMLInteger(configNode, "percentHoly", intValue))
-				voc->increaseAbsorbPercent(COMBAT_HOLYDAMAGE, intValue);
-			else if(readXMLInteger(configNode, "percentDeath", intValue))
-				voc->increaseAbsorbPercent(COMBAT_DEATHDAMAGE, intValue);
-			else if(readXMLInteger(configNode, "percentLifeDrain", intValue))
-				voc->increaseAbsorbPercent(COMBAT_LIFEDRAIN, intValue);
-			else if(readXMLInteger(configNode, "percentManaDrain", intValue))
-				voc->increaseAbsorbPercent(COMBAT_MANADRAIN, intValue);
-			else if(readXMLInteger(configNode, "percentDrown", intValue))
-				voc->increaseAbsorbPercent(COMBAT_DROWNDAMAGE, intValue);
-			else if(readXMLInteger(configNode, "percentPhysical", intValue))
-				voc->increaseAbsorbPercent(COMBAT_PHYSICALDAMAGE, intValue);
-			else if(readXMLInteger(configNode, "percentHealing", intValue))
-				voc->increaseAbsorbPercent(COMBAT_HEALING, intValue);
-			else if(readXMLInteger(configNode, "percentUndefined", intValue))
-				voc->increaseAbsorbPercent(COMBAT_UNDEFINEDDAMAGE, intValue);
-		}
 
-		configNode = configNode->next;
+			if(readXMLInteger(configNode, "percentElements", intValue))
+			{
+				voc->increaseAbsorb(COMBAT_ENERGYDAMAGE, intValue);
+				voc->increaseAbsorb(COMBAT_FIREDAMAGE, intValue);
+				voc->increaseAbsorb(COMBAT_EARTHDAMAGE, intValue);
+				voc->increaseAbsorb(COMBAT_ICEDAMAGE, intValue);
+			}
+
+			if(readXMLInteger(configNode, "percentMagic", intValue))
+			{
+				voc->increaseAbsorb(COMBAT_ENERGYDAMAGE, intValue);
+				voc->increaseAbsorb(COMBAT_FIREDAMAGE, intValue);
+				voc->increaseAbsorb(COMBAT_EARTHDAMAGE, intValue);
+				voc->increaseAbsorb(COMBAT_ICEDAMAGE, intValue);
+				voc->increaseAbsorb(COMBAT_HOLYDAMAGE, intValue);
+				voc->increaseAbsorb(COMBAT_DEATHDAMAGE, intValue);
+			}
+
+			if(readXMLInteger(configNode, "percentEnergy", intValue))
+				voc->increaseAbsorb(COMBAT_ENERGYDAMAGE, intValue);
+
+			if(readXMLInteger(configNode, "percentFire", intValue))
+				voc->increaseAbsorb(COMBAT_FIREDAMAGE, intValue);
+
+			if(readXMLInteger(configNode, "percentPoison", intValue) || readXMLInteger(configNode, "percentEarth", intValue))
+				voc->increaseAbsorb(COMBAT_EARTHDAMAGE, intValue);
+
+			if(readXMLInteger(configNode, "percentIce", intValue))
+				voc->increaseAbsorb(COMBAT_ICEDAMAGE, intValue);
+
+			if(readXMLInteger(configNode, "percentHoly", intValue))
+				voc->increaseAbsorb(COMBAT_HOLYDAMAGE, intValue);
+
+			if(readXMLInteger(configNode, "percentDeath", intValue))
+				voc->increaseAbsorb(COMBAT_DEATHDAMAGE, intValue);
+
+			if(readXMLInteger(configNode, "percentLifeDrain", intValue))
+				voc->increaseAbsorb(COMBAT_LIFEDRAIN, intValue);
+
+			if(readXMLInteger(configNode, "percentManaDrain", intValue))
+				voc->increaseAbsorb(COMBAT_MANADRAIN, intValue);
+
+			if(readXMLInteger(configNode, "percentDrown", intValue))
+				voc->increaseAbsorb(COMBAT_DROWNDAMAGE, intValue);
+
+			if(readXMLInteger(configNode, "percentPhysical", intValue))
+				voc->increaseAbsorb(COMBAT_PHYSICALDAMAGE, intValue);
+
+			if(readXMLInteger(configNode, "percentHealing", intValue))
+				voc->increaseAbsorb(COMBAT_HEALING, intValue);
+
+			if(readXMLInteger(configNode, "percentUndefined", intValue))
+				voc->increaseAbsorb(COMBAT_UNDEFINEDDAMAGE, intValue);
+		}
+		else if(!xmlStrcmp(configNode->name, (const xmlChar*)"reflect"))
+		{
+			if(readXMLInteger(configNode, "percentAll", intValue))
+			{
+				for(int32_t i = COMBAT_FIRST; i <= COMBAT_LAST; i++)
+					voc->increaseReflect(REFLECT_PERCENT, (CombatType_t)i, intValue);
+			}
+
+			if(readXMLInteger(configNode, "percentElements", intValue))
+			{
+				voc->increaseReflect(REFLECT_PERCENT, COMBAT_ENERGYDAMAGE, intValue);
+				voc->increaseReflect(REFLECT_PERCENT, COMBAT_FIREDAMAGE, intValue);
+				voc->increaseReflect(REFLECT_PERCENT, COMBAT_EARTHDAMAGE, intValue);
+				voc->increaseReflect(REFLECT_PERCENT, COMBAT_ICEDAMAGE, intValue);
+			}
+
+			if(readXMLInteger(configNode, "percentMagic", intValue))
+			{
+				voc->increaseReflect(REFLECT_PERCENT, COMBAT_ENERGYDAMAGE, intValue);
+				voc->increaseReflect(REFLECT_PERCENT, COMBAT_FIREDAMAGE, intValue);
+				voc->increaseReflect(REFLECT_PERCENT, COMBAT_EARTHDAMAGE, intValue);
+				voc->increaseReflect(REFLECT_PERCENT, COMBAT_ICEDAMAGE, intValue);
+				voc->increaseReflect(REFLECT_PERCENT, COMBAT_HOLYDAMAGE, intValue);
+				voc->increaseReflect(REFLECT_PERCENT, COMBAT_DEATHDAMAGE, intValue);
+			}
+
+			if(readXMLInteger(configNode, "percentEnergy", intValue))
+				voc->increaseReflect(REFLECT_PERCENT, COMBAT_ENERGYDAMAGE, intValue);
+
+			if(readXMLInteger(configNode, "percentFire", intValue))
+				voc->increaseReflect(REFLECT_PERCENT, COMBAT_FIREDAMAGE, intValue);
+
+			if(readXMLInteger(configNode, "percentPoison", intValue) || readXMLInteger(configNode, "percentEarth", intValue))
+				voc->increaseReflect(REFLECT_PERCENT, COMBAT_EARTHDAMAGE, intValue);
+
+			if(readXMLInteger(configNode, "percentIce", intValue))
+				voc->increaseReflect(REFLECT_PERCENT, COMBAT_ICEDAMAGE, intValue);
+
+			if(readXMLInteger(configNode, "percentHoly", intValue))
+				voc->increaseReflect(REFLECT_PERCENT, COMBAT_HOLYDAMAGE, intValue);
+
+			if(readXMLInteger(configNode, "percentDeath", intValue))
+				voc->increaseReflect(REFLECT_PERCENT, COMBAT_DEATHDAMAGE, intValue);
+
+			if(readXMLInteger(configNode, "percentLifeDrain", intValue))
+				voc->increaseReflect(REFLECT_PERCENT, COMBAT_LIFEDRAIN, intValue);
+
+			if(readXMLInteger(configNode, "percentManaDrain", intValue))
+				voc->increaseReflect(REFLECT_PERCENT, COMBAT_MANADRAIN, intValue);
+
+			if(readXMLInteger(configNode, "percentDrown", intValue))
+				voc->increaseReflect(REFLECT_PERCENT, COMBAT_DROWNDAMAGE, intValue);
+
+			if(readXMLInteger(configNode, "percentPhysical", intValue))
+				voc->increaseReflect(REFLECT_PERCENT, COMBAT_PHYSICALDAMAGE, intValue);
+
+			if(readXMLInteger(configNode, "percentHealing", intValue))
+				voc->increaseReflect(REFLECT_PERCENT, COMBAT_HEALING, intValue);
+
+			if(readXMLInteger(configNode, "percentUndefined", intValue))
+				voc->increaseReflect(REFLECT_PERCENT, COMBAT_UNDEFINEDDAMAGE, intValue);
+
+			if(readXMLInteger(configNode, "chanceAll", intValue))
+			{
+				for(int32_t i = COMBAT_FIRST; i <= COMBAT_LAST; i++)
+					voc->increaseReflect(REFLECT_CHANCE, (CombatType_t)i, intValue);
+			}
+
+			if(readXMLInteger(configNode, "chanceElements", intValue))
+			{
+				voc->increaseReflect(REFLECT_CHANCE, COMBAT_ENERGYDAMAGE, intValue);
+				voc->increaseReflect(REFLECT_CHANCE, COMBAT_FIREDAMAGE, intValue);
+				voc->increaseReflect(REFLECT_CHANCE, COMBAT_EARTHDAMAGE, intValue);
+				voc->increaseReflect(REFLECT_CHANCE, COMBAT_ICEDAMAGE, intValue);
+			}
+
+			if(readXMLInteger(configNode, "chanceMagic", intValue))
+			{
+				voc->increaseReflect(REFLECT_CHANCE, COMBAT_ENERGYDAMAGE, intValue);
+				voc->increaseReflect(REFLECT_CHANCE, COMBAT_FIREDAMAGE, intValue);
+				voc->increaseReflect(REFLECT_CHANCE, COMBAT_EARTHDAMAGE, intValue);
+				voc->increaseReflect(REFLECT_CHANCE, COMBAT_ICEDAMAGE, intValue);
+				voc->increaseReflect(REFLECT_CHANCE, COMBAT_HOLYDAMAGE, intValue);
+				voc->increaseReflect(REFLECT_CHANCE, COMBAT_DEATHDAMAGE, intValue);
+			}
+
+			if(readXMLInteger(configNode, "chanceEnergy", intValue))
+				voc->increaseReflect(REFLECT_CHANCE, COMBAT_ENERGYDAMAGE, intValue);
+
+			if(readXMLInteger(configNode, "chanceFire", intValue))
+				voc->increaseReflect(REFLECT_CHANCE, COMBAT_FIREDAMAGE, intValue);
+
+			if(readXMLInteger(configNode, "chancePoison", intValue) || readXMLInteger(configNode, "chanceEarth", intValue))
+				voc->increaseReflect(REFLECT_CHANCE, COMBAT_EARTHDAMAGE, intValue);
+
+			if(readXMLInteger(configNode, "chanceIce", intValue))
+				voc->increaseReflect(REFLECT_CHANCE, COMBAT_ICEDAMAGE, intValue);
+
+			if(readXMLInteger(configNode, "chanceHoly", intValue))
+				voc->increaseReflect(REFLECT_CHANCE, COMBAT_HOLYDAMAGE, intValue);
+
+			if(readXMLInteger(configNode, "chanceDeath", intValue))
+				voc->increaseReflect(REFLECT_CHANCE, COMBAT_DEATHDAMAGE, intValue);
+
+			if(readXMLInteger(configNode, "chanceLifeDrain", intValue))
+				voc->increaseReflect(REFLECT_CHANCE, COMBAT_LIFEDRAIN, intValue);
+
+			if(readXMLInteger(configNode, "chanceManaDrain", intValue))
+				voc->increaseReflect(REFLECT_CHANCE, COMBAT_MANADRAIN, intValue);
+
+			if(readXMLInteger(configNode, "chanceDrown", intValue))
+				voc->increaseReflect(REFLECT_CHANCE, COMBAT_DROWNDAMAGE, intValue);
+
+			if(readXMLInteger(configNode, "chancePhysical", intValue))
+				voc->increaseReflect(REFLECT_CHANCE, COMBAT_PHYSICALDAMAGE, intValue);
+
+			if(readXMLInteger(configNode, "chanceHealing", intValue))
+				voc->increaseReflect(REFLECT_CHANCE, COMBAT_HEALING, intValue);
+
+			if(readXMLInteger(configNode, "chanceUndefined", intValue))
+				voc->increaseReflect(REFLECT_CHANCE, COMBAT_UNDEFINEDDAMAGE, intValue);
+		}
 	}
 
 	vocationsMap[voc->getId()] = voc;
@@ -277,12 +410,8 @@ bool Vocations::loadFromXml()
 		return false;
 	}
 
-	p = root->children;
-	while(p)
-	{
+	for(p = root->children; p; p = p->next)
 		parseVocationNode(p);
-		p = p->next;
-	}
 
 	xmlFreeDoc(doc);
 	return true;
@@ -329,7 +458,10 @@ Vocation::~Vocation()
 
 void Vocation::reset()
 {
-	memset(absorbPercent, 0, sizeof(absorbPercent));
+	memset(absorb, 0, sizeof(absorb));
+	memset(reflect[REFLECT_PERCENT], 0, sizeof(reflect[REFLECT_PERCENT]));
+	memset(reflect[REFLECT_CHANCE], 0, sizeof(reflect[REFLECT_CHANCE]));
+
 	needPremium = false;
 	attackable = true;
 	lessLoss = fromVocation = 0;
@@ -358,6 +490,14 @@ void Vocation::reset()
 	formulaMultipliers[MULTIPLIER_MANA] = 4.0f;
 	for(int32_t i = MULTIPLIER_FIRST; i < MULTIPLIER_LAST; i++)
 		formulaMultipliers[i] = 1.0f;
+}
+
+int16_t Vocation::getReflect(CombatType_t combat) const
+{
+	if(reflect[REFLECT_CHANCE][combat] < random_range(0, 100))
+		return reflect[REFLECT_PERCENT][combat];
+
+	return 0;
 }
 
 uint32_t Vocation::getReqSkillTries(int32_t skill, int32_t level)

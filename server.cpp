@@ -79,7 +79,7 @@ void ServicePort::open(uint16_t port)
 	{
 		if(m_logError)
 		{
-			LOG_MESSAGE(LOGTYPE_ERROR, e.what(), "NETWORK");
+			LOG_MESSAGE(LOGTYPE_ERROR, e.what(), "NETWORK")
 			m_logError = false;
 		}
 
@@ -121,7 +121,7 @@ void ServicePort::accept()
 	{
 		if(m_logError)
 		{
-			LOG_MESSAGE(LOGTYPE_ERROR, e.what(), "NETWORK");
+			LOG_MESSAGE(LOGTYPE_ERROR, e.what(), "NETWORK")
 			m_logError = false;
 		}
 	}
@@ -140,13 +140,13 @@ void ServicePort::handle(boost::asio::ip::tcp::socket* socket, const boost::syst
 		}
 
 		boost::system::error_code error;
-		const boost::asio::ip::tcp::endpoint endpoint = socket->remote_endpoint(error);
+		const boost::asio::ip::tcp::endpoint ip = socket->remote_endpoint(error);
 
 		uint32_t remoteIp = 0;
 		if(!error)
-			remoteIp = htonl(endpoint.address().to_v4().to_ulong());
+			remoteIp = htonl(ip.address().to_v4().to_ulong());
 
-		Connection* connection = NULL;
+		Connection_ptr connection;
 		if(remoteIp && ConnectionManager::getInstance()->acceptConnection(remoteIp) &&
 			(connection = ConnectionManager::getInstance()->createConnection(
 			socket, m_io_service, shared_from_this())))
@@ -208,7 +208,7 @@ Protocol* ServicePort::makeProtocol(bool checksum, NetworkMessage& msg) const
 	for(ServiceVec::const_iterator it = m_services.begin(); it != m_services.end(); ++it)
 	{
 		if((*it)->getProtocolId() == protocolId && ((checksum && (*it)->hasChecksum()) || !(*it)->hasChecksum()))
-			return (*it)->makeProtocol(NULL);
+			return (*it)->makeProtocol(Connection_ptr());
 	}
 
 	return NULL;
@@ -225,7 +225,7 @@ void ServiceManager::run()
 	}
 	catch(boost::system::system_error& e)
 	{
-		LOG_MESSAGE(LOGTYPE_ERROR, e.what(), "NETWORK");
+		LOG_MESSAGE(LOGTYPE_ERROR, e.what(), "NETWORK")
 	}
 }
 
@@ -243,7 +243,7 @@ void ServiceManager::stop()
 		}
 		catch(boost::system::system_error& e)
 		{
-			LOG_MESSAGE(LOGTYPE_ERROR, e.what(), "NETWORK");
+			LOG_MESSAGE(LOGTYPE_ERROR, e.what(), "NETWORK")
 		}
 	}
 

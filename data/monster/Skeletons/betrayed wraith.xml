@@ -68,6 +68,7 @@
 				<item id="5741" chance="1500"/><!-- skullhelm -->
 				<item id="2145" countmax="3" chance="2222"/><!-- small diamond -->
 				<item id="3976" countmax="25" chance="20000"/><!-- worm -->
+				<item id="7416" chance="300"/><!-- bloody edge -->
 			</inside>
 		</item>
 	</loot>

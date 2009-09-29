@@ -77,7 +77,7 @@
 		<vocation id="1"/>
 		<vocation id="5"/>
 	</instant>
-	<instant name="Ethereal Spear" words="exori con" lvl="23" mana="35" prem="1" range="5" needtarget="1" exhaustion="2000" blockwalls="1" needlearn="0" event="script" value="attack/ethereal spear.lua">
+	<instant name="Ethereal Spear" words="exori con" lvl="23" mana="25" prem="1" range="5" needtarget="1" exhaustion="2000" blockwalls="1" needlearn="0" event="script" value="attack/ethereal spear.lua">
 		<vocation id="3"/>
 		<vocation id="7"/>
 	</instant>

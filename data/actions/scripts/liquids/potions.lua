@@ -1,5 +1,6 @@
 local config = {
 	removeOnUse = "no",
+	usableOnTarget = "yes", -- can be used on target? (fe. healing friend)
 	splashable = "no",
 	realAnimation = "no", -- make text effect visible only for players in range 1x1
 	healthMultiplier = 1.0,
@@ -7,6 +8,7 @@ local config = {
 }
 
 config.removeOnUse = getBooleanFromString(config.removeOnUse)
+config.usableOnTarget = getBooleanFromString(config.usableOnTarget)
 config.splashable = getBooleanFromString(config.splashable)
 config.realAnimation = getBooleanFromString(config.realAnimation)
 
@@ -33,7 +35,7 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 		return false
 	end
 
-	if(not isPlayer(itemEx.uid)) then
+	if(not isPlayer(itemEx.uid) or (not config.usableOnTarget and cid ~= itemEx.uid)) then
 		if(not config.splashable) then
 			return false
 		end
@@ -53,7 +55,7 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 	end
 
 	if(((potion.level and getPlayerLevel(cid) < potion.level) or (potion.vocations and not isInArray(potion.vocations, getPlayerVocation(cid)))) and
-		not getPlayerCustomFlagValue(cid, PlayerCustomFlag_GamemasterPrivileges))
+		not getPlayerCustomFlagValue(cid, PLAYERCUSTOMFLAG_GAMEMASTERPRIVILEGES))
 	then
 		doCreatureSay(itemEx.uid, "Only " .. potion.vocStr .. (potion.level and (" of level " .. potion.level) or "") .. " or above may drink this fluid.", TALKTYPE_ORANGE_1)
 		return true

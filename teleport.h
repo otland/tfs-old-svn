@@ -17,12 +17,13 @@
 
 #ifndef __TELEPORT__
 #define __TELEPORT__
+
 #include "tile.h"
 
 class Teleport : public Item, public Cylinder
 {
 	public:
-		Teleport(uint16_t _type);
+		Teleport(uint16_t type): Item(type) {}
 		virtual ~Teleport() {}
 
 		virtual Teleport* getTeleport() {return this;}
@@ -32,10 +33,21 @@ class Teleport : public Item, public Cylinder
 		virtual Attr_ReadValue readAttr(AttrTypes_t attr, PropStream& propStream);
 		virtual bool serializeAttr(PropWriteStream& propWriteStream) const;
 
-		void setDestPos(const Position& pos) {destPos = pos;}
-		const Position& getDestPos() const {return destPos;}
+		void setDestination(const Position& pos) {destination = pos;}
+		Position getDestination() const {return destination;}
 
 		//cylinder implementations
+		virtual Cylinder* getParent() {return Item::getParent();}
+		virtual const Cylinder* getParent() const {return Item::getParent();}
+		virtual bool isRemoved() const {return Item::isRemoved();}
+		virtual Position getPosition() const {return Item::getPosition();}
+		virtual Tile* getTile() {return Item::getTile();}
+		virtual const Tile* getTile() const {return Item::getTile();}
+		virtual Item* getItem() {return this;}
+		virtual const Item* getItem() const {return this;}
+		virtual Creature* getCreature() {return NULL;}
+		virtual const Creature* getCreature() const {return NULL;}
+
 		virtual ReturnValue __queryAdd(int32_t index, const Thing* thing, uint32_t count,
 			uint32_t flags) const {return RET_NOTPOSSIBLE;}
 		virtual ReturnValue __queryMaxCount(int32_t index, const Thing* thing, uint32_t count,
@@ -59,6 +71,6 @@ class Teleport : public Item, public Cylinder
 			int32_t index, bool isCompleteRemoval, cylinderlink_t link = LINK_OWNER);
 
 	private:
-		Position destPos;
+		Position destination;
 };
 #endif

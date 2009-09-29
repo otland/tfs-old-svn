@@ -15,27 +15,32 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////
 
-#ifndef __CONNECTION__
-#define __CONNECTION__
+#ifndef __CONNECTION_H__
+#define __CONNECTION_H__
 #include "otsystem.h"
 
 #include "networkmessage.h"
-class Connection;
-class Protocol;
+#include <boost/utility.hpp>
+#include <boost/enable_shared_from_this.hpp>
 
 class OutputMessage;
-typedef boost::shared_ptr<OutputMessage>OutputMessage_ptr;
+typedef boost::shared_ptr<OutputMessage> OutputMessage_ptr;
+
+class Connection;
+typedef boost::shared_ptr<Connection> Connection_ptr;
+
 class ServiceBase;
 typedef boost::shared_ptr<ServiceBase> Service_ptr;
+
 class ServicePort;
 typedef boost::shared_ptr<ServicePort> ServicePort_ptr;
 
 #ifdef __DEBUG_NET__
-#define PRINT_ASIO_ERROR(desc) \
-	std::cout << "[Error - " << __FUNCTION__ << "]: " << desc << " - Value: " << \
-		error.value() << " Message: " << error.message() << std::endl;
+#define PRINT_ASIO_ERROR(description) \
+	std::cout << "[Error - " << __FUNCTION__ << "] " << description << " - "
+		<< error.message() << " (" << error.message() << ")" << std::endl;
 #else
-#define PRINT_ASIO_ERROR(desc)
+#define PRINT_ASIO_ERROR(x)
 #endif
 
 struct LoginBlock
@@ -49,63 +54,66 @@ struct ConnectBlock
 	uint64_t startTime, blockTime;
 };
 
+class Protocol;
 class ConnectionManager
 {
 	public:
-		virtual ~ConnectionManager() {OTSYS_THREAD_LOCKVARRELEASE(m_connectionManagerLock);}
-
+		virtual ~ConnectionManager() {}
 		static ConnectionManager* getInstance()
 		{
 			static ConnectionManager instance;
 			return &instance;
 		}
 
-		Connection* createConnection(boost::asio::ip::tcp::socket* socket,
-			boost::asio::io_service& io_service, ServicePort_ptr servicer);
-		void releaseConnection(Connection* connection);
+		Connection_ptr createConnection(boost::asio::ip::tcp::socket* socket,
+			boost::asio::io_service& io_service, ServicePort_ptr servicers);
+		void releaseConnection(Connection_ptr connection);
 
 		bool isDisabled(uint32_t clientIp, int32_t protocolId);
 		void addAttempt(uint32_t clientIp, int32_t protocolId, bool success);
 
-		bool acceptConnection(uint32_t clientIp);
-		void closeAll();
+		bool acceptConnection(uint32_t clientIp); 
+		void shutdown();
 
 	protected:
-		ConnectionManager() {OTSYS_THREAD_LOCKVARINIT(m_connectionManagerLock);}
+		ConnectionManager() {}
 
 		typedef std::map<uint32_t, LoginBlock> IpLoginMap;
 		IpLoginMap ipLoginMap;
 
 		typedef std::map<uint32_t, ConnectBlock> IpConnectMap;
-		IpConnectMap ipConnectMap;
+		IpConnectMap ipConnectMap; 
 
-		std::list<Connection*> m_connections;
-		OTSYS_THREAD_LOCKVAR m_connectionManagerLock;
+		std::list<Connection_ptr> m_connections;
+		boost::recursive_mutex m_connectionManagerLock;
 };
 
-class Connection : boost::noncopyable
+class Connection : public boost::enable_shared_from_this<Connection>, boost::noncopyable
 {
 	public:
+		enum {writeTimeout = 30};
+		enum {readTimeout = 30};
+
+		enum ConnectionState_t
+		{
+			CONNECTION_STATE_OPEN = 0,
+			CONNECTION_STATE_REQUEST_CLOSE,
+			CONNECTION_STATE_CLOSING,
+			CONNECTION_STATE_CLOSED
+		};
+
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
 		static uint32_t connectionCount;
 #endif
-		enum
-		{
-			CLOSE_STATE_NONE = 0,
-			CLOSE_STATE_REQUESTED = 1,
-			CLOSE_STATE_CLOSING = 2
-		};
-
 	private:
-		Connection(boost::asio::ip::tcp::socket* socket, boost::asio::io_service& io_service, ServicePort_ptr servicer):
-			m_timer(io_service), m_socket(socket), m_io_service(io_service), m_port(servicer)
+		Connection(boost::asio::ip::tcp::socket* socket, boost::asio::io_service& io_service, ServicePort_ptr servicePort):
+			m_socket(socket), m_readTimer(io_service), m_writeTimer(io_service), m_service(io_service), m_servicePort(servicePort)
 		{
-			m_protocol = NULL;
-			m_closeState = CLOSE_STATE_NONE;
 			m_refCount = m_pendingWrite = m_pendingRead = 0;
-			m_receivedFirst = m_socketClosed = m_writeError = m_readError = false;
+			m_connectionState = CONNECTION_STATE_OPEN;
+			m_receivedFirst = m_writeError = m_readError = false;
+			m_protocol = NULL;
 
-			OTSYS_THREAD_LOCKVARINIT(m_connectionLock);
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
 			connectionCount++;
 #endif
@@ -116,9 +124,7 @@ class Connection : boost::noncopyable
 	public:
 		virtual ~Connection()
 		{
-			OTSYS_THREAD_LOCKVARRELEASE(m_connectionLock);
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
-
 			connectionCount--;
 #endif
 		}
@@ -129,44 +135,51 @@ class Connection : boost::noncopyable
 		void handle(Protocol* protocol);
 		void accept();
 
-		void close();	
 		bool send(OutputMessage_ptr msg);
+		void close();
 
 		int32_t addRef() {return ++m_refCount;}
 		int32_t unRef() {return --m_refCount;}
 
 	private:
-		void internalSend(OutputMessage_ptr msg);
-
-		void closeConnection();
-		void releaseConnection();
-		void deleteConnection();
-
 		void parseHeader(const boost::system::error_code& error);
 		void parsePacket(const boost::system::error_code& error);
 
-		bool write();
 		void onWrite(OutputMessage_ptr msg, const boost::system::error_code& error);
 		void onStop();
 
-		void handleTimeout(const boost::system::error_code& error);
 		void handleReadError(const boost::system::error_code& error);
 		void handleWriteError(const boost::system::error_code& error);
 
+		static void handleReadTimeout(boost::weak_ptr<Connection> weak, const boost::system::error_code& error);
+		static void handleWriteTimeout(boost::weak_ptr<Connection> weak, const boost::system::error_code& error);
+
+		void closeConnection();
+		void deleteConnection();
+		void releaseConnection();
+
+		void onReadTimeout();
+		void onWriteTimeout();
+
+		void internalSend(OutputMessage_ptr msg);
+		void closeSocket();
+
 		NetworkMessage m_msg;
 		Protocol* m_protocol;
-		boost::asio::deadline_timer m_timer;
 
 		boost::asio::ip::tcp::socket* m_socket;
-		boost::asio::io_service& m_io_service;
-		ServicePort_ptr m_port;
+		boost::asio::deadline_timer m_readTimer, m_writeTimer;
 
-		static bool m_logError;
-		bool m_receivedFirst, m_socketClosed, m_writeError, m_readError;
+		boost::asio::io_service& m_service;
+		ServicePort_ptr m_servicePort;
+		bool m_receivedFirst, m_writeError, m_readError;
 
 		int32_t m_pendingWrite, m_pendingRead;
-		uint32_t m_closeState, m_refCount;
+		ConnectionState_t m_connectionState;
+		uint32_t m_refCount;
 
-		OTSYS_THREAD_LOCKVAR m_connectionLock;
+		static bool m_logError;
+		boost::recursive_mutex m_connectionLock;
 };
+
 #endif

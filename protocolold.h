@@ -30,9 +30,8 @@ class ProtocolOld : public Protocol
 #endif
 		virtual void onRecvFirstMessage(NetworkMessage& msg);
 
-		ProtocolOld(Connection* connection): Protocol(connection)
+		ProtocolOld(Connection_ptr connection): Protocol(connection)
 		{
-			enableChecksum();
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
 			protocolOldCount++;
 #endif
@@ -60,7 +59,7 @@ class ProtocolOld : public Protocol
 class ProtocolOldLogin : public ProtocolOld
 {
 	public:
-		ProtocolOldLogin(Connection* connection) : ProtocolOld(connection) {}
+		ProtocolOldLogin(Connection_ptr connection) : ProtocolOld(connection) {}
 
 		enum {protocolId = 0x01};
 		static const char* protocolName() {return "old login protocol";}
@@ -69,7 +68,7 @@ class ProtocolOldLogin : public ProtocolOld
 class ProtocolOldGame : public ProtocolOld
 {
 	public:
-		ProtocolOldGame(Connection* connection) : ProtocolOld(connection) {}
+		ProtocolOldGame(Connection_ptr connection) : ProtocolOld(connection) {}
 
 		enum {protocolId = 0x0A};
 		static const char* protocolName() {return "old game protocol";}

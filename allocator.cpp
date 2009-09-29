@@ -62,11 +62,11 @@ void operator delete[](void* p, int32_t dummy)
 #endif
 
 #ifdef __OTSERV_ALLOCATOR_STATS__
-OTSYS_THREAD_RETURN allocatorStatsThread(void* a)
+void allocatorStatsThread(void* a)
 {
 	while(true)
 	{
-		OTSYS_SLEEP(30000);
+		boost::this_thread::sleep(boost::posix_time::milliseconds(30000));
 		PoolManager::getInstance().dumpStats();
 	}
 }

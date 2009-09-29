@@ -135,9 +135,7 @@ class MoveEvent : public Event
 		virtual std::string getScriptEventParams() const;
 
 		static StepFunction StepInField;
-		static StepFunction StepOutField;
 		static MoveFunction AddItemField;
-		static MoveFunction RemoveItemField;
 		static EquipFunction EquipItem;
 		static EquipFunction DeEquipItem;
 

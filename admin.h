@@ -18,8 +18,9 @@
 #ifdef __REMOTE_CONTROL__
 #ifndef __ADMIN__
 #define __ADMIN__
-
 #include "otsystem.h"
+
+#include "textlogger.h"
 #include "player.h"
 
 // -> server
@@ -84,6 +85,7 @@ enum
 	AP_MSG_KEY_EXCHANGE = 3,
 	AP_MSG_COMMAND = 4,
 	AP_MSG_PING = 5,
+	AP_MSG_KEEP_ALIVE = 6,
 
 	AP_MSG_HELLO = 1,
 	AP_MSG_KEY_EXCHANGE_OK = 2,
@@ -188,7 +190,7 @@ class ProtocolAdmin : public Protocol
 #endif
 		virtual void onRecvFirstMessage(NetworkMessage& msg);
 
-		ProtocolAdmin(Connection* connection): Protocol(connection)
+		ProtocolAdmin(Connection_ptr connection): Protocol(connection)
 		{
 			m_state = NO_CONNECTED;
 			m_loginTries = m_lastCommand = 0;
@@ -229,6 +231,8 @@ class ProtocolAdmin : public Protocol
 		};
 
 	private:
+		void addLogLine(LogType_t type, std::string message);
+
 		int32_t m_loginTries;
 		ProtocolState_t m_state;
 		uint32_t m_lastCommand, m_startTime;

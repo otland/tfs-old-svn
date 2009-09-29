@@ -26,7 +26,7 @@
 #include "configmanager.h"
 extern ConfigManager g_config;
 
-std::string transformToSHA1(std::string plainText, bool upperCase /*= false*/)
+std::string transformToSHA1(std::string plainText, bool upperCase)
 {
 	SHA1 sha1;
 	unsigned sha1Hash[5];
@@ -46,7 +46,7 @@ std::string transformToSHA1(std::string plainText, bool upperCase /*= false*/)
 	return hexStr;
 }
 
-std::string transformToMD5(std::string plainText, bool upperCase /*= false*/)
+std::string transformToMD5(std::string plainText, bool upperCase)
 {
 	MD5_CTX m_md5;
 	std::stringstream hexStream;
@@ -66,26 +66,31 @@ std::string transformToMD5(std::string plainText, bool upperCase /*= false*/)
 	return hexStr;
 }
 
-bool passwordTest(const std::string &plain, std::string &hash)
+void _encrypt(std::string& str, bool upperCase)
 {
-	switch(g_config.getNumber(ConfigManager::PASSWORDTYPE))
+	switch(g_config.getNumber(ConfigManager::ENCRYPTION))
 	{
-		case PASSWORD_TYPE_MD5:
-		{
-			std::transform(hash.begin(), hash.end(), hash.begin(), upchar);
-			return transformToMD5(plain, true) == hash;
-		}
-
-		case PASSWORD_TYPE_SHA1:
-		{
-			std::transform(hash.begin(), hash.end(), hash.begin(), upchar);
-			return transformToSHA1(plain, true) == hash;
-		}
-
+		case ENCRYPTION_MD5:
+			str = transformToMD5(str, upperCase);
+			break;
+		case ENCRYPTION_SHA1:
+			str = transformToSHA1(str, upperCase);
+			break;
 		default:
-			return plain == hash;
+		{
+			if(upperCase)
+				std::transform(str.begin(), str.end(), str.begin(), upchar);
+
+			break;
+		}
 	}
-	return false;
+}
+
+bool encryptTest(std::string plain, std::string& hash)
+{
+	std::transform(hash.begin(), hash.end(), hash.begin(), upchar);
+	_encrypt(plain, true);
+	return plain == hash;
 }
 
 void replaceString(std::string& text, const std::string key, const std::string value)
@@ -141,85 +146,73 @@ bool booleanString(std::string source)
 bool readXMLInteger(xmlNodePtr node, const char* tag, int& value)
 {
 	char* nodeValue = (char*)xmlGetProp(node, (xmlChar*)tag);
-	if(nodeValue)
-	{
-		value = atoi(nodeValue);
-		xmlFreeOTSERV(nodeValue);
-		return true;
-	}
+	if(!nodeValue)
+		return false;
 
-	return false;
+	value = atoi(nodeValue);
+	xmlFree(nodeValue);
+	return true;
 }
 
 #if (defined __WINDOWS__ || defined WIN32) && !defined __GNUC__
 bool readXMLInteger(xmlNodePtr node, const char* tag, int32_t& value)
 {
 	char* nodeValue = (char*)xmlGetProp(node, (xmlChar*)tag);
-	if(nodeValue)
-	{
-		value = atoi(nodeValue);
-		xmlFreeOTSERV(nodeValue);
-		return true;
-	}
+	if(!nodeValue)
+		return false;
 
-	return false;
+	value = atoi(nodeValue);
+	xmlFree(nodeValue);
+	return true;
 }
 #endif
 
 bool readXMLInteger64(xmlNodePtr node, const char* tag, int64_t& value)
 {
 	char* nodeValue = (char*)xmlGetProp(node, (xmlChar*)tag);
-	if(nodeValue)
-	{
-		value = ATOI64(nodeValue);
-		xmlFreeOTSERV(nodeValue);
-		return true;
-	}
+	if(!nodeValue)
+		return false;
 
-	return false;
+	value = atoll(nodeValue);
+	xmlFree(nodeValue);
+	return true;
 }
 
 bool readXMLFloat(xmlNodePtr node, const char* tag, float& value)
 {
 	char* nodeValue = (char*)xmlGetProp(node, (xmlChar*)tag);
-	if(nodeValue)
-	{
-		value = atof(nodeValue);
-		xmlFreeOTSERV(nodeValue);
-		return true;
-	}
+	if(!nodeValue)
+		return false;
 
-	return false;
+	value = atof(nodeValue);
+	xmlFree(nodeValue);
+	return true;
 }
 
 bool readXMLString(xmlNodePtr node, const char* tag, std::string& value)
 {
 	char* nodeValue = (char*)xmlGetProp(node, (xmlChar*)tag);
-	if(nodeValue)
-	{
-		if(!utf8ToLatin1(nodeValue, value))
-			value = nodeValue;
+	if(!nodeValue)
+		return false;
 
-		xmlFreeOTSERV(nodeValue);
-		return true;
-	}
+	if(!utf8ToLatin1(nodeValue, value))
+		value = nodeValue;
 
-	return false;
+	xmlFree(nodeValue);
+	return true;
 }
 
 bool readXMLContentString(xmlNodePtr node, std::string& value)
 {
 	char* nodeValue = (char*)xmlNodeGetContent(node);
-	if(nodeValue)
-	{
-		if(!utf8ToLatin1(nodeValue, value))
-			value = nodeValue;
+	if(!nodeValue)
+		return false;
 
-		xmlFreeOTSERV(nodeValue);
-		return true;
-	}
+	if(!utf8ToLatin1(nodeValue, value))
+		value = nodeValue;
 
-	return false;
+	xmlFree(nodeValue);
+	return true;
 }
 
 bool parseXMLContentString(xmlNodePtr node, std::string& value)
@@ -376,11 +369,7 @@ int32_t random_range(int32_t lowestNumber, int32_t highestNumber, DistributionTy
 		return lowestNumber;
 
 	if(lowestNumber > highestNumber)
-	{
-		int32_t tmp = highestNumber;
-		highestNumber = lowestNumber;
-		lowestNumber = tmp;
-	}
+		std::swap(lowestNumber, highestNumber);
 
 	switch(type)
 	{
@@ -937,6 +926,7 @@ MagicEffectNames magicEffectNames[] =
 	{"bloodysteps",		NM_ME_BLOODYSTEPS},
 	{"stepsvertical",	NM_ME_STEPSVERTICAL},
 	{"yalaharighost",	NM_ME_YALAHARIGHOST},
+	{"bats",		NM_ME_BATS},
 	{"smoke",		NM_ME_SMOKE}
 };
 

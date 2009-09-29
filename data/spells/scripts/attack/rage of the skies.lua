@@ -1,7 +1,7 @@
 local combat = createCombatObject()
 setCombatParam(combat, COMBAT_PARAM_TYPE, COMBAT_ENERGYDAMAGE)
 setCombatParam(combat, COMBAT_PARAM_EFFECT, CONST_ME_BIGCLOUDS)
-setCombatFormula(combat, COMBAT_FORMULA_LEVELMAGIC, -1.3, -30, -1.6, 0)
+setAttackFormula(combat, COMBAT_FORMULA_LEVELMAGIC, 5, 5, 5, 12)
 
 local area = createCombatArea(AREA_CROSS6X6)
 setCombatArea(combat, area)

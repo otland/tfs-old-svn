@@ -18,42 +18,38 @@
 #ifndef __WAITLIST__
 #define __WAITLIST__
 
-#include "game.h"
-#include "networkmessage.h"
-
 struct Wait
 {
-	uint32_t acc, ip;
+	uint32_t ip;
 	std::string name;
 	bool premium;
 	int64_t timeout;
 };
 typedef std::list<Wait*> WaitList;
 
+class Player;
 class WaitingList
 {
 	public:
-		WaitingList() {}
 		virtual ~WaitingList() {waitList.clear();}
-
 		static WaitingList* getInstance()
 		{
 			static WaitingList waitingList;
 			return &waitingList;
 		}
 
-		bool clientLogin(const Player* player);
-		int32_t getClientSlot(const Player* player);
+		bool login(const Player* player);
+		int32_t getSlot(const Player* player);
 
 		static int32_t getTime(int32_t slot);
 
 	protected:
-		void cleanUpList();
+		WaitingList() {}
+		void cleanup();
 
-		WaitList::iterator findClient(const Player* player, uint32_t& slot);
+		WaitList::iterator find(const Player* player, uint32_t& slot);
 		int32_t getTimeout(int32_t slot) {return getTime(slot) + 15;}
 
 		WaitList waitList;
-		WaitList priorityWaitList;
 };
 #endif

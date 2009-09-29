@@ -25,7 +25,6 @@
 #include <memory>
 #include <cstdlib>
 #include <fstream>
-#include <limits>
 
 template<typename T>
 class dummyallocator
@@ -46,6 +45,7 @@ class dummyallocator
 		template <class U>
 		dummyallocator(const dummyallocator<U>&) throw() {}
 		dummyallocator(const dummyallocator&) throw() {}
+
 		dummyallocator() throw() {}
 		virtual ~dummyallocator() throw() {}
 
@@ -88,7 +88,7 @@ void operator delete(void* p, int32_t dummy);
 void operator delete[](void* p, int32_t dummy);
 #endif
 #ifdef __OTSERV_ALLOCATOR_STATS__
-OTSYS_THREAD_RETURN allocatorStatsThread(void* a);
+void allocatorStatsThread(void* a);
 #endif
 
 struct poolTag
@@ -108,7 +108,7 @@ class PoolManager
 		void* allocate(size_t size)
 		{
 			Pools::iterator it;
-			OTSYS_THREAD_LOCK(poolLock, "");
+			poolLock.lock();
 			for(it = pools.begin(); it != pools.end(); ++it)
 			{
 				if(it->first >= size + sizeof(poolTag))
@@ -117,15 +117,15 @@ class PoolManager
 					#ifdef __OTSERV_ALLOCATOR_STATS__
 					if(!tag)
 						dumpStats();
-					#endif
 
+					#endif
 					tag->poolbytes = it->first;
 					#ifdef __OTSERV_ALLOCATOR_STATS__
 					poolsStats[it->first]->allocations++;
 					poolsStats[it->first]->unused+= it->first - (size + sizeof(poolTag));
-
 					#endif
-					OTSYS_THREAD_UNLOCK(poolLock, "");
+
+					poolLock.unlock();
 					return tag + 1;
 				}
 			}
@@ -134,9 +134,10 @@ class PoolManager
 			#ifdef __OTSERV_ALLOCATOR_STATS__
 			poolsStats[0]->allocations++;
 			poolsStats[0]->unused += size;
+
 			#endif
 			tag->poolbytes = 0;
-			OTSYS_THREAD_UNLOCK(poolLock, "");
+			poolLock.unlock();
 			return tag + 1;
 		}
 
@@ -146,7 +147,7 @@ class PoolManager
 				return;
 
 			poolTag* const tag = reinterpret_cast<poolTag*>(deletable) - 1U;
-			OTSYS_THREAD_LOCK(poolLock, "");
+			poolLock.lock();
 			if(tag->poolbytes)
 			{
 				Pools::iterator it;
@@ -165,7 +166,7 @@ class PoolManager
 				#endif
 			}
 
-			OTSYS_THREAD_UNLOCK(poolLock, "");
+			poolLock.unlock();
 		}
 
 		#ifdef __OTSERV_ALLOCATOR_STATS__
@@ -200,13 +201,14 @@ class PoolManager
 			while(it != pools.end())
 			{
 				std::free(it->second);
-				pools.erase(it++);
+				it = pools.erase(it);
 			}
+
 			#ifdef __OTSERV_ALLOCATOR_STATS__
-			for(PoolsStats::iterator sit = poolsStats.begin(); sit != poolsStats.end(); ++sit)
+			for(PoolsStats::iterator sit = poolsStats.begin(); sit != poolsStats.end();)
 			{
 				std::free(sit->second);
-				poolsStats.erase(sit++);
+				sit = poolsStats.erase(sit);
 			}
 			#endif
 		}
@@ -216,6 +218,7 @@ class PoolManager
 		{
 			pools[size] = new(0) boost::pool<boost::default_user_allocator_malloc_free>(size, nextSize);
 			#ifdef __OTSERV_ALLOCATOR_STATS__
+
 			t_PoolStats * tmp = new(0) t_PoolStats;
 			tmp->unused = tmp->allocations = tmp->deallocations = 0;
 			poolsStats[size] = tmp;
@@ -224,7 +227,6 @@ class PoolManager
 
 		PoolManager()
 		{
-			OTSYS_THREAD_LOCKVARINIT(poolLock);
 			addPool(4 + sizeof(poolTag), 32768);
 			addPool(20 + sizeof(poolTag), 32768);
 			addPool(32 + sizeof(poolTag), 32768);
@@ -239,6 +241,7 @@ class PoolManager
 
 			addPool(60 + sizeof(poolTag), 10000); //Tile class
 			addPool(36 + sizeof(poolTag), 10000); //Item class
+
 			#ifdef __OTSERV_ALLOCATOR_STATS__
 			t_PoolStats * tmp = new(0) t_PoolStats;
 			tmp->unused = tmp->allocations = tmp->deallocations = 0;
@@ -263,7 +266,7 @@ class PoolManager
 		PoolsStats poolsStats;
 
 		#endif
-		OTSYS_THREAD_LOCKVAR poolLock;
+		boost::recursive_mutex poolLock;
 };
 #endif
 #endif

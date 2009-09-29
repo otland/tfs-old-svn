@@ -30,6 +30,7 @@ DROP TABLE IF EXISTS `server_record`;
 DROP TABLE IF EXISTS `server_motd`;
 DROP TABLE IF EXISTS `server_reports`;
 DROP TABLE IF EXISTS `server_config`;
+DROP TABLE IF EXISTS `account_viplist`;
 
 CREATE TABLE `accounts`
 (
@@ -44,6 +45,16 @@ CREATE TABLE `accounts`
 	`warnings` INT NOT NULL DEFAULT 0,
 	`group_id` INT NOT NULL DEFAULT 1,
 	PRIMARY KEY (`id`), UNIQUE (`name`)
+) ENGINE = InnoDB;
+
+CREATE TABLE `account_viplist`
+(
+	`account_id` INT NOT NULL,
+	`world_id` TINYINT(2) UNSIGNED NOT NULL DEFAULT 0,
+	`player_id` INT NOT NULL,
+	KEY (`account_id`), KEY (`player_id`), KEY (`world_id`), UNIQUE (`account_id`, `player_id`),
+	FOREIGN KEY (`account_id`) REFERENCES `accounts`(`id`) ON DELETE CASCADE,
+	FOREIGN KEY (`player_id`) REFERENCES `players`(`id`) ON DELETE CASCADE
 ) ENGINE = InnoDB;
 
 INSERT INTO `accounts` VALUES (1, '1', '1', 65535, 0, '', '0', 0, 0, 1);
@@ -358,7 +369,7 @@ CREATE TABLE `server_config`
 	UNIQUE (`config`)
 ) ENGINE = InnoDB;
 
-INSERT INTO `server_config` VALUES ('db_version', 21);
+INSERT INTO `server_config` VALUES ('db_version', 23);
 
 CREATE TABLE `server_motd`
 (
@@ -403,7 +414,7 @@ BEFORE DELETE
 ON `accounts`
 FOR EACH ROW
 BEGIN
-	DELETE FROM `bans` WHERE `type` NOT IN (1,2) AND `value` = OLD.`id`;
+	DELETE FROM `bans` WHERE `type` IN (3, 4) AND `value` = OLD.`id`;
 END|
 
 CREATE TRIGGER `oncreate_guilds`
@@ -443,7 +454,7 @@ BEFORE DELETE
 ON `players`
 FOR EACH ROW
 BEGIN
-	DELETE FROM `bans` WHERE `type` = 2 AND `value` = OLD.`id`;
+	DELETE FROM `bans` WHERE `type` IN (2, 5) AND `value` = OLD.`id`;
 	UPDATE `houses` SET `owner` = 0 WHERE `owner` = OLD.`id`;
 END|
 

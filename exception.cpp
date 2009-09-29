@@ -16,45 +16,34 @@
 ////////////////////////////////////////////////////////////////////////
 #ifdef __EXCEPTION_TRACER__
 #include "otpch.h"
-
 #include "exception.h"
-#include "otsystem.h"
 
 #include <iostream>
-#include <fstream>
 #include <iomanip>
+#include <fstream>
 #ifdef WIN32
 #include <excpt.h>
 #include <tlhelp32.h>
 #endif
 
+#include <boost/config.hpp>
 #include "tools.h"
-#include "configmanager.h"
 
+#include "configmanager.h"
 extern ConfigManager g_config;
 
 typedef std::map<uint32_t, char*> FunctionMap;
 FunctionMap functionMap;
 
-uint32_t max_off, min_off;
-bool maploaded = false;
-OTSYS_THREAD_LOCKVAR maploadlock;
+uint32_t offMax, offMin;
+bool mapLoaded = false;
+boost::recursive_mutex mapLock;
 
 #ifdef WIN32
-void printPointer(std::ostream* output,uint32_t p);
-EXCEPTION_DISPOSITION __cdecl _SEHHandler(struct _EXCEPTION_RECORD *ExceptionRecord, void * EstablisherFrame,
-	struct _CONTEXT *ContextRecord, void * DispatcherContext);
+void printPointer(std::ostream* output, uint32_t p);
+EXCEPTION_DISPOSITION __cdecl _SEHHandler(struct _EXCEPTION_RECORD *ExceptionRecord, void* EstablisherFrame,
+	struct _CONTEXT *ContextRecord, void* DispatcherContext);
 #endif
-
-#ifndef COMPILER_STRING
-#ifdef __GNUC__
-#define COMPILER_STRING  "gcc " __VERSION__
-#else
-#define COMPILER_STRING  ""
-#endif
-#endif
-
-#define COMPILATION_DATE  __DATE__ " " __TIME__
 
 ExceptionHandler::ExceptionHandler()
 {
@@ -70,8 +59,8 @@ ExceptionHandler::~ExceptionHandler()
 bool ExceptionHandler::InstallHandler()
 {
 	#ifdef WIN32
-	OTSYS_THREAD_LOCK_CLASS lockObj(maploadlock);
-	if(!maploaded)
+	boost::recursive_mutex::scoped_lock lockObj(mapLock);
+	if(!mapLoaded)
 		LoadMap();
 
 	if(installed)
@@ -94,6 +83,7 @@ bool ExceptionHandler::InstallHandler()
 	__asm__("movl %0,%%eax;movl %%eax,%%fs:0;": : "g" (&chain):"%eax");
 	#endif
 	#endif
+
 	installed = true;
 	return true;
 }
@@ -117,25 +107,25 @@ bool ExceptionHandler::RemoveHandler()
 char* getFunctionName(unsigned long addr, unsigned long& start)
 {
 	FunctionMap::iterator functions;
-	if(addr >= min_off && addr <= max_off)
+	if(addr < offMin || addr > offMax)
+		return NULL;
+
+	for(FunctionMap::iterator functions = functionMap.begin(); functions != functionMap.end(); ++functions)
 	{
-		for(functions = functionMap.begin(); functions != functionMap.end(); ++functions)
-		{
-			if(functions->first > addr && functions != functionMap.begin())
-			{
-				functions--;
-				start = functions->first;
-				return functions->second;
-			}
-		}
+		if(functions->first <= addr || functions == functionMap.begin())
+			continue;
+
+		functions--;
+		start = functions->first;
+		return functions->second;
 	}
 
 	return NULL;
 }
 
 #ifdef WIN32
-EXCEPTION_DISPOSITION __cdecl _SEHHandler(struct _EXCEPTION_RECORD *ExceptionRecord, void * EstablisherFrame,
-	 struct _CONTEXT *ContextRecord, void * DispatcherContext)
+EXCEPTION_DISPOSITION __cdecl _SEHHandler(struct _EXCEPTION_RECORD *ExceptionRecord, void* EstablisherFrame,
+	 struct _CONTEXT *ContextRecord, void* DispatcherContext)
 {
 	uint32_t *esp;
 	uint32_t *next_ret;
@@ -164,8 +154,8 @@ EXCEPTION_DISPOSITION __cdecl _SEHHandler(struct _EXCEPTION_RECORD *ExceptionRec
 	time(&rawtime);
 	*outdriver << "*****************************************************" << std::endl;
 	*outdriver << "Error report - " << std::ctime(&rawtime) << std::endl;
-	*outdriver << "Compiler info - " << COMPILER_STRING << std::endl;
-	*outdriver << "Compilation Date - " << COMPILATION_DATE << std::endl << std::endl;
+	*outdriver << "Compiler Info - " << BOOST_COMPILER << std::endl;
+	*outdriver << "Compilation Date - " << __DATE__ << " " << __TIME__ << std::endl << std::endl;
 
 	//system and process info
 	//- global memory information
@@ -290,7 +280,7 @@ EXCEPTION_DISPOSITION __cdecl _SEHHandler(struct _EXCEPTION_RECORD *ExceptionRec
 			*outdriver<< std::endl;
 		}
 
-		if(stack_val >= min_off && stack_val <= max_off)
+		if(stack_val >= offMin && stack_val <= offMax)
 		{
 			foundRetAddress++;
 			//
@@ -319,10 +309,10 @@ EXCEPTION_DISPOSITION __cdecl _SEHHandler(struct _EXCEPTION_RECORD *ExceptionRec
 	return ExceptionContinueSearch;
 }
 
-void printPointer(std::ostream* output,uint32_t p)
+void printPointer(std::ostream* output, uint32_t p)
 {
 	*output << p;
-	if(IsBadReadPtr((void*)p, 4) == 0)
+	if(!IsBadReadPtr((void*)p, 4))
 		*output << " -> " << *(uint32_t*)p;
 }
 #endif
@@ -330,7 +320,7 @@ void printPointer(std::ostream* output,uint32_t p)
 bool ExceptionHandler::LoadMap()
 {
 	#ifdef __GNUC__
-	if(maploaded)
+	if(mapLoaded)
 		return false;
 
 	functionMap.clear();
@@ -338,8 +328,8 @@ bool ExceptionHandler::LoadMap()
 	//load map file if exists
 	char line[1024];
 	FILE* input = fopen("forgottenserver.map", "r");
-	min_off = 0xFFFFFF;
-	max_off = 0;
+	offMin = 0xFFFFFF;
+	offMax = 0;
 	int32_t n = 0;
 	if(!input)
 	{
@@ -352,7 +342,7 @@ bool ExceptionHandler::LoadMap()
 	//read until found .text		   0x00401000
 	while(fgets(line, 1024, input))
 	{
-		if(memcmp(line,".text",5) == 0)
+		if(!memcmp(line, ".text",5))
 			break;
 	}
 
@@ -395,10 +385,10 @@ bool ExceptionHandler::LoadMap()
 				strcpy(name, pos2);
 				name[strlen(pos2) - 1] = 0;
 				functionMap[offset] = name;
-				if(offset > max_off)
-					max_off = offset;
-				if(offset < min_off)
-					min_off = offset;
+				if(offset > offMax)
+					offMax = offset;
+				if(offset < offMin)
+					offMin = offset;
 				n++;
 			}
 		}
@@ -406,7 +396,7 @@ bool ExceptionHandler::LoadMap()
 
 	//close file
 	fclose(input);
-	maploaded = true;
+	mapLoaded = true;
 	#endif
 	return true;
 }
@@ -433,8 +423,8 @@ void ExceptionHandler::dumpStack()
 	time(&rawtime);
 	output << "*****************************************************" << std::endl;
 	output << "Stack dump - " << std::ctime(&rawtime) << std::endl;
-	output << "Compiler info - " << COMPILER_STRING << std::endl;
-	output << "Compilation Date - " << COMPILATION_DATE << std::endl << std::endl;
+	output << "Compiler Info - " << BOOST_COMPILER << std::endl;
+	output << "Compilation Date - " << __DATE__ << " " << __TIME__ << std::endl << std::endl;
 
 	#ifdef __GNUC__
 	__asm__ ("movl %%esp, %0;":"=r"(esp)::);
@@ -481,7 +471,7 @@ void ExceptionHandler::dumpStack()
 			output << std::endl;
 		}
 
-		if(stack_val >= min_off && stack_val <= max_off)
+		if(stack_val >= offMin && stack_val <= offMax)
 		{
 			foundRetAddress++;
 			//

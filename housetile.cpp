@@ -31,11 +31,6 @@ HouseTile::HouseTile(int32_t x, int32_t y, int32_t z, House* _house):
 	setFlag(TILESTATE_HOUSE);
 }
 
-HouseTile::~HouseTile()
-{
-	//
-}
-
 void HouseTile::__addThing(Creature* actor, int32_t index, Thing* thing)
 {
 	Tile::__addThing(actor, index, thing);
@@ -92,16 +87,12 @@ Cylinder* HouseTile::__queryDestination(int32_t& index, const Thing* thing, Item
 		{
 			if(!house->isInvited(player) && !player->hasFlag(PlayerFlag_CanEditHouses))
 			{
-				Tile* destTile = g_game.getTile(house->getEntryPosition());
+				Tile* destTile = g_game.getTile(house->getEntry());
 				if(!destTile)
 				{
-					#ifdef __DEBUG__
-					assert(destTile != NULL);
-					#endif
 					std::cout << "[Error - HouseTile::__queryDestination] Tile at house entry position for house: "
-						<< house->getName() << " (" << house->getHouseId() << ") does not exist." << std::endl;
-
-					destTile = g_game.getTile(player->getTemplePosition());
+						<< house->getName() << " (" << house->getId() << ") does not exist." << std::endl;
+					destTile = g_game.getTile(player->getMasterPosition());
 					if(!destTile)
 						destTile = &(Tile::nullTile);
 				}

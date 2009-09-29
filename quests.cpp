@@ -24,7 +24,7 @@ bool Mission::isStarted(Player* player)
 		return false;
 
 	std::string value;
-	return player->getStorageValue(storageId, value) && atoi(value.c_str()) >= startValue;
+	return player->getStorage(storageId, value) && atoi(value.c_str()) >= startValue;
 }
 
 bool Mission::isCompleted(Player* player)
@@ -33,13 +33,13 @@ bool Mission::isCompleted(Player* player)
 		return false;
 
 	std::string value;
-	return player->getStorageValue(storageId, value) && atoi(value.c_str()) >= endValue;
+	return player->getStorage(storageId, value) && atoi(value.c_str()) >= endValue;
 }
 
 std::string Mission::getDescription(Player* player)
 {
 	std::string value;
-	if(!player->getStorageValue(storageId, value))
+	if(!player->getStorage(storageId, value))
 		return "Couldn't retrieve player storage, please report to gamemaster.";
 
 	if(atoi(value.c_str()) >= endValue)
@@ -47,7 +47,7 @@ std::string Mission::getDescription(Player* player)
 
 	for(int32_t i = endValue; i >= startValue; --i)
 	{
-		if(!player->getStorageValue(storageId, value))
+		if(!player->getStorage(storageId, value))
 			continue;
 
 		if(i == atoi(value.c_str()))
@@ -71,7 +71,7 @@ bool Quest::isStarted(Player* player)
 		return false;
 
 	std::string value;
-	return player->getStorageValue(storageId, value) && atoi(value.c_str()) >= storageValue;
+	return player->getStorage(storageId, value) && atoi(value.c_str()) >= storageValue;
 }
 
 bool Quest::isCompleted(Player* player) const

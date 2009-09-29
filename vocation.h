@@ -30,7 +30,7 @@ enum multiplier_t
 	MULTIPLIER_MAGICDEFENSE = 3,
 	MULTIPLIER_ARMOR = 4,
 	MULTIPLIER_MAGIC = 5,
-	MULTIPLIER_MAGICHEALING = 6,
+	MULTIPLIER_HEALING = 6,
 	MULTIPLIER_WAND = 7,
 	MULTIPLIER_MANA = 8,
 	MULTIPLIER_LAST = MULTIPLIER_MANA
@@ -97,8 +97,11 @@ class Vocation
 		float getMultiplier(multiplier_t type) const {return formulaMultipliers[type];}
 		void setMultiplier(multiplier_t type, float v) {formulaMultipliers[type] = v;}
 
-		int16_t getAbsorbPercent(CombatType_t combat) const {return absorbPercent[combat];}
-		void increaseAbsorbPercent(CombatType_t combat, int16_t v) {absorbPercent[combat] += v;}
+		int16_t getAbsorb(CombatType_t combat) const {return absorb[combat];}
+		void increaseAbsorb(CombatType_t combat, int16_t v) {absorb[combat] += v;}
+
+		int16_t getReflect(CombatType_t combat) const;
+		void increaseReflect(Reflect_t type, CombatType_t combat, int16_t v) {reflect[type][combat] += v;}
 
 		double getExperienceMultiplier() const {return skillMultipliers[SKILL__LEVEL];}
 		void setSkillMultiplier(skills_t s, float v) {skillMultipliers[s] = v;}
@@ -117,7 +120,7 @@ class Vocation
 		uint32_t id, fromVocation, baseSpeed, attackSpeed;
 		std::string name, description;
 
-		int16_t absorbPercent[COMBAT_LAST + 1];
+		int16_t absorb[COMBAT_LAST + 1], reflect[REFLECT_LAST + 1][COMBAT_LAST + 1];
 		uint32_t gain[GAIN_LAST + 1], gainTicks[GAIN_LAST + 1], gainAmount[GAIN_LAST + 1], skillBase[SKILL_LAST + 1];
 		float skillMultipliers[SKILL__LAST + 1], formulaMultipliers[MULTIPLIER_LAST + 1];
 };

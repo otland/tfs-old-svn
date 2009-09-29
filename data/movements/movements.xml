@@ -111,7 +111,7 @@
 
 	<!-- Snow footprint tiles -->
 	<movevent type="StepIn" itemid="670" event="script" value="snow.lua"/>
-	<movevent type="StepIn" fromid="6580" toid="6593" event="script" value="snow.lua"/>
+	<movevent type="StepIn" fromid="6580" toid="6594" event="script" value="snow.lua"/>
 
 	<!-- Create bread movements -->
 	<movevent type="AddItem" tileitem="1" itemid="1786" event="script" value="dough.lua"/>
@@ -609,6 +609,8 @@
 		<vocation id="7" showInDescription="0"/>
 	</movevent>
 	<movevent type="DeEquip" itemid="2470" slot="legs" event="function" value="onDeEquipItem"/>
+	<movevent type="Equip" itemid="2504" slot="legs" event="function" value="onEquipItem"/>
+	<movevent type="DeEquip" itemid="2504" slot="legs" event="function" value="onDeEquipItem"/>
 	<movevent type="Equip" itemid="7885" slot="legs" level="40" event="function" value="onEquipItem">
 		<vocation id="1"/>
 		<vocation id="5" showInDescription="0"/>

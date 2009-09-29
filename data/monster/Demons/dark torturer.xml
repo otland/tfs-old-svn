@@ -60,6 +60,8 @@
 				<item id="5944" chance="5555"/><!-- soul orb -->
 				<item id="5801" chance="1800"/><!-- key ring -->
 				<item id="5480" chance="1666"/><!-- cat's paw -->
+				<item id="7412" chance="250"/><!-- butcher's axe -->
+				<item id="7388" chance="200"/><!-- vile axe -->
 			</inside>
 		</item>
 	</loot>

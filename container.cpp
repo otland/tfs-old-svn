@@ -24,9 +24,9 @@
 
 extern Game g_game;
 
-Container::Container(uint16_t _type) : Item(_type)
+Container::Container(uint16_t type) : Item(type)
 {
-	maxSize = items[_type].maxItems;
+	maxSize = items[type].maxItems;
 	serializationCount = 0;
 	totalWeight = 0.0;
 }
@@ -36,7 +36,7 @@ Container::~Container()
 	for(ItemList::iterator cit = itemlist.begin(); cit != itemlist.end(); ++cit)
 	{
 		(*cit)->setParent(NULL);
-		(*cit)->releaseThing2();
+		(*cit)->unRef();
 	}
 
 	itemlist.clear();
@@ -53,9 +53,9 @@ Item* Container::clone() const
 
 Container* Container::getParentContainer()
 {
-	if(Thing* thing = getParent())
+	if(Cylinder* cylinder = getParent())
 	{
-		if(Item* item = thing->getItem())
+		if(Item* item = cylinder->getItem())
 			return item->getContainer();
 	}
 
@@ -91,47 +91,38 @@ Attr_ReadValue Container::readAttr(AttrTypes_t attr, PropStream& propStream)
 
 bool Container::unserializeItemNode(FileLoader& f, NODE node, PropStream& propStream)
 {
-	if(Item::unserializeItemNode(f, node, propStream))
+	if(!Item::unserializeItemNode(f, node, propStream))
+		return false;
+
+	uint32_t type;
+	for(NODE nodeItem = f.getChildNode(node, type); nodeItem; nodeItem = f.getNextNode(nodeItem, type))
 	{
-		uint32_t type;
-		NODE nodeItem = f.getChildNode(node, type);
-		while(nodeItem)
-		{
-			//load container items
-			if(type == OTBM_ITEM)
-			{
-				PropStream itemPropStream;
-				f.getProps(nodeItem, itemPropStream);
+		//load container items
+		if(type != OTBM_ITEM)
+			return false;
 
-				Item* item = Item::CreateItem(itemPropStream);
-				if(!item)
-					return false;
+		PropStream itemPropStream;
+		f.getProps(nodeItem, itemPropStream);
 
-				if(!item->unserializeItemNode(f, nodeItem, itemPropStream))
-					return false;
+		Item* item = Item::CreateItem(itemPropStream);
+		if(!item)
+			return false;
 
-				addItem(item);
-				totalWeight += item->getWeight();
-				if(Container* parent = getParentContainer())
-					parent->updateItemWeight(item->getWeight());
-			}
-			else/*unknown type*/
-				return false;
+		if(!item->unserializeItemNode(f, nodeItem, itemPropStream))
+			return false;
 
-			nodeItem = f.getNextNode(nodeItem, type);
-		}
-
-		return true;
+		addItem(item);
+		updateItemWeight(item->getWeight());
 	}
 
-	return false;
+	return true;
 }
 
 void Container::updateItemWeight(double diff)
 {
 	totalWeight += diff;
-	if(Container* parentContainer = getParentContainer())
-		parentContainer->updateItemWeight(diff);
+	if(Container* parent = getParentContainer())
+		parent->updateItemWeight(diff);
 }
 
 double Container::getWeight() const
@@ -292,13 +283,13 @@ ReturnValue Container::__queryAdd(int32_t index, const Thing* thing, uint32_t co
 	if(item == this)
 		return RET_THISISIMPOSSIBLE;
 
-	const Cylinder* cylinder = getParent();
-	while(cylinder)
+	if(const Container* container = item->getContainer())
 	{
-		if(cylinder == thing)
-			return RET_THISISIMPOSSIBLE;
-
-		cylinder = cylinder->getParent();
+		for(const Cylinder* cylinder = getParent(); cylinder; cylinder = cylinder->getParent())
+		{
+			if(cylinder == container)
+				return RET_THISISIMPOSSIBLE;
+		}
 	}
 
 	if(index == INDEX_WHEREEVER && !((flags & FLAG_NOLIMIT) == FLAG_NOLIMIT) && full())

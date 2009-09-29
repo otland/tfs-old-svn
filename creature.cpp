@@ -32,9 +32,9 @@
 #include "configmanager.h"
 #include "game.h"
 
-OTSYS_THREAD_LOCKVAR AutoID::autoIDLock;
-uint32_t AutoID::count = 1000;
-AutoID::list_type AutoID::list;
+boost::recursive_mutex AutoId::lock;
+uint32_t AutoId::count = 1000;
+AutoId::List AutoId::list;
 
 extern Game g_game;
 extern ConfigManager g_config;
@@ -64,9 +64,7 @@ Creature::Creature()
 	varSpeed = 0;
 
 	masterRadius = -1;
-	masterPos.x = 0;
-	masterPos.y = 0;
-	masterPos.z = 0;
+	masterPosition = Position();
 
 	followCreature = NULL;
 	hasFollowPath = false;
@@ -98,7 +96,7 @@ Creature::~Creature()
 	{
 		(*cit)->setAttackedCreature(NULL);
 		(*cit)->setMaster(NULL);
-		(*cit)->releaseThing2();
+		(*cit)->unRef();
 	}
 
 	summons.clear();
@@ -468,13 +466,16 @@ void Creature::onCreatureAppear(const Creature* creature)
 void Creature::onCreatureDisappear(const Creature* creature, bool isLogout)
 {
 	internalCreatureDisappear(creature, true);
-	if(creature == this)
-	{
-		if(master && !master->isRemoved())
-			master->removeSummon(this);
-	}
-	else if(isMapLoaded && creature->getPosition().z == getPosition().z)
+	if(creature != this && isMapLoaded && creature->getPosition().z == getPosition().z)
 		updateTileCache(creature->getTile(), creature->getPosition());
+}
+
+void Creature::onRemovedCreature()
+{
+	setRemoved();
+	removeList();
+	if(master && !master->isRemoved())
+		master->removeSummon(this);
 }
 
 void Creature::onChangeZone(ZoneType_t zone)
@@ -715,53 +716,56 @@ bool Creature::onDeath()
 			tmp->onAttackedCreatureKilled(this);
 	}
 
+	dropCorpse(deathList);
 	if(master)
 		master->removeSummon(this);
 
-	dropCorpse(deathList);
 	return true;
 }
 
 void Creature::dropCorpse(DeathList deathList)
 {
 	Item* corpse = createCorpse(deathList);
-	if(Tile* tile = getTile())
-	{
-		Item* splash = NULL;
-		switch(getRace())
-		{
-			case RACE_VENOM:
-				splash = Item::CreateItem(ITEM_FULLSPLASH, FLUID_GREEN);
-				break;
-
-			case RACE_BLOOD:
-				splash = Item::CreateItem(ITEM_FULLSPLASH, FLUID_BLOOD);
-				break;
-
-			case RACE_UNDEAD:
-			case RACE_FIRE:
-			case RACE_ENERGY:
-			default:
-				break;
-		}
-
-		if(splash)
-		{
-			g_game.internalAddItem(NULL, tile, splash, INDEX_WHEREEVER, FLAG_NOLIMIT);
-			g_game.startDecay(splash);
-		}
-
-		if(corpse)
-		{
-			g_game.internalAddItem(NULL, tile, corpse, INDEX_WHEREEVER, FLAG_NOLIMIT);
-			dropLoot(corpse->getContainer());
-			g_game.startDecay(corpse);
-		}
-	}
+	bool deny = false;
 
 	CreatureEventList deathEvents = getCreatureEvents(CREATURE_EVENT_DEATH);
 	for(CreatureEventList::iterator it = deathEvents.begin(); it != deathEvents.end(); ++it)
-		(*it)->executeDeath(this, corpse, deathList);
+	{
+		if(!(*it)->executeDeath(this, corpse, deathList) && !deny)
+			deny = true;
+	}
+
+	if(!corpse || deny)
+		return;
+
+	Tile* tile = getTile();
+	if(!tile)
+		return;
+
+	Item* splash = NULL;
+	switch(getRace())
+	{
+		case RACE_VENOM:
+			splash = Item::CreateItem(ITEM_FULLSPLASH, FLUID_GREEN);
+			break;
+
+		case RACE_BLOOD:
+			splash = Item::CreateItem(ITEM_FULLSPLASH, FLUID_BLOOD);
+			break;
+
+		default:
+			break;
+	}
+
+	if(splash)
+	{
+		g_game.internalAddItem(NULL, tile, splash, INDEX_WHEREEVER, FLAG_NOLIMIT);
+		g_game.startDecay(splash);
+	}
+
+	g_game.internalAddItem(NULL, tile, corpse, INDEX_WHEREEVER, FLAG_NOLIMIT);
+	dropLoot(corpse->getContainer());
+	g_game.startDecay(corpse);
 }
 
 DeathList Creature::getKillers()
@@ -843,6 +847,25 @@ void Creature::changeMana(int32_t manaChange)
 		mana += std::min(manaChange, getMaxMana() - mana);
 	else
 		mana = std::max((int32_t)0, mana + manaChange);
+}
+
+bool Creature::getStorage(const uint32_t key, std::string& value) const
+{
+	StorageMap::const_iterator it = storageMap.find(key);
+	if(it != storageMap.end())
+	{
+		value = it->second;
+		return true;
+	}
+
+	value = "-1";
+	return false;
+}
+
+bool Creature::setStorage(const uint32_t key, const std::string& value)
+{
+	storageMap[key] = value;
+	return true;
 }
 
 void Creature::gainHealth(Creature* caster, int32_t healthGain)
@@ -1254,19 +1277,19 @@ void Creature::addSummon(Creature* creature)
 	creature->setLossSkill(false);
 
 	creature->setMaster(this);
-	creature->useThing2();
+	creature->addRef();
 	summons.push_back(creature);
 }
 
 void Creature::removeSummon(const Creature* creature)
 {
 	std::list<Creature*>::iterator it = std::find(summons.begin(), summons.end(), creature);
-	if(it != summons.end())
-	{
-		(*it)->setMaster(NULL);
-		(*it)->releaseThing2();
-		summons.erase(it);
-	}
+	if(it == summons.end())
+		return;
+
+	(*it)->setMaster(NULL);
+	(*it)->unRef();
+	summons.erase(it);
 }
 
 void Creature::destroySummons()
@@ -1277,7 +1300,7 @@ void Creature::destroySummons()
 		(*it)->changeHealth(-(*it)->getHealth());
 
 		(*it)->setMaster(NULL);
-		(*it)->releaseThing2();
+		(*it)->unRef();
 	}
 
 	summons.clear();
@@ -1477,7 +1500,7 @@ int32_t Creature::getStepDuration(Direction dir) const
 
 int32_t Creature::getStepDuration() const
 {
-	if(isRemoved())
+	if(removed)
 		return 0;
 
 	uint32_t stepSpeed = getStepSpeed();
@@ -1513,10 +1536,16 @@ void Creature::setNormalCreatureLight()
 bool Creature::registerCreatureEvent(const std::string& name)
 {
 	CreatureEvent* event = g_creatureEvents->getEventByName(name);
-	if(!event)
+	if(!event) //check for existance
 		return false;
 
-	if(!hasEventRegistered(event->getEventType())) //wasn't added, so set the bit in the bitfield
+	for(CreatureEventList::iterator it = eventsList.begin(); it != eventsList.end(); ++it)
+	{
+		if((*it) == event) //do not allow registration of same event more than once
+			return false;
+	}
+
+	if(!hasEventRegistered(event->getEventType())) //there's no such type registered yet, so set the bit in the bitfield
 		scriptEventsBitField |= ((uint32_t)1 << event->getEventType());
 
 	eventsList.push_back(event);
@@ -1526,13 +1555,13 @@ bool Creature::registerCreatureEvent(const std::string& name)
 CreatureEventList Creature::getCreatureEvents(CreatureEventType_t type)
 {
 	CreatureEventList retList;
-	if(hasEventRegistered(type))
+	if(!hasEventRegistered(type))
+		return retList;
+
+	for(CreatureEventList::iterator it = eventsList.begin(); it != eventsList.end(); ++it)
 	{
-		for(CreatureEventList::iterator it = eventsList.begin(); it != eventsList.end(); ++it)
-		{
-			if((*it)->getEventType() == type)
-				retList.push_back(*it);
-		}
+		if((*it)->getEventType() == type)
+			retList.push_back(*it);
 	}
 
 	return retList;

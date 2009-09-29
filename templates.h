@@ -19,38 +19,20 @@
 #define __TEMPLATES__
 #include "otsystem.h"
 
-template<class T> class AutoList
+template<class T> class AutoList : public std::map<uint32_t, T*>
 {
 	public:
 		AutoList() {}
-		virtual ~AutoList()
-		{
-			list.clear();
-		}
-
-		void addList(T* t)
-		{
-			list[t->getID()] = t;
-		}
-
-		void removeList(uint32_t _id)
-		{
-			list.erase(_id);
-		}
-
-		typedef std::map<uint32_t, T*> list_type;
-		list_type list;
-
-		typedef typename list_type::iterator listiterator;
+		virtual ~AutoList() {}
 };
 
-class AutoID
+class AutoId
 {
 	public:
-		AutoID()
+		AutoId()
 		{
-			OTSYS_THREAD_LOCK_CLASS lockClass(autoIDLock);
-			count++;
+			boost::recursive_mutex::scoped_lock lockClass(lock);
+			++count;
 			if(count >= 0xFFFFFF)
 				count = 1000;
 
@@ -59,27 +41,28 @@ class AutoID
 				if(count >= 0xFFFFFF)
 					count = 1000;
 				else
-					count++;
+					++count;
 			}
 
 			list.insert(count);
-			auto_id = count;
+			autoId = count;
 		}
 
-		virtual ~AutoID()
+		virtual ~AutoId()
 		{
-			list_type::iterator it = list.find(auto_id);
+			std::set<uint32_t>::iterator it = list.find(autoId);
 			if(it != list.end())
 				list.erase(it);
 		}
 
-		typedef std::set<uint32_t> list_type;
-
-		uint32_t auto_id;
-		static OTSYS_THREAD_LOCKVAR autoIDLock;
+		uint32_t autoId;
 
 	protected:
 		static uint32_t count;
-		static list_type list;
+
+		typedef std::set<uint32_t> List;
+		static List list;
+
+		static boost::recursive_mutex lock;
 };
 #endif

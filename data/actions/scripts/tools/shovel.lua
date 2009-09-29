@@ -18,7 +18,7 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 		elseif(rand >= 1 and rand <= 5) then
 			doCreateItem(2159, 1, toPosition)
 		elseif(rand > 85) then
-			doSummonCreature("Scarab", toPosition)
+			doCreateMonster("Scarab", toPosition, false)
 		end
 
 		doSendMagicEffect(toPosition, CONST_ME_POFF)

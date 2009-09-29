@@ -30,7 +30,7 @@ extern Game g_game;
 extern ConfigManager g_config;
 extern Monsters g_monsters;
 
-AutoList<Monster>Monster::listMonster;
+AutoList<Monster>Monster::autoList;
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
 uint32_t Monster::monsterCount = 0;
 #endif
@@ -61,8 +61,10 @@ Monster::Monster(MonsterType* _mType):
 	defaultOutfit = mType->outfit;
 	currentOutfit = mType->outfit;
 
-	health = mType->health;
-	healthMax = mType->healthMax;
+	double multiplier = g_config.getDouble(ConfigManager::RATE_MONSTER_HEALTH);
+	health = (int32_t)(mType->health * multiplier);
+	healthMax = (int32_t)(mType->healthMax * multiplier);
+
 	baseSpeed = mType->baseSpeed;
 	internalLight.level = mType->lightLevel;
 	internalLight.color = mType->lightColor;
@@ -83,11 +85,10 @@ Monster::Monster(MonsterType* _mType):
 	extraMeleeAttack = false;
 
 	// register creature events
-	MonsterScriptList::iterator it;
-	for(it = mType->scriptList.begin(); it != mType->scriptList.end(); ++it)
+	for(StringVec::iterator it = mType->scriptList.begin(); it != mType->scriptList.end(); ++it)
 	{
 		if(!registerCreatureEvent(*it))
-			std::cout << "Warning: [Monster::Monster]. Unknown event name - " << *it << std::endl;
+			std::cout << "[Warning - Monster::Monster] Unknown event name - " << *it << std::endl;
 	}
 
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
@@ -184,11 +185,9 @@ void Monster::onCreatureMove(const Creature* creature, const Tile* newTile, cons
 			onCreatureLeave(const_cast<Creature*>(creature));
 
 		if(isSummon() && getMaster() == creature && canSeeNewPos) //Turn the summon on again
-		{
 			isMasterInRange = true;
-			updateIdleStatus();
-		}
 
+		updateIdleStatus();
 		if(!followCreature && !isSummon() && isOpponent(creature)) //we have no target lets try pick this one
 			selectTarget(const_cast<Creature*>(creature));
 	}
@@ -201,7 +200,7 @@ void Monster::updateTargetList()
 	{
 		if((*it)->getHealth() <= 0 || !canSee((*it)->getPosition()))
 		{
-			(*it)->releaseThing2();
+			(*it)->unRef();
 			it = friendList.erase(it);
 		}
 		else
@@ -212,7 +211,7 @@ void Monster::updateTargetList()
 	{
 		if((*it)->getHealth() <= 0 || !canSee((*it)->getPosition()))
 		{
-			(*it)->releaseThing2();
+			(*it)->unRef();
 			it = targetList.erase(it);
 		}
 		else
@@ -230,7 +229,7 @@ void Monster::updateTargetList()
 void Monster::clearTargetList()
 {
 	for(CreatureList::iterator it = targetList.begin(); it != targetList.end(); ++it)
-		(*it)->releaseThing2();
+		(*it)->unRef();
 
 	targetList.clear();
 }
@@ -238,7 +237,7 @@ void Monster::clearTargetList()
 void Monster::clearFriendList()
 {
 	for(CreatureList::iterator it = friendList.begin(); it != friendList.end(); ++it)
-		(*it)->releaseThing2();
+		(*it)->unRef();
 
 	friendList.clear();
 }
@@ -250,7 +249,7 @@ void Monster::onCreatureFound(Creature* creature, bool pushFront /*= false*/)
 		assert(creature != this);
 		if(std::find(friendList.begin(), friendList.end(), creature) == friendList.end())
 		{
-			creature->useThing2();
+			creature->addRef();
 			friendList.push_back(creature);
 		}
 	}
@@ -260,15 +259,15 @@ void Monster::onCreatureFound(Creature* creature, bool pushFront /*= false*/)
 		assert(creature != this);
 		if(std::find(targetList.begin(), targetList.end(), creature) == targetList.end())
 		{
-			creature->useThing2();
+			creature->addRef();
 			if(pushFront)
 				targetList.push_front(creature);
 			else
 				targetList.push_back(creature);
-
-			updateIdleStatus();
 		}
 	}
+
+	updateIdleStatus();
 }
 
 void Monster::onCreatureEnter(Creature* creature)
@@ -340,7 +339,7 @@ void Monster::onCreatureLeave(Creature* creature)
 		CreatureList::iterator it = std::find(friendList.begin(), friendList.end(), creature);
 		if(it != friendList.end())
 		{
-			(*it)->releaseThing2();
+			(*it)->unRef();
 			friendList.erase(it);
 		}
 #ifdef __DEBUG__
@@ -355,7 +354,7 @@ void Monster::onCreatureLeave(Creature* creature)
 		CreatureList::iterator it = std::find(targetList.begin(), targetList.end(), creature);
 		if(it != targetList.end())
 		{
-			(*it)->releaseThing2();
+			(*it)->unRef();
 			targetList.erase(it);
 			if(targetList.empty())
 				updateIdleStatus();
@@ -382,31 +381,59 @@ bool Monster::searchTarget(TargetSearchType_t searchType /*= TARGETSEARCH_DEFAUL
 			resultList.push_back(*it);
 	}
 
-	if(!resultList.empty())
+	switch(searchType)
 	{
-		uint32_t index = random_range(0, resultList.size() - 1);
-		CreatureList::iterator it = resultList.begin();
+		case TARGETSEARCH_NEAREST:
+		{
+			Creature* target = NULL;
+			int32_t range = -1;
+			for(CreatureList::iterator it = resultList.begin(); it != resultList.end(); ++it)
+			{
+				int32_t tmp = std::max(std::abs(myPos.x - (*it)->getPosition().x),
+					std::abs(myPos.y - (*it)->getPosition().y));
+				if(range >= 0 && tmp >= range)
+					continue;
 
-		std::advance(it, index);
+				target = *it;
+				range = tmp;
+			}
+
+			if(target && selectTarget(target))
+				return target;
+
+			break;
+		}
+		default:
+		{
+			if(!resultList.empty())
+			{
+				CreatureList::iterator it = resultList.begin();
+				std::advance(it, random_range(0, resultList.size() - 1));
 #ifdef __DEBUG__
-		std::cout << "Selecting target " << (*it)->getName() << std::endl;
+
+				std::cout << "Selecting target " << (*it)->getName() << std::endl;
 #endif
-		return selectTarget(*it);
+				return selectTarget(*it);
+			}
+
+			if(searchType == TARGETSEARCH_ATTACKRANGE)
+				return false;
+
+			break;
+		}
 	}
 
-	if(searchType == TARGETSEARCH_ATTACKRANGE)
-		return false;
 
 	//lets just pick the first target in the list
 	for(CreatureList::iterator it = targetList.begin(); it != targetList.end(); ++it)
 	{
-		if(followCreature != (*it) && selectTarget(*it))
-		{
+		if(followCreature == (*it) || !selectTarget(*it))
+			continue;
+
 #ifdef __DEBUG__
-			std::cout << "Selecting target " << (*it)->getName() << std::endl;
+		std::cout << "Selecting target " << (*it)->getName() << std::endl;
 #endif
-			return true;
-		}
+		return true;
 	}
 
 	return false;
@@ -428,7 +455,7 @@ void Monster::onFollowCreatureComplete(const Creature* creature)
 		else if(!isSummon()) //push target we have not found a path to the back
 			targetList.push_back(target);
 		else //Since we removed the creature from the targetList (and not put it back) we have to release it too
-			target->releaseThing2();
+			target->unRef();
 	}
 }
 
@@ -489,10 +516,15 @@ bool Monster::selectTarget(Creature* creature)
 
 void Monster::setIdle(bool _idle)
 {
+	if(isRemoved() || getHealth() <= 0)
+		return;
+
 	isIdle = _idle;
 	if(isIdle)
 	{
 		onIdleStatus();
+		clearTargetList();
+		clearFriendList();
 		g_game.removeCreatureCheck(this);
 	}
 	else
@@ -572,11 +604,8 @@ void Monster::onThink(uint32_t interval)
 	{
 		if(!followCreature || !hasFollowPath)
 			searchTarget();
-		else if(isFleeing())
-		{
-			if(attackedCreature && !canUseAttack(getPosition(), attackedCreature))
-				searchTarget(TARGETSEARCH_ATTACKRANGE);
-		}
+		else if(isFleeing() && attackedCreature && !canUseAttack(getPosition(), attackedCreature))
+			searchTarget(TARGETSEARCH_ATTACKRANGE);
 	}
 
 	onThinkTarget(interval);
@@ -611,8 +640,15 @@ void Monster::doAttacking(uint32_t interval)
 					updateLook = false;
 				}
 
-				minCombatValue = it->minCombatValue;
-				maxCombatValue = it->maxCombatValue;
+				double multiplier;
+				if(maxCombatValue > 0) //defense
+					multiplier = g_config.getDouble(ConfigManager::RATE_MONSTER_DEFENSE);
+				else //attack
+					multiplier = g_config.getDouble(ConfigManager::RATE_MONSTER_ATTACK);
+
+				minCombatValue = (int32_t)(it->minCombatValue * multiplier);
+				maxCombatValue = (int32_t)(it->maxCombatValue * multiplier);
+
 				it->spell->castSpell(this, attackedCreature);
 				if(it->isMelee)
 					extraMeleeAttack = false;
@@ -702,8 +738,13 @@ void Monster::onThinkTarget(uint32_t interval)
 
 	targetChangeTicks = 0;
 	targetChangeCooldown = (uint32_t)mType->changeTargetSpeed;
-	if(mType->changeTargetChance >= random_range(1, 100))
+	if(mType->changeTargetChance < random_range(1, 100))
+		return;
+
+	if(mType->targetDistance <= 1)
 		searchTarget(TARGETSEARCH_RANDOM);
+	else
+		searchTarget(TARGETSEARCH_NEAREST);
 }
 
 void Monster::onThinkDefense(uint32_t interval)
@@ -1108,7 +1149,7 @@ bool Monster::onDeath()
 	clearFriendList();
 
 	setAttackedCreature(NULL);
-	setIdle(true);
+	onIdleStatus();
 	if(raid)
 	{
 		raid->unRef();
@@ -1128,12 +1169,12 @@ Item* Monster::createCorpse(DeathList deathList)
 	if(mType->corpseUnique)
 		corpse->setUniqueId(mType->corpseUnique);
 
+	if(mType->corpseAction)
+		corpse->setActionId(mType->corpseAction);
+
 	DeathEntry ownerEntry = deathList[0];
 	if(ownerEntry.isNameKill())
 		return corpse;
-
-	if(deathList.size() > 1)
-		ownerEntry = deathList[1];
 
 	Creature* owner = ownerEntry.getKillerCreature();
 	if(!owner)
@@ -1160,14 +1201,14 @@ bool Monster::inDespawnRange(const Position& pos)
 	if(!radius)
 		return false;
 
-	if(!Spawns::getInstance()->isInZone(masterPos, radius, pos))
+	if(!Spawns::getInstance()->isInZone(masterPosition, radius, pos))
 		return true;
 
 	int32_t range = g_config.getNumber(ConfigManager::DEFAULT_DESPAWNRANGE);
 	if(!range)
 		return false;
 
-	return std::abs(pos.z - masterPos.z) > range;
+	return std::abs(pos.z - masterPosition.z) > range;
 }
 
 bool Monster::despawn()
@@ -1180,8 +1221,14 @@ bool Monster::getCombatValues(int32_t& min, int32_t& max)
 	if(!minCombatValue && !maxCombatValue)
 		return false;
 
-	min = minCombatValue;
-	max = maxCombatValue;
+	double multiplier;
+	if(maxCombatValue > 0) //defense
+		multiplier = g_config.getDouble(ConfigManager::RATE_MONSTER_DEFENSE);
+	else //attack
+		multiplier = g_config.getDouble(ConfigManager::RATE_MONSTER_ATTACK);
+
+	min = (int32_t)(minCombatValue * multiplier);
+	max = (int32_t)(maxCombatValue * multiplier);
 	return true;
 }
 
@@ -1270,9 +1317,9 @@ void Monster::drainHealth(Creature* attacker, CombatType_t combatType, int32_t d
 
 void Monster::changeHealth(int32_t healthChange)
 {
-	Creature::changeHealth(healthChange);
 	//In case a player with ignore flag set attacks the monster
 	setIdle(false);
+	Creature::changeHealth(healthChange);
 }
 
 bool Monster::challengeCreature(Creature* creature)

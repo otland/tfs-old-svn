@@ -126,6 +126,11 @@
 			Ban length in seconds.
 			Default: 7 * 24 * 60 * 60 (7 days)
 
+		killsBanLength
+			Ban length for unjustified player killing.
+			Works only if useBlackSkull option is disabled.
+			Default: 7 * 24 * 60 * 60 (7 days)
+
 		finalBanLength
 			Default: 30 * 24 * 60 * 60 (30 days)
 
@@ -412,7 +417,7 @@
 			Use 0 to disable.
 			Default: 10
 
-		passwordType
+		encryptionType
 			Defines how passwords should be stored in database.
 			*WARNING: Using plain passwords is not recommented!*
 			Values: plain, md5, sha1
@@ -456,9 +461,11 @@
 
 	*HIGHSCORES
 		highscoreDisplayPlayers
+			How much players will be displayed in highscores.
 			Default: 15
 
 		updateHighscoresAfterMinutes
+			How often highscores list will be updated.
 			In minutes.
 			Default: 60
 
@@ -468,8 +475,8 @@
 			Default: yes
 
 		houseNeedPremium
-			Is premium requied to buy a house?
-			NOTE: Houses for are cleaned everytime server start,
+			Is premium required to buy a house?
+			NOTE: Houses are cleaned everytime server start,
 				so if this option is enabled and player don't have premium - house will be removed. (If houseRentPeriod != never)
 			Default: yes
 
@@ -499,6 +506,11 @@
 			Values: yearly, monthly, weekly, daily, never
 			Default: never
 
+		houseCleanOld
+			Defines if houses should be auto cleaned when player is inactive (Not logging in specified amount of time)
+			In seconds, 0 to disable.
+			Default: 0
+
 		guildHalls
 			Use guild halls system, allowing to buy guild hall only bu guild leader. All members will be auto invited.
 				You can mark house as guild hall in map editor.
@@ -509,6 +521,7 @@
 			Default: 200
 
 		timeBetweenExActions
+			Time player need to wait before using next item.
 			Default: 1000
 
 		checkCorpseOwner
@@ -611,6 +624,7 @@
 			Default: yes
 
 		allowChangeAddons
+			Should player's be able to change their outfit addons?
 			Default: yes
 
 		disableOutfitsForPrivilegedPlayers
@@ -624,6 +638,8 @@
 			Default: yes
 
 		saveGlobalStorage
+		
+			Global storages are stored in `global_storage` table.
 			Default: yes
 
 		displaySkillLevelOnAdvance
@@ -688,11 +704,11 @@
 
 		maxItemsPerPZTile
 			Maximum items which can be placed on 1 protection zone tile.
-			Default: 0
+			Default: 0 (means no limit!)
 
 		maxItemsPerHouseTile
 			Maximum items which can be placed on 1 house tile.
-			Default: 0
+			Default: 0 (means no limit!)
 
 	*PREMIUM-RELATED
 		freePremium
@@ -706,6 +722,7 @@
 
 	*BLESSINGS
 		blessingsOnlyPremium
+			Should only premium players be able to use blessings?
 			Default: yes
 
 		blessingReductionBase
@@ -749,6 +766,25 @@
 		rateSpawn
 			Default: 1
 
+		rateMonsterHealth
+			Monster health multiplier.
+			For example, if monster have 1000 health points by default,
+				and you set this value to 2.0 - then monster will have 2000 health points.
+			Default: 1.0
+
+		rateMonsterMana
+			Monster mana cost multiplier.
+			Means how much more mana points player need to summon/convince a monster.
+			Default: 1.0
+
+		rateMonsterAttack
+			Monster attack strength multiplier.
+			Default: 1.0
+
+		rateMonsterDefense
+			Monster defense multiplier.
+			Default: 1.0
+
 	*EXPERIENCE FROM PLAYERS
 		minLevelThresholdForKilledPlayer
 			Default: 0.9
@@ -765,7 +801,6 @@
 		rateStaminaThresholdGain is dividing in case the normal gain (that is
 		 multiplied by rateStaminaGain btw.) passed above threshold, eg:
 		60 * 1000 / 3 = 20 / 4 = 5 seconds (3 * 4 = 12 minutes for 1 stamina minute).
-		staminaRatingLimit* is in minutes.
 
 		rateStaminaLoss
 			Default: 1
@@ -777,9 +812,11 @@
 			Default: 4
 
 		staminaRatingLimitTop
+			In minutes.
 			Default: 41 * 60
 
 		staminaRatingLimitBottom
+			In minutes.
 			Default: 14 * 60
 
 		rateStaminaAboveNormal
@@ -822,7 +859,7 @@
 		if you want such a system please check out data/globalevents/globalevents.xml.
 
 		globalSaveEnabled
-			Should daily saving system aka global tibia be enabled?
+			Should daily saving system aka global Tibia be enabled?
 			Default: no
 
 		globalSaveHour
@@ -872,7 +909,7 @@
 			Default: Europe
 
 		displayGamemastersWithOnlineCommand
-			Should online gamemasters be displayed when using /online command?
+			Should online gamemasters be displayed when using !online command?
 			Default: no
 
 	*LOGS
@@ -881,7 +918,7 @@
 			Default: yes
 
 		prefixChannelLogs
-			Defines channel logs file prefix,
+			Defines channel logs file prefix.
 			Usable if you have multiworld, and want to have channels from all worlds in different files.
 			Default: ""
 

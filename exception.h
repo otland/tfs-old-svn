@@ -18,6 +18,8 @@
 #ifdef __EXCEPTION_TRACER__
 #ifndef __EXCEPTION_H__
 #define __EXCEPTION_H__
+#include "otsystem.h"
+
 class ExceptionHandler
 {
 	public:

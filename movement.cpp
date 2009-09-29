@@ -565,6 +565,9 @@ uint32_t MoveEvents::onItemMove(Creature* actor, Item* item, Tile* tile, bool is
 		return ret;
 	}
 
+	m_lastCacheTile = tile;
+	m_lastCacheItemVector.clear();
+
 	//we cannot use iterators here since the scripts can invalidate the iterator
 	Thing* thing = NULL;
 	for(int32_t i = tile->__getFirstIndex(), j = tile->__getLastIndex(); i < j; ++i) //already checked the ground
@@ -814,12 +817,8 @@ bool MoveEvent::loadFunction(const std::string& functionName)
 	std::string tmpFunctionName = asLowerCaseString(functionName);
 	if(tmpFunctionName == "onstepinfield")
 		stepFunction = StepInField;
-	else if(tmpFunctionName == "onstepoutfield")
-		stepFunction = StepOutField;
 	else if(tmpFunctionName == "onaddfield")
 		moveFunction = AddItemField;
-	else if(tmpFunctionName == "onremovefield")
-		moveFunction = RemoveItemField;
 	else if(tmpFunctionName == "onequipitem")
 		equipFunction = EquipItem;
 	else if(tmpFunctionName == "ondeequipitem")
@@ -861,11 +860,6 @@ uint32_t MoveEvent::StepInField(Creature* creature, Item* item)
 	return LUA_ERROR_ITEM_NOT_FOUND;
 }
 
-uint32_t MoveEvent::StepOutField(Creature* creature, Item* item)
-{
-	return 1;
-}
-
 uint32_t MoveEvent::AddItemField(Item* item)
 {
 	if(MagicField* field = item->getMagicField())
@@ -883,11 +877,6 @@ uint32_t MoveEvent::AddItemField(Item* item)
 	}
 
 	return LUA_ERROR_ITEM_NOT_FOUND;
-}
-
-uint32_t MoveEvent::RemoveItemField(Item* item)
-{
-	return 1;
 }
 
 uint32_t MoveEvent::EquipItem(MoveEvent* moveEvent, Player* player, Item* item, slots_t slot, bool isCheck)

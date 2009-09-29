@@ -22,13 +22,16 @@
 #include "cylinder.h"
 #include "item.h"
 
-class Creature;
 class Teleport;
 class TrashHolder;
 class Mailbox;
 class MagicField;
-class QTreeLeafNode;
 class BedItem;
+
+class Player;
+class Creature;
+class HouseTile;
+class QTreeLeafNode;
 
 typedef std::list<Player*> PlayerList;
 typedef std::list<Creature*> SpectatorVec;
@@ -64,13 +67,14 @@ enum tileflags_t
 	TILESTATE_MAILBOX = 1 << 19,
 	TILESTATE_TRASHHOLDER = 1 << 20,
 	TILESTATE_BED = 1 << 21,
-	TILESTATE_BLOCKSOLID = 1 << 22,
-	TILESTATE_BLOCKPATH = 1 << 23,
-	TILESTATE_IMMOVABLEBLOCKSOLID = 1 << 24,
-	TILESTATE_IMMOVABLEBLOCKPATH = 1 << 25,
-	TILESTATE_IMMOVABLENOFIELDBLOCKPATH = 1 << 26,
-	TILESTATE_NOFIELDBLOCKPATH = 1 << 27,
-	TILESTATE_DYNAMIC_TILE = 1 << 28
+	TILESTATE_DEPOT = 1 << 22,
+	TILESTATE_BLOCKSOLID = 1 << 23,
+	TILESTATE_BLOCKPATH = 1 << 24,
+	TILESTATE_IMMOVABLEBLOCKSOLID = 1 << 25,
+	TILESTATE_IMMOVABLEBLOCKPATH = 1 << 26,
+	TILESTATE_IMMOVABLENOFIELDBLOCKPATH = 1 << 27,
+	TILESTATE_NOFIELDBLOCKPATH = 1 << 28,
+	TILESTATE_DYNAMIC_TILE = 1 << 29
 };
 
 enum ZoneType_t
@@ -82,7 +86,6 @@ enum ZoneType_t
 	ZONE_NORMAL
 };
 
-class HouseTile;
 class TileItemVector
 {
 	public:
@@ -152,9 +155,6 @@ class Tile : public Cylinder
 		HouseTile* getHouseTile();
 		const HouseTile* getHouseTile() const;
 		bool isHouseTile() const {return hasFlag(TILESTATE_HOUSE);}
-
-		virtual int32_t getThrowRange() const {return 0;}
-		virtual bool isPushable() const {return false;}
 
 		MagicField* getFieldItem() const;
 		Teleport* getTeleportItem() const;
@@ -232,12 +232,22 @@ class Tile : public Cylinder
 
 		bool isSwimmingPool(bool checkPz = true) const;
 		bool hasHeight(uint32_t n) const;
-		virtual std::string getDescription(int32_t lookDistance) const;
 
 		void moveCreature(Creature* actor, Creature* creature, Cylinder* toCylinder, bool forceTeleport = false);
 		int32_t getClientIndexOfThing(const Player* player, const Thing* thing) const;
 
 		//cylinder implementations
+		virtual Cylinder* getParent() {return NULL;}
+		virtual const Cylinder* getParent() const {return NULL;}
+		virtual bool isRemoved() const {return false;}
+		virtual Position getPosition() const {return pos;}
+		virtual Tile* getTile() {return this;}
+		virtual const Tile* getTile() const {return this;}
+		virtual Item* getItem() {return NULL;}
+		virtual const Item* getItem() const {return NULL;}
+		virtual Creature* getCreature() {return NULL;}
+		virtual const Creature* getCreature() const {return NULL;}
+
 		virtual ReturnValue __queryAdd(int32_t index, const Thing* thing, uint32_t count,
 			uint32_t flags) const;
 		virtual ReturnValue __queryMaxCount(int32_t index, const Thing* thing, uint32_t count,
@@ -268,11 +278,6 @@ class Tile : public Cylinder
 		virtual void __internalAddThing(Thing* thing) {__internalAddThing(0, thing);}
 		virtual void __internalAddThing(uint32_t index, Thing* thing);
 
-		virtual Position getPosition() const {return tilePos;}
-		const Position& getTilePosition() const {return tilePos;}
-
-		virtual bool isRemoved() const {return false;}
-
 	private:
 		void onAddTileItem(Item* item);
 		void onUpdateTileItem(Item* oldItem, const ItemType& oldType, Item* newItem, const ItemType& newType);
@@ -289,7 +294,7 @@ class Tile : public Cylinder
 		Item* ground;
 
 	protected:
-		Position tilePos;
+		Position pos;
 		uint32_t m_flags, thingCount;
 };
 
@@ -333,7 +338,7 @@ class StaticTile : public Tile
 };
 
 inline Tile::Tile(uint16_t x, uint16_t y, uint16_t z): qt_node(NULL),
-	ground(NULL), tilePos(x, y, z), m_flags(0), thingCount(0) {}
+	ground(NULL), pos(x, y, z), m_flags(0), thingCount(0) {}
 
 inline Tile::~Tile() {}
 

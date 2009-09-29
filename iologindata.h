@@ -18,9 +18,9 @@
 #ifndef __IOLOGINDATA__
 #define __IOLOGINDATA__
 #include "otsystem.h"
-
 #include "database.h"
 
+#include "creature.h"
 #include "player.h"
 #include "account.h"
 #include "group.h"
@@ -47,35 +47,35 @@ class IOLoginData
 			return &instance;
 		}
 
-		Account loadAccount(uint32_t accId, bool preLoad = false);
-		bool saveAccount(Account acc);
+		Account loadAccount(uint32_t accountId, bool preLoad = false);
+		bool saveAccount(Account account);
 
 		bool getAccountId(const std::string& name, uint32_t& number);
 		bool getAccountName(uint32_t number, std::string& name);
 
-		bool hasFlag(uint32_t accId, PlayerFlags value);
-		bool hasCustomFlag(uint32_t accId, PlayerCustomFlags value);
+		bool hasFlag(uint32_t accountId, PlayerFlags value);
+		bool hasCustomFlag(uint32_t accountId, PlayerCustomFlags value);
 		bool hasFlag(PlayerFlags value, const std::string& accName);
 		bool hasCustomFlag(PlayerCustomFlags value, const std::string& accName);
 
-		bool accountExists(uint32_t accId);
+		bool accountIdExists(uint32_t accountId);
 		bool accountNameExists(const std::string& name);
 
-		bool getPassword(uint32_t accId, const std::string& name, std::string& password);
-		bool setNewPassword(uint32_t accountId, std::string newPassword);
-		bool validRecoveryKey(uint32_t accountId, const std::string recoveryKey);
-		bool setRecoveryKey(uint32_t accountId, std::string recoveryKey);
+		bool getPassword(uint32_t accountId, std::string& password, std::string name = "");
+		bool setPassword(uint32_t accountId, std::string newPassword);
+		bool validRecoveryKey(uint32_t accountId, std::string recoveryKey);
+		bool setRecoveryKey(uint32_t accountId, std::string newRecoveryKey);
 
 		uint64_t createAccount(std::string name, std::string password);
 		void removePremium(Account account);
 
-		const Group* getPlayerGroupByAccount(uint32_t accId);
+		const Group* getPlayerGroupByAccount(uint32_t accountId);
 
 		bool loadPlayer(Player* player, const std::string& name, bool preLoad = false);
 		bool savePlayer(Player* player, bool preSave = true, bool shallow = false);
 
 		bool playerDeath(Player* player, const DeathList& dl);
-		bool updateOnlineStatus(uint32_t guid, bool login);
+		bool playerMail(Creature* actor, std::string name, uint32_t townId, Item* item);
 
 		bool hasFlag(const std::string& name, PlayerFlags value);
 		bool hasCustomFlag(const std::string& name, PlayerCustomFlags value);
@@ -104,6 +104,7 @@ class IOLoginData
 		bool getDefaultTownByName(const std::string& name, uint32_t& townId);
 
 		bool updatePremiumDays();
+		bool updateOnlineStatus(uint32_t guid, bool login);
 		bool resetGuildInformation(uint32_t guid);
 
 	protected:
@@ -116,16 +117,17 @@ class IOLoginData
 			}
 		};
 
-		bool storeNameByGuid(uint32_t guid);
-		typedef std::map<int32_t, std::pair<Item*, int32_t> > ItemMap;
-
-		void loadItems(ItemMap& itemMap, DBResult* result);
-		bool saveItems(const Player* player, const ItemBlockList& itemList, DBInsert& query_insert);
+		typedef std::map<std::string, uint32_t, StringCompareCase> GuidCacheMap;
+		GuidCacheMap guidCacheMap;
 
 		typedef std::map<uint32_t, std::string> NameCacheMap;
 		NameCacheMap nameCacheMap;
 
-		typedef std::map<std::string, uint32_t, StringCompareCase> GuidCacheMap;
-		GuidCacheMap guidCacheMap;
+		typedef std::map<int32_t, std::pair<Item*, int32_t> > ItemMap;
+
+		bool saveItems(const Player* player, const ItemBlockList& itemList, DBInsert& query_insert);
+		void loadItems(ItemMap& itemMap, DBResult* result);
+
+		bool storeNameByGuid(uint32_t guid);
 };
 #endif

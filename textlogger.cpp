@@ -37,27 +37,26 @@ void Loggar::close()
 	}
 }
 
-void Loggar::log(std::string output, LogFile_t file, bool newLine /*= true*/)
+void Loggar::iFile(LogFile_t file, std::string output, bool newLine)
 {
 	if(!m_files[file])
 		return;
 
-	internalLog(m_files[file], output, newLine);
+	internal(m_files[file], output, newLine);
 	fflush(m_files[file]);
 }
 
-void Loggar::log(std::string file, std::string output, bool newLine /*= true*/)
+void Loggar::eFile(std::string file, std::string output, bool newLine)
 {
-	file = getFilePath(FILE_TYPE_LOG, file);
-	FILE* f = fopen(file.c_str(), "a");
+	FILE* f = fopen(getFilePath(FILE_TYPE_LOG, file).c_str(), "a");
 	if(!f)
 		return;
 
-	internalLog(f, "[" + formatDate() + "] " + output, newLine);
+	internal(f, "[" + formatDate() + "] " + output, newLine);
 	fclose(f);
 }
 
-void Loggar::internalLog(FILE* file, std::string output, bool newLine /*= true*/)
+void Loggar::internal(FILE* file, std::string output, bool newLine)
 {
 	if(!file)
 		return;
@@ -68,12 +67,10 @@ void Loggar::internalLog(FILE* file, std::string output, bool newLine /*= true*/
 	fprintf(file, "%s", output.c_str());
 }
 
-void Loggar::logMessage(const char* func, LogType_t type, std::string message, std::string channel/* = ""*/)
+void Loggar::log(const char* func, LogType_t type, std::string message, std::string channel/* = ""*/, bool newLine/* = true*/)
 {
 	std::stringstream ss;
-	ss << "[" << formatDate() << "]"
-		<< " (";
-
+	ss << "[" << formatDate() << "]" << " (";
 	switch(type)
 	{
 		case LOGTYPE_EVENT:
@@ -102,7 +99,7 @@ void Loggar::logMessage(const char* func, LogType_t type, std::string message, s
 		ss << channel << ": ";
 
 	ss << message;
-	log(ss.str(), LOGFILE_ADMIN);
+	iFile(LOGFILE_ADMIN, ss.str(), newLine);
 }
 
 #if defined(WIN32) && not defined(__CONSOLE__)
@@ -111,7 +108,6 @@ TextLogger::TextLogger()
 	out = std::cerr.rdbuf();
 	err = std::cout.rdbuf();
 	m_displayDate = true;
-	m_cache = "";
 }
 
 TextLogger::~TextLogger()
@@ -126,6 +122,7 @@ int32_t TextLogger::overflow(int32_t c)
 	{
 		GUI::getInstance()->m_logText += "\r\n";
 		SendMessage(GetDlgItem(GUI::getInstance()->m_mainWindow, ID_LOG), WM_SETTEXT, 0, (LPARAM)GUI::getInstance()->m_logText.c_str());
+
 		GUI::getInstance()->m_lineCount++;
 		SendMessage(GUI::getInstance()->m_logWindow, EM_LINESCROLL, 0, GUI::getInstance()->m_lineCount);
 

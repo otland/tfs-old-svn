@@ -48,12 +48,13 @@
 				Event type
 				Values:
 					login, logout
-					advance, statschange, direction
+					advance, statschange,
+					direction, outfit
 					sendmail, receivemail
 					traderequest, tradeaccept
 					joinchannel, leavechannel
 					look, think, textedit, reportbug
-					target, follow
+					push, target, follow
 					attack, combat, areacombat, cast
 					kill, death, preparedeath
 		Functions:
@@ -62,6 +63,7 @@
 			onAdvance(cid, skill, oldLevel, newLevel)
 			onStatsChange(cid, attacker, type, combat, value)
 			onDirection(cid, old, current)
+			onOutfit(cid, old, current)
 			onSendMail(cid, receiver, item, openBox)
 			onReceiveMail(cid, sender, item, openBox)
 			onTradeRequest(cid, target, item)
@@ -73,6 +75,7 @@
 			onTextEdit(cid, item, newText)
 			onReportBug(cid, comment)
 			onAreaCombat(cid, tileItem, tilePosition, isAggressive)
+			onPush(cid, target)
 			onTarget(cid, target)
 			onFollow(cid, target)
 			onCombat(cid, target)
@@ -163,7 +166,7 @@
 				Words used to execute this talkaction.
 				Can be separated by a semicolon, fe. words="/a; /b",
 					or using own separator, fe. words="/a, /b" separator=","
-			seperator
+			separator
 				Read "words".
 			access
 				Access required.
@@ -174,7 +177,8 @@
 				E.q
 					If you use 'quotation' - you will need to write /goto "PlayerName
 					If you use 'word' - you will need to write /goto PlayerName
-				Values: quotation/word
+					If you use 'word-spaced' - you are able to make seperate commands with space between word(s)
+				Values: quotation/word/word-spaced
 			log
 				Defines if talkaction should be logged.
 				Default: no

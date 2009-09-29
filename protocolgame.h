@@ -40,13 +40,13 @@ class ProtocolGame : public Protocol
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
 		static uint32_t protocolGameCount;
 #endif
-		ProtocolGame(Connection* connection): Protocol(connection)
+		ProtocolGame(Connection_ptr connection): Protocol(connection)
 		{
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
 			protocolGameCount++;
 #endif
 			player = NULL;
-			m_nextPing = m_eventConnect = 0;
+			m_eventConnect = 0;
 			m_debugAssertSent = m_acceptPackets = false;
 		}
 
@@ -63,9 +63,9 @@ class ProtocolGame : public Protocol
 		enum {hasChecksum = true};
 		static const char* protocolName() {return "game protocol";}
 
-		bool login(const std::string& name, uint32_t accnumber, const std::string& password,
-			OperatingSystem_t operatingSystem, uint16_t version, bool gamemasterLogin);
-		bool logout(bool displayEffect, bool forced, bool executeLogout = true);
+		bool login(const std::string& name, uint32_t id, const std::string& password,
+			OperatingSystem_t operatingSystem, uint16_t version, bool gamemaster);
+		bool logout(bool displayEffect, bool forceLogout);
 
 		void setPlayer(Player* p);
 
@@ -201,9 +201,9 @@ class ProtocolGame : public Protocol
 		void sendCreatureSkull(const Creature* creature);
 		void sendCreatureShield(const Creature* creature);
 
-		void sendShop(const ShopInfoList& itemList);
+		void sendShop(const ShopInfoList& shop);
 		void sendCloseShop();
-		void sendGoods(const std::map<uint32_t, uint32_t>& itemMap);
+		void sendGoods(const ShopInfoList& shop);
 		void sendTradeItemRequest(const Player* player, const Item* item, bool ack);
 		void sendCloseTrade();
 
@@ -231,7 +231,7 @@ class ProtocolGame : public Protocol
 		void sendUpdateTile(const Tile* tile, const Position& pos);
 
 		void sendAddCreature(const Creature* creature, const Position& pos, uint32_t stackpos);
-		void sendRemoveCreature(const Creature* creature, const Position& pos, uint32_t stackpos, bool isLogout);
+		void sendRemoveCreature(const Creature* creature, const Position& pos, uint32_t stackpos);
 		void sendMoveCreature(const Creature* creature, const Tile* newTile, const Position& newPos, uint32_t newStackPos,
 			const Tile* oldTile, const Position& oldPos, uint32_t oldStackpos, bool teleport);
 
@@ -303,15 +303,15 @@ class ProtocolGame : public Protocol
 		//shop
 		void AddShopItem(NetworkMessage_ptr msg, const ShopInfo item);
 
-		#define addGameTask(f, ...) addGameTaskInternal(false, 0, boost::bind(f, &g_game, __VA_ARGS__))
-		#define addGameTaskTimed(delay, f, ...) addGameTaskInternal(true, delay, boost::bind(f, &g_game, __VA_ARGS__))
+		#define addGameTask(f, ...) addGameTaskInternal(0, boost::bind(f, &g_game, __VA_ARGS__))
+		#define addGameTaskTimed(delay, f, ...) addGameTaskInternal(delay, boost::bind(f, &g_game, __VA_ARGS__))
 		template<class FunctionType>
-		void addGameTaskInternal(bool droppable, uint32_t delay, const FunctionType&);
+		void addGameTaskInternal(uint32_t delay, const FunctionType&);
 
 		friend class Player;
 		Player* player;
 
-		uint32_t m_nextPing, m_eventConnect;
+		uint32_t m_eventConnect;
 		bool m_debugAssertSent, m_acceptPackets;
 };
 #endif

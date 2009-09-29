@@ -17,11 +17,11 @@
 
 #ifndef __SCHEDULER__
 #define __SCHEDULER__
-
 #include "otsystem.h"
-#include "tasks.h"
 
+#include "tasks.h"
 #define SCHEDULER_MINTICKS 50
+
 class SchedulerTask : public Task
 {
 	public:
@@ -30,7 +30,7 @@ class SchedulerTask : public Task
 		void setEventId(uint32_t eventId) {m_eventId = eventId;}
 		uint32_t getEventId() const {return m_eventId;}
 
-		int64_t getCycle() const {return m_expiration;}
+		boost::system_time getCycle() const {return m_expiration;}
 		bool operator<(const SchedulerTask& other) const {return getCycle() > other.getCycle();}
 
 	protected:
@@ -43,19 +43,20 @@ class SchedulerTask : public Task
 
 inline SchedulerTask* createSchedulerTask(uint32_t delay, const boost::function<void (void)>& f)
 {
-	assert(delay != 0);
+	assert(delay);
 	if(delay < SCHEDULER_MINTICKS)
 		delay = SCHEDULER_MINTICKS;
 
 	return new SchedulerTask(delay, f);
 }
-class lessSchedTask : public std::binary_function<SchedulerTask*&, SchedulerTask*&, bool>
+
+class lessTask : public std::binary_function<SchedulerTask*&, SchedulerTask*&, bool>
 {
 	public:
 		bool operator()(SchedulerTask*& t1, SchedulerTask*& t2) {return (*t1) < (*t2);}
 };
 
-typedef std::set<uint32_t> EventIdSet;
+typedef std::set<uint32_t> EventIds;
 class Scheduler
 {
 	public:
@@ -72,7 +73,7 @@ class Scheduler
 		void stop();
 		void shutdown();
 
-		static OTSYS_THREAD_RETURN schedulerThread(void* p);
+		static void schedulerThread(void* p);
 
 	protected:
 		Scheduler();
@@ -83,13 +84,13 @@ class Scheduler
 			STATE_TERMINATED
 		};
 
-		uint32_t m_lastEventId;
-		EventIdSet m_eventIds;
+		uint32_t m_lastEvent;
+		EventIds m_eventIds;
 
-		OTSYS_THREAD_LOCKVAR_PTR m_eventLock;
-		OTSYS_THREAD_SIGNALVAR m_eventSignal;
+		boost::mutex m_eventLock;
+		boost::condition_variable m_eventSignal;
 
-		std::priority_queue<SchedulerTask*, std::vector<SchedulerTask*>, lessSchedTask > m_eventList;
+		std::priority_queue<SchedulerTask*, std::vector<SchedulerTask*>, lessTask > m_eventList;
 		static SchedulerState m_threadState;
 };
 #endif

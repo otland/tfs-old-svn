@@ -31,7 +31,8 @@
 
 enum slots_t
 {
-	SLOT_WHEREEVER = 0,
+	SLOT_PRE_FIRST = 0,
+	SLOT_WHEREEVER = SLOT_PRE_FIRST,
 	SLOT_FIRST = 1,
 	SLOT_HEAD = SLOT_FIRST,
 	SLOT_NECKLACE = 2,
@@ -44,9 +45,9 @@ enum slots_t
 	SLOT_RING = 9,
 	SLOT_AMMO = 10,
 	SLOT_DEPOT = 11,
+	SLOT_LAST = SLOT_DEPOT,
 	SLOT_HAND = 12,
-	SLOT_TWO_HAND = SLOT_HAND,
-	SLOT_LAST = SLOT_DEPOT
+	SLOT_TWO_HAND = SLOT_HAND
 };
 
 enum lootDrop_t
@@ -118,6 +119,7 @@ struct DeathLessThan
 typedef std::vector<DeathEntry> DeathList;
 typedef std::list<CreatureEvent*> CreatureEventList;
 typedef std::list<Condition*> ConditionList;
+typedef std::map<uint32_t, std::string> StorageMap;
 
 class Map;
 class Tile;
@@ -150,7 +152,7 @@ class FrozenPathingConditionCall
 		Position targetPos;
 };
 
-class Creature : public AutoID, virtual public Thing
+class Creature : public AutoId, virtual public Thing
 {
 	protected:
 		Creature();
@@ -171,6 +173,7 @@ class Creature : public AutoID, virtual public Thing
 		virtual const std::string& getNameDescription() const = 0;
 		virtual std::string getDescription(int32_t lookDistance) const;
 
+		uint32_t getID() const {return id;}
 		void setID()
 		{
 			/*
@@ -178,14 +181,14 @@ class Creature : public AutoID, virtual public Thing
 			 * 0x40000000 - Monster
 			 * 0x80000000 - NPC
 			 */
-			if(this->id == 0)
-				this->id = auto_id | this->idRange();
+			if(!id)
+				id = autoId | rangeId();
 		}
-		void setRemoved() {removed = true;}
-		void getPathToFollowCreature();
 
-		virtual uint32_t idRange() = 0;
-		uint32_t getID() const {return id;}
+		void setRemoved() {removed = true;}
+		virtual bool isRemoved() const {return removed;}
+
+		virtual uint32_t rangeId() = 0;
 		virtual void removeList() = 0;
 		virtual void addList() = 0;
 
@@ -193,7 +196,6 @@ class Creature : public AutoID, virtual public Thing
 		virtual bool canSeeCreature(const Creature* creature) const;
 		virtual bool canWalkthrough(const Creature* creature) const {return creature->isWalkable() || creature->isGhost();}
 
-		virtual RaceType_t getRace() const {return RACE_NONE;}
 		Direction getDirection() const {return direction;}
 		void setDirection(Direction dir) {direction = dir;}
 
@@ -205,12 +207,13 @@ class Creature : public AutoID, virtual public Thing
 		SpeakClasses getSpeakType() const {return speakType;}
 		void setSpeakType(SpeakClasses type) {speakType = type;}
 
-		const Position& getMasterPos() const {return masterPos;}
-		void setMasterPos(const Position& pos, uint32_t radius = 1) {masterPos = pos; masterRadius = radius;}
+		Position getMasterPosition() const {return masterPosition;}
+		void setMasterPosition(const Position& pos, uint32_t radius = 1) {masterPosition = pos; masterRadius = radius;}
 
 		virtual int32_t getThrowRange() const {return 1;}
+		virtual RaceType_t getRace() const {return RACE_NONE;}
+
 		virtual bool isPushable() const {return getWalkDelay() <= 0;}
-		virtual bool isRemoved() const {return removed;}
 		virtual bool canSeeInvisibility() const {return false;}
 
 		int32_t getWalkDelay(Direction dir) const;
@@ -218,6 +221,7 @@ class Creature : public AutoID, virtual public Thing
 		int32_t getStepDuration(Direction dir) const;
 		int32_t getStepDuration() const;
 
+		void getPathToFollowCreature();
 		int64_t getEventStepTicks() const;
 		int64_t getTimeSinceLastMove() const;
 		virtual int32_t getStepSpeed() const {return getSpeed();}
@@ -317,6 +321,13 @@ class Creature : public AutoID, virtual public Thing
 		virtual void changeMana(int32_t manaChange);
 		void changeMaxMana(uint32_t manaChange) {manaMax = manaChange;}
 
+		virtual bool getStorage(const uint32_t key, std::string& value) const;
+		virtual bool setStorage(const uint32_t key, const std::string& value);
+		virtual void eraseStorage(const uint32_t key) {storageMap.erase(key);}
+
+		inline StorageMap::const_iterator getStorageBegin() const {return storageMap.begin();}
+		inline StorageMap::const_iterator getStorageEnd() const {return storageMap.end();}
+
 		virtual void gainHealth(Creature* caster, int32_t amount);
 		virtual void drainHealth(Creature* attacker, CombatType_t combatType, int32_t damage);
 		virtual void drainMana(Creature* attacker, CombatType_t combatType, int32_t damage);
@@ -387,7 +398,7 @@ class Creature : public AutoID, virtual public Thing
 		virtual void onCreatureConvinced(const Creature* convincer, const Creature* creature) {}
 		virtual void onCreatureChangeVisible(const Creature* creature, Visible_t visible) {}
 		virtual void onPlacedCreature() {}
-		virtual void onRemovedCreature() {}
+		virtual void onRemovedCreature();
 
 		virtual WeaponType_t getWeaponType() {return WEAPON_NONE;}
 		virtual bool getCombatValues(int32_t& min, int32_t& max) {return false;}
@@ -416,7 +427,7 @@ class Creature : public AutoID, virtual public Thing
 			Thing::setParent(cylinder);
 		}
 
-		virtual Position getPosition() const {return _tile->getTilePosition();}
+		virtual Position getPosition() const {return _tile->getPosition();}
 		virtual Tile* getTile() {return _tile;}
 		virtual const Tile* getTile() const {return _tile;}
 		int32_t getWalkCache(const Position& pos) const;
@@ -438,6 +449,7 @@ class Creature : public AutoID, virtual public Thing
 		bool isMapLoaded;
 		bool isUpdatingPath;
 		bool checked;
+		StorageMap storageMap;
 
 		int32_t checkVector;
 		int32_t health, healthMax;
@@ -449,7 +461,7 @@ class Creature : public AutoID, virtual public Thing
 		Outfit_t currentOutfit;
 		Outfit_t defaultOutfit;
 
-		Position masterPos;
+		Position masterPosition;
 		Position lastPosition;
 		int32_t masterRadius;
 		uint64_t lastStep;

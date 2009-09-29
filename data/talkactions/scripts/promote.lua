@@ -1,3 +1,7 @@
+local config = {
+	broadcast = false
+}
+
 function onSay(cid, words, param, channel)
 	if(param == '') then
 		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Command param required.")
@@ -27,7 +31,12 @@ function onSay(cid, words, param, channel)
 	end
 
 	local str = "been " .. (g == 1 and "promoted" or "demoted") .. " to " .. getGroupInfo(newId).name .. "."
-	doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, param .. " has " .. str)
+	if(not config.broadcast) then
+		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, param .. " has " .. str)
+	else
+		doBroadcastMessage(param .. " has " .. str, MESSAGE_EVENT_ADVANCE)
+	end
+
 	doPlayerSendTextMessage(pid, MESSAGE_EVENT_ADVANCE, "You have " .. str)
 	return true
 end

@@ -15,16 +15,14 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////
 #include "otpch.h"
+#include "weapons.h"
+
 #include <libxml/xmlmemory.h>
 #include <libxml/parser.h>
 
-#include "weapons.h"
-#include "tools.h"
-
-#include "combat.h"
-#include "items.h"
-
+#include "game.h"
 #include "configmanager.h"
+#include "tools.h"
 
 extern Game g_game;
 extern ConfigManager g_config;
@@ -34,11 +32,6 @@ Weapons::Weapons():
 	m_scriptInterface("Weapon Interface")
 {
 	m_scriptInterface.initState();
-}
-
-Weapons::~Weapons()
-{
-	clear();
 }
 
 const Weapon* Weapons::getWeapon(const Item* item) const
@@ -84,6 +77,7 @@ bool Weapons::loadDefaults()
 						weapon->configureWeapon(*it);
 						weapons[it->id] = weapon;
 					}
+
 					break;
 				}
 
@@ -98,6 +92,7 @@ bool Weapons::loadDefaults()
 						weapon->configureWeapon(*it);
 						weapons[it->id] = weapon;
 					}
+
 					break;
 				}
 
@@ -427,13 +422,15 @@ void Weapon::onUsedWeapon(Player* player, Item* item, Tile* destTile) const
 	}
 
 	if(!player->hasFlag(PlayerFlag_HasNoExhaustion) && exhaustion > 0)
-		player->addExhaust(exhaustion, EXHAUST_WEAPON);
+		player->addExhaust(exhaustion, EXHAUST_COMBAT);
 
 	int32_t manaCost = getManaCost(player);
 	if(manaCost > 0)
 	{
-		player->addManaSpent(manaCost);
 		player->changeMana(-manaCost);
+		if(!player->hasFlag(PlayerFlag_NotGainMana) && (player->getZone() != ZONE_PVP
+			|| !g_config.getBool(ConfigManager::PVPZONE_ADDMANASPENT)))
+			player->addManaSpent(manaCost);
 	}
 
 	if(!player->hasFlag(PlayerFlag_HasInfiniteSoul) && soul > 0)

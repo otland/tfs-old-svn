@@ -38,7 +38,7 @@ extern ConfigManager g_config;
 extern Game g_game;
 extern Spells* g_spells;
 
-AutoList<Npc> Npc::listNpc;
+AutoList<Npc> Npc::autoList;
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
 uint32_t Npc::npcCount = 0;
 #endif
@@ -46,12 +46,12 @@ NpcScriptInterface* Npc::m_scriptInterface = NULL;
 
 void Npcs::reload()
 {
-	for(AutoList<Npc>::listiterator it = Npc::listNpc.list.begin(); it != Npc::listNpc.list.end(); ++it)
+	for(AutoList<Npc>::iterator it = Npc::autoList.begin(); it != Npc::autoList.end(); ++it)
 		it->second->closeAllShopWindows();
 
 	delete Npc::m_scriptInterface;
 	Npc::m_scriptInterface = NULL;
-	for(AutoList<Npc>::listiterator it = Npc::listNpc.list.begin(); it != Npc::listNpc.list.end(); ++it)
+	for(AutoList<Npc>::iterator it = Npc::autoList.begin(); it != Npc::autoList.end(); ++it)
 		it->second->reload();
 }
 
@@ -1376,7 +1376,7 @@ void Npc::executeResponse(Player* player, NpcState* npcState, const NpcResponse*
 				{
 					Position teleportTo = it->pos;
 					if(it->strValue == "|TEMPLE|")
-						teleportTo = player->getTemplePosition();
+						teleportTo = player->getMasterPosition();
 
 					g_game.internalTeleport(player, teleportTo, true);
 					break;
@@ -1456,7 +1456,7 @@ void Npc::executeResponse(Player* player, NpcState* npcState, const NpcResponse*
 				case ACTION_SETSTORAGE:
 				{
 					if(it->key > 0)
-						player->addStorageValue(it->key, it->strValue);
+						player->setStorage(it->key, it->strValue);
 
 					break;
 				}
@@ -1907,7 +1907,7 @@ bool Npc::canWalkTo(const Position& fromPos, Direction dir)
 
 	Position toPos = fromPos;
 	toPos = getNextPosition(dir, toPos);
-	if(!Spawns::getInstance()->isInZone(masterPos, masterRadius, toPos))
+	if(!Spawns::getInstance()->isInZone(masterPosition, masterRadius, toPos))
 		return false;
 
 	Tile* tile = g_game.getTile(toPos);
@@ -2150,10 +2150,10 @@ const NpcResponse* Npc::getResponse(const ResponseList& list, const Player* play
 		if((*it)->getStorageId() != -1)
 		{
 			std::string value;
-			if(!player->getStorageValue((*it)->getStorageId(), value))
+			if(!player->getStorage((*it)->getStorageId(), value))
 				continue;
 
-			std::string storageValue = (*it)->getStorageValue();
+			std::string storageValue = (*it)->getStorage();
 			if(asLowerCaseString(storageValue) == "_time")
 			{
 				std::stringstream s;

@@ -30,7 +30,8 @@ enum TargetSearchType_t
 {
 	TARGETSEARCH_DEFAULT,
 	TARGETSEARCH_RANDOM,
-	TARGETSEARCH_ATTACKRANGE
+	TARGETSEARCH_ATTACKRANGE,
+	TARGETSEARCH_NEAREST
 };
 
 typedef std::list<Creature*> CreatureList;
@@ -51,10 +52,11 @@ class Monster : public Creature
 		virtual Monster* getMonster() {return this;}
 		virtual const Monster* getMonster() const {return this;}
 
-		virtual uint32_t idRange() {return 0x40000000;}
-		static AutoList<Monster> listMonster;
-		void removeList() {listMonster.removeList(getID());}
-		void addList() {listMonster.addList(this);}
+		virtual uint32_t rangeId() {return 0x40000000;}
+		static AutoList<Monster> autoList;
+
+		void removeList() {autoList[id] = this;}
+		void addList() {autoList.erase(id);}
 
 		virtual const std::string& getName() const {return mType->name;}
 		virtual const std::string& getNameDescription() const {return mType->nameDescription;}
