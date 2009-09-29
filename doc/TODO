@@ -16,7 +16,7 @@
 ]
 
 [ BUGS
-	Reload not working on certain conditions
+	Specific reload types not working on certain conditions
 		Assigned to: Elf
 ]
 
@@ -24,9 +24,9 @@
 	Finish documentation as its incomplete
 		Assigned to: KaczooH
 
-	Patch missing changes from OpenTibia SVN
-		Assigned to: Elf, slawkens
+	Patch missing IndexedTile changes from revscriptsys2
+		Assigned to: Elf
 
 	Deprecate several hardcoded systems (guild management, etc) and rescript them in Lua
-		Assigned to: slawkens, Elf
+		Assigned to: slawkens
 ]
