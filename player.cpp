@@ -21,21 +21,22 @@
 #include "iologindata.h"
 #include "ioban.h"
 
-#include "creatureevent.h"
-#include "chat.h"
-
 #include "town.h"
 #include "house.h"
 #include "beds.h"
 
 #include "combat.h"
-#include "movement.h"
-#include "weapons.h"
-
-#include "configmanager.h"
-#ifndef __CONSOLE__
+#if defined(WIN32) && not defined(__CONSOLE__)
 #include "gui.h"
 #endif
+
+#include "movement.h"
+#include "weapons.h"
+#include "creatureevent.h"
+
+#include "configmanager.h"
+#include "game.h"
+#include "chat.h"
 
 extern ConfigManager g_config;
 extern Game g_game;
