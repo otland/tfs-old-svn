@@ -1033,21 +1033,32 @@ LuaVariant LuaScriptInterface::popVariant(lua_State* L)
 
 void LuaScriptInterface::popPosition(lua_State* L, PositionEx& position)
 {
-	position.x = getField(L, "x");
-	position.y = getField(L, "y");
-	position.z = getField(L, "z");
+	if(!lua_isboolean(L, -1))
+	{
+		position.x = getField(L, "x");
+		position.y = getField(L, "y");
+		position.z = getField(L, "z");
+		position.stackpos = getField(L, "stackpos");
+	}
+	else
+		position = PositionEx();
 
-	position.stackpos = getField(L, "stackpos");
 	lua_pop(L, 1); //table
 }
 
 void LuaScriptInterface::popPosition(lua_State* L, Position& position, uint32_t& stackpos)
 {
-	position.x = getField(L, "x");
-	position.y = getField(L, "y");
-	position.z = getField(L, "z");
+	stackpos = 0;
+	if(!lua_isboolean(L, -1))
+	{
+		position.x = getField(L, "x");
+		position.y = getField(L, "y");
+		position.z = getField(L, "z");
+		stackpos = getField(L, "stackpos");
+	}
+	else
+		position = Position();
 
-	stackpos = getField(L, "stackpos");
 	lua_pop(L, 1); //table
 }
 
@@ -1105,6 +1116,7 @@ Outfit_t LuaScriptInterface::popOutfit(lua_State* L)
 
 	outfit.lookTypeEx = getField(L, "lookTypeEx");
 	outfit.lookType = getField(L, "lookType");
+
 	lua_pop(L, 1); //table
 	return outfit;
 }
@@ -9339,7 +9351,7 @@ int32_t LuaScriptInterface::luaDoItemEraseAttribute(lua_State* L)
 		ret = false;
 	}
 	else if(key != "aid")
-		item->eraseAttribute();
+		item->eraseAttribute(key);
 	else
 		item->resetActionId();
 
