@@ -18,10 +18,10 @@ function Wait:continue()
 end
 
 function Wait:createObject(v)
-	local f, vtype = v, type(v)
-	if(vtype == 'string') then
+	local f, t = v, type(v)
+	if(t == 'string') then
 		f = loadstring(v)
-	elseif(vtype ~= 'function') then
+	elseif(t ~= 'function') then
 		return false
 	end
 
