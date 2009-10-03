@@ -4500,27 +4500,23 @@ void Game::addDistanceEffect(const SpectatorVec& list, const Position& fromPos, 
 
 void Game::startDecay(Item* item)
 {
-	if(item && item->canDecay())
-	{
-		uint32_t decayState = item->getDecaying();
-		if(decayState == DECAYING_TRUE)
-			 return;
+	if(!item || !item->canDecay() || item->getDecaying() == DECAYING_TRUE)
+		return;
 
-		if(item->getDuration() > 0)
-		{
-			item->addRef();
-			item->setDecaying(DECAYING_TRUE);
-			toDecayItems.push_back(item);
-		}
-		else
-			internalDecayItem(item);
+	if(item->getDuration() > 0)
+	{
+		item->addRef();
+		item->setDecaying(DECAYING_TRUE);
+		toDecayItems.push_back(item);
 	}
+	else
+		internalDecayItem(item);
 }
 
 void Game::internalDecayItem(Item* item)
 {
 	const ItemType& it = Item::items.getItemType(item->getID());
-	if(it.decayTo != 0)
+	if(it.decayTo)
 	{
 		Item* newItem = transformItem(item, it.decayTo);
 		startDecay(newItem);
