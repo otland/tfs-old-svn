@@ -15,15 +15,16 @@ string.trim = function (str)
 end
 
 string.explode = function (str, sep)
-	if(isInArray({#sep, #str}, 0) then
-		return
+	local t = {}
+	if(type(str) ~= 'string' or type(sep) ~= 'string' or isInArray({sep:len(), str:len()}, 0) then
+		return t
 	end
 
-	local pos, t = 1, {}
-	for s, e in function()
+	local pos = 1
+	for b, e in function()
 		return str:find(sep, pos)
 	end do
-		table.insert(t, str:sub(pos, s - 1):trim())
+		table.insert(t, str:sub(pos, b - 1):trim())
 		pos = e + 1
 	end
 

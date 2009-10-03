@@ -491,3 +491,62 @@ function getDepotId(uid)
 
 	return ret
 end
+
+function getItemDescriptions(uid)
+	local thing = getThing(uid)
+	if(thing.itemid < 100) then
+		return false
+	end
+
+	local item = getItemInfo(thing.itemid)
+	return {
+		name = getItemAttribute(uid, "name") or item.name,
+		plural = getItemAttribute(uid, "pluralname") or item.plural,
+		article = getItemAttribute(uid, "article") or item.article,
+		text = getItemAttribute(uid, "text") or "",
+		special = getItemAttribute(uid, "description") or "",
+		writer = getItemAttribute(uid, "writer") or "",
+		date = getItemAttribute(uid, "date") or 0
+	}	
+end
+
+function getItemWeightById(itemid, count, precision)
+	local item, count, precision = getItemInfo(itemid), count or 1, precision or false
+	if(not item) then
+		return false
+	end
+
+	if(precision) then
+		return item.weight * count
+	end
+
+	local t = string.explode(tostring(item.weight * count), ".")
+	return t[1] .. "." .. string.sub(t[2], 1, 2)
+end
+
+function getItemWeaponType(uid)
+	local thing = getThing(uid)
+	if(thing.itemid < 100) then
+		return false
+	end
+
+	return getItemInfo(thing.itemid).weaponType
+end
+
+function getItemRWInfo(uid)
+	local thing = getThing(uid)
+	if(thing.itemid < 100) then
+		return false
+	end
+
+	local item, flags = getItemInfo(thing.itemid), 0
+	if(item.readable) then
+		flags += 1
+	end
+
+	if(item.writable) then
+		flags += 2
+	end
+
+	return flags
+end

@@ -724,6 +724,7 @@ int32_t LuaScriptInterface::getEvent(const std::string& eventName)
 	//save in our events table
 	lua_pushnumber(m_luaState, m_runningEventId);
 	lua_pushvalue(m_luaState, -2);
+
 	lua_rawset(m_luaState, -4);
 	lua_pop(m_luaState, 2);
 
@@ -738,14 +739,14 @@ int32_t LuaScriptInterface::getEvent(const std::string& eventName)
 
 const std::string& LuaScriptInterface::getFileById(int32_t scriptId)
 {
-	const static std::string unk = "(Unknown scriptfile)";
+	const static std::string tmp = "(Unknown script file)";
 	if(scriptId != EVENT_ID_LOADING)
 	{
 		ScriptsCache::iterator it = m_cacheFiles.find(scriptId);
 		if(it != m_cacheFiles.end())
 			return it->second;
 
-		return unk;
+		return tmp;
 	}
 
 	return m_loadingFile;
@@ -775,7 +776,7 @@ void LuaScriptInterface::reportError(const char* function, const std::string& er
 
 	std::cout << eventDesc << std::endl;
 	if(function)
-		std::cout << function << "(). ";
+		std::cout << function << "() ";
 
 	std::cout << errorDesc << std::endl;
 }
@@ -787,6 +788,7 @@ bool LuaScriptInterface::pushFunction(int32_t functionId)
 	{
 		lua_pushnumber(m_luaState, functionId);
 		lua_rawget(m_luaState, -2);
+
 		lua_remove(m_luaState, -2);
 		if(lua_isfunction(m_luaState, -1))
 			return true;
@@ -885,13 +887,14 @@ int32_t LuaScriptInterface::luaErrorHandler(lua_State* L)
 
 	lua_pushvalue(L, 1);
 	lua_pushinteger(L, 2);
+
 	lua_call(L, 2, 1);
 	return 1;
 }
 
 int32_t LuaScriptInterface::callFunction(uint32_t params)
 {
-	int32_t result = 0, size = lua_gettop(m_luaState), errorIndex = lua_gettop(m_luaState) - params;
+	int32_t result = false, size = lua_gettop(m_luaState), errorIndex = lua_gettop(m_luaState) - params;
 	lua_pushcfunction(m_luaState, luaErrorHandler);
 
 	lua_insert(m_luaState, errorIndex);
@@ -902,7 +905,7 @@ int32_t LuaScriptInterface::callFunction(uint32_t params)
 
 	lua_remove(m_luaState, errorIndex);
 	if((lua_gettop(m_luaState) + (int32_t)params + 1) != size)
-		reportErrorFunc("Stack size changed!");
+		LuaScriptInterface::reportError(NULL, "Stack size changed!");
 
 	return result;
 }
@@ -1486,12 +1489,6 @@ void LuaScriptInterface::registerFunctions()
 
 	//getTileInfo(pos)
 	lua_register(m_luaState, "getTileInfo", LuaScriptInterface::luaGetTileInfo);
-
-	//getItemWeaponType(uid)
-	lua_register(m_luaState, "getItemWeaponType", LuaScriptInterface::luaGetItemWeaponType);
-
-	//getItemRWInfo(uid)
-	lua_register(m_luaState, "getItemRWInfo", LuaScriptInterface::luaGetItemRWInfo);
 
 	//getThingFromPos(pos[, displayError = true])
 	lua_register(m_luaState, "getThingFromPos", LuaScriptInterface::luaGetThingFromPos);
@@ -2164,17 +2161,8 @@ void LuaScriptInterface::registerFunctions()
 	//getItemIdByName(name[, displayError = true])
 	lua_register(m_luaState, "getItemIdByName", LuaScriptInterface::luaGetItemIdByName);
 
-	//getItemDescriptionsById(itemid)
-	lua_register(m_luaState, "getItemDescriptionsById", LuaScriptInterface::luaGetItemDescriptionsById);
-
-	//getItemWeightById(itemid, count[, precise = true])
-	lua_register(m_luaState, "getItemWeightById", LuaScriptInterface::luaGetItemWeightById);
-
-	//getItemDescriptions(uid)
-	lua_register(m_luaState, "getItemDescriptions", LuaScriptInterface::luaGetItemDescriptions);
-
-	//getItemWeight(uid[, precise = true])
-	lua_register(m_luaState, "getItemWeight", LuaScriptInterface::luaGetItemWeight);
+	//getItemInfo(itemid)
+	lua_register(m_luaState, "getItemInfo", LuaScriptInterface::luaGetItemInfo);
 
 	//getItemAttribute(uid, key)
 	lua_register(m_luaState, "getItemAttribute", LuaScriptInterface::luaGetItemAttribute);
@@ -2185,14 +2173,14 @@ void LuaScriptInterface::registerFunctions()
 	//doItemEraseAttribute(uid, key)
 	lua_register(m_luaState, "doItemEraseAttribute", LuaScriptInterface::luaDoItemEraseAttribute);
 
-	//getItemLevelDoor(itemid)
-	lua_register(m_luaState, "getItemLevelDoor", LuaScriptInterface::luaGetItemLevelDoor);
+	//getItemWeight(uid[, precise = true])
+	lua_register(m_luaState, "getItemWeight", LuaScriptInterface::luaGetItemWeight);
 
-	//hasProperty(uid)
-	lua_register(m_luaState, "hasProperty", LuaScriptInterface::luaHasProperty);
+	//hasItemProperty(uid)
+	lua_register(m_luaState, "hasItemProperty", LuaScriptInterface::luaHasItemProperty);
 	
-	//hasClient(cid)
-	lua_register(m_luaState, "hasClient", LuaScriptInterface::luaHasClient);
+	//hasPlayerClient(cid)
+	lua_register(m_luaState, "hasPlayerClient", LuaScriptInterface::luaHasPlayerClient);
 
 	//isIpBanished(ip[, mask])
 	lua_register(m_luaState, "isIpBanished", LuaScriptInterface::luaIsIpBanished);
@@ -2725,7 +2713,7 @@ int32_t LuaScriptInterface::luaGetPlayerIdleTime(lua_State* L)
 	return internalGetPlayerInfo(L, PlayerInfoIdleTime);
 }
 
-int32_t LuaScriptInterface::luaHasClient(lua_State* L)
+int32_t LuaScriptInterface::luaHasPlayerClient(lua_State* L)
 {
 	return internalGetPlayerInfo(L, PlayerInfoClient);
 }
@@ -4054,45 +4042,6 @@ int32_t LuaScriptInterface::luaDoShowTextDialog(lua_State* L)
 		reportErrorFunc(getErrorDesc(LUA_ERROR_PLAYER_NOT_FOUND));
 		lua_pushboolean(L, false);
 	}
-	return 1;
-}
-
-int32_t LuaScriptInterface::luaGetItemWeaponType(lua_State* L)
-{
-	//getItemWeaponType(uid)
-	ScriptEnviroment* env = getScriptEnv();
-	if(const Item* item = env->getItemByUID(popNumber(L)))
-		lua_pushnumber(L, item->getWeaponType());
-	else
-	{
-		reportErrorFunc(getErrorDesc(LUA_ERROR_ITEM_NOT_FOUND));
-		lua_pushboolean(L, false);
-	}
-
-	return 1;
-}
-
-int32_t LuaScriptInterface::luaGetItemRWInfo(lua_State* L)
-{
-	//getItemRWInfo(uid)
-	ScriptEnviroment* env = getScriptEnv();
-	if(const Item* item = env->getItemByUID(popNumber(L)))
-	{
-		uint32_t flags = 0;
-		if(item->isReadable())
-			flags |= 1;
-
-		if(item->canWriteText())
-			flags |= 2;
-
-		lua_pushnumber(L, flags);
-	}
-	else
-	{
-		reportErrorFunc(getErrorDesc(LUA_ERROR_ITEM_NOT_FOUND));
-		lua_pushboolean(L, false);
-	}
-
 	return 1;
 }
 
@@ -9181,89 +9130,98 @@ int32_t LuaScriptInterface::luaGetItemIdByName(lua_State* L)
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaGetItemDescriptionsById(lua_State* L)
+int32_t LuaScriptInterface::luaGetItemInfo(lua_State* L)
 {
-	//getItemDescriptionsById(itemid)
-	const ItemType& it = Item::items[popNumber(L)];
-
-	lua_newtable(L);
-	setField(L, "name", it.name.c_str());
-	setField(L, "article", it.article.c_str());
-	setField(L, "plural", it.pluralName.c_str());
-	setField(L, "description", it.description.c_str());
-	return 1;
-}
-
-int32_t LuaScriptInterface::luaGetItemWeightById(lua_State* L)
-{
-	//getItemWeightById(itemid, count[, precise = TRUE])
-	bool precise = true;
-	if(lua_gettop(L) > 2)
-		precise = popNumber(L);
-
-	int32_t count = popNumber(L);
-	const ItemType& it = Item::items[popNumber(L)];
-
-	double weight = it.weight * std::max(1, count);
-	if(precise)
+	//getItemInfo(itemid)
+	const ItemType* item;
+	if(!(item = Item::items.getElement(popNumber(L))))
 	{
-		std::stringstream ws;
-		ws << std::fixed << std::setprecision(2) << weight;
-		weight = atof(ws.str().c_str());
-	}
-
-	lua_pushnumber(L, weight);
-	return 1;
-}
-
-int32_t LuaScriptInterface::luaGetItemDescriptions(lua_State* L)
-{
-	//getItemDescriptions(uid)
-	ScriptEnviroment* env = getScriptEnv();
-	Item* item = env->getItemByUID(popNumber(L));
-	if(!item)
-	{
-		reportErrorFunc(getErrorDesc(LUA_ERROR_ITEM_NOT_FOUND));
 		lua_pushboolean(L, false);
 		return 1;
 	}
 
 	lua_newtable(L);
-	setField(L, "name", item->getName().c_str());
-	setField(L, "article", item->getArticle().c_str());
-	setField(L, "plural", item->getPluralName().c_str());
-	setField(L, "text", item->getText().c_str());
-	setField(L, "special", item->getSpecialDescription().c_str());
-	setField(L, "writer", item->getWriter().c_str());
-	setField(L, "date", item->getDate());
-	return 1;
-}
-
-int32_t LuaScriptInterface::luaGetItemWeight(lua_State* L)
-{
-	//getItemWeight(itemid[, precise = true])
-	bool precise = true;
-	if(lua_gettop(L) > 2)
-		precise = popNumber(L);
-
-	ScriptEnviroment* env = getScriptEnv();
-	Item* item = env->getItemByUID(popNumber(L));
-	if(!item)
-	{
-		reportErrorFunc(getErrorDesc(LUA_ERROR_ITEM_NOT_FOUND));
-		lua_pushboolean(L, false);
-		return 1;
-	}
-
-	double weight = item->getWeight();
-	if(precise)
-	{
-		std::stringstream ws;
-		ws << std::fixed << std::setprecision(2) << weight;
-		weight = atof(ws.str().c_str());
-	}
-
-	lua_pushnumber(L, weight);
+	setFieldBool(L, "stopTime", item->stopTime);
+	setFieldBool(L, "showCount", item->showCount);
+	setFieldBool(L, "clientCharges", item->clientCharges);
+	setFieldBool(L, "stackable", item->stackable);
+	setFieldBool(L, "showDuration", item->showDuration);
+	setFieldBool(L, "showCharges", item->showCharges);
+	setFieldBool(L, "showAttributes", item->showCharges);
+	setFieldBool(L, "distRead", item->allowDistRead);
+	setFieldBool(L, "readable", item->canReadText);
+	setFieldBool(L, "writable", item->canWriteText);
+	setFieldBool(L, "forceSerialize", item->forceSerialize);
+	setFieldBool(L, "vertical", item->isVertical);
+	setFieldBool(L, "horizontal", item->isHorizontal);
+	setFieldBool(L, "hangable", item->isHangable);
+	setFieldBool(L, "usable", item->useable);
+	setFieldBool(L, "movable", item->moveable);
+	setFieldBool(L, "pickupable", item->pickupable);
+	setFieldBool(L, "rotable", item->rotable);
+	setFieldBool(L, "replacable", item->replaceable);
+	setFieldBool(L, "hasHeight", item->hasHeight);
+	setFieldBool(L, "blockSolid", item->blockSolid);
+	setFieldBool(L, "blockPickupable", item->blockPickupable);
+	setFieldBool(L, "blockProjectile", item->blockProjectile);
+	setFieldBool(L, "blockPathing", item->blockPathFind);
+	setFieldBool(L, "allowPickupable", item->allowPickupable);
+	setFieldBool(L, "alwaysOnTop", item->alwaysOnTop);
+	//TODO: floorChange
+	setField(L, "magicEffect", (int32_t)item->magicEffect);
+	setField(L, "fluidSource", (int32_t)item->fluidSource);
+	setField(L, "weaponType", (int32_t)item->weaponType);
+	setField(L, "bedPartnerDirection", (int32_t)item->bedPartnerDir);
+	setField(L, "ammoAction", (int32_t)item->ammoAction);
+	setField(L, "combatType", (int32_t)item->combatType);
+	setField(L, "corpseType", (int32_t)item->corpseType);
+	setField(L, "shootType", (int32_t)item->shootType);
+	setField(L, "ammoType", (int32_t)item->ammoType);
+	//TODO: transformToOnUse
+	setField(L, "transformToFree", item->transformToFree);
+	setField(L, "transformToEquip", item->transformToEquip);
+	setField(L, "transformToDeEquip", item->transformToDeEquip);
+	setField(L, "clientId", item->clientId);
+	setField(L, "maxItems", item->maxItems);
+	setField(L, "slotPosition", item->slotPosition);
+	setField(L, "wieldPosition", item->wieldPosition);
+	setField(L, "speed", item->speed);
+	setField(L, "maxTextLength", item->maxTextLen);
+	setField(L, "writeOnceItemId", item->writeOnceItemId);
+	setField(L, "attack", item->attack);
+	setField(L, "extraAttack", item->extraAttack);
+	setField(L, "defense", item->defense);
+	setField(L, "extraDefense", item->extraDefense);
+	setField(L, "armor", item->armor);
+	setField(L, "breakChance", item->breakChance);
+	setField(L, "hitChance", item->hitChance);
+	setField(L, "maxHitChance", item->maxHitChance);
+	setField(L, "runeLevel", item->runeLevel);
+	setField(L, "runeMagicLevel", item->runeMagLevel);
+	setField(L, "lightLevel", item->lightLevel);
+	setField(L, "lightColor", item->lightColor);
+	setField(L, "decayTo", item->decayTo);
+	setField(L, "rotateTo", item->rotateTo);
+	setField(L, "alwaysOnTopOrder", item->alwaysOnTopOrder);
+	setField(L, "shootRange", item->shootRange);
+	setField(L, "charges", item->charges);
+	setField(L, "decayTime", item->decayTime);
+	setField(L, "attackSpeed", item->attackSpeed);
+	setField(L, "wieldInfo", item->wieldInfo);
+	setField(L, "minRequiredLevel", item->minReqLevel);
+	setField(L, "minRequiredMagicLevel", item->minReqMagLevel);
+	setField(L, "worth", item->worth);
+	setField(L, "levelDoor", item->levelDoor);
+	setField(L, "name", item->name.c_str());
+	setField(L, "plural", item->pluralName.c_str());
+	setField(L, "article", item->article.c_str());
+	setField(L, "description", item->description.c_str());
+	setField(L, "runeSpellName", item->runeSpellName.c_str());
+	setField(L, "vocationString", item->vocationString.c_str());
+	//TODO: attributes
+	setField(L, "group", (int32_t)item->group);
+	setField(L, "type", (int32_t)item->type);
+	setFieldFloat(L, "weight", item->weight);
 	return 1;
 }
 
@@ -9389,16 +9347,37 @@ int32_t LuaScriptInterface::luaDoItemEraseAttribute(lua_State* L)
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaGetItemLevelDoor(lua_State* L)
+int32_t LuaScriptInterface::luaGetItemWeight(lua_State* L)
 {
-	//getItemLevelDoor(itemid)
-	lua_pushnumber(L, Item::items[popNumber(L)].levelDoor);
+	//getItemWeight(itemid[, precise = true])
+	bool precise = true;
+	if(lua_gettop(L) > 2)
+		precise = popNumber(L);
+
+	ScriptEnviroment* env = getScriptEnv();
+	Item* item = env->getItemByUID(popNumber(L));
+	if(!item)
+	{
+		reportErrorFunc(getErrorDesc(LUA_ERROR_ITEM_NOT_FOUND));
+		lua_pushboolean(L, false);
+		return 1;
+	}
+
+	double weight = item->getWeight();
+	if(precise)
+	{
+		std::stringstream ws;
+		ws << std::fixed << std::setprecision(2) << weight;
+		weight = atof(ws.str().c_str());
+	}
+
+	lua_pushnumber(L, weight);
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaHasProperty(lua_State* L)
+int32_t LuaScriptInterface::luaHasItemProperty(lua_State* L)
 {
-	//hasProperty(uid, prop)
+	//hasItemProperty(uid, prop)
 	uint32_t prop = popNumber(L);
 	ScriptEnviroment* env = getScriptEnv();
 

@@ -473,12 +473,10 @@ class LuaScriptInterface
 		static int32_t luaGetPlayerLossSkill(lua_State* L);
 
 		//get item info
-		static int32_t luaGetItemWeaponType(lua_State* L);
-		static int32_t luaGetItemRWInfo(lua_State* L);
 		static int32_t luaGetThing(lua_State* L);
 		static int32_t luaGetThingPosition(lua_State* L);
 		static int32_t luaDoItemRaidUnref(lua_State* L);
-		static int32_t luaHasProperty(lua_State* L);
+		static int32_t luaHasItemProperty(lua_State* L);
 
 		//get tile info
 		static int32_t luaGetThingFromPos(lua_State* L);
@@ -551,7 +549,7 @@ class LuaScriptInterface
 		static int32_t luaGetPlayerFlagValue(lua_State* L);
 		static int32_t luaGetPlayerCustomFlagValue(lua_State* L);
 		static int32_t luaGetCreatureCondition(lua_State* L);
-		static int32_t luaHasClient(lua_State* L);
+		static int32_t luaHasPlayerClient(lua_State* L);
 
 		static int32_t luaGetDepotId(lua_State* L);
 		static int32_t luaGetVocationInfo(lua_State* L);
@@ -718,14 +716,11 @@ class LuaScriptInterface
 		static int32_t luaDoUpdateHouseAuctions(lua_State* L);
 
 		static int32_t luaGetItemIdByName(lua_State* L);
-		static int32_t luaGetItemDescriptionsById(lua_State* L);
-		static int32_t luaGetItemWeightById(lua_State* L);
-		static int32_t luaGetItemDescriptions(lua_State* L);
+		static int32_t luaGetItemInfo(lua_State* L);
 		static int32_t luaGetItemWeight(lua_State* L);
 		static int32_t luaGetItemAttribute(lua_State* L);
 		static int32_t luaDoItemSetAttribute(lua_State* L);
 		static int32_t luaDoItemEraseAttribute(lua_State* L);
-		static int32_t luaGetItemLevelDoor(lua_State* L);
 
 		static int32_t luaGetTalkActionList(lua_State* L);
 		static int32_t luaGetExperienceStageList(lua_State* L);
