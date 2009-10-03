@@ -180,7 +180,7 @@ class MatrixArea
 		bool** data_;
 };
 
-typedef std::map<Direction, MatrixArea* > CombatAreaMap;
+typedef std::map<Direction, MatrixArea* > CombatAreas;
 class CombatArea
 {
 	public:
@@ -237,14 +237,14 @@ class CombatArea
 					dir = SOUTHEAST;
 			}
 
-			CombatAreaMap::const_iterator it = areas.find(dir);
+			CombatAreas::const_iterator it = areas.find(dir);
 			if(it != areas.end())
 				return it->second;
 
 			return NULL;
 		}
 
-		CombatAreaMap areas;
+		CombatAreas areas;
 		bool hasExtArea;
 };
 

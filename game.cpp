@@ -4100,48 +4100,36 @@ bool Game::combatBlockHit(CombatType_t combatType, Creature* attacker, Creature*
 		addMagicEffect(list, targetPos, NM_MAGIC_BLOCKHIT);
 		return true;
 	}
-	else if(blockType == BLOCK_IMMUNITY)
+	else if(blockType != BLOCK_IMMUNITY)
+		return false;
+
+	MagicEffect_t effect = NM_MAGIC_NONE;
+	switch(combatType)
 	{
-		uint8_t magicEffect = 0;
-		switch(combatType)
+		case COMBAT_UNDEFINEDDAMAGE:
+			break;
+
+		case COMBAT_ENERGYDAMAGE:
+		case COMBAT_FIREDAMAGE:
+		case COMBAT_PHYSICALDAMAGE:
+		case COMBAT_ICEDAMAGE:
+		case COMBAT_DEATHDAMAGE:
+		case COMBAT_EARTHDAMAGE:
+		case COMBAT_HOLYDAMAGE:
 		{
-			case COMBAT_UNDEFINEDDAMAGE:
-				break;
-
-			case COMBAT_ENERGYDAMAGE:
-			case COMBAT_FIREDAMAGE:
-			case COMBAT_PHYSICALDAMAGE:
-			case COMBAT_ICEDAMAGE:
-			case COMBAT_DEATHDAMAGE:
-			{
-				magicEffect = (uint8_t)NM_MAGIC_BLOCKHIT;
-				break;
-			}
-
-			case COMBAT_EARTHDAMAGE:
-			{
-				magicEffect = (uint8_t)NM_MAGIC_POISON_RINGS;
-				break;
-			}
-
-			case COMBAT_HOLYDAMAGE:
-			{
-				magicEffect = (uint8_t)NM_MAGIC_HOLYDAMAGE;
-				break;
-			}
-
-			default:
-			{
-				magicEffect = (uint8_t)NM_MAGIC_POFF;
-				break;
-			}
+			effect = NM_MAGIC_BLOCKHIT;
+			break;
 		}
 
-		addMagicEffect(list, targetPos, magicEffect);
-		return true;
+		default:
+		{
+			effect = NM_MAGIC_POFF;
+			break;
+		}
 	}
 
-	return false;
+	addMagicEffect(list, targetPos, magicEffect);
+	return true;
 }
 
 bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creature* target, int32_t healthChange,

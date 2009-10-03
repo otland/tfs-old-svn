@@ -1079,7 +1079,7 @@ void TargetCallback::onTargetCombat(Creature* creature, Creature* target) const
 
 void CombatArea::clear()
 {
-	for(CombatAreaMap::iterator it = areas.begin(); it != areas.end(); ++it)
+	for(CombatAreas::iterator it = areas.begin(); it != areas.end(); ++it)
 		delete it->second;
 
 	areas.clear();
@@ -1088,7 +1088,7 @@ void CombatArea::clear()
 CombatArea::CombatArea(const CombatArea& rhs)
 {
 	hasExtArea = rhs.hasExtArea;
-	for(CombatAreaMap::const_iterator it = rhs.areas.begin(); it != rhs.areas.end(); ++it)
+	for(CombatAreas::const_iterator it = rhs.areas.begin(); it != rhs.areas.end(); ++it)
 		areas[it->first] = new MatrixArea(*it->second);
 }
 
