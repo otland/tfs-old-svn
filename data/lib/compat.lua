@@ -109,6 +109,10 @@ doSendTutorial = doPlayerSendTutorial
 getWaypointsList = getWaypointList
 getPlayerLastLoginSaved = getPlayerLastLogin
 getThingPos = getThingPosition
+doAreaCombatHealth = doCombatAreaHealth
+doAreaCombatMana = doCombatAreaMana
+doAreaCombatCondition = doCombatAreaCondition
+doAreaCombatDispel = doCombatAreaDispel
 db.updateQueryLimitOperator = db.updateLimiter
 db.stringComparisonOperator = db.stringComparison
 

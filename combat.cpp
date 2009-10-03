@@ -1006,7 +1006,7 @@ void ValueCallback::getMinMaxValues(Player* player, int32_t& min, int32_t& max, 
 		LuaScriptInterface::reportError(NULL, std::string(LuaScriptInterface::popString(L)));
 
 	if((lua_gettop(L) + parameters + 1) != params)
-		LuaScriptInterface::reportError(NULL, "Stack size changed!");
+		reportErrorFunc("Stack size changed!");
 
 	env->resetCallback();
 	m_scriptInterface->releaseScriptEnv();
@@ -1063,7 +1063,7 @@ void TargetCallback::onTargetCombat(Creature* creature, Creature* target) const
 			LuaScriptInterface::reportError(NULL, std::string(LuaScriptInterface::popString(L)));
 
 		if((lua_gettop(L) + 2 /*nParams*/ + 1) != size)
-			LuaScriptInterface::reportError(NULL, "Stack size changed!");
+			reportErrorFunc("Stack size changed!");
 
 		env->resetCallback();
 		m_scriptInterface->releaseScriptEnv();

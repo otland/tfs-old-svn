@@ -2808,16 +2808,16 @@ int32_t NpcScriptInterface::luaOpenShopWindow(lua_State* L)
 	else
 		buyCallback = popCallback(L);
 
-	if(lua_istable(L, -1) == 0)
+	if(!lua_istable(L, -1))
 	{
 		reportError(__FUNCTION__, "item list is not a table.");
 		lua_pushboolean(L, false);
 		return 1;
 	}
 
-	lua_pushnil(L);
 	ShopInfoList itemList;
-	while(lua_next(L, -2) != 0)
+	lua_pushnil(L);
+	while(lua_next(L, -2))
 	{
 		ShopInfo item;
 		item.itemId = getField(L, "id");
@@ -2825,8 +2825,8 @@ int32_t NpcScriptInterface::luaOpenShopWindow(lua_State* L)
 		item.buyPrice = getField(L, "buy");
 		item.sellPrice = getField(L, "sell");
 		item.itemName = getFieldString(L, "name");
-		itemList.push_back(item);
 
+		itemList.push_back(item);
 		lua_pop(L, 1);
 	}
 

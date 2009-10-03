@@ -644,7 +644,7 @@ int32_t LuaScriptInterface::loadFile(const std::string& file, Npc* npc/* = NULL*
 	}
 
 	//check that it is loaded as a function
-	if(lua_isfunction(m_luaState, -1) == 0)
+	if(!lua_isfunction(m_luaState, -1))
 		return -1;
 
 	m_loadingFile = file;
@@ -680,7 +680,7 @@ int32_t LuaScriptInterface::loadBuffer(const std::string& text, Npc* npc/* = NUL
 	}
 
 	//check that it is loaded as a function
-	if(lua_isfunction(m_luaState, -1) == 0)
+	if(!lua_isfunction(m_luaState, -1))
 		return -1;
 
 	m_loadingFile = "buffer";
@@ -707,7 +707,7 @@ int32_t LuaScriptInterface::getEvent(const std::string& eventName)
 {
 	//get our events table
 	lua_getfield(m_luaState, LUA_REGISTRYINDEX, "EVENTS");
-	if(lua_istable(m_luaState, -1) == 0)
+	if(!lua_istable(m_luaState, -1))
 	{
 		lua_pop(m_luaState, 1);
 		return -1;
@@ -715,7 +715,7 @@ int32_t LuaScriptInterface::getEvent(const std::string& eventName)
 
 	//get current event function pointer
 	lua_getglobal(m_luaState, eventName.c_str());
-	if(lua_isfunction(m_luaState, -1) == 0)
+	if(!lua_isfunction(m_luaState, -1))
 	{
 		lua_pop(m_luaState, 1);
 		return -1;
@@ -783,12 +783,12 @@ void LuaScriptInterface::reportError(const char* function, const std::string& er
 bool LuaScriptInterface::pushFunction(int32_t functionId)
 {
 	lua_getfield(m_luaState, LUA_REGISTRYINDEX, "EVENTS");
-	if(lua_istable(m_luaState, -1) != 0)
+	if(lua_istable(m_luaState, -1))
 	{
 		lua_pushnumber(m_luaState, functionId);
 		lua_rawget(m_luaState, -2);
 		lua_remove(m_luaState, -2);
-		if(lua_isfunction(m_luaState, -1) != 0)
+		if(lua_isfunction(m_luaState, -1))
 			return true;
 	}
 
@@ -889,20 +889,20 @@ int32_t LuaScriptInterface::luaErrorHandler(lua_State* L)
 	return 1;
 }
 
-int32_t LuaScriptInterface::callFunction(uint32_t nParams)
+int32_t LuaScriptInterface::callFunction(uint32_t params)
 {
-	int32_t result = false, size = lua_gettop(m_luaState), errorIndex = lua_gettop(m_luaState) - nParams;
+	int32_t result = 0, size = lua_gettop(m_luaState), errorIndex = lua_gettop(m_luaState) - params;
 	lua_pushcfunction(m_luaState, luaErrorHandler);
 
 	lua_insert(m_luaState, errorIndex);
-	if(lua_pcall(m_luaState, nParams, 1, errorIndex))
+	if(lua_pcall(m_luaState, params, 1, errorIndex))
 		LuaScriptInterface::reportError(NULL, LuaScriptInterface::popString(m_luaState));
 	else
 		result = (int32_t)LuaScriptInterface::popBoolean(m_luaState);
 
 	lua_remove(m_luaState, errorIndex);
-	if((lua_gettop(m_luaState) + (int32_t)nParams + 1) != size)
-		LuaScriptInterface::reportError(NULL, "Stack size changed!");
+	if((lua_gettop(m_luaState) + (int32_t)params + 1) != size)
+		reportErrorFunc("Stack size changed!");
 
 	return result;
 }
@@ -1065,9 +1065,6 @@ void LuaScriptInterface::popPosition(lua_State* L, Position& position, uint32_t&
 bool LuaScriptInterface::popBoolean(lua_State* L)
 {
 	lua_pop(L, 1);
-	if(lua_isnumber(L, 0))
-		return (bool)lua_tonumber(L, 0);
-
 	return lua_toboolean(L, 0);
 }
 
@@ -1083,9 +1080,6 @@ int64_t LuaScriptInterface::popNumber(lua_State* L)
 double LuaScriptInterface::popFloatNumber(lua_State* L)
 {
 	lua_pop(L, 1);
-	if(lua_isboolean(L, 0))
-		return (double)lua_toboolean(L, 0);
-
 	return lua_tonumber(L, 0);
 }
 
@@ -1094,7 +1088,7 @@ std::string LuaScriptInterface::popString(lua_State* L)
 	lua_pop(L, 1);
 	const char* str = lua_tostring(L, 0);
 	if(!str || !strlen(str))
-		return "";
+		return std::string();
 
 	return str;
 }
@@ -1154,7 +1148,7 @@ int64_t LuaScriptInterface::getField(lua_State* L, const char* key)
 	lua_pushstring(L, key);
 	lua_gettable(L, -2); // get table[key]
 
-	int32_t result = (int64_t)lua_tonumber(L, -1);
+	int64_t result = (int64_t)lua_tonumber(L, -1);
 	lua_pop(L, 1); // remove number and key
 	return result;
 }
@@ -1164,7 +1158,7 @@ uint64_t LuaScriptInterface::getFieldUnsigned(lua_State* L, const char* key)
 	lua_pushstring(L, key);
 	lua_gettable(L, -2); // get table[key]
 
-	uint32_t result = (uint64_t)lua_tonumber(L, -1);
+	uint64_t result = (uint64_t)lua_tonumber(L, -1);
 	lua_pop(L, 1); // remove number and key
 	return result;
 }
@@ -2005,7 +1999,7 @@ void LuaScriptInterface::registerFunctions()
 	//isSightClear(fromPos, toPos, floorCheck)
 	lua_register(m_luaState, "isSightClear", LuaScriptInterface::luaIsSightClear);
 
-	//isInArray(array, value[, lower = true])
+	//isInArray(array, value[, caseSensitive = false])
 	lua_register(m_luaState, "isInArray", LuaScriptInterface::luaIsInArray);
 
 	//addEvent(callback, delay, ...)
@@ -3511,7 +3505,7 @@ int32_t LuaScriptInterface::luaDoCreatureAddHealth(lua_State* L)
 	ScriptEnviroment* env = getScriptEnv();
 	if(Creature* creature = env->getCreatureByUID(popNumber(L)))
 	{
-		if(healthChange) //do not post with 0
+		if(healthChange) //do not post with 0 value
 			g_game.combatChangeHealth(healthChange < 1 ? COMBAT_UNDEFINEDDAMAGE : COMBAT_HEALING,
 				NULL, creature, healthChange, hitEffect, hitColor, force);
 
@@ -5401,7 +5395,7 @@ int32_t LuaScriptInterface::luaCreateCombatArea(lua_State* L)
 		area->setupExtArea(listExtArea, rowsExtArea);
 	}
 
-	if(lua_isnil(L, -1) == 1) //prevent crash
+	if(lua_isnil(L, -1)) //prevent crash
 	{
 		lua_pop(L, 2);
 		lua_pushboolean(L, false);
@@ -5874,7 +5868,7 @@ int32_t LuaScriptInterface::luaDoCombatAreaHealth(lua_State* L)
 	}
 
 	const CombatArea* area = env->getCombatArea(areaId);
-	if(area || areaId == 0)
+	if(area || !areaId)
 	{
 		CombatParams params;
 		params.combatType = combatType;
@@ -5959,7 +5953,7 @@ int32_t LuaScriptInterface::luaDoCombatAreaMana(lua_State* L)
 	}
 
 	const CombatArea* area = env->getCombatArea(areaId);
-	if(area || areaId == 0)
+	if(area || !areaId)
 	{
 		CombatParams params;
 		params.effects.impact = effect;
@@ -6039,7 +6033,7 @@ int32_t LuaScriptInterface::luaDoCombatAreaCondition(lua_State* L)
 	if(const Condition* condition = env->getConditionObject(conditionId))
 	{
 		const CombatArea* area = env->getCombatArea(areaId);
-		if(area || areaId == 0)
+		if(area || !areaId)
 		{
 			CombatParams params;
 			params.effects.impact = effect;
@@ -6134,7 +6128,7 @@ int32_t LuaScriptInterface::luaDoCombatAreaDispel(lua_State* L)
 	}
 
 	const CombatArea* area = env->getCombatArea(areaId);
-	if(area || areaId == 0)
+	if(area || !areaId)
 	{
 		CombatParams params;
 		params.effects.impact = effect;
@@ -8031,27 +8025,17 @@ int32_t LuaScriptInterface::luaIsSightClear(lua_State* L)
 
 int32_t LuaScriptInterface::luaIsInArray(lua_State* L)
 {
-	//isInArray(array, value[, lower = true])
-	bool lower = true;
+	//isInArray(array, value[, caseSensitive = false])
+	bool caseSensitive = false;
 	if(lua_gettop(L) > 2)
-		lower = (bool)popNumber(L);
+		caseSensitive = popNumber(L);
 
-	std::string value;
-	if(lua_isnil(L, -1) == 1)
-		lua_pop(L, 1);
-	else if(lua_isnumber(L, -1) == 1)
-	{
-		char tmp[40];
-		sprintf(tmp, "%d", (int32_t)popNumber(L));
-		value = tmp;
-	}
-	else if(lua_isboolean(L, -1) == 1)
-	{
-		char tmp[3];
-		sprintf(tmp, "%d", (int32_t)popBoolean(L));
-		value = tmp;
-	}
-	else if(lua_isstring(L, -1) == 1)
+	boost::any value;
+	if(lua_isnumber(L, -1))
+		value = popFloatNumber(L);
+	else if(lua_isboolean(L, -1))
+		value = popBoolean(L);
+	else if(lua_isstring(L, -1))
 		value = popString(L);
 	else
 	{
@@ -8060,57 +8044,89 @@ int32_t LuaScriptInterface::luaIsInArray(lua_State* L)
 		return 1;
 	}
 
-	if(lower)
-		toLowerCaseString(value);
+	std::type_info type = value.type();
+	if(!caseSensitive && type == typeid(std::string))
+		value = asLowerCaseString(boost::any_cast<std::string>(value));
 
-	int32_t i = 1;
-	while(true)
+	if(!lua_istable(L, -1))
 	{
-		lua_pushnumber(L, i);
-		lua_gettable(L, -2);
-		if(lua_isnil(L, -1) == 1)
+		boost::any data;
+		if(lua_isnumber(L, -1))
+			data = popFloatNumber(L);
+		else if(lua_isboolean(L, -1))
+			data = popBoolean(L);
+		else if(lua_isstring(L, -1))
+			data = popString(L);
+		else
 		{
-			lua_pop(L, 2);
+			lua_pop(L, 1);
 			lua_pushboolean(L, false);
 			return 1;
 		}
-		else if(lua_isnumber(L, -1) == 1)
-		{
-			int32_t arrayValue = (int32_t)popNumber(L);
-			if(arrayValue == atoi(value.c_str()))
-			{
-				lua_pop(L, 1);
-				lua_pushboolean(L, true);
-				return 1;
-			}
-		}
-		else if(lua_isboolean(L, -1) == 1)
-		{
-			int32_t arrayValue = (int32_t)popBoolean(L);
-			if(arrayValue == atoi(value.c_str()))
-			{
-				lua_pop(L, 1);
-				lua_pushboolean(L, true);
-				return 1;
-			}
-		}
-		else if(lua_isstring(L, -1) == 1)
-		{
-			std::string arrayValue = popString(L);
-			if(lower)
-				toLowerCaseString(arrayValue);
 
-			if(arrayValue == value)
-			{
-				lua_pop(L, 1);
-				lua_pushboolean(L, true);
-				return 1;
-			}
-		}
+		if(type != data.type()) // check is it even same type before searching deeper
+			lua_pushboolean(L, false);
+		else if(type == typeid(bool))
+			lua_pushboolean(L, boost::any_cast<bool>(value) == boost::any_cast<bool>(data));
+		else if(type == typeid(double))
+			lua_pushboolean(L, boost::any_cast<double>(value) == boost::any_cast<double>(data));
+		else if(caseSensitive)
+			lua_pushboolean(L, boost::any_cast<std::string>(value) == boost::any_cast<std::string>(data));
+		else
+			lua_pushboolean(L, boost::any_cast<std::string>(value) == asLowerCaseString(boost::any_cast<std::string>(data)));
+
+		return 1;
+	}
+
+	lua_pushnil(L);
+	while(lua_next(L, -2))
+	{
+		if(lua_isnil(L, -1))
+			break;
+
+		boost::any data;
+		if(lua_isnumber(L, -1))
+			data = popFloatNumber(L);
+		else if(lua_isboolean(L, -1))
+			data = popBoolean(L);
+		else if(lua_isstring(L, -1))
+			data = popString(L);
 		else
 			break;
 
-		++i;
+		lua_pop(L, 1);
+		if(type != data.type()) // check is it same type before searching deeper
+			continue;
+
+		if(type == typeid(bool))
+		{
+			if(boost::any_cast<bool>(value) != boost::any_cast<bool>(data))
+				continue;
+
+			lua_pushboolean(L, true);
+			return 1;
+		}
+		else if(type == typeid(double))
+		{
+			if(boost::any_cast<double>(value) != boost::any_cast<double>(data))
+				continue;
+
+			lua_pushboolean(L, true);
+			return 1;
+		}
+		else if(caseSensitive)
+		{
+			if(boost::any_cast<std::string>(value) != boost::any_cast<std::string>(data))
+				continue;
+
+			lua_pushboolean(L, true);
+			return 1;
+		}
+		else if(boost::any_cast<std::string>(value) == asLowerCaseString(boost::any_cast<std::string>(data)))
+		{
+			lua_pushboolean(L, true);
+			return 1;
+		}
 	}
 
 	lua_pop(L, 2);
@@ -9286,9 +9302,7 @@ int32_t LuaScriptInterface::luaDoItemSetAttribute(lua_State* L)
 {
 	//doItemSetAttribute(uid, key, value)
 	boost::any value;
-	if(lua_isboolean(L, -1) == 1)
-		value = (bool)popNumber(L);
-	else if(lua_isnumber(L, -1) == 1)
+	if(lua_isnumber(L, -1))
 	{
 		float tmp = popFloatNumber(L);
 		if(std::floor(tmp) < tmp)
@@ -9296,11 +9310,15 @@ int32_t LuaScriptInterface::luaDoItemSetAttribute(lua_State* L)
 		else
 			value = (int32_t)tmp;
 	}
-	else if(lua_isstring(L, -1) == 1)
+	else if(lua_isboolean(L, -1))
+		value = popBoolean(L);
+	else if(lua_isstring(L, -1))
 		value = popString(L);
 	else
 	{
+		lua_pop(L, 1);
 		reportErrorFunc("Invalid data type");
+
 		lua_pushboolean(L, false);
 		return 1;
 	}
