@@ -310,8 +310,8 @@ bool Monster::doTeleportToMaster()
 		getMaster()->getPosition(), true), false) != RET_NOERROR)
 		return false;
 
-	g_game.addMagicEffect(tmp, NM_ME_POFF);
-	g_game.addMagicEffect(getPosition(), NM_ME_TELEPORT);
+	g_game.addMagicEffect(tmp, NM_MAGIC_POFF);
+	g_game.addMagicEffect(getPosition(), NM_MAGIC_TELEPORT);
 	return true;
 }
 
@@ -809,7 +809,7 @@ void Monster::onThinkDefense(uint32_t interval)
 					{
 						addSummon(summon);
 						if(g_game.placeCreature(summon, getPosition()))
-							g_game.addMagicEffect(getPosition(), NM_ME_MAGIC_ENERGY);
+							g_game.addMagicEffect(getPosition(), NM_MAGIC_MAGIC_ENERGY);
 						else
 							removeSummon(summon);
 					}
@@ -902,7 +902,7 @@ void Monster::pushItems(Tile* tile)
 	}
 
 	if(removeCount > 0)
-		g_game.addMagicEffect(tile->getPosition(), NM_ME_POFF);
+		g_game.addMagicEffect(tile->getPosition(), NM_MAGIC_POFF);
 }
 
 bool Monster::pushCreature(Creature* creature)
@@ -952,7 +952,7 @@ void Monster::pushCreatures(Tile* tile)
 	}
 
 	if(effect)
-		g_game.addMagicEffect(tile->getPosition(), NM_ME_BLOCKHIT);
+		g_game.addMagicEffect(tile->getPosition(), NM_MAGIC_BLOCKHIT);
 }
 
 bool Monster::getNextStep(Direction& dir, uint32_t& flags)

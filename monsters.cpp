@@ -350,7 +350,7 @@ bool Monsters::deserializeSpell(xmlNodePtr node, spellBlock_t& sb, const std::st
 				if(readXMLInteger(node, "spread", intValue))
 					spread = std::max(0, intValue);
 
-				AreaCombat* area = new AreaCombat();
+				CombatArea* area = new CombatArea();
 				area->setupArea(length, spread);
 
 				combat->setArea(area);
@@ -365,7 +365,7 @@ bool Monsters::deserializeSpell(xmlNodePtr node, spellBlock_t& sb, const std::st
 			if(readXMLInteger(node, "target", intValue))
 				needTarget = (intValue != 0);
 
-			AreaCombat* area = new AreaCombat();
+			CombatArea* area = new CombatArea();
 			area->setupArea(radius);
 			combat->setArea(area);
 		}
@@ -831,8 +831,8 @@ bool Monsters::deserializeSpell(xmlNodePtr node, spellBlock_t& sb, const std::st
 					{
 						if(readXMLString(attributeNode, "value", strValue))
 						{
-							ShootType_t shoot = getShootType(strValue);
-							if(shoot != NM_SHOOT_UNK)
+							ShootEffect_t shoot = getShootType(strValue);
+							if(shoot != NM_SHOOT_UNKNOWN)
 								combat->setParam(COMBATPARAM_DISTANCEEFFECT, shoot);
 							else
 								std::cout << "[Warning - Monsters::deserializeSpell] " << description << " - Unknown shootEffect: " << strValue << std::endl;
@@ -842,8 +842,8 @@ bool Monsters::deserializeSpell(xmlNodePtr node, spellBlock_t& sb, const std::st
 					{
 						if(readXMLString(attributeNode, "value", strValue))
 						{
-							MagicEffectClasses effect = getMagicEffect(strValue);
-							if(effect != NM_ME_UNK)
+							MagicEffect_t effect = getMagicEffect(strValue);
+							if(effect != NM_MAGIC_UNKNOWN)
 								combat->setParam(COMBATPARAM_EFFECT, effect);
 							else
 								std::cout << "[Warning - Monsters::deserializeSpell] " << description << " - Unknown areaEffect: " << strValue << std::endl;

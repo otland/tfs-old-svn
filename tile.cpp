@@ -122,7 +122,7 @@ bool Tile::hasHeight(uint32_t n) const
 bool Tile::isSwimmingPool(bool checkPz /*= true*/) const
 {
 	if(TrashHolder* trashHolder = getTrashHolder())
-		return trashHolder->getEffect() == NM_ME_LOSE_ENERGY && (!checkPz ||
+		return trashHolder->getEffect() == NM_MAGIC_LOSE_ENERGY && (!checkPz ||
 			getZone() == ZONE_PROTECTION || getZone() == ZONE_NOPVP);
 
 	return false;

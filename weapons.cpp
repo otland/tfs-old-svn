@@ -403,7 +403,7 @@ bool Weapon::internalUseWeapon(Player* player, Item* item, Tile* tile) const
 	else
 	{
 		Combat::postCombatEffects(player, tile->getPosition(), params);
-		g_game.addMagicEffect(tile->getPosition(), NM_ME_POFF);
+		g_game.addMagicEffect(tile->getPosition(), NM_MAGIC_POFF);
 	}
 
 	onUsedAmmo(player, item, tile);
@@ -710,7 +710,7 @@ bool WeaponDistance::configureWeapon(const ItemType& it)
 	if(it.ammoAction != AMMOACTION_NONE)
 		ammoAction = it.ammoAction;
 
-	params.distanceEffect = it.shootType;
+	params.effects.distance = it.shootType;
 	ammoAttackValue = it.attack;
 	return Weapon::configureWeapon(it);
 }
@@ -996,7 +996,7 @@ bool WeaponWand::configureEvent(xmlNodePtr p)
 
 bool WeaponWand::configureWeapon(const ItemType& it)
 {
-	params.distanceEffect = it.shootType;
+	params.effects.distance = it.shootType;
 	return Weapon::configureWeapon(it);
 }
 

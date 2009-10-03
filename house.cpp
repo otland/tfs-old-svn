@@ -186,8 +186,8 @@ void House::removePlayer(Player* player, bool ignoreRights)
 	Position toPos = g_game.getClosestFreeTile(player, entry, false, false);
 	if(toPos.x && g_game.internalTeleport(player, toPos, true) == RET_NOERROR && !player->isGhost())
 	{
-		g_game.addMagicEffect(tmp, NM_ME_POFF);
-		g_game.addMagicEffect(player->getPosition(), NM_ME_TELEPORT);
+		g_game.addMagicEffect(tmp, NM_MAGIC_POFF);
+		g_game.addMagicEffect(player->getPosition(), NM_MAGIC_TELEPORT);
 	}
 }
 

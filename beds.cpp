@@ -127,13 +127,13 @@ void BedItem::sleep(Player* player)
 			nextBedItem->updateAppearance(player);
 
 		player->getTile()->moveCreature(NULL, player, getTile());
-		g_game.addMagicEffect(player->getPosition(), NM_ME_SLEEP);
+		g_game.addMagicEffect(player->getPosition(), NM_MAGIC_SLEEP);
 		Scheduler::getScheduler().addEvent(createSchedulerTask(SCHEDULER_MINTICKS, boost::bind(&Game::kickPlayer, &g_game, player->getID(), false)));
 	}
 	else if(Item::items[getID()].transformToFree)
 	{
 		wakeUp();
-		g_game.addMagicEffect(player->getPosition(), NM_ME_POFF);
+		g_game.addMagicEffect(player->getPosition(), NM_MAGIC_POFF);
 	}
 	else
 		player->sendCancelMessage(RET_NOTPOSSIBLE);

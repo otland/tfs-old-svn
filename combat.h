@@ -59,12 +59,36 @@ class TargetCallback : public CallBack
 		formulaType_t type;
 };
 
+struct CombatEffects
+{
+	CombatEffects(bool _show): show(_show)
+	{
+		color = TEXTCOLOR_UNKNOWN;
+		distance = NM_SHOOT_NONE;
+		impact = NM_MAGIC_NONE;
+		hit = NM_MAGIC_UNKNOWN;
+	}
+
+	CombatEffects():
+	{
+		color = TEXTCOLOR_UNKNOWN;
+		distance = NM_SHOOT_NONE;
+		impact = NM_MAGIC_NONE;
+		hit = NM_MAGIC_UNKNOWN;
+		show = true;
+	}
+
+	MagicEffect_t impact, hit;
+	ShootEffect_t distance;
+	TextColor_t color;
+	bool show;
+};
+
 struct CombatParams
 {
 	CombatParams()
 	{
 		blockedByArmor = blockedByShield = targetCasterOrTopMost = targetPlayersOrSummons = differentAreaDamage = false;
-		impactEffect = distanceEffect = NM_ME_NONE;
 		isAggressive = useCharges = true;
 		dispelType = CONDITION_NONE;
 		combatType = COMBAT_NONE;
@@ -76,7 +100,6 @@ struct CombatParams
 	}
 
 	bool blockedByArmor, blockedByShield, targetCasterOrTopMost, targetPlayersOrSummons, differentAreaDamage, useCharges, isAggressive;
-	uint8_t impactEffect, distanceEffect;
 	ConditionType_t dispelType;
 	CombatType_t combatType;
 	uint32_t itemId;
@@ -84,6 +107,7 @@ struct CombatParams
 	TargetCallback* targetCallback;
 	ValueCallback* valueCallback;
 	TileCallback* tileCallback;
+	CombatEffects effects;
 
 	std::list<const Condition*> conditionList;
 };
@@ -156,14 +180,14 @@ class MatrixArea
 		bool** data_;
 };
 
-typedef std::map<Direction, MatrixArea* > AreaCombatMap;
-class AreaCombat
+typedef std::map<Direction, MatrixArea* > CombatAreaMap;
+class CombatArea
 {
 	public:
-		AreaCombat() {hasExtArea = false;}
-		virtual ~AreaCombat() {clear();}
+		CombatArea() {hasExtArea = false;}
+		virtual ~CombatArea() {clear();}
 
-		AreaCombat(const AreaCombat& rhs);
+		CombatArea(const CombatArea& rhs);
 
 		ReturnValue doCombat(Creature* attacker, const Position& pos, const Combat& combat) const;
 		bool getList(const Position& centerPos, const Position& targetPos, std::list<Tile*>& list) const;
@@ -213,14 +237,14 @@ class AreaCombat
 					dir = SOUTHEAST;
 			}
 
-			AreaCombatMap::const_iterator it = areas.find(dir);
+			CombatAreaMap::const_iterator it = areas.find(dir);
 			if(it != areas.end())
 				return it->second;
 
 			return NULL;
 		}
 
-		AreaCombatMap areas;
+		CombatAreaMap areas;
 		bool hasExtArea;
 };
 
@@ -233,25 +257,25 @@ class Combat
 		static void doCombatHealth(Creature* caster, Creature* target,
 			int32_t minChange, int32_t maxChange, const CombatParams& params);
 		static void doCombatHealth(Creature* caster, const Position& pos,
-			const AreaCombat* area, int32_t minChange, int32_t maxChange, const CombatParams& params);
+			const CombatArea* area, int32_t minChange, int32_t maxChange, const CombatParams& params);
 
 		static void doCombatMana(Creature* caster, Creature* target,
 			int32_t minChange, int32_t maxChange, const CombatParams& params);
 		static void doCombatMana(Creature* caster, const Position& pos,
-			const AreaCombat* area, int32_t minChange, int32_t maxChange, const CombatParams& params);
+			const CombatArea* area, int32_t minChange, int32_t maxChange, const CombatParams& params);
 
 		static void doCombatCondition(Creature* caster, Creature* target,
 			const CombatParams& params);
 		static void doCombatCondition(Creature* caster, const Position& pos,
-			const AreaCombat* area, const CombatParams& params);
+			const CombatArea* area, const CombatParams& params);
 
 		static void doCombatDispel(Creature* caster, Creature* target,
 			const CombatParams& params);
 		static void doCombatDispel(Creature* caster, const Position& pos,
-			const AreaCombat* area, const CombatParams& params);
+			const CombatArea* area, const CombatParams& params);
 
 		static void getCombatArea(const Position& centerPos, const Position& targetPos,
-			const AreaCombat* area, std::list<Tile*>& list);
+			const CombatArea* area, std::list<Tile*>& list);
 
 		static bool isInPvpZone(const Creature* attacker, const Creature* target);
 		static bool isProtected(Player* attacker, Player* target);
@@ -264,7 +288,7 @@ class Combat
 		static ReturnValue canDoCombat(const Creature* attacker, const Creature* target);
 
 		static void postCombatEffects(Creature* caster, const Position& pos, const CombatParams& params);
-		static void addDistanceEffect(Creature* caster, const Position& fromPos, const Position& toPos, uint8_t effect);
+		static void addDistanceEffect(Creature* caster, const Position& fromPos, const Position& toPos, ShootEffect_t effect);
 
 		void doCombat(Creature* caster, Creature* target) const;
 		void doCombat(Creature* caster, const Position& pos) const;
@@ -272,7 +296,7 @@ class Combat
 		bool setCallback(CallBackParam_t key);
 		CallBack* getCallback(CallBackParam_t key);
 
-		void setArea(AreaCombat* _area)
+		void setArea(CombatArea* _area)
 		{
 			if(area)
 				delete area;
@@ -293,7 +317,7 @@ class Combat
 	protected:
 		static void doCombatDefault(Creature* caster, Creature* target, const CombatParams& params);
 		static void CombatFunc(Creature* caster, const Position& pos,
-			const AreaCombat* area, const CombatParams& params, COMBATFUNC func, void* data);
+			const CombatArea* area, const CombatParams& params, COMBATFUNC func, void* data);
 
 		static bool CombatHealthFunc(Creature* caster, Creature* target, const CombatParams& params, void* data);
 		static bool CombatManaFunc(Creature* caster, Creature* target, const CombatParams& params, void* data);
@@ -312,7 +336,7 @@ class Combat
 		double mina, minb, maxa, maxb, minl, maxl, minm, maxm;
 		int32_t minc, maxc;
 
-		AreaCombat* area;
+		CombatArea* area;
 };
 
 class MagicField : public Item

@@ -34,7 +34,7 @@ class Creature;
 class Player;
 class Item;
 class Container;
-class AreaCombat;
+class CombatArea;
 class Combat;
 class Condition;
 class Npc;
@@ -131,8 +131,8 @@ class ScriptEnviroment
 
 		void removeItemByUID(uint32_t uid);
 
-		static uint32_t addCombatArea(AreaCombat* area);
-		static AreaCombat* getCombatArea(uint32_t areaId);
+		static uint32_t addCombatArea(CombatArea* area);
+		static CombatArea* getCombatArea(uint32_t areaId);
 
 		static uint32_t addCombatObject(Combat* combat);
 		static Combat* getCombatObject(uint32_t combatId);
@@ -146,7 +146,7 @@ class ScriptEnviroment
 		typedef std::map<uint64_t, Thing*> ThingMap;
 		typedef std::vector<const LuaVariant*> VariantVector;
 		typedef std::map<uint32_t, std::string> StorageMap;
-		typedef std::map<uint32_t, AreaCombat*> AreaMap;
+		typedef std::map<uint32_t, CombatArea*> AreaMap;
 		typedef std::map<uint32_t, Combat*> CombatMap;
 		typedef std::map<uint32_t, Condition*> ConditionMap;
 		typedef std::list<Item*> ItemList;
@@ -636,17 +636,17 @@ class LuaScriptInterface
 		static int32_t luaSetConditionFormula(lua_State* L);
 		static int32_t luaDoCombat(lua_State* L);
 
-		static int32_t luaDoAreaCombatHealth(lua_State* L);
+		static int32_t luaDoCombatAreaHealth(lua_State* L);
 		static int32_t luaDoTargetCombatHealth(lua_State* L);
 
 		//
-		static int32_t luaDoAreaCombatMana(lua_State* L);
+		static int32_t luaDoCombatAreaMana(lua_State* L);
 		static int32_t luaDoTargetCombatMana(lua_State* L);
 
-		static int32_t luaDoAreaCombatCondition(lua_State* L);
+		static int32_t luaDoCombatAreaCondition(lua_State* L);
 		static int32_t luaDoTargetCombatCondition(lua_State* L);
 
-		static int32_t luaDoAreaCombatDispel(lua_State* L);
+		static int32_t luaDoCombatAreaDispel(lua_State* L);
 		static int32_t luaDoTargetCombatDispel(lua_State* L);
 
 		static int32_t luaDoChallengeCreature(lua_State* L);

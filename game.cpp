@@ -4082,7 +4082,7 @@ bool Game::combatBlockHit(CombatType_t combatType, Creature* attacker, Creature*
 	const SpectatorVec& list = getSpectators(targetPos);
 	if(!target->isAttackable() || Combat::canDoCombat(attacker, target) != RET_NOERROR)
 	{
-		addMagicEffect(list, targetPos, NM_ME_POFF, target->isGhost());
+		addMagicEffect(list, targetPos, NM_MAGIC_POFF, target->isGhost());
 		return true;
 	}
 
@@ -4092,17 +4092,17 @@ bool Game::combatBlockHit(CombatType_t combatType, Creature* attacker, Creature*
 	healthChange = -damage;
 	if(blockType == BLOCK_DEFENSE)
 	{
-		addMagicEffect(list, targetPos, NM_ME_POFF);
+		addMagicEffect(list, targetPos, NM_MAGIC_POFF);
 		return true;
 	}
 	else if(blockType == BLOCK_ARMOR)
 	{
-		addMagicEffect(list, targetPos, NM_ME_BLOCKHIT);
+		addMagicEffect(list, targetPos, NM_MAGIC_BLOCKHIT);
 		return true;
 	}
 	else if(blockType == BLOCK_IMMUNITY)
 	{
-		uint8_t hitEffect = 0;
+		uint8_t magicEffect = 0;
 		switch(combatType)
 		{
 			case COMBAT_UNDEFINEDDAMAGE:
@@ -4114,38 +4114,38 @@ bool Game::combatBlockHit(CombatType_t combatType, Creature* attacker, Creature*
 			case COMBAT_ICEDAMAGE:
 			case COMBAT_DEATHDAMAGE:
 			{
-				hitEffect = (uint8_t)NM_ME_BLOCKHIT;
+				magicEffect = (uint8_t)NM_MAGIC_BLOCKHIT;
 				break;
 			}
 
 			case COMBAT_EARTHDAMAGE:
 			{
-				hitEffect = (uint8_t)NM_ME_POISON_RINGS;
+				magicEffect = (uint8_t)NM_MAGIC_POISON_RINGS;
 				break;
 			}
 
 			case COMBAT_HOLYDAMAGE:
 			{
-				hitEffect = (uint8_t)NM_ME_HOLYDAMAGE;
+				magicEffect = (uint8_t)NM_MAGIC_HOLYDAMAGE;
 				break;
 			}
 
 			default:
 			{
-				hitEffect = (uint8_t)NM_ME_POFF;
+				magicEffect = (uint8_t)NM_MAGIC_POFF;
 				break;
 			}
 		}
 
-		addMagicEffect(list, targetPos, hitEffect);
+		addMagicEffect(list, targetPos, magicEffect);
 		return true;
 	}
 
 	return false;
 }
 
-bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creature* target,
-	int32_t healthChange, bool force/* = false*/)
+bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creature* target, int32_t healthChange,
+	MagicEffect_t hitEffect/* = NM_MAGIC_UNKNOWN*/, TextColor_t hitColor/* = TEXTCOLOR_UNKNOWN*/, bool force/* = false*/)
 {
 	const Position& targetPos = target->getPosition();
 	if(healthChange > 0)
@@ -4173,7 +4173,7 @@ bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creat
 
 			const SpectatorVec& list = getSpectators(targetPos);
 			if(combatType != COMBAT_HEALING)
-				addMagicEffect(list, targetPos, NM_ME_MAGIC_ENERGY);
+				addMagicEffect(list, targetPos, NM_MAGIC_MAGIC_ENERGY);
 
 			addAnimatedText(list, targetPos, TEXTCOLOR_GREEN, buffer);
 		}
@@ -4183,7 +4183,7 @@ bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creat
 		const SpectatorVec& list = getSpectators(targetPos);
 		if(!target->isAttackable() || Combat::canDoCombat(attacker, target) != RET_NOERROR)
 		{
-			addMagicEffect(list, targetPos, NM_ME_POFF);
+			addMagicEffect(list, targetPos, NM_MAGIC_POFF);
 			return true;
 		}
 
@@ -4211,7 +4211,7 @@ bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creat
 					char buffer[20];
 					sprintf(buffer, "%d", manaDamage);
 
-					addMagicEffect(list, targetPos, NM_ME_LOSE_ENERGY);
+					addMagicEffect(list, targetPos, NM_MAGIC_LOSE_ENERGY);
 					addAnimatedText(list, targetPos, TEXTCOLOR_BLUE, buffer);
 				}
 			}
@@ -4234,7 +4234,7 @@ bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creat
 				addCreatureHealth(list, target);
 
 				TextColor_t textColor = TEXTCOLOR_NONE;
-				MagicEffectClasses hitEffect = NM_ME_NONE;
+				MagicEffect_t magicEffect = NM_MAGIC_NONE;
 				switch(combatType)
 				{
 					case COMBAT_PHYSICALDAMAGE:
@@ -4244,29 +4244,29 @@ bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creat
 						{
 							case RACE_VENOM:
 								textColor = TEXTCOLOR_LIGHTGREEN;
-								hitEffect = NM_ME_POISON;
+								magicEffect = NM_MAGIC_POISON;
 								splash = Item::CreateItem(ITEM_SMALLSPLASH, FLUID_GREEN);
 								break;
 
 							case RACE_BLOOD:
 								textColor = TEXTCOLOR_RED;
-								hitEffect = NM_ME_DRAW_BLOOD;
+								magicEffect = NM_MAGIC_DRAW_BLOOD;
 								splash = Item::CreateItem(ITEM_SMALLSPLASH, FLUID_BLOOD);
 								break;
 
 							case RACE_UNDEAD:
 								textColor = TEXTCOLOR_GREY;
-								hitEffect = NM_ME_HIT_AREA;
+								magicEffect = NM_MAGIC_HIT_AREA;
 								break;
 
 							case RACE_FIRE:
 								textColor = TEXTCOLOR_ORANGE;
-								hitEffect = NM_ME_DRAW_BLOOD;
+								magicEffect = NM_MAGIC_DRAW_BLOOD;
 								break;
 
 							case RACE_ENERGY:
 								textColor = TEXTCOLOR_PURPLE;
-								hitEffect = NM_ME_PURPLEENERGY;
+								magicEffect = NM_MAGIC_PURPLEENERGY;
 								break;
 
 							default:
@@ -4284,56 +4284,56 @@ bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creat
 					case COMBAT_ENERGYDAMAGE:
 					{
 						textColor = TEXTCOLOR_PURPLE;
-						hitEffect = NM_ME_ENERGY_DAMAGE;
+						magicEffect = NM_MAGIC_ENERGY_DAMAGE;
 						break;
 					}
 
 					case COMBAT_EARTHDAMAGE:
 					{
 						textColor = TEXTCOLOR_LIGHTGREEN;
-						hitEffect = NM_ME_POISON_RINGS;
+						magicEffect = NM_MAGIC_POISON_RINGS;
 						break;
 					}
 
 					case COMBAT_DROWNDAMAGE:
 					{
 						textColor = TEXTCOLOR_LIGHTBLUE;
-						hitEffect = NM_ME_LOSE_ENERGY;
+						magicEffect = NM_MAGIC_LOSE_ENERGY;
 						break;
 					}
 
 					case COMBAT_FIREDAMAGE:
 					{
 						textColor = TEXTCOLOR_ORANGE;
-						hitEffect = NM_ME_HITBY_FIRE;
+						magicEffect = NM_MAGIC_HITBY_FIRE;
 						break;
 					}
 
 					case COMBAT_ICEDAMAGE:
 					{
 						textColor = TEXTCOLOR_TEAL;
-						hitEffect = NM_ME_ICEATTACK;
+						magicEffect = NM_MAGIC_ICEATTACK;
 						break;
 					}
 
 					case COMBAT_HOLYDAMAGE:
 					{
 						textColor = TEXTCOLOR_YELLOW;
-						hitEffect = NM_ME_HOLYDAMAGE;
+						magicEffect = NM_MAGIC_HOLYDAMAGE;
 						break;
 					}
 
 					case COMBAT_DEATHDAMAGE:
 					{
 						textColor = TEXTCOLOR_DARKRED;
-						hitEffect = NM_ME_SMALLCLOUDS;
+						magicEffect = NM_MAGIC_SMALLCLOUDS;
 						break;
 					}
 
 					case COMBAT_LIFEDRAIN:
 					{
 						textColor = TEXTCOLOR_RED;
-						hitEffect = NM_ME_MAGIC_BLOOD;
+						magicEffect = NM_MAGIC_MAGIC_BLOOD;
 						break;
 					}
 
@@ -4341,12 +4341,18 @@ bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creat
 						break;
 				}
 
-				if(textColor != TEXTCOLOR_NONE)
+				if(hitEffect != NM_MAGIC_UNKNOWN)
+					magicEffect = hitEffect;
+
+				if(hitColor != TEXTCOLOR_UNKNOWN)
+					textColor = hitColor;
+
+				if(textColor < TEXTCOLOR_NONE && magicEffect < NM_MAGIC_NONE)
 				{
 					char buffer[20];
 					sprintf(buffer, "%d", damage);
 
-					addMagicEffect(list, targetPos, hitEffect);
+					addMagicEffect(list, targetPos, magicEffect);
 					addAnimatedText(list, targetPos, textColor, buffer);
 				}
 			}
@@ -4388,7 +4394,7 @@ bool Game::combatChangeMana(Creature* attacker, Creature* target, int32_t manaCh
 		const SpectatorVec& list = getSpectators(targetPos);
 		if(!target->isAttackable() || Combat::canDoCombat(attacker, target) != RET_NOERROR)
 		{
-			addMagicEffect(list, targetPos, NM_ME_POFF);
+			addMagicEffect(list, targetPos, NM_MAGIC_POFF);
 			return false;
 		}
 
@@ -4396,7 +4402,7 @@ bool Game::combatChangeMana(Creature* attacker, Creature* target, int32_t manaCh
 		BlockType_t blockType = target->blockHit(attacker, COMBAT_MANADRAIN, manaLoss);
 		if(blockType != BLOCK_NONE)
 		{
-			addMagicEffect(list, targetPos, NM_ME_POFF);
+			addMagicEffect(list, targetPos, NM_MAGIC_POFF);
 			return false;
 		}
 
@@ -5126,7 +5132,7 @@ bool Game::playerViolationWindow(uint32_t playerId, std::string name, uint8_t re
 		sprintf(buffer, "You have been %s.", (kickAction > KICK ? "banished" : "namelocked"));
 		target->sendTextMessage(MSG_INFO_DESCR, buffer);
 
-		addMagicEffect(target->getPosition(), NM_ME_MAGIC_POISON);
+		addMagicEffect(target->getPosition(), NM_MAGIC_MAGIC_POISON);
 		Scheduler::getScheduler().addEvent(createSchedulerTask(1000, boost::bind(
 			&Game::kickPlayer, this, target->getID(), false)));
 	}

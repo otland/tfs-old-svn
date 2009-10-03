@@ -180,14 +180,14 @@ class EffectEvent : public RaidEvent
 {
 	public:
 		EffectEvent(Raid* raid, bool ref): RaidEvent(raid, ref),
-			m_effect(NM_ME_NONE) {}
+			m_effect(NM_MAGIC_NONE) {}
 		virtual ~EffectEvent() {}
 
 		virtual bool configureRaidEvent(xmlNodePtr eventNode);
 		virtual bool executeEvent() const;
 
 	private:
-		MagicEffectClasses m_effect;
+		MagicEffect_t m_effect;
 		Position m_position;
 };
 

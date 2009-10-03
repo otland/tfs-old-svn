@@ -245,7 +245,7 @@ std::string CreatureEvent::getScriptEventName() const
 		case CREATURE_EVENT_STATSCHANGE:
 			return "onStatsChange";
 		case CREATURE_EVENT_COMBAT_AREA:
-			return "onAreaCombat";
+			return "onCombatArea";
 		case CREATURE_EVENT_PUSH:
 			return "onPush";
 		case CREATURE_EVENT_TARGET:
@@ -1159,7 +1159,7 @@ uint32_t CreatureEvent::executeStatsChange(Creature* creature, Creature* attacke
 
 uint32_t CreatureEvent::executeCombatArea(Creature* creature, Tile* tile, bool aggressive)
 {
-	//onAreaCombat(cid, ground, position, aggressive)
+	//onCombatArea(cid, ground, position, aggressive)
 	if(m_scriptInterface->reserveScriptEnv())
 	{
 		ScriptEnviroment* env = m_scriptInterface->getScriptEnv();
@@ -1211,7 +1211,7 @@ uint32_t CreatureEvent::executeCombatArea(Creature* creature, Tile* tile, bool a
 	}
 	else
 	{
-		std::cout << "[Error - CreatureEvent::executeAreaCombat] Call stack overflow." << std::endl;
+		std::cout << "[Error - CreatureEvent::executeCombatArea] Call stack overflow." << std::endl;
 		return 0;
 	}
 }

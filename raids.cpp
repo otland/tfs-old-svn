@@ -438,7 +438,7 @@ bool EffectEvent::configureRaidEvent(xmlNodePtr eventNode)
 			m_effect = getMagicEffect(strValue);
 	}
 	else
-		m_effect = (MagicEffectClasses)intValue;
+		m_effect = (MagicEffect_t)intValue;
 
 	if(!readXMLString(eventNode, "pos", strValue))
 	{

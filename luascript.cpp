@@ -336,7 +336,7 @@ void ScriptEnviroment::removeItemByUID(uint32_t uid)
 		m_globalMap.erase(it);
 }
 
-uint32_t ScriptEnviroment::addCombatArea(AreaCombat* area)
+uint32_t ScriptEnviroment::addCombatArea(CombatArea* area)
 {
 	uint32_t newAreaId = m_lastAreaId + 1;
 	m_areaMap[newAreaId] = area;
@@ -345,7 +345,7 @@ uint32_t ScriptEnviroment::addCombatArea(AreaCombat* area)
 	return newAreaId;
 }
 
-AreaCombat* ScriptEnviroment::getCombatArea(uint32_t areaId)
+CombatArea* ScriptEnviroment::getCombatArea(uint32_t areaId)
 {
 	AreaMap::const_iterator it = m_areaMap.find(areaId);
 	if(it != m_areaMap.end())
@@ -1565,7 +1565,7 @@ void LuaScriptInterface::registerFunctions()
 	//doPlayerAddSkillTry(cid, skillid, n[, useMultiplier])
 	lua_register(m_luaState, "doPlayerAddSkillTry", LuaScriptInterface::luaDoPlayerAddSkillTry);
 
-	//doCreatureAddHealth(cid, health[, force])
+	//doCreatureAddHealth(cid, health[, hitEffect[, hitColor[, force]]])
 	lua_register(m_luaState, "doCreatureAddHealth", LuaScriptInterface::luaDoCreatureAddHealth);
 
 	//doCreatureAddMana(cid, mana)
@@ -1903,26 +1903,26 @@ void LuaScriptInterface::registerFunctions()
 	//createCombatObject()
 	lua_register(m_luaState, "createCombatObject", LuaScriptInterface::luaCreateCombatObject);
 
-	//doAreaCombatHealth(cid, type, pos, area, min, max, effect)
-	lua_register(m_luaState, "doAreaCombatHealth", LuaScriptInterface::luaDoAreaCombatHealth);
+	//doCombatAreaHealth(cid, type, pos, area, min, max, effect)
+	lua_register(m_luaState, "doCombatAreaHealth", LuaScriptInterface::luaDoCombatAreaHealth);
 
 	//doTargetCombatHealth(cid, target, type, min, max, effect)
 	lua_register(m_luaState, "doTargetCombatHealth", LuaScriptInterface::luaDoTargetCombatHealth);
 
-	//doAreaCombatMana(cid, pos, area, min, max, effect)
-	lua_register(m_luaState, "doAreaCombatMana", LuaScriptInterface::luaDoAreaCombatMana);
+	//doCombatAreaMana(cid, pos, area, min, max, effect)
+	lua_register(m_luaState, "doCombatAreaMana", LuaScriptInterface::luaDoCombatAreaMana);
 
 	//doTargetCombatMana(cid, target, min, max, effect)
 	lua_register(m_luaState, "doTargetCombatMana", LuaScriptInterface::luaDoTargetCombatMana);
 
-	//doAreaCombatCondition(cid, pos, area, condition, effect)
-	lua_register(m_luaState, "doAreaCombatCondition", LuaScriptInterface::luaDoAreaCombatCondition);
+	//doCombatAreaCondition(cid, pos, area, condition, effect)
+	lua_register(m_luaState, "doCombatAreaCondition", LuaScriptInterface::luaDoCombatAreaCondition);
 
 	//doTargetCombatCondition(cid, target, condition, effect)
 	lua_register(m_luaState, "doTargetCombatCondition", LuaScriptInterface::luaDoTargetCombatCondition);
 
-	//doAreaCombatDispel(cid, pos, area, type, effect)
-	lua_register(m_luaState, "doAreaCombatDispel", LuaScriptInterface::luaDoAreaCombatDispel);
+	//doCombatAreaDispel(cid, pos, area, type, effect)
+	lua_register(m_luaState, "doCombatAreaDispel", LuaScriptInterface::luaDoCombatAreaDispel);
 
 	//doTargetCombatDispel(cid, target, type, effect)
 	lua_register(m_luaState, "doTargetCombatDispel", LuaScriptInterface::luaDoTargetCombatDispel);
@@ -3493,17 +3493,28 @@ int32_t LuaScriptInterface::luaDoCreatureSetHideHealth(lua_State* L)
 
 int32_t LuaScriptInterface::luaDoCreatureAddHealth(lua_State* L)
 {
-	//doCreatureAddHealth(uid, health[, force])
+	//doCreatureAddHealth(uid, health[, hitEffect[, hitColor[, force]]])
+	int32_t params = lua_gettop(L);
 	bool force = false;
-	if(lua_gettop(L) > 2)
+	if(params > 4)
 		force = popNumber(L);
 
-	int32_t healthChange = (int32_t)popNumber(L);
+	TextColor_t hitColor = TEXTCOLOR_UNKNOWN;
+	if(params > 3)
+		hitColor = (TextColor_t)popNumber(L);
+
+	MagicEffect_t hitEffect = NM_MAGIC_UNKNOWN;
+	if(params > 2)
+		hitEffect = (MagicEffect_t)popNumber(L);
+
+	int32_t healthChange = popNumber(L);
 	ScriptEnviroment* env = getScriptEnv();
 	if(Creature* creature = env->getCreatureByUID(popNumber(L)))
 	{
-		g_game.combatChangeHealth(healthChange < 0 ? COMBAT_UNDEFINEDDAMAGE : COMBAT_HEALING,
-			NULL, creature, healthChange, force);
+		if(healthChange) //do not post with 0
+			g_game.combatChangeHealth(healthChange < 1 ? COMBAT_UNDEFINEDDAMAGE : COMBAT_HEALING,
+				NULL, creature, healthChange, hitEffect, hitColor, force);
+
 		lua_pushboolean(L, true);
 	}
 	else
@@ -3511,6 +3522,7 @@ int32_t LuaScriptInterface::luaDoCreatureAddHealth(lua_State* L)
 		reportErrorFunc(getErrorDesc(LUA_ERROR_CREATURE_NOT_FOUND));
 		lua_pushboolean(L, false);
 	}
+
 	return 1;
 }
 
@@ -5377,7 +5389,7 @@ int32_t LuaScriptInterface::luaCreateCombatArea(lua_State* L)
 		return 1;
 	}
 
-	AreaCombat* area = new AreaCombat;
+	CombatArea* area = new CombatArea;
 	if(lua_gettop(L) > 1)
 	{
 		//has extra parameter with diagonal area information
@@ -5459,7 +5471,7 @@ int32_t LuaScriptInterface::luaSetCombatArea(lua_State* L)
 		return 1;
 	}
 
-	const AreaCombat* area = env->getCombatArea(areaId);
+	const CombatArea* area = env->getCombatArea(areaId);
 	if(!area)
 	{
 		reportErrorFunc(getErrorDesc(LUA_ERROR_AREA_NOT_FOUND));
@@ -5467,7 +5479,7 @@ int32_t LuaScriptInterface::luaSetCombatArea(lua_State* L)
 		return 1;
 	}
 
-	combat->setArea(new AreaCombat(*area));
+	combat->setArea(new CombatArea(*area));
 	lua_pushboolean(L, true);
 	return 1;
 }
@@ -5801,7 +5813,7 @@ int32_t LuaScriptInterface::luaDoCombat(lua_State* L)
 			if(!combat->hasArea())
 			{
 				combat->postCombatEffects(creature, var.pos);
-				g_game.addMagicEffect(var.pos, NM_ME_POFF);
+				g_game.addMagicEffect(var.pos, NM_MAGIC_POFF);
 			}
 			else
 				combat->doCombat(creature, var.pos);
@@ -5834,9 +5846,9 @@ int32_t LuaScriptInterface::luaDoCombat(lua_State* L)
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaDoAreaCombatHealth(lua_State* L)
+int32_t LuaScriptInterface::luaDoCombatAreaHealth(lua_State* L)
 {
-	//doAreaCombatHealth(cid, type, pos, area, min, max, effect)
+	//doCombatAreaHealth(cid, type, pos, area, min, max, effect)
 	uint8_t effect = (uint8_t)popNumber(L);
 	int32_t maxChange = (int32_t)popNumber(L), minChange = (int32_t)popNumber(L);
 	uint32_t areaId = popNumber(L);
@@ -5861,12 +5873,12 @@ int32_t LuaScriptInterface::luaDoAreaCombatHealth(lua_State* L)
 		}
 	}
 
-	const AreaCombat* area = env->getCombatArea(areaId);
+	const CombatArea* area = env->getCombatArea(areaId);
 	if(area || areaId == 0)
 	{
 		CombatParams params;
 		params.combatType = combatType;
-		params.impactEffect = effect;
+		params.effects.impact = effect;
 		Combat::doCombatHealth(creature, pos, area, minChange, maxChange, params);
 
 		lua_pushboolean(L, true);
@@ -5907,7 +5919,7 @@ int32_t LuaScriptInterface::luaDoTargetCombatHealth(lua_State* L)
 	{
 		CombatParams params;
 		params.combatType = combatType;
-		params.impactEffect = effect;
+		params.effects.impact = effect;
 		Combat::doCombatHealth(creature, target, minChange, maxChange, params);
 
 		lua_pushboolean(L, true);
@@ -5920,9 +5932,9 @@ int32_t LuaScriptInterface::luaDoTargetCombatHealth(lua_State* L)
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaDoAreaCombatMana(lua_State* L)
+int32_t LuaScriptInterface::luaDoCombatAreaMana(lua_State* L)
 {
-	//doAreaCombatMana(cid, pos, area, min, max, effect)
+	//doCombatAreaMana(cid, pos, area, min, max, effect)
 	uint8_t effect = (uint8_t)popNumber(L);
 	int32_t maxChange = (int32_t)popNumber(L), minChange = (int32_t)popNumber(L);
 	uint32_t areaId = popNumber(L);
@@ -5946,11 +5958,11 @@ int32_t LuaScriptInterface::luaDoAreaCombatMana(lua_State* L)
 		}
 	}
 
-	const AreaCombat* area = env->getCombatArea(areaId);
+	const CombatArea* area = env->getCombatArea(areaId);
 	if(area || areaId == 0)
 	{
 		CombatParams params;
-		params.impactEffect = effect;
+		params.effects.impact = effect;
 		Combat::doCombatMana(creature, pos, area, minChange, maxChange, params);
 
 		lua_pushboolean(L, true);
@@ -5988,7 +6000,7 @@ int32_t LuaScriptInterface::luaDoTargetCombatMana(lua_State* L)
 	if(Creature* target = env->getCreatureByUID(targetCid))
 	{
 		CombatParams params;
-		params.impactEffect = effect;
+		params.effects.impact = effect;
 		Combat::doCombatMana(creature, target, minChange, maxChange, params);
 
 		lua_pushboolean(L, true);
@@ -6001,9 +6013,9 @@ int32_t LuaScriptInterface::luaDoTargetCombatMana(lua_State* L)
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaDoAreaCombatCondition(lua_State* L)
+int32_t LuaScriptInterface::luaDoCombatAreaCondition(lua_State* L)
 {
-	//doAreaCombatCondition(cid, pos, area, condition, effect)
+	//doCombatAreaCondition(cid, pos, area, condition, effect)
 	Creature* creature = NULL;
 	PositionEx pos;
 
@@ -6026,11 +6038,11 @@ int32_t LuaScriptInterface::luaDoAreaCombatCondition(lua_State* L)
 
 	if(const Condition* condition = env->getConditionObject(conditionId))
 	{
-		const AreaCombat* area = env->getCombatArea(areaId);
+		const CombatArea* area = env->getCombatArea(areaId);
 		if(area || areaId == 0)
 		{
 			CombatParams params;
-			params.impactEffect = effect;
+			params.effects.impact = effect;
 			params.conditionList.push_back(condition);
 			Combat::doCombatCondition(creature, pos, area, params);
 
@@ -6076,7 +6088,7 @@ int32_t LuaScriptInterface::luaDoTargetCombatCondition(lua_State* L)
 		if(const Condition* condition = env->getConditionObject(conditionId))
 		{
 			CombatParams params;
-			params.impactEffect = effect;
+			params.effects.impact = effect;
 			params.conditionList.push_back(condition);
 			Combat::doCombatCondition(creature, target, params);
 
@@ -6096,9 +6108,9 @@ int32_t LuaScriptInterface::luaDoTargetCombatCondition(lua_State* L)
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaDoAreaCombatDispel(lua_State* L)
+int32_t LuaScriptInterface::luaDoCombatAreaDispel(lua_State* L)
 {
-	//doAreaCombatDispel(cid, pos, area, type, effect)
+	//doCombatAreaDispel(cid, pos, area, type, effect)
 	uint8_t effect = (uint8_t)popNumber(L);
 	ConditionType_t dispelType = (ConditionType_t)popNumber(L);
 	uint32_t areaId = popNumber(L);
@@ -6121,11 +6133,11 @@ int32_t LuaScriptInterface::luaDoAreaCombatDispel(lua_State* L)
 		}
 	}
 
-	const AreaCombat* area = env->getCombatArea(areaId);
+	const CombatArea* area = env->getCombatArea(areaId);
 	if(area || areaId == 0)
 	{
 		CombatParams params;
-		params.impactEffect = effect;
+		params.effects.impact = effect;
 		params.dispelType = dispelType;
 		Combat::doCombatDispel(creature, pos, area, params);
 
@@ -6165,7 +6177,7 @@ int32_t LuaScriptInterface::luaDoTargetCombatDispel(lua_State* L)
 	if(target)
 	{
 		CombatParams params;
-		params.impactEffect = effect;
+		params.effects.impact = effect;
 		params.dispelType = dispelType;
 		Combat::doCombatDispel(creature, target, params);
 
