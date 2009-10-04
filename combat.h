@@ -69,7 +69,7 @@ struct CombatEffects
 		hit = NM_MAGIC_UNKNOWN;
 	}
 
-	CombatEffects():
+	CombatEffects()
 	{
 		color = TEXTCOLOR_UNKNOWN;
 		distance = NM_SHOOT_NONE;
