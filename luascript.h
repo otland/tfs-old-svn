@@ -324,6 +324,12 @@ class LuaScriptInterface
 		static void setFieldBool(lua_State* L, const char* index, bool val);
 		static void setFieldFloat(lua_State* L, const char* index, double val);
 
+		static void createTable(lua_State* L, const char* index);
+		static void createTable(lua_State* L, const char* index, int32_t narr, int32_t nrec);
+		static void createTable(lua_State* L, int32_t index);
+		static void createTable(lua_State* L, int32_t index, int32_t narr, int32_t nrec);
+		static void pushTable(lua_State* L);
+
 		static std::string getGlobalString(lua_State* L, const std::string& _identifier, const std::string& _default = "");
 		static bool getGlobalBool(lua_State* L, const std::string& _identifier, bool _default = false);
 		static int32_t getGlobalNumber(lua_State* L, const std::string& _identifier, const int32_t _default = 0);
@@ -549,10 +555,6 @@ class LuaScriptInterface
 		static int32_t luaGetVocationInfo(lua_State* L);
 		static int32_t luaGetGroupInfo(lua_State* L);
 		static int32_t luaGetMonsterInfo(lua_State* L);
-		static int32_t luaGetMonsterHealingSpells(lua_State* L);
-		static int32_t luaGetMonsterAttackSpells(lua_State* L);
-		static int32_t luaGetMonsterLootList(lua_State* L);
-		static int32_t luaGetMonsterSummonList(lua_State* L);
 
 		static int32_t luaGetPlayerPromotionLevel(lua_State* L);
 		static int32_t luaDoPlayerSetPromotionLevel(lua_State* L);

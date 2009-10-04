@@ -631,3 +631,23 @@ function getContainerCapById(itemid)
 
 	return item.maxItems
 end
+
+function getMonsterAttackSpells(name)
+	local monster = getMonsterInfo(name)
+	return monster and monster.attacks or false
+end
+
+function getMonsterHealingSpells(name)
+	local monster = getMonsterInfo(name)
+	return monster and monster.defenses or false
+end
+
+function getMonsterLootList(name)
+	local monster = getMonsterInfo(name)
+	return monster and monster.loot or false
+end
+
+function getMonsterSummonList(name)
+	local monster = getMonsterInfo(name)
+	return monster and monster.summons or false
+end

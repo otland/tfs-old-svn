@@ -926,7 +926,7 @@ void LuaScriptInterface::pushVariant(lua_State* L, const LuaVariant& var)
 		{
 			lua_pushstring(L, "pos");
 			pushPosition(L, var.pos);
-			lua_settable(L, -3);
+			pushTable(L);
 			break;
 		}
 		case VARIANT_NONE:
@@ -1124,27 +1124,56 @@ void LuaScriptInterface::setField(lua_State* L, const char* index, int32_t val)
 {
 	lua_pushstring(L, index);
 	lua_pushnumber(L, val);
-	lua_settable(L, -3);
+	pushTable(L);
 }
 
 void LuaScriptInterface::setField(lua_State* L, const char* index, const std::string& val)
 {
 	lua_pushstring(L, index);
 	lua_pushstring(L, val.c_str());
-	lua_settable(L, -3);
+	pushTable(L);
 }
 
 void LuaScriptInterface::setFieldBool(lua_State* L, const char* index, bool val)
 {
 	lua_pushstring(L, index);
 	lua_pushboolean(L, val);
-	lua_settable(L, -3);
+	pushTable(L);
 }
 
 void LuaScriptInterface::setFieldFloat(lua_State* L, const char* index, double val)
 {
 	lua_pushstring(L, index);
 	lua_pushnumber(L, val);
+	pushTable(L);
+}
+
+void LuaScriptInterface::createTable(lua_State* L, const char* index)
+{
+	lua_pushstring(L, index);
+	lua_newtable(L);
+}
+
+void LuaScriptInterface::createTable(lua_State* L, const char* index, int32_t narr, int32_t nrec)
+{
+	lua_pushstring(L, index);
+	lua_createtable(L, narr, nrec);
+}
+
+void LuaScriptInterface::createTable(lua_State* L, int32_t index)
+{
+	lua_pushnumber(L, index);
+	lua_newtable(L);
+}
+
+void LuaScriptInterface::createTable(lua_State* L, int32_t index, int32_t narr, int32_t nrec)
+{
+	lua_pushnumber(L, index);
+	lua_createtable(L, narr, nrec);
+}
+
+void LuaScriptInterface::pushTable(lua_State* L)
+{
 	lua_settable(L, -3);
 }
 
@@ -1278,7 +1307,7 @@ void LuaScriptInterface::moveValue(lua_State* from, lua_State* to)
 				// We still have the key in the 'from' state ontop of the stack
 
 				lua_insert(to, -2); // Move key above value
-				lua_settable(to, -3); // Set the key
+				pushTable(to); // Set the key
 			}
 
 			break;
@@ -1661,18 +1690,6 @@ void LuaScriptInterface::registerFunctions()
 	//getMonsterInfo(name)
 	lua_register(m_luaState, "getMonsterInfo", LuaScriptInterface::luaGetMonsterInfo);
 
-	//getMonsterHealingSpells(name)
-	lua_register(m_luaState, "getMonsterHealingSpells", LuaScriptInterface::luaGetMonsterHealingSpells);
-
-	//getMonsterAttackSpells(name)
-	lua_register(m_luaState, "getMonsterAttackSpells", LuaScriptInterface::luaGetMonsterAttackSpells);
-
-	//getMonsterLootList(name)
-	lua_register(m_luaState, "getMonsterLootList", LuaScriptInterface::luaGetMonsterLootList);
-
-	//getMonsterSummonList(name)
-	lua_register(m_luaState, "getMonsterSummonList", LuaScriptInterface::luaGetMonsterSummonList);
-
 	//doAddCondition(cid, condition)
 	lua_register(m_luaState, "doAddCondition", LuaScriptInterface::luaDoAddCondition);
 
@@ -1795,9 +1812,6 @@ void LuaScriptInterface::registerFunctions()
 
 	//getContainerCap(uid)
 	lua_register(m_luaState, "getContainerCap", LuaScriptInterface::luaGetContainerCap);
-
-	//getContainerCapById(itemid)
-	lua_register(m_luaState, "getContainerCapById", LuaScriptInterface::luaGetContainerCapById);
 
 	//getContainerItem(uid, slot)
 	lua_register(m_luaState, "getContainerItem", LuaScriptInterface::luaGetContainerItem);
@@ -4870,7 +4884,7 @@ int32_t LuaScriptInterface::luaGetHouseInfo(lua_State* L)
 
 	lua_pushstring(L, "entry");
 	pushPosition(L, house->getEntry(), 0);
-	lua_settable(L, -3);
+	pushTable(L);
 
 	setField(L, "rent", house->getRent());
 	setField(L, "price", house->getPrice());
@@ -6210,7 +6224,7 @@ int32_t LuaScriptInterface::luaGetMonsterTargetList(lua_State* L)
 		{
 			lua_pushnumber(L, i);
 			lua_pushnumber(L, env->addThing(*it));
-			lua_settable(L, -3);
+			pushTable(L);
 		}
 	}
 
@@ -6249,7 +6263,7 @@ int32_t LuaScriptInterface::luaGetMonsterFriendList(lua_State* L)
 		{
 			lua_pushnumber(L, i);
 			lua_pushnumber(L, env->addThing(*it));
-			lua_settable(L, -3);
+			pushTable(L);
 		}
 	}
 
@@ -6351,162 +6365,122 @@ int32_t LuaScriptInterface::luaGetMonsterInfo(lua_State* L)
 	setFieldBool(L, "convinceable", mType->isConvinceable);
 	setFieldBool(L, "attackable", mType->isAttackable);
 	setFieldBool(L, "hostile", mType->isHostile);
-	return 1;
-}
-
-int32_t LuaScriptInterface::luaGetMonsterHealingSpells(lua_State* L)
-{
-	//getMonsterHealingSpells(name)
-	const MonsterType* mType = g_monsters.getMonsterType(popString(L));
-	if(!mType)
-	{
-		lua_pushboolean(L, false);
-		return 1;
-	}
+	createTable(L, "defenses");
 
 	SpellList::const_iterator it = mType->spellDefenseList.begin();
-	lua_newtable(L);
 	for(uint32_t i = 1; it != mType->spellDefenseList.end(); ++it, ++i)
 	{
-		lua_pushnumber(L, i);
-		lua_newtable(L);
-
+		createTable(L, i);
 		setField(L, "speed", it->speed);
 		setField(L, "chance", it->chance);
 		setField(L, "range", it->range);
+
 		setField(L, "minCombatValue", it->minCombatValue);
 		setField(L, "maxCombatValue", it->maxCombatValue);
 		setFieldBool(L, "isMelee", it->isMelee);
-		lua_settable(L, -3);
+		pushTable(L);
 	}
 
-	return 1;
-}
+	pushTable(L);
+	createTable(L, "attacks");
 
-int32_t LuaScriptInterface::luaGetMonsterAttackSpells(lua_State* L)
-{
-	//getMonsterAttackSpells(name)
-	const MonsterType* mType = g_monsters.getMonsterType(popString(L));
-	if(!mType)
-	{
-		lua_pushboolean(L, false);
-		return 1;
-	}
-
-	SpellList::const_iterator it = mType->spellAttackList.begin();
-	lua_newtable(L);
+	it = mType->spellAttackList.begin();
 	for(uint32_t i = 1; it != mType->spellAttackList.end(); ++it, ++i)
 	{
-		lua_pushnumber(L, i);
-		lua_newtable(L);
-
+		createTable(L, i);
 		setField(L, "speed", it->speed);
 		setField(L, "chance", it->chance);
 		setField(L, "range", it->range);
+
 		setField(L, "minCombatValue", it->minCombatValue);
 		setField(L, "maxCombatValue", it->maxCombatValue);
 		setFieldBool(L, "isMelee", it->isMelee);
-		lua_settable(L, -3);
+		pushTable(L);
 	}
 
-	return 1;
-}
+	pushTable(L);
+	createTable(L, "loot");
 
-int32_t LuaScriptInterface::luaGetMonsterLootList(lua_State* L)
-{
-	//getMonsterLootList(name)
-	const MonsterType* mType = g_monsters.getMonsterType(popString(L));
-	if(!mType)
+	LootItems::const_iterator lit = mType->lootItems.begin();
+	for(uint32_t i = 1; lit != mType->lootItems.end(); ++lit, ++i)
 	{
-		lua_pushboolean(L, false);
-		return 1;
-	}
-
-	LootItems::const_iterator it = mType->lootItems.begin();
-	lua_newtable(L);
-	for(uint32_t i = 1; it != mType->lootItems.end(); ++it, ++i)
-	{
-		lua_pushnumber(L, i);
-		lua_newtable(L);
-
-		std::vector<uint16_t> ids = it->ids;
-		std::stringstream tmp;
-
-		tmp << ids[0];
-		if(ids.size() > 1)
+		createTable(L, i);
+		if(lit->ids.size() > 1)
 		{
-			tmp.clear();
-			for(std::vector<uint16_t>::iterator lit = ids.begin(); lit != ids.end(); ++lit)
-				tmp << ";" << (*lit);
-		}
+			createTable(L, "ids");
+			std::vector<uint16_t>::iterator iit = lit->ids.begin();
+			for(uint32_t j = 1; iit != lit->ids.end(); ++iit, ++j)
+			{
+				lua_pushnumber(L, j);
+				lua_pushnumber(L, (*iit));
+				pushTable(L);
+			}
 
-		setField(L, "id", tmp.str());
-		setField(L, "countMax", it->count);
+			pushTable(L);
+		}
+		else
+			setField(L, "id", lit->ids[0]);
+
+		setField(L, "count", it->count);
 		setField(L, "chance", it->chance);
 		setField(L, "subType", it->subType);
 		setField(L, "actionId", it->actionId);
 		setField(L, "uniqueId", it->uniqueId);
 		setField(L, "text", it->text);
+
+		createTable(L, "child");
 		if(it->childLoot.size() > 0)
 		{
 			LootItems::const_iterator cit = it->childLoot.begin();
-
-			lua_newtable(L);
 			for(uint32_t j = 1; cit != it->childLoot.end(); ++cit, ++j)
 			{
-				lua_pushnumber(L, j);
-				lua_newtable(L);
-
-				tmp.clear();
-				ids = cit->ids;
-				tmp << ids[0];
-				if(ids.size() > 1)
+				createTable(L, j);
+				if(cit->ids.size() > 1)
 				{
-					tmp.clear();
-					for(std::vector<uint16_t>::iterator lit = ids.begin(); lit != ids.end(); ++lit)
-						tmp << ";" << (*lit);
-				}
+					createTable(L, "ids");
+					std::vector<uint16_t>::iterator iit = cit->ids.begin();
+					for(uint32_t k = 1; iit != cit->ids.end(); ++iit, ++k)
+					{
+						lua_pushnumber(L, k);
+						lua_pushnumber(L, (*iit));
+						pushTable(L);
+					}
 
-				setField(L, "id", tmp.str());
-				setField(L, "countMax", cit->count);
+					pushTable(L);
+				}
+				else
+					setField(L, "id", cit->ids[0]);
+
+				setField(L, "count", cit->count);
 				setField(L, "chance", cit->chance);
 				setField(L, "subType", cit->subType);
 				setField(L, "actionId", cit->actionId);
 				setField(L, "uniqueId", cit->uniqueId);
 				setField(L, "text", cit->text);
-				lua_settable(L, -3);
+
+				pushTable(L);
 			}
 		}
 
-		lua_settable(L, -3);
+		pushTable(L);
 	}
 
-	return 1;
-}
+	pushTable(L);
+	createTable(L, "summons");
 
-int32_t LuaScriptInterface::luaGetMonsterSummonList(lua_State* L)
-{
-	//getMonsterSummonList(name)
-	const MonsterType* mType = g_monsters.getMonsterType(popString(L));
-	if(!mType)
+	SummonList::const_iterator sit = mType->summonList.begin();
+	for(uint32_t i = 1; sit != mType->summonList.end(); ++sit, ++i)
 	{
-		lua_pushboolean(L, false);
-		return 1;
+		createTable(L, i);
+		setField(L, "name", sit->name);
+		setField(L, "chance", sit->chance);
+
+		setField(L, "interval", sit->interval);
+		setField(L, "amount", sit->amount);
+		pushTable(L);
 	}
 
-	SummonList::const_iterator it = mType->summonList.begin();
-	lua_newtable(L);
-	for(uint32_t i = 1; it != mType->summonList.end(); ++it, ++i)
-	{
-		lua_pushnumber(L, i);
-		lua_newtable(L);
-
-		setField(L, "name", it->name);
-		setField(L, "chance", it->chance);
-		setField(L, "interval", it->interval);
-		setField(L, "amount", it->amount);
-		lua_settable(L, -3);
-	}
+	pushTable(L);
 	return 1;
 }
 
@@ -6517,16 +6491,17 @@ int32_t LuaScriptInterface::luaGetTalkActionList(lua_State* L)
 	lua_newtable(L);
 	for(uint32_t i = 1; it != g_talkActions->getLastTalk(); ++it, ++i)
 	{
-		lua_pushnumber(L, i);
-		lua_newtable(L);
-
+		createTable(L, i);
 		setField(L, "words", it->first);
 		setField(L, "access", it->second->getAccess());
+
 		setFieldBool(L, "log", it->second->isLogged());
 		setFieldBool(L, "hide", it->second->isHidden());
+
 		setField(L, "channel", it->second->getChannel());
-		lua_settable(L, -3);
+		pushTable(L);
 	}
+
 	return 1;
 }
 
@@ -6543,12 +6518,10 @@ int32_t LuaScriptInterface::luaGetExperienceStageList(lua_State* L)
 	lua_newtable(L);
 	for(uint32_t i = 1; it != g_game.getLastStage(); ++it, ++i)
 	{
-		lua_pushnumber(L, i);
-		lua_newtable(L);
-
+		createTable(L, i);
 		setField(L, "level", it->first);
 		setFieldFloat(L, "multiplier", it->second);
-		lua_settable(L, -3);
+		pushTable(L);
 	}
 
 	return 1;
@@ -7110,7 +7083,7 @@ int32_t LuaScriptInterface::luaGetPlayersByAccountId(lua_State* L)
 	{
 		lua_pushnumber(L, i);
 		lua_pushnumber(L, env->addThing(*it));
-		lua_settable(L, -3);
+		pushTable(L);
 	}
 
 	return 1;
@@ -7146,7 +7119,7 @@ int32_t LuaScriptInterface::luaGetPlayersByIp(lua_State* L)
 	{
 		lua_pushnumber(L, i);
 		lua_pushnumber(L, env->addThing(*it));
-		lua_settable(L, -3);
+		pushTable(L);
 	}
 
 	return 1;
@@ -8367,7 +8340,7 @@ int32_t LuaScriptInterface::luaGetPartyMembers(lua_State* L)
 			{
 				lua_pushnumber(L, i);
 				lua_pushnumber(L, (*it)->getID());
-				lua_settable(L, -3);
+				pushTable(L);
 			}
 
 			return 1;
@@ -8459,7 +8432,7 @@ int32_t LuaScriptInterface::luaGetChannelUsers(lua_State* L)
 		{
 			lua_pushnumber(L, i);
 			lua_pushnumber(L, env->addThing(it->second));
-			lua_settable(L, -3);
+			pushTable(L);
 		}
 	}
 	else
@@ -8479,7 +8452,7 @@ int32_t LuaScriptInterface::luaGetPlayersOnline(lua_State* L)
 	{
 		lua_pushnumber(L, i);
 		lua_pushnumber(L, env->addThing(it->second));
-		lua_settable(L, -3);
+		pushTable(L);
 	}
 	return 1;
 }
@@ -8582,7 +8555,7 @@ int32_t LuaScriptInterface::luaGetCreatureSummons(lua_State* L)
 	{
 		lua_pushnumber(L, i);
 		lua_pushnumber(L, env->addThing(*it));
-		lua_settable(L, -3);
+		pushTable(L);
 	}
 
 	return 1;
@@ -8644,7 +8617,7 @@ int32_t LuaScriptInterface::luaGetPlayerRates(lua_State* L)
 	{
 		lua_pushnumber(L, i);
 		lua_pushnumber(L, player->rates[(skills_t)i]);
-		lua_settable(L, -3);
+		pushTable(L);
 	}
 
 	return 1;
@@ -8767,7 +8740,7 @@ int32_t LuaScriptInterface::luaGetTownHouses(lua_State* L)
 
 		lua_pushnumber(L, i);
 		lua_pushnumber(L, it->second->getId());
-		lua_settable(L, -3);
+		pushTable(L);
 	}
 
 	return 1;
@@ -8800,7 +8773,7 @@ int32_t LuaScriptInterface::luaGetSpectators(lua_State* L)
 	{
 		lua_pushnumber(L, i);
 		lua_pushnumber(L, env->addThing(*it));
-		lua_settable(L, -3);
+		pushTable(L);
 	}
 
 	return 1;
@@ -8827,13 +8800,12 @@ int32_t LuaScriptInterface::luaGetWaypointList(lua_State* L)
 	lua_newtable(L);
 	for(uint32_t i = 1; it != waypointsMap.end(); ++it, ++i)
 	{
-		lua_pushnumber(L, i);
-		lua_createtable(L, 2, 0);
-
+		createTable(L, i);
 		setField(L, "name", it->first);
 		setField(L, "pos", it->second->pos.x);
-		lua_settable(L, -3);
+		pushTable(L);
 	}
+
 	return 1;
 }
 
@@ -9054,7 +9026,16 @@ int32_t LuaScriptInterface::luaGetItemInfo(lua_State* L)
 	setFieldBool(L, "blockPathing", item->blockPathFind);
 	setFieldBool(L, "allowPickupable", item->allowPickupable);
 	setFieldBool(L, "alwaysOnTop", item->alwaysOnTop);
-	//TODO: floorChange
+
+	createTable(L, "floorChange");
+	for(int32_t i = CHANGE_FIRST; i <= CHANGE_LAST; ++i)
+	{
+		lua_pushnumber(L, i);
+		lua_pushboolean(L, item->floorChange[i - 1]);
+		pushTable(L);
+	}
+
+	pushTable(L);
 	setField(L, "magicEffect", (int32_t)item->magicEffect);
 	setField(L, "fluidSource", (int32_t)item->fluidSource);
 	setField(L, "weaponType", (int32_t)item->weaponType);
@@ -9064,7 +9045,12 @@ int32_t LuaScriptInterface::luaGetItemInfo(lua_State* L)
 	setField(L, "corpseType", (int32_t)item->corpseType);
 	setField(L, "shootType", (int32_t)item->shootType);
 	setField(L, "ammoType", (int32_t)item->ammoType);
-	//TODO: transformUseTo
+
+	createTable(L, "transformUseTo");
+	setField(L, "female", item->transformUseTo[PLAYERSEX_FEMALE]);
+	setField(L, "male", item->transformUseTo[PLAYERSEX_MALE]);
+
+	pushTable(L);
 	setField(L, "transformToFree", item->transformToFree);
 	setField(L, "transformEquipTo", item->transformEquipTo);
 	setField(L, "transformDeEquipTo", item->transformDeEquipTo);
@@ -9105,7 +9091,25 @@ int32_t LuaScriptInterface::luaGetItemInfo(lua_State* L)
 	setField(L, "description", item->description.c_str());
 	setField(L, "runeSpellName", item->runeSpellName.c_str());
 	setField(L, "vocationString", item->vocationString.c_str());
-	//TODO: attributes
+
+	createTable(L, "attributes");
+	setFieldBool(L, "manaShield", item->attributes.manaShield);
+	setFieldBool(L, "invisible", item->attributes.invisible);
+	setFieldBool(L, "regeneration", item->attributes.regeneration);
+	setFieldBool(L, "preventLoss", item->attributes.preventLoss);
+	setFieldBool(L, "preventDrop", item->attributes.preventDrop);
+	setField(L, "elementType", (int32_t)item->attributes.elementType);
+	setField(L, "elementDamage", item->attributes.elementDamage);
+	setField(L, "speed", item->attributes.speed);
+	setField(L, "healthGain", item->attributes.healthGain);
+	setField(L, "healthTicks", item->attributes.healthTicks);
+	setField(L, "manaGain", item->attributes.manaGain);
+	setField(L, "manaTicks", item->attributes.manaTicks);
+	setField(L, "conditionSuppressions", item->attributes.conditionSuppressions);
+
+	//TODO: absorb, increment, reflect, skills, skillsPercent, stats, statsPercent
+
+	pushTable(L);
 	setField(L, "group", (int32_t)item->group);
 	setField(L, "type", (int32_t)item->type);
 	setFieldFloat(L, "weight", item->weight);
@@ -9637,9 +9641,7 @@ int32_t LuaScriptInterface::luaGetBanList(lua_State* L)
 	lua_newtable(L);
 	for(uint32_t i = 1; it != bans.end(); ++it, ++i)
 	{
-		lua_pushnumber(L, i);
-		lua_newtable(L);
-
+		createTable(L, i);
 		setField(L, "id", it->id);
 		setField(L, "type", it->type);
 		setField(L, "value", it->value);
@@ -9651,7 +9653,7 @@ int32_t LuaScriptInterface::luaGetBanList(lua_State* L)
 		setField(L, "action", it->action);
 		setField(L, "comment", it->comment);
 		setField(L, "statement", it->statement);
-		lua_settable(L, -3);
+		pushTable(L);
 	}
 
 	return 1;
@@ -9703,9 +9705,7 @@ int32_t LuaScriptInterface::luaGetModList(lua_State* L)
 	lua_newtable(L);
 	for(uint32_t i = 1; it != ScriptingManager::getInstance()->getLastMod(); ++it, ++i)
 	{
-		lua_pushnumber(L, i);
-		lua_createtable(L, 7, 0);
-
+		createTable(L, i);
 		setField(L, "name", it->first);
 		setField(L, "description", it->second.description);
 		setField(L, "file", it->second.file);
@@ -9715,7 +9715,7 @@ int32_t LuaScriptInterface::luaGetModList(lua_State* L)
 		setField(L, "contact", it->second.contact);
 
 		setFieldBool(L, "enabled", it->second.enabled);
-		lua_settable(L, -3);
+		pushTable(L);
 	}
 
 	return 1;
