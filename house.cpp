@@ -182,12 +182,11 @@ void House::removePlayer(Player* player, bool ignoreRights)
 	if(!ignoreRights && player->hasFlag(PlayerFlag_CanEditHouses))
 		return;
 
-	Position tmp = player->getPosition();
-	Position toPos = g_game.getClosestFreeTile(player, entry, false, false);
-	if(toPos.x && g_game.internalTeleport(player, toPos, true) == RET_NOERROR && !player->isGhost())
+	Position curPos = player->getPosition(), newPos = g_game.getClosestFreeTile(player, entry, false, false);
+	if(g_game.internalTeleport(player, newPos, true) == RET_NOERROR && !player->isGhost())
 	{
-		g_game.addMagicEffect(tmp, NM_MAGIC_POFF);
-		g_game.addMagicEffect(player->getPosition(), NM_MAGIC_TELEPORT);
+		g_game.addMagicEffect(curPos, NM_MAGIC_POFF);
+		g_game.addMagicEffect(newPos, NM_MAGIC_TELEPORT);
 	}
 }
 
@@ -200,19 +199,20 @@ void House::removePlayers(bool ignoreInvites)
 		if(!creatures)
 			continue;
 
+		Player* player = NULL;
 		for(CreatureVector::iterator cit = creatures->begin(); cit != creatures->end(); ++cit)
 		{
-			Player* player = (*cit)->getPlayer();
-			if(player && !player->isRemoved() && (ignoreInvites || !isInvited(player)))
+			if((player = (*cit)->getPlayer()) && !player->isRemoved()
+				&& (ignoreInvites || !isInvited(player)))
 				kickList.push_back(player);
 		}
 	}
 
-	if(kickList.size())
-	{
-		for(PlayerVector::iterator it = kickList.begin(); it != kickList.end(); ++it)
-			removePlayer((*it), false);
-	}
+	if(kickList.empty())
+		return;
+
+	for(PlayerVector::iterator it = kickList.begin(); it != kickList.end(); ++it)
+		removePlayer((*it), false);
 }
 
 bool House::kickPlayer(Player* player, Player* target)
@@ -241,13 +241,14 @@ bool House::kickPlayer(Player* player, Player* target)
 
 void House::clean()
 {
-	transferToDepot();
-	removePlayers(true);
 	for(HouseBedList::iterator bit = bedsList.begin(); bit != bedsList.end(); ++bit)
 	{
 		if((*bit)->getSleeper())
 			(*bit)->wakeUp();
 	}
+
+	removePlayers(true);
+	transferToDepot();
 }
 
 bool House::transferToDepot()
@@ -258,18 +259,18 @@ bool House::transferToDepot()
 	Player* player = NULL;
 	if(owner)
 	{
-		uint32_t owner = owner;
-		if(isGuild() && !IOGuild::getInstance()->swapGuildIdToOwner(owner))
-			owner = 0;
+		uint32_t tmp = owner;
+		if(isGuild() && !IOGuild::getInstance()->swapGuildIdToOwner(tmp))
+			tmp = 0;
 
-		if(owner)
-			player = g_game.getPlayerByGuidEx(owner);
+		if(tmp)
+			player = g_game.getPlayerByGuidEx(tmp);
 	}
 
 	Item* item = NULL;
 	Container* tmpContainer = NULL;
 
-	ItemList moveItemList;
+	ItemList moveList;
 	for(HouseTileList::iterator it = houseTiles.begin(); it != houseTiles.end(); ++it)
 	{
 		for(uint32_t i = 0; i < (*it)->getThingCount(); ++i)
@@ -278,11 +279,11 @@ bool House::transferToDepot()
 				continue;
 
 			if(item->isPickupable())
-				moveItemList.push_back(item);
+				moveList.push_back(item);
 			else if((tmpContainer = item->getContainer()))
 			{
 				for(ItemList::const_iterator it = tmpContainer->getItems(); it != tmpContainer->getEnd(); ++it)
-					moveItemList.push_back(*it);
+					moveList.push_back(*it);
 			}
 		}
 	}
@@ -290,7 +291,7 @@ bool House::transferToDepot()
 	if(player)
 	{
 		Depot* depot = player->getDepot(townId, true);
-		for(ItemList::iterator it = moveItemList.begin(); it != moveItemList.end(); ++it)
+		for(ItemList::iterator it = moveList.begin(); it != moveList.end(); ++it)
 			g_game.internalMoveItem(NULL, (*it)->getParent(), depot, INDEX_WHEREEVER, (*it), (*it)->getItemCount(), NULL, FLAG_NOLIMIT);
 
 		if(player->isVirtual())
@@ -301,7 +302,7 @@ bool House::transferToDepot()
 	}
 	else
 	{
-		for(ItemList::iterator it = moveItemList.begin(); it != moveItemList.end(); ++it)
+		for(ItemList::iterator it = moveList.begin(); it != moveList.end(); ++it)
 			g_game.internalRemoveItem(NULL, (*it), (*it)->getItemCount(), false, FLAG_NOLIMIT);
 	}
 

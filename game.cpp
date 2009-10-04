@@ -5162,6 +5162,7 @@ Position Game::getClosestFreeTile(Creature* creature, Position pos, bool extende
 	relList.push_back(PositionPair(1, -1));
 	relList.push_back(PositionPair(1, 0));
 	relList.push_back(PositionPair(1, 1));
+
 	if(extended)
 	{
 		relList.push_back(PositionPair(-2, 0));
