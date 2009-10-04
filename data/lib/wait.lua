@@ -1,6 +1,3 @@
---[[
-	FIXME
-
 Wait = createClass(nil)
 Wait:setAttributes({
 	co = nil
@@ -17,7 +14,7 @@ function Wait:continue()
 	return true
 end
 
-function Wait:createObject(v)
+function createThread(v)
 	local f, t = v, type(v)
 	if(t == 'string') then
 		f = loadstring(v)
@@ -25,8 +22,12 @@ function Wait:createObject(v)
 		return false
 	end
 
-	self:co = coroutine.create(f)
-	self:continue()
-	return true
+	local ret = Wait:new()
+	ret:create(f)
+	return ret
 end
-]]--
+
+function Wait:create(f)
+	self:co = coroutine.create(f)
+	return self:continue()
+end
