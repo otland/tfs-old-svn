@@ -602,13 +602,11 @@ class LuaScriptInterface
 		static int32_t luaIsPlayerSaving(lua_State* L);
 		static int32_t luaIsCreature(lua_State* L);
 		static int32_t luaIsContainer(lua_State* L);
-		static int32_t luaIsCorpse(lua_State* L);
 		static int32_t luaIsMovable(lua_State* L);
 
 		//container
 		static int32_t luaGetContainerSize(lua_State* L);
 		static int32_t luaGetContainerCap(lua_State* L);
-		static int32_t luaGetContainerCapById(lua_State* L);
 		static int32_t luaGetContainerItem(lua_State* L);
 		static int32_t luaDoAddContainerItem(lua_State* L);
 
@@ -665,14 +663,6 @@ class LuaScriptInterface
 		static int32_t luaGetCreatureMaster(lua_State* L);
 		static int32_t luaGetCreatureSummons(lua_State* L);
 
-		static int32_t luaIsItemStackable(lua_State* L);
-		static int32_t luaIsItemRune(lua_State* L);
-		static int32_t luaIsItemFluidContainer(lua_State* L);
-		static int32_t luaIsItemContainer(lua_State* L);
-		static int32_t luaIsItemMovable(lua_State* L);
-		static int32_t luaIsItemDoor(lua_State* L);
-
-		static int32_t luaGetFluidSourceType(lua_State* L);
 		static int32_t luaGetHighscoreString(lua_State* L);
 		static int32_t luaIsSightClear(lua_State* L);
 		static int32_t luaIsInArray(lua_State* L);

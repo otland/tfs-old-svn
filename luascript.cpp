@@ -1769,9 +1769,6 @@ void LuaScriptInterface::registerFunctions()
 	//isContainer(uid)
 	lua_register(m_luaState, "isContainer", LuaScriptInterface::luaIsContainer);
 
-	//isCorpse(uid)
-	lua_register(m_luaState, "isCorpse", LuaScriptInterface::luaIsCorpse);
-
 	//isMovable(uid)
 	lua_register(m_luaState, "isMovable", LuaScriptInterface::luaIsMovable);
 
@@ -1976,24 +1973,6 @@ void LuaScriptInterface::registerFunctions()
 
 	//getCreatureTarget(cid)
 	lua_register(m_luaState, "getCreatureTarget", LuaScriptInterface::luaGetCreatureTarget);
-
-	//isItemStackable(itemid)
-	lua_register(m_luaState, "isItemStackable", LuaScriptInterface::luaIsItemStackable);
-
-	//isItemRune(itemid)
-	lua_register(m_luaState, "isItemRune", LuaScriptInterface::luaIsItemRune);
-
-	//isItemFluidContainer(itemid)
-	lua_register(m_luaState, "isItemFluidContainer", LuaScriptInterface::luaIsItemFluidContainer);
-
-	//isItemContainer(itemid)
-	lua_register(m_luaState, "isItemContainer", LuaScriptInterface::luaIsItemContainer);
-
-	//isItemMovable(itemid)
-	lua_register(m_luaState, "isItemMovable", LuaScriptInterface::luaIsItemMovable);
-
-	//isItemDoor(itemid)
-	lua_register(m_luaState, "isItemDoor", LuaScriptInterface::luaIsItemDoor);
 
 	//isSightClear(fromPos, toPos, floorCheck)
 	lua_register(m_luaState, "isSightClear", LuaScriptInterface::luaIsSightClear);
@@ -2258,9 +2237,6 @@ void LuaScriptInterface::registerFunctions()
 
 	//getModList()
 	lua_register(m_luaState, "getModList", LuaScriptInterface::luaGetModList);
-
-	//getFluidSourceType(type)
-	lua_register(m_luaState, "getFluidSourceType", LuaScriptInterface::luaGetFluidSourceType);
 
 	//getHighscoreString(skillId)
 	lua_register(m_luaState, "getHighscoreString", LuaScriptInterface::luaGetHighscoreString);
@@ -7006,7 +6982,7 @@ int32_t LuaScriptInterface::luaIsCreature(lua_State* L)
 {
 	//isCreature(cid)
 	ScriptEnviroment* env = getScriptEnv();
-	lua_pushboolean(L, env->getCreatureByUID(popNumber(L)) ? true: false);
+	lua_pushboolean(L, env->getCreatureByUID(popNumber(L)) ? true : false);
 	return 1;
 }
 
@@ -7015,21 +6991,6 @@ int32_t LuaScriptInterface::luaIsContainer(lua_State* L)
 	//isContainer(uid)
 	ScriptEnviroment* env = getScriptEnv();
 	lua_pushboolean(L, env->getContainerByUID(popNumber(L)) ? true : false);
-	return 1;
-}
-
-int32_t LuaScriptInterface::luaIsCorpse(lua_State* L)
-{
-	//isCorpse(uid)
-	ScriptEnviroment* env = getScriptEnv();
-	if(Item* item = env->getItemByUID(popNumber(L)))
-	{
-		const ItemType& it = Item::items[item->getID()];
-		lua_pushboolean(L, it.corpseType != RACE_NONE);
-	}
-	else
-		lua_pushboolean(L, false);
-
 	return 1;
 }
 
@@ -7276,20 +7237,6 @@ int32_t LuaScriptInterface::luaGetContainerCap(lua_State* L)
 	ScriptEnviroment* env = getScriptEnv();
 	if(Container* container = env->getContainerByUID(popNumber(L)))
 		lua_pushnumber(L, container->capacity());
-	else
-	{
-		reportErrorFunc(getErrorDesc(LUA_ERROR_CONTAINER_NOT_FOUND));
-		lua_pushboolean(L, false);
-	}
-	return 1;
-}
-
-int32_t LuaScriptInterface::luaGetContainerCapById(lua_State* L)
-{
-	//getContainerCapById(itemid)
-	const ItemType& it = Item::items[popNumber(L)];
-	if(it.isContainer())
-		lua_pushnumber(L, it.maxItems);
 	else
 	{
 		reportErrorFunc(getErrorDesc(LUA_ERROR_CONTAINER_NOT_FOUND));
@@ -7911,48 +7858,6 @@ int32_t LuaScriptInterface::luaGetCreatureTarget(lua_State* L)
 		reportErrorFunc(getErrorDesc(LUA_ERROR_CREATURE_NOT_FOUND));
 		lua_pushboolean(L, false);
 	}
-	return 1;
-}
-
-int32_t LuaScriptInterface::luaIsItemStackable(lua_State* L)
-{
-	//isItemStackable(itemid)
-	lua_pushboolean(L, Item::items[popNumber(L)].stackable);
-	return 1;
-}
-
-int32_t LuaScriptInterface::luaIsItemRune(lua_State* L)
-{
-	//isItemRune(itemid)
-	lua_pushboolean(L, Item::items[popNumber(L)].isRune());
-	return 1;
-}
-
-int32_t LuaScriptInterface::luaIsItemDoor(lua_State* L)
-{
-	//isItemDoor(itemid)
-	lua_pushboolean(L, Item::items[popNumber(L)].isDoor());
-	return 1;
-}
-
-int32_t LuaScriptInterface::luaIsItemContainer(lua_State* L)
-{
-	//isItemContainer(itemid)
-	lua_pushboolean(L, Item::items[popNumber(L)].isContainer());
-	return 1;
-}
-
-int32_t LuaScriptInterface::luaIsItemFluidContainer(lua_State* L)
-{
-	//isItemFluidContainer(itemid)
-	lua_pushboolean(L, Item::items[popNumber(L)].isFluidContainer());
-	return 1;
-}
-
-int32_t LuaScriptInterface::luaIsItemMovable(lua_State* L)
-{
-	//isItemMovable(itemid)
-	lua_pushboolean(L, Item::items[popNumber(L)].moveable);
 	return 1;
 }
 
@@ -8897,21 +8802,6 @@ int32_t LuaScriptInterface::luaGetSpectators(lua_State* L)
 		lua_pushnumber(L, env->addThing(*it));
 		lua_settable(L, -3);
 	}
-
-	return 1;
-}
-
-int32_t LuaScriptInterface::luaGetFluidSourceType(lua_State* L)
-{
-	//getFluidSourceType(type)
-	const ItemType& it = Item::items[popNumber(L)];
-	if(!it.id)
-	{
-		reportErrorFunc(getErrorDesc(LUA_ERROR_ITEM_NOT_FOUND));
-		lua_pushboolean(L, false);
-	}
-	else
-		lua_pushnumber(L, it.fluidSource);
 
 	return 1;
 }

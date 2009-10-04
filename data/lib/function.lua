@@ -474,13 +474,35 @@ function setHealingFormula(combat, type, minl, maxl, minm, maxm, min, max)
 end
 
 function doChangeTypeItem(uid, subtype)
-	local item = getThing(uid)
-	if(item.itemid < 100) then
+	local thing = getThing(uid)
+	if(thing.itemid < 100) then
 		return false
 	end
 
 	local subtype = subtype or 1
-	return doTransformItem(item.uid, item.itemid, subtype)
+	return doTransformItem(thing.uid, thing.itemid, subtype)
+end
+
+function doSetItemText(uid, text, writer, date)
+	local thing = getThing(uid)
+	if(thing.itemid < 100) then
+		return false
+	end
+
+	doItemSetAttribute(uid, "text", text)
+	if(writer ~= nil) then
+		doItemSetAttribute(uid, "writer", tostring(writer))
+		if(date ~= nil) then
+			doItemSetAttribute(uid, "date", tonumber(date))
+		end
+	end
+
+	return true
+end
+
+function getFluidSourceType(itemid)
+	local item = getItemInfo(itemid)
+	return item and item.fluidSource or false
 end
 
 function getDepotId(uid)
@@ -559,4 +581,53 @@ end
 function getItemLevelDoor(itemid)
 	local item = getItemInfo(itemid)
 	return item and item.levelDoor or false
+end
+
+function isItemStackable(itemid)
+	local item = getItemInfo(itemid)
+	return item and item.stackable or false
+end
+
+function isItemRune(itemid)
+	local item = getItemInfo(itemid)
+	return item and item.clientCharges or false
+end
+
+function isItemDoor(itemid)
+	local item = getItemInfo(itemid)
+	return item and item.type == 5 or false
+end
+
+function isItemContainer(itemid)
+	local item = getItemInfo(itemid)
+	return item and item.group == 2 or false
+end
+
+function isItemFluidContainer(itemid)
+	local item = getItemInfo(itemid)
+	return item and item.group == 12 or false
+end
+
+function isItemMovable(itemid)
+	local item = getItemInfo(itemid)
+	return item and item.movable or false
+end
+
+function isCorpse(uid)
+	local thing = getThing(uid)
+	if(thing.itemid < 100) then
+		return false
+	end
+
+	local item = getItemInfo(thing.itemid)
+	return item and item.corpseType ~= 0 or false
+end
+
+function getContainerCapById(itemid)
+	local item = getItemInfo(itemid)
+	if(not item or item.group ~= 12) then
+		return false
+	end
+
+	return item.maxItems
 end
