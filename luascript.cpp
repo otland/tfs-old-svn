@@ -2405,7 +2405,7 @@ const luaL_Reg LuaScriptInterface::luaStdTable[] =
 	{"clog", LuaScriptInterface::luaStdClog},
 
 	{NULL, NULL}
-}
+};
 
 int32_t LuaScriptInterface::internalGetPlayerInfo(lua_State* L, PlayerInfo_t info)
 {
@@ -5802,7 +5802,7 @@ int32_t LuaScriptInterface::luaDoCombat(lua_State* L)
 int32_t LuaScriptInterface::luaDoCombatAreaHealth(lua_State* L)
 {
 	//doCombatAreaHealth(cid, type, pos, area, min, max, effect)
-	uint8_t effect = (uint8_t)popNumber(L);
+	MagicEffect_t effect = (MagicEffect_t)popNumber(L);
 	int32_t maxChange = (int32_t)popNumber(L), minChange = (int32_t)popNumber(L);
 	uint32_t areaId = popNumber(L);
 
@@ -5814,11 +5814,9 @@ int32_t LuaScriptInterface::luaDoCombatAreaHealth(lua_State* L)
 
 	ScriptEnviroment* env = getScriptEnv();
 	Creature* creature = NULL;
-
-	if(cid != 0)
+	if(cid)
 	{
-		creature = env->getCreatureByUID(cid);
-		if(!creature)
+		if(!(creature = env->getCreatureByUID(cid)))
 		{
 			reportErrorFunc(getErrorDesc(LUA_ERROR_CREATURE_NOT_FOUND));
 			lua_pushboolean(L, false);
@@ -5832,8 +5830,8 @@ int32_t LuaScriptInterface::luaDoCombatAreaHealth(lua_State* L)
 		CombatParams params;
 		params.combatType = combatType;
 		params.effects.impact = effect;
-		Combat::doCombatHealth(creature, pos, area, minChange, maxChange, params);
 
+		Combat::doCombatHealth(creature, pos, area, minChange, maxChange, params);
 		lua_pushboolean(L, true);
 	}
 	else
@@ -5848,18 +5846,17 @@ int32_t LuaScriptInterface::luaDoCombatAreaHealth(lua_State* L)
 int32_t LuaScriptInterface::luaDoTargetCombatHealth(lua_State* L)
 {
 	//doTargetCombatHealth(cid, target, type, min, max, effect)
-	uint8_t effect = (uint8_t)popNumber(L);
+	MagicEffect_t effect = (MagicEffect_t)popNumber(L);
 	int32_t maxChange = (int32_t)popNumber(L), minChange = (int32_t)popNumber(L);
+
 	CombatType_t combatType = (CombatType_t)popNumber(L);
 	uint32_t targetCid = popNumber(L), cid = popNumber(L);
 
 	ScriptEnviroment* env = getScriptEnv();
 	Creature* creature = NULL;
-
-	if(cid != 0)
+	if(cid)
 	{
-		creature = env->getCreatureByUID(cid);
-		if(!creature)
+		if(!(creature = env->getCreatureByUID(cid)))
 		{
 			reportErrorFunc(getErrorDesc(LUA_ERROR_CREATURE_NOT_FOUND));
 			lua_pushboolean(L, false);
@@ -5873,8 +5870,8 @@ int32_t LuaScriptInterface::luaDoTargetCombatHealth(lua_State* L)
 		CombatParams params;
 		params.combatType = combatType;
 		params.effects.impact = effect;
-		Combat::doCombatHealth(creature, target, minChange, maxChange, params);
 
+		Combat::doCombatHealth(creature, target, minChange, maxChange, params);
 		lua_pushboolean(L, true);
 	}
 	else
@@ -5882,28 +5879,26 @@ int32_t LuaScriptInterface::luaDoTargetCombatHealth(lua_State* L)
 		reportErrorFunc(getErrorDesc(LUA_ERROR_CREATURE_NOT_FOUND));
 		lua_pushboolean(L, false);
 	}
+
 	return 1;
 }
 
 int32_t LuaScriptInterface::luaDoCombatAreaMana(lua_State* L)
 {
 	//doCombatAreaMana(cid, pos, area, min, max, effect)
-	uint8_t effect = (uint8_t)popNumber(L);
+	MagicEffect_t effect = (MagicEffect_t)popNumber(L);
 	int32_t maxChange = (int32_t)popNumber(L), minChange = (int32_t)popNumber(L);
 	uint32_t areaId = popNumber(L);
 
 	PositionEx pos;
 	popPosition(L, pos);
-
 	uint32_t cid = popNumber(L);
 
 	ScriptEnviroment* env = getScriptEnv();
 	Creature* creature = NULL;
-
-	if(cid != 0)
+	if(cid)
 	{
-		creature = env->getCreatureByUID(cid);
-		if(!creature)
+		if(!(creature = env->getCreatureByUID(cid)))
 		{
 			reportErrorFunc(getErrorDesc(LUA_ERROR_CREATURE_NOT_FOUND));
 			lua_pushboolean(L, false);
@@ -5916,8 +5911,8 @@ int32_t LuaScriptInterface::luaDoCombatAreaMana(lua_State* L)
 	{
 		CombatParams params;
 		params.effects.impact = effect;
-		Combat::doCombatMana(creature, pos, area, minChange, maxChange, params);
 
+		Combat::doCombatMana(creature, pos, area, minChange, maxChange, params);
 		lua_pushboolean(L, true);
 	}
 	else
@@ -5925,24 +5920,22 @@ int32_t LuaScriptInterface::luaDoCombatAreaMana(lua_State* L)
 		reportErrorFunc(getErrorDesc(LUA_ERROR_AREA_NOT_FOUND));
 		lua_pushboolean(L, false);
 	}
+
 	return 1;
 }
 
 int32_t LuaScriptInterface::luaDoTargetCombatMana(lua_State* L)
 {
 	//doTargetCombatMana(cid, target, min, max, effect)
-	Creature* creature = NULL;
-
-	uint8_t effect = (uint8_t)popNumber(L);
+	MagicEffect_t effect = (uint8_t)popNumber(L);
 	int32_t maxChange = (int32_t)popNumber(L), minChange = (int32_t)popNumber(L);
-	uint32_t targetCid = popNumber(L);
-	uint32_t cid = popNumber(L);
+	uint32_t targetCid = popNumber(L), cid = popNumber(L);
 
 	ScriptEnviroment* env = getScriptEnv();
-	if(cid != 0)
+	Creature* creature = NULL;
+	if(cid)
 	{
-		creature = env->getCreatureByUID(cid);
-		if(!creature)
+		if(!(creature = env->getCreatureByUID(cid)))
 		{
 			reportErrorFunc(getErrorDesc(LUA_ERROR_CREATURE_NOT_FOUND));
 			lua_pushboolean(L, false);
@@ -5954,8 +5947,8 @@ int32_t LuaScriptInterface::luaDoTargetCombatMana(lua_State* L)
 	{
 		CombatParams params;
 		params.effects.impact = effect;
-		Combat::doCombatMana(creature, target, minChange, maxChange, params);
 
+		Combat::doCombatMana(creature, target, minChange, maxChange, params);
 		lua_pushboolean(L, true);
 	}
 	else
@@ -5963,25 +5956,25 @@ int32_t LuaScriptInterface::luaDoTargetCombatMana(lua_State* L)
 		reportErrorFunc(getErrorDesc(LUA_ERROR_CREATURE_NOT_FOUND));
 		lua_pushboolean(L, false);
 	}
+
 	return 1;
 }
 
 int32_t LuaScriptInterface::luaDoCombatAreaCondition(lua_State* L)
 {
 	//doCombatAreaCondition(cid, pos, area, condition, effect)
-	Creature* creature = NULL;
-	PositionEx pos;
-
-	uint8_t effect = (uint8_t)popNumber(L);
+	MagicEffect_t effect = (MagicEffect_t)popNumber(L);
 	uint32_t conditionId = popNumber(L), areaId = popNumber(L);
+
+	PositionEx pos;
 	popPosition(L, pos);
 	uint32_t cid = popNumber(L);
 
 	ScriptEnviroment* env = getScriptEnv();
-	if(cid != 0)
+	Creature* creature = NULL;
+	if(cid)
 	{
-		creature = env->getCreatureByUID(cid);
-		if(!creature)
+		if(!(creature = env->getCreatureByUID(cid)))
 		{
 			reportErrorFunc(getErrorDesc(LUA_ERROR_CREATURE_NOT_FOUND));
 			lua_pushboolean(L, false);
@@ -6019,16 +6012,14 @@ int32_t LuaScriptInterface::luaDoCombatAreaCondition(lua_State* L)
 int32_t LuaScriptInterface::luaDoTargetCombatCondition(lua_State* L)
 {
 	//doTargetCombatCondition(cid, target, condition, effect)
-	uint8_t effect = (uint8_t)popNumber(L);
+	MagicEffect_t effect = (MagicEffect_t)popNumber(L);
 	uint32_t conditionId = popNumber(L), targetCid = popNumber(L), cid = popNumber(L);
 
 	ScriptEnviroment* env = getScriptEnv();
 	Creature* creature = NULL;
-
-	if(cid != 0)
+	if(cid)
 	{
-		creature = env->getCreatureByUID(cid);
-		if(!creature)
+		if(!(creature = env->getCreatureByUID(cid)))
 		{
 			reportErrorFunc(getErrorDesc(LUA_ERROR_CREATURE_NOT_FOUND));
 			lua_pushboolean(L, false);
@@ -6043,8 +6034,8 @@ int32_t LuaScriptInterface::luaDoTargetCombatCondition(lua_State* L)
 			CombatParams params;
 			params.effects.impact = effect;
 			params.conditionList.push_back(condition);
-			Combat::doCombatCondition(creature, target, params);
 
+			Combat::doCombatCondition(creature, target, params);
 			lua_pushboolean(L, true);
 		}
 		else
@@ -6058,27 +6049,26 @@ int32_t LuaScriptInterface::luaDoTargetCombatCondition(lua_State* L)
 		reportErrorFunc(getErrorDesc(LUA_ERROR_CREATURE_NOT_FOUND));
 		lua_pushboolean(L, false);
 	}
+
 	return 1;
 }
 
 int32_t LuaScriptInterface::luaDoCombatAreaDispel(lua_State* L)
 {
 	//doCombatAreaDispel(cid, pos, area, type, effect)
-	uint8_t effect = (uint8_t)popNumber(L);
+	MagicEffect_t effect = (MagicEffect_t)popNumber(L);
 	ConditionType_t dispelType = (ConditionType_t)popNumber(L);
 	uint32_t areaId = popNumber(L);
+
 	PositionEx pos;
 	popPosition(L, pos);
-
 	uint32_t cid = popNumber(L);
 
 	ScriptEnviroment* env = getScriptEnv();
 	Creature* creature = NULL;
-
-	if(cid != 0)
+	if(cid)
 	{
-		creature = env->getCreatureByUID(cid);
-		if(!creature)
+		if(!(creature = env->getCreatureByUID(cid)))
 		{
 			reportErrorFunc(getErrorDesc(LUA_ERROR_CREATURE_NOT_FOUND));
 			lua_pushboolean(L, false);
@@ -6092,8 +6082,8 @@ int32_t LuaScriptInterface::luaDoCombatAreaDispel(lua_State* L)
 		CombatParams params;
 		params.effects.impact = effect;
 		params.dispelType = dispelType;
-		Combat::doCombatDispel(creature, pos, area, params);
 
+		Combat::doCombatDispel(creature, pos, area, params);
 		lua_pushboolean(L, true);
 	}
 	else
@@ -6101,24 +6091,22 @@ int32_t LuaScriptInterface::luaDoCombatAreaDispel(lua_State* L)
 		reportErrorFunc(getErrorDesc(LUA_ERROR_AREA_NOT_FOUND));
 		lua_pushboolean(L, false);
 	}
+
 	return 1;
 }
 
 int32_t LuaScriptInterface::luaDoTargetCombatDispel(lua_State* L)
 {
 	//doTargetCombatDispel(cid, target, type, effect)
-	uint8_t effect = (uint8_t)popNumber(L);
+	MagicEffect_t effect = (MagicEffect_t)popNumber(L);
 	ConditionType_t dispelType = (ConditionType_t)popNumber(L);
 	uint32_t targetCid = popNumber(L), cid = popNumber(L);
 
 	ScriptEnviroment* env = getScriptEnv();
 	Creature* creature = NULL;
-
-	if(cid != 0)
+	if(cid)
 	{
-		creature = env->getCreatureByUID(cid);
-
-		if(!creature)
+		if(!(creature = env->getCreatureByUID(cid)))
 		{
 			reportErrorFunc(getErrorDesc(LUA_ERROR_CREATURE_NOT_FOUND));
 			lua_pushboolean(L, false);
@@ -6126,14 +6114,13 @@ int32_t LuaScriptInterface::luaDoTargetCombatDispel(lua_State* L)
 		}
 	}
 
-	Creature* target = env->getCreatureByUID(targetCid);
-	if(target)
+	if(Creature* target = env->getCreatureByUID(targetCid))
 	{
 		CombatParams params;
 		params.effects.impact = effect;
 		params.dispelType = dispelType;
-		Combat::doCombatDispel(creature, target, params);
 
+		Combat::doCombatDispel(creature, target, params);
 		lua_pushboolean(L, true);
 	}
 	else
@@ -8003,7 +7990,7 @@ int32_t LuaScriptInterface::luaIsInArray(lua_State* L)
 		return 1;
 	}
 
-	std::type_info type = value.type();
+	const std::type_info& type = value.type();
 	if(!caseSensitive && type == typeid(std::string))
 		value = asLowerCaseString(boost::any_cast<std::string>(value));
 
@@ -9189,8 +9176,8 @@ int32_t LuaScriptInterface::luaGetItemInfo(lua_State* L)
 	setField(L, "ammoType", (int32_t)item->ammoType);
 	//TODO: transformToOnUse
 	setField(L, "transformToFree", item->transformToFree);
-	setField(L, "transformToEquip", item->transformToEquip);
-	setField(L, "transformToDeEquip", item->transformToDeEquip);
+	setField(L, "transformToOnEquip", item->transformToOnEquip);
+	setField(L, "transformToOnDeEquip", item->transformToOnDeEquip);
 	setField(L, "clientId", item->clientId);
 	setField(L, "maxItems", item->maxItems);
 	setField(L, "slotPosition", item->slotPosition);
@@ -9219,7 +9206,7 @@ int32_t LuaScriptInterface::luaGetItemInfo(lua_State* L)
 	setField(L, "attackSpeed", item->attackSpeed);
 	setField(L, "wieldInfo", item->wieldInfo);
 	setField(L, "minRequiredLevel", item->minReqLevel);
-	setField(L, "minRequiredMagicLevel", item->minReqMagLevel);
+	setField(L, "minRequiredMagicLevel", item->minReqMagicLevel);
 	setField(L, "worth", item->worth);
 	setField(L, "levelDoor", item->levelDoor);
 	setField(L, "name", item->name.c_str());

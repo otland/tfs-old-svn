@@ -4128,7 +4128,7 @@ bool Game::combatBlockHit(CombatType_t combatType, Creature* attacker, Creature*
 		}
 	}
 
-	addMagicEffect(list, targetPos, magicEffect);
+	addMagicEffect(list, targetPos, effect);
 	return true;
 }
 

@@ -694,7 +694,7 @@ void Combat::addDistanceEffect(Creature* caster, const Position& fromPos, const 
 				break;
 
 			default:
-				effect = NM_MAGIC_NONE;
+				effect = NM_SHOOT_NONE;
 				break;
 		}
 	}
