@@ -1304,7 +1304,7 @@ void Player::onCreatureAppear(const Creature* creature)
 		g_moveEvents->onPlayerEquip(this, item, (slots_t)slot, false);
 	}
 
-	if(BedItem* bed = Beds::getInstance().getBedBySleeper(getGUID()))
+	if(BedItem* bed = Beds::getInstance()->getBedBySleeper(getGUID()))
 		bed->wakeUp();
 
 	Outfit outfit;
@@ -4185,7 +4185,7 @@ void Player::manageAccount(const std::string &text)
 						IOLoginData::getInstance()->changeName(tmp, managerString, managerString2) &&
 						IOBan::getInstance()->removePlayerBanishment(tmp, PLAYERBAN_LOCK))
 					{
-						if(House* house = Houses::getInstance().getHouseByPlayerId(tmp))
+						if(House* house = Houses::getInstance()->getHouseByPlayerId(tmp))
 							house->updateDoorDescription(managerString);
 
 						talkState[1] = true;

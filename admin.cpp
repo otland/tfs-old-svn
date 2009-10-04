@@ -457,7 +457,7 @@ void ProtocolAdmin::adminCommandPayHouses()
 	if(!output)
 		return;
 
-	Houses::getInstance().payHouses();
+	Houses::getInstance()->payHouses();
 	addLogLine(LOGTYPE_EVENT, "pay houses ok");
 
 	TRACK_MESSAGE(output);
@@ -525,7 +525,7 @@ void ProtocolAdmin::adminCommandSetOwner(const std::string& param)
 			if(size > 2)
 				clean = booleanString(params[2]);
 
-			if(House* house = Houses::getInstance().getHouse(houseId))
+			if(House* house = Houses::getInstance()->getHouse(houseId))
 			{
 				uint32_t guid;
 				if(IOLoginData::getInstance()->getGuidByName(guid, name))
@@ -757,7 +757,7 @@ Item* Admin::createMail(const std::string xmlData, std::string& name, uint32_t& 
 
 	if(readXMLString(root, "town", strValue))
 	{
-		Town* town = Towns::getInstance().getTown(strValue);
+		Town* town = Towns::getInstance()->getTown(strValue);
 		if(!town)
 			return false;
 

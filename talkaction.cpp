@@ -391,7 +391,7 @@ bool TalkAction::houseBuy(Creature* creature, const std::string& cmd, const std:
 
 	if(!house->isGuild())
 	{
-		if(Houses::getInstance().getHouseByPlayerId(player->getGUID()))
+		if(Houses::getInstance()->getHouseByPlayerId(player->getGUID()))
 		{
 			player->sendCancel("You already rent another house.");
 			g_game.addMagicEffect(player->getPosition(), NM_MAGIC_POFF);
@@ -399,7 +399,7 @@ bool TalkAction::houseBuy(Creature* creature, const std::string& cmd, const std:
 		}
 
 		uint16_t accountHouses = g_config.getNumber(ConfigManager::HOUSES_PER_ACCOUNT);
-		if(accountHouses > 0 && Houses::getInstance().getHousesCount(player->getAccount()) >= accountHouses)
+		if(accountHouses > 0 && Houses::getInstance()->getHousesCount(player->getAccount()) >= accountHouses)
 		{
 			char buffer[80];
 			sprintf(buffer, "You may own only %d house%s per account.", accountHouses, (accountHouses != 1 ? "s" : ""));
@@ -435,7 +435,7 @@ bool TalkAction::houseBuy(Creature* creature, const std::string& cmd, const std:
 			return false;
 		}
 
-		if(Houses::getInstance().getHouseByGuildId(player->getGuildId()))
+		if(Houses::getInstance()->getHouseByGuildId(player->getGuildId()))
 		{
 			player->sendCancel("Your guild rents already another hall.");
 			g_game.addMagicEffect(player->getPosition(), NM_MAGIC_POFF);
@@ -484,8 +484,8 @@ bool TalkAction::houseSell(Creature* creature, const std::string& cmd, const std
 	if(!player || !g_config.getBool(ConfigManager::HOUSE_BUY_AND_SELL))
 		return false;
 
-	House* house = Houses::getInstance().getHouseByPlayerId(player->getGUID());
-	if(!house && (!player->getGuildId() || !(house = Houses::getInstance().getHouseByGuildId(player->getGuildId()))))
+	House* house = Houses::getInstance()->getHouseByPlayerId(player->getGUID());
+	if(!house && (!player->getGuildId() || !(house = Houses::getInstance()->getHouseByGuildId(player->getGuildId()))))
 	{
 		player->sendCancel("You do not rent any flat.");
 		g_game.addMagicEffect(player->getPosition(), NM_MAGIC_POFF);
@@ -517,7 +517,7 @@ bool TalkAction::houseSell(Creature* creature, const std::string& cmd, const std
 
 	if(!house->isGuild())
 	{
-		if(Houses::getInstance().getHouseByPlayerId(tradePartner->getGUID()))
+		if(Houses::getInstance()->getHouseByPlayerId(tradePartner->getGUID()))
 		{
 			player->sendCancel("Trade player already rents another house.");
 			g_game.addMagicEffect(player->getPosition(), NM_MAGIC_POFF);
@@ -525,7 +525,7 @@ bool TalkAction::houseSell(Creature* creature, const std::string& cmd, const std
 		}
 
 		uint16_t housesPerAccount = g_config.getNumber(ConfigManager::HOUSES_PER_ACCOUNT);
-		if(housesPerAccount > 0 && Houses::getInstance().getHousesCount(tradePartner->getAccount()) >= housesPerAccount)
+		if(housesPerAccount > 0 && Houses::getInstance()->getHousesCount(tradePartner->getAccount()) >= housesPerAccount)
 		{
 			char buffer[100];
 			sprintf(buffer, "Trade player has reached limit of %d house%s per account.", housesPerAccount, (housesPerAccount != 1 ? "s" : ""));
@@ -562,7 +562,7 @@ bool TalkAction::houseSell(Creature* creature, const std::string& cmd, const std
 			return false;
 		}
 
-		if(Houses::getInstance().getHouseByGuildId(tradePartner->getGuildId()))
+		if(Houses::getInstance()->getHouseByGuildId(tradePartner->getGuildId()))
 		{
 			player->sendCancel("Trade player's guild already rents another hall.");
 			g_game.addMagicEffect(player->getPosition(), NM_MAGIC_POFF);
@@ -577,7 +577,7 @@ bool TalkAction::houseSell(Creature* creature, const std::string& cmd, const std
 		return false;
 	}
 
-	if(!Houses::getInstance().payRent(player, house, 0))
+	if(!Houses::getInstance()->payRent(player, house, 0))
 	{
 		player->sendCancel("You have to pay a pre-rent first.");
 		g_game.addMagicEffect(player->getPosition(), NM_MAGIC_POFF);
@@ -605,7 +605,7 @@ bool TalkAction::houseKick(Creature* creature, const std::string& cmd, const std
 	if(g_game.getPlayerByNameWildcard(param, targetPlayer) != RET_NOERROR)
 		targetPlayer = player;
 
-	House* house = Houses::getInstance().getHouseByPlayer(targetPlayer);
+	House* house = Houses::getInstance()->getHouseByPlayer(targetPlayer);
 	if(!house || !house->kickPlayer(player, targetPlayer))
 	{
 		g_game.addMagicEffect(player->getPosition(), NM_MAGIC_POFF);
@@ -623,7 +623,7 @@ bool TalkAction::houseDoorList(Creature* creature, const std::string& cmd, const
 	if(!player)
 		return false;
 
-	House* house = Houses::getInstance().getHouseByPlayer(player);
+	House* house = Houses::getInstance()->getHouseByPlayer(player);
 	if(!house)
 	{
 		player->sendCancelMessage(RET_NOTPOSSIBLE);
@@ -653,7 +653,7 @@ bool TalkAction::houseGuestList(Creature* creature, const std::string& cmd, cons
 	if(!player)
 		return false;
 
-	House* house = Houses::getInstance().getHouseByPlayer(player);
+	House* house = Houses::getInstance()->getHouseByPlayer(player);
 	if(house && house->canEditAccessList(GUEST_LIST, player))
 	{
 		player->setEditHouse(house, GUEST_LIST);
@@ -675,7 +675,7 @@ bool TalkAction::houseSubOwnerList(Creature* creature, const std::string& cmd, c
 	if(!player)
 		return false;
 
-	House* house = Houses::getInstance().getHouseByPlayer(player);
+	House* house = Houses::getInstance()->getHouseByPlayer(player);
 	if(house && house->canEditAccessList(SUBOWNER_LIST, player))
 	{
 		player->setEditHouse(house, SUBOWNER_LIST);
@@ -915,7 +915,7 @@ bool TalkAction::thingProporties(Creature* creature, const std::string& cmd, con
 					_player->setStaminaMinutes(atoi(parseParams(it, tokens.end()).c_str()));
 				else if(action == "town" || action == "temple")
 				{
-					if(Town* town = Towns::getInstance().getTown(parseParams(it, tokens.end())))
+					if(Town* town = Towns::getInstance()->getTown(parseParams(it, tokens.end())))
 					{
 						_player->setMasterPosition(town->getPosition());
 						_player->setTown(town->getID());

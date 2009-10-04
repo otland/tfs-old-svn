@@ -4763,7 +4763,7 @@ int32_t LuaScriptInterface::luaDoPlayerSetTown(lua_State* L)
 	ScriptEnviroment* env = getScriptEnv();
 	if(Player* player = env->getPlayerByUID(popNumber(L)))
 	{
-		if(Town* town = Towns::getInstance().getTown(townid))
+		if(Town* town = Towns::getInstance()->getTown(townid))
 		{
 			player->setMasterPosition(town->getPosition());
 			player->setTown(townid);
@@ -4877,7 +4877,7 @@ int32_t LuaScriptInterface::luaGetHouseInfo(lua_State* L)
 	if(lua_gettop(L) > 1)
 		displayError = popNumber(L);
 
-	House* house = Houses::getInstance().getHouse(popNumber(L));
+	House* house = Houses::getInstance()->getHouse(popNumber(L));
 	if(!house)
 	{
 		if(displayError)
@@ -4916,7 +4916,7 @@ int32_t LuaScriptInterface::luaGetHouseAccessList(lua_State* L)
 {
 	//getHouseAccessList(houseid, listid)
 	uint32_t listid = popNumber(L);
-	if(House* house = Houses::getInstance().getHouse(popNumber(L)))
+	if(House* house = Houses::getInstance()->getHouse(popNumber(L)))
 	{
 		std::string list;
 		if(house->getAccessList(listid, list))
@@ -4935,7 +4935,7 @@ int32_t LuaScriptInterface::luaGetHouseAccessList(lua_State* L)
 int32_t LuaScriptInterface::luaGetHouseByPlayerGUID(lua_State* L)
 {
 	//getHouseByPlayerGUID(guid)
-	if(House* house = Houses::getInstance().getHouseByPlayerId(popNumber(L)))
+	if(House* house = Houses::getInstance()->getHouseByPlayerId(popNumber(L)))
 		lua_pushnumber(L, house->getId());
 	else
 		lua_pushnil(L);
@@ -4948,7 +4948,7 @@ int32_t LuaScriptInterface::luaSetHouseAccessList(lua_State* L)
 	std::string list = popString(L);
 	uint32_t listid = popNumber(L);
 
-	if(House* house = Houses::getInstance().getHouse(popNumber(L)))
+	if(House* house = Houses::getInstance()->getHouse(popNumber(L)))
 	{
 		house->setAccessList(listid, list);
 		lua_pushboolean(L, true);
@@ -4969,7 +4969,7 @@ int32_t LuaScriptInterface::luaSetHouseOwner(lua_State* L)
 		clean = popNumber(L);
 
 	uint32_t owner = popNumber(L);
-	if(House* house = Houses::getInstance().getHouse(popNumber(L)))
+	if(House* house = Houses::getInstance()->getHouse(popNumber(L)))
 		lua_pushboolean(L, house->setOwnerEx(owner, clean));
 	else
 	{
@@ -8823,7 +8823,7 @@ int32_t LuaScriptInterface::luaGetTownId(lua_State* L)
 {
 	//getTownId(townName)
 	std::string townName = popString(L);
-	if(Town* town = Towns::getInstance().getTown(townName))
+	if(Town* town = Towns::getInstance()->getTown(townName))
 		lua_pushnumber(L, town->getID());
 	else
 		lua_pushboolean(L, false);
@@ -8835,7 +8835,7 @@ int32_t LuaScriptInterface::luaGetTownName(lua_State* L)
 {
 	//getTownName(townId)
 	uint32_t townId = popNumber(L);
-	if(Town* town = Towns::getInstance().getTown(townId))
+	if(Town* town = Towns::getInstance()->getTown(townId))
 		lua_pushstring(L, town->getName().c_str());
 	else
 		lua_pushboolean(L, false);
@@ -8851,7 +8851,7 @@ int32_t LuaScriptInterface::luaGetTownTemplePosition(lua_State* L)
 		displayError = popNumber(L);
 
 	uint32_t townId = popNumber(L);
-	if(Town* town = Towns::getInstance().getTown(townId))
+	if(Town* town = Towns::getInstance()->getTown(townId))
 		pushPosition(L, town->getPosition(), 255);
 	else
 		lua_pushboolean(L, false);
@@ -8866,9 +8866,9 @@ int32_t LuaScriptInterface::luaGetTownHouses(lua_State* L)
 	if(lua_gettop(L) > 0)
 		townId = popNumber(L);
 
-	HouseMap::iterator it = Houses::getInstance().getHouseBegin();
+	HouseMap::iterator it = Houses::getInstance()->getHouseBegin();
 	lua_newtable(L);
-	for(uint32_t i = 1; it != Houses::getInstance().getHouseEnd(); ++i, ++it)
+	for(uint32_t i = 1; it != Houses::getInstance()->getHouseEnd(); ++i, ++it)
 	{
 		if(townId != 0 && it->second->getTownId() != townId)
 			continue;
@@ -9085,7 +9085,7 @@ int32_t LuaScriptInterface::luaDoCleanHouse(lua_State* L)
 {
 	//doCleanHouse(houseId)
 	uint32_t houseId = popNumber(L);
-	if(House* house = Houses::getInstance().getHouse(houseId))
+	if(House* house = Houses::getInstance()->getHouse(houseId))
 	{
 		house->clean();
 		lua_pushboolean(L, true);

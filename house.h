@@ -254,10 +254,10 @@ class Houses
 {
 	public:
 		virtual ~Houses() {}
-		static Houses& getInstance()
+		static Houses* getInstance()
 		{
 			static Houses instance;
-			return instance;
+			return &instance;
 		}
 
 		bool loadFromXml(std::string filename);

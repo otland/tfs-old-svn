@@ -496,7 +496,7 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool preLo
 
 	player->setSkullEnd((time_t)result->getDataInt("skulltime"), true, skull);
 	player->town = result->getDataInt("town_id");
-	if(Town* town = Towns::getInstance().getTown(player->town))
+	if(Town* town = Towns::getInstance()->getTown(player->town))
 		player->setMasterPosition(town->getPosition());
 
 	player->setLossPercent(LOSS_EXPERIENCE, result->getDataInt("loss_experience"));
@@ -1498,7 +1498,7 @@ DeleteCharacter_t IOLoginData::deleteCharacter(uint32_t accountId, const std::st
 	uint32_t id = result->getDataInt("id");
 	result->free();
 
-	House* house = Houses::getInstance().getHouseByPlayerId(id);
+	House* house = Houses::getInstance()->getHouseByPlayerId(id);
 	if(house)
 		return DELETE_HOUSE;
 

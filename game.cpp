@@ -197,7 +197,7 @@ void Game::setGameState(GameState_t newState)
 					it = Player::autoList.begin();
 				}
 
-				Houses::getInstance().payHouses();
+				Houses::getInstance()->payHouses();
 				saveGameState(false);
 				Dispatcher::getDispatcher().addTask(createTask(boost::bind(&Game::shutdown, this)));
 
@@ -5805,7 +5805,7 @@ bool Game::reloadInfo(ReloadInfo_t reload, uint32_t playerId/* = 0*/)
 
 		case RELOAD_HOUSEPRICES:
 		{
-			if(Houses::getInstance().reloadPrices())
+			if(Houses::getInstance()->reloadPrices())
 				done = true;
 			else
 				std::cout << "[Error - Game::reloadInfo] Failed to reload house prices." << std::endl;
@@ -6020,7 +6020,7 @@ void Game::globalSave()
 	}
 
 	//pay houses
-	Houses::getInstance().payHouses();
+	Houses::getInstance()->payHouses();
 	//clear temporial and expired bans
 	IOBan::getInstance()->clearTemporials();
 	//remove premium days globally if configured to

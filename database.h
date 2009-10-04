@@ -79,7 +79,7 @@ class _Database
 		/**
 		* Singleton implementation.
 		*
-		* Retruns instance of database handler. Don't create database (or drivers) instances in your code - instead of it use Database::getInstance(). This method stores static instance of connection class internaly to make sure exacly one instance of connection is created for entire system.
+		* Retruns instance of database handler. Don't create database (or drivers) instances in your code - instead of it use Database::getInstance()-> This method stores static instance of connection class internaly to make sure exacly one instance of connection is created for entire system.
 		*
 		* @return database connection handler singletor
 		*/

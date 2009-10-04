@@ -724,7 +724,7 @@ bool Houses::loadFromXml(std::string filename)
 			return false;
 		}
 
-		House* house = Houses::getInstance().getHouse(houseId);
+		House* house = Houses::getInstance()->getHouse(houseId);
 		if(!house)
 		{
 			std::cout << "[Error - Houses::loadFromXml] Unknown house with id: " << houseId << std::endl;
@@ -832,7 +832,7 @@ bool Houses::payRent(Player* player, House* house, uint32_t bid, time_t _time/* 
 		player->hasCustomFlag(PlayerCustomFlag_IgnoreHouseRent))
 		return true;
 
-	Town* town = Towns::getInstance().getTown(house->getTownId());
+	Town* town = Towns::getInstance()->getTown(house->getTownId());
 	if(!town)
 		return false;
 
@@ -881,7 +881,7 @@ bool Houses::payHouse(House* house, time_t _time, uint32_t bid)
 		house->getPaidUntil() > _time || !house->getRent())
 		return true;
 
-	Town* town = Towns::getInstance().getTown(house->getTownId());
+	Town* town = Towns::getInstance()->getTown(house->getTownId());
 	if(!town)
 		return false;
 

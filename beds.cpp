@@ -44,7 +44,7 @@ Attr_ReadValue BedItem::readAttr(AttrTypes_t attr, PropStream& propStream)
 				if(IOLoginData::getInstance()->getNameByGuid(_sleeper, name))
 				{
 					setSpecialDescription(name + " is sleeping there.");
-					Beds::getInstance().setBedSleeper(this, _sleeper);
+					Beds::getInstance()->setBedSleeper(this, _sleeper);
 				}
 			}
 
@@ -115,7 +115,7 @@ void BedItem::sleep(Player* player)
 
 	if(!sleeper)
 	{
-		Beds::getInstance().setBedSleeper(this, player->getGUID());
+		Beds::getInstance()->setBedSleeper(this, player->getGUID());
 		internalSetSleeper(player);
 
 		BedItem* nextBedItem = getNextBedItem();
@@ -159,7 +159,7 @@ void BedItem::wakeUp()
 		}
 	}
 
-	Beds::getInstance().setBedSleeper(NULL, sleeper);
+	Beds::getInstance()->setBedSleeper(NULL, sleeper);
 	internalRemoveSleeper();
 
 	BedItem* nextBedItem = getNextBedItem();

@@ -64,10 +64,10 @@ class Beds
 {
 	public:
 		virtual ~Beds() {}
-		static Beds& getInstance()
+		static Beds* getInstance()
 		{
 			static Beds instance;
-			return instance;
+			return &instance;
 		}
 
 		BedItem* getBedBySleeper(uint32_t guid);
