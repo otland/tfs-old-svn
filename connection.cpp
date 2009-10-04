@@ -99,7 +99,7 @@ void Connection::close()
 		return;
 
 	m_connectionState = CONNECTION_STATE_REQUEST_CLOSE;
-	Dispatcher::getDispatcher().addTask(createTask(boost::bind(&Connection::closeConnection, this)));
+	Dispatcher::getInstance()->addTask(createTask(boost::bind(&Connection::closeConnection, this)));
 }
 
 bool ConnectionManager::isDisabled(uint32_t clientIp, int32_t protocolId)
@@ -258,7 +258,7 @@ void Connection::closeSocket()
 void Connection::releaseConnection()
 {
 	if(m_refCount > 0) //Reschedule it and try again.
-		Scheduler::getScheduler().addEvent(createSchedulerTask(SCHEDULER_MINTICKS,
+		Scheduler::getInstance()->addEvent(createSchedulerTask(SCHEDULER_MINTICKS,
 			boost::bind(&Connection::releaseConnection, this)));
 	else
 		deleteConnection();

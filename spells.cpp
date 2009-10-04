@@ -302,7 +302,7 @@ bool BaseSpell::castSpell(Creature* creature, Creature* target)
 }
 
 CombatSpell::CombatSpell(Combat* _combat, bool _needTarget, bool _needDirection) :
-	Event(&g_spells->getScriptInterface())
+	Event(&g_spells->getInterface())
 {
 	combat =_combat;
 	needTarget = _needTarget;
@@ -317,13 +317,13 @@ CombatSpell::~CombatSpell()
 
 bool CombatSpell::loadScriptCombat()
 {
-	if(m_scriptInterface->reserveScriptEnv())
+	if(m_scriptInterface->reserveEnv())
 	{
-		ScriptEnviroment* env = m_scriptInterface->getScriptEnv();
+		ScriptEnviroment* env = m_scriptInterface->getEnv();
 		combat = env->getCombatObject(env->getLastCombatId());
 
 		env->resetCallback();
-		m_scriptInterface->releaseScriptEnv();
+		m_scriptInterface->releaseEnv();
 	}
 
 	return combat != NULL;
@@ -400,9 +400,9 @@ bool CombatSpell::castSpell(Creature* creature, Creature* target)
 bool CombatSpell::executeCastSpell(Creature* creature, const LuaVariant& var)
 {
 	//onCastSpell(cid, var)
-	if(m_scriptInterface->reserveScriptEnv())
+	if(m_scriptInterface->reserveEnv())
 	{
-		ScriptEnviroment* env = m_scriptInterface->getScriptEnv();
+		ScriptEnviroment* env = m_scriptInterface->getEnv();
 		if(m_scripted == EVENT_SCRIPT_BUFFER)
 		{
 			env->setRealPos(creature->getPosition());
@@ -415,11 +415,11 @@ bool CombatSpell::executeCastSpell(Creature* creature, const LuaVariant& var)
 			bool result = true;
 			if(m_scriptInterface->loadBuffer(scriptstream.str()) != -1)
 			{
-				lua_State* L = m_scriptInterface->getLuaState();
+				lua_State* L = m_scriptInterface->getState();
 				result = m_scriptInterface->getGlobalBool(L, "_result", true);
 			}
 
-			m_scriptInterface->releaseScriptEnv();
+			m_scriptInterface->releaseEnv();
 			return result;
 		}
 		else
@@ -432,14 +432,14 @@ bool CombatSpell::executeCastSpell(Creature* creature, const LuaVariant& var)
 
 			env->setScriptId(m_scriptId, m_scriptInterface);
 			env->setRealPos(creature->getPosition());
-			lua_State* L = m_scriptInterface->getLuaState();
+			lua_State* L = m_scriptInterface->getState();
 
 			m_scriptInterface->pushFunction(m_scriptId);
 			lua_pushnumber(L, env->addThing(creature));
 			m_scriptInterface->pushVariant(L, var);
 
 			bool result = m_scriptInterface->callFunction(2);
-			m_scriptInterface->releaseScriptEnv();
+			m_scriptInterface->releaseEnv();
 			return result;
 		}
 	}
@@ -1250,9 +1250,9 @@ bool InstantSpell::internalCastSpell(Creature* creature, const LuaVariant& var)
 bool InstantSpell::executeCastSpell(Creature* creature, const LuaVariant& var)
 {
 	//onCastSpell(cid, var)
-	if(m_scriptInterface->reserveScriptEnv())
+	if(m_scriptInterface->reserveEnv())
 	{
-		ScriptEnviroment* env = m_scriptInterface->getScriptEnv();
+		ScriptEnviroment* env = m_scriptInterface->getEnv();
 		if(m_scripted == EVENT_SCRIPT_BUFFER)
 		{
 			env->setRealPos(creature->getPosition());
@@ -1265,11 +1265,11 @@ bool InstantSpell::executeCastSpell(Creature* creature, const LuaVariant& var)
 			bool result = true;
 			if(m_scriptInterface->loadBuffer(scriptstream.str()) != -1)
 			{
-				lua_State* L = m_scriptInterface->getLuaState();
+				lua_State* L = m_scriptInterface->getState();
 				result = m_scriptInterface->getGlobalBool(L, "_result", true);
 			}
 
-			m_scriptInterface->releaseScriptEnv();
+			m_scriptInterface->releaseEnv();
 			return result;
 		}
 		else
@@ -1282,14 +1282,14 @@ bool InstantSpell::executeCastSpell(Creature* creature, const LuaVariant& var)
 
 			env->setScriptId(m_scriptId, m_scriptInterface);
 			env->setRealPos(creature->getPosition());
-			lua_State* L = m_scriptInterface->getLuaState();
+			lua_State* L = m_scriptInterface->getState();
 
 			m_scriptInterface->pushFunction(m_scriptId);
 			lua_pushnumber(L, env->addThing(creature));
 			m_scriptInterface->pushVariant(L, var);
 
 			bool result = m_scriptInterface->callFunction(2);
-			m_scriptInterface->releaseScriptEnv();
+			m_scriptInterface->releaseEnv();
 			return result;
 		}
 	}
@@ -1934,9 +1934,9 @@ bool RuneSpell::internalCastSpell(Creature* creature, const LuaVariant& var)
 bool RuneSpell::executeCastSpell(Creature* creature, const LuaVariant& var)
 {
 	//onCastSpell(cid, var)
-	if(m_scriptInterface->reserveScriptEnv())
+	if(m_scriptInterface->reserveEnv())
 	{
-		ScriptEnviroment* env = m_scriptInterface->getScriptEnv();
+		ScriptEnviroment* env = m_scriptInterface->getEnv();
 		if(m_scripted == EVENT_SCRIPT_BUFFER)
 		{
 			env->setRealPos(creature->getPosition());
@@ -1949,11 +1949,11 @@ bool RuneSpell::executeCastSpell(Creature* creature, const LuaVariant& var)
 			bool result = true;
 			if(m_scriptInterface->loadBuffer(scriptstream.str()) != -1)
 			{
-				lua_State* L = m_scriptInterface->getLuaState();
+				lua_State* L = m_scriptInterface->getState();
 				result = m_scriptInterface->getGlobalBool(L, "_result", true);
 			}
 
-			m_scriptInterface->releaseScriptEnv();
+			m_scriptInterface->releaseEnv();
 			return result;
 		}
 		else
@@ -1966,14 +1966,14 @@ bool RuneSpell::executeCastSpell(Creature* creature, const LuaVariant& var)
 
 			env->setScriptId(m_scriptId, m_scriptInterface);
 			env->setRealPos(creature->getPosition());
-			lua_State* L = m_scriptInterface->getLuaState();
+			lua_State* L = m_scriptInterface->getState();
 
 			m_scriptInterface->pushFunction(m_scriptId);
 			lua_pushnumber(L, env->addThing(creature));
 			m_scriptInterface->pushVariant(L, var);
 
 			bool result = m_scriptInterface->callFunction(2);
-			m_scriptInterface->releaseScriptEnv();
+			m_scriptInterface->releaseEnv();
 			return result;
 		}
 	}

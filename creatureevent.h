@@ -81,7 +81,7 @@ class CreatureEvents : public BaseEvents
 		virtual Event* getEvent(const std::string& nodeName);
 		virtual bool registerEvent(Event* event, xmlNodePtr p, bool override);
 
-		virtual LuaScriptInterface& getScriptInterface() {return m_scriptInterface;}
+		virtual LuaScriptInterface& getInterface() {return m_scriptInterface;}
 		LuaScriptInterface m_scriptInterface;
 
 		//creature events

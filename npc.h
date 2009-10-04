@@ -418,7 +418,7 @@ class Npc : public Creature
 		void onPlayerCloseChannel(const Player* player);
 
 		void setCreatureFocus(Creature* creature);
-		NpcScriptInterface* getScriptInterface();
+		NpcScriptInterface* getInterface();
 
 	protected:
 		Npc(const std::string& _name);

@@ -485,9 +485,9 @@ int32_t Weapon::getManaCost(const Player* player) const
 bool Weapon::executeUseWeapon(Player* player, const LuaVariant& var) const
 {
 	//onUseWeapon(cid, var)
-	if(m_scriptInterface->reserveScriptEnv())
+	if(m_scriptInterface->reserveEnv())
 	{
-		ScriptEnviroment* env = m_scriptInterface->getScriptEnv();
+		ScriptEnviroment* env = m_scriptInterface->getEnv();
 		if(m_scripted == EVENT_SCRIPT_BUFFER)
 		{
 			env->setRealPos(player->getPosition());
@@ -500,11 +500,11 @@ bool Weapon::executeUseWeapon(Player* player, const LuaVariant& var) const
 			bool result = true;
 			if(m_scriptInterface->loadBuffer(scriptstream.str()) != -1)
 			{
-				lua_State* L = m_scriptInterface->getLuaState();
+				lua_State* L = m_scriptInterface->getState();
 				result = m_scriptInterface->getGlobalBool(L, "_result", true);
 			}
 
-			m_scriptInterface->releaseScriptEnv();
+			m_scriptInterface->releaseEnv();
 			return result;
 		}
 		else
@@ -518,14 +518,14 @@ bool Weapon::executeUseWeapon(Player* player, const LuaVariant& var) const
 			env->setScriptId(m_scriptId, m_scriptInterface);
 			env->setRealPos(player->getPosition());
 
-			lua_State* L = m_scriptInterface->getLuaState();
+			lua_State* L = m_scriptInterface->getState();
 			m_scriptInterface->pushFunction(m_scriptId);
 
 			lua_pushnumber(L, env->addThing(player));
 			m_scriptInterface->pushVariant(L, var);
 
 			bool result = m_scriptInterface->callFunction(2);
-			m_scriptInterface->releaseScriptEnv();
+			m_scriptInterface->releaseEnv();
 			return result;
 		}
 	}

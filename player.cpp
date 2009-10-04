@@ -1637,7 +1637,7 @@ void Player::setNextWalkActionTask(SchedulerTask* task)
 {
 	if(walkTaskEvent)
 	{
-		Scheduler::getScheduler().stopEvent(walkTaskEvent);
+		Scheduler::getInstance()->stopEvent(walkTaskEvent);
 		walkTaskEvent = 0;
 	}
 
@@ -1650,13 +1650,13 @@ void Player::setNextWalkTask(SchedulerTask* task)
 {
 	if(nextStepEvent)
 	{
-		Scheduler::getScheduler().stopEvent(nextStepEvent);
+		Scheduler::getInstance()->stopEvent(nextStepEvent);
 		nextStepEvent = 0;
 	}
 
 	if(task)
 	{
-		nextStepEvent = Scheduler::getScheduler().addEvent(task);
+		nextStepEvent = Scheduler::getInstance()->addEvent(task);
 		setIdleTime(0);
 	}
 }
@@ -1665,13 +1665,13 @@ void Player::setNextActionTask(SchedulerTask* task)
 {
 	if(actionTaskEvent)
 	{
-		Scheduler::getScheduler().stopEvent(actionTaskEvent);
+		Scheduler::getInstance()->stopEvent(actionTaskEvent);
 		actionTaskEvent = 0;
 	}
 
 	if(task)
 	{
-		actionTaskEvent = Scheduler::getScheduler().addEvent(task);
+		actionTaskEvent = Scheduler::getInstance()->addEvent(task);
 		setIdleTime(0);
 	}
 }
@@ -3249,7 +3249,7 @@ bool Player::setAttackedCreature(Creature* creature)
 		setFollowCreature(NULL);
 
 	if(creature)
-		Dispatcher::getDispatcher().addTask(createTask(boost::bind(&Game::checkCreatureAttack, &g_game, getID())));
+		Dispatcher::getInstance()->addTask(createTask(boost::bind(&Game::checkCreatureAttack, &g_game, getID())));
 
 	return true;
 }
@@ -3359,7 +3359,7 @@ void Player::onWalkComplete()
 	if(!walkTask)
 		return;
 
-	walkTaskEvent = Scheduler::getScheduler().addEvent(walkTask);
+	walkTaskEvent = Scheduler::getInstance()->addEvent(walkTask);
 	walkTask = NULL;
 }
 
@@ -3989,7 +3989,7 @@ bool Player::addUnjustifiedKill(const Player* attacked)
 
 		sendTextMessage(MSG_INFO_DESCR, "You have been banished.");
 		g_game.addMagicEffect(getPosition(), NM_MAGIC_MAGIC_POISON);
-		Scheduler::getScheduler().addEvent(createSchedulerTask(1000, boost::bind(
+		Scheduler::getInstance()->addEvent(createSchedulerTask(1000, boost::bind(
 			&Game::kickPlayer, &g_game, getID(), false)));
 	}
 	else

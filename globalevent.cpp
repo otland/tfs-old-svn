@@ -96,9 +96,9 @@ void GlobalEvents::startup()
 	now = std::max(1, (int32_t)(60 - ts->tm_sec)) * 1000;
 
 	execute(GLOBAL_EVENT_STARTUP);
-	Scheduler::getScheduler().addEvent(createSchedulerTask((int32_t)now,
+	Scheduler::getInstance()->addEvent(createSchedulerTask((int32_t)now,
 		boost::bind(&GlobalEvents::timer, this)));
-	Scheduler::getScheduler().addEvent(createSchedulerTask(GLOBAL_THINK_INTERVAL,
+	Scheduler::getInstance()->addEvent(createSchedulerTask(GLOBAL_THINK_INTERVAL,
 		boost::bind(&GlobalEvents::think, this, GLOBAL_THINK_INTERVAL)));
 }
 
@@ -119,7 +119,7 @@ void GlobalEvents::timer()
 	}
 
 	now = std::max(1, (int32_t)(60 - ts->tm_sec)) * 1000;
-	Scheduler::getScheduler().addEvent(createSchedulerTask((int32_t)now,
+	Scheduler::getInstance()->addEvent(createSchedulerTask((int32_t)now,
 		boost::bind(&GlobalEvents::timer, this)));
 }
 
@@ -137,7 +137,7 @@ void GlobalEvents::think(uint32_t interval)
 				<< it->second->getName() << std::endl;
 	}
 
-	Scheduler::getScheduler().addEvent(createSchedulerTask(interval,
+	Scheduler::getInstance()->addEvent(createSchedulerTask(interval,
 		boost::bind(&GlobalEvents::think, this, interval)));
 }
 
@@ -278,9 +278,9 @@ std::string GlobalEvent::getScriptEventParams() const
 int32_t GlobalEvent::executeThink(uint32_t interval, uint32_t lastExecution, uint32_t thinkInterval)
 {
 	//onThink(interval, lastExecution, thinkInterval)
-	if(m_scriptInterface->reserveScriptEnv())
+	if(m_scriptInterface->reserveEnv())
 	{
-		ScriptEnviroment* env = m_scriptInterface->getScriptEnv();
+		ScriptEnviroment* env = m_scriptInterface->getEnv();
 		if(m_scripted == EVENT_SCRIPT_BUFFER)
 		{
 			std::stringstream scriptstream;
@@ -293,11 +293,11 @@ int32_t GlobalEvent::executeThink(uint32_t interval, uint32_t lastExecution, uin
 			bool result = true;
 			if(m_scriptInterface->loadBuffer(scriptstream.str()) != -1)
 			{
-				lua_State* L = m_scriptInterface->getLuaState();
+				lua_State* L = m_scriptInterface->getState();
 				result = m_scriptInterface->getGlobalBool(L, "_result", true);
 			}
 
-			m_scriptInterface->releaseScriptEnv();
+			m_scriptInterface->releaseEnv();
 			return result;
 		}
 		else
@@ -309,7 +309,7 @@ int32_t GlobalEvent::executeThink(uint32_t interval, uint32_t lastExecution, uin
 			#endif
 
 			env->setScriptId(m_scriptId, m_scriptInterface);
-			lua_State* L = m_scriptInterface->getLuaState();
+			lua_State* L = m_scriptInterface->getState();
 
 			m_scriptInterface->pushFunction(m_scriptId);
 			lua_pushnumber(L, interval);
@@ -318,7 +318,7 @@ int32_t GlobalEvent::executeThink(uint32_t interval, uint32_t lastExecution, uin
 			lua_pushnumber(L, thinkInterval);
 
 			bool result = m_scriptInterface->callFunction(3);
-			m_scriptInterface->releaseScriptEnv();
+			m_scriptInterface->releaseEnv();
 			return result;
 		}
 	}
@@ -332,9 +332,9 @@ int32_t GlobalEvent::executeThink(uint32_t interval, uint32_t lastExecution, uin
 int32_t GlobalEvent::executeRecord(uint32_t current, uint32_t old, Player* player)
 {
 	//onRecord(current, old, cid)
-	if(m_scriptInterface->reserveScriptEnv())
+	if(m_scriptInterface->reserveEnv())
 	{
-		ScriptEnviroment* env = m_scriptInterface->getScriptEnv();
+		ScriptEnviroment* env = m_scriptInterface->getEnv();
 		if(m_scripted == EVENT_SCRIPT_BUFFER)
 		{
 			std::stringstream scriptstream;
@@ -346,11 +346,11 @@ int32_t GlobalEvent::executeRecord(uint32_t current, uint32_t old, Player* playe
 			bool result = true;
 			if(m_scriptInterface->loadBuffer(scriptstream.str()) != -1)
 			{
-				lua_State* L = m_scriptInterface->getLuaState();
+				lua_State* L = m_scriptInterface->getState();
 				result = m_scriptInterface->getGlobalBool(L, "_result", true);
 			}
 
-			m_scriptInterface->releaseScriptEnv();
+			m_scriptInterface->releaseEnv();
 			return result;
 		}
 		else
@@ -362,7 +362,7 @@ int32_t GlobalEvent::executeRecord(uint32_t current, uint32_t old, Player* playe
 			#endif
 
 			env->setScriptId(m_scriptId, m_scriptInterface);
-			lua_State* L = m_scriptInterface->getLuaState();
+			lua_State* L = m_scriptInterface->getState();
 
 			m_scriptInterface->pushFunction(m_scriptId);
 			lua_pushnumber(L, current);
@@ -370,7 +370,7 @@ int32_t GlobalEvent::executeRecord(uint32_t current, uint32_t old, Player* playe
 			lua_pushnumber(L, env->addThing(player));
 
 			bool result = m_scriptInterface->callFunction(3);
-			m_scriptInterface->releaseScriptEnv();
+			m_scriptInterface->releaseEnv();
 			return result;
 		}
 	}
@@ -383,19 +383,19 @@ int32_t GlobalEvent::executeRecord(uint32_t current, uint32_t old, Player* playe
 
 int32_t GlobalEvent::executeEvent()
 {
-	if(m_scriptInterface->reserveScriptEnv())
+	if(m_scriptInterface->reserveEnv())
 	{
-		ScriptEnviroment* env = m_scriptInterface->getScriptEnv();
+		ScriptEnviroment* env = m_scriptInterface->getEnv();
 		if(m_scripted == EVENT_SCRIPT_BUFFER)
 		{
 			bool result = true;
 			if(m_scriptInterface->loadBuffer(m_scriptData) != -1)
 			{
-				lua_State* L = m_scriptInterface->getLuaState();
+				lua_State* L = m_scriptInterface->getState();
 				result = m_scriptInterface->getGlobalBool(L, "_result", true);
 			}
 
-			m_scriptInterface->releaseScriptEnv();
+			m_scriptInterface->releaseEnv();
 			return result;
 		}
 		else
@@ -404,7 +404,7 @@ int32_t GlobalEvent::executeEvent()
 			m_scriptInterface->pushFunction(m_scriptId);
 
 			bool result = m_scriptInterface->callFunction(0);
-			m_scriptInterface->releaseScriptEnv();
+			m_scriptInterface->releaseEnv();
 			return result;
 		}
 	}

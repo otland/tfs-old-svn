@@ -1076,9 +1076,9 @@ uint32_t MoveEvent::executeStep(Creature* actor, Creature* creature, Item* item,
 {
 	//onStepIn(cid, item, position, lastPosition, fromPosition, toPosition, actor)
 	//onStepOut(cid, item, position, lastPosition, fromPosition, toPosition, actor)
-	if(m_scriptInterface->reserveScriptEnv())
+	if(m_scriptInterface->reserveEnv())
 	{
-		ScriptEnviroment* env = m_scriptInterface->getScriptEnv();
+		ScriptEnviroment* env = m_scriptInterface->getEnv();
 		if(m_scripted == EVENT_SCRIPT_BUFFER)
 		{
 			env->setRealPos(creature->getPosition());
@@ -1096,11 +1096,11 @@ uint32_t MoveEvent::executeStep(Creature* actor, Creature* creature, Item* item,
 			bool result = true;
 			if(m_scriptInterface->loadBuffer(scriptstream.str()) != -1)
 			{
-				lua_State* L = m_scriptInterface->getLuaState();
+				lua_State* L = m_scriptInterface->getState();
 				result = m_scriptInterface->getGlobalBool(L, "_result", true);
 			}
 
-			m_scriptInterface->releaseScriptEnv();
+			m_scriptInterface->releaseEnv();
 			return result;
 		}
 		else
@@ -1114,7 +1114,7 @@ uint32_t MoveEvent::executeStep(Creature* actor, Creature* creature, Item* item,
 			env->setScriptId(m_scriptId, m_scriptInterface);
 			env->setRealPos(creature->getPosition());
 
-			lua_State* L = m_scriptInterface->getLuaState();
+			lua_State* L = m_scriptInterface->getState();
 			m_scriptInterface->pushFunction(m_scriptId);
 			lua_pushnumber(L, env->addThing(creature));
 
@@ -1127,7 +1127,7 @@ uint32_t MoveEvent::executeStep(Creature* actor, Creature* creature, Item* item,
 			lua_pushnumber(L, env->addThing(actor));
 			bool result = m_scriptInterface->callFunction(7);
 
-			m_scriptInterface->releaseScriptEnv();
+			m_scriptInterface->releaseEnv();
 			return result;
 		}
 	}
@@ -1150,9 +1150,9 @@ uint32_t MoveEvent::executeEquip(Player* player, Item* item, slots_t slot)
 {
 	//onEquip(cid, item, slot)
 	//onDeEquip(cid, item, slot)
-	if(m_scriptInterface->reserveScriptEnv())
+	if(m_scriptInterface->reserveEnv())
 	{
-		ScriptEnviroment* env = m_scriptInterface->getScriptEnv();
+		ScriptEnviroment* env = m_scriptInterface->getEnv();
 		if(m_scripted == EVENT_SCRIPT_BUFFER)
 		{
 			env->setRealPos(player->getPosition());
@@ -1166,11 +1166,11 @@ uint32_t MoveEvent::executeEquip(Player* player, Item* item, slots_t slot)
 			bool result = true;
 			if(m_scriptInterface->loadBuffer(scriptstream.str()) != -1)
 			{
-				lua_State* L = m_scriptInterface->getLuaState();
+				lua_State* L = m_scriptInterface->getState();
 				result = m_scriptInterface->getGlobalBool(L, "_result", true);
 			}
 
-			m_scriptInterface->releaseScriptEnv();
+			m_scriptInterface->releaseEnv();
 			return result;
 		}
 		else
@@ -1184,7 +1184,7 @@ uint32_t MoveEvent::executeEquip(Player* player, Item* item, slots_t slot)
 			env->setScriptId(m_scriptId, m_scriptInterface);
 			env->setRealPos(player->getPosition());
 
-			lua_State* L = m_scriptInterface->getLuaState();
+			lua_State* L = m_scriptInterface->getState();
 			m_scriptInterface->pushFunction(m_scriptId);
 
 			lua_pushnumber(L, env->addThing(player));
@@ -1192,7 +1192,7 @@ uint32_t MoveEvent::executeEquip(Player* player, Item* item, slots_t slot)
 			lua_pushnumber(L, slot);
 
 			bool result = m_scriptInterface->callFunction(3);
-			m_scriptInterface->releaseScriptEnv();
+			m_scriptInterface->releaseEnv();
 			return result;
 		}
 	}
@@ -1215,9 +1215,9 @@ uint32_t MoveEvent::executeAddRemItem(Creature* actor, Item* item, Item* tileIte
 {
 	//onAddItem(moveItem, tileItem, position, cid)
 	//onRemoveItem(moveItem, tileItem, position, cid)
-	if(m_scriptInterface->reserveScriptEnv())
+	if(m_scriptInterface->reserveEnv())
 	{
-		ScriptEnviroment* env = m_scriptInterface->getScriptEnv();
+		ScriptEnviroment* env = m_scriptInterface->getEnv();
 		if(m_scripted == EVENT_SCRIPT_BUFFER)
 		{
 			env->setRealPos(pos);
@@ -1233,11 +1233,11 @@ uint32_t MoveEvent::executeAddRemItem(Creature* actor, Item* item, Item* tileIte
 			bool result = true;
 			if(m_scriptInterface->loadBuffer(scriptstream.str()) != -1)
 			{
-				lua_State* L = m_scriptInterface->getLuaState();
+				lua_State* L = m_scriptInterface->getState();
 				result = m_scriptInterface->getGlobalBool(L, "_result", true);
 			}
 
-			m_scriptInterface->releaseScriptEnv();
+			m_scriptInterface->releaseEnv();
 			return result;
 		}
 		else
@@ -1254,7 +1254,7 @@ uint32_t MoveEvent::executeAddRemItem(Creature* actor, Item* item, Item* tileIte
 			env->setScriptId(m_scriptId, m_scriptInterface);
 			env->setRealPos(pos);
 
-			lua_State* L = m_scriptInterface->getLuaState();
+			lua_State* L = m_scriptInterface->getState();
 			m_scriptInterface->pushFunction(m_scriptId);
 
 			LuaScriptInterface::pushThing(L, item, env->addThing(item));
@@ -1264,7 +1264,7 @@ uint32_t MoveEvent::executeAddRemItem(Creature* actor, Item* item, Item* tileIte
 			lua_pushnumber(L, env->addThing(actor));
 			bool result = m_scriptInterface->callFunction(4);
 
-			m_scriptInterface->releaseScriptEnv();
+			m_scriptInterface->releaseEnv();
 			return result;
 		}
 	}

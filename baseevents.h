@@ -42,7 +42,7 @@ class BaseEvents
 		virtual bool registerEvent(Event* event, xmlNodePtr p, bool override) = 0;
 		virtual Event* getEvent(const std::string& nodeName) = 0;
 
-		virtual LuaScriptInterface& getScriptInterface() = 0;
+		virtual LuaScriptInterface& getInterface() = 0;
 
 		bool m_loaded;
 };

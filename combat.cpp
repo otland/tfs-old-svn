@@ -939,18 +939,18 @@ void Combat::doCombatDefault(Creature* caster, Creature* target, const CombatPar
 void ValueCallback::getMinMaxValues(Player* player, int32_t& min, int32_t& max, bool useCharges) const
 {
 	//"onGetPlayerMinMaxValues"(cid, ...)
-	if(!m_scriptInterface->reserveScriptEnv())
+	if(!m_scriptInterface->reserveEnv())
 	{
 		std::cout << "[Error - ValueCallback::getMinMaxValues] Callstack overflow." << std::endl;
 		return;
 	}
 
-	ScriptEnviroment* env = m_scriptInterface->getScriptEnv();
+	ScriptEnviroment* env = m_scriptInterface->getEnv();
 	if(!env->setCallbackId(m_scriptId, m_scriptInterface))
 		return;
 
 	m_scriptInterface->pushFunction(m_scriptId);
-	lua_State* L = m_scriptInterface->getLuaState();
+	lua_State* L = m_scriptInterface->getState();
 	lua_pushnumber(L, env->addThing(player));
 
 	int32_t parameters = 1;
@@ -1003,13 +1003,13 @@ void ValueCallback::getMinMaxValues(Player* player, int32_t& min, int32_t& max, 
 		player->increaseCombatValues(min, max, useCharges, type != FORMULA_SKILL);
 	}
 	else
-		LuaScriptInterface::reportError(NULL, std::string(LuaScriptInterface::popString(L)));
+		LuaScriptInterface::error(NULL, std::string(LuaScriptInterface::popString(L)));
 
 	if((lua_gettop(L) + parameters + 1) != params)
-		LuaScriptInterface::reportError(__FUNCTION__, "Stack size changed!");
+		LuaScriptInterface::error(__FUNCTION__, "Stack size changed!");
 
 	env->resetCallback();
-	m_scriptInterface->releaseScriptEnv();
+	m_scriptInterface->releaseEnv();
 }
 
 //**********************************************************
@@ -1017,21 +1017,21 @@ void ValueCallback::getMinMaxValues(Player* player, int32_t& min, int32_t& max, 
 void TileCallback::onTileCombat(Creature* creature, Tile* tile) const
 {
 	//"onTileCombat"(cid, pos)
-	if(m_scriptInterface->reserveScriptEnv())
+	if(m_scriptInterface->reserveEnv())
 	{
-		ScriptEnviroment* env = m_scriptInterface->getScriptEnv();
+		ScriptEnviroment* env = m_scriptInterface->getEnv();
 		if(!env->setCallbackId(m_scriptId, m_scriptInterface))
 			return;
 
 		m_scriptInterface->pushFunction(m_scriptId);
-		lua_State* L = m_scriptInterface->getLuaState();
+		lua_State* L = m_scriptInterface->getState();
 
 		lua_pushnumber(L, creature ? env->addThing(creature) : 0);
 		m_scriptInterface->pushPosition(L, tile->getPosition(), 0);
 
 		m_scriptInterface->callFunction(2);
 		env->resetCallback();
-		m_scriptInterface->releaseScriptEnv();
+		m_scriptInterface->releaseEnv();
 	}
 	else
 		std::cout << "[Error - TileCallback::onTileCombat] Call stack overflow." << std::endl;
@@ -1042,9 +1042,9 @@ void TileCallback::onTileCombat(Creature* creature, Tile* tile) const
 void TargetCallback::onTargetCombat(Creature* creature, Creature* target) const
 {
 	//"onTargetCombat"(cid, target)
-	if(m_scriptInterface->reserveScriptEnv())
+	if(m_scriptInterface->reserveEnv())
 	{
-		ScriptEnviroment* env = m_scriptInterface->getScriptEnv();
+		ScriptEnviroment* env = m_scriptInterface->getEnv();
 		if(!env->setCallbackId(m_scriptId, m_scriptInterface))
 			return;
 
@@ -1053,20 +1053,20 @@ void TargetCallback::onTargetCombat(Creature* creature, Creature* target) const
 			cid = env->addThing(creature);
 
 		m_scriptInterface->pushFunction(m_scriptId);
-		lua_State* L = m_scriptInterface->getLuaState();
+		lua_State* L = m_scriptInterface->getState();
 
 		lua_pushnumber(L, cid);
 		lua_pushnumber(L, env->addThing(target));
 
 		int32_t size = lua_gettop(L);
 		if(lua_pcall(L, 2, 0 /*nReturnValues*/, 0) != 0)
-			LuaScriptInterface::reportError(NULL, std::string(LuaScriptInterface::popString(L)));
+			LuaScriptInterface::error(NULL, std::string(LuaScriptInterface::popString(L)));
 
 		if((lua_gettop(L) + 2 /*nParams*/ + 1) != size)
-			reportErrorFunc("Stack size changed!");
+			errorEx("Stack size changed!");
 
 		env->resetCallback();
-		m_scriptInterface->releaseScriptEnv();
+		m_scriptInterface->releaseEnv();
 	}
 	else
 	{

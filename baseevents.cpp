@@ -29,7 +29,7 @@ bool BaseEvents::loadFromXml()
 		return false;
 	}
 
-	if(getScriptInterface().loadFile(getFilePath(FILE_TYPE_OTHER, std::string(scriptsName + "/lib/" + scriptsName + ".lua"))) == -1)
+	if(getInterface().loadFile(getFilePath(FILE_TYPE_OTHER, std::string(scriptsName + "/lib/" + scriptsName + ".lua"))) == -1)
 		std::cout << "[Warning - BaseEvents::loadFromXml] Cannot load " << scriptsName << "/lib/" << scriptsName << ".lua" << std::endl;
 
 	xmlDocPtr doc = xmlParseFile(getFilePath(FILE_TYPE_OTHER, std::string(scriptsName + "/" + scriptsName + ".xml")).c_str());
@@ -198,7 +198,7 @@ bool Event::loadScript(const std::string& script, bool file)
 	if(result == -1)
 	{
 		std::cout << "[Warning - Event::loadScript] Cannot load script (" << script << ")" << std::endl;
-		std::cout << m_scriptInterface->getLastLuaError() << std::endl;
+		std::cout << m_scriptInterface->getLastError() << std::endl;
 		return false;
 	}
 

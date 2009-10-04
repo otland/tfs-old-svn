@@ -61,10 +61,10 @@ class Scheduler
 {
 	public:
 		virtual ~Scheduler() {}
-		static Scheduler& getScheduler()
+		static Scheduler* getInstance()
 		{
 			static Scheduler scheduler;
-			return scheduler;
+			return &scheduler;
 		}
 
 		uint32_t addEvent(SchedulerTask* task);

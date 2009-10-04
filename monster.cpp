@@ -508,7 +508,7 @@ bool Monster::selectTarget(Creature* creature)
 	}
 
 	if((isHostile() || isSummon()) && setAttackedCreature(creature) && !isSummon())
-		Dispatcher::getDispatcher().addTask(createTask(
+		Dispatcher::getInstance()->addTask(createTask(
 			boost::bind(&Game::checkCreatureAttack, &g_game, getID())));
 
 	return setFollowCreature(creature, true);

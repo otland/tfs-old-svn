@@ -149,7 +149,7 @@ bool Raids::startup()
 		return false;
 
 	setLastRaidEnd(OTSYS_TIME());
-	checkRaidsEvent = Scheduler::getScheduler().addEvent(createSchedulerTask(
+	checkRaidsEvent = Scheduler::getInstance()->addEvent(createSchedulerTask(
 		CHECK_RAIDS_INTERVAL * 1000, boost::bind(&Raids::checkRaids, this)));
 
 	started = true;
@@ -158,7 +158,7 @@ bool Raids::startup()
 
 void Raids::checkRaids()
 {
-	checkRaidsEvent = Scheduler::getScheduler().addEvent(createSchedulerTask(
+	checkRaidsEvent = Scheduler::getInstance()->addEvent(createSchedulerTask(
 		CHECK_RAIDS_INTERVAL * 1000, boost::bind(&Raids::checkRaids, this)));
 	if(getRunning())
 		return;
@@ -175,7 +175,7 @@ void Raids::checkRaids()
 
 void Raids::clear()
 {
-	Scheduler::getScheduler().stopEvent(checkRaidsEvent);
+	Scheduler::getInstance()->stopEvent(checkRaidsEvent);
 	checkRaidsEvent = lastRaidEnd = 0;
 	loaded = started = false;
 
@@ -301,7 +301,7 @@ bool Raid::startRaid()
 	if(!raidEvent)
 		return false;
 
-	nextEvent = Scheduler::getScheduler().addEvent(createSchedulerTask(
+	nextEvent = Scheduler::getInstance()->addEvent(createSchedulerTask(
 		raidEvent->getDelay(), boost::bind(&Raid::executeRaidEvent, this, raidEvent)));
 	Raids::getInstance()->setRunning(this);
 	return true;
@@ -316,7 +316,7 @@ bool Raid::executeRaidEvent(RaidEvent* raidEvent)
 	if(!newRaidEvent)
 		return !resetRaid(false);
 
-	nextEvent = Scheduler::getScheduler().addEvent(createSchedulerTask(
+	nextEvent = Scheduler::getInstance()->addEvent(createSchedulerTask(
 		std::max(RAID_MINTICKS, (int32_t)(newRaidEvent->getDelay() - raidEvent->getDelay())),
 		boost::bind(&Raid::executeRaidEvent, this, newRaidEvent)));
 	return true;
@@ -348,7 +348,7 @@ void Raid::stopEvents()
 	if(!nextEvent)
 		return;
 
-	Scheduler::getScheduler().stopEvent(nextEvent);
+	Scheduler::getInstance()->stopEvent(nextEvent);
 	nextEvent = 0;
 }
 
@@ -963,19 +963,19 @@ bool ScriptEvent::configureRaidEvent(xmlNodePtr eventNode)
 bool ScriptEvent::executeEvent() const
 {
 	//onRaid()
-	if(m_scriptInterface.reserveScriptEnv())
+	if(m_scriptInterface.reserveEnv())
 	{
-		ScriptEnviroment* env = m_scriptInterface.getScriptEnv();
+		ScriptEnviroment* env = m_scriptInterface.getEnv();
 		if(m_scripted == EVENT_SCRIPT_BUFFER)
 		{
 			bool result = true;
 			if(m_scriptInterface.loadBuffer(m_scriptData) != -1)
 			{
-				lua_State* L = m_scriptInterface.getLuaState();
+				lua_State* L = m_scriptInterface.getState();
 				result = m_scriptInterface.getGlobalBool(L, "_result", true);
 			}
 
-			m_scriptInterface.releaseScriptEnv();
+			m_scriptInterface.releaseEnv();
 			return result;
 		}
 		else
@@ -987,7 +987,7 @@ bool ScriptEvent::executeEvent() const
 			m_scriptInterface.pushFunction(m_scriptId);
 
 			bool result = m_scriptInterface.callFunction(0);
-			m_scriptInterface.releaseScriptEnv();
+			m_scriptInterface.releaseEnv();
 			return result;
 		}
 	}

@@ -296,9 +296,9 @@ bool TalkAction::loadFunction(const std::string& functionName)
 int32_t TalkAction::executeSay(Creature* creature, const std::string& words, const std::string& param, uint16_t channel)
 {
 	//onSay(cid, words, param, channel)
-	if(m_scriptInterface->reserveScriptEnv())
+	if(m_scriptInterface->reserveEnv())
 	{
-		ScriptEnviroment* env = m_scriptInterface->getScriptEnv();
+		ScriptEnviroment* env = m_scriptInterface->getEnv();
 		if(m_scripted == EVENT_SCRIPT_BUFFER)
 		{
 			env->setRealPos(creature->getPosition());
@@ -313,11 +313,11 @@ int32_t TalkAction::executeSay(Creature* creature, const std::string& words, con
 			bool result = true;
 			if(m_scriptInterface->loadBuffer(scriptstream.str()) != -1)
 			{
-				lua_State* L = m_scriptInterface->getLuaState();
+				lua_State* L = m_scriptInterface->getState();
 				result = m_scriptInterface->getGlobalBool(L, "_result", true);
 			}
 
-			m_scriptInterface->releaseScriptEnv();
+			m_scriptInterface->releaseEnv();
 			return result;
 		}
 		else
@@ -331,7 +331,7 @@ int32_t TalkAction::executeSay(Creature* creature, const std::string& words, con
 			env->setScriptId(m_scriptId, m_scriptInterface);
 			env->setRealPos(creature->getPosition());
 
-			lua_State* L = m_scriptInterface->getLuaState();
+			lua_State* L = m_scriptInterface->getState();
 			m_scriptInterface->pushFunction(m_scriptId);
 			lua_pushnumber(L, env->addThing(creature));
 
@@ -340,7 +340,7 @@ int32_t TalkAction::executeSay(Creature* creature, const std::string& words, con
 			lua_pushnumber(L, channel);
 
 			bool result = m_scriptInterface->callFunction(4);
-			m_scriptInterface->releaseScriptEnv();
+			m_scriptInterface->releaseEnv();
 			return result;
 		}
 	}
