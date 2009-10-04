@@ -5927,7 +5927,7 @@ int32_t LuaScriptInterface::luaDoCombatAreaMana(lua_State* L)
 int32_t LuaScriptInterface::luaDoTargetCombatMana(lua_State* L)
 {
 	//doTargetCombatMana(cid, target, min, max, effect)
-	MagicEffect_t effect = (uint8_t)popNumber(L);
+	MagicEffect_t effect = (MagicEffect_t)popNumber(L);
 	int32_t maxChange = (int32_t)popNumber(L), minChange = (int32_t)popNumber(L);
 	uint32_t targetCid = popNumber(L), cid = popNumber(L);
 
@@ -9174,10 +9174,10 @@ int32_t LuaScriptInterface::luaGetItemInfo(lua_State* L)
 	setField(L, "corpseType", (int32_t)item->corpseType);
 	setField(L, "shootType", (int32_t)item->shootType);
 	setField(L, "ammoType", (int32_t)item->ammoType);
-	//TODO: transformToOnUse
+	//TODO: transformUseTo
 	setField(L, "transformToFree", item->transformToFree);
-	setField(L, "transformToOnEquip", item->transformToOnEquip);
-	setField(L, "transformToOnDeEquip", item->transformToOnDeEquip);
+	setField(L, "transformEquipTo", item->transformEquipTo);
+	setField(L, "transformDeEquipTo", item->transformDeEquipTo);
 	setField(L, "clientId", item->clientId);
 	setField(L, "maxItems", item->maxItems);
 	setField(L, "slotPosition", item->slotPosition);

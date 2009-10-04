@@ -145,7 +145,7 @@ class ItemType
 		ShootEffect_t shootType;
 		Ammo_t ammoType;
 
-		uint16_t transformToOnUse[2], transformToFree, transformEquipTo, transformDeEquipTo,
+		uint16_t transformUseTo[2], transformToFree, transformEquipTo, transformDeEquipTo,
 			id, clientId, maxItems, slotPosition, wieldPosition, speed, maxTextLen, writeOnceItemId;
 
 		int32_t attack, extraAttack, defense, extraDefense, armor, breakChance, hitChance, maxHitChance,
