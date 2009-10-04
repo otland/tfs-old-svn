@@ -19,13 +19,6 @@
 #define __CONFIG_MANAGER__
 #include "luascript.h"
 
-extern "C"
-{
-	#include <lua.h>
-	#include <lauxlib.h>
-	#include <lualib.h>
-}
-
 class ConfigManager
 {
 	public:
