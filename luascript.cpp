@@ -6421,18 +6421,18 @@ int32_t LuaScriptInterface::luaGetMonsterInfo(lua_State* L)
 		else
 			setField(L, "id", lit->ids[0]);
 
-		setField(L, "count", it->count);
-		setField(L, "chance", it->chance);
-		setField(L, "subType", it->subType);
-		setField(L, "actionId", it->actionId);
-		setField(L, "uniqueId", it->uniqueId);
-		setField(L, "text", it->text);
+		setField(L, "count", lit->count);
+		setField(L, "chance", lit->chance);
+		setField(L, "subType", lit->subType);
+		setField(L, "actionId", lit->actionId);
+		setField(L, "uniqueId", lit->uniqueId);
+		setField(L, "text", lit->text);
 
 		createTable(L, "child");
-		if(it->childLoot.size() > 0)
+		if(lit->childLoot.size() > 0)
 		{
-			LootItems::const_iterator cit = it->childLoot.begin();
-			for(uint32_t j = 1; cit != it->childLoot.end(); ++cit, ++j)
+			LootItems::const_iterator cit = lit->childLoot.begin();
+			for(uint32_t j = 1; cit != lit->childLoot.end(); ++cit, ++j)
 			{
 				createTable(L, j);
 				if(cit->ids.size() > 1)
@@ -9092,20 +9092,20 @@ int32_t LuaScriptInterface::luaGetItemInfo(lua_State* L)
 	setField(L, "runeSpellName", item->runeSpellName.c_str());
 	setField(L, "vocationString", item->vocationString.c_str());
 
-	createTable(L, "attributes");
-	setFieldBool(L, "manaShield", item->attributes.manaShield);
-	setFieldBool(L, "invisible", item->attributes.invisible);
-	setFieldBool(L, "regeneration", item->attributes.regeneration);
-	setFieldBool(L, "preventLoss", item->attributes.preventLoss);
-	setFieldBool(L, "preventDrop", item->attributes.preventDrop);
-	setField(L, "elementType", (int32_t)item->attributes.elementType);
-	setField(L, "elementDamage", item->attributes.elementDamage);
-	setField(L, "speed", item->attributes.speed);
-	setField(L, "healthGain", item->attributes.healthGain);
-	setField(L, "healthTicks", item->attributes.healthTicks);
-	setField(L, "manaGain", item->attributes.manaGain);
-	setField(L, "manaTicks", item->attributes.manaTicks);
-	setField(L, "conditionSuppressions", item->attributes.conditionSuppressions);
+	createTable(L, "abilities");
+	setFieldBool(L, "manaShield", item->abilities.manaShield);
+	setFieldBool(L, "invisible", item->abilities.invisible);
+	setFieldBool(L, "regeneration", item->abilities.regeneration);
+	setFieldBool(L, "preventLoss", item->abilities.preventLoss);
+	setFieldBool(L, "preventDrop", item->abilities.preventDrop);
+	setField(L, "elementType", (int32_t)item->abilities.elementType);
+	setField(L, "elementDamage", item->abilities.elementDamage);
+	setField(L, "speed", item->abilities.speed);
+	setField(L, "healthGain", item->abilities.healthGain);
+	setField(L, "healthTicks", item->abilities.healthTicks);
+	setField(L, "manaGain", item->abilities.manaGain);
+	setField(L, "manaTicks", item->abilities.manaTicks);
+	setField(L, "conditionSuppressions", item->abilities.conditionSuppressions);
 
 	//TODO: absorb, increment, reflect, skills, skillsPercent, stats, statsPercent
 
