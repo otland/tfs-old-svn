@@ -128,7 +128,7 @@ class ScriptEnviroment
 		void resetTimerEvent() {m_timerEvent = false;}
 
 		LuaScriptInterface* getInterface() {return m_interface;}
-		void getEventInfo(int32_t& scriptId, std::string& desc, LuaScriptInterface*& scriptInterface, int32_t& callbackId, bool& timerEvent);
+		void getInfo(int32_t& scriptId, std::string& desc, LuaScriptInterface*& scriptInterface, int32_t& callbackId, bool& timerEvent);
 		void reset();
 		void resetCallback() {m_callbackId = 0;}
 
@@ -231,8 +231,8 @@ class LuaScriptInterface
 		int32_t loadDirectory(const std::string& dir, Npc* npc = NULL);
 
 		std::string getName() {return m_interfaceName;}
-		const std::string& getScript(int32_t scriptId);
-		const std::string& getLastError() const {return m_lastError;}
+		std::string getScript(int32_t scriptId);
+		std::string getLastError() const {return m_lastError;}
 
 		int32_t getEvent(const std::string& eventName);
 		lua_State* getState() {return m_luaState;}

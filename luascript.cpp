@@ -31,6 +31,7 @@
 #include "house.h"
 #include "housetile.h"
 
+#include "database.h"
 #include "iologindata.h"
 #include "ioban.h"
 #include "iomapserialize.h"
@@ -177,7 +178,7 @@ bool ScriptEnviroment::setCallbackId(int32_t callbackId, LuaScriptInterface* scr
 	return false;
 }
 
-void ScriptEnviroment::getEventInfo(int32_t& scriptId, std::string& desc, LuaScriptInterface*& scriptInterface, int32_t& callbackId, bool& timerEvent)
+void ScriptEnviroment::getInfo(int32_t& scriptId, std::string& desc, LuaScriptInterface*& scriptInterface, int32_t& callbackId, bool& timerEvent)
 {
 	scriptId = m_scriptId;
 	desc = m_eventdesc;
@@ -765,8 +766,7 @@ void LuaScriptInterface::error(const char* function, const std::string& desc)
 	std::string event;
 
 	LuaScriptInterface* interface;
-	getEnv()->getEventInfo(script, event, interface, callback, timer);
-
+	getEnv()->getInfo(script, event, interface, callback, timer);
 	if(interface)
 	{
 		std::cout << std::endl << "[Error - " << interface->getName() << "] " << std::endl;
