@@ -2308,25 +2308,25 @@ void LuaScriptInterface::registerFunctions()
 	lua_register(m_luaState, "domodlib", LuaScriptInterface::luaL_domodlib);
 
 	//md5(string[, upperCase])
-	lua_register(m_luaState, "md5", LuaScriptInterface::luaHashMD5);
+	lua_register(m_luaState, "md5", LuaScriptInterface::luaMD5);
 
 	//sha1(string[, upperCase])
-	lua_register(m_luaState, "sha1", LuaScriptInterface::luaHashSHA1);
-
-	//print(text)
-	lua_register(m_luaState, "print", LuaScriptInterface::luaPrint);
+	lua_register(m_luaState, "sha1", LuaScriptInterface::luaSHA1);
 
 	//db table
-	luaL_register(m_luaState, "db", LuaScriptInterface::luaDatabaseReg);
+	luaL_register(m_luaState, "db", LuaScriptInterface::luaDatabaseTable);
 
 	//result table
-	luaL_register(m_luaState, "result", LuaScriptInterface::luaResultReg);
+	luaL_register(m_luaState, "result", LuaScriptInterface::luaResultTable);
 
 	//bit table
-	luaL_register(m_luaState, "bit", LuaScriptInterface::luaBitReg);
+	luaL_register(m_luaState, "bit", LuaScriptInterface::luaBitTable);
+
+	//std table
+	luaL_register(m_luaState, "std", LuaScriptInterface::luaStdTable);
 }
 
-const luaL_Reg LuaScriptInterface::luaDatabaseReg[] =
+const luaL_Reg LuaScriptInterface::luaDatabaseTable[] =
 {
 	//db.executeQuery(query)
 	{"executeQuery", LuaScriptInterface::luaDatabaseExecute},
@@ -2352,7 +2352,7 @@ const luaL_Reg LuaScriptInterface::luaDatabaseReg[] =
 	{NULL,NULL}
 };
 
-const luaL_Reg LuaScriptInterface::luaResultReg[] =
+const luaL_Reg LuaScriptInterface::luaResultTable[] =
 {
 	//result.getDataInt(resId, s)
 	{"getDataInt", LuaScriptInterface::luaResultGetDataInt},
@@ -2375,7 +2375,7 @@ const luaL_Reg LuaScriptInterface::luaResultReg[] =
 	{NULL,NULL}
 };
 
-const luaL_Reg LuaScriptInterface::luaBitReg[] =
+const luaL_Reg LuaScriptInterface::luaBitTable[] =
 {
 	//{"cast", LuaScriptInterface::luaBitCast},
 	{"bnot", LuaScriptInterface::luaBitNot},
@@ -2386,7 +2386,6 @@ const luaL_Reg LuaScriptInterface::luaBitReg[] =
 	{"rshift", LuaScriptInterface::luaBitRightShift},
 	//{"arshift", LuaScriptInterface::luaBitArithmeticalRightShift},
 
-	//Unsigned
 	//{"ucast", LuaScriptInterface::luaBitUCast},
 	{"ubnot", LuaScriptInterface::luaBitUNot},
 	{"uband", LuaScriptInterface::luaBitUAnd},
@@ -2398,6 +2397,15 @@ const luaL_Reg LuaScriptInterface::luaBitReg[] =
 
 	{NULL,NULL}
 };
+
+const luaL_Reg LuaScriptInterface::luaStdTable[] =
+{
+	{"cout", LuaScriptInterface::luaStdCout},
+	{"cerr", LuaScriptInterface::luaStdCerr},
+	{"clog", LuaScriptInterface::luaStdClog},
+
+	{NULL, NULL}
+}
 
 int32_t LuaScriptInterface::internalGetPlayerInfo(lua_State* L, PlayerInfo_t info)
 {
@@ -9875,7 +9883,7 @@ int32_t LuaScriptInterface::luaL_domodlib(lua_State* L)
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaHashMD5(lua_State* L)
+int32_t LuaScriptInterface::luaMD5(lua_State* L)
 {
 	//md5(string[, upperCase])
 	bool upperCase = false;
@@ -9886,7 +9894,7 @@ int32_t LuaScriptInterface::luaHashMD5(lua_State* L)
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaHashSHA1(lua_State* L)
+int32_t LuaScriptInterface::luaSHA1(lua_State* L)
 {
 	//sha1(string[, upperCase])
 	bool upperCase = false;
@@ -9897,19 +9905,25 @@ int32_t LuaScriptInterface::luaHashSHA1(lua_State* L)
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaPrint(lua_State* L)
-{
-	//print(text)
-	StringVec data;
-	for(int32_t i = 0, params = lua_gettop(L); i < params; ++i)
-		data.push_back(popString(L));
+#define EXPOSE_LOG(Name, Stream)\
+	int32_t LuaScriptInterface::luaStd##Name(lua_State* L)\
+	{\
+		StringVec data;\
+		for(int32_t i = 0, params = lua_gettop(L); i < params; ++i)\
+			data.push_back(popString(L));\
+\
+		for(StringVec::reverse_iterator it = data.rbegin(); it != data.rend(); ++it)\
+			Stream << (*it) << std::endl;\
+\
+		lua_pushnumber(L, data.size());\
+		return 1;\
+	}
 
-	for(StringVec::reverse_iterator it = data.rbegin(); it != data.rend(); ++it)
-		std::cout << (*it) << std::endl;
+EXPOSE_LOG(Cout, std::cout)
+EXPOSE_LOG(Cerr, std::cerr)
+EXPOSE_LOG(Clog, std::clog)
 
-	lua_pushnumber(L, data.size());
-	return 1;
-}
+#undef EXPOSE_LOG
 
 int32_t LuaScriptInterface::luaDatabaseExecute(lua_State* L)
 {
@@ -10059,6 +10073,7 @@ int32_t LuaScriptInterface::luaResultFree(lua_State* L)
 	lua_pushboolean(L, env->removeResult(rid));
 	return 1;
 }
+
 #undef CHECK_RESULT
 
 int32_t LuaScriptInterface::luaBitNot(lua_State* L)
@@ -10075,34 +10090,38 @@ int32_t LuaScriptInterface::luaBitUNot(lua_State* L)
 	return 1;
 }
 
-#define MULTIOP(type, name, op)\
+#define MULTI_OPERATOR(type, name, op)\
 	int32_t LuaScriptInterface::luaBit##name(lua_State* L)\
 	{\
-		int32_t n = lua_gettop(L);\
-		type w = (type)popNumber(L);\
-		for(int32_t i = 2; i <= n; ++i)\
-			w op popNumber(L);\
-		\
-		lua_pushnumber(L, w);\
+		int32_t params = lua_gettop(L);\
+		type value = (type)popNumber(L);\
+		for(int32_t i = 2; i <= params; ++i)\
+			value op popNumber(L);\
+\
+		lua_pushnumber(L, value);\
 		return 1;\
 	}
 
-MULTIOP(int32_t, And, &=)
-MULTIOP(int32_t, Or, |=)
-MULTIOP(int32_t, Xor, ^=)
-MULTIOP(uint32_t, UAnd, &=)
-MULTIOP(uint32_t, UOr, |=)
-MULTIOP(uint32_t, UXor, ^=)
+MULTI_OPERATOR(int32_t, And, &=)
+MULTI_OPERATOR(int32_t, Or, |=)
+MULTI_OPERATOR(int32_t, Xor, ^=)
+MULTI_OPERATOR(uint32_t, UAnd, &=)
+MULTI_OPERATOR(uint32_t, UOr, |=)
+MULTI_OPERATOR(uint32_t, UXor, ^=)
 
-#define SHIFTOP(type, name, op)\
+#undef MULTI_OPERATOR
+
+#define SHIFT_OPERATOR(type, name, op)\
 	int32_t LuaScriptInterface::luaBit##name(lua_State* L)\
 	{\
-		type n2 = (type)popNumber(L), n1 = (type)popNumber(L);\
-		lua_pushnumber(L, (n1 op n2));\
+		type v2 = (type)popNumber(L), v1 = (type)popNumber(L);\
+		lua_pushnumber(L, (v1 op v2));\
 		return 1;\
 	}
 
-SHIFTOP(int32_t, LeftShift, <<)
-SHIFTOP(int32_t, RightShift, >>)
-SHIFTOP(uint32_t, ULeftShift, <<)
-SHIFTOP(uint32_t, URightShift, >>)
+SHIFT_OPERATOR(int32_t, LeftShift, <<)
+SHIFT_OPERATOR(int32_t, RightShift, >>)
+SHIFT_OPERATOR(uint32_t, ULeftShift, <<)
+SHIFT_OPERATOR(uint32_t, URightShift, >>)
+
+#undef SHIFT_OPERATOR

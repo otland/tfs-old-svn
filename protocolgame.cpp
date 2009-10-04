@@ -836,7 +836,7 @@ void ProtocolGame::parsePacket(NetworkMessage &msg)
 				s << player->getName() << " sent unknown byte: " << hex << std::endl;
 
 				LOG_MESSAGE(LOGTYPE_NOTICE, s.str(), "PLAYER")
-				Loggar::getInstance()->eFile(getFilePath(FILE_TYPE_LOG, "bots/" + player->getName() + ".log").c_str(),
+				Logger::getInstance()->eFile(getFilePath(FILE_TYPE_LOG, "bots/" + player->getName() + ".log").c_str(),
 					"[" + formatDate() + "] Received byte " + hex.str(), false);
 				break;
 			}
@@ -1298,7 +1298,7 @@ void ProtocolGame::parseSay(NetworkMessage& msg)
 		std::stringstream s;
 		s << text.length();
 
-		Loggar::getInstance()->eFile("bots/" + player->getName() + ".log", "Attempt to send message with size " + s.str() + " - client is limited to 255 characters.", true);
+		Logger::getInstance()->eFile("bots/" + player->getName() + ".log", "Attempt to send message with size " + s.str() + " - client is limited to 255 characters.", true);
 		return;
 	}
 
@@ -1446,7 +1446,7 @@ void ProtocolGame::parseDebugAssert(NetworkMessage& msg)
 		<< std::endl << std::endl;
 
 	m_debugAssertSent = true;
-	Loggar::getInstance()->iFile(LOGFILE_CLIENT_ASSERTION, s.str(), false);
+	Logger::getInstance()->iFile(LOGFILE_CLIENT_ASSERTION, s.str(), false);
 }
 
 void ProtocolGame::parseBugReport(NetworkMessage& msg)

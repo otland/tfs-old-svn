@@ -22,13 +22,13 @@
 #include "gui.h"
 #endif
 
-void Loggar::open()
+void Logger::open()
 {
 	m_files[LOGFILE_ADMIN] = fopen(getFilePath(FILE_TYPE_LOG, "admin.log").c_str(), "a");
 	m_files[LOGFILE_CLIENT_ASSERTION] = fopen(getFilePath(FILE_TYPE_LOG, "client_assertions.log").c_str(), "a");
 }
 
-void Loggar::close()
+void Logger::close()
 {
 	for(uint8_t i = 0; i <= LOGFILE_LAST; i++)
 	{
@@ -37,7 +37,7 @@ void Loggar::close()
 	}
 }
 
-void Loggar::iFile(LogFile_t file, std::string output, bool newLine)
+void Logger::iFile(LogFile_t file, std::string output, bool newLine)
 {
 	if(!m_files[file])
 		return;
@@ -46,7 +46,7 @@ void Loggar::iFile(LogFile_t file, std::string output, bool newLine)
 	fflush(m_files[file]);
 }
 
-void Loggar::eFile(std::string file, std::string output, bool newLine)
+void Logger::eFile(std::string file, std::string output, bool newLine)
 {
 	FILE* f = fopen(getFilePath(FILE_TYPE_LOG, file).c_str(), "a");
 	if(!f)
@@ -56,7 +56,7 @@ void Loggar::eFile(std::string file, std::string output, bool newLine)
 	fclose(f);
 }
 
-void Loggar::internal(FILE* file, std::string output, bool newLine)
+void Logger::internal(FILE* file, std::string output, bool newLine)
 {
 	if(!file)
 		return;
@@ -67,7 +67,7 @@ void Loggar::internal(FILE* file, std::string output, bool newLine)
 	fprintf(file, "%s", output.c_str());
 }
 
-void Loggar::log(const char* func, LogType_t type, std::string message, std::string channel/* = ""*/, bool newLine/* = true*/)
+void Logger::log(const char* func, LogType_t type, std::string message, std::string channel/* = ""*/, bool newLine/* = true*/)
 {
 	std::stringstream ss;
 	ss << "[" << formatDate() << "]" << " (";
@@ -103,28 +103,28 @@ void Loggar::log(const char* func, LogType_t type, std::string message, std::str
 }
 
 #if defined(WIN32) && not defined(__CONSOLE__)
-TextLogger::TextLogger()
+GUILogger::GUILogger()
 {
-	out = std::cerr.rdbuf();
-	err = std::cout.rdbuf();
+	out = std::cout.rdbuf();
+	err = std::cerr.rdbuf();
+	log = std::clog.rdbuf();
 	m_displayDate = true;
 }
 
-TextLogger::~TextLogger()
+GUILogger::~GUILogger()
 {
-	std::cerr.rdbuf(err);
 	std::cout.rdbuf(out);
+	std::cerr.rdbuf(err);
+	std::clog.rdbuf(log);
 }
 
-int32_t TextLogger::overflow(int32_t c)
+int32_t GUILogger::overflow(int32_t c)
 {
 	if(c == '\n')
 	{
 		GUI::getInstance()->m_logText += "\r\n";
 		SendMessage(GetDlgItem(GUI::getInstance()->m_mainWindow, ID_LOG), WM_SETTEXT, 0, (LPARAM)GUI::getInstance()->m_logText.c_str());
-
-		GUI::getInstance()->m_lineCount++;
-		SendMessage(GUI::getInstance()->m_logWindow, EM_LINESCROLL, 0, GUI::getInstance()->m_lineCount);
+		SendMessage(GUI::getInstance()->m_logWindow, EM_LINESCROLL, 0, ++GUI::getInstance()->m_lineCount);
 
 		char buffer[85];
 		sprintf(buffer, "logs/server/%s.log", formatDateShort().c_str());

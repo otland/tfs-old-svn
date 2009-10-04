@@ -93,7 +93,7 @@ Npcs g_npcs;
 RSA g_RSA;
 Chat g_chat;
 #if defined(WIN32) && not defined(__CONSOLE__)
-TextLogger g_logger;
+GUILogger g_logger;
 NOTIFYICONDATA NID;
 #endif
 
@@ -467,7 +467,7 @@ ServiceManager* services)
 	if(!g_config.load())
 		startupErrorMessage("Unable to load " + g_config.getString(ConfigManager::CONFIG_FILE) + "!");
 
-	Loggar::getInstance()->open();
+	Logger::getInstance()->open();
 	IntegerVec cores = vectorAtoi(explodeString(g_config.getString(ConfigManager::CORES_USED), ","));
 	if(cores[0] != -1)
 	{

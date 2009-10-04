@@ -736,12 +736,11 @@ class LuaScriptInterface
 		static int32_t luaL_loadmodlib(lua_State* L);
 		static int32_t luaL_domodlib(lua_State* L);
 
-		static int32_t luaHashMD5(lua_State* L);
-		static int32_t luaHashSHA1(lua_State* L);
-		static int32_t luaPrint(lua_State* L);
+		static int32_t luaMD5(lua_State* L);
+		static int32_t luaSHA1(lua_State* L);
 		static int32_t internalGetPlayerInfo(lua_State* L, PlayerInfo_t info);
 
-		static const luaL_Reg luaDatabaseReg[8];
+		static const luaL_Reg luaDatabaseTable[8];
 		static int32_t luaDatabaseExecute(lua_State* L);
 		static int32_t luaDatabaseStoreQuery(lua_State* L);
 		static int32_t luaDatabaseEscapeString(lua_State* L);
@@ -750,7 +749,7 @@ class LuaScriptInterface
 		static int32_t luaDatabaseStringComparison(lua_State* L);
 		static int32_t luaDatabaseUpdateLimiter(lua_State* L);
 
-		static const luaL_Reg luaResultReg[7];
+		static const luaL_Reg luaResultTable[7];
 		static int32_t luaResultGetDataInt(lua_State* L);
 		static int32_t luaResultGetDataLong(lua_State* L);
 		static int32_t luaResultGetDataString(lua_State* L);
@@ -758,7 +757,7 @@ class LuaScriptInterface
 		static int32_t luaResultNext(lua_State* L);
 		static int32_t luaResultFree(lua_State* L);
 
-		static const luaL_Reg luaBitReg[13];
+		static const luaL_Reg luaBitTable[13];
 		static int32_t luaBitNot(lua_State* L);
 		static int32_t luaBitAnd(lua_State* L);
 		static int32_t luaBitOr(lua_State* L);
@@ -771,6 +770,11 @@ class LuaScriptInterface
 		static int32_t luaBitUXor(lua_State* L);
 		static int32_t luaBitULeftShift(lua_State* L);
 		static int32_t luaBitURightShift(lua_State* L);
+
+		static const luaL_Reg luaStdTable[4];
+		static int32_t luaStdCout(lua_State* L);
+		static int32_t luaStdCerr(lua_State* L);
+		static int32_t luaStdClog(lua_State* L);
 
 		lua_State* m_luaState;
 		std::string m_lastLuaError;

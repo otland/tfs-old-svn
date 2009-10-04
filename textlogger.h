@@ -40,13 +40,13 @@ enum LogType_t
 	LOGTYPE_ERROR,
 };
 
-class Loggar
+class Logger
 {
 	public:
-		virtual ~Loggar() {close();}
-		static Loggar* getInstance()
+		virtual ~Logger() {close();}
+		static Logger* getInstance()
 		{
-			static Loggar instance;
+			static Logger instance;
 			return &instance;
 		}
 
@@ -59,24 +59,25 @@ class Loggar
 		void log(const char* func, LogType_t type, std::string message, std::string channel = "", bool newLine = true);
 
 	private:
-		Loggar() {}
+		Logger() {}
 		void internal(FILE* file, std::string output, bool newLine);
 
 		FILE* m_files[LOGFILE_LAST + 1];
 };
 
 #define LOG_MESSAGE(type, message, channel) \
-	Loggar::getInstance()->log(__OTSERV_FUNCTION__, type, message, channel);
+	Logger::getInstance()->log(__OTSERV_FUNCTION__, type, message, channel);
 
 #if defined(WIN32) && not defined(__CONSOLE__)
-class TextLogger : public std::streambuf
+class GUILogger : public std::streambuf
 {
 	public:
-		TextLogger();
-		virtual ~TextLogger();
+		GUILogger();
+		virtual ~GUILogger();
 
 		std::streambuf* out;
 		std::streambuf* err;
+		std::streambuf* log;
 
 	protected:
 		int32_t overflow(int32_t c);
