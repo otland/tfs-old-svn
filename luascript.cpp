@@ -504,11 +504,7 @@ void ScriptEnviroment::streamThing(std::stringstream& stream, const std::string&
 			id = creature->getID();
 
 		stream << "uid = " << id << "," << std::endl;
-		if(const Player* player = creature->getPlayer())
-			stream << "itemid = " << player->getGUID() << "," << std::endl;
-		else
-			stream << "itemid = 1," << std::endl;
-
+		stream << "itemid = 1," << std::endl;
 		if(creature->getPlayer())
 			stream << "type = 1," << std::endl;
 		else if(creature->getMonster())
@@ -516,7 +512,10 @@ void ScriptEnviroment::streamThing(std::stringstream& stream, const std::string&
 		else
 			stream << "type = 3," << std::endl;
 
-		stream << "actionid = 0" << std::endl;
+		if(const Player* player = creature->getPlayer())
+			stream << "actionid = " << player->getGUID() << "," << std::endl;
+		else
+			stream << "actionid = 0" << std::endl;
 	}
 	else
 	{
@@ -968,7 +967,10 @@ void LuaScriptInterface::pushThing(lua_State* L, Thing* thing, uint32_t id/* = 0
 		else
 			setField(L, "type", 3);
 
-		setField(L, "actionid", 0);
+		if(const Player* player = creature->getPlayer())
+			setField(L, "actionid", player->getGUID());
+		else
+			setField(L, "actionid", 0);
 	}
 	else
 	{

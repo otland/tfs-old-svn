@@ -475,7 +475,7 @@ end
 
 function doChangeTypeItem(uid, subtype)
 	local item = getThing(uid)
-	if(item.itemid == 0) then
+	if(item.itemid < 100) then
 		return false
 	end
 
@@ -503,8 +503,8 @@ function getItemDescriptions(uid)
 		name = getItemAttribute(uid, "name") or item.name,
 		plural = getItemAttribute(uid, "pluralname") or item.plural,
 		article = getItemAttribute(uid, "article") or item.article,
-		text = getItemAttribute(uid, "text") or "",
 		special = getItemAttribute(uid, "description") or "",
+		text = getItemAttribute(uid, "text") or "",
 		writer = getItemAttribute(uid, "writer") or "",
 		date = getItemAttribute(uid, "date") or 0
 	}	
@@ -516,12 +516,17 @@ function getItemWeightById(itemid, count, precision)
 		return false
 	end
 
+	if(count > 100) then
+		-- print a warning, as its impossible to have more than 100 stackable items without "cheating" the count
+		print('[Warning] getItemWeightById', 'Calculating weight for more than 100 items!')
+	end
+
 	if(precision) then
 		return item.weight * count
 	end
 
 	local t = string.explode(tostring(item.weight * count), ".")
-	return t[1] .. "." .. string.sub(t[2], 1, 2)
+	return tonumber(t[1] .. "." .. string.sub(t[2], 1, 2))
 end
 
 function getItemWeaponType(uid)
@@ -541,12 +546,17 @@ function getItemRWInfo(uid)
 
 	local item, flags = getItemInfo(thing.itemid), 0
 	if(item.readable) then
-		flags += 1
+		flags = 1
 	end
 
 	if(item.writable) then
-		flags += 2
+		flags = flags + 2
 	end
 
 	return flags
+end
+
+function getItemLevelDoor(itemid)
+	local item = getItemInfo(itemid)
+	return item and item.levelDoor or false
 end
