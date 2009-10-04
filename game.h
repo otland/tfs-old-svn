@@ -430,11 +430,11 @@ class Game
 		  * \param type Type of message
 		  * \param text The text to say
 		  * \param ghostMode Is creature on ghost mode
-		  * \param listPtr Send message only to creatures pointed in vector
+		  * \param spectators Send message only to creatures pointed in vector
 		  * \param pos Appear as sent from different position
 		  */
 		bool internalCreatureSay(Creature* creature, SpeakClasses type, const std::string& text,
-			bool ghostMode, SpectatorVec* listPtr = NULL, Position* pos = NULL);
+			bool ghostMode, SpectatorVec* spectators = NULL, Position* pos = NULL);
 
 		bool internalStartTrade(Player* player, Player* partner, Item* tradeItem);
 		bool internalCloseTrade(Player* player);

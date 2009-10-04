@@ -3835,7 +3835,7 @@ bool Game::internalCreatureTurn(Creature* creature, Direction dir)
 }
 
 bool Game::internalCreatureSay(Creature* creature, SpeakClasses type, const std::string& text,
-	bool ghostMode, SpectatorVec* listPtr/* = NULL*/, Position* pos/* = NULL*/)
+	bool ghostMode, SpectatorVec* spectators/* = NULL*/, Position* pos/* = NULL*/)
 {
 	Player* player = creature->getPlayer();
 	if(player && player->isAccountManager())
@@ -3850,7 +3850,7 @@ bool Game::internalCreatureSay(Creature* creature, SpeakClasses type, const std:
 
 	SpectatorVec list;
 	SpectatorVec::const_iterator it;
-	if(!listPtr || !listPtr->size())
+	if(!spectators || !spectators->size())
 	{
 		// This somewhat complex construct ensures that the cached SpectatorVec
 		// is used if available and if it can be used, else a local vector is
@@ -3864,7 +3864,7 @@ bool Game::internalCreatureSay(Creature* creature, SpeakClasses type, const std:
 			getSpectators(list, destPos, false, true, 18, 18, 14, 14);
 	}
 	else
-		list = (*listPtr);
+		list = (*spectators);
 
 	//send to client
 	Player* tmpPlayer = NULL;
