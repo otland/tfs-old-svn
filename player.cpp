@@ -1304,7 +1304,7 @@ void Player::onCreatureAppear(const Creature* creature)
 		g_moveEvents->onPlayerEquip(this, item, (slots_t)slot, false);
 	}
 
-	if(BedItem* bed = Beds::getInstance()->getBedBySleeper(getGUID()))
+	if(BedItem* bed = Beds::getInstance()->getBedBySleeper(guid))
 		bed->wakeUp();
 
 	Outfit outfit;
@@ -1746,12 +1746,12 @@ void Player::removeMessageBuffer()
 		if(++messageBuffer > maxBuffer)
 		{
 			uint32_t muteCount = 1;
-			MuteCountMap::iterator it = muteCountMap.find(getGUID());
+			MuteCountMap::iterator it = muteCountMap.find(guid);
 			if(it != muteCountMap.end())
 				muteCount = it->second;
 
 			uint32_t muteTime = 5 * muteCount * muteCount;
-			muteCountMap[getGUID()] = muteCount + 1;
+			muteCountMap[guid] = muteCount + 1;
 			if(Condition* condition = Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_MUTED, muteTime * 1000))
 				addCondition(condition);
 
