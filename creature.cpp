@@ -1122,12 +1122,21 @@ void Creature::addHealPoints(Creature* caster, int32_t healthPoints)
 
 void Creature::onAddCondition(ConditionType_t type, bool hadCondition)
 {
-	if(type == CONDITION_INVISIBLE && !hadCondition)
-		g_game.internalCreatureChangeVisible(this, VISIBLE_DISAPPEAR);
-	else if(type == CONDITION_PARALYZE && hasCondition(CONDITION_HASTE))
-		removeCondition(CONDITION_HASTE);
-	else if(type == CONDITION_HASTE && hasCondition(CONDITION_PARALYZE))
-		removeCondition(CONDITION_PARALYZE);
+	if(type == CONDITION_INVISIBLE)
+	{
+		if(!hadCondition)
+			g_game.internalCreatureChangeVisible(this, VISIBLE_DISAPPEAR);
+	}
+	else if(type == CONDITION_PARALYZE)
+	{
+		if(hasCondition(CONDITION_HASTE))
+			removeCondition(CONDITION_HASTE);
+	}
+	else if(type == CONDITION_HASTE)
+	{
+		if(hasCondition(CONDITION_PARALYZE))
+			removeCondition(CONDITION_PARALYZE);
+	}
 }
 
 void Creature::onEndCondition(ConditionType_t type)
