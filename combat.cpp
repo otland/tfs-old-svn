@@ -667,7 +667,7 @@ void Combat::combatTileEffects(const SpectatorVec& list, Creature* caster, Tile*
 
 void Combat::postCombatEffects(Creature* caster, const Position& pos, const CombatParams& params)
 {
-	if(caster && params.effects.distance != NM_MAGIC_NONE)
+	if(caster && params.effects.distance != NM_SHOOT_NONE)
 		addDistanceEffect(caster, caster->getPosition(), pos, params.effects.distance);
 }
 
@@ -699,7 +699,7 @@ void Combat::addDistanceEffect(Creature* caster, const Position& fromPos, const 
 		}
 	}
 
-	if(caster && effect != NM_MAGIC_NONE)
+	if(caster && effect != NM_SHOOT_NONE)
 		g_game.addDistanceEffect(fromPos, toPos, effect);
 }
 
@@ -825,7 +825,7 @@ void Combat::doCombatHealth(Creature* caster, Creature* target, int32_t minChang
 		|| g_config.getBool(ConfigManager::GHOST_SPELL_EFFECTS)))
 		g_game.addMagicEffect(target->getPosition(), params.effects.impact);
 
-	if(caster && params.effects.distance != NM_MAGIC_NONE)
+	if(caster && params.effects.distance != NM_SHOOT_NONE)
 		addDistanceEffect(caster, caster->getPosition(), target->getPosition(), params.effects.distance);
 }
 
@@ -855,7 +855,7 @@ void Combat::doCombatMana(Creature* caster, Creature* target, int32_t minChange,
 		|| g_config.getBool(ConfigManager::GHOST_SPELL_EFFECTS)))
 		g_game.addMagicEffect(target->getPosition(), params.effects.impact);
 
-	if(caster && params.effects.distance != NM_MAGIC_NONE)
+	if(caster && params.effects.distance != NM_SHOOT_NONE)
 		addDistanceEffect(caster, caster->getPosition(), target->getPosition(), params.effects.distance);
 }
 
@@ -887,7 +887,7 @@ void Combat::doCombatCondition(Creature* caster, Creature* target, const CombatP
 		|| g_config.getBool(ConfigManager::GHOST_SPELL_EFFECTS)))
 		g_game.addMagicEffect(target->getPosition(), params.effects.impact);
 
-	if(caster && params.effects.distance != NM_MAGIC_NONE)
+	if(caster && params.effects.distance != NM_SHOOT_NONE)
 		addDistanceEffect(caster, caster->getPosition(), target->getPosition(), params.effects.distance);
 }
 
@@ -910,7 +910,7 @@ void Combat::doCombatDispel(Creature* caster, Creature* target, const CombatPara
 		|| g_config.getBool(ConfigManager::GHOST_SPELL_EFFECTS)))
 		g_game.addMagicEffect(target->getPosition(), params.effects.impact);
 
-	if(caster && params.effects.distance != NM_MAGIC_NONE)
+	if(caster && params.effects.distance != NM_SHOOT_NONE)
 		addDistanceEffect(caster, caster->getPosition(), target->getPosition(), params.effects.distance);
 }
 
@@ -930,7 +930,7 @@ void Combat::doCombatDefault(Creature* caster, Creature* target, const CombatPar
 		|| g_config.getBool(ConfigManager::GHOST_SPELL_EFFECTS)))
 		g_game.addMagicEffect(target->getPosition(), params.effects.impact);
 
-	if(caster && params.effects.distance != NM_MAGIC_NONE)
+	if(caster && params.effects.distance != NM_SHOOT_NONE)
 		addDistanceEffect(caster, caster->getPosition(), target->getPosition(), params.effects.distance);
 }
 
@@ -1006,7 +1006,7 @@ void ValueCallback::getMinMaxValues(Player* player, int32_t& min, int32_t& max, 
 		LuaScriptInterface::reportError(NULL, std::string(LuaScriptInterface::popString(L)));
 
 	if((lua_gettop(L) + parameters + 1) != params)
-		reportErrorFunc("Stack size changed!");
+		LuaScriptInterface::reportError(__FUNCTION__, "Stack size changed!");
 
 	env->resetCallback();
 	m_scriptInterface->releaseScriptEnv();
