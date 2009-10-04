@@ -17,7 +17,13 @@
 
 #ifndef __LUASCRIPT__
 #define __LUASCRIPT__
-#include <lua5.1/lua.hpp>
+
+extern "C"
+{
+	#include "lua.h"
+	#include "lualib.h"
+	#include "lauxlib.h"
+}
 
 #include "otsystem.h"
 #include "position.h"
