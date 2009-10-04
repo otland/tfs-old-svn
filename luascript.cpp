@@ -5344,7 +5344,7 @@ int32_t LuaScriptInterface::luaCreateCombatArea(lua_State* L)
 		area->setupExtArea(listExtArea, rowsExtArea);
 	}
 
-	if(lua_isnil(L, -1)) //prevent crash
+	if(lua_isnoneornil(L, -1)) //prevent crash
 	{
 		lua_pop(L, 2);
 		lua_pushboolean(L, false);
@@ -6408,7 +6408,7 @@ int32_t LuaScriptInterface::luaGetMonsterInfo(lua_State* L)
 		if(lit->ids.size() > 1)
 		{
 			createTable(L, "ids");
-			std::vector<uint16_t>::iterator iit = lit->ids.begin();
+			std::vector<uint16_t>::const_iterator iit = lit->ids.begin();
 			for(uint32_t j = 1; iit != lit->ids.end(); ++iit, ++j)
 			{
 				lua_pushnumber(L, j);
@@ -6438,7 +6438,7 @@ int32_t LuaScriptInterface::luaGetMonsterInfo(lua_State* L)
 				if(cit->ids.size() > 1)
 				{
 					createTable(L, "ids");
-					std::vector<uint16_t>::iterator iit = cit->ids.begin();
+					std::vector<uint16_t>::const_iterator iit = cit->ids.begin();
 					for(uint32_t k = 1; iit != cit->ids.end(); ++iit, ++k)
 					{
 						lua_pushnumber(L, k);
@@ -7905,7 +7905,7 @@ int32_t LuaScriptInterface::luaIsInArray(lua_State* L)
 	lua_pushnil(L);
 	while(lua_next(L, -2))
 	{
-		if(lua_isnil(L, -1))
+		if(lua_isnoneornil(L, -1))
 			break;
 
 		boost::any data;
