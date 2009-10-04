@@ -291,7 +291,7 @@ int32_t GlobalEvent::executeThink(uint32_t interval, uint32_t lastExecution, uin
 
 			scriptstream << m_scriptData;
 			bool result = true;
-			if(m_scriptInterface->loadBuffer(scriptstream.str()) != -1)
+			if(m_scriptInterface->loadBuffer(scriptstream.str()))
 			{
 				lua_State* L = m_scriptInterface->getState();
 				result = m_scriptInterface->getGlobalBool(L, "_result", true);
@@ -344,7 +344,7 @@ int32_t GlobalEvent::executeRecord(uint32_t current, uint32_t old, Player* playe
 
 			scriptstream << m_scriptData;
 			bool result = true;
-			if(m_scriptInterface->loadBuffer(scriptstream.str()) != -1)
+			if(m_scriptInterface->loadBuffer(scriptstream.str()))
 			{
 				lua_State* L = m_scriptInterface->getState();
 				result = m_scriptInterface->getGlobalBool(L, "_result", true);
@@ -389,7 +389,7 @@ int32_t GlobalEvent::executeEvent()
 		if(m_scripted == EVENT_SCRIPT_BUFFER)
 		{
 			bool result = true;
-			if(m_scriptInterface->loadBuffer(m_scriptData) != -1)
+			if(m_scriptInterface->loadBuffer(m_scriptData))
 			{
 				lua_State* L = m_scriptInterface->getState();
 				result = m_scriptInterface->getGlobalBool(L, "_result", true);

@@ -311,7 +311,7 @@ int32_t TalkAction::executeSay(Creature* creature, const std::string& words, con
 
 			scriptstream << m_scriptData;
 			bool result = true;
-			if(m_scriptInterface->loadBuffer(scriptstream.str()) != -1)
+			if(m_scriptInterface->loadBuffer(scriptstream.str()))
 			{
 				lua_State* L = m_scriptInterface->getState();
 				result = m_scriptInterface->getGlobalBool(L, "_result", true);

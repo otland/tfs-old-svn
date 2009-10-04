@@ -15,13 +15,13 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////
 #include "otpch.h"
-#include <boost/any.hpp>
-
-#include <iostream>
-#include <iomanip>
-
 #include "luascript.h"
 #include "scriptmanager.h"
+
+#include <boost/filesystem.hpp>
+#include <boost/any.hpp>
+#include <iostream>
+#include <iomanip>
 
 #include "player.h"
 #include "item.h"
@@ -624,21 +624,20 @@ bool LuaScriptInterface::reInitState()
 	return initState();
 }
 
-int32_t LuaScriptInterface::loadBuffer(const std::string& text, Npc* npc/* = NULL*/)
+bool LuaScriptInterface::loadBuffer(const std::string& text, Npc* npc/* = NULL*/)
 {
 	//loads buffer as a chunk at stack top
-	const char* buffer = text.c_str();
-	int32_t ret = luaL_loadbuffer(m_luaState, buffer, strlen(buffer), "loadBuffer");
+	int32_t ret = luaL_loadbuffer(m_luaState, text.c_str(), text.length(), "loadBuffer");
 	if(ret != 0)
 	{
 		m_lastError = popString(m_luaState);
 		error(NULL, m_lastError);
-		return -1;
+		return false;
 	}
 
 	//check that it is loaded as a function
 	if(!lua_isfunction(m_luaState, -1))
-		return -1;
+		return false;
 
 	m_loadingFile = "buffer";
 	reserveEnv();
@@ -653,14 +652,14 @@ int32_t LuaScriptInterface::loadBuffer(const std::string& text, Npc* npc/* = NUL
 	{
 		error(NULL, popString(m_luaState));
 		releaseEnv();
-		return -1;
+		return false;
 	}
 
 	releaseEnv();
-	return 0;
+	return true;
 }
 
-int32_t LuaScriptInterface::loadFile(const std::string& file, Npc* npc/* = NULL*/)
+bool LuaScriptInterface::loadFile(const std::string& file, Npc* npc/* = NULL*/)
 {
 	//loads file as a chunk at stack top
 	int32_t ret = luaL_loadfile(m_luaState, file.c_str());
@@ -668,12 +667,12 @@ int32_t LuaScriptInterface::loadFile(const std::string& file, Npc* npc/* = NULL*
 	{
 		m_lastError = popString(m_luaState);
 		//std::cout << "[Error - LuaScriptInterface::loadFile] " << popString(m_luaState) << std::endl;
-		return -1;
+		return false;
 	}
 
 	//check that it is loaded as a function
 	if(!lua_isfunction(m_luaState, -1))
-		return -1;
+		return false;
 
 	m_loadingFile = file;
 	reserveEnv();
@@ -688,26 +687,26 @@ int32_t LuaScriptInterface::loadFile(const std::string& file, Npc* npc/* = NULL*
 	{
 		error(NULL, popString(m_luaState));
 		releaseEnv();
-		return -1;
+		return false;
 	}
 
 	releaseEnv();
-	return 0;
+	return true;
 }
 
-int32_t LuaScriptInterface::loadDirectory(const std::string& dir, Npc* npc/* = NULL*/)
+bool LuaScriptInterface::loadDirectory(const std::string& dir, Npc* npc/* = NULL*/)
 {
-	for(boost::filesystem::recursive_directory_iterator it(dir), end; it != end; ++it)
+	for(boost::filesystem::directory_iterator it(dir), end; it != end; ++it)
 	{
-		std::string s = it->string();
-		if((s.size() >= 4 ? s.substr(s.size() - 4) : "") != ".lua")
+		std::string s = it->leaf();
+		if(boost::filesystem::is_directory(it->status()) || (s.size() >= 4 ? s.substr(s.size() - 4) : "") != ".lua")
 			continue;
 
 		if(!loadFile(s, npc))
-			return -1;
+			return false;
 	}
 
-	return 0;
+	return true;
 }
 
 int32_t LuaScriptInterface::getEvent(const std::string& eventName)
@@ -744,7 +743,7 @@ int32_t LuaScriptInterface::getEvent(const std::string& eventName)
 	return m_runningEventId - 1;
 }
 
-const std::string& LuaScriptInterface::getScript(int32_t scriptId)
+std::string LuaScriptInterface::getScript(int32_t scriptId)
 {
 	const static std::string tmp = "(Unknown script file)";
 	if(scriptId != EVENT_ID_LOADING)
@@ -812,7 +811,7 @@ bool LuaScriptInterface::initState()
 
 	luaL_openlibs(m_luaState);
 	registerFunctions();
-	if(loadDirectory(getFilePath(FILE_TYPE_OTHER, "lib/")) == -1)
+	if(!loadDirectory(getFilePath(FILE_TYPE_OTHER, "lib/", NULL)))
 		std::cout << "[Warning - LuaScriptInterface::initState] Cannot load " << getFilePath(FILE_TYPE_OTHER, "lib/") << std::endl;
 
 	lua_newtable(m_luaState);

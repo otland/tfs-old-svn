@@ -936,8 +936,8 @@ bool ScriptEvent::configureRaidEvent(xmlNodePtr eventNode)
 		return false;
 
 	std::string scriptsName = Raids::getInstance()->getScriptBaseName();
-	if(m_scriptInterface.loadFile(getFilePath(FILE_TYPE_OTHER, std::string(scriptsName + "/lib/" + scriptsName + ".lua"))) == -1)
-		std::cout << "[Warning - ScriptEvent::configureRaidEvent] Cannot load " << scriptsName << "/lib/" << scriptsName << ".lua" << std::endl;
+	if(!m_scriptInterface.loadDirectory(getFilePath(FILE_TYPE_OTHER, std::string(scriptsName + "/lib/"))))
+		std::cout << "[Warning - ScriptEvent::configureRaidEvent] Cannot load " << scriptsName << "/lib/" << std::endl;
 
 	std::string strValue;
 	if(readXMLString(eventNode, "file", strValue))
@@ -948,13 +948,10 @@ bool ScriptEvent::configureRaidEvent(xmlNodePtr eventNode)
 			return false;
 		}
 	}
-	else if(!parseXMLContentString(eventNode->children, strValue))
+	else if(!parseXMLContentString(eventNode->children, strValue) && !loadBuffer(strValue))
 	{
-		if(!loadBuffer(strValue))
-		{
-			std::cout << "[Error - ScriptEvent::configureRaidEvent] Cannot load raid script buffer." << std::endl;
-			return false;
-		}
+		std::cout << "[Error - ScriptEvent::configureRaidEvent] Cannot load raid script buffer." << std::endl;
+		return false;
 	}
 
 	return true;
@@ -969,7 +966,7 @@ bool ScriptEvent::executeEvent() const
 		if(m_scripted == EVENT_SCRIPT_BUFFER)
 		{
 			bool result = true;
-			if(m_scriptInterface.loadBuffer(m_scriptData) != -1)
+			if(m_scriptInterface.loadBuffer(m_scriptData))
 			{
 				lua_State* L = m_scriptInterface.getState();
 				result = m_scriptInterface.getGlobalBool(L, "_result", true);

@@ -29,8 +29,8 @@ bool BaseEvents::loadFromXml()
 		return false;
 	}
 
-	if(getInterface().loadFile(getFilePath(FILE_TYPE_OTHER, std::string(scriptsName + "/lib/" + scriptsName + ".lua"))) == -1)
-		std::cout << "[Warning - BaseEvents::loadFromXml] Cannot load " << scriptsName << "/lib/" << scriptsName << ".lua" << std::endl;
+	if(!getInterface().loadDirectory(getFilePath(FILE_TYPE_OTHER, std::string(scriptsName + "/lib/"))))
+		std::cout << "[Warning - BaseEvents::loadFromXml] Cannot load " << scriptsName << "/lib/" << std::endl;
 
 	xmlDocPtr doc = xmlParseFile(getFilePath(FILE_TYPE_OTHER, std::string(scriptsName + "/" + scriptsName + ".xml")).c_str());
 	if(!doc)
@@ -178,24 +178,24 @@ bool Event::loadScript(const std::string& script, bool file)
 		return false;
 	}
 
-	int32_t result = -1;
+	bool result = false;
 	if(!file)
 	{
-		std::string script_ = script, tmp = "function " + getScriptEventName();
-		trimString(script_);
-		if(script_.find(tmp) == std::string::npos)
+		std::string buffer = script, function = "function " + getScriptEventName();
+		trimString(buffer);
+		if(buffer.find(function) == std::string::npos)
 		{
 			std::stringstream scriptstream;
-			scriptstream << tmp << "(" << getScriptEventParams() << ")" << std::endl << script_ << std::endl << "end";
-			script_ = scriptstream.str();
+			scriptstream << function << "(" << getScriptEventParams() << ")" << std::endl << buffer << std::endl << "end";
+			buffer = scriptstream.str();
 		}
 
-		result = m_scriptInterface->loadBuffer(script_);
+		result = m_scriptInterface->loadBuffer(buffer);
 	}
 	else
 		result = m_scriptInterface->loadFile(script);
 
-	if(result == -1)
+	if(!result)
 	{
 		std::cout << "[Warning - Event::loadScript] Cannot load script (" << script << ")" << std::endl;
 		std::cout << m_scriptInterface->getLastError() << std::endl;

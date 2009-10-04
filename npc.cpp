@@ -1675,7 +1675,7 @@ void Npc::executeResponse(Player* player, NpcState* npcState, const NpcResponse*
 						scriptstream << "}" << std::endl;
 
 						scriptstream << it->strValue;
-						if(scriptInterface.loadBuffer(scriptstream.str(), this) != -1)
+						if(scriptInterface.loadBuffer(scriptstream.str(), this))
 						{
 							lua_State* L = scriptInterface.getState();
 							lua_getglobal(L, "_state");
@@ -2499,7 +2499,7 @@ bool NpcScriptInterface::loadNpcLib(std::string file)
 	if(m_libLoaded)
 		return true;
 
-	if(loadFile(file) == -1)
+	if(!loadFile(file))
 	{
 		std::cout << "Warning: [NpcScriptInterface::loadNpcLib] Cannot load " << file << std::endl;
 		return false;
@@ -2893,7 +2893,7 @@ NpcScript::NpcScript(std::string file, Npc* npc):
 	NpcEventsHandler(npc)
 {
 	m_scriptInterface = npc->getInterface();
-	if(m_scriptInterface->loadFile(file, npc) == -1)
+	if(!m_scriptInterface->loadFile(file, npc))
 	{
 		std::cout << "[Warning - NpcScript::NpcScript] Cannot load script: " << file << std::endl;
 		std::cout << m_scriptInterface->getLastError() << std::endl;

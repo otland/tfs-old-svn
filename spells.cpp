@@ -413,7 +413,7 @@ bool CombatSpell::executeCastSpell(Creature* creature, const LuaVariant& var)
 
 			scriptstream << m_scriptData;
 			bool result = true;
-			if(m_scriptInterface->loadBuffer(scriptstream.str()) != -1)
+			if(m_scriptInterface->loadBuffer(scriptstream.str()))
 			{
 				lua_State* L = m_scriptInterface->getState();
 				result = m_scriptInterface->getGlobalBool(L, "_result", true);
@@ -1263,7 +1263,7 @@ bool InstantSpell::executeCastSpell(Creature* creature, const LuaVariant& var)
 
 			scriptstream << m_scriptData;
 			bool result = true;
-			if(m_scriptInterface->loadBuffer(scriptstream.str()) != -1)
+			if(m_scriptInterface->loadBuffer(scriptstream.str()))
 			{
 				lua_State* L = m_scriptInterface->getState();
 				result = m_scriptInterface->getGlobalBool(L, "_result", true);
@@ -1947,7 +1947,7 @@ bool RuneSpell::executeCastSpell(Creature* creature, const LuaVariant& var)
 
 			scriptstream << m_scriptData;
 			bool result = true;
-			if(m_scriptInterface->loadBuffer(scriptstream.str()) != -1)
+			if(m_scriptInterface->loadBuffer(scriptstream.str()))
 			{
 				lua_State* L = m_scriptInterface->getState();
 				result = m_scriptInterface->getGlobalBool(L, "_result", true);

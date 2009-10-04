@@ -226,9 +226,9 @@ class LuaScriptInterface
 			}
 		}
 
-		int32_t loadBuffer(const std::string& text, Npc* npc = NULL);
-		int32_t loadFile(const std::string& file, Npc* npc = NULL);
-		int32_t loadDirectory(const std::string& dir, Npc* npc = NULL);
+		bool loadBuffer(const std::string& text, Npc* npc = NULL);
+		bool loadFile(const std::string& file, Npc* npc = NULL);
+		bool loadDirectory(const std::string& dir, Npc* npc = NULL);
 
 		std::string getName() {return m_interfaceName;}
 		std::string getScript(int32_t scriptId);

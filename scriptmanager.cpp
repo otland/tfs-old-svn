@@ -15,9 +15,9 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////
 #include "otpch.h"
-#include <boost/filesystem.hpp>
-
 #include "scriptmanager.h"
+
+#include <boost/filesystem.hpp>
 #include <libxml/xmlmemory.h>
 #include <libxml/parser.h>
 
@@ -119,12 +119,12 @@ bool ScriptingManager::loadMods()
 		return true; //silently ignore
 
 	int32_t i = 0;
+	bool enabled = false;
 	for(boost::filesystem::directory_iterator it(modsPath), end; it != end; ++it)
 	{
 		std::string name = it->leaf(); //deprecated in newer version of boost, use filename() if compilation fails even if deprecations aren't disabled
 		if(!boost::filesystem::is_directory(it->status()) && name.find(".xml") != std::string::npos)
 		{
-			bool enabled;
 			std::cout << "> Loading " << name << "...";
 			if(loadFromXml(name, enabled))
 			{
@@ -161,7 +161,9 @@ bool ScriptingManager::reloadMods()
 
 bool ScriptingManager::loadFromXml(const std::string& file, bool& enabled)
 {
+	enabled = false;
 	std::string modPath = getFilePath(FILE_TYPE_MOD, file);
+
 	xmlDocPtr doc = xmlParseFile(modPath.c_str());
 	if(!doc)
 	{

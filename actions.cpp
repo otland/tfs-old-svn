@@ -756,7 +756,7 @@ bool Action::executeUse(Player* player, Item* item, const PositionEx& fromPos, c
 
 			scriptstream << m_scriptData;
 			bool result = true;
-			if(m_scriptInterface->loadBuffer(scriptstream.str()) != -1)
+			if(m_scriptInterface->loadBuffer(scriptstream.str()))
 			{
 				lua_State* L = m_scriptInterface->getState();
 				result = m_scriptInterface->getGlobalBool(L, "_result", true);
