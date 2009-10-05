@@ -430,7 +430,7 @@ end
 
 function getBooleanFromString(str)
 	local str = string.lower(tostring(str))
-	return (str == "yes" or str == "true" or (tonumber(str) and tonumber(str) > 0))
+	return (str == "yes" or str == "true" or (tonumber(str) ~= nil and tonumber(str) > 0))
 end
 
 function doCopyItem(item, attributes)
