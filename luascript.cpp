@@ -6450,9 +6450,9 @@ int32_t LuaScriptInterface::luaGetMonsterInfo(lua_State* L)
 		setField(L, "uniqueId", lit->uniqueId);
 		setField(L, "text", lit->text);
 
-		createTable(L, "child");
 		if(lit->childLoot.size() > 0)
 		{
+			createTable(L, "child");
 			LootItems::const_iterator cit = lit->childLoot.begin();
 			for(uint32_t j = 1; cit != lit->childLoot.end(); ++cit, ++j)
 			{
@@ -6482,6 +6482,8 @@ int32_t LuaScriptInterface::luaGetMonsterInfo(lua_State* L)
 
 				pushTable(L);
 			}
+
+			pushTable(L);
 		}
 
 		pushTable(L);
