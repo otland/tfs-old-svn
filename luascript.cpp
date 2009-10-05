@@ -666,7 +666,7 @@ bool LuaScriptInterface::loadFile(const std::string& file, Npc* npc/* = NULL*/)
 	if(ret)
 	{
 		m_lastError = popString(m_luaState);
-		//std::cout << "[Error - LuaScriptInterface::loadFile] " << popString(m_luaState) << std::endl;
+		std::cout << "[Error - LuaScriptInterface::loadFile] " << popString(m_luaState) << std::endl;
 		return false;
 	}
 
@@ -699,7 +699,7 @@ bool LuaScriptInterface::loadDirectory(const std::string& dir, Npc* npc/* = NULL
 	for(boost::filesystem::directory_iterator it(dir), end; it != end; ++it)
 	{
 		std::string s = it->leaf();
-		if(boost::filesystem::is_directory(it->status()) || (s.size() >= 4 ? s.substr(s.size() - 4) : "") != ".lua")
+		if(boost::filesystem::is_directory(it->status()) || (s.size() > 4 ? s.substr(s.size() - 4) : "") != ".lua")
 			continue;
 
 		if(!loadFile(s, npc))

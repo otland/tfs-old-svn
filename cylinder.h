@@ -45,7 +45,7 @@ enum cylinderlink_t
 class Cylinder
 {
 	public:
-		virtual ~Cylinder() = 0;
+		virtual ~Cylinder() {}
 
 		virtual Cylinder* getParent() = 0;
 		virtual const Cylinder* getParent() const = 0;
