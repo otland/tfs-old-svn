@@ -910,7 +910,7 @@ bool LuaScriptInterface::callFunction(uint32_t params)
 	else
 		result = (int32_t)LuaScriptInterface::popBoolean(m_luaState);
 
-	lua_remove(m_luaState, errorIndex);
+	lua_remove(m_luaState, handler);
 	if((lua_gettop(m_luaState) + (int32_t)params + 1) != size)
 		LuaScriptInterface::error(NULL, "Stack size changed!");
 
