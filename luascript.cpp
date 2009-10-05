@@ -696,13 +696,18 @@ bool LuaScriptInterface::loadFile(const std::string& file, Npc* npc/* = NULL*/)
 
 bool LuaScriptInterface::loadDirectory(const std::string& dir, Npc* npc/* = NULL*/)
 {
+	StringVec files;
 	for(boost::filesystem::directory_iterator it(dir), end; it != end; ++it)
 	{
 		std::string s = it->leaf();
-		if(boost::filesystem::is_directory(it->status()) || (s.size() > 4 ? s.substr(s.size() - 4) : "") != ".lua")
-			continue;
+		if(!boost::filesystem::is_directory(it->status()) && (s.size() > 4 ? s.substr(s.size() - 4) : "") == ".lua")
+			files.push_back(s);
+	}
 
-		if(!loadFile(dir + s, npc))
+	std::sort(files.begin(), files.end());
+	for(StringVec::iterator it = files.begin(); it != files.end(); ++it)
+	{
+		if(!loadFile(dir + (*it), npc))
 			return false;
 	}
 

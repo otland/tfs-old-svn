@@ -50,15 +50,6 @@ CREATE TABLE "accounts" (
 	UNIQUE ("name")
 );
 
-CREATE TABLE "account_viplist" (
-	"account_id" INTEGER NOT NULL,
-	"world_id" INTEGER NOT NULL DEFAULT 0,
-	"player_id" INTEGER NOT NULL,
-	UNIQUE ("account_id", "player_id"),
-	FOREIGN KEY "account_id" REFERENCES "accounts" ("id"),
-	FOREIGN KEY "player_id" REFERENCES "players" ("id")
-);
-
 INSERT INTO "accounts" VALUES (1, '1', '1', 65535, 0, '', '0', 0, 0, 1);
 
 CREATE TABLE "players" (
@@ -118,6 +109,15 @@ CREATE TABLE "players" (
 );
 
 INSERT INTO "players" VALUES (1, 'Account Manager', 0, 1, 1, 1, 0, 150, 150, 0, 0, 0, 0, 0, 110, 0, 0, 0, 0, 0, 0, 0, 50, 50, 7, '', 400, 0, 0, 0, 0, 0, 0, 0, '', 0, 0, 0, 201660000, 0, 100, 100, 100, 100, 100, 0, 0, 0, 0, 0, '');
+
+CREATE TABLE "account_viplist" (
+	"account_id" INTEGER NOT NULL,
+	"world_id" INTEGER NOT NULL DEFAULT 0,
+	"player_id" INTEGER NOT NULL,
+	UNIQUE ("account_id", "player_id"),
+	FOREIGN KEY ("account_id") REFERENCES "accounts" ("id"),
+	FOREIGN KEY ("player_id") REFERENCES "players" ("id")
+);
 
 CREATE TABLE "global_storage" (
 	"key" INTEGER NOT NULL,

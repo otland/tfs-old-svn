@@ -688,7 +688,7 @@ bool Creature::onDeath()
 		{
 			if(it->getKillerCreature()->getPlayer())
 				tmp = it->getKillerCreature();
-			else if(it->getKillerCreature()->getMaster() && it->getKillerCreature()->getMaster()->getPlayer())
+			else if(it->getKillerCreature()->getPlayerMaster())
 				tmp = it->getKillerCreature()->getMaster();
 		}
 

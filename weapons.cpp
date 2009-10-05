@@ -57,7 +57,7 @@ void Weapons::clear()
 
 bool Weapons::loadDefaults()
 {
-	for(uint32_t i = 0; i < Item::items.size(); ++i)
+	for(uint32_t i = 0; i <= Item::items.size(); ++i)
 	{
 		const ItemType* it = Item::items.getElement(i);
 		if(!it || weapons.find(it->id) != weapons.end())

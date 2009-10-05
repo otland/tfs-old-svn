@@ -10,7 +10,7 @@ function Wait:continue()
 	end
 
 	local _, delay = coroutine.resume(self.co)
-	addEvent(self:continue, delay)
+	addEvent(self.continue, delay)
 	return true
 end
 
