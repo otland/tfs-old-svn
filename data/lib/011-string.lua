@@ -16,7 +16,7 @@ end
 
 string.explode = function (str, sep)
 	local t = {}
-	if(type(str) ~= 'string' or type(sep) ~= 'string' or isInArray({sep:len(), str:len()}, 0) then
+	if(type(str) ~= 'string' or type(sep) ~= 'string' or isInArray({sep:len(), str:len()}, 0)) then
 		return t
 	end
 
@@ -44,7 +44,7 @@ string.difftime = function (diff)
 		{"day", diff / 60 / 60 / 24 % 7},
 		{"hour", diff / 60 / 60 % 24},
 		{"minute", diff / 60 % 60},
-		{'second", diff % 60}
+		{"second", diff % 60}
 	}
 
 	local t = {}

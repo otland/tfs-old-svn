@@ -702,7 +702,7 @@ bool LuaScriptInterface::loadDirectory(const std::string& dir, Npc* npc/* = NULL
 		if(boost::filesystem::is_directory(it->status()) || (s.size() > 4 ? s.substr(s.size() - 4) : "") != ".lua")
 			continue;
 
-		if(!loadFile(s, npc))
+		if(!loadFile(dir + s, npc))
 			return false;
 	}
 
