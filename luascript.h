@@ -17,6 +17,7 @@
 
 #ifndef __LUASCRIPT__
 #define __LUASCRIPT__
+#include "otsystem.h"
 
 extern "C"
 {
@@ -25,7 +26,7 @@ extern "C"
 	#include "lauxlib.h"
 }
 
-#include "otsystem.h"
+#include "database.h"
 #include "position.h"
 
 enum LuaVariantType_t
@@ -53,9 +54,14 @@ struct LuaVariant
 	uint32_t number;
 };
 
+class Game;
 class Thing;
+class LuaScriptInterface;
+
 class Creature;
 class Player;
+class Npc;
+
 class Item;
 class Container;
 
@@ -63,11 +69,7 @@ class Combat;
 class CombatArea;
 class Condition;
 
-class Npc;
-class DBResult;
-class LuaScriptInterface;
-class Game;
-
+struct Outfit_t;
 class ScriptEnviroment
 {
 	public:
@@ -249,10 +251,9 @@ class LuaScriptInterface
 		}
 
 		bool pushFunction(int32_t functionId);
-		int32_t callFunction(uint32_t params);
+		bool callFunction(uint32_t params);
 		static int32_t handleFunction(lua_State* L);
 
-		int32_t getStack(lua_State* L = NULL) const;
 		void dumpStack(lua_State* L = NULL);
 
 		//push/pop common structures
@@ -306,7 +307,6 @@ class LuaScriptInterface
 		static bool getArea(lua_State* L, std::list<uint32_t>& list, uint32_t& rows);
 
 		virtual void registerFunctions();
-		static int32_t internalGetPlayerInfo(lua_State* L, PlayerInfo_t info);
 
 		//lua functions
 		static int32_t luaDoRemoveItem(lua_State* L);
@@ -667,7 +667,7 @@ class LuaScriptInterface
 		static int32_t luaBitULeftShift(lua_State* L);
 		static int32_t luaBitURightShift(lua_State* L);
 
-		static const luaL_Reg luaStdTable[4];
+		static const luaL_Reg luaStdTable[6];
 		static int32_t luaStdCout(lua_State* L);
 		static int32_t luaStdCerr(lua_State* L);
 		static int32_t luaStdClog(lua_State* L);
@@ -721,6 +721,7 @@ class LuaScriptInterface
 			PlayerInfoLastLogin,
 			PlayerInfoAccountManager
 		};
+		static int32_t internalGetPlayerInfo(lua_State* L, PlayerInfo_t info);
 
 		int32_t m_runningEventId;
 		uint32_t m_lastEventTimerId;
