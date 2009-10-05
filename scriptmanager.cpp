@@ -132,7 +132,7 @@ bool ScriptingManager::loadMods()
 			std::cout << " done";
 			if(!enabled)
 			{
-				++j
+				++j;
 				std::cout << ", but disabled";
 			}
 
