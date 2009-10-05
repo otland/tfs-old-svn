@@ -15,6 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////
 #include "otpch.h"
+
 #include "quests.h"
 #include "tools.h"
 
@@ -40,21 +41,24 @@ std::string Mission::getDescription(Player* player)
 {
 	std::string value;
 	if(!player->getStorage(storageId, value))
-		return "Couldn't retrieve player storage, please report to gamemaster.";
+		return "Couldn't retrieve player storage, please report to a gamemaster.";
 
 	if(atoi(value.c_str()) >= endValue)
 		return states.rbegin()->second;
 
 	for(int32_t i = endValue; i >= startValue; --i)
 	{
-		if(!player->getStorage(storageId, value))
+		if(!player->getStorage(storageId, value) || atoi(value.c_str()) != i)
 			continue;
 
-		if(i == atoi(value.c_str()))
-			return states[i - startValue];
+		std::string ret = states[i - startValue];
+		if(ret.find("{STORAGE}") != std::string::npos)
+			replaceString(ret, "{STORAGE}", value);
+
+		return ret;
 	}
 
-	return "Couldn't retrieve mission description, please report to gamemaster.";
+	return "Couldn't retrieve mission description, please report to a gamemaster.";
 }
 
 Quest::~Quest()
