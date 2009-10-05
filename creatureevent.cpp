@@ -73,8 +73,9 @@ bool CreatureEvents::registerEvent(Event* event, xmlNodePtr p, bool override)
 		if(oldEvent->getEventType() == creatureEvent->getEventType() && (!oldEvent->isLoaded() || override))
 			oldEvent->copyEvent(creatureEvent);
 
-		delete creatureEvent;
-		return override;
+		/*delete creatureEvent;
+		return override;*/
+		return false;
 	}
 
 	//if not, register it normally
@@ -100,7 +101,8 @@ bool CreatureEvents::playerLogin(Player* player)
 	bool result = true;
 	for(CreatureEventList::iterator it = m_creatureEvents.begin(); it != m_creatureEvents.end(); ++it)
 	{
-		if(it->second->getEventType() == CREATURE_EVENT_LOGIN && !it->second->executeLogin(player) && result)
+		if(it->second->getEventType() == CREATURE_EVENT_LOGIN &&
+			!it->second->executeLogin(player) && result)
 			result = false;
 	}
 
@@ -113,7 +115,8 @@ bool CreatureEvents::playerLogout(Player* player, bool forceLogout)
 	bool result = true;
 	for(CreatureEventList::iterator it = m_creatureEvents.begin(); it != m_creatureEvents.end(); ++it)
 	{
-		if(it->second->getEventType() == CREATURE_EVENT_LOGOUT && !it->second->executeLogout(player, forceLogout) && result)
+		if(it->second->getEventType() == CREATURE_EVENT_LOGOUT &&
+			!it->second->executeLogout(player, forceLogout) && result)
 			result = false;
 	}
 
