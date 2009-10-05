@@ -73,7 +73,7 @@ void ConnectionManager::shutdown()
 	std::cout << "Closing all connections" << std::endl;
 	#endif
 	boost::recursive_mutex::scoped_lock lockClass(m_connectionManagerLock);
-	for(std::list<Connection_ptr>::iterator it = m_connections.begin(); it != m_connections.end();)
+	for(std::list<Connection_ptr>::iterator it = m_connections.begin(); it != m_connections.end(); ++it)
 	{
 		try
 		{
@@ -82,7 +82,6 @@ void ConnectionManager::shutdown()
 			(*it)->m_socket->close(error);
 		}
 		catch(boost::system::system_error&) {}
-		++it;
 	}
 
 	m_connections.clear();
@@ -479,9 +478,13 @@ bool Connection::send(OutputMessage_ptr msg)
 		#endif
 		internalSend(msg);
 	}
-	else
+	else if(m_pendingWrite > 100 && g_config.getBool(ConfigManager::FORCE_CLOSE_SLOW_CONNECTION))
 	{
-		
+		std::cout << "NOTICE: Forcing slow connection to disconnect!" << std::endl;
+		close();
+	}
+	else
+	{	
 		#ifdef __DEBUG_NET__
 		std::cout << "Connection::send Adding to queue " << msg->getMessageLength() << std::endl;
 		#endif
