@@ -628,7 +628,7 @@ bool LuaScriptInterface::loadBuffer(const std::string& text, Npc* npc/* = NULL*/
 {
 	//loads buffer as a chunk at stack top
 	int32_t ret = luaL_loadbuffer(m_luaState, text.c_str(), text.length(), "loadBuffer");
-	if(ret != 0)
+	if(ret)
 	{
 		m_lastError = popString(m_luaState);
 		error(NULL, m_lastError);
@@ -648,7 +648,7 @@ bool LuaScriptInterface::loadBuffer(const std::string& text, Npc* npc/* = NULL*/
 
 	//execute it
 	ret = lua_pcall(m_luaState, 0, 0, 0);
-	if(ret != 0)
+	if(ret)
 	{
 		error(NULL, popString(m_luaState));
 		releaseEnv();
@@ -666,7 +666,7 @@ bool LuaScriptInterface::loadFile(const std::string& file, Npc* npc/* = NULL*/)
 	if(ret)
 	{
 		m_lastError = popString(m_luaState);
-		std::cout << "[Error - LuaScriptInterface::loadFile] " << popString(m_luaState) << std::endl;
+		std::cout << "[Error - LuaScriptInterface::loadFile] " << m_lastError << std::endl;
 		return false;
 	}
 
