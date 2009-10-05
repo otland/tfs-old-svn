@@ -29,9 +29,9 @@ extern ConfigManager g_config;
 extern Weapons* g_weapons;
 
 Weapons::Weapons():
-	m_scriptInterface("Weapon Interface")
+	m_interface("Weapon Interface")
 {
-	m_scriptInterface.initState();
+	m_interface.initState();
 }
 
 const Weapon* Weapons::getWeapon(const Item* item) const
@@ -52,7 +52,7 @@ void Weapons::clear()
 		delete it->second;
 
 	weapons.clear();
-	m_scriptInterface.reInitState();
+	m_interface.reInitState();
 }
 
 bool Weapons::loadDefaults()
@@ -72,7 +72,7 @@ bool Weapons::loadDefaults()
 				case WEAPON_CLUB:
 				case WEAPON_FIST:
 				{
-					if(WeaponMelee* weapon = new WeaponMelee(&m_scriptInterface))
+					if(WeaponMelee* weapon = new WeaponMelee(&m_interface))
 					{
 						weapon->configureWeapon(*it);
 						weapons[it->id] = weapon;
@@ -87,7 +87,7 @@ bool Weapons::loadDefaults()
 					if(it->weaponType == WEAPON_DIST && it->ammoType != AMMO_NONE)
 						continue;
 
-					if(WeaponDistance* weapon = new WeaponDistance(&m_scriptInterface))
+					if(WeaponDistance* weapon = new WeaponDistance(&m_interface))
 					{
 						weapon->configureWeapon(*it);
 						weapons[it->id] = weapon;
@@ -109,13 +109,13 @@ Event* Weapons::getEvent(const std::string& nodeName)
 {
 	std::string tmpNodeName = asLowerCaseString(nodeName);
 	if(tmpNodeName == "melee")
-		return new WeaponMelee(&m_scriptInterface);
+		return new WeaponMelee(&m_interface);
 
 	if(tmpNodeName == "distance" || tmpNodeName == "ammunition")
-		return new WeaponDistance(&m_scriptInterface);
+		return new WeaponDistance(&m_interface);
 
 	if(tmpNodeName == "wand" || tmpNodeName == "rod")
-		return new WeaponWand(&m_scriptInterface);
+		return new WeaponWand(&m_interface);
 
 	return NULL;
 }
@@ -485,9 +485,9 @@ int32_t Weapon::getManaCost(const Player* player) const
 bool Weapon::executeUseWeapon(Player* player, const LuaVariant& var) const
 {
 	//onUseWeapon(cid, var)
-	if(m_scriptInterface->reserveEnv())
+	if(m_interface->reserveEnv())
 	{
-		ScriptEnviroment* env = m_scriptInterface->getEnv();
+		ScriptEnviroment* env = m_interface->getEnv();
 		if(m_scripted == EVENT_SCRIPT_BUFFER)
 		{
 			env->setRealPos(player->getPosition());
@@ -498,13 +498,13 @@ bool Weapon::executeUseWeapon(Player* player, const LuaVariant& var) const
 
 			scriptstream << m_scriptData;
 			bool result = true;
-			if(m_scriptInterface->loadBuffer(scriptstream.str()))
+			if(m_interface->loadBuffer(scriptstream.str()))
 			{
-				lua_State* L = m_scriptInterface->getState();
-				result = m_scriptInterface->getGlobalBool(L, "_result", true);
+				lua_State* L = m_interface->getState();
+				result = m_interface->getGlobalBool(L, "_result", true);
 			}
 
-			m_scriptInterface->releaseEnv();
+			m_interface->releaseEnv();
 			return result;
 		}
 		else
@@ -515,17 +515,17 @@ bool Weapon::executeUseWeapon(Player* player, const LuaVariant& var) const
 			env->setEventDesc(desc);
 			#endif
 
-			env->setScriptId(m_scriptId, m_scriptInterface);
+			env->setScriptId(m_scriptId, m_interface);
 			env->setRealPos(player->getPosition());
 
-			lua_State* L = m_scriptInterface->getState();
-			m_scriptInterface->pushFunction(m_scriptId);
+			lua_State* L = m_interface->getState();
+			m_interface->pushFunction(m_scriptId);
 
 			lua_pushnumber(L, env->addThing(player));
-			m_scriptInterface->pushVariant(L, var);
+			m_interface->pushVariant(L, var);
 
-			bool result = m_scriptInterface->callFunction(2);
-			m_scriptInterface->releaseEnv();
+			bool result = m_interface->callFunction(2);
+			m_interface->releaseEnv();
 			return result;
 		}
 	}

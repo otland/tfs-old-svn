@@ -15,8 +15,8 @@ string.trim = function (str)
 end
 
 string.explode = function (str, sep)
-	local t = {}
-	if(type(str) ~= 'string' or type(sep) ~= 'string' or isInArray({sep:len(), str:len()}, 0)) then
+	local str, t = tostring(str), {}
+	if(type(sep) ~= 'string' or isInArray({sep:len(), str:len()}, 0)) then
 		return t
 	end
 

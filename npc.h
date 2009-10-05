@@ -122,7 +122,7 @@ class NpcScript : public NpcEventsHandler
 		virtual void onThink();
 
 	private:
-		NpcScriptInterface* m_scriptInterface;
+		NpcScriptInterface* m_interface;
 		int32_t m_onCreatureAppear, m_onCreatureDisappear, m_onCreatureMove, m_onCreatureSay,
 			m_onPlayerCloseChannel, m_onPlayerEndTrade, m_onThink;
 };
@@ -495,7 +495,7 @@ class Npc : public Creature
 		ResponseList responseList;
 
 		NpcEventsHandler* m_npcEventHandler;
-		static NpcScriptInterface* m_scriptInterface;
+		static NpcScriptInterface* m_interface;
 
 		friend class Npcs;
 		friend class NpcScriptInterface;

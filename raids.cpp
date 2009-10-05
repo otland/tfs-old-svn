@@ -184,7 +184,7 @@ void Raids::clear()
 		delete (*it);
 
 	raidList.clear();
-	ScriptEvent::m_scriptInterface.reInitState();
+	ScriptEvent::m_interface.reInitState();
 }
 
 bool Raids::reload()
@@ -928,7 +928,7 @@ bool AreaSpawnEvent::executeEvent() const
 	return true;
 }
 
-LuaScriptInterface ScriptEvent::m_scriptInterface("Raid Interface");
+LuaScriptInterface ScriptEvent::m_interface("Raid Interface");
 
 bool ScriptEvent::configureRaidEvent(xmlNodePtr eventNode)
 {
@@ -936,7 +936,7 @@ bool ScriptEvent::configureRaidEvent(xmlNodePtr eventNode)
 		return false;
 
 	std::string scriptsName = Raids::getInstance()->getScriptBaseName();
-	if(!m_scriptInterface.loadDirectory(getFilePath(FILE_TYPE_OTHER, std::string(scriptsName + "/lib/"))))
+	if(!m_interface.loadDirectory(getFilePath(FILE_TYPE_OTHER, std::string(scriptsName + "/lib/"))))
 		std::cout << "[Warning - ScriptEvent::configureRaidEvent] Cannot load " << scriptsName << "/lib/" << std::endl;
 
 	std::string strValue;
@@ -960,19 +960,19 @@ bool ScriptEvent::configureRaidEvent(xmlNodePtr eventNode)
 bool ScriptEvent::executeEvent() const
 {
 	//onRaid()
-	if(m_scriptInterface.reserveEnv())
+	if(m_interface.reserveEnv())
 	{
-		ScriptEnviroment* env = m_scriptInterface.getEnv();
+		ScriptEnviroment* env = m_interface.getEnv();
 		if(m_scripted == EVENT_SCRIPT_BUFFER)
 		{
 			bool result = true;
-			if(m_scriptInterface.loadBuffer(m_scriptData))
+			if(m_interface.loadBuffer(m_scriptData))
 			{
-				lua_State* L = m_scriptInterface.getState();
-				result = m_scriptInterface.getGlobalBool(L, "_result", true);
+				lua_State* L = m_interface.getState();
+				result = m_interface.getGlobalBool(L, "_result", true);
 			}
 
-			m_scriptInterface.releaseEnv();
+			m_interface.releaseEnv();
 			return result;
 		}
 		else
@@ -980,11 +980,11 @@ bool ScriptEvent::executeEvent() const
 			#ifdef __DEBUG_LUASCRIPTS__
 			env->setEventDesc("Raid event");
 			#endif
-			env->setScriptId(m_scriptId, &m_scriptInterface);
-			m_scriptInterface.pushFunction(m_scriptId);
+			env->setScriptId(m_scriptId, &m_interface);
+			m_interface.pushFunction(m_scriptId);
 
-			bool result = m_scriptInterface.callFunction(0);
-			m_scriptInterface.releaseEnv();
+			bool result = m_interface.callFunction(0);
+			m_interface.releaseEnv();
 			return result;
 		}
 	}

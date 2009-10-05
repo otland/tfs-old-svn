@@ -162,12 +162,12 @@ bool ScriptEnviroment::loadGameState()
 	return true;
 }
 
-bool ScriptEnviroment::setCallbackId(int32_t callbackId, LuaScriptInterface* scriptInterface)
+bool ScriptEnviroment::setCallbackId(int32_t callbackId, LuaScriptInterface* interface)
 {
 	if(!m_callbackId)
 	{
 		m_callbackId = callbackId;
-		m_interface = scriptInterface;
+		m_interface = interface;
 		return true;
 	}
 
@@ -178,11 +178,11 @@ bool ScriptEnviroment::setCallbackId(int32_t callbackId, LuaScriptInterface* scr
 	return false;
 }
 
-void ScriptEnviroment::getInfo(int32_t& scriptId, std::string& desc, LuaScriptInterface*& scriptInterface, int32_t& callbackId, bool& timerEvent)
+void ScriptEnviroment::getInfo(int32_t& scriptId, std::string& desc, LuaScriptInterface*& interface, int32_t& callbackId, bool& timerEvent)
 {
 	scriptId = m_scriptId;
 	desc = m_eventdesc;
-	scriptInterface = m_interface;
+	interface = m_interface;
 	callbackId = m_callbackId;
 	timerEvent = m_timerEvent;
 }
@@ -5321,29 +5321,26 @@ int32_t LuaScriptInterface::luaCreateCombatObject(lua_State* L)
 bool LuaScriptInterface::getArea(lua_State* L, std::list<uint32_t>& list, uint32_t& rows)
 {
 	rows = 0;
-	uint32_t i = 0, j = 0;
-	lua_pushnil(L); //first key
+	uint32_t i = 0;
 
-	while(lua_next(L, -2) != 0)
+	lua_pushnil(L);
+	while(lua_next(L, -2))
 	{
 		lua_pushnil(L);
-		while(lua_next(L, -2) != 0)
+		while(lua_next(L, -2))
 		{
 			list.push_back((uint32_t)lua_tonumber(L, -1));
-
-			lua_pop(L, 1); //removes `value'; keeps `key' for next iteration //
-			j++;
+			lua_pop(L, 1); //removes value, keeps key for next iteration
+			++i;
 		}
 
+		lua_pop(L, 1); //removes value, keeps key for next iteration
 		++rows;
-
-		j = 0;
-		lua_pop(L, 1); //removes `value'; keeps `key' for next iteration //
-		i++;
+		i = 0;
 	}
 
 	lua_pop(L, 1);
-	return (rows != 0);
+	return rows;
 }
 
 int32_t LuaScriptInterface::luaCreateCombatArea(lua_State* L)
@@ -5615,7 +5612,7 @@ int32_t LuaScriptInterface::luaSetCombatCallBack(lua_State* L)
 		return 1;
 	}
 
-	LuaScriptInterface* scriptInterface = env->getInterface();
+	LuaScriptInterface* interface = env->getInterface();
 	combat->setCallback(key);
 
 	CallBack* callback = combat->getCallback(key);
@@ -5629,7 +5626,7 @@ int32_t LuaScriptInterface::luaSetCombatCallBack(lua_State* L)
 		return 1;
 	}
 
-	if(!callback->loadCallBack(scriptInterface, function))
+	if(!callback->loadCallBack(interface, function))
 	{
 		errorEx("Cannot load callback");
 		lua_pushboolean(L, false);
@@ -7913,7 +7910,7 @@ int32_t LuaScriptInterface::luaIsInArray(lua_State* L)
 			return 1;
 		}
 
-		if(type != data.type()) // check is it even same type before searching deeper
+		if(type != data.type()) // check is it even same data type before searching deeper
 			lua_pushboolean(L, false);
 		else if(type == typeid(bool))
 			lua_pushboolean(L, boost::any_cast<bool>(value) == boost::any_cast<bool>(data));
@@ -7930,9 +7927,6 @@ int32_t LuaScriptInterface::luaIsInArray(lua_State* L)
 	lua_pushnil(L);
 	while(lua_next(L, -2))
 	{
-		if(lua_isnoneornil(L, -1))
-			break;
-
 		boost::any data;
 		if(lua_isnumber(L, -1))
 			data = popFloatNumber(L);
@@ -7941,10 +7935,12 @@ int32_t LuaScriptInterface::luaIsInArray(lua_State* L)
 		else if(lua_isstring(L, -1))
 			data = popString(L);
 		else
+		{
+			lua_pop(L, 1);
 			break;
+		}
 
-		lua_pop(L, 1);
-		if(type != data.type()) // check is it same type before searching deeper
+		if(type != data.type()) // check is it same data type before searching deeper
 			continue;
 
 		if(type == typeid(bool))
@@ -7987,8 +7983,8 @@ int32_t LuaScriptInterface::luaAddEvent(lua_State* L)
 {
 	//addEvent(callback, delay, ...)
 	ScriptEnviroment* env = getEnv();
-	LuaScriptInterface* scriptInterface = env->getInterface();
-	if(!scriptInterface)
+	LuaScriptInterface* interface = env->getInterface();
+	if(!interface)
 	{
 		errorEx("No valid script interface!");
 		lua_pushboolean(L, false);
@@ -8014,12 +8010,11 @@ int32_t LuaScriptInterface::luaAddEvent(lua_State* L)
 	eventDesc.function = luaL_ref(L, LUA_REGISTRYINDEX);
 	eventDesc.scriptId = env->getScriptId();
 
-	scriptInterface->m_lastEventTimerId++;
-	scriptInterface->m_timerEvents[scriptInterface->m_lastEventTimerId] = eventDesc;
+	interface->m_timerEvents[++interface->m_lastEventTimerId] = eventDesc;
 	Scheduler::getInstance()->addEvent(createSchedulerTask(delay, boost::bind(
-		&LuaScriptInterface::executeTimer, scriptInterface, scriptInterface->m_lastEventTimerId)));
+		&LuaScriptInterface::executeTimer, interface, interface->m_lastEventTimerId)));
 
-	lua_pushnumber(L, scriptInterface->m_lastEventTimerId);
+	lua_pushnumber(L, interface->m_lastEventTimerId);
 	return 1;
 }
 
@@ -8029,23 +8024,23 @@ int32_t LuaScriptInterface::luaStopEvent(lua_State* L)
 	uint32_t eventId = popNumber(L);
 	ScriptEnviroment* env = getEnv();
 
-	LuaScriptInterface* scriptInterface = env->getInterface();
-	if(!scriptInterface)
+	LuaScriptInterface* interface = env->getInterface();
+	if(!interface)
 	{
 		errorEx("No valid script interface!");
 		lua_pushboolean(L, false);
 		return 1;
 	}
 
-	LuaTimerEvents::iterator it = scriptInterface->m_timerEvents.find(eventId);
-	if(it != scriptInterface->m_timerEvents.end())
+	LuaTimerEvents::iterator it = interface->m_timerEvents.find(eventId);
+	if(it != interface->m_timerEvents.end())
 	{
 		for(std::list<int32_t>::iterator lt = it->second.parameters.begin(); lt != it->second.parameters.end(); ++lt)
-			luaL_unref(scriptInterface->m_luaState, LUA_REGISTRYINDEX, *lt);
+			luaL_unref(interface->m_luaState, LUA_REGISTRYINDEX, *lt);
 		it->second.parameters.clear();
 
-		luaL_unref(scriptInterface->m_luaState, LUA_REGISTRYINDEX, it->second.function);
-		scriptInterface->m_timerEvents.erase(it);
+		luaL_unref(interface->m_luaState, LUA_REGISTRYINDEX, it->second.function);
+		interface->m_timerEvents.erase(it);
 		lua_pushboolean(L, true);
 	}
 	else

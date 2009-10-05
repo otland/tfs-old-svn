@@ -46,9 +46,9 @@ extern Actions* g_actions;
 extern ConfigManager g_config;
 
 Actions::Actions():
-m_scriptInterface("Action Interface")
+m_interface("Action Interface")
 {
-	m_scriptInterface.initState();
+	m_interface.initState();
 }
 
 Actions::~Actions()
@@ -70,13 +70,13 @@ void Actions::clear()
 	clearMap(uniqueItemMap);
 	clearMap(actionItemMap);
 
-	m_scriptInterface.reInitState();
+	m_interface.reInitState();
 }
 
 Event* Actions::getEvent(const std::string& nodeName)
 {
 	if(asLowerCaseString(nodeName) == "action")
-		return new Action(&m_scriptInterface);
+		return new Action(&m_interface);
 
 	return NULL;
 }
@@ -735,9 +735,9 @@ ReturnValue Action::canExecuteAction(const Player* player, const Position& toPos
 bool Action::executeUse(Player* player, Item* item, const PositionEx& fromPos, const PositionEx& toPos, bool extendedUse, uint32_t creatureId)
 {
 	//onUse(cid, item, fromPosition, itemEx, toPosition)
-	if(m_scriptInterface->reserveEnv())
+	if(m_interface->reserveEnv())
 	{
-		ScriptEnviroment* env = m_scriptInterface->getEnv();
+		ScriptEnviroment* env = m_interface->getEnv();
 		if(m_scripted == EVENT_SCRIPT_BUFFER)
 		{
 			env->setRealPos(player->getPosition());
@@ -756,13 +756,13 @@ bool Action::executeUse(Player* player, Item* item, const PositionEx& fromPos, c
 
 			scriptstream << m_scriptData;
 			bool result = true;
-			if(m_scriptInterface->loadBuffer(scriptstream.str()))
+			if(m_interface->loadBuffer(scriptstream.str()))
 			{
-				lua_State* L = m_scriptInterface->getState();
-				result = m_scriptInterface->getGlobalBool(L, "_result", true);
+				lua_State* L = m_interface->getState();
+				result = m_interface->getGlobalBool(L, "_result", true);
 			}
 
-			m_scriptInterface->releaseEnv();
+			m_interface->releaseEnv();
 			return result;
 		}
 		else
@@ -773,11 +773,11 @@ bool Action::executeUse(Player* player, Item* item, const PositionEx& fromPos, c
 			env->setEventDesc(desc.str());
 			#endif
 
-			env->setScriptId(m_scriptId, m_scriptInterface);
+			env->setScriptId(m_scriptId, m_interface);
 			env->setRealPos(player->getPosition());
 
-			lua_State* L = m_scriptInterface->getState();
-			m_scriptInterface->pushFunction(m_scriptId);
+			lua_State* L = m_interface->getState();
+			m_interface->pushFunction(m_scriptId);
 
 			lua_pushnumber(L, env->addThing(player));
 			LuaScriptInterface::pushThing(L, item, env->addThing(item));
@@ -795,8 +795,8 @@ bool Action::executeUse(Player* player, Item* item, const PositionEx& fromPos, c
 				LuaScriptInterface::pushPosition(L, fromPos, fromPos.stackpos);
 			}
 
-			bool result = m_scriptInterface->callFunction(5);
-			m_scriptInterface->releaseEnv();
+			bool result = m_interface->callFunction(5);
+			m_interface->releaseEnv();
 			return result;
 		}
 	}

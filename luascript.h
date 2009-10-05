@@ -84,11 +84,11 @@ class ScriptEnviroment
 		void eraseStorage(const uint32_t key) {m_storageMap.erase(key);}
 
 		int32_t getScriptId() {return m_scriptId;}
-		void setScriptId(int32_t scriptId, LuaScriptInterface* scriptInterface)
-			{m_scriptId = scriptId; m_interface = scriptInterface;}
+		void setScriptId(int32_t scriptId, LuaScriptInterface* interface)
+			{m_scriptId = scriptId; m_interface = interface;}
 
 		int32_t getCallbackId() {return m_callbackId;}
-		bool setCallbackId(int32_t callbackId, LuaScriptInterface* scriptInterface);
+		bool setCallbackId(int32_t callbackId, LuaScriptInterface* interface);
 
 		std::string getEventDesc() {return m_eventdesc;}
 		void setEventDesc(const std::string& desc) {m_eventdesc = desc;}
@@ -136,7 +136,7 @@ class ScriptEnviroment
 		void resetTimerEvent() {m_timerEvent = false;}
 
 		LuaScriptInterface* getInterface() {return m_interface;}
-		void getInfo(int32_t& scriptId, std::string& desc, LuaScriptInterface*& scriptInterface, int32_t& callbackId, bool& timerEvent);
+		void getInfo(int32_t& scriptId, std::string& desc, LuaScriptInterface*& interface, int32_t& callbackId, bool& timerEvent);
 		void reset();
 		void resetCallback() {m_callbackId = 0;}
 

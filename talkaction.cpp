@@ -52,9 +52,9 @@ extern Chat g_chat;
 extern TalkActions* g_talkActions;
 
 TalkActions::TalkActions() :
-m_scriptInterface("TalkAction Interface")
+m_interface("TalkAction Interface")
 {
-	m_scriptInterface.initState();
+	m_interface.initState();
 }
 
 TalkActions::~TalkActions()
@@ -68,13 +68,13 @@ void TalkActions::clear()
 		delete it->second;
 
 	talksMap.clear();
-	m_scriptInterface.reInitState();
+	m_interface.reInitState();
 }
 
 Event* TalkActions::getEvent(const std::string& nodeName)
 {
 	if(asLowerCaseString(nodeName) == "talkaction")
-		return new TalkAction(&m_scriptInterface);
+		return new TalkAction(&m_interface);
 
 	return NULL;
 }
@@ -296,9 +296,9 @@ bool TalkAction::loadFunction(const std::string& functionName)
 int32_t TalkAction::executeSay(Creature* creature, const std::string& words, const std::string& param, uint16_t channel)
 {
 	//onSay(cid, words, param, channel)
-	if(m_scriptInterface->reserveEnv())
+	if(m_interface->reserveEnv())
 	{
-		ScriptEnviroment* env = m_scriptInterface->getEnv();
+		ScriptEnviroment* env = m_interface->getEnv();
 		if(m_scripted == EVENT_SCRIPT_BUFFER)
 		{
 			env->setRealPos(creature->getPosition());
@@ -311,13 +311,13 @@ int32_t TalkAction::executeSay(Creature* creature, const std::string& words, con
 
 			scriptstream << m_scriptData;
 			bool result = true;
-			if(m_scriptInterface->loadBuffer(scriptstream.str()))
+			if(m_interface->loadBuffer(scriptstream.str()))
 			{
-				lua_State* L = m_scriptInterface->getState();
-				result = m_scriptInterface->getGlobalBool(L, "_result", true);
+				lua_State* L = m_interface->getState();
+				result = m_interface->getGlobalBool(L, "_result", true);
 			}
 
-			m_scriptInterface->releaseEnv();
+			m_interface->releaseEnv();
 			return result;
 		}
 		else
@@ -328,19 +328,19 @@ int32_t TalkAction::executeSay(Creature* creature, const std::string& words, con
 			env->setEventDesc(desc);
 			#endif
 
-			env->setScriptId(m_scriptId, m_scriptInterface);
+			env->setScriptId(m_scriptId, m_interface);
 			env->setRealPos(creature->getPosition());
 
-			lua_State* L = m_scriptInterface->getState();
-			m_scriptInterface->pushFunction(m_scriptId);
+			lua_State* L = m_interface->getState();
+			m_interface->pushFunction(m_scriptId);
 			lua_pushnumber(L, env->addThing(creature));
 
 			lua_pushstring(L, words.c_str());
 			lua_pushstring(L, param.c_str());
 			lua_pushnumber(L, channel);
 
-			bool result = m_scriptInterface->callFunction(4);
-			m_scriptInterface->releaseEnv();
+			bool result = m_interface->callFunction(4);
+			m_interface->releaseEnv();
 			return result;
 		}
 	}
