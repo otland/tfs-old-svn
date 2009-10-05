@@ -506,12 +506,7 @@ function getFluidSourceType(itemid)
 end
 
 function getDepotId(uid)
-	local ret = getItemAttribute(uid, "depotid")
-	if(ret == nil) then
-		return false
-	end
-
-	return ret
+	return getItemAttribute(uid, "depotid") or false
 end
 
 function getItemDescriptions(uid)

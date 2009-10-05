@@ -2771,7 +2771,7 @@ int32_t LuaScriptInterface::luaGetPlayerSex(lua_State* L)
 	if(!player)
 	{
 		errorEx(getError(LUA_ERROR_PLAYER_NOT_FOUND));
-		lua_pushnil(L);
+		lua_pushboolean(L, false);
 	}
 	else
 		lua_pushnumber(L, player->getSex(full));
@@ -4458,11 +4458,9 @@ int32_t LuaScriptInterface::luaDoCreateTeleport(lua_State* L)
 
 	if(newItem->getParent())
 		lua_pushnumber(L, env->addThing(newItem));
-	else
-	{
-		//stackable item stacked with existing object, newItem will be released
+	else //stackable item stacked with existing object, newItem will be released
 		lua_pushnil(L);
-	}
+
 	return 1;
 }
 
@@ -9148,7 +9146,7 @@ int32_t LuaScriptInterface::luaGetItemAttribute(lua_State* L)
 	if(!item)
 	{
 		errorEx(getError(LUA_ERROR_ITEM_NOT_FOUND));
-		lua_pushboolean(L, false);
+		lua_pushnil(L);
 		return 1;
 	}
 
