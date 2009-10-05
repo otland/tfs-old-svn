@@ -625,7 +625,7 @@ end
 
 function getContainerCapById(itemid)
 	local item = getItemInfo(itemid)
-	if(not item or item.group ~= 12) then
+	if(not item or item.group ~= 2) then
 		return false
 	end
 
