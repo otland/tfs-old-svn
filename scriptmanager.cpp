@@ -145,7 +145,11 @@ bool ScriptingManager::loadMods()
 		++i;
 	}
 
-	std::cout << "> " << i << " mods were loaded (" << j << " disabled)." << std::endl;
+	std::cout << "> " << i << " mods were loaded";
+	if(j)
+		std::cout << " (" << j << " disabled)";
+
+	std::cout << "." << std::endl;
 	modsLoaded = true;
 	return true;
 }
