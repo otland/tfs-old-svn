@@ -1063,7 +1063,7 @@ void TargetCallback::onTargetCombat(Creature* creature, Creature* target) const
 			LuaScriptInterface::error(NULL, std::string(LuaScriptInterface::popString(L)));
 
 		if((lua_gettop(L) + 2 /*nParams*/ + 1) != size)
-			errorEx("Stack size changed!");
+			LuaScriptInterface::error(__FUNCTION__, "Stack size changed!");
 
 		env->resetCallback();
 		m_scriptInterface->releaseEnv();
