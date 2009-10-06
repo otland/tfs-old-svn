@@ -154,7 +154,7 @@ bool House::isGuild() const
 	return g_config.getBool(ConfigManager::GUILD_HALLS) && guild;
 }
 
-void House::updateDoorDescription(std::string name/* = ""*/)
+void House::updateDoorDescription(std::string _name/* = ""*/)
 {
 	std::string tmp = "house";
 	if(isGuild())
@@ -164,14 +164,14 @@ void House::updateDoorDescription(std::string name/* = ""*/)
 	if(owner)
 	{
 		if(isGuild())
-			IOGuild::getInstance()->getGuildById(name, owner);
-		else if(name.empty())
-			IOLoginData::getInstance()->getNameByGuid(owner, name);
+			IOGuild::getInstance()->getGuildById(_name, owner);
+		else if(_name.empty())
+			IOLoginData::getInstance()->getNameByGuid(owner, _name);
 
-		sprintf(houseDescription, "It belongs to %s '%s'. %s owns this %s.", tmp.c_str(), name.c_str(), name.c_str(), tmp.c_str());
+		sprintf(houseDescription, "It belongs to %s '%s'. %s owns this %s.", tmp.c_str(), _name.c_str(), name.c_str(), tmp.c_str());
 	}
 	else
-		sprintf(houseDescription, "It belongs to %s '%s'. Nobody owns this %s. It costs %d gold coins.", tmp.c_str(), name.c_str(), tmp.c_str(), price);
+		sprintf(houseDescription, "It belongs to %s '%s'. Nobody owns this %s. It costs %d gold coins.", tmp.c_str(), _name.c_str(), tmp.c_str(), price);
 
 	for(HouseDoorList::iterator it = doorList.begin(); it != doorList.end(); ++it)
 		(*it)->setSpecialDescription(houseDescription);
