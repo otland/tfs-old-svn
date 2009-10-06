@@ -2425,11 +2425,13 @@ const luaL_Reg LuaScriptInterface::luaStdTable[] =
 int32_t LuaScriptInterface::internalGetPlayerInfo(lua_State* L, PlayerInfo_t info)
 {
 	ScriptEnviroment* env = getEnv();
-
 	const Player* player = env->getPlayerByUID(popNumber(L));
 	if(!player)
 	{
-		errorEx(getError(LUA_ERROR_PLAYER_NOT_FOUND));
+		std::stringstream s;
+		s << getError(LUA_ERROR_PLAYER_NOT_FOUND) << " when requesting player info #" << info;
+		errorEx(s.str());
+
 		lua_pushboolean(L, false);
 		return 1;
 	}
@@ -2558,7 +2560,7 @@ int32_t LuaScriptInterface::internalGetPlayerInfo(lua_State* L, PlayerInfo_t inf
 			value = player->accountManager;
 			break;
 		default:
-			errorEx("Unknown player info - " + info);
+			errorEx("Unknown player info #" + info);
 			value = 0;
 			break;
 	}
