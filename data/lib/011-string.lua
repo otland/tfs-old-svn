@@ -12,14 +12,18 @@ string.explode = function (str, sep)
 		return {}
 	end
 
-	local tmp, pos, t = "", 1, {}
+	local pos, tmp, t = 1, "", {}
 	for s, e in function() return string.find(str, sep, pos) end do
-		tmp = string.trim(str:sub(pos, s - 1))
+		if(s == e) then
+			break
+		end
+
+		tmp = str:sub(pos, s - 1):trim()
 		table.insert(t, tmp)
 		pos = e + 1
 	end
 
-	tmp = string.trim(str:sub(pos))
+	tmp = str:sub(pos):trim()
 	table.insert(t, tmp)
 	return t
 end

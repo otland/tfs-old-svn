@@ -76,8 +76,7 @@ Tile* Thing::getTile()
 	}
 #endif
 
-	//get root cylinder
-	if(cylinder && cylinder->getParent())
+	if(cylinder->getParent())
 		cylinder = cylinder->getParent();
 
 	return dynamic_cast<Tile*>(cylinder);
@@ -95,8 +94,7 @@ const Tile* Thing::getTile() const
 	}
 #endif
 
-	//get root cylinder
-	if(cylinder && cylinder->getParent())
+	if(cylinder->getParent())
 		cylinder = cylinder->getParent();
 
 	return dynamic_cast<const Tile*>(cylinder);

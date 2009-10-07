@@ -16,20 +16,24 @@
 ////////////////////////////////////////////////////////////////////////
 #if defined(WIN32) && not defined(__CONSOLE__)
 #include "otpch.h"
-#include "gui.h"
+#include "playerbox.h"
 
+#include "gui.h"
+#include "player.h"
 #include "ioban.h"
+
 #include "game.h"
 extern Game g_game;
 
-HWND PlayerBox::parent = NULL;
 HWND PlayerBox::playerBox = NULL;
-HWND PlayerBox::permBan = NULL;
+HWND PlayerBox::parent = NULL;
+
+HWND PlayerBox::ban = NULL;
 HWND PlayerBox::kick = NULL;
 HWND PlayerBox::list = NULL;
 HWND PlayerBox::online = NULL;
 
-HINSTANCE PlayerBox::m_hInst = NULL;
+HINSTANCE PlayerBox::m_instance = NULL;
 
 PlayerBox::PlayerBox()
 {
@@ -40,16 +44,20 @@ PlayerBox::PlayerBox()
 		wcex.cbSize = sizeof(WNDCLASSEX);
 		wcex.style = CS_HREDRAW | CS_VREDRAW;
 		wcex.lpfnWndProc = (WNDPROC)WndProc;
+
 		wcex.cbClsExtra = 0;
 		wcex.cbWndExtra = 0;
 		wcex.hInstance = hInst;
+
+		wcex.lpszMenuName = NULL;
 		wcex.hIcon = NULL;
+		wxec.hIconSm = NULL;
+
 		wcex.hCursor = LoadCursor(NULL, IDC_ARROW);
 		wcex.hbrBackground = (HBRUSH)(COLOR_BACKGROUND);
-		wcex.lpszMenuName = NULL;
+
 		wcex.lpszClassName = "PlayerBox";
-		wcex.hIconSm = NULL;
-		if(RegisterClassEx(&wcex) == 0)
+		if(!RegisterClassEx(&wcex))
 			MessageBox(NULL, "Cannot create PlayerBox!", "Error", MB_OK);
 	}
 }
@@ -87,20 +95,19 @@ LRESULT CALLBACK PlayerBox::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPAR
 			int32_t playersOnline = g_game.getPlayersOnline();
 			char playersOnlineBuffer[50];
 			sprintf(playersOnlineBuffer, "%d player%s online", playersOnline, (playersOnline != 1 ? "s" : ""));
+			m_instance = GetModuleHandle(NULL);
 
-			m_hInst = GetModuleHandle(NULL);
-			permBan = CreateWindowEx(0, "button", "Ban permamently", WS_VISIBLE | WS_CHILD | WS_TABSTOP, 5, 35, 115, 25, hWnd, NULL, m_hInst, NULL);
-			kick = CreateWindowEx(0, "button", "Kick", WS_VISIBLE | WS_CHILD | WS_TABSTOP, 125, 35, 90, 25, hWnd, NULL, m_hInst, NULL);
-			list = CreateWindowEx(0, "combobox", "", WS_CHILD | WS_VISIBLE | WS_VSCROLL/* | CBS_DROPDOWNLIST*/ | CBS_SORT, 5, 5, 210, 25, hWnd, NULL, m_hInst, NULL);
-			online = CreateWindowEx(WS_EX_STATICEDGE, "static", playersOnlineBuffer, WS_VISIBLE | WS_CHILD | WS_TABSTOP, 5, 65, 210, 20, hWnd, NULL, m_hInst, NULL);
-			SendMessage(permBan, WM_SETFONT, (WPARAM)GUI::getInstance()->m_font, 0);
+			ban = CreateWindowEx(0, "button", "Ban permamently", WS_VISIBLE | WS_CHILD | WS_TABSTOP, 5, 35, 115, 25, hWnd, NULL, m_instance, NULL);
+			kick = CreateWindowEx(0, "button", "Kick", WS_VISIBLE | WS_CHILD | WS_TABSTOP, 125, 35, 90, 25, hWnd, NULL, m_instance, NULL);
+			list = CreateWindowEx(0, "combobox", "", WS_CHILD | WS_VISIBLE | WS_VSCROLL/* | CBS_DROPDOWNLIST*/ | CBS_SORT, 5, 5, 210, 25, hWnd, NULL, m_instance, NULL);
+			online = CreateWindowEx(WS_EX_STATICEDGE, "static", playersOnlineBuffer, WS_VISIBLE | WS_CHILD | WS_TABSTOP, 5, 65, 210, 20, hWnd, NULL, m_instance, NULL);
+
+			SendMessage(ban, WM_SETFONT, (WPARAM)GUI::getInstance()->m_font, 0);
 			SendMessage(kick, WM_SETFONT, (WPARAM)GUI::getInstance()->m_font, 0);
 			SendMessage(list, WM_SETFONT, (WPARAM)GUI::getInstance()->m_font, 0);
 			SendMessage(online, WM_SETFONT, (WPARAM)GUI::getInstance()->m_font, 0);
-
-			AutoList<Player>::iterator it;
-			for(it = Player::autoList.begin(); it != Player::autoList.end(); ++it)
-				SendMessage(list, CB_ADDSTRING, 0, (LPARAM)(*it).second->getName().c_str());
+			for(AutoList<Player>::iterator it = Player::autoList.begin(); it != Player::autoList.end(); ++it)
+				SendMessage(list, CB_ADDSTRING, 0, (LPARAM)it->second->getName().c_str());
 
 			break;
 		}
@@ -118,7 +125,7 @@ LRESULT CALLBACK PlayerBox::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPAR
 						sprintf(buffer, "Are you sure you want to %s %s?", ((HWND)lParam == kick ? "kick" : "ban permamently"), player->getName().c_str());
 						if(MessageBox(hWnd, buffer, "Player management", MB_YESNO) == IDYES)
 						{
-							if((HWND)lParam == permBan)
+							if((HWND)lParam == ban)
 								IOBan::getInstance()->addPlayerBanishment(player->getID(), -1, 21, ACTION_DELETION, "Permament banishment.", 0, PLAYERBAN_BANISHMENT);
 
 							g_game.addMagicEffect(player->getPosition(), NM_MAGIC_MAGIC_POISON);
@@ -141,12 +148,14 @@ LRESULT CALLBACK PlayerBox::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPAR
 			EnableWindow(parent, true);
 			SetForegroundWindow(parent);
 			DestroyWindow(hWnd);
+
 			PostQuitMessage(0);
 			break;
 		}
 		default:
 			return DefWindowProc(hWnd, message, wParam, lParam);
 	}
+
 	return 0;
 }
 
@@ -154,7 +163,8 @@ bool PlayerBox::popUp(LPCTSTR szCaption)
 {
 	RECT r;
 	GetWindowRect(GetDesktopWindow(), &r);
-	playerBox = CreateWindowEx(WS_EX_TOOLWINDOW, "PlayerBox", szCaption, WS_POPUPWINDOW|WS_CAPTION|WS_TABSTOP, (r.right-200)/2, (r.bottom-115)/2, 225, 115, parent, NULL, m_hInst, NULL);
+
+	playerBox = CreateWindowEx(WS_EX_TOOLWINDOW, "PlayerBox", szCaption, WS_POPUPWINDOW|WS_CAPTION|WS_TABSTOP, (r.right-200)/2, (r.bottom-115)/2, 225, 115, parent, NULL, m_instance, NULL);
 	if(!playerBox)
 		return FALSE;
 
@@ -165,6 +175,7 @@ bool PlayerBox::popUp(LPCTSTR szCaption)
 
 	BOOL ret = 0;
 	MSG msg;
+
 	SendMessage(list, WM_KEYDOWN, VK_DOWN, 0);
 	while(GetMessage(&msg, NULL, 0, 0))
 	{
@@ -177,6 +188,7 @@ bool PlayerBox::popUp(LPCTSTR szCaption)
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);
 	}
+
 	return ret;
 }
 #endif

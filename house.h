@@ -213,7 +213,7 @@ class House
 		AccessHouseLevel_t getHouseAccessLevel(const Player* player);
 
 		bool kickPlayer(Player* player, Player* target);
-		void updateDoorDescription(std::string name = "");
+		void updateDoorDescription(std::string _name = "");
 		void clean();
 
 		void addDoor(Door* door);

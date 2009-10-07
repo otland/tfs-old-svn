@@ -168,10 +168,10 @@ void House::updateDoorDescription(std::string _name/* = ""*/)
 		else if(_name.empty())
 			IOLoginData::getInstance()->getNameByGuid(owner, _name);
 
-		sprintf(houseDescription, "It belongs to %s '%s'. %s owns this %s.", tmp.c_str(), _name.c_str(), name.c_str(), tmp.c_str());
+		sprintf(houseDescription, "It belongs to %s '%s'. %s owns this %s.", tmp.c_str(), name.c_str(), _name.c_str(), tmp.c_str());
 	}
 	else
-		sprintf(houseDescription, "It belongs to %s '%s'. Nobody owns this %s. It costs %d gold coins.", tmp.c_str(), _name.c_str(), tmp.c_str(), price);
+		sprintf(houseDescription, "It belongs to %s '%s'. Nobody owns this %s. It costs %d gold coins.", tmp.c_str(), name.c_str(), tmp.c_str(), price);
 
 	for(HouseDoorList::iterator it = doorList.begin(); it != doorList.end(); ++it)
 		(*it)->setSpecialDescription(houseDescription);

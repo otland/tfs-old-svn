@@ -276,6 +276,7 @@ void Game::cleanMap(uint32_t& count)
 
 	Tile* tile = NULL;
 	Item* item = NULL;
+	TileItemVector::iterator tit;
 
 	int32_t tiles = -1;
 	if(g_config.getBool(ConfigManager::STORE_TRASH))
@@ -284,30 +285,36 @@ void Game::cleanMap(uint32_t& count)
 		Trash::iterator it = trash.begin();
 		if(g_config.getBool(ConfigManager::CLEAN_PROTECTED_ZONES))
 		{
-			while(it != trash.end())
+			for(; it != trash.end(); ++it)
 			{
-				if((tile = getTile(*it)))
-				{
-					tile->resetFlag(TILESTATE_TRASHED);
-					if(!tile->hasFlag(TILESTATE_HOUSE))
-					{
-						for(uint32_t i = 0; i < tile->getThingCount();)
-						{
-							if((item = tile->__getThing(i)->getItem()) && item->isMoveable()
-								&& !item->isLoadedFromMap() && !item->isScriptProtected())
-							{
-								internalRemoveItem(NULL, item);
-								count++;
-							}
-							else
-								++i;
-						}
-					}
-				}
+				if(!(tile = getTile(*it)))
+					continue;
 
-				trash.erase(it);
-				it = trash.begin();
+				tile->resetFlag(TILESTATE_TRASHED);
+				if(tile->hasFlag(TILESTATE_HOUSE))
+					continue;
+
+				if(!tile->getItemList())
+					continue;
+
+				tit = tile->getItemList().begin();
+				while(tile->getItemList() && tit != tile->getItemLIst.end())
+				{
+					if((*tit)->isMoveable() && !(*tit)->isLoadedFromMap()
+						&& !(*tit)->isScriptProtected())
+					{
+						internalRemoveItem(NULL, (*tit));
+						if(tile->getItemList())
+							tit = tile->getItemList().begin();
+
+						++count;
+					}
+					else
+						++tit;
+				}
 			}
+
+			trash.clear();
 		}
 		else
 		{
@@ -328,12 +335,11 @@ void Game::cleanMap(uint32_t& count)
 							}
 							else
 								++i;
-						}
+					}
 					}
 				}
 
-				trash.erase(it);
-				it = trash.begin();
+				it = trash.erase(it);
 			}
 		}
 	}

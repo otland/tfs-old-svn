@@ -538,12 +538,17 @@ function getItemWeightById(itemid, count, precision)
 		print('[Warning] getItemWeightById', 'Calculating weight for more than 100 items!')
 	end
 
+	local weight = item.weight * count
 	if(precision) then
-		return item.weight * count
+		return weight
 	end
 
-	local t = string.explode(tostring(item.weight * count), ".")
-	return tonumber(t[1] .. "." .. string.sub(t[2], 1, 2))
+	local t = string.explode(tostring(weight), ".")
+	if(table.maxn(t) == 2) then
+		return tonumber(t[1] .. "." .. string.sub(t[2], 1, 2))
+	end
+
+	return weight
 end
 
 function getItemWeaponType(uid)

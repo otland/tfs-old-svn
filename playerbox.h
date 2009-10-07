@@ -20,15 +20,17 @@
 #define __PLAYERBOX__
 #include "otsystem.h"
 
-#include "player.h"
+class Player;
 class PlayerBox
 {
 	static HWND playerBox;
 	static HWND parent;
+
 	static HWND kick;
-	static HWND permBan;
+	static HWND ban;
 	static HWND online;
-	static HINSTANCE m_hInst;
+
+	static HINSTANCE m_instance;
 	static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
 	public:
@@ -39,7 +41,7 @@ class PlayerBox
 		void addPlayer(Player* player);
 		void removePlayer(Player* player);
 
-		void setParent(HWND hWndParent) {parent = hWndParent;}
+		void setParent(HWND _parent) {parent = _parent;}
 		bool popUp(LPCTSTR szCaption);
 		static HWND list;
 };

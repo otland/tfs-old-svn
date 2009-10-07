@@ -23,10 +23,6 @@
 #define MULTI_SQL_DRIVERS
 #endif
 
-#ifndef WIN32
-	#define __CONSOLE__
-#endif
-
 #ifdef XML_GCC_FREE
 	#define xmlFree(s) free(s)
 #endif
@@ -49,9 +45,13 @@
 #endif
 
 #if defined _WIN32
-#  ifndef WIN32
-#    define WIN32
-#  endif
+	#ifndef WIN32
+		#define WIN32
+	#endif
+#endif
+
+#ifndef WIN32
+	#define __CONSOLE__
 #endif
 
 #if defined __WINDOWS__ || defined WIN32
