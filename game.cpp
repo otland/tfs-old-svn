@@ -276,7 +276,7 @@ void Game::cleanMap(uint32_t& count)
 
 	Tile* tile = NULL;
 	Item* item = NULL;
-	TileItemVector::iterator tit;
+	ItemVector::iterator tit;
 
 	int32_t tiles = -1;
 	if(g_config.getBool(ConfigManager::STORE_TRASH))
@@ -297,15 +297,15 @@ void Game::cleanMap(uint32_t& count)
 				if(!tile->getItemList())
 					continue;
 
-				tit = tile->getItemList().begin();
-				while(tile->getItemList() && tit != tile->getItemLIst.end())
+				tit = tile->getItemList()->begin();
+				while(tile->getItemList() && tit != tile->getItemList()->end())
 				{
 					if((*tit)->isMoveable() && !(*tit)->isLoadedFromMap()
 						&& !(*tit)->isScriptProtected())
 					{
 						internalRemoveItem(NULL, (*tit));
 						if(tile->getItemList())
-							tit = tile->getItemList().begin();
+							tit = tile->getItemList()->begin();
 
 						++count;
 					}
