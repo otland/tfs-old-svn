@@ -866,7 +866,8 @@ Cylinder* Tile::__queryDestination(int32_t& index, const Thing* thing, Item** de
 
 	if(destTile)
 	{
-		if(Thing* destThing = destTile->getTopDownItem())
+		Thing* destThing = destTile->getTopDownItem();
+		if(destThing && !destThing->isRemoved())
 			*destItem = destThing->getItem();
 	}
 
