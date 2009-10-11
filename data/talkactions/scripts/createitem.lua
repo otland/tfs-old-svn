@@ -38,6 +38,7 @@ function onSay(cid, words, param, channel)
 		return true
 	end
 
+	doDecayItem(item)
 	if(not isPlayerGhost(cid)) then
 		doSendMagicEffect(pos, CONST_ME_MAGIC_RED)
 	end
