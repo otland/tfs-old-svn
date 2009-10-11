@@ -19,7 +19,7 @@
 #define __TEXTLOGGER__
 #include "otsystem.h"
 
-#if defined(WIN32) && not defined(__CONSOLE__)
+#if defined(WINDOWS) && not defined(__CONSOLE__)
 #include <ostream>
 #include <fstream>
 #endif
@@ -68,7 +68,7 @@ class Logger
 #define LOG_MESSAGE(type, message, channel) \
 	Logger::getInstance()->log(__OTSERV_FUNCTION__, type, message, channel);
 
-#if defined(WIN32) && not defined(__CONSOLE__)
+#if defined(WINDOWS) && not defined(__CONSOLE__)
 class GUILogger : public std::streambuf
 {
 	public:

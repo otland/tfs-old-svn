@@ -20,7 +20,7 @@
 #include <iostream>
 #include <fstream>
 #include <iomanip>
-#ifndef WIN32
+#ifndef WINDOWS
 #include <unistd.h>
 #endif
 #include <boost/config.hpp>
@@ -66,7 +66,7 @@
 #endif
 
 #ifndef __CONSOLE__
-#ifdef WIN32
+#ifdef WINDOWS
 #include "shellapi.h"
 #include "gui.h"
 #include "inputbox.h"
@@ -92,7 +92,7 @@ Npcs g_npcs;
 
 RSA g_RSA;
 Chat g_chat;
-#if defined(WIN32) && not defined(__CONSOLE__)
+#if defined(WINDOWS) && not defined(__CONSOLE__)
 GUILogger g_logger;
 NOTIFYICONDATA NID;
 #endif
@@ -106,7 +106,7 @@ boost::unique_lock<boost::mutex> g_loaderUniqueLock(g_loaderLock);
 extern Admin* g_admin;
 #endif
 
-#if not defined(WIN32) || defined(__CONSOLE__)
+#if not defined(WINDOWS) || defined(__CONSOLE__)
 bool argumentsHandler(StringVec args)
 {
 	StringVec tmp;
@@ -124,7 +124,7 @@ bool argumentsHandler(StringVec args)
 			"\t--game-port=$1\tPort for game server to listen on.\n"
 			"\t--admin-port=$1\tPort for admin server to listen on.\n"
 			"\t--status-port=$1\tPort for status server to listen on.\n";
-#ifndef WIN32
+#ifndef WINDOWS
 			std::cout << "\t--runfile=$1\t\tSpecifies run file. Will contain the pid\n"
 			"\t\t\t\tof the server process as long as it is running.\n";
 #endif
@@ -159,7 +159,7 @@ bool argumentsHandler(StringVec args)
 			g_config.setNumber(ConfigManager::ADMIN_PORT, atoi(tmp[1].c_str()));
 		else if(tmp[0] == "--status-port")
 			g_config.setNumber(ConfigManager::STATUS_PORT, atoi(tmp[1].c_str()));
-#ifndef WIN32
+#ifndef WINDOWS
 		else if(tmp[0] == "--runfile")
 			g_config.setString(ConfigManager::RUNFILE, tmp[1]);
 #endif
@@ -173,7 +173,7 @@ bool argumentsHandler(StringVec args)
 }
 #endif
 
-#ifndef WIN32
+#ifndef WINDOWS
 void signalHandler(int32_t sig)
 {
 	uint32_t tmp = 0;
@@ -240,7 +240,7 @@ void startupErrorMessage(const std::string& error)
 	if(error.length() > 0)
 		std::cout << std::endl << "> ERROR: " << error << std::endl;
 
-	#if defined(WIN32) && not defined(__CONSOLE__)
+	#if defined(WINDOWS) && not defined(__CONSOLE__)
 	MessageBox(GUI::getInstance()->m_mainWindow, error.c_str(), "Error", MB_OK);
 	system("pause");
 	#else
@@ -250,12 +250,12 @@ void startupErrorMessage(const std::string& error)
 }
 
 void otserv(
-#if not defined(WIN32) || defined(__CONSOLE__)
+#if not defined(WINDOWS) || defined(__CONSOLE__)
 StringVec args,
 #endif
 ServiceManager* services);
 
-#if not defined(WIN32) || defined(__CONSOLE__)
+#if not defined(WINDOWS) || defined(__CONSOLE__)
 int main(int argc, char *argv[])
 {
 	StringVec args = StringVec(argv, argv + argc);
@@ -280,7 +280,7 @@ void serverMain(void* param)
 	ExceptionHandler mainExceptionHandler;
 	mainExceptionHandler.InstallHandler();
 	#endif
-	#ifndef WIN32
+	#ifndef WINDOWS
 
 	// ignore sigpipe...
 	struct sigaction sigh;
@@ -301,7 +301,7 @@ void serverMain(void* param)
 	#endif
 
 	Dispatcher::getInstance()->addTask(createTask(boost::bind(otserv,
-	#if not defined(WIN32) || defined(__CONSOLE__)
+	#if not defined(WINDOWS) || defined(__CONSOLE__)
 	args,
 	#endif
 	&servicer)));
@@ -310,7 +310,7 @@ void serverMain(void* param)
 	if(servicer.isRunning())
 	{
 		std::cout << ">> " << g_config.getString(ConfigManager::SERVER_NAME) << " server Online!" << std::endl << std::endl;
-		#if defined(WIN32) && not defined(__CONSOLE__)
+		#if defined(WINDOWS) && not defined(__CONSOLE__)
 		SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Status: Online!");
 		GUI::getInstance()->m_connections = true;
 		#endif
@@ -319,13 +319,13 @@ void serverMain(void* param)
 	else
 	{
 		std::cout << ">> " << g_config.getString(ConfigManager::SERVER_NAME) << " server Offline! No services available..." << std::endl << std::endl;
-		#if defined(WIN32) && not defined(__CONSOLE__)
+		#if defined(WINDOWS) && not defined(__CONSOLE__)
 		SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Status: Offline!");
 		GUI::getInstance()->m_connections = true;
 		#endif
 	}
 
-	#if not defined(WIN32) || defined(__CONSOLE__)
+	#if not defined(WINDOWS) || defined(__CONSOLE__)
 	std::string outPath = g_config.getString(ConfigManager::OUT_LOG), errPath = g_config.getString(ConfigManager::ERROR_LOG);
 	if(outPath.length() < 3)
 		outPath = "";
@@ -370,19 +370,19 @@ void serverMain(void* param)
 	mainExceptionHandler.RemoveHandler();
 #endif
 	exit(0);
-#if not defined(WIN32) || defined(__CONSOLE__)
+#if not defined(WINDOWS) || defined(__CONSOLE__)
 	return 0;
 #endif
 }
 
 void otserv(
-#if not defined(WIN32) || defined(__CONSOLE__)
+#if not defined(WINDOWS) || defined(__CONSOLE__)
 StringVec args,
 #endif
 ServiceManager* services)
 {
 	srand((uint32_t)OTSYS_TIME());
-	#ifdef WIN32
+	#ifdef WINDOWS
 	#ifdef __CONSOLE__
 	SetConsoleTitle(STATUS_SERVER_NAME);
 	#else
@@ -391,7 +391,7 @@ ServiceManager* services)
 	#endif
 
 	g_game.setGameState(GAME_STATE_STARTUP);
-	#if !defined(WIN32) && !defined(__ROOT_PERMISSION__)
+	#if !defined(WINDOWS) && !defined(__ROOT_PERMISSION__)
 	if(getuid() == 0 || geteuid() == 0)
 	{
 		std::cout << "> WARNING: " << STATUS_SERVER_NAME << " has been executed as root user! It is recommended to execute as a normal user." << std::endl;
@@ -471,7 +471,7 @@ ServiceManager* services)
 	IntegerVec cores = vectorAtoi(explodeString(g_config.getString(ConfigManager::CORES_USED), ","));
 	if(cores[0] != -1)
 	{
-	#ifdef WIN32
+	#ifdef WINDOWS
 		int32_t mask = 0;
 		for(IntegerVec::iterator it = cores.begin(); it != cores.end(); ++it)
 			mask += 1 << (*it);

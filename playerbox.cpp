@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////
-#if defined(WIN32) && not defined(__CONSOLE__)
+#if defined(WINDOWS) && not defined(__CONSOLE__)
 #include "otpch.h"
 #include "playerbox.h"
 
@@ -51,7 +51,7 @@ PlayerBox::PlayerBox()
 
 		wcex.lpszMenuName = NULL;
 		wcex.hIcon = NULL;
-		wxec.hIconSm = NULL;
+		wcex.hIconSm = NULL;
 
 		wcex.hCursor = LoadCursor(NULL, IDC_ARROW);
 		wcex.hbrBackground = (HBRUSH)(COLOR_BACKGROUND);

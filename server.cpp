@@ -15,14 +15,10 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////
 #include "otpch.h"
-#if defined __WINDOWS__ || defined WIN32
-#include <winerror.h>
-#endif
-
 #include "server.h"
+
 #include "connection.h"
 #include "outputmessage.h"
-
 #include "textlogger.h"
 
 #include "game.h"

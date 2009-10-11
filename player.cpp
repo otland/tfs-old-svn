@@ -26,7 +26,7 @@
 #include "beds.h"
 
 #include "combat.h"
-#if defined(WIN32) && not defined(__CONSOLE__)
+#if defined(WINDOWS) && not defined(__CONSOLE__)
 #include "gui.h"
 #endif
 

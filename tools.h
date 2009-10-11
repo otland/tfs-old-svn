@@ -64,7 +64,7 @@ std::string asUpperCaseString(const std::string& source);
 bool booleanString(std::string source);
 
 bool readXMLInteger(xmlNodePtr node, const char* tag, int& value);
-#if (defined __WINDOWS__ || defined WIN32) && !defined __GNUC__
+#if defined WINDOWS && !defined __GNUC__
 bool readXMLInteger(xmlNodePtr node, const char* tag, int32_t& value);
 #endif
 bool readXMLInteger64(xmlNodePtr node, const char* tag, int64_t& value);

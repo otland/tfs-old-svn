@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////
 #include "otpch.h"
-#if defined WIN32
+#if defined WINDOWS
 #include <winerror.h>
 #endif
 

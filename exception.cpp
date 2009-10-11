@@ -21,7 +21,7 @@
 #include <iostream>
 #include <iomanip>
 #include <fstream>
-#ifdef WIN32
+#ifdef WINDOWS
 #include <excpt.h>
 #include <tlhelp32.h>
 #endif
@@ -39,7 +39,7 @@ uint32_t offMax, offMin;
 bool mapLoaded = false;
 boost::recursive_mutex mapLock;
 
-#ifdef WIN32
+#ifdef WINDOWS
 void printPointer(std::ostream* output, uint32_t p);
 EXCEPTION_DISPOSITION __cdecl _SEHHandler(struct _EXCEPTION_RECORD *ExceptionRecord, void* EstablisherFrame,
 	struct _CONTEXT *ContextRecord, void* DispatcherContext);
@@ -58,7 +58,7 @@ ExceptionHandler::~ExceptionHandler()
 
 bool ExceptionHandler::InstallHandler()
 {
-	#ifdef WIN32
+	#ifdef WINDOWS
 	boost::recursive_mutex::scoped_lock lockObj(mapLock);
 	if(!mapLoaded)
 		LoadMap();
@@ -94,7 +94,7 @@ bool ExceptionHandler::RemoveHandler()
 	if(!installed)
 		return false;
 
-	#ifdef WIN32
+	#ifdef WINDOWS
 	#ifdef __GNUC__
 	__asm__ ("movl %0,%%eax;movl %%eax,%%fs:0;"::"r"(chain.prev):"%eax" );
 	#endif
@@ -123,7 +123,7 @@ char* getFunctionName(unsigned long addr, unsigned long& start)
 	return NULL;
 }
 
-#ifdef WIN32
+#ifdef WINDOWS
 EXCEPTION_DISPOSITION __cdecl _SEHHandler(struct _EXCEPTION_RECORD *ExceptionRecord, void* EstablisherFrame,
 	 struct _CONTEXT *ContextRecord, void* DispatcherContext)
 {

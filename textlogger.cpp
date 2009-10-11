@@ -18,7 +18,7 @@
 #include "textlogger.h"
 
 #include "tools.h"
-#if defined(WIN32) && not defined(__CONSOLE__)
+#if defined(WINDOWS) && not defined(__CONSOLE__)
 #include "gui.h"
 #endif
 
@@ -102,7 +102,7 @@ void Logger::log(const char* func, LogType_t type, std::string message, std::str
 	iFile(LOGFILE_ADMIN, ss.str(), newLine);
 }
 
-#if defined(WIN32) && not defined(__CONSOLE__)
+#if defined(WINDOWS) && not defined(__CONSOLE__)
 GUILogger::GUILogger()
 {
 	out = std::cout.rdbuf();

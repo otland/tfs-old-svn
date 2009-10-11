@@ -277,7 +277,7 @@
 		<vocation id="4"/>
 		<vocation id="8"/>
 	</instant>
-	<instant name="Swift Foot" words="utamo tempo san" lvl="55" mana="400" prem="1" aggressive="0" selftarget="1" exhaustion="1000" needlearn="0" event="script" value="support/swift foot.lua">
+	<instant name="Swift Foot" words="utamo tempo san" lvl="55" mana="400" prem="1" aggressive="0" selftarget="1" exhaustion="10000" needlearn="0" event="script" value="support/swift foot.lua">
 		<vocation id="3"/>
 		<vocation id="7"/>
 	</instant>
@@ -318,7 +318,7 @@
 		<vocation id="3"/>
 		<vocation id="7"/>
 	</instant>
-	<instant name="Protector" words="utamo tempo" lvl="55" mana="200" prem="1" aggressive="0" selftarget="1" exhaustion="1000" needlearn="0" event="script" value="support/protector.lua">
+	<instant name="Protector" words="utamo tempo" lvl="55" mana="200" prem="1" aggressive="0" selftarget="1" exhaustion="10000" needlearn="0" event="script" value="support/protector.lua">
 		<vocation id="4"/>
 		<vocation id="8"/>
 	</instant>
