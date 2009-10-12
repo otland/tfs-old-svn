@@ -183,7 +183,7 @@ bool TalkActions::onPlayerSay(Creature* creature, uint16_t channelId, const std:
 	return false;
 }
 
-TalkAction::TalkAction(LuaInterface* _interface):
+TalkAction::TalkAction(LuaScriptInterface* _interface):
 Event(_interface)
 {
 	m_function = NULL;
@@ -861,11 +861,10 @@ bool TalkAction::thingProporties(Creature* creature, const std::string& cmd, con
 			}
 			else
 			{
-				if(!invalid.empty())
-					invalid += ", ";
-
-				invalid += action;
-				std::advance(it, 2);
+				std::stringstream s;
+				s << action << " (" << parseParams(it, tokens.end()) << ")";
+				invalid += s.str();
+				break;
 			}
 		}
 		else if(Creature* _creature = thing->getCreature())
@@ -936,11 +935,10 @@ bool TalkAction::thingProporties(Creature* creature, const std::string& cmd, con
 					_player->switchSaving();
 				else
 				{
-					if(!invalid.empty())
-						invalid += ", ";
-
-					invalid += action;
-					std::advance(it, 2);
+					std::stringstream s;
+					s << action << " (" << parseParams(it, tokens.end()) << ")";
+					invalid += s.str();
+					break;
 				}
 			}
 			/*else if(Npc* _npc = _creature->getNpc())
@@ -951,11 +949,10 @@ bool TalkAction::thingProporties(Creature* creature, const std::string& cmd, con
 			}*/
 			else
 			{
-				if(!invalid.empty())
-					invalid += ", ";
-
-				invalid += action;
-				std::advance(it, 2);
+				std::stringstream s;
+				s << action << " (" << parseParams(it, tokens.end()) << ")";
+				invalid += s.str();
+				break;
 			}
 		}
 	}
@@ -977,7 +974,7 @@ bool TalkAction::thingProporties(Creature* creature, const std::string& cmd, con
 	if(invalid.empty())
 		return true;
 
-	std::string tmp = "Following actions were invalid: " + invalid;
+	std::string tmp = "Following action was invalid: " + invalid;
 	player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, tmp.c_str());
 	return true;
 }
