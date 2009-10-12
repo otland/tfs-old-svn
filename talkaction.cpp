@@ -183,7 +183,7 @@ bool TalkActions::onPlayerSay(Creature* creature, uint16_t channelId, const std:
 	return false;
 }
 
-TalkAction::TalkAction(LuaScriptInterface* _interface):
+TalkAction::TalkAction(LuaInterface* _interface):
 Event(_interface)
 {
 	m_function = NULL;

@@ -928,7 +928,7 @@ bool AreaSpawnEvent::executeEvent() const
 	return true;
 }
 
-LuaScriptInterface ScriptEvent::m_interface("Raid Interface");
+LuaInterface ScriptEvent::m_interface("Raid Interface");
 
 bool ScriptEvent::configureRaidEvent(xmlNodePtr eventNode)
 {

@@ -3,7 +3,7 @@
 		The Forgotten Server
 
 	Version
-		0.3.5
+		0.4.0_DEV
 
 	Codenamed
 		Crying Damson
@@ -15,18 +15,20 @@
 		http://otland.net/
 ]
 
-[ BUGS
-	Specific reload types not working on certain conditions
-		Assigned to: Elf
+[ NOTE
+	First follow up TODO of 0.3 branch...
 ]
 
 [ TASKS
+	Rewrite GUI using wxWidgets
+		Assigned to: Kiper
+
 	Finish documentation as its incomplete
 		Assigned to: KaczooH
 
-	Patch missing IndexedTile changes from revscriptsys2
+	Patch IndexedTile changes from revscriptsys2
 		Assigned to: Elf
 
 	Deprecate several hardcoded systems (guild management, etc) and rescript them in Lua
-		Assigned to: slawkens
+		Assigned to: ?
 ]

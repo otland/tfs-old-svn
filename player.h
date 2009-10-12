@@ -887,7 +887,7 @@ class Player : public Creature, public Cylinder
 		LearnedInstantSpellList learnedInstantSpellList;
 
 		friend class Game;
-		friend class LuaScriptInterface;
+		friend class LuaInterface;
 		friend class Npc;
 		friend class Map;
 		friend class Actions;

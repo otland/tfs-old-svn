@@ -42,7 +42,7 @@ class BaseEvents
 		virtual bool registerEvent(Event* event, xmlNodePtr p, bool override) = 0;
 		virtual Event* getEvent(const std::string& nodeName) = 0;
 
-		virtual LuaScriptInterface& getInterface() = 0;
+		virtual LuaInterface& getInterface() = 0;
 
 		bool m_loaded;
 };
@@ -57,7 +57,7 @@ enum EventScript_t
 class Event
 {
 	public:
-		Event(LuaScriptInterface* _interface): m_interface(_interface),
+		Event(LuaInterface* _interface): m_interface(_interface),
 			m_scripted(EVENT_SCRIPT_FALSE), m_scriptId(0) {}
 		Event(const Event* copy);
 		virtual ~Event() {}
@@ -77,7 +77,7 @@ class Event
 		virtual std::string getScriptEventName() const = 0;
 		virtual std::string getScriptEventParams() const = 0;
 
-		LuaScriptInterface* m_interface;
+		LuaInterface* m_interface;
 		EventScript_t m_scripted;
 
 		int32_t m_scriptId;
@@ -90,11 +90,11 @@ class CallBack
 		CallBack();
 		virtual ~CallBack() {}
 
-		bool loadCallBack(LuaScriptInterface* _interface, std::string name);
+		bool loadCallBack(LuaInterface* _interface, std::string name);
 
 	protected:
 		int32_t m_scriptId;
-		LuaScriptInterface* m_interface;
+		LuaInterface* m_interface;
 
 		bool m_loaded;
 		std::string m_callbackName;

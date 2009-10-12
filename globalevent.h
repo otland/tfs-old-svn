@@ -58,8 +58,8 @@ class GlobalEvents : public BaseEvents
 		virtual Event* getEvent(const std::string& nodeName);
 		virtual bool registerEvent(Event* event, xmlNodePtr p, bool override);
 
-		virtual LuaScriptInterface& getInterface() {return m_interface;}
-		LuaScriptInterface m_interface;
+		virtual LuaInterface& getInterface() {return m_interface;}
+		LuaInterface m_interface;
 
 		GlobalEventMap thinkMap, serverMap, timerMap;
 };
@@ -67,7 +67,7 @@ class GlobalEvents : public BaseEvents
 class GlobalEvent : public Event
 {
 	public:
-		GlobalEvent(LuaScriptInterface* _interface);
+		GlobalEvent(LuaInterface* _interface);
 		virtual ~GlobalEvent() {}
 
 		virtual bool configureEvent(xmlNodePtr p);

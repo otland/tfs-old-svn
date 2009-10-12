@@ -15,12 +15,9 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////
 #include "otpch.h"
-#include "textlogger.h"
 
+#include "textlogger.h"
 #include "tools.h"
-#if defined(WINDOWS) && not defined(__CONSOLE__)
-#include "gui.h"
-#endif
 
 void Logger::open()
 {
@@ -101,55 +98,3 @@ void Logger::log(const char* func, LogType_t type, std::string message, std::str
 	ss << message;
 	iFile(LOGFILE_ADMIN, ss.str(), newLine);
 }
-
-#if defined(WINDOWS) && not defined(__CONSOLE__)
-GUILogger::GUILogger()
-{
-	out = std::cout.rdbuf();
-	err = std::cerr.rdbuf();
-	log = std::clog.rdbuf();
-	m_displayDate = true;
-}
-
-GUILogger::~GUILogger()
-{
-	std::cout.rdbuf(out);
-	std::cerr.rdbuf(err);
-	std::clog.rdbuf(log);
-}
-
-int32_t GUILogger::overflow(int32_t c)
-{
-	if(c == '\n')
-	{
-		GUI::getInstance()->m_logText += "\r\n";
-		SendMessage(GetDlgItem(GUI::getInstance()->m_mainWindow, ID_LOG), WM_SETTEXT, 0, (LPARAM)GUI::getInstance()->m_logText.c_str());
-		SendMessage(GUI::getInstance()->m_logWindow, EM_LINESCROLL, 0, ++GUI::getInstance()->m_lineCount);
-
-		char buffer[85];
-		sprintf(buffer, "logs/server/%s.log", formatDateShort().c_str());
-		if(FILE* file = fopen(buffer, "a"))
-		{
-			fprintf(file, "[%s] %s\n", formatDate().c_str(), m_cache.c_str());
-			fclose(file);
-			m_cache = "";
-		}
-
-		m_displayDate = true;
-	}
-	else
-	{
-		if(m_displayDate)
-		{
-			GUI::getInstance()->m_logText += std::string("[" + formatDate() +"] ").c_str();
-			m_displayDate = false;
-		}
-
-		GUI::getInstance()->m_logText += (char)c;
-		m_cache += c;
-	}
-
-	return c;
-}
-#endif
-

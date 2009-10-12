@@ -32,23 +32,21 @@ struct LibBlock
 };
 typedef std::map<std::string, LibBlock> LibMap;
 
-class ScriptingManager
+class ScriptManager
 {
 	public:
-		virtual ~ScriptingManager() {clearMods();}
-		static ScriptingManager* getInstance()
+		virtual ~ScriptManager() {clearMods();}
+		static ScriptManager* getInstance()
 		{
-			static ScriptingManager instance;
+			static ScriptManager instance;
 			return &instance;
 		}
 
-		bool load();
-
+		bool loadSystem();
 		bool loadMods();
+
 		void clearMods();
 		bool reloadMods();
-
-		bool loadFromXml(const std::string& file, bool& enabled);
 
 		inline LibMap::iterator getFirstLib() {return libMap.begin();}
 		inline LibMap::iterator getLastLib() {return libMap.end();}
@@ -56,8 +54,11 @@ class ScriptingManager
 		inline ModMap::iterator getFirstMod() {return modMap.begin();}
 		inline ModMap::iterator getLastMod() {return modMap.end();}
 
+	protected:
+		bool loadFromXml(const std::string& file, bool& enabled);
+
 	private:
-		ScriptingManager(): modsLoaded(false) {}
+		ScriptManager(): modsLoaded(false) {}
 		bool modsLoaded;
 
 		LibMap libMap;

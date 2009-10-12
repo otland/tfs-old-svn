@@ -531,6 +531,6 @@ class Creature : public AutoId, virtual public Thing
 
 		friend class Game;
 		friend class Map;
-		friend class LuaScriptInterface;
+		friend class LuaInterface;
 };
 #endif

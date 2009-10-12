@@ -52,8 +52,8 @@ class Weapons : public BaseEvents
 		virtual Event* getEvent(const std::string& nodeName);
 		virtual bool registerEvent(Event* event, xmlNodePtr p, bool override);
 
-		virtual LuaScriptInterface& getInterface() {return m_interface;}
-		LuaScriptInterface m_interface;
+		virtual LuaInterface& getInterface() {return m_interface;}
+		LuaInterface m_interface;
 
 		typedef std::map<uint32_t, Weapon*> WeaponMap;
 		WeaponMap weapons;
@@ -62,7 +62,7 @@ class Weapons : public BaseEvents
 class Weapon : public Event
 {
 	public:
-		Weapon(LuaScriptInterface* _interface);
+		Weapon(LuaInterface* _interface);
 		virtual ~Weapon();
 
 		virtual bool configureEvent(xmlNodePtr p);
@@ -122,7 +122,7 @@ class Weapon : public Event
 class WeaponMelee : public Weapon
 {
 	public:
-		WeaponMelee(LuaScriptInterface* _interface);
+		WeaponMelee(LuaInterface* _interface);
 		virtual ~WeaponMelee() {}
 
 		virtual bool configureEvent(xmlNodePtr p);
@@ -144,7 +144,7 @@ class WeaponMelee : public Weapon
 class WeaponDistance : public Weapon
 {
 	public:
-		WeaponDistance(LuaScriptInterface* _interface);
+		WeaponDistance(LuaInterface* _interface);
 		virtual ~WeaponDistance() {}
 
 		virtual bool configureEvent(xmlNodePtr p);
@@ -165,7 +165,7 @@ class WeaponDistance : public Weapon
 class WeaponWand : public Weapon
 {
 	public:
-		WeaponWand(LuaScriptInterface* _interface);
+		WeaponWand(LuaInterface* _interface);
 		virtual ~WeaponWand() {}
 
 		virtual bool configureEvent(xmlNodePtr p);

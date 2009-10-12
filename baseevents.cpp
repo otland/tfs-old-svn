@@ -226,7 +226,7 @@ CallBack::CallBack()
 	m_loaded = false;
 }
 
-bool CallBack::loadCallBack(LuaScriptInterface* _interface, std::string name)
+bool CallBack::loadCallBack(LuaInterface* _interface, std::string name)
 {
 	if(!_interface)
 	{

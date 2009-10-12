@@ -31,13 +31,13 @@ void GameServers::clear()
 	serverList.clear();
 }
 
-bool GameServers::reload(bool showResult/* = true*/)
+bool GameServers::reload()
 {
 	clear();
-	return loadFromXml(showResult);
+	return loadFromXml(false);
 }
 
-bool GameServers::loadFromXml(bool showResult/* = true*/)
+bool GameServers::loadFromXml(bool result)
 {
 	xmlDocPtr doc = xmlParseFile(getFilePath(FILE_TYPE_XML, "servers.xml").c_str());
 	if(!doc)
@@ -132,14 +132,13 @@ bool GameServers::loadFromXml(bool showResult/* = true*/)
 		p = p->next;
 	}
 
-	xmlFreeDoc(doc);
-	if(showResult)
+	if(result)
 	{
 		std::cout << "> Servers loaded:" << std::endl;
 		for(GameServersMap::iterator it = serverList.begin(); it != serverList.end(); it++)
 			std::cout << it->second->getName() << " (" << it->second->getAddress() << ":" << it->second->getPort() << ")" << std::endl;
 	}
-
+	xmlFreeDoc(doc);
 	return true;
 }
 

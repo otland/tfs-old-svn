@@ -57,8 +57,8 @@ class TalkActions : public BaseEvents
 		virtual Event* getEvent(const std::string& nodeName);
 		virtual bool registerEvent(Event* event, xmlNodePtr p, bool override);
 
-		virtual LuaScriptInterface& getInterface() {return m_interface;}
-		LuaScriptInterface m_interface;
+		virtual LuaInterface& getInterface() {return m_interface;}
+		LuaInterface m_interface;
 };
 
 typedef bool (TalkFunction)(Creature* creature, const std::string& words, const std::string& param);
@@ -66,7 +66,7 @@ class TalkAction : public Event
 {
 	public:
 		TalkAction(const TalkAction* copy);
-		TalkAction(LuaScriptInterface* _interface);
+		TalkAction(LuaInterface* _interface);
 		virtual ~TalkAction() {}
 
 		virtual bool configureEvent(xmlNodePtr p);

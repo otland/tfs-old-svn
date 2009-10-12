@@ -998,15 +998,15 @@ void ValueCallback::getMinMaxValues(Player* player, int32_t& min, int32_t& max, 
 	int32_t params = lua_gettop(L);
 	if(!lua_pcall(L, parameters, 2, 0))
 	{
-		min = LuaScriptInterface::popNumber(L);
-		max = LuaScriptInterface::popNumber(L);
+		min = LuaInterface::popNumber(L);
+		max = LuaInterface::popNumber(L);
 		player->increaseCombatValues(min, max, useCharges, type != FORMULA_SKILL);
 	}
 	else
-		LuaScriptInterface::error(NULL, std::string(LuaScriptInterface::popString(L)));
+		LuaInterface::error(NULL, std::string(LuaInterface::popString(L)));
 
 	if((lua_gettop(L) + parameters + 1) != params)
-		LuaScriptInterface::error(__FUNCTION__, "Stack size changed!");
+		LuaInterface::error(__FUNCTION__, "Stack size changed!");
 
 	env->resetCallback();
 	m_interface->releaseEnv();
@@ -1060,10 +1060,10 @@ void TargetCallback::onTargetCombat(Creature* creature, Creature* target) const
 
 		int32_t size = lua_gettop(L);
 		if(lua_pcall(L, 2, 0 /*nReturnValues*/, 0) != 0)
-			LuaScriptInterface::error(NULL, std::string(LuaScriptInterface::popString(L)));
+			LuaInterface::error(NULL, std::string(LuaInterface::popString(L)));
 
 		if((lua_gettop(L) + 2 /*nParams*/ + 1) != size)
-			LuaScriptInterface::error(__FUNCTION__, "Stack size changed!");
+			LuaInterface::error(__FUNCTION__, "Stack size changed!");
 
 		env->resetCallback();
 		m_interface->releaseEnv();

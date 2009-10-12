@@ -15,18 +15,13 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////
 #include "otpch.h"
-#include "resources.h"
-
 #include "protocolold.h"
 #include "rsa.h"
 
 #include "outputmessage.h"
 #include "connection.h"
-#ifndef __CONSOLE__
-#include "gui.h"
-#endif
-
 #include "game.h"
+
 extern Game g_game;
 
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
@@ -56,11 +51,7 @@ void ProtocolOld::disconnectClient(uint8_t error, const char* message)
 
 bool ProtocolOld::parseFirstPacket(NetworkMessage& msg)
 {
-	if(
-#ifndef __CONSOLE__
-		!GUI::getInstance()->m_connections ||
-#endif
-		g_game.getGameState() == GAME_STATE_SHUTDOWN)
+	if(g_game.getGameState() == GAME_STATE_SHUTDOWN)
 	{
 		getConnection()->close();
 		return false;

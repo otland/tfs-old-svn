@@ -81,8 +81,8 @@ class CreatureEvents : public BaseEvents
 		virtual Event* getEvent(const std::string& nodeName);
 		virtual bool registerEvent(Event* event, xmlNodePtr p, bool override);
 
-		virtual LuaScriptInterface& getInterface() {return m_interface;}
-		LuaScriptInterface m_interface;
+		virtual LuaInterface& getInterface() {return m_interface;}
+		LuaInterface m_interface;
 
 		//creature events
 		typedef std::map<std::string, CreatureEvent*> CreatureEventList;
@@ -96,7 +96,7 @@ typedef std::map<uint32_t, Player*> UsersMap;
 class CreatureEvent : public Event
 {
 	public:
-		CreatureEvent(LuaScriptInterface* _interface);
+		CreatureEvent(LuaInterface* _interface);
 		virtual ~CreatureEvent() {}
 
 		virtual bool configureEvent(xmlNodePtr p);

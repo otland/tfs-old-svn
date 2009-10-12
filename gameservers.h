@@ -17,9 +17,8 @@
 
 #ifndef __GAMESERVER__
 #define __GAMESERVER__
-#include "otsystem.h"
 
-#include "resources.h"
+#include "otsystem.h"
 #include "const.h"
 
 class GameServer
@@ -56,8 +55,8 @@ class GameServers
 			return &instance;
 		}
 
-		bool loadFromXml(bool showResult = false);
-		bool reload(bool showResult = false);
+		bool loadFromXml(bool result);
+		bool reload();
 
 		GameServer* getServerById(uint32_t id) const;
 		GameServer* getServerByName(std::string name) const;

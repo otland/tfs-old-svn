@@ -154,7 +154,7 @@ int32_t Weapons::getMaxWeaponDamage(int32_t level, int32_t attackSkill, int32_t 
 	return (int32_t)std::ceil((2 * (attackValue * (attackSkill + 5.8) / 25 + (level - 1) / 10.)) / attackFactor);
 }
 
-Weapon::Weapon(LuaScriptInterface* _interface):
+Weapon::Weapon(LuaInterface* _interface):
 	Event(_interface)
 {
 	id = 0;
@@ -536,7 +536,7 @@ bool Weapon::executeUseWeapon(Player* player, const LuaVariant& var) const
 	}
 }
 
-WeaponMelee::WeaponMelee(LuaScriptInterface* _interface):
+WeaponMelee::WeaponMelee(LuaInterface* _interface):
 	Weapon(_interface)
 {
 	elementType = COMBAT_NONE;
@@ -678,7 +678,7 @@ int32_t WeaponMelee::getElementDamage(const Player* player, const Item* item) co
 	return -random_range(0, (int32_t)std::floor(maxValue), DISTRO_NORMAL);
 }
 
-WeaponDistance::WeaponDistance(LuaScriptInterface* _interface):
+WeaponDistance::WeaponDistance(LuaInterface* _interface):
 	Weapon(_interface)
 {
 	hitChance = -1;
@@ -970,7 +970,7 @@ bool WeaponDistance::getSkillType(const Player* player, const Item* item,
 	return true;
 }
 
-WeaponWand::WeaponWand(LuaScriptInterface* _interface):
+WeaponWand::WeaponWand(LuaInterface* _interface):
 	Weapon(_interface)
 {
 	minChange = 0;

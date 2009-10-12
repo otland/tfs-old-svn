@@ -125,7 +125,7 @@ bool CreatureEvents::playerLogout(Player* player, bool forceLogout)
 
 /////////////////////////////////////
 
-CreatureEvent::CreatureEvent(LuaScriptInterface* _interface):
+CreatureEvent::CreatureEvent(LuaInterface* _interface):
 Event(_interface)
 {
 	m_type = CREATURE_EVENT_NONE;
@@ -686,7 +686,7 @@ uint32_t CreatureEvent::executeMailSend(Player* player, Player* receiver, Item* 
 			lua_pushnumber(L, env->addThing(player));
 			lua_pushnumber(L, env->addThing(receiver));
 
-			LuaScriptInterface::pushThing(L, item, env->addThing(item));
+			LuaInterface::pushThing(L, item, env->addThing(item));
 			lua_pushboolean(L, openBox);
 
 			bool result = m_interface->callFunction(4);
@@ -745,7 +745,7 @@ uint32_t CreatureEvent::executeMailReceive(Player* player, Player* sender, Item*
 			lua_pushnumber(L, env->addThing(player));
 			lua_pushnumber(L, env->addThing(sender));
 
-			LuaScriptInterface::pushThing(L, item, env->addThing(item));
+			LuaInterface::pushThing(L, item, env->addThing(item));
 			lua_pushboolean(L, openBox);
 
 			bool result = m_interface->callFunction(4);
@@ -802,7 +802,7 @@ uint32_t CreatureEvent::executeTradeRequest(Player* player, Player* target, Item
 
 			lua_pushnumber(L, env->addThing(player));
 			lua_pushnumber(L, env->addThing(target));
-			LuaScriptInterface::pushThing(L, item, env->addThing(item));
+			LuaInterface::pushThing(L, item, env->addThing(item));
 
 			bool result = m_interface->callFunction(3);
 			m_interface->releaseEnv();
@@ -858,8 +858,8 @@ uint32_t CreatureEvent::executeTradeAccept(Player* player, Player* target, Item*
 
 			lua_pushnumber(L, env->addThing(player));
 			lua_pushnumber(L, env->addThing(target));
-			LuaScriptInterface::pushThing(L, item, env->addThing(item));
-			LuaScriptInterface::pushThing(L, targetItem, env->addThing(targetItem));
+			LuaInterface::pushThing(L, item, env->addThing(item));
+			LuaInterface::pushThing(L, targetItem, env->addThing(targetItem));
 
 			bool result = m_interface->callFunction(4);
 			m_interface->releaseEnv();
@@ -915,9 +915,9 @@ uint32_t CreatureEvent::executeLook(Player* player, Thing* thing, const Position
 			m_interface->pushFunction(m_scriptId);
 
 			lua_pushnumber(L, env->addThing(player));
-			LuaScriptInterface::pushThing(L, thing, env->addThing(thing));
+			LuaInterface::pushThing(L, thing, env->addThing(thing));
 
-			LuaScriptInterface::pushPosition(L, position, stackpos);
+			LuaInterface::pushPosition(L, position, stackpos);
 			lua_pushnumber(L, lookDistance);
 
 			bool result = m_interface->callFunction(4);
@@ -1029,8 +1029,8 @@ uint32_t CreatureEvent::executeOutfit(Creature* creature, const Outfit_t& old, c
 			m_interface->pushFunction(m_scriptId);
 
 			lua_pushnumber(L, env->addThing(creature));
-			LuaScriptInterface::pushOutfit(L, old);
-			LuaScriptInterface::pushOutfit(L, current);
+			LuaInterface::pushOutfit(L, old);
+			LuaInterface::pushOutfit(L, current);
 
 			bool result = m_interface->callFunction(3);
 			m_interface->releaseEnv();
@@ -1202,9 +1202,9 @@ uint32_t CreatureEvent::executeCombatArea(Creature* creature, Tile* tile, bool a
 			m_interface->pushFunction(m_scriptId);
 
 			lua_pushnumber(L, env->addThing(creature));
-			LuaScriptInterface::pushThing(L, tile->ground, env->addThing(tile->ground));
+			LuaInterface::pushThing(L, tile->ground, env->addThing(tile->ground));
 
-			LuaScriptInterface::pushPosition(L, tile->getPosition(), 0);
+			LuaInterface::pushPosition(L, tile->getPosition(), 0);
 			lua_pushboolean(L, aggressive);
 
 			bool result = m_interface->callFunction(4);
@@ -1492,7 +1492,7 @@ uint32_t CreatureEvent::executeDeath(Creature* creature, Item* corpse, DeathList
 			m_interface->pushFunction(m_scriptId);
 
 			lua_pushnumber(L, env->addThing(creature));
-			LuaScriptInterface::pushThing(L, corpse, env->addThing(corpse));
+			LuaInterface::pushThing(L, corpse, env->addThing(corpse));
 
 			lua_newtable(L);
 			DeathList::iterator it = deathList.begin();
@@ -1637,7 +1637,7 @@ uint32_t CreatureEvent::executeTextEdit(Player* player, Item* item, std::string 
 			m_interface->pushFunction(m_scriptId);
 
 			lua_pushnumber(L, env->addThing(player));
-			LuaScriptInterface::pushThing(L, item, env->addThing(item));
+			LuaInterface::pushThing(L, item, env->addThing(item));
 			lua_pushstring(L, newText.c_str());
 
 			bool result = m_interface->callFunction(3);

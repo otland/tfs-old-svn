@@ -41,9 +41,6 @@
 
 #include "configmanager.h"
 #include "luascript.h"
-#ifndef __CONSOLE__
-#include "gui.h"
-#endif
 
 Actions* g_actions = NULL;
 CreatureEvents* g_creatureEvents = NULL;
@@ -57,7 +54,7 @@ extern Chat g_chat;
 extern ConfigManager g_config;
 extern Monsters g_monsters;
 
-bool ScriptingManager::load()
+bool ScriptManager::load()
 {
 	g_weapons = new Weapons();
 	if(!g_weapons->loadFromXml())
@@ -112,7 +109,7 @@ bool ScriptingManager::load()
 	return true;
 }
 
-bool ScriptingManager::loadMods()
+bool ScriptManager::loadMods()
 {
 	boost::filesystem::path modsPath(getFilePath(FILE_TYPE_MOD, ""));
 	if(!boost::filesystem::exists(modsPath))
@@ -154,19 +151,19 @@ bool ScriptingManager::loadMods()
 	return true;
 }
 
-void ScriptingManager::clearMods()
+void ScriptManager::clearMods()
 {
 	modMap.clear();
 	libMap.clear();
 }
 
-bool ScriptingManager::reloadMods()
+bool ScriptManager::reloadMods()
 {
 	clearMods();
 	return loadMods();
 }
 
-bool ScriptingManager::loadFromXml(const std::string& file, bool& enabled)
+bool ScriptManager::loadFromXml(const std::string& file, bool& enabled)
 {
 	enabled = false;
 	std::string modPath = getFilePath(FILE_TYPE_MOD, file);
@@ -174,7 +171,7 @@ bool ScriptingManager::loadFromXml(const std::string& file, bool& enabled)
 	xmlDocPtr doc = xmlParseFile(modPath.c_str());
 	if(!doc)
 	{
-		std::cout << "[Error - ScriptingManager::loadFromXml] Cannot load mod " << modPath << std::endl;
+		std::cout << "[Error - ScriptManager::loadFromXml] Cannot load mod " << modPath << std::endl;
 		std::cout << getLastXMLError() << std::endl;
 		return false;
 	}
@@ -185,7 +182,7 @@ bool ScriptingManager::loadFromXml(const std::string& file, bool& enabled)
 	xmlNodePtr p, root = xmlDocGetRootElement(doc);
 	if(xmlStrcmp(root->name,(const xmlChar*)"mod"))
 	{
-		std::cout << "[Error - ScriptingManager::loadFromXml] Malformed mod " << modPath << std::endl;
+		std::cout << "[Error - ScriptManager::loadFromXml] Malformed mod " << modPath << std::endl;
 		std::cout << getLastXMLError() << std::endl;
 
 		xmlFreeDoc(doc);
@@ -194,7 +191,7 @@ bool ScriptingManager::loadFromXml(const std::string& file, bool& enabled)
 
 	if(!readXMLString(root, "name", strValue))
 	{
-		std::cout << "[Warning - ScriptingManager::loadFromXml] Empty name in mod " << modPath << std::endl;
+		std::cout << "[Warning - ScriptManager::loadFromXml] Empty name in mod " << modPath << std::endl;
 		xmlFreeDoc(doc);
 		return false;
 	}
@@ -259,7 +256,7 @@ bool ScriptingManager::loadFromXml(const std::string& file, bool& enabled)
 			{
 				if(!readXMLString(p, "name", strValue))
 				{
-					std::cout << "[Warning - ScriptingManager::loadFromXml] Lib without name in mod " << strValue << std::endl;
+					std::cout << "[Warning - ScriptManager::loadFromXml] Lib without name in mod " << strValue << std::endl;
 					p = p->next;
 					continue;
 				}
@@ -278,7 +275,7 @@ bool ScriptingManager::loadFromXml(const std::string& file, bool& enabled)
 						libMap[strValue] = lb;
 					}
 					else
-						std::cout << "[Warning - ScriptingManager::loadFromXml] Duplicated lib in mod "
+						std::cout << "[Warning - ScriptManager::loadFromXml] Duplicated lib in mod "
 							<< strValue << ", previously declared in " << it->second.first << std::endl;
 				}
 			}
@@ -306,6 +303,7 @@ bool ScriptingManager::loadFromXml(const std::string& file, bool& enabled)
 
 	enabled = mod.enabled;
 	modMap[mod.name] = mod;
+
 	xmlFreeDoc(doc);
 	return true;
 }

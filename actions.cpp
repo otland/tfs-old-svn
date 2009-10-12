@@ -663,7 +663,7 @@ bool Actions::useItemEx(Player* player, const Position& fromPos, const Position&
 	return true;
 }
 
-Action::Action(LuaScriptInterface* _interface):
+Action::Action(LuaInterface* _interface):
 Event(_interface)
 {
 	allowFarUse = false;
@@ -780,19 +780,19 @@ bool Action::executeUse(Player* player, Item* item, const PositionEx& fromPos, c
 			m_interface->pushFunction(m_scriptId);
 
 			lua_pushnumber(L, env->addThing(player));
-			LuaScriptInterface::pushThing(L, item, env->addThing(item));
-			LuaScriptInterface::pushPosition(L, fromPos, fromPos.stackpos);
+			LuaInterface::pushThing(L, item, env->addThing(item));
+			LuaInterface::pushPosition(L, fromPos, fromPos.stackpos);
 
 			Thing* thing = g_game.internalGetThing(player, toPos, toPos.stackpos);
 			if(thing && (thing != item || !extendedUse))
 			{
-				LuaScriptInterface::pushThing(L, thing, env->addThing(thing));
-				LuaScriptInterface::pushPosition(L, toPos, toPos.stackpos);
+				LuaInterface::pushThing(L, thing, env->addThing(thing));
+				LuaInterface::pushPosition(L, toPos, toPos.stackpos);
 			}
 			else
 			{
-				LuaScriptInterface::pushThing(L, NULL, 0);
-				LuaScriptInterface::pushPosition(L, fromPos, fromPos.stackpos);
+				LuaInterface::pushThing(L, NULL, 0);
+				LuaInterface::pushPosition(L, fromPos, fromPos.stackpos);
 			}
 
 			bool result = m_interface->callFunction(5);

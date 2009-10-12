@@ -15,8 +15,6 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////
 #include "otpch.h"
-#include "resources.h"
-
 #include <boost/function.hpp>
 #include <iostream>
 
@@ -44,10 +42,6 @@
 #include "chat.h"
 #include "configmanager.h"
 #include "game.h"
-
-#ifndef __CONSOLE__
-#include "gui.h"
-#endif
 
 extern Game g_game;
 extern ConfigManager g_config;
@@ -402,11 +396,7 @@ void ProtocolGame::onRecvFirstMessage(NetworkMessage& msg)
 
 bool ProtocolGame::parseFirstPacket(NetworkMessage& msg)
 {
-	if(
-#ifndef __CONSOLE__
-		!GUI::getInstance()->m_connections ||
-#endif
-		g_game.getGameState() == GAME_STATE_SHUTDOWN)
+	if(g_game.getGameState() == GAME_STATE_SHUTDOWN)
 	{
 		getConnection()->close();
 		return false;

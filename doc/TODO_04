@@ -5,10 +5,7 @@
 	Piszcie swoje propozycje co do 0.4- narazie wypiszę wszystko co przyszło mi do glowy, albo ustaliliśmy z Elfem.
 
 	TODO:
-	* Finish boost_thread support
-	* GUI w QT/wxWidgets
 	* Multilang (szczególnie RET_* i możliwie wszystko pozostałe)
-	* Manual do komend- przykładowe użycie, możliwe wartości, używane w grze, możliwość deaktywacji w configu- przykład: /man serverinfo, /man /goto, /a man, itd.
 	* Stabilność :D!
 	* Nowy podział plików:
 		* configs/

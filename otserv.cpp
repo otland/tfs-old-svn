@@ -20,6 +20,7 @@
 #include <iostream>
 #include <fstream>
 #include <iomanip>
+
 #ifndef WINDOWS
 #include <unistd.h>
 #endif
@@ -35,7 +36,6 @@
 #include "chat.h"
 #include "tools.h"
 #include "rsa.h"
-#include "textlogger.h"
 
 #include "protocollogin.h"
 #include "protocolgame.h"
@@ -64,18 +64,6 @@
 #ifdef __EXCEPTION_TRACER__
 #include "exception.h"
 #endif
-
-#ifndef __CONSOLE__
-#ifdef WINDOWS
-#include "shellapi.h"
-#include "gui.h"
-#include "inputbox.h"
-#include "commctrl.h"
-#endif
-#else
-#include "resources.h"
-#endif
-
 #ifdef __NO_BOOST_EXCEPTIONS__
 #include <exception>
 
@@ -89,13 +77,8 @@ ConfigManager g_config;
 Game g_game;
 Monsters g_monsters;
 Npcs g_npcs;
-
 RSA g_RSA;
 Chat g_chat;
-#if defined(WINDOWS) && not defined(__CONSOLE__)
-GUILogger g_logger;
-NOTIFYICONDATA NID;
-#endif
 
 IpList serverIps;
 boost::mutex g_loaderLock;
@@ -106,7 +89,6 @@ boost::unique_lock<boost::mutex> g_loaderUniqueLock(g_loaderLock);
 extern Admin* g_admin;
 #endif
 
-#if not defined(WINDOWS) || defined(__CONSOLE__)
 bool argumentsHandler(StringVec args)
 {
 	StringVec tmp;
@@ -171,7 +153,6 @@ bool argumentsHandler(StringVec args)
 
 	return true;
 }
-#endif
 
 #ifndef WINDOWS
 void signalHandler(int32_t sig)
@@ -235,57 +216,40 @@ void allocationHandler()
 	exit(-1);
 }
 
-void startupErrorMessage(const std::string& error)
+void startupErrorMessage(std::string error = "")
 {
 	if(error.length() > 0)
 		std::cout << std::endl << "> ERROR: " << error << std::endl;
 
-	#if defined(WINDOWS) && not defined(__CONSOLE__)
-	MessageBox(GUI::getInstance()->m_mainWindow, error.c_str(), "Error", MB_OK);
-	system("pause");
-	#else
 	getchar();
-	#endif
 	exit(-1);
 }
 
-void otserv(
-#if not defined(WINDOWS) || defined(__CONSOLE__)
-StringVec args,
-#endif
-ServiceManager* services);
-
-#if not defined(WINDOWS) || defined(__CONSOLE__)
-int main(int argc, char *argv[])
+void otserv(StringVec args, ServiceManager* services);
+int main(int argc, char* argv[])
 {
 	StringVec args = StringVec(argv, argv + argc);
 	if(argc > 1 && !argumentsHandler(args))
 		return 0;
 
-#else
-void serverMain(void* param)
-{
-	std::cout.rdbuf(&g_logger);
-	std::cerr.rdbuf(&g_logger);
-
-#endif
 	std::set_new_handler(allocationHandler);
 	ServiceManager servicer;
 	g_config.startup();
 
-	#ifdef __OTSERV_ALLOCATOR_STATS__
+#ifdef __OTSERV_ALLOCATOR_STATS__
 	boost::thread(boost::bind(&allocatorStatsThread, (void*)NULL));
-	#endif
-	#ifdef __EXCEPTION_TRACER__
+#endif
+#ifdef __EXCEPTION_TRACER__
 	ExceptionHandler mainExceptionHandler;
 	mainExceptionHandler.InstallHandler();
-	#endif
-	#ifndef WINDOWS
+#endif
+#ifndef WINDOWS
 
 	// ignore sigpipe...
 	struct sigaction sigh;
 	sigh.sa_handler = SIG_IGN;
 	sigh.sa_flags = 0;
+
 	sigemptyset(&sigh.sa_mask);
 	sigaction(SIGPIPE, &sigh, NULL);
 
@@ -298,35 +262,20 @@ void serverMain(void* param)
 	signal(SIGCONT, signalHandler); //reload all
 	signal(SIGQUIT, signalHandler); //save & shutdown
 	signal(SIGTERM, signalHandler); //shutdown
-	#endif
+#endif
 
-	Dispatcher::getInstance()->addTask(createTask(boost::bind(otserv,
-	#if not defined(WINDOWS) || defined(__CONSOLE__)
-	args,
-	#endif
-	&servicer)));
-
+	Dispatcher::getInstance()->addTask(createTask(boost::bind(otserv, args, &servicer)));
 	g_loaderSignal.wait(g_loaderUniqueLock);
 	if(servicer.isRunning())
 	{
 		std::cout << ">> " << g_config.getString(ConfigManager::SERVER_NAME) << " server Online!" << std::endl << std::endl;
-		#if defined(WINDOWS) && not defined(__CONSOLE__)
-		SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Status: Online!");
-		GUI::getInstance()->m_connections = true;
-		#endif
 		servicer.run();
 	}
 	else
-	{
 		std::cout << ">> " << g_config.getString(ConfigManager::SERVER_NAME) << " server Offline! No services available..." << std::endl << std::endl;
-		#if defined(WINDOWS) && not defined(__CONSOLE__)
-		SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Status: Offline!");
-		GUI::getInstance()->m_connections = true;
-		#endif
-	}
 
-	#if not defined(WINDOWS) || defined(__CONSOLE__)
-	std::string outPath = g_config.getString(ConfigManager::OUT_LOG), errPath = g_config.getString(ConfigManager::ERROR_LOG);
+	std::string outPath = g_config.getString(ConfigManager::OUT_LOG),
+		errPath = g_config.getString(ConfigManager::ERROR_LOG);
 	if(outPath.length() < 3)
 		outPath = "";
 	else if(outPath[0] != '/' && outPath[1] != ':')
@@ -343,7 +292,7 @@ void serverMain(void* param)
 		std::cout << "> Logging errors to file: " << errPath << std::endl;
 	}
 
-	if(outPath != "")
+	if(!outPath.empty())
 	{
 		boost::shared_ptr<std::ofstream> outFile;
 		outFile.reset(new std::ofstream(outPath.c_str(), (g_config.getBool(ConfigManager::TRUNCATE_LOGS) ?
@@ -354,7 +303,7 @@ void serverMain(void* param)
 		std::cout.rdbuf(outFile->rdbuf());
 	}
 
-	if(errPath != "")
+	if(!errPath.empty())
 	{
 		boost::shared_ptr<std::ofstream> errFile;
 		errFile.reset(new std::ofstream(errPath.c_str(), (g_config.getBool(ConfigManager::TRUNCATE_LOGS) ?
@@ -364,114 +313,93 @@ void serverMain(void* param)
 
 		std::cerr.rdbuf(errFile->rdbuf());
 	}
-	#endif
 
 #ifdef __EXCEPTION_TRACER__
 	mainExceptionHandler.RemoveHandler();
 #endif
 	exit(0);
-#if not defined(WINDOWS) || defined(__CONSOLE__)
 	return 0;
-#endif
 }
 
-void otserv(
-#if not defined(WINDOWS) || defined(__CONSOLE__)
-StringVec args,
-#endif
-ServiceManager* services)
+void otserv(StringVec args, ServiceManager* services)
 {
 	srand((uint32_t)OTSYS_TIME());
-	#ifdef WINDOWS
-	#ifdef __CONSOLE__
+#ifdef WINDOWS
 	SetConsoleTitle(STATUS_SERVER_NAME);
-	#else
-	GUI::getInstance()->m_connections = false;
-	#endif
-	#endif
+#endif
 
 	g_game.setGameState(GAME_STATE_STARTUP);
-	#if !defined(WINDOWS) && !defined(__ROOT_PERMISSION__)
+#if !defined(WINDOWS) && !defined(__ROOT_PERMISSION__)
 	if(getuid() == 0 || geteuid() == 0)
 	{
-		std::cout << "> WARNING: " << STATUS_SERVER_NAME << " has been executed as root user! It is recommended to execute as a normal user." << std::endl;
-		std::cout << "Continue? (y/N)" << std::endl;
-
+		std::cout << "> WARNING: " << STATUS_SERVER_NAME << " has been executed as root user! It is recommended to execute as a normal user." << std::endl
+			<< "Continue? (y/N)" << std::endl;
 		char buffer = getchar();
 		if(buffer == 10 || (buffer != 121 && buffer != 89))
 			startupErrorMessage("Aborted.");
 	}
-	#endif
+#endif
 
-	std::cout << STATUS_SERVER_NAME << ", version " << STATUS_SERVER_VERSION << " (" << STATUS_SERVER_CODENAME << ")" << std::endl;
-	std::cout << "Compiled with " << BOOST_COMPILER << " at " << __DATE__ << ", " << __TIME__ << "." << std::endl;
-	std::cout << "A server developed by Elf, slawkens, Talaturen, KaczooH, Lithium, Kiper, Kornholijo." << std::endl;
-	std::cout << "Visit our forum for updates, support and resources: http://otland.net." << std::endl << std::endl;
-
+	std::cout << STATUS_SERVER_NAME << ", version " << STATUS_SERVER_VERSION << " (" << STATUS_SERVER_CODENAME << ")" << std::endl
+		<< "Compiled with " << BOOST_COMPILER << " at " << __DATE__ << ", " << __TIME__ << "." << std::endl
+		<< "A server developed by Elf, slawkens, Talaturen, KaczooH, Lithium, Kiper, Kornholijo." << std::endl
+		<< "Visit our forum for updates, support and resources: http://otland.net." << std::endl << std::endl;
 	std::stringstream ss;
-	#ifdef __DEBUG__
+#ifdef __DEBUG__
 	ss << " GLOBAL";
-	#endif
-	#ifdef __DEBUG_MOVESYS__
+#endif
+#ifdef __DEBUG_MOVESYS__
 	ss << " MOVESYS";
-	#endif
-	#ifdef __DEBUG_CHAT__
+#endif
+#ifdef __DEBUG_CHAT__
 	ss << " CHAT";
-	#endif
-	#ifdef __DEBUG_EXCEPTION_REPORT__
+#endif
+#ifdef __DEBUG_EXCEPTION_REPORT__
 	ss << " EXCEPTION-REPORT";
-	#endif
-	#ifdef __DEBUG_HOUSES__
+#endif
+#ifdef __DEBUG_HOUSES__
 	ss << " HOUSES";
-	#endif
-	#ifdef __DEBUG_LUASCRIPTS__
+#endif
+#ifdef __DEBUG_LUASCRIPTS__
 	ss << " LUA-SCRIPTS";
-	#endif
-	#ifdef __DEBUG_MAILBOX__
+#endif
+#ifdef __DEBUG_MAILBOX__
 	ss << " MAILBOX";
-	#endif
-	#ifdef __DEBUG_NET__
+#endif
+#ifdef __DEBUG_NET__
 	ss << " NET";
-	#endif
-	#ifdef __DEBUG_NET_DETAIL__
+#endif
+#ifdef __DEBUG_NET_DETAIL__
 	ss << " NET-DETAIL";
-	#endif
-	#ifdef __DEBUG_RAID__
+#endif
+#ifdef __DEBUG_RAID__
 	ss << " RAIDS";
-	#endif
-	#ifdef __DEBUG_SCHEDULER__
+#endif
+#ifdef __DEBUG_SCHEDULER__
 	ss << " SCHEDULER";
-	#endif
-	#ifdef __DEBUG_SPAWN__
+#endif
+#ifdef __DEBUG_SPAWN__
 	ss << " SPAWNS";
-	#endif
-	#ifdef __SQL_QUERY_DEBUG__
+#endif
+#ifdef __SQL_QUERY_DEBUG__
 	ss << " SQL-QUERIES";
-	#endif
+#endif
 
 	std::string debug = ss.str();
 	if(!debug.empty())
-	{
-		std::cout << ">> Debugging:";
-		#ifndef __CONSOLE__
-		SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Displaying debugged components");
-		#endif
-
-		std::cout << debug << "." << std::endl;
-	}
+		std::cout << ">> Debugging:" << debug << "." << std::endl;
 
 	std::cout << ">> Loading config (" << g_config.getString(ConfigManager::CONFIG_FILE) << ")" << std::endl;
-	#ifndef __CONSOLE__
-	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Loading config");
-	#endif
 	if(!g_config.load())
 		startupErrorMessage("Unable to load " + g_config.getString(ConfigManager::CONFIG_FILE) + "!");
 
 	Logger::getInstance()->open();
+	std::cout << ">> Opening logs..." << std::endl;
+
 	IntegerVec cores = vectorAtoi(explodeString(g_config.getString(ConfigManager::CORES_USED), ","));
 	if(cores[0] != -1)
 	{
-	#ifdef WINDOWS
+#ifdef WINDOWS
 		int32_t mask = 0;
 		for(IntegerVec::iterator it = cores.begin(); it != cores.end(); ++it)
 			mask += 1 << (*it);
@@ -494,7 +422,7 @@ ServiceManager* services)
 	else if(defaultPriority == "higher")
 		SetPriorityClass(GetCurrentProcess(), ABOVE_NORMAL_PRIORITY_CLASS);
 
-	#else
+#else
 		cpu_set_t mask;
 		CPU_ZERO(&mask);
 		for(IntegerVec::iterator it = cores.begin(); it != cores.end(); ++it)
@@ -513,7 +441,7 @@ ServiceManager* services)
 	}
 
 	if(!nice(g_config.getNumber(ConfigManager::NICE_LEVEL))) {}
-	#endif
+#endif
 	std::string encryptionType = asLowerCaseString(g_config.getString(ConfigManager::ENCRYPTION_TYPE));
 	if(encryptionType == "md5")
 	{
@@ -532,9 +460,6 @@ ServiceManager* services)
 	}
 	
 	std::cout << ">> Checking software version... ";
-	#ifndef __CONSOLE__
-	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Checking software version");
-	#endif
 	if(xmlDocPtr doc = xmlParseFile(VERSION_CHECK))
 	{
 		xmlNodePtr p, root = xmlDocGetRootElement(doc);
@@ -561,21 +486,19 @@ ServiceManager* services)
 
 				if(tmp)
 				{
-					std::cout << "outdated, please consider updating!" << std::endl;
-					std::cout << "> Current version information - version: " << STATUS_SERVER_VERSION << ", patch: " << VERSION_PATCH;
-					std::cout << ", build: " << VERSION_BUILD << ", timestamp: " << VERSION_TIMESTAMP << "." << std::endl;
-					std::cout << "> Latest version information - version: " << version << ", patch: " << patch;
-					std::cout << ", build: " << build << ", timestamp: " << timestamp << "." << std::endl;
-					if(g_config.getBool(ConfigManager::CONFIM_OUTDATED_VERSION) && version.find("_SVN") == std::string::npos)
+					if(version.find("_SVN") != std::string::npos)
+						std::cout << "outdated, please consider updating!" << std::endl;
+
+					std::cout << "> Current version information - version: " << STATUS_SERVER_VERSION << ", patch: " << VERSION_PATCH
+						<< ", build: " << VERSION_BUILD << ", timestamp: " << VERSION_TIMESTAMP << "." << std::endl
+						<< "> Latest version information - version: " << version << ", patch: " << patch
+						<< ", build: " << build << ", timestamp: " << timestamp << "." << std::endl;
+					if(g_config.getBool(ConfigManager::CONFIM_OUTDATED_VERSION)
+						&& version.find("_SVN") == std::string::npos)
 					{
-						#ifndef __CONSOLE__
-						if(MessageBox(GUI::getInstance()->m_mainWindow, "Continue?", "Outdated software", MB_YESNO) == IDNO)
-						#else
 						std::cout << "Continue? (y/N)" << std::endl;
-	
 						char buffer = getchar();
 						if(buffer == 10 || (buffer != 121 && buffer != 89))
-						#endif
 							startupErrorMessage("Aborted.");
 					}
 				}
@@ -594,54 +517,41 @@ ServiceManager* services)
 		std::cout << "failed - could not parse remote file (are you connected to the internet?)" << std::endl;
 
 	std::cout << ">> Fetching blacklist" << std::endl;
-	#ifndef __CONSOLE__
-	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Fetching blacklist");
-	#endif
 	if(!g_game.fetchBlacklist())
 	{
-		#ifndef __CONSOLE__
-		if(MessageBox(GUI::getInstance()->m_mainWindow, "Unable to fetch blacklist! Continue?", "Blacklist", MB_YESNO) == IDNO)
-		#else
 		std::cout << "Unable to fetch blacklist! Continue? (y/N)" << std::endl;
 		char buffer = getchar();
 		if(buffer == 10 || (buffer != 121 && buffer != 89))
-		#endif
 			startupErrorMessage("Unable to fetch blacklist!");
 	}
 
 	std::cout << ">> Loading RSA key" << std::endl;
-	#ifndef __CONSOLE__
-	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Loading RSA Key");
-	#endif
-
 	const char* p("14299623962416399520070177382898895550795403345466153217470516082934737582776038882967213386204600674145392845853859217990626450972452084065728686565928113");
 	const char* q("7630979195970404721891201847792002125535401292779123937207447574596692788513647179235335529307251350570728407373705564708871762033017096809910315212884101");
 	const char* d("46730330223584118622160180015036832148732986808519344675210555262940258739805766860224610646919605860206328024326703361630109888417839241959507572247284807035235569619173792292786907845791904955103601652822519121908367187885509270025388641700821735345222087940578381210879116823013776808975766851829020659073");
-	g_RSA.setKey(p, q, d);
 
+	g_RSA.setKey(p, q, d);
 	std::cout << ">> Starting SQL connection" << std::endl;
-	#ifndef __CONSOLE__
-	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Starting SQL connection");
-	#endif
+
 	Database* db = Database::getInstance();
 	if(db && db->isConnected())
 	{
 		std::cout << ">> Running Database Manager" << std::endl;
-		if(!DatabaseManager::getInstance()->isDatabaseSetup())
-			startupErrorMessage("The database you specified in config.lua is empty, please import schemas/<dbengine>.sql to the database (if you are using MySQL, please read doc/MYSQL_HELP for more information).");
-		else
+		if(DatabaseManager::getInstance()->isDatabaseSetup())
 		{
 			uint32_t version = 0;
 			do
 			{
 				version = DatabaseManager::getInstance()->updateDatabase();
-				if(version == 0)
+				if(!version)
 					break;
 
 				std::cout << "> Database has been updated to version: " << version << "." << std::endl;
 			}
 			while(version < VERSION_DATABASE);
 		}
+		else
+			startupErrorMessage("The database you have specified in config.lua is empty, please import schemas/<dbengine>.sql to the database.");
 
 		DatabaseManager::getInstance()->checkTriggers();
 		DatabaseManager::getInstance()->checkEncryption();
@@ -652,120 +562,75 @@ ServiceManager* services)
 		startupErrorMessage("Couldn't estabilish connection to SQL database!");
 
 	std::cout << ">> Loading items" << std::endl;
-	#ifndef __CONSOLE__
-	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Loading items");
-	#endif
 	if(Item::items.loadFromOtb(getFilePath(FILE_TYPE_OTHER, "items/items.otb")))
 		startupErrorMessage("Unable to load items (OTB)!");
 
 	if(!Item::items.loadFromXml())
 	{
-		#ifndef __CONSOLE__
-		if(MessageBox(GUI::getInstance()->m_mainWindow, "Unable to load items (XML)! Continue?", "Items (XML)", MB_YESNO) == IDNO)
-		#else
 		std::cout << "Unable to load items (XML)! Continue? (y/N)" << std::endl;
 		char buffer = getchar();
 		if(buffer == 10 || (buffer != 121 && buffer != 89))
-		#endif
 			startupErrorMessage("Unable to load items (XML)!");
 	}
 
 	std::cout << ">> Loading groups" << std::endl;
-	#ifndef __CONSOLE__
-	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Loading groups");
-	#endif
 	if(!Groups::getInstance()->loadFromXml())
 		startupErrorMessage("Unable to load groups!");
 
 	std::cout << ">> Loading vocations" << std::endl;
-	#ifndef __CONSOLE__
-	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Loading vocations");
-	#endif
 	if(!Vocations::getInstance()->loadFromXml())
 		startupErrorMessage("Unable to load vocations!");
 
 	std::cout << ">> Loading script systems" << std::endl;
-	#ifndef __CONSOLE__
-	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Loading script systems");
-	#endif
-	if(!ScriptingManager::getInstance()->load())
-		startupErrorMessage("");
+	if(!ScriptManager::getInstance()->loadSystem())
+		startupErrorMessage();
 
 	std::cout << ">> Loading chat channels" << std::endl;
-	#ifndef __CONSOLE__
-	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Loading chat channels");
-	#endif
 	if(!g_chat.loadFromXml())
 		startupErrorMessage("Unable to load chat channels!");
 
 	std::cout << ">> Loading outfits" << std::endl;
-	#ifndef __CONSOLE__
-	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Loading outfits");
-	#endif
 	if(!Outfits::getInstance()->loadFromXml())
 		startupErrorMessage("Unable to load outfits!");
 
 	std::cout << ">> Loading experience stages" << std::endl;
-	#ifndef __CONSOLE__
-	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Loading experience stages");
-	#endif
 	if(!g_game.loadExperienceStages())
 		startupErrorMessage("Unable to load experience stages!");
 
 	std::cout << ">> Loading monsters" << std::endl;
-	#ifndef __CONSOLE__
-	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Loading monsters");
-	#endif
 	if(!g_monsters.loadFromXml())
 	{
-		#ifndef __CONSOLE__
-		if(MessageBox(GUI::getInstance()->m_mainWindow, "Unable to load monsters! Continue?", "Monsters", MB_YESNO) == IDNO)
-		#else
 		std::cout << "Unable to load monsters! Continue? (y/N)" << std::endl;
 		char buffer = getchar();
 		if(buffer == 10 || (buffer != 121 && buffer != 89))
-		#endif
 			startupErrorMessage("Unable to load monsters!");
 	}
 
 	std::cout << ">> Loading mods..." << std::endl;
-	#ifndef __CONSOLE__
-	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Loading mods...");
-	#endif
-	if(!ScriptingManager::getInstance()->loadMods())
-		startupErrorMessage("Unable to load mods!");
+	if(!ScriptManager::getInstance()->loadMods())
+		startupErrorMessage();
 
 	std::cout << ">> Loading map and spawns..." << std::endl;
-	#ifndef __CONSOLE__
-	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Loading map and spawns...");
-	#endif
 	if(!g_game.loadMap(g_config.getString(ConfigManager::MAP_NAME)))
-		startupErrorMessage("");
+		startupErrorMessage();
 
 	#ifdef __LOGIN_SERVER__
 	std::cout << ">> Loading game servers" << std::endl;
-	#ifndef __CONSOLE__
-	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Loading game servers");
-	#endif
 	if(!GameServers::getInstance()->loadFromXml(true))
 		startupErrorMessage("Unable to load game servers!");
-	#endif
 
+	#endif
 	#ifdef __REMOTE_CONTROL__
 	std::cout << ">> Loading administration protocol" << std::endl;
-	#ifndef __CONSOLE__
-	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Loading administration protocol");
-	#endif
-
 	g_admin = new Admin();
 	if(!g_admin->loadFromXml())
 		startupErrorMessage("Unable to load administration protocol!");
 
 	services->add<ProtocolAdmin>(g_config.getNumber(ConfigManager::ADMIN_PORT));
 	#endif
-
 	std::cout << ">> Checking world type... ";
 	std::string worldType = asLowerCaseString(g_config.getString(ConfigManager::WORLD_TYPE));
+
 	if(worldType == "pvp" || worldType == "2" || worldType == "normal")
 	{
 		g_game.setWorldType(WORLD_TYPE_PVP);
@@ -788,9 +653,6 @@ ServiceManager* services)
 	}
 
 	std::cout << ">> Initializing game state modules and registering services..." << std::endl;
-	#ifndef __CONSOLE__
-	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Initializing game state and registering services...");
-	#endif
 	g_game.setGameState(GAME_STATE_INIT);
 
 	std::string ip = g_config.getString(ConfigManager::IP);
@@ -844,18 +706,12 @@ ServiceManager* services)
 		std::cout << (*it) << "\t";
 
 	std::cout << std::endl << ">> All modules were loaded, server is starting up..." << std::endl;
-	#ifndef __CONSOLE__
-	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> All modules were loaded, server is starting up...");
-	#endif
 	g_game.setGameState(GAME_STATE_NORMAL);
-
 	g_game.start(services);
 	g_loaderSignal.notify_all();
 }
 
-#ifndef __CONSOLE__
-LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
-{
+/*{
 	CInputBox iBox(hwnd);
 	switch(message)
 	{
@@ -1447,5 +1303,4 @@ int32_t WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszA
 	}
 
 	return messages.wParam;
-}
-#endif
+}*/

@@ -21,6 +21,7 @@
 #include <iostream>
 #include <iomanip>
 #include <fstream>
+
 #ifdef WINDOWS
 #include <excpt.h>
 #include <tlhelp32.h>
@@ -127,13 +128,7 @@ char* getFunctionName(unsigned long addr, unsigned long& start)
 EXCEPTION_DISPOSITION __cdecl _SEHHandler(struct _EXCEPTION_RECORD *ExceptionRecord, void* EstablisherFrame,
 	 struct _CONTEXT *ContextRecord, void* DispatcherContext)
 {
-	uint32_t *esp;
-	uint32_t *next_ret;
-	uint32_t stack_val;
-	uint32_t *stacklimit;
-	uint32_t *stackstart;
-	uint32_t nparameters = 0;
-	uint32_t file,foundRetAddress = 0;
+	uint32_t *esp, *next_ret, stack_val, *stacklimit, *stackstart, nparameters = 0, file, foundRetAddress = 0;
 	_MEMORY_BASIC_INFORMATION mbi;
 
 	std::ostream *outdriver;
@@ -152,6 +147,7 @@ EXCEPTION_DISPOSITION __cdecl _SEHHandler(struct _EXCEPTION_RECORD *ExceptionRec
 
 	time_t rawtime;
 	time(&rawtime);
+
 	*outdriver << "*****************************************************" << std::endl;
 	*outdriver << "Error report - " << std::ctime(&rawtime) << std::endl;
 	*outdriver << "Compiler Info - " << BOOST_COMPILER << std::endl;
@@ -174,10 +170,12 @@ EXCEPTION_DISPOSITION __cdecl _SEHHandler(struct _EXCEPTION_RECORD *ExceptionRec
 	FILETIME FTcreation, FTexit, FTkernel, FTuser;
 	SYSTEMTIME systemtime;
 	GetProcessTimes(GetCurrentProcess(), &FTcreation, &FTexit, &FTkernel, &FTuser);
+
 	// creation time
 	FileTimeToSystemTime(&FTcreation, &systemtime);
 	*outdriver << "Start time: " << systemtime.wDay << "-" << systemtime.wMonth << "-" << systemtime.wYear << "  " <<
 		systemtime.wHour << ":" << systemtime.wMinute << ":" << systemtime.wSecond << std::endl;
+
 	// kernel time
 	uint32_t miliseconds;
 	miliseconds = FTkernel.dwHighDateTime * 429497 + FTkernel.dwLowDateTime/10000;
@@ -188,6 +186,7 @@ EXCEPTION_DISPOSITION __cdecl _SEHHandler(struct _EXCEPTION_RECORD *ExceptionRec
 	*outdriver << ":" << miliseconds/1000;
 	miliseconds = miliseconds - (miliseconds/1000)*1000;
 	*outdriver << "." << miliseconds << std::endl;
+
 	// user time
 	miliseconds = FTuser.dwHighDateTime * 429497 + FTuser.dwLowDateTime/10000;
 	*outdriver << "User time: " << miliseconds/3600000;
@@ -200,7 +199,8 @@ EXCEPTION_DISPOSITION __cdecl _SEHHandler(struct _EXCEPTION_RECORD *ExceptionRec
 
 	// n threads
 	PROCESSENTRY32 uProcess;
-	HANDLE lSnapShot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS,0);
+	HANDLE lSnapShot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+
 	BOOL r;
 	if(lSnapShot != 0)
 	{
@@ -224,8 +224,10 @@ EXCEPTION_DISPOSITION __cdecl _SEHHandler(struct _EXCEPTION_RECORD *ExceptionRec
 	//exception header type and eip
 	outdriver->flags(std::ios::hex | std::ios::showbase);
 	*outdriver << "Exception: " << (uint32_t)ExceptionRecord->ExceptionCode << " at eip = " << (uint32_t)ExceptionRecord->ExceptionAddress;
+
 	FunctionMap::iterator functions;
 	unsigned long functionAddr;
+
 	char* functionName = getFunctionName((unsigned long)ExceptionRecord->ExceptionAddress, functionAddr);
 	if(functionName)
 		*outdriver << "(" << functionName << " - " << functionAddr << ")";
@@ -254,8 +256,8 @@ EXCEPTION_DISPOSITION __cdecl _SEHHandler(struct _EXCEPTION_RECORD *ExceptionRec
 
 	stackstart = esp;
 	next_ret = (uint32_t*)(ContextRecord->Ebp);
-	uint32_t frame_param_counter;
-	frame_param_counter = 0;
+
+	uint32_t frame_param_counter = 0;
 	while(esp < stacklimit)
 	{
 		stack_val = *esp;
@@ -283,8 +285,8 @@ EXCEPTION_DISPOSITION __cdecl _SEHHandler(struct _EXCEPTION_RECORD *ExceptionRec
 		if(stack_val >= offMin && stack_val <= offMax)
 		{
 			foundRetAddress++;
-			//
 			unsigned long functionAddr;
+
 			char* functionName = getFunctionName(stack_val, functionAddr);
 			output << (unsigned long)esp << "  " << functionName << "(" <<
 				functionAddr << ")" << std::endl;
@@ -325,12 +327,12 @@ bool ExceptionHandler::LoadMap()
 
 	functionMap.clear();
 	installed = false;
+
 	//load map file if exists
-	char line[1024];
-	FILE* input = fopen("forgottenserver.map", "r");
 	offMin = 0xFFFFFF;
 	offMax = 0;
-	int32_t n = 0;
+
+	FILE* input = fopen("forgottenserver.map", "r");
 	if(!input)
 	{
 		MessageBoxA(NULL, "Failed loading symbols, forgottenserver.map file not found.", "Error", MB_OK | MB_ICONERROR);
@@ -339,18 +341,18 @@ bool ExceptionHandler::LoadMap()
 		return false;
 	}
 
-	//read until found .text		   0x00401000
+	//read until found .text 0x00401000
+	char line[1024];
 	while(fgets(line, 1024, input))
 	{
-		if(!memcmp(line, ".text",5))
+		if(!memcmp(line, ".text", 5))
 			break;
 	}
 
 	if(feof(input))
 		return false;
 
-	char tofind[] = "0x";
-	char lib[] = ".a(";
+	char tofind[] = "0x", lib[] = ".a(";
 	while(fgets(line, 1024, input))
 	{
 		char* pos = strstr(line, lib);
@@ -364,6 +366,7 @@ bool ExceptionHandler::LoadMap()
 			char hexnumber[12];
 			strncpy(hexnumber, pos, 10);
 			hexnumber[10] = 0;
+
 			char* pEnd;
 			uint32_t offset = strtol(hexnumber, &pEnd, 0);
 			if(offset)
@@ -384,12 +387,12 @@ bool ExceptionHandler::LoadMap()
 				char* name = new char[strlen(pos2)+1];
 				strcpy(name, pos2);
 				name[strlen(pos2) - 1] = 0;
+
 				functionMap[offset] = name;
 				if(offset > offMax)
 					offMax = offset;
 				if(offset < offMin)
 					offMin = offset;
-				n++;
 			}
 		}
 	}
@@ -403,9 +406,9 @@ bool ExceptionHandler::LoadMap()
 
 void ExceptionHandler::dumpStack()
 {
-	#ifndef __GNUC__
+#ifndef __GNUC__
 	return;
-	#endif
+#endif
 
 	uint32_t *esp;
 	uint32_t *next_ret;

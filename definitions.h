@@ -80,8 +80,6 @@
 
 #define BOOST_ASIO_ENABLE_CANCELIO 1
 #if defined WINDOWS
-#define __CONSOLE__
-
 #if defined _MSC_VER && defined NDEBUG
 	#define _SECURE_SCL 0
 	#define HAS_ITERATOR_DEBUGGING 0
@@ -147,5 +145,19 @@
 
 #endif
 #endif
-#endif
 
+#define CLIENT_VERSION_MIN 850
+#define CLIENT_VERSION_MAX 852
+#define CLIENT_VERSION_STRING "Only clients with protocol 8.5x allowed!"
+
+#define STATUS_SERVER_NAME "The Forgotten Server"
+#define STATUS_SERVER_VERSION "0.4_DEV"
+#define STATUS_SERVER_CODENAME ""
+#define STATUS_SERVER_PROTOCOL "8.52"
+
+#define VERSION_CHECK "http://forgottenserver.otland.net/version.xml"
+#define VERSION_PATCH 0
+#define VERSION_TIMESTAMP 0
+#define VERSION_BUILD 0
+#define VERSION_DATABASE 23
+#endif

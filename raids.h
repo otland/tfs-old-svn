@@ -251,7 +251,7 @@ class ScriptEvent : public RaidEvent, public Event
 		virtual bool executeEvent() const;
 
 		virtual bool configureEvent(xmlNodePtr p) {return false;}
-		static LuaScriptInterface m_interface;
+		static LuaInterface m_interface;
 
 	protected:
 		virtual std::string getScriptEventName() const {return "onRaid";}

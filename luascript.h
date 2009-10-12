@@ -56,7 +56,7 @@ struct LuaVariant
 
 class Game;
 class Thing;
-class LuaScriptInterface;
+class LuaInterface;
 
 class Creature;
 class Player;
@@ -84,11 +84,11 @@ class ScriptEnviroment
 		void eraseStorage(const uint32_t key) {m_storageMap.erase(key);}
 
 		int32_t getScriptId() {return m_scriptId;}
-		void setScriptId(int32_t scriptId, LuaScriptInterface* interface)
+		void setScriptId(int32_t scriptId, LuaInterface* interface)
 			{m_scriptId = scriptId; m_interface = interface;}
 
 		int32_t getCallbackId() {return m_callbackId;}
-		bool setCallbackId(int32_t callbackId, LuaScriptInterface* interface);
+		bool setCallbackId(int32_t callbackId, LuaInterface* interface);
 
 		std::string getEventDesc() {return m_eventdesc;}
 		void setEventDesc(const std::string& desc) {m_eventdesc = desc;}
@@ -135,8 +135,8 @@ class ScriptEnviroment
 		void setTimerEvent() {m_timerEvent = true;}
 		void resetTimerEvent() {m_timerEvent = false;}
 
-		LuaScriptInterface* getInterface() {return m_interface;}
-		void getInfo(int32_t& scriptId, std::string& desc, LuaScriptInterface*& interface, int32_t& callbackId, bool& timerEvent);
+		LuaInterface* getInterface() {return m_interface;}
+		void getInfo(int32_t& scriptId, std::string& desc, LuaInterface*& interface, int32_t& callbackId, bool& timerEvent);
 		void reset();
 		void resetCallback() {m_callbackId = 0;}
 
@@ -157,7 +157,7 @@ class ScriptEnviroment
 		typedef std::list<Item*> ItemList;
 		typedef std::map<uint32_t, DBResult*> DBResultMap;
 
-		LuaScriptInterface* m_interface;
+		LuaInterface* m_interface;
 		int32_t m_scriptId, m_callbackId;
 		std::string m_eventdesc;
 		bool m_timerEvent;
@@ -205,11 +205,11 @@ enum ErrorCode_t
 
 #define errorEx(a) error(__FUNCTION__, a)
 
-class LuaScriptInterface
+class LuaInterface
 {
 	public:
-		LuaScriptInterface(std::string interfaceName);
-		virtual ~LuaScriptInterface();
+		LuaInterface(std::string interfaceName);
+		virtual ~LuaInterface();
 
 		virtual bool initState();
 		bool reInitState();

@@ -61,8 +61,8 @@ class Spells : public BaseEvents
 		virtual Event* getEvent(const std::string& nodeName);
 		virtual bool registerEvent(Event* event, xmlNodePtr p, bool override);
 
-		virtual LuaScriptInterface& getInterface() {return m_interface;}
-		LuaScriptInterface m_interface;
+		virtual LuaInterface& getInterface() {return m_interface;}
+		LuaInterface m_interface;
 
 		RunesMap runes;
 		InstantsMap instants;
@@ -174,7 +174,7 @@ class Spell : public BaseSpell
 class InstantSpell : public TalkAction, public Spell
 {
 	public:
-		InstantSpell(LuaScriptInterface* _interface);
+		InstantSpell(LuaInterface* _interface);
 		virtual ~InstantSpell() {}
 
 		virtual bool configureEvent(xmlNodePtr p);
@@ -216,7 +216,7 @@ class InstantSpell : public TalkAction, public Spell
 class ConjureSpell : public InstantSpell
 {
 	public:
-		ConjureSpell(LuaScriptInterface* _interface);
+		ConjureSpell(LuaInterface* _interface);
 		virtual ~ConjureSpell() {}
 
 		virtual bool configureEvent(xmlNodePtr p);
@@ -254,7 +254,7 @@ class ConjureSpell : public InstantSpell
 class RuneSpell : public Action, public Spell
 {
 	public:
-		RuneSpell(LuaScriptInterface* _interface);
+		RuneSpell(LuaInterface* _interface);
 		virtual ~RuneSpell() {}
 
 		virtual bool configureEvent(xmlNodePtr p);

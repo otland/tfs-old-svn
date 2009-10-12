@@ -612,7 +612,7 @@ void MoveEvents::onRemoveTileItem(const Tile* tile, Item* item)
 	}
 }
 
-MoveEvent::MoveEvent(LuaScriptInterface* _interface):
+MoveEvent::MoveEvent(LuaInterface* _interface):
 Event(_interface)
 {
 	m_eventType = MOVE_EVENT_NONE;
@@ -1118,11 +1118,11 @@ uint32_t MoveEvent::executeStep(Creature* actor, Creature* creature, Item* item,
 			m_interface->pushFunction(m_scriptId);
 			lua_pushnumber(L, env->addThing(creature));
 
-			LuaScriptInterface::pushThing(L, item, env->addThing(item));
-			LuaScriptInterface::pushPosition(L, pos, 0);
-			LuaScriptInterface::pushPosition(L, creature->getLastPosition(), 0);
-			LuaScriptInterface::pushPosition(L, fromPos, 0);
-			LuaScriptInterface::pushPosition(L, toPos, 0);
+			LuaInterface::pushThing(L, item, env->addThing(item));
+			LuaInterface::pushPosition(L, pos, 0);
+			LuaInterface::pushPosition(L, creature->getLastPosition(), 0);
+			LuaInterface::pushPosition(L, fromPos, 0);
+			LuaInterface::pushPosition(L, toPos, 0);
 
 			lua_pushnumber(L, env->addThing(actor));
 			bool result = m_interface->callFunction(7);
@@ -1188,7 +1188,7 @@ uint32_t MoveEvent::executeEquip(Player* player, Item* item, slots_t slot)
 			m_interface->pushFunction(m_scriptId);
 
 			lua_pushnumber(L, env->addThing(player));
-			LuaScriptInterface::pushThing(L, item, env->addThing(item));
+			LuaInterface::pushThing(L, item, env->addThing(item));
 			lua_pushnumber(L, slot);
 
 			bool result = m_interface->callFunction(3);
@@ -1257,9 +1257,9 @@ uint32_t MoveEvent::executeAddRemItem(Creature* actor, Item* item, Item* tileIte
 			lua_State* L = m_interface->getState();
 			m_interface->pushFunction(m_scriptId);
 
-			LuaScriptInterface::pushThing(L, item, env->addThing(item));
-			LuaScriptInterface::pushThing(L, tileItem, env->addThing(tileItem));
-			LuaScriptInterface::pushPosition(L, pos, 0);
+			LuaInterface::pushThing(L, item, env->addThing(item));
+			LuaInterface::pushThing(L, tileItem, env->addThing(tileItem));
+			LuaInterface::pushPosition(L, pos, 0);
 
 			lua_pushnumber(L, env->addThing(actor));
 			bool result = m_interface->callFunction(4);

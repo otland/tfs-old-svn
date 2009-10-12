@@ -5831,7 +5831,7 @@ bool Game::reloadInfo(ReloadInfo_t reload, uint32_t playerId/* = 0*/)
 		case RELOAD_MODS:
 		{
 			std::cout << ">> Reloading mods..." << std::endl;
-			if(ScriptingManager::getInstance()->reloadMods())
+			if(ScriptManager::getInstance()->reloadMods())
 				done = true;
 			else
 				std::cout << "[Error - Game::reloadInfo] Failed to reload mods." << std::endl;

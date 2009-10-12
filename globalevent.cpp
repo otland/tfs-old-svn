@@ -181,7 +181,7 @@ GlobalEventMap GlobalEvents::getEventMap(GlobalEvent_t type)
 	return GlobalEventMap();
 }
 
-GlobalEvent::GlobalEvent(LuaScriptInterface* _interface):
+GlobalEvent::GlobalEvent(LuaInterface* _interface):
 	Event(_interface)
 {
 	m_lastExecution = time(NULL);
