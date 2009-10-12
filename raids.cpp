@@ -149,7 +149,7 @@ bool Raids::startup()
 		return false;
 
 	setLastRaidEnd(OTSYS_TIME());
-	checkRaidsEvent = Scheduler::getScheduler().addEvent(createSchedulerTask(
+	checkRaidsEvent = Scheduler::getInstance()->addEvent(createSchedulerTask(
 		CHECK_RAIDS_INTERVAL * 1000, boost::bind(&Raids::checkRaids, this)));
 
 	started = true;
@@ -158,7 +158,7 @@ bool Raids::startup()
 
 void Raids::checkRaids()
 {
-	checkRaidsEvent = Scheduler::getScheduler().addEvent(createSchedulerTask(
+	checkRaidsEvent = Scheduler::getInstance()->addEvent(createSchedulerTask(
 		CHECK_RAIDS_INTERVAL * 1000, boost::bind(&Raids::checkRaids, this)));
 	if(getRunning())
 		return;
@@ -175,7 +175,7 @@ void Raids::checkRaids()
 
 void Raids::clear()
 {
-	Scheduler::getScheduler().stopEvent(checkRaidsEvent);
+	Scheduler::getInstance()->stopEvent(checkRaidsEvent);
 	checkRaidsEvent = lastRaidEnd = 0;
 	loaded = started = false;
 
@@ -184,7 +184,7 @@ void Raids::clear()
 		delete (*it);
 
 	raidList.clear();
-	ScriptEvent::m_scriptInterface.reInitState();
+	ScriptEvent::m_interface.reInitState();
 }
 
 bool Raids::reload()
@@ -301,7 +301,7 @@ bool Raid::startRaid()
 	if(!raidEvent)
 		return false;
 
-	nextEvent = Scheduler::getScheduler().addEvent(createSchedulerTask(
+	nextEvent = Scheduler::getInstance()->addEvent(createSchedulerTask(
 		raidEvent->getDelay(), boost::bind(&Raid::executeRaidEvent, this, raidEvent)));
 	Raids::getInstance()->setRunning(this);
 	return true;
@@ -316,7 +316,7 @@ bool Raid::executeRaidEvent(RaidEvent* raidEvent)
 	if(!newRaidEvent)
 		return !resetRaid(false);
 
-	nextEvent = Scheduler::getScheduler().addEvent(createSchedulerTask(
+	nextEvent = Scheduler::getInstance()->addEvent(createSchedulerTask(
 		std::max(RAID_MINTICKS, (int32_t)(newRaidEvent->getDelay() - raidEvent->getDelay())),
 		boost::bind(&Raid::executeRaidEvent, this, newRaidEvent)));
 	return true;
@@ -348,7 +348,7 @@ void Raid::stopEvents()
 	if(!nextEvent)
 		return;
 
-	Scheduler::getScheduler().stopEvent(nextEvent);
+	Scheduler::getInstance()->stopEvent(nextEvent);
 	nextEvent = 0;
 }
 
@@ -438,7 +438,7 @@ bool EffectEvent::configureRaidEvent(xmlNodePtr eventNode)
 			m_effect = getMagicEffect(strValue);
 	}
 	else
-		m_effect = (MagicEffectClasses)intValue;
+		m_effect = (MagicEffect_t)intValue;
 
 	if(!readXMLString(eventNode, "pos", strValue))
 	{
@@ -928,7 +928,7 @@ bool AreaSpawnEvent::executeEvent() const
 	return true;
 }
 
-LuaScriptInterface ScriptEvent::m_scriptInterface("Raid Interface");
+LuaScriptInterface ScriptEvent::m_interface("Raid Interface");
 
 bool ScriptEvent::configureRaidEvent(xmlNodePtr eventNode)
 {
@@ -936,8 +936,8 @@ bool ScriptEvent::configureRaidEvent(xmlNodePtr eventNode)
 		return false;
 
 	std::string scriptsName = Raids::getInstance()->getScriptBaseName();
-	if(m_scriptInterface.loadFile(getFilePath(FILE_TYPE_OTHER, std::string(scriptsName + "/lib/" + scriptsName + ".lua"))) == -1)
-		std::cout << "[Warning - ScriptEvent::configureRaidEvent] Cannot load " << scriptsName << "/lib/" << scriptsName << ".lua" << std::endl;
+	if(!m_interface.loadDirectory(getFilePath(FILE_TYPE_OTHER, std::string(scriptsName + "/lib/"))))
+		std::cout << "[Warning - ScriptEvent::configureRaidEvent] Cannot load " << scriptsName << "/lib/" << std::endl;
 
 	std::string strValue;
 	if(readXMLString(eventNode, "file", strValue))
@@ -948,13 +948,10 @@ bool ScriptEvent::configureRaidEvent(xmlNodePtr eventNode)
 			return false;
 		}
 	}
-	else if(!parseXMLContentString(eventNode->children, strValue))
+	else if(!parseXMLContentString(eventNode->children, strValue) && !loadBuffer(strValue))
 	{
-		if(!loadBuffer(strValue))
-		{
-			std::cout << "[Error - ScriptEvent::configureRaidEvent] Cannot load raid script buffer." << std::endl;
-			return false;
-		}
+		std::cout << "[Error - ScriptEvent::configureRaidEvent] Cannot load raid script buffer." << std::endl;
+		return false;
 	}
 
 	return true;
@@ -963,19 +960,19 @@ bool ScriptEvent::configureRaidEvent(xmlNodePtr eventNode)
 bool ScriptEvent::executeEvent() const
 {
 	//onRaid()
-	if(m_scriptInterface.reserveScriptEnv())
+	if(m_interface.reserveEnv())
 	{
-		ScriptEnviroment* env = m_scriptInterface.getScriptEnv();
+		ScriptEnviroment* env = m_interface.getEnv();
 		if(m_scripted == EVENT_SCRIPT_BUFFER)
 		{
 			bool result = true;
-			if(m_scriptInterface.loadBuffer(m_scriptData) != -1)
+			if(m_interface.loadBuffer(m_scriptData))
 			{
-				lua_State* L = m_scriptInterface.getLuaState();
-				result = m_scriptInterface.getGlobalBool(L, "_result", true);
+				lua_State* L = m_interface.getState();
+				result = m_interface.getGlobalBool(L, "_result", true);
 			}
 
-			m_scriptInterface.releaseScriptEnv();
+			m_interface.releaseEnv();
 			return result;
 		}
 		else
@@ -983,11 +980,11 @@ bool ScriptEvent::executeEvent() const
 			#ifdef __DEBUG_LUASCRIPTS__
 			env->setEventDesc("Raid event");
 			#endif
-			env->setScriptId(m_scriptId, &m_scriptInterface);
-			m_scriptInterface.pushFunction(m_scriptId);
+			env->setScriptId(m_scriptId, &m_interface);
+			m_interface.pushFunction(m_scriptId);
 
-			bool result = m_scriptInterface.callFunction(0);
-			m_scriptInterface.releaseScriptEnv();
+			bool result = m_interface.callFunction(0);
+			m_interface.releaseEnv();
 			return result;
 		}
 	}

@@ -47,16 +47,6 @@ CREATE TABLE `accounts`
 	PRIMARY KEY (`id`), UNIQUE (`name`)
 ) ENGINE = InnoDB;
 
-CREATE TABLE `account_viplist`
-(
-	`account_id` INT NOT NULL,
-	`world_id` TINYINT(2) UNSIGNED NOT NULL DEFAULT 0,
-	`player_id` INT NOT NULL,
-	KEY (`account_id`), KEY (`player_id`), KEY (`world_id`), UNIQUE (`account_id`, `player_id`),
-	FOREIGN KEY (`account_id`) REFERENCES `accounts`(`id`) ON DELETE CASCADE,
-	FOREIGN KEY (`player_id`) REFERENCES `players`(`id`) ON DELETE CASCADE
-) ENGINE = InnoDB;
-
 INSERT INTO `accounts` VALUES (1, '1', '1', 65535, 0, '', '0', 0, 0, 1);
 
 CREATE TABLE `players`
@@ -119,6 +109,16 @@ CREATE TABLE `players`
 ) ENGINE = InnoDB;
 
 INSERT INTO `players` VALUES (1, 'Account Manager', 0, 1, 1, 1, 0, 150, 150, 0, 0, 0, 0, 0, 110, 0, 0, 0, 0, 0, 0, 0, 50, 50, 7, '', 400, 0, 0, 0, 0, 0, 0, 0, '', 0, 0, 0, 201660000, 0, 100, 100, 100, 100, 100, 0, 0, 0, 0, 0, '');
+
+CREATE TABLE `account_viplist`
+(
+	`account_id` INT NOT NULL,
+	`world_id` TINYINT(2) UNSIGNED NOT NULL DEFAULT 0,
+	`player_id` INT NOT NULL,
+	KEY (`account_id`), KEY (`player_id`), KEY (`world_id`), UNIQUE (`account_id`, `player_id`),
+	FOREIGN KEY (`account_id`) REFERENCES `accounts`(`id`) ON DELETE CASCADE,
+	FOREIGN KEY (`player_id`) REFERENCES `players`(`id`) ON DELETE CASCADE
+) ENGINE = InnoDB;
 
 CREATE TABLE `player_deaths`
 (

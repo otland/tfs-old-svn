@@ -135,17 +135,17 @@ class ItemType
 			hasHeight, blockSolid, blockPickupable, blockProjectile, blockPathFind, allowPickupable, alwaysOnTop,
 			floorChange[CHANGE_LAST];
 
-		MagicEffectClasses magicEffect;
+		MagicEffect_t magicEffect;
 		FluidTypes_t fluidSource;
 		WeaponType_t weaponType;
 		Direction bedPartnerDir;
 		AmmoAction_t ammoAction;
 		CombatType_t combatType;
 		RaceType_t corpseType;
-		ShootType_t shootType;
+		ShootEffect_t shootType;
 		Ammo_t ammoType;
 
-		uint16_t transformToOnUse[2], transformToFree, transformEquipTo, transformDeEquipTo,
+		uint16_t transformUseTo[2], transformToFree, transformEquipTo, transformDeEquipTo,
 			id, clientId, maxItems, slotPosition, wieldPosition, speed, maxTextLen, writeOnceItemId;
 
 		int32_t attack, extraAttack, defense, extraDefense, armor, breakChance, hitChance, maxHitChance,

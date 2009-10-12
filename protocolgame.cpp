@@ -59,9 +59,9 @@ template<class FunctionType>
 void ProtocolGame::addGameTaskInternal(uint32_t delay, const FunctionType& func)
 {
 	if(delay > 0)
-		Dispatcher::getDispatcher().addTask(createTask(delay, func));
+		Dispatcher::getInstance()->addTask(createTask(delay, func));
 	else
-		Dispatcher::getDispatcher().addTask(createTask(func));
+		Dispatcher::getInstance()->addTask(createTask(func));
 }
 
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
@@ -101,7 +101,7 @@ bool ProtocolGame::login(const std::string& name, uint32_t id, const std::string
 	if(!players.empty())
 		_player = players[random_range(0, (players.size() - 1))];
 
-	if(!_player || name == "account manager" || g_config.getNumber(ConfigManager::ALLOW_CLONES) > (int32_t)players.size())
+	if(!_player || name == "Account Manager" || g_config.getNumber(ConfigManager::ALLOW_CLONES) > (int32_t)players.size())
 	{
 		player = new Player(name, this);
 		player->addRef();
@@ -276,7 +276,7 @@ bool ProtocolGame::login(const std::string& name, uint32_t id, const std::string
 		_player->isConnecting = true;
 
 		addRef();
-		m_eventConnect = Scheduler::getScheduler().addEvent(createSchedulerTask(
+		m_eventConnect = Scheduler::getInstance()->addEvent(createSchedulerTask(
 			1000, boost::bind(&ProtocolGame::connect, this, _player->getID(), operatingSystem, version)));
 		return true;
 	}
@@ -322,7 +322,7 @@ bool ProtocolGame::logout(bool displayEffect, bool forceLogout)
 		displayEffect = false;
 
 	if(displayEffect && !player->isGhost())
-		g_game.addMagicEffect(player->getPosition(), NM_ME_POFF);
+		g_game.addMagicEffect(player->getPosition(), NM_MAGIC_POFF);
 
 	if(Connection_ptr connection = getConnection())
 		connection->close();
@@ -508,7 +508,7 @@ bool ProtocolGame::parseFirstPacket(NetworkMessage& msg)
 	}
 
 	ConnectionManager::getInstance()->addAttempt(getIP(), protocolId, true);
-	Dispatcher::getDispatcher().addTask(createTask(boost::bind(
+	Dispatcher::getInstance()->addTask(createTask(boost::bind(
 		&ProtocolGame::login, this, character, id, password, operatingSystem, version, gamemaster)));
 	return true;
 }
@@ -825,8 +825,8 @@ void ProtocolGame::parsePacket(NetworkMessage &msg)
 						IOLoginData::getInstance()->saveAccount(tmp);
 						player->sendTextMessage(MSG_INFO_DESCR, "You have been banished.");
 
-						g_game.addMagicEffect(player->getPosition(), NM_ME_MAGIC_POISON);
-						Scheduler::getScheduler().addEvent(createSchedulerTask(1000, boost::bind(
+						g_game.addMagicEffect(player->getPosition(), NM_MAGIC_MAGIC_POISON);
+						Scheduler::getInstance()->addEvent(createSchedulerTask(1000, boost::bind(
 							&Game::kickPlayer, &g_game, player->getID(), false)));
 					}
 				}
@@ -836,7 +836,7 @@ void ProtocolGame::parsePacket(NetworkMessage &msg)
 				s << player->getName() << " sent unknown byte: " << hex << std::endl;
 
 				LOG_MESSAGE(LOGTYPE_NOTICE, s.str(), "PLAYER")
-				Loggar::getInstance()->eFile(getFilePath(FILE_TYPE_LOG, "bots/" + player->getName() + ".log").c_str(),
+				Logger::getInstance()->eFile(getFilePath(FILE_TYPE_LOG, "bots/" + player->getName() + ".log").c_str(),
 					"[" + formatDate() + "] Received byte " + hex.str(), false);
 				break;
 			}
@@ -1030,7 +1030,7 @@ bool ProtocolGame::canSee(uint16_t x, uint16_t y, uint16_t z) const
 //********************** Parse methods *******************************//
 void ProtocolGame::parseLogout(NetworkMessage& msg)
 {
-	Dispatcher::getDispatcher().addTask(createTask(boost::bind(&ProtocolGame::logout, this, true, false)));
+	Dispatcher::getInstance()->addTask(createTask(boost::bind(&ProtocolGame::logout, this, true, false)));
 }
 
 void ProtocolGame::parseCreatePrivateChannel(NetworkMessage& msg)
@@ -1298,7 +1298,7 @@ void ProtocolGame::parseSay(NetworkMessage& msg)
 		std::stringstream s;
 		s << text.length();
 
-		Loggar::getInstance()->eFile("bots/" + player->getName() + ".log", "Attempt to send message with size " + s.str() + " - client is limited to 255 characters.", true);
+		Logger::getInstance()->eFile("bots/" + player->getName() + ".log", "Attempt to send message with size " + s.str() + " - client is limited to 255 characters.", true);
 		return;
 	}
 
@@ -1446,7 +1446,7 @@ void ProtocolGame::parseDebugAssert(NetworkMessage& msg)
 		<< std::endl << std::endl;
 
 	m_debugAssertSent = true;
-	Loggar::getInstance()->iFile(LOGFILE_CLIENT_ASSERTION, s.str(), false);
+	Logger::getInstance()->iFile(LOGFILE_CLIENT_ASSERTION, s.str(), false);
 }
 
 void ProtocolGame::parseBugReport(NetworkMessage& msg)
@@ -2063,7 +2063,7 @@ void ProtocolGame::sendDistanceShoot(const Position& from, const Position& to, u
 
 void ProtocolGame::sendMagicEffect(const Position& pos, uint8_t type)
 {
-	if(type > NM_ME_LAST || !canSee(pos))
+	if(type > NM_MAGIC_LAST || !canSee(pos))
 		return;
 
 	NetworkMessage_ptr msg = getOutputBuffer();

@@ -29,8 +29,8 @@ bool BaseEvents::loadFromXml()
 		return false;
 	}
 
-	if(getScriptInterface().loadFile(getFilePath(FILE_TYPE_OTHER, std::string(scriptsName + "/lib/" + scriptsName + ".lua"))) == -1)
-		std::cout << "[Warning - BaseEvents::loadFromXml] Cannot load " << scriptsName << "/lib/" << scriptsName << ".lua" << std::endl;
+	if(!getInterface().loadDirectory(getFilePath(FILE_TYPE_OTHER, std::string(scriptsName + "/lib/"))))
+		std::cout << "[Warning - BaseEvents::loadFromXml] Cannot load " << scriptsName << "/lib/" << std::endl;
 
 	xmlDocPtr doc = xmlParseFile(getFilePath(FILE_TYPE_OTHER, std::string(scriptsName + "/" + scriptsName + ".xml")).c_str());
 	if(!doc)
@@ -146,7 +146,7 @@ bool BaseEvents::reload()
 
 Event::Event(const Event* copy)
 {
-	m_scriptInterface = copy->m_scriptInterface;
+	m_interface = copy->m_interface;
 	m_scripted = copy->m_scripted;
 	m_scriptId = copy->m_scriptId;
 	m_scriptData = copy->m_scriptData;
@@ -154,9 +154,9 @@ Event::Event(const Event* copy)
 
 bool Event::loadBuffer(const std::string& buffer)
 {
-	if(!m_scriptInterface || m_scriptData != "")
+	if(!m_interface || m_scriptData != "")
 	{
-		std::cout << "[Error - Event::loadScriptFile] m_scriptInterface == NULL, scriptData != \"\"" << std::endl;
+		std::cout << "[Error - Event::loadScriptFile] m_interface == NULL, scriptData != \"\"" << std::endl;
 		return false;
 	}
 
@@ -172,37 +172,37 @@ bool Event::checkBuffer(const std::string& buffer)
 
 bool Event::loadScript(const std::string& script, bool file)
 {
-	if(!m_scriptInterface || m_scriptId != 0)
+	if(!m_interface || m_scriptId != 0)
 	{
-		std::cout << "[Error - Event::loadScript] m_scriptInterface == NULL, scriptId = " << m_scriptId << std::endl;
+		std::cout << "[Error - Event::loadScript] m_interface == NULL, scriptId = " << m_scriptId << std::endl;
 		return false;
 	}
 
-	int32_t result = -1;
+	bool result = false;
 	if(!file)
 	{
-		std::string script_ = script, tmp = "function " + getScriptEventName();
-		trimString(script_);
-		if(script_.find(tmp) == std::string::npos)
+		std::string buffer = script, function = "function " + getScriptEventName();
+		trimString(buffer);
+		if(buffer.find(function) == std::string::npos)
 		{
 			std::stringstream scriptstream;
-			scriptstream << tmp << "(" << getScriptEventParams() << ")" << std::endl << script_ << std::endl << "end";
-			script_ = scriptstream.str();
+			scriptstream << function << "(" << getScriptEventParams() << ")" << std::endl << buffer << std::endl << "end";
+			buffer = scriptstream.str();
 		}
 
-		result = m_scriptInterface->loadBuffer(script_);
+		result = m_interface->loadBuffer(buffer);
 	}
 	else
-		result = m_scriptInterface->loadFile(script);
+		result = m_interface->loadFile(script);
 
-	if(result == -1)
+	if(!result)
 	{
 		std::cout << "[Warning - Event::loadScript] Cannot load script (" << script << ")" << std::endl;
-		std::cout << m_scriptInterface->getLastLuaError() << std::endl;
+		std::cout << m_interface->getLastError() << std::endl;
 		return false;
 	}
 
-	int32_t id = m_scriptInterface->getEvent(getScriptEventName());
+	int32_t id = m_interface->getEvent(getScriptEventName());
 	if(id == -1)
 	{
 		std::cout << "[Warning - Event::loadScript] Event " << getScriptEventName() << " not found (" << script << ")" << std::endl;
@@ -222,7 +222,7 @@ bool Event::checkScript(const std::string& script, bool file)
 CallBack::CallBack()
 {
 	m_scriptId = 0;
-	m_scriptInterface = NULL;
+	m_interface = NULL;
 	m_loaded = false;
 }
 
@@ -230,12 +230,12 @@ bool CallBack::loadCallBack(LuaScriptInterface* _interface, std::string name)
 {
 	if(!_interface)
 	{
-		std::cout << "Failure: [CallBack::loadCallBack] m_scriptInterface == NULL" << std::endl;
+		std::cout << "Failure: [CallBack::loadCallBack] m_interface == NULL" << std::endl;
 		return false;
 	}
 
-	m_scriptInterface = _interface;
-	int32_t id = m_scriptInterface->getEvent(name);
+	m_interface = _interface;
+	int32_t id = m_interface->getEvent(name);
 	if(id == -1)
 	{
 		std::cout << "Warning: [CallBack::loadCallBack] Event " << name << " not found." << std::endl;

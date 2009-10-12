@@ -21,21 +21,22 @@
 #include "iologindata.h"
 #include "ioban.h"
 
-#include "creatureevent.h"
-#include "chat.h"
-
 #include "town.h"
 #include "house.h"
 #include "beds.h"
 
 #include "combat.h"
-#include "movement.h"
-#include "weapons.h"
-
-#include "configmanager.h"
-#ifndef __CONSOLE__
+#if defined(WINDOWS) && not defined(__CONSOLE__)
 #include "gui.h"
 #endif
+
+#include "movement.h"
+#include "weapons.h"
+#include "creatureevent.h"
+
+#include "configmanager.h"
+#include "game.h"
+#include "chat.h"
 
 extern ConfigManager g_config;
 extern Game g_game;
@@ -1303,7 +1304,7 @@ void Player::onCreatureAppear(const Creature* creature)
 		g_moveEvents->onPlayerEquip(this, item, (slots_t)slot, false);
 	}
 
-	if(BedItem* bed = Beds::getInstance().getBedBySleeper(getGUID()))
+	if(BedItem* bed = Beds::getInstance()->getBedBySleeper(guid))
 		bed->wakeUp();
 
 	Outfit outfit;
@@ -1636,7 +1637,7 @@ void Player::setNextWalkActionTask(SchedulerTask* task)
 {
 	if(walkTaskEvent)
 	{
-		Scheduler::getScheduler().stopEvent(walkTaskEvent);
+		Scheduler::getInstance()->stopEvent(walkTaskEvent);
 		walkTaskEvent = 0;
 	}
 
@@ -1649,13 +1650,13 @@ void Player::setNextWalkTask(SchedulerTask* task)
 {
 	if(nextStepEvent)
 	{
-		Scheduler::getScheduler().stopEvent(nextStepEvent);
+		Scheduler::getInstance()->stopEvent(nextStepEvent);
 		nextStepEvent = 0;
 	}
 
 	if(task)
 	{
-		nextStepEvent = Scheduler::getScheduler().addEvent(task);
+		nextStepEvent = Scheduler::getInstance()->addEvent(task);
 		setIdleTime(0);
 	}
 }
@@ -1664,13 +1665,13 @@ void Player::setNextActionTask(SchedulerTask* task)
 {
 	if(actionTaskEvent)
 	{
-		Scheduler::getScheduler().stopEvent(actionTaskEvent);
+		Scheduler::getInstance()->stopEvent(actionTaskEvent);
 		actionTaskEvent = 0;
 	}
 
 	if(task)
 	{
-		actionTaskEvent = Scheduler::getScheduler().addEvent(task);
+		actionTaskEvent = Scheduler::getInstance()->addEvent(task);
 		setIdleTime(0);
 	}
 }
@@ -1745,12 +1746,12 @@ void Player::removeMessageBuffer()
 		if(++messageBuffer > maxBuffer)
 		{
 			uint32_t muteCount = 1;
-			MuteCountMap::iterator it = muteCountMap.find(getGUID());
+			MuteCountMap::iterator it = muteCountMap.find(guid);
 			if(it != muteCountMap.end())
 				muteCount = it->second;
 
 			uint32_t muteTime = 5 * muteCount * muteCount;
-			muteCountMap[getGUID()] = muteCount + 1;
+			muteCountMap[guid] = muteCount + 1;
 			if(Condition* condition = Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_MUTED, muteTime * 1000))
 				addCondition(condition);
 
@@ -3248,7 +3249,7 @@ bool Player::setAttackedCreature(Creature* creature)
 		setFollowCreature(NULL);
 
 	if(creature)
-		Dispatcher::getDispatcher().addTask(createTask(boost::bind(&Game::checkCreatureAttack, &g_game, getID())));
+		Dispatcher::getInstance()->addTask(createTask(boost::bind(&Game::checkCreatureAttack, &g_game, getID())));
 
 	return true;
 }
@@ -3358,7 +3359,7 @@ void Player::onWalkComplete()
 	if(!walkTask)
 		return;
 
-	walkTaskEvent = Scheduler::getScheduler().addEvent(walkTask);
+	walkTaskEvent = Scheduler::getInstance()->addEvent(walkTask);
 	walkTask = NULL;
 }
 
@@ -3987,8 +3988,8 @@ bool Player::addUnjustifiedKill(const Player* attacked)
 			return true;
 
 		sendTextMessage(MSG_INFO_DESCR, "You have been banished.");
-		g_game.addMagicEffect(getPosition(), NM_ME_MAGIC_POISON);
-		Scheduler::getScheduler().addEvent(createSchedulerTask(1000, boost::bind(
+		g_game.addMagicEffect(getPosition(), NM_MAGIC_MAGIC_POISON);
+		Scheduler::getInstance()->addEvent(createSchedulerTask(1000, boost::bind(
 			&Game::kickPlayer, &g_game, getID(), false)));
 	}
 	else
@@ -4184,7 +4185,7 @@ void Player::manageAccount(const std::string &text)
 						IOLoginData::getInstance()->changeName(tmp, managerString, managerString2) &&
 						IOBan::getInstance()->removePlayerBanishment(tmp, PLAYERBAN_LOCK))
 					{
-						if(House* house = Houses::getInstance().getHouseByPlayerId(tmp))
+						if(House* house = Houses::getInstance()->getHouseByPlayerId(tmp))
 							house->updateDoorDescription(managerString);
 
 						talkState[1] = true;

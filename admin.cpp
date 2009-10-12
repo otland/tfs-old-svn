@@ -30,7 +30,7 @@
 #include "networkmessage.h"
 
 #include "house.h"
-#include "mailbox.h"
+#include "town.h"
 #include "iologindata.h"
 
 extern Game g_game;
@@ -326,7 +326,7 @@ void ProtocolAdmin::parsePacket(NetworkMessage& msg)
 				case CMD_SHALLOW_SAVE_SERVER:
 				{
 					addLogLine(LOGTYPE_EVENT, "saving server");
-					Dispatcher::getDispatcher().addTask(createTask(boost::bind(
+					Dispatcher::getInstance()->addTask(createTask(boost::bind(
 						&Game::saveGameState, &g_game, (command == CMD_SHALLOW_SAVE_SERVER))));
 
 					output->AddByte(AP_MSG_COMMAND_OK);
@@ -336,7 +336,7 @@ void ProtocolAdmin::parsePacket(NetworkMessage& msg)
 				case CMD_CLOSE_SERVER:
 				{
 					addLogLine(LOGTYPE_EVENT, "closing server");
-					Dispatcher::getDispatcher().addTask(createTask(boost::bind(
+					Dispatcher::getInstance()->addTask(createTask(boost::bind(
 						&Game::setGameState, &g_game, GAME_STATE_CLOSED)));
 
 					output->AddByte(AP_MSG_COMMAND_OK);
@@ -346,7 +346,7 @@ void ProtocolAdmin::parsePacket(NetworkMessage& msg)
 				case CMD_OPEN_SERVER:
 				{
 					addLogLine(LOGTYPE_EVENT, "opening server");
-					Dispatcher::getDispatcher().addTask(createTask(boost::bind(
+					Dispatcher::getInstance()->addTask(createTask(boost::bind(
 						&Game::setGameState, &g_game, GAME_STATE_NORMAL)));
 
 					output->AddByte(AP_MSG_COMMAND_OK);
@@ -356,7 +356,7 @@ void ProtocolAdmin::parsePacket(NetworkMessage& msg)
 				case CMD_SHUTDOWN_SERVER:
 				{
 					addLogLine(LOGTYPE_EVENT, "shutting down server");
-					Dispatcher::getDispatcher().addTask(createTask(boost::bind(
+					Dispatcher::getInstance()->addTask(createTask(boost::bind(
 						&Game::setGameState, &g_game, GAME_STATE_SHUTDOWN)));
 
 					output->AddByte(AP_MSG_COMMAND_OK);
@@ -365,7 +365,7 @@ void ProtocolAdmin::parsePacket(NetworkMessage& msg)
 
 				case CMD_PAY_HOUSES:
 				{
-					Dispatcher::getDispatcher().addTask(createTask(boost::bind(
+					Dispatcher::getInstance()->addTask(createTask(boost::bind(
 						&ProtocolAdmin::adminCommandPayHouses, this)));
 					break;
 				}
@@ -373,7 +373,7 @@ void ProtocolAdmin::parsePacket(NetworkMessage& msg)
 				case CMD_RELOAD_SCRIPTS:
 				{
 					const int8_t reload = msg.GetByte();
-					Dispatcher::getDispatcher().addTask(createTask(boost::bind(
+					Dispatcher::getInstance()->addTask(createTask(boost::bind(
 						&ProtocolAdmin::adminCommandReload, this, reload)));
 					break;
 				}
@@ -381,7 +381,7 @@ void ProtocolAdmin::parsePacket(NetworkMessage& msg)
 				case CMD_KICK:
 				{
 					const std::string param = msg.GetString();
-					Dispatcher::getDispatcher().addTask(createTask(boost::bind(
+					Dispatcher::getInstance()->addTask(createTask(boost::bind(
 						&ProtocolAdmin::adminCommandKickPlayer, this, param)));
 					break;
 				}
@@ -389,7 +389,7 @@ void ProtocolAdmin::parsePacket(NetworkMessage& msg)
 				case CMD_SETOWNER:
 				{
 					const std::string param = msg.GetString();
-					Dispatcher::getDispatcher().addTask(createTask(boost::bind(
+					Dispatcher::getInstance()->addTask(createTask(boost::bind(
 						&ProtocolAdmin::adminCommandSetOwner, this, param)));
 					break;
 				}
@@ -397,7 +397,7 @@ void ProtocolAdmin::parsePacket(NetworkMessage& msg)
 				case CMD_SEND_MAIL:
 				{
 					const std::string xmlData = msg.GetString();
-					Dispatcher::getDispatcher().addTask(createTask(boost::bind(
+					Dispatcher::getInstance()->addTask(createTask(boost::bind(
 						&ProtocolAdmin::adminCommandSendMail, this, xmlData)));
 					break;
 				}
@@ -406,7 +406,7 @@ void ProtocolAdmin::parsePacket(NetworkMessage& msg)
 				{
 					const std::string param = msg.GetString();
 					addLogLine(LOGTYPE_EVENT, "broadcasting: " + param);
-					Dispatcher::getDispatcher().addTask(createTask(boost::bind(
+					Dispatcher::getInstance()->addTask(createTask(boost::bind(
 						&Game::broadcastMessage, &g_game, param, MSG_STATUS_WARNING)));
 
 					output->AddByte(AP_MSG_COMMAND_OK);
@@ -457,7 +457,7 @@ void ProtocolAdmin::adminCommandPayHouses()
 	if(!output)
 		return;
 
-	Houses::getInstance().payHouses();
+	Houses::getInstance()->payHouses();
 	addLogLine(LOGTYPE_EVENT, "pay houses ok");
 
 	TRACK_MESSAGE(output);
@@ -489,7 +489,7 @@ void ProtocolAdmin::adminCommandKickPlayer(const std::string& param)
 	Player* player = NULL;
 	if(g_game.getPlayerByNameWildcard(param, player) == RET_NOERROR)
 	{
-		Scheduler::getScheduler().addEvent(createSchedulerTask(SCHEDULER_MINTICKS, boost::bind(&Game::kickPlayer, &g_game, player->getID(), false)));
+		Scheduler::getInstance()->addEvent(createSchedulerTask(SCHEDULER_MINTICKS, boost::bind(&Game::kickPlayer, &g_game, player->getID(), false)));
 		addLogLine(LOGTYPE_EVENT, "kicking player " + player->getName());
 		output->AddByte(AP_MSG_COMMAND_OK);
 	}
@@ -525,7 +525,7 @@ void ProtocolAdmin::adminCommandSetOwner(const std::string& param)
 			if(size > 2)
 				clean = booleanString(params[2]);
 
-			if(House* house = Houses::getInstance().getHouse(houseId))
+			if(House* house = Houses::getInstance()->getHouse(houseId))
 			{
 				uint32_t guid;
 				if(IOLoginData::getInstance()->getGuidByName(guid, name))
@@ -740,7 +740,7 @@ RSA* Admin::getRSAKey(uint8_t type)
 
 Item* Admin::createMail(const std::string xmlData, std::string& name, uint32_t& depotId)
 {
-	xmlDocPtr doc = xmlParseMemory(xmlData.c_str(), strlen(xmlData.c_str()));
+	xmlDocPtr doc = xmlParseMemory(xmlData.c_str(), xmlData.length());
 	if(!doc)
 		return NULL;
 
@@ -757,8 +757,11 @@ Item* Admin::createMail(const std::string xmlData, std::string& name, uint32_t& 
 
 	if(readXMLString(root, "town", strValue))
 	{
-		if(!Mailbox::getDepotId(strValue, depotId))
+		Town* town = Towns::getInstance()->getTown(strValue);
+		if(!town)
 			return false;
+
+		depotId = town->getID();
 	}
 	else if(!IOLoginData::getInstance()->getDefaultTownByName(name, depotId)) //use the players default town
 		return false;

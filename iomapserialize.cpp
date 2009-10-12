@@ -60,7 +60,7 @@ bool IOMapSerialize::updateAuctions()
 	{
 		query.str("");
 		query << "DELETE FROM `house_auctions` WHERE `house_id` = " << result->getDataInt("house_id");
-		if(!(house = Houses::getInstance().getHouse(result->getDataInt(
+		if(!(house = Houses::getInstance()->getHouse(result->getDataInt(
 			"house_id"))) || !db->executeQuery(query.str()))
 		{
 			success = false;
@@ -68,7 +68,7 @@ bool IOMapSerialize::updateAuctions()
 		}
 
 		house->setOwner(result->getDataInt("player_id"));
-		Houses::getInstance().payHouse(house, now, result->getDataInt("bid"));
+		Houses::getInstance()->payHouse(house, now, result->getDataInt("bid"));
 	}
 	while(result->next());
 	result->free();
@@ -88,7 +88,7 @@ bool IOMapSerialize::loadHouses()
 	House* house = NULL;
 	do
 	{
-		if(!(house = Houses::getInstance().getHouse(result->getDataInt("id"))))
+		if(!(house = Houses::getInstance()->getHouse(result->getDataInt("id"))))
 			continue;
 
 		house->setRentWarnings(result->getDataInt("warnings"));
@@ -102,7 +102,7 @@ bool IOMapSerialize::loadHouses()
 	while(result->next());
 	result->free();
 
-	for(HouseMap::iterator it = Houses::getInstance().getHouseBegin(); it != Houses::getInstance().getHouseEnd(); ++it)
+	for(HouseMap::iterator it = Houses::getInstance()->getHouseBegin(); it != Houses::getInstance()->getHouseEnd(); ++it)
 	{
 		if(!(house = it->second) || !house->getId() || !house->getOwner())
 			continue;
@@ -128,7 +128,7 @@ bool IOMapSerialize::updateHouses()
 	DBQuery query;
 
 	House* house = NULL;
-	for(HouseMap::iterator it = Houses::getInstance().getHouseBegin(); it != Houses::getInstance().getHouseEnd(); ++it)
+	for(HouseMap::iterator it = Houses::getInstance()->getHouseBegin(); it != Houses::getInstance()->getHouseEnd(); ++it)
 	{
 		if(!(house = it->second))
 			continue;
@@ -192,7 +192,7 @@ bool IOMapSerialize::saveHouses()
 	if(!trans.begin())
 		return false;
 
-	for(HouseMap::iterator it = Houses::getInstance().getHouseBegin(); it != Houses::getInstance().getHouseEnd(); ++it)
+	for(HouseMap::iterator it = Houses::getInstance()->getHouseBegin(); it != Houses::getInstance()->getHouseEnd(); ++it)
 		saveHouse(db, it->second);
 
 	return trans.commit();
@@ -261,7 +261,7 @@ bool IOMapSerialize::loadMapRelational(Map* map)
 	DBQuery query; //lock mutex!
 
 	House* house = NULL;
-	for(HouseMap::iterator it = Houses::getInstance().getHouseBegin(); it != Houses::getInstance().getHouseEnd(); ++it)
+	for(HouseMap::iterator it = Houses::getInstance()->getHouseBegin(); it != Houses::getInstance()->getHouseEnd(); ++it)
 	{
 		if(!(house = it->second))
 			continue;
@@ -370,7 +370,7 @@ bool IOMapSerialize::saveMapRelational(Map* map)
 		return false;
 
 	uint32_t tileId = 0;
-	for(HouseMap::iterator it = Houses::getInstance().getHouseBegin(); it != Houses::getInstance().getHouseEnd(); ++it)
+	for(HouseMap::iterator it = Houses::getInstance()->getHouseBegin(); it != Houses::getInstance()->getHouseEnd(); ++it)
 	{
 		//save house items
 		for(HouseTileList::iterator tit = it->second->getHouseTileBegin(); tit != it->second->getHouseTileEnd(); ++tit)
@@ -395,7 +395,7 @@ bool IOMapSerialize::loadMapBinary(Map* map)
 	do
 	{
 		int32_t houseId = result->getDataInt("house_id");
-		house = Houses::getInstance().getHouse(houseId);
+		house = Houses::getInstance()->getHouse(houseId);
 
 		uint64_t attrSize = 0;
 		const char* attr = result->getDataStream("data", attrSize);
@@ -463,7 +463,7 @@ bool IOMapSerialize::saveMapBinary(Map* map)
 
 	DBInsert stmt(db);
 	stmt.setQuery("INSERT INTO `house_data` (`house_id`, `world_id`, `data`) VALUES ");
- 	for(HouseMap::iterator it = Houses::getInstance().getHouseBegin(); it != Houses::getInstance().getHouseEnd(); ++it)
+ 	for(HouseMap::iterator it = Houses::getInstance()->getHouseBegin(); it != Houses::getInstance()->getHouseEnd(); ++it)
 	{
  		//save house items
 		PropWriteStream stream;

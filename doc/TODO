@@ -3,7 +3,7 @@
 		The Forgotten Server
 
 	Version
-		0.3.5
+		0.3.6
 
 	Codenamed
 		Crying Damson
@@ -15,18 +15,20 @@
 		http://otland.net/
 ]
 
-[ BUGS
-	Specific reload types not working on certain conditions
-		Assigned to: Elf
+[ NOTE
+	Fix up all reported (critical?) issues
 ]
 
-[ TASKS
-	Finish documentation as its incomplete
-		Assigned to: KaczooH
-
-	Patch missing IndexedTile changes from revscriptsys2
+[ BUGS
+	TalkAction::changeProporties causing crash on invalid param
 		Assigned to: Elf
 
-	Deprecate several hardcoded systems (guild management, etc) and rescript them in Lua
-		Assigned to: slawkens
+	Invalid duration of some items
+		Assigned to: Elf
+
+	Reloading NPC causing crash
+		Assigned to: Elf
+
+	Exhaustion inside protector.lua and swift foot.lua in data/spells/scripts/support causing unwanted behavior
+		Assigned to: Elf
 ]

@@ -306,7 +306,7 @@ void Creature::addEventWalk()
 
 	int64_t ticks = getEventStepTicks();
 	if(ticks > 0)
-		eventWalk = Scheduler::getScheduler().addEvent(createSchedulerTask(ticks,
+		eventWalk = Scheduler::getInstance()->addEvent(createSchedulerTask(ticks,
 			boost::bind(&Game::checkCreatureWalk, &g_game, getID())));
 }
 
@@ -315,7 +315,7 @@ void Creature::stopEventWalk()
 	if(!eventWalk)
 		return;
 
-	Scheduler::getScheduler().stopEvent(eventWalk);
+	Scheduler::getInstance()->stopEvent(eventWalk);
 	eventWalk = 0;
 	if(!listWalkDir.empty())
 	{
@@ -629,7 +629,7 @@ void Creature::onCreatureMove(const Creature* creature, const Tile* newTile, con
 		if(hasFollowPath)
 		{
 			isUpdatingPath = true;
-			Dispatcher::getDispatcher().addTask(createTask(
+			Dispatcher::getInstance()->addTask(createTask(
 				boost::bind(&Game::updateCreatureWalk, &g_game, getID())));
 		}
 
@@ -642,7 +642,7 @@ void Creature::onCreatureMove(const Creature* creature, const Tile* newTile, con
 		if(newPos.z == oldPos.z && canSee(attackedCreature->getPosition()))
 		{
 			if(hasExtraSwing()) //our target is moving lets see if we can get in hit
-				Dispatcher::getDispatcher().addTask(createTask(
+				Dispatcher::getInstance()->addTask(createTask(
 					boost::bind(&Game::checkCreatureAttack, &g_game, getID())));
 
 			if(newTile->getZone() != oldTile->getZone())
@@ -688,7 +688,7 @@ bool Creature::onDeath()
 		{
 			if(it->getKillerCreature()->getPlayer())
 				tmp = it->getKillerCreature();
-			else if(it->getKillerCreature()->getMaster() && it->getKillerCreature()->getMaster()->getPlayer())
+			else if(it->getKillerCreature()->getPlayerMaster())
 				tmp = it->getKillerCreature()->getMaster();
 		}
 
@@ -1122,12 +1122,21 @@ void Creature::addHealPoints(Creature* caster, int32_t healthPoints)
 
 void Creature::onAddCondition(ConditionType_t type, bool hadCondition)
 {
-	if(type == CONDITION_INVISIBLE && !hadCondition)
-		g_game.internalCreatureChangeVisible(this, VISIBLE_DISAPPEAR);
-	else if(type == CONDITION_PARALYZE && hasCondition(CONDITION_HASTE))
-		removeCondition(CONDITION_HASTE);
-	else if(type == CONDITION_HASTE && hasCondition(CONDITION_PARALYZE))
-		removeCondition(CONDITION_PARALYZE);
+	if(type == CONDITION_INVISIBLE)
+	{
+		if(!hadCondition)
+			g_game.internalCreatureChangeVisible(this, VISIBLE_DISAPPEAR);
+	}
+	else if(type == CONDITION_PARALYZE)
+	{
+		if(hasCondition(CONDITION_HASTE))
+			removeCondition(CONDITION_HASTE);
+	}
+	else if(type == CONDITION_HASTE)
+	{
+		if(hasCondition(CONDITION_PARALYZE))
+			removeCondition(CONDITION_PARALYZE);
+	}
 }
 
 void Creature::onEndCondition(ConditionType_t type)

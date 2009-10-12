@@ -288,7 +288,7 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 							return false;
 						}
 
-						house = Houses::getInstance().getHouse(_houseid, true);
+						house = Houses::getInstance()->getHouse(_houseid, true);
 						if(!house)
 						{
 							std::stringstream ss;
@@ -505,11 +505,11 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 						return false;
 					}
 
-					Town* town = Towns::getInstance().getTown(townId);
+					Town* town = Towns::getInstance()->getTown(townId);
 					if(!town)
 					{
 						town = new Town(townId);
-						Towns::getInstance().addTown(townId, town);
+						Towns::getInstance()->addTown(townId, town);
 					}
 
 					std::string townName;

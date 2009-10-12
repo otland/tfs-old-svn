@@ -129,7 +129,7 @@ bool Combat::getMinMaxValues(Creature* creature, Creature* target, int32_t& min,
 	return true;
 }
 
-void Combat::getCombatArea(const Position& centerPos, const Position& targetPos, const AreaCombat* area, std::list<Tile*>& list)
+void Combat::getCombatArea(const Position& centerPos, const Position& targetPos, const CombatArea* area, std::list<Tile*>& list)
 {
 	if(area)
 		area->getList(centerPos, targetPos, list);
@@ -404,11 +404,11 @@ bool Combat::setParam(CombatParam_t param, uint32_t value)
 			return true;
 
 		case COMBATPARAM_EFFECT:
-			params.impactEffect = value;
+			params.effects.impact = (MagicEffect_t)value;
 			return true;
 
 		case COMBATPARAM_DISTANCEEFFECT:
-			params.distanceEffect = value;
+			params.effects.distance = (ShootEffect_t)value;
 			return true;
 
 		case COMBATPARAM_BLOCKEDBYARMOR:
@@ -445,6 +445,14 @@ bool Combat::setParam(CombatParam_t param, uint32_t value)
 
 		case COMBATPARAM_USECHARGES:
 			params.useCharges = (value != 0);
+			return true;
+
+		case COMBATPARAM_HITEFFECT:
+			params.effects.hit = (MagicEffect_t)value;
+			return true;
+
+		case COMBATPARAM_HITCOLOR:
+			params.effects.color = (TextColor_t)value;
 			return true;
 
 		default:
@@ -531,7 +539,7 @@ bool Combat::CombatHealthFunc(Creature* caster, Creature* target, const CombatPa
 	if(change < 0 && caster && caster->getPlayer() && target->getPlayer() && target->getPlayer()->getSkull() != SKULL_BLACK)
 		change = change / 2;
 
-	if(!g_game.combatChangeHealth(params.combatType, caster, target, change))
+	if(!g_game.combatChangeHealth(params.combatType, caster, target, change, params.effects.hit, params.effects.color))
 		return false;
 
 	CombatConditionFunc(caster, target, params, NULL);
@@ -601,7 +609,7 @@ bool Combat::CombatNullFunc(Creature* caster, Creature* target, const CombatPara
 
 void Combat::combatTileEffects(const SpectatorVec& list, Creature* caster, Tile* tile, const CombatParams& params)
 {
-	if(params.itemId != 0)
+	if(params.itemId)
 	{
 		Player* player = NULL;
 		if(caster)
@@ -652,51 +660,50 @@ void Combat::combatTileEffects(const SpectatorVec& list, Creature* caster, Tile*
 	if(params.tileCallback)
 		params.tileCallback->onTileCombat(caster, tile);
 
-	if(params.impactEffect != NM_ME_NONE &&
-		(!caster || !caster->isGhost() || g_config.getBool(ConfigManager::GHOST_SPELL_EFFECTS)))
-		g_game.addMagicEffect(list, tile->getPosition(), params.impactEffect);
+	if(params.effects.impact != NM_MAGIC_NONE && (!caster || !caster->isGhost()
+		|| g_config.getBool(ConfigManager::GHOST_SPELL_EFFECTS)))
+		g_game.addMagicEffect(list, tile->getPosition(), params.effects.impact);
 }
 
 void Combat::postCombatEffects(Creature* caster, const Position& pos, const CombatParams& params)
 {
-	if(caster && params.distanceEffect != NM_ME_NONE)
-		addDistanceEffect(caster, caster->getPosition(), pos, params.distanceEffect);
+	if(caster && params.effects.distance != NM_SHOOT_NONE)
+		addDistanceEffect(caster, caster->getPosition(), pos, params.effects.distance);
 }
 
-void Combat::addDistanceEffect(Creature* caster, const Position& fromPos, const Position& toPos, uint8_t effect)
+void Combat::addDistanceEffect(Creature* caster, const Position& fromPos, const Position& toPos, ShootEffect_t effect)
 {
-	uint8_t distanceEffect = effect;
-	if(distanceEffect == NM_SHOOT_WEAPONTYPE)
+	if(effect == NM_SHOOT_WEAPONTYPE)
 	{
 		switch(caster->getWeaponType())
 		{
 			case WEAPON_AXE:
-				distanceEffect = NM_SHOOT_WHIRLWINDAXE;
+				effect = NM_SHOOT_WHIRLWINDAXE;
 				break;
 
 			case WEAPON_SWORD:
-				distanceEffect = NM_SHOOT_WHIRLWINDSWORD;
+				effect = NM_SHOOT_WHIRLWINDSWORD;
 				break;
 
 			case WEAPON_CLUB:
-				distanceEffect = NM_SHOOT_WHIRLWINDCLUB;
+				effect = NM_SHOOT_WHIRLWINDCLUB;
 				break;
 
 			case WEAPON_FIST:
-				distanceEffect = NM_SHOOT_LARGEROCK;
+				effect = NM_SHOOT_LARGEROCK;
 				break;
 
 			default:
-				distanceEffect = NM_ME_NONE;
+				effect = NM_SHOOT_NONE;
 				break;
 		}
 	}
 
-	if(caster && distanceEffect != NM_ME_NONE)
-		g_game.addDistanceEffect(fromPos, toPos, distanceEffect);
+	if(caster && effect != NM_SHOOT_NONE)
+		g_game.addDistanceEffect(fromPos, toPos, effect);
 }
 
-void Combat::CombatFunc(Creature* caster, const Position& pos, const AreaCombat* area,
+void Combat::CombatFunc(Creature* caster, const Position& pos, const CombatArea* area,
 	const CombatParams& params, COMBATFUNC func, void* data)
 {
 	std::list<Tile*> tileList;
@@ -814,15 +821,15 @@ void Combat::doCombatHealth(Creature* caster, Creature* target, int32_t minChang
 	if(params.targetCallback)
 		params.targetCallback->onTargetCombat(caster, target);
 
-	bool display = (!caster || !caster->isGhost() || g_config.getBool(ConfigManager::GHOST_SPELL_EFFECTS));
-	if(params.impactEffect != NM_ME_NONE && display)
-		g_game.addMagicEffect(target->getPosition(), params.impactEffect);
+	if(params.effects.impact != NM_MAGIC_NONE && (!caster || !caster->isGhost()
+		|| g_config.getBool(ConfigManager::GHOST_SPELL_EFFECTS)))
+		g_game.addMagicEffect(target->getPosition(), params.effects.impact);
 
-	if(caster && params.distanceEffect != NM_ME_NONE && display)
-		addDistanceEffect(caster, caster->getPosition(), target->getPosition(), params.distanceEffect);
+	if(caster && params.effects.distance != NM_SHOOT_NONE)
+		addDistanceEffect(caster, caster->getPosition(), target->getPosition(), params.effects.distance);
 }
 
-void Combat::doCombatHealth(Creature* caster, const Position& pos, const AreaCombat* area,
+void Combat::doCombatHealth(Creature* caster, const Position& pos, const CombatArea* area,
 	int32_t minChange, int32_t maxChange, const CombatParams& params)
 {
 	Combat2Var var;
@@ -844,15 +851,15 @@ void Combat::doCombatMana(Creature* caster, Creature* target, int32_t minChange,
 	if(params.targetCallback)
 		params.targetCallback->onTargetCombat(caster, target);
 
-	bool display = (!caster || !caster->isGhost() || g_config.getBool(ConfigManager::GHOST_SPELL_EFFECTS));
-	if(params.impactEffect != NM_ME_NONE && display)
-		g_game.addMagicEffect(target->getPosition(), params.impactEffect);
+	if(params.effects.impact != NM_MAGIC_NONE && (!caster || !caster->isGhost()
+		|| g_config.getBool(ConfigManager::GHOST_SPELL_EFFECTS)))
+		g_game.addMagicEffect(target->getPosition(), params.effects.impact);
 
-	if(caster && params.distanceEffect != NM_ME_NONE && display)
-		addDistanceEffect(caster, caster->getPosition(), target->getPosition(), params.distanceEffect);
+	if(caster && params.effects.distance != NM_SHOOT_NONE)
+		addDistanceEffect(caster, caster->getPosition(), target->getPosition(), params.effects.distance);
 }
 
-void Combat::doCombatMana(Creature* caster, const Position& pos, const AreaCombat* area,
+void Combat::doCombatMana(Creature* caster, const Position& pos, const CombatArea* area,
 	int32_t minChange, int32_t maxChange, const CombatParams& params)
 {
 	Combat2Var var;
@@ -861,7 +868,7 @@ void Combat::doCombatMana(Creature* caster, const Position& pos, const AreaComba
 	CombatFunc(caster, pos, area, params, CombatManaFunc, (void*)&var);
 }
 
-void Combat::doCombatCondition(Creature* caster, const Position& pos, const AreaCombat* area,
+void Combat::doCombatCondition(Creature* caster, const Position& pos, const CombatArea* area,
 	const CombatParams& params)
 {
 	CombatFunc(caster, pos, area, params, CombatConditionFunc, NULL);
@@ -876,15 +883,15 @@ void Combat::doCombatCondition(Creature* caster, Creature* target, const CombatP
 	if(params.targetCallback)
 		params.targetCallback->onTargetCombat(caster, target);
 
-	bool display = (!caster || !caster->isGhost() || g_config.getBool(ConfigManager::GHOST_SPELL_EFFECTS));
-	if(params.impactEffect != NM_ME_NONE && display)
-		g_game.addMagicEffect(target->getPosition(), params.impactEffect);
+	if(params.effects.impact != NM_MAGIC_NONE && (!caster || !caster->isGhost()
+		|| g_config.getBool(ConfigManager::GHOST_SPELL_EFFECTS)))
+		g_game.addMagicEffect(target->getPosition(), params.effects.impact);
 
-	if(caster && params.distanceEffect != NM_ME_NONE && display)
-		addDistanceEffect(caster, caster->getPosition(), target->getPosition(), params.distanceEffect);
+	if(caster && params.effects.distance != NM_SHOOT_NONE)
+		addDistanceEffect(caster, caster->getPosition(), target->getPosition(), params.effects.distance);
 }
 
-void Combat::doCombatDispel(Creature* caster, const Position& pos, const AreaCombat* area,
+void Combat::doCombatDispel(Creature* caster, const Position& pos, const CombatArea* area,
 	const CombatParams& params)
 {
 	CombatFunc(caster, pos, area, params, CombatDispelFunc, NULL);
@@ -899,12 +906,12 @@ void Combat::doCombatDispel(Creature* caster, Creature* target, const CombatPara
 	if(params.targetCallback)
 		params.targetCallback->onTargetCombat(caster, target);
 
-	bool display = (!caster || !caster->isGhost() || g_config.getBool(ConfigManager::GHOST_SPELL_EFFECTS));
-	if(params.impactEffect != NM_ME_NONE && display)
-		g_game.addMagicEffect(target->getPosition(), params.impactEffect);
+	if(params.effects.impact != NM_MAGIC_NONE && (!caster || !caster->isGhost()
+		|| g_config.getBool(ConfigManager::GHOST_SPELL_EFFECTS)))
+		g_game.addMagicEffect(target->getPosition(), params.effects.impact);
 
-	if(caster && params.distanceEffect != NM_ME_NONE && display)
-		addDistanceEffect(caster, caster->getPosition(), target->getPosition(), params.distanceEffect);
+	if(caster && params.effects.distance != NM_SHOOT_NONE)
+		addDistanceEffect(caster, caster->getPosition(), target->getPosition(), params.effects.distance);
 }
 
 void Combat::doCombatDefault(Creature* caster, Creature* target, const CombatParams& params)
@@ -919,12 +926,12 @@ void Combat::doCombatDefault(Creature* caster, Creature* target, const CombatPar
 	if(params.targetCallback)
 		params.targetCallback->onTargetCombat(caster, target);
 
-	bool display = (!caster || !caster->isGhost() || g_config.getBool(ConfigManager::GHOST_SPELL_EFFECTS));
-	if(params.impactEffect != NM_ME_NONE && display)
-		g_game.addMagicEffect(target->getPosition(), params.impactEffect);
+	if(params.effects.impact != NM_MAGIC_NONE && (!caster || !caster->isGhost()
+		|| g_config.getBool(ConfigManager::GHOST_SPELL_EFFECTS)))
+		g_game.addMagicEffect(target->getPosition(), params.effects.impact);
 
-	if(caster && params.distanceEffect != NM_ME_NONE && display)
-		addDistanceEffect(caster, caster->getPosition(), target->getPosition(), params.distanceEffect);
+	if(caster && params.effects.distance != NM_SHOOT_NONE)
+		addDistanceEffect(caster, caster->getPosition(), target->getPosition(), params.effects.distance);
 }
 
 //**********************************************************
@@ -932,18 +939,18 @@ void Combat::doCombatDefault(Creature* caster, Creature* target, const CombatPar
 void ValueCallback::getMinMaxValues(Player* player, int32_t& min, int32_t& max, bool useCharges) const
 {
 	//"onGetPlayerMinMaxValues"(cid, ...)
-	if(!m_scriptInterface->reserveScriptEnv())
+	if(!m_interface->reserveEnv())
 	{
 		std::cout << "[Error - ValueCallback::getMinMaxValues] Callstack overflow." << std::endl;
 		return;
 	}
 
-	ScriptEnviroment* env = m_scriptInterface->getScriptEnv();
-	if(!env->setCallbackId(m_scriptId, m_scriptInterface))
+	ScriptEnviroment* env = m_interface->getEnv();
+	if(!env->setCallbackId(m_scriptId, m_interface))
 		return;
 
-	m_scriptInterface->pushFunction(m_scriptId);
-	lua_State* L = m_scriptInterface->getLuaState();
+	m_interface->pushFunction(m_scriptId);
+	lua_State* L = m_interface->getState();
 	lua_pushnumber(L, env->addThing(player));
 
 	int32_t parameters = 1;
@@ -996,13 +1003,13 @@ void ValueCallback::getMinMaxValues(Player* player, int32_t& min, int32_t& max, 
 		player->increaseCombatValues(min, max, useCharges, type != FORMULA_SKILL);
 	}
 	else
-		LuaScriptInterface::reportError(NULL, std::string(LuaScriptInterface::popString(L)));
+		LuaScriptInterface::error(NULL, std::string(LuaScriptInterface::popString(L)));
 
 	if((lua_gettop(L) + parameters + 1) != params)
-		LuaScriptInterface::reportError(NULL, "Stack size changed!");
+		LuaScriptInterface::error(__FUNCTION__, "Stack size changed!");
 
 	env->resetCallback();
-	m_scriptInterface->releaseScriptEnv();
+	m_interface->releaseEnv();
 }
 
 //**********************************************************
@@ -1010,21 +1017,21 @@ void ValueCallback::getMinMaxValues(Player* player, int32_t& min, int32_t& max, 
 void TileCallback::onTileCombat(Creature* creature, Tile* tile) const
 {
 	//"onTileCombat"(cid, pos)
-	if(m_scriptInterface->reserveScriptEnv())
+	if(m_interface->reserveEnv())
 	{
-		ScriptEnviroment* env = m_scriptInterface->getScriptEnv();
-		if(!env->setCallbackId(m_scriptId, m_scriptInterface))
+		ScriptEnviroment* env = m_interface->getEnv();
+		if(!env->setCallbackId(m_scriptId, m_interface))
 			return;
 
-		m_scriptInterface->pushFunction(m_scriptId);
-		lua_State* L = m_scriptInterface->getLuaState();
+		m_interface->pushFunction(m_scriptId);
+		lua_State* L = m_interface->getState();
 
 		lua_pushnumber(L, creature ? env->addThing(creature) : 0);
-		m_scriptInterface->pushPosition(L, tile->getPosition(), 0);
+		m_interface->pushPosition(L, tile->getPosition(), 0);
 
-		m_scriptInterface->callFunction(2);
+		m_interface->callFunction(2);
 		env->resetCallback();
-		m_scriptInterface->releaseScriptEnv();
+		m_interface->releaseEnv();
 	}
 	else
 		std::cout << "[Error - TileCallback::onTileCombat] Call stack overflow." << std::endl;
@@ -1035,31 +1042,31 @@ void TileCallback::onTileCombat(Creature* creature, Tile* tile) const
 void TargetCallback::onTargetCombat(Creature* creature, Creature* target) const
 {
 	//"onTargetCombat"(cid, target)
-	if(m_scriptInterface->reserveScriptEnv())
+	if(m_interface->reserveEnv())
 	{
-		ScriptEnviroment* env = m_scriptInterface->getScriptEnv();
-		if(!env->setCallbackId(m_scriptId, m_scriptInterface))
+		ScriptEnviroment* env = m_interface->getEnv();
+		if(!env->setCallbackId(m_scriptId, m_interface))
 			return;
 
 		uint32_t cid = 0;
 		if(creature)
 			cid = env->addThing(creature);
 
-		m_scriptInterface->pushFunction(m_scriptId);
-		lua_State* L = m_scriptInterface->getLuaState();
+		m_interface->pushFunction(m_scriptId);
+		lua_State* L = m_interface->getState();
 
 		lua_pushnumber(L, cid);
 		lua_pushnumber(L, env->addThing(target));
 
 		int32_t size = lua_gettop(L);
 		if(lua_pcall(L, 2, 0 /*nReturnValues*/, 0) != 0)
-			LuaScriptInterface::reportError(NULL, std::string(LuaScriptInterface::popString(L)));
+			LuaScriptInterface::error(NULL, std::string(LuaScriptInterface::popString(L)));
 
 		if((lua_gettop(L) + 2 /*nParams*/ + 1) != size)
-			LuaScriptInterface::reportError(NULL, "Stack size changed!");
+			LuaScriptInterface::error(__FUNCTION__, "Stack size changed!");
 
 		env->resetCallback();
-		m_scriptInterface->releaseScriptEnv();
+		m_interface->releaseEnv();
 	}
 	else
 	{
@@ -1070,22 +1077,22 @@ void TargetCallback::onTargetCombat(Creature* creature, Creature* target) const
 
 //**********************************************************
 
-void AreaCombat::clear()
+void CombatArea::clear()
 {
-	for(AreaCombatMap::iterator it = areas.begin(); it != areas.end(); ++it)
+	for(CombatAreas::iterator it = areas.begin(); it != areas.end(); ++it)
 		delete it->second;
 
 	areas.clear();
 }
 
-AreaCombat::AreaCombat(const AreaCombat& rhs)
+CombatArea::CombatArea(const CombatArea& rhs)
 {
 	hasExtArea = rhs.hasExtArea;
-	for(AreaCombatMap::const_iterator it = rhs.areas.begin(); it != rhs.areas.end(); ++it)
+	for(CombatAreas::const_iterator it = rhs.areas.begin(); it != rhs.areas.end(); ++it)
 		areas[it->first] = new MatrixArea(*it->second);
 }
 
-bool AreaCombat::getList(const Position& centerPos, const Position& targetPos, std::list<Tile*>& list) const
+bool CombatArea::getList(const Position& centerPos, const Position& targetPos, std::list<Tile*>& list) const
 {
 	Tile* tile = g_game.getTile(targetPos);
 	const MatrixArea* area = getArea(centerPos, targetPos);
@@ -1126,7 +1133,7 @@ bool AreaCombat::getList(const Position& centerPos, const Position& targetPos, s
 	return true;
 }
 
-void AreaCombat::copyArea(const MatrixArea* input, MatrixArea* output, MatrixOperation_t op) const
+void CombatArea::copyArea(const MatrixArea* input, MatrixArea* output, MatrixOperation_t op) const
 {
 	uint16_t centerY, centerX;
 	input->getCenter(centerY, centerX);
@@ -1208,7 +1215,7 @@ void AreaCombat::copyArea(const MatrixArea* input, MatrixArea* output, MatrixOpe
 	}
 }
 
-MatrixArea* AreaCombat::createArea(const std::list<uint32_t>& list, uint32_t rows)
+MatrixArea* CombatArea::createArea(const std::list<uint32_t>& list, uint32_t rows)
 {
 	uint32_t cols = list.size() / rows;
 	MatrixArea* area = new MatrixArea(rows, cols);
@@ -1233,7 +1240,7 @@ MatrixArea* AreaCombat::createArea(const std::list<uint32_t>& list, uint32_t row
 	return area;
 }
 
-void AreaCombat::setupArea(const std::list<uint32_t>& list, uint32_t rows)
+void CombatArea::setupArea(const std::list<uint32_t>& list, uint32_t rows)
 {
 	//NORTH
 	MatrixArea* area = createArea(list, rows);
@@ -1256,7 +1263,7 @@ void AreaCombat::setupArea(const std::list<uint32_t>& list, uint32_t rows)
 	areas[WEST] = westArea;
 }
 
-void AreaCombat::setupArea(int32_t length, int32_t spread)
+void CombatArea::setupArea(int32_t length, int32_t spread)
 {
 	std::list<uint32_t> list;
 	uint32_t rows = length;
@@ -1286,7 +1293,7 @@ void AreaCombat::setupArea(int32_t length, int32_t spread)
 	setupArea(list, rows);
 }
 
-void AreaCombat::setupArea(int32_t radius)
+void CombatArea::setupArea(int32_t radius)
 {
 	int32_t area[13][13] =
 	{
@@ -1322,7 +1329,7 @@ void AreaCombat::setupArea(int32_t radius)
 	setupArea(list, 13);
 }
 
-void AreaCombat::setupExtArea(const std::list<uint32_t>& list, uint32_t rows)
+void CombatArea::setupExtArea(const std::list<uint32_t>& list, uint32_t rows)
 {
 	if(list.empty())
 		return;

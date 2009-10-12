@@ -72,7 +72,7 @@ DatabaseMySQL::DatabaseMySQL()
 
 	int32_t keepAlive = g_config.getNumber(ConfigManager::SQL_KEEPALIVE);
 	if(keepAlive)
-		Scheduler::getScheduler().addEvent(createSchedulerTask((keepAlive * 1000), boost::bind(&DatabaseMySQL::keepAlive, this)));
+		Scheduler::getInstance()->addEvent(createSchedulerTask((keepAlive * 1000), boost::bind(&DatabaseMySQL::keepAlive, this)));
 }
 
 bool DatabaseMySQL::getParam(DBParam_t param)
@@ -196,7 +196,7 @@ void DatabaseMySQL::keepAlive()
 		if(time(NULL) > (m_use + delay) && mysql_ping(&m_handle))
 			reconnect();
 
-		Scheduler::getScheduler().addEvent(createSchedulerTask((delay * 1000), boost::bind(&DatabaseMySQL::keepAlive, this)));
+		Scheduler::getInstance()->addEvent(createSchedulerTask((delay * 1000), boost::bind(&DatabaseMySQL::keepAlive, this)));
 	}
 }
 

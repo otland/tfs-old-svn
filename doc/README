@@ -3,7 +3,7 @@
 		The Forgotten Server
 
 	Version
-		0.3.5
+		0.3.6
 
 	Codenamed
 		Crying Damson
@@ -95,11 +95,11 @@
 
 		Download sources
 			Launch a terminal, and paste in this command:
-				svn co http://svn.otland.net/public/forgottenserver/tags/0.3.5
+				svn co http://svn.otland.net/public/forgottenserver/tags/0.3.6
 
 		Compiling
 			Launch a terminal, and type this:
-				cd 0.3.5 && ./autogen.sh && ./configure --enable-sqlite --enable-server-diag && make
+				cd 0.3.6 && ./autogen.sh && ./configure --enable-sqlite --enable-server-diag && make
 
 		Linker error
 			If you receive a linker error saying something with 'libboost', try pasting the following commands to terminal and then move back to compiling again:

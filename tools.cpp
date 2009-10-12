@@ -154,7 +154,7 @@ bool readXMLInteger(xmlNodePtr node, const char* tag, int& value)
 	return true;
 }
 
-#if (defined __WINDOWS__ || defined WIN32) && !defined __GNUC__
+#if defined WINDOWS && !defined __GNUC__
 bool readXMLInteger(xmlNodePtr node, const char* tag, int32_t& value)
 {
 	char* nodeValue = (char*)xmlGetProp(node, (xmlChar*)tag);
@@ -825,13 +825,13 @@ struct AmmoTypeNames
 struct MagicEffectNames
 {
 	const char* name;
-	MagicEffectClasses magicEffect;
+	MagicEffect_t magicEffect;
 };
 
 struct ShootTypeNames
 {
 	const char* name;
-	ShootType_t shootType;
+	ShootEffect_t shootType;
 };
 
 struct CombatTypeNames
@@ -860,74 +860,74 @@ struct SkillIdNames
 
 MagicEffectNames magicEffectNames[] =
 {
-	{"redspark",		NM_ME_DRAW_BLOOD},
-	{"bluebubble",		NM_ME_LOSE_ENERGY},
-	{"poff",		NM_ME_POFF},
-	{"yellowspark",		NM_ME_BLOCKHIT},
-	{"explosionarea",	NM_ME_EXPLOSION_AREA},
-	{"explosion",		NM_ME_EXPLOSION_DAMAGE},
-	{"firearea",		NM_ME_FIRE_AREA},
-	{"yellowbubble",	NM_ME_YELLOW_RINGS},
-	{"greenbubble",		NM_ME_POISON_RINGS},
-	{"blackspark",		NM_ME_HIT_AREA},
-	{"teleport",		NM_ME_TELEPORT},
-	{"energy",		NM_ME_ENERGY_DAMAGE},
-	{"blueshimmer",		NM_ME_MAGIC_ENERGY},
-	{"redshimmer",		NM_ME_MAGIC_BLOOD},
-	{"greenshimmer",	NM_ME_MAGIC_POISON},
-	{"fire",		NM_ME_HITBY_FIRE},
-	{"greenspark",		NM_ME_POISON},
-	{"mortarea",		NM_ME_MORT_AREA},
-	{"greennote",		NM_ME_SOUND_GREEN},
-	{"rednote",		NM_ME_SOUND_RED},
-	{"poison",		NM_ME_POISON_AREA},
-	{"yellownote",		NM_ME_SOUND_YELLOW},
-	{"purplenote",		NM_ME_SOUND_PURPLE},
-	{"bluenote",		NM_ME_SOUND_BLUE},
-	{"whitenote",		NM_ME_SOUND_WHITE},
-	{"bubbles",		NM_ME_BUBBLES},
-	{"dice",		NM_ME_CRAPS},
-	{"giftwraps",		NM_ME_GIFT_WRAPS},
-	{"yellowfirework",	NM_ME_FIREWORK_YELLOW},
-	{"redfirework",		NM_ME_FIREWORK_RED},
-	{"bluefirework",	NM_ME_FIREWORK_BLUE},
-	{"stun",		NM_ME_STUN},
-	{"sleep",		NM_ME_SLEEP},
-	{"watercreature",	NM_ME_WATERCREATURE},
-	{"groundshaker",	NM_ME_GROUNDSHAKER},
-	{"hearts",		NM_ME_HEARTS},
-	{"fireattack",		NM_ME_FIREATTACK},
-	{"energyarea",		NM_ME_ENERGY_AREA},
-	{"smallclouds",		NM_ME_SMALLCLOUDS},
-	{"holydamage",		NM_ME_HOLYDAMAGE},
-	{"bigclouds",		NM_ME_BIGCLOUDS},
-	{"icearea",		NM_ME_ICEAREA},
-	{"icetornado",		NM_ME_ICETORNADO},
-	{"iceattack",		NM_ME_ICEATTACK},
-	{"stones",		NM_ME_STONES},
-	{"smallplants",		NM_ME_SMALLPLANTS},
-	{"carniphila",		NM_ME_CARNIPHILA},
-	{"purpleenergy",	NM_ME_PURPLEENERGY},
-	{"yellowenergy",	NM_ME_YELLOWENERGY},
-	{"holyarea",		NM_ME_HOLYAREA},
-	{"bigplants",		NM_ME_BIGPLANTS},
-	{"cake",		NM_ME_CAKE},
-	{"giantice",		NM_ME_GIANTICE},
-	{"watersplash",		NM_ME_WATERSPLASH},
-	{"plantattack",		NM_ME_PLANTATTACK},
-	{"tutorialarrow",	NM_ME_TUTORIALARROW},
-	{"tutorialsquare",	NM_ME_TUTORIALSQUARE},
-	{"mirrorhorizontal",	NM_ME_MIRRORHORIZONTAL},
-	{"mirrorvertical",	NM_ME_MIRRORVERTICAL},
-	{"skullhorizontal",	NM_ME_SKULLHORIZONTAL},
-	{"skullvertical",	NM_ME_SKULLVERTICAL},
-	{"assassin",		NM_ME_ASSASSIN},
-	{"stepshorizontal",	NM_ME_STEPSHORIZONTAL},
-	{"bloodysteps",		NM_ME_BLOODYSTEPS},
-	{"stepsvertical",	NM_ME_STEPSVERTICAL},
-	{"yalaharighost",	NM_ME_YALAHARIGHOST},
-	{"bats",		NM_ME_BATS},
-	{"smoke",		NM_ME_SMOKE}
+	{"redspark",		NM_MAGIC_DRAW_BLOOD},
+	{"bluebubble",		NM_MAGIC_LOSE_ENERGY},
+	{"poff",		NM_MAGIC_POFF},
+	{"yellowspark",		NM_MAGIC_BLOCKHIT},
+	{"explosionarea",	NM_MAGIC_EXPLOSION_AREA},
+	{"explosion",		NM_MAGIC_EXPLOSION_DAMAGE},
+	{"firearea",		NM_MAGIC_FIRE_AREA},
+	{"yellowbubble",	NM_MAGIC_YELLOW_RINGS},
+	{"greenbubble",		NM_MAGIC_POISON_RINGS},
+	{"blackspark",		NM_MAGIC_HIT_AREA},
+	{"teleport",		NM_MAGIC_TELEPORT},
+	{"energy",		NM_MAGIC_ENERGY_DAMAGE},
+	{"blueshimmer",		NM_MAGIC_MAGIC_ENERGY},
+	{"redshimmer",		NM_MAGIC_MAGIC_BLOOD},
+	{"greenshimmer",	NM_MAGIC_MAGIC_POISON},
+	{"fire",		NM_MAGIC_HITBY_FIRE},
+	{"greenspark",		NM_MAGIC_POISON},
+	{"mortarea",		NM_MAGIC_MORT_AREA},
+	{"greennote",		NM_MAGIC_SOUND_GREEN},
+	{"rednote",		NM_MAGIC_SOUND_RED},
+	{"poison",		NM_MAGIC_POISON_AREA},
+	{"yellownote",		NM_MAGIC_SOUND_YELLOW},
+	{"purplenote",		NM_MAGIC_SOUND_PURPLE},
+	{"bluenote",		NM_MAGIC_SOUND_BLUE},
+	{"whitenote",		NM_MAGIC_SOUND_WHITE},
+	{"bubbles",		NM_MAGIC_BUBBLES},
+	{"dice",		NM_MAGIC_CRAPS},
+	{"giftwraps",		NM_MAGIC_GIFT_WRAPS},
+	{"yellowfirework",	NM_MAGIC_FIREWORK_YELLOW},
+	{"redfirework",		NM_MAGIC_FIREWORK_RED},
+	{"bluefirework",	NM_MAGIC_FIREWORK_BLUE},
+	{"stun",		NM_MAGIC_STUN},
+	{"sleep",		NM_MAGIC_SLEEP},
+	{"watercreature",	NM_MAGIC_WATERCREATURE},
+	{"groundshaker",	NM_MAGIC_GROUNDSHAKER},
+	{"hearts",		NM_MAGIC_HEARTS},
+	{"fireattack",		NM_MAGIC_FIREATTACK},
+	{"energyarea",		NM_MAGIC_ENERGY_AREA},
+	{"smallclouds",		NM_MAGIC_SMALLCLOUDS},
+	{"holydamage",		NM_MAGIC_HOLYDAMAGE},
+	{"bigclouds",		NM_MAGIC_BIGCLOUDS},
+	{"icearea",		NM_MAGIC_ICEAREA},
+	{"icetornado",		NM_MAGIC_ICETORNADO},
+	{"iceattack",		NM_MAGIC_ICEATTACK},
+	{"stones",		NM_MAGIC_STONES},
+	{"smallplants",		NM_MAGIC_SMALLPLANTS},
+	{"carniphila",		NM_MAGIC_CARNIPHILA},
+	{"purpleenergy",	NM_MAGIC_PURPLEENERGY},
+	{"yellowenergy",	NM_MAGIC_YELLOWENERGY},
+	{"holyarea",		NM_MAGIC_HOLYAREA},
+	{"bigplants",		NM_MAGIC_BIGPLANTS},
+	{"cake",		NM_MAGIC_CAKE},
+	{"giantice",		NM_MAGIC_GIANTICE},
+	{"watersplash",		NM_MAGIC_WATERSPLASH},
+	{"plantattack",		NM_MAGIC_PLANTATTACK},
+	{"tutorialarrow",	NM_MAGIC_TUTORIALARROW},
+	{"tutorialsquare",	NM_MAGIC_TUTORIALSQUARE},
+	{"mirrorhorizontal",	NM_MAGIC_MIRRORHORIZONTAL},
+	{"mirrorvertical",	NM_MAGIC_MIRRORVERTICAL},
+	{"skullhorizontal",	NM_MAGIC_SKULLHORIZONTAL},
+	{"skullvertical",	NM_MAGIC_SKULLVERTICAL},
+	{"assassin",		NM_MAGIC_ASSASSIN},
+	{"stepshorizontal",	NM_MAGIC_STEPSHORIZONTAL},
+	{"bloodysteps",		NM_MAGIC_BLOODYSTEPS},
+	{"stepsvertical",	NM_MAGIC_STEPSVERTICAL},
+	{"yalaharighost",	NM_MAGIC_YALAHARIGHOST},
+	{"bats",		NM_MAGIC_BATS},
+	{"smoke",		NM_MAGIC_SMOKE}
 };
 
 ShootTypeNames shootTypeNames[] =
@@ -1075,7 +1075,7 @@ SkillIdNames skillIdNames[] =
 	{"magic level",		SKILL__MAGLEVEL}
 };
 
-MagicEffectClasses getMagicEffect(const std::string& strValue)
+MagicEffect_t getMagicEffect(const std::string& strValue)
 {
 	for(uint32_t i = 0; i < sizeof(magicEffectNames) / sizeof(MagicEffectNames); ++i)
 	{
@@ -1083,10 +1083,10 @@ MagicEffectClasses getMagicEffect(const std::string& strValue)
 			return magicEffectNames[i].magicEffect;
 	}
 
-	return NM_ME_UNK;
+	return NM_MAGIC_UNKNOWN;
 }
 
-ShootType_t getShootType(const std::string& strValue)
+ShootEffect_t getShootType(const std::string& strValue)
 {
 	for(uint32_t i = 0; i < sizeof(shootTypeNames) / sizeof(ShootTypeNames); ++i)
 	{
@@ -1094,7 +1094,7 @@ ShootType_t getShootType(const std::string& strValue)
 			return shootTypeNames[i].shootType;
 	}
 
-	return NM_SHOOT_UNK;
+	return NM_SHOOT_UNKNOWN;
 }
 
 CombatType_t getCombatType(const std::string& strValue)

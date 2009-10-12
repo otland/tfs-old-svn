@@ -41,13 +41,9 @@
 
 #include <time.h>
 #include <assert.h>
-#ifdef WIN32
+#ifdef WINDOWS
 #include <windows.h>
 #include <sys/timeb.h>
-
-#ifdef __WIN_LOW_FRAG_HEAP__
-#define _WIN32_WINNT 0x0501
-#endif
 
 #define OTSERV_ACCESS(file, mode) _access(file, mode);
 inline int64_t OTSYS_TIME()

@@ -27,19 +27,19 @@
 Cylinder* Thing::getTopParent()
 {
 	//tile
-	if(!getParent())
+	Cylinder* aux = getParent();
+	if(!aux)
 		return dynamic_cast<Cylinder*>(this);
 
-	Cylinder* aux = getParent();
-	Cylinder* prevaux = dynamic_cast<Cylinder*>(this);
+	Cylinder* prev = dynamic_cast<Cylinder*>(this);
 	while(aux->getParent())
 	{
-		prevaux = aux;
+		prev = aux;
 		aux = aux->getParent();
 	}
 
-	if(dynamic_cast<Cylinder*>(prevaux))
-		return prevaux;
+	if(dynamic_cast<Cylinder*>(prev))
+		return prev;
 
 	return aux;
 }
@@ -47,19 +47,19 @@ Cylinder* Thing::getTopParent()
 const Cylinder* Thing::getTopParent() const
 {
 	//tile
-	if(getParent() == NULL)
+	const Cylinder* aux = getParent();
+	if(!aux)
 		return dynamic_cast<const Cylinder*>(this);
 
-	const Cylinder* aux = getParent();
-	const Cylinder* prevaux = dynamic_cast<const Cylinder*>(this);
+	const Cylinder* prev = dynamic_cast<const Cylinder*>(this);
 	while(aux->getParent())
 	{
-		prevaux = aux;
+		prev = aux;
 		aux = aux->getParent();
 	}
 
-	if(dynamic_cast<const Cylinder*>(prevaux))
-		return prevaux;
+	if(dynamic_cast<const Cylinder*>(prev))
+		return prev;
 
 	return aux;
 }
@@ -76,7 +76,6 @@ Tile* Thing::getTile()
 	}
 #endif
 
-	//get root cylinder
 	if(cylinder->getParent())
 		cylinder = cylinder->getParent();
 
@@ -95,7 +94,6 @@ const Tile* Thing::getTile() const
 	}
 #endif
 
-	//get root cylinder
 	if(cylinder->getParent())
 		cylinder = cylinder->getParent();
 
@@ -116,9 +114,9 @@ Position Thing::getPosition() const
 
 bool Thing::isRemoved() const
 {
-	if(!parent)
+	const Cylinder* aux = getParent();
+	if(!aux)
 		return true;
 
-	const Cylinder* aux = getParent();
 	return aux->isRemoved();
 }

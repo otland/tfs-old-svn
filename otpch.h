@@ -20,7 +20,7 @@
 #endif
 
 #define __OTPCH__
-#if defined __WINDOWS__ || defined WIN32
+#if defined WINDOWS
 #include <winerror.h>
 #endif
 

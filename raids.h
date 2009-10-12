@@ -180,14 +180,14 @@ class EffectEvent : public RaidEvent
 {
 	public:
 		EffectEvent(Raid* raid, bool ref): RaidEvent(raid, ref),
-			m_effect(NM_ME_NONE) {}
+			m_effect(NM_MAGIC_NONE) {}
 		virtual ~EffectEvent() {}
 
 		virtual bool configureRaidEvent(xmlNodePtr eventNode);
 		virtual bool executeEvent() const;
 
 	private:
-		MagicEffectClasses m_effect;
+		MagicEffect_t m_effect;
 		Position m_position;
 };
 
@@ -244,14 +244,14 @@ class ScriptEvent : public RaidEvent, public Event
 {
 	public:
 		ScriptEvent(Raid* raid, bool ref): RaidEvent(raid, ref),
-			Event(&m_scriptInterface) {m_scriptInterface.initState();}
+			Event(&m_interface) {m_interface.initState();}
 		virtual ~ScriptEvent() {}
 
 		virtual bool configureRaidEvent(xmlNodePtr eventNode);
 		virtual bool executeEvent() const;
 
 		virtual bool configureEvent(xmlNodePtr p) {return false;}
-		static LuaScriptInterface m_scriptInterface;
+		static LuaScriptInterface m_interface;
 
 	protected:
 		virtual std::string getScriptEventName() const {return "onRaid";}

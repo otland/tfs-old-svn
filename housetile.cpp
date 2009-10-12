@@ -47,14 +47,14 @@ void HouseTile::__internalAddThing(uint32_t index, Thing* thing)
 
 void HouseTile::updateHouse(Item* item)
 {
-	if(item->getTile() == this)
-	{
-		Door* door = item->getDoor();
-		if(door && door->getDoorId() != 0)
-			house->addDoor(door);
-		else if(BedItem* bed = item->getBed())
-			house->addBed(bed);
-	}
+	if(item->getTile() != this)
+		return;
+
+	Door* door = item->getDoor();
+	if(door && door->getDoorId())
+		house->addDoor(door);
+	else if(BedItem* bed = item->getBed())
+		house->addBed(bed);
 }
 
 ReturnValue HouseTile::__queryAdd(int32_t index, const Thing* thing, uint32_t count, uint32_t flags) const

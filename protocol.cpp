@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////
 #include "otpch.h"
-#if defined WIN32
+#if defined WINDOWS
 #include <winerror.h>
 #endif
 
@@ -25,7 +25,9 @@
 #include "connection.h"
 #include "outputmessage.h"
 
+#include "tools.h"
 #include "rsa.h"
+
 extern RSA g_RSA;
 
 void Protocol::onSendMessage(OutputMessage_ptr msg)
@@ -90,7 +92,7 @@ OutputMessage_ptr Protocol::getOutputBuffer()
 void Protocol::releaseProtocol()
 {
 	if(m_refCount > 0)
-		Scheduler::getScheduler().addEvent(createSchedulerTask(SCHEDULER_MINTICKS, boost::bind(&Protocol::releaseProtocol, this)));
+		Scheduler::getInstance()->addEvent(createSchedulerTask(SCHEDULER_MINTICKS, boost::bind(&Protocol::releaseProtocol, this)));
 	else
 		deleteProtocolTask();
 }
@@ -123,9 +125,7 @@ void Protocol::XTEA_encrypt(OutputMessage& msg)
 	uint32_t* buffer = (uint32_t*)msg.getOutputBuffer();
 	while(readPos < messageLength / 4)
 	{
-		uint32_t v0 = buffer[readPos], v1 = buffer[readPos + 1];
-		uint32_t delta = 0x61C88647;
-		uint32_t sum = 0;
+		uint32_t v0 = buffer[readPos], v1 = buffer[readPos + 1], delta = 0x61C88647, sum = 0;
 		for(int32_t i = 0; i < 32; i++)
 		{
 			v0 += ((v1 << 4 ^ v1 >> 5) + v1) ^ (sum + k[sum & 3]);
@@ -143,7 +143,12 @@ bool Protocol::XTEA_decrypt(NetworkMessage& msg)
 {
 	if((msg.getMessageLength() - 6) % 8 != 0)
 	{
-		std::cout << "[Failure - Protocol::XTEA_decrypt] Not valid encrypted message size" << std::endl;
+		std::cout << "[Failure - Protocol::XTEA_decrypt] Not valid encrypted message size";
+		int32_t ip = getIP();
+		if(ip)
+			std::cout << " (IP: " << convertIPAddress(ip) << ")";
+
+		std::cout << std::endl;
 		return false;
 	}
 
@@ -151,14 +156,11 @@ bool Protocol::XTEA_decrypt(NetworkMessage& msg)
 	for(uint8_t i = 0; i < 4; i++)
 		k[i] = m_key[i];
 
-	int32_t messageLength = msg.getMessageLength() - 6;
+	int32_t messageLength = msg.getMessageLength() - 6, readPos = 0;
 	uint32_t* buffer = (uint32_t*)(msg.getBuffer() + msg.getReadPos());
-	int32_t readPos = 0;
 	while(readPos < messageLength / 4)
 	{
-		uint32_t v0 = buffer[readPos], v1 = buffer[readPos + 1];
-		uint32_t delta = 0x61C88647;
-		uint32_t sum = 0xC6EF3720;
+		uint32_t v0 = buffer[readPos], v1 = buffer[readPos + 1], delta = 0x61C88647, sum = 0xC6EF3720;
 		for(int32_t i = 0; i < 32; i++)
 		{
 			v1 -= ((v0 << 4 ^ v0 >> 5) + v0) ^ (sum + k[sum>>11 & 3]);
@@ -175,7 +177,12 @@ bool Protocol::XTEA_decrypt(NetworkMessage& msg)
 	int32_t tmp = msg.GetU16();
 	if(tmp > msg.getMessageLength() - 8)
 	{
-		std::cout << "[Failure - Protocol::XTEA_decrypt] Not valid unencrypted message size" << std::endl;
+		std::cout << "[Failure - Protocol::XTEA_decrypt] Not valid unencrypted message size";
+		uint32_t ip = getIP();
+		if(ip)
+			std::cout << " (IP: " << convertIPAddress(ip) << ")";
+
+		std::cout << std::endl;
 		return false;
 	}
 

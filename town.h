@@ -44,10 +44,10 @@ typedef std::map<uint32_t, Town*> TownMap;
 class Towns
 {
 	public:
-		static Towns& getInstance()
+		static Towns* getInstance()
 		{
 			static Towns instance;
-			return instance;
+			return &instance;
 		}
 
 		bool addTown(uint32_t townId, Town* town)

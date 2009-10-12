@@ -30,7 +30,7 @@
 #include "configmanager.h"
 #include "game.h"
 
-#ifndef WIN32
+#ifndef WINDOWS
 	#define SOCKET_ERROR -1
 	#define INVALID_SOCKET -1
 #endif

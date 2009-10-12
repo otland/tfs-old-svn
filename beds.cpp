@@ -44,7 +44,7 @@ Attr_ReadValue BedItem::readAttr(AttrTypes_t attr, PropStream& propStream)
 				if(IOLoginData::getInstance()->getNameByGuid(_sleeper, name))
 				{
 					setSpecialDescription(name + " is sleeping there.");
-					Beds::getInstance().setBedSleeper(this, _sleeper);
+					Beds::getInstance()->setBedSleeper(this, _sleeper);
 				}
 			}
 
@@ -115,7 +115,7 @@ void BedItem::sleep(Player* player)
 
 	if(!sleeper)
 	{
-		Beds::getInstance().setBedSleeper(this, player->getGUID());
+		Beds::getInstance()->setBedSleeper(this, player->getGUID());
 		internalSetSleeper(player);
 
 		BedItem* nextBedItem = getNextBedItem();
@@ -127,13 +127,13 @@ void BedItem::sleep(Player* player)
 			nextBedItem->updateAppearance(player);
 
 		player->getTile()->moveCreature(NULL, player, getTile());
-		g_game.addMagicEffect(player->getPosition(), NM_ME_SLEEP);
-		Scheduler::getScheduler().addEvent(createSchedulerTask(SCHEDULER_MINTICKS, boost::bind(&Game::kickPlayer, &g_game, player->getID(), false)));
+		g_game.addMagicEffect(player->getPosition(), NM_MAGIC_SLEEP);
+		Scheduler::getInstance()->addEvent(createSchedulerTask(SCHEDULER_MINTICKS, boost::bind(&Game::kickPlayer, &g_game, player->getID(), false)));
 	}
 	else if(Item::items[getID()].transformToFree)
 	{
 		wakeUp();
-		g_game.addMagicEffect(player->getPosition(), NM_ME_POFF);
+		g_game.addMagicEffect(player->getPosition(), NM_MAGIC_POFF);
 	}
 	else
 		player->sendCancelMessage(RET_NOTPOSSIBLE);
@@ -159,7 +159,7 @@ void BedItem::wakeUp()
 		}
 	}
 
-	Beds::getInstance().setBedSleeper(NULL, sleeper);
+	Beds::getInstance()->setBedSleeper(NULL, sleeper);
 	internalRemoveSleeper();
 
 	BedItem* nextBedItem = getNextBedItem();
@@ -201,11 +201,11 @@ void BedItem::updateAppearance(const Player* player)
 	if(it.type != ITEM_TYPE_BED)
 		return;
 
-	if(player && it.transformToOnUse[player->getSex(false)])
+	if(player && it.transformUseTo[player->getSex(false)])
 	{
-		const ItemType& newType = Item::items[it.transformToOnUse[player->getSex(false)]];
+		const ItemType& newType = Item::items[it.transformUseTo[player->getSex(false)]];
 		if(newType.type == ITEM_TYPE_BED)
-			g_game.transformItem(this, it.transformToOnUse[player->getSex(false)]);
+			g_game.transformItem(this, it.transformUseTo[player->getSex(false)]);
 	}
 	else if(it.transformToFree)
 	{

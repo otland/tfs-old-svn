@@ -127,7 +127,7 @@ struct RefreshBlock_t
 	uint64_t lastRefresh;
 };
 
-typedef std::map< uint32_t, shared_ptr<RuleViolation> > RuleViolationsMap;
+typedef std::map<uint32_t, shared_ptr<RuleViolation> > RuleViolationsMap;
 typedef std::map<Tile*, RefreshBlock_t> RefreshTiles;
 typedef std::vector< std::pair<std::string, uint32_t> > Highscore;
 typedef std::list<Position> Trash;
@@ -430,11 +430,11 @@ class Game
 		  * \param type Type of message
 		  * \param text The text to say
 		  * \param ghostMode Is creature on ghost mode
-		  * \param listPtr Send message only to creatures pointed in vector
+		  * \param spectators Send message only to creatures pointed in vector
 		  * \param pos Appear as sent from different position
 		  */
 		bool internalCreatureSay(Creature* creature, SpeakClasses type, const std::string& text,
-			bool ghostMode, SpectatorVec* listPtr = NULL, Position* pos = NULL);
+			bool ghostMode, SpectatorVec* spectators = NULL, Position* pos = NULL);
 
 		bool internalStartTrade(Player* player, Player* partner, Item* tradeItem);
 		bool internalCloseTrade(Player* player);
@@ -571,7 +571,8 @@ class Game
 		bool combatBlockHit(CombatType_t combatType, Creature* attacker, Creature* target,
 			int32_t& healthChange, bool checkDefense, bool checkArmor);
 
-		bool combatChangeHealth(CombatType_t combatType, Creature* attacker, Creature* target, int32_t healthChange, bool force = false);
+		bool combatChangeHealth(CombatType_t combatType, Creature* attacker, Creature* target, int32_t healthChange,
+			MagicEffect_t hitEffect = NM_MAGIC_UNKNOWN, TextColor_t hitColor = TEXTCOLOR_UNKNOWN, bool force = false);
 		bool combatChangeMana(Creature* attacker, Creature* target, int32_t manaChange);
 
 		//animation help functions

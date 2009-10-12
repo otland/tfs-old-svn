@@ -57,7 +57,7 @@ void Teleport::__addThing(Creature* actor, int32_t index, Thing* thing)
 	if(Creature* creature = thing->getCreature())
 	{
 		getTile()->moveCreature(actor, creature, destTile);
-		g_game.addMagicEffect(destTile->getPosition(), NM_ME_TELEPORT, creature->isGhost());
+		g_game.addMagicEffect(destTile->getPosition(), NM_MAGIC_TELEPORT, creature->isGhost());
 	}
 	else if(Item* item = thing->getItem())
 		g_game.internalMoveItem(actor, getTile(), destTile, INDEX_WHEREEVER, item, item->getItemCount(), NULL);
@@ -66,12 +66,14 @@ void Teleport::__addThing(Creature* actor, int32_t index, Thing* thing)
 void Teleport::postAddNotification(Creature* actor, Thing* thing, const Cylinder* oldParent,
 	int32_t index, cylinderlink_t link /*= LINK_OWNER*/)
 {
-	getParent()->postAddNotification(actor, thing, oldParent, index, LINK_PARENT);
+	if(getParent())
+		getParent()->postAddNotification(actor, thing, oldParent, index, LINK_PARENT);
 }
 
 void Teleport::postRemoveNotification(Creature* actor, Thing* thing, const Cylinder* newParent,
 	int32_t index, bool isCompleteRemoval, cylinderlink_t link /*= LINK_OWNER*/)
 {
-	getParent()->postRemoveNotification(actor, thing, newParent,
-		index, isCompleteRemoval, LINK_PARENT);
+	if(getParent())
+		getParent()->postRemoveNotification(actor, thing, newParent,
+			index, isCompleteRemoval, LINK_PARENT);
 }

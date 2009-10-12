@@ -99,10 +99,10 @@ struct poolTag
 class PoolManager
 {
 	public:
-		static PoolManager& getInstance()
+		static PoolManager* getInstance()
 		{
 			static PoolManager instance;
-			return instance;
+			return &instance;
 		}
 
 		void* allocate(size_t size)

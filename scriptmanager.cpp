@@ -15,9 +15,9 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////
 #include "otpch.h"
-#include <boost/filesystem.hpp>
-
 #include "scriptmanager.h"
+
+#include <boost/filesystem.hpp>
 #include <libxml/xmlmemory.h>
 #include <libxml/parser.h>
 
@@ -118,31 +118,38 @@ bool ScriptingManager::loadMods()
 	if(!boost::filesystem::exists(modsPath))
 		return true; //silently ignore
 
-	int32_t i = 0;
+	int32_t i = 0, j = 0;
+	bool enabled = false;
 	for(boost::filesystem::directory_iterator it(modsPath), end; it != end; ++it)
 	{
-		std::string name = it->leaf(); //deprecated in newer version of boost, use filename() if compilation fails even if deprecations aren't disabled
-		if(!boost::filesystem::is_directory(it->status()) && name.find(".xml") != std::string::npos)
+		std::string s = it->leaf();
+		if(boost::filesystem::is_directory(it->status()) && (s.size() > 4 ? s.substr(s.size() - 4) : "") != ".xml")
+			continue;
+
+		std::cout << "> Loading " << s << "...";
+		if(loadFromXml(s, enabled))
 		{
-			bool enabled;
-			std::cout << "> Loading " << name << "...";
-			if(loadFromXml(name, enabled))
+			std::cout << " done";
+			if(!enabled)
 			{
-				std::cout << " done";
-				if(!enabled)
-					std::cout << ", but disabled";
-
-				std::cout << ".";
+				++j;
+				std::cout << ", but disabled";
 			}
-			else
-				std::cout << " failed!";
 
-			std::cout << std::endl;
-			++i;
+			std::cout << ".";
 		}
+		else
+			std::cout << " failed!";
+
+		std::cout << std::endl;
+		++i;
 	}
 
-	std::cout << "> " << i << " mods were loaded." << std::endl;
+	std::cout << "> " << i << " mods were loaded";
+	if(j)
+		std::cout << " (" << j << " disabled)";
+
+	std::cout << "." << std::endl;
 	modsLoaded = true;
 	return true;
 }
@@ -161,7 +168,9 @@ bool ScriptingManager::reloadMods()
 
 bool ScriptingManager::loadFromXml(const std::string& file, bool& enabled)
 {
+	enabled = false;
 	std::string modPath = getFilePath(FILE_TYPE_MOD, file);
+
 	xmlDocPtr doc = xmlParseFile(modPath.c_str());
 	if(!doc)
 	{

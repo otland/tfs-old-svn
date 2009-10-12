@@ -137,7 +137,7 @@ class IOMap
 				map->housefile += "-house.xml";
 			}
 
-			return Houses::getInstance().loadFromXml(map->housefile);
+			return Houses::getInstance()->loadFromXml(map->housefile);
 		}
 
 		const std::string& getLastErrorString() const {return errorString;}

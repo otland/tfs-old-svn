@@ -58,8 +58,8 @@ ItemType::ItemType()
 	wieldPosition = SLOT_HAND;
 	ammoType = AMMO_NONE;
 	ammoAction = AMMOACTION_NONE;
-	shootType = (ShootType_t)0;
-	magicEffect = NM_ME_NONE;
+	shootType = (ShootEffect_t)0;
+	magicEffect = NM_MAGIC_NONE;
 	attack = extraAttack = 0;
 	defense = extraDefense = 0;
 	attackSpeed = 0;
@@ -92,8 +92,8 @@ ItemType::ItemType()
 	worth = 0;
 
 	bedPartnerDir = NORTH;
-	transformToOnUse[PLAYERSEX_FEMALE] = 0;
-	transformToOnUse[PLAYERSEX_MALE] = 0;
+	transformUseTo[PLAYERSEX_FEMALE] = 0;
+	transformUseTo[PLAYERSEX_MALE] = 0;
 	transformToFree = 0;
 	levelDoor = 0;
 
@@ -421,7 +421,7 @@ bool Items::loadFromXml()
 			continue;
 
 		//check bed items
-		if((it->transformToFree || it->transformToOnUse[PLAYERSEX_FEMALE] || it->transformToOnUse[PLAYERSEX_MALE]) && it->type != ITEM_TYPE_BED)
+		if((it->transformToFree || it->transformUseTo[PLAYERSEX_FEMALE] || it->transformUseTo[PLAYERSEX_MALE]) && it->type != ITEM_TYPE_BED)
 			std::cout << "[Warning - Items::loadFromXml] Item " << it->id << " is not set as a bed-type." << std::endl;
 	}
 
@@ -831,8 +831,8 @@ void Items::parseItemNode(xmlNodePtr itemNode, uint32_t id)
 			{
 				if(readXMLString(itemAttributesNode, "value", strValue))
 				{
-					ShootType_t shoot = getShootType(strValue);
-					if(shoot != NM_SHOOT_UNK)
+					ShootEffect_t shoot = getShootType(strValue);
+					if(shoot != NM_SHOOT_UNKNOWN)
 						it.shootType = shoot;
 					else
 						std::cout << "[Warning - Items::loadFromXml] Unknown shootType " << strValue << std::endl;
@@ -842,8 +842,8 @@ void Items::parseItemNode(xmlNodePtr itemNode, uint32_t id)
 			{
 				if(readXMLString(itemAttributesNode, "value", strValue))
 				{
-					MagicEffectClasses effect = getMagicEffect(strValue);
-					if(effect != NM_ME_UNK)
+					MagicEffect_t effect = getMagicEffect(strValue);
+					if(effect != NM_MAGIC_UNKNOWN)
 						it.magicEffect = effect;
 					else
 						std::cout << "[Warning - Items::loadFromXml] Unknown effect " << strValue << std::endl;
@@ -1672,26 +1672,26 @@ void Items::parseItemNode(xmlNodePtr itemNode, uint32_t id)
 			{
 				if(readXMLInteger(itemAttributesNode, "value", intValue))
 				{
-					it.transformToOnUse[PLAYERSEX_MALE] = intValue;
+					it.transformUseTo[PLAYERSEX_MALE] = intValue;
 					ItemType& ot = getItemType(intValue);
 					if(!ot.transformToFree)
 						ot.transformToFree = it.id;
 
-					if(!it.transformToOnUse[PLAYERSEX_FEMALE])
-						it.transformToOnUse[PLAYERSEX_FEMALE] = intValue;
+					if(!it.transformUseTo[PLAYERSEX_FEMALE])
+						it.transformUseTo[PLAYERSEX_FEMALE] = intValue;
 				}
 			}
 			else if(tmpStrValue == "femaletransformto")
 			{
 				if(readXMLInteger(itemAttributesNode, "value", intValue))
 				{
-					it.transformToOnUse[PLAYERSEX_FEMALE] = intValue;
+					it.transformUseTo[PLAYERSEX_FEMALE] = intValue;
 					ItemType& ot = getItemType(intValue);
 					if(!ot.transformToFree)
 						ot.transformToFree = it.id;
 
-					if(!it.transformToOnUse[PLAYERSEX_MALE])
-						it.transformToOnUse[PLAYERSEX_MALE] = intValue;
+					if(!it.transformUseTo[PLAYERSEX_MALE])
+						it.transformUseTo[PLAYERSEX_MALE] = intValue;
 				}
 			}
 			else if(tmpStrValue == "transformto")

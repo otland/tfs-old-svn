@@ -3,7 +3,7 @@
 		The Forgotten Server
 
 	Version
-		0.3.5
+		0.3.6
 
 	Codenamed
 		Crying Damson
@@ -688,7 +688,7 @@
 			//
 		]
 	]
-	[ 0.3.5
+	[ 0.3.6
 		[ Note
 			We just had no time to finish this, as there are just too many of these files...
 		]
@@ -866,7 +866,7 @@
 			getGroupInfo(id), doPlayerAddFrags(cid, amount) (slawkens)
 		Possibility to update from 0.2.1 (Elf)
 	]
-	[ 0.3.5
+	[ 0.3.6
 		Full protocol 8.5 support (Elf, OpenTibia SVN, Talaturen)
 		Modifications system 'aka mods & moved custom things there (Elf, slawkens)
 		Guildhall support (Elf)
@@ -959,7 +959,7 @@
 		LuaFunction: getPlayerLookDir(cid), use getCreatureLookDirection(cid)
 		Integer return values of Lua functions, use booleans instead
 	]
-	[ 0.3.5
+	[ 0.3.6
 		LuaFunctions: getHouse*(houseId) (getHouseName, getHouseRent etc) - use getHouseInfo(houseId).name/owner/entry/rent/price/town, etc
 		LuaConstants: All are listed in compat.lua, though
 	]
@@ -1076,7 +1076,7 @@
 
 		... and few more.
 	]
-	[ 0.3.5
+	[ 0.3.6
 		NPC voices (Elf)
 		Some vocation attributes not working or working unproperly (Elf)
 		Account name cannot be same as password anymore (Elf)

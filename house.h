@@ -213,7 +213,7 @@ class House
 		AccessHouseLevel_t getHouseAccessLevel(const Player* player);
 
 		bool kickPlayer(Player* player, Player* target);
-		void updateDoorDescription(std::string name = "");
+		void updateDoorDescription(std::string _name = "");
 		void clean();
 
 		void addDoor(Door* door);
@@ -254,10 +254,10 @@ class Houses
 {
 	public:
 		virtual ~Houses() {}
-		static Houses& getInstance()
+		static Houses* getInstance()
 		{
 			static Houses instance;
-			return instance;
+			return &instance;
 		}
 
 		bool loadFromXml(std::string filename);

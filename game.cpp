@@ -97,11 +97,11 @@ Game::~Game()
 
 void Game::start(ServiceManager* servicer)
 {
-	checkDecayEvent = Scheduler::getScheduler().addEvent(createSchedulerTask(EVENT_DECAYINTERVAL,
+	checkDecayEvent = Scheduler::getInstance()->addEvent(createSchedulerTask(EVENT_DECAYINTERVAL,
 		boost::bind(&Game::checkDecay, this)));
-	checkCreatureEvent = Scheduler::getScheduler().addEvent(createSchedulerTask(EVENT_CREATURE_THINK_INTERVAL,
+	checkCreatureEvent = Scheduler::getInstance()->addEvent(createSchedulerTask(EVENT_CREATURE_THINK_INTERVAL,
 		boost::bind(&Game::checkCreatures, this)));
-	checkLightEvent = Scheduler::getScheduler().addEvent(createSchedulerTask(EVENT_LIGHTINTERVAL,
+	checkLightEvent = Scheduler::getInstance()->addEvent(createSchedulerTask(EVENT_LIGHTINTERVAL,
 		boost::bind(&Game::checkLight, this)));
 
 	services = servicer;
@@ -148,7 +148,7 @@ void Game::start(ServiceManager* servicer)
 
 		uint32_t hoursLeftInMs = 60000 * 60 * hoursLeft, minutesLeftInMs = 60000 * (minutesLeft - minutesToRemove);
 		if(!ignoreEvent && (hoursLeftInMs + minutesLeftInMs) > 0)
-			saveEvent = Scheduler::getScheduler().addEvent(createSchedulerTask(hoursLeftInMs + minutesLeftInMs,
+			saveEvent = Scheduler::getInstance()->addEvent(createSchedulerTask(hoursLeftInMs + minutesLeftInMs,
 				boost::bind(&Game::prepareGlobalSave, this)));
 	}
 }
@@ -197,12 +197,12 @@ void Game::setGameState(GameState_t newState)
 					it = Player::autoList.begin();
 				}
 
-				Houses::getInstance().payHouses();
+				Houses::getInstance()->payHouses();
 				saveGameState(false);
-				Dispatcher::getDispatcher().addTask(createTask(boost::bind(&Game::shutdown, this)));
+				Dispatcher::getInstance()->addTask(createTask(boost::bind(&Game::shutdown, this)));
 
-				Scheduler::getScheduler().stop();
-				Dispatcher::getDispatcher().stop();
+				Scheduler::getInstance()->stop();
+				Dispatcher::getInstance()->stop();
 				break;
 			}
 
@@ -276,6 +276,7 @@ void Game::cleanMap(uint32_t& count)
 
 	Tile* tile = NULL;
 	Item* item = NULL;
+	TileItemVector::iterator tit;
 
 	int32_t tiles = -1;
 	if(g_config.getBool(ConfigManager::STORE_TRASH))
@@ -284,30 +285,36 @@ void Game::cleanMap(uint32_t& count)
 		Trash::iterator it = trash.begin();
 		if(g_config.getBool(ConfigManager::CLEAN_PROTECTED_ZONES))
 		{
-			while(it != trash.end())
+			for(; it != trash.end(); ++it)
 			{
-				if((tile = getTile(*it)))
-				{
-					tile->resetFlag(TILESTATE_TRASHED);
-					if(!tile->hasFlag(TILESTATE_HOUSE))
-					{
-						for(uint32_t i = 0; i < tile->getThingCount();)
-						{
-							if((item = tile->__getThing(i)->getItem()) && item->isMoveable()
-								&& !item->isLoadedFromMap() && !item->isScriptProtected())
-							{
-								internalRemoveItem(NULL, item);
-								count++;
-							}
-							else
-								++i;
-						}
-					}
-				}
+				if(!(tile = getTile(*it)))
+					continue;
 
-				trash.erase(it);
-				it = trash.begin();
+				tile->resetFlag(TILESTATE_TRASHED);
+				if(tile->hasFlag(TILESTATE_HOUSE))
+					continue;
+
+				if(!tile->getItemList())
+					continue;
+
+				tit = tile->getItemList().begin();
+				while(tile->getItemList() && tit != tile->getItemLIst.end())
+				{
+					if((*tit)->isMoveable() && !(*tit)->isLoadedFromMap()
+						&& !(*tit)->isScriptProtected())
+					{
+						internalRemoveItem(NULL, (*tit));
+						if(tile->getItemList())
+							tit = tile->getItemList().begin();
+
+						++count;
+					}
+					else
+						++tit;
+				}
 			}
+
+			trash.clear();
 		}
 		else
 		{
@@ -328,12 +335,11 @@ void Game::cleanMap(uint32_t& count)
 							}
 							else
 								++i;
-						}
+					}
 					}
 				}
 
-				trash.erase(it);
-				it = trash.begin();
+				it = trash.erase(it);
 			}
 		}
 	}
@@ -413,7 +419,7 @@ void Game::proceduralRefresh(RefreshTiles::iterator* it/* = NULL*/)
 
 	// Refresh some items every 100 ms until all tiles has been checked
 	// For 100k tiles, this would take 100000/2500 = 40s = half a minute
-	Scheduler::getScheduler().addEvent(createSchedulerTask(100,
+	Scheduler::getInstance()->addEvent(createSchedulerTask(100,
 		boost::bind(&Game::proceduralRefresh, this, it)));
 }
 
@@ -1005,7 +1011,7 @@ bool Game::playerMoveCreature(uint32_t playerId, uint32_t movingCreatureId,
 		std::list<Direction> listDir;
 		if(getPathToEx(player, movingCreaturePos, listDir, 0, 1, true, true))
 		{
-			Dispatcher::getDispatcher().addTask(createTask(boost::bind(&Game::playerAutoWalk,
+			Dispatcher::getInstance()->addTask(createTask(boost::bind(&Game::playerAutoWalk,
 				this, player->getID(), listDir)));
 			SchedulerTask* task = createSchedulerTask(player->getStepDuration(), boost::bind(&Game::playerMoveCreature, this,
 				playerId, movingCreatureId, movingCreaturePos, toPos));
@@ -1259,7 +1265,7 @@ bool Game::playerMoveItem(uint32_t playerId, const Position& fromPos,
 		std::list<Direction> listDir;
 		if(getPathToEx(player, item->getPosition(), listDir, 0, 1, true, true))
 		{
-			Dispatcher::getDispatcher().addTask(createTask(boost::bind(&Game::playerAutoWalk,
+			Dispatcher::getInstance()->addTask(createTask(boost::bind(&Game::playerAutoWalk,
 				this, player->getID(), listDir)));
 			SchedulerTask* task = createSchedulerTask(player->getStepDuration(), boost::bind(&Game::playerMoveItem, this,
 				playerId, fromPos, spriteId, fromStackpos, toPos, count));
@@ -1323,7 +1329,7 @@ bool Game::playerMoveItem(uint32_t playerId, const Position& fromPos,
 			std::list<Direction> listDir;
 			if(map->getPathTo(player, walkPos, listDir))
 			{
-				Dispatcher::getDispatcher().addTask(createTask(boost::bind(&Game::playerAutoWalk,
+				Dispatcher::getInstance()->addTask(createTask(boost::bind(&Game::playerAutoWalk,
 					this, player->getID(), listDir)));
 				SchedulerTask* task = createSchedulerTask(player->getStepDuration(), boost::bind(&Game::playerMoveItem, this,
 					playerId, itemPos, spriteId, itemStackpos, toPos, count));
@@ -2372,7 +2378,7 @@ bool Game::playerUseItemEx(uint32_t playerId, const Position& fromPos, int16_t f
 			std::list<Direction> listDir;
 			if(getPathToEx(player, walkToPos, listDir, 0, 1, true, true, 10))
 			{
-				Dispatcher::getDispatcher().addTask(createTask(boost::bind(&Game::playerAutoWalk,
+				Dispatcher::getInstance()->addTask(createTask(boost::bind(&Game::playerAutoWalk,
 					this, player->getID(), listDir)));
 
 				SchedulerTask* task = createSchedulerTask(400, boost::bind(&Game::playerUseItemEx, this,
@@ -2439,7 +2445,7 @@ bool Game::playerUseItem(uint32_t playerId, const Position& pos, int16_t stackpo
 			std::list<Direction> listDir;
 			if(getPathToEx(player, pos, listDir, 0, 1, true, true))
 			{
-				Dispatcher::getDispatcher().addTask(createTask(boost::bind(&Game::playerAutoWalk,
+				Dispatcher::getInstance()->addTask(createTask(boost::bind(&Game::playerAutoWalk,
 					this, player->getID(), listDir)));
 
 				SchedulerTask* task = createSchedulerTask(400, boost::bind(&Game::playerUseItem, this,
@@ -2516,7 +2522,7 @@ bool Game::playerUseBattleWindow(uint32_t playerId, const Position& fromPos, int
 			std::list<Direction> listDir;
 			if(getPathToEx(player, item->getPosition(), listDir, 0, 1, true, true))
 			{
-				Dispatcher::getDispatcher().addTask(createTask(boost::bind(&Game::playerAutoWalk,
+				Dispatcher::getInstance()->addTask(createTask(boost::bind(&Game::playerAutoWalk,
 					this, player->getID(), listDir)));
 
 				SchedulerTask* task = createSchedulerTask(400, boost::bind(&Game::playerUseBattleWindow, this,
@@ -2634,7 +2640,7 @@ bool Game::playerRotateItem(uint32_t playerId, const Position& pos, int16_t stac
 		std::list<Direction> listDir;
 		if(getPathToEx(player, pos, listDir, 0, 1, true, true))
 		{
-			Dispatcher::getDispatcher().addTask(createTask(boost::bind(&Game::playerAutoWalk,
+			Dispatcher::getInstance()->addTask(createTask(boost::bind(&Game::playerAutoWalk,
 				this, player->getID(), listDir)));
 
 			SchedulerTask* task = createSchedulerTask(400, boost::bind(&Game::playerRotateItem, this,
@@ -2790,7 +2796,7 @@ bool Game::playerRequestTrade(uint32_t playerId, const Position& pos, int16_t st
 		std::list<Direction> listDir;
 		if(getPathToEx(player, pos, listDir, 0, 1, true, true))
 		{
-			Dispatcher::getDispatcher().addTask(createTask(boost::bind(&Game::playerAutoWalk,
+			Dispatcher::getInstance()->addTask(createTask(boost::bind(&Game::playerAutoWalk,
 				this, player->getID(), listDir)));
 
 			SchedulerTask* task = createSchedulerTask(400, boost::bind(&Game::playerRequestTrade, this,
@@ -3835,7 +3841,7 @@ bool Game::internalCreatureTurn(Creature* creature, Direction dir)
 }
 
 bool Game::internalCreatureSay(Creature* creature, SpeakClasses type, const std::string& text,
-	bool ghostMode, SpectatorVec* listPtr/* = NULL*/, Position* pos/* = NULL*/)
+	bool ghostMode, SpectatorVec* spectators/* = NULL*/, Position* pos/* = NULL*/)
 {
 	Player* player = creature->getPlayer();
 	if(player && player->isAccountManager())
@@ -3850,7 +3856,7 @@ bool Game::internalCreatureSay(Creature* creature, SpeakClasses type, const std:
 
 	SpectatorVec list;
 	SpectatorVec::const_iterator it;
-	if(!listPtr || !listPtr->size())
+	if(!spectators || !spectators->size())
 	{
 		// This somewhat complex construct ensures that the cached SpectatorVec
 		// is used if available and if it can be used, else a local vector is
@@ -3864,7 +3870,7 @@ bool Game::internalCreatureSay(Creature* creature, SpeakClasses type, const std:
 			getSpectators(list, destPos, false, true, 18, 18, 14, 14);
 	}
 	else
-		list = (*listPtr);
+		list = (*spectators);
 
 	//send to client
 	Player* tmpPlayer = NULL;
@@ -3957,7 +3963,7 @@ void Game::removeCreatureCheck(Creature* creature)
 
 void Game::checkCreatures()
 {
-	Scheduler::getScheduler().addEvent(createSchedulerTask(
+	Scheduler::getInstance()->addEvent(createSchedulerTask(
 		EVENT_CHECK_CREATURE_INTERVAL, boost::bind(&Game::checkCreatures, this)));
 	checkCreatureLastIndex++;
 	if(checkCreatureLastIndex == EVENT_CREATURECOUNT)
@@ -4082,7 +4088,7 @@ bool Game::combatBlockHit(CombatType_t combatType, Creature* attacker, Creature*
 	const SpectatorVec& list = getSpectators(targetPos);
 	if(!target->isAttackable() || Combat::canDoCombat(attacker, target) != RET_NOERROR)
 	{
-		addMagicEffect(list, targetPos, NM_ME_POFF, target->isGhost());
+		addMagicEffect(list, targetPos, NM_MAGIC_POFF, target->isGhost());
 		return true;
 	}
 
@@ -4092,60 +4098,48 @@ bool Game::combatBlockHit(CombatType_t combatType, Creature* attacker, Creature*
 	healthChange = -damage;
 	if(blockType == BLOCK_DEFENSE)
 	{
-		addMagicEffect(list, targetPos, NM_ME_POFF);
+		addMagicEffect(list, targetPos, NM_MAGIC_POFF);
 		return true;
 	}
 	else if(blockType == BLOCK_ARMOR)
 	{
-		addMagicEffect(list, targetPos, NM_ME_BLOCKHIT);
+		addMagicEffect(list, targetPos, NM_MAGIC_BLOCKHIT);
 		return true;
 	}
-	else if(blockType == BLOCK_IMMUNITY)
+	else if(blockType != BLOCK_IMMUNITY)
+		return false;
+
+	MagicEffect_t effect = NM_MAGIC_NONE;
+	switch(combatType)
 	{
-		uint8_t hitEffect = 0;
-		switch(combatType)
+		case COMBAT_UNDEFINEDDAMAGE:
+			break;
+
+		case COMBAT_ENERGYDAMAGE:
+		case COMBAT_FIREDAMAGE:
+		case COMBAT_PHYSICALDAMAGE:
+		case COMBAT_ICEDAMAGE:
+		case COMBAT_DEATHDAMAGE:
+		case COMBAT_EARTHDAMAGE:
+		case COMBAT_HOLYDAMAGE:
 		{
-			case COMBAT_UNDEFINEDDAMAGE:
-				break;
-
-			case COMBAT_ENERGYDAMAGE:
-			case COMBAT_FIREDAMAGE:
-			case COMBAT_PHYSICALDAMAGE:
-			case COMBAT_ICEDAMAGE:
-			case COMBAT_DEATHDAMAGE:
-			{
-				hitEffect = (uint8_t)NM_ME_BLOCKHIT;
-				break;
-			}
-
-			case COMBAT_EARTHDAMAGE:
-			{
-				hitEffect = (uint8_t)NM_ME_POISON_RINGS;
-				break;
-			}
-
-			case COMBAT_HOLYDAMAGE:
-			{
-				hitEffect = (uint8_t)NM_ME_HOLYDAMAGE;
-				break;
-			}
-
-			default:
-			{
-				hitEffect = (uint8_t)NM_ME_POFF;
-				break;
-			}
+			effect = NM_MAGIC_BLOCKHIT;
+			break;
 		}
 
-		addMagicEffect(list, targetPos, hitEffect);
-		return true;
+		default:
+		{
+			effect = NM_MAGIC_POFF;
+			break;
+		}
 	}
 
-	return false;
+	addMagicEffect(list, targetPos, effect);
+	return true;
 }
 
-bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creature* target,
-	int32_t healthChange, bool force/* = false*/)
+bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creature* target, int32_t healthChange,
+	MagicEffect_t hitEffect/* = NM_MAGIC_UNKNOWN*/, TextColor_t hitColor/* = TEXTCOLOR_UNKNOWN*/, bool force/* = false*/)
 {
 	const Position& targetPos = target->getPosition();
 	if(healthChange > 0)
@@ -4173,7 +4167,7 @@ bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creat
 
 			const SpectatorVec& list = getSpectators(targetPos);
 			if(combatType != COMBAT_HEALING)
-				addMagicEffect(list, targetPos, NM_ME_MAGIC_ENERGY);
+				addMagicEffect(list, targetPos, NM_MAGIC_MAGIC_ENERGY);
 
 			addAnimatedText(list, targetPos, TEXTCOLOR_GREEN, buffer);
 		}
@@ -4183,7 +4177,7 @@ bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creat
 		const SpectatorVec& list = getSpectators(targetPos);
 		if(!target->isAttackable() || Combat::canDoCombat(attacker, target) != RET_NOERROR)
 		{
-			addMagicEffect(list, targetPos, NM_ME_POFF);
+			addMagicEffect(list, targetPos, NM_MAGIC_POFF);
 			return true;
 		}
 
@@ -4211,7 +4205,7 @@ bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creat
 					char buffer[20];
 					sprintf(buffer, "%d", manaDamage);
 
-					addMagicEffect(list, targetPos, NM_ME_LOSE_ENERGY);
+					addMagicEffect(list, targetPos, NM_MAGIC_LOSE_ENERGY);
 					addAnimatedText(list, targetPos, TEXTCOLOR_BLUE, buffer);
 				}
 			}
@@ -4234,7 +4228,7 @@ bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creat
 				addCreatureHealth(list, target);
 
 				TextColor_t textColor = TEXTCOLOR_NONE;
-				MagicEffectClasses hitEffect = NM_ME_NONE;
+				MagicEffect_t magicEffect = NM_MAGIC_NONE;
 				switch(combatType)
 				{
 					case COMBAT_PHYSICALDAMAGE:
@@ -4244,29 +4238,29 @@ bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creat
 						{
 							case RACE_VENOM:
 								textColor = TEXTCOLOR_LIGHTGREEN;
-								hitEffect = NM_ME_POISON;
+								magicEffect = NM_MAGIC_POISON;
 								splash = Item::CreateItem(ITEM_SMALLSPLASH, FLUID_GREEN);
 								break;
 
 							case RACE_BLOOD:
 								textColor = TEXTCOLOR_RED;
-								hitEffect = NM_ME_DRAW_BLOOD;
+								magicEffect = NM_MAGIC_DRAW_BLOOD;
 								splash = Item::CreateItem(ITEM_SMALLSPLASH, FLUID_BLOOD);
 								break;
 
 							case RACE_UNDEAD:
 								textColor = TEXTCOLOR_GREY;
-								hitEffect = NM_ME_HIT_AREA;
+								magicEffect = NM_MAGIC_HIT_AREA;
 								break;
 
 							case RACE_FIRE:
 								textColor = TEXTCOLOR_ORANGE;
-								hitEffect = NM_ME_DRAW_BLOOD;
+								magicEffect = NM_MAGIC_DRAW_BLOOD;
 								break;
 
 							case RACE_ENERGY:
 								textColor = TEXTCOLOR_PURPLE;
-								hitEffect = NM_ME_PURPLEENERGY;
+								magicEffect = NM_MAGIC_PURPLEENERGY;
 								break;
 
 							default:
@@ -4284,56 +4278,56 @@ bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creat
 					case COMBAT_ENERGYDAMAGE:
 					{
 						textColor = TEXTCOLOR_PURPLE;
-						hitEffect = NM_ME_ENERGY_DAMAGE;
+						magicEffect = NM_MAGIC_ENERGY_DAMAGE;
 						break;
 					}
 
 					case COMBAT_EARTHDAMAGE:
 					{
 						textColor = TEXTCOLOR_LIGHTGREEN;
-						hitEffect = NM_ME_POISON_RINGS;
+						magicEffect = NM_MAGIC_POISON_RINGS;
 						break;
 					}
 
 					case COMBAT_DROWNDAMAGE:
 					{
 						textColor = TEXTCOLOR_LIGHTBLUE;
-						hitEffect = NM_ME_LOSE_ENERGY;
+						magicEffect = NM_MAGIC_LOSE_ENERGY;
 						break;
 					}
 
 					case COMBAT_FIREDAMAGE:
 					{
 						textColor = TEXTCOLOR_ORANGE;
-						hitEffect = NM_ME_HITBY_FIRE;
+						magicEffect = NM_MAGIC_HITBY_FIRE;
 						break;
 					}
 
 					case COMBAT_ICEDAMAGE:
 					{
 						textColor = TEXTCOLOR_TEAL;
-						hitEffect = NM_ME_ICEATTACK;
+						magicEffect = NM_MAGIC_ICEATTACK;
 						break;
 					}
 
 					case COMBAT_HOLYDAMAGE:
 					{
 						textColor = TEXTCOLOR_YELLOW;
-						hitEffect = NM_ME_HOLYDAMAGE;
+						magicEffect = NM_MAGIC_HOLYDAMAGE;
 						break;
 					}
 
 					case COMBAT_DEATHDAMAGE:
 					{
 						textColor = TEXTCOLOR_DARKRED;
-						hitEffect = NM_ME_SMALLCLOUDS;
+						magicEffect = NM_MAGIC_SMALLCLOUDS;
 						break;
 					}
 
 					case COMBAT_LIFEDRAIN:
 					{
 						textColor = TEXTCOLOR_RED;
-						hitEffect = NM_ME_MAGIC_BLOOD;
+						magicEffect = NM_MAGIC_MAGIC_BLOOD;
 						break;
 					}
 
@@ -4341,12 +4335,18 @@ bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creat
 						break;
 				}
 
-				if(textColor != TEXTCOLOR_NONE)
+				if(hitEffect != NM_MAGIC_UNKNOWN)
+					magicEffect = hitEffect;
+
+				if(hitColor != TEXTCOLOR_UNKNOWN)
+					textColor = hitColor;
+
+				if(textColor < TEXTCOLOR_NONE && magicEffect < NM_MAGIC_NONE)
 				{
 					char buffer[20];
 					sprintf(buffer, "%d", damage);
 
-					addMagicEffect(list, targetPos, hitEffect);
+					addMagicEffect(list, targetPos, magicEffect);
 					addAnimatedText(list, targetPos, textColor, buffer);
 				}
 			}
@@ -4388,7 +4388,7 @@ bool Game::combatChangeMana(Creature* attacker, Creature* target, int32_t manaCh
 		const SpectatorVec& list = getSpectators(targetPos);
 		if(!target->isAttackable() || Combat::canDoCombat(attacker, target) != RET_NOERROR)
 		{
-			addMagicEffect(list, targetPos, NM_ME_POFF);
+			addMagicEffect(list, targetPos, NM_MAGIC_POFF);
 			return false;
 		}
 
@@ -4396,7 +4396,7 @@ bool Game::combatChangeMana(Creature* attacker, Creature* target, int32_t manaCh
 		BlockType_t blockType = target->blockHit(attacker, COMBAT_MANADRAIN, manaLoss);
 		if(blockType != BLOCK_NONE)
 		{
-			addMagicEffect(list, targetPos, NM_ME_POFF);
+			addMagicEffect(list, targetPos, NM_MAGIC_POFF);
 			return false;
 		}
 
@@ -4500,27 +4500,23 @@ void Game::addDistanceEffect(const SpectatorVec& list, const Position& fromPos, 
 
 void Game::startDecay(Item* item)
 {
-	if(item && item->canDecay())
-	{
-		uint32_t decayState = item->getDecaying();
-		if(decayState == DECAYING_TRUE)
-			 return;
+	if(!item || !item->canDecay() || item->getDecaying() == DECAYING_TRUE)
+		return;
 
-		if(item->getDuration() > 0)
-		{
-			item->addRef();
-			item->setDecaying(DECAYING_TRUE);
-			toDecayItems.push_back(item);
-		}
-		else
-			internalDecayItem(item);
+	if(item->getDuration() > 0)
+	{
+		item->addRef();
+		item->setDecaying(DECAYING_TRUE);
+		toDecayItems.push_back(item);
 	}
+	else
+		internalDecayItem(item);
 }
 
 void Game::internalDecayItem(Item* item)
 {
 	const ItemType& it = Item::items.getItemType(item->getID());
-	if(it.decayTo != 0)
+	if(it.decayTo)
 	{
 		Item* newItem = transformItem(item, it.decayTo);
 		startDecay(newItem);
@@ -4535,7 +4531,7 @@ void Game::internalDecayItem(Item* item)
 
 void Game::checkDecay()
 {
-	Scheduler::getScheduler().addEvent(createSchedulerTask(EVENT_DECAYINTERVAL,
+	Scheduler::getInstance()->addEvent(createSchedulerTask(EVENT_DECAYINTERVAL,
 		boost::bind(&Game::checkDecay, this)));
 
 	size_t bucket = (lastBucket + 1) % EVENT_DECAYBUCKETS;
@@ -4584,7 +4580,7 @@ void Game::checkDecay()
 
 void Game::checkLight()
 {
-	Scheduler::getScheduler().addEvent(createSchedulerTask(EVENT_LIGHTINTERVAL,
+	Scheduler::getInstance()->addEvent(createSchedulerTask(EVENT_LIGHTINTERVAL,
 		boost::bind(&Game::checkLight, this)));
 
 	lightHour = lightHour + lightHourDelta;
@@ -5130,8 +5126,8 @@ bool Game::playerViolationWindow(uint32_t playerId, std::string name, uint8_t re
 		sprintf(buffer, "You have been %s.", (kickAction > KICK ? "banished" : "namelocked"));
 		target->sendTextMessage(MSG_INFO_DESCR, buffer);
 
-		addMagicEffect(target->getPosition(), NM_ME_MAGIC_POISON);
-		Scheduler::getScheduler().addEvent(createSchedulerTask(1000, boost::bind(
+		addMagicEffect(target->getPosition(), NM_MAGIC_MAGIC_POISON);
+		Scheduler::getInstance()->addEvent(createSchedulerTask(1000, boost::bind(
 			&Game::kickPlayer, this, target->getID(), false)));
 	}
 
@@ -5172,6 +5168,7 @@ Position Game::getClosestFreeTile(Creature* creature, Position pos, bool extende
 	relList.push_back(PositionPair(1, -1));
 	relList.push_back(PositionPair(1, 0));
 	relList.push_back(PositionPair(1, 1));
+
 	if(extended)
 	{
 		relList.push_back(PositionPair(-2, 0));
@@ -5594,7 +5591,7 @@ void Game::checkHighscores()
 	if(tmp <= 0)
 		return;
 
-	Scheduler::getScheduler().addEvent(createSchedulerTask(tmp, boost::bind(&Game::checkHighscores, this)));
+	Scheduler::getInstance()->addEvent(createSchedulerTask(tmp, boost::bind(&Game::checkHighscores, this)));
 }
 
 std::string Game::getHighscoreString(uint16_t skill)
@@ -5815,7 +5812,7 @@ bool Game::reloadInfo(ReloadInfo_t reload, uint32_t playerId/* = 0*/)
 
 		case RELOAD_HOUSEPRICES:
 		{
-			if(Houses::getInstance().reloadPrices())
+			if(Houses::getInstance()->reloadPrices())
 				done = true;
 			else
 				std::cout << "[Error - Game::reloadInfo] Failed to reload house prices." << std::endl;
@@ -5993,19 +5990,19 @@ void Game::prepareGlobalSave()
 		globalSaveMessage[0] = true;
 
 		broadcastMessage("Server is going down for a global save within 5 minutes. Please logout.", MSG_STATUS_WARNING);
-		Scheduler::getScheduler().addEvent(createSchedulerTask(120000, boost::bind(&Game::prepareGlobalSave, this)));
+		Scheduler::getInstance()->addEvent(createSchedulerTask(120000, boost::bind(&Game::prepareGlobalSave, this)));
 	}
 	else if(!globalSaveMessage[1])
 	{
 		globalSaveMessage[1] = true;
 		broadcastMessage("Server is going down for a global save within 3 minutes. Please logout.", MSG_STATUS_WARNING);
-		Scheduler::getScheduler().addEvent(createSchedulerTask(120000, boost::bind(&Game::prepareGlobalSave, this)));
+		Scheduler::getInstance()->addEvent(createSchedulerTask(120000, boost::bind(&Game::prepareGlobalSave, this)));
 	}
 	else if(!globalSaveMessage[2])
 	{
 		globalSaveMessage[2] = true;
 		broadcastMessage("Server is going down for a global save in one minute, please logout!", MSG_STATUS_WARNING);
-		Scheduler::getScheduler().addEvent(createSchedulerTask(60000, boost::bind(&Game::prepareGlobalSave, this)));
+		Scheduler::getInstance()->addEvent(createSchedulerTask(60000, boost::bind(&Game::prepareGlobalSave, this)));
 	}
 	else
 		globalSave();
@@ -6016,12 +6013,12 @@ void Game::globalSave()
 	if(g_config.getBool(ConfigManager::SHUTDOWN_AT_GLOBALSAVE))
 	{
 		//shutdown server
-		Dispatcher::getDispatcher().addTask(createTask(boost::bind(&Game::setGameState, this, GAME_STATE_SHUTDOWN)));
+		Dispatcher::getInstance()->addTask(createTask(boost::bind(&Game::setGameState, this, GAME_STATE_SHUTDOWN)));
 		return;
 	}
 
 	//close server
-	Dispatcher::getDispatcher().addTask(createTask(boost::bind(&Game::setGameState, this, GAME_STATE_CLOSED)));
+	Dispatcher::getInstance()->addTask(createTask(boost::bind(&Game::setGameState, this, GAME_STATE_CLOSED)));
 	//clean map if configured to
 	if(g_config.getBool(ConfigManager::CLEAN_MAP_AT_GLOBALSAVE))
 	{
@@ -6030,7 +6027,7 @@ void Game::globalSave()
 	}
 
 	//pay houses
-	Houses::getInstance().payHouses();
+	Houses::getInstance()->payHouses();
 	//clear temporial and expired bans
 	IOBan::getInstance()->clearTemporials();
 	//remove premium days globally if configured to
@@ -6044,28 +6041,29 @@ void Game::globalSave()
 		setGlobalSaveMessage(i, false);
 
 	//prepare for next global save after 24 hours
-	Scheduler::getScheduler().addEvent(createSchedulerTask(86100000, boost::bind(&Game::prepareGlobalSave, this)));
+	Scheduler::getInstance()->addEvent(createSchedulerTask(86100000, boost::bind(&Game::prepareGlobalSave, this)));
 	//open server
-	Dispatcher::getDispatcher().addTask(createTask(boost::bind(&Game::setGameState, this, GAME_STATE_NORMAL)));
+	Dispatcher::getInstance()->addTask(createTask(boost::bind(&Game::setGameState, this, GAME_STATE_NORMAL)));
 }
 
 void Game::shutdown()
 {
 	std::cout << "Prepaparing";
-	Scheduler::getScheduler().shutdown();
+	Scheduler::getInstance()->shutdown();
 	std::cout << " to";
-	Dispatcher::getDispatcher().shutdown();
+	Dispatcher::getInstance()->shutdown();
 	std::cout << " shutdown";
 	Spawns::getInstance()->clear();
 	std::cout << " the";
 	Raids::getInstance()->clear();
 	std::cout << " server";
 	cleanup();
-	std::cout << "-" << std::endl;
+	std::cout << "-";
 	if(services)
 		services->stop();
 
 	std::cout << " done." << std::endl;
+	exit(0);
 }
 
 void Game::cleanup()

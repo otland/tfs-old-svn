@@ -23,8 +23,38 @@
 #define MULTI_SQL_DRIVERS
 #endif
 
-#ifndef WIN32
-	#define __CONSOLE__
+#ifdef __MINGW32__
+	#define XML_GCC_FREE
+	#ifndef __WINDOWS__
+		#define __WINDOWS__
+	#endif
+#endif
+
+#if defined _WIN32 || defined WIN32 || defined __WINDOWS__ || defined WINDOWS
+	#ifndef _WIN64
+		#ifndef _WIN32
+			#define _WIN32
+		#endif
+		#ifndef WIN32
+			#define WIN32
+		#endif
+	#endif
+	#indef __WINDOWS__
+		#define __WINDOWS__
+	#endif
+	#ifndef WINDOWS
+		#define WINDOWS
+	#endif
+#endif
+
+#ifdef __CYGWIN__
+	#undef WIN32
+	#undef WIN64
+	#undef _WIN32
+	#undef _WIN64
+	#undef WINDOWS
+	#undef __WINDOWS__
+	#define HAVE_ERRNO_AS_DEFINE
 #endif
 
 #ifdef XML_GCC_FREE
@@ -48,17 +78,17 @@
 	#endif
 #endif
 
-#if defined _WIN32
-#  ifndef WIN32
-#    define WIN32
-#  endif
-#endif
-
-#if defined __WINDOWS__ || defined WIN32
+#define BOOST_ASIO_ENABLE_CANCELIO 1
+#if defined WINDOWS
+#define __CONSOLE__
 
 #if defined _MSC_VER && defined NDEBUG
 	#define _SECURE_SCL 0
 	#define HAS_ITERATOR_DEBUGGING 0
+#endif
+
+#ifndef EWOULDBLOCK
+	#define EWOULDBLOCK WSAEWOULDBLOCK
 #endif
 
 #ifndef __FUNCTION__
@@ -69,11 +99,18 @@
 #undef _WIN32_WINNT
 #endif
 
+#ifdef _WIN64_WINNT
+#undef _WIN64_WINNT
+#endif
+
 //Windows 2000	0x0500
 //Windows XP	0x0501
 //Windows 2003	0x0502
 //Windows Vista	0x0600
+//Windows Seven 0x0601
+
 #define _WIN32_WINNT 0x0501
+#define _WIN64_WINNT 0x0501
 
 #ifndef __GNUC__
 	#ifndef NOMINMAX
