@@ -85,10 +85,6 @@
 	#define HAS_ITERATOR_DEBUGGING 0
 #endif
 
-#ifndef EWOULDBLOCK
-	#define EWOULDBLOCK WSAEWOULDBLOCK
-#endif
-
 #ifndef __FUNCTION__
 	#define	__FUNCTION__ __func__
 #endif
@@ -151,7 +147,7 @@
 
 #define STATUS_SERVER_NAME "The Forgotten Server"
 #define STATUS_SERVER_VERSION "0.4_DEV"
-#define STATUS_SERVER_CODENAME
+#define STATUS_SERVER_CODENAME ""
 #define STATUS_SERVER_PROTOCOL "8.52"
 
 #define VERSION_CHECK "http://forgottenserver.otland.net/version.xml"
