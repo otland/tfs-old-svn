@@ -374,12 +374,8 @@ bool Npc::loadFromXml(const std::string& filename)
 	if(scriptfile.empty())
 		return true;
 
-	if(scriptfile.find("{DATA}") != std::string::npos)
-		replaceString(scriptfile, "{DATA}", getFilePath(FILE_TYPE_OTHER, "npc/scripts"));
-
-	if(scriptfile.find("{MODS}") != std::string::npos)
-		replaceString(scriptfile, "{MODS}", getFilePath(FILE_TYPE_MOD, "npc"));
-
+	replaceString(scriptfile, "|DATA|", getFilePath(FILE_TYPE_OTHER, "npc/scripts"));
+	replaceString(scriptfile, "|MODS|", getFilePath(FILE_TYPE_MOD, "npc"));
 	if(scriptfile.find("/") == std::string::npos)
 		scriptfile = getFilePath(FILE_TYPE_OTHER, "npc/scripts/" + scriptfile);
 
@@ -1785,7 +1781,6 @@ void Npc::doSay(const std::string& text, SpeakClasses type, Player* player)
 		std::string tmp = text;
 		replaceString(tmp, "{", "");
 		replaceString(tmp, "}", "");
-
 		g_game.internalCreatureSay(this, type, tmp, false);
 	}
 	else

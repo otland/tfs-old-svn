@@ -465,9 +465,8 @@ bool AccessList::parseList(const std::string& _list)
 {
 	playerList.clear();
 	guildList.clear();
-
 	expressionList.clear();
-	regExList.clear();
+	regexList.clear();
 
 	list = _list;
 	if(_list.empty())
@@ -508,7 +507,7 @@ bool AccessList::isInList(const Player* player)
 	try
 	{
 		toLowerCaseString(name);
-		for(RegExList::iterator it = regExList.begin(); it != regExList.end(); ++it)
+		for(RegexList::iterator it = regexList.begin(); it != regexList.end(); ++it)
 		{
 			if(boost::regex_match(name.c_str(), what, it->first))
 				return it->second;
@@ -571,30 +570,29 @@ bool AccessList::addExpression(const std::string& expression)
 			return false;
 	}
 
-	std::string outExp;
-	std::string metachars = ".[{}()\\+|^$";
+	std::string out, meta = ".[{}()\\+|^$";
 	for(std::string::const_iterator it = expression.begin(); it != expression.end(); ++it)
 	{
-		if(metachars.find(*it) != std::string::npos)
-			outExp += "\\";
+		if(meta.find(*it) != std::string::npos)
+			out += "\\";
 
-		outExp += (*it);
+		out += (*it);
 	}
 
-	replaceString(outExp, "*", ".*");
-	replaceString(outExp, "?", ".?");
+	replaceString(out, "*", ".*");
+	replaceString(out, "?", ".?");
 	try
 	{
-		if(outExp.length() > 0)
+		if(out.length() > 0)
 		{
-			expressionList.push_back(outExp);
-			if(outExp.substr(0, 1) == "!")
+			expressionList.push_back(out);
+			if(out.substr(0, 1) == "!")
 			{
-				if(outExp.length() > 1)
-					regExList.push_front(std::make_pair(boost::regex(outExp.substr(1)), false));
+				if(out.length() > 1)
+					regexList.push_front(std::make_pair(boost::regex(out.substr(1)), false));
 			}
 			else
-				regExList.push_back(std::make_pair(boost::regex(outExp), true));
+				regexList.push_back(std::make_pair(boost::regex(out), true));
 		}
 	}
 	catch(...) {}

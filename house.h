@@ -76,13 +76,13 @@ class AccessList
 		typedef std::tr1::unordered_set<uint32_t> PlayerList;
 		typedef std::list<std::pair<uint32_t, int32_t> > GuildList;
 		typedef std::list<std::string> ExpressionList;
-		typedef std::list<std::pair<boost::regex, bool> > RegExList;
+		typedef std::list<std::pair<boost::regex, bool> > RegexList;
 
 		std::string list;
 		PlayerList playerList;
 		GuildList guildList;
 		ExpressionList expressionList;
-		RegExList regExList;
+		RegexList regexList;
 };
 
 class Door : public Item

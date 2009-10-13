@@ -93,14 +93,19 @@ bool encryptTest(std::string plain, std::string& hash)
 	return plain == hash;
 }
 
-void replaceString(std::string& text, const std::string key, const std::string value)
+bool replaceString(std::string& text, const std::string key, const std::string value)
 {
-	if(value.find(key) != std::string::npos) //don't allow infinite loops
-		return;
+	if(value.find(key) != std::string::npos) // don't allow infinite loops
+		return false;
 
-	for(std::string::size_type keyStart = text.find(key); keyStart
-		!= std::string::npos; keyStart = text.find(key))
+	std::string::size_type keyStart = text.find(key);
+	if(keyStart == std::string::npos)
+		return false;
+
+	for(; keyStart != std::string::npos; keyStart = text.find(key))
 		text.replace(keyStart, key.size(), value);
+
+	return true;
 }
 
 void trim_right(std::string& source, const std::string& t)

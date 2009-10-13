@@ -52,10 +52,9 @@ std::string Mission::getDescription(Player* player)
 			continue;
 
 		std::string ret = states[i - startValue];
-		if(ret.find("{STORAGE}") != std::string::npos)
-			replaceString(ret, "{STORAGE}", value);
-
+		replaceString(ret, "|STORAGE|", value);
 		return ret;
+
 	}
 
 	return "Couldn't retrieve mission description, please report to a gamemaster.";
