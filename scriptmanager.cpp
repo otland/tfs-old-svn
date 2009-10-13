@@ -54,7 +54,7 @@ extern Chat g_chat;
 extern ConfigManager g_config;
 extern Monsters g_monsters;
 
-bool ScriptManager::load()
+bool ScriptManager::loadSystem()
 {
 	g_weapons = new Weapons();
 	if(!g_weapons->loadFromXml())
@@ -113,7 +113,10 @@ bool ScriptManager::loadMods()
 {
 	boost::filesystem::path modsPath(getFilePath(FILE_TYPE_MOD, ""));
 	if(!boost::filesystem::exists(modsPath))
-		return true; //silently ignore
+	{
+		std::cout << "[Error - ScriptManager::loadMods] Couldn't locate main directory" << std::endl;
+		return false;
+	}
 
 	int32_t i = 0, j = 0;
 	bool enabled = false;
