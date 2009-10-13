@@ -87,10 +87,6 @@
 	#define HAS_ITERATOR_DEBUGGING 0
 #endif
 
-#ifndef EWOULDBLOCK
-	#define EWOULDBLOCK WSAEWOULDBLOCK
-#endif
-
 #ifndef __FUNCTION__
 	#define	__FUNCTION__ __func__
 #endif
