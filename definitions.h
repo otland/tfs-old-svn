@@ -17,10 +17,12 @@
 
 #ifndef __DEFINITIONS__
 #define __DEFINITIONS__
+
 #undef MULTI_SQL_DRIVERS
 #define SQL_DRIVERS __USE_SQLITE__+__USE_MYSQL__+__USE_ODBC__+__USE_PGSQL__
+
 #if SQL_DRIVERS > 1
-#define MULTI_SQL_DRIVERS
+	#define MULTI_SQL_DRIVERS
 #endif
 
 #ifdef __MINGW32__
@@ -142,7 +144,6 @@
 	#pragma warning(disable:4244)
 	#pragma warning(disable:4267)
 	#pragma warning(disable:4018)
-
 #endif
 #endif
 
@@ -152,7 +153,7 @@
 
 #define STATUS_SERVER_NAME "The Forgotten Server"
 #define STATUS_SERVER_VERSION "0.4_DEV"
-#define STATUS_SERVER_CODENAME ""
+#define STATUS_SERVER_CODENAME
 #define STATUS_SERVER_PROTOCOL "8.52"
 
 #define VERSION_CHECK "http://forgottenserver.otland.net/version.xml"
