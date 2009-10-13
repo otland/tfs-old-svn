@@ -41,7 +41,7 @@
 			#define WIN32
 		#endif
 	#endif
-	#indef __WINDOWS__
+	#ifndef __WINDOWS__
 		#define __WINDOWS__
 	#endif
 	#ifndef WINDOWS
@@ -71,17 +71,15 @@
 
 #ifdef __DEBUG_EXCEPTION_REPORT__
 	#define DEBUG_REPORT int *a = NULL; *a = 1;
+#elif defined __EXCEPTION_TRACER__
+	#include "exception.h"
+	#define DEBUG_REPORT ExceptionHandler::dumpStack();
 #else
-	#ifdef __EXCEPTION_TRACER__
-		#include "exception.h"
-		#define DEBUG_REPORT ExceptionHandler::dumpStack();
-	#else
-		#define DEBUG_REPORT
-	#endif
+	#define DEBUG_REPORT
 #endif
 
 #define BOOST_ASIO_ENABLE_CANCELIO 1
-#if defined WINDOWS
+#ifdef WINDOWS
 #if defined _MSC_VER && defined NDEBUG
 	#define _SECURE_SCL 0
 	#define HAS_ITERATOR_DEBUGGING 0
@@ -118,12 +116,12 @@
 	#endif
 
 	#include <cstring>
-	inline int strcasecmp(const char *s1, const char *s2)
+	inline int strcasecmp(const char * s1, const char * s2)
 	{
 		return ::_stricmp(s1, s2);
 	}
 
-	inline int strncasecmp(const char *s1, const char *s2, size_t n)
+	inline int strncasecmp(const char * s1, const char * s2, size_t n)
 	{
 		return ::_strnicmp(s1, s2, n);
 	}
