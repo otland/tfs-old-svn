@@ -39,7 +39,7 @@
 			#define WIN32
 		#endif
 	#endif
-	#indef __WINDOWS__
+	#ifndef __WINDOWS__
 		#define __WINDOWS__
 	#endif
 	#ifndef WINDOWS
