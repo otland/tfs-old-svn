@@ -252,7 +252,6 @@ void Status::getInfo(uint32_t requestedInfo, OutputMessage_ptr output, NetworkMe
 		output->AddString(g_config.getString(ConfigManager::URL).c_str());
 		output->AddU32((uint32_t)(running >> 32));
 		output->AddU32((uint32_t)(running));
-		output->AddString(STATUS_SERVER_VERSION);
   	}
 
 	if(requestedInfo & REQUEST_RATES_SERVER_INFO)
