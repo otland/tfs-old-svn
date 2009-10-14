@@ -37,5 +37,6 @@ function onLogin(cid)
 	registerCreatureEvent(cid, "Idle")
 	registerCreatureEvent(cid, "SkullCheck")
 	registerCreatureEvent(cid, "ReportBug")
+	registerCreatureEvent(cid, "AdvanceSave")
 	return true
 end

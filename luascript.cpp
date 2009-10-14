@@ -8949,6 +8949,7 @@ int32_t LuaInterface::luaDoSaveServer(lua_State* L)
 		shallow = popNumber(L);
 
 	Dispatcher::getInstance()->addTask(createTask(boost::bind(&Game::saveGameState, &g_game, shallow)));
+	lua_pushnil(L);
 	return 1;
 }
 
@@ -8980,6 +8981,7 @@ int32_t LuaInterface::luaDoRefreshMap(lua_State* L)
 {
 	//doRefreshMap()
 	g_game.proceduralRefresh();
+	lua_pushnil(L);
 	return 1;
 }
 
