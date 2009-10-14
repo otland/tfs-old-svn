@@ -160,10 +160,15 @@ std::string Status::getStatusString(bool sendPlayers) const
 	if(sendPlayers)
 	{
 		std::stringstream ss;
-		for(AutoList<Player>::iterator it = Player::autoList.begin(); it != Player::autoList.end(); ++it)
+		for(AutoList<Player>::iterator it = Player::autoList.begin(); it != Player::autoList.end(); )
 		{
-			if(!it->second->isGhost())
-				ss << it->second->getName() << "," << it->second->getVocationId() << "," << it->second->getLevel() << ";";
+			if(it->second->isGhost())
+				continue;
+
+			ss << it->second->getName() << "," << it->second->getVocationId() << "," << it->second->getLevel();
+			++it;
+			if(it != Player::autoList.end())
+				ss << ";";
 		}
 
 		xmlNodeSetContent(p, (const xmlChar*)ss.str().c_str());
