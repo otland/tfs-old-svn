@@ -1732,6 +1732,12 @@ void LuaScriptInterface::registerFunctions()
 	//saveData()
 	lua_register(m_luaState, "saveData", LuaScriptInterface::luaSaveData);
 
+	//refreshMap()
+	lua_register(m_luaState, "refreshMap", LuaScriptInterface::luaRefreshMap);
+
+	//cleanMap()
+	lua_register(m_luaState, "cleanMap", LuaScriptInterface::luaCleanMap);
+
 	//getPlayersByAccountNumber(accountNumber)
 	lua_register(m_luaState, "getPlayersByAccountNumber", LuaScriptInterface::luaGetPlayersByAccountNumber);
 
@@ -7349,6 +7355,20 @@ int32_t LuaScriptInterface::luaSaveData(lua_State* L)
 {
 	g_dispatcher.addTask(
 		createTask(boost::bind(&Game::saveGameState, &g_game)));
+	return 1;
+}
+
+int32_t LuaScriptInterface::luaRefreshMap(lua_State* L)
+{
+	g_dispatcher.addTask(
+		createTask(boost::bind(&Game::refreshMap, &g_game)));
+	return 1;
+}
+
+int32_t LuaScriptInterface::luaCleanMap(lua_State* L)
+{
+	g_dispatcher.addTask(
+		createTask(boost::bind(&Game::cleanMap, &g_game)));
 	return 1;
 }
 

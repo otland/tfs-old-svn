@@ -501,6 +501,7 @@ class Game
 		void saveGameState();
 		void loadGameState();
 		void refreshMap();
+		void cleanMap() {map->clean();}
 
 		//Events
 		void checkCreatureWalk(uint32_t creatureId);
