@@ -52,7 +52,11 @@ enum RequestedInfo_t
 	REQUEST_MAP_INFO = 0x10,
 	REQUEST_EXT_PLAYERS_INFO = 0x20,
 	REQUEST_PLAYER_STATUS_INFO = 0x40,
-	REQUEST_SERVER_SOFTWARE_INFO = 0x80
+	REQUEST_SERVER_SOFTWARE_INFO = 0x80,
+	REQUEST_RATES_SERVER_INFO = 0xFF,
+
+	//TFS-specific
+	REQUEST_STAGES_SERVER_INFO = 0xFE
 };
 
 std::map<uint32_t, int64_t> ProtocolStatus::ipConnectMap;
@@ -251,6 +255,16 @@ void Status::getInfo(uint32_t requestedInfo, OutputMessage_ptr output, NetworkMe
 		output->AddString(STATUS_SERVER_VERSION);
   	}
 
+	if(requestedInfo & REQUEST_RATES_SERVER_INFO)
+	{
+		output->AddByte(0x13);
+		output->AddU16(g_config.getNumber(ConfigManager::RATE_EXPERIENCE));
+		output->AddU16(g_config.getNumber(ConfigManager::RATE_MAGIC));
+		output->AddU16(g_config.getNumber(ConfigManager::RATE_SKILL));
+		output->AddU16(g_config.getNumber(ConfigManager::RATE_LOOT));
+		output->AddU16(g_config.getNumber(ConfigManager::RATE_SPAWN));
+	}
+
 	if(requestedInfo & REQUEST_PLAYERS_INFO)
 	{
 		output->AddByte(0x20);
@@ -269,6 +283,23 @@ void Status::getInfo(uint32_t requestedInfo, OutputMessage_ptr output, NetworkMe
 		output->AddU16(mapWidth);
 		output->AddU16(mapHeight);
   	}
+
+	if(requestedInfo & REQUEST_STAGES_SERVER_INFO)
+	{
+		output->AddByte(0x01);
+		if(g_game.getStagesEnabled())
+		{
+			output->AddByte(g_game.getStagesCount());
+			for(StageList::const_iterator it = g_game.getFirstStage(),
+				end = g_game.getLastStage(); it != end; ++it)
+			{
+				output->AddU32(it->first);
+				output->AddU32(it->second);
+			}
+		}
+		else
+			output->AddByte(0x00);
+	}
 
 	if(requestedInfo & REQUEST_EXT_PLAYERS_INFO)
 	{

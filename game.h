@@ -107,7 +107,7 @@ typedef std::map< uint32_t, shared_ptr<RuleViolation> > RuleViolationsMap;
 #define STATE_TIME 1000
 
 typedef std::vector< std::pair<std::string, unsigned int> > Highscore;
-
+typedef std::map<int32_t, int32_t> StageList;
 typedef std::list<std::string> BlackList;
 
 /**
@@ -548,6 +548,12 @@ class Game
 		bool loadExperienceStages();
 		uint64_t getExperienceStage(uint32_t level);
 
+		size_t getStagesCount() const {return stages.size();}
+		bool getStagesEnabled() const {return stagesEnabled;}
+
+		inline StageList::const_iterator getFirstStage() const {return stages.begin();}
+		online StageList::const_iterator getLastStage() const {return stages.end();}
+
 		void setServerSaveMessage(int16_t key, bool value) {serverSaveMessage[key] = value;}
 		bool getServerSaveMessage(int16_t key) const {return serverSaveMessage[key];}
 
@@ -624,7 +630,6 @@ class Game
 		int32_t lastMotdNum;
 		uint32_t lastPlayersRecord;
 
-		typedef std::map<int32_t,int32_t> StageList;
 		StageList stages;
 		bool stagesEnabled;
 		uint32_t lastStageLevel;
