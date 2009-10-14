@@ -89,7 +89,7 @@ void ProtocolStatus::onRecvFirstMessage(NetworkMessage& msg)
 		//XML info protocol
 		case 0xFF:
 		{
-			if(msg.GetRaw() == "info")
+			if(msg.GetString(4) == "info") // in case some automatics would request players from 0.3
 			{
 				OutputMessage_ptr output = OutputMessagePool::getInstance()->getOutputMessage(this, false);
 				if(output)

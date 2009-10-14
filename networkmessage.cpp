@@ -44,26 +44,17 @@ int32_t NetworkMessage::decodeHeader()
 }
 
 /******************************************************************************/
-std::string NetworkMessage::GetString()
+std::string NetworkMessage::GetString(uint16_t size/* = 0*/)
 {
-	uint16_t stringlen = GetU16();
-	if(stringlen >= (NETWORKMESSAGE_MAXSIZE - m_ReadPos))
+	if(!size)
+		size = GetU16();
+
+	if(size >= (NETWORKMESSAGE_MAXSIZE - m_ReadPos))
 		return std::string();
 
 	char* v = (char*)(m_MsgBuf + m_ReadPos);
-	m_ReadPos += stringlen;
-	return std::string(v, stringlen);
-}
-
-std::string NetworkMessage::GetRaw()
-{
-	uint16_t stringlen = m_MsgSize- m_ReadPos;
-	if(stringlen >= (NETWORKMESSAGE_MAXSIZE - m_ReadPos))
-		return std::string();
-
-	char* v = (char*)(m_MsgBuf + m_ReadPos);
-	m_ReadPos += stringlen;
-	return std::string(v, stringlen);
+	m_ReadPos += size;
+	return std::string(v, size);
 }
 
 Position NetworkMessage::GetPosition()
