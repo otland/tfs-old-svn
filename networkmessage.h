@@ -75,7 +75,7 @@ class NetworkMessage
 			return v;
 		}
 
-		std::string GetString(uint16_t stringLen = 0);
+		std::string GetString(uint16_t size = 0);
 		std::string GetRaw() {return GetString(m_MsgSize - m_ReadPos);}
 
 		Position GetPosition();
