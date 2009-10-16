@@ -60,8 +60,8 @@ class Party
 		void addPlayerDamageMonster(Player* player, uint32_t points);
 		void clearPlayerPoints(Player* player);
 
-		bool isPlayerMember(const Player* player) const;
-		bool isPlayerInvited(const Player* player) const;
+		bool isPlayerMember(const Player* player, bool result = false) const;
+		bool isPlayerInvited(const Player* player, bool result = false) const;
 		bool canOpenCorpse(uint32_t ownerId);
 
 	protected:
