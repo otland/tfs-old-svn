@@ -608,8 +608,12 @@ Attr_ReadValue Item::readAttr(AttrTypes_t attr, PropStream& propStream)
 		case ATTR_ATTRIBUTE_MAP:
 		{
 			bool unique = hasIntegerAttribute("uid"), ret = unserializeMap(propStream);
-			if(!unique && hasIntegerAttribute("uid"))
+			if(!unique && hasIntegerAttribute("uid")) // unfortunately we have to do this
 				ScriptEnviroment::addUniqueThing(this);
+
+			// this attribute has a custom behavior as well
+			if(getDecaying() != DECAYING_FALSE)
+				setDecaying(DECAYING_PENDING);
 
 			if(ret)
 				break;
