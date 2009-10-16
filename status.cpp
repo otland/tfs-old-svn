@@ -166,7 +166,7 @@ std::string Status::getStatusString(bool sendPlayers) const
 			ss << it->second->getName() << "," << it->second->getVocationId() << "," << it->second->getLevel();
 			++it;
 			if(it != Player::autoList.end())
-				std::cout << ";";
+				ss << ";";
 		}
 
 		xmlNodeSetContent(p, (const xmlChar*)ss.str().c_str());
@@ -244,16 +244,6 @@ void Status::getInfo(uint32_t requestedInfo, OutputMessage_ptr output, NetworkMe
 		output->AddU32((uint32_t)(uptime));
 	}
 
-	if(requestedInfo & REQUEST_SERVER_RATES_INFO)
-	{
-		output->AddByte(0x13);
-		output->AddU16(g_config.getNumber(ConfigManager::RATE_EXPERIENCE));
-		output->AddU16(g_config.getNumber(ConfigManager::RATE_MAGIC));
-		output->AddU16(g_config.getNumber(ConfigManager::RATE_SKILL));
-		output->AddU16(g_config.getNumber(ConfigManager::RATE_LOOT));
-		output->AddU16(g_config.getNumber(ConfigManager::RATE_SPAWN));
-	}
-
 	if(requestedInfo & REQUEST_PLAYERS_INFO)
 	{
 		output->AddByte(0x20);
@@ -272,23 +262,6 @@ void Status::getInfo(uint32_t requestedInfo, OutputMessage_ptr output, NetworkMe
 		g_game.getMapDimensions(mapWidth, mapHeight);
 		output->AddU16(mapWidth);
 		output->AddU16(mapHeight);
-	}
-
-	if(requestedInfo & REQUEST_SERVER_STAGES_INFO)
-	{
-		output->AddByte(0x01); //as otserv uses 10+ we are safe
-		if(g_config.getBool(ConfigManager::EXPERIENCE_STAGES))
-		{
-			output->AddByte(g_game.getStagesCount());
-			for(StageList::const_iterator it = g_game.getFirstStage(),
-				end = g_game.getLastStage(); it != end; ++it)
-			{
-				output->AddU32(it->first);
-				output->AddU32(it->second);
-			}
-		}
-		else
-			output->AddByte(0x00);
 	}
 
 	if(requestedInfo & REQUEST_EXT_PLAYERS_INFO)
