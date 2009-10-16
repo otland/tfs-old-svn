@@ -1,6 +1,9 @@
+ITEM_SEARINGFIRE_FIRST = 1506
+ITEM_SEARINGFIRE_LAST = 1508
+
 local function doRemoveField(cid, pos)
 	local field = getTileItemByType(pos, ITEM_TYPE_MAGICFIELD)
-	if(field.itemid ~=0) then
+	if(field.itemid ~= 0 and (field.item < ITEM_SEARINGFIRE_FIRST or field.item > ITEM_SEARINGFIRE_LAST)) then
 		doRemoveItem(field.uid)
 		doSendMagicEffect(pos, CONST_ME_POFF)
 		return true

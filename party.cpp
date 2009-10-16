@@ -440,7 +440,7 @@ bool Party::isPlayerInvited(const Player* player) const
 
 bool Party::canOpenCorpse(uint32_t ownerId)
 {
-	if(Player* player = g_game.getPlayerByID(ownerId))
+	if(Player* player = g_game.getPlayerByGuid(ownerId))
 		return leader->getID() == ownerId || isPlayerMember(player);
 
 	return false;

@@ -11071,12 +11071,7 @@
 	<item id="5402" article="a" name="bamboo lamp"/>
 	<item id="5403" article="a" name="bamboo lamp"/>
 	<item id="5404" article="a" name="bamboo lamp"/>
-	<item id="5405" name="shallow water"/>
-	<item id="5406" name="shallow water"/>
-	<item id="5407" name="shallow water"/>
-	<item id="5408" name="shallow water"/>
-	<item id="5409" name="shallow water"/>
-	<item id="5410" name="shallow water"/>
+	<item fromid="5405" toid="5410" name="shallow water"/>
 	<item id="5411" name="rocks"/>
 	<item id="5412" name="rocks"/>
 	<item id="5413" article="a" name="coral reef"/>
@@ -11093,18 +11088,7 @@
 	<item id="5424" article="a" name="water wheel"/>
 	<item id="5425" article="a" name="water wheel"/>
 	<item id="5426" article="a" name="stearing wheell"/>
-	<item id="5427" name="shallow water"/>
-	<item id="5428" name="shallow water"/>
-	<item id="5429" name="shallow water"/>
-	<item id="5430" name="shallow water"/>
-	<item id="5431" name="shallow water"/>
-	<item id="5432" name="shallow water"/>
-	<item id="5433" name="shallow water"/>
-	<item id="5434" name="shallow water"/>
-	<item id="5435" name="shallow water"/>
-	<item id="5436" name="shallow water"/>
-	<item id="5437" name="shallow water"/>
-	<item id="5438" name="shallow water"/>
+	<item fromid="5427" toid="5438" name="shallow water"/>
 	<item id="5439" article="a" name="steering wheel"/>
 	<item id="5440" article="a" name="steering wheel"/>
 	<item id="5441" article="a" name="steering wheel"/>
