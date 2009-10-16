@@ -19,11 +19,11 @@ function doConvertIntegerToIp(int, mask)
 				end
 			end
 		elseif(m[1] ~= 255 or m[2] ~= 255 or m[3] ~= 255 or m[4] ~= 255) then
-			return table.concat(b, ".") .. " : " .. table.concat(m, ".")
+			return b[4] .. "." .. b[3] .. "." .. b[2] .. "." .. b[1] .. ":" .. m[4] .. "." .. m[3] .. "." .. m[2] .. "." .. m[1]
 		end
 	end
 
-	return table.concat(b, ".")
+	return b[4] .. "." .. b[3] .. "." .. b[2] .. "." .. b[1]
 end
 
 function doConvertIpToInteger(str)
