@@ -40,7 +40,7 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 		end
 
 		local chance, items = math.random(0, 100000) / config.rateLoot, {}
-		for _, data in ipairs(corpse) then
+		for _, data in ipairs(corpse) do
 			if(data[3] >= chance) then
 				local tmp = {data[1], math.random(1, data[2])}
 				table.insert(items, tmp)
@@ -62,7 +62,7 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 	end
 
 	config.allowFromPz = config.allowFromPz or not getTileInfo(getThingPosition(cid)).protection
-	local formula, tries = getPlayerSkill(cid, SKILL_FISHING) / 200 + 0.85 * math.random(), 1
+	local formula, tries = getPlayerSkill(cid, SKILL_FISHING) / 200 + 0.85 * math.random(), 0
 	if(item.itemid ~= ITEM_MECHANICAL_FISHING_ROD) then
 		if(config.allowFromPz and (not config.useBait or
 			(getPlayerItemCount(cid, ITEM_WORM) >= config.baitCount and
@@ -81,27 +81,34 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 			elseif(formula > 0.7) then
 				doPlayerAddItem(cid, ITEM_FISH, config.fishes)
 				tries = 2
+			else
+				tries = 1
 			end
 		end
-	elseif(formula > 0.7 and config.allowFromPz and (not config.useBait or
+	elseif(config.allowFromPz and (not config.useBait or
 		(getPlayerItemCount(cid, ITEM_NAIL) >= config.baitCount and
 		doPlayerRemoveItem(cid, ITEM_NAIL, config.baitCount)))) then
-		doPlayerAddItem(cid, ITEM_MECHANICAL_FISH, config.fishes)
-		tries = 2
+		if(formula > 0.7) then
+			doPlayerAddItem(cid, ITEM_MECHANICAL_FISH, config.fishes)
+			tries = 2
+		else
+			tries = 1
+		end
+	end
+
+	if(tries > 1) then
+		doPlayerAddSkillTry(cid, SKILL_FISHING, tries)
+		if(not isInArray(config.holes, itemEx.itemid)) then
+			doTransformItem(itemEx.uid, itemEx.itemid + 6)
+		else
+			doTransformItem(itemEx.uid, itemEx.itemid + 1)
+		end
+
+		doDecayItem(itemEx.uid)
+	elseif(tries > 0) then
+		doPlayerAddSkillTry(cid, SKILL_FISHING, tries)
 	end
 
 	doSendMagicEffect(toPosition, CONST_ME_LOSEENERGY)
-	doPlayerAddSkillTry(cid, SKILL_FISHING, tries)
-	if(tries == 1) then
-		return true
-	end
-
-	if(not isInArray(config.holes, itemEx.itemid)) then
-		doTransformItem(itemEx.uid, itemEx.itemid + 6)
-	else
-		doTransformItem(itemEx.uid, itemEx.itemid + 1)
-	end
-
-	doDecayItem(itemEx.uid)
 	return true
 end
