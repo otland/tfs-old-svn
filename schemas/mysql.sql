@@ -311,6 +311,7 @@ CREATE TABLE `guilds`
 	`name` VARCHAR(255) NOT NULL,
 	`ownerid` INT NOT NULL,
 	`creationdata` INT NOT NULL,
+	`checkdata` INT NOT NULL,
 	`motd` VARCHAR(255) NOT NULL,
 	PRIMARY KEY (`id`),
 	UNIQUE (`name`, `world_id`)
@@ -369,7 +370,7 @@ CREATE TABLE `server_config`
 	UNIQUE (`config`)
 ) ENGINE = InnoDB;
 
-INSERT INTO `server_config` VALUES ('db_version', 23);
+INSERT INTO `server_config` VALUES ('db_version', 24);
 
 CREATE TABLE `server_motd`
 (

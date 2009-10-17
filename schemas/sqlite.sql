@@ -4,7 +4,7 @@ CREATE TABLE "server_config" (
 	UNIQUE ("config")
 );
 
-INSERT INTO "server_config" VALUES ('db_version', 23);
+INSERT INTO "server_config" VALUES ('db_version', 24);
 
 CREATE TABLE "server_motd" (
 	"id" INTEGER NOT NULL,
@@ -132,6 +132,7 @@ CREATE TABLE "guilds" (
 	"name" VARCHAR(255) NOT NULL,
 	"ownerid" INTEGER NOT NULL,
 	"creationdata" INTEGER NOT NULL,
+	"checkdata" INTEGER NOT NULL,
 	"motd" VARCHAR(255) NOT NULL DEFAULT '',
 	UNIQUE ("name", "world_id"),
 	FOREIGN KEY ("ownerid") REFERENCES "players" ("id")

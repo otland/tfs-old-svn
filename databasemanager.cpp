@@ -1060,6 +1060,21 @@ uint32_t DatabaseManager::updateDatabase()
 			return 23;
 		}
 
+		case 23:
+		{
+			std::cout << "> Updating database to version 24..." << std::endl;
+			query << "ALTER TABLE `guilds` ADD `checkdata` ";
+			if(db->getDatabaseEngine() == DATABASE_ENGINE_SQLITE)
+				query << "INTEGER NOT NULL;";
+			else
+				query << "INT NOT NULL AFTER `creationdata`;";
+
+			db->executeQuery(query.str());
+			query.str("");
+			registerDatabaseConfig("db_version", 24);
+			return 24;
+		}
+
 		default:
 			break;
 	}
