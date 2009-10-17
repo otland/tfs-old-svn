@@ -189,6 +189,9 @@ bool Party::removeInvite(Player* player)
 
 void Party::revokeInvitation(Player* player)
 {
+	if(!player || player->isRemoved())
+		return;
+
 	char buffer[150];
 	sprintf(buffer, "%s has revoked %s invitation.", leader->getName().c_str(), (leader->getSex(false) ? "his" : "her"));
 	player->sendTextMessage(MSG_INFO_DESCR, buffer);
@@ -220,6 +223,9 @@ bool Party::invitePlayer(Player* player)
 
 void Party::updateIcons(Player* player)
 {
+	if(!player || player->isRemoved())
+		return;
+
 	PlayerVector::iterator it;
 	for(it = memberList.begin(); it != memberList.end(); ++it)
 	{
@@ -286,7 +292,7 @@ void Party::updateSharedExperience()
 
 bool Party::setSharedExperience(Player* player, bool _sharedExpActive)
 {
-	if(!player || leader != player)
+	if(!player || player->isRemoved() || player != leader)
 		return false;
 
 	if(sharedExpActive == _sharedExpActive)
@@ -325,6 +331,9 @@ void Party::shareExperience(double experience, bool fromMonster, bool multiplied
 
 bool Party::canUseSharedExperience(const Player* player, uint32_t highestLevel/* = 0*/) const
 {
+	if(!player || player->isRemoved())
+		return false;
+
 	if(!highestLevel)
 	{
 		highestLevel = leader->getLevel();
@@ -377,7 +386,6 @@ void Party::addPlayerHealedMember(Player* player, uint32_t points)
 	if(it == pointMap.end())
 	{
 		CountBlock_t cb;
-		cb.totalDamage = 0;
 		cb.totalHeal = points;
 		cb.ticks = OTSYS_TIME();
 		pointMap[player->getID()] = cb;
