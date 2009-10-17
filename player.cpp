@@ -4771,10 +4771,10 @@ PartyShields_t Player::getPartyShield(const Creature* creature) const
 
 bool Player::isInviting(const Player* player) const
 {
-	if(!player || !getParty() || getParty()->getLeader() != this)
+	if(!player || player->isRemoved() || !party || party->getLeader() != this)
 		return false;
 
-	return getParty()->isPlayerInvited(player);
+	return party->isPlayerInvited(player);
 }
 
 bool Player::isPartner(const Player* player) const

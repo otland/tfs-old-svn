@@ -71,7 +71,7 @@ void Party::disband()
 
 bool Party::leave(Player* player)
 {
-	if(!isPlayerMember(player) && leader != player)
+	if(!isPlayerMember(player) || player == leader)
 		return false;
 
 	bool missingLeader = false;
@@ -119,7 +119,7 @@ bool Party::leave(Player* player)
 
 bool Party::passLeadership(Player* player)
 {
-	if(!isPlayerMember(player) && leader != player)
+	if(!isPlayerMember(player) || player == leader)
 		return false;
 
 	//Remove it before to broadcast the message correctly
@@ -145,7 +145,7 @@ bool Party::passLeadership(Player* player)
 
 bool Party::join(Player* player)
 {
-	if(!isPlayerMember(player))
+	if(isPlayerMember(player) || !isPlayerInvited(player))
 		return false;
 
 	memberList.push_back(player);

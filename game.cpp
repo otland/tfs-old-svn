@@ -4729,9 +4729,6 @@ bool Game::playerJoinParty(uint32_t playerId, uint32_t leaderId)
 	if(!leader || leader->isRemoved() || !leader->isInviting(player))
 		return false;
 
-	if(!leader->getParty() || leader->getParty()->getLeader() != leader)
-		return false;
-
 	if(!player->getParty())
 		return leader->getParty()->join(player);
 
