@@ -390,8 +390,8 @@ class Npc : public Creature
 		virtual uint32_t rangeId() {return 0x80000000;}
 		static AutoList<Npc> autoList;
 
-		void removeList() {autoList[id] = this;}
-		void addList() {autoList.erase(id);}
+		void addList() {autoList[id] = this;}
+		void removeList() {autoList.erase(id);}
 
 		virtual bool isPushable() const {return false;}
 		virtual bool isAttackable() const {return attackable;}

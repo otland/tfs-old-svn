@@ -55,8 +55,8 @@ class Monster : public Creature
 		virtual uint32_t rangeId() {return 0x40000000;}
 		static AutoList<Monster> autoList;
 
-		void removeList() {autoList[id] = this;}
-		void addList() {autoList.erase(id);}
+		void addList() {autoList[id] = this;}
+		void removeList() {autoList.erase(id);}
 
 		virtual const std::string& getName() const {return mType->name;}
 		virtual const std::string& getNameDescription() const {return mType->nameDescription;}
