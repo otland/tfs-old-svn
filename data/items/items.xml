@@ -9621,7 +9621,7 @@
 	</item>
 	<item id="4614" name="shallow water">
 		<attribute key="decayTo" value="4608"/>
-		<attribute key="duration" value="1200"/>
+		<attribute key="duration" value="60"/>
 		<attribute key="type" value="trashholder"/>
 		<attribute key="effect" value="bluebubble"/>
 		<attribute key="fluidSource" value="water"/>
@@ -9629,7 +9629,7 @@
 	</item>
 	<item id="4615" name="shallow water">
 		<attribute key="decayTo" value="4609"/>
-		<attribute key="duration" value="1200"/>
+		<attribute key="duration" value="60"/>
 		<attribute key="type" value="trashholder"/>
 		<attribute key="effect" value="bluebubble"/>
 		<attribute key="fluidSource" value="water"/>
@@ -9637,7 +9637,7 @@
 	</item>
 	<item id="4616" name="shallow water">
 		<attribute key="decayTo" value="4610"/>
-		<attribute key="duration" value="1200"/>
+		<attribute key="duration" value="60"/>
 		<attribute key="type" value="trashholder"/>
 		<attribute key="effect" value="bluebubble"/>
 		<attribute key="fluidSource" value="water"/>
@@ -9645,7 +9645,7 @@
 	</item>
 	<item id="4617" name="shallow water">
 		<attribute key="decayTo" value="4611"/>
-		<attribute key="duration" value="1200"/>
+		<attribute key="duration" value="60"/>
 		<attribute key="type" value="trashholder"/>
 		<attribute key="effect" value="bluebubble"/>
 		<attribute key="fluidSource" value="water"/>
@@ -9653,7 +9653,7 @@
 	</item>
 	<item id="4618" name="shallow water">
 		<attribute key="decayTo" value="4612"/>
-		<attribute key="duration" value="1200"/>
+		<attribute key="duration" value="60"/>
 		<attribute key="type" value="trashholder"/>
 		<attribute key="effect" value="bluebubble"/>
 		<attribute key="fluidSource" value="water"/>
@@ -9661,7 +9661,7 @@
 	</item>
 	<item id="4619" name="shallow water">
 		<attribute key="decayTo" value="4613"/>
-		<attribute key="duration" value="1200"/>
+		<attribute key="duration" value="60"/>
 		<attribute key="type" value="trashholder"/>
 		<attribute key="effect" value="bluebubble"/>
 		<attribute key="fluidSource" value="water"/>
