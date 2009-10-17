@@ -3039,11 +3039,11 @@ bool Game::playerLookInTrade(uint32_t playerId, bool lookAtCounterOffer, int32_t
 			ss << ".";
 			const ItemType& it = Item::items[tradeItem->getID()];
 			if(it.transformEquipTo)
-				ss << std::endl << "TransformTo: [" << it.transformEquipTo << "] (onEquip).";
+				ss << std::endl << "TransformTo (onEquip): [" << it.transformEquipTo << "]";
 			else if(it.transformDeEquipTo)
-				ss << std::endl << "TransformTo: [" << it.transformDeEquipTo << "] (onDeEquip).";
+				ss << std::endl << "TransformTo (onDeEquip): [" << it.transformDeEquipTo << "]";
 			else if(it.decayTo != -1)
-				ss << std::endl << "DecayTo: [" << it.decayTo << "].";
+				ss << std::endl << "DecayTo: [" << it.decayTo << "]";
 		}
 
 		player->sendTextMessage(MSG_INFO_DESCR, ss.str());
