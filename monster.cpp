@@ -1182,7 +1182,7 @@ Item* Monster::createCorpse(DeathList deathList)
 
 	uint32_t ownerId = 0;
 	if(owner->getPlayer())
-		ownerId = owner->getGUID();
+		ownerId = owner->getPlayer()->getGUID();
 	else if(owner->isPlayerSummon())
 		ownerId = owner->getPlayerMaster()->getGUID();
 

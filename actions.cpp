@@ -506,6 +506,9 @@ ReturnValue Actions::internalUseItem(Player* player, const Position& pos, uint8_
 		Container* tmpContainer = NULL;
 		if(Depot* depot = container->getDepot())
 		{
+			if(player->hasFlag(PlayerFlag_CannotPickupItem))
+				return RET_CANNOTUSETHISOBJECT;
+
 			if(Depot* playerDepot = player->getDepot(depot->getDepotId(), true))
 			{
 				player->useDepot(depot->getDepotId(), true);
