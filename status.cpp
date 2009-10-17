@@ -160,15 +160,15 @@ std::string Status::getStatusString(bool sendPlayers) const
 	if(sendPlayers)
 	{
 		std::stringstream ss;
-		for(AutoList<Player>::iterator it = Player::autoList.begin(); it != Player::autoList.end(); )
+		for(AutoList<Player>::iterator it = Player::autoList.begin(); it != Player::autoList.end(); ++it)
 		{
-			if(it->second->isGhost())
+			if(it->second->isRemoved() || it->second->isGhost())
 				continue;
 
-			ss << it->second->getName() << "," << it->second->getVocationId() << "," << it->second->getLevel();
-			++it;
-			if(it != Player::autoList.end())
+			if(!ss.str().empty())
 				ss << ";";
+
+			ss << it->second->getName() << "," << it->second->getVocationId() << "," << it->second->getLevel();
 		}
 
 		xmlNodeSetContent(p, (const xmlChar*)ss.str().c_str());
@@ -272,7 +272,7 @@ void Status::getInfo(uint32_t requestedInfo, OutputMessage_ptr output, NetworkMe
 		std::list<std::pair<std::string, uint32_t> > players;
 		for(AutoList<Player>::iterator it = Player::autoList.begin(); it != Player::autoList.end(); ++it)
 		{
-			if(!it->second->isGhost())
+			if(!it->second->isRemoved() && !it->second->isGhost())
 				players.push_back(std::make_pair(it->second->getName(), it->second->getLevel()));
 		}
 
