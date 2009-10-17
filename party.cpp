@@ -71,7 +71,7 @@ void Party::disband()
 
 bool Party::leave(Player* player)
 {
-	if(!isPlayerMember(player) || player == leader)
+	if(!isPlayerMember(player) && player != leader)
 		return false;
 
 	bool missingLeader = false;
