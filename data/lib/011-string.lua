@@ -14,10 +14,6 @@ string.explode = function (str, sep)
 
 	local pos, tmp, t = 1, "", {}
 	for s, e in function() return string.find(str, sep, pos) end do
-		if(s == e) then
-			break
-		end
-
 		tmp = str:sub(pos, s - 1):trim()
 		table.insert(t, tmp)
 		pos = e + 1
