@@ -39,7 +39,7 @@ class Npcs
 		void reload();
 };
 
-class NpcScriptInterface : public LuaInterface
+class NpcScriptInterface : public LuaScriptInterface
 {
 	public:
 		NpcScriptInterface();
