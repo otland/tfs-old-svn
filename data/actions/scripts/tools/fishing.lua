@@ -97,7 +97,7 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 	end
 
 	if(tries > 1) then
-		doPlayerAddSkillTry(cid, SKILL_FISHING, tries)
+		doPlayerAddSkillTry(cid, SKILL_FISHING, 2)
 		if(not isInArray(config.holes, itemEx.itemid)) then
 			doTransformItem(itemEx.uid, itemEx.itemid + 6)
 		else
@@ -106,7 +106,7 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 
 		doDecayItem(itemEx.uid)
 	elseif(tries > 0) then
-		doPlayerAddSkillTry(cid, SKILL_FISHING, tries)
+		doPlayerAddSkillTry(cid, SKILL_FISHING, 1)
 	end
 
 	doSendMagicEffect(toPosition, CONST_ME_LOSEENERGY)
