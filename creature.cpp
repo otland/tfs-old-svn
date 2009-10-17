@@ -1076,20 +1076,14 @@ void Creature::addDamagePoints(Creature* attacker, int32_t damagePoints)
 		attackerId = attacker->getID();
 
 	CountMap::iterator it = damageMap.find(attackerId);
-	if(it == damageMap.end())
-	{
-		CountBlock_t cb;
-		cb.ticks = cb.start = OTSYS_TIME();
-
-		cb.total = damagePoints;
-		damageMap[attackerId] = cb;
-	}
-	else
+	if(it != damageMap.end())
 	{
 		it->second.ticks = OTSYS_TIME();
 		if(damagePoints > 0)
 			it->second.total += damagePoints;
 	}
+	else
+		damageMap[attackerId] = CountBlock_t(damagePoints);
 
 	if(damagePoints > 0)
 		lastHitCreature = attackerId;
@@ -1105,19 +1099,13 @@ void Creature::addHealPoints(Creature* caster, int32_t healthPoints)
 		casterId = caster->getID();
 
 	CountMap::iterator it = healMap.find(casterId);
-	if(it == healMap.end())
-	{
-		CountBlock_t cb;
-		cb.ticks = cb.start = OTSYS_TIME();
-
-		cb.total = healthPoints;
-		healMap[casterId] = cb;
-	}
-	else
+	if(it != healMap.end())
 	{
 		it->second.ticks = OTSYS_TIME();
 		it->second.total += healthPoints;
 	}
+	else
+		healMap[casterId] = CountBlock_t(healthPoints);
 }
 
 void Creature::onAddCondition(ConditionType_t type, bool hadCondition)

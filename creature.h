@@ -494,6 +494,14 @@ class Creature : public AutoId, virtual public Thing
 		{
 			uint32_t total;
 			int64_t ticks, start;
+
+			CountBlock_t(uint32_t points)
+			{
+				start = ticks = OTSYS_TIME();
+				total = points;
+			}
+
+			CountBlock_t() {start = ticks = total = 0;}
 		};
 
 		typedef std::map<uint32_t, CountBlock_t> CountMap;

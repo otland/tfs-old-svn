@@ -383,18 +383,13 @@ void Party::addPlayerHealedMember(Player* player, uint32_t points)
 		return;
 
 	CountMap::iterator it = pointMap.find(player->getID());
-	if(it == pointMap.end())
-	{
-		CountBlock_t cb;
-		cb.totalHeal = points;
-		cb.ticks = OTSYS_TIME();
-		pointMap[player->getID()] = cb;
-	}
-	else
+	if(it != pointMap.end())
 	{
 		it->second.totalHeal += points;
 		it->second.ticks = OTSYS_TIME();
 	}
+	else
+		pointMap[player->getID()] = CountBlock_t(points, 0);
 
 	updateSharedExperience();
 }
@@ -405,19 +400,13 @@ void Party::addPlayerDamageMonster(Player* player, uint32_t points)
 		return;
 
 	CountMap::iterator it = pointMap.find(player->getID());
-	if(it == pointMap.end())
-	{
-		CountBlock_t cb;
-		cb.totalHeal = 0;
-		cb.totalDamage = points;
-		cb.ticks = OTSYS_TIME();
-		pointMap[player->getID()] = cb;
-	}
-	else
+	if(it != pointMap.end())
 	{
 		it->second.totalDamage += points;
 		it->second.ticks = OTSYS_TIME();
 	}
+	else
+		pointMap[player->getID()] = CountBlock_t(0, points);
 
 	updateSharedExperience();
 }
