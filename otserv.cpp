@@ -335,7 +335,7 @@ void otserv(StringVec args, ServiceManager* services)
 		std::cout << "> WARNING: " << STATUS_SERVER_NAME << " has been executed as root user! It is recommended to execute as a normal user." << std::endl
 			<< "Continue? (y/N)" << std::endl;
 		char buffer = getchar();
-		if(buffer == 10 || (buffer != 121 && buffer != 89))
+		if(buffer != 121 && buffer != 89)
 			startupErrorMessage("Aborted.");
 	}
 #endif
@@ -459,7 +459,7 @@ void otserv(StringVec args, ServiceManager* services)
 		std::cout << "> Using plaintext encryption" << std::endl;
 	}
 	
-	std::cout << ">> Checking software version... ";
+	std::cout << ">> Checking software version...";
 	if(xmlDocPtr doc = xmlParseFile(VERSION_CHECK))
 	{
 		xmlNodePtr p, root = xmlDocGetRootElement(doc);
@@ -486,19 +486,24 @@ void otserv(StringVec args, ServiceManager* services)
 
 				if(tmp)
 				{
-					if(version.find("_SVN") != std::string::npos)
-						std::cout << "outdated, please consider updating!" << std::endl;
+					std::cout << " ";
+					if(version.find("_SVN") == std::string::npos)
+						std::cout << "running sub version, please mind it's unstable and only for testing purposes!";
+					else
+						std::cout << "outdated, please consider upgrading!";
 
-					std::cout << "> Current version information - version: " << STATUS_SERVER_VERSION << ", patch: " << VERSION_PATCH
-						<< ", build: " << VERSION_BUILD << ", timestamp: " << VERSION_TIMESTAMP << "." << std::endl
-						<< "> Latest version information - version: " << version << ", patch: " << patch
-						<< ", build: " << build << ", timestamp: " << timestamp << "." << std::endl;
+					std::cout << std::endl << "> Current version information - version: "
+						<< STATUS_SERVER_VERSION << ", patch: " << VERSION_PATCH
+						<< ", build: " << VERSION_BUILD << ", timestamp: " << VERSION_TIMESTAMP
+						<< "." << std::endl << "> Latest version information - version: "
+						<< version << ", patch: " << patch << ", build: " << build
+						<< ", timestamp: " << timestamp << "." << std::endl;
 					if(g_config.getBool(ConfigManager::CONFIM_OUTDATED_VERSION)
 						&& version.find("_SVN") == std::string::npos)
 					{
 						std::cout << "Continue? (y/N)" << std::endl;
 						char buffer = getchar();
-						if(buffer == 10 || (buffer != 121 && buffer != 89))
+						if(buffer != 121 && buffer != 89)
 							startupErrorMessage("Aborted.");
 					}
 				}
@@ -521,7 +526,7 @@ void otserv(StringVec args, ServiceManager* services)
 	{
 		std::cout << "Unable to fetch blacklist! Continue? (y/N)" << std::endl;
 		char buffer = getchar();
-		if(buffer == 10 || (buffer != 121 && buffer != 89))
+		if(buffer != 121 && buffer != 89)
 			startupErrorMessage("Unable to fetch blacklist!");
 	}
 
@@ -569,7 +574,7 @@ void otserv(StringVec args, ServiceManager* services)
 	{
 		std::cout << "Unable to load items (XML)! Continue? (y/N)" << std::endl;
 		char buffer = getchar();
-		if(buffer == 10 || (buffer != 121 && buffer != 89))
+		if(buffer != 121 && buffer != 89)
 			startupErrorMessage("Unable to load items (XML)!");
 	}
 
@@ -602,7 +607,7 @@ void otserv(StringVec args, ServiceManager* services)
 	{
 		std::cout << "Unable to load monsters! Continue? (y/N)" << std::endl;
 		char buffer = getchar();
-		if(buffer == 10 || (buffer != 121 && buffer != 89))
+		if(buffer != 121 && buffer != 89)
 			startupErrorMessage("Unable to load monsters!");
 	}
 
