@@ -64,9 +64,15 @@
 #ifdef __EXCEPTION_TRACER__
 #include "exception.h"
 #endif
+
+#ifndef __REMOTE_CONTROL__
+#include "textlogger.h"
+#else
+extern Admin* g_admin;
+#endif
+
 #ifdef __NO_BOOST_EXCEPTIONS__
 #include <exception>
-
 void boost::throw_exception(std::exception const & e)
 {
 	std::cout << "Boost exception: " << e.what() << std::endl;
@@ -83,11 +89,7 @@ Chat g_chat;
 IpList serverIps;
 boost::mutex g_loaderLock;
 boost::condition_variable g_loaderSignal;
-
 boost::unique_lock<boost::mutex> g_loaderUniqueLock(g_loaderLock);
-#ifdef __REMOTE_CONTROL__
-extern Admin* g_admin;
-#endif
 
 bool argumentsHandler(StringVec args)
 {
