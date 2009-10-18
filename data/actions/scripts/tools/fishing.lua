@@ -103,7 +103,7 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 					if(summon.bossName ~= "" and summon.bossChance >= random) then
 						doCreateMonster(summon.bossName, position)
 						tries = 4
-					if(summon.name ~= "" and summon.chance >= random) then
+					elseif(summon.name ~= "" and summon.chance >= random) then
 						doCreateMonster(summon.name, position)
 						tries = 3
 					else
