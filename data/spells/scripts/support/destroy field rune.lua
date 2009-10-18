@@ -1,9 +1,8 @@
-ITEM_SEARINGFIRE_FIRST = 1506
-ITEM_SEARINGFIRE_LAST = 1508
+UNREMOVABLE_FIELDS = {0, 1506, 1507, 1508}
 
 local function doRemoveField(cid, pos)
 	local field = getTileItemByType(pos, ITEM_TYPE_MAGICFIELD)
-	if(field.itemid ~= 0 and (field.item < ITEM_SEARINGFIRE_FIRST or field.item > ITEM_SEARINGFIRE_LAST)) then
+	if(not isInArray(UNREMOVABLE_FIELDS, field.itemid)) then
 		doRemoveItem(field.uid)
 		doSendMagicEffect(pos, CONST_ME_POFF)
 		return true
