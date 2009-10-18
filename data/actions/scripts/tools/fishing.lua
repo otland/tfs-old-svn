@@ -15,7 +15,7 @@ local config = {
 	rateLoot = getConfigValue("rateLoot"),
 
 	summons = {
-		-- {name, skill, chance}
+		-- {skill, name, chance, bossName, bossChance}
 	},
 	rateSpawn = getConfigValue("rateSpawn"),
 
@@ -89,15 +89,21 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 			elseif(formula > 0.7 and doPlayerRemoveItem(cid, ITEM_WORM, config.baitCount)) then
 				tries = 2
 				if(table.maxn(config.summons) > 0 and getDistanceBetween(position, toPosition) < 2) then
-					local skill, summon = getPlayerSkill(cid, SKILL_FISHING), {name = "", chance = 0}
+					local skill, summon = getPlayerSkill(cid, SKILL_FISHING), {name = "", chance = 0, bossName = "", bossChance = 0}
 					for _, data in pairs(config.summons) do
-						if(skill >= data[2]) then
-							summon.name = data[1]
+						if(skill >= data[1]) then
+							summon.name = data[2]
 							summon.chance = data[3]
+							summon.bossName = data[4]
+							summon.bossChance = data[5]
 						end
 					end
 
-					if(summon.name ~= "" and summon.chance >= math.random(1, 100000) / config.rateSpawn) then
+					local random = math.random(1, 100000) / config.rateSpawn
+					if(summon.bossName ~= "" and summon.bossChance >= random) then
+						doCreateMonster(summon.bossName, position)
+						tries = 4
+					if(summon.name ~= "" and summon.chance >= random) then
 						doCreateMonster(summon.name, position)
 						tries = 3
 					else
