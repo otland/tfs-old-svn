@@ -5,9 +5,6 @@
 		with getting real monster attributes, loot etc
 
 		[ MISSING MONSTERS (not all listed there)
-			Annelids
-				Rift Worm
-
 			Ape Bosses
 				Hairman The Huge
 
@@ -42,7 +39,6 @@
 			Ghosts
 				Dryad
 				Ghostly Apparition
-				Rift Phantom
 				Tormented Ghost
 
 			Orc Bosses
@@ -53,11 +49,8 @@
 				Sharptooth
 				Splasher
 
-			Serpents
-				Young Sea Serpent
-
-			Skeletons
-				Dreadbeast
+			Rifts
+				Rift Phantom
 
 			Traps
 				Deathspawn
@@ -69,7 +62,6 @@
 				Pillar
 
 			Undead Humanoids
-				Rift Scythe
 				Undead Jester
 		]
 
@@ -194,8 +186,10 @@
 	<monster name="Golgordan" file="Bosses/golgordan.xml"/>
 	<monster name="Grorlam" file="Bosses/grorlam.xml"/>
 	<monster name="Hellgorak" file="Bosses/hellgorak.xml"/>
+	<monster name="Koshei The Deathless" file="Bosses/koshei the deathless.xml"/>
 	<monster name="Latrivan" file="Bosses/latrivan.xml"/>
 	<monster name="Lethal Lissy" file="Bosses/lethal lissy.xml"/>
+	<monster name="Leviathan" file="Bosses/leviathan.xml"/>
 	<monster name="Lord of the Elements" file="Bosses/lord of the elements.xml"/>
 	<monster name="Mad Technomancer" file="Bosses/mad technomancer.xml"/>
 	<monster name="Madareth" file="Bosses/madareth.xml"/>
@@ -439,6 +433,7 @@
 	<monster name="Hero" file="Outlaws/hero.xml"/>
 	<monster name="Hunter" file="Outlaws/hunter.xml"/>
 	<monster name="Nomad" file="Outlaws/nomad.xml"/>
+	<monster name="Poacher" file="Outlaws/poacher.xml"/>
 	<monster name="Primitive" file="Outlaws/primitive.xml"/>
 	<monster name="Smuggler" file="Outlaws/smuggler.xml"/>
 	<monster name="Stalker" file="Outlaws/stalker.xml"/>
@@ -488,11 +483,17 @@
 	<monster name="Crocodile" file="Reptiles/crocodile.xml"/>
 	<monster name="Hydra" file="Reptiles/hydra.xml"/>
 
+	<!-- Rifts -->
+	<monster name="Rift Worm" file="Rifts/rift worm.xml"/>
+	<monster name="Rift Scythe" file="Rifts/rift scythe.xml"/>
+	<monster name="Rift Brood" file="Rifts/rift brood.xml"/>
+
 	<!-- Serpents -->
 	<monster name="Cobra" file="Serpents/cobra.xml"/>
 	<monster name="Sea Serpent" file="Serpents/sea serpent.xml"/>
 	<monster name="Serpent Spawn" file="Serpents/serpent spawn.xml"/>
 	<monster name="Snake" file="Serpents/snake.xml"/>
+	<monster name="Young Sea Serpent" file="Serpents/young sea serpent.xml"/>
 
 	<!-- Sheeps -->
 	<monster name="Black Sheep" file="Sheeps/black sheep.xml"/>
@@ -506,6 +507,8 @@
 	<monster name="Bonebeast" file="Skeletons/bonebeast.xml"/>
 	<monster name="Bone Beast" file="Skeletons/bonebeast.xml"/>
 	<monster name="Demon Skeleton" file="Skeletons/demon skeleton.xml"/>
+	<monster name="Dreadbeast" file="Skeletons/dreadbeast.xml"/>
+	<monster name="Dread Beast" file="Skeletons/dreadbeast.xml"/>
 	<monster name="Lost Soul" file="Skeletons/lost soul.xml"/>
 	<monster name="Pirate Skeleton" file="Skeletons/pirate skeleton.xml"/>
 	<monster name="Skeleton" file="Skeletons/skeleton.xml"/>
