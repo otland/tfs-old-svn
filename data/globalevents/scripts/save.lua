@@ -20,9 +20,8 @@ local function executeSave(seconds)
 		doBroadcastMessage(text)
 	end
 
-	seconds = seconds - config.events
 	if(seconds > 0) then
-		addEvent(executeSave, config.events * 1000, seconds)
+		addEvent(executeSave, config.events * 1000, seconds - config.events)
 	else
 		doSaveServer(config.shallow)
 	end
