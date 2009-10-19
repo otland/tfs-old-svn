@@ -1,30 +1,39 @@
 local config = {
-	broadcast = "no"
+	broadcast = {120, 30},
+	shallow = "no",
+	delay = 120,
+	events = 30
 }
 
-config.broadcast = getBooleanFromString(config.broadcast)
+config.shallow = getBooleanFromString(config.shallow)
+
 local function executeSave(seconds)
-	if(seconds == 0) then
-		doSaveServer()
-		return true
+	if(isInArray(config.broadcast, seconds)) then
+		local text = ""
+		if(not config.shallow) then
+			text = "Full s"
+		else
+			text = "S"
+		end
+
+		text = text .. "erver save within " .. seconds .. " seconds, please mind it may freeze!"
+		doBroadcastMessage(text)
 	end
 
-	if(seconds == 120 or seconds == 30) then
-		doBroadcastMessage("Full server save within " .. seconds .. " seconds, please stay in safe place!")
-	end
-
-	seconds = seconds - 30
-	if(seconds >= 0) then
-		addEvent(executeSave, 30 * 1000, seconds)
+	seconds = seconds - config.events
+	if(seconds > 0) then
+		addEvent(executeSave, config.events * 1000, seconds)
+	else
+		doSaveServer(config.shallow)
 	end
 end
 
 function onThink(interval, lastExecution, thinkInterval)
-	if(not config.broadcast) then
-		doSaveServer()
-		return true
+	if(table.maxn(config.broadcast) == 0) then
+		doSaveServer(config.shallow)
+	else
+		executeSave(config.delay)
 	end
 
-	executeSave(120)
 	return true
 end
