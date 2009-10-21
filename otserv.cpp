@@ -21,6 +21,12 @@
 #include <fstream>
 #include <iomanip>
 
+#ifndef WX_PRECOMP
+	#include <wx/wx.h>
+#else
+	#include <wx/wxprec.h>
+#endif
+
 #ifndef WINDOWS
 #include <unistd.h>
 #endif
@@ -70,6 +76,8 @@
 #else
 extern Admin* g_admin;
 #endif
+
+#include "gui.h"
 
 #ifdef __NO_BOOST_EXCEPTIONS__
 #include <exception>
@@ -223,21 +231,54 @@ void startupErrorMessage(std::string error = "")
 	if(error.length() > 0)
 		std::cout << std::endl << "> ERROR: " << error << std::endl;
 
-	getchar();
-	exit(-1);
+	/*getchar();
+	exit(-1);*/
 }
+int otservMain(int argc, char* argv[]);
+
+class MainGUIApp : public wxApp
+{
+	public:
+		bool OnInit()
+		{
+            if(!wxApp::OnInit())
+                return false;
+            MainGUI* frame = new MainGUI(NULL);
+            SetTopWindow(frame);
+            frame->Show();
+            std::cout.rdbuf(frame->getLogText());
+            //std::cout << "runninbg server";
+            std::cout << "runninbg server";
+            otservMain(argc, argv);
+            return true;
+        }
+        int OnRun()
+        {
+            int errorCode = wxApp::OnRun();
+            if(errorCode != 0)
+                return errorCode;
+            std::cout << "runninbg server";
+            return otservMain(argc, argv);
+        }
+		int OnExit()
+		{
+            return 0;   
+        }
+};
+
+IMPLEMENT_APP(MainGUIApp)
 
 void otserv(StringVec args, ServiceManager* services);
-int main(int argc, char* argv[])
+int otservMain(int argc, char* argv[])
 {
 	StringVec args = StringVec(argv, argv + argc);
 	if(argc > 1 && !argumentsHandler(args))
 		return 0;
-
+    std::cout << "lol";
 	std::set_new_handler(allocationHandler);
 	ServiceManager servicer;
 	g_config.startup();
-
+std::cout << "lol1";
 #ifdef __OTSERV_ALLOCATOR_STATS__
 	boost::thread(boost::bind(&allocatorStatsThread, (void*)NULL));
 #endif
@@ -265,9 +306,11 @@ int main(int argc, char* argv[])
 	signal(SIGQUIT, signalHandler); //save & shutdown
 	signal(SIGTERM, signalHandler); //shutdown
 #endif
-
+std::cout << "lol2";
 	Dispatcher::getInstance()->addTask(createTask(boost::bind(otserv, args, &servicer)));
+	std::cout << "lol3";
 	g_loaderSignal.wait(g_loaderUniqueLock);
+	std::cout << "lol4";
 	if(servicer.isRunning())
 	{
 		std::cout << ">> " << g_config.getString(ConfigManager::SERVER_NAME) << " server Online!" << std::endl << std::endl;
@@ -326,10 +369,10 @@ int main(int argc, char* argv[])
 void otserv(StringVec args, ServiceManager* services)
 {
 	srand((uint32_t)OTSYS_TIME());
-#ifdef WINDOWS
+/*#ifdef WINDOWS
 	SetConsoleTitle(STATUS_SERVER_NAME);
-#endif
-
+#endif*/
+    std::cout.rdbuf(((MainGUI*)wxTheApp->GetTopWindow())->getLogText());
 	g_game.setGameState(GAME_STATE_STARTUP);
 #if !defined(WINDOWS) && !defined(__ROOT_PERMISSION__)
 	if(getuid() == 0 || geteuid() == 0)
@@ -503,10 +546,10 @@ void otserv(StringVec args, ServiceManager* services)
 					if(g_config.getBool(ConfigManager::CONFIM_OUTDATED_VERSION)
 						&& version.find("_SVN") == std::string::npos)
 					{
-						std::cout << "Continue? (y/N)" << std::endl;
+						/*std::cout << "Continue? (y/N)" << std::endl;
 						char buffer = getchar();
 						if(buffer != 121 && buffer != 89)
-							startupErrorMessage("Aborted.");
+							startupErrorMessage("Aborted.");*/
 					}
 				}
 				else
@@ -527,9 +570,9 @@ void otserv(StringVec args, ServiceManager* services)
 	if(!g_game.fetchBlacklist())
 	{
 		std::cout << "Unable to fetch blacklist! Continue? (y/N)" << std::endl;
-		char buffer = getchar();
+		/*char buffer = getchar();
 		if(buffer != 121 && buffer != 89)
-			startupErrorMessage("Unable to fetch blacklist!");
+			startupErrorMessage("Unable to fetch blacklist!");*/
 	}
 
 	std::cout << ">> Loading RSA key" << std::endl;
@@ -575,9 +618,9 @@ void otserv(StringVec args, ServiceManager* services)
 	if(!Item::items.loadFromXml())
 	{
 		std::cout << "Unable to load items (XML)! Continue? (y/N)" << std::endl;
-		char buffer = getchar();
+		/*char buffer = getchar();
 		if(buffer != 121 && buffer != 89)
-			startupErrorMessage("Unable to load items (XML)!");
+			startupErrorMessage("Unable to load items (XML)!");*/
 	}
 
 	std::cout << ">> Loading groups" << std::endl;
@@ -608,9 +651,9 @@ void otserv(StringVec args, ServiceManager* services)
 	if(!g_monsters.loadFromXml())
 	{
 		std::cout << "Unable to load monsters! Continue? (y/N)" << std::endl;
-		char buffer = getchar();
+		/*char buffer = getchar();
 		if(buffer != 121 && buffer != 89)
-			startupErrorMessage("Unable to load monsters!");
+			startupErrorMessage("Unable to load monsters!");*/
 	}
 
 	std::cout << ">> Loading mods..." << std::endl;
