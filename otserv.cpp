@@ -20,11 +20,12 @@
 #include <iostream>
 #include <fstream>
 #include <iomanip>
-
+#ifdef __GUI__
 #ifndef WX_PRECOMP
 	#include <wx/wx.h>
 #else
 	#include <wx/wxprec.h>
+#endif
 #endif
 
 #ifndef WINDOWS
@@ -42,6 +43,9 @@
 #include "chat.h"
 #include "tools.h"
 #include "rsa.h"
+#ifdef __GUI__
+#include "gui.h"
+#endif
 
 #include "protocollogin.h"
 #include "protocolgame.h"
@@ -77,8 +81,6 @@
 extern Admin* g_admin;
 #endif
 
-#include "gui.h"
-
 #ifdef __NO_BOOST_EXCEPTIONS__
 #include <exception>
 void boost::throw_exception(std::exception const & e)
@@ -110,7 +112,7 @@ bool argumentsHandler(StringVec args)
 			"\n"
 			"\t--config=$1\t\tAlternate configuration file path.\n"
 			"\t--data-directory=$1\tAlternate data directory path.\n"
-			"\t--ip=$1\t\t\tIP address of gameworld server.\n"
+			"\t--ip=$1\t\t\tIP address of the server.\n"
 			"\t\t\t\tShould be equal to the global IP.\n"
 			"\t--login-port=$1\tPort for login server to listen on.\n"
 			"\t--game-port=$1\tPort for game server to listen on.\n"
@@ -123,7 +125,8 @@ bool argumentsHandler(StringVec args)
 			std::cout << "\t--output-log=$1\t\tAll standard output will be logged to\n"
 			"\t\t\t\tthis file.\n"
 			"\t--error-log=$1\t\tAll standard errors will be logged to\n"
-			"\t\t\t\tthis file.\n";
+			"\t\t\t\tthis file.\n"
+			"\t--closed\t\t\tStarts the server as closed.\n";
 			return false;
 		}
 
@@ -131,7 +134,7 @@ bool argumentsHandler(StringVec args)
 		{
 			std::cout << STATUS_SERVER_NAME << ", version " << STATUS_SERVER_VERSION << " (" << STATUS_SERVER_CODENAME << ")\n"
 			"Compiled with " << BOOST_COMPILER << " at " << __DATE__ << ", " << __TIME__ << ".\n"
-			"A server developed by Elf, slawkens, Talaturen, Lithium, KaczooH, Kiper, Kornholijo.\n"
+			"A server developed by Elf, Talaturen, Lithium, KaczooH, Kiper, Kornholijo.\n"
 			"Visit our forum for updates, support and resources: http://otland.net.\n";
 			return false;
 		}
@@ -159,6 +162,8 @@ bool argumentsHandler(StringVec args)
 			g_config.setString(ConfigManager::OUT_LOG, tmp[1]);
 		else if(tmp[0] == "--error-log")
 			g_config.setString(ConfigManager::ERROR_LOG, tmp[1]);
+		else if(tmp[0] == "--closed")
+			g_config.setBool(ConfigManager::START_CLOSED, booleanString(tmp[1]));
 	}
 
 	return true;
@@ -231,11 +236,12 @@ void startupErrorMessage(std::string error = "")
 	if(error.length() > 0)
 		std::cout << std::endl << "> ERROR: " << error << std::endl;
 
-	/*getchar();
-	exit(-1);*/
+	getchar();
+	exit(-1);
 }
-int otservMain(int argc, char* argv[]);
 
+#ifdef __GUI__
+int otservMain(int argc, char* argv[]);
 class MainGUIApp : public wxApp
 {
 	public:
@@ -267,18 +273,23 @@ class MainGUIApp : public wxApp
 };
 
 IMPLEMENT_APP(MainGUIApp)
+#endif
 
 void otserv(StringVec args, ServiceManager* services);
+#ifdef __GUI__
 int otservMain(int argc, char* argv[])
+#else
+int main(int argc, char* argv[])
+#endif
 {
 	StringVec args = StringVec(argv, argv + argc);
 	if(argc > 1 && !argumentsHandler(args))
 		return 0;
-    std::cout << "lol";
+
 	std::set_new_handler(allocationHandler);
 	ServiceManager servicer;
 	g_config.startup();
-std::cout << "lol1";
+
 #ifdef __OTSERV_ALLOCATOR_STATS__
 	boost::thread(boost::bind(&allocatorStatsThread, (void*)NULL));
 #endif
@@ -306,11 +317,9 @@ std::cout << "lol1";
 	signal(SIGQUIT, signalHandler); //save & shutdown
 	signal(SIGTERM, signalHandler); //shutdown
 #endif
-std::cout << "lol2";
+
 	Dispatcher::getInstance()->addTask(createTask(boost::bind(otserv, args, &servicer)));
-	std::cout << "lol3";
 	g_loaderSignal.wait(g_loaderUniqueLock);
-	std::cout << "lol4";
 	if(servicer.isRunning())
 	{
 		std::cout << ">> " << g_config.getString(ConfigManager::SERVER_NAME) << " server Online!" << std::endl << std::endl;
@@ -369,10 +378,10 @@ std::cout << "lol2";
 void otserv(StringVec args, ServiceManager* services)
 {
 	srand((uint32_t)OTSYS_TIME());
-/*#ifdef WINDOWS
+#if defined(WINDOWS) && !defined(__GUI__)
 	SetConsoleTitle(STATUS_SERVER_NAME);
-#endif*/
-    std::cout.rdbuf(((MainGUI*)wxTheApp->GetTopWindow())->getLogText());
+
+#endif
 	g_game.setGameState(GAME_STATE_STARTUP);
 #if !defined(WINDOWS) && !defined(__ROOT_PERMISSION__)
 	if(getuid() == 0 || geteuid() == 0)
@@ -387,7 +396,7 @@ void otserv(StringVec args, ServiceManager* services)
 
 	std::cout << STATUS_SERVER_NAME << ", version " << STATUS_SERVER_VERSION << " (" << STATUS_SERVER_CODENAME << ")" << std::endl
 		<< "Compiled with " << BOOST_COMPILER << " at " << __DATE__ << ", " << __TIME__ << "." << std::endl
-		<< "A server developed by Elf, slawkens, Talaturen, KaczooH, Lithium, Kiper, Kornholijo." << std::endl
+		<< "A server developed by Elf, Talaturen, KaczooH, Lithium, Kiper, Kornholijo." << std::endl
 		<< "Visit our forum for updates, support and resources: http://otland.net." << std::endl << std::endl;
 	std::stringstream ss;
 #ifdef __DEBUG__
@@ -546,10 +555,10 @@ void otserv(StringVec args, ServiceManager* services)
 					if(g_config.getBool(ConfigManager::CONFIM_OUTDATED_VERSION)
 						&& version.find("_SVN") == std::string::npos)
 					{
-						/*std::cout << "Continue? (y/N)" << std::endl;
+						std::cout << "Continue? (y/N)" << std::endl;
 						char buffer = getchar();
 						if(buffer != 121 && buffer != 89)
-							startupErrorMessage("Aborted.");*/
+							startupErrorMessage("Aborted.");
 					}
 				}
 				else
@@ -570,9 +579,9 @@ void otserv(StringVec args, ServiceManager* services)
 	if(!g_game.fetchBlacklist())
 	{
 		std::cout << "Unable to fetch blacklist! Continue? (y/N)" << std::endl;
-		/*char buffer = getchar();
+		char buffer = getchar();
 		if(buffer != 121 && buffer != 89)
-			startupErrorMessage("Unable to fetch blacklist!");*/
+			startupErrorMessage("Unable to fetch blacklist!");
 	}
 
 	std::cout << ">> Loading RSA key" << std::endl;
@@ -618,9 +627,9 @@ void otserv(StringVec args, ServiceManager* services)
 	if(!Item::items.loadFromXml())
 	{
 		std::cout << "Unable to load items (XML)! Continue? (y/N)" << std::endl;
-		/*char buffer = getchar();
+		char buffer = getchar();
 		if(buffer != 121 && buffer != 89)
-			startupErrorMessage("Unable to load items (XML)!");*/
+			startupErrorMessage("Unable to load items (XML)!");
 	}
 
 	std::cout << ">> Loading groups" << std::endl;
@@ -651,9 +660,9 @@ void otserv(StringVec args, ServiceManager* services)
 	if(!g_monsters.loadFromXml())
 	{
 		std::cout << "Unable to load monsters! Continue? (y/N)" << std::endl;
-		/*char buffer = getchar();
+		char buffer = getchar();
 		if(buffer != 121 && buffer != 89)
-			startupErrorMessage("Unable to load monsters!");*/
+			startupErrorMessage("Unable to load monsters!");
 	}
 
 	std::cout << ">> Loading mods..." << std::endl;
@@ -756,11 +765,10 @@ void otserv(StringVec args, ServiceManager* services)
 		std::cout << (*it) << "\t";
 
 	std::cout << std::endl << ">> All modules were loaded, server is starting up..." << std::endl;
-	g_game.setGameState(GAME_STATE_NORMAL);
+	g_game.setGameState(g_config.getBool(ConfigManager::START_CLOSED) ? GAME_STATE_CLOSED : GAME_STATE_NORMAL);
 	g_game.start(services);
 	g_loaderSignal.notify_all();
 }
-
 /*{
 	CInputBox iBox(hwnd);
 	switch(message)
@@ -874,7 +882,7 @@ void otserv(StringVec args, ServiceManager* services)
 						GUI::getInstance()->m_lineCount = 0;
 						std::cout << STATUS_SERVER_NAME << ", version " << STATUS_SERVER_VERSION << " (" << STATUS_SERVER_CODENAME << ")" << std::endl;
 						std::cout << "Compiled with " << BOOST_COMPILER << " at " << __DATE__ << ", " << __TIME__ << "." << std::endl;
-						std::cout << "A server developed by Elf, slawkens, Talaturen, Lithium, KaczooH, Kiper, Kornholijo." << std::endl;
+						std::cout << "A server developed by Elf, Talaturen, Lithium, KaczooH, Kiper, Kornholijo." << std::endl;
 						std::cout << "Visit our forum for updates, support and resources: http://otland.net." << std::endl;
 						std::cout << std::endl;
 					}

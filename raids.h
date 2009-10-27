@@ -180,7 +180,7 @@ class EffectEvent : public RaidEvent
 {
 	public:
 		EffectEvent(Raid* raid, bool ref): RaidEvent(raid, ref),
-			m_effect(NM_MAGIC_NONE) {}
+			m_effect(MAGIC_EFFECT_NONE) {}
 		virtual ~EffectEvent() {}
 
 		virtual bool configureRaidEvent(xmlNodePtr eventNode);

@@ -3512,7 +3512,7 @@ int32_t LuaInterface::luaDoCreatureAddHealth(lua_State* L)
 	if(params > 3)
 		hitColor = (TextColor_t)popNumber(L);
 
-	MagicEffect_t hitEffect = NM_MAGIC_UNKNOWN;
+	MagicEffect_t hitEffect = MAGIC_EFFECT_UNKNOWN;
 	if(params > 2)
 		hitEffect = (MagicEffect_t)popNumber(L);
 
@@ -5778,7 +5778,7 @@ int32_t LuaInterface::luaDoCombat(lua_State* L)
 			if(!combat->hasArea())
 			{
 				combat->postCombatEffects(creature, var.pos);
-				g_game.addMagicEffect(var.pos, NM_MAGIC_POFF);
+				g_game.addMagicEffect(var.pos, MAGIC_EFFECT_POFF);
 			}
 			else
 				combat->doCombat(creature, var.pos);

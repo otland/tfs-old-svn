@@ -59,7 +59,7 @@ ItemType::ItemType()
 	ammoType = AMMO_NONE;
 	ammoAction = AMMOACTION_NONE;
 	shootType = (ShootEffect_t)0;
-	magicEffect = NM_MAGIC_NONE;
+	magicEffect = MAGIC_EFFECT_NONE;
 	attack = extraAttack = 0;
 	defense = extraDefense = 0;
 	attackSpeed = 0;
@@ -832,7 +832,7 @@ void Items::parseItemNode(xmlNodePtr itemNode, uint32_t id)
 				if(readXMLString(itemAttributesNode, "value", strValue))
 				{
 					ShootEffect_t shoot = getShootType(strValue);
-					if(shoot != NM_SHOOT_UNKNOWN)
+					if(shoot != SHOOT_EFFECT_UNKNOWN)
 						it.shootType = shoot;
 					else
 						std::cout << "[Warning - Items::loadFromXml] Unknown shootType " << strValue << std::endl;
@@ -843,7 +843,7 @@ void Items::parseItemNode(xmlNodePtr itemNode, uint32_t id)
 				if(readXMLString(itemAttributesNode, "value", strValue))
 				{
 					MagicEffect_t effect = getMagicEffect(strValue);
-					if(effect != NM_MAGIC_UNKNOWN)
+					if(effect != MAGIC_EFFECT_UNKNOWN)
 						it.magicEffect = effect;
 					else
 						std::cout << "[Warning - Items::loadFromXml] Unknown effect " << strValue << std::endl;

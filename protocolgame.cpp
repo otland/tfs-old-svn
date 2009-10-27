@@ -316,7 +316,7 @@ bool ProtocolGame::logout(bool displayEffect, bool forceLogout)
 		displayEffect = false;
 
 	if(displayEffect && !player->isGhost())
-		g_game.addMagicEffect(player->getPosition(), NM_MAGIC_POFF);
+		g_game.addMagicEffect(player->getPosition(), MAGIC_EFFECT_POFF);
 
 	if(Connection_ptr connection = getConnection())
 		connection->close();
@@ -815,7 +815,7 @@ void ProtocolGame::parsePacket(NetworkMessage &msg)
 						IOLoginData::getInstance()->saveAccount(tmp);
 						player->sendTextMessage(MSG_INFO_DESCR, "You have been banished.");
 
-						g_game.addMagicEffect(player->getPosition(), NM_MAGIC_MAGIC_POISON);
+						g_game.addMagicEffect(player->getPosition(), MAGIC_EFFECT_MAGIC_POISON);
 						Scheduler::getInstance()->addEvent(createSchedulerTask(1000, boost::bind(
 							&Game::kickPlayer, &g_game, player->getID(), false)));
 					}
@@ -2040,7 +2040,7 @@ void ProtocolGame::sendPing()
 
 void ProtocolGame::sendDistanceShoot(const Position& from, const Position& to, uint8_t type)
 {
-	if(type > NM_SHOOT_LAST || (!canSee(from) && !canSee(to)))
+	if(type > SHOOT_EFFECT_LAST || (!canSee(from) && !canSee(to)))
 		return;
 
 	NetworkMessage_ptr msg = getOutputBuffer();
@@ -2053,7 +2053,7 @@ void ProtocolGame::sendDistanceShoot(const Position& from, const Position& to, u
 
 void ProtocolGame::sendMagicEffect(const Position& pos, uint8_t type)
 {
-	if(type > NM_MAGIC_LAST || !canSee(pos))
+	if(type > MAGIC_EFFECT_LAST || !canSee(pos))
 		return;
 
 	NetworkMessage_ptr msg = getOutputBuffer();

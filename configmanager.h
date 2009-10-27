@@ -187,6 +187,7 @@ class ConfigManager
 		enum bool_config_t
 		{
 			GLOBALSAVE_ENABLED = 0,
+			START_CLOSED,
 			START_CHOOSEVOC,
 			ON_OR_OFF_CHARLIST,
 			ONE_PLAYER_ON_ACCOUNT,
@@ -271,6 +272,7 @@ class ConfigManager
 
 		bool setString(uint32_t _what, const std::string& _value);
 		bool setNumber(uint32_t _what, int32_t _value);
+		bool setBool(uint32_t _what, bool _value);
 
 		void getValue(const std::string& key, lua_State* _L) {LuaInterface::getValue(key, L, _L);}
 
