@@ -270,18 +270,18 @@ int32_t Game::loadMap(std::string filename)
 
 void Game::cleanMap(uint32_t& count)
 {
-	count = 0;
 	uint64_t start = OTSYS_TIME();
-	setGameState(GAME_STATE_MAINTAIN);
+	uint32_t tiles = 0; count = 0;
+
+	int32_t marked = -1;
+	if(gameState == GAME_STATE_NORMAL)
+		setGameState(GAME_STATE_MAINTAIN);
 
 	Tile* tile = NULL;
-	Item* item = NULL;
 	ItemVector::iterator tit;
-
-	int32_t tiles = -1;
 	if(g_config.getBool(ConfigManager::STORE_TRASH))
 	{
-		tiles = trash.size();
+		marked = trash.size();
 		Trash::iterator it = trash.begin();
 		if(g_config.getBool(ConfigManager::CLEAN_PROTECTED_ZONES))
 		{
@@ -291,19 +291,17 @@ void Game::cleanMap(uint32_t& count)
 					continue;
 
 				tile->resetFlag(TILESTATE_TRASHED);
-				if(tile->hasFlag(TILESTATE_HOUSE))
+				if(tile->hasFlag(TILESTATE_HOUSE) || !tile->getItemList())
 					continue;
 
-				if(!tile->getItemList())
-					continue;
-
+				++tiles;
 				tit = tile->getItemList()->begin();
 				while(tile->getItemList() && tit != tile->getItemList()->end())
 				{
 					if((*tit)->isMoveable() && !(*tit)->isLoadedFromMap()
 						&& !(*tit)->isScriptProtected())
 					{
-						internalRemoveItem(NULL, (*tit));
+						internalRemoveItem(NULL, *tit);
 						if(tile->getItemList())
 							tit = tile->getItemList()->begin();
 
@@ -318,52 +316,62 @@ void Game::cleanMap(uint32_t& count)
 		}
 		else
 		{
-			while(it != trash.end())
+			for(; it != trash.end(); ++it)
 			{
-				if((tile = getTile(*it)))
-				{
-					tile->resetFlag(TILESTATE_TRASHED);
-					if(!tile->hasFlag(TILESTATE_PROTECTIONZONE))
-					{
-						for(uint32_t i = 0; i < tile->getThingCount();)
-						{
-							if((item = tile->__getThing(i)->getItem()) && item->isMoveable()
-								&& !item->isLoadedFromMap() && !item->isScriptProtected())
-							{
-								internalRemoveItem(NULL, item);
-								count++;
-							}
-							else
-								++i;
-					}
-					}
-				}
+				if(!(tile = getTile(*it)))
+					continue;
 
-				it = trash.erase(it);
+				tile->resetFlag(TILESTATE_TRASHED);
+				if(tile->hasFlag(TILESTATE_PROTECTIONZONE) || !tile->getItemList())
+					continue;
+
+				++tiles;
+				tit = tile->getItemList()->begin();
+				while(tile->getItemList() && tit != tile->getItemList()->end())
+				{
+					if((*tit)->isMoveable() && !(*tit)->isLoadedFromMap()
+						&& !(*tit)->isScriptProtected())
+					{
+						internalRemoveItem(NULL, *tit);
+						if(tile->getItemList())
+							tit = tile->getItemList()->begin();
+
+						++count;
+					}
+					else
+						++tit;
+				}
 			}
+
+			trash.clear();
 		}
 	}
 	else if(g_config.getBool(ConfigManager::CLEAN_PROTECTED_ZONES))
 	{
-		for(int16_t z = 0; z < MAP_MAX_LAYERS; z++)
+		for(uint16_t z = 0; z < (uint16_t)MAP_MAX_LAYERS; z++)
 		{
 			for(uint16_t y = 1; y <= map->mapHeight; y++)
 			{
 				for(uint16_t x = 1; x <= map->mapWidth; x++)
 				{
-					if((tile = getTile(Position(x, y, (unsigned)z))) && !tile->hasFlag(TILESTATE_HOUSE))
+					if(!(tile = getTile(x, y, z)) || tile->hasFlag(TILESTATE_HOUSE) || !tile->getItemList())
+						continue;
+
+					++tiles;
+					tit = tile->getItemList()->begin();
+					while(tile->getItemList() && tit != tile->getItemList()->end())
 					{
-						for(uint32_t i = 0; i < tile->getThingCount();)
+						if((*tit)->isMoveable() && !(*tit)->isLoadedFromMap()
+							&& !(*tit)->isScriptProtected())
 						{
-							if((item = tile->__getThing(i)->getItem()) && item->isMoveable()
-								&& !item->isLoadedFromMap() && !item->isScriptProtected())
-							{
-								internalRemoveItem(NULL, item);
-								count++;
-							}
-							else
-								++i;
+							internalRemoveItem(NULL, *tit);
+							if(tile->getItemList())
+								tit = tile->getItemList()->begin();
+
+							++count;
 						}
+						else
+							++tit;
 					}
 				}
 			}
@@ -371,35 +379,43 @@ void Game::cleanMap(uint32_t& count)
 	}
 	else
 	{
-		for(int16_t z = 0; z < MAP_MAX_LAYERS; z++)
+		for(uint16_t z = 0; z < (uint16_t)MAP_MAX_LAYERS; z++)
 		{
 			for(uint16_t y = 1; y <= map->mapHeight; y++)
 			{
 				for(uint16_t x = 1; x <= map->mapWidth; x++)
 				{
-					if((tile = getTile(Position(x, y, (unsigned)z))) && !tile->hasFlag(TILESTATE_PROTECTIONZONE))
+					if(!(tile = getTile(x, y, z)) || tile->hasFlag(TILESTATE_PROTECTIONZONE) || !tile->getItemList())
+						continue;
+
+					++tiles;
+					tit = tile->getItemList()->begin();
+					while(tile->getItemList() && tit != tile->getItemList()->end())
 					{
-						for(uint32_t i = 0; i < tile->getThingCount();)
+						if((*tit)->isMoveable() && !(*tit)->isLoadedFromMap()
+							&& !(*tit)->isScriptProtected())
 						{
-							if((item = tile->__getThing(i)->getItem()) && item->isMoveable()
-								&& !item->isLoadedFromMap() && !item->isScriptProtected())
-							{
-								internalRemoveItem(NULL, item);
-								count++;
-							}
-							else
-								++i;
+							internalRemoveItem(NULL, *tit);
+							if(tile->getItemList())
+								tit = tile->getItemList()->begin();
+
+							++count;
 						}
+						else
+							++tit;
 					}
 				}
 			}
 		}
 	}
 
-	setGameState(GAME_STATE_NORMAL);
-	std::cout << "> CLEAN: Removed " << count << " item" << (count != 1 ? "s" : "");
-	if(tiles > -1)
-		std::cout << " from " << tiles << " tile" << (tiles != 1 ? "s" : "");
+	if(gameState == GAME_STATE_MAINTAIN)
+		setGameState(GAME_STATE_NORMAL);
+
+	std::cout << "> CLEAN: Removed " << count << " item" << (count != 1 ? "s" : "")
+		<< " from " << tiles << " tile" << (tiles != 1 ? "s" : "");
+	if(marked >= 0)
+		std::cout << " (" << marked << " were marked)" << std::endl;
 
 	std::cout << " in " << (OTSYS_TIME() - start) / (1000.) << " seconds." << std::endl;
 }
@@ -434,10 +450,10 @@ void Game::refreshMap(RefreshTiles::iterator* it/* = NULL*/, uint32_t limit/* = 
 
 	Tile* tile = NULL;
 	TileItemVector* items = NULL;
-	Item* item = NULL;
 
-	uint32_t cleaned = 0, downItemsSize = 0;
-	for(; (*it) != end && (limit != 0 ? (cleaned < limit) : true); ++(*it), ++cleaned)
+	Item* item = NULL;
+	for(uint32_t cleaned = 0, downItemsSize = 0; (*it) != end &&
+		(limit ? (cleaned < limit) : true); ++(*it), ++cleaned)
 	{
 		if(!(tile = (*it)->first))
 			continue;
@@ -476,8 +492,8 @@ void Game::refreshMap(RefreshTiles::iterator* it/* = NULL*/, uint32_t limit/* = 
 			}
 			else
 			{
-				std::cout << "> WARNING: Could not refresh item: " << item->getID();
-				std::cout << " at position: " << tile->getPosition() << std::endl;
+				std::cout << "> WARNING: Could not refresh item: " << item->getID()
+					<< " at position: " << tile->getPosition() << std::endl;
 				delete item;
 			}
 		}
