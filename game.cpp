@@ -73,7 +73,6 @@ Game::Game()
 	lastStageLevel = 0;
 	lastPlayersRecord = 0;
 	useLastStageLevel = false;
-	stateTime = OTSYS_TIME();
 	for(int16_t i = 0; i < 3; i++)
 		serverSaveMessage[i] = false;
 
@@ -221,18 +220,16 @@ void Game::saveGameState()
 	if(gameState == GAME_STATE_NORMAL)
 		setGameState(GAME_STATE_MAINTAIN);
 
-	stateTime = 0;
 	std::cout << "Saving server..." << std::endl;
+	IOLoginData* io = IOLoginData::getInstance();
 	for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
 	{
-		(*it).second->loginPosition = (*it).second->getPosition();
-		IOLoginData::getInstance()->savePlayer((*it).second, false);
+		it->second->loginPosition = it->second->getPosition();
+		io->savePlayer(it->second, false);
 	}
 
 	map->saveMap();
 	ScriptEnviroment::saveGameState();
-	stateTime = OTSYS_TIME() + STATE_TIME;
-
 	if(gameState == GAME_STATE_MAINTAIN)
 		setGameState(GAME_STATE_NORMAL);
 }

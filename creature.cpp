@@ -1393,35 +1393,20 @@ void Creature::executeConditions(uint32_t interval)
 	}
 }
 
-bool Creature::hasCondition(ConditionType_t type) const
+bool Creature::hasCondition(ConditionType_t type, int32_t subId/* = 0*/, bool checkTime/* = true*/) const
 {
-	if(type == CONDITION_EXHAUST_COMBAT && g_game.getStateTime() == 0)
-		return true;
-
 	if(isSuppress(type))
 		return false;
 
 	for(ConditionList::const_iterator it = conditions.begin(); it != conditions.end(); ++it)
 	{
-		if((*it)->getType() == type)
-		{
-			if(g_config.getBoolean(ConfigManager::OLD_CONDITION_ACCURACY))
-				return true;
+		if((*it)->getType() != type || (subId != -1 && (*it)->getSubId() != (uint32_t)subId))
+			continue;
 
-			if((*it)->getEndTime() == 0)
-				return true;
-
-			int64_t seekTime = g_game.getStateTime();
-			if(seekTime == 0)
-				return true;
-
-			if((*it)->getEndTime() >= seekTime)
-				seekTime = (*it)->getEndTime();
-
-			if(seekTime >= OTSYS_TIME())
-				return true;
-		}
+		return !checkTime || g_config.getBool(ConfigManager::OLD_CONDITION_ACCURACY)
+			|| !(*it)->getEndTime() || (*it)->getEndTime() >= OTSYS_TIME();
 	}
+
 	return false;
 }
 

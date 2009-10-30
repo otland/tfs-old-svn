@@ -1286,75 +1286,46 @@ Floor* QTreeLeafNode::createFloor(uint32_t z)
 
 uint32_t Map::clean()
 {
+	uint64_t start = OTSYS_TIME();
+	uint32_t count = 0, tiles = 0;
 	if(g_game.getGameState() == GAME_STATE_NORMAL)
 		g_game.setGameState(GAME_STATE_MAINTAIN);
 
-	g_game.setStateTime(0);
-	uint64_t start = OTSYS_TIME();
-	uint64_t count = 0;
 	Tile* tile = NULL;
-	Item *item = NULL;
-
-	QTreeLeafNode* startLeaf;
-	QTreeLeafNode* leafE;
-	QTreeLeafNode* leafS;
-	Floor* floor;
-
-	startLeaf = getLeaf(0, 0);
-	leafS = startLeaf;
-
-	for(int32_t ny = 0; ny <= 0xFFFF; ny += FLOOR_SIZE)
+	ItemVector::iterator tit;
+	for(int32_t z = 0; z < (int32_t)MAP_MAX_LAYERS; z++)
 	{
-		leafE = leafS;
-		for(int32_t nx = 0; nx <= 0xFFFF; nx += FLOOR_SIZE)
+		for(int32_t y = 1; y <= mapHeight; y++)
 		{
-			if(leafE)
+			for(int32_t x = 1; x <= mapWidth; x++)
 			{
-				for(int32_t nz = 0; nz < MAP_MAX_LAYERS; ++nz)
-				{
-					if(leafE && (floor = leafE->getFloor(nz)))
-					{
-						for(int32_t ly = 0; ly < FLOOR_SIZE; ++ly)
-						{
-							for(int32_t lx = 0; lx < FLOOR_SIZE; ++lx)
-							{
-								if(floor && (tile = floor->tiles[(nx + lx) & FLOOR_MASK][(ny + ly) & FLOOR_MASK]))
-								{
-									if(!tile->hasFlag(TILESTATE_PROTECTIONZONE))
-									{
-										for(uint32_t i = 0; i < tile->getThingCount(); ++i)
-										{
-											item = tile->__getThing(i)->getItem();
-											if(item && !item->isLoadedFromMap() && !item->isNotMoveable())
-											{
-												g_game.internalRemoveItem(item);
-												i--;
-												count++;
-											}
-										}
-									}
-								}
-							}
-						}
-					}
-				}
-				leafE = leafE->stepEast();
-			}
-			else
-				leafE = getLeaf(nx + FLOOR_SIZE, ny);
-		}
+				if(!(tile = getTile(x, y, z)) || tile->hasFlag(TILESTATE_PROTECTIONZONE) || !tile->getItemList())
+					continue;
 
-		if(leafS)
-			leafS = leafS->stepSouth();
-		else
-			leafS = getLeaf(0, ny + FLOOR_SIZE);
+				++tiles;
+				tit = tile->getItemList()->begin();
+				while(tile->getItemList() && tit != tile->getItemList()->end())
+				{
+					if((*tit)->isMoveable() && !(*tit)->isLoadedFromMap())
+					{
+						g_game.internalRemoveItem(NULL, *tit);
+						if(tile->getItemList())
+							tit = tile->getItemList()->begin();
+
+						++count;
+					}
+					else
+						++tit;
+				}
+			}
+		}
 	}
 
-	std::cout << "> Cleaning time: " << (OTSYS_TIME() - start) / (1000.) << " seconds, collected " << count << " item" << (count != 1 ? "s" : "") << "." << std::endl;
-
-	g_game.setStateTime(OTSYS_TIME() + STATE_TIME);
 	if(g_game.getGameState() == GAME_STATE_MAINTAIN)
 		g_game.setGameState(GAME_STATE_NORMAL);
 
+	std::cout << "> CLEAN: Removed " << count << " item" << (count != 1 ? "s" : "")
+		<< " from " << tiles << " tile" << (tiles != 1 ? "s" : "") << " in "
+		<< (OTSYS_TIME() - start) / (1000.) << " seconds." << std::endl;
 	return count;
 }

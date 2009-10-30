@@ -194,7 +194,7 @@ class Creature : public AutoID, virtual public Thing
 		const Outfit_t getCurrentOutfit() const {return currentOutfit;}
 		const void setCurrentOutfit(Outfit_t outfit) {currentOutfit = outfit;}
 		const Outfit_t getDefaultOutfit() const {return defaultOutfit;}
-		bool isInvisible() const {return hasCondition(CONDITION_INVISIBLE);}
+		bool isInvisible() const {return hasCondition(CONDITION_INVISIBLE, -1, false);}
 		ZoneType_t getZone() const {return getTile()->getZone();}
 
 		//walk functions
@@ -243,7 +243,7 @@ class Creature : public AutoID, virtual public Thing
 		void removeCondition(const Creature* attacker, ConditionType_t type);
 		Condition* getCondition(ConditionType_t type, ConditionId_t id, uint32_t subId = 0) const;
 		void executeConditions(uint32_t interval);
-		bool hasCondition(ConditionType_t type) const;
+		bool hasCondition(ConditionType_t type, int32_t subId = 0, bool checkTime = true) const;
 		virtual bool isImmune(ConditionType_t type) const;
 		virtual bool isImmune(CombatType_t type) const;
 		virtual bool isSuppress(ConditionType_t type) const;
