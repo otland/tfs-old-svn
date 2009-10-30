@@ -60,8 +60,8 @@ class Party
 		void addPlayerDamageMonster(Player* player, uint32_t points);
 		void clearPlayerPoints(Player* player);
 
-		bool isPlayerMember(const Player* player) const;
-		bool isPlayerInvited(const Player* player) const;
+		bool isPlayerMember(const Player* player, bool result = false) const;
+		bool isPlayerInvited(const Player* player, bool result = false) const;
 		bool canOpenCorpse(uint32_t ownerId);
 
 	protected:
@@ -72,13 +72,21 @@ class Party
 
 		Player* leader;
 		bool sharedExpActive, sharedExpEnabled;
+
 		struct CountBlock_t
 		{
-			int32_t totalHeal;
-			int32_t totalDamage;
+			int32_t totalHeal, totalDamage;
 			int64_t ticks;
-		};
 
+			CountBlock_t(int32_t heal, int32_t damage)
+			{
+				ticks = OTSYS_TIME();
+				totalDamage = damage;
+				totalHeal = heal;
+			}
+
+			CountBlock_t() {ticks = totalHeal = totalDamage = 0;}
+		};
 		typedef std::map<uint32_t, CountBlock_t> CountMap;
 		CountMap pointMap;
 };
