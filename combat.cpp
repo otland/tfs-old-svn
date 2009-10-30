@@ -660,46 +660,46 @@ void Combat::combatTileEffects(const SpectatorVec& list, Creature* caster, Tile*
 	if(params.tileCallback)
 		params.tileCallback->onTileCombat(caster, tile);
 
-	if(params.effects.impact != NM_MAGIC_NONE && (!caster || !caster->isGhost()
+	if(params.effects.impact != MAGIC_EFFECT_NONE && (!caster || !caster->isGhost()
 		|| g_config.getBool(ConfigManager::GHOST_SPELL_EFFECTS)))
 		g_game.addMagicEffect(list, tile->getPosition(), params.effects.impact);
 }
 
 void Combat::postCombatEffects(Creature* caster, const Position& pos, const CombatParams& params)
 {
-	if(caster && params.effects.distance != NM_SHOOT_NONE)
+	if(caster && params.effects.distance != SHOOT_EFFECT_NONE)
 		addDistanceEffect(caster, caster->getPosition(), pos, params.effects.distance);
 }
 
 void Combat::addDistanceEffect(Creature* caster, const Position& fromPos, const Position& toPos, ShootEffect_t effect)
 {
-	if(effect == NM_SHOOT_WEAPONTYPE)
+	if(effect == SHOOT_EFFECT_WEAPONTYPE)
 	{
 		switch(caster->getWeaponType())
 		{
 			case WEAPON_AXE:
-				effect = NM_SHOOT_WHIRLWINDAXE;
+				effect = SHOOT_EFFECT_WHIRLWINDAXE;
 				break;
 
 			case WEAPON_SWORD:
-				effect = NM_SHOOT_WHIRLWINDSWORD;
+				effect = SHOOT_EFFECT_WHIRLWINDSWORD;
 				break;
 
 			case WEAPON_CLUB:
-				effect = NM_SHOOT_WHIRLWINDCLUB;
+				effect = SHOOT_EFFECT_WHIRLWINDCLUB;
 				break;
 
 			case WEAPON_FIST:
-				effect = NM_SHOOT_LARGEROCK;
+				effect = SHOOT_EFFECT_LARGEROCK;
 				break;
 
 			default:
-				effect = NM_SHOOT_NONE;
+				effect = SHOOT_EFFECT_NONE;
 				break;
 		}
 	}
 
-	if(caster && effect != NM_SHOOT_NONE)
+	if(caster && effect != SHOOT_EFFECT_NONE)
 		g_game.addDistanceEffect(fromPos, toPos, effect);
 }
 
@@ -821,11 +821,11 @@ void Combat::doCombatHealth(Creature* caster, Creature* target, int32_t minChang
 	if(params.targetCallback)
 		params.targetCallback->onTargetCombat(caster, target);
 
-	if(params.effects.impact != NM_MAGIC_NONE && (!caster || !caster->isGhost()
+	if(params.effects.impact != MAGIC_EFFECT_NONE && (!caster || !caster->isGhost()
 		|| g_config.getBool(ConfigManager::GHOST_SPELL_EFFECTS)))
 		g_game.addMagicEffect(target->getPosition(), params.effects.impact);
 
-	if(caster && params.effects.distance != NM_SHOOT_NONE)
+	if(caster && params.effects.distance != SHOOT_EFFECT_NONE)
 		addDistanceEffect(caster, caster->getPosition(), target->getPosition(), params.effects.distance);
 }
 
@@ -851,11 +851,11 @@ void Combat::doCombatMana(Creature* caster, Creature* target, int32_t minChange,
 	if(params.targetCallback)
 		params.targetCallback->onTargetCombat(caster, target);
 
-	if(params.effects.impact != NM_MAGIC_NONE && (!caster || !caster->isGhost()
+	if(params.effects.impact != MAGIC_EFFECT_NONE && (!caster || !caster->isGhost()
 		|| g_config.getBool(ConfigManager::GHOST_SPELL_EFFECTS)))
 		g_game.addMagicEffect(target->getPosition(), params.effects.impact);
 
-	if(caster && params.effects.distance != NM_SHOOT_NONE)
+	if(caster && params.effects.distance != SHOOT_EFFECT_NONE)
 		addDistanceEffect(caster, caster->getPosition(), target->getPosition(), params.effects.distance);
 }
 
@@ -883,11 +883,11 @@ void Combat::doCombatCondition(Creature* caster, Creature* target, const CombatP
 	if(params.targetCallback)
 		params.targetCallback->onTargetCombat(caster, target);
 
-	if(params.effects.impact != NM_MAGIC_NONE && (!caster || !caster->isGhost()
+	if(params.effects.impact != MAGIC_EFFECT_NONE && (!caster || !caster->isGhost()
 		|| g_config.getBool(ConfigManager::GHOST_SPELL_EFFECTS)))
 		g_game.addMagicEffect(target->getPosition(), params.effects.impact);
 
-	if(caster && params.effects.distance != NM_SHOOT_NONE)
+	if(caster && params.effects.distance != SHOOT_EFFECT_NONE)
 		addDistanceEffect(caster, caster->getPosition(), target->getPosition(), params.effects.distance);
 }
 
@@ -906,11 +906,11 @@ void Combat::doCombatDispel(Creature* caster, Creature* target, const CombatPara
 	if(params.targetCallback)
 		params.targetCallback->onTargetCombat(caster, target);
 
-	if(params.effects.impact != NM_MAGIC_NONE && (!caster || !caster->isGhost()
+	if(params.effects.impact != MAGIC_EFFECT_NONE && (!caster || !caster->isGhost()
 		|| g_config.getBool(ConfigManager::GHOST_SPELL_EFFECTS)))
 		g_game.addMagicEffect(target->getPosition(), params.effects.impact);
 
-	if(caster && params.effects.distance != NM_SHOOT_NONE)
+	if(caster && params.effects.distance != SHOOT_EFFECT_NONE)
 		addDistanceEffect(caster, caster->getPosition(), target->getPosition(), params.effects.distance);
 }
 
@@ -926,11 +926,11 @@ void Combat::doCombatDefault(Creature* caster, Creature* target, const CombatPar
 	if(params.targetCallback)
 		params.targetCallback->onTargetCombat(caster, target);
 
-	if(params.effects.impact != NM_MAGIC_NONE && (!caster || !caster->isGhost()
+	if(params.effects.impact != MAGIC_EFFECT_NONE && (!caster || !caster->isGhost()
 		|| g_config.getBool(ConfigManager::GHOST_SPELL_EFFECTS)))
 		g_game.addMagicEffect(target->getPosition(), params.effects.impact);
 
-	if(caster && params.effects.distance != NM_SHOOT_NONE)
+	if(caster && params.effects.distance != SHOOT_EFFECT_NONE)
 		addDistanceEffect(caster, caster->getPosition(), target->getPosition(), params.effects.distance);
 }
 

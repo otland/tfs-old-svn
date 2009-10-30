@@ -832,7 +832,7 @@ bool Monsters::deserializeSpell(xmlNodePtr node, spellBlock_t& sb, const std::st
 						if(readXMLString(attributeNode, "value", strValue))
 						{
 							ShootEffect_t shoot = getShootType(strValue);
-							if(shoot != NM_SHOOT_UNKNOWN)
+							if(shoot != SHOOT_EFFECT_UNKNOWN)
 								combat->setParam(COMBATPARAM_DISTANCEEFFECT, shoot);
 							else
 								std::cout << "[Warning - Monsters::deserializeSpell] " << description << " - Unknown shootEffect: " << strValue << std::endl;
@@ -843,7 +843,7 @@ bool Monsters::deserializeSpell(xmlNodePtr node, spellBlock_t& sb, const std::st
 						if(readXMLString(attributeNode, "value", strValue))
 						{
 							MagicEffect_t effect = getMagicEffect(strValue);
-							if(effect != NM_MAGIC_UNKNOWN)
+							if(effect != MAGIC_EFFECT_UNKNOWN)
 								combat->setParam(COMBATPARAM_EFFECT, effect);
 							else
 								std::cout << "[Warning - Monsters::deserializeSpell] " << description << " - Unknown areaEffect: " << strValue << std::endl;

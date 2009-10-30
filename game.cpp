@@ -270,18 +270,18 @@ int32_t Game::loadMap(std::string filename)
 
 void Game::cleanMap(uint32_t& count)
 {
-	count = 0;
 	uint64_t start = OTSYS_TIME();
-	setGameState(GAME_STATE_MAINTAIN);
+	uint32_t tiles = 0; count = 0;
+
+	int32_t marked = -1;
+	if(gameState == GAME_STATE_NORMAL)
+		setGameState(GAME_STATE_MAINTAIN);
 
 	Tile* tile = NULL;
-	Item* item = NULL;
-	TileItemVector::iterator tit;
-
-	int32_t tiles = -1;
+	ItemVector::iterator tit;
 	if(g_config.getBool(ConfigManager::STORE_TRASH))
 	{
-		tiles = trash.size();
+		marked = trash.size();
 		Trash::iterator it = trash.begin();
 		if(g_config.getBool(ConfigManager::CLEAN_PROTECTED_ZONES))
 		{
@@ -291,21 +291,19 @@ void Game::cleanMap(uint32_t& count)
 					continue;
 
 				tile->resetFlag(TILESTATE_TRASHED);
-				if(tile->hasFlag(TILESTATE_HOUSE))
+				if(tile->hasFlag(TILESTATE_HOUSE) || !tile->getItemList())
 					continue;
 
-				if(!tile->getItemList())
-					continue;
-
-				tit = tile->getItemList().begin();
-				while(tile->getItemList() && tit != tile->getItemLIst.end())
+				++tiles;
+				tit = tile->getItemList()->begin();
+				while(tile->getItemList() && tit != tile->getItemList()->end())
 				{
 					if((*tit)->isMoveable() && !(*tit)->isLoadedFromMap()
 						&& !(*tit)->isScriptProtected())
 					{
-						internalRemoveItem(NULL, (*tit));
+						internalRemoveItem(NULL, *tit);
 						if(tile->getItemList())
-							tit = tile->getItemList().begin();
+							tit = tile->getItemList()->begin();
 
 						++count;
 					}
@@ -318,52 +316,62 @@ void Game::cleanMap(uint32_t& count)
 		}
 		else
 		{
-			while(it != trash.end())
+			for(; it != trash.end(); ++it)
 			{
-				if((tile = getTile(*it)))
-				{
-					tile->resetFlag(TILESTATE_TRASHED);
-					if(!tile->hasFlag(TILESTATE_PROTECTIONZONE))
-					{
-						for(uint32_t i = 0; i < tile->getThingCount();)
-						{
-							if((item = tile->__getThing(i)->getItem()) && item->isMoveable()
-								&& !item->isLoadedFromMap() && !item->isScriptProtected())
-							{
-								internalRemoveItem(NULL, item);
-								count++;
-							}
-							else
-								++i;
-					}
-					}
-				}
+				if(!(tile = getTile(*it)))
+					continue;
 
-				it = trash.erase(it);
+				tile->resetFlag(TILESTATE_TRASHED);
+				if(tile->hasFlag(TILESTATE_PROTECTIONZONE) || !tile->getItemList())
+					continue;
+
+				++tiles;
+				tit = tile->getItemList()->begin();
+				while(tile->getItemList() && tit != tile->getItemList()->end())
+				{
+					if((*tit)->isMoveable() && !(*tit)->isLoadedFromMap()
+						&& !(*tit)->isScriptProtected())
+					{
+						internalRemoveItem(NULL, *tit);
+						if(tile->getItemList())
+							tit = tile->getItemList()->begin();
+
+						++count;
+					}
+					else
+						++tit;
+				}
 			}
+
+			trash.clear();
 		}
 	}
 	else if(g_config.getBool(ConfigManager::CLEAN_PROTECTED_ZONES))
 	{
-		for(int16_t z = 0; z < MAP_MAX_LAYERS; z++)
+		for(uint16_t z = 0; z < (uint16_t)MAP_MAX_LAYERS; z++)
 		{
 			for(uint16_t y = 1; y <= map->mapHeight; y++)
 			{
 				for(uint16_t x = 1; x <= map->mapWidth; x++)
 				{
-					if((tile = getTile(Position(x, y, (unsigned)z))) && !tile->hasFlag(TILESTATE_HOUSE))
+					if(!(tile = getTile(x, y, z)) || tile->hasFlag(TILESTATE_HOUSE) || !tile->getItemList())
+						continue;
+
+					++tiles;
+					tit = tile->getItemList()->begin();
+					while(tile->getItemList() && tit != tile->getItemList()->end())
 					{
-						for(uint32_t i = 0; i < tile->getThingCount();)
+						if((*tit)->isMoveable() && !(*tit)->isLoadedFromMap()
+							&& !(*tit)->isScriptProtected())
 						{
-							if((item = tile->__getThing(i)->getItem()) && item->isMoveable()
-								&& !item->isLoadedFromMap() && !item->isScriptProtected())
-							{
-								internalRemoveItem(NULL, item);
-								count++;
-							}
-							else
-								++i;
+							internalRemoveItem(NULL, *tit);
+							if(tile->getItemList())
+								tit = tile->getItemList()->begin();
+
+							++count;
 						}
+						else
+							++tit;
 					}
 				}
 			}
@@ -371,35 +379,43 @@ void Game::cleanMap(uint32_t& count)
 	}
 	else
 	{
-		for(int16_t z = 0; z < MAP_MAX_LAYERS; z++)
+		for(uint16_t z = 0; z < (uint16_t)MAP_MAX_LAYERS; z++)
 		{
 			for(uint16_t y = 1; y <= map->mapHeight; y++)
 			{
 				for(uint16_t x = 1; x <= map->mapWidth; x++)
 				{
-					if((tile = getTile(Position(x, y, (unsigned)z))) && !tile->hasFlag(TILESTATE_PROTECTIONZONE))
+					if(!(tile = getTile(x, y, z)) || tile->hasFlag(TILESTATE_PROTECTIONZONE) || !tile->getItemList())
+						continue;
+
+					++tiles;
+					tit = tile->getItemList()->begin();
+					while(tile->getItemList() && tit != tile->getItemList()->end())
 					{
-						for(uint32_t i = 0; i < tile->getThingCount();)
+						if((*tit)->isMoveable() && !(*tit)->isLoadedFromMap()
+							&& !(*tit)->isScriptProtected())
 						{
-							if((item = tile->__getThing(i)->getItem()) && item->isMoveable()
-								&& !item->isLoadedFromMap() && !item->isScriptProtected())
-							{
-								internalRemoveItem(NULL, item);
-								count++;
-							}
-							else
-								++i;
+							internalRemoveItem(NULL, *tit);
+							if(tile->getItemList())
+								tit = tile->getItemList()->begin();
+
+							++count;
 						}
+						else
+							++tit;
 					}
 				}
 			}
 		}
 	}
 
-	setGameState(GAME_STATE_NORMAL);
-	std::cout << "> CLEAN: Removed " << count << " item" << (count != 1 ? "s" : "");
-	if(tiles > -1)
-		std::cout << " from " << tiles << " tile" << (tiles != 1 ? "s" : "");
+	if(gameState == GAME_STATE_MAINTAIN)
+		setGameState(GAME_STATE_NORMAL);
+
+	std::cout << "> CLEAN: Removed " << count << " item" << (count != 1 ? "s" : "")
+		<< " from " << tiles << " tile" << (tiles != 1 ? "s" : "");
+	if(marked >= 0)
+		std::cout << " (" << marked << " were marked)" << std::endl;
 
 	std::cout << " in " << (OTSYS_TIME() - start) / (1000.) << " seconds." << std::endl;
 }
@@ -434,10 +450,10 @@ void Game::refreshMap(RefreshTiles::iterator* it/* = NULL*/, uint32_t limit/* = 
 
 	Tile* tile = NULL;
 	TileItemVector* items = NULL;
-	Item* item = NULL;
 
-	uint32_t cleaned = 0, downItemsSize = 0;
-	for(; (*it) != end && (limit != 0 ? (cleaned < limit) : true); ++(*it), ++cleaned)
+	Item* item = NULL;
+	for(uint32_t cleaned = 0, downItemsSize = 0; (*it) != end &&
+		(limit ? (cleaned < limit) : true); ++(*it), ++cleaned)
 	{
 		if(!(tile = (*it)->first))
 			continue;
@@ -476,8 +492,8 @@ void Game::refreshMap(RefreshTiles::iterator* it/* = NULL*/, uint32_t limit/* = 
 			}
 			else
 			{
-				std::cout << "> WARNING: Could not refresh item: " << item->getID();
-				std::cout << " at position: " << tile->getPosition() << std::endl;
+				std::cout << "> WARNING: Could not refresh item: " << item->getID()
+					<< " at position: " << tile->getPosition() << std::endl;
 				delete item;
 			}
 		}
@@ -4088,7 +4104,7 @@ bool Game::combatBlockHit(CombatType_t combatType, Creature* attacker, Creature*
 	const SpectatorVec& list = getSpectators(targetPos);
 	if(!target->isAttackable() || Combat::canDoCombat(attacker, target) != RET_NOERROR)
 	{
-		addMagicEffect(list, targetPos, NM_MAGIC_POFF, target->isGhost());
+		addMagicEffect(list, targetPos, MAGIC_EFFECT_POFF, target->isGhost());
 		return true;
 	}
 
@@ -4098,18 +4114,18 @@ bool Game::combatBlockHit(CombatType_t combatType, Creature* attacker, Creature*
 	healthChange = -damage;
 	if(blockType == BLOCK_DEFENSE)
 	{
-		addMagicEffect(list, targetPos, NM_MAGIC_POFF);
+		addMagicEffect(list, targetPos, MAGIC_EFFECT_POFF);
 		return true;
 	}
 	else if(blockType == BLOCK_ARMOR)
 	{
-		addMagicEffect(list, targetPos, NM_MAGIC_BLOCKHIT);
+		addMagicEffect(list, targetPos, MAGIC_EFFECT_BLOCKHIT);
 		return true;
 	}
 	else if(blockType != BLOCK_IMMUNITY)
 		return false;
 
-	MagicEffect_t effect = NM_MAGIC_NONE;
+	MagicEffect_t effect = MAGIC_EFFECT_NONE;
 	switch(combatType)
 	{
 		case COMBAT_UNDEFINEDDAMAGE:
@@ -4123,13 +4139,13 @@ bool Game::combatBlockHit(CombatType_t combatType, Creature* attacker, Creature*
 		case COMBAT_EARTHDAMAGE:
 		case COMBAT_HOLYDAMAGE:
 		{
-			effect = NM_MAGIC_BLOCKHIT;
+			effect = MAGIC_EFFECT_BLOCKHIT;
 			break;
 		}
 
 		default:
 		{
-			effect = NM_MAGIC_POFF;
+			effect = MAGIC_EFFECT_POFF;
 			break;
 		}
 	}
@@ -4139,7 +4155,7 @@ bool Game::combatBlockHit(CombatType_t combatType, Creature* attacker, Creature*
 }
 
 bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creature* target, int32_t healthChange,
-	MagicEffect_t hitEffect/* = NM_MAGIC_UNKNOWN*/, TextColor_t hitColor/* = TEXTCOLOR_UNKNOWN*/, bool force/* = false*/)
+	MagicEffect_t hitEffect/* = MAGIC_EFFECT_UNKNOWN*/, TextColor_t hitColor/* = TEXTCOLOR_UNKNOWN*/, bool force/* = false*/)
 {
 	const Position& targetPos = target->getPosition();
 	if(healthChange > 0)
@@ -4167,7 +4183,7 @@ bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creat
 
 			const SpectatorVec& list = getSpectators(targetPos);
 			if(combatType != COMBAT_HEALING)
-				addMagicEffect(list, targetPos, NM_MAGIC_MAGIC_ENERGY);
+				addMagicEffect(list, targetPos, MAGIC_EFFECT_MAGIC_ENERGY);
 
 			addAnimatedText(list, targetPos, TEXTCOLOR_GREEN, buffer);
 		}
@@ -4177,7 +4193,7 @@ bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creat
 		const SpectatorVec& list = getSpectators(targetPos);
 		if(!target->isAttackable() || Combat::canDoCombat(attacker, target) != RET_NOERROR)
 		{
-			addMagicEffect(list, targetPos, NM_MAGIC_POFF);
+			addMagicEffect(list, targetPos, MAGIC_EFFECT_POFF);
 			return true;
 		}
 
@@ -4205,7 +4221,7 @@ bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creat
 					char buffer[20];
 					sprintf(buffer, "%d", manaDamage);
 
-					addMagicEffect(list, targetPos, NM_MAGIC_LOSE_ENERGY);
+					addMagicEffect(list, targetPos, MAGIC_EFFECT_LOSE_ENERGY);
 					addAnimatedText(list, targetPos, TEXTCOLOR_BLUE, buffer);
 				}
 			}
@@ -4228,7 +4244,7 @@ bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creat
 				addCreatureHealth(list, target);
 
 				TextColor_t textColor = TEXTCOLOR_NONE;
-				MagicEffect_t magicEffect = NM_MAGIC_NONE;
+				MagicEffect_t magicEffect = MAGIC_EFFECT_NONE;
 				switch(combatType)
 				{
 					case COMBAT_PHYSICALDAMAGE:
@@ -4238,29 +4254,29 @@ bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creat
 						{
 							case RACE_VENOM:
 								textColor = TEXTCOLOR_LIGHTGREEN;
-								magicEffect = NM_MAGIC_POISON;
+								magicEffect = MAGIC_EFFECT_POISON;
 								splash = Item::CreateItem(ITEM_SMALLSPLASH, FLUID_GREEN);
 								break;
 
 							case RACE_BLOOD:
 								textColor = TEXTCOLOR_RED;
-								magicEffect = NM_MAGIC_DRAW_BLOOD;
+								magicEffect = MAGIC_EFFECT_DRAW_BLOOD;
 								splash = Item::CreateItem(ITEM_SMALLSPLASH, FLUID_BLOOD);
 								break;
 
 							case RACE_UNDEAD:
 								textColor = TEXTCOLOR_GREY;
-								magicEffect = NM_MAGIC_HIT_AREA;
+								magicEffect = MAGIC_EFFECT_HIT_AREA;
 								break;
 
 							case RACE_FIRE:
 								textColor = TEXTCOLOR_ORANGE;
-								magicEffect = NM_MAGIC_DRAW_BLOOD;
+								magicEffect = MAGIC_EFFECT_DRAW_BLOOD;
 								break;
 
 							case RACE_ENERGY:
 								textColor = TEXTCOLOR_PURPLE;
-								magicEffect = NM_MAGIC_PURPLEENERGY;
+								magicEffect = MAGIC_EFFECT_PURPLEENERGY;
 								break;
 
 							default:
@@ -4278,56 +4294,56 @@ bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creat
 					case COMBAT_ENERGYDAMAGE:
 					{
 						textColor = TEXTCOLOR_PURPLE;
-						magicEffect = NM_MAGIC_ENERGY_DAMAGE;
+						magicEffect = MAGIC_EFFECT_ENERGY_DAMAGE;
 						break;
 					}
 
 					case COMBAT_EARTHDAMAGE:
 					{
 						textColor = TEXTCOLOR_LIGHTGREEN;
-						magicEffect = NM_MAGIC_POISON_RINGS;
+						magicEffect = MAGIC_EFFECT_POISON_RINGS;
 						break;
 					}
 
 					case COMBAT_DROWNDAMAGE:
 					{
 						textColor = TEXTCOLOR_LIGHTBLUE;
-						magicEffect = NM_MAGIC_LOSE_ENERGY;
+						magicEffect = MAGIC_EFFECT_LOSE_ENERGY;
 						break;
 					}
 
 					case COMBAT_FIREDAMAGE:
 					{
 						textColor = TEXTCOLOR_ORANGE;
-						magicEffect = NM_MAGIC_HITBY_FIRE;
+						magicEffect = MAGIC_EFFECT_HITBY_FIRE;
 						break;
 					}
 
 					case COMBAT_ICEDAMAGE:
 					{
 						textColor = TEXTCOLOR_TEAL;
-						magicEffect = NM_MAGIC_ICEATTACK;
+						magicEffect = MAGIC_EFFECT_ICEATTACK;
 						break;
 					}
 
 					case COMBAT_HOLYDAMAGE:
 					{
 						textColor = TEXTCOLOR_YELLOW;
-						magicEffect = NM_MAGIC_HOLYDAMAGE;
+						magicEffect = MAGIC_EFFECT_HOLYDAMAGE;
 						break;
 					}
 
 					case COMBAT_DEATHDAMAGE:
 					{
 						textColor = TEXTCOLOR_DARKRED;
-						magicEffect = NM_MAGIC_SMALLCLOUDS;
+						magicEffect = MAGIC_EFFECT_SMALLCLOUDS;
 						break;
 					}
 
 					case COMBAT_LIFEDRAIN:
 					{
 						textColor = TEXTCOLOR_RED;
-						magicEffect = NM_MAGIC_MAGIC_BLOOD;
+						magicEffect = MAGIC_EFFECT_MAGIC_BLOOD;
 						break;
 					}
 
@@ -4335,13 +4351,13 @@ bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creat
 						break;
 				}
 
-				if(hitEffect != NM_MAGIC_UNKNOWN)
+				if(hitEffect != MAGIC_EFFECT_UNKNOWN)
 					magicEffect = hitEffect;
 
 				if(hitColor != TEXTCOLOR_UNKNOWN)
 					textColor = hitColor;
 
-				if(textColor < TEXTCOLOR_NONE && magicEffect < NM_MAGIC_NONE)
+				if(textColor < TEXTCOLOR_NONE && magicEffect < MAGIC_EFFECT_NONE)
 				{
 					char buffer[20];
 					sprintf(buffer, "%d", damage);
@@ -4388,7 +4404,7 @@ bool Game::combatChangeMana(Creature* attacker, Creature* target, int32_t manaCh
 		const SpectatorVec& list = getSpectators(targetPos);
 		if(!target->isAttackable() || Combat::canDoCombat(attacker, target) != RET_NOERROR)
 		{
-			addMagicEffect(list, targetPos, NM_MAGIC_POFF);
+			addMagicEffect(list, targetPos, MAGIC_EFFECT_POFF);
 			return false;
 		}
 
@@ -4396,7 +4412,7 @@ bool Game::combatChangeMana(Creature* attacker, Creature* target, int32_t manaCh
 		BlockType_t blockType = target->blockHit(attacker, COMBAT_MANADRAIN, manaLoss);
 		if(blockType != BLOCK_NONE)
 		{
-			addMagicEffect(list, targetPos, NM_MAGIC_POFF);
+			addMagicEffect(list, targetPos, MAGIC_EFFECT_POFF);
 			return false;
 		}
 
@@ -5126,7 +5142,7 @@ bool Game::playerViolationWindow(uint32_t playerId, std::string name, uint8_t re
 		sprintf(buffer, "You have been %s.", (kickAction > KICK ? "banished" : "namelocked"));
 		target->sendTextMessage(MSG_INFO_DESCR, buffer);
 
-		addMagicEffect(target->getPosition(), NM_MAGIC_MAGIC_POISON);
+		addMagicEffect(target->getPosition(), MAGIC_EFFECT_MAGIC_POISON);
 		Scheduler::getInstance()->addEvent(createSchedulerTask(1000, boost::bind(
 			&Game::kickPlayer, this, target->getID(), false)));
 	}
