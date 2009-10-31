@@ -275,6 +275,7 @@ void serverMain(void* param)
 
 	#ifdef __OTSERV_ALLOCATOR_STATS__
 	boost::thread(boost::bind(&allocatorStatsThread, (void*)NULL));
+	// TODO: destruct this thread...
 	#endif
 	#ifdef __EXCEPTION_TRACER__
 	ExceptionHandler mainExceptionHandler;
@@ -305,25 +306,7 @@ void serverMain(void* param)
 	args,
 	#endif
 	&servicer)));
-
 	g_loaderSignal.wait(g_loaderUniqueLock);
-	if(servicer.isRunning())
-	{
-		std::cout << ">> " << g_config.getString(ConfigManager::SERVER_NAME) << " server Online!" << std::endl << std::endl;
-		#if defined(WINDOWS) && not defined(__CONSOLE__)
-		SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Status: Online!");
-		GUI::getInstance()->m_connections = true;
-		#endif
-		servicer.run();
-	}
-	else
-	{
-		std::cout << ">> " << g_config.getString(ConfigManager::SERVER_NAME) << " server Offline! No services available..." << std::endl << std::endl;
-		#if defined(WINDOWS) && not defined(__CONSOLE__)
-		SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Status: Offline!");
-		GUI::getInstance()->m_connections = true;
-		#endif
-	}
 
 	#if not defined(WINDOWS) || defined(__CONSOLE__)
 	std::string outPath = g_config.getString(ConfigManager::OUT_LOG), errPath = g_config.getString(ConfigManager::ERROR_LOG);
@@ -366,10 +349,27 @@ void serverMain(void* param)
 	}
 	#endif
 
+	if(servicer.isRunning())
+	{
+		std::cout << ">> " << g_config.getString(ConfigManager::SERVER_NAME) << " server Online!" << std::endl << std::endl;
+		#if defined(WINDOWS) && not defined(__CONSOLE__)
+		SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Status: Online!");
+		GUI::getInstance()->m_connections = true;
+		#endif
+		servicer.run();
+	}
+	else
+	{
+		std::cout << ">> " << g_config.getString(ConfigManager::SERVER_NAME) << " server Offline! No services available..." << std::endl << std::endl;
+		#if defined(WINDOWS) && not defined(__CONSOLE__)
+		SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Status: Offline!");
+		GUI::getInstance()->m_connections = true;
+		#endif
+	}
+
 #ifdef __EXCEPTION_TRACER__
 	mainExceptionHandler.RemoveHandler();
 #endif
-	exit(0);
 #if not defined(WINDOWS) || defined(__CONSOLE__)
 	return 0;
 #endif
@@ -392,7 +392,7 @@ ServiceManager* services)
 
 	g_game.setGameState(GAME_STATE_STARTUP);
 	#if !defined(WINDOWS) && !defined(__ROOT_PERMISSION__)
-	if(getuid() == 0 || geteuid() == 0)
+	if(!getuid() || !geteuid())
 	{
 		std::cout << "> WARNING: " << STATUS_SERVER_NAME << " has been executed as root user! It is recommended to execute as a normal user." << std::endl;
 		std::cout << "Continue? (y/N)" << std::endl;
@@ -456,7 +456,6 @@ ServiceManager* services)
 		#ifndef __CONSOLE__
 		SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Displaying debugged components");
 		#endif
-
 		std::cout << debug << "." << std::endl;
 	}
 

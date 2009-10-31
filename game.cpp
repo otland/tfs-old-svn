@@ -52,7 +52,7 @@
 
 #include "vocation.h"
 #include "group.h"
-#include "tasks.h"
+#include "dispatcher.h"
 
 #ifdef __EXCEPTION_TRACER__
 #include "exception.h"
@@ -549,15 +549,23 @@ Thing* Game::internalGetThing(Player* player, const Position& pos, int32_t index
 
 			case STACKPOS_USEITEM:
 			{
+				Item* downItem = tile->getTopDownItem();
 				Item* item = tile->getItemByTopOrder(2);
-				if(!item || !g_actions->hasAction(item))
+				if(item && g_actions->hasAction(item))
 				{
-					if(!(thing = tile->getTopDownItem()) &&
-						!(thing = tile->getTopTopItem()))
-						thing = tile->ground;
+					const ItemType& it = Item::items[item->getID()];
+					if(!downItem || (!it.hasHeight && !it.allowPickupable))
+						thing = item;
 				}
-				else
-					thing = item;
+
+				if(!thing)
+					thing = downItem;
+
+				if(!thing)
+					thing = tile->getTopTopItem();
+
+				if(!thing)
+					thing = tile->ground;
 
 				break;
 			}
@@ -3055,11 +3063,11 @@ bool Game::playerLookInTrade(uint32_t playerId, bool lookAtCounterOffer, int32_t
 			ss << ".";
 			const ItemType& it = Item::items[tradeItem->getID()];
 			if(it.transformEquipTo)
-				ss << std::endl << "TransformTo: [" << it.transformEquipTo << "] (onEquip).";
+				ss << std::endl << "TransformTo (onEquip): [" << it.transformEquipTo << "]";
 			else if(it.transformDeEquipTo)
-				ss << std::endl << "TransformTo: [" << it.transformDeEquipTo << "] (onDeEquip).";
+				ss << std::endl << "TransformTo (onDeEquip): [" << it.transformDeEquipTo << "]";
 			else if(it.decayTo != -1)
-				ss << std::endl << "DecayTo: [" << it.decayTo << "].";
+				ss << std::endl << "DecayTo: [" << it.decayTo << "]";
 		}
 
 		player->sendTextMessage(MSG_INFO_DESCR, ss.str());
@@ -4745,9 +4753,6 @@ bool Game::playerJoinParty(uint32_t playerId, uint32_t leaderId)
 	if(!leader || leader->isRemoved() || !leader->isInviting(player))
 		return false;
 
-	if(!leader->getParty() || leader->getParty()->getLeader() != leader)
-		return false;
-
 	if(!player->getParty())
 		return leader->getParty()->join(player);
 
@@ -6074,12 +6079,9 @@ void Game::shutdown()
 	Raids::getInstance()->clear();
 	std::cout << " server";
 	cleanup();
-	std::cout << "-";
+	std::cout << "- done." << std::endl;
 	if(services)
 		services->stop();
-
-	std::cout << " done." << std::endl;
-	exit(0);
 }
 
 void Game::cleanup()

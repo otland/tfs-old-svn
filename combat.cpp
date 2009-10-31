@@ -57,68 +57,68 @@ Combat::~Combat()
 
 bool Combat::getMinMaxValues(Creature* creature, Creature* target, int32_t& min, int32_t& max) const
 {
-	if(!creature)
-		return false;
-
-	if(creature->getCombatValues(min, max))
-		return true;
-
-	if(Player* player = creature->getPlayer())
+	if(creature)
 	{
-		if(params.valueCallback)
-		{
-			params.valueCallback->getMinMaxValues(player, min, max, params.useCharges);
+		if(creature->getCombatValues(min, max))
 			return true;
-		}
 
-		min = max = 0;
-		switch(formulaType)
+		if(Player* player = creature->getPlayer())
 		{
-			case FORMULA_LEVELMAGIC:
+			if(params.valueCallback)
 			{
-				min = (int32_t)((player->getLevel() / minl + player->getMagicLevel() * minm) * 1. * mina + minb);
-				max = (int32_t)((player->getLevel() / maxl + player->getMagicLevel() * maxm) * 1. * maxa + maxb);
-				if(minc && std::abs(min) < std::abs(minc))
-					min = minc;
-
-				if(maxc && std::abs(max) < std::abs(maxc))
-					max = maxc;
-
-				player->increaseCombatValues(min, max, params.useCharges, true);
+				params.valueCallback->getMinMaxValues(player, min, max, params.useCharges);
 				return true;
 			}
 
-			case FORMULA_SKILL:
+			min = max = 0;
+			switch(formulaType)
 			{
-				Item* tool = player->getWeapon();
-				if(const Weapon* weapon = g_weapons->getWeapon(tool))
+				case FORMULA_LEVELMAGIC:
 				{
-					max = (int32_t)(weapon->getWeaponDamage(player, target, tool, true) * maxa + maxb);
-					if(params.useCharges && tool->hasCharges() && g_config.getBool(ConfigManager::REMOVE_WEAPON_CHARGES))
-						g_game.transformItem(tool, tool->getID(), std::max((int32_t)0, ((int32_t)tool->getCharges()) - 1));
+					min = (int32_t)((player->getLevel() / minl + player->getMagicLevel() * minm) * 1. * mina + minb);
+					max = (int32_t)((player->getLevel() / maxl + player->getMagicLevel() * maxm) * 1. * maxa + maxb);
+					if(minc && std::abs(min) < std::abs(minc))
+						min = minc;
+
+					if(maxc && std::abs(max) < std::abs(maxc))
+						max = maxc;
+
+					player->increaseCombatValues(min, max, params.useCharges, true);
+					return true;
 				}
-				else
+
+				case FORMULA_SKILL:
+				{
+					Item* tool = player->getWeapon();
+					if(const Weapon* weapon = g_weapons->getWeapon(tool))
+					{
+						max = (int32_t)(weapon->getWeaponDamage(player, target, tool, true) * maxa + maxb);
+						if(params.useCharges && tool->hasCharges() && g_config.getBool(ConfigManager::REMOVE_WEAPON_CHARGES))
+							g_game.transformItem(tool, tool->getID(), std::max((int32_t)0, ((int32_t)tool->getCharges()) - 1));
+					}
+					else
+						max = (int32_t)maxb;
+
+					min = (int32_t)minb;
+					if(maxc && std::abs(max) < std::abs(maxc))
+						max = maxc;
+
+					return true;
+				}
+
+				case FORMULA_VALUE:
+				{
+					min = (int32_t)minb;
 					max = (int32_t)maxb;
+					return true;
+				}
 
-				min = (int32_t)minb;
-				if(maxc && std::abs(max) < std::abs(maxc))
-					max = maxc;
-
-				return true;
+				default:
+					break;
 			}
 
-			case FORMULA_VALUE:
-			{
-				min = (int32_t)minb;
-				max = (int32_t)maxb;
-				return true;
-			}
-
-			default:
-				break;
+			return false;
 		}
-
-		return false;
 	}
 
 	if(formulaType != FORMULA_VALUE)
