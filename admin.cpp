@@ -346,8 +346,7 @@ void ProtocolAdmin::parsePacket(NetworkMessage& msg)
 				case CMD_OPEN_SERVER:
 				{
 					addLogLine(LOGTYPE_EVENT, "opening server");
-					Dispatcher::getInstance()->addTask(createTask(boost::bind(
-						&Game::setGameState, &g_game, GAME_STATE_NORMAL)));
+					g_game.setGameState(GAME_STATE_NORMAL);
 
 					output->AddByte(AP_MSG_COMMAND_OK);
 					break;
@@ -378,6 +377,7 @@ void ProtocolAdmin::parsePacket(NetworkMessage& msg)
 					break;
 				}
 
+				// why do we run these below on dispatcher thread anyway?
 				case CMD_KICK:
 				{
 					const std::string param = msg.GetString();

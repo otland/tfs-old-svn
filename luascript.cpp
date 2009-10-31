@@ -8866,7 +8866,8 @@ int32_t LuaInterface::luaDoSetGameState(lua_State* L)
 	uint32_t id = popNumber(L);
 	if(id >= GAME_STATE_FIRST && id <= GAME_STATE_LAST)
 	{
-		Dispatcher::getInstance()->addTask(createTask(boost::bind(&Game::setGameState, &g_game, (GameState_t)id)));
+		Dispatcher::getInstance()->addTask(createTask(
+			boost::bind(&Game::setGameState, &g_game, (GameState_t)id)));
 		lua_pushboolean(L, true);
 	}
 	else
