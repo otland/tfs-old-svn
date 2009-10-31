@@ -19,7 +19,7 @@
 #define __SCHEDULER__
 #include "otsystem.h"
 
-#include "tasks.h"
+#include "dispatcher.h"
 #define SCHEDULER_MINTICKS 50
 
 class SchedulerTask : public Task

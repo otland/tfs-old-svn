@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////
 #include "otpch.h"
-#include "tasks.h"
+#include "dispatcher.h"
 
 #include "outputmessage.h"
 #if defined __EXCEPTION_TRACER__
