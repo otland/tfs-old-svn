@@ -52,7 +52,6 @@
 
 #include "vocation.h"
 #include "group.h"
-#include "dispatcher.h"
 
 #ifdef __EXCEPTION_TRACER__
 #include "exception.h"
