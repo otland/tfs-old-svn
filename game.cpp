@@ -52,7 +52,6 @@
 
 #include "vocation.h"
 #include "group.h"
-#include "tasks.h"
 
 #ifdef __EXCEPTION_TRACER__
 #include "exception.h"
@@ -6069,7 +6068,7 @@ void Game::globalSave()
 
 void Game::shutdown()
 {
-	std::cout << "Prepaparing";
+	std::cout << "Preparing";
 	Scheduler::getInstance()->shutdown();
 	std::cout << " to";
 	Dispatcher::getInstance()->shutdown();
