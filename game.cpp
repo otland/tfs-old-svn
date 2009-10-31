@@ -6068,7 +6068,7 @@ void Game::globalSave()
 
 void Game::shutdown()
 {
-	std::cout << "Prepaparing";
+	std::cout << "Preparing";
 	Scheduler::getInstance()->shutdown();
 	std::cout << " to";
 	Dispatcher::getInstance()->shutdown();
