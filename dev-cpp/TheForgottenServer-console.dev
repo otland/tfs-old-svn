@@ -1,7 +1,7 @@
 [Project]
 FileName=TheForgottenServer-console.dev
 Name=TheForgottenServer
-UnitCount=173
+UnitCount=171
 Type=1
 Ver=1
 ObjFiles=
@@ -1689,26 +1689,6 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit168]
-FileName=..\protocolhttp.cpp
-CompileCpp=1
-Folder=TheForgottenServer
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit169]
-FileName=..\protocolhttp.h
-CompileCpp=1
-Folder=TheForgottenServer
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
 [Unit1]
 FileName=..\waypoints.h
 CompileCpp=1
@@ -1739,7 +1719,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit172]
+[Unit168]
 FileName=..\itemattributes.cpp
 CompileCpp=1
 Folder=TheForgottenServer
@@ -1749,7 +1729,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=0
 
-[Unit173]
+[Unit169]
 FileName=..\itemattributes.h
 CompileCpp=1
 Folder=TheForgottenServer

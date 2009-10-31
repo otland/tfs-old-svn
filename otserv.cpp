@@ -40,7 +40,6 @@
 #include "protocollogin.h"
 #include "protocolgame.h"
 #include "protocolold.h"
-#include "protocolhttp.h"
 #include "status.h"
 #ifdef __REMOTE_CONTROL__
 #include "admin.h"
@@ -819,9 +818,8 @@ ServiceManager* services)
 
 	serverIps.push_back(std::make_pair(resolvedIp, 0));
 	Status::getInstance()->setMapName(g_config.getString(ConfigManager::MAP_NAME));
-	services->add<ProtocolStatus>(g_config.getNumber(ConfigManager::STATUS_PORT));
 
-	//services->add<ProtocolHTTP>(8080);
+	services->add<ProtocolStatus>(g_config.getNumber(ConfigManager::STATUS_PORT));
 	if(
 #ifdef __LOGIN_SERVER__
 	true
