@@ -414,7 +414,7 @@ void Game::cleanMapEx(uint32_t& count)
 	std::cout << "> CLEAN: Removed " << count << " item" << (count != 1 ? "s" : "")
 		<< " from " << tiles << " tile" << (tiles != 1 ? "s" : "");
 	if(marked >= 0)
-		std::cout << " (" << marked << " were marked)" << std::endl;
+		std::cout << " (" << marked << " were marked)";
 
 	std::cout << " in " << (OTSYS_TIME() - start) / (1000.) << " seconds." << std::endl;
 }
