@@ -8975,7 +8975,7 @@ int32_t LuaInterface::luaDoCleanMap(lua_State* L)
 {
 	//doCleanMap()
 	uint32_t count = 0;
-	g_game.cleanMap(count);
+	g_game.cleanMapEx(count);
 	lua_pushnumber(L, count);
 	return 1;
 }
