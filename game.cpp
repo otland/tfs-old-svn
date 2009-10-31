@@ -267,7 +267,7 @@ int32_t Game::loadMap(std::string filename)
 	return map->loadMap(getFilePath(FILE_TYPE_OTHER, std::string("world/" + filename + ".otbm")));
 }
 
-void Game::cleanMap(uint32_t& count)
+void Game::cleanMapEx(uint32_t& count)
 {
 	uint64_t start = OTSYS_TIME();
 	uint32_t tiles = 0; count = 0;
@@ -417,6 +417,12 @@ void Game::cleanMap(uint32_t& count)
 		std::cout << " (" << marked << " were marked)" << std::endl;
 
 	std::cout << " in " << (OTSYS_TIME() - start) / (1000.) << " seconds." << std::endl;
+}
+
+void Game::cleanMap()
+{
+	uint32_t dummy;
+	cleanMapEx(dummy);
 }
 
 void Game::proceduralRefresh(RefreshTiles::iterator* it/* = NULL*/)
@@ -6041,10 +6047,7 @@ void Game::globalSave()
 	Dispatcher::getInstance()->addTask(createTask(boost::bind(&Game::setGameState, this, GAME_STATE_CLOSED)));
 	//clean map if configured to
 	if(g_config.getBool(ConfigManager::CLEAN_MAP_AT_GLOBALSAVE))
-	{
-		uint32_t dummy;
-		cleanMap(dummy);
-	}
+		cleanMap();
 
 	//pay houses
 	Houses::getInstance()->payHouses();

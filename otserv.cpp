@@ -162,7 +162,6 @@ bool argumentsHandler(StringVec args)
 #ifndef WINDOWS
 void signalHandler(int32_t sig)
 {
-	uint32_t tmp = 0;
 	switch(sig)
 	{
 		case SIGHUP:
@@ -171,7 +170,8 @@ void signalHandler(int32_t sig)
 			break;
 
 		case SIGTRAP:
-			g_game.cleanMap(tmp);
+			Dispatcher::getInstance()->addTask(createTask(
+				boost::bind(&Game::cleanMap, &g_game)));
 			break;
 
 		case SIGCHLD:
@@ -188,7 +188,8 @@ void signalHandler(int32_t sig)
 			break;
 
 		case SIGCONT:
-			g_game.reloadInfo(RELOAD_ALL);
+			Dispatcher::getInstance()->addTask(createTask(
+				boost::bind(&Game::reloadInfo, &g_game, RELOAD_ALL, 0)));
 			break;
 
 		case SIGQUIT:
