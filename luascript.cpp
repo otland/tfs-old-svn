@@ -8931,6 +8931,8 @@ int32_t LuaInterface::luaDoReloadInfo(lua_State* L)
 	uint32_t id = popNumber(L);
 	if(id >= RELOAD_FIRST && id <= RELOAD_LAST)
 	{
+		// we're passing it to scheduler since talkactions reload will
+		// re-init our lua state and crash due to unfinished call
 		Scheduler::getInstance()->addEvent(createSchedulerTask(SCHEDULER_MINTICKS,
 			boost::bind(&Game::reloadInfo, &g_game, (ReloadInfo_t)id, cid)));
 		lua_pushboolean(L, true);
