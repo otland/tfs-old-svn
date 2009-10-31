@@ -6079,12 +6079,9 @@ void Game::shutdown()
 	Raids::getInstance()->clear();
 	std::cout << " server";
 	cleanup();
-	std::cout << "-";
+	std::cout << "- done." << std::endl;
 	if(services)
 		services->stop();
-
-	std::cout << " done." << std::endl;
-	exit(0);
 }
 
 void Game::cleanup()

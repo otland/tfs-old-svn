@@ -20,13 +20,6 @@
 #include <iostream>
 #include <fstream>
 #include <iomanip>
-#ifdef __GUI__
-#ifndef WX_PRECOMP
-	#include <wx/wx.h>
-#else
-	#include <wx/wxprec.h>
-#endif
-#endif
 
 #ifndef WINDOWS
 #include <unistd.h>
@@ -43,9 +36,6 @@
 #include "chat.h"
 #include "tools.h"
 #include "rsa.h"
-#ifdef __GUI__
-#include "gui.h"
-#endif
 
 #include "protocollogin.h"
 #include "protocolgame.h"
@@ -240,47 +230,8 @@ void startupErrorMessage(std::string error = "")
 	exit(-1);
 }
 
-#ifdef __GUI__
-int otservMain(int argc, char* argv[]);
-class MainGUIApp : public wxApp
-{
-	public:
-		bool OnInit()
-		{
-            if(!wxApp::OnInit())
-                return false;
-            MainGUI* frame = new MainGUI(NULL);
-            SetTopWindow(frame);
-            frame->Show();
-            std::cout.rdbuf(frame->getLogText());
-            //std::cout << "runninbg server";
-            std::cout << "runninbg server";
-            otservMain(argc, argv);
-            return true;
-        }
-        int OnRun()
-        {
-            int errorCode = wxApp::OnRun();
-            if(errorCode != 0)
-                return errorCode;
-            std::cout << "runninbg server";
-            return otservMain(argc, argv);
-        }
-		int OnExit()
-		{
-            return 0;   
-        }
-};
-
-IMPLEMENT_APP(MainGUIApp)
-#endif
-
 void otserv(StringVec args, ServiceManager* services);
-#ifdef __GUI__
-int otservMain(int argc, char* argv[])
-#else
 int main(int argc, char* argv[])
-#endif
 {
 	StringVec args = StringVec(argv, argv + argc);
 	if(argc > 1 && !argumentsHandler(args))
@@ -292,6 +243,7 @@ int main(int argc, char* argv[])
 
 #ifdef __OTSERV_ALLOCATOR_STATS__
 	boost::thread(boost::bind(&allocatorStatsThread, (void*)NULL));
+	// TODO: destroy this thread
 #endif
 #ifdef __EXCEPTION_TRACER__
 	ExceptionHandler mainExceptionHandler;
@@ -320,13 +272,6 @@ int main(int argc, char* argv[])
 
 	Dispatcher::getInstance()->addTask(createTask(boost::bind(otserv, args, &servicer)));
 	g_loaderSignal.wait(g_loaderUniqueLock);
-	if(servicer.isRunning())
-	{
-		std::cout << ">> " << g_config.getString(ConfigManager::SERVER_NAME) << " server Online!" << std::endl << std::endl;
-		servicer.run();
-	}
-	else
-		std::cout << ">> " << g_config.getString(ConfigManager::SERVER_NAME) << " server Offline! No services available..." << std::endl << std::endl;
 
 	std::string outPath = g_config.getString(ConfigManager::OUT_LOG),
 		errPath = g_config.getString(ConfigManager::ERROR_LOG);
@@ -368,23 +313,30 @@ int main(int argc, char* argv[])
 		std::cerr.rdbuf(errFile->rdbuf());
 	}
 
+	if(servicer.isRunning())
+	{
+		std::cout << ">> " << g_config.getString(ConfigManager::SERVER_NAME) << " server Online!" << std::endl << std::endl;
+		servicer.run();
+	}
+	else
+		std::cout << ">> " << g_config.getString(ConfigManager::SERVER_NAME) << " server Offline! No services available..." << std::endl << std::endl;
+
 #ifdef __EXCEPTION_TRACER__
 	mainExceptionHandler.RemoveHandler();
 #endif
-	exit(0);
 	return 0;
 }
 
 void otserv(StringVec args, ServiceManager* services)
 {
 	srand((uint32_t)OTSYS_TIME());
-#if defined(WINDOWS) && !defined(__GUI__)
+#if defined(WINDOWS)
 	SetConsoleTitle(STATUS_SERVER_NAME);
 
 #endif
 	g_game.setGameState(GAME_STATE_STARTUP);
 #if !defined(WINDOWS) && !defined(__ROOT_PERMISSION__)
-	if(getuid() == 0 || geteuid() == 0)
+	if(!getuid() || !geteuid())
 	{
 		std::cout << "> WARNING: " << STATUS_SERVER_NAME << " has been executed as root user! It is recommended to execute as a normal user." << std::endl
 			<< "Continue? (y/N)" << std::endl;
@@ -769,596 +721,3 @@ void otserv(StringVec args, ServiceManager* services)
 	g_game.start(services);
 	g_loaderSignal.notify_all();
 }
-/*{
-	CInputBox iBox(hwnd);
-	switch(message)
-	{
-		case WM_CREATE:
-		{
-			GUI::getInstance()->m_logWindow = CreateWindow("edit", NULL,
-				WS_CHILD | WS_VSCROLL | WS_HSCROLL | WS_VISIBLE | ES_MULTILINE | DS_CENTER, 0, 0, 640, 450, hwnd, (HMENU)ID_LOG, NULL, NULL);
-			GUI::getInstance()->m_statusBar = CreateWindowEx(0, STATUSCLASSNAME, NULL,
-				WS_CHILD | WS_VISIBLE | SBARS_SIZEGRIP, 0, 0, 0, 0, hwnd, (HMENU)ID_STATUS_BAR, GetModuleHandle(NULL), NULL);
-
-			int32_t statusBarWidthLine[] = {150, -1};
-			GUI::getInstance()->m_lineCount = 0;
-
-			SendMessage(GUI::getInstance()->m_statusBar, SB_SETPARTS, sizeof(statusBarWidthLine) / sizeof(int32_t), (LPARAM)statusBarWidthLine);
-			SendMessage(GUI::getInstance()->m_statusBar, SB_SETTEXT, 0, (LPARAM)"Not loaded");
-
-			GUI::getInstance()->m_minimized = false;
-			GUI::getInstance()->m_pBox.setParent(hwnd);
-			SendMessage(GUI::getInstance()->m_logWindow, WM_SETFONT, (WPARAM)GUI::getInstance()->m_font, 0);
-
-			NID.hWnd = hwnd;
-			NID.hIcon = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(ID_ICON));
-			NID.uCallbackMessage = WM_USER + 1;
-			NID.uFlags = NIF_TIP | NIF_ICON | NIF_MESSAGE;
-
-			strcpy(NID.szTip, STATUS_SERVER_NAME);
-			Shell_NotifyIcon(NIM_ADD, &NID);
-
-			boost::thread(boost::bind(&serverMain, (void*)hwnd));
-			break;
-		}
-
-		case WM_SIZE:
-		{
-			if(wParam == SIZE_MINIMIZED)
-			{
-				GUI::getInstance()->m_minimized = true;
-				ShowWindow(hwnd, SW_HIDE);
-				ModifyMenu(GUI::getInstance()->m_trayMenu, ID_TRAY_HIDE, MF_STRING, ID_TRAY_HIDE, "&Show window");
-			}
-			else
-			{
-				RECT rcStatus;
-				int32_t iStatusHeight;
-				int32_t iEditHeight;
-				RECT rcClient;
-				GUI::getInstance()->m_statusBar = GetDlgItem(hwnd, ID_STATUS_BAR);
-				SendMessage(GUI::getInstance()->m_statusBar, WM_SIZE, 0, 0);
-				GetWindowRect(GUI::getInstance()->m_statusBar, &rcStatus);
-				iStatusHeight = rcStatus.bottom - rcStatus.top;
-				GetClientRect(hwnd, &rcClient);
-				iEditHeight = rcClient.bottom - iStatusHeight;
-				GUI::getInstance()->m_logWindow = GetDlgItem(hwnd, ID_LOG);
-				SetWindowPos(GUI::getInstance()->m_logWindow, NULL, 0, rcClient.top, rcClient.right, iEditHeight, SWP_NOZORDER);
-			}
-
-			break;
-		}
-
-		case WM_COMMAND:
-		{
-			switch(LOWORD(wParam))
-			{
-				case ID_TRAY_HIDE:
-				{
-					if(GUI::getInstance()->m_minimized)
-					{
-						ShowWindow(hwnd, SW_SHOW);
-						ShowWindow(hwnd, SW_RESTORE);
-						ModifyMenu(GUI::getInstance()->m_trayMenu, ID_TRAY_HIDE, MF_STRING, ID_TRAY_HIDE, "&Hide window");
-						GUI::getInstance()->m_minimized = false;
-					}
-					else
-					{
-						ShowWindow(hwnd, SW_HIDE);
-						ModifyMenu(GUI::getInstance()->m_trayMenu, ID_TRAY_HIDE, MF_STRING, ID_TRAY_HIDE, "&Show window");
-						GUI::getInstance()->m_minimized = true;
-					}
-
-					break;
-				}
-
-				case ID_MENU_MAIN_ACCEPT:
-				{
-					if(g_game.getGameState() != GAME_STATE_STARTUP && !GUI::getInstance()->m_connections)
-					{
-						GUI::getInstance()->m_connections = true;
-						ModifyMenu(GetMenu(hwnd), ID_MENU_MAIN_ACCEPT, MF_STRING, ID_MENU_MAIN_REJECT, "&Reject connections");
-					}
-
-					break;
-				}
-
-				case ID_MENU_MAIN_REJECT:
-				{
-					if(g_game.getGameState() != GAME_STATE_STARTUP && GUI::getInstance()->m_connections)
-					{
-						GUI::getInstance()->m_connections = false;
-						ModifyMenu(GetMenu(hwnd), ID_MENU_MAIN_REJECT, MF_STRING, ID_MENU_MAIN_ACCEPT, "&Accept connections");
-					}
-
-					break;
-				}
-
-				case ID_MENU_MAIN_CLEARLOG:
-				{
-					if(g_game.getGameState() != GAME_STATE_STARTUP)
-					{
-						GUI::getInstance()->m_logText = "";
-						GUI::getInstance()->m_lineCount = 0;
-						std::cout << STATUS_SERVER_NAME << ", version " << STATUS_SERVER_VERSION << " (" << STATUS_SERVER_CODENAME << ")" << std::endl;
-						std::cout << "Compiled with " << BOOST_COMPILER << " at " << __DATE__ << ", " << __TIME__ << "." << std::endl;
-						std::cout << "A server developed by Elf, Talaturen, Lithium, KaczooH, Kiper, Kornholijo." << std::endl;
-						std::cout << "Visit our forum for updates, support and resources: http://otland.net." << std::endl;
-						std::cout << std::endl;
-					}
-
-					break;
-				}
-
-				case ID_TRAY_SHUTDOWN:
-				case ID_MENU_MAIN_SHUTDOWN:
-				{
-					if(MessageBox(hwnd, "Are you sure you want to shutdown the server?", "Shutdown", MB_YESNO) == IDYES)
-					{
-						Dispatcher::getInstance()->addTask(
-							createTask(boost::bind(&Game::setGameState, &g_game, GAME_STATE_SHUTDOWN)));
-						Shell_NotifyIcon(NIM_DELETE, &NID);
-					}
-
-					break;
-				}
-
-				case ID_MENU_SERVER_WORLDTYPE_PVP:
-				{
-					if(g_game.getGameState() != GAME_STATE_STARTUP)
-					{
-						g_game.setWorldType(WORLD_TYPE_PVP);
-						std::cout << "WorldType set to 'PVP'." << std::endl;
-					}
-
-					break;
-				}
-
-				case ID_MENU_SERVER_WORLDTYPE_NOPVP:
-				{
-					if(g_game.getGameState() != GAME_STATE_STARTUP)
-					{
-						g_game.setWorldType(WORLD_TYPE_NO_PVP);
-						std::cout << "WorldType set to 'Non-PVP'." << std::endl;
-					}
-
-					break;
-				}
-
-				case ID_MENU_SERVER_WORLDTYPE_PVPENFORCED:
-				{
-					if(g_game.getGameState() != GAME_STATE_STARTUP)
-					{
-						g_game.setWorldType(WORLD_TYPE_PVP_ENFORCED);
-						std::cout << "WorldType set to 'PVP-Enforced'." << std::endl;
-					}
-
-					break;
-				}
-
-				case ID_MENU_SERVER_BROADCAST:
-				{
-					if(g_game.getGameState() != GAME_STATE_STARTUP)
-					{
-						if(iBox.DoModal("Broadcast message", "What would you like to broadcast?"))
-							g_game.broadcastMessage(iBox.Text, MSG_STATUS_WARNING);
-					}
-
-					break;
-				}
-
-				case ID_MENU_SERVER_SAVE:
-				{
-					if(g_game.getGameState() != GAME_STATE_STARTUP)
-					{
-						Dispatcher::getInstance()->addTask(createTask(
-							boost::bind(&Game::saveGameState, &g_game, false)));
-						MessageBox(NULL, "Server has been saved.", "Server save", MB_OK);
-					}
-
-					break;
-				}
-
-				case ID_MENU_SERVER_CLEAN:
-				{
-					if(g_game.getGameState() != GAME_STATE_STARTUP)
-					{
-						uint32_t count = 0;
-						g_game.cleanMap(count);
-
-						char buffer[100];
-						sprintf(buffer, "Map has been cleaned, collected %u items.", count);
-						MessageBox(NULL, buffer, "Map clean", MB_OK);
-					}
-
-					break;
-				}
-
-				case ID_MENU_SERVER_REFRESH:
-				{
-					if(g_game.getGameState() != GAME_STATE_STARTUP)
-					{
-						g_game.proceduralRefresh();
-						MessageBox(NULL, "Map will now refresh in a while.", "Map refresh", MB_OK);
-					}
-
-					break;
-				}
-
-				case ID_MENU_SERVER_OPEN:
-				{
-					if(g_game.getGameState() != GAME_STATE_STARTUP && GUI::getInstance()->m_connections)
-					{
-						g_game.setGameState(GAME_STATE_NORMAL);
-						ModifyMenu(GetMenu(hwnd), ID_MENU_SERVER_OPEN, MF_STRING, ID_MENU_SERVER_CLOSE, "&Close server");
-					}
-
-					break;
-				}
-
-				case ID_MENU_SERVER_CLOSE:
-				{
-					if(g_game.getGameState() != GAME_STATE_STARTUP && GUI::getInstance()->m_connections)
-					{
-						Dispatcher::getInstance()->addTask(createTask(
-							boost::bind(&Game::setGameState, &g_game, GAME_STATE_CLOSED)));
-						ModifyMenu(GetMenu(hwnd), ID_MENU_SERVER_CLOSE, MF_STRING, ID_MENU_SERVER_OPEN, "&Open server");
-					}
-
-					break;
-				}
-
-				case ID_MENU_SERVER_PLAYERBOX:
-				{
-					if(g_game.getGameState() != GAME_STATE_STARTUP && GUI::getInstance()->m_connections)
-					{
-						if(g_game.getPlayersOnline() == 0)
-							MessageBox(NULL, "No players online.", "Player management", MB_OK);
-						else
-							GUI::getInstance()->m_pBox.popUp("Player management");
-					}
-
-					break;
-				}
-
-				case ID_MENU_RELOAD_ACTIONS:
-				{
-					if(g_game.getGameState() != GAME_STATE_STARTUP)
-					{
-						if(g_game.reloadInfo(RELOAD_ACTIONS))
-							std::cout << "Reloaded actions." << std::endl;
-					}
-
-					break;
-				}
-
-				case ID_MENU_RELOAD_CHAT:
-				{
-					if(g_game.getGameState() != GAME_STATE_STARTUP)
-					{
-						if(g_game.reloadInfo(RELOAD_CHAT))
-							std::cout << "Reloaded chat channels." << std::endl;
-					}
-
-					break;
-				}
-
-				case ID_MENU_RELOAD_CONFIG:
-				{
-					if(g_game.getGameState() != GAME_STATE_STARTUP)
-					{
-						if(g_game.reloadInfo(RELOAD_CONFIG))
-							std::cout << "Reloaded config." << std::endl;
-					}
-
-					break;
-				}
-
-				case ID_MENU_RELOAD_CREATUREEVENTS:
-				{
-					if(g_game.getGameState() != GAME_STATE_STARTUP)
-					{
-						if(g_game.reloadInfo(RELOAD_CREATUREEVENTS))
-							std::cout << "Reloaded creature events." << std::endl;
-					}
-
-					break;
-				}
-
-				#ifdef __LOGIN_SERVER__
-				case ID_MENU_RELOAD_GAMESERVERS:
-				{
-					if(g_game.getGameState() != GAME_STATE_STARTUP)
-					{
-						if(g_game.reloadInfo(RELOAD_GAMESERVERS))
-							std::cout << "Reloaded game servers." << std::endl;
-					}
-
-					break;
-				}
-
-				#endif
-				case ID_MENU_RELOAD_GLOBALEVENTS:
-				{
-					if(g_game.getGameState() != GAME_STATE_STARTUP)
-					{
-						if(g_game.reloadInfo(RELOAD_GLOBALEVENTS))
-							std::cout << "Reloaded global events." << std::endl;
-					}
-
-					break;
-				}
-
-				case ID_MENU_RELOAD_GROUPS:
-				{
-					if(g_game.getGameState() != GAME_STATE_STARTUP)
-					{
-						if(g_game.reloadInfo(RELOAD_GROUPS))
-							std::cout << "Reloaded groups." << std::endl;
-					}
-
-					break;
-				}
-
-				case ID_MENU_RELOAD_HIGHSCORES:
-				{
-					if(g_game.getGameState() != GAME_STATE_STARTUP)
-					{
-						if(g_game.reloadInfo(RELOAD_HIGHSCORES))
-							std::cout << "Reloaded highscores." << std::endl;
-					}
-
-					break;
-				}
-
-				case ID_MENU_RELOAD_HOUSEPRICES:
-				{
-					if(g_game.getGameState() != GAME_STATE_STARTUP)
-					{
-						if(g_game.reloadInfo(RELOAD_HOUSEPRICES))
-							std::cout << "Reloaded house prices." << std::endl;
-					}
-
-					break;
-				}
-
-				case ID_MENU_RELOAD_ITEMS:
-				{
-					if(g_game.getGameState() != GAME_STATE_STARTUP)
-					{
-						if(g_game.reloadInfo(RELOAD_ITEMS))
-							std::cout << "Reloaded items." << std::endl;
-					}
-
-					break;
-				}
-
-				case ID_MENU_RELOAD_MODS:
-				{
-					if(g_game.getGameState() != GAME_STATE_STARTUP)
-					{
-						if(g_game.reloadInfo(RELOAD_MODS))
-							std::cout << "Reloaded mods." << std::endl;
-					}
-
-					break;
-				}
-
-				case ID_MENU_RELOAD_MONSTERS:
-				{
-					if(g_game.getGameState() != GAME_STATE_STARTUP)
-					{
-						if(g_game.reloadInfo(RELOAD_MONSTERS))
-							std::cout << "Reloaded monsters." << std::endl;
-					}
-
-					break;
-				}
-
-				case ID_MENU_RELOAD_MOVEMENTS:
-				{
-					if(g_game.getGameState() != GAME_STATE_STARTUP)
-					{
-						if(g_game.reloadInfo(RELOAD_MOVEEVENTS))
-							std::cout << "Reloaded movements." << std::endl;
-					}
-
-					break;
-				}
-
-				case ID_MENU_RELOAD_NPCS:
-				{
-					if(g_game.getGameState() != GAME_STATE_STARTUP)
-					{
-						if(g_game.reloadInfo(RELOAD_NPCS))
-							std::cout << "Reloaded npcs." << std::endl;
-					}
-
-					break;
-				}
-
-				case ID_MENU_RELOAD_OUTFITS:
-				{
-					if(g_game.getGameState() != GAME_STATE_STARTUP)
-					{
-						if(g_game.reloadInfo(RELOAD_OUTFITS))
-							std::cout << "Reloaded outfits." << std::endl;
-					}
-
-					break;
-				}
-
-				case ID_MENU_RELOAD_QUESTS:
-				{
-					if(g_game.getGameState() != GAME_STATE_STARTUP)
-					{
-						if(g_game.reloadInfo(RELOAD_QUESTS))
-							std::cout << "Reloaded quests." << std::endl;
-					}
-
-					break;
-				}
-
-				case ID_MENU_RELOAD_RAIDS:
-				{
-					if(g_game.getGameState() != GAME_STATE_STARTUP)
-					{
-						if(g_game.reloadInfo(RELOAD_RAIDS))
-							std::cout << "Reloaded raids." << std::endl;
-					}
-
-					break;
-				}
-
-				case ID_MENU_RELOAD_SPELLS:
-				{
-					if(g_game.getGameState() != GAME_STATE_STARTUP)
-					{
-						if(g_game.reloadInfo(RELOAD_SPELLS))
-							std::cout << "Reloaded spells." << std::endl;
-					}
-
-					break;
-				}
-
-				case ID_MENU_RELOAD_STAGES:
-				{
-					if(g_game.getGameState() != GAME_STATE_STARTUP)
-					{
-						if(g_game.reloadInfo(RELOAD_STAGES))
-							std::cout << "Reloaded stages." << std::endl;
-					}
-
-					break;
-				}
-
-				case ID_MENU_RELOAD_TALKACTIONS:
-				{
-					if(g_game.getGameState() != GAME_STATE_STARTUP)
-					{
-						if(g_game.reloadInfo(RELOAD_TALKACTIONS))
-							std::cout << "Reloaded talk actions." << std::endl;
-					}
-
-					break;
-				}
-
-				case ID_MENU_RELOAD_VOCATIONS:
-				{
-					if(g_game.getGameState() != GAME_STATE_STARTUP)
-					{
-						if(g_game.reloadInfo(RELOAD_VOCATIONS))
-							std::cout << "Reloaded vocations." << std::endl;
-					}
-
-					break;
-				}
-
-				case ID_MENU_RELOAD_WEAPONS:
-				{
-					if(g_game.getGameState() != GAME_STATE_STARTUP)
-					{
-						if(g_game.reloadInfo(RELOAD_WEAPONS))
-							std::cout << "Reloaded weapons." << std::endl;
-					}
-
-					break;
-				}
-
-				case ID_MENU_RELOAD_ALL:
-				{
-					if(g_game.getGameState() != GAME_STATE_STARTUP)
-					{
-						if(g_game.reloadInfo(RELOAD_ALL))
-							std::cout << "Reloaded all." << std::endl;
-					}
-
-					break;
-				}
-
-				default:
-					break;
-			}
-
-			break;
-		}
-
-		case WM_CLOSE:
-		case WM_DESTROY:
-		{
-			if(MessageBox(hwnd, "Are you sure you want to shutdown the server?", "Shutdown", MB_YESNO) == IDYES)
-			{
-				Shell_NotifyIcon(NIM_DELETE, &NID);
-				Dispatcher::getInstance()->addTask(createTask(boost::bind(&Game::setGameState, &g_game, GAME_STATE_SHUTDOWN)));
-			}
-
-			break;
-		}
-
-		case WM_USER + 1: // tray icon messages
-		{
-			switch(lParam)
-			{
-				case WM_RBUTTONUP: // right click
-				{
-					POINT mp;
-					GetCursorPos(&mp);
-					TrackPopupMenu(GetSubMenu(GUI::getInstance()->m_trayMenu, 0), 0, mp.x, mp.y, 0, hwnd, 0);
-					break;
-				}
-
-				case WM_LBUTTONUP: // left click
-				{
-					if(GUI::getInstance()->m_minimized)
-					{
-						ShowWindow(hwnd, SW_SHOW);
-						ShowWindow(hwnd, SW_RESTORE);
-						ModifyMenu(GUI::getInstance()->m_trayMenu, ID_TRAY_HIDE, MF_STRING, ID_TRAY_HIDE, "&Hide window");
-						GUI::getInstance()->m_minimized = false;
-					}
-
-					break;
-				}
-			}
-
-			break;
-		}
-
-		default:
-			return DefWindowProc(hwnd, message, wParam, lParam);
-	}
-
-	return 0;
-}
-
-int32_t WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszArgument, int32_t WindowStyle)
-{
-	MSG messages;
-	WNDCLASSEX wincl;
-	GUI::getInstance()->initTrayMenu();
-	GUI::getInstance()->initFont();
-	wincl.hInstance = hInstance;
-	wincl.lpszClassName = "forgottenserver_gui";
-	wincl.lpfnWndProc = WindowProcedure;
-	wincl.style = CS_DBLCLKS;
-	wincl.cbSize = sizeof(WNDCLASSEX);
-	wincl.hIcon = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(ID_ICON));
-	wincl.hIconSm = (HICON)LoadImage(GetModuleHandle(NULL), MAKEINTRESOURCE(ID_ICON), IMAGE_ICON, 16, 16, 0);
-	wincl.hCursor = LoadCursor(NULL, IDC_ARROW);
-	wincl.lpszMenuName = MAKEINTRESOURCE(ID_MENU);
-	wincl.cbClsExtra = 0;
-	wincl.cbWndExtra = 0;
-	wincl.hbrBackground = (HBRUSH)COLOR_BACKGROUND;
-	if(!RegisterClassEx(&wincl))
-		return 0;
-
-	GUI::getInstance()->m_mainWindow = CreateWindowEx(0, "forgottenserver_gui", STATUS_SERVER_NAME, WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, 640, 450, HWND_DESKTOP, NULL, hInstance, NULL);
-	ShowWindow(GUI::getInstance()->m_mainWindow, 1);
-	while(GetMessage(&messages, NULL, 0, 0))
-	{
-		TranslateMessage(&messages);
-		DispatchMessage(&messages);
-	}
-
-	return messages.wParam;
-}*/
