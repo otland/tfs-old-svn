@@ -968,7 +968,7 @@ void LuaInterface::pushThing(lua_State* L, Thing* thing, uint32_t id/* = 0*/)
 	{
 		const Item* item = thing->getItem();
 		if(!id)
-			id = item->getID();
+			id = item->getUniqueId();
 
 		setField(L, "uid", id);
 		setField(L, "itemid", item->getID());
