@@ -1290,7 +1290,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit132]
-FileName=..\tasks.cpp
+FileName=..\dispatcher.cpp
 CompileCpp=1
 Folder=TheForgottenServer
 Compile=1
@@ -1300,7 +1300,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit133]
-FileName=..\tasks.h
+FileName=..\dispatcher.h
 CompileCpp=1
 Folder=TheForgottenServer
 Compile=1
