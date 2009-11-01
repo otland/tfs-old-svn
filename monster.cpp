@@ -1172,11 +1172,13 @@ Item* Monster::createCorpse(DeathList deathList)
 	if(mType->corpseAction)
 		corpse->setActionId(mType->corpseAction);
 
-	DeathEntry ownerEntry = deathList[0];
-	if(ownerEntry.isNameKill())
+	if(deathList[0].isNameKill())
 		return corpse;
 
-	Creature* owner = ownerEntry.getKillerCreature();
+	Creature* owner = deathList[0].getKillerCreature();
+	if(deathList.size() > 1 && deathList[1].getDamage() > deathList[0].getDamage())
+		owner = deathList[1].getKillerCreature();
+
 	if(!owner)
 		return corpse;
 

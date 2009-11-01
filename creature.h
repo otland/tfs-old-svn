@@ -100,6 +100,8 @@ struct DeathEntry
 		bool isUnjustified() const {return unjustified;}
 
 		const std::type_info& getKillerType() const {return data.type();}
+		int32_t getDamage() const {return damage;}
+
 		Creature* getKillerCreature() const {return boost::any_cast<Creature*>(data);}
 		std::string getKillerName() const {return boost::any_cast<std::string>(data);}
 

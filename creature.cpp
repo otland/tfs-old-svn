@@ -771,11 +771,20 @@ void Creature::dropCorpse(DeathList deathList)
 DeathList Creature::getKillers()
 {
 	DeathList list;
+	CountMap::const_iterator it;
+
 	Creature* lhc = NULL;
-	if(!(lhc = g_game.getCreatureByID(lastHitCreature)))
-		list.push_back(DeathEntry(getCombatName(lastDamageSource), 0));
+	if((lhc = g_game.getCreatureByID(lastHitCreature)))
+	{
+		int32_t damage = 0;
+		it = damageMap.find(lastHitCreature);
+		if(it != damageMap.end())
+			damage = it->second.total;
+
+		list.push_back(DeathEntry(lhc, damage));
+	}
 	else
-		list.push_back(DeathEntry(lhc, 0));
+		list.push_back(DeathEntry(getCombatName(lastDamageSource), 0));
 
 	int32_t requiredTime = g_config.getNumber(ConfigManager::DEATHLIST_REQUIRED_TIME);
 	int64_t now = OTSYS_TIME();
