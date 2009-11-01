@@ -790,7 +790,7 @@ DeathList Creature::getKillers()
 	int64_t now = OTSYS_TIME();
 
 	CountBlock_t cb;
-	for(CountMap::const_iterator it = damageMap.begin(); it != damageMap.end(); ++it)
+	for(it = damageMap.begin(); it != damageMap.end(); ++it)
 	{
 		cb = it->second;
 		if((now - cb.ticks) > requiredTime)
