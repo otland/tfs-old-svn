@@ -117,8 +117,7 @@ enum
 	//CMD_GETHOUSE = 12,
 	CMD_SAVE_SERVER = 13,
 	CMD_SEND_MAIL = 14,
-	CMD_SHALLOW_SAVE_SERVER = 15,
-	CMD_SETOWNER = 16
+	CMD_SHALLOW_SAVE_SERVER = 15
 };
 
 
@@ -217,8 +216,8 @@ class ProtocolAdmin : public Protocol
 
 		void adminCommandPayHouses();
 		void adminCommandReload(int8_t reload);
+
 		void adminCommandKickPlayer(const std::string& name);
-		void adminCommandSetOwner(const std::string& param);
 		void adminCommandSendMail(const std::string& xmlData);
 
 		enum ProtocolState_t
