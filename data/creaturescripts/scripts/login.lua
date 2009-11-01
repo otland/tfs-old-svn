@@ -1,5 +1,6 @@
 local config = {
-	loginMessage = getConfigValue('loginMessage')
+	loginMessage = getConfigValue('loginMessage'),
+	useFragHandler = getBooleanFromString(getConfigValue('useFragHandler'))
 }
 
 function onLogin(cid)
@@ -34,8 +35,12 @@ function onLogin(cid)
 
 	registerCreatureEvent(cid, "Mail")
 	registerCreatureEvent(cid, "GuildMotd")
+
 	registerCreatureEvent(cid, "Idle")
-	registerCreatureEvent(cid, "SkullCheck")
+	if(config.useFragHandler) then
+		registerCreatureEvent(cid, "SkullCheck")
+	end
+
 	registerCreatureEvent(cid, "ReportBug")
 	registerCreatureEvent(cid, "AdvanceSave")
 	return true
