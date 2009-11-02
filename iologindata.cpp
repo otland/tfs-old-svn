@@ -82,7 +82,7 @@ Account IOLoginData::loadAccount(uint32_t accountId, bool preLoad/* = false*/)
 		if(GameServer* server = GameServers::getInstance()->getServerById(result->getDataInt("world_id")))
 			account.charList[ss] = server;
 		else
-			std::cout << "[Warning - IOLoginData::loadAccount] Invalid server for player '" << ss << "'." << std::endl;
+			std::clog << "[Warning - IOLoginData::loadAccount] Invalid server for player '" << ss << "'." << std::endl;
 #endif
 	}
 	while(result->next());
@@ -338,7 +338,7 @@ void IOLoginData::removePremium(Account account)
 		account.lastDay = timeNow;
 
 	if(!saveAccount(account))
-		std::cout << "> ERROR: Failed to save account: " << account.name << "!" << std::endl;
+		std::clog << "> ERROR: Failed to save account: " << account.name << "!" << std::endl;
 }
 
 const Group* IOLoginData::getPlayerGroupByAccount(uint32_t accountId)
@@ -639,10 +639,10 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool preLo
 					if(Depot* depot = c->getDepot())
 						player->addDepot(depot, pid);
 					else
-						std::cout << "[Error - IOLoginData::loadPlayer] Cannot load depot " << pid << " for player " << name << std::endl;
+						std::clog << "[Error - IOLoginData::loadPlayer] Cannot load depot " << pid << " for player " << name << std::endl;
 				}
 				else
-					std::cout << "[Error - IOLoginData::loadPlayer] Cannot load depot " << pid << " for player " << name << std::endl;
+					std::clog << "[Error - IOLoginData::loadPlayer] Cannot load depot " << pid << " for player " << name << std::endl;
 			}
 			else
 			{
@@ -708,7 +708,7 @@ void IOLoginData::loadItems(ItemMap& itemMap, DBResult* result)
 		if(Item* item = Item::CreateItem(result->getDataInt("itemtype"), result->getDataInt("count")))
 		{
 			if(!item->unserializeAttr(propStream))
-				std::cout << "[Warning - IOLoginData::loadItems] Unserialize error for item with id " << item->getID() << std::endl;
+				std::clog << "[Warning - IOLoginData::loadItems] Unserialize error for item with id " << item->getID() << std::endl;
 
 			itemMap[result->getDataInt("sid")] = std::make_pair(item, result->getDataInt("pid"));
 		}

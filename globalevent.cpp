@@ -85,7 +85,7 @@ bool GlobalEvents::registerEvent(Event* event, xmlNodePtr p, bool override)
 		return true;
 	}
 
-	std::cout << "[Warning - GlobalEvents::configureEvent] Duplicate registered globalevent with name: " << globalEvent->getName() << std::endl;
+	std::clog << "[Warning - GlobalEvents::configureEvent] Duplicate registered globalevent with name: " << globalEvent->getName() << std::endl;
 	return false;
 }
 
@@ -114,7 +114,7 @@ void GlobalEvents::timer()
 			continue;
 
 		if(!it->second->executeEvent())
-			std::cout << "[Error - GlobalEvents::timer] Couldn't execute event: "
+			std::clog << "[Error - GlobalEvents::timer] Couldn't execute event: "
 				<< it->second->getName() << std::endl;
 	}
 
@@ -133,7 +133,7 @@ void GlobalEvents::think(uint32_t interval)
 
 		it->second->setLastExecution(now);
 		if(!it->second->executeThink(it->second->getInterval(), now, interval))
-			std::cout << "[Error - GlobalEvents::think] Couldn't execute event: "
+			std::clog << "[Error - GlobalEvents::think] Couldn't execute event: "
 				<< it->second->getName() << std::endl;
 	}
 
@@ -193,7 +193,7 @@ bool GlobalEvent::configureEvent(xmlNodePtr p)
 	std::string strValue;
 	if(!readXMLString(p, "name", strValue))
 	{
-		std::cout << "[Error - GlobalEvent::configureEvent] No name for a globalevent." << std::endl;
+		std::clog << "[Error - GlobalEvent::configureEvent] No name for a globalevent." << std::endl;
 		return false;
 	}
 
@@ -210,7 +210,7 @@ bool GlobalEvent::configureEvent(xmlNodePtr p)
 			m_eventType = GLOBAL_EVENT_RECORD;
 		else
 		{
-			std::cout << "[Error - GlobalEvent::configureEvent] No valid type \"" << strValue << "\" for globalevent with name " << m_name << std::endl;
+			std::clog << "[Error - GlobalEvent::configureEvent] No valid type \"" << strValue << "\" for globalevent with name " << m_name << std::endl;
 			return false;
 		}
 
@@ -221,7 +221,7 @@ bool GlobalEvent::configureEvent(xmlNodePtr p)
 		IntegerVec params = vectorAtoi(explodeString(strValue, ":"));
 		if(params.size() < 2 || params[0] > 23 || params[0] < 0 || params[1] > 59 || params[1] < 0)
 		{
-			std::cout << "[Error - GlobalEvent::configureEvent] No valid time \"" << strValue << "\" for globalevent with name " << m_name << std::endl;
+			std::clog << "[Error - GlobalEvent::configureEvent] No valid time \"" << strValue << "\" for globalevent with name " << m_name << std::endl;
 			return false;
 		}
 
@@ -239,7 +239,7 @@ bool GlobalEvent::configureEvent(xmlNodePtr p)
 		}
 	}
 
-	std::cout << "[Error - GlobalEvent::configureEvent] No interval for globalevent with name " << m_name << std::endl;
+	std::clog << "[Error - GlobalEvent::configureEvent] No interval for globalevent with name " << m_name << std::endl;
 	return false;
 }
 
@@ -324,7 +324,7 @@ int32_t GlobalEvent::executeThink(uint32_t interval, uint32_t lastExecution, uin
 	}
 	else
 	{
-		std::cout << "[Error - GlobalEvent::executeThink] Call stack overflow." << std::endl;
+		std::clog << "[Error - GlobalEvent::executeThink] Call stack overflow." << std::endl;
 		return 0;
 	}
 }
@@ -376,7 +376,7 @@ int32_t GlobalEvent::executeRecord(uint32_t current, uint32_t old, Player* playe
 	}
 	else
 	{
-		std::cout << "[Error - GlobalEvent::executeRecord] Call stack overflow." << std::endl;
+		std::clog << "[Error - GlobalEvent::executeRecord] Call stack overflow." << std::endl;
 		return 0;
 	}
 }
@@ -410,7 +410,7 @@ int32_t GlobalEvent::executeEvent()
 	}
 	else
 	{
-		std::cout << "[Error - GlobalEvent::executeEvent] Call stack overflow." << std::endl;
+		std::clog << "[Error - GlobalEvent::executeEvent] Call stack overflow." << std::endl;
 		return 0;
 	}
 }

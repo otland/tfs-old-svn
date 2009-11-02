@@ -47,31 +47,31 @@ bool Map::loadMap(const std::string& identifier)
 	IOMap* loader = new IOMap();
 	if(!loader->loadMap(this, identifier))
 	{
-		std::cout << "> FATAL: OTBM Loader - " << loader->getLastErrorString() << std::endl;
+		std::clog << "> FATAL: OTBM Loader - " << loader->getLastErrorString() << std::endl;
 		return false;
 	}
 
-	std::cout << "> Map loading time: " << (OTSYS_TIME() - start) / (1000.) << " seconds." << std::endl;
+	std::clog << "> Map loading time: " << (OTSYS_TIME() - start) / (1000.) << " seconds." << std::endl;
 	start = OTSYS_TIME();
 	if(!loader->loadSpawns(this))
-		std::cout << "> WARNING: Could not load spawn data." << std::endl;
+		std::clog << "> WARNING: Could not load spawn data." << std::endl;
 
 	if(!loader->loadHouses(this))
-		std::cout << "> WARNING: Could not load house data." << std::endl;
+		std::clog << "> WARNING: Could not load house data." << std::endl;
 
 	delete loader;
-	std::cout << "> Data parsing time: " << (OTSYS_TIME() - start) / (1000.) << " seconds." << std::endl;
+	std::clog << "> Data parsing time: " << (OTSYS_TIME() - start) / (1000.) << " seconds." << std::endl;
 	start = OTSYS_TIME();
 
 	IOMapSerialize::getInstance()->updateHouses();
 	IOMapSerialize::getInstance()->updateAuctions();
-	std::cout << "> Houses synchronization time: " << (OTSYS_TIME() - start) / (1000.) << " seconds." << std::endl;
+	std::clog << "> Houses synchronization time: " << (OTSYS_TIME() - start) / (1000.) << " seconds." << std::endl;
 
 	start = OTSYS_TIME();
 	IOMapSerialize::getInstance()->loadHouses();
 	IOMapSerialize::getInstance()->loadMap(this);
 
-	std::cout << "> Content unserialization time: " << (OTSYS_TIME() - start) / (1000.) << " seconds." << std::endl;
+	std::clog << "> Content unserialization time: " << (OTSYS_TIME() - start) / (1000.) << " seconds." << std::endl;
 	return true;
 }
 
@@ -124,7 +124,7 @@ void Map::setTile(uint16_t x, uint16_t y, uint16_t z, Tile* newTile)
 {
 	if(z >= MAP_MAX_LAYERS)
 	{
-		std::cout << "[Error - Map::setTile]: Attempt to set tile on invalid Z coordinate - " << z << "!" << std::endl;
+		std::clog << "[Error - Map::setTile]: Attempt to set tile on invalid Z coordinate - " << z << "!" << std::endl;
 		return;
 	}
 
@@ -161,7 +161,7 @@ void Map::setTile(uint16_t x, uint16_t y, uint16_t z, Tile* newTile)
 		newTile->qt_node = leaf;
 	}
 	else
-		std::cout << "[Error - Map::setTile] Tile already exists - pos " << offsetX << "/" << offsetY << "/" << z << std::endl;
+		std::clog << "[Error - Map::setTile] Tile already exists - pos " << offsetX << "/" << offsetY << "/" << z << std::endl;
 
 	if(newTile->hasFlag(TILESTATE_REFRESH))
 	{
@@ -951,7 +951,7 @@ void AStarNodes::closeNode(AStarNode* node)
 	}
 
 	assert(pos >= MAX_NODES);
-	std::cout << "AStarNodes. trying to close node out of range" << std::endl;
+	std::clog << "AStarNodes. trying to close node out of range" << std::endl;
 	return;
 }
 
@@ -965,7 +965,7 @@ void AStarNodes::openNode(AStarNode* node)
 	}
 
 	assert(pos >= MAX_NODES);
-	std::cout << "AStarNodes. trying to open node out of range" << std::endl;
+	std::clog << "AStarNodes. trying to open node out of range" << std::endl;
 	return;
 }
 

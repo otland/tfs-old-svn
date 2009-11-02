@@ -74,7 +74,7 @@ class OutputMessage : public NetworkMessage, boost::noncopyable
 		{
 			uint32_t n = 1;
 			for(std::list<std::string>::const_reverse_iterator it = lastUses.rbegin(); it != lastUses.rend(); ++it, ++n)
-				std::cout << "\t" << n << ".\t" << (*it) << std::endl;
+				std::clog << "\t" << n << ".\t" << (*it) << std::endl;
 		}
 #endif
 
@@ -92,7 +92,7 @@ class OutputMessage : public NetworkMessage, boost::noncopyable
 		{
 			if((int32_t)m_outputBufferStart - (int32_t)sizeof(T) < 0)
 			{
-				std::cout << "[Error - OutputMessage::addHeader] m_outputBufferStart(" << m_outputBufferStart << ") < " << sizeof(T) << std::endl;
+				std::clog << "[Error - OutputMessage::addHeader] m_outputBufferStart(" << m_outputBufferStart << ") < " << sizeof(T) << std::endl;
 				return;
 			}
 

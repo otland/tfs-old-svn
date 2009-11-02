@@ -74,7 +74,7 @@
 #include <exception>
 void boost::throw_exception(std::exception const & e)
 {
-	std::cout << "Boost exception: " << e.what() << std::endl;
+	std::clog << "Boost exception: " << e.what() << std::endl;
 }
 #endif
 
@@ -97,7 +97,7 @@ bool argumentsHandler(StringVec args)
 	{
 		if((*it) == "--help")
 		{
-			std::cout << "Usage:\n"
+			std::clog << "Usage:\n"
 			"\n"
 			"\t--config=$1\t\tAlternate configuration file path.\n"
 			"\t--data-directory=$1\tAlternate data directory path.\n"
@@ -109,10 +109,10 @@ bool argumentsHandler(StringVec args)
 			"\t--manager-port=$1\tPort for manager server to listen on.\n"
 			"\t--status-port=$1\tPort for status server to listen on.\n";
 #ifndef WINDOWS
-			std::cout << "\t--runfile=$1\t\tSpecifies run file. Will contain the pid\n"
+			std::clog << "\t--runfile=$1\t\tSpecifies run file. Will contain the pid\n"
 			"\t\t\t\tof the server process as long as run status.\n";
 #endif
-			std::cout << "\t--log=$1\t\tWhole standard output will be logged to\n"
+			std::clog << "\t--log=$1\t\tWhole standard output will be logged to\n"
 			"\t\t\t\tthis file.\n"
 			"\t--closed\t\t\tStarts the server as closed.\n";
 			return false;
@@ -120,7 +120,7 @@ bool argumentsHandler(StringVec args)
 
 		if((*it) == "--version")
 		{
-			std::cout << STATUS_SERVER_NAME << ", version " << STATUS_SERVER_VERSION << " (" << STATUS_SERVER_CODENAME << ")\n"
+			std::clog << STATUS_SERVER_NAME << ", version " << STATUS_SERVER_VERSION << " (" << STATUS_SERVER_CODENAME << ")\n"
 			"Compiled with " << BOOST_COMPILER << " at " << __DATE__ << ", " << __TIME__ << ".\n"
 			"A server developed by Elf, Talaturen, Lithium, KaczooH, Kiper, Kornholijo.\n"
 			"Visit our forum for updates, support and resources: http://otland.net.\n";
@@ -223,7 +223,7 @@ void allocationHandler()
 void startupErrorMessage(std::string error = "")
 {
 	if(error.length() > 0)
-		std::cout << std::endl << "> ERROR: " << error << std::endl;
+		std::clog << std::endl << "> ERROR: " << error << std::endl;
 
 	getchar();
 	exit(-1);
@@ -269,21 +269,17 @@ int main(int argc, char* argv[])
 	signal(SIGTERM, signalHandler); //shutdown
 #endif
 
+	OutputHandler::getInstance();
 	Dispatcher::getInstance()->addTask(createTask(boost::bind(otserv, args, &servicer)));
+
 	g_loaderSignal.wait(g_loaderUniqueLock);
-	OutputHandler* handler = OutputHandler::getInstance();
-
-	std::cout.rdbuf(handler);
-	std::cerr.rdbuf(handler);
-	std::clog.rdbuf(handler);
-
 	if(servicer.isRunning())
 	{
-		std::cout << ">> " << g_config.getString(ConfigManager::SERVER_NAME) << " server Online!" << std::endl << std::endl;
+		std::clog << ">> " << g_config.getString(ConfigManager::SERVER_NAME) << " server Online!" << std::endl << std::endl;
 		servicer.run();
 	}
 	else
-		std::cout << ">> " << g_config.getString(ConfigManager::SERVER_NAME) << " server Offline! No services available..." << std::endl << std::endl;
+		std::clog << ">> " << g_config.getString(ConfigManager::SERVER_NAME) << " server Offline! No services available..." << std::endl << std::endl;
 
 #ifdef __EXCEPTION_TRACER__
 	mainExceptionHandler.RemoveHandler();
@@ -302,7 +298,7 @@ void otserv(StringVec args, ServiceManager* services)
 #if !defined(WINDOWS) && !defined(__ROOT_PERMISSION__)
 	if(!getuid() || !geteuid())
 	{
-		std::cout << "> WARNING: " << STATUS_SERVER_NAME << " has been executed as root user! It is recommended to execute as a normal user." << std::endl
+		std::clog << "> WARNING: " << STATUS_SERVER_NAME << " has been executed as root user! It is recommended to execute as a normal user." << std::endl
 			<< "Continue? (y/N)" << std::endl;
 		char buffer = getchar();
 		if(buffer != 121 && buffer != 89)
@@ -310,7 +306,7 @@ void otserv(StringVec args, ServiceManager* services)
 	}
 #endif
 
-	std::cout << STATUS_SERVER_NAME << ", version " << STATUS_SERVER_VERSION << " (" << STATUS_SERVER_CODENAME << ")" << std::endl
+	std::clog << STATUS_SERVER_NAME << ", version " << STATUS_SERVER_VERSION << " (" << STATUS_SERVER_CODENAME << ")" << std::endl
 		<< "Compiled with " << BOOST_COMPILER << " at " << __DATE__ << ", " << __TIME__ << "." << std::endl
 		<< "A server developed by Elf, Talaturen, KaczooH, Lithium, Kiper, Kornholijo." << std::endl
 		<< "Visit our forum for updates, support and resources: http://otland.net." << std::endl << std::endl;
@@ -357,13 +353,13 @@ void otserv(StringVec args, ServiceManager* services)
 
 	std::string debug = ss.str();
 	if(!debug.empty())
-		std::cout << ">> Debugging:" << debug << "." << std::endl;
+		std::clog << ">> Debugging:" << debug << "." << std::endl;
 
-	std::cout << ">> Loading config (" << g_config.getString(ConfigManager::CONFIG_FILE) << ")" << std::endl;
+	std::clog << ">> Loading config (" << g_config.getString(ConfigManager::CONFIG_FILE) << ")" << std::endl;
 	if(!g_config.load())
 		startupErrorMessage("Unable to load " + g_config.getString(ConfigManager::CONFIG_FILE) + "!");
 
-	std::cout << ">> Opening logs" << std::endl;
+	std::clog << ">> Opening logs" << std::endl;
 	Logger::getInstance()->open();
 
 	IntegerVec cores = vectorAtoi(explodeString(g_config.getString(ConfigManager::CORES_USED), ","));
@@ -416,20 +412,20 @@ void otserv(StringVec args, ServiceManager* services)
 	if(encryptionType == "md5")
 	{
 		g_config.setNumber(ConfigManager::ENCRYPTION, ENCRYPTION_MD5);
-		std::cout << "> Using MD5 encryption" << std::endl;
+		std::clog << "> Using MD5 encryption" << std::endl;
 	}
 	else if(encryptionType == "sha1")
 	{
 		g_config.setNumber(ConfigManager::ENCRYPTION, ENCRYPTION_SHA1);
-		std::cout << "> Using SHA1 encryption" << std::endl;
+		std::clog << "> Using SHA1 encryption" << std::endl;
 	}
 	else
 	{
 		g_config.setNumber(ConfigManager::ENCRYPTION, ENCRYPTION_PLAIN);
-		std::cout << "> Using plaintext encryption" << std::endl;
+		std::clog << "> Using plaintext encryption" << std::endl;
 	}
 	
-	std::cout << ">> Checking software version...";
+	std::clog << ">> Checking software version...";
 	if(xmlDocPtr doc = xmlParseFile(VERSION_CHECK))
 	{
 		xmlNodePtr p, root = xmlDocGetRootElement(doc);
@@ -456,13 +452,13 @@ void otserv(StringVec args, ServiceManager* services)
 
 				if(tmp)
 				{
-					std::cout << " ";
+					std::clog << " ";
 					if(version.find("_SVN") == std::string::npos)
-						std::cout << "running sub version, please mind it's unstable and only for testing purposes!";
+						std::clog << "running sub version, please mind it's unstable and only for testing purposes!";
 					else
-						std::cout << "outdated, please consider upgrading!";
+						std::clog << "outdated, please consider upgrading!";
 
-					std::cout << std::endl << "> Current version information - version: "
+					std::clog << std::endl << "> Current version information - version: "
 						<< STATUS_SERVER_VERSION << ", patch: " << VERSION_PATCH
 						<< ", build: " << VERSION_BUILD << ", timestamp: " << VERSION_TIMESTAMP
 						<< "." << std::endl << "> Latest version information - version: "
@@ -471,47 +467,47 @@ void otserv(StringVec args, ServiceManager* services)
 					if(g_config.getBool(ConfigManager::CONFIM_OUTDATED_VERSION)
 						&& version.find("_SVN") == std::string::npos)
 					{
-						std::cout << "Continue? (y/N)" << std::endl;
+						std::clog << "Continue? (y/N)" << std::endl;
 						char buffer = getchar();
 						if(buffer != 121 && buffer != 89)
 							startupErrorMessage("Aborted.");
 					}
 				}
 				else
-					std::cout << "up to date!" << std::endl;
+					std::clog << "up to date!" << std::endl;
 			}
 			else
-				std::cout << "failed checking - malformed entry." << std::endl;
+				std::clog << "failed checking - malformed entry." << std::endl;
 		}
 		else
-			std::cout << "failed checking - malformed file." << std::endl;
+			std::clog << "failed checking - malformed file." << std::endl;
 
 		xmlFreeDoc(doc);
 	}
 	else
-		std::cout << "failed - could not parse remote file (are you connected to the internet?)" << std::endl;
+		std::clog << "failed - could not parse remote file (are you connected to the internet?)" << std::endl;
 
-	std::cout << ">> Fetching blacklist" << std::endl;
+	std::clog << ">> Fetching blacklist" << std::endl;
 	if(!g_game.fetchBlacklist())
 	{
-		std::cout << "Unable to fetch blacklist! Continue? (y/N)" << std::endl;
+		std::clog << "Unable to fetch blacklist! Continue? (y/N)" << std::endl;
 		char buffer = getchar();
 		if(buffer != 121 && buffer != 89)
 			startupErrorMessage("Unable to fetch blacklist!");
 	}
 
-	std::cout << ">> Loading RSA key" << std::endl;
+	std::clog << ">> Loading RSA key" << std::endl;
 	const char* p("14299623962416399520070177382898895550795403345466153217470516082934737582776038882967213386204600674145392845853859217990626450972452084065728686565928113");
 	const char* q("7630979195970404721891201847792002125535401292779123937207447574596692788513647179235335529307251350570728407373705564708871762033017096809910315212884101");
 	const char* d("46730330223584118622160180015036832148732986808519344675210555262940258739805766860224610646919605860206328024326703361630109888417839241959507572247284807035235569619173792292786907845791904955103601652822519121908367187885509270025388641700821735345222087940578381210879116823013776808975766851829020659073");
 
 	g_RSA.setKey(p, q, d);
-	std::cout << ">> Starting SQL connection" << std::endl;
+	std::clog << ">> Starting SQL connection" << std::endl;
 
 	Database* db = Database::getInstance();
 	if(db && db->isConnected())
 	{
-		std::cout << ">> Running Database Manager" << std::endl;
+		std::clog << ">> Running Database Manager" << std::endl;
 		if(DatabaseManager::getInstance()->isDatabaseSetup())
 		{
 			uint32_t version = 0;
@@ -521,7 +517,7 @@ void otserv(StringVec args, ServiceManager* services)
 				if(!version)
 					break;
 
-				std::cout << "> Database has been updated to version: " << version << "." << std::endl;
+				std::clog << "> Database has been updated to version: " << version << "." << std::endl;
 			}
 			while(version < VERSION_DATABASE);
 		}
@@ -532,99 +528,99 @@ void otserv(StringVec args, ServiceManager* services)
 		DatabaseManager::getInstance()->checkEncryption();
 		if(g_config.getBool(ConfigManager::OPTIMIZE_DB_AT_STARTUP) &&
 			!DatabaseManager::getInstance()->optimizeTables())
-			std::cout << "> No tables were optimized." << std::endl;
+			std::clog << "> No tables were optimized." << std::endl;
 	}
 	else
 		startupErrorMessage("Couldn't estabilish connection to SQL database!");
 
-	std::cout << ">> Loading items" << std::endl;
+	std::clog << ">> Loading items" << std::endl;
 	if(Item::items.loadFromOtb(getFilePath(FILE_TYPE_OTHER, "items/items.otb")))
 		startupErrorMessage("Unable to load items (OTB)!");
 
 	if(!Item::items.loadFromXml())
 	{
-		std::cout << "Unable to load items (XML)! Continue? (y/N)" << std::endl;
+		std::clog << "Unable to load items (XML)! Continue? (y/N)" << std::endl;
 		char buffer = getchar();
 		if(buffer != 121 && buffer != 89)
 			startupErrorMessage("Unable to load items (XML)!");
 	}
 
-	std::cout << ">> Loading groups" << std::endl;
+	std::clog << ">> Loading groups" << std::endl;
 	if(!Groups::getInstance()->loadFromXml())
 		startupErrorMessage("Unable to load groups!");
 
-	std::cout << ">> Loading vocations" << std::endl;
+	std::clog << ">> Loading vocations" << std::endl;
 	if(!Vocations::getInstance()->loadFromXml())
 		startupErrorMessage("Unable to load vocations!");
 
-	std::cout << ">> Loading script systems" << std::endl;
+	std::clog << ">> Loading script systems" << std::endl;
 	if(!ScriptManager::getInstance()->loadSystem())
 		startupErrorMessage();
 
-	std::cout << ">> Loading chat channels" << std::endl;
+	std::clog << ">> Loading chat channels" << std::endl;
 	if(!g_chat.loadFromXml())
 		startupErrorMessage("Unable to load chat channels!");
 
-	std::cout << ">> Loading outfits" << std::endl;
+	std::clog << ">> Loading outfits" << std::endl;
 	if(!Outfits::getInstance()->loadFromXml())
 		startupErrorMessage("Unable to load outfits!");
 
-	std::cout << ">> Loading experience stages" << std::endl;
+	std::clog << ">> Loading experience stages" << std::endl;
 	if(!g_game.loadExperienceStages())
 		startupErrorMessage("Unable to load experience stages!");
 
-	std::cout << ">> Loading monsters" << std::endl;
+	std::clog << ">> Loading monsters" << std::endl;
 	if(!g_monsters.loadFromXml())
 	{
-		std::cout << "Unable to load monsters! Continue? (y/N)" << std::endl;
+		std::clog << "Unable to load monsters! Continue? (y/N)" << std::endl;
 		char buffer = getchar();
 		if(buffer != 121 && buffer != 89)
 			startupErrorMessage("Unable to load monsters!");
 	}
 
-	std::cout << ">> Loading mods..." << std::endl;
+	std::clog << ">> Loading mods..." << std::endl;
 	if(!ScriptManager::getInstance()->loadMods())
 		startupErrorMessage();
 
-	std::cout << ">> Loading map and spawns..." << std::endl;
+	std::clog << ">> Loading map and spawns..." << std::endl;
 	if(!g_game.loadMap(g_config.getString(ConfigManager::MAP_NAME)))
 		startupErrorMessage();
 
 	#ifdef __LOGIN_SERVER__
-	std::cout << ">> Loading game servers" << std::endl;
+	std::clog << ">> Loading game servers" << std::endl;
 	if(!GameServers::getInstance()->loadFromXml(true))
 		startupErrorMessage("Unable to load game servers!");
 
 	#endif
 	
-	std::cout << ">> Checking world type... ";
+	std::clog << ">> Checking world type... ";
 	std::string worldType = asLowerCaseString(g_config.getString(ConfigManager::WORLD_TYPE));
 	if(worldType == "pvp" || worldType == "2" || worldType == "normal")
 	{
 		g_game.setWorldType(WORLD_TYPE_PVP);
-		std::cout << "PvP" << std::endl;
+		std::clog << "PvP" << std::endl;
 	}
 	else if(worldType == "no-pvp" || worldType == "nopvp" || worldType == "non-pvp" || worldType == "nonpvp" || worldType == "1" || worldType == "safe")
 	{
 		g_game.setWorldType(WORLD_TYPE_NO_PVP);
-		std::cout << "NoN-PvP" << std::endl;
+		std::clog << "NoN-PvP" << std::endl;
 	}
 	else if(worldType == "pvp-enforced" || worldType == "pvpenforced" || worldType == "pvp-enfo" || worldType == "pvpenfo" || worldType == "pvpe" || worldType == "enforced" || worldType == "enfo" || worldType == "3" || worldType == "war")
 	{
 		g_game.setWorldType(WORLD_TYPE_PVP_ENFORCED);
-		std::cout << "PvP-Enforced" << std::endl;
+		std::clog << "PvP-Enforced" << std::endl;
 	}
 	else
 	{
-		std::cout << std::endl;
+		std::clog << std::endl;
 		startupErrorMessage("Unknown world type: " + g_config.getString(ConfigManager::WORLD_TYPE));
 	}
 
-	std::cout << ">> Initializing game state modules and registering services..." << std::endl;
+	std::clog << ">> Initializing game state modules and registering services..." << std::endl;
 	g_game.setGameState(GAME_STATE_INIT);
 
 	std::string ip = g_config.getString(ConfigManager::IP);
-	std::cout << "> Global address: " << ip << std::endl;
+	std::clog << "> Global address: " << ip << std::endl;
 	serverIps.push_back(std::make_pair(LOCALHOST, 0xFFFFFFFF));
 
 	char hostName[128];
@@ -672,13 +668,13 @@ void otserv(StringVec args, ServiceManager* services)
 
 	services->add<ProtocolGame>(g_config.getNumber(ConfigManager::GAME_PORT));
 	services->add<ProtocolOldGame>(g_config.getNumber(ConfigManager::LOGIN_PORT));
-	std::cout << "> Local ports: ";
+	std::clog << "> Local ports: ";
 
 	std::list<uint16_t> ports = services->getPorts();
 	for(std::list<uint16_t>::iterator it = ports.begin(); it != ports.end(); ++it)
-		std::cout << (*it) << "\t";
+		std::clog << (*it) << "\t";
 
-	std::cout << std::endl << ">> All modules were loaded, server is starting up..." << std::endl;
+	std::clog << std::endl << ">> All modules were loaded, server is starting up..." << std::endl;
 	g_game.setGameState(g_config.getBool(ConfigManager::START_CLOSED) ? GAME_STATE_CLOSED : GAME_STATE_NORMAL);
 	g_game.start(services);
 	g_loaderSignal.notify_all();

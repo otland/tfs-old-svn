@@ -31,7 +31,7 @@ DatabasePgSQL::DatabasePgSQL()
 	m_handle = PQconnectdb(dns.str().c_str());
 	m_connected = PQstatus(m_handle) == CONNECTION_OK;
 	if(!m_connected)
-		std::cout << "Failed to estabilish PostgreSQL database connection: " << PQerrorMessage(m_handle) << std::endl;
+		std::clog << "Failed to estabilish PostgreSQL database connection: " << PQerrorMessage(m_handle) << std::endl;
 }
 
 bool DatabasePgSQL::getParam(DBParam_t param)
@@ -54,7 +54,7 @@ bool DatabasePgSQL::executeQuery(const std::string& query)
 		return false;
 
 	#ifdef __SQL_QUERY_DEBUG__
-	std::cout << "PGSQL QUERY: " << query << std::endl;
+	std::clog << "PGSQL QUERY: " << query << std::endl;
 	#endif
 
 	// executes query
@@ -62,7 +62,7 @@ bool DatabasePgSQL::executeQuery(const std::string& query)
 	ExecStatusType stat = PQresultStatus(res);
 	if(stat != PGRES_COMMAND_OK && stat != PGRES_TUPLES_OK)
 	{
-		std::cout << "PQexec(): " << query << ": " << PQresultErrorMessage(res) << std::endl;
+		std::clog << "PQexec(): " << query << ": " << PQresultErrorMessage(res) << std::endl;
 		PQclear(res);
 		return false;
 	}
@@ -78,7 +78,7 @@ DBResult* DatabasePgSQL::storeQuery(const std::string& query)
 		return NULL;
 
 	#ifdef __SQL_QUERY_DEBUG__
-	std::cout << "PGSQL QUERY: " << query << std::endl;
+	std::clog << "PGSQL QUERY: " << query << std::endl;
 	#endif
 
 	// executes query
@@ -86,7 +86,7 @@ DBResult* DatabasePgSQL::storeQuery(const std::string& query)
 	ExecStatusType stat = PQresultStatus(res);
 	if(stat != PGRES_COMMAND_OK && stat != PGRES_TUPLES_OK)
 	{
-		std::cout << "PQexec(): " << query << ": " << PQresultErrorMessage(res) << std::endl;
+		std::clog << "PQexec(): " << query << ": " << PQresultErrorMessage(res) << std::endl;
 		PQclear(res);
 		return false;
 	}
@@ -143,7 +143,7 @@ uint64_t DatabasePgSQL::getLastInsertId()
 	ExecStatusType stat = PQresultStatus(res);
 	if(stat != PGRES_COMMAND_OK && stat != PGRES_TUPLES_OK)
 	{
-		std::cout << "PQexec(): " << query << ": " << PQresultErrorMessage(res) << std::endl;
+		std::clog << "PQexec(): " << query << ": " << PQresultErrorMessage(res) << std::endl;
 		PQclear(res);
 		return 0;
 	}
@@ -198,7 +198,7 @@ void PgSQLResult::free()
 		delete this;
 	}
 	else
-		std::cout << "[Warning - PgSQLResult::free] Trying to free already freed result." << std::endl;
+		std::clog << "[Warning - PgSQLResult::free] Trying to free already freed result." << std::endl;
 }
 
 bool PgSQLResult::next()

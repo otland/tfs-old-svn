@@ -312,7 +312,7 @@ const std::string& ConfigManager::getString(uint32_t _what) const
 		return m_confString[_what];
 
 	if(!m_startup)
-		std::cout << "[Warning - ConfigManager::getString] " << _what << std::endl;
+		std::clog << "[Warning - ConfigManager::getString] " << _what << std::endl;
 
 	return m_confString[DUMMY_STR];
 }
@@ -323,7 +323,7 @@ bool ConfigManager::getBool(uint32_t _what) const
 		return m_confBool[_what];
 
 	if(!m_startup)
-		std::cout << "[Warning - ConfigManager::getBool] " << _what << std::endl;
+		std::clog << "[Warning - ConfigManager::getBool] " << _what << std::endl;
 
 	return false;
 }
@@ -334,7 +334,7 @@ int32_t ConfigManager::getNumber(uint32_t _what) const
 		return m_confNumber[_what];
 
 	if(!m_startup)
-		std::cout << "[Warning - ConfigManager::getNumber] " << _what << std::endl;
+		std::clog << "[Warning - ConfigManager::getNumber] " << _what << std::endl;
 
 	return 0;
 }
@@ -345,7 +345,7 @@ double ConfigManager::getDouble(uint32_t _what) const
 		return m_confDouble[_what];
 
 	if(!m_startup)
-		std::cout << "[Warning - ConfigManager::getDouble] " << _what << std::endl;
+		std::clog << "[Warning - ConfigManager::getDouble] " << _what << std::endl;
 
 	return 0;
 }
@@ -358,7 +358,7 @@ bool ConfigManager::setString(uint32_t _what, const std::string& _value)
 		return true;
 	}
 
-	std::cout << "[Warning - ConfigManager::setString] " << _what << std::endl;
+	std::clog << "[Warning - ConfigManager::setString] " << _what << std::endl;
 	return false;
 }
 
@@ -370,7 +370,7 @@ bool ConfigManager::setNumber(uint32_t _what, int32_t _value)
 		return true;
 	}
 
-	std::cout << "[Warning - ConfigManager::setNumber] " << _what << std::endl;
+	std::clog << "[Warning - ConfigManager::setNumber] " << _what << std::endl;
 	return false;
 }
 
@@ -382,6 +382,6 @@ bool ConfigManager::setBool(uint32_t _what, bool _value)
 		return true;
 	}
 
-	std::cout << "[Warning - ConfigManager::setBool] " << _what << std::endl;
+	std::clog << "[Warning - ConfigManager::setBool] " << _what << std::endl;
 	return false;
 }

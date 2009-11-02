@@ -49,7 +49,7 @@ bool Vocations::parseVocationNode(xmlNodePtr p)
 
 	if(!readXMLInteger(p, "id", intValue))
 	{
-		std::cout << "[Error - Vocations::parseVocationNode] Missing vocation id." << std::endl;
+		std::clog << "[Error - Vocations::parseVocationNode] Missing vocation id." << std::endl;
 		return false;
 	}
 
@@ -165,7 +165,7 @@ bool Vocations::parseVocationNode(xmlNodePtr p)
 				skills_t skill = (skills_t)intValue;
 				if(intValue < SKILL_FIRST || intValue >= SKILL__LAST)
 				{
-					std::cout << "[Error - Vocations::parseVocationNode] No valid skill id (" << intValue << ")." << std::endl;
+					std::clog << "[Error - Vocations::parseVocationNode] No valid skill id (" << intValue << ")." << std::endl;
 					continue;
 				}
 
@@ -397,15 +397,15 @@ bool Vocations::loadFromXml()
 	xmlDocPtr doc = xmlParseFile(getFilePath(FILE_TYPE_XML,"vocations.xml").c_str());
 	if(!doc)
 	{
-		std::cout << "[Warning - Vocations::loadFromXml] Cannot load vocations file." << std::endl;
-		std::cout << getLastXMLError() << std::endl;
+		std::clog << "[Warning - Vocations::loadFromXml] Cannot load vocations file." << std::endl;
+		std::clog << getLastXMLError() << std::endl;
 		return false;
 	}
 
 	xmlNodePtr p, root = xmlDocGetRootElement(doc);
 	if(xmlStrcmp(root->name,(const xmlChar*)"vocations"))
 	{
-		std::cout << "[Error - Vocations::loadFromXml] Malformed vocations file." << std::endl;
+		std::clog << "[Error - Vocations::loadFromXml] Malformed vocations file." << std::endl;
 		xmlFreeDoc(doc);
 		return false;
 	}
@@ -423,7 +423,7 @@ Vocation* Vocations::getVocation(uint32_t vocId)
 	if(it != vocationsMap.end())
 		return it->second;
 
-	std::cout << "[Warning - Vocations::getVocation] Vocation " << vocId << " not found." << std::endl;
+	std::clog << "[Warning - Vocations::getVocation] Vocation " << vocId << " not found." << std::endl;
 	return &Vocations::defVoc;
 }
 

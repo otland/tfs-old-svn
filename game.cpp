@@ -235,7 +235,7 @@ void Game::setGameState(GameState_t newState)
 
 void Game::saveGameState(bool shallow)
 {
-	std::cout << "> Saving server..." << std::endl;
+	std::clog << "> Saving server..." << std::endl;
 	uint64_t start = OTSYS_TIME();
 	if(gameState == GAME_STATE_NORMAL)
 		setGameState(GAME_STATE_MAINTAIN);
@@ -256,7 +256,7 @@ void Game::saveGameState(bool shallow)
 	if(gameState == GAME_STATE_MAINTAIN)
 		setGameState(GAME_STATE_NORMAL);
 
-	std::cout << "> SAVE: Complete in " << (OTSYS_TIME() - start) / (1000.) << " seconds using " << storage << " house storage." << std::endl;
+	std::clog << "> SAVE: Complete in " << (OTSYS_TIME() - start) / (1000.) << " seconds using " << storage << " house storage." << std::endl;
 }
 
 int32_t Game::loadMap(std::string filename)
@@ -411,12 +411,12 @@ void Game::cleanMapEx(uint32_t& count)
 	if(gameState == GAME_STATE_MAINTAIN)
 		setGameState(GAME_STATE_NORMAL);
 
-	std::cout << "> CLEAN: Removed " << count << " item" << (count != 1 ? "s" : "")
+	std::clog << "> CLEAN: Removed " << count << " item" << (count != 1 ? "s" : "")
 		<< " from " << tiles << " tile" << (tiles != 1 ? "s" : "");
 	if(marked >= 0)
-		std::cout << " (" << marked << " were marked)";
+		std::clog << " (" << marked << " were marked)";
 
-	std::cout << " in " << (OTSYS_TIME() - start) / (1000.) << " seconds." << std::endl;
+	std::clog << " in " << (OTSYS_TIME() - start) / (1000.) << " seconds." << std::endl;
 }
 
 void Game::cleanMap()
@@ -475,8 +475,8 @@ void Game::refreshMap(RefreshTiles::iterator* it/* = NULL*/, uint32_t limit/* = 
 					#else
 					if(internalRemoveItem(NULL, item) != RET_NOERROR)
 					{
-						std::cout << "> WARNING: Could not refresh item: " << item->getID();
-						std::cout << " at position: " << tile->getPosition() << std::endl;
+						std::clog << "> WARNING: Could not refresh item: " << item->getID();
+						std::clog << " at position: " << tile->getPosition() << std::endl;
 					}
 					#endif
 				}
@@ -497,7 +497,7 @@ void Game::refreshMap(RefreshTiles::iterator* it/* = NULL*/, uint32_t limit/* = 
 			}
 			else
 			{
-				std::cout << "> WARNING: Could not refresh item: " << item->getID()
+				std::clog << "> WARNING: Could not refresh item: " << item->getID()
 					<< " at position: " << tile->getPosition() << std::endl;
 				delete item;
 			}
@@ -714,7 +714,7 @@ Player* Game::getPlayerByNameEx(const std::string& s)
 		return player;
 
 #ifdef __DEBUG__
-	std::cout << "[Failure - Game::getPlayerByNameEx] Cannot load player: " << name << std::endl;
+	std::clog << "[Failure - Game::getPlayerByNameEx] Cannot load player: " << name << std::endl;
 #endif
 	delete player;
 	return NULL;
@@ -749,7 +749,7 @@ Player* Game::getPlayerByGuidEx(uint32_t guid)
 		return player;
 
 #ifdef __DEBUG__
-	std::cout << "[Failure - Game::getPlayerByGuidEx] Cannot load player: " << name << std::endl;
+	std::clog << "[Failure - Game::getPlayerByGuidEx] Cannot load player: " << name << std::endl;
 #endif
 	delete player;
 	return NULL;
@@ -1945,7 +1945,7 @@ Item* Game::transformItem(Item* item, uint16_t newId, int32_t newCount /*= -1*/)
 	if(itemIndex == -1)
 	{
 #ifdef __DEBUG__
-		std::cout << "Error: transformItem, itemIndex == -1" << std::endl;
+		std::clog << "Error: transformItem, itemIndex == -1" << std::endl;
 #endif
 		return item;
 	}
@@ -2028,7 +2028,7 @@ Item* Game::transformItem(Item* item, uint16_t newId, int32_t newCount /*= -1*/)
 	if(!newItem)
 	{
 		#ifdef __DEBUG__
-		std::cout << "Error: [Game::transformItem] Item of type " << item->getID() << " transforming into invalid type " << newId << std::endl;
+		std::clog << "Error: [Game::transformItem] Item of type " << item->getID() << " transforming into invalid type " << newId << std::endl;
 		#endif
 		return NULL;
 	}
@@ -2114,7 +2114,7 @@ bool Game::playerBroadcastMessage(Player* player, SpeakClasses type, const std::
 		//TODO: event handling - onCreatureSay
 	}
 
-	std::cout << "> " << player->getName() << " broadcasted: \"" << text << "\"." << std::endl;
+	std::clog << "> " << player->getName() << " broadcasted: \"" << text << "\"." << std::endl;
 	return true;
 }
 
@@ -2188,7 +2188,7 @@ bool Game::playerOpenChannel(uint32_t playerId, uint16_t channelId)
 	if(!channel)
 	{
 		#ifdef __DEBUG_CHAT__
-		std::cout << "Game::playerOpenChannel - failed adding user to channel." << std::endl;
+		std::clog << "Game::playerOpenChannel - failed adding user to channel." << std::endl;
 		#endif
 		return false;
 	}
@@ -3143,7 +3143,7 @@ bool Game::internalCloseTrade(Player* player)
 	Player* tradePartner = player->tradePartner;
 	if((tradePartner && tradePartner->getTradeState() == TRADE_TRANSFER) || player->getTradeState() == TRADE_TRANSFER)
 	{
-		std::cout << "[Warning - Game::internalCloseTrade] TradeState == TRADE_TRANSFER, " <<
+		std::clog << "[Warning - Game::internalCloseTrade] TradeState == TRADE_TRANSFER, " <<
 			player->getName() << " " << player->getTradeState() << ", " <<
 			tradePartner->getName() << " " << tradePartner->getTradeState() << std::endl;
 		return true;
@@ -4554,7 +4554,7 @@ void Game::internalDecayItem(Item* item)
 	{
 		ReturnValue ret = internalRemoveItem(NULL, item);
 		if(ret != RET_NOERROR)
-			std::cout << "> DEBUG: internalDecayItem failed, error code: " << (int32_t)ret << ", item id: " << item->getID() << std::endl;
+			std::clog << "> DEBUG: internalDecayItem failed, error code: " << (int32_t)ret << ", item id: " << item->getID() << std::endl;
 	}
 }
 
@@ -5175,7 +5175,7 @@ bool Game::broadcastMessage(const std::string& text, MessageClasses type)
 	if(type < MSG_CLASS_FIRST || type > MSG_CLASS_LAST)
 		return false;
 
-	std::cout << "> Broadcasted message: \"" << text << "\"." << std::endl;
+	std::clog << "> Broadcasted message: \"" << text << "\"." << std::endl;
 	for(AutoList<Player>::iterator it = Player::autoList.begin(); it != Player::autoList.end(); ++it)
 		it->second->sendTextMessage(type, text);
 
@@ -5495,15 +5495,15 @@ bool Game::loadExperienceStages()
 	xmlDocPtr doc = xmlParseFile(getFilePath(FILE_TYPE_XML, "stages.xml").c_str());
 	if(!doc)
 	{
-		std::cout << "[Warning - Game::loadExperienceStages] Cannot load stages file." << std::endl;
-		std::cout << getLastXMLError() << std::endl;
+		std::clog << "[Warning - Game::loadExperienceStages] Cannot load stages file." << std::endl;
+		std::clog << getLastXMLError() << std::endl;
 		return false;
 	}
 
 	xmlNodePtr q, p, root = xmlDocGetRootElement(doc);
 	if(xmlStrcmp(root->name, (const xmlChar*)"stages"))
 	{
-		std::cout << "[Error - Game::loadExperienceStages] Malformed stages file" << std::endl;
+		std::clog << "[Error - Game::loadExperienceStages] Malformed stages file" << std::endl;
 		xmlFreeDoc(doc);
 		return false;
 	}
@@ -5709,7 +5709,7 @@ void Game::loadMotd()
 	DBResult* result;
 	if(!(result = db->storeQuery(query.str())))
 	{
-		std::cout << "> ERROR: Failed to load motd!" << std::endl;
+		std::clog << "> ERROR: Failed to load motd!" << std::endl;
 		lastMotdId = random_range(5, 500);
 		return;
 	}
@@ -5741,7 +5741,7 @@ void Game::loadPlayersRecord()
 	DBResult* result;
 	if(!(result = db->storeQuery(query.str())))
 	{
-		std::cout << "> ERROR: Failed to load players record!" << std::endl;
+		std::clog << "> ERROR: Failed to load players record!" << std::endl;
 		return;
 	}
 
@@ -5759,7 +5759,7 @@ bool Game::reloadInfo(ReloadInfo_t reload, uint32_t playerId/* = 0*/)
 			if(g_actions->reload())
 				done = true;
 			else
-				std::cout << "[Error - Game::reloadInfo] Failed to reload actions." << std::endl;
+				std::clog << "[Error - Game::reloadInfo] Failed to reload actions." << std::endl;
 
 			break;
 		}
@@ -5769,7 +5769,7 @@ bool Game::reloadInfo(ReloadInfo_t reload, uint32_t playerId/* = 0*/)
 			if(g_chat.reload())
 				done = true;
 			else
-				std::cout << "[Error - Game::reloadInfo] Failed to reload chat." << std::endl;
+				std::clog << "[Error - Game::reloadInfo] Failed to reload chat." << std::endl;
 
 			break;
 		}
@@ -5779,7 +5779,7 @@ bool Game::reloadInfo(ReloadInfo_t reload, uint32_t playerId/* = 0*/)
 			if(g_config.reload())
 				done = true;
 			else
-				std::cout << "[Error - Game::reloadInfo] Failed to reload config." << std::endl;
+				std::clog << "[Error - Game::reloadInfo] Failed to reload config." << std::endl;
 
 			break;
 		}
@@ -5789,7 +5789,7 @@ bool Game::reloadInfo(ReloadInfo_t reload, uint32_t playerId/* = 0*/)
 			if(g_creatureEvents->reload())
 				done = true;
 			else
-				std::cout << "[Error - Game::reloadInfo] Failed to reload creature events." << std::endl;
+				std::clog << "[Error - Game::reloadInfo] Failed to reload creature events." << std::endl;
 
 			break;
 		}
@@ -5800,7 +5800,7 @@ bool Game::reloadInfo(ReloadInfo_t reload, uint32_t playerId/* = 0*/)
 			if(GameServers::getInstance()->reload())
 				done = true;
 			else
-				std::cout << "[Error - Game::reloadInfo] Failed to reload game servers." << std::endl;
+				std::clog << "[Error - Game::reloadInfo] Failed to reload game servers." << std::endl;
 
 			#endif
 			break;
@@ -5811,7 +5811,7 @@ bool Game::reloadInfo(ReloadInfo_t reload, uint32_t playerId/* = 0*/)
 			if(g_globalEvents->reload())
 				done = true;
 			else
-				std::cout << "[Error - Game::reloadInfo] Failed to reload global events." << std::endl;
+				std::clog << "[Error - Game::reloadInfo] Failed to reload global events." << std::endl;
 
 			break;
 		}
@@ -5821,7 +5821,7 @@ bool Game::reloadInfo(ReloadInfo_t reload, uint32_t playerId/* = 0*/)
 			//if(Groups::getInstance()->reload())
 				done = true;
 			//else
-			//	std::cout << "[Error - Game::reloadInfo] Failed to reload groups." << std::endl;
+			//	std::clog << "[Error - Game::reloadInfo] Failed to reload groups." << std::endl;
 
 			break;
 		}
@@ -5831,7 +5831,7 @@ bool Game::reloadInfo(ReloadInfo_t reload, uint32_t playerId/* = 0*/)
 			if(reloadHighscores())
 				done = true;
 			else
-				std::cout << "[Error - Game::reloadInfo] Failed to reload highscores." << std::endl;
+				std::clog << "[Error - Game::reloadInfo] Failed to reload highscores." << std::endl;
 
 			break;
 		}
@@ -5841,7 +5841,7 @@ bool Game::reloadInfo(ReloadInfo_t reload, uint32_t playerId/* = 0*/)
 			if(Houses::getInstance()->reloadPrices())
 				done = true;
 			else
-				std::cout << "[Error - Game::reloadInfo] Failed to reload house prices." << std::endl;
+				std::clog << "[Error - Game::reloadInfo] Failed to reload house prices." << std::endl;
 
 			break;
 		}
@@ -5849,18 +5849,18 @@ bool Game::reloadInfo(ReloadInfo_t reload, uint32_t playerId/* = 0*/)
 		case RELOAD_ITEMS:
 		{
 			//TODO
-			std::cout << "[Notice - Game::reloadInfo] Reload type does not work." << std::endl;
+			std::clog << "[Notice - Game::reloadInfo] Reload type does not work." << std::endl;
 			done = true;
 			break;
 		}
 
 		case RELOAD_MODS:
 		{
-			std::cout << ">> Reloading mods..." << std::endl;
+			std::clog << ">> Reloading mods..." << std::endl;
 			if(ScriptManager::getInstance()->reloadMods())
 				done = true;
 			else
-				std::cout << "[Error - Game::reloadInfo] Failed to reload mods." << std::endl;
+				std::clog << "[Error - Game::reloadInfo] Failed to reload mods." << std::endl;
 
 			break;
 		}
@@ -5870,7 +5870,7 @@ bool Game::reloadInfo(ReloadInfo_t reload, uint32_t playerId/* = 0*/)
 			if(g_monsters.reload())
 				done = true;
 			else
-				std::cout << "[Error - Game::reloadInfo] Failed to reload monsters." << std::endl;
+				std::clog << "[Error - Game::reloadInfo] Failed to reload monsters." << std::endl;
 
 			break;
 		}
@@ -5880,7 +5880,7 @@ bool Game::reloadInfo(ReloadInfo_t reload, uint32_t playerId/* = 0*/)
 			if(g_moveEvents->reload())
 				done = true;
 			else
-				std::cout << "[Error - Game::reloadInfo] Failed to reload move events." << std::endl;
+				std::clog << "[Error - Game::reloadInfo] Failed to reload move events." << std::endl;
 
 			break;
 		}
@@ -5895,7 +5895,7 @@ bool Game::reloadInfo(ReloadInfo_t reload, uint32_t playerId/* = 0*/)
 		case RELOAD_OUTFITS:
 		{
 			//TODO
-			std::cout << "[Notice - Game::reloadInfo] Reload type does not work." << std::endl;
+			std::clog << "[Notice - Game::reloadInfo] Reload type does not work." << std::endl;
 			done = true;
 			break;
 		}
@@ -5905,7 +5905,7 @@ bool Game::reloadInfo(ReloadInfo_t reload, uint32_t playerId/* = 0*/)
 			if(Quests::getInstance()->reload())
 				done = true;
 			else
-				std::cout << "[Error - Game::reloadInfo] Failed to reload quests." << std::endl;
+				std::clog << "[Error - Game::reloadInfo] Failed to reload quests." << std::endl;
 
 			break;
 		}
@@ -5913,9 +5913,9 @@ bool Game::reloadInfo(ReloadInfo_t reload, uint32_t playerId/* = 0*/)
 		case RELOAD_RAIDS:
 		{
 			if(!Raids::getInstance()->reload())
-				std::cout << "[Error - Game::reloadInfo] Failed to reload raids." << std::endl;
+				std::clog << "[Error - Game::reloadInfo] Failed to reload raids." << std::endl;
 			else if(!Raids::getInstance()->startup())
-				std::cout << "[Error - Game::reloadInfo] Failed to startup raids when reloading." << std::endl;
+				std::clog << "[Error - Game::reloadInfo] Failed to startup raids when reloading." << std::endl;
 			else
 				done = true;
 
@@ -5925,9 +5925,9 @@ bool Game::reloadInfo(ReloadInfo_t reload, uint32_t playerId/* = 0*/)
 		case RELOAD_SPELLS:
 		{
 			if(!g_spells->reload())
-				std::cout << "[Error - Game::reloadInfo] Failed to reload spells." << std::endl;
+				std::clog << "[Error - Game::reloadInfo] Failed to reload spells." << std::endl;
 			else if(!g_monsters.reload())
-				std::cout << "[Error - Game::reloadInfo] Failed to reload monsters when reloading spells." << std::endl;
+				std::clog << "[Error - Game::reloadInfo] Failed to reload monsters when reloading spells." << std::endl;
 			else
 				done = true;
 
@@ -5939,7 +5939,7 @@ bool Game::reloadInfo(ReloadInfo_t reload, uint32_t playerId/* = 0*/)
 			if(loadExperienceStages())
 				done = true;
 			else
-				std::cout << "[Error - Game::reloadInfo] Failed to reload stages." << std::endl;
+				std::clog << "[Error - Game::reloadInfo] Failed to reload stages." << std::endl;
 
 			break;
 		}
@@ -5949,7 +5949,7 @@ bool Game::reloadInfo(ReloadInfo_t reload, uint32_t playerId/* = 0*/)
 			if(g_talkActions->reload())
 				done = true;
 			else
-				std::cout << "[Error - Game::reloadInfo] Failed to reload talk actions." << std::endl;
+				std::clog << "[Error - Game::reloadInfo] Failed to reload talk actions." << std::endl;
 
 			break;
 		}
@@ -5959,7 +5959,7 @@ bool Game::reloadInfo(ReloadInfo_t reload, uint32_t playerId/* = 0*/)
 			//if(Vocations::getInstance()->reload())
 				done = true;
 			//else
-			//	std::cout << "[Notice - Game::reloadInfo] Reload type does not work." << std::endl;
+			//	std::clog << "[Notice - Game::reloadInfo] Reload type does not work." << std::endl;
 
 			break;
 		}
@@ -5967,7 +5967,7 @@ bool Game::reloadInfo(ReloadInfo_t reload, uint32_t playerId/* = 0*/)
 		case RELOAD_WEAPONS:
 		{
 			//TODO
-			std::cout << "[Notice - Game::reloadInfo] Reload type does not work." << std::endl;
+			std::clog << "[Notice - Game::reloadInfo] Reload type does not work." << std::endl;
 			done = true;
 			break;
 		}
@@ -5986,7 +5986,7 @@ bool Game::reloadInfo(ReloadInfo_t reload, uint32_t playerId/* = 0*/)
 
 		default:
 		{
-			std::cout << "[Warning - Game::reloadInfo] Reload type not found." << std::endl;
+			std::clog << "[Warning - Game::reloadInfo] Reload type not found." << std::endl;
 			break;
 		}
 	}
@@ -6071,17 +6071,17 @@ void Game::globalSave()
 
 void Game::shutdown()
 {
-	std::cout << "Preparing";
+	std::clog << "Preparing";
 	Scheduler::getInstance()->shutdown();
-	std::cout << " to";
+	std::clog << " to";
 	Dispatcher::getInstance()->shutdown();
-	std::cout << " shutdown";
+	std::clog << " shutdown";
 	Spawns::getInstance()->clear();
-	std::cout << " the";
+	std::clog << " the";
 	Raids::getInstance()->clear();
-	std::cout << " server";
+	std::clog << " server";
 	cleanup();
-	std::cout << "- done." << std::endl;
+	std::clog << "- done." << std::endl;
 	if(services)
 		services->stop();
 }

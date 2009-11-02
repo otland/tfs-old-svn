@@ -195,7 +195,7 @@ bool MoveEvents::registerEvent(Event* event, xmlNodePtr p, bool override)
 			}
 		}
 		else
-			std::cout << "[Warning - MoveEvents::registerEvent] Malformed entry (from item: \"" << strValue << "\", to item: \"" << endStrValue << "\")" << std::endl;
+			std::clog << "[Warning - MoveEvents::registerEvent] Malformed entry (from item: \"" << strValue << "\", to item: \"" << endStrValue << "\")" << std::endl;
 	}
 
 	if(readXMLString(p, "uniqueid", strValue))
@@ -230,7 +230,7 @@ bool MoveEvents::registerEvent(Event* event, xmlNodePtr p, bool override)
 			}
 		}
 		else
-			std::cout << "[Warning - MoveEvents::registerEvent] Malformed entry (from unique: \"" << strValue << "\", to unique: \"" << endStrValue << "\")" << std::endl;
+			std::clog << "[Warning - MoveEvents::registerEvent] Malformed entry (from unique: \"" << strValue << "\", to unique: \"" << endStrValue << "\")" << std::endl;
 	}
 
 	if(readXMLString(p, "actionid", strValue))
@@ -265,7 +265,7 @@ bool MoveEvents::registerEvent(Event* event, xmlNodePtr p, bool override)
 			}
 		}
 		else
-			std::cout << "[Warning - MoveEvents::registerEvent] Malformed entry (from action: \"" << strValue << "\", to action: \"" << endStrValue << "\")" << std::endl;
+			std::clog << "[Warning - MoveEvents::registerEvent] Malformed entry (from action: \"" << strValue << "\", to action: \"" << endStrValue << "\")" << std::endl;
 	}
 
 	if(readXMLString(p, "pos", strValue) || readXMLString(p, "position", strValue))
@@ -301,7 +301,7 @@ void MoveEvents::addEvent(MoveEvent* moveEvent, int32_t id, MoveListMap& map, bo
 				*it = moveEvent;
 			}
 			else
-				std::cout << "[Warning - MoveEvents::addEvent] Duplicate move event found: " << id << std::endl;
+				std::clog << "[Warning - MoveEvents::addEvent] Duplicate move event found: " << id << std::endl;
 
 			return;
 		}
@@ -415,7 +415,7 @@ void MoveEvents::addEvent(MoveEvent* moveEvent, Position pos, MovePosListMap& ma
 		{
 			if(!override)
 			{
-				std::cout << "[Warning - MoveEvents::addEvent] Duplicate move event found: " << pos << std::endl;
+				std::clog << "[Warning - MoveEvents::addEvent] Duplicate move event found: " << pos << std::endl;
 				add = false;
 			}
 			else
@@ -676,7 +676,7 @@ std::string MoveEvent::getScriptEventName() const
 			break;
 	}
 
-	std::cout << "[Error - MoveEvent::getScriptEventName] No valid event type." << std::endl;
+	std::clog << "[Error - MoveEvent::getScriptEventName] No valid event type." << std::endl;
 	return "";
 }
 
@@ -700,7 +700,7 @@ std::string MoveEvent::getScriptEventParams() const
 			break;
 	}
 
-	std::cout << "[Error - MoveEvent::getScriptEventParams] No valid event type." << std::endl;
+	std::clog << "[Error - MoveEvent::getScriptEventParams] No valid event type." << std::endl;
 	return "";
 }
 
@@ -725,7 +725,7 @@ bool MoveEvent::configureEvent(xmlNodePtr p)
 			m_eventType = MOVE_EVENT_REMOVE_ITEM;
 		else
 		{
-			std::cout << "[Error - MoveEvent::configureMoveEvent] Unknown event type \"" << strValue << "\"" << std::endl;
+			std::clog << "[Error - MoveEvent::configureMoveEvent] Unknown event type \"" << strValue << "\"" << std::endl;
 			return false;
 		}
 
@@ -761,7 +761,7 @@ bool MoveEvent::configureEvent(xmlNodePtr p)
 				else if(tmpStrValue == "pickupable")
 					slot = SLOTP_RIGHT | SLOTP_LEFT | SLOTP_AMMO;
 				else
-					std::cout << "[Warning - MoveEvent::configureMoveEvent] Unknown slot type \"" << strValue << "\"" << std::endl;
+					std::clog << "[Warning - MoveEvent::configureMoveEvent] Unknown slot type \"" << strValue << "\"" << std::endl;
 			}
 
 			wieldInfo = 0;
@@ -792,7 +792,7 @@ bool MoveEvent::configureEvent(xmlNodePtr p)
 			while(vocationNode)
 			{
 				if(!parseVocationNode(vocationNode, vocEquipMap, vocStringVec, error))
-					std::cout << "[Warning - MoveEvent::configureEvent] " << error << std::endl;
+					std::clog << "[Warning - MoveEvent::configureEvent] " << error << std::endl;
 
 				vocationNode = vocationNode->next;
 			}
@@ -805,7 +805,7 @@ bool MoveEvent::configureEvent(xmlNodePtr p)
 	}
 	else
 	{
-		std::cout << "[Error - MoveEvent::configureMoveEvent] No event found." << std::endl;
+		std::clog << "[Error - MoveEvent::configureMoveEvent] No event found." << std::endl;
 		return false;
 	}
 
@@ -825,7 +825,7 @@ bool MoveEvent::loadFunction(const std::string& functionName)
 		equipFunction = DeEquipItem;
 	else
 	{
-		std::cout << "[Warning - MoveEvent::loadFunction] Function \"" << functionName << "\" does not exist." << std::endl;
+		std::clog << "[Warning - MoveEvent::loadFunction] Function \"" << functionName << "\" does not exist." << std::endl;
 		return false;
 	}
 
@@ -837,7 +837,7 @@ MoveEvent_t MoveEvent::getEventType() const
 {
 	if(m_eventType == MOVE_EVENT_NONE)
 	{
-		std::cout << "[Error - MoveEvent::getEventType] MOVE_EVENT_NONE" << std::endl;
+		std::clog << "[Error - MoveEvent::getEventType] MOVE_EVENT_NONE" << std::endl;
 		return (MoveEvent_t)0;
 	}
 
@@ -1133,7 +1133,7 @@ uint32_t MoveEvent::executeStep(Creature* actor, Creature* creature, Item* item,
 	}
 	else
 	{
-		std::cout << "[Error - MoveEvent::executeStep] Call stack overflow." << std::endl;
+		std::clog << "[Error - MoveEvent::executeStep] Call stack overflow." << std::endl;
 		return 0;
 	}
 }
@@ -1198,7 +1198,7 @@ uint32_t MoveEvent::executeEquip(Player* player, Item* item, slots_t slot)
 	}
 	else
 	{
-		std::cout << "[Error - MoveEvent::executeEquip] Call stack overflow." << std::endl;
+		std::clog << "[Error - MoveEvent::executeEquip] Call stack overflow." << std::endl;
 		return 0;
 	}
 }
@@ -1270,7 +1270,7 @@ uint32_t MoveEvent::executeAddRemItem(Creature* actor, Item* item, Item* tileIte
 	}
 	else
 	{
-		std::cout << "[Error - MoveEvent::executeAddRemItem] Call stack overflow." << std::endl;
+		std::clog << "[Error - MoveEvent::executeAddRemItem] Call stack overflow." << std::endl;
 		return 0;
 	}
 }

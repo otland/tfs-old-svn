@@ -42,7 +42,7 @@ uint32_t ProtocolLogin::protocolLoginCount = 0;
 void ProtocolLogin::deleteProtocolTask()
 {
 #ifdef __DEBUG_NET_DETAIL__
-	std::cout << "Deleting ProtocolLogin" << std::endl;
+	std::clog << "Deleting ProtocolLogin" << std::endl;
 #endif
 	Protocol::deleteProtocolTask();
 }

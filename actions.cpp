@@ -97,7 +97,7 @@ bool Actions::registerEvent(Event* event, xmlNodePtr p, bool override)
 	{
 		if(!parseIntegerVec(strValue, intVector))
 		{
-			std::cout << "[Warning - Actions::registerEvent] Invalid itemid - '" << strValue << "'" << std::endl;
+			std::clog << "[Warning - Actions::registerEvent] Invalid itemid - '" << strValue << "'" << std::endl;
 			return false;
 		}
 
@@ -105,7 +105,7 @@ bool Actions::registerEvent(Event* event, xmlNodePtr p, bool override)
 		{
 			if(!override)
 			{
-				std::cout << "[Warning - Actions::registerEvent] Duplicate registered item id: " << intVector[0] << std::endl;
+				std::clog << "[Warning - Actions::registerEvent] Duplicate registered item id: " << intVector[0] << std::endl;
 				success = false;
 			}
 			else
@@ -121,7 +121,7 @@ bool Actions::registerEvent(Event* event, xmlNodePtr p, bool override)
 			{
 				if(!override)
 				{
-					std::cout << "[Warning - Actions::registerEvent] Duplicate registered item id: " << intVector[i] << std::endl;
+					std::clog << "[Warning - Actions::registerEvent] Duplicate registered item id: " << intVector[i] << std::endl;
 					continue;
 				}
 				else
@@ -147,7 +147,7 @@ bool Actions::registerEvent(Event* event, xmlNodePtr p, bool override)
 					{
 						if(!override)
 						{
-							std::cout << "[Warning - Actions::registerEvent] Duplicate registered item with id: " << intVector[i] <<
+							std::clog << "[Warning - Actions::registerEvent] Duplicate registered item with id: " << intVector[i] <<
 								", in fromid: " << tmp << " and toid: " << endIntVector[i] << std::endl;
 							intVector[i]++;
 							continue;
@@ -161,7 +161,7 @@ bool Actions::registerEvent(Event* event, xmlNodePtr p, bool override)
 			}
 		}
 		else
-			std::cout << "[Warning - Actions::registerEvent] Malformed entry (from item: \"" << strValue <<
+			std::clog << "[Warning - Actions::registerEvent] Malformed entry (from item: \"" << strValue <<
 				"\", to item: \"" << endStrValue << "\")" << std::endl;
 	}
 
@@ -169,7 +169,7 @@ bool Actions::registerEvent(Event* event, xmlNodePtr p, bool override)
 	{
 		if(!parseIntegerVec(strValue, intVector))
 		{
-			std::cout << "[Warning - Actions::registerEvent] Invalid uniqueid - '" << strValue << "'" << std::endl;
+			std::clog << "[Warning - Actions::registerEvent] Invalid uniqueid - '" << strValue << "'" << std::endl;
 			return false;
 		}
 
@@ -177,7 +177,7 @@ bool Actions::registerEvent(Event* event, xmlNodePtr p, bool override)
 		{
 			if(!override)
 			{
-				std::cout << "[Warning - Actions::registerEvent] Duplicate registered item uid: " << intVector[0] << std::endl;
+				std::clog << "[Warning - Actions::registerEvent] Duplicate registered item uid: " << intVector[0] << std::endl;
 				success = false;
 			}
 			else
@@ -193,7 +193,7 @@ bool Actions::registerEvent(Event* event, xmlNodePtr p, bool override)
 			{
 				if(!override)
 				{
-					std::cout << "[Warning - Actions::registerEvent] Duplicate registered item uid: " << intVector[i] << std::endl;
+					std::clog << "[Warning - Actions::registerEvent] Duplicate registered item uid: " << intVector[i] << std::endl;
 					continue;
 				}
 				else
@@ -219,7 +219,7 @@ bool Actions::registerEvent(Event* event, xmlNodePtr p, bool override)
 					{
 						if(!override)
 						{
-							std::cout << "[Warning - Actions::registerEvent] Duplicate registered item with uid: " << intVector[i] <<
+							std::clog << "[Warning - Actions::registerEvent] Duplicate registered item with uid: " << intVector[i] <<
 								", in fromuid: " << tmp << " and touid: " << endIntVector[i] << std::endl;
 							intVector[i]++;
 							continue;
@@ -233,7 +233,7 @@ bool Actions::registerEvent(Event* event, xmlNodePtr p, bool override)
 			}
 		}
 		else
-			std::cout << "[Warning - Actions::registerEvent] Malformed entry (from unique: \"" << strValue <<
+			std::clog << "[Warning - Actions::registerEvent] Malformed entry (from unique: \"" << strValue <<
 				"\", to unique: \"" << endStrValue << "\")" << std::endl;
 	}
 
@@ -241,7 +241,7 @@ bool Actions::registerEvent(Event* event, xmlNodePtr p, bool override)
 	{
 		if(!parseIntegerVec(strValue, intVector))
 		{
-			std::cout << "[Warning - Actions::registerEvent] Invalid actionid - '" << strValue << "'" << std::endl;
+			std::clog << "[Warning - Actions::registerEvent] Invalid actionid - '" << strValue << "'" << std::endl;
 			return false;
 		}
 
@@ -249,7 +249,7 @@ bool Actions::registerEvent(Event* event, xmlNodePtr p, bool override)
 		{
 			if(!override)
 			{
-				std::cout << "[Warning - Actions::registerEvent] Duplicate registered item aid: " << intVector[0] << std::endl;
+				std::clog << "[Warning - Actions::registerEvent] Duplicate registered item aid: " << intVector[0] << std::endl;
 				success = false;
 			}
 			else
@@ -265,7 +265,7 @@ bool Actions::registerEvent(Event* event, xmlNodePtr p, bool override)
 			{
 				if(!override)
 				{
-					std::cout << "[Warning - Actions::registerEvent] Duplicate registered item aid: " << intVector[i] << std::endl;
+					std::clog << "[Warning - Actions::registerEvent] Duplicate registered item aid: " << intVector[i] << std::endl;
 					continue;
 				}
 				else
@@ -291,7 +291,7 @@ bool Actions::registerEvent(Event* event, xmlNodePtr p, bool override)
 					{
 						if(!override)
 						{
-							std::cout << "[Warning - Actions::registerEvent] Duplicate registered item with aid: " << intVector[i] <<
+							std::clog << "[Warning - Actions::registerEvent] Duplicate registered item with aid: " << intVector[i] <<
 								", in fromaid: " << tmp << " and toaid: " << endIntVector[i] << std::endl;
 							intVector[i]++;
 							continue;
@@ -305,7 +305,7 @@ bool Actions::registerEvent(Event* event, xmlNodePtr p, bool override)
 			}
 		}
 		else
-			std::cout << "[Warning - Actions::registerEvent] Malformed entry (from action: \"" << strValue <<
+			std::clog << "[Warning - Actions::registerEvent] Malformed entry (from action: \"" << strValue <<
 				"\", to action: \"" << endStrValue << "\")" << std::endl;
 	}
 
@@ -700,7 +700,7 @@ bool Action::loadFunction(const std::string& functionName)
 		function = decreaseItemId;
 	else
 	{
-		std::cout << "[Warning - Action::loadFunction] Function \"" << functionName << "\" does not exist." << std::endl;
+		std::clog << "[Warning - Action::loadFunction] Function \"" << functionName << "\" does not exist." << std::endl;
 		return false;
 	}
 
@@ -804,7 +804,7 @@ bool Action::executeUse(Player* player, Item* item, const PositionEx& fromPos, c
 	}
 	else
 	{
-		std::cout << "[Error - Action::executeUse]: Call stack overflow." << std::endl;
+		std::clog << "[Error - Action::executeUse]: Call stack overflow." << std::endl;
 		return false;
 	}
 }

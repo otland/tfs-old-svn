@@ -297,7 +297,7 @@ bool IOMapSerialize::loadMapRelational(Map* map)
 						if(Tile* tile = map->getTile(pos))
 							loadItems(db, itemsResult, tile, false);
 						else
-							std::cout << "[Error - IOMapSerialize::loadMapRelational] Unserialization"
+							std::clog << "[Error - IOMapSerialize::loadMapRelational] Unserialization"
 								<< " of invalid tile at position "<< pos << std::endl;
 					}
 
@@ -437,7 +437,7 @@ bool IOMapSerialize::loadMapBinary(Map* map)
 			}
 			else
 			{
-				std::cout << "[Error - IOMapSerialize::loadMapBinary] Unserialization of invalid tile"
+				std::clog << "[Error - IOMapSerialize::loadMapBinary] Unserialization of invalid tile"
 					<< " at position " << pos << std::endl;
 				break;
 			}
@@ -530,7 +530,7 @@ bool IOMapSerialize::loadItems(Database* db, DBResult* result, Cylinder* parent,
 				}
 			}
 			else
-				std::cout << "[Warning - IOMapSerialize::loadItems] Unserialization error [0] for item type " << id << std::endl;
+				std::clog << "[Warning - IOMapSerialize::loadItems] Unserialization error [0] for item type " << id << std::endl;
 		}
 		else if(tile)
 		{
@@ -569,13 +569,13 @@ bool IOMapSerialize::loadItems(Database* db, DBResult* result, Cylinder* parent,
 					itemMap[sid] = std::make_pair(item, pid);
 			}
 			else
-				std::cout << "[Warning - IOMapSerialize::loadItems] Unserialization error [1] for item type " << id << std::endl;
+				std::clog << "[Warning - IOMapSerialize::loadItems] Unserialization error [1] for item type " << id << std::endl;
 		}
 		else if((item = Item::CreateItem(id)))
 		{
 			item->unserializeAttr(propStream);
 			if(!depotTransfer)
-				std::cout << "[Warning - IOMapSerialize::loadItems] NULL item at "
+				std::clog << "[Warning - IOMapSerialize::loadItems] NULL item at "
 				<< tile->getPosition() << " (type = " << id << ", sid = "
 				<< sid << ", pid = " << pid << ")" << std::endl;
 			else
@@ -696,7 +696,7 @@ bool IOMapSerialize::loadContainer(PropStream& propStream, Container* container)
 	{
 		if(!loadItem(propStream, container, false))
 		{
-			std::cout << "[Warning - IOMapSerialize::loadContainer] Unserialization error [0] for item in container " << container->getID() << std::endl;
+			std::clog << "[Warning - IOMapSerialize::loadContainer] Unserialization error [0] for item in container " << container->getID() << std::endl;
 			return false;
 		}
 
@@ -708,7 +708,7 @@ bool IOMapSerialize::loadContainer(PropStream& propStream, Container* container)
 	if(endAttr == ATTR_END)
 		return true;
 
-	std::cout << "[Warning - IOMapSerialize::loadContainer] Unserialization error [1] for item in container " << container->getID() << std::endl;
+	std::clog << "[Warning - IOMapSerialize::loadContainer] Unserialization error [1] for item in container " << container->getID() << std::endl;
 	return false;
 }
 
@@ -730,7 +730,7 @@ bool IOMapSerialize::loadItem(PropStream& propStream, Cylinder* parent, bool dep
 
 		if(!item->unserializeAttr(propStream))
 		{
-			std::cout << "[Warning - IOMapSerialize::loadItem] Unserialization error [0] for item type " << id << std::endl;
+			std::clog << "[Warning - IOMapSerialize::loadItem] Unserialization error [0] for item type " << id << std::endl;
 			delete item;
 			return false;
 		}
@@ -795,7 +795,7 @@ bool IOMapSerialize::loadItem(PropStream& propStream, Cylinder* parent, bool dep
 			item = g_game.transformItem(item, id);
 		}
 		else
-			std::cout << "[Warning - IOMapSerialize::loadItem] Unserialization error [1] for item type " << id << std::endl;
+			std::clog << "[Warning - IOMapSerialize::loadItem] Unserialization error [1] for item type " << id << std::endl;
 
 		return true;
 	}

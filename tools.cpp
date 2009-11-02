@@ -1541,7 +1541,7 @@ std::string getFilePath(FileType_t filetype, std::string filename)
 			break;
 		}
 		default:
-			std::cout << "ERROR: Wrong file type!" << std::endl;
+			std::clog << "ERROR: Wrong file type!" << std::endl;
 			break;
 	}
 	return path;

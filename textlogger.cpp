@@ -115,25 +115,23 @@ void Logger::log(const char* func, LogType_t type, std::string message, std::str
 
 OutputHandler::OutputHandler()
 {
-	out = std::cout.rdbuf();
-	err = std::cerr.rdbuf();
-	log = std::clog.rdbuf();
+	m_buffer = std::clog.rdbuf(this);
 	m_date = true;
 }
 
 OutputHandler::~OutputHandler()
 {
-	std::cout.rdbuf(out);
-	std::cout.rdbuf(err);
-	std::cout.rdbuf(log);
+	std::clog.rdbuf(m_buffer);
 }
 
-char OutputHandler::overflow(char c)
+std::streambuf::int_type OutputHandler::overflow(std::streambuf::int_type c/* = traits_type::eof()*/)
 {
 	if(c == '\n' || c == '\r')
 	{
+		Logger::getInstance()->iFile(LOGFILE_OUTPUT, m_cache, true);
 		m_cache += c;
-		Logger::getInstance()->iFile(LOGFILE_OUTPUT, m_cache, false);
+
+		std::cout.write(m_cache);
 		Manager::getInstance()->output(m_cache);
 
 		m_cache.clear();

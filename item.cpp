@@ -48,7 +48,7 @@ Item* Item::CreateItem(const uint16_t type, uint16_t amount/* = 1*/)
 	if(it.group == ITEM_GROUP_DEPRECATED)
 	{
 		#ifdef __DEBUG__
-		std::cout << "[Error - Item::CreateItem] Item " << it.id << " has been declared as deprecated" << std::endl;
+		std::clog << "[Error - Item::CreateItem] Item " << it.id << " has been declared as deprecated" << std::endl;
 		#endif
 		return NULL;
 	}

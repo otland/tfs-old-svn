@@ -704,7 +704,7 @@ int32_t Player::getContainerID(const Container* container) const
 void Player::addContainer(uint32_t cid, Container* container)
 {
 #ifdef __DEBUG__
-	std::cout << getName() << ", addContainer: " << (int32_t)cid << std::endl;
+	std::clog << getName() << ", addContainer: " << (int32_t)cid << std::endl;
 #endif
 	if(cid > 0xF)
 		return;
@@ -733,7 +733,7 @@ void Player::closeContainer(uint32_t cid)
 	}
 #ifdef __DEBUG__
 
-	std::cout << getName() << ", closeContainer: " << (int32_t)cid << std::endl;
+	std::clog << getName() << ", closeContainer: " << (int32_t)cid << std::endl;
 #endif
 }
 
@@ -795,7 +795,7 @@ bool Player::setStorage(const uint32_t key, const std::string& value)
 				return addOutfit(outfit.outfitId, addons);
 		}
 		else
-			std::cout << "[Warning - Player::setStorage] Invalid addons value key: " << key
+			std::clog << "[Warning - Player::setStorage] Invalid addons value key: " << key
 				<< ", value: " << value << " for player: " << getName() << std::endl;
 	}
 	else if(IS_IN_KEYRANGE(key, OUTFITSID_RANGE))
@@ -805,11 +805,11 @@ bool Player::setStorage(const uint32_t key, const std::string& value)
 		if(addons < 4)
 			return addOutfit(outfitId, addons);
 		else
-			std::cout << "[Warning - Player::setStorage] Invalid addons value key: " << key
+			std::clog << "[Warning - Player::setStorage] Invalid addons value key: " << key
 				<< ", value: " << value << " for player: " << getName() << std::endl;
 	}
 	else
-		std::cout << "[Warning - Player::setStorage] Unknown reserved key: " << key << " for player: " << getName() << std::endl;
+		std::clog << "[Warning - Player::setStorage] Unknown reserved key: " << key << " for player: " << getName() << std::endl;
 
 	return false;
 }
@@ -818,7 +818,7 @@ void Player::eraseStorage(const uint32_t key)
 {
 	Creature::eraseStorage(key);
 	if(IS_IN_KEYRANGE(key, RESERVED_RANGE))
-		std::cout << "[Warning - Player::eraseStorage] Unknown reserved key: " << key << " for player: " << name << std::endl;
+		std::clog << "[Warning - Player::eraseStorage] Unknown reserved key: " << key << " for player: " << name << std::endl;
 }
 
 bool Player::canSee(const Position& pos) const
@@ -872,7 +872,7 @@ Depot* Player::getDepot(uint32_t depotId, bool autoCreateDepot)
 		}
 
 		g_game.freeThing(locker);
-		std::cout << "Failure: Creating a new depot with id: " << depotId <<
+		std::clog << "Failure: Creating a new depot with id: " << depotId <<
 			", for player: " << getName() << std::endl;
 	}
 
@@ -1339,7 +1339,7 @@ void Player::onCreatureAppear(const Creature* creature)
 		IOLoginData::getInstance()->updateOnlineStatus(guid, true);
 
 	if(g_config.getBool(ConfigManager::DISPLAY_LOGGING))
-		std::cout << name << " has logged in." << std::endl;
+		std::clog << name << " has logged in." << std::endl;
 }
 
 void Player::onAttackedCreatureDisappear(bool isLogout)
@@ -1428,7 +1428,7 @@ void Player::onCreatureDisappear(const Creature* creature, bool isLogout)
 		IOLoginData::getInstance()->updateOnlineStatus(guid, false);
 
 	if(g_config.getBool(ConfigManager::DISPLAY_LOGGING))
-		std::cout << getName() << " has logged out." << std::endl;
+		std::clog << getName() << " has logged out." << std::endl;
 
 	bool saved = false;
 	for(uint32_t tries = 0; !saved && tries < 3; ++tries)
@@ -1437,15 +1437,15 @@ void Player::onCreatureDisappear(const Creature* creature, bool isLogout)
 			saved = true;
 #ifdef __DEBUG__
 		else
-			std::cout << "Error while saving player: " << getName() << ", strike " << tries << "." << std::endl;
+			std::clog << "Error while saving player: " << getName() << ", strike " << tries << "." << std::endl;
 #endif
 	}
 
 	if(!saved)
 #ifndef __DEBUG__
-		std::cout << "Error while saving player: " << getName() << "." << std::endl;
+		std::clog << "Error while saving player: " << getName() << "." << std::endl;
 #else
-		std::cout << "Player " << getName() << " couldn't be saved." << std::endl;
+		std::clog << "Player " << getName() << " couldn't be saved." << std::endl;
 #endif
 }
 
@@ -2797,7 +2797,7 @@ void Player::__addThing(Creature* actor, int32_t index, Thing* thing)
 	if(index < 0 || index > 11)
 	{
 #ifdef __DEBUG_MOVESYS__
-		std::cout << "Failure: [Player::__addThing], " << "player: " << getName() << ", index: " << index << ", index < 0 || index > 11" << std::endl;
+		std::clog << "Failure: [Player::__addThing], " << "player: " << getName() << ", index: " << index << ", index < 0 || index > 11" << std::endl;
 		DEBUG_REPORT
 #endif
 		return /*RET_NOTPOSSIBLE*/;
@@ -2806,7 +2806,7 @@ void Player::__addThing(Creature* actor, int32_t index, Thing* thing)
 	if(index == 0)
 	{
 #ifdef __DEBUG_MOVESYS__
-		std::cout << "Failure: [Player::__addThing], " << "player: " << getName() << ", index == 0" << std::endl;
+		std::clog << "Failure: [Player::__addThing], " << "player: " << getName() << ", index == 0" << std::endl;
 		DEBUG_REPORT
 #endif
 		return /*RET_NOTENOUGHROOM*/;
@@ -2816,7 +2816,7 @@ void Player::__addThing(Creature* actor, int32_t index, Thing* thing)
 	if(!item)
 	{
 #ifdef __DEBUG_MOVESYS__
-		std::cout << "Failure: [Player::__addThing], " << "player: " << getName() << ", item == NULL" << std::endl;
+		std::clog << "Failure: [Player::__addThing], " << "player: " << getName() << ", item == NULL" << std::endl;
 		DEBUG_REPORT
 #endif
 		return /*RET_NOTPOSSIBLE*/;
@@ -2838,7 +2838,7 @@ void Player::__updateThing(Thing* thing, uint16_t itemId, uint32_t count)
 	if(index == -1)
 	{
 #ifdef __DEBUG_MOVESYS__
-		std::cout << "Failure: [Player::__updateThing], " << "player: " << getName() << ", index == -1" << std::endl;
+		std::clog << "Failure: [Player::__updateThing], " << "player: " << getName() << ", index == -1" << std::endl;
 		DEBUG_REPORT
 #endif
 		return /*RET_NOTPOSSIBLE*/;
@@ -2848,7 +2848,7 @@ void Player::__updateThing(Thing* thing, uint16_t itemId, uint32_t count)
 	if(item == NULL)
 	{
 #ifdef __DEBUG_MOVESYS__
-		std::cout << "Failure: [Player::__updateThing], " << "player: " << getName() << ", item == NULL" << std::endl;
+		std::clog << "Failure: [Player::__updateThing], " << "player: " << getName() << ", item == NULL" << std::endl;
 		DEBUG_REPORT
 #endif
 		return /*RET_NOTPOSSIBLE*/;
@@ -2871,7 +2871,7 @@ void Player::__replaceThing(uint32_t index, Thing* thing)
 	if(index < 0 || index > 11)
 	{
 #ifdef __DEBUG_MOVESYS__
-		std::cout << "Failure: [Player::__replaceThing], " << "player: " << getName() << ", index: " << index << ", index < 0 || index > 11" << std::endl;
+		std::clog << "Failure: [Player::__replaceThing], " << "player: " << getName() << ", index: " << index << ", index < 0 || index > 11" << std::endl;
 		DEBUG_REPORT
 #endif
 		return /*RET_NOTPOSSIBLE*/;
@@ -2881,7 +2881,7 @@ void Player::__replaceThing(uint32_t index, Thing* thing)
 	if(!oldItem)
 	{
 #ifdef __DEBUG_MOVESYS__
-		std::cout << "Failure: [Player::__updateThing], " << "player: " << getName() << ", oldItem == NULL" << std::endl;
+		std::clog << "Failure: [Player::__updateThing], " << "player: " << getName() << ", oldItem == NULL" << std::endl;
 		DEBUG_REPORT
 #endif
 		return /*RET_NOTPOSSIBLE*/;
@@ -2891,7 +2891,7 @@ void Player::__replaceThing(uint32_t index, Thing* thing)
 	if(!item)
 	{
 #ifdef __DEBUG_MOVESYS__
-		std::cout << "Failure: [Player::__updateThing], " << "player: " << getName() << ", item == NULL" << std::endl;
+		std::clog << "Failure: [Player::__updateThing], " << "player: " << getName() << ", item == NULL" << std::endl;
 		DEBUG_REPORT
 #endif
 		return /*RET_NOTPOSSIBLE*/;
@@ -2915,7 +2915,7 @@ void Player::__removeThing(Thing* thing, uint32_t count)
 	if(!item)
 	{
 #ifdef __DEBUG_MOVESYS__
-		std::cout << "Failure: [Player::__removeThing], " << "player: " << getName() << ", item == NULL" << std::endl;
+		std::clog << "Failure: [Player::__removeThing], " << "player: " << getName() << ", item == NULL" << std::endl;
 		DEBUG_REPORT
 #endif
 		return /*RET_NOTPOSSIBLE*/;
@@ -2925,7 +2925,7 @@ void Player::__removeThing(Thing* thing, uint32_t count)
 	if(index == -1)
 	{
 #ifdef __DEBUG_MOVESYS__
-		std::cout << "Failure: [Player::__removeThing], " << "player: " << getName() << ", index == -1" << std::endl;
+		std::clog << "Failure: [Player::__removeThing], " << "player: " << getName() << ", index == -1" << std::endl;
 		DEBUG_REPORT
 #endif
 		return /*RET_NOTPOSSIBLE*/;
@@ -3159,14 +3159,14 @@ void Player::__internalAddThing(Thing* thing)
 void Player::__internalAddThing(uint32_t index, Thing* thing)
 {
 #ifdef __DEBUG_MOVESYS__
-	std::cout << "[Player::__internalAddThing] index: " << index << std::endl;
+	std::clog << "[Player::__internalAddThing] index: " << index << std::endl;
 #endif
 
 	Item* item = thing->getItem();
 	if(!item)
 	{
 #ifdef __DEBUG_MOVESYS__
-		std::cout << "Failure: [Player::__internalAddThing] item == NULL" << std::endl;
+		std::clog << "Failure: [Player::__internalAddThing] item == NULL" << std::endl;
 #endif
 		return;
 	}
@@ -3175,7 +3175,7 @@ void Player::__internalAddThing(uint32_t index, Thing* thing)
 	if(index == 0)
 	{
 #ifdef __DEBUG_MOVESYS__
-		std::cout << "Failure: [Player::__internalAddThing] index == 0" << std::endl;
+		std::clog << "Failure: [Player::__internalAddThing] index == 0" << std::endl;
 		DEBUG_REPORT
 #endif
 		return;
@@ -3186,7 +3186,7 @@ void Player::__internalAddThing(uint32_t index, Thing* thing)
 		if(inventory[index])
 		{
 #ifdef __DEBUG_MOVESYS__
-			std::cout << "Warning: [Player::__internalAddThing], player: " << getName() << ", items[index] is not empty." << std::endl;
+			std::clog << "Warning: [Player::__internalAddThing], player: " << getName() << ", items[index] is not empty." << std::endl;
 			//DEBUG_REPORT
 #endif
 			return;
@@ -3849,7 +3849,7 @@ void Player::generateReservedStorage()
 		if(baseKey <= PSTRG_OUTFITSID_RANGE_START + PSTRG_OUTFITSID_RANGE_SIZE)
 			continue;
 
-		std::cout << "[Warning - Player::genReservedStorageRange] Player " << getName() << " with more than 500 outfits!" << std::endl;
+		std::clog << "[Warning - Player::genReservedStorageRange] Player " << getName() << " with more than 500 outfits!" << std::endl;
 		break;
 	}
 }

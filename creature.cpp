@@ -379,7 +379,7 @@ void Creature::updateTileCache(const Tile* tile, int32_t dx, int32_t dy)
 	}
 #ifdef __DEBUG__
 	else
-		std::cout << "Creature::updateTileCache out of range." << std::endl;
+		std::clog << "Creature::updateTileCache out of range." << std::endl;
 #endif
 }
 
@@ -412,10 +412,10 @@ int32_t Creature::getWalkCache(const Position& pos) const
 		if(tile && (tile->__queryAdd(0, this, 1, FLAG_PATHFINDING | FLAG_IGNOREFIELDDAMAGE) == RET_NOERROR))
 		{
 			if(!localMapCache[y][x])
-				std::cout << "Wrong cache value" << std::endl;
+				std::clog << "Wrong cache value" << std::endl;
 		}
 		else if(localMapCache[y][x])
-			std::cout << "Wrong cache value" << std::endl;
+			std::clog << "Wrong cache value" << std::endl;
 
 #endif
 		if(localMapCache[y][x])

@@ -55,15 +55,15 @@ bool Spawns::loadFromXml(const std::string& _filename)
 	xmlDocPtr doc = xmlParseFile(filename.c_str());
 	if(!doc)
 	{
-		std::cout << "[Warning - Spawns::loadFromXml] Cannot open spawns file." << std::endl;
-		std::cout << getLastXMLError() << std::endl;
+		std::clog << "[Warning - Spawns::loadFromXml] Cannot open spawns file." << std::endl;
+		std::clog << getLastXMLError() << std::endl;
 		return false;
 	}
 
 	xmlNodePtr spawnNode, root = xmlDocGetRootElement(doc);
 	if(xmlStrcmp(root->name,(const xmlChar*)"spawns"))
 	{
-		std::cout << "[Error - Spawns::loadFromXml] Malformed spawns file." << std::endl;
+		std::clog << "[Error - Spawns::loadFromXml] Malformed spawns file." << std::endl;
 		xmlFreeDoc(doc);
 		return false;
 	}
@@ -146,8 +146,8 @@ bool Spawns::parseSpawnNode(xmlNodePtr p, bool checkDuplicate)
 			{
 				if(intValue <= interval)
 				{
-					std::cout << "[Warning - Spawns::loadFromXml] " << name << " " << centerPos << " spawntime cannot";
-					std::cout << " be less than " << interval << " seconds." << std::endl;
+					std::clog << "[Warning - Spawns::loadFromXml] " << name << " " << centerPos << " spawntime cannot";
+					std::clog << " be less than " << interval << " seconds." << std::endl;
 
 					tmpNode = tmpNode->next;
 					continue;
@@ -344,7 +344,7 @@ void Spawn::startup()
 void Spawn::checkSpawn()
 {
 #ifdef __DEBUG_SPAWN__
-	std::cout << "[Notice] Spawn::checkSpawn " << this << std::endl;
+	std::clog << "[Notice] Spawn::checkSpawn " << this << std::endl;
 #endif
 	checkSpawnEvent = 0;
 
@@ -401,7 +401,7 @@ void Spawn::checkSpawn()
 		checkSpawnEvent = Scheduler::getInstance()->addEvent(createSchedulerTask(getInterval(), boost::bind(&Spawn::checkSpawn, this)));
 #ifdef __DEBUG_SPAWN__
 	else
-		std::cout << "[Notice] Spawn::checkSpawn stopped " << this << std::endl;
+		std::clog << "[Notice] Spawn::checkSpawn stopped " << this << std::endl;
 #endif
 }
 
@@ -409,14 +409,14 @@ bool Spawn::addMonster(const std::string& _name, const Position& _pos, Direction
 {
 	if(!g_game.getTile(_pos))
 	{
-		std::cout << "[Spawn::addMonster] NULL tile at spawn position (" << _pos << ")" << std::endl;
+		std::clog << "[Spawn::addMonster] NULL tile at spawn position (" << _pos << ")" << std::endl;
 		return false;
 	}
 
 	MonsterType* mType = g_monsters.getMonsterType(_name);
 	if(!mType)
 	{
-		std::cout << "[Spawn::addMonster] Cannot find \"" << _name << "\"" << std::endl;
+		std::clog << "[Spawn::addMonster] Cannot find \"" << _name << "\"" << std::endl;
 		return false;
 	}
 

@@ -196,7 +196,7 @@ void ScriptEnviroment::addUniqueThing(Thing* thing)
 	if(m_globalMap[item->getUniqueId()])
 	{
 		if(item->getActionId() != 2000) //scripted quest system
-			std::cout << "Duplicate uniqueId " << item->getUniqueId() << std::endl;
+			std::clog << "Duplicate uniqueId " << item->getUniqueId() << std::endl;
 	}
 	else
 		m_globalMap[item->getUniqueId()] = thing;
@@ -252,7 +252,7 @@ void ScriptEnviroment::insertThing(uint32_t uid, Thing* thing)
 	if(!m_localMap[uid])
 		m_localMap[uid] = thing;
 	else
-		std::cout << "[Error - ScriptEnviroment::insertThing] Thing uid already taken" << std::endl;
+		std::clog << "[Error - ScriptEnviroment::insertThing] Thing uid already taken" << std::endl;
 }
 
 Thing* ScriptEnviroment::getThingByUID(uint32_t uid)
@@ -666,7 +666,7 @@ bool LuaInterface::loadFile(const std::string& file, Npc* npc/* = NULL*/)
 	if(ret)
 	{
 		m_lastError = popString(m_luaState);
-		std::cout << "[Error - LuaInterface::loadFile] " << m_lastError << std::endl;
+		std::clog << "[Error - LuaInterface::loadFile] " << m_lastError << std::endl;
 		return false;
 	}
 
@@ -773,23 +773,23 @@ void LuaInterface::error(const char* function, const std::string& desc)
 	getEnv()->getInfo(script, event, interface, callback, timer);
 	if(interface)
 	{
-		std::cout << std::endl << "[Error - " << interface->getName() << "] " << std::endl;
+		std::clog << std::endl << "[Error - " << interface->getName() << "] " << std::endl;
 		if(callback)
-			std::cout << "In a callback: " << interface->getScript(callback) << std::endl;
+			std::clog << "In a callback: " << interface->getScript(callback) << std::endl;
 
 		if(timer)
-			std::cout << (callback ? "from" : "In") << " a timer event called from: " << std::endl;
+			std::clog << (callback ? "from" : "In") << " a timer event called from: " << std::endl;
 
-		std::cout << interface->getScript(script) << std::endl << "Description: ";
+		std::clog << interface->getScript(script) << std::endl << "Description: ";
 	}
 	else
-		std::cout << std::endl << "[Lua Error] ";
+		std::clog << std::endl << "[Lua Error] ";
 
-	std::cout << event << std::endl;
+	std::clog << event << std::endl;
 	if(function)
-		std::cout << "(" << function << ") ";
+		std::clog << "(" << function << ") ";
 
-	std::cout << desc << std::endl;
+	std::clog << desc << std::endl;
 }
 
 bool LuaInterface::pushFunction(int32_t function)
@@ -817,7 +817,7 @@ bool LuaInterface::initState()
 	luaL_openlibs(m_luaState);
 	registerFunctions();
 	if(!loadDirectory(getFilePath(FILE_TYPE_OTHER, "lib/"), NULL))
-		std::cout << "[Warning - LuaInterface::initState] Cannot load " << getFilePath(FILE_TYPE_OTHER, "lib/") << std::endl;
+		std::clog << "[Warning - LuaInterface::initState] Cannot load " << getFilePath(FILE_TYPE_OTHER, "lib/") << std::endl;
 
 	lua_newtable(m_luaState);
 	lua_setfield(m_luaState, LUA_REGISTRYINDEX, "EVENTS");
@@ -868,7 +868,7 @@ void LuaInterface::executeTimer(uint32_t eventIndex)
 			releaseEnv();
 		}
 		else
-			std::cout << "[Error] Call stack overflow. LuaInterface::executeTimer" << std::endl;
+			std::clog << "[Error] Call stack overflow. LuaInterface::executeTimer" << std::endl;
 
 		//free resources
 		for(std::list<int32_t>::iterator lt = it->second.parameters.begin(); lt != it->second.parameters.end(); ++lt)
@@ -931,9 +931,9 @@ void LuaInterface::dumpStack(lua_State* L/* = NULL*/)
 	if(!stack)
 		return;
 
-	std::cout << "Stack size: " << stack << std::endl;
+	std::clog << "Stack size: " << stack << std::endl;
 	for(int32_t i = 1; i <= stack ; ++i)
-		std::cout << lua_typename(m_luaState, lua_type(m_luaState, -i)) << " " << lua_topointer(m_luaState, -i) << std::endl;
+		std::clog << lua_typename(m_luaState, lua_type(m_luaState, -i)) << " " << lua_topointer(m_luaState, -i) << std::endl;
 }
 
 void LuaInterface::pushVariant(lua_State* L, const LuaVariant& var)
@@ -2414,7 +2414,6 @@ const luaL_Reg LuaInterface::luaStdTable[] =
 {
 	{"cout", LuaInterface::luaStdCout},
 	{"cerr", LuaInterface::luaStdCerr},
-	{"clog", LuaInterface::luaStdClog},
 
 	{"md5", LuaInterface::luaStdMD5},
 	{"sha1", LuaInterface::luaStdSHA1},
@@ -9817,7 +9816,6 @@ int32_t LuaInterface::luaL_dodirectory(lua_State* L)
 
 EXPOSE_LOG(Cout, std::cout)
 EXPOSE_LOG(Cerr, std::cerr)
-EXPOSE_LOG(Clog, std::clog)
 
 #undef EXPOSE_LOG
 

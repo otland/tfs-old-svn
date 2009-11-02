@@ -123,7 +123,7 @@ bool ServiceManager::add(uint16_t port)
 {
 	if(!port)
 	{
-		std::cout << "> ERROR: No port provided for service " << ProtocolType::protocolName() << ". Service disabled." << std::endl;
+		std::clog << "> ERROR: No port provided for service " << ProtocolType::protocolName() << ". Service disabled." << std::endl;
 		return false;
 	}
 
@@ -140,8 +140,8 @@ bool ServiceManager::add(uint16_t port)
 		servicePort = it->second;
 		if(servicePort->isSingleSocket() || ProtocolType::isSingleSocket)
 		{
-			std::cout << "> ERROR: " << ProtocolType::protocolName() << " and " << servicePort->getProtocolNames();
-			std::cout << " cannot use the same port (" << port << ")." << std::endl;
+			std::clog << "> ERROR: " << ProtocolType::protocolName() << " and " << servicePort->getProtocolNames();
+			std::clog << " cannot use the same port (" << port << ")." << std::endl;
 			return false;
 		}
 	}

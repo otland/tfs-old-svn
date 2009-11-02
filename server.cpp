@@ -49,7 +49,7 @@ void ServicePort::onOpen(boost::weak_ptr<ServicePort> weakService, uint16_t port
 	if(ServicePort_ptr service = weakService.lock())
 	{
 		#ifdef __DEBUG_NET_DETAIL__
-		std::cout << "ServicePort::onOpen" << std::endl;
+		std::clog << "ServicePort::onOpen" << std::endl;
 		#endif
 		service->open(port);
 	}
@@ -130,7 +130,7 @@ void ServicePort::handle(boost::asio::ip::tcp::socket* socket, const boost::syst
 		if(m_services.empty())
 		{
 #ifdef __DEBUG_NET__
-			std::cout << "[Error - ServerPort::handle] No services running!" << std::endl;
+			std::clog << "[Error - ServerPort::handle] No services running!" << std::endl;
 #endif
 			return;
 		}
@@ -162,7 +162,7 @@ void ServicePort::handle(boost::asio::ip::tcp::socket* socket, const boost::syst
 		}
 
 #ifdef __DEBUG_NET_DETAIL__
-		std::cout << "handle - OK" << std::endl;
+		std::clog << "handle - OK" << std::endl;
 #endif
 		accept();
 	}
@@ -179,7 +179,7 @@ void ServicePort::handle(boost::asio::ip::tcp::socket* socket, const boost::syst
 	}
 #ifdef __DEBUG_NET__
 	else
-		std::cout << "[Error - ServerPort::handle] Operation aborted." << std::endl;
+		std::clog << "[Error - ServerPort::handle] Operation aborted." << std::endl;
 #endif
 }
 

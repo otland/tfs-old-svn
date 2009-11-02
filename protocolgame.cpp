@@ -998,7 +998,7 @@ bool ProtocolGame::canSee(uint16_t x, uint16_t y, uint16_t z) const
 {
 #ifdef __DEBUG__
 	if(z < 0 || z >= MAP_MAX_LAYERS)
-		std::cout << "[Warning - ProtocolGame::canSee] Z-value is out of range!" << std::endl;
+		std::clog << "[Warning - ProtocolGame::canSee] Z-value is out of range!" << std::endl;
 #endif
 
 	const Position& myPos = player->getPosition();
@@ -2094,7 +2094,7 @@ void ProtocolGame::sendFYIBox(const std::string& message)
 {
 	if(message.empty() || message.length() > 1018) //Prevent client debug when message is empty or length is > 1018 (not confirmed)
 	{
-		std::cout << "[Warning - ProtocolGame::sendFYIBox] Trying to send an empty or too huge message." << std::endl;
+		std::clog << "[Warning - ProtocolGame::sendFYIBox] Trying to send an empty or too huge message." << std::endl;
 		return;
 	}
 

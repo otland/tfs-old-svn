@@ -42,15 +42,15 @@ bool GameServers::loadFromXml(bool result)
 	xmlDocPtr doc = xmlParseFile(getFilePath(FILE_TYPE_XML, "servers.xml").c_str());
 	if(!doc)
 	{
-		std::cout << "[Warning - GameServers::loadFromXml] Cannot load servers file." << std::endl;
-		std::cout << getLastXMLError() << std::endl;
+		std::clog << "[Warning - GameServers::loadFromXml] Cannot load servers file." << std::endl;
+		std::clog << getLastXMLError() << std::endl;
 		return false;
 	}
 
 	xmlNodePtr p, root = xmlDocGetRootElement(doc);
 	if(xmlStrcmp(root->name,(const xmlChar*)"servers"))
 	{
-		std::cout << "[Error - GameServers::loadFromXml] Malformed servers file." << std::endl;
+		std::clog << "[Error - GameServers::loadFromXml] Malformed servers file." << std::endl;
 		xmlFreeDoc(doc);
 		return false;
 	}
@@ -72,14 +72,14 @@ bool GameServers::loadFromXml(bool result)
 			id = intValue;
 		else
 		{
-			std::cout << "[Error - GameServers::loadFromXml] Missing id, skipping" << std::endl;
+			std::clog << "[Error - GameServers::loadFromXml] Missing id, skipping" << std::endl;
 			p = p->next;
 			continue;
 		}
 
 		if(getServerById(id))
 		{
-			std::cout << "[Error - GameServers::loadFromXml] Duplicate server id " << id << ", skipping" << std::endl;
+			std::clog << "[Error - GameServers::loadFromXml] Duplicate server id " << id << ", skipping" << std::endl;
 			p = p->next;
 			continue;
 		}
@@ -89,7 +89,7 @@ bool GameServers::loadFromXml(bool result)
 		else
 		{
 			name = "Server #" + id;
-			std::cout << "[Warning - GameServers::loadFromXml] Missing name for server " << id << ", using default" << std::endl;
+			std::clog << "[Warning - GameServers::loadFromXml] Missing name for server " << id << ", using default" << std::endl;
 		}
 
 		if(readXMLInteger(p, "versionMin", intValue))
@@ -97,7 +97,7 @@ bool GameServers::loadFromXml(bool result)
 		else
 		{
 			versionMin = CLIENT_VERSION_MIN;
-			std::cout << "[Warning - GameServers::loadFromXml] Missing versionMin for server " << id << ", using default" << std::endl;
+			std::clog << "[Warning - GameServers::loadFromXml] Missing versionMin for server " << id << ", using default" << std::endl;
 		}
 
 		if(readXMLInteger(p, "versionMax", intValue))
@@ -105,7 +105,7 @@ bool GameServers::loadFromXml(bool result)
 		else
 		{
 			versionMax = CLIENT_VERSION_MAX;
-			std::cout << "[Warning - GameServers::loadFromXml] Missing versionMax for server " << id << ", using default" << std::endl;
+			std::clog << "[Warning - GameServers::loadFromXml] Missing versionMax for server " << id << ", using default" << std::endl;
 		}
 
 		if(readXMLString(p, "address", strValue) || readXMLString(p, "ip", strValue))
@@ -113,7 +113,7 @@ bool GameServers::loadFromXml(bool result)
 		else
 		{
 			address = "localhost";
-			std::cout << "[Warning - GameServers::loadFromXml] Missing address for server " << id << ", using default" << std::endl;
+			std::clog << "[Warning - GameServers::loadFromXml] Missing address for server " << id << ", using default" << std::endl;
 		}
 
 		if(readXMLInteger(p, "port", intValue))
@@ -121,22 +121,22 @@ bool GameServers::loadFromXml(bool result)
 		else
 		{
 			port = 7171;
-			std::cout << "[Warning - GameServers::loadFromXml] Missing port for server " << id << ", using default" << std::endl;
+			std::clog << "[Warning - GameServers::loadFromXml] Missing port for server " << id << ", using default" << std::endl;
 		}
 
 		if(GameServer* server = new GameServer(name, versionMin, versionMax, inet_addr(address.c_str()), port))
 			serverList[id] = server;
 		else
-			std::cout << "[Error - GameServers::loadFromXml] Couldn't add server " << name << std::endl;
+			std::clog << "[Error - GameServers::loadFromXml] Couldn't add server " << name << std::endl;
 
 		p = p->next;
 	}
 
 	if(result)
 	{
-		std::cout << "> Servers loaded:" << std::endl;
+		std::clog << "> Servers loaded:" << std::endl;
 		for(GameServersMap::iterator it = serverList.begin(); it != serverList.end(); it++)
-			std::cout << it->second->getName() << " (" << it->second->getAddress() << ":" << it->second->getPort() << ")" << std::endl;
+			std::clog << it->second->getName() << " (" << it->second->getAddress() << ":" << it->second->getPort() << ")" << std::endl;
 	}
 	xmlFreeDoc(doc);
 	return true;

@@ -43,7 +43,7 @@ Connection_ptr ConnectionManager::createConnection(boost::asio::ip::tcp::socket*
 	boost::asio::io_service& io_service, ServicePort_ptr servicer)
 {
 	#ifdef __DEBUG_NET_DETAIL__
-	std::cout << "Creating new Connection" << std::endl;
+	std::clog << "Creating new Connection" << std::endl;
 	#endif
 	boost::recursive_mutex::scoped_lock lockClass(m_connectionManagerLock);
 	Connection_ptr connection = boost::shared_ptr<Connection>(new Connection(socket, io_service, servicer));
@@ -55,7 +55,7 @@ Connection_ptr ConnectionManager::createConnection(boost::asio::ip::tcp::socket*
 void ConnectionManager::releaseConnection(Connection_ptr connection)
 {
 	#ifdef __DEBUG_NET_DETAIL__
-	std::cout << "Releasing connection" << std::endl;
+	std::clog << "Releasing connection" << std::endl;
 	#endif
 	boost::recursive_mutex::scoped_lock lockClass(m_connectionManagerLock);
 
@@ -63,13 +63,13 @@ void ConnectionManager::releaseConnection(Connection_ptr connection)
 	if(it != m_connections.end())
 		m_connections.erase(it);
 	else
-		std::cout << "[Error - ConnectionManager::releaseConnection] Connection not found" << std::endl;
+		std::clog << "[Error - ConnectionManager::releaseConnection] Connection not found" << std::endl;
 }
 
 void ConnectionManager::shutdown()
 {
 	#ifdef __DEBUG_NET_DETAIL__
-	std::cout << "Closing all connections" << std::endl;
+	std::clog << "Closing all connections" << std::endl;
 	#endif
 	boost::recursive_mutex::scoped_lock lockClass(m_connectionManagerLock);
 	for(std::list<Connection_ptr>::iterator it = m_connections.begin(); it != m_connections.end(); ++it)
@@ -90,7 +90,7 @@ void Connection::close()
 {
 	//any thread
 	#ifdef __DEBUG_NET_DETAIL__
-	std::cout << "Connection::close" << std::endl;
+	std::clog << "Connection::close" << std::endl;
 	#endif
 	boost::recursive_mutex::scoped_lock lockClass(m_connectionLock);
 	if(m_connectionState == CONNECTION_STATE_CLOSED || m_connectionState == CONNECTION_STATE_REQUEST_CLOSE)
@@ -186,12 +186,12 @@ void Connection::closeConnection()
 {
 	//dispatcher thread
 	#ifdef __DEBUG_NET_DETAIL__
-	std::cout << "Connection::closeConnection" << std::endl;
+	std::clog << "Connection::closeConnection" << std::endl;
 	#endif
 	m_connectionLock.lock();
 	if(m_connectionState != CONNECTION_STATE_REQUEST_CLOSE)
 	{
-		std::cout << "[Error - Connection::closeConnection] m_connectionState = " << m_connectionState << std::endl;
+		std::clog << "[Error - Connection::closeConnection] m_connectionState = " << m_connectionState << std::endl;
 		m_connectionLock.unlock();
 		return;
 	}
@@ -217,13 +217,13 @@ void Connection::closeConnection()
 void Connection::closeSocket()
 {
 	#ifdef __DEBUG_NET_DETAIL__
-	std::cout << "Connection::closeSocket" << std::endl;
+	std::clog << "Connection::closeSocket" << std::endl;
 	#endif
 	m_connectionLock.lock();
 	if(m_socket->is_open())
 	{
 		#ifdef __DEBUG_NET_DETAIL__
-		std::cout << "Closing socket" << std::endl;
+		std::clog << "Closing socket" << std::endl;
 		#endif
 		m_pendingRead = m_pendingWrite = 0;
 		try
@@ -457,7 +457,7 @@ void Connection::parsePacket(const boost::system::error_code& error)
 bool Connection::send(OutputMessage_ptr msg)
 {
 	#ifdef __DEBUG_NET_DETAIL__
-	std::cout << "Connection::send init" << std::endl;
+	std::clog << "Connection::send init" << std::endl;
 	#endif
 	m_connectionLock.lock();
 	if(m_connectionState != CONNECTION_STATE_OPEN || m_writeError)
@@ -473,19 +473,19 @@ bool Connection::send(OutputMessage_ptr msg)
 			msg->getProtocol()->onSendMessage(msg);
 
 		#ifdef __DEBUG_NET_DETAIL__
-		std::cout << "Connection::send " << msg->getMessageLength() << std::endl;
+		std::clog << "Connection::send " << msg->getMessageLength() << std::endl;
 		#endif
 		internalSend(msg);
 	}
 	else if(m_pendingWrite > 100 && g_config.getBool(ConfigManager::FORCE_CLOSE_SLOW_CONNECTION))
 	{
-		std::cout << "NOTICE: Forcing slow connection to disconnect!" << std::endl;
+		std::clog << "NOTICE: Forcing slow connection to disconnect!" << std::endl;
 		close();
 	}
 	else
 	{	
 		#ifdef __DEBUG_NET__
-		std::cout << "Connection::send Adding to queue " << msg->getMessageLength() << std::endl;
+		std::clog << "Connection::send Adding to queue " << msg->getMessageLength() << std::endl;
 		#endif
 		OutputMessagePool::getInstance()->autoSend(msg);
 	}
@@ -533,7 +533,7 @@ uint32_t Connection::getIP() const
 void Connection::onWrite(OutputMessage_ptr msg, const boost::system::error_code& error)
 {
 	#ifdef __DEBUG_NET_DETAIL__
-	std::cout << "onWrite" << std::endl;
+	std::clog << "onWrite" << std::endl;
 	#endif
 	m_connectionLock.lock();
 	m_writeTimer.cancel();
@@ -608,7 +608,7 @@ void Connection::handleReadTimeout(boost::weak_ptr<Connection> weak, const boost
 	if(shared_ptr<Connection> connection = weak.lock())
 	{
 		#ifdef __DEBUG_NET_DETAIL__
-		std::cout << "Connection::handleReadTimeout" << std::endl;
+		std::clog << "Connection::handleReadTimeout" << std::endl;
 		#endif
 		connection->onReadTimeout();
 	}
@@ -646,7 +646,7 @@ void Connection::handleWriteTimeout(boost::weak_ptr<Connection> weak, const boos
 	if(shared_ptr<Connection> connection = weak.lock())
 	{
 		#ifdef __DEBUG_NET_DETAIL__
-		std::cout << "Connection::handleWriteTimeout" << std::endl;
+		std::clog << "Connection::handleWriteTimeout" << std::endl;
 		#endif
 		connection->onWriteTimeout();
 	}

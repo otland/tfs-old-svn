@@ -63,7 +63,7 @@ bool CreatureEvents::registerEvent(Event* event, xmlNodePtr p, bool override)
 
 	if(creatureEvent->getEventType() == CREATURE_EVENT_NONE)
 	{
-		std::cout << "[Error - CreatureEvents::registerEvent] Trying to register event without type!" << std::endl;
+		std::clog << "[Error - CreatureEvents::registerEvent] Trying to register event without type!" << std::endl;
 		return false;
 	}
 
@@ -137,14 +137,14 @@ bool CreatureEvent::configureEvent(xmlNodePtr p)
 	std::string str;
 	if(!readXMLString(p, "name", str))
 	{
-		std::cout << "[Error - CreatureEvent::configureEvent] No name for creature event." << std::endl;
+		std::clog << "[Error - CreatureEvent::configureEvent] No name for creature event." << std::endl;
 		return false;
 	}
 
 	m_eventName = str;
 	if(!readXMLString(p, "type", str))
 	{
-		std::cout << "[Error - CreatureEvent::configureEvent] No type for creature event." << std::endl;
+		std::clog << "[Error - CreatureEvent::configureEvent] No type for creature event." << std::endl;
 		return false;
 	}
 
@@ -203,7 +203,7 @@ bool CreatureEvent::configureEvent(xmlNodePtr p)
 		m_type = CREATURE_EVENT_PREPAREDEATH;
 	else
 	{
-		std::cout << "[Error - CreatureEvent::configureEvent] No valid type for creature event." << str << std::endl;
+		std::clog << "[Error - CreatureEvent::configureEvent] No valid type for creature event." << str << std::endl;
 		return false;
 	}
 
@@ -392,7 +392,7 @@ uint32_t CreatureEvent::executeLogin(Player* player)
 	}
 	else
 	{
-		std::cout << "[Error - CreatureEvent::executeLogin] Call stack overflow." << std::endl;
+		std::clog << "[Error - CreatureEvent::executeLogin] Call stack overflow." << std::endl;
 		return 0;
 	}
 }
@@ -446,7 +446,7 @@ uint32_t CreatureEvent::executeLogout(Player* player, bool forceLogout)
 	}
 	else
 	{
-		std::cout << "[Error - CreatureEvent::executeLogout] Call stack overflow." << std::endl;
+		std::clog << "[Error - CreatureEvent::executeLogout] Call stack overflow." << std::endl;
 		return 0;
 	}
 }
@@ -512,7 +512,7 @@ uint32_t CreatureEvent::executeChannelJoin(Player* player, uint16_t channelId, U
 	}
 	else
 	{
-		std::cout << "[Error - CreatureEvent::executeChannelJoin] Call stack overflow." << std::endl;
+		std::clog << "[Error - CreatureEvent::executeChannelJoin] Call stack overflow." << std::endl;
 		return 0;
 	}
 }
@@ -578,7 +578,7 @@ uint32_t CreatureEvent::executeChannelLeave(Player* player, uint16_t channelId, 
 	}
 	else
 	{
-		std::cout << "[Error - CreatureEvent::executeChannelLeave] Call stack overflow." << std::endl;
+		std::clog << "[Error - CreatureEvent::executeChannelLeave] Call stack overflow." << std::endl;
 		return 0;
 	}
 }
@@ -637,7 +637,7 @@ uint32_t CreatureEvent::executeAdvance(Player* player, skills_t skill, uint32_t 
 	}
 	else
 	{
-		std::cout << "[Error - CreatureEvent::executeAdvance] Call stack overflow." << std::endl;
+		std::clog << "[Error - CreatureEvent::executeAdvance] Call stack overflow." << std::endl;
 		return 0;
 	}
 }
@@ -696,7 +696,7 @@ uint32_t CreatureEvent::executeMailSend(Player* player, Player* receiver, Item* 
 	}
 	else
 	{
-		std::cout << "[Error - CreatureEvent::executeMailSend] Call stack overflow." << std::endl;
+		std::clog << "[Error - CreatureEvent::executeMailSend] Call stack overflow." << std::endl;
 		return 0;
 	}
 }
@@ -755,7 +755,7 @@ uint32_t CreatureEvent::executeMailReceive(Player* player, Player* sender, Item*
 	}
 	else
 	{
-		std::cout << "[Error - CreatureEvent::executeMailReceive] Call stack overflow." << std::endl;
+		std::clog << "[Error - CreatureEvent::executeMailReceive] Call stack overflow." << std::endl;
 		return 0;
 	}
 }
@@ -811,7 +811,7 @@ uint32_t CreatureEvent::executeTradeRequest(Player* player, Player* target, Item
 	}
 	else
 	{
-		std::cout << "[Error - CreatureEvent::executeTradeRequest] Call stack overflow." << std::endl;
+		std::clog << "[Error - CreatureEvent::executeTradeRequest] Call stack overflow." << std::endl;
 		return 0;
 	}
 }
@@ -868,7 +868,7 @@ uint32_t CreatureEvent::executeTradeAccept(Player* player, Player* target, Item*
 	}
 	else
 	{
-		std::cout << "[Error - CreatureEvent::executeTradeAccept] Call stack overflow." << std::endl;
+		std::clog << "[Error - CreatureEvent::executeTradeAccept] Call stack overflow." << std::endl;
 		return 0;
 	}
 }
@@ -927,7 +927,7 @@ uint32_t CreatureEvent::executeLook(Player* player, Thing* thing, const Position
 	}
 	else
 	{
-		std::cout << "[Error - CreatureEvent::executeLook] Call stack overflow." << std::endl;
+		std::clog << "[Error - CreatureEvent::executeLook] Call stack overflow." << std::endl;
 		return 0;
 	}
 }
@@ -983,7 +983,7 @@ uint32_t CreatureEvent::executeDirection(Creature* creature, Direction old, Dire
 	}
 	else
 	{
-		std::cout << "[Error - CreatureEvent::executeDirection] Call stack overflow." << std::endl;
+		std::clog << "[Error - CreatureEvent::executeDirection] Call stack overflow." << std::endl;
 		return 0;
 	}
 }
@@ -1039,7 +1039,7 @@ uint32_t CreatureEvent::executeOutfit(Creature* creature, const Outfit_t& old, c
 	}
 	else
 	{
-		std::cout << "[Error - CreatureEvent::executeOutfit] Call stack overflow." << std::endl;
+		std::clog << "[Error - CreatureEvent::executeOutfit] Call stack overflow." << std::endl;
 		return 0;
 	}
 }
@@ -1093,7 +1093,7 @@ uint32_t CreatureEvent::executeThink(Creature* creature, uint32_t interval)
 	}
 	else
 	{
-		std::cout << "[Error - CreatureEvent::executeThink] Call stack overflow." << std::endl;
+		std::clog << "[Error - CreatureEvent::executeThink] Call stack overflow." << std::endl;
 		return 0;
 	}
 }
@@ -1155,7 +1155,7 @@ uint32_t CreatureEvent::executeStatsChange(Creature* creature, Creature* attacke
 	}
 	else
 	{
-		std::cout << "[Error - CreatureEvent::executeStatsChange] Call stack overflow." << std::endl;
+		std::clog << "[Error - CreatureEvent::executeStatsChange] Call stack overflow." << std::endl;
 		return 0;
 	}
 }
@@ -1214,7 +1214,7 @@ uint32_t CreatureEvent::executeCombatArea(Creature* creature, Tile* tile, bool a
 	}
 	else
 	{
-		std::cout << "[Error - CreatureEvent::executeAreaCombat] Call stack overflow." << std::endl;
+		std::clog << "[Error - CreatureEvent::executeAreaCombat] Call stack overflow." << std::endl;
 		return 0;
 	}
 }
@@ -1268,7 +1268,7 @@ uint32_t CreatureEvent::executeCombat(Creature* creature, Creature* target)
 	}
 	else
 	{
-		std::cout << "[Error - CreatureEvent::executeCombat] Call stack overflow." << std::endl;
+		std::clog << "[Error - CreatureEvent::executeCombat] Call stack overflow." << std::endl;
 		return 0;
 	}
 }
@@ -1322,7 +1322,7 @@ uint32_t CreatureEvent::executeAttack(Creature* creature, Creature* target)
 	}
 	else
 	{
-		std::cout << "[Error - CreatureEvent::executeAttack] Call stack overflow." << std::endl;
+		std::clog << "[Error - CreatureEvent::executeAttack] Call stack overflow." << std::endl;
 		return 0;
 	}
 }
@@ -1380,7 +1380,7 @@ uint32_t CreatureEvent::executeCast(Creature* creature, Creature* target/* = NUL
 	}
 	else
 	{
-		std::cout << "[Error - CreatureEvent::executeCast] Call stack overflow." << std::endl;
+		std::clog << "[Error - CreatureEvent::executeCast] Call stack overflow." << std::endl;
 		return 0;
 	}
 }
@@ -1436,7 +1436,7 @@ uint32_t CreatureEvent::executeKill(Creature* creature, Creature* target, bool l
 	}
 	else
 	{
-		std::cout << "[Error - CreatureEvent::executeKill] Call stack overflow." << std::endl;
+		std::clog << "[Error - CreatureEvent::executeKill] Call stack overflow." << std::endl;
 		return 0;
 	}
 }
@@ -1514,7 +1514,7 @@ uint32_t CreatureEvent::executeDeath(Creature* creature, Item* corpse, DeathList
 	}
 	else
 	{
-		std::cout << "[Error - CreatureEvent::executeDeath] Call stack overflow." << std::endl;
+		std::clog << "[Error - CreatureEvent::executeDeath] Call stack overflow." << std::endl;
 		return 0;
 	}
 }
@@ -1591,7 +1591,7 @@ uint32_t CreatureEvent::executePrepareDeath(Creature* creature, DeathList deathL
 	}
 	else
 	{
-		std::cout << "[Error - CreatureEvent::executePrepareDeath] Call stack overflow." << std::endl;
+		std::clog << "[Error - CreatureEvent::executePrepareDeath] Call stack overflow." << std::endl;
 		return 0;
 	}
 }
@@ -1647,7 +1647,7 @@ uint32_t CreatureEvent::executeTextEdit(Player* player, Item* item, std::string 
 	}
 	else
 	{
-		std::cout << "[Error - CreatureEvent::executeTextEdit] Call stack overflow." << std::endl;
+		std::clog << "[Error - CreatureEvent::executeTextEdit] Call stack overflow." << std::endl;
 		return 0;
 	}
 }
@@ -1701,7 +1701,7 @@ uint32_t CreatureEvent::executeReportBug(Player* player, std::string comment)
 	}
 	else
 	{
-		std::cout << "[Error - CreatureEvent::executeReportBug] Call stack overflow." << std::endl;
+		std::clog << "[Error - CreatureEvent::executeReportBug] Call stack overflow." << std::endl;
 		return 0;
 	}
 }
@@ -1755,7 +1755,7 @@ uint32_t CreatureEvent::executePush(Player* player, Creature* target)
 	}
 	else
 	{
-		std::cout << "[Error - CreatureEvent::executePush] Call stack overflow." << std::endl;
+		std::clog << "[Error - CreatureEvent::executePush] Call stack overflow." << std::endl;
 		return 0;
 	}
 }
@@ -1809,7 +1809,7 @@ uint32_t CreatureEvent::executeTarget(Creature* creature, Creature* target)
 	}
 	else
 	{
-		std::cout << "[Error - CreatureEvent::executeTarget] Call stack overflow." << std::endl;
+		std::clog << "[Error - CreatureEvent::executeTarget] Call stack overflow." << std::endl;
 		return 0;
 	}
 }
@@ -1863,7 +1863,7 @@ uint32_t CreatureEvent::executeFollow(Creature* creature, Creature* target)
 	}
 	else
 	{
-		std::cout << "[Error - CreatureEvent::executeFollow] Call stack overflow." << std::endl;
+		std::clog << "[Error - CreatureEvent::executeFollow] Call stack overflow." << std::endl;
 		return 0;
 	}
 }

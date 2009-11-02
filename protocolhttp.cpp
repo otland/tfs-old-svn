@@ -27,7 +27,7 @@ uint32_t ProtocolHTTP::protocolHTTPCount = 0;
 void ProtocolHTTP::deleteProtocolTask()
 {
 #ifdef __DEBUG_NET_DETAIL__
-	std::cout << "Deleting ProtocolHTTP" << std::endl;
+	std::clog << "Deleting ProtocolHTTP" << std::endl;
 #endif
 	Protocol::deleteProtocolTask();
 }

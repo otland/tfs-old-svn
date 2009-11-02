@@ -112,7 +112,7 @@ void ProtocolStatus::onRecvFirstMessage(NetworkMessage& msg)
 void ProtocolStatus::deleteProtocolTask()
 {
 #ifdef __DEBUG_NET_DETAIL__
-	std::cout << "Deleting ProtocolStatus" << std::endl;
+	std::clog << "Deleting ProtocolStatus" << std::endl;
 #endif
 	Protocol::deleteProtocolTask();
 }

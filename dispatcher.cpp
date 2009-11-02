@@ -99,7 +99,7 @@ void Dispatcher::addTask(Task* task, bool front/* = false*/)
 	}
 	#ifdef __DEBUG_SCHEDULER__
 	else
-		std::cout << "[Error - Dispatcher::addTask] Dispatcher thread is terminated." << std::endl;
+		std::clog << "[Error - Dispatcher::addTask] Dispatcher thread is terminated." << std::endl;
 	#endif
 
 	m_taskLock.unlock();

@@ -90,7 +90,7 @@ Cylinder* HouseTile::__queryDestination(int32_t& index, const Thing* thing, Item
 				Tile* destTile = g_game.getTile(house->getEntry());
 				if(!destTile)
 				{
-					std::cout << "[Error - HouseTile::__queryDestination] Tile at house entry position for house: "
+					std::clog << "[Error - HouseTile::__queryDestination] Tile at house entry position for house: "
 						<< house->getName() << " (" << house->getId() << ") does not exist." << std::endl;
 					destTile = g_game.getTile(player->getMasterPosition());
 					if(!destTile)

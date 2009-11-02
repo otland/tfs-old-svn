@@ -74,14 +74,11 @@ class OutputHandler : public std::streambuf
 			return &instance;
 		}
 
-		std::streambuf* out;
-		std::streambuf* err;
-		std::streambuf* log;
-
 	protected:
 		OutputHandler();
-		char overflow(char c);
+		std::streambuf::int_type overflow(std::streambuf::int_type c = traits_type::eof())
 
+		std::streambuf* m_buffer;
 		std::string m_cache;
 		bool m_date;
 };

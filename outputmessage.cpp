@@ -62,7 +62,7 @@ void OutputMessagePool::send(OutputMessage_ptr msg)
 	if(state == OutputMessage::STATE_ALLOCATED_NO_AUTOSEND)
 	{
 		#ifdef __DEBUG_NET_DETAIL__
-		std::cout << "Sending message - SINGLE" << std::endl;
+		std::clog << "Sending message - SINGLE" << std::endl;
 		#endif
 		if(msg->getConnection())
 		{
@@ -71,12 +71,12 @@ void OutputMessagePool::send(OutputMessage_ptr msg)
 		}
 		#ifdef __DEBUG_NET__
 		else
-			std::cout << "Error: [OutputMessagePool::send] NULL connection." << std::endl;
+			std::clog << "Error: [OutputMessagePool::send] NULL connection." << std::endl;
 		#endif
 	}
 	#ifdef __DEBUG_NET__
 	else
-		std::cout << "Warning: [OutputMessagePool::send] State != STATE_ALLOCATED_NO_AUTOSEND" << std::endl;
+		std::clog << "Warning: [OutputMessagePool::send] State != STATE_ALLOCATED_NO_AUTOSEND" << std::endl;
 	#endif
 }
 
@@ -114,7 +114,7 @@ void OutputMessagePool::sendAll()
 		#endif
 		{
 			#ifdef __DEBUG_NET_DETAIL__
-			std::cout << "Sending message - ALL" << std::endl;
+			std::clog << "Sending message - ALL" << std::endl;
 			#endif
 			if(omsg->getConnection())
 			{
@@ -123,7 +123,7 @@ void OutputMessagePool::sendAll()
 			}
 			#ifdef __DEBUG_NET__
 			else
-				std::cout << "Error: [OutputMessagePool::send] NULL connection." << std::endl;
+				std::clog << "Error: [OutputMessagePool::send] NULL connection." << std::endl;
 			#endif
 
 			it = m_autoSend.erase(it);
@@ -144,12 +144,12 @@ void OutputMessagePool::internalReleaseMessage(OutputMessage* msg)
 	if(msg->getProtocol())
 		msg->getProtocol()->unRef();
 	else
-		std::cout << "[Warning - OutputMessagePool::internalReleaseMessage] protocol not found." << std::endl;
+		std::clog << "[Warning - OutputMessagePool::internalReleaseMessage] protocol not found." << std::endl;
 
 	if(msg->getConnection())
 		msg->getConnection()->unRef();
 	else
-		std::cout << "[Warning - OutputMessagePool::internalReleaseMessage] connection not found." << std::endl;
+		std::clog << "[Warning - OutputMessagePool::internalReleaseMessage] connection not found." << std::endl;
 
 	msg->freeMessage();
 #ifdef __TRACK_NETWORK__
@@ -164,7 +164,7 @@ void OutputMessagePool::internalReleaseMessage(OutputMessage* msg)
 OutputMessage_ptr OutputMessagePool::getOutputMessage(Protocol* protocol, bool autoSend /*= true*/)
 {
 	#ifdef __DEBUG_NET_DETAIL__
-	std::cout << "request output message - auto = " << autoSend << std::endl;
+	std::clog << "request output message - auto = " << autoSend << std::endl;
 	#endif
 	if(m_shutdown)
 		return OutputMessage_ptr();
