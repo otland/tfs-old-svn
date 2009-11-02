@@ -62,4 +62,26 @@ class Logger
 
 #define LOG_MESSAGE(type, message, channel) \
 	Logger::getInstance()->log(__OTSERV_FUNCTION__, type, message, channel);
+
+class OutputHandler : public std::streambuf
+{
+	public:
+		virtual ~OutputHandler() {}
+		static OutputHandler* getInstance()
+		{
+			static OutputHandler instance;
+			return &instance;
+		}
+
+		std::streambuf* out;
+		std::streambuf* err;
+		std::streambuf* log;
+
+	protected:
+		OutputHandler();
+		char overflow(char c);
+
+		bool m_date;
+		std::string m_cache;
+};
 #endif

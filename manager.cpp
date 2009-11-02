@@ -39,26 +39,25 @@ void ProtocolManager::onRecvFirstMessage(NetworkMessage& msg)
 	m_state = NO_CONNECTED;
 	if(g_config.getString(ConfigManager::MANAGER_PASSWORD).empty())
 	{
-		addLogLine(LOGTYPE_EVENT, "connection attempt on disabled protocol");
+		addLogLine(LOGTYPE_WARNING, "Connection attempt on disabled protocol");
 		getConnection()->close();
 		return;
 	}
 
 	if(!Manager::getInstance()->allow(getIP()))
 	{
-		addLogLine(LOGTYPE_EVENT, "ip not allowed");
+		addLogLine(LOGTYPE_WARNING, "IP not allowed");
 		getConnection()->close();
 		return;
 	}
 
-	if(!Manager::getInstance()->addConnection())
+	if(!Manager::getInstance()->addConnection(this))
 	{
-		addLogLine(LOGTYPE_EVENT, "cannot add new connection");
+		addLogLine(LOGTYPE_WARNING, "Cannot add more connections");
 		getConnection()->close();
 		return;
 	}
 
-	addLogLine(LOGTYPE_EVENT, "sending HELLO");
 	if(OutputMessage_ptr output = OutputMessagePool::getInstance()->getOutputMessage(this, false))
 	{
 		TRACK_MESSAGE(output);
@@ -95,29 +94,29 @@ void ProtocolManager::parsePacket(NetworkMessage& msg)
 			{
 				//login timeout
 				getConnection()->close();
-				addLogLine(LOGTYPE_EVENT, "login timeout");
+				addLogLine(LOGTYPE_WARNING, "Login timeout");
 				return;
 			}
 
 			if(m_loginTries > 3)
 			{
 				output->AddByte(MP_MSG_ERROR);
-				output->AddString("too many login tries");
+				output->AddString("Too many login attempts");
 				OutputMessagePool::getInstance()->send(output);
 
 				getConnection()->close();
-				addLogLine(LOGTYPE_EVENT, "too many login tries");
+				addLogLine(LOGTYPE_WARNING, "Too many login attempts");
 				return;
 			}
 
 			if(recvbyte != MP_MSG_LOGIN)
 			{
 				output->AddByte(MP_MSG_ERROR);
-				output->AddString("you are not logged in");
+				output->AddString("You are not logged in");
 				OutputMessagePool::getInstance()->send(output);
 
 				getConnection()->close();
-				addLogLine(LOGTYPE_EVENT, "wrong command while NO_LOGGED_IN");
+				addLogLine(LOGTYPE_WARNING, "Wrong command while NO_LOGGED_IN");
 				return;
 			}
 			break;
@@ -129,7 +128,7 @@ void ProtocolManager::parsePacket(NetworkMessage& msg)
 		default:
 		{
 			getConnection()->close();
-			addLogLine(LOGTYPE_EVENT, "no valid connection state!!!");
+			addLogLine(LOGTYPE_ERROR, "No valid connection state");
 			return;
 		}
 	}
@@ -145,60 +144,44 @@ void ProtocolManager::parsePacket(NetworkMessage& msg)
 				_encrypt(word, false);
 				if(pass == word)
 				{
-					m_state = LOGGED_IN;
-					output->AddByte(MP_MSG_LOGIN_OK);
-					addLogLine(LOGTYPE_EVENT, "login ok");
+					if(!Manager::getInstance()->acceptConnection(this))
+					{
+						output->AddByte(MP_MSG_LOGIN_FAILED);
+						output->AddString("Unknown connection");
+						OutputMessagePool::getInstance()->send(output);
+
+						getConnection()->close();
+						addLogLine(LOGTYPE_ERROR, "Login failed due to unknown connection");
+						return;
+					}
+					else
+					{
+						m_state = LOGGED_IN;
+						output->AddByte(MP_MSG_LOGIN_OK);
+						addLogLine(LOGTYPE_EVENT, "Login ok");
+					}
 				}
 				else
 				{
-					m_loginTries++;
 					output->AddByte(MP_MSG_LOGIN_FAILED);
-					output->AddString("wrong password");
-					addLogLine(LOGTYPE_EVENT, "login failed.("+ pass + ")");
+					output->AddString("Wrong password");
+
+					m_loginTries++;
+					addLogLine(LOGTYPE_EVENT, "Login failed (" + pass + ")");
 				}
 			}
 			else
 			{
 				output->AddByte(MP_MSG_LOGIN_FAILED);
-				output->AddString("cannot login");
-				addLogLine(LOGTYPE_EVENT, "wrong state at login");
+				output->AddString("Cannot login right now!");
+				addLogLine(LOGTYPE_ERROR, "Wrong state at login");
 			}
 
-			break;
-		}
-
-		case MP_MSG_COMMAND:
-		{
-			if(m_state != LOGGED_IN)
-			{
-				addLogLine(LOGTYPE_EVENT, "recvbyte == MP_MSG_COMMAND && m_state != LOGGED_IN !!!");
-				break;
-			}
-
-			uint8_t command = msg.GetByte();
-			switch(command)
-			{
-				case CMD_TEST:
-				{
-					const std::string param = msg.GetString();
-					addLogLine(LOGTYPE_EVENT, "test command: " + param);
-
-					output->AddByte(MP_MSG_COMMAND_OK);
-					break;
-				}
-
-				default:
-				{
-					output->AddByte(MP_MSG_COMMAND_FAILED);
-					output->AddString("not known server command");
-					addLogLine(LOGTYPE_EVENT, "not known server command");
-				}
-			}
 			break;
 		}
 
 		case MP_MSG_PING:
-			output->AddByte(MP_MSG_PING_OK);
+			output->AddByte(MP_MSG_PING);
 			break;
 
 		case MP_MSG_KEEP_ALIVE:
@@ -207,9 +190,9 @@ void ProtocolManager::parsePacket(NetworkMessage& msg)
 		default:
 		{
 			output->AddByte(MP_MSG_ERROR);
-			output->AddString("not known command byte");
+			output->AddString("Unknown command");
 
-			addLogLine(LOGTYPE_EVENT, "not known command byte");
+			addLogLine(LOGTYPE_WARNING, "Unknown command");
 			break;
 		}
 	}
@@ -220,24 +203,47 @@ void ProtocolManager::parsePacket(NetworkMessage& msg)
 
 void ProtocolManager::deleteProtocolTask()
 {
-	addLogLine(LOGTYPE_EVENT, "end connection");
-	Manager::getInstance()->removeConnection();
+	addLogLine(LOGTYPE_EVENT, "Ending connection");
+	Manager::getInstance()->removeConnection(this);
 	Protocol::deleteProtocolTask();
 }
 
-bool Manager::addConnection()
+void ProtocolManager::output(const std::string& message)
 {
-	if(m_currrentConnections >= g_config.getNumber(ConfigManager::MANAGER_CONNECTIONS_LIMIT))
+	OutputMessage_ptr output = OutputMessagePool::getInstance()->getOutputMessage(this, false);
+	if(!output)
+		return;
+
+	TRACK_MESSAGE(output)
+	output->AddByte(MP_MSG_OUTPUT);
+	output->AddString(message);
+	OutputMessagePool::getInstance()->send(output);
+}
+
+bool Manager::addConnection(ProtocolManager* client)
+{
+	if(m_connections.size() >= g_config.getNumber(ConfigManager::MANAGER_CONNECTIONS_LIMIT))
 		return false;
 
-	m_currrentConnections++;
+	m_connections[client] = false;
 	return true;
 }
 
-void Manager::removeConnection()
+bool Manager::acceptConnection(ProtocolManager* client)
 {
-	if(m_currrentConnections > 0)
-		m_currrentConnections--;
+	ConnectionMap::iterator it = m_connections.find(client);
+	if(it == m_connections.end())
+		return false;
+
+	it->second = true;
+	return true;
+}
+
+void Manager::removeConnection(ProtocolManager* client)
+{
+	ConnectionMap::iterator it = m_connections.find(client);
+	if(it != m_connections.end())
+		m_connections.erase(it);
 }
 
 bool Manager::allow(uint32_t ip) const
@@ -252,6 +258,18 @@ bool Manager::allow(uint32_t ip) const
 		LOG_MESSAGE(LOGTYPE_EVENT, "forbidden connection try", "MANAGER " + convertIPAddress(ip));
 
 	return false;
+}
+
+void Manager::output(const std::string& message)
+{
+	if(m_connections.empty())
+		return;
+
+	for(ConnectionMap::const_iterator it = m_connections.begin(); it != m_connections.end(); ++it)
+	{
+		if(it->second)
+			it->first->output(message);
+	}
 }
 
 void ProtocolManager::addLogLine(LogType_t type, std::string message)

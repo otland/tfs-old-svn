@@ -84,6 +84,7 @@ Monsters g_monsters;
 Npcs g_npcs;
 RSA g_RSA;
 Chat g_chat;
+OutputHandler g_output;
 
 IpList serverIps;
 boost::mutex g_loaderLock;
@@ -276,7 +277,7 @@ int main(int argc, char* argv[])
 	Dispatcher::getInstance()->addTask(createTask(boost::bind(otserv, args, &servicer)));
 	g_loaderSignal.wait(g_loaderUniqueLock);
 
-	std::string outPath = g_config.getString(ConfigManager::OUT_LOG),
+	/*std::string outPath = g_config.getString(ConfigManager::OUT_LOG),
 		errPath = g_config.getString(ConfigManager::ERROR_LOG);
 	if(outPath.length() < 3)
 		outPath = "";
@@ -314,7 +315,11 @@ int main(int argc, char* argv[])
 			startupErrorMessage("Could not open error log file for writing!");
 
 		std::cerr.rdbuf(errFile->rdbuf());
-	}
+	}*/
+
+	std::cout.rdbuf(&g_output);
+	std::cerr.rdbuf(&g_output);
+	std::clog.rdbuf(&g_output);
 
 	if(servicer.isRunning())
 	{

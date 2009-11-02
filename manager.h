@@ -24,32 +24,21 @@
 enum
 {
 	MP_MSG_LOGIN = 1,
-	MP_MSG_ENCRYPTION = 2,
-	MP_MSG_KEY_EXCHANGE = 3,
-	MP_MSG_COMMAND = 4,
+	MP_MSG_PING = 2,
+	MP_MSG_KEEP_ALIVE = 3,
+	MP_MSG_LUA = 4,
+
+	MP_MSG_ERROR = 1,
+	MP_MSG_HELLO = 2,
+	MP_MSG_LOGIN_OK = 3,
+	MP_MSG_LOGIN_FAILED = 4,
 	MP_MSG_PING = 5,
-	MP_MSG_KEEP_ALIVE = 6,
-
-	MP_MSG_HELLO = 1,
-	MP_MSG_KEY_EXCHANGE_OK = 2,
-	MP_MSG_KEY_EXCHANGE_FAILED = 3,
-	MP_MSG_LOGIN_OK = 4,
-	MP_MSG_LOGIN_FAILED = 5,
-	MP_MSG_COMMAND_OK = 6,
-	MP_MSG_COMMAND_FAILED = 7,
-	MP_MSG_ENCRYPTION_OK = 8,
-	MP_MSG_ENCRYPTION_FAILED = 9,
-	MP_MSG_PING_OK = 10,
-	MP_MSG_MESSAGE = 11,
-	MP_MSG_ERROR = 12,
+	MP_MSG_OUTPUT = 6
 };
 
-enum
-{
-	CMD_TEST = 1
-};
-
+class ProtocolManager;
 class NetworkMessage;
+
 class Manager
 {
 	public:
@@ -60,14 +49,18 @@ class Manager
 			return &instance;
 		}
 
-		bool addConnection();
-		void removeConnection();
+		bool addConnection(ProtocolManager* client);
+		bool acceptConnection(ProtocolManager* client);
+		void removeConnection(ProtocolManager* client);
 
 		bool allow(uint32_t ip) const;
+		void output(const std::string& message);
 
 	protected:
-		Manager(): m_currrentConnections(0) {}
-		int32_t m_currrentConnections;
+		Manager() {}
+
+		typedef std::map<ProtocolManager*, bool> ConnectionMap;
+		ConnectionMap m_connections;
 };
 
 
@@ -99,6 +92,8 @@ class ProtocolManager : public Protocol
 		enum {isSingleSocket = false};
 		enum {hasChecksum = false};
 		static const char* protocolName() {return "manager protocol";}
+
+		void output(const std::string& message);
 
 	protected:
 		enum ProtocolState_t

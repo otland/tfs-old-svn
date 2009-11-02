@@ -15,9 +15,10 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////
 #include "otpch.h"
-
 #include "textlogger.h"
+
 #include "tools.h"
+#include "manager.h"
 
 void Logger::open()
 {
@@ -97,4 +98,41 @@ void Logger::log(const char* func, LogType_t type, std::string message, std::str
 
 	ss << message;
 	iFile(LOGFILE_ADMIN, ss.str(), newLine);
+}
+
+OutputHandler::OutputHandler()
+{
+	out = std::cout.rdbuf();
+	err = std::cerr.rdbuf();
+	log = std::clog.rdbuf();
+	m_date = true;
+}
+
+OutputHandler::~OutputHandler()
+{
+	std::cout.rdbuf(out);
+	std::cout.rdbuf(err);
+	std::cout.rdbuf(log);
+}
+
+char OutputHandler::overflow(char c)
+{
+	if(c == '\n' || c == '\r')
+	{
+		Manager::getInstance()->output(m_cache);
+		m_cache("");
+		m_date = true;
+
+		// TODO: to files?
+	}
+	else
+	{
+		if(m_date)
+		{
+			m_cache += formatDate();
+			m_date = false;
+		}
+
+		m_cache += c;
+	}
 }
