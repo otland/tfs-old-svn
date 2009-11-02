@@ -46,7 +46,7 @@ enum
 
 enum
 {
-	CMD_BROADCAST = 1
+	CMD_TEST = 1
 };
 
 class NetworkMessage;

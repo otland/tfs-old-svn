@@ -33,8 +33,8 @@
 #include "town.h"
 #include "iologindata.h"
 
-extern Game g_game;
 extern ConfigManager g_config;
+extern Game g_game;
 
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
 uint32_t ProtocolAdmin::protocolAdminCount = 0;
@@ -531,7 +531,7 @@ void ProtocolAdmin::adminCommandSendMail(const std::string& xmlData)
 	OutputMessagePool::getInstance()->send(output);
 }
 
-Admin::Admin(): m_currentConnections(0), m_encrypted(false),
+Admin::Admin(): m_currrentConnections(0), m_encrypted(false),
 	m_key_RSA1024XTEA(NULL)
 {
 	std::string strValue = g_config.getString(ConfigManager::ADMIN_ENCRYPTION);
@@ -542,14 +542,14 @@ Admin::Admin(): m_currentConnections(0), m_encrypted(false),
 		{
 			m_key_RSA1024XTEA = new RSA();
 			if(!m_key_RSA1024XTEA->setKey(getFilePath(FILE_TYPE_CONFIG,
-				g_config.getString(ConfigManager::ADMIN_ENCRYPTION_DATA)))
+				g_config.getString(ConfigManager::ADMIN_ENCRYPTION_DATA))))
 			{
 				std::cout << "[Warning - Admin::Admin] Unable to set RSA1024XTEA key!" << std::endl;
 				delete m_key_RSA1024XTEA;
 				m_key_RSA1024XTEA = NULL;
 			}
 			else
-				m_encypted = true;
+				m_encrypted = true;
 		}
 	}
 }
@@ -590,7 +590,7 @@ uint16_t Admin::getPolicy() const
 uint32_t Admin::getOptions() const
 {
 	uint32_t ret = 0;
-	if(m_encypted)
+	if(m_encrypted)
 	{
 		if(m_key_RSA1024XTEA)
 			ret |= ENCRYPTION_RSA1024XTEA;

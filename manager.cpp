@@ -21,12 +21,14 @@
 #include "tools.h"
 
 #include "configmanager.h"
+#include "game.h"
 
 #include "connection.h"
 #include "outputmessage.h"
 #include "networkmessage.h"
 
 extern ConfigManager g_config;
+extern Game g_game;
 
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
 uint32_t ProtocolManager::protocolManagerCount = 0;
@@ -61,7 +63,9 @@ void ProtocolManager::onRecvFirstMessage(NetworkMessage& msg)
 	{
 		TRACK_MESSAGE(output);
 		output->AddByte(MP_MSG_HELLO);
+
 		output->AddU32(1); //version
+		output->AddString("TFADMIN");
 		OutputMessagePool::getInstance()->send(output);
 	}
 
@@ -174,84 +178,10 @@ void ProtocolManager::parsePacket(NetworkMessage& msg)
 			uint8_t command = msg.GetByte();
 			switch(command)
 			{
-				/*case CMD_SAVE_SERVER:
-				case CMD_SHALLOW_SAVE_SERVER:
-				{
-					addLogLine(LOGTYPE_EVENT, "saving server");
-					Dispatcher::getInstance()->addTask(createTask(boost::bind(
-						&Game::saveGameState, &g_game, (command == CMD_SHALLOW_SAVE_SERVER))));
-
-					output->AddByte(MP_MSG_COMMAND_OK);
-					break;
-				}
-
-				case CMD_CLOSE_SERVER:
-				{
-					addLogLine(LOGTYPE_EVENT, "closing server");
-					Dispatcher::getInstance()->addTask(createTask(boost::bind(
-						&Game::setGameState, &g_game, GAME_STATE_CLOSED)));
-
-					output->AddByte(MP_MSG_COMMAND_OK);
-					break;
-				}
-
-				case CMD_OPEN_SERVER:
-				{
-					addLogLine(LOGTYPE_EVENT, "opening server");
-					g_game.setGameState(GAME_STATE_NORMAL);
-
-					output->AddByte(MP_MSG_COMMAND_OK);
-					break;
-				}
-
-				case CMD_SHUTDOWN_SERVER:
-				{
-					addLogLine(LOGTYPE_EVENT, "shutting down server");
-					Dispatcher::getInstance()->addTask(createTask(boost::bind(
-						&Game::setGameState, &g_game, GAME_STATE_SHUTDOWN)));
-
-					output->AddByte(MP_MSG_COMMAND_OK);
-					break;
-				}
-
-				case CMD_PAY_HOUSES:
-				{
-					Dispatcher::getInstance()->addTask(createTask(boost::bind(
-						&ProtocolManager::ManagerCommandPayHouses, this)));
-					break;
-				}
-
-				case CMD_RELOAD_SCRIPTS:
-				{
-					const int8_t reload = msg.GetByte();
-					Dispatcher::getInstance()->addTask(createTask(boost::bind(
-						&ProtocolManager::ManagerCommandReload, this, reload)));
-					break;
-				}
-
-				// why do we run these below on dispatcher thread anyway?
-				case CMD_KICK:
+				case CMD_TEST:
 				{
 					const std::string param = msg.GetString();
-					Dispatcher::getInstance()->addTask(createTask(boost::bind(
-						&ProtocolManager::ManagerCommandKickPlayer, this, param)));
-					break;
-				}
-
-				case CMD_SEND_MAIL:
-				{
-					const std::string xmlData = msg.GetString();
-					Dispatcher::getInstance()->addTask(createTask(boost::bind(
-						&ProtocolManager::ManagerCommandSendMail, this, xmlData)));
-					break;
-				}*/
-
-				case CMD_BROADCAST:
-				{
-					const std::string param = msg.GetString();
-					addLogLine(LOGTYPE_EVENT, "broadcasting: " + param);
-					/*Dispatcher::getInstance()->addTask(createTask(boost::bind(
-						&Game::broadcastMessage, &g_game, param, MSG_STATUS_WARNING)));*/
+					addLogLine(LOGTYPE_EVENT, "test command: " + param);
 
 					output->AddByte(MP_MSG_COMMAND_OK);
 					break;
@@ -295,92 +225,6 @@ void ProtocolManager::deleteProtocolTask()
 	Protocol::deleteProtocolTask();
 }
 
-/*void ProtocolManager::ManagerCommandPayHouses()
-{
-	OutputMessage_ptr output = OutputMessagePool::getInstance()->getOutputMessage(this, false);
-	if(!output)
-		return;
-
-	Houses::getInstance()->payHouses();
-	addLogLine(LOGTYPE_EVENT, "pay houses ok");
-
-	TRACK_MESSAGE(output);
-	output->AddByte(MP_MSG_COMMAND_OK);
-	OutputMessagePool::getInstance()->send(output);
-}
-
-void ProtocolManager::ManagerCommandReload(int8_t reload)
-{
-	OutputMessage_ptr output = OutputMessagePool::getInstance()->getOutputMessage(this, false);
-	if(!output)
-		return;
-
-	g_game.reloadInfo((ReloadInfo_t)reload);
-	addLogLine(LOGTYPE_EVENT, "reload ok");
-
-	TRACK_MESSAGE(output);
-	output->AddByte(MP_MSG_COMMAND_OK);
-	OutputMessagePool::getInstance()->send(output);
-}
-
-void ProtocolManager::ManagerCommandKickPlayer(const std::string& param)
-{
-	OutputMessage_ptr output = OutputMessagePool::getInstance()->getOutputMessage(this, false);
-	if(!output)
-		return;
-
-	TRACK_MESSAGE(output);
-	Player* player = NULL;
-	if(g_game.getPlayerByNameWildcard(param, player) == RET_NOERROR)
-	{
-		Scheduler::getInstance()->addEvent(createSchedulerTask(SCHEDULER_MINTICKS, boost::bind(&Game::kickPlayer, &g_game, player->getID(), false)));
-		addLogLine(LOGTYPE_EVENT, "kicking player " + player->getName());
-		output->AddByte(MP_MSG_COMMAND_OK);
-	}
-	else
-	{
-		addLogLine(LOGTYPE_EVENT, "failed setting kick for player " + param);
-		output->AddByte(MP_MSG_COMMAND_FAILED);
-		output->AddString("player is not online");
-	}
-
-	OutputMessagePool::getInstance()->send(output);
-}
-
-void ProtocolManager::ManagerCommandSendMail(const std::string& xmlData)
-{
-	OutputMessage_ptr output = OutputMessagePool::getInstance()->getOutputMessage(this, false);
-	if(!output)
-		return;
-
-	std::string name;
-	uint32_t depotId;
-
-	TRACK_MESSAGE(output);
-	if(Item* mailItem = Manager::createMail(xmlData, name, depotId))
-	{
-		if(IOLoginData::getInstance()->playerMail(NULL, name, depotId, mailItem))
-		{
-			addLogLine(LOGTYPE_EVENT, "sent mailbox to " + name);
-			output->AddByte(MP_MSG_COMMAND_OK);
-		}
-		else
-		{
-			addLogLine(LOGTYPE_EVENT, "failed sending mailbox to " + name);
-			output->AddByte(MP_MSG_COMMAND_FAILED);
-			output->AddString("could not send the box");
-		}
-	}
-	else
-	{
-		addLogLine(LOGTYPE_EVENT, "failed parsing mailbox");
-		output->AddByte(MP_MSG_COMMAND_FAILED);
-		output->AddString("could not parse the box");
-	}
-
-	OutputMessagePool::getInstance()->send(output);
-}*/
-
 bool Manager::addConnection()
 {
 	if(m_currrentConnections >= g_config.getNumber(ConfigManager::MANAGER_CONNECTIONS_LIMIT))
@@ -396,66 +240,9 @@ void Manager::removeConnection()
 		m_currrentConnections--;
 }
 
-/*Item* Manager::createMail(const std::string xmlData, std::string& name, uint32_t& depotId)
-{
-	xmlDocPtr doc = xmlParseMemory(xmlData.c_str(), xmlData.length());
-	if(!doc)
-		return NULL;
-
-	xmlNodePtr root = xmlDocGetRootElement(doc);
-	if(xmlStrcmp(root->name,(const xmlChar*)"mail"))
-		return NULL;
-
-	int32_t intValue;
-	std::string strValue;
-
-	int32_t itemId = ITEM_PARCEL;
-	if(readXMLString(root, "to", strValue))
-		name = strValue;
-
-	if(readXMLString(root, "town", strValue))
-	{
-		Town* town = Towns::getInstance()->getTown(strValue);
-		if(!town)
-			return false;
-
-		depotId = town->getID();
-	}
-	else if(!IOLoginData::getInstance()->getDefaultTownByName(name, depotId)) //use the players default town
-		return false;
-
-	if(readXMLInteger(root, "id", intValue))
-		itemId = intValue;
-
-	Item* mailItem = Item::CreateItem(itemId);
-	mailItem->setParent(VirtualCylinder::virtualCylinder);
-	if(Container* mailContainer = mailItem->getContainer())
-	{
-		xmlNodePtr node = root->children;
-		while(node)
-		{
-			if(node->type != XML_ELEMENT_NODE)
-			{
-				node = node->next;
-				continue;
-			}
-
-			if(!Item::loadItem(node, mailContainer))
-			{
-				delete mailContainer;
-				return NULL;
-			}
-
-			node = node->next;
-		}
-	}
-
-	return mailItem;
-}*/
-
 bool Manager::allow(uint32_t ip) const
 {
-	if(!g_config.getBool(ConfigManager::MANAGER_LOCALHOST_LIMIT))
+	if(!g_config.getBool(ConfigManager::MANAGER_LOCALHOST_ONLY))
 		return !ConnectionManager::getInstance()->isDisabled(ip, 0xFE);
 
 	if(ip == 0x0100007F) //127.0.0.1
