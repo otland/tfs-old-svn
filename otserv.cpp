@@ -41,6 +41,7 @@
 #include "protocolgame.h"
 #include "protocolold.h"
 #include "protocolhttp.h"
+
 #include "status.h"
 #include "manager.h"
 #ifdef __REMOTE_CONTROL__
@@ -568,7 +569,8 @@ void otserv(StringVec args, ServiceManager* services)
 
 		DatabaseManager::getInstance()->checkTriggers();
 		DatabaseManager::getInstance()->checkEncryption();
-		if(g_config.getBool(ConfigManager::OPTIMIZE_DB_AT_STARTUP) && !DatabaseManager::getInstance()->optimizeTables())
+		if(g_config.getBool(ConfigManager::OPTIMIZE_DB_AT_STARTUP) &&
+			!DatabaseManager::getInstance()->optimizeTables())
 			std::cout << "> No tables were optimized." << std::endl;
 	}
 	else
