@@ -1436,7 +1436,7 @@ void ProtocolGame::parseDebugAssert(NetworkMessage& msg)
 		<< std::endl << std::endl;
 
 	m_debugAssertSent = true;
-	Logger::getInstance()->iFile(LOGFILE_CLIENT_ASSERTION, s.str(), false);
+	Logger::getInstance()->iFile(LOGFILE_ASSERTIONS, s.str(), false);
 }
 
 void ProtocolGame::parseBugReport(NetworkMessage& msg)

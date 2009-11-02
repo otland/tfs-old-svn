@@ -29,8 +29,8 @@ ConfigManager::ConfigManager()
 	m_confString[CONFIG_FILE] = getFilePath(FILE_TYPE_CONFIG, "config.lua");
 	m_confBool[LOGIN_ONLY_LOGINSERVER] = m_confBool[START_CLOSED] = false;
 
-	m_confNumber[LOGIN_PORT] = m_confNumber[GAME_PORT] = m_confNumber[ADMIN_PORT] = m_confNumber[STATUS_PORT] = 0;
-	m_confString[DATA_DIRECTORY] = m_confString[IP] = m_confString[RUNFILE] = m_confString[ERROR_LOG] = m_confString[OUT_LOG] = "";
+	m_confNumber[LOGIN_PORT] = m_confNumber[GAME_PORT] = m_confNumber[ADMIN_PORT] = m_confNumber[MANAGER_PORT] = m_confNumber[STATUS_PORT] = 0;
+	m_confString[DATA_DIRECTORY] = m_confString[IP] = m_confString[RUNFILE] = m_confString[OUTPUT_LOG] = "";
 }
 
 bool ConfigManager::load()
@@ -76,14 +76,11 @@ bool ConfigManager::load()
 		if(m_confString[RUNFILE] == "")
 			m_confString[RUNFILE] = getGlobalString("runFile", "");
 
-		if(m_confString[OUT_LOG] == "")
-			m_confString[OUT_LOG] = getGlobalString("outLogName", "");
-
-		if(m_confString[ERROR_LOG] == "")
-			m_confString[ERROR_LOG] = getGlobalString("errorLogName", "");
+		if(m_confString[OUTPUT_LOG] == "")
+			m_confString[OUTPUT_LOG] = getGlobalString("outputLog", "");
 
 		m_confBool[BIND_IP_ONLY] = getGlobalBool("bindOnlyConfiguredIpAddress", false);
-		m_confBool[TRUNCATE_LOGS] = getGlobalBool("truncateLogsOnStartup", true);
+		m_confBool[TRUNCATE_LOG] = getGlobalBool("truncateLogOnStartup", true);
 		#ifdef MULTI_SQL_DRIVERS
 		m_confString[SQL_TYPE] = getGlobalString("sqlType", "sqlite");
 		#endif

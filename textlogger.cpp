@@ -17,13 +17,26 @@
 #include "otpch.h"
 #include "textlogger.h"
 
-#include "tools.h"
 #include "manager.h"
+
+#include "configmanager.h"
+#include "tools.h"
+
+extern ConfigManager g_config;
 
 void Logger::open()
 {
+	std::string path = g_config.getString(ConfigManager::OUTPUT_LOG);
+	if(path.length() < 3)
+		path = "";
+	else if(outPath[0] != '/' && outPath[1] != ':')
+		path = getFilePath(FILE_TYPE_LOG, outPath);
+
 	m_files[LOGFILE_ADMIN] = fopen(getFilePath(FILE_TYPE_LOG, "admin.log").c_str(), "a");
-	m_files[LOGFILE_CLIENT_ASSERTION] = fopen(getFilePath(FILE_TYPE_LOG, "client_assertions.log").c_str(), "a");
+	if(!path.empty())
+		m_files[LOGFILE_OUTPUT] = fopen(path.c_str(), (g_config.getBool(ConfigManager::TRUNCATE_LOG) ? "r" : "a"));
+
+	m_files[LOGFILE_ASSERTIONS] = fopen(getFilePath(FILE_TYPE_LOG, "client_assertions.log").c_str(), "a");
 }
 
 void Logger::close()
@@ -119,20 +132,23 @@ char OutputHandler::overflow(char c)
 {
 	if(c == '\n' || c == '\r')
 	{
+		m_cache += c;
+		Logger::getInstance()->iFile(LOGFILE_OUTPUT, m_cache, false);
 		Manager::getInstance()->output(m_cache);
+
 		m_cache("");
 		m_date = true;
-
-		// TODO: to files?
 	}
 	else
 	{
 		if(m_date)
 		{
-			m_cache += formatDate();
+			m_cache += std::string("[" + formatDate() + "] ");
 			m_date = false;
 		}
 
 		m_cache += c;
 	}
+
+	return c;
 }

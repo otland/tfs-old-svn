@@ -84,7 +84,6 @@ Monsters g_monsters;
 Npcs g_npcs;
 RSA g_RSA;
 Chat g_chat;
-OutputHandler g_output;
 
 IpList serverIps;
 boost::mutex g_loaderLock;
@@ -111,11 +110,9 @@ bool argumentsHandler(StringVec args)
 			"\t--status-port=$1\tPort for status server to listen on.\n";
 #ifndef WINDOWS
 			std::cout << "\t--runfile=$1\t\tSpecifies run file. Will contain the pid\n"
-			"\t\t\t\tof the server process as long as it is running.\n";
+			"\t\t\t\tof the server process as long as run status.\n";
 #endif
-			std::cout << "\t--output-log=$1\t\tAll standard output will be logged to\n"
-			"\t\t\t\tthis file.\n"
-			"\t--error-log=$1\t\tAll standard errors will be logged to\n"
+			std::cout << "\t--log=$1\t\tWhole standard output will be logged to\n"
 			"\t\t\t\tthis file.\n"
 			"\t--closed\t\t\tStarts the server as closed.\n";
 			return false;
@@ -151,10 +148,8 @@ bool argumentsHandler(StringVec args)
 		else if(tmp[0] == "--runfile")
 			g_config.setString(ConfigManager::RUNFILE, tmp[1]);
 #endif
-		else if(tmp[0] == "--output-log")
-			g_config.setString(ConfigManager::OUT_LOG, tmp[1]);
-		else if(tmp[0] == "--error-log")
-			g_config.setString(ConfigManager::ERROR_LOG, tmp[1]);
+		else if(tmp[0] == "--log")
+			g_config.setString(ConfigManager::OUTPUT_LOG, tmp[1]);
 		else if(tmp[0] == "--closed")
 			g_config.setBool(ConfigManager::START_CLOSED, booleanString(tmp[1]));
 	}
@@ -276,50 +271,11 @@ int main(int argc, char* argv[])
 
 	Dispatcher::getInstance()->addTask(createTask(boost::bind(otserv, args, &servicer)));
 	g_loaderSignal.wait(g_loaderUniqueLock);
+	OutputHandler* handler = OutputHandler::getInstance();
 
-	/*std::string outPath = g_config.getString(ConfigManager::OUT_LOG),
-		errPath = g_config.getString(ConfigManager::ERROR_LOG);
-	if(outPath.length() < 3)
-		outPath = "";
-	else if(outPath[0] != '/' && outPath[1] != ':')
-	{
-		outPath = getFilePath(FILE_TYPE_LOG, outPath);
-		std::cout << "> Logging output to file: " << outPath << std::endl;
-	}
-
-	if(errPath.length() < 3)
-		errPath = "";
-	else if(errPath[0] != '/' && errPath[1] != ':')
-	{
-		errPath = getFilePath(FILE_TYPE_LOG, errPath);
-		std::cout << "> Logging errors to file: " << errPath << std::endl;
-	}
-
-	if(!outPath.empty())
-	{
-		boost::shared_ptr<std::ofstream> outFile;
-		outFile.reset(new std::ofstream(outPath.c_str(), (g_config.getBool(ConfigManager::TRUNCATE_LOGS) ?
-			std::ios::trunc : std::ios::app) | std::ios::out));
-		if(!outFile->is_open())
-			startupErrorMessage("Could not open output log file for writing!");
-
-		std::cout.rdbuf(outFile->rdbuf());
-	}
-
-	if(!errPath.empty())
-	{
-		boost::shared_ptr<std::ofstream> errFile;
-		errFile.reset(new std::ofstream(errPath.c_str(), (g_config.getBool(ConfigManager::TRUNCATE_LOGS) ?
-			std::ios::trunc : std::ios::app) | std::ios::out));
-		if(!errFile->is_open())
-			startupErrorMessage("Could not open error log file for writing!");
-
-		std::cerr.rdbuf(errFile->rdbuf());
-	}*/
-
-	std::cout.rdbuf(&g_output);
-	std::cerr.rdbuf(&g_output);
-	std::clog.rdbuf(&g_output);
+	std::cout.rdbuf(handler);
+	std::cerr.rdbuf(handler);
+	std::clog.rdbuf(handler);
 
 	if(servicer.isRunning())
 	{
@@ -407,8 +363,8 @@ void otserv(StringVec args, ServiceManager* services)
 	if(!g_config.load())
 		startupErrorMessage("Unable to load " + g_config.getString(ConfigManager::CONFIG_FILE) + "!");
 
+	std::cout << ">> Opening logs" << std::endl;
 	Logger::getInstance()->open();
-	std::cout << ">> Opening logs..." << std::endl;
 
 	IntegerVec cores = vectorAtoi(explodeString(g_config.getString(ConfigManager::CORES_USED), ","));
 	if(cores[0] != -1)
