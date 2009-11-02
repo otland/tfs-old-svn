@@ -29,8 +29,8 @@ void Logger::open()
 	std::string path = g_config.getString(ConfigManager::OUTPUT_LOG);
 	if(path.length() < 3)
 		path = "";
-	else if(outPath[0] != '/' && outPath[1] != ':')
-		path = getFilePath(FILE_TYPE_LOG, outPath);
+	else if(path[0] != '/' && path[1] != ':')
+		path = getFilePath(FILE_TYPE_LOG, path);
 
 	m_files[LOGFILE_ADMIN] = fopen(getFilePath(FILE_TYPE_LOG, "admin.log").c_str(), "a");
 	if(!path.empty())
@@ -136,7 +136,7 @@ char OutputHandler::overflow(char c)
 		Logger::getInstance()->iFile(LOGFILE_OUTPUT, m_cache, false);
 		Manager::getInstance()->output(m_cache);
 
-		m_cache("");
+		m_cache.clear();
 		m_date = true;
 	}
 	else
