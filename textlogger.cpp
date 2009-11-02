@@ -34,7 +34,7 @@ void Logger::open()
 
 	m_files[LOGFILE_ADMIN] = fopen(getFilePath(FILE_TYPE_LOG, "admin.log").c_str(), "a");
 	if(!path.empty())
-		m_files[LOGFILE_OUTPUT] = fopen(path.c_str(), (g_config.getBool(ConfigManager::TRUNCATE_LOG) ? "r" : "a"));
+		m_files[LOGFILE_OUTPUT] = fopen(path.c_str(), (g_config.getBool(ConfigManager::TRUNCATE_LOG) ? "w" : "a"));
 
 	m_files[LOGFILE_ASSERTIONS] = fopen(getFilePath(FILE_TYPE_LOG, "client_assertions.log").c_str(), "a");
 }

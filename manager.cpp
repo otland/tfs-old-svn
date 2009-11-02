@@ -18,6 +18,7 @@
 #include <iostream>
 
 #include "manager.h"
+#include "luascript.h"
 #include "tools.h"
 
 #include "configmanager.h"
@@ -116,7 +117,7 @@ void ProtocolManager::parsePacket(NetworkMessage& msg)
 				OutputMessagePool::getInstance()->send(output);
 
 				getConnection()->close();
-				addLogLine(LOGTYPE_WARNING, "Wrong command while NO_LOGGED_IN");
+				addLogLine(LOGTYPE_WARNING, "Wrong command while not logged in");
 				return;
 			}
 			break;
@@ -146,7 +147,7 @@ void ProtocolManager::parsePacket(NetworkMessage& msg)
 				{
 					if(!Manager::getInstance()->acceptConnection(this))
 					{
-						output->AddByte(MP_MSG_LOGIN_FAILED);
+						output->AddByte(MP_MSG_FAILURE);
 						output->AddString("Unknown connection");
 						OutputMessagePool::getInstance()->send(output);
 
@@ -157,13 +158,13 @@ void ProtocolManager::parsePacket(NetworkMessage& msg)
 					else
 					{
 						m_state = LOGGED_IN;
-						output->AddByte(MP_MSG_LOGIN_OK);
+						output->AddByte(MP_MSG_SUCCESS);
 						addLogLine(LOGTYPE_EVENT, "Login ok");
 					}
 				}
 				else
 				{
-					output->AddByte(MP_MSG_LOGIN_FAILED);
+					output->AddByte(MP_MSG_FAILURE);
 					output->AddString("Wrong password");
 
 					m_loginTries++;
@@ -172,7 +173,7 @@ void ProtocolManager::parsePacket(NetworkMessage& msg)
 			}
 			else
 			{
-				output->AddByte(MP_MSG_LOGIN_FAILED);
+				output->AddByte(MP_MSG_FAILURE);
 				output->AddString("Cannot login right now!");
 				addLogLine(LOGTYPE_ERROR, "Wrong state at login");
 			}
@@ -180,12 +181,31 @@ void ProtocolManager::parsePacket(NetworkMessage& msg)
 			break;
 		}
 
+		case MP_MSG_KEEP_ALIVE:
+			break;
+
 		case MP_MSG_PING:
 			output->AddByte(MP_MSG_PING);
 			break;
 
-		case MP_MSG_KEEP_ALIVE:
+		case MP_MSG_LUA:
+		{
+			LuaInterface* interface = Manager::getInstance()->getInterface();
+			if(interface->reserveEnv())
+			{
+				interface->loadBuffer(msg.GetString(), NULL);
+				interface->releaseEnv();
+				output->AddByte(MP_MSG_SUCCESS);
+			}
+			else
+			{
+				output->AddByte(MP_MSG_FAILURE)
+				output->AddString("Unable to reserve script environment");
+				addLogLine(LOGTYPE_ERROR, "Unable to reserve script environment");
+			}
+
 			break;
+		}
 
 		default:
 		{
@@ -222,17 +242,17 @@ void ProtocolManager::output(const std::string& message)
 
 bool Manager::addConnection(ProtocolManager* client)
 {
-	if(m_connections.size() >= g_config.getNumber(ConfigManager::MANAGER_CONNECTIONS_LIMIT))
+	if(m_clients.size() >= g_config.getNumber(ConfigManager::MANAGER_CONNECTIONS_LIMIT))
 		return false;
 
-	m_connections[client] = false;
+	m_clients[client] = false;
 	return true;
 }
 
 bool Manager::acceptConnection(ProtocolManager* client)
 {
-	ConnectionMap::iterator it = m_connections.find(client);
-	if(it == m_connections.end())
+	ClientMap::iterator it = m_clients.find(client);
+	if(it == m_clients.end())
 		return false;
 
 	it->second = true;
@@ -241,9 +261,9 @@ bool Manager::acceptConnection(ProtocolManager* client)
 
 void Manager::removeConnection(ProtocolManager* client)
 {
-	ConnectionMap::iterator it = m_connections.find(client);
-	if(it != m_connections.end())
-		m_connections.erase(it);
+	ClientMap::iterator it = m_clients.find(client);
+	if(it != m_clients.end())
+		m_clients.erase(it);
 }
 
 bool Manager::allow(uint32_t ip) const
@@ -262,10 +282,10 @@ bool Manager::allow(uint32_t ip) const
 
 void Manager::output(const std::string& message)
 {
-	if(m_connections.empty())
+	if(m_clients.empty())
 		return;
 
-	for(ConnectionMap::const_iterator it = m_connections.begin(); it != m_connections.end(); ++it)
+	for(ClientMap::const_iterator it = m_clients.begin(); it != m_clients.end(); ++it)
 	{
 		if(it->second)
 			it->first->output(message);

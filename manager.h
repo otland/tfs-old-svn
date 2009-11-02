@@ -24,20 +24,21 @@
 enum
 {
 	MP_MSG_LOGIN = 1,
-	MP_MSG_PING = 2,
-	MP_MSG_KEEP_ALIVE = 3,
+	MP_MSG_KEEP_ALIVE = 2,
+	MP_MSG_PING = 3,
 	MP_MSG_LUA = 4,
 
 	MP_MSG_ERROR = 1,
-	MP_MSG_HELLO = 2,
-	MP_MSG_LOGIN_OK = 3,
-	MP_MSG_LOGIN_FAILED = 4,
+	MP_MSG_SUCCESS = 2,
+	MP_MSG_FAILURE = 3,
+	MP_MSG_HELLO = 4,
 	MP_MSG_PING = 5,
 	MP_MSG_OUTPUT = 6
 };
 
 class ProtocolManager;
 class NetworkMessage;
+class LuaInterface;
 
 class Manager
 {
@@ -56,11 +57,14 @@ class Manager
 		bool allow(uint32_t ip) const;
 		void output(const std::string& message);
 
+		LuaInterface* getInterface() {return &m_interface;}
+
 	protected:
 		Manager() {}
+		LuaInterface m_interface;
 
-		typedef std::map<ProtocolManager*, bool> ConnectionMap;
-		ConnectionMap m_connections;
+		typedef std::map<ProtocolManager*, bool> ClientMap;
+		ClientMap m_clients;
 };
 
 
