@@ -131,7 +131,7 @@ std::streambuf::int_type OutputHandler::overflow(std::streambuf::int_type c/* = 
 		Logger::getInstance()->iFile(LOGFILE_OUTPUT, m_cache, true);
 		m_cache += c;
 
-		std::cout.write(m_cache);
+		std::cout.write(m_cache.c_str(), m_cache.size());
 		Manager::getInstance()->output(m_cache);
 
 		m_cache.clear();
