@@ -318,3 +318,10 @@
 	outLogName = ""
 	errorLogName = ""
 	truncateLogsOnStartup = false
+
+	-- Manager
+	managerLocalhostLimit = true
+	managerConnectionsLimit = 1
+	managerPassword = ""
+	managerPort = 7171
+	managerLogsEnabled = true

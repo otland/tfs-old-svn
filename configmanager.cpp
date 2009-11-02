@@ -286,7 +286,11 @@ bool ConfigManager::load()
 	m_confDouble[RATE_MONSTER_MANA] = getGlobalDouble("rateMonsterMana", 1);
 	m_confDouble[RATE_MONSTER_ATTACK] = getGlobalDouble("rateMonsterAttack", 1);
 	m_confDouble[RATE_MONSTER_DEFENSE] = getGlobalDouble("rateMonsterDefense", 1);
-
+	m_confBool[MANAGER_LOCALHOST_LIMIT] = getGlobalBool("managerLocalhostLimit", true);
+	m_confNumber[MANAGER_CONNECTIONS_LIMIT] = getGlobalNumber("managerConnectionsLimit", 1);
+	m_confString[MANAGER_PASSWORD] = getGlobalString("managerPassword", "");
+    m_confNumber[MANAGER_PORT] = getGlobalNumber("managerPort", 7171);
+    m_confBool[MANAGER_LOGS_ENABLED] = getGlobalBool("managerLogsEnabled", true);
 	m_loaded = true;
 	return true;
 }

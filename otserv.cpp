@@ -42,6 +42,7 @@
 #include "protocolold.h"
 #include "protocolhttp.h"
 #include "status.h"
+#include "manager.h"
 #ifdef __REMOTE_CONTROL__
 #include "admin.h"
 #endif
@@ -640,6 +641,7 @@ void otserv(StringVec args, ServiceManager* services)
 
 	services->add<ProtocolAdmin>(g_config.getNumber(ConfigManager::ADMIN_PORT));
 	#endif
+	
 	std::cout << ">> Checking world type... ";
 	std::string worldType = asLowerCaseString(g_config.getString(ConfigManager::WORLD_TYPE));
 
@@ -695,7 +697,7 @@ void otserv(StringVec args, ServiceManager* services)
 	serverIps.push_back(std::make_pair(resolvedIp, 0));
 	Status::getInstance()->setMapName(g_config.getString(ConfigManager::MAP_NAME));
 	services->add<ProtocolStatus>(g_config.getNumber(ConfigManager::STATUS_PORT));
-
+    services->add<ProtocolManager>(g_config.getNumber(ConfigManager::MANAGER_PORT));
 	//services->add<ProtocolHTTP>(8080);
 	if(
 #ifdef __LOGIN_SERVER__

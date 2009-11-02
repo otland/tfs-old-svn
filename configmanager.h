@@ -59,6 +59,7 @@ class ConfigManager
 			PREFIX_CHANNEL_LOGS,
 			CORES_USED,
 			MAILBOX_DISABLED_TOWNS,
+			MANAGER_PASSWORD,
 			LAST_STRING_CONFIG /* this must be the last one */
 		};
 
@@ -71,6 +72,7 @@ class ConfigManager
 			GAME_PORT,
 			ADMIN_PORT,
 			STATUS_PORT,
+			MANAGER_PORT,
 			SQL_PORT,
 			SQL_KEEPALIVE,
 			MAX_PLAYERS,
@@ -159,6 +161,7 @@ class ConfigManager
 			LOOT_MESSAGE_TYPE,
 			NAME_REPORT_TYPE,
 			HOUSE_CLEAN_OLD,
+			MANAGER_CONNECTIONS_LIMIT,
 			LAST_NUMBER_CONFIG /* this must be the last one */
 		};
 
@@ -259,6 +262,8 @@ class ConfigManager
 			USE_FRAG_HANDLER,
 			ALLOW_FIGHTBACK,
 			VIPLIST_PER_PLAYER,
+			MANAGER_LOCALHOST_LIMIT,
+			MANAGER_LOGS_ENABLED,
 			LAST_BOOL_CONFIG /* this must be the last one */
 		};
 
