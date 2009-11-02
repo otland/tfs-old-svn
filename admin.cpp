@@ -35,7 +35,6 @@
 
 extern Game g_game;
 extern ConfigManager g_config;
-Admin* g_admin = NULL;
 
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
 uint32_t ProtocolAdmin::protocolAdminCount = 0;
@@ -43,21 +42,22 @@ uint32_t ProtocolAdmin::protocolAdminCount = 0;
 
 void ProtocolAdmin::onRecvFirstMessage(NetworkMessage& msg)
 {
-	if(!g_admin->enabled())
+	m_state = NO_CONNECTED;
+	if(g_config.getString(ConfigManager::ADMIN_PASSWORD).empty())
 	{
+		addLogLine(LOGTYPE_EVENT, "connection attempt on disabled protocol");
 		getConnection()->close();
 		return;
 	}
 
-	m_state = NO_CONNECTED;
-	if(!g_admin->allowIP(getIP()))
+	if(!Admin::getInstance()->allow(getIP()))
 	{
 		addLogLine(LOGTYPE_EVENT, "ip not allowed");
 		getConnection()->close();
 		return;
 	}
 
-	if(!g_admin->addConnection())
+	if(!Admin::getInstance()->addConnection())
 	{
 		addLogLine(LOGTYPE_EVENT, "cannot add new connection");
 		getConnection()->close();
@@ -71,8 +71,9 @@ void ProtocolAdmin::onRecvFirstMessage(NetworkMessage& msg)
 		output->AddByte(AP_MSG_HELLO);
 		output->AddU32(1); //version
 		output->AddString("OTADMIN");
-		output->AddU16(g_admin->getProtocolPolicy()); //security policy
-		output->AddU32(g_admin->getProtocolOptions()); //protocol options(encryption, ...)
+
+		output->AddU16(Admin::getInstance()->getPolicy()); //security policy
+		output->AddU32(Admin::getInstance()->getOptions()); //protocol options(encryption, ...)
 		OutputMessagePool::getInstance()->send(output);
 	}
 
@@ -98,7 +99,7 @@ void ProtocolAdmin::parsePacket(NetworkMessage& msg)
 	{
 		case ENCRYPTION_NO_SET:
 		{
-			if(g_admin->requireEncryption())
+			if(Admin::getInstance()->isEncypted())
 			{
 				if((time(NULL) - m_startTime) > 30000)
 				{
@@ -126,7 +127,7 @@ void ProtocolAdmin::parsePacket(NetworkMessage& msg)
 
 		case NO_LOGGED_IN:
 		{
-			if(g_admin->requireLogin())
+			if(g_config.getBool(ConfigManager::ADMIN_REQUIRE_LOGIN))
 			{
 				if((time(NULL) - m_startTime) > 30000)
 				{
@@ -180,10 +181,11 @@ void ProtocolAdmin::parsePacket(NetworkMessage& msg)
 	{
 		case AP_MSG_LOGIN:
 		{
-			if(m_state == NO_LOGGED_IN && g_admin->requireLogin())
+			if(m_state == NO_LOGGED_IN && g_config.getBool(ConfigManager::ADMIN_REQUIRE_LOGIN))
 			{
-				std::string password = msg.GetString();
-				if(g_admin->passwordMatch(password))
+				std::string pass = msg.GetString(), word = g_config.getString(ConfigManager::ADMIN_PASSWORD);
+				_encrypt(word, false);
+				if(pass == word)
 				{
 					m_state = LOGGED_IN;
 					output->AddByte(AP_MSG_LOGIN_OK);
@@ -209,14 +211,14 @@ void ProtocolAdmin::parsePacket(NetworkMessage& msg)
 
 		case AP_MSG_ENCRYPTION:
 		{
-			if(m_state == ENCRYPTION_NO_SET && g_admin->requireEncryption())
+			if(m_state == ENCRYPTION_NO_SET && Admin::getInstance()->isEncypted())
 			{
 				uint8_t keyType = msg.GetByte();
 				switch(keyType)
 				{
 					case ENCRYPTION_RSA1024XTEA:
 					{
-						RSA* rsa = g_admin->getRSAKey(ENCRYPTION_RSA1024XTEA);
+						RSA* rsa = Admin::getInstance()->getRSAKey(ENCRYPTION_RSA1024XTEA);
 						if(!rsa)
 						{
 							output->AddByte(AP_MSG_ENCRYPTION_FAILED);
@@ -268,14 +270,14 @@ void ProtocolAdmin::parsePacket(NetworkMessage& msg)
 
 		case AP_MSG_KEY_EXCHANGE:
 		{
-			if(m_state == ENCRYPTION_NO_SET && g_admin->requireEncryption())
+			if(m_state == ENCRYPTION_NO_SET && Admin::getInstance()->isEncypted())
 			{
 				uint8_t keyType = msg.GetByte();
 				switch(keyType)
 				{
 					case ENCRYPTION_RSA1024XTEA:
 					{
-						RSA* rsa = g_admin->getRSAKey(ENCRYPTION_RSA1024XTEA);
+						RSA* rsa = Admin::getInstance()->getRSAKey(ENCRYPTION_RSA1024XTEA);
 						if(!rsa)
 						{
 							output->AddByte(AP_MSG_KEY_EXCHANGE_FAILED);
@@ -439,7 +441,7 @@ void ProtocolAdmin::parsePacket(NetworkMessage& msg)
 void ProtocolAdmin::deleteProtocolTask()
 {
 	addLogLine(LOGTYPE_EVENT, "end connection");
-	g_admin->removeConnection();
+	Admin::getInstance()->removeConnection();
 	Protocol::deleteProtocolTask();
 }
 
@@ -529,91 +531,32 @@ void ProtocolAdmin::adminCommandSendMail(const std::string& xmlData)
 	OutputMessagePool::getInstance()->send(output);
 }
 
-bool Admin::loadFromXml()
+Admin::Admin(): m_currentConnections(0), m_encrypted(false),
+	m_key_RSA1024XTEA(NULL)
 {
-	xmlDocPtr doc = xmlParseFile(getFilePath(FILE_TYPE_XML, "admin.xml").c_str());
-	if(!doc)
+	std::string strValue = g_config.getString(ConfigManager::ADMIN_ENCRYPTION);
+	if(!strValue.empty())
 	{
-		std::cout << "[Warning - Admin::loadFromXml] Cannot load admin file." << std::endl;
-		std::cout << getLastXMLError() << std::endl;
-		return false;
-	}
-
-	xmlNodePtr p, q, root = xmlDocGetRootElement(doc);
-	if(xmlStrcmp(root->name,(const xmlChar*)"otadmin"))
-	{
-		std::cout << "[Error - Admin::loadFromXml] Malformed admin file" << std::endl;
-		xmlFreeDoc(doc);
-		return false;
-	}
-
-	std::string strValue;
-	if(readXMLString(root, "enabled", strValue))
-		m_enabled = booleanString(strValue);
-
-	int32_t intValue;
-	p = root->children;
-	while(p)
-	{
-		if(xmlStrEqual(p->name, (const xmlChar*)"security"))
+		toLowerCaseString(strValue);
+		if(strValue == "rsa1024xtea")
 		{
-			if(readXMLString(p, "onlylocalhost", strValue))
-				m_onlyLocalHost = booleanString(strValue);
-			if(readXMLInteger(p, "maxconnections", intValue) && intValue > 0)
-				m_maxConnections = intValue;
-			if(readXMLString(p, "loginrequired", strValue))
-				m_requireLogin = booleanString(strValue);
-			if(readXMLString(p, "loginpassword", strValue))
-				m_password = strValue;
-			else if(m_requireLogin)
-				std::cout << "[Warning - Admin::loadFromXml]: Login required, but no password specified - using default." << std::endl;
-		}
-		else if(xmlStrEqual(p->name, (const xmlChar*)"encryption"))
-		{
-			if(readXMLString(p, "required", strValue))
-				m_requireEncryption = booleanString(strValue);
-
-			q = p->children;
-			while(q)
+			m_key_RSA1024XTEA = new RSA();
+			if(!m_key_RSA1024XTEA->setKey(getFilePath(FILE_TYPE_CONFIG,
+				g_config.getString(ConfigManager::ADMIN_ENCRYPTION_DATA)))
 			{
-				if(xmlStrEqual(q->name, (const xmlChar*)"key"))
-				{
-					if(readXMLString(q, "type", strValue))
-					{
-						if(asLowerCaseString(strValue) == "rsa1024xtea")
-						{
-							if(readXMLString(q, "file", strValue))
-							{
-								m_key_RSA1024XTEA = new RSA();
-								if(!m_key_RSA1024XTEA->setKey(getFilePath(FILE_TYPE_XML, strValue)))
-								{
-									delete m_key_RSA1024XTEA;
-									m_key_RSA1024XTEA = NULL;
-									std::cout << "[Error - Admin::loadFromXml]: Could not load RSA key from file " << getFilePath(FILE_TYPE_XML, strValue) << std::endl;
-								}
-							}
-							else
-								std::cout << "[Error - Admin::loadFromXml]: Missing file for RSA1024XTEA key." << std::endl;
-						}
-						else
-							std::cout << "[Warning - Admin::loadFromXml]: " << strValue << " is not a valid key type." << std::endl;
-					}
-				}
-
-				q = q->next;
+				std::cout << "[Warning - Admin::Admin] Unable to set RSA1024XTEA key!" << std::endl;
+				delete m_key_RSA1024XTEA;
+				m_key_RSA1024XTEA = NULL;
 			}
+			else
+				m_encypted = true;
 		}
-
-		p = p->next;
 	}
-
-	xmlFreeDoc(doc);
-	return true;
 }
 
 bool Admin::addConnection()
 {
-	if(m_currrentConnections >= m_maxConnections)
+	if(m_currrentConnections >= g_config.getNumber(ConfigManager::ADMIN_CONNECTIONS_LIMIT))
 		return false;
 
 	m_currrentConnections++;
@@ -626,38 +569,28 @@ void Admin::removeConnection()
 		m_currrentConnections--;
 }
 
-uint16_t Admin::getProtocolPolicy()
+uint16_t Admin::getPolicy() const
 {
 	uint16_t policy = 0;
-	if(requireLogin())
+	if(g_config.getBool(ConfigManager::ADMIN_REQUIRE_LOGIN))
 		policy |= REQUIRE_LOGIN;
-	if(requireEncryption())
+
+	if(m_encrypted)
 		policy |= REQUIRE_ENCRYPTION;
 
 	return policy;
 }
 
-uint32_t Admin::getProtocolOptions()
+uint32_t Admin::getOptions() const
 {
 	uint32_t ret = 0;
-	if(requireEncryption() && m_key_RSA1024XTEA)
-		ret |= ENCRYPTION_RSA1024XTEA;
-
-	return ret;
-}
-
-RSA* Admin::getRSAKey(uint8_t type)
-{
-	switch(type)
+	if(m_encypted)
 	{
-		case ENCRYPTION_RSA1024XTEA:
-			return m_key_RSA1024XTEA;
-
-		default:
-			break;
+		if(m_key_RSA1024XTEA)
+			ret |= ENCRYPTION_RSA1024XTEA;
 	}
 
-	return NULL;
+	return ret;
 }
 
 Item* Admin::createMail(const std::string xmlData, std::string& name, uint32_t& depotId)
@@ -717,32 +650,37 @@ Item* Admin::createMail(const std::string xmlData, std::string& name, uint32_t& 
 	return mailItem;
 }
 
-bool Admin::allowIP(uint32_t ip)
+bool Admin::allow(uint32_t ip) const
 {
-	if(!m_onlyLocalHost)
+	if(!g_config.getBool(ConfigManager::ADMIN_LOCALHOST_ONLY))
 		return !ConnectionManager::getInstance()->isDisabled(ip, 0xFE);
 
 	if(ip == 0x0100007F) //127.0.0.1
 		return true;
 
-	if(g_config.getBool(ConfigManager::ADMIN_LOGS_ENABLED))
+	if(g_config.getBool(ConfigManager::ADMIN_LOGS))
 		LOG_MESSAGE(LOGTYPE_EVENT, "forbidden connection try", "ADMIN " + convertIPAddress(ip));
 
 	return false;
 }
 
-bool Admin::passwordMatch(const std::string& password)
+RSA* Admin::getRSAKey(uint8_t type)
 {
-	//prevent empty password login
-	if(!m_password.length())
-		return false;
+	switch(type)
+	{
+		case ENCRYPTION_RSA1024XTEA:
+			return m_key_RSA1024XTEA;
 
-	return password == m_password;
+		default:
+			break;
+	}
+
+	return NULL;
 }
 
 void ProtocolAdmin::addLogLine(LogType_t type, std::string message)
 {
-	if(g_config.getBool(ConfigManager::ADMIN_LOGS_ENABLED))
+	if(g_config.getBool(ConfigManager::ADMIN_LOGS))
 		LOG_MESSAGE(type, message, "ADMIN " + convertIPAddress(getIP()))
 }
 #endif

@@ -17,9 +17,7 @@
 #ifndef __MANAGER__
 #define __MANAGER__
 #include "otsystem.h"
-
 #include "textlogger.h"
-#include "player.h"
 
 enum
 {
@@ -46,49 +44,27 @@ enum
 
 enum
 {
-	CMD_BROADCAST = 1,
-	CMD_CLOSE_SERVER = 2,
-	CMD_PAY_HOUSES = 3,
-	CMD_OPEN_SERVER = 4,
-	CMD_SHUTDOWN_SERVER = 5,
-	CMD_RELOAD_SCRIPTS = 6,
-	//CMD_PLAYER_INFO = 7,
-	//CMD_GETONLINE = 8,
-	CMD_KICK = 9,
-	//CMD_BAN_MANAGER = 10,
-	//CMD_SERVER_INFO = 11,
-	//CMD_GETHOUSE = 12,
-	CMD_SAVE_SERVER = 13,
-	CMD_SEND_MAIL = 14,
-	CMD_SHALLOW_SAVE_SERVER = 15
+	CMD_BROADCAST = 1
 };
 
 class NetworkMessage;
-
 class Manager
 {
 	public:
-		Manager()
+		virtual ~Manager() {}
+		static Manager* getInstance()
 		{
-			m_currrentConnections = 0;
+			static Manager instance;
+			return &instance;
 		}
 
-		virtual ~Manager()
-		{
-		}
-		
-		static Manager *getInstance()
-		{
-            static Manager instance;
-            return &instance;
-        }
 		bool addConnection();
 		void removeConnection();
-		static Item* createMail(const std::string xmlData, std::string& name, uint32_t& depotId);
-		bool allowIP(uint32_t ip);
-		bool passwordMatch(std::string password);
+
+		bool allow(uint32_t ip) const;
 
 	protected:
+		Manager(): m_currrentConnections(0) {}
 		int32_t m_currrentConnections;
 };
 
@@ -123,21 +99,15 @@ class ProtocolManager : public Protocol
 		static const char* protocolName() {return "manager protocol";}
 
 	protected:
-		virtual void parsePacket(NetworkMessage& msg);
-		virtual void deleteProtocolTask();
-
-		void ManagerCommandPayHouses();
-		void ManagerCommandReload(int8_t reload);
-
-		void ManagerCommandKickPlayer(const std::string& name);
-		void ManagerCommandSendMail(const std::string& xmlData);
-
 		enum ProtocolState_t
 		{
 			NO_CONNECTED,
 			NO_LOGGED_IN,
 			LOGGED_IN,
 		};
+
+		virtual void parsePacket(NetworkMessage& msg);
+		virtual void deleteProtocolTask();
 
 	private:
 		void addLogLine(LogType_t type, std::string message);

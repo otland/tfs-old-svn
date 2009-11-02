@@ -18,21 +18,14 @@
 #include <iostream>
 
 #include "manager.h"
-#include "rsa.h"
 #include "tools.h"
 
 #include "configmanager.h"
-#include "game.h"
 
 #include "connection.h"
 #include "outputmessage.h"
 #include "networkmessage.h"
 
-#include "house.h"
-#include "town.h"
-#include "iologindata.h"
-
-extern Game g_game;
 extern ConfigManager g_config;
 
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
@@ -42,7 +35,14 @@ uint32_t ProtocolManager::protocolManagerCount = 0;
 void ProtocolManager::onRecvFirstMessage(NetworkMessage& msg)
 {
 	m_state = NO_CONNECTED;
-	if(!Manager::getInstance()->allowIP(getIP()))
+	if(g_config.getString(ConfigManager::MANAGER_PASSWORD).empty())
+	{
+		addLogLine(LOGTYPE_EVENT, "connection attempt on disabled protocol");
+		getConnection()->close();
+		return;
+	}
+
+	if(!Manager::getInstance()->allow(getIP()))
 	{
 		addLogLine(LOGTYPE_EVENT, "ip not allowed");
 		getConnection()->close();
@@ -137,8 +137,9 @@ void ProtocolManager::parsePacket(NetworkMessage& msg)
 		{
 			if(m_state == NO_LOGGED_IN)
 			{
-				std::string password = msg.GetString();
-				if(Manager::getInstance()->passwordMatch(password))
+				std::string pass = msg.GetString(), word = g_config.getString(ConfigManager::MANAGER_PASSWORD);
+				_encrypt(word, false);
+				if(pass == word)
 				{
 					m_state = LOGGED_IN;
 					output->AddByte(MP_MSG_LOGIN_OK);
@@ -173,7 +174,7 @@ void ProtocolManager::parsePacket(NetworkMessage& msg)
 			uint8_t command = msg.GetByte();
 			switch(command)
 			{
-				case CMD_SAVE_SERVER:
+				/*case CMD_SAVE_SERVER:
 				case CMD_SHALLOW_SAVE_SERVER:
 				{
 					addLogLine(LOGTYPE_EVENT, "saving server");
@@ -243,14 +244,14 @@ void ProtocolManager::parsePacket(NetworkMessage& msg)
 					Dispatcher::getInstance()->addTask(createTask(boost::bind(
 						&ProtocolManager::ManagerCommandSendMail, this, xmlData)));
 					break;
-				}
+				}*/
 
 				case CMD_BROADCAST:
 				{
 					const std::string param = msg.GetString();
 					addLogLine(LOGTYPE_EVENT, "broadcasting: " + param);
-					Dispatcher::getInstance()->addTask(createTask(boost::bind(
-						&Game::broadcastMessage, &g_game, param, MSG_STATUS_WARNING)));
+					/*Dispatcher::getInstance()->addTask(createTask(boost::bind(
+						&Game::broadcastMessage, &g_game, param, MSG_STATUS_WARNING)));*/
 
 					output->AddByte(MP_MSG_COMMAND_OK);
 					break;
@@ -294,7 +295,7 @@ void ProtocolManager::deleteProtocolTask()
 	Protocol::deleteProtocolTask();
 }
 
-void ProtocolManager::ManagerCommandPayHouses()
+/*void ProtocolManager::ManagerCommandPayHouses()
 {
 	OutputMessage_ptr output = OutputMessagePool::getInstance()->getOutputMessage(this, false);
 	if(!output)
@@ -378,7 +379,7 @@ void ProtocolManager::ManagerCommandSendMail(const std::string& xmlData)
 	}
 
 	OutputMessagePool::getInstance()->send(output);
-}
+}*/
 
 bool Manager::addConnection()
 {
@@ -395,7 +396,7 @@ void Manager::removeConnection()
 		m_currrentConnections--;
 }
 
-Item* Manager::createMail(const std::string xmlData, std::string& name, uint32_t& depotId)
+/*Item* Manager::createMail(const std::string xmlData, std::string& name, uint32_t& depotId)
 {
 	xmlDocPtr doc = xmlParseMemory(xmlData.c_str(), xmlData.length());
 	if(!doc)
@@ -450,9 +451,9 @@ Item* Manager::createMail(const std::string xmlData, std::string& name, uint32_t
 	}
 
 	return mailItem;
-}
+}*/
 
-bool Manager::allowIP(uint32_t ip)
+bool Manager::allow(uint32_t ip) const
 {
 	if(!g_config.getBool(ConfigManager::MANAGER_LOCALHOST_LIMIT))
 		return !ConnectionManager::getInstance()->isDisabled(ip, 0xFE);
@@ -460,23 +461,14 @@ bool Manager::allowIP(uint32_t ip)
 	if(ip == 0x0100007F) //127.0.0.1
 		return true;
 
-	if(g_config.getBool(ConfigManager::MANAGER_LOGS_ENABLED))
-		LOG_MESSAGE(LOGTYPE_EVENT, "forbidden connection try", "Manager " + convertIPAddress(ip));
+	if(g_config.getBool(ConfigManager::MANAGER_LOGS))
+		LOG_MESSAGE(LOGTYPE_EVENT, "forbidden connection try", "MANAGER " + convertIPAddress(ip));
 
 	return false;
 }
 
-bool Manager::passwordMatch(std::string password)
-{
-	//prevent empty password login
-	if(g_config.getString(ConfigManager::MANAGER_PASSWORD).empty())
-		return false;
-
-	return encryptTest(g_config.getString(ConfigManager::MANAGER_PASSWORD), password);
-}
-
 void ProtocolManager::addLogLine(LogType_t type, std::string message)
 {
-	if(g_config.getBool(ConfigManager::MANAGER_LOGS_ENABLED))
-		LOG_MESSAGE(type, message, "Manager " + convertIPAddress(getIP()))
+	if(g_config.getBool(ConfigManager::MANAGER_LOGS))
+		LOG_MESSAGE(type, message, "MANAGER " + convertIPAddress(getIP()))
 }

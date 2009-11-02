@@ -89,8 +89,6 @@
 	bindOnlyConfiguredIpAddress = false
 	loginPort = 7171
 	gamePort = 7172
-	adminPort = 7171
-	statusPort = 7171
 	loginTries = 10
 	retryTimeout = 5 * 1000
 	loginTimeout = 60 * 1000
@@ -302,6 +300,7 @@
 	teleportPlayerSummons = false
 
 	-- Status
+	statusPort = 7171
 	ownerName = ""
 	ownerEmail = "@otland.net"
 	url = "http://otland.net/"
@@ -311,7 +310,6 @@
 	-- Logs
 	-- NOTE: This kind of logging does not work in GUI version.
 	-- For such, please compile the software with __GUI_LOGS__ flag.
-	adminLogsEnabled = false
 	displayPlayersLogging = true
 	prefixChannelLogs = ""
 	runFile = ""
@@ -320,8 +318,23 @@
 	truncateLogsOnStartup = false
 
 	-- Manager
-	managerLocalhostLimit = true
-	managerConnectionsLimit = 1
-	managerPassword = ""
+	-- NOTE: managerPassword left blank disables manager.
 	managerPort = 7171
-	managerLogsEnabled = true
+	managerLogs = true
+	managerPassword = ""
+	managerLocalhostOnly = true
+	managerConnectionsLimit = 1
+
+	-- Admin
+	-- NOTE: adminPassword left blank disables manager.
+	-- Set to anything if you set adminRequireLogin to false.
+	-- adminEncryption available options: rsa1024xtea;
+	-- remember to set correct data!
+	adminPort = 7171
+	adminLogs = true
+	adminPassword = ""
+	adminLocalhostOnly = true
+	adminConnectionsLimit = 1
+	adminRequireLogin = true
+	adminEncryption = ""
+	adminEncryptionData = ""

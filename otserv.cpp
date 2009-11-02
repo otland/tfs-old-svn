@@ -65,11 +65,8 @@
 #ifdef __EXCEPTION_TRACER__
 #include "exception.h"
 #endif
-
 #ifndef __REMOTE_CONTROL__
 #include "textlogger.h"
-#else
-extern Admin* g_admin;
 #endif
 
 #ifdef __NO_BOOST_EXCEPTIONS__
@@ -108,6 +105,7 @@ bool argumentsHandler(StringVec args)
 			"\t--login-port=$1\tPort for login server to listen on.\n"
 			"\t--game-port=$1\tPort for game server to listen on.\n"
 			"\t--admin-port=$1\tPort for admin server to listen on.\n"
+			"\t--manager-port=$1\tPort for manager server to listen on.\n"
 			"\t--status-port=$1\tPort for status server to listen on.\n";
 #ifndef WINDOWS
 			std::cout << "\t--runfile=$1\t\tSpecifies run file. Will contain the pid\n"
@@ -143,6 +141,8 @@ bool argumentsHandler(StringVec args)
 			g_config.setNumber(ConfigManager::GAME_PORT, atoi(tmp[1].c_str()));
 		else if(tmp[0] == "--admin-port")
 			g_config.setNumber(ConfigManager::ADMIN_PORT, atoi(tmp[1].c_str()));
+		else if(tmp[0] == "--manager-port")
+			g_config.setNumber(ConfigManager::MANAGER_PORT, atoi(tmp[1].c_str()));
 		else if(tmp[0] == "--status-port")
 			g_config.setNumber(ConfigManager::STATUS_PORT, atoi(tmp[1].c_str()));
 #ifndef WINDOWS
@@ -633,18 +633,9 @@ void otserv(StringVec args, ServiceManager* services)
 		startupErrorMessage("Unable to load game servers!");
 
 	#endif
-	#ifdef __REMOTE_CONTROL__
-	std::cout << ">> Loading administration protocol" << std::endl;
-	g_admin = new Admin();
-	if(!g_admin->loadFromXml())
-		startupErrorMessage("Unable to load administration protocol!");
-
-	services->add<ProtocolAdmin>(g_config.getNumber(ConfigManager::ADMIN_PORT));
-	#endif
 	
 	std::cout << ">> Checking world type... ";
 	std::string worldType = asLowerCaseString(g_config.getString(ConfigManager::WORLD_TYPE));
-
 	if(worldType == "pvp" || worldType == "2" || worldType == "normal")
 	{
 		g_game.setWorldType(WORLD_TYPE_PVP);
@@ -696,8 +687,13 @@ void otserv(StringVec args, ServiceManager* services)
 
 	serverIps.push_back(std::make_pair(resolvedIp, 0));
 	Status::getInstance()->setMapName(g_config.getString(ConfigManager::MAP_NAME));
+
 	services->add<ProtocolStatus>(g_config.getNumber(ConfigManager::STATUS_PORT));
-    services->add<ProtocolManager>(g_config.getNumber(ConfigManager::MANAGER_PORT));
+	services->add<ProtocolManager>(g_config.getNumber(ConfigManager::MANAGER_PORT));
+	#ifdef __REMOTE_CONTROL__
+	services->add<ProtocolAdmin>(g_config.getNumber(ConfigManager::ADMIN_PORT));
+	#endif
+
 	//services->add<ProtocolHTTP>(8080);
 	if(
 #ifdef __LOGIN_SERVER__

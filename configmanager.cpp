@@ -67,6 +67,9 @@ bool ConfigManager::load()
 		if(m_confNumber[ADMIN_PORT] == 0)
 			m_confNumber[ADMIN_PORT] = getGlobalNumber("adminPort", 7171);
 
+		if(m_confNumber[MANAGER_PORT] == 0)
+			m_confNumber[MANAGER_PORT] = getGlobalNumber("managerPort", 7171);
+
 		if(m_confNumber[STATUS_PORT] == 0)
 			m_confNumber[STATUS_PORT] = getGlobalNumber("statusPort", 7171);
 
@@ -169,7 +172,6 @@ bool ConfigManager::load()
 	m_confBool[CLEAN_MAP_AT_GLOBALSAVE] = getGlobalBool("cleanMapAtGlobalSave", true);
 	m_confBool[FREE_PREMIUM] = getGlobalBool("freePremium", false);
 	m_confNumber[PROTECTION_LEVEL] = getGlobalNumber("protectionLevel", 1);
-	m_confBool[ADMIN_LOGS_ENABLED] = getGlobalBool("adminLogsEnabled", false);
 	m_confNumber[STATUSQUERY_TIMEOUT] = getGlobalNumber("statusTimeout", 5 * 60 * 1000);
 	m_confBool[BROADCAST_BANISHMENTS] = getGlobalBool("broadcastBanishments", true);
 	m_confBool[GENERATE_ACCOUNT_NUMBER] = getGlobalBool("generateAccountNumber", true);
@@ -286,11 +288,18 @@ bool ConfigManager::load()
 	m_confDouble[RATE_MONSTER_MANA] = getGlobalDouble("rateMonsterMana", 1);
 	m_confDouble[RATE_MONSTER_ATTACK] = getGlobalDouble("rateMonsterAttack", 1);
 	m_confDouble[RATE_MONSTER_DEFENSE] = getGlobalDouble("rateMonsterDefense", 1);
-	m_confBool[MANAGER_LOCALHOST_LIMIT] = getGlobalBool("managerLocalhostLimit", true);
+	m_confBool[MANAGER_LOCALHOST_ONLY] = getGlobalBool("managerLocalhostOnly", true);
 	m_confNumber[MANAGER_CONNECTIONS_LIMIT] = getGlobalNumber("managerConnectionsLimit", 1);
 	m_confString[MANAGER_PASSWORD] = getGlobalString("managerPassword", "");
-    m_confNumber[MANAGER_PORT] = getGlobalNumber("managerPort", 7171);
-    m_confBool[MANAGER_LOGS_ENABLED] = getGlobalBool("managerLogsEnabled", true);
+	m_confBool[MANAGER_LOGS] = getGlobalBool("managerLogs", false);
+	m_confBool[ADMIN_LOGS] = getGlobalBool("adminLogs", false);
+	m_confString[ADMIN_PASSWORD] = getGlobalString("adminPassword", "");
+	m_confNumber[ADMIN_CONNECTIONS_LIMIT] = getGlobalNumber("adminConnectionsLimit", 1);
+	m_confBool[ADMIN_LOCALHOST_ONLY] = getGlobalBool("adminLocalhostOnly", true);
+	m_confBool[ADMIN_REQUIRE_LOGIN] = getGlobalBool("adminRequireLogin", true);
+	m_confString[ADMIN_ENCRYPTION] = getGlobalString("adminEncryption", "");
+	m_confString[ADMIN_ENCRYPTION_DATA] = getGlobalString("adminEncryptionData", "");
+
 	m_loaded = true;
 	return true;
 }

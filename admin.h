@@ -18,10 +18,9 @@
 #ifdef __REMOTE_CONTROL__
 #ifndef __ADMIN__
 #define __ADMIN__
-#include "otsystem.h"
 
+#include "otsystem.h"
 #include "textlogger.h"
-#include "player.h"
 
 // -> server
 // command(1 byte) | size(2 bytes) | parameters(size bytes)
@@ -120,7 +119,6 @@ enum
 	CMD_SHALLOW_SAVE_SERVER = 15
 };
 
-
 enum
 {
 	REQUIRE_LOGIN = 1,
@@ -133,50 +131,37 @@ enum
 };
 
 class NetworkMessage;
+class Player;
 class RSA;
 
 class Admin
 {
 	public:
-		Admin()
+		virtual ~Admin() {delete m_key_RSA1024XTEA;}
+		static Manager* getInstance()
 		{
-			m_enabled = m_onlyLocalHost = m_requireLogin = true;
-			m_requireEncryption = false;
-			m_currrentConnections = 0;
-			m_key_RSA1024XTEA = NULL;
-			m_maxConnections = 1;
-			m_password = "";
+			static Manager instance;
+			return &instance;
 		}
-
-		virtual ~Admin()
-		{
-			delete m_key_RSA1024XTEA;
-		}
-
-		bool loadFromXml();
 
 		bool addConnection();
 		void removeConnection();
 
-		uint16_t getProtocolPolicy();
-		uint32_t getProtocolOptions();
-
-		RSA* getRSAKey(uint8_t type);
+		uint16_t getPolicy() const;
+		uint32_t getOptions() const;
 
 		static Item* createMail(const std::string xmlData, std::string& name, uint32_t& depotId);
-		bool allowIP(uint32_t ip);
-		bool passwordMatch(const std::string& password);
+		bool allow(uint32_t ip) const;
 
-		bool enabled() const {return m_enabled;}
-		bool onlyLocalHost() const {return m_onlyLocalHost;}
-		bool requireLogin() const {return m_requireLogin;}
-		bool requireEncryption() const {return m_requireEncryption;}
+		bool isEncypted() const {return m_encrypted;}
+		RSA* getRSAKey(uint8_t type);
 
 	protected:
-		int32_t m_maxConnections, m_currrentConnections;
-		bool m_enabled, m_onlyLocalHost, m_requireLogin, m_requireEncryption;
+		Admin();
 
-		std::string m_password;
+		int32_t m_currrentConnections;
+		bool m_encrypted;
+
 		RSA* m_key_RSA1024XTEA;
 };
 
@@ -211,23 +196,24 @@ class ProtocolAdmin : public Protocol
 		static const char* protocolName() {return "admin protocol";}
 
 	protected:
-		virtual void parsePacket(NetworkMessage& msg);
-		virtual void deleteProtocolTask();
-
-		void adminCommandPayHouses();
-		void adminCommandReload(int8_t reload);
-
-		void adminCommandKickPlayer(const std::string& name);
-		void adminCommandSendMail(const std::string& xmlData);
-
 		enum ProtocolState_t
 		{
 			NO_CONNECTED,
 			ENCRYPTION_NO_SET,
 			ENCRYPTION_OK,
 			NO_LOGGED_IN,
-			LOGGED_IN,
+			LOGGED_IN
 		};
+
+		virtual void parsePacket(NetworkMessage& msg);
+		virtual void deleteProtocolTask();
+
+		// commands
+		void adminCommandPayHouses();
+		void adminCommandReload(int8_t reload);
+
+		void adminCommandKickPlayer(const std::string& name);
+		void adminCommandSendMail(const std::string& xmlData);
 
 	private:
 		void addLogLine(LogType_t type, std::string message);
