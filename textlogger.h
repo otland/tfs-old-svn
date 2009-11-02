@@ -66,7 +66,7 @@ class Logger
 class OutputHandler : public std::streambuf
 {
 	public:
-		virtual ~OutputHandler() {}
+		virtual ~OutputHandler();
 		static OutputHandler* getInstance()
 		{
 			static OutputHandler instance;
