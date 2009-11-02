@@ -17,9 +17,10 @@
 #ifndef __MANAGER__
 #define __MANAGER__
 #include "otsystem.h"
+#include "textlogger.h"
 
 #include "protocol.h"
-#include "textlogger.h"
+#include "luascript.h"
 
 enum
 {
@@ -32,13 +33,12 @@ enum
 	MP_MSG_SUCCESS = 2,
 	MP_MSG_FAILURE = 3,
 	MP_MSG_HELLO = 4,
-	MP_MSG_PING = 5,
+	MP_MSG_PONG = 5,
 	MP_MSG_OUTPUT = 6
 };
 
-class ProtocolManager;
+class ProtocolManager; // TODO: move manager below that class...
 class NetworkMessage;
-class LuaInterface;
 
 class Manager
 {
@@ -60,7 +60,7 @@ class Manager
 		LuaInterface* getInterface() {return &m_interface;}
 
 	protected:
-		Manager() {}
+		Manager(): m_interface("Manager interface") {}
 		LuaInterface m_interface;
 
 		typedef std::map<ProtocolManager*, bool> ClientMap;

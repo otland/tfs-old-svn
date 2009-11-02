@@ -18,7 +18,6 @@
 #include <iostream>
 
 #include "manager.h"
-#include "luascript.h"
 #include "tools.h"
 
 #include "configmanager.h"
@@ -185,7 +184,7 @@ void ProtocolManager::parsePacket(NetworkMessage& msg)
 			break;
 
 		case MP_MSG_PING:
-			output->AddByte(MP_MSG_PING);
+			output->AddByte(MP_MSG_PONG);
 			break;
 
 		case MP_MSG_LUA:
@@ -199,7 +198,7 @@ void ProtocolManager::parsePacket(NetworkMessage& msg)
 			}
 			else
 			{
-				output->AddByte(MP_MSG_FAILURE)
+				output->AddByte(MP_MSG_FAILURE);
 				output->AddString("Unable to reserve script environment");
 				addLogLine(LOGTYPE_ERROR, "Unable to reserve script environment");
 			}
@@ -242,7 +241,8 @@ void ProtocolManager::output(const std::string& message)
 
 bool Manager::addConnection(ProtocolManager* client)
 {
-	if(m_clients.size() >= g_config.getNumber(ConfigManager::MANAGER_CONNECTIONS_LIMIT))
+	if(g_config.getNumber(ConfigManager::MANAGER_CONNECTIONS_LIMIT) > 0 && m_clients.size()
+		>= (size_t)g_config.getNumber(ConfigManager::MANAGER_CONNECTIONS_LIMIT))
 		return false;
 
 	m_clients[client] = false;
