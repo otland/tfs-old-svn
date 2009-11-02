@@ -76,7 +76,7 @@ class OutputHandler : public std::streambuf
 
 	protected:
 		OutputHandler();
-		std::streambuf::int_type overflow(std::streambuf::int_type c = traits_type::eof())
+		std::streambuf::int_type overflow(std::streambuf::int_type c = traits_type::eof());
 
 		std::streambuf* m_buffer;
 		std::string m_cache;
