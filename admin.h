@@ -18,8 +18,9 @@
 #ifdef __REMOTE_CONTROL__
 #ifndef __ADMIN__
 #define __ADMIN__
-
 #include "otsystem.h"
+
+#include "protocol.h"
 #include "textlogger.h"
 
 // -> server
@@ -137,10 +138,10 @@ class RSA;
 class Admin
 {
 	public:
-		virtual ~Admin() {delete m_key_RSA1024XTEA;}
-		static Manager* getInstance()
+		virtual ~Admin();
+		static Admin* getInstance()
 		{
-			static Manager instance;
+			static Admin instance;
 			return &instance;
 		}
 
@@ -164,7 +165,6 @@ class Admin
 
 		RSA* m_key_RSA1024XTEA;
 };
-
 
 class ProtocolAdmin : public Protocol
 {

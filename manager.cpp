@@ -150,7 +150,7 @@ void ProtocolManager::parsePacket(NetworkMessage& msg)
 					m_loginTries++;
 					output->AddByte(MP_MSG_LOGIN_FAILED);
 					output->AddString("wrong password");
-					addLogLine(LOGTYPE_EVENT, "login failed.("+ password + ")");
+					addLogLine(LOGTYPE_EVENT, "login failed.("+ pass + ")");
 				}
 			}
 			else

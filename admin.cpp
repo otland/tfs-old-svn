@@ -196,7 +196,7 @@ void ProtocolAdmin::parsePacket(NetworkMessage& msg)
 					m_loginTries++;
 					output->AddByte(AP_MSG_LOGIN_FAILED);
 					output->AddString("wrong password");
-					addLogLine(LOGTYPE_EVENT, "login failed.("+ password + ")");
+					addLogLine(LOGTYPE_EVENT, "login failed.("+ pass + ")");
 				}
 			}
 			else
@@ -552,6 +552,12 @@ Admin::Admin(): m_currentConnections(0), m_encrypted(false),
 				m_encypted = true;
 		}
 	}
+}
+
+Admin::~Admin()
+{
+	delete m_key_RSA1024XTEA;
+	m_key_RSA1024XTEA = NULL;
 }
 
 bool Admin::addConnection()

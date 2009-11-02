@@ -20,8 +20,6 @@
 #include "protocol.h"
 
 class NetworkMessage;
-class OutputMessage;
-
 class ProtocolHTTP : public Protocol
 {
 	public:

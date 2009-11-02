@@ -17,6 +17,8 @@
 #ifndef __MANAGER__
 #define __MANAGER__
 #include "otsystem.h"
+
+#include "protocol.h"
 #include "textlogger.h"
 
 enum
