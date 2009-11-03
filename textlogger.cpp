@@ -115,13 +115,15 @@ void Logger::log(const char* func, LogType_t type, std::string message, std::str
 
 OutputHandler::OutputHandler()
 {
-	m_buffer = std::clog.rdbuf(this);
+	log = std::clog.rdbuf(this);
+	err = std::cerr.rdbuf(this);
 	m_date = true;
 }
 
 OutputHandler::~OutputHandler()
 {
-	std::clog.rdbuf(m_buffer);
+	std::clog.rdbuf(log);
+	std::cerr.rdbuf(err);
 }
 
 std::streambuf::int_type OutputHandler::overflow(std::streambuf::int_type c/* = traits_type::eof()*/)

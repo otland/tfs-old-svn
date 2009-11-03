@@ -2413,6 +2413,7 @@ const luaL_Reg LuaInterface::luaBitTable[] =
 const luaL_Reg LuaInterface::luaStdTable[] =
 {
 	{"cout", LuaInterface::luaStdCout},
+	{"clog", LuaInterface::luaStdClog},
 	{"cerr", LuaInterface::luaStdCerr},
 
 	{"md5", LuaInterface::luaStdMD5},
@@ -9815,6 +9816,7 @@ int32_t LuaInterface::luaL_dodirectory(lua_State* L)
 	}
 
 EXPOSE_LOG(Cout, std::cout)
+EXPOSE_LOG(Clog, std::clog)
 EXPOSE_LOG(Cerr, std::cerr)
 
 #undef EXPOSE_LOG

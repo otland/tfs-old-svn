@@ -78,7 +78,9 @@ class OutputHandler : public std::streambuf
 		OutputHandler();
 		std::streambuf::int_type overflow(std::streambuf::int_type c = traits_type::eof());
 
-		std::streambuf* m_buffer;
+		std::streambuf* log;
+		std::streambuf* err;
+
 		std::string m_cache;
 		bool m_date;
 };
