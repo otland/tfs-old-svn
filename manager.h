@@ -57,7 +57,7 @@ class Manager
 
 		bool allow(uint32_t ip) const;
 		void output(const std::string& message);
-		bool execute(const std::string& script) const;
+		bool execute(const std::string& script);
 
 	protected:
 		Manager(): m_interface("Manager Interface") {m_interface.initState();}
