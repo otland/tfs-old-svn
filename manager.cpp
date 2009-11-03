@@ -245,12 +245,14 @@ void ProtocolManager::parsePacket(NetworkMessage& msg)
 			output->AddByte(MP_MSG_CHAT_LIST);
 			ChannelList list = g_chat.getPublicChannels();
 
-			output->AddByte(list.size());
+			output->AddU16(list.size());
 			for(ChannelList::const_iterator it = list.begin(); it != list.end(); ++it)
 			{
 				output->AddU16((*it)->getId());
 				output->AddString((*it)->getName());
+
 				output->AddU16((*it)->getFlags());
+				output->AddU16((*it)->getUsers().size());
 			}
 
 			break;
@@ -266,7 +268,7 @@ void ProtocolManager::parsePacket(NetworkMessage& msg)
 				output->AddByte(MP_MSG_CHAT_USERS);
 				UsersMap users = channel->getUsers();
 
-				output->AddU32(users.size());
+				output->AddU16(users.size());
 				for(UsersMap::const_iterator it = users.begin(); it != users.end(); ++it)
 					output->AddU32(it->first);
 			}
