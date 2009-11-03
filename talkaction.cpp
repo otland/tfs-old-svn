@@ -1056,8 +1056,8 @@ bool TalkAction::banishmentInfo(Creature* creature, const std::string& cmd, cons
 
 	char buffer[500 + ban.comment.length()];
 	sprintf(buffer, "%s has been %s at:\n%s by: %s,\nfor the following reason:\n%s.\nThe action taken was:\n%s.\nThe comment given was:\n%s.\n%s%s.",
-		what.c_str(), (deletion ? "deleted" : "banished"), formatDateShort(ban.added).c_str(), admin.c_str(), getReason(ban.reason).c_str(),
-		getAction(ban.action, false).c_str(), ban.comment.c_str(), end.c_str(), (deletion ? "." : formatDateShort(ban.expires, true).c_str()));
+		what.c_str(), (deletion ? "deleted" : "banished"), formatDateEx(ban.added, "%d %b %Y").c_str(), admin.c_str(), getReason(ban.reason).c_str(),
+		getAction(ban.action, false).c_str(), ban.comment.c_str(), end.c_str(), (deletion ? "." : formatDateEx(ban.expires).c_str()));
 
 	player->sendFYIBox(buffer);
 	return true;

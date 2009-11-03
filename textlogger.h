@@ -80,8 +80,6 @@ class OutputHandler : public std::streambuf
 
 		std::streambuf* log;
 		std::streambuf* err;
-
 		std::string m_cache;
-		bool m_date;
 };
 #endif

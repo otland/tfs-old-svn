@@ -188,22 +188,15 @@ void ProtocolManager::parsePacket(NetworkMessage& msg)
 
 		case MP_MSG_LUA:
 		{
-			LuaInterface* interface = Manager::getInstance()->getInterface();
-			if(interface->reserveEnv())
-			{
-				std::string tmp = msg.GetString();
-				std::clog << tmp << std::endl;
-				interface->loadBuffer(tmp);
-
-				interface->releaseEnv();
-				output->AddByte(MP_MSG_SUCCESS);
-			}
-			else
+			std::string script = msg.GetString();
+			if(!Manager::getInstance()->execute(script))
 			{
 				output->AddByte(MP_MSG_FAILURE);
 				output->AddString("Unable to reserve script enviroment");
 				addLogLine(LOGTYPE_ERROR, "Unable to reserve script enviroment");
 			}
+			else
+				output->AddByte(MP_MSG_SUCCESS);
 
 			break;
 		}
@@ -288,6 +281,16 @@ void Manager::output(const std::string& message)
 		if(it->second)
 			it->first->output(message);
 	}
+}
+
+bool Manager::execute(const std::string& script)
+{
+	if(!m_interface.reserveEnv())
+		return false;
+
+	m_interface.loadBuffer(script);
+	m_interface.releaseEnv();
+	return true;
 }
 
 void ProtocolManager::addLogLine(LogType_t type, std::string message)

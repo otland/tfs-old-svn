@@ -617,7 +617,7 @@ std::string formatDate(time_t _time/* = 0*/)
 	return buffer;
 }
 
-std::string formatDateShort(time_t _time, bool detailed/* = false*/)
+std::string formatDateEx(time_t _time/* = 0*/, std::string format/* = "%d %b %Y, %H:%M:%S"*/)
 {
 	char buffer[21];
 	if(!_time)
@@ -625,29 +625,26 @@ std::string formatDateShort(time_t _time, bool detailed/* = false*/)
 
 	const tm* tms = localtime(&_time);
 	if(tms)
-	{
-		std::string format = "%d %b %Y";
-		if(detailed)
-			format += " %H:%M:%S";
-
 		strftime(buffer, 25, format.c_str(), tms);
-	}
 	else
 		sprintf(buffer, "UNIX Time: %d", (int32_t)_time);
 
 	return buffer;
 }
 
-std::string formatTime(int32_t hours, int32_t minutes)
+std::string formatTime(time_t _time/* = 0*/)
 {
-	std::stringstream time;
-	if(hours)
-		time << hours << " " << (hours > 1 ? "hours" : "hour") << (minutes ? " and " : "");
+	char buffer[21];
+	if(!_time)
+		_time = time(NULL);
 
-	if(minutes)
-		time << minutes << " " << (minutes > 1 ? "minutes" : "minute");
+	const tm* tms = localtime(&_time);
+	if(tms)
+		sprintf(buffer, "%02d:%02d:%02d", tms->tm_hour, tms->tm_min, tms->tm_sec);
+	else
+		sprintf(buffer, "UNIX Time: %d", (int32_t)_time);
 
-	return time.str();
+	return buffer;
 }
 
 std::string convertIPAddress(uint32_t ip)

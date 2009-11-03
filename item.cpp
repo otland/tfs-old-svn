@@ -1319,7 +1319,7 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 		replaceString(str, "|TIME|", ss.str());
 
 		ss.str("");
-		replaceString(str, "|DATE|", formatDateShort(now, true));
+		replaceString(str, "|DATE|", formatDateEx(now));
 	}
 
 	s << std::endl << str;

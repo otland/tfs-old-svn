@@ -105,7 +105,6 @@ void Logger::log(const char* func, LogType_t type, std::string message, std::str
 	}
 
 	ss << " - " << func << ") ";
-
 	if(!channel.empty())
 		ss << channel << ": ";
 
@@ -117,7 +116,6 @@ OutputHandler::OutputHandler()
 {
 	log = std::clog.rdbuf(this);
 	err = std::cerr.rdbuf(this);
-	m_date = true;
 }
 
 OutputHandler::~OutputHandler()
@@ -133,24 +131,17 @@ std::streambuf::int_type OutputHandler::overflow(std::streambuf::int_type c/* = 
 		m_cache += c;
 		if(g_config.isLoaded())
 		{
-			Logger::getInstance()->iFile(LOGFILE_OUTPUT, m_cache, false);
+			Logger::getInstance()->iFile(LOGFILE_OUTPUT, std::string(
+				"[" + formatDate() + "] " + m_cache), false);
 			Manager::getInstance()->output(m_cache);
 		}
 
-		std::cout.write(m_cache.c_str(), m_cache.size());
+		std::cout << "[" << formatTime() << "] " << m_cache;
 		m_cache.clear();
 		m_date = true;
 	}
 	else
-	{
-		if(m_date)
-		{
-			m_cache += std::string("[" + formatDate() + "] ");
-			m_date = false;
-		}
-
 		m_cache += c;
-	}
 
 	return c;
 }
