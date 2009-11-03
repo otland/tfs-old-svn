@@ -137,7 +137,7 @@ std::streambuf::int_type OutputHandler::overflow(std::streambuf::int_type c/* = 
 			Manager::getInstance()->output(m_cache);
 		}
 
-		std::cout.write(m_cache, m_cache.size());
+		std::cout.write(m_cache.c_str(), m_cache.size());
 		m_cache.clear();
 		m_date = true;
 	}
