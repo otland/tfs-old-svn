@@ -274,7 +274,9 @@ class ConfigManager
 
 		bool load();
 		bool reload();
-		void startup() {m_startup = false;}
+
+		void startup(bool value = false) {m_startup = value;}
+		bool running() const {return !m_startup;}
 
 		const std::string& getString(uint32_t _what) const;
 		bool getBool(uint32_t _what) const;

@@ -130,12 +130,14 @@ std::streambuf::int_type OutputHandler::overflow(std::streambuf::int_type c/* = 
 {
 	if(c == '\n' || c == '\r')
 	{
-		Logger::getInstance()->iFile(LOGFILE_OUTPUT, m_cache, true);
 		m_cache += c;
+		if(g_config.running())
+		{
+			Logger::getInstance()->iFile(LOGFILE_OUTPUT, m_cache, false);
+			Manager::getInstance()->output(m_cache);
+		}
 
-		std::cout.write(m_cache.c_str(), m_cache.size());
-		Manager::getInstance()->output(m_cache);
-
+		std::cout.write(m_cache, m_cache.size());
 		m_cache.clear();
 		m_date = true;
 	}
