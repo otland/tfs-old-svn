@@ -50,6 +50,7 @@ class Manager
 			static Manager instance;
 			return &instance;
 		}
+		LuaInterface* getInterface() {return &m_interface;}
 
 		bool addConnection(ProtocolManager* client);
 		bool acceptConnection(ProtocolManager* client);
@@ -59,7 +60,8 @@ class Manager
 		void output(const std::string& message);
 
 	protected:
-		Manager() {}
+		Manager(): m_interface("Manager Interface") {m_interface.initState();}
+		LuaInterface m_interface;
 
 		typedef std::map<ProtocolManager*, bool> ClientMap;
 		ClientMap m_clients;
@@ -96,7 +98,6 @@ class ProtocolManager : public Protocol
 		static const char* protocolName() {return "manager protocol";}
 
 		void output(const std::string& message);
-		static LuaInterface m_interface;
 
 	protected:
 		enum ProtocolState_t

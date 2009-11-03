@@ -30,7 +30,6 @@
 extern ConfigManager g_config;
 extern Game g_game;
 
-LuaInterface ProtocolManager::m_interface("Manager Interface");
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
 uint32_t ProtocolManager::protocolManagerCount = 0;
 #endif
@@ -189,12 +188,14 @@ void ProtocolManager::parsePacket(NetworkMessage& msg)
 
 		case MP_MSG_LUA:
 		{
-			if(m_interface.reserveEnv())
+			LuaInterface* interface = Manager::getInstance()->getInterface();
+			if(interface->reserveEnv())
 			{
-				ScriptEnviroment* env = m_interface.getEnv();
-				m_interface.loadBuffer(msg.GetString());
+				std::string tmp = msg.GetString();
+				std::clog << tmp << std::endl;
+				interface->loadBuffer(tmp);
 
-				m_interface.releaseEnv();
+				interface->releaseEnv();
 				output->AddByte(MP_MSG_SUCCESS);
 			}
 			else
@@ -227,13 +228,13 @@ void ProtocolManager::deleteProtocolTask()
 
 void ProtocolManager::output(const std::string& message)
 {
-	/*NetworkMessage_ptr msg = getOutputBuffer();
+	NetworkMessage_ptr msg = getOutputBuffer();
 	if(!msg)
 		return;
 
 	TRACK_MESSAGE(msg)
 	msg->AddByte(MP_MSG_OUTPUT);
-	msg->AddString(message);*/
+	msg->AddString(message);
 }
 
 bool Manager::addConnection(ProtocolManager* client)
