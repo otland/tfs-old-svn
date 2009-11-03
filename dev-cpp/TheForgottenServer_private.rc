@@ -2,7 +2,6 @@
 /* DO NOT EDIT! */
 
 #include <windows.h> // include for version info constants
-#include "../gui_resources.rc"
 
 A ICON MOVEABLE PURE LOADONCALL DISCARDABLE "TheForgottenServer.ico"
 
