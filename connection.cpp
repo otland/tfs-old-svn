@@ -59,7 +59,7 @@ void ConnectionManager::releaseConnection(Connection_ptr connection)
 	#endif
 	boost::recursive_mutex::scoped_lock lockClass(m_connectionManagerLock);
 
-	std::list<Connection_ptr>::iterator it =std::find(m_connections.begin(), m_connections.end(), connection);
+	std::list<Connection_ptr>::iterator it = std::find(m_connections.begin(), m_connections.end(), connection);
 	if(it != m_connections.end())
 		m_connections.erase(it);
 	else
