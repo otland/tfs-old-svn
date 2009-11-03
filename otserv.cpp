@@ -232,13 +232,13 @@ void startupErrorMessage(std::string error = "")
 void otserv(StringVec args, ServiceManager* services);
 int main(int argc, char* argv[])
 {
-	std::set_new_handler(allocationHandler);
 	StringVec args = StringVec(argv, argv + argc);
 	if(argc > 1 && !argumentsHandler(args))
 		return 0;
 
-	g_config.startup();
+	std::set_new_handler(allocationHandler);
 	ServiceManager servicer;
+	g_config.startup();
 
 #ifdef __OTSERV_ALLOCATOR_STATS__
 	boost::thread(boost::bind(&allocatorStatsThread, (void*)NULL));
