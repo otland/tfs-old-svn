@@ -68,7 +68,7 @@ class Manager
 		}
 
 		bool addConnection(ProtocolManager* client);
-		bool acceptConnection(ProtocolManager* client);
+		bool loginConnection(ProtocolManager* client);
 		void removeConnection(ProtocolManager* client);
 
 		bool allow(uint32_t ip) const;
@@ -119,6 +119,8 @@ class ProtocolManager : public Protocol
 		enum {isSingleSocket = false};
 		enum {hasChecksum = false};
 		static const char* protocolName() {return "manager protocol";}
+
+		bool checkChannel(uint16_t channelId) const {return ((m_channels & (uint32_t)channelId) == (uint32_t)channelId);}
 
 		void output(const std::string& message);
 		void addUser(Player* player);

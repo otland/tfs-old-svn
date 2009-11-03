@@ -512,7 +512,7 @@ void Manager::talk(uint32_t playerId, uint16_t channelId, SpeakClasses type, con
 
 	for(ClientMap::const_iterator it = m_clients.begin(); it != m_clients.end(); ++it)
 	{
-		it(it->second && it->first->checkChannel(channelId))
+		if(it->second && it->first->checkChannel(channelId))
 			it->first->talk(playerId, channelId, type, message);
 	}
 }
@@ -524,7 +524,7 @@ void Manager::addUser(uint32_t playerId, uint16_t channelId)
 
 	for(ClientMap::const_iterator it = m_clients.begin(); it != m_clients.end(); ++it)
 	{
-		it(it->second && it->first->checkChannel(channelId))
+		if(it->second && it->first->checkChannel(channelId))
 			it->first->addUser(playerId, channelId);
 	}
 }
@@ -536,8 +536,8 @@ void Manager::removeUser(uint32_t playerId, uint16_t channelId)
 
 	for(ClientMap::const_iterator it = m_clients.begin(); it != m_clients.end(); ++it)
 	{
-		it(it->second && it->first->checkChannel(channelId))
-			it->first->removeUser(playerId, channelId)
+		if(it->second && it->first->checkChannel(channelId))
+			it->first->removeUser(playerId, channelId);
         }
 }
 
