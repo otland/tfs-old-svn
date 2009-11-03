@@ -17,8 +17,9 @@
 #ifndef __MANAGER__
 #define __MANAGER__
 #include "otsystem.h"
-#include "textlogger.h"
+#include "const.h"
 
+#include "textlogger.h"
 #include "protocol.h"
 #include "luascript.h"
 
@@ -29,17 +30,32 @@ enum
 	MP_MSG_KEEP_ALIVE = 3,
 	MP_MSG_PING = 4,
 	MP_MSG_LUA = 5,
+	MP_MSG_USER_INFO = 6,
+	MP_MSG_CHAT_REQUEST = 7,
+	MP_MSG_CHAT_OPEN = 8,
+	MP_MSG_CHAT_CLOSE = 9,
+	MP_MSG_CHAT_TALK = 10,
 
 	MP_MSG_ERROR = 1,
 	MP_MSG_SUCCESS = 2,
 	MP_MSG_FAILURE = 3,
 	MP_MSG_HELLO = 4,
 	MP_MSG_PONG = 5,
-	MP_MSG_OUTPUT = 6
+	MP_MSG_OUTPUT = 6,
+	MP_MSG_USERS = 7,
+	MP_MSG_USER_ADD = 8,
+	MP_MSG_USER_REMOVE = 9,
+	MP_MSG_USER_DATA = 10,
+	MP_MSG_CHAT_LIST = 11,
+	MP_MSG_CHAT_USERS = 12,
+	MP_MSG_CHAT_USER_ADD = 13,
+	MP_MSG_CHAT_USER_REMOVE = 14,
+	MP_MSG_CHAT_MESSAGE = 15
 };
 
-class ProtocolManager; // TODO: move manager below that class...
+class ProtocolManager; // TODO
 class NetworkMessage;
+class Player;
 
 class Manager
 {
@@ -56,8 +72,15 @@ class Manager
 		void removeConnection(ProtocolManager* client);
 
 		bool allow(uint32_t ip) const;
-		void output(const std::string& message);
 		bool execute(const std::string& script);
+
+		void output(const std::string& message);
+		void addUser(Player* player);
+		void removeUser(uint32_t playerId);
+
+		void talk(uint32_t playerId, uint16_t channelId, SpeakClasses type, const std::string& message);
+		void addUser(uint32_t playerId, uint16_t channelId);
+		void removeUser(uint32_t playerId, uint16_t channelId);
 
 	protected:
 		Manager(): m_interface("Manager Interface") {m_interface.initState();}
@@ -79,7 +102,7 @@ class ProtocolManager : public Protocol
 		ProtocolManager(Connection_ptr connection): Protocol(connection)
 		{
 			m_state = NO_CONNECTED;
-			m_loginTries = m_lastCommand = 0;
+			m_loginTries = m_lastCommand = m_channels = 0;
 			m_startTime = time(NULL);
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
 			protocolManagerCount++;
@@ -98,6 +121,12 @@ class ProtocolManager : public Protocol
 		static const char* protocolName() {return "manager protocol";}
 
 		void output(const std::string& message);
+		void addUser(Player* player);
+		void removeUser(uint32_t playerId);
+
+		void talk(uint32_t playerId, uint16_t channelId, SpeakClasses type, const std::string& message);
+		void addUser(uint32_t playerId, uint16_t channelId);
+		void removeUser(uint32_t playerId, uint16_t channelId);
 
 	protected:
 		enum ProtocolState_t
@@ -115,6 +144,6 @@ class ProtocolManager : public Protocol
 
 		int32_t m_loginTries;
 		ProtocolState_t m_state;
-		uint32_t m_lastCommand, m_startTime;
+		uint32_t m_lastCommand, m_startTime, m_channels;
 };
 #endif

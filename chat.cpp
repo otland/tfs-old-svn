@@ -19,6 +19,7 @@
 
 #include "player.h"
 #include "iologindata.h"
+#include "manager.h"
 
 #include "configmanager.h"
 #include "game.h"
@@ -131,6 +132,7 @@ bool ChatChannel::addUser(Player* player)
 	for(CreatureEventList::iterator it = joinEvents.begin(); it != joinEvents.end(); ++it)
 		(*it)->executeChannelJoin(player, m_id, m_users);
 
+	Manager::getInstance()->addUser(player->getID(), m_id);
 	return true;
 }
 
@@ -145,6 +147,7 @@ bool ChatChannel::removeUser(Player* player)
 	for(CreatureEventList::iterator it = leaveEvents.begin(); it != leaveEvents.end(); ++it)
 		(*it)->executeChannelLeave(player, m_id, m_users);
 
+	Manager::getInstance()->removeUser(player->getID(), m_id);
 	return true;
 }
 
@@ -165,6 +168,17 @@ bool ChatChannel::talk(Player* player, SpeakClasses type, const std::string& tex
 
 	if(hasFlag(CHANNELFLAG_LOGGED) && m_file->is_open())
 		*m_file << "[" << formatDate() << "] " << player->getName() << ": " << text << std::endl;
+
+	return true;
+}
+
+bool ChatChannel::talk(std::string nick, SpeakClasses type, std::string text)
+{
+	for(UsersMap::iterator it = m_users.begin(); it != m_users.end(); ++it)
+		it->second->sendChannelMessage(nick, text, type, m_id);
+
+	if(hasFlag(CHANNELFLAG_LOGGED) && m_file->is_open())
+		*m_file << "[" << formatDate() << "] " << nick << ": " << text << std::endl;
 
 	return true;
 }
@@ -515,6 +529,9 @@ bool Chat::talkToChannel(Player* player, SpeakClasses type, const std::string& t
 			return true;
 		}
 	}
+
+	if(isPublicChannel(channelId))
+		Manager::getInstance()->talk(player->getID(), channelId, type, text);
 
 	if(channelId != CHANNEL_GUILD || !g_config.getBool(ConfigManager::INGAME_GUILD_MANAGEMENT)
 		|| (text[0] != '!' && text[0] != '/'))
@@ -1080,16 +1097,16 @@ ChannelList Chat::getChannelList(Player* player)
 	}
 
 	bool hasPrivate = false;
-	PrivateChatChannel* prvChannel = NULL;
+	PrivateChatChannel* privChannel = NULL;
 	for(PrivateChannelMap::iterator pit = m_privateChannels.begin(); pit != m_privateChannels.end(); ++pit)
 	{
-		if(!(prvChannel = pit->second))
+		if(!(privChannel = pit->second))
 			continue;
 
-		if(prvChannel->isInvited(player))
-			list.push_back(prvChannel);
+		if(privChannel->isInvited(player))
+			list.push_back(privChannel);
 
-		if(prvChannel->getOwner() == player->getGUID())
+		if(privChannel->getOwner() == player->getGUID())
 			hasPrivate = true;
 	}
 
@@ -1177,4 +1194,16 @@ PrivateChatChannel* Chat::getPrivateChannel(Player* player)
 	}
 
 	return channel;
+}
+
+ChannelList Chat::getPublicChannels() const
+{
+	ChannelList list;
+	for(NormalChannelMap::const_iterator it = m_normalChannels.begin(); it != m_normalChannels.end(); ++it)
+	{
+		if(isPublicChannel(it->first))
+			list.push_back(it->second);
+	}
+
+	return list;
 }
