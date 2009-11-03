@@ -232,13 +232,13 @@ void startupErrorMessage(std::string error = "")
 void otserv(StringVec args, ServiceManager* services);
 int main(int argc, char* argv[])
 {
+	std::set_new_handler(allocationHandler);
 	StringVec args = StringVec(argv, argv + argc);
 	if(argc > 1 && !argumentsHandler(args))
 		return 0;
 
-	std::set_new_handler(allocationHandler);
-	ServiceManager servicer;
 	g_config.startup();
+	ServiceManager servicer;
 
 #ifdef __OTSERV_ALLOCATOR_STATS__
 	boost::thread(boost::bind(&allocatorStatsThread, (void*)NULL));
@@ -298,8 +298,8 @@ void otserv(StringVec args, ServiceManager* services)
 #if !defined(WINDOWS) && !defined(__ROOT_PERMISSION__)
 	if(!getuid() || !geteuid())
 	{
-		std::clog << "> WARNING: " << STATUS_SERVER_NAME << " has been executed as root user! It is "
-			"recommended to execute as a normal user." << std::endl << "Continue? (y/N)" << std::endl;
+		std::clog << "> WARNING: " << STATUS_SERVER_NAME << " has been executed as super user! It is "
+			<< "recommended to run as a normal user." << std::endl << "Continue? (y/N)" << std::endl;
 		char buffer = getchar();
 		if(buffer != 121 && buffer != 89)
 			startupErrorMessage("Aborted.");
