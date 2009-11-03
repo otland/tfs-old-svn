@@ -126,21 +126,25 @@ OutputHandler::~OutputHandler()
 
 std::streambuf::int_type OutputHandler::overflow(std::streambuf::int_type c/* = traits_type::eof()*/)
 {
-	if(c == '\n' || c == '\r')
+	m_cache += c;
+	if(c != '\n' && c != '\r')
+		return c;
+
+	if(g_config.isLoaded())
 	{
-		m_cache += c;
-		if(g_config.isLoaded())
-		{
-			Logger::getInstance()->iFile(LOGFILE_OUTPUT, std::string(
-				"[" + formatDate() + "] " + m_cache), false);
-			Manager::getInstance()->output(m_cache);
-		}
+		std::stringstream s;
+		if(m_cache.size() > 1)
+			s << "[" << formatDate() << "] ";
 
-		std::cout << "[" << formatTime() << "] " << m_cache;
-		m_cache.clear();
+		s.write(m_cache.c_str(), m_cache.size());
+		Logger::getInstance()->iFile(LOGFILE_OUTPUT, s.str(), false);
+		Manager::getInstance()->output(m_cache);
 	}
-	else
-		m_cache += c;
 
+	if(m_cache.size() > 1)
+		std::cout << "[" << formatTime() << "] ";
+
+	std::cout.write(m_cache.c_str(), m_cache.size());
+	m_cache.clear();
 	return c;
 }
