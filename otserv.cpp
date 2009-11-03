@@ -298,8 +298,8 @@ void otserv(StringVec args, ServiceManager* services)
 #if !defined(WINDOWS) && !defined(__ROOT_PERMISSION__)
 	if(!getuid() || !geteuid())
 	{
-		std::clog << "> WARNING: " << STATUS_SERVER_NAME << " has been executed as root user! It is recommended to execute as a normal user." << std::endl
-			<< "Continue? (y/N)" << std::endl;
+		std::clog << "> WARNING: " << STATUS_SERVER_NAME << " has been executed as root user! It is "
+			"recommended to execute as a normal user." << std::endl << "Continue? (y/N)" << std::endl;
 		char buffer = getchar();
 		if(buffer != 121 && buffer != 89)
 			startupErrorMessage("Aborted.");
