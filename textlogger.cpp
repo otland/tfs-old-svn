@@ -138,7 +138,6 @@ std::streambuf::int_type OutputHandler::overflow(std::streambuf::int_type c/* = 
 
 		std::cout << "[" << formatTime() << "] " << m_cache;
 		m_cache.clear();
-		m_date = true;
 	}
 	else
 		m_cache += c;
