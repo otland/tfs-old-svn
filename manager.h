@@ -58,11 +58,8 @@ class Manager
 		bool allow(uint32_t ip) const;
 		void output(const std::string& message);
 
-		LuaInterface* getInterface() {return &m_interface;}
-
 	protected:
-		Manager(): m_interface("Manager interface") {}
-		LuaInterface m_interface;
+		Manager() {}
 
 		typedef std::map<ProtocolManager*, bool> ClientMap;
 		ClientMap m_clients;
@@ -99,6 +96,7 @@ class ProtocolManager : public Protocol
 		static const char* protocolName() {return "manager protocol";}
 
 		void output(const std::string& message);
+		static LuaInterface m_interface;
 
 	protected:
 		enum ProtocolState_t

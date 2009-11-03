@@ -30,6 +30,7 @@
 extern ConfigManager g_config;
 extern Game g_game;
 
+LuaInterface ProtocolManager::m_interface("Manager Interface");
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
 uint32_t ProtocolManager::protocolManagerCount = 0;
 #endif
@@ -188,18 +189,19 @@ void ProtocolManager::parsePacket(NetworkMessage& msg)
 
 		case MP_MSG_LUA:
 		{
-			LuaInterface* interface = Manager::getInstance()->getInterface();
-			if(interface->reserveEnv())
+			if(m_interface.reserveEnv())
 			{
-				interface->loadBuffer(msg.GetString(), NULL);
-				interface->releaseEnv();
+				ScriptEnviroment* env = m_interface.getEnv();
+				m_interface.loadBuffer(msg.GetString());
+
+				m_interface.releaseEnv();
 				output->AddByte(MP_MSG_SUCCESS);
 			}
 			else
 			{
 				output->AddByte(MP_MSG_FAILURE);
-				output->AddString("Unable to reserve script environment");
-				addLogLine(LOGTYPE_ERROR, "Unable to reserve script environment");
+				output->AddString("Unable to reserve script enviroment");
+				addLogLine(LOGTYPE_ERROR, "Unable to reserve script enviroment");
 			}
 
 			break;
@@ -225,13 +227,13 @@ void ProtocolManager::deleteProtocolTask()
 
 void ProtocolManager::output(const std::string& message)
 {
-	NetworkMessage_ptr msg = getOutputBuffer();
+	/*NetworkMessage_ptr msg = getOutputBuffer();
 	if(!msg)
 		return;
 
 	TRACK_MESSAGE(msg)
 	msg->AddByte(MP_MSG_OUTPUT);
-	msg->AddString(message);
+	msg->AddString(message);*/
 }
 
 bool Manager::addConnection(ProtocolManager* client)
