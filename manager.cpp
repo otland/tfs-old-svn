@@ -58,14 +58,13 @@ void ProtocolManager::onRecvFirstMessage(NetworkMessage& msg)
 		return;
 	}
 
-	if(OutputMessage_ptr output = OutputMessagePool::getInstance()->getOutputMessage(this, false))
+	if(NetworkMessage_ptr msg = getOutputBuffer())
 	{
-		TRACK_MESSAGE(output);
-		output->AddByte(MP_MSG_HELLO);
+		TRACK_MESSAGE(msg);
+		msg->AddByte(MP_MSG_HELLO);
 
-		output->AddU32(1); //version
-		output->AddString("TFADMIN");
-		OutputMessagePool::getInstance()->send(output);
+		msg->AddU32(1); //version
+		msg->AddString("TFADMIN");
 	}
 
 	m_lastCommand = time(NULL);
@@ -81,7 +80,7 @@ void ProtocolManager::parsePacket(NetworkMessage& msg)
 	}
 
 	uint8_t recvbyte = msg.GetByte();
-	OutputMessage_ptr output = OutputMessagePool::getInstance()->getOutputMessage(this, false);
+	NetworkMessage_ptr output = getOutputBuffer();
 	if(!output)
 		return;
 
@@ -102,7 +101,7 @@ void ProtocolManager::parsePacket(NetworkMessage& msg)
 			{
 				output->AddByte(MP_MSG_ERROR);
 				output->AddString("Too many login attempts");
-				OutputMessagePool::getInstance()->send(output);
+				OutputMessagePool::getInstance()->sendAll();
 
 				getConnection()->close();
 				addLogLine(LOGTYPE_WARNING, "Too many login attempts");
@@ -113,7 +112,7 @@ void ProtocolManager::parsePacket(NetworkMessage& msg)
 			{
 				output->AddByte(MP_MSG_ERROR);
 				output->AddString("You are not logged in");
-				OutputMessagePool::getInstance()->send(output);
+				OutputMessagePool::getInstance()->sendAll();
 
 				getConnection()->close();
 				addLogLine(LOGTYPE_WARNING, "Wrong command while not logged in");
@@ -148,7 +147,7 @@ void ProtocolManager::parsePacket(NetworkMessage& msg)
 					{
 						output->AddByte(MP_MSG_FAILURE);
 						output->AddString("Unknown connection");
-						OutputMessagePool::getInstance()->send(output);
+						OutputMessagePool::getInstance()->sendAll();
 
 						getConnection()->close();
 						addLogLine(LOGTYPE_ERROR, "Login failed due to unknown connection");
@@ -215,9 +214,6 @@ void ProtocolManager::parsePacket(NetworkMessage& msg)
 			break;
 		}
 	}
-
-	if(output->getMessageLength() > 0)
-		OutputMessagePool::getInstance()->send(output);
 }
 
 void ProtocolManager::deleteProtocolTask()
@@ -229,14 +225,13 @@ void ProtocolManager::deleteProtocolTask()
 
 void ProtocolManager::output(const std::string& message)
 {
-	OutputMessage_ptr output = OutputMessagePool::getInstance()->getOutputMessage(this, false);
-	if(!output)
+	NetworkMessage_ptr msg = getOutputBuffer();
+	if(!msg)
 		return;
 
-	TRACK_MESSAGE(output)
-	output->AddByte(MP_MSG_OUTPUT);
-	output->AddString(message);
-	OutputMessagePool::getInstance()->send(output);
+	TRACK_MESSAGE(msg)
+	msg->AddByte(MP_MSG_OUTPUT);
+	msg->AddString(message);
 }
 
 bool Manager::addConnection(ProtocolManager* client)
@@ -294,6 +289,12 @@ void Manager::output(const std::string& message)
 
 void ProtocolManager::addLogLine(LogType_t type, std::string message)
 {
-	if(g_config.getBool(ConfigManager::MANAGER_LOGS))
-		LOG_MESSAGE(type, message, "MANAGER " + convertIPAddress(getIP()))
+	if(!g_config.getBool(ConfigManager::MANAGER_LOGS))
+		return;
+
+	std::string tmp = "MANAGER";
+	if(getIP())
+		tmp += " " + convertIPAddress(getIP());
+
+	LOG_MESSAGE(type, message, tmp)
 }

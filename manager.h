@@ -25,9 +25,10 @@
 enum
 {
 	MP_MSG_LOGIN = 1,
-	MP_MSG_KEEP_ALIVE = 2,
-	MP_MSG_PING = 3,
-	MP_MSG_LUA = 4,
+	MP_MSG_LOGOUT = 2,
+	MP_MSG_KEEP_ALIVE = 3,
+	MP_MSG_PING = 4,
+	MP_MSG_LUA = 5,
 
 	MP_MSG_ERROR = 1,
 	MP_MSG_SUCCESS = 2,
@@ -43,7 +44,7 @@ class NetworkMessage;
 class Manager
 {
 	public:
-		virtual ~Manager() {}
+		virtual ~Manager() {m_clients.clear();}
 		static Manager* getInstance()
 		{
 			static Manager instance;
