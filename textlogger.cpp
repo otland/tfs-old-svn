@@ -131,7 +131,7 @@ std::streambuf::int_type OutputHandler::overflow(std::streambuf::int_type c/* = 
 	if(c == '\n' || c == '\r')
 	{
 		m_cache += c;
-		if(g_config.running())
+		if(g_config.isLoaded())
 		{
 			Logger::getInstance()->iFile(LOGFILE_OUTPUT, m_cache, false);
 			Manager::getInstance()->output(m_cache);

@@ -274,9 +274,10 @@ class ConfigManager
 
 		bool load();
 		bool reload();
+		void startup() {m_startup = false;}
 
-		void startup(bool value = false) {m_startup = value;}
-		bool running() const {return !m_startup;}
+		bool isRunning() const {return !m_startup;}
+		bool isLoaded() const {return m_loaded;}
 
 		const std::string& getString(uint32_t _what) const;
 		bool getBool(uint32_t _what) const;
@@ -290,6 +291,8 @@ class ConfigManager
 		void getValue(const std::string& key, lua_State* _L) {LuaInterface::getValue(key, L, _L);}
 
 	private:
+		static void moveValue(lua_State* fromL, lua_State* toL);
+
 		std::string getGlobalString(const std::string& _identifier, const std::string& _default = "")
 		{
 			return LuaInterface::getGlobalString(L, _identifier, _default);
@@ -309,7 +312,6 @@ class ConfigManager
 
 		bool m_loaded, m_startup;
 		lua_State* L;
-		static void moveValue(lua_State* fromL, lua_State* toL);
 
 		std::string m_confString[LAST_STRING_CONFIG];
 		bool m_confBool[LAST_BOOL_CONFIG];
