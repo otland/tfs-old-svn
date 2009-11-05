@@ -18,6 +18,7 @@
 
 #include "ioguild.h"
 #include "database.h"
+#include "player.h"
 
 #include "configmanager.h"
 #include "game.h"

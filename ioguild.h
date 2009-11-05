@@ -19,7 +19,7 @@
 #define __IOGUILD__
 #include "otsystem.h"
 
-#include "player.h"
+class Player;
 class IOGuild
 {
 	public:

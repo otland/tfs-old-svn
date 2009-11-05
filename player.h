@@ -17,7 +17,6 @@
 
 #ifndef __PLAYER__
 #define __PLAYER__
-
 #include "otsystem.h"
 #include "enums.h"
 
