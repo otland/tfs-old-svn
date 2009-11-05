@@ -259,7 +259,8 @@ class PropStream
 		}
 
 	protected:
-		const char* p, end;
+		const char* p;
+		const char* end;
 };
 
 class PropWriteStream
