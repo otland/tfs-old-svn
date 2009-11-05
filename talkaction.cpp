@@ -293,11 +293,12 @@ bool TalkAction::loadFunction(const std::string& functionName)
 	return true;
 }
 
-int32_t TalkAction::executeSay(Creature* creature, const std::string& words, const std::string& param, uint16_t channel)
+int32_t TalkAction::executeSay(Creature* creature, const std::string& words, std::string param, uint16_t channel)
 {
 	//onSay(cid, words, param, channel)
 	if(m_interface->reserveEnv())
 	{
+		trimString(param);
 		ScriptEnviroment* env = m_interface->getEnv();
 		if(m_scripted == EVENT_SCRIPT_BUFFER)
 		{
@@ -474,7 +475,7 @@ bool TalkAction::houseBuy(Creature* creature, const std::string& cmd, const std:
 	ret += "depot of this town for rent.";
 	player->sendTextMessage(MSG_INFO_DESCR, ret.c_str());
 
-	g_game.addMagicEffect(player->getPosition(), MAGIC_EFFECT_ENERGY);
+	g_game.addMagicEffect(player->getPosition(), MAGIC_EFFECT_WRAPS_BLUE);
 	return false;
 }
 
@@ -591,7 +592,7 @@ bool TalkAction::houseSell(Creature* creature, const std::string& cmd, const std
 	if(!g_game.internalStartTrade(player, tradePartner, transferItem))
 		transferItem->onTradeEvent(ON_TRADE_CANCEL, player, NULL);
 
-	g_game.addMagicEffect(player->getPosition(), MAGIC_EFFECT_ENERGY);
+	g_game.addMagicEffect(player->getPosition(), MAGIC_EFFECT_WRAPS_BLUE);
 	return false;
 }
 
@@ -612,7 +613,7 @@ bool TalkAction::houseKick(Creature* creature, const std::string& cmd, const std
 		player->sendCancelMessage(RET_NOTPOSSIBLE);
 	}
 	else
-		g_game.addMagicEffect(player->getPosition(), MAGIC_EFFECT_ENERGY);
+		g_game.addMagicEffect(player->getPosition(), MAGIC_EFFECT_WRAPS_BLUE);
 
 	return false;
 }
@@ -636,7 +637,7 @@ bool TalkAction::houseDoorList(Creature* creature, const std::string& cmd, const
 	{
 		player->setEditHouse(house, door->getDoorId());
 		player->sendHouseWindow(house, door->getDoorId());
-		g_game.addMagicEffect(player->getPosition(), MAGIC_EFFECT_ENERGY);
+		g_game.addMagicEffect(player->getPosition(), MAGIC_EFFECT_WRAPS_BLUE);
 	}
 	else
 	{
@@ -658,7 +659,7 @@ bool TalkAction::houseGuestList(Creature* creature, const std::string& cmd, cons
 	{
 		player->setEditHouse(house, GUEST_LIST);
 		player->sendHouseWindow(house, GUEST_LIST);
-		g_game.addMagicEffect(player->getPosition(), MAGIC_EFFECT_ENERGY);
+		g_game.addMagicEffect(player->getPosition(), MAGIC_EFFECT_WRAPS_BLUE);
 	}
 	else
 	{
@@ -680,7 +681,7 @@ bool TalkAction::houseSubOwnerList(Creature* creature, const std::string& cmd, c
 	{
 		player->setEditHouse(house, SUBOWNER_LIST);
 		player->sendHouseWindow(house, SUBOWNER_LIST);
-		g_game.addMagicEffect(player->getPosition(), MAGIC_EFFECT_ENERGY);
+		g_game.addMagicEffect(player->getPosition(), MAGIC_EFFECT_WRAPS_BLUE);
 	}
 	else
 	{
@@ -970,7 +971,7 @@ bool TalkAction::thingProporties(Creature* creature, const std::string& cmd, con
 	for(it = list.begin(); it != list.end(); ++it)
 		(*it)->onUpdateTile(tile, pos);
 
-	g_game.addMagicEffect(pos, MAGIC_EFFECT_POISON);
+	g_game.addMagicEffect(pos, MAGIC_EFFECT_WRAPS_GREEN);
 	if(invalid.empty())
 		return true;
 
