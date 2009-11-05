@@ -61,7 +61,7 @@
 			Now that we have a database created it is time to import
 			all tables and triggers, closedown the MySQL commandline
 			cd (change directory) to TheForgottenServer one, and type:
-				mysql -uroot -p theforgottenserver < schamas/mysql.sql
+				mysql -uroot -p theforgottenserver < schemas/mysql.sql
 
 			If you changed database name then also remember to change
 			'theforgottenserver' to your database name there.

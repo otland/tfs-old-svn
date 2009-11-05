@@ -55,6 +55,10 @@ bool Outfits::parseOutfitNode(xmlNodePtr p)
 	else
 		name = strValue;
 
+	bool override = false;
+	if(readXMLString(p, "override", strValue) && booleanString(strValue))
+		override = true;
+
 	if(readXMLInteger(p, "access", intValue))
 		newOutfit.accessLevel = intValue;
 
@@ -528,9 +532,31 @@ bool Outfits::parseOutfitNode(xmlNodePtr p)
 			}
 		}
 
-		allOutfits.push_back(outfit);
+		bool add = false;
+		OutfitMap::iterator fit;
 		for(IntegerVec::iterator it = intVector.begin(); it != intVector.end(); ++it)
-			outfitsMap[(*it)][outfit.outfitId] = outfit;
+		{
+			fit = outfitsMap[(*it)].find(outfit.outfitId);
+			if(fit != outfitsMap[(*it)].end())
+			{
+				if(override)
+				{
+					fit->second = outfit;
+					if(!add)
+						add = true;
+				else
+					std::cout << "[Warning - Outfits::parseOutfitNode] Duplicated outfit for gender " << (*it) << " with lookType " << outfit.outfitId << std::endl;
+			}
+			else
+			{
+				outfitsMap[(*it)][outfit.outfitId] = outfit;
+				if(!add)
+					add = true;
+			}
+		}
+
+		if(add)
+			allOutfits.push_back(outfit);
 	}
 
 	return true;

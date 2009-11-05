@@ -1325,7 +1325,7 @@ bool InstantSpell::SearchPlayer(const InstantSpell* spell, Creature* creature, c
 	std::stringstream ss;
 	ss << targetPlayer->getName() << " " << g_game.getSearchString(player->getPosition(), targetPlayer->getPosition(), true, true) << ".";
 	player->sendTextMessage(MSG_INFO_DESCR, ss.str().c_str());
-	g_game.addMagicEffect(player->getPosition(), MAGIC_EFFECT_MAGIC_ENERGY);
+	g_game.addMagicEffect(player->getPosition(), MAGIC_EFFECT_ENERGY);
 	return true;
 }
 
@@ -1379,7 +1379,7 @@ bool InstantSpell::SummonMonster(const InstantSpell* spell, Creature* creature, 
 	if(ret == RET_NOERROR)
 	{
 		spell->postCastSpell(player, (uint32_t)manaCost, (uint32_t)spell->getSoulCost());
-		g_game.addMagicEffect(player->getPosition(), MAGIC_EFFECT_MAGIC_ENERGY);
+		g_game.addMagicEffect(player->getPosition(), MAGIC_EFFECT_ENERGY);
 	}
 	else
 	{
@@ -1463,7 +1463,7 @@ bool InstantSpell::Illusion(const InstantSpell* spell, Creature* creature, const
 	ReturnValue ret = CreateIllusion(creature, param, 60000);
 
 	if(ret == RET_NOERROR)
-		g_game.addMagicEffect(player->getPosition(), MAGIC_EFFECT_MAGIC_BLOOD);
+		g_game.addMagicEffect(player->getPosition(), MAGIC_EFFECT_BLOOD);
 	else
 	{
 		player->sendCancelMessage(ret);
@@ -1618,7 +1618,7 @@ bool ConjureSpell::ConjureItem(const ConjureSpell* spell, Creature* creature, co
 		if(resLeft == RET_NOERROR || resRight == RET_NOERROR)
 		{
 			spell->postCastSpell(player, true, false);
-			g_game.addMagicEffect(player->getPosition(), MAGIC_EFFECT_MAGIC_BLOOD);
+			g_game.addMagicEffect(player->getPosition(), MAGIC_EFFECT_BLOOD);
 			return true;
 		}
 
@@ -1630,7 +1630,7 @@ bool ConjureSpell::ConjureItem(const ConjureSpell* spell, Creature* creature, co
 	else if(internalConjureItem(player, spell->getConjureId(), spell->getConjureCount()) == RET_NOERROR)
 	{
 		spell->postCastSpell(player);
-		g_game.addMagicEffect(player->getPosition(), MAGIC_EFFECT_MAGIC_BLOOD);
+		g_game.addMagicEffect(player->getPosition(), MAGIC_EFFECT_BLOOD);
 		return true;
 	}
 
@@ -1664,7 +1664,7 @@ bool ConjureSpell::ConjureFood(const ConjureSpell* spell, Creature* creature, co
 			internalConjureItem(player, foodType[random_range(0, (sizeof(foodType) / sizeof(uint32_t)) - 1)], 1);
 
 		spell->postCastSpell(player);
-		g_game.addMagicEffect(player->getPosition(), MAGIC_EFFECT_MAGIC_POISON);
+		g_game.addMagicEffect(player->getPosition(), MAGIC_EFFECT_POISON);
 		return true;
 	}
 
@@ -1772,7 +1772,7 @@ bool RuneSpell::Illusion(const RuneSpell* spell, Creature* creature, Item* item,
 	ReturnValue ret = CreateIllusion(creature, illusionItem->getID(), 60000);
 
 	if(ret == RET_NOERROR)
-		g_game.addMagicEffect(player->getPosition(), MAGIC_EFFECT_MAGIC_BLOOD);
+		g_game.addMagicEffect(player->getPosition(), MAGIC_EFFECT_BLOOD);
 	else
 	{
 		player->sendCancelMessage(ret);
@@ -1840,7 +1840,7 @@ bool RuneSpell::Convince(const RuneSpell* spell, Creature* creature, Item* item,
 	}
 
 	spell->postCastSpell(player, (uint32_t)manaCost, (uint32_t)spell->getSoulCost());
-	g_game.addMagicEffect(player->getPosition(), MAGIC_EFFECT_MAGIC_BLOOD);
+	g_game.addMagicEffect(player->getPosition(), MAGIC_EFFECT_BLOOD);
 	return true;
 }
 

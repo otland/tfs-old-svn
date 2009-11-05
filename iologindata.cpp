@@ -1072,7 +1072,6 @@ bool IOLoginData::playerDeath(Player* player, const DeathList& dl)
 	if(tmp > 0 && size > tmp)
 		size = tmp;
 
-	std::list<std::string> uniqueCreatures;
 	uint64_t deathId = db->getLastInsertId();
 	for(DeathList::const_iterator it = dl.begin(); i < size && it != dl.end(); ++it, ++i)
 	{

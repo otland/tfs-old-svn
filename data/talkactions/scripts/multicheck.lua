@@ -1,7 +1,6 @@
 function onSay(cid, words, param, channel)
 	local _ip = nil
-	param = param:trim()
-	if(param:len() > 0) then
+	if(param ~= '') then
 		_ip = tonumber(param)
 		if(not _ip or _ip == 0) then
 			local revertIp = doRevertIp(param)
