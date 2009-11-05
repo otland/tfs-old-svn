@@ -381,7 +381,7 @@ inline bool FileLoader::readBytes(uint8_t* buffer, int32_t size, int32_t pos)
 		return true;
 	}
 
-	if(gzseek(m_file, pos, SEEK_SET) == -1)
+	if(gzseek(m_file, pos, SEEK_SET) < 0)
 	{
 		m_lastError = ERROR_SEEK_ERROR;
 		return false;
@@ -422,7 +422,7 @@ inline bool FileLoader::safeSeek(uint32_t pos)
 		m_cache_index = i;
 		m_cache_offset = pos - m_cached_data[i].base;
 	}
-	else if(gzseek(m_file, pos, SEEK_SET) == -1)
+	else if(gzseek(m_file, pos, SEEK_SET) < 0)
 	{
 		m_lastError = ERROR_SEEK_ERROR;
 		return false;
@@ -506,7 +506,7 @@ int32_t FileLoader::loadCacheBlock(uint32_t pos)
 		m_cached_data[loading_cache].data = new uint8_t[m_cache_size];
 
 	m_cached_data[loading_cache].base = base_pos;
-	if(gzseek(m_file, m_cached_data[loading_cache].base, SEEK_SET) == -1)
+	if(gzseek(m_file, m_cached_data[loading_cache].base, SEEK_SET) < 0)
 	{
 		m_lastError = ERROR_SEEK_ERROR;
 		return -1;
