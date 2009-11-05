@@ -4196,7 +4196,7 @@ bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creat
 
 			const SpectatorVec& list = getSpectators(targetPos);
 			if(combatType != COMBAT_HEALING)
-				addMagicEffect(list, targetPos, MAGIC_EFFECT_ENERGY);
+				addMagicEffect(list, targetPos, MAGIC_EFFECT_WRAPS_BLUE);
 
 			addAnimatedText(list, targetPos, TEXTCOLOR_GREEN, buffer);
 		}
@@ -4356,7 +4356,7 @@ bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creat
 					case COMBAT_LIFEDRAIN:
 					{
 						textColor = TEXTCOLOR_RED;
-						magicEffect = MAGIC_EFFECT_BLOOD;
+						magicEffect = MAGIC_EFFECT_WRAPS_RED;
 						break;
 					}
 
@@ -5152,7 +5152,7 @@ bool Game::playerViolationWindow(uint32_t playerId, std::string name, uint8_t re
 		sprintf(buffer, "You have been %s.", (kickAction > KICK ? "banished" : "namelocked"));
 		target->sendTextMessage(MSG_INFO_DESCR, buffer);
 
-		addMagicEffect(target->getPosition(), MAGIC_EFFECT_POISON);
+		addMagicEffect(target->getPosition(), MAGIC_EFFECT_WRAPS_GREEN);
 		Scheduler::getInstance()->addEvent(createSchedulerTask(1000, boost::bind(
 			&Game::kickPlayer, this, target->getID(), false)));
 	}

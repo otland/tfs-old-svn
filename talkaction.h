@@ -72,7 +72,7 @@ class TalkAction : public Event
 		virtual bool configureEvent(xmlNodePtr p);
 		virtual bool loadFunction(const std::string& functionName);
 
-		int32_t executeSay(Creature* creature, const std::string& words, const std::string& param, uint16_t channel);
+		int32_t executeSay(Creature* creature, const std::string& words, std::string param, uint16_t channel);
 
 		std::string getWords() const {return m_words;}
 		void setWords(const std::string& words) {m_words = words;}
