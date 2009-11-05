@@ -706,8 +706,14 @@ bool Creature::onDeath()
 		if(!it->getKillerCreature()->onKilledCreature(this, flags) && lastHit)
 			return false;
 
+		int8_t value = 0;
 		if(hasBitSet((uint32_t)KILLFLAG_UNJUSTIFIED, flags))
-			it->setUnjustified(true);
+			value += 1;
+
+		if(hasBitSet((uint32_t)KILLFLAG_GUILDWAR, flags))
+			value += 2;
+
+		it->setValue(value);
 	}
 
 	for(CountMap::iterator it = damageMap.begin(); it != damageMap.end(); ++it)

@@ -62,7 +62,8 @@ enum killflags_t
 	KILLFLAG_NONE = 0,
 	KILLFLAG_LASTHIT = 1 << 0,
 	KILLFLAG_JUSTIFY = 1 << 1,
-	KILLFLAG_UNJUSTIFIED = 1 << 2
+	KILLFLAG_UNJUSTIFIED = 1 << 2,
+	KILLFLAG_GUILDWAR = 1 << 3
 };
 
 enum Visible_t
@@ -90,14 +91,15 @@ struct DeathLessThan;
 struct DeathEntry
 {
 		DeathEntry(std::string name, int32_t dmg):
-			data(name), damage(dmg), unjustified(false) {}
+			data(name), damage(dmg), value(0) {}
 		DeathEntry(Creature* killer, int32_t dmg):
-			data(killer), damage(dmg), unjustified(false) {}
-		void setUnjustified(bool v) {unjustified = v;}
+			data(killer), damage(dmg), value(0) {}
 
 		bool isCreatureKill() const {return data.type() == typeid(Creature*);}
 		bool isNameKill() const {return !isCreatureKill();}
-		bool isUnjustified() const {return unjustified;}
+
+		void setValue(int8_t v) {value = v;}
+		int16_t getValue() const {return (int16_t)value;}
 
 		const std::type_info& getKillerType() const {return data.type();}
 		int32_t getDamage() const {return damage;}
@@ -108,7 +110,7 @@ struct DeathEntry
 	protected:
 		boost::any data;
 		int32_t damage;
-		bool unjustified;
+		int8_t value;
 
 		friend struct DeathLessThan;
 };
