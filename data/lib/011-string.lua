@@ -7,7 +7,7 @@ string.trim = function (str)
 	return str:gsub("^%s*(.-)%s*$", "%1")
 end
 
-string.explode = function (str, sep)
+string.explode = function (str, sep, limit)
 	if(type(sep) ~= 'string' or isInArray({tostring(str):len(), sep:len()}, 0)) then
 		return {}
 	end
@@ -16,7 +16,11 @@ string.explode = function (str, sep)
 	for s, e in function() return string.find(str, sep, pos) end do
 		tmp = str:sub(pos, s - 1):trim()
 		table.insert(t, tmp)
+
 		pos = e + 1
+		if(limit ~= nil and i == limit) then
+			break
+		end
 	end
 
 	tmp = str:sub(pos):trim()

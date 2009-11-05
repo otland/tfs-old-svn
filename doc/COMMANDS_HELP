@@ -439,7 +439,7 @@
 			/mc 127.0.0.1 (Display all players with IP = 127.0.0.1)
 			/mc Tester (Display all players with same IP as Tester)
 
-	/waypoints
+	/wp
 		Displays map waypoints.
 
 	/notations

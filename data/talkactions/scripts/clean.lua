@@ -7,12 +7,12 @@ function onSay(cid, words, param, channel)
 	end
 
 	if(param == 'tile') then
-		local removeLoadedFromMap, t = false, string.explode(param, ",")
+		local removeLoaded, t = false, string.explode(param, ",")
 		if(t[2]) then
-			removeLoadedFromMap = getBooleanFromString(t[2])
+			removeLoaded = getBooleanFromString(t[2])
 		end
 
-		doCleanTile(getCreaturePosition(cid), removeLoadedFromMap)
+		doCleanTile(getCreaturePosition(cid), removeLoaded)
 		return true
 	end
 

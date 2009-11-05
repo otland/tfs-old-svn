@@ -768,3 +768,23 @@ enchantedItems = {
 	[2544] = {7840, 7839, 7850, 7838},
 	[8905] = {8906, 8907, 8909, 8908}
 }
+
+Storage_meta =
+{
+	__index = function(t, k)
+		if(k == "type") then
+			return function()
+				return "GameState"
+			end
+		end
+
+		return getStorage(k)
+	end,
+
+	__newindex = function(t, k, v)
+		return doSetStorage(k, v)
+	end
+}
+
+storage = {}
+setmetatable(storage, Storage_meta)

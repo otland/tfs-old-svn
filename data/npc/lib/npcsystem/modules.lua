@@ -3,20 +3,6 @@
 -- Modified by Elf.
 
 if(Modules == nil) then
-	-- default words for greeting and ungreeting the npc. Should be a table containing all such words.
-	FOCUS_GREETWORDS = {'hi', 'hello', 'hey'}
-	FOCUS_FAREWELLWORDS = {'bye', 'farewell', 'cya'}
-
-	-- The words for requesting trade window.
-	SHOP_TRADEREQUEST = {'offer', 'trade'}
-
-	-- The word for accepting/declining an offer. CAN ONLY CONTAIN ONE FIELD! Should be a teble with a single string value.
-	SHOP_YESWORD = {'yes'}
-	SHOP_NOWORD = {'no'}
-
-	-- Pattern used to get the amount of an item a player wants to buy/sell.
-	PATTERN_COUNT = '%d+'
-
 	-- Constants used to separate buying from selling.
 	SHOPMODULE_SELL_ITEM = 1
 	SHOPMODULE_BUY_ITEM = 2
@@ -123,7 +109,7 @@ if(Modules == nil) then
 			elseif(getPlayerVocation(cid) ~= parameters.vocation and getPlayerVocation(cid) ~= parameters.vocation + 4 and vocation ~= 9) then
 				npcHandler:say('This spell is not for your vocation', cid)
 			elseif(not doPlayerRemoveMoney(cid, parameters.price)) then
-				npcHandler:say('You do not have enough money, this spell costs ' .. parameters.price .. ' bronze coins.', cid)
+				npcHandler:say('You do not have enough money, this spell costs ' .. parameters.price .. ' gold coins.', cid)
 			else
 				npcHandler:say('You have learned ' .. parameters.spellName .. '.', cid)
 				playerLearnInstantSpell(cid, parameters.spellName)
@@ -418,7 +404,7 @@ if(Modules == nil) then
 			return false
 		end
 
-		module.npcHandler:say('Do you want to travel to ' .. keywords[1] .. ' for ' .. parameters.cost .. ' bronze coins?', cid)
+		module.npcHandler:say('Do you want to travel to ' .. keywords[1] .. ' for ' .. parameters.cost .. ' gold coins?', cid)
 		return true
 	end
 

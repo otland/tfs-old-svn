@@ -1,5 +1,5 @@
 function onSay(cid, words, param, channel)
-	if(param:trim() ~= '') then
+	if(param ~= '') then
 		doWaypointAddTemporial(param, getCreaturePosition(cid))
 		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Temporial waypoint saved.")
 		return true

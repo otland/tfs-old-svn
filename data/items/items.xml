@@ -14407,13 +14407,13 @@
 	<item id="6574" article="a" name="bar of chocolate">
 		<attribute key="weight" value="10"/>
 	</item>
-	<item id="6575" article="a" name="green balloon">
+	<item id="6575" article="a" name="red balloon">
 		<attribute key="weight" value="10"/>
 	</item>
 	<item id="6576" article="a" name="fireworks rocket">
 		<attribute key="weight" value="100"/>
 	</item>
-	<item id="6577" article="a" name="red balloon">
+	<item id="6577" article="a" name="green balloon">
 		<attribute key="weight" value="10"/>
 	</item>
 	<item id="6578" article="a" name="party hat">

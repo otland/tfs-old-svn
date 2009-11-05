@@ -809,7 +809,7 @@ void Monster::onThinkDefense(uint32_t interval)
 					{
 						addSummon(summon);
 						if(g_game.placeCreature(summon, getPosition()))
-							g_game.addMagicEffect(getPosition(), MAGIC_EFFECT_MAGIC_ENERGY);
+							g_game.addMagicEffect(getPosition(), MAGIC_EFFECT_ENERGY);
 						else
 							removeSummon(summon);
 					}

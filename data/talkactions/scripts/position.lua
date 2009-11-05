@@ -4,7 +4,7 @@ local config = {
 
 function onSay(cid, words, param, channel)
 	local pid = cid
-	if(param ~= '') then
+	if(param ~= '' and getPlayerAccess(cid) >= config.access) then
 		pid = getPlayerByNameWildcard(param)
 		if(not pid or (isPlayerGhost(pid) and getPlayerGhostAccess(pid) > getPlayerGhostAccess(cid))) then
 			doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Player " .. param .. " is not currently online.")
