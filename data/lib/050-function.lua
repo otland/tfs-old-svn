@@ -539,14 +539,14 @@ function getItemWeightById(itemid, count, precision)
 	end
 
 	local weight = item.weight * count
-	if(precision) then
+	--[[if(precision) then
 		return weight
 	end
 
 	local t = string.explode(tostring(weight), ".")
 	if(table.maxn(t) == 2) then
 		return tonumber(t[1] .. "." .. string.sub(t[2], 1, 2))
-	end
+	end]]--
 
 	return weight
 end
