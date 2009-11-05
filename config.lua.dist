@@ -160,7 +160,7 @@
 	-- Map
 	-- NOTE: storeTrash costs more memory, but will perform alot faster cleaning.
 	-- useHouseDataStorage usage may be found at README.
-	mapName = "forgotten"
+	mapName = "forgotten.otbm.gz"
 	mapAuthor = "Komic"
 	randomizeTiles = true
 	useHouseDataStorage = false

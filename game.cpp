@@ -264,7 +264,7 @@ int32_t Game::loadMap(std::string filename)
 	if(!map)
 		map = new Map;
 
-	return map->loadMap(getFilePath(FILE_TYPE_OTHER, std::string("world/" + filename + ".otbm")));
+	return map->loadMap(getFilePath(FILE_TYPE_OTHER, std::string("world/" + filename)));
 }
 
 void Game::cleanMapEx(uint32_t& count)

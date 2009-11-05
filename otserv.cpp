@@ -534,7 +534,7 @@ void otserv(StringVec args, ServiceManager* services)
 		startupErrorMessage("Couldn't estabilish connection to SQL database!");
 
 	std::clog << ">> Loading items" << std::endl;
-	if(Item::items.loadFromOtb(getFilePath(FILE_TYPE_OTHER, "items/items.otb")))
+	if(Item::items.loadFromOtb(getFilePath(FILE_TYPE_OTHER, "items/items.otb.gz")))
 		startupErrorMessage("Unable to load items (OTB)!");
 
 	if(!Item::items.loadFromXml())
