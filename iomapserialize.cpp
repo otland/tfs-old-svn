@@ -407,12 +407,12 @@ bool IOMapSerialize::loadMapBinary(Map* map)
 			uint16_t x = 0, y = 0;
 			uint8_t z = 0;
 
-			propStream.GET_USHORT(x);
-			propStream.GET_USHORT(y);
-			propStream.GET_UCHAR(z);
+			propStream.getShort(x);
+			propStream.getShort(y);
+			propStream.getByte(z);
 
 			uint32_t itemCount = 0;
-			propStream.GET_ULONG(itemCount);
+			propStream.getLong(itemCount);
 
 			Position pos(x, y, (int16_t)z);
 			if(house && house->hasPendingTransfer())
@@ -704,7 +704,7 @@ bool IOMapSerialize::loadContainer(PropStream& propStream, Container* container)
 	}
 
 	uint8_t endAttr = ATTR_END;
-	propStream.GET_UCHAR(endAttr);
+	propStream.getByte(endAttr);
 	if(endAttr == ATTR_END)
 		return true;
 
@@ -719,7 +719,7 @@ bool IOMapSerialize::loadItem(PropStream& propStream, Cylinder* parent, bool dep
 		tile = parent->getTile();
 
 	uint16_t id = 0;
-	propStream.GET_USHORT(id);
+	propStream.getShort(id);
 	Item* item = NULL;
 
 	const ItemType& iType = Item::items[id];
@@ -844,11 +844,11 @@ bool IOMapSerialize::saveTile(PropWriteStream& stream, const Tile* tile)
 	tileCount = items.size(); //lame, but at least we don't need a new variable
 	if(tileCount > 0)
 	{
-		stream.ADD_USHORT(tile->getPosition().x);
-		stream.ADD_USHORT(tile->getPosition().y);
-		stream.ADD_UCHAR(tile->getPosition().z);
+		stream.addShort(tile->getPosition().x);
+		stream.addShort(tile->getPosition().y);
+		stream.addByte(tile->getPosition().z);
 
-		stream.ADD_ULONG(tileCount);
+		stream.addLong(tileCount);
 		for(std::vector<Item*>::iterator it = items.begin(); it != items.end(); ++it)
 			saveItem(stream, (*it));
 	}
@@ -858,16 +858,16 @@ bool IOMapSerialize::saveTile(PropWriteStream& stream, const Tile* tile)
 
 bool IOMapSerialize::saveItem(PropWriteStream& stream, const Item* item)
 {
-	stream.ADD_USHORT(item->getID());
+	stream.addShort(item->getID());
 	item->serializeAttr(stream);
 	if(const Container* container = item->getContainer())
 	{
-		stream.ADD_UCHAR(ATTR_CONTAINER_ITEMS);
-		stream.ADD_ULONG(container->size());
+		stream.addByte(ATTR_CONTAINER_ITEMS);
+		stream.addLong(container->size());
 		for(ItemList::const_reverse_iterator rit = container->getReversedItems(); rit != container->getReversedEnd(); ++rit)
 			saveItem(stream, (*rit));
 	}
 
-	stream.ADD_UCHAR(ATTR_END);
+	stream.addByte(ATTR_END);
 	return true;
 }

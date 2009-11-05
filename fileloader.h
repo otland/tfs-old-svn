@@ -182,7 +182,18 @@ class PropStream
 		int32_t size() const {return end - p;}
 
 		template <typename T>
-		inline bool GET_STRUCT(T* &ret)
+		inline bool getType(T &ret)
+		{
+			if(size() < (int32_t)sizeof(T))
+				return false;
+
+			ret = *((T*)p);
+			p += sizeof(T);
+			return true;
+		}
+
+		template <typename T>
+		inline bool getStruct(T* &ret)
 		{
 			if(size() < (int32_t)sizeof(T))
 			{
@@ -195,26 +206,15 @@ class PropStream
 			return true;
 		}
 
-		template <typename T>
-		inline bool GET_VALUE(T &ret)
-		{
-			if(size() < (int32_t)sizeof(T))
-				return false;
+		inline bool getByte(uint8_t &ret) {return getType(ret);}
+		inline bool getShort(uint16_t &ret) {return getType(ret);}
+		inline bool getTime(time_t &ret) {return getType(ret);}
+		inline bool getLong(uint32_t &ret) {return getType(ret);}
 
-			ret = *((T*)p);
-			p += sizeof(T);
-			return true;
-		}
-
-		inline bool GET_TIME(time_t &ret) {return GET_VALUE(ret);}
-		inline bool GET_ULONG(uint32_t &ret) {return GET_VALUE(ret);}
-		inline bool GET_USHORT(uint16_t &ret) {return GET_VALUE(ret);}
-		inline bool GET_UCHAR(uint8_t &ret) {return GET_VALUE(ret);}
-
-		inline bool GET_STRING(std::string& ret)
+		inline bool getString(std::string& ret)
 		{
 			uint16_t strLen;
-			if(!GET_USHORT(strLen))
+			if(!getShort(strLen))
 				return false;
 
 			if(size() < (int32_t)strLen)
@@ -230,10 +230,10 @@ class PropStream
 			return true;
 		}
 
-		inline bool GET_LSTRING(std::string& ret)
+		inline bool getLongString(std::string& ret)
 		{
 			uint32_t strLen;
-			if(!GET_ULONG(strLen))
+			if(!getLong(strLen))
 				return false;
 
 			if(size() < (int32_t)strLen)
@@ -249,22 +249,7 @@ class PropStream
 			return true;
 		}
 
-		inline bool GET_NSTRING(uint16_t strLen, std::string& ret)
-		{
-			if(size() < (int32_t)strLen)
-				return false;
-
-			char* str = new char[strLen + 1];
-			memcpy(str, p, strLen);
-			str[strLen] = 0;
-
-			ret.assign(str, strLen);
-			delete[] str;
-			p += strLen;
-			return true;
-		}
-
-		inline bool SKIP_N(int16_t n)
+		inline bool skip(int16_t n)
 		{
 			if(size() < n)
 				return false;
@@ -274,8 +259,7 @@ class PropStream
 		}
 
 	protected:
-		const char* p;
-		const char* end;
+		const char* p, end;
 };
 
 class PropWriteStream
@@ -296,22 +280,8 @@ class PropWriteStream
 			return buffer;
 		}
 
-		//TODO: might need temp buffer and zero fill the memory chunk allocated by realloc
 		template <typename T>
-		inline void ADD_TYPE(T* add)
-		{
-			if((bufferSize - size) < sizeof(T))
-			{
-				bufferSize += ((sizeof(T) + 0x1F) & 0xFFFFFFE0);
-				buffer = (char*)realloc(buffer, bufferSize);
-			}
-
-			memcpy(&buffer[size], (char*)add, sizeof(T));
-			size += sizeof(T);
-		}
-
-		template <typename T>
-		inline void ADD_VALUE(T add)
+		inline void addType(T add)
 		{
 			if((bufferSize - size) < sizeof(T))
 			{
@@ -323,14 +293,29 @@ class PropWriteStream
 			size += sizeof(T);
 		}
 
-		inline void ADD_ULONG(uint32_t ret) {ADD_VALUE(ret);}
-		inline void ADD_USHORT(uint16_t ret) {ADD_VALUE(ret);}
-		inline void ADD_UCHAR(uint8_t ret) {ADD_VALUE(ret);}
+		//TODO: might need temp buffer and zero fill the memory chunk allocated by realloc
+		template <typename T>
+		inline void addStruct(T* add)
+		{
+			if((bufferSize - size) < sizeof(T))
+			{
+				bufferSize += ((sizeof(T) + 0x1F) & 0xFFFFFFE0);
+				buffer = (char*)realloc(buffer, bufferSize);
+			}
 
-		inline void ADD_STRING(const std::string& add)
+			memcpy(&buffer[size], (char*)add, sizeof(T));
+			size += sizeof(T);
+		}
+
+		inline void addByte(uint8_t ret) {addType(ret);}
+		inline void addShort(uint16_t ret) {addType(ret);}
+		inline void addTime(time_t ret) {addType(ret);}
+		inline void addLong(uint32_t ret) {addType(ret);}
+
+		inline void addString(const std::string& add)
 		{
 			uint16_t strLen = add.size();
-			ADD_USHORT(strLen);
+			addShort(strLen);
 			if((bufferSize - size) < strLen)
 			{
 				bufferSize += ((strLen + 0x1F) & 0xFFFFFFE0);
@@ -341,10 +326,10 @@ class PropWriteStream
 			size += strLen;
 		}
 
-		inline void ADD_LSTRING(const std::string& add)
+		inline void addLongString(const std::string& add)
 		{
 			uint16_t strLen = add.size();
-			ADD_ULONG(strLen);
+			addLong(strLen);
 			if((bufferSize - size) < strLen)
 			{
 				bufferSize += ((strLen + 0x1F) & 0xFFFFFFE0);

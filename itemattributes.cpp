@@ -278,14 +278,14 @@ boost::any ItemAttribute::get() const
 bool ItemAttributes::unserializeMap(PropStream& stream)
 {
 	uint16_t n;
-	if(!stream.GET_USHORT(n))
+	if(!stream.getShort(n))
 		return true;
 
 	createAttributes();
 	while(n--)
 	{
 		std::string key;
-		if(!stream.GET_STRING(key))
+		if(!stream.getString(key))
 			return false;
 
 		ItemAttribute attr;
@@ -300,15 +300,15 @@ bool ItemAttributes::unserializeMap(PropStream& stream)
 
 void ItemAttributes::serializeMap(PropWriteStream& stream) const
 {
-	stream.ADD_USHORT((uint16_t)std::min((size_t)0xFFFF, attributes->size()));
+	stream.addShort((uint16_t)std::min((size_t)0xFFFF, attributes->size()));
 	AttributeMap::const_iterator it = attributes->begin();
 	for(int32_t i = 0; it != attributes->end() && i <= 0xFFFF; ++it, ++i)
 	{
 		std::string key = it->first;
 		if(key.size() > 0xFFFF)
-			stream.ADD_STRING(key.substr(0, 0xFFFF));
+			stream.addString(key.substr(0, 0xFFFF));
 		else
-			stream.ADD_STRING(key);
+			stream.addString(key);
 
 		it->second.serialize(stream);
 	}
@@ -317,13 +317,13 @@ void ItemAttributes::serializeMap(PropWriteStream& stream) const
 bool ItemAttribute::unserialize(PropStream& stream)
 {
 	uint8_t type = 0;
-	stream.GET_UCHAR(type);
+	stream.getByte(type);
 	switch(type)
 	{
 		case STRING:
 		{
 			std::string v;
-			if(!stream.GET_LSTRING(v))
+			if(!stream.getLongString(v))
 				return false;
 
 			set(v);
@@ -332,7 +332,7 @@ bool ItemAttribute::unserialize(PropStream& stream)
 		case INTEGER:
 		{
 			uint32_t v;
-			if(!stream.GET_ULONG(v))
+			if(!stream.getLong(v))
 				return false;
 
 			set(*reinterpret_cast<int32_t*>(&v));
@@ -341,7 +341,7 @@ bool ItemAttribute::unserialize(PropStream& stream)
 		case FLOAT:
 		{
 			uint32_t v;
-			if(!stream.GET_ULONG(v))
+			if(!stream.getLong(v))
 				return false;
 
 			set(*reinterpret_cast<float*>(&v));
@@ -350,7 +350,7 @@ bool ItemAttribute::unserialize(PropStream& stream)
 		case BOOLEAN:
 		{
 			uint8_t v;
-			if(!stream.GET_UCHAR(v))
+			if(!stream.getByte(v))
 				return false;
 
 			set(v != 0);
@@ -364,20 +364,20 @@ bool ItemAttribute::unserialize(PropStream& stream)
 
 void ItemAttribute::serialize(PropWriteStream& stream) const
 {
-	stream.ADD_UCHAR((uint8_t)type);
+	stream.addByte((uint8_t)type);
 	switch(type)
 	{
 		case STRING:
-			stream.ADD_LSTRING(*getString());
+			stream.addLongString(*getString());
 			break;
 		case INTEGER:
-			stream.ADD_ULONG(*(uint32_t*)getInteger());
+			stream.addLong(*(uint32_t*)getInteger());
 			break;
 		case FLOAT:
-			stream.ADD_ULONG(*(uint32_t*)getFloat());
+			stream.addLong(*(uint32_t*)getFloat());
 			break;
 		case BOOLEAN:
-			stream.ADD_UCHAR(*(uint8_t*)getBoolean());
+			stream.addByte(*(uint8_t*)getBoolean());
 		default:
 			break;
 	}

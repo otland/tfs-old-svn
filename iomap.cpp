@@ -106,7 +106,7 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 	}
 
 	OTBM_root_header* rootHeader;
-	if(!propStream.GET_STRUCT(rootHeader))
+	if(!propStream.getStruct(rootHeader))
 	{
 		setLastErrorString("Could not read header.");
 		return false;
@@ -170,13 +170,13 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 
 	std::string tmp;
 	uint8_t attribute;
-	while(propStream.GET_UCHAR(attribute))
+	while(propStream.getByte(attribute))
 	{
 		switch(attribute)
 		{
 			case OTBM_ATTR_DESCRIPTION:
 			{
-				if(!propStream.GET_STRING(tmp))
+				if(!propStream.getString(tmp))
 				{
 					setLastErrorString("Invalid description tag.");
 					return false;
@@ -187,7 +187,7 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 			}
 			case OTBM_ATTR_EXT_SPAWN_FILE:
 			{
-				if(!propStream.GET_STRING(tmp))
+				if(!propStream.getString(tmp))
 				{
 					setLastErrorString("Invalid spawnfile tag.");
 					return false;
@@ -199,7 +199,7 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 			}
 			case OTBM_ATTR_EXT_HOUSE_FILE:
 			{
-				if(!propStream.GET_STRING(tmp))
+				if(!propStream.getString(tmp))
 				{
 					setLastErrorString("Invalid housefile tag.");
 					return false;
@@ -239,7 +239,7 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 			}
 
 			OTBM_Destination_coords* area_coord;
-			if(!propStream.GET_STRUCT(area_coord))
+			if(!propStream.getStruct(area_coord))
 			{
 				setLastErrorString("Invalid map node.");
 				return false;
@@ -264,7 +264,7 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 					}
 
 					OTBM_Tile_coords* tileCoord;
-					if(!propStream.GET_STRUCT(tileCoord))
+					if(!propStream.getStruct(tileCoord))
 					{
 						setLastErrorString("Could not read tile position.");
 						return false;
@@ -279,7 +279,7 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 					if(type == OTBM_HOUSETILE)
 					{
 						uint32_t _houseid;
-						if(!propStream.GET_ULONG(_houseid))
+						if(!propStream.getLong(_houseid))
 						{
 							std::stringstream ss;
 							ss << "[x:" << px << ", y:" << py << ", z:" << pz << "] Could not read house id.";
@@ -304,14 +304,14 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 
 					//read tile attributes
 					uint8_t attribute;
-					while(propStream.GET_UCHAR(attribute))
+					while(propStream.getByte(attribute))
 					{
 						switch(attribute)
 						{
 							case OTBM_ATTR_TILE_FLAGS:
 							{
 								uint32_t flags;
-								if(!propStream.GET_ULONG(flags))
+								if(!propStream.getLong(flags))
 								{
 									std::stringstream ss;
 									ss << "[x:" << px << ", y:" << py << ", z:" << pz << "] Failed to read tile flags.";
@@ -499,7 +499,7 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 					}
 
 					uint32_t townId = 0;
-					if(!propStream.GET_ULONG(townId))
+					if(!propStream.getLong(townId))
 					{
 						setLastErrorString("Could not read town id.");
 						return false;
@@ -513,7 +513,7 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 					}
 
 					std::string townName;
-					if(!propStream.GET_STRING(townName))
+					if(!propStream.getString(townName))
 					{
 						setLastErrorString("Could not read town name.");
 						return false;
@@ -521,7 +521,7 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 
 					town->setName(townName);
 					OTBM_Destination_coords *townCoords;
-					if(!propStream.GET_STRUCT(townCoords))
+					if(!propStream.getStruct(townCoords))
 					{
 						setLastErrorString("Could not read town coordinates.");
 						return false;
@@ -552,14 +552,14 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 					}
 
 					std::string name;
-					if(!propStream.GET_STRING(name))
+					if(!propStream.getString(name))
 					{
 						setLastErrorString("Could not read waypoint name.");
 						return false;
 					}
 
 					OTBM_Destination_coords* waypoint_coords;
-					if(!propStream.GET_STRUCT(waypoint_coords))
+					if(!propStream.getStruct(waypoint_coords))
 					{
 						setLastErrorString("Could not read waypoint coordinates.");
 						return false;

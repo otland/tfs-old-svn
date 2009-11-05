@@ -50,7 +50,7 @@ FileLoader::~FileLoader()
 	}
 }
 
-bool FileLoader::openFile(const char* filename, bool write, bool caching /*= false*/)
+bool FileLoader::openFile(const char* filename, bool write, bool caching/* = false*/)
 {
 	uint32_t version = 0;
 	if(write)
@@ -86,7 +86,7 @@ bool FileLoader::openFile(const char* filename, bool write, bool caching /*= fal
 				m_use_cache = true;
 				fseek(m_file, 0, SEEK_END);
 				int32_t file_size = ftell(m_file);
-				m_cache_size = std::min(32768, std::max(file_size/20, 8192)) & ~0x1FFF;
+				m_cache_size = std::min(32768, std::max(file_size / 20, 8192)) & ~0x1FFF;
 			}
 
 			if(safeSeek(4))

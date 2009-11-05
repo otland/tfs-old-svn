@@ -93,7 +93,7 @@ Item* Item::CreateItem(const uint16_t type, uint16_t amount/* = 1*/)
 Item* Item::CreateItem(PropStream& propStream)
 {
 	uint16_t type;
-	if(!propStream.GET_USHORT(type))
+	if(!propStream.getShort(type))
 		return NULL;
 
 	return Item::CreateItem(items.getRandomizedItem(type), 0);
@@ -324,7 +324,7 @@ Attr_ReadValue Item::readAttr(AttrTypes_t attr, PropStream& propStream)
 		case ATTR_COUNT:
 		{
 			uint8_t _count;
-			if(!propStream.GET_UCHAR(_count))
+			if(!propStream.getByte(_count))
 				return ATTR_READ_ERROR;
 
 			setSubType((uint16_t)_count);
@@ -334,7 +334,7 @@ Attr_ReadValue Item::readAttr(AttrTypes_t attr, PropStream& propStream)
 		case ATTR_ACTION_ID:
 		{
 			uint16_t aid;
-			if(!propStream.GET_USHORT(aid))
+			if(!propStream.getShort(aid))
 				return ATTR_READ_ERROR;
 
 			setAttribute("aid", aid);
@@ -344,7 +344,7 @@ Attr_ReadValue Item::readAttr(AttrTypes_t attr, PropStream& propStream)
 		case ATTR_UNIQUE_ID:
 		{
 			uint16_t uid;
-			if(!propStream.GET_USHORT(uid))
+			if(!propStream.getShort(uid))
 				return ATTR_READ_ERROR;
 
 			setUniqueId(uid);
@@ -354,7 +354,7 @@ Attr_ReadValue Item::readAttr(AttrTypes_t attr, PropStream& propStream)
 		case ATTR_NAME:
 		{
 			std::string name;
-			if(!propStream.GET_STRING(name))
+			if(!propStream.getString(name))
 				return ATTR_READ_ERROR;
 
 			setAttribute("name", name);
@@ -364,7 +364,7 @@ Attr_ReadValue Item::readAttr(AttrTypes_t attr, PropStream& propStream)
 		case ATTR_PLURALNAME:
 		{
 			std::string name;
-			if(!propStream.GET_STRING(name))
+			if(!propStream.getString(name))
 				return ATTR_READ_ERROR;
 
 			setAttribute("pluralname", name);
@@ -374,7 +374,7 @@ Attr_ReadValue Item::readAttr(AttrTypes_t attr, PropStream& propStream)
 		case ATTR_ARTICLE:
 		{
 			std::string article;
-			if(!propStream.GET_STRING(article))
+			if(!propStream.getString(article))
 				return ATTR_READ_ERROR;
 
 			setAttribute("article", article);
@@ -384,7 +384,7 @@ Attr_ReadValue Item::readAttr(AttrTypes_t attr, PropStream& propStream)
 		case ATTR_ATTACK:
 		{
 			int32_t attack;
-			if(!propStream.GET_ULONG((uint32_t&)attack))
+			if(!propStream.getLong((uint32_t&)attack))
 				return ATTR_READ_ERROR;
 
 			setAttribute("attack", attack);
@@ -394,7 +394,7 @@ Attr_ReadValue Item::readAttr(AttrTypes_t attr, PropStream& propStream)
 		case ATTR_EXTRAATTACK:
 		{
 			int32_t attack;
-			if(!propStream.GET_ULONG((uint32_t&)attack))
+			if(!propStream.getLong((uint32_t&)attack))
 				return ATTR_READ_ERROR;
 
 			setAttribute("extraattack", attack);
@@ -404,7 +404,7 @@ Attr_ReadValue Item::readAttr(AttrTypes_t attr, PropStream& propStream)
 		case ATTR_DEFENSE:
 		{
 			int32_t defense;
-			if(!propStream.GET_ULONG((uint32_t&)defense))
+			if(!propStream.getLong((uint32_t&)defense))
 				return ATTR_READ_ERROR;
 
 			setAttribute("defense", defense);
@@ -414,7 +414,7 @@ Attr_ReadValue Item::readAttr(AttrTypes_t attr, PropStream& propStream)
 		case ATTR_EXTRADEFENSE:
 		{
 			int32_t defense;
-			if(!propStream.GET_ULONG((uint32_t&)defense))
+			if(!propStream.getLong((uint32_t&)defense))
 				return ATTR_READ_ERROR;
 
 			setAttribute("extradefense", defense);
@@ -424,7 +424,7 @@ Attr_ReadValue Item::readAttr(AttrTypes_t attr, PropStream& propStream)
 		case ATTR_ARMOR:
 		{
 			int32_t armor;
-			if(!propStream.GET_ULONG((uint32_t&)armor))
+			if(!propStream.getLong((uint32_t&)armor))
 				return ATTR_READ_ERROR;
 
 			setAttribute("armor", armor);
@@ -434,7 +434,7 @@ Attr_ReadValue Item::readAttr(AttrTypes_t attr, PropStream& propStream)
 		case ATTR_ATTACKSPEED:
 		{
 			int32_t attackSpeed;
-			if(!propStream.GET_ULONG((uint32_t&)attackSpeed))
+			if(!propStream.getLong((uint32_t&)attackSpeed))
 				return ATTR_READ_ERROR;
 
 			setAttribute("attackspeed", attackSpeed);
@@ -444,7 +444,7 @@ Attr_ReadValue Item::readAttr(AttrTypes_t attr, PropStream& propStream)
 		case ATTR_HITCHANCE:
 		{
 			int32_t hitChance;
-			if(!propStream.GET_ULONG((uint32_t&)hitChance))
+			if(!propStream.getLong((uint32_t&)hitChance))
 				return ATTR_READ_ERROR;
 
 			setAttribute("hitchance", hitChance);
@@ -454,7 +454,7 @@ Attr_ReadValue Item::readAttr(AttrTypes_t attr, PropStream& propStream)
 		case ATTR_SCRIPTPROTECTED:
 		{
 			uint8_t protection;
-			if(!propStream.GET_UCHAR(protection))
+			if(!propStream.getByte(protection))
 				return ATTR_READ_ERROR;
 
 			setAttribute("scriptprotected", protection != 0);
@@ -464,7 +464,7 @@ Attr_ReadValue Item::readAttr(AttrTypes_t attr, PropStream& propStream)
 		case ATTR_TEXT:
 		{
 			std::string text;
-			if(!propStream.GET_STRING(text))
+			if(!propStream.getString(text))
 				return ATTR_READ_ERROR;
 
 			setAttribute("text", text);
@@ -474,7 +474,7 @@ Attr_ReadValue Item::readAttr(AttrTypes_t attr, PropStream& propStream)
 		case ATTR_WRITTENDATE:
 		{
 			int32_t date;
-			if(!propStream.GET_ULONG((uint32_t&)date))
+			if(!propStream.getLong((uint32_t&)date))
 				return ATTR_READ_ERROR;
 
 			setAttribute("date", date);
@@ -484,7 +484,7 @@ Attr_ReadValue Item::readAttr(AttrTypes_t attr, PropStream& propStream)
 		case ATTR_WRITTENBY:
 		{
 			std::string writer;
-			if(!propStream.GET_STRING(writer))
+			if(!propStream.getString(writer))
 				return ATTR_READ_ERROR;
 
 			setAttribute("writer", writer);
@@ -494,7 +494,7 @@ Attr_ReadValue Item::readAttr(AttrTypes_t attr, PropStream& propStream)
 		case ATTR_DESC:
 		{
 			std::string text;
-			if(!propStream.GET_STRING(text))
+			if(!propStream.getString(text))
 				return ATTR_READ_ERROR;
 
 			setAttribute("description", text);
@@ -504,7 +504,7 @@ Attr_ReadValue Item::readAttr(AttrTypes_t attr, PropStream& propStream)
 		case ATTR_RUNE_CHARGES:
 		{
 			uint8_t charges;
-			if(!propStream.GET_UCHAR(charges))
+			if(!propStream.getByte(charges))
 				return ATTR_READ_ERROR;
 
 			setSubType((uint16_t)charges);
@@ -514,7 +514,7 @@ Attr_ReadValue Item::readAttr(AttrTypes_t attr, PropStream& propStream)
 		case ATTR_CHARGES:
 		{
 			uint16_t charges;
-			if(!propStream.GET_USHORT(charges))
+			if(!propStream.getShort(charges))
 				return ATTR_READ_ERROR;
 
 			setSubType(charges);
@@ -524,7 +524,7 @@ Attr_ReadValue Item::readAttr(AttrTypes_t attr, PropStream& propStream)
 		case ATTR_DURATION:
 		{
 			int32_t duration;
-			if(!propStream.GET_ULONG((uint32_t&)duration))
+			if(!propStream.getLong((uint32_t&)duration))
 				return ATTR_READ_ERROR;
 
 			setAttribute("duration", duration);
@@ -534,7 +534,7 @@ Attr_ReadValue Item::readAttr(AttrTypes_t attr, PropStream& propStream)
 		case ATTR_DECAYING_STATE:
 		{
 			uint8_t state;
-			if(!propStream.GET_UCHAR(state))
+			if(!propStream.getByte(state))
 				return ATTR_READ_ERROR;
 
 			if((ItemDecayState_t)state != DECAYING_FALSE)
@@ -551,7 +551,7 @@ Attr_ReadValue Item::readAttr(AttrTypes_t attr, PropStream& propStream)
 		case ATTR_DEPOT_ID:
 		{
 			uint16_t depot;
-			if(!propStream.GET_USHORT(depot))
+			if(!propStream.getShort(depot))
 				return ATTR_READ_ERROR;
 
 			break;
@@ -561,7 +561,7 @@ Attr_ReadValue Item::readAttr(AttrTypes_t attr, PropStream& propStream)
 		case ATTR_HOUSEDOORID:
 		{
 			uint8_t door;
-			if(!propStream.GET_UCHAR(door))
+			if(!propStream.getByte(door))
 				return ATTR_READ_ERROR;
 
 			break;
@@ -571,7 +571,7 @@ Attr_ReadValue Item::readAttr(AttrTypes_t attr, PropStream& propStream)
 		case ATTR_TELE_DEST:
 		{
 			TeleportDest* dest;
-			if(!propStream.GET_STRUCT(dest))
+			if(!propStream.getStruct(dest))
 				return ATTR_READ_ERROR;
 
 			break;
@@ -581,7 +581,7 @@ Attr_ReadValue Item::readAttr(AttrTypes_t attr, PropStream& propStream)
 		case ATTR_SLEEPERGUID:
 		{
 			uint32_t sleeper;
-			if(!propStream.GET_ULONG(sleeper))
+			if(!propStream.getLong(sleeper))
 				return ATTR_READ_ERROR;
 
 			break;
@@ -590,7 +590,7 @@ Attr_ReadValue Item::readAttr(AttrTypes_t attr, PropStream& propStream)
 		case ATTR_SLEEPSTART:
 		{
 			uint32_t sleepStart;
-			if(!propStream.GET_ULONG(sleepStart))
+			if(!propStream.getLong(sleepStart))
 				return ATTR_READ_ERROR;
 
 			break;
@@ -600,7 +600,7 @@ Attr_ReadValue Item::readAttr(AttrTypes_t attr, PropStream& propStream)
 		case ATTR_CONTAINER_ITEMS:
 		{
 			uint32_t _count;
-			propStream.GET_ULONG(_count);
+			propStream.getLong(_count);
 			return ATTR_READ_ERROR;
 		}
 
@@ -629,7 +629,7 @@ Attr_ReadValue Item::readAttr(AttrTypes_t attr, PropStream& propStream)
 bool Item::unserializeAttr(PropStream& propStream)
 {
 	uint8_t attrType = ATTR_END;
-	while(propStream.GET_UCHAR(attrType) && attrType != ATTR_END)
+	while(propStream.getByte(attrType) && attrType != ATTR_END)
 	{
 		switch(readAttr((AttrTypes_t)attrType, propStream))
 		{
@@ -651,13 +651,13 @@ bool Item::serializeAttr(PropWriteStream& propWriteStream) const
 {
 	if(isStackable() || isFluidContainer() || isSplash())
 	{
-		propWriteStream.ADD_UCHAR(ATTR_COUNT);
-		propWriteStream.ADD_UCHAR((uint8_t)getSubType());
+		propWriteStream.addByte(ATTR_COUNT);
+		propWriteStream.addByte((uint8_t)getSubType());
 	}
 
 	if(attributes && !attributes->empty())
 	{
-		propWriteStream.ADD_UCHAR(ATTR_ATTRIBUTE_MAP);
+		propWriteStream.addByte(ATTR_ATTRIBUTE_MAP);
 		serializeMap(propWriteStream);
 	}
 
