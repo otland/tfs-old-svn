@@ -544,6 +544,7 @@ bool Outfits::parseOutfitNode(xmlNodePtr p)
 					fit->second = outfit;
 					if(!add)
 						add = true;
+				}
 				else
 					std::cout << "[Warning - Outfits::parseOutfitNode] Duplicated outfit for gender " << (*it) << " with lookType " << outfit.outfitId << std::endl;
 			}
