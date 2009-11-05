@@ -18,6 +18,7 @@
 #ifndef __FILELOADER__
 #define __FILELOADER__
 #include "otsystem.h"
+#include <zlib.h>
 
 struct NodeStruct;
 typedef NodeStruct* NODE;
@@ -125,7 +126,7 @@ class FileLoader
 				if(unescape && (c == NODE_START || c == NODE_END || c == ESCAPE_CHAR))
 				{
 					uint8_t escape = ESCAPE_CHAR;
-					size_t value = fwrite(&escape, 1, 1, m_file);
+					size_t value = gzwrite(m_file, &escape, 1);
 					if(value != 1)
 					{
 						m_lastError = ERROR_COULDNOTWRITE;
@@ -133,7 +134,7 @@ class FileLoader
 					}
 				}
 
-				size_t value = fwrite(&c, 1, 1, m_file);
+				size_t value = gzwrite(m_file, &c, 1);
 				if(value != 1)
 				{
 					m_lastError = ERROR_COULDNOTWRITE;
@@ -145,7 +146,7 @@ class FileLoader
 		}
 
 	protected:
-		FILE* m_file;
+		gzFile m_file;
 		FILELOADER_ERRORS m_lastError;
 		NODE m_root;
 		uint32_t m_buffer_size;
