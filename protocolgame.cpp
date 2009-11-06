@@ -167,13 +167,13 @@ bool ProtocolGame::login(const std::string& name, uint32_t id, const std::string
 
 		if(!player->hasFlag(PlayerFlag_CanAlwaysLogin))
 		{
-			if(g_game.getGameState() == GAME_STATE_CLOSING)
+			if(g_game.getGameState() == GAMESTATE_CLOSING)
 			{
 				disconnectClient(0x14, "Gameworld is just going down, please come back later.");
 				return false;
 			}
 
-			if(g_game.getGameState() == GAME_STATE_CLOSED)
+			if(g_game.getGameState() == GAMESTATE_CLOSED)
 			{
 				disconnectClient(0x14, "Gameworld is currently closed, please come back later.");
 				return false;
@@ -396,7 +396,7 @@ void ProtocolGame::onRecvFirstMessage(NetworkMessage& msg)
 
 bool ProtocolGame::parseFirstPacket(NetworkMessage& msg)
 {
-	if(g_game.getGameState() == GAME_STATE_SHUTDOWN)
+	if(g_game.getGameState() == GAMESTATE_SHUTDOWN)
 	{
 		getConnection()->close();
 		return false;
@@ -436,13 +436,13 @@ bool ProtocolGame::parseFirstPacket(NetworkMessage& msg)
 		password = "1";
 	}
 
-	if(g_game.getGameState() < GAME_STATE_NORMAL)
+	if(g_game.getGameState() < GAMESTATE_NORMAL)
 	{
 		disconnectClient(0x14, "Gameworld is just starting up, please wait.");
 		return false;
 	}
 
-	if(g_game.getGameState() == GAME_STATE_MAINTAIN)
+	if(g_game.getGameState() == GAMESTATE_MAINTAIN)
 	{
 		disconnectClient(0x14, "Gameworld is under maintenance, please re-connect in a while.");
 		return false;
@@ -505,7 +505,7 @@ bool ProtocolGame::parseFirstPacket(NetworkMessage& msg)
 
 void ProtocolGame::parsePacket(NetworkMessage &msg)
 {
-	if(!player || !m_acceptPackets || g_game.getGameState() == GAME_STATE_SHUTDOWN
+	if(!player || !m_acceptPackets || g_game.getGameState() == GAMESTATE_SHUTDOWN
 		|| msg.getMessageLength() <= 0)
 		return;
 

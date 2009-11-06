@@ -5004,8 +5004,7 @@ int32_t LuaInterface::luaSetWorldType(lua_State* L)
 {
 	//setWorldType(type)
 	WorldType_t type = (WorldType_t)popNumber(L);
-
-	if(type >= WORLD_TYPE_FIRST && type <= WORLD_TYPE_LAST)
+	if(type >= WORLDTYPE_FIRST && type <= WORLDTYPE_LAST)
 	{
 		g_game.setWorldType(type);
 		lua_pushboolean(L, true);
@@ -8864,7 +8863,7 @@ int32_t LuaInterface::luaDoSetGameState(lua_State* L)
 {
 	//doSetGameState(id)
 	uint32_t id = popNumber(L);
-	if(id >= GAME_STATE_FIRST && id <= GAME_STATE_LAST)
+	if(id >= GAMESTATE_FIRST && id <= GAMESTATE_LAST)
 	{
 		Dispatcher::getInstance()->addTask(createTask(
 			boost::bind(&Game::setGameState, &g_game, (GameState_t)id)));

@@ -63,7 +63,7 @@ void ProtocolLogin::disconnectClient(uint8_t error, const char* message)
 
 bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 {
-	if(g_game.getGameState() == GAME_STATE_SHUTDOWN)
+	if(g_game.getGameState() == GAMESTATE_SHUTDOWN)
 	{
 		getConnection()->close();
 		return false;
@@ -103,13 +103,13 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 		return false;
 	}
 
-	if(g_game.getGameState() < GAME_STATE_NORMAL)
+	if(g_game.getGameState() < GAMESTATE_NORMAL)
 	{
 		disconnectClient(0x0A, "Server is just starting up, please wait.");
 		return false;
 	}
 
-	if(g_game.getGameState() == GAME_STATE_MAINTAIN)
+	if(g_game.getGameState() == GAMESTATE_MAINTAIN)
 	{
 		disconnectClient(0x0A, "Server is under maintenance, please re-connect in a while.");
 		return false;

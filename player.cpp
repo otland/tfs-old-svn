@@ -847,10 +847,20 @@ bool Player::canWalkthrough(const Creature* creature) const
 	if(creature == this)
 		return false;
 
-	if(const Player* player = creature->getPlayer())
-		return player->isGhost() && getGhostAccess() < player->getGhostAccess();
+	const Player* player = creature->getPlayer();
+	if(!player)
+		return creature->isWalkable();
 
-	return false;
+	if(hasCustomFlag(PlayerCustomFlag_CanWalkthrough) || player->isWalkable())
+		return true;
+
+	/*if(g_game.getWorldType() == WORLDTYPE_OPTIONAL)
+	{
+		// TODO: there are some special tiles on which you cannot step in...
+		return true;
+	}*/
+
+	return player->isGhost() && getGhostAccess() < player->getGhostAccess();
 }
 
 Depot* Player::getDepot(uint32_t depotId, bool autoCreateDepot)
@@ -1380,7 +1390,7 @@ void Player::onAttackedCreatureChangeZone(ZoneType_t zone)
 		setAttackedCreature(NULL);
 		onAttackedCreatureDisappear(false);
 	}
-	else if(zone == ZONE_NORMAL && g_game.getWorldType() == WORLD_TYPE_NO_PVP && attackedCreature->getPlayer())
+	else if(zone == ZONE_NORMAL && g_game.getWorldType() == WORLDTYPE_OPTIONAL && attackedCreature->getPlayer())
 	{
 		//attackedCreature can leave a pvp zone if not pzlocked
 		setAttackedCreature(NULL);
@@ -2095,7 +2105,7 @@ bool Player::onDeath()
 		setDropLoot(LOOT_DROP_NONE);
 		setLossSkill(false);
 	}
-	else if(skull < SKULL_RED && g_game.getWorldType() != WORLD_TYPE_PVP_ENFORCED)
+	else if(skull < SKULL_RED)
 	{
 		for(int32_t i = SLOT_FIRST; ((skillLoss || lootDrop == LOOT_DROP_FULL) && i < SLOT_LAST); ++i)
 		{
@@ -3477,7 +3487,7 @@ void Player::onCombatRemoveCondition(const Creature* attacker, Condition* condit
 	{
 		remove = false;
 		//Means the condition is from an item, id == slot
-		if(g_game.getWorldType() == WORLD_TYPE_PVP_ENFORCED)
+		if(g_game.getWorldType() == WORLDTYPE_HARDCORE)
 		{
 			if(Item* item = getInventoryItem((slots_t)condition->getId()))
 			{
@@ -3881,13 +3891,13 @@ Skulls_t Player::getSkullClient(const Creature* creature) const
 {
 	if(const Player* player = creature->getPlayer())
 	{
-		if(g_game.getWorldType() != WORLD_TYPE_PVP)
+		if(g_game.getWorldType() != WORLDTYPE_NORMAL)
 			return SKULL_NONE;
 
 		if((player == this || (skull != SKULL_NONE && player->getSkull() < SKULL_RED)) && player->hasAttacked(this))
 			return SKULL_YELLOW;
 
-		if(player->getSkull() == SKULL_NONE && isPartner(player) && g_game.getWorldType() != WORLD_TYPE_NO_PVP)
+		if(player->getSkull() == SKULL_NONE && isPartner(player) && g_game.getWorldType() != WORLDTYPE_OPTIONAL)
 			return SKULL_GREEN;
 	}
 
@@ -3912,7 +3922,7 @@ void Player::addAttacked(const Player* attacked)
 
 void Player::setSkullEnd(time_t _time, bool login, Skulls_t _skull)
 {
-	if(g_game.getWorldType() == WORLD_TYPE_PVP_ENFORCED)
+	if(g_game.getWorldType() != WORLDTYPE_NORMAL)
 		return;
 
 	bool requireUpdate = false;
@@ -3938,7 +3948,7 @@ void Player::setSkullEnd(time_t _time, bool login, Skulls_t _skull)
 
 bool Player::addUnjustifiedKill(const Player* attacked)
 {
-	if(g_game.getWorldType() == WORLD_TYPE_PVP_ENFORCED || attacked == this || hasFlag(
+	if(g_game.getWorldType() != WORLDTYPE_NORMAL || attacked == this || hasFlag(
 		PlayerFlag_NotGainInFight) || hasCustomFlag(PlayerCustomFlag_NotGainSkull))
 		return false;
 

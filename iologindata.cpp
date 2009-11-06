@@ -783,16 +783,13 @@ bool IOLoginData::savePlayer(Player* player, bool preSave/* = true*/, bool shall
 	query << "`sex` = " << player->sex << ", ";
 	query << "`balance` = " << player->balance << ", ";
 	query << "`stamina` = " << player->getStamina() << ", ";
-	if(g_game.getWorldType() != WORLD_TYPE_PVP_ENFORCED)
-	{
-		Skulls_t skull = SKULL_RED;
-		if(g_config.getBool(ConfigManager::USE_BLACK_SKULL))
-			skull = player->getSkull();
 
-		query << "`skull` = " << skull << ", ";
-		query << "`skulltime` = " << player->getSkullEnd() << ", ";
-	}
+	Skulls_t skull = SKULL_RED;
+	if(g_config.getBool(ConfigManager::USE_BLACK_SKULL))
+		skull = player->getSkull();
 
+	query << "`skull` = " << skull << ", ";
+	query << "`skulltime` = " << player->getSkullEnd() << ", ";
 	query << "`promotion` = " << player->promotionLevel << ", ";
 	if(g_config.getBool(ConfigManager::STORE_DIRECTION))
 		query << "`direction` = " << (uint32_t)player->getDirection() << ", ";

@@ -42,6 +42,10 @@ BANTYPE_DELETION = 3
 
 SKILLS = SKILL_NAMES
 
+WORLD_TYPE_NO_PVP = 1
+WORLD_TYPE_PVP = 2
+WORLD_TYPE_PVP_ENFORCED = 3
+
 table.getPos = table.find
 doSetCreatureDropLoot = doCreatureSetDropLoot
 doPlayerSay = doCreatureSay
@@ -191,3 +195,6 @@ PlayerCustomFlag_IgnorePacification = 19
 PlayerCustomFlag_CanStairhop = 20
 PlayerCustomFlag_CanTurnhop = 21
 PlayerCustomFlag_IgnoreHouseRent = 22
+PlayerCustomFlag_CanWearAllAddons = 23
+PlayerCustomFlag_IsWalkable = 24
+PlayerCustomFlag_CanWalkthrough = 25

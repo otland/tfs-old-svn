@@ -178,11 +178,11 @@ void signalHandler(int32_t sig)
 
 		case SIGUSR1:
 			Dispatcher::getInstance()->addTask(createTask(
-				boost::bind(&Game::setGameState, &g_game, GAME_STATE_CLOSED)));
+				boost::bind(&Game::setGameState, &g_game, GAMESTATE_CLOSED)));
 			break;
 
 		case SIGUSR2:
-			g_game.setGameState(GAME_STATE_NORMAL);
+			g_game.setGameState(GAMESTATE_NORMAL);
 			break;
 
 		case SIGCONT:
@@ -192,7 +192,7 @@ void signalHandler(int32_t sig)
 
 		case SIGQUIT:
 			Dispatcher::getInstance()->addTask(createTask(
-				boost::bind(&Game::setGameState, &g_game, GAME_STATE_SHUTDOWN)));
+				boost::bind(&Game::setGameState, &g_game, GAMESTATE_SHUTDOWN)));
 			break;
 
 		case SIGTERM:
@@ -294,7 +294,7 @@ void otserv(StringVec args, ServiceManager* services)
 	SetConsoleTitle(STATUS_SERVER_NAME);
 
 #endif
-	g_game.setGameState(GAME_STATE_STARTUP);
+	g_game.setGameState(GAMESTATE_STARTUP);
 #if !defined(WINDOWS) && !defined(__ROOT_PERMISSION__)
 	if(!getuid() || !geteuid())
 	{
@@ -595,20 +595,20 @@ void otserv(StringVec args, ServiceManager* services)
 	
 	std::clog << ">> Checking world type... ";
 	std::string worldType = asLowerCaseString(g_config.getString(ConfigManager::WORLD_TYPE));
-	if(worldType == "pvp" || worldType == "2" || worldType == "normal")
+	if(worldType == "normal" || worldType == "2" || worldType == "normalpvp")
 	{
-		g_game.setWorldType(WORLD_TYPE_PVP);
-		std::clog << "PvP" << std::endl;
+		g_game.setWorldType(WORLDTYPE_NORMAL);
+		std::clog << "Normal PvP" << std::endl;
 	}
-	else if(worldType == "no-pvp" || worldType == "nopvp" || worldType == "non-pvp" || worldType == "nonpvp" || worldType == "1" || worldType == "safe")
+	else if(worldType == "optional" || worldType == "1" || worldType == "optionalpvp")
 	{
-		g_game.setWorldType(WORLD_TYPE_NO_PVP);
-		std::clog << "NoN-PvP" << std::endl;
+		g_game.setWorldType(WORLDTYPE_OPTIONAL);
+		std::clog << "Optional PvP" << std::endl;
 	}
-	else if(worldType == "pvp-enforced" || worldType == "pvpenforced" || worldType == "pvp-enfo" || worldType == "pvpenfo" || worldType == "pvpe" || worldType == "enforced" || worldType == "enfo" || worldType == "3" || worldType == "war")
+	else if(worldType == "hardcore" || worldType == "3" || worldType == "hardcorepvp")
 	{
-		g_game.setWorldType(WORLD_TYPE_PVP_ENFORCED);
-		std::clog << "PvP-Enforced" << std::endl;
+		g_game.setWorldType(WORLDTYPE_HARDCORE);
+		std::clog << "Hardcore PvP" << std::endl;
 	}
 	else
 	{
@@ -617,7 +617,7 @@ void otserv(StringVec args, ServiceManager* services)
 	}
 
 	std::clog << ">> Initializing game state modules and registering services..." << std::endl;
-	g_game.setGameState(GAME_STATE_INIT);
+	g_game.setGameState(GAMESTATE_INIT);
 
 	std::string ip = g_config.getString(ConfigManager::IP);
 	std::clog << "> Global address: " << ip << std::endl;
@@ -675,7 +675,7 @@ void otserv(StringVec args, ServiceManager* services)
 		std::clog << (*it) << "\t";
 
 	std::clog << std::endl << ">> All modules were loaded, server is starting up..." << std::endl;
-	g_game.setGameState(g_config.getBool(ConfigManager::START_CLOSED) ? GAME_STATE_CLOSED : GAME_STATE_NORMAL);
+	g_game.setGameState(g_config.getBool(ConfigManager::START_CLOSED) ? GAMESTATE_CLOSED : GAMESTATE_NORMAL);
 	g_game.start(services);
 	g_loaderSignal.notify_all();
 }

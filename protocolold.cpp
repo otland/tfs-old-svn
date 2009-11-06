@@ -51,7 +51,7 @@ void ProtocolOld::disconnectClient(uint8_t error, const char* message)
 
 bool ProtocolOld::parseFirstPacket(NetworkMessage& msg)
 {
-	if(g_game.getGameState() == GAME_STATE_SHUTDOWN)
+	if(g_game.getGameState() == GAMESTATE_SHUTDOWN)
 	{
 		getConnection()->close();
 		return false;

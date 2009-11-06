@@ -250,6 +250,7 @@ class Player : public Creature, public Cylinder
 		Group* getGroup() const {return group;}
 
 		virtual bool isGhost() const {return hasCondition(CONDITION_GAMEMASTER, GAMEMASTER_INVISIBLE) || hasFlag(PlayerFlag_CannotBeSeen);}
+		virtual bool isWalkable() const {return hasCustomFlag(PlayerCustomFlag_IsWalkable);}
 
 		void switchSaving() {saving = !saving;}
 		bool isSaving() const {return saving;}

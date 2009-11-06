@@ -83,7 +83,7 @@ void ProtocolAdmin::onRecvFirstMessage(NetworkMessage& msg)
 
 void ProtocolAdmin::parsePacket(NetworkMessage& msg)
 {
-	if(g_game.getGameState() == GAME_STATE_SHUTDOWN)
+	if(g_game.getGameState() == GAMESTATE_SHUTDOWN)
 	{
 		getConnection()->close();
 		return;
@@ -339,7 +339,7 @@ void ProtocolAdmin::parsePacket(NetworkMessage& msg)
 				{
 					addLogLine(LOGTYPE_EVENT, "closing server");
 					Dispatcher::getInstance()->addTask(createTask(boost::bind(
-						&Game::setGameState, &g_game, GAME_STATE_CLOSED)));
+						&Game::setGameState, &g_game, GAMESTATE_CLOSED)));
 
 					output->AddByte(AP_MSG_COMMAND_OK);
 					break;
@@ -348,7 +348,7 @@ void ProtocolAdmin::parsePacket(NetworkMessage& msg)
 				case CMD_OPEN_SERVER:
 				{
 					addLogLine(LOGTYPE_EVENT, "opening server");
-					g_game.setGameState(GAME_STATE_NORMAL);
+					g_game.setGameState(GAMESTATE_NORMAL);
 
 					output->AddByte(AP_MSG_COMMAND_OK);
 					break;
@@ -358,7 +358,7 @@ void ProtocolAdmin::parsePacket(NetworkMessage& msg)
 				{
 					addLogLine(LOGTYPE_EVENT, "shutting down server");
 					Dispatcher::getInstance()->addTask(createTask(boost::bind(
-						&Game::setGameState, &g_game, GAME_STATE_SHUTDOWN)));
+						&Game::setGameState, &g_game, GAMESTATE_SHUTDOWN)));
 
 					output->AddByte(AP_MSG_COMMAND_OK);
 					break;

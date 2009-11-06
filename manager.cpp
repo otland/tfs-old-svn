@@ -76,7 +76,7 @@ void ProtocolManager::onRecvFirstMessage(NetworkMessage& msg)
 
 void ProtocolManager::parsePacket(NetworkMessage& msg)
 {
-	if(g_game.getGameState() == GAME_STATE_SHUTDOWN)
+	if(g_game.getGameState() == GAMESTATE_SHUTDOWN)
 	{
 		getConnection()->close();
 		return;
