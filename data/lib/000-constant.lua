@@ -771,12 +771,32 @@ enchantedItems = {
 	[8905] = {8906, 8907, 8909, 8908}
 }
 
+Config_meta =
+{
+	__index = function(t, k)
+		if(k == "type") then
+			return function()
+				return "Config"
+			end
+		end
+
+		return getConfigValue(k)
+	end,
+
+	__newindex = function(t, k, v)
+		return t[k] = v
+	end
+}
+
+CONFIG = {}
+setmetatable(CONFIG, Config_meta)
+
 Storage_meta =
 {
 	__index = function(t, k)
 		if(k == "type") then
 			return function()
-				return "GameState"
+				return "Storage"
 			end
 		end
 
@@ -788,5 +808,5 @@ Storage_meta =
 	end
 }
 
-storage = {}
-setmetatable(storage, Storage_meta)
+STORAGE = {}
+setmetatable(STORAGE, Storage_meta)
