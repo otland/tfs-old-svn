@@ -352,7 +352,7 @@ void ProtocolManager::parsePacket(NetworkMessage& msg)
 
 void ProtocolManager::deleteProtocolTask()
 {
-	addLogLine(LOGTYPE_EVENT, "Ending connection");
+	addLogLine(LOGTYPE_EVENT, "Closing protocol");
 	Manager::getInstance()->removeConnection(this);
 	Protocol::deleteProtocolTask();
 }
@@ -362,7 +362,7 @@ void ProtocolManager::output(const std::string& message)
 	NetworkMessage_ptr msg = getOutputBuffer();
 	if(!msg)
 		return;
-
+puts("test");
 	TRACK_MESSAGE(msg)
 	msg->AddByte(MP_MSG_OUTPUT);
 	msg->AddString(message);

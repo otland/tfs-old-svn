@@ -116,7 +116,7 @@ doAreaCombatDispel = doCombatAreaDispel
 getItemDescriptionsById = getItemInfo
 hasProperty = hasItemProperty
 hasClient = hasPlayerClient
-print = std.cout
+print = std.clog
 db.updateQueryLimitOperator = db.updateLimiter
 db.stringComparisonOperator = db.stringComparison
 
