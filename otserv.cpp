@@ -595,10 +595,10 @@ void otserv(StringVec args, ServiceManager* services)
 	
 	std::clog << ">> Checking world type... ";
 	std::string worldType = asLowerCaseString(g_config.getString(ConfigManager::WORLD_TYPE));
-	if(worldType == "normal" || worldType == "2" || worldType == "normalpvp")
+	if(worldType == "open" || worldType == "2" || worldType == "openpvp")
 	{
-		g_game.setWorldType(WORLDTYPE_NORMAL);
-		std::clog << "Normal PvP" << std::endl;
+		g_game.setWorldType(WORLDTYPE_OPEN);
+		std::clog << "Open PvP" << std::endl;
 	}
 	else if(worldType == "optional" || worldType == "1" || worldType == "optionalpvp")
 	{

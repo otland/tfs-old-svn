@@ -3895,7 +3895,7 @@ Skulls_t Player::getSkullClient(const Creature* creature) const
 {
 	if(const Player* player = creature->getPlayer())
 	{
-		if(g_game.getWorldType() != WORLDTYPE_NORMAL)
+		if(g_game.getWorldType() != WORLDTYPE_OPEN)
 			return SKULL_NONE;
 
 		if((player == this || (skull != SKULL_NONE && player->getSkull() < SKULL_RED)) && player->hasAttacked(this))
@@ -3926,7 +3926,7 @@ void Player::addAttacked(const Player* attacked)
 
 void Player::setSkullEnd(time_t _time, bool login, Skulls_t _skull)
 {
-	if(g_game.getWorldType() != WORLDTYPE_NORMAL)
+	if(g_game.getWorldType() != WORLDTYPE_OPEN)
 		return;
 
 	bool requireUpdate = false;
@@ -3952,7 +3952,7 @@ void Player::setSkullEnd(time_t _time, bool login, Skulls_t _skull)
 
 bool Player::addUnjustifiedKill(const Player* attacked)
 {
-	if(g_game.getWorldType() != WORLDTYPE_NORMAL || attacked == this || hasFlag(
+	if(g_game.getWorldType() != WORLDTYPE_OPEN || attacked == this || hasFlag(
 		PlayerFlag_NotGainInFight) || hasCustomFlag(PlayerCustomFlag_NotGainSkull))
 		return false;
 

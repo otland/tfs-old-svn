@@ -72,7 +72,7 @@ extern GlobalEvents* g_globalEvents;
 Game::Game()
 {
 	gameState = GAMESTATE_NORMAL;
-	worldType = WORLDTYPE_NORMAL;
+	worldType = WORLDTYPE_OPEN;
 	map = NULL;
 	playersRecord = lastStageLevel = 0;
 	for(int32_t i = 0; i < 3; i++)

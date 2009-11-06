@@ -1,6 +1,6 @@
 local config = {
 	optional = {"1", "optional", "optionalpvp"},
-	normal = {"2", "normal", "normalpvp"},
+	open = {"2", "open", "openpvp"},
 	hardcore = {"3", "hardcore", "hardcorepvp"}
 }
 
@@ -15,9 +15,9 @@ function onSay(cid, words, param, channel)
 	if(table.isStrIn(param, config.optional)) then
 		setWorldType(WORLDTYPE_OPTIONAL)
 		world = "Optional PvP"
-	elseif(table.isStrIn(param, config.normal)) then
-		setWorldType(WORLDTYPE_NORMAL)
-		world = "Normal PvP"
+	elseif(table.isStrIn(param, config.open)) then
+		setWorldType(WORLDTYPE_OPEN)
+		world = "Open PvP"
 	elseif(table.isStrIn(param, config.hardcore)) then
 		setWorldType(WORLDTYPE_HARDCORE)
 		world = "Hardcore PvP"

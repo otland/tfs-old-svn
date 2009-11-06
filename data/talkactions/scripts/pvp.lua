@@ -1,6 +1,6 @@
 local worlds = {
 	[WORLDTYPE_OPTIONAL] = "Optional PvP",
-	[WORLDTYPE_NORMAL] = "Normal PvP",
+	[WORLDTYPE_OPEN] = "Open PvP",
 	[WORLDTYPE_HARDCORE] = "Hardcore PvP"
 }
 
