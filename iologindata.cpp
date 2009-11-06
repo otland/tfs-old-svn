@@ -422,7 +422,8 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool preLo
 	player->setStamina(result->getDataLong("stamina"));
 	player->balance = result->getDataLong("balance");
 	player->marriage = result->getDataInt("marriage");
-	if(player->isPremium() || !g_config.getBool(ConfigManager::BLESSING_ONLY_PREMIUM))
+	if(g_config.getBool(ConfigManager::BLESSINGS) && (player->isPremium()
+		|| !g_config.getBool(ConfigManager::BLESSING_ONLY_PREMIUM)))
 		player->blessings = result->getDataInt("blessings");
 
 	uint64_t conditionsSize = 0;
@@ -825,7 +826,8 @@ bool IOLoginData::savePlayer(Player* player, bool preSave/* = true*/, bool shall
 	query << "`loss_items` = " << (uint32_t)player->getLossPercent(LOSS_ITEMS) << ", ";
 
 	query << "`lastlogout` = " << player->getLastLogout() << ", ";
-	if(player->isPremium() || !g_config.getBool(ConfigManager::BLESSING_ONLY_PREMIUM))
+	if(g_config.getBool(ConfigManager::BLESSINGS) && (player->isPremium()
+		|| !g_config.getBool(ConfigManager::BLESSING_ONLY_PREMIUM)))
 		query << "`blessings` = " << player->blessings << ", ";
 
 	query << "`marriage` = " << player->marriage << ", ";

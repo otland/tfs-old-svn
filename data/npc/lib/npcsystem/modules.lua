@@ -128,6 +128,11 @@ if(Modules == nil) then
 			error('StdModule.bless called without any npcHandler instance.')
 		end
 
+		if(not getBooleanFromString(getConfigValue('blessings'))) then
+			npcHandler:say("Sorry, but Gods moved back my permission to bless anyone.", cid)
+			return false
+		end
+
 		if(not npcHandler:isFocused(cid)) then
 			return false
 		end

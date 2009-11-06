@@ -757,12 +757,16 @@ void Player::dropLoot(Container* corpse)
 	if(!corpse || lootDrop != LOOT_DROP_FULL)
 		return;
 
-	uint32_t start = g_config.getNumber(ConfigManager::BLESS_REDUCTION_BASE), loss = lossPercent[LOSS_CONTAINERS], bless = getBlessings();
-	while(bless > 0 && loss > 0)
+	uint32_t loss = lossPercent[LOSS_CONTAINERS];
+	if(g_config.getBool(ConfigManager::BLESSINGS))
 	{
-		loss -= start;
-		start -= g_config.getNumber(ConfigManager::BLESS_REDUCTION_DECREAMENT);
-		bless--;
+		uint32_t start = g_config.getNumber(ConfigManager::BLESS_REDUCTION_BASE), bless = getBlessings();
+		while(bless > 0 && loss > 0)
+		{
+			loss -= start;
+			start -= g_config.getNumber(ConfigManager::BLESS_REDUCTION_DECREAMENT);
+			bless--;
+		}
 	}
 
 	uint32_t itemLoss = (uint32_t)std::floor((double)((loss + 5) * lossPercent[LOSS_ITEMS]) / 1000.);
@@ -4059,7 +4063,8 @@ void Player::setPromotionLevel(uint32_t pLevel)
 
 uint16_t Player::getBlessings() const
 {
-	if(!isPremium() && g_config.getBool(ConfigManager::BLESSING_ONLY_PREMIUM))
+	if(!g_config.getBool(ConfigManager::BLESSINGS) || (!isPremium() &&
+		g_config.getBool(ConfigManager::BLESSING_ONLY_PREMIUM)))
 		return 0;
 
 	uint16_t count = 0;
