@@ -141,7 +141,7 @@ bool ConfigManager::load()
 	m_confNumber[SPAWNPOS_Y] = getGlobalNumber("newPlayerSpawnPosY", 100);
 	m_confNumber[SPAWNPOS_Z] = getGlobalNumber("newPlayerSpawnPosZ", 7);
 	m_confNumber[SPAWNTOWN_ID] = getGlobalNumber("newPlayerTownId", 1);
-	m_confString[WORLD_TYPE] = getGlobalString("worldType", "normal");
+	m_confString[WORLD_TYPE] = getGlobalString("worldType", "open");
 	m_confBool[ACCOUNT_MANAGER] = getGlobalBool("accountManager", true);
 	m_confBool[NAMELOCK_MANAGER] = getGlobalBool("namelockManager", false);
 	m_confNumber[START_LEVEL] = getGlobalNumber("newPlayerLevel", 1);
