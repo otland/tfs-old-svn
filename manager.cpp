@@ -160,7 +160,7 @@ void ProtocolManager::parsePacket(NetworkMessage& msg)
 					{
 						m_state = LOGGED_IN;
 						output->AddByte(MP_MSG_USERS);
-						addLogLine(LOGTYPE_EVENT, "Login ok, sending users");
+						addLogLine(LOGTYPE_EVENT, "Logged in, sending users");
 
 						std::map<uint32_t, std::string> users;
 						for(AutoList<Player>::iterator it = Player::autoList.begin(); it != Player::autoList.end(); ++it)
@@ -183,7 +183,7 @@ void ProtocolManager::parsePacket(NetworkMessage& msg)
 					output->AddString("Wrong password");
 
 					m_loginTries++;
-					addLogLine(LOGTYPE_EVENT, "Login failed (" + pass + ")");
+					addLogLine(LOGTYPE_EVENT, "Login failed due to wrong password (" + pass + ")");
 				}
 			}
 			else
@@ -194,6 +194,17 @@ void ProtocolManager::parsePacket(NetworkMessage& msg)
 			}
 
 			break;
+		}
+
+		case MP_MSG_LOGOUT:
+		{
+			output->AddByte(MP_MSG_BYE);
+			output->AddString("Bye, bye!");
+			OutputMessagePool::getInstance()->sendAll();
+
+			addLogLine(LOGTYPE_EVENT, "Logout");
+			getConnection()->close();
+			return;
 		}
 
 		case MP_MSG_KEEP_ALIVE:
@@ -209,11 +220,14 @@ void ProtocolManager::parsePacket(NetworkMessage& msg)
 			if(!Manager::getInstance()->execute(script))
 			{
 				output->AddByte(MP_MSG_FAILURE);
-				output->AddString("Unable to reserve script enviroment");
-				addLogLine(LOGTYPE_ERROR, "Unable to reserve script enviroment");
+				output->AddString("Unable to reserve enviroment for Lua script");
+				addLogLine(LOGTYPE_ERROR, "Unable to reserve enviroment for Lua script");
 			}
 			else
+			{
 				output->AddByte(MP_MSG_SUCCESS);
+				addLogLine(LOGTYPE_EVENT, "Executed Lua script");
+			}
 
 			break;
 		}
