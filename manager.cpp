@@ -83,7 +83,7 @@ void ProtocolManager::parsePacket(NetworkMessage& msg)
 	}
 
 	uint8_t recvbyte = msg.GetByte();
-	NetworkMessage_ptr output = getOutputBuffer();
+	OutputMessage_ptr output = getOutputBuffer();
 	if(!output)
 		return;
 
@@ -104,7 +104,7 @@ void ProtocolManager::parsePacket(NetworkMessage& msg)
 			{
 				output->AddByte(MP_MSG_ERROR);
 				output->AddString("Too many login attempts");
-				OutputMessagePool::getInstance()->sendAll();
+				getConnection()->send(output);
 
 				getConnection()->close();
 				addLogLine(LOGTYPE_WARNING, "Too many login attempts");
@@ -115,7 +115,7 @@ void ProtocolManager::parsePacket(NetworkMessage& msg)
 			{
 				output->AddByte(MP_MSG_ERROR);
 				output->AddString("You are not logged in");
-				OutputMessagePool::getInstance()->sendAll();
+				getConnection()->send(output);
 
 				getConnection()->close();
 				addLogLine(LOGTYPE_WARNING, "Wrong command while not logged in");
@@ -150,7 +150,7 @@ void ProtocolManager::parsePacket(NetworkMessage& msg)
 					{
 						output->AddByte(MP_MSG_FAILURE);
 						output->AddString("Unknown connection");
-						OutputMessagePool::getInstance()->sendAll();
+						getConnection()->send(output);
 
 						getConnection()->close();
 						addLogLine(LOGTYPE_ERROR, "Login failed due to unknown connection");
@@ -200,10 +200,10 @@ void ProtocolManager::parsePacket(NetworkMessage& msg)
 		{
 			output->AddByte(MP_MSG_BYE);
 			output->AddString("Bye, bye!");
-			OutputMessagePool::getInstance()->sendAll();
+			getConnection()->send(output);
 
-			addLogLine(LOGTYPE_EVENT, "Logout");
 			getConnection()->close();
+			addLogLine(LOGTYPE_EVENT, "Logout");
 			return;
 		}
 

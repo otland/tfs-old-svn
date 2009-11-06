@@ -71,12 +71,12 @@ void OutputMessagePool::send(OutputMessage_ptr msg)
 		}
 		#ifdef __DEBUG_NET__
 		else
-			std::clog << "Error: [OutputMessagePool::send] NULL connection." << std::endl;
+			std::clog << "[Error - OutputMessagePool::send] NULL connection." << std::endl;
 		#endif
 	}
 	#ifdef __DEBUG_NET__
 	else
-		std::clog << "Warning: [OutputMessagePool::send] State != STATE_ALLOCATED_NO_AUTOSEND" << std::endl;
+		std::clog << "[Warning - OutputMessagePool::send] State != STATE_ALLOCATED_NO_AUTOSEND" << std::endl;
 	#endif
 }
 
@@ -123,7 +123,7 @@ void OutputMessagePool::sendAll()
 			}
 			#ifdef __DEBUG_NET__
 			else
-				std::clog << "Error: [OutputMessagePool::send] NULL connection." << std::endl;
+				std::clog << "[Error - OutputMessagePool::send] NULL connection." << std::endl;
 			#endif
 
 			it = m_autoSend.erase(it);
@@ -161,7 +161,7 @@ void OutputMessagePool::internalReleaseMessage(OutputMessage* msg)
 	m_outputPoolLock.unlock();
 }
 
-OutputMessage_ptr OutputMessagePool::getOutputMessage(Protocol* protocol, bool autoSend /*= true*/)
+OutputMessage_ptr OutputMessagePool::getOutputMessage(Protocol* protocol, bool autoSend/* = true*/)
 {
 	#ifdef __DEBUG_NET_DETAIL__
 	std::clog << "request output message - auto = " << autoSend << std::endl;
