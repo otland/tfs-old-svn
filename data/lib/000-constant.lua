@@ -784,7 +784,8 @@ Config_meta =
 	end,
 
 	__newindex = function(t, k, v)
-		return t[k] = v
+		t[k] = v
+		return true
 	end
 }
 
