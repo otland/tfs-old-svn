@@ -643,7 +643,15 @@ std::string formatTime(time_t _time/* = 0*/, bool ms/* = false*/)
 	std::stringstream s;
 	if(tms)
 	{
-		s << tms->tm_hour << ":" << tms->tm_min << ":" << tms->tm_sec;
+		s << tms->tm_hour << ":";
+		if(tms->tm_min < 10)
+			s << "0";
+
+		s << tms->tm_min << ":";
+		if(tms->tm_sec < 10)
+			s << "0";
+
+		s << tms->tm_sec;
 		if(ms)
 		{
 			timeb t;
