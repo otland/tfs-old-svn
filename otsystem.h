@@ -45,34 +45,36 @@
 #include <windows.h>
 #include <sys/timeb.h>
 
-#define OTSERV_ACCESS(file, mode) _access(file, mode);
-inline int64_t OTSYS_TIME()
-{
-	_timeb t;
-	_ftime(&t);
-	return ((int64_t)t.millitm) + ((int64_t)t.time) * 1000;
-}
+#ifndef access
+#define access _access
+#endif
+
+#ifndef timeb
+#define timeb _timeb
+#endif
+
+#ifndef ftime
+#define ftime _ftime
+#endif
 #else
 #include <sys/timeb.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 
 #include <unistd.h>
-#include <time.h>
 #include <netdb.h>
 #include <errno.h>
 
 #include <arpa/inet.h>
 #include <netinet/in.h>
+#endif
 
-#define OTSERV_ACCESS(file, mode) access(file, mode);
 inline int64_t OTSYS_TIME()
 {
 	timeb t;
 	ftime(&t);
 	return ((int64_t)t.millitm) + ((int64_t)t.time) * 1000;
 }
-#endif
 
 #ifdef __GNUC__
 	#define __OTSERV_FUNCTION__ __PRETTY_FUNCTION__

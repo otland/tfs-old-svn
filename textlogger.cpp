@@ -130,6 +130,10 @@ std::streambuf::int_type OutputHandler::overflow(std::streambuf::int_type c/* = 
 	if(c != '\n' && c != '\r')
 		return c;
 
+	if(m_cache.size() > 1)
+		std::cout << "[" << formatTime(0, true) << "] ";
+
+	std::cout.write(m_cache.c_str(), m_cache.size());
 	if(g_config.isLoaded())
 	{
 		std::stringstream s;
@@ -141,10 +145,6 @@ std::streambuf::int_type OutputHandler::overflow(std::streambuf::int_type c/* = 
 		Manager::getInstance()->output(m_cache);
 	}
 
-	if(m_cache.size() > 1)
-		std::cout << "[" << formatTime() << "] ";
-
-	std::cout.write(m_cache.c_str(), m_cache.size());
 	m_cache.clear();
 	return c;
 }
