@@ -362,7 +362,7 @@ void ProtocolManager::output(const std::string& message)
 	NetworkMessage_ptr msg = getOutputBuffer();
 	if(!msg)
 		return;
-puts("test");
+
 	TRACK_MESSAGE(msg)
 	msg->AddByte(MP_MSG_OUTPUT);
 	msg->AddString(message);
