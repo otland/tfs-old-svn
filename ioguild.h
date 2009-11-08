@@ -18,6 +18,7 @@
 #ifndef __IOGUILD__
 #define __IOGUILD__
 #include "otsystem.h"
+#include "enums.h"
 
 class Player;
 class IOGuild
