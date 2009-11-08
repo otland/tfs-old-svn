@@ -99,7 +99,7 @@ struct DeathEntry
 		bool isNameKill() const {return !isCreatureKill();}
 
 		void setValue(int8_t v) {value = v;}
-		int16_t getValue() const {return (int16_t)value;}
+		int16_t getValue() const {return value;}
 
 		const std::type_info& getKillerType() const {return data.type();}
 		int32_t getDamage() const {return damage;}
@@ -110,7 +110,7 @@ struct DeathEntry
 	protected:
 		boost::any data;
 		int32_t damage;
-		int8_t value;
+		int16_t value;
 
 		friend struct DeathLessThan;
 };

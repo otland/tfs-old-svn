@@ -1076,7 +1076,7 @@ bool IOLoginData::playerDeath(Player* player, const DeathList& dl)
 	{
 		query.str("");
 		query << "INSERT INTO `killers` (`death_id`, `final_hit`, `unjustified`) VALUES ("
-			<< deathId << ", " << (it == dl.begin()) << ", " << it->isUnjustified() << ")";
+			<< deathId << ", " << (it == dl.begin()) << ", " << it->getValue() << ")";
 		if(!db->executeQuery(query.str()))
 			return false;
 

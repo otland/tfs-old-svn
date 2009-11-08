@@ -706,7 +706,7 @@ bool Creature::onDeath()
 		if(!it->getKillerCreature()->onKilledCreature(this, flags) && lastHit)
 			return false;
 
-		int8_t value = 0;
+		int16_t value = 0;
 		if(hasBitSet((uint32_t)KILLFLAG_UNJUSTIFIED, flags))
 			value += 1;
 
