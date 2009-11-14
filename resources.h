@@ -74,13 +74,13 @@
 #endif
 
 #define CLIENT_VERSION_MIN 850
-#define CLIENT_VERSION_MAX 852
+#define CLIENT_VERSION_MAX 853
 #define CLIENT_VERSION_STRING "Only clients with protocol 8.5x allowed!"
 
 #define STATUS_SERVER_NAME "The Forgotten Server"
 #define STATUS_SERVER_VERSION "0.3.6_SVN"
 #define STATUS_SERVER_CODENAME "Crying Damson"
-#define STATUS_SERVER_PROTOCOL "8.52"
+#define STATUS_SERVER_PROTOCOL "8.53"
 
 #define VERSION_CHECK "http://forgottenserver.otland.net/version.xml"
 #define VERSION_PATCH 0
