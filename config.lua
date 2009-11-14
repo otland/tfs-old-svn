@@ -221,7 +221,7 @@
 	-- Blessings
 	-- NOTE: blessingReduction* regards items/containers loss.
 	-- eachBlessReduction is how much each bless reduces the experience/magic/skills loss.
-	blessingsOnlyPremium = true
+	blessingOnlyPremium = true
 	blessingReductionBase = 30
 	blessingReductionDecreament = 5
 	eachBlessReduction = 8
