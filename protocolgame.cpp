@@ -2671,6 +2671,8 @@ void ProtocolGame::AddCreature(NetworkMessage_ptr msg, const Creature* creature,
 	msg->AddU16(creature->getStepSpeed());
 	msg->AddByte(player->getSkullClient(creature));
 	msg->AddByte(player->getPartyShield(creature));
+	if(player->getClientVersion() > 852) // TODO: remove after 8.6
+		msg->AddByte(0x00);
 }
 
 void ProtocolGame::AddPlayerStats(NetworkMessage_ptr msg)
@@ -2680,7 +2682,7 @@ void ProtocolGame::AddPlayerStats(NetworkMessage_ptr msg)
 	msg->AddU16(player->getPlayerInfo(PLAYERINFO_MAXHEALTH));
 	msg->AddU32(uint32_t(player->getFreeCapacity() * 100));
 	uint64_t experience = player->getExperience();
-	if(experience > 0x7FFFFFFF) //Client debugs after 2,147,483,647 exp
+	if(experience > 0x7FFFFFFF) // client debugs after 2,147,483,647 exp
 		msg->AddU32(0x7FFFFFFF);
 	else
 		msg->AddU32(experience);

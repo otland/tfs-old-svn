@@ -627,7 +627,7 @@ bool LuaInterface::reInitState()
 bool LuaInterface::loadBuffer(const std::string& text, Npc* npc/* = NULL*/)
 {
 	//loads buffer as a chunk at stack top
-	int32_t ret = luaL_loadbuffer(m_luaState, text.c_str(), text.length(), "loadBuffer");
+	int32_t ret = luaL_loadbuffer(m_luaState, text.c_str(), text.length(), "LuaInterface::loadBuffer");
 	if(ret)
 	{
 		m_lastError = popString(m_luaState);
@@ -2301,7 +2301,7 @@ void LuaInterface::registerFunctions()
 	//doReloadInfo(id[, cid])
 	lua_register(m_luaState, "doReloadInfo", LuaInterface::luaDoReloadInfo);
 
-	//doSaveServer()
+	//doSaveServer([shallow = false])
 	lua_register(m_luaState, "doSaveServer", LuaInterface::luaDoSaveServer);
 
 	//doCleanHouse(houseId)
@@ -8945,7 +8945,7 @@ int32_t LuaInterface::luaDoReloadInfo(lua_State* L)
 
 int32_t LuaInterface::luaDoSaveServer(lua_State* L)
 {
-	//doSaveServer([shallow])
+	//doSaveServer([shallow = false])
 	bool shallow = false;
 	if(lua_gettop(L) > 0)
 		shallow = popNumber(L);
