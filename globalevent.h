@@ -22,8 +22,6 @@
 #include "const.h"
 #include "scheduler.h"
 
-#define GLOBAL_THINK_INTERVAL 1000
-
 enum GlobalEvent_t
 {
 	GLOBAL_EVENT_NONE,
@@ -42,10 +40,10 @@ class GlobalEvents : public BaseEvents
 	public:
 		GlobalEvents();
 		virtual ~GlobalEvents();
-
 		void startup();
+
 		void timer();
-		void think(uint32_t interval);
+		void think();
 		void execute(GlobalEvent_t type);
 
 		GlobalEventMap getEventMap(GlobalEvent_t type);
@@ -71,27 +69,26 @@ class GlobalEvent : public Event
 		virtual ~GlobalEvent() {}
 
 		virtual bool configureEvent(xmlNodePtr p);
-		int32_t executeThink(uint32_t interval, uint32_t lastExecution, uint32_t thinkInterval);
+
 		int32_t executeRecord(uint32_t current, uint32_t old, Player* player);
 		int32_t executeEvent();
 
 		GlobalEvent_t getEventType() const {return m_eventType;}
 		std::string getName() const {return m_name;}
+
 		uint32_t getInterval() const {return m_interval;}
 
-		uint32_t getHour() const {return m_hour;}
-		uint32_t getMinute() const {return m_minute;}
-
-		uint32_t getLastExecution() const {return m_lastExecution;}
-		void setLastExecution(uint32_t time) {m_lastExecution = time;}
+		int64_t getLastExecution() const {return m_lastExecution;}
+		void setLastExecution(int64_t time) {m_lastExecution = time;}
 
 	protected:
+		GlobalEvent_t m_eventType;
+
 		virtual std::string getScriptEventName() const;
 		virtual std::string getScriptEventParams() const;
 
 		std::string m_name;
-		time_t m_lastExecution;
-		uint32_t m_interval, m_hour, m_minute;
-		GlobalEvent_t m_eventType;
+		int64_t m_lastExecution;
+		uint32_t m_interval;
 };
 #endif

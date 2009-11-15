@@ -4,7 +4,7 @@ function executeClean()
 	return true
 end
 
-function onThink(interval, lastExecution, thinkInterval)
+function onThink(interval)
 	doBroadcastMessage("Game map cleaning within 30 seconds, please pick up your items!")
 	addEvent(executeClean, 30000)
 	return true
