@@ -239,15 +239,14 @@ bool ProtocolGame::login(const std::string& name, uint32_t id, const std::string
 			return false;
 		}
 
+		player->setClientVersion(version);
+		player->setOperatingSystem(operatingSystem);
 		if(!g_game.placeCreature(player, player->getLoginPosition()) && !g_game.placeCreature(player, player->getMasterPosition(), false, true))
 		{
 			disconnectClient(0x14, "Temple position is wrong. Contact with the administration.");
 			return false;
 
 		}
-
-		player->setOperatingSystem(operatingSystem);
-		player->setClientVersion(version);
 
 		player->lastIP = player->getIP();
 		player->lastLoad = OTSYS_TIME();
@@ -1556,6 +1555,7 @@ void ProtocolGame::sendWorldLight(const LightInfo& lightInfo)
 
 void ProtocolGame::sendCreatureEmblem(const Creature* creature)
 {
+	return;/*
 	if(!canSee(creature) || player->getClientVersion() < 853) // TODO: remove after 8.6
 		return;
 
@@ -1563,10 +1563,10 @@ void ProtocolGame::sendCreatureEmblem(const Creature* creature)
 	if(msg)
 	{
 		TRACK_MESSAGE(msg);
-		msg->AddByte(0x92); // FIXME: its only a guess :D
+		msg->AddByte(0x92); // FIXME: that's the wrong byte, I don't know does it even exists...
 		msg->AddU32(creature->getID());
 		msg->AddByte(player->getGuildEmblem(creature));
-	}
+	}*/
 }
 
 void ProtocolGame::sendCreatureShield(const Creature* creature)
@@ -2237,9 +2237,9 @@ void ProtocolGame::sendAddCreature(const Creature* creature, const Position& pos
 	LightInfo lightInfo;
 	g_game.getWorldLightInfo(lightInfo);
 	AddWorldLight(msg, lightInfo);
-
 	//player light level
 	AddCreatureLight(msg, creature);
+
 	player->sendIcons();
 	for(VIPListSet::iterator it = player->VIPList.begin(); it != player->VIPList.end(); it++)
 	{
