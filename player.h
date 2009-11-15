@@ -184,10 +184,10 @@ class Player : public Creature, public Cylinder
 
 		void setParty(Party* _party) {party = _party;}
 		Party* getParty() const {return party;}
-		PartyShields_t getPartyShield(const Creature* creature) const;
+
 		bool isInviting(const Player* player) const;
 		bool isPartner(const Player* player) const;
-		void sendPlayerPartyIcons(Player* player);
+
 		bool addPartyInvitation(Party* party);
 		bool removePartyInvitation(Party* party);
 		void clearPartyInvitations();
@@ -295,6 +295,7 @@ class Player : public Creature, public Cylinder
 
 		virtual bool isPushable() const;
 		virtual int32_t getThrowRange() const {return 1;}
+		virtual double getGainedExperience(Creature* attacker) const;
 
 		bool isMuted(uint16_t channelId, SpeakClasses type, uint32_t& time);
 		void addMessageBuffer();
@@ -416,6 +417,7 @@ class Player : public Creature, public Cylinder
 
 		bool isPzLocked() const {return pzLocked;}
 		void setPzLocked(bool v) {pzLocked = v;}
+
 		virtual BlockType_t blockHit(Creature* attacker, CombatType_t combatType, int32_t& damage,
 			bool checkDefense = false, bool checkArmor = false);
 		virtual void doAttacking(uint32_t interval);
@@ -449,8 +451,6 @@ class Player : public Creature, public Cylinder
 		void addInFightTicks(bool pzLock = false);
 		void addDefaultRegeneration(uint32_t addTicks);
 
-		virtual double getGainedExperience(Creature* attacker) const;
-
 		//combat event functions
 		virtual void onAddCondition(ConditionType_t type, bool hadCondition);
 		virtual void onAddCombatCondition(ConditionType_t type, bool hadCondition);
@@ -475,7 +475,9 @@ class Player : public Creature, public Cylinder
 
 		virtual void getCreatureLight(LightInfo& light) const;
 		Skulls_t getSkull() const;
-		Skulls_t getSkullClient(const Creature* creature) const;
+
+		Skulls_t getSkullType(const Creature* creature) const;
+		PartyShields_t getPartyShield(const Creature* creature) const;
 
 		bool hasAttacked(const Player* attacked) const;
 		void addAttacked(const Player* attacked);
@@ -517,7 +519,7 @@ class Player : public Creature, public Cylinder
 			{if(client) client->sendCreatureTurn(creature, creature->getTile()->getClientIndexOfThing(this, creature));}
 		void sendCreatureSay(const Creature* creature, SpeakClasses type, const std::string& text, Position* pos = NULL)
 			{if(client) client->sendCreatureSay(creature, type, text, pos);}
-		void sendCreatureSquare(const Creature* creature, SquareColor_t color)
+		void sendCreatureSquare(const Creature* creature, uint8_t color)
 			{if(client) client->sendCreatureSquare(creature, color);}
 		void sendCreatureChangeOutfit(const Creature* creature, const Outfit_t& outfit)
 			{if(client) client->sendCreatureOutfit(creature, outfit);}
@@ -526,6 +528,8 @@ class Player : public Creature, public Cylinder
 			{if(client) client->sendCreatureLight(creature);}
 		void sendCreatureShield(const Creature* creature)
 			{if(client) client->sendCreatureShield(creature);}
+		void sendCreatureEmblem(const Creature* creature)
+			{if(client) client->sendCreatureEmblem(creature);}
 
 		//container
 		void sendAddContainerItem(const Container* container, const Item* item);
@@ -662,6 +666,7 @@ class Player : public Creature, public Cylinder
 		void sendAddMarker(const Position& pos, MapMarks_t markType, const std::string& desc)
 			{if (client) client->sendAddMarker(pos, markType, desc);}
 		void sendCritical() const;
+		void sendPlayerPartyIcons(Player* player) const;
 
 		void receivePing() {lastPong = OTSYS_TIME();}
 		virtual void onThink(uint32_t interval);

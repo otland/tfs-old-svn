@@ -1554,6 +1554,21 @@ void ProtocolGame::sendWorldLight(const LightInfo& lightInfo)
 	}
 }
 
+void ProtocolGame::sendCreatureEmblem(const Creature* creature)
+{
+	if(!canSee(creature) || player->getClientVersion() < 853) // TODO: remove after 8.6
+		return;
+
+	NetworkMessage_ptr msg = getOutputBuffer();
+	if(msg)
+	{
+		TRACK_MESSAGE(msg);
+		msg->AddByte(0x92); // FIXME: its only a guess :D
+		msg->AddU32(creature->getID());
+		msg->AddByte(player->getEmblemClient(creature));
+	}
+}
+
 void ProtocolGame::sendCreatureShield(const Creature* creature)
 {
 	if(!canSee(creature))
@@ -1580,11 +1595,11 @@ void ProtocolGame::sendCreatureSkull(const Creature* creature)
 		TRACK_MESSAGE(msg);
 		msg->AddByte(0x90);
 		msg->AddU32(creature->getID());
-		msg->AddByte(player->getSkullClient(creature));
+		msg->AddByte(player->getSkullType(creature));
 	}
 }
 
-void ProtocolGame::sendCreatureSquare(const Creature* creature, SquareColor_t color)
+void ProtocolGame::sendCreatureSquare(const Creature* creature, uint8_t color)
 {
 	if(!canSee(creature))
 		return;
@@ -1595,7 +1610,7 @@ void ProtocolGame::sendCreatureSquare(const Creature* creature, SquareColor_t co
 		TRACK_MESSAGE(msg);
 		msg->AddByte(0x86);
 		msg->AddU32(creature->getID());
-		msg->AddByte((uint8_t)color);
+		msg->AddByte(color);
 	}
 }
 
@@ -2669,10 +2684,10 @@ void ProtocolGame::AddCreature(NetworkMessage_ptr msg, const Creature* creature,
 	msg->AddByte(lightInfo.color);
 
 	msg->AddU16(creature->getStepSpeed());
-	msg->AddByte(player->getSkullClient(creature));
+	msg->AddByte(player->getSkullType(creature));
 	msg->AddByte(player->getPartyShield(creature));
 	if(player->getClientVersion() > 852) // TODO: remove after 8.6
-		msg->AddByte(0x00);
+		msg->AddByte(player->getGuildEmblem(creature));
 }
 
 void ProtocolGame::AddPlayerStats(NetworkMessage_ptr msg)

@@ -543,10 +543,13 @@ class Game
 
 		void changeLight(const Creature* creature);
 		void changeSpeed(Creature* creature, int32_t varSpeedDelta);
+
 		void internalCreatureChangeOutfit(Creature* creature, const Outfit_t& oufit, bool forced = false);
 		void internalCreatureChangeVisible(Creature* creature, Visible_t visible);
+
 		void updateCreatureSkull(Creature* creature);
-		void sendPublicSquare(Player* sender, SquareColor_t color);
+		void updateCreatureShield(Creature* creature);
+		void updateCreatureEmblem(Creature* creature);
 
 		GameState_t getGameState() const {return gameState;}
 		void setGameState(GameState_t newState);
@@ -574,12 +577,15 @@ class Game
 			int32_t& healthChange, bool checkDefense, bool checkArmor);
 
 		bool combatChangeHealth(CombatType_t combatType, Creature* attacker, Creature* target, int32_t healthChange,
-			MagicEffect_t hitEffect = MAGIC_EFFECT_UNKNOWN, TextColor_t hitColor = TEXTCOLOR_UNKNOWN, bool force = false);
+			MagicEffect_t hitEffect = MAGIC_EFFECT_UNKNOWN, Color_t hitColor = COLOR_UNKNOWN, bool force = false);
 		bool combatChangeMana(Creature* attacker, Creature* target, int32_t manaChange);
 
 		//animation help functions
 		void addCreatureHealth(const Creature* target);
 		void addCreatureHealth(const SpectatorVec& list, const Creature* target);
+		void addCreatureSquare(const Creature* target, uint8_t squareColor);
+		void addCreatureSquare(const SpectatorVec& list, const Creature* target, uint8_t squareColor);
+
 		void addAnimatedText(const Position& pos, uint8_t textColor, const std::string& text);
 		void addAnimatedText(const SpectatorVec& list, const Position& pos, uint8_t textColor, const std::string& text);
 		void addMagicEffect(const Position& pos, uint8_t effect, bool ghostMode = false);

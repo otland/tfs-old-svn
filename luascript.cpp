@@ -1600,6 +1600,9 @@ void LuaInterface::registerFunctions()
 	//doCreatureSay(uid, text[, type = SPEAK_SAY[, ghost = false[, cid = 0[, pos]]]])
 	lua_register(m_luaState, "doCreatureSay", LuaInterface::luaDoCreatureSay);
 
+	//doSendCreatureSquare(cid, color[, player])
+	lua_register(m_luaState, "doSendCreatureSquare", LuaInterface::luaDoSendCreatureSquare);
+
 	//doSendMagicEffect(pos, type[, player])
 	lua_register(m_luaState, "doSendMagicEffect", LuaInterface::luaDoSendMagicEffect);
 
@@ -2066,6 +2069,18 @@ void LuaInterface::registerFunctions()
 
 	//doCreatureSetLookDirection(cid, dir)
 	lua_register(m_luaState, "doCreatureSetLookDirection", LuaInterface::luaDoCreatureSetLookDir);
+
+	//getCreatureGuildEmblem(cid)
+	lua_register(m_luaState, "getCreatureGuildEmblem", LuaInterface::luaGetCreatureGuildEmblem);
+
+	//doCreatureSetGuildEmblem(cid, emblem)
+	lua_register(m_luaState, "doCreatureSetGuildEmblem", LuaInterface::luaDoCreatureSetGuildEmblem);
+
+	//getCreaturePartyShield(cid)
+	lua_register(m_luaState, "getCreaturePartyShield", LuaInterface::luaGetCreaturePartyShield);
+
+	//doCreatureSetPartyShield(cid, shield)
+	lua_register(m_luaState, "doCreatureSetPartyShield", LuaInterface::luaDoCreatureSetPartyShield);
 
 	//getCreatureSkullType(cid)
 	lua_register(m_luaState, "getCreatureSkullType", LuaInterface::luaGetCreatureSkullType);
@@ -3508,9 +3523,9 @@ int32_t LuaInterface::luaDoCreatureAddHealth(lua_State* L)
 	if(params > 4)
 		force = popNumber(L);
 
-	TextColor_t hitColor = TEXTCOLOR_UNKNOWN;
+	Color_t hitColor = COLOR_UNKNOWN;
 	if(params > 3)
-		hitColor = (TextColor_t)popNumber(L);
+		hitColor = (Color_t)popNumber(L);
 
 	MagicEffect_t hitEffect = MAGIC_EFFECT_UNKNOWN;
 	if(params > 2)
@@ -3893,6 +3908,36 @@ int32_t LuaInterface::luaDoPlayerSendToChannel(lua_State* L)
 	return 1;
 }
 
+int32_t LuaInterface::luaDoSendCreatureSquare(lua_State* L)
+{
+	//doSendCreatureSquare(cid, color[, player])
+	ScriptEnviroment* env = getEnv();
+	SpectatorVec list;
+	if(lua_gettop(L) > 2)
+	{
+		if(Creature* creature = env->getCreatureByUID(popNumber(L)))
+			list.push_back(creature);
+	}
+
+        uint8_t color = popNumber(L);
+	if(Creature* creature = env->getCreatureByUID(popNumber(L)))
+	{
+	        if(!list.empty())
+        	        g_game.addCreatureSquare(list, cid, color);
+	        else
+        	        g_game.addCreatureSquare(cid, color);
+
+	        lua_pushboolean(L, true);
+	}
+	else
+	{
+		errorEx(getError(LUA_ERROR_CREATURE_NOT_FOUND));
+		lua_pushboolean(L, false);
+	}
+
+        return 1;
+}
+
 int32_t LuaInterface::luaDoSendAnimatedText(lua_State* L)
 {
 	//doSendAnimatedText(pos, text, color[, player])
@@ -3904,7 +3949,7 @@ int32_t LuaInterface::luaDoSendAnimatedText(lua_State* L)
 			list.push_back(creature);
 	}
 
-	uint32_t color = popNumber(L);
+	uint8_t color = popNumber(L);
 	std::string text = popString(L);
 
 	PositionEx pos;
@@ -6381,6 +6426,7 @@ int32_t LuaInterface::luaGetMonsterInfo(lua_State* L)
 	setField(L, "race", mType->race);
 	setField(L, "skull", mType->skull);
 	setField(L, "partyShield", mType->partyShield);
+	setField(L, "guildEmblem", mType->guildEmblem);
 	setFieldBool(L, "summonable", mType->isSummonable);
 	setFieldBool(L, "illusionable", mType->isIllusionable);
 	setFieldBool(L, "convinceable", mType->isConvinceable);
@@ -7731,6 +7777,72 @@ int32_t LuaInterface::luaGetCreatureNoMove(lua_State* L)
 		lua_pushboolean(L, false);
 	}
 
+	return 1;
+}
+
+int32_t LuaInterface::luaGetCreatureGuildEmblem(lua_State* L)
+{
+	//getCreatureGuildEmblem(cid)
+	ScriptEnviroment* env = getEnv();
+	if(Creature* creature = env->getCreatureByUID(popNumber(L)))
+		lua_pushnumber(L, creature->getEmblem());
+	else
+	{
+		errorEx(getError(LUA_ERROR_CREATURE_NOT_FOUND));
+		lua_pushboolean(L, false);
+	}
+	return 1;
+}
+
+int32_t LuaInterface::luaDoCreatureSetGuildEmblem(lua_State* L)
+{
+	//doCreatureSetGuildEmblem(cid, emblem)
+	GuildEmblems_t emblem = (GuildEmblems_t)popNumber(L);
+	ScriptEnviroment* env = getEnv();
+	if(Creature* creature = env->getCreatureByUID(popNumber(L)))
+	{
+		creature->setEmblem(emblem);
+		g_game.updateCreatureEmblem(creature);
+		lua_pushboolean(L, true);
+	}
+	else
+	{
+		errorEx(getError(LUA_ERROR_CREATURE_NOT_FOUND));
+		lua_pushboolean(L, false);
+	}
+	return 1;
+}
+
+int32_t LuaInterface::luaGetCreaturePartyShield(lua_State* L)
+{
+	//getCreaturePartyShield(cid)
+	ScriptEnviroment* env = getEnv();
+	if(Creature* creature = env->getCreatureByUID(popNumber(L)))
+		lua_pushnumber(L, creature->getShield());
+	else
+	{
+		errorEx(getError(LUA_ERROR_CREATURE_NOT_FOUND));
+		lua_pushboolean(L, false);
+	}
+	return 1;
+}
+
+int32_t LuaInterface::luaDoCreatureSetPartyShield(lua_State* L)
+{
+        //doCreatureSetPartyShield(cid, shield)
+	PartyShields_t shield = (PartyShields_t)popNumber(L);
+	ScriptEnviroment* env = getEnv();
+	if(Creature* creature = env->getCreatureByUID(popNumber(L)))
+	{
+		creature->setShield(shield);
+		g_game.updateCreatureShield(creature);
+		lua_pushboolean(L, true);
+	}
+	else
+	{
+		errorEx(getError(LUA_ERROR_CREATURE_NOT_FOUND));
+		lua_pushboolean(L, false);
+	}
 	return 1;
 }
 

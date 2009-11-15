@@ -317,8 +317,9 @@ class LuaInterface
 		static int32_t luaGetClosestFreeTile(lua_State* L);
 		static int32_t luaDoTeleportThing(lua_State* L);
 		static int32_t luaDoTransformItem(lua_State* L);
-		static int32_t luaDoSendMagicEffect(lua_State* L);
+		static int32_t luaDoSendCreatureSquare(lua_State* L);
 		static int32_t luaDoSendAnimatedText(lua_State* L);
+		static int32_t luaDoSendMagicEffect(lua_State* L);
 		static int32_t luaDoSendDistanceShoot(lua_State* L);
 		static int32_t luaDoShowTextWindow(lua_State* L);
 		static int32_t luaDoShowTextDialog(lua_State* L);
@@ -379,6 +380,10 @@ class LuaInterface
 		static int32_t luaDoCreatureSetHideHealth(lua_State* L);
 		static int32_t luaGetCreatureSpeakType(lua_State* L);
 		static int32_t luaDoCreatureSetSpeakType(lua_State* L);
+		static int32_t luaGetCreatureGuildEmblem(lua_State* L);
+		static int32_t luaDoCreatureSetGuildEmblem(lua_State* L)
+		static int32_t luaGetCreaturePartyShield(lua_State* L);
+		static int32_t luaDoCreatureSetPartyShield(lua_State* L)
 		static int32_t luaGetCreatureSkullType(lua_State* L);
 		static int32_t luaDoCreatureSetSkullType(lua_State* L);
 		static int32_t luaGetPlayerSkullEnd(lua_State* L);

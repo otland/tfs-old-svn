@@ -200,6 +200,7 @@ class ProtocolGame : public Protocol
 
 		void sendCreatureSkull(const Creature* creature);
 		void sendCreatureShield(const Creature* creature);
+		void sendCreatureEmblem(const Creature* creature);
 
 		void sendShop(const ShopInfoList& shop);
 		void sendCloseShop();
@@ -222,7 +223,7 @@ class ProtocolGame : public Protocol
 		void sendCreatureLight(const Creature* creature);
 		void sendWorldLight(const LightInfo& lightInfo);
 
-		void sendCreatureSquare(const Creature* creature, SquareColor_t color);
+		void sendCreatureSquare(const Creature* creature, uint8_t color);
 
 		//tiles
 		void sendAddTileItem(const Tile* tile, const Position& pos, uint32_t stackpos, const Item* item);

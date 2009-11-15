@@ -2015,9 +2015,9 @@ BlockType_t Player::blockHit(Creature* attacker, CombatType_t combatType, int32_
 	{
 		int16_t color = g_config.getNumber(ConfigManager::SQUARE_COLOR);
 		if(color < 0)
-			color = random_range(0, 255);
+			color = random_range(0, 254);
 
-		sendCreatureSquare(attacker, (SquareColor_t)color);
+		sendCreatureSquare(attacker, color);
 	}
 
 	if(blockType != BLOCK_NONE)
@@ -3891,7 +3891,7 @@ Skulls_t Player::getSkull() const
 	return skull;
 }
 
-Skulls_t Player::getSkullClient(const Creature* creature) const
+Skulls_t Player::getSkullType(const Creature* creature) const
 {
 	if(const Player* player = creature->getPlayer())
 	{
@@ -3905,7 +3905,7 @@ Skulls_t Player::getSkullClient(const Creature* creature) const
 			return SKULL_GREEN;
 	}
 
-	return Creature::getSkullClient(creature);
+	return Creature::getSkullType(creature);
 }
 
 bool Player::hasAttacked(const Player* attacked) const
@@ -4805,7 +4805,7 @@ bool Player::isPartner(const Player* player) const
 	return (getParty() == player->getParty());
 }
 
-void Player::sendPlayerPartyIcons(Player* player)
+void Player::sendPlayerPartyIcons(Player* player) const
 {
 	sendCreatureShield(player);
 	sendCreatureSkull(player);
@@ -4946,5 +4946,5 @@ bool Player::transferMoneyTo(const std::string& name, uint64_t amount)
 void Player::sendCritical() const
 {
 	if(g_config.getBool(ConfigManager::DISPLAY_CRITICAL_HIT))
-		g_game.addAnimatedText(getPosition(), TEXTCOLOR_DARKRED, "CRITICAL!");
+		g_game.addAnimatedText(getPosition(), COLOR_DARKRED, "CRITICAL!");
 }

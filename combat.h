@@ -63,7 +63,7 @@ struct CombatEffects
 {
 	CombatEffects(bool _show): show(_show)
 	{
-		color = TEXTCOLOR_UNKNOWN;
+		color = COLOR_UNKNOWN;
 		distance = SHOOT_EFFECT_NONE;
 		impact = MAGIC_EFFECT_NONE;
 		hit = MAGIC_EFFECT_UNKNOWN;
@@ -71,7 +71,7 @@ struct CombatEffects
 
 	CombatEffects()
 	{
-		color = TEXTCOLOR_UNKNOWN;
+		color = COLOR_UNKNOWN;
 		distance = SHOOT_EFFECT_NONE;
 		impact = MAGIC_EFFECT_NONE;
 		hit = MAGIC_EFFECT_UNKNOWN;
@@ -80,7 +80,7 @@ struct CombatEffects
 
 	MagicEffect_t impact, hit;
 	ShootEffect_t distance;
-	TextColor_t color;
+	Color_t color;
 	bool show;
 };
 
