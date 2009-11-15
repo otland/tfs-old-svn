@@ -33,15 +33,85 @@
 extern Game g_game;
 extern MoveEvents* g_moveEvents;
 
-MoveEvents::MoveEvents():
-	m_lastCacheTile(NULL), m_interface("MoveEvents Interface")
+void MoveEventScript::registerFunctions()
 {
-	m_interface.initState();
+	LuaInterface::registerFunctions();
+	lua_register(m_luaState, "callFunction", MoveEventScript::luaCallFunction);
 }
 
-MoveEvents::~MoveEvents()
+int32_t MoveEventScript::luaCallFunction(lua_State* L)
 {
-	clear();
+	//callFunction(...)
+	if(event->getEventType() == MOVE_EVENT_EQUIP || event->getEventType() == MOVE_EVENT_DEEQUIP)
+	{
+		ScriptEnviroment* env = getEnv();
+		slots_t slot = (slots_t)popNumber(L);
+
+		Item* item = env->getItemByUID(popNumber(L));
+		if(!item)
+		{
+			error(__FUNCTION__, getError(LUA_ERROR_ITEM_NOT_FOUND));
+			lua_pushboolean(L, false);
+			return 1;
+		}
+
+		Player* player = env->getPlayerByUID(popNumber(L));
+		if(!player)
+		{
+			error(__FUNCTION__, getError(LUA_ERROR_PLAYER_NOT_FOUND));
+			lua_pushboolean(L, false);
+			return 1;
+		}
+
+		lua_pushboolean(L, event->callEquip(event, player, item, slot, true));
+		return 1;
+	}
+	else if(event->getEventType() == MOVE_EVENT_STEP_IN)
+	{
+		ScriptEnviroment* env = getEnv();
+		Item* item = env->getItemByUID(popNumber(L));
+		if(!item)
+		{
+			error(__FUNCTION__, getError(LUA_ERROR_ITEM_NOT_FOUND));
+			lua_pushboolean(L, false);
+			return 1;
+		}
+
+		Creature* creature = env->getCreatureByUID(popNumber(L));
+		if(!creature)
+		{
+			error(__FUNCTION__, getError(LUA_ERROR_CREATURE_NOT_FOUND));
+			lua_pushboolean(L, false);
+			return 1;
+		}
+
+		lua_pushboolean(L, event->callStep(creature, item));
+		return 1;
+	}
+	else if(event->getEventType() == MOVE_EVENT_ADD_ITEM)
+	{
+		ScriptEnviroment* env = getEnv();
+		Item* item = env->getItemByUID(popNumber(L));
+		if(!item)
+		{
+			error(__FUNCTION__, getError(LUA_ERROR_ITEM_NOT_FOUND));
+			lua_pushboolean(L, false);
+			return 1;
+		}
+
+		lua_pushboolean(L, event->callMove(item));
+		return 1;
+	}
+
+	error(__FUNCTION__, "callFunction not available for this event.");
+	lua_pushboolean(L, false);
+	return 0;
+}
+
+MoveEvents::MoveEvents():
+	m_lastCacheTile(NULL)
+{
+	m_interface.initState();
 }
 
 inline void MoveEvents::clearMap(MoveListMap& map)
@@ -612,7 +682,7 @@ void MoveEvents::onRemoveTileItem(const Tile* tile, Item* item)
 	}
 }
 
-MoveEvent::MoveEvent(LuaInterface* _interface):
+MoveEvent::MoveEvent(MoveEventScript* _interface):
 Event(_interface)
 {
 	m_eventType = MOVE_EVENT_NONE;
@@ -1078,6 +1148,7 @@ uint32_t MoveEvent::executeStep(Creature* actor, Creature* creature, Item* item,
 	//onStepOut(cid, item, position, lastPosition, fromPosition, toPosition, actor)
 	if(m_interface->reserveEnv())
 	{
+		m_interface->setEvent(this);
 		ScriptEnviroment* env = m_interface->getEnv();
 		if(m_scripted == EVENT_SCRIPT_BUFFER)
 		{
@@ -1152,6 +1223,7 @@ uint32_t MoveEvent::executeEquip(Player* player, Item* item, slots_t slot)
 	//onDeEquip(cid, item, slot)
 	if(m_interface->reserveEnv())
 	{
+		m_interface->setEvent(this);
 		ScriptEnviroment* env = m_interface->getEnv();
 		if(m_scripted == EVENT_SCRIPT_BUFFER)
 		{
@@ -1217,6 +1289,7 @@ uint32_t MoveEvent::executeAddRemItem(Creature* actor, Item* item, Item* tileIte
 	//onRemoveItem(moveItem, tileItem, position, cid)
 	if(m_interface->reserveEnv())
 	{
+		m_interface->setEvent(this);
 		ScriptEnviroment* env = m_interface->getEnv();
 		if(m_scripted == EVENT_SCRIPT_BUFFER)
 		{

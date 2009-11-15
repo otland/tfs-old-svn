@@ -4481,7 +4481,7 @@ void Game::addCreatureSquare(const SpectatorVec& list, const Creature* target, u
 	for(SpectatorVec::const_iterator it = list.begin(); it != list.end(); ++it)
 	{
 		if((player = (*it)->getPlayer()))
-			player->sendCreatureSquare(creature, squareColor);
+			player->sendCreatureSquare(target, squareColor);
 	}
 }
 

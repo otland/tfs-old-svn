@@ -1565,7 +1565,7 @@ void ProtocolGame::sendCreatureEmblem(const Creature* creature)
 		TRACK_MESSAGE(msg);
 		msg->AddByte(0x92); // FIXME: its only a guess :D
 		msg->AddU32(creature->getID());
-		msg->AddByte(player->getEmblemClient(creature));
+		msg->AddByte(player->getGuildEmblem(creature));
 	}
 }
 

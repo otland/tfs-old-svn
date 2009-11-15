@@ -21,6 +21,23 @@
 #include "baseevents.h"
 #include "creature.h"
 
+class MoveEvent;
+class MoveEventScript : public LuaInterface
+{
+	public:
+		MoveEventScript() : LuaInterface("MoveEvents Interface") {}
+		virtual ~MoveEventScript() {}
+
+		void setEvent(MoveEvent* _event) {event = _event;}
+		MoveEvent* getEvent() {return event;}
+
+	protected:
+		MoveEvent* event;
+
+		virtual void registerFunctions();
+		static int32_t luaCallFunction(lua_State* L);
+};
+
 enum MoveEvent_t
 {
 	MOVE_EVENT_FIRST = 0,
@@ -36,19 +53,12 @@ enum MoveEvent_t
 	MOVE_EVENT_LAST = MOVE_EVENT_REMOVE_ITEM_ITEMTILE
 };
 
-class MoveEvent;
 typedef std::list<MoveEvent*> EventList;
-
-struct MoveEventList
-{
-	EventList moveEvent[MOVE_EVENT_NONE];
-};
-
 class MoveEvents : public BaseEvents
 {
 	public:
 		MoveEvents();
-		virtual ~MoveEvents();
+		virtual ~MoveEvents() {clear();}
 
 		uint32_t onCreatureMove(Creature* actor, Creature* creature, const Tile* fromTile, const Tile* toTile, bool isStepping);
 		uint32_t onPlayerEquip(Player* player, Item* item, slots_t slot, bool isCheck);
@@ -62,8 +72,10 @@ class MoveEvents : public BaseEvents
 		void onAddTileItem(const Tile* tile, Item* item);
 
 	protected:
-		const Tile* m_lastCacheTile;
-		std::vector<Item*> m_lastCacheItemVector;
+		struct MoveEventList
+		{
+			EventList moveEvent[MOVE_EVENT_NONE];
+		};
 
 		virtual std::string getScriptBaseName() const {return "movements";}
 		virtual void clear();
@@ -71,8 +83,8 @@ class MoveEvents : public BaseEvents
 		virtual Event* getEvent(const std::string& nodeName);
 		virtual bool registerEvent(Event* event, xmlNodePtr p, bool override);
 
-		virtual LuaInterface& getInterface() {return m_interface;}
-		LuaInterface m_interface;
+		virtual MoveEventScript& getInterface() {return m_interface;}
+		MoveEventScript m_interface;
 
 		void registerItemID(int32_t itemId, MoveEvent_t eventType);
 		void registerActionID(int32_t actionId, MoveEvent_t eventType);
@@ -92,6 +104,9 @@ class MoveEvents : public BaseEvents
 
 		void addEvent(MoveEvent* moveEvent, Position pos, MovePosListMap& map, bool override);
 		MoveEvent* getEvent(const Tile* tile, MoveEvent_t eventType);
+
+		const Tile* m_lastCacheTile;
+		std::vector<Item*> m_lastCacheItemVector;
 };
 
 typedef uint32_t (MoveFunction)(Item* item);
@@ -101,7 +116,7 @@ typedef uint32_t (EquipFunction)(MoveEvent* moveEvent, Player* player, Item* ite
 class MoveEvent : public Event
 {
 	public:
-		MoveEvent(LuaInterface* _interface);
+		MoveEvent(MoveEventScript* _interface);
 		MoveEvent(const MoveEvent* copy);
 		virtual ~MoveEvent();
 
@@ -120,9 +135,13 @@ class MoveEvent : public Event
 		uint32_t executeEquip(Player* player, Item* item, slots_t slot);
 		uint32_t executeAddRemItem(Creature* actor, Item* item, Item* tileItem, const Position& pos);
 
+		bool callMove(Item* item) {return moveFunction(item);}
+		bool callStep(Creature* creature, Item* item) {return stepFunction(creature, item);}
+		bool callEquip(MoveEvent* moveEvent, Player* player, Item* item, slots_t slot, bool boolean)
+			{return equipFunction(moveEvent, player, item, slot, boolean);}
+
 		uint32_t getWieldInfo() const {return wieldInfo;}
 		uint32_t getSlot() const {return slot;}
-
 		int32_t getReqLevel() const {return reqLevel;}
 		int32_t getReqMagLv() const {return reqMagLevel;}
 		bool isPremium() const {return premium;}
@@ -131,6 +150,8 @@ class MoveEvent : public Event
 		const std::string& getVocationString() const {return vocationString;}
 
 	protected:
+		MoveEvent_t m_eventType;
+
 		virtual std::string getScriptEventName() const;
 		virtual std::string getScriptEventParams() const;
 
@@ -139,16 +160,12 @@ class MoveEvent : public Event
 		static EquipFunction EquipItem;
 		static EquipFunction DeEquipItem;
 
-		MoveEvent_t m_eventType;
-		StepFunction* stepFunction;
 		MoveFunction* moveFunction;
+		StepFunction* stepFunction;
 		EquipFunction* equipFunction;
 
-		uint32_t wieldInfo;
-		uint32_t slot;
-
-		int32_t reqLevel;
-		int32_t reqMagLevel;
+		uint32_t wieldInfo, slot;
+		int32_t reqLevel, reqMagLevel;
 		bool premium;
 
 		VocationMap vocEquipMap;

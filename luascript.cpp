@@ -3923,9 +3923,9 @@ int32_t LuaInterface::luaDoSendCreatureSquare(lua_State* L)
 	if(Creature* creature = env->getCreatureByUID(popNumber(L)))
 	{
 	        if(!list.empty())
-        	        g_game.addCreatureSquare(list, cid, color);
+        	        g_game.addCreatureSquare(list, creature, color);
 	        else
-        	        g_game.addCreatureSquare(cid, color);
+        	        g_game.addCreatureSquare(creature, color);
 
 	        lua_pushboolean(L, true);
 	}

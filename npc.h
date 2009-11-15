@@ -24,10 +24,6 @@
 #include "luascript.h"
 
 class Npc;
-class Player;
-class NpcResponse;
-
-struct NpcState;
 typedef std::list<Npc*> NpcList;
 
 class Npcs
@@ -39,19 +35,21 @@ class Npcs
 		void reload();
 };
 
-class NpcScriptInterface : public LuaInterface
+class NpcState;
+class NpcScript : public LuaInterface
 {
 	public:
-		NpcScriptInterface();
-		virtual ~NpcScriptInterface();
+		NpcScript();
+		virtual ~NpcScript() {}
 
 		bool loadNpcLib(std::string file);
 
-		static void pushState(lua_State *L, NpcState* state);
-		static void popState(lua_State *L, NpcState* &state);
+		static void pushState(lua_State* L, NpcState* state);
+		static void popState(lua_State* L, NpcState* &state);
 
 	protected:
 		virtual void registerFunctions();
+
 		static int32_t luaActionFocus(lua_State* L);
 		static int32_t luaActionSay(lua_State* L);
 
@@ -72,41 +70,15 @@ class NpcScriptInterface : public LuaInterface
 
 	private:
 		bool m_libLoaded;
-
-		virtual bool initState();
 		virtual bool closeState();
 };
 
-class NpcEventsHandler
+class Player;
+class NpcEvents
 {
 	public:
-		NpcEventsHandler(Npc* npc);
-		virtual ~NpcEventsHandler() {}
-
-		virtual void onCreatureAppear(const Creature* creature) {}
-		virtual void onCreatureDisappear(const Creature* creature) {}
-
-		virtual void onCreatureMove(const Creature* creature, const Position& oldPos, const Position& newPos) {}
-		virtual void onCreatureSay(const Creature* creature, SpeakClasses, const std::string& text, Position* pos = NULL) {}
-
-		virtual void onPlayerTrade(const Player* player, int32_t callback, uint16_t itemid,
-			uint8_t count, uint8_t amount, bool ignoreCap, bool inBackpacks) {}
-		virtual void onPlayerEndTrade(const Player* player) {}
-		virtual void onPlayerCloseChannel(const Player* player) {}
-
-		virtual void onThink() {}
-		bool isLoaded();
-
-	protected:
-		Npc* m_npc;
-		bool m_loaded;
-};
-
-class NpcScript : public NpcEventsHandler
-{
-	public:
-		NpcScript(std::string file, Npc* npc);
-		virtual ~NpcScript() {}
+		NpcEvents(std::string file, Npc* npc);
+		virtual ~NpcEvents() {}
 
 		virtual void onCreatureAppear(const Creature* creature);
 		virtual void onCreatureDisappear(const Creature* creature);
@@ -120,9 +92,12 @@ class NpcScript : public NpcEventsHandler
 		virtual void onPlayerCloseChannel(const Player* player);
 
 		virtual void onThink();
+		bool isLoaded() const {return m_loaded;}
 
 	private:
-		NpcScriptInterface* m_interface;
+		Npc* m_npc;
+		bool m_loaded;
+		NpcScript* m_interface;
 		int32_t m_onCreatureAppear, m_onCreatureDisappear, m_onCreatureMove, m_onCreatureSay,
 			m_onPlayerCloseChannel, m_onPlayerEndTrade, m_onThink;
 };
@@ -263,9 +238,11 @@ struct ScriptVars
 };
 
 typedef std::list<ResponseAction> ActionList;
-typedef std::list<NpcResponse*> ResponseList;
-typedef std::map<std::string, int32_t> ResponseScriptMap;
 
+class NpcResponse;
+typedef std::list<NpcResponse*> ResponseList;
+
+typedef std::map<std::string, int32_t> ResponseScriptMap;
 class NpcResponse
 {
 	public:
@@ -418,7 +395,7 @@ class Npc : public Creature
 		void onPlayerCloseChannel(const Player* player);
 
 		void setCreatureFocus(Creature* creature);
-		NpcScriptInterface* getInterface();
+		NpcScript* getInterface();
 
 	protected:
 		Npc(const std::string& _name);
@@ -494,10 +471,10 @@ class Npc : public Creature
 		ResponseScriptMap responseScriptMap;
 		ResponseList responseList;
 
-		NpcEventsHandler* m_npcEventHandler;
-		static NpcScriptInterface* m_interface;
+		NpcEvents* m_npcEventHandler;
+		static NpcScript* m_interface;
 
 		friend class Npcs;
-		friend class NpcScriptInterface;
+		friend class NpcScript;
 };
 #endif

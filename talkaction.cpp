@@ -1221,6 +1221,13 @@ bool TalkAction::ghost(Creature* creature, const std::string& cmd, const std::st
 		}
 
 		IOLoginData::getInstance()->updateOnlineStatus(player->getGUID(), false);
+		if(player->isTrading())
+			g_game.internalCloseTrade(player);
+
+		player->clearPartyInvitations();
+		if(player->getParty())
+			player->getParty()->leave(player);
+
 		player->sendTextMessage(MSG_INFO_DESCR, "You are now invisible.");
 	}
 

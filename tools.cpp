@@ -651,17 +651,16 @@ std::string formatTime(time_t _time/* = 0*/, bool ms/* = false*/)
 		if(ms)
 		{
 			timeb t;
-			if(!ftime(&t))
-			{
-				s << "."; // make it format zzz
-				if(t.millitm < 10)
-					s << "0";
+			ftime(&t);
 
-				if(t.millitm < 100)
-					s << "0";
+			s << "."; // make it format zzz
+			if(t.millitm < 10)
+				s << "0";
 
-				s << t.millitm;
-			}
+			if(t.millitm < 100)
+				s << "0";
+
+			s << t.millitm;
 		}
 	}
 	else

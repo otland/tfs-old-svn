@@ -33,7 +33,7 @@ Party::Party(Player* _leader)
 	{
 		leader = _leader;
 		leader->setParty(this);
-		leader->sendPlayerPartyIcons(leader);
+		leader->sendPlayerIcons(leader);
 	}
 }
 
@@ -43,13 +43,13 @@ void Party::disband()
 	leader->setParty(NULL);
 	leader->sendTextMessage(MSG_INFO_DESCR, "Your party has been disbanded.");
 
-	leader->sendPlayerPartyIcons(leader);
+	leader->sendPlayerIcons(leader);
 	for(PlayerVector::iterator it = inviteList.begin(); it != inviteList.end(); ++it)
 	{
 		(*it)->removePartyInvitation(this);
-		(*it)->sendPlayerPartyIcons(leader);
-		(*it)->sendPlayerPartyIcons(*it);
-		leader->sendPlayerPartyIcons(*it);
+		(*it)->sendPlayerIcons(leader);
+		(*it)->sendPlayerIcons(*it);
+		leader->sendPlayerIcons(*it);
 	}
 
 	inviteList.clear();
@@ -59,9 +59,9 @@ void Party::disband()
 		(*it)->setParty(NULL);
 		(*it)->sendTextMessage(MSG_INFO_DESCR, "Your party has been disbanded.");
 
-		(*it)->sendPlayerPartyIcons(*it);
-		(*it)->sendPlayerPartyIcons(leader);
-		leader->sendPlayerPartyIcons(*it);
+		(*it)->sendPlayerIcons(*it);
+		(*it)->sendPlayerIcons(leader);
+		leader->sendPlayerIcons(*it);
 	}
 
 	memberList.clear();
@@ -101,7 +101,7 @@ bool Party::leave(Player* player)
 	player->sendClosePrivate(CHANNEL_PARTY);
 
 	player->sendTextMessage(MSG_INFO_DESCR, "You have left the party.");
-	player->sendPlayerPartyIcons(player);
+	player->sendPlayerIcons(player);
 
 	updateSharedExperience();
 	updateIcons(player);
@@ -177,8 +177,8 @@ bool Party::removeInvite(Player* player)
 	if(it != inviteList.end())
 		inviteList.erase(it);
 
-	leader->sendPlayerPartyIcons(player);
-	player->sendPlayerPartyIcons(leader);
+	leader->sendPlayerIcons(player);
+	player->sendPlayerIcons(leader);
 
 	player->removePartyInvitation(this);
 	if(canDisband())
@@ -216,8 +216,8 @@ bool Party::invitePlayer(Player* player)
 	sprintf(buffer, "%s has invited you to %s party.", leader->getName().c_str(), (leader->getSex(false) ? "his" : "her"));
 	player->sendTextMessage(MSG_INFO_DESCR, buffer);
 
-	leader->sendPlayerPartyIcons(player);
-	player->sendPlayerPartyIcons(leader);
+	leader->sendPlayerIcons(player);
+	player->sendPlayerIcons(leader);
 	return true;
 }
 
@@ -229,18 +229,18 @@ void Party::updateIcons(Player* player)
 	PlayerVector::iterator it;
 	for(it = memberList.begin(); it != memberList.end(); ++it)
 	{
-		(*it)->sendPlayerPartyIcons(player);
-		player->sendPlayerPartyIcons((*it));
+		(*it)->sendPlayerIcons(player);
+		player->sendPlayerIcons((*it));
 	}
 
 	for(it = inviteList.begin(); it != inviteList.end(); ++it)
 	{
-		(*it)->sendPlayerPartyIcons(player);
-		player->sendPlayerPartyIcons((*it));
+		(*it)->sendPlayerIcons(player);
+		player->sendPlayerIcons((*it));
 	}
 
-	leader->sendPlayerPartyIcons(player);
-	player->sendPlayerPartyIcons(leader);
+	leader->sendPlayerIcons(player);
+	player->sendPlayerIcons(leader);
 }
 
 void Party::updateAllIcons()
@@ -249,15 +249,15 @@ void Party::updateAllIcons()
 	for(it = memberList.begin(); it != memberList.end(); ++it)
 	{
 		for(PlayerVector::iterator iit = memberList.begin(); iit != memberList.end(); ++iit)
-			(*it)->sendPlayerPartyIcons((*iit));
+			(*it)->sendPlayerIcons((*iit));
 
-		(*it)->sendPlayerPartyIcons(leader);
-		leader->sendPlayerPartyIcons((*it));
+		(*it)->sendPlayerIcons(leader);
+		leader->sendPlayerIcons((*it));
 	}
 
-	leader->sendPlayerPartyIcons(leader);
+	leader->sendPlayerIcons(leader);
 	for(it = inviteList.begin(); it != inviteList.end(); ++it)
-		(*it)->sendPlayerPartyIcons(leader);
+		(*it)->sendPlayerIcons(leader);
 }
 
 void Party::broadcastMessage(MessageClasses messageClass, const std::string& text, bool sendToInvitations/* = false*/)
