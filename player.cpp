@@ -1413,8 +1413,8 @@ void Player::onCreatureDisappear(const Creature* creature, bool isLogout)
 		g_game.internalCloseTrade(this);
 
 	clearPartyInvitations();
-	if(getParty())
-		getParty()->leave(this);
+	if(party)
+		party->leave(this);
 
 	g_game.cancelRuleViolation(this);
 	if(hasFlag(PlayerFlag_CanAnswerRuleViolations))

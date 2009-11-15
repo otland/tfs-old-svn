@@ -124,7 +124,7 @@ class Spell : public BaseSpell
 		int32_t getManaCost(const Player* player) const;
 		int32_t getSoulCost() const {return soul;}
 		uint32_t getLevel() const {return level;}
-		uint32_t getMagicLevel() const {return magLevel;}
+		int32_t getMagicLevel() const {return magLevel;}
 		int32_t getMana() const {return mana;}
 		int32_t getManaPercent() const {return manaPercent;}
 		uint32_t getExhaustion() const {return exhaustion;}

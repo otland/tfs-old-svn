@@ -257,20 +257,22 @@ class Player : public Creature, public Cylinder
 
 		uint32_t getIdleTime() const {return idleTime;}
 		void setIdleTime(uint32_t amount) {idleTime = amount;}
+
 		bool checkLoginDelay(uint32_t playerId) const;
+		bool isTrading() const {return tradePartner;}
 
 		uint32_t getAccount() const {return accountId;}
 		std::string getAccountName() const {return account;}
 		uint16_t getAccess() const {return group ? group->getAccess() : 0;}
 		uint16_t getGhostAccess() const {return group ? group->getGhostAccess() : 0;}
+
 		bool isPremium() const;
+		int32_t getPremiumDays() const {return premiumDays;}
 
 		uint32_t getLevel() const {return level;}
 		uint64_t getExperience() const {return experience;}
 		uint32_t getMagicLevel() const {return getPlayerInfo(PLAYERINFO_MAGICLEVEL);}
 		uint64_t getSpentMana() const {return manaSpent;}
-
-		int32_t getPremiumDays() const {return premiumDays;}
 
 		uint32_t getVocationId() const {return vocation_id;}
 		void setVocation(uint32_t vocId);
