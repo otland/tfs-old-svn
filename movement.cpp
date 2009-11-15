@@ -33,6 +33,8 @@
 extern Game g_game;
 extern MoveEvents* g_moveEvents;
 
+MoveEvent* MoveEventScript::event = NULL;
+
 void MoveEventScript::registerFunctions()
 {
 	LuaInterface::registerFunctions();
@@ -42,6 +44,14 @@ void MoveEventScript::registerFunctions()
 int32_t MoveEventScript::luaCallFunction(lua_State* L)
 {
 	//callFunction(...)
+	MoveEvent* event = MoveEventScript::event;
+	if(!event)
+	{
+		error(__FUNCTION__, "MoveEvent not set!");
+		lua_pushboolean(L, false);
+		return 0;
+	}
+
 	if(event->getEventType() == MOVE_EVENT_EQUIP || event->getEventType() == MOVE_EVENT_DEEQUIP)
 	{
 		ScriptEnviroment* env = getEnv();
@@ -103,7 +113,7 @@ int32_t MoveEventScript::luaCallFunction(lua_State* L)
 		return 1;
 	}
 
-	error(__FUNCTION__, "callFunction not available for this event.");
+	error(__FUNCTION__, "callFunction not available for current event.");
 	lua_pushboolean(L, false);
 	return 0;
 }
@@ -682,7 +692,7 @@ void MoveEvents::onRemoveTileItem(const Tile* tile, Item* item)
 	}
 }
 
-MoveEvent::MoveEvent(MoveEventScript* _interface):
+MoveEvent::MoveEvent(LuaInterface* _interface):
 Event(_interface)
 {
 	m_eventType = MOVE_EVENT_NONE;
@@ -1148,7 +1158,7 @@ uint32_t MoveEvent::executeStep(Creature* actor, Creature* creature, Item* item,
 	//onStepOut(cid, item, position, lastPosition, fromPosition, toPosition, actor)
 	if(m_interface->reserveEnv())
 	{
-		m_interface->setEvent(this);
+		MoveEventScript::event = this;
 		ScriptEnviroment* env = m_interface->getEnv();
 		if(m_scripted == EVENT_SCRIPT_BUFFER)
 		{
@@ -1223,7 +1233,7 @@ uint32_t MoveEvent::executeEquip(Player* player, Item* item, slots_t slot)
 	//onDeEquip(cid, item, slot)
 	if(m_interface->reserveEnv())
 	{
-		m_interface->setEvent(this);
+		MoveEventScript::event = this;
 		ScriptEnviroment* env = m_interface->getEnv();
 		if(m_scripted == EVENT_SCRIPT_BUFFER)
 		{
@@ -1289,7 +1299,7 @@ uint32_t MoveEvent::executeAddRemItem(Creature* actor, Item* item, Item* tileIte
 	//onRemoveItem(moveItem, tileItem, position, cid)
 	if(m_interface->reserveEnv())
 	{
-		m_interface->setEvent(this);
+		MoveEventScript::event = this;
 		ScriptEnviroment* env = m_interface->getEnv();
 		if(m_scripted == EVENT_SCRIPT_BUFFER)
 		{

@@ -28,12 +28,9 @@ class MoveEventScript : public LuaInterface
 		MoveEventScript() : LuaInterface("MoveEvents Interface") {}
 		virtual ~MoveEventScript() {}
 
-		void setEvent(MoveEvent* _event) {event = _event;}
-		MoveEvent* getEvent() {return event;}
+		static MoveEvent* event;
 
 	protected:
-		MoveEvent* event;
-
 		virtual void registerFunctions();
 		static int32_t luaCallFunction(lua_State* L);
 };
@@ -83,7 +80,7 @@ class MoveEvents : public BaseEvents
 		virtual Event* getEvent(const std::string& nodeName);
 		virtual bool registerEvent(Event* event, xmlNodePtr p, bool override);
 
-		virtual MoveEventScript& getInterface() {return m_interface;}
+		virtual LuaInterface& getInterface() {return m_interface;}
 		MoveEventScript m_interface;
 
 		void registerItemID(int32_t itemId, MoveEvent_t eventType);
@@ -116,7 +113,7 @@ typedef uint32_t (EquipFunction)(MoveEvent* moveEvent, Player* player, Item* ite
 class MoveEvent : public Event
 {
 	public:
-		MoveEvent(MoveEventScript* _interface);
+		MoveEvent(LuaInterface* _interface);
 		MoveEvent(const MoveEvent* copy);
 		virtual ~MoveEvent();
 
