@@ -216,46 +216,13 @@ bool Npc::loadFromXml(const std::string& filename)
 		floorChange = booleanString(strValue);
 
 	if(readXMLString(root, "skull", strValue))
-	{
-		std::string tmpStrValue = asLowerCaseString(strValue);
-		if(tmpStrValue == "red" || tmpStrValue == "4")
-			setSkull(SKULL_RED);
-		else if(tmpStrValue == "white" || tmpStrValue == "3")
-			setSkull(SKULL_WHITE);
-		else if(tmpStrValue == "green" || tmpStrValue == "2")
-			setSkull(SKULL_GREEN);
-		else if(tmpStrValue == "yellow" || tmpStrValue == "1")
-			setSkull(SKULL_YELLOW);
-		else
-			setSkull(SKULL_NONE);
-	}
+		setSkull(getSkullType(strValue));
 
 	if(readXMLString(root, "shield", strValue))
-	{
-		std::string tmpStrValue = asLowerCaseString(strValue);
-		if(tmpStrValue == "whitenoshareoff" || tmpStrValue == "10")
-			setShield(SHIELD_YELLOW_NOSHAREDEXP);
-		else if(tmpStrValue == "blueshareoff" || tmpStrValue == "9")
-			setShield(SHIELD_BLUE_NOSHAREDEXP);
-		else if(tmpStrValue == "yellowshareblink" || tmpStrValue == "8")
-			setShield(SHIELD_YELLOW_NOSHAREDEXP_BLINK);
-		else if(tmpStrValue == "blueshareblink" || tmpStrValue == "7")
-			setShield(SHIELD_BLUE_NOSHAREDEXP_BLINK);
-		else if(tmpStrValue == "yellowshareon" || tmpStrValue == "6")
-			setShield(SHIELD_YELLOW_SHAREDEXP);
-		else if(tmpStrValue == "blueshareon" || tmpStrValue == "5")
-			setShield(SHIELD_BLUE_SHAREDEXP);
-		else if(tmpStrValue == "yellow" || tmpStrValue == "4")
-			setShield(SHIELD_YELLOW);
-		else if(tmpStrValue == "blue" || tmpStrValue == "3")
-			setShield(SHIELD_BLUE);
-		else if(tmpStrValue == "whiteyellow" || tmpStrValue == "2")
-			setShield(SHIELD_WHITEYELLOW);
-		else if(tmpStrValue == "whiteblue" || tmpStrValue == "1")
-			setShield(SHIELD_WHITEBLUE);
-		else
-			setShield(SHIELD_NONE);
-	}
+		setShield(getPartyShield(strValue));
+
+	if(readXMLString(root, "emblem", strValue))
+		setEmblem(getGuildEmblem(strValue));
 
 	p = root->children;
 	while(p)

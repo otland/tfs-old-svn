@@ -70,6 +70,7 @@ Monster::Monster(MonsterType* _mType):
 	internalLight.color = mType->lightColor;
 	setSkull(mType->skull);
 	setShield(mType->partyShield);
+	setEmblem(mType->guildEmblem);
 
 	hideName = mType->hideName, hideHealth = mType->hideHealth;
 

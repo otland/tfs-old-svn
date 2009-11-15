@@ -677,18 +677,22 @@ std::string convertIPAddress(uint32_t ip)
 	return buffer;
 }
 
-Skulls_t getSkull(std::string strValue)
+Skulls_t getSkullType(std::string strValue)
 {
 	std::string tmpStrValue = asLowerCaseString(strValue);
 	if(tmpStrValue == "black" || tmpStrValue == "5")
 		return SKULL_BLACK;
-	else if(tmpStrValue == "red" || tmpStrValue == "4")
+
+	if(tmpStrValue == "red" || tmpStrValue == "4")
 		return SKULL_RED;
-	else if(tmpStrValue == "white" || tmpStrValue == "3")
+
+	if(tmpStrValue == "white" || tmpStrValue == "3")
 		return SKULL_WHITE;
-	else if(tmpStrValue == "green" || tmpStrValue == "2")
+
+	if(tmpStrValue == "green" || tmpStrValue == "2")
 		return SKULL_GREEN;
-	else if(tmpStrValue == "yellow" || tmpStrValue == "1")
+
+	if(tmpStrValue == "yellow" || tmpStrValue == "1")
 		return SKULL_YELLOW;
 
 	return SKULL_NONE;
@@ -699,45 +703,73 @@ PartyShields_t getPartyShield(std::string strValue)
 	std::string tmpStrValue = asLowerCaseString(strValue);
 	if(tmpStrValue == "whitenoshareoff" || tmpStrValue == "10")
 		return SHIELD_YELLOW_NOSHAREDEXP;
-	else if(tmpStrValue == "blueshareoff" || tmpStrValue == "9")
+
+	if(tmpStrValue == "blueshareoff" || tmpStrValue == "9")
 		return SHIELD_BLUE_NOSHAREDEXP;
-	else if(tmpStrValue == "yellowshareblink" || tmpStrValue == "8")
+
+	if(tmpStrValue == "yellowshareblink" || tmpStrValue == "8")
 		return SHIELD_YELLOW_NOSHAREDEXP_BLINK;
-	else if(tmpStrValue == "blueshareblink" || tmpStrValue == "7")
+
+	if(tmpStrValue == "blueshareblink" || tmpStrValue == "7")
 		return SHIELD_BLUE_NOSHAREDEXP_BLINK;
-	else if(tmpStrValue == "yellowshareon" || tmpStrValue == "6")
+
+	if(tmpStrValue == "yellowshareon" || tmpStrValue == "6")
 		return SHIELD_YELLOW_SHAREDEXP;
-	else if(tmpStrValue == "blueshareon" || tmpStrValue == "5")
+
+	if(tmpStrValue == "blueshareon" || tmpStrValue == "5")
 		return SHIELD_BLUE_SHAREDEXP;
-	else if(tmpStrValue == "yellow" || tmpStrValue == "4")
+
+	if(tmpStrValue == "yellow" || tmpStrValue == "4")
 		return SHIELD_YELLOW;
-	else if(tmpStrValue == "blue" || tmpStrValue == "3")
+
+	if(tmpStrValue == "blue" || tmpStrValue == "3")
 		return SHIELD_BLUE;
-	else if(tmpStrValue == "whiteyellow" || tmpStrValue == "2")
+
+	if(tmpStrValue == "whiteyellow" || tmpStrValue == "2")
 		return SHIELD_WHITEYELLOW;
-	else if(tmpStrValue == "whiteblue" || tmpStrValue == "1")
+
+	if(tmpStrValue == "whiteblue" || tmpStrValue == "1")
 		return SHIELD_WHITEBLUE;
 
 	return SHIELD_NONE;
+}
+
+GuildEmblems_t getGuildEmblem(std::string strValue)
+{
+	std::string tmpStrValue = asLowerCaseString(strValue);
+	if(tmpStrValue == "enemy" || tmpStrValue == "2")
+		return EMBLEM_ENEMY;
+
+	if(tmpStrValue == "ally" || tmpStrValue == "1")
+		return EMBLEM_ALLY;
+
+	return EMBLEM_NONE;
 }
 
 Direction getDirection(std::string string)
 {
 	if(string == "north" || string == "n" || string == "0")
 		return NORTH;
-	else if(string == "east" || string == "e" || string == "1")
+
+	if(string == "east" || string == "e" || string == "1")
 		return EAST;
-	else if(string == "south" || string == "s" || string == "2")
+
+	if(string == "south" || string == "s" || string == "2")
 		return SOUTH;
-	else if(string == "west" || string == "w" || string == "3")
+
+	if(string == "west" || string == "w" || string == "3")
 		return WEST;
-	else if(string == "southwest" || string == "south west" || string == "south-west" || string == "sw" || string == "4")
+
+	if(string == "southwest" || string == "south west" || string == "south-west" || string == "sw" || string == "4")
 		return SOUTHWEST;
-	else if(string == "southeast" || string == "south east" || string == "south-east" || string == "se" || string == "5")
+
+	if(string == "southeast" || string == "south east" || string == "south-east" || string == "se" || string == "5")
 		return SOUTHEAST;
-	else if(string == "northwest" || string == "north west" || string == "north-west" || string == "nw" || string == "6")
+
+	if(string == "northwest" || string == "north west" || string == "north-west" || string == "nw" || string == "6")
 		return NORTHWEST;
-	else if(string == "northeast" || string == "north east" || string == "north-east" || string == "ne" || string == "7")
+
+	if(string == "northeast" || string == "north east" || string == "north-east" || string == "ne" || string == "7")
 		return NORTHEAST;
 
 	return SOUTH;

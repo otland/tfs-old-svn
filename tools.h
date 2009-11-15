@@ -101,8 +101,9 @@ int32_t round(float v);
 uint32_t rand24b();
 float box_muller(float m, float s);
 
-Skulls_t getSkull(std::string strValue);
+Skulls_t getSkullType(std::string strValue);
 PartyShields_t getPartyShield(std::string strValue);
+GuildEmblems_t getGuildEmblem(std::string strValue);
 
 Direction getDirection(std::string string);
 Direction getDirectionTo(Position pos1, Position pos2, bool extended = true);

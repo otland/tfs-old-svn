@@ -55,6 +55,7 @@ void MonsterType::reset()
 	race = RACE_BLOOD;
 	skull = SKULL_NONE;
 	partyShield = SHIELD_NONE;
+	guildEmblem = EMBLEM_NONE;
 	lootMessage = LOOTMSG_IGNORE;
 
 	for(SpellList::iterator it = spellAttackList.begin(); it != spellAttackList.end(); ++it)
@@ -950,10 +951,13 @@ bool Monsters::loadMonster(const std::string& file, const std::string& monsterNa
 		mType->manaCost = intValue;
 
 	if(readXMLString(root, "skull", strValue))
-		mType->skull = getSkull(strValue);
+		mType->skull = getSkullType(strValue);
 
 	if(readXMLString(root, "shield", strValue))
 		mType->partyShield = getPartyShield(strValue);
+
+	if(readXMLString(root, "emblem", strValue))
+		mType->guildEmblem = getGuildEmblem(strValue);
 
 	p = root->children;
 	while(p && monsterLoad)
@@ -1057,10 +1061,13 @@ bool Monsters::loadMonster(const std::string& file, const std::string& monsterNa
 						mType->isWalkable = booleanString(strValue);
 
 					if(readXMLString(tmpNode, "skull", strValue))
-						mType->skull = getSkull(strValue);
+						mType->skull = getSkullType(strValue);
 
 					if(readXMLString(tmpNode, "shield", strValue))
 						mType->partyShield = getPartyShield(strValue);
+
+					if(readXMLString(tmpNode, "emblem", strValue))
+						mType->guildEmblem = getGuildEmblem(strValue);
 				}
 
 				tmpNode = tmpNode->next;
