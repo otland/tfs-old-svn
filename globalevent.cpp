@@ -371,6 +371,7 @@ int32_t GlobalEvent::executeEvent()
 		else
 		{
 			env->setScriptId(m_scriptId, m_interface);
+			lua_State* L = m_interface->getState();
 			m_interface->pushFunction(m_scriptId);
 
 			int32_t params = 0;
