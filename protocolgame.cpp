@@ -245,15 +245,14 @@ bool ProtocolGame::login(const std::string& name, uint32_t id, const std::string
 			return false;
 		}
 
+		player->setOperatingSystem(operatingSystem);
+		player->setClientVersion(version);
 		if(!g_game.placeCreature(player, player->getLoginPosition()) && !g_game.placeCreature(player, player->getMasterPosition(), false, true))
 		{
 			disconnectClient(0x14, "Temple position is wrong. Contact with the administration.");
 			return false;
 
 		}
-
-		player->setOperatingSystem(operatingSystem);
-		player->setClientVersion(version);
 
 		player->lastIP = player->getIP();
 		player->lastLoad = OTSYS_TIME();
