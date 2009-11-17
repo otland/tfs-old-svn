@@ -487,7 +487,7 @@ void ScriptEnviroment::streamThing(std::stringstream& stream, const std::string&
 	{
 		const Item* item = thing->getItem();
 		if(!id)
-			id = item->getID();
+			id = item->getUniqueId();
 
 		stream << "uid = " << id << "," << std::endl;
 		stream << "itemid = " << item->getID() << "," << std::endl;
@@ -968,7 +968,7 @@ void LuaScriptInterface::pushThing(lua_State* L, Thing* thing, uint32_t id/* = 0
 	{
 		const Item* item = thing->getItem();
 		if(!id)
-			id = item->getID();
+			id = item->getUniqueId();
 
 		setField(L, "uid", id);
 		setField(L, "itemid", item->getID());
