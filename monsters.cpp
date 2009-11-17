@@ -951,13 +951,13 @@ bool Monsters::loadMonster(const std::string& file, const std::string& monsterNa
 		mType->manaCost = intValue;
 
 	if(readXMLString(root, "skull", strValue))
-		mType->skull = getSkullType(strValue);
+		mType->skull = skullType(strValue);
 
 	if(readXMLString(root, "shield", strValue))
-		mType->partyShield = getPartyShield(strValue);
+		mType->partyShield = partyShield(strValue);
 
 	if(readXMLString(root, "emblem", strValue))
-		mType->guildEmblem = getGuildEmblem(strValue);
+		mType->guildEmblem = guildEmblem(strValue);
 
 	p = root->children;
 	while(p && monsterLoad)

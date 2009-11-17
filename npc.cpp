@@ -216,13 +216,13 @@ bool Npc::loadFromXml(const std::string& filename)
 		floorChange = booleanString(strValue);
 
 	if(readXMLString(root, "skull", strValue))
-		setSkull(getSkullType(strValue));
+		setSkull(skullType(strValue));
 
 	if(readXMLString(root, "shield", strValue))
-		setShield(getPartyShield(strValue));
+		setShield(partyShield(strValue));
 
 	if(readXMLString(root, "emblem", strValue))
-		setEmblem(getGuildEmblem(strValue));
+		setEmblem(guildEmblem(strValue));
 
 	p = root->children;
 	while(p)

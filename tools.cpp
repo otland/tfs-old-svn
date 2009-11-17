@@ -676,7 +676,7 @@ std::string convertIPAddress(uint32_t ip)
 	return buffer;
 }
 
-Skulls_t getSkullType(std::string strValue)
+Skulls_t skullType(std::string strValue)
 {
 	std::string tmpStrValue = asLowerCaseString(strValue);
 	if(tmpStrValue == "black" || tmpStrValue == "5")
@@ -697,7 +697,7 @@ Skulls_t getSkullType(std::string strValue)
 	return SKULL_NONE;
 }
 
-PartyShields_t getPartyShield(std::string strValue)
+PartyShields_t partyShield(std::string strValue)
 {
 	std::string tmpStrValue = asLowerCaseString(strValue);
 	if(tmpStrValue == "whitenoshareoff" || tmpStrValue == "10")
@@ -733,7 +733,7 @@ PartyShields_t getPartyShield(std::string strValue)
 	return SHIELD_NONE;
 }
 
-GuildEmblems_t getGuildEmblem(std::string strValue)
+GuildEmblems_t guildEmblem(std::string strValue)
 {
 	std::string tmpStrValue = asLowerCaseString(strValue);
 	if(tmpStrValue == "enemy" || tmpStrValue == "2")
