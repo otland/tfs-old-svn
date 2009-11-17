@@ -41,9 +41,6 @@
 
 #include "configmanager.h"
 #include "luascript.h"
-#ifndef __CONSOLE__
-#include "gui.h"
-#endif
 
 Actions* g_actions = NULL;
 CreatureEvents* g_creatureEvents = NULL;

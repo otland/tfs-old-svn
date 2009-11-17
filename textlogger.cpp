@@ -101,8 +101,8 @@ void Logger::log(const char* func, LogType_t type, std::string message, std::str
 	ss << message;
 	iFile(LOGFILE_ADMIN, ss.str(), newLine);
 }
-
 #if defined(WINDOWS) && not defined(__CONSOLE__)
+
 GUILogger::GUILogger()
 {
 	out = std::cout.rdbuf();

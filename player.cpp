@@ -1342,7 +1342,7 @@ void Player::onCreatureAppear(const Creature* creature)
 	if(!isGhost())
 		IOLoginData::getInstance()->updateOnlineStatus(guid, true);
 
-	#ifndef __CONSOLE__
+	#if defined(WINDOWS) && not defined(__CONSOLE__)
 	GUI::getInstance()->m_pBox.addPlayer(this);
 	#endif
 	if(g_config.getBool(ConfigManager::DISPLAY_LOGGING))
@@ -1434,7 +1434,7 @@ void Player::onCreatureDisappear(const Creature* creature, bool isLogout)
 	if(!isGhost())
 		IOLoginData::getInstance()->updateOnlineStatus(guid, false);
 
-	#ifndef __CONSOLE__
+	#if defined(WINDOWS) && not defined(__CONSOLE__)
 	GUI::getInstance()->m_pBox.removePlayer(this);
 	#endif
 	if(g_config.getBool(ConfigManager::DISPLAY_LOGGING))
