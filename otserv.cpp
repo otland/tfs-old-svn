@@ -168,8 +168,7 @@ void signalHandler(int32_t sig)
 			break;
 
 		case SIGTRAP:
-			Dispatcher::getInstance()->addTask(createTask(
-				boost::bind(&Game::cleanMap, &g_game)));
+			g_game.cleanMap();
 			break;
 
 		case SIGCHLD:
