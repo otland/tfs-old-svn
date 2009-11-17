@@ -1498,7 +1498,7 @@ bool Monsters::loadLoot(xmlNodePtr node, LootBlock& lootBlock)
 
 	int32_t intValue;
 	if(readXMLInteger(node, "count", intValue) || readXMLInteger(node, "countmax", intValue))
-		lootBlock.count = std::min(100, intValue);
+		lootBlock.count = std::max(1, std::min(100, intValue));
 	else
 		lootBlock.count = 1;
 
