@@ -64,13 +64,11 @@
 #include "exception.h"
 #endif
 
-#ifndef __CONSOLE__
-#ifdef WINDOWS
+#if defined(WINDOWS) && not defined(__CONSOLE__)
 #include "shellapi.h"
 #include "gui.h"
 #include "inputbox.h"
 #include "commctrl.h"
-#endif
 #else
 #include "resources.h"
 #endif
@@ -381,8 +379,8 @@ StringVec args,
 ServiceManager* services)
 {
 	srand((uint32_t)OTSYS_TIME());
-	#ifdef WINDOWS
-	#ifdef __CONSOLE__
+	#if defined(WINDOWS)
+	#if defined(__CONSOLE__)
 	SetConsoleTitle(STATUS_SERVER_NAME);
 	#else
 	GUI::getInstance()->m_connections = false;
@@ -452,14 +450,14 @@ ServiceManager* services)
 	if(!debug.empty())
 	{
 		std::cout << ">> Debugging:";
-		#ifndef __CONSOLE__
+		#if defined(WINDOWS) && not defined(__CONSOLE__)
 		SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Displaying debugged components");
 		#endif
 		std::cout << debug << "." << std::endl;
 	}
 
 	std::cout << ">> Loading config (" << g_config.getString(ConfigManager::CONFIG_FILE) << ")" << std::endl;
-	#ifndef __CONSOLE__
+	#if defined(WINDOWS) && not defined(__CONSOLE__)
 	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Loading config");
 	#endif
 	if(!g_config.load())
@@ -530,7 +528,7 @@ ServiceManager* services)
 	}
 	
 	std::cout << ">> Checking software version... ";
-	#ifndef __CONSOLE__
+	#if defined(WINDOWS) && not defined(__CONSOLE__)
 	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Checking software version");
 	#endif
 	if(xmlDocPtr doc = xmlParseFile(VERSION_CHECK))
@@ -566,7 +564,7 @@ ServiceManager* services)
 					std::cout << ", build: " << build << ", timestamp: " << timestamp << "." << std::endl;
 					if(g_config.getBool(ConfigManager::CONFIM_OUTDATED_VERSION) && version.find("_SVN") == std::string::npos)
 					{
-						#ifndef __CONSOLE__
+						#if defined(WINDOWS) && not defined(__CONSOLE__)
 						if(MessageBox(GUI::getInstance()->m_mainWindow, "Continue?", "Outdated software", MB_YESNO) == IDNO)
 						#else
 						std::cout << "Continue? (y/N)" << std::endl;
@@ -592,12 +590,12 @@ ServiceManager* services)
 		std::cout << "failed - could not parse remote file (are you connected to the internet?)" << std::endl;
 
 	std::cout << ">> Fetching blacklist" << std::endl;
-	#ifndef __CONSOLE__
+	#if defined(WINDOWS) && not defined(__CONSOLE__)
 	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Fetching blacklist");
 	#endif
 	if(!g_game.fetchBlacklist())
 	{
-		#ifndef __CONSOLE__
+		#if defined(WINDOWS) && not defined(__CONSOLE__)
 		if(MessageBox(GUI::getInstance()->m_mainWindow, "Unable to fetch blacklist! Continue?", "Blacklist", MB_YESNO) == IDNO)
 		#else
 		std::cout << "Unable to fetch blacklist! Continue? (y/N)" << std::endl;
@@ -608,7 +606,7 @@ ServiceManager* services)
 	}
 
 	std::cout << ">> Loading RSA key" << std::endl;
-	#ifndef __CONSOLE__
+	#if defined(WINDOWS) && not defined(__CONSOLE__)
 	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Loading RSA Key");
 	#endif
 
@@ -618,7 +616,7 @@ ServiceManager* services)
 	g_RSA.setKey(p, q, d);
 
 	std::cout << ">> Starting SQL connection" << std::endl;
-	#ifndef __CONSOLE__
+	#if defined(WINDOWS) && not defined(__CONSOLE__)
 	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Starting SQL connection");
 	#endif
 	Database* db = Database::getInstance();
@@ -650,7 +648,7 @@ ServiceManager* services)
 		startupErrorMessage("Couldn't estabilish connection to SQL database!");
 
 	std::cout << ">> Loading items" << std::endl;
-	#ifndef __CONSOLE__
+	#if defined(WINDOWS) && not defined(__CONSOLE__)
 	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Loading items");
 	#endif
 	if(Item::items.loadFromOtb(getFilePath(FILE_TYPE_OTHER, "items/items.otb")))
@@ -658,7 +656,7 @@ ServiceManager* services)
 
 	if(!Item::items.loadFromXml())
 	{
-		#ifndef __CONSOLE__
+		#if defined(WINDOWS) && not defined(__CONSOLE__)
 		if(MessageBox(GUI::getInstance()->m_mainWindow, "Unable to load items (XML)! Continue?", "Items (XML)", MB_YESNO) == IDNO)
 		#else
 		std::cout << "Unable to load items (XML)! Continue? (y/N)" << std::endl;
@@ -669,54 +667,54 @@ ServiceManager* services)
 	}
 
 	std::cout << ">> Loading groups" << std::endl;
-	#ifndef __CONSOLE__
+	#if defined(WINDOWS) && not defined(__CONSOLE__)
 	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Loading groups");
 	#endif
 	if(!Groups::getInstance()->loadFromXml())
 		startupErrorMessage("Unable to load groups!");
 
 	std::cout << ">> Loading vocations" << std::endl;
-	#ifndef __CONSOLE__
+	#if defined(WINDOWS) && not defined(__CONSOLE__)
 	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Loading vocations");
 	#endif
 	if(!Vocations::getInstance()->loadFromXml())
 		startupErrorMessage("Unable to load vocations!");
 
 	std::cout << ">> Loading script systems" << std::endl;
-	#ifndef __CONSOLE__
+	#if defined(WINDOWS) && not defined(__CONSOLE__)
 	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Loading script systems");
 	#endif
 	if(!ScriptingManager::getInstance()->load())
 		startupErrorMessage("");
 
 	std::cout << ">> Loading chat channels" << std::endl;
-	#ifndef __CONSOLE__
+	#if defined(WINDOWS) && not defined(__CONSOLE__)
 	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Loading chat channels");
 	#endif
 	if(!g_chat.loadFromXml())
 		startupErrorMessage("Unable to load chat channels!");
 
 	std::cout << ">> Loading outfits" << std::endl;
-	#ifndef __CONSOLE__
+	#if defined(WINDOWS) && not defined(__CONSOLE__)
 	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Loading outfits");
 	#endif
 	if(!Outfits::getInstance()->loadFromXml())
 		startupErrorMessage("Unable to load outfits!");
 
 	std::cout << ">> Loading experience stages" << std::endl;
-	#ifndef __CONSOLE__
+	#if defined(WINDOWS) && not defined(__CONSOLE__)
 	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Loading experience stages");
 	#endif
 	if(!g_game.loadExperienceStages())
 		startupErrorMessage("Unable to load experience stages!");
 
 	std::cout << ">> Loading monsters" << std::endl;
-	#ifndef __CONSOLE__
+	#if defined(WINDOWS) && not defined(__CONSOLE__)
 	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Loading monsters");
 	#endif
 	if(!g_monsters.loadFromXml())
 	{
-		#ifndef __CONSOLE__
+		#if defined(WINDOWS) && not defined(__CONSOLE__)
 		if(MessageBox(GUI::getInstance()->m_mainWindow, "Unable to load monsters! Continue?", "Monsters", MB_YESNO) == IDNO)
 		#else
 		std::cout << "Unable to load monsters! Continue? (y/N)" << std::endl;
@@ -727,14 +725,14 @@ ServiceManager* services)
 	}
 
 	std::cout << ">> Loading mods..." << std::endl;
-	#ifndef __CONSOLE__
+	#if defined(WINDOWS) && not defined(__CONSOLE__)
 	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Loading mods...");
 	#endif
 	if(!ScriptingManager::getInstance()->loadMods())
 		startupErrorMessage("Unable to load mods!");
 
 	std::cout << ">> Loading map and spawns..." << std::endl;
-	#ifndef __CONSOLE__
+	#if defined(WINDOWS) && not defined(__CONSOLE__)
 	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Loading map and spawns...");
 	#endif
 	if(!g_game.loadMap(g_config.getString(ConfigManager::MAP_NAME)))
@@ -742,7 +740,7 @@ ServiceManager* services)
 
 	#ifdef __LOGIN_SERVER__
 	std::cout << ">> Loading game servers" << std::endl;
-	#ifndef __CONSOLE__
+	#if defined(WINDOWS) && not defined(__CONSOLE__)
 	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Loading game servers");
 	#endif
 	if(!GameServers::getInstance()->loadFromXml(true))
@@ -751,7 +749,7 @@ ServiceManager* services)
 
 	#ifdef __REMOTE_CONTROL__
 	std::cout << ">> Loading administration protocol" << std::endl;
-	#ifndef __CONSOLE__
+	#if defined(WINDOWS) && not defined(__CONSOLE__)
 	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Loading administration protocol");
 	#endif
 
@@ -786,7 +784,7 @@ ServiceManager* services)
 	}
 
 	std::cout << ">> Initializing game state modules and registering services..." << std::endl;
-	#ifndef __CONSOLE__
+	#if defined(WINDOWS) && not defined(__CONSOLE__)
 	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Initializing game state and registering services...");
 	#endif
 	g_game.setGameState(GAME_STATE_INIT);
@@ -841,7 +839,7 @@ ServiceManager* services)
 		std::cout << (*it) << "\t";
 
 	std::cout << std::endl << ">> All modules were loaded, server is starting up..." << std::endl;
-	#ifndef __CONSOLE__
+	#if defined(WINDOWS) && not defined(__CONSOLE__)
 	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> All modules were loaded, server is starting up...");
 	#endif
 	g_game.setGameState(GAME_STATE_NORMAL);
@@ -850,7 +848,7 @@ ServiceManager* services)
 	g_loaderSignal.notify_all();
 }
 
-#ifndef __CONSOLE__
+#if defined(WINDOWS) && not defined(__CONSOLE__)
 LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	CInputBox iBox(hwnd);
