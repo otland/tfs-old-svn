@@ -119,9 +119,9 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 		}
 	}
 
-	if(version < 850)
+	if(version < 853)
 	{
-		disconnectClient(0x0A, "Only clients with protocol 8.5 allowed!");
+		disconnectClient(0x0A, "Only clients with protocol 8.53 allowed!");
 		return false;
 	}
 
