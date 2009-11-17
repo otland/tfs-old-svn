@@ -549,7 +549,7 @@ class Game
 		bool getStagesEnabled() const {return stagesEnabled;}
 
 		inline StageList::const_iterator getFirstStage() const {return stages.begin();}
-		online StageList::const_iterator getLastStage() const {return stages.end();}
+		inline StageList::const_iterator getLastStage() const {return stages.end();}
 
 		void setServerSaveMessage(int16_t key, bool value) {serverSaveMessage[key] = value;}
 		bool getServerSaveMessage(int16_t key) const {return serverSaveMessage[key];}
