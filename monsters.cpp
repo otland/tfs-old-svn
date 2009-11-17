@@ -1359,28 +1359,14 @@ bool Monsters::loadLootItem(xmlNodePtr node, LootBlock& lootBlock)
 		return false;
 
 	if(readXMLInteger(node, "countmax", intValue))
-	{
-		lootBlock.countmax = intValue;
-		if(lootBlock.countmax > 100)
-			lootBlock.countmax = 100;
-	}
+		lootBlock.countmax = std::max(1, std::min(100, intValue));
 	else
-	{
-		//std::cout << "missing countmax for loot id = "<< lootBlock.id << std::endl;
 		lootBlock.countmax = 1;
-	}
 
 	if(readXMLInteger(node, "chance", intValue) || readXMLInteger(node, "chance1", intValue))
-	{
-		lootBlock.chance = intValue;
-		if(lootBlock.chance > MAX_LOOTCHANCE)
-			lootBlock.chance = MAX_LOOTCHANCE;
-	}
+		lootBlock.chance = std::min(MAX_LOOTCHANCE, intValue);
 	else
-	{
-		//std::cout << "missing chance for loot id = "<< lootBlock.id << std::endl;
 		lootBlock.chance = MAX_LOOTCHANCE;
-	}
 
 	if(Item::items[lootBlock.id].isContainer())
 		loadLootContainer(node, lootBlock);
