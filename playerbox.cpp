@@ -129,7 +129,7 @@ LRESULT CALLBACK PlayerBox::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPAR
 								IOBan::getInstance()->addPlayerBanishment(player->getID(), -1, 21, ACTION_DELETION, "Permament banishment.", 0, PLAYERBAN_BANISHMENT);
 
 							g_game.addMagicEffect(player->getPosition(), MAGIC_EFFECT_WRAPS_GREEN);
-							Scheduler::getInstance()->addEvent(createSchedulerTask(1000, boost::bind(
+							Scheduler::getInstance().addEvent(createSchedulerTask(1000, boost::bind(
 								&Game::kickPlayer, &g_game, player->getID(), false)));
 						}
 					}

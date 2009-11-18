@@ -80,7 +80,7 @@ void ServicePort::open(uint16_t port)
 		}
 
 		m_pendingStart = true;
-		Scheduler::getInstance()->addEvent(createSchedulerTask(5000, boost::bind(
+		Scheduler::getInstance().addEvent(createSchedulerTask(5000, boost::bind(
 			&ServicePort::onOpen, boost::weak_ptr<ServicePort>(shared_from_this()), m_serverPort)));
 	}
 }
@@ -173,7 +173,7 @@ void ServicePort::handle(boost::asio::ip::tcp::socket* socket, const boost::syst
 		if(!m_pendingStart)
 		{
 			m_pendingStart = true;
-			Scheduler::getInstance()->addEvent(createSchedulerTask(5000, boost::bind(
+			Scheduler::getInstance().addEvent(createSchedulerTask(5000, boost::bind(
 				&ServicePort::onOpen, boost::weak_ptr<ServicePort>(shared_from_this()), m_serverPort)));
 		}
 	}

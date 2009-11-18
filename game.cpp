@@ -96,11 +96,11 @@ Game::~Game()
 
 void Game::start(ServiceManager* servicer)
 {
-	checkDecayEvent = Scheduler::getInstance()->addEvent(createSchedulerTask(EVENT_DECAYINTERVAL,
+	checkDecayEvent = Scheduler::getInstance().addEvent(createSchedulerTask(EVENT_DECAYINTERVAL,
 		boost::bind(&Game::checkDecay, this)));
-	checkCreatureEvent = Scheduler::getInstance()->addEvent(createSchedulerTask(EVENT_CREATURE_THINK_INTERVAL,
+	checkCreatureEvent = Scheduler::getInstance().addEvent(createSchedulerTask(EVENT_CREATURE_THINK_INTERVAL,
 		boost::bind(&Game::checkCreatures, this)));
-	checkLightEvent = Scheduler::getInstance()->addEvent(createSchedulerTask(EVENT_LIGHTINTERVAL,
+	checkLightEvent = Scheduler::getInstance().addEvent(createSchedulerTask(EVENT_LIGHTINTERVAL,
 		boost::bind(&Game::checkLight, this)));
 
 	services = servicer;
@@ -147,7 +147,7 @@ void Game::start(ServiceManager* servicer)
 
 		uint32_t hoursLeftInMs = 60000 * 60 * hoursLeft, minutesLeftInMs = 60000 * (minutesLeft - minutesToRemove);
 		if(!ignoreEvent && (hoursLeftInMs + minutesLeftInMs) > 0)
-			saveEvent = Scheduler::getInstance()->addEvent(createSchedulerTask(hoursLeftInMs + minutesLeftInMs,
+			saveEvent = Scheduler::getInstance().addEvent(createSchedulerTask(hoursLeftInMs + minutesLeftInMs,
 				boost::bind(&Game::prepareGlobalSave, this)));
 	}
 }
@@ -198,10 +198,10 @@ void Game::setGameState(GameState_t newState)
 
 				Houses::getInstance()->payHouses();
 				saveGameState(false);
-				Dispatcher::getInstance()->addTask(createTask(boost::bind(&Game::shutdown, this)));
+				Dispatcher::getInstance().addTask(createTask(boost::bind(&Game::shutdown, this)));
 
-				Scheduler::getInstance()->stop();
-				Dispatcher::getInstance()->stop();
+				Scheduler::getInstance().stop();
+				Dispatcher::getInstance().stop();
 				break;
 			}
 
@@ -434,7 +434,7 @@ void Game::proceduralRefresh(RefreshTiles::iterator* it/* = NULL*/)
 
 	// Refresh some items every 100 ms until all tiles has been checked
 	// For 100k tiles, this would take 100000/2500 = 40s = half a minute
-	Scheduler::getInstance()->addEvent(createSchedulerTask(100,
+	Scheduler::getInstance().addEvent(createSchedulerTask(100,
 		boost::bind(&Game::proceduralRefresh, this, it)));
 }
 
@@ -1034,7 +1034,7 @@ bool Game::playerMoveCreature(uint32_t playerId, uint32_t movingCreatureId,
 		std::list<Direction> listDir;
 		if(getPathToEx(player, movingCreaturePos, listDir, 0, 1, true, true))
 		{
-			Dispatcher::getInstance()->addTask(createTask(boost::bind(&Game::playerAutoWalk,
+			Dispatcher::getInstance().addTask(createTask(boost::bind(&Game::playerAutoWalk,
 				this, player->getID(), listDir)));
 			SchedulerTask* task = createSchedulerTask(player->getStepDuration(), boost::bind(&Game::playerMoveCreature, this,
 				playerId, movingCreatureId, movingCreaturePos, toPos));
@@ -1288,7 +1288,7 @@ bool Game::playerMoveItem(uint32_t playerId, const Position& fromPos,
 		std::list<Direction> listDir;
 		if(getPathToEx(player, item->getPosition(), listDir, 0, 1, true, true))
 		{
-			Dispatcher::getInstance()->addTask(createTask(boost::bind(&Game::playerAutoWalk,
+			Dispatcher::getInstance().addTask(createTask(boost::bind(&Game::playerAutoWalk,
 				this, player->getID(), listDir)));
 			SchedulerTask* task = createSchedulerTask(player->getStepDuration(), boost::bind(&Game::playerMoveItem, this,
 				playerId, fromPos, spriteId, fromStackpos, toPos, count));
@@ -1352,7 +1352,7 @@ bool Game::playerMoveItem(uint32_t playerId, const Position& fromPos,
 			std::list<Direction> listDir;
 			if(map->getPathTo(player, walkPos, listDir))
 			{
-				Dispatcher::getInstance()->addTask(createTask(boost::bind(&Game::playerAutoWalk,
+				Dispatcher::getInstance().addTask(createTask(boost::bind(&Game::playerAutoWalk,
 					this, player->getID(), listDir)));
 				SchedulerTask* task = createSchedulerTask(player->getStepDuration(), boost::bind(&Game::playerMoveItem, this,
 					playerId, itemPos, spriteId, itemStackpos, toPos, count));
@@ -2401,7 +2401,7 @@ bool Game::playerUseItemEx(uint32_t playerId, const Position& fromPos, int16_t f
 			std::list<Direction> listDir;
 			if(getPathToEx(player, walkToPos, listDir, 0, 1, true, true, 10))
 			{
-				Dispatcher::getInstance()->addTask(createTask(boost::bind(&Game::playerAutoWalk,
+				Dispatcher::getInstance().addTask(createTask(boost::bind(&Game::playerAutoWalk,
 					this, player->getID(), listDir)));
 
 				SchedulerTask* task = createSchedulerTask(400, boost::bind(&Game::playerUseItemEx, this,
@@ -2468,7 +2468,7 @@ bool Game::playerUseItem(uint32_t playerId, const Position& pos, int16_t stackpo
 			std::list<Direction> listDir;
 			if(getPathToEx(player, pos, listDir, 0, 1, true, true))
 			{
-				Dispatcher::getInstance()->addTask(createTask(boost::bind(&Game::playerAutoWalk,
+				Dispatcher::getInstance().addTask(createTask(boost::bind(&Game::playerAutoWalk,
 					this, player->getID(), listDir)));
 
 				SchedulerTask* task = createSchedulerTask(400, boost::bind(&Game::playerUseItem, this,
@@ -2545,7 +2545,7 @@ bool Game::playerUseBattleWindow(uint32_t playerId, const Position& fromPos, int
 			std::list<Direction> listDir;
 			if(getPathToEx(player, item->getPosition(), listDir, 0, 1, true, true))
 			{
-				Dispatcher::getInstance()->addTask(createTask(boost::bind(&Game::playerAutoWalk,
+				Dispatcher::getInstance().addTask(createTask(boost::bind(&Game::playerAutoWalk,
 					this, player->getID(), listDir)));
 
 				SchedulerTask* task = createSchedulerTask(400, boost::bind(&Game::playerUseBattleWindow, this,
@@ -2663,7 +2663,7 @@ bool Game::playerRotateItem(uint32_t playerId, const Position& pos, int16_t stac
 		std::list<Direction> listDir;
 		if(getPathToEx(player, pos, listDir, 0, 1, true, true))
 		{
-			Dispatcher::getInstance()->addTask(createTask(boost::bind(&Game::playerAutoWalk,
+			Dispatcher::getInstance().addTask(createTask(boost::bind(&Game::playerAutoWalk,
 				this, player->getID(), listDir)));
 
 			SchedulerTask* task = createSchedulerTask(400, boost::bind(&Game::playerRotateItem, this,
@@ -2819,7 +2819,7 @@ bool Game::playerRequestTrade(uint32_t playerId, const Position& pos, int16_t st
 		std::list<Direction> listDir;
 		if(getPathToEx(player, pos, listDir, 0, 1, true, true))
 		{
-			Dispatcher::getInstance()->addTask(createTask(boost::bind(&Game::playerAutoWalk,
+			Dispatcher::getInstance().addTask(createTask(boost::bind(&Game::playerAutoWalk,
 				this, player->getID(), listDir)));
 
 			SchedulerTask* task = createSchedulerTask(400, boost::bind(&Game::playerRequestTrade, this,
@@ -3986,7 +3986,7 @@ void Game::removeCreatureCheck(Creature* creature)
 
 void Game::checkCreatures()
 {
-	Scheduler::getInstance()->addEvent(createSchedulerTask(
+	Scheduler::getInstance().addEvent(createSchedulerTask(
 		EVENT_CHECK_CREATURE_INTERVAL, boost::bind(&Game::checkCreatures, this)));
 	checkCreatureLastIndex++;
 	if(checkCreatureLastIndex == EVENT_CREATURECOUNT)
@@ -4554,7 +4554,7 @@ void Game::internalDecayItem(Item* item)
 
 void Game::checkDecay()
 {
-	Scheduler::getInstance()->addEvent(createSchedulerTask(EVENT_DECAYINTERVAL,
+	Scheduler::getInstance().addEvent(createSchedulerTask(EVENT_DECAYINTERVAL,
 		boost::bind(&Game::checkDecay, this)));
 
 	size_t bucket = (lastBucket + 1) % EVENT_DECAYBUCKETS;
@@ -4603,7 +4603,7 @@ void Game::checkDecay()
 
 void Game::checkLight()
 {
-	Scheduler::getInstance()->addEvent(createSchedulerTask(EVENT_LIGHTINTERVAL,
+	Scheduler::getInstance().addEvent(createSchedulerTask(EVENT_LIGHTINTERVAL,
 		boost::bind(&Game::checkLight, this)));
 
 	lightHour = lightHour + lightHourDelta;
@@ -5147,7 +5147,7 @@ bool Game::playerViolationWindow(uint32_t playerId, std::string name, uint8_t re
 		target->sendTextMessage(MSG_INFO_DESCR, buffer);
 
 		addMagicEffect(target->getPosition(), MAGIC_EFFECT_WRAPS_GREEN);
-		Scheduler::getInstance()->addEvent(createSchedulerTask(1000, boost::bind(
+		Scheduler::getInstance().addEvent(createSchedulerTask(1000, boost::bind(
 			&Game::kickPlayer, this, target->getID(), false)));
 	}
 
@@ -5611,7 +5611,7 @@ void Game::checkHighscores()
 	if(tmp <= 0)
 		return;
 
-	Scheduler::getInstance()->addEvent(createSchedulerTask(tmp, boost::bind(&Game::checkHighscores, this)));
+	Scheduler::getInstance().addEvent(createSchedulerTask(tmp, boost::bind(&Game::checkHighscores, this)));
 }
 
 std::string Game::getHighscoreString(uint16_t skill)
@@ -6010,19 +6010,19 @@ void Game::prepareGlobalSave()
 		globalSaveMessage[0] = true;
 
 		broadcastMessage("Server is going down for a global save within 5 minutes. Please logout.", MSG_STATUS_WARNING);
-		Scheduler::getInstance()->addEvent(createSchedulerTask(120000, boost::bind(&Game::prepareGlobalSave, this)));
+		Scheduler::getInstance().addEvent(createSchedulerTask(120000, boost::bind(&Game::prepareGlobalSave, this)));
 	}
 	else if(!globalSaveMessage[1])
 	{
 		globalSaveMessage[1] = true;
 		broadcastMessage("Server is going down for a global save within 3 minutes. Please logout.", MSG_STATUS_WARNING);
-		Scheduler::getInstance()->addEvent(createSchedulerTask(120000, boost::bind(&Game::prepareGlobalSave, this)));
+		Scheduler::getInstance().addEvent(createSchedulerTask(120000, boost::bind(&Game::prepareGlobalSave, this)));
 	}
 	else if(!globalSaveMessage[2])
 	{
 		globalSaveMessage[2] = true;
 		broadcastMessage("Server is going down for a global save in one minute, please logout!", MSG_STATUS_WARNING);
-		Scheduler::getInstance()->addEvent(createSchedulerTask(60000, boost::bind(&Game::prepareGlobalSave, this)));
+		Scheduler::getInstance().addEvent(createSchedulerTask(60000, boost::bind(&Game::prepareGlobalSave, this)));
 	}
 	else
 		globalSave();
@@ -6033,12 +6033,12 @@ void Game::globalSave()
 	if(g_config.getBool(ConfigManager::SHUTDOWN_AT_GLOBALSAVE))
 	{
 		//shutdown server
-		Dispatcher::getInstance()->addTask(createTask(boost::bind(&Game::setGameState, this, GAME_STATE_SHUTDOWN)));
+		Dispatcher::getInstance().addTask(createTask(boost::bind(&Game::setGameState, this, GAME_STATE_SHUTDOWN)));
 		return;
 	}
 
 	//close server
-	Dispatcher::getInstance()->addTask(createTask(boost::bind(&Game::setGameState, this, GAME_STATE_CLOSED)));
+	Dispatcher::getInstance().addTask(createTask(boost::bind(&Game::setGameState, this, GAME_STATE_CLOSED)));
 	//clean map if configured to
 	if(g_config.getBool(ConfigManager::CLEAN_MAP_AT_GLOBALSAVE))
 	{
@@ -6061,17 +6061,17 @@ void Game::globalSave()
 		setGlobalSaveMessage(i, false);
 
 	//prepare for next global save after 24 hours
-	Scheduler::getInstance()->addEvent(createSchedulerTask(86100000, boost::bind(&Game::prepareGlobalSave, this)));
+	Scheduler::getInstance().addEvent(createSchedulerTask(86100000, boost::bind(&Game::prepareGlobalSave, this)));
 	//open server
-	Dispatcher::getInstance()->addTask(createTask(boost::bind(&Game::setGameState, this, GAME_STATE_NORMAL)));
+	Dispatcher::getInstance().addTask(createTask(boost::bind(&Game::setGameState, this, GAME_STATE_NORMAL)));
 }
 
 void Game::shutdown()
 {
 	std::cout << "Preparing";
-	Scheduler::getInstance()->shutdown();
+	Scheduler::getInstance().shutdown();
 	std::cout << " to";
-	Dispatcher::getInstance()->shutdown();
+	Dispatcher::getInstance().shutdown();
 	std::cout << " shutdown";
 	Spawns::getInstance()->clear();
 	std::cout << " the";

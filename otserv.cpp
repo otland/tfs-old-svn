@@ -177,7 +177,7 @@ void signalHandler(int32_t sig)
 	switch(sig)
 	{
 		case SIGHUP:
-			Dispatcher::getInstance()->addTask(createTask(
+			Dispatcher::getInstance().addTask(createTask(
 				boost::bind(&Game::saveGameState, &g_game, false)));
 			break;
 
@@ -190,7 +190,7 @@ void signalHandler(int32_t sig)
 			break;
 
 		case SIGUSR1:
-			Dispatcher::getInstance()->addTask(createTask(
+			Dispatcher::getInstance().addTask(createTask(
 				boost::bind(&Game::setGameState, &g_game, GAME_STATE_CLOSED)));
 			break;
 
@@ -203,12 +203,12 @@ void signalHandler(int32_t sig)
 			break;
 
 		case SIGQUIT:
-			Dispatcher::getInstance()->addTask(createTask(
+			Dispatcher::getInstance().addTask(createTask(
 				boost::bind(&Game::setGameState, &g_game, GAME_STATE_SHUTDOWN)));
 			break;
 
 		case SIGTERM:
-			Dispatcher::getInstance()->addTask(createTask(
+			Dispatcher::getInstance().addTask(createTask(
 				boost::bind(&Game::shutdown, &g_game)));
 			break;
 
@@ -298,7 +298,7 @@ void serverMain(void* param)
 	signal(SIGTERM, signalHandler); //shutdown
 	#endif
 
-	Dispatcher::getInstance()->addTask(createTask(boost::bind(otserv,
+	Dispatcher::getInstance().addTask(createTask(boost::bind(otserv,
 	#if not defined(WINDOWS) || defined(__CONSOLE__)
 	args,
 	#endif
@@ -976,7 +976,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 				{
 					if(MessageBox(hwnd, "Are you sure you want to shutdown the server?", "Shutdown", MB_YESNO) == IDYES)
 					{
-						Dispatcher::getInstance()->addTask(
+						Dispatcher::getInstance().addTask(
 							createTask(boost::bind(&Game::setGameState, &g_game, GAME_STATE_SHUTDOWN)));
 						Shell_NotifyIcon(NIM_DELETE, &NID);
 					}
@@ -1032,7 +1032,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 				{
 					if(g_game.getGameState() != GAME_STATE_STARTUP)
 					{
-						Dispatcher::getInstance()->addTask(createTask(
+						Dispatcher::getInstance().addTask(createTask(
 							boost::bind(&Game::saveGameState, &g_game, false)));
 						MessageBox(NULL, "Server has been saved.", "Server save", MB_OK);
 					}
@@ -1081,7 +1081,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 				{
 					if(g_game.getGameState() != GAME_STATE_STARTUP && GUI::getInstance()->m_connections)
 					{
-						Dispatcher::getInstance()->addTask(createTask(
+						Dispatcher::getInstance().addTask(createTask(
 							boost::bind(&Game::setGameState, &g_game, GAME_STATE_CLOSED)));
 						ModifyMenu(GetMenu(hwnd), ID_MENU_SERVER_CLOSE, MF_STRING, ID_MENU_SERVER_OPEN, "&Open server");
 					}
@@ -1370,7 +1370,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 			if(MessageBox(hwnd, "Are you sure you want to shutdown the server?", "Shutdown", MB_YESNO) == IDYES)
 			{
 				Shell_NotifyIcon(NIM_DELETE, &NID);
-				Dispatcher::getInstance()->addTask(createTask(boost::bind(&Game::setGameState, &g_game, GAME_STATE_SHUTDOWN)));
+				Dispatcher::getInstance().addTask(createTask(boost::bind(&Game::setGameState, &g_game, GAME_STATE_SHUTDOWN)));
 			}
 
 			break;

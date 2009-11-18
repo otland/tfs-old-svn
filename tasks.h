@@ -60,10 +60,10 @@ class Dispatcher
 {
 	public:
 		virtual ~Dispatcher() {}
-		static Dispatcher* getInstance()
+		static Dispatcher& getInstance()
 		{
 			static Dispatcher dispatcher;
-			return &dispatcher;
+			return dispatcher;
 		}
 
 		void addTask(Task* task, bool front = false);

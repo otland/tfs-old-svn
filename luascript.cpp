@@ -8013,7 +8013,7 @@ int32_t LuaScriptInterface::luaAddEvent(lua_State* L)
 	eventDesc.scriptId = env->getScriptId();
 
 	interface->m_timerEvents[++interface->m_lastEventTimerId] = eventDesc;
-	Scheduler::getInstance()->addEvent(createSchedulerTask(delay, boost::bind(
+	Scheduler::getInstance().addEvent(createSchedulerTask(delay, boost::bind(
 		&LuaScriptInterface::executeTimer, interface, interface->m_lastEventTimerId)));
 
 	lua_pushnumber(L, interface->m_lastEventTimerId);
@@ -8866,7 +8866,7 @@ int32_t LuaScriptInterface::luaDoSetGameState(lua_State* L)
 	uint32_t id = popNumber(L);
 	if(id >= GAME_STATE_FIRST && id <= GAME_STATE_LAST)
 	{
-		Dispatcher::getInstance()->addTask(createTask(boost::bind(&Game::setGameState, &g_game, (GameState_t)id)));
+		Dispatcher::getInstance().addTask(createTask(boost::bind(&Game::setGameState, &g_game, (GameState_t)id)));
 		lua_pushboolean(L, true);
 	}
 	else
@@ -8931,7 +8931,7 @@ int32_t LuaScriptInterface::luaDoReloadInfo(lua_State* L)
 	uint32_t id = popNumber(L);
 	if(id >= RELOAD_FIRST && id <= RELOAD_LAST)
 	{
-		Scheduler::getInstance()->addEvent(createSchedulerTask(SCHEDULER_MINTICKS,
+		Scheduler::getInstance().addEvent(createSchedulerTask(SCHEDULER_MINTICKS,
 			boost::bind(&Game::reloadInfo, &g_game, (ReloadInfo_t)id, cid)));
 		lua_pushboolean(L, true);
 	}
@@ -8948,7 +8948,7 @@ int32_t LuaScriptInterface::luaDoSaveServer(lua_State* L)
 	if(lua_gettop(L) > 0)
 		shallow = popNumber(L);
 
-	Dispatcher::getInstance()->addTask(createTask(boost::bind(&Game::saveGameState, &g_game, shallow)));
+	Dispatcher::getInstance().addTask(createTask(boost::bind(&Game::saveGameState, &g_game, shallow)));
 	return 1;
 }
 

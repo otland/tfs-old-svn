@@ -96,9 +96,9 @@ void GlobalEvents::startup()
 	now = std::max(1, (int32_t)(60 - ts->tm_sec)) * 1000;
 
 	execute(GLOBAL_EVENT_STARTUP);
-	Scheduler::getInstance()->addEvent(createSchedulerTask((int32_t)now,
+	Scheduler::getInstance().addEvent(createSchedulerTask((int32_t)now,
 		boost::bind(&GlobalEvents::timer, this)));
-	Scheduler::getInstance()->addEvent(createSchedulerTask(GLOBAL_THINK_INTERVAL,
+	Scheduler::getInstance().addEvent(createSchedulerTask(GLOBAL_THINK_INTERVAL,
 		boost::bind(&GlobalEvents::think, this, GLOBAL_THINK_INTERVAL)));
 }
 
@@ -119,7 +119,7 @@ void GlobalEvents::timer()
 	}
 
 	now = std::max(1, (int32_t)(60 - ts->tm_sec)) * 1000;
-	Scheduler::getInstance()->addEvent(createSchedulerTask((int32_t)now,
+	Scheduler::getInstance().addEvent(createSchedulerTask((int32_t)now,
 		boost::bind(&GlobalEvents::timer, this)));
 }
 
@@ -137,7 +137,7 @@ void GlobalEvents::think(uint32_t interval)
 				<< it->second->getName() << std::endl;
 	}
 
-	Scheduler::getInstance()->addEvent(createSchedulerTask(interval,
+	Scheduler::getInstance().addEvent(createSchedulerTask(interval,
 		boost::bind(&GlobalEvents::think, this, interval)));
 }
 
