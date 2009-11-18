@@ -92,7 +92,7 @@ OutputMessage_ptr Protocol::getOutputBuffer()
 void Protocol::releaseProtocol()
 {
 	if(m_refCount > 0)
-		Scheduler::getInstance()->addEvent(createSchedulerTask(SCHEDULER_MINTICKS, boost::bind(&Protocol::releaseProtocol, this)));
+		Scheduler::getInstance().addEvent(createSchedulerTask(SCHEDULER_MINTICKS, boost::bind(&Protocol::releaseProtocol, this)));
 	else
 		deleteProtocolTask();
 }

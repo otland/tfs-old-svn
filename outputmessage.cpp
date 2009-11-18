@@ -135,7 +135,7 @@ void OutputMessagePool::sendAll()
 
 void OutputMessagePool::releaseMessage(OutputMessage* msg)
 {
-	Dispatcher::getInstance()->addTask(createTask(boost::bind(
+	Dispatcher::getInstance().addTask(createTask(boost::bind(
 		&OutputMessagePool::internalReleaseMessage, this, msg)), true);
 }
 

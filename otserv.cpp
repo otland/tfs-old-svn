@@ -163,7 +163,7 @@ void signalHandler(int32_t sig)
 	switch(sig)
 	{
 		case SIGHUP:
-			Dispatcher::getInstance()->addTask(createTask(
+			Dispatcher::getInstance().addTask(createTask(
 				boost::bind(&Game::saveGameState, &g_game, false)));
 			break;
 
@@ -176,7 +176,7 @@ void signalHandler(int32_t sig)
 			break;
 
 		case SIGUSR1:
-			Dispatcher::getInstance()->addTask(createTask(
+			Dispatcher::getInstance().addTask(createTask(
 				boost::bind(&Game::setGameState, &g_game, GAMESTATE_CLOSED)));
 			break;
 
@@ -185,17 +185,17 @@ void signalHandler(int32_t sig)
 			break;
 
 		case SIGCONT:
-			Dispatcher::getInstance()->addTask(createTask(
+			Dispatcher::getInstance().addTask(createTask(
 				boost::bind(&Game::reloadInfo, &g_game, RELOAD_ALL, 0)));
 			break;
 
 		case SIGQUIT:
-			Dispatcher::getInstance()->addTask(createTask(
+			Dispatcher::getInstance().addTask(createTask(
 				boost::bind(&Game::setGameState, &g_game, GAMESTATE_SHUTDOWN)));
 			break;
 
 		case SIGTERM:
-			Dispatcher::getInstance()->addTask(createTask(
+			Dispatcher::getInstance().addTask(createTask(
 				boost::bind(&Game::shutdown, &g_game)));
 			break;
 
@@ -269,7 +269,7 @@ int main(int argc, char* argv[])
 #endif
 
 	OutputHandler::getInstance();
-	Dispatcher::getInstance()->addTask(createTask(boost::bind(otserv, args, &servicer)));
+	Dispatcher::getInstance().addTask(createTask(boost::bind(otserv, args, &servicer)));
 
 	g_loaderSignal.wait(g_loaderUniqueLock);
 	if(servicer.isRunning())

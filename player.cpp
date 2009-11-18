@@ -1643,7 +1643,7 @@ void Player::setNextWalkActionTask(SchedulerTask* task)
 {
 	if(walkTaskEvent)
 	{
-		Scheduler::getInstance()->stopEvent(walkTaskEvent);
+		Scheduler::getInstance().stopEvent(walkTaskEvent);
 		walkTaskEvent = 0;
 	}
 
@@ -1656,13 +1656,13 @@ void Player::setNextWalkTask(SchedulerTask* task)
 {
 	if(nextStepEvent)
 	{
-		Scheduler::getInstance()->stopEvent(nextStepEvent);
+		Scheduler::getInstance().stopEvent(nextStepEvent);
 		nextStepEvent = 0;
 	}
 
 	if(task)
 	{
-		nextStepEvent = Scheduler::getInstance()->addEvent(task);
+		nextStepEvent = Scheduler::getInstance().addEvent(task);
 		setIdleTime(0);
 	}
 }
@@ -1671,13 +1671,13 @@ void Player::setNextActionTask(SchedulerTask* task)
 {
 	if(actionTaskEvent)
 	{
-		Scheduler::getInstance()->stopEvent(actionTaskEvent);
+		Scheduler::getInstance().stopEvent(actionTaskEvent);
 		actionTaskEvent = 0;
 	}
 
 	if(task)
 	{
-		actionTaskEvent = Scheduler::getInstance()->addEvent(task);
+		actionTaskEvent = Scheduler::getInstance().addEvent(task);
 		setIdleTime(0);
 	}
 }
@@ -3257,7 +3257,7 @@ bool Player::setAttackedCreature(Creature* creature)
 		setFollowCreature(NULL);
 
 	if(creature)
-		Dispatcher::getInstance()->addTask(createTask(boost::bind(&Game::checkCreatureAttack, &g_game, getID())));
+		Dispatcher::getInstance().addTask(createTask(boost::bind(&Game::checkCreatureAttack, &g_game, getID())));
 
 	return true;
 }
@@ -3367,7 +3367,7 @@ void Player::onWalkComplete()
 	if(!walkTask)
 		return;
 
-	walkTaskEvent = Scheduler::getInstance()->addEvent(walkTask);
+	walkTaskEvent = Scheduler::getInstance().addEvent(walkTask);
 	walkTask = NULL;
 }
 
@@ -3998,7 +3998,7 @@ bool Player::addUnjustifiedKill(const Player* attacked)
 
 		sendTextMessage(MSG_INFO_DESCR, "You have been banished.");
 		g_game.addMagicEffect(getPosition(), MAGIC_EFFECT_WRAPS_GREEN);
-		Scheduler::getInstance()->addEvent(createSchedulerTask(1000, boost::bind(
+		Scheduler::getInstance().addEvent(createSchedulerTask(1000, boost::bind(
 			&Game::kickPlayer, &g_game, getID(), false)));
 	}
 	else

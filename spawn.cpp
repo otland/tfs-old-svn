@@ -253,7 +253,7 @@ bool Spawns::isInZone(const Position& centerPos, int32_t radius, const Position&
 void Spawn::startEvent()
 {
 	if(checkSpawnEvent == 0)
-		checkSpawnEvent = Scheduler::getInstance()->addEvent(createSchedulerTask(getInterval(), boost::bind(&Spawn::checkSpawn, this)));
+		checkSpawnEvent = Scheduler::getInstance().addEvent(createSchedulerTask(getInterval(), boost::bind(&Spawn::checkSpawn, this)));
 }
 
 Spawn::Spawn(const Position& _pos, int32_t _radius)
@@ -398,7 +398,7 @@ void Spawn::checkSpawn()
 	}
 
 	if(spawnedMap.size() < spawnMap.size())
-		checkSpawnEvent = Scheduler::getInstance()->addEvent(createSchedulerTask(getInterval(), boost::bind(&Spawn::checkSpawn, this)));
+		checkSpawnEvent = Scheduler::getInstance().addEvent(createSchedulerTask(getInterval(), boost::bind(&Spawn::checkSpawn, this)));
 #ifdef __DEBUG_SPAWN__
 	else
 		std::clog << "[Notice] Spawn::checkSpawn stopped " << this << std::endl;
@@ -452,7 +452,7 @@ void Spawn::stopEvent()
 {
 	if(checkSpawnEvent != 0)
 	{
-		Scheduler::getInstance()->stopEvent(checkSpawnEvent);
+		Scheduler::getInstance().stopEvent(checkSpawnEvent);
 		checkSpawnEvent = 0;
 	}
 }

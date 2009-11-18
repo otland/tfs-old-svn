@@ -53,9 +53,9 @@ template<class FunctionType>
 void ProtocolGame::addGameTaskInternal(uint32_t delay, const FunctionType& func)
 {
 	if(delay > 0)
-		Dispatcher::getInstance()->addTask(createTask(delay, func));
+		Dispatcher::getInstance().addTask(createTask(delay, func));
 	else
-		Dispatcher::getInstance()->addTask(createTask(func));
+		Dispatcher::getInstance().addTask(createTask(func));
 }
 
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
@@ -269,7 +269,7 @@ bool ProtocolGame::login(const std::string& name, uint32_t id, const std::string
 		_player->isConnecting = true;
 
 		addRef();
-		m_eventConnect = Scheduler::getInstance()->addEvent(createSchedulerTask(
+		m_eventConnect = Scheduler::getInstance().addEvent(createSchedulerTask(
 			1000, boost::bind(&ProtocolGame::connect, this, _player->getID(), operatingSystem, version)));
 		return true;
 	}
@@ -497,7 +497,7 @@ bool ProtocolGame::parseFirstPacket(NetworkMessage& msg)
 	}
 
 	ConnectionManager::getInstance()->addAttempt(getIP(), protocolId, true);
-	Dispatcher::getInstance()->addTask(createTask(boost::bind(
+	Dispatcher::getInstance().addTask(createTask(boost::bind(
 		&ProtocolGame::login, this, character, id, password, operatingSystem, version, gamemaster)));
 	return true;
 }
@@ -815,7 +815,7 @@ void ProtocolGame::parsePacket(NetworkMessage &msg)
 						player->sendTextMessage(MSG_INFO_DESCR, "You have been banished.");
 
 						g_game.addMagicEffect(player->getPosition(), MAGIC_EFFECT_WRAPS_GREEN);
-						Scheduler::getInstance()->addEvent(createSchedulerTask(1000, boost::bind(
+						Scheduler::getInstance().addEvent(createSchedulerTask(1000, boost::bind(
 							&Game::kickPlayer, &g_game, player->getID(), false)));
 					}
 				}
@@ -1019,7 +1019,7 @@ bool ProtocolGame::canSee(uint16_t x, uint16_t y, uint16_t z) const
 //********************** Parse methods *******************************//
 void ProtocolGame::parseLogout(NetworkMessage& msg)
 {
-	Dispatcher::getInstance()->addTask(createTask(boost::bind(&ProtocolGame::logout, this, true, false)));
+	Dispatcher::getInstance().addTask(createTask(boost::bind(&ProtocolGame::logout, this, true, false)));
 }
 
 void ProtocolGame::parseCreatePrivateChannel(NetworkMessage& msg)
