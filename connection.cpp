@@ -322,7 +322,7 @@ void Connection::accept()
 
 		// Read size of the first packet
 		boost::asio::async_read(getHandle(),
-			boost::asio::buffer(m_msg.getBuffer(), NetworkMessage::headerLength),
+			boost::asio::buffer(m_msg.buffer(), NETWORK_HEADER_LENGTH),
 			boost::bind(&Connection::parseHeader, shared_from_this(), boost::asio::placeholders::error));
 	}
 	catch(boost::system::system_error& e)
@@ -361,8 +361,8 @@ void Connection::parseHeader(const boost::system::error_code& error)
 			boost::weak_ptr<Connection>(shared_from_this()), boost::asio::placeholders::error));
 
 		// Read packet content
-		m_msg.setMessageLength(size + NetworkMessage::headerLength);
-		boost::asio::async_read(getHandle(), boost::asio::buffer(m_msg.getBodyBuffer(), size),
+		m_msg.setSize(size + NETWORK_HEADER_LENGTH);
+		boost::asio::async_read(getHandle(), boost::asio::buffer(m_msg.bodyBuffer(), size),
 			boost::bind(&Connection::parsePacket, shared_from_this(), boost::asio::placeholders::error));
 	}
 	catch(boost::system::system_error& e)
@@ -393,14 +393,14 @@ void Connection::parsePacket(const boost::system::error_code& error)
 	}
 
 	--m_pendingRead;
-	uint32_t length = m_msg.getMessageLength() - m_msg.getReadPos() - 4, checksumReceived = m_msg.PeekU32(), checksum = 0;
+	uint32_t length = m_msg.size() - m_msg.position() - 4, checksumReceived = m_msg.get<uint32_t>(true), checksum = 0;
 	if(length > 0)
-		checksum = adlerChecksum((uint8_t*)(m_msg.getBuffer() + m_msg.getReadPos() + 4), length);
+		checksum = adlerChecksum((uint8_t*)(m_msg.buffer() + m_msg.position() + 4), length);
 
 	bool checksumEnabled = false;
 	if(checksumReceived == checksum)
 	{
-		m_msg.SkipBytes(4);
+		m_msg.skip(4);
 		checksumEnabled = true;
 	}
 
@@ -422,7 +422,7 @@ void Connection::parsePacket(const boost::system::error_code& error)
 			m_protocol->setConnection(shared_from_this());
 		}
 		else
-			m_msg.SkipBytes(1); // Skip protocol
+			m_msg.skip(1); // Skip protocol
 
 		m_protocol->onRecvFirstMessage(m_msg);
 	}
@@ -438,7 +438,7 @@ void Connection::parsePacket(const boost::system::error_code& error)
 
 		// Wait to the next packet
 		boost::asio::async_read(getHandle(),
-			boost::asio::buffer(m_msg.getBuffer(), NetworkMessage::headerLength),
+			boost::asio::buffer(m_msg.buffer(), NETWORK_HEADER_LENGTH),
 			boost::bind(&Connection::parseHeader, shared_from_this(), boost::asio::placeholders::error));
 	}
 	catch(boost::system::system_error& e)
@@ -473,7 +473,7 @@ bool Connection::send(OutputMessage_ptr msg)
 			msg->getProtocol()->onSendMessage(msg);
 
 		#ifdef __DEBUG_NET_DETAIL__
-		std::clog << "Connection::send " << msg->getMessageLength() << std::endl;
+		std::clog << "Connection::send " << msg->size() << std::endl;
 		#endif
 		internalSend(msg);
 	}
@@ -485,7 +485,7 @@ bool Connection::send(OutputMessage_ptr msg)
 	else
 	{	
 		#ifdef __DEBUG_NET__
-		std::clog << "Connection::send Adding to queue " << msg->getMessageLength() << std::endl;
+		std::clog << "Connection::send Adding to queue " << msg->size() << std::endl;
 		#endif
 		OutputMessagePool::getInstance()->autoSend(msg);
 	}
@@ -505,7 +505,7 @@ void Connection::internalSend(OutputMessage_ptr msg)
 			boost::weak_ptr<Connection>(shared_from_this()), boost::asio::placeholders::error));
 
 		boost::asio::async_write(getHandle(),
-			boost::asio::buffer(msg->getOutputBuffer(), msg->getMessageLength()),
+			boost::asio::buffer(msg->getOutputBuffer(), msg->size()),
 			boost::bind(&Connection::onWrite, shared_from_this(), msg, boost::asio::placeholders::error));
 	}
 	catch(boost::system::system_error& e)

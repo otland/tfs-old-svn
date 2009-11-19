@@ -53,8 +53,8 @@ void ProtocolLogin::disconnectClient(uint8_t error, const char* message)
 	if(output)
 	{
 		TRACK_MESSAGE(output);
-		output->AddByte(error);
-		output->AddString(message);
+		output->put<char>(error);
+		output->putString(message);
 		OutputMessagePool::getInstance()->send(output);
 	}
 
@@ -70,21 +70,21 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 	}
 
 	uint32_t clientIp = getConnection()->getIP();
-	/*uint16_t operatingSystem = msg.GetU16();*/msg.SkipBytes(2);
-	uint16_t version = msg.GetU16();
+	/*uint16_t operatingSystem = msg.get<uint16_t>();*/msg.skip(2);
+	uint16_t version = msg.get<uint16_t>();
 
-	msg.SkipBytes(12);
+	msg.skip(12);
 	if(!RSA_decrypt(msg))
 	{
 		getConnection()->close();
 		return false;
 	}
 
-	uint32_t key[4] = {msg.GetU32(), msg.GetU32(), msg.GetU32(), msg.GetU32()};
+	uint32_t key[4] = {msg.get<uint32_t>(), msg.get<uint32_t>(), msg.get<uint32_t>(), msg.get<uint32_t>()};
 	enableXTEAEncryption();
 	setXTEAKey(key);
 
-	std::string name = msg.GetString(), password = msg.GetString();
+	std::string name = msg.getString(), password = msg.getString();
 	if(name.empty())
 	{
 		if(!g_config.getBool(ConfigManager::ACCOUNT_MANAGER))
@@ -180,11 +180,11 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 	if(OutputMessage_ptr output = OutputMessagePool::getInstance()->getOutputMessage(this, false))
 	{
 		TRACK_MESSAGE(output);
-		output->AddByte(0x14);
+		output->put<char>(0x14);
 
 		char motd[1300];
 		sprintf(motd, "%d\n%s", g_game.getMotdId(), g_config.getString(ConfigManager::MOTD).c_str());
-		output->AddString(motd);
+		output->putString(motd);
 
 		uint32_t serverIp = serverIps[0].first;
 		for(IpList::iterator it = serverIps.begin(); it != serverIps.end(); ++it)
@@ -197,50 +197,50 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 		}
 
 		//Add char list
-		output->AddByte(0x64);
+		output->put<char>(0x64);
 		if(g_config.getBool(ConfigManager::ACCOUNT_MANAGER) && id != 1)
 		{
-			output->AddByte(account.charList.size() + 1);
-			output->AddString("Account Manager");
-			output->AddString(g_config.getString(ConfigManager::SERVER_NAME));
-			output->AddU32(serverIp);
-			output->AddU16(g_config.getNumber(ConfigManager::GAME_PORT));
+			output->put<char>(account.charList.size() + 1);
+			output->putString("Account Manager");
+			output->putString(g_config.getString(ConfigManager::SERVER_NAME));
+			output->put<uint32_t>(serverIp);
+			output->put<uint16_t>(g_config.getNumber(ConfigManager::GAME_PORT));
 		}
 		else
-			output->AddByte((uint8_t)account.charList.size());
+			output->put<char>((uint8_t)account.charList.size());
 
 		for(Characters::iterator it = account.charList.begin(); it != account.charList.end(); it++)
 		{
 			#ifndef __LOGIN_SERVER__
-			output->AddString((*it));
+			output->putString((*it));
 			if(g_config.getBool(ConfigManager::ON_OR_OFF_CHARLIST))
 			{
 				if(g_game.getPlayerByName((*it)))
-					output->AddString("Online");
+					output->putString("Online");
 				else
-					output->AddString("Offline");
+					output->putString("Offline");
 			}
 			else
-				output->AddString(g_config.getString(ConfigManager::SERVER_NAME));
+				output->putString(g_config.getString(ConfigManager::SERVER_NAME));
 
-			output->AddU32(serverIp);
-			output->AddU16(g_config.getNumber(ConfigManager::GAME_PORT));
+			output->put<uint32_t>(serverIp);
+			output->put<uint16_t>(g_config.getNumber(ConfigManager::GAME_PORT));
 			#else
 			if(version < it->second->getVersionMin() || version > it->second->getVersionMax())
 				continue;
 
-			output->AddString(it->first);
-			output->AddString(it->second->getName());
-			output->AddU32(it->second->getAddress());
-			output->AddU16(it->second->getPort());
+			output->putString(it->first);
+			output->putString(it->second->getName());
+			output->put<uint32_t>(it->second->getAddress());
+			output->put<uint16_t>(it->second->getPort());
 			#endif
 		}
 
 		//Add premium days
 		if(g_config.getBool(ConfigManager::FREE_PREMIUM))
-			output->AddU16(65535); //client displays free premium
+			output->put<uint16_t>(65535); //client displays free premium
 		else
-			output->AddU16(account.premiumDays);
+			output->put<uint16_t>(account.premiumDays);
 
 		OutputMessagePool::getInstance()->send(output);
 	}

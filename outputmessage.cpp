@@ -110,7 +110,7 @@ void OutputMessagePool::sendAll()
 		if(true)
 		#else
 		//It will send only messages bigger then 1 kb or with a lifetime greater than 10 ms
-		if(omsg->getMessageLength() > 1024 || (m_frameTime - omsg->getFrame() > 10))
+		if(omsg->size() > 1024 || (m_frameTime - omsg->getFrame() > 10))
 		#endif
 		{
 			#ifdef __DEBUG_NET_DETAIL__
@@ -197,7 +197,7 @@ OutputMessage_ptr OutputMessagePool::getOutputMessage(Protocol* protocol, bool a
 void OutputMessagePool::configureOutputMessage(OutputMessage_ptr msg, Protocol* protocol, bool autoSend)
 {
 	TRACK_MESSAGE(msg);
-	msg->Reset();
+	msg->reset();
 	if(autoSend)
 	{
 		msg->setState(OutputMessage::STATE_ALLOCATED);

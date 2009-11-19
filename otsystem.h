@@ -55,6 +55,9 @@
 
 #ifndef ftime
 #define ftime _ftime
+
+#define EWOULDBLOCK WSAEWOULDBLOCK
+#define errno WSAGetLastError()
 #endif
 #else
 #include <sys/timeb.h>
@@ -67,6 +70,22 @@
 
 #include <arpa/inet.h>
 #include <netinet/in.h>
+
+#ifndef SOCKET
+#define SOCKET int32_t
+#endif
+
+#ifndef closesocket
+#define closesocket close
+#endif
+
+#ifndef SOCKADDR
+#define SOCKADDR sockaddr
+#endif
+
+#ifndef SOCKET_ERROR
+#define SOCKET_ERROR -1
+#endif
 #endif
 
 inline int64_t OTSYS_TIME()

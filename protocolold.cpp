@@ -41,8 +41,8 @@ void ProtocolOld::disconnectClient(uint8_t error, const char* message)
 	if(OutputMessage_ptr output = OutputMessagePool::getInstance()->getOutputMessage(this, false))
 	{
 		TRACK_MESSAGE(output);
-		output->AddByte(error);
-		output->AddString(message);
+		output->put<char>(error);
+		output->putString(message);
 		OutputMessagePool::getInstance()->send(output);
 	}
 
@@ -57,9 +57,9 @@ bool ProtocolOld::parseFirstPacket(NetworkMessage& msg)
 		return false;
 	}
 
-	/*uint16_t operatingSystem = */msg.GetU16();
-	uint16_t version = msg.GetU16();
-	msg.SkipBytes(12);
+	/*uint16_t operatingSystem = */msg.get<uint16_t>();
+	uint16_t version = msg.get<uint16_t>();
+	msg.skip(12);
 	if(version <= 760)
 		disconnectClient(0x0A, CLIENT_VERSION_STRING);
 
@@ -69,7 +69,7 @@ bool ProtocolOld::parseFirstPacket(NetworkMessage& msg)
 		return false;
 	}
 
-	uint32_t key[4] = {msg.GetU32(), msg.GetU32(), msg.GetU32(), msg.GetU32()};
+	uint32_t key[4] = {msg.get<uint32_t>(), msg.get<uint32_t>(), msg.get<uint32_t>(), msg.get<uint32_t>()};
 	enableXTEAEncryption();
 	setXTEAKey(key);
 

@@ -200,7 +200,7 @@ std::string ServicePort::getProtocolNames() const
 
 Protocol* ServicePort::makeProtocol(bool checksum, NetworkMessage& msg) const
 {
-	uint8_t protocolId = msg.GetByte();
+	uint8_t protocolId = msg.get<char>();
 	for(ServiceVec::const_iterator it = m_services.begin(); it != m_services.end(); ++it)
 	{
 		if((*it)->getProtocolId() == protocolId && ((checksum && (*it)->hasChecksum()) || !(*it)->hasChecksum()))
