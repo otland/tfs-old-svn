@@ -80,7 +80,7 @@ class NetworkMessage
 			m_size += sizeof(T);
 		}
 
-		void putString(const std::string& value) {putString(value.c_str());}
+		void putString(const std::string& value, bool addSize = true) {putString(value.c_str(), addSize);}
 		void putString(const char* value, bool addSize = true);
 
 		void putPadding(uint32_t amount);

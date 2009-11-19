@@ -55,6 +55,7 @@
 
 #ifndef ftime
 #define ftime _ftime
+#endif
 
 #define EWOULDBLOCK WSAEWOULDBLOCK
 #define OTSYS_SLEEP(n) Sleep(n)

@@ -60,7 +60,8 @@ void ProtocolStatus::onRecvFirstMessage(NetworkMessage& msg)
 	}
 
 	ipConnectMap[getIP()] = OTSYS_TIME();
-	switch(msg.get<char>())
+	uint8_t type = msg.get<char>();
+	switch(type)
 	{
 		case 0xFF:
 		{
@@ -75,8 +76,7 @@ void ProtocolStatus::onRecvFirstMessage(NetworkMessage& msg)
 						if(msg.size() > msg.position())
 							sendPlayers = msg.get<char>() == 0x01;
 
-						std::string str = status->getStatusString(sendPlayers);
-						output->put<char>s(str.c_str(), str.size());
+						output->putString(status->getStatusString(sendPlayers), false);
 					}
 
 					setRawMessages(true); // we dont want the size header, nor encryption

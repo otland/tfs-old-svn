@@ -138,14 +138,14 @@ SocketCode_t NetworkMessage::write(SOCKET socket, int32_t timeout/* = NETWORK_RE
 
 	    	sent += ret;
 	}
-	while(sent < m_size + HEADER_SIZE);
+	while(sent < m_size + NETWORK_HEADER_SIZE);
 	return SOCKET_CODE_OK;
 }
 
 std::string NetworkMessage::getString(bool peek/* = false*/, uint16_t size/* = 0*/)
 {
 	if(!size)
-		size = get<uin16_t>(peek);
+		size = get<uint16_t>(peek);
 
 	uint16_t position = m_position;
 	if(peek)
