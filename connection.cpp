@@ -342,7 +342,7 @@ void Connection::parseHeader(const boost::system::error_code& error)
 	m_readTimer.cancel();
 
 	int32_t size = m_msg.decodeHeader();
-	if(error || size <= 0 || size >= NETWORKMESSAGE_MAXSIZE - 16)
+	if(error || size <= 0 || size >= NETWORK_MAX_SIZE - 16)
 		handleReadError(error);
 
 	if(m_connectionState != CONNECTION_STATE_OPEN || m_readError)

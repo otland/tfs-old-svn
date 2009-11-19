@@ -57,8 +57,8 @@
 #define ftime _ftime
 
 #define EWOULDBLOCK WSAEWOULDBLOCK
+#define OTSYS_SLEEP(n) Sleep(n)
 #define errno WSAGetLastError()
-#endif
 #else
 #include <sys/timeb.h>
 #include <sys/types.h>
@@ -86,6 +86,14 @@
 #ifndef SOCKET_ERROR
 #define SOCKET_ERROR -1
 #endif
+
+inline void OTSYS_SLEEP(int32_t n)
+{
+	timespec tv;
+	tv.tv_sec  = n / 1000;
+	tv.tv_nsec = (n % 1000) * 1000000;
+	nanosleep(&tv, NULL);
+}
 #endif
 
 inline int64_t OTSYS_TIME()
