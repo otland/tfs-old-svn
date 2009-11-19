@@ -322,7 +322,7 @@ void Connection::accept()
 
 		// Read size of the first packet
 		boost::asio::async_read(getHandle(),
-			boost::asio::buffer(m_msg.buffer(), NETWORK_HEADER_LENGTH),
+			boost::asio::buffer(m_msg.buffer(), NETWORK_HEADER_SIZE),
 			boost::bind(&Connection::parseHeader, shared_from_this(), boost::asio::placeholders::error));
 	}
 	catch(boost::system::system_error& e)
@@ -361,7 +361,7 @@ void Connection::parseHeader(const boost::system::error_code& error)
 			boost::weak_ptr<Connection>(shared_from_this()), boost::asio::placeholders::error));
 
 		// Read packet content
-		m_msg.setSize(size + NETWORK_HEADER_LENGTH);
+		m_msg.setSize(size + NETWORK_HEADER_SIZE);
 		boost::asio::async_read(getHandle(), boost::asio::buffer(m_msg.bodyBuffer(), size),
 			boost::bind(&Connection::parsePacket, shared_from_this(), boost::asio::placeholders::error));
 	}
@@ -438,7 +438,7 @@ void Connection::parsePacket(const boost::system::error_code& error)
 
 		// Wait to the next packet
 		boost::asio::async_read(getHandle(),
-			boost::asio::buffer(m_msg.buffer(), NETWORK_HEADER_LENGTH),
+			boost::asio::buffer(m_msg.buffer(), NETWORK_HEADER_SIZE),
 			boost::bind(&Connection::parseHeader, shared_from_this(), boost::asio::placeholders::error));
 	}
 	catch(boost::system::system_error& e)

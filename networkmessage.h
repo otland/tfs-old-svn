@@ -113,7 +113,7 @@ class NetworkMessage
 		virtual void clearTrack() {}
 #endif
 
-	private:
+	protected:
 		// used to check available space while writing
 		inline bool hasSpace(int32_t size) {return (size + m_position < NETWORK_MAX_SIZE - 16);}
 
