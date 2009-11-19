@@ -42,20 +42,20 @@ class OutputMessage : public NetworkMessage, boost::noncopyable
 		Protocol* getProtocol() const {return m_protocol;}
 		Connection_ptr getConnection() const {return m_connection;}
 
-		char* getOutputBuffer() {return (char*)&m_MsgBuf[m_outputBufferStart];}
+		char* getOutputBuffer() {return (char*)&m_buffer[m_outputBufferStart];}
 		uint64_t getFrame() const {return m_frame;}
 
-		void writeMessageLength() {addHeader((uint16_t)(m_MsgSize));}
+		void writeMessageLength() {addHeader((uint16_t)(m_size));}
 		void addCryptoHeader(bool addChecksum)
 		{
 			if(addChecksum)
-				addHeader((uint32_t)(adlerChecksum((uint8_t*)(m_MsgBuf + m_outputBufferStart), m_MsgSize)));
+				addHeader((uint32_t)(adlerChecksum((uint8_t*)(m_buffer + m_outputBufferStart), m_size)));
 
-			addHeader((uint16_t)(m_MsgSize));
+			addHeader((uint16_t)(m_size));
 		}
 
 #ifdef __TRACK_NETWORK__
-		virtual void Track(std::string file, int64_t line, std::string func)
+		virtual void Track(std::string file, int32_t line, std::string func)
 		{
 			if(lastUses.size() >= 25)
 				lastUses.pop_front();
@@ -97,8 +97,8 @@ class OutputMessage : public NetworkMessage, boost::noncopyable
 			}
 
 			m_outputBufferStart -= sizeof(T);
-			*(T*)(m_MsgBuf + m_outputBufferStart) = value;
-			m_MsgSize += sizeof(T);
+			*(T*)(m_buffer + m_outputBufferStart) = value;
+			m_size += sizeof(T);
 		}
 
 		void freeMessage()
