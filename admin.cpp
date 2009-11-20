@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////
-#ifdef __REMOTE_CONTROL__
+#ifdef __OTADMIN__
 #include "otpch.h"
 #include <iostream>
 

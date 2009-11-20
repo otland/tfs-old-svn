@@ -1088,9 +1088,10 @@ bool TalkAction::diagnostics(Creature* creature, const std::string& cmd, const s
 	text << "--------------------\n";
 	text << "ProtocolGame: " << ProtocolGame::protocolGameCount << std::endl;
 	text << "ProtocolLogin: " << ProtocolLogin::protocolLoginCount << std::endl;
-#ifdef __REMOTE_CONTROL__
+#ifdef __OTADMIN__
 	text << "ProtocolAdmin: " << ProtocolAdmin::protocolAdminCount << std::endl;
 #endif
+	text << "ProtocolManager: " << ProtocolManager::protocolManagerCount << std::endl;
 	text << "ProtocolStatus: " << ProtocolStatus::protocolStatusCount << std::endl;
 	text << "ProtocolOld: " << ProtocolOld::protocolOldCount << std::endl << std::endl;
 	player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, text.str().c_str());

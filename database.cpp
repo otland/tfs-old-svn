@@ -24,9 +24,6 @@
 #ifdef __USE_SQLITE__
 #include "databasesqlite.h"
 #endif
-#ifdef __USE_ODBC__
-#include "databaseodbc.h"
-#endif
 #ifdef __USE_PGSQL__
 #include "databasepgsql.h"
 #endif
@@ -47,10 +44,6 @@ Database* _Database::getInstance()
 #ifdef __USE_MYSQL__
 		if(g_config.getString(ConfigManager::SQL_TYPE) == "mysql")
 			_instance = new DatabaseMySQL;
-#endif
-#ifdef __USE_ODBC__
-		if(g_config.getString(ConfigManager::SQL_TYPE) == "odbc")
-			_instance = new DatabaseODBC;
 #endif
 #ifdef __USE_SQLITE__
 		if(g_config.getString(ConfigManager::SQL_TYPE) == "sqlite")
@@ -126,15 +119,12 @@ bool DBInsert::addRow(std::stringstream& row)
 
 bool DBInsert::execute()
 {
-	if(!m_multiLine || m_buf.length() < 1) // INSERTs were executed on-fly
-		return true;
-
-	if(!m_rows) //no rows to execute
+	if(!m_multiLine || m_buf.length() < 1 || !m_rows) // INSERTs were executed on-fly or there's no rows to execute
 		return true;
 
 	m_rows = 0;
 	// executes buffer
-	bool res = m_db->executeQuery(m_query + m_buf);
+	bool ret = m_db->executeQuery(m_query + m_buf);
 	m_buf = "";
-	return res;
+	return ret;
 }

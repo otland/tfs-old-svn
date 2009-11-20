@@ -44,7 +44,7 @@
 
 #include "status.h"
 #include "manager.h"
-#ifdef __REMOTE_CONTROL__
+#ifdef __OTADMIN__
 #include "admin.h"
 #endif
 
@@ -66,7 +66,7 @@
 #ifdef __EXCEPTION_TRACER__
 #include "exception.h"
 #endif
-#ifndef __REMOTE_CONTROL__
+#ifndef __OTADMIN__
 #include "textlogger.h"
 #endif
 
@@ -648,7 +648,7 @@ void otserv(StringVec args, ServiceManager* services)
 
 	services->add<ProtocolStatus>(g_config.getNumber(ConfigManager::STATUS_PORT));
 	services->add<ProtocolManager>(g_config.getNumber(ConfigManager::MANAGER_PORT));
-	#ifdef __REMOTE_CONTROL__
+	#ifdef __OTADMIN__
 	services->add<ProtocolAdmin>(g_config.getNumber(ConfigManager::ADMIN_PORT));
 	#endif
 

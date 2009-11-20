@@ -38,10 +38,10 @@ class DatabaseSQLite : public _Database
 		DATABASE_VIRTUAL bool rollback() {return executeQuery("ROLLBACK");}
 		DATABASE_VIRTUAL bool commit() {return executeQuery("COMMIT");}
 
-		DATABASE_VIRTUAL bool executeQuery(const std::string &query);
-		DATABASE_VIRTUAL DBResult* storeQuery(const std::string &query);
+		DATABASE_VIRTUAL bool executeQuery(const std::string& query);
+		DATABASE_VIRTUAL DBResult* storeQuery(const std::string& query);
 
-		DATABASE_VIRTUAL std::string escapeString(const std::string &s);
+		DATABASE_VIRTUAL std::string escapeString(const std::string& s);
 		DATABASE_VIRTUAL std::string escapeBlob(const char* s, uint32_t length);
 
 		DATABASE_VIRTUAL uint64_t getLastInsertId() {return (uint64_t)sqlite3_last_insert_rowid(m_handle);}
@@ -51,9 +51,9 @@ class DatabaseSQLite : public _Database
 		DATABASE_VIRTUAL DatabaseEngine_t getDatabaseEngine() {return DATABASE_ENGINE_SQLITE;}
 
 	protected:
-		boost::recursive_mutex sqliteLock;
+		std::string _parse(const std::string& s);
 
-		std::string _parse(const std::string &s);
+		boost::recursive_mutex sqliteLock;
 		sqlite3* m_handle;
 };
 
@@ -62,17 +62,17 @@ class SQLiteResult : public _DBResult
 	friend class DatabaseSQLite;
 
 	public:
-		DATABASE_VIRTUAL int32_t getDataInt(const std::string &s);
-		DATABASE_VIRTUAL int64_t getDataLong(const std::string &s);
-		DATABASE_VIRTUAL std::string getDataString(const std::string &s);
-		DATABASE_VIRTUAL const char* getDataStream(const std::string &s, uint64_t &size);
+		DATABASE_VIRTUAL int32_t getDataInt(const std::string& s);
+		DATABASE_VIRTUAL int64_t getDataLong(const std::string& s);
+		DATABASE_VIRTUAL std::string getDataString(const std::string& s);
+		DATABASE_VIRTUAL const char* getDataStream(const std::string& s, uint64_t& size);
 
 		DATABASE_VIRTUAL void free();
 		DATABASE_VIRTUAL bool next() {return sqlite3_step(m_handle) == SQLITE_ROW;}
 
 	protected:
 		SQLiteResult(sqlite3_stmt* stmt);
-		DATABASE_VIRTUAL ~SQLiteResult() {}
+		DATABASE_VIRTUAL ~SQLiteResult();
 
 		typedef std::map<const std::string, uint32_t> listNames_t;
 		listNames_t m_listNames;

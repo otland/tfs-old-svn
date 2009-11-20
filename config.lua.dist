@@ -114,7 +114,7 @@
 	sqlUser = "root"
 	sqlPass = ""
 	sqlDatabase = "theforgottenserver"
-	sqlFile = "forgottenserver.s3db"
+	sqlFile = "theforgottenserver.s3db"
 	sqlKeepAlive = 0
 	mysqlReadTimeout = 10
 	mysqlWriteTimeout = 10

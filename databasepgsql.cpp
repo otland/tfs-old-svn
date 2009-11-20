@@ -53,10 +53,6 @@ bool DatabasePgSQL::executeQuery(const std::string& query)
 	if(!m_connected)
 		return false;
 
-	#ifdef __SQL_QUERY_DEBUG__
-	std::clog << "PGSQL QUERY: " << query << std::endl;
-	#endif
-
 	// executes query
 	PGresult* res = PQexec(m_handle, _parse(query).c_str());
 	ExecStatusType stat = PQresultStatus(res);
@@ -77,10 +73,6 @@ DBResult* DatabasePgSQL::storeQuery(const std::string& query)
 	if(!m_connected)
 		return NULL;
 
-	#ifdef __SQL_QUERY_DEBUG__
-	std::clog << "PGSQL QUERY: " << query << std::endl;
-	#endif
-
 	// executes query
 	PGresult* res = PQexec(m_handle, _parse(query).c_str());
 	ExecStatusType stat = PQresultStatus(res);
@@ -92,8 +84,8 @@ DBResult* DatabasePgSQL::storeQuery(const std::string& query)
 	}
 
 	// everything went fine
-	DBResult* results = new PgSQLResult(res);
-	return verifyResult(results);
+	DBResult* result = new PgSQLResult(res);
+	return verifyResult(result);
 }
 
 std::string DatabasePgSQL::escapeString(const std::string& s)
@@ -156,7 +148,6 @@ uint64_t DatabasePgSQL::getLastInsertId()
 std::string DatabasePgSQL::_parse(const std::string& s)
 {
 	std::string query = "";
-
 	bool inString = false;
 	for(uint32_t a = 0; a < s.length(); a++)
 	{
@@ -192,13 +183,15 @@ const char* PgSQLResult::getDataStream(const std::string& s, uint64_t& size)
 
 void PgSQLResult::free()
 {
-	if(m_handle)
+	if(!m_handle)
 	{
-		PQclear(m_handle);
-		delete this;
+		std::clog << "[Critical - PgSQLResult::free] Trying to free already freed result!!!" << std::endl;
+		return;
 	}
-	else
-		std::clog << "[Warning - PgSQLResult::free] Trying to free already freed result." << std::endl;
+
+	PQclear(m_handle);
+	m_handle = NULL;
+	delete this;
 }
 
 bool PgSQLResult::next()
@@ -210,15 +203,18 @@ bool PgSQLResult::next()
 	return true;
 }
 
-PgSQLResult::PgSQLResult(PGresult* results)
+PgSQLResult::~PgSQLResult()
 {
-	if(!res)
-	{
-		delete this;
-		return;
-	}
+	if(m_handle)
+		PQclear(m_handle);
+}
 
-	m_handle = results;
+PgSQLResult::PgSQLResult(PGresult* result)
+{
+	if(!result)
+		return;
+
+	m_handle = result;
 	m_cursor = -1;
 	m_rows = PQntuples(m_handle) - 1;
 }
