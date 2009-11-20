@@ -57,9 +57,17 @@
 #define ftime _ftime
 #endif
 
+#ifndef EWOULDBLOCK
 #define EWOULDBLOCK WSAEWOULDBLOCK
-#define OTSYS_SLEEP(n) Sleep(n)
+#endif
+
+#ifndef errno
 #define errno WSAGetLastError()
+#endif
+
+#ifndef OTSYS_SLEEP
+#define OTSYS_SLEEP(n) Sleep(n)
+#endif
 #else
 #include <sys/timeb.h>
 #include <sys/types.h>
