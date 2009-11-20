@@ -32,9 +32,9 @@ extern ConfigManager g_config;
 #define OTSYS_SQLITE3_PREPARE sqlite3_prepare_v2
 #endif
 
-DatabaseSQLite::DatabaseSQLite() :
-	m_connected(false)
+DatabaseSQLite::DatabaseSQLite()
 {
+	m_connected = false;
 	// test for existence of database file;
 	// sqlite3_open will create a new one if it isn't there (what we don't want)
 	if(!fileExists(g_config.getString(ConfigManager::SQL_FILE).c_str()))

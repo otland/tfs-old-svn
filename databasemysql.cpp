@@ -21,12 +21,15 @@
 #include "database.h"
 #include "databasemysql.h"
 
+#include "scheduler.h"
 #include "configmanager.h"
+
 extern ConfigManager g_config;
 
 DatabaseMySQL::DatabaseMySQL() :
-	m_connected(false), m_timeoutTask(0)
+	m_timeoutTask(0)
 {
+	m_connected = false;
 	if(!mysql_init(&m_handle))
 	{
 		std::clog << std::endl << "Failed to initialize MySQL connection handler." << std::endl;
@@ -288,7 +291,7 @@ MySQLResult::~MySQLResult()
 	m_listNames.clear();
 }
 
-MySQLResult::MySQLResult(MYSQL_RES* presult)
+MySQLResult::MySQLResult(MYSQL_RES* result)
 {
 	if(!result)
 		return;
