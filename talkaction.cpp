@@ -37,6 +37,7 @@
 #include "outputmessage.h"
 #include "connection.h"
 #include "admin.h"
+#include "manager.h"
 #include "protocollogin.h"
 #include "protocolold.h"
 #endif
