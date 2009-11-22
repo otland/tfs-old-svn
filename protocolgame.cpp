@@ -813,8 +813,8 @@ void ProtocolGame::GetTileDescription(const Tile* tile, NetworkMessage_ptr msg)
 
 		if(creatures)
 		{
-			CreatureVector::const_iterator cit;
-			for(cit = creatures->begin(); ((cit != creatures->end()) && (count < 10)); ++cit)
+			CreatureVector::const_reverse_iterator cit;
+			for(cit = creatures->rbegin(); ((cit != creatures->rend()) && (count < 10)); ++cit)
 			{
 				if((*cit)->isInGhostMode() && !player->isAccessPlayer())
 					continue;

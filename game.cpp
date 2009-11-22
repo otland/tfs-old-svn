@@ -1413,6 +1413,7 @@ ReturnValue Game::internalAddItem(Cylinder* toCylinder, Item* item, int32_t inde
 			else
 			{
 				moveItem = NULL;
+				item->onRemoved();
 				FreeThing(item);
 			}
 		}

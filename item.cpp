@@ -243,6 +243,7 @@ void Item::setDefaultSubtype()
 
 void Item::onRemoved()
 {
+	ScriptEnviroment::removeTempItem(this);
 	if(getUniqueId() != 0)
 		ScriptEnviroment::removeUniqueThing(this);
 }
