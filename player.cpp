@@ -858,11 +858,8 @@ bool Player::canWalkthrough(const Creature* creature) const
 	if(hasCustomFlag(PlayerCustomFlag_CanWalkthrough) || player->isWalkable())
 		return true;
 
-	/*if(g_game.getWorldType() == WORLDTYPE_OPTIONAL)
-	{
-		// TODO: there are some special tiles on which you cannot step in...
-		return true;
-	}*/
+	if(g_game.getWorldType() == WORLDTYPE_OPTIONAL)
+		return Item::items[player->getTile()->ground->getID()].walkStack;
 
 	return player->isGhost() && getGhostAccess() < player->getGhostAccess();
 }

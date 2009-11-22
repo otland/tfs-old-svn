@@ -413,6 +413,7 @@ enum GuildEmblems_t
 	EMBLEM_NONE = 0,
 	// FIXME: not sure...
 	EMBLEM_ALLY,
+	EMBLEM_FRIEND,
 	EMBLEM_ENEMY
 };
 

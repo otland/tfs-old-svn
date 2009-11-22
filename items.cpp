@@ -38,7 +38,7 @@ ItemType::ItemType()
 	type = ITEM_TYPE_NONE;
 	stackable = useable = alwaysOnTop = lookThrough = pickupable = rotable = hasHeight = forceSerialize = false;
 	blockSolid = blockProjectile = blockPathFind = allowPickupable = false;
-	moveable = true;
+	moveable = walkStack = true;
 	alwaysOnTopOrder = 0;
 	rotateTo = 0;
 
@@ -1699,6 +1699,11 @@ void Items::parseItemNode(xmlNodePtr itemNode, uint32_t id)
 				if(readXMLInteger(itemAttributesNode, "value", intValue))
 					it.transformToFree = intValue;
 			}
+			else if(tmpStrValue == "walkstack")
+			{
+				if(readXMLString(itemAttributesNode, "value", intValue))
+					it.walkStack = (intValue != 0);
+			}
 			else
 				std::clog << "[Warning - Items::loadFromXml] Unknown key value " << strValue << std::endl;
 		}
@@ -1724,10 +1729,10 @@ void Items::parseRandomizationBlock(int32_t id, int32_t fromId, int32_t toId, in
 	}
 
 	RandomizationBlock rand;
-	rand.chance = chance;
 	rand.fromRange = fromId;
 	rand.toRange = toId;
 
+	rand.chance = chance;
 	randomizationMap[id] = rand;
 }
 
