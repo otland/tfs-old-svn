@@ -118,8 +118,9 @@ class ScriptEnviroment
 		void insertThing(uint32_t uid, Thing* thing);
 		void removeThing(uint32_t uid);
 
-		void addTempItem(Item* item);
-		void removeTempItem(Item* item);
+		static void addTempItem(ScriptEnviroment* env, Item* item);
+		static void removeTempItem(ScriptEnviroment* env, Item* item);
+		static void removeTempItem(Item* item);
 
 		DBResult* getResultByID(uint32_t id);
 		uint32_t addResult(DBResult* res);
@@ -155,6 +156,7 @@ class ScriptEnviroment
 		typedef std::map<uint32_t, Combat*> CombatMap;
 		typedef std::map<uint32_t, Condition*> ConditionMap;
 		typedef std::list<Item*> ItemList;
+		typedef std::map<ScriptEnviroment*, ItemList> TempItemListMap;
 		typedef std::map<uint32_t, DBResult*> DBResultMap;
 
 		LuaScriptInterface* m_interface;
@@ -163,9 +165,9 @@ class ScriptEnviroment
 		bool m_timerEvent;
 
 		ThingMap m_localMap;
-		ItemList m_tempItems;
 		DBResultMap m_tempResults;
 
+		static TempItemListMap; m_tempItems;
 		static StorageMap m_storageMap;
 		static ThingMap m_globalMap;
 

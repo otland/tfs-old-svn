@@ -867,7 +867,7 @@ void ProtocolGame::GetTileDescription(const Tile* tile, NetworkMessage_ptr msg)
 
 	if(creatures)
 	{
-		for(CreatureVector::const_iterator cit = creatures->begin(); (cit != creatures->end() && count < 10); ++cit)
+		for(CreatureVector::const_reverse_iterator cit = creatures->rbegin(); (cit != creatures->rend() && count < 10); ++cit)
 		{
 			if(!player->canSeeCreature(*cit))
 				continue;
@@ -2680,8 +2680,7 @@ void ProtocolGame::AddCreature(NetworkMessage_ptr msg, const Creature* creature,
 	msg->AddU16(creature->getStepSpeed());
 	msg->AddByte(player->getSkullClient(creature));
 	msg->AddByte(player->getPartyShield(creature));
-	if(player->getClientVersion() > 852) // TODO: remove after 8.6
-		msg->AddByte(0x00);
+	msg->AddByte(0x00); // guild emblem
 }
 
 void ProtocolGame::AddPlayerStats(NetworkMessage_ptr msg)
