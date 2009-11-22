@@ -1555,7 +1555,6 @@ void ProtocolGame::sendWorldLight(const LightInfo& lightInfo)
 
 void ProtocolGame::sendCreatureEmblem(const Creature* creature)
 {
-	return;/*
 	if(!canSee(creature) || player->getClientVersion() < 853) // TODO: remove after 8.6
 		return;
 
@@ -1563,10 +1562,11 @@ void ProtocolGame::sendCreatureEmblem(const Creature* creature)
 	if(msg)
 	{
 		TRACK_MESSAGE(msg);
-		msg->put<char>(0x92); // FIXME: that's the wrong byte, I don't know does it even exists...
-		msg->put<uint32_t>(creature->getID());
-		msg->put<char>(player->getGuildEmblem(creature));
-	}*/
+		// There doesn't seem to be a clear way...
+		uint32_t stackpos = creature->getTile()->getClientIndexOfThing(player, creature);
+		RemoveTileItem(msg, creature->getPosition(), stackpos);
+		AddTileCreature(msg, creature->getPosition(), stackpos, creature);
+	}
 }
 
 void ProtocolGame::sendCreatureShield(const Creature* creature)
