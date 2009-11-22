@@ -1701,7 +1701,7 @@ void Items::parseItemNode(xmlNodePtr itemNode, uint32_t id)
 			}
 			else if(tmpStrValue == "walkstack")
 			{
-				if(readXMLString(itemAttributesNode, "value", intValue))
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
 					it.walkStack = (intValue != 0);
 			}
 			else
