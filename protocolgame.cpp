@@ -857,7 +857,7 @@ void ProtocolGame::GetTileDescription(const Tile* tile, NetworkMessage_ptr msg)
 
 	if(creatures)
 	{
-		for(CreatureVector::const_iterator cit = creatures->begin(); (cit != creatures->end() && count < 10); ++cit)
+		for(CreatureVector::const_reverse_iterator cit = creatures->rbegin(); (cit != creatures->rend() && count < 10); ++cit)
 		{
 			if(!player->canSeeCreature(*cit))
 				continue;
@@ -1555,7 +1555,7 @@ void ProtocolGame::sendWorldLight(const LightInfo& lightInfo)
 
 void ProtocolGame::sendCreatureEmblem(const Creature* creature)
 {
-	if(!canSee(creature) || player->getClientVersion() < 853) // TODO: remove after 8.6
+	if(!canSee(creature))
 		return;
 
 	NetworkMessage_ptr msg = getOutputBuffer();
@@ -2686,8 +2686,7 @@ void ProtocolGame::AddCreature(NetworkMessage_ptr msg, const Creature* creature,
 	msg->put<uint16_t>(creature->getStepSpeed());
 	msg->put<char>(player->getSkullType(creature));
 	msg->put<char>(player->getPartyShield(creature));
-	if(player->getClientVersion() > 852) // TODO: remove after 8.6
-		msg->put<char>(player->getGuildEmblem(creature));
+	msg->put<char>(player->getGuildEmblem(creature));
 }
 
 void ProtocolGame::AddPlayerStats(NetworkMessage_ptr msg)

@@ -1337,7 +1337,7 @@ int32_t Tile::getClientIndexOfThing(const Player* player, const Thing* thing) co
 
 	if(const CreatureVector* creatures = getCreatures())
 	{
-		for(CreatureVector::const_iterator cit = creatures->begin(); cit != creatures->end(); ++cit)
+		for(CreatureVector::const_reverse_iterator cit = creatures->rbegin(); cit != creatures->rend(); ++cit)
 		{
 			if((*cit) == thing)
 				return ++n;

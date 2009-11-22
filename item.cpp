@@ -228,6 +228,7 @@ void Item::onRemoved()
 		raid = NULL;
 	}
 
+	ScriptEnviroment::removeTempItem(this);
 	if(getUniqueId())
 		ScriptEnviroment::removeUniqueThing(this);
 }

@@ -1560,43 +1560,43 @@ ReturnValue Game::internalAddItem(Creature* actor, Cylinder* toCylinder, Item* i
 	if(ret != RET_NOERROR)
 		return ret;
 
-	if(!test)
+	if(test)
+		return RET_NOERROR;
+
+	uint32_t m = maxQueryCount;
+	if(item->isStackable())
+		m = std::min((uint32_t)item->getItemCount(), maxQueryCount);
+
+	Item* moveItem = item;
+	if(item->isStackable() && toItem && toItem->getID() == item->getID())
 	{
-		uint32_t m = maxQueryCount;
-		if(item->isStackable())
-			m = std::min((uint32_t)item->getItemCount(), maxQueryCount);
-
-		Item* moveItem = item;
-		if(item->isStackable() && toItem && toItem->getID() == item->getID())
+		uint32_t n = std::min((uint32_t)100 - toItem->getItemCount(), m);
+		toCylinder->__updateThing(toItem, toItem->getID(), toItem->getItemCount() + n);
+		if(m - n > 0)
 		{
-			uint32_t n = std::min((uint32_t)100 - toItem->getItemCount(), m);
-			toCylinder->__updateThing(toItem, toItem->getID(), toItem->getItemCount() + n);
-			if(m - n > 0)
-			{
-				if(m - n != item->getItemCount())
-					moveItem = Item::CreateItem(item->getID(), m - n);
-			}
-			else
-			{
-				moveItem = NULL;
-				if(item->getParent() != VirtualCylinder::virtualCylinder)
-					freeThing(item);
-			}
-		}
-
-		if(moveItem)
-		{
-			toCylinder->__addThing(actor, index, moveItem);
-			int32_t moveItemIndex = toCylinder->__getIndexOfThing(moveItem);
-			if(moveItemIndex != -1)
-				toCylinder->postAddNotification(actor, moveItem, NULL, moveItemIndex);
+			if(m - n != item->getItemCount())
+				moveItem = Item::CreateItem(item->getID(), m - n);
 		}
 		else
 		{
-			int32_t itemIndex = toCylinder->__getIndexOfThing(item);
-			if(itemIndex != -1)
-				toCylinder->postAddNotification(actor, item, NULL, itemIndex);
+			moveItem = NULL;
+			item->onRemoved();
+			freeThing(item);
 		}
+	}
+
+	if(moveItem)
+	{
+		toCylinder->__addThing(actor, index, moveItem);
+		int32_t moveItemIndex = toCylinder->__getIndexOfThing(moveItem);
+		if(moveItemIndex != -1)
+			toCylinder->postAddNotification(actor, moveItem, NULL, moveItemIndex);
+	}
+	else
+	{
+		int32_t itemIndex = toCylinder->__getIndexOfThing(item);
+		if(itemIndex != -1)
+			toCylinder->postAddNotification(actor, item, NULL, itemIndex);
 	}
 
 	return RET_NOERROR;

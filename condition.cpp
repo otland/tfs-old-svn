@@ -1422,7 +1422,7 @@ void ConditionSpeed::endCondition(Creature* creature, ConditionEnd_t reason)
 
 void ConditionSpeed::addCondition(Creature* creature, const Condition* addCondition)
 {
-	if(!updateCondition(addCondition))
+	if(conditionType != addCondition->getType() || (ticks == -1 && addCondition->getTicks() > 0))
 		return;
 
 	setTicks(addCondition->getTicks());

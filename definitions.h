@@ -141,9 +141,9 @@
 #endif
 #endif
 
-#define CLIENT_VERSION_MIN 850
+#define CLIENT_VERSION_MIN 853
 #define CLIENT_VERSION_MAX 853
-#define CLIENT_VERSION_STRING "Only clients with protocol 8.5x allowed!"
+#define CLIENT_VERSION_STRING "Only clients with protocol 8.53 allowed!"
 
 #define STATUS_SERVER_NAME "The Forgotten Server"
 #define STATUS_SERVER_VERSION "0.4_DEV"
