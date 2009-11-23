@@ -565,7 +565,7 @@ if(Modules == nil) then
 				if(e == 1) then
 					a = tonumber(tmp)
 				elseif(e == 2) then
-					b = tonumber(tmp)
+					b = tmp
 				elseif(e == 3) then
 					c = tmp
 				elseif(e == 4) then
@@ -647,7 +647,7 @@ if(Modules == nil) then
 				items = ""
 			end
 
-			if(v[1] > 1) then
+			if(tonumber(v[1]) ~= nil and v[1] > 1) then
 				items = items .. v[1] .. " "
 			end
 
@@ -672,18 +672,41 @@ if(Modules == nil) then
 					if(parent.gender == nil or parent.gender == getPlayerSex(cid)) then
 						local found = true
 						for k, v in pairs(parent.items) do
-							if((k == 0 and getPlayerMoney(cid) < v[1]) or k == 0 or getPlayerItemCount(cid, k, v[2]) < v[1]) then
+							if(tonumber(v[1]) == nil) then
+								if(v[1] == "storagecheck") then
+									if(getCreatureStorage(cid, v[1]) ~= v[2]) then
+										found = false
+									end
+								elseif(v[1] == "outfitid") then
+									if(canPlayerWearOutfitId(cid, v[1], v[2]) then
+										found = false
+									end
+								elseif(v[1] == "outfit") then
+									if(canPlayerWearOutfit(cid, v[1], v[2]) then
+										found = false
+									end
+								else
+									found = false
+								end
+							elseif((k == 0 and getPlayerMoney(cid) < v[1]) or k == 0 or getPlayerItemCount(cid, k, v[2]) < v[1]) then
 								found = false
+							end
+
+							if(not found) then
 								break
 							end
 						end
 
 						if(found) then
 							for k, v in pairs(parent.items) do
-								if(k == 0) then
-									doPlayerRemoveMoney(cid, v[1])
-								else
-									doPlayerRemoveItem(cid, k, v[1], v[2])
+								if(tonumber(v[1]) ~= nil) then
+									if(k == 0) then
+										doPlayerRemoveMoney(cid, v[1])
+									else
+										doPlayerRemoveItem(cid, k, v[1], v[2])
+									end
+								elseif(v[1] == "storageset") then
+									doCreatureSetStorage(cid, v[1], v[2])
 								end
 							end
 
