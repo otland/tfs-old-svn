@@ -641,17 +641,19 @@ if(Modules == nil) then
 
 		local items = nil
 		for k, v in pairs(parameters.items) do
-			if(items ~= nil) then
-				items = items .. ", "
-			else
-				items = ""
-			end
+			if(v[1] ~= "storageset") then
+				if(items ~= nil) then
+					items = items .. ", "
+				else
+					items = ""
+				end
 
-			if(tonumber(v[1]) ~= nil and v[1] > 1) then
-				items = items .. v[1] .. " "
-			end
+				if(tonumber(v[1]) ~= nil and v[1] > 1) then
+					items = items .. v[1] .. " "
+				end
 
-			items = items .. v[3]
+				items = items .. v[3]
+			end
 		end
 	
 		module.npcHandler:say('Do you want ' .. keywords[1] .. ' ' .. (addon == 0 and "outfit" or "addon") .. ' for ' .. items .. '?', cid)
