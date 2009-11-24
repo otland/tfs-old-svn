@@ -625,7 +625,7 @@ bool IOMapSerialize::saveItems(Database* db, uint32_t& tileId, uint32_t houseId,
 	DBQuery query;
 	for(int32_t i = 0; i < thingCount; ++i)
 	{
-		if(!(item = tile->__getThing(i)->getItem()) || (item->isNotMoveable() && !item->forceSerialize()))
+		if(!(item = tile->__getThing(i)->getItem()) || (!item->isMoveable() && !item->forceSerialize()))
 			continue;
 
 		if(!stored)

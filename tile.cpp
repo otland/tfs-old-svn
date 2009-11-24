@@ -119,7 +119,7 @@ bool Tile::hasHeight(uint32_t n) const
 	return false;
 }
 
-bool Tile::isSwimmingPool(bool checkPz /*= true*/) const
+bool Tile::isSwimmingPool(bool checkPz/* = true*/) const
 {
 	if(TrashHolder* trashHolder = getTrashHolder())
 		return trashHolder->getEffect() == MAGIC_EFFECT_LOSE_ENERGY && (!checkPz ||
@@ -752,7 +752,7 @@ ReturnValue Tile::__queryRemove(const Thing* thing, uint32_t count, uint32_t fla
 
 	const Item* item = thing->getItem();
 	if(!item || !count || (item->isStackable() && count > item->getItemCount())
-		|| (item->isNotMoveable() && !hasBitSet(FLAG_IGNORENOTMOVEABLE, flags)))
+		|| (!item->isMoveable() && !hasBitSet(FLAG_IGNORENOTMOVEABLE, flags)))
 		return RET_NOTPOSSIBLE;
 
 	return RET_NOERROR;
@@ -999,7 +999,7 @@ void Tile::__addThing(Creature* actor, int32_t index, Thing* thing)
 					if(!(oldField = (*it)->getMagicField()))
 						continue;
 
-					if(oldField->isReplaceable())
+					if(oldField->isReplacable())
 					{
 						int32_t oldFieldIndex = __getIndexOfThing(*it);
 						__removeThing(oldField, 1);

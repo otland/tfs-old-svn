@@ -50,7 +50,7 @@ uint32_t Player::playerCount = 0;
 MuteCountMap Player::muteCountMap;
 
 Player::Player(const std::string& _name, ProtocolGame* p):
-	Creature(), transferContainer(ITEM_LOCKER1), name(_name), nameDescription(_name), client(p)
+	Creature(), transferContainer(ITEM_LOCKER), name(_name), nameDescription(_name), client(p)
 {
 	if(client)
 		client->setPlayer(this);
@@ -871,7 +871,7 @@ Depot* Player::getDepot(uint32_t depotId, bool autoCreateDepot)
 	//create a new depot?
 	if(autoCreateDepot)
 	{
-		Item* locker = Item::CreateItem(ITEM_LOCKER1);
+		Item* locker = Item::CreateItem(ITEM_LOCKER);
 		if(Container* container = locker->getContainer())
 		{
 			if(Depot* depot = container->getDepot())
@@ -2708,7 +2708,7 @@ ReturnValue Player::__queryRemove(const Thing* thing, uint32_t count, uint32_t f
 	if(count == 0 || (item->isStackable() && count > item->getItemCount()))
 		return RET_NOTPOSSIBLE;
 
-	 if(item->isNotMoveable() && !hasBitSet(FLAG_IGNORENOTMOVEABLE, flags))
+	 if(!item->isMoveable() && !hasBitSet(FLAG_IGNORENOTMOVEABLE, flags))
 		return RET_NOTMOVEABLE;
 
 	return RET_NOERROR;

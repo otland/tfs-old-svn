@@ -639,7 +639,7 @@ void Combat::combatTileEffects(const SpectatorVec& list, Creature* caster, Tile*
 						break;
 				}
 			}
-			else if(params.isAggressive && !Item::items[itemId].blockSolid)
+			else if(params.isAggressive && !Item::items[itemId].blockPathFind)
 				pzLock = true;
 
 			player->addInFightTicks(pzLock);
@@ -1358,6 +1358,14 @@ void CombatArea::setupExtArea(const std::list<uint32_t>& list, uint32_t rows)
 }
 
 //**********************************************************
+
+bool MagicField::isBlocking() const
+{
+	if(g_game.getWorldType() != WORLDTYPE_OPTIONAL && (id == ITEM_MAGICWALL || id == ITEM_WILDGROWTH))
+		return true;
+
+	return Item::isBlocking();
+}
 
 void MagicField::onStepInField(Creature* creature, bool purposeful/* = true*/)
 {

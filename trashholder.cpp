@@ -47,8 +47,8 @@ void TrashHolder::__addThing(Creature* actor, int32_t index, Thing* thing)
 	}
 	else if(getTile()->isSwimmingPool(false) && thing->getCreature())
 	{
-		Player* player = thing->getCreature()->getPlayer();
-		if(player && player->getPosition() == player->getLastPosition())
+		Creature* creature = thing->getCreature();
+		if(creature && creature->getPosition() == creature->getLastPosition())
 		{
 			//player has just logged in a swimming pool
 			static Outfit_t outfit;
