@@ -682,22 +682,27 @@ if(Modules == nil) then
 							local tmp = tonumber(v[1])
 							if(tmp == nil) then
 								if(v[1] == "storagecheck") then
-									if(getCreatureStorage(cid, k) ~= v[2]) then
+									if(getCreatureStorage(cid, k) < v[2]) then
 										found = false
 									end
 								elseif(v[1] == "outfitid") then
-									if(canPlayerWearOutfitId(cid, k, v[2])) then
+									if(not canPlayerWearOutfitId(cid, k, v[2])) then
 										found = false
 									end
 								elseif(v[1] == "outfit") then
-									if(canPlayerWearOutfit(cid, k, v[2])) then
+									if(not canPlayerWearOutfit(cid, k, v[2])) then
 										found = false
 									end
 								else
 									found = false
 								end
-							elseif((k == 20000 and getPlayerMoney(cid) < tmp) or k == 20000 or getPlayerItemCount(cid, k, v[2]) < tmp) then
+							elseif(k == 20000) then
+								if(getPlayerMoney(cid) < tmp) then
+									found = false
+								end
+							elseif(getPlayerItemCount(cid, k, v[2]) < tmp) then
 								found = false
+								print(getPlayerItemCount(cid, k, v[2]))
 							end
 
 							if(not found) then
