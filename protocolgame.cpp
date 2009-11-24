@@ -1849,7 +1849,7 @@ void ProtocolGame::sendGoods(const ShopInfoList& shop)
 			{
 				if(sit->sellPrice < 0)
 					continue;
-				
+
 				int8_t subType = -1;
 				if(sit->subType)
 				{
@@ -1871,7 +1871,7 @@ void ProtocolGame::sendGoods(const ShopInfoList& shop)
 			{
 				if(sit->sellPrice < 0)
 					continue;
-				
+
 				int8_t subType = -1;
 				if(sit->subType)
 				{
@@ -1879,7 +1879,7 @@ void ProtocolGame::sendGoods(const ShopInfoList& shop)
 					if(it.hasSubType() && !it.stackable)
 						subType = sit->subType;
 				}
-				
+
 				if(subType != -1)
 				{
 					uint32_t count = player->__getItemTypeCount(sit->itemId, subType);
