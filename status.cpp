@@ -45,11 +45,11 @@ void ProtocolStatus::onRecvFirstMessage(NetworkMessage& msg)
 {
 	for(StringVec::const_iterator it = g_game.blacklist.begin(); it != g_game.blacklist.end(); ++it)
 	{
-		if((*it) == convertIPAddress(getIP()))
-		{
-			getConnection()->close();
-			return;
-		}
+		if((*it) != convertIPAddress(getIP()))
+			continue;
+
+		getConnection()->close();
+		return;
 	}
 
 	IpConnectMap::const_iterator it = ipConnectMap.find(getIP());
@@ -65,7 +65,7 @@ void ProtocolStatus::onRecvFirstMessage(NetworkMessage& msg)
 	{
 		case 0xFF:
 		{
-			if(msg.getString(4) == "info")
+			if(msg.getString(false, 4) == "info")
 			{
 				if(OutputMessage_ptr output = OutputMessagePool::getInstance()->getOutputMessage(this, false))
 				{
