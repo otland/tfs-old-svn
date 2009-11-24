@@ -1255,11 +1255,11 @@
 	</item>
 	<item id="1497" article="a" name="magic wall">
 		<attribute key="type" value="magicfield"/>
+		<attribute key="decayTo" value="0"/>
+		<attribute key="duration" value="20"/>
 	</item>
 	<item id="1498" article="a" name="magic wall">
 		<attribute key="type" value="magicfield"/>
-		<attribute key="decayTo" value="0"/>
-		<attribute key="duration" value="20"/>
 	</item>
 	<item id="1499" article="a" name="rush wood">
 		<attribute key="type" value="magicfield"/>
