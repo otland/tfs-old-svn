@@ -33,8 +33,7 @@ class ProtocolHTTP : public Protocol
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
 			protocolHTTPCount++;
 #endif
-			disableXTEAEncryption();
-			disableChecksum();
+			setRawMessages(true);
 		}
 		virtual ~ProtocolHTTP()
 		{
