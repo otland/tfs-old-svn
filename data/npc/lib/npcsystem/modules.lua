@@ -542,7 +542,7 @@ if(Modules == nil) then
 				i = i + 1
 			end
 
-			if(i ~= 1) then
+			if(i > 0) then
 				local ret = NpcSystem.getParameter('outfit' .. n)
 				if(ret ~= nil) then
 					self:parseList(keywords, ret)
@@ -628,9 +628,14 @@ if(Modules == nil) then
 			end
 		end
 
-		local node = self.npcHandler.keywordHandler:addKeyword(keywords, OutfitModule.obtain, parameters)
-		node:addChildKeywordNode(self.yesNode)
-		node:addChildKeywordNode(self.noNode)
+		for i, name in pairs(keywords) do
+			local words = {}
+			table.insert(words, name)
+
+			local node = self.npcHandler.keywordHandler:addKeyword(words, OutfitModule.obtain, parameters)
+			node:addChildKeywordNode(self.yesNode)
+			node:addChildKeywordNode(self.noNode)
+		end
 	end
 
 	function OutfitModule.obtain(cid, message, keywords, parameters, node)
@@ -1025,19 +1030,20 @@ if(Modules == nil) then
 		end
 
 		if(names ~= nil and SHOPMODULE_MODE ~= SHOPMODULE_MODE_TRADE) then
-			for i, name in pairs(names) do
-				local parameters = {
-						itemid = itemid,
-						cost = cost,
-						eventType = SHOPMODULE_BUY_ITEM,
-						module = self,
-						realName = realName or getItemNameById(itemid),
-						subType = subType or 1
-					}
+			local parameters = {
+				itemid = itemid,
+				cost = cost,
+				eventType = SHOPMODULE_BUY_ITEM,
+				module = self,
+				realName = realName or getItemNameById(itemid),
+				subType = subType or 1
+			}
 
-				keywords = {}
+			for i, name in pairs(names) do
+				local keywords = {}
 				table.insert(keywords, 'buy')
 				table.insert(keywords, name)
+
 				local node = self.npcHandler.keywordHandler:addKeyword(keywords, ShopModule.tradeItem, parameters)
 				node:addChildKeywordNode(self.yesNode)
 				node:addChildKeywordNode(self.noNode)
@@ -1054,20 +1060,21 @@ if(Modules == nil) then
 	--	realName - The real, full name for the item. Will be used as ITEMNAME in MESSAGE_ONBUY and MESSAGE_ONSELL if defined. Default value is nil (getItemNameById will be used)
 	function ShopModule:addBuyableItemContainer(names, container, itemid, cost, subType, realName)
 		if(names ~= nil) then
-			for i, name in pairs(names) do
-				local parameters = {
-						container = container,
-						itemid = itemid,
-						cost = cost,
-						eventType = SHOPMODULE_BUY_ITEM_CONTAINER,
-						module = self,
-						realName = realName or getItemNameById(itemid),
-						subType = subType or 1
-					}
+			local parameters = {
+				container = container,
+				itemid = itemid,
+				cost = cost,
+				eventType = SHOPMODULE_BUY_ITEM_CONTAINER,
+				module = self,
+				realName = realName or getItemNameById(itemid),
+				subType = subType or 1
+			}
 
-				keywords = {}
+			for i, name in pairs(names) do
+				local keywords = {}
 				table.insert(keywords, 'buy')
 				table.insert(keywords, name)
+
 				local node = self.npcHandler.keywordHandler:addKeyword(keywords, ShopModule.tradeItem, parameters)
 				node:addChildKeywordNode(self.yesNode)
 				node:addChildKeywordNode(self.noNode)
@@ -1091,18 +1098,19 @@ if(Modules == nil) then
 		end
 
 		if(names ~= nil and SHOPMODULE_MODE ~= SHOPMODULE_MODE_TRADE) then
-			for i, name in pairs(names) do
-				local parameters = {
-						itemid = itemid,
-						cost = cost,
-						eventType = SHOPMODULE_SELL_ITEM,
-						module = self,
-						realName = realName or getItemNameById(itemid)
-					}
+			local parameters = {
+				itemid = itemid,
+				cost = cost,
+				eventType = SHOPMODULE_SELL_ITEM,
+				module = self,
+				realName = realName or getItemNameById(itemid)
+			}
 
-				keywords = {}
+			for i, name in pairs(names) do
+				local keywords = {}
 				table.insert(keywords, 'sell')
 				table.insert(keywords, name)
+
 				local node = self.npcHandler.keywordHandler:addKeyword(keywords, ShopModule.tradeItem, parameters)
 				node:addChildKeywordNode(self.yesNode)
 				node:addChildKeywordNode(self.noNode)
