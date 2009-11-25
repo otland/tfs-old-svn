@@ -1871,20 +1871,14 @@ bool Npc::canWalkTo(const Position& fromPos, Direction dir)
 	if(getNoMove())
 		return false;
 
-	Position toPos = fromPos;
-	toPos = getNextPosition(dir, toPos);
+	Position toPos = getNextPosition(dir, fromPos);
 	if(!Spawns::getInstance()->isInZone(masterPosition, masterRadius, toPos))
 		return false;
 
 	Tile* tile = g_game.getTile(toPos);
-	if(!tile)
-		return true;
-
-	if(getTile()->isSwimmingPool() != tile->isSwimmingPool()) // prevent npc entering/exiting to swimming pool
+	if(!tile || g_game.isSwimmingPool(NULL, getTile(), false) != g_game.isSwimmingPool(NULL, tile,
+		false) || (!floorChange && (tile->floorChange() || tile->positionChange())))
 		return false;
-
-	if(floorChange && (tile->floorChange() || tile->positionChange()))
-		return true;
 
 	return tile->__queryAdd(0, this, 1, FLAG_PATHFINDING) == RET_NOERROR;
 }

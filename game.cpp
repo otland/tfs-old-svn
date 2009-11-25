@@ -507,11 +507,17 @@ void Game::refreshMap(RefreshTiles::iterator* it/* = NULL*/, uint32_t limit/* = 
 
 bool Game::isSwimmingPool(const Item* item, const Tile* tile, bool checkProtection) const
 {
-	if(const TrashHolder* trashHolder = dynamic_cast<const Item*>(item))
-		return tile && trashHolder->getEffect() == MAGIC_EFFECT_LOSE_ENERGY && (!checkProtection
-			|| tile->getZone() == ZONE_PROTECTION || tile->getZone() == ZONE_OPTIONAL);
+	if(!tile)
+		return false;
 
-	return false;
+	TrashHolder* trashHolder = NULL;
+	if(!item)
+		trashHolder = tile->getTrashHolder();
+	else
+		trashHolder = item->getTrashHolder();
+
+	return trashHolder && trashHolder->getEffect() == MAGIC_EFFECT_LOSE_ENERGY && (!checkProtection
+		|| tile->getZone() == ZONE_PROTECTION || tile->getZone() == ZONE_OPTIONAL);
 }
 
 Cylinder* Game::internalGetCylinder(Player* player, const Position& pos)
