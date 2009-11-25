@@ -859,7 +859,8 @@ bool Player::canWalkthrough(const Creature* creature) const
 		== WORLDTYPE_OPTIONAL && Item::items[player->getTile()->ground->getID()].walkStack))
 		return true;
 
-	return player->isGhost() && getGhostAccess() < player->getGhostAccess();
+	return (player->isGhost() && getGhostAccess() < player->getGhostAccess())
+		|| (isGhost() && getGhostAccess() > player->getGhostAccess());
 }
 
 Depot* Player::getDepot(uint32_t depotId, bool autoCreateDepot)
