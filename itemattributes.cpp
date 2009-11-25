@@ -156,7 +156,7 @@ ItemAttribute& ItemAttribute::operator=(const ItemAttribute& o)
 			type = NONE;
 			break;
 	}
-	
+
 	return *this;
 
 }
