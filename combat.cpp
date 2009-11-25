@@ -1362,14 +1362,14 @@ void CombatArea::setupExtArea(const std::list<uint32_t>& list, uint32_t rows)
 bool MagicField::isBlocking(const Creature* creature) const
 {
 	if(id != ITEM_MAGICWALL || id != ITEM_WILDGROWTH)
-		return Item::isBlocking();
+		return Item::isBlocking(creature);
 
 	return !creature->getPlayer() || g_game.getWorldType() != WORLDTYPE_OPTIONAL;
 }
 
 void MagicField::onStepInField(Creature* creature, bool purposeful/* = true*/)
 {
-	if(isBlocking() && (!creature->getPlayer() || !creature->isGhost()))
+	if(isBlocking(creature) && (!creature->getPlayer() || !creature->isGhost()))
 	{
 		g_game.internalRemoveItem(creature, this, 1);
 		return;
@@ -1382,8 +1382,8 @@ void MagicField::onStepInField(Creature* creature, bool purposeful/* = true*/)
 	if(!it.condition)
 		return;
 
-	Condition* condition = it.condition->clone();
 	uint32_t ownerId = getOwner();
+	Condition* condition = it.condition->clone();
 	if(ownerId && !getTile()->hasFlag(TILESTATE_HARDCOREZONE))
 	{
 		if(Creature* owner = g_game.getCreatureByID(ownerId))
