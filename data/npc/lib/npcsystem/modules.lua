@@ -128,11 +128,16 @@ if(Modules == nil) then
 			error('StdModule.bless called without any npcHandler instance.')
 		end
 
-		if(not npcHandler:isFocused(cid) or getWorldType() == WORLD_TYPE_PVP_ENFORCED) then
+		if(not getBooleanFromString(getConfigValue('blessings'))) then
+			npcHandler:say("Sorry, but Gods moved back my permission to bless anyone.", cid)
 			return false
 		end
 
-		if(isPlayerPremiumCallback(cid) or not getBooleanFromString(getConfigValue('blessingOnlyPremium')) or not parameters.premium) then
+		if(not npcHandler:isFocused(cid)) then
+			return false
+		end
+
+		if(isPlayerPremiumCallback(cid) or not getBooleanFromString(getConfigValue('blessingsOnlyPremium')) or not parameters.premium) then
 			local price = parameters.baseCost
 			if(getPlayerLevel(cid) > parameters.startLevel) then
 				price = (price + ((math.min(parameters.endLevel, getPlayerLevel(cid)) - parameters.startLevel) * parameters.levelCost))
@@ -537,7 +542,7 @@ if(Modules == nil) then
 				i = i + 1
 			end
 
-			if(i ~= 1) then
+			if(i > 0) then
 				local ret = NpcSystem.getParameter('outfit' .. n)
 				if(ret ~= nil) then
 					self:parseList(keywords, ret)
@@ -560,7 +565,7 @@ if(Modules == nil) then
 				if(e == 1) then
 					a = tonumber(tmp)
 				elseif(e == 2) then
-					b = tonumber(tmp)
+					b = tmp
 				elseif(e == 3) then
 					c = tmp
 				elseif(e == 4) then
@@ -623,9 +628,14 @@ if(Modules == nil) then
 			end
 		end
 
-		local node = self.npcHandler.keywordHandler:addKeyword(keywords, OutfitModule.obtain, parameters)
-		node:addChildKeywordNode(self.yesNode)
-		node:addChildKeywordNode(self.noNode)
+		for i, name in pairs(keywords) do
+			local words = {}
+			table.insert(words, name)
+
+			local node = self.npcHandler.keywordHandler:addKeyword(words, OutfitModule.obtain, parameters)
+			node:addChildKeywordNode(self.yesNode)
+			node:addChildKeywordNode(self.noNode)
+		end
 	end
 
 	function OutfitModule.obtain(cid, message, keywords, parameters, node)
@@ -636,17 +646,19 @@ if(Modules == nil) then
 
 		local items = nil
 		for k, v in pairs(parameters.items) do
-			if(items ~= nil) then
-				items = items .. ", "
-			else
-				items = ""
-			end
+			if(v[1] ~= "storageset") then
+				if(items ~= nil) then
+					items = items .. ", "
+				else
+					items = ""
+				end
 
-			if(v[1] > 1) then
-				items = items .. v[1] .. " "
-			end
+				if(tonumber(v[1]) ~= nil and tonumber(v[1]) > 1) then
+					items = items .. v[1] .. " "
+				end
 
-			items = items .. v[3]
+				items = items .. v[3]
+			end
 		end
 	
 		module.npcHandler:say('Do you want ' .. keywords[1] .. ' ' .. (addon == 0 and "outfit" or "addon") .. ' for ' .. items .. '?', cid)
@@ -667,18 +679,46 @@ if(Modules == nil) then
 					if(parent.gender == nil or parent.gender == getPlayerSex(cid)) then
 						local found = true
 						for k, v in pairs(parent.items) do
-							if((k == 0 and getPlayerMoney(cid) < v[1]) or k == 0 or getPlayerItemCount(cid, k, v[2]) < v[1]) then
+							local tmp = tonumber(v[1])
+							if(tmp == nil) then
+								if(v[1] == "storagecheck") then
+									if(getCreatureStorage(cid, k) < v[2]) then
+										found = false
+									end
+								elseif(v[1] == "outfitid") then
+									if(not canPlayerWearOutfitId(cid, k, v[2])) then
+										found = false
+									end
+								elseif(v[1] == "outfit") then
+									if(not canPlayerWearOutfit(cid, k, v[2])) then
+										found = false
+									end
+								else
+									found = false
+								end
+							elseif(k == 20000) then
+								if(getPlayerMoney(cid) < tmp) then
+									found = false
+								end
+							elseif(getPlayerItemCount(cid, k, v[2]) < tmp) then
 								found = false
+							end
+
+							if(not found) then
 								break
 							end
 						end
 
 						if(found) then
 							for k, v in pairs(parent.items) do
-								if(k == 0) then
-									doPlayerRemoveMoney(cid, v[1])
-								else
-									doPlayerRemoveItem(cid, k, v[1], v[2])
+								if(tonumber(v[1]) ~= nil) then
+									if(k == 20000) then
+										doPlayerRemoveMoney(cid, v[1])
+									else
+										doPlayerRemoveItem(cid, k, v[1], v[2])
+									end
+								elseif(v[1] == "storageset") then
+									doCreatureSetStorage(cid, v[1], v[2])
 								end
 							end
 
@@ -994,19 +1034,20 @@ if(Modules == nil) then
 		end
 
 		if(names ~= nil and SHOPMODULE_MODE ~= SHOPMODULE_MODE_TRADE) then
-			for i, name in pairs(names) do
-				local parameters = {
-						itemid = itemid,
-						cost = cost,
-						eventType = SHOPMODULE_BUY_ITEM,
-						module = self,
-						realName = realName or getItemNameById(itemid),
-						subType = subType or 1
-					}
+			local parameters = {
+				itemid = itemid,
+				cost = cost,
+				eventType = SHOPMODULE_BUY_ITEM,
+				module = self,
+				realName = realName or getItemNameById(itemid),
+				subType = subType or 1
+			}
 
-				keywords = {}
+			for i, name in pairs(names) do
+				local keywords = {}
 				table.insert(keywords, 'buy')
 				table.insert(keywords, name)
+
 				local node = self.npcHandler.keywordHandler:addKeyword(keywords, ShopModule.tradeItem, parameters)
 				node:addChildKeywordNode(self.yesNode)
 				node:addChildKeywordNode(self.noNode)
@@ -1023,20 +1064,21 @@ if(Modules == nil) then
 	--	realName - The real, full name for the item. Will be used as ITEMNAME in MESSAGE_ONBUY and MESSAGE_ONSELL if defined. Default value is nil (getItemNameById will be used)
 	function ShopModule:addBuyableItemContainer(names, container, itemid, cost, subType, realName)
 		if(names ~= nil) then
-			for i, name in pairs(names) do
-				local parameters = {
-						container = container,
-						itemid = itemid,
-						cost = cost,
-						eventType = SHOPMODULE_BUY_ITEM_CONTAINER,
-						module = self,
-						realName = realName or getItemNameById(itemid),
-						subType = subType or 1
-					}
+			local parameters = {
+				container = container,
+				itemid = itemid,
+				cost = cost,
+				eventType = SHOPMODULE_BUY_ITEM_CONTAINER,
+				module = self,
+				realName = realName or getItemNameById(itemid),
+				subType = subType or 1
+			}
 
-				keywords = {}
+			for i, name in pairs(names) do
+				local keywords = {}
 				table.insert(keywords, 'buy')
 				table.insert(keywords, name)
+
 				local node = self.npcHandler.keywordHandler:addKeyword(keywords, ShopModule.tradeItem, parameters)
 				node:addChildKeywordNode(self.yesNode)
 				node:addChildKeywordNode(self.noNode)
@@ -1060,18 +1102,19 @@ if(Modules == nil) then
 		end
 
 		if(names ~= nil and SHOPMODULE_MODE ~= SHOPMODULE_MODE_TRADE) then
-			for i, name in pairs(names) do
-				local parameters = {
-						itemid = itemid,
-						cost = cost,
-						eventType = SHOPMODULE_SELL_ITEM,
-						module = self,
-						realName = realName or getItemNameById(itemid)
-					}
+			local parameters = {
+				itemid = itemid,
+				cost = cost,
+				eventType = SHOPMODULE_SELL_ITEM,
+				module = self,
+				realName = realName or getItemNameById(itemid)
+			}
 
-				keywords = {}
+			for i, name in pairs(names) do
+				local keywords = {}
 				table.insert(keywords, 'sell')
 				table.insert(keywords, name)
+
 				local node = self.npcHandler.keywordHandler:addKeyword(keywords, ShopModule.tradeItem, parameters)
 				node:addChildKeywordNode(self.yesNode)
 				node:addChildKeywordNode(self.noNode)
