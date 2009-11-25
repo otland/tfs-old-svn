@@ -1466,15 +1466,18 @@ void Player::openShopWindow()
 	sendGoods();
 }
 
-void Player::closeShopWindow(Npc* npc/* = NULL*/, int32_t onBuy/* = -1*/, int32_t onSell/* = -1*/)
+void Player::closeShopWindow(bool send/* = true*/, Npc* npc/* = NULL*/, int32_t onBuy/* = -1*/, int32_t onSell/* = -1*/)
 {
 	if(npc || (npc = getShopOwner(onBuy, onSell)))
 		npc->onPlayerEndTrade(this, onBuy, onSell);
 
 	if(shopOwner)
-		sendCloseShop();
+	{
+		shopOwner = NULL;
+		if(send)
+			sendCloseShop();
+	}
 
-	shopOwner = NULL;
 	purchaseCallback = saleCallback = -1;
 	shopOffer.clear();
 }

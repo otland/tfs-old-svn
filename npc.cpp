@@ -2484,7 +2484,6 @@ int32_t NpcScript::luaActionFocus(lua_State* L)
 {
 	//selfFocus(cid)
 	ScriptEnviroment* env = getEnv();
-
 	Npc* npc = env->getNpc();
 	if(!npc)
 		return 0;
@@ -2788,7 +2787,7 @@ int32_t NpcScript::luaOpenShopWindow(lua_State* L)
 		return 1;
 	}
 
-	player->closeShopWindow();
+	player->closeShopWindow(false);
 	npc->addShopPlayer(player);
 
 	player->setShopOwner(npc, buyCallback, sellCallback, itemList);
@@ -2802,7 +2801,6 @@ int32_t NpcScript::luaCloseShopWindow(lua_State* L)
 {
 	//closeShopWindow(cid)
 	ScriptEnviroment* env = getEnv();
-
 	Player* player = env->getPlayerByUID(popNumber(L));
 	if(!player)
 	{
@@ -2822,7 +2820,7 @@ int32_t NpcScript::luaCloseShopWindow(lua_State* L)
 	int32_t onBuy, onSell;
 	Npc* merchant = player->getShopOwner(onBuy, onSell);
 	if(merchant == npc)
-		player->closeShopWindow(npc, onBuy, onSell);
+		player->closeShopWindow(true, npc, onBuy, onSell);
 
 	return 1;
 }
