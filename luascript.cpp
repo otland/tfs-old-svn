@@ -4603,9 +4603,9 @@ int32_t LuaInterface::luaGetTileInfo(lua_State* L)
 		pushThing(L, tile->ground, env->addThing(tile->ground));
 
 		setFieldBool(L, "protection", tile->hasFlag(TILESTATE_PROTECTIONZONE));
-		setFieldBool(L, "nopvp", tile->hasFlag(TILESTATE_NOPVPZONE));
+		setFieldBool(L, "optional", tile->hasFlag(TILESTATE_OPTIONALZONE));
 		setFieldBool(L, "nologout", tile->hasFlag(TILESTATE_NOLOGOUT));
-		setFieldBool(L, "pvp", tile->hasFlag(TILESTATE_PVPZONE));
+		setFieldBool(L, "hardcore", tile->hasFlag(TILESTATE_HARDCOREZONE));
 		setFieldBool(L, "refresh", tile->hasFlag(TILESTATE_REFRESH));
 		setFieldBool(L, "trashed", tile->hasFlag(TILESTATE_TRASHED));
 		setFieldBool(L, "house", tile->hasFlag(TILESTATE_HOUSE));

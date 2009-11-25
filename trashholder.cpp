@@ -29,7 +29,7 @@ void TrashHolder::__addThing(Creature* actor, int32_t index, Thing* thing)
 		if(item == this || !item->isMoveable())
 			return;
 
-		if(getTile()->isSwimmingPool())
+		if(g_game.isSwimmingPool(this, getTile(), true))
 		{
 			if(item->getID() == ITEM_WATERBALL_SPLASH)
 				return;
@@ -45,7 +45,7 @@ void TrashHolder::__addThing(Creature* actor, int32_t index, Thing* thing)
 		if(effect != MAGIC_EFFECT_NONE)
 			g_game.addMagicEffect(getTile()->getPosition(), effect);
 	}
-	else if(getTile()->isSwimmingPool(false) && thing->getCreature())
+	else if(g_game.isSwimmingPool(this, getTile(), false) && thing->getCreature())
 	{
 		Player* player = thing->getCreature()->getPlayer();
 		if(player && player->getPosition() == player->getLastPosition())

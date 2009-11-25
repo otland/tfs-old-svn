@@ -322,10 +322,10 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 
 								if((flags & TILESTATE_PROTECTIONZONE) == TILESTATE_PROTECTIONZONE)
 									tileflags |= TILESTATE_PROTECTIONZONE;
-								else if((flags & TILESTATE_NOPVPZONE) == TILESTATE_NOPVPZONE)
-									tileflags |= TILESTATE_NOPVPZONE;
-								else if((flags & TILESTATE_PVPZONE) == TILESTATE_PVPZONE)
-									tileflags |= TILESTATE_PVPZONE;
+								else if((flags & TILESTATE_OPTIONALZONE) == TILESTATE_OPTIONALZONE)
+									tileflags |= TILESTATE_OPTIONALZONE;
+								else if((flags & TILESTATE_HARDCOREZONE) == TILESTATE_HARDCOREZONE)
+									tileflags |= TILESTATE_HARDCOREZONE;
 
 								if((flags & TILESTATE_NOLOGOUT) == TILESTATE_NOLOGOUT)
 									tileflags |= TILESTATE_NOLOGOUT;

@@ -45,9 +45,9 @@ enum tileflags_t
 	TILESTATE_NONE = 0,
 	TILESTATE_PROTECTIONZONE = 1 << 0,
 	TILESTATE_TRASHED = 1 << 1,
-	TILESTATE_NOPVPZONE = 1 << 2,
+	TILESTATE_OPTIONALZONE = 1 << 2,
 	TILESTATE_NOLOGOUT = 1 << 3,
-	TILESTATE_PVPZONE = 1 << 4,
+	TILESTATE_HARDCOREZONE = 1 << 4,
 	TILESTATE_REFRESH = 1 << 5,
 
 	//internal usage
@@ -80,10 +80,10 @@ enum tileflags_t
 enum ZoneType_t
 {
 	ZONE_PROTECTION,
-	ZONE_NOPVP,
-	ZONE_PVP,
+	ZONE_OPTIONAL,
+	ZONE_HARDCORE,
 	ZONE_NOLOGOUT,
-	ZONE_NORMAL
+	ZONE_OPEN
 };
 
 class TileItemVector
@@ -221,18 +221,16 @@ class Tile : public Cylinder
 			if(hasFlag(TILESTATE_PROTECTIONZONE))
 				return ZONE_PROTECTION;
 
-			if(hasFlag(TILESTATE_NOPVPZONE))
-				return ZONE_NOPVP;
+			if(hasFlag(TILESTATE_OPTIONALZONE))
+				return ZONE_OPTIONAL;
 
-			if(hasFlag(TILESTATE_PVPZONE))
-				return ZONE_PVP;
+			if(hasFlag(TILESTATE_HARDCOREZONE))
+				return ZONE_HARDCORE;
 
-			return ZONE_NORMAL;
+			return ZONE_OPEN;
 		}
 
-		bool isSwimmingPool(bool checkPz = true) const;
 		bool hasHeight(uint32_t n) const;
-
 		void moveCreature(Creature* actor, Creature* creature, Cylinder* toCylinder, bool forceTeleport = false);
 		int32_t getClientIndexOfThing(const Player* player, const Thing* thing) const;
 

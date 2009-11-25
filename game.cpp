@@ -505,6 +505,15 @@ void Game::refreshMap(RefreshTiles::iterator* it/* = NULL*/, uint32_t limit/* = 
 	}
 }
 
+bool Game::isSwimmingPool(const Item* item, const Tile* tile, bool checkProtection) const
+{
+	if(const TrashHolder* trashHolder = dynamic_cast<const Item*>(item))
+		return tile && trashHolder->getEffect() == MAGIC_EFFECT_LOSE_ENERGY && (!checkProtection
+			|| tile->getZone() == ZONE_PROTECTION || tile->getZone() == ZONE_OPTIONAL);
+
+	return false;
+}
+
 Cylinder* Game::internalGetCylinder(Player* player, const Position& pos)
 {
 	if(pos.x != 0xFFFF)
@@ -512,10 +521,7 @@ Cylinder* Game::internalGetCylinder(Player* player, const Position& pos)
 
 	//container
 	if(pos.y & 0x40)
-	{
-		uint8_t fromCid = pos.y & 0x0F;
-		return player->getContainer(fromCid);
-	}
+		return player->getContainer((uint8_t)(pos.y & 0x0F));
 
 	return player;
 }
@@ -1084,8 +1090,8 @@ bool Game::playerMoveCreature(uint32_t playerId, uint32_t movingCreatureId,
 			return false;
 		}
 
-		if((movingCreature->getZone() == ZONE_PROTECTION || movingCreature->getZone() == ZONE_NOPVP)
-			&& !toTile->hasFlag(TILESTATE_NOPVPZONE) && !toTile->hasFlag(TILESTATE_PROTECTIONZONE)
+		if((movingCreature->getZone() == ZONE_PROTECTION || movingCreature->getZone() == ZONE_OPTIONAL)
+			&& !toTile->hasFlag(TILESTATE_OPTIONALZONE) && !toTile->hasFlag(TILESTATE_PROTECTIONZONE)
 			&& !player->hasFlag(PlayerFlag_IgnoreProtectionZone))
 		{
 			player->sendCancelMessage(RET_NOTPOSSIBLE);

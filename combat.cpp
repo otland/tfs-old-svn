@@ -305,9 +305,9 @@ ReturnValue Combat::canDoCombat(const Creature* attacker, const Creature* target
 		}
 	}
 
-	return checkZones && (target->getTile()->hasFlag(TILESTATE_NOPVPZONE) ||
-		(attacker->getTile()->hasFlag(TILESTATE_NOPVPZONE)
-		&& !target->getTile()->hasFlag(TILESTATE_NOPVPZONE) &&
+	return checkZones && (target->getTile()->hasFlag(TILESTATE_OPTIONALZONE) ||
+		(attacker->getTile()->hasFlag(TILESTATE_OPTIONALZONE)
+		&& !target->getTile()->hasFlag(TILESTATE_OPTIONALZONE) &&
 		!target->getTile()->hasFlag(TILESTATE_PROTECTIONZONE))) ?
 		RET_ACTIONNOTPERMITTEDINANOPVPZONE : RET_NOERROR;
 }
@@ -340,10 +340,10 @@ ReturnValue Combat::canTargetCreature(const Player* player, const Creature* targ
 
 		if(target->getPlayer() || (target->getMaster() && target->getMaster()->getPlayer()))
 		{
-			if(player->getZone() == ZONE_NOPVP)
+			if(player->getZone() == ZONE_OPTIONAL)
 				return RET_ACTIONNOTPERMITTEDINANOPVPZONE;
 
-			if(target->getZone() == ZONE_NOPVP)
+			if(target->getZone() == ZONE_OPTIONAL)
 				return RET_YOUMAYNOTATTACKAPERSONINPROTECTIONZONE;
 		}
 	}
@@ -365,7 +365,7 @@ ReturnValue Combat::canTargetCreature(const Player* player, const Creature* targ
 
 bool Combat::isInPvpZone(const Creature* attacker, const Creature* target)
 {
-	return attacker->getZone() == ZONE_PVP && target->getZone() == ZONE_PVP;
+	return attacker->getZone() == ZONE_HARDCORE && target->getZone() == ZONE_HARDCORE;
 }
 
 bool Combat::isProtected(Player* attacker, Player* target)
@@ -373,7 +373,7 @@ bool Combat::isProtected(Player* attacker, Player* target)
 	if(attacker->hasFlag(PlayerFlag_CannotAttackPlayer) || !target->isAttackable())
 		return true;
 
-	if(attacker->getZone() == ZONE_PVP && target->getZone() == ZONE_PVP && g_config.getBool(ConfigManager::PVP_TILE_IGNORE_PROTECTION))
+	if(attacker->getZone() == ZONE_HARDCORE && target->getZone() == ZONE_HARDCORE && g_config.getBool(ConfigManager::PVP_TILE_IGNORE_PROTECTION))
 		return false;
 
 	if(attacker->hasCustomFlag(PlayerCustomFlag_IsProtected) || target->hasCustomFlag(PlayerCustomFlag_IsProtected))
@@ -624,18 +624,18 @@ void Combat::combatTileEffects(const SpectatorVec& list, Creature* caster, Tile*
 		if(player)
 		{
 			bool pzLock = false;
-			if(g_game.getWorldType() == WORLDTYPE_OPTIONAL || tile->hasFlag(TILESTATE_NOPVPZONE))
+			if(g_game.getWorldType() == WORLDTYPE_OPTIONAL || tile->hasFlag(TILESTATE_OPTIONALZONE))
 			{
 				switch(itemId)
 				{
-					case ITEM_FIREFIELD_PVP:
-						itemId = ITEM_FIREFIELD_NOPVP;
+					case ITEM_FIREFIELD:
+						itemId = ITEM_FIREFIELD_SAFE;
 						break;
-					case ITEM_POISONFIELD_PVP:
-						itemId = ITEM_POISONFIELD_NOPVP;
+					case ITEM_POISONFIELD:
+						itemId = ITEM_POISONFIELD_SAFE;
 						break;
-					case ITEM_ENERGYFIELD_PVP:
-						itemId = ITEM_ENERGYFIELD_NOPVP;
+					case ITEM_ENERGYFIELD:
+						itemId = ITEM_ENERGYFIELD_SAFE;
 						break;
 				}
 			}
@@ -1384,12 +1384,12 @@ void MagicField::onStepInField(Creature* creature, bool purposeful/* = true*/)
 
 	Condition* condition = it.condition->clone();
 	uint32_t ownerId = getOwner();
-	if(ownerId && !getTile()->hasFlag(TILESTATE_PVPZONE))
+	if(ownerId && !getTile()->hasFlag(TILESTATE_HARDCOREZONE))
 	{
 		if(Creature* owner = g_game.getCreatureByID(ownerId))
 		{
 			bool harmful = true;
-			if((g_game.getWorldType() == WORLDTYPE_OPTIONAL || getTile()->hasFlag(TILESTATE_NOPVPZONE))
+			if((g_game.getWorldType() == WORLDTYPE_OPTIONAL || getTile()->hasFlag(TILESTATE_OPTIONALZONE))
 				&& (owner->getPlayer() || owner->isPlayerSummon()))
 				harmful = false;
 			else if(Player* targetPlayer = creature->getPlayer())

@@ -119,15 +119,6 @@ bool Tile::hasHeight(uint32_t n) const
 	return false;
 }
 
-bool Tile::isSwimmingPool(bool checkPz/* = true*/) const
-{
-	if(TrashHolder* trashHolder = getTrashHolder())
-		return trashHolder->getEffect() == MAGIC_EFFECT_LOSE_ENERGY && (!checkPz ||
-			getZone() == ZONE_PROTECTION || getZone() == ZONE_NOPVP);
-
-	return false;
-}
-
 uint32_t Tile::getCreatureCount() const
 {
 	if(const CreatureVector* creatures = getCreatures())
@@ -607,13 +598,13 @@ ReturnValue Tile::__queryAdd(int32_t index, const Thing* thing, uint32_t count,
 			if(!player->getParent() && hasFlag(TILESTATE_NOLOGOUT)) //player is trying to login to a "no logout" tile
 				return RET_NOTPOSSIBLE;
 
-			if(player->isPzLocked() && !player->getTile()->hasFlag(TILESTATE_PVPZONE) && hasFlag(TILESTATE_PVPZONE)) //player is trying to enter a pvp zone while being pz-locked
+			if(player->isPzLocked() && !player->getTile()->hasFlag(TILESTATE_HARDCOREZONE) && hasFlag(TILESTATE_HARDCOREZONE)) //player is trying to enter a pvp zone while being pz-locked
 				return RET_PLAYERISPZLOCKEDENTERPVPZONE;
 
-			if(player->isPzLocked() && player->getTile()->hasFlag(TILESTATE_PVPZONE) && !hasFlag(TILESTATE_PVPZONE)) //player is trying to leave a pvp zone while being pz-locked
+			if(player->isPzLocked() && player->getTile()->hasFlag(TILESTATE_HARDCOREZONE) && !hasFlag(TILESTATE_HARDCOREZONE)) //player is trying to leave a pvp zone while being pz-locked
 				return RET_PLAYERISPZLOCKEDLEAVEPVPZONE;
 
-			if(hasFlag(TILESTATE_NOPVPZONE) && player->isPzLocked())
+			if(hasFlag(TILESTATE_OPTIONALZONE) && player->isPzLocked())
 				return RET_PLAYERISPZLOCKED;
 
 			if(hasFlag(TILESTATE_PROTECTIONZONE) && player->isPzLocked())

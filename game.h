@@ -155,6 +155,8 @@ class Game
 		void checkHighscores();
 		bool reloadHighscores();
 
+		bool isSwimmingPool(const Item* item, const Tile* tile, bool checkProtection) const;
+
 		void prepareGlobalSave();
 		void globalSave();
 

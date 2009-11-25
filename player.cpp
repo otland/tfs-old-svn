@@ -1384,12 +1384,12 @@ void Player::onAttackedCreatureChangeZone(ZoneType_t zone)
 		setAttackedCreature(NULL);
 		onAttackedCreatureDisappear(false);
 	}
-	else if(zone == ZONE_NOPVP && attackedCreature->getPlayer() && !hasFlag(PlayerFlag_IgnoreProtectionZone))
+	else if(zone == ZONE_OPTIONAL && attackedCreature->getPlayer() && !hasFlag(PlayerFlag_IgnoreProtectionZone))
 	{
 		setAttackedCreature(NULL);
 		onAttackedCreatureDisappear(false);
 	}
-	else if(zone == ZONE_NORMAL && g_game.getWorldType() == WORLDTYPE_OPTIONAL && attackedCreature->getPlayer())
+	else if(zone == ZONE_OPEN && g_game.getWorldType() == WORLDTYPE_OPTIONAL && attackedCreature->getPlayer())
 	{
 		//attackedCreature can leave a pvp zone if not pzlocked
 		setAttackedCreature(NULL);
@@ -2099,7 +2099,7 @@ bool Player::onDeath()
 {
 	Item* preventLoss = NULL;
 	Item* preventDrop = NULL;
-	if(getZone() == ZONE_PVP)
+	if(getZone() == ZONE_HARDCORE)
 	{
 		setDropLoot(LOOT_DROP_NONE);
 		setLossSkill(false);
@@ -3532,7 +3532,7 @@ void Player::onAttackedCreature(Creature* target)
 		return;
 
 	addAttacked(targetPlayer);
-	if(targetPlayer == this && targetPlayer->getZone() != ZONE_PVP)
+	if(targetPlayer == this && targetPlayer->getZone() != ZONE_HARDCORE)
 	{
 		targetPlayer->sendCreatureSkull(this);
 		return;
