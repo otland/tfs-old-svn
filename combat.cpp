@@ -1369,7 +1369,7 @@ bool MagicField::isBlocking(const Creature* creature) const
 
 void MagicField::onStepInField(Creature* creature, bool purposeful/* = true*/)
 {
-	if(isBlocking(creature) && (!creature->getPlayer() || !creature->isGhost()))
+	if((id == ITEM_MAGICWALL || id == ITEM_WILDGROWTH || isBlocking(creature)) && !creature->isGhost())
 	{
 		g_game.internalRemoveItem(creature, this, 1);
 		return;
@@ -1378,7 +1378,7 @@ void MagicField::onStepInField(Creature* creature, bool purposeful/* = true*/)
 	if(!purposeful)
 		return;
 
-	const ItemType& it = items[getID()];
+	const ItemType& it = items[id];
 	if(!it.condition)
 		return;
 
