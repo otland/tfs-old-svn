@@ -43,17 +43,17 @@ void TrashHolder::__addThing(Creature* actor, int32_t index, Thing* thing)
 
 		g_game.internalRemoveItem(actor, item);
 		if(effect != MAGIC_EFFECT_NONE)
-			g_game.addMagicEffect(getPosition(), effect);
+			g_game.addMagicEffect(getTile()->getPosition(), effect);
 	}
 	else if(getTile()->isSwimmingPool(false) && thing->getCreature())
 	{
-		Creature* creature = thing->getCreature();
-		if(creature && creature->getPosition() == creature->getLastPosition())
+		Player* player = thing->getCreature()->getPlayer();
+		if(player && player->getPosition() == player->getLastPosition())
 		{
 			//player has just logged in a swimming pool
 			static Outfit_t outfit;
 			outfit.lookType = 267;
-			Spell::CreateIllusion(creature, outfit, -1);
+			Spell::CreateIllusion(player, outfit, -1);
 		}
 	}
 }
