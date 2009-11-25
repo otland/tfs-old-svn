@@ -506,7 +506,7 @@ void Game::refreshMap(RefreshTiles::iterator* it/* = NULL*/, uint32_t limit/* = 
 	}
 }
 
-bool Game::isSwimmingPool(const Item* item, const Tile* tile, bool checkProtection) const
+bool Game::isSwimmingPool(Item* item, const Tile* tile, bool checkProtection) const
 {
 	if(!tile)
 		return false;
