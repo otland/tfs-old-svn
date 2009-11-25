@@ -348,7 +348,7 @@ class MagicField : public Item
 		virtual MagicField* getMagicField() {return this;}
 		virtual const MagicField* getMagicField() const {return this;}
 
-		virtual bool isBlocking() const;
+		virtual bool isBlocking(const Creature* creature) const;
 
 		bool isReplacable() const {return Item::items[getID()].replaceable;}
 		CombatType_t getCombatType() const

@@ -279,7 +279,7 @@ class Item : virtual public Thing, public ItemAttributes
 		bool canWriteText() const {return items[id].canWriteText;}
 
 		virtual bool isPushable() const {return isMoveable();}
-		virtual bool isBlocking() const {return items[id].blockSolid;}
+		virtual bool isBlocking(const Creature* creature) const {return items[id].blockSolid;}
 		bool isGroundTile() const {return items[id].isGroundTile();}
 		bool isContainer() const {return items[id].isContainer();}
 		bool isSplash() const {return items[id].isSplash();}

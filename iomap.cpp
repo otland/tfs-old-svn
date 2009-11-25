@@ -64,7 +64,7 @@ Tile* IOMap::createTile(Item*& ground, Item* item, uint16_t px, uint16_t py, uin
 	Tile* tile = NULL;
 	if(ground)
 	{
-		if((item && item->isBlocking()) || ground->isBlocking()) //tile is blocking with possibly some decoration, should be static
+		if((item && item->isBlocking(NULL)) || ground->isBlocking(NULL)) //tile is blocking with possibly some decoration, should be static
 			tile = new StaticTile(px, py, pz);
 		else //tile is not blocking with possibly multiple items, use dynamic
 			tile = new DynamicTile(px, py, pz);

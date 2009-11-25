@@ -549,7 +549,7 @@ ReturnValue Tile::__queryAdd(int32_t index, const Thing* thing, uint32_t count,
 				for(CreatureVector::const_iterator cit = creatures->begin(); cit != creatures->end(); ++cit)
 				{
 					if(!creature->canWalkthrough(*cit))
-						return RET_NOTENOUGHROOM;
+						return RET_NOTENOUGHROOM; //NOTPOSSIBLE
 				}
 			}
 
@@ -564,23 +564,26 @@ ReturnValue Tile::__queryAdd(int32_t index, const Thing* thing, uint32_t count,
 				return RET_NOTPOSSIBLE;
 
 			MagicField* field = getFieldItem();
-			if(field && !field->isBlocking())
-			{
-				CombatType_t combatType = field->getCombatType();
-				//There is 3 options for a monster to enter a magic field
-				//1) Monster is immune
-				if(!monster->isImmune(combatType))
-				{
-					//1) Monster is "strong" enough to handle the damage
-					//2) Monster is already afflicated by this type of condition
-					if(!hasBitSet(FLAG_IGNOREFIELDDAMAGE, flags))
-						return RET_NOTPOSSIBLE;
+			if(!field)
+				return RET_NOERROR;
 
-					if(!monster->canPushItems() && !monster->hasCondition(
-						Combat::DamageToConditionType(combatType), false))
-						return RET_NOTPOSSIBLE;
-				}
-			}
+			if(field->isBlocking(creature))
+				return RET_NOTPOSSIBLE;
+
+			CombatType_t combatType = field->getCombatType();
+			//There is 3 options for a monster to enter a magic field
+			//1) Monster is immune
+			if(monster->isImmune(combatType))
+				return RET_NOERROR;
+
+			//1) Monster is "strong" enough to handle the damage
+			//2) Monster is already afflicated by this type of condition
+			if(!hasBitSet(FLAG_IGNOREFIELDDAMAGE, flags))
+				return RET_NOTPOSSIBLE;
+
+			if(!monster->canPushItems() && !monster->hasCondition(
+				Combat::DamageToConditionType(combatType), false))
+				return RET_NOTPOSSIBLE;
 
 			return RET_NOERROR;
 		}
@@ -591,7 +594,7 @@ ReturnValue Tile::__queryAdd(int32_t index, const Thing* thing, uint32_t count,
 				for(CreatureVector::const_iterator cit = creatures->begin(); cit != creatures->end(); ++cit)
 				{
 					if(!creature->canWalkthrough(*cit))
-						return RET_NOTENOUGHROOM; //RET_NOTPOSSIBLE
+						return RET_NOTENOUGHROOM; //NOTPOSSIBLE
 				}
 			}
 
@@ -609,13 +612,17 @@ ReturnValue Tile::__queryAdd(int32_t index, const Thing* thing, uint32_t count,
 
 			if(hasFlag(TILESTATE_PROTECTIONZONE) && player->isPzLocked())
 				return RET_PLAYERISPZLOCKED;
+
+			MagicField* field = getFieldItem();
+			if(field && field->isBlocking(creature))
+				return RET_NOTPOSSIBLE;
 		}
 		else if(creatures && !creatures->empty() && !hasBitSet(FLAG_IGNOREBLOCKCREATURE, flags))
 		{
 			for(CreatureVector::const_iterator cit = creatures->begin(); cit != creatures->end(); ++cit)
 			{
 				if(!creature->canWalkthrough(*cit))
-					return RET_NOTENOUGHROOM;
+					return RET_NOTENOUGHROOM; //NOTPOSSIBLE
 			}
 		}
 
@@ -625,7 +632,7 @@ ReturnValue Tile::__queryAdd(int32_t index, const Thing* thing, uint32_t count,
 			{
 				//If the FLAG_IGNOREBLOCKITEM bit isn't set we dont have to iterate every single item
 				if(hasFlag(TILESTATE_BLOCKSOLID))
-					return RET_NOTENOUGHROOM;
+					return RET_NOTPOSSIBLE;
 			}
 			else
 			{
@@ -672,12 +679,12 @@ ReturnValue Tile::__queryAdd(int32_t index, const Thing* thing, uint32_t count,
 		if(!ground && !itemIsHangable)
 			return RET_NOTPOSSIBLE;
 
-		if(creatures && !creatures->empty() && item->isBlocking() && !hasBitSet(FLAG_IGNOREBLOCKCREATURE, flags))
+		if(creatures && !creatures->empty() && !hasBitSet(FLAG_IGNOREBLOCKCREATURE, flags))
 		{
 			for(CreatureVector::const_iterator cit = creatures->begin(); cit != creatures->end(); ++cit)
 			{
-				if(!(*cit)->isGhost())
-					return RET_NOTENOUGHROOM;
+				if(!(*cit)->isGhost() && item->isBlocking(*cit))
+					return RET_NOTENOUGHROOM; //NOTPOSSIBLE
 			}
 		}
 
@@ -709,13 +716,13 @@ ReturnValue Tile::__queryAdd(int32_t index, const Thing* thing, uint32_t count,
 					else if(iType.blockSolid)
 					{
 						if(!item->isPickupable())
-							return RET_NOTENOUGHROOM;
+							return RET_NOTPOSSIBLE;
 
 						if(iType.allowPickupable)
 							continue;
 
 						if(!iType.hasHeight || iType.pickupable || iType.isBed())
-							return RET_NOTENOUGHROOM;
+							return RET_NOTPOSSIBLE;
 					}
 				}
 			}
