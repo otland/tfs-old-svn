@@ -43,7 +43,7 @@ void TrashHolder::__addThing(Creature* actor, int32_t index, Thing* thing)
 
 		g_game.internalRemoveItem(actor, item);
 		if(effect != MAGIC_EFFECT_NONE)
-			g_game.addMagicEffect(getTile()->getPosition(), effect);
+			g_game.addMagicEffect(getPosition(), effect);
 	}
 	else if(g_game.isSwimmingPool(this, getTile(), false) && thing->getCreature())
 	{
