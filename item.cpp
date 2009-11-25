@@ -671,7 +671,7 @@ bool Item::hasProperty(enum ITEMPROPERTY prop) const
 	switch(prop)
 	{
 		case BLOCKSOLID:
-			if(isBlocking())
+			if(it.blockSolid))
 				return true;
 
 			break;
@@ -714,7 +714,7 @@ bool Item::hasProperty(enum ITEMPROPERTY prop) const
 			break;
 
 		case IMMOVABLEBLOCKSOLID:
-			if(isBlocking() && (!it.moveable || (loadedFromMap &&
+			if(it.blockSolid && (!it.moveable || (loadedFromMap &&
 				(getUniqueId() || (getActionId() && getContainer())))))
 				return true;
 
