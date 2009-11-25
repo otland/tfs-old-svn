@@ -35,6 +35,7 @@
 #include "ioguild.h"
 
 #include "items.h"
+#include "trashholder.h"
 #include "container.h"
 #include "monsters.h"
 

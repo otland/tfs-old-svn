@@ -702,7 +702,6 @@ if(Modules == nil) then
 								end
 							elseif(getPlayerItemCount(cid, k, v[2]) < tmp) then
 								found = false
-								print(getPlayerItemCount(cid, k, v[2]))
 							end
 
 							if(not found) then
