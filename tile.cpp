@@ -645,7 +645,7 @@ ReturnValue Tile::__queryAdd(int32_t index, const Thing* thing, uint32_t count,
 					for(ItemVector::const_iterator it = items->begin(); it != items->end(); ++it)
 					{
 						item = (*it);
-						const ItemType& iType = Item::items[iItem->getID()];
+						const ItemType& iType = Item::items[item->getID()];
 						if(item->isBlocking(creature) && (!iType.moveable || (item->isLoadedFromMap() &&
 							(item->getUniqueId() || (item->getActionId()
 							&& item->getContainer())))))
