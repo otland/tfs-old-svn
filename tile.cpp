@@ -646,9 +646,9 @@ ReturnValue Tile::__queryAdd(int32_t index, const Thing* thing, uint32_t count,
 					{
 						item = (*it);
 						const ItemType& iType = Item::items[iItem->getID()];
-						if(item->isBlocking(creature) && (!iType.moveable || (iItem->isLoadedFromMap() &&
-							(iItem->getUniqueId() || (iItem->getActionId()
-							&& iItem->getContainer())))))
+						if(item->isBlocking(creature) && (!iType.moveable || (item->isLoadedFromMap() &&
+							(item->getUniqueId() || (item->getActionId()
+							&& item->getContainer())))))
 							return RET_NOTPOSSIBLE;
 					}
 				}
