@@ -1364,7 +1364,7 @@ bool MagicField::isBlocking(const Creature* creature) const
 	if(id != ITEM_MAGICWALL && id != ITEM_WILDGROWTH)
 		return Item::isBlocking(creature);
 
-	return !creature->getPlayer() || g_game.getWorldType() != WORLDTYPE_OPTIONAL;
+	return !creature || !creature->getPlayer() || g_game.getWorldType() != WORLDTYPE_OPTIONAL;
 }
 
 void MagicField::onStepInField(Creature* creature, bool purposeful/* = true*/)
