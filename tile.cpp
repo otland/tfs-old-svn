@@ -528,7 +528,7 @@ ReturnValue Tile::__queryAdd(int32_t index, const Thing* thing, uint32_t count,
 
 			if(monster->canPushCreatures() && !monster->isSummon())
 			{
-				if(creatures)
+				if(creatures && !creatures->empty())
 				{
 					Creature* tmp = NULL;
 					for(uint32_t i = 0; i < creatures->size(); ++i)
@@ -537,9 +537,7 @@ ReturnValue Tile::__queryAdd(int32_t index, const Thing* thing, uint32_t count,
 						if(creature->canWalkthrough(tmp))
 							continue;
 
-						if(!tmp->getMonster() || !tmp->isPushable() ||
-							(tmp->getMonster()->isSummon() &&
-							tmp->getMonster()->isPlayerSummon()))
+						if(!tmp->getMonster() || !tmp->isPushable() || tmp->isPlayerSummon())
 							return RET_NOTPOSSIBLE;
 					}
 				}
@@ -563,6 +561,9 @@ ReturnValue Tile::__queryAdd(int32_t index, const Thing* thing, uint32_t count,
 				&& (!(monster->canPushItems() || hasBitSet(FLAG_IGNOREBLOCKITEM, flags))))
 				return RET_NOTPOSSIBLE;
 
+			if(!items) // Do not seek for fields if there are no items
+				return RET_NOERROR;
+
 			MagicField* field = getFieldItem();
 			if(!field)
 				return RET_NOERROR;
@@ -581,13 +582,11 @@ ReturnValue Tile::__queryAdd(int32_t index, const Thing* thing, uint32_t count,
 			if(!hasBitSet(FLAG_IGNOREFIELDDAMAGE, flags))
 				return RET_NOTPOSSIBLE;
 
-			if(!monster->canPushItems() && !monster->hasCondition(
-				Combat::DamageToConditionType(combatType), false))
-				return RET_NOTPOSSIBLE;
-
-			return RET_NOERROR;
+			return !monster->hasCondition(Combat::DamageToConditionType(combatType), false)
+				&& !monster->canPushItems() ? RET_NOTPOSSIBLE : RET_NOERROR;
 		}
-		else if(const Player* player = creature->getPlayer())
+
+		if(const Player* player = creature->getPlayer())
 		{
 			if(creatures && !creatures->empty() && !hasBitSet(FLAG_IGNOREBLOCKCREATURE, flags))
 			{
@@ -612,10 +611,6 @@ ReturnValue Tile::__queryAdd(int32_t index, const Thing* thing, uint32_t count,
 
 			if(hasFlag(TILESTATE_PROTECTIONZONE) && player->isPzLocked())
 				return RET_PLAYERISPZLOCKED;
-
-			MagicField* field = getFieldItem();
-			if(field && field->isBlocking(creature))
-				return RET_NOTPOSSIBLE;
 		}
 		else if(creatures && !creatures->empty() && !hasBitSet(FLAG_IGNOREBLOCKCREATURE, flags))
 		{
@@ -628,19 +623,17 @@ ReturnValue Tile::__queryAdd(int32_t index, const Thing* thing, uint32_t count,
 
 		if(items)
 		{
-			if(!hasBitSet(FLAG_IGNOREBLOCKITEM, flags))
-			{
-				//If the FLAG_IGNOREBLOCKITEM bit isn't set we dont have to iterate every single item
-				if(hasFlag(TILESTATE_BLOCKSOLID))
-					return RET_NOTPOSSIBLE;
-			}
-			else
+			MagicField* field = getFieldItem();
+			if(field && field->isBlocking(creature))
+				return RET_NOTPOSSIBLE;
+
+			if(hasBitSet(FLAG_IGNOREBLOCKITEM, flags)) //If the FLAG_IGNOREBLOCKITEM bit isn't set we dont have to iterate every single item
 			{
 				//FLAG_IGNOREBLOCKITEM is set
 				if(ground)
 				{
 					const ItemType& iType = Item::items[ground->getID()];
-					if(iType.blockSolid && (!iType.moveable || (ground->isLoadedFromMap() &&
+					if(ground->isBlocking(creature) && (!iType.moveable || (ground->isLoadedFromMap() &&
 						(ground->getUniqueId() || (ground->getActionId()
 						&& ground->getContainer())))))
 						return RET_NOTPOSSIBLE;
@@ -648,18 +641,20 @@ ReturnValue Tile::__queryAdd(int32_t index, const Thing* thing, uint32_t count,
 
 				if(const TileItemVector* items = getItemList())
 				{
-					Item* iItem = NULL;
+					Item* item = NULL;
 					for(ItemVector::const_iterator it = items->begin(); it != items->end(); ++it)
 					{
-						iItem = (*it);
+						item = (*it);
 						const ItemType& iType = Item::items[iItem->getID()];
-						if(iType.blockSolid && (!iType.moveable || (iItem->isLoadedFromMap() &&
+						if(item->isBlocking(creature) && (!iType.moveable || (iItem->isLoadedFromMap() &&
 							(iItem->getUniqueId() || (iItem->getActionId()
 							&& iItem->getContainer())))))
 							return RET_NOTPOSSIBLE;
 					}
 				}
 			}
+			else if(hasFlag(TILESTATE_BLOCKSOLID))
+				return RET_NOTPOSSIBLE;
 		}
 	}
 	else if(const Item* item = thing->getItem())

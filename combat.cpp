@@ -1361,7 +1361,7 @@ void CombatArea::setupExtArea(const std::list<uint32_t>& list, uint32_t rows)
 
 bool MagicField::isBlocking(const Creature* creature) const
 {
-	if(id != ITEM_MAGICWALL || id != ITEM_WILDGROWTH)
+	if(id != ITEM_MAGICWALL && id != ITEM_WILDGROWTH)
 		return Item::isBlocking(creature);
 
 	return !creature->getPlayer() || g_game.getWorldType() != WORLDTYPE_OPTIONAL;
