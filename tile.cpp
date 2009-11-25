@@ -708,7 +708,7 @@ ReturnValue Tile::__queryAdd(int32_t index, const Thing* thing, uint32_t count,
 
 					if(itemIsHangable && (iType.isHorizontal || iType.isVertical))
 						continue;
-					else if(iType.blockSolid)
+					else if(iItem->isBlocking(NULL))
 					{
 						if(!item->isPickupable())
 							return RET_NOTPOSSIBLE;
