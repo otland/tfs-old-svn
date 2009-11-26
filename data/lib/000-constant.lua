@@ -790,8 +790,7 @@ Config_meta =
 	end,
 
 	__newindex = function(t, k, v)
-		t[k] = v
-		return true
+		return false
 	end
 }
 
