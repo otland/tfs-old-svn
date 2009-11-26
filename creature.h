@@ -198,7 +198,7 @@ class Creature : public AutoId, virtual public Thing
 
 		virtual bool canSee(const Position& pos) const;
 		virtual bool canSeeCreature(const Creature* creature) const;
-		virtual bool canWalkthrough(const Creature* creature) const {return creature->isWalkable() || creature->isGhost();}
+		virtual bool canWalkthrough(const Creature* creature) const {return creature->isWalkable() || creature->isGhost() || isGhost();}
 
 		Direction getDirection() const {return direction;}
 		void setDirection(Direction dir) {direction = dir;}
