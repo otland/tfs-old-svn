@@ -2149,11 +2149,8 @@ const NpcResponse* Npc::getResponse(const ResponseList& list, const Player* play
 
 		if((*it)->getStorageId() != -1)
 		{
-			std::string value;
-			if(!player->getStorage((*it)->getStorageId(), value))
-				continue;
-
-			std::string storageValue = (*it)->getStorage();
+			std::string value, storageValue = (*it)->getStorage();
+			player->getStorage((*it)->getStorageId(), value);
 			if(asLowerCaseString(storageValue) == "_time")
 			{
 				std::stringstream s;
@@ -2173,7 +2170,7 @@ const NpcResponse* Npc::getResponse(const ResponseList& list, const Player* play
 				case STORAGE_LESSOREQUAL:
 				{
 					int32_t v1 = atoi(value.c_str()), v2 = atoi(storageValue.c_str());
-					tmp = v2 > v1;
+					tmp = v1 <= v2;
 					break;
 				}
 				case STORAGE_EQUAL:
@@ -2189,7 +2186,7 @@ const NpcResponse* Npc::getResponse(const ResponseList& list, const Player* play
 				case STORAGE_GREATEROREQUAL:
 				{
 					int32_t v1 = atoi(value.c_str()), v2 = atoi(storageValue.c_str());
-					tmp = v2 < v1;
+					tmp = v1 >= v2;
 					break;
 				}
 				case STORAGE_GREATER:
