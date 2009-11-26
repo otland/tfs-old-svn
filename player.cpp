@@ -792,8 +792,7 @@ bool Player::setStorage(const uint32_t key, const std::string& value)
 
 	if(IS_IN_KEYRANGE(key, OUTFITS_RANGE))
 	{
-		uint32_t lookType = atoi(value.c_str()) >> 16;
-		uint32_t addons = atoi(value.c_str()) & 0xFF;
+		uint32_t lookType = atoi(value.c_str()) >> 16, addons = atoi(value.c_str()) & 0xFF;
 		if(addons < 4)
 		{
 			Outfit outfit;
@@ -806,8 +805,7 @@ bool Player::setStorage(const uint32_t key, const std::string& value)
 	}
 	else if(IS_IN_KEYRANGE(key, OUTFITSID_RANGE))
 	{
-		uint32_t outfitId = atoi(value.c_str()) >> 16;
-		uint32_t addons = atoi(value.c_str()) & 0xFF;
+		uint32_t outfitId = atoi(value.c_str()) >> 16, addons = atoi(value.c_str()) & 0xFF;
 		if(addons < 4)
 			return addOutfit(outfitId, addons);
 		else
