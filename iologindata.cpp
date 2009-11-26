@@ -531,7 +531,6 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool preLo
 
 			player->rankId = rankId;
 			player->rankName = result->getDataString("rank");
-
 			player->guildNick = nick;
 			result->free();
 #ifdef __GAYWAR__
