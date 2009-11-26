@@ -718,7 +718,7 @@ if(Modules == nil) then
 										doPlayerRemoveItem(cid, k, v[1], v[2])
 									end
 								elseif(v[1] == "storageset") then
-									doCreatureSetStorage(cid, v[1], v[2])
+									doCreatureSetStorage(cid, k, v[2])
 								end
 							end
 

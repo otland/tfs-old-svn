@@ -2345,6 +2345,14 @@ void LuaInterface::registerFunctions()
 	//doRefreshMap()
 	lua_register(m_luaState, "doRefreshMap", LuaInterface::luaDoRefreshMap);
 
+#ifdef __GAYWAR__
+	//doGuildAddEnemy(guild, enemy, war, mode)
+	lua_register(m_luaState, "doGuildAddEnemy", LuaInterface::luaDoGuildAddEnemy);
+
+	//doGuildRemoveEnemy(guild, enemy)
+	lua_register(m_luaState, "doGuildRemoveEnemy", LuaInterface::luaDoGuildRemoveEnemy);
+#endif
+
 	//doUpdateHouseAuctions()
 	lua_register(m_luaState, "doUpdateHouseAuctions", LuaInterface::luaDoUpdateHouseAuctions);
 
@@ -5574,9 +5582,7 @@ int32_t LuaInterface::luaSetCombatParam(lua_State* L)
 int32_t LuaInterface::luaSetConditionParam(lua_State* L)
 {
 	//setConditionParam(condition, key, value)
-	int32_t value = (int32_t)popNumber(L);
-	ConditionParam_t key = (ConditionParam_t)popNumber(L);
-
+	int32_t value = popNumber(L);
 	ScriptEnviroment* env = getEnv();
 	if(env->getScriptId() != EVENT_ID_LOADING)
 	{
@@ -5585,6 +5591,7 @@ int32_t LuaInterface::luaSetConditionParam(lua_State* L)
 		return 1;
 	}
 
+	ConditionParam_t key = (ConditionParam_t)popNumber(L);
 	if(Condition* condition = env->getConditionObject(popNumber(L)))
 	{
 		condition->setParam(key, value);
@@ -9845,6 +9852,45 @@ int32_t LuaInterface::luaGetConfigFile(lua_State* L)
 	lua_pushstring(L, g_config.getString(ConfigManager::CONFIG_FILE).c_str());
 	return 1;
 }
+
+#ifdef __GAYWAR__
+int32_t LuaInterface::luaDoGuildAddEnemy(lua_State* L)
+{
+	//doGuildAddEnemy(guild, enemy, war, mode)
+	WarInfo_t mode = (WarInfo_t)popNumber(L);
+	uint32_t war = popNumber(L), enemy = popNumber(L), guild = popNumber(L), count = 0;
+	for(AutoList<Player>::iterator it = Player::autoList.begin(); it != Player::autoList.end(); ++it)
+	{
+		if(it->second->isRemoved() || it->second->getGuildId() != guild)
+			continue;
+
+		it->second->addEnemy(war, mode, enemy);
+		g_game.updateCreatureEmblem(it->second);
+		++count;
+	}
+
+	lua_pushnumber(L, count);
+	return 1;
+}
+
+int32_t LuaInterface::luaDoGuildRemoveEnemy(lua_State* L)
+{
+	//doGuildRemoveEnemy(guild, enemy)
+	uint32_t enemy = popNumber(L), guild = popNumber(L), count = 0;
+	for(AutoList<Player>::iterator it = Player::autoList.begin(); it != Player::autoList.end(); ++it)
+	{
+		if(it->second->isRemoved() || it->second->getGuildId() != guild)
+			continue;
+
+		it->second->removeEnemy(enemy);
+		g_game.updateCreatureEmblem(it->second);
+		++count;
+	}
+
+	lua_pushnumber(L, count);
+	return 1;
+}
+#endif
 
 int32_t LuaInterface::luaGetConfigValue(lua_State* L)
 {

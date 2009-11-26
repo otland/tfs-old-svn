@@ -272,14 +272,16 @@ ReturnValue Combat::canDoCombat(const Creature* attacker, const Creature* target
 			return RET_YOUMAYNOTATTACKTHISPLAYER;
 
 		const Player* attackerPlayer = NULL;
-		if((attackerPlayer = attacker->getPlayer()) || (attacker->getMaster()
-			&& (attackerPlayer = attacker->getMaster()->getPlayer())))
+		if((attackerPlayer = attacker->getPlayer()) || (attackerPlayer = attacker->getPlayerMaster()))
 		{
 			checkZones = true;
-			if((g_game.getWorldType() == WORLDTYPE_OPTIONAL && !Combat::isInPvpZone(attacker, target)) ||
-				isProtected(const_cast<Player*>(attackerPlayer), const_cast<Player*>(targetPlayer))
-				|| (g_config.getBool(ConfigManager::CANNOT_ATTACK_SAME_LOOKFEET) &&
-				attackerPlayer->getDefaultOutfit().lookFeet == targetPlayer->getDefaultOutfit().lookFeet)
+			if((g_game.getWorldType() == WORLDTYPE_OPTIONAL && !Combat::isInPvpZone(attacker, target)
+#ifdef __GAYWAR__
+				&& !attackerPlayer->isEnemy(targetPlayer)
+#endif
+				) || isProtected(const_cast<Player*>(attackerPlayer), const_cast<Player*>(targetPlayer))
+				|| (g_config.getBool(ConfigManager::CANNOT_ATTACK_SAME_LOOKFEET)
+				&& attackerPlayer->getDefaultOutfit().lookFeet == targetPlayer->getDefaultOutfit().lookFeet)
 				|| !attackerPlayer->canSeeCreature(targetPlayer))
 				return RET_YOUMAYNOTATTACKTHISPLAYER;
 		}
@@ -290,16 +292,19 @@ ReturnValue Combat::canDoCombat(const Creature* attacker, const Creature* target
 			return RET_YOUMAYNOTATTACKTHISCREATURE;
 
 		const Player* attackerPlayer = NULL;
-		if((attackerPlayer = attacker->getPlayer()) || (attacker->getMaster()
-			&& (attackerPlayer = attacker->getMaster()->getPlayer())))
+		if((attackerPlayer = attacker->getPlayer()) || (attackerPlayer = attacker->getPlayerMaster()))
 		{
 			if(attackerPlayer->hasFlag(PlayerFlag_CannotAttackMonster))
 				return RET_YOUMAYNOTATTACKTHISCREATURE;
 
-			if(target->getMaster() && target->getMaster()->getPlayer())
+			if(target->isPlayerSummon())
 			{
 				checkZones = true;
-				if(g_game.getWorldType() == WORLDTYPE_OPTIONAL && !Combat::isInPvpZone(attacker, target))
+				if(g_game.getWorldType() == WORLDTYPE_OPTIONAL && !Combat::isInPvpZone(attacker, target)
+#ifdef __GAYWAR__
+					&& !attackerPlayer->isEnemy(target->getPlayerMaster())
+#endif
+				)
 					return RET_YOUMAYNOTATTACKTHISCREATURE;
 			}
 		}
@@ -338,7 +343,7 @@ ReturnValue Combat::canTargetCreature(const Player* player, const Creature* targ
 		if(target->getZone() == ZONE_PROTECTION)
 			return RET_YOUMAYNOTATTACKAPERSONINPROTECTIONZONE;
 
-		if(target->getPlayer() || (target->getMaster() && target->getMaster()->getPlayer()))
+		if(target->getPlayer() || target->isPlayerSummon())
 		{
 			if(player->getZone() == ZONE_OPTIONAL)
 				return RET_ACTIONNOTPERMITTEDINANOPVPZONE;
@@ -1364,7 +1369,23 @@ bool MagicField::isBlocking(const Creature* creature) const
 	if(id != ITEM_MAGICWALL && id != ITEM_WILDGROWTH)
 		return Item::isBlocking(creature);
 
-	return !creature || !creature->getPlayer() || g_game.getWorldType() != WORLDTYPE_OPTIONAL;
+	if(!creature)
+		return true;
+
+	const Player* player = creature->getPlayer();
+	if(!player || g_game.getWorldType() != WORLDTYPE_OPTIONAL)
+		return true;
+#ifdef __GAYWAR__
+
+	uint32_t ownerId = getOwner();
+	if(!ownerId)
+		return false;
+
+	if(Creature* owner = g_game.getCreatureByID(ownerId))
+		return player->getGuildEmblem(owner) != EMBLEM_NONE;
+#endif
+
+	return false;
 }
 
 void MagicField::onStepInField(Creature* creature, bool purposeful/* = true*/)

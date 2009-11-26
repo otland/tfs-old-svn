@@ -400,3 +400,76 @@ std::string IOGuild::getMotd(uint32_t guild)
 	result->free();
 	return motd;
 }
+
+#ifdef __GAYWAR__
+bool IOGuild::war(std::pair<uint32_t, WarInfo_t> enemy)
+{
+	Database* db = Database::getInstance();
+	DBResult* result;
+
+	DBQuery query;
+	query << "SELECT `g`.`name` AS `guild_name`, `e`.`name` AS `enemy_name`, `w`.* FROM `guild_wars` w INNER JOIN `guilds` g ON `w`.`guild_id` = `g`.`id` INNER JOIN `guilds` e ON `w`.`enemy_id` = `e`.`id` WHERE `w`.`id` = " << enemy.first;
+	if(!(result = db->storeQuery(query.str())))
+		return false;
+
+	uint32_t ids[WARINFO_LIMIT];
+	ids[WARINFO_GUILD] = result->getDataInt("guild_id");
+	ids[WARINFO_ENEMY] = result->getDataInt("enemy_id");
+
+	std::string names[WARINFO_LIMIT];
+	names[WARINFO_GUILD] = result->getDataString("guild_name");
+	names[WARINFO_ENEMY] = result->getDataString("enemy_name");
+
+	uint32_t frags[WARINFO_LIMIT + 1];
+	frags[WARINFO_GUILD] = result->getDataInt("guild_kills");
+	frags[WARINFO_ENEMY] = result->getDataInt("enemy_kills");
+
+	frags[WARINFO_LIMIT] = result->getDataInt("frags");
+	uint32_t payment = result->getDataInt("payment");
+	result->free();
+
+	frags[enemy.second]++;
+	if(frags[WARINFO_GUILD] < frags[WARINFO_LIMIT] && frags[WARINFO_ENEMY] < frags[WARINFO_LIMIT])
+	{
+		query.str("");
+		query << "UPDATE `guild_wars` SET `guild_kills` = " << frags[WARINFO_GUILD] << ", `enemy_kills` = " << frags[WARINFO_ENEMY] << " WHERE `id` = " << enemy.first;
+		return db->executeQuery(query.str());
+	}
+
+	query.str("");
+	query << "UPDATE `guilds` SET `balance` = `balance` - " << payment << " WHERE `guild_id` = " << ids[enemy.second == WARINFO_GUILD] << ".";
+	if(!db->executeQuery(query.str()))
+		return false;
+
+	query.str("");
+	query << "UPDATE `guilds` SET `balance` = `balance` + " << payment << " WHERE `guild_id` = " << ids[enemy.second] << ".";
+	if(!db->executeQuery(query.str()))
+		return false;
+
+	query.str("");
+	query << "UPDATE `guild_wars` SET `guild_kills` = " << frags[WARINFO_GUILD] << ", `enemy_kills` = " << frags[WARINFO_ENEMY] << ", `end` = " << time(NULL) << ", `status` = 5 WHERE `id` = " << enemy.first;
+	if(!db->executeQuery(query.str()))
+		return false;
+
+	for(AutoList<Player>::iterator it = Player::autoList.begin(); it != Player::autoList.end(); ++it)
+	{
+		if(it->second->isRemoved())
+			continue;
+
+		if(it->second->getGuildId() == ids[WARINFO_GUILD])
+		{
+			it->second->removeEnemy(ids[WARINFO_ENEMY]);
+			g_game.updateCreatureEmblem(it->second);
+		}
+		else if(it->second->getGuildId() == ids[WARINFO_ENEMY])
+		{
+			it->second->removeEnemy(ids[WARINFO_GUILD]);
+			g_game.updateCreatureEmblem(it->second);
+		}
+	}
+
+	std::stringstream s;
+	s << names[enemy.second] << " has just won the war against " << names[enemy.second == WARINFO_GUILD] << ".";
+	return g_game.broadcastMessage(s.str().c_str(), MSG_EVENT_ADVANCE);
+}
+#endif

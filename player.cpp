@@ -855,8 +855,8 @@ bool Player::canWalkthrough(const Creature* creature) const
 	if(!player)
 		return creature->isWalkable();
 
-	if(hasCustomFlag(PlayerCustomFlag_CanWalkthrough) || player->isWalkable() || (g_game.getWorldType()
-		== WORLDTYPE_OPTIONAL && Item::items[player->getTile()->ground->getID()].walkStack))
+	if(hasCustomFlag(PlayerCustomFlag_CanWalkthrough) || player->isWalkable() || (g_game.getWorldType() == WORLDTYPE_OPTIONAL
+		&& getGuildEmblem(player) == EMBLEM_NONE && Item::items[player->getTile()->ground->getID()].walkStack))
 		return true;
 
 	return (player->isGhost() && getGhostAccess() < player->getGhostAccess())
@@ -1390,7 +1390,11 @@ void Player::onAttackedCreatureChangeZone(ZoneType_t zone)
 		setAttackedCreature(NULL);
 		onAttackedCreatureDisappear(false);
 	}
-	else if(zone == ZONE_OPEN && g_game.getWorldType() == WORLDTYPE_OPTIONAL && attackedCreature->getPlayer())
+	else if(zone == ZONE_OPEN && g_game.getWorldType() == WORLDTYPE_OPTIONAL && attackedCreature->getPlayer()
+#ifdef __GAYWAR__
+		&& !attackedCreature->getPlayer()->isEnemy(this)
+#endif
+		)
 	{
 		//attackedCreature can leave a pvp zone if not pzlocked
 		setAttackedCreature(NULL);
@@ -3542,8 +3546,8 @@ void Player::onAttackedCreature(Creature* target)
 		return;
 	}
 
-	if(Combat::isInPvpZone(this, targetPlayer) || isPartner(targetPlayer) || (g_config.getBool(
-		ConfigManager::ALLOW_FIGHTBACK) && targetPlayer->hasAttacked(this)))
+	if(Combat::isInPvpZone(this, targetPlayer) || isPartner(targetPlayer) || (g_config.getBool(ConfigManager::ALLOW_FIGHTBACK)
+		&& targetPlayer->hasAttacked(this) && targetPlayer->getGuildEmblem(this) == EMBLEM_NONE))
 		return;
 
 	if(!pzLocked)
@@ -3636,6 +3640,37 @@ void Player::onTargetCreatureGainHealth(Creature* target, int32_t points)
 	}
 }
 
+#ifdef __GAYWAR__
+GuildEmblems_t Player::getGuildEmblem(const Creature* creature) const
+{
+	GuildEmblems_t ret = Creature::getGuildEmblem(creature);
+	if(warMap.empty())
+		return ret;
+
+	const Player* player = creature->getPlayer();
+	if(!player)
+		return ret;
+
+	if(player->isEnemy(this))
+		return EMBLEM_ENEMY;
+
+	return player->getGuildId() == guildId ? EMBLEM_ALLY : EMBLEM_NONE;
+}
+
+bool Player::getEnemy(uint32_t guild, std::pair<uint32_t, WarInfo_t>& war) const
+{
+	if(!guildId || !guild)
+		return false;
+
+	WarMap::const_iterator it = warMap.find(guild);
+	if(it == warMap.end())
+		return false;
+
+	war = it->second;
+	return true;
+}
+#endif
+
 bool Player::onKilledCreature(Creature* target, uint32_t& flags)
 {
 	if(!Creature::onKilledCreature(target, flags))
@@ -3650,16 +3685,27 @@ bool Player::onKilledCreature(Creature* target, uint32_t& flags)
 		g_config.getNumber(ConfigManager::HUNTING_DURATION))))
 		addCondition(condition);
 
-	if(hasFlag(PlayerFlag_NotGainInFight) || !hasBitSet((uint32_t)KILLFLAG_JUSTIFY, flags) || getZone() != target->getZone())
+	if(hasFlag(PlayerFlag_NotGainInFight) || getZone() != target->getZone())
 		return true;
 
 	Player* targetPlayer = target->getPlayer();
-	if(!targetPlayer || Combat::isInPvpZone(this, targetPlayer) || !hasCondition(CONDITION_INFIGHT) || isPartner(targetPlayer))
+	if(!targetPlayer || Combat::isInPvpZone(this, targetPlayer) || isPartner(targetPlayer))
+		return true;
+
+#ifdef __GAYWAR__
+	std::pair<uint32_t, WarInfo_t> enemy;
+	if(targetPlayer->getEnemy(guildId, enemy) && (!hasBitSet((uint32_t)KILLFLAG_LASTHIT,
+		flags) || IOGuild::getInstance()->war(enemy)))
+		flags |= (uint32_t)KILLFLAG_GUILDWAR;
+#endif
+
+	if(!hasBitSet((uint32_t)KILLFLAG_JUSTIFY, flags) || !hasCondition(CONDITION_INFIGHT))
 		return true;
 
 	if(!targetPlayer->hasAttacked(this) && target->getSkull() == SKULL_NONE && targetPlayer != this
 		&& ((g_config.getBool(ConfigManager::USE_FRAG_HANDLER) && addUnjustifiedKill(
-		targetPlayer)) || hasBitSet((uint32_t)KILLFLAG_LASTHIT, flags)))
+		targetPlayer, !hasBitSet((uint32_t)KILLFLAG_GUILDWAR, flags)))
+		|| hasBitSet((uint32_t)KILLFLAG_LASTHIT, flags)))
 		flags |= (uint32_t)KILLFLAG_UNJUSTIFIED;
 
 	pzLocked = true;
@@ -3949,7 +3995,7 @@ void Player::setSkullEnd(time_t _time, bool login, Skulls_t _skull)
 	}
 }
 
-bool Player::addUnjustifiedKill(const Player* attacked)
+bool Player::addUnjustifiedKill(const Player* attacked, bool countNow)
 {
 	if(g_game.getWorldType() != WORLDTYPE_OPEN || attacked == this || hasFlag(
 		PlayerFlag_NotGainInFight) || hasCustomFlag(PlayerCustomFlag_NotGainSkull))
@@ -3965,9 +4011,11 @@ bool Player::addUnjustifiedKill(const Player* attacked)
 
 	time_t now = time(NULL), today = (now - 84600), week = (now - (7 * 84600));
 	std::vector<time_t> dateList;
-	IOLoginData::getInstance()->getUnjustifiedDates(guid, dateList, now);
 
-	dateList.push_back(now);
+	IOLoginData::getInstance()->getUnjustifiedDates(guid, dateList, now);
+	if(countNow)
+		dateList.push_back(now);
+
 	uint32_t tc = 0, wc = 0, mc = dateList.size();
 	for(std::vector<time_t>::iterator it = dateList.begin(); it != dateList.end(); ++it)
 	{

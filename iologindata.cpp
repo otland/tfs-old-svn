@@ -525,14 +525,36 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool preLo
 		query << "SELECT `guild_ranks`.`name` AS `rank`, `guild_ranks`.`guild_id` AS `guildid`, `guild_ranks`.`level` AS `level`, `guilds`.`name` AS `guildname` FROM `guild_ranks`, `guilds` WHERE `guild_ranks`.`id` = " << rankId << " AND `guild_ranks`.`guild_id` = `guilds`.`id` LIMIT 1";
 		if((result = db->storeQuery(query.str())))
 		{
+			player->guildId = result->getDataInt("guildid");
 			player->guildName = result->getDataString("guildname");
 			player->guildLevel = (GuildLevel_t)result->getDataInt("level");
-			player->guildId = result->getDataInt("guildid");
-			player->rankName = result->getDataString("rank");
-			player->rankId = rankId;
-			player->guildNick = nick;
 
+			player->rankId = rankId;
+			player->rankName = result->getDataString("rank");
+
+			player->guildNick = nick;
 			result->free();
+#ifdef __GAYWAR__
+
+			query.str("");
+			query << "SELECT `id`, `guild_id`, `enemy_id` FROM `guild_wars` WHERE (`guild_id` = "
+				<< player->guildId << " OR `enemy_id` = " << player->guildId
+				<< ") AND `status` IN (1, 4)";
+			if((result = db->storeQuery(query.str())))
+			{
+				do
+				{
+					uint32_t guild = result->getDataInt("guild_id");
+					if(player->guildId == guild)
+						player->addEnemy(result->getDataInt("id"), WARINFO_ENEMY,
+							result->getDataInt("enemy_id"));
+					else
+						player->addEnemy(result->getDataInt("id"), WARINFO_GUILD, guild);
+				}
+				while(result->next());
+				result->free();
+			}
+#endif
 		}
 	}
 	else if(g_config.getBool(ConfigManager::INGAME_GUILD_MANAGEMENT))

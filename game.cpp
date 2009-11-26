@@ -257,7 +257,8 @@ void Game::saveGameState(bool shallow)
 	if(gameState == GAMESTATE_MAINTAIN)
 		setGameState(GAMESTATE_NORMAL);
 
-	std::clog << "> SAVE: Complete in " << (OTSYS_TIME() - start) / (1000.) << " seconds using " << storage << " house storage." << std::endl;
+	std::clog << "> SAVE: Complete in " << (OTSYS_TIME() - start) / (1000.) << " seconds using "
+		<< storage << " house storage." << std::endl;
 }
 
 int32_t Game::loadMap(std::string filename)

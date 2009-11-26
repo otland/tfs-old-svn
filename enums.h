@@ -280,6 +280,15 @@ enum PlayerSex_t
 	// own use- each female should be even and male odd.
 };
 
+#ifdef __GAYWAR__
+enum WarInfo_t
+{
+        WARINFO_GUILD = 0,
+        WARINFO_ENEMY = 1,
+        WARINFO_LIMIT = 2
+};
+#endif
+
 struct Outfit_t
 {
 	Outfit_t() {lookHead = lookBody = lookLegs = lookFeet = lookType = lookTypeEx = lookAddons = 0;}

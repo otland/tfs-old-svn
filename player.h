@@ -127,6 +127,9 @@ typedef std::map<uint32_t, uint32_t> MuteCountMap;
 typedef std::list<std::string> LearnedInstantSpellList;
 typedef std::list<uint32_t> InvitedToGuildsList;
 typedef std::list<Party*> PartyList;
+#ifdef __GAYWAR__
+typedef std::map<uint32_t, std::pair<uint32_t, WarInfo_t> > WarMap;
+#endif
 
 #define SPEED_MAX 1500
 #define SPEED_MIN 10
@@ -273,6 +276,16 @@ class Player : public Creature, public Cylinder
 
 		bool isPremium() const;
 		int32_t getPremiumDays() const {return premiumDays;}
+
+#ifdef __GAYWAR__
+		bool getEnemy(uint32_t guild, std::pair<uint32_t, WarInfo_t>& war) const;
+		bool isEnemy(const Player* player) const {return guildId && player && !player->isRemoved()
+			&& player->getGuildId() && warMap.find(player->getGuildId()) != warMap.end();}
+
+		void addEnemy(uint32_t war, WarInfo_t mode, uint32_t guild)
+			{warMap[guild] = std::make_pair(war, mode);}
+		void removeEnemy(uint32_t guild) {warMap.erase(guild);}
+#endif
 
 		uint32_t getVocationId() const {return vocation_id;}
 		void setVocation(uint32_t vocId);
@@ -442,7 +455,7 @@ class Player : public Creature, public Cylinder
 		void removeExperience(uint64_t exp, bool updateStats = true);
 		void addManaSpent(uint64_t amount, bool useMultiplier = true);
 		void addSkillAdvance(skills_t skill, uint32_t count, bool useMultiplier = true);
-		bool addUnjustifiedKill(const Player* attacked);
+		bool addUnjustifiedKill(const Player* attacked, bool countNow);
 
 		virtual int32_t getArmor() const;
 		virtual int32_t getDefense() const;
@@ -480,6 +493,9 @@ class Player : public Creature, public Cylinder
 
 		Skulls_t getSkullType(const Creature* creature) const;
 		PartyShields_t getPartyShield(const Creature* creature) const;
+#ifdef __GAYWAR__
+		GuildEmblems_t getGuildEmblem(const Creature* creature) const;
+#endif
 
 		bool hasAttacked(const Player* attacked) const;
 		void addAttacked(const Player* attacked);
@@ -892,6 +908,9 @@ class Player : public Creature, public Cylinder
 		PartyList invitePartyList;
 		OutfitMap outfits;
 		LearnedInstantSpellList learnedInstantSpellList;
+#ifdef __GAYWAR__
+		WarMap warMap;
+#endif
 
 		friend class Game;
 		friend class LuaInterface;
