@@ -1361,9 +1361,11 @@ void CombatArea::setupExtArea(const std::list<uint32_t>& list, uint32_t rows)
 
 void MagicField::onStepInField(Creature* creature, bool purposeful/* = true*/)
 {
-	if(isBlocking() && (!creature->getPlayer() || !creature->isGhost()))
+	if(isBlocking())
 	{
-		g_game.internalRemoveItem(creature, this, 1);
+		if(!creature->isGhost())
+			g_game.internalRemoveItem(creature, this, 1);
+
 		return;
 	}
 
