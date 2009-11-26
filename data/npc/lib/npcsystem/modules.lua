@@ -563,7 +563,7 @@ if(Modules == nil) then
 			local a, b, c, d, e = nil, nil, nil, nil, 1
 			for tmp in string.gmatch(list, '[^,]+') do
 				if(e == 1) then
-					a = tonumber(tmp)
+					a = tmp
 				elseif(e == 2) then
 					b = tmp
 				elseif(e == 3) then
@@ -578,16 +578,22 @@ if(Modules == nil) then
 			end
 
 			if(outfit == nil) then
-				outfit = {a, b, getBooleanFromString(c), d}
-			elseif(a ~= nil and b ~= nil and c ~= nil) then
-				local tmp = tonumber(d)
-				if(tmp == nil) then
-					tmp = -1
-				end
+				outfit = {tonumber(a), tonumber(b), getBooleanFromString(c), d}
+			elseif(a ~= nil) then
+				local tmp = tonumber(a)
+				if((tmp ~= nil or tostring(a) == "money") and b ~= nil and c ~= nil) then
+					a = tmp or 20000
+					tmp = tonumber(d)
+					if(tmp == nil) then
+						tmp = -1
+					end
 
-				items[a] = {b, tmp, c}
+					items[a] = {b, tmp, c}
+				else
+					print('[Warning] NpcSystem:', 'Missing parameter(s) for outfit items.', b, c, d)
+				end
 			else
-				print('[Warning] NpcSystem:', 'Missing parameter(s) for outfit items.', a, b, c, d)
+				print('[Warning] NpcSystem:', 'Missing base parameter for outfit items.', a)
 			end
 		end
 
