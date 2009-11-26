@@ -400,8 +400,8 @@ std::string IOGuild::getMotd(uint32_t guild)
 	result->free();
 	return motd;
 }
-
 #ifdef __GAYWAR__
+
 bool IOGuild::war(std::pair<uint32_t, WarInfo_t> enemy)
 {
 	Database* db = Database::getInstance();

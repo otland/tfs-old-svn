@@ -3639,8 +3639,8 @@ void Player::onTargetCreatureGainHealth(Creature* target, int32_t points)
 			getParty()->addPlayerHealedMember(this, points);
 	}
 }
-
 #ifdef __GAYWAR__
+
 GuildEmblems_t Player::getGuildEmblem(const Creature* creature) const
 {
 	GuildEmblems_t ret = Creature::getGuildEmblem(creature);
@@ -3691,8 +3691,8 @@ bool Player::onKilledCreature(Creature* target, uint32_t& flags)
 	Player* targetPlayer = target->getPlayer();
 	if(!targetPlayer || Combat::isInPvpZone(this, targetPlayer) || isPartner(targetPlayer))
 		return true;
-
 #ifdef __GAYWAR__
+
 	std::pair<uint32_t, WarInfo_t> enemy;
 	if(targetPlayer->getEnemy(guildId, enemy) && (!hasBitSet((uint32_t)KILLFLAG_LASTHIT,
 		flags) || IOGuild::getInstance()->war(enemy)))
