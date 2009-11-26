@@ -2130,7 +2130,7 @@ const NpcResponse* Npc::getResponse(const ResponseList& list, const Player* play
 				case STORAGE_LESSOREQUAL:
 				{
 					int32_t v1 = atoi(value.c_str()), v2 = atoi(storageValue.c_str());
-					tmp = v1 <= v1;
+					tmp = v1 <= v2;
 					break;
 				}
 				case STORAGE_EQUAL:
