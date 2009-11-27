@@ -9,7 +9,7 @@ function onStepIn(cid, item, position, lastPosition, fromPosition, toPosition, a
 		if(not isInArray(SPECIAL_QUESTS, item.actionid) and item.uid > 65535) then
 			return true
 		end
-	elseif(getTileInfo(position).creatures <= 0) then
+	elseif(getTileInfo(position).creatures <= 1) then
 		return true
 	end
 	

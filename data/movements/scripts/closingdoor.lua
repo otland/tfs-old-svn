@@ -1,4 +1,8 @@
 function onStepOut(cid, item, position, fromPosition)
+	if(getTileInfo(position).creatures > 0) then
+		return true
+	end
+
 	local newPosition = {x = position.x, y = position.y, z = position.z}
 	if(isInArray(verticalOpenDoors, item.itemid)) then
 		newPosition.x = newPosition.x + 1
