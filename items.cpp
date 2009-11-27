@@ -1462,8 +1462,8 @@ void Items::parseItemNode(xmlNodePtr itemNode, uint32_t id)
 				it.group = ITEM_GROUP_MAGICFIELD;
 				it.type = ITEM_TYPE_MAGICFIELD;
 				CombatType_t combatType = COMBAT_NONE;
-				ConditionDamage* conditionDamage = NULL;
 
+				ConditionDamage* conditionDamage = NULL;
 				if(readXMLString(itemAttributesNode, "value", strValue))
 				{
 					tmpStrValue = asLowerCaseString(strValue);
