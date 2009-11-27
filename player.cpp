@@ -3866,16 +3866,15 @@ bool Player::canWearOutfit(uint32_t outfitId, uint32_t addons)
 	if(ret)
 		return ret;
 
-	std::stringstream s;
-	s << atoi(value.c_str());
-	if(value != s.str())
+	int32_t tmp = atoi(value.c_str());
+	if(!tmp && value != "0")
 		return ret;
 
-	s << atoi(it->second.storageValue.c_str());
-	if(it->second.storageValue != s.str())
+	tmp = atoi(it->second.storageValue.c_str());
+	if(!tmp && it->second.storageValue != "0")
 		return ret;
 
-	return atoi(it->second.storageValue.c_str()) >= atoi(value.c_str());
+	return tmp >= atoi(value.c_str());
 }
 
 bool Player::addOutfit(uint32_t outfitId, uint32_t addons)
