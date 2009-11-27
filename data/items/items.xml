@@ -21712,6 +21712,16 @@
 	<item id="10552" name="glowing switch">
 		<attribute key="walkStack" value="0"/>
 	</item>
+	<item id="10553" article="a" name="magic wall">
+		<attribute key="type" value="magicfield"/>
+		<attribute key="decayTo" value="0"/>
+		<attribute key="duration" value="20"/>
+	</item>
+	<item id="10554" article="a" name="rush wood">
+		<attribute key="type" value="magicfield"/>
+		<attribute key="decayTo" value="0"/>
+		<attribute key="duration" value="45"/>
+	</item>
 	<item id="20001" name="water"/>
 	<item id="20002" name="blood"/>
 	<item id="20003" name="beer"/>
