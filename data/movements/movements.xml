@@ -110,6 +110,72 @@
 	<movevent type="StepOut" itemid="10476" event="script" value="closingdoor.lua"/>
 	<movevent type="StepOut" itemid="10483" event="script" value="closingdoor.lua"/>
 	<movevent type="StepOut" itemid="10485" event="script" value="closingdoor.lua"/>
+	<movevent type="StepIn" itemid="1228" event="script" value="walkback.lua"/>
+	<movevent type="StepIn" itemid="1230" event="script" value="walkback.lua"/>
+	<movevent type="StepIn" itemid="1246" event="script" value="walkback.lua"/>
+	<movevent type="StepIn" itemid="1248" event="script" value="walkback.lua"/>
+	<movevent type="StepIn" itemid="1260" event="script" value="walkback.lua"/>
+	<movevent type="StepIn" itemid="1262" event="script" value="walkback.lua"/>
+	<movevent type="StepIn" itemid="3541" event="script" value="walkback.lua"/>
+	<movevent type="StepIn" itemid="3550" event="script" value="walkback.lua"/>
+	<movevent type="StepIn" itemid="5104" event="script" value="walkback.lua"/>
+	<movevent type="StepIn" itemid="5113" event="script" value="walkback.lua"/>
+	<movevent type="StepIn" itemid="5122" event="script" value="walkback.lua"/>
+	<movevent type="StepIn" itemid="5131" event="script" value="walkback.lua"/>
+	<movevent type="StepIn" itemid="5293" event="script" value="walkback.lua"/>
+	<movevent type="StepIn" itemid="5295" event="script" value="walkback.lua"/>
+	<movevent type="StepIn" itemid="1224" event="script" value="walkback.lua"/>
+	<movevent type="StepIn" itemid="1226" event="script" value="walkback.lua"/>
+	<movevent type="StepIn" itemid="1242" event="script" value="walkback.lua"/>
+	<movevent type="StepIn" itemid="1244" event="script" value="walkback.lua"/>
+	<movevent type="StepIn" itemid="1256" event="script" value="walkback.lua"/>
+	<movevent type="StepIn" itemid="1258" event="script" value="walkback.lua"/>
+	<movevent type="StepIn" itemid="3543" event="script" value="walkback.lua"/>
+	<movevent type="StepIn" itemid="3552" event="script" value="walkback.lua"/>
+	<movevent type="StepIn" itemid="5106" event="script" value="walkback.lua"/>
+	<movevent type="StepIn" itemid="5115" event="script" value="walkback.lua"/>
+	<movevent type="StepIn" itemid="5124" event="script" value="walkback.lua"/>
+	<movevent type="StepIn" itemid="5133" event="script" value="walkback.lua"/>
+	<movevent type="StepIn" itemid="5289" event="script" value="walkback.lua"/>
+	<movevent type="StepIn" itemid="5291" event="script" value="walkback.lua"/>
+	<movevent type="StepIn" itemid="5746" event="script" value="walkback.lua"/>
+	<movevent type="StepIn" itemid="5749" event="script" value="walkback.lua"/>
+	<movevent type="StepIn" itemid="6203" event="script" value="walkback.lua"/>
+	<movevent type="StepIn" itemid="6205" event="script" value="walkback.lua"/>
+	<movevent type="StepIn" itemid="6207" event="script" value="walkback.lua"/>
+	<movevent type="StepIn" itemid="6209" event="script" value="walkback.lua"/>
+	<movevent type="StepIn" itemid="6260" event="script" value="walkback.lua"/>
+	<movevent type="StepIn" itemid="6262" event="script" value="walkback.lua"/>
+	<movevent type="StepIn" itemid="6264" event="script" value="walkback.lua"/>
+	<movevent type="StepIn" itemid="6266" event="script" value="walkback.lua"/>
+	<movevent type="StepIn" itemid="6897" event="script" value="walkback.lua"/>
+	<movevent type="StepIn" itemid="6899" event="script" value="walkback.lua"/>
+	<movevent type="StepIn" itemid="6906" event="script" value="walkback.lua"/>
+	<movevent type="StepIn" itemid="6908" event="script" value="walkback.lua"/>
+	<movevent type="StepIn" itemid="7039" event="script" value="walkback.lua"/>
+	<movevent type="StepIn" itemid="7041" event="script" value="walkback.lua"/>
+	<movevent type="StepIn" itemid="7048" event="script" value="walkback.lua"/>
+	<movevent type="StepIn" itemid="7050" event="script" value="walkback.lua"/>
+	<movevent type="StepIn" itemid="8552" event="script" value="walkback.lua"/>
+	<movevent type="StepIn" itemid="8554" event="script" value="walkback.lua"/>
+	<movevent type="StepIn" itemid="8556" event="script" value="walkback.lua"/>
+	<movevent type="StepIn" itemid="8558" event="script" value="walkback.lua"/>
+	<movevent type="StepIn" itemid="9176" event="script" value="walkback.lua"/>
+	<movevent type="StepIn" itemid="9178" event="script" value="walkback.lua"/>
+	<movevent type="StepIn" itemid="9180" event="script" value="walkback.lua"/>
+	<movevent type="StepIn" itemid="9182" event="script" value="walkback.lua"/>
+	<movevent type="StepIn" itemid="9278" event="script" value="walkback.lua"/>
+	<movevent type="StepIn" itemid="9280" event="script" value="walkback.lua"/>
+	<movevent type="StepIn" itemid="9282" event="script" value="walkback.lua"/>
+	<movevent type="StepIn" itemid="9284" event="script" value="walkback.lua"/>
+	<movevent type="StepIn" itemid="10279" event="script" value="walkback.lua"/>
+	<movevent type="StepIn" itemid="10281" event="script" value="walkback.lua"/>
+	<movevent type="StepIn" itemid="10283" event="script" value="walkback.lua"/>
+	<movevent type="StepIn" itemid="10285" event="script" value="walkback.lua"/>
+	<movevent type="StepIn" itemid="10474" event="script" value="walkback.lua"/>
+	<movevent type="StepIn" itemid="10476" event="script" value="walkback.lua"/>
+	<movevent type="StepIn" itemid="10483" event="script" value="walkback.lua"/>
+	<movevent type="StepIn" itemid="10485" event="script" value="walkback.lua"/>
 
 	<!-- Snow footprint tiles -->
 	<movevent type="StepIn" itemid="670" event="script" value="snow.lua"/>
