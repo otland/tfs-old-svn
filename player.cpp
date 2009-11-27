@@ -3860,7 +3860,22 @@ bool Player::canWearOutfit(uint32_t outfitId, uint32_t addons)
 		return true;
 
 	std::string value;
-	return getStorage(it->second.storageId, value) && value == it->second.storageValue;
+	getStorage(it->second.storageId, value);
+
+	bool ret = value == it->second.storageValue;
+	if(ret)
+		return ret;
+
+	std::stringstream s;
+	s << atoi(value.c_str());
+	if(value != s.str())
+		return ret;
+
+	s << atoi(it->second.storageValue.c_str());
+	if(it->second.storageValue != s.str())
+		return ret;
+
+	return atoi(it->second.storageValue.c_str()) >= atoi(value.c_str());
 }
 
 bool Player::addOutfit(uint32_t outfitId, uint32_t addons)
