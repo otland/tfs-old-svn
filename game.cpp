@@ -1106,8 +1106,8 @@ bool Game::playerMoveCreature(uint32_t playerId, uint32_t movingCreatureId,
 			return false;
 		}
 
-		if(Item::items[toTile->ground->getID()].walkStack && !player->hasFlag(PlayerFlag_CanPushAllCreatures)
-			&& !Item::items[movingCreature->getTile()->ground->getID()].walkStack)
+		if(toTile->getCreatures() && !toTile->getCreatures()->empty()
+			&& !player->hasFlag(PlayerFlag_CanPushAllCreatures))
 		{
 			player->sendCancelMessage(RET_NOTPOSSIBLE);
 			return false;

@@ -642,6 +642,14 @@ void Combat::combatTileEffects(const SpectatorVec& list, Creature* caster, Tile*
 					case ITEM_ENERGYFIELD:
 						itemId = ITEM_ENERGYFIELD_SAFE;
 						break;
+					case ITEM_MAGICWALL:
+						itemId = ITEM_MAGICWALL_SAFE;
+						break;
+					case ITEM_WILDGROWTH:
+						itemId = ITEM_WILDGROWTH_SAFE;
+						break;
+					default:
+						break;
 				}
 			}
 			else if(params.isAggressive && !Item::items[itemId].blockPathFind)
@@ -1366,7 +1374,7 @@ void CombatArea::setupExtArea(const std::list<uint32_t>& list, uint32_t rows)
 
 bool MagicField::isBlocking(const Creature* creature) const
 {
-	if(id != ITEM_MAGICWALL && id != ITEM_WILDGROWTH)
+	if(id != ITEM_MAGICWALL_SAFE && id != ITEM_WILDGROWTH_SAFE)
 		return Item::isBlocking(creature);
 
 	if(!creature)
@@ -1390,7 +1398,7 @@ bool MagicField::isBlocking(const Creature* creature) const
 
 void MagicField::onStepInField(Creature* creature, bool purposeful/* = true*/)
 {
-	if(id == ITEM_MAGICWALL || id == ITEM_WILDGROWTH || isBlocking(creature))
+	if(id == ITEM_MAGICWALL_SAFE || id == ITEM_WILDGROWTH_SAFE || isBlocking(creature))
 	{
 		if(!creature->isGhost())
 			g_game.internalRemoveItem(creature, this, 1);

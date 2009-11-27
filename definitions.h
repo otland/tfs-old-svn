@@ -141,14 +141,14 @@
 #endif
 #endif
 
-#define CLIENT_VERSION_MIN 853
-#define CLIENT_VERSION_MAX 853
-#define CLIENT_VERSION_STRING "Only clients with protocol 8.53 allowed!"
+#define CLIENT_VERSION_MIN 857
+#define CLIENT_VERSION_MAX 857
+#define CLIENT_VERSION_STRING "Only clients with protocol 8.57 allowed!"
 
 #define STATUS_SERVER_NAME "The Forgotten Server"
 #define STATUS_SERVER_VERSION "0.4_DEV"
 #define STATUS_SERVER_CODENAME ""
-#define STATUS_SERVER_PROTOCOL "8.53"
+#define STATUS_SERVER_PROTOCOL "8.57"
 
 #define VERSION_CHECK "http://forgottenserver.otland.net/version.xml"
 #define VERSION_PATCH 0
