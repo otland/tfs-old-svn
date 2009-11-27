@@ -1377,11 +1377,7 @@ bool MagicField::isBlocking(const Creature* creature) const
 	if(id != ITEM_MAGICWALL_SAFE && id != ITEM_WILDGROWTH_SAFE)
 		return Item::isBlocking(creature);
 
-	if(!creature)
-		return true;
-
-	const Player* player = creature->getPlayer();
-	if(!player || g_game.getWorldType() != WORLDTYPE_OPTIONAL)
+	if(!creature || !creature->getPlayer())
 		return true;
 #ifdef __GAYWAR__
 
@@ -1390,7 +1386,7 @@ bool MagicField::isBlocking(const Creature* creature) const
 		return false;
 
 	if(Creature* owner = g_game.getCreatureByID(ownerId))
-		return player->getGuildEmblem(owner) != EMBLEM_NONE;
+		return creature->getPlayer()->getGuildEmblem(owner) != EMBLEM_NONE;
 #endif
 
 	return false;
