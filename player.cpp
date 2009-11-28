@@ -3874,7 +3874,7 @@ bool Player::canWearOutfit(uint32_t outfitId, uint32_t addons)
 	if(!tmp && it->second.storageValue != "0")
 		return ret;
 
-	return tmp >= atoi(value.c_str());
+	return atoi(value.c_str()) >= tmp;
 }
 
 bool Player::addOutfit(uint32_t outfitId, uint32_t addons)
