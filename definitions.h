@@ -80,8 +80,6 @@
 
 #define BOOST_ASIO_ENABLE_CANCELIO 1
 #if defined WINDOWS
-#define __CONSOLE__
-
 #if defined _MSC_VER && defined NDEBUG
 	#define _SECURE_SCL 0
 	#define HAS_ITERATOR_DEBUGGING 0

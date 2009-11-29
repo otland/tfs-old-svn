@@ -167,7 +167,7 @@ class ScriptEnviroment
 		ThingMap m_localMap;
 		DBResultMap m_tempResults;
 
-		static TempItemListMap; m_tempItems;
+		static TempItemListMap m_tempItems;
 		static StorageMap m_storageMap;
 		static ThingMap m_globalMap;
 
