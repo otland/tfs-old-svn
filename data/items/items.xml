@@ -18613,7 +18613,7 @@
 		<attribute key="weight" value="60000"/>
 		<attribute key="containerSize" value="10"/>
 		<attribute key="decayTo" value="8308"/>
-		<attribute key="duration" value="60"/>
+		<attribute key="duration" value="10"/>
 		<attribute key="corpseType" value="blood"/>
 		<attribute key="fluidSource" value="blood"/>
 	</item>
@@ -18621,7 +18621,7 @@
 		<attribute key="weight" value="55000"/>
 		<attribute key="containerSize" value="10"/>
 		<attribute key="decayTo" value="8311"/>
-		<attribute key="duration" value="120"/>
+		<attribute key="duration" value="900"/>
 		<attribute key="corpseType" value="blood"/>
 		<attribute key="fluidSource" value="blood"/>
 	</item>
@@ -18635,12 +18635,13 @@
 		<attribute key="weight" value="45000"/>
 		<attribute key="containerSize" value="10"/>
 		<attribute key="decayTo" value="8312"/>
-		<attribute key="duration" value="180"/>
+		<attribute key="duration" value="600"/>
 		<attribute key="corpseType" value="blood"/>
 	</item>
 	<item id="8312" name="slain sea serpent">
 		<attribute key="weight" value="30000"/>
 		<attribute key="decayTo" value="0"/>
+		<attribute key="duration" value="600"/>
 	</item>
 	<item id="8313" article="a" name="birch"/>
 	<item id="8314" article="a" name="bare pine"/>
