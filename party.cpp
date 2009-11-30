@@ -321,9 +321,11 @@ void Party::shareExperience(double experience, bool fromMonster, bool multiplied
 		shareExperience += (experience * ((double)g_config.getNumber(ConfigManager::EXTRA_PARTY_PERCENT) / 100));
 
 	shareExperience /= memberList.size() + 1;
-	leader->onGainSharedExperience(shareExperience, fromMonster, multiplied);
+	double tmpExperience = shareExperience; //we need this, as onGainSharedExperience increases the value
+
+	leader->onGainSharedExperience(tmpExperience, fromMonster, multiplied);
 	for(PlayerVector::iterator it = memberList.begin(); it != memberList.end(); ++it)
-		(*it)->onGainSharedExperience(shareExperience, fromMonster, multiplied);
+		(*it)->onGainSharedExperience(tmpExperience, fromMonster, multiplied);
 }
 
 bool Party::canUseSharedExperience(const Player* player, uint32_t highestLevel/* = 0*/) const
