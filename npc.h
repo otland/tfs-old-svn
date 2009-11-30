@@ -375,6 +375,7 @@ class Npc : public Creature
 		virtual bool isWalkable() const {return walkable;}
 
 		virtual bool canSee(const Position& pos) const;
+		virtual bool canSeeInvisibility() const {return true;}
 
 		bool isLoaded() {return loaded;}
 		bool load();
