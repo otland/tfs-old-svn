@@ -222,8 +222,8 @@
 	<action itemid="2694" event="script" value="other/createbread.lua"/>
 
 	<!-- Windows -->
-	<action fromid="6436" toid="6447" event="script" value="other/windows.lua"/>
-	<action fromid="6450" toid="6473" event="script" value="other/windows.lua"/>
+	<action fromid="5303" toid="5305" event="script" value="other/windows.lua"/>
+	<action fromid="6436" toid="6473" event="script" value="other/windows.lua"/>
 	<action fromid="6788" toid="6791" event="script" value="other/windows.lua"/>
 	<action fromid="7025" toid="7032" event="script" value="other/windows.lua"/>
 	<action fromid="10264" toid="10267" event="script" value="other/windows.lua"/>
@@ -255,6 +255,9 @@
 	<action itemid="10091" event="script" value="other/doors.lua"/>
 	<action fromid="10268" toid="10285" event="script" value="other/doors.lua"/>
 	<action fromid="10468" toid="10486" event="script" value="other/doors.lua"/>
+	<action fromid="10779" toid="10781" event="script" value="other/doors.lua"/>
+	<action fromid="10784" toid="10790" event="script" value="other/doors.lua"/>
+	<action fromid="10793" toid="10796" event="script" value="other/doors.lua"/>
 
 	<!-- Watch -->
 	<action itemid="2036" event="script" value="other/watch.lua"/>

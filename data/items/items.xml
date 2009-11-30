@@ -7,7 +7,7 @@
 
 		Most needed are the items (including floors, walls)
 		introduced in the most recent tibia updates
-		starting from 8.2 to 8.5
+		starting from 8.2 to 8.6
 
 		If you found something wrong with existing item(s), we're also waiting for you :)
 
@@ -10987,8 +10987,14 @@
 	</item>
 	<item fromid="5296" toid="5301" name="wooden plank"/>
 	<item id="5302" name="wooden planks"/>
-	<item id="5303" article="a" name="white stone wall window"/>
-	<item id="5304" article="a" name="white stone wall window"/>
+	<item id="5303" article="a" name="white stone wall window">
+		<attribute key="type" value="door"/>
+		<attribute key="blockprojectile" value="1"/>
+	</item>
+	<item id="5304" article="a" name="white stone wall window">
+		<attribute key="type" value="door"/>
+		<attribute key="blockprojectile" value="1"/>
+	</item>
 	<item id="5305" article="a" name="white stone railing"/>
 	<item id="5306" article="a" name="white stone railing"/>
 	<item id="5307" article="a" name="white stone railing"/>
@@ -14066,8 +14072,12 @@
 	<item id="6447" article="a" name="stone window">
 		<attribute key="type" value="door"/>
 	</item>
-	<item id="6448" article="a" name="marble window"/>
-	<item id="6449" article="a" name="marble window"/>
+	<item id="6448" article="a" name="marble window">
+		<attribute key="type" value="door"/>
+	</item>
+	<item id="6449" article="a" name="marble window">
+		<attribute key="type" value="door"/>
+	</item>
 	<item id="6450" article="a" name="tree window">
 		<attribute key="type" value="door"/>
 		<attribute key="blockprojectile" value="1"/>
@@ -19930,20 +19940,20 @@
 		<attribute key="weight" value="35000"/>
 		<attribute key="containerSize" value="8"/>
 		<attribute key="decayTo" value="8943"/>
-		<attribute key="duration" value="500"/>
+		<attribute key="duration" value="900"/>
 		<attribute key="corpseType" value="blood"/>
 	</item>
 	<item id="8943" article="a" name="slain wyrm">
 		<attribute key="weight" value="20000"/>
 		<attribute key="containerSize" value="8"/>
 		<attribute key="decayTo" value="8944"/>
-		<attribute key="duration" value="300"/>
+		<attribute key="duration" value="600"/>
 		<attribute key="corpseType" value="blood"/>
 	</item>
 	<item id="8944" article="a" name="slain wyrm">
 		<attribute key="weight" value="5000"/>
 		<attribute key="decayTo" value="0"/>
-		<attribute key="duration" value="150"/>
+		<attribute key="duration" value="600"/>
 		<attribute key="corpseType" value="blood"/>
 	</item>
 	<item id="8945"/>
@@ -19966,13 +19976,13 @@
 		<attribute key="weight" value="30000"/>
 		<attribute key="containerSize" value="8"/>
 		<attribute key="decayTo" value="8950"/>
-		<attribute key="duration" value="500"/>
+		<attribute key="duration" value="600"/>
 		<attribute key="corpseType" value="blood"/>
 	</item>
 	<item id="8950" article="a" name="slain rotworm queen">
 		<attribute key="weight" value="20000"/>
 		<attribute key="decayTo" value="0"/>
-		<attribute key="duration" value="300"/>
+		<attribute key="duration" value="600"/>
 		<attribute key="corpseType" value="blood"/>
 	</item>
 	<item id="8951" article="a" name="slain bog raider">
@@ -19993,13 +20003,13 @@
 		<attribute key="weight" value="20000"/>
 		<attribute key="containerSize" value="8"/>
 		<attribute key="decayTo" value="8954"/>
-		<attribute key="duration" value="500"/>
+		<attribute key="duration" value="600"/>
 		<attribute key="corpseType" value="venom"/>
 	</item>
 	<item id="8954" article="a" name="slain bog raider">
 		<attribute key="weight" value="10000"/>
 		<attribute key="decayTo" value="0"/>
-		<attribute key="duration" value="300"/>
+		<attribute key="duration" value="600"/>
 		<attribute key="corpseType" value="venom"/>
 	</item>
 	<item id="8955" article="a" name="slain reaper">
@@ -20020,13 +20030,13 @@
 		<attribute key="weight" value="30000"/>
 		<attribute key="containerSize" value="8"/>
 		<attribute key="decayTo" value="8958"/>
-		<attribute key="duration" value="500"/>
+		<attribute key="duration" value="600"/>
 		<attribute key="corpseType" value="undead"/>
 	</item>
 	<item id="8958" article="a" name="slain reaper">
 		<attribute key="weight" value="20000"/>
 		<attribute key="decayTo" value="0"/>
-		<attribute key="duration" value="300"/>
+		<attribute key="duration" value="600"/>
 		<attribute key="corpseType" value="undead"/>
 	</item>
 	<item id="8959" article="a" name="white marble tile"/>
@@ -20048,13 +20058,13 @@
 		<attribute key="weight" value="30000"/>
 		<attribute key="containerSize" value="8"/>
 		<attribute key="decayTo" value="8963"/>
-		<attribute key="duration" value="500"/>
+		<attribute key="duration" value="600"/>
 		<attribute key="corpseType" value="undead"/>
 	</item>
 	<item id="8963" article="a" name="slain halloween pumpkin">
 		<attribute key="weight" value="30000"/>
 		<attribute key="decayTo" value="0"/>
-		<attribute key="duration" value="300"/>
+		<attribute key="duration" value="600"/>
 		<attribute key="corpseType" value="undead"/>
 	</item>
 	<item id="8964" article="a" name="slain fire elemental">
@@ -20080,19 +20090,19 @@
 		<attribute key="weight" value="10000"/>
 		<attribute key="containerSize" value="8"/>
 		<attribute key="decayTo" value="0"/>
-		<attribute key="duration" value="500"/>
+		<attribute key="duration" value="600"/>
 	</item>
 	<item id="8968" article="a" name="slain ice elemental">
 		<attribute key="weight" value="10000"/>
 		<attribute key="containerSize" value="8"/>
 		<attribute key="decayTo" value="0"/>
-		<attribute key="duration" value="500"/>
+		<attribute key="duration" value="600"/>
 	</item>
 	<item id="8969" article="a" name="slain fire elemental">
 		<attribute key="weight" value="10000"/>
 		<attribute key="containerSize" value="8"/>
 		<attribute key="decayTo" value="0"/>
-		<attribute key="duration" value="500"/>
+		<attribute key="duration" value="600"/>
 		<attribute key="corpseType" value="fire"/>
 	</item>
 	<item id="8970" name="Santiago's piano"/>
@@ -21722,6 +21732,94 @@
 		<attribute key="type" value="magicfield"/>
 		<attribute key="decayTo" value="0"/>
 		<attribute key="duration" value="45"/>
+	</item>
+	<item id="10779" article="a" name="closed door">
+		<attribute key="type" value="door"/>
+		<attribute key="blockprojectile" value="1"/>
+		<attribute key="description" value="It is locked."/>
+	</item>
+	<item id="10780" article="a" name="closed door">
+		<attribute key="type" value="door"/>
+		<attribute key="blockprojectile" value="1"/>
+	</item>
+	<item id="10781" article="an" name="open door">
+		<attribute key="type" value="door"/>
+	</item>
+	<item id="10784" article="a" name="gate of expertise">
+		<attribute key="type" value="door"/>
+		<attribute key="levelDoor" value="1000"/>
+		<attribute key="blockprojectile" value="1"/>
+	</item>
+	<item id="10785" article="a" name="gate of expertise">
+		<attribute key="type" value="door"/>
+	</item>
+	<item id="10786" article="a" name="closed door">
+		<attribute key="type" value="door"/>
+		<attribute key="blockprojectile" value="1"/>
+	</item>
+	<item id="10787" article="a" name="open door">
+		<attribute key="type" value="door"/>
+	</item>
+	<item id="10788" article="a" name="closed door">
+		<attribute key="type" value="door"/>
+		<attribute key="blockprojectile" value="1"/>
+		<attribute key="description" value="It is locked."/>
+	</item>
+	<item id="10789" article="a" name="closed door">
+		<attribute key="type" value="door"/>
+		<attribute key="blockprojectile" value="1"/>
+	</item>
+	<item id="10790" article="an" name="open door">
+		<attribute key="type" value="door"/>
+	</item>
+	<item id="10793" article="a" name="gate of expertise">
+		<attribute key="type" value="door"/>
+		<attribute key="levelDoor" value="1000"/>
+		<attribute key="blockprojectile" value="1"/>
+	</item>
+	<item id="10794" article="a" name="gate of expertise">
+		<attribute key="type" value="door"/>
+	</item>
+	<item id="10795" article="a" name="closed door">
+		<attribute key="type" value="door"/>
+		<attribute key="blockprojectile" value="1"/>
+	</item>
+	<item id="10796" article="a" name="open door">
+		<attribute key="type" value="door"/>
+	</item>
+	<item fromid="11056" toid="11067" article="a" name="window"/>
+	<item id="11108" article="a" name="heart backpack">
+		<attribute key="weight" value="1800"/>
+		<attribute key="containerSize" value="20"/>
+		<attribute key="slotType" value="backpack"/>
+	</item>
+	<item id="11110" article="a" name="stone stairs">
+		<attribute key="floorchange" value="north"/>
+	</item>
+	<item id="11228" article="a" name="zao backpack">
+		<attribute key="weight" value="1800"/>
+		<attribute key="containerSize" value="20"/>
+		<attribute key="slotType" value="backpack"/>
+	</item>
+	<item id="11229" article="a" name="zao bag">
+		<attribute key="weight" value="800"/>
+		<attribute key="containerSize" value="8"/>
+		<attribute key="slotType" value="backpack"/>
+	</item>
+	<item id="11230" article="a" name="backpack">
+		<attribute key="weight" value="1800"/>
+		<attribute key="containerSize" value="20"/>
+		<attribute key="slotType" value="backpack"/>
+	</item>
+	<item id="11231" article="a" name="bull backpack">
+		<attribute key="weight" value="1800"/>
+		<attribute key="containerSize" value="20"/>
+		<attribute key="slotType" value="backpack"/>
+	</item>
+	<item id="11250" article="a" name="backpack">
+		<attribute key="weight" value="1800"/>
+		<attribute key="containerSize" value="20"/>
+		<attribute key="slotType" value="backpack"/>
 	</item>
 	<item id="20001" name="water"/>
 	<item id="20002" name="blood"/>
