@@ -18,7 +18,7 @@
 #include "textlogger.h"
 
 #include "tools.h"
-#if defined(WINDOWS) && not defined(__CONSOLE__)
+#if defined(WINDOWS) && !defined(__CONSOLE__)
 #include "gui.h"
 #endif
 
@@ -101,7 +101,7 @@ void Logger::log(const char* func, LogType_t type, std::string message, std::str
 	ss << message;
 	iFile(LOGFILE_ADMIN, ss.str(), newLine);
 }
-#if defined(WINDOWS) && not defined(__CONSOLE__)
+#if defined(WINDOWS) && !defined(__CONSOLE__)
 
 GUILogger::GUILogger()
 {

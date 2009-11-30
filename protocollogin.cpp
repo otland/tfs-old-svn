@@ -25,7 +25,7 @@
 #include "iologindata.h"
 #include "ioban.h"
 
-#if defined(WINDOWS) && not defined(__CONSOLE__)
+#if defined(WINDOWS) && !defined(__CONSOLE__)
 #include "gui.h"
 #endif
 #include "outputmessage.h"
@@ -68,7 +68,7 @@ void ProtocolLogin::disconnectClient(uint8_t error, const char* message)
 bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 {
 	if(
-#if defined(WINDOWS) && not defined(__CONSOLE__)
+#if defined(WINDOWS) && !defined(__CONSOLE__)
 		!GUI::getInstance()->m_connections ||
 #endif
 		g_game.getGameState() == GAME_STATE_SHUTDOWN)

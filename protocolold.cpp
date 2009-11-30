@@ -22,7 +22,7 @@
 
 #include "outputmessage.h"
 #include "connection.h"
-#if defined(WINDOWS) && not defined(__CONSOLE__)
+#if defined(WINDOWS) && !defined(__CONSOLE__)
 #include "gui.h"
 #endif
 
@@ -57,7 +57,7 @@ void ProtocolOld::disconnectClient(uint8_t error, const char* message)
 bool ProtocolOld::parseFirstPacket(NetworkMessage& msg)
 {
 	if(
-#if defined(WINDOWS) && not defined(__CONSOLE__)
+#if defined(WINDOWS) && !defined(__CONSOLE__)
 		!GUI::getInstance()->m_connections ||
 #endif
 		g_game.getGameState() == GAME_STATE_SHUTDOWN)

@@ -45,7 +45,7 @@
 #include "configmanager.h"
 #include "game.h"
 
-#if defined(WINDOWS) && not defined(__CONSOLE__)
+#if defined(WINDOWS) && !defined(__CONSOLE__)
 #include "gui.h"
 #endif
 
@@ -402,7 +402,7 @@ void ProtocolGame::onRecvFirstMessage(NetworkMessage& msg)
 bool ProtocolGame::parseFirstPacket(NetworkMessage& msg)
 {
 	if(
-#if defined(WINDOWS) && not defined(__CONSOLE__)
+#if defined(WINDOWS) && !defined(__CONSOLE__)
 		!GUI::getInstance()->m_connections ||
 #endif
 		g_game.getGameState() == GAME_STATE_SHUTDOWN)
