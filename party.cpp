@@ -325,7 +325,10 @@ void Party::shareExperience(double experience, bool fromMonster, bool multiplied
 
 	leader->onGainSharedExperience(tmpExperience, fromMonster, multiplied);
 	for(PlayerVector::iterator it = memberList.begin(); it != memberList.end(); ++it)
+	{
+		tmpExperience = shareExperience;
 		(*it)->onGainSharedExperience(tmpExperience, fromMonster, multiplied);
+	}
 }
 
 bool Party::canUseSharedExperience(const Player* player, uint32_t highestLevel/* = 0*/) const
