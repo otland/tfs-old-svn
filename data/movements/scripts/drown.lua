@@ -7,6 +7,7 @@ function onStepIn(cid, item, position, fromPosition)
 	if(isPlayer(cid)) then
 		doAddCondition(cid, condition)
 	end
+
 	return true
 end
 
