@@ -4189,7 +4189,8 @@
 	<item id="2424" article="a" name="silver mace">
 		<attribute key="weight" value="6700"/>
 		<attribute key="defense" value="30"/>
-		<attribute key="attack" value="40"/>
+		<attribute key="attack" value="41"/>
+		<attribute key="extradef" value="2"/>
 		<attribute key="weaponType" value="club"/>
 	</item>
 	<item id="2425" article="an" name="obsidian lance">
@@ -4281,7 +4282,7 @@
 		<attribute key="weaponType" value="club"/>
 		<attribute key="extradef" value="1"/>
 	</item>
-	<item id="2437" article="a" name="golden mace">
+	<item id="2437" article="a" name="light mace">
 		<attribute key="weight" value="5000"/>
 		<attribute key="defense" value="24"/>
 		<attribute key="attack" value="47"/>
@@ -16222,7 +16223,7 @@
 		<attribute key="weaponType" value="sword"/>
 		<attribute key="slotType" value="two-handed"/>
 	</item>
-	<item id="7450" article="the" name="ice hammer">
+	<item id="7450" article="the" name="hammer of prophecy">
 		<attribute key="weight" value="5500"/>
 	</item>
 	<item id="7451" article="a" name="shadow sceptre">
@@ -19848,32 +19849,39 @@
 		<attribute key="extradef" value="-1"/>
 	</item>
 	<item id="8928" article="an" name="obsidian truncheon">
-		<attribute key="weight" value="9500"/>
+		<attribute key="weight" value="6500"/>
 		<attribute key="defense" value="30"/>
 		<attribute key="attack" value="50"/>
 		<attribute key="weaponType" value="club"/>
 		<attribute key="extradef" value="2"/>
 	</item>
 	<item id="8929" article="the" name="stomper">
-		<attribute key="weight" value="9000"/> <!-- Not Correct -->
+		<attribute key="weight" value="11500"/>
 		<attribute key="defense" value="20"/>
 		<attribute key="attack" value="51"/>
 		<attribute key="weaponType" value="club"/>
-		<attribute key="extradef" value="3"/>
+		<attribute key="slotType" value="two-handed"/>
 	</item>
 	<item id="8930" article="an" name="emerald sword">
-		<attribute key="weight" value="4200"/>
+		<attribute key="weight" value="4100"/>
 		<attribute key="defense" value="33"/>
 		<attribute key="attack" value="49"/>
 		<attribute key="weaponType" value="sword"/>
-		<attribute key="extradef" value="2"/>
+		<attribute key="extradef" value="3"/>
 	</item>
-	<item id="8931"/>
+	<item id="8931" article="a" name="flame blade">
+		<attribute key="weight" value="6700"/>
+		<attribute key="defense" value="30"/>
+		<attribute key="attack" value="54"/>
+		<attribute key="weaponType" value="sword"/>
+		<attribute key="extradef" value="3"/>
+	</item>
 	<item id="8932" article="the" name="calamity">
 		<attribute key="weight" value="6800"/>
 		<attribute key="defense" value="35"/>
 		<attribute key="attack" value="51"/>
 		<attribute key="weaponType" value="sword"/>
+		<attribute key="slotType" value="two-handed"/>
 	</item>
 	<item id="8933" article="a" name="slain earth elemental">
 		<attribute key="weight" value="50000"/>

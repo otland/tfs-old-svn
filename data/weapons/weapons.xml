@@ -106,9 +106,10 @@
 	<melee id="2400" level="80" unproperly="1" event="function" value="default"/>
 	<melee id="8930" level="100" unproperly="1" event="function" value="default"/>
 	<melee id="8932" level="100" unproperly="1" event="function" value="default"/>
-	<melee id="2408" level="110" unproperly="1" event="function" value="default">
+	<melee id="2408" level="120" unproperly="1" event="function" value="default">
 		<vocation id="4"/>
 	</melee>
+	<melee id="8931" level="140" unproperly="1" event="function" value="default"/>
 	<melee id="2390" level="140" unproperly="1" event="function" value="default">
 		<vocation id="4"/>
 		<vocation id="8" showInDescription="0"/>
@@ -192,6 +193,7 @@
 	<melee id="7434" level="75" unproperly="1" event="function" value="default"/>
 	<melee id="6553" level="75" unproperly="1" event="function" value="default"/>
 	<melee id="7455" level="80" unproperly="1" event="function" value="default"/>
+	<melee id="7435" level="85" unproperly="1" event="function" value="default"/>
 	<melee id="7453" level="85" unproperly="1" event="function" value="default">
 		<vocation id="4"/>
 	</melee>
@@ -199,12 +201,8 @@
 	<melee id="2415" level="95" unproperly="1" event="function" value="default">
 		<vocation id="4"/>
 	</melee>
-	<melee id="7435" level="85" unproperly="1" event="function" value="default"/>
-	<melee id="7423" level="85" unproperly="1" event="function" value="default">
-		<vocation id="4"/>
-		<vocation id="8" showInDescription="0"/>
-	</melee>
 	<melee id="8924" level="110" unproperly="1" event="function" value="default"/>
+	<melee id="8926" level="120" unproperly="1" event="function" value="default"/>
 	<melee id="8925" level="130" unproperly="1" event="function" value="default"/>
 		<!-- Fire -->
 	<melee id="7749" level="20" event="function" value="default"/>
@@ -260,7 +258,6 @@
 	<melee id="7437" level="30" unproperly="1" event="function" value="default"/>
 	<melee id="7424" level="30" unproperly="1" event="function" value="default"/>
 	<melee id="3961" level="35" unproperly="1" event="function" value="default"/>
-	<melee id="2424" level="35" unproperly="1" event="function" value="default"/>
 	<melee id="7452" level="30" unproperly="1" event="function" value="default">
 		<vocation id="4"/>
 	</melee>
@@ -268,6 +265,7 @@
 	<melee id="7451" level="35" unproperly="1" event="function" value="default"/>
 	<melee id="7392" level="35" unproperly="1" event="function" value="default"/>
 	<melee id="7426" level="40" unproperly="1" event="function" value="default"/>
+	<melee id="2424" level="45" unproperly="1" event="function" value="default"/>
 	<melee id="7427" level="45" unproperly="1" event="function" value="default"/>
 	<melee id="2391" level="50" unproperly="1" event="function" value="default">
 		<vocation id="4"/>
@@ -292,6 +290,10 @@
 	<melee id="2437" level="80" unproperly="1" event="function" value="default"/>
 	<melee id="7431" level="80" unproperly="1" event="function" value="default"/>
 	<melee id="2421" level="85" unproperly="1" event="function" value="default"/>
+	<melee id="7423" level="85" unproperly="1" event="function" value="default">
+		<vocation id="4"/>
+		<vocation id="8" showInDescription="0"/>
+	</melee>
 	<melee id="8928" level="100" unproperly="1" event="function" value="default"/>
 	<melee id="8929" level="100" unproperly="1" event="function" value="default">
 		<vocation id="4"/>
