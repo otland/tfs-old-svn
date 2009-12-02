@@ -1,3 +1,4 @@
+#ifdef WINDOWS
 #ifndef __CONSOLE__
 #include "resources.h"
 #include <windows.h>
@@ -62,4 +63,5 @@ BEGIN
 	END
 
 END
+#endif
 #endif
