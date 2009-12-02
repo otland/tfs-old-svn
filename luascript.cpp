@@ -2090,17 +2090,26 @@ void LuaInterface::registerFunctions()
 	//getCreatureGuildEmblem(cid)
 	lua_register(m_luaState, "getCreatureGuildEmblem", LuaInterface::luaGetCreatureGuildEmblem);
 
+	//getCreatureTargetGuildEmblem(cid, target)
+	lua_register(m_luaState, "getCreatureTargetGuildEmblem", LuaInterface::luaGetCreatureTargetGuildEmblem);
+
 	//doCreatureSetGuildEmblem(cid, emblem)
 	lua_register(m_luaState, "doCreatureSetGuildEmblem", LuaInterface::luaDoCreatureSetGuildEmblem);
 
 	//getCreaturePartyShield(cid)
 	lua_register(m_luaState, "getCreaturePartyShield", LuaInterface::luaGetCreaturePartyShield);
 
+	//getCreatureTargetPartyShield(cid, target)
+	lua_register(m_luaState, "getCreatureTargetPartyShield", LuaInterface::luaGetCreatureTargetPartyShield);
+
 	//doCreatureSetPartyShield(cid, shield)
 	lua_register(m_luaState, "doCreatureSetPartyShield", LuaInterface::luaDoCreatureSetPartyShield);
 
 	//getCreatureSkullType(cid)
 	lua_register(m_luaState, "getCreatureSkullType", LuaInterface::luaGetCreatureSkullType);
+
+	//getCreatureTargetSkullType(cid, target)
+	lua_register(m_luaState, "getCreatureTargetSkullType", LuaInterface::luaGetCreatureTargetSkullType);
 
 	//doCreatureSetSkullType(cid, skull)
 	lua_register(m_luaState, "doCreatureSetSkullType", LuaInterface::luaDoCreatureSetSkullType);
@@ -7730,7 +7739,6 @@ int32_t LuaInterface::luaDoPlayerAddPremiumDays(lua_State* L)
 {
 	//doPlayerAddPremiumDays(cid, days)
 	int32_t days = popNumber(L);
-
 	ScriptEnviroment* env = getEnv();
 	if(Player* player = env->getPlayerByUID(popNumber(L)))
 	{
@@ -7756,6 +7764,7 @@ int32_t LuaInterface::luaDoPlayerAddPremiumDays(lua_State* L)
 		errorEx(getError(LUA_ERROR_PLAYER_NOT_FOUND));
 		lua_pushboolean(L, false);
 	}
+
 	return 1;
 }
 
@@ -7763,7 +7772,6 @@ int32_t LuaInterface::luaGetCreatureLastPosition(lua_State* L)
 {
 	//getCreatureLastPosition(cid)
 	ScriptEnviroment* env = getEnv();
-
 	if(Creature* creature = env->getCreatureByUID(popNumber(L)))
 		pushPosition(L, creature->getLastPosition(), 0);
 	else
@@ -7771,6 +7779,7 @@ int32_t LuaInterface::luaGetCreatureLastPosition(lua_State* L)
 		errorEx(getError(LUA_ERROR_CREATURE_NOT_FOUND));
 		lua_pushboolean(L, false);
 	}
+
 	return 1;
 }
 
@@ -7815,6 +7824,31 @@ int32_t LuaInterface::luaGetCreatureGuildEmblem(lua_State* L)
 		errorEx(getError(LUA_ERROR_CREATURE_NOT_FOUND));
 		lua_pushboolean(L, false);
 	}
+
+	return 1;
+}
+
+int32_t LuaScriptInterface::luaGetCreatureTargetGuildEmblem(lua_State* L)
+{
+	//getCreatureTargetGuildEmblem(cid, target)
+	uint32_t tid = popNumber(L);
+	ScriptEnviroment* env = getEnv();
+	if(Creature* creature = env->getCreatureByUID(popNumber(L)))
+	{
+		if(Creature* target = env->getCreatureByUID(tid))
+			lua_pushnumber(L, creature->getGuildEmblem(target));
+		else
+		{
+			errorEx(getError(LUA_ERROR_CREATURE_NOT_FOUND));
+			lua_pushboolean(L, false);
+		}
+	}
+	else
+	{
+		errorEx(getError(LUA_ERROR_CREATURE_NOT_FOUND));
+		lua_pushboolean(L, false);
+	}
+
 	return 1;
 }
 
@@ -7834,6 +7868,7 @@ int32_t LuaInterface::luaDoCreatureSetGuildEmblem(lua_State* L)
 		errorEx(getError(LUA_ERROR_CREATURE_NOT_FOUND));
 		lua_pushboolean(L, false);
 	}
+
 	return 1;
 }
 
@@ -7848,6 +7883,31 @@ int32_t LuaInterface::luaGetCreaturePartyShield(lua_State* L)
 		errorEx(getError(LUA_ERROR_CREATURE_NOT_FOUND));
 		lua_pushboolean(L, false);
 	}
+
+	return 1;
+}
+
+int32_t LuaScriptInterface::luaGetCreatureTargetPartyShield(lua_State* L)
+{
+	//getCreatureTargetPartyShield(cid, target)
+	uint32_t tid = popNumber(L);
+	ScriptEnviroment* env = getEnv();
+	if(Creature* creature = env->getCreatureByUID(popNumber(L)))
+	{
+		if(Creature* target = env->getCreatureByUID(tid))
+			lua_pushnumber(L, creature->getPartyShield(target));
+		else
+		{
+			errorEx(getError(LUA_ERROR_CREATURE_NOT_FOUND));
+			lua_pushboolean(L, false);
+		}
+	}
+	else
+	{
+		errorEx(getError(LUA_ERROR_CREATURE_NOT_FOUND));
+		lua_pushboolean(L, false);
+	}
+
 	return 1;
 }
 
@@ -7867,6 +7927,7 @@ int32_t LuaInterface::luaDoCreatureSetPartyShield(lua_State* L)
 		errorEx(getError(LUA_ERROR_CREATURE_NOT_FOUND));
 		lua_pushboolean(L, false);
 	}
+
 	return 1;
 }
 
@@ -7881,6 +7942,31 @@ int32_t LuaInterface::luaGetCreatureSkullType(lua_State* L)
 		errorEx(getError(LUA_ERROR_CREATURE_NOT_FOUND));
 		lua_pushboolean(L, false);
 	}
+
+	return 1;
+}
+
+int32_t LuaScriptInterface::luaGetCreatureTargetSkullType(lua_State* L)
+{
+	//getCreatureTargetSkullType(cid, target)
+	uint32_t tid = popNumber(L);
+	ScriptEnviroment* env = getEnv();
+	if(Creature* creature = env->getCreatureByUID(popNumber(L)))
+	{
+		if(Creature* target = env->getCreatureByUID(tid))
+			lua_pushnumber(L, creature->getSkullType(target));
+		else
+		{
+			errorEx(getError(LUA_ERROR_CREATURE_NOT_FOUND));
+			lua_pushboolean(L, false);
+		}
+	}
+	else
+	{
+		errorEx(getError(LUA_ERROR_CREATURE_NOT_FOUND));
+		lua_pushboolean(L, false);
+	}
+
 	return 1;
 }
 
@@ -7888,7 +7974,6 @@ int32_t LuaInterface::luaDoCreatureSetLookDir(lua_State* L)
 {
 	//doCreatureSetLookDirection(cid, dir)
 	Direction dir = (Direction)popNumber(L);
-
 	ScriptEnviroment* env = getEnv();
 	if(Creature* creature = env->getCreatureByUID(popNumber(L)))
 	{
@@ -7906,6 +7991,7 @@ int32_t LuaInterface::luaDoCreatureSetLookDir(lua_State* L)
 		errorEx(getError(LUA_ERROR_CREATURE_NOT_FOUND));
 		lua_pushboolean(L, false);
 	}
+
 	return 1;
 }
 
@@ -7925,6 +8011,7 @@ int32_t LuaInterface::luaDoCreatureSetSkullType(lua_State* L)
 		errorEx(getError(LUA_ERROR_CREATURE_NOT_FOUND));
 		lua_pushboolean(L, false);
 	}
+
 	return 1;
 }
 
@@ -7945,6 +8032,7 @@ int32_t LuaInterface::luaDoPlayerSetSkullEnd(lua_State* L)
 		errorEx(getError(LUA_ERROR_PLAYER_NOT_FOUND));
 		lua_pushboolean(L, false);
 	}
+
 	return 1;
 }
 
@@ -7959,6 +8047,7 @@ int32_t LuaInterface::luaGetCreatureSpeed(lua_State* L)
 		errorEx(getError(LUA_ERROR_CREATURE_NOT_FOUND));
 		lua_pushboolean(L, false);
 	}
+
 	return 1;
 }
 
@@ -7973,6 +8062,7 @@ int32_t LuaInterface::luaGetCreatureBaseSpeed(lua_State* L)
 		errorEx(getError(LUA_ERROR_CREATURE_NOT_FOUND));
 		lua_pushboolean(L, false);
 	}
+
 	return 1;
 }
 
@@ -7990,6 +8080,7 @@ int32_t LuaInterface::luaGetCreatureTarget(lua_State* L)
 		errorEx(getError(LUA_ERROR_CREATURE_NOT_FOUND));
 		lua_pushboolean(L, false);
 	}
+
 	return 1;
 }
 
