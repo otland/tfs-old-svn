@@ -53,7 +53,6 @@
 	</wand>
 
 	<!-- Swords -->
-	<melee id="2396" event="function" value="default"/>
 	<melee id="2413" unproperly="1" event="function" value="default">
 		<vocation id="4"/>
 	</melee>
@@ -115,7 +114,6 @@
 		<vocation id="8" showInDescription="0"/>
 	</melee>
 		<!-- Fire -->
-	<melee id="7744" event="function" value="default"/>
 	<melee id="7745" level="50" unproperly="1" event="function" value="default"/>
 	<melee id="7746" level="60" unproperly="1" event="function" value="default"/>
 	<melee id="7747" level="35" unproperly="1" event="function" value="default">
@@ -125,7 +123,6 @@
 		<vocation id="4"/>
 	</melee>
 		<!-- Ice -->
-	<melee id="7763" event="function" value="default"/>
 	<melee id="7764" level="50" unproperly="1" event="function" value="default"/>
 	<melee id="7765" level="60" unproperly="1" event="function" value="default"/>
 	<melee id="7766" level="35" unproperly="1" event="function" value="default">
@@ -135,7 +132,6 @@
 		<vocation id="4"/>
 	</melee>
 		<!-- Earth -->
-	<melee id="7854" event="function" value="default"/>
 	<melee id="7855" level="50" unproperly="1" event="function" value="default"/>
 	<melee id="7856" level="60" unproperly="1" event="function" value="default"/>
 	<melee id="7857" level="35" unproperly="1" event="function" value="default">
@@ -145,7 +141,6 @@
 		<vocation id="4"/>
 	</melee>
 		<!-- Energy -->
-	<melee id="7869" event="function" value="default"/>
 	<melee id="7870" level="50" unproperly="1" event="function" value="default"/>
 	<melee id="7871" level="60" unproperly="1" event="function" value="default"/>
 	<melee id="7872" level="35" unproperly="1" event="function" value="default">
