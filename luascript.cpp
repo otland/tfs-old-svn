@@ -2084,11 +2084,8 @@ void LuaScriptInterface::registerFunctions()
 	//doCreatureSetLookDirection(cid, dir)
 	lua_register(m_luaState, "doCreatureSetLookDirection", LuaScriptInterface::luaDoCreatureSetLookDir);
 
-	//getCreatureSkullType(cid)
+	//getCreatureSkullType(cid[, target])
 	lua_register(m_luaState, "getCreatureSkullType", LuaScriptInterface::luaGetCreatureSkullType);
-
-	//getCreatureTargetSkullType(cid, target)
-	lua_register(m_luaState, "getCreatureTargetSkullType", LuaScriptInterface::luaGetCreatureTargetSkullType);
 
 	//doCreatureSetSkullType(cid, skull)
 	lua_register(m_luaState, "doCreatureSetSkullType", LuaScriptInterface::luaDoCreatureSetSkullType);
@@ -7757,28 +7754,18 @@ int32_t LuaScriptInterface::luaGetCreatureNoMove(lua_State* L)
 
 int32_t LuaScriptInterface::luaGetCreatureSkullType(lua_State* L)
 {
-	//getCreatureSkullType(cid)
-	ScriptEnviroment* env = getEnv();
-	if(Creature* creature = env->getCreatureByUID(popNumber(L)))
-		lua_pushnumber(L, creature->getSkull());
-	else
-	{
-		errorEx(getError(LUA_ERROR_CREATURE_NOT_FOUND));
-		lua_pushboolean(L, false);
-	}
+	//getCreatureSkullType(cid[, target])
+	uint32_t tid = 0;
+	if(lua_gettop(L) > 1)
+		tid = popNumber(L);
 
-	return 1;
-}
-
-int32_t LuaScriptInterface::luaGetCreatureTargetSkullType(lua_State* L)
-{
-	//getCreatureTargetSkullType(cid, target)
-	uint32_t tid = popNumber(L);
 	ScriptEnviroment* env = getEnv();
 	if(Creature* creature = env->getCreatureByUID(popNumber(L)))
 	{
-		if(Creature* target = env->getCreatureByUID(tid))
-			lua_pushnumber(L, creature->getSkullType(target));
+		if(!tid)
+			lua_pushnumber(L, creature->getSkull());
+		else if(Creature* target = env->getCreatureByUID(tid))
+			lua_pushnumber(L, creature->getSkullClient(target));
 		else
 		{
 			errorEx(getError(LUA_ERROR_CREATURE_NOT_FOUND));
@@ -7798,7 +7785,6 @@ int32_t LuaScriptInterface::luaDoCreatureSetLookDir(lua_State* L)
 {
 	//doCreatureSetLookDirection(cid, dir)
 	Direction dir = (Direction)popNumber(L);
-
 	ScriptEnviroment* env = getEnv();
 	if(Creature* creature = env->getCreatureByUID(popNumber(L)))
 	{
