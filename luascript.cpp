@@ -2071,7 +2071,7 @@ void LuaInterface::registerFunctions()
 
 	//doPlayerSendTutorial(cid, id)
 	lua_register(m_luaState, "doPlayerSendTutorial", LuaInterface::luaDoPlayerSendTutorial);
-	
+
 	//doPlayerSendMailByName(name, item[, town[, actor]])
 	lua_register(m_luaState, "doPlayerSendTutorial", LuaInterface::luaDoPlayerSendTutorial);
 
@@ -7828,7 +7828,7 @@ int32_t LuaInterface::luaGetCreatureGuildEmblem(lua_State* L)
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaGetCreatureTargetGuildEmblem(lua_State* L)
+int32_t LuaInterface::luaGetCreatureTargetGuildEmblem(lua_State* L)
 {
 	//getCreatureTargetGuildEmblem(cid, target)
 	uint32_t tid = popNumber(L);
@@ -7887,7 +7887,7 @@ int32_t LuaInterface::luaGetCreaturePartyShield(lua_State* L)
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaGetCreatureTargetPartyShield(lua_State* L)
+int32_t LuaInterface::luaGetCreatureTargetPartyShield(lua_State* L)
 {
 	//getCreatureTargetPartyShield(cid, target)
 	uint32_t tid = popNumber(L);
@@ -7946,7 +7946,7 @@ int32_t LuaInterface::luaGetCreatureSkullType(lua_State* L)
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaGetCreatureTargetSkullType(lua_State* L)
+int32_t LuaInterface::luaGetCreatureTargetSkullType(lua_State* L)
 {
 	//getCreatureTargetSkullType(cid, target)
 	uint32_t tid = popNumber(L);
