@@ -2087,29 +2087,20 @@ void LuaInterface::registerFunctions()
 	//doCreatureSetLookDirection(cid, dir)
 	lua_register(m_luaState, "doCreatureSetLookDirection", LuaInterface::luaDoCreatureSetLookDir);
 
-	//getCreatureGuildEmblem(cid)
+	//getCreatureGuildEmblem(cid[, target])
 	lua_register(m_luaState, "getCreatureGuildEmblem", LuaInterface::luaGetCreatureGuildEmblem);
-
-	//getCreatureTargetGuildEmblem(cid, target)
-	lua_register(m_luaState, "getCreatureTargetGuildEmblem", LuaInterface::luaGetCreatureTargetGuildEmblem);
 
 	//doCreatureSetGuildEmblem(cid, emblem)
 	lua_register(m_luaState, "doCreatureSetGuildEmblem", LuaInterface::luaDoCreatureSetGuildEmblem);
 
-	//getCreaturePartyShield(cid)
+	//getCreaturePartyShield(cid[, target])
 	lua_register(m_luaState, "getCreaturePartyShield", LuaInterface::luaGetCreaturePartyShield);
-
-	//getCreatureTargetPartyShield(cid, target)
-	lua_register(m_luaState, "getCreatureTargetPartyShield", LuaInterface::luaGetCreatureTargetPartyShield);
 
 	//doCreatureSetPartyShield(cid, shield)
 	lua_register(m_luaState, "doCreatureSetPartyShield", LuaInterface::luaDoCreatureSetPartyShield);
 
-	//getCreatureSkullType(cid)
+	//getCreatureSkullType(cid[, target])
 	lua_register(m_luaState, "getCreatureSkullType", LuaInterface::luaGetCreatureSkullType);
-
-	//getCreatureTargetSkullType(cid, target)
-	lua_register(m_luaState, "getCreatureTargetSkullType", LuaInterface::luaGetCreatureTargetSkullType);
 
 	//doCreatureSetSkullType(cid, skull)
 	lua_register(m_luaState, "doCreatureSetSkullType", LuaInterface::luaDoCreatureSetSkullType);
@@ -7815,27 +7806,17 @@ int32_t LuaInterface::luaGetCreatureNoMove(lua_State* L)
 
 int32_t LuaInterface::luaGetCreatureGuildEmblem(lua_State* L)
 {
-	//getCreatureGuildEmblem(cid)
-	ScriptEnviroment* env = getEnv();
-	if(Creature* creature = env->getCreatureByUID(popNumber(L)))
-		lua_pushnumber(L, creature->getEmblem());
-	else
-	{
-		errorEx(getError(LUA_ERROR_CREATURE_NOT_FOUND));
-		lua_pushboolean(L, false);
-	}
+	//getCreatureGuildEmblem(cid[, target])
+	uint32_t tid = 0;
+	if(lua_gettop(L) > 1)
+		tid = popNumber(L);
 
-	return 1;
-}
-
-int32_t LuaInterface::luaGetCreatureTargetGuildEmblem(lua_State* L)
-{
-	//getCreatureTargetGuildEmblem(cid, target)
-	uint32_t tid = popNumber(L);
 	ScriptEnviroment* env = getEnv();
 	if(Creature* creature = env->getCreatureByUID(popNumber(L)))
 	{
-		if(Creature* target = env->getCreatureByUID(tid))
+		if(!tid)
+			lua_pushnumber(L, creature->getEmblem());
+		else if(Creature* target = env->getCreatureByUID(tid))
 			lua_pushnumber(L, creature->getGuildEmblem(target));
 		else
 		{
@@ -7874,27 +7855,17 @@ int32_t LuaInterface::luaDoCreatureSetGuildEmblem(lua_State* L)
 
 int32_t LuaInterface::luaGetCreaturePartyShield(lua_State* L)
 {
-	//getCreaturePartyShield(cid)
-	ScriptEnviroment* env = getEnv();
-	if(Creature* creature = env->getCreatureByUID(popNumber(L)))
-		lua_pushnumber(L, creature->getShield());
-	else
-	{
-		errorEx(getError(LUA_ERROR_CREATURE_NOT_FOUND));
-		lua_pushboolean(L, false);
-	}
+	//getCreaturePartyShield(cid[, target])
+	uint32_t tid = 0;
+	if(lua_gettop(L) > 1)
+		tid = popNumber(L);
 
-	return 1;
-}
-
-int32_t LuaInterface::luaGetCreatureTargetPartyShield(lua_State* L)
-{
-	//getCreatureTargetPartyShield(cid, target)
-	uint32_t tid = popNumber(L);
 	ScriptEnviroment* env = getEnv();
 	if(Creature* creature = env->getCreatureByUID(popNumber(L)))
 	{
-		if(Creature* target = env->getCreatureByUID(tid))
+		if(!tid)
+			lua_pushnumber(L, creature->getShield());
+		else if(Creature* target = env->getCreatureByUID(tid))
 			lua_pushnumber(L, creature->getPartyShield(target));
 		else
 		{
@@ -7933,27 +7904,17 @@ int32_t LuaInterface::luaDoCreatureSetPartyShield(lua_State* L)
 
 int32_t LuaInterface::luaGetCreatureSkullType(lua_State* L)
 {
-	//getCreatureSkullType(cid)
-	ScriptEnviroment* env = getEnv();
-	if(Creature* creature = env->getCreatureByUID(popNumber(L)))
-		lua_pushnumber(L, creature->getSkull());
-	else
-	{
-		errorEx(getError(LUA_ERROR_CREATURE_NOT_FOUND));
-		lua_pushboolean(L, false);
-	}
+	//getCreatureSkullType(cid[, target])
+	uint32_t tid = 0;
+	if(lua_gettop(L) > 1)
+		tid = popNumber(L);
 
-	return 1;
-}
-
-int32_t LuaInterface::luaGetCreatureTargetSkullType(lua_State* L)
-{
-	//getCreatureTargetSkullType(cid, target)
-	uint32_t tid = popNumber(L);
 	ScriptEnviroment* env = getEnv();
 	if(Creature* creature = env->getCreatureByUID(popNumber(L)))
 	{
-		if(Creature* target = env->getCreatureByUID(tid))
+		if(!tid)
+			lua_pushnumber(L, creature->getSkull());
+		else if(Creature* target = env->getCreatureByUID(tid))
 			lua_pushnumber(L, creature->getSkullType(target));
 		else
 		{
