@@ -2221,7 +2221,7 @@ void ProtocolGame::sendAddCreature(const Creature* creature, const Position& pos
 				else if(i < reasons)
 					msg->put<char>(group->getStatementViolationFlags());
 				else
-					msg->put<char>(0);
+					msg->put<char>(0x00);
 			}
 		}
 	}
