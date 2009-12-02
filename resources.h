@@ -15,6 +15,8 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////
 
+#ifndef __RESOURCES__
+#define __RESOURCES__
 #include "definitions.h"
 #if defined(WINDOWS) && !defined(__CONSOLE__)
 	#define ID_KICK 101
@@ -88,3 +90,4 @@
 #define VERSION_TIMESTAMP 0
 #define VERSION_BUILD 0
 #define VERSION_DATABASE 23
+#endif

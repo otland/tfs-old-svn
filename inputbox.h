@@ -15,10 +15,10 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////
 
-#include "otsystem.h"
-#if defined(WINDOWS) && !defined(__CONSOLE__)
 #ifndef __INPUTBOX__
 #define __INPUTBOX__
+#include "otsystem.h"
+#if defined(WINDOWS) && !defined(__CONSOLE__)
 
 #include <tchar.h>
 #define INPUTBOX_WIDTH 400
@@ -27,12 +27,12 @@
 class CInputBox
 {
 	static HFONT m_hFont;
-	static HWND  m_hWndInputBox;
-	static HWND  m_hWndParent;
-	static HWND  m_hWndEdit;
-	static HWND  m_hWndOK;
-	static HWND  m_hWndCancel;
-	static HWND  m_hWndPrompt;
+	static HWND m_hWndInputBox;
+	static HWND m_hWndParent;
+	static HWND m_hWndEdit;
+	static HWND m_hWndOK;
+	static HWND m_hWndCancel;
+	static HWND m_hWndPrompt;
 
 	static HINSTANCE m_hInst;
 

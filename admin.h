@@ -15,10 +15,10 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////
 
-#ifdef __REMOTE_CONTROL__
 #ifndef __ADMIN__
 #define __ADMIN__
 #include "otsystem.h"
+#ifdef __REMOTE_CONTROL__
 
 #include "textlogger.h"
 #include "player.h"

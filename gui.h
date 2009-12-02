@@ -15,11 +15,12 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////
 
-#include "resources.h"
-#if defined(WINDOWS) && !defined(__CONSOLE__)
 #ifndef __GUI__
 #define __GUI__
+#include "definitions.h"
+#if defined(WINDOWS) && !defined(__CONSOLE__)
 
+#include "resources.h"
 #include "playerbox.h"
 
 class GUI
