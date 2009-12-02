@@ -257,6 +257,7 @@ class ConfigManager
 			USE_BLACK_SKULL,
 			ALLOW_FIGHTBACK,
 			VIPLIST_PER_PLAYER,
+			USE_FRAG_HANDLER,
 			LAST_BOOL_CONFIG /* this must be the last one */
 		};
 

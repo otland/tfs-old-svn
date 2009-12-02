@@ -17,6 +17,8 @@
 	-- (dailyFragsToRedSkull + dailyFragsToBanishment) with their
 	-- *RedSkull equivalents.
 	-- Auto banishing works only if useBlackSkull set to negative.
+	-- advancedFragList is not advised if you use huge frags
+	-- requirements.
 	redSkullLength = 30 * 24 * 60 * 60
 	blackSkullLength = 45 * 24 * 60 * 60
 	dailyFragsToRedSkull = 3
@@ -31,6 +33,7 @@
 	blackSkulledDeathHealth = 40
 	blackSkulledDeathMana = 0
 	useBlackSkull = true
+	useFragHandler = true
 	advancedFragList = false
 
 	-- Banishments

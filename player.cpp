@@ -3548,7 +3548,7 @@ void Player::onAttackedCreature(Creature* target)
 	if(getZone() != target->getZone())
 		return;
 
-	if(getSkull() == SKULL_NONE)
+	if(skull == SKULL_NONE)
 	{
 		if(targetPlayer->getSkull() != SKULL_NONE)
 			targetPlayer->sendCreatureSkull(this);
@@ -3650,8 +3650,9 @@ bool Player::onKilledCreature(Creature* target, uint32_t& flags)
 	if(!targetPlayer || Combat::isInPvpZone(this, targetPlayer) || !hasCondition(CONDITION_INFIGHT) || isPartner(targetPlayer))
 		return true;
 
-	if(!targetPlayer->hasAttacked(this) && target->getSkull() == SKULL_NONE
-		&& targetPlayer != this && addUnjustifiedKill(targetPlayer))
+	if(!targetPlayer->hasAttacked(this) && target->getSkull() == SKULL_NONE && targetPlayer != this
+		&& ((g_config.getBool(ConfigManager::USE_FRAG_HANDLER) && addUnjustifiedKill(
+		targetPlayer)) || hasBitSet((uint32_t)KILLFLAG_LASTHIT, flags)))
 		flags |= (uint32_t)KILLFLAG_UNJUSTIFIED;
 
 	pzLocked = true;

@@ -382,6 +382,7 @@ class LuaScriptInterface
 		static int32_t luaGetCreatureSpeakType(lua_State* L);
 		static int32_t luaDoCreatureSetSpeakType(lua_State* L);
 		static int32_t luaGetCreatureSkullType(lua_State* L);
+		static int32_t luaGetCreatureTargetSkullType(lua_State* L);
 		static int32_t luaDoCreatureSetSkullType(lua_State* L);
 		static int32_t luaGetPlayerSkullEnd(lua_State* L);
 		static int32_t luaDoPlayerSetSkullEnd(lua_State* L);

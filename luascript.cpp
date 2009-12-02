@@ -2068,7 +2068,7 @@ void LuaScriptInterface::registerFunctions()
 
 	//doPlayerSendTutorial(cid, id)
 	lua_register(m_luaState, "doPlayerSendTutorial", LuaScriptInterface::luaDoPlayerSendTutorial);
-	
+
 	//doPlayerSendMailByName(name, item[, town[, actor]])
 	lua_register(m_luaState, "doPlayerSendTutorial", LuaScriptInterface::luaDoPlayerSendTutorial);
 
@@ -2086,6 +2086,9 @@ void LuaScriptInterface::registerFunctions()
 
 	//getCreatureSkullType(cid)
 	lua_register(m_luaState, "getCreatureSkullType", LuaScriptInterface::luaGetCreatureSkullType);
+
+	//getCreatureTargetSkullType(cid, target)
+	lua_register(m_luaState, "getCreatureTargetSkullType", LuaScriptInterface::luaGetCreatureTargetSkullType);
 
 	//doCreatureSetSkullType(cid, skull)
 	lua_register(m_luaState, "doCreatureSetSkullType", LuaScriptInterface::luaDoCreatureSetSkullType);
@@ -7763,6 +7766,31 @@ int32_t LuaScriptInterface::luaGetCreatureSkullType(lua_State* L)
 		errorEx(getError(LUA_ERROR_CREATURE_NOT_FOUND));
 		lua_pushboolean(L, false);
 	}
+
+	return 1;
+}
+
+int32_t LuaScriptInterface::luaGetCreatureTargetSkullType(lua_State* L)
+{
+	//getCreatureTargetSkullType(cid, target)
+	uint32_t tid = popNumber(L);
+	ScriptEnviroment* env = getEnv();
+	if(Creature* creature = env->getCreatureByUID(popNumber(L)))
+	{
+		if(Creature* target = env->getCreatureByUID(tid))
+			lua_pushnumber(L, creature->getSkullType(target));
+		else
+		{
+			errorEx(getError(LUA_ERROR_CREATURE_NOT_FOUND));
+			lua_pushboolean(L, false);
+		}
+	}
+	else
+	{
+		errorEx(getError(LUA_ERROR_CREATURE_NOT_FOUND));
+		lua_pushboolean(L, false);
+	}
+
 	return 1;
 }
 

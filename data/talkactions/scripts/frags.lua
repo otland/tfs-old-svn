@@ -1,13 +1,17 @@
 local config = {
-	advancedFragList = getBooleanFromString(getConfigValue("advancedFragList"))
+	useFragHandler = getBooleanFromString(getConfigValue('useFragHandler')),
+	advancedFragList = getBooleanFromString(getConfigValue('advancedFragList'))
 }
 
 function onSay(cid, words, param, channel)
+	if(not config.useFragHandler) then
+		return false
+	end
+
 	local time = os.time()
 	local times = {today = (time - 86400), week = (time - (7 * 86400))}
 
-	local contents = {day = {}, week = {}, month = {}}
-	local result = db.getResult("SELECT `pd`.`date`, `pd`.`level`, `p`.`name` FROM `player_killers` pk LEFT JOIN `killers` k ON `pk`.`kill_id` = `k`.`id` LEFT JOIN `player_deaths` pd ON `k`.`death_id` = `pd`.`id` LEFT JOIN `players` p ON `pd`.`player_id` = `p`.`id` WHERE `pk`.`player_id` = " .. getPlayerGUID(cid) .. " AND `k`.`unjustified` = 1 AND `pd`.`date` >= " .. (time - (30 * 86400)) .. " ORDER BY `pd`.`date` DESC")
+	local contents, result = {day = {}, week = {}, month = {}}, db.getResult("SELECT `pd`.`date`, `pd`.`level`, `p`.`name` FROM `player_killers` pk LEFT JOIN `killers` k ON `pk`.`kill_id` = `k`.`id` LEFT JOIN `player_deaths` pd ON `k`.`death_id` = `pd`.`id` LEFT JOIN `players` p ON `pd`.`player_id` = `p`.`id` WHERE `pk`.`player_id` = " .. getPlayerGUID(cid) .. " AND `k`.`unjustified` = 1 AND `pd`.`date` >= " .. (time - (30 * 86400)) .. " ORDER BY `pd`.`date` DESC")
 	if(result:getID() ~= -1) then
 		repeat
 			local content = {
