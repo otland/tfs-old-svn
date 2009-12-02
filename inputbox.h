@@ -15,13 +15,12 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////
 
+#include "otsystem.h"
 #if defined(WINDOWS) && !defined(__CONSOLE__)
 #ifndef __INPUTBOX__
 #define __INPUTBOX__
-#include "otsystem.h"
 
 #include <tchar.h>
-
 #define INPUTBOX_WIDTH 400
 #define INPUTBOX_HEIGHT 125
 

@@ -15,8 +15,8 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////
 
-#ifdef WINDOWS
-#ifndef __CONSOLE__
+#include "definitions.h"
+#if defined(WINDOWS) && !defined(__CONSOLE__)
 	#define ID_KICK 101
 	#define ID_BAN 102
 	#define ID_ABOUT 104
@@ -72,7 +72,6 @@
 	#define ID_MENU_RELOAD_VOCATIONS 235
 	#define ID_MENU_RELOAD_WEAPONS 236
 	#define ID_MENU_RELOAD_ALL 237
-#endif
 #endif
 
 #define CLIENT_VERSION_MIN 853

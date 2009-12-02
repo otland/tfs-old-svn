@@ -1,6 +1,5 @@
-#ifdef WINDOWS
-#ifndef __CONSOLE__
 #include "resources.h"
+#if defined(WINDOWS) && !defined(__CONSOLE__)
 #include <windows.h>
 
 ID_ICON ICON "TheForgottenServer.ico"
@@ -63,5 +62,4 @@ BEGIN
 	END
 
 END
-#endif
 #endif

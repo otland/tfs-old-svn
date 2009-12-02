@@ -15,10 +15,10 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////
 
+#include "otsystem.h"
 #if defined(WINDOWS) && !defined(__CONSOLE__)
 #ifndef __PLAYERBOX__
 #define __PLAYERBOX__
-#include "otsystem.h"
 
 class Player;
 class PlayerBox

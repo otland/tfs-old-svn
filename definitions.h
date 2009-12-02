@@ -30,8 +30,15 @@
 	#endif
 #endif
 
-#if defined _WIN32 || defined WIN32 || defined __WINDOWS__ || defined WINDOWS
-	#ifndef _WIN64
+#if defined _WIN32 || defined WIN32 || defined _WIN64 || defined WIN64 || defined __WINDOWS__ || defined WINDOWS
+	#if defined _WIN64 || defined WIN64
+		#ifndef _WIN64
+			#define _WIN64
+		#endif
+		#ifndef WIN64
+			#define WIN64
+		#endif
+	#else
 		#ifndef _WIN32
 			#define _WIN32
 		#endif
