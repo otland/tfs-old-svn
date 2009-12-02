@@ -93,7 +93,7 @@ AC_ARG_ENABLE(sqlite, [  --enable-sqlite			enable SQLite support], [
 	useSQLite=yes
 ])
 
-#check if we want the profiler
+# check if we want the profiler
 AC_ARG_ENABLE(profiler, [  --enable-profiler			enable profiler support], [PROFILER_FLAGS=-pg])
 AC_SUBST(PROFILER_FLAGS)
 
@@ -122,15 +122,19 @@ AC_FUNC_MEMCMP
 AC_FUNC_REALLOC
 AC_CHECK_FUNCS([floor ftime gethostbyname gethostname memset pow sqrt strcasecmp strncasecmp strstr strtol])
 
-# check for libxml2
-AM_PATH_XML2(2.6.5, , AC_MSG_ERROR([you need libxml2 >= 2.6.5 to compile theforgottenserver!]))
+# check for xml2
+AM_PATH_XML2(2.6.5, , AC_MSG_ERROR([You need libxml2 >= 2.6.5 to compile theforgottenserver!]))
 LIBS="$LIBS $XML_LIBS"
 
-#check GMP
-AC_CHECK_HEADERS([gmp.h], ,[AC_MSG_ERROR("GMP header not found.")])
-AC_CHECK_LIB(gmp, __gmpz_init2, ,[AC_MSG_ERROR("Linking against GMP failed.")])
+# check for gmp
+AC_CHECK_HEADERS([gmp.h], ,[AC_MSG_ERROR("gmp header not found.")])
+AC_CHECK_LIB(gmp, __gmpz_init2, ,[AC_MSG_ERROR("Linking against gmp library failed.")])
 
-#check for boost
+# check for zlib
+AC_CHECK_HEADERS([zlib.h], ,[AC_MSG_ERROR("zlib header not found.")])
+AC_CHECK_LIB(z, main, ,[AC_MSG_ERROR("Linking against zlib library failed.")])
+
+# check for boost
 AC_CHECK_LIB(boost_thread-gcc-mt, main, , [
 	AC_CHECK_LIB(boost_thread-mt, main, , [
 		AC_CHECK_LIB(boost_thread, main, , [
@@ -171,34 +175,34 @@ AC_CHECK_LIB(boost_filesystem-gcc-mt, main, , [
 	])
 ])
 
-#check boost asio
+# check for boost::asio
 AC_CHECK_HEADERS([boost/asio.hpp], ,[AC_MSG_ERROR("boost::asio header not found.")])
 
-#check lua 5.1
+# check for Lua
 PKG_CHECK_MODULES(LUA, lua5.1 >= 5.1, , [
-	AC_CHECK_HEADERS([lua.hpp],[],[AC_MSG_ERROR("lua header not found.")])
-	AC_CHECK_LIB(lua, main, , [AC_MSG_ERROR("Linking against lua failed.")])
+	AC_CHECK_HEADERS([lua.hpp],[],[AC_MSG_ERROR("Lua header not found.")])
+	AC_CHECK_LIB(lua, main, , [AC_MSG_ERROR("Linking against Lua library failed.")])
 ])
 AC_SUBST(LUA_CFLAGS)
 AC_SUBST(LUA_LIBS)
 
 # check for mysql if it is enabled
 if test -n "$MYSQL_FLAGS"; then
-	AC_CHECK_HEADERS([mysql/mysql.h],[MYSQL_LIBS=-lmysqlclient],[AC_MSG_ERROR("mysql headers missing.")])
+	AC_CHECK_HEADERS([mysql/mysql.h],[MYSQL_LIBS=-lmysqlclient],[AC_MSG_ERROR("MySQL headers missing.")])
 	AC_CHECK_LIB(mysqlclient, main,[],[AC_MSG_ERROR("Linking against mysql-client failed.")])
 	AC_SUBST(MYSQL_LIBS)
 fi
 
 # check for postgresql if it is enabled
 if test -n "$PGSQL_FLAGS"; then
-	AC_CHECK_HEADERS([postgresql/libpq-fe.h],[PGSQL_LIBS=-lpg],[AC_MSG_ERROR("postgresql headers missing.")])
+	AC_CHECK_HEADERS([postgresql/libpq-fe.h],[PGSQL_LIBS=-lpg],[AC_MSG_ERROR("PostgreSQL headers missing.")])
 	AC_CHECK_LIB(pq, main,[],[AC_MSG_ERROR("Linking against libpq failed.")])
 	AC_SUBST(PGSQL_LIBS)
 fi
 
 # check for sqlite if it is enabled
 if test -n "$SQLITE_FLAGS"; then
-	AC_CHECK_HEADERS([sqlite3.h],[SQLITE_LIBS=-lsqlite3],[AC_MSG_ERROR("sqlite3 headers missing.")])
+	AC_CHECK_HEADERS([sqlite3.h],[SQLITE_LIBS=-lsqlite3],[AC_MSG_ERROR("SQLite3 headers missing.")])
 	AC_CHECK_LIB(sqlite3, main,[],[AC_MSG_ERROR("Linking against sqlite3 failed.")])
 	AC_SUBST(SQLITE_LIBS)
 fi
