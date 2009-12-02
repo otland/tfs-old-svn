@@ -15,10 +15,10 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////
 
-#ifdef __OTADMIN__
 #ifndef __ADMIN__
 #define __ADMIN__
 #include "otsystem.h"
+#ifdef __OTADMIN__
 
 #include "protocol.h"
 #include "textlogger.h"
