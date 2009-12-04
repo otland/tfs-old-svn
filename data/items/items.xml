@@ -21804,12 +21804,12 @@
 	<item id="11110" article="a" name="stone stairs">
 		<attribute key="floorchange" value="north"/>
 	</item>
-	<item id="11228" article="a" name="zaoan backpack">
+	<item id="11228" article="a" name="expedition backpack">
 		<attribute key="weight" value="1800"/>
 		<attribute key="containerSize" value="20"/>
 		<attribute key="slotType" value="backpack"/>
 	</item>
-	<item id="11229" article="a" name="zaoan bag">
+	<item id="11229" article="a" name="expedition bag">
 		<attribute key="weight" value="800"/>
 		<attribute key="containerSize" value="8"/>
 		<attribute key="slotType" value="backpack"/>
@@ -21824,7 +21824,7 @@
 		<attribute key="containerSize" value="20"/>
 		<attribute key="slotType" value="backpack"/>
 	</item>
-	<item id="11250" article="a" name="expedition backpack">
+	<item id="11250" article="a" name="fussy backpack">
 		<attribute key="weight" value="1800"/>
 		<attribute key="containerSize" value="20"/>
 		<attribute key="slotType" value="backpack"/>
