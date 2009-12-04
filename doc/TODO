@@ -19,10 +19,15 @@
 	First follow up TODO of 0.3 branch...
 ]
 
-[ TASKS
-	Rewrite GUI using wxWidgets
-		Assigned to: Kiper
+[ BUGS
+	Ghost causing debugs with creature stacks as of 8.53
+		Assigned to: Elf
 
+	8.57 or 8.6? has or will have an extra byte regarding stacks
+		Assigned to: Elf
+]
+
+[ TASKS
 	Finish documentation as its incomplete
 		Assigned to: KaczooH
 
