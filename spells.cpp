@@ -69,7 +69,8 @@ ReturnValue Spells::onPlayerSay(Player* player, const std::string& words)
 		trimString(reParam);
 	}
 
-	if(!instantSpell->playerCastInstant(player, reParam))
+	Position pos = player->getPosition();
+	if(!instantSpell->castInstant(player, reParam))
 		return RET_NEEDEXCHANGE;
 
 	SpeakClasses type = SPEAK_SAY;
@@ -94,8 +95,8 @@ ReturnValue Spells::onPlayerSay(Player* player, const std::string& words)
 		ret += ": " + param.substr(tmp, rtmp);
 	}
 
-	return g_game.internalCreatureSay(player, type, ret, player->isGhost()) ?
-		RET_NOERROR : RET_NOTPOSSIBLE;
+	return g_game.internalCreatureSay(player, type, ret, player->isGhost(),
+		(*pos)) ? RET_NOERROR : RET_NOTPOSSIBLE;
 }
 
 void Spells::clear()
@@ -241,13 +242,13 @@ InstantSpell* Spells::getInstantSpellByIndex(const Player* player, uint32_t inde
 	for(InstantsMap::iterator it = instants.begin(); it != instants.end(); ++it)
 	{
 		InstantSpell* instantSpell = it->second;
-		if(instantSpell->canCast(player))
-		{
-			if(count == index)
-				return instantSpell;
+		if(!instantSpell->canCast(player))
+			continue;
 
-			++count;
-		}
+		if(count == index)
+			return instantSpell;
+
+		++count;
 	}
 
 	return NULL;
@@ -255,9 +256,10 @@ InstantSpell* Spells::getInstantSpellByIndex(const Player* player, uint32_t inde
 
 InstantSpell* Spells::getInstantSpellByName(const std::string& name)
 {
+	std::string tmpName = asLowerCaseString(name);
 	for(InstantsMap::iterator it = instants.begin(); it != instants.end(); ++it)
 	{
-		if(strcasecmp(it->second->getName().c_str(), name.c_str()) == 0)
+		if(tmpName == asLowerCaseString(it->second->getName()))
 			return it->second;
 	}
 
@@ -367,7 +369,6 @@ bool CombatSpell::castSpell(Creature* creature, Creature* target)
 		if(combat->hasArea())
 		{
 			var.type = VARIANT_POSITION;
-
 			if(needTarget)
 				var.pos = target->getPosition();
 			else if(needDirection)
@@ -571,7 +572,7 @@ bool Spell::configureSpell(xmlNodePtr p)
 	return true;
 }
 
-bool Spell::playerSpellCheck(Player* player) const
+bool Spell::checkSpell(Player* player) const
 {
 	if(player->hasFlag(PlayerFlag_CannotUseSpells))
 		return false;
@@ -680,9 +681,9 @@ bool Spell::playerSpellCheck(Player* player) const
 	return true;
 }
 
-bool Spell::playerInstantSpellCheck(Player* player, Creature* creature)
+bool Spell::checkInstantSpell(Player* player, Creature* creature)
 {
-	if(!playerSpellCheck(player))
+	if(!checkSpell(player))
 		return false;
 
 	const Position& toPos = creature->getPosition();
@@ -769,9 +770,9 @@ bool Spell::playerInstantSpellCheck(Player* player, Creature* creature)
 	return true;
 }
 
-bool Spell::playerInstantSpellCheck(Player* player, const Position& toPos)
+bool Spell::checkInstantSpell(Player* player, const Position& toPos)
 {
-	if(!playerSpellCheck(player))
+	if(!checkSpell(player))
 		return false;
 
 	if(toPos.x == 0xFFFF)
@@ -831,9 +832,9 @@ bool Spell::playerInstantSpellCheck(Player* player, const Position& toPos)
 	return true;
 }
 
-bool Spell::playerRuneSpellCheck(Player* player, const Position& toPos)
+bool Spell::checkRuneSpell(Player* player, const Position& toPos)
 {
-	if(!playerSpellCheck(player))
+	if(!checkSpell(player))
 		return false;
 
 	if(toPos.x == 0xFFFF)
@@ -931,7 +932,7 @@ bool Spell::playerRuneSpellCheck(Player* player, const Position& toPos)
 	return true;
 }
 
-void Spell::postCastSpell(Player* player, bool finishedCast /*= true*/, bool payCost /*= true*/) const
+void Spell::postSpell(Player* player, bool finishedCast /*= true*/, bool payCost /*= true*/) const
 {
 	if(finishedCast)
 	{
@@ -943,10 +944,10 @@ void Spell::postCastSpell(Player* player, bool finishedCast /*= true*/, bool pay
 	}
 
 	if(payCost)
-		postCastSpell(player, (uint32_t)getManaCost(player), (uint32_t)getSoulCost());
+		postSpell(player, (uint32_t)getManaCost(player), (uint32_t)getSoulCost());
 }
 
-void Spell::postCastSpell(Player* player, uint32_t manaCost, uint32_t soulCost) const
+void Spell::postSpell(Player* player, uint32_t manaCost, uint32_t soulCost) const
 {
 	if(manaCost > 0)
 	{
@@ -1075,14 +1076,14 @@ bool InstantSpell::loadFunction(const std::string& functionName)
 	return true;
 }
 
-bool InstantSpell::playerCastInstant(Player* player, const std::string& param)
+bool InstantSpell::castInstant(Player* player, const std::string& param)
 {
 	LuaVariant var;
 	if(selfTarget)
 	{
 		var.type = VARIANT_NUMBER;
 		var.number = player->getID();
-		if(!playerInstantSpellCheck(player, player))
+		if(!checkInstantSpell(player, player))
 			return false;
 	}
 	else if(needTarget || casterTargetOrDirection)
@@ -1141,14 +1142,14 @@ bool InstantSpell::playerCastInstant(Player* player, const std::string& param)
 
 			var.type = VARIANT_NUMBER;
 			var.number = target->getID();
-			if(!playerInstantSpellCheck(player, target))
+			if(!checkInstantSpell(player, target))
 				return false;
 		}
 		else
 		{
 			var.type = VARIANT_POSITION;
 			var.pos = Spells::getCasterPosition(player, player->getDirection());
-			if(!playerInstantSpellCheck(player, var.pos))
+			if(!checkInstantSpell(player, var.pos))
 				return false;
 		}
 	}
@@ -1156,7 +1157,7 @@ bool InstantSpell::playerCastInstant(Player* player, const std::string& param)
 	{
 		var.type = VARIANT_STRING;
 		var.text = param;
-		if(!playerSpellCheck(player))
+		if(!checkSpell(player))
 			return false;
 	}
 	else
@@ -1167,14 +1168,14 @@ bool InstantSpell::playerCastInstant(Player* player, const std::string& param)
 		else
 			var.pos = player->getPosition();
 
-		if(!playerInstantSpellCheck(player, var.pos))
+		if(!checkInstantSpell(player, var.pos))
 			return false;
 	}
 
 	if(!internalCastSpell(player, var))
 		return false;
 
-	Spell::postCastSpell(player);
+	Spell::postSpell(player);
 	return true;
 }
 
@@ -1241,10 +1242,7 @@ bool InstantSpell::internalCastSpell(Creature* creature, const LuaVariant& var)
 	if(isScripted())
 		return executeCastSpell(creature, var);
 
-	if(function)
-		return function(this, creature, var.text);
-
-	return false;
+	return function ? function(this, creature, var.text) : false;
 }
 
 bool InstantSpell::executeCastSpell(Creature* creature, const LuaVariant& var)
@@ -1378,7 +1376,7 @@ bool InstantSpell::SummonMonster(const InstantSpell* spell, Creature* creature, 
 	ReturnValue ret = g_game.placeSummon(creature, param);
 	if(ret == RET_NOERROR)
 	{
-		spell->postCastSpell(player, (uint32_t)manaCost, (uint32_t)spell->getSoulCost());
+		spell->postSpell(player, (uint32_t)manaCost, (uint32_t)spell->getSoulCost());
 		g_game.addMagicEffect(player->getPosition(), MAGIC_EFFECT_WRAPS_BLUE);
 	}
 	else
@@ -1484,7 +1482,6 @@ bool InstantSpell::canCast(const Player* player) const
 
 	return player->hasLearnedInstantSpell(getName());
 }
-
 
 ConjureSpell::ConjureSpell(LuaInterface* _interface):
 	InstantSpell(_interface)
@@ -1599,25 +1596,25 @@ bool ConjureSpell::ConjureItem(const ConjureSpell* spell, Creature* creature, co
 			resLeft = internalConjureItem(player, spell->getConjureId(), spell->getConjureCount(),
 				true, spell->getReagentId(), SLOT_LEFT);
 			if(resLeft == RET_NOERROR)
-				spell->postCastSpell(player, false);
+				spell->postSpell(player, false);
 		}
 
 		ReturnValue resRight = internalConjureItem(player, spell->getConjureId(), spell->getConjureCount(),
 			true, spell->getReagentId(), SLOT_RIGHT, true);
 		if(resRight == RET_NOERROR)
 		{
-			if(resLeft == RET_NOERROR && !spell->playerSpellCheck(player))
+			if(resLeft == RET_NOERROR && !spell->checkSpell(player))
 				return false;
 
 			resRight = internalConjureItem(player, spell->getConjureId(), spell->getConjureCount(),
 				true, spell->getReagentId(), SLOT_RIGHT);
 			if(resRight == RET_NOERROR)
-				spell->postCastSpell(player, false);
+				spell->postSpell(player, false);
 		}
 
 		if(resLeft == RET_NOERROR || resRight == RET_NOERROR)
 		{
-			spell->postCastSpell(player, true, false);
+			spell->postSpell(player, true, false);
 			g_game.addMagicEffect(player->getPosition(), MAGIC_EFFECT_WRAPS_RED);
 			return true;
 		}
@@ -1629,7 +1626,7 @@ bool ConjureSpell::ConjureItem(const ConjureSpell* spell, Creature* creature, co
 	}
 	else if(internalConjureItem(player, spell->getConjureId(), spell->getConjureCount()) == RET_NOERROR)
 	{
-		spell->postCastSpell(player);
+		spell->postSpell(player);
 		g_game.addMagicEffect(player->getPosition(), MAGIC_EFFECT_WRAPS_RED);
 		return true;
 	}
@@ -1663,7 +1660,7 @@ bool ConjureSpell::ConjureFood(const ConjureSpell* spell, Creature* creature, co
 		if(random_range(0, 100) > 50)
 			internalConjureItem(player, foodType[random_range(0, (sizeof(foodType) / sizeof(uint32_t)) - 1)], 1);
 
-		spell->postCastSpell(player);
+		spell->postSpell(player);
 		g_game.addMagicEffect(player->getPosition(), MAGIC_EFFECT_WRAPS_GREEN);
 		return true;
 	}
@@ -1671,23 +1668,18 @@ bool ConjureSpell::ConjureFood(const ConjureSpell* spell, Creature* creature, co
 	return false;
 }
 
-bool ConjureSpell::playerCastInstant(Player* player, const std::string& param)
+bool ConjureSpell::castInstant(Player* player, const std::string& param)
 {
-	if(!playerSpellCheck(player))
+	if(!checkSpell(player))
 		return false;
 
-	if(isScripted())
-	{
-		LuaVariant var;
-		var.type = VARIANT_STRING;
-		var.text = param;
-		return executeCastSpell(player, var);
-	}
+	if(!isScripted())
+		return function ? function(this, player, param) : false;
 
-	if(function)
-		return function(this, player, param);
-
-	return false;
+	LuaVariant var;
+	var.type = VARIANT_STRING;
+	var.text = param;
+	return executeCastSpell(player, var);
 }
 
 RuneSpell::RuneSpell(LuaInterface* _interface):
@@ -1839,7 +1831,7 @@ bool RuneSpell::Convince(const RuneSpell* spell, Creature* creature, Item* item,
 		return false;
 	}
 
-	spell->postCastSpell(player, (uint32_t)manaCost, (uint32_t)spell->getSoulCost());
+	spell->postSpell(player, (uint32_t)manaCost, (uint32_t)spell->getSoulCost());
 	g_game.addMagicEffect(player->getPosition(), MAGIC_EFFECT_WRAPS_RED);
 	return true;
 }
@@ -1868,7 +1860,7 @@ ReturnValue RuneSpell::canExecuteAction(const Player* player, const Position& to
 bool RuneSpell::executeUse(Player* player, Item* item, const PositionEx& posFrom,
 	const PositionEx& posTo, bool extendedUse, uint32_t creatureId)
 {
-	if(!playerRuneSpellCheck(player, posTo))
+	if(!checkRuneSpell(player, posTo))
 		return false;
 
 	bool result = false;
@@ -1893,7 +1885,7 @@ bool RuneSpell::executeUse(Player* player, Item* item, const PositionEx& posFrom
 
 	if(result)
 	{
-		Spell::postCastSpell(player);
+		Spell::postSpell(player);
 		if(hasCharges && item && g_config.getBool(ConfigManager::REMOVE_RUNE_CHARGES))
 			g_game.transformItem(item, item->getID(), std::max((int32_t)0, ((int32_t)item->getCharges()) - 1));
 	}
@@ -1925,10 +1917,7 @@ bool RuneSpell::castSpell(Creature* creature, Creature* target)
 
 bool RuneSpell::internalCastSpell(Creature* creature, const LuaVariant& var)
 {
-	if(isScripted())
-		return executeCastSpell(creature, var);
-
-	return false;
+	return isScripted() ? executeCastSpell(creature, var) : false;
 }
 
 bool RuneSpell::executeCastSpell(Creature* creature, const LuaVariant& var)

@@ -118,8 +118,8 @@ class Spell : public BaseSpell
 		bool configureSpell(xmlNodePtr xmlspell);
 		const std::string& getName() const {return name;}
 
-		void postCastSpell(Player* player, bool isFinished = true, bool payCost = true) const;
-		void postCastSpell(Player* player, uint32_t manaCost, uint32_t soulCost) const;
+		void postSpell(Player* player, bool isFinished = true, bool payCost = true) const;
+		void postSpell(Player* player, uint32_t manaCost, uint32_t soulCost) const;
 
 		int32_t getManaCost(const Player* player) const;
 		int32_t getSoulCost() const {return soul;}
@@ -139,10 +139,10 @@ class Spell : public BaseSpell
 		static ReturnValue CreateIllusion(Creature* creature, uint32_t itemId, int32_t time);
 
 	protected:
-		bool playerSpellCheck(Player* player) const;
-		bool playerInstantSpellCheck(Player* player, Creature* creature);
-		bool playerInstantSpellCheck(Player* player, const Position& toPos);
-		bool playerRuneSpellCheck(Player* player, const Position& toPos);
+		bool checkSpell(Player* player) const;
+		bool checkInstantSpell(Player* player, Creature* creature);
+		bool checkInstantSpell(Player* player, const Position& toPos);
+		bool checkRuneSpell(Player* player, const Position& toPos);
 
 		int32_t level;
 		int32_t magLevel;
@@ -180,7 +180,7 @@ class InstantSpell : public TalkAction, public Spell
 		virtual bool configureEvent(xmlNodePtr p);
 		virtual bool loadFunction(const std::string& functionName);
 
-		virtual bool playerCastInstant(Player* player, const std::string& param);
+		virtual bool castInstant(Player* player, const std::string& param);
 
 		virtual bool castSpell(Creature* creature);
 		virtual bool castSpell(Creature* creature, Creature* target);
@@ -222,7 +222,7 @@ class ConjureSpell : public InstantSpell
 		virtual bool configureEvent(xmlNodePtr p);
 		virtual bool loadFunction(const std::string& functionName);
 
-		virtual bool playerCastInstant(Player* player, const std::string& param);
+		virtual bool castInstant(Player* player, const std::string& param);
 
 		virtual bool castSpell(Creature* creature) {return false;}
 		virtual bool castSpell(Creature* creature, Creature* target) {return false;}
