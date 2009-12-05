@@ -65,7 +65,7 @@ class IOGuild
 		bool updateOwnerId(uint32_t guild, uint32_t guid);
 #ifdef __GAYWAR__
 
-		bool war(std::pair<uint32_t, WarInfo_t> enemy);
+		bool war(Player* player, Player* target, std::pair<uint32_t, WarInfo_t> enemy);
 #endif
 
 	private:

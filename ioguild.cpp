@@ -22,7 +22,9 @@
 
 #include "configmanager.h"
 #include "game.h"
+#include "chat.h"
 
+extern Chat g_chat;
 extern Game g_game;
 extern ConfigManager g_config;
 
@@ -402,8 +404,24 @@ std::string IOGuild::getMotd(uint32_t guild)
 }
 #ifdef __GAYWAR__
 
-bool IOGuild::war(std::pair<uint32_t, WarInfo_t> enemy)
+bool IOGuild::war(Player* player, Player* target, std::pair<uint32_t, WarInfo_t> enemy)
 {
+	ChatChannel* channel = NULL;
+	std::stringstream s;
+	if((channel = g_chat.getChannel(player, CHANNEL_GUILD)))
+	{
+		s << player->getName() << " just killed " << target->getName() << ".";
+		channel->talk("", SPEAK_CHANNEL_RA, s.str());
+	}
+
+	s.str("");
+	if((channel = g_chat.getChannel(target, CHANNEL_GUILD)))
+	{
+		s << target->getName() << " just died by " << player->getName() << ".";
+		channel->talk("", SPEAK_CHANNEL_RA, s.str());
+	}
+
+	s.str("");
 	Database* db = Database::getInstance();
 	DBResult* result;
 
@@ -425,11 +443,11 @@ bool IOGuild::war(std::pair<uint32_t, WarInfo_t> enemy)
 	frags[WARINFO_ENEMY] = result->getDataInt("enemy_kills");
 
 	frags[WARINFO_LIMIT] = result->getDataInt("frags");
-	uint32_t payment = result->getDataInt("payment");
+	uint32_t payment = result->getDataInt("payment"), end = result->getDataInt("end");
 	result->free();
 
 	frags[enemy.second]++;
-	if(frags[WARINFO_GUILD] < frags[WARINFO_LIMIT] && frags[WARINFO_ENEMY] < frags[WARINFO_LIMIT])
+	if(frags[WARINFO_GUILD] < frags[WARINFO_LIMIT] && frags[WARINFO_ENEMY] < frags[WARINFO_LIMIT] && end > time(NULL))
 	{
 		query.str("");
 		query << "UPDATE `guild_wars` SET `guild_kills` = " << frags[WARINFO_GUILD] << ", `enemy_kills` = " << frags[WARINFO_ENEMY] << " WHERE `id` = " << enemy.first;
@@ -456,15 +474,16 @@ bool IOGuild::war(std::pair<uint32_t, WarInfo_t> enemy)
 		if(it->second->isRemoved())
 			continue;
 
+		g_game.updateCreatureEmblem(it->second);
 		if(it->second->getGuildId() == ids[WARINFO_GUILD])
 		{
 			it->second->removeEnemy(ids[WARINFO_ENEMY]);
-			g_game.updateCreatureEmblem(it->second);
+			g_game.updateCreatureSkull(it->second);
 		}
 		else if(it->second->getGuildId() == ids[WARINFO_ENEMY])
 		{
 			it->second->removeEnemy(ids[WARINFO_GUILD]);
-			g_game.updateCreatureEmblem(it->second);
+			g_game.updateCreatureSkull(it->second);
 		}
 	}
 

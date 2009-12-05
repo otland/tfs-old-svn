@@ -3690,7 +3690,7 @@ bool Player::onKilledCreature(Creature* target, uint32_t& flags)
 
 	std::pair<uint32_t, WarInfo_t> enemy;
 	if(targetPlayer->getEnemy(this, enemy) && (!hasBitSet((uint32_t)KILLFLAG_LASTHIT,
-		flags) || IOGuild::getInstance()->war(enemy)))
+		flags) || IOGuild::getInstance()->war(this, targetPlayer, enemy)))
 		flags |= (uint32_t)KILLFLAG_GUILDWAR;
 #endif
 
