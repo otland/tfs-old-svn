@@ -447,7 +447,7 @@ bool IOGuild::war(Player* player, Player* target, std::pair<uint32_t, WarInfo_t>
 	result->free();
 
 	frags[enemy.second]++;
-	if(frags[WARINFO_GUILD] < frags[WARINFO_LIMIT] && frags[WARINFO_ENEMY] < frags[WARINFO_LIMIT] && end > time(NULL))
+	if(frags[WARINFO_GUILD] < frags[WARINFO_LIMIT] && frags[WARINFO_ENEMY] < frags[WARINFO_LIMIT] && (!end || end > time(NULL)))
 	{
 		query.str("");
 		query << "UPDATE `guild_wars` SET `guild_kills` = " << frags[WARINFO_GUILD] << ", `enemy_kills` = " << frags[WARINFO_ENEMY] << " WHERE `id` = " << enemy.first;
