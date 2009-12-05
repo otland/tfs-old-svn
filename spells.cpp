@@ -96,7 +96,7 @@ ReturnValue Spells::onPlayerSay(Player* player, const std::string& words)
 	}
 
 	return g_game.internalCreatureSay(player, type, ret, player->isGhost(),
-		(*pos)) ? RET_NOERROR : RET_NOTPOSSIBLE;
+		NULL, &pos) ? RET_NOERROR : RET_NOTPOSSIBLE;
 }
 
 void Spells::clear()
