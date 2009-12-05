@@ -3642,30 +3642,26 @@ void Player::onTargetCreatureGainHealth(Creature* target, int32_t points)
 
 GuildEmblems_t Player::getGuildEmblem(const Creature* creature) const
 {
-	GuildEmblems_t ret = Creature::getGuildEmblem(creature);
-	if(warMap.empty())
-		return ret;
-
 	const Player* player = creature->getPlayer();
-	if(!player)
-		return ret;
+	if(!player || !player->hasEnemy())
+		return Creature::getGuildEmblem(creature);
 
 	if(player->isEnemy(this))
 		return EMBLEM_ENEMY;
 
-	return player->getGuildId() == guildId ? EMBLEM_ALLY : EMBLEM_NONE;
+	return player->getGuildId() == guildId ? EMBLEM_ALLY : EMBLEM_AFFECTED;
 }
 
-bool Player::getEnemy(uint32_t guild, std::pair<uint32_t, WarInfo_t>& war) const
+bool Player::getEnemy(const Player* enemy, std::pair<uint32_t, WarInfo_t>& data) const
 {
-	if(!guildId || !guild)
+	if(!guildId || !enemy->getGuildId())
 		return false;
 
-	WarMap::const_iterator it = warMap.find(guild);
+	WarMap::const_iterator it = warMap.find(enemy->getGuildId());
 	if(it == warMap.end())
 		return false;
 
-	war = it->second;
+	data = it->second;
 	return true;
 }
 #endif
@@ -3693,7 +3689,7 @@ bool Player::onKilledCreature(Creature* target, uint32_t& flags)
 #ifdef __GAYWAR__
 
 	std::pair<uint32_t, WarInfo_t> enemy;
-	if(targetPlayer->getEnemy(guildId, enemy) && (!hasBitSet((uint32_t)KILLFLAG_LASTHIT,
+	if(targetPlayer->getEnemy(this, enemy) && (!hasBitSet((uint32_t)KILLFLAG_LASTHIT,
 		flags) || IOGuild::getInstance()->war(enemy)))
 		flags |= (uint32_t)KILLFLAG_GUILDWAR;
 #endif
@@ -4792,11 +4788,11 @@ void Player::setGroupId(int32_t newId)
 
 void Player::setGroup(Group* newGroup)
 {
-	if(newGroup)
-	{
-		group = newGroup;
-		groupId = group->getId();
-	}
+	if(!newGroup)
+		return;
+
+	group = newGroup;
+	groupId = group->getId();
 }
 
 PartyShields_t Player::getPartyShield(const Creature* creature) const
@@ -4809,34 +4805,30 @@ PartyShields_t Player::getPartyShield(const Creature* creature) const
 	{
 		if(party->getLeader() == player)
 		{
-			if(party->isSharedExperienceActive())
-			{
-				if(party->isSharedExperienceEnabled())
-					return SHIELD_YELLOW_SHAREDEXP;
+			if(!party->isSharedExperienceActive())
+				return SHIELD_YELLOW;
 
-				if(party->canUseSharedExperience(player))
-					return SHIELD_YELLOW_NOSHAREDEXP;
+			if(party->isSharedExperienceEnabled())
+				return SHIELD_YELLOW_SHAREDEXP;
 
-				return SHIELD_YELLOW_NOSHAREDEXP_BLINK;
-			}
+			if(party->canUseSharedExperience(player))
+				return SHIELD_YELLOW_NOSHAREDEXP;
 
-			return SHIELD_YELLOW;
+			return SHIELD_YELLOW_NOSHAREDEXP_BLINK;
 		}
 
 		if(party->isPlayerMember(player))
 		{
-			if(party->isSharedExperienceActive())
-			{
-				if(party->isSharedExperienceEnabled())
-					return SHIELD_BLUE_SHAREDEXP;
+			if(!party->isSharedExperienceActive())
+				return SHIELD_BLUE;
 
-				if(party->canUseSharedExperience(player))
-					return SHIELD_BLUE_NOSHAREDEXP;
+			if(party->isSharedExperienceEnabled())
+				return SHIELD_BLUE_SHAREDEXP;
 
-				return SHIELD_BLUE_NOSHAREDEXP_BLINK;
-			}
+			if(party->canUseSharedExperience(player))
+				return SHIELD_BLUE_NOSHAREDEXP;
 
-			return SHIELD_BLUE;
+			return SHIELD_BLUE_NOSHAREDEXP_BLINK;
 		}
 
 		if(isInviting(player))
@@ -4862,7 +4854,10 @@ bool Player::isPartner(const Player* player) const
 	if(!player || !getParty() || !player->getParty())
 		return false;
 
-	return (getParty() == player->getParty());
+	if(!warMap.empty() && player->getGuildId() == guildId)
+		return true;
+
+	return player->getParty() == party;
 }
 
 void Player::sendPlayerIcons(Player* player)

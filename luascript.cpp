@@ -9913,11 +9913,12 @@ int32_t LuaInterface::luaDoGuildAddEnemy(lua_State* L)
 	uint32_t war = popNumber(L), enemy = popNumber(L), guild = popNumber(L), count = 0;
 	for(AutoList<Player>::iterator it = Player::autoList.begin(); it != Player::autoList.end(); ++it)
 	{
+		g_game.updateCreatureEmblem(it->second);
 		if(it->second->isRemoved() || it->second->getGuildId() != guild)
 			continue;
 
 		it->second->addEnemy(war, mode, enemy);
-		g_game.updateCreatureEmblem(it->second);
+		g_game.updateCreatureSkull(it->second);
 		++count;
 	}
 
@@ -9931,11 +9932,12 @@ int32_t LuaInterface::luaDoGuildRemoveEnemy(lua_State* L)
 	uint32_t enemy = popNumber(L), guild = popNumber(L), count = 0;
 	for(AutoList<Player>::iterator it = Player::autoList.begin(); it != Player::autoList.end(); ++it)
 	{
+		g_game.updateCreatureEmblem(it->second);
 		if(it->second->isRemoved() || it->second->getGuildId() != guild)
 			continue;
 
 		it->second->removeEnemy(enemy);
-		g_game.updateCreatureEmblem(it->second);
+		g_game.updateCreatureSkull(it->second);
 		++count;
 	}
 

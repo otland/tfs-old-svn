@@ -278,9 +278,10 @@ class Player : public Creature, public Cylinder
 		int32_t getPremiumDays() const {return premiumDays;}
 #ifdef __GAYWAR__
 
-		bool getEnemy(uint32_t guild, std::pair<uint32_t, WarInfo_t>& war) const;
+		bool getEnemy(const Player* enemy, std::pair<uint32_t, WarInfo_t>& war) const;
 		bool isEnemy(const Player* player) const {return guildId && player && !player->isRemoved()
 			&& player->getGuildId() && warMap.find(player->getGuildId()) != warMap.end();}
+		bool hasEnemy() const {return !warMap.empty();}
 
 		void addEnemy(uint32_t war, WarInfo_t mode, uint32_t guild)
 			{warMap[guild] = std::make_pair(war, mode);}
