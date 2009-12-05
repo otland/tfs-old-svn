@@ -413,9 +413,9 @@ enum GuildEmblems_t
 {
 	EMBLEM_NONE = 0,
 	// FIXME: not sure...
-	EMBLEM_ALLY,
+	EMBLEM_AFFECTED,
 	EMBLEM_ENEMY,
-	EMBLEM_AFFECTED
+	EMBLEM_ALLY
 };
 
 enum item_t
