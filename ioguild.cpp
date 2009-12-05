@@ -487,7 +487,6 @@ bool IOGuild::war(Player* player, Player* target, std::pair<uint32_t, WarInfo_t>
 		}
 	}
 
-	std::stringstream s;
 	s << names[enemy.second] << " has just won the war against " << names[enemy.second == WARINFO_GUILD] << ".";
 	return g_game.broadcastMessage(s.str().c_str(), MSG_EVENT_ADVANCE);
 }
