@@ -12,12 +12,13 @@ string.explode = function (str, sep, limit)
 		return {}
 	end
 
-	local pos, tmp, t = 1, "", {}
+	local i, pos, tmp, t = 0, 1, "", {}
 	for s, e in function() return string.find(str, sep, pos) end do
 		tmp = str:sub(pos, s - 1):trim()
 		table.insert(t, tmp)
-
 		pos = e + 1
+
+		i = i + 1
 		if(limit ~= nil and i == limit) then
 			break
 		end
