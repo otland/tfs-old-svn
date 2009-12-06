@@ -102,7 +102,7 @@ CREATE TABLE "players" (
 	"online" TINYINT NOT NULL DEFAULT 0,
 	"marriage" INTEGER NOT NULL DEFAULT 0,
 	"promotion" INTEGER NOT NULL DEFAULT 0,
-	"deleted" BOOLEAN NOT NULL DEFAULT 0,
+	"deleted" INTEGER NOT NULL DEFAULT 0,
 	"description" VARCHAR(255) NOT NULL DEFAULT '',
 	UNIQUE ("name", "deleted"),
 	FOREIGN KEY ("account_id") REFERENCES "accounts" ("id")

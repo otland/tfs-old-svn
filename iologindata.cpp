@@ -1525,7 +1525,7 @@ DeleteCharacter_t IOLoginData::deleteCharacter(uint32_t accountId, const std::st
 		return DELETE_LEADER;
 
 	query.str("");
-	query << "UPDATE `players` SET `deleted` = 1 WHERE `id` = " << id << db->getUpdateLimiter();
+	query << "UPDATE `players` SET `deleted` = " << time(NULL) << " WHERE `id` = " << id << db->getUpdateLimiter();
 	if(!db->executeQuery(query.str()))
 		return DELETE_INTERNAL;
 

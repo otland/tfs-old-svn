@@ -336,9 +336,9 @@ uint32_t DatabaseManager::updateDatabase()
 			}
 
 			if(db->getDatabaseEngine() == DATABASE_ENGINE_SQLITE)
-				db->executeQuery("ALTER TABLE `players` ADD `deleted` BOOLEAN NOT NULL DEFAULT 0;");
+				db->executeQuery("ALTER TABLE `players` ADD `deleted` INTEGER NOT NULL DEFAULT 0;");
 			else
-				db->executeQuery("ALTER TABLE `players` ADD `deleted` TINYINT(1) NOT NULL DEFAULT 0;");
+				db->executeQuery("ALTER TABLE `players` ADD `deleted` INT NOT NULL DEFAULT 0;");
 
 			if(db->getDatabaseEngine() == DATABASE_ENGINE_MYSQL)
 				db->executeQuery("ALTER TABLE `player_items` CHANGE `attributes` `attributes` BLOB NOT NULL;");
