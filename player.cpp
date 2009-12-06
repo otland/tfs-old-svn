@@ -853,9 +853,10 @@ bool Player::canWalkthrough(const Creature* creature) const
 	if(!player)
 		return creature->isWalkable();
 
+	GuildEmblems_t tmp = getGuildEmblem(player);
 	if((hasCustomFlag(PlayerCustomFlag_CanWalkthrough) || player->isWalkable() || (g_game.getWorldType() == WORLDTYPE_OPTIONAL
-		&& getGuildEmblem(player) == EMBLEM_NONE && Item::items[player->getTile()->ground->getID()].walkStack)) &&
-		(!player->hasCustomFlag(PlayerCustomFlag_GamemasterPrivileges) || player->getAccess() <= getAccess()))
+		&& (tmp == EMBLEM_NONE || tmp == EMBLEM_AFFECTED) && Item::items[player->getTile()->ground->getID()].walkStack))
+		&& (!player->hasCustomFlag(PlayerCustomFlag_GamemasterPrivileges) || player->getAccess() <= getAccess()))
 		return true;
 
 	return (player->isGhost() && getGhostAccess() < player->getGhostAccess())
