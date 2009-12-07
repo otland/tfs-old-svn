@@ -22,17 +22,17 @@
 [ BUGS
 	Ghost causing debugs with creature stacks as of 8.53
 		Assigned to: Elf
-
-	8.57 or 8.6? has or will have an extra byte regarding stacks
-		Assigned to: Elf
 ]
 
 [ TASKS
-	Finish documentation as its incomplete
-		Assigned to: KaczooH
+	8.57 or 8.6? has or will have an extra byte regarding stacks
+		Assigned to: Elf
 
 	Patch IndexedTile changes from revscriptsys2
 		Assigned to: Elf
+
+	Finish documentation as its incomplete
+		Assigned to: KaczooH
 
 	Deprecate several hardcoded systems (guild management, etc) and rescript them in Lua
 		Assigned to: ?
