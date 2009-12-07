@@ -277,7 +277,7 @@ ReturnValue Combat::canDoCombat(const Creature* attacker, const Creature* target
 			checkZones = true;
 			if((g_game.getWorldType() == WORLDTYPE_OPTIONAL && !Combat::isInPvpZone(attacker, target)
 #ifdef __WAR_SYSTEM__
-				&& !attackerPlayer->isEnemy(targetPlayer)
+				&& !attackerPlayer->isEnemy(targetPlayer, true)
 #endif
 				) || isProtected(const_cast<Player*>(attackerPlayer), const_cast<Player*>(targetPlayer))
 				|| (g_config.getBool(ConfigManager::CANNOT_ATTACK_SAME_LOOKFEET)
@@ -302,7 +302,7 @@ ReturnValue Combat::canDoCombat(const Creature* attacker, const Creature* target
 				checkZones = true;
 				if(g_game.getWorldType() == WORLDTYPE_OPTIONAL && !Combat::isInPvpZone(attacker, target)
 #ifdef __WAR_SYSTEM__
-					&& !attackerPlayer->isEnemy(target->getPlayerMaster())
+					&& !attackerPlayer->isEnemy(target->getPlayerMaster(), true)
 #endif
 				)
 					return RET_YOUMAYNOTATTACKTHISCREATURE;

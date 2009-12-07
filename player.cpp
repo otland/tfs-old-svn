@@ -1392,7 +1392,7 @@ void Player::onAttackedCreatureChangeZone(ZoneType_t zone)
 	}
 	else if(zone == ZONE_OPEN && g_game.getWorldType() == WORLDTYPE_OPTIONAL && attackedCreature->getPlayer()
 #ifdef __WAR_SYSTEM__
-		&& !attackedCreature->getPlayer()->isEnemy(this)
+		&& !attackedCreature->getPlayer()->isEnemy(this, true)
 #endif
 		)
 	{
@@ -3647,7 +3647,7 @@ GuildEmblems_t Player::getGuildEmblem(const Creature* creature) const
 	if(!player || !player->hasEnemy())
 		return Creature::getGuildEmblem(creature);
 
-	if(player->isEnemy(this))
+	if(player->isEnemy(this, false))
 		return EMBLEM_ENEMY;
 
 	return player->getGuildId() == guildId ? EMBLEM_ALLY : EMBLEM_AFFECTED;
@@ -3655,10 +3655,14 @@ GuildEmblems_t Player::getGuildEmblem(const Creature* creature) const
 
 bool Player::getEnemy(const Player* enemy, std::pair<uint32_t, WarInfo_t>& data) const
 {
-	if(!guildId || !enemy->getGuildId())
+	if(!guildId || !enemy || enemy->isRemoved())
 		return false;
 
-	WarMap::const_iterator it = warMap.find(enemy->getGuildId());
+	uint32_t guild = enemy->getGuildId();
+	if(!guild)
+		return false;
+
+	WarMap::const_iterator it = warMap.find(guild);
 	if(it == warMap.end())
 		return false;
 
@@ -3666,15 +3670,17 @@ bool Player::getEnemy(const Player* enemy, std::pair<uint32_t, WarInfo_t>& data)
 	return true;
 }
 
-bool Player::isEnemy(const Player* enemy) const
+bool Player::isEnemy(const Player* enemy, bool allies) const
 {
-	if(!guildId || !enemy || enemy->isRemoved() || !enemy->getGuildId())
+	if(!guildId || !enemy || enemy->isRemoved())
 		return false;
 
-	if(g_config.getBool(ConfigManager::OPTIONAL_WAR_ATTACK_ALLY) && enemy->getGuildId() == guildId)
-		return true;
+	uint32_t guild = enemy->getGuildId();
+	if(!guild)
+		return false;
 
-	return warMap.find(enemy->getGuildId()) != warMap.end();
+	return (allies && g_config.getBool(ConfigManager::OPTIONAL_WAR_ATTACK_ALLY)
+		&& guildId == guild) || warMap.find(guild) != warMap.end();
 }
 #endif
 
