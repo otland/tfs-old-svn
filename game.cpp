@@ -1601,8 +1601,11 @@ ReturnValue Game::internalAddItem(Creature* actor, Cylinder* toCylinder, Item* i
 		else
 		{
 			moveItem = NULL;
-			item->onRemoved();
-			freeThing(item);
+			if(item->getParent() != VirtualCylinder::virtualCylinder)
+			{
+				item->onRemoved();
+				freeThing(item);
+			}
 		}
 	}
 
