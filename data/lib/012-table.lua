@@ -8,7 +8,7 @@ table.find = function (table, value)
 	return nil
 end
 
-table.isStrIn = function (txt, str)
+table.contains = function (txt, str)
 	for i, v in pairs(str) do
 		if(txt:find(v) and not txt:find('(%w+)' .. v) and not txt:find(v .. '(%w+)')) then
 			return true
@@ -17,8 +17,9 @@ table.isStrIn = function (txt, str)
 
 	return false
 end
+table.isStrIn = table.contains
 
-table.countElements = function (table, item)
+table.count = function (table, item)
 	local count = 0
 	for i, n in pairs(table) do
 		if(item == n) then
@@ -28,6 +29,7 @@ table.countElements = function (table, item)
 
 	return count
 end
+table.countElements = table.count
 
 table.getCombinations = function (table, num)
 	local a, number, select, newlist = {}, #table, num, {}
