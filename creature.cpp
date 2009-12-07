@@ -1471,19 +1471,12 @@ bool Creature::hasCondition(ConditionType_t type, int32_t subId/* = 0*/, bool ch
 	if(isSuppress(type))
 		return false;
 
-	ConditionList tmpList;
 	for(ConditionList::const_iterator it = conditions.begin(); it != conditions.end(); ++it)
 	{
-		if((*it)->getType() == type && (subId == -1 || (*it)->getSubId() == (uint32_t)subId))
-			tmpList.push_back(*it);
-	}
+		if((*it)->getType() != type || (subId != -1 && (*it)->getSubId() != (uint32_t)subId))
+			continue;
 
-	if(!checkTime)
-		return tmpList.size();
-
-	for(ConditionList::const_iterator it = tmpList.begin(); it != tmpList.end(); ++it)
-	{
-		if(!(*it)->getEndTime() || (*it)->getEndTime() >= OTSYS_TIME())
+		if(!checkTime || !(*it)->getEndTime() || (*it)->getEndTime() >= OTSYS_TIME())
 			return true;
 	}
 
