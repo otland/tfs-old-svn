@@ -127,7 +127,7 @@ typedef std::map<uint32_t, uint32_t> MuteCountMap;
 typedef std::list<std::string> LearnedInstantSpellList;
 typedef std::list<uint32_t> InvitedToGuildsList;
 typedef std::list<Party*> PartyList;
-#ifdef __GAYWAR__
+#ifdef __WAR_SYSTEM__
 typedef std::map<uint32_t, std::pair<uint32_t, WarInfo_t> > WarMap;
 #endif
 
@@ -276,11 +276,10 @@ class Player : public Creature, public Cylinder
 
 		bool isPremium() const;
 		int32_t getPremiumDays() const {return premiumDays;}
-#ifdef __GAYWAR__
+#ifdef __WAR_SYSTEM__
 
 		bool getEnemy(const Player* enemy, std::pair<uint32_t, WarInfo_t>& war) const;
-		bool isEnemy(const Player* player) const {return guildId && player && !player->isRemoved()
-			&& player->getGuildId() && warMap.find(player->getGuildId()) != warMap.end();}
+		bool isEnemy(const Player* player) const;
 		bool hasEnemy() const {return !warMap.empty();}
 
 		void addEnemy(uint32_t war, WarInfo_t mode, uint32_t guild)
@@ -494,7 +493,7 @@ class Player : public Creature, public Cylinder
 
 		Skulls_t getSkullType(const Creature* creature) const;
 		PartyShields_t getPartyShield(const Creature* creature) const;
-#ifdef __GAYWAR__
+#ifdef __WAR_SYSTEM__
 		GuildEmblems_t getGuildEmblem(const Creature* creature) const;
 #endif
 
@@ -909,7 +908,7 @@ class Player : public Creature, public Cylinder
 		PartyList invitePartyList;
 		OutfitMap outfits;
 		LearnedInstantSpellList learnedInstantSpellList;
-#ifdef __GAYWAR__
+#ifdef __WAR_SYSTEM__
 		WarMap warMap;
 #endif
 

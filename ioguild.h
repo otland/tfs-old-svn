@@ -63,7 +63,7 @@ class IOGuild
 
 		bool swapGuildIdToOwner(uint32_t& value);
 		bool updateOwnerId(uint32_t guild, uint32_t guid);
-#ifdef __GAYWAR__
+#ifdef __WAR_SYSTEM__
 
 		bool war(Player* player, Player* target, std::pair<uint32_t, WarInfo_t> enemy);
 #endif

@@ -2345,7 +2345,7 @@ void LuaInterface::registerFunctions()
 
 	//doRefreshMap()
 	lua_register(m_luaState, "doRefreshMap", LuaInterface::luaDoRefreshMap);
-#ifdef __GAYWAR__
+#ifdef __WAR_SYSTEM__
 
 	//doGuildAddEnemy(guild, enemy, war, mode)
 	lua_register(m_luaState, "doGuildAddEnemy", LuaInterface::luaDoGuildAddEnemy);
@@ -9905,7 +9905,7 @@ int32_t LuaInterface::luaGetConfigFile(lua_State* L)
 	lua_pushstring(L, g_config.getString(ConfigManager::CONFIG_FILE).c_str());
 	return 1;
 }
-#ifdef __GAYWAR__
+#ifdef __WAR_SYSTEM__
 
 int32_t LuaInterface::luaDoGuildAddEnemy(lua_State* L)
 {

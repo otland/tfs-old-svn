@@ -276,7 +276,7 @@ ReturnValue Combat::canDoCombat(const Creature* attacker, const Creature* target
 		{
 			checkZones = true;
 			if((g_game.getWorldType() == WORLDTYPE_OPTIONAL && !Combat::isInPvpZone(attacker, target)
-#ifdef __GAYWAR__
+#ifdef __WAR_SYSTEM__
 				&& !attackerPlayer->isEnemy(targetPlayer)
 #endif
 				) || isProtected(const_cast<Player*>(attackerPlayer), const_cast<Player*>(targetPlayer))
@@ -301,7 +301,7 @@ ReturnValue Combat::canDoCombat(const Creature* attacker, const Creature* target
 			{
 				checkZones = true;
 				if(g_game.getWorldType() == WORLDTYPE_OPTIONAL && !Combat::isInPvpZone(attacker, target)
-#ifdef __GAYWAR__
+#ifdef __WAR_SYSTEM__
 					&& !attackerPlayer->isEnemy(target->getPlayerMaster())
 #endif
 				)
@@ -1380,7 +1380,7 @@ bool MagicField::isBlocking(const Creature* creature) const
 
 	if(!creature || !creature->getPlayer())
 		return true;
-#ifdef __GAYWAR__
+#ifdef __WAR_SYSTEM__
 
 	uint32_t ownerId = getOwner();
 	if(!ownerId)

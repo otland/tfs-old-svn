@@ -269,6 +269,9 @@ class ConfigManager
 			ADMIN_LOGS,
 			ADMIN_LOCALHOST_ONLY,
 			ADMIN_REQUIRE_LOGIN,
+#ifdef __WAR_SYSTEM__
+			OPTIONAL_WAR_ATTAK_ALLY,
+#endif
 			LAST_BOOL_CONFIG /* this must be the last one */
 		};
 

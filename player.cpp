@@ -1391,7 +1391,7 @@ void Player::onAttackedCreatureChangeZone(ZoneType_t zone)
 		onAttackedCreatureDisappear(false);
 	}
 	else if(zone == ZONE_OPEN && g_game.getWorldType() == WORLDTYPE_OPTIONAL && attackedCreature->getPlayer()
-#ifdef __GAYWAR__
+#ifdef __WAR_SYSTEM__
 		&& !attackedCreature->getPlayer()->isEnemy(this)
 #endif
 		)
@@ -3639,7 +3639,7 @@ void Player::onTargetCreatureGainHealth(Creature* target, int32_t points)
 			getParty()->addPlayerHealedMember(this, points);
 	}
 }
-#ifdef __GAYWAR__
+#ifdef __WAR_SYSTEM__
 
 GuildEmblems_t Player::getGuildEmblem(const Creature* creature) const
 {
@@ -3665,6 +3665,17 @@ bool Player::getEnemy(const Player* enemy, std::pair<uint32_t, WarInfo_t>& data)
 	data = it->second;
 	return true;
 }
+
+bool Player::isEnemy(const Player* enemy) const
+{
+	if(!guildId || !enemy || enemy->isRemoved() || !enemy->getGuildId())
+		return false;
+
+	if(g_config.getBool(ConfigManager::OPTIONAL_WAR_ATTACK_ALLY) && enemy->getGuildId() == guildId)
+		return true;
+
+	return warMap.find(player->getGuildId()) != warMap.end();
+}
 #endif
 
 bool Player::onKilledCreature(Creature* target, uint32_t& flags)
@@ -3687,7 +3698,7 @@ bool Player::onKilledCreature(Creature* target, uint32_t& flags)
 	Player* targetPlayer = target->getPlayer();
 	if(!targetPlayer || Combat::isInPvpZone(this, targetPlayer) || isPartner(targetPlayer))
 		return true;
-#ifdef __GAYWAR__
+#ifdef __WAR_SYSTEM__
 
 	std::pair<uint32_t, WarInfo_t> enemy;
 	if(targetPlayer->getEnemy(this, enemy) && (!hasBitSet((uint32_t)KILLFLAG_LASTHIT,

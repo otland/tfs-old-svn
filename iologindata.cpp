@@ -533,7 +533,7 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool preLo
 			player->rankName = result->getDataString("rank");
 			player->guildNick = nick;
 			result->free();
-#ifdef __GAYWAR__
+#ifdef __WAR_SYSTEM__
 
 			query.str("");
 			query << "SELECT `id`, `guild_id`, `enemy_id` FROM `guild_wars` WHERE (`guild_id` = "

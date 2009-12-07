@@ -402,7 +402,7 @@ std::string IOGuild::getMotd(uint32_t guild)
 	result->free();
 	return motd;
 }
-#ifdef __GAYWAR__
+#ifdef __WAR_SYSTEM__
 
 bool IOGuild::war(Player* player, Player* target, std::pair<uint32_t, WarInfo_t> enemy)
 {

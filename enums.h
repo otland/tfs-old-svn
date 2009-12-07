@@ -279,7 +279,7 @@ enum PlayerSex_t
 	// DO NOT ADD HERE! Every higher sex is only for your
 	// own use- each female should be even and male odd.
 };
-#ifdef __GAYWAR__
+#ifdef __WAR_SYSTEM__
 
 enum WarInfo_t
 {
