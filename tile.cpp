@@ -582,7 +582,7 @@ ReturnValue Tile::__queryAdd(int32_t index, const Thing* thing, uint32_t count,
 			if(!hasBitSet(FLAG_IGNOREFIELDDAMAGE, flags))
 				return RET_NOTPOSSIBLE;
 
-			return !monster->hasCondition(Combat::DamageToConditionType(combatType), false)
+			return !monster->hasCondition(Combat::DamageToConditionType(combatType), -1, false)
 				&& !monster->canPushItems() ? RET_NOTPOSSIBLE : RET_NOERROR;
 		}
 

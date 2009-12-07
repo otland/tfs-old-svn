@@ -217,7 +217,6 @@ bool ConfigManager::load()
 	m_confNumber[EXTRA_PARTY_PERCENT] = getGlobalNumber("extraPartyExperiencePercent", 5);
 	m_confNumber[EXTRA_PARTY_LIMIT] = getGlobalNumber("extraPartyExperienceLimit", 20);
 	m_confBool[DISABLE_OUTFITS_PRIVILEGED] = getGlobalBool("disableOutfitsForPrivilegedPlayers", false);
-	m_confBool[OLD_CONDITION_ACCURACY] = getGlobalBool("oldConditionAccuracy", false);
 	m_confBool[HOUSE_STORAGE] = getGlobalBool("useHouseDataStorage", false);
 	m_confBool[TRACER_BOX] = getGlobalBool("promptExceptionTracerErrorBox", true);
 	m_confNumber[LOGIN_PROTECTION] = getGlobalNumber("loginProtectionPeriod", 10 * 1000);
