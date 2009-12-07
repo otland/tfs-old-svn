@@ -733,6 +733,7 @@ bool Creature::onDeath()
 void Creature::dropCorpse(DeathList deathList)
 {
 	Item* corpse = createCorpse(deathList);
+	corpse->setParent(VirtualCylinder::virtualCylinder);
 	bool deny = false;
 
 	CreatureEventList deathEvents = getCreatureEvents(CREATURE_EVENT_DEATH);
@@ -742,6 +743,7 @@ void Creature::dropCorpse(DeathList deathList)
 			deny = true;
 	}
 
+	corpse->setParent(NULL);
 	if(!corpse || deny)
 		return;
 
