@@ -4865,9 +4865,11 @@ bool Player::isPartner(const Player* player) const
 {
 	if(!player || !getParty() || !player->getParty())
 		return false;
+#ifdef __WAR_SYSTEM__
 
 	if(!warMap.empty() && player->getGuildId() == guildId)
 		return true;
+#endif
 
 	return player->getParty() == party;
 }
