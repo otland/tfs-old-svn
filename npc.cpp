@@ -1005,23 +1005,23 @@ bool Npc::canSee(const Position& pos) const
 void Npc::onCreatureAppear(const Creature* creature)
 {
 	Creature::onCreatureAppear(creature);
-	if(creature == this && walkTicks > 0)
-		addEventWalk();
-
 	if(creature == this)
 	{
+		if(walkTicks > 0)
+			addEventWalk();
+
 		if(m_npcEventHandler)
 			m_npcEventHandler->onCreatureAppear(creature);
 
 		return;
 	}
 
+	if(m_npcEventHandler)
+		m_npcEventHandler->onCreatureAppear(creature);
+
 	//only players for script events
 	if(Player* player = const_cast<Player*>(creature->getPlayer()))
 	{
-		if(m_npcEventHandler)
-			m_npcEventHandler->onCreatureAppear(creature);
-
 		NpcState* npcState = getState(player);
 		if(npcState && canSee(player->getPosition()))
 		{
@@ -1034,13 +1034,18 @@ void Npc::onCreatureAppear(const Creature* creature)
 void Npc::onCreatureDisappear(const Creature* creature, bool isLogout)
 {
 	Creature::onCreatureDisappear(creature, isLogout);
-	if(creature == this) //Close all open shop window's
-		closeAllShopWindows();
-	else if(Player* player = const_cast<Player*>(creature->getPlayer()))
+	if(creature == this)
 	{
-		if(m_npcEventHandler)
-			m_npcEventHandler->onCreatureDisappear(creature);
+		//Close all open shop window's
+		closeAllShopWindows();
+		return;
+	}
 
+	if(m_npcEventHandler)
+		m_npcEventHandler->onCreatureDisappear(creature);
+
+	if(Player* player = const_cast<Player*>(creature->getPlayer()))
+	{
 		NpcState* npcState = getState(player);
 		if(npcState)
 		{
@@ -1054,16 +1059,11 @@ void Npc::onCreatureMove(const Creature* creature, const Tile* newTile, const Po
 		const Tile* oldTile, const Position& oldPos, bool teleport)
 {
 	Creature::onCreatureMove(creature, newTile, newPos, oldTile, oldPos, teleport);
-	if(creature == this)
-	{
-		if(m_npcEventHandler)
-			m_npcEventHandler->onCreatureMove(creature, oldPos, newPos);
-	}
-	else if(Player* player = const_cast<Player*>(creature->getPlayer()))
-	{
-		if(m_npcEventHandler)
-			m_npcEventHandler->onCreatureMove(creature, oldPos, newPos);
+	if(m_npcEventHandler)
+		m_npcEventHandler->onCreatureMove(creature, oldPos, newPos);
 
+	if(Player* player = const_cast<Player*>(creature->getPlayer()))
+	{
 		NpcState* npcState = getState(player);
 		if(npcState)
 		{
@@ -1090,9 +1090,6 @@ void Npc::onCreatureMove(const Creature* creature, const Tile* newTile, const Po
 
 void Npc::onCreatureSay(const Creature* creature, SpeakClasses type, const std::string& text, Position* pos/* = NULL*/)
 {
-	if(creature->getID() == this->getID())
-		return;
-
 	//only players for script events
 	if(const Player* player = creature->getPlayer())
 	{

@@ -2319,7 +2319,7 @@ Item* Player::createCorpse(DeathList deathList)
 
 void Player::addExhaust(uint32_t ticks, Exhaust_t type)
 {
-	if(Condition* condition = Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_EXHAUST, ticks, 0, false, type))
+	if(Condition* condition = Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_EXHAUST, ticks, 0, false, (uint32_t)type))
 		addCondition(condition);
 }
 
