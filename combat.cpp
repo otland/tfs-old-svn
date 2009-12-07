@@ -629,7 +629,8 @@ void Combat::combatTileEffects(const SpectatorVec& list, Creature* caster, Tile*
 		if(player)
 		{
 			bool pzLock = false;
-			if(g_game.getWorldType() == WORLDTYPE_OPTIONAL || tile->hasFlag(TILESTATE_OPTIONALZONE))
+			if((g_game.getWorldType() == WORLDTYPE_OPTIONAL && !tile->hasFlag(
+				TILESTATE_HARDCOREZONE)) || tile->hasFlag(TILESTATE_OPTIONALZONE))
 			{
 				switch(itemId)
 				{
