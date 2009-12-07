@@ -42,7 +42,7 @@ bool Outfits::parseOutfitNode(xmlNodePtr p)
 	Outfit newOutfit;
 	newOutfit.outfitId = intValue;
 
-	std::string name, strValue;
+	std::string strValue;
 	if(readXMLString(p, "default", strValue))
 		newOutfit.isDefault = booleanString(strValue);
 
@@ -50,10 +50,10 @@ bool Outfits::parseOutfitNode(xmlNodePtr p)
 	{
 		std::stringstream ss;
 		ss << "Outfit #" << newOutfit.outfitId;
-		ss >> name;
+		ss >> newOutfit.name;
 	}
 	else
-		name = strValue;
+		newOutfit.name = strValue;
 
 	bool override = false;
 	if(readXMLString(p, "override", strValue) && booleanString(strValue))
@@ -112,8 +112,9 @@ bool Outfits::parseOutfitNode(xmlNodePtr p)
 
 		if(readXMLString(listNode, "name", strValue))
 			outfit.name = strValue;
-		else
-			outfit.name = name;
+
+		if(readXMLString(listNode, "premium", strValue))
+			outfit.isPremium = booleanString(strValue);
 
 		if(readXMLString(listNode, "requirement", strValue))
 		{
