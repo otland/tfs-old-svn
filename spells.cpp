@@ -1089,48 +1089,36 @@ bool InstantSpell::castInstant(Player* player, const std::string& param)
 	else if(needTarget || casterTargetOrDirection)
 	{
 		Creature* target = NULL;
-		bool useDirection = false;
 		if(hasParam)
 		{
 			Player* targetPlayer = NULL;
 			ReturnValue ret = g_game.getPlayerByNameWildcard(param, targetPlayer);
+			if(limitRange && targetPlayer && !Position::areInRange(Position(limitRange,
+				limitRange, 0), target->getPosition(), player->getPosition()))
+				target = targetPlayer;
 
-			target = targetPlayer;
-			if(limitRange && target && !Position::areInRange(Position(limitRange, limitRange, 0), target->getPosition(), player->getPosition()))
-				useDirection = true;
-
-			if((!target || target->getHealth() <= 0) && !useDirection)
+			if((!target || target->getHealth() <= 0) && !casterTargetOrDirection)
 			{
-				if(!casterTargetOrDirection)
-				{
-					player->sendCancelMessage(ret);
-					g_game.addMagicEffect(player->getPosition(), MAGIC_EFFECT_POFF);
-					return false;
-				}
-
-				useDirection = true;
+				player->sendCancelMessage(ret);
+				g_game.addMagicEffect(player->getPosition(), MAGIC_EFFECT_POFF);
+				return false;
 			}
 		}
 		else
 		{
-			target = player->getAttackedCreature();
-			if(limitRange && target && !Position::areInRange(Position(limitRange, limitRange, 0), target->getPosition(), player->getPosition()))
-				useDirection = true;
+			if(limitRange && player->getAttackedCreature() && !Position::areInRange(Position(
+				limitRange, limitRange, 0), target->getPosition(), player->getPosition()))
+				target = player->getAttackedCreature();
 
-			if((!target || target->getHealth() <= 0) && !useDirection)
+			if((!target || target->getHealth() <= 0) && !casterTargetOrDirection)
 			{
-				if(!casterTargetOrDirection)
-				{
-					player->sendCancelMessage(RET_YOUCANONLYUSEITONCREATURES);
-					g_game.addMagicEffect(player->getPosition(), MAGIC_EFFECT_POFF);
-					return false;
-				}
-
-				useDirection = true;
+				player->sendCancelMessage(RET_YOUCANONLYUSEITONCREATURES);
+				g_game.addMagicEffect(player->getPosition(), MAGIC_EFFECT_POFF);
+				return false;
 			}
 		}
 
-		if(!useDirection)
+		if(target)
 		{
 			bool canSee = player->canSeeCreature(target);
 			if(!canSee || !canThrowSpell(player, target))
