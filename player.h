@@ -279,7 +279,7 @@ class Player : public Creature, public Cylinder
 #ifdef __WAR_SYSTEM__
 
 		bool getEnemy(const Player* enemy, std::pair<uint32_t, WarInfo_t>& war) const;
-		bool isEnemy(const Player* player) const;
+		bool isEnemy(const Player* enemy) const;
 		bool hasEnemy() const {return !warMap.empty();}
 
 		void addEnemy(uint32_t war, WarInfo_t mode, uint32_t guild)

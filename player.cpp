@@ -3674,7 +3674,7 @@ bool Player::isEnemy(const Player* enemy) const
 	if(g_config.getBool(ConfigManager::OPTIONAL_WAR_ATTACK_ALLY) && enemy->getGuildId() == guildId)
 		return true;
 
-	return warMap.find(player->getGuildId()) != warMap.end();
+	return warMap.find(enemy->getGuildId()) != warMap.end();
 }
 #endif
 
