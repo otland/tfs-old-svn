@@ -733,9 +733,10 @@ bool Creature::onDeath()
 void Creature::dropCorpse(DeathList deathList)
 {
 	Item* corpse = createCorpse(deathList);
-	corpse->setParent(VirtualCylinder::virtualCylinder);
-	bool deny = false;
+	if(corpse)
+		corpse->setParent(VirtualCylinder::virtualCylinder);
 
+	bool deny = false;
 	CreatureEventList deathEvents = getCreatureEvents(CREATURE_EVENT_DEATH);
 	for(CreatureEventList::iterator it = deathEvents.begin(); it != deathEvents.end(); ++it)
 	{
@@ -743,8 +744,11 @@ void Creature::dropCorpse(DeathList deathList)
 			deny = true;
 	}
 
+	if(!corpse)
+		return;
+
 	corpse->setParent(NULL);
-	if(!corpse || deny)
+	if(deny)
 		return;
 
 	Tile* tile = getTile();
