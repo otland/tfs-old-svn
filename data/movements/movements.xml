@@ -110,10 +110,10 @@
 	<movevent type="StepOut" itemid="10476" event="script" value="closingdoor.lua"/>
 	<movevent type="StepOut" itemid="10483" event="script" value="closingdoor.lua"/>
 	<movevent type="StepOut" itemid="10485" event="script" value="closingdoor.lua"/>
+	<movevent type="StepOut" itemid="10783" event="script" value="closingdoor.lua"/>
 	<movevent type="StepOut" itemid="10785" event="script" value="closingdoor.lua"/>
-	<movevent type="StepOut" itemid="10787" event="script" value="closingdoor.lua"/>
+	<movevent type="StepOut" itemid="10792" event="script" value="closingdoor.lua"/>
 	<movevent type="StepOut" itemid="10794" event="script" value="closingdoor.lua"/>
-	<movevent type="StepOut" itemid="10796" event="script" value="closingdoor.lua"/>
 	<movevent type="StepIn" itemid="1228" event="script" value="walkback.lua"/>
 	<movevent type="StepIn" itemid="1230" event="script" value="walkback.lua"/>
 	<movevent type="StepIn" itemid="1246" event="script" value="walkback.lua"/>
@@ -180,10 +180,10 @@
 	<movevent type="StepIn" itemid="10476" event="script" value="walkback.lua"/>
 	<movevent type="StepIn" itemid="10483" event="script" value="walkback.lua"/>
 	<movevent type="StepIn" itemid="10485" event="script" value="walkback.lua"/>
+	<movevent type="StepIn" itemid="10783" event="script" value="walkback.lua"/>
 	<movevent type="StepIn" itemid="10785" event="script" value="walkback.lua"/>
-	<movevent type="StepIn" itemid="10787" event="script" value="walkback.lua"/>
+	<movevent type="StepIn" itemid="10792" event="script" value="walkback.lua"/>
 	<movevent type="StepIn" itemid="10794" event="script" value="walkback.lua"/>
-	<movevent type="StepIn" itemid="10796" event="script" value="walkback.lua"/>
 
 	<!-- Snow footprint tiles -->
 	<movevent type="StepIn" itemid="670" event="script" value="snow.lua"/>
