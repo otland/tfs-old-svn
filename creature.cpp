@@ -1232,14 +1232,14 @@ bool Creature::onKilledCreature(Creature* target, uint32_t& flags)
 	if(!hasBitSet((uint32_t)KILLFLAG_LASTHIT, flags))
 	{
 		for(CreatureEventList::iterator it = killEvents.begin(); it != killEvents.end(); ++it)
-			(*it)->executeKill(this, target, false);
+			(*it)->executeKill(this, target, flags);
 
 		return true;
 	}
 
 	for(CreatureEventList::iterator it = killEvents.begin(); it != killEvents.end(); ++it)
 	{
-		if(!(*it)->executeKill(this, target, true) && ret)
+		if(!(*it)->executeKill(this, target, flags) && ret)
 			ret = false;
 	}
 

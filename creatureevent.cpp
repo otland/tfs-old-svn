@@ -318,7 +318,7 @@ std::string CreatureEvent::getScriptEventParams() const
 		case CREATURE_EVENT_CAST:
 			return "cid, target";
 		case CREATURE_EVENT_KILL:
-			return "cid, target, lastHit";
+			return "cid, target, flags";
 		case CREATURE_EVENT_DEATH:
 			return "cid, corpse, deathList";
 		case CREATURE_EVENT_PREPAREDEATH:
@@ -1385,9 +1385,9 @@ uint32_t CreatureEvent::executeCast(Creature* creature, Creature* target/* = NUL
 	}
 }
 
-uint32_t CreatureEvent::executeKill(Creature* creature, Creature* target, bool lastHit)
+uint32_t CreatureEvent::executeKill(Creature* creature, Creature* target, uint32_t flags)
 {
-	//onKill(cid, target, lastHit)
+	//onKill(cid, target, flags)
 	if(m_interface->reserveEnv())
 	{
 		ScriptEnviroment* env = m_interface->getEnv();
@@ -1398,7 +1398,7 @@ uint32_t CreatureEvent::executeKill(Creature* creature, Creature* target, bool l
 			scriptstream << "local cid = " << env->addThing(creature) << std::endl;
 
 			scriptstream << "local target = " << env->addThing(target) << std::endl;
-			scriptstream << "local lastHit = " << (lastHit ? "true" : "false") << std::endl;
+			scriptstream << "local flags = " << flags << std::endl;
 
 			scriptstream << m_scriptData;
 			bool result = true;
@@ -1427,7 +1427,7 @@ uint32_t CreatureEvent::executeKill(Creature* creature, Creature* target, bool l
 
 			lua_pushnumber(L, env->addThing(creature));
 			lua_pushnumber(L, env->addThing(target));
-			lua_pushboolean(L, lastHit);
+			lua_pushnumber(L, flags);
 
 			bool result = m_interface->callFunction(3);
 			m_interface->releaseEnv();
