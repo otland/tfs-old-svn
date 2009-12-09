@@ -386,7 +386,7 @@ bool ProtocolGame::parseFirstPacket(NetworkMessage& msg)
 	std::string password = msg.GetString();
 
 	msg.SkipBytes(3);
-	if(version < 853)
+	if(version < 854)
 	{
 		disconnectClient(0x0A, "Only clients with protocol 8.53 allowed!");
 		return false;
