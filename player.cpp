@@ -3680,7 +3680,7 @@ bool Player::isEnemy(const Player* enemy, bool allies) const
 		return false;
 
 	return !warMap.empty() && ((g_config.getBool(ConfigManager::OPTIONAL_WAR_ATTACK_ALLY)
-		allies && && guildId == guild) || warMap.find(guild) != warMap.end());
+		&& allies && guildId == guild) || warMap.find(guild) != warMap.end());
 }
 #endif
 
