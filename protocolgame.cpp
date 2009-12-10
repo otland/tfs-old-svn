@@ -1562,7 +1562,10 @@ void ProtocolGame::sendCreatureEmblem(const Creature* creature)
 	if(msg)
 	{
 		TRACK_MESSAGE(msg);
-		// There doesn't seem to be a clear way...
+		std::list<uint32_t>::iterator it = std::find(knownCreatureList.begin(), knownCreatureList.end(), creature->getID());
+		if(it != knownCreatureList.end())
+			knownCreatureList.erase(it);
+
 		uint32_t stackpos = creature->getTile()->getClientIndexOfThing(player, creature);
 		RemoveTileItem(msg, creature->getPosition(), stackpos);
 		AddTileCreature(msg, creature->getPosition(), stackpos, creature);
@@ -2686,9 +2689,10 @@ void ProtocolGame::AddCreature(NetworkMessage_ptr msg, const Creature* creature,
 	msg->put<uint16_t>(creature->getStepSpeed());
 	msg->put<char>(player->getSkullType(creature));
 	msg->put<char>(player->getPartyShield(creature));
-	msg->put<char>(player->getGuildEmblem(creature));
 	if(!known)
-		msg->put<char>(!player->canWalkthrough(creature));
+		msg->put<char>(player->getGuildEmblem(creature));
+
+	msg->put<char>(!player->canWalkthrough(creature));
 }
 
 void ProtocolGame::AddPlayerStats(NetworkMessage_ptr msg)
