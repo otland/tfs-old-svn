@@ -2719,7 +2719,6 @@ void ProtocolGame::AddCreature(NetworkMessage_ptr msg, const Creature* creature,
 
 	msg->AddByte((int32_t)std::ceil(((float)creature->getHealth()) * 100 / std::max(creature->getMaxHealth(), (int32_t)1)));
 	msg->AddByte((uint8_t)creature->getDirection());
-
 	if(!creature->isInvisible() && !creature->isInGhostMode())
 		AddCreatureOutfit(msg, creature, creature->getCurrentOutfit());
 	else
@@ -2733,9 +2732,10 @@ void ProtocolGame::AddCreature(NetworkMessage_ptr msg, const Creature* creature,
 	msg->AddU16(creature->getStepSpeed());
 	msg->AddByte(player->getSkullClient(creature->getPlayer()));
 	msg->AddByte(player->getPartyShield(creature->getPlayer()));
-	msg->AddByte(0x00); // war emblem
 	if(!known)
-		msg->AddByte(0x01); // impassable
+		msg->AddByte(0x00); // war emblem
+
+	msg->AddByte(0x01); // impassable
 }
 
 void ProtocolGame::AddPlayerStats(NetworkMessage_ptr msg)
