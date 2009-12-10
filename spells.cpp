@@ -953,7 +953,7 @@ void Spell::postSpell(Player* player, uint32_t manaCost, uint32_t soulCost) cons
 	{
 		player->changeMana(-(int32_t)manaCost);
 		if(!player->hasFlag(PlayerFlag_NotGainMana) && (player->getZone() != ZONE_HARDCORE
-			|| !g_config.getBool(ConfigManager::PVPZONE_ADDMANASPENT)))
+			|| g_config.getBool(ConfigManager::PVPZONE_ADDMANASPENT)))
 			player->addManaSpent(manaCost);
 	}
 
