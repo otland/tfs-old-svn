@@ -537,8 +537,7 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool preLo
 
 			query.str("");
 			query << "SELECT `id`, `guild_id`, `enemy_id` FROM `guild_wars` WHERE (`guild_id` = "
-				<< player->guildId << " OR `enemy_id` = " << player->guildId
-				<< ") AND `status` IN (1, 4)";
+				<< player->guildId << " OR `enemy_id` = " << player->guildId << ") AND `status` IN (1,4)";
 			if((result = db->storeQuery(query.str())))
 			{
 				do
