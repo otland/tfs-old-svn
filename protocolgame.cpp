@@ -1558,17 +1558,28 @@ void ProtocolGame::sendCreatureEmblem(const Creature* creature)
 	if(!canSee(creature))
 		return;
 
+	uint32_t stackpos = creature->getTile()->getClientIndexOfThing(player, creature);
+	if(stackpos >= 10)
+		return;
+
 	NetworkMessage_ptr msg = getOutputBuffer();
 	if(msg)
 	{
 		TRACK_MESSAGE(msg);
+		RemoveTileItem(msg, creature->getPosition(), stackpos);
+
 		std::list<uint32_t>::iterator it = std::find(knownCreatureList.begin(), knownCreatureList.end(), creature->getID());
 		if(it != knownCreatureList.end())
+		{
 			knownCreatureList.erase(it);
+		        msg->put<char>(0x6A);
 
-		uint32_t stackpos = creature->getTile()->getClientIndexOfThing(player, creature);
-		RemoveTileItem(msg, creature->getPosition(), stackpos);
-		AddTileCreature(msg, creature->getPosition(), stackpos, creature);
+		        msg->putPosition(creature->getPosition());
+		        msg->put<char>(stackpos);
+		        AddCreature(msg, creature, false, creature->getID());
+		}
+		else
+			AddTileCreature(msg, creature->getPosition(), stackpos, creature);
 	}
 }
 
