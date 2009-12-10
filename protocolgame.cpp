@@ -2733,7 +2733,9 @@ void ProtocolGame::AddCreature(NetworkMessage_ptr msg, const Creature* creature,
 	msg->AddU16(creature->getStepSpeed());
 	msg->AddByte(player->getSkullClient(creature->getPlayer()));
 	msg->AddByte(player->getPartyShield(creature->getPlayer()));
-	msg->AddByte(0x00); // guild emblem
+	msg->AddByte(0x00); // war emblem
+	if(!known)
+		msg->put<char>(0x01); // impassable
 }
 
 void ProtocolGame::AddPlayerStats(NetworkMessage_ptr msg)
