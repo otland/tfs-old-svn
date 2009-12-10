@@ -2735,7 +2735,7 @@ void ProtocolGame::AddCreature(NetworkMessage_ptr msg, const Creature* creature,
 	msg->AddByte(player->getPartyShield(creature->getPlayer()));
 	msg->AddByte(0x00); // war emblem
 	if(!known)
-		msg->put<char>(0x01); // impassable
+		msg->AddByte(0x01); // impassable
 }
 
 void ProtocolGame::AddPlayerStats(NetworkMessage_ptr msg)
