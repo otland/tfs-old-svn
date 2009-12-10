@@ -2221,7 +2221,6 @@ bool Player::onDeath()
 	}
 	else
 	{
-		pzLocked = false;
 		setLossSkill(true);
 		if(preventLoss)
 		{
@@ -2238,17 +2237,18 @@ void Player::dropCorpse(DeathList deathList)
 {
 	if(lootDrop == LOOT_DROP_NONE)
 	{
-		setDropLoot(LOOT_DROP_FULL);
+		pzLocked = false;
 		if(health <= 0)
 		{
 			health = healthMax;
 			mana = manaMax;
 		}
 
+		setDropLoot(LOOT_DROP_FULL);
 		sendStats();
 		sendIcons();
-		onIdleStatus();
 
+		onIdleStatus();
 		g_game.addCreatureHealth(this);
 		g_game.internalTeleport(this, masterPosition, true);
 	}
