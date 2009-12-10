@@ -940,7 +940,7 @@ void Spell::postSpell(Player* player, bool finishedCast /*= true*/, bool payCost
 			player->addExhaust(exhaustion, isAggressive ? EXHAUST_COMBAT : EXHAUST_HEALING);
 
 		if(isAggressive && !player->hasFlag(PlayerFlag_NotGainInFight))
-			player->addInFightTicks();
+			player->addInFightTicks(false);
 	}
 
 	if(payCost)

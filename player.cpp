@@ -2230,7 +2230,6 @@ bool Player::onDeath()
 	}
 	else
 	{
-		pzLocked = false;
 		setLossSkill(true);
 		if(preventLoss)
 		{
@@ -2247,17 +2246,18 @@ void Player::dropCorpse(DeathList deathList)
 {
 	if(lootDrop == LOOT_DROP_NONE)
 	{
-		setDropLoot(LOOT_DROP_FULL);
+		pzLocked = false;
 		if(health <= 0)
 		{
 			health = healthMax;
 			mana = manaMax;
 		}
 
+		setDropLoot(LOOT_DROP_FULL);
 		sendStats();
 		sendIcons();
-		onIdleStatus();
 
+		onIdleStatus();
 		g_game.addCreatureHealth(this);
 		g_game.internalTeleport(this, masterPosition, true);
 	}
@@ -2319,20 +2319,26 @@ Item* Player::createCorpse(DeathList deathList)
 
 void Player::addExhaust(uint32_t ticks, Exhaust_t type)
 {
-	if(Condition* condition = Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_EXHAUST, ticks, 0, false, (uint32_t)type))
+	if(Condition* condition = Condition::createCondition(CONDITIONID_DEFAULT,
+		CONDITION_EXHAUST, ticks, 0, false, (uint32_t)type))
 		addCondition(condition);
 }
 
-void Player::addInFightTicks(bool pzLock/* = false*/)
+void Player::addInFightTicks(bool pzLock, int32_t ticks/* = 0*/)
 {
 	if(hasFlag(PlayerFlag_NotGainInFight))
 		return;
+
+	if(!ticks)
+		ticks = g_config.getNumber(ConfigManager::PZ_LOCKED);
+	else
+		ticks = std::max(-1, ticks);
 
 	if(pzLock)
 		pzLocked = true;
 
 	if(Condition* condition = Condition::createCondition(CONDITIONID_DEFAULT,
-		CONDITION_INFIGHT, g_config.getNumber(ConfigManager::PZ_LOCKED)))
+		CONDITION_INFIGHT, ticks))
 		addCondition(condition);
 }
 
@@ -3534,7 +3540,7 @@ void Player::onAttackedCreature(Creature* target)
 	if(hasFlag(PlayerFlag_NotGainInFight))
 		return;
 
-	addInFightTicks();
+	addInFightTicks(false);
 	Player* targetPlayer = target->getPlayer();
 	if(!targetPlayer)
 		return;
@@ -3580,7 +3586,7 @@ void Player::onSummonAttackedCreature(Creature* summon, Creature* target)
 void Player::onAttacked()
 {
 	Creature::onAttacked();
-	addInFightTicks();
+	addInFightTicks(false);
 }
 
 bool Player::checkLoginDelay(uint32_t playerId) const
@@ -3721,11 +3727,7 @@ bool Player::onKilledCreature(Creature* target, uint32_t& flags)
 		|| hasBitSet((uint32_t)KILLFLAG_LASTHIT, flags)))
 		flags |= (uint32_t)KILLFLAG_UNJUSTIFIED;
 
-	pzLocked = true;
-	if((condition = Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_INFIGHT,
-		g_config.getNumber(ConfigManager::WHITE_SKULL_TIME))))
-		addCondition(condition);
-
+	addInFightTicks(true, g_config.getNumber(ConfigManager::WHITE_SKULL_TIME));
 	return true;
 }
 
