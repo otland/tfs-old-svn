@@ -975,7 +975,7 @@ void ProtocolGame::checkCreatureAsKnown(uint32_t id, bool& known, uint32_t& remo
 			knownCreatureList.push_back(removedKnown);
 		}
 
-		// hopefully we found someone to remove :S, we got only 150 tries
+		// hopefully we found someone to remove :S, we got only 250 tries
 		// if not... lets kick some players with debug errors :)
 		knownCreatureList.pop_front();
 	}
@@ -2688,7 +2688,7 @@ void ProtocolGame::AddCreature(NetworkMessage_ptr msg, const Creature* creature,
 	msg->put<char>(player->getPartyShield(creature));
 	msg->put<char>(player->getGuildEmblem(creature));
 	if(!known)
-		msg->put<char>(player->canWalkthrough(creature));
+		msg->put<char>(!player->canWalkthrough(creature));
 }
 
 void ProtocolGame::AddPlayerStats(NetworkMessage_ptr msg)
