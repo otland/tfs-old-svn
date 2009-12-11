@@ -2683,7 +2683,7 @@ void ProtocolGame::AddCreature(NetworkMessage_ptr msg, const Creature* creature,
 	if(!known)
 		msg->AddByte(0x00); // war emblem
 
-	msg->AddByte(0x01); // impassable
+	msg->AddByte(!player->canWalkthrough(creature));
 }
 
 void ProtocolGame::AddPlayerStats(NetworkMessage_ptr msg)

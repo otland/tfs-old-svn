@@ -212,18 +212,15 @@
 	<action itemid="10035" event="script" value="other/teleport.lua"/>
 
 	<!-- Destroy -->
-	<action fromid="2376" toid="2404" event="script" value="other/destroy.lua"/>
-	<action fromid="2406" toid="2419" event="script" value="other/destroy.lua"/>
-	<action fromid="2421" toid="2441" event="script" value="other/destroy.lua"/>
-	<action fromid="2443" toid="2453" event="script" value="other/destroy.lua"/>
+	<action id="2321;2376-2388;2390-2398;2400-2404;2406-2409;2411-2417;2419;2421-2441;2443-2454;3961-3964;3966;4846;6101;6528;6553;7379-7392;7402-7437;7449;7451-7456;7744-7758;7763-7777;7854-7883;7958;8601-8602;8924-8932;10293" event="script" value="other/destroy.lua"/>
 
 	<!-- Bread Creating -->
 	<action itemid="2692" event="script" value="other/createbread.lua"/>
 	<action itemid="2694" event="script" value="other/createbread.lua"/>
 
 	<!-- Windows -->
-	<action fromid="6436" toid="6447" event="script" value="other/windows.lua"/>
-	<action fromid="6450" toid="6473" event="script" value="other/windows.lua"/>
+	<action fromid="5303" toid="5305" event="script" value="other/windows.lua"/>
+	<action fromid="6436" toid="6473" event="script" value="other/windows.lua"/>
 	<action fromid="6788" toid="6791" event="script" value="other/windows.lua"/>
 	<action fromid="7025" toid="7032" event="script" value="other/windows.lua"/>
 	<action fromid="10264" toid="10267" event="script" value="other/windows.lua"/>
@@ -255,6 +252,9 @@
 	<action itemid="10091" event="script" value="other/doors.lua"/>
 	<action fromid="10268" toid="10285" event="script" value="other/doors.lua"/>
 	<action fromid="10468" toid="10486" event="script" value="other/doors.lua"/>
+	<action fromid="10777" toid="10779" event="script" value="other/doors.lua"/>
+	<action fromid="10782" toid="10788" event="script" value="other/doors.lua"/>
+	<action fromid="10791" toid="10794" event="script" value="other/doors.lua"/>
 
 	<!-- Watch -->
 	<action itemid="2036" event="script" value="other/watch.lua"/>

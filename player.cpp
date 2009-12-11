@@ -52,7 +52,7 @@ uint32_t Player::playerCount = 0;
 MuteCountMap Player::muteCountMap;
 
 Player::Player(const std::string& _name, ProtocolGame* p):
-	Creature(), transferContainer(ITEM_LOCKER1), name(_name), nameDescription(_name), client(p)
+	Creature(), transferContainer(ITEM_LOCKER), name(_name), nameDescription(_name), client(p)
 {
 	if(client)
 		client->setPlayer(this);
@@ -849,10 +849,14 @@ bool Player::canWalkthrough(const Creature* creature) const
 	if(creature == this)
 		return false;
 
-	if(const Player* player = creature->getPlayer())
-		return player->isGhost() && getGhostAccess() < player->getGhostAccess();
+	const Player* player = creature->getPlayer();
+	if(!player)
+		return false;
 
-	return false;
+	if(g_game.getWorldType() == WORLD_TYPE_NO_PVP && getTile()->ground->getID() != ITEM_GLOWING_SWITCH)
+		return true;
+
+	return player->isGhost() && getGhostAccess() < player->getGhostAccess();
 }
 
 Depot* Player::getDepot(uint32_t depotId, bool autoCreateDepot)
@@ -864,7 +868,7 @@ Depot* Player::getDepot(uint32_t depotId, bool autoCreateDepot)
 	//create a new depot?
 	if(autoCreateDepot)
 	{
-		Item* locker = Item::CreateItem(ITEM_LOCKER1);
+		Item* locker = Item::CreateItem(ITEM_LOCKER);
 		if(Container* container = locker->getContainer())
 		{
 			if(Depot* depot = container->getDepot())

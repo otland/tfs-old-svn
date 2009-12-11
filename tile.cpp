@@ -573,7 +573,7 @@ ReturnValue Tile::__queryAdd(int32_t index, const Thing* thing, uint32_t count,
 				return RET_NOTPOSSIBLE;
 
 			MagicField* field = getFieldItem();
-			if(field && !field->isBlocking())
+			if(field && !field->isBlocking(monster))
 			{
 				CombatType_t combatType = field->getCombatType();
 				//There is 3 options for a monster to enter a magic field
@@ -630,6 +630,10 @@ ReturnValue Tile::__queryAdd(int32_t index, const Thing* thing, uint32_t count,
 
 		if(items)
 		{
+			MagicField* field = getFieldItem();
+			if(field && field->isBlocking(creature))
+				return RET_NOTPOSSIBLE;
+
 			if(!hasBitSet(FLAG_IGNOREBLOCKITEM, flags))
 			{
 				//If the FLAG_IGNOREBLOCKITEM bit isn't set we dont have to iterate every single item
@@ -642,7 +646,7 @@ ReturnValue Tile::__queryAdd(int32_t index, const Thing* thing, uint32_t count,
 				if(ground)
 				{
 					const ItemType& iType = Item::items[ground->getID()];
-					if(iType.blockSolid && (!iType.moveable || (ground->isLoadedFromMap() &&
+					if(ground->isBlocking(creature) && (!iType.moveable || (ground->isLoadedFromMap() &&
 						(ground->getUniqueId() || (ground->getActionId()
 						&& ground->getContainer())))))
 						return RET_NOTPOSSIBLE;
@@ -655,7 +659,7 @@ ReturnValue Tile::__queryAdd(int32_t index, const Thing* thing, uint32_t count,
 					{
 						iItem = (*it);
 						const ItemType& iType = Item::items[iItem->getID()];
-						if(iType.blockSolid && (!iType.moveable || (iItem->isLoadedFromMap() &&
+						if(iItem->isBlocking(creature) && (!iType.moveable || (iItem->isLoadedFromMap() &&
 							(iItem->getUniqueId() || (iItem->getActionId()
 							&& iItem->getContainer())))))
 							return RET_NOTPOSSIBLE;
@@ -681,11 +685,11 @@ ReturnValue Tile::__queryAdd(int32_t index, const Thing* thing, uint32_t count,
 		if(!ground && !itemIsHangable)
 			return RET_NOTPOSSIBLE;
 
-		if(creatures && !creatures->empty() && item->isBlocking() && !hasBitSet(FLAG_IGNOREBLOCKCREATURE, flags))
+		if(creatures && !creatures->empty() && !hasBitSet(FLAG_IGNOREBLOCKCREATURE, flags))
 		{
 			for(CreatureVector::const_iterator cit = creatures->begin(); cit != creatures->end(); ++cit)
 			{
-				if(!(*cit)->isGhost())
+				if(!(*cit)->isGhost() && item->isBlocking(*cit))
 					return RET_NOTENOUGHROOM;
 			}
 		}

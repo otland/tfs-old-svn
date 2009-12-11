@@ -110,11 +110,9 @@
 	<item id="415" article="a" name="stone tile"/>
 	<item id="416" article="a" name="stone tile">
 		<attribute key="description" value="It seems to be a switch."/>
-		<attribute key="walkStack" value="0"/>
 	</item>
 	<item id="417" article="a" name="stone tile">
 		<attribute key="description" value="It seems to be a switch."/>
-		<attribute key="walkStack" value="0"/>
 	</item>
 	<item id="418" article="a" name="stone tile">
 		<attribute key="description" value="There is a hole in the ceiling."/>
@@ -129,11 +127,9 @@
 	<item id="424" article="a" name="stone tile"/>
 	<item id="425" article="a" name="stone tile">
 		<attribute key="description" value="It seems to be a switch."/>
-		<attribute key="walkStack" value="0"/>
 	</item>
 	<item id="426" article="a" name="stone tile">
 		<attribute key="description" value="It seems to be a switch."/>
-		<attribute key="walkStack" value="0"/>
 	</item>
 	<item id="427" article="a" name="trapdoor">
 		<attribute key="floorchange" value="down"/>
@@ -166,11 +162,9 @@
 	<item id="445" name="wooden floor"/>
 	<item id="446" name="wooden floor">
 		<attribute key="description" value="It seems to be a switch."/>
-		<attribute key="walkStack" value="0"/>
 	</item>
 	<item id="447" name="wooden floor">
 		<attribute key="description" value="It seems to be a switch."/>
-		<attribute key="walkStack" value="0"/>
 	</item>
 	<item id="448" name="wooden floor"/>
 	<item id="449" name="wooden floor"/>
@@ -7584,7 +7578,6 @@
 	<item id="3201" article="a" name="strange carving"/>
 	<item id="3202" article="a" name="strange carving">
 		<attribute key="description" value="It seems to be a switch."/>
-		<attribute key="walkStack" value="0"/>
 	</item>
 	<item id="3203" article="a" name="strange carving"/>
 	<item id="3204" article="a" name="strange carving"/>
@@ -7600,15 +7593,12 @@
 	<item id="3214" article="a" name="strange carving"/>
 	<item id="3215" article="a" name="strange carving">
 		<attribute key="description" value="It seems to be a switch."/>
-		<attribute key="walkStack" value="0"/>
 	</item>
 	<item id="3216" article="a" name="wooden tile">
 		<attribute key="description" value="It seems to be a switch."/>
-		<attribute key="walkStack" value="0"/>
 	</item>
 	<item id="3217" article="a" name="wooden tile">
 		<attribute key="description" value="It seems to be a switch."/>
-		<attribute key="walkStack" value="0"/>
 	</item>
 	<item id="3218" article="a" name="stone roof"/>
 	<item id="3219" article="a" name="stone stairway">
@@ -21725,12 +21715,8 @@
 	<item id="10496" name="pavement"/>
 	<item id="10497" name="pavement"/>
 	<item id="10498" name="pavement"/>
-	<item id="10551" name="glowing switch">
-		<attribute key="walkStack" value="0"/>
-	</item>
-	<item id="10552" name="glowing switch">
-		<attribute key="walkStack" value="0"/>
-	</item>
+	<item id="10551" name="glowing switch"/>
+	<item id="10552" name="glowing switch"/>
 	<item id="10777" article="a" name="closed door">
 		<attribute key="type" value="door"/>
 		<attribute key="blockprojectile" value="1"/>
