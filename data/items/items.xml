@@ -21725,10 +21725,7 @@
 	<item id="10496" name="pavement"/>
 	<item id="10497" name="pavement"/>
 	<item id="10498" name="pavement"/>
-	<item id="10551" name="glowing switch">
-		<attribute key="walkStack" value="0"/>
-	</item>
-	<item id="10552" name="glowing switch">
+	<item fromid="10551" toid="10552" name="glowing switch">
 		<attribute key="walkStack" value="0"/>
 	</item>
 	<item id="10777" article="a" name="closed door">
