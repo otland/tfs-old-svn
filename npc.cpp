@@ -2543,11 +2543,16 @@ int32_t NpcScript::luaActionMove(lua_State* L)
 
 int32_t NpcScript::luaActionMoveTo(lua_State* L)
 {
-	//selfMoveTo(x, y, z)
-	Position pos;
-	pos.z = (uint16_t)popNumber(L);
-	pos.y = (uint16_t)popNumber(L);
-	pos.x = (uint16_t)popNumber(L);
+	//selfMoveTo({x, y, z|pos})
+	PositionEx pos;
+	if(!lua_istable(L, -1))
+	{
+		pos.z = (uint16_t)popNumber(L);
+		pos.y = (uint16_t)popNumber(L);
+		pos.x = (uint16_t)popNumber(L);
+	}
+	else
+		popPosition(L, pos);
 
 	ScriptEnviroment* env = getEnv();
 	if(Npc* npc = env->getNpc())
@@ -2562,8 +2567,8 @@ int32_t NpcScript::luaActionFollow(lua_State* L)
 	uint32_t cid = popNumber(L);
 	ScriptEnviroment* env = getEnv();
 
-	Player* player = env->getPlayerByUID(cid);
-	if(cid && !player)
+	Creature* creature = env->getCreatureByUID(cid);
+	if(cid && !creature)
 	{
 		lua_pushboolean(L, false);
 		return 1;
@@ -2576,7 +2581,7 @@ int32_t NpcScript::luaActionFollow(lua_State* L)
 		return 1;
 	}
 
-	lua_pushboolean(L, npc->setFollowCreature(player, true));
+	lua_pushboolean(L, npc->setFollowCreature(creature, true));
 	return 1;
 }
 
