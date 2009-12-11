@@ -246,8 +246,14 @@
 	<movevent type="AddItem" itemid="1506" event="function" value="onAddField"/>
 	<movevent type="StepIn" itemid="1507" event="function" value="onStepInField"/>
 	<movevent type="AddItem" itemid="1507" event="function" value="onAddField"/>
+	<movevent type="StepIn" itemid="1508" event="function" value="onStepInField"/>
+	<movevent type="AddItem" itemid="1508" event="function" value="onAddField"/>
 	<movevent type="StepIn" itemid="7359" event="function" value="onStepInField"/>
+	<movevent type="AddItem" itemid="7359" event="function" value="onAddField"/>
+	<movevent type="StepIn" itemid="7360" event="function" value="onStepInField"/>
 	<movevent type="AddItem" itemid="7360" event="function" value="onAddField"/>
+	<movevent type="StepIn" itemid="7465-7473" event="function" value="onStepInField"/>
+	<movevent type="AddItem" itemid="7465-7473" event="function" value="onAddField"/>
 	<movevent type="StepIn" itemid="11094" event="function" value="onStepInField"/>
 	<movevent type="AddItem" itemid="11094" event="function" value="onAddField"/>
 	<movevent type="StepIn" itemid="11095" event="function" value="onStepInField"/>
