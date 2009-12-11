@@ -95,6 +95,7 @@ enum MagicEffectClasses
 	NM_ME_YALAHARIGHOST	= 0x41, //65
 	NM_ME_BATS		= 0x42, //66
 	NM_ME_SMOKE		= 0x43, //67
+	NM_ME_INSECTS		= 0x44, //68
 
 	//for internal use, dont send to client
 	NM_ME_NONE             = 0xFF,

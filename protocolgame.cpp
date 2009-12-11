@@ -2110,7 +2110,7 @@ void ProtocolGame::sendDistanceShoot(const Position& from, const Position& to, u
 
 void ProtocolGame::sendMagicEffect(const Position& pos, uint8_t type)
 {
-	if(canSee(pos) && type <= 67)
+	if(canSee(pos) && type <= 68)
 	{
 		NetworkMessage_ptr msg = getOutputBuffer();
 		if(msg)

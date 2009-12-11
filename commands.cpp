@@ -1160,7 +1160,7 @@ bool Commands::newType(Creature* creature, const std::string& cmd, const std::st
 	if(player)
 	{
 		int32_t lookType = atoi(param.c_str());
-		if(lookType >= 0 && lookType != 1 && lookType != 135 && (lookType <= 160 || lookType >= 192) && lookType <= 333)
+		if(lookType >= 0 && lookType != 1 && lookType != 135 && (lookType <= 160 || lookType >= 192) && lookType <= 351)
 		{
 			g_game.internalCreatureChangeOutfit(creature, (const Outfit_t&)lookType);
 			return true;
