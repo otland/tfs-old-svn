@@ -1,16 +1,15 @@
-function isInRange(pos, fromPos, toPos)
-	return (pos.x >= fromPos.x and pos.y >= fromPos.y and pos.z >= fromPos.z and pos.x <= toPos.x and pos.y <= toPos.y and pos.z <= toPos.z)
+function isInRange(pos, fromPosition, toPosition)
+	return (position.x >= fromPosition.x and position.y >= fromPosition.y and position.z >= fromPosition.z and position.x <= toPosition.x and position.y <= toPosition.y and position.z <= toPosition.z)
 end
 
 function getDistanceBetween(firstPosition, secondPosition)
-	local xDif = math.abs(firstPosition.x - secondPosition.x)
-	local yDif = math.abs(firstPosition.y - secondPosition.y)
-
-	local posDif = math.max(xDif, yDif)
+	local x, y = math.abs(firstPosition.x - secondPosition.x), math.abs(firstPosition.y - secondPosition.y)
+	local diff = math.max(x, y)
 	if(firstPosition.z ~= secondPosition.z) then
-		posDif = posDif + 9 + 6
+		diff = diff + 9 + 6
 	end
-	return posDif
+
+	return diff
 end
 
 function getDirectionTo(pos1, pos2)

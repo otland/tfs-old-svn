@@ -927,7 +927,8 @@ MagicEffectNames magicEffectNames[] =
 	{"stepsvertical",	MAGIC_EFFECT_STEPSVERTICAL},
 	{"yalaharighost",	MAGIC_EFFECT_YALAHARIGHOST},
 	{"bats",		MAGIC_EFFECT_BATS},
-	{"smoke",		MAGIC_EFFECT_SMOKE}
+	{"smoke",		MAGIC_EFFECT_SMOKE},
+	{"insects",		MAGIC_EFFECT_INSECTS}
 };
 
 ShootTypeNames shootTypeNames[] =

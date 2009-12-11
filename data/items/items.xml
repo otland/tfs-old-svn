@@ -21810,7 +21810,7 @@
 		<attribute key="containerSize" value="20"/>
 		<attribute key="slotType" value="backpack"/>
 	</item>
-	<item id="11256" article="a" name="santa backpack">
+	<item id="11256" article="a" name="fluffy santa backpack">
 		<attribute key="weight" value="1800"/>
 		<attribute key="containerSize" value="20"/>
 		<attribute key="slotType" value="backpack"/>
