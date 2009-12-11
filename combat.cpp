@@ -628,6 +628,7 @@ void Combat::combatTileEffects(const SpectatorVec& list, Creature* caster, Tile*
 		uint32_t itemId = params.itemId;
 		if(player)
 		{
+			bool pzLock = false;
 			if((g_game.getWorldType() == WORLDTYPE_OPTIONAL && !tile->hasFlag(
 				TILESTATE_HARDCOREZONE)) || tile->hasFlag(TILESTATE_OPTIONALZONE))
 			{
@@ -653,7 +654,9 @@ void Combat::combatTileEffects(const SpectatorVec& list, Creature* caster, Tile*
 				}
 			}
 			else if(params.isAggressive && !Item::items[itemId].blockPathFind)
-				player->addInFightTicks(true);
+				pzLock = true;
+
+			player->addInFightTicks(pzLock);
 		}
 
 		if(Item* item = Item::CreateItem(itemId))

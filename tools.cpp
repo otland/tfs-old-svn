@@ -736,11 +736,14 @@ PartyShields_t getShields(std::string strValue)
 GuildEmblems_t getEmblems(std::string strValue)
 {
 	std::string tmpStrValue = asLowerCaseString(strValue);
-	if(tmpStrValue == "enemy" || tmpStrValue == "2")
-		return EMBLEM_ENEMY;
+	if(tmpStrValue == "blue" || tmpStrValue == "3")
+		return EMBLEM_BLUE;
 
-	if(tmpStrValue == "ally" || tmpStrValue == "1")
-		return EMBLEM_ALLY;
+	if(tmpStrValue == "red" || tmpStrValue == "2")
+		return EMBLEM_RED;
+
+	if(tmpStrValue == "green" || tmpStrValue == "1")
+		return EMBLEM_GREEN;
 
 	return EMBLEM_NONE;
 }
@@ -983,7 +986,8 @@ MagicEffectNames magicEffectNames[] =
 	{"stepsvertical",	MAGIC_EFFECT_STEPSVERTICAL},
 	{"yalaharighost",	MAGIC_EFFECT_YALAHARIGHOST},
 	{"bats",		MAGIC_EFFECT_BATS},
-	{"smoke",		MAGIC_EFFECT_SMOKE}
+	{"smoke",		MAGIC_EFFECT_SMOKE},
+	{"insects",		MAGIC_EFFECT_INSECTS}
 };
 
 ShootTypeNames shootTypeNames[] =

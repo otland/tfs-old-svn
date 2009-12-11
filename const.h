@@ -412,10 +412,9 @@ enum PartyShields_t
 enum GuildEmblems_t
 {
 	EMBLEM_NONE = 0,
-	// FIXME: not sure...
-	EMBLEM_ALLY,
-	EMBLEM_ENEMY,
-	EMBLEM_AFFECTED
+	EMBLEM_GREEN,
+	EMBLEM_RED,
+	EMBLEM_BLUE
 };
 
 enum item_t

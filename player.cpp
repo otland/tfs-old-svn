@@ -855,7 +855,7 @@ bool Player::canWalkthrough(const Creature* creature) const
 
 	GuildEmblems_t tmp = getGuildEmblem(player);
 	if((hasCustomFlag(PlayerCustomFlag_CanWalkthrough) || player->isWalkable() || (g_game.getWorldType() == WORLDTYPE_OPTIONAL
-		&& (tmp == EMBLEM_NONE || tmp == EMBLEM_AFFECTED) && Item::items[player->getTile()->ground->getID()].walkStack))
+		&& (tmp == EMBLEM_NONE || tmp == EMBLEM_BLUE) && Item::items[player->getTile()->ground->getID()].walkStack))
 		&& (!player->hasCustomFlag(PlayerCustomFlag_GamemasterPrivileges) || player->getAccess() <= getAccess()))
 		return true;
 
@@ -3654,9 +3654,9 @@ GuildEmblems_t Player::getGuildEmblem(const Creature* creature) const
 		return Creature::getGuildEmblem(creature);
 
 	if(player->isEnemy(this, false))
-		return EMBLEM_ENEMY;
+		return EMBLEM_RED;
 
-	return player->getGuildId() == guildId ? EMBLEM_ALLY : EMBLEM_AFFECTED;
+	return player->getGuildId() == guildId ? EMBLEM_GREEN : EMBLEM_BLUE;
 }
 
 bool Player::getEnemy(const Player* enemy, std::pair<uint32_t, WarInfo_t>& data) const
