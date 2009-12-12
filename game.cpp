@@ -1085,6 +1085,13 @@ bool Game::playerMoveCreature(uint32_t playerId, uint32_t movingCreatureId,
 			player->sendCancelMessage(RET_NOTPOSSIBLE);
 			return false;
 		}
+
+		if(toTile->getCreatures() && !toTile->getCreatures()->empty()
+			&& !player->hasFlag(PlayerFlag_CanPushAllCreatures))
+		{
+			player->sendCancelMessage(RET_NOTPOSSIBLE);
+			return false;
+		}
 	}
 
 	bool deny = false;
