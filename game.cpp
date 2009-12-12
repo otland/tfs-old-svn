@@ -2104,13 +2104,10 @@ bool Game::playerBroadcastMessage(Player* player, SpeakClasses type, const std::
 	if(!player->hasFlag(PlayerFlag_CanBroadcast) || type < SPEAK_CLASS_FIRST || type > SPEAK_CLASS_LAST)
 		return false;
 
-	//const Position& pos = player->getPosition();
 	for(AutoList<Player>::iterator it = Player::autoList.begin(); it != Player::autoList.end(); ++it)
-	{
 		it->second->sendCreatureSay(player, type, text);
-		//TODO: event handling - onCreatureSay
-	}
 
+	//TODO: event handling - onCreatureSay
 	std::cout << "> " << player->getName() << " broadcasted: \"" << text << "\"." << std::endl;
 	return true;
 }

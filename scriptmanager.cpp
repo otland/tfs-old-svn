@@ -219,7 +219,7 @@ bool ScriptingManager::loadFromXml(const std::string& file, bool& enabled)
 			if(!xmlStrcmp(p->name, (const xmlChar*)"quest"))
 				Quests::getInstance()->parseQuestNode(p, modsLoaded);
 			else if(!xmlStrcmp(p->name, (const xmlChar*)"outfit"))
-				Outfits::getInstance()->parseOutfitNode(p); //TODO: duplicates (I just don't remember how it works here)
+				Outfits::getInstance()->parseOutfitNode(p);
 			else if(!xmlStrcmp(p->name, (const xmlChar*)"vocation"))
 				Vocations::getInstance()->parseVocationNode(p); //duplicates checking is dangerous, shouldn't be performed
 			else if(!xmlStrcmp(p->name, (const xmlChar*)"group"))

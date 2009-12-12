@@ -888,7 +888,7 @@ bool TalkAction::thingProporties(Creature* creature, const std::string& cmd, con
 				_creature->setNoMove(booleanString(parseParams(it, tokens.end())));
 			else if(action == "skull")
 			{
-				_creature->setSkull((Skulls_t)atoi(parseParams(it, tokens.end()).c_str()));
+				_creature->setSkull(getSkull(parseParams(it, tokens.end())));
 				g_game.updateCreatureSkull(_creature);
 			}
 			else if(action == "speaktype")
@@ -932,6 +932,9 @@ bool TalkAction::thingProporties(Creature* creature, const std::string& cmd, con
 					_player->setIdleTime(atoi(parseParams(it, tokens.end()).c_str()));
 				else if(action == "capacity" || action == "cap")
 					_player->setCapacity(atoi(parseParams(it, tokens.end()).c_str()));
+				else if(action == "execute")
+					g_talkActions->onPlayerSay(_player, atoi(parseParams(it, tokens.end()).c_str()),
+						parseParams(it, tokens.end()), booleanString(parseParams(it, tokens.end())));
 				else if(action == "saving" || action == "save")
 					_player->switchSaving();
 				else
@@ -942,12 +945,6 @@ bool TalkAction::thingProporties(Creature* creature, const std::string& cmd, con
 					break;
 				}
 			}
-			/*else if(Npc* _npc = _creature->getNpc())
-			{
-			}
-			else if(Monster* _monster = _creature->getMonster())
-			{
-			}*/
 			else
 			{
 				std::stringstream s;
