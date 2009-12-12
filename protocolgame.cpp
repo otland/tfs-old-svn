@@ -3082,10 +3082,10 @@ void ProtocolGame::AddShopItem(NetworkMessage_ptr msg, const ShopInfo item)
 {
 	const ItemType& it = Item::items[item.itemId];
 	msg->put<uint16_t>(it.clientId);
-	if(it.stackable || it.charges)
-		msg->put<char>(item.subType);
-	else if(it.isSplash() || it.isFluidContainer())
+	if(it.isSplash() || it.isFluidContainer())
 		msg->put<char>(fluidMap[item.subType % 8]);
+	else if(it.stackable || it.charges)
+		msg->put<char>(item.subType);
 	else
 		msg->put<char>(0x01);
 
