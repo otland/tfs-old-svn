@@ -2132,11 +2132,9 @@ bool Game::playerBroadcastMessage(Player* player, SpeakClasses type, const std::
 		return false;
 
 	for(AutoList<Player>::iterator it = Player::autoList.begin(); it != Player::autoList.end(); ++it)
-	{
 		it->second->sendCreatureSay(player, type, text);
-		//TODO: event handling - onCreatureSay
-	}
 
+	//TODO: event handling - onCreatureSay
 	std::clog << "> " << player->getName() << " broadcasted: \"" << text << "\"." << std::endl;
 	return true;
 }

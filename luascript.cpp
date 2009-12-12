@@ -9919,7 +9919,6 @@ int32_t LuaInterface::luaDoGuildAddEnemy(lua_State* L)
 			continue;
 
 		it->second->addEnemy(war, mode, enemy);
-		g_game.updateCreatureSkull(it->second);
 		++count;
 	}
 
@@ -9938,7 +9937,6 @@ int32_t LuaInterface::luaDoGuildRemoveEnemy(lua_State* L)
 			continue;
 
 		it->second->removeEnemy(enemy);
-		g_game.updateCreatureSkull(it->second);
 		++count;
 	}
 

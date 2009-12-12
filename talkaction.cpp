@@ -857,9 +857,8 @@ bool TalkAction::thingProporties(Creature* creature, const std::string& cmd, con
 				|| action == "pos" || action == "dest") //TODO: doesn't work
 			{
 				if(Teleport* teleport = item->getTeleport())
-					teleport->setDestination(Position(atoi(parseParams(it,
-						tokens.end()).c_str()), atoi(parseParams(it, tokens.end()).c_str()),
-						atoi(parseParams(it, tokens.end()).c_str())));
+					teleport->setDestination(Position(atoi(parseParams(it, tokens.end()).c_str()), atoi(
+						parseParams(it, tokens.end()).c_str()), atoi(parseParams(it, tokens.end()).c_str())));
 			}
 			else
 			{
@@ -889,8 +888,18 @@ bool TalkAction::thingProporties(Creature* creature, const std::string& cmd, con
 				_creature->setNoMove(booleanString(parseParams(it, tokens.end())));
 			else if(action == "skull")
 			{
-				_creature->setSkull((Skulls_t)atoi(parseParams(it, tokens.end()).c_str()));
+				_creature->setSkull(getSkulls(parseParams(it, tokens.end())));
 				g_game.updateCreatureSkull(_creature);
+			}
+			else if(action == "shield")
+			{
+				_creature->setShield(getShields(parseParams(it, tokens.end())));
+				g_game.updateCreatureShield(_creature);
+			}
+			else if(action == "emblem")
+			{
+				_creature->setEmblem(getEmblems(parseParams(it, tokens.end()))));
+				g_game.updateCreatureEmblem(_creature);
 			}
 			else if(action == "speaktype")
 				_creature->setSpeakType((SpeakClasses)atoi(parseParams(it, tokens.end()).c_str()));
@@ -912,8 +921,6 @@ bool TalkAction::thingProporties(Creature* creature, const std::string& cmd, con
 					_player->setVocation(atoi(parseParams(it, tokens.end()).c_str()));
 				else if(action == "sex" || action == "gender")
 					_player->setSex(atoi(parseParams(it, tokens.end()).c_str()));
-				else if(action == "stamina")
-					_player->setStaminaMinutes(atoi(parseParams(it, tokens.end()).c_str()));
 				else if(action == "town" || action == "temple")
 				{
 					if(Town* town = Towns::getInstance()->getTown(parseParams(it, tokens.end())))
@@ -922,17 +929,22 @@ bool TalkAction::thingProporties(Creature* creature, const std::string& cmd, con
 						_player->setTown(town->getID());
 					}
 				}
-				else if(action == "balance")
-					_player->balance = atoi(parseParams(it, tokens.end()).c_str());
 				else if(action == "marriage" || action == "partner")
 					_player->marriage = atoi(parseParams(it, tokens.end()).c_str());
+				else if(action == "balance")
+					_player->balance = atoi(parseParams(it, tokens.end()).c_str());
 				else if(action == "rates")
 					_player->rates[atoi(parseParams(it, tokens.end()).c_str())] = atof(
 						parseParams(it, tokens.end()).c_str());
 				else if(action == "idle")
 					_player->setIdleTime(atoi(parseParams(it, tokens.end()).c_str()));
+				else if(action == "stamina")
+					_player->setStaminaMinutes(atoi(parseParams(it, tokens.end()).c_str()));
 				else if(action == "capacity" || action == "cap")
 					_player->setCapacity(atoi(parseParams(it, tokens.end()).c_str()));
+				else if(action == "execute")
+					g_talkActions->onPlayerSay(_player, atoi(parseParams(it, tokens.end()).c_str()),
+						parseParams(it, tokens.end()), booleanString(parseParams(it, tokens.end())));
 				else if(action == "saving" || action == "save")
 					_player->switchSaving();
 				else
