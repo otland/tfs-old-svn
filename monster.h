@@ -112,6 +112,7 @@ class Monster : public Creature
 		const CreatureList& getFriendList() {return friendList;}
 
 		bool isTarget(Creature* creature);
+		bool getIdleStatus() const {return isIdle;}
 		bool isFleeing() const {return getHealth() <= mType->runAwayHealth;}
 
 		virtual BlockType_t blockHit(Creature* attacker, CombatType_t combatType, int32_t& damage,
@@ -159,7 +160,6 @@ class Monster : public Creature
 
 		void setIdle(bool _idle);
 		void updateIdleStatus();
-		bool getIdleStatus() const {return isIdle;}
 
 		virtual void onAddCondition(ConditionType_t type, bool hadCondition);
 		virtual void onEndCondition(ConditionType_t type);
