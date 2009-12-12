@@ -15,14 +15,7 @@
 		http://otland.net/
 ]
 
-[ NOTE
-	Fix up all reported (critical?) issues
-]
-
 [ BUGS
-	TalkAction::changeProporties causing crash on invalid param
-		Assigned to: Elf
-
-	Reloading NPC causing crash
+	Ghosts stacking may cause debug to the stacker (8.53+)
 		Assigned to: Elf
 ]

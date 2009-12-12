@@ -1317,25 +1317,26 @@ void Player::onCreatureAppear(const Creature* creature)
 
 	if(lastLogout && stamina < STAMINA_MAX)
 	{
-		int64_t period = (int32_t)time(NULL) - lastLogout - 600;
-		if(period > 0)
+		int64_t ticks = (int64_t)time(NULL) - lastLogout - 600;
+		if(ticks > 0)
 		{
-			period = (int64_t)std::ceil((double)period * g_config.getDouble(ConfigManager::RATE_STAMINA_GAIN));
-			int64_t rated = stamina + period, tmp = g_config.getNumber(
-				ConfigManager::STAMINA_LIMIT_TOP) * STAMINA_MULTIPLIER;
-			if(rated >= tmp)
-				rated -= tmp;
+			ticks = (int64_t)((double)ticks * 1000 / g_config.getDouble(ConfigManager::RATE_STAMINA_GAIN));
+			int64_t premium = g_config.getNumber(ConfigManager::STAMINA_LIMIT_TOP) * STAMINA_MULTIPLIER,
+				period = stamina + ticks;
+			if(period > premium)
+				period -= premium;
 			else
-				rated = 0;
+				period = 0;
 
-			useStamina(period - rated);
-			if(rated > 0)
+			useStamina(ticks - period);
+			if(period > 0)
 			{
-				tmp = (int64_t)std::ceil((double)rated / g_config.getDouble(ConfigManager::RATE_STAMINA_THRESHOLD));
-				if(stamina + tmp > STAMINA_MAX)
-					tmp = STAMINA_MAX;
+				ticks = (int64_t)((g_config.getDouble(ConfigManager::RATE_STAMINA_GAIN) * period)
+					/ g_config.getDouble(ConfigManager::RATE_STAMINA_THRESHOLD));
+				if(stamina + ticks > STAMINA_MAX)
+					ticks = STAMINA_MAX - stamina;
 
-				useStamina(tmp);
+				useStamina(ticks);
 			}
 
 			sendStats();
