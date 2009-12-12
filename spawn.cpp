@@ -312,18 +312,14 @@ bool Spawn::spawnMonster(uint32_t spawnId, MonsterType* mType, const Position& p
 			return false;
 		}
 	}
-	else
+	else if(!g_game.placeCreature(monster, pos, false, true))
 	{
-		if(!g_game.placeCreature(monster, pos, false, true))
-		{
-			delete monster;
-			return false;
-		}
+		delete monster;
+		return false;
 	}
 
 	monster->setSpawn(this);
 	monster->addRef();
-
 	monster->setMasterPosition(pos, radius);
 	monster->setDirection(dir);
 
@@ -350,12 +346,10 @@ void Spawn::checkSpawn()
 
 	Monster* monster;
 	uint32_t spawnId;
-
 	for(SpawnedMap::iterator it = spawnedMap.begin(); it != spawnedMap.end();)
 	{
 		spawnId = it->first;
 		monster = it->second;
-
 		if(monster->isRemoved())
 		{
 			if(spawnId != 0)
@@ -364,13 +358,13 @@ void Spawn::checkSpawn()
 			monster->unRef();
 			spawnedMap.erase(it++);
 		}
-		else if(!isInSpawnZone(monster->getPosition()) && spawnId != 0)
-		{
-			spawnedMap.insert(SpawnedPair(0, monster));
-			spawnedMap.erase(it++);
-		}
 		else
+		{
+			if(spawnId != 0 && !isInSpawnZone(monster->getPosition()) && monster->getIdleStatus())
+				g_game.internalTeleport(monster, monster->getMasterPosition(), FLAG_NOLIMIT);
+
 			++it;
+		}
 	}
 
 	uint32_t spawnCount = 0;
@@ -378,23 +372,22 @@ void Spawn::checkSpawn()
 	{
 		spawnId = it->first;
 		spawnBlock_t& sb = it->second;
+		if(spawnedMap.count(spawnId))
+			continue;
 
-		if(spawnedMap.count(spawnId) == 0)
+		if(OTSYS_TIME() < sb.lastSpawn + sb.interval)
+			continue;
+
+		if(findPlayer(sb.pos))
 		{
-			if(OTSYS_TIME() >= sb.lastSpawn + sb.interval)
-			{
-				if(findPlayer(sb.pos))
-				{
-					sb.lastSpawn = OTSYS_TIME();
-					continue;
-				}
-
-				spawnMonster(spawnId, sb.mType, sb.pos, sb.direction);
-				++spawnCount;
-				if(spawnCount >= (uint32_t)g_config.getNumber(ConfigManager::RATE_SPAWN))
-					break;
-			}
+			sb.lastSpawn = OTSYS_TIME();
+			continue;
 		}
+
+		spawnMonster(spawnId, sb.mType, sb.pos, sb.direction);
+		++spawnCount;
+		if(spawnCount >= (uint32_t)g_config.getNumber(ConfigManager::RATE_SPAWN))
+			break;
 	}
 
 	if(spawnedMap.size() < spawnMap.size())
@@ -439,20 +432,20 @@ void Spawn::removeMonster(Monster* monster)
 {
 	for(SpawnedMap::iterator it = spawnedMap.begin(); it != spawnedMap.end(); ++it)
 	{
-		if(it->second == monster)
-		{
-			monster->unRef();
-			spawnedMap.erase(it);
-			break;
-		}
+		if(it->second != monster)
+			continue;
+
+		monster->unRef();
+		spawnedMap.erase(it);
+		break;
 	}
 }
 
 void Spawn::stopEvent()
 {
-	if(checkSpawnEvent != 0)
-	{
-		Scheduler::getInstance().stopEvent(checkSpawnEvent);
-		checkSpawnEvent = 0;
-	}
+	if(!checkSpawnEvent)
+		return;
+
+	Scheduler::getInstance().stopEvent(checkSpawnEvent);
+	checkSpawnEvent = 0;
 }
