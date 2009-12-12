@@ -1843,7 +1843,7 @@ void ProtocolGame::sendGoods(const ShopInfoList& shop)
 			{
 				if(sit->sellPrice < 0)
 					continue;
-				
+
 				int8_t subType = -1;
 				if(sit->subType)
 				{
@@ -1865,7 +1865,7 @@ void ProtocolGame::sendGoods(const ShopInfoList& shop)
 			{
 				if(sit->sellPrice < 0)
 					continue;
-				
+
 				int8_t subType = -1;
 				if(sit->subType)
 				{
@@ -1873,7 +1873,7 @@ void ProtocolGame::sendGoods(const ShopInfoList& shop)
 					if(it.hasSubType() && !it.stackable)
 						subType = sit->subType;
 				}
-				
+
 				if(subType != -1)
 				{
 					uint32_t count = player->__getItemTypeCount(sit->itemId, subType);
@@ -3061,7 +3061,7 @@ void ProtocolGame::AddShopItem(NetworkMessage_ptr msg, const ShopInfo item)
 {
 	const ItemType& it = Item::items[item.itemId];
 	msg->AddU16(it.clientId);
-	if(it.stackable || it.isRune())
+	if(it.stackable || it.charges)
 		msg->AddByte(item.subType);
 	else if(it.isSplash() || it.isFluidContainer())
 		msg->AddByte(fluidMap[item.subType % 8]);
