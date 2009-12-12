@@ -898,7 +898,7 @@ bool TalkAction::thingProporties(Creature* creature, const std::string& cmd, con
 			}
 			else if(action == "emblem")
 			{
-				_creature->setEmblem(getEmblems(parseParams(it, tokens.end()))));
+				_creature->setEmblem(getEmblems(parseParams(it, tokens.end())));
 				g_game.updateCreatureEmblem(_creature);
 			}
 			else if(action == "speaktype")
