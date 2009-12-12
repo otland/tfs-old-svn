@@ -263,8 +263,8 @@
 	-- 60 * 1000 / 3 = 20 / 4 = 5 seconds (3 * 4 = 12 minutes for 1 stamina minute).
 	-- staminaRatingLimit* is in minutes.
 	rateStaminaLoss = 1
-	rateStaminaGain = 1000 / 3
-	rateStaminaThresholdGain = 4
+	rateStaminaGain = 3
+	rateStaminaThresholdGain = 12
 	staminaRatingLimitTop = 41 * 60
 	staminaRatingLimitBottom = 14 * 60
 	rateStaminaAboveNormal = 1.5
