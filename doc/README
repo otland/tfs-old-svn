@@ -23,10 +23,10 @@
 		http://sourceforge.net/project/memberlist.php?group_id=32523
 
 	.. also a thanks to the following people who has helped this
-	project by contributing something: Cayan, TheMask,
-		Rafael Hamdan, Fare-Fray, Kiwi Dan,
-		Piotrek1447, Hermes, Gesior.pl, levandi,
-		Casa, Winghawk, Nexoz, Godely, buzzbuzz2.
+	project by contributing something: Cayan, TheMask, slawkens
+		Rafael Hamdan, Fare-Fray, Kiwi Dan, Gentleman Riko,
+		Piotrek1447, Hermes, Gesior.pl, levandi, Bennet,
+		Casa, Winghawk, Nexoz, Godely, buzzbuzz2, koob.
 ]
 
 [ LICENSE
@@ -46,18 +46,11 @@
 	C++ Programmer(s)
 		Elf
 		Talaturen
-		slawkens
 
 	LUA Scripter(s)
 		Elf
-		slawkens
-
-	PHP Programmer(s)
-		Elf
-		slawkens
 
 	DATA Directory Manager(s)
-		slawkens
 		Lithium
 		KaczooH
 
@@ -91,7 +84,7 @@
 
 		Download required packages
 			Launch a terminal, and paste in the following commands:
-				apt-get install libboost1.37-dev liblua5.1-0 liblua5.1-0-dev liblua50 liblua50-dev liblualib50 liblualib50-dev lua50 libsqlite0 libsqlite0-dev libsqlite3-0 libsqlite3-dev sqlite3 lua5.1 libmysql++-dev libgmp3-dev subversion make g++ libxml2 libxml2-dev libxml++2.6-dev libmysqlclient15-dev mysql-client-5.0 mysql-common mysql-server-5.0 gcc cpp automake autoconf pkg-config
+				apt-get install libboost1.38-dev libboost-system1.38-dev libboost-filesystem1.38-dev libboost-date-time1.38-dev libboost-regex1.38-dev libboost-thread1.38-dev libgmp3-dev liblua5.1-0 liblua5.1-0-dev liblua50 liblua50-dev liblualib50 liblualib50-dev lua50 lua5.1 libsqlite0-dev libsqlite3-dev sqlite3 libmysql++-dev libmysqlclient15-dev mysql-client-5.0 mysql-server-5.0 mysql-common libxml2-dev libxml++2.6-dev cpp gcc g++ make automake autoconf pkg-config subversion liblua5.1-sql-mysql-dev liblua5.1-sql-sqlite3-dev zlib1g-dev zlib1g
 
 		Download sources
 			Launch a terminal, and paste in this command:
@@ -111,6 +104,10 @@
 				ln /usr/lib/libboost_regex-mt.a /usr/lib/libboost_regex.a
 				ln /usr/lib/libboost_thread-mt.so /usr/lib/libboost_thread.so
 				ln /usr/lib/libboost_thread-mt.a /usr/lib/libboost_thread.a
+				ln /usr/lib/libboost_filesystem-mt.so /usr/lib/libboost_filesystem.so
+				ln /usr/lib/libboost_filesystem-mt.a /usr/lib/libboost_filesystem.a
+				ln /usr/lib/libboost_date_time-mt.so /usr/lib/libboost_date_time.so
+				ln /usr/lib/libboost_date_time-mt.a /usr/lib/libboost_date_time.a
 				rm -rf boost_asio_1_0_0 boost_asio_1_0_0.tar.gz
 
 	Windows

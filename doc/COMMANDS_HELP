@@ -42,25 +42,10 @@
 		Values
 			type
 				* Items
-					description/desc
-					count/fluidtype/charges
+					set
+					erase
 					action/actionid/aid
 					unique/uniqueid/uid
-					duration
-					writer
-					text
-					name
-					pluralname
-					article
-					attack
-					extraattack
-					defense
-					extradefense
-					armor
-					attackspeed
-					hitchance
-					shootrange
-					depot/depotid
 					destination/position/pos/destpos
 				* Creatures
 					health
@@ -87,11 +72,12 @@
 					marriage
 					rates
 					resetidle
+					execute
 					saving
 
 		Examples
 			/attr aid 300
-			/attr text "Hello guys"
+			/attr set text "Hello guys
 			/attr skull 2
 
 	/serverdiag

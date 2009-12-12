@@ -1742,18 +1742,18 @@ BuildCmd=0
 [VersionInfo]
 Major=0
 Minor=3
-Release=5
-Build=2576
+Release=6
+Build=3293
 LanguageID=1033
 CharsetID=1250
 CompanyName=OtLand.net
-FileVersion=0.3.5
+FileVersion=0.3.6
 FileDescription=The Forgotten Server
 InternalName=Crying Damson
 LegalCopyright=
 LegalTrademarks=
 OriginalFilename=Crying Damson.exe
 ProductName=The Forgotten Server
-ProductVersion=0.3.5
+ProductVersion=0.3.6
 AutoIncBuildNr=0
 

@@ -258,11 +258,9 @@
 	-- NOTE: Stamina is stored in miliseconds, so seconds are multiplied by 1000.
 	-- rateStaminaHits multiplies every hit done a creature, which are later
 	-- multiplied by player attack speed.
-	-- rateStaminaGain is multiplying every second of logged out time, eg:
-	-- 60 * 1000 / 3 = 20 seconds, what gives 1 stamina minute for 3 being logged off.
-	-- rateStaminaThresholdGain is dividing in case the normal gain (that is
-	-- multiplied by rateStaminaGain, btw.) passed above threshold, eg:
-	-- 60 * 1000 / 3 = 20 / 4 = 5 seconds (3 * 4 = 12 minutes for 1 stamina minute).
+	-- rateStaminaGain is divider of every logged out second, eg:
+	-- 60000 / 3 = 20000 milliseconds, what gives 20 stamina seconds for 1 minute being logged off.
+	-- rateStaminaThresholdGain is divider for the premium stamina.
 	-- staminaRatingLimit* is in minutes.
 	rateStaminaLoss = 1
 	rateStaminaGain = 3

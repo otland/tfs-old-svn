@@ -111,6 +111,10 @@
 		advancedFragList
 			Default: no
 
+		useFragHandler
+			Enable or disable hardcoded frag handler.
+			Default: yes
+
 	*BANISHMENTS
 		notationsToBan
 			Amount of notations to receive by player to be banned automatically.
@@ -796,20 +800,19 @@
 		NOTE: Stamina is stored in miliseconds so you must multiply seconds by 1000.
 		rateStaminaHits multiplies every hit a creature does which is later
 		multiplied by player's attack speed.
-		rateStaminaGain is multiplying every second of logged out time, eg:
-		60 * 1000 / 3 = 20 seconds, what gives 1 stamina minute for 3 being logged off.
-		rateStaminaThresholdGain is dividing in case the normal gain (that is
-		 multiplied by rateStaminaGain btw.) passed above threshold, eg:
-		60 * 1000 / 3 = 20 / 4 = 5 seconds (3 * 4 = 12 minutes for 1 stamina minute).
+		rateStaminaGain is divider of every logged out second, eg:
+		60000 / 3 = 20000 milliseconds, what gives 20 stamina seconds for 1 minute being logged off.
+		rateStaminaThresholdGain is divider for the premium stamina.
+		staminaRatingLimit* is in minutes.
 
 		rateStaminaLoss
 			Default: 1
 
 		rateStaminaGain
-			Default: 1000 / 3
+			Default: 3
 
 		rateStaminaThresholdGain
-			Default: 4
+			Default: 12
 
 		staminaRatingLimitTop
 			In minutes.

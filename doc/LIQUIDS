@@ -21,10 +21,10 @@
 	26	lava			RED
 
 	3	beer			BROWN
-	11	oil			BROWN
-	19	mud			BROWN
-	27	rum			BROWN
-	35	tea			BROWN
+	11	oil				BROWN
+	19	mud				BROWN
+	27	rum				BROWN
+	35	tea				BROWN
 	43	mead			BROWN
 
 	4	slime			GREEN
@@ -35,7 +35,7 @@
 	21	fruit juice		YELLOW
 
 	6	milk			WHITE
-	14	coconut milk		WHITE
+	14	coconut milk	WHITE
 
 	7	manafluid		PURPLE
 	15	wine			PURPLE

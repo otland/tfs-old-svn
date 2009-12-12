@@ -18,4 +18,7 @@
 [ BUGS
 	Ghosts stacking may cause debug to the stacker (8.53+)
 		Assigned to: Elf
+
+	RVW control through the Comment not working
+		Assigned to: Elf
 ]

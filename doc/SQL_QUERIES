@@ -45,7 +45,7 @@
 		UPDATE `players` SET `blessings` = 0;
 
 	Clean all players deaths
-		DELETE FROM `player_deaths`, `killers`, `player_killers`, `environment_killers`;
+		TRUNCATE TABLE `player_deaths`;
 
 	Delete inactive players
 	In this example below level 50, 20 days of inactivity

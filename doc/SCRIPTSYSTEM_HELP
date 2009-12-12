@@ -156,7 +156,7 @@
 	*SPELLS
 		File: spells/spells.xml
 		Attributes
-			//TODO :()
+			//TODO
 		Function: onCastSpell(cid, var)
 
 	*TALKACTIONS
@@ -189,7 +189,7 @@
 				Default: yes
 			exception
 				List of players, who can't use this talkaction.
-				Example: "GM John;GM 2;Maatt"
+				Example: "GM John;GM 2;Elf"
 		Function: onSay(cid, words, param, channel)
 
 	*WEAPONS
