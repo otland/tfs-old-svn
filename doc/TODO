@@ -36,4 +36,14 @@
 
 	Deprecate several hardcoded systems (guild management, etc) and rescript them in Lua
 		Assigned to: ?
+
+
+	Make MD5 and SHA1 use OpenSSL (upto five times faster)
+		Assigned to: Stian ("thestian")
+
+	Maybe make RSA, XTEA use OpenSSL (no data about the speed)
+		Assigned to: Stian ("thestian")
+
+	Change from mysql to mysql++ (more object oriented, fits better into C++ projects)
+		Assigned to: Elf
 ]
