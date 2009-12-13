@@ -332,7 +332,7 @@ bool ExceptionHandler::LoadMap()
 	offMin = 0xFFFFFF;
 	offMax = 0;
 
-	FILE* input = fopen("forgottenserver.map", "r");
+	FILE* input = fopen("theforgottenserver.map", "r");
 	if(!input)
 	{
 		MessageBoxA(NULL, "Failed loading symbols, forgottenserver.map file not found.", "Error", MB_OK | MB_ICONERROR);

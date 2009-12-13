@@ -100,10 +100,6 @@
 #undef _WIN32_WINNT
 #endif
 
-#ifdef _WIN64_WINNT
-#undef _WIN64_WINNT
-#endif
-
 //Windows 2000	0x0500
 //Windows XP	0x0501
 //Windows 2003	0x0502
@@ -111,8 +107,6 @@
 //Windows Seven 0x0601
 
 #define _WIN32_WINNT 0x0501
-#define _WIN64_WINNT 0x0501
-
 #ifndef __GNUC__
 	#ifndef NOMINMAX
 		#define NOMINMAX

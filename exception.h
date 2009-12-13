@@ -33,7 +33,6 @@ class ExceptionHandler
 
 	private:
 		bool LoadMap();
-
 		struct SEHChain
 		{
 			SEHChain *prev;

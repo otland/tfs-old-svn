@@ -12,7 +12,7 @@ ResourceIncludes=
 MakeIncludes=
 Compiler=
 CppCompiler=-D__USE_MYSQL___@@_-D__USE_SQLITE___@@_-D__ENABLE_SERVER_DIAGNOSTIC___@@_-D__EXCEPTION_TRACER___@@_
-Linker=-O1_@@_-lboost_system_@@_-lgmp_@@_-llua5.1_@@_-lmysql_@@_-lboost_regex_@@_-lsqlite3_@@_-lwsock32_@@_-lxml2_@@_-lmysql_@@_-lws2_32_@@_-s_@@_-lboost_filesystem_@@_-lboost_thread_@@_-lz_@@_
+Linker=-O1_@@_-lboost_system_@@_-lgmp_@@_-llua5.1_@@_-lmysql_@@_-lboost_regex_@@_-lsqlite3_@@_-lwsock32_@@_-lxml2_@@_-lmysql_@@_-lws2_32_@@_-s_@@_-lboost_filesystem_@@_-lboost_thread_@@_-lz_@@_-Wl,-Map=theforgottenserver.map_@@_
 IsCpp=1
 Icon=TheForgottenServer.ico
 ExeOutput=
@@ -31,20 +31,20 @@ CompilerSettings=0000000001100000000000
 
 [VersionInfo]
 Major=0
-Minor=3
-Release=5
-Build=2576
+Minor=4
+Release=0
+Build=0
 LanguageID=1033
 CharsetID=1250
 CompanyName=OtLand.net
-FileVersion=0.3.5
+FileVersion=0.4
 FileDescription=The Forgotten Server
-InternalName=Crying Damson
+InternalName=
 LegalCopyright=
 LegalTrademarks=
-OriginalFilename=Crying Damson.exe
+OriginalFilename=The Forgotten Server.exe
 ProductName=The Forgotten Server
-ProductVersion=0.3.5
+ProductVersion=0.4
 AutoIncBuildNr=0
 
 [Unit1]

@@ -1,0 +1,318 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="TheForgottenServer" />
+		<Option pch_mode="0" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug Windows">
+				<Option platforms="Windows;" />
+				<Option output="C:\theforgottenserver\Debug" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="C:\theforgottenserver\" />
+				<Option object_output="obj\Debug\" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-pg" />
+					<Add option="-g" />
+					<Add option="-D__USE_MYSQL___" />
+					<Add option="-D__USE_SQLITE___" />
+					<Add option="-D__ENABLE_SERVER_DIAGNOSTIC___" />
+					<Add option="-D__EXCEPTION_TRACER___" />
+				</Compiler>
+				<Linker>
+					<Add option="-pg -lgmon" />
+					<Add option="-lxml2" />
+					<Add option="-lmysql" />
+					<Add option="-lsqlite3" />
+					<Add option="-lgmp" />
+					<Add option="-llua5.1" />
+					<Add option="-lboost_system" />
+					<Add option="-lboost_filesystem" />
+					<Add option="-lboost_thread" />
+					<Add option="-lboost_regex" />
+					<Add option="-lz" />
+					<Add option="-lwsock32" />
+					<Add option="-lws2_32" />
+					<Add option="-Wl,-Map=C:\theforgottenserver\theforgottenserver.map" />
+				</Linker>
+			</Target>
+			<Target title="Release Windows">
+				<Option platforms="Windows;" />
+				<Option output="C:\theforgottenserver\Release.exe" prefix_auto="1" extension_auto="0" />
+				<Option working_dir="C:\theforgottenserver\" />
+				<Option object_output="obj\Release\" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-D__USE_MYSQL___" />
+					<Add option="-D__USE_SQLITE___" />
+					<Add option="-D__ENABLE_SERVER_DIAGNOSTIC___" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+					<Add option="-lxml2" />
+					<Add option="-lmysql" />
+					<Add option="-lsqlite3" />
+					<Add option="-lgmp" />
+					<Add option="-llua5.1" />
+					<Add option="-lboost_system" />
+					<Add option="-lboost_filesystem" />
+					<Add option="-lboost_thread" />
+					<Add option="-lboost_regex" />
+					<Add option="-lz" />
+					<Add option="-lwsock32" />
+					<Add option="-lws2_32" />
+				</Linker>
+			</Target>
+		</Build>
+		<VirtualTargets>
+			<Add alias="All" targets="Debug Windows;Release Windows;" />
+			<Add alias="All Debug" targets="Debug Windows;" />
+			<Add alias="All Release" targets="Release Windows;" />
+		</VirtualTargets>
+		<Compiler>
+			<Add option="-Wall" />
+			<Add option="-Wno-unused-parameter" />
+			<Add option="-O1" />
+		</Compiler>
+		<Unit filename="..\Makefile.am">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="..\account.h" />
+		<Unit filename="..\actions.cpp" />
+		<Unit filename="..\actions.h" />
+		<Unit filename="..\admin.cpp" />
+		<Unit filename="..\admin.h" />
+		<Unit filename="..\allocator.cpp" />
+		<Unit filename="..\allocator.h" />
+		<Unit filename="..\autogen.sh">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="..\baseevents.cpp" />
+		<Unit filename="..\baseevents.h" />
+		<Unit filename="..\beds.cpp" />
+		<Unit filename="..\beds.h" />
+		<Unit filename="..\chat.cpp" />
+		<Unit filename="..\chat.h" />
+		<Unit filename="..\combat.cpp" />
+		<Unit filename="..\combat.h" />
+		<Unit filename="..\condition.cpp" />
+		<Unit filename="..\condition.h" />
+		<Unit filename="..\config.lua.dist">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="..\configmanager.cpp" />
+		<Unit filename="..\configmanager.h" />
+		<Unit filename="..\configure.ac">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="..\connection.cpp" />
+		<Unit filename="..\connection.h" />
+		<Unit filename="..\const.h" />
+		<Unit filename="..\container.cpp" />
+		<Unit filename="..\container.h" />
+		<Unit filename="..\creature.cpp" />
+		<Unit filename="..\creature.h" />
+		<Unit filename="..\creatureevent.cpp" />
+		<Unit filename="..\creatureevent.h" />
+		<Unit filename="..\cylinder.cpp" />
+		<Unit filename="..\cylinder.h" />
+		<Unit filename="..\database.cpp" />
+		<Unit filename="..\database.h" />
+		<Unit filename="..\databasemanager.cpp" />
+		<Unit filename="..\databasemanager.h" />
+		<Unit filename="..\databasemysql.cpp" />
+		<Unit filename="..\databasemysql.h" />
+		<Unit filename="..\databasesqlite.cpp" />
+		<Unit filename="..\databasesqlite.h" />
+		<Unit filename="..\definitions.h" />
+		<Unit filename="..\depot.cpp" />
+		<Unit filename="..\depot.h" />
+		<Unit filename="..\dispatcher.cpp" />
+		<Unit filename="..\dispatcher.h" />
+		<Unit filename="..\doc\ACTION_IDS">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="..\doc\CHANGELOG">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="..\doc\COMMANDS_HELP">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="..\doc\CONFIG_HELP">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="..\doc\GROUPS">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="..\doc\LICENSE">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="..\doc\LIQUIDS">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="..\doc\LUA_FUNCTIONS">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="..\doc\MYSQL_HELP">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="..\doc\README">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="..\doc\RESERVED_IDS">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="..\doc\SCRIPTSYSTEM_HELP">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="..\doc\SIGNALS">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="..\doc\SQL_QUERIES">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="..\doc\TODO">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="..\enums.h" />
+		<Unit filename="..\exception.cpp" />
+		<Unit filename="..\exception.h" />
+		<Unit filename="..\fileloader.cpp" />
+		<Unit filename="..\fileloader.h" />
+		<Unit filename="..\game.cpp" />
+		<Unit filename="..\game.h" />
+		<Unit filename="..\gameservers.cpp" />
+		<Unit filename="..\gameservers.h" />
+		<Unit filename="..\globalevent.cpp" />
+		<Unit filename="..\globalevent.h" />
+		<Unit filename="..\group.cpp" />
+		<Unit filename="..\group.h" />
+		<Unit filename="..\house.cpp" />
+		<Unit filename="..\house.h" />
+		<Unit filename="..\housetile.cpp" />
+		<Unit filename="..\housetile.h" />
+		<Unit filename="..\ioban.cpp" />
+		<Unit filename="..\ioban.h" />
+		<Unit filename="..\ioguild.cpp" />
+		<Unit filename="..\ioguild.h" />
+		<Unit filename="..\iologindata.cpp" />
+		<Unit filename="..\iologindata.h" />
+		<Unit filename="..\iomap.cpp" />
+		<Unit filename="..\iomap.h" />
+		<Unit filename="..\iomapserialize.cpp" />
+		<Unit filename="..\iomapserialize.h" />
+		<Unit filename="..\item.cpp" />
+		<Unit filename="..\item.h" />
+		<Unit filename="..\itemattributes.cpp" />
+		<Unit filename="..\itemattributes.h" />
+		<Unit filename="..\itemloader.h" />
+		<Unit filename="..\items.cpp" />
+		<Unit filename="..\items.h" />
+		<Unit filename="..\luascript.cpp" />
+		<Unit filename="..\luascript.h" />
+		<Unit filename="..\mailbox.cpp" />
+		<Unit filename="..\mailbox.h" />
+		<Unit filename="..\manager.cpp" />
+		<Unit filename="..\manager.h" />
+		<Unit filename="..\map.cpp" />
+		<Unit filename="..\map.h" />
+		<Unit filename="..\md5.cpp" />
+		<Unit filename="..\md5.h" />
+		<Unit filename="..\monster.cpp" />
+		<Unit filename="..\monster.h" />
+		<Unit filename="..\monsters.cpp" />
+		<Unit filename="..\monsters.h" />
+		<Unit filename="..\movement.cpp" />
+		<Unit filename="..\movement.h" />
+		<Unit filename="..\networkmessage.cpp" />
+		<Unit filename="..\networkmessage.h" />
+		<Unit filename="..\npc.cpp" />
+		<Unit filename="..\npc.h" />
+		<Unit filename="..\otpch.h" />
+		<Unit filename="..\otserv.cpp" />
+		<Unit filename="..\otsystem.h" />
+		<Unit filename="..\outfit.cpp" />
+		<Unit filename="..\outfit.h" />
+		<Unit filename="..\outputmessage.cpp" />
+		<Unit filename="..\outputmessage.h" />
+		<Unit filename="..\party.cpp" />
+		<Unit filename="..\party.h" />
+		<Unit filename="..\player.cpp" />
+		<Unit filename="..\player.h" />
+		<Unit filename="..\position.cpp" />
+		<Unit filename="..\position.h" />
+		<Unit filename="..\protocol.cpp" />
+		<Unit filename="..\protocol.h" />
+		<Unit filename="..\protocolgame.cpp" />
+		<Unit filename="..\protocolgame.h" />
+		<Unit filename="..\protocolhttp.cpp" />
+		<Unit filename="..\protocolhttp.h" />
+		<Unit filename="..\protocollogin.cpp" />
+		<Unit filename="..\protocollogin.h" />
+		<Unit filename="..\protocolold.cpp" />
+		<Unit filename="..\protocolold.h" />
+		<Unit filename="..\quests.cpp" />
+		<Unit filename="..\quests.h" />
+		<Unit filename="..\raids.cpp" />
+		<Unit filename="..\raids.h" />
+		<Unit filename="..\rsa.cpp" />
+		<Unit filename="..\rsa.h" />
+		<Unit filename="..\scheduler.cpp" />
+		<Unit filename="..\scheduler.h" />
+		<Unit filename="..\schemas\mysql.sql">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="..\schemas\pgsql.sql">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="..\schemas\sqlite.sql">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="..\scriptmanager.cpp" />
+		<Unit filename="..\scriptmanager.h" />
+		<Unit filename="..\server.cpp" />
+		<Unit filename="..\server.h" />
+		<Unit filename="..\sha1.cpp" />
+		<Unit filename="..\sha1.h" />
+		<Unit filename="..\spawn.cpp" />
+		<Unit filename="..\spawn.h" />
+		<Unit filename="..\spells.cpp" />
+		<Unit filename="..\spells.h" />
+		<Unit filename="..\status.cpp" />
+		<Unit filename="..\status.h" />
+		<Unit filename="..\talkaction.cpp" />
+		<Unit filename="..\talkaction.h" />
+		<Unit filename="..\teleport.cpp" />
+		<Unit filename="..\teleport.h" />
+		<Unit filename="..\templates.h" />
+		<Unit filename="..\textlogger.cpp" />
+		<Unit filename="..\textlogger.h" />
+		<Unit filename="..\theforgottenserver.s3db">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="..\thing.cpp" />
+		<Unit filename="..\thing.h" />
+		<Unit filename="..\tile.cpp" />
+		<Unit filename="..\tile.h" />
+		<Unit filename="..\tools.cpp" />
+		<Unit filename="..\tools.h" />
+		<Unit filename="..\town.h" />
+		<Unit filename="..\trashholder.cpp" />
+		<Unit filename="..\trashholder.h" />
+		<Unit filename="..\vocation.cpp" />
+		<Unit filename="..\vocation.h" />
+		<Unit filename="..\waitlist.cpp" />
+		<Unit filename="..\waitlist.h" />
+		<Unit filename="..\waypoints.h" />
+		<Unit filename="..\weapons.cpp" />
+		<Unit filename="..\weapons.h" />
+		<Extensions>
+			<code_completion />
+			<debugger />
+			<envvars />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

@@ -31,20 +31,20 @@ CompilerSettings=0000000001100000000000
 
 [VersionInfo]
 Major=0
-Minor=3
-Release=5
-Build=2576
+Minor=4
+Release=0
+Build=0
 LanguageID=1033
 CharsetID=1250
 CompanyName=OtLand.net
-FileVersion=0.3.5
+FileVersion=0.4
 FileDescription=The Forgotten Server
-InternalName=Crying Damson
+InternalName=
 LegalCopyright=
 LegalTrademarks=
-OriginalFilename=Crying Damson.exe
+OriginalFilename=The Forgotten Server.exe
 ProductName=The Forgotten Server
-ProductVersion=0.3.5
+ProductVersion=0.4
 AutoIncBuildNr=0
 
 [Unit1]
