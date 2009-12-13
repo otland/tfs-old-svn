@@ -1324,7 +1324,7 @@ void Player::onCreatureAppear(const Creature* creature)
 		int64_t ticks = (int64_t)time(NULL) - lastLogout - 600;
 		if(ticks > 0)
 		{
-			ticks = (int64_t)((double)ticks * 1000 / g_config.getDouble(ConfigManager::RATE_STAMINA_GAIN));
+			ticks = (int64_t)((double)(ticks * 1000) / g_config.getDouble(ConfigManager::RATE_STAMINA_GAIN));
 			int64_t premium = g_config.getNumber(ConfigManager::STAMINA_LIMIT_TOP) * STAMINA_MULTIPLIER,
 				period = stamina + ticks;
 			if(period > premium)
