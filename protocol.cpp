@@ -213,10 +213,8 @@ bool Protocol::RSA_decrypt(RSA* rsa, NetworkMessage& msg)
 
 uint32_t Protocol::getIP() const
 {
-	// No need to get two elements here
-	Connection_ptr conn = getConnection();
-	if(conn)
-		return conn->getIP();
+	if(Connection_ptr connection = getConnection())
+		return connection->getIP();
 
 	return 0;
 }

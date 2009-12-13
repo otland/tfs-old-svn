@@ -114,7 +114,7 @@ inline int64_t OTSYS_TIME()
 
 #ifdef __GNUC__
 	#define __OTSERV_FUNCTION__ __PRETTY_FUNCTION__
-#elif defined _MSC_VER
+#elif defined(_MSC_VER)
 	#define __OTSERV_FUNCTION__ __FUNCDNAME__
 #endif
 
