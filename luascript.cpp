@@ -854,7 +854,6 @@ bool LuaInterface::initState()
 
 	lua_newtable(m_luaState);
 	lua_setfield(m_luaState, LUA_REGISTRYINDEX, "EVENTS");
-
 	m_runningEventId = EVENT_ID_USER;
 	return true;
 }
@@ -5535,12 +5534,6 @@ int32_t LuaInterface::luaSetCombatCondition(lua_State* L)
 	//setCombatCondition(combat, condition)
 	uint32_t conditionId = popNumber(L);
 	ScriptEnviroment* env = getEnv();
-	if(env->getScriptId() != EVENT_ID_LOADING)
-	{
-		errorEx("This function can only be used while loading the script.");
-		lua_pushboolean(L, false);
-		return 1;
-	}
 
 	Combat* combat = env->getCombatObject(popNumber(L));
 	if(!combat)
@@ -5596,12 +5589,6 @@ int32_t LuaInterface::luaSetConditionParam(lua_State* L)
 	//setConditionParam(condition, key, value)
 	int32_t value = popNumber(L);
 	ScriptEnviroment* env = getEnv();
-	if(env->getScriptId() != EVENT_ID_LOADING)
-	{
-		errorEx("This function can only be used while loading the script.");
-		lua_pushboolean(L, false);
-		return 1;
-	}
 
 	ConditionParam_t key = (ConditionParam_t)popNumber(L);
 	if(Condition* condition = env->getConditionObject(popNumber(L)))
@@ -5623,13 +5610,6 @@ int32_t LuaInterface::luaAddDamageCondition(lua_State* L)
 	//addDamageCondition(condition, rounds, time, value)
 	int32_t value = popNumber(L), time = popNumber(L), rounds = popNumber(L);
 	ScriptEnviroment* env = getEnv();
-	if(env->getScriptId() != EVENT_ID_LOADING)
-	{
-		errorEx("This function can only be used while loading the script.");
-		lua_pushboolean(L, false);
-		return 1;
-	}
-
 	if(ConditionDamage* condition = dynamic_cast<ConditionDamage*>(env->getConditionObject(popNumber(L))))
 	{
 		condition->addDamage(rounds, time, value);
@@ -5649,13 +5629,6 @@ int32_t LuaInterface::luaAddOutfitCondition(lua_State* L)
 	//addOutfitCondition(condition, outfit)
 	Outfit_t outfit = popOutfit(L);
 	ScriptEnviroment* env = getEnv();
-	if(env->getScriptId() != EVENT_ID_LOADING)
-	{
-		errorEx("This function can only be used while loading the script.");
-		lua_pushboolean(L, false);
-		return 1;
-	}
-
 	if(ConditionOutfit* condition = dynamic_cast<ConditionOutfit*>(env->getConditionObject(popNumber(L))))
 	{
 		condition->addOutfit(outfit);
@@ -5768,17 +5741,9 @@ int32_t LuaInterface::luaSetCombatFormula(lua_State* L)
 int32_t LuaInterface::luaSetConditionFormula(lua_State* L)
 {
 	//setConditionFormula(condition, mina, minb, maxa, maxb)
-	ScriptEnviroment* env = getEnv();
-	if(env->getScriptId() != EVENT_ID_LOADING)
-	{
-		errorEx("This function can only be used while loading the script.");
-		lua_pushboolean(L, false);
-		return 1;
-	}
-
 	double maxb = popFloatNumber(L), maxa = popFloatNumber(L),
 		minb = popFloatNumber(L), mina = popFloatNumber(L);
-
+	ScriptEnviroment* env = getEnv();
 	if(ConditionSpeed* condition = dynamic_cast<ConditionSpeed*>(env->getConditionObject(popNumber(L))))
 	{
 		condition->setFormulaVars(mina, minb, maxa, maxb);
@@ -6082,8 +6047,8 @@ int32_t LuaInterface::luaDoCombatAreaCondition(lua_State* L)
 			CombatParams params;
 			params.effects.impact = effect;
 			params.conditionList.push_back(condition);
-			Combat::doCombatCondition(creature, pos, area, params);
 
+			Combat::doCombatCondition(creature, pos, area, params);
 			lua_pushboolean(L, true);
 		}
 		else
