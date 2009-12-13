@@ -74,13 +74,17 @@ bool Mailbox::getDepotId(const std::string& townString, uint32_t& depotId)
 	if(!town)
 		return false;
 
-	IntegerVec disabledTowns = vectorAtoi(explodeString(g_config.getString(ConfigManager::MAILBOX_DISABLED_TOWNS), ","));
-	if(disabledTowns[0] != -1)
-	{	
-		for(IntegerVec::iterator it = disabledTowns.begin(); it != disabledTowns.end(); ++it)
+	std::string disabledTowns = g_config.getString(ConfigManager::MAILBOX_DISABLED_TOWNS);
+	if(disabledTowns.size())
+	{
+		IntegerVec tmpVec = vectorAtoi(explodeString(disabledTowns, ","));
+		if(tmpVec[0] != 0)
 		{
-			if(town->getID() == uint32_t(*it))
-				return false;
+			for(IntegerVec::iterator it = tmpVec.begin(); it != tmpVec.end(); ++it)
+			{
+				if(town->getID() == uint32_t(*it))
+					return false;
+			}
 		}
 	}
 

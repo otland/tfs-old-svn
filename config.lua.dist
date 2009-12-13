@@ -165,7 +165,7 @@
 	useHouseDataStorage = false
 	storeTrash = true
 	cleanProtectedZones = true
-	mailboxDisabledTowns = "-1"
+	mailboxDisabledTowns = ""
 
 	-- Startup
 	-- NOTE: defaultPriority works only on Windows and niceLevel on *nix

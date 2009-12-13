@@ -271,7 +271,7 @@ bool ConfigManager::load()
 	m_confBool[PVPZONE_ADDMANASPENT] = getGlobalBool("addManaSpentInPvPZone", true);
 	m_confNumber[ITEMLIMIT_PROTECTIONZONE] = getGlobalNumber("maxItemsPerPZTile", 0);
 	m_confNumber[ITEMLIMIT_HOUSETILE] = getGlobalNumber("maxItemsPerHouseTile", 0);
-	m_confString[MAILBOX_DISABLED_TOWNS] = getGlobalString("mailboxDisabledTowns", "-1");
+	m_confString[MAILBOX_DISABLED_TOWNS] = getGlobalString("mailboxDisabledTowns", "");
 	m_confNumber[SQUARE_COLOR] = getGlobalNumber("squareColor", 0);
 	m_confBool[USE_BLACK_SKULL] = getGlobalBool("useBlackSkull", false);
 	m_confBool[USE_FRAG_HANDLER] = getGlobalBool("useFragHandler", true);
