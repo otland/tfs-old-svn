@@ -70,6 +70,7 @@ ScriptEnviroment::CombatMap ScriptEnviroment::m_combatMap;
 uint32_t ScriptEnviroment::m_lastCombatId = 0;
 ScriptEnviroment::ConditionMap ScriptEnviroment::m_conditionMap;
 uint32_t ScriptEnviroment::m_lastConditionId = 0;
+ScriptEnviroment::ConditionMap ScriptEnviroment::m_tempConditionMap;
 
 ScriptEnviroment::ThingMap ScriptEnviroment::m_globalMap;
 ScriptEnviroment::StorageMap ScriptEnviroment::m_storageMap;
@@ -92,6 +93,10 @@ ScriptEnviroment::~ScriptEnviroment()
 		delete it->second;
 
 	m_areaMap.clear();
+	for(ConditionMap::iterator it = m_conditionMap.begin(); it != m_conditionMap.end(); ++it)
+		delete it->second;
+
+	m_conditionMap.clear();
 	reset();
 }
 
@@ -120,6 +125,10 @@ void ScriptEnviroment::reset()
 	}
 
 	m_tempResults.clear();
+	for(ConditionMap::iterator it = m_tempConditionMap.begin(); it != m_tempConditionMap.end(); ++it)
+		delete it->second;
+
+	m_tempConditionMap.clear();
 	m_localMap.clear();
 }
 
@@ -380,10 +389,13 @@ Combat* ScriptEnviroment::getCombatObject(uint32_t combatId)
 
 uint32_t ScriptEnviroment::addConditionObject(Condition* condition)
 {
-	uint32_t newConditionId = m_lastConditionId + 1;
-	m_conditionMap[newConditionId] = condition;
+	m_conditionMap[++m_lastConditionId] = condition;
+	return m_lastConditionId;
+}
 
-	m_lastConditionId++;
+uint32_t ScriptEnviroment::addTempConditionObject(Condition* condition)
+{
+	m_conditionMap[++m_lastConditionId] = condition;
 	return m_lastConditionId;
 }
 
@@ -391,6 +403,10 @@ Condition* ScriptEnviroment::getConditionObject(uint32_t conditionId)
 {
 	ConditionMap::iterator it = m_conditionMap.find(conditionId);
 	if(it != m_conditionMap.end())
+		return it->second;
+
+	it = m_tempConditionMap.find(conditionId);
+	if(it != m_tempConditionMap.end())
 		return it->second;
 
 	return NULL;
@@ -5468,15 +5484,13 @@ int32_t LuaInterface::luaCreateConditionObject(lua_State* L)
 		ticks = popNumber(L);
 
 	ScriptEnviroment* env = getEnv();
-	if(env->getScriptId() != EVENT_ID_LOADING)
-	{
-		errorEx("This function can only be used while loading the script.");
-		lua_pushboolean(L, false);
-		return 1;
-	}
-
 	if(Condition* condition = Condition::createCondition(CONDITIONID_COMBAT, (ConditionType_t)popNumber(L), ticks, 0, buff, subId))
-		lua_pushnumber(L, env->addConditionObject(condition));
+	{
+		if(env->getScriptId() != EVENT_ID_LOADING)
+			lua_pushnumber(L, env->addTempConditionObject(condition));
+		else
+			lua_pushnumber(L, env->addConditionObject(condition));
+	}
 	else
 	{
 		errorEx(getError(LUA_ERROR_CONDITION_NOT_FOUND));
@@ -7605,27 +7619,6 @@ int32_t LuaInterface::luaDoCreatureChangeOutfit(lua_State* L)
 	else
 	{
 		errorEx(getError(LUA_ERROR_CREATURE_NOT_FOUND));
-		lua_pushboolean(L, false);
-	}
-	return 1;
-}
-
-int32_t LuaInterface::luaDoSetCreatureLight(lua_State* L)
-{
-	//doSetCreatureLight(cid, lightLevel, lightColor, time)
-	uint32_t time = popNumber(L);
-	uint8_t color = (uint8_t)popNumber(L), level = (uint8_t)popNumber(L);
-
-	ScriptEnviroment* env = getEnv();
-	if(Creature* creature = env->getCreatureByUID(popNumber(L)))
-	{
-		Condition* condition = Condition::createCondition(CONDITIONID_COMBAT, CONDITION_LIGHT, time, level | (color << 8));
-		creature->addCondition(condition);
-		lua_pushboolean(L, true);
-	}
-	else
-	{
-		errorEx(getError(LUA_ERROR_PLAYER_NOT_FOUND));
 		lua_pushboolean(L, false);
 	}
 	return 1;

@@ -106,6 +106,7 @@ class ScriptEnviroment
 		static Combat* getCombatObject(uint32_t combatId);
 
 		static uint32_t addConditionObject(Condition* condition);
+		static uint32_t addTempConditionObject(Condition* condition);
 		static Condition* getConditionObject(uint32_t conditionId);
 
 		Thing* getThingByUID(uint32_t uid);
@@ -151,12 +152,13 @@ class ScriptEnviroment
 	private:
 		typedef std::map<uint64_t, Thing*> ThingMap;
 		typedef std::vector<const LuaVariant*> VariantVector;
+		typedef std::list<Item*> ItemList;
+		typedef std::map<ScriptEnviroment*, ItemList> TempItemListMap;
+
 		typedef std::map<uint32_t, std::string> StorageMap;
 		typedef std::map<uint32_t, CombatArea*> AreaMap;
 		typedef std::map<uint32_t, Combat*> CombatMap;
 		typedef std::map<uint32_t, Condition*> ConditionMap;
-		typedef std::list<Item*> ItemList;
-		typedef std::map<ScriptEnviroment*, ItemList> TempItemListMap;
 		typedef std::map<uint32_t, DBResult*> DBResultMap;
 
 		LuaInterface* m_interface;
@@ -179,6 +181,7 @@ class ScriptEnviroment
 
 		static uint32_t m_lastConditionId;
 		static ConditionMap m_conditionMap;
+		static ConditionMap m_tempConditionMap;
 
 		int32_t m_lastUID;
 		bool m_loaded;
@@ -376,7 +379,6 @@ class LuaInterface
 		static int32_t luaDoPlayerSetSex(lua_State* L);
 		static int32_t luaDoPlayerSetIdleTime(lua_State* L);
 		static int32_t luaGetPlayerIdleTime(lua_State* L);
-		static int32_t luaDoSetCreatureLight(lua_State* L);
 		static int32_t luaDoCreatureSetLookDir(lua_State* L);
 		static int32_t luaGetCreatureHideHealth(lua_State* L);
 		static int32_t luaDoCreatureSetHideHealth(lua_State* L);
