@@ -35,7 +35,7 @@ std::string transformToSHA1(std::string plainText, bool upperCase)
 	
 	// Now compute the SHA1 value
 	// This is actually a C call, so I had to do some hacks - Stian
-	SHA1((unsigned char *)(plainText.c_str()), plainText.length(), obuf)
+	SHA1((unsigned char *)(plainText.c_str()), plainText.length(), sha1Hash);
 
 	// Convert into hex
 	hexStream.flags(std::ios::hex | std::ios::uppercase);
@@ -60,7 +60,7 @@ std::string transformToMD5(std::string plainText, bool upperCase)
 	
 	// Now compute the MD5 value
 	// This is actually a C call, so I had to do some hacks - Stian
-	SHA1((unsigned char *)(plainText.c_str()), plainText.length(), obuf)
+	SHA1((unsigned char *)(plainText.c_str()), plainText.length(), md5Hash);
 
 	// Convert into hex
 	hexStream.flags(std::ios::hex | std::ios::uppercase);
