@@ -1809,9 +1809,6 @@ void LuaInterface::registerFunctions()
 	//canPlayerWearOutfitId(cid, outfitId[, addon = 0])
 	lua_register(m_luaState, "canPlayerWearOutfitId", LuaInterface::luaCanPlayerWearOutfitId);
 
-	//doSetCreatureLight(cid, lightLevel, lightColor, time)
-	lua_register(m_luaState, "doSetCreatureLight", LuaInterface::luaDoSetCreatureLight);
-
 	//getCreatureCondition(cid, condition[, subId])
 	lua_register(m_luaState, "getCreatureCondition", LuaInterface::luaGetCreatureCondition);
 
