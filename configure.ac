@@ -178,6 +178,10 @@ AC_CHECK_LIB(boost_filesystem-gcc-mt, main, , [
 # check for boost::asio
 AC_CHECK_HEADERS([boost/asio.hpp], ,[AC_MSG_ERROR("boost::asio header not found.")])
 
+# check for openssl, upcoming features
+AC_CHECK_HEADERS([openssl/md5.h openssl/sha.h openssl/rsa.h openssl/engine.h], , [AC_MSG_ERROR("Required OpenSSL headers not found.")])
+AC_CHECK_LIB(crypto, main, , [AC_MSG_ERROR("OpenSSL library not found")])
+
 # check for Lua
 PKG_CHECK_MODULES(LUA, lua5.1 >= 5.1, , [
 	AC_CHECK_HEADERS([lua.hpp],[],[AC_MSG_ERROR("Lua header not found.")])

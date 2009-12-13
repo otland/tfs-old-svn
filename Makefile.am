@@ -38,7 +38,7 @@ theforgottenserver_SOURCES = account.h actions.cpp actions.h $(MAYBE_OTADMIN) \
 	iologindata.h iomap.cpp iomap.h iomapserialize.cpp iomapserialize.h \
 	item.cpp item.h itemattributes.cpp itemattributes.h items.cpp \
 	items.h luascript.cpp luascript.h mailbox.cpp mailbox.h manager.cpp \
-	manager.h map.cpp map.h md5.cpp md5.h monster.cpp monster.h \
+	manager.h map.cpp map.h monster.cpp monster.h \
 	monsters.cpp monsters.h movement.cpp movement.h networkmessage.cpp \
 	networkmessage.h npc.cpp npc.h otpch.h otserv.cpp otsystem.h \
 	outfit.cpp outfit.h outputmessage.cpp outputmessage.h party.cpp \
@@ -47,7 +47,7 @@ theforgottenserver_SOURCES = account.h actions.cpp actions.h $(MAYBE_OTADMIN) \
 	protocolhttp.h protocollogin.cpp protocollogin.h protocolold.cpp \
 	protocolold.h quests.cpp quests.h raids.cpp raids.h rsa.cpp rsa.h \
 	scheduler.cpp scheduler.h scriptmanager.cpp scriptmanager.h \
-	server.cpp server.h sha1.cpp sha1.h spawn.cpp spawn.h spells.cpp \
+	server.cpp server.h spawn.cpp spawn.h spells.cpp \
 	spells.h status.cpp status.h talkaction.cpp talkaction.h teleport.cpp \
 	teleport.h templates.h textlogger.cpp textlogger.h thing.cpp thing.h \
 	tile.cpp tile.h tools.cpp tools.h town.h trashholder.cpp \
