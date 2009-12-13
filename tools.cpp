@@ -1582,16 +1582,15 @@ std::string getFilePath(FileType_t filetype, std::string filename)
 		}
 		case FILE_TYPE_CONFIG:
 		{
-			#if defined(__FILESYSTEM_HIERARCHY_STANDARD__) && defined(__HOMEDIR_CONF__)
+			#if defined(__HOMEDIR_CONF__)
 			if(fileExists("~/.tfs/" + filename))
 				path = "~/.tfs/" + filename;
 			else
+			#endif
+			#if defined(__FILESYSTEM_HIERARCHY_STANDARD__)
 				path = "/etc/tfs/" + filename;
-
-			#elif defined(__FILESYSTEM_HIERARCHY_STANDARD__)
-			path = "/etc/tfs/" + filename;
 			#else
-			path = filename;
+				path = filename;
 			#endif
 			break;
 		}
