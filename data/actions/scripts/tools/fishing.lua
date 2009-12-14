@@ -9,7 +9,7 @@ local config = {
 		[10499] = {
 			[101] = {
 				-- TODO: Water Elemental loot...
-			}
+			},
 			[102] = {
 				-- TODO: Massive Water Elemental loot
 			}
@@ -46,7 +46,7 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 	if(corpse ~= nil) then
 		corpse = corpse[itemEx.actionid]
 		if(corpse ~= nil) then
-			local owner = getItemAttribute(cid, "corpseowner")
+			local owner = getItemAttribute(itemEx.uid, "corpseowner")
 			if(owner ~= 0 and owner ~= getPlayerGUID(cid) and config.checkCorpseOwner) then
 				doPlayerSendDefaultCancel(cid, RETURNVALUE_YOUARENOTTHEOWNER)
 				return true
@@ -66,7 +66,8 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 				doPlayerAddItem(cid, loot[1], loot[2])
 			end
 
-			doTransformItem(itemEx.uid, itemEx.uid + 1)
+			doTransformItem(itemEx.uid, getItemInfo(itemEx.itemid).decayTo)
+			doDecayItem(itemEx.uid)
 			return true
 		end
 	end
