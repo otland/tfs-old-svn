@@ -70,7 +70,7 @@
 		<item id="2148" countmax="65" chance="28000"/><!-- gold coin -->
 		<item id="7368" countmax="5" chance="3100"/><!-- assassin star -->
 		<item id="5954" chance="1150"/><!-- demon horn -->
-		<item id="2520" chance="850"/><!-- demon shield -->
+		<item id="2520" chance="950"/><!-- demon shield -->
 		<item id="2462" chance="3000"/><!-- devil helmet -->
 		<item id="2387" chance="21000"/><!-- double axe -->
 		<item id="2432" chance="6000"/><!-- fire axe -->
@@ -99,7 +99,7 @@
 		<item id="2171" chance="1200"/><!-- platinum amulet -->
 		<item id="2164" chance="800"/><!-- might ring -->
 		<item id="7382" chance="350"/><!-- demonrage sword -->
-		<item id="2470" chance="650"/><!-- golden legs -->
+		<item id="2470" chance="750"/><!-- golden legs -->
 		<item id="7393" chance="50"/><!-- demon trophy -->
 			</inside>
 		</item>
