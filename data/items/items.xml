@@ -16691,6 +16691,7 @@
 		<attribute key="description" value="This nifty gadget can be used for many vital and less vital purposes. If it's not jammed, that is." />
 		<attribute key="weight" value="300" />
 	</item>
+	<!-- 10517 is empty -->
 	<item id="10518" article="a" name="demon backpack">
 		<attribute key="weight" value="1800" />
 		<attribute key="containerSize" value="20" />
