@@ -406,8 +406,8 @@ bool Items::loadFromXml()
 					size_t vec_size = intVector.size();
 					for(size_t i = 0; i < vec_size; i++)
 					{
-						while(intVector[i] < endVector[i])
-							parseItemNode(itemNode, ++intVector[i]);
+						while(intVector[i] <= endVector[i])
+							parseItemNode(itemNode, intVector[i]++);
 					}
 				}
 			}
