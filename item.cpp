@@ -1376,7 +1376,8 @@ void Item::setActionId(int32_t aid)
 		g_moveEvents->onRemoveTileItem(getTile(), this);
 
 	setAttribute("aid", aid);
-	g_moveEvents->onAddTileItem(getTile(), this);
+	if(getTile())
+		g_moveEvents->onAddTileItem(getTile(), this);
 }
 
 void Item::resetActionId()
@@ -1385,7 +1386,8 @@ void Item::resetActionId()
 		return;
 
 	eraseAttribute("aid");
-	g_moveEvents->onAddTileItem(getTile(), this);
+	if(getTile())
+		g_moveEvents->onAddTileItem(getTile(), this);
 }
 
 void Item::setUniqueId(int32_t uid)
