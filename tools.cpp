@@ -15,31 +15,33 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////
 #include "otpch.h"
+#include "tools.h"
+
 #include <iostream>
 #include <iomanip>
 #include <openssl/sha.h>
 #include <openssl/md5.h>
-#include "tools.h"
 
 #include "vocation.h"
 #include "configmanager.h"
+
 extern ConfigManager g_config;
 
 std::string transformToSHA1(std::string plainText, bool upperCase)
 {
 	// Here we store each binary value as char
-	unsigned char sha1Hash[20];
-	
+	uint8_t sha1Hash[20];
+
 	// This holds the hex value
 	std::stringstream hexStream;
-	
+
 	// Now compute the SHA1 value
 	// This is actually a C call, so I had to do some hacks - Stian
-	SHA1((unsigned char *)(plainText.c_str()), plainText.length(), sha1Hash);
+	SHA1((uint8_t*)(plainText.c_str()), plainText.length(), sha1Hash);
 
 	// Convert into hex
 	hexStream.flags(std::ios::hex | std::ios::uppercase);
-	for(short i = 0; i < 20; ++i)
+	for(int16_t i = 0; i < 20; ++i)
 		hexStream << std::setw(2) << std::setfill('0') << (uint32_t)sha1Hash[i];
 
 	// Convert into a C++ string
@@ -53,18 +55,18 @@ std::string transformToSHA1(std::string plainText, bool upperCase)
 std::string transformToMD5(std::string plainText, bool upperCase)
 {
 	// Here we store each binary value as char
-	unsigned char md5Hash[16];
-	
+	uint8_t md5Hash[16];
+
 	// This holds the hex value
 	std::stringstream hexStream;
-	
+
 	// Now compute the MD5 value
 	// This is actually a C call, so I had to do some hacks - Stian
-	SHA1((unsigned char *)(plainText.c_str()), plainText.length(), md5Hash);
+	MD5((uint8_t*)(plainText.c_str()), plainText.length(), md5Hash);
 
 	// Convert into hex
 	hexStream.flags(std::ios::hex | std::ios::uppercase);
-	for(short i = 0; i < 16; ++i)
+	for(int16_t i = 0; i < 16; ++i)
 		hexStream << std::setw(2) << std::setfill('0') << (uint32_t)md5Hash[i];
 
 	// Convert into a C++ string
