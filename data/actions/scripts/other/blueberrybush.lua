@@ -8,7 +8,6 @@ end
 
 function transformBack(position)
 	position.stackpos = STACKPOS_TOP_MOVEABLE_ITEM_OR_CREATURE
-
 	local topThing = getThingFromPos(position)
 	if(topThing.itemid == ITEM_BLUEBERRY) then
 		addEvent(transformBack, 300000, position)
