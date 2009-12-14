@@ -15,30 +15,36 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////
 #include "otpch.h"
+#include "tools.h"
+
 #include <iostream>
 #include <iomanip>
-
-#include "tools.h"
-#include "md5.h"
-#include "sha1.h"
+#include <openssl/sha.h>
+#include <openssl/md5.h>
 
 #include "vocation.h"
 #include "configmanager.h"
+
 extern ConfigManager g_config;
 
 std::string transformToSHA1(std::string plainText, bool upperCase)
 {
-	SHA1 sha1;
-	unsigned sha1Hash[5];
+	// Here we store each binary value as char
+	uint8_t sha1Hash[20];
+
+	// This holds the hex value
 	std::stringstream hexStream;
 
-	sha1.Input((const uint8_t*)plainText.c_str(), plainText.length());
-	sha1.Result(sha1Hash);
+	// Now compute the SHA1 value
+	// This is actually a C call, so I had to do some hacks - Stian
+	SHA1((uint8_t*)(plainText.c_str()), plainText.length(), sha1Hash);
 
+	// Convert into hex
 	hexStream.flags(std::ios::hex | std::ios::uppercase);
-	for(uint32_t i = 0; i < 5; ++i)
-		hexStream << std::setw(8) << std::setfill('0') << (uint32_t)sha1Hash[i];
+	for(int16_t i = 0; i < 20; ++i)
+		hexStream << std::setw(2) << std::setfill('0') << (uint32_t)sha1Hash[i];
 
+	// Convert into a C++ string
 	std::string hexStr = hexStream.str();
 	if(!upperCase)
 		toLowerCaseString(hexStr);
@@ -48,17 +54,22 @@ std::string transformToSHA1(std::string plainText, bool upperCase)
 
 std::string transformToMD5(std::string plainText, bool upperCase)
 {
-	MD5_CTX m_md5;
+	// Here we store each binary value as char
+	uint8_t md5Hash[16];
+
+	// This holds the hex value
 	std::stringstream hexStream;
 
-	MD5Init(&m_md5, 0);
-	MD5Update(&m_md5, (const uint8_t*)plainText.c_str(), plainText.length());
-	MD5Final(&m_md5);
+	// Now compute the MD5 value
+	// This is actually a C call, so I had to do some hacks - Stian
+	MD5((uint8_t*)(plainText.c_str()), plainText.length(), md5Hash);
 
+	// Convert into hex
 	hexStream.flags(std::ios::hex | std::ios::uppercase);
-	for(uint32_t i = 0; i < 16; ++i)
-		hexStream << std::setw(2) << std::setfill('0') << (uint32_t)m_md5.digest[i];
+	for(int16_t i = 0; i < 16; ++i)
+		hexStream << std::setw(2) << std::setfill('0') << (uint32_t)md5Hash[i];
 
+	// Convert into a C++ string
 	std::string hexStr = hexStream.str();
 	if(!upperCase)
 		toLowerCaseString(hexStr);
