@@ -1,8 +1,5 @@
-local holes = {468, 481, 483, 7932, 8579}
-local sand = {231, 9059}
-
 function onUse(cid, item, fromPosition, itemEx, toPosition)
-	if(isInArray(holes, itemEx.itemid)) then
+	if(isInArray(HOLES, itemEx.itemid)) then
 		local newId = itemEx.itemid + 1
 		if(itemEx.itemid == 8579) then
 			newId = 8585
@@ -10,7 +7,7 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 
 		doTransformItem(itemEx.uid, newId)
 		doDecayItem(itemEx.uid)
-	elseif(isInArray(sand, itemEx.itemid)) then
+	elseif(isInArray(SAND, itemEx.itemid)) then
 		local rand = math.random(1, 100)
 		if(itemEx.actionid  == 100 and rand <= 20) then
 			doTransformItem(itemEx.uid, 489)

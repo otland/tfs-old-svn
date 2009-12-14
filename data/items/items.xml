@@ -11605,6 +11605,8 @@
 	</item>
 	<item id="5670" article="a" name="voodoo skull">
 		<attribute key="weight" value="1000"/>
+		<attribute key="decayTo" value="5669"/>
+		<attribute key="duration" value="86400"/>
 	</item>
 	<item id="5671" article="a" name="pirate statue"/>
 	<item id="5672" article="a" name="pirate statue"/>

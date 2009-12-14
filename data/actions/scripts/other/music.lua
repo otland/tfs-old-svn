@@ -5,8 +5,8 @@ local DIDGERIDOO = 3952
 local CORNUCOPIA = 2369
 local PARTY_TRUMPET = 6572
 local USED_PARTY_TRUMPET = 6573
-local GREEN_NOTES = {2070, 2071, 2073, 2075, 2076, 2078, 2367, 2374}
 
+local GREEN_NOTES = {2070, 2071, 2073, 2075, 2076, 2078, 2367, 2374}
 function onUse(cid, item, fromPosition, itemEx, toPosition)
 	local random = math.random(1, 5)
 	if(item.itemid == BIRD_CAGE) then

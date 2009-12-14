@@ -2243,7 +2243,7 @@ void LuaInterface::registerFunctions()
 
 	//hasItemProperty(uid)
 	lua_register(m_luaState, "hasItemProperty", LuaInterface::luaHasItemProperty);
-	
+
 	//hasPlayerClient(cid)
 	lua_register(m_luaState, "hasPlayerClient", LuaInterface::luaHasPlayerClient);
 

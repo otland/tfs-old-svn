@@ -1,6 +1,3 @@
-local JUNGLE_GRASS = {2782, 3985}
-local SPIDER_WEB = {7538, 7539}
-
 function onUse(cid, item, fromPosition, itemEx, toPosition)
 	if(isInArray(JUNGLE_GRASS, itemEx.itemid)) then
 		doTransformItem(itemEx.uid, itemEx.itemid - 1)
