@@ -322,7 +322,7 @@
 
 	<!-- Watch -->
 	<action fromid="1728" toid="1731" event="script" value="other/watch.lua"/>
-	<action fromid="1873" toid="1877" event="script" value="other/watch.lua"/>
+	<action itemid="1877" event="script" value="other/watch.lua"/>
 	<action itemid="1881" event="script" value="other/watch.lua"/>
 	<action itemid="2036" event="script" value="other/watch.lua"/>
 	<action fromid="6091" toid="6092" event="script" value="other/watch.lua"/>
