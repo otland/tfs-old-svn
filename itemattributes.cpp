@@ -141,16 +141,16 @@ ItemAttribute& ItemAttribute::operator=(const ItemAttribute& o)
 	switch(type)
 	{
 		case STRING:
-			new(data) std::string(*reinterpret_cast<const std::string*>(&o.data));
+			new(data) std::string(o.data);
 			break;
 		case INTEGER:
-			*reinterpret_cast<int32_t*>(data) = *reinterpret_cast<const int32_t*>(&o.data);
+			memcpy(&data, &o.data, sizeof(int32_t));
 			break;
 		case FLOAT:
-			*reinterpret_cast<float*>(data) = *reinterpret_cast<const float*>(&o.data);
+			memcpy(&data, &o.data, sizeof(float));
 			break;
 		case BOOLEAN:
-			*reinterpret_cast<bool*>(data) = *reinterpret_cast<const bool*>(&o.data);
+			memcpy(&data, &o.data, sizeof(bool));
 			break;
 		default:
 			type = NONE;
@@ -164,8 +164,10 @@ ItemAttribute& ItemAttribute::operator=(const ItemAttribute& o)
 void ItemAttribute::clear()
 {
 	type = NONE;
-	if(type == STRING)
-		(reinterpret_cast<std::string*>(&data))->~basic_string();
+	std::string *clearString;
+	if(type == STRING) {
+		memcpy(&clearString, &data, sizeof(data));
+	}
 }
 
 void ItemAttribute::set(const std::string& s)
@@ -179,21 +181,21 @@ void ItemAttribute::set(int32_t i)
 {
 	clear();
 	type = INTEGER;
-	*reinterpret_cast<int32_t*>(&data) = i;
+	memcpy(&data, &i, sizeof(int32_t));
 }
 
 void ItemAttribute::set(float f)
 {
 	clear();
 	type = FLOAT;
-	*reinterpret_cast<float*>(&data) = f;
+	memcpy(&data, &f, sizeof(float));
 }
 
 void ItemAttribute::set(bool b)
 {
 	clear();
 	type = BOOLEAN;
-	*reinterpret_cast<bool*>(&data) = b;
+	memcpy(&data, &b, sizeof(bool));
 }
 
 void ItemAttribute::set(boost::any a)
@@ -210,17 +212,20 @@ void ItemAttribute::set(boost::any a)
 	else if(a.type() == typeid(int32_t))
 	{
 		type = INTEGER;
-		*reinterpret_cast<int32_t*>(&data) = boost::any_cast<int32_t>(a);
+		int32_t i = boost::any_cast<int32_t>(a);
+		memcpy(&data, &i, sizeof(int32_t));
 	}
 	else if(a.type() == typeid(float))
 	{
 		type = FLOAT;
-		*reinterpret_cast<float*>(&data) = boost::any_cast<float>(a);
+		float f = boost::any_cast<float>(a);
+		memcpy(&data, &f, sizeof(float));
 	}
 	else if(a.type() == typeid(bool))
 	{
 		type = BOOLEAN;
-		*reinterpret_cast<bool*>(&data) = boost::any_cast<bool>(a);
+		bool b = boost::any_cast<bool>(a);
+		memcpy(&data, &b, sizeof(bool));
 	}
 }
 
@@ -261,13 +266,13 @@ boost::any ItemAttribute::get() const
 	switch(type)
 	{
 		case STRING:
-			return *reinterpret_cast<const std::string*>(&data);
+			return boost::any_cast<const std::string>(&data);
 		case INTEGER:
-			return *reinterpret_cast<const int*>(&data);
+			return boost::any_cast<const int32_t>(&data);
 		case FLOAT:
-			return *reinterpret_cast<const float*>(&data);
+			return boost::any_cast<const float>(&data);
 		case BOOLEAN:
-			return *reinterpret_cast<const bool*>(&data);
+			return boost::any_cast<const bool>(&data);
 		default:
 			break;
 	}
@@ -344,7 +349,7 @@ bool ItemAttribute::unserialize(PropStream& stream)
 			if(!stream.getLong(v))
 				return false;
 
-			set(*reinterpret_cast<float*>(&v));
+			set(boost::any_cast<float>(&v));
 			break;
 		}
 		case BOOLEAN:

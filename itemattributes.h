@@ -31,9 +31,9 @@ class ItemAttribute
 		virtual ~ItemAttribute() {clear();}
 
 		ItemAttribute(const std::string& s): type(ItemAttribute::STRING) {new(data) std::string(s);}
-		ItemAttribute(int32_t i): type(ItemAttribute::INTEGER) {*reinterpret_cast<int32_t*>(data) = i;}
-		ItemAttribute(float f): type(ItemAttribute::FLOAT) {*reinterpret_cast<float*>(data) = f;}
-		ItemAttribute(bool b): type(ItemAttribute::BOOLEAN) {*reinterpret_cast<bool*>(data) = b;}
+		ItemAttribute(int32_t i): type(ItemAttribute::INTEGER) {memcpy(&data, &i, sizeof(int32_t));}
+		ItemAttribute(float f): type(ItemAttribute::FLOAT) {memcpy(&data, &f, sizeof(float));}
+		ItemAttribute(bool b): type(ItemAttribute::BOOLEAN) {memcpy(&data, &b, sizeof(bool));}
 
 		ItemAttribute& operator=(const ItemAttribute& o);
 
