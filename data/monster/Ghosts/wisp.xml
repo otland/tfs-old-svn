@@ -8,19 +8,18 @@
 		<flag summonable="0"/>
 		<flag attackable="1"/>
 		<flag hostile="1"/>
-		<flag illusionable="0"/>
-		<flag convinceable="1"/>
+		<flag illusionable="1"/>
+		<flag convinceable="0"/>
 		<flag pushable="0"/>
-		<flag canpushitems="1"/>
+		<flag canpushitems="0"/>
 		<flag staticattack="15"/>
 		<flag lightlevel="0"/>
 		<flag lightcolor="0"/>
-		<flag targetdistance="3"/>
+		<flag targetdistance="7"/>
 		<flag runonhealth="30"/>
 	</flags>
 	<attacks>
-		<attack name="melee" interval="2000" min="-0" max="-60"/>
-		<attack name="lifedrain" interval="2000" min="-20" max="-40">
+		<attack name="lifedrain" interval="2000" min="-5" max="-30">
 			<attribute key="areaEffect" value="redshimmer"/>
 		</attack>
 	</attacks>
