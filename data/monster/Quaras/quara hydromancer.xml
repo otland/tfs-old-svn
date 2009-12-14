@@ -37,6 +37,7 @@
 		<immunity lifedrain="1"/>
 		<immunity paralyze="1"/>
 		<immunity invisible="1"/>
+		<immunity drown="1"/>
 	</immunities>
 	<voices interval="5000" chance="10">
 		<voice sentence="Qua hah tsh!"/>

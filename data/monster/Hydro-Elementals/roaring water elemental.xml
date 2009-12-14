@@ -39,6 +39,7 @@
 		<immunity lifedrain="1"/>
 		<immunity paralyze="1"/>
 		<immunity invisible="1"/>
+		<immunity drown="1"/>
 	</immunities>
 	<loot>
 		<item id="2148" countmax="90" chance="27000"/><!-- gold coin -->

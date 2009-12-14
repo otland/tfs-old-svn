@@ -37,6 +37,7 @@
 		<immunity ice="1"/>
 		<immunity paralyze="1"/>
 		<immunity invisible="1"/>
+		<immunity drown="1"/>
 	</immunities>
 	<voices interval="3000" chance="200">
 		<voice sentence="CHHHRRRR"/>
