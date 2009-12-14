@@ -21607,6 +21607,14 @@
 	<item id="10491" article="a" name="limestone window">
 		<attribute key="type" value="door"/>
 	</item>
+	<item id="10499" article="a" name="slain water elemental">
+		<attribute key="decayTo" value="10500"/>
+		<attribute key="duration" value="600"/>
+	</item>
+	<item id="10500" article="a" name="pool of water">
+		<attribute key="decayTo" value="0"/>
+		<attribute key="duration" value="300"/>
+	</item>
 	<item id="10502" article="a" name="engraved wedding ring">
 		<attribute key="weight" value="40"/>
 		<attribute key="slotType" value="ring"/>

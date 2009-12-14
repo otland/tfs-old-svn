@@ -5,10 +5,14 @@ local config = {
 	holes = {7236},
 
 	corpses = {
-		-- [corpse] = {items}
-		[2025] = {
-			-- {itemid, countmax, chance}
-			-- TODO: Water elemental and Massive Water Elemental loot...
+		-- [corpse] = {[aid] = { {itemid, countmax, chance} }}
+		[10499] = {
+			[101] = {
+				-- TODO: Water Elemental loot...
+			}
+			[102] = {
+				-- TODO: Massive Water Elemental loot
+			}
 		}
 	},
 	checkCorpseOwner = getConfigValue("checkCorpseOwner"),
@@ -40,28 +44,31 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 
 	local corpse = config.corpses[itemEx.itemid]
 	if(corpse ~= nil) then
-		local owner = getItemAttribute(cid, "corpseowner")
-		if(owner ~= 0 and owner ~= getPlayerGUID(cid) and config.checkCorpseOwner) then
-			doPlayerSendDefaultCancel(cid, RETURNVALUE_YOUARENOTTHEOWNER)
+		corpse = corpse[itemEx.actionid]
+		if(corpse ~= nil) then
+			local owner = getItemAttribute(cid, "corpseowner")
+			if(owner ~= 0 and owner ~= getPlayerGUID(cid) and config.checkCorpseOwner) then
+				doPlayerSendDefaultCancel(cid, RETURNVALUE_YOUARENOTTHEOWNER)
+				return true
+			end
+
+			local chance, items = math.random(0, 100000) / config.rateLoot, {}
+			for _, data in ipairs(corpse) do
+				if(data[3] >= chance) then
+					local tmp = {data[1], math.random(1, data[2])}
+					table.insert(items, tmp)
+				end
+			end
+
+			local itemCount = table.maxn(items)
+			if(itemCount > 0) then
+				local loot = items[math.random(1, itemCount)]
+				doPlayerAddItem(cid, loot[1], loot[2])
+			end
+
+			doTransformItem(itemEx.uid, itemEx.uid + 1)
 			return true
 		end
-
-		local chance, items = math.random(0, 100000) / config.rateLoot, {}
-		for _, data in ipairs(corpse) do
-			if(data[3] >= chance) then
-				local tmp = {data[1], math.random(1, data[2])}
-				table.insert(items, tmp)
-			end
-		end
-
-		local itemCount = table.maxn(items)
-		if(itemCount > 0) then
-			local loot = items[math.random(1, itemCount)]
-			doPlayerAddItem(cid, loot[1], loot[2])
-		end
-
-		doTransformItem(itemEx.uid, itemEx.uid + 1)
-		return true
 	end
 
 	if(not isInArray(config.fishable, itemEx.itemid)) then
