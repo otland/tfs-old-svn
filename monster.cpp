@@ -1171,7 +1171,7 @@ Item* Monster::createCorpse(DeathList deathList)
 		corpse->setUniqueId(mType->corpseUnique);
 
 	if(mType->corpseAction)
-		corpse->setActionId(mType->corpseAction);
+		corpse->setActionId(mType->corpseAction, false);
 
 	if(deathList[0].isNameKill())
 		return corpse;

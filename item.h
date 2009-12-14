@@ -217,8 +217,8 @@ class Item : virtual public Thing, public ItemAttributes
 		void resetWriter() {eraseAttribute("writer");}
 		std::string getWriter() const;
 
-		void setActionId(int32_t aid);
-		void resetActionId();
+		void setActionId(int32_t aid, bool callEvent = true);
+		void resetActionId(bool callEvent = true);
 		int32_t getActionId() const;
 
 		void setUniqueId(int32_t uid);

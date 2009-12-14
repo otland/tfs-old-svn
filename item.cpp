@@ -1370,24 +1370,32 @@ std::string Item::getWeightDescription(double weight, bool stackable, uint32_t c
 	return s.str();
 }
 
-void Item::setActionId(int32_t aid)
+void Item::setActionId(int32_t aid, bool callEvent/* = true*/)
 {
-	if(getActionId())
-		g_moveEvents->onRemoveTileItem(getTile(), this);
+	Tile* tile = NULL;
+	if(callEvent)
+		tile = getTile();
+
+	if(tile && getActionId())
+		g_moveEvents->onRemoveTileItem(tile, this);
 
 	setAttribute("aid", aid);
-	if(getTile())
-		g_moveEvents->onAddTileItem(getTile(), this);
+	if(tile)
+		g_moveEvents->onAddTileItem(tile, this);
 }
 
-void Item::resetActionId()
+void Item::resetActionId(bool callEvent/* = true*/)
 {
 	if(!getActionId())
 		return;
 
+	Tile* tile = NULL;
+	if(callEvent)
+		tile = getTile();
+
 	eraseAttribute("aid");
-	if(getTile())
-		g_moveEvents->onAddTileItem(getTile(), this);
+	if(tile)
+		g_moveEvents->onAddTileItem(tile, this);
 }
 
 void Item::setUniqueId(int32_t uid)
