@@ -11,7 +11,7 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 		return true
 	end
 
-	if(itemEx.itemid == 1499) then
+	if(isInArray(WILD_GROWTH, itemEx.itemid)) then
 		doSendMagicEffect(toPosition, CONST_ME_POFF)
 		doRemoveItem(itemEx.uid)
 		return true

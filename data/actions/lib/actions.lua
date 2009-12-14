@@ -7,6 +7,7 @@ SAND = {231, 9059}
 
 JUNGLE_GRASS = {2782, 3985}
 SPIDER_WEB = {7538, 7539}
+WILD_GROWTH = {1499, 11095}
 
 SPECIAL_FOODS = {
 	[9992] = "Gulp.", [9993] = "Chomp.", [9994] = "Chomp.", [9995] = "Chomp.", [9997] = "Yum.",

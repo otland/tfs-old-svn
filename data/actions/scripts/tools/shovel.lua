@@ -7,6 +7,7 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 
 		doTransformItem(itemEx.uid, newId)
 		doDecayItem(itemEx.uid)
+		return true
 	elseif(isInArray(SAND, itemEx.itemid)) then
 		local rand = math.random(1, 100)
 		if(itemEx.actionid  == 100 and rand <= 20) then
@@ -19,7 +20,8 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 		end
 
 		doSendMagicEffect(toPosition, CONST_ME_POFF)
+		return true
 	end
 
-	return true
+	return false
 end

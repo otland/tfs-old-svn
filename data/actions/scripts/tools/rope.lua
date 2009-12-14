@@ -7,6 +7,7 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 	local itemGround = getThingFromPos(toPosition)
 	if(isInArray(SPOTS, itemGround.itemid)) then
 		doTeleportThing(cid, {x = toPosition.x, y = toPosition.y + 1, z = toPosition.z - 1}, false)
+		return true
 	elseif(isInArray(ROPABLE, itemEx.itemid)) then
 		local hole = getThingFromPos({x = toPosition.x, y = toPosition.y, z = toPosition.z + 1, stackpos = STACKPOS_TOP_MOVEABLE_ITEM_OR_CREATURE})
 		if(hole.itemid > 0) then
@@ -14,9 +15,9 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 		else
 			doPlayerSendDefaultCancel(cid, RETURNVALUE_NOTPOSSIBLE)
 		end
-	else
-		return false
+
+		return true
 	end
 
-	return true
+	return false
 end
