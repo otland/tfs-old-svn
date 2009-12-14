@@ -442,40 +442,40 @@ bool Items::loadFromXml()
 		}
 		else if(!xmlStrcmp(paletteNode->name, (const xmlChar*)"palette"))
 		{
-			if(readXMLString(paletteNode, "randomize", strValue))
+			if(!readXMLString(paletteNode, "randomize", strValue))
+				continue;
+
+			std::vector<int32_t> itemList = vectorAtoi(explodeString(strValue, ";"));
+			if(itemList.size() > 1)
 			{
-				std::vector<int32_t> itemList = vectorAtoi(explodeString(strValue, ";"));
-				if(itemList.size() >= 2)
+				if(itemList[0] < itemList[1])
 				{
-					if(itemList[0] < itemList[1])
-					{
-						fromId = itemList[0];
-						toId = itemList[1];
-					}
-					else
-						std::clog << "[Warning - Items::loadFromXml] Randomize min cannot be higher than max." << std::endl;
+					fromId = itemList[0];
+					toId = itemList[1];
+				}
+				else
+					std::clog << "[Warning - Items::loadFromXml] Randomize min cannot be higher than max." << std::endl;
+			}
+
+			int32_t chance = getRandomizationChance();
+			if(readXMLInteger(paletteNode, "chance", intValue))
+			{
+				if(intValue > 100)
+				{
+					intValue = 100;
+					std::clog << "[Warning: Items::loadRandomization] Randomize chance cannot be higher than 100." << std::endl;
 				}
 
-				int32_t chance = getRandomizationChance();
-				if(readXMLInteger(paletteNode, "chance", intValue))
-				{
-					if(intValue > 100)
-					{
-						intValue = 100;
-						std::clog << "[Warning: Items::loadRandomization] Randomize chance cannot be higher than 100." << std::endl;
-					}
+				chance = intValue;
+			}
 
-					chance = intValue;
-				}
-
-				if(readXMLInteger(paletteNode, "itemid", id))
-					parseRandomizationBlock(id, fromId, toId, chance);
-				else if(readXMLInteger(paletteNode, "fromid", id) && readXMLInteger(paletteNode, "toid", endId))
-				{
-					parseRandomizationBlock(id, fromId, toId, chance);
-					while(id < endId)
-						parseRandomizationBlock(++id, fromId, toId, chance);
-				}
+			if(readXMLInteger(paletteNode, "itemid", id))
+				parseRandomizationBlock(id, fromId, toId, chance);
+			else if(readXMLInteger(paletteNode, "fromid", id) && readXMLInteger(paletteNode, "toid", endId))
+			{
+				parseRandomizationBlock(id, fromId, toId, chance);
+				while(id < endId)
+					parseRandomizationBlock(++id, fromId, toId, chance);
 			}
 		}
 	}
