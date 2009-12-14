@@ -30,6 +30,6 @@
 	<loot>
 		<item id="2666" countmax="2" chance="25000"/><!-- meat -->
 		<item id="3976" chance="9000"/><!-- worm -->
-		<item id="5897"  chance="1500"/><!-- wolf paw -->
+		<item id="5897" chance="1500"/><!-- wolf paw -->
 	</loot>
 </monster>
