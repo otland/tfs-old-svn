@@ -19,7 +19,7 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 		end
 
 		str = hour .. ':' .. minute
-	else if(config.twentyFour) then
+	elseif(config.twentyFour) then
 		str = os.date('%H:%M')
 	else
 		str = os.date('%I:%M %p')

@@ -56,7 +56,7 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 	end
 
 	local position = fromPosition
-	if(position.x == CONSTAINER_POSITION)
+	if(position.x == CONSTAINER_POSITION) then
 		position = toPosition
 	end
 
