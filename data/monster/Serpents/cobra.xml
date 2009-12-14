@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <monster name="Cobra" namedescription="a cobra" race="blood" experience="30" speed="170" manacost="275">
 	<health now="65" max="65"/>
 	<look type="81" corpse="3007"/>
@@ -35,8 +35,4 @@
 		<voice sentence="Zzzzzz"/>
 		<voice sentence="Fsssss"/>
 	</voices>
-	<loot>
-		<item id="2220" chance="33333"/><!-- dirty fur -->
-		<item id="2230" chance="20000"/><!-- bone -->
-	</loot>
 </monster>
