@@ -44,8 +44,17 @@
 		<immunity energy="1"/>
 	</immunities>
 	<loot>
-		<item id="2148" countmax="130" chance="100000"/><!-- gold coin -->
-		<item id="2152" countmax="3" chance="6000"/><!-- platinum coin -->
-		<item id="8305" chance="2200"/><!-- mother soil -->
+		<item id="2148" countmax="90" chance="40000"/><!-- gold coin -->
+		<item id="2148" countmax="78" chance="40000"/><!-- gold coin -->
+		<item id="2152" countmax="3" chance="5000"/><!-- platinum coin -->
+		<item id="2149" countmax="2" chance="4500"/><!-- small emerald -->
+		<item id="1294" countmax="15" chance="5000"/><!-- small stone -->
+		<item id="8305" chance="100000"/><!-- mother soil -->
+		<item id="1987" chance="100000"><!-- bag -->
+			<inside>
+			<item id="7884" chance="750"/><!-- terra mantle -->
+			<item id="8880" chance="300"/><!-- swamplair armor -->
+			</inside>
+		</item>
 	</loot>
 </monster>

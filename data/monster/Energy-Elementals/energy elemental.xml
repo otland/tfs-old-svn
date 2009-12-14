@@ -49,10 +49,23 @@
 		<immunity invisible="1"/>
 	</immunities>
 	<loot>
-		<item id="2148" countmax="100" chance="100000"/><!-- gold coin -->
-		<item id="8303" countmax="2" chance="1500"/><!-- energy soil -->
-		<item id="7439" chance="2100"/><!-- berserk potion -->
-		<item id="2150" countmax="3" chance="4500"/><!-- small amethyst -->
-		<item id="8920" chance="1000"/><!-- wand of starstorm -->
+		<item id="2148" countmax="90" chance="42000"/><!-- gold coin -->
+		<item id="2148" countmax="80" chance="42000"/><!-- gold coin -->
+		<item id="7638" countmax="10" chance="5500"/><!-- flash arrow -->
+		<item id="2399" countmax="5" chance="5500"/><!-- throwing star -->
+		<item id="7620" chance="12000"/><!-- mana potion -->
+		<item id="7589" chance="9250"/><!-- strong mana potion -->
+		<item id="1987" chance="100000"><!-- bag -->
+			<inside>
+		<item id="2150" countmax="3" chance="2750"/><!-- small amethysts -->
+		<item id="7449" chance="6375"/><!-- crystal sword -->
+		<item id="2425" chance="4200"/><!-- obsidian lance -->
+		<item id="2124" chance="2000"/><!-- crystal ring -->
+		<item id="2167" chance="1150"/><!-- energy ring -->
+		<item id="2170" chance="1200"/><!-- silver amulet -->
+		<item id="2515" chance="500"/><!-- guardian shield -->
+		<item id="2189" chance="500"/><!-- wand of cosmic energy -->
+			</inside>
+		</item>
 	</loot>
 </monster>

@@ -45,20 +45,30 @@
 		<voice sentence="I'm just a messenger of what's yet to come." yell="1"/>		
 	</voices>	 
 	<loot>
-		<item id="2666" countmax="6" chance="50000"/><!-- meat -->
-		<item id="7368" countmax="2" chance="5000"/><!-- assassin stars -->
-		<item id="6500" countmax="1" chance="3000"/><!-- demonic essence -->
-		<item id="2475" chance="200"/><!-- warrior helmet -->
-		<item id="2148" countmax="180" chance="100000"/><!-- gold coin -->
+		<item id="2148" countmax="80" chance="44000"/><!-- gold coin -->
+		<item id="2148" countmax="70" chance="44000"/><!-- gold coin -->
+		<item id="2148" countmax="60" chance="44000"/><!-- gold coin -->
+		<item id="7368" countmax="2" chance="7750"/><!-- assassin stars -->
+		<item id="2413" chance="5000"/><!-- battle shield -->
+		<item id="2231" chance="7000"/><!-- big bone -->
+		<item id="2478" chance="12000"/><!-- brass legs -->
+		<item id="10000" chance="10000"/><!-- demonic essence -->
+		<item id="7591" chance="40500"/><!-- great health potion -->
+		<item id="2477" chance="2750"/><!-- knight legs -->
+		<item id="2666" countmax="6" chance="7000"/><!-- meat -->
+		<item id="2394" chance="11000"/><!-- morning star -->
 		<item id="1987" chance="100000"><!-- bag -->
 			<inside>
-				<item id="2394" chance="5000"/><!-- morning star -->
-				<item id="9970" countmax="4" chance="1500"/><!-- small topaz -->
-				<item id="2476" chance="200"/><!-- knight armor -->
-				<item id="2477" chance="200"/><!-- knight legs -->
-				<item id="7421" chance="200"/><!-- onyx fail -->
-				<item id="9948" chance="200"/><!-- dracoyle statue -->
-				<item id="9969" chance="300"/><!-- black skull -->
+			<item id="9808" chance="1500"/><!-- rusty armor -->
+			<item id="9808" chance="1500"/><!-- rusty armor -->
+			<item id="9970" countmax="4" chance="3250"/><!-- small topaz -->
+			<item id="7452" chance="1000"/><!-- spiked squelcher -->
+			<item id="8473" chance="10000"/><!-- ultimate health potion -->
+			<item id="2475" chance="1900"/><!-- warrior helmet -->
+			<item id="7439" chance="1100"/><!-- berserk potion -->
+			<item id="9969" chance="200"/><!-- black skull -->
+			<item id="7421" chance="200"/><!-- onyx fail -->
+			<item id="9948" chance="100"/><!-- dracoyle statue -->
 			</inside>
 		</item>
 	</loot>

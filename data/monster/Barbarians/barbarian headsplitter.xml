@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 	<monster name="Barbarian Headsplitter" nameDescription="a barbarian headsplitter" race="blood" experience="85" speed="270" manacost="450">
 	<health now="100" max="100"/>
 	<look type="253" head="115" body="105" legs="119" feet="132" corpse="6080"/>
@@ -41,17 +41,22 @@
 		<voice sentence="Its you or me!"/>
 	</voices>
 	<loot>
-		<item id="2148" countmax="30" chance="33333"/><!-- gold coin -->
-		<item id="2111" countmax="6" chance="10000"/><!-- snowball -->
-		<item id="2473" chance="10000"/><!-- viking helmet -->
-		<item id="7457" chance="10000"/><!-- fur boots -->
-		<item id="2460" chance="10000"/><!-- brass helmet -->
-		<item id="2403" chance="10000"/><!-- knife -->
-		<item id="2473" chance="10000"/><!-- viking helmet -->
-		<item id="5913" chance="10000"/><!-- brown piece of cloth -->
-		<item id="2050" chance="10000"/><!-- torch -->
-		<item id="7449" chance="10000"/><!-- crystal sword -->
-		<item id="7461" chance="1000"/><!-- krimhorn helmet -->
-		<item id="2320" chance="10000"/><!-- skull -->
+		<item id="2148" countmax="30" chance="40000"/><!-- gold coin -->
+		<item id="2050" chance="61500"/><!-- torch -->
+		<item id="2403" chance="15500"/><!-- knife -->
+		<item id="2460" chance="16750"/><!-- brass helmet -->
+		<item id="2483" chance="9000"/><!-- scale armor -->
+		<item id="2473" chance="3850"/><!-- viking helmet -->
+		<item id="2320" chance="2600"/><!-- skull -->
+		<item id="1987" chance="100000"><!-- bag -->
+			<inside>
+		<item id="5913" chance="2500"/><!-- brown piece of cloth -->
+		<item id="7618" chance="2000"/><!-- health potion -->
+		<item id="2168" chance="750"/><!-- life ring-->
+		<item id="7461" chance="500"/><!-- krimhorn helmet -->
+		<item id="7449" chance="650"/><!-- crystal sword -->
+		<item id="7457" chance="300"/><!-- fur boots -->
+			</inside>
+		</item>
 	</loot>
 </monster>

@@ -41,8 +41,10 @@
 		<immunity earth="1"/>
 	</immunities>
 	<loot>
-		<item id="2148" countmax="44" chance="100000"/><!-- gold coin -->
-		<item id="5880" countmax="1" chance="1800"/><!-- iron ore -->
-		<item id="8298" chance="2000"/><!-- natural soil -->
+		<item id="2148" countmax="80" chance="24500"/><!-- gold coin -->
+		<item id="2148" countmax="47" chance="24500"/><!-- gold coin -->
+		<item id="1294" countmax="3" chance="40000"/><!-- small stones -->
+		<item id="2244" chance="22000"/><!-- some leaves -->
+		<item id="8298" chance="3750"/><!-- natural soil -->
 	</loot>
 </monster>

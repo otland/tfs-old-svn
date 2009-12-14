@@ -42,8 +42,9 @@
 		<immunity invisible="1"/>
 	</immunities>
 	<loot>
-		<item id="2148" countmax="100" chance="100000"/><!-- gold coin -->
-		<item id="8303" countmax="2" chance="1500"/><!-- energy soil -->
-		<item id="7838" countmax="3" chance="3200"/><!-- flash arrow -->
+		<item id="2148" countmax="80" chance="25000"/><!-- gold coin -->
+		<item id="2148" countmax="44" chance="25000"/><!-- gold coin -->
+		<item id="7838" countmax="3" chance="3750"/><!-- flash arrow -->
+		<item id="8303" chance="3000"/><!-- energy soil -->
 	</loot>
 </monster>

@@ -37,12 +37,19 @@
 		<voice sentence="Humy tasy! Hum hum!"/>
 	</voices>
 	<loot>
-		<item id="2513" chance="1500"/><!-- battle shield -->
-		<item id="2490" chance="200"/><!-- dark helmet -->
-		<item id="2148" countmax="24" chance="4000"/><!-- gold coin -->
-		<item id="2666" countmax="2" chance="5000"/><!-- meat -->
-		<item id="2510" chance="2000"/><!-- plate shield -->
-		<item id="2442" chance="2000"/><!-- heavy machete -->
-		<item id="7588" chance="2000"/><!-- strong health potion -->
+		<item id="2148" countmax="24" chance="32000"/><!-- gold coin -->
+		<item id="2666" countmax="2" chance="26750"/><!-- meat -->
+		<item id="2671" countmax="2" chance="11000"/><!-- ham -->
+		<item id="2406" chance="8000"/><!-- short sword -->
+		<item id="2510" chance="1600"/><!-- plate shield -->
+		<item id="1987" chance="100000"><!-- bag -->
+			<inside>
+		<item id="2513" chance="1300"/><!-- battle shield -->
+		<item id="2381" chance="850"/><!-- halberd -->
+		<item id="7398" chance="150"/><!-- cyclops trophy -->
+		<item id="2490" chance="250"/><!-- dark helmet -->
+		<item id="7588" chance="600"/><!-- strong health potion -->
+			</inside>
+		</item>
 	</loot>
 </monster>

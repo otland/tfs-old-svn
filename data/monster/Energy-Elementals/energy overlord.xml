@@ -47,9 +47,14 @@
 		<immunity invisible="1"/>
 	</immunities>
 	<loot>
-		<item id="2148" chance="100000" countmax="100"/><!-- gold coin -->
-		<item id="2152" chance="10000" countmax="3"/><!-- platinum coin -->
-		<item id="8306" chance="4000"/><!-- pure energy -->
-		<item id="8879" chance="1900"/><!-- voltage armor -->
+		<item id="2148" chance="50000" countmax="60"/><!-- gold coin -->
+		<item id="2148" chance="50000" countmax="40"/><!-- gold coin -->
+		<item id="2152" chance="5000" countmax="3"/><!-- platinum coin -->
+		<item id="1987" chance="100000"><!-- bag -->
+			<inside>
+		<item id="8306" chance="100000"/><!-- pure energy -->
+		<item id="8879" chance="1000"/><!-- voltage armor -->
+			</inside>
+		</item>
 	</loot>
 </monster>

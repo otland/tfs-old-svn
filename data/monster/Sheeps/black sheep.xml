@@ -36,7 +36,6 @@
 		<voice sentence="Maeh"/>
 	</voices>
 	<loot>
-		<item id="3976" countmax="10" chance="50000"/><!-- worm -->
-		<item id="2666" countmax="5" chance="100000"/><!-- meat -->
+		<item id="2666" countmax="4" chance="22500"/><!-- meat -->
 	</loot>
 </monster>

@@ -23,6 +23,6 @@
 		<immunity poison="1"/>
 	</immunities>
 	<loot>
-		<item id="8710" chance="99999"/><!-- cockroach leg -->
+		<item id="8710" chance="100000"/><!-- cockroach leg -->
 	</loot>
 </monster>

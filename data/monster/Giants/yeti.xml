@@ -40,17 +40,12 @@
 		<voice sentence="Yooodelaaaheeeheee!"/>
 	</voices>
 	<loot>
-		<item id="2671" countmax="3" chance="10000"/><!-- ham -->
-		<item id="2148" countmax="70" chance="100000"/><!-- gold coin -->
-		<item id="2666" countmax="5" chance="33333"/><!-- meat -->
-		<item id="2111" countmax="5" chance="10000"/><!-- snowball -->
-		<item id="2425" chance="1333"/><!-- obsidian lance -->
-		<item id="4848" chance="600"/><!-- icicle -->
-		<item id="2197" chance="700"/><!-- stone skin amulet -->
-		<item id="2381" chance="6666"/><!-- halberd -->
-		<item id="2177" chance="2500"/><!-- life crystal -->
-		<item id="2044" chance="10000"/><!-- lamp -->
-		<item id="2448" chance="10000"/><!-- studded club -->
-		<item id="2688" countmax="4" chance="2500"/><!-- candy cane -->
+		<item id="2148" countmax="60" chance="100000"/><!-- gold coin -->
+		<item id="2148" countmax="40" chance="100000"/><!-- gold coin -->
+		<item id="2666" countmax="4" chance="33333"/><!-- meat -->
+		<item id="2671" countmax="5" chance="10000"/><!-- ham -->
+		<item id="2111" countmax="22" chance="10000"/><!-- snowball -->
+		<item id="2644" chance="1333"/><!-- bunny slippers -->
+
 	</loot>
 </monster>

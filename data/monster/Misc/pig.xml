@@ -1,6 +1,6 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <monster name="Pig" nameDescription="a pig" race="blood" experience="0" speed="114" manacost="255">
-	<health now="150" max="150"/>
+	<health now="25" max="25"/>
 	<look type="60" corpse="6000"/>
 	<targetchange interval="2000" chance="0"/>
 	<strategy attack="100" defense="0"/>
@@ -22,7 +22,6 @@
 	</attacks>
 	<defenses armor="2" defense="2"/>
 	<loot>
-		<item id="3976" countmax="10" chance="50000"/><!-- worm -->
-		<item id="2671" countmax="4" chance="100000"/><!-- ham -->
+		<item id="2666" countmax="4" chance="20000"/><!-- meat -->
 	</loot>
 </monster>

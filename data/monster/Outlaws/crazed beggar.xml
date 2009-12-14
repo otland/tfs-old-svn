@@ -35,18 +35,22 @@
 		<voice sentence="Wanna buy roses??"/>
 	</voices>
 	<loot>
-		<item id="2148" countmax="9" chance="30000"/><!-- gold coin -->
-		<item id="2666" countmax="3" chance="19000"/><!-- meat -->
-		<item id="2237" chance="40000"/><!-- dirty cape -->
-		<item id="2744" chance="21000"/><!-- bed rose -->
-		<item id="2370" chance="13000"/><!-- lute -->
+		<item id="2148" countmax="9" chance="50000"/><!-- gold coin -->
+		<item id="2237" chance="55000"/><!-- dirty cape -->
+		<item id="2690" chance="22500"/><!-- roll -->
+		<item id="2666" chance="12000"/><!-- meat -->
+		<item id="2567" chance="9750"/><!-- wooden spoon -->
+		<item id="2556" chance="6500"/><!-- wooden hammer  -->
+		<item id="2570" chance="4850"/><!-- rolling pin -->
+		<item id="2744" chance="4800"/><!-- red rose -->
 		<item id="1987" chance="100000"><!-- bag -->
 			<inside>
-				<item id="2690" countmax="1" chance="11290"/><!-- roll -->
-				<item id="2567" chance="33000"/><!-- wooden spoon -->
-				<item id="9808" chance="2500"/><!-- rusty armor -->
-				<item id="1681" chance="5500"/><!-- blue pillow -->
-				<item id="2213" chance="1500"/><!-- dwarven ring -->
+				<item id="1681" chance="2500"/><!-- blue pillow -->
+				<item id="5553" chance="850"/><!-- rum flak -->
+				<item id="2802" chance="800"/><!-- sling herb -->		
+				<item id="9808" chance="750"/><!-- rusty armor -->
+				<item id="2213" chance="200"/><!-- dwarven ring -->
+				<item id="2370" chance="7500"/><!-- lute -->
 			</inside>
 		</item>
 	</loot>

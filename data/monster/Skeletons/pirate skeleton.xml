@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <monster name="Pirate Skeleton" nameDescription="a pirate skeleton" race="undead" experience="85" speed="230" manacost="0">
 	<health now="190" max="190"/>
 	<look type="195" corpse="6070"/>
@@ -26,14 +26,15 @@
 		<element holyPercent="-20"/>
 	</elements>
 	<loot>
-		<item id="2148" countmax="25" chance="40000"/><!-- gold coin -->
-		<item id="2229" countmax="2" chance="9727"/><!-- skull -->
-		<item id="2231" chance="4000"/><!-- big bone -->
-		<item id="6095" chance="5000"/><!-- pirate shirt -->
-		<item id="5927" chance="100000"><!-- pirate bag -->
+		<item id="2148" countmax="35" chance="23000"/><!-- gold coin -->
+		<item id="2231" chance="11500"/><!-- big bone -->
+		<item id="2230" chance="6000"/><!-- bone -->
+		<item id="1987" chance="100000"><!-- bag -->
 			<inside>
-				<item id="2376" chance="18402"/><!-- sword -->
-				<item id="2449" chance="8491"/><!-- bone club -->
+				<item id="2406" chance="7000"/><!-- short sword -->
+				<item id="2376" chance="7000"/><!-- sword -->
+				<item id="2449" chance="7000"/><!-- bone club -->
+				<item id="2229" countmax="2" chance="2000"/><!-- skull -->
 			</inside>
 		</item>
 	</loot>

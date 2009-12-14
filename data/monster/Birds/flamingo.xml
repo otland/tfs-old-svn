@@ -21,7 +21,5 @@
 	</attacks>
 	<defenses armor="1" defense="6"/>
 	<loot>
-		<item id="3976" countmax="10" chance="50000"/><!-- worm -->
-		<item id="3976" countmax="10" chance="50000"/><!-- worm -->
 	</loot>
 </monster>

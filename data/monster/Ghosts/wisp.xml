@@ -37,13 +37,12 @@
 	</defenses>
 	<elements>
 		<element energyPercent="-30"/>
-		<element earthPercent="-80"/>
-		<element deathPercent="-65"/>
+		<element earthPercent="-90"/>
+		<element physicalPercent="-65"/>
 	</elements>
 	<immunities>
-		<immunity physical="1"/>
+		<immunity death="1"/>
 		<immunity paralyze="1"/>
-		<immunity drunk="1"/>
 	</immunities>
 	<voices interval="2000" chance="5">
 		<voice sentence="Crackle!"/>

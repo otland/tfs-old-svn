@@ -29,7 +29,6 @@
 		<element deathPercent="-5"/>
 	</elements>
 	<loot>
-		<item id="3976" countmax="10" chance="50000"/><!-- worm -->
-		<item id="2666" countmax="4" chance="33333"/><!-- meat -->
+		<item id="2666" countmax="2" chance="15000"/><!-- meat -->
 	</loot>
 </monster>

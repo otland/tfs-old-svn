@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <monster name="Crystal Spider" nameDescription="a crystal spider" race="undead" experience="900" speed="340" manacost="0">
 	<health now="1250" max="1250"/>
 	<look type="263" corpse="7344"/>
@@ -50,21 +50,25 @@
 		<voice sentence="Screeech!"/>
 	</voices>
 	<loot>
-		<item id="2148" countmax="95" chance="100000"/><!-- gold coin -->
-		<item id="2463" chance="3333"/><!-- plate armor -->
-		<item id="2476" chance="1428"/><!-- knight armor -->
-		<item id="2457" chance="3555"/><!-- steel helmet -->
-		<item id="2171" chance="1222"/><!-- platinum amulet -->
-		<item id="7437" chance="777"/><!-- sapphire hammer -->
+		<item id="2148" countmax="50" chance="800000"/><!-- gold coin -->
+		<item id="2148" countmax="45" chance="800000"/><!-- gold coin -->
+		<item id="7364" countmax="7" chance="2500"/><!-- sniper arrow -->
+		<item id="2478" chance="8600"/><!-- brass legs -->
+		<item id="2463" chance="6500"/><!-- plate armor -->
+		<item id="2463" chance="4000"/><!-- ice cube -->
+		<item id="2457" chance="4000"/><!-- steel helmet -->
 		<item id="1987" chance="100000"><!-- bag -->
 			<inside>
-				<item id="7449" chance="1555"/><!-- crystal sword -->
-				<item id="2477" chance="1000"/><!-- knight legs -->
-				<item id="7364" countmax="7" chance="1777"/><!-- sniper arrow -->
-				<item id="7290" chance="1333"/><!-- shard -->
-				<item id="7902" chance="1033"/><!-- glacier mask -->
-				<item id="2169" chance="1333"/><!-- time ring -->
-				<item id="7589" chance="1823"/><!-- strong mana potion -->
+				<item id="7437" chance="1100"/><!-- sapphire hammer -->
+				<item id="5879" chance="1100"/><!-- spider silk-->
+				<item id="7449" chance="725"/><!-- crystal sword -->
+				<item id="7589" chance="500"/><!-- strong mana potion -->
+				<item id="2477" chance="200"/><!-- knight legs -->
+				<item id="7290" chance="500"/><!-- shard -->
+				<item id="2169" chance="450"/><!-- time ring -->
+				<item id="7902" chance="300"/><!-- glacier mask -->
+				<item id="2476" chance="200"/><!-- knight armor -->
+				<item id="2171" chance="250"/><!-- platinum amulet -->
 			</inside>
 		</item>
 	</loot>

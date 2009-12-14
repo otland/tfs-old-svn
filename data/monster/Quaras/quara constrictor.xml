@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <monster name="Quara Constrictor" nameDescription="a quara constrictor" race="blood" experience="250" speed="520" manacost="670">
 	<health now="450" max="450"/>
 	<look type="46" corpse="6065"/>
@@ -44,13 +44,18 @@
 		<voice sentence="Boohaa!"/>
 	</voices>
 	<loot>
-		<item id="2670" countmax="5" chance="20000"/><!-- shrimp -->
-		<item id="2148" countmax="20" chance="100000"/><!-- gold coin -->
-		<item id="2150" countmax="3" chance="2222"/><!-- small amethyst -->
-		<item id="2397" chance="3333"/><!-- longsword -->
-		<item id="2381" chance="2222"/><!-- halberd -->
-		<item id="2460" chance="4000"/><!-- brass helmet -->
-		<item id="2465" chance="2857"/><!-- brass armor -->
-		<item id="5895" countmax="1" chance="2000"/><!-- fish fin -->
+		<item id="2148" countmax="48" chance="34000"/><!-- gold coin -->
+		<item id="2148" countmax="45" chance="34000"/><!-- gold coin -->
+		<item id="2406" chance="7200"/><!-- short sword -->
+		<item id="2465" chance="2500"/><!-- brass armor -->
+		<item id="2460" chance="7500"/><!-- brass helmet -->
+		<item id="1987" chance="100000"><!-- bag -->
+			<inside>
+		<item id="2397" chance="4600"/><!-- longsword -->
+		<item id="2670" countmax="5" chance="1000"/><!-- shrimp -->
+		<item id="5895" chance="2000"/><!-- fish fin -->
+		<item id="2150" chance="1000"/><!-- small amethyst -->
+			</inside>
+		</item>
 	</loot>
 </monster>

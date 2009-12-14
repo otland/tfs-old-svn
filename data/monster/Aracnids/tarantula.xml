@@ -40,14 +40,13 @@
 		<immunity drunk="1"/>
 	</immunities>
 	<loot>
-		<item id="2148" countmax="40" chance="92000"/><!-- gold coin -->
-		<item id="2478" chance="20000"/><!-- brass legs -->
-		<item id="2510" chance="17000"/><!-- plate shield -->
-		<item id="2457" chance="7300"/><!-- steel helmet -->
-		<item id="2463" chance="300"/><!-- plate armor -->
+		<item id="2478" chance="3250"/><!-- brass legs -->
+		<item id="2148" countmax="40" chance="23000"/><!-- gold coin -->
+		<item id="2510" chance="1800"/><!-- plate shield -->
 		<item id="1987" chance="100000"><!-- bag -->
 			<inside>
-				<item id="2169" chance="2500"/><!-- time ring -->
+				<item id="2457" chance="1250"/><!-- steel helmet -->
+				<item id="2169" chance="200"/><!-- time ring -->
 			</inside>
 		</item>
 	</loot>

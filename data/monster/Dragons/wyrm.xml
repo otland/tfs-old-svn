@@ -46,19 +46,26 @@
 		<voice sentence="GROOOOAAAAAAAAR!"/>
 	</voices>
 	<loot>
-		<item id="2672" countmax="3" chance="9000"/><!-- dragon ham -->
-		<item id="2148" countmax="200" chance="6000"/><!-- gold coin -->
-		<item id="2647" chance="1222"/><!-- plate legs -->
-		<item id="8871" chance="1990"/><!-- focus cape -->
-		<item id="2546" countmax="10" chance="6000"/><!-- burst arrow -->
+		<item id="2148" countmax="90" chance="30000"/><!-- gold coin -->
+		<item id="2148" countmax="80" chance="30000"/><!-- gold coin -->
+		<item id="2148" countmax="60" chance="30000"/><!-- gold coin -->
+		<item id="2672" countmax="3" chance="15000"/><!-- dragon ham -->
+		<item id="2546" countmax="10" chance="4750"/><!-- burst arrow -->
+		<item id="7588" chance="4750"/><!-- strong health potion -->
+		<item id="2647" chance="1750"/><!-- plate legs -->
+		<item id="8921" chance="700"/><!-- wand of draconia -->
+		<item id="2145" countmax="3" chance="750"/><!-- small diamonds-->
 		<item id="1987" chance="10000"><!-- bag -->
 			<inside>
-				<item id="2148" countmax="200" chance="100000"/><!-- gold coin -->
-				<item id="7430" chance="1554"/><!-- dragonbone staff -->
-				<item id="7588" chance="5332"/><!-- strong health potion -->
-				<item id="8921" chance="3999"/><!-- wand of draconia -->
-				<item id="8871" chance="1000"/><!-- focus cape -->
-				<item id="7430" chance="1200"/><!-- dragonbone staff -->
+		<item id="7589" chance="4000"/><!-- strong mana potion -->
+		<item id="2455" chance="15000"/><!-- crossbow -->
+		<item id="2457" chance="7500"/><!-- steel helmet -->
+		<item id="7889" chance="650"/><!-- lightning pendant -->
+		<item id="8871" chance="600"/><!-- focus cape -->
+		<item id="8920" chance="550"/><!-- wand of starstorm -->
+		<item id="8873" chance="750"/><!-- hubiscus dress -->
+		<item id="7430" chance="300"/><!-- dragonbone staff -->
+		<item id="8855" chance="200"/><!-- composite hornbow -->
 			</inside>
 		</item>
 	</loot>

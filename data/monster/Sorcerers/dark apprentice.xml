@@ -47,10 +47,19 @@
 		<voice sentence="I must dispose of my masters enemies!"/>
 	</voices>
 	<loot>
-		<item id="2148" countmax="100" chance="100000"/><!-- gold coin -->
-		<item id="2260" chance="400"/><!-- blank rune -->
-		<item id="7620" chance="400"/><!-- mana potion -->
-		<item id="6079" chance="400"/><!-- dead frog -->
+		<item id="2148" countmax="50" chance="33500"/><!-- gold coin -->
+		<item id="2260" chance="4125"/><!-- blank rune -->
+		<item id="7620" chance="1500"/><!-- mana potion -->
+		<item id="2260" chance="4125"/><!-- blank rune -->
+		<item id="6079" chance="10500"/><!-- dead frog -->
+		<item id="1987" chance="100000"><!-- bag -->
+			<inside>
+		<item id="2260" chance="4125"/><!-- blank rune -->
+		<item id="2191" chance="2200"/><!-- wand of dragonbreath -->
+		<item id="7620" chance="1500"/><!-- mana potion -->
+		<item id="7618" chance="3400"/><!-- health potion -->
 		<item id="2188" chance="100"/><!-- wand of decay -->
+			</inside>
+		</item>
 	</loot>
 </monster>

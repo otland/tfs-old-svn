@@ -28,8 +28,8 @@
 		<elemetn deathPercent="-5"/>
 	</elements>
 	<loot>
-		<item id="3976" countmax="10" chance="50000"/><!-- worm -->
-		<item id="2666" countmax="3" chance="90000"/><!-- meat -->
-		<item id="5897" countmax="1" chance="6666"/><!-- wolf paw -->
+		<item id="2666" countmax="2" chance="25000"/><!-- meat -->
+		<item id="3976" chance="9000"/><!-- worm -->
+		<item id="5897"  chance="1500"/><!-- wolf paw -->
 	</loot>
 </monster>

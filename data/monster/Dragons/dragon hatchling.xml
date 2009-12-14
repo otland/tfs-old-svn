@@ -44,13 +44,12 @@
 		<voice sentence="Fchu?" yell="0"/>
 		<voice sentence="Rooawwrr"/>
 	</voices>
-	<loot>
-		<item id="7618" countmax="1" chance="5000"/><!-- health potion -->
-		<item id="2672" countmax="1" chance="5000"/><!-- dragon ham -->
-		<item id="2148" countmax="26" chance="100000"/><!-- gold coin -->
+		<loot>
+		<item id="2148" countmax="55" chance="37500"/><!-- gold coin -->
+		<item id="2672" chance="25000"/><!-- dragon ham -->
 		<item id="1987" chance="100000"><!-- bag -->
 			<inside>
-				<item id="2148" countmax="25" chance="100000"/><!-- gold coin -->
+				<item id="7618" chance="5000"/><!-- health potion -->
 			</inside>
 		</item>
 	</loot>

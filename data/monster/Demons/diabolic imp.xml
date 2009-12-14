@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <monster name="Diabolic Imp" nameDescription="a diabolic imp" race="blood" experience="1950" speed="360" manacost="0">
 	<health now="1950" max="1950"/>
 	<look type="237" corpse="6364"/>
@@ -55,22 +55,28 @@
 		<voice sentence="He he he!"/>
 	</voices>
 	<loot>
-		<item id="2148" countmax="79" chance="100000"/><!-- gold coin -->
-		<item id="2050" chance="15000"/><!-- torch -->
-		<item id="6558" chance="2222"/><!-- concentrated demonic blood -->
-		<item id="2260" chance="18000"/><!-- blank rune -->
-		<item id="6300" chance="999"/><!-- death ring -->
-		<item id="2465" chance="6577"/><!-- brass armor -->
+		<item id="2148" countmax="99" chance="50000"/><!-- gold coin -->
+		<item id="2148" countmax="98" chance="50000"/><!-- gold coin -->
+		<item id="2548" chance="50000"/><!-- pitch fork -->
+		<item id="6558" chance="25000"/><!-- concentrated demonic blood -->
+		<item id="6558" chance="25000"/><!-- concentrated demonic blood -->
+		<item id="6500" chance="5000"/><!-- demonic essence -->
+		<item id="2260" chance="10000"/><!-- blank rune -->
 		<item id="1987" chance="100000"><!-- bag -->
 			<inside>
-				<item id="2548" chance="20000"/><!-- pitch fork -->
-				<item id="2465" chance="6577"/><!-- brass armor -->
-				<item id="2185" chance="833"/><!-- necrotic rod -->
-				<item id="2464" chance="7887"/><!-- chain armor -->
-				<item id="5944" chance="5666"/><!-- soul orb -->
-				<item id="6500" countmax="1" chance="7777"/><!-- demonic essence -->
-				<item id="2150" countmax="1" chance="8888"/><!-- small amethyst -->
-				<item id="2165" chance="4555"/><!-- stealth ring -->
+		<item id="7900" chance="1200"/><!-- magma monocle -->
+		<item id="6300" chance="500"/><!-- death ring -->
+		<item id="7899" chance="900"/><!-- magma coat-->
+		<item id="2165" chance="2500"/><!-- stealth ring -->
+		<item id="2515" chance="10000"/><!-- guardian shield -->
+		<item id="2150" countmax="3" chance="2000"/><!-- small amethyst -->
+		<item id="2260" chance="10000"/><!-- blank rune -->
+		<item id="2387" chance="1500"/><!-- double axe -->
+		<item id="2568" chance="3000"/><!-- cleaver -->
+		<item id="2419" chance="8000"/><!-- scimitar -->
+		<item id="5944" chance="10000"/><!-- soul orb -->
+		<item id="2148" countmax="7" chance="600"/><!-- platinum coin -->
+		<item id="2185" chance="750"/><!-- necrotic rod -->
 			</inside>
 		</item>
 	</loot>

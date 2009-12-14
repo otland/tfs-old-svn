@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <monster name="Hellhound" nameDescription="a hellhound" race="blood" experience="6800" speed="310" manacost="0">
 	<health now="7500" max="7500"/>
 	<look type="240" corpse="6332"/>
@@ -53,21 +53,27 @@
 		<voice sentence="GRRRRR!"/>
 	</voices>
 	<loot>
-		<item id="2148" countmax="100" chance="100000"/><!-- gold coin -->
-		<item id="5944" chance="5555"/><!-- soul orb -->
-		<item id="2671" countmax="5" chance="50000"/><!-- ham -->
-		<item id="2230" chance="25000"/><!-- bone -->
-		<item id="6500" countmax="1" chance="7200"/><!-- demonic essence -->
+		<item id="2148" countmax="100" chance="25000"/><!-- gold coin -->
+		<item id="2148" countmax="100" chance="25000"/><!-- gold coin -->
+		<item id="2148" countmax="100" chance="25000"/><!-- gold coin -->
+		<item id="2148" countmax="75" chance="25000"/><!-- gold coin -->
+		<item id="2152" countmax="5" chance="5000"/><!-- platinum coin -->
+		<item id="2671" countmax="6" chance="22500"/><!-- ham -->
+		<item id="2410" countmax="11" chance="9000"/><!-- throwing knife -->
+		<item id="2144" countmax="4" chance="7000"/><!-- black pearl -->
 		<item id="2231" chance="30000"/><!-- big bone -->
-		<item id="2393" chance="2000"/><!-- giant sword -->
-		<item id="2144" countmax="3" chance="9999"/><!-- black pearl -->
+		<item id="2230" chance="25000"/><!-- bone -->
+		<item id="6558" chance="6500"/><!-- concentrated demonic blood -->
+		<item id="6500" chance="15000"/><!-- demonic essence -->
+		<item id="9971" chance="1000"/><!-- gold ingot -->
 		<item id="1987" chance="100000"><!-- bag -->
 			<inside>
-				<item id="2430" chance="2857"/><!-- knight axe -->
-				<item id="2383" chance="2500"/><!-- spike sword -->
-				<item id="2410" countmax="11" chance="15000"/><!-- throwing knife -->
-				<item id="6558" countmax="2" chance="8888"/><!-- concentrated demonic blood -->
-				<item id="6553" chance="1600"/><!-- ruthless axe -->
+				<item id="9808" chance="1500"/><!-- rusty armor -->
+				<item id="2393" chance="2500"/><!-- giant sword -->
+				<item id="5944" chance="7500"/><!-- soul orb -->
+				<item id="2430" chance="3000"/><!-- knight axe -->
+				<item id="2383" chance="275000"/><!-- spike sword -->
+				<item id="6553" chance="400"/><!-- ruthless axe -->
 			</inside>
 		</item>
 	</loot>

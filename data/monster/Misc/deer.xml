@@ -33,7 +33,7 @@
 		<immunity invisible="0"/>
 	</immunities>
 	<loot>
-		<item id="3976" countmax="10" chance="50000"/><!-- worm -->
-		<item id="2666" countmax="4" chance="100000"/><!-- meat -->
+		<item id="2666" countmax="4" chance="20000"/><!-- meat -->
+		<item id="2671" countmax="2" chance="20000"/><!-- ham -->
 	</loot>
 </monster>

@@ -30,9 +30,7 @@
 		<element icePercent="-8"/>
 	</elements>
 	<loot>
-		<item id="3976" countmax="10" chance="50000"/><!-- worm -->
-		<item id="2671" countmax="2" chance="33333"/><!-- ham -->
-		<item id="2666" countmax="3" chance="33333"/><!-- meat -->
-		<item id="3976" countmax="10" chance="50000"/><!-- worm -->
+		<item id="2671" countmax="4" chance="8500"/><!-- ham -->
+		<item id="2666" countmax="4" chance="16750"/><!-- meat -->
 	</loot>
 </monster>
