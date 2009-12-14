@@ -50,7 +50,7 @@
 				<item id="2802" chance="800"/><!-- sling herb -->		
 				<item id="9808" chance="750"/><!-- rusty armor -->
 				<item id="2213" chance="200"/><!-- dwarven ring -->
-				<item id="2370" chance="7500"/><!-- lute -->
+				<item id="2072" chance="7500"/><!-- lute -->
 			</inside>
 		</item>
 	</loot>
