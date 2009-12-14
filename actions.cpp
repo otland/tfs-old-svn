@@ -758,7 +758,7 @@ bool Action::executeUse(Player* player, Item* item, const PositionEx& fromPos, c
 			else
 			{
 				env->streamThing(scriptstream, "itemEx", NULL, 0);
-				env->streamPosition(scriptstream, "toPosition", player->getPosition(), 255);
+				env->streamPosition(scriptstream, "toPosition", PositionEx());
 			}
 
 			scriptstream << m_scriptData;
@@ -799,7 +799,7 @@ bool Action::executeUse(Player* player, Item* item, const PositionEx& fromPos, c
 			else
 			{
 				LuaInterface::pushThing(L, NULL, 0);
-				LuaInterface::pushPosition(L, player->getPosition(), 255);
+				LuaInterface::pushPosition(L, PositionEx());
 			}
 
 			bool result = m_interface->callFunction(5);

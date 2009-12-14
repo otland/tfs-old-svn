@@ -55,30 +55,29 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 		return false
 	end
 
-	local position = fromPosition
-	if(position.x == CONSTAINER_POSITION) then
-		position = toPosition
+	if(fromPosition.x == CONSTAINER_POSITION) then
+		fromPosition = getThingPosition(cid)
 	end
 
 	local random = math.random(1, table.maxn(doll))
 	local sound = doll[random]
-	if(item.itemid == 5791) then
+	if(item.itemid == 6566) then
 		if(random == 3) then
-			doSendMagicEffect(position, CONST_ME_POFF)
+			doSendMagicEffect(fromPosition, CONST_ME_POFF)
 		elseif(random == 4) then
-			doSendMagicEffect(position, CONST_ME_FIREAREA)
+			doSendMagicEffect(fromPosition, CONST_ME_FIREAREA)
 		elseif(random == 5) then
 			doTargetCombatHealth(0, cid, COMBAT_PHYSICALDAMAGE, -1, -1, CONST_ME_EXPLOSIONHIT)
 		end
 	elseif(item.itemid == 5669) then
-		doSendMagicEffect(position, CONST_ME_MAGIC_RED)
+		doSendMagicEffect(fromPosition, CONST_ME_MAGIC_RED)
 		doTransformItem(item.uid, item.itemid + 1)
 		doDecayItem(item.uid)
 	elseif(item.itemid == 6388) then
-		doSendMagicEffect(position, CONST_ME_SOUND_YELLOW)
+		doSendMagicEffect(fromPosition, CONST_ME_SOUND_YELLOW)
 		sound = sound .. getCreatureName(cid) .. "."
 	end
 
-	doCreatureSay(cid, sound, TALKTYPE_MONSTER, false, 0, position)
+	doCreatureSay(cid, sound, TALKTYPE_MONSTER, false, 0, fromPosition)
 	return true
 end

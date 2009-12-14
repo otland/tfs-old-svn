@@ -23,16 +23,15 @@ local FOODS, MAX_FOOD = {
 
 function onUse(cid, item, fromPosition, itemEx, toPosition)
 	if(item.itemid == 6280) then
-		local position = fromPosition
-		if(position.x == CONTAINER_POSITION) then
-			position = toPosition
+		if(fromPosition.x == CONTAINER_POSITION) then
+			fromPosition = getThingPosition(cid)
 		end
 
 		doCreatureSay(cid, "Blewing out the candle.", TALKTYPE_MONSTER)
 		doTransformItem(item.uid, item.itemid - 1)
 
-		doSendMagicEffect(position, CONST_ME_POFF)
-		return TRUE
+		doSendMagicEffect(fromPosition, CONST_ME_POFF)
+		return true
 	end
 
 	local food = FOODS[item.itemid]
@@ -50,5 +49,5 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 	doRemoveItem(item.uid, 1)
 
 	doCreatureSay(cid, food[2], TALKTYPE_MONSTER)
-	return TRUE
+	return true
 end
