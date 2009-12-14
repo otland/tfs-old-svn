@@ -183,7 +183,7 @@ class PropStream
 		int32_t size() const {return end - p;}
 
 		template <typename T>
-		inline bool getType(T &ret)
+		inline bool getType(T& ret)
 		{
 			if(size() < (int32_t)sizeof(T))
 				return false;
@@ -207,10 +207,20 @@ class PropStream
 			return true;
 		}
 
-		inline bool getByte(uint8_t &ret) {return getType(ret);}
-		inline bool getShort(uint16_t &ret) {return getType(ret);}
-		inline bool getTime(time_t &ret) {return getType(ret);}
-		inline bool getLong(uint32_t &ret) {return getType(ret);}
+		inline bool getByte(uint8_t& ret) {return getType(ret);}
+		inline bool getShort(uint16_t& ret) {return getType(ret);}
+		inline bool getTime(time_t& ret) {return getType(ret);}
+		inline bool getLong(uint32_t& ret) {return getType(ret);}
+
+		inline bool getFloat(float& ret)
+		{
+			if(size() < (int32_t)sizeof(uint32_t))
+				return false;
+
+			ret = *((uint32_t*)p);
+			p += sizeof(uint32_t);
+			return true;
+		}
 
 		inline bool getString(std::string& ret)
 		{

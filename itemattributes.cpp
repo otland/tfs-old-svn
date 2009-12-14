@@ -340,8 +340,8 @@ bool ItemAttribute::unserialize(PropStream& stream)
 		}
 		case FLOAT:
 		{
-			uint32_t v;
-			if(!stream.getLong(v))
+			float v;
+			if(!stream.getFloat(v))
 				return false;
 
 			set(*reinterpret_cast<float*>(&v));
