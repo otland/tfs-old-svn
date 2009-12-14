@@ -181,8 +181,6 @@
 	<action itemid="2064" event="function" value="increaseItemId"/>
 	<action itemid="2065" event="function" value="decreaseItemId"/>
 	<action itemid="2578" event="function" value="increaseItemId"/>
-	<action itemid="2096" event="function" value="increaseItemId"/>
-	<action itemid="2097" event="function" value="decreaseItemId"/>
 	<action itemid="1786" event="function" value="increaseItemId"/>
 	<action itemid="1787" event="function" value="decreaseItemId"/>
 	<action itemid="1788" event="function" value="increaseItemId"/>
