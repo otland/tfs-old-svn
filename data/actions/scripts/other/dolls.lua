@@ -55,7 +55,7 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 		return false
 	end
 
-	if(fromPosition.x == CONSTAINER_POSITION) then
+	if(fromPosition.x == CONTAINER_POSITION) then
 		fromPosition = getThingPosition(cid)
 	end
 
