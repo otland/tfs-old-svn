@@ -2071,7 +2071,7 @@ void LuaScriptInterface::registerFunctions()
 	lua_register(m_luaState, "doPlayerSendTutorial", LuaScriptInterface::luaDoPlayerSendTutorial);
 
 	//doPlayerSendMailByName(name, item[, town[, actor]])
-	lua_register(m_luaState, "doPlayerSendTutorial", LuaScriptInterface::luaDoPlayerSendTutorial);
+	lua_register(m_luaState, "doPlayerSendMailByName", LuaScriptInterface::luaDoPlayerSendMailByName);
 
 	//doPlayerAddMapMark(cid, pos, type[, description])
 	lua_register(m_luaState, "doPlayerAddMapMark", LuaScriptInterface::luaDoPlayerAddMapMark);

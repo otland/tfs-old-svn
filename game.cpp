@@ -6088,6 +6088,10 @@ void Game::shutdown()
 	std::cout << "- done." << std::endl;
 	if(services)
 		services->stop();
+#if defined(WINDOWS) && !defined(__CONSOLE__)
+
+	exit(1);
+#endif
 }
 
 void Game::cleanup()

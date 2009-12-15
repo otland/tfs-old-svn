@@ -56,6 +56,7 @@ class MoveEvents : public BaseEvents
 		uint32_t onItemMove(Creature* actor, Item* item, Tile* tile, bool isAdd);
 
 		MoveEvent* getEvent(Item* item, MoveEvent_t eventType);
+		bool hasEquipEvent(Item* item);
 		bool hasTileEvent(Item* item);
 
 		void onRemoveTileItem(const Tile* tile, Item* item);

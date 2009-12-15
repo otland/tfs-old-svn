@@ -428,8 +428,17 @@ function doPlayerBroadcastMessage(cid, text, class, checkFlag, ghost)
 	return true
 end
 
-function getBooleanFromString(str)
-	local str = string.lower(tostring(str))
+function getBooleanFromString(input)
+	local tmp = type(input)
+	if(tmp == 'boolean') then
+		return input
+	end
+
+	if(tmp == 'number') then
+		return input > 0
+	end
+
+	local str = string.lower(tostring(input))
 	return (str == "yes" or str == "true" or (tonumber(str) ~= nil and tonumber(str) > 0))
 end
 

@@ -117,6 +117,7 @@ getItemDescriptionsById = getItemInfo
 hasProperty = hasItemProperty
 hasClient = hasPlayerClient
 print = std.cout
+getPosByDir = getPositionByDirection
 db.updateQueryLimitOperator = db.updateLimiter
 db.stringComparisonOperator = db.stringComparison
 

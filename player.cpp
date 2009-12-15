@@ -2023,19 +2023,18 @@ BlockType_t Player::blockHit(Creature* attacker, CombatType_t combatType, int32_
 		return blockType;
 
 	if(vocation->getMultiplier(MULTIPLIER_MAGICDEFENSE) != 1.0 && combatType != COMBAT_NONE &&
-		combatType != COMBAT_PHYSICALDAMAGE && combatType != COMBAT_UNDEFINEDDAMAGE && combatType != COMBAT_DROWNDAMAGE)
+		combatType != COMBAT_PHYSICALDAMAGE && combatType != COMBAT_UNDEFINEDDAMAGE &&
+		combatType != COMBAT_DROWNDAMAGE)
 		damage -= (int32_t)std::ceil((double)(damage * vocation->getMultiplier(MULTIPLIER_MAGICDEFENSE)) / 100.);
 
 	if(damage > 0)
 	{
+		Item* item = NULL;
 		int32_t blocked = 0, reflected = 0;
 		for(int32_t slot = SLOT_FIRST; slot < SLOT_LAST; ++slot)
 		{
-			if(!isItemAbilityEnabled((slots_t)slot))
-				continue;
-
-			Item* item = getInventoryItem((slots_t)slot);
-			if(!item)
+			if(!(item = getInventoryItem((slots_t)slot)) || (g_moveEvents->hasEquipEvent(item)
+				&& !isItemAbilityEnabled((slots_t)slot)))
 				continue;
 
 			const ItemType& it = Item::items[item->getID()];
@@ -2110,13 +2109,11 @@ bool Player::onDeath()
 	}
 	else if(skull < SKULL_RED && g_game.getWorldType() != WORLD_TYPE_PVP_ENFORCED)
 	{
+		Item* item = NULL;
 		for(int32_t i = SLOT_FIRST; ((skillLoss || lootDrop == LOOT_DROP_FULL) && i < SLOT_LAST); ++i)
 		{
-			if(!isItemAbilityEnabled((slots_t)i))
-				continue;
-
-			Item* item = getInventoryItem((slots_t)i);
-			if(!item)
+			if(!(item = getInventoryItem((slots_t)i)) || (g_moveEvents->hasEquipEvent(item)
+				&& !isItemAbilityEnabled((slots_t)i)))
 				continue;
 
 			const ItemType& it = Item::items[item->getID()];
@@ -4864,14 +4861,12 @@ void Player::increaseCombatValues(int32_t& min, int32_t& max, bool useCharges, b
 	if(!countWeapon)
 		weapon = getWeapon();
 
+	Item* item = NULL;
 	int32_t minValue = 0, maxValue = 0;
 	for(int32_t i = SLOT_FIRST; i < SLOT_LAST; ++i)
 	{
-		if(!isItemAbilityEnabled((slots_t)i))
-			continue;
-
-		Item* item = getInventoryItem((slots_t)i);
-		if(!item)
+		if(!(item = getInventoryItem((slots_t)i)) || (g_moveEvents->hasEquipEvent(item)
+			&& !isItemAbilityEnabled((slots_t)i)))
 			continue;
 
 		const ItemType& it = Item::items[item->getID()];
