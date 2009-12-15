@@ -1104,7 +1104,23 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 			else
 				s << ", ";
 
-			s << "reflect all " << std::showpos << show << std::noshowpos << "% for mixed damage";
+			s << "reflect all " << std::showpos << show << std::noshowpos << "% for ";
+			show = it.abilities.reflect[REFLECT_PERCENT][COMBAT_FIRST];
+			for(int32_t i = (COMBAT_FIRST + 1); i <= COMBAT_LAST; i++)
+			{
+				if(it.abilities.reflect[REFLECT_PERCENT][i] == show)
+					continue;
+
+				show = 0;
+				break;
+			}
+
+			if(!show)
+				s << "mixed";
+			else
+				s << show;
+
+			s << " damage";
 		}
 
 		if(it.abilities.speed)
