@@ -262,10 +262,10 @@
 	<!-- Boots -->
 	<movevent type="Equip" itemid="2195" slot="feet" event="function" value="onEquipItem"/>
 	<movevent type="DeEquip" itemid="2195" slot="feet" event="function" value="onDeEquipItem"/>
-	<movevent type="Equip" itemid="6132" slot="feet" event="function" value="onEquipItem"/>
-	<movevent type="DeEquip" itemid="6132" slot="feet" event="function" value="onDeEquipItem"/>
 	<movevent type="Equip" itemid="2640" slot="feet" event="function" value="onEquipItem"/>
 	<movevent type="DeEquip" itemid="2640" slot="feet" event="function" value="onDeEquipItem"/>
+	<movevent type="Equip" itemid="6132" slot="feet" event="function" value="onEquipItem"/>
+	<movevent type="DeEquip" itemid="6132" slot="feet" event="function" value="onDeEquipItem"/>
 	<movevent type="Equip" itemid="7457" slot="feet" event="function" value="onEquipItem"/>
 	<movevent type="DeEquip" itemid="7457" slot="feet" event="function" value="onDeEquipItem"/>
 	<movevent type="Equip" itemid="7886" slot="feet" event="function" value="onEquipItem">
@@ -407,8 +407,6 @@
 	<movevent type="DeEquip" itemid="6301" slot="ring" event="function" value="onDeEquipItem"/>
 
 	<!-- Helmets -->
-	<movevent type="Equip" itemid="2343" slot="head" event="function" value="onEquipItem"/>
-	<movevent type="DeEquip" itemid="2343" slot="head" event="function" value="onDeEquipItem"/>
 	<movevent type="Equip" itemid="2323" slot="head" event="function" value="onEquipItem">
 		<vocation id="1"/>
 		<vocation id="5" showInDescription="0"/>
@@ -416,6 +414,8 @@
 		<vocation id="6" showInDescription="0"/>
 	</movevent>
 	<movevent type="DeEquip" itemid="2323" slot="head" event="function" value="onDeEquipItem"/>
+	<movevent type="Equip" itemid="2343" slot="head" event="function" value="onEquipItem"/>
+	<movevent type="DeEquip" itemid="2343" slot="head" event="function" value="onDeEquipItem"/>
 	<movevent type="Equip" itemid="2474" slot="head" event="function" value="onEquipItem"/>
 	<movevent type="DeEquip" itemid="2474" slot="head" event="function" value="onDeEquipItem"/>
 	<movevent type="Equip" itemid="2502" slot="head" event="function" value="onEquipItem"/>
