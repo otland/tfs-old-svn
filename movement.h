@@ -41,13 +41,13 @@ enum MoveEvent_t
 	MOVE_EVENT_STEP_IN = MOVE_EVENT_FIRST,
 	MOVE_EVENT_STEP_OUT = 1,
 	MOVE_EVENT_EQUIP = 2,
-	MOVE_EVENT_DEEQUIP = 3,
+	MOVE_EVENT_DE_EQUIP = 3,
 	MOVE_EVENT_ADD_ITEM = 4,
 	MOVE_EVENT_REMOVE_ITEM = 5,
-	MOVE_EVENT_ADD_ITEM_ITEMTILE = 6,
-	MOVE_EVENT_REMOVE_ITEM_ITEMTILE = 7,
+	MOVE_EVENT_ADD_TILEITEM = 6,
+	MOVE_EVENT_REMOVE_TILEITEM = 7,
 	MOVE_EVENT_NONE = 8,
-	MOVE_EVENT_LAST = MOVE_EVENT_REMOVE_ITEM_ITEMTILE
+	MOVE_EVENT_LAST = MOVE_EVENT_REMOVE_TILEITEM
 };
 
 typedef std::list<MoveEvent*> EventList;
@@ -63,6 +63,7 @@ class MoveEvents : public BaseEvents
 		uint32_t onItemMove(Creature* actor, Item* item, Tile* tile, bool isAdd);
 
 		MoveEvent* getEvent(Item* item, MoveEvent_t eventType);
+		bool hasEquipEvent(Item* item);
 		bool hasTileEvent(Item* item);
 
 		void onRemoveTileItem(const Tile* tile, Item* item);

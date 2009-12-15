@@ -52,7 +52,7 @@ int32_t MoveEventScript::luaCallFunction(lua_State* L)
 		return 0;
 	}
 
-	if(event->getEventType() == MOVE_EVENT_EQUIP || event->getEventType() == MOVE_EVENT_DEEQUIP)
+	if(event->getEventType() == MOVE_EVENT_EQUIP || event->getEventType() == MOVE_EVENT_DE_EQUIP)
 	{
 		ScriptEnviroment* env = getEnv();
 		slots_t slot = (slots_t)popNumber(L);
@@ -189,10 +189,10 @@ bool MoveEvents::registerEvent(Event* event, xmlNodePtr p, bool override)
 		switch(eventType)
 		{
 			case MOVE_EVENT_ADD_ITEM:
-				moveEvent->setEventType(MOVE_EVENT_ADD_ITEM_ITEMTILE);
+				moveEvent->setEventType(MOVE_EVENT_ADD_TILEITEM);
 				break;
 			case MOVE_EVENT_REMOVE_ITEM:
-				moveEvent->setEventType(MOVE_EVENT_REMOVE_ITEM_ITEMTILE);
+				moveEvent->setEventType(MOVE_EVENT_REMOVE_TILEITEM);
 				break;
 			default:
 				break;
@@ -526,10 +526,15 @@ MoveEvent* MoveEvents::getEvent(const Tile* tile, MoveEvent_t eventType)
 	return NULL;
 }
 
+bool MoveEvents::hasEquipEvent(Item* item)
+{
+	return getEvent(item, MOVE_EVENT_EQUIP) && getEvent(item, MOVE_EVENT_DE_EQUIP);
+}
+
 bool MoveEvents::hasTileEvent(Item* item)
 {
-	return (getEvent(item, MOVE_EVENT_STEP_IN) || getEvent(item, MOVE_EVENT_STEP_OUT) ||
-		getEvent(item, MOVE_EVENT_ADD_ITEM_ITEMTILE) || getEvent(item, MOVE_EVENT_REMOVE_ITEM_ITEMTILE));
+	return getEvent(item, MOVE_EVENT_STEP_IN) || getEvent(item, MOVE_EVENT_STEP_OUT) || getEvent(
+		item, MOVE_EVENT_ADD_TILEITEM) || getEvent(item, MOVE_EVENT_REMOVE_TILEITEM);
 }
 
 uint32_t MoveEvents::onCreatureMove(Creature* actor, Creature* creature, const Tile* fromTile, const Tile* toTile, bool isStepping)
@@ -603,7 +608,7 @@ uint32_t MoveEvents::onPlayerEquip(Player* player, Item* item, slots_t slot, boo
 
 uint32_t MoveEvents::onPlayerDeEquip(Player* player, Item* item, slots_t slot, bool isRemoval)
 {
-	if(MoveEvent* moveEvent = getEvent(item, MOVE_EVENT_DEEQUIP, slot))
+	if(MoveEvent* moveEvent = getEvent(item, MOVE_EVENT_DE_EQUIP, slot))
 		return moveEvent->fireEquip(player, item, slot, isRemoval);
 
 	return 1;
@@ -611,11 +616,11 @@ uint32_t MoveEvents::onPlayerDeEquip(Player* player, Item* item, slots_t slot, b
 
 uint32_t MoveEvents::onItemMove(Creature* actor, Item* item, Tile* tile, bool isAdd)
 {
-	MoveEvent_t eventType1 = MOVE_EVENT_REMOVE_ITEM, eventType2 = MOVE_EVENT_REMOVE_ITEM_ITEMTILE;
+	MoveEvent_t eventType1 = MOVE_EVENT_REMOVE_ITEM, eventType2 = MOVE_EVENT_REMOVE_TILEITEM;
 	if(isAdd)
 	{
 		eventType1 = MOVE_EVENT_ADD_ITEM;
-		eventType2 = MOVE_EVENT_ADD_ITEM_ITEMTILE;
+		eventType2 = MOVE_EVENT_ADD_TILEITEM;
 	}
 
 	uint32_t ret = 1;
@@ -743,7 +748,7 @@ std::string MoveEvent::getScriptEventName() const
 		case MOVE_EVENT_EQUIP:
 			return "onEquip";
 
-		case MOVE_EVENT_DEEQUIP:
+		case MOVE_EVENT_DE_EQUIP:
 			return "onDeEquip";
 
 		case MOVE_EVENT_ADD_ITEM:
@@ -769,7 +774,7 @@ std::string MoveEvent::getScriptEventParams() const
 			return "cid, item, position, lastPosition, fromPosition, toPosition, actor";
 
 		case MOVE_EVENT_EQUIP:
-		case MOVE_EVENT_DEEQUIP:
+		case MOVE_EVENT_DE_EQUIP:
 			return "cid, item, slot";
 
 		case MOVE_EVENT_ADD_ITEM:
@@ -798,7 +803,7 @@ bool MoveEvent::configureEvent(xmlNodePtr p)
 		else if(tmpStrValue == "equip")
 			m_eventType = MOVE_EVENT_EQUIP;
 		else if(tmpStrValue == "deequip")
-			m_eventType = MOVE_EVENT_DEEQUIP;
+			m_eventType = MOVE_EVENT_DE_EQUIP;
 		else if(tmpStrValue == "additem")
 			m_eventType = MOVE_EVENT_ADD_ITEM;
 		else if(tmpStrValue == "removeitem")
@@ -809,7 +814,7 @@ bool MoveEvent::configureEvent(xmlNodePtr p)
 			return false;
 		}
 
-		if(m_eventType == MOVE_EVENT_EQUIP || m_eventType == MOVE_EVENT_DEEQUIP)
+		if(m_eventType == MOVE_EVENT_EQUIP || m_eventType == MOVE_EVENT_DE_EQUIP)
 		{
 			if(readXMLString(p, "slot", strValue))
 			{

@@ -7,28 +7,6 @@ LUA_ERROR = false
 LUA_NO_ERROR = true
 LUA_NULL = nil
 
-TEXTCOLOR_BLACK = 0
-TEXTCOLOR_BLUE = 5
-TEXTCOLOR_GREEN = 18
-TEXTCOLOR_TEAL = 35
-TEXTCOLOR_LIGHTGREEN = 66
-TEXTCOLOR_DARKBROWN = 78
-TEXTCOLOR_LIGHTBLUE = 89
-TEXTCOLOR_DARKPURPLE = 112
-TEXTCOLOR_BROWN = 120
-TEXTCOLOR_GREY = 129
-TEXTCOLOR_DARKRED = 144
-TEXTCOLOR_DARKPINK = 152
-TEXTCOLOR_PURPLE = 154
-TEXTCOLOR_DARKORANGE = 156
-TEXTCOLOR_RED = 180
-TEXTCOLOR_PINK = 190
-TEXTCOLOR_ORANGE = 192
-TEXTCOLOR_DARKYELLOW = 205
-TEXTCOLOR_YELLOW = 210
-TEXTCOLOR_WHITE = 215
-TEXTCOLOR_NONE = 255
-
 TALKTYPE_CHANNEL_R1 = TALKTYPE_CHANNEL_RN
 TALKTYPE_CHANNEL_R2 = TALKTYPE_CHANNEL_RA
 TALKTYPE_ORANGE_1 = TALKTYPE_MONSTER
@@ -63,10 +41,6 @@ BANTYPE_NOTATION = 4
 BANTYPE_DELETION = 3
 
 SKILLS = SKILL_NAMES
-
-WORLD_TYPE_NO_PVP = 1
-WORLD_TYPE_PVP = 2
-WORLD_TYPE_PVP_ENFORCED = 3
 
 table.getPos = table.find
 doSetCreatureDropLoot = doCreatureSetDropLoot
@@ -142,7 +116,8 @@ doAreaCombatDispel = doCombatAreaDispel
 getItemDescriptionsById = getItemInfo
 hasProperty = hasItemProperty
 hasClient = hasPlayerClient
-print = std.clog
+print = std.cout
+getPosByDir = getPositionByDirection
 db.updateQueryLimitOperator = db.updateLimiter
 db.stringComparisonOperator = db.stringComparison
 
@@ -217,6 +192,3 @@ PlayerCustomFlag_IgnorePacification = 19
 PlayerCustomFlag_CanStairhop = 20
 PlayerCustomFlag_CanTurnhop = 21
 PlayerCustomFlag_IgnoreHouseRent = 22
-PlayerCustomFlag_CanWearAllAddons = 23
-PlayerCustomFlag_IsWalkable = 24
-PlayerCustomFlag_CanWalkthrough = 25
