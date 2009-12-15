@@ -28,11 +28,6 @@
 #include "configmanager.h"
 #include "game.h"
 
-#ifndef WINDOWS
-	#define SOCKET_ERROR -1
-	#define INVALID_SOCKET -1
-#endif
-
 extern ConfigManager g_config;
 extern Game g_game;
 
