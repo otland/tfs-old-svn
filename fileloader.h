@@ -217,7 +217,10 @@ class PropStream
 			if(size() < (int32_t)sizeof(uint32_t))
 				return false;
 
-			ret = *((uint32_t*)p);
+			float f;
+			memcpy(&f, (uint32_t*)p, sizeof(uint32_t));
+
+			ret = f;
 			p += sizeof(uint32_t);
 			return true;
 		}
