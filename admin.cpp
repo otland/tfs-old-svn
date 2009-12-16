@@ -541,7 +541,7 @@ Admin::Admin(): m_currrentConnections(0), m_encrypted(false),
 		if(strValue == "rsa1024xtea")
 		{
 			m_key_RSA1024XTEA = new RSA();
-			if(!m_key_RSA1024XTEA->setKey(getFilePath(FILE_TYPE_CONFIG,
+			if(!m_key_RSA1024XTEA->initialize(getFilePath(FILE_TYPE_CONFIG,
 				g_config.getString(ConfigManager::ADMIN_ENCRYPTION_DATA))))
 			{
 				std::clog << "[Warning - Admin::Admin] Unable to set RSA1024XTEA key!" << std::endl;

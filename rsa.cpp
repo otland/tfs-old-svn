@@ -19,7 +19,6 @@
 
 RSA::RSA()
 {
-	m_keySet = false;
 	mpz_init2(m_p, 1024);
 	mpz_init2(m_q, 1024);
 	mpz_init2(m_d, 1024);
@@ -40,9 +39,8 @@ RSA::~RSA()
 	mpz_clear(m_mod);
 }
 
-bool RSA::setKey(const std::string& file)
+bool RSA::initialize(const std::string& file)
 {
-	//loads p, q and d from a file
 	FILE* f = fopen(file.c_str(), "r");
 	if(!f)
 		return false;
@@ -51,11 +49,12 @@ bool RSA::setKey(const std::string& file)
 	delete fgets(p, 512, f);
 	delete fgets(q, 512, f);
 	delete fgets(d, 512, f);
-	setKey(p, q, d);
+
+	initialize(p, q, d);
 	return true;
 }
 
-void RSA::setKey(const char* p, const char* q, const char* d)
+void RSA::initialize(const char* p, const char* q, const char* d)
 {
 	boost::recursive_mutex::scoped_lock lockClass(rsaLock);
 
@@ -63,16 +62,16 @@ void RSA::setKey(const char* p, const char* q, const char* d)
 	mpz_set_str(m_q, q, 10);
 	mpz_set_str(m_d, d, 10);
 
-	mpz_t pm1,qm1;
+	mpz_t pm1, qm1;
 	mpz_init2(pm1, 520);
 	mpz_init2(qm1, 520);
 
 	mpz_sub_ui(pm1, m_p, 1);
 	mpz_sub_ui(qm1, m_q, 1);
 	mpz_invert(m_u, m_p, m_q);
+
 	mpz_mod(m_dp, m_d, pm1);
 	mpz_mod(m_dq, m_d, qm1);
-
 	mpz_mul(m_mod, m_p, m_q);
 
 	mpz_clear(pm1);
@@ -82,8 +81,8 @@ void RSA::setKey(const char* p, const char* q, const char* d)
 void RSA::decrypt(char* msg, int32_t size)
 {
 	boost::recursive_mutex::scoped_lock lockClass(rsaLock);
+	mpz_t c, v1, v2, u2, tmp;
 
-	mpz_t c,v1,v2,u2,tmp;
 	mpz_init2(c, 1024);
 	mpz_init2(v1, 1024);
 	mpz_init2(v2, 1024);
@@ -96,14 +95,17 @@ void RSA::decrypt(char* msg, int32_t size)
 	mpz_powm(v1, tmp, m_dp, m_p);
 	mpz_mod(tmp, c, m_q);
 	mpz_powm(v2, tmp, m_dq, m_q);
+
 	mpz_sub(u2, v2, v1);
 	mpz_mul(tmp, u2, m_u);
+
 	mpz_mod(u2, tmp, m_q);
 	if(mpz_cmp_si(u2, 0) < 0)
 	{
 		mpz_add(tmp, u2, m_q);
 		mpz_set(u2, tmp);
 	}
+
 	mpz_mul(tmp, u2, m_p);
 	mpz_set_ui(c, 0);
 	mpz_add(c, v1, tmp);
@@ -117,11 +119,6 @@ void RSA::decrypt(char* msg, int32_t size)
 	mpz_clear(v2);
 	mpz_clear(u2);
 	mpz_clear(tmp);
-}
-
-int32_t RSA::getKeySize()
-{
-	return (mpz_sizeinbase(m_mod, 2) + 7) / 8;
 }
 
 void RSA::getPublicKey(char* buffer)
