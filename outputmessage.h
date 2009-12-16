@@ -49,7 +49,7 @@ class OutputMessage : public NetworkMessage, boost::noncopyable
 		void addCryptoHeader(bool addChecksum)
 		{
 			if(addChecksum)
-				addHeader((uint32_t)(adlerChecksum((uint8_t*)(m_buffer + m_outputBufferStart), m_size)));
+				addHeader((adlerChecksum((uint8_t*)(m_buffer + m_outputBufferStart), m_size)));
 
 			addHeader((uint16_t)(m_size));
 		}

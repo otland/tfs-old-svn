@@ -26,6 +26,7 @@
 #include <cryptopp/md5.h>
 #include <cryptopp/hex.h>
 #include <cryptopp/cryptlib.h>
+#include <cryptopp/adler32.h>
 
 #include "vocation.h"
 #include "configmanager.h"
@@ -1545,29 +1546,24 @@ bool fileExists(const char* filename)
 	return true;
 }
 
-uint32_t adlerChecksum(uint8_t *data, size_t length)
+uint32_t adlerChecksum(uint8_t* data, size_t length)
 {
+	// Keep this check, rarely used I think
 	if(length > NETWORK_MAX_SIZE || length < 0)
 		return 0;
+		
+	// Crypto++ object
+	CryptoPP::Adler32 adler;
+	
+	// Digest cash object, cast later
+	byte digest[CryptoPP::Adler32::DIGESTSIZE];
+	
+	// Do the calculation now
+	adler.CalculateDigest(digest, (const byte*)data, length);
+	
 
-	const uint16_t adler = 65521;
-	uint32_t a = 1, b = 0;
-	while(length > 0)
-	{
-		size_t tmp = length > 5552 ? 5552 : length;
-		length -= tmp;
-		do
-		{
-			a += *data++;
-			b += a;
-		}
-		while(--tmp);
-
-		a %= adler;
-		b %= adler;
-	}
-
-	return (b << 16) | a;
+	// return uint32_t cast type
+	return (uint32_t)((uint8_t)digest[0]+(uint8_t)digest[1]+(uint8_t)digest[2]+(uint8_t)digest[3]);
 }
 
 std::string getFilePath(FileType_t filetype, std::string filename)
