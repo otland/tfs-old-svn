@@ -19,8 +19,10 @@
 
 #include <iostream>
 #include <iomanip>
-#include <openssl/sha.h>
-#include <openssl/md5.h>
+#include <cryptopp/sha.h>
+#include <cryptopp/md5.h>
+#include <cryptopp/hex.h>
+#include <cryptopp/cryptlib.h>
 
 #include "vocation.h"
 #include "configmanager.h"
@@ -29,23 +31,23 @@ extern ConfigManager g_config;
 
 std::string transformToSHA1(std::string plainText, bool upperCase)
 {
-	// Here we store each binary value as char
-	uint8_t sha1Hash[20];
-
-	// This holds the hex value
-	std::stringstream hexStream;
-
-	// Now compute the SHA1 value
-	// This is actually a C call, so I had to do some hacks - Stian
-	SHA1((uint8_t*)(plainText.c_str()), plainText.length(), sha1Hash);
-
-	// Convert into hex
-	hexStream.flags(std::ios::hex | std::ios::uppercase);
-	for(int16_t i = 0; i < 20; ++i)
-		hexStream << std::setw(2) << std::setfill('0') << (uint32_t)sha1Hash[i];
-
-	// Convert into a C++ string
-	std::string hexStr = hexStream.str();
+	// Crypto++ SHA1 object
+	CryptoPP::SHA1 hash;
+	
+	// Use native byte instead of casting chars
+	byte digest [ CryptoPP::SHA1::DIGESTSIZE ];
+	
+	// Do the actual calculation, require a byte value so we need a cast
+	hash.CalculateDigest( digest, (const byte*)plainText.c_str(), plainText.length() );
+	
+	// Drop internal hex encoder and use this, returns uppercase by default
+	CryptoPP::HexEncoder encoder;
+	std::string hexStr;
+	encoder.Attach ( new CryptoPP::StringSink( output ) );
+	encoder.Put ( digest, sizeof(digest) );
+	encoder.MessageEnd();
+	
+	// Convert to lowerCase if needed
 	if(!upperCase)
 		toLowerCaseString(hexStr);
 
@@ -54,23 +56,23 @@ std::string transformToSHA1(std::string plainText, bool upperCase)
 
 std::string transformToMD5(std::string plainText, bool upperCase)
 {
-	// Here we store each binary value as char
-	uint8_t md5Hash[16];
-
-	// This holds the hex value
-	std::stringstream hexStream;
-
-	// Now compute the MD5 value
-	// This is actually a C call, so I had to do some hacks - Stian
-	MD5((uint8_t*)(plainText.c_str()), plainText.length(), md5Hash);
-
-	// Convert into hex
-	hexStream.flags(std::ios::hex | std::ios::uppercase);
-	for(int16_t i = 0; i < 16; ++i)
-		hexStream << std::setw(2) << std::setfill('0') << (uint32_t)md5Hash[i];
-
-	// Convert into a C++ string
-	std::string hexStr = hexStream.str();
+	// Crypto++ MD5 object
+	CryptoPP::MD5 hash;
+	
+	// Use native byte instead of casting chars
+	byte digest [ CryptoPP::MD5::DIGESTSIZE ];
+	
+	// Do the actual calculation, require a byte value so we need a cast
+	hash.CalculateDigest( digest, (const byte*)plainText.c_str(), plainText.length() );
+	
+	// Drop internal hex encoder and use this, returns uppercase by default
+	CryptoPP::HexEncoder encoder;
+	std::string hexStr;
+	encoder.Attach ( new CryptoPP::StringSink( output ) );
+	encoder.Put ( digest, sizeof(digest) );
+	encoder.MessageEnd();
+	
+	// Convert to lowerCase if needed
 	if(!upperCase)
 		toLowerCaseString(hexStr);
 
