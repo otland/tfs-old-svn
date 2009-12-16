@@ -35,6 +35,7 @@ function getDirectionTo(pos1, pos2)
 			dir = SOUTH
 		end
 	end
+
 	return dir
 end
 
@@ -42,37 +43,35 @@ function getCreatureLookPosition(cid)
 	return getPosByDir(getThingPos(cid), getCreatureLookDirection(cid))
 end
 
-function getPositionByDirection(fromPosition, direction, size)
+function getPositionByDirection(position, direction, size)
 	local n = size or 1
-
-	local pos = fromPosition
 	if(direction == NORTH) then
-		pos.y = pos.y - n
+		position.y = position.y - n
 	elseif(direction == SOUTH) then
-		pos.y = pos.y + n
+		position.y = position.y + n
 	elseif(direction == WEST) then
-		pos.x = pos.x - n
+		position.x = position.x - n
 	elseif(direction == EAST) then
-		pos.x = pos.x + n
+		position.x = position.x + n
 	elseif(direction == NORTHWEST) then
-		pos.y = pos.y - n
-		pos.x = pos.x - n
+		position.y = position.y - n
+		position.x = position.x - n
 	elseif(direction == NORTHEAST) then
-		pos.y = pos.y - n
-		pos.x = pos.x + n
+		position.y = position.y - n
+		position.x = position.x + n
 	elseif(direction == SOUTHWEST) then
-		pos.y = pos.y + n
-		pos.x = pos.x - n
+		position.y = position.y + n
+		position.x = position.x - n
 	elseif(direction == SOUTHEAST) then
-		pos.y = pos.y + n
-		pos.x = pos.x + n
+		position.y = position.y + n
+		position.x = position.x + n
 	end
 
-	return pos
+	return position
 end
 
-function doComparePositions(pos, posEx)
-	return pos.x == posEx.x and pos.y == posEx.y and pos.z == posEx.z
+function doComparePositions(position, positionEx)
+	return position.x == positionEx.x and position.y == positionEx.y and position.z == positionEx.z
 end
 
 function getArea(position, x, y)
