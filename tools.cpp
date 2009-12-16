@@ -19,6 +19,9 @@
 
 #include <iostream>
 #include <iomanip>
+
+#define CRYPTOPP_ENABLE_NAMESPACE_WEAK 1
+
 #include <cryptopp/sha.h>
 #include <cryptopp/md5.h>
 #include <cryptopp/hex.h>
@@ -43,7 +46,7 @@ std::string transformToSHA1(std::string plainText, bool upperCase)
 	// Drop internal hex encoder and use this, returns uppercase by default
 	CryptoPP::HexEncoder encoder;
 	std::string hexStr;
-	encoder.Attach ( new CryptoPP::StringSink( output ) );
+	encoder.Attach ( new CryptoPP::StringSink( hexStr ) );
 	encoder.Put ( digest, sizeof(digest) );
 	encoder.MessageEnd();
 	
@@ -57,10 +60,10 @@ std::string transformToSHA1(std::string plainText, bool upperCase)
 std::string transformToMD5(std::string plainText, bool upperCase)
 {
 	// Crypto++ MD5 object
-	CryptoPP::MD5 hash;
+	CryptoPP::Weak::MD5 hash;
 	
 	// Use native byte instead of casting chars
-	byte digest [ CryptoPP::MD5::DIGESTSIZE ];
+	byte digest [ CryptoPP::Weak::MD5::DIGESTSIZE ];
 	
 	// Do the actual calculation, require a byte value so we need a cast
 	hash.CalculateDigest( digest, (const byte*)plainText.c_str(), plainText.length() );
@@ -68,7 +71,7 @@ std::string transformToMD5(std::string plainText, bool upperCase)
 	// Drop internal hex encoder and use this, returns uppercase by default
 	CryptoPP::HexEncoder encoder;
 	std::string hexStr;
-	encoder.Attach ( new CryptoPP::StringSink( output ) );
+	encoder.Attach ( new CryptoPP::StringSink( hexStr ) );
 	encoder.Put ( digest, sizeof(digest) );
 	encoder.MessageEnd();
 	
