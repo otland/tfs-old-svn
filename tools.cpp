@@ -36,50 +36,54 @@ std::string transformToSHA1(std::string plainText, bool upperCase)
 {
 	// Crypto++ SHA1 object
 	CryptoPP::SHA1 hash;
-	
 	// Use native byte instead of casting chars
-	byte digest [ CryptoPP::SHA1::DIGESTSIZE ];
-	
+	byte digest[CryptoPP::SHA1::DIGESTSIZE];
 	// Do the actual calculation, require a byte value so we need a cast
-	hash.CalculateDigest( digest, (const byte*)plainText.c_str(), plainText.length() );
-	
-	// Drop internal hex encoder and use this, returns uppercase by default
-	CryptoPP::HexEncoder encoder;
-	std::string hexStr;
-	encoder.Attach ( new CryptoPP::StringSink( hexStr ) );
-	encoder.Put ( digest, sizeof(digest) );
-	encoder.MessageEnd();
-	
-	// Convert to lowerCase if needed
-	if(!upperCase)
-		toLowerCaseString(hexStr);
+	hash.CalculateDigest(digest, (const byte*)plainText.c_str(), plainText.length());
 
-	return hexStr;
+	// Crypto++ HexEncoder object
+	CryptoPP::HexEncoder encoder;
+	// Our output
+	std::string output;
+
+	// Drop internal hex encoder and use this, returns uppercase by default
+	encoder.Attach(new CryptoPP::StringSink(output));
+	encoder.Put(digest, sizeof(digest));
+	encoder.MessageEnd();
+
+	// Make sure we want uppercase
+	if(upperCase)
+		return output;
+
+	// Convert to lowercase if needed
+	return asLowerCaseString(output);
 }
 
 std::string transformToMD5(std::string plainText, bool upperCase)
 {
 	// Crypto++ MD5 object
 	CryptoPP::Weak::MD5 hash;
-	
 	// Use native byte instead of casting chars
-	byte digest [ CryptoPP::Weak::MD5::DIGESTSIZE ];
-	
+	byte digest[CryptoPP::Weak::MD5::DIGESTSIZE];
 	// Do the actual calculation, require a byte value so we need a cast
-	hash.CalculateDigest( digest, (const byte*)plainText.c_str(), plainText.length() );
-	
-	// Drop internal hex encoder and use this, returns uppercase by default
-	CryptoPP::HexEncoder encoder;
-	std::string hexStr;
-	encoder.Attach ( new CryptoPP::StringSink( hexStr ) );
-	encoder.Put ( digest, sizeof(digest) );
-	encoder.MessageEnd();
-	
-	// Convert to lowerCase if needed
-	if(!upperCase)
-		toLowerCaseString(hexStr);
+	hash.CalculateDigest(digest, (const byte*)plainText.c_str(), plainText.length());
 
-	return hexStr;
+	// Crypto++ HexEncoder object
+	CryptoPP::HexEncoder encoder;
+	// Our output
+	std::string output;
+
+	// Drop internal hex encoder and use this, returns uppercase by default
+	encoder.Attach(new CryptoPP::StringSink(output));
+	encoder.Put(digest, sizeof(digest));
+	encoder.MessageEnd();
+
+	// Make sure we want uppercase
+	if(upperCase)
+		return output;
+
+	// Convert to lowercase if needed
+	return asLowerCaseString(output);
 }
 
 void _encrypt(std::string& str, bool upperCase)

@@ -15,19 +15,12 @@
 		http://otland.net/
 ]
 
-[ NOTE
-	First follow up TODO of 0.3 branch...
-]
-
 [ BUGS
 	Ghost causing debugs with creature stacks as of 8.53
 		Assigned to: Elf
 ]
 
 [ TASKS
-	8.57 or 8.6? has or will have an extra byte regarding stacks
-		Assigned to: Elf
-
 	Patch IndexedTile changes from revscriptsys2
 		Assigned to: Elf
 
@@ -38,14 +31,14 @@
 		Assigned to: ?
 
 
-	Make MD5 and SHA1 use Crypto++ (upto five times faster)
-		Assigned to: Stian ("thestian")
-		Finished.
-
 	Maybe make RSA use Crypto++ (no data about the speed)
 		Assigned to: Stian ("thestian")
-		Seems to give some diffrent data, maybe signature or something?
-		Put to on-hold as the implantation in TFS ain't that bad
+		[
+			Seems to give some diffrent data, maybe signature or something?
+			Put to on-hold as the implantation in TFS ain't that bad
+
+			What exactly? Also, why we didn't try that OpenSSL solution?
+		]
 
 	Change from mysql to mysql++ (more object oriented, fits better into C++ projects)
 		Assigned to: Elf
