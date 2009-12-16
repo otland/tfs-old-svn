@@ -239,7 +239,7 @@ bool IOLoginData::getPassword(uint32_t accountId, std::string& password, std::st
 	if(!(result = db->storeQuery(query.str())))
 		return false;
 
-	if(name.empty())
+	if(name.empty() || name == "Account Manager")
 	{
 		password = result->getDataString("password");
 		result->free();
