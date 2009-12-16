@@ -4,7 +4,7 @@ function onCastSpell(cid, var)
 	local position = getThingPosition(cid)
 	position.stackpos = 0
 
-	local ground = getThingFromPos(pos)
+	local ground = getThingFromPos(position)
 	if(isInArray(SPOTS, ground.itemid)) then
 		local newPosition = position
 		newPosition.y = newPosition.y + 1
