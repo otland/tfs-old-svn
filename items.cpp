@@ -184,7 +184,7 @@ int32_t Items::loadFromOtb(std::string file)
 		return ERROR_INVALID_FORMAT;
 	}
 
-	uint16_t lastId = 0;
+	uint16_t lastId = 99;
 	for(node = f.getChildNode(node, type); node != NO_NODE; node = f.getNextNode(node, type))
 	{
 		PropStream props;
@@ -268,7 +268,9 @@ int32_t Items::loadFromOtb(std::string file)
 					if(!props.getShort(serverId))
 						return ERROR_INVALID_FORMAT;
 
-					if(lastId && lastId != serverId - 1)
+					if(serverId > 20000 && serverId < 20100)
+						serverId = serverId - 20000;
+					else if(lastId > 99 && lastId != serverId - 1)
 					{
 						static ItemType dummyItemType;
 						while(lastId != serverId - 1)
@@ -277,8 +279,6 @@ int32_t Items::loadFromOtb(std::string file)
 							items.addElement(&dummyItemType, lastId);
 						}
 					}
-					else if(serverId > 20000 && serverId < 20100)
-						serverId = serverId - 20000;
 
 					iType->id = serverId;
 					lastId = serverId;
@@ -289,11 +289,11 @@ int32_t Items::loadFromOtb(std::string file)
 					if(length != sizeof(uint16_t))
 						return ERROR_INVALID_FORMAT;
 
-					uint16_t clientid;
-					if(!props.getShort(clientid))
+					uint16_t clientId;
+					if(!props.getShort(clientId))
 						return ERROR_INVALID_FORMAT;
 
-					iType->clientId = clientid;
+					iType->clientId = clientId;
 					break;
 				}
 				case ITEM_ATTR_SPEED:
@@ -326,11 +326,11 @@ int32_t Items::loadFromOtb(std::string file)
 					if(length != sizeof(uint8_t))
 						return ERROR_INVALID_FORMAT;
 
-					uint8_t toporder;
-					if(!props.getByte(toporder))
+					uint8_t topOrder;
+					if(!props.getByte(topOrder))
 						return ERROR_INVALID_FORMAT;
 
-					iType->alwaysOnTopOrder = toporder;
+					iType->alwaysOnTopOrder = topOrder;
 					break;
 				}
 				default:
