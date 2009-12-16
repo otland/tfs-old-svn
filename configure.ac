@@ -184,7 +184,7 @@ AC_CHECK_LIB(cryptopp, main, , [AC_MSG_ERROR("Linking against Crypto++ library f
 
 # check for Lua
 PKG_CHECK_MODULES(LUA, lua5.1 >= 5.1, , [
-	AC_CHECK_HEADERS([lua.hpp],[],[AC_MSG_ERROR("Lua header not found.")])
+	AC_CHECK_HEADERS([lua.hpp], , [AC_MSG_ERROR("Lua header not found.")])
 	AC_CHECK_LIB(lua, main, , [AC_MSG_ERROR("Linking against Lua library failed.")])
 ])
 AC_SUBST(LUA_CFLAGS)
