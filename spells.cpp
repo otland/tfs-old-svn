@@ -1314,6 +1314,7 @@ bool InstantSpell::SearchPlayer(const InstantSpell* spell, Creature* creature, c
 	std::stringstream ss;
 	ss << targetPlayer->getName() << " " << g_game.getSearchString(player->getPosition(), targetPlayer->getPosition(), true, true) << ".";
 	player->sendTextMessage(MSG_INFO_DESCR, ss.str().c_str());
+
 	g_game.addMagicEffect(player->getPosition(), MAGIC_EFFECT_WRAPS_BLUE);
 	return true;
 }
@@ -1369,14 +1370,12 @@ bool InstantSpell::SummonMonster(const InstantSpell* spell, Creature* creature, 
 	{
 		spell->postSpell(player, (uint32_t)manaCost, (uint32_t)spell->getSoulCost());
 		g_game.addMagicEffect(player->getPosition(), MAGIC_EFFECT_WRAPS_BLUE);
-	}
-	else
-	{
-		player->sendCancelMessage(ret);
-		g_game.addMagicEffect(player->getPosition(), MAGIC_EFFECT_POFF);
+		return true;
 	}
 
-	return (ret == RET_NOERROR);
+	player->sendCancelMessage(ret);
+	g_game.addMagicEffect(player->getPosition(), MAGIC_EFFECT_POFF);
+	return false;
 }
 
 bool InstantSpell::Levitate(const InstantSpell* spell, Creature* creature, const std::string& param)
@@ -1385,49 +1384,42 @@ bool InstantSpell::Levitate(const InstantSpell* spell, Creature* creature, const
 	if(!player)
 		return false;
 
-	const Position& currentPos = creature->getPosition();
-	Position destPos = Spells::getCasterPosition(creature, creature->getDirection());
-
+	uint16_t floor = 7;
 	ReturnValue ret = RET_NOERROR;
-	std::string tmpParam = asLowerCaseString(param);
+	const Position& position = creature->getPosition();
+	Position destination = Spells::getCasterPosition(creature, creature->getDirection());
 
-	uint16_t blockedFloor = 7;
-	bool up = false;
+	std::string tmpParam = asLowerCaseString(param);
 	if(tmpParam == "up")
-	{
-		up = true;
-		blockedFloor = 8;
-	}
+		floor = 8;
 	else if(tmpParam != "down")
 		ret = RET_NOTPOSSIBLE;
 
 	if(ret == RET_NOERROR)
 	{
 		ret = RET_NOTPOSSIBLE;
-		if(currentPos.z != blockedFloor)
+		if(position.z != floor)
 		{
 			Tile* tmpTile = NULL;
-			if(up)
+			if(floor != 7)
 			{
-				tmpTile = g_game.getTile(currentPos.x, currentPos.y, currentPos.z - 1);
-				destPos.z--;
+				tmpTile = g_game.getTile(position.x, position.y, position.z - 1);
+				destination.z--;
 			}
 			else
 			{
-				tmpTile = g_game.getTile(destPos);
-				destPos.z++;
+				tmpTile = g_game.getTile(destination);
+				destination.z++;
 			}
 
-			if(!tmpTile || (tmpTile->ground == NULL && !tmpTile->hasProperty(IMMOVABLEBLOCKSOLID)))
+			if(!tmpTile || (!tmpTile->ground && !tmpTile->hasProperty(IMMOVABLEBLOCKSOLID)))
 			{
 				Tile* tile = player->getTile();
-				tmpTile = g_game.getTile(destPos.x, destPos.y, destPos.z);
-				if(tile && tmpTile && tmpTile->ground
-					&& !tmpTile->hasProperty(IMMOVABLEBLOCKSOLID) && !tmpTile->floorChange()
-					&& tile->hasFlag(TILESTATE_HOUSE) == tmpTile->hasFlag(TILESTATE_HOUSE)
-					&& tile->hasFlag(TILESTATE_PROTECTIONZONE) == tmpTile->hasFlag(TILESTATE_PROTECTIONZONE)
-				)
-						ret = g_game.internalMoveCreature(NULL, player, tile, tmpTile, FLAG_IGNOREBLOCKITEM | FLAG_IGNOREBLOCKCREATURE);
+				tmpTile = g_game.getTile(destination);
+				if(tile && tmpTile && tmpTile->ground && !tmpTile->hasProperty(IMMOVABLEBLOCKSOLID) &&
+					!tmpTile->floorChange() && tile->hasFlag(TILESTATE_HOUSE) == tmpTile->hasFlag(TILESTATE_HOUSE)
+					&& tile->hasFlag(TILESTATE_PROTECTIONZONE) == tmpTile->hasFlag(TILESTATE_PROTECTIONZONE))
+					ret = g_game.internalMoveCreature(NULL, player, tile, tmpTile, FLAG_IGNOREBLOCKITEM | FLAG_IGNOREBLOCKCREATURE);
 			}
 		}
 	}
@@ -1450,15 +1442,14 @@ bool InstantSpell::Illusion(const InstantSpell* spell, Creature* creature, const
 		return false;
 
 	ReturnValue ret = CreateIllusion(creature, param, 60000);
-
 	if(ret == RET_NOERROR)
-		g_game.addMagicEffect(player->getPosition(), MAGIC_EFFECT_WRAPS_RED);
-	else
 	{
-		player->sendCancelMessage(ret);
-		g_game.addMagicEffect(player->getPosition(), MAGIC_EFFECT_POFF);
+		g_game.addMagicEffect(player->getPosition(), MAGIC_EFFECT_WRAPS_RED);
+		return true;
 	}
 
+	player->sendCancelMessage(ret);
+	g_game.addMagicEffect(player->getPosition(), MAGIC_EFFECT_POFF);
 	return (ret == RET_NOERROR);
 }
 
@@ -1513,8 +1504,6 @@ bool ConjureSpell::loadFunction(const std::string& functionName)
 	std::string tmpFunctionName = asLowerCaseString(functionName);
 	if(tmpFunctionName == "conjureitem" || tmpFunctionName == "conjurerune")
 		function = ConjureItem;
-	else if(tmpFunctionName == "conjurefood")
-		function = ConjureFood;
 	else
 	{
 		std::clog << "[Warning - ConjureSpell::loadFunction] Function \"" << functionName << "\" does not exist." << std::endl;
@@ -1629,36 +1618,6 @@ bool ConjureSpell::ConjureItem(const ConjureSpell* spell, Creature* creature, co
 	return false;
 }
 
-bool ConjureSpell::ConjureFood(const ConjureSpell* spell, Creature* creature, const std::string& param)
-{
-	Player* player = creature->getPlayer();
-	if(!player)
-		return false;
-
-	static uint32_t foodType[] =
-	{
-		ITEM_MEAT,
-		ITEM_HAM,
-		ITEM_GRAPE,
-		ITEM_APPLE,
-		ITEM_BREAD,
-		ITEM_CHEESE,
-		ITEM_ROLL
-	};
-
-	if(internalConjureItem(player, foodType[random_range(0, (sizeof(foodType) / sizeof(uint32_t)) - 1)], 1) == RET_NOERROR)
-	{
-		if(random_range(0, 100) > 50)
-			internalConjureItem(player, foodType[random_range(0, (sizeof(foodType) / sizeof(uint32_t)) - 1)], 1);
-
-		spell->postSpell(player);
-		g_game.addMagicEffect(player->getPosition(), MAGIC_EFFECT_WRAPS_GREEN);
-		return true;
-	}
-
-	return false;
-}
-
 bool ConjureSpell::castInstant(Player* player, const std::string& param)
 {
 	if(!checkSpell(player))
@@ -1753,16 +1712,15 @@ bool RuneSpell::Illusion(const RuneSpell* spell, Creature* creature, Item* item,
 	}
 
 	ReturnValue ret = CreateIllusion(creature, illusionItem->getID(), 60000);
-
 	if(ret == RET_NOERROR)
-		g_game.addMagicEffect(player->getPosition(), MAGIC_EFFECT_WRAPS_RED);
-	else
 	{
-		player->sendCancelMessage(ret);
-		g_game.addMagicEffect(player->getPosition(), MAGIC_EFFECT_POFF);
+		g_game.addMagicEffect(player->getPosition(), MAGIC_EFFECT_WRAPS_RED);
+		return true;
 	}
 
-	return (ret == RET_NOERROR);
+	player->sendCancelMessage(ret);
+	g_game.addMagicEffect(player->getPosition(), MAGIC_EFFECT_POFF);
+	return false;
 }
 
 bool RuneSpell::Convince(const RuneSpell* spell, Creature* creature, Item* item, const Position& posFrom, const Position& posTo)

@@ -239,7 +239,6 @@ class ConjureSpell : public InstantSpell
 			bool transform = false, uint32_t reagentId = 0, slots_t slot = SLOT_WHEREEVER, bool test = false);
 
 		static ConjureSpellFunction ConjureItem;
-		static ConjureSpellFunction ConjureFood;
 
 		bool internalCastSpell(Creature* creature, const LuaVariant& var);
 		Position getCasterPosition(Creature* creature);
