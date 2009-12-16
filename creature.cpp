@@ -1403,7 +1403,7 @@ bool Creature::hasCondition(ConditionType_t type, int32_t subId/* = 0*/, bool ch
 		if((*it)->getType() != type || (subId != -1 && (*it)->getSubId() != (uint32_t)subId))
 			continue;
 
-		if(!checkTime || g_config.getBool(ConfigManager::OLD_CONDITION_ACCURACY)
+		if(!checkTime || g_config.getBoolean(ConfigManager::OLD_CONDITION_ACCURACY)
 			|| !(*it)->getEndTime() || (*it)->getEndTime() >= OTSYS_TIME())
 			return true;
 	}

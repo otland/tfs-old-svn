@@ -1295,9 +1295,9 @@ uint32_t Map::clean()
 	ItemVector::iterator tit;
 	for(int32_t z = 0; z < (int32_t)MAP_MAX_LAYERS; z++)
 	{
-		for(int32_t y = 1; y <= mapHeight; y++)
+		for(uint32_t y = 1; y <= mapHeight; y++)
 		{
-			for(int32_t x = 1; x <= mapWidth; x++)
+			for(uint32_t x = 1; x <= mapWidth; x++)
 			{
 				if(!(tile = getTile(x, y, z)) || tile->hasFlag(TILESTATE_PROTECTIONZONE) || !tile->getItemList())
 					continue;
@@ -1306,9 +1306,9 @@ uint32_t Map::clean()
 				tit = tile->getItemList()->begin();
 				while(tile->getItemList() && tit != tile->getItemList()->end())
 				{
-					if((*tit)->isMoveable() && !(*tit)->isLoadedFromMap())
+					if((*tit)->isPushable() && !(*tit)->isLoadedFromMap())
 					{
-						g_game.internalRemoveItem(NULL, *tit);
+						g_game.internalRemoveItem(*tit, -1);
 						if(tile->getItemList())
 							tit = tile->getItemList()->begin();
 
