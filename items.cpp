@@ -184,8 +184,8 @@ int32_t Items::loadFromOtb(std::string file)
 		return ERROR_INVALID_FORMAT;
 	}
 
-	node = f.getChildNode(node, type);
-	while(node != NO_NODE)
+	uint16_t lastId = 99;
+	for(node = f.getChildNode(node, type); node != NO_NODE; node = f.getNextNode(node, type))
 	{
 		PropStream props;
 		if(!f.getProps(node, props))
@@ -264,14 +264,24 @@ int32_t Items::loadFromOtb(std::string file)
 					if(length != sizeof(uint16_t))
 						return ERROR_INVALID_FORMAT;
 
-					uint16_t serverid;
-					if(!props.GET_USHORT(serverid))
+					uint16_t serverId;
+					if(!props.GET_USHORT(serverId))
 						return ERROR_INVALID_FORMAT;
 
-					if(serverid > 20000 && serverid < 20100)
-						serverid = serverid - 20000;
+					if(serverId > 20000 && serverId < 20100)
+						serverId = serverId - 20000;
+					else if(lastId > 99 && lastId != serverId - 1)
+					{
+						static ItemType dummyItemType;
+						while(lastId != serverId - 1)
+						{
+							dummyItemType.id = ++lastId;
+							items.addElement(&dummyItemType, lastId);
+						}
+					}
 
-					iType->id = serverid;
+					iType->id = serverId;
+					lastId = serverId;
 					break;
 				}
 				case ITEM_ATTR_CLIENTID:
@@ -279,11 +289,11 @@ int32_t Items::loadFromOtb(std::string file)
 					if(length != sizeof(uint16_t))
 						return ERROR_INVALID_FORMAT;
 
-					uint16_t clientid;
-					if(!props.GET_USHORT(clientid))
+					uint16_t clientId;
+					if(!props.GET_USHORT(clientId))
 						return ERROR_INVALID_FORMAT;
 
-					iType->clientId = clientid;
+					iType->clientId = clientId;
 					break;
 				}
 				case ITEM_ATTR_SPEED:
@@ -316,11 +326,11 @@ int32_t Items::loadFromOtb(std::string file)
 					if(length != sizeof(uint8_t))
 						return ERROR_INVALID_FORMAT;
 
-					uint8_t toporder;
-					if(!props.GET_UCHAR(toporder))
+					uint8_t topOrder;
+					if(!props.GET_UCHAR(topOrder))
 						return ERROR_INVALID_FORMAT;
 
-					iType->alwaysOnTopOrder = toporder;
+					iType->alwaysOnTopOrder = topOrder;
 					break;
 				}
 				default:
@@ -334,10 +344,10 @@ int32_t Items::loadFromOtb(std::string file)
 			}
 		}
 
-		reverseItemMap[iType->clientId] = iType->id;
 		// store the found item
 		items.addElement(iType, iType->id);
-		node = f.getNextNode(node, type);
+		if(iType->clientId)
+			reverseItemMap[iType->clientId] = iType->id;
 	}
 
 	return ERROR_NONE;
