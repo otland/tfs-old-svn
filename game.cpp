@@ -182,7 +182,7 @@ void Game::setGameState(GameState_t newState)
 				g_globalEvents->startup();
 
 				IOBan::getInstance()->clearTemporials();
-				if(g_config.getBool(ConfigManager::REMOVE_PREMIUM_ON_INIT))
+				if(g_config.getBool(ConfigManager::INIT_PREMIUM_UPDATE))
 					IOLoginData::getInstance()->updatePremiumDays();
 				break;
 			}

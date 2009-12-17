@@ -1,5 +1,5 @@
 local config = {
-	expireReportsAfterReads = getConfigValue('expireReportsAfterReads')
+	expiration = getConfigValue('reportsExpirationAfterReads')
 }
 
 function onSay(cid, words, param, channel)
@@ -14,7 +14,7 @@ function onSay(cid, words, param, channel)
 			doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Report with no. " .. reportId .. " does not exists.")
 		end
 	else
-		local list = db.getResult("SELECT `r`.`id`, `r`.`player_id`, `p`.`name` AS `player_name` FROM `server_reports` r LEFT JOIN `players` p ON `r`.`player_id` = `p`.`id` WHERE `r`.`reads` < " .. config.expireReportsAfterReads)
+		local list = db.getResult("SELECT `r`.`id`, `r`.`player_id`, `p`.`name` AS `player_name` FROM `server_reports` r LEFT JOIN `players` p ON `r`.`player_id` = `p`.`id` WHERE `r`.`reads` < " .. config.expiration)
 		if(list:getID() ~= -1) then
 			doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "New reports:")
 			repeat

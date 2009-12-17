@@ -525,8 +525,7 @@ void otserv(StringVec args, ServiceManager* services)
 
 		DatabaseManager::getInstance()->checkTriggers();
 		DatabaseManager::getInstance()->checkEncryption();
-		if(g_config.getBool(ConfigManager::OPTIMIZE_DB_AT_STARTUP) &&
-			!DatabaseManager::getInstance()->optimizeTables())
+		if(g_config.getBool(ConfigManager::OPTIMIZE_DATABASE) && !DatabaseManager::getInstance()->optimizeTables())
 			std::clog << "> No tables were optimized." << std::endl;
 	}
 	else
