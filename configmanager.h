@@ -258,6 +258,7 @@ class ConfigManager
 			ALLOW_FIGHTBACK,
 			VIPLIST_PER_PLAYER,
 			USE_FRAG_HANDLER,
+			ADDONS_PREMIUM,
 			LAST_BOOL_CONFIG /* this must be the last one */
 		};
 

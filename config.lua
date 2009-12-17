@@ -155,17 +155,13 @@
 	-- Item usage
 	timeBetweenActions = 200
 	timeBetweenExActions = 1000
-	checkCorpseOwner = true
 	hotkeyAimbotEnabled = true
-	maximumDoorLevel = 500
 
 	-- Map
 	-- NOTE: storeTrash costs more memory, but will perform alot faster cleaning.
-	-- useHouseDataStorage usage may be found at README.
 	mapName = "forgotten"
 	mapAuthor = "Komic"
 	randomizeTiles = true
-	useHouseDataStorage = false
 	storeTrash = true
 	cleanProtectedZones = true
 	mailboxDisabledTowns = "-1"
@@ -181,29 +177,40 @@
 	removePremiumOnInit = true
 	confirmOutdatedVersion = false
 
-	-- Muted buffer
+	-- Talk-related
 	maxMessageBuffer = 4
 	bufferMutedOnSpellFailure = false
+	spellNameInsteadOfWords = false
+	emoteSpells = false
 
-	-- Miscellaneous
-	-- NOTE: promptExceptionTracerErrorBox works only with precompiled support feature,
-	-- called "exception tracer" (__EXCEPTION_TRACER__ flag).
-	-- monsterLootMessage 0 to disable, 1 - only party, 2 - only player, 3 - party or player (like Tibia's)
-	dataDirectory = "data/"
+	-- Outfits
 	allowChangeOutfit = true
 	allowChangeColors = true
 	allowChangeAddons = true
 	disableOutfitsForPrivilegedPlayers = false
+	addonsOnlyPremium = true
+
+	-- Miscellaneous
+	-- NOTE: promptExceptionTracerErrorBox works only with precompiled support feature,
+	-- called "exception tracer" (__EXCEPTION_TRACER__ flag).
+	dataDirectory = "data/"
 	bankSystem = true
-	saveGlobalStorage = true
 	displaySkillLevelOnAdvance = false
-	spellNameInsteadOfWords = false
-	emoteSpells = false
 	promptExceptionTracerErrorBox = true
+	separateViplistPerCharacter = false
+	maximumDoorLevel = 500
+
+	-- Saving-related
+	-- useHouseDataStorage usage may be found at README.
+	saveGlobalStorage = true
+	useHouseDataStorage = false
 	storePlayerDirection = false
+
+	-- Loot
+	-- monsterLootMessage 0 to disable, 1 - only party, 2 - only player, 3 - party or player (like Tibia's)
+	checkCorpseOwner = true
 	monsterLootMessage = 3
 	monsterLootMessageType = 25
-	separateViplistPerCharacter = false
 
 	-- Ghost mode
 	ghostModeInvisibleEffect = false

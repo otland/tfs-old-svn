@@ -2517,7 +2517,7 @@ void ProtocolGame::sendOutfitWindow()
 				msg->AddString(it->name);
 				if(player->hasCustomFlag(PlayerCustomFlag_CanWearAllAddons))
 					msg->AddByte(0x03);
-				else if(player->isPremium())
+				else if(!g_config.getBool(ConfigManager::ADDONS_PREMIUM) || player->isPremium())
 					msg->AddByte(it->addons);
 				else
 					msg->AddByte(0x00);

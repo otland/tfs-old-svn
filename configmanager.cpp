@@ -286,6 +286,7 @@ bool ConfigManager::load()
 	m_confDouble[RATE_MONSTER_MANA] = getGlobalDouble("rateMonsterMana", 1);
 	m_confDouble[RATE_MONSTER_ATTACK] = getGlobalDouble("rateMonsterAttack", 1);
 	m_confDouble[RATE_MONSTER_DEFENSE] = getGlobalDouble("rateMonsterDefense", 1);
+	m_confBool[ADDONS_PREMIUM] = getGlobalBool("addonsOnlyPremium", true);
 
 	m_loaded = true;
 	return true;
