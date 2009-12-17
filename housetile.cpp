@@ -34,6 +34,9 @@ HouseTile::HouseTile(int32_t x, int32_t y, int32_t z, House* _house):
 void HouseTile::__addThing(Creature* actor, int32_t index, Thing* thing)
 {
 	Tile::__addThing(actor, index, thing);
+	if(!thing->getParent())
+		return;
+
 	if(Item* item = thing->getItem())
 		updateHouse(item);
 }
@@ -41,6 +44,9 @@ void HouseTile::__addThing(Creature* actor, int32_t index, Thing* thing)
 void HouseTile::__internalAddThing(uint32_t index, Thing* thing)
 {
 	Tile::__internalAddThing(index, thing);
+	if(!thing->getParent())
+		return;
+
 	if(Item* item = thing->getItem())
 		updateHouse(item);
 }
