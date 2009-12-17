@@ -166,19 +166,20 @@
 	cleanProtectedZones = true
 	mailboxDisabledTowns = "-1"
 
-	-- Startup
+	-- Process
 	-- NOTE: defaultPriority works only on Windows and niceLevel on *nix
 	-- coresUsed are seperated by comma cores ids used by server process,
 	-- default is -1, so it stays untouched (automaticaly assigned by OS).
 	defaultPriority = "high"
 	niceLevel = 5
 	coresUsed = "-1"
+
+	-- Startup
 	optimizeDatabaseAtStartup = true
 	removePremiumOnInit = true
 	confirmOutdatedVersion = false
 
-	-- Talk-related
-	maxMessageBuffer = 4
+	-- Spells
 	bufferMutedOnSpellFailure = false
 	spellNameInsteadOfWords = false
 	emoteSpells = false
@@ -199,6 +200,7 @@
 	promptExceptionTracerErrorBox = true
 	separateViplistPerCharacter = false
 	maximumDoorLevel = 500
+	maxMessageBuffer = 4
 
 	-- Saving-related
 	-- useHouseDataStorage usage may be found at README.
