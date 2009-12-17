@@ -165,6 +165,7 @@
 
 	-- Process
 	-- NOTE: defaultPriority works only on Windows and niceLevel on *nix
+	-- niceLevel works only on *nix systems
 	-- coresUsed are seperated by comma cores ids used by server process,
 	-- default is -1, so it stays untouched (automaticaly assigned by OS).
 	defaultPriority = "high"
@@ -191,7 +192,6 @@
 	-- Miscellaneous
 	-- NOTE: promptExceptionTracerErrorBox works only with precompiled support feature,
 	-- called "exception tracer" (__EXCEPTION_TRACER__ flag).
-	-- monsterLootMessage 0 to disable, 1 - only party, 2 - only player, 3 - party or player (like Tibia's)
 	dataDirectory = "data/"
 	bankSystem = true
 	displaySkillLevelOnAdvance = false
