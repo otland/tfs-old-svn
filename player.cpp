@@ -846,6 +846,9 @@ bool Player::canSeeCreature(const Creature* creature) const
 
 bool Player::canWalkthrough(const Creature* creature) const
 {
+	if(!creature)
+		return true;
+
 	if(creature == this)
 		return false;
 
@@ -855,7 +858,7 @@ bool Player::canWalkthrough(const Creature* creature) const
 
 	GuildEmblems_t tmp = getGuildEmblem(player);
 	if((hasCustomFlag(PlayerCustomFlag_CanWalkthrough) || player->isWalkable() || (g_game.getWorldType() == WORLDTYPE_OPTIONAL
-		&& (tmp == EMBLEM_NONE || tmp == EMBLEM_BLUE) && Item::items[player->getTile()->ground->getID()].walkStack))
+		&& (tmp == EMBLEM_NONE || tmp == EMBLEM_BLUE) && player->getTile()->ground && Item::items[player->getTile()->ground->getID()].walkStack))
 		&& (!player->hasCustomFlag(PlayerCustomFlag_GamemasterPrivileges) || player->getAccess() <= getAccess()))
 		return true;
 

@@ -992,6 +992,7 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 			s << "magic level " << std::showpos << (int32_t)it.abilities.stats[STAT_MAGICLEVEL] << std::noshowpos;
 		}
 
+		// TODO: we should find some better way of completing this
 		int32_t show = it.abilities.absorb[COMBAT_FIRST];
 		for(int32_t i = (COMBAT_FIRST + 1); i <= COMBAT_LAST; i++)
 		{
@@ -1042,6 +1043,7 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 			s << "protection all " << std::showpos << show << std::noshowpos << "%";
 		}
 
+		// TODO: same case as absorbs...
 		show = it.abilities.reflect[REFLECT_CHANCE][COMBAT_FIRST];
 		for(int32_t i = (COMBAT_FIRST + 1); i <= COMBAT_LAST; i++)
 		{
@@ -1057,7 +1059,7 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 			bool tmp = true;
 			for(int32_t i = COMBAT_FIRST; i <= COMBAT_LAST; i++)
 			{
-				if(!it.abilities.reflect[REFLECT_CHANCE][i])
+				if(!it.abilities.reflect[REFLECT_CHANCE][i] || !it.abilities.reflect[REFLECT_PERCENT][i])
 					continue;
 
 				if(tmp)
@@ -1071,24 +1073,24 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 					else
 						s << ", ";
 
-					s << "reflect ";
+					s << "reflect: ";
 				}
 				else
 					s << ", ";
 
-				std::string ss = "no";
+				s << it.abilities.reflect[REFLECT_CHANCE][i] << "% for ";
 				if(it.abilities.reflect[REFLECT_PERCENT][i] > 99)
-					ss = "whole";
+					s << "whole";
 				else if(it.abilities.reflect[REFLECT_PERCENT][i] >= 75)
-					ss = "huge";
+					s << "huge";
 				else if(it.abilities.reflect[REFLECT_PERCENT][i] >= 50)
-					ss = "medium";
+					s << "medium";
 				else if(it.abilities.reflect[REFLECT_PERCENT][i] >= 25)
-					ss = "small";
-				else if(it.abilities.reflect[REFLECT_PERCENT][i] > 0)
-					ss = "tiny";
+					s << "small";
+				else
+					s << "tiny";
 
-				s << getCombatName((CombatType_t)i) << " " << std::showpos << it.abilities.reflect[REFLECT_PERCENT][i] << std::noshowpos << "% for " << ss;
+				s << getCombatName((CombatType_t)i);
 			}
 
 			if(!tmp)
@@ -1104,21 +1106,32 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 			else
 				s << ", ";
 
-			s << "reflect all " << std::showpos << show << std::noshowpos << "% for ";
-			show = it.abilities.reflect[REFLECT_PERCENT][COMBAT_FIRST];
+			int32_t tmp = it.abilities.reflect[REFLECT_PERCENT][COMBAT_FIRST];
 			for(int32_t i = (COMBAT_FIRST + 1); i <= COMBAT_LAST; i++)
 			{
-				if(it.abilities.reflect[REFLECT_PERCENT][i] == show)
+				if(it.abilities.reflect[REFLECT_PERCENT][i] == tmp)
 					continue;
 
-				show = 0;
+				tmp = 0;
 				break;
 			}
 
-			if(!show)
-				s << "mixed";
+			s << "reflect: " << show << "% for ";
+			if(tmp)
+			{
+				if(tmp > 99)
+					s << "whole";
+				else if(tmp >= 75)
+					s << "huge";
+				else if(tmp >= 50)
+					s << "medium";
+				else if(tmp >= 25)
+					s << "small";
+				else
+					s << "tiny";
+			}
 			else
-				s << show;
+				s << "mixed";
 
 			s << " damage";
 		}
