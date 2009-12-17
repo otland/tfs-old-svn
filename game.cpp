@@ -189,7 +189,7 @@ void Game::setGameState(GameState_t newState)
 
 			case GAMESTATE_SHUTDOWN:
 			{
-				g_globalEvents->execute(GLOBAL_EVENT_SHUTDOWN);
+				g_globalEvents->execute(GLOBALEVENT_SHUTDOWN);
 				AutoList<Player>::iterator it = Player::autoList.begin();
 				while(it != Player::autoList.end()) //kick all players that are still online
 				{
@@ -5789,7 +5789,7 @@ void Game::checkPlayersRecord(Player* player)
 	if(count <= playersRecord)
 		return;
 
-	GlobalEventMap recordEvents = g_globalEvents->getEventMap(GLOBAL_EVENT_RECORD);
+	GlobalEventMap recordEvents = g_globalEvents->getEventMap(GLOBALEVENT_RECORD);
 	for(GlobalEventMap::iterator it = recordEvents.begin(); it != recordEvents.end(); ++it)
 		it->second->executeRecord(count, playersRecord, player);
 
@@ -6100,7 +6100,13 @@ void Game::prepareGlobalSave()
 
 void Game::globalSave()
 {
-	if(g_config.getBool(ConfigManager::SHUTDOWN_AT_GLOBALSAVE))
+	bool close = g_config.getBool(ConfigManager::SHUTDOWN_AT_GLOBALSAVE);
+	if(close) // check are we're going to close the server
+		setGameState(GAMESTATE_CLOSING);
+
+	// call the global event
+	g_globalEvents->execute(GLOBALEVENT_GLOBALSAVE);
+	if(close)
 	{
 		//shutdown server
 		Dispatcher::getInstance().addTask(createTask(boost::bind(&Game::setGameState, this, GAMESTATE_SHUTDOWN)));
@@ -6118,7 +6124,7 @@ void Game::globalSave()
 	//clear temporial and expired bans
 	IOBan::getInstance()->clearTemporials();
 	//remove premium days globally if configured to
-	if(g_config.getBool(ConfigManager::REMOVE_PREMIUM_ON_INIT))
+	if(g_config.getBool(ConfigManager::INIT_UPDATE_PREMIUM))
 		IOLoginData::getInstance()->updatePremiumDays();
 
 	//reload everything

@@ -78,3 +78,11 @@ function onStartup()
 	db.executeQuery("UPDATE `players` SET `online` = 0 WHERE `world_id` = " .. getConfigValue('worldId') .. ";")
 	return true
 end
+
+function onGlobalSave()
+	if(getGameState() ~= GAMESTATE_CLOSING) then
+		return onStartup()
+	end
+
+	return true
+end

@@ -66,9 +66,9 @@ bool GlobalEvents::registerEvent(Event* event, xmlNodePtr p, bool override)
 		return false;
 
 	GlobalEventMap* map = &thinkMap;
-	if(globalEvent->getEventType() == GLOBAL_EVENT_TIMER)
+	if(globalEvent->getEventType() == GLOBALEVENT_TIMER)
 		map = &timerMap;
-	else if(globalEvent->getEventType() != GLOBAL_EVENT_NONE)
+	else if(globalEvent->getEventType() != GLOBALEVENT_NONE)
 		map = &serverMap;
 
 	GlobalEventMap::iterator it = map->find(globalEvent->getName());
@@ -91,7 +91,7 @@ bool GlobalEvents::registerEvent(Event* event, xmlNodePtr p, bool override)
 
 void GlobalEvents::startup()
 {
-	execute(GLOBAL_EVENT_STARTUP);
+	execute(GLOBALEVENT_STARTUP);
 	Scheduler::getInstance().addEvent(createSchedulerTask(TIMER_INTERVAL,
 		boost::bind(&GlobalEvents::timer, this)));
 	Scheduler::getInstance().addEvent(createSchedulerTask(SCHEDULER_MINTICKS,
@@ -148,15 +148,16 @@ GlobalEventMap GlobalEvents::getEventMap(GlobalEvent_t type)
 {
 	switch(type)
 	{
-		case GLOBAL_EVENT_NONE:
+		case GLOBALEVENT_NONE:
 			return thinkMap;
 
-		case GLOBAL_EVENT_TIMER:
+		case GLOBALEVENT_TIMER:
 			return timerMap;
 
-		case GLOBAL_EVENT_STARTUP:
-		case GLOBAL_EVENT_SHUTDOWN:
-		case GLOBAL_EVENT_RECORD:
+		case GLOBALEVENT_STARTUP:
+		case GLOBALEVENT_SHUTDOWN:
+		case GLOBALEVENT_GLOBALSAVE
+		case GLOBALEVENT_RECORD:
 		{
 			GlobalEventMap retMap;
 			for(GlobalEventMap::iterator it = serverMap.begin(); it != serverMap.end(); ++it)
@@ -192,16 +193,18 @@ bool GlobalEvent::configureEvent(xmlNodePtr p)
 	}
 
 	m_name = strValue;
-	m_eventType = GLOBAL_EVENT_NONE;
+	m_eventType = GLOBALEVENT_NONE;
 	if(readXMLString(p, "type", strValue))
 	{
 		std::string tmpStrValue = asLowerCaseString(strValue);
 		if(tmpStrValue == "startup" || tmpStrValue == "start" || tmpStrValue == "load")
-			m_eventType = GLOBAL_EVENT_STARTUP;
+			m_eventType = GLOBALEVENT_STARTUP;
 		else if(tmpStrValue == "shutdown" || tmpStrValue == "quit" || tmpStrValue == "exit")
-			m_eventType = GLOBAL_EVENT_SHUTDOWN;
+			m_eventType = GLOBALEVENT_SHUTDOWN;
+		else if(tmpStrValue == "globalsave" || tmpStrValue == "global")
+			m_eventType = GLOBALEVENT_GLOBALSAVE;
 		else if(tmpStrValue == "record" || tmpStrValue == "playersrecord")
-			m_eventType = GLOBAL_EVENT_RECORD;
+			m_eventType = GLOBALEVENT_RECORD;
 		else
 		{
 			std::clog << "[Error - GlobalEvent::configureEvent] No valid type \"" << strValue << "\" for globalevent with name " << m_name << std::endl;
@@ -241,7 +244,7 @@ bool GlobalEvent::configureEvent(xmlNodePtr p)
 			}
 		}
 
-		m_eventType = GLOBAL_EVENT_TIMER;
+		m_eventType = GLOBALEVENT_TIMER;
 		return true;
 	}
 
@@ -260,13 +263,15 @@ std::string GlobalEvent::getScriptEventName() const
 {
 	switch(m_eventType)
 	{
-		case GLOBAL_EVENT_STARTUP:
+		case GLOBALEVENT_STARTUP:
 			return "onStartup";
-		case GLOBAL_EVENT_SHUTDOWN:
+		case GLOBALEVENT_SHUTDOWN:
 			return "onShutdown";
-		case GLOBAL_EVENT_RECORD:
+		case GLOBALEVENT_GLOBALSAVE:
+			return "onGlobalSave";
+		case GLOBALEVENT_RECORD:
 			return "onRecord";
-		case GLOBAL_EVENT_TIMER:
+		case GLOBALEVENT_TIMER:
 			return "onTime";
 		default:
 			break;
@@ -279,11 +284,11 @@ std::string GlobalEvent::getScriptEventParams() const
 {
 	switch(m_eventType)
 	{
-		case GLOBAL_EVENT_RECORD:
+		case GLOBALEVENT_RECORD:
 			return "current, old, cid";
-		case GLOBAL_EVENT_NONE:
+		case GLOBALEVENT_NONE:
 			return "interval";
-		case GLOBAL_EVENT_TIMER:
+		case GLOBALEVENT_TIMER:
 			return "time";
 		default:
 			break;
@@ -352,9 +357,9 @@ int32_t GlobalEvent::executeEvent()
 		if(m_scripted == EVENT_SCRIPT_BUFFER)
 		{
 			std::stringstream scriptstream;
-			if(m_eventType == GLOBAL_EVENT_NONE)
+			if(m_eventType == GLOBALEVENT_NONE)
 				scriptstream << "local interval = " << m_interval << std::endl;
-			else if(m_eventType == GLOBAL_EVENT_TIMER)
+			else if(m_eventType == GLOBALEVENT_TIMER)
 				scriptstream << "local time = " << m_interval << std::endl;
 
 			scriptstream << m_scriptData;
@@ -375,7 +380,7 @@ int32_t GlobalEvent::executeEvent()
 			m_interface->pushFunction(m_scriptId);
 
 			int32_t params = 0;
-			if(m_eventType == GLOBAL_EVENT_NONE || m_eventType == GLOBAL_EVENT_TIMER)
+			if(m_eventType == GLOBALEVENT_NONE || m_eventType == GLOBALEVENT_TIMER)
 			{
 				lua_pushnumber(L, m_interval);
 				params = 1;
