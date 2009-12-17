@@ -207,27 +207,28 @@ bool Quests::parseQuestNode(xmlNodePtr p, bool checkDuplicate)
 
 		if(Mission* mission = new Mission(missionName, missionState, storageId, startValue, endValue))
 		{
-			if(state.size()) // don't parse sub-states if main state is set
-				continue;
-
-			for(xmlNodePtr stateNode = missionNode->children; stateNode; missionNode = missionNode->next)
+			if(missionState.empty())
 			{
-				if(xmlStrcmp(stateNode->name, (const xmlChar*)"missionstate"))
-					continue;
-
-				uint32_t missionId;
-				if(!readXMLInteger(stateNode, "id", intValue))
+				// parse sub-states only if main is not set
+				for(xmlNodePtr stateNode = missionNode->children; stateNode; stateNode = stateNode->next)
 				{
-					std::cout << "[Warning - Quests::parseQuestNode] Missing missionId for mission state" << std::endl;
-					continue;
+					if(xmlStrcmp(stateNode->name, (const xmlChar*)"missionstate"))
+						continue;
+
+					uint32_t missionId;
+					if(!readXMLInteger(stateNode, "id", intValue))
+					{
+						std::cout << "[Warning - Quests::parseQuestNode] Missing missionId for mission state" << std::endl;
+						continue;
+					}
+
+					missionId = intValue;
+					std::string description;
+					if(readXMLString(stateNode, "description", strValue))
+						description = strValue;
+
+					mission->newState(missionId, description);
 				}
-
-				missionId = intValue;
-				std::string description;
-				if(readXMLString(stateNode, "description", strValue))
-					description = strValue;
-
-				mission->newState(missionId, description);
 			}
 
 			quest->newMission(mission);
