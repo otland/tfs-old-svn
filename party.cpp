@@ -439,5 +439,5 @@ bool Party::isPlayerInvited(const Player* player, bool result/* = false*/) const
 
 bool Party::canOpenCorpse(uint32_t ownerId)
 {
-	return leader->getGUID() == ownerId || isPlayerMember(g_game.getPlayerByGuid(ownerId));
+	return leader->getID() == ownerId || isPlayerMember(g_game.getPlayerByID(ownerId));
 }
