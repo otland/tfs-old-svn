@@ -1560,7 +1560,7 @@ uint32_t adlerChecksum(uint8_t* data, size_t length)
 	// Do the calculation now
 	adler.CalculateDigest(digest, (const byte*)data, length);
 	// return uint32_t cast type
-	return (uint32_t)((uint8_t)digest[0] + (uint8_t)digest[1] + (uint8_t)digest[2] + (uint8_t)digest[3]);
+	return *(uint32_t*)(digest);
 }
 
 std::string getFilePath(FileType_t filetype, std::string filename)
