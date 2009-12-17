@@ -24,6 +24,9 @@
 				Dwarf Miner
 				Dwarf Dispenser
 
+			Frogs
+				Deathspawn
+
 			Giant Bosses
 				Freegoiz
 				Stonecracker
@@ -50,7 +53,6 @@
 				Deathspawn
 				Hell Hole
 				Kitty
-				Lavahole
 				Magic Pillar
 				Mechanical Fighter
 				Pillar
@@ -74,13 +76,13 @@
 	<monster name="Merlkin" file="Apes/merlkin.xml"/>
 	<monster name="Sibang" file="Apes/sibang.xml"/>
 
-	<!-- Aracnids -->
-	<monster name="Crystal Spider" file="Aracnids/crystal spider.xml"/>
-	<monster name="Giant Spider" file="Aracnids/giant spider.xml"/>
-	<monster name="Poison Spider" file="Aracnids/poison spider.xml"/>
-	<monster name="Scorpion" file="Aracnids/scorpion.xml"/>
-	<monster name="Spider" file="Aracnids/spider.xml"/>
-	<monster name="Tarantula" file="Aracnids/tarantula.xml"/>
+	<!-- Arachnids -->
+	<monster name="Crystal Spider" file="Arachnids/crystal spider.xml"/>
+	<monster name="Giant Spider" file="Arachnids/giant spider.xml"/>
+	<monster name="Poison Spider" file="Arachnids/poison spider.xml"/>
+	<monster name="Scorpion" file="Arachnids/scorpion.xml"/>
+	<monster name="Spider" file="Arachnids/spider.xml"/>
+	<monster name="Tarantula" file="Arachnids/tarantula.xml"/>
 
 	<!-- Arena -->
 		<!-- Greenhorn -->
@@ -148,7 +150,6 @@
 
 	<!-- Birds -->
 	<monster name="Chicken" file="Birds/chicken.xml"/>
-	<monster name="Dire Penguin" file="Birds/dire penguin.xml"/>
 	<monster name="Flamingo" file="Birds/flamingo.xml"/>
 	<monster name="Parrot" file="Birds/parrot.xml"/>
 	<monster name="Penguin" file="Birds/penguin.xml"/>
@@ -171,6 +172,7 @@
 	<monster name="Deadeye Devious" file="Bosses/deadeye devious.xml"/>
 	<monster name="Demodras" file="Bosses/demodras.xml"/>
 	<monster name="Dharalion" file="Bosses/dharalion.xml"/>
+	<monster name="Dire Penguin" file="Bosses/dire penguin.xml"/>
 	<monster name="Dracola" file="Bosses/dracola.xml"/>
 	<monster name="Fernfang" file="Bosses/fernfang.xml"/>
 	<monster name="Ferumbras" file="Bosses/ferumbras.xml"/>
@@ -211,13 +213,13 @@
 	<monster name="Tibia Bug" file="Bosses/tibia bug.xml"/>
 	<monster name="Tiquandas Revenge" file="Bosses/tiquandas revenge.xml"/>
 	<monster name="Undead Minion" file="Bosses/undead minion.xml"/>
+	<monster name="Ungreez" file="Bosses/ungreez.xml"/>
 	<monster name="Ushuriel" file="Bosses/ushuriel.xml"/>
 	<monster name="Xenia" file="Bosses/xenia.xml"/>
 	<monster name="Zugurosh" file="Bosses/zugurosh.xml"/>
 
 	<!-- Canines -->
 	<monster name="Dog" file="Canines/dog.xml"/>
-	<monster name="Hellhound" file="Canines/hellhound.xml"/>
 	<monster name="Husky" file="Canines/husky.xml"/>	
 	<monster name="War wolf" file="Canines/war wolf.xml"/>
 	<monster name="Werewolf" file="Canines/werewolf.xml"/>
@@ -251,13 +253,13 @@
 	<monster name="Fury" file="Demons/fury.xml"/>
 	<monster name="Gozzler" file="Demons/gozzler.xml"/>
 	<monster name="Hand of Cursed Fate" file="Demons/hand of cursed fate.xml"/>
+	<monster name="Hellhound" file="Demons/hellhound.xml"/>
 	<monster name="Hellspawn" file="Demons/hellspawn.xml"/>
 	<monster name="Juggernaut" file="Demons/juggernaut.xml"/>
 	<monster name="Nightmare" file="Demons/nightmare.xml"/>
 	<monster name="Nightmare Scion" file="Demons/nightmare scion.xml"/>
 	<monster name="Nightstalker" file="Demons/nightstalker.xml"/>
 	<monster name="Plaguesmith" file="Demons/plaguesmith.xml"/>
-	<monster name="Ungreez" file="Demons/ungreez.xml"/>
 
 	<!-- Djinns -->
 	<monster name="Blue Djinn" file="Djinns/blue djinn.xml"/>
@@ -272,6 +274,7 @@
 	<monster name="Dragon Hatchling" file="Dragons/dragon hatchling.xml"/>
 	<monster name="Frost Dragon" file="Dragons/frost dragon.xml"/>
 	<monster name="Frost Dragon Hatchling" file="Dragons/frost dragon hatchling.xml"/>
+	<monster name="Undead Dragon" file="Dragons/undead dragon.xml"/>
 	<monster name="Wyrm" file="Dragons/wyrm.xml"/>
 
 	<!-- Dwarves -->
@@ -319,10 +322,11 @@
 	<monster name="Earth Elemental" file="Geo-Elementals/earth elemental.xml"/>
 	<monster name="Earth Overlord" file="Geo-Elementals/earth overlord.xml"/>
 	<monster name="Gargoyle" file="Geo-Elementals/gargoyle.xml"/>
-	<monster name="Stone Golem" file="Geo-Elementals/stone golem.xml"/>
 	<monster name="Jagged Earth Elemental" file="Geo-Elementals/jagged earth elemental.xml"/>
 	<monster name="Massive Earth Elemental" file="Geo-Elementals/massive earth elemental.xml"/>
+	<monster name="Medusa" file="Geo-Elementals/medusa.xml"/>
 	<monster name="Muddy Earth Elemental" file="Geo-Elementals/muddy earth elemental.xml"/>
+	<monster name="Stone Golem" file="Geo-Elementals/stone golem.xml"/>
 	<monster name="War Golem" file="Geo-Elementals/war golem.xml"/>
 	<monster name="Worker Golem" file="Geo-Elementals/worker golem.xml"/>
 
@@ -330,7 +334,6 @@
 	<monster name="Ghost" file="Ghosts/ghost.xml"/>
 	<monster name="Phantasm Summon" file="Ghosts/phantasm summon.xml"/>
 	<monster name="Phantasm" file="Ghosts/phantasm.xml"/>
-	<monster name="Pirate Ghost" file="Ghosts/pirate ghost.xml"/>
 	<monster name="Spectre" file="Ghosts/spectre.xml"/>
 	<monster name="Wisp" file="Ghosts/wisp.xml"/>
 
@@ -364,7 +367,7 @@
 	<monster name="Centipede" file="Insects/centipede.xml"/>
 	<monster name="Cockroach" file="Insects/cockroach.xml"/>
 	<monster name="Larva" file="Insects/larva.xml"/>
-	<monster name="Pink Butterfly" file="Insects/pink butterfly.xml"/>
+	<monster name="Purple Butterfly" file="Insects/purple butterfly.xml"/>
 	<monster name="Red Butterfly" file="Insects/red butterfly.xml"/>
 	<monster name="Scarab" file="Insects/scarab.xml"/>
 	<monster name="Wasp" file="Insects/wasp.xml"/>
@@ -450,7 +453,9 @@
 	<monster name="Pirate Buccaneer" file="Pirates/pirate buccaneer.xml"/>
 	<monster name="Pirate Corsair" file="Pirates/pirate corsair.xml"/>
 	<monster name="Pirate Cutthroat" file="Pirates/pirate cutthroat.xml"/>
+	<monster name="Pirate Ghost" file="Pirates/pirate ghost.xml"/>
 	<monster name="Pirate Marauder" file="Pirates/pirate marauder.xml"/>
+	<monster name="Pirate Skeleton" file="Pirates/pirate skeleton.xml"/>
 
 	<!-- Pyro-Elementals -->
 	<monster name="Blazing Fire Elemental" file="Pyro-Elementals/blazing fire elemental.xml"/>
@@ -507,10 +512,8 @@
 	<monster name="Dreadbeast" file="Skeletons/dreadbeast.xml"/>
 	<monster name="Dread Beast" file="Skeletons/dreadbeast.xml"/>
 	<monster name="Lost Soul" file="Skeletons/lost soul.xml"/>
-	<monster name="Pirate Skeleton" file="Skeletons/pirate skeleton.xml"/>
 	<monster name="Skeleton" file="Skeletons/skeleton.xml"/>
 	<monster name="Skeleton Warrior" file="Skeletons/skeleton warrior.xml"/>
-	<monster name="Undead Dragon" file="Skeletons/undead dragon.xml"/>
 	<monster name="Undead Gladiator" file="Skeletons/undead gladiator.xml"/>
 
 	<!-- Sorcerers -->
@@ -519,7 +522,6 @@
 	<monster name="Ice Witch" file="Sorcerers/ice witch.xml"/>
 	<monster name="Infernalist" file="Sorcerers/infernalist.xml"/>
 	<monster name="Mad Scientist" file="Sorcerers/mad scientist.xml"/>
-	<monster name="Medusa" file="Sorcerers/medusa.xml"/>
 	<monster name="Warlock" file="Sorcerers/warlock.xml"/>
 	<monster name="Witch" file="Sorcerers/witch.xml"/>
 
@@ -534,7 +536,6 @@
 	<monster name="Lavahole" file="Traps/lavahole.xml"/>
 	<monster name="Magicthrower" file="Traps/magicthrower.xml"/>
 	<monster name="Plaguethrower" file="Traps/plaguethrower.xml"/>
-	<monster name="Poisonthrower" file="Traps/poisonthrower.xml"/>
 	<monster name="Shredderthrower" file="Traps/shredderthrower.xml"/>
 
 	<!-- Trolls -->

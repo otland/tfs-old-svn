@@ -27,9 +27,6 @@
 		</attack>
 	</attacks>
 	<defenses armor="17" defense="40">
-		<defense name="speed" interval="1000" chance="9" speedchange="1201" duration="3000">
-			<attribute key="areaEffect" value="redshimmer"/>
-		</defense>
 		<defense name="invisible" interval="1000" chance="9" duration="2000">
 			<attribute key="areaEffect" value="blueshimmer"/>
 		</defense>
