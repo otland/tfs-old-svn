@@ -18,7 +18,7 @@
 		<flag runonhealth="30"/>
 	</flags>
 	<attacks>
-		<attack name="melee" interval="1000" skill="65" attack="65"/>
+		<attack name="melee" interval="1000" skill="30" attack="40"/>
 		<attack name="poison" interval="1000" chance="12" length="8" spread="10" min="-100" max="-160">
 			<attribute key="areaEffect" value="bubbles"/>
 		</attack>

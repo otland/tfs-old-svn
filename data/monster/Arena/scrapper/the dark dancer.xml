@@ -11,7 +11,7 @@
 		<flag targetdistance="5"/>
 	</flags>
 	<attacks>
-		<attack name="poisoncondition" interval="2000" min="-55" max="-99" start="-11"/>
+		<attack name="poisoncondition" interval="2000" skill="20" attack="30"/>
 		<attack name="physical" interval="3000" chance="70" radius="1" target="1" range="5" min="-60" max="-95">
 			<attribute key="areaEffect" value="mortarea"/>
 			<attribute key="shootEffect" value="suddendeath"/>

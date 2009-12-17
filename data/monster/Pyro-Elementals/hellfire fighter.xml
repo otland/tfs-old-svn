@@ -18,7 +18,7 @@
 		<flag runonhealth="0"/>
 	</flags>
 	<attacks>
-		<attack name="melee" interval="2000" min="-30" max="-420"/>
+		<attack name="melee" interval="2000" skill="120" attack="80"/>
 		<attack name="firefield" interval="3000" chance="30" range="7" radius="4" target="0">
 			<attribute key="shootEffect" value="fire"/>
 		</attack>
@@ -53,7 +53,7 @@
 			<inside>
 		<item id="7894" chance="850"/><!-- magma legs -->
 		<item id="7899" chance="1300"/><!-- magma coat -->
-		<item id="5022" countmax="2" chance="4000"/><!-- ancient coin -->
+		<item id="5022" countmax="2" chance="4000"/><!-- orichalcum pearl -->
 		<item id="2152" chance="850"/><!-- platinum coin -->
 		<item id="2145" chance="13200"/><!-- small diamond -->
 		<item id="2147" countmax="4" chance="7000"/><!-- small ruby -->

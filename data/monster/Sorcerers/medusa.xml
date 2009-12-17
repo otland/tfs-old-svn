@@ -18,7 +18,7 @@
 		<flag runonhealth="275"/>
 	</flags>
 	<attacks>
-		<attack name="melee" interval="2000" skill="80" attack="83" poison="920"/>
+		<attack name="melee" interval="2000" skill="50" attack="100" poison="920"/>
 		<attack name="earth" interval="1000" chance="10" length="8" spread="3" min="-250" max="-350">
 			<attribute key="areaEffect" value="carniphila"/>
 		</attack>
@@ -71,7 +71,7 @@
 			<item id="7884" chance="550"/><!-- terra mantle -->
 			<item id="7413" chance="1300"/><!-- titan axe -->	
 			<item id="10219" chance="1500"/><!-- sacred tree amulet -->
-			<item id="9808" chance="650"/><!-- rusty amor -->
+			<item id="9810" chance="650"/><!-- rusty amor -->
 			<item id="7885" chance="250"/><!-- terra legs -->
 		</item>
 	</loot>

@@ -18,7 +18,7 @@
 		<flag runonhealth="0"/>
 	</flags>
 	<attacks>
-		<attack name="melee" interval="2000" min="-0" max="-230"/>
+		<attack name="melee" interval="2000" skill="50" attack="80"/>
 		<attack name="physical" interval="1000" chance="14" range="7" min="-0" max="-95">
 			<attribute key="shootEffect" value="explosion"/>
 		</attack>
@@ -55,8 +55,8 @@
 		<item id="8309" countmax="5" chance="2000"/><!-- nails -->
 		<item id="5880" chance="850"/><!-- iron ore -->
 		<item id="9690" countmax="2" chance="500"/><!-- gear wheel -->
-		<item id="9808" chance="4650"/><!-- rusty armor -->
-		<item id="9811" chance="2650"/><!-- rusty legs -->
+		<item id="9809" chance="4650"/><!-- rusty armor -->
+		<item id="9812" chance="2650"/><!-- rusty legs -->
 		<item id="8472" chance="1600"/><!-- great spirit potion -->
 		<item id="7591" chance="1900"/><!-- great health potion -->
 		<item id="1987" chance="100000"><!-- bag -->

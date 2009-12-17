@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <monster name="Scorpion" nameDescription="a scorpion" race="venom" experience="45" speed="150" manacost="310">
 	<health now="45" max="45"/>
 	<look type="43" corpse="5988"/>
@@ -18,7 +18,7 @@
 		<flag runonhealth="5"/>
 	</flags>
 	<attacks>
-		<attack name="melee" interval="2000" skill="35" attack="21" poison="150"/>
+		<attack name="melee" interval="2000" skill="30" attack="25" poison="17"/>
 	</attacks>
 	<defenses armor="10" defense="5"/>
 	<elements>

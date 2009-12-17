@@ -18,7 +18,7 @@
 		<flag runonhealth="0"/>
 	</flags>
 	<attacks>
-		<attack name="melee" interval="2000" skill="85" attack="85"/>
+		<attack name="melee" interval="2000" skill="150" attack="60"/>
 		<attack name="melee" interval="2000" chance="20" range="7" radius="4" target="1" min="-300" max="-395">
 			<attribute key="shootEffect" value="fire"/>
 			<attribute key="areaEffect" value="redspark"/>
@@ -79,11 +79,11 @@
 		<item id="2033" chance="3333"/><!-- golden mug -->
 		<item id="7365" countmax="10" chance="22000"/><!-- onyx arrow -->
 		<item id="2547" countmax="6" chance="3000"/><!-- power bolt -->
-		<item id="2260" chance="45500"/><!-- blank rune -->
-		<item id="5944" chance="7000"/><!-- soul orb -->
-		<item id="9808" chance="3333"/><!-- rusty armor -->
 		<item id="1987" chance="100000"><!-- bag -->
 			<inside>
+		<item id="2260" chance="45500"/><!-- blank rune -->
+		<item id="5944" chance="7000"/><!-- soul orb -->
+		<item id="9810" chance="2000"/><!-- rusty armor -->
 		<item id="7430" chance="4000"/><!-- dragonbone staff -->
 		<item id="2476" chance="3500"/><!-- knight armor -->
 		<item id="2177" chance="2500"/><!-- life crystal -->		

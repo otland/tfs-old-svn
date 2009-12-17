@@ -9,7 +9,7 @@
 		<flag staticattack="78"/>
 	</flags>
 	<attacks>
-		<attack name="melee" interval="2000" min="-5" max="-150"/>
+		<attack name="melee" interval="2000" skill="40" attack="60"/>
 		<attack name="lifedrain" interval="4000" chance="50" range="5" radius="1" target="1" min="0" max="50">
 			<attribute key="areaEffect" value="redshimmer"/>
 		</attack>

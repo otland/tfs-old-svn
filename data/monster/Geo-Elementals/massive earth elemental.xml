@@ -19,7 +19,7 @@
 		<flag runonhealth="1"/>
 	</flags>
 	<attacks>
-		<attack name="melee" interval="2000" skill="100" attack="95"/>
+		<attack name="melee" interval="2000" skill="45" attack="40"/>
 		<attack name="earth" interval="2000" chance="15" range="7" min="-25" max="-140">
 			<attribute key="shootEffect" value="earth"/>
 		</attack>
@@ -57,7 +57,7 @@
 			<inside>
 		<item id="2145" countmax="2" chance="1000"/><!-- small diamond -->
 		<item id="2436" chance="10000"/><!-- plate armor -->
-		<item id="9808" chance="3500"/><!-- rusty armor -->
+		<item id="9809" chance="3500"/><!-- rusty armor -->
 		<item id="2213" chance="3500"/><!-- dwarven ring -->
 		<item id="9970" countmax="2" chance="3500"/><!-- small topaz-->
 		<item id="2197" chance="300"/><!-- stone skin amulet -->

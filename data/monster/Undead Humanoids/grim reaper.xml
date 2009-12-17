@@ -18,7 +18,7 @@
 		<flag runonhealth="0"/>
 	</flags>
 	<attacks>
-		<attack name="melee" interval="2000" skill="130" attack="135"/>
+		<attack name="melee" interval="2000" skill="106" attack="140"/>
 		<attack name="death" interval="1000" chance="9" range="7" min="0" max="-350">
 			<attribute key="shootEffect" value="suddendeath"/>
 			<attribute key="areaEffect" value="mortarea"/>
@@ -72,7 +72,7 @@
 		<item id="2550" chance="9500"/><!-- scythe -->
 		<item id="8910" chance="700"/><!-- underworld rod -->
 		<item id="7896" chance="1000"/><!-- glacier kilt -->
-		<item id="9808" chance="2250"/><!-- rusty armor -->
+		<item id="9810" chance="2250"/><!-- rusty armor -->
 		<item id="7418" chance="450"/><!-- nightmare blade -->
 		<item id="5022" countmax="4" chance="1500"/><!-- orichalcum pearl -->
 		<item id="8889" chance="560"/><!-- skullcracker armor -->

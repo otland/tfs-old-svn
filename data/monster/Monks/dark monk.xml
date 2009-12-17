@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <monster name="Dark Monk" nameDescription="a dark monk" race="blood" experience="145" speed="210" manacost="0">
-	<health now="1200" max="1200"/>
+	<health now="190" max="190"/>
 	<look type="225" corpse="6080"/>
 	<targetchange interval="5000" chance="8"/>
 	<strategy attack="100" defense="0"/>
@@ -18,7 +18,7 @@
 		<flag runonhealth="0"/>
 	</flags>
 	<attacks>
-		<attack name="melee" interval="2000" skill="50" attack="57"/>
+		<attack name="melee" interval="2000" skill="30" attack="50"/>
 		<attack name="lifedrain" interval="1000" chance="12" range="1" min="-55" max="-100">
 			<attribute key="areaEffect" value="redshimmer"/>
 		</attack>

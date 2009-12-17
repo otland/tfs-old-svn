@@ -8,7 +8,7 @@
 		<flag staticattack="78"/>
 	</flags>
 	<attacks>
-		<attack name="melee" interval="2000" min="-1" max="-25"/>
+		<attack name="melee" interval="2000" skill="10" attack="30"/>
 	</attacks>
 	<defenses armor="2" defense="3"/>
 	<elements>

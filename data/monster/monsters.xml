@@ -5,17 +5,10 @@
 		with getting real monster attributes, loot etc
 
 		[ MISSING MONSTERS (not all listed there)
-			Ape Bosses
-				Hairman The Huge
-
-			Barbarians Bosses
-				Barbaria
-
 			Bio-Elemental Bosses
 				Diseased Bill
 				Diseased Dan
 				Diseased Fred
-				The Plasmother
 
 			Canine Bosses
 				The Big Bad One
@@ -170,6 +163,7 @@
 	<!-- Bosses -->
 	<monster name="Annihilon" file="Bosses/annihilon.xml"/>
 	<monster name="Apprentice Sheng" file="Bosses/apprentice sheng.xml"/>
+	<monster name="Barbaria" file="Bosses/barbaria.xml"/>
 	<monster name="Big Boss Trolliver" file="Bosses/big boss trolliver.xml"/>
 	<monster name="Bones" file="Bosses/bones.xml"/>
 	<monster name="Brutus Bloodbeard" file="Bosses/brutus bloodbeard.xml"/>
@@ -186,6 +180,7 @@
 	<monster name="Ghazbaran" file="Bosses/ghazbaran.xml"/>
 	<monster name="Golgordan" file="Bosses/golgordan.xml"/>
 	<monster name="Grorlam" file="Bosses/grorlam.xml"/>
+	<monster name="Hairman The Huge" file="Bosses/hairman the huge.xml"/>
 	<monster name="Hellgorak" file="Bosses/hellgorak.xml"/>
 	<monster name="Koshei The Deathless" file="Bosses/koshei the deathless.xml"/>
 	<monster name="Latrivan" file="Bosses/latrivan.xml"/>
@@ -211,6 +206,7 @@
 	<monster name="The Horned Fox" file="Bosses/the horned fox.xml"/>
 	<monster name="The Imperor" file="Bosses/the imperor.xml"/>
 	<monster name="The Old Widow" file="Bosses/the old widow.xml"/>
+	<monster name="The Plasmother" file="Bosses/the plasmother.xml"/>
 	<monster name="Thul" file="Bosses/thul.xml"/>
 	<monster name="Tibia Bug" file="Bosses/tibia bug.xml"/>
 	<monster name="Tiquandas Revenge" file="Bosses/tiquandas revenge.xml"/>
@@ -535,6 +531,7 @@
 	<monster name="Deathslicer" file="Traps/deathslicer.xml"/>
 	<monster name="Eye of the Seven" file="Traps/eye of the seven.xml"/>
 	<monster name="Flamethrower" file="Traps/flamethrower.xml"/>
+	<monster name="Lavahole" file="Traps/lavahole.xml"/>
 	<monster name="Magicthrower" file="Traps/magicthrower.xml"/>
 	<monster name="Plaguethrower" file="Traps/plaguethrower.xml"/>
 	<monster name="Poisonthrower" file="Traps/poisonthrower.xml"/>

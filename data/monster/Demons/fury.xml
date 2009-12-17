@@ -18,7 +18,7 @@
 		<flag runonhealth="0"/>
 	</flags>
 	<attacks>
-		<attack name="melee" interval="2000" min="-100" max="-500"/>
+		<attack name="melee" interval="2000" skill="50" attack="170"/>
 		<attack name="physical" interval="2000" chance="17" range="7" min="-140" max="-200">
 			<attribute key="shootEffect" value="throwingstar"/>
 		</attack>
@@ -71,7 +71,7 @@
 		<item id="5911" chance="3650"/><!-- red piece of cloth -->
 		<item id="1987" chance="100000"><!-- bag -->
 			<inside>
-		<item id="9811" chance="11000"/><!-- rusty legs -->
+		<item id="9813" chance="11000"/><!-- rusty legs -->
 		<item id="2120" countmax="3" chance="6000"/><!-- small amethyst -->
 		<item id="5944" chance="21500"/><!-- soul orb -->
 		<item id="2645" chance="1000"/><!-- steel boots -->

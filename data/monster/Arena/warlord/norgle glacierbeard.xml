@@ -19,7 +19,7 @@
 		<flag runonhealth="0"/>
 	</flags>
 	<attacks>
-		<attack name="melee" interval="2000" min="-100" max="-230"/>
+		<attack name="melee" interval="2000" skill="80" attack="50"/>
 		<!--<attack name="Smokewave" interval="1000" chance="35"/> -->
 	</attacks>
 	<defenses armor="25" defense="27"/>

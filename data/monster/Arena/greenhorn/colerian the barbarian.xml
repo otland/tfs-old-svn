@@ -9,7 +9,7 @@
 		<flag staticattack="100"/>
 	</flags>
 	<attacks>
-		<attack name="melee" interval="2000" min="-30" max="-65"/>
+		<attack name="melee" interval="2000" skill="20" attack="40"/>
 		<attack name="physical" interval="1000" chance="80" range="5" radius="1" target="1" min="0" max="-40">
 			<attribute key="shootEffect" value="piercingbolt"/>
 		</attack>

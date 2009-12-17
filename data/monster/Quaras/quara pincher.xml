@@ -18,7 +18,7 @@
 		<flag runonhealth="0"/>
 	</flags>
 	<attacks>
-		<attack name="melee" interval="1000" skill="88" attack="60"/>
+		<attack name="melee" interval="1000" skill="75" attack="80"/>
 		<attack name="speed" interval="1000" chance="12" range="7" speedchange="-850" duration="4000">
 			<attribute key="areaEffect" value="redshimmer"/>
 		</attack>

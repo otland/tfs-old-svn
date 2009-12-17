@@ -18,7 +18,7 @@
 		<flag runonhealth="15"/>
 	</flags>
 	<attacks>
-		<attack name="melee" interval="2000" skill="15" attack="17"/>
+		<attack name="melee" interval="2000" skill="40" attack="10"/>
 	</attacks>
 	<defenses armor="6" defense="6"/>
 	<elements>
@@ -34,7 +34,7 @@
 	<loot>
 		<item id="5896" chance="2000"/><!-- bear paw -->
 		<item id="2671" countmax="3" chance="25000"/><!-- ham -->
-		<item id="2671" countmax="4" chance="46750"/><!-- meat -->
+		<item id="2666" countmax="4" chance="46750"/><!-- meat -->
 		<item id="3976" countmax="3" chance="3000"/><!-- worm -->
 		<item id="5902" chance="1700"/><!-- honeycomb -->
 	</loot>

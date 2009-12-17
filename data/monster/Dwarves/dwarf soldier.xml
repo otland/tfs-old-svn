@@ -18,7 +18,7 @@
 		<flag runonhealth="0"/>
 	</flags>
 	<attacks>
-		<attack name="melee" interval="2000" min="-30" max="-100"/>
+		<attack name="melee" interval="2000" skill="60" attack="20"/>
 		<attack name="physical" interval="3000" chance="13" range="7" min="-20" max="-40">
 			<attribute key="shootEffect" value="bolt"/>
 		</attack>

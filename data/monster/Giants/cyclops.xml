@@ -18,7 +18,7 @@
 		<flag runonhealth="0"/>
 	</flags>
 	<attacks>
-		<attack name="melee" interval="2000" min="-0" max="-100"/>
+		<attack name="melee" interval="2000" skill="60" attack="30"/>
 	</attacks>
 	<defenses armor="15" defense="20"/>
 	<elements>
@@ -35,7 +35,8 @@
 		<voice sentence="Let da mashing begin!"/>
 	</voices>
 	<loot>
-		<item id="2148" countmax="52" chance="21000"/><!-- gold coin -->
+		<item id="2148" countmax="33" chance="22500"/><!-- gold coin -->
+		<item id="2148" countmax="22" chance="22500"/><!-- gold coin -->
 		<item id="2671" countmax="4" chance="4500"/><!-- ham -->
 		<item id="7618" chance="250"/><!-- health potion -->	
 		<item id="2666" countmax="3" chance="18333"/><!-- meat -->
@@ -43,7 +44,7 @@
 		<item id="2406" chance="7000"/><!-- short sword -->
 		<item id="1987" chance="100000"><!-- bag -->
 			<inside>
-				<item id="2513" chance="16000"/><!-- battle shield -->
+				<item id="2513" chance="2300"/><!-- battle shield -->
 				<item id="2129" chance="400"/><!-- wolf tooth chain -->
 				<item id="2381" chance="800"/><!-- halberd -->
 				<item id="2490" chance="250"/><!-- dark helmet -->

@@ -18,7 +18,7 @@
 		<flag runonhealth="0"/>
 	</flags>
 	<attacks>
-		<attack name="melee" interval="2000" chance="100" min="-0" max="-360" range="1"/>
+		<attack name="melee" interval="2000" chance="100" skill="60" attack="100"/>
 		<attack name="fireball" interval="2000" chance="24" min="-60" max="-160"/>
 		<attack name="soulfire" interval="2000" chance="14"/> 
 	</attacks>	
@@ -57,10 +57,10 @@
 		<item id="2477" chance="2750"/><!-- knight legs -->
 		<item id="2666" countmax="6" chance="7000"/><!-- meat -->
 		<item id="2394" chance="11000"/><!-- morning star -->
+		<item id="9809" chance="1750"/><!-- rusty armor -->
 		<item id="1987" chance="100000"><!-- bag -->
 			<inside>
-			<item id="9808" chance="1500"/><!-- rusty armor -->
-			<item id="9808" chance="1500"/><!-- rusty armor -->
+			<item id="9809" chance="1750"/><!-- rusty armor -->
 			<item id="9970" countmax="4" chance="3250"/><!-- small topaz -->
 			<item id="7452" chance="1000"/><!-- spiked squelcher -->
 			<item id="8473" chance="10000"/><!-- ultimate health potion -->

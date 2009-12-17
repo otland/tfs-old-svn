@@ -19,7 +19,7 @@
 		<flag runonhealth="0"/>
 	</flags>
 	<attacks>
-		<attack name="melee" interval="2000" min="-30" max="-70"/>
+		<attack name="melee" interval="2000" skill="10" attack="20"/>
 		<attack name="physical" interval="2000" chance="34" range="7" radius="1" target="1" min="-30" max="-80">
 			<attribute key="shootEffect" value="snowball"/>
 		</attack>
@@ -57,7 +57,7 @@
 	<loot>
 		<item id="2148" countmax="15" chance="48000"/><!-- gold coin -->
 		<item id="2671" countmax="3" chance="6300"/><!-- ham -->
-		<item id="3965" chance="16000"/><!-- hunting spear -->
+		<item id="3965" chance="8650"/><!-- hunting spear -->
 		<item id="2686" countmax="2" chance="8000"/><!-- corncob -->
 		<item id="2464" chance="8100"/><!-- chain armor -->
 		<item id="2401" chance="5500"/><!-- staff -->

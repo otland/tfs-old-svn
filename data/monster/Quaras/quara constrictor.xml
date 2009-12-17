@@ -18,7 +18,7 @@
 		<flag runonhealth="0"/>
 	</flags>
 	<attacks>
-		<attack name="melee" interval="2000" skill="47" attack="45"/>
+		<attack name="melee" interval="2000" skill="50" attack="50"/>
 		<attack name="melee" interval="1000" chance="10" range="7" radius="3" target="0" min="-95" max="-155">
 			<attribute key="areaEffect" value="blackspark"/>
 		</attack>

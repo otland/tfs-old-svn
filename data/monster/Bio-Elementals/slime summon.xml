@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <monster name="Slime" nameDescription="a slime" race="venom" experience="0" speed="120" manacost="0">
 	<health now="150" max="150"/>
 	<look type="19" corpse="1496"/>
@@ -18,7 +18,7 @@
 		<flag runonhealth="0"/>
 	</flags>
 	<attacks>
-		<attack name="melee" interval="2000" skill="22" attack="42" poison="90"/>
+		<attack name="melee" interval="2000" skill="45" attack="40"/>
 	</attacks>
 	<defenses armor="3" defense="10"/>
 	<elements>

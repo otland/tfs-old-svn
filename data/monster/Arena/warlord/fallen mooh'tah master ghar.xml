@@ -10,7 +10,7 @@
 		<flag staticattack="78"/>
 	</flags>
 	<attacks>
-		<attack name="melee" interval="2000" min="-200" max="-460"/>
+		<attack name="melee" interval="2000" skill="60" attack="150" poison="18"/>
 		<attack name="fire" interval="6000" chance="30" min="-80" max="-300" length="8" spread="3">
 			<attribute key="areaEffect" value="firearea"/>
 		</attack>

@@ -18,7 +18,7 @@
 		<flag runonhealth="0"/>
 	</flags>
 	<attacks>
-		<attack name="melee" interval="2000" min="-0" max="-35"/>
+		<attack name="melee" interval="2000" skill="25" attack="20"/>
 		<attack name="lifedrain" interval="1000" chance="35" range="7" min="-20" max="-60">
 			<attribute key="shootEffect" value="energy"/>
 			<attribute key="areaEffect" value="poff"/>
