@@ -21,12 +21,14 @@
 #include <iomanip>
 
 #define CRYPTOPP_ENABLE_NAMESPACE_WEAK 1
+#define CRYPTOPP_DEFAULT_NO_DLL
 
 #include <cryptopp/sha.h>
 #include <cryptopp/md5.h>
+#include <cryptopp/adler32.h>
+
 #include <cryptopp/hex.h>
 #include <cryptopp/cryptlib.h>
-#include <cryptopp/adler32.h>
 
 #include "vocation.h"
 #include "configmanager.h"
@@ -1560,13 +1562,13 @@ uint32_t adlerChecksum(uint8_t* data, size_t length)
 	// Do the calculation now
 	adler.CalculateDigest(digest, (const byte*)data, length);
 	// return uint32_t cast type
-	return *(uint32_t*)(digest);
+	return (uint32_t)(((uint16_t)digest[0] << 8 | digest[1]) << 16) | ((uint16_t)digest[2] << 8 | digest[3]);
 }
 
 std::string getFilePath(FileType_t filetype, std::string filename)
 {
 	#ifdef __FILESYSTEM_HIERARCHY_STANDARD__
-	std::string path = "/usr/share/tfs/";
+	std::string path = "/var/lib/tfs/";
 	#endif
 	std::string path = g_config.getString(ConfigManager::DATA_DIRECTORY);
 	switch(filetype)
@@ -1589,7 +1591,7 @@ std::string getFilePath(FileType_t filetype, std::string filename)
 			#ifndef __FILESYSTEM_HIERARCHY_STANDARD__
 			path = "mods/" + filename;
 			#else
-			path = "/etc/tfs/mods/" + filename;
+			path = "/usr/share/tfs/" + filename;
 			#endif
 			break;
 		}

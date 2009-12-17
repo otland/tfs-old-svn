@@ -210,7 +210,7 @@ bool Quests::parseQuestNode(xmlNodePtr p, bool checkDuplicate)
 			if(missionState.empty())
 			{
 				// parse sub-states only if main is not set
-				for(xmlNodePtr stateNode = missionNode->children; stateNode; missionNode = missionNode->next)
+				for(xmlNodePtr stateNode = missionNode->children; stateNode; stateNode = stateNode->next)
 				{
 					if(xmlStrcmp(stateNode->name, (const xmlChar*)"missionstate"))
 						continue;
