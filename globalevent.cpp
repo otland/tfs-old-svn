@@ -156,7 +156,7 @@ GlobalEventMap GlobalEvents::getEventMap(GlobalEvent_t type)
 
 		case GLOBALEVENT_STARTUP:
 		case GLOBALEVENT_SHUTDOWN:
-		case GLOBALEVENT_GLOBALSAVE
+		case GLOBALEVENT_GLOBALSAVE:
 		case GLOBALEVENT_RECORD:
 		{
 			GlobalEventMap retMap;

@@ -6124,7 +6124,7 @@ void Game::globalSave()
 	//clear temporial and expired bans
 	IOBan::getInstance()->clearTemporials();
 	//remove premium days globally if configured to
-	if(g_config.getBool(ConfigManager::INIT_UPDATE_PREMIUM))
+	if(g_config.getBool(ConfigManager::INIT_PREMIUM_UPDATE))
 		IOLoginData::getInstance()->updatePremiumDays();
 
 	//reload everything
