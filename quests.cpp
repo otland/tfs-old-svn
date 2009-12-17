@@ -41,7 +41,14 @@ std::string Mission::getDescription(Player* player)
 {
 	std::string value;
 	if(!player->getStorage(storageId, value))
-		return "Couldn't retrieve player storage, please report to a gamemaster.";
+		return "Couldn't retrieve a valid player storage, please report to a gamemaster.";
+
+	if(state.size())
+	{
+		std::string ret = state;
+		replaceString(ret, "|STATE|", value);
+		return ret;
+	}
 
 	if(atoi(value.c_str()) >= endValue)
 		return states.rbegin()->second;
@@ -52,13 +59,12 @@ std::string Mission::getDescription(Player* player)
 			continue;
 
 		std::string ret = states[i - startValue];
-		if(ret.find("{STORAGE}") != std::string::npos)
-			replaceString(ret, "{STORAGE}", value);
-
+		replaceString(ret, "|STATE|", value);
 		return ret;
+
 	}
 
-	return "Couldn't retrieve mission description, please report to a gamemaster.";
+	return "Couldn't retrieve any mission description, please report to a gamemaster.";
 }
 
 Quest::~Quest()
@@ -176,18 +182,17 @@ bool Quests::parseQuestNode(xmlNodePtr p, bool checkDuplicate)
 	if(!quest)
 		return false;
 
-	xmlNodePtr missionNode = p->children;
-	while(missionNode)
+	for(xmlNodePtr missionNode = p->children; missionNode; missionNode = missionNode->next)
 	{
 		if(xmlStrcmp(missionNode->name, (const xmlChar*)"mission"))
-		{
-			missionNode = missionNode->next;
 			continue;
-		}
 
-		std::string missionName;
+		std::string missionName, missionState;
 		if(readXMLString(missionNode, "name", strValue))
 			missionName = strValue;
+
+		if(readXMLString(missionNode, "state", strValue) || readXMLString(missionNode, "description", strValue))
+			missionState = strValue;
 
 		uint32_t storageId = 0;
 		if(readXMLInteger(missionNode, "storageid", intValue) || readXMLInteger(p, "storageId", intValue))
@@ -200,39 +205,33 @@ bool Quests::parseQuestNode(xmlNodePtr p, bool checkDuplicate)
 		if(readXMLInteger(missionNode, "endvalue", intValue) || readXMLInteger(p, "endValue", intValue))
 			endValue = intValue;
 
-		if(Mission* mission = new Mission(missionName, storageId, startValue, endValue))
+		if(Mission* mission = new Mission(missionName, missionState, storageId, startValue, endValue))
 		{
-			xmlNodePtr stateNode = missionNode->children;
-			while(stateNode)
+			if(state.size()) // don't parse sub-states if main state is set
+				continue;
+
+			for(xmlNodePtr stateNode = missionNode->children; stateNode; missionNode = missionNode->next)
 			{
 				if(xmlStrcmp(stateNode->name, (const xmlChar*)"missionstate"))
-				{
-					stateNode = stateNode->next;
 					continue;
-				}
 
 				uint32_t missionId;
-				if(readXMLInteger(stateNode, "id", intValue))
-					missionId = intValue;
-				else
+				if(!readXMLInteger(stateNode, "id", intValue))
 				{
 					std::cout << "[Warning - Quests::parseQuestNode] Missing missionId for mission state" << std::endl;
-					stateNode = stateNode->next;
 					continue;
 				}
 
+				missionId = intValue;
 				std::string description;
 				if(readXMLString(stateNode, "description", strValue))
 					description = strValue;
 
 				mission->newState(missionId, description);
-				stateNode = stateNode->next;
 			}
 
 			quest->newMission(mission);
 		}
-
-		missionNode = missionNode->next;
 	}
 
 	if(checkDuplicate)

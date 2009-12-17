@@ -26,9 +26,10 @@ typedef std::map<uint32_t, std::string> StateMap;
 class Mission
 {
 	public:
-		Mission(std::string _name, uint32_t _storageId, int32_t _startValue, int32_t _endValue)
+		Mission(std::string _name, std::string _state, uint32_t _storageId, int32_t _startValue, int32_t _endValue)
 		{
 			name = _name;
+			state = _state;
 			endValue = _endValue;
 			startValue = _startValue;
 			storageId = _storageId;
@@ -44,7 +45,7 @@ class Mission
 		std::string getDescription(Player* player);
 
 	private:
-		std::string name;
+		std::string name, state;
 		StateMap states;
 
 		int32_t startValue, endValue;
