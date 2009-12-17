@@ -2101,7 +2101,7 @@ int32_t LuaScriptInterface::luaCanPlayerLearnInstantSpell(lua_State* L)
 			return 1;
 		}
 
-		if(player->getMagicLevel() < spell->getMagicLevel())
+		if((int32_t)player->getMagicLevel() < spell->getMagicLevel())
 		{
 			lua_pushnumber(L, LUA_FALSE);
 			return 1;

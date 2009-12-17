@@ -2343,9 +2343,8 @@ const NpcResponse* Npc::getResponse(const ResponseList& list, const Player* play
 					std::cout << "[WARNING]: Non-existant spell in cannotlearnspell tag" << std::endl;
 				else
 				{
-					if(player->getLevel() >= spell->getLevel() &&
-					player->getMagicLevel() >= spell->getMagicLevel() &&
-					(spell->isPremium()? player->isPremium() : true))
+					if(player->getLevel() >= spell->getLevel() && (int32_t)player->getMagicLevel()
+						>= spell->getMagicLevel() && (!spell->isPremium() || player->isPremium()))
 						continue;
 				}
 			}
