@@ -234,7 +234,7 @@
 	blessings = true
 	blessingOnlyPremium = true
 	blessingReductionBase = 30
-	blessingReductionDecreament = 5
+	blessingReductionDecrement = 5
 	eachBlessReduction = 8
 
 	-- Rates
