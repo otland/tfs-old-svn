@@ -35,10 +35,7 @@ PrivateChatChannel::PrivateChatChannel(uint16_t id, std::string name, uint16_t f
 
 bool PrivateChatChannel::isInvited(const Player* player)
 {
-	if(!player)
-		return false;
-
-	if(player->getGUID() == getOwner())
+	if(player->getGUID() == m_owner)
 		return true;
 
 	return std::find(m_invites.begin(), m_invites.end(), player->getGUID()) != m_invites.end();
@@ -82,19 +79,18 @@ void PrivateChatChannel::excludePlayer(Player* player, Player* excludePlayer)
 	if(player == excludePlayer || !removeInvited(excludePlayer))
 		return;
 
-	removeUser(excludePlayer);
-
 	std::string msg = excludePlayer->getName();
 	msg += " has been excluded.";
 	player->sendTextMessage(MSG_INFO_DESCR, msg.c_str());
 
+	removeUser(excludePlayer);
 	excludePlayer->sendClosePrivate(getId());
 }
 
 void PrivateChatChannel::closeChannel()
 {
 	for(UsersMap::iterator it = m_users.begin(); it != m_users.end(); ++it)
-		it->second->sendClosePrivate(getId());
+		it->second->sendClosePrivate(m_id);
 }
 
 ChatChannel::ChatChannel(uint16_t id, const std::string& name, uint16_t flags, uint32_t access/* = 0*/,
@@ -317,13 +313,10 @@ bool Chat::parseChannelNode(xmlNodePtr p)
 	VocationMap vocMap;
 
 	std::string error;
-	xmlNodePtr tmpNode = p->children;
-	while(tmpNode)
+	for(xmlNodePtr tmpNode = p->children; tmpNode; tmpNode = tmpNode->next)
 	{
 		if(!parseVocationNode(tmpNode, vocMap, vocStringVec, error))
 			std::clog << "[Warning - Chat::loadFromXml] " << error << std::endl;
-
-		tmpNode = tmpNode->next;
 	}
 
 	VocationMap* vocationMap = NULL;
@@ -361,7 +354,7 @@ bool Chat::parseChannelNode(xmlNodePtr p)
 
 ChatChannel* Chat::createChannel(Player* player, uint16_t channelId)
 {
-	if(getChannel(player, channelId))
+	if(!player || player->isRemoved() || getChannel(player, channelId))
 		return NULL;
 
 	switch(channelId)
@@ -476,7 +469,7 @@ bool Chat::removeUserFromChannel(Player* player, uint16_t channelId)
 	if(!channel || !channel->removeUser(player))
 		return false;
 
-	if(player && channel->getOwner() == player->getGUID())
+	if(channel->getOwner() == player->getGUID())
 		deleteChannel(player, channelId);
 
 	return true;
@@ -484,6 +477,9 @@ bool Chat::removeUserFromChannel(Player* player, uint16_t channelId)
 
 void Chat::removeUserFromAllChannels(Player* player)
 {
+	if(!player)
+		return;
+
 	for(NormalChannelMap::iterator it = m_normalChannels.begin(); it != m_normalChannels.end(); ++it)
 		it->second->removeUser(player);
 
@@ -503,8 +499,11 @@ void Chat::removeUserFromAllChannels(Player* player)
 
 bool Chat::talkToChannel(Player* player, SpeakClasses type, const std::string& text, uint16_t channelId)
 {
+	if(text.empty())
+		return false;
+
 	ChatChannel* channel = getChannel(player, channelId);
-	if(!channel || !player || !text.length())
+	if(!channel)
 		return false;
 
 	if(!player->hasFlag(PlayerFlag_CannotBeMuted))
@@ -1082,6 +1081,9 @@ std::string Chat::getChannelName(Player* player, uint16_t channelId)
 ChannelList Chat::getChannelList(Player* player)
 {
 	ChannelList list;
+	if(!player || player->isRemoved()
+		return list;
+
 	ChatChannel* channel = NULL;
 	if(player->getParty() && ((channel = getChannel(player, CHANNEL_PARTY)) || (channel = createChannel(player, CHANNEL_PARTY))))
 		list.push_back(channel);
@@ -1121,6 +1123,9 @@ ChatChannel* Chat::getChannel(Player* player, uint16_t channelId)
 	#ifdef __DEBUG_CHAT__
 	std::clog << "Chat::getChannel - getChannel id " << channelId << std::endl;
 	#endif
+	if(!player || player->isRemoved())
+		return false;
+
 	if(channelId == CHANNEL_GUILD)
 	{
 		GuildChannelMap::iterator git = m_guildChannels.find(player->getGuildId());
@@ -1186,6 +1191,9 @@ ChatChannel* Chat::getChannelById(uint16_t channelId)
 
 PrivateChatChannel* Chat::getPrivateChannel(Player* player)
 {
+	if(!player || player->isRemoved())
+		return false;
+
 	PrivateChatChannel* channel = NULL;
 	for(PrivateChannelMap::iterator it = m_privateChannels.begin(); it != m_privateChannels.end(); ++it)
 	{

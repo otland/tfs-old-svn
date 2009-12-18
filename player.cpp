@@ -764,12 +764,12 @@ void Player::dropLoot(Container* corpse)
 		while(bless > 0 && loss > 0)
 		{
 			loss -= start;
-			start -= g_config.getNumber(ConfigManager::BLESS_REDUCTION_DECREAMENT);
+			start -= g_config.getNumber(ConfigManager::BLESS_REDUCTION_DECREMENT);
 			bless--;
 		}
 	}
 
-	uint32_t itemLoss = (uint32_t)std::floor((double)((loss + 5) * lossPercent[LOSS_ITEMS]) / 1000.);
+	uint32_t itemLoss = (uint32_t)std::floor((5. + loss) * lossPercent[LOSS_ITEMS] / 1000.);
 	for(int32_t i = SLOT_FIRST; i < SLOT_LAST; ++i)
 	{
 		Item* item = inventory[i];
@@ -777,7 +777,7 @@ void Player::dropLoot(Container* corpse)
 			continue;
 
 		uint32_t rand = random_range(1, 100);
-		if(skull > SKULL_WHITE || (item->getContainer() && rand <= loss) || (!item->getContainer() && rand <= itemLoss))
+		if(skull > SKULL_WHITE || (item->getContainer() && rand < loss) || (!item->getContainer() && rand < itemLoss))
 		{
 			g_game.internalMoveItem(NULL, this, corpse, INDEX_WHEREEVER, item, item->getItemCount(), 0);
 			sendRemoveInventoryItem((slots_t)i, inventory[(slots_t)i]);
