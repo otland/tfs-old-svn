@@ -179,7 +179,7 @@ AC_CHECK_LIB(boost_filesystem-gcc-mt, main, , [
 AC_CHECK_HEADERS([boost/asio.hpp], ,[AC_MSG_ERROR("boost::asio header not found.")])
 
 # check for Crypto++
-AC_CHECK_HEADERS([cryptopp/sha.h cryptopp/md5.h cryptopp/hex.h cryptopp/cryptlib.h], , [AC_MSG_ERROR("Required Crypto++ headers not found.")])
+AC_CHECK_HEADERS([cryptopp/sha.h cryptopp/md5.h cryptopp/adler32.h cryptopp/hex.h cryptopp/cryptlib.h], , [AC_MSG_ERROR("Required Crypto++ headers not found.")])
 AC_CHECK_LIB(cryptopp, main, , [AC_MSG_ERROR("Linking against Crypto++ library failed")])
 
 # check for Lua
