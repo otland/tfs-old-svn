@@ -1129,7 +1129,7 @@ if(Modules == nil) then
 	function ShopModule:callbackOnBuy(cid, itemid, subType, amount, ignoreCap, inBackpacks)
 		local shopItem = nil
 		for _, item in ipairs(self.npcHandler.shopItems) do
-			if(item.id ~= itemid) then
+			if(item.id == itemid) then
 				shopItem = item
 				break
 			end
@@ -1206,7 +1206,7 @@ if(Modules == nil) then
 	function ShopModule:callbackOnSell(cid, itemid, subType, amount, ignoreCap, inBackpacks)
 		local shopItem = nil
 		for _, item in ipairs(self.npcHandler.shopItems) do
-			if(item.id ~= itemid) then
+			if(item.id == itemid) then
 				shopItem = item
 				break
 			end
