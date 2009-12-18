@@ -1081,7 +1081,7 @@ std::string Chat::getChannelName(Player* player, uint16_t channelId)
 ChannelList Chat::getChannelList(Player* player)
 {
 	ChannelList list;
-	if(!player || player->isRemoved()
+	if(!player || player->isRemoved())
 		return list;
 
 	ChatChannel* channel = NULL;
