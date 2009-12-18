@@ -229,12 +229,8 @@ bool Chat::loadFromXml()
 		return false;
 	}
 
-	p = root->children;
-	while(p)
-	{
+	for(p = root->children; p; p = p->next)
 		parseChannelNode(p);
-		p = p->next;
-	}
 
 	xmlFreeDoc(doc);
 	return true;
@@ -1192,7 +1188,7 @@ ChatChannel* Chat::getChannelById(uint16_t channelId)
 PrivateChatChannel* Chat::getPrivateChannel(Player* player)
 {
 	if(!player || player->isRemoved())
-		return false;
+		return NULL;
 
 	PrivateChatChannel* channel = NULL;
 	for(PrivateChannelMap::iterator it = m_privateChannels.begin(); it != m_privateChannels.end(); ++it)
@@ -1201,7 +1197,7 @@ PrivateChatChannel* Chat::getPrivateChannel(Player* player)
 			return channel;
 	}
 
-	return channel;
+	return NULL;
 }
 
 ChannelList Chat::getPublicChannels() const

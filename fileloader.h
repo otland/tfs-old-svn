@@ -214,6 +214,7 @@ class PropStream
 
 		inline bool getFloat(float& ret)
 		{
+			// ugly hack, but it makes reading not depending on arch
 			if(size() < (int32_t)sizeof(uint32_t))
 				return false;
 

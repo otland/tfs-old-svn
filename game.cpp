@@ -1993,6 +1993,9 @@ Item* Game::transformItem(Item* item, uint16_t newId, int32_t newCount /*= -1*/)
 		else
 			newItem = Item::CreateItem(newId, newCount);
 
+		if(!newItem)
+			return NULL;
+
 		newItem->copyAttributes(item);
 		if(internalAddItem(NULL, cylinder, newItem, INDEX_WHEREEVER, FLAG_NOLIMIT) == RET_NOERROR)
 			return newItem;
