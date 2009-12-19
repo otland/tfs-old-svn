@@ -948,13 +948,11 @@ bool ScriptEvent::configureRaidEvent(xmlNodePtr eventNode)
 			return false;
 		}
 	}
-	else if(!parseXMLContentString(eventNode->children, strValue) && !loadBuffer(strValue))
-	{
-		std::clog << "[Error - ScriptEvent::configureRaidEvent] Cannot load raid script buffer." << std::endl;
-		return false;
-	}
+	else if(parseXMLContentString(eventNode->children, strValue) && loadBuffer(strValue))
+		return true;
 
-	return true;
+	std::clog << "[Error - ScriptEvent::configureRaidEvent] Cannot load raid script buffer." << std::endl;
+	return false;
 }
 
 bool ScriptEvent::executeEvent() const
