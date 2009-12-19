@@ -335,8 +335,8 @@ bool ExceptionHandler::LoadMap()
 	FILE* input = fopen("theforgottenserver.map", "r");
 	if(!input)
 	{
-		MessageBoxA(NULL, "Failed loading symbols, forgottenserver.map file not found.", "Error", MB_OK | MB_ICONERROR);
-		std::clog << "Failed loading symbols, forgottenserver.map file not found. " << std::endl;
+		MessageBoxA(NULL, "Failed loading symbols, theforgottenserver.map file not found.", "Error", MB_OK | MB_ICONERROR);
+		std::clog << "Failed loading symbols, theforgottenserver.map file not found. " << std::endl;
 		exit(1);
 		return false;
 	}
