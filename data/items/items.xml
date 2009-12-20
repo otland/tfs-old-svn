@@ -16619,6 +16619,7 @@
 	<item fromid="10490" toid="10491" article="a" name="limestone window">
 		<attribute key="type" value="door" />
 	</item>
+	<item fromid="10492" toid="10498" name="pavement" />
 	<item id="10502" article="a" name="engraved wedding ring">
 		<attribute key="weight" value="40" />
 		<attribute key="slotType" value="ring" />
@@ -16890,7 +16891,6 @@
 		<attribute key="description" value="The special carrying device Spetulus gave you now contains a mirror crystal." />
 		<attribute key="weight" value="3500" />
 	</item>
-	<!-- 10718 & 10719 - Tibia Friends amulet -->
 	<item id="10774" article="a" name="closed door">
 		<attribute key="type" value="door" />
 		<attribute key="blockprojectile" value="1" />
