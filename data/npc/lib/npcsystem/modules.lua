@@ -1000,13 +1000,15 @@ if(Modules == nil) then
 				id = itemid,
 				buy = cost,
 				sell = -1,
-				subType = subType or 1
+				subType = subType or 1,
 				name = realName or getItemNameById(itemid)
 			}
 
 			for _, shopItem in ipairs(self.npcHandler.shopItems) do
 				if(shopItem.id == item.id and shopItem.subType == item.subType) then
+					item.sell = shopItem.sell
 					shopItem = item
+
 					item = nil
 					break
 				end
@@ -1079,15 +1081,17 @@ if(Modules == nil) then
 		if(SHOPMODULE_MODE ~= SHOPMODULE_MODE_TALK) then
 			local item = {
 				id = itemid,
-				buyPrice = -1,
-				sellPrice = cost,
-				subType = 1
-				realName = realName or getItemNameById(itemid)
+				buy = -1,
+				sell = cost,
+				subType = 1,
+				name = realName or getItemNameById(itemid)
 			}
 
 			for _, shopItem in ipairs(self.npcHandler.shopItems) do
 				if(shopItem.id == item.id and shopItem.subType == item.subType) then
+					item.buy = shopItem.buy
 					shopItem = item
+
 					item = nil
 					break
 				end
@@ -1187,7 +1191,7 @@ if(Modules == nil) then
 			end
 
 			return false
-		else
+		end
 
 		local msg = self.npcHandler:getMessage(MESSAGE_BOUGHT)
 		doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, self.npcHandler:parseMessage(msg, parseInfo))
