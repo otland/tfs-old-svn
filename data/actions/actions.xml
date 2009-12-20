@@ -252,9 +252,9 @@
 	<action itemid="10091" event="script" value="other/doors.lua"/>
 	<action fromid="10268" toid="10285" event="script" value="other/doors.lua"/>
 	<action fromid="10468" toid="10486" event="script" value="other/doors.lua"/>
-	<action fromid="10777" toid="10779" event="script" value="other/doors.lua"/>
-	<action fromid="10782" toid="10788" event="script" value="other/doors.lua"/>
-	<action fromid="10791" toid="10794" event="script" value="other/doors.lua"/>
+	<action fromid="10774" toid="10776" event="script" value="other/doors.lua"/>
+	<action fromid="10779" toid="10785" event="script" value="other/doors.lua"/>
+	<action fromid="10788" toid="10791" event="script" value="other/doors.lua"/>
 
 	<!-- Watch -->
 	<action itemid="2036" event="script" value="other/watch.lua"/>
