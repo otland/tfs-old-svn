@@ -1557,30 +1557,7 @@
 	<item id="2024" article="a" name="broken brown glass">
 		<attribute key="weight" value="100" />
 	</item>
-	<item id="2025" article="a" name="pool">
-		<attribute key="decayTo" value="2026" />
-		<attribute key="duration" value="45" />
-	</item>
-	<item id="2026" article="a" name="pool">
-		<attribute key="decayTo" value="2027" />
-		<attribute key="duration" value="45" />
-	</item>
-	<item id="2027" article="a" name="pool">
-		<attribute key="decayTo" value="0" />
-		<attribute key="duration" value="60" />
-	</item>
-	<item id="2028" article="a" name="pool">
-		<attribute key="decayTo" value="2029" />
-		<attribute key="duration" value="45" />
-	</item>
-	<item id="2029" article="a" name="pool">
-		<attribute key="decayTo" value="2030" />
-		<attribute key="duration" value="45" />
-	</item>
-	<item id="2030" article="a" name="pool">
-		<attribute key="decayTo" value="0" />
-		<attribute key="duration" value="60" />
-	</item>
+	<item fromid="2025" toid="2030" article="a" name="pool" />
 	<item id="2031" article="a" name="waterskin">
 		<attribute key="weight" value="800" />
 	</item>
@@ -16998,6 +16975,8 @@
 	<item id="10791" article="a" name="open door">
 		<attribute key="type" value="door" />
 	</item>
+	<item fromid="10970" toid="10973" name="wall lamp" />
+	<item fromid="10997" toid="11000" name="street lamp" />
 	<item fromid="11059" toid="11060" name="glowing switch">
 		<attribute key="walkStack" value="0" />
 	</item>

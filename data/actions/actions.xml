@@ -229,6 +229,14 @@
 	<action itemid="9974" event="function" value="decreaseItemId"/>
 	<action itemid="10044" event="function" value="increaseItemId"/>
 	<action itemid="10045" event="function" value="decreaseItemId"/>
+	<action itemid="10970" event="function" value="increaseItemId"/>
+	<action itemid="10971" event="function" value="decreaseItemId"/>
+	<action itemid="10972" event="function" value="increaseItemId"/>
+	<action itemid="10973" event="function" value="decreaseItemId"/>
+	<action itemid="10997" event="function" value="increaseItemId"/>
+	<action itemid="10998" event="function" value="decreaseItemId"/>
+	<action itemid="10999" event="function" value="increaseItemId"/>
+	<action itemid="11000" event="function" value="decreaseItemId"/>
 
 	<!-- Spellbooks -->
 	<action itemid="2175" event="script" value="other/spellbook.lua"/>
