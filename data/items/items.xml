@@ -3665,11 +3665,13 @@
 		<attribute key="weight" value="4200" />
 		<attribute key="armor" value="6" />
 		<attribute key="slotType" value="head" />
+		<attribute key="absorbPercentPhysical" value="2" />
 	</item>
 	<item id="2503" article="a" name="dwarven armor">
 		<attribute key="weight" value="13000" />
 		<attribute key="armor" value="10" />
 		<attribute key="slotType" value="body" />
+		<attribute key="absorbPercentPhysical" value="5" />
 	</item>
 	<item id="2504" name="dwarven legs">
 		<attribute key="weight" value="4000" />
@@ -12335,6 +12337,7 @@
 		<attribute key="armor" value="2" />
 		<attribute key="slotType" value="feet" />
 		<attribute key="description" value="These boots keep your toes warm in even the iciest regions but they feel kind of heavy." />
+		<attribute key="speed" value="-12" />
 	</item>
 	<item id="7458" article="a" name="fur cap">
 		<attribute key="weight" value="1800" />
@@ -12345,6 +12348,7 @@
 	<item id="7459" name="earmuffs">
 		<attribute key="weight" value="500" />
 		<attribute key="slotType" value="head" />
+		<attribute key="absorbPercentIce" value="2" />
 	</item>
 	<item id="7460" article="a" name="norse shield">
 		<attribute key="weight" value="4100" />
