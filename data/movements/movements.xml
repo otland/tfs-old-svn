@@ -23,8 +23,8 @@
 	<movevent type="StepOut" itemid="3217" event="script" value="tiles.lua"/>
 	<movevent type="StepIn" itemid="3202" event="script" value="tiles.lua"/>
 	<movevent type="StepOut" itemid="3215" event="script" value="tiles.lua"/>
-	<movevent type="StepIn" itemid="10551" event="script" value="tiles.lua"/>
-	<movevent type="StepOut" itemid="10552" event="script" value="tiles.lua"/>
+	<movevent type="StepIn" itemid="11059" event="script" value="tiles.lua"/>
+	<movevent type="StepOut" itemid="11060" event="script" value="tiles.lua"/>
 	<!-- <movevent type="StepIn" itemid="8714" event="script" value="tiles.lua"/> -->
 
 	<!-- Traps -->
@@ -254,10 +254,10 @@
 	<movevent type="AddItem" itemid="7360" event="function" value="onAddField"/>
 	<movevent type="StepIn" itemid="7465-7473" event="function" value="onStepInField"/>
 	<movevent type="AddItem" itemid="7465-7473" event="function" value="onAddField"/>
-	<movevent type="StepIn" itemid="11094" event="function" value="onStepInField"/>
-	<movevent type="AddItem" itemid="11094" event="function" value="onAddField"/>
 	<movevent type="StepIn" itemid="11095" event="function" value="onStepInField"/>
 	<movevent type="AddItem" itemid="11095" event="function" value="onAddField"/>
+	<movevent type="StepIn" itemid="11096" event="function" value="onStepInField"/>
+	<movevent type="AddItem" itemid="11096" event="function" value="onAddField"/>
 
 	<!-- Boots -->
 	<movevent type="Equip" itemid="2195" slot="feet" event="function" value="onEquipItem"/>
