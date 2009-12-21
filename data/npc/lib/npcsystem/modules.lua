@@ -650,11 +650,16 @@ if(Modules == nil) then
 			return false
 		end
 
-		local items = nil
+		local i, items, size = 0, nil, table.maxn(parameters.items)
 		for k, v in pairs(parameters.items) do
 			if(v[1] ~= "storageset") then
+				i = i + 1
 				if(items ~= nil) then
-					items = items .. ", "
+					if(i == size) then
+						items = items .. " and "
+					else
+						items = items .. ", "
+					end
 				else
 					items = ""
 				end
@@ -769,11 +774,15 @@ if(Modules == nil) then
 			return false
 		end
 
-		local msg = nil
-		if(table.maxn(module.outfits) > 0) then
-			for _, outfit in ipairs(module.outfits) do
+		local msg, size = nil, table.maxn(module.outfits)
+		if(size > 0) then
+			for i, outfit in ipairs(module.outfits) do
 				if(msg ~= nil) then
-					msg = msg .. ", "
+					if(i == size) then
+						msg = msg .. " and "
+					else
+						msg = msg .. ", "
+					end
 				else
 					msg = "I can dress you into "
 				end
