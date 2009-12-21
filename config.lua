@@ -180,6 +180,8 @@
 	confirmOutdatedVersion = false
 
 	-- Spells
+	formulaLevel = 5.0
+	formulaMagic = 1.0
 	bufferMutedOnSpellFailure = false
 	spellNameInsteadOfWords = false
 	emoteSpells = false
