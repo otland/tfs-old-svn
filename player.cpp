@@ -1328,14 +1328,18 @@ void Player::onCreatureAppear(const Creature* creature)
 		if(ticks > 0)
 		{
 			ticks = (int64_t)((double)(ticks * 1000) / g_config.getDouble(ConfigManager::RATE_STAMINA_GAIN));
-			int64_t premium = g_config.getNumber(ConfigManager::STAMINA_LIMIT_TOP) * STAMINA_MULTIPLIER,
-				period = stamina + ticks;
-			if(period > premium)
-				period -= premium;
-			else
-				period = 0;
+			int64_t premium = g_config.getNumber(ConfigManager::STAMINA_LIMIT_TOP) * STAMINA_MULTIPLIER, period = ticks;
+			if((int64_t)stamina <= premium)
+			{
+				period += stamina;
+				if(period > premium)
+					period -= premium;
+				else
+					period = 0;
 
-			useStamina(ticks - period);
+				useStamina(ticks - period);
+			}
+
 			if(period > 0)
 			{
 				ticks = (int64_t)((g_config.getDouble(ConfigManager::RATE_STAMINA_GAIN) * period)
