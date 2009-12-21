@@ -486,7 +486,6 @@ bool isValidName(std::string text, bool forceUppercaseOnFirstLetter/* = true*/)
 		if(text[size] != 32)
 		{
 			lenBeforeSpace++;
-
 			if(text[size] != 39)
 				lenBeforeQuote++;
 			else

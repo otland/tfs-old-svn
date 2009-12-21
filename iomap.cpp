@@ -15,9 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////
 #include "otpch.h"
-
 #include "iomap.h"
-#include "fileloader.h"
 
 #include "map.h"
 #include "town.h"
@@ -29,7 +27,9 @@
 #include "teleport.h"
 #include "beds.h"
 
+#include "fileloader.h"
 #include "game.h"
+
 extern Game g_game;
 
 typedef uint8_t attribute_t;
@@ -122,7 +122,7 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 		return false;
 	}
 
-	if(headerVersion > 2)
+	if(headerVersion > 3)
 	{
 		setLastErrorString("Unknown OTBM version detected.");
 		return false;
