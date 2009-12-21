@@ -17,12 +17,12 @@ if(Modules == nil) then
 	SHOPMODULE_MODE = SHOPMODULE_MODE_BOTH
 
 	-- Constants used for outfit giving mode
-	OUTFITMODULE_FUNCTION_OLD = doPlayerAddOutfit -- Gives outfit through look type
-	OUTFITMODULE_FUNCTION_NEW = doPlayerAddOutfitId -- Gives outfit through outfit id
+	OUTFITMODULE_FUNCTION_OLD = { doPlayerAddOutfit, canPlayerWearOutfit } -- lookType usage
+	OUTFITMODULE_FUNCTION_NEW = { doPlayerAddOutfitId, canPlayerWearOutfitId } -- OutfitId usage
 
 	-- Used in outfit module
 	OUTFITMODULE_FUNCTION = OUTFITMODULE_FUNCTION_NEW
-	if(OUTFITMODULE_FUNCTION == nil) then
+	if(OUTFITMODULE_FUNCTION[1] == nil or OUTFITMODULE_FUNCTION[2] == nil) then
 		OUTFITMODULE_FUNCTION = OUTFITMODULE_FUNCTION_OLD
 	end
 
@@ -504,7 +504,7 @@ if(Modules == nil) then
 	Modules.parseableModules['module_outfit'] = OutfitModule
 
 	function OutfitModule:new()
-		if(OUTFITMODULE_FUNCTION == nil) then
+		if(OUTFITMODULE_FUNCTION[1] == nil or OUTFITMODULE_FUNCTION[2] == nil) then
 			return nil
 		end
 
@@ -680,8 +680,8 @@ if(Modules == nil) then
 
 		local parent = node:getParent():getParameters()
 		if(isPlayerPremiumCallback(cid) or not parent.premium) then
-			if(not canPlayerWearOutfitId(cid, parent.outfit, parent.addon)) then
-				if(parent.addon == 0 or canPlayerWearOutfitId(cid, parent.outfit)) then
+			if(not OUTFITMODULE_FUNCTION[2](cid, parent.outfit, parent.addon)) then
+				if(parent.addon == 0 or OUTFITMODULE_FUNCTION[2](cid, parent.outfit)) then
 					if(parent.gender == nil or parent.gender == getPlayerSex(cid)) then
 						local found = true
 						for k, v in pairs(parent.items) do
@@ -729,7 +729,7 @@ if(Modules == nil) then
 							end
 
 							module.npcHandler:say('It was a pleasure to dress you.', cid)
-							OUTFITMODULE_FUNCTION(cid, parent.outfit, parent.addon)
+							OUTFITMODULE_FUNCTION[1](cid, parent.outfit, parent.addon)
 							doPlayerSetStorageValue(cid, parent.storageId, storage)
 						else
 							module.npcHandler:say('You don\'t have these items!', cid)
