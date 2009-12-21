@@ -165,7 +165,7 @@ void Player::setVocation(uint32_t vocId)
 
 bool Player::isPushable() const
 {
-	return !hasFlag(PlayerFlag_CannotBePushed) && Creature::isPushable();
+	return accountManager == MANAGER_NONE && !hasFlag(PlayerFlag_CannotBePushed) && Creature::isPushable();
 }
 
 std::string Player::getDescription(int32_t lookDistance) const
