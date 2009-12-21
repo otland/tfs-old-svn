@@ -261,12 +261,12 @@ ConditionDamage* Monsters::getDamageCondition(ConditionType_t conditionType,
 
 bool Monsters::deserializeSpell(xmlNodePtr node, spellBlock_t& sb, const std::string& description)
 {
-	sb.chance = 100;
-	sb.speed = 2000;
 	sb.range = sb.minCombatValue = sb.maxCombatValue = 0;
 	sb.combatSpell = sb.isMelee = false;
+	sb.chance = 100;
+	sb.speed = 2000;
 
-	std::string name = "", scriptName = "";
+	std::string name, scriptName;
 	bool isScripted = false;
 	if(readXMLString(node, "script", scriptName))
 		isScripted = true;
@@ -301,12 +301,11 @@ bool Monsters::deserializeSpell(xmlNodePtr node, spellBlock_t& sb, const std::st
 		sb.minCombatValue = intValue;
 
 	if(readXMLInteger(node, "max", intValue))
-	{
 		sb.maxCombatValue = intValue;
-		//normalize values
-		if(std::abs(sb.minCombatValue) > std::abs(sb.maxCombatValue))
-			std::swap(sb.minCombatValue, sb.maxCombatValue);
-	}
+
+	//normalize values
+	if(std::abs(sb.minCombatValue) > std::abs(sb.maxCombatValue))
+		std::swap(sb.minCombatValue, sb.maxCombatValue);
 
 	if((sb.spell = g_spells->getSpellByName(name)))
 		return true;
@@ -372,7 +371,7 @@ bool Monsters::deserializeSpell(xmlNodePtr node, spellBlock_t& sb, const std::st
 		}
 
 		std::string tmpName = asLowerCaseString(name);
-		if(tmpName == "melee")
+		if(tmpName == "melee" || tmpName == "distance")
 		{
 			int32_t attack = 0, skill = 0;
 			if(readXMLInteger(node, "attack", attack) && readXMLInteger(node, "skill", skill))
