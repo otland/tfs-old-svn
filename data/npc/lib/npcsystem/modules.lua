@@ -1013,11 +1013,13 @@ if(Modules == nil) then
 				name = realName or getItemNameById(itemid)
 			}
 
-			for _, shopItem in ipairs(self.npcHandler.shopItems) do
+			for i, shopItem in ipairs(self.npcHandler.shopItems) do
 				if(shopItem.id == item.id and shopItem.subType == item.subType) then
-					item.sell = shopItem.sell
-					shopItem = item
+					if(item.sell ~= shopItem.sell) then
+						item.sell = shopItem.sell
+					end
 
+					self.npcHandler.shopItems[i] = item
 					item = nil
 					break
 				end
@@ -1096,11 +1098,13 @@ if(Modules == nil) then
 				name = realName or getItemNameById(itemid)
 			}
 
-			for _, shopItem in ipairs(self.npcHandler.shopItems) do
+			for i, shopItem in ipairs(self.npcHandler.shopItems) do
 				if(shopItem.id == item.id and shopItem.subType == item.subType) then
-					item.buy = shopItem.buy
-					shopItem = item
+					if(item.buy ~= shopItem.buy) then
+						item.buy = shopItem.buy
+					end
 
+					self.npcHandler.shopItems[i] = item
 					item = nil
 					break
 				end
@@ -1142,7 +1146,7 @@ if(Modules == nil) then
 	function ShopModule:callbackOnBuy(cid, itemid, subType, amount, ignoreCap, inBackpacks)
 		local shopItem = nil
 		for _, item in ipairs(self.npcHandler.shopItems) do
-			if(item.id == itemid) then
+			if(item.id == itemid and item.subType == subType) then
 				shopItem = item
 				break
 			end
@@ -1219,7 +1223,7 @@ if(Modules == nil) then
 	function ShopModule:callbackOnSell(cid, itemid, subType, amount, ignoreCap, inBackpacks)
 		local shopItem = nil
 		for _, item in ipairs(self.npcHandler.shopItems) do
-			if(item.id == itemid) then
+			if(item.id == itemid and item.subType == subType) then
 				shopItem = item
 				break
 			end
@@ -1242,7 +1246,7 @@ if(Modules == nil) then
 			[TAG_ITEMNAME] = shopItem.name
 		}
 
-		if(subType < 1) then
+		if(subType < 1 or getItemInfo(itemid).stackable) then
 			subType = -1
 		end
 
