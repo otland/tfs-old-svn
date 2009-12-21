@@ -238,6 +238,8 @@ bool ConfigManager::load()
 	m_confNumber[BLESS_REDUCTION_DECREMENT] = getGlobalNumber("blessingReductionDecrement", 5);
 	m_confBool[ALLOW_CHANGEADDONS] = getGlobalBool("allowChangeAddons", true);
 	m_confNumber[BLESS_REDUCTION] = getGlobalNumber("eachBlessReduction", 8);
+	m_confDouble[FORMULA_LEVEL] = getGlobalDouble("formulaLevel", 5.0);
+	m_confDouble[FORMULA_MAGIC] = getGlobalDouble("formulaMagic", 1.0);
 	m_confString[PREFIX_CHANNEL_LOGS] = getGlobalString("prefixChannelLogs", "");
 	m_confBool[GHOST_INVISIBLE_EFFECT] = getGlobalBool("ghostModeInvisibleEffect", false);
 	m_confString[CORES_USED] = getGlobalString("coresUsed", "-1");
