@@ -10,14 +10,14 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 	if(isInArray(UP_FLOORS, item.itemid)) then
 		fromPosition.z = fromPosition.z - 1
 		fromPosition.y = fromPosition.y + 1
-		if(getThingFromPos(fromPosition, false).itemid == 0) then
+		if(doTileQueryAdd(cid, fromPosition, 4, false) ~= RETURNVALUE_NOERROR) then
 			fromPosition.y = fromPosition.y - 2
 		end
 	else
 		fromPosition.z = fromPosition.z + 1
 	end
 
-	if(getThingFromPos(fromPosition, false).itemid == 0) then
+	if(doTileQueryAdd(cid, fromPosition, 4, false) ~= RETURNVALUE_NOERROR) then
 		return false
 	end
 
