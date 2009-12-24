@@ -6,16 +6,19 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 		return false
 	end
 
+	fromPosition.stackpos = STACKPOS_GROUND
 	if(isInArray(UP_FLOORS, item.itemid)) then
 		fromPosition.z = fromPosition.z - 1
 		fromPosition.y = fromPosition.y + 1
-
-		fromPosition.stackpos = STACKPOS_GROUND
-		if(item.actionid == 100 or getThingFromPos(fromPosition, false).itemid == 0) then
+		if(doTileQueryAdd(cid, fromPosition, 4, false) ~= RETURNVALUE_NOERROR) then
 			fromPosition.y = fromPosition.y - 2
 		end
 	else
 		fromPosition.z = fromPosition.z + 1
+	end
+
+	if(doTileQueryAdd(cid, fromPosition, 4, false) ~= RETURNVALUE_NOERROR) then
+		return false
 	end
 
 	local pos, dir = getCreaturePosition(cid), SOUTH

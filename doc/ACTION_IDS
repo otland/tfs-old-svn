@@ -33,9 +33,6 @@
 
 		Draw Well (Item: 1369)
 			It teleports player 1 floor down (like room to the Fibula Dungeon in global Tibia)
-
-		Ladders (Items: 1386, 3678, 5543, 8599)
-			It makes them work in a reverted way - player will be teleported to the NORTH, NOT to the SOUTH as regularly
 	]
 
 	[ Doors & Tiles
