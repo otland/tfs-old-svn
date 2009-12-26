@@ -174,11 +174,6 @@ Weapon::Weapon(LuaInterface* _interface):
 	params.combatType = COMBAT_PHYSICALDAMAGE;
 }
 
-Weapon::~Weapon()
-{
-	//
-}
-
 bool Weapon::configureEvent(xmlNodePtr p)
 {
 	int32_t intValue, wieldInfo = 0;
@@ -572,16 +567,6 @@ bool WeaponMelee::useWeapon(Player* player, Item* item, Creature* target) const
 	return true;
 }
 
-void WeaponMelee::onUsedWeapon(Player* player, Item* item, Tile* destTile) const
-{
-	Weapon::onUsedWeapon(player, item, destTile);
-}
-
-void WeaponMelee::onUsedAmmo(Player* player, Item* item, Tile* destTile) const
-{
-	Weapon::onUsedAmmo(player, item, destTile);
-}
-
 bool WeaponMelee::getSkillType(const Player* player, const Item* item,
 	skills_t& skill, uint32_t& skillpoint) const
 {
@@ -867,9 +852,10 @@ bool WeaponDistance::useWeapon(Player* player, Item* item, Creature* target) con
 			destList.push_back(std::make_pair(1, -1));
 			destList.push_back(std::make_pair(1, 0));
 			destList.push_back(std::make_pair(1, 1));
-			std::random_shuffle(destList.begin(), destList.end());
 
+			std::random_shuffle(destList.begin(), destList.end());
 			Position destPos = target->getPosition();
+
 			Tile* tmpTile = NULL;
 			for(std::vector<std::pair<int32_t, int32_t> >::iterator it = destList.begin(); it != destList.end(); ++it)
 			{
@@ -890,17 +876,10 @@ bool WeaponDistance::useWeapon(Player* player, Item* item, Creature* target) con
 	return true;
 }
 
-void WeaponDistance::onUsedWeapon(Player* player, Item* item, Tile* destTile) const
-{
-	Weapon::onUsedWeapon(player, item, destTile);
-}
-
 void WeaponDistance::onUsedAmmo(Player* player, Item* item, Tile* destTile) const
 {
-	if(ammoAction == AMMOACTION_MOVEBACK && breakChance > 0 && random_range(1, 100) < breakChance)
-		g_game.transformItem(item, item->getID(), std::max(0, item->getItemCount() - 1));
-	else
-		Weapon::onUsedAmmo(player, item, destTile);
+	if(!breakChance || random_range(1, 100) < breakChance)
+		onUsedAmmo(player, item, destTile);
 }
 
 int32_t WeaponDistance::getWeaponDamage(const Player* player, const Creature* target, const Item* item, bool maxDamage /*= false*/) const
