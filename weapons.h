@@ -95,6 +95,8 @@ class Weapon : public Event
 		bool internalUseWeapon(Player* player, Item* item, Creature* target, int32_t damageModifier) const;
 		bool internalUseWeapon(Player* player, Item* item, Tile* tile) const;
 
+		virtual void onUsedWeapon(Player* player, Item* item, Tile* destTile) const;
+		virtual void onUsedAmmo(Player* player, Item* item, Tile* destTile) const;
 		virtual bool getSkillType(const Player* player, const Item* item, skills_t& skill, uint32_t& skillpoint) const {return false;}
 
 		int32_t getManaCost(const Player* player) const;
@@ -131,8 +133,6 @@ class WeaponMelee : public Weapon
 		virtual int32_t getElementDamage(const Player* player, const Item* item) const;
 
 	protected:
-		virtual void onUsedWeapon(Player* player, Item* item, Tile* destTile) const;
-		virtual void onUsedAmmo(Player* player, Item* item, Tile* destTile) const;
 		virtual bool getSkillType(const Player* player, const Item* item, skills_t& skill, uint32_t& skillpoint) const;
 
 		CombatType_t elementType;
