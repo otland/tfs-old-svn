@@ -5,8 +5,7 @@ local function doTargetCorpse(cid, pos)
 	local corpse = getThingFromPos(getPos)
 	if(corpse.uid > 0 and isCorpse(corpse.uid) and isMoveable(corpse.uid) and getCreatureSkullType(cid) ~= SKULL_BLACK) then
 		doRemoveItem(corpse.uid)
-		local creature = doCreateMonster(cid, "Skeleton", pos)
-		doConvinceCreature(cid, creature)
+		doConvinceCreature(cid, doCreateMonster("Skeleton", pos))
 
 		doSendMagicEffect(pos, CONST_ME_MAGIC_BLUE)
 		return true
