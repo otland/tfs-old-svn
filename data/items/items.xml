@@ -16704,14 +16704,14 @@
 	<item id="10524" article="a" name="dead medusa">
 		<attribute key="containerSize" value="10" />
 		<attribute key="decayTo" value="10525" />
-		<attribute key="duration" value="600" />
+		<attribute key="duration" value="10" />
 		<attribute key="corpseType" value="blood" />
 		<attribute key="fluidSource" value="blood" />
 	</item>
 	<item id="10525" article="a" name="dead medusa">
 		<attribute key="containerSize" value="10" />
 		<attribute key="decayTo" value="10526" />
-		<attribute key="duration" value="600" />
+		<attribute key="duration" value="900" />
 		<attribute key="corpseType" value="blood" />
 		<attribute key="fluidSource" value="blood" />
 	</item>
@@ -16721,6 +16721,7 @@
 		<attribute key="corpseType" value="blood" />
 	</item>
 	<item id="10527" article="a" name="dead medusa">
+		<attribute key="decayTo" value="0" />
 		<attribute key="duration" value="600" />
 		<attribute key="corpseType" value="blood" />
 	</item>
