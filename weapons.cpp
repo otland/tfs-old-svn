@@ -726,11 +726,11 @@ bool WeaponDistance::useWeapon(Player* player, Item* item, Creature* target) con
 	if(hitChance == -1)
 	{
 		//hit chance is based on distance to target and distance skill
-		uint32_t skill = player->getSkill(SKILL_DIST, SKILL_LEVEL);
 		const Position& playerPos = player->getPosition();
 		const Position& targetPos = target->getPosition();
 		uint32_t distance = std::max(std::abs(playerPos.x - targetPos.x), std::abs(playerPos.y - targetPos.y));
 
+		uint32_t skill = player->getSkill(SKILL_DIST, SKILL_LEVEL);
 		if(maxHitChance == 75)
 		{
 			//chance for one-handed weapons
