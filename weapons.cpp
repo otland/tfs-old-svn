@@ -879,7 +879,7 @@ bool WeaponDistance::useWeapon(Player* player, Item* item, Creature* target) con
 void WeaponDistance::onUsedAmmo(Player* player, Item* item, Tile* destTile) const
 {
 	if(!breakChance || random_range(1, 100) < breakChance)
-		onUsedAmmo(player, item, destTile);
+		Weapon::onUsedAmmo(player, item, destTile);
 }
 
 int32_t WeaponDistance::getWeaponDamage(const Player* player, const Creature* target, const Item* item, bool maxDamage /*= false*/) const
