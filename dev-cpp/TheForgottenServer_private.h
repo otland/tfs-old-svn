@@ -5,7 +5,7 @@
 #define THEFORGOTTENSERVER_PRIVATE_H
 
 /* VERSION DEFINITIONS */
-#define VER_STRING	"0.4"
+#define VER_STRING	"0.4.0.0"
 #define VER_MAJOR	0
 #define VER_MINOR	4
 #define VER_RELEASE	0

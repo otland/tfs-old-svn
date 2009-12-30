@@ -3,6 +3,7 @@
 
 #include <windows.h> // include for version info constants
 
+
 A ICON MOVEABLE PURE LOADONCALL DISCARDABLE "TheForgottenServer.ico"
 
 //
@@ -15,7 +16,7 @@ FILETYPE VFT_APP
 {
   BLOCK "StringFileInfo"
 	 {
-		 BLOCK "040904E4"
+		 BLOCK "040904E2"
 		 {
 			 VALUE "CompanyName", "OtLand.net"
 			 VALUE "FileVersion", "0.4"
