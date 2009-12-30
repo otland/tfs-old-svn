@@ -464,17 +464,10 @@ void Weapon::onUsedAmmo(Player* player, Item* item, Tile* destTile) const
 
 int32_t Weapon::getManaCost(const Player* player) const
 {
-	if(mana != 0)
+	if(mana)
 		return mana;
 
-	if(manaPercent != 0)
-	{
-		int32_t maxMana = player->getMaxMana();
-		int32_t manaCost = (maxMana * manaPercent) / 100;
-		return manaCost;
-	}
-
-	return 0;
+	return manaPercent ? (player->getMaxMana() * manaPercent) / 100 : 0;
 }
 
 bool Weapon::executeUseWeapon(Player* player, const LuaVariant& var) const
@@ -878,7 +871,9 @@ bool WeaponDistance::useWeapon(Player* player, Item* item, Creature* target) con
 
 void WeaponDistance::onUsedAmmo(Player* player, Item* item, Tile* destTile) const
 {
-	if(!breakChance || random_range(1, 100) < breakChance)
+	if(ammoAction == AMMOACTION_MOVEBACK && breakChance > 0 && random_range(1, 100) < breakChance)
+		g_game.transformItem(item, item->getID(), std::max(0, item->getItemCount() - 1));
+	else
 		Weapon::onUsedAmmo(player, item, destTile);
 }
 
@@ -887,8 +882,7 @@ int32_t WeaponDistance::getWeaponDamage(const Player* player, const Creature* ta
 	int32_t attackValue = ammoAttackValue;
 	if(item->getWeaponType() == WEAPON_AMMO)
 	{
-		Item* bow = const_cast<Player*>(player)->getWeapon(true);
-		if(bow)
+		if(Item* bow = const_cast<Player*>(player)->getWeapon(true))
 			attackValue += bow->getAttack() + bow->getExtraAttack();
 	}
 
