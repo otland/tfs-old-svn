@@ -324,7 +324,7 @@ Item* Player::getWeapon(bool ignoreAmmo)
 
 WeaponType_t Player::getWeaponType()
 {
-	if(Item* item = getWeapon())
+	if(Item* item = getWeapon(false))
 		return item->getWeaponType();
 
 	return WEAPON_NONE;
@@ -3288,7 +3288,7 @@ void Player::doAttacking(uint32_t interval)
 		return;
 	}
 
-	Item* tool = getWeapon();
+	Item* tool = getWeapon(false);
 	if(const Weapon* weapon = g_weapons->getWeapon(tool))
 	{
 		if(weapon->interruptSwing() && !canDoAction())
@@ -4180,7 +4180,7 @@ uint64_t Player::getLostExperience() const
 
 uint32_t Player::getAttackSpeed()
 {
-	Item* weapon = getWeapon();
+	Item* weapon = getWeapon(false);
 	if(weapon && weapon->getAttackSpeed() != 0)
 		return weapon->getAttackSpeed();
 
@@ -4941,7 +4941,7 @@ void Player::increaseCombatValues(int32_t& min, int32_t& max, bool useCharges, b
 
 	Item* weapon = NULL;
 	if(!countWeapon)
-		weapon = getWeapon();
+		weapon = getWeapon(false);
 
 	Item* item = NULL;
 	int32_t minValue = 0, maxValue = 0;
