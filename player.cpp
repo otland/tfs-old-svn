@@ -269,26 +269,25 @@ void Player::setConditionSuppressions(uint32_t conditions, bool remove)
 		conditionSuppressions &= ~conditions;
 }
 
-Item* Player::getWeapon(bool ignoreAmmo /*= false*/)
+Item* Player::getWeapon(bool ignoreAmmo)
 {
-	Item* item;
-	for(uint32_t slot = SLOT_RIGHT; slot <= SLOT_LEFT; slot++)
+	Item* item = NULL;
+	for(uint32_t slot = SLOT_RIGHT; slot <= SLOT_LEFT; ++slot)
 	{
-		item = getEquippedItem((slots_t)slot);
-		if(!item)
+		if(!(item = getEquippedItem((slots_t)slot)))
 			continue;
 
 		switch(item->getWeaponType())
 		{
+			case WEAPON_FIST:
 			case WEAPON_SWORD:
 			case WEAPON_AXE:
 			case WEAPON_CLUB:
 			case WEAPON_WAND:
-			case WEAPON_FIST:
 			{
-				const Weapon* weapon = g_weapons->getWeapon(item);
-				if(weapon)
+				if(g_weapons->getWeapon(item))
 					return item;
+
 				break;
 			}
 
@@ -299,23 +298,19 @@ Item* Player::getWeapon(bool ignoreAmmo /*= false*/)
 					Item* ammoItem = getInventoryItem(SLOT_AMMO);
 					if(ammoItem && ammoItem->getAmmoType() == item->getAmmoType())
 					{
-						const Weapon* weapon = g_weapons->getWeapon(ammoItem);
-						if(weapon)
+						if(g_weapons->getWeapon(ammoItem))
 						{
 							shootRange = item->getShootRange();
 							return ammoItem;
 						}
 					}
 				}
-				else
+				else if(g_weapons->getWeapon(item))
 				{
-					const Weapon* weapon = g_weapons->getWeapon(item);
-					if(weapon)
-					{
-						shootRange = item->getShootRange();
-						return item;
-					}
+					shootRange = item->getShootRange();
+					return item;
 				}
+
 				break;
 			}
 
@@ -366,8 +361,8 @@ int32_t Player::getWeaponSkill(const Item* item) const
 
 int32_t Player::getArmor() const
 {
-	int32_t armor = 0;
-	for(int32_t i = SLOT_FIRST; i < SLOT_LAST; ++i)
+	int32_t i = SLOT_FIRST, armor = 0;
+	for(; i < SLOT_LAST; ++i)
 	{
 		if(Item* item = getInventoryItem((slots_t)i))
 			armor += item->getArmor();
@@ -382,12 +377,10 @@ int32_t Player::getArmor() const
 void Player::getShieldAndWeapon(const Item* &shield, const Item* &weapon) const
 {
 	shield = weapon = NULL;
-
 	Item* item = NULL;
 	for(uint32_t slot = SLOT_RIGHT; slot <= SLOT_LEFT; slot++)
 	{
-		item = getInventoryItem((slots_t)slot);
-		if(!item)
+		if(!(item = getInventoryItem((slots_t)slot)))
 			continue;
 
 		switch(item->getWeaponType())
@@ -2417,7 +2410,7 @@ void Player::notifyLogIn(Player* loginPlayer)
 	if(!client)
 		return;
 
-	VIPListSet::iterator it = VIPList.find(loginPlayer->getGUID());
+	VIPSet::iterator it = VIPList.find(loginPlayer->getGUID());
 	if(it != VIPList.end())
 		client->sendVIPLogIn(loginPlayer->getGUID());
 }
@@ -2427,14 +2420,14 @@ void Player::notifyLogOut(Player* logoutPlayer)
 	if(!client)
 		return;
 
-	VIPListSet::iterator it = VIPList.find(logoutPlayer->getGUID());
+	VIPSet::iterator it = VIPList.find(logoutPlayer->getGUID());
 	if(it != VIPList.end())
 		client->sendVIPLogOut(logoutPlayer->getGUID());
 }
 
 bool Player::removeVIP(uint32_t _guid)
 {
-	VIPListSet::iterator it = VIPList.find(_guid);
+	VIPSet::iterator it = VIPList.find(_guid);
 	if(it == VIPList.end())
 		return false;
 
@@ -2460,7 +2453,7 @@ bool Player::addVIP(uint32_t _guid, std::string& name, bool isOnline, bool inter
 		return false;
 	}
 
-	VIPListSet::iterator it = VIPList.find(_guid);
+	VIPSet::iterator it = VIPList.find(_guid);
 	if(it != VIPList.end())
 	{
 		if(!internal)

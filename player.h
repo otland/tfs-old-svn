@@ -120,7 +120,7 @@ enum Exhaust_t
 	EXHAUST_HEALING = 2
 };
 
-typedef std::set<uint32_t> VIPListSet;
+typedef std::set<uint32_t> VIPSet;
 typedef std::vector<std::pair<uint32_t, Container*> > ContainerVector;
 typedef std::map<uint32_t, std::pair<Depot*, bool> > DepotMap;
 typedef std::map<uint32_t, uint32_t> MuteCountMap;
@@ -135,6 +135,7 @@ typedef std::map<uint32_t, std::pair<uint32_t, WarInfo_t> > WarMap;
 #define SPEED_MIN 10
 #define STAMINA_MAX (42 * 60 * 60 * 1000)
 #define STAMINA_MULTIPLIER (60 * 1000)
+#define FIST_ATTACK 7
 
 class Player : public Creature, public Cylinder
 {
@@ -443,7 +444,7 @@ class Player : public Creature, public Cylinder
 		bool getAddAttackSkill() const {return addAttackSkillPoint;}
 		BlockType_t getLastAttackBlockType() const {return lastAttackBlockType;}
 
-		Item* getWeapon(bool ignoreAmmo = false);
+		Item* getWeapon(bool ignoreAmmo);
 		virtual WeaponType_t getWeaponType();
 		int32_t getWeaponSkill(const Item* item) const;
 		void getShieldAndWeapon(const Item* &shield, const Item* &weapon) const;
@@ -709,7 +710,7 @@ class Player : public Creature, public Cylinder
 		void unlearnInstantSpell(const std::string& name);
 		bool hasLearnedInstantSpell(const std::string& name) const;
 
-		VIPListSet VIPList;
+		VIPSet VIPList;
 		ContainerVector containerVec;
 		InvitedToGuildsList invitedToGuildsList;
 		ConditionList storedConditionList;

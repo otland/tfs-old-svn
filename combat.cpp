@@ -89,12 +89,12 @@ bool Combat::getMinMaxValues(Creature* creature, Creature* target, int32_t& min,
 
 				case FORMULA_SKILL:
 				{
-					Item* tool = player->getWeapon();
-					if(const Weapon* weapon = g_weapons->getWeapon(tool))
+					Item* item = player->getWeapon(false);
+					if(const Weapon* weapon = g_weapons->getWeapon(item))
 					{
-						max = (int32_t)(weapon->getWeaponDamage(player, target, tool, true) * maxa + maxb);
-						if(params.useCharges && tool->hasCharges() && g_config.getBool(ConfigManager::REMOVE_WEAPON_CHARGES))
-							g_game.transformItem(tool, tool->getID(), std::max((int32_t)0, ((int32_t)tool->getCharges()) - 1));
+						max = (int32_t)(weapon->getWeaponDamage(player, target, item, true) * maxa + maxb);
+						if(params.useCharges && item->hasCharges() && g_config.getBool(ConfigManager::REMOVE_WEAPON_CHARGES))
+							g_game.transformItem(item, item->getID(), std::max((int32_t)0, ((int32_t)item->getCharges()) - 1));
 					}
 					else
 						max = (int32_t)maxb;
@@ -983,21 +983,22 @@ void ValueCallback::getMinMaxValues(Player* player, int32_t& min, int32_t& max, 
 		case FORMULA_SKILL:
 		{
 			//"onGetPlayerMinMaxValues"(cid, level, skill, attack, factor)
-			Item* tool = player->getWeapon();
 			lua_pushnumber(L, player->getLevel());
-			lua_pushnumber(L, player->getWeaponSkill(tool));
-
-			int32_t attack = 7;
-			if(tool)
+			if(Item* weapon = player->getWeapon(false))
 			{
-				attack = tool->getAttack();
-				if(useCharges && tool->hasCharges() && g_config.getBool(ConfigManager::REMOVE_WEAPON_CHARGES))
-					g_game.transformItem(tool, tool->getID(), std::max(0, tool->getCharges() - 1));
+				lua_pushnumber(L, player->getWeaponSkill(weapon));
+				if(useCharges && weapon->hasCharges() && g_config.getBool(ConfigManager::REMOVE_WEAPON_CHARGES))
+					g_game.transformItem(weapon, weapon->getID(), std::max(0, weapon->getCharges() - 1));
+
+				lua_pushnumber(L, weapon->getAttack() + weapon->getExtraAttack());
+			}
+			else
+			{
+				lua_pushnumber(L, player->getSkill(SKILL_FIST, SKILL_LEVEL));
+				lua_pushnumber(L, FIST_ATTACK);
 			}
 
-			lua_pushnumber(L, attack);
 			lua_pushnumber(L, player->getAttackFactor());
-
 			parameters += 4;
 			break;
 		}

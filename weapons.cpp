@@ -248,9 +248,10 @@ bool Weapon::configureEvent(xmlNodePtr p)
 	if(wieldInfo)
 	{
 		ItemType& it = Item::items.getItemType(id);
-		it.wieldInfo = wieldInfo;
-		it.minReqLevel = getReqLevel();
 		it.minReqMagicLevel = getReqMagLv();
+		it.minReqLevel = getReqLevel();
+
+		it.wieldInfo = wieldInfo;
 		it.vocationString = parseVocationString(vocStringVec);
 	}
 
@@ -283,11 +284,9 @@ int32_t Weapon::playerWeaponCheck(Player* player, Creature* target) const
 		return 0;
 
 	const ItemType& it = Item::items[getID()];
-	int32_t range;
+	int32_t range = it.shootRange;
 	if(it.weaponType == WEAPON_AMMO)
 		range = player->getShootRange();
-	else
-		range = it.shootRange;
 
 	if(std::max(std::abs(playerPos.x - targetPos.x), std::abs(playerPos.y - targetPos.y)) > range)
 		return 0;
@@ -337,8 +336,7 @@ bool Weapon::useFist(Player* player, Creature* target)
 		return false;
 
 	float attackFactor = player->getAttackFactor();
-	int32_t attackSkill = player->getSkill(SKILL_FIST, SKILL_LEVEL);
-	int32_t attackValue = 7;
+	int32_t attackSkill = player->getSkill(SKILL_FIST, SKILL_LEVEL), attackValue = FIST_ATTACK;
 
 	double maxDamage = Weapons::getMaxWeaponDamage(player->getLevel(), attackSkill, attackValue, attackFactor);
 	if(random_range(1, 100) <= g_config.getNumber(ConfigManager::CRITICAL_HIT_CHANCE))
@@ -531,11 +529,6 @@ WeaponMelee::WeaponMelee(LuaInterface* _interface):
 	elementDamage = 0;
 }
 
-bool WeaponMelee::configureEvent(xmlNodePtr p)
-{
-	return Weapon::configureEvent(p);
-}
-
 bool WeaponMelee::configureWeapon(const ItemType& it)
 {
 	elementType = it.abilities.elementType;
@@ -615,8 +608,8 @@ bool WeaponMelee::getSkillType(const Player* player, const Item* item,
 
 int32_t WeaponMelee::getWeaponDamage(const Player* player, const Creature* target, const Item* item, bool maxDamage /*= false*/) const
 {
-	int32_t attackSkill = player->getWeaponSkill(item);
-	int32_t attackValue = std::max((int32_t)0, (int32_t(item->getAttack() + item->getExtraAttack()) - elementDamage));
+	int32_t attackSkill = player->getWeaponSkill(item), attackValue = std::max((int32_t)0,
+		(int32_t(item->getAttack() + item->getExtraAttack()) - elementDamage));
 	float attackFactor = player->getAttackFactor();
 
 	double maxValue = Weapons::getMaxWeaponDamage(player->getLevel(), attackSkill, attackValue, attackFactor);
@@ -664,11 +657,6 @@ WeaponDistance::WeaponDistance(LuaInterface* _interface):
 	swing = params.blockedByShield = false;
 }
 
-bool WeaponDistance::configureEvent(xmlNodePtr p)
-{
-	return Weapon::configureEvent(p);
-}
-
 bool WeaponDistance::configureWeapon(const ItemType& it)
 {
 	if(it.ammoType != AMMO_NONE) //hit chance on two-handed weapons is limited to 90%
@@ -698,11 +686,10 @@ int32_t WeaponDistance::playerWeaponCheck(Player* player, Creature* target) cons
 	const ItemType& it = Item::items[id];
 	if(it.weaponType == WEAPON_AMMO)
 	{
-		if(Item* bow = player->getWeapon(true))
+		if(Item* item = player->getWeapon(true))
 		{
-			const Weapon* boWeapon = g_weapons->getWeapon(bow);
-			if(boWeapon)
-				return boWeapon->playerWeaponCheck(player, target);
+			if(const Weapon* weapon = g_weapons->getWeapon(item))
+				return weapon->playerWeaponCheck(player, target);
 		}
 	}
 
@@ -712,10 +699,10 @@ int32_t WeaponDistance::playerWeaponCheck(Player* player, Creature* target) cons
 bool WeaponDistance::useWeapon(Player* player, Item* item, Creature* target) const
 {
 	int32_t damageModifier = playerWeaponCheck(player, target);
-	if(damageModifier == 0)
+	if(!damageModifier)
 		return false;
 
-	int32_t chance;
+	int32_t chance = hitChance;
 	if(hitChance == -1)
 	{
 		//hit chance is based on distance to target and distance skill
@@ -819,8 +806,6 @@ bool WeaponDistance::useWeapon(Player* player, Item* item, Creature* target) con
 		else
 			chance = maxHitChance;
 	}
-	else
-		chance = hitChance;
 
 	if(item->getWeaponType() == WEAPON_AMMO)
 	{

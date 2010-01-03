@@ -995,7 +995,7 @@ bool IOLoginData::savePlayer(Player* player, bool preSave/* = true*/, bool shall
 	else
 		query_insert.setQuery("INSERT INTO `player_viplist` (`player_id`, `vip_id`) VALUES ");
 
-	for(VIPListSet::iterator it = player->VIPList.begin(); it != player->VIPList.end(); it++)
+	for(VIPSet::iterator it = player->VIPList.begin(); it != player->VIPList.end(); it++)
 	{
 		if(!playerExists(*it, false, false))
 			continue;
@@ -1538,7 +1538,7 @@ DeleteCharacter_t IOLoginData::deleteCharacter(uint32_t accountId, const std::st
 
 	for(AutoList<Player>::iterator it = Player::autoList.begin(); it != Player::autoList.end(); ++it)
 	{
-		VIPListSet::iterator it_ = it->second->VIPList.find(id);
+		VIPSet::iterator it_ = it->second->VIPList.find(id);
 		if(it_ != it->second->VIPList.end())
 			it->second->VIPList.erase(it_);
 	}

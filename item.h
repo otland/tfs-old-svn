@@ -130,6 +130,7 @@ struct TeleportDest
 #pragma pack()
 
 typedef std::list<Item*> ItemList;
+typedef std::vector<Item*> ItemVector;
 
 class Item : virtual public Thing, public ItemAttributes
 {
