@@ -18,7 +18,7 @@ if(NpcSystem == nil) then
 	FOCUS_FAREWELLWORDS = {'bye', 'farewell'}
 
 	-- The word for requesting trade window. For more information look at the top of modules.lua
-	SHOP_TRADEREQUEST = {'trade'}
+	SHOP_TRADEREQUEST = {'offer', 'trade'}
 
 	-- The word for accepting/declining an offer. CAN ONLY CONTAIN ONE FIELD! For more information look at the top of modules.lua
 	SHOP_YESWORD = {'yes'}

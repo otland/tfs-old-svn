@@ -2,7 +2,6 @@
 -- Modified by Talaturen.
 
 if(NpcHandler == nil) then
-	local eventSay, eventSayInDefault = {}, 0
 	-- Constant talkdelay behaviors.
 	TALKDELAY_NONE = 0 -- No talkdelay. Npc will reply immedeatly.
 	TALKDELAY_ONTHINK = 1 -- Talkdelay handled through the onThink callback function. (Default)
@@ -71,7 +70,7 @@ if(NpcHandler == nil) then
 		keywordHandler = nil,
 		focuses = nil,
 		talkStart = nil,
-		idleTime = 86400,
+		idleTime = 300,
 		talkRadius = 3,
 		talkDelayTime = 1, -- Seconds to delay outgoing messages.
 		queue = nil,
@@ -191,10 +190,7 @@ if(NpcHandler == nil) then
 	end
 
 	-- Used when the npc should un-focus the player.
-	function NpcHandler:releaseFocus(focus, onWalkAway)
-		if eventDelayedSay[focus] and not onWalkAway then
-			cancelNPCTalk(eventDelayedSay[focus])
-		end
+	function NpcHandler:releaseFocus(focus)
 		if(NPCHANDLER_CONVBEHAVIOR ~= CONVERSATION_DEFAULT) then
 			if(not self:isFocused(focus)) then
 				return
@@ -208,10 +204,8 @@ if(NpcHandler == nil) then
 			end
 			table.remove(self.focuses, pos)
 			self.talkStart[focus] = nil
-			if isPlayer(focus) == TRUE then
-				closeShopWindow(focus) --Even if it can not exist, we need to prevent it.
-				self:updateFocus()
-			end
+			closeShopWindow(focus) --Even if it can not exist, we need to prevent it.
+			self:updateFocus()
 		else
 			closeShopWindow(focus)
 			self:changeFocus(0)
@@ -327,8 +321,13 @@ if(NpcHandler == nil) then
 		if(callback == nil or callback(cid)) then
 			if(self:processModuleCallback(CALLBACK_FAREWELL)) then
 				if(self.queue == nil or not self.queue:greetNext()) then
-					self:say(self:parseMessage(self:getMessage(MESSAGE_FAREWELL), {[TAG_PLAYERNAME] = getPlayerName(cid)}), cid, true)
+					local msg = self:getMessage(MESSAGE_FAREWELL)
+					local parseInfo = { [TAG_PLAYERNAME] = getPlayerName(cid) }
+					msg = self:parseMessage(msg, parseInfo)
+
+					self:say(msg, cid)
 					self:releaseFocus(cid)
+					self:say(msg)
 				end
 			end
 		end
@@ -545,8 +544,9 @@ if(NpcHandler == nil) then
 						local parseInfo = { [TAG_PLAYERNAME] = getPlayerName(cid) }
 						msg = self:parseMessage(msg, parseInfo)
 
-						self:releaseFocus(cid, true)
-						selfSay(msg)
+						self:say(msg, cid)
+						self:releaseFocus(cid)
+						self:say(msg)
 					end
 				end
 			end
@@ -573,21 +573,12 @@ if(NpcHandler == nil) then
 
 	-- Makes the npc represented by this instance of NpcHandler say something.
 	--	This implements the currently set type of talkdelay.
-	--	shallDelay is a boolean value. If it is false, the message is not delayed. Default value is true.
-	function NpcHandler:say(message, focus, publicize, shallDelay, delay)
-		if not focus then
-			stopEvent(eventSayInDefault)
-			eventSayInDefault = addEvent(function(z) doCreatureSay(z[1], z[2], TALKTYPE_SAY) end, self.talkDelayTime * 1000, {getNpcCid(), message})
-			return
-		elseif type(message) == "table" then
-			return doNPCTalkALot(message, delay or 10000, focus)
-		elseif eventDelayedSay[focus] then
-			cancelNPCTalk(eventDelayedSay[focus])
-		end
-		local shallDelay = not shallDelay and true or shallDelay
+	--	shallDelay is a boolean value. If it is false, the message is not delayed. Default value is false.
+	function NpcHandler:say(message, focus, shallDelay)
+		local shallDelay = shallDelay or false
 		if(NPCHANDLER_TALKDELAY == TALKDELAY_NONE or not shallDelay) then
 			if(NPCHANDLER_CONVBEHAVIOR ~= CONVERSATION_DEFAULT) then
-				selfSay(message, focus, publicize and TRUE or FALSE)
+				selfSay(message, focus)
 				return
 			else
 				selfSay(message)
@@ -595,14 +586,17 @@ if(NpcHandler == nil) then
 			end
 		end
 
-		if NPCHANDLER_CONVBEHAVIOR ~= CONVERSATION_DEFAULT then
-			stopEvent(eventSay[focus])
-			eventSay[focus] = addEvent(function(x) if isPlayer(x[3]) == TRUE then doCreatureSay(x[1], x[2], TALKTYPE_PRIVATE_NP, false, x[3], getCreaturePosition(x[1])) end end, self.talkDelayTime * 1000, {getNpcCid(), message, focus})
-			if(publicize) then
-				addEvent(function(y) local spectators = getSpectators(getCreaturePosition(y[1]), 7, 5, false) for i = 1, #spectators do if spectators[i] == y[3] then table.remove(spectators, i) break end end if #spectators > 0 then for i, tid in ipairs(spectators) do if(isPlayer(tid) == TRUE) then doCreatureSay(y[1], y[2], TALKTYPE_SAY, false, tid, getCreaturePosition(getNpcCid())) end end end end, self.talkDelayTime * 1000, {getNpcCid(), message, focus})
-			end
+		-- TODO: Add an event handling method for delayed messages
+		if(NPCHANDLER_CONVBEHAVIOR ~= CONVERSATION_DEFAULT) then
+			self.talkDelay[focus] = {
+				message = message,
+				time = os.time() + self.talkDelayTime,
+			}
 		else
-			addEvent(function(x) doCreatureSay(x[1], x[2], TALKTYPE_SAY) end, self.talkDelayTime * 1000, {getNpcCid(), message})
+			self.talkDelay = {
+				message = message,
+				time = os.time() + self.talkDelayTime
+			}
 		end
 	end
 end

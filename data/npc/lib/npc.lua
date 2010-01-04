@@ -60,44 +60,60 @@ function doMessageCheck(message, keyword)
 end
 
 function doNpcSellItem(cid, itemid, amount, subType, ignoreCap, inBackpacks, backpack)
-	local amount, subType, ignoreCap, item = amount or 1, subType or 0, ignoreCap and TRUE or FALSE, 0
-	if(isItemStackable(itemid) == TRUE) then
-		if(inBackpacks) then
-			stuff = doCreateItemEx(backpack, 1)
-			item = doAddContainerItem(stuff, itemid, amount)
-		else
-			stuff = doCreateItemEx(itemid, amount)
+	local amount = amount or 1
+	local subType = subType or 1
+	local ignoreCap = ignoreCap and true or false
+
+	local item = 0
+	if(isItemStackable(itemid)) then
+		item = doCreateItemEx(itemid, amount)
+		if(doPlayerAddItemEx(cid, item, ignoreCap) ~= RETURNVALUE_NOERROR) then
+			return 0, 0
 		end
-		return doPlayerAddItemEx(cid, stuff, ignoreCap) ~= RETURNVALUE_NOERROR and 0 or amount, 0
+
+		return amount, 0
 	end
 
 	local a = 0
 	if(inBackpacks) then
-		local container, b = doCreateItemEx(backpack, 1), 1
+		local container = doCreateItemEx(backpack, 1)
+		local b = 1
 		for i = 1, amount do
-			local item = doAddContainerItem(container, itemid, subType)
-			if(isInArray({(getContainerCapById(backpack) * b), amount}, i) == TRUE) then
+			item = doAddContainerItem(container, itemid, subType)
+			if(itemid == ITEM_PARCEL) then
+				doAddContainerItem(item, ITEM_LABEL)
+			end
+
+			if(isInArray({(getContainerCapById(backpack) * b), amount}, i)) then
 				if(doPlayerAddItemEx(cid, container, ignoreCap) ~= RETURNVALUE_NOERROR) then
-					b = b - 1 -- 
+					b = b - 1
 					break
 				end
-				a = i -- a = a + i
-				if(amount > i) then  
+
+				a = i
+				if(amount > i) then
 					container = doCreateItemEx(backpack, 1)
 					b = b + 1
 				end
 			end
 		end
+
 		return a, b
 	end
 
-	for i = 1, amount do -- normal method for non-stackable items
-		local item = doCreateItemEx(itemid, subType)
+	for i = 1, amount do
+		item = doCreateItemEx(itemid, subType)
+		if(itemid == ITEM_PARCEL) then
+			doAddContainerItem(item, ITEM_LABEL)
+		end
+
 		if(doPlayerAddItemEx(cid, item, ignoreCap) ~= RETURNVALUE_NOERROR) then
 			break
 		end
+
 		a = i
 	end
+
 	return a, 0
 end
 
@@ -136,40 +152,3 @@ doNpcSetCreatureFocus = selfFocus
 getNpcCid = getNpcId
 getDistanceTo = getNpcDistanceTo
 getDistanceToCreature = getNpcDistanceToCreature
-
-if not eventDelayedSay then eventDelayedSay = {} end
-
-local func = function(pars)
-	if isCreature(pars.cid) == TRUE and isPlayer(pars.pcid) == TRUE then
-		doCreatureSay(pars.cid, pars.text, pars.type, false, pars.pcid, getCreaturePosition(pars.cid))
-	end
-end
-
-function doCreatureSayWithDelay(cid, text, type, delay, e, pcid)
-	if isCreature(cid) == TRUE and isPlayer(pcid) == TRUE then
-		e.event = addEvent(func, delay < 1 and 1000 or delay, {cid=cid, text=text, type=type, e=e, pcid=pcid})
-	end
-end
-
-function cancelNPCTalk(events)
-	for i = 1, #events do
-		stopEvent(events[i].event)
-	end
-	events = nil
-end
-
-function doNPCTalkALot(msgs, interval, pcid)
-	if eventDelayedSay[pcid] then
-		cancelNPCTalk(eventDelayedSay[pcid])
-	end
-	if isPlayer(pcid) == TRUE then
-		eventDelayedSay[pcid] = {}
-		local ret = {}
-		for i = 1, #msgs do
-			eventDelayedSay[pcid][i] = {}
-			doCreatureSayWithDelay(getNpcCid(), msgs[i], TALKTYPE_PRIVATE_NP, ((i-1) * (interval or 10000)) + 1000, eventDelayedSay[pcid][i], pcid)
-			table.insert(ret, eventDelayedSay[pcid][i])
-		end
-		return(ret)
-	end
-end
