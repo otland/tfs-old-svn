@@ -4194,17 +4194,14 @@ uint64_t Player::getLostExperience() const
 
 uint32_t Player::getAttackSpeed()
 {
+	if(!weapon)
+		return vocation->getAttackSpeed();
+
 	uint32_t speed = vocation->getAttackSpeed();
-	if(weapon)
-	{
-		if(weapon->getAttackSpeed() != 0)
-			speed = weapon->getAttackSpeed();
+	if(weapon->getAttackSpeed() != 0)
+		speed = weapon->getAttackSpeed();
 
-		if(weapon->isDualWield())
-			speed /= 2;
-	}
-
-	return speed;
+	return weapon->isDualWield() ? speed / 2 : speed;
 }
 
 void Player::learnInstantSpell(const std::string& name)
