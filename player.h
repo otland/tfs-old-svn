@@ -445,8 +445,12 @@ class Player : public Creature, public Cylinder
 		BlockType_t getLastAttackBlockType() const {return lastAttackBlockType;}
 
 		Item* getWeapon(bool ignoreAmmo);
+		ItemVector getWeapons();
+
 		virtual WeaponType_t getWeaponType();
 		int32_t getWeaponSkill(const Item* item) const;
+
+		void findWeapon(bool remove);
 		void getShieldAndWeapon(const Item* &_shield, const Item* &_weapon) const;
 
 		virtual void drainHealth(Creature* attacker, CombatType_t combatType, int32_t damage);

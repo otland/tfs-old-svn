@@ -1318,6 +1318,7 @@ void Player::onCreatureAppear(const Creature* creature)
 		g_moveEvents->onPlayerEquip(this, item, (slots_t)slot, false);
 	}
 
+	findWeapon(false);
 	if(BedItem* bed = Beds::getInstance()->getBedBySleeper(guid))
 		bed->wakeUp();
 
@@ -1609,7 +1610,6 @@ void Player::onSendContainer(const Container* container)
 void Player::onUpdateInventoryItem(slots_t slot, Item* oldItem, const ItemType& oldType,
 	Item* newItem, const ItemType& newType)
 {
-	findWeapon(oldItem != newItem);
 	if(oldItem != newItem)
 		onRemoveInventoryItem(slot, oldItem);
 
@@ -1619,6 +1619,7 @@ void Player::onUpdateInventoryItem(slots_t slot, Item* oldItem, const ItemType& 
 
 void Player::onRemoveInventoryItem(slots_t slot, Item* item)
 {
+	findWeapon(true);
 	if(tradeState == TRADE_TRANSFER)
 		return;
 
