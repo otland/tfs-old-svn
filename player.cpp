@@ -4201,7 +4201,7 @@ uint32_t Player::getAttackSpeed()
 	if(weapon->getAttackSpeed() != 0)
 		speed = weapon->getAttackSpeed();
 
-	return weapon->isDualWield() ? speed / 2 : speed;
+	return speed / getWeapons().size();
 }
 
 void Player::learnInstantSpell(const std::string& name)
