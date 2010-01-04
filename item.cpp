@@ -462,6 +462,16 @@ Attr_ReadValue Item::readAttr(AttrTypes_t attr, PropStream& propStream)
 			break;
 		}
 
+		case ATTR_DUALWIELD:
+		{
+			uint8_t wield;
+			if(!propStream.getByte(wield))
+				return ATTR_READ_ERROR;
+
+			setAttribute("dualwield", wield != 0);
+			break;
+		}
+
 		case ATTR_TEXT:
 		{
 			std::string text;

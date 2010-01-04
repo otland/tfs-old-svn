@@ -129,7 +129,7 @@ class ItemType
 		bool isRune() const {return clientCharges;}
 		bool hasSubType() const {return (isFluidContainer() || isSplash() || stackable || charges);}
 
-		bool stopTime, showCount, clientCharges, stackable, showDuration, showCharges, showAttributes,
+		bool stopTime, showCount, clientCharges, stackable, showDuration, showCharges, showAttributes, dualWield,
 			allowDistRead, canReadText, canWriteText, forceSerialize, isVertical, isHorizontal, isHangable,
 			useable, moveable, pickupable, rotable, replaceable, lookThrough, walkStack, hasHeight, blockSolid,
 			blockPickupable, blockProjectile, blockPathFind, allowPickupable, alwaysOnTop, floorChange[CHANGE_LAST];

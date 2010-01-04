@@ -80,7 +80,7 @@ ItemType::ItemType()
 	writeOnceItemId = 0;
 
 	transformEquipTo = transformDeEquipTo = 0;
-	showDuration = showCharges = showAttributes = false;
+	showDuration = showCharges = showAttributes = dualWield = false;
 	charges	= 0;
 	hitChance = maxHitChance = breakChance = -1;
 	shootRange = 1;
@@ -934,6 +934,11 @@ void Items::parseItemNode(xmlNodePtr itemNode, uint32_t id)
 			{
 				if(readXMLInteger(itemAttributesNode, "value", intValue))
 					it.maxHitChance = std::max(0, std::min(100, intValue));
+			}
+			else if(tmpStrValue == "dualwield")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+					it.dualWield = (intValue != 0);
 			}
 			else if(tmpStrValue == "preventloss")
 			{

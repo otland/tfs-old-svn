@@ -447,7 +447,7 @@ class Player : public Creature, public Cylinder
 		Item* getWeapon(bool ignoreAmmo);
 		virtual WeaponType_t getWeaponType();
 		int32_t getWeaponSkill(const Item* item) const;
-		void getShieldAndWeapon(const Item* &shield, const Item* &weapon) const;
+		void getShieldAndWeapon(const Item* &_shield, const Item* &_weapon) const;
 
 		virtual void drainHealth(Creature* attacker, CombatType_t combatType, int32_t damage);
 		virtual void drainMana(Creature* attacker, CombatType_t combatType, int32_t damage);
@@ -902,6 +902,7 @@ class Player : public Creature, public Cylinder
 		Item* writeItem;
 		House* editHouse;
 		Npc* shopOwner;
+		Item* weapon;
 
 		typedef std::set<uint32_t> AttackedSet;
 		AttackedSet attackedSet;

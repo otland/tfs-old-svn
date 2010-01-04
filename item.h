@@ -110,6 +110,7 @@ enum AttrTypes_t
 	ATTR_SHOOTRANGE = 40,
 	ATTR_ARTICLE = 41,
 	ATTR_SCRIPTPROTECTED = 42,
+	ATTR_DUALWIELD = 43,
 	ATTR_ATTRIBUTE_MAP = 128
 };
 
@@ -243,7 +244,9 @@ class Item : virtual public Thing, public ItemAttributes
 		std::string getName() const;
 		std::string getPluralName() const;
 		std::string getArticle() const;
+
 		bool isScriptProtected() const;
+		bool isDualWield() const;
 
 		int32_t getAttack() const;
 		int32_t getExtraAttack() const;
@@ -445,6 +448,15 @@ inline int32_t Item::getShootRange() const
 		return *v;
 
 	return items[id].shootRange;
+}
+
+inline bool Item::isDualWield() const
+{
+	const bool* v = getBooleanAttribute("dualwield");
+	if(v)
+		return *v;
+
+	return items[id].dualWield;
 }
 
 inline void Item::decreaseDuration(int32_t time)
