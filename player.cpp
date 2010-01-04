@@ -4949,6 +4949,10 @@ void Player::increaseCombatValues(int32_t& min, int32_t& max, bool useCharges, b
 	else
 		max = (int32_t)(max * vocation->getMultiplier(MULTIPLIER_MAGIC));
 
+	Item* _weapon = NULL;
+	if(!countWeapon)
+		_weapon = weapon;
+
 	Item* item = NULL;
 	int32_t minValue = 0, maxValue = 0;
 	for(int32_t i = SLOT_FIRST; i < SLOT_LAST; ++i)
@@ -4994,7 +4998,7 @@ void Player::increaseCombatValues(int32_t& min, int32_t& max, bool useCharges, b
 			break;
 		}
 
-		if(useCharges && removeCharges && item != weapon && item->hasCharges())
+		if(useCharges && removeCharges && item != _weapon && item->hasCharges())
 			g_game.transformItem(item, item->getID(), std::max((int32_t)0, (int32_t)item->getCharges() - 1));
 	}
 
