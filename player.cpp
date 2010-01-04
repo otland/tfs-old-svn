@@ -2592,6 +2592,7 @@ ReturnValue Player::__queryAdd(int32_t index, const Thing* thing, uint32_t count
 						ret = RET_CANONLYUSEONESHIELD;
 					else if(!leftItem->isWeapon() || !item->isWeapon() ||
 						leftType == WEAPON_AMMO || type == WEAPON_AMMO ||
+						leftType == WEAPON_SHIELD || type == WEAPON_SHIELD ||
 						(leftItem->isDualWield() && item->isDualWield()))
 						ret = RET_NOERROR;
 					else
@@ -2624,6 +2625,7 @@ ReturnValue Player::__queryAdd(int32_t index, const Thing* thing, uint32_t count
 						ret = RET_CANONLYUSEONESHIELD;
 					else if(!rightItem->isWeapon() || !item->isWeapon() ||
 						rightType == WEAPON_AMMO || type == WEAPON_AMMO ||
+						rightType == WEAPON_SHIELD || type == WEAPON_SHIELD ||
 						(rightItem->isDualWield() && item->isDualWield()))
 						ret = RET_NOERROR;
 					else
@@ -4194,7 +4196,7 @@ uint64_t Player::getLostExperience() const
 
 uint32_t Player::getAttackSpeed()
 {
-	return weapon && weapon->getAttackSpeed() != 0 ? weapon->getAttackSpeed() : vocation->getAttackSpeed() / getWeapons().size();
+	return ((weapon && weapon->getAttackSpeed() != 0) ? weapon->getAttackSpeed() : (vocation->getAttackSpeed() / getWeapons().size()));
 }
 
 void Player::learnInstantSpell(const std::string& name)
