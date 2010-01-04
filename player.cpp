@@ -285,11 +285,8 @@ Item* Player::getWeapon(bool ignoreAmmo)
 	return g_weapons->getWeapon(ammoItem) ? ammoItem : NULL;
 }
 
-void Player::findWeapon(bool remove)
+void Player::findWeapon()
 {
-	if(!remove && weapon)
-		return;
-
 	ItemVector weapons = getWeapons();
 	if(weapons.empty())
 		weapon = NULL;
@@ -305,9 +302,9 @@ ItemVector Player::getWeapons()
 {
 	Item* item = NULL;
 	ItemVector weapons;
-	for(uint32_t slot = SLOT_RIGHT; slot <= SLOT_LEFT; ++slot)
+	for(int32_t slot = SLOT_RIGHT; slot <= SLOT_LEFT; ++slot)
 	{
-		if(!(item = getEquippedItem(slot)))
+		if(!(item = getEquippedItem((slots_t)slot)))
 			continue;
 
 		WeaponType_t weaponType = item->getWeaponType();
@@ -1318,7 +1315,7 @@ void Player::onCreatureAppear(const Creature* creature)
 		g_moveEvents->onPlayerEquip(this, item, (slots_t)slot, false);
 	}
 
-	findWeapon(false);
+	findWeapon();
 	if(BedItem* bed = Beds::getInstance()->getBedBySleeper(guid))
 		bed->wakeUp();
 
@@ -1619,7 +1616,7 @@ void Player::onUpdateInventoryItem(slots_t slot, Item* oldItem, const ItemType& 
 
 void Player::onRemoveInventoryItem(slots_t slot, Item* item)
 {
-	findWeapon(true);
+	findWeapon();
 	if(tradeState == TRADE_TRANSFER)
 		return;
 
@@ -3299,15 +3296,19 @@ void Player::doAttacking(uint32_t interval)
 		return;
 	}
 
-	if(const Weapon* weapon = g_weapons->getWeapon(weapon))
+	if(const Weapon* _weapon = g_weapons->getWeapon(weapon))
 	{
-		if(weapon->interruptSwing() && !canDoAction())
+		if(_weapon->interruptSwing() && !canDoAction())
 		{
-			SchedulerTask* task = createSchedulerTask(getNextActionTime(), boost::bind(&Game::checkCreatureAttack, &g_game, getID()));
+			SchedulerTask* task = createSchedulerTask(getNextActionTime(),
+				boost::bind(&Game::checkCreatureAttack, &g_game, getID()));
 			setNextActionTask(task);
 		}
-		else if((!weapon->hasExhaustion() || !hasCondition(CONDITION_EXHAUST, EXHAUST_COMBAT)) && weapon->useWeapon(this, weapon, attackedCreature))
+		else if((!_weapon->hasExhaustion() || !hasCondition(CONDITION_EXHAUST, EXHAUST_COMBAT)) && _weapon->useWeapon(this, weapon, attackedCreature))
+		{
 			lastAttack = OTSYS_TIME();
+			findWeapon();
+		}
 	}
 	else if(Weapon::useFist(this, attackedCreature))
 		lastAttack = OTSYS_TIME();
