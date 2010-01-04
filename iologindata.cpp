@@ -713,7 +713,9 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool preLo
 
 	player->updateInventoryWeight();
 	player->updateItemsLight(true);
+
 	player->updateBaseSpeed();
+	player->updateWeapon();
 	return true;
 }
 

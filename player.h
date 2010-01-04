@@ -449,8 +449,6 @@ class Player : public Creature, public Cylinder
 
 		virtual WeaponType_t getWeaponType();
 		int32_t getWeaponSkill(const Item* item) const;
-
-		void findWeapon();
 		void getShieldAndWeapon(const Item* &_shield, const Item* &_weapon) const;
 
 		virtual void drainHealth(Creature* attacker, CombatType_t combatType, int32_t damage);
@@ -741,6 +739,7 @@ class Player : public Creature, public Cylinder
 		void updateInventoryWeight();
 		void updateInventoryGoods(uint32_t itemId);
 		void updateItemsLight(bool internal = false);
+		void updateWeapon();
 
 		void setNextWalkActionTask(SchedulerTask* task);
 		void setNextWalkTask(SchedulerTask* task);

@@ -285,19 +285,6 @@ Item* Player::getWeapon(bool ignoreAmmo)
 	return g_weapons->getWeapon(ammoItem) ? ammoItem : NULL;
 }
 
-void Player::findWeapon()
-{
-	ItemVector weapons = getWeapons();
-	if(weapons.empty())
-		weapon = NULL;
-	else if(weapons.size() == 1 || weapons[1] == weapon)
-		weapon = weapons[0];
-	else if(weapons[0] == weapon)
-		weapon = weapons[1];
-	else
-		weapon = NULL;
-}
-
 ItemVector Player::getWeapons()
 {
 	Item* item = NULL;
@@ -323,8 +310,6 @@ ItemVector Player::getWeapons()
 					if(weaponType == WEAPON_DIST)
 						shootRange = item->getShootRange();
 				}
-
-				break;
 			}
 
 			default:
@@ -333,6 +318,19 @@ ItemVector Player::getWeapons()
 	}
 
 	return weapons;
+}
+
+void Player::updateWeapon()
+{
+	ItemVector weapons = getWeapons();
+	if(weapons.empty())
+		weapon = NULL;
+	else if(weapons.size() == 1 || weapons[1] == weapon)
+		weapon = weapons[0];
+	else if(weapons[0] == weapon)
+		weapon = weapons[1];
+	else
+		weapon = NULL;
 }
 
 WeaponType_t Player::getWeaponType()
@@ -1315,7 +1313,6 @@ void Player::onCreatureAppear(const Creature* creature)
 		g_moveEvents->onPlayerEquip(this, item, (slots_t)slot, false);
 	}
 
-	findWeapon();
 	if(BedItem* bed = Beds::getInstance()->getBedBySleeper(guid))
 		bed->wakeUp();
 
@@ -1616,7 +1613,6 @@ void Player::onUpdateInventoryItem(slots_t slot, Item* oldItem, const ItemType& 
 
 void Player::onRemoveInventoryItem(slots_t slot, Item* item)
 {
-	findWeapon();
 	if(tradeState == TRADE_TRANSFER)
 		return;
 
@@ -2232,6 +2228,7 @@ bool Player::onDeath()
 		sendSkills();
 
 		sendReLoginWindow();
+		g_creatureEvents->playerLogout(this, true);
 		g_game.removeCreature(this, false);
 	}
 	else
@@ -2241,6 +2238,8 @@ bool Player::onDeath()
 		{
 			loginPosition = masterPosition;
 			sendReLoginWindow();
+
+			g_creatureEvents->playerLogout(this, true);
 			g_game.removeCreature(this, false);
 		}
 	}
@@ -3096,6 +3095,8 @@ void Player::postAddNotification(Creature* actor, Thing* thing, const Cylinder* 
 
 		updateInventoryWeight();
 		updateItemsLight();
+
+		updateWeapon();
 		sendStats();
 	}
 
@@ -3144,6 +3145,8 @@ void Player::postRemoveNotification(Creature* actor, Thing* thing, const Cylinde
 
 		updateInventoryWeight();
 		updateItemsLight();
+
+		updateWeapon();
 		sendStats();
 	}
 
@@ -3307,7 +3310,7 @@ void Player::doAttacking(uint32_t interval)
 		else if((!_weapon->hasExhaustion() || !hasCondition(CONDITION_EXHAUST, EXHAUST_COMBAT)) && _weapon->useWeapon(this, weapon, attackedCreature))
 		{
 			lastAttack = OTSYS_TIME();
-			findWeapon();
+			updateWeapon();
 		}
 	}
 	else if(Weapon::useFist(this, attackedCreature))
@@ -4949,13 +4952,9 @@ void Player::increaseCombatValues(int32_t& min, int32_t& max, bool useCharges, b
 	else
 		max = (int32_t)(max * vocation->getMultiplier(MULTIPLIER_MAGIC));
 
-	Item* _weapon = NULL;
-	if(!countWeapon)
-		_weapon = weapon;
-
 	Item* item = NULL;
-	int32_t minValue = 0, maxValue = 0;
-	for(int32_t i = SLOT_FIRST; i < SLOT_LAST; ++i)
+	int32_t minValue = 0, maxValue = 0, i = SLOT_FIRST;
+	for(; i < SLOT_LAST; ++i)
 	{
 		if(!(item = getInventoryItem((slots_t)i)) || (g_moveEvents->hasEquipEvent(item)
 			&& !isItemAbilityEnabled((slots_t)i)))
@@ -4998,7 +4997,7 @@ void Player::increaseCombatValues(int32_t& min, int32_t& max, bool useCharges, b
 			break;
 		}
 
-		if(useCharges && removeCharges && item != _weapon && item->hasCharges())
+		if(useCharges && removeCharges && (countWeapon || item != weapon) && item->hasCharges())
 			g_game.transformItem(item, item->getID(), std::max((int32_t)0, (int32_t)item->getCharges() - 1));
 	}
 
