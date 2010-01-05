@@ -399,8 +399,6 @@ void Player::getShieldAndWeapon(const Item* &_shield, const Item* &_weapon) cons
 			{
 				if(!_shield || (_shield && item->getDefense() > _shield->getDefense()))
 					_shield = item;
-
-				break;
 			}
 
 			default:
@@ -4195,7 +4193,7 @@ uint64_t Player::getLostExperience() const
 
 uint32_t Player::getAttackSpeed() const
 {
-	return ((weapon && weapon->getAttackSpeed() != 0) ? weapon->getAttackSpeed() : (vocation->getAttackSpeed() / getWeapons().size()));
+	return ((weapon && weapon->getAttackSpeed() != 0) ? weapon->getAttackSpeed() : (vocation->getAttackSpeed() / std::max((size_t)1, getWeapons().size())));
 }
 
 void Player::learnInstantSpell(const std::string& name)
