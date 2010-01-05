@@ -456,12 +456,12 @@ bool IOGuild::war(Player* player, Player* target, std::pair<uint32_t, WarInfo_t>
 	}
 
 	query.str("");
-	query << "UPDATE `guilds` SET `balance` = `balance` - " << payment << " WHERE `guild_id` = " << ids[enemy.second == WARINFO_ENEMY];
+	query << "UPDATE `guilds` SET `balance` = `balance` - " << payment << " WHERE `id` = " << ids[enemy.second == WARINFO_GUILD];
 	if(!db->executeQuery(query.str()))
 		return false;
 
 	query.str("");
-	query << "UPDATE `guilds` SET `balance` = `balance` + " << payment << " WHERE `guild_id` = " << ids[enemy.second];
+	query << "UPDATE `guilds` SET `balance` = `balance` + " << payment << " WHERE `id` = " << ids[enemy.second];
 	if(!db->executeQuery(query.str()))
 		return false;
 
