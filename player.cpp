@@ -285,7 +285,7 @@ Item* Player::getWeapon(bool ignoreAmmo)
 	return g_weapons->getWeapon(ammoItem) ? ammoItem : NULL;
 }
 
-ItemVector Player::getWeapons()
+ItemVector Player::getWeapons() const
 {
 	Item* item = NULL;
 	ItemVector weapons;
@@ -305,11 +305,7 @@ ItemVector Player::getWeapons()
 			case WEAPON_WAND:
 			{
 				if(g_weapons->getWeapon(item))
-				{
 					weapons.push_back(item);
-					if(weaponType == WEAPON_DIST)
-						shootRange = item->getShootRange();
-				}
 			}
 
 			default:
@@ -331,6 +327,9 @@ void Player::updateWeapon()
 		weapon = weapons[1];
 	else
 		weapon = NULL;
+
+	if(weapon && weapon->getWeaponType() == WEAPON_DIST)
+		shootRange = weapon->getShootRange();
 }
 
 WeaponType_t Player::getWeaponType()
@@ -472,7 +471,7 @@ float Player::getDefenseFactor() const
 
 		case FIGHTMODE_DEFENSE:
 		{
-			if((OTSYS_TIME() - lastAttack) < const_cast<Player*>(this)->getAttackSpeed()) //attacking will cause us to get into normal defense
+			if((OTSYS_TIME() - lastAttack) < getAttackSpeed()) //attacking will cause us to get into normal defense
 				return 1.0f;
 
 			return 2.0f;
@@ -4194,7 +4193,7 @@ uint64_t Player::getLostExperience() const
 	return (uint64_t)std::floor((double)(lost * percent));
 }
 
-uint32_t Player::getAttackSpeed()
+uint32_t Player::getAttackSpeed() const
 {
 	return ((weapon && weapon->getAttackSpeed() != 0) ? weapon->getAttackSpeed() : (vocation->getAttackSpeed() / getWeapons().size()));
 }

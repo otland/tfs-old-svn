@@ -445,7 +445,7 @@ class Player : public Creature, public Cylinder
 		BlockType_t getLastAttackBlockType() const {return lastAttackBlockType;}
 
 		Item* getWeapon(bool ignoreAmmo);
-		ItemVector getWeapons();
+		ItemVector getWeapons() const;
 
 		virtual WeaponType_t getWeaponType();
 		int32_t getWeaponSkill(const Item* item) const;
@@ -691,7 +691,7 @@ class Player : public Creature, public Cylinder
 
 		void receivePing() {lastPong = OTSYS_TIME();}
 		virtual void onThink(uint32_t interval);
-		uint32_t getAttackSpeed();
+		uint32_t getAttackSpeed() const;
 
 		virtual void postAddNotification(Creature* actor, Thing* thing, const Cylinder* oldParent,
 			int32_t index, cylinderlink_t link = LINK_OWNER);
