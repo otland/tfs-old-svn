@@ -904,6 +904,7 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 			break;
 		}
 
+		// TODO: update to the latest (from below)
 		if(!show)
 		{
 			bool tmp = true;
@@ -955,6 +956,19 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 				s << ", ";
 
 			s << "speed " << std::showpos << (int32_t)(it.abilities.speed / 2) << std::noshowpos;
+		}
+
+		if(it.dualWield || (item && item->isDualWield()))
+		{
+			if(begin)
+			{
+				begin = false;
+				s << " (";
+			}
+			else
+				s << ", ";
+
+			s << "dual wielding";
 		}
 
 		if(!begin)
