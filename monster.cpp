@@ -1170,7 +1170,7 @@ Item* Monster::createCorpse(DeathList deathList)
 		corpse->setUniqueId(mType->corpseUnique);
 
 	if(mType->corpseAction)
-		corpse->setActionId(mType->corpseAction);
+		corpse->setActionId(mType->corpseAction, false);
 
 	DeathEntry ownerEntry = deathList[0];
 	if(ownerEntry.isNameKill())
