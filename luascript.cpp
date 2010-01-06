@@ -1624,7 +1624,7 @@ void LuaInterface::registerFunctions()
 	//getClosestFreeTile(cid, targetpos[, extended = false[, ignoreHouse = true]])
 	lua_register(m_luaState, "getClosestFreeTile", LuaInterface::luaGetClosestFreeTile);
 
-	//doTeleportThing(cid, newpos[, pushmove])
+	//doTeleportThing(cid, newpos[, pushmove = true])
 	lua_register(m_luaState, "doTeleportThing", LuaInterface::luaDoTeleportThing);
 
 	//doTransformItem(uid, newId[, count/subType])
@@ -3285,7 +3285,7 @@ int32_t LuaInterface::luaGetClosestFreeTile(lua_State* L)
 
 int32_t LuaInterface::luaDoTeleportThing(lua_State* L)
 {
-	//doTeleportThing(cid, newpos[, pushmove = TRUE])
+	//doTeleportThing(cid, newpos[, pushmove = true])
 	bool pushMove = true;
 	if(lua_gettop(L) > 2)
 		pushMove = popNumber(L);

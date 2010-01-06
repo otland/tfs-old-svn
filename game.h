@@ -344,7 +344,8 @@ class Game
 		void clearSpectatorCache() {if(map) map->clearSpectatorCache();}
 
 		ReturnValue internalMoveCreature(Creature* creature, Direction direction, uint32_t flags = 0);
-		ReturnValue internalMoveCreature(Creature* actor, Creature* creature, Cylinder* fromCylinder, Cylinder* toCylinder, uint32_t flags = 0);
+		ReturnValue internalMoveCreature(Creature* actor, Creature* creature, Cylinder* fromCylinder,
+			Cylinder* toCylinder, uint32_t flags = 0, bool forceTeleport = false);
 
 		ReturnValue internalMoveItem(Creature* actor, Cylinder* fromCylinder, Cylinder* toCylinder, int32_t index,
 			Item* item, uint32_t count, Item** _moveItem, uint32_t flags = 0);

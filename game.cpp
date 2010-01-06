@@ -1199,14 +1199,15 @@ ReturnValue Game::internalMoveCreature(Creature* creature, Direction direction, 
 	return ret;
 }
 
-ReturnValue Game::internalMoveCreature(Creature* actor, Creature* creature, Cylinder* fromCylinder, Cylinder* toCylinder, uint32_t flags/* = 0*/)
+ReturnValue Game::internalMoveCreature(Creature* actor, Creature* creature, Cylinder* fromCylinder,
+	Cylinder* toCylinder, uint32_t flags/* = 0*/, bool forceTeleport/* = false*/)
 {
 	//check if we can move the creature to the destination
 	ReturnValue ret = toCylinder->__queryAdd(0, creature, 1, flags);
 	if(ret != RET_NOERROR)
 		return ret;
 
-	fromCylinder->getTile()->moveCreature(actor, creature, toCylinder);
+	fromCylinder->getTile()->moveCreature(actor, creature, toCylinder, forceTeleport);
 	if(creature->getParent() != toCylinder)
 		return RET_NOERROR;
 
@@ -2080,14 +2081,7 @@ ReturnValue Game::internalTeleport(Thing* thing, const Position& newPos, bool pu
 	if(Tile* toTile = map->getTile(newPos))
 	{
 		if(Creature* creature = thing->getCreature())
-		{
-			if(Position::areInRange<1,1,0>(creature->getPosition(), newPos) && pushMove)
-				creature->getTile()->moveCreature(NULL, creature, toTile, false);
-			else
-				creature->getTile()->moveCreature(NULL, creature, toTile, true);
-
-			return RET_NOERROR;
-		}
+			return internalMoveCreature(NULL, creature, creature->getParent(), toTile, !pushMove);
 
 		if(Item* item = thing->getItem())
 			return internalMoveItem(NULL, item->getParent(), toTile, INDEX_WHEREEVER, item, item->getItemCount(), NULL, flags);
