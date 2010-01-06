@@ -2081,13 +2081,12 @@ ReturnValue Game::internalTeleport(Thing* thing, const Position& newPos, bool pu
 	{
 		if(Creature* creature = thing->getCreature())
 		{
-			/*if(Position::areInRange<1,1,0>(creature->getPosition(), newPos) && pushMove)
+			if(Position::areInRange<1,1,0>(creature->getPosition(), newPos) && pushMove)
 				creature->getTile()->moveCreature(NULL, creature, toTile, false);
 			else
 				creature->getTile()->moveCreature(NULL, creature, toTile, true);
 
-			return RET_NOERROR;*/
-			return internalMoveCreature(NULL, creature, creature->getParent(), toTile);
+			return RET_NOERROR;
 		}
 
 		if(Item* item = thing->getItem())
