@@ -747,14 +747,15 @@ class LuaInterface
 		struct LuaTimerEvent
 		{
 			int32_t scriptId, function;
+			uint32_t eventId;
 			std::list<int32_t> parameters;
 		};
 
-		typedef std::map<uint32_t , LuaTimerEvent > LuaTimerEvents;
+		typedef std::map<uint32_t, LuaTimerEvent> LuaTimerEvents;
 		LuaTimerEvents m_timerEvents;
 
 		//script file cache
-		typedef std::map<int32_t , std::string> ScriptsCache;
+		typedef std::map<int32_t, std::string> ScriptsCache;
 		ScriptsCache m_cacheFiles;
 };
 #endif

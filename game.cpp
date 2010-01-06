@@ -1139,7 +1139,7 @@ bool Game::playerMoveCreature(uint32_t playerId, uint32_t movingCreatureId,
 			return true;
 		}
 
-		internalTeleport(movingCreature, toTile->getPosition(), true);
+		internalTeleport(movingCreature, toTile->getPosition(), false);
 		return true;
 	}
 
@@ -2070,7 +2070,7 @@ Item* Game::transformItem(Item* item, uint16_t newId, int32_t newCount /*= -1*/)
 	return newItem;
 }
 
-ReturnValue Game::internalTeleport(Thing* thing, const Position& newPos, bool pushMove, uint32_t flags /*= 0*/)
+ReturnValue Game::internalTeleport(Thing* thing, const Position& newPos, bool forceTeleport, uint32_t flags/* = 0*/, bool fullTeleport/* = true*/)
 {
 	if(newPos == thing->getPosition())
 		return RET_NOERROR;
@@ -2081,7 +2081,13 @@ ReturnValue Game::internalTeleport(Thing* thing, const Position& newPos, bool pu
 	if(Tile* toTile = map->getTile(newPos))
 	{
 		if(Creature* creature = thing->getCreature())
-			return internalMoveCreature(NULL, creature, creature->getParent(), toTile, FLAG_NOLIMIT, !pushMove);
+		{
+			if(fullTeleport)
+				return internalMoveCreature(NULL, creature, creature->getParent(), toTile, flags, forceTeleport);
+
+			creature->getTile()->moveCreature(NULL, creature, toTile, forceTeleport);
+			return RET_NOERROR;
+		}
 
 		if(Item* item = thing->getItem())
 			return internalMoveItem(NULL, item->getParent(), toTile, INDEX_WHEREEVER, item, item->getItemCount(), NULL, flags);
@@ -2348,7 +2354,7 @@ bool Game::playerAutoWalk(uint32_t playerId, std::list<Direction>& listDir)
 		}
 
 		internalCreatureTurn(player, getDirectionTo(player->getPosition(), pos, false));
-		internalTeleport(player, pos, false);
+		internalTeleport(player, pos, true);
 		return true;
 	}
 
@@ -3549,7 +3555,7 @@ bool Game::playerTurn(uint32_t playerId, Direction dir)
 	ReturnValue ret = tile->__queryAdd(0, player, 1, FLAG_IGNOREBLOCKITEM);
 	if(ret != RET_NOTENOUGHROOM && (ret != RET_NOTPOSSIBLE || player->hasCustomFlag(PlayerCustomFlag_CanMoveAnywhere))
 		&& (ret != RET_PLAYERISNOTINVITED || player->hasFlag(PlayerFlag_CanEditHouses)))
-		return internalTeleport(player, pos, true);
+		return internalTeleport(player, pos, false, FLAG_NOLIMIT, false);
 
 	player->sendCancelMessage(ret);
 	return false;

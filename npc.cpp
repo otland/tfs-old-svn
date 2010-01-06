@@ -1342,7 +1342,7 @@ void Npc::executeResponse(Player* player, NpcState* npcState, const NpcResponse*
 					if(it->strValue == "|TEMPLE|")
 						teleportTo = player->getMasterPosition();
 
-					g_game.internalTeleport(player, teleportTo, true);
+					g_game.internalTeleport(player, teleportTo, false);
 					break;
 				}
 

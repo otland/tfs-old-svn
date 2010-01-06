@@ -308,7 +308,7 @@ bool Monster::doTeleportToMaster()
 {
 	const Position& tmp = getPosition();
 	if(g_game.internalTeleport(this, g_game.getClosestFreeTile(this,
-		getMaster()->getPosition(), true), false) != RET_NOERROR)
+		getMaster()->getPosition(), true), true) != RET_NOERROR)
 		return false;
 
 	g_game.addMagicEffect(tmp, MAGIC_EFFECT_POFF);

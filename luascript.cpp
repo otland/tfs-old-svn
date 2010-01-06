@@ -648,6 +648,9 @@ LuaInterface::LuaInterface(std::string interfaceName)
 
 LuaInterface::~LuaInterface()
 {
+	for(LuaTimerEvents::iterator it = m_timerEvents.begin(); it != m_timerEvents.end(); ++it)
+		Scheduler::getInstance().stopEvent(it->second.eventId);
+
 	closeState();
 }
 
@@ -672,7 +675,7 @@ bool LuaInterface::loadBuffer(const std::string& text, Npc* npc/* = NULL*/)
 	if(!lua_isfunction(m_luaState, -1))
 		return false;
 
-	m_loadingFile = "buffer";
+	m_loadingFile = text;
 	reserveEnv();
 
 	ScriptEnviroment* env = getEnv();
@@ -1624,7 +1627,7 @@ void LuaInterface::registerFunctions()
 	//getClosestFreeTile(cid, targetpos[, extended = false[, ignoreHouse = true]])
 	lua_register(m_luaState, "getClosestFreeTile", LuaInterface::luaGetClosestFreeTile);
 
-	//doTeleportThing(cid, newpos[, pushmove = true])
+	//doTeleportThing(cid, newpos[, pushmove = true[, fullTeleport = true]])
 	lua_register(m_luaState, "doTeleportThing", LuaInterface::luaDoTeleportThing);
 
 	//doTransformItem(uid, newId[, count/subType])
@@ -1714,7 +1717,7 @@ void LuaInterface::registerFunctions()
 	//doAddContainerItemEx(uid, virtuid)
 	lua_register(m_luaState, "doAddContainerItemEx", LuaInterface::luaDoAddContainerItemEx);
 
-	//doRelocate(pos, posTo[, creatures = true])
+	//doRelocate(pos, posTo[, creatures = true[, unmovable = true]])
 	//Moves all moveable objects from pos to posTo
 	lua_register(m_luaState, "doRelocate", LuaInterface::luaDoRelocate);
 
@@ -3285,9 +3288,13 @@ int32_t LuaInterface::luaGetClosestFreeTile(lua_State* L)
 
 int32_t LuaInterface::luaDoTeleportThing(lua_State* L)
 {
-	//doTeleportThing(cid, newpos[, pushmove = true])
-	bool pushMove = true;
-	if(lua_gettop(L) > 2)
+	//doTeleportThing(cid, newpos[, pushMove = true[, fullTeleport = true]])
+	bool fullTeleport = true, pushMove = true;
+	int32_t params = lua_gettop(L);
+	if(params > 3)
+		fullTeleport = popNumber(L);
+
+	if(params > 2)
 		pushMove = popNumber(L);
 
 	PositionEx pos;
@@ -3295,7 +3302,7 @@ int32_t LuaInterface::luaDoTeleportThing(lua_State* L)
 
 	ScriptEnviroment* env = getEnv();
 	if(Thing* tmp = env->getThingByUID(popNumber(L)))
-		lua_pushboolean(L, g_game.internalTeleport(tmp, pos, pushMove) == RET_NOERROR);
+		lua_pushboolean(L, g_game.internalTeleport(tmp, pos, !pushMove, FLAG_NOLIMIT, fullTeleport) == RET_NOERROR);
 	else
 	{
 		errorEx(getError(LUA_ERROR_THING_NOT_FOUND));
@@ -3781,11 +3788,14 @@ int32_t LuaInterface::luaDoTileAddItemEx(lua_State* L)
 
 int32_t LuaInterface::luaDoRelocate(lua_State* L)
 {
-	//doRelocate(pos, posTo[, creatures = true])
+	//doRelocate(pos, posTo[, creatures = true[, unmovable = true]])
 	//Moves all moveable objects from pos to posTo
+	bool unmovable = true, creatures = true;
+	int32_t params = lua_gettop(L);
+	if(params > 3)
+		unmovable = popNumber(L);
 
-	bool creatures = true;
-	if(lua_gettop(L) > 2)
+	if(params > 2)
 		creatures = popNumber(L);
 
 	PositionEx toPos;
@@ -3814,20 +3824,18 @@ int32_t LuaInterface::luaDoRelocate(lua_State* L)
 	{
 		for(int32_t i = fromTile->getThingCount() - 1; i >= 0; --i)
 		{
-			Thing* thing = fromTile->__getThing(i);
-			if(thing)
+			if(Thing* thing = fromTile->__getThing(i))
 			{
 				if(Item* item = thing->getItem())
 				{
 					const ItemType& it = Item::items[item->getID()];
 					if(!it.isGroundTile() && !it.alwaysOnTop && !it.isMagicField())
-						g_game.internalTeleport(item, toPos, false, FLAG_IGNORENOTMOVEABLE);
+						g_game.internalTeleport(item, toPos, true, unmovable ? FLAG_IGNORENOTMOVEABLE : 0);
 				}
 				else if(creatures)
 				{
-					Creature* creature = thing->getCreature();
-					if(creature)
-						g_game.internalTeleport(creature, toPos, true);
+					if(Creature* creature = thing->getCreature())
+						g_game.internalTeleport(creature, toPos, false);
 				}
 			}
 		}
@@ -8156,10 +8164,9 @@ int32_t LuaInterface::luaAddEvent(lua_State* L)
 	eventDesc.function = luaL_ref(L, LUA_REGISTRYINDEX);
 	eventDesc.scriptId = env->getScriptId();
 
-	interface->m_timerEvents[++interface->m_lastEventTimerId] = eventDesc;
-	Scheduler::getInstance().addEvent(createSchedulerTask(delay, boost::bind(
+	eventDesc.eventId = Scheduler::getInstance().addEvent(createSchedulerTask(delay, boost::bind(
 		&LuaInterface::executeTimer, interface, interface->m_lastEventTimerId)));
-
+	interface->m_timerEvents[++interface->m_lastEventTimerId] = eventDesc;
 	lua_pushnumber(L, interface->m_lastEventTimerId);
 	return 1;
 }
@@ -8181,11 +8188,13 @@ int32_t LuaInterface::luaStopEvent(lua_State* L)
 	LuaTimerEvents::iterator it = interface->m_timerEvents.find(eventId);
 	if(it != interface->m_timerEvents.end())
 	{
+		Scheduler::getInstance().stopEvent(it->second.eventId);
 		for(std::list<int32_t>::iterator lt = it->second.parameters.begin(); lt != it->second.parameters.end(); ++lt)
 			luaL_unref(interface->m_luaState, LUA_REGISTRYINDEX, *lt);
-		it->second.parameters.clear();
 
+		it->second.parameters.clear();
 		luaL_unref(interface->m_luaState, LUA_REGISTRYINDEX, it->second.function);
+
 		interface->m_timerEvents.erase(it);
 		lua_pushboolean(L, true);
 	}

@@ -2261,7 +2261,7 @@ void Player::dropCorpse(DeathList deathList)
 
 		onIdleStatus();
 		g_game.addCreatureHealth(this);
-		g_game.internalTeleport(this, masterPosition, true);
+		g_game.internalTeleport(this, masterPosition, false);
 	}
 	else
 	{

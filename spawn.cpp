@@ -361,7 +361,7 @@ void Spawn::checkSpawn()
 		else
 		{
 			if(spawnId != 0 && !isInSpawnZone(monster->getPosition()) && monster->getIdleStatus())
-				g_game.internalTeleport(monster, monster->getMasterPosition(), FLAG_NOLIMIT);
+				g_game.internalTeleport(monster, monster->getMasterPosition(), true);
 
 			++it;
 		}
