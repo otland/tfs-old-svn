@@ -22,6 +22,9 @@
 
 #include "group.h"
 #include "tools.h"
+#include "configmanager.h"
+
+extern ConfigManager g_config;
 
 Group Groups::defGroup = Group();
 
