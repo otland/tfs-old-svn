@@ -833,7 +833,7 @@ bool TalkAction::thingProporties(Creature* creature, const std::string& cmd, con
 			{
 				std::string type = parseParams(it, tokens.end()), key = parseParams(it,
 					tokens.end()), value = parseParams(it, tokens.end());
-				if(type == "integer" || type == "number")
+				if(type == "integer" || type == "number" || type == "int")
 					item->setAttribute(key, atoi(value.c_str()));
 				else if(type == "float" || type == "double")
 					item->setAttribute(key, (float)atof(value.c_str()));

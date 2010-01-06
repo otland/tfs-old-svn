@@ -282,7 +282,7 @@ bool ConfigManager::load()
 	m_confNumber[NAME_REPORT_TYPE] = getGlobalNumber("violationNameReportActionType", 2);
 	m_confBool[ALLOW_FIGHTBACK] = getGlobalBool("allowFightback", true);
 	m_confNumber[HOUSE_CLEAN_OLD] = getGlobalNumber("houseCleanOld", 0);
-	m_confBool[VIPLIST_PER_PLAYER] = getGlobalBool("separateViplistPerCharacter", false);
+	m_confBool[VIPLIST_PER_PLAYER] = getGlobalBool("separateVipListPerCharacter", false);
 	m_confDouble[RATE_MONSTER_HEALTH] = getGlobalDouble("rateMonsterHealth", 1);
 	m_confDouble[RATE_MONSTER_MANA] = getGlobalDouble("rateMonsterMana", 1);
 	m_confDouble[RATE_MONSTER_ATTACK] = getGlobalDouble("rateMonsterAttack", 1);
@@ -302,6 +302,8 @@ bool ConfigManager::load()
 #ifdef __WAR_SYSTEM__
 	m_confBool[OPTIONAL_WAR_ATTACK_ALLY] = getGlobalBool("optionalWarAttackableAlly", false);
 #endif
+	m_confNumber[VIPLIST_DEFAULT_LIMIT] = getGlobalNumber("vipListDefaultLimit", 20);
+	m_confNumber[VIPLIST_DEFAULT_PREMIUM_LIMIT] = getGlobalNumber("vipListDefaultPremiumLimit", 100);
 
 	m_loaded = true;
 	return true;

@@ -275,6 +275,7 @@ Item* Player::getWeapon(bool ignoreAmmo)
 	if(!weapon)
 		return NULL;
 
+	shootRange = weapon->getShootRange();
 	if(ignoreAmmo || weapon->getAmmoType() == AMMO_NONE)
 		return weapon;
 
@@ -294,15 +295,14 @@ ItemVector Player::getWeapons() const
 		if(!(item = getEquippedItem((slots_t)slot)))
 			continue;
 
-		WeaponType_t weaponType = item->getWeaponType();
-		switch(weaponType)
+		switch(item->getWeaponType())
 		{
-			case WEAPON_FIST:
 			case WEAPON_CLUB:
 			case WEAPON_SWORD:
 			case WEAPON_AXE:
 			case WEAPON_DIST:
 			case WEAPON_WAND:
+			case WEAPON_FIST:
 			{
 				if(g_weapons->getWeapon(item))
 					weapons.push_back(item);
@@ -327,9 +327,6 @@ void Player::updateWeapon()
 		weapon = weapons[1];
 	else
 		weapon = NULL;
-
-	if(weapon && weapon->getWeaponType() == WEAPON_DIST)
-		shootRange = weapon->getShootRange();
 }
 
 WeaponType_t Player::getWeaponType()
@@ -390,20 +387,11 @@ void Player::getShieldAndWeapon(const Item* &_shield, const Item* &_weapon) cons
 	Item* item = NULL;
 	for(uint32_t slot = SLOT_RIGHT; slot <= SLOT_LEFT; ++slot)
 	{
-		if(!(item = getInventoryItem((slots_t)slot)))
+		if(!(item = getInventoryItem((slots_t)slot)) || item->getWeaponType() != WEAPON_SHIELD)
 			continue;
 
-		switch(item->getWeaponType())
-		{
-			case WEAPON_SHIELD:
-			{
-				if(!_shield || (_shield && item->getDefense() > _shield->getDefense()))
-					_shield = item;
-			}
-
-			default:
-				break;
-		}
+		if(!_shield || (_shield && item->getDefense() > _shield->getDefense()))
+			_shield = item;
 	}
 
 	_weapon = weapon;
@@ -2002,14 +1990,7 @@ void Player::onAttackedCreatureBlockHit(Creature* target, BlockType_t blockType)
 bool Player::hasShield() const
 {
 	Item* item = getInventoryItem(SLOT_LEFT);
-	if(item && item->getWeaponType() == WEAPON_SHIELD)
-		return true;
-
-	item = getInventoryItem(SLOT_RIGHT);
-	if(item && item->getWeaponType() == WEAPON_SHIELD)
-		return true;
-
-	return false;
+	return (item && item->getWeaponType() == WEAPON_SHIELD) || ((item = getInventoryItem(SLOT_RIGHT)) && item->getWeaponType() == WEAPON_SHIELD);
 }
 
 BlockType_t Player::blockHit(Creature* attacker, CombatType_t combatType, int32_t& damage,
@@ -2449,7 +2430,7 @@ bool Player::addVIP(uint32_t _guid, std::string& name, bool isOnline, bool inter
 		return false;
 	}
 
-	if(VIPList.size() > (group ? group->getMaxVips(isPremium()) : 20))
+	if(VIPList.size() > (group ? group->getMaxVips(isPremium()) : g_config.getNumber(ConfigManager::VIPLIST_DEFAULT_LIMIT)))
 	{
 		if(!internal)
 			sendTextMessage(MSG_STATUS_SMALL, "You cannot add more buddies.");
