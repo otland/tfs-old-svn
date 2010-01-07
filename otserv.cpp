@@ -122,7 +122,7 @@ bool argumentsHandler(StringVec args)
 		{
 			std::clog << STATUS_SERVER_NAME << ", version " << STATUS_SERVER_VERSION << " (" << STATUS_SERVER_CODENAME << ")\n"
 			"Compiled with " << BOOST_COMPILER << " at " << __DATE__ << ", " << __TIME__ << ".\n"
-			"A server developed by Elf, Talaturen, Lithium, KaczooH, Kiper, Kornholijo, Stian.\n"
+			"A server developed by Elf, Talaturen, KaczooH, Stian, Chojrak, Sentielo and Kornholijo.\n"
 			"Visit our forum for updates, support and resources: http://otland.net.\n";
 			return false;
 		}
@@ -307,7 +307,7 @@ void otserv(StringVec args, ServiceManager* services)
 
 	std::clog << STATUS_SERVER_NAME << ", version " << STATUS_SERVER_VERSION << " (" << STATUS_SERVER_CODENAME << ")" << std::endl
 		<< "Compiled with " << BOOST_COMPILER << " at " << __DATE__ << ", " << __TIME__ << "." << std::endl
-		<< "A server developed by Elf, Talaturen, KaczooH, Lithium, Kiper, Kornholijo, Stian." << std::endl
+		<< "A server developed by Elf, Talaturen, KaczooH, Stian, Chojrak, Sentielo and Kornholijo." << std::endl
 		<< "Visit our forum for updates, support and resources: http://otland.net." << std::endl << std::endl;
 	std::stringstream ss;
 #ifdef __DEBUG__

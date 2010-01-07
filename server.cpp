@@ -217,17 +217,9 @@ void ServiceManager::run()
 	assert(!running);
 	try
 	{
-		// Seems to be like the wrong way of doing this, but I assume that m_io_service.ran() is a blocking call
+		m_io_service.run();
 		if(!running)
-		{
 			running = true;
-			m_io_service.run();
-		}
-		else
-		{
-			std::clog << "Error: Service can't start. Seems to be running already";
-			exit(-1);
-		}
 	}
 	catch(boost::system::system_error& e)
 	{

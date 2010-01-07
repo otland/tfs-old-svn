@@ -2880,7 +2880,6 @@ void Player::__updateThing(Thing* thing, uint16_t itemId, uint32_t count)
 
 void Player::__replaceThing(uint32_t index, Thing* thing)
 {
-	// Note: uint can't be < 0
 	if(index > 11)
 	{
 #ifdef __DEBUG_MOVESYS__
