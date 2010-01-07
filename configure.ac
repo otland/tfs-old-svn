@@ -214,6 +214,16 @@ if test -n "$SQLITE_FLAGS"; then
 	AC_SUBST(SQLITE_LIBS)
 fi
 
+if test "$useMySQL" = "no" ; then
+	if test "$useSQLite" = "no" ; then
+		if test "$usePostgreSQL" = "no" ; then
+			echo Error: no database driver was enabled! To enable a database driver, configure with --enable-\<dbdriver\> \(example: --enable-mysql\).
+			echo
+			exit 1
+			return 1
+		fi
+	fi
+fi
 AC_CONFIG_FILES([Makefile])
 AC_OUTPUT
 
@@ -233,12 +243,6 @@ echo Build with MySQL............ : $useMySQL
 echo Build with SQLite........... : $useSQLite
 echo Build with PostgreSQL....... : $usePostgreSQL
 echo
-if test "$useMySQL" = "no" ; then
-	if test "$useSQLite" = "no" ; then
-		if test "$usePostgreSQL" = "no" ; then
-			echo Warning: no database driver was enabled! To enable a database driver, configure with --enable-\<dbdriver\> \(example: --enable-mysql\).
-			echo
-		fi
-	fi
-fi
+
 echo Configure complete, now you may type \'make\'.
+echo Developers might use \'dev-build.sh\'.
