@@ -468,7 +468,7 @@ void Game::refreshMap(RefreshTiles::iterator* it/* = NULL*/, uint32_t limit/* = 
 		if((items = tile->getItemList()))
 		{
 			downItemsSize = tile->getDownItemCount();
-			for(uint32_t i = downItemsSize - 1; i >= 0; --i)
+			for(uint32_t i = downItemsSize - 1; i; --i)
 			{
 				if((item = items->at(i)))
 				{
