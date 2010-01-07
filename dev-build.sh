@@ -1,7 +1,7 @@
 #!/bin/bash
-echo "TFS test build script, seems to speed things up ALOT when testing new features. Require ccache installed"
+echo "TheForgottenServer test build script, seems to speed things up ALOT when testing new features. Requires ccache installed!"
 
 # Enable CCACHE
 export PATH=/usr/lib/ccache:$PATH
-# Enable 4 make processes
-make -j 4
+# Enable 5 make processes - 1 + number of cores
+make -j 5
