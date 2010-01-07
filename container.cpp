@@ -625,7 +625,7 @@ void Container::__removeThing(Thing* thing, uint32_t count)
 
 Thing* Container::__getThing(uint32_t index) const
 {
-	if(index < 0 || index > size())
+	if(index > size())
 		return NULL;
 
 	uint32_t count = 0;

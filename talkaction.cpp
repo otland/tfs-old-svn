@@ -117,7 +117,7 @@ bool TalkActions::onPlayerSay(Creature* creature, uint16_t channelId, const std:
 {
 	std::string cmdstring[TALKFILTER_LAST] = words, paramstring[TALKFILTER_LAST] = "";
 	size_t loc = words.find('"', 0);
-	if(loc != std::string::npos && loc >= 0)
+	if(loc != std::string::npos && loc > 0)
 	{
 		cmdstring[TALKFILTER_QUOTATION] = std::string(words, 0, loc);
 		paramstring[TALKFILTER_QUOTATION] = std::string(words, (loc + 1), (words.size() - (loc - 1)));
@@ -125,13 +125,13 @@ bool TalkActions::onPlayerSay(Creature* creature, uint16_t channelId, const std:
 	}
 
 	loc = words.find(" ", 0);
-	if(loc != std::string::npos && loc >= 0)
+	if(loc != std::string::npos && loc > 0)
 	{
 		cmdstring[TALKFILTER_WORD] = std::string(words, 0, loc);
 		paramstring[TALKFILTER_WORD] = std::string(words, (loc + 1), (words.size() - (loc - 1)));
 
 		size_t sloc = words.find(" ", ++loc);
-		if(sloc != std::string::npos && sloc >= 0)
+		if(sloc != std::string::npos && sloc > 0)
 		{
 			cmdstring[TALKFILTER_WORD_SPACED] = std::string(words, 0, sloc);
 			paramstring[TALKFILTER_WORD_SPACED] = std::string(words, (sloc + 1), (words.size() - (sloc - 1)));

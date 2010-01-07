@@ -468,7 +468,7 @@ void Game::refreshMap(RefreshTiles::iterator* it/* = NULL*/, uint32_t limit/* = 
 		if((items = tile->getItemList()))
 		{
 			downItemsSize = tile->getDownItemCount();
-			for(uint32_t i = downItemsSize - 1; i >= 0; --i)
+			for(uint32_t i = downItemsSize - 1; i > 0; --i)
 			{
 				if((item = items->at(i)))
 				{
@@ -3609,7 +3609,7 @@ bool Game::playerSay(uint32_t playerId, uint16_t channelId, SpeakClasses type, c
 		return internalCreatureSay(player, SPEAK_SAY, text, false);
 	}
 
-	if(g_talkActions->onPlayerSay(player, type == SPEAK_SAY ? CHANNEL_DEFAULT : channelId, text, false))
+	if(g_talkActions->onPlayerSay(player, (type == SPEAK_SAY) ? (unsigned)CHANNEL_DEFAULT : channelId, text, false))
 		return true;
 
 	if(!muted)

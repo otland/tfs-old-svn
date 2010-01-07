@@ -7011,7 +7011,7 @@ int32_t LuaInterface::luaGetGuildMotd(lua_State* L)
 int32_t LuaInterface::luaDoMoveCreature(lua_State* L)
 {
 	//doMoveCreature(cid, direction)
-	uint32_t direction = popNumber(L);
+	int32_t direction = popNumber(L);
 	if(direction < NORTH || direction > NORTHEAST)
 	{
 		lua_pushboolean(L, false);

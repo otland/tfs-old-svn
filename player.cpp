@@ -2880,7 +2880,8 @@ void Player::__updateThing(Thing* thing, uint16_t itemId, uint32_t count)
 
 void Player::__replaceThing(uint32_t index, Thing* thing)
 {
-	if(index < 0 || index > 11)
+	// Note: uint can't be < 0
+	if(index > 11)
 	{
 #ifdef __DEBUG_MOVESYS__
 		std::clog << "Failure: [Player::__replaceThing], " << "player: " << getName() << ", index: " << index << ", index < 0 || index > 11" << std::endl;
@@ -3507,7 +3508,7 @@ void Player::onCombatRemoveCondition(const Creature* attacker, Condition* condit
 	{
 		if(!canDoAction())
 		{
-			uint32_t delay = getNextActionTime();
+			int32_t delay = getNextActionTime();
 			delay -= (delay % EVENT_CREATURE_THINK_INTERVAL);
 			if(delay < 0)
 				removeCondition(condition);

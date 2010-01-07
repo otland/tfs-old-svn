@@ -233,12 +233,16 @@ void Connection::closeSocket()
 			if(error)
 			{
 				if(error != boost::asio::error::not_connected)
+				{
 					PRINT_ASIO_ERROR("Shutdown");
+				}
 			}
 
 			m_socket->close(error);
 			if(error)
+			{
 				PRINT_ASIO_ERROR("Close");
+			}
 		}
 		catch(boost::system::system_error& e)
 		{
