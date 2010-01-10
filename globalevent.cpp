@@ -325,7 +325,7 @@ int32_t GlobalEvent::executeRecord(uint32_t current, uint32_t old, Player* playe
 		{
 			#ifdef __DEBUG_LUASCRIPTS__
 			char desc[125];
-			sprintf(desc, "%s - %i to %i (%i)", getName().c_str(), old, current, player->getName().c_str());
+			sprintf(desc, "%s - %i to %i (%s)", getName().c_str(), old, current, player->getName().c_str());
 			env->setEventDesc(desc);
 			#endif
 
