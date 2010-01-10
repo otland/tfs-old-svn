@@ -217,9 +217,8 @@ void ServiceManager::run()
 	assert(!running);
 	try
 	{
+		running = true;
 		m_io_service.run();
-		if(!running)
-			running = true;
 	}
 	catch(boost::system::system_error& e)
 	{
