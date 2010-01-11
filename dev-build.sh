@@ -28,9 +28,9 @@ echo "TheForgottenServer test build script, seems to speed things up ALOT when t
 # Enable CCACHE
 export PATH=/usr/lib/ccache/bin:$PATH
 # Get number cores
-CORES=`grep cores /proc/cpuinfo | wc -l` 
+CORES=`grep cores /proc/cpuinfo | wc -l`
 # Enable make processes - 1 + number of cores
-MAKEOPT=$(($cores+1))
+MAKEOPT=$(($CORES + 1))
 
 echo "Building on $CORES cores, using $MAKEOPT processes"
 make -j $MAKEOPT
