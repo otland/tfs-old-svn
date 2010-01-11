@@ -358,7 +358,7 @@
 		<vocation id="3"/>
 		<vocation id="7"/>
 	</conjure>
-	<conjure name="Food" words="exevo pan" lvl="14" mana="120" soul="1" exhaustion="1000" needlearn="0" event="script" value="support/conjure food.lua">
+	<instant name="Food" words="exevo pan" lvl="14" mana="120" soul="1" aggressive="0" selftarget="1" exhaustion="1000" needlearn="1" event="script" value="support/conjure food.lua">
 		<vocation id="2"/>
 		<vocation id="3"/>
 		<vocation id="6"/>

@@ -78,12 +78,13 @@ void ServicePort::open(uint16_t port)
 			LOG_MESSAGE(LOGTYPE_ERROR, e.what(), "NETWORK")
 			m_logError = false;
 		}
+
 		return;
 	}
+
 	m_pendingStart = true;
 	Scheduler::getInstance().addEvent(createSchedulerTask(5000, boost::bind(
 		&ServicePort::onOpen, boost::weak_ptr<ServicePort>(shared_from_this()), m_serverPort)));
-	
 }
 
 void ServicePort::close()
@@ -182,9 +183,7 @@ void ServicePort::handle(boost::asio::ip::tcp::socket* socket, const boost::syst
 	}
 #ifdef __DEBUG_NET__
 	else
-	{
 		std::clog << "[Error - ServerPort::handle] Operation aborted." << std::endl;
-	}
 #endif
 }
 
@@ -240,20 +239,19 @@ void ServiceManager::stop()
 		try
 		{
 			m_io_service.post(boost::bind(&ServicePort::close, it->second));
-			// Give it some time seems to really help on the possible segmentation errors
-			boost::this_thread::sleep(boost::posix_time::seconds(1));
 		}
 		catch(boost::system::system_error& e)
 		{
 			LOG_MESSAGE(LOGTYPE_ERROR, e.what(), "NETWORK")
 		}
+
+		// Give it some time seems to really help on the possible segmentation errors
+		boost::this_thread::sleep(boost::posix_time::seconds(10));
 	}
-	// Just to be safe we do it here too, need some more testing
-	boost::this_thread::sleep(boost::posix_time::seconds(1));
+
 	m_acceptors.clear();
-	boost::this_thread::sleep(boost::posix_time::seconds(1));
 	OutputMessagePool::getInstance()->stop();
-	boost::this_thread::sleep(boost::posix_time::seconds(1));
+
 	deathTimer.expires_from_now(boost::posix_time::seconds(3));
 	deathTimer.async_wait(boost::bind(&ServiceManager::die, this));
 }

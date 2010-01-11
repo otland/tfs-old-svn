@@ -156,7 +156,7 @@ Item* MonsterType::createLoot(const LootBlock& lootBlock)
 		tmpItem->setSubType(lootBlock.subType);
 
 	if(lootBlock.actionId != -1)
-		tmpItem->setActionId(lootBlock.actionId);
+		tmpItem->setActionId(lootBlock.actionId, false);
 
 	if(lootBlock.uniqueId != -1)
 		tmpItem->setUniqueId(lootBlock.uniqueId);

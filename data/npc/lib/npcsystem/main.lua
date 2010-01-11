@@ -1,5 +1,5 @@
 -- Advanced NPC System (Created by Jiddo),
--- Modified by Talaturen.
+-- Modified by TheForgottenServer Team.
 
 if(NpcSystem == nil) then
 	-- Loads the underlying classes of the npcsystem.

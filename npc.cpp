@@ -104,7 +104,8 @@ bool Npc::load()
 	if(!m_interface)
 	{
 		m_interface = new NpcScript();
-		m_interface->loadNpcLib(getFilePath(FILE_TYPE_OTHER, "npc/lib/npc.lua"));
+		m_interface->loadFile(getFilePath(FILE_TYPE_OTHER, "npc/lib/npc.lua"));
+		m_interface->loadFile(getFilePath(FILE_TYPE_OTHER, "npc/lib/npcsystem/main.lua"));
 	}
 
 	loaded = loadFromXml(m_filename);
@@ -1584,6 +1585,7 @@ void Npc::executeResponse(Player* player, NpcState* npcState, const NpcResponse*
 				case ACTION_SCRIPT:
 				{
 					NpcScript interface;
+					interface.loadFile(getFilePath(FILE_TYPE_OTHER, "npc/lib/npc.lua"));
 					if(interface.reserveEnv())
 					{
 						ScriptEnviroment* env = m_interface->getEnv();
@@ -2427,29 +2429,7 @@ NpcScript* Npc::getInterface()
 NpcScript::NpcScript() :
 	LuaInterface("NpcScript Interface")
 {
-	m_libLoaded = false;
 	initState();
-}
-
-bool NpcScript::closeState()
-{
-	m_libLoaded = false;
-	return LuaInterface::closeState();
-}
-
-bool NpcScript::loadNpcLib(std::string file)
-{
-	if(m_libLoaded)
-		return true;
-
-	if(!loadFile(file))
-	{
-		std::clog << "Warning: [NpcScript::loadNpcLib] Cannot load " << file << std::endl;
-		return false;
-	}
-
-	m_libLoaded = true;
-	return true;
 }
 
 void NpcScript::registerFunctions()

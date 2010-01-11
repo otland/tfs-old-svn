@@ -42,8 +42,6 @@ class NpcScript : public LuaInterface
 		NpcScript();
 		virtual ~NpcScript() {}
 
-		bool loadNpcLib(std::string file);
-
 		static void pushState(lua_State* L, NpcState* state);
 		static void popState(lua_State* L, NpcState* &state);
 
@@ -67,10 +65,6 @@ class NpcScript : public LuaInterface
 
 		static int32_t luaOpenShopWindow(lua_State* L);
 		static int32_t luaCloseShopWindow(lua_State* L);
-
-	private:
-		bool m_libLoaded;
-		virtual bool closeState();
 };
 
 class Player;
