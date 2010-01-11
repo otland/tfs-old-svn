@@ -23,7 +23,7 @@
 # 1/7 of the original compile speed!
 # When more you do it, more ccache will cache, default is limited to use 1GB storage
 
-echo "TheForgottenServer test build script, seems to speed things up ALOT when testing new features. Requires ccache installed!"
+echo "TheForgottenServer build script- seems to speed things up ALOT when testing new features. Requires CCache installed!"
 
 # Enable CCACHE
 export PATH=/usr/lib/ccache/bin:$PATH
