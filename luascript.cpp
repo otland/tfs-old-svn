@@ -904,7 +904,7 @@ void LuaInterface::executeTimer(uint32_t eventIndex)
 			releaseEnv();
 		}
 		else
-			std::clog << "[Error] Call stack overflow. LuaInterface::executeTimer" << std::endl;
+			std::clog << "[Error - LuaInterface::executeTimer] Call stack overflow." << std::endl;
 
 		//free resources
 		for(std::list<int32_t>::iterator lt = it->second.parameters.begin(); lt != it->second.parameters.end(); ++lt)
