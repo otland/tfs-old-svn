@@ -90,8 +90,8 @@ class ScriptEnviroment
 		int32_t getCallbackId() {return m_callbackId;}
 		bool setCallbackId(int32_t callbackId, LuaInterface* interface);
 
-		std::string getEventDesc() {return m_eventdesc;}
-		void setEventDesc(const std::string& desc) {m_eventdesc = desc;}
+		std::string getEvent() {return m_event;}
+		void setEvent(const std::string& desc) {m_event = desc;}
 
 		Position getRealPos() {return m_realPos;}
 		void setRealPos(const Position& realPos) {m_realPos = realPos;}
@@ -163,7 +163,7 @@ class ScriptEnviroment
 
 		LuaInterface* m_interface;
 		int32_t m_scriptId, m_callbackId;
-		std::string m_eventdesc;
+		std::string m_event;
 		bool m_timerEvent;
 
 		ThingMap m_localMap;
@@ -736,8 +736,8 @@ class LuaInterface
 		};
 		static int32_t internalGetPlayerInfo(lua_State* L, PlayerInfo_t info);
 
-		int32_t m_runningEventId;
-		uint32_t m_lastEventTimerId;
+		int32_t m_runningEvent;
+		uint32_t m_lastTimer;
 		std::string m_loadingFile, m_interfaceName;
 
 		static ScriptEnviroment m_scriptEnv[21];

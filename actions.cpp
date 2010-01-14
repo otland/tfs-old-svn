@@ -777,7 +777,7 @@ bool Action::executeUse(Player* player, Item* item, const PositionEx& fromPos, c
 			#ifdef __DEBUG_LUASCRIPTS__
 			std::stringstream desc;
 			desc << player->getName() << " - " << item->getID() << " " << fromPos << "|" << toPos;
-			env->setEventDesc(desc.str());
+			env->setEvent(desc.str());
 			#endif
 
 			env->setScriptId(m_scriptId, m_interface);

@@ -509,10 +509,9 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool preLo
 	player->loginPosition = Position(result->getDataInt("posx"), result->getDataInt("posy"), result->getDataInt("posz"));
 	player->lastLogin = result->getDataLong("lastlogin");
 	player->lastLogout = result->getDataLong("lastlogout");
-	player->lastIP = result->getDataInt("lastip");
 
-	Position loginPos = player->loginPosition;
-	if(!loginPos.x || !loginPos.y)
+	player->lastIP = result->getDataInt("lastip");
+	if(!player->loginPosition.x || !player->loginPosition.y)
 		player->loginPosition = player->getMasterPosition();
 
 	const uint32_t rankId = result->getDataInt("rank_id");

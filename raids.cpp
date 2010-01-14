@@ -976,7 +976,7 @@ bool ScriptEvent::executeEvent() const
 		else
 		{
 			#ifdef __DEBUG_LUASCRIPTS__
-			env->setEventDesc("Raid event");
+			env->setEvent("Raid event");
 			#endif
 			env->setScriptId(m_scriptId, &m_interface);
 			m_interface.pushFunction(m_scriptId);

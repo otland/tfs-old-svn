@@ -195,7 +195,7 @@ bool ScriptEnviroment::setCallbackId(int32_t callbackId, LuaInterface* interface
 void ScriptEnviroment::getInfo(int32_t& scriptId, std::string& desc, LuaInterface*& interface, int32_t& callbackId, bool& timerEvent)
 {
 	scriptId = m_scriptId;
-	desc = m_eventdesc;
+	desc = m_event;
 	interface = m_interface;
 	callbackId = m_callbackId;
 	timerEvent = m_timerEvent;
@@ -643,7 +643,7 @@ LuaInterface::LuaInterface(std::string interfaceName)
 {
 	m_luaState = NULL;
 	m_interfaceName = interfaceName;
-	m_lastEventTimerId = 1000;
+	m_lastTimer = 1000;
 }
 
 LuaInterface::~LuaInterface()
@@ -769,7 +769,7 @@ int32_t LuaInterface::getEvent(const std::string& eventName)
 	}
 
 	//save in our events table
-	lua_pushnumber(m_luaState, m_runningEventId);
+	lua_pushnumber(m_luaState, m_runningEvent);
 	lua_pushvalue(m_luaState, -2);
 
 	lua_rawset(m_luaState, -4);
@@ -779,9 +779,9 @@ int32_t LuaInterface::getEvent(const std::string& eventName)
 	lua_pushnil(m_luaState);
 	lua_setglobal(m_luaState, eventName.c_str());
 
-	m_cacheFiles[m_runningEventId] = m_loadingFile + ":" + eventName;
-	++m_runningEventId;
-	return m_runningEventId - 1;
+	m_cacheFiles[m_runningEvent] = m_loadingFile + ":" + eventName;
+	++m_runningEvent;
+	return m_runningEvent - 1;
 }
 
 std::string LuaInterface::getScript(int32_t scriptId)
@@ -857,7 +857,7 @@ bool LuaInterface::initState()
 
 	lua_newtable(m_luaState);
 	lua_setfield(m_luaState, LUA_REGISTRYINDEX, "EVENTS");
-	m_runningEventId = EVENT_ID_USER;
+	m_runningEvent = EVENT_ID_USER;
 	return true;
 }
 
@@ -8157,17 +8157,16 @@ int32_t LuaInterface::luaAddEvent(lua_State* L)
 	for(int32_t i = 0; i < parameters - 2; ++i) //-2 because addEvent needs at least two parameters
 		params.push_back(luaL_ref(L, LUA_REGISTRYINDEX));
 
-	uint32_t delay = std::max((int64_t)SCHEDULER_MINTICKS, popNumber(L));
-	LuaTimerEvent eventDesc;
+	LuaTimerEvent event;
+	event.eventId = Scheduler::getInstance().addEvent(createSchedulerTask(std::max((int64_t)SCHEDULER_MINTICKS, popNumber(L)),
+		boost::bind(&LuaInterface::executeTimer, interface, ++interface->m_lastTimer)));
 
-	eventDesc.parameters = params;
-	eventDesc.function = luaL_ref(L, LUA_REGISTRYINDEX);
-	eventDesc.scriptId = env->getScriptId();
+	event.parameters = params;
+	event.function = luaL_ref(L, LUA_REGISTRYINDEX);
+	event.scriptId = env->getScriptId();
 
-	eventDesc.eventId = Scheduler::getInstance().addEvent(createSchedulerTask(delay, boost::bind(
-		&LuaInterface::executeTimer, interface, interface->m_lastEventTimerId)));
-	interface->m_timerEvents[++interface->m_lastEventTimerId] = eventDesc;
-	lua_pushnumber(L, interface->m_lastEventTimerId);
+	interface->m_timerEvents[interface->m_lastTimer] = event;
+	lua_pushnumber(L, interface->m_lastTimer);
 	return 1;
 }
 

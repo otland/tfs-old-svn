@@ -428,7 +428,7 @@ bool CombatSpell::executeCastSpell(Creature* creature, const LuaVariant& var)
 			#ifdef __DEBUG_LUASCRIPTS__
 			char desc[60];
 			sprintf(desc, "onCastSpell - %s", creature->getName().c_str());
-			env->setEventDesc(desc);
+			env->setEvent(desc);
 			#endif
 
 			env->setScriptId(m_scriptId, m_interface);
@@ -1266,7 +1266,7 @@ bool InstantSpell::executeCastSpell(Creature* creature, const LuaVariant& var)
 			#ifdef __DEBUG_LUASCRIPTS__
 			char desc[60];
 			sprintf(desc, "onCastSpell - %s", creature->getName().c_str());
-			env->setEventDesc(desc);
+			env->setEvent(desc);
 			#endif
 
 			env->setScriptId(m_scriptId, m_interface);
@@ -1899,7 +1899,7 @@ bool RuneSpell::executeCastSpell(Creature* creature, const LuaVariant& var)
 			#ifdef __DEBUG_LUASCRIPTS__
 			char desc[60];
 			sprintf(desc, "onCastSpell - %s", creature->getName().c_str());
-			env->setEventDesc(desc);
+			env->setEvent(desc);
 			#endif
 
 			env->setScriptId(m_scriptId, m_interface);

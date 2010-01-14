@@ -375,7 +375,7 @@ uint32_t CreatureEvent::executeLogin(Player* player)
 			#ifdef __DEBUG_LUASCRIPTS__
 			char desc[35];
 			sprintf(desc, "%s", player->getName().c_str());
-			env->setEventDesc(desc);
+			env->setEvent(desc);
 			#endif
 
 			env->setScriptId(m_scriptId, m_interface);
@@ -427,7 +427,7 @@ uint32_t CreatureEvent::executeLogout(Player* player, bool forceLogout)
 			#ifdef __DEBUG_LUASCRIPTS__
 			char desc[35];
 			sprintf(desc, "%s", player->getName().c_str());
-			env->setEventDesc(desc);
+			env->setEvent(desc);
 			#endif
 
 			env->setScriptId(m_scriptId, m_interface);
@@ -484,7 +484,7 @@ uint32_t CreatureEvent::executeChannelJoin(Player* player, uint16_t channelId, U
 			#ifdef __DEBUG_LUASCRIPTS__
 			char desc[35];
 			sprintf(desc, "%s", player->getName().c_str());
-			env->setEventDesc(desc);
+			env->setEvent(desc);
 			#endif
 
 			env->setScriptId(m_scriptId, m_interface);
@@ -550,7 +550,7 @@ uint32_t CreatureEvent::executeChannelLeave(Player* player, uint16_t channelId, 
 			#ifdef __DEBUG_LUASCRIPTS__
 			char desc[35];
 			sprintf(desc, "%s", player->getName().c_str());
-			env->setEventDesc(desc);
+			env->setEvent(desc);
 			#endif
 
 			env->setScriptId(m_scriptId, m_interface);
@@ -615,7 +615,7 @@ uint32_t CreatureEvent::executeAdvance(Player* player, skills_t skill, uint32_t 
 			#ifdef __DEBUG_LUASCRIPTS__
 			char desc[35];
 			sprintf(desc, "%s", player->getName().c_str());
-			env->setEventDesc(desc);
+			env->setEvent(desc);
 			#endif
 
 			env->setScriptId(m_scriptId, m_interface);
@@ -674,7 +674,7 @@ uint32_t CreatureEvent::executeMailSend(Player* player, Player* receiver, Item* 
 			#ifdef __DEBUG_LUASCRIPTS__
 			char desc[30];
 			sprintf(desc, "%s", player->getName().c_str());
-			env->setEventDesc(desc);
+			env->setEvent(desc);
 			#endif
 
 			env->setScriptId(m_scriptId, m_interface);
@@ -733,7 +733,7 @@ uint32_t CreatureEvent::executeMailReceive(Player* player, Player* sender, Item*
 			#ifdef __DEBUG_LUASCRIPTS__
 			char desc[30];
 			sprintf(desc, "%s", player->getName().c_str());
-			env->setEventDesc(desc);
+			env->setEvent(desc);
 			#endif
 
 			env->setScriptId(m_scriptId, m_interface);
@@ -791,7 +791,7 @@ uint32_t CreatureEvent::executeTradeRequest(Player* player, Player* target, Item
 			#ifdef __DEBUG_LUASCRIPTS__
 			char desc[35];
 			sprintf(desc, "%s", player->getName().c_str());
-			env->setEventDesc(desc);
+			env->setEvent(desc);
 			#endif
 
 			env->setScriptId(m_scriptId, m_interface);
@@ -847,7 +847,7 @@ uint32_t CreatureEvent::executeTradeAccept(Player* player, Player* target, Item*
 			#ifdef __DEBUG_LUASCRIPTS__
 			char desc[35];
 			sprintf(desc, "%s", player->getName().c_str());
-			env->setEventDesc(desc);
+			env->setEvent(desc);
 			#endif
 
 			env->setScriptId(m_scriptId, m_interface);
@@ -905,7 +905,7 @@ uint32_t CreatureEvent::executeLook(Player* player, Thing* thing, const Position
 			#ifdef __DEBUG_LUASCRIPTS__
 			char desc[30];
 			sprintf(desc, "%s", player->getName().c_str());
-			env->setEventDesc(desc);
+			env->setEvent(desc);
 			#endif
 
 			env->setScriptId(m_scriptId, m_interface);
@@ -963,7 +963,7 @@ uint32_t CreatureEvent::executeDirection(Creature* creature, Direction old, Dire
 			#ifdef __DEBUG_LUASCRIPTS__
 			char desc[30];
 			sprintf(desc, "%s", creature->getName().c_str());
-			env->setEventDesc(desc);
+			env->setEvent(desc);
 			#endif
 
 			env->setScriptId(m_scriptId, m_interface);
@@ -1019,7 +1019,7 @@ uint32_t CreatureEvent::executeOutfit(Creature* creature, const Outfit_t& old, c
 			#ifdef __DEBUG_LUASCRIPTS__
 			char desc[30];
 			sprintf(desc, "%s", creature->getName().c_str());
-			env->setEventDesc(desc);
+			env->setEvent(desc);
 			#endif
 
 			env->setScriptId(m_scriptId, m_interface);
@@ -1074,7 +1074,7 @@ uint32_t CreatureEvent::executeThink(Creature* creature, uint32_t interval)
 			#ifdef __DEBUG_LUASCRIPTS__
 			char desc[35];
 			sprintf(desc, "%s", creature->getName().c_str());
-			env->setEventDesc(desc);
+			env->setEvent(desc);
 			#endif
 
 			env->setScriptId(m_scriptId, m_interface);
@@ -1132,7 +1132,7 @@ uint32_t CreatureEvent::executeStatsChange(Creature* creature, Creature* attacke
 			#ifdef __DEBUG_LUASCRIPTS__
 			char desc[35];
 			sprintf(desc, "%s", creature->getName().c_str());
-			env->setEventDesc(desc);
+			env->setEvent(desc);
 			#endif
 
 			env->setScriptId(m_scriptId, m_interface);
@@ -1192,7 +1192,7 @@ uint32_t CreatureEvent::executeCombatArea(Creature* creature, Tile* tile, bool a
 			#ifdef __DEBUG_LUASCRIPTS__
 			std::stringstream desc;
 			desc << creature->getName();
-			env->setEventDesc(desc.str());
+			env->setEvent(desc.str());
 			#endif
 
 			env->setScriptId(m_scriptId, m_interface);
@@ -1249,7 +1249,7 @@ uint32_t CreatureEvent::executeCombat(Creature* creature, Creature* target)
 			#ifdef __DEBUG_LUASCRIPTS__
 			std::stringstream desc;
 			desc << creature->getName();
-			env->setEventDesc(desc.str());
+			env->setEvent(desc.str());
 			#endif
 
 			env->setScriptId(m_scriptId, m_interface);
@@ -1303,7 +1303,7 @@ uint32_t CreatureEvent::executeAttack(Creature* creature, Creature* target)
 			#ifdef __DEBUG_LUASCRIPTS__
 			std::stringstream desc;
 			desc << creature->getName();
-			env->setEventDesc(desc.str());
+			env->setEvent(desc.str());
 			#endif
 
 			env->setScriptId(m_scriptId, m_interface);
@@ -1361,7 +1361,7 @@ uint32_t CreatureEvent::executeCast(Creature* creature, Creature* target/* = NUL
 			#ifdef __DEBUG_LUASCRIPTS__
 			std::stringstream desc;
 			desc << creature->getName();
-			env->setEventDesc(desc.str());
+			env->setEvent(desc.str());
 			#endif
 
 			env->setScriptId(m_scriptId, m_interface);
@@ -1416,7 +1416,7 @@ uint32_t CreatureEvent::executeKill(Creature* creature, Creature* target, uint32
 			#ifdef __DEBUG_LUASCRIPTS__
 			std::stringstream desc;
 			desc << creature->getName();
-			env->setEventDesc(desc.str());
+			env->setEvent(desc.str());
 			#endif
 
 			env->setScriptId(m_scriptId, m_interface);
@@ -1482,7 +1482,7 @@ uint32_t CreatureEvent::executeDeath(Creature* creature, Item* corpse, DeathList
 			#ifdef __DEBUG_LUASCRIPTS__
 			char desc[35];
 			sprintf(desc, "%s", creature->getName().c_str());
-			env->setEventDesc(desc);
+			env->setEvent(desc);
 			#endif
 
 			env->setScriptId(m_scriptId, m_interface);
@@ -1559,7 +1559,7 @@ uint32_t CreatureEvent::executePrepareDeath(Creature* creature, DeathList deathL
 			#ifdef __DEBUG_LUASCRIPTS__
 			char desc[35];
 			sprintf(desc, "%s", creature->getName().c_str());
-			env->setEventDesc(desc);
+			env->setEvent(desc);
 			#endif
 
 			env->setScriptId(m_scriptId, m_interface);
@@ -1627,7 +1627,7 @@ uint32_t CreatureEvent::executeTextEdit(Player* player, Item* item, std::string 
 			#ifdef __DEBUG_LUASCRIPTS__
 			char desc[35];
 			sprintf(desc, "%s", player->getName().c_str());
-			env->setEventDesc(desc);
+			env->setEvent(desc);
 			#endif
 
 			env->setScriptId(m_scriptId, m_interface);
@@ -1682,7 +1682,7 @@ uint32_t CreatureEvent::executeReportBug(Player* player, std::string comment)
 			#ifdef __DEBUG_LUASCRIPTS__
 			char desc[35];
 			sprintf(desc, "%s", player->getName().c_str());
-			env->setEventDesc(desc);
+			env->setEvent(desc);
 			#endif
 
 			env->setScriptId(m_scriptId, m_interface);
@@ -1736,7 +1736,7 @@ uint32_t CreatureEvent::executePush(Player* player, Creature* target)
 			#ifdef __DEBUG_LUASCRIPTS__
 			std::stringstream desc;
 			desc << player->getName();
-			env->setEventDesc(desc.str());
+			env->setEvent(desc.str());
 			#endif
 
 			env->setScriptId(m_scriptId, m_interface);
@@ -1790,7 +1790,7 @@ uint32_t CreatureEvent::executeTarget(Creature* creature, Creature* target)
 			#ifdef __DEBUG_LUASCRIPTS__
 			std::stringstream desc;
 			desc << creature->getName();
-			env->setEventDesc(desc.str());
+			env->setEvent(desc.str());
 			#endif
 
 			env->setScriptId(m_scriptId, m_interface);
@@ -1844,7 +1844,7 @@ uint32_t CreatureEvent::executeFollow(Creature* creature, Creature* target)
 			#ifdef __DEBUG_LUASCRIPTS__
 			std::stringstream desc;
 			desc << creature->getName();
-			env->setEventDesc(desc.str());
+			env->setEvent(desc.str());
 			#endif
 
 			env->setScriptId(m_scriptId, m_interface);

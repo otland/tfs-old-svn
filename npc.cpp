@@ -2839,7 +2839,7 @@ void NpcEvents::onCreatureAppear(const Creature* creature)
 		#ifdef __DEBUG_LUASCRIPTS__
 		std::stringstream desc;
 		desc << "npc " << m_npc->getName();
-		env->setEventDesc(desc.str());
+		env->setEvent(desc.str());
 		#endif
 
 		env->setScriptId(m_onCreatureAppear, m_interface);
@@ -2870,7 +2870,7 @@ void NpcEvents::onCreatureDisappear(const Creature* creature)
 		#ifdef __DEBUG_LUASCRIPTS__
 		std::stringstream desc;
 		desc << "npc " << m_npc->getName();
-		env->setEventDesc(desc.str());
+		env->setEvent(desc.str());
 		#endif
 
 		env->setScriptId(m_onCreatureDisappear, m_interface);
@@ -2901,7 +2901,7 @@ void NpcEvents::onCreatureMove(const Creature* creature, const Position& oldPos,
 		#ifdef __DEBUG_LUASCRIPTS__
 		std::stringstream desc;
 		desc << "npc " << m_npc->getName();
-		env->setEventDesc(desc.str());
+		env->setEvent(desc.str());
 		#endif
 
 		env->setScriptId(m_onCreatureMove, m_interface);
@@ -2935,7 +2935,7 @@ void NpcEvents::onCreatureSay(const Creature* creature, SpeakClasses type, const
 		#ifdef __DEBUG_LUASCRIPTS__
 		std::stringstream desc;
 		desc << "npc " << m_npc->getName();
-		env->setEventDesc(desc.str());
+		env->setEvent(desc.str());
 		#endif
 
 		env->setScriptId(m_onCreatureSay, m_interface);
@@ -2970,7 +2970,7 @@ void NpcEvents::onPlayerTrade(const Player* player, int32_t callback, uint16_t i
 		#ifdef __DEBUG_LUASCRIPTS__
 		std::stringstream desc;
 		desc << "npc " << m_npc->getName();
-		env->setEventDesc(desc.str());
+		env->setEvent(desc.str());
 		#endif
 
 		env->setScriptId(-1, m_interface);
@@ -3058,7 +3058,7 @@ void NpcEvents::onThink()
 		#ifdef __DEBUG_LUASCRIPTS__
 		std::stringstream desc;
 		desc << "npc " << m_npc->getName();
-		env->setEventDesc(desc.str());
+		env->setEvent(desc.str());
 		#endif
 
 		env->setScriptId(m_onThink, m_interface);
