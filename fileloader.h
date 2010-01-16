@@ -87,12 +87,7 @@ class FileLoader
 {
 	public:
 		FileLoader();
-		virtual ~FileLoader()
-		{
-			delete m_file;
-			delete m_buffer;
-			delete[] m_cached_data;	
-		}
+		virtual ~FileLoader();
 
 		bool openFile(const char* filename, bool write, bool caching = false);
 		const uint8_t* getProps(const NODE, uint32_t &size);
