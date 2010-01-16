@@ -105,52 +105,60 @@ void Game::start(ServiceManager* servicer)
 		boost::bind(&Game::checkLight, this)));
 
 	services = servicer;
-	if(g_config.getBool(ConfigManager::GLOBALSAVE_ENABLED) && g_config.getNumber(ConfigManager::GLOBALSAVE_H) >= 1
-		&& g_config.getNumber(ConfigManager::GLOBALSAVE_H) <= 24)
+	if(!g_config.getBool(ConfigManager::GLOBALSAVE_ENABLED) || g_config.getNumber(ConfigManager::GLOBALSAVE_H) < 1 ||
+		g_config.getNumber(ConfigManager::GLOBALSAVE_H) > 24 || g_config.getNumber(ConfigManager::GLOBALSAVE_M) < 0
+		|| g_config.getNumber(ConfigManager::GLOBALSAVE_M) > 59)
+		return;
+
+	time_t timeNow = time(NULL);
+	const tm* theTime = localtime(&timeNow);
+
+	int32_t prepareHour = g_config.getNumber(ConfigManager::GLOBALSAVE_H) - 1,
+		prepareMinute = g_config.getNumber(ConfigManager::GLOBALSAVE_M),
+		hoursLeft = 0, minutesLeft = 0;
+	if(theTime->tm_hour > prepareHour)
 	{
-		int32_t prepareGlobalSaveHour = g_config.getNumber(ConfigManager::GLOBALSAVE_H) - 1, hoursLeft = 0, minutesLeft = 0, minutesToRemove = 0;
-		bool ignoreEvent = false;
-
-		time_t timeNow = time(NULL);
-		const tm* theTime = localtime(&timeNow);
-		if(theTime->tm_hour > prepareGlobalSaveHour)
+		hoursLeft = 24 - (theTime->tm_hour - prepareHour);
+		if(theTime->tm_min > prepareMinute)
+			minutesLeft = theTime->tm_min - prepareMinute;
+		else
+			minutesLeft = prepareMinute - theTime->tm_min;
+	}
+	else if(theTime->tm_hour == prepareHour)
+	{
+		if(theTime->tm_min > (prepareMinute - 6) && theTime->tm_min <= prepareMinute)
 		{
-			hoursLeft = 24 - (theTime->tm_hour - prepareGlobalSaveHour);
-			if(theTime->tm_min > 55 && theTime->tm_min <= 59)
-				minutesToRemove = theTime->tm_min - 55;
-			else
-				minutesLeft = 55 - theTime->tm_min;
+			if(theTime->tm_min > (prepareMinute - 4))
+				setGlobalSaveMessage(0, true);
+
+			if(theTime->tm_min > (prepareMinute - 2))
+				setGlobalSaveMessage(1, true);
+
+			prepareGlobalSave();
 		}
-		else if(theTime->tm_hour == prepareGlobalSaveHour)
+		else if(theTime->tm_min > prepareMinute)
 		{
-			if(theTime->tm_min >= 55 && theTime->tm_min <= 59)
-			{
-				if(theTime->tm_min >= 57)
-					setGlobalSaveMessage(0, true);
-
-				if(theTime->tm_min == 59)
-					setGlobalSaveMessage(1, true);
-
-				prepareGlobalSave();
-				ignoreEvent = true;
-			}
-			else
-				minutesLeft = 55 - theTime->tm_min;
+			hoursLeft = 23;
+			minutesLeft = 60 - (theTime->tm_min - prepareMinute);
 		}
 		else
-		{
-			hoursLeft = prepareGlobalSaveHour - theTime->tm_hour;
-			if(theTime->tm_min > 55 && theTime->tm_min <= 59)
-				minutesToRemove = theTime->tm_min - 55;
-			else
-				minutesLeft = 55 - theTime->tm_min;
-		}
-
-		uint32_t hoursLeftInMs = 60000 * 60 * hoursLeft, minutesLeftInMs = 60000 * (minutesLeft - minutesToRemove);
-		if(!ignoreEvent && (hoursLeftInMs + minutesLeftInMs) > 0)
-			saveEvent = Scheduler::getInstance().addEvent(createSchedulerTask(hoursLeftInMs + minutesLeftInMs,
-				boost::bind(&Game::prepareGlobalSave, this)));
+			minutesLeft = prepareMinute - theTime->tm_min;
 	}
+	else
+	{
+		hoursLeft = prepareHour - theTime->tm_hour;
+		if(theTime->tm_min > prepareMinute)
+			minutesLeft = theTime->tm_min - prepareMinute;
+		else
+			minutesLeft = prepareMinute - theTime->tm_min;
+	}
+
+	if(!hoursLeft || !minutesLeft)
+		return;
+
+	uint32_t timeLeft = (hoursLeft * 60 * 60 * 1000) + minutesLeft * 60 * 1000;
+	saveEvent = Scheduler::getInstance().addEvent(createSchedulerTask(timeLeft,
+		boost::bind(&Game::prepareGlobalSave, this)));
 }
 
 void Game::loadGameState()

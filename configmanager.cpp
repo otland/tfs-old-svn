@@ -97,6 +97,7 @@ bool ConfigManager::load()
 		m_confString[MAP_NAME] = getGlobalString("mapName", "forgotten.otbm.gz");
 		m_confBool[GLOBALSAVE_ENABLED] = getGlobalBool("globalSaveEnabled", true);
 		m_confNumber[GLOBALSAVE_H] = getGlobalNumber("globalSaveHour", 8);
+		m_confNumber[GLOBALSAVE_M] = getGlobalNumber("globalSaveMinute", 0);
 		m_confString[HOUSE_RENT_PERIOD] = getGlobalString("houseRentPeriod", "monthly");
 		m_confNumber[WORLD_ID] = getGlobalNumber("worldId", 0);
 		m_confBool[RANDOMIZE_TILES] = getGlobalBool("randomizeTiles", true);
