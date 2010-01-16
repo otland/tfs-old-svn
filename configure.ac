@@ -245,4 +245,4 @@ echo Build with PostgreSQL....... : $usePostgreSQL
 echo
 
 echo Configure complete, now you may type \'make\'.
-echo Developers might want to use \'dev-build.sh\'.
+echo Developers might want to use \'build.sh\'.

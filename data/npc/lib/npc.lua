@@ -1,6 +1,3 @@
--- Include the Advanced NPC System
-dofile(getDataDir() .. 'npc/lib/npcsystem/npcsystem.lua')
-
 function selfIdle()
 	following = false
 	attacking = false
