@@ -8415,7 +8415,7 @@ int32_t LuaInterface::luaDoPlayerAddStamina(lua_State* L)
 int32_t LuaInterface::luaDoPlayerSetBalance(lua_State* L)
 {
 	//doPlayerSetBalance(cid, balance)
-	uint32_t balance = popNumber(L);
+	uint64_t balance = popNumber(L);
 
 	ScriptEnviroment* env = getEnv();
 	if(Player* player = env->getPlayerByUID(popNumber(L)))
