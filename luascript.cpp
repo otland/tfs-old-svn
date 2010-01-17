@@ -2573,8 +2573,12 @@ int32_t LuaInterface::internalGetPlayerInfo(lua_State* L, PlayerInfo_t info)
 			value = player->getGroupId();
 			break;
 		case PlayerInfoBalance:
-			value = (g_config.getBool(ConfigManager::BANK_SYSTEM) ? player->balance : 0);
-			break;
+			if(g_config.getBool(ConfigManager::BANK_SYSTEM))
+				lua_pushnumber(L, player->balance);
+			else
+				lua_pushnumber(L, 0);
+
+			return 1;
 		case PlayerInfoStamina:
 			value = player->getStaminaMinutes();
 			break;
