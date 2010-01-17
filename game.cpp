@@ -1818,7 +1818,7 @@ bool Game::removeItemOfType(Cylinder* cylinder, uint16_t itemId, int32_t count, 
 	return (count == 0);
 }
 
-uint32_t Game::getMoney(const Cylinder* cylinder)
+uint64_t Game::getMoney(const Cylinder* cylinder)
 {
 	if(!cylinder)
 		return 0;
@@ -1829,13 +1829,10 @@ uint32_t Game::getMoney(const Cylinder* cylinder)
 	Thing* thing = NULL;
 	Item* item = NULL;
 
-	uint32_t moneyCount = 0;
+	uint64_t moneyCount = 0;
 	for(int32_t i = cylinder->__getFirstIndex(); i < cylinder->__getLastIndex(); ++i)
 	{
-		if(!(thing = cylinder->__getThing(i)))
-			continue;
-
-		if(!(item = thing->getItem()))
+		if(!(thing = cylinder->__getThing(i)) || !(item = thing->getItem()))
 			continue;
 
 		if((tmpContainer = item->getContainer()))
@@ -1861,7 +1858,7 @@ uint32_t Game::getMoney(const Cylinder* cylinder)
 	return moneyCount;
 }
 
-bool Game::removeMoney(Cylinder* cylinder, int32_t money, uint32_t flags /*= 0*/)
+bool Game::removeMoney(Cylinder* cylinder, int64_t money, uint32_t flags /*= 0*/)
 {
 	if(!cylinder)
 		return false;
@@ -1878,13 +1875,10 @@ bool Game::removeMoney(Cylinder* cylinder, int32_t money, uint32_t flags /*= 0*/
 	Thing* thing = NULL;
 	Item* item = NULL;
 
-	int32_t moneyCount = 0;
+	int64_t moneyCount = 0;
 	for(int32_t i = cylinder->__getFirstIndex(); i < cylinder->__getLastIndex() && money > 0; ++i)
 	{
-		if(!(thing = cylinder->__getThing(i)))
-			continue;
-
-		if(!(item = thing->getItem()))
+		if(!(thing = cylinder->__getThing(i)) || !(item = thing->getItem()))
 			continue;
 
 		if((tmpContainer = item->getContainer()))
@@ -1927,8 +1921,7 @@ bool Game::removeMoney(Cylinder* cylinder, int32_t money, uint32_t flags /*= 0*/
 		if(mit->first > money)
 		{
 			// Remove a monetary value from an item
-			int32_t remaind = item->getWorth() - money;
-			addMoney(cylinder, remaind, flags);
+			addMoney(cylinder, (int64_t)(item->getWorth() - money), flags);
 			money = 0;
 		}
 		else
@@ -1941,26 +1934,25 @@ bool Game::removeMoney(Cylinder* cylinder, int32_t money, uint32_t flags /*= 0*/
 	return money == 0;
 }
 
-void Game::addMoney(Cylinder* cylinder, int32_t money, uint32_t flags /*= 0*/)
+void Game::addMoney(Cylinder* cylinder, int64_t money, uint32_t flags /*= 0*/)
 {
 	IntegerMap moneyMap = Item::items.getMoneyMap();
-	int32_t tmp = 0;
 	for(IntegerMap::reverse_iterator it = moneyMap.rbegin(); it != moneyMap.rend(); ++it)
 	{
-		tmp = money / it->first;
+		int64_t tmp = money / it->first;
 		money -= tmp * it->first;
-		if(tmp != 0)
-		{
-			do
-			{
-				Item* remaindItem = Item::CreateItem(it->second, std::min(100, tmp));
-				if(internalAddItem(NULL, cylinder, remaindItem, INDEX_WHEREEVER, flags) != RET_NOERROR)
-					internalAddItem(NULL, cylinder->getTile(), remaindItem, INDEX_WHEREEVER, FLAG_NOLIMIT);
+		if(!tmp)
+			continue;
 
-				tmp -= std::min(100, tmp);
-			}
-			while(tmp > 0);
+		do
+		{
+			Item* remainItem = Item::CreateItem(it->second, std::min((int64_t)100, tmp));
+			if(internalAddItem(NULL, cylinder, remainItem, INDEX_WHEREEVER, flags) != RET_NOERROR)
+				internalAddItem(NULL, cylinder->getTile(), remainItem, INDEX_WHEREEVER, FLAG_NOLIMIT);
+
+			tmp -= std::min((int64_t)100, tmp);
 		}
+		while(tmp > 0);
 	}
 }
 

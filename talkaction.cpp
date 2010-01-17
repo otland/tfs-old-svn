@@ -452,7 +452,7 @@ bool TalkAction::houseBuy(Creature* creature, const std::string& cmd, const std:
 		return false;
 	}
 
-	if(g_game.getMoney(player) < house->getPrice() || !g_game.removeMoney(player, house->getPrice()))
+	if((uint32_t)g_game.getMoney(player) < house->getPrice() || !g_game.removeMoney(player, house->getPrice()))
 	{
 		player->sendCancel("You do not have enough money.");
 		g_game.addMagicEffect(player->getPosition(), MAGIC_EFFECT_POFF);

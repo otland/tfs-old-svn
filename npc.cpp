@@ -1465,7 +1465,7 @@ void Npc::executeResponse(Player* player, NpcState* npcState, const NpcResponse*
 					const ItemType& iit = Item::items[npcState->itemId];
 					if(iit.id != 0)
 					{
-						uint32_t moneyCount = it->intValue;
+						uint64_t moneyCount = it->intValue;
 						if(it->strValue == "|PRICE|")
 							moneyCount = npcState->price * npcState->amount;
 
@@ -2041,7 +2041,7 @@ const NpcResponse* Npc::getResponse(const ResponseList& list, const Player* play
 
 			if(hasBitSet(RESPOND_LOWMONEY, params))
 			{
-				if((signed)g_game.getMoney(player) >= (npcState->price * npcState->amount))
+				if(g_game.getMoney(player) >= (uint64_t)(npcState->price * npcState->amount))
 					continue;
 
 				++matchCount;

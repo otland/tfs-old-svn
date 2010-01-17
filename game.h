@@ -383,7 +383,7 @@ class Game
 		  * Get the amount of money in a a cylinder
 		  * \returns the amount of money found
 		  */
-		uint32_t getMoney(const Cylinder* cylinder);
+		uint64_t getMoney(const Cylinder* cylinder);
 
 		/**
 		  * Remove/Add item(s) with a monetary value
@@ -392,7 +392,7 @@ class Game
 		  * \param flags optional flags to modifiy the default behaviour
 		  * \returns true if the removal was successful
 		  */
-		bool removeMoney(Cylinder* cylinder, int32_t money, uint32_t flags = 0);
+		bool removeMoney(Cylinder* cylinder, int64_t money, uint32_t flags = 0);
 
 		/**
 		  * Add item(s) with monetary value
@@ -400,7 +400,7 @@ class Game
 		  * \param money the amount to give
 		  * \param flags optional flags to modify default behavior
 		  */
-		void addMoney(Cylinder* cylinder, int32_t money, uint32_t flags = 0);
+		void addMoney(Cylinder* cylinder, int64_t money, uint32_t flags = 0);
 
 		/**
 		  * Transform one item to another type/count
