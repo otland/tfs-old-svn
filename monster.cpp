@@ -116,7 +116,7 @@ void Monster::onAttackedCreature(Creature* target)
 {
 	Creature::onAttackedCreature(target);
 	if(isSummon())
-		getMaster()->onSummonAttackedCreature(this, target);
+		master->onSummonAttackedCreature(this, target);
 }
 
 void Monster::onAttackedCreatureDisappear(bool isLogout)
@@ -132,7 +132,7 @@ void Monster::onAttackedCreatureDrain(Creature* target, int32_t points)
 {
 	Creature::onAttackedCreatureDrain(target, points);
 	if(isSummon())
-		getMaster()->onSummonAttackedCreatureDrain(this, target, points);
+		master->onSummonAttackedCreatureDrain(this, target, points);
 }
 
 void Monster::onCreatureAppear(const Creature* creature)
@@ -142,7 +142,7 @@ void Monster::onCreatureAppear(const Creature* creature)
 	{
 		//We just spawned lets look around to see who is there.
 		if(isSummon())
-			isMasterInRange = canSee(getMaster()->getPosition());
+			isMasterInRange = canSee(master->getPosition());
 
 		updateTargetList();
 		updateIdleStatus();
@@ -172,7 +172,7 @@ void Monster::onCreatureMove(const Creature* creature, const Tile* newTile, cons
 	if(creature == this)
 	{
 		if(isSummon())
-			isMasterInRange = canSee(getMaster()->getPosition());
+			isMasterInRange = canSee(master->getPosition());
 
 		updateTargetList();
 		updateIdleStatus();
@@ -185,7 +185,7 @@ void Monster::onCreatureMove(const Creature* creature, const Tile* newTile, cons
 		else if(!canSeeNewPos && canSeeOldPos)
 			onCreatureLeave(const_cast<Creature*>(creature));
 
-		if(isSummon() && getMaster() == creature && canSeeNewPos) //Turn the summon on again
+		if(isSummon() && master == creature && canSeeNewPos) //Turn the summon on again
 			isMasterInRange = true;
 
 		updateIdleStatus();
@@ -273,7 +273,7 @@ void Monster::onCreatureFound(Creature* creature, bool pushFront /*= false*/)
 
 void Monster::onCreatureEnter(Creature* creature)
 {
-	if(getMaster() == creature) //Turn the summon on again
+	if(master == creature) //Turn the summon on again
 	{
 		isMasterInRange = true;
 		updateIdleStatus();
@@ -284,31 +284,31 @@ void Monster::onCreatureEnter(Creature* creature)
 
 bool Monster::isFriend(const Creature* creature)
 {
-	if(!isSummon() || !getMaster()->getPlayer())
+	if(!isSummon() || !master->getPlayer())
 		return creature->getMonster() && !creature->isSummon();
 
 	const Player* tmpPlayer = NULL;
 	if(creature->getPlayer())
 		tmpPlayer = creature->getPlayer();
-	else if(creature->getMaster() && creature->getMaster()->getPlayer())
-		tmpPlayer = creature->getMaster()->getPlayer();
+	else if(creature->getPlayerMaster())
+		tmpPlayer = creature->getPlayerMaster();
 
-	const Player* masterPlayer = getMaster()->getPlayer();
-	return tmpPlayer && (tmpPlayer == getMaster() || masterPlayer->isPartner(tmpPlayer));
+	const Player* masterPlayer = master->getPlayer();
+	return tmpPlayer && (tmpPlayer == masterPlayer) || masterPlayer->isPartner(tmpPlayer));
 }
 
 bool Monster::isOpponent(const Creature* creature)
 {
-	return (isSummon() && getMaster()->getPlayer() && creature != getMaster()) || ((creature->getPlayer()
+	return (isSummon() && master->getPlayer() && creature != master) || ((creature->getPlayer()
 		&& !creature->getPlayer()->hasFlag(PlayerFlag_IgnoredByMonsters)) ||
-		(creature->getMaster() && creature->getMaster()->getPlayer()));
+		(creature->getMaster() && creature->getPlayerMaster()));
 }
 
 bool Monster::doTeleportToMaster()
 {
 	const Position& tmp = getPosition();
 	if(g_game.internalTeleport(this, g_game.getClosestFreeTile(this,
-		getMaster()->getPosition(), true), true) != RET_NOERROR)
+		master->getPosition(), true), true) != RET_NOERROR)
 		return false;
 
 	g_game.addMagicEffect(tmp, MAGIC_EFFECT_POFF);
@@ -321,9 +321,9 @@ void Monster::onCreatureLeave(Creature* creature)
 #ifdef __DEBUG__
 	std::clog << "onCreatureLeave - " << creature->getName() << std::endl;
 #endif
-	if(isSummon() && getMaster() == creature)
+	if(isSummon() && master == creature)
 	{
-		if(!g_config.getBool(ConfigManager::TELEPORT_SUMMONS) && (!getMaster()->getPlayer()
+		if(!g_config.getBool(ConfigManager::TELEPORT_SUMMONS) && (!master->getPlayer()
 			|| !g_config.getBool(ConfigManager::TELEPORT_PLAYER_SUMMONS)))
 		{
 			//Turn the monster off until its master comes back
@@ -539,7 +539,7 @@ void Monster::updateIdleStatus()
 	{
 		if(isSummon())
 		{
-			if((!isMasterInRange && !teleportToMaster) || (getMaster()->getMonster() && getMaster()->getMonster()->getIdleStatus()))
+			if((!isMasterInRange && !teleportToMaster) || (master->getMonster() && master->getMonster()->getIdleStatus()))
 				idle = true;
 		}
 		else if(targetList.empty())
@@ -591,10 +591,10 @@ void Monster::onThink(uint32_t interval)
 	{
 		if(!attackedCreature)
 		{
-			if(getMaster() && getMaster()->getAttackedCreature()) //This happens if the monster is summoned during combat
-				selectTarget(getMaster()->getAttackedCreature());
-			else if(getMaster() != followCreature) //Our master has not ordered us to attack anything, lets follow him around instead.
-				setFollowCreature(getMaster());
+			if(master && master->getAttackedCreature()) //This happens if the monster is summoned during combat
+				selectTarget(master->getAttackedCreature());
+			else if(master != followCreature) //Our master has not ordered us to attack anything, lets follow him around instead.
+				setFollowCreature(master);
 		}
 		else if(attackedCreature == this)
 			setFollowCreature(NULL);
@@ -1343,7 +1343,7 @@ bool Monster::convinceCreature(Creature* creature)
 
 	Creature* oldMaster = NULL;
 	if(isSummon())
-		oldMaster = getMaster();
+		oldMaster = master;
 
 	if(oldMaster)
 	{
@@ -1402,7 +1402,7 @@ void Monster::getPathSearchParams(const Creature* creature, FindPathParams& fpp)
 	fpp.maxTargetDist = mType->targetDistance;
 	if(isSummon())
 	{
-		if(getMaster() == creature)
+		if(master == creature)
 		{
 			fpp.maxTargetDist = 2;
 			fpp.fullPathSearch = true;

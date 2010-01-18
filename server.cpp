@@ -79,12 +79,10 @@ void ServicePort::open(uint16_t port)
 			m_logError = false;
 		}
 
-		return;
+		m_pendingStart = true;
+		Scheduler::getInstance().addEvent(createSchedulerTask(5000, boost::bind(
+			&ServicePort::onOpen, boost::weak_ptr<ServicePort>(shared_from_this()), m_serverPort)));
 	}
-
-	m_pendingStart = true;
-	Scheduler::getInstance().addEvent(createSchedulerTask(5000, boost::bind(
-		&ServicePort::onOpen, boost::weak_ptr<ServicePort>(shared_from_this()), m_serverPort)));
 }
 
 void ServicePort::close()
@@ -219,8 +217,8 @@ void ServiceManager::run()
 	assert(!running);
 	try
 	{
-		running = true;
 		m_io_service.run();
+		running = true;
 	}
 	catch(boost::system::system_error& e)
 	{
@@ -245,14 +243,13 @@ void ServiceManager::stop()
 			LOG_MESSAGE(LOGTYPE_ERROR, e.what(), "NETWORK")
 		}
 
-		// Give it some time seems to really help on the possible segmentation errors
-		boost::this_thread::sleep(boost::posix_time::seconds(10));
+		deathTimer.expires_from_now(boost::posix_time::seconds(3));
 	}
 
 	m_acceptors.clear();
 	OutputMessagePool::getInstance()->stop();
 
-	deathTimer.expires_from_now(boost::posix_time::seconds(3));
+	deathTimer.expires_from_now(boost::posix_time::seconds(3)); 
 	deathTimer.async_wait(boost::bind(&ServiceManager::die, this));
 }
 
