@@ -1,10 +1,10 @@
 CREATE TABLE "server_config" (
 	"config" VARCHAR(35) NOT NULL DEFAULT '',
-	"value" INTEGER NOT NULL,
+	"value" VARCHAR(255) NOT NULL DEFAULT '',
 	UNIQUE ("config")
 );
 
-INSERT INTO "server_config" VALUES ('db_version', 24);
+INSERT INTO "server_config" VALUES ('db_version', 25);
 
 CREATE TABLE "server_motd" (
 	"id" INTEGER NOT NULL,

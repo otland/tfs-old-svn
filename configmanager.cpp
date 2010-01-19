@@ -26,11 +26,12 @@ ConfigManager::ConfigManager()
 	m_loaded = false;
 	m_startup = true;
 
+	m_confNumber[ENCRYPTION] = ENCRYPTION_PLAIN;
 	m_confString[CONFIG_FILE] = getFilePath(FILE_TYPE_CONFIG, "config.lua");
-	m_confBool[LOGIN_ONLY_LOGINSERVER] = m_confBool[START_CLOSED] = false;
 
 	m_confNumber[LOGIN_PORT] = m_confNumber[GAME_PORT] = m_confNumber[ADMIN_PORT] = m_confNumber[MANAGER_PORT] = m_confNumber[STATUS_PORT] = 0;
-	m_confString[DATA_DIRECTORY] = m_confString[IP] = m_confString[RUNFILE] = m_confString[OUTPUT_LOG] = "";
+	m_confString[DATA_DIRECTORY] = m_confString[IP] = m_confString[RUNFILE] = m_confString[OUTPUT_LOG] = m_confString[ENCRYPTION_KEY] = "";
+	m_confBool[LOGIN_ONLY_LOGINSERVER] = m_confBool[START_CLOSED] = false;
 }
 
 bool ConfigManager::load()
@@ -109,8 +110,6 @@ bool ConfigManager::load()
 		m_confBool[LOGIN_ONLY_LOGINSERVER] = getGlobalBool("loginOnlyWithLoginServer", false);
 		#endif
 		m_confString[ENCRYPTION_TYPE] = getGlobalString("encryptionType", "plain");
-		m_confString[ENCRYPTION_VAHASH_KEY] = getGlobalString("vahashKey", "");
-		m_confNumber[ENCRYPTION] = ENCRYPTION_PLAIN;
 	}
 
 	m_confString[MAP_AUTHOR] = getGlobalString("mapAuthor", "Unknown");

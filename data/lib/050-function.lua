@@ -138,8 +138,7 @@ function playerExists(name)
 end
 
 function getTibiaTime()
-	local minutes = getWorldTime()
-	local hours = 0
+	local minutes, hours = getWorldTime(), 0
 	while (minutes > 60) do
 		hours = hours + 1
 		minutes = minutes - 60

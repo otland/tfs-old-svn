@@ -51,7 +51,7 @@ class ConfigManager
 			#endif
 			SQL_FILE,
 			ENCRYPTION_TYPE,
-			ENCRYPTION_VAHASH_KEY,
+			ENCRYPTION_KEY,
 			MAP_AUTHOR,
 			RUNFILE,
 			OUTPUT_LOG,

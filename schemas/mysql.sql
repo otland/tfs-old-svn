@@ -366,11 +366,11 @@ CREATE TABLE `global_storage`
 CREATE TABLE `server_config`
 (
 	`config` VARCHAR(35) NOT NULL DEFAULT '',
-	`value` INT NOT NULL,
+	`value` VARCHAR(255) NOT NULL DEFAULT '',
 	UNIQUE (`config`)
 ) ENGINE = InnoDB;
 
-INSERT INTO `server_config` VALUES ('db_version', 24);
+INSERT INTO `server_config` VALUES ('db_version', 25);
 
 CREATE TABLE `server_motd`
 (
