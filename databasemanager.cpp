@@ -1079,7 +1079,7 @@ uint32_t DatabaseManager::updateDatabase()
 			{
 				case DATABASE_ENGINE_SQLITE:
 				{
-					query << "DROP TABLE `server_config`;"
+					query << "DROP TABLE `server_config`;";
 					db->executeQuery(query.str());
 
 					query << "CREATE TABLE `server_config` (`config` VARCHAR(35) NOT NULL DEFAULT '', `value` VARCHAR(255) NOT NULL DEFAULT '', UNIQUE (`config`));";
