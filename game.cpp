@@ -114,24 +114,26 @@ void Game::start(ServiceManager* servicer)
 	const tm* theTime = localtime(&timeNow);
 
 	int32_t prepareHour = g_config.getNumber(ConfigManager::GLOBALSAVE_H) - 1,
-		prepareMinute = g_config.getNumber(ConfigManager::GLOBALSAVE_M),
+		prepareMinute = g_config.getNumber(ConfigManager::GLOBALSAVE_M) - 5,
 		hoursLeft = 0, minutesLeft = 0;
 	if(theTime->tm_hour > prepareHour)
 	{
 		hoursLeft = 24 - (theTime->tm_hour - prepareHour);
 		if(theTime->tm_min > prepareMinute)
-			minutesLeft = theTime->tm_min - prepareMinute;
+			minutesLeft = 60 - (theTime->tm_min - prepareMinute);
+		else if(theTime->tm_min == prepareMinute)
+			minutesLeft = 60;
 		else
 			minutesLeft = prepareMinute - theTime->tm_min;
 	}
 	else if(theTime->tm_hour == prepareHour)
 	{
-		if(theTime->tm_min > (prepareMinute - 6) && theTime->tm_min <= prepareMinute)
+		if(theTime->tm_min > (prepareMinute - 1) && theTime->tm_min < (prepareMinute + 6))
 		{
-			if(theTime->tm_min > (prepareMinute - 4))
+			if(theTime->tm_min > (prepareMinute + 1))
 				setGlobalSaveMessage(0, true);
 
-			if(theTime->tm_min > (prepareMinute - 2))
+			if(theTime->tm_min > (prepareMinute + 3))
 				setGlobalSaveMessage(1, true);
 
 			prepareGlobalSave();
@@ -141,6 +143,8 @@ void Game::start(ServiceManager* servicer)
 			hoursLeft = 23;
 			minutesLeft = 60 - (theTime->tm_min - prepareMinute);
 		}
+		else if(theTime->tm_min == prepareMinute)
+			minutesLeft = 60;
 		else
 			minutesLeft = prepareMinute - theTime->tm_min;
 	}
@@ -148,7 +152,9 @@ void Game::start(ServiceManager* servicer)
 	{
 		hoursLeft = prepareHour - theTime->tm_hour;
 		if(theTime->tm_min > prepareMinute)
-			minutesLeft = theTime->tm_min - prepareMinute;
+			minutesLeft = 60 - (theTime->tm_min - prepareMinute);
+		else if(theTime->tm_min == prepareMinute)
+			minutesLeft = 60;
 		else
 			minutesLeft = prepareMinute - theTime->tm_min;
 	}
@@ -156,7 +162,7 @@ void Game::start(ServiceManager* servicer)
 	if(!hoursLeft || !minutesLeft)
 		return;
 
-	uint32_t timeLeft = (hoursLeft * 60 * 60 * 1000) + minutesLeft * 60 * 1000;
+	uint32_t timeLeft = (hoursLeft * 3600000) + minutesLeft * 60000;
 	saveEvent = Scheduler::getInstance().addEvent(createSchedulerTask(timeLeft,
 		boost::bind(&Game::prepareGlobalSave, this)));
 }

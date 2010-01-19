@@ -2014,64 +2014,72 @@ BlockType_t Player::blockHit(Creature* attacker, CombatType_t combatType, int32_
 		combatType != COMBAT_DROWNDAMAGE)
 		damage -= (int32_t)std::ceil((double)(damage * vocation->getMultiplier(MULTIPLIER_MAGICDEFENSE)) / 100.);
 
-	if(damage > 0)
+	if(damage <= 0)
+		return blockType;
+
+	bool reflecting = attacker && !attacker->isRemoved() && attacker->getHealth() > 0;
+	int32_t blocked = 0, reflected = 0;
+
+	Item* item = NULL;
+	for(int32_t slot = SLOT_FIRST; slot < SLOT_LAST; ++slot)
 	{
-		Item* item = NULL;
-		int32_t blocked = 0, reflected = 0;
-		for(int32_t slot = SLOT_FIRST; slot < SLOT_LAST; ++slot)
+		if(!(item = getInventoryItem((slots_t)slot)) || (g_moveEvents->hasEquipEvent(item)
+			&& !isItemAbilityEnabled((slots_t)slot)))
+			continue;
+
+		const ItemType& it = Item::items[item->getID()];
+		if(it.abilities.absorb[combatType])
 		{
-			if(!(item = getInventoryItem((slots_t)slot)) || (g_moveEvents->hasEquipEvent(item)
-				&& !isItemAbilityEnabled((slots_t)slot)))
-				continue;
-
-			const ItemType& it = Item::items[item->getID()];
-			if(it.abilities.absorb[combatType])
-			{
-				blocked += (int32_t)std::ceil((double)(damage * it.abilities.absorb[combatType]) / 100.);
-				if(item->hasCharges())
-					g_game.transformItem(item, item->getID(), std::max((int32_t)0, (int32_t)item->getCharges() - 1));
-			}
-
-			if(it.abilities.reflect[REFLECT_PERCENT][combatType] && it.abilities.reflect[REFLECT_CHANCE][combatType] < random_range(0, 100))
-			{
-				reflected += (int32_t)std::ceil((double)(damage * it.abilities.reflect[REFLECT_PERCENT][combatType]) / 100.);
-				if(item->hasCharges() && !it.abilities.absorb[combatType])
-					g_game.transformItem(item, item->getID(), std::max((int32_t)0, (int32_t)item->getCharges() - 1));
-			}
+			blocked += (int32_t)std::ceil((double)(damage * it.abilities.absorb[combatType]) / 100.);
+			if(item->hasCharges())
+				g_game.transformItem(item, item->getID(), std::max((int32_t)0, (int32_t)item->getCharges() - 1));
 		}
 
-		if(outfitAttributes)
-		{
-			uint32_t tmp = Outfits::getInstance()->getOutfitAbsorb(defaultOutfit.lookType, sex, combatType);
-			if(tmp)
-				blocked += (int32_t)std::ceil((double)(damage * tmp) / 100.);
+		if(!reflecting)
+			continue;
 
+		if(it.abilities.reflect[REFLECT_PERCENT][combatType] && it.abilities.reflect[REFLECT_CHANCE][combatType] < random_range(0, 100))
+		{
+			reflected += (int32_t)std::ceil((double)(damage * it.abilities.reflect[REFLECT_PERCENT][combatType]) / 100.);
+			if(item->hasCharges() && !it.abilities.absorb[combatType])
+				g_game.transformItem(item, item->getID(), std::max((int32_t)0, (int32_t)item->getCharges() - 1));
+		}
+	}
+
+	if(outfitAttributes)
+	{
+		uint32_t tmp = Outfits::getInstance()->getOutfitAbsorb(defaultOutfit.lookType, sex, combatType);
+		if(tmp)
+			blocked += (int32_t)std::ceil((double)(damage * tmp) / 100.);
+
+		if(reflecting)
+		{
 			tmp = Outfits::getInstance()->getOutfitReflect(defaultOutfit.lookType, sex, combatType);
 			if(tmp)
 				reflected += (int32_t)std::ceil((double)(damage * tmp) / 100.);
 		}
+	}
 
-		if(vocation->getAbsorb(combatType))
-			blocked += (int32_t)std::ceil((double)(damage * vocation->getAbsorb(combatType)) / 100.);
+	if(vocation->getAbsorb(combatType))
+		blocked += (int32_t)std::ceil((double)(damage * vocation->getAbsorb(combatType)) / 100.);
 
-		if(vocation->getReflect(combatType))
-			reflected += (int32_t)std::ceil((double)(damage * vocation->getReflect(combatType)) / 100.);
+	if(reflecting && vocation->getReflect(combatType))
+		reflected += (int32_t)std::ceil((double)(damage * vocation->getReflect(combatType)) / 100.);
 
-		damage -= blocked;
-		if(damage <= 0)
-		{
-			damage = 0;
-			blockType = BLOCK_DEFENSE;
-		}
+	damage -= blocked;
+	if(damage <= 0)
+	{
+		damage = 0;
+		blockType = BLOCK_DEFENSE;
+	}
 
-		if(reflected)
-		{
-			CombatType_t reflectType = combatType;
-			if(reflected <= 0)
-				reflectType = COMBAT_HEALING;
+	if(reflected)
+	{
+		CombatType_t reflectType = combatType;
+		if(reflected <= 0)
+			reflectType = COMBAT_HEALING;
 
-			g_game.combatChangeHealth(reflectType, NULL, attacker, -reflected);
-		}
+		g_game.combatChangeHealth(reflectType, NULL, attacker, -reflected);
 	}
 
 	return blockType;
