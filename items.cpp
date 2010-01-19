@@ -928,7 +928,7 @@ void Items::parseItemNode(xmlNodePtr itemNode, uint32_t id)
 			else if(tmpStrValue == "hitchance")
 			{
 				if(readXMLInteger(itemAttributesNode, "value", intValue))
-					it.hitChance = std::max(0, std::min(100, intValue));
+					it.hitChance = std::max(-100, std::min(100, intValue));
 			}
 			else if(tmpStrValue == "maxhitchance")
 			{

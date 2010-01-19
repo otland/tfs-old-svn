@@ -3454,18 +3454,18 @@ void Player::onAddCombatCondition(ConditionType_t type, bool hadCondition)
 		case CONDITION_DRUNK:
 			tmp = "drunk";
 			break;
-		case CONDITION_MANASHIELD:
-			tmp = "protected by a magic shield";
-			break;
 		case CONDITION_PARALYZE:
 			tmp = "paralyzed";
+			break;
+		/*case CONDITION_MANASHIELD:
+			tmp = "protected by a magic shield";
 			break;
 		case CONDITION_HASTE:
 			tmp = "hasted";
 			break;
 		case CONDITION_ATTRIBUTES:
 			tmp = "strengthened";
-			break;
+			break;*/
 		default:
 			break;
 	}
