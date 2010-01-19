@@ -1321,7 +1321,7 @@ void DatabaseManager::checkEncryption()
 					{
 						do
 						{
-							query << "UPDATE `accounts` SET `password` = " << db->escapeString(transformToVAHash(result->getDataString("password"), false)) << ", `key` = " << db->escapeString(transformToVAHASH(result->getDataString("key"), false)) << " WHERE `id` = " << result->getDataInt("id") << ";";
+							query << "UPDATE `accounts` SET `password` = " << db->escapeString(transformToVAHash(result->getDataString("password"), false)) << ", `key` = " << db->escapeString(transformToVAHash(result->getDataString("key"), false)) << " WHERE `id` = " << result->getDataInt("id") << ";";
 							db->executeQuery(query.str());
 						}
 						while(result->next());
