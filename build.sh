@@ -4,7 +4,7 @@
 
 # Example:
 # # make clean
-# # time ./dev-build.sh
+# # time ./build.sh
 
 # Gives:
 # real	3m27.070s
@@ -13,14 +13,14 @@
 
 # CCACHE recompile (from scratch):
 # # make clean
-# # time ./dev-build.sh
+# # time ./build.sh
 
 # Gives:
 # real	0m27.620s
 # user	0m43.744s
 # sys	0m4.766s
 
-# 1/7 of the original compile speed!
+# 1/7 of the original compile time!
 # When more you do it, more ccache will cache, default is limited to use 1GB storage
 
 echo "TheForgottenServer build script- seems to speed things up ALOT when testing new features. Requires CCache installed!"
@@ -29,7 +29,7 @@ echo "TheForgottenServer build script- seems to speed things up ALOT when testin
 export PATH=/usr/lib/ccache/bin:$PATH
 # Get number cores
 CORES=`grep cores /proc/cpuinfo | wc -l`
-# Enable make processes - 1 + number of cores
+# Set make processes - 1 + number of cores
 MAKEOPT=$(($CORES + 1))
 
 echo "Building on $CORES cores, using $MAKEOPT processes"
