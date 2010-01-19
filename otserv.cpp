@@ -418,6 +418,21 @@ void otserv(StringVec args, ServiceManager* services)
 		g_config.setNumber(ConfigManager::ENCRYPTION, ENCRYPTION_SHA1);
 		std::clog << "> Using SHA1 encryption" << std::endl;
 	}
+	else if(encryptionType == "sha256")
+	{
+		g_config.setNumber(ConfigManager::ENCRYPTION, ENCRYPTION_SHA1);
+		std::clog << "> Using SHA256 encryption" << std::endl;
+	}
+	else if(encryptionType == "sha512")
+	{
+		g_config.setNumber(ConfigManager::ENCRYPTION, ENCRYPTION_SHA1);
+		std::clog << "> Using SHA512 encryption" << std::endl;
+	}
+	else if(encryptionType == "vahash")
+	{
+		g_config.setNumber(ConfigManager::ENCRYPTION, ENCRYPTION_SHA1);
+		std::clog << "> Using SHA1 encryption" << std::endl;
+	}
 	else
 	{
 		g_config.setNumber(ConfigManager::ENCRYPTION, ENCRYPTION_PLAIN);

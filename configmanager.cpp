@@ -109,6 +109,7 @@ bool ConfigManager::load()
 		m_confBool[LOGIN_ONLY_LOGINSERVER] = getGlobalBool("loginOnlyWithLoginServer", false);
 		#endif
 		m_confString[ENCRYPTION_TYPE] = getGlobalString("encryptionType", "plain");
+		m_confString[ENCRYPTION_VAHASH_KEY] = getGlobalString("vahashKey", "");
 		m_confNumber[ENCRYPTION] = ENCRYPTION_PLAIN;
 	}
 

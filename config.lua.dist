@@ -117,7 +117,10 @@
 	sqlKeepAlive = 0
 	mysqlReadTimeout = 10
 	mysqlWriteTimeout = 10
-	encryptionType = "plain"
+	-- Can be plain, sha1, md5, sha256, sha512 or vahash
+	encryptionType = "sha1"
+	-- Only used by vahash, change this and all passwords will break! Should be very random, any length allowed.
+	vahashKey = "128ehmMIqwD12ed"
 
 	-- Deathlist
 	deathListEnabled = true
