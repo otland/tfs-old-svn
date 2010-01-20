@@ -2215,9 +2215,9 @@ bool Player::onDeath()
 		sendStats();
 		sendSkills();
 
-		sendReLoginWindow();
 		g_creatureEvents->playerLogout(this, true);
 		g_game.removeCreature(this, false);
+		sendReLoginWindow();
 	}
 	else
 	{
@@ -2225,10 +2225,9 @@ bool Player::onDeath()
 		if(preventLoss)
 		{
 			loginPosition = masterPosition;
-			sendReLoginWindow();
-
 			g_creatureEvents->playerLogout(this, true);
 			g_game.removeCreature(this, false);
+			sendReLoginWindow();
 		}
 	}
 

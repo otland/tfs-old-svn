@@ -134,6 +134,9 @@ bool ChatChannel::addUser(Player* player)
 
 bool ChatChannel::removeUser(Player* player)
 {
+	if(!player || player->isRemoved())
+		return false;
+
 	UsersMap::iterator it = m_users.find(player->getID());
 	if(it == m_users.end())
 		return false;
@@ -473,7 +476,7 @@ bool Chat::removeUserFromChannel(Player* player, uint16_t channelId)
 
 void Chat::removeUserFromAllChannels(Player* player)
 {
-	if(!player)
+	if(!player || player->isRemoved())
 		return;
 
 	for(NormalChannelMap::iterator it = m_normalChannels.begin(); it != m_normalChannels.end(); ++it)
@@ -488,7 +491,7 @@ void Chat::removeUserFromAllChannels(Player* player)
 	for(PrivateChannelMap::iterator it = m_privateChannels.begin(); it != m_privateChannels.end(); ++it)
 	{
 		it->second->removeUser(player);
-		if(player && it->second->getOwner() == player->getGUID())
+		if(it->second->getOwner() == player->getGUID())
 			deleteChannel(player, it->second->getId());
 	}
 }
