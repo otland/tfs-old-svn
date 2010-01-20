@@ -1128,10 +1128,11 @@ bool Game::playerMoveCreature(uint32_t playerId, uint32_t movingCreatureId,
 			}
 
 			uint32_t protectionLevel = g_config.getNumber(ConfigManager::PROTECTION_LEVEL);
-			if(player->getLevel() < protectionLevel)
+			if(player->getLevel() < protectionLevel && player->getVocation()->isAttackable())
 			{
 				Player* movingPlayer = movingCreature->getPlayer();
-				if(movingPlayer && movingPlayer->getLevel() >= protectionLevel)
+				if(movingPlayer && movingPlayer->getLevel() >= protectionLevel
+					&& movingPlayer->getVocation()->isAttackable())
 				{
 					player->sendCancelMessage(RET_PLAYERISNOTREACHABLE);
 					return false;
