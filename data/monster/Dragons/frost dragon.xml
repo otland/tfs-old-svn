@@ -18,19 +18,22 @@
 		<flag runonhealth="250"/>
 	</flags>
 	<attacks>
-		<attack name="melee" interval="2000" skill="100" attack="40"/>
-		<attack name="physical" interval="2000" chance="25" range="7" radius="4" target="1" min="-80" max="-180">
+		<attack name="melee" interval="2000" skill="110" attack="67"/>
+		<attack name="physical" interval="2000" chance="28" range="7" radius="4" target="1" min="-80" max="-180">
 			<attribute key="shootEffect" value="energy"/>
 			<attribute key="areaEffect" value="blackspark"/>
 		</attack>
-		<attack name="physical" interval="3000" chance="20" length="7" spread="3" min="-100" max="-260">
+		<attack name="physical" interval="3000" chance="22" length="7" spread="3" min="-100" max="-260">
 			<attribute key="areaEffect" value="poff"/>
 		</attack>
-		<attack name="melee" interval="2000" chance="19" range="7" radius="3" target="0" min="-0" max="-70">
+		<attack name="melee" interval="2000" chance="35" range="7" radius="3" target="0" min="-0" max="-70">
 			<attribute key="areaEffect" value="poff"/>
 		</attack>
 		<attack name="speed" interval="4000" chance="25" range="7" target="1" speedchange="-600" duration="50000">
 			<attribute key="areaEffect" value="redshimmer"/>
+		</attack>
+		<attack name="ice" interval="3000" chance="11" range="4" radius="4" target="0" min="-100" max="-270">
+			<attribute key="areaEffect" value="icetornado"/>
 		</attack>
 	</attacks>
 	<defenses armor="22" defense="35">
