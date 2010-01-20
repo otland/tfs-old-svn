@@ -113,17 +113,18 @@ void Game::start(ServiceManager* servicer)
 	time_t timeNow = time(NULL);
 	const tm* theTime = localtime(&timeNow);
 
-	int32_t prepareHour = g_config.getNumber(ConfigManager::GLOBALSAVE_H) - 1,
+	int32_t prepareHour = g_config.getNumber(ConfigManager::GLOBALSAVE_H),
 		prepareMinute = g_config.getNumber(ConfigManager::GLOBALSAVE_M) - 5,
 		hoursLeft = 0, minutesLeft = 0;
 	if(theTime->tm_hour > prepareHour)
 	{
-		hoursLeft = 24 - (theTime->tm_hour - prepareHour);
+		hoursLeft = 23 - (theTime->tm_hour - prepareHour);
 		if(theTime->tm_min > prepareMinute)
+		{
 			minutesLeft = 60 - (theTime->tm_min - prepareMinute);
-		else if(theTime->tm_min == prepareMinute)
-			minutesLeft = 60;
-		else
+			hoursLeft--;
+		}
+		else if(theTime->tm_min != prepareMinute)
 			minutesLeft = prepareMinute - theTime->tm_min;
 	}
 	else if(theTime->tm_hour == prepareHour)
@@ -140,11 +141,9 @@ void Game::start(ServiceManager* servicer)
 		}
 		else if(theTime->tm_min > prepareMinute)
 		{
-			hoursLeft = 23;
 			minutesLeft = 60 - (theTime->tm_min - prepareMinute);
+			hoursLeft = 23;
 		}
-		else if(theTime->tm_min == prepareMinute)
-			minutesLeft = 60;
 		else
 			minutesLeft = prepareMinute - theTime->tm_min;
 	}
@@ -152,10 +151,11 @@ void Game::start(ServiceManager* servicer)
 	{
 		hoursLeft = prepareHour - theTime->tm_hour;
 		if(theTime->tm_min > prepareMinute)
+		{
 			minutesLeft = 60 - (theTime->tm_min - prepareMinute);
-		else if(theTime->tm_min == prepareMinute)
-			minutesLeft = 60;
-		else
+			hoursLeft--;
+		}
+		else if(theTime->tm_min != prepareMinute)
 			minutesLeft = prepareMinute - theTime->tm_min;
 	}
 
@@ -1119,11 +1119,24 @@ bool Game::playerMoveCreature(uint32_t playerId, uint32_t movingCreatureId,
 			return false;
 		}
 
-		if(toTile->getCreatures() && !toTile->getCreatures()->empty()
-			&& !player->hasFlag(PlayerFlag_CanPushAllCreatures))
+		if(!player->hasFlag(PlayerFlag_CanPushAllCreatures))
 		{
-			player->sendCancelMessage(RET_NOTPOSSIBLE);
-			return false;
+			if(toTile->getCreatures() && !toTile->getCreatures()->empty())
+			{
+				player->sendCancelMessage(RET_NOTPOSSIBLE);
+				return false;
+			}
+
+			uint32_t protectionLevel = g_config.getNumber(ConfigManager::PROTECTION_LEVEL);
+			if(player->getLevel() < protectionLevel)
+			{
+				Player* movingPlayer = movingCreature->getPlayer();
+				if(movingPlayer && movingPlayer->getLevel() >= protectionLevel)
+				{
+					player->sendCancelMessage(RET_PLAYERISNOTREACHABLE);
+					return false;
+				}
+			}
 		}
 	}
 
