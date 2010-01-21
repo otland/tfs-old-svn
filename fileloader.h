@@ -18,7 +18,10 @@
 #ifndef __FILELOADER__
 #define __FILELOADER__
 #include "otsystem.h"
+
+#ifdef __USE_ZLIB__
 #include <zlib.h>
+#endif
 
 struct NodeStruct;
 typedef NodeStruct* NODE;
@@ -126,7 +129,11 @@ class FileLoader
 				if(unescape && (c == NODE_START || c == NODE_END || c == ESCAPE_CHAR))
 				{
 					uint8_t escape = ESCAPE_CHAR;
+#ifdef __USE_ZLIB__
 					size_t value = gzwrite(m_file, &escape, 1);
+#else
+					size_t value = fwrite(&escape, 1, 1, m_file);
+#endif
 					if(value != 1)
 					{
 						m_lastError = ERROR_COULDNOTWRITE;
@@ -134,7 +141,11 @@ class FileLoader
 					}
 				}
 
+#ifdef __USE_ZLIB__
 				size_t value = gzwrite(m_file, &c, 1);
+#else
+				size_t value = fwrite(&c, 1, 1, m_file);
+#endif
 				if(value != 1)
 				{
 					m_lastError = ERROR_COULDNOTWRITE;
@@ -146,8 +157,13 @@ class FileLoader
 		}
 
 	protected:
-		gzFile m_file;
 		FILELOADER_ERRORS m_lastError;
+#ifdef __USE_ZLIB__
+		gzFile m_file;
+#else
+		FILE* m_file;
+#endif
+
 		NODE m_root;
 		uint32_t m_buffer_size;
 		uint8_t* m_buffer;
@@ -163,8 +179,10 @@ class FileLoader
 		#define CACHE_BLOCKS 3
 		uint32_t m_cache_size;
 		_cache m_cached_data[CACHE_BLOCKS];
+
 		#define NO_VALID_CACHE 0xFFFFFFFF
 		uint32_t m_cache_index, m_cache_offset;
+
 		inline uint32_t getCacheBlock(uint32_t pos);
 		int32_t loadCacheBlock(uint32_t pos);
 };

@@ -20,9 +20,6 @@
 #include <iostream>
 #include <iomanip>
 
-#define CRYPTOPP_ENABLE_NAMESPACE_WEAK 1
-#define CRYPTOPP_DEFAULT_NO_DLL
-
 #include <cryptopp/sha.h>
 #include <cryptopp/md5.h>
 #include <cryptopp/adler32.h>
