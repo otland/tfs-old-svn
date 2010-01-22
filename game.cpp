@@ -2997,11 +2997,12 @@ bool Game::playerAcceptTrade(uint32_t playerId)
 	player->setTradeState(TRADE_NONE);
 	player->tradeItem = NULL;
 	player->tradePartner = NULL;
-	player->sendTradeClose();
 
 	tradePartner->setTradeState(TRADE_NONE);
 	tradePartner->tradeItem = NULL;
 	tradePartner->tradePartner = NULL;
+
+	player->sendTradeClose();
 	tradePartner->sendTradeClose();
 	return isSuccess;
 }
