@@ -2941,13 +2941,14 @@ bool Game::internalStartTrade(Player* player, Player* tradePartner, Item* tradeI
 		char buffer[100];
 		sprintf(buffer, "%s wants to trade with you", player->getName().c_str());
 		tradePartner->sendTextMessage(MSG_INFO_DESCR, buffer);
+
 		tradePartner->tradeState = TRADE_ACKNOWLEDGE;
 		tradePartner->tradePartner = player;
 	}
 	else
 	{
-		Item* counterOfferItem = tradePartner->tradeItem;
-		player->sendTradeItemRequest(tradePartner, counterOfferItem, false);
+		Item* counterItem = tradePartner->tradeItem;
+		player->sendTradeItemRequest(tradePartner, counterItem, false);
 		tradePartner->sendTradeItemRequest(player, tradeItem, false);
 	}
 
