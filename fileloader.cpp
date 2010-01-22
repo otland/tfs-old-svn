@@ -460,7 +460,11 @@ inline bool FileLoader::safeSeek(uint32_t pos)
 		m_cache_index = i;
 		m_cache_offset = pos - m_cached_data[i].base;
 	}
+#ifdef __USE_ZLIB__
 	else if(gzseek(m_file, pos, SEEK_SET) < 0)
+#else
+	else if(fseek(m_file, pos, SEEK_SET))
+#endif
 	{
 		m_lastError = ERROR_SEEK_ERROR;
 		return false;
