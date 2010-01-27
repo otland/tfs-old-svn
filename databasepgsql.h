@@ -21,7 +21,7 @@
 #ifndef __DATABASE__
 #error "database.h should be included first."
 #endif
-#include <postgresql/libpq-fe.h>
+#include "libpq-fe.h"
 
 class DatabasePgSQL : public _Database
 {

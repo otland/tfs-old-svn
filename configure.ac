@@ -202,7 +202,7 @@ fi
 
 # check for postgresql if it is enabled
 if test -n "$PGSQL_FLAGS"; then
-	AC_CHECK_HEADERS([postgresql/libpq-fe.h],[PGSQL_LIBS=-lpg],[AC_MSG_ERROR("PostgreSQL headers missing.")])
+	AC_CHECK_HEADERS([libpq-fe.h],[PGSQL_LIBS=-lpg],[AC_MSG_ERROR("PostgreSQL headers missing.")])
 	AC_CHECK_LIB(pq, main,[],[AC_MSG_ERROR("Linking against libpq failed.")])
 	AC_SUBST(PGSQL_LIBS)
 fi

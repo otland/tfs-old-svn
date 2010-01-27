@@ -135,13 +135,13 @@ uint64_t DatabasePgSQL::getLastInsertId()
 	ExecStatusType stat = PQresultStatus(res);
 	if(stat != PGRES_COMMAND_OK && stat != PGRES_TUPLES_OK)
 	{
-		std::clog << "PQexec(): " << query << ": " << PQresultErrorMessage(res) << std::endl;
+		std::clog << "PQexec(): \"SELECT LASTVAL() as last\": " << PQresultErrorMessage(res) << std::endl;
 		PQclear(res);
 		return 0;
 	}
 
 	const uint64_t id = atoll(PQgetvalue(res, 0, PQfnumber(res, "last")));
-	PGClear(res);
+	PQclear(res);
 	return id;
 }
 
