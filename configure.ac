@@ -80,7 +80,7 @@ AC_ARG_ENABLE(mysql, [  --enable-mysql				enable MySQL support], [
 # check if we want postgresql enabled
 AC_ARG_ENABLE(pgsql, [  --enable-pgsql				enable PostgreSQL support], [
 	AM_CONDITIONAL(USE_PGSQL, true)
-	PGSQL_FLAGS=-D__USE_PGSQL__
+	PGSQL_FLAGS="-D__USE_PGSQL__ -I`pg_config --includedir`"
 	AC_SUBST(PGSQL_FLAGS)
 	usePostgreSQL=yes
 ])
@@ -202,7 +202,7 @@ fi
 
 # check for postgresql if it is enabled
 if test -n "$PGSQL_FLAGS"; then
-	AC_CHECK_HEADERS([libpq-fe.h],[PGSQL_LIBS=-lpg],[AC_MSG_ERROR("PostgreSQL headers missing.")])
+	AC_CHECK_HEADERS([`pg_config --includedir`/libpq-fe.h],[PGSQL_LIBS=-lpg],[AC_MSG_ERROR("PostgreSQL headers missing.")])
 	AC_CHECK_LIB(pq, main,[],[AC_MSG_ERROR("Linking against libpq failed.")])
 	AC_SUBST(PGSQL_LIBS)
 fi
