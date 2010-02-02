@@ -759,8 +759,8 @@ void Player::dropLoot(Container* corpse)
 		if(!item)
 			continue;
 
-		uint32_t rand = random_range(1, 100);
-		if(skull > SKULL_WHITE || (item->getContainer() && rand < loss) || (!item->getContainer() && rand < itemLoss))
+		uint32_t tmp = random_range(1, 100);
+		if(skull > SKULL_WHITE || (item->getContainer() && tmp < loss) || (!item->getContainer() && tmp < itemLoss))
 		{
 			g_game.internalMoveItem(NULL, this, corpse, INDEX_WHEREEVER, item, item->getItemCount(), 0);
 			sendRemoveInventoryItem((slots_t)i, inventory[(slots_t)i]);
@@ -2040,7 +2040,7 @@ BlockType_t Player::blockHit(Creature* attacker, CombatType_t combatType, int32_
 		if(!reflecting)
 			continue;
 
-		if(it.abilities.reflect[REFLECT_PERCENT][combatType] && it.abilities.reflect[REFLECT_CHANCE][combatType] < random_range(0, 100))
+		if(it.abilities.reflect[REFLECT_PERCENT][combatType] && it.abilities.reflect[REFLECT_CHANCE][combatType] > random_range(0, 99))
 		{
 			reflected += (int32_t)std::ceil((double)(damage * it.abilities.reflect[REFLECT_PERCENT][combatType]) / 100.);
 			if(item->hasCharges() && !it.abilities.absorb[combatType])
@@ -3506,7 +3506,7 @@ void Player::onCombatRemoveCondition(const Creature* attacker, Condition* condit
 			if(Item* item = getInventoryItem((slots_t)condition->getId()))
 			{
 				//25% chance to destroy the item
-				if(25 >= random_range(0, 100))
+				if(random_range(1, 100) < 26)
 					g_game.internalRemoveItem(NULL, item);
 			}
 		}
