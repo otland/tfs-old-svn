@@ -58,8 +58,8 @@ class MoveEvents : public BaseEvents
 		virtual ~MoveEvents() {clear();}
 
 		uint32_t onCreatureMove(Creature* actor, Creature* creature, const Tile* fromTile, const Tile* toTile, bool isStepping);
-		uint32_t onPlayerEquip(Player* player, Item* item, slots_t slot, bool isCheck);
-		uint32_t onPlayerDeEquip(Player* player, Item* item, slots_t slot, bool isRemoval);
+		bool onPlayerEquip(Player* player, Item* item, slots_t slot, bool isCheck);
+		bool onPlayerDeEquip(Player* player, Item* item, slots_t slot, bool isRemoval);
 		uint32_t onItemMove(Creature* actor, Item* item, Tile* tile, bool isAdd);
 
 		MoveEvent* getEvent(Item* item, MoveEvent_t eventType);
@@ -109,7 +109,7 @@ class MoveEvents : public BaseEvents
 
 typedef uint32_t (MoveFunction)(Item* item);
 typedef uint32_t (StepFunction)(Creature* creature, Item* item);
-typedef uint32_t (EquipFunction)(MoveEvent* moveEvent, Player* player, Item* item, slots_t slot, bool boolean);
+typedef bool (EquipFunction)(MoveEvent* moveEvent, Player* player, Item* item, slots_t slot, bool boolean);
 
 class MoveEvent : public Event
 {
@@ -126,17 +126,16 @@ class MoveEvent : public Event
 
 		uint32_t fireStepEvent(Creature* actor, Creature* creature, Item* item, const Position& pos, const Position& fromPos, const Position& toPos);
 		uint32_t fireAddRemItem(Creature* actor, Item* item, Item* tileItem, const Position& pos);
-		uint32_t fireEquip(Player* player, Item* item, slots_t slot, bool boolean);
+		bool fireEquip(Player* player, Item* item, slots_t slot, bool boolean);
 
-		//scripting
 		uint32_t executeStep(Creature* actor, Creature* creature, Item* item, const Position& pos, const Position& fromPos, const Position& toPos);
-		uint32_t executeEquip(Player* player, Item* item, slots_t slot);
+		bool executeEquip(Player* player, Item* item, slots_t slot);
 		uint32_t executeAddRemItem(Creature* actor, Item* item, Item* tileItem, const Position& pos);
 
-		bool callMove(Item* item) {return moveFunction(item);}
-		bool callStep(Creature* creature, Item* item) {return stepFunction(creature, item);}
-		bool callEquip(MoveEvent* moveEvent, Player* player, Item* item, slots_t slot, bool boolean)
-			{return equipFunction(moveEvent, player, item, slot, boolean);}
+		static StepFunction StepInField;
+		static MoveFunction AddItemField;
+		static EquipFunction EquipItem;
+		static EquipFunction DeEquipItem;
 
 		uint32_t getWieldInfo() const {return wieldInfo;}
 		uint32_t getSlot() const {return slot;}
@@ -152,11 +151,6 @@ class MoveEvent : public Event
 
 		virtual std::string getScriptEventName() const;
 		virtual std::string getScriptEventParams() const;
-
-		static StepFunction StepInField;
-		static MoveFunction AddItemField;
-		static EquipFunction EquipItem;
-		static EquipFunction DeEquipItem;
 
 		MoveFunction* moveFunction;
 		StepFunction* stepFunction;

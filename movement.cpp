@@ -73,7 +73,11 @@ int32_t MoveEventScript::luaCallFunction(lua_State* L)
 			return 1;
 		}
 
-		lua_pushboolean(L, event->callEquip(event, player, item, slot, true));
+		if(event->getEventType() != MOVE_EVENT_EQUIP)
+			lua_pushboolean(L, MoveEvent::DeEquipItem(event, player, item, slot, true));
+		else
+			lua_pushboolean(L, MoveEvent::EquipItem(event, player, item, slot, true));
+
 		return 1;
 	}
 	else if(event->getEventType() == MOVE_EVENT_STEP_IN)
@@ -95,7 +99,7 @@ int32_t MoveEventScript::luaCallFunction(lua_State* L)
 			return 1;
 		}
 
-		lua_pushboolean(L, event->callStep(creature, item));
+		lua_pushboolean(L, MoveEvent::StepInField(creature, item));
 		return 1;
 	}
 	else if(event->getEventType() == MOVE_EVENT_ADD_ITEM)
@@ -109,7 +113,7 @@ int32_t MoveEventScript::luaCallFunction(lua_State* L)
 			return 1;
 		}
 
-		lua_pushboolean(L, event->callMove(item));
+		lua_pushboolean(L, MoveEvent::AddItemField(item));
 		return 1;
 	}
 
@@ -598,20 +602,20 @@ uint32_t MoveEvents::onCreatureMove(Creature* actor, Creature* creature, const T
 	return ret;
 }
 
-uint32_t MoveEvents::onPlayerEquip(Player* player, Item* item, slots_t slot, bool isCheck)
+bool MoveEvents::onPlayerEquip(Player* player, Item* item, slots_t slot, bool isCheck)
 {
 	if(MoveEvent* moveEvent = getEvent(item, MOVE_EVENT_EQUIP, slot))
 		return moveEvent->fireEquip(player, item, slot, isCheck);
 
-	return 1;
+	return true;
 }
 
-uint32_t MoveEvents::onPlayerDeEquip(Player* player, Item* item, slots_t slot, bool isRemoval)
+bool MoveEvents::onPlayerDeEquip(Player* player, Item* item, slots_t slot, bool isRemoval)
 {
 	if(MoveEvent* moveEvent = getEvent(item, MOVE_EVENT_DE_EQUIP, slot))
 		return moveEvent->fireEquip(player, item, slot, isRemoval);
 
-	return 1;
+	return true;
 }
 
 uint32_t MoveEvents::onItemMove(Creature* actor, Item* item, Tile* tile, bool isAdd)
@@ -964,25 +968,25 @@ uint32_t MoveEvent::AddItemField(Item* item)
 	return LUA_ERROR_ITEM_NOT_FOUND;
 }
 
-uint32_t MoveEvent::EquipItem(MoveEvent* moveEvent, Player* player, Item* item, slots_t slot, bool isCheck)
+bool MoveEvent::EquipItem(MoveEvent* moveEvent, Player* player, Item* item, slots_t slot, bool isCheck)
 {
 	if(player->isItemAbilityEnabled(slot))
-		return 1;
+		return true;
 
 	if(!player->hasFlag(PlayerFlag_IgnoreEquipCheck) && moveEvent->getWieldInfo() != 0)
 	{
 		if(player->getLevel() < (uint32_t)moveEvent->getReqLevel() || player->getMagicLevel() < (uint32_t)moveEvent->getReqMagLv())
-			return 0;
+			return false;
 
 		if(moveEvent->isPremium() && !player->isPremium())
-			return 0;
+			return false;
 
 		if(!moveEvent->getVocEquipMap().empty() && moveEvent->getVocEquipMap().find(player->getVocationId()) == moveEvent->getVocEquipMap().end())
-			return 0;
+			return false;
 	}
 
 	if(isCheck)
-		return 1;
+		return true;
 
 	const ItemType& it = Item::items[item->getID()];
 	if(it.transformEquipTo)
@@ -990,9 +994,8 @@ uint32_t MoveEvent::EquipItem(MoveEvent* moveEvent, Player* player, Item* item, 
 		Item* newItem = g_game.transformItem(item, it.transformEquipTo);
 		g_game.startDecay(newItem);
 	}
-	else
-		player->setItemAbility(slot, true);
 
+	player->setItemAbility(slot, true);
 	if(it.abilities.invisible)
 	{
 		Condition* condition = Condition::createCondition((ConditionId_t)slot, CONDITION_INVISIBLE, -1, 0);
@@ -1074,15 +1077,14 @@ uint32_t MoveEvent::EquipItem(MoveEvent* moveEvent, Player* player, Item* item, 
 	if(needUpdateStats)
 		player->sendStats();
 
-	return 1;
+	return true;
 }
 
-uint32_t MoveEvent::DeEquipItem(MoveEvent* moveEvent, Player* player, Item* item, slots_t slot, bool isRemoval)
+bool MoveEvent::DeEquipItem(MoveEvent* moveEvent, Player* player, Item* item, slots_t slot, bool isRemoval)
 {
 	if(!player->isItemAbilityEnabled(slot))
-		return 1;
+		return true;
 
-	player->setItemAbility(slot, false);
 	const ItemType& it = Item::items[item->getID()];
 	if(isRemoval && it.transformDeEquipTo)
 	{
@@ -1090,6 +1092,7 @@ uint32_t MoveEvent::DeEquipItem(MoveEvent* moveEvent, Player* player, Item* item
 		g_game.startDecay(item);
 	}
 
+	player->setItemAbility(slot, false);
 	if(it.abilities.invisible)
 		player->removeCondition(CONDITION_INVISIBLE, (ConditionId_t)slot);
 
@@ -1146,7 +1149,7 @@ uint32_t MoveEvent::DeEquipItem(MoveEvent* moveEvent, Player* player, Item* item
 	if(needUpdateStats)
 		player->sendStats();
 
-	return 1;
+	return true;
 }
 
 uint32_t MoveEvent::fireStepEvent(Creature* actor, Creature* creature, Item* item, const Position& pos, const Position& fromPos, const Position& toPos)
@@ -1224,7 +1227,7 @@ uint32_t MoveEvent::executeStep(Creature* actor, Creature* creature, Item* item,
 	}
 }
 
-uint32_t MoveEvent::fireEquip(Player* player, Item* item, slots_t slot, bool boolean)
+bool MoveEvent::fireEquip(Player* player, Item* item, slots_t slot, bool boolean)
 {
 	if(isScripted())
 		return executeEquip(player, item, slot);
@@ -1232,7 +1235,7 @@ uint32_t MoveEvent::fireEquip(Player* player, Item* item, slots_t slot, bool boo
 	return equipFunction(this, player, item, slot, boolean);
 }
 
-uint32_t MoveEvent::executeEquip(Player* player, Item* item, slots_t slot)
+bool MoveEvent::executeEquip(Player* player, Item* item, slots_t slot)
 {
 	//onEquip(cid, item, slot)
 	//onDeEquip(cid, item, slot)
@@ -1286,7 +1289,7 @@ uint32_t MoveEvent::executeEquip(Player* player, Item* item, slots_t slot)
 	else
 	{
 		std::clog << "[Error - MoveEvent::executeEquip] Call stack overflow." << std::endl;
-		return 0;
+		return false;
 	}
 }
 
