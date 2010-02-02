@@ -26,8 +26,7 @@
 	<action itemid="2120" event="script" value="tools/rope.lua"/>
 	<action itemid="7731" event="script" value="tools/rope.lua"/>
 	<action itemid="2553" event="script" value="tools/pick.lua"/>
-	<action itemid="5908" event="script" value="tools/obsidian_knife.lua"/>
-	<action itemid="5942" event="script" value="tools/blessed_wooden_stake.lua"/>
+	<action itemid="5908;5942" event="script" value="tools/skinning.lua"/>
 
 	<!-- Liquids -->
 	<action itemid="1775" event="script" value="liquids/containers.lua"/>
