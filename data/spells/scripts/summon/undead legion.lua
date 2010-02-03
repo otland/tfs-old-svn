@@ -1,17 +1,14 @@
-function onTargetTile(cid, pos)
-	local getPos = pos
-	getPos.stackpos = STACKPOS_TOP_MOVEABLE_ITEM_OR_CREATURE
-
-	local corpse = getThingFromPos(getPos)
-	if(corpse.uid > 0 and isCorpse(corpse.uid) and isMoveable(corpse.uid) and getCreatureSkullType(cid) ~= SKULL_BLACK) then
-		doRemoveItem(corpse.uid)
-		doConvinceCreature(cid, doCreateMonster("Skeleton", pos))
-
-		doSendMagicEffect(pos, CONST_ME_MAGIC_BLUE)
-		return true
+function onTargetTile(cid, position)
+	position.stackpos = 255
+	local corpse = getThingFromPos(position)
+	if(corpse.uid == 0 or not isCorpse(corpse.uid) or not isMoveable(corpse.uid) or getCreatureSkullType(cid) == SKULL_BLACK) then
+		return false
 	end
 
-	return false
+	doRemoveItem(corpse.uid)
+	doConvinceCreature(cid, doCreateMonster("Skeleton", position, false))
+	doSendMagicEffect(position, CONST_ME_MAGIC_BLUE)
+	return true
 end
 
 local area, combat = createCombatArea(AREA_CIRCLE3X3), createCombatObject()
