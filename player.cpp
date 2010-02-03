@@ -1996,7 +1996,7 @@ bool Player::hasShield() const
 }
 
 BlockType_t Player::blockHit(Creature* attacker, CombatType_t combatType, int32_t& damage,
-	bool checkDefense/* = false*/, bool checkArmor/* = false*/)
+	bool checkDefense/* = false*/, bool checkArmor/* = false*/, bool reflect/* = true*/)
 {
 	BlockType_t blockType = Creature::blockHit(attacker, combatType, damage, checkDefense, checkArmor);
 	if(attacker)
@@ -2019,8 +2019,9 @@ BlockType_t Player::blockHit(Creature* attacker, CombatType_t combatType, int32_
 	if(damage <= 0)
 		return blockType;
 
-	bool reflecting = attacker && !attacker->isRemoved() && attacker->getHealth() > 0;
 	int32_t blocked = 0, reflected = 0;
+	if(reflect)
+		reflect = attacker && !attacker->isRemoved() && attacker->getHealth() > 0;
 
 	Item* item = NULL;
 	for(int32_t slot = SLOT_FIRST; slot < SLOT_LAST; ++slot)
@@ -2037,7 +2038,7 @@ BlockType_t Player::blockHit(Creature* attacker, CombatType_t combatType, int32_
 				g_game.transformItem(item, item->getID(), std::max((int32_t)0, (int32_t)item->getCharges() - 1));
 		}
 
-		if(!reflecting)
+		if(!reflect)
 			continue;
 
 		if(it.abilities.reflect[REFLECT_PERCENT][combatType] && it.abilities.reflect[REFLECT_CHANCE][combatType] > random_range(0, 99))
@@ -2054,7 +2055,7 @@ BlockType_t Player::blockHit(Creature* attacker, CombatType_t combatType, int32_
 		if(tmp)
 			blocked += (int32_t)std::ceil((double)(damage * tmp) / 100.);
 
-		if(reflecting)
+		if(reflect)
 		{
 			tmp = Outfits::getInstance()->getOutfitReflect(defaultOutfit.lookType, sex, combatType);
 			if(tmp)
@@ -2065,7 +2066,7 @@ BlockType_t Player::blockHit(Creature* attacker, CombatType_t combatType, int32_
 	if(vocation->getAbsorb(combatType))
 		blocked += (int32_t)std::ceil((double)(damage * vocation->getAbsorb(combatType)) / 100.);
 
-	if(reflecting && vocation->getReflect(combatType))
+	if(reflect && vocation->getReflect(combatType))
 		reflected += (int32_t)std::ceil((double)(damage * vocation->getReflect(combatType)) / 100.);
 
 	damage -= blocked;
@@ -2077,11 +2078,11 @@ BlockType_t Player::blockHit(Creature* attacker, CombatType_t combatType, int32_
 
 	if(reflected)
 	{
-		CombatType_t reflectType = combatType;
-		if(reflected <= 0)
-			reflectType = COMBAT_HEALING;
+		if(combatType != COMBAT_HEALING)
+			reflected = -reflected;
 
-		g_game.combatChangeHealth(reflectType, NULL, attacker, -reflected);
+		if(attacker->blockHit(this, combatType, reflected, false, false, false) == BLOCK_NONE)
+			g_game.combatChangeHealth(combatType, NULL, attacker, reflected);
 	}
 
 	return blockType;
