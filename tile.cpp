@@ -288,8 +288,8 @@ Item* Tile::getItemByTopOrder(uint32_t topOrder)
 {
 	if(TileItemVector* items = getItemList())
 	{
-		ItemVector::reverse_iterator eit = ItemVector::reverse_iterator(items->getBeginTopItem());
-		for(ItemVector::reverse_iterator it = ItemVector::reverse_iterator(items->getEndTopItem()); it != eit; ++it)
+		for(ItemVector::reverse_iterator it = ItemVector::reverse_iterator(items->getEndTopItem()),
+			end = ItemVector::reverse_iterator(items->getBeginTopItem()); it != end; ++it)
 		{
 			if(Item::items[(*it)->getID()].alwaysOnTopOrder == (int32_t)topOrder)
 				return (*it);
@@ -853,7 +853,7 @@ Cylinder* Tile::__queryDestination(int32_t& index, const Thing* thing, Item** de
 	else
 		flags |= FLAG_NOLIMIT; //will ignore that there is blocking items/creatures
 
-	if(destTile)
+	if(destTile && destTile->empty())
 	{
 		Thing* destThing = destTile->getTopDownItem();
 		if(destThing && !destThing->isRemoved())

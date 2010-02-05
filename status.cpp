@@ -38,15 +38,6 @@ IpConnectMap ProtocolStatus::ipConnectMap;
 
 void ProtocolStatus::onRecvFirstMessage(NetworkMessage& msg)
 {
-	for(StringVec::const_iterator it = g_game.blacklist.begin(); it != g_game.blacklist.end(); ++it)
-	{
-		if((*it) != convertIPAddress(getIP()))
-			continue;
-
-		getConnection()->close();
-		return;
-	}
-
 	IpConnectMap::const_iterator it = ipConnectMap.find(getIP());
 	if(it != ipConnectMap.end() && OTSYS_TIME() < it->second + g_config.getNumber(ConfigManager::STATUSQUERY_TIMEOUT))
 	{
