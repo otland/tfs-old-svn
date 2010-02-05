@@ -656,13 +656,11 @@ bool Actions::useItemEx(Player* player, const Position& fromPos, const Position&
 	PositionEx toPosEx(toPos, toStackPos);
 
 	ReturnValue ret = internalUseItemEx(player, fromPosEx, toPosEx, item, isHotkey, creatureId);
-	if(ret != RET_NOERROR)
-	{
-		player->sendCancelMessage(ret);
-		return false;
-	}
+	if(ret == RET_NOERROR)
+		return true;
 
-	return true;
+	player->sendCancelMessage(ret);
+	return false;
 }
 
 Action::Action(LuaInterface* _interface):
