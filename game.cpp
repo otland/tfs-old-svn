@@ -1711,9 +1711,9 @@ bool Game::removeItemOfType(Cylinder* cylinder, uint16_t itemId, int32_t count, 
 
 	std::list<Container*> listContainer;
 	Container* tmpContainer = NULL;
+	Item* item = NULL;
 
 	Thing* thing = NULL;
-	Item* item = NULL;
 	for(int32_t i = cylinder->__getFirstIndex(); i < cylinder->__getLastIndex() && count > 0;)
 	{
 		if((thing = cylinder->__getThing(i)) && (item = thing->getItem()))
@@ -1738,6 +1738,8 @@ bool Game::removeItemOfType(Cylinder* cylinder, uint16_t itemId, int32_t count, 
 					--count;
 					internalRemoveItem(NULL, item);
 				}
+				else
+					++i;
 			}
 			else
 			{
@@ -1777,6 +1779,8 @@ bool Game::removeItemOfType(Cylinder* cylinder, uint16_t itemId, int32_t count, 
 					--count;
 					internalRemoveItem(NULL, item);
 				}
+				else
+					++i;
 			}
 			else
 			{
@@ -1797,10 +1801,9 @@ uint32_t Game::getMoney(const Cylinder* cylinder)
 
 	std::list<Container*> listContainer;
 	Container* tmpContainer = NULL;
-
-	Thing* thing = NULL;
 	Item* item = NULL;
 
+	Thing* thing = NULL;
 	uint32_t moneyCount = 0;
 	for(int32_t i = cylinder->__getFirstIndex(); i < cylinder->__getLastIndex(); ++i)
 	{
