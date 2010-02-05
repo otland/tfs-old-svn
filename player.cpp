@@ -275,7 +275,6 @@ Item* Player::getWeapon(bool ignoreAmmo)
 	if(!weapon)
 		return NULL;
 
-	shootRange = weapon->getShootRange();
 	if(ignoreAmmo || weapon->getAmmoType() == AMMO_NONE)
 		return weapon;
 
@@ -327,6 +326,9 @@ void Player::updateWeapon()
 		weapon = weapons[1];
 	else
 		weapon = NULL;
+
+	if(weapon)
+		shootRange = weapon->getShootRange();
 }
 
 WeaponType_t Player::getWeaponType()
@@ -3289,7 +3291,11 @@ void Player::doAttacking(uint32_t interval)
 		return;
 	}
 
-	if(const Weapon* _weapon = g_weapons->getWeapon(weapon))
+	Item* item = getWeapon(false);
+	if(!item)
+		return;
+
+	if(const Weapon* _weapon = g_weapons->getWeapon(item))
 	{
 		if(_weapon->interruptSwing() && !canDoAction())
 		{

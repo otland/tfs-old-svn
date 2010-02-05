@@ -280,7 +280,7 @@ class Tile : public Cylinder
 		void onRemoveTileItem(const SpectatorVec& list, std::vector<uint32_t>& oldStackPosVector, Item* item);
 		void onUpdateTile();
 
-		void updateTileFlags(Item* item, bool removed);
+		void updateTileFlags(Item* item, bool remove);
 
 	protected:
 		bool isDynamic() const {return (m_flags & TILESTATE_DYNAMIC_TILE);}

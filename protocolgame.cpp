@@ -338,11 +338,10 @@ bool ProtocolGame::connect(uint32_t playerId, OperatingSystem_t operatingSystem,
 
 	player = _player;
 	player->addRef();
+	player->client = this;
 	player->isConnecting = false;
 
-	player->client = this;
 	player->sendCreatureAppear(player);
-
 	player->setOperatingSystem(operatingSystem);
 	player->setClientVersion(version);
 

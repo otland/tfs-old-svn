@@ -571,7 +571,7 @@ uint32_t MoveEvents::onCreatureMove(Creature* actor, Creature* creature, const T
 			return ret;
 
 		//We cannot use iterators here since the scripts can invalidate the iterator
-		for(int32_t i = 0, j = m_lastCacheItemVector.size(); i < j; ++i)
+		for(int32_t i = 0; i < m_lastCacheItemVector.size(); ++i)
 		{
 			if((tileItem = m_lastCacheItemVector[i]) && (moveEvent = getEvent(tileItem, eventType)))
 				ret &= moveEvent->fireStepEvent(actor, creature, tileItem, tile->getPosition(), fromPos, toPos);
@@ -585,7 +585,7 @@ uint32_t MoveEvents::onCreatureMove(Creature* actor, Creature* creature, const T
 
 	//We cannot use iterators here since the scripts can invalidate the iterator
 	Thing* thing = NULL;
-	for(int32_t i = tile->__getFirstIndex(), j = tile->__getLastIndex(); i < j; ++i) //already checked the ground
+	for(int32_t i = tile->__getFirstIndex(); i < tile->__getLastIndex(); ++i) //already checked the ground
 	{
 		if(!(thing = tile->__getThing(i)) || !(tileItem = thing->getItem()))
 			continue;
@@ -620,19 +620,19 @@ bool MoveEvents::onPlayerDeEquip(Player* player, Item* item, slots_t slot, bool 
 
 uint32_t MoveEvents::onItemMove(Creature* actor, Item* item, Tile* tile, bool isAdd)
 {
-	MoveEvent_t eventType1 = MOVE_EVENT_REMOVE_ITEM, eventType2 = MOVE_EVENT_REMOVE_TILEITEM;
+	MoveEvent_t eventType = MOVE_EVENT_REMOVE_ITEM, tileEventType = MOVE_EVENT_REMOVE_TILEITEM;
 	if(isAdd)
 	{
-		eventType1 = MOVE_EVENT_ADD_ITEM;
-		eventType2 = MOVE_EVENT_ADD_TILEITEM;
+		eventType = MOVE_EVENT_ADD_ITEM;
+		tileEventType = MOVE_EVENT_ADD_TILEITEM;
 	}
 
 	uint32_t ret = 1;
-	MoveEvent* moveEvent = getEvent(tile, eventType1);
+	MoveEvent* moveEvent = getEvent(tile, eventType);
 	if(moveEvent)
 		ret &= moveEvent->fireAddRemItem(actor, item, NULL, tile->getPosition());
 
-	moveEvent = getEvent(item, eventType1);
+	moveEvent = getEvent(item, eventType);
 	if(moveEvent)
 		ret &= moveEvent->fireAddRemItem(actor, item, NULL, tile->getPosition());
 
@@ -643,12 +643,11 @@ uint32_t MoveEvents::onItemMove(Creature* actor, Item* item, Tile* tile, bool is
 			return ret;
 
 		//We cannot use iterators here since the scripts can invalidate the iterator
-		for(int32_t i = 0, j = m_lastCacheItemVector.size(); i < j; ++i)
+		for(int32_t i = 0; i < m_lastCacheItemVector.size(); ++i)
 		{
 			if((tileItem = m_lastCacheItemVector[i]) && tileItem != item
-				&& (moveEvent = getEvent(tileItem, eventType2)))
-				ret &= moveEvent->fireAddRemItem(actor, item,
-					tileItem, tile->getPosition());
+				&& (moveEvent = getEvent(tileItem, tileEventType)))
+				ret &= moveEvent->fireAddRemItem(actor, item, tileItem, tile->getPosition());
 		}
 
 		return ret;
@@ -659,12 +658,12 @@ uint32_t MoveEvents::onItemMove(Creature* actor, Item* item, Tile* tile, bool is
 
 	//we cannot use iterators here since the scripts can invalidate the iterator
 	Thing* thing = NULL;
-	for(int32_t i = tile->__getFirstIndex(), j = tile->__getLastIndex(); i < j; ++i) //already checked the ground
+	for(int32_t i = tile->__getFirstIndex(); i < tile->__getLastIndex(); ++i) //already checked the ground
 	{
 		if(!(thing = tile->__getThing(i)) || !(tileItem = thing->getItem()) || tileItem == item)
 			continue;
 
-		if((moveEvent = getEvent(tileItem, eventType2)))
+		if((moveEvent = getEvent(tileItem, tileEventType)))
 		{
 			m_lastCacheItemVector.push_back(tileItem);
 			ret &= moveEvent->fireAddRemItem(actor, item, tileItem, tile->getPosition());

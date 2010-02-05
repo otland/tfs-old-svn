@@ -600,9 +600,6 @@ class Game
 		bool cancelRuleViolation(Player* player);
 		bool closeRuleViolation(Player* player);
 
-		std::vector<std::string> blacklist;
-		bool fetchBlacklist();
-
 		bool loadExperienceStages();
 		double getExperienceStage(uint32_t level, double divider = 1.);
 

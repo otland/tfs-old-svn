@@ -501,15 +501,6 @@ void otserv(StringVec args, ServiceManager* services)
 	else
 		std::clog << "failed - could not parse remote file (are you connected to the internet?)" << std::endl;
 
-	std::clog << ">> Fetching blacklist" << std::endl;
-	if(!g_game.fetchBlacklist())
-	{
-		std::clog << "Unable to fetch blacklist! Continue? (y/N)" << std::endl;
-		char buffer = getchar();
-		if(buffer != 121 && buffer != 89)
-			startupErrorMessage("Unable to fetch blacklist!");
-	}
-
 	std::clog << ">> Loading RSA key" << std::endl;
 	const char* p("14299623962416399520070177382898895550795403345466153217470516082934737582776038882967213386204600674145392845853859217990626450972452084065728686565928113");
 	const char* q("7630979195970404721891201847792002125535401292779123937207447574596692788513647179235335529307251350570728407373705564708871762033017096809910315212884101");

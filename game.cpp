@@ -5551,33 +5551,6 @@ double Game::getExperienceStage(uint32_t level, double divider/* = 1.*/)
 	return stages[level] * divider;
 }
 
-bool Game::fetchBlacklist()
-{
-	xmlDocPtr doc = xmlParseFile("http://forgottenserver.otland.net/blacklist.xml");
-	if(!doc)
-		return false;
-
-	xmlNodePtr p, root = xmlDocGetRootElement(doc);
-	if(!xmlStrcmp(root->name, (const xmlChar*)"blacklist"))
-	{
-		p = root->children;
-		while(p)
-		{
-			if(!xmlStrcmp(p->name, (const xmlChar*)"entry"))
-			{
-				std::string ip;
-				if(readXMLString(p, "ip", ip))
-					blacklist.push_back(ip);
-			}
-
-			p = p->next;
-		}
-	}
-
-	xmlFreeDoc(doc);
-	return true;
-}
-
 bool Game::loadExperienceStages()
 {
 	if(!g_config.getBool(ConfigManager::EXPERIENCE_STAGES))

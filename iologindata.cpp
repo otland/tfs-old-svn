@@ -360,14 +360,14 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool preLo
 {
 	Database* db = Database::getInstance();
 	DBQuery query;
-	query << "SELECT `id`, `account_id`, `group_id`, `world_id`, `sex`, `vocation`, `experience`, `level`, `maglevel`, ";
-	query << "`health`, `healthmax`, `blessings`, `mana`, `manamax`, `manaspent`, `soul`, `lookbody`, `lookfeet`, ";
-	query << "`lookhead`, `looklegs`, `looktype`, `lookaddons`, `posx`, `posy`, `posz`, `cap`, `lastlogin`, ";
-	query << "`lastlogout`, `lastip`, `conditions`, `skull`, `skulltime`, `guildnick`, `rank_id`, `town_id`, ";
-	query << "`balance`, `stamina`, `direction`, `loss_experience`, `loss_mana`, `loss_skills`, `loss_containers`, ";
-	query << "`loss_items`, `marriage`, `promotion`, `description` FROM `players` WHERE `name` ";
-	query << db->getStringComparison() << db->escapeString(name) << " AND `world_id` = ";
-	query << g_config.getNumber(ConfigManager::WORLD_ID) << " AND `deleted` = 0 LIMIT 1";
+	query << "SELECT `id`, `account_id`, `group_id`, `world_id`, `sex`, `vocation`, `experience`, `level`, "
+	<< "`maglevel`, `health`, `healthmax`, `blessings`, `mana`, `manamax`, `manaspent`, `soul`, `lookbody`, "
+	<< "`lookfeet`, `lookhead`, `looklegs`, `looktype`, `lookaddons`, `posx`, `posy`, `posz`, `cap`, "
+	<< "`lastlogin`, `lastlogout`, `lastip`, `conditions`, `skull`, `skulltime`, `guildnick`, `rank_id`, "
+	<< "`town_id`, `balance`, `stamina`, `direction`, `loss_experience`, `loss_mana`, `loss_skills`, "
+	<< "`loss_containers`, `loss_items`, `marriage`, `promotion`, `description` FROM `players` WHERE "
+	<< "`name` " << db->getStringComparison() << db->escapeString(name) << " AND `world_id` = "
+	<< g_config.getNumber(ConfigManager::WORLD_ID) << " AND `deleted` = 0 LIMIT 1";
 
 	DBResult* result;
 	if(!(result = db->storeQuery(query.str())))
@@ -381,8 +381,8 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool preLo
 	}
 
 	Account account = loadAccount(accountId, true);
-	player->accountId = accountId;
 	player->account = account.name;
+	player->accountId = accountId;
 
 	Group* group = Groups::getInstance()->getGroup(result->getDataInt("group_id"));
 	player->setGroup(group);
@@ -405,23 +405,22 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool preLo
 		player->setDirection((Direction)result->getDataInt("direction"));
 
 	player->level = std::max((uint32_t)1, (uint32_t)result->getDataInt("level"));
-	uint64_t currExpCount = Player::getExpForLevel(player->level);
-	uint64_t nextExpCount = Player::getExpForLevel(player->level + 1);
-	uint64_t experience = (uint64_t)result->getDataLong("experience");
+	uint64_t currExpCount = Player::getExpForLevel(player->level), nextExpCount = Player::getExpForLevel(
+		player->level + 1), experience = (uint64_t)result->getDataLong("experience");
 	if(experience < currExpCount || experience > nextExpCount)
 		experience = currExpCount;
 
 	player->experience = experience;
+	player->levelPercent = 0;
 	if(currExpCount < nextExpCount)
 		player->levelPercent = Player::getPercentLevel(player->experience - currExpCount, nextExpCount - currExpCount);
-	else
-		player->levelPercent = 0;
 
 	player->soul = result->getDataInt("soul");
 	player->capacity = result->getDataInt("cap");
 	player->setStamina(result->getDataLong("stamina"));
-	player->balance = result->getDataLong("balance");
 	player->marriage = result->getDataInt("marriage");
+
+	player->balance = result->getDataLong("balance");
 	if(g_config.getBool(ConfigManager::BLESSINGS) && (player->isPremium()
 		|| !g_config.getBool(ConfigManager::BLESSING_ONLY_PREMIUM)))
 		player->blessings = result->getDataInt("blessings");
@@ -450,8 +449,7 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool preLo
 	player->manaMax = result->getDataInt("manamax");
 
 	player->magLevel = result->getDataInt("maglevel");
-	uint64_t nextManaCount = player->vocation->getReqMana(player->magLevel + 1);
-	uint64_t manaSpent = result->getDataLong("manaspent");
+	uint64_t nextManaCount = player->vocation->getReqMana(player->magLevel + 1), manaSpent = result->getDataLong("manaspent");
 	if(manaSpent > nextManaCount)
 		manaSpent = 0;
 
@@ -471,7 +469,7 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool preLo
 				player->defaultOutfit.lookType = outfit.lookType;
 		}
 
-		if(!wearable) //Just pick the first default outfit we can find
+		if(!wearable) //just pick the first default outfit we can find
 		{
 			const OutfitMap& defaultOutfits = Outfits::getInstance()->getOutfits(player->getSex(true));
 			if(!defaultOutfits.empty())
