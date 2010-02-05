@@ -853,7 +853,7 @@ Cylinder* Tile::__queryDestination(int32_t& index, const Thing* thing, Item** de
 	else
 		flags |= FLAG_NOLIMIT; //will ignore that there is blocking items/creatures
 
-	if(destTile && destTile->empty())
+	if(destTile)
 	{
 		Thing* destThing = destTile->getTopDownItem();
 		if(destThing && !destThing->isRemoved())
