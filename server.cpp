@@ -242,8 +242,6 @@ void ServiceManager::stop()
 		{
 			LOG_MESSAGE(LOGTYPE_ERROR, e.what(), "NETWORK")
 		}
-
-		deathTimer.expires_from_now(boost::posix_time::seconds(3));
 	}
 
 	m_acceptors.clear();
