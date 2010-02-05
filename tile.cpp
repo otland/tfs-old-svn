@@ -1629,9 +1629,6 @@ void Tile::__internalAddThing(uint32_t index, Thing* thing)
 
 void Tile::updateTileFlags(Item* item, bool remove)
 {
-	if(item->isRemoved())
-		return;
-
 	if(!remove)
 	{
 		if(!hasFlag(TILESTATE_FLOORCHANGE))
