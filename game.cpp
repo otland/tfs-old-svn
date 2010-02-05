@@ -90,7 +90,6 @@ Game::Game()
 
 Game::~Game()
 {
-	blacklist.clear();
 	if(map)
 		delete map;
 }
