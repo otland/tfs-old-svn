@@ -4889,6 +4889,14 @@ bool Player::isPartner(const Player* player) const
 	return player->getParty() == party;
 }
 
+bool Player::getHideHealth() const
+{
+	if(hasFlag(PlayerFlag_HideHealth))
+		return true;
+
+	return hideHealth;
+}
+
 void Player::sendPlayerIcons(Player* player)
 {
 	sendCreatureShield(player);

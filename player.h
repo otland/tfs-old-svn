@@ -192,6 +192,8 @@ class Player : public Creature, public Cylinder
 		bool isInviting(const Player* player) const;
 		bool isPartner(const Player* player) const;
 
+		bool getHideHealth() const;
+
 		bool addPartyInvitation(Party* party);
 		bool removePartyInvitation(Party* party);
 		void clearPartyInvitations();

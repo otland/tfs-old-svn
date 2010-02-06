@@ -496,14 +496,15 @@ enum PlayerFlags
 	PlayerFlag_CannotBeMuted,			//2^36 = 68719476736
 	PlayerFlag_IsAlwaysPremium,			//2^37 = 137438953472
 	PlayerFlag_CanAnswerRuleViolations,		//2^38 = 274877906944
-	PlayerFlag_39,	//ignore			//2^39 = 549755813888	//not used by us
+	PlayerFlag_39,	//ignore			//2^39 = 549755813888 //not used by us
 	PlayerFlag_ShowGroupNameInsteadOfVocation,	//2^40 = 1099511627776
 	PlayerFlag_HasInfiniteStamina,			//2^41 = 2199023255552
 	PlayerFlag_CannotMoveItems,			//2^42 = 4398046511104
 	PlayerFlag_CannotMoveCreatures,			//2^43 = 8796093022208
 	PlayerFlag_CanReportBugs,			//2^44 = 17592186044416
-	PlayerFlag_45,	//ignore			//2^45 = 35184372088832	//not used by us
+	PlayerFlag_45,	//ignore			//2^45 = 35184372088832 //not used by us
 	PlayerFlag_CannotBeSeen,			//2^46 = 70368744177664
+	PlayerFlag_HideHealth,				//2^47 = 140737488355328
 
 	PlayerFlag_LastFlag
 };

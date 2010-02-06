@@ -205,6 +205,7 @@ class Creature : public AutoId, virtual public Thing
 
 		bool getHideName() const {return hideName;}
 		void setHideName(bool v) {hideName = v;}
+
 		bool getHideHealth() const {return hideHealth;}
 		void setHideHealth(bool v) {hideHealth = v;}
 
