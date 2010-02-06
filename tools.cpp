@@ -95,12 +95,18 @@ bool encryptTest(std::string plain, std::string& hash)
 
 void replaceString(std::string& text, const std::string key, const std::string value)
 {
-	if(value.find(key) != std::string::npos) //don't allow infinite loops
-		return;
+	std::string::size_type start = text.find(key);
+	if(start == std::string::npos) //skip if there's no key in text
+		return false;
 
-	for(std::string::size_type keyStart = text.find(key); keyStart
-		!= std::string::npos; keyStart = text.find(key))
-		text.replace(keyStart, key.size(), value);
+	std::string::size_type pos = 0;
+	for(; start != std::string::npos; start = text.find(key, pos))
+	{
+		text.replace(start, key.size(), value);
+		pos = start + key.size();
+	}
+
+	return true;
 }
 
 void trim_right(std::string& source, const std::string& t)
