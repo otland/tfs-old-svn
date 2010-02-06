@@ -81,12 +81,12 @@ bool Weapons::loadDefaults()
 					break;
 				}
 
-				case WEAPON_AMMO:
 				case WEAPON_DIST:
-				{
-					if(it->weaponType == WEAPON_DIST && it->ammoType != AMMO_NONE)
-						continue;
+					if(it->ammoType != AMMO_NONE)
+						break;
 
+				case WEAPON_AMMO:
+				{
 					if(WeaponDistance* weapon = new WeaponDistance(&m_interface))
 					{
 						weapon->configureWeapon(*it);

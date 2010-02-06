@@ -275,7 +275,7 @@ Item* Player::getWeapon(bool ignoreAmmo)
 	if(!weapon)
 		return NULL;
 
-	if(weapon->getWeaponType() != WEAPON_DIST || ignoreAmmo || weapon->getAmmoType() == AMMO_NONE)
+	if(ignoreAmmo || weapon->getAmmoType() == AMMO_NONE)
 		return weapon;
 
 	Item* ammoItem = getInventoryItem(SLOT_AMMO);
@@ -288,9 +288,34 @@ ItemVector Player::getWeapons() const
 	ItemVector weapons;
 	for(int32_t slot = SLOT_RIGHT; slot <= SLOT_LEFT; ++slot)
 	{
-		if((item = getInventoryItem((slots_t)slot)) && item->getWeaponType() > WEAPON_NONE
-			&& item->getWeaponType() < WEAPON_AMMO && g_weapons->getWeapon(item))
-			weapons.push_back(item);
+		if(!(item = getInventoryItem((slots_t)slot)))
+			continue;
+
+		switch(item->getWeaponType())
+		{
+			case WEAPON_SWORD:
+			case WEAPON_CLUB:
+			case WEAPON_AXE:
+			case WEAPON_FIST:
+			case WEAPON_WAND:
+			{
+				if(g_weapons->getWeapon(item))
+					weapons.push_back(item);
+
+				break;
+			}
+
+			case WEAPON_DIST:
+			{
+				if(g_weapons->getWeapon(item) || item->getAmmoType() != AMMO_NONE)
+					weapons.push_back(item);
+
+				break;
+			}
+
+			default:
+				break;
+		}
 	}
 
 	return weapons;
