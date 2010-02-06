@@ -276,13 +276,17 @@ Item* Player::getWeapon(bool ignoreAmmo)
 		return NULL;
 
 	if(ignoreAmmo || weapon->getAmmoType() == AMMO_NONE)
+	{
+		shootRange = weapon->getShootRange();
 		return weapon;
+	}
 
 	Item* ammoItem = getInventoryItem(SLOT_AMMO);
-	if(!ammoItem || ammoItem->getAmmoType() != weapon->getAmmoType())
+	if(!ammoItem || ammoItem->getAmmoType() != weapon->getAmmoType() || !g_weapons->getWeapon(ammoItem))
 		return NULL;
 
-	return g_weapons->getWeapon(ammoItem) ? ammoItem : NULL;
+	shootRange = ammoItem->getShootRange();
+	return ammoItem;
 }
 
 ItemVector Player::getWeapons() const
@@ -326,14 +330,11 @@ void Player::updateWeapon()
 		weapon = weapons[1];
 	else
 		weapon = NULL;
-
-	if(weapon)
-		shootRange = weapon->getShootRange();
 }
 
 WeaponType_t Player::getWeaponType()
 {
-	if(weapon)
+	if(Item* item = getWeapon(false))
 		return weapon->getWeaponType();
 
 	return WEAPON_NONE;
@@ -3292,9 +3293,6 @@ void Player::doAttacking(uint32_t interval)
 	}
 
 	Item* item = getWeapon(false);
-	if(!item)
-		return;
-
 	if(const Weapon* _weapon = g_weapons->getWeapon(item))
 	{
 		if(_weapon->interruptSwing() && !canDoAction())
