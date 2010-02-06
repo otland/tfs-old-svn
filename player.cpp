@@ -275,18 +275,11 @@ Item* Player::getWeapon(bool ignoreAmmo)
 	if(!weapon)
 		return NULL;
 
-	if(ignoreAmmo || weapon->getAmmoType() == AMMO_NONE)
-	{
-		shootRange = weapon->getShootRange();
+	if(weapon->getWeaponType() != WEAPON_DIST || ignoreAmmo || weapon->getAmmoType() == AMMO_NONE)
 		return weapon;
-	}
 
 	Item* ammoItem = getInventoryItem(SLOT_AMMO);
-	if(!ammoItem || ammoItem->getAmmoType() != weapon->getAmmoType() || !g_weapons->getWeapon(ammoItem))
-		return NULL;
-
-	shootRange = ammoItem->getShootRange();
-	return ammoItem;
+	return ammoItem && ammoItem->getAmmoType() == weapon->getAmmoType() && g_weapons->getWeapon(ammoItem) ? ammoItem : NULL;
 }
 
 ItemVector Player::getWeapons() const
@@ -295,25 +288,9 @@ ItemVector Player::getWeapons() const
 	ItemVector weapons;
 	for(int32_t slot = SLOT_RIGHT; slot <= SLOT_LEFT; ++slot)
 	{
-		if(!(item = getEquippedItem((slots_t)slot)))
-			continue;
-
-		switch(item->getWeaponType())
-		{
-			case WEAPON_CLUB:
-			case WEAPON_SWORD:
-			case WEAPON_AXE:
-			case WEAPON_DIST:
-			case WEAPON_WAND:
-			case WEAPON_FIST:
-			{
-				if(g_weapons->getWeapon(item))
-					weapons.push_back(item);
-			}
-
-			default:
-				break;
-		}
+		if((item = getInventoryItem((slots_t)slot)) && item->getWeaponType() > WEAPON_NONE
+			&& item->getWeaponType() < WEAPON_AMMO && g_weapons->getWeapon(item))
+			weapons.push_back(item);
 	}
 
 	return weapons;
@@ -330,12 +307,15 @@ void Player::updateWeapon()
 		weapon = weapons[1];
 	else
 		weapon = NULL;
+
+	if(weapon)
+		shootRange = weapon->getShootRange();
 }
 
 WeaponType_t Player::getWeaponType()
 {
 	if(Item* item = getWeapon(false))
-		return weapon->getWeaponType();
+		return item->getWeaponType();
 
 	return WEAPON_NONE;
 }
