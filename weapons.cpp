@@ -687,7 +687,10 @@ int32_t WeaponDistance::playerWeaponCheck(Player* player, Creature* target) cons
 	if(it.weaponType == WEAPON_AMMO)
 	{
 		if(Item* item = player->getWeapon(true))
-			return weapon->playerWeaponCheck(player, target);
+		{
+			if(const Weapon* weapon = g_weapons->getWeapon(item))
+				return weapon->playerWeaponCheck(player, target);
+		}
 	}
 
 	return Weapon::playerWeaponCheck(player, target);

@@ -288,7 +288,7 @@ ItemVector Player::getWeapons() const
 	ItemVector weapons;
 	for(int32_t slot = SLOT_RIGHT; slot <= SLOT_LEFT; ++slot)
 	{
-		if(!(item = getInventoryItem((slots_t)slot)))
+		if(!(item = getEquippedItem((slots_t)slot)))
 			continue;
 
 		switch(item->getWeaponType())
