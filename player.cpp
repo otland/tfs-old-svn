@@ -2582,7 +2582,7 @@ ReturnValue Player::__queryAdd(int32_t index, const Thing* thing, uint32_t count
 					WeaponType_t type = item->getWeaponType(), leftType = leftItem->getWeaponType();
 					if(leftItem->getSlotPosition() & SLOTP_TWO_HAND)
 						ret = RET_DROPTWOHANDEDITEM;
-					else if(item == leftItem)
+					else if(item == leftItem && item->getSubType() == leftItem->getSubType())
 						ret = RET_NOERROR;
 					else if(leftType == WEAPON_SHIELD && type == WEAPON_SHIELD)
 						ret = RET_CANONLYUSEONESHIELD;
@@ -2615,7 +2615,7 @@ ReturnValue Player::__queryAdd(int32_t index, const Thing* thing, uint32_t count
 					WeaponType_t type = item->getWeaponType(), rightType = rightItem->getWeaponType();
 					if(rightItem->getSlotPosition() & SLOTP_TWO_HAND)
 						ret = RET_DROPTWOHANDEDITEM;
-					else if(item == rightItem)
+					else if(item == rightItem && item->getSubType() == rightItem->getSubType())
 						ret = RET_NOERROR;
 					else if(rightType == WEAPON_SHIELD && type == WEAPON_SHIELD)
 						ret = RET_CANONLYUSEONESHIELD;
