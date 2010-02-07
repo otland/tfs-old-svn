@@ -2049,7 +2049,7 @@ BlockType_t Player::blockHit(Creature* attacker, CombatType_t combatType, int32_
 		if(!reflect)
 			continue;
 
-		if(it.abilities.reflect[REFLECT_PERCENT][combatType] && it.abilities.reflect[REFLECT_CHANCE][combatType] > random_range(0, 99))
+		if(it.abilities.reflect[REFLECT_PERCENT][combatType] && random_range(1, 100) < it.abilities.reflect[REFLECT_CHANCE][combatType])
 		{
 			reflected += (int32_t)std::ceil((double)(damage * it.abilities.reflect[REFLECT_PERCENT][combatType]) / 100.);
 			if(item->hasCharges() && !it.abilities.absorb[combatType])
