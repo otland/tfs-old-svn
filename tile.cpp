@@ -855,9 +855,8 @@ Cylinder* Tile::__queryDestination(int32_t& index, const Thing* thing, Item** de
 
 	if(destTile)
 	{
-		Thing* destThing = destTile->getTopDownItem();
-		if(destThing && !destThing->isRemoved())
-			*destItem = destThing->getItem();
+		if(Item* item = destTile->getTopDownItem())
+			*destItem = item;
 	}
 
 	return destTile;
@@ -1302,12 +1301,6 @@ int32_t Tile::getClientIndexOfThing(const Player* player, const Thing* thing) co
 	if(ground && ground == thing)
 		return 0;
 
-	if(const Item* item = thing->getItem())
-	{
-		if(item->isGroundTile())
-			return 0;
-	}
-
 	int32_t n = 0;
 	if(!ground)
 		n--;
@@ -1364,6 +1357,9 @@ int32_t Tile::__getIndexOfThing(const Thing* thing) const
 		return 0;
 
 	int32_t n = 0;
+	if(!ground)
+		n--;
+
 	const TileItemVector* items = getItemList();
 	if(items)
 	{
@@ -1452,11 +1448,7 @@ Thing* Tile::__getThing(uint32_t index) const
 	{
 		uint32_t topItemSize = items->getTopItemCount();
 		if(index < topItemSize)
-		{
-			Item* item = items->at(items->downItemCount + index);
-			if(item && !item->isRemoved())
-				return item;
-		}
+			return items->at(items->downItemCount + index);
 
 		index -= topItemSize;
 	}
@@ -1470,11 +1462,7 @@ Thing* Tile::__getThing(uint32_t index) const
 	}
 
 	if(items && index < items->getDownItemCount())
-	{
-		Item* item = items->at(index);
-		if(item && !item->isRemoved())
-			return item;
-	}
+		return items->at(index);
 
 	return NULL;
 }
