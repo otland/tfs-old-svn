@@ -767,7 +767,7 @@ void Items::parseItemNode(xmlNodePtr itemNode, uint32_t id)
 						it.weaponType = WEAPON_DIST;
 					else if(tmpStrValue == "wand" || tmpStrValue == "rod")
 						it.weaponType = WEAPON_WAND;
-					else if(tmpStrValue == "ammunition" || tmpStrValue == "ammo" || tmpStrValue == "ammu")
+					else if(tmpStrValue == "ammunition" || tmpStrValue == "ammo")
 						it.weaponType = WEAPON_AMMO;
 					else if(tmpStrValue == "fist")
 						it.weaponType = WEAPON_FIST;

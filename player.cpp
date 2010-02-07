@@ -272,14 +272,35 @@ void Player::setConditionSuppressions(uint32_t conditions, bool remove)
 
 Item* Player::getWeapon(bool ignoreAmmo)
 {
-	if(!weapon)
-		return NULL;
-
-	if(ignoreAmmo || weapon->getAmmoType() == AMMO_NONE)
+	if(weapon)
 		return weapon;
 
-	Item* ammoItem = getInventoryItem(SLOT_AMMO);
-	return ammoItem && ammoItem->getAmmoType() == weapon->getAmmoType() && g_weapons->getWeapon(ammoItem) ? ammoItem : NULL;
+	Item* item = NULL;
+	for(int32_t slot = SLOT_RIGHT; slot <= SLOT_LEFT; ++slot)
+	{
+		if(!(item = getEquippedItem((slots_t)slot)) || item->getWeaponType() != WEAPON_DIST)
+			continue;
+
+		if(!ignoreAmmo && item->getAmmoType() != AMMO_NONE)
+		{
+			Item* ammoItem = getInventoryItem(SLOT_AMMO);
+			if(ammoItem && ammoItem->getAmmoType() == item->getAmmoType())
+			{
+				if(g_weapons->getWeapon(ammoItem))
+				{
+					shootRange = item->getShootRange();
+					return ammoItem;
+				}
+			}
+		}
+		else if(g_weapons->getWeapon(item))
+		{
+			shootRange = item->getShootRange();
+			return item;
+		}
+	}
+
+	return NULL;
 }
 
 ItemVector Player::getWeapons() const
@@ -293,6 +314,10 @@ ItemVector Player::getWeapons() const
 
 		switch(item->getWeaponType())
 		{
+			case WEAPON_DIST:
+				if(item->getAmmoType() != AMMO_NONE)
+					break;
+
 			case WEAPON_SWORD:
 			case WEAPON_CLUB:
 			case WEAPON_AXE:
@@ -300,14 +325,6 @@ ItemVector Player::getWeapons() const
 			case WEAPON_WAND:
 			{
 				if(g_weapons->getWeapon(item))
-					weapons.push_back(item);
-
-				break;
-			}
-
-			case WEAPON_DIST:
-			{
-				if(g_weapons->getWeapon(item) || item->getAmmoType() != AMMO_NONE)
 					weapons.push_back(item);
 
 				break;

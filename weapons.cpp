@@ -111,7 +111,7 @@ Event* Weapons::getEvent(const std::string& nodeName)
 	if(tmpNodeName == "melee")
 		return new WeaponMelee(&m_interface);
 
-	if(tmpNodeName == "distance" || tmpNodeName == "ammunition")
+	if(tmpNodeName == "distance" || tmpNodeName == "ammunition" || tmpNodeName == "ammo")
 		return new WeaponDistance(&m_interface);
 
 	if(tmpNodeName == "wand" || tmpNodeName == "rod")
