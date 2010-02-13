@@ -540,10 +540,10 @@ void otserv(StringVec args, ServiceManager* services)
 	std::clog << ">> Loading items" << std::endl;
 #ifdef __USE_ZLIB__
 	if(Item::items.loadFromOtb(getFilePath(FILE_TYPE_OTHER, "items/items.otb.gz")))
-#else
-	if(Item::items.loadFromOtb(getFilePath(FILE_TYPE_OTHER, "items/items.otb")))
 #endif
-		startupErrorMessage("Unable to load items (OTB)!");
+		if(Item::items.loadFromOtb(getFilePath(FILE_TYPE_OTHER, "items/items.otb")))
+
+			startupErrorMessage("Unable to load items (OTB)!");
 
 	if(!Item::items.loadFromXml())
 	{

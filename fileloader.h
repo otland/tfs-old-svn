@@ -92,7 +92,7 @@ class FileLoader
 		FileLoader();
 		virtual ~FileLoader();
 
-		bool openFile(const char* filename, bool write, bool caching = false);
+		bool openFile(std::string filename, bool write, bool caching = false);
 		const uint8_t* getProps(const NODE, uint32_t &size);
 		bool getProps(const NODE, PropStream& props);
 		const NODE getChildNode(const NODE parent, uint32_t &type);
@@ -123,29 +123,35 @@ class FileLoader
 	public:
 		inline bool writeData(const void* data, int32_t size, bool unescape)
 		{
+			size_t value = 0;
+
 			for(int32_t i = 0; i < size; ++i)
 			{
 				uint8_t c = *(((uint8_t*)data) + i);
 				if(unescape && (c == NODE_START || c == NODE_END || c == ESCAPE_CHAR))
 				{
 					uint8_t escape = ESCAPE_CHAR;
+					
 #ifdef __USE_ZLIB__
-					size_t value = gzwrite(m_file, &escape, 1);
-#else
-					size_t value = fwrite(&escape, 1, 1, m_file);
+					if(m_gz)
+						value = gzwrite(m_file, &escape, 1);
+					else
 #endif
+						value = fwrite(&escape, 1, 1, (FILE*)m_file);
+
 					if(value != 1)
 					{
 						m_lastError = ERROR_COULDNOTWRITE;
 						return false;
 					}
 				}
-
 #ifdef __USE_ZLIB__
-				size_t value = gzwrite(m_file, &c, 1);
-#else
-				size_t value = fwrite(&c, 1, 1, m_file);
+				if(m_gz)
+					value = gzwrite(m_file, &c, 1);
+				else
 #endif
+					value = fwrite(&c, 1, 1, (FILE*)m_file);
+
 				if(value != 1)
 				{
 					m_lastError = ERROR_COULDNOTWRITE;
@@ -158,11 +164,10 @@ class FileLoader
 
 	protected:
 		FILELOADER_ERRORS m_lastError;
-#ifdef __USE_ZLIB__
-		gzFile m_file;
-#else
-		FILE* m_file;
-#endif
+
+		void* m_file;
+
+		bool m_gz;
 
 		NODE m_root;
 		uint32_t m_buffer_size;
