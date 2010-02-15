@@ -97,7 +97,7 @@ void replaceString(std::string& text, const std::string key, const std::string v
 {
 	std::string::size_type start = text.find(key);
 	if(start == std::string::npos) //skip if there's no key in text
-		return false;
+		return;
 
 	std::string::size_type pos = 0;
 	for(; start != std::string::npos; start = text.find(key, pos))
@@ -105,8 +105,6 @@ void replaceString(std::string& text, const std::string key, const std::string v
 		text.replace(start, key.size(), value);
 		pos = start + key.size();
 	}
-
-	return true;
 }
 
 void trim_right(std::string& source, const std::string& t)
