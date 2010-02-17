@@ -571,7 +571,7 @@ uint32_t MoveEvents::onCreatureMove(Creature* actor, Creature* creature, const T
 			return ret;
 
 		//We cannot use iterators here since the scripts can invalidate the iterator
-		for(int32_t i = 0; i < m_lastCacheItemVector.size(); ++i)
+		for(uint32_t i = 0; i < m_lastCacheItemVector.size(); ++i)
 		{
 			if((tileItem = m_lastCacheItemVector[i]) && (moveEvent = getEvent(tileItem, eventType)))
 				ret &= moveEvent->fireStepEvent(actor, creature, tileItem, tile->getPosition(), fromPos, toPos);
@@ -643,7 +643,7 @@ uint32_t MoveEvents::onItemMove(Creature* actor, Item* item, Tile* tile, bool is
 			return ret;
 
 		//We cannot use iterators here since the scripts can invalidate the iterator
-		for(int32_t i = 0; i < m_lastCacheItemVector.size(); ++i)
+		for(uint32_t i = 0; i < m_lastCacheItemVector.size(); ++i)
 		{
 			if((tileItem = m_lastCacheItemVector[i]) && tileItem != item
 				&& (moveEvent = getEvent(tileItem, tileEventType)))
