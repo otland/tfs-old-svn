@@ -48,7 +48,7 @@
 	Extended reload command with weapons and quests.
 	Corrected TEXTCOLOR_DARKRED value.
 	Corrected ids of field items and corpses.
-	Most damage killer and unjustified (bool) is now also accessible in onDeath event.
+	Most damage killer and two unjustified (bool) are now also accessible in onDeath event.
 	Attempt to make the NPC shop system work with fluid containers.
 	Fixed a crash related to trading.
 	Changed the house system to use rent instead of x gold per house tile.
