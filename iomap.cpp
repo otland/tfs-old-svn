@@ -353,6 +353,9 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 									return false;
 								}
 
+								if(item->getItemCount() <= 0)
+									item->setItemCount(1);
+
 								if(house && item->isMoveable())
 								{
 									std::clog << "[Warning - IOMap::loadMap] Movable item in house: " << house->getId();
@@ -418,6 +421,9 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 
 							if(item->unserializeItemNode(f, nodeItem, propStream))
 							{
+								if(item->getItemCount() <= 0)
+									item->setItemCount(1);
+
 								if(house && item->isMoveable())
 								{
 									std::clog << "[Warning - IOMap::loadMap] Movable item in house: ";
