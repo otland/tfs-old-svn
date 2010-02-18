@@ -938,7 +938,7 @@ void Player::sendCancelMessage(ReturnValue message) const
 			break;
 
 		case RET_BOTHHANDSNEEDTOBEFREE:
-			sendCancel("Both hands needs to be free.");
+			sendCancel("Both hands need to be free.");
 			break;
 
 		case RET_CANNOTBEDRESSED:
@@ -970,7 +970,7 @@ void Player::sendCancelMessage(ReturnValue message) const
 			break;
 
 		case RET_NOTENOUGHCAPACITY:
-			sendCancel("This object is too heavy.");
+			sendCancel("This object is too heavy for you to carry.");
 			break;
 
 		case RET_CONTAINERNOTENOUGHROOM:
@@ -983,7 +983,7 @@ void Player::sendCancelMessage(ReturnValue message) const
 			break;
 
 		case RET_CANNOTPICKUP:
-			sendCancel("You cannot pickup this object.");
+			sendCancel("You cannot take this object.");
 			break;
 
 		case RET_CANNOTTHROW:
@@ -1127,7 +1127,7 @@ void Player::sendCancelMessage(ReturnValue message) const
 			break;
 
 		case RET_ACTIONNOTPERMITTEDINANOPVPZONE:
-			sendCancel("This action is not permitted in a non-pvp zone.");
+			sendCancel("This action is not permitted in a safe zone.");
 			break;
 
 		case RET_YOUCANNOTLOGOUTHERE:

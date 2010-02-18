@@ -1906,9 +1906,14 @@ void ProtocolGame::sendGoods(const ShopInfoList& shop)
 
 				if(subType != -1)
 				{
-					uint32_t count = player->__getItemTypeCount(sit->itemId, subType);
+					uint32_t count = subType;
+					if(!it.isFluidContainer() && !it.isSplash())
+						count = player->__getItemTypeCount(sit->itemId, subType);
+
 					if(count > 0)
 						goodsMap[sit->itemId] = count;
+					else
+						goodsMap[sit->itemId] = 0;
 				}
 				else
 					goodsMap[sit->itemId] = tmpMap[sit->itemId];

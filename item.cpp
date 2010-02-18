@@ -894,8 +894,9 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 			s << "magic level " << std::showpos << (int32_t)it.abilities.stats[STAT_MAGICLEVEL] << std::noshowpos;
 		}
 
+		// TODO: we should find some better way of completing this
 		int32_t show = it.abilities.absorb[COMBAT_FIRST];
-		for(uint32_t i = (COMBAT_FIRST + 1); i <= COMBAT_LAST; i++)
+		for(int32_t i = (COMBAT_FIRST + 1); i <= COMBAT_LAST; i++)
 		{
 			if(it.abilities.absorb[i] == show)
 				continue;
@@ -904,17 +905,17 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 			break;
 		}
 
-		// TODO: update to the latest (from below)
 		if(!show)
 		{
 			bool tmp = true;
-			for(uint32_t i = COMBAT_FIRST; i <= COMBAT_LAST; i++)
+			for(int32_t i = COMBAT_FIRST; i <= COMBAT_LAST; i++)
 			{
 				if(!it.abilities.absorb[i])
 					continue;
 
 				if(tmp)
 				{
+					tmp = false;
 					if(begin)
 					{
 						begin = false;
@@ -923,7 +924,6 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 					else
 						s << ", ";
 
-					tmp = false;
 					s << "protection ";
 				}
 				else
@@ -945,6 +945,99 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 			s << "protection all " << std::showpos << show << std::noshowpos << "%";
 		}
 
+		// TODO: same case as absorbs...
+		show = it.abilities.reflect[REFLECT_CHANCE][COMBAT_FIRST];
+		for(int32_t i = (COMBAT_FIRST + 1); i <= COMBAT_LAST; i++)
+		{
+			if(it.abilities.reflect[REFLECT_CHANCE][i] == show)
+				continue;
+
+			show = 0;
+			break;
+		}
+
+		if(!show)
+		{
+			bool tmp = true;
+			for(int32_t i = COMBAT_FIRST; i <= COMBAT_LAST; i++)
+			{
+				if(!it.abilities.reflect[REFLECT_CHANCE][i] || !it.abilities.reflect[REFLECT_PERCENT][i])
+					continue;
+
+				if(tmp)
+				{
+					tmp = false;
+				       if(begin)
+					{
+						begin = false;
+						s << " (";
+					}
+					else
+						s << ", ";
+
+					s << "reflect: ";
+				}
+				else
+					s << ", ";
+
+				s << it.abilities.reflect[REFLECT_CHANCE][i] << "% for ";
+				if(it.abilities.reflect[REFLECT_PERCENT][i] > 99)
+					s << "whole";
+				else if(it.abilities.reflect[REFLECT_PERCENT][i] >= 75)
+					s << "huge";
+				else if(it.abilities.reflect[REFLECT_PERCENT][i] >= 50)
+					s << "medium";
+				else if(it.abilities.reflect[REFLECT_PERCENT][i] >= 25)
+					s << "small";
+				else
+					s << "tiny";
+
+				s << getCombatName((CombatType_t)i);
+			}
+
+			if(!tmp)
+				s << " damage";
+		}
+		else
+		{
+			if(begin)
+			{
+				begin = false;
+				s << " (";
+			}
+			else
+				s << ", ";
+
+			int32_t tmp = it.abilities.reflect[REFLECT_PERCENT][COMBAT_FIRST];
+			for(int32_t i = (COMBAT_FIRST + 1); i <= COMBAT_LAST; i++)
+			{
+				if(it.abilities.reflect[REFLECT_PERCENT][i] == tmp)
+					continue;
+
+				tmp = 0;
+				break;
+			}
+
+			s << "reflect: " << show << "% for ";
+			if(tmp)
+			{
+				if(tmp > 99)
+					s << "whole";
+				else if(tmp >= 75)
+					s << "huge";
+				else if(tmp >= 50)
+					s << "medium";
+				else if(tmp >= 25)
+					s << "small";
+				else
+					s << "tiny";
+			}
+			else
+				s << "mixed";
+
+			s << " damage";
+		}
+
 		if(it.abilities.speed)
 		{
 			if(begin)
@@ -956,6 +1049,58 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 				s << ", ";
 
 			s << "speed " << std::showpos << (int32_t)(it.abilities.speed / 2) << std::noshowpos;
+		}
+
+		if(it.abilities.invisible)
+		{
+			if(begin)
+			{
+				begin = false;
+				s << " (";
+			}
+			else
+				s << ", ";
+
+			s << "invisibility";
+		}
+
+		if(it.abilities.regeneration)
+		{
+			if(begin)
+			{
+				begin = false;
+				s << " (";
+			}
+			else
+				s << ", ";
+
+			s << "faster regeneration";
+		}
+
+		if(it.abilities.manaShield)
+		{
+			if(begin)
+			{
+				begin = false;
+				s << " (";
+			}
+			else
+				s << ", ";
+
+			s << "mana shield";
+		}
+
+		if(hasBitSet(it.abilities.conditionSuppressions, CONDITION_DRUNK))
+		{
+			if(begin)
+			{
+				begin = false;
+				s << " (";
+			}
+			else
+				s << ", ";
+
+			s << "hard drinking";
 		}
 
 		if(it.dualWield || (item && item->isDualWield()))
@@ -1173,6 +1318,58 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 			s << "speed " << std::showpos << (int32_t)(it.abilities.speed / 2) << std::noshowpos;
 		}
 
+		if(it.abilities.invisible)
+		{
+			if(begin)
+			{
+				begin = false;
+				s << " (";
+			}
+			else
+				s << ", ";
+
+			s << "invisibility";
+		}
+
+		if(it.abilities.regeneration)
+		{
+			if(begin)
+			{
+				begin = false;
+				s << " (";
+			}
+			else
+				s << ", ";
+
+			s << "faster regeneration";
+		}
+
+		if(it.abilities.manaShield)
+		{
+			if(begin)
+			{
+				begin = false;
+				s << " (";
+			}
+			else
+				s << ", ";
+
+			s << "mana shield";
+		}
+
+		if(hasBitSet(it.abilities.conditionSuppressions, CONDITION_DRUNK))
+		{
+			if(begin)
+			{
+				begin = false;
+				s << " (";
+			}
+			else
+				s << ", ";
+
+			s << "hard drinking";
+		}
+
 		if(!begin)
 			s << ")";
 	}
@@ -1197,7 +1394,7 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 	}
 	else if(it.allowDistRead)
 	{
-		s << std::endl;
+		s << "." << std::endl;
 		if(item && !item->getText().empty())
 		{
 			if(lookDistance <= 4)
@@ -1216,12 +1413,10 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 
 				std::string text = item->getText();
 				s << text;
-				if(!text.empty())
-				{
-					char end = *text.rbegin();
-					if(end == '?' || end == '!' || end == '.')
-						dot = false;
-				}
+
+				char end = *text.rbegin();
+				if(end == '?' || end == '!' || end == '.')
+					dot = false;
 			}
 			else
 				s << "You are too far away to read it";
@@ -1288,7 +1483,7 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 	{
 		std::string tmp;
 		if(!item)
-			tmp = getWeightDescription(it.weight, it.stackable, subType);
+			tmp = getWeightDescription(it.weight, it.stackable && it.showCount, subType);
 		else
 			tmp = item->getWeightDescription();
 

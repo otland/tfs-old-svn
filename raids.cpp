@@ -680,7 +680,7 @@ bool SingleSpawnEvent::executeEvent() const
 		return false;
 	}
 
-	if(!g_game.placeCreature(monster, m_position))
+	if(!g_game.placeCreature(monster, m_position, false, true))
 	{
 		delete monster;
 		std::clog << "[Error - SingleSpawnEvent::executeEvent] Cannot spawn monster " << m_monsterName << std::endl;
@@ -907,7 +907,7 @@ bool AreaSpawnEvent::executeEvent() const
 			for(int32_t t = 0; t < MAXIMUM_TRIES_PER_MONSTER; ++t)
 			{
 				if(!g_game.placeCreature(monster, Position(random_range(m_fromPos.x, m_toPos.x),
-					random_range(m_fromPos.y, m_toPos.y), random_range(m_fromPos.z, m_toPos.z))))
+					random_range(m_fromPos.y, m_toPos.y), random_range(m_fromPos.z, m_toPos.z)), true))
 					continue;
 
 				if(m_raid->usesRef() && m_ref)

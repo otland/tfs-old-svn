@@ -187,7 +187,7 @@ class Item : virtual public Thing, public ItemAttributes
 
 		virtual std::string getDescription(int32_t lookDistance) const {return getDescription(items[id], lookDistance, this);}
 		std::string getNameDescription() const {return getNameDescription(items[id], this);}
-		std::string getWeightDescription() const {return getWeightDescription(getWeight(), items[id].stackable, count);}
+		std::string getWeightDescription() const {return getWeightDescription(getWeight(), items[id].stackable && items[id].showCount, count);}
 
 		Player* getHoldingPlayer();
 		const Player* getHoldingPlayer() const;

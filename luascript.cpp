@@ -4327,6 +4327,13 @@ int32_t LuaInterface::luaGetTileItemByType(lua_State* L)
 
 			break;
 		}
+		case ITEM_TYPE_DEPOT:
+		{
+			if(!tile->hasFlag(TILESTATE_DEPOT))
+				found = false;
+
+			break;
+		}
 		default:
 			break;
 	}
@@ -9191,7 +9198,7 @@ int32_t LuaInterface::luaGetItemInfo(lua_State* L)
 	setFieldBool(L, "stackable", item->stackable);
 	setFieldBool(L, "showDuration", item->showDuration);
 	setFieldBool(L, "showCharges", item->showCharges);
-	setFieldBool(L, "showAttributes", item->showCharges);
+	setFieldBool(L, "showAttributes", item->showAttributes);
 	setFieldBool(L, "distRead", item->allowDistRead);
 	setFieldBool(L, "readable", item->canReadText);
 	setFieldBool(L, "writable", item->canWriteText);

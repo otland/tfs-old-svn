@@ -1249,7 +1249,9 @@ FluidTypeNames fluidTypeNames[] =
 	{"fruit juice",		FLUID_FRUITJUICE},
 	{"lava",		FLUID_LAVA},
 	{"rum",			FLUID_RUM},
-	{"swamp",		FLUID_SWAMP}
+	{"swamp",		FLUID_SWAMP},
+	{"tea",			FLUID_TEA},
+	{"mead",		FLUID_MEAD}
 };
 
 SkillIdNames skillIdNames[] =

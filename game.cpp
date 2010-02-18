@@ -3024,16 +3024,20 @@ bool Game::playerAcceptTrade(uint32_t playerId)
 
 	if(!success)
 	{
-		std::string error = getTradeErrorDescription(ret1, tradeItem1);
-		tradePartner->sendTextMessage(MSG_INFO_DESCR, error);
-
-		error = getTradeErrorDescription(ret2, tradeItem2);
+		std::string error;
 		if(tradeItem2)
+		{
+			error = getTradeErrorDescription(ret1, tradeItem1);
+			tradePartner->sendTextMessage(MSG_INFO_DESCR, error);
 			tradeItem2->onTradeEvent(ON_TRADE_CANCEL, tradePartner, NULL);
+		}
 
-		player->sendTextMessage(MSG_INFO_DESCR, error);
 		if(tradeItem1)
+		{
+			error = getTradeErrorDescription(ret2, tradeItem2);
+			player->sendTextMessage(MSG_INFO_DESCR, error);
 			tradeItem1->onTradeEvent(ON_TRADE_CANCEL, player, NULL);
+		}
 	}
 
 	player->setTradeState(TRADE_NONE);
@@ -3051,6 +3055,9 @@ bool Game::playerAcceptTrade(uint32_t playerId)
 
 std::string Game::getTradeErrorDescription(ReturnValue ret, Item* item)
 {
+	if(!item)
+		return std::string();
+
 	std::stringstream ss;
 	if(ret == RET_NOTENOUGHCAPACITY)
 	{
@@ -3314,8 +3321,13 @@ bool Game::playerLookInShop(uint32_t playerId, uint16_t spriteId, uint8_t count)
 		return false;
 
 	int32_t subType = count;
-	if(it.isFluidContainer() && count < uint8_t(sizeof(reverseFluidMap) / sizeof(int8_t)))
-		subType = reverseFluidMap[count];
+	if(it.isFluidContainer())
+	{
+		if(subType == 3) // FIXME: hack
+			subType = 11;
+		else if(count < uint8_t(sizeof(reverseFluidMap) / sizeof(int8_t)))
+			subType = reverseFluidMap[count];
+	}
 
 	std::stringstream ss;
 	ss << "You see " << Item::getDescription(it, 1, NULL, subType);
