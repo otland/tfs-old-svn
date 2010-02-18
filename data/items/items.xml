@@ -16665,11 +16665,14 @@
 		<attribute key="type" value="door" />
 	</item>
 	<item fromid="10492" toid="10498" name="pavement" />
-	<item id="10499" article="a" name="slain water elemental">
+	<item id="10499" name="remains of a water elemental">
+		<attribute key="description" value="Something is wobbling inside. Maybe with a fishing rod you could reach it."/>
 		<attribute key="decayTo" value="10500" />
 		<attribute key="duration" value="600" />
+		<attribute key="corpseType" value="water"/>
 	</item>
-	<item id="10500" article="a" name="pool of water">
+	<item id="10500" name="remains of a water elemental">
+		<attribute key="description" value="It has already been emptied of the treasure it held."/>
 		<attribute key="decayTo" value="0" />
 		<attribute key="duration" value="300" />
 	</item>

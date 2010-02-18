@@ -60,17 +60,17 @@ bool FileLoader::openFile(std::string name, bool write, bool caching/* = false*/
 	if(write)
 	{
 #ifdef __USE_ZLIB__
-		m_file = gzopen(name, "wb");
+		m_file = gzopen(name.c_str(), "wb");
 #else
-		m_file = fopen(name, "wb");
+		m_file = fopen(name.c_str(), "wb");
 #endif
 		if(!m_file)
 			name += ".gz";
 
 #ifdef __USE_ZLIB__
-                m_file = gzopen(name, "wb");
+                m_file = gzopen(name.c_str(), "wb");
 #else
-                m_file = fopen(name, "wb");
+                m_file = fopen(name.c_str(), "wb");
 #endif
 		if(m_file)
 		{
@@ -85,17 +85,17 @@ bool FileLoader::openFile(std::string name, bool write, bool caching/* = false*/
 	}
 
 #ifdef __USE_ZLIB__
-	m_file = gzopen(name, "rb");
+	m_file = gzopen(name.c_str(), "rb");
 #else
-	m_file = fopen(name, "rb");
+	m_file = fopen(name.c_str(), "rb");
 #endif
 	if(!m_file)
 		name += ".gz";
 
 #ifdef __USE_ZLIB__
-        m_file = gzopen(name, "rb");
+        m_file = gzopen(name.c_str(), "rb");
 #else
-        m_file = fopen(name, "rb");
+        m_file = fopen(name.c_str(), "rb");
 #endif
 	if(m_file)
 	{
