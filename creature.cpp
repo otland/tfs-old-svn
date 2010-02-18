@@ -80,6 +80,10 @@ Creature::Creature() :
 
 	attackedCreature = NULL;
 	_lastHitCreature = NULL;
+	_mostDamageCreature = NULL;
+	lastHitUnjustified = false;
+	mostDamageUnjustified = false;
+
 	lastHitCreature = 0;
 	blockCount = 0;
 	blockTicks = 0;
@@ -290,7 +294,7 @@ void Creature::onWalk(Direction& dir)
 				default:
 					break;
 			}
-			g_game.internalCreatureSay(this, SPEAK_MONSTER_SAY, "Hicks!");
+			g_game.internalCreatureSay(this, SPEAK_MONSTER_SAY, "Hicks!", false);
 		}
 	}
 }
@@ -751,26 +755,25 @@ void Creature::onCreatureChangeVisible(const Creature* creature, bool visible)
 
 void Creature::onDeath()
 {
-	Creature* mostDamageCreature = NULL;
 	Creature* mostDamageCreatureMaster = NULL;
 	Creature* lastHitCreatureMaster = NULL;
 
-	if(getKillers(&_lastHitCreature, &mostDamageCreature))
+	if(getKillers(&_lastHitCreature, &_mostDamageCreature))
 	{
 		if(_lastHitCreature)
 		{
-			_lastHitCreature->onKilledCreature(this);
+			lastHitUnjustified = _lastHitCreature->onKilledCreature(this);
 			lastHitCreatureMaster = _lastHitCreature->getMaster();
 		}
 
-		if(mostDamageCreature)
+		if(_mostDamageCreature)
 		{
-			mostDamageCreatureMaster = mostDamageCreature->getMaster();
-			bool isNotLastHitMaster = (mostDamageCreature != lastHitCreatureMaster);
+			mostDamageCreatureMaster = _mostDamageCreature->getMaster();
+			bool isNotLastHitMaster = (_mostDamageCreature != lastHitCreatureMaster);
 			bool isNotMostDamageMaster = (_lastHitCreature != mostDamageCreatureMaster);
 			bool isNotSameMaster = lastHitCreatureMaster == NULL || (mostDamageCreatureMaster != lastHitCreatureMaster);
-			if(mostDamageCreature != _lastHitCreature && isNotLastHitMaster && isNotMostDamageMaster && isNotSameMaster)
-				mostDamageCreature->onKilledCreature(this, false);
+			if(_mostDamageCreature != _lastHitCreature && isNotLastHitMaster && isNotMostDamageMaster && isNotSameMaster)
+				mostDamageUnjustified = _mostDamageCreature->onKilledCreature(this, false);
 		}
 	}
 
@@ -822,7 +825,7 @@ void Creature::dropCorpse()
 	//scripting event - onDeath
 	CreatureEvent* eventDeath = getCreatureEvent(CREATURE_EVENT_DEATH);
 	if(eventDeath)
-		eventDeath->executeOnDeath(this, corpse, _lastHitCreature);
+		eventDeath->executeOnDeath(this, corpse, _lastHitCreature, _mostDamageCreature, lastHitUnjustified, mostDamageUnjustified);
 
 	g_game.removeCreature(this, false);
 }
@@ -1194,7 +1197,7 @@ void Creature::onAttackedCreatureKilled(Creature* target)
 	}
 }
 
-void Creature::onKilledCreature(Creature* target, bool lastHit/* = true*/)
+bool Creature::onKilledCreature(Creature* target, bool lastHit/* = true*/)
 {
 	if(getMaster())
 		getMaster()->onKilledCreature(target);
@@ -1203,6 +1206,8 @@ void Creature::onKilledCreature(Creature* target, bool lastHit/* = true*/)
 	CreatureEvent* eventKill = getCreatureEvent(CREATURE_EVENT_KILL);
 	if(eventKill)
 		eventKill->executeOnKill(this, target);
+
+	return false;
 }
 
 void Creature::onGainExperience(uint64_t gainExp)
@@ -1393,21 +1398,35 @@ void Creature::executeConditions(uint32_t interval)
 	}
 }
 
-bool Creature::hasCondition(ConditionType_t type, int32_t subId/* = 0*/, bool checkTime/* = true*/) const
+bool Creature::hasCondition(ConditionType_t type) const
 {
+	if(type == CONDITION_EXHAUST_COMBAT && g_game.getStateTime() == 0)
+		return true;
+
 	if(isSuppress(type))
 		return false;
 
 	for(ConditionList::const_iterator it = conditions.begin(); it != conditions.end(); ++it)
 	{
-		if((*it)->getType() != type || (subId != -1 && (*it)->getSubId() != (uint32_t)subId))
-			continue;
+		if((*it)->getType() == type)
+		{
+			if(g_config.getBoolean(ConfigManager::OLD_CONDITION_ACCURACY))
+				return true;
 
-		if(!checkTime || g_config.getBoolean(ConfigManager::OLD_CONDITION_ACCURACY)
-			|| !(*it)->getEndTime() || (*it)->getEndTime() >= OTSYS_TIME())
-			return true;
+			if((*it)->getEndTime() == 0)
+				return true;
+
+			int64_t seekTime = g_game.getStateTime();
+			if(seekTime == 0)
+				return true;
+
+			if((*it)->getEndTime() >= seekTime)
+				seekTime = (*it)->getEndTime();
+
+			if(seekTime >= OTSYS_TIME())
+				return true;
+		}
 	}
-
 	return false;
 }
 

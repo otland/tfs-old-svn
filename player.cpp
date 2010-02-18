@@ -985,7 +985,7 @@ void Player::sendCancelMessage(ReturnValue message) const
 			break;
 
 		case RET_BOTHHANDSNEEDTOBEFREE:
-			sendCancel("Both hands needs to be free.");
+			sendCancel("Both hands need to be free.");
 			break;
 
 		case RET_CANNOTBEDRESSED:
@@ -1017,7 +1017,7 @@ void Player::sendCancelMessage(ReturnValue message) const
 			break;
 
 		case RET_NOTENOUGHCAPACITY:
-			sendCancel("This object is too heavy.");
+			sendCancel("This object is too heavy for you to carry.");
 			break;
 
 		case RET_CONTAINERNOTENOUGHROOM:
@@ -1030,7 +1030,7 @@ void Player::sendCancelMessage(ReturnValue message) const
 			break;
 
 		case RET_CANNOTPICKUP:
-			sendCancel("You cannot pickup this object.");
+			sendCancel("You cannot take this object.");
 			break;
 
 		case RET_CANNOTTHROW:
@@ -1062,7 +1062,7 @@ void Player::sendCancelMessage(ReturnValue message) const
 			break;
 
 		case RET_CANNOTUSETHISOBJECT:
-			sendCancel("You can not use this object.");
+			sendCancel("You cannot use this object.");
 			break;
 
 		case RET_PLAYERWITHTHISNAMEISNOTONLINE:
@@ -1174,7 +1174,7 @@ void Player::sendCancelMessage(ReturnValue message) const
 			break;
 
 		case RET_ACTIONNOTPERMITTEDINANOPVPZONE:
-			sendCancel("This action is not permitted in a none pvp zone.");
+			sendCancel("This action is not permitted in a non pvp zone.");
 			break;
 
 		case RET_YOUCANNOTLOGOUTHERE:
@@ -1561,7 +1561,7 @@ void Player::openShopWindow(const std::list<ShopInfo>& shop)
 	sendSaleItemList();
 }
 
-void Player::closeShopWindow()
+void Player::closeShopWindow(bool sendCloseShopWindow /*= true*/)
 {
 	//unreference callbacks
 	int32_t onBuy;
@@ -1572,7 +1572,8 @@ void Player::closeShopWindow()
 	{
 		setShopOwner(NULL, -1, -1);
 		npc->onPlayerEndTrade(this, onBuy, onSell);
-		sendCloseShop();
+		if(sendCloseShopWindow)
+			sendCloseShop();
 	}
 	shopItemList.clear();
 }
@@ -1800,7 +1801,7 @@ void Player::onThink(uint32_t interval)
 		else if(client && idleTime == 60000 * g_config.getNumber(ConfigManager::KICK_AFTER_MINUTES))
 		{
 			char buffer[130];
-			sprintf(buffer, "You have been idle for %d minutes, you will be disconnected in one minute if you are still idle.", g_config.getNumber(ConfigManager::KICK_AFTER_MINUTES));
+			sprintf(buffer, "You have been idle for %d minutes. You will be disconnected in one minute if you are still idle then.", g_config.getNumber(ConfigManager::KICK_AFTER_MINUTES));
 			client->sendTextMessage(MSG_STATUS_WARNING, buffer);
 		}
 	}
@@ -1878,7 +1879,7 @@ void Player::drainMana(Creature* attacker, int32_t manaLoss)
 	sendTextMessage(MSG_EVENT_DEFAULT, buffer);
 }
 
-void Player::addManaSpent(uint64_t amount)
+void Player::addManaSpent(uint64_t amount, bool withMultiplier /*= true*/)
 {
 	if(amount > 0 && !hasFlag(PlayerFlag_NotGainMana))
 	{
@@ -1890,7 +1891,9 @@ void Player::addManaSpent(uint64_t amount)
 			return;
 		}
 
-		amount = amount * g_config.getNumber(ConfigManager::RATE_MAGIC);
+		if(withMultiplier)
+			amount = amount * g_config.getNumber(ConfigManager::RATE_MAGIC);
+
 		while(manaSpent + amount >= nextReqMana)
 		{
 			amount -= nextReqMana - manaSpent;
@@ -3163,7 +3166,9 @@ bool Player::hasShopItemForSale(uint32_t itemId, uint8_t subType)
 		if(it->itemId == itemId && (*it).buyPrice > 0)
 		{
 			const ItemType& iit = Item::items[itemId];
-			if(iit.isFluidContainer() || iit.isSplash() || iit.isRune())
+			if(iit.isFluidContainer() || iit.isSplash())
+				return (it->subType % 8) == subType;
+			else if(iit.isRune())
 				return it->subType == subType;
 
 			return true;
@@ -3614,8 +3619,9 @@ void Player::onTargetCreatureGainHealth(Creature* target, int32_t points)
 	}
 }
 
-void Player::onKilledCreature(Creature* target, bool lastHit/* = true*/)
+bool Player::onKilledCreature(Creature* target, bool lastHit/* = true*/)
 {
+	bool unjustified = false;
 	if(hasFlag(PlayerFlag_NotGenerateLoot))
 		target->setDropLoot(false);
 
@@ -3637,6 +3643,7 @@ void Player::onKilledCreature(Creature* target, bool lastHit/* = true*/)
 				targetPlayer != this)
 			{
 				addUnjustifiedDead(targetPlayer);
+				unjustified = true;
 			}
 
 			if(lastHit && !Combat::isInPvpZone(this, targetPlayer) && hasCondition(CONDITION_INFIGHT))
@@ -3647,6 +3654,7 @@ void Player::onKilledCreature(Creature* target, bool lastHit/* = true*/)
 			}
 		}
 	}
+	return unjustified;
 }
 
 void Player::gainExperience(uint64_t gainExp)

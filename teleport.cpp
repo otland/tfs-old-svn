@@ -103,11 +103,16 @@ void Teleport::__addThing(int32_t index, Thing* thing)
 	{
 		if(Creature* creature = thing->getCreature())
 		{
-			creature->getTile()->moveCreature(creature, destTile);
+			g_game.internalCreatureTurn(creature, creature->getPosition().x > getDestPos().x ? WEST : EAST);
+			getTile()->moveCreature(creature, destTile);
 			g_game.addMagicEffect(destTile->getPosition(), NM_ME_TELEPORT);
 		}
 		else if(Item* item = thing->getItem())
+		{
+			g_game.addMagicEffect(item->getPosition(), NM_ME_TELEPORT);
 			g_game.internalMoveItem(getTile(), destTile, INDEX_WHEREEVER, item, item->getItemCount(), NULL);
+			g_game.addMagicEffect(destTile->getPosition(), NM_ME_TELEPORT);
+		}
 	}
 }
 

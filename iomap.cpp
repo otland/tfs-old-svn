@@ -178,6 +178,7 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 					return false;
 				}
 				break;
+
 			case OTBM_ATTR_EXT_SPAWN_FILE:
 				if(!propStream.GET_STRING(tmp))
 				{
@@ -187,6 +188,7 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 				map->spawnfile = identifier.substr(0, identifier.rfind('/') + 1);
 				map->spawnfile += tmp;
 				break;
+
 			case OTBM_ATTR_EXT_HOUSE_FILE:
 				if(!propStream.GET_STRING(tmp))
 				{
@@ -196,10 +198,10 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 				map->housefile = identifier.substr(0, identifier.rfind('/') + 1);
 				map->housefile += tmp;
 				break;
+
 			default:
 				setLastErrorString("Unknown header node.");
 				return false;
-				break;
 		}
 	}
 
@@ -341,6 +343,9 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 								}
 								else
 								{
+                                    if(item->getItemCount() <= 0)
+                                        item->setItemCount(1);
+
 									if(tile)
 									{
 										tile->__internalAddThing(item);
@@ -400,6 +405,9 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 								}
 								else
 								{
+                                    if(item->getItemCount() <= 0)
+                                        item->setItemCount(1);
+
 									if(tile)
 									{
 										tile->__internalAddThing(item);

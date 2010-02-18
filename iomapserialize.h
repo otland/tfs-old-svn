@@ -42,11 +42,12 @@ class IOMapSerialize
 		bool loadMapRelational(Map* map);
 		bool saveMapRelational(Map* map);
 
-		bool loadMapBinary(Map* map);
+		void loadMapBinary(Map* map);
 		bool saveMapBinary(Map* map);
 
-		bool saveItem(PropWriteStream& stream, const Item* item);
-		bool saveTile(PropWriteStream& stream, const Tile* tile);
+		void saveItem(PropWriteStream& stream, const Item* item);
+		void saveTile(PropWriteStream& stream, const Tile* tile);
+
 		bool loadContainer(PropStream& propStream, Container* container);
 		bool loadItem(PropStream& propStream, Cylinder* parent);
 		bool saveTile(Database* db, uint32_t tileId, const Tile* tile);

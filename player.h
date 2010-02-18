@@ -240,7 +240,7 @@ class Player : public Creature, public Cylinder
 		uint32_t getAccount() const {return accountNumber;}
 		AccountType_t getAccountType() const {return accountType;}
 		uint32_t getLevel() const {return level;}
-		uint32_t getMagicLevel() const {return getPlayerInfo(PLAYERINFO_MAGICLEVEL);}
+		int32_t getMagicLevel() const {return getPlayerInfo(PLAYERINFO_MAGICLEVEL);}
 		bool isAccessPlayer() const {return accessLevel;}
 		bool isPremium() const;
 
@@ -360,7 +360,7 @@ class Player : public Creature, public Cylinder
 
 		void stopWalk();
 		void openShopWindow(const std::list<ShopInfo>& shop);
-		void closeShopWindow();
+		void closeShopWindow(bool sendCloseShopWindow = true);
 		void updateSaleShopList(uint32_t itemId);
 		bool hasShopItemForSale(uint32_t itemId, uint8_t subType);
 
@@ -397,7 +397,7 @@ class Player : public Creature, public Cylinder
 
 		virtual void drainHealth(Creature* attacker, CombatType_t combatType, int32_t damage);
 		virtual void drainMana(Creature* attacker, int32_t manaLoss);
-		void addManaSpent(uint64_t amount);
+		void addManaSpent(uint64_t amount, bool withMultiplier = true);
 		void addSkillAdvance(skills_t skill, uint32_t count);
 
 		virtual int32_t getArmor() const;
@@ -422,7 +422,7 @@ class Player : public Creature, public Cylinder
 		virtual void onAttacked();
 		virtual void onAttackedCreatureDrainHealth(Creature* target, int32_t points);
 		virtual void onTargetCreatureGainHealth(Creature* target, int32_t points);
-		virtual void onKilledCreature(Creature* target, bool lastHit = true);
+		virtual bool onKilledCreature(Creature* target, bool lastHit = true);
 		virtual void onGainExperience(uint64_t gainExp);
 		virtual void onGainSharedExperience(uint64_t gainExp);
 		virtual void onAttackedCreatureBlockHit(Creature* target, BlockType_t blockType);
@@ -476,8 +476,8 @@ class Player : public Creature, public Cylinder
 
 		void sendCreatureTurn(const Creature* creature)
 			{if(client) client->sendCreatureTurn(creature, creature->getTile()->getClientIndexOfThing(this, creature));}
-		void sendCreatureSay(const Creature* creature, SpeakClasses type, const std::string& text)
-			{if(client) client->sendCreatureSay(creature, type, text);}
+		void sendCreatureSay(const Creature* creature, SpeakClasses type, const std::string& text, Position* pos = NULL)
+			{if(client) client->sendCreatureSay(creature, type, text, pos);}
 		void sendCreatureSquare(const Creature* creature, SquareColor_t color)
 			{if(client) client->sendCreatureSquare(creature, color);}
 		void sendCreatureChangeOutfit(const Creature* creature, const Outfit_t& outfit)
@@ -850,7 +850,7 @@ class Player : public Creature, public Cylinder
 			if(!hasFlag(PlayerFlag_SetMaxSpeed))
 				baseSpeed = 220 + (2* (level - 1));
 			else
-				baseSpeed = 900;
+				baseSpeed = PLAYER_MAX_SPEED;
 		}
 
 		bool isPromoted();

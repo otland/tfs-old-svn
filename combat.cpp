@@ -82,7 +82,6 @@ bool Combat::getMinMaxValues(Creature* creature, Creature* target, int32_t& min,
 					max = (int32_t)((player->getLevel() * 2 + player->getMagicLevel() * 3) * 1. * mina + minb);
 					min = (int32_t)((player->getLevel() * 2 + player->getMagicLevel() * 3) * 1. * maxa + maxb);
 					return true;
-					break;
 				}
 
 				case FORMULA_SKILL:
@@ -104,7 +103,6 @@ bool Combat::getMinMaxValues(Creature* creature, Creature* target, int32_t& min,
 						max = (int32_t)maxb;
 
 					return true;
-					break;
 				}
 
 				case FORMULA_VALUE:
@@ -112,7 +110,6 @@ bool Combat::getMinMaxValues(Creature* creature, Creature* target, int32_t& min,
 					min = (int32_t)mina;
 					max = (int32_t)maxa;
 					return true;
-					break;
 				}
 
 				default:
@@ -120,7 +117,6 @@ bool Combat::getMinMaxValues(Creature* creature, Creature* target, int32_t& min,
 					min = 0;
 					max = 0;
 					return false;
-					break;
 				}
 			}
 		}
@@ -1426,7 +1422,7 @@ void MagicField::onStepInField(Creature* creature)
 	if(isBlocking())
 	{
 		if(!creature->isInGhostMode())
-			g_game.internalRemoveItem(this, 1);
+			 g_game.internalRemoveItem(this, 1);
 
 		return;
 	}
@@ -1449,11 +1445,15 @@ void MagicField::onStepInField(Creature* creature)
 				}
 			}
 
-			if(Player* targetPlayer = creature->getPlayer())
+			Player* targetPlayer = creature->getPlayer();
+			if(targetPlayer)
 			{
 				Player* attackerPlayer = g_game.getPlayerByID(owner);
-				if(attackerPlayer && Combat::isProtected(attackerPlayer, targetPlayer))
-					harmfulField = false;
+				if(attackerPlayer)
+				{
+					if(Combat::isProtected(attackerPlayer, targetPlayer))
+						harmfulField = false;
+				}
 			}
 
 			if(!harmfulField || (OTSYS_TIME() - createTime <= 5000) || creature->hasBeenAttacked(owner))

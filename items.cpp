@@ -22,6 +22,7 @@
 #include "items.h"
 #include "spells.h"
 #include "condition.h"
+#include "movement.h"
 #include "weapons.h"
 
 #include <iostream>
@@ -32,7 +33,9 @@ uint32_t Items::dwMajorVersion = 0;
 uint32_t Items::dwMinorVersion = 0;
 uint32_t Items::dwBuildNumber = 0;
 
+extern MoveEvents* g_moveEvents;
 extern Spells* g_spells;
+extern Weapons* g_weapons;
 
 ItemType::ItemType()
 {
@@ -60,6 +63,8 @@ ItemType::ItemType()
 	blockSolid = false;
 	blockProjectile = false;
 	blockPathFind = false;
+
+	allowPickupable = false;
 
 	wieldInfo = 0;
 	minReqLevel = 0;
@@ -108,6 +113,7 @@ ItemType::ItemType()
 	transformDeEquipTo = 0;
 	showDuration = false;
 	showCharges = false;
+	showAttributes = false;
 	charges	= 0;
 	hitChance = -1;
 	maxHitChance = -1;
@@ -568,6 +574,11 @@ bool Items::parseItemNode(xmlNodePtr itemNode, uint32_t id)
 				if(readXMLInteger(itemAttributesNode, "value", intValue))
 					it.blockProjectile = (intValue == 1);
 			}
+			else if(tmpStrValue == "allowpickupable")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+					it.allowPickupable = (intValue != 0);
+			}
 			else if(tmpStrValue == "floorchange")
 			{
 				if(readXMLString(itemAttributesNode, "value", strValue))
@@ -653,6 +664,10 @@ bool Items::parseItemNode(xmlNodePtr itemNode, uint32_t id)
 						it.fluidSource = FLUID_RUM;
 					else if(tmpStrValue == "swamp")
 						it.fluidSource = FLUID_SWAMP;
+					else if(tmpStrValue == "tea")
+						it.fluidSource = FLUID_TEA;
+					else if(tmpStrValue == "mead")
+						it.fluidSource = FLUID_MEAD;
 					else
 						std::cout << "Warning: [Items::loadFromXml] " << "Unknown fluidSource " << strValue << std::endl;
 				}
@@ -808,6 +823,11 @@ bool Items::parseItemNode(xmlNodePtr itemNode, uint32_t id)
 			{
 				if(readXMLInteger(itemAttributesNode, "value", intValue))
 					it.showCharges = (intValue != 0);
+			}
+			else if(tmpStrValue == "showattributes")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+					it.showAttributes = (intValue != 0);
 			}
 			else if(tmpStrValue == "breakchance")
 			{
@@ -1288,8 +1308,11 @@ bool Items::parseItemNode(xmlNodePtr itemNode, uint32_t id)
 	}
 
 	if(it.pluralName.size() == 0 && it.name.size() != 0)
-		it.pluralName = it.name + "s";
-
+	{
+		it.pluralName = it.name;
+		if(it.showCount != 0)
+			it.pluralName += "s";
+	}
 	return true;
 }
 

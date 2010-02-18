@@ -1642,18 +1642,18 @@ BuildCmd=
 [VersionInfo]
 Major=0
 Minor=2
-Release=12
+Release=7
 Build=0
 LanguageID=1033
 CharsetID=1252
 CompanyName=
-FileVersion=0.2.12
+FileVersion=0.2.7-debug
 FileDescription=The Forgotten Server
 InternalName=
 LegalCopyright=
 LegalTrademarks=
 OriginalFilename=TheForgottenServer.exe
 ProductName=The Forgotten Server
-ProductVersion=
+ProductVersion=0.2.7-debug
 AutoIncBuildNr=0
 

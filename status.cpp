@@ -59,15 +59,6 @@ std::map<uint32_t, int64_t> ProtocolStatus::ipConnectMap;
 
 void ProtocolStatus::onRecvFirstMessage(NetworkMessage& msg)
 {
-	for(BlackList::const_iterator it = g_game.blacklist.begin(); it != g_game.blacklist.end(); it++)
-	{
-		if(*it == convertIPToString(getIP()))
-		{
-			getConnection()->closeConnection();
-			return;
-		}
-	}
-
 	std::map<uint32_t, int64_t>::const_iterator it = ipConnectMap.find(getIP());
 	if(it != ipConnectMap.end())
 	{
@@ -248,6 +239,7 @@ void Status::getInfo(uint32_t requestedInfo, OutputMessage_ptr output, NetworkMe
 		output->AddString(g_config.getString(ConfigManager::URL).c_str());
 		output->AddU32((uint32_t)(running >> 32));
 		output->AddU32((uint32_t)(running));
+		output->AddString(STATUS_SERVER_VERSION);
   	}
 
 	if(requestedInfo & REQUEST_PLAYERS_INFO)

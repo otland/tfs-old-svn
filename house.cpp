@@ -388,13 +388,12 @@ bool House::canEditAccessList(uint32_t listId, const Player* player)
 	{
 		case HOUSE_OWNER:
 			return true;
-			break;
+
 		case HOUSE_SUBOWNER:
 			return listId == GUEST_LIST;
-			break;
+
 		default:
 			return false;
-			break;
 	}
 }
 
@@ -883,7 +882,7 @@ bool Houses::payHouses()
 				player->setDepotChange(true);
 
 				//get money from depot
-				if(g_game.removeMoney(depot, housePrice, FLAG_NOLIMIT))
+				if(g_game.removeMoney(depot, house->getRent(), FLAG_NOLIMIT))
 				{
 					time_t paidUntil = currentTime;
 					switch(rentPeriod)
@@ -942,7 +941,7 @@ bool Houses::payHouses()
 						}
 
 						char warningText[300];
-						sprintf(warningText, "Warning! \nThe %s rent of %d gold for your house \"%s\" is payable. Have it within %d days or you will lose this house.", period.c_str(), housePrice, house->getName().c_str(), daysLeft);
+						sprintf(warningText, "Warning! \nThe %s rent of %d gold for your house \"%s\" is payable. Have it within %d days or you will lose this house.", period.c_str(), house->getRent(), house->getName().c_str(), daysLeft);
 						letter->setText(warningText);
 						g_game.internalAddItem(depot, letter, INDEX_WHEREEVER, FLAG_NOLIMIT);
 						house->setPayRentWarnings(house->getPayRentWarnings() + 1);

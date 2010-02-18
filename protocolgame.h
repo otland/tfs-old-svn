@@ -180,7 +180,7 @@ class ProtocolGame : public Protocol
 		void sendSkills();
 		void sendPing();
 		void sendCreatureTurn(const Creature* creature, uint32_t stackpos);
-		void sendCreatureSay(const Creature* creature, SpeakClasses type, const std::string& text);
+		void sendCreatureSay(const Creature* creature, SpeakClasses type, const std::string& text, Position* pos = NULL);
 
 		void sendCancel(const std::string& message);
 		void sendCancelWalk();
@@ -263,7 +263,8 @@ class ProtocolGame : public Protocol
 		void AddDistanceShoot(NetworkMessage_ptr msg, const Position& from, const Position& to, uint8_t type);
 		void AddCreature(NetworkMessage_ptr msg, const Creature* creature, bool known, uint32_t remove);
 		void AddPlayerStats(NetworkMessage_ptr msg);
-		void AddCreatureSpeak(NetworkMessage_ptr msg, const Creature* creature, SpeakClasses type, std::string text, uint16_t channelId, uint32_t time = 0);
+		void AddCreatureSpeak(NetworkMessage_ptr msg, const Creature* creature, SpeakClasses type,
+			std::string text, uint16_t channelId, uint32_t time = 0, Position* pos = NULL);
 		void AddCreatureHealth(NetworkMessage_ptr msg, const Creature* creature);
 		void AddCreatureOutfit(NetworkMessage_ptr msg, const Creature* creature, const Outfit_t& outfit);
 		void AddCreatureInvisible(NetworkMessage_ptr msg, const Creature* creature);

@@ -219,10 +219,13 @@ class ItemType
 		bool blockProjectile;
 		bool blockPathFind;
 
+		bool allowPickupable;
+
 		unsigned short transformEquipTo;
 		unsigned short transformDeEquipTo;
 		bool showDuration;
 		bool showCharges;
+		bool showAttributes;
 		uint32_t charges;
 		int32_t breakChance;
 		int32_t hitChance;

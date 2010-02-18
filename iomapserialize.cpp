@@ -33,7 +33,10 @@ bool IOMapSerialize::loadMap(Map* map)
 	bool s = false;
 
 	if(g_config.getString(ConfigManager::MAP_STORAGE_TYPE) == "binary")
-		s = loadMapBinary(map);
+	{
+		loadMapBinary(map);
+		s = true;
+	}
 	else
 		s = loadMapRelational(map);
 
@@ -344,13 +347,13 @@ bool IOMapSerialize::saveTile(Database* db, uint32_t tileId, const Tile* tile)
 	return true;
 }
 
-bool IOMapSerialize::loadMapBinary(Map* map)
+void IOMapSerialize::loadMapBinary(Map* map)
 {
 	Database* db = Database::getInstance();
 
 	DBQuery query;
 	query.reset();
-	query << "SELECT `data` FROM `map_store`;";
+	query << "SELECT `house_id`, `data` FROM `map_store`;";
 
 	DBResult result;
 
@@ -362,7 +365,6 @@ bool IOMapSerialize::loadMapBinary(Map* map)
 			const char* attr = result.getDataBlob("data", attrSize, i);
 			PropStream propStream;
 			propStream.init(attr, attrSize);
-
 			while(propStream.size())
 			{
 				uint32_t item_count = 0;
@@ -376,7 +378,7 @@ bool IOMapSerialize::loadMapBinary(Map* map)
 				Tile* tile = map->getTile(x, y, z);
 				if(!tile)
 				{
-					std::cout << "ERROR: Unserialization of invalid tile in IOMapSerialize::loadTile(), at position: [X: " << x << ", Y: " << y << ", Z: " << z << "]." << std::endl;
+					std::cout << "ERROR: Unserialization of invalid tile in IOMapSerialize::loadTile(), at position: [X: " << x << ", Y: " << y << ", Z: " << z << "]. House ID: " << result.getDataInt("house_id", i) << std::endl;
 					break;
 				}
 
@@ -386,7 +388,6 @@ bool IOMapSerialize::loadMapBinary(Map* map)
  			}
 		}
 	}
- 	return true;
 }
 
 bool IOMapSerialize::loadContainer(PropStream& propStream, Container* container)
@@ -526,6 +527,7 @@ bool IOMapSerialize::saveMapBinary(Map* map)
 		return false;
 
  	DBQuery query;
+	DBResult result;
 	query << "DELETE FROM `map_store`;";
 	if(!db->executeQuery(query))
  		return false;
@@ -541,16 +543,12 @@ bool IOMapSerialize::saveMapBinary(Map* map)
  		//save house items
  		House* house = it->second;
 		PropWriteStream stream;
-		for(HouseTileList::iterator tile_iter = house->getHouseTileBegin();
-			tile_iter != house->getHouseTileEnd();
-			++tile_iter)
-		{
-			if(!saveTile(stream, *tile_iter))
- 				return false;
- 		}
+		for(HouseTileList::iterator tile_iter = house->getHouseTileBegin(); tile_iter != house->getHouseTileEnd(); ++tile_iter)
+			saveTile(stream, *tile_iter);
 
 		uint32_t attributesSize;
 		const char* attributes = stream.getStream(attributesSize);
+
 		query << "(" << it->second->getHouseId() << ", " <<
 			db->escapeBlob(attributes, attributesSize) << ")";
 
@@ -567,7 +565,7 @@ bool IOMapSerialize::saveMapBinary(Map* map)
  	return trans.success();
 }
 
-bool IOMapSerialize::saveItem(PropWriteStream& stream, const Item* item)
+void IOMapSerialize::saveItem(PropWriteStream& stream, const Item* item)
 {
 	const Container* container = item->getContainer();
 
@@ -585,11 +583,13 @@ bool IOMapSerialize::saveItem(PropWriteStream& stream, const Item* item)
 	}
 
 	stream.ADD_UCHAR(0x00); // attr end
-	return true;
 }
 
-bool IOMapSerialize::saveTile(PropWriteStream& stream, const Tile* tile)
+void IOMapSerialize::saveTile(PropWriteStream& stream, const Tile* tile)
 {
+	if(tile->getPosition().x == 0 || tile->getPosition().y == 0)
+		return;
+
 	std::vector<Item*> items;
 	for(int32_t i = tile->getThingCount(); i > 0; --i)
 	{
@@ -621,7 +621,6 @@ bool IOMapSerialize::saveTile(PropWriteStream& stream, const Tile* tile)
 			saveItem(stream, *iter);
 		}
 	}
-	return true;
 }
 
 bool IOMapSerialize::loadHouseInfo(Map* map)

@@ -88,7 +88,7 @@ bool Map::saveMap()
 	bool saved = false;
 	for(uint32_t tries = 0; tries < 3; tries++)
 	{
-		if(IOMapSerialize.saveMap(this))
+		if(IOMapSerialize.saveHouseInfo(this))
 		{
 			saved = true;
 			break;
@@ -101,7 +101,7 @@ bool Map::saveMap()
 	saved = false;
 	for(uint32_t tries = 0; tries < 3; tries++)
 	{
-		if(IOMapSerialize.saveHouseInfo(this))
+		if(IOMapSerialize.saveMap(this))
 		{
 			saved = true;
 			break;

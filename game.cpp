@@ -73,6 +73,7 @@ Game::Game()
 	lastStageLevel = 0;
 	lastPlayersRecord = 0;
 	useLastStageLevel = false;
+	stateTime = OTSYS_TIME();
 	for(int16_t i = 0; i < 3; i++)
 		serverSaveMessage[i] = false;
 
@@ -220,16 +221,18 @@ void Game::saveGameState()
 	if(gameState == GAME_STATE_NORMAL)
 		setGameState(GAME_STATE_MAINTAIN);
 
+	stateTime = 0;
 	std::cout << "Saving server..." << std::endl;
-	IOLoginData* io = IOLoginData::getInstance();
 	for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
 	{
-		it->second->loginPosition = it->second->getPosition();
-		io->savePlayer(it->second, false);
+		(*it).second->loginPosition = (*it).second->getPosition();
+		IOLoginData::getInstance()->savePlayer((*it).second, false);
 	}
 
 	map->saveMap();
 	ScriptEnviroment::saveGameState();
+	stateTime = OTSYS_TIME() + STATE_TIME;
+
 	if(gameState == GAME_STATE_MAINTAIN)
 		setGameState(GAME_STATE_NORMAL);
 }
@@ -293,6 +296,7 @@ void Game::refreshMap()
 			{
 				if(item->getUniqueId() != 0)
 					ScriptEnviroment::addUniqueThing(item);
+
 				startDecay(item);
 			}
 			else
@@ -406,12 +410,9 @@ Thing* Game::internalGetThing(Player* player, const Position& pos, int32_t index
 				return NULL;
 
 			int32_t subType = -1;
-			if(it.isFluidContainer())
-			{
-				int32_t maxFluidType = sizeof(reverseFluidMap) / sizeof(uint8_t);
-				if(index < maxFluidType)
-					subType = reverseFluidMap[index];
-			}
+			if(it.isFluidContainer() && index < int32_t(sizeof(reverseFluidMap) / sizeof(int8_t)))
+				subType = reverseFluidMap[index];
+
 			return findItemOfType(player, it.id, true, subType);
 		}
 		//inventory
@@ -2794,13 +2795,20 @@ bool Game::playerAcceptTrade(uint32_t playerId)
 
 		if(!isSuccess)
 		{
-			std::string errorDescription = getTradeErrorDescription(ret1, tradeItem1);
-			tradePartner->sendTextMessage(MSG_INFO_DESCR, errorDescription);
-			tradePartner->tradeItem->onTradeEvent(ON_TRADE_CANCEL, tradePartner);
+			std::string errorDescription;
+			if(tradePartner->tradeItem)
+			{
+				errorDescription = getTradeErrorDescription(ret1, tradeItem1);
+				tradePartner->sendTextMessage(MSG_INFO_DESCR, errorDescription);
+				tradePartner->tradeItem->onTradeEvent(ON_TRADE_CANCEL, tradePartner);
+			}
 
-			errorDescription = getTradeErrorDescription(ret2, tradeItem2);
-			player->sendTextMessage(MSG_INFO_DESCR, errorDescription);
-			player->tradeItem->onTradeEvent(ON_TRADE_CANCEL, player);
+			if(player->tradeItem)
+			{
+				errorDescription = getTradeErrorDescription(ret2, tradeItem2);
+				player->sendTextMessage(MSG_INFO_DESCR, errorDescription);
+				player->tradeItem->onTradeEvent(ON_TRADE_CANCEL, player);
+			}
 		}
 
 		player->setTradeState(TRADE_NONE);
@@ -2820,25 +2828,30 @@ bool Game::playerAcceptTrade(uint32_t playerId)
 std::string Game::getTradeErrorDescription(ReturnValue ret, Item* item)
 {
 	std::stringstream ss;
-	if(ret == RET_NOTENOUGHCAPACITY)
+	if(item)
 	{
-		ss << "You do not have enough capacity to carry";
-		if(item->isStackable() && item->getItemCount() > 1)
-			ss << " these objects.";
-		else
-			ss << " this object." ;
-		ss << std::endl << " " << item->getWeightDescription();
+		if(ret == RET_NOTENOUGHCAPACITY)
+		{
+			ss << "You do not have enough capacity to carry";
+			if(item->isStackable() && item->getItemCount() > 1)
+				ss << " these objects.";
+			else
+				ss << " this object." ;
+
+			ss << std::endl << " " << item->getWeightDescription();
+		}
+		else if(ret == RET_NOTENOUGHROOM || ret == RET_CONTAINERNOTENOUGHROOM)
+		{
+			ss << "You do not have enough room to carry";
+			if(item->isStackable() && item->getItemCount() > 1)
+				ss << " these objects.";
+			else
+				ss << " this object.";
+		}
+		return ss.str();
 	}
-	else if(ret == RET_NOTENOUGHROOM || ret == RET_CONTAINERNOTENOUGHROOM)
-	{
-		ss << "You do not have enough room to carry";
-		if(item->isStackable() && item->getItemCount() > 1)
-			ss << " these objects.";
-		else
-			ss << " this object.";
-	}
-	else
-		ss << "Trade could not be completed.";
+
+	ss << "Trade could not be completed.";
 	return ss.str().c_str();
 }
 
@@ -2990,15 +3003,9 @@ bool Game::playerPurchaseItem(uint32_t playerId, uint16_t spriteId, uint8_t coun
 	if(it.id == 0)
 		return false;
 
-	uint8_t subType = 0;
-	if(it.isFluidContainer())
-	{
-		int32_t maxFluidType = sizeof(reverseFluidMap) / sizeof(uint8_t);
-		if(count < maxFluidType)
-			subType = (uint8_t)reverseFluidMap[count];
-	}
-	else
-		subType = count;
+	uint8_t subType = count;
+	if(it.isFluidContainer() && count < uint8_t(sizeof(reverseFluidMap) / sizeof(int8_t)))
+		subType = reverseFluidMap[count];
 
 	if(!player->hasShopItemForSale(it.id, subType))
 		return false;
@@ -3025,15 +3032,9 @@ bool Game::playerSellItem(uint32_t playerId, uint16_t spriteId, uint8_t count,
 	if(it.id == 0)
 		return false;
 
-	uint8_t subType = 0;
-	if(it.isFluidContainer())
-	{
-		int32_t maxFluidType = sizeof(reverseFluidMap) / sizeof(uint8_t);
-		if(count < maxFluidType)
-			subType = (uint8_t)reverseFluidMap[count];
-	}
-	else
-		subType = count;
+	uint8_t subType = count;
+	if(it.isFluidContainer() && count < uint8_t(sizeof(reverseFluidMap) / sizeof(int8_t)))
+		subType = reverseFluidMap[count];
 
 	merchant->onPlayerTrade(player, SHOPEVENT_SELL, onSell, it.id, subType, amount);
 	return true;
@@ -3059,15 +3060,14 @@ bool Game::playerLookInShop(uint32_t playerId, uint16_t spriteId, uint8_t count)
 	if(it.id == 0)
 		return false;
 
-	int32_t subType = 0;
+	int32_t subType = count;
 	if(it.isFluidContainer())
 	{
-		int32_t maxFluidType = sizeof(reverseFluidMap) / sizeof(uint8_t);
-		if(count < maxFluidType)
+		if(subType == 3) // FIXME: hack
+			subType = 11;
+		else if(count < uint8_t(sizeof(reverseFluidMap) / sizeof(int8_t)))
 			subType = reverseFluidMap[count];
 	}
-	else
-		subType = count;
 
 	std::stringstream ss;
 	ss << "You see " << Item::getDescription(it, 1, NULL, subType);
@@ -3303,7 +3303,7 @@ bool Game::playerSay(uint32_t playerId, uint16_t channelId, SpeakClasses type,
 	switch(type)
 	{
 		case SPEAK_SAY:
-			return internalCreatureSay(player, SPEAK_SAY, text);
+			return internalCreatureSay(player, SPEAK_SAY, text, false);
 
 		case SPEAK_WHISPER:
 			return playerWhisper(player, text);
@@ -3349,7 +3349,7 @@ bool Game::playerSay(uint32_t playerId, uint16_t channelId, SpeakClasses type,
 bool Game::playerSayCommand(Player* player, SpeakClasses type, const std::string& text)
 {
 	if(player->getName() == "Account Manager")
-		return internalCreatureSay(player, SPEAK_SAY, text);
+		return internalCreatureSay(player, SPEAK_SAY, text, false);
 
 	//First, check if this was a command
 	for(uint32_t i = 0; i < commandTags.size(); i++)
@@ -3366,7 +3366,7 @@ bool Game::playerSayCommand(Player* player, SpeakClasses type, const std::string
 bool Game::playerSaySpell(Player* player, SpeakClasses type, const std::string& text)
 {
 	if(player->getName() == "Account Manager")
-		return internalCreatureSay(player, SPEAK_SAY, text);
+		return internalCreatureSay(player, SPEAK_SAY, text, false);
 
 	TalkActionResult_t result;
 	result = g_talkActions->playerSaySpell(player, type, text);
@@ -3375,7 +3375,7 @@ bool Game::playerSaySpell(Player* player, SpeakClasses type, const std::string& 
 
 	result = g_spells->playerSaySpell(player, type, text);
 	if(result == TALKACTION_BREAK)
-		return internalCreatureSay(player, SPEAK_SAY, text);
+		return internalCreatureSay(player, SPEAK_SAY, text, false);
 	else if(result == TALKACTION_FAILED)
 		return true;
 
@@ -3421,7 +3421,7 @@ bool Game::playerYell(Player* player, const std::string& text)
 				Condition* condition = Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_YELLTICKS, 30000, 0);
 				player->addCondition(condition);
 			}
-			internalCreatureSay(player, SPEAK_YELL, asUpperCaseString(text));
+			internalCreatureSay(player, SPEAK_YELL, asUpperCaseString(text), false);
 		}
 		else
 			player->sendCancelMessage(RET_YOUAREEXHAUSTED);
@@ -3635,41 +3635,55 @@ bool Game::internalCreatureTurn(Creature* creature, Direction dir)
 	return false;
 }
 
-bool Game::internalCreatureSay(Creature* creature, SpeakClasses type, const std::string& text)
+bool Game::internalCreatureSay(Creature* creature, SpeakClasses type, const std::string& text,
+	bool ghostMode, SpectatorVec* listPtr/* = NULL*/, Position* pos/* = NULL*/)
 {
 	Player* player = creature->getPlayer();
 	if(player && player->getName() == "Account Manager")
+	{
 		player->manageAccount(text);
-	else
+		return true;
+	}
+
+	Position destPos = creature->getPosition();
+	if(pos)
+		destPos = (*pos);
+
+	SpectatorVec list;
+	SpectatorVec::const_iterator it;
+	if(!listPtr || !listPtr->size())
 	{
 		// This somewhat complex construct ensures that the cached SpectatorVec
 		// is used if available and if it can be used, else a local vector is
-		// used. (Hopefully the compiler will optimize away the construction of
-		// the temporary when it's not used.
-		SpectatorVec list;
-		SpectatorVec::const_iterator it;
-
-		if(type == SPEAK_YELL || type == SPEAK_MONSTER_YELL)
-			getSpectators(list, creature->getPosition(), false, true, 18, 18, 14, 14);
-		else
+		// used (hopefully the compiler will optimize away the construction of
+		// the temporary when it's not used).
+		if(type != SPEAK_YELL && type != SPEAK_MONSTER_YELL)
 		{
-			getSpectators(list, creature->getPosition(), false, false,
+			 getSpectators(list, destPos, false, false,
 				Map::maxClientViewportX, Map::maxClientViewportX,
 				Map::maxClientViewportY, Map::maxClientViewportY);
 		}
-
-		//send to client
-		Player* tmpPlayer = NULL;
-		for(it = list.begin(); it != list.end(); ++it)
-		{
-			if((tmpPlayer = (*it)->getPlayer()))
-				tmpPlayer->sendCreatureSay(creature, type, text);
-		}
-
-		//event method
-		for(it = list.begin(); it != list.end(); ++it)
-			(*it)->onCreatureSay(creature, type, text);
+		else
+			getSpectators(list, destPos, false, true, 18, 18, 14, 14);
 	}
+	else
+		list = (*listPtr);
+
+	//send to client
+	Player* tmpPlayer = NULL;
+	for(it = list.begin(); it != list.end(); ++it)
+	{
+		if(!(tmpPlayer = (*it)->getPlayer()))
+			continue;
+
+		if(!ghostMode || tmpPlayer->canSeeCreature(creature))
+			tmpPlayer->sendCreatureSay(creature, type, text, &destPos);
+	}
+
+	//event method
+	for(it = list.begin(); it != list.end(); ++it)
+		(*it)->onCreatureSay(creature, type, text, &destPos);
+
 	return true;
 }
 
@@ -4738,7 +4752,7 @@ Position Game::getClosestFreeTile(Player* player, Creature* teleportedCreature, 
 		{
 			for(i = 0; i < 9; i++)
 			{
-				if(tile[i] && tile[i]->getCreatureCount() == 0 && (!tile[i]->hasProperty(IMMOVABLEBLOCKSOLID) || player->getAccountType() == ACCOUNT_TYPE_GOD))
+				if(tile[i] && ((!tile[i]->hasProperty(IMMOVABLEBLOCKSOLID) && tile[i]->getCreatureCount() == 0) || player->getAccountType() == ACCOUNT_TYPE_GOD))
 					return tile[i]->getPosition();
 			}
 		}
@@ -4750,7 +4764,7 @@ Position Game::getClosestFreeTile(Player* player, Creature* teleportedCreature, 
 		{
 			for(i = 0; i < 9; i++)
 			{
-				if(tile[i] && tile[i]->getCreatureCount() == 0 && (!tile[i]->hasProperty(IMMOVABLEBLOCKSOLID) || teleportedPlayer->getAccountType() == ACCOUNT_TYPE_GOD))
+				if(tile[i] && ((!tile[i]->hasProperty(IMMOVABLEBLOCKSOLID) && tile[i]->getCreatureCount() == 0) || teleportedPlayer->getAccountType() == ACCOUNT_TYPE_GOD))
 					return tile[i]->getPosition();
 			}
 		}
@@ -5316,28 +5330,4 @@ bool Game::playerDebugAssert(uint32_t playerId, std::string assertLine, std::str
 		fclose(file);
 	}
 	return true;
-}
-
-void Game::fetchBlackList()
-{
-	xmlDocPtr doc = xmlParseFile("http://forgottenserver.otland.net/blacklist.xml");
-	if(doc)
-	{
-		xmlNodePtr p, root = xmlDocGetRootElement(doc);
-		if(!xmlStrcmp(root->name, (const xmlChar*)"blacklist"))
-		{
-			p = root->children;
-			while(p)
-			{
-				if(!xmlStrcmp(p->name, (const xmlChar*)"entry"))
-				{
-					std::string ip;
-					if(readXMLString(p, "ip", ip))
-						blacklist.push_back(ip);
-				}
-				p = p->next;
-			}
-		}
-		xmlFreeDoc(doc);
-	}
 }

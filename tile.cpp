@@ -617,7 +617,7 @@ ReturnValue Tile::__queryAdd(int32_t index, const Thing* thing, uint32_t count,
 		}
 		else if(const Player* player = creature->getPlayer())
 		{
-			if(creatures && !creatures->empty() && !hasBitSet(FLAG_IGNOREBLOCKCREATURE, flags))
+			if(creatures && !creatures->empty() && !hasBitSet(FLAG_IGNOREBLOCKCREATURE, flags) && !player->isAccessPlayer())
 			{
 				for(CreatureVector::const_iterator cit = creatures->begin(); cit != creatures->end(); ++cit)
 				{
@@ -741,15 +741,13 @@ ReturnValue Tile::__queryAdd(int32_t index, const Thing* thing, uint32_t count,
 					}
 					else if(iiType.blockSolid)
 					{
-						if(item->isPickupable())
-						{
-							if(iitem->getTrashHolder())
-								continue;
+						if(iiType.allowPickupable && !item->isMagicField() && !item->isBlocking())
+							continue;
 
-							if(!iiType.hasHeight || iiType.pickupable || iiType.isBed())
-								return RET_NOTENOUGHROOM;
-						}
-						else
+						if(!item->isPickupable())
+							return RET_NOTENOUGHROOM;
+
+						if(!iiType.hasHeight || iiType.pickupable || iiType.isBed())
 							return RET_NOTENOUGHROOM;
 					}
 				}
@@ -1815,4 +1813,12 @@ void Tile::updateTileFlags(Item* item, bool removing)
 		if(item->getContainer() && item->getContainer()->getDepot())
 			resetFlag(TILESTATE_DEPOT);
 	}
+}
+
+bool Tile::isMoveableBlocking() const
+{
+	if(!ground || hasFlag(TILESTATE_BLOCKSOLID))
+		return true;
+
+	return false;
 }

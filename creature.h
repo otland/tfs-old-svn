@@ -194,7 +194,7 @@ class Creature : public AutoID, virtual public Thing
 		const Outfit_t getCurrentOutfit() const {return currentOutfit;}
 		const void setCurrentOutfit(Outfit_t outfit) {currentOutfit = outfit;}
 		const Outfit_t getDefaultOutfit() const {return defaultOutfit;}
-		bool isInvisible() const {return hasCondition(CONDITION_INVISIBLE, -1, false);}
+		bool isInvisible() const {return hasCondition(CONDITION_INVISIBLE);}
 		ZoneType_t getZone() const {return getTile()->getZone();}
 
 		//walk functions
@@ -243,7 +243,7 @@ class Creature : public AutoID, virtual public Thing
 		void removeCondition(const Creature* attacker, ConditionType_t type);
 		Condition* getCondition(ConditionType_t type, ConditionId_t id, uint32_t subId = 0) const;
 		void executeConditions(uint32_t interval);
-		bool hasCondition(ConditionType_t type, int32_t subId = 0, bool checkTime = true) const;
+		bool hasCondition(ConditionType_t type) const;
 		virtual bool isImmune(ConditionType_t type) const;
 		virtual bool isImmune(CombatType_t type) const;
 		virtual bool isSuppress(ConditionType_t type) const;
@@ -278,7 +278,7 @@ class Creature : public AutoID, virtual public Thing
 		virtual void onAttackedCreatureDrainHealth(Creature* target, int32_t points);
 		virtual void onTargetCreatureGainHealth(Creature* target, int32_t points);
 		virtual void onAttackedCreatureKilled(Creature* target);
-		virtual void onKilledCreature(Creature* target, bool lastHit = true);
+		virtual bool onKilledCreature(Creature* target, bool lastHit = true);
 		virtual void onGainExperience(uint64_t gainExp);
 		virtual void onGainSharedExperience(uint64_t gainExp);
 		virtual void onAttackedCreatureBlockHit(Creature* target, BlockType_t blockType);
@@ -312,7 +312,8 @@ class Creature : public AutoID, virtual public Thing
 		virtual void onFollowCreatureDisappear(bool isLogout) {}
 
 		virtual void onCreatureTurn(const Creature* creature, uint32_t stackPos) {}
-		virtual void onCreatureSay(const Creature* creature, SpeakClasses type, const std::string& text) {}
+		virtual void onCreatureSay(const Creature* creature, SpeakClasses type, const std::string& text,
+			Position* pos = NULL) {}
 
 		virtual void onCreatureChangeOutfit(const Creature* creature, const Outfit_t& outfit) {}
 		virtual void onCreatureConvinced(const Creature* convincer, const Creature* creature) {}
@@ -398,6 +399,9 @@ class Creature : public AutoID, virtual public Thing
 		//combat variables
 		Creature* attackedCreature;
 		Creature* _lastHitCreature;
+		Creature* _mostDamageCreature;
+		bool lastHitUnjustified;
+		bool mostDamageUnjustified;
 
 		struct CountBlock_t
 		{

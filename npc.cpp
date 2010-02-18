@@ -1323,7 +1323,7 @@ void Npc::onCreatureTurn(const Creature* creature, uint32_t stackpos)
 	Creature::onCreatureTurn(creature, stackpos);
 }
 
-void Npc::onCreatureSay(const Creature* creature, SpeakClasses type, const std::string& text)
+void Npc::onCreatureSay(const Creature* creature, SpeakClasses type, const std::string& text, Position* pos/* = NULL*/)
 {
 	if(creature->getID() == this->getID())
 		return;
@@ -1529,7 +1529,13 @@ void Npc::processResponse(Player* player, NpcState* npcState, const NpcResponse*
 		if(response->getAmount() != -1)
 		{
 			if(npcState->itemId > 0)
-				npcState->amount = (int32_t)std::min((int32_t)response->getAmount(), (int32_t)100);
+			{
+				const ItemType& it = Item::items[npcState->itemId];
+				if(it.id != 0 && it.stackable == false)
+					npcState->amount = (int32_t)std::min((int32_t)response->getAmount(), (int32_t)100);
+				else
+					npcState->amount = response->getAmount();
+			}
 			else
 				npcState->amount = response->getAmount();
 		}
@@ -1968,7 +1974,7 @@ void Npc::executeResponse(Player* player, NpcState* npcState, const NpcResponse*
 
 void Npc::doSay(const std::string& text)
 {
-	g_game.internalCreatureSay(this, SPEAK_SAY, text);
+	g_game.internalCreatureSay(this, SPEAK_SAY, text, false);
 }
 
 void Npc::doSayToPlayer(Player* player, const std::string& text)
@@ -2343,8 +2349,9 @@ const NpcResponse* Npc::getResponse(const ResponseList& list, const Player* play
 					std::cout << "[WARNING]: Non-existant spell in cannotlearnspell tag" << std::endl;
 				else
 				{
-					if(player->getLevel() >= spell->getLevel() && (int32_t)player->getMagicLevel()
-						>= spell->getMagicLevel() && (!spell->isPremium() || player->isPremium()))
+					if(player->getLevel() >= spell->getLevel() &&
+					player->getMagicLevel() >= spell->getMagicLevel() &&
+					(spell->isPremium()? player->isPremium() : true))
 						continue;
 				}
 			}
@@ -2623,7 +2630,12 @@ int32_t Npc::matchKeywords(NpcResponse* response, std::vector<std::string> wordL
 				//TODO: Should iterate through each word until a number or a new keyword is found.
 				int32_t amount = atoi(lastWordMatchIter->c_str());
 				if(amount > 0)
-					response->setAmount(amount);
+				{
+					if(amount <= 500)
+						response->setAmount(amount);
+					else
+						response->setAmount(500);
+				}
 				else
 				{
 					response->setAmount(1);
@@ -2809,6 +2821,9 @@ void Npc::addShopPlayer(Player* player)
 
 void Npc::removeShopPlayer(const Player* player)
 {
+	if(shopPlayerList.size() == 0)
+		return;
+
 	ShopPlayerList::iterator it = std::find(shopPlayerList.begin(), shopPlayerList.end(), player);
 	if(it != shopPlayerList.end())
 		shopPlayerList.erase(it);
@@ -2816,9 +2831,13 @@ void Npc::removeShopPlayer(const Player* player)
 
 void Npc::closeAllShopWindows()
 {
-	ShopPlayerList closeList = shopPlayerList;
-	for(ShopPlayerList::iterator it = closeList.begin(); it != closeList.end(); ++it)
-		(*it)->closeShopWindow();
+	for(ShopPlayerList::iterator it = shopPlayerList.begin(); it != shopPlayerList.end();)
+	{
+		Player* player = *(it);
+		it = shopPlayerList.erase(it);
+		player->closeShopWindow();
+	}
+	shopPlayerList.clear();
 }
 
 NpcScriptInterface* Npc::getScriptInterface()
@@ -3263,7 +3282,7 @@ void NpcScriptInterface::popState(lua_State* L, NpcState* &state)
 	state->spellName = getFieldString(L, "spellname");
 	state->listName = getFieldString(L, "listname");
 	state->listPluralName = getFieldString(L, "listpname");
-	bool isIdle = getFieldBool(L, "isidle");
+	bool isIdle = getFieldBool(L, "isidle") || getFieldBool(L, "isIdle");
 	if(isIdle)
 		state->focusState = 0;
 
@@ -3320,6 +3339,7 @@ int32_t NpcScriptInterface::luaOpenShopWindow(lua_State* L)
 
 		item.buyPrice = getField(L, "buy");
 		item.sellPrice = getField(L, "sell");
+		item.realName = getFieldString(L, "name");
 		items.push_back(item);
 
 		lua_pop(L, 1);
@@ -3335,7 +3355,7 @@ int32_t NpcScriptInterface::luaOpenShopWindow(lua_State* L)
 	}
 
 	//Close any eventual other shop window currently open.
-	player->closeShopWindow();
+	player->closeShopWindow(false);
 
 	if(!npc)
 	{
@@ -3620,7 +3640,7 @@ void NpcScript::onCreatureMove(const Creature* creature, const Position& oldPos,
 		std::cout << "[Error - NpcScript::onCreatureMove] NPC Name: " << m_npc->getName() << " - Call stack overflow" << std::endl;
 }
 
-void NpcScript::onCreatureSay(const Creature* creature, SpeakClasses type, const std::string& text)
+void NpcScript::onCreatureSay(const Creature* creature, SpeakClasses type, const std::string& text, Position* pos/* = NULL*/)
 {
 	if(m_onCreatureSay == -1)
 		return;

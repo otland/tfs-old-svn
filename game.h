@@ -106,9 +106,8 @@ typedef std::map< uint32_t, shared_ptr<RuleViolation> > RuleViolationsMap;
 #define EVENT_DECAY_BUCKETS 16
 #define STATE_TIME 1000
 
-typedef std::vector< std::pair<std::string, unsigned int> > Highscore;
 typedef std::map<int32_t, int32_t> StageList;
-typedef std::list<std::string> BlackList;
+typedef std::vector< std::pair<std::string, unsigned int> > Highscore;
 
 /**
   * Main Game class.
@@ -131,9 +130,6 @@ class Game
 		void autoSave();
 		void prepareServerSave();
 		void serverSave();
-
-		void fetchBlackList();
-		BlackList blacklist;
 
 		/**
 		  * Load a map.
@@ -383,7 +379,8 @@ class Game
 		  * \param type Type of message
 		  * \param text The text to say
 		  */
-		bool internalCreatureSay(Creature* creature, SpeakClasses type, const std::string& text);
+		bool internalCreatureSay(Creature* creature, SpeakClasses type, const std::string& text,
+			bool ghostMode, SpectatorVec* listPtr = NULL, Position* pos = NULL);
 
 		Position getClosestFreeTile(Player* player, Creature* teleportedCreature, Position toPos, bool toCreature);
 
@@ -531,6 +528,9 @@ class Game
 		Map* getMap() { return map;}
 		const Map* getMap() const { return map;}
 
+		int64_t getStateTime() const {return stateTime;}
+		void setStateTime(int64_t _stateTime) {stateTime = _stateTime;}
+
 		void addCommandTag(std::string tag);
 		void resetCommandTag();
 
@@ -544,12 +544,6 @@ class Game
 
 		bool loadExperienceStages();
 		uint64_t getExperienceStage(uint32_t level);
-
-		size_t getStagesCount() const {return stages.size();}
-		bool getStagesEnabled() const {return stagesEnabled;}
-
-		inline StageList::const_iterator getFirstStage() const {return stages.begin();}
-		inline StageList::const_iterator getLastStage() const {return stages.end();}
 
 		void setServerSaveMessage(int16_t key, bool value) {serverSaveMessage[key] = value;}
 		bool getServerSaveMessage(int16_t key) const {return serverSaveMessage[key];}
@@ -567,7 +561,9 @@ class Game
 
 		Highscore highscoreStorage[9];
 		time_t lastHSUpdate;
+
 		bool serverSaveMessage[2];
+		int64_t stateTime;
 
 		std::vector<Thing*> ToReleaseThings;
 

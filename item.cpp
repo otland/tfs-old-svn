@@ -92,7 +92,6 @@ Item* Item::CreateItem(const uint16_t _type, uint16_t _count /*= 1*/)
 
 		newItem->useThing2();
 	}
-
 	return newItem;
 }
 
@@ -686,7 +685,7 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance,
 
 	if(it.isRune())
 	{
-		s << "(";
+		s << " (";
 		if(!it.runeSpellName.empty())
 			s << "\"" << it.runeSpellName << "\", ";
 
@@ -761,27 +760,78 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance,
 			s << ")";
 		}
 	}
-	else if(it.armor != 0)
+	else if(it.armor || (item && item->getArmor()) || it.showAttributes)
 	{
-		s << " (Arm:" << it.armor;
-		for(uint16_t i = SKILL_FIRST; i <= SKILL_LAST; i++)
-		{
-			if(it.abilities.skills[i] != 0)
-				s << ", " << getSkillName(i) << " " << std::showpos << (int32_t)it.abilities.skills[i] << std::noshowpos;
-		}
-
-		if(it.abilities.stats[STAT_MAGICPOINTS] != 0)
-			s << ", magic level " << std::showpos << (int32_t)it.abilities.stats[STAT_MAGICPOINTS] << std::noshowpos;
+		int32_t tmp = it.armor;
+		if(item)
+			tmp = item->getArmor();
 
 		bool begin = true;
-		for(uint32_t i = COMBAT_FIRST; i <= COMBAT_LAST; i++)
+		if(tmp)
 		{
-			if(it.abilities.absorbPercent[i] != 0)
+			s << " (Arm:" << tmp;
+			begin = false;
+		}
+
+		for(uint16_t i = SKILL_FIRST; i <= SKILL_LAST; i++)
+		{
+			if(!it.abilities.skills[i])
+				continue;
+
+			if(begin)
 			{
-				if(begin)
+				begin = false;
+				s << " (";
+			}
+			else
+				s << ", ";
+
+			s << getSkillName(i) << " " << std::showpos << (int32_t)it.abilities.skills[i] << std::noshowpos;
+		}
+
+		if(it.abilities.stats[STAT_MAGICPOINTS])
+		{
+			if(begin)
+			{
+				begin = false;
+				s << " (";
+			}
+			else
+				s << ", ";
+
+			s << "magic level " << std::showpos << (int32_t)it.abilities.stats[STAT_MAGICPOINTS] << std::noshowpos;
+		}
+
+		int32_t show = it.abilities.absorbPercent[COMBAT_FIRST];
+		for(uint32_t i = (COMBAT_FIRST + 1); i <= COMBAT_LAST; i++)
+		{
+			if(it.abilities.absorbPercent[i] == show)
+				continue;
+
+			show = 0;
+			break;
+		}
+
+		if(!show)
+		{
+			bool tmp = true;
+			for(uint32_t i = COMBAT_FIRST; i <= COMBAT_LAST; i++)
+			{
+				if(!it.abilities.absorbPercent[i])
+					continue;
+
+				if(tmp)
 				{
-					s << ", protection ";
-					begin = false;
+					tmp = false;
+					if(begin)
+					{
+						begin = false;
+						s << " (";
+					}
+					else
+						s << ", ";
+
+					s << "protection ";
 				}
 				else
 					s << ", ";
@@ -789,16 +839,47 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance,
 				s << getCombatName((CombatType_t)i) << " " << std::showpos << it.abilities.absorbPercent[i] << std::noshowpos << "%";
 			}
 		}
+		else
+		{
+			if(begin)
+			{
+				begin = false;
+				s << " (";
+			}
+			else
+				s << ", ";
 
-		if(it.abilities.speed > 0)
-			s << ", speed " << std::showpos << (it.abilities.speed / 2) << std::noshowpos;
+			s << "protection all " << std::showpos << show << std::noshowpos << "%";
+		}
 
-		s << ")";
+		if(it.abilities.speed)
+		{
+			if(begin)
+			{
+				begin = false;
+				s << " (";
+			}
+			else
+				s << ", ";
+
+			s << "speed " << std::showpos << (int32_t)(it.abilities.speed / 2) << std::noshowpos;
+		}
+
+		if(!begin)
+			s << ")";
 	}
 	else if(it.isContainer())
 		s << " (Vol:" << (int32_t)it.maxItems << ")";
 	else if(it.abilities.speed > 0)
 		s << " (speed " << std::showpos << (it.abilities.speed / 2) << std::noshowpos << ")";
+	else if(it.abilities.conditionSuppressions == 2048)
+		s << " (hard drinking)";
+	else if(it.abilities.invisible)
+		s << " (invisibility)";
+	else if(it.abilities.regeneration)
+		s << " (faster regeneration)";
+	else if(it.abilities.manaShield > 0)
+		s << " (mana shield)";
 	else if(it.isKey())
 		s << " (Key:" << (item ? (int32_t)item->getActionId() : 0) << ")";
 	else if(it.isFluidContainer())
@@ -816,9 +897,9 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance,
 		else
 			s << "unknown";
 	}
-	else if(it.allowDistRead)
+	else if(it.allowDistRead && it.id != 7369 && it.id != 7370 && it.id != 7371)
 	{
-		s << std::endl;
+		s << "." << std::endl;
 		if(item && item->getText() != "")
 		{
 			if(lookDistance <= 4)
@@ -867,20 +948,9 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance,
 			s << " that is brand-new";
 	}
 
-	bool dot = true;
-	if(item)
-	{
-		std::string itemText = item->getText();
-		if(itemText != "")
-		{
-			char lastChar = itemText[itemText.length() - 1];
-			if(lastChar == '?' || lastChar == '!' || lastChar == '.')
-				dot = false;
-		}
-	}
-
-	if(dot)
+	if(!it.allowDistRead || item->getText() == "" || (it.id >= 7369 && it.id <= 7371))
 		s << ".";
+
 
 	if(it.wieldInfo != 0)
 	{
@@ -931,6 +1001,9 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance,
 	else if(it.description.length() && lookDistance <= 1)
 		s << std::endl << it.description;
 
+	if(it.allowDistRead && it.id >= 7369 && it.id <= 7371 && item->getText() != "")
+		s << std::endl << item->getText();
+		
 	return s.str();
 }
 
@@ -978,7 +1051,7 @@ std::string Item::getNameDescription() const
 std::string Item::getWeightDescription(const ItemType& it, double weight, uint32_t count /*= 1*/)
 {
 	std::stringstream ss;
-	if(it.stackable && count > 1)
+	if(it.stackable && count > 1 && it.showCount != 0)
 		ss << "They weigh " << std::fixed << std::setprecision(2) << weight << " oz.";
 	else
 		ss << "It weighs " << std::fixed << std::setprecision(2) << weight << " oz.";

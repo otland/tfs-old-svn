@@ -1054,6 +1054,7 @@ std::string getReason(int32_t reasonId)
 		case 18: return "False Report to Gamemaster";
 		case 19: return "Destructive Behaviour";
 		case 20: return "Excessive Unjustified Player Killing";
+		case 21: return "Spoiling Auction";
 		default: return "Unknown Reason";
 	}
 }

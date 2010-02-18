@@ -551,6 +551,7 @@ bool Action::increaseItemId(Player* player, Item* item, const PositionEx& posFro
 		if(item)
 		{
 			g_game.transformItem(item, item->getID() + 1);
+			g_game.startDecay(item);
 			return true;
 		}
 	}
@@ -564,6 +565,7 @@ bool Action::decreaseItemId(Player* player, Item* item, const PositionEx& posFro
 		if(item)
 		{
 			g_game.transformItem(item, item->getID() - 1);
+			g_game.startDecay(item);
 			return true;
 		}
 	}

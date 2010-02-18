@@ -737,7 +737,7 @@ uint32_t MoveEvent::EquipItem(MoveEvent* moveEvent, Player* player, Item* item, 
 
 	if(!player->hasFlag(PlayerFlag_IgnoreWeaponCheck) && moveEvent->getWieldInfo() != 0)
 	{
-		if(player->getLevel() < (uint32_t)moveEvent->getReqLevel() || player->getMagicLevel() < (uint32_t)moveEvent->getReqMagLv())
+		if(player->getLevel() < (uint32_t)moveEvent->getReqLevel() || player->getMagicLevel() < moveEvent->getReqMagLv())
 			return 0;
 
 		if(moveEvent->isPremium() && !player->isPremium())

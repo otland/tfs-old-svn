@@ -143,7 +143,7 @@ class MonsterType
 		MonsterScriptList scriptList;
 
 		void createLoot(Container* corpse);
-		void createLootContainer(Container* parent, const LootBlock& lootblock);
+		bool createLootContainer(Container* parent, const LootBlock& lootblock);
 		Item* createLootItem(const LootBlock& lootblock);
 };
 

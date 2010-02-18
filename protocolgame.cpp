@@ -386,9 +386,10 @@ bool ProtocolGame::parseFirstPacket(NetworkMessage& msg)
 	std::string password = msg.GetString();
 
 	msg.SkipBytes(3);
+
 	if(version < 854)
 	{
-		disconnectClient(0x0A, "Only clients with protocol 8.53 allowed!");
+		disconnectClient(0x0A, "Only clients with protocol 8.54 allowed!");
 		return false;
 	}
 
@@ -927,10 +928,10 @@ void ProtocolGame::checkCreatureAsKnown(uint32_t id, bool &known, uint32_t &remo
 	knownCreatureList.push_back(id);
 
 	// too many known creatures?
-	if(knownCreatureList.size() > 150)
+	if(knownCreatureList.size() > 250)
 	{
 		// lets try to remove one from the end of the list
-		for(int32_t n = 0; n < 150; n++)
+		for(int32_t n = 0; n < 250; n++)
 		{
 			removedKnown = knownCreatureList.front();
 
@@ -1863,7 +1864,7 @@ void ProtocolGame::sendSaleItemList(const std::list<ShopInfo>& shop)
 					int8_t subtype = -1;
 					const ItemType& it = Item::items[sInfo.itemId];
 					if(it.hasSubType() && !it.stackable)
-						subtype = (sInfo.subType == 0 ? -1 :sInfo.subType);
+						subtype = (sInfo.subType == 0 ? -1 : sInfo.subType);
 
 					uint32_t count = player->__getItemTypeCount(sInfo.itemId, subtype);
 					if(count > 0)
@@ -1890,18 +1891,18 @@ void ProtocolGame::sendSaleItemList(const std::list<ShopInfo>& shop)
 					int8_t subtype = -1;
 					const ItemType& it = Item::items[sInfo.itemId];
 					if(it.hasSubType() && !it.stackable)
-						subtype = (sInfo.subType == 0 ? -1 :sInfo.subType);
+						subtype = (sInfo.subType == 0 ? -1 : sInfo.subType);
 
 					if(subtype != -1)
 					{
-						// This shop item requires extra checks
-						uint32_t count = player->__getItemTypeCount(sInfo.itemId, subtype);
+						uint32_t count = subtype;
+						if(!it.isFluidContainer() && !it.isSplash())
+							count = player->__getItemTypeCount(sInfo.itemId, subtype); // This shop item requires extra checks
 
 						if(count > 0)
 							saleMap[sInfo.itemId] = count;
 						else
-							// No count if you include subtypes in the calculations
-							saleMap[sInfo.itemId] = 0;
+							saleMap[sInfo.itemId] = 0; // No count if you include subtypes in the calculations
 					}
 					else
 						saleMap[sInfo.itemId] = tempSaleMap[sInfo.itemId];
@@ -2012,13 +2013,13 @@ void ProtocolGame::sendCreatureTurn(const Creature* creature, uint32_t stackPos)
 	}
 }
 
-void ProtocolGame::sendCreatureSay(const Creature* creature, SpeakClasses type, const std::string& text)
+void ProtocolGame::sendCreatureSay(const Creature* creature, SpeakClasses type, const std::string& text, Position* pos/* = NULL*/)
 {
 	NetworkMessage_ptr msg = getOutputBuffer();
 	if(msg)
 	{
 		TRACK_MESSAGE(msg);
-		AddCreatureSpeak(msg, creature, type, text, 0);
+		AddCreatureSpeak(msg, creature, type, text, 0, 0, pos);
 	}
 }
 
@@ -2719,6 +2720,7 @@ void ProtocolGame::AddCreature(NetworkMessage_ptr msg, const Creature* creature,
 
 	msg->AddByte((int32_t)std::ceil(((float)creature->getHealth()) * 100 / std::max(creature->getMaxHealth(), (int32_t)1)));
 	msg->AddByte((uint8_t)creature->getDirection());
+
 	if(!creature->isInvisible() && !creature->isInGhostMode())
 		AddCreatureOutfit(msg, creature, creature->getCurrentOutfit());
 	else
@@ -2730,12 +2732,14 @@ void ProtocolGame::AddCreature(NetworkMessage_ptr msg, const Creature* creature,
 	msg->AddByte(lightInfo.color);
 
 	msg->AddU16(creature->getStepSpeed());
+
 	msg->AddByte(player->getSkullClient(creature->getPlayer()));
 	msg->AddByte(player->getPartyShield(creature->getPlayer()));
+
 	if(!known)
 		msg->AddByte(0x00); // war emblem
 
-	msg->AddByte(0x01); // impassable
+	msg->AddByte(player->isAccessPlayer() ? 0x00 : 0x01);
 }
 
 void ProtocolGame::AddPlayerStats(NetworkMessage_ptr msg)
@@ -2781,8 +2785,8 @@ void ProtocolGame::AddPlayerSkills(NetworkMessage_ptr msg)
 	msg->AddByte(player->getSkill(SKILL_FISH, SKILL_PERCENT));
 }
 
-void ProtocolGame::AddCreatureSpeak(NetworkMessage_ptr msg, const Creature* creature,
-	SpeakClasses type, std::string text, uint16_t channelId, uint32_t time /*= 0*/)
+void ProtocolGame::AddCreatureSpeak(NetworkMessage_ptr msg, const Creature* creature, SpeakClasses type,
+	std::string text, uint16_t channelId, uint32_t time/*= 0*/, Position* pos/* = NULL*/)
 {
 	if(!creature)
 		return;
@@ -2821,8 +2825,14 @@ void ProtocolGame::AddCreatureSpeak(NetworkMessage_ptr msg, const Creature* crea
 		case SPEAK_MONSTER_SAY:
 		case SPEAK_MONSTER_YELL:
 		case SPEAK_PRIVATE_NP:
-			msg->AddPosition(creature->getPosition());
+		{
+			if(pos)
+				msg->AddPosition(*pos);
+			else
+				msg->AddPosition(creature->getPosition());
+
 			break;
+		}
 
 		case SPEAK_CHANNEL_Y:
 		case SPEAK_CHANNEL_R1:
@@ -2833,11 +2843,8 @@ void ProtocolGame::AddCreatureSpeak(NetworkMessage_ptr msg, const Creature* crea
 			break;
 
 		case SPEAK_RVR_CHANNEL:
-		{
-			uint32_t _time = (OTSYS_TIME() / 1000) & 0xFFFFFFFF;
-			msg->AddU32(_time - time);
+			msg->AddU32(uint32_t(OTSYS_TIME() / 1000 & 0xFFFFFFFF) - time);
 			break;
-		}
 
 		default:
 			break;
@@ -3121,14 +3128,14 @@ void ProtocolGame::AddShopItem(NetworkMessage_ptr msg, const ShopInfo item)
 {
 	const ItemType& it = Item::items[item.itemId];
 	msg->AddU16(it.clientId);
-	if(it.isSplash() || it.isFluidContainer())
-		msg->AddByte(fluidMap[item.subType % 8]);
-	else if(it.stackable || it.charges)
+	if(it.stackable || it.isRune())
 		msg->AddByte(item.subType);
+	else if(it.isSplash() || it.isFluidContainer())
+		msg->AddByte(fluidMap[item.subType % 8]);
 	else
 		msg->AddByte(0x01);
 
-	msg->AddString(it.name);
+	msg->AddString(item.realName);
 	msg->AddU32(uint32_t(it.weight * 100));
 	msg->AddU32(item.buyPrice);
 	msg->AddU32(item.sellPrice);

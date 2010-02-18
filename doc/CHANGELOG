@@ -3,7 +3,7 @@
 		The Forgotten Server
 
 	Version
-		0.2.5
+		0.2.7
 
 	Codenamed
 		"Mystic Spirit"
@@ -24,31 +24,58 @@
 	M data/global.lua
 	M data/items/items.otb
 	M data/items/items.xml
-	M data/spells/spells.xml
-	A data/spells/scripts/party/enchant.lua
-	A data/spells/scripts/party/heal.lua
-	A data/spells/scripts/party/protect.lua
-	A data/spells/scripts/party/train.lua
-	A data/spells/scripts/support/blood rage.lua
-	A data/spells/scripts/support/charge.lua
-	A data/spells/scripts/support/protector.lua
-	A data/spells/scripts/support/sharpshooter.lua
-	A data/spells/scripts/support/swift foot.lua
+	M data/npc/lib/npc.lua
 ]
 
 [ Milestone
-	Fixed a bug which would cause player to receive multiple banishments for unjustified player killing.
-	Fixed a bug where icons would not be updated properly on login.
-	Corrected text color values, and added a predefined text color for sky blue which is used for ice damage (TEXTCOLOR_SKYBLUE).
-	Added energy race for monsters (RACE_ENERGY).
-	Added the missing spells from protocol 8.4.
-	Players in a party will now receive the green loot message centered in the screen instead of the message in party channel.
-	Messages containing more than 255 characters are now being ignored due to client debug error.
-	Support for 'Yalahar'-stairs, with southalt and eastalt floorchange attribute key in items.xml.
-	Added support for inBackpacks and ignoreCapacity in the source-code, the Lua NPC-system still has to be updated.
-	Minor update to items.otb to be compatible with the recent changes in the client data file.
-	Cleanup teleport and movement related code.
-	Fixed crash during shutdown when not freeing memory (we can't let dispatcher and scheduler threads work when calling exit in the main thread).
-	Fixed a crash with the guild command !revoke.
-	Fixed SQLite errors.
+	Protocol 8.54 support.
+	Improved networking code - should fix a deadlock which could occur during a DoS attack.
+	Improved NPC code - with better compatibility for buy with backpacks and ignore capacity.
+	Fixed several items.xml loading bugs.
+	Fixed a mailbox bug, and added "New mail has arrived" message.
+	Extended buffer size for look description to prevent overflows.
+	Fixed !createguild crash which would occur if database connection failed or triggers weren't properly imported.
+	Fixed player saving in SQLite.
+	Look description will now say "They weigh" for stackable items instead of "It weighs".
+	New Lua function: setCreatureLookDir(cid, dir).
+	Additional parameters to Lua function: doPlayerAddExp(cid, exp, <optional/NEW> usemultiplier, <optional/NEW> sendtext)
+	Monster code fixes.
+	New Lua functions: getTileThingByTopOrder(pos, topOrder), getPlayerMasterPos(cid).
+	Monster AI improvements.
+	Fixed an issue with NPC amounts.
+	Added missing magic effects in tools.cpp.
+	Increase or decrease function call from actions will now also try to decay the item.
+	Extended reload command with weapons and quests.
+	Corrected TEXTCOLOR_DARKRED value.
+	Corrected ids of field items and corpses.
+	Most damage killer and unjustified (bool) is now also accessible in onDeath event.
+	Attempt to make the NPC shop system work with fluid containers.
+	Fixed a crash related to trading.
+	Changed the house system to use rent instead of x gold per house tile.
+	Corrected some errors in Item::getDescription.
+	items.xml: allowpickupable, showattributes, added tea and mead to fluidsources.
+	Reload items will now also reload movements and weapons otherwise it breaks them.
+	Extended doCreatureSay with three more optional parameters (..., ghost, cid, pos)
+	New Lua functions: doCreateNpc(name, pos), getItemWeightByUID(uid).
+	Events from a Lua interface will now be stopped at reload.
+	Third parameter in doTeleportThing (pushMovement) will now default to false.
+	doTeleportThing and normal teleports will also update the look direction of a player.
+	doRelocate will no longer move doors.
+	ITEM_TYPE_DEPOT is now supported in getTileItemByType.
+	getItemDescriptions will now also include description in the table it returns.
+	doTransformItem will no longer try to transform an item to the same ID.
+	Applied a patch from 0.3 that fixes a bug which would prevent monsters from dropping empty containers (such as key rings).
+	Corrected condition tick intervals in monsters.
+	Added support for freezecondition, cursecondition and dazzlecondition in monsters.
+	Added drownPercent, lifedrainPercent and physicalPercent to monster immunity elements, and also error handling for incorrect elements.
+	Fixed crashes and compatibility issues in the NPC code.
+	Corrected RET_BOTHHANDSNEEDTOBEFREE, RET_NOTENOUGHCAPACITY and RET_CANNOTPICKUP cancel messages.
+	Corrected the "You have been idle for x minutes" message.
+	Increased knownCreatureList max size to 250 which is supported in newer clients.
+	Gamemasters can now walk and teleport through creatures.
+	Fixed some issues with raids.
+	Removed the blacklist code as it is no longer in use.
+	The msgcontains function has been improved.
+	Heavily updated items.xml file.
+	Code cleanup, formating & optimizations.
 ]

@@ -123,15 +123,13 @@ class ScriptEnviroment
 
 		void getEventInfo(int32_t& scriptId, std::string& desc, LuaScriptInterface*& scriptInterface, int32_t& callbackId, bool& timerEvent);
 
-		static void addUniqueThing(Thing* thing);
-		static void removeUniqueThing(Thing* thing);
-
-		uint32_t addThing(Thing* thing);
-		void insertThing(uint32_t uid, Thing* thing);
-
 		static void addTempItem(ScriptEnviroment* env, Item* item);
 		static void removeTempItem(ScriptEnviroment* env, Item* item);
 		static void removeTempItem(Item* item);
+		static void addUniqueThing(Thing* thing);
+		static void removeUniqueThing(Thing* thing);
+		uint32_t addThing(Thing* thing);
+		void insertThing(uint32_t uid, Thing* thing);
 
 		void addGlobalStorageValue(const uint32_t key, const int32_t value);
 		bool getGlobalStorageValue(const uint32_t key, int32_t& value) const;
@@ -147,7 +145,6 @@ class ScriptEnviroment
 		Container* getContainerByUID(uint32_t uid);
 		Creature* getCreatureByUID(uint32_t uid);
 		Player* getPlayerByUID(uint32_t uid);
-
 		void removeItemByUID(uint32_t uid);
 
 		static uint32_t addCombatArea(AreaCombat* area);
@@ -169,7 +166,6 @@ class ScriptEnviroment
 		typedef std::map<uint32_t, Combat*> CombatMap;
 		typedef std::map<uint32_t, Condition*> ConditionMap;
 		typedef std::list<Item*> ItemList;
-		typedef std::map<ScriptEnviroment*, ItemList> TempItemListMap;
 
 		//script file id
 		int32_t m_scriptId;
@@ -190,6 +186,7 @@ class ScriptEnviroment
 		ThingMap m_localMap;
 
 		//temporary item list
+		typedef std::map<ScriptEnviroment*, ItemList> TempItemListMap;
 		static TempItemListMap m_tempItems;
 
 		//area map
@@ -363,6 +360,7 @@ class LuaScriptInterface
 		static int32_t luaDoCreateItem(lua_State* L);
 		static int32_t luaDoCreateItemEx(lua_State* L);
 		static int32_t luaDoCreateTeleport(lua_State* L);
+		static int32_t luaDoCreateNpc(lua_State* L);
 		static int32_t luaDoSummonCreature(lua_State* L);
 		static int32_t luaDoConvinceCreature(lua_State* L);
 		static int32_t luaGetMonsterTargetList(lua_State* L);
@@ -594,6 +592,7 @@ class LuaScriptInterface
 		static int32_t luaGetItemName(lua_State* L);
 		static int32_t luaGetItemDescriptions(lua_State* L);
 		static int32_t luaGetItemWeight(lua_State* L);
+		static int32_t luaGetItemWeightByUID(lua_State* L);
 		static int32_t luaGetItemIdByName(lua_State* L);
 		static int32_t luaIsSightClear(lua_State* L);
 
@@ -660,6 +659,7 @@ class LuaScriptInterface
 			int32_t scriptId;
 			int32_t function;
 			std::list<int> parameters;
+			uint32_t eventId;
 		};
 		uint32_t m_lastEventTimerId;
 

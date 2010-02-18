@@ -428,7 +428,10 @@ bool Spell::configureSpell(xmlNodePtr p)
 			"firecondition",
 			"poisoncondition",
 			"energycondition",
-			"drowncondition"
+			"drowncondition",
+			"freezecondition",
+			"cursecondition",
+			"dazzlecondition"
 		};
 
 		for(uint32_t i = 0; i < sizeof(reservedList)/sizeof(const char*); ++i)
@@ -1930,15 +1933,15 @@ bool RuneSpell::configureEvent(xmlNodePtr p)
 		charges = (uint32_t)intValue;
 
 	hasCharges = (charges > 0);
+
 	if(magLevel != 0 || level != 0)
 	{
 		//Change information in the ItemType to get accurate description
 		ItemType& iType = Item::items.getItemType(runeId);
-		iType.charges = charges;
 		iType.runeMagLevel = magLevel;
 		iType.runeLevel = level;
+		iType.charges = charges;
 	}
-
 	return true;
 }
 

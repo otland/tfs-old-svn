@@ -75,11 +75,11 @@ function isPlayerPremiumCallback(cid)
 end
 
 function msgcontains(message, keyword)
-	local a, b = string.find(message, keyword)
-	if a == nil or b == nil then
-		return false
+	local message, keyword = message:lower(), keyword:lower()
+	if message == keyword then
+		return true
 	end
-	return true
+	return message:find(keyword) and not message:find('(%w+)' .. keyword)
 end
 
 function selfSayChannel(cid, message)
