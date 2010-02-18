@@ -624,9 +624,12 @@ void Monster::doAttacking(uint32_t interval)
 	attackTicks += interval;
 
 	const Position& myPos = getPosition();
-	const Position& targetPos = attackedCreature->getPosition();
 	for(SpellList::iterator it = mType->spellAttackList.begin(); it != mType->spellAttackList.end(); ++it)
 	{
+		if(!attackedCreature || attackedCreature->isRemoved())
+			break;
+
+		const Position& targetPos = attackedCreature->getPosition();
 		if(it->isMelee && isFleeing())
 			continue;
 
@@ -654,6 +657,7 @@ void Monster::doAttacking(uint32_t interval)
 				if(it->isMelee)
 					extraMeleeAttack = false;
 #ifdef __DEBUG__
+
 				static uint64_t prevTicks = OTSYS_TIME();
 				std::clog << "doAttacking ticks: " << OTSYS_TIME() - prevTicks << std::endl;
 				prevTicks = OTSYS_TIME();
