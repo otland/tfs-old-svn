@@ -1897,12 +1897,9 @@ void ProtocolGame::sendGoods(const ShopInfoList& shop)
 					continue;
 
 				int8_t subType = -1;
-				if(sit->subType)
-				{
-					const ItemType& it = Item::items[sit->itemId];
-					if(it.hasSubType() && !it.stackable)
-						subType = sit->subType;
-				}
+				const ItemType& it = Item::items[sit->itemId];
+				if(sit->subType && it.hasSubType() && !it.stackable)
+					subType = sit->subType;
 
 				if(subType != -1)
 				{
