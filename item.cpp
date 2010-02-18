@@ -872,7 +872,7 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance,
 		s << " (Vol:" << (int32_t)it.maxItems << ")";
 	else if(it.abilities.speed > 0)
 		s << " (speed " << std::showpos << (it.abilities.speed / 2) << std::noshowpos << ")";
-	else if(it.abilities.conditionSuppressions == 2048)
+	else if(((it.abilities.conditionSuppressions & CONDITION_DRUNK) == CONDITION_DRUNK))
 		s << " (hard drinking)";
 	else if(it.abilities.invisible)
 		s << " (invisibility)";

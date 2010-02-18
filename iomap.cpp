@@ -343,8 +343,8 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 								}
 								else
 								{
-                                    if(item->getItemCount() <= 0)
-                                        item->setItemCount(1);
+									if(item->getItemCount() <= 0)
+										item->setItemCount(1);
 
 									if(tile)
 									{
@@ -375,7 +375,6 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 								ss << "[x:" << px << ", y:" << py << ", z:" << pz << "] " << "Unknown tile attribute.";
 								setLastErrorString(ss.str());
 								return false;
-								break;
 						}
 					}
 
@@ -405,8 +404,8 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 								}
 								else
 								{
-                                    if(item->getItemCount() <= 0)
-                                        item->setItemCount(1);
+									if(item->getItemCount() <= 0)
+										item->setItemCount(1);
 
 									if(tile)
 									{

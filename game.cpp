@@ -223,10 +223,11 @@ void Game::saveGameState()
 
 	stateTime = 0;
 	std::cout << "Saving server..." << std::endl;
+	IOLoginData* io = IOLoginData::getInstance();
 	for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
 	{
 		(*it).second->loginPosition = (*it).second->getPosition();
-		IOLoginData::getInstance()->savePlayer((*it).second, false);
+		io->savePlayer((*it).second, false);
 	}
 
 	map->saveMap();
