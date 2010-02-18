@@ -62,9 +62,9 @@ void Teleport::__addThing(Creature* actor, int32_t index, Thing* thing)
 	}
 	else if(Item* item = thing->getItem())
 	{
-		g_game.addMagicEffect(item->getPosition(), NM_ME_TELEPORT);
+		g_game.addMagicEffect(item->getPosition(), MAGIC_EFFECT_TELEPORT);
 		g_game.internalMoveItem(actor, getTile(), destTile, INDEX_WHEREEVER, item, item->getItemCount(), NULL);
-		g_game.addMagicEffect(destTile->getPosition(), NM_ME_TELEPORT);
+		g_game.addMagicEffect(destTile->getPosition(), MAGIC_EFFECT_TELEPORT);
 	}
 }
 
