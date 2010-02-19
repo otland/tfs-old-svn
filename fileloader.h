@@ -128,10 +128,11 @@ class FileLoader
 				uint8_t c = *(((uint8_t*)data) + i);
 				if(unescape && (c == NODE_START || c == NODE_END || c == ESCAPE_CHAR))
 				{
+					uint8_t tmp = ESCAPE_CHAR;
 #ifdef __USE_ZLIB__
-					size_t value = gzwrite(m_file, (uint8_t&)ESCAPE_CHAR,, 1);
+					size_t value = gzwrite(m_file, &tmp, 1);
 #else
-					size_t value = fwrite((uint8_t&)ESCAPE_CHAR,, 1, 1, m_file);
+					size_t value = fwrite(&tmp, 1, 1, m_file);
 #endif
 					if(value != 1)
 					{
