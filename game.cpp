@@ -4888,7 +4888,7 @@ bool Game::playerPassPartyLeadership(uint32_t playerId, uint32_t newLeaderId)
 		return false;
 
 	Player* newLeader = getPlayerByID(newLeaderId);
-	if(!newLeader || newLeader->isRemoved() || !player->isPartner(newLeader))
+	if(!newLeader || newLeader->isRemoved() || !newLeader->getParty() || newLeader->getParty() != player->getParty())
 		return false;
 
 	return player->getParty()->passLeadership(newLeader);

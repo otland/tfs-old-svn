@@ -3669,8 +3669,8 @@ void Player::onTargetCreatureGainHealth(Creature* target, int32_t points)
 		else if(target->getMaster() && target->getMaster()->getPlayer())
 			tmpPlayer = target->getMaster()->getPlayer();
 
-		if(isPartner(tmpPlayer))
-			getParty()->addPlayerHealedMember(this, points);
+		if(party && isPartner(tmpPlayer))
+			party->addPlayerHealedMember(this, points);
 	}
 }
 #ifdef __WAR_SYSTEM__
@@ -4000,7 +4000,11 @@ Skulls_t Player::getSkullType(const Creature* creature) const
 		if(g_game.getWorldType() != WORLDTYPE_OPEN)
 			return SKULL_NONE;
 
-		if((player == this || (skull != SKULL_NONE && player->getSkull() < SKULL_RED)) && player->hasAttacked(this))
+		if((player == this || (skull != SKULL_NONE && player->getSkull() < SKULL_RED)) && player->hasAttacked(this)
+#ifdef __WAR_SYSTEM__
+			&& !player->isEnemy(this, true)
+#endif
+		)
 			return SKULL_YELLOW;
 
 		if(player->getSkull() == SKULL_NONE && isPartner(player) && g_game.getWorldType() != WORLDTYPE_OPTIONAL)
@@ -4895,15 +4899,15 @@ bool Player::isInviting(const Player* player) const
 
 bool Player::isPartner(const Player* player) const
 {
-	if(!player || !getParty() || !player->getParty())
+	if(!player)
 		return false;
 #ifdef __WAR_SYSTEM__
 
-	if(!warMap.empty() && player->getGuildId() == guildId)
-		return true;
+        if(!warMap.empty() && player->getGuildId() == guildId)
+                return true;
 #endif
 
-	return player->getParty() == party;
+	return player->getParty() && player->getParty() == party;
 }
 
 bool Player::getHideHealth() const
