@@ -128,8 +128,8 @@ class Spell : public BaseSpell
 		int32_t getMana() const {return mana;}
 		int32_t getManaPercent() const {return manaPercent;}
 		uint32_t getExhaustion() const {return exhaustion;}
-		const bool isEnabled() const {return enabled;}
-		const bool isPremium() const {return premium;}
+		bool isEnabled() const {return enabled;}
+		bool isPremium() const {return premium;}
 
 		virtual bool isInstant() const = 0;
 		bool isLearnable() const {return learnable;}

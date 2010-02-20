@@ -61,7 +61,7 @@ class ChatChannel
 
 		uint32_t getLevel() const {return m_level;}
 		uint32_t getAccess() const {return m_access;}
-		virtual const uint32_t getOwner() {return 0;}
+		virtual uint32_t getOwner() {return 0;}
 
 		bool hasFlag(uint16_t value) const {return ((m_flags & (uint16_t)value) == (uint16_t)value);}
 		bool checkVocation(uint32_t vocationId) const
@@ -93,7 +93,7 @@ class PrivateChatChannel : public ChatChannel
 		PrivateChatChannel(uint16_t id, std::string name, uint16_t flags);
 		virtual ~PrivateChatChannel() {}
 
-		virtual const uint32_t getOwner() {return m_owner;}
+		virtual uint32_t getOwner() {return m_owner;}
 		void setOwner(uint32_t id) {m_owner = id;}
 
 		bool isInvited(const Player* player);

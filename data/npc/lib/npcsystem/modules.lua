@@ -434,7 +434,7 @@ if(Modules == nil) then
 				module.npcHandler:say('Get out of there with this blood!', cid)
 			end
 		else
-			modulenpcHandler:say('I can only allow premium players to travel there.', cid)
+			module.npcHandler:say('I can only allow premium players to travel there.', cid)
 		end
 
 		module.npcHandler:resetNpc()
