@@ -1090,7 +1090,7 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 			s << "mana shield";
 		}
 
-		if(hasBitSet(it.abilities.conditionSuppressions, CONDITION_DRUNK))
+		if(hasBitSet(CONDITION_DRUNK, it.abilities.conditionSuppressions))
 		{
 			if(begin)
 			{
