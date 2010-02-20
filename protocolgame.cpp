@@ -1560,6 +1560,10 @@ void ProtocolGame::sendCreatureEmblem(const Creature* creature)
 	if(!canSee(creature))
 		return;
 
+	uint32_t stackpos = creature->getTile()->getClientIndexOfThing(player, creature);
+	if(stackpos >= 10)
+		return;
+
 	NetworkMessage_ptr msg = getOutputBuffer();
 	if(msg)
 	{
