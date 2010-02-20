@@ -16669,12 +16669,14 @@
 		<attribute key="description" value="Something is wobbling inside. Maybe with a fishing rod you could reach it."/>
 		<attribute key="decayTo" value="10500" />
 		<attribute key="duration" value="600" />
-		<attribute key="corpseType" value="water"/>
+		<attribute key="corpseType" value="undead"/>
+		<attribute key="fluidSource" value="water"/>
 	</item>
 	<item id="10500" name="remains of a water elemental">
 		<attribute key="description" value="It has already been emptied of the treasure it held."/>
 		<attribute key="decayTo" value="0" />
 		<attribute key="duration" value="300" />
+		<attribute key="corpseType" value="undead"/>
 	</item>
 	<item id="10502" article="a" name="engraved wedding ring">
 		<attribute key="weight" value="40" />
