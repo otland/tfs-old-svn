@@ -10,7 +10,7 @@ FLAGS = -D_THREAD_SAFE -D_REENTRANT -D__NO_HOMEDIR_CONF__  -D__ENABLE_SERVER_DIA
 CXXFLAGS = $(INCLUDEDIRS) $(FLAGS) -Werror -Wall -O0 -ggdb
 CXX = g++
 
-LIBS = -lxml2 -lpthread -llua5.1 -lgmp -lmysqlclient -lboost_regex -llua5.1-sql-mysql -ldl -lboost_system
+LIBS = -lxml2 -lpthread -llua5.1 -lgmp -lmysqlclient -lboost_regex -llua5.1-sql-mysql -ldl -lboost_system -lboost_thread
 
 LDFLAGS = $(LIBDIRS) $(LIBS)
 
