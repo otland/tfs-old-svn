@@ -1596,6 +1596,7 @@ void ProtocolGame::sendCreatureImpassable(const Creature* creature)
 		TRACK_MESSAGE(msg);
 		msg->put<char>(0x92);
 		msg->put<uint32_t>(creature->getID());
+		msg->put<char>(player->canWalkthrough(creature));
 	}
 }
 

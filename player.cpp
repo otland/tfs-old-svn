@@ -1897,7 +1897,6 @@ void Player::addExperience(uint64_t exp)
 		updateBaseSpeed();
 		g_game.changeSpeed(this, 0);
 
-		g_game.updateCreatureImpassable(this);
 		g_game.addCreatureHealth(this);
 		if(party)
 			party->updateSharedExperience();
@@ -1938,8 +1937,6 @@ void Player::removeExperience(uint64_t exp, bool updateStats/* = true*/)
 		{
 			updateBaseSpeed();
 			g_game.changeSpeed(this, 0);
-
-			g_game.updateCreatureImpassable(this);
 			g_game.addCreatureHealth(this);
 		}
 
