@@ -475,17 +475,24 @@ bool IOGuild::war(Player* player, Player* target, std::pair<uint32_t, WarInfo_t>
 		if(it->second->isRemoved())
 			continue;
 
-		g_game.updateCreatureEmblem(it->second);
+		bool update = false;
 		if(it->second->getGuildId() == ids[WARINFO_GUILD])
 		{
 			it->second->removeEnemy(ids[WARINFO_ENEMY]);
-			g_game.updateCreatureSkull(it->second);
+			update = true;
 		}
 		else if(it->second->getGuildId() == ids[WARINFO_ENEMY])
 		{
 			it->second->removeEnemy(ids[WARINFO_GUILD]);
-			g_game.updateCreatureSkull(it->second);
+			update = true;
 		}
+
+		if(!update)
+			continue;
+
+		g_game.updateCreatureEmblem(it->second); //will re-add the creature
+		/*g_game.updateCreatureImpassable(it->second);
+		g_game.updateCreatureSkull(it->second);*/
 	}
 
 	s << names[enemy.second] << " has just won the war against " << names[enemy.second == WARINFO_GUILD] << ".";

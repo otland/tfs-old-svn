@@ -1560,10 +1560,6 @@ void ProtocolGame::sendCreatureEmblem(const Creature* creature)
 	if(!canSee(creature))
 		return;
 
-	/*uint32_t stackpos = creature->getTile()->getClientIndexOfThing(player, creature);
-	if(stackpos >= 10)
-		return;
-
 	NetworkMessage_ptr msg = getOutputBuffer();
 	if(msg)
 	{
@@ -1582,14 +1578,20 @@ void ProtocolGame::sendCreatureEmblem(const Creature* creature)
 		}
 		else
 			AddTileCreature(msg, creature->getPosition(), stackpos, creature);
-	}*/
+	}
+}
+
+void ProtocolGame::sendCreatureImpassable(const Creature* creature)
+{
+	if(!canSee(creature))
+		return;
+
 	NetworkMessage_ptr msg = getOutputBuffer();
 	if(msg)
 	{
 		TRACK_MESSAGE(msg);
 		msg->put<char>(0x92);
 		msg->put<uint32_t>(creature->getID());
-		msg->put<char>(player->getGuildEmblem(creature));
 	}
 }
 

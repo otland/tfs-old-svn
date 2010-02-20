@@ -553,6 +553,8 @@ class Player : public Creature, public Cylinder
 			{if(client) client->sendCreatureShield(creature);}
 		void sendCreatureEmblem(const Creature* creature)
 			{if(client) client->sendCreatureEmblem(creature);}
+		void sendCreatureImpassable(const Creature* creature)
+			{if(client) client->sendCreatureImpassable(creature);}
 
 		//container
 		void sendAddContainerItem(const Container* container, const Item* item);

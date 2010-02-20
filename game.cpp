@@ -4823,6 +4823,19 @@ void Game::updateCreatureEmblem(Creature* creature)
 	}
 }
 
+void Game::updateCreatureImpassable(Creature* creature)
+{
+	const SpectatorVec& list = getSpectators(creature->getPosition());
+
+	//send to client
+	Player* tmpPlayer = NULL;
+	for(SpectatorVec::const_iterator it = list.begin(); it != list.end(); ++it)
+	{
+		if((tmpPlayer = (*it)->getPlayer()))
+			tmpPlayer->sendCreatureImpassable(creature);
+	}
+}
+
 bool Game::playerInviteToParty(uint32_t playerId, uint32_t invitedId)
 {
 	Player* player = getPlayerByID(playerId);

@@ -1895,12 +1895,12 @@ void Player::addExperience(uint64_t exp)
 	if(prevLevel != level)
 	{
 		updateBaseSpeed();
-		setBaseSpeed(getBaseSpeed());
-
 		g_game.changeSpeed(this, 0);
+
+		g_game.updateCreatureImpassable(this);
 		g_game.addCreatureHealth(this);
-		if(getParty())
-			getParty()->updateSharedExperience();
+		if(party)
+			party->updateSharedExperience();
 
 		char advMsg[60];
 		sprintf(advMsg, "You advanced from Level %d to Level %d.", prevLevel, level);
@@ -1937,9 +1937,9 @@ void Player::removeExperience(uint64_t exp, bool updateStats/* = true*/)
 		if(updateStats)
 		{
 			updateBaseSpeed();
-			setBaseSpeed(getBaseSpeed());
-
 			g_game.changeSpeed(this, 0);
+
+			g_game.updateCreatureImpassable(this);
 			g_game.addCreatureHealth(this);
 		}
 
