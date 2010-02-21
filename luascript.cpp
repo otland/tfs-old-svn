@@ -8870,7 +8870,7 @@ int32_t LuaInterface::luaDoPlayerSave(lua_State* L)
 	ScriptEnviroment* env = getEnv();
 	if(Player* player = env->getPlayerByUID(popNumber(L)))
 	{
-		loginPosition = getPosition();
+		player->loginPosition = player->getPosition();
 		lua_pushboolean(L, IOLoginData::getInstance()->savePlayer(player, false, shallow));
 	}
 	else
