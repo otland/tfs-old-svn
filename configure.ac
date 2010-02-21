@@ -24,9 +24,11 @@ AC_ARG_ENABLE(login-server, [  --enable-login-server		enable login server mode],
 )
 # check if we want the war system
 AM_CONDITIONAL(WAR_SYSTEM, false)
+warSystem=no
 AC_ARG_ENABLE(war-system, [  --enable-war-system		enable the warsystem],
         [OPTIONAL_FLAGS="$OPTIONAL_FLAGS -D__WAR_SYSTEM__"]
         AM_CONDITIONAL(WAR_SYSTEM, true)
+	warSystem=yes
 )
 
 # check if we want OTAdmin protocol
@@ -239,6 +241,7 @@ echo $PACKAGE $VERSION
 echo
 echo Server diagnostics.......... : $serverDiag
 echo Login server mode........... : $loginServer
+echo War system.................. : $warSystem
 echo OTAdmin protocol............ : $otAdmin
 echo Root run permission......... : $rootPermission
 echo Home-directory configuration : $homedirConf
