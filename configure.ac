@@ -22,11 +22,17 @@ AC_ARG_ENABLE(login-server, [  --enable-login-server		enable login server mode],
 	AM_CONDITIONAL(LOGIN_SERVER, true)
 	loginServer=yes
 )
+# check if we want the war system
+AM_CONDITIONAL(WAR_SYSTEM, false)
+AC_ARG_ENABLE(war-system, [  --enable-war-system		enable the warsystem],
+        [OPTIONAL_FLAGS="$OPTIONAL_FLAGS -D__WAR_SYSTEM__"]
+        AM_CONDITIONAL(WAR_SYSTEM, true)
+)
 
 # check if we want OTAdmin protocol
 AM_CONDITIONAL(OT_ADMIN, false)
 otAdmin=no
-AC_ARG_ENABLE(ot-admin, [  --enable-ot-admin			enable OTAdmin protocol],
+AC_ARG_ENABLE(ot-admin, [  --enable-ot-admin		enable OTAdmin protocol],
 	[OPTIONAL_FLAGS="$OPTIONAL_FLAGS -D__OTADMIN__"]
 	AM_CONDITIONAL(OT_ADMIN, true)
 	otAdmin=yes
@@ -56,7 +62,7 @@ AC_SUBST(OPTIONAL_FLAGS)
 
 # check if we want a debug build
 debugBuild=no
-AC_ARG_ENABLE(debug, [  --enable-debug				enable debuging],
+AC_ARG_ENABLE(debug, [  --enable-debug		enable debuging],
 	[DEBUG_FLAGS="-D__DEBUG__ -D__DEBUG_MOVESYS__ -D__DEBUG_CHAT__ -D__DEBUG_EXCEPTION_REPORT__ -D__DEBUG_HOUSES__ -D__DEBUG_LUASCRIPTS__ -D__DEBUG_MAILBOX__ -D__DEBUG_NET__ -D__DEBUG_NET_DETAIL__ -D__DEBUG_RAID__ -D__DEBUG_SCHEDULER__ -D__DEBUG_SPAWN__ -D__SQL_QUERY_DEBUG__"]
 	debugBuild=yes
 )
@@ -70,7 +76,7 @@ AM_CONDITIONAL(USE_SQLITE, false)
 useSQLite=no
 
 # check if we want mysql enabled
-AC_ARG_ENABLE(mysql, [  --enable-mysql				enable MySQL support], [
+AC_ARG_ENABLE(mysql, [  --enable-mysql		enable MySQL support], [
 	AM_CONDITIONAL(USE_MYSQL, true)
 	MYSQL_FLAGS=-D__USE_MYSQL__
 	AC_SUBST(MYSQL_FLAGS)
@@ -78,7 +84,7 @@ AC_ARG_ENABLE(mysql, [  --enable-mysql				enable MySQL support], [
 ])
 
 # check if we want postgresql enabled
-AC_ARG_ENABLE(pgsql, [  --enable-pgsql				enable PostgreSQL support], [
+AC_ARG_ENABLE(pgsql, [  --enable-pgsql		enable PostgreSQL support], [
 	AM_CONDITIONAL(USE_PGSQL, true)
 	PGSQL_FLAGS="-D__USE_PGSQL__ -I`pg_config --includedir`"
 	AC_SUBST(PGSQL_FLAGS)
@@ -86,7 +92,7 @@ AC_ARG_ENABLE(pgsql, [  --enable-pgsql				enable PostgreSQL support], [
 ])
 
 # check if we want sqlite enabled
-AC_ARG_ENABLE(sqlite, [  --enable-sqlite			enable SQLite support], [
+AC_ARG_ENABLE(sqlite, [  --enable-sqlite		enable SQLite support], [
 	AM_CONDITIONAL(USE_SQLITE, true)
 	SQLITE_FLAGS=-D__USE_SQLITE__
 	AC_SUBST(SQLITE_FLAGS)
@@ -94,7 +100,7 @@ AC_ARG_ENABLE(sqlite, [  --enable-sqlite			enable SQLite support], [
 ])
 
 # check if we want the profiler
-AC_ARG_ENABLE(profiler, [  --enable-profiler			enable profiler support], [PROFILER_FLAGS=-pg])
+AC_ARG_ENABLE(profiler, [  --enable-profiler		enable profiler support], [PROFILER_FLAGS=-pg])
 AC_SUBST(PROFILER_FLAGS)
 
 # Checks for header files.
