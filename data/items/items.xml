@@ -2210,6 +2210,7 @@
 		<attribute key="duration" value="600" />
 		<attribute key="showduration" value="1" />
 		<attribute key="invisible" value="1" />
+		<attribute key="showattributes" value="1" />
 	</item>
 	<item id="2203" article="a" name="power ring">
 		<attribute key="weight" value="80" />
@@ -2228,6 +2229,7 @@
 		<attribute key="duration" value="1200" />
 		<attribute key="showduration" value="1" />
 		<attribute key="manashield" value="1" />
+		<attribute key="showattributes" value="1" />
 	</item>
 	<item id="2205" article="a" name="life ring">
 		<attribute key="weight" value="80" />
@@ -2240,6 +2242,7 @@
 		<attribute key="manaGain" value="4" />
 		<attribute key="manaTicks" value="3000" />
 		<attribute key="showduration" value="1" />
+		<attribute key="showattributes" value="1" />
 	</item>
 	<item id="2206" article="a" name="time ring">
 		<attribute key="weight" value="90" />
@@ -2249,6 +2252,7 @@
 		<attribute key="duration" value="600" />
 		<attribute key="showduration" value="1" />
 		<attribute key="speed" value="60" />
+		<attribute key="showattributes" value="1" />
 	</item>
 	<item id="2207" article="a" name="sword ring">
 		<attribute key="weight" value="90" />
@@ -2320,6 +2324,7 @@
 		<attribute key="suppressDrunk" value="1" />
 		<attribute key="duration" value="3600" />
 		<attribute key="showduration" value="1" />
+		<attribute key="showattributes" value="1" />
 	</item>
 	<item id="2216" article="a" name="ring of healing">
 		<attribute key="weight" value="100" />
@@ -2331,6 +2336,7 @@
 		<attribute key="manaGain" value="4" />
 		<attribute key="manaTicks" value="1000" />
 		<attribute key="showduration" value="1" />
+		<attribute key="showattributes" value="1" />
 	</item>
 	<item id="2217" article="a" name="book">
 		<attribute key="weight" value="1500" />
@@ -4140,6 +4146,7 @@
 		<attribute key="manaGain" value="2" />
 		<attribute key="manaTicks" value="1000" />
 		<attribute key="showduration" value="1" />
+		<attribute key="showattributes" value="1" />
 	</item>
 	<item id="2641" name="traper boots">
 		<attribute key="weight" value="900" />
