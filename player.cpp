@@ -3581,7 +3581,7 @@ void Player::onAttackedCreature(Creature* target)
 		isAlly(targetPlayer) ||
 #endif
 		(g_config.getBool(ConfigManager::ALLOW_FIGHTBACK) && targetPlayer->hasAttacked(this)
-		&& !targetPlayer->isEnemy(this, true))
+		&& !targetPlayer->isEnemy(this, true)))
 		return;
 
 	if(!pzLocked)
@@ -3688,12 +3688,12 @@ GuildEmblems_t Player::getGuildEmblem(const Creature* creature) const
 	return player->getGuildId() == guildId ? EMBLEM_GREEN : EMBLEM_BLUE;
 }
 
-bool Player::getEnemy(const Player* enemy, War_t& data) const
+bool Player::getEnemy(const Player* player, War_t& data) const
 {
-	if(!guildId || !enemy || enemy->isRemoved())
+	if(!guildId || !player || player->isRemoved())
 		return false;
 
-	uint32_t guild = enemy->getGuildId();
+	uint32_t guild = player->getGuildId();
 	if(!guild)
 		return false;
 
@@ -3705,12 +3705,12 @@ bool Player::getEnemy(const Player* enemy, War_t& data) const
 	return true;
 }
 
-bool Player::isEnemy(const Player* enemy, bool allies) const
+bool Player::isEnemy(const Player* player, bool allies) const
 {
-	if(!guildId || !enemy || enemy->isRemoved())
+	if(!guildId || !player || player->isRemoved())
 		return false;
 
-	uint32_t guild = enemy->getGuildId();
+	uint32_t guild = player->getGuildId();
 	if(!guild)
 		return false;
 
@@ -3718,7 +3718,7 @@ bool Player::isEnemy(const Player* enemy, bool allies) const
 		&& allies && guildId == guild) || warMap.find(guild) != warMap.end());
 }
 
-bool Player::isAlly(const Player* enemy) const
+bool Player::isAlly(const Player* player) const
 {
 	return !warMap.empty() && player && player->getGuildId() == guildId;
 }

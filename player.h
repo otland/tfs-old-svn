@@ -282,10 +282,10 @@ class Player : public Creature, public Cylinder
 #ifdef __WAR_SYSTEM__
 
 		bool hasEnemy() const {return !warMap.empty();}
-		bool getEnemy(const Player* enemy, War_t& data) const;
+		bool getEnemy(const Player* player, War_t& data) const;
 
-		bool isEnemy(const Player* enemy, bool allies) const;
-		bool isAlly(const Player* enemy) const;
+		bool isEnemy(const Player* player, bool allies) const;
+		bool isAlly(const Player* player) const;
 
 		void addEnemy(uint32_t guild, War_t war)
 			{warMap[guild] = war;}
