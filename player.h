@@ -281,9 +281,11 @@ class Player : public Creature, public Cylinder
 		int32_t getPremiumDays() const {return premiumDays;}
 #ifdef __WAR_SYSTEM__
 
-		bool getEnemy(const Player* enemy, War_t& data) const;
-		bool isEnemy(const Player* enemy, bool allies) const;
 		bool hasEnemy() const {return !warMap.empty();}
+		bool getEnemy(const Player* enemy, War_t& data) const;
+
+		bool isEnemy(const Player* enemy, bool allies) const;
+		bool isAlly(const Player* enemy) const;
 
 		void addEnemy(uint32_t guild, War_t war)
 			{warMap[guild] = war;}

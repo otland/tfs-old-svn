@@ -3576,8 +3576,12 @@ void Player::onAttackedCreature(Creature* target)
 		return;
 	}
 
-	if(Combat::isInPvpZone(this, targetPlayer) || isPartner(targetPlayer) || (g_config.getBool(ConfigManager::ALLOW_FIGHTBACK)
-		&& targetPlayer->hasAttacked(this) && targetPlayer->getGuildEmblem(this) == EMBLEM_NONE))
+	if(Combat::isInPvpZone(this, targetPlayer) || isPartner(targetPlayer) ||
+#ifdef __WAR_SYSTEM__
+		isAlly(targetPlayer) ||
+#endif
+		(g_config.getBool(ConfigManager::ALLOW_FIGHTBACK) && targetPlayer->hasAttacked(this)
+		&& !targetPlayer->isEnemy(this, true))
 		return;
 
 	if(!pzLocked)
@@ -3586,22 +3590,19 @@ void Player::onAttackedCreature(Creature* target)
 		sendIcons();
 	}
 
-	if(getZone() != target->getZone())
+	if(getZone() != target->getZone() || skull != SKULL_NONE
+#ifdef __WAR_SYSTEM__
+		|| targetPlayer->isEnemy(this, true)
+#endif
+		)
 		return;
 
-	if(skull == SKULL_NONE
-#ifdef __WAR_SYSTEM__
-		&& !targetPlayer->isEnemy(this)
-#endif
-	)
+	if(targetPlayer->getSkull() != SKULL_NONE)
+		targetPlayer->sendCreatureSkull(this);
+	else if(!hasCustomFlag(PlayerCustomFlag_NotGainSkull))
 	{
-		if(targetPlayer->getSkull() != SKULL_NONE)
-			targetPlayer->sendCreatureSkull(this);
-		else if(!hasCustomFlag(PlayerCustomFlag_NotGainSkull))
-		{
-			setSkull(SKULL_WHITE);
-			g_game.updateCreatureSkull(this);
-		}
+		setSkull(SKULL_WHITE);
+		g_game.updateCreatureSkull(this);
 	}
 }
 
@@ -3669,7 +3670,7 @@ void Player::onTargetCreatureGainHealth(Creature* target, int32_t points)
 		else if(target->getMaster() && target->getMaster()->getPlayer())
 			tmpPlayer = target->getMaster()->getPlayer();
 
-		if(party && isPartner(tmpPlayer))
+		if(isPartner(tmpPlayer))
 			party->addPlayerHealedMember(this, points);
 	}
 }
@@ -3716,6 +3717,11 @@ bool Player::isEnemy(const Player* enemy, bool allies) const
 	return !warMap.empty() && ((g_config.getBool(ConfigManager::OPTIONAL_WAR_ATTACK_ALLY)
 		&& allies && guildId == guild) || warMap.find(guild) != warMap.end());
 }
+
+bool Player::isAlly(const Player* enemy) const
+{
+	return !warMap.empty() && player && player->getGuildId() == guildId;
+}
 #endif
 
 bool Player::onKilledCreature(Creature* target, DeathEntry& entry)
@@ -3736,7 +3742,11 @@ bool Player::onKilledCreature(Creature* target, DeathEntry& entry)
 		return true;
 
 	Player* targetPlayer = target->getPlayer();
-	if(!targetPlayer || Combat::isInPvpZone(this, targetPlayer) || isPartner(targetPlayer))
+	if(!targetPlayer || Combat::isInPvpZone(this, targetPlayer) || isPartner(targetPlayer)
+#ifdef __WAR_SYSTEM__
+		|| isAlly(targetPlayer)
+#endif
+		)
 		return true;
 #ifdef __WAR_SYSTEM__
 
@@ -4010,7 +4020,11 @@ Skulls_t Player::getSkullType(const Creature* creature) const
 		)
 			return SKULL_YELLOW;
 
-		if(player->getSkull() == SKULL_NONE && isPartner(player) && g_game.getWorldType() != WORLDTYPE_OPTIONAL)
+		if(player->getSkull() == SKULL_NONE && isPartner(player) &&
+#ifdef __WAR_SYSTEM__
+			isAlly(player) &&
+#endif
+			g_game.getWorldType() != WORLDTYPE_OPTIONAL)
 			return SKULL_GREEN;
 	}
 
@@ -4902,15 +4916,7 @@ bool Player::isInviting(const Player* player) const
 
 bool Player::isPartner(const Player* player) const
 {
-	if(!player)
-		return false;
-#ifdef __WAR_SYSTEM__
-
-        if(!warMap.empty() && player->getGuildId() == guildId)
-                return true;
-#endif
-
-	return player->getParty() && player->getParty() == party;
+	return player && player->getParty() && player->getParty() == party;
 }
 
 bool Player::getHideHealth() const

@@ -294,7 +294,11 @@ bool Monster::isFriend(const Creature* creature)
 		tmpPlayer = creature->getPlayerMaster();
 
 	const Player* masterPlayer = master->getPlayer();
-	return tmpPlayer && (tmpPlayer == masterPlayer || masterPlayer->isPartner(tmpPlayer));
+	return tmpPlayer && (tmpPlayer == masterPlayer || masterPlayer->isPartner(tmpPlayer)
+#ifdef __WAR_SYSTEM__
+		|| masterPlayer->isAlly(tmpPlayer)
+#endif
+		);
 }
 
 bool Monster::isOpponent(const Creature* creature)
