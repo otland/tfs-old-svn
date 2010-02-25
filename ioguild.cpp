@@ -477,7 +477,7 @@ bool IOGuild::war(Player* player, Player* target, War_t enemy)
 	return g_game.broadcastMessage(s.str().c_str(), MSG_EVENT_ADVANCE);
 }
 
-void frag(Player* player, uint64_t deathId, const DeathList& list)
+void IOGuild::frag(Player* player, uint64_t deathId, const DeathList& list)
 {
 	Database* db = Database::getInstance();
 	War_t war;
