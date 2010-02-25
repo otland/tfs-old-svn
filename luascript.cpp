@@ -2362,7 +2362,7 @@ void LuaInterface::registerFunctions()
 	lua_register(m_luaState, "doRefreshMap", LuaInterface::luaDoRefreshMap);
 #ifdef __WAR_SYSTEM__
 
-	//doGuildAddEnemy(guild, enemy, war, mode)
+	//doGuildAddEnemy(guild, enemy, war, type)
 	lua_register(m_luaState, "doGuildAddEnemy", LuaInterface::luaDoGuildAddEnemy);
 
 	//doGuildRemoveEnemy(guild, enemy)
@@ -9896,17 +9896,20 @@ int32_t LuaInterface::luaGetConfigFile(lua_State* L)
 
 int32_t LuaInterface::luaDoGuildAddEnemy(lua_State* L)
 {
-	//doGuildAddEnemy(guild, enemy, war, mode)
-	WarInfo_t mode = (WarInfo_t)popNumber(L);
-	uint32_t war = popNumber(L), enemy = popNumber(L), guild = popNumber(L), count = 0;
+	//doGuildAddEnemy(guild, enemy, war, type)
+	War_t war;
+	war.type = (WarType_t)popNumber(L);
+	war.war = popNumber(L);
+
+	uint32_t enemy = popNumber(L), guild = popNumber(L), count = 0;
 	for(AutoList<Player>::iterator it = Player::autoList.begin(); it != Player::autoList.end(); ++it)
 	{
-		g_game.updateCreatureEmblem(it->second);
 		if(it->second->isRemoved() || it->second->getGuildId() != guild)
 			continue;
 
-		it->second->addEnemy(war, mode, enemy);
 		++count;
+		it->second->addEnemy(enemy, war);
+		g_game.updateCreatureEmblem(it->second);
 	}
 
 	lua_pushnumber(L, count);
@@ -9919,12 +9922,12 @@ int32_t LuaInterface::luaDoGuildRemoveEnemy(lua_State* L)
 	uint32_t enemy = popNumber(L), guild = popNumber(L), count = 0;
 	for(AutoList<Player>::iterator it = Player::autoList.begin(); it != Player::autoList.end(); ++it)
 	{
-		g_game.updateCreatureEmblem(it->second);
 		if(it->second->isRemoved() || it->second->getGuildId() != guild)
 			continue;
 
-		it->second->removeEnemy(enemy);
 		++count;
+		it->second->removeEnemy(enemy);
+		g_game.updateCreatureEmblem(it->second);
 	}
 
 	lua_pushnumber(L, count);

@@ -57,15 +57,6 @@ enum lootDrop_t
 	LOOT_DROP_NONE
 };
 
-enum killflags_t
-{
-	KILLFLAG_NONE = 0,
-	KILLFLAG_LASTHIT = 1 << 0,
-	KILLFLAG_JUSTIFY = 1 << 1,
-	KILLFLAG_UNJUSTIFIED = 1 << 2,
-	KILLFLAG_GUILDWAR = 1 << 3
-};
-
 enum Visible_t
 {
 	VISIBLE_NONE = 0,
@@ -91,15 +82,26 @@ struct DeathLessThan;
 struct DeathEntry
 {
 		DeathEntry(std::string name, int32_t dmg):
-			data(name), damage(dmg), value(0) {}
+			data(name), damage(dmg), last(false), justify(false), unjustified(false) {}
 		DeathEntry(Creature* killer, int32_t dmg):
-			data(killer), damage(dmg), value(0) {}
+			data(killer), damage(dmg), last(false), justify(false), unjustified(false) {}
 
 		bool isCreatureKill() const {return data.type() == typeid(Creature*);}
 		bool isNameKill() const {return !isCreatureKill();}
+#ifdef __WAR_SYSTEM__
 
-		void setValue(int8_t v) {value = v;}
-		int16_t getValue() const {return value;}
+		void setWar(War_t v) {war = v;}
+		War_t getWar() const {return war;}
+#endif
+
+		void setLast() {last = true;}
+		bool isLast() const {return last;}
+
+		void setJustify() {justify = true;}
+		bool isJustify() const {return justify;}
+
+		void setUnjustified() {unjustified = true;}
+		bool isUnjustified() const {return unjustified;}
 
 		const std::type_info& getKillerType() const {return data.type();}
 		int32_t getDamage() const {return damage;}
@@ -108,11 +110,17 @@ struct DeathEntry
 		std::string getKillerName() const {return boost::any_cast<std::string>(data);}
 
 	protected:
+		friend struct DeathLessThan;
+
 		boost::any data;
 		int32_t damage;
-		int16_t value;
+#ifdef __WAR_SYSTEM__
+		War_t war;
+#endif
 
-		friend struct DeathLessThan;
+		bool last;
+		bool justify;
+		bool unjustified;
 };
 
 struct DeathLessThan
@@ -363,7 +371,7 @@ class Creature : public AutoId, virtual public Thing
 		virtual void onSummonAttackedCreatureDrain(Creature* summon, Creature* target, int32_t points) {}
 		virtual void onTargetCreatureGainHealth(Creature* target, int32_t points);
 		virtual void onAttackedCreatureKilled(Creature* target);
-		virtual bool onKilledCreature(Creature* target, uint32_t& flags);
+		virtual bool onKilledCreature(Creature* target, DeathEntry& entry);
 		virtual void onGainExperience(double& gainExp, bool fromMonster, bool multiplied);
 		virtual void onGainSharedExperience(double& gainExp, bool fromMonster, bool multiplied);
 		virtual void onAttackedCreatureBlockHit(Creature* target, BlockType_t blockType) {}

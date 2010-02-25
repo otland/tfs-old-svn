@@ -541,10 +541,9 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool preLo
 				{
 					uint32_t guild = result->getDataInt("guild_id");
 					if(player->guildId == guild)
-						player->addEnemy(result->getDataInt("id"), WARINFO_ENEMY,
-							result->getDataInt("enemy_id"));
+						player->addEnemy(result->getDataInt("enemy_id"), War_t(result->getDataInt("id"), WAR_ENEMY));
 					else
-						player->addEnemy(result->getDataInt("id"), WARINFO_GUILD, guild);
+						player->addEnemy(guild, War_t(result->getDataInt("id"), WAR_GUILD));
 				}
 				while(result->next());
 				result->free();
@@ -1090,14 +1089,29 @@ bool IOLoginData::playerDeath(Player* player, const DeathList& dl)
 	if(tmp > 0 && size > tmp)
 		size = tmp;
 
+#ifdef __WAR_SYSTEM__
+	DeathList wl;
+#endif
 	uint64_t deathId = db->getLastInsertId();
 	for(DeathList::const_iterator it = dl.begin(); i < size && it != dl.end(); ++it, ++i)
 	{
 		query.str("");
-		query << "INSERT INTO `killers` (`death_id`, `final_hit`, `unjustified`) VALUES ("
-			<< deathId << ", " << (it == dl.begin()) << ", " << it->getValue() << ")";
+		query << "INSERT INTO `killers` (`death_id`, `final_hit`, `unjustified`"
+#ifdef __WAR_SYSTEM__
+			<< ", `war`"
+#endif
+			<< ") VALUES (" << deathId << ", " << it->isLast() << ", " << it->isUnjustified()
+#ifdef __WAR_SYSTEM__
+			<< ", " << it->getWar().war
+#endif
+			<< ")";
 		if(!db->executeQuery(query.str()))
 			return false;
+#ifdef __WAR_SYSTEM__
+
+		if(it->getWar().war)
+			wl.push_back(*it);
+#endif
 
 		std::string name;
 		uint64_t killId = db->getLastInsertId();
@@ -1134,6 +1148,11 @@ bool IOLoginData::playerDeath(Player* player, const DeathList& dl)
 				return false;
 		}
 	}
+#ifdef __WAR_SYSTEM__
+
+	if(!wl.empty())
+		IOGuild::getInstance()->frag(player, deathId, wl);
+#endif
 
 	return trans.commit();
 }

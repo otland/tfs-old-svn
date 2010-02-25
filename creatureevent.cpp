@@ -318,7 +318,11 @@ std::string CreatureEvent::getScriptEventParams() const
 		case CREATURE_EVENT_CAST:
 			return "cid, target";
 		case CREATURE_EVENT_KILL:
-			return "cid, target, flags";
+#ifndef __WAR_SYSTEM__
+			return "cid, target, damage, flags";
+#else
+			return "cid, target, damage, flags, war";
+#endif
 		case CREATURE_EVENT_DEATH:
 			return "cid, corpse, deathList";
 		case CREATURE_EVENT_PREPAREDEATH:
@@ -1385,11 +1389,21 @@ uint32_t CreatureEvent::executeCast(Creature* creature, Creature* target/* = NUL
 	}
 }
 
-uint32_t CreatureEvent::executeKill(Creature* creature, Creature* target, uint32_t flags)
+uint32_t CreatureEvent::executeKill(Creature* creature, Creature* target, const DeathEntry& entry)
 {
-	//onKill(cid, target, flags)
+	//onKill(cid, target, damage, flags)
 	if(m_interface->reserveEnv())
 	{
+		uint32_t flags = 0;
+		if(entry.isLast())
+			flags |= 1;
+
+		if(entry.isJustify())
+			flags |= 2;
+
+		if(entry.isUnjustified())
+			flags |= 4;
+
 		ScriptEnviroment* env = m_interface->getEnv();
 		if(m_scripted == EVENT_SCRIPT_BUFFER)
 		{
@@ -1398,7 +1412,11 @@ uint32_t CreatureEvent::executeKill(Creature* creature, Creature* target, uint32
 			scriptstream << "local cid = " << env->addThing(creature) << std::endl;
 
 			scriptstream << "local target = " << env->addThing(target) << std::endl;
+			scriptstream << "local damage = " << entry.getDamage() << std::endl;
 			scriptstream << "local flags = " << flags << std::endl;
+#ifdef __WAR_SYSTEM__
+			scriptstream << "local war = " << entry.getWar().war << std::endl;
+#endif
 
 			scriptstream << m_scriptData;
 			bool result = true;
@@ -1427,7 +1445,12 @@ uint32_t CreatureEvent::executeKill(Creature* creature, Creature* target, uint32
 
 			lua_pushnumber(L, env->addThing(creature));
 			lua_pushnumber(L, env->addThing(target));
+
+			lua_pushnumber(L, entry.getDamage());
 			lua_pushnumber(L, flags);
+#ifdef __WAR_SYSTEM__
+			lua_pushnumber(L, entry.getWar().war);
+#endif
 
 			bool result = m_interface->callFunction(3);
 			m_interface->releaseEnv();

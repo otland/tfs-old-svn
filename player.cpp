@@ -3684,7 +3684,7 @@ GuildEmblems_t Player::getGuildEmblem(const Creature* creature) const
 	return player->getGuildId() == guildId ? EMBLEM_GREEN : EMBLEM_BLUE;
 }
 
-bool Player::getEnemy(const Player* enemy, std::pair<uint32_t, WarInfo_t>& data) const
+bool Player::getEnemy(const Player* enemy, War_t& data) const
 {
 	if(!guildId || !enemy || enemy->isRemoved())
 		return false;
@@ -3715,9 +3715,9 @@ bool Player::isEnemy(const Player* enemy, bool allies) const
 }
 #endif
 
-bool Player::onKilledCreature(Creature* target, uint32_t& flags)
+bool Player::onKilledCreature(Creature* target, DeathEntry& entry)
 {
-	if(!Creature::onKilledCreature(target, flags))
+	if(!Creature::onKilledCreature(target, entry))
 		return false;
 
 	if(hasFlag(PlayerFlag_NotGenerateLoot))
@@ -3737,20 +3737,23 @@ bool Player::onKilledCreature(Creature* target, uint32_t& flags)
 		return true;
 #ifdef __WAR_SYSTEM__
 
-	std::pair<uint32_t, WarInfo_t> enemy;
-	if(targetPlayer->getEnemy(this, enemy) && (!hasBitSet((uint32_t)KILLFLAG_LASTHIT,
-		flags) || IOGuild::getInstance()->war(this, targetPlayer, enemy)))
-		flags |= (uint32_t)KILLFLAG_GUILDWAR;
+	War_t enemy;
+	if(targetPlayer->getEnemy(this, enemy) && (!entry.isLast() || IOGuild::getInstance()->war(this, targetPlayer, enemy)))
+		entry.setWar(enemy);
 #endif
 
-	if(!hasBitSet((uint32_t)KILLFLAG_JUSTIFY, flags) || !hasCondition(CONDITION_INFIGHT))
+	if(!entry.isJustify() || !hasCondition(CONDITION_INFIGHT))
 		return true;
 
-	if(!targetPlayer->hasAttacked(this) && target->getSkull() == SKULL_NONE && targetPlayer != this
-		&& ((g_config.getBool(ConfigManager::USE_FRAG_HANDLER) && addUnjustifiedKill(
-		targetPlayer, !hasBitSet((uint32_t)KILLFLAG_GUILDWAR, flags)))
-		|| hasBitSet((uint32_t)KILLFLAG_LASTHIT, flags)))
-		flags |= (uint32_t)KILLFLAG_UNJUSTIFIED;
+	if(!targetPlayer->hasAttacked(this) && target->getSkull() == SKULL_NONE && targetPlayer != this && ((g_config.getBool(
+		ConfigManager::USE_FRAG_HANDLER) && addUnjustifiedKill(targetPlayer,
+#ifndef __WAR_SYSTEM__
+		true
+#else
+		!entry.getWar().war
+#endif
+		)) || entry.isLast()))
+		entry.setUnjustified();
 
 	addInFightTicks(true, g_config.getNumber(ConfigManager::WHITE_SKULL_TIME));
 	return true;

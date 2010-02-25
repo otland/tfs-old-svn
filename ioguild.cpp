@@ -404,69 +404,50 @@ std::string IOGuild::getMotd(uint32_t guild)
 }
 #ifdef __WAR_SYSTEM__
 
-bool IOGuild::war(Player* player, Player* target, std::pair<uint32_t, WarInfo_t> enemy)
+bool IOGuild::war(Player* player, Player* target, War_t enemy)
 {
-	ChatChannel* channel = NULL;
-	std::stringstream s;
-	if((channel = g_chat.getChannel(player, CHANNEL_GUILD)))
-	{
-		s << player->getName() << " just killed " << target->getName() << ".";
-		channel->talk("", SPEAK_CHANNEL_RA, s.str());
-	}
-
-	s.str("");
-	if((channel = g_chat.getChannel(target, CHANNEL_GUILD)))
-	{
-		s << target->getName() << " just died by " << player->getName() << ".";
-		channel->talk("", SPEAK_CHANNEL_RA, s.str());
-	}
-
-	s.str("");
 	Database* db = Database::getInstance();
 	DBResult* result;
 
 	DBQuery query;
-	query << "SELECT `g`.`name` AS `guild_name`, `e`.`name` AS `enemy_name`, `w`.* FROM `guild_wars` w INNER JOIN `guilds` g ON `w`.`guild_id` = `g`.`id` INNER JOIN `guilds` e ON `w`.`enemy_id` = `e`.`id` WHERE `w`.`id` = " << enemy.first;
+	query << "SELECT `g`.`name` AS `guild_name`, `e`.`name` AS `enemy_name`, `w`.* FROM `guild_wars` w INNER JOIN `guilds` g ON `w`.`guild_id` = `g`.`id` INNER JOIN `guilds` e ON `w`.`enemy_id` = `e`.`id` WHERE `w`.`id` = " << enemy.war;
 	if(!(result = db->storeQuery(query.str())))
 		return false;
 
-	uint32_t ids[WARINFO_LIMIT];
-	ids[WARINFO_GUILD] = result->getDataInt("guild_id");
-	ids[WARINFO_ENEMY] = result->getDataInt("enemy_id");
+	enemy.ids[WAR_GUILD] = result->getDataInt("guild_id");
+	enemy.ids[WAR_ENEMY] = result->getDataInt("enemy_id");
+	enemy.names[WAR_GUILD] = result->getDataString("guild_name");
+	enemy.names[WAR_ENEMY] = result->getDataString("enemy_name");
 
-	std::string names[WARINFO_LIMIT];
-	names[WARINFO_GUILD] = result->getDataString("guild_name");
-	names[WARINFO_ENEMY] = result->getDataString("enemy_name");
+	enemy.frags[WAR_GUILD] = result->getDataInt("guild_kills");
+	enemy.frags[WAR_ENEMY] = result->getDataInt("enemy_kills");
+	enemy.frags[enemy.type]++;
 
-	uint32_t frags[WARINFO_LIMIT + 1];
-	frags[WARINFO_GUILD] = result->getDataInt("guild_kills");
-	frags[WARINFO_ENEMY] = result->getDataInt("enemy_kills");
+	enemy.limit = result->getDataInt("frags");
+	enemy.end = result->getDataInt("end");
+	enemy.status = result->getDataInt("status");
+	enemy.payment = result->getDataInt("payment");
 
-	frags[WARINFO_LIMIT] = result->getDataInt("frags");
-	uint32_t end = result->getDataInt("end"), status = result->getDataInt(
-		"status"), payment = result->getDataInt("payment");
 	result->free();
-
-	frags[enemy.second]++;
-	if(frags[WARINFO_GUILD] < frags[WARINFO_LIMIT] && frags[WARINFO_ENEMY] < frags[WARINFO_LIMIT] && (status != 1 || !end || end > time(NULL)))
+	if(enemy.frags[WAR_GUILD] < enemy.limit && enemy.frags[WAR_ENEMY] < enemy.limit && (enemy.status != 1 || !enemy.end || enemy.end > time(NULL)))
 	{
 		query.str("");
-		query << "UPDATE `guild_wars` SET `guild_kills` = " << frags[WARINFO_GUILD] << ", `enemy_kills` = " << frags[WARINFO_ENEMY] << " WHERE `id` = " << enemy.first;
+		query << "UPDATE `guild_wars` SET `guild_kills` = " << enemy.frags[WAR_GUILD] << ", `enemy_kills` = " << enemy.frags[WAR_ENEMY] << " WHERE `id` = " << enemy.war;
 		return db->executeQuery(query.str());
 	}
 
 	query.str("");
-	query << "UPDATE `guilds` SET `balance` = `balance` - " << payment << " WHERE `id` = " << ids[enemy.second == WARINFO_GUILD];
+	query << "UPDATE `guilds` SET `balance` = `balance` - " << enemy.payment << " WHERE `id` = " << enemy.ids[enemy.type == WAR_GUILD];
 	if(!db->executeQuery(query.str()))
 		return false;
 
 	query.str("");
-	query << "UPDATE `guilds` SET `balance` = `balance` + " << payment << " WHERE `id` = " << ids[enemy.second];
+	query << "UPDATE `guilds` SET `balance` = `balance` + " << enemy.payment << " WHERE `id` = " << enemy.ids[enemy.type];
 	if(!db->executeQuery(query.str()))
 		return false;
 
 	query.str("");
-	query << "UPDATE `guild_wars` SET `guild_kills` = " << frags[WARINFO_GUILD] << ", `enemy_kills` = " << frags[WARINFO_ENEMY] << ", `end` = " << time(NULL) << ", `status` = 5 WHERE `id` = " << enemy.first;
+	query << "UPDATE `guild_wars` SET `guild_kills` = " << enemy.frags[WAR_GUILD] << ", `enemy_kills` = " << enemy.frags[WAR_ENEMY] << ", `end` = " << time(NULL) << ", `status` = 5 WHERE `id` = " << enemy.war;
 	if(!db->executeQuery(query.str()))
 		return false;
 
@@ -476,26 +457,73 @@ bool IOGuild::war(Player* player, Player* target, std::pair<uint32_t, WarInfo_t>
 			continue;
 
 		bool update = false;
-		if(it->second->getGuildId() == ids[WARINFO_GUILD])
+		if(it->second->getGuildId() == enemy.ids[WAR_GUILD])
 		{
-			it->second->removeEnemy(ids[WARINFO_ENEMY]);
+			it->second->removeEnemy(enemy.ids[WAR_ENEMY]);
 			update = true;
 		}
-		else if(it->second->getGuildId() == ids[WARINFO_ENEMY])
+		else if(it->second->getGuildId() == enemy.ids[WAR_ENEMY])
 		{
-			it->second->removeEnemy(ids[WARINFO_GUILD]);
+			it->second->removeEnemy(enemy.ids[WAR_GUILD]);
 			update = true;
 		}
 
-		if(!update)
-			continue;
-
-		g_game.updateCreatureEmblem(it->second); //will re-add the creature
-		/*g_game.updateCreatureImpassable(it->second);
-		g_game.updateCreatureSkull(it->second);*/
+		if(update)
+			g_game.updateCreatureEmblem(it->second);
 	}
 
-	s << names[enemy.second] << " has just won the war against " << names[enemy.second == WARINFO_GUILD] << ".";
+	std::stringstream s;
+	s << enemy.names[enemy.type] << " has just won the war against " << enemy.names[enemy.type == WAR_GUILD] << ".";
 	return g_game.broadcastMessage(s.str().c_str(), MSG_EVENT_ADVANCE);
+}
+
+void frag(Player* player, uint64_t deathId, const DeathList& list)
+{
+	Database* db = Database::getInstance();
+	War_t war;
+
+	std::stringstream s;
+	for(DeathList::const_iterator it = list.begin(); it != list.end(); )
+	{
+		if(it->isLast())
+			war = it->getWar();
+
+		Creature* creature = it->getKillerCreature();
+		if(it != list.begin())
+		{
+			++it;
+			if(it == list.end())
+				s << " and ";
+			else
+				s << ", ";
+		}
+		else
+			++it;
+
+		s << creature->getName();
+	}
+
+	std::string killers = s.str();
+	s.str("");
+
+	ChatChannel* channel = NULL;
+	if((channel = g_chat.getChannel(player, CHANNEL_GUILD)))
+	{
+		s << "Guild member " << player->getName() << " was killed by " << killers << ". The new score is " << war.frags[
+			war.type == WAR_GUILD] << ":" << war.frags[war.type] << " frags (limit " << war.limit << ").";
+		channel->talk("", SPEAK_CHANNEL_RA, s.str());
+	}
+
+	s.str("");
+	if((channel = g_chat.getChannel(list[0].getKillerCreature()->getPlayer(), CHANNEL_GUILD)))
+	{
+		s << "Opponent " << player->getName() << " was killed by " << killers << ". The new score is " << war.frags[
+			war.type] << ":" << war.frags[war.type == WAR_GUILD] << " frags (limit " << war.limit << ").";
+		channel->talk("", SPEAK_CHANNEL_RA, s.str());
+	}
+
+	DBQuery query;
+	query << "INSERT INTO `guild_kills` (`war_id`, `death_id`) VALUES (" << war.war << ", " << deathId << ");";
+	db->executeQuery(query.str());
 }
 #endif

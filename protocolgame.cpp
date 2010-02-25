@@ -1568,25 +1568,24 @@ void ProtocolGame::sendCreatureEmblem(const Creature* creature)
 	if(msg)
 	{
 		TRACK_MESSAGE(msg);
-		RemoveTileItem(msg, creature->getPosition(), stackpos);
-
-		std::list<uint32_t>::iterator it = std::find(knownCreatureList.begin(), knownCreatureList.end(), creature->getID());
+		/*std::list<uint32_t>::iterator it = std::find(knownCreatureList.begin(), knownCreatureList.end(), creature->getID());
 		if(it != knownCreatureList.end())
 		{
-			knownCreatureList.erase(it);
+			RemoveTileItem(msg, creature->getPosition(), stackpos);
 		        msg->put<char>(0x6A);
 
 		        msg->putPosition(creature->getPosition());
-		        msg->put<char>(stackpos);
+		        msg->put<char>(stackpos);*/
 		        AddCreature(msg, creature, false, creature->getID());
-		}
+		/*}
 		else
-			AddTileCreature(msg, creature->getPosition(), stackpos, creature);
+			AddTileCreature(msg, creature->getPosition(), stackpos, creature);*/
 	}
 }
 
 void ProtocolGame::sendCreatureImpassable(const Creature* creature)
 {
+	// TODO: how this actually work...
 	if(!canSee(creature))
 		return;
 
@@ -1596,7 +1595,7 @@ void ProtocolGame::sendCreatureImpassable(const Creature* creature)
 		TRACK_MESSAGE(msg);
 		msg->put<char>(0x92);
 		msg->put<uint32_t>(creature->getID());
-		msg->put<char>(player->canWalkthrough(creature));
+		msg->put<char>(!player->canWalkthrough(creature));
 	}
 }
 

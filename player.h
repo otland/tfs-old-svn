@@ -128,7 +128,7 @@ typedef std::list<std::string> LearnedInstantSpellList;
 typedef std::list<uint32_t> InvitedToGuildsList;
 typedef std::list<Party*> PartyList;
 #ifdef __WAR_SYSTEM__
-typedef std::map<uint32_t, std::pair<uint32_t, WarInfo_t> > WarMap;
+typedef std::map<uint32_t, War_t> WarMap;
 #endif
 
 #define SPEED_MAX 1500
@@ -281,12 +281,12 @@ class Player : public Creature, public Cylinder
 		int32_t getPremiumDays() const {return premiumDays;}
 #ifdef __WAR_SYSTEM__
 
-		bool getEnemy(const Player* enemy, std::pair<uint32_t, WarInfo_t>& war) const;
+		bool getEnemy(const Player* enemy, War_t& data) const;
 		bool isEnemy(const Player* enemy, bool allies) const;
 		bool hasEnemy() const {return !warMap.empty();}
 
-		void addEnemy(uint32_t war, WarInfo_t mode, uint32_t guild)
-			{warMap[guild] = std::make_pair(war, mode);}
+		void addEnemy(uint32_t guild, War_t war)
+			{warMap[guild] = war;}
 		void removeEnemy(uint32_t guild) {warMap.erase(guild);}
 #endif
 
@@ -483,7 +483,7 @@ class Player : public Creature, public Cylinder
 		virtual void onAttackedCreatureDrain(Creature* target, int32_t points);
 		virtual void onSummonAttackedCreatureDrain(Creature* summon, Creature* target, int32_t points);
 		virtual void onTargetCreatureGainHealth(Creature* target, int32_t points);
-		virtual bool onKilledCreature(Creature* target, uint32_t& flags);
+		virtual bool onKilledCreature(Creature* target, DeathEntry& entry);
 		virtual void onGainExperience(double& gainExp, bool fromMonster, bool multiplied);
 		virtual void onGainSharedExperience(double& gainExp, bool fromMonster, bool multiplied);
 		virtual void onAttackedCreatureBlockHit(Creature* target, BlockType_t blockType);

@@ -284,11 +284,39 @@ enum PlayerSex_t
 };
 #ifdef __WAR_SYSTEM__
 
-enum WarInfo_t
+enum WarType_t
 {
-        WARINFO_GUILD = 0,
-        WARINFO_ENEMY = 1,
-        WARINFO_LIMIT = 2
+	WAR_FIRST = 0,
+	WAR_GUILD = WAR_FIRST,
+	WAR_ENEMY,
+	WAR_LAST = WAR_ENEMY
+};
+
+struct War_t
+{
+	War_t(uint32_t _war, WarType_t _type)
+	{
+		war = _war;
+		type = _type;
+
+		memset(ids, 0, sizeof(ids));
+		memset(frags, 0, sizeof(frags));
+
+		limit = end = status = payment = 0;
+	}
+	War_t() {War_t(0, WAR_FIRST);}
+
+	uint32_t war;
+	WarType_t type;
+
+	uint32_t ids[WAR_LAST + 1];
+	std::string names[WAR_LAST + 1];
+	uint16_t frags[WAR_LAST + 1];
+
+	uint16_t limit;
+	time_t end;
+	int8_t status;
+	uint64_t payment;
 };
 #endif
 
