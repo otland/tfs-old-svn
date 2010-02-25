@@ -1568,18 +1568,18 @@ void ProtocolGame::sendCreatureEmblem(const Creature* creature)
 	if(msg)
 	{
 		TRACK_MESSAGE(msg);
-		/*std::list<uint32_t>::iterator it = std::find(knownCreatureList.begin(), knownCreatureList.end(), creature->getID());
+		std::list<uint32_t>::iterator it = std::find(knownCreatureList.begin(), knownCreatureList.end(), creature->getID());
 		if(it != knownCreatureList.end())
 		{
 			RemoveTileItem(msg, creature->getPosition(), stackpos);
 		        msg->put<char>(0x6A);
 
 		        msg->putPosition(creature->getPosition());
-		        msg->put<char>(stackpos);*/
-		        AddCreature(msg, creature, false, creature->getID());
-		/*}
+		        msg->put<char>(stackpos);
+		        AddCreature(msg, creature, false, 0);
+		}
 		else
-			AddTileCreature(msg, creature->getPosition(), stackpos, creature);*/
+			AddTileCreature(msg, creature->getPosition(), stackpos, creature);
 	}
 }
 
