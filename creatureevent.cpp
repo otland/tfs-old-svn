@@ -1448,11 +1448,14 @@ uint32_t CreatureEvent::executeKill(Creature* creature, Creature* target, const 
 
 			lua_pushnumber(L, entry.getDamage());
 			lua_pushnumber(L, flags);
-#ifdef __WAR_SYSTEM__
-			lua_pushnumber(L, entry.getWar().war);
-#endif
+#ifndef __WAR_SYSTEM__
 
-			bool result = m_interface->callFunction(3);
+			bool result = m_interface->callFunction(4);
+#else
+			lua_pushnumber(L, entry.getWar().war);
+
+			bool result = m_interface->callFunction(5);
+#endif
 			m_interface->releaseEnv();
 			return result;
 		}
