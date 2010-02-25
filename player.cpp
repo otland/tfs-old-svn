@@ -3589,7 +3589,11 @@ void Player::onAttackedCreature(Creature* target)
 	if(getZone() != target->getZone())
 		return;
 
-	if(skull == SKULL_NONE)
+	if(skull == SKULL_NONE
+#ifdef __WAR_SYSTEM__
+		&& !targetPlayer->isEnemy(this)
+#endif
+	)
 	{
 		if(targetPlayer->getSkull() != SKULL_NONE)
 			targetPlayer->sendCreatureSkull(this);
