@@ -134,7 +134,7 @@ function doPlayerTransferAllMoneyTo(cid, target)
 end
 
 function playerExists(name)
-	return getPlayerGUIDByName(name) ~= 0
+	return getPlayerGUIDByName(name) ~= nil
 end
 
 function getTibiaTime()
