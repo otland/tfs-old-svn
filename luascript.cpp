@@ -1868,6 +1868,9 @@ void LuaInterface::registerFunctions()
 	//registerCreatureEvent(uid, eventName)
 	lua_register(m_luaState, "registerCreatureEvent", LuaInterface::luaRegisterCreatureEvent);
 
+	//unregisterCreatureEvent(uid, eventName)
+	lua_register(m_luaState, "unregisterCreatureEvent", LuaInterface::luaUnregisterCreatureEvent);
+
 	//getContainerSize(uid)
 	lua_register(m_luaState, "getContainerSize", LuaInterface::luaGetContainerSize);
 
@@ -7280,6 +7283,23 @@ int32_t LuaInterface::luaRegisterCreatureEvent(lua_State* L)
 	ScriptEnviroment* env = getEnv();
 	if(Creature* creature = env->getCreatureByUID(popNumber(L)))
 		lua_pushboolean(L, creature->registerCreatureEvent(name));
+	else
+	{
+		errorEx(getError(LUA_ERROR_CREATURE_NOT_FOUND));
+		lua_pushboolean(L, false);
+	}
+
+	return 1;
+}
+
+int32_t LuaInterface::luaUnregisterCreatureEvent(lua_State* L)
+{
+	//unregisterCreatureEvent(cid, name)
+	std::string name = popString(L);
+
+	ScriptEnviroment* env = getEnv();
+	if(Creature* creature = env->getCreatureByUID(popNumber(L)))
+		lua_pushboolean(L, creature->unregisterCreatureEvent(name));
 	else
 	{
 		errorEx(getError(LUA_ERROR_CREATURE_NOT_FOUND));

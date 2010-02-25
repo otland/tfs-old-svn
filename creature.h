@@ -436,6 +436,7 @@ class Creature : public AutoId, virtual public Thing
 
 		//creature script events
 		bool registerCreatureEvent(const std::string& name);
+		bool unregisterCreatureEvent(const std::string& name);
 		CreatureEventList getCreatureEvents(CreatureEventType_t type);
 
 		virtual void setParent(Cylinder* cylinder)
@@ -527,7 +528,7 @@ class Creature : public AutoId, virtual public Thing
 		CountMap healMap;
 
 		CreatureEventList eventsList;
-		uint32_t scriptEventsBitField, blockCount, blockTicks, lastHitCreature;
+		uint32_t blockCount, blockTicks, lastHitCreature;
 		CombatType_t lastDamageSource;
 
 		#ifdef __DEBUG__
@@ -538,7 +539,6 @@ class Creature : public AutoId, virtual public Thing
 		void updateTileCache(const Tile* tile, int32_t dx, int32_t dy);
 		void updateTileCache(const Tile* tile, const Position& pos);
 
-		bool hasEventRegistered(CreatureEventType_t event) const {return (0 != (scriptEventsBitField & ((uint32_t)1 << event)));}
 		virtual bool hasExtraSwing() {return false;}
 
 		virtual uint16_t getLookCorpse() const {return 0;}

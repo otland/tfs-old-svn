@@ -67,6 +67,7 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 			end
 
 			doTransformItem(itemEx.uid, getItemInfo(itemEx.itemid).decayTo)
+			doSendMagicEffect(toPosition, CONST_ME_WATERSPLASH)
 			doDecayItem(itemEx.uid)
 			return true
 		end
