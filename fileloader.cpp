@@ -28,8 +28,7 @@ FileLoader::FileLoader()
 	//cache
 	m_use_cache = false;
 	m_cache_size = 0;
-	m_cache_index = NO_VALID_CACHE;
-	m_cache_offset = NO_VALID_CACHE;
+	m_cache_index = m_cache_offset = NO_VALID_CACHE;
 	memset(m_cached_data, 0, sizeof(m_cached_data));
 }
 
