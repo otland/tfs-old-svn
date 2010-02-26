@@ -3581,7 +3581,10 @@ void Player::onAttackedCreature(Creature* target)
 		isAlly(targetPlayer) ||
 #endif
 		(g_config.getBool(ConfigManager::ALLOW_FIGHTBACK) && targetPlayer->hasAttacked(this)
-		&& !targetPlayer->isEnemy(this, true)))
+#ifdef __WAR_SYSTEM__
+		&& !targetPlayer->isEnemy(this, true)
+#endif
+		))
 		return;
 
 	if(!pzLocked)
