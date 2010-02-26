@@ -1071,7 +1071,7 @@ bool IOLoginData::saveItems(const Player* player, const ItemBlockList& itemList,
 	return query_insert.execute();
 }
 
-bool IOLoginData::playerDeath(Player* player, const DeathList& dl)
+bool IOLoginData::playerDeath(Player* _player, const DeathList& dl)
 {
 	Database* db = Database::getInstance();
 	DBQuery query;
@@ -1080,8 +1080,8 @@ bool IOLoginData::playerDeath(Player* player, const DeathList& dl)
 	if(!trans.begin())
 		return false;
 
-	query << "INSERT INTO `player_deaths` (`player_id`, `date`, `level`) VALUES (" << player->getGUID()
-		<< ", " << time(NULL) << ", " << player->getLevel() << ")";
+	query << "INSERT INTO `player_deaths` (`player_id`, `date`, `level`) VALUES (" << _player->getGUID()
+		<< ", " << time(NULL) << ", " << _player->getLevel() << ")";
 	if(!db->executeQuery(query.str()))
 		return false;
 
@@ -1107,11 +1107,6 @@ bool IOLoginData::playerDeath(Player* player, const DeathList& dl)
 			<< ")";
 		if(!db->executeQuery(query.str()))
 			return false;
-#ifdef __WAR_SYSTEM__
-
-		if(it->getWar().war)
-			wl.push_back(*it);
-#endif
 
 		std::string name;
 		uint64_t killId = db->getLastInsertId();
@@ -1127,6 +1122,9 @@ bool IOLoginData::playerDeath(Player* player, const DeathList& dl)
 
 			if(player)
 			{
+				if(_player->isEnemy(player, false))
+					wl.push_back(*it);
+
 				query.str("");
 				query << "INSERT INTO `player_killers` (`kill_id`, `player_id`) VALUES ("
 					<< killId << ", " << player->getGUID() << ")";
@@ -1151,7 +1149,7 @@ bool IOLoginData::playerDeath(Player* player, const DeathList& dl)
 #ifdef __WAR_SYSTEM__
 
 	if(!wl.empty())
-		IOGuild::getInstance()->frag(player, deathId, wl);
+		IOGuild::getInstance()->frag(_player, deathId, wl);
 #endif
 
 	return trans.commit();
