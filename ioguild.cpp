@@ -488,9 +488,6 @@ void IOGuild::frag(Player* player, uint64_t deathId, const DeathList& list)
 		if(it->isLast())
 			war = it->getWar();
 
-		if(it->isNameKill())
-			continue;
-
 		Creature* creature = it->getKillerCreature();
 		if(it != list.begin())
 		{
@@ -526,7 +523,7 @@ void IOGuild::frag(Player* player, uint64_t deathId, const DeathList& list)
 	}
 
 	DBQuery query;
-	query << "INSERT INTO `guild_kills` (`war_id`, `death_id`) VALUES (" << war.war << ", " << deathId << ");";
+	query << "INSERT INTO `guild_kills` (`guild_id`, `war_id`, `death_id`) VALUES (" << list[0].getKillerCreature()->getPlayer()->getGuildId() << ", " << war.war << ", " << deathId << ");";
 	db->executeQuery(query.str());
 }
 #endif
