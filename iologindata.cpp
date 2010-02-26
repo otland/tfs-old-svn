@@ -1122,11 +1122,11 @@ bool IOLoginData::playerDeath(Player* _player, const DeathList& dl)
 
 			if(player)
 			{
-				#ifdef __WAR_SYSTEM__
-					if(_player->isEnemy(player, false))
-						wl.push_back(*it);
-				#endif
+#ifdef __WAR_SYSTEM__
+				if(_player->isEnemy(player, false))
+					wl.push_back(*it);
 
+#endif
 				query.str("");
 				query << "INSERT INTO `player_killers` (`kill_id`, `player_id`) VALUES ("
 					<< killId << ", " << player->getGUID() << ")";
