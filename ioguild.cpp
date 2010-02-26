@@ -488,6 +488,9 @@ void IOGuild::frag(Player* player, uint64_t deathId, const DeathList& list)
 		if(it->isLast())
 			war = it->getWar();
 
+		if(it->isNameKill())
+			continue;
+
 		Creature* creature = it->getKillerCreature();
 		if(it != list.begin())
 		{
