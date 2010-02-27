@@ -38,7 +38,8 @@ if(Modules == nil) then
 	function StdModule.say(cid, message, keywords, parameters, node)
 		local npcHandler = parameters.npcHandler
 		if(npcHandler == nil) then
-			error('StdModule.say called without any npcHandler instance.')
+			print('StdModule.say called without any npcHandler instance.')
+			return false
 		end
 
 		local onlyFocus = (parameters.onlyFocus == nil or parameters.onlyFocus == true)
@@ -64,7 +65,8 @@ if(Modules == nil) then
 	function StdModule.promotePlayer(cid, message, keywords, parameters, node)
 		local npcHandler = parameters.npcHandler
 		if(npcHandler == nil) then
-			error('StdModule.promotePlayer called without any npcHandler instance.')
+			print('StdModule.promotePlayer called without any npcHandler instance.')
+			return false
 		end
 
 		if(not npcHandler:isFocused(cid)) then
@@ -93,7 +95,8 @@ if(Modules == nil) then
 	function StdModule.learnSpell(cid, message, keywords, parameters, node)
 		local npcHandler = parameters.npcHandler
 		if(npcHandler == nil) then
-			error('StdModule.learnSpell called without any npcHandler instance.')
+			print('StdModule.learnSpell called without any npcHandler instance.')
+			return false
 		end
 
 		if(not npcHandler:isFocused(cid)) then
@@ -124,7 +127,8 @@ if(Modules == nil) then
 	function StdModule.bless(cid, message, keywords, parameters, node)
 		local npcHandler = parameters.npcHandler
 		if(npcHandler == nil) then
-			error('StdModule.bless called without any npcHandler instance.')
+			print('StdModule.bless called without any npcHandler instance.')
+			return false
 		end
 
 		if(not getBooleanFromString(getConfigValue('blessings'))) then
@@ -161,7 +165,8 @@ if(Modules == nil) then
 	function StdModule.travel(cid, message, keywords, parameters, node)
 		local npcHandler = parameters.npcHandler
 		if(npcHandler == nil) then
-			error('StdModule.travel called without any npcHandler instance.')
+			print('StdModule.travel called without any npcHandler instance.')
+			return false
 		end
 
 		if(not npcHandler:isFocused(cid)) then
@@ -839,20 +844,21 @@ if(Modules == nil) then
 	function ShopModule:parseBuyable(data)
 		for item in string.gmatch(data, '[^;]+') do
 			local i, name, itemid, cost, subType, realName = 1, nil, nil, nil, nil, nil
-			for temp in string.gmatch(item, '[^,]+') do
+			for tmp in string.gmatch(item, '[^,]+') do
 				if(i == 1) then
-					name = temp
+					name = tmp
 				elseif(i == 2) then
-					itemid = tonumber(temp)
+					itemid = tonumber(tmp)
 				elseif(i == 3) then
-					cost = tonumber(temp)
+					cost = tonumber(tmp)
 				elseif(i == 4) then
-					subType = tonumber(temp)
+					subType = tonumber(tmp)
 				elseif(i == 5) then
-					realName = temp
+					realName = tmp
 				else
-					print('[Warning] NpcSystem:', 'Unknown parameter found in buyable items parameter.', temp, item)
+					print('[Warning] NpcSystem:', 'Unknown parameter found in buyable items parameter.', tmp, item)
 				end
+
 				i = i + 1
 			end
 
@@ -1152,12 +1158,12 @@ if(Modules == nil) then
 		end
 
 		if(shopItem == nil) then
-			error("[ShopModule.onBuy]", "Item not found on shopItems list")
+			print("[ShopModule.onBuy]", "Item not found on shopItems list")
 			return false
 		end
 
 		if(shopItem.buy == -1) then
-			error("[ShopModule.onSell]", "Attempt to purchase an item which only sellable")
+			print("[ShopModule.onSell]", "Attempt to purchase an item which only sellable")
 			return false
 		end
 
@@ -1229,12 +1235,12 @@ if(Modules == nil) then
 		end
 
 		if(shopItem == nil) then
-			error("[ShopModule.onBuy]", "Item not found on shopItems list")
+			print("[ShopModule.onBuy]", "Item not found on shopItems list")
 			return false
 		end
 
 		if(shopItem.sell == -1) then
-			error("[ShopModule.onSell]", "Attempt to sell an item which is only buyable")
+			print("[ShopModule.onSell]", "Attempt to sell an item which is only buyable")
 			return false
 		end
 
