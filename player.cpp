@@ -4011,9 +4011,9 @@ Skulls_t Player::getSkullType(const Creature* creature) const
 
 		if(player->getSkull() == SKULL_NONE &&
 #ifndef __WAR_SYSTEM__
-			isPartner(player)
+			isPartner(player) &&
 #else
-			(isPartner(player) || isAlly(player)) &&
+			(isPartner(player) || isAlly(player) &&
 #endif
 			g_game.getWorldType() != WORLDTYPE_OPTIONAL)
 			return SKULL_GREEN;
