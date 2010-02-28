@@ -128,28 +128,21 @@ bool Spawns::parseSpawnNode(xmlNodePtr p, bool checkDuplicate)
 	}
 
 	spawnList.push_back(spawn);
-	xmlNodePtr tmpNode = p->children;
-	while(tmpNode)
+	for(xmlNodePtr tmpNode = p->children; tmpNode; tmpNode = tmpNode->next)
 	{
 		if(!xmlStrcmp(tmpNode->name, (const xmlChar*)"monster"))
 		{
-			std::string name;
 			if(!readXMLString(tmpNode, "name", strValue))
-			{
-				tmpNode = tmpNode->next;
 				continue;
-			}
 
-			name = strValue;
+			std::string name = strValue;
 			int32_t interval = MINSPAWN_INTERVAL / 1000;
 			if(readXMLInteger(tmpNode, "spawntime", intValue) || readXMLInteger(tmpNode, "interval", intValue))
 			{
 				if(intValue <= interval)
 				{
-					std::clog << "[Warning - Spawns::loadFromXml] " << name << " " << centerPos << " spawntime cannot";
-					std::clog << " be less than " << interval << " seconds." << std::endl;
-
-					tmpNode = tmpNode->next;
+					std::clog << "[Warning - Spawns::loadFromXml] " << name << " " << centerPos << " spawntime cannot"
+						<< " be less than " << interval << " seconds." << std::endl;
 					continue;
 				}
 
@@ -175,14 +168,10 @@ bool Spawns::parseSpawnNode(xmlNodePtr p, bool checkDuplicate)
 		}
 		else if(!xmlStrcmp(tmpNode->name, (const xmlChar*)"npc"))
 		{
-			std::string name;
 			if(!readXMLString(tmpNode, "name", strValue))
-			{
-				tmpNode = tmpNode->next;
 				continue;
-			}
 
-			name = strValue;
+			std::string name = strValue;
 			Position placePos = centerPos;
 			if(readXMLInteger(tmpNode, "x", intValue))
 				placePos.x += intValue;
@@ -199,17 +188,12 @@ bool Spawns::parseSpawnNode(xmlNodePtr p, bool checkDuplicate)
 
 			Npc* npc = Npc::createNpc(name);
 			if(!npc)
-			{
-				tmpNode = tmpNode->next;
 				continue;
-			}
 
 			npc->setMasterPosition(placePos, radius);
 			npc->setDirection(direction);
 			npcList.push_back(npc);
 		}
-
-		tmpNode = tmpNode->next;
 	}
 
 	return true;
