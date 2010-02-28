@@ -67,7 +67,7 @@ bool Spawns::loadFromXml(const std::string& _filename)
 		return false;
 	}
 
-	for(spawnNode = root->children; spawnNode; spawnNode->next)
+	for(spawnNode = root->children; spawnNode; spawnNode = spawnNode->next)
 		parseSpawnNode(spawnNode, false);
 
 	xmlFreeDoc(doc);
