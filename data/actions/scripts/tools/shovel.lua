@@ -1,20 +1,24 @@
 function onUse(cid, item, fromPosition, itemEx, toPosition)
 	if(isInArray(HOLES, itemEx.itemid)) then
-		local newId = itemEx.itemid + 1
-		if(itemEx.itemid == 8579) then
-			newId = 8585
+		if(itemEx.itemid ~= 8579) then
+			itemEx.itemid = itemEx.itemid + 1
+		else
+			itemEx.itemid = 8585
 		end
 
-		doTransformItem(itemEx.uid, newId)
+		doTransformItem(itemEx.uid, itemEx.itemid)
 		doDecayItem(itemEx.uid)
 		return true
-	elseif(isInArray(SAND, itemEx.itemid)) then
+	elseif(SAND_HOLES[itemEx.itemid] ~= nil) then
+		doSendMagicEffect(toPosition, CONST_ME_POFF)
+		doTransformItem(itemEx.uid, SAND_HOLES[itemEx.itemid])
+
+		doDecayItem(itemEx.uid)
+		return true
+	elseif(itemEx.itemid == SAND and not isRookie(cid)) then
 		local rand = math.random(1, 100)
-		if(itemEx.actionid  == 100 and rand <= 20) then
-			doTransformItem(itemEx.uid, 489)
-			doDecayItem(itemEx.uid)
-		elseif(rand >= 1 and rand <= 5) then
-			doCreateItem(2159, 1, toPosition)
+		if(rand >= 1 and rand <= 5) then
+			doCreateItem(ITEM_SCARAB_COIN, 1, toPosition)
 		elseif(rand > 85) then
 			doCreateMonster("Scarab", toPosition, false)
 		end
