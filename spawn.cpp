@@ -36,7 +36,6 @@ extern Game g_game;
 
 Spawns::Spawns()
 {
-	filename = "";
 	loaded = started = false;
 }
 
@@ -68,12 +67,8 @@ bool Spawns::loadFromXml(const std::string& _filename)
 		return false;
 	}
 
-	spawnNode = root->children;
-	while(spawnNode)
-	{
+	for(spawnNode = root->children; spawnNode; spawnNode->next)
 		parseSpawnNode(spawnNode, false);
-		spawnNode = spawnNode->next;
-	}
 
 	xmlFreeDoc(doc);
 	loaded = true;
@@ -222,7 +217,7 @@ void Spawns::clear()
 
 	spawnList.clear();
 	loaded = false;
-	filename = "";
+	filename = std::string();
 }
 
 bool Spawns::isInZone(const Position& centerPos, int32_t radius, const Position& pos)
@@ -236,7 +231,7 @@ bool Spawns::isInZone(const Position& centerPos, int32_t radius, const Position&
 
 void Spawn::startEvent()
 {
-	if(checkSpawnEvent == 0)
+	if(!checkSpawnEvent)
 		checkSpawnEvent = Scheduler::getInstance().addEvent(createSchedulerTask(getInterval(), boost::bind(&Spawn::checkSpawn, this)));
 }
 
@@ -303,10 +298,10 @@ bool Spawn::spawnMonster(uint32_t spawnId, MonsterType* mType, const Position& p
 	}
 
 	monster->setSpawn(this);
-	monster->addRef();
 	monster->setMasterPosition(pos, radius);
 	monster->setDirection(dir);
 
+	monster->addRef();
 	spawnedMap.insert(SpawnedPair(spawnId, monster));
 	spawnMap[spawnId].lastSpawn = OTSYS_TIME();
 	return true;
@@ -326,17 +321,17 @@ void Spawn::checkSpawn()
 #ifdef __DEBUG_SPAWN__
 	std::clog << "[Notice] Spawn::checkSpawn " << this << std::endl;
 #endif
-	checkSpawnEvent = 0;
-
 	Monster* monster;
 	uint32_t spawnId;
+
+	checkSpawnEvent = 0;
 	for(SpawnedMap::iterator it = spawnedMap.begin(); it != spawnedMap.end();)
 	{
 		spawnId = it->first;
 		monster = it->second;
 		if(monster->isRemoved())
 		{
-			if(spawnId != 0)
+			if(spawnId)
 				spawnMap[spawnId].lastSpawn = OTSYS_TIME();
 
 			monster->unRef();
@@ -344,7 +339,7 @@ void Spawn::checkSpawn()
 		}
 		else
 		{
-			if(spawnId != 0 && !isInSpawnZone(monster->getPosition()) && monster->getIdleStatus())
+			if(spawnId && !isInSpawnZone(monster->getPosition()) && monster->getIdleStatus())
 				g_game.internalTeleport(monster, monster->getMasterPosition(), true);
 
 			++it;
