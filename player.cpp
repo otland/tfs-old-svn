@@ -1176,12 +1176,6 @@ void Player::sendCancelMessage(ReturnValue message) const
 	}
 }
 
-void Player::sendStats()
-{
-	if(client)
-		client->sendStats();
-}
-
 Item* Player::getWriteItem(uint32_t& _windowTextId, uint16_t& _maxWriteLen)
 {
 	_windowTextId = windowTextId;
@@ -1725,11 +1719,11 @@ void Player::onThink(uint32_t interval)
 			setAttackedCreature(NULL);
 	}
 
-	if((timeNow - lastPong) >= 60000 && canLogout(true))
+	if((timeNow - lastPong) >= 60000 && !isConnecting && !pzLocked && !getTile()->hasFlag(TILESTATE_NOLOGOUT))
 	{
 		if(client)
 			client->logout(true, true);
-		else if(g_creatureEvents->playerLogout(this, true))
+		else if(g_creatureEvents->playerLogout(this, false))
 			g_game.removeCreature(this, true);
 	}
 
@@ -3881,14 +3875,6 @@ void Player::changeSoul(int32_t soulChange)
 		soul = std::min((int32_t)soulMax, (int32_t)soul + soulChange);
 
 	sendStats();
-}
-
-bool Player::canLogout(bool checkInfight)
-{
-	if(checkInfight && hasCondition(CONDITION_INFIGHT))
-		return false;
-
-	return !isConnecting && !pzLocked && !getTile()->hasFlag(TILESTATE_NOLOGOUT);
 }
 
 bool Player::changeOutfit(Outfit_t outfit, bool checkList)

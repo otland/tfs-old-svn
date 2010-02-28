@@ -515,7 +515,6 @@ class Player : public Creature, public Cylinder
 		bool removeOutfit(uint32_t outfitId, uint32_t addons);
 
 		bool canWearOutfit(uint32_t outfitId, uint32_t addons);
-		bool canLogout(bool checkInfight);
 
 		//tile
 		//send methods
@@ -645,7 +644,8 @@ class Player : public Creature, public Cylinder
 		void sendIcons() const;
 		void sendMagicEffect(const Position& pos, uint8_t type) const
 			{if(client) client->sendMagicEffect(pos, type);}
-		void sendStats();
+		void sendStats() const
+			{if(client) client->sendStats();}
 		void sendSkills() const
 			{if(client) client->sendSkills();}
 		void sendTextMessage(MessageClasses type, const std::string& message) const

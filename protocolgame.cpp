@@ -306,7 +306,7 @@ bool ProtocolGame::logout(bool displayEffect, bool forceLogout)
 					return false;
 			}
 			else
-				g_creatureEvents->playerLogout(player, false);
+				g_creatureEvents->playerLogout(player, true);
 		}
 		else if(!g_creatureEvents->playerLogout(player, true))
 			return false;
