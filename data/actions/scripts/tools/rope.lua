@@ -4,6 +4,7 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 		return true
 	end
 
+	toPosition.stackpos = STACKPOS_GROUND
 	local itemGround = getThingFromPos(toPosition)
 	if(isInArray(SPOTS, itemGround.itemid)) then
 		doTeleportThing(cid, {x = toPosition.x, y = toPosition.y + 1, z = toPosition.z - 1}, false)
