@@ -645,8 +645,8 @@ class LuaInterface
 		static int32_t luaGetConfigFile(lua_State* L);
 		static int32_t luaGetConfigValue(lua_State* L);
 		static int32_t luaGetModList(lua_State* L);
-		static int32_t luaErrors(lua_State* L);
 
+		static int32_t luaL_errors(lua_State* L);
 		static int32_t luaL_loadmodlib(lua_State* L);
 		static int32_t luaL_domodlib(lua_State* L);
 		static int32_t luaL_dodirectory(lua_State* L);
@@ -693,6 +693,7 @@ class LuaInterface
 		static int32_t luaStdVAHash(lua_State* L);
 
 		lua_State* m_luaState;
+		bool m_errors;
 		std::string m_lastError;
 
 	private:
@@ -741,7 +742,6 @@ class LuaInterface
 		};
 		static int32_t internalGetPlayerInfo(lua_State* L, PlayerInfo_t info);
 
-		bool m_errors;
 		int32_t m_runningEvent;
 		uint32_t m_lastTimer;
 		std::string m_loadingFile, m_interfaceName;

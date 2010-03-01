@@ -2389,7 +2389,7 @@ void LuaInterface::registerFunctions()
 	lua_register(m_luaState, "dodirectory", LuaInterface::luaL_dodirectory);
 
 	//errors(var)
-	luaL_register(m_luaState, "errors", LuaInterface::luaErrors);
+	lua_register(m_luaState, "errors", LuaInterface::luaL_errors);
 
 	//db table
 	luaL_register(m_luaState, "db", LuaInterface::luaDatabaseTable);
@@ -10046,11 +10046,11 @@ int32_t LuaInterface::luaL_dodirectory(lua_State* L)
 	return 1;
 }
 
-int32_t LuaInterface::luaErrors(lua_State* L)
+int32_t LuaInterface::luaL_errors(lua_State* L)
 {
 	//errors(var)
-	lua_pushboolean(L, m_errors);
-	m_errors = popNumber(L);
+	lua_pushboolean(L, getEnv()->getInterface()->m_errors);
+	getEnv()->getInterface()->m_errors = popNumber(L);
 	return 1;
 }
 
