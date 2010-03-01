@@ -644,6 +644,7 @@ LuaInterface::LuaInterface(std::string interfaceName)
 	m_luaState = NULL;
 	m_interfaceName = interfaceName;
 	m_lastTimer = 1000;
+	m_errors = true;
 }
 
 LuaInterface::~LuaInterface()
@@ -801,6 +802,9 @@ std::string LuaInterface::getScript(int32_t scriptId)
 
 void LuaInterface::error(const char* function, const std::string& desc)
 {
+	if(!m_errors)
+		return;
+
 	int32_t script, callback;
 	bool timer;
 	std::string event;
@@ -1883,7 +1887,7 @@ void LuaInterface::registerFunctions()
 	//doAddContainerItem(uid, itemid[, count/subType])
 	lua_register(m_luaState, "doAddContainerItem", LuaInterface::luaDoAddContainerItem);
 
-	//getHouseInfo(houseId)
+	//getHouseInfo(houseId[, displayError = true])
 	lua_register(m_luaState, "getHouseInfo", LuaInterface::luaGetHouseInfo);
 
 	//getHouseAccessList(houseid, listId)
@@ -2383,6 +2387,9 @@ void LuaInterface::registerFunctions()
 
 	//dodirectory(dir)
 	lua_register(m_luaState, "dodirectory", LuaInterface::luaL_dodirectory);
+
+	//errors(var)
+	luaL_register(m_luaState, "errors", LuaInterface::luaErrors);
 
 	//db table
 	luaL_register(m_luaState, "db", LuaInterface::luaDatabaseTable);
@@ -5001,7 +5008,7 @@ int32_t LuaInterface::luaGetPlayerMoney(lua_State* L)
 
 int32_t LuaInterface::luaGetHouseInfo(lua_State* L)
 {
-	//getHouseInfo(houseId)
+	//getHouseInfo(houseId[, displayError = true])
 	bool displayError = true;
 	if(lua_gettop(L) > 1)
 		displayError = popNumber(L);
@@ -10026,6 +10033,7 @@ int32_t LuaInterface::luaL_domodlib(lua_State* L)
 
 int32_t LuaInterface::luaL_dodirectory(lua_State* L)
 {
+	//dodirectory(dir)
 	std::string dir = popString(L);
 	if(!getEnv()->getInterface()->loadDirectory(dir, NULL))
 	{
@@ -10035,6 +10043,14 @@ int32_t LuaInterface::luaL_dodirectory(lua_State* L)
 	else
 		lua_pushboolean(L, true);
 
+	return 1;
+}
+
+int32_t LuaInterface::luaErrors(lua_State* L)
+{
+	//errors(var)
+	lua_pushboolean(L, m_errors);
+	m_errors = popNumber(L);
 	return 1;
 }
 
