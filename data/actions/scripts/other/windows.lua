@@ -37,7 +37,7 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 		return false
 	end
 
-	local house, position = getHouseFromPos(position), getThingPosition(item.uid)
+	local house, position = getHouseFromPos(fromPosition), fromPosition
 	if(not house) then
 		position.y = position.y - 1
 		house = getHouseFromPos(position)

@@ -9,9 +9,9 @@ function onSay(cid, words, param, channel)
 
 	local tid, t = cid, string.explode(param, ",")
 	if(t[(master and 1 or 2)]) then
-		tid = getPlayerByNameWildcard(t[2])
+		tid = getPlayerByNameWildcard(t[(master and 1 or 2)])
 		if(not tid or (isPlayerGhost(tid) and getPlayerAccess(tid) > getPlayerAccess(cid))) then
-			doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Player " .. t[2] .. " not found.")
+			doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Player " .. t[(master and 1 or 2)] .. " not found.")
 			return true
 		end
 	end
