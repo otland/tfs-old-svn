@@ -802,9 +802,6 @@ std::string LuaInterface::getScript(int32_t scriptId)
 
 void LuaInterface::error(const char* function, const std::string& desc)
 {
-	if(!getEnv()->getInterface()->m_errors)
-		return;
-
 	int32_t script, callback;
 	bool timer;
 	std::string event;
@@ -813,6 +810,9 @@ void LuaInterface::error(const char* function, const std::string& desc)
 	getEnv()->getInfo(script, event, interface, callback, timer);
 	if(interface)
 	{
+		if(!interface->m_errors)
+			return;
+
 		std::clog << std::endl << "[Error - " << interface->getName() << "] " << std::endl;
 		if(callback)
 			std::clog << "In a callback: " << interface->getScript(callback) << std::endl;
