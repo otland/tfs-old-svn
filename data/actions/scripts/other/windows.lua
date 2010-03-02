@@ -33,7 +33,22 @@ local WINDOWS = {
 
 function onUse(cid, item, fromPosition, itemEx, toPosition)
 	local window = WINDOWS[item.itemid]
-	if(not window or (not getHouseFromPos(getCreaturePosition(cid)) and not getPlayerCustomFlagValue(cid, PLAYERCUSTOMFLAG_GAMEMASTERPRIVILEGES))) then
+	if(not window) then
+		return false
+	end
+
+	local house, position = getHouseFromPos(position), getThingPosition(item.uid)
+	if(not house) then
+		position.y = position.y - 1
+		house = getHouseFromPos(position)
+		if(not house) then
+			position.y = position.y + 1
+			position.x = position.x - 1
+			house = getHouseFromPos(position)
+		end
+	end
+
+	if(house and getHouseFromPos(getThingPosition(cid)) ~= house and not getPlayerCustomFlagValue(cid, PLAYERCUSTOMFLAG_GAMEMASTERPRIVILEGES)) then
 		return false
 	end
 
