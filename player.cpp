@@ -3118,7 +3118,7 @@ void Player::postAddNotification(Creature* actor, Thing* thing, const Cylinder* 
 			return;
 
 		std::vector<Container*> containers;
-		for(std::vector<Container*>::iterator it = containerVec.begin(); it != containerVec.end(); ++it)
+		for(ContainerVector::iterator it = containerVec.begin(); it != containerVec.end(); ++it)
 		{
 			if(!Position::areInRange<1,1,0>(it->second->getPosition(), getPosition()))
 				containers.push_back(it->second);
@@ -3208,7 +3208,7 @@ void Player::__internalAddThing(uint32_t index, Thing* thing)
 		return;
 	}
 
-	if(index < 0 || index > 11)
+	if(index > 11)
 	{
 #ifdef __DEBUG_MOVESYS__
 		std::clog << "Failure: [Player::__internalAddThing] index < 0 || index > 11" << std::endl;
