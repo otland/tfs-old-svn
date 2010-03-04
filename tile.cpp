@@ -881,7 +881,6 @@ void Tile::__addThing(Creature* actor, int32_t index, Thing* thing)
 	{
 #ifdef __DEBUG_MOVESYS__
 		std::clog << "[Failure - Tile::__addThing] item == NULL" << std::endl;
-		DEBUG_REPORT
 #endif
 		return/* RET_NOTPOSSIBLE*/;
 	}
@@ -1026,7 +1025,6 @@ void Tile::__updateThing(Thing* thing, uint16_t itemId, uint32_t count)
 	{
 #ifdef __DEBUG_MOVESYS__
 		std::clog << "[Failure - Tile::__updateThing] index == -1" << std::endl;
-		DEBUG_REPORT
 #endif
 		return/* RET_NOTPOSSIBLE*/;
 	}
@@ -1036,7 +1034,6 @@ void Tile::__updateThing(Thing* thing, uint16_t itemId, uint32_t count)
 	{
 #ifdef __DEBUG_MOVESYS__
 		std::clog << "[Failure - Tile::__updateThing] item == NULL" << std::endl;
-		DEBUG_REPORT
 #endif
 		return/* RET_NOTPOSSIBLE*/;
 	}
@@ -1059,7 +1056,6 @@ void Tile::__replaceThing(uint32_t index, Thing* thing)
 	{
 #ifdef __DEBUG_MOVESYS__
 		std::clog << "[Failure - Tile::__replaceThing] item == NULL" << std::endl;
-		DEBUG_REPORT
 #endif
 		return/* RET_NOTPOSSIBLE*/;
 	}
@@ -1105,7 +1101,6 @@ void Tile::__replaceThing(uint32_t index, Thing* thing)
 			{
 #ifdef __DEBUG_MOVESYS__
 				std::clog << "[Failure - Tile::__replaceThing] Update object is a creature" << std::endl;
-				DEBUG_REPORT
 #endif
 				return/* RET_NOTPOSSIBLE*/;
 			}
@@ -1140,10 +1135,9 @@ void Tile::__replaceThing(uint32_t index, Thing* thing)
 		oldItem->setParent(NULL);
 		return/* RET_NOERROR*/;
 	}
-
 #ifdef __DEBUG_MOVESYS__
+
 	std::clog << "[Failure - Tile::__replaceThing] Update object not found" << std::endl;
-	DEBUG_REPORT
 #endif
 }
 
@@ -1159,7 +1153,6 @@ void Tile::__removeThing(Thing* thing, uint32_t count)
 			{
 #ifdef __DEBUG_MOVESYS__
 				std::clog << "[Failure - Tile::__removeThing] creature not found" << std::endl;
-				DEBUG_REPORT
 #endif
 				return/* RET_NOTPOSSIBLE*/;
 			}
@@ -1170,10 +1163,7 @@ void Tile::__removeThing(Thing* thing, uint32_t count)
 		}
 #ifdef __DEBUG_MOVESYS__
 		else
-		{
 			std::clog << "[Failure - Tile::__removeThing] creature not found" << std::endl;
-			DEBUG_REPORT
-		}
 #endif
 
 		return;
@@ -1184,7 +1174,6 @@ void Tile::__removeThing(Thing* thing, uint32_t count)
 	{
 #ifdef __DEBUG_MOVESYS__
 		std::clog << "[Failure - Tile::__removeThing] item == NULL" << std::endl;
-		DEBUG_REPORT
 #endif
 		return/* RET_NOTPOSSIBLE*/;
 	}
@@ -1194,7 +1183,6 @@ void Tile::__removeThing(Thing* thing, uint32_t count)
 	{
 #ifdef __DEBUG_MOVESYS__
 		std::clog << "[Failure - Tile::__removeThing] index == -1" << std::endl;
-		DEBUG_REPORT
 #endif
 		return/* RET_NOTPOSSIBLE*/;
 	}
@@ -1289,10 +1277,9 @@ void Tile::__removeThing(Thing* thing, uint32_t count)
 			return/* RET_NOERROR*/;
 		}
 	}
-
 #ifdef __DEBUG_MOVESYS__
+
 	std::clog << "[Failure - Tile::__removeThing] thing not found" << std::endl;
-	DEBUG_REPORT
 #endif
 }
 

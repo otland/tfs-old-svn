@@ -429,30 +429,24 @@ void Container::__addThing(Creature* actor, int32_t index, Thing* thing)
 	{
 #ifdef __DEBUG_MOVESYS__
 		std::clog << "Failure: [Container::__addThing], index:" << index << ", index >= capacity()" << std::endl;
-		DEBUG_REPORT
 #endif
 		return /*RET_NOTPOSSIBLE*/;
 	}
 
 	Item* item = thing->getItem();
-	if(item == NULL)
+	if(!item)
 	{
 #ifdef __DEBUG_MOVESYS__
 		std::clog << "Failure: [Container::__addThing] item == NULL" << std::endl;
-		DEBUG_REPORT
 #endif
 		return /*RET_NOTPOSSIBLE*/;
 	}
 
 #ifdef __DEBUG_MOVESYS__
-	if(index != INDEX_WHEREEVER)
+	if(index != INDEX_WHEREEVER && size() >= capacity())
 	{
-		if(size() >= capacity())
-		{
-			std::clog << "Failure: [Container::__addThing] size() >= capacity()" << std::endl;
-			DEBUG_REPORT
-			return /*RET_CONTAINERNOTENOUGHROOM*/;
-		}
+		std::clog << "Failure: [Container::__addThing] size() >= capacity()" << std::endl;
+		return /*RET_CONTAINERNOTENOUGHROOM*/;
 	}
 #endif
 
@@ -475,17 +469,15 @@ void Container::__updateThing(Thing* thing, uint16_t itemId, uint32_t count)
 	{
 #ifdef __DEBUG_MOVESYS__
 		std::clog << "Failure: [Container::__updateThing] index == -1" << std::endl;
-		DEBUG_REPORT
 #endif
 		return /*RET_NOTPOSSIBLE*/;
 	}
 
 	Item* item = thing->getItem();
-	if(item == NULL)
+	if(!item)
 	{
 #ifdef __DEBUG_MOVESYS__
 		std::clog << "Failure: [Container::__updateThing] item == NULL" << std::endl;
-		DEBUG_REPORT
 #endif
 		return /*RET_NOTPOSSIBLE*/;
 	}
@@ -510,11 +502,10 @@ void Container::__updateThing(Thing* thing, uint16_t itemId, uint32_t count)
 void Container::__replaceThing(uint32_t index, Thing* thing)
 {
 	Item* item = thing->getItem();
-	if(item == NULL)
+	if(!item)
 	{
 #ifdef __DEBUG_MOVESYS__
 		std::clog << "Failure: [Container::__replaceThing] item == NULL" << std::endl;
-		DEBUG_REPORT
 #endif
 		return /*RET_NOTPOSSIBLE*/;
 	}
@@ -525,15 +516,14 @@ void Container::__replaceThing(uint32_t index, Thing* thing)
 	{
 		if(count == index)
 			break;
-		else
-			++count;
+
+		++count;
 	}
 
 	if(cit == itemlist.end())
 	{
 #ifdef __DEBUG_MOVESYS__
 		std::clog << "Failure: [Container::__updateThing] item not found" << std::endl;
-		DEBUG_REPORT
 #endif
 		return /*RET_NOTPOSSIBLE*/;
 	}
@@ -560,11 +550,10 @@ void Container::__replaceThing(uint32_t index, Thing* thing)
 void Container::__removeThing(Thing* thing, uint32_t count)
 {
 	Item* item = thing->getItem();
-	if(item == NULL)
+	if(!item)
 	{
 #ifdef __DEBUG_MOVESYS__
 		std::clog << "Failure: [Container::__removeThing] item == NULL" << std::endl;
-		DEBUG_REPORT
 #endif
 		return /*RET_NOTPOSSIBLE*/;
 	}
@@ -574,7 +563,6 @@ void Container::__removeThing(Thing* thing, uint32_t count)
 	{
 #ifdef __DEBUG_MOVESYS__
 		std::clog << "Failure: [Container::__removeThing] index == -1" << std::endl;
-		DEBUG_REPORT
 #endif
 		return /*RET_NOTPOSSIBLE*/;
 	}
@@ -584,7 +572,6 @@ void Container::__removeThing(Thing* thing, uint32_t count)
 	{
 #ifdef __DEBUG_MOVESYS__
 		std::clog << "Failure: [Container::__removeThing] item not found" << std::endl;
-		DEBUG_REPORT
 #endif
 		return /*RET_NOTPOSSIBLE*/;
 	}

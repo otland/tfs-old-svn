@@ -71,7 +71,6 @@ Tile* Thing::getTile()
 	if(!cylinder)
 	{
 		std::clog << "[Failure - Thing::getTile] NULL tile" << std::endl;
-		DEBUG_REPORT
 		return &(Tile::nullTile);
 	}
 #endif
@@ -89,7 +88,6 @@ const Tile* Thing::getTile() const
 	if(!cylinder)
 	{
 		std::clog << "[Failure - Thing::getTile] NULL tile" << std::endl;
-		DEBUG_REPORT
 		return &(Tile::nullTile);
 	}
 #endif
@@ -107,7 +105,6 @@ Position Thing::getPosition() const
 
 #ifdef __DEBUG_MOVESYS__
 	std::clog << "[Failure - Thing::getTile] NULL tile" << std::endl;
-	DEBUG_REPORT
 #endif
 	return Tile::nullTile.getPosition();
 }

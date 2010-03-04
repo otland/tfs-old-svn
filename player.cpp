@@ -2835,7 +2835,6 @@ void Player::__addThing(Creature* actor, int32_t index, Thing* thing)
 	{
 #ifdef __DEBUG_MOVESYS__
 		std::clog << "Failure: [Player::__addThing], " << "player: " << getName() << ", index: " << index << ", index < 0 || index > 11" << std::endl;
-		DEBUG_REPORT
 #endif
 		return /*RET_NOTPOSSIBLE*/;
 	}
@@ -2844,7 +2843,6 @@ void Player::__addThing(Creature* actor, int32_t index, Thing* thing)
 	{
 #ifdef __DEBUG_MOVESYS__
 		std::clog << "Failure: [Player::__addThing], " << "player: " << getName() << ", index == 0" << std::endl;
-		DEBUG_REPORT
 #endif
 		return /*RET_NOTENOUGHROOM*/;
 	}
@@ -2854,7 +2852,6 @@ void Player::__addThing(Creature* actor, int32_t index, Thing* thing)
 	{
 #ifdef __DEBUG_MOVESYS__
 		std::clog << "Failure: [Player::__addThing], " << "player: " << getName() << ", item == NULL" << std::endl;
-		DEBUG_REPORT
 #endif
 		return /*RET_NOTPOSSIBLE*/;
 	}
@@ -2864,7 +2861,6 @@ void Player::__addThing(Creature* actor, int32_t index, Thing* thing)
 
 	//send to client
 	sendAddInventoryItem((slots_t)index, item);
-
 	//event methods
 	onAddInventoryItem((slots_t)index, item);
 }
@@ -2876,17 +2872,15 @@ void Player::__updateThing(Thing* thing, uint16_t itemId, uint32_t count)
 	{
 #ifdef __DEBUG_MOVESYS__
 		std::clog << "Failure: [Player::__updateThing], " << "player: " << getName() << ", index == -1" << std::endl;
-		DEBUG_REPORT
 #endif
 		return /*RET_NOTPOSSIBLE*/;
 	}
 
 	Item* item = thing->getItem();
-	if(item == NULL)
+	if(!item)
 	{
 #ifdef __DEBUG_MOVESYS__
 		std::clog << "Failure: [Player::__updateThing], " << "player: " << getName() << ", item == NULL" << std::endl;
-		DEBUG_REPORT
 #endif
 		return /*RET_NOTPOSSIBLE*/;
 	}
@@ -2909,7 +2903,6 @@ void Player::__replaceThing(uint32_t index, Thing* thing)
 	{
 #ifdef __DEBUG_MOVESYS__
 		std::clog << "Failure: [Player::__replaceThing], " << "player: " << getName() << ", index: " << index << ", index < 0 || index > 11" << std::endl;
-		DEBUG_REPORT
 #endif
 		return /*RET_NOTPOSSIBLE*/;
 	}
@@ -2919,7 +2912,6 @@ void Player::__replaceThing(uint32_t index, Thing* thing)
 	{
 #ifdef __DEBUG_MOVESYS__
 		std::clog << "Failure: [Player::__updateThing], " << "player: " << getName() << ", oldItem == NULL" << std::endl;
-		DEBUG_REPORT
 #endif
 		return /*RET_NOTPOSSIBLE*/;
 	}
@@ -2929,7 +2921,6 @@ void Player::__replaceThing(uint32_t index, Thing* thing)
 	{
 #ifdef __DEBUG_MOVESYS__
 		std::clog << "Failure: [Player::__updateThing], " << "player: " << getName() << ", item == NULL" << std::endl;
-		DEBUG_REPORT
 #endif
 		return /*RET_NOTPOSSIBLE*/;
 	}
@@ -2953,7 +2944,6 @@ void Player::__removeThing(Thing* thing, uint32_t count)
 	{
 #ifdef __DEBUG_MOVESYS__
 		std::clog << "Failure: [Player::__removeThing], " << "player: " << getName() << ", item == NULL" << std::endl;
-		DEBUG_REPORT
 #endif
 		return /*RET_NOTPOSSIBLE*/;
 	}
@@ -2963,7 +2953,6 @@ void Player::__removeThing(Thing* thing, uint32_t count)
 	{
 #ifdef __DEBUG_MOVESYS__
 		std::clog << "Failure: [Player::__removeThing], " << "player: " << getName() << ", index == -1" << std::endl;
-		DEBUG_REPORT
 #endif
 		return /*RET_NOTPOSSIBLE*/;
 	}
@@ -3200,18 +3189,10 @@ void Player::__internalAddThing(uint32_t index, Thing* thing)
 	std::clog << "[Player::__internalAddThing] index: " << index << std::endl;
 
 #endif
-	if(!index)
+	if(!index || index > 11)
 	{
 #ifdef __DEBUG_MOVESYS__
-		std::clog << "Failure: [Player::__internalAddThing] index == 0" << std::endl;
-#endif
-		return;
-	}
-
-	if(index > 11)
-	{
-#ifdef __DEBUG_MOVESYS__
-		std::clog << "Failure: [Player::__internalAddThing] index < 0 || index > 11" << std::endl;
+		std::clog << "Failure: [Player::__internalAddThing] index == 0 || index > 11" << std::endl;
 #endif
 		return;
 	}
