@@ -4070,7 +4070,7 @@ bool Player::addUnjustifiedKill(const Player* attacked, bool countNow)
 		PlayerFlag_NotGainInFight) || hasCustomFlag(PlayerCustomFlag_NotGainSkull))
 		return false;
 
-	if(client)
+	if(client && countNow)
 	{
 		char buffer[90];
 		sprintf(buffer, "Warning! The murder of %s was not justified.",
