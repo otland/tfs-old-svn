@@ -76,7 +76,7 @@ int32_t MoveEventScript::luaCallFunction(lua_State* L)
 		if(event->getEventType() != MOVE_EVENT_EQUIP)
 			lua_pushboolean(L, MoveEvent::DeEquipItem(event, player, item, slot, true));
 		else
-			lua_pushboolean(L, MoveEvent::EquipItem(event, player, item, slot, true));
+			lua_pushboolean(L, MoveEvent::EquipItem(event, player, item, slot, false));
 
 		return 1;
 	}

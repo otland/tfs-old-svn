@@ -2840,7 +2840,7 @@ void Player::__addThing(Creature* actor, int32_t index, Thing* thing)
 		return /*RET_NOTPOSSIBLE*/;
 	}
 
-	if(index == 0)
+	if(!index)
 	{
 #ifdef __DEBUG_MOVESYS__
 		std::clog << "Failure: [Player::__addThing], " << "player: " << getName() << ", index == 0" << std::endl;
@@ -3100,7 +3100,6 @@ void Player::postAddNotification(Creature* actor, Thing* thing, const Cylinder* 
 
 		updateInventoryWeight();
 		updateItemsLight();
-
 		updateWeapon();
 		sendStats();
 	}
@@ -3118,15 +3117,14 @@ void Player::postAddNotification(Creature* actor, Thing* thing, const Cylinder* 
 		if(creature != this)
 			return;
 
-		typedef std::vector<Container*> Containers;
-		Containers containers;
-		for(ContainerVector::iterator it = containerVec.begin(); it != containerVec.end(); ++it)
+		std::vector<Container*> containers;
+		for(std::vector<Container*>::iterator it = containerVec.begin(); it != containerVec.end(); ++it)
 		{
 			if(!Position::areInRange<1,1,0>(it->second->getPosition(), getPosition()))
 				containers.push_back(it->second);
 		}
 
-		for(Containers::const_iterator it = containers.begin(); it != containers.end(); ++it)
+		for(std::vector<Container*>::const_iterator it = containers.begin(); it != containers.end(); ++it)
 			autoCloseContainers(*it);
 	}
 }
@@ -3150,7 +3148,6 @@ void Player::postRemoveNotification(Creature* actor, Thing* thing, const Cylinde
 
 		updateInventoryWeight();
 		updateItemsLight();
-
 		updateWeapon();
 		sendStats();
 	}
@@ -3201,7 +3198,31 @@ void Player::__internalAddThing(uint32_t index, Thing* thing)
 {
 #ifdef __DEBUG_MOVESYS__
 	std::clog << "[Player::__internalAddThing] index: " << index << std::endl;
+
 #endif
+	if(!index)
+	{
+#ifdef __DEBUG_MOVESYS__
+		std::clog << "Failure: [Player::__internalAddThing] index == 0" << std::endl;
+#endif
+		return;
+	}
+
+	if(index < 0 || index > 11)
+	{
+#ifdef __DEBUG_MOVESYS__
+		std::clog << "Failure: [Player::__internalAddThing] index < 0 || index > 11" << std::endl;
+#endif
+		return;
+	}
+
+	if(inventory[index])
+	{
+#ifdef __DEBUG_MOVESYS__
+		std::clog << "Warning: [Player::__internalAddThing], player: " << getName() << ", items[index] is not empty." << std::endl;
+#endif
+		return;
+	}
 
 	Item* item = thing->getItem();
 	if(!item)
@@ -3212,30 +3233,8 @@ void Player::__internalAddThing(uint32_t index, Thing* thing)
 		return;
 	}
 
-	//index == 0 means we should equip this item at the most appropiate slot
-	if(index == 0)
-	{
-#ifdef __DEBUG_MOVESYS__
-		std::clog << "Failure: [Player::__internalAddThing] index == 0" << std::endl;
-		DEBUG_REPORT
-#endif
-		return;
-	}
-
-	if(index > 0 && index < 11)
-	{
-		if(inventory[index])
-		{
-#ifdef __DEBUG_MOVESYS__
-			std::clog << "Warning: [Player::__internalAddThing], player: " << getName() << ", items[index] is not empty." << std::endl;
-			//DEBUG_REPORT
-#endif
-			return;
-		}
-
-		inventory[index] = item;
-		item->setParent(this);
-	}
+	inventory[index] = item;
+	item->setParent(this);
 }
 
 bool Player::setFollowCreature(Creature* creature, bool fullPathSearch /*= false*/)
@@ -3414,19 +3413,20 @@ void Player::getCreatureLight(LightInfo& light) const
 		light = itemsLight;
 }
 
-void Player::updateItemsLight(bool internal /*=false*/)
+void Player::updateItemsLight(bool internal/* =false*/)
 {
-	LightInfo maxLight;
-	LightInfo curLight;
+	LightInfo maxLight, curLight;
+	Item* item = NULL;
 	for(int32_t i = SLOT_FIRST; i < SLOT_LAST; ++i)
 	{
-		if(Item* item = getInventoryItem((slots_t)i))
-		{
-			item->getLight(curLight);
-			if(curLight.level > maxLight.level)
-				maxLight = curLight;
-		}
+		if(!(item = getInventoryItem((slots_t)i)))
+			continue;
+
+		item->getLight(curLight);
+		if(curLight.level > maxLight.level)
+			maxLight = curLight;
 	}
+
 	if(itemsLight.level != maxLight.level || itemsLight.color != maxLight.color)
 	{
 		itemsLight = maxLight;
