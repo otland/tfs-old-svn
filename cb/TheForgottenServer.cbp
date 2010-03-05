@@ -16,10 +16,10 @@
 				<Compiler>
 					<Add option="-pg" />
 					<Add option="-g" />
-					<Add option="-D__USE_MYSQL___" />
-					<Add option="-D__USE_SQLITE___" />
-					<Add option="-D__ENABLE_SERVER_DIAGNOSTIC___" />
-					<Add option="-D__EXCEPTION_TRACER___" />
+					<Add option="-D__USE_MYSQL__" />
+					<Add option="-D__USE_SQLITE__" />
+					<Add option="-D__ENABLE_SERVER_DIAGNOSTIC__" />
+					<Add option="-D__EXCEPTION_TRACER__" />
 				</Compiler>
 				<Linker>
 					<Add option="-pg -lgmon" />

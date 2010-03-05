@@ -43,6 +43,7 @@ bool ConfigManager::load()
 	if(!L)
 		return false;
 
+	luaL_openlibs(L);
 	if(luaL_dofile(L, m_confString[CONFIG_FILE].c_str()))
 	{
 		lua_close(L);
