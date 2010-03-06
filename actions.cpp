@@ -706,7 +706,7 @@ bool Action::loadFunction(const std::string& functionName)
 	return true;
 }
 
-bool Action::increaseItemId(Player* player, Item* item, const PositionEx& posFrom, const PositionEx& posTo, bool extendedUse, uint32_t creatureId)
+bool Action::increaseItemId(Player* player, Item* item, const PositionEx&, const PositionEx&, bool, uint32_t)
 {
 	if(!player || !item)
 		return false;
@@ -716,7 +716,7 @@ bool Action::increaseItemId(Player* player, Item* item, const PositionEx& posFro
 	return true;
 }
 
-bool Action::decreaseItemId(Player* player, Item* item, const PositionEx& posFrom, const PositionEx& posTo, bool extendedUse, uint32_t creatureId)
+bool Action::decreaseItemId(Player* player, Item* item, const PositionEx&, const PositionEx&, bool, uint32_t)
 {
 	if(!player || !item)
 		return false;
@@ -734,7 +734,7 @@ ReturnValue Action::canExecuteAction(const Player* player, const Position& toPos
 	return g_actions->canUseFar(player, toPos, getCheckLineOfSight());
 }
 
-bool Action::executeUse(Player* player, Item* item, const PositionEx& fromPos, const PositionEx& toPos, bool extendedUse, uint32_t creatureId)
+bool Action::executeUse(Player* player, Item* item, const PositionEx& fromPos, const PositionEx& toPos, bool extendedUse, uint32_t)
 {
 	//onUse(cid, item, fromPosition, itemEx, toPosition)
 	if(m_interface->reserveEnv())

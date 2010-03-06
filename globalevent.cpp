@@ -59,7 +59,7 @@ Event* GlobalEvents::getEvent(const std::string& nodeName)
 	return NULL;
 }
 
-bool GlobalEvents::registerEvent(Event* event, xmlNodePtr p, bool override)
+bool GlobalEvents::registerEvent(Event* event, xmlNodePtr, bool override)
 {
 	GlobalEvent* globalEvent = dynamic_cast<GlobalEvent*>(event);
 	if(!globalEvent)

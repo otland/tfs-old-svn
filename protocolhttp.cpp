@@ -37,7 +37,7 @@ void ProtocolHTTP::disconnectClient()
 	getConnection()->close();
 }
 
-bool ProtocolHTTP::parseFirstPacket(NetworkMessage& msg)
+bool ProtocolHTTP::parseFirstPacket(NetworkMessage&)
 {
 	if(OutputMessage_ptr output = OutputMessagePool::getInstance()->getOutputMessage(this, false))
 	{

@@ -120,7 +120,7 @@ Event* Weapons::getEvent(const std::string& nodeName)
 	return NULL;
 }
 
-bool Weapons::registerEvent(Event* event, xmlNodePtr p, bool override)
+bool Weapons::registerEvent(Event* event, xmlNodePtr, bool override)
 {
 	Weapon* weapon = dynamic_cast<Weapon*>(event);
 	if(!weapon)
@@ -404,7 +404,7 @@ bool Weapon::internalUseWeapon(Player* player, Item* item, Tile* tile) const
 	return true;
 }
 
-void Weapon::onUsedWeapon(Player* player, Item* item, Tile* destTile) const
+void Weapon::onUsedWeapon(Player* player, Item* item, Tile*) const
 {
 	if(!player->hasFlag(PlayerFlag_NotGainSkill))
 	{
@@ -606,7 +606,7 @@ bool WeaponMelee::getSkillType(const Player* player, const Item* item,
 	return false;
 }
 
-int32_t WeaponMelee::getWeaponDamage(const Player* player, const Creature* target, const Item* item, bool maxDamage /*= false*/) const
+int32_t WeaponMelee::getWeaponDamage(const Player* player, const Creature*, const Item* item, bool maxDamage /*= false*/) const
 {
 	int32_t attackSkill = player->getWeaponSkill(item), attackValue = std::max((int32_t)0,
 		(int32_t(item->getAttack() + item->getExtraAttack()) - elementDamage));
@@ -904,7 +904,7 @@ int32_t WeaponDistance::getWeaponDamage(const Player* player, const Creature* ta
 	return -random_range(minValue, ret, DISTRO_NORMAL);
 }
 
-bool WeaponDistance::getSkillType(const Player* player, const Item* item,
+bool WeaponDistance::getSkillType(const Player* player, const Item*,
 	skills_t& skill, uint32_t& skillpoint) const
 {
 	skill = SKILL_DIST;
@@ -961,7 +961,7 @@ bool WeaponWand::configureWeapon(const ItemType& it)
 	return Weapon::configureWeapon(it);
 }
 
-int32_t WeaponWand::getWeaponDamage(const Player* player, const Creature* target, const Item* item, bool maxDamage /* = false*/) const
+int32_t WeaponWand::getWeaponDamage(const Player* player, const Creature*, const Item*, bool maxDamage /* = false*/) const
 {
 	float multiplier = 1.0f;
 	if(Vocation* vocation = player->getVocation())

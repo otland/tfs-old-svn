@@ -119,7 +119,7 @@ void Monster::onAttackedCreature(Creature* target)
 		master->onSummonAttackedCreature(this, target);
 }
 
-void Monster::onAttackedCreatureDisappear(bool isLogout)
+void Monster::onAttackedCreatureDisappear(bool)
 {
 #ifdef __DEBUG__
 	std::clog << "Attacked creature disappeared." << std::endl;
@@ -465,7 +465,7 @@ void Monster::onFollowCreatureComplete(const Creature* creature)
 }
 
 BlockType_t Monster::blockHit(Creature* attacker, CombatType_t combatType, int32_t& damage,
-	bool checkDefense/* = false*/, bool checkArmor/* = false*/, bool reflect/* = true*/)
+	bool checkDefense/* = false*/, bool checkArmor/* = false*/, bool /*reflect = true*/)
 {
 	BlockType_t blockType = Creature::blockHit(attacker, combatType, damage, checkDefense, checkArmor);
 	if(!damage)

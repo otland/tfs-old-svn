@@ -283,8 +283,8 @@ class Creature : public AutoId, virtual public Thing
 		virtual bool setFollowCreature(Creature* creature, bool fullPathSearch = false);
 
 		//follow events
-		virtual void onFollowCreature(const Creature* creature) {}
-		virtual void onFollowCreatureComplete(const Creature* creature) {}
+		virtual void onFollowCreature(const Creature*) {}
+		virtual void onFollowCreatureComplete(const Creature*) {}
 
 		//combat functions
 		Creature* getAttackedCreature() {return attackedCreature;}
@@ -345,8 +345,8 @@ class Creature : public AutoId, virtual public Thing
 		virtual void drainHealth(Creature* attacker, CombatType_t combatType, int32_t damage);
 		virtual void drainMana(Creature* attacker, CombatType_t combatType, int32_t damage);
 
-		virtual bool challengeCreature(Creature* creature) {return false;}
-		virtual bool convinceCreature(Creature* creature) {return false;}
+		virtual bool challengeCreature(Creature*) {return false;}
+		virtual bool convinceCreature(Creature*) {return false;}
 
 		virtual bool onDeath();
 		virtual double getGainedExperience(Creature* attacker) const {return getDamageRatio(attacker) * (double)getLostExperience();}
@@ -356,26 +356,26 @@ class Creature : public AutoId, virtual public Thing
 
 		//combat event functions
 		virtual void onAddCondition(ConditionType_t type, bool hadCondition);
-		virtual void onAddCombatCondition(ConditionType_t type, bool hadCondition) {}
+		virtual void onAddCombatCondition(ConditionType_t, bool) {}
 		virtual void onEndCondition(ConditionType_t type);
 		virtual void onTickCondition(ConditionType_t type, int32_t interval, bool& _remove);
 		virtual void onCombatRemoveCondition(const Creature* attacker, Condition* condition);
-		virtual void onAttackedCreature(Creature* target) {}
-		virtual void onSummonAttackedCreature(Creature* summon, Creature* target) {}
+		virtual void onAttackedCreature(Creature*) {}
+		virtual void onSummonAttackedCreature(Creature*, Creature*) {}
 		virtual void onAttacked() {}
 		virtual void onAttackedCreatureDrainHealth(Creature* target, int32_t points);
-		virtual void onSummonAttackedCreatureDrainHealth(Creature* summon, Creature* target, int32_t points) {}
+		virtual void onSummonAttackedCreatureDrainHealth(Creature*, Creature*, int32_t) {}
 		virtual void onAttackedCreatureDrainMana(Creature* target, int32_t points);
-		virtual void onSummonAttackedCreatureDrainMana(Creature* summon, Creature* target, int32_t points) {}
+		virtual void onSummonAttackedCreatureDrainMana(Creature*, Creature*, int32_t) {}
 		virtual void onAttackedCreatureDrain(Creature* target, int32_t points);
-		virtual void onSummonAttackedCreatureDrain(Creature* summon, Creature* target, int32_t points) {}
+		virtual void onSummonAttackedCreatureDrain(Creature*, Creature*, int32_t) {}
 		virtual void onTargetCreatureGainHealth(Creature* target, int32_t points);
 		virtual void onAttackedCreatureKilled(Creature* target);
 		virtual bool onKilledCreature(Creature* target, DeathEntry& entry);
 		virtual void onGainExperience(double& gainExp, bool fromMonster, bool multiplied);
 		virtual void onGainSharedExperience(double& gainExp, bool fromMonster, bool multiplied);
-		virtual void onAttackedCreatureBlockHit(Creature* target, BlockType_t blockType) {}
-		virtual void onBlockHit(BlockType_t blockType) {}
+		virtual void onAttackedCreatureBlockHit(Creature*, BlockType_t) {}
+		virtual void onBlockHit(BlockType_t) {}
 		virtual void onChangeZone(ZoneType_t zone);
 		virtual void onAttackedCreatureChangeZone(ZoneType_t zone);
 		virtual void onIdleStatus();
@@ -393,28 +393,28 @@ class Creature : public AutoId, virtual public Thing
 		virtual void onUpdateTileItem(const Tile* tile, const Position& pos, const Item* oldItem,
 			const ItemType& oldType, const Item* newItem, const ItemType& newType);
 		virtual void onRemoveTileItem(const Tile* tile, const Position& pos, const ItemType& iType, const Item* item);
-		virtual void onUpdateTile(const Tile* tile, const Position& pos) {}
+		virtual void onUpdateTile(const Tile*, const Position&) {}
 
 		virtual void onCreatureAppear(const Creature* creature);
 		virtual void onCreatureDisappear(const Creature* creature, bool isLogout);
 		virtual void onCreatureMove(const Creature* creature, const Tile* newTile, const Position& newPos,
 			const Tile* oldTile, const Position& oldPos, bool teleport);
 
-		virtual void onAttackedCreatureDisappear(bool isLogout) {}
-		virtual void onFollowCreatureDisappear(bool isLogout) {}
+		virtual void onAttackedCreatureDisappear(bool) {}
+		virtual void onFollowCreatureDisappear(bool) {}
 
-		virtual void onCreatureTurn(const Creature* creature) {}
-		virtual void onCreatureSay(const Creature* creature, SpeakClasses type, const std::string& text,
-			Position* pos = NULL) {}
+		virtual void onCreatureTurn(const Creature*) {}
+		virtual void onCreatureSay(const Creature*, SpeakClasses, const std::string&,
+			Position* = NULL) {}
 
-		virtual void onCreatureChangeOutfit(const Creature* creature, const Outfit_t& outfit) {}
-		virtual void onCreatureConvinced(const Creature* convincer, const Creature* creature) {}
-		virtual void onCreatureChangeVisible(const Creature* creature, Visible_t visible) {}
+		virtual void onCreatureChangeOutfit(const Creature*, const Outfit_t&) {}
+		virtual void onCreatureConvinced(const Creature*, const Creature*) {}
+		virtual void onCreatureChangeVisible(const Creature*, Visible_t) {}
 		virtual void onPlacedCreature() {}
 		virtual void onRemovedCreature();
 
 		virtual WeaponType_t getWeaponType() {return WEAPON_NONE;}
-		virtual bool getCombatValues(int32_t& min, int32_t& max) {return false;}
+		virtual bool getCombatValues(int32_t&, int32_t&) {return false;}
 
 		virtual void setSkull(Skulls_t newSkull) {skull = newSkull;}
 		virtual Skulls_t getSkull() const {return skull;}
@@ -549,10 +549,10 @@ class Creature : public AutoId, virtual public Thing
 		DeathList getKillers();
 
 		virtual Item* createCorpse(DeathList deathList);
-		virtual void dropLoot(Container* corpse) {}
+		virtual void dropLoot(Container*) {}
 		virtual void dropCorpse(DeathList deathList);
 
-		virtual void doAttacking(uint32_t interval) {}
+		virtual void doAttacking(uint32_t) {}
 		void internalCreatureDisappear(const Creature* creature, bool isLogout);
 
 		friend class Game;

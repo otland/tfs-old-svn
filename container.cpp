@@ -366,8 +366,8 @@ ReturnValue Container::__queryRemove(const Thing* thing, uint32_t count, uint32_
 	return RET_NOERROR;
 }
 
-Cylinder* Container::__queryDestination(int32_t& index, const Thing* thing, Item** destItem,
-	uint32_t& flags)
+Cylinder* Container::__queryDestination(int32_t& index, const Thing*, Item** destItem,
+	uint32_t&)
 {
 	if(index == 254 /*move up*/)
 	{
@@ -423,7 +423,7 @@ void Container::__addThing(Creature* actor, Thing* thing)
 	return __addThing(actor, 0, thing);
 }
 
-void Container::__addThing(Creature* actor, int32_t index, Thing* thing)
+void Container::__addThing(Creature*, int32_t index, Thing* thing)
 {
 	if(index >= (int32_t)capacity())
 	{
@@ -698,7 +698,7 @@ std::map<uint32_t, uint32_t>& Container::__getAllItemTypeCount(std::map<uint32_t
 }
 
 void Container::postAddNotification(Creature* actor, Thing* thing, const Cylinder* oldParent,
-	int32_t index, cylinderlink_t link /*= LINK_OWNER*/)
+	int32_t index, cylinderlink_t /*link = LINK_OWNER*/)
 {
 	Cylinder* topParent = getTopParent();
 	if(!topParent->getCreature())
@@ -717,7 +717,7 @@ void Container::postAddNotification(Creature* actor, Thing* thing, const Cylinde
 }
 
 void Container::postRemoveNotification(Creature* actor, Thing* thing, const Cylinder* newParent,
-	int32_t index, bool isCompleteRemoval, cylinderlink_t link /*= LINK_OWNER*/)
+	int32_t index, bool isCompleteRemoval, cylinderlink_t /*link = LINK_OWNER*/)
 {
 	Cylinder* topParent = getTopParent();
 	if(!topParent->getCreature())
@@ -743,7 +743,7 @@ void Container::__internalAddThing(Thing* thing)
 	__internalAddThing(0, thing);
 }
 
-void Container::__internalAddThing(uint32_t index, Thing* thing)
+void Container::__internalAddThing(uint32_t, Thing* thing)
 {
 #ifdef __DEBUG_MOVESYS__
 	std::clog << "[Container::__internalAddThing] index: " << index << std::endl;

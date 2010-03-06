@@ -350,7 +350,7 @@ bool IOMapSerialize::loadMapRelational(Map* map)
 	return true;
 }
 
-bool IOMapSerialize::saveMapRelational(Map* map)
+bool IOMapSerialize::saveMapRelational(Map*)
 {
 	Database* db = Database::getInstance();
 	//Start the transaction
@@ -448,7 +448,7 @@ bool IOMapSerialize::loadMapBinary(Map* map)
  	return true;
 }
 
-bool IOMapSerialize::saveMapBinary(Map* map)
+bool IOMapSerialize::saveMapBinary(Map*)
 {
  	Database* db = Database::getInstance();
 	//Start the transaction
@@ -491,7 +491,7 @@ bool IOMapSerialize::saveMapBinary(Map* map)
  	return transaction.commit();
 }
 
-bool IOMapSerialize::loadItems(Database* db, DBResult* result, Cylinder* parent, bool depotTransfer/* = false*/)
+bool IOMapSerialize::loadItems(Database*, DBResult* result, Cylinder* parent, bool depotTransfer/* = false*/)
 {
 	ItemMap itemMap;
 	Tile* tile = NULL;

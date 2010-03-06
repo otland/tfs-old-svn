@@ -1253,7 +1253,7 @@ void Player::sendAddContainerItem(const Container* container, const Item* item)
 	}
 }
 
-void Player::sendUpdateContainerItem(const Container* container, uint8_t slot, const Item* oldItem, const Item* newItem)
+void Player::sendUpdateContainerItem(const Container* container, uint8_t slot, const Item*, const Item* newItem)
 {
 	if(!client)
 		return;
@@ -1265,7 +1265,7 @@ void Player::sendUpdateContainerItem(const Container* container, uint8_t slot, c
 	}
 }
 
-void Player::sendRemoveContainerItem(const Container* container, uint8_t slot, const Item* item)
+void Player::sendRemoveContainerItem(const Container* container, uint8_t slot, const Item*)
 {
 	if(!client)
 		return;
@@ -1554,13 +1554,13 @@ void Player::onCreatureMove(const Creature* creature, const Tile* newTile, const
 	}
 }
 
-void Player::onAddContainerItem(const Container* container, const Item* item)
+void Player::onAddContainerItem(const Container*, const Item* item)
 {
 	checkTradeState(item);
 }
 
 void Player::onUpdateContainerItem(const Container* container, uint8_t slot,
-	const Item* oldItem, const ItemType& oldType, const Item* newItem, const ItemType& newType)
+	const Item* oldItem, const ItemType&, const Item* newItem, const ItemType&)
 {
 	if(oldItem != newItem)
 		onRemoveContainerItem(container, slot, oldItem);
@@ -1569,7 +1569,7 @@ void Player::onUpdateContainerItem(const Container* container, uint8_t slot,
 		checkTradeState(oldItem);
 }
 
-void Player::onRemoveContainerItem(const Container* container, uint8_t slot, const Item* item)
+void Player::onRemoveContainerItem(const Container* container, uint8_t, const Item* item)
 {
 	if(tradeState == TRADE_TRANSFER)
 		return;
@@ -1607,8 +1607,8 @@ void Player::onSendContainer(const Container* container)
 	}
 }
 
-void Player::onUpdateInventoryItem(slots_t slot, Item* oldItem, const ItemType& oldType,
-	Item* newItem, const ItemType& newType)
+void Player::onUpdateInventoryItem(slots_t slot, Item* oldItem, const ItemType& ,
+	Item* newItem, const ItemType&)
 {
 	if(oldItem != newItem)
 		onRemoveInventoryItem(slot, oldItem);
@@ -1617,7 +1617,7 @@ void Player::onUpdateInventoryItem(slots_t slot, Item* oldItem, const ItemType& 
 		checkTradeState(oldItem);
 }
 
-void Player::onRemoveInventoryItem(slots_t slot, Item* item)
+void Player::onRemoveInventoryItem(slots_t, Item* item)
 {
 	if(tradeState == TRADE_TRANSFER)
 		return;
@@ -1957,7 +1957,7 @@ uint32_t Player::getPercentLevel(uint64_t count, uint64_t nextLevelCount)
 	return 0;
 }
 
-void Player::onBlockHit(BlockType_t blockType)
+void Player::onBlockHit(BlockType_t)
 {
 	if(shieldBlockCount > 0)
 	{
@@ -2682,7 +2682,7 @@ ReturnValue Player::__queryAdd(int32_t index, const Thing* thing, uint32_t count
 }
 
 ReturnValue Player::__queryMaxCount(int32_t index, const Thing* thing, uint32_t count, uint32_t& maxQueryCount,
-	uint32_t flags) const
+	uint32_t) const
 {
 	const Item* item = thing->getItem();
 	if(!item)
@@ -2739,7 +2739,7 @@ ReturnValue Player::__queryRemove(const Thing* thing, uint32_t count, uint32_t f
 }
 
 Cylinder* Player::__queryDestination(int32_t& index, const Thing* thing, Item** destItem,
-	uint32_t& flags)
+	uint32_t&)
 {
 	if(index == 0 /*drop to capacity window*/ || index == INDEX_WHEREEVER)
 	{
@@ -2829,7 +2829,7 @@ void Player::__addThing(Creature* actor, Thing* thing)
 	__addThing(actor, 0, thing);
 }
 
-void Player::__addThing(Creature* actor, int32_t index, Thing* thing)
+void Player::__addThing(Creature*, int32_t index, Thing* thing)
 {
 	if(index < 0 || index > 11)
 	{
@@ -3070,7 +3070,7 @@ std::map<uint32_t, uint32_t>& Player::__getAllItemTypeCount(std::map<uint32_t,
 	return countMap;
 }
 
-void Player::postAddNotification(Creature* actor, Thing* thing, const Cylinder* oldParent,
+void Player::postAddNotification(Creature*, Thing* thing, const Cylinder* oldParent,
 	int32_t index, cylinderlink_t link /*= LINK_OWNER*/)
 {
 	if(link == LINK_OWNER) //calling movement scripts
@@ -3118,7 +3118,7 @@ void Player::postAddNotification(Creature* actor, Thing* thing, const Cylinder* 
 	}
 }
 
-void Player::postRemoveNotification(Creature* actor, Thing* thing, const Cylinder* newParent,
+void Player::postRemoveNotification(Creature*, Thing* thing, const Cylinder* newParent,
 	int32_t index, bool isCompleteRemoval, cylinderlink_t link /*= LINK_OWNER*/)
 {
 	if(link == LINK_OWNER) //calling movement scripts
@@ -3271,7 +3271,7 @@ void Player::getPathSearchParams(const Creature* creature, FindPathParams& fpp) 
 	fpp.fullPathSearch = true;
 }
 
-void Player::doAttacking(uint32_t interval)
+void Player::doAttacking(uint32_t)
 {
 	if(!lastAttack)
 		lastAttack = OTSYS_TIME() - getAttackSpeed() - 1;
@@ -3423,7 +3423,7 @@ void Player::onAddCondition(ConditionType_t type, bool hadCondition)
 		sendIcons();
 }
 
-void Player::onAddCombatCondition(ConditionType_t type, bool hadCondition)
+void Player::onAddCombatCondition(ConditionType_t type, bool)
 {
 	std::string tmp;
 	switch(type)
@@ -3491,7 +3491,7 @@ void Player::onEndCondition(ConditionType_t type)
 	sendIcons();
 }
 
-void Player::onCombatRemoveCondition(const Creature* attacker, Condition* condition)
+void Player::onCombatRemoveCondition(const Creature*, Condition* condition)
 {
 	//Creature::onCombatRemoveCondition(attacker, condition);
 	bool remove = true;
@@ -3815,7 +3815,7 @@ void Player::onGainExperience(double& gainExp, bool fromMonster, bool multiplied
 		Creature::onGainExperience(gainExp, fromMonster, true);
 }
 
-void Player::onGainSharedExperience(double& gainExp, bool fromMonster, bool multiplied)
+void Player::onGainSharedExperience(double& gainExp, bool fromMonster, bool)
 {
 	if(gainExperience(gainExp, fromMonster))
 		Creature::onGainSharedExperience(gainExp, fromMonster, true);

@@ -165,7 +165,7 @@ bool Event::loadBuffer(const std::string& buffer)
 	return true;
 }
 
-bool Event::checkBuffer(const std::string& buffer)
+bool Event::checkBuffer(const std::string&)
 {
 	return true; //TODO
 }
@@ -214,7 +214,7 @@ bool Event::loadScript(const std::string& script, bool file)
 	return true;
 }
 
-bool Event::checkScript(const std::string& script, bool file)
+bool Event::checkScript(const std::string&, bool)
 {
 	return true; //TODO
 }

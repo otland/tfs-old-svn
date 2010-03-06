@@ -4920,7 +4920,7 @@ bool Game::playerLeaveParty(uint32_t playerId)
 	return player->getParty()->leave(player);
 }
 
-bool Game::playerSharePartyExperience(uint32_t playerId, bool activate, uint8_t unknown)
+bool Game::playerSharePartyExperience(uint32_t playerId, bool activate, uint8_t)
 {
 	Player* player = getPlayerByID(playerId);
 	if(!player || player->isRemoved())

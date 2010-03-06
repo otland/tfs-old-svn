@@ -403,10 +403,10 @@ class Npc : public Creature
 		virtual void onCreatureSay(const Creature* creature, SpeakClasses type, const std::string& text, Position* pos = NULL);
 		virtual void onThink(uint32_t interval);
 
-		bool isImmune(CombatType_t type) const {return true;}
-		bool isImmune(ConditionType_t type) const {return true;}
+		bool isImmune(CombatType_t) const {return true;}
+		bool isImmune(ConditionType_t) const {return true;}
 
-		virtual std::string getDescription(int32_t lookDistance) const {return nameDescription + ".";}
+		virtual std::string getDescription(int32_t) const {return nameDescription + ".";}
 		virtual bool getNextStep(Direction& dir, uint32_t& flags);
 		bool getRandomStep(Direction& dir);
 

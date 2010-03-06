@@ -106,7 +106,7 @@ class Condition;
 class ItemType
 {
 	private:
-		ItemType(const ItemType& it) {}
+		ItemType(const ItemType&) {}
 
 	public:
 		ItemType();

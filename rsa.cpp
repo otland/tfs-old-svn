@@ -78,7 +78,7 @@ void RSA::initialize(const char* p, const char* q, const char* d)
 	mpz_clear(qm1);
 }
 
-void RSA::decrypt(char* msg, int32_t size)
+void RSA::decrypt(char* msg)
 {
 	boost::recursive_mutex::scoped_lock lockClass(rsaLock);
 	mpz_t c, v1, v2, u2, tmp;

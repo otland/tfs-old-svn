@@ -499,7 +499,7 @@ void Tile::moveCreature(Creature* actor, Creature* creature, Cylinder* toCylinde
 	newTile->postAddNotification(actor, creature, this, newStackpos);
 }
 
-ReturnValue Tile::__queryAdd(int32_t index, const Thing* thing, uint32_t count,
+ReturnValue Tile::__queryAdd(int32_t, const Thing* thing, uint32_t,
 	uint32_t flags) const
 {
 	const CreatureVector* creatures = getCreatures();
@@ -726,8 +726,8 @@ ReturnValue Tile::__queryAdd(int32_t index, const Thing* thing, uint32_t count,
 	return RET_NOERROR;
 }
 
-ReturnValue Tile::__queryMaxCount(int32_t index, const Thing* thing, uint32_t count, uint32_t& maxQueryCount,
-	uint32_t flags) const
+ReturnValue Tile::__queryMaxCount(int32_t, const Thing*, uint32_t count, uint32_t& maxQueryCount,
+	uint32_t ) const
 {
 	maxQueryCount = std::max((uint32_t)1, count);
 	return RET_NOERROR;
@@ -747,7 +747,7 @@ ReturnValue Tile::__queryRemove(const Thing* thing, uint32_t count, uint32_t fla
 	return RET_NOERROR;
 }
 
-Cylinder* Tile::__queryDestination(int32_t& index, const Thing* thing, Item** destItem,
+Cylinder* Tile::__queryDestination(int32_t&, const Thing*, Item** destItem,
 	uint32_t& flags)
 {
 	Tile* destTile = NULL;
@@ -862,7 +862,7 @@ Cylinder* Tile::__queryDestination(int32_t& index, const Thing* thing, Item** de
 	return destTile;
 }
 
-void Tile::__addThing(Creature* actor, int32_t index, Thing* thing)
+void Tile::__addThing(Creature* actor, int32_t, Thing* thing)
 {
 	if(Creature* creature = thing->getCreature())
 	{
@@ -1510,7 +1510,7 @@ void Tile::postAddNotification(Creature* actor, Thing* thing, const Cylinder* ol
 }
 
 void Tile::postRemoveNotification(Creature* actor, Thing* thing, const Cylinder* newParent,
-	int32_t index, bool isCompleteRemoval, cylinderlink_t link/* = LINK_OWNER*/)
+	int32_t index, bool isCompleteRemoval, cylinderlink_t /*link = LINK_OWNER*/)
 {
 	const Position& cylinderMapPos = pos;
 	const SpectatorVec& list = g_game.getSpectators(cylinderMapPos);
@@ -1542,7 +1542,7 @@ void Tile::postRemoveNotification(Creature* actor, Thing* thing, const Cylinder*
 	}
 }
 
-void Tile::__internalAddThing(uint32_t index, Thing* thing)
+void Tile::__internalAddThing(uint32_t, Thing* thing)
 {
 	thing->setParent(this);
 	if(Creature* creature = thing->getCreature())

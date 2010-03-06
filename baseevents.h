@@ -71,7 +71,7 @@ class Event
 		bool loadScript(const std::string& script, bool file);
 		bool checkScript(const std::string& script, bool file);
 
-		virtual bool loadFunction(const std::string& functionName) {return false;}
+		virtual bool loadFunction(const std::string&) {return false;}
 
 	protected:
 		virtual std::string getScriptEventName() const = 0;

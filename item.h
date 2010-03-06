@@ -196,7 +196,7 @@ class Item : virtual public Thing, public ItemAttributes
 		virtual Attr_ReadValue readAttr(AttrTypes_t attr, PropStream& propStream);
 		virtual bool unserializeAttr(PropStream& propStream);
 		virtual bool serializeAttr(PropWriteStream& propWriteStream) const;
-		virtual bool unserializeItemNode(FileLoader& f, NODE node, PropStream& propStream) {return unserializeAttr(propStream);}
+		virtual bool unserializeItemNode(FileLoader&, NODE, PropStream& propStream) {return unserializeAttr(propStream);}
 
 		// Item attributes
 		void setDuration(int32_t time) {setAttribute("duration", time);}
@@ -283,7 +283,7 @@ class Item : virtual public Thing, public ItemAttributes
 		bool canWriteText() const {return items[id].canWriteText;}
 
 		virtual bool isPushable() const {return isMoveable();}
-		virtual bool isBlocking(const Creature* creature) const {return items[id].blockSolid;}
+		virtual bool isBlocking(const Creature*) const {return items[id].blockSolid;}
 		bool isGroundTile() const {return items[id].isGroundTile();}
 		bool isContainer() const {return items[id].isContainer();}
 		bool isSplash() const {return items[id].isSplash();}
@@ -328,7 +328,7 @@ class Item : virtual public Thing, public ItemAttributes
 		void setRaid(Raid* _raid) {raid = _raid;}
 
 		virtual void onRemoved();
-		virtual bool onTradeEvent(TradeEvents_t event, Player* owner, Player* seller) {return true;}
+		virtual bool onTradeEvent(TradeEvents_t, Player*, Player*) {return true;}
 
 		void setDefaultSubtype();
 		virtual void __startDecaying();

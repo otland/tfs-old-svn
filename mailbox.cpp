@@ -29,8 +29,8 @@
 extern ConfigManager g_config;
 extern Game g_game;
 
-ReturnValue Mailbox::__queryAdd(int32_t index, const Thing* thing, uint32_t count,
-	uint32_t flags) const
+ReturnValue Mailbox::__queryAdd(int32_t, const Thing* thing, uint32_t,
+	uint32_t) const
 {
 	if(const Item* item = thing->getItem())
 	{
@@ -41,14 +41,14 @@ ReturnValue Mailbox::__queryAdd(int32_t index, const Thing* thing, uint32_t coun
 	return RET_NOTPOSSIBLE;
 }
 
-ReturnValue Mailbox::__queryMaxCount(int32_t index, const Thing* thing, uint32_t count, uint32_t& maxQueryCount,
-	uint32_t flags) const
+ReturnValue Mailbox::__queryMaxCount(int32_t, const Thing*, uint32_t count, uint32_t& maxQueryCount,
+	uint32_t) const
 {
 	maxQueryCount = std::max((uint32_t)1, count);
 	return RET_NOERROR;
 }
 
-void Mailbox::__addThing(Creature* actor, int32_t index, Thing* thing)
+void Mailbox::__addThing(Creature* actor, int32_t, Thing* thing)
 {
 	Item* item = thing->getItem();
 	if(!item)

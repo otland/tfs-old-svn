@@ -156,7 +156,7 @@ void Condition::setTicks(int32_t _ticks)
 		endTime = OTSYS_TIME() + _ticks;
 }
 
-bool Condition::startCondition(Creature* creature)
+bool Condition::startCondition(Creature*)
 {
 	if(ticks > 0)
 		endTime = OTSYS_TIME() + ticks;
@@ -290,10 +290,10 @@ Icons_t Condition::getIcons() const
 ConditionGeneric::ConditionGeneric(ConditionId_t _id, ConditionType_t _type, int32_t _ticks, bool _buff, uint32_t _subId):
 Condition(_id, _type, _ticks, _buff, _subId)
 {
-	//
+	// TODO: Get rid of this?
 }
 
-void ConditionGeneric::addCondition(Creature* creature, const Condition* addCondition)
+void ConditionGeneric::addCondition(Creature*, const Condition* addCondition)
 {
 	if(updateCondition(addCondition))
 		setTicks(addCondition->getTicks());
@@ -489,7 +489,7 @@ bool ConditionAttributes::executeCondition(Creature* creature, int32_t interval)
 	return ConditionGeneric::executeCondition(creature, interval);
 }
 
-void ConditionAttributes::endCondition(Creature* creature, ConditionEnd_t reason)
+void ConditionAttributes::endCondition(Creature* creature, ConditionEnd_t)
 {
 	Player* player = creature->getPlayer();
 	if(!player)
@@ -637,7 +637,7 @@ ConditionGeneric(_id, _type, _ticks, _buff, _subId)
 	healthTicks = manaTicks = 1000;
 }
 
-void ConditionRegeneration::addCondition(Creature* creature, const Condition* addCondition)
+void ConditionRegeneration::addCondition(Creature*, const Condition* addCondition)
 {
 	if(!updateCondition(addCondition))
 		return;
@@ -778,7 +778,7 @@ ConditionGeneric(_id, _type, _ticks, _buff, _subId)
 	internalSoulTicks = soulTicks = soulGain = 0;
 }
 
-void ConditionSoul::addCondition(Creature* creature, const Condition* addCondition)
+void ConditionSoul::addCondition(Creature*, const Condition* addCondition)
 {
 	if(!updateCondition(addCondition))
 		return;
@@ -1529,7 +1529,7 @@ void ConditionOutfit::changeOutfit(Creature* creature, int32_t index/* = -1*/)
 	g_game.internalCreatureChangeOutfit(creature, outfits[index], true);
 }
 
-void ConditionOutfit::endCondition(Creature* creature, ConditionEnd_t reason)
+void ConditionOutfit::endCondition(Creature* creature, ConditionEnd_t)
 {
 	if(!outfits.empty())
 		g_game.internalCreatureChangeOutfit(creature, creature->getDefaultOutfit(), true);
@@ -1585,7 +1585,7 @@ bool ConditionLight::executeCondition(Creature* creature, int32_t interval)
 	return Condition::executeCondition(creature, interval);
 }
 
-void ConditionLight::endCondition(Creature* creature, ConditionEnd_t reason)
+void ConditionLight::endCondition(Creature* creature, ConditionEnd_t)
 {
 	creature->setNormalCreatureLight();
 	g_game.changeLight(creature);

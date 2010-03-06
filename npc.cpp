@@ -2287,7 +2287,7 @@ const NpcResponse* Npc::getResponse(const Player* player, NpcState* npcState, co
 	return getResponse(responseList, player, npcState, text);
 }
 
-const NpcResponse* Npc::getResponse(const Player* player, NpcEvent_t eventType)
+const NpcResponse* Npc::getResponse(const Player*, NpcEvent_t eventType)
 {
 	std::string eventName = getEventResponseName(eventType);
 	if(eventName.empty())
@@ -2921,7 +2921,7 @@ void NpcEvents::onCreatureMove(const Creature* creature, const Position& oldPos,
 		std::clog << "[Error - NpcEvents::onCreatureMove] NPC Name: " << m_npc->getName() << " - Call stack overflow" << std::endl;
 }
 
-void NpcEvents::onCreatureSay(const Creature* creature, SpeakClasses type, const std::string& text, Position* pos/* = NULL*/)
+void NpcEvents::onCreatureSay(const Creature* creature, SpeakClasses type, const std::string& text, Position* /*pos = NULL*/)
 {
 	if(m_onCreatureSay == -1)
 		return;

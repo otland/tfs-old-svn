@@ -86,7 +86,7 @@ class _Database
 		* @param DBParam_t parameter to get
 		* @return suitable for given parameter
 		*/
-		DATABASE_VIRTUAL bool getParam(DBParam_t param) {return false;}
+		DATABASE_VIRTUAL bool getParam(DBParam_t) {return false;}
 
 		/**
 		* Database connected.
@@ -127,7 +127,7 @@ class _Database
 		* @param std::string query command
 		* @return true on success, false on error
 		*/
-		DATABASE_VIRTUAL bool executeQuery(const std::string& query) {return 0;}
+		DATABASE_VIRTUAL bool executeQuery(const std::string) {return 0;}
 
 		/**
 		* Queries database.
@@ -137,7 +137,7 @@ class _Database
 		* @param std::string query
 		* @return results object (null on error)
 		*/
-		DATABASE_VIRTUAL DBResult* storeQuery(const std::string& query) {return 0;}
+		DATABASE_VIRTUAL DBResult* storeQuery(const std::string) {return 0;}
 
 		/**
 		* Escapes string for query.
@@ -147,7 +147,7 @@ class _Database
 		* @param std::string string to be escaped
 		* @return quoted string
 		*/
-		DATABASE_VIRTUAL std::string escapeString(const std::string& s) {return "''";}
+		DATABASE_VIRTUAL std::string escapeString(const std::string) {return "''";}
 
 		/**
 		* Escapes binary stream for query.
@@ -158,7 +158,7 @@ class _Database
 		* @param long stream length
 		* @return quoted string
 		*/
-		DATABASE_VIRTUAL std::string escapeBlob(const char* s, uint32_t length) {return "''";}
+		DATABASE_VIRTUAL std::string escapeBlob(const char*, uint32_t) {return "''";}
 
 		/**
 		 * Retrieve id of last inserted row
@@ -202,25 +202,25 @@ class _DBResult
 		*\returns The Integer value of the selected field and row
 		*\param s The name of the field
 		*/
-		DATABASE_VIRTUAL int32_t getDataInt(const std::string& s) {return 0;}
+		DATABASE_VIRTUAL int32_t getDataInt(const std::string&) {return 0;}
 
 		/** Get the Long value of a field in database
 		*\returns The Long value of the selected field and row
 		*\param s The name of the field
 		*/
-		DATABASE_VIRTUAL int64_t getDataLong(const std::string& s) {return 0;}
+		DATABASE_VIRTUAL int64_t getDataLong(const std::string&) {return 0;}
 
 		/** Get the String of a field in database
 		*\returns The String of the selected field and row
 		*\param s The name of the field
 		*/
-		DATABASE_VIRTUAL std::string getDataString(const std::string& s) {return "''";}
+		DATABASE_VIRTUAL std::string getDataString(const std::string&) {return "''";}
 
 		/** Get the blob of a field in database
 		*\returns a PropStream that is initiated with the blob data field, if not exist it returns NULL.
 		*\param s The name of the field
 		*/
-		DATABASE_VIRTUAL const char* getDataStream(const std::string& s, uint64_t& size) {return 0;}
+		DATABASE_VIRTUAL const char* getDataStream(const std::string&, uint64_t&) {return 0;}
 
 		/** Result freeing
 		*/

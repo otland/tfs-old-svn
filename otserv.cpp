@@ -286,7 +286,7 @@ int main(int argc, char* argv[])
 	return 0;
 }
 
-void otserv(StringVec args, ServiceManager* services)
+void otserv(StringVec, ServiceManager* services)
 {
 	srand((uint32_t)OTSYS_TIME());
 #if defined(WINDOWS)

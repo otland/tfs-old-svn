@@ -573,7 +573,7 @@ bool Combat::CombatManaFunc(Creature* caster, Creature* target, const CombatPara
 	return true;
 }
 
-bool Combat::CombatConditionFunc(Creature* caster, Creature* target, const CombatParams& params, void* data)
+bool Combat::CombatConditionFunc(Creature* caster, Creature* target, const CombatParams& params, void*)
 {
 	if(params.conditionList.empty())
 		return false;
@@ -596,7 +596,7 @@ bool Combat::CombatConditionFunc(Creature* caster, Creature* target, const Comba
 	return result;
 }
 
-bool Combat::CombatDispelFunc(Creature* caster, Creature* target, const CombatParams& params, void* data)
+bool Combat::CombatDispelFunc(Creature* caster, Creature* target, const CombatParams& params, void*)
 {
 	if(!target->hasCondition(params.dispelType))
 		return false;
@@ -605,7 +605,7 @@ bool Combat::CombatDispelFunc(Creature* caster, Creature* target, const CombatPa
 	return true;
 }
 
-bool Combat::CombatNullFunc(Creature* caster, Creature* target, const CombatParams& params, void* data)
+bool Combat::CombatNullFunc(Creature* caster, Creature* target, const CombatParams& params, void*)
 {
 	CombatConditionFunc(caster, target, params, NULL);
 	CombatDispelFunc(caster, target, params, NULL);

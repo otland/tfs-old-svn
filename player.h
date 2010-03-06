@@ -522,7 +522,7 @@ class Player : public Creature, public Cylinder
 			{if(client) client->sendAddTileItem(tile, pos, tile->getClientIndexOfThing(this, item), item);}
 		void sendUpdateTileItem(const Tile* tile, const Position& pos, const Item* oldItem, const Item* newItem)
 			{if(client) client->sendUpdateTileItem(tile, pos, tile->getClientIndexOfThing(this, oldItem), newItem);}
-		void sendRemoveTileItem(const Tile* tile, const Position& pos, uint32_t stackpos, const Item* item)
+		void sendRemoveTileItem(const Tile* tile, const Position& pos, uint32_t stackpos, const Item*)
 			{if(client) client->sendRemoveTileItem(tile, pos, stackpos);}
 		void sendUpdateTile(const Tile* tile, const Position& pos)
 			{if(client) client->sendUpdateTile(tile, pos);}
@@ -567,9 +567,9 @@ class Player : public Creature, public Cylinder
 		//inventory
 		void sendAddInventoryItem(slots_t slot, const Item* item)
 			{if(client) client->sendAddInventoryItem(slot, item);}
-		void sendUpdateInventoryItem(slots_t slot, const Item* oldItem, const Item* newItem)
+		void sendUpdateInventoryItem(slots_t slot, const Item*, const Item* newItem)
 			{if(client) client->sendUpdateInventoryItem(slot, newItem);}
-		void sendRemoveInventoryItem(slots_t slot, const Item* item)
+		void sendRemoveInventoryItem(slots_t slot, const Item*)
 			{if(client) client->sendRemoveInventoryItem(slot);}
 
 		//event methods
@@ -609,7 +609,7 @@ class Player : public Creature, public Cylinder
 		void autoCloseContainers(const Container* container);
 
 		//inventory
-		void onAddInventoryItem(slots_t slot, Item* item) {}
+		void onAddInventoryItem(slots_t, Item*) {}
 		void onUpdateInventoryItem(slots_t slot, Item* oldItem, const ItemType& oldType,
 			Item* newItem, const ItemType& newType);
 		void onRemoveInventoryItem(slots_t slot, Item* item);

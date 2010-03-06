@@ -92,7 +92,7 @@ class CombatSpell : public Event, public BaseSpell
 
 		virtual bool castSpell(Creature* creature);
 		virtual bool castSpell(Creature* creature, Creature* target);
-		virtual bool configureEvent(xmlNodePtr p) {return true;}
+		virtual bool configureEvent(xmlNodePtr) {return true;}
 
 		//scripting
 		bool executeCastSpell(Creature* creature, const LuaVariant& var);
@@ -224,8 +224,8 @@ class ConjureSpell : public InstantSpell
 
 		virtual bool castInstant(Player* player, const std::string& param);
 
-		virtual bool castSpell(Creature* creature) {return false;}
-		virtual bool castSpell(Creature* creature, Creature* target) {return false;}
+		virtual bool castSpell(Creature*) {return false;}
+		virtual bool castSpell(Creature*, Creature*) {return false;}
 
 		uint32_t getConjureId() const {return conjureId;}
 		uint32_t getConjureCount() const {return conjureCount;}

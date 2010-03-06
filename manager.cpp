@@ -37,7 +37,7 @@ extern Chat g_chat;
 uint32_t ProtocolManager::protocolManagerCount = 0;
 #endif
 
-void ProtocolManager::onRecvFirstMessage(NetworkMessage& msg)
+void ProtocolManager::onRecvFirstMessage(NetworkMessage&)
 {
 	m_state = NO_CONNECTED;
 	if(g_config.getString(ConfigManager::MANAGER_PASSWORD).empty())

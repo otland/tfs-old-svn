@@ -275,7 +275,7 @@ void Creature::onWalk(Direction& dir)
 	g_game.internalCreatureSay(this, SPEAK_MONSTER_SAY, "Hicks!", isGhost());
 }
 
-bool Creature::getNextStep(Direction& dir, uint32_t& flags)
+bool Creature::getNextStep(Direction& dir, uint32_t&)
 {
 	if(listWalkDir.empty())
 		return false;
@@ -428,21 +428,21 @@ int32_t Creature::getWalkCache(const Position& pos) const
 	return 2;
 }
 
-void Creature::onAddTileItem(const Tile* tile, const Position& pos, const Item* item)
+void Creature::onAddTileItem(const Tile* tile, const Position& pos, const Item*)
 {
 	if(isMapLoaded && pos.z == getPosition().z)
 		updateTileCache(tile, pos);
 }
 
-void Creature::onUpdateTileItem(const Tile* tile, const Position& pos, const Item* oldItem,
-	const ItemType& oldType, const Item* newItem, const ItemType& newType)
+void Creature::onUpdateTileItem(const Tile* tile, const Position& pos, const Item*,
+	const ItemType& oldType, const Item*, const ItemType& newType)
 {
 	if(isMapLoaded && (oldType.blockSolid || oldType.blockPathFind || newType.blockPathFind
 		|| newType.blockSolid) && pos.z == getPosition().z)
 		updateTileCache(tile, pos);
 }
 
-void Creature::onRemoveTileItem(const Tile* tile, const Position& pos, const ItemType& iType, const Item* item)
+void Creature::onRemoveTileItem(const Tile* tile, const Position& pos, const ItemType& iType, const Item*)
 {
 	if(isMapLoaded && (iType.blockSolid || iType.blockPathFind ||
 		iType.isGroundTile()) && pos.z == getPosition().z)
@@ -463,7 +463,7 @@ void Creature::onCreatureAppear(const Creature* creature)
 		updateTileCache(creature->getTile(), creature->getPosition());
 }
 
-void Creature::onCreatureDisappear(const Creature* creature, bool isLogout)
+void Creature::onCreatureDisappear(const Creature* creature, bool)
 {
 	internalCreatureDisappear(creature, true);
 	if(creature != this && isMapLoaded && creature->getPosition().z == getPosition().z)
@@ -836,7 +836,7 @@ bool Creature::hasBeenAttacked(uint32_t attackerId) const
 	return false;
 }
 
-Item* Creature::createCorpse(DeathList deathList)
+Item* Creature::createCorpse(DeathList)
 {
 	return Item::CreateItem(getLookCorpse());
 }
@@ -914,7 +914,7 @@ void Creature::drainMana(Creature* attacker, CombatType_t combatType, int32_t da
 }
 
 BlockType_t Creature::blockHit(Creature* attacker, CombatType_t combatType, int32_t& damage,
-	bool checkDefense/* = false*/, bool checkArmor/* = false*/, bool reflect/* = true*/)
+	bool checkDefense/* = false*/, bool checkArmor/* = false*/, bool /*reflect = true*/)
 {
 	BlockType_t blockType = BLOCK_NONE;
 	if(isImmune(combatType))
@@ -1006,7 +1006,7 @@ bool Creature::setAttackedCreature(Creature* creature)
 	return true;
 }
 
-void Creature::getPathSearchParams(const Creature* creature, FindPathParams& fpp) const
+void Creature::getPathSearchParams(const Creature*, FindPathParams& fpp) const
 {
 	fpp.fullPathSearch = !hasFollowPath;
 	fpp.clearSight = true;
@@ -1032,7 +1032,7 @@ void Creature::getPathToFollowCreature()
 	onFollowCreatureComplete(followCreature);
 }
 
-bool Creature::setFollowCreature(Creature* creature, bool fullPathSearch /*= false*/)
+bool Creature::setFollowCreature(Creature* creature, bool /*fullPathSearch = false*/)
 {
 	if(creature)
 	{
@@ -1143,7 +1143,7 @@ void Creature::onEndCondition(ConditionType_t type)
 		g_game.internalCreatureChangeVisible(this, VISIBLE_APPEAR);
 }
 
-void Creature::onTickCondition(ConditionType_t type, int32_t interval, bool& _remove)
+void Creature::onTickCondition(ConditionType_t type, int32_t, bool& _remove)
 {
 	if(const MagicField* field = getTile()->getFieldItem())
 	{
@@ -1167,7 +1167,7 @@ void Creature::onTickCondition(ConditionType_t type, int32_t interval, bool& _re
 	}
 }
 
-void Creature::onCombatRemoveCondition(const Creature* attacker, Condition* condition)
+void Creature::onCombatRemoveCondition(const Creature*, Condition* condition)
 {
 	removeCondition(condition);
 }
@@ -1492,7 +1492,7 @@ bool Creature::isSuppress(ConditionType_t type) const
 	return ((getConditionSuppressions() & (uint32_t)type) == (uint32_t)type);
 }
 
-std::string Creature::getDescription(int32_t lookDistance) const
+std::string Creature::getDescription(int32_t) const
 {
 	return "a creature";
 }

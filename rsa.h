@@ -30,7 +30,7 @@ class RSA
 		void initialize(const char* p, const char* q, const char* d);
 		bool initialize(const std::string& file);
 
-		void decrypt(char* msg, int32_t size);
+		void decrypt(char* msg);
 
 		void getPublicKey(char* buffer);
 

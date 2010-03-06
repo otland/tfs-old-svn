@@ -48,7 +48,7 @@ bool Teleport::serializeAttr(PropWriteStream& propWriteStream) const
 	return ret;
 }
 
-void Teleport::__addThing(Creature* actor, int32_t index, Thing* thing)
+void Teleport::__addThing(Creature* actor, int32_t, Thing* thing)
 {
 	Tile* destTile = g_game.getTile(destination);
 	if(!destTile)
@@ -69,14 +69,14 @@ void Teleport::__addThing(Creature* actor, int32_t index, Thing* thing)
 }
 
 void Teleport::postAddNotification(Creature* actor, Thing* thing, const Cylinder* oldParent,
-	int32_t index, cylinderlink_t link /*= LINK_OWNER*/)
+	int32_t index, cylinderlink_t /*link = LINK_OWNER*/)
 {
 	if(getParent())
 		getParent()->postAddNotification(actor, thing, oldParent, index, LINK_PARENT);
 }
 
 void Teleport::postRemoveNotification(Creature* actor, Thing* thing, const Cylinder* newParent,
-	int32_t index, bool isCompleteRemoval, cylinderlink_t link /*= LINK_OWNER*/)
+	int32_t index, bool isCompleteRemoval, cylinderlink_t /*link = LINK_OWNER*/)
 {
 	if(getParent())
 		getParent()->postRemoveNotification(actor, thing, newParent,

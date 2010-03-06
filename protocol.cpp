@@ -203,7 +203,7 @@ bool Protocol::RSA_decrypt(RSA* rsa, NetworkMessage& msg)
 		return false;
 	}
 
-	rsa->decrypt((char*)(msg.buffer() + msg.position()), 128);
+	rsa->decrypt((char*)(msg.buffer() + msg.position()));
 	if(!msg.get<char>())
 		return true;
 

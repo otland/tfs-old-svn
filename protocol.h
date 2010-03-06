@@ -49,7 +49,7 @@ class Protocol : boost::noncopyable
 		void onRecvMessage(NetworkMessage& msg);
 		void onSendMessage(OutputMessage_ptr msg);
 
-		virtual void parsePacket(NetworkMessage& msg) {}
+		virtual void parsePacket(NetworkMessage&) {}
 		uint32_t getIP() const;
 
 		Connection_ptr getConnection() {return m_connection;}

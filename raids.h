@@ -250,7 +250,7 @@ class ScriptEvent : public RaidEvent, public Event
 		virtual bool configureRaidEvent(xmlNodePtr eventNode);
 		virtual bool executeEvent() const;
 
-		virtual bool configureEvent(xmlNodePtr p) {return false;}
+		virtual bool configureEvent(xmlNodePtr) {return false;}
 		static LuaInterface m_interface;
 
 	protected:
