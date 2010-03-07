@@ -3742,7 +3742,7 @@ bool Player::onKilledCreature(Creature* target, DeathEntry& entry)
 #ifndef __WAR_SYSTEM__
 		true
 #else
-		!enemy.war
+		!targetPlayer->isEnemy(this, true)
 #endif
 		) || entry.isLast()))
 		entry.setUnjustified();
