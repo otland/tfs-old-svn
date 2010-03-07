@@ -141,16 +141,16 @@ ItemAttribute& ItemAttribute::operator=(const ItemAttribute& o)
 	switch(type)
 	{
 		case STRING:
-			new(data.s) std::string(o.data.s);
+			new(data) std::string(*reinterpret_cast<const std::string*>(&o.data));
 			break;
 		case INTEGER:
-			data.i = o.data.i;
+			*reinterpret_cast<int32_t*>(data) = *reinterpret_cast<const int32_t*>(&o.data);
 			break;
 		case FLOAT:
-			data.f = o.data.f;
+			*reinterpret_cast<float*>(data) = *reinterpret_cast<const float*>(&o.data);
 			break;
 		case BOOLEAN:
-			data.b = o.data.b;
+			*reinterpret_cast<bool*>(data) = *reinterpret_cast<const bool*>(&o.data);
 			break;
 		default:
 			type = NONE;
@@ -163,41 +163,37 @@ ItemAttribute& ItemAttribute::operator=(const ItemAttribute& o)
 
 void ItemAttribute::clear()
 {
-	if(type == STRING)
-	{
-		std::string* tmp = (std::string*)(data.s);
-		tmp->~basic_string();
-	}
-
 	type = NONE;
+	if(type == STRING)
+		(reinterpret_cast<std::string*>(&data))->~basic_string();
 }
 
 void ItemAttribute::set(const std::string& s)
 {
 	clear();
 	type = STRING;
-	new(data.s) std::string(s);
+	new(data) std::string(s);
 }
 
 void ItemAttribute::set(int32_t i)
 {
 	clear();
 	type = INTEGER;
-	data.i = i;
+	*reinterpret_cast<int32_t*>(&data) = i;
 }
 
 void ItemAttribute::set(float f)
 {
 	clear();
 	type = FLOAT;
-	data.f = f;
+	*reinterpret_cast<float*>(&data) = f;
 }
 
 void ItemAttribute::set(bool b)
 {
 	clear();
 	type = BOOLEAN;
-	data.b = b;
+	*reinterpret_cast<bool*>(&data) = b;
 }
 
 void ItemAttribute::set(boost::any a)
@@ -209,22 +205,22 @@ void ItemAttribute::set(boost::any a)
 	if(a.type() == typeid(std::string))
 	{
 		type = STRING;
-		new(data.s) std::string(boost::any_cast<std::string>(a));
+		new(data) std::string(boost::any_cast<std::string>(a));
 	}
 	else if(a.type() == typeid(int32_t))
 	{
 		type = INTEGER;
-		data.i = boost::any_cast<int32_t>(a);
+		*reinterpret_cast<int32_t*>(&data) = boost::any_cast<int32_t>(a);
 	}
 	else if(a.type() == typeid(float))
 	{
 		type = FLOAT;
-		data.f = boost::any_cast<float>(a);
+		*reinterpret_cast<float*>(&data) = boost::any_cast<float>(a);
 	}
 	else if(a.type() == typeid(bool))
 	{
 		type = BOOLEAN;
-		data.b = boost::any_cast<bool>(a);
+		*reinterpret_cast<bool*>(&data) = boost::any_cast<bool>(a);
 	}
 }
 
@@ -233,7 +229,7 @@ const std::string* ItemAttribute::getString() const
 	if(type != STRING)
 		return NULL;
 
-	return (std::string*)(data.s);
+	return reinterpret_cast<const std::string*>(&data);
 }
 
 const int32_t* ItemAttribute::getInteger() const
@@ -241,7 +237,7 @@ const int32_t* ItemAttribute::getInteger() const
 	if(type != INTEGER)
 		return NULL;
 
-	return &data.i;
+	return reinterpret_cast<const int32_t*>(&data);
 }
 
 const float* ItemAttribute::getFloat() const
@@ -249,7 +245,7 @@ const float* ItemAttribute::getFloat() const
 	if(type != FLOAT)
 		return NULL;
 
-	return &data.f;
+	return reinterpret_cast<const float*>(&data);
 }
 
 const bool* ItemAttribute::getBoolean() const
@@ -257,7 +253,7 @@ const bool* ItemAttribute::getBoolean() const
 	if(type != BOOLEAN)
 		return NULL;
 
-	return &data.b;
+	return reinterpret_cast<const bool*>(&data);
 }
 
 boost::any ItemAttribute::get() const
@@ -265,13 +261,13 @@ boost::any ItemAttribute::get() const
 	switch(type)
 	{
 		case STRING:
-			return (const std::string*)data.s;
+			return *reinterpret_cast<const std::string*>(&data);
 		case INTEGER:
-			return data.i;
+			return *reinterpret_cast<const int*>(&data);
 		case FLOAT:
-			return data.f;
+			return *reinterpret_cast<const float*>(&data);
 		case BOOLEAN:
-			return data.b;
+			return *reinterpret_cast<const bool*>(&data);
 		default:
 			break;
 	}
