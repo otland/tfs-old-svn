@@ -3738,13 +3738,13 @@ bool Player::onKilledCreature(Creature* target, DeathEntry& entry)
 		return true;
 
 	if(!targetPlayer->hasAttacked(this) && target->getSkull() == SKULL_NONE && targetPlayer != this
-		&& ((g_config.getBool(ConfigManager::USE_FRAG_HANDLER) && addUnjustifiedKill(targetPlayer,
+		&& (addUnjustifiedKill(targetPlayer,
 #ifndef __WAR_SYSTEM__
 		true
 #else
 		!enemy.war
 #endif
-		)) || entry.isLast()))
+		) || entry.isLast()))
 		entry.setUnjustified();
 
 	addInFightTicks(true, g_config.getNumber(ConfigManager::WHITE_SKULL_TIME));
@@ -4022,7 +4022,9 @@ void Player::addAttacked(const Player* attacked)
 
 void Player::setSkullEnd(time_t _time, bool login, Skulls_t _skull)
 {
-	if(g_game.getWorldType() != WORLDTYPE_OPEN)
+	if(g_game.getWorldType() != WORLDTYPE_OPEN
+		|| hasFlag(PlayerFlag_NotGainInFight) ||
+		hasCustomFlag(PlayerCustomFlag_NotGainSkull))
 		return;
 
 	bool requireUpdate = false;
@@ -4048,8 +4050,10 @@ void Player::setSkullEnd(time_t _time, bool login, Skulls_t _skull)
 
 bool Player::addUnjustifiedKill(const Player* attacked, bool countNow)
 {
-	if(g_game.getWorldType() != WORLDTYPE_OPEN || attacked == this || hasFlag(
-		PlayerFlag_NotGainInFight) || hasCustomFlag(PlayerCustomFlag_NotGainSkull))
+	if(!g_config.getBool(ConfigManager::USE_FRAG_HANDLER) || hasFlag(
+		PlayerFlag_NotGainInFight) || g_game.getWorldType() != WORLDTYPE_OPEN
+		|| hasCustomFlag(PlayerCustomFlag_NotGainUnjustified) || hasCustomFlag(
+		PlayerCustomFlag_NotGainSkull) || attacked == this)
 		return false;
 
 	if(client && countNow)
