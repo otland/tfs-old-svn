@@ -141,16 +141,16 @@ ItemAttribute& ItemAttribute::operator=(const ItemAttribute& o)
 	switch(type)
 	{
 		case STRING:
-			new(sdata) std::string(o.sdata);
+			new(data.s) std::string(o.data.s);
 			break;
 		case INTEGER:
-			idata = o.idata;
+			data.i = o.data.i;
 			break;
 		case FLOAT:
-			fdata = o.fdata;
+			data.f = o.data.f;
 			break;
 		case BOOLEAN:
-			bdata = o.bdata;
+			data.b = o.data.b;
 			break;
 		default:
 			type = NONE;
@@ -163,37 +163,41 @@ ItemAttribute& ItemAttribute::operator=(const ItemAttribute& o)
 
 void ItemAttribute::clear()
 {
-	type = NONE;
 	if(type == STRING)
-		(reinterpret_cast<std::string*>(&sdata))->~basic_string();
+	{
+		std::string* tmp = (std::string*)(data.s);
+		tmp->~basic_string();
+	}
+
+	type = NONE;
 }
 
 void ItemAttribute::set(const std::string& s)
 {
 	clear();
 	type = STRING;
-	new(sdata) std::string(s);
+	new(data.s) std::string(s);
 }
 
 void ItemAttribute::set(int32_t i)
 {
 	clear();
 	type = INTEGER;
-	idata = i;
+	data.i = i;
 }
 
 void ItemAttribute::set(float f)
 {
 	clear();
 	type = FLOAT;
-	fdata = f;
+	data.f = f;
 }
 
 void ItemAttribute::set(bool b)
 {
 	clear();
 	type = BOOLEAN;
-	bdata = b;
+	data.b = b;
 }
 
 void ItemAttribute::set(boost::any a)
@@ -205,22 +209,22 @@ void ItemAttribute::set(boost::any a)
 	if(a.type() == typeid(std::string))
 	{
 		type = STRING;
-		new(sdata) std::string(boost::any_cast<std::string>(a));
+		new(data.s) std::string(boost::any_cast<std::string>(a));
 	}
 	else if(a.type() == typeid(int32_t))
 	{
 		type = INTEGER;
-		idata = boost::any_cast<int32_t>(a);
+		data.i = boost::any_cast<int32_t>(a);
 	}
 	else if(a.type() == typeid(float))
 	{
 		type = FLOAT;
-		fdata = boost::any_cast<float>(a);
+		data.f = boost::any_cast<float>(a);
 	}
 	else if(a.type() == typeid(bool))
 	{
 		type = BOOLEAN;
-		bdata = boost::any_cast<bool>(a);
+		data.b = boost::any_cast<bool>(a);
 	}
 }
 
@@ -229,7 +233,7 @@ const std::string* ItemAttribute::getString() const
 	if(type != STRING)
 		return NULL;
 
-	return (std::string*)sdata;
+	return (std::string*)(data.s);
 }
 
 const int32_t* ItemAttribute::getInteger() const
@@ -237,7 +241,7 @@ const int32_t* ItemAttribute::getInteger() const
 	if(type != INTEGER)
 		return NULL;
 
-	return (int32_t*)idata;
+	return &data.i;
 }
 
 const float* ItemAttribute::getFloat() const
@@ -245,7 +249,7 @@ const float* ItemAttribute::getFloat() const
 	if(type != FLOAT)
 		return NULL;
 
-	return (float*)&fdata;
+	return &data.f;
 }
 
 const bool* ItemAttribute::getBoolean() const
@@ -253,7 +257,7 @@ const bool* ItemAttribute::getBoolean() const
 	if(type != BOOLEAN)
 		return NULL;
 
-	return (bool*)bdata;
+	return &data.b;
 }
 
 boost::any ItemAttribute::get() const
@@ -261,13 +265,13 @@ boost::any ItemAttribute::get() const
 	switch(type)
 	{
 		case STRING:
-			return (const std::string*)sdata;
+			return (const std::string*)data.s;
 		case INTEGER:
-			return idata;
+			return data.i;
 		case FLOAT:
-			return fdata;
+			return data.f;
 		case BOOLEAN:
-			return bdata;
+			return data.b;
 		default:
 			break;
 	}

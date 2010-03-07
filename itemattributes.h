@@ -30,10 +30,10 @@ class ItemAttribute
 		ItemAttribute(const ItemAttribute& o): type(ItemAttribute::NONE) {*this = o;}
 		virtual ~ItemAttribute() {clear();}
 
-		ItemAttribute(const std::string& s): type(ItemAttribute::STRING) {new(sdata) std::string(s);}
-		ItemAttribute(int32_t i): type(ItemAttribute::INTEGER) {idata = i;}
-		ItemAttribute(float f): type(ItemAttribute::FLOAT) {fdata = f;}
-		ItemAttribute(bool b): type(ItemAttribute::BOOLEAN) {bdata = b;}
+		ItemAttribute(const std::string& s): type(ItemAttribute::STRING) {new(data.s) std::string(s);}
+		ItemAttribute(int32_t i): type(ItemAttribute::INTEGER) {data.i = i;}
+		ItemAttribute(float f): type(ItemAttribute::FLOAT) {data.f = f;}
+		ItemAttribute(bool b): type(ItemAttribute::BOOLEAN) {data.b = b;}
 
 		ItemAttribute& operator=(const ItemAttribute& o);
 
@@ -55,12 +55,12 @@ class ItemAttribute
 		boost::any get() const;
 
 	private:
-		union {
-   			int32_t idata;
-    			char sdata[sizeof(std::string)];
-			float fdata;
-			bool bdata;
-		};
+		union Data {
+			char s[sizeof(std::string)];
+			int32_t i;
+			float f;
+			bool b;
+		} data;
 
 		enum Type
 		{

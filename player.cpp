@@ -3729,19 +3729,20 @@ bool Player::onKilledCreature(Creature* target, DeathEntry& entry)
 #ifdef __WAR_SYSTEM__
 
 	War_t enemy;
-	if(targetPlayer->getEnemy(this, enemy) && (!entry.isLast() || IOGuild::getInstance()->war(this, targetPlayer, enemy)))
+	if(targetPlayer->getEnemy(this, enemy) && (!entry.isLast() || IOGuild::getInstance()->war(enemy)))
 		entry.setWar(enemy);
+
 #endif
 
 	if(!entry.isJustify() || !hasCondition(CONDITION_INFIGHT))
 		return true;
 
-	if(!targetPlayer->hasAttacked(this) && target->getSkull() == SKULL_NONE && targetPlayer != this && ((g_config.getBool(
-		ConfigManager::USE_FRAG_HANDLER) && addUnjustifiedKill(targetPlayer,
+	if(!targetPlayer->hasAttacked(this) && target->getSkull() == SKULL_NONE && targetPlayer != this
+		&& ((g_config.getBool(ConfigManager::USE_FRAG_HANDLER) && addUnjustifiedKill(targetPlayer,
 #ifndef __WAR_SYSTEM__
 		true
 #else
-		!entry.getWar().war
+		!enemy.war
 #endif
 		)) || entry.isLast()))
 		entry.setUnjustified();

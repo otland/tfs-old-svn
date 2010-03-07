@@ -353,7 +353,7 @@ int32_t TalkAction::executeSay(Creature* creature, const std::string& words, std
 	}
 }
 
-bool TalkAction::houseBuy(Creature* creature, const std::string& cmd, const std::string& param)
+bool TalkAction::houseBuy(Creature* creature, const std::string&, const std::string&)
 {
 	Player* player = creature->getPlayer();
 	if(!player || !g_config.getBool(ConfigManager::HOUSE_BUY_AND_SELL))
@@ -480,7 +480,7 @@ bool TalkAction::houseBuy(Creature* creature, const std::string& cmd, const std:
 	return false;
 }
 
-bool TalkAction::houseSell(Creature* creature, const std::string& cmd, const std::string& param)
+bool TalkAction::houseSell(Creature* creature, const std::string&, const std::string& param)
 {
 	Player* player = creature->getPlayer();
 	if(!player || !g_config.getBool(ConfigManager::HOUSE_BUY_AND_SELL))
@@ -597,7 +597,7 @@ bool TalkAction::houseSell(Creature* creature, const std::string& cmd, const std
 	return false;
 }
 
-bool TalkAction::houseKick(Creature* creature, const std::string& cmd, const std::string& param)
+bool TalkAction::houseKick(Creature* creature, const std::string&, const std::string& param)
 {
 	Player* player = creature->getPlayer();
 	if(!player)
@@ -619,7 +619,7 @@ bool TalkAction::houseKick(Creature* creature, const std::string& cmd, const std
 	return false;
 }
 
-bool TalkAction::houseDoorList(Creature* creature, const std::string& cmd, const std::string& param)
+bool TalkAction::houseDoorList(Creature* creature, const std::string&, const std::string&)
 {
 	Player* player = creature->getPlayer();
 	if(!player)
@@ -649,7 +649,7 @@ bool TalkAction::houseDoorList(Creature* creature, const std::string& cmd, const
 	return false;
 }
 
-bool TalkAction::houseGuestList(Creature* creature, const std::string& cmd, const std::string& param)
+bool TalkAction::houseGuestList(Creature* creature, const std::string&, const std::string&)
 {
 	Player* player = creature->getPlayer();
 	if(!player)
@@ -671,7 +671,7 @@ bool TalkAction::houseGuestList(Creature* creature, const std::string& cmd, cons
 	return false;
 }
 
-bool TalkAction::houseSubOwnerList(Creature* creature, const std::string& cmd, const std::string& param)
+bool TalkAction::houseSubOwnerList(Creature* creature, const std::string&, const std::string&)
 {
 	Player* player = creature->getPlayer();
 	if(!player)
@@ -693,7 +693,7 @@ bool TalkAction::houseSubOwnerList(Creature* creature, const std::string& cmd, c
 	return false;
 }
 
-bool TalkAction::guildJoin(Creature* creature, const std::string& cmd, const std::string& param)
+bool TalkAction::guildJoin(Creature* creature, const std::string&, const std::string& param)
 {
 	Player* player = creature->getPlayer();
 	if(!player || !g_config.getBool(ConfigManager::INGAME_GUILD_MANAGEMENT))
@@ -728,7 +728,7 @@ bool TalkAction::guildJoin(Creature* creature, const std::string& cmd, const std
 	return true;
 }
 
-bool TalkAction::guildCreate(Creature* creature, const std::string& cmd, const std::string& param)
+bool TalkAction::guildCreate(Creature* creature, const std::string&, const std::string& param)
 {
 	Player* player = creature->getPlayer();
 	if(!player || !g_config.getBool(ConfigManager::INGAME_GUILD_MANAGEMENT))
@@ -796,7 +796,7 @@ bool TalkAction::guildCreate(Creature* creature, const std::string& cmd, const s
 	return true;
 }
 
-bool TalkAction::thingProporties(Creature* creature, const std::string& cmd, const std::string& param)
+bool TalkAction::thingProporties(Creature* creature, const std::string&, const std::string& param)
 {
 	Player* player = creature->getPlayer();
 	if(!player)
@@ -998,7 +998,7 @@ bool TalkAction::thingProporties(Creature* creature, const std::string& cmd, con
 	return true;
 }
 
-bool TalkAction::banishmentInfo(Creature* creature, const std::string& cmd, const std::string& param)
+bool TalkAction::banishmentInfo(Creature* creature, const std::string&, const std::string& param)
 {
 	Player* player = creature->getPlayer();
 	if(!player)
@@ -1082,7 +1082,7 @@ bool TalkAction::banishmentInfo(Creature* creature, const std::string& cmd, cons
 	return true;
 }
 
-bool TalkAction::diagnostics(Creature* creature, const std::string& cmd, const std::string& param)
+bool TalkAction::diagnostics(Creature* creature, const std::string&, const std::string&)
 {
 	Player* player = creature->getPlayer();
 	if(!player)
@@ -1139,7 +1139,7 @@ bool TalkAction::diagnostics(Creature* creature, const std::string& cmd, const s
 	return true;
 }
 
-bool TalkAction::addSkill(Creature* creature, const std::string& cmd, const std::string& param)
+bool TalkAction::addSkill(Creature* creature, const std::string&, const std::string& param)
 {
 	Player* player = creature->getPlayer();
 	if(!player)
@@ -1187,7 +1187,7 @@ bool TalkAction::addSkill(Creature* creature, const std::string& cmd, const std:
 	return true;
 }
 
-bool TalkAction::ghost(Creature* creature, const std::string& cmd, const std::string& param)
+bool TalkAction::ghost(Creature* creature, const std::string&, const std::string&)
 {
 	Player* player = creature->getPlayer();
 	if(!player)

@@ -23,12 +23,23 @@
 # 1/7 of the original compile time!
 # When more you do it, more ccache will cache, default is limited to use 1GB storage
 
-echo "TheForgottenServer build script- seems to speed things up ALOT when testing new features. Requires CCache installed!"
+echo "TheForgottenServer build script- seems to speed things up ALOT."
+# Enable CCache
+if test -x `which ccache`; then
+	echo "CCache: OK"
+	if [ -f /usr/lib/ccache/bin ]; then
+		export PATH=/usr/lib/ccache/bin/:$PATH
+		echo "CCache binaries located in /usr/lib/ccache/bin"
+	else
+		export PATH=/usr/lib/ccache/:$PATH
+		echo "CCache binaries located in /usr/lib/ccache"
+	fi
+else
+	echo "CCache: Not installed"
+fi
 
-# Enable CCACHE
-export PATH=/usr/lib/ccache/bin:$PATH
 # Get number cores
-CORES=`grep cores /proc/cpuinfo | wc -l`
+CORES=`grep processor /proc/cpuinfo | wc -l`
 # Set make processes - 1 + number of cores
 MAKEOPT=$(($CORES + 1))
 

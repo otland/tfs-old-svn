@@ -404,7 +404,7 @@ std::string IOGuild::getMotd(uint32_t guild)
 }
 #ifdef __WAR_SYSTEM__
 
-bool IOGuild::war(Player* player, Player* target, War_t& enemy)
+bool IOGuild::war(War_t& enemy)
 {
 	Database* db = Database::getInstance();
 	DBResult* result;

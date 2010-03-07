@@ -127,7 +127,7 @@ Event* Spells::getEvent(const std::string& nodeName)
 	return NULL;
 }
 
-bool Spells::registerEvent(Event* event, xmlNodePtr p, bool override)
+bool Spells::registerEvent(Event* event, xmlNodePtr, bool override)
 {
 	if(InstantSpell* instant = dynamic_cast<InstantSpell*>(event))
 	{
@@ -1289,7 +1289,7 @@ bool InstantSpell::executeCastSpell(Creature* creature, const LuaVariant& var)
 	}
 }
 
-bool InstantSpell::SearchPlayer(const InstantSpell* spell, Creature* creature, const std::string& param)
+bool InstantSpell::SearchPlayer(const InstantSpell*, Creature* creature, const std::string& param)
 {
 	Player* player = creature->getPlayer();
 	if(!player || player->isRemoved())
@@ -1378,7 +1378,7 @@ bool InstantSpell::SummonMonster(const InstantSpell* spell, Creature* creature, 
 	return false;
 }
 
-bool InstantSpell::Levitate(const InstantSpell* spell, Creature* creature, const std::string& param)
+bool InstantSpell::Levitate(const InstantSpell*, Creature* creature, const std::string& param)
 {
 	Player* player = creature->getPlayer();
 	if(!player)
@@ -1435,7 +1435,7 @@ bool InstantSpell::Levitate(const InstantSpell* spell, Creature* creature, const
 	return false;
 }
 
-bool InstantSpell::Illusion(const InstantSpell* spell, Creature* creature, const std::string& param)
+bool InstantSpell::Illusion(const InstantSpell*, Creature* creature, const std::string& param)
 {
 	Player* player = creature->getPlayer();
 	if(!player)
@@ -1553,7 +1553,7 @@ ReturnValue ConjureSpell::internalConjureItem(Player* player, uint32_t conjureId
 	return RET_YOUNEEDAMAGICITEMTOCASTSPELL;
 }
 
-bool ConjureSpell::ConjureItem(const ConjureSpell* spell, Creature* creature, const std::string& param)
+bool ConjureSpell::ConjureItem(const ConjureSpell* spell, Creature* creature, const std::string&)
 {
 	Player* player = creature->getPlayer();
 	if(!player)
@@ -1689,7 +1689,7 @@ bool RuneSpell::loadFunction(const std::string& functionName)
 	return true;
 }
 
-bool RuneSpell::Illusion(const RuneSpell* spell, Creature* creature, Item* item, const Position& posFrom, const Position& posTo)
+bool RuneSpell::Illusion(const RuneSpell*, Creature* creature, Item*, const Position&, const Position& posTo)
 {
 	Player* player = creature->getPlayer();
 	if(!player)
@@ -1723,7 +1723,7 @@ bool RuneSpell::Illusion(const RuneSpell* spell, Creature* creature, Item* item,
 	return false;
 }
 
-bool RuneSpell::Convince(const RuneSpell* spell, Creature* creature, Item* item, const Position& posFrom, const Position& posTo)
+bool RuneSpell::Convince(const RuneSpell* spell, Creature* creature, Item*, const Position&, const Position& posTo)
 {
 	Player* player = creature->getPlayer();
 	if(!player)
@@ -1807,7 +1807,7 @@ ReturnValue RuneSpell::canExecuteAction(const Player* player, const Position& to
 }
 
 bool RuneSpell::executeUse(Player* player, Item* item, const PositionEx& posFrom,
-	const PositionEx& posTo, bool extendedUse, uint32_t creatureId)
+	const PositionEx& posTo, bool, uint32_t creatureId)
 {
 	if(!checkRuneSpell(player, posTo))
 		return false;

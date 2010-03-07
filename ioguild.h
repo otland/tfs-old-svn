@@ -70,7 +70,7 @@ class IOGuild
 		bool updateOwnerId(uint32_t guild, uint32_t guid);
 #ifdef __WAR_SYSTEM__
 
-		bool war(Player* player, Player* target, War_t& enemy);
+		bool war(War_t& enemy);
 		void frag(Player* player, uint64_t deathId, const DeathList& list);
 #endif
 
