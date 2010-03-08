@@ -537,13 +537,21 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool preLo
 				<< player->guildId << " OR `enemy_id` = " << player->guildId << ") AND `status` IN (1,4)";
 			if((result = db->storeQuery(query.str())))
 			{
+				War_t war;
 				do
 				{
 					uint32_t guild = result->getDataInt("guild_id");
 					if(player->guildId == guild)
-						player->addEnemy(result->getDataInt("enemy_id"), War_t(result->getDataInt("id"), WAR_ENEMY));
+					{
+						war.type = WAR_ENEMY;
+						war.war = result->getDataInt("id");
+						player->addEnemy(result->getDataInt("enemy_id"), war);
 					else
-						player->addEnemy(guild, War_t(result->getDataInt("id"), WAR_GUILD));
+					{
+						war.type = WAR_GUILD;
+						war.war = result->getDataInt("id");
+						player->addEnemy(guild, war);
+					}
 				}
 				while(result->next());
 				result->free();

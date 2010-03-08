@@ -304,16 +304,6 @@ struct War_t
 
 		limit = end = status = payment = 0;
 	}
-	War_t(uint32_t _war, WarType_t _type)
-	{
-		war = _war;
-		type = _type;
-
-		memset(ids, 0, sizeof(ids));
-		memset(frags, 0, sizeof(frags));
-
-		limit = end = status = payment = 0;
-	}
 
 	uint32_t war;
 	WarType_t type;
