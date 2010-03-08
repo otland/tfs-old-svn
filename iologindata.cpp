@@ -546,6 +546,7 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool preLo
 						war.type = WAR_ENEMY;
 						war.war = result->getDataInt("id");
 						player->addEnemy(result->getDataInt("enemy_id"), war);
+					}
 					else
 					{
 						war.type = WAR_GUILD;
