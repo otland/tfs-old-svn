@@ -1575,9 +1575,9 @@ void ProtocolGame::sendCreatureEmblem(const Creature* creature)
 			RemoveTileItem(msg, creature->getPosition(), stackpos);
 		        msg->put<char>(0x6A);
 
-		        msg->putPosition(creature->getPosition());
-		        msg->put<char>(stackpos);
-		        AddCreature(msg, creature, false, creature->getID());
+			msg->putPosition(creature->getPosition());
+			msg->put<char>(stackpos);
+			AddCreature(msg, creature, false, creature->getID());
 		}
 		else
 			AddTileCreature(msg, creature->getPosition(), stackpos, creature);
