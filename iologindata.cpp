@@ -1632,9 +1632,9 @@ bool IOLoginData::getUnjustifiedDates(uint32_t guid, std::vector<time_t>& dateLi
 		<< "LEFT JOIN `player_deaths` pd ON `k`.`death_id` = `pd`.`id` WHERE `pk`.`player_id` = " << guid
 		<< " AND `k`.`unjustified` = 1 AND `pd`.`date` >= " << (_time - (30 * 86400));
 #ifdef __WAR_SYSTEM__
+
 	query << " AND `k`.`war` = 0";
 #endif
-
 	DBResult* result;
 	if(!(result = db->storeQuery(query.str())))
 		return false;

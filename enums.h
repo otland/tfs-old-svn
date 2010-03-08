@@ -294,6 +294,16 @@ enum WarType_t
 
 struct War_t
 {
+	War_t()
+	{
+		war = 0;
+		type = WAR_FIRST;
+
+		memset(ids, 0, sizeof(ids));
+		memset(frags, 0, sizeof(frags));
+
+		limit = end = status = payment = 0;
+	}
 	War_t(uint32_t _war, WarType_t _type)
 	{
 		war = _war;
@@ -304,7 +314,6 @@ struct War_t
 
 		limit = end = status = payment = 0;
 	}
-	War_t() {War_t(0, WAR_FIRST);}
 
 	uint32_t war;
 	WarType_t type;
