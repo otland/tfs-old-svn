@@ -233,7 +233,7 @@ bool replaceString(std::string& text, const std::string key, const std::string v
 	for(; start != std::string::npos; start = text.find(key, pos))
 	{
 		text.replace(start, key.size(), value);
-		pos += start + key.size();
+		pos = start + value.size() + 1;
 	}
 
 	return true;
