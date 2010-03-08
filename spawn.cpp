@@ -101,7 +101,7 @@ bool Spawns::parseSpawnNode(xmlNodePtr p, bool checkDuplicate)
 	}
 	else
 	{
-		IntegerVec posVec = vectorAtoi(explodeString(",", strValue));
+		IntegerVec posVec = vectorAtoi(explodeString(strValue, ","));
 		if(posVec.size() < 3)
 			return false;
 

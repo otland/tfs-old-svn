@@ -4960,60 +4960,67 @@ bool Game::playerViolationWindow(uint32_t playerId, std::string name, uint8_t re
 	if(!group)
 		return false;
 
+	std::string::size_type start = comment.find("{"), end = std::string::npos;
+	if(start != std::string::npos)
+		end = comment.find("}", start + 1);
+
 	time_t length[3] = {0, 0, 0};
-	int32_t pos = 0, start = comment.find("{");
-	while((start = comment.find("{")) > 0 && pos < 4)
+	if(end != std::string::npos)
 	{
-		std::string::size_type end = comment.find("}", start);
-		if(end == std::string::npos)
-			break;
-
-		std::string data = comment.substr(start + 1, end - 1);
-		comment = comment.substr(end + 1);
-
-		++pos;
-		if(data.empty())
-			continue;
-
-		if(data == "delete")
+		int32_t i = 0;
+		StringVec vec = explodeString(comment.substr(start + 1, end - 1), ",");
+		for(StringVec::iterator it = vec.begin(); it != vec.end() && i < 4; ++it, ++i)
 		{
-			action = ACTION_DELETION;
-			continue;
-		}
-
-		time_t banTime = time(NULL);
-		StringVec vec = explodeString(";", data);
-		for(StringVec::iterator it = vec.begin(); it != vec.end(); ++it)
-		{
-			StringVec tmp = explodeString(",", *it);
-			uint32_t count = 1;
-			if(tmp.size() > 1)
+			if((*it) == "delete")
 			{
-				count = atoi(tmp[1].c_str());
-				if(!count)
-					count = 1;
+				i--;
+				action = ACTION_DELETION;
+				continue;
 			}
 
-			if(tmp[0][0] == 's')
-				banTime += count;
-			if(tmp[0][0] == 'm')
-				banTime += count * 60;
-			if(tmp[0][0] == 'h')
-				banTime += count * 3600;
-			if(tmp[0][0] == 'd')
-				banTime += count * 86400;
-			if(tmp[0][0] == 'w')
-				banTime += count * 604800;
-			if(tmp[0][0] == 'm')
-				banTime += count * 2592000;
-			if(tmp[0][0] == 'y')
-				banTime += count * 31536000;
+			time_t banTime = time(NULL);
+			StringVec tec = explodeString((*it), "+");
+			for(StringVec::iterator tit = tec.begin(); tit != tec.end(); ++tit)
+			{
+				std::string tmp = (*it);
+				if(tmp[0] != 's' && tmp[0] != 'm' && tmp[0] != 'h' && tmp[0] != 'd'
+					&& tmp[0] != 'w' && tmp[0] != 'o' && tmp[0] != 'y')
+					continue;
+
+				uint32_t count = 1;
+				if(tmp.size() > 1)
+				{
+					count = atoi(tmp.substr(1).c_str());
+					if(!count)
+						count = 1;
+				}
+
+				if(tmp[0] == 's')
+					banTime += count;
+
+				if(tmp[0] == 'm')
+					banTime += count * 60;
+
+				if(tmp[0] == 'h')
+					banTime += count * 3600;
+
+				if(tmp[0] == 'd')
+					banTime += count * 86400;
+
+				if(tmp[0] == 'w')
+					banTime += count * 604800;
+
+				if(tmp[0] == 'o')
+					banTime += count * 2592000;
+
+				if(tmp[0] == 'y')
+					banTime += count * 31536000;
+
+				length[i] = banTime;
+			}
 		}
 
-		if(action == ACTION_DELETION)
-			length[pos - 2] = banTime;
-		else
-			length[pos - 1] = banTime;
+		comment = comment.substr(end + 1);
 	}
 
 	int16_t nameFlags = group->getNameViolationFlags(), statementFlags = group->getStatementViolationFlags();
@@ -5054,8 +5061,6 @@ bool Game::playerViolationWindow(uint32_t playerId, std::string name, uint8_t re
 		KICK = 2,
 		FULL_KICK = 3,
 	} kickAction = FULL_KICK;
-
-	pos = 1;
 	switch(action)
 	{
 		case ACTION_STATEMENT:
@@ -5125,7 +5130,6 @@ bool Game::playerViolationWindow(uint32_t playerId, std::string name, uint8_t re
 
 			bool deny = action != ACTION_BANREPORT;
 			int64_t banTime = -1;
-			pos = 2;
 
 			account.warnings++;
 			if(account.warnings >= g_config.getNumber(ConfigManager::WARNINGS_TO_DELETION))
@@ -5218,10 +5222,10 @@ bool Game::playerViolationWindow(uint32_t playerId, std::string name, uint8_t re
 
 	if(ipBanishment && target->getIP())
 	{
-		if(!length[pos])
-			length[pos] = time(NULL) + g_config.getNumber(ConfigManager::IPBANISHMENT_LENGTH);
+		if(!length[2])
+			length[2] = time(NULL) + g_config.getNumber(ConfigManager::IPBANISHMENT_LENGTH);
 
-		IOBan::getInstance()->addIpBanishment(target->getIP(), length[pos], reason, comment, player->getGUID(), 0xFFFFFFFF);
+		IOBan::getInstance()->addIpBanishment(target->getIP(), length[2], reason, comment, player->getGUID(), 0xFFFFFFFF);
 	}
 
 	if(kickAction == FULL_KICK)

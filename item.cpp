@@ -116,10 +116,10 @@ bool Item::loadItem(xmlNodePtr node, Container* parent)
 
 	if(readXMLString(node, "attributes", strValue))
 	{
-		StringVec v, attr = explodeString(";", strValue);
+		StringVec v, attr = explodeString(strValue, ";");
 		for(StringVec::iterator it = attr.begin(); it != attr.end(); ++it)
 		{
-			v = explodeString(",", (*it));
+			v = explodeString((*it), ",");
 			if(v.size() < 2)
 				continue;
 
