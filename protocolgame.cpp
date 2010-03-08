@@ -1573,7 +1573,7 @@ void ProtocolGame::sendCreatureEmblem(const Creature* creature)
 		if(it != knownCreatureList.end())
 		{
 			RemoveTileItem(msg, creature->getPosition(), stackpos);
-		        msg->put<char>(0x6A);
+			msg->put<char>(0x6A);
 
 			msg->putPosition(creature->getPosition());
 			msg->put<char>(stackpos);
