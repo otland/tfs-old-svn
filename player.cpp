@@ -865,7 +865,10 @@ bool Player::canWalkthrough(const Creature* creature) const
 		return creature->isWalkable();
 
 	if((hasCustomFlag(PlayerCustomFlag_CanWalkthrough) || player->isWalkable() || (((g_game.getWorldType() == WORLDTYPE_OPTIONAL &&
-		(!player->isEnemy(this, true)) && player->getVocation()->isAttackable()) || (player->getVocation()->isAttackable() &&
+#ifdef __WAR_SYSTEM__
+		!player->isEnemy(this, true) &&
+#endif
+		player->getVocation()->isAttackable()) || (player->getVocation()->isAttackable() &&
 		player->getLevel() < (uint32_t)g_config.getNumber(ConfigManager::PROTECTION_LEVEL))) && player->getTile()->ground &&
 		Item::items[player->getTile()->ground->getID()].walkStack)) && (!player->hasCustomFlag(PlayerCustomFlag_GamemasterPrivileges)
 		|| player->getAccess() <= getAccess()))
