@@ -864,10 +864,9 @@ bool Player::canWalkthrough(const Creature* creature) const
 	if(!player)
 		return creature->isWalkable();
 
-	GuildEmblems_t tmp = getGuildEmblem(player);
 	if((hasCustomFlag(PlayerCustomFlag_CanWalkthrough) || player->isWalkable() || (((g_game.getWorldType() == WORLDTYPE_OPTIONAL &&
-		(tmp == EMBLEM_NONE || tmp == EMBLEM_BLUE) && player->getVocation()->isAttackable()) || (player->getVocation()->isAttackable()
-		&& player->getLevel() < (uint32_t)g_config.getNumber(ConfigManager::PROTECTION_LEVEL))) && player->getTile()->ground &&
+		(!player->isEnemy(this, true)) && player->getVocation()->isAttackable()) || (player->getVocation()->isAttackable() &&
+		player->getLevel() < (uint32_t)g_config.getNumber(ConfigManager::PROTECTION_LEVEL))) && player->getTile()->ground &&
 		Item::items[player->getTile()->ground->getID()].walkStack)) && (!player->hasCustomFlag(PlayerCustomFlag_GamemasterPrivileges)
 		|| player->getAccess() <= getAccess()))
 		return true;
@@ -3557,7 +3556,7 @@ void Player::onAttackedCreature(Creature* target)
 #endif
 		(g_config.getBool(ConfigManager::ALLOW_FIGHTBACK) && targetPlayer->hasAttacked(this)
 #ifdef __WAR_SYSTEM__
-		&& !targetPlayer->isEnemy(this, true)
+		&& !targetPlayer->isEnemy(this, false)
 #endif
 		))
 		return;
@@ -3692,8 +3691,9 @@ bool Player::isEnemy(const Player* player, bool allies) const
 	if(!guild)
 		return false;
 
-	return !warMap.empty() && ((g_config.getBool(ConfigManager::OPTIONAL_WAR_ATTACK_ALLY)
-		&& allies && guildId == guild) || warMap.find(guild) != warMap.end());
+	return !warMap.empty() && (((g_game.getWorldType() != WORLDTYPE_OPTIONAL || g_config.getBool(
+		ConfigManager::OPTIONAL_WAR_ATTACK_ALLY)) && allies && guildId == guild) ||
+		warMap.find(guild) != warMap.end());
 }
 
 bool Player::isAlly(const Player* player) const

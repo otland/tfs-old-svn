@@ -1560,6 +1560,7 @@ void ProtocolGame::sendCreatureEmblem(const Creature* creature)
 	if(!canSee(creature))
 		return;
 
+	// we are cheating the client in here!
 	uint32_t stackpos = creature->getTile()->getClientIndexOfThing(player, creature);
 	if(stackpos >= 10)
 		return;
@@ -1576,7 +1577,7 @@ void ProtocolGame::sendCreatureEmblem(const Creature* creature)
 
 		        msg->putPosition(creature->getPosition());
 		        msg->put<char>(stackpos);
-		        AddCreature(msg, creature, false, 0);
+		        AddCreature(msg, creature, false, creature->getID());
 		}
 		else
 			AddTileCreature(msg, creature->getPosition(), stackpos, creature);
