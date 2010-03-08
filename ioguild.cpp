@@ -294,7 +294,7 @@ bool IOGuild::isInvited(uint32_t guild, uint32_t guid)
 	DBResult* result;
 
 	DBQuery query;
-	query << "SELECT `id` FROM `guild_invites` WHERE `player_id` = " << guid << " AND `guild_id`= " << guild << " LIMIT 1";
+	query << "SELECT `guild_id` FROM `guild_invites` WHERE `player_id` = " << guid << " AND `guild_id`= " << guild << " LIMIT 1";
 	if(!(result = db->storeQuery(query.str())))
 		return false;
 
