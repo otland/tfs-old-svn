@@ -6066,13 +6066,20 @@ bool Game::reloadInfo(ReloadInfo_t reload, uint32_t playerId/* = 0*/)
 			break;
 		}
 
+		case RELOAD_MODS:
 		case RELOAD_ALL:
 		{
 			done = true;
-			for(uint8_t i = RELOAD_FIRST; i <= RELOAD_LAST; i++)
+			for(int32_t i = RELOAD_FIRST; i <= RELOAD_LAST; i++)
 			{
 				if(!reloadInfo((ReloadInfo_t)i) && done)
 					done = false;
+			}
+
+			if(!ScriptManager::getInstance()->reloadMods())
+			{
+				std::clog << "[Error - Game::reloadInfo] Failed to reload mods." << std::endl;
+				done = false;
 			}
 
 			break;
@@ -6098,7 +6105,11 @@ bool Game::reloadInfo(ReloadInfo_t reload, uint32_t playerId/* = 0*/)
 		return true;
 	}
 
-	player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, "Failed to reload.");
+	if(reload == RELOAD_ALL || reload == RELOAD_MODS)
+		player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, "Failed to reload some parts.");
+	else
+		player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, "Failed to reload.");
+
 	return false;
 }
 

@@ -160,7 +160,7 @@ void Raids::checkRaids()
 {
 	checkRaidsEvent = Scheduler::getInstance().addEvent(createSchedulerTask(
 		CHECK_RAIDS_INTERVAL * 1000, boost::bind(&Raids::checkRaids, this)));
-	if(getRunning())
+	if(running)
 		return;
 
 	uint64_t now = OTSYS_TIME();

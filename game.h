@@ -103,7 +103,7 @@ enum ReloadInfo_t
 	RELOAD_WEAPONS = 21,
 	RELOAD_MODS = 22,
 	RELOAD_ALL = 23,
-	RELOAD_LAST = RELOAD_MODS
+	RELOAD_LAST = RELOAD_WEAPONS
 };
 
 struct RuleViolation
