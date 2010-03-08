@@ -5101,27 +5101,28 @@ bool Game::playerViolationWindow(uint32_t playerId, std::string name, uint8_t re
 		}
 
 		case ACTION_NOTATION:
-		{
-			if(!IOBan::getInstance()->addNotation(account.number, reason,
-				comment, player->getGUID(), target->getGUID()))
-			{
-				player->sendCancel("Unable to perform action.");
-				return false;
-			}
-
-			if(IOBan::getInstance()->getNotationsCount(account.number) < (uint32_t)
-				g_config.getNumber(ConfigManager::NOTATIONS_TO_BAN))
-			{
-				kickAction = NONE;
-				break;
-			}
-
-			action = ACTION_BANISHMENT;
-		}
-
 		case ACTION_BANISHMENT:
 		case ACTION_BANREPORT:
 		{
+			if(action == ACTION_NOTATION)
+			{
+				if(!IOBan::getInstance()->addNotation(account.number, reason,
+					comment, player->getGUID(), target->getGUID()))
+				{
+					player->sendCancel("Unable to perform action.");
+					return false;
+				}
+
+				if(IOBan::getInstance()->getNotationsCount(account.number) < (uint32_t)
+					g_config.getNumber(ConfigManager::NOTATIONS_TO_BAN))
+				{
+					kickAction = NONE;
+					break;
+				}
+
+				action = ACTION_BANISHMENT;
+			}
+
 			bool deny = action != ACTION_BANREPORT;
 			int64_t banTime = -1;
 			pos = 2;
