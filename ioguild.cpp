@@ -437,12 +437,7 @@ bool IOGuild::war(War_t& enemy)
 	}
 
 	query.str("");
-	query << "UPDATE `guilds` SET `balance` = `balance` - " << enemy.payment << " WHERE `id` = " << enemy.ids[enemy.type == WAR_GUILD];
-	if(!db->executeQuery(query.str()))
-		return false;
-
-	query.str("");
-	query << "UPDATE `guilds` SET `balance` = `balance` + " << enemy.payment << " WHERE `id` = " << enemy.ids[enemy.type];
+	query << "UPDATE `guilds` SET `balance` = `balance` + " << (enemy.payment * 2) << " WHERE `id` = " << enemy.ids[enemy.type];
 	if(!db->executeQuery(query.str()))
 		return false;
 
