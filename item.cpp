@@ -688,7 +688,7 @@ bool Item::hasProperty(enum ITEMPROPERTY prop) const
 
 		case MOVEABLE:
 			if(it.moveable && (!loadedFromMap || (!getUniqueId()
-				&& (!getActionId() || getContainer()))))
+				&& (!getActionId() || !getContainer()))))
 				return true;
 
 			break;
