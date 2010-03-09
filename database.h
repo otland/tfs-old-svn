@@ -127,7 +127,7 @@ class _Database
 		* @param std::string query command
 		* @return true on success, false on error
 		*/
-		DATABASE_VIRTUAL bool executeQuery(const std::string) {return 0;}
+		DATABASE_VIRTUAL bool executeQuery(const std::string&) {return 0;}
 
 		/**
 		* Queries database.
@@ -137,7 +137,7 @@ class _Database
 		* @param std::string query
 		* @return results object (null on error)
 		*/
-		DATABASE_VIRTUAL DBResult* storeQuery(const std::string) {return 0;}
+		DATABASE_VIRTUAL DBResult* storeQuery(const std::string&) {return 0;}
 
 		/**
 		* Escapes string for query.
@@ -147,7 +147,7 @@ class _Database
 		* @param std::string string to be escaped
 		* @return quoted string
 		*/
-		DATABASE_VIRTUAL std::string escapeString(const std::string) {return "''";}
+		DATABASE_VIRTUAL std::string escapeString(const std::string&) {return "''";}
 
 		/**
 		* Escapes binary stream for query.
