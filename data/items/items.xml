@@ -16963,7 +16963,12 @@
 		<attribute key="description" value="The special carrying device Spetulus gave you now contains a mirror crystal." />
 		<attribute key="weight" value="3500" />
 	</item>
+	<item fromid="10710" toid="10711" article="a" name="dragon statue" />
 	<!-- 10718 & 10719 - Tibia Friends amulet -->
+	<item id="10733" article="a" name="thornpeak grass" />
+	<item fromid="10734" toid="10735" article="a" name="pepper root grass" />
+	<item fromid="10740" toid="10742" article="a" name="trollhair plants" />
+	<item id="10762" article="a" name="pepper root grass" />
 	<item id="10774" article="a" name="closed door">
 		<attribute key="type" value="door" />
 		<attribute key="blockprojectile" value="1" />
@@ -17018,11 +17023,69 @@
 	<item id="10791" article="a" name="open door">
 		<attribute key="type" value="door" />
 	</item>
+	<item id="10792" article="a" name="tainted plant" />
+	<item id="10802" article="a" name="witches cauldron plant" />
+	<item id="10805" article="a" name="pestilent fern" />
+	<item fromid="10806" toid="10808" article="a" name="necrotic grass" />
+	<item id="10809" article="a" name="stone wall" />
+	<item id="10810" article="a" name="apocalypse mushroom" />
+	<item id="10811" article="a" name="stone wall" />
+	<item id="10812" article="a" name="mourning mushroom" />
+	<item fromid="10813" toid="10814" article="a" name="stone wall" />
+	<item id="10815" article="a" name="infected throne" />
+	<item fromid="10817" toid="10826" article="a" name="stone wall" />
+	<item fromid="10829" toid="10844" article="a" name="stone wall" />
+	<item fromid="10869" toid="10870" article="a" name="rattleleaf bush" />
+	<item id="10875" article="a" name="throatslitter" />
+	<item fromid="10876" toid="10877" article="a" name="rattleleaf bush" />
+	<item fromid="10879" toid="10882" article="a" name="defense construction" />
+	<item id="10911" article="a" name="solstice tree" />
+	<item id="10912" article="a" name="dry solstice tree" />
+	<item id="10927" article="a" name="Map to the Unknown">
+		<attribute key="weight" value="680" />
+		<attribute key="description" value="Treasured by adventurers and explorers alike." />
+	</item>
+	<item id="10941" article="a" name="Almanac of Magic">
+		<attribute key="weight" value="5555" />
+		<attribute key="description" value="Invaluable for all magic research." />
+	</item>
+	<item id="10942" article="a" name="baby rotworm">
+		<attribute key="weight" value="45" />
+		<attribute key="description" value="It looks hungry." />
+	</item>
+	<item id="10943" article="a" name="universal tool">
+		<attribute key="weight" value="300" />
+		<attribute key="description" value="The tool of choice for any gadgeteer." />
+	</item>
+	<item id="10944" article="a" name="soul contract">
+		<attribute key="weight" value="150" />
+		<attribute key="description" value="A contract in which some desperate person has sold his soul." />
+	</item>
+	<item fromid="10945" toid="10948" article="a" name="dragon statue" />
+	<item fromid="10949" toid="10950" article="a" name="dragon throne" />
+	<item fromid="10951" toid="10952" article="a" name="dragon banner" />
+	<item fromid="10955" toid="10956" article="a" name="dragon banner" />
+	<item fromid="10953" toid="10954" article="a" name="banner" />
+	<item fromid="10957" toid="10958" article="a" name="banner" />
+	<item fromid="10962" toid="10963" article="a" name="dragon banner" />
+	<item fromid="10964" toid="10965" article="a" name="banner" />
 	<item fromid="10970" toid="10973" name="wall lamp" />
-	<item fromid="10997" toid="11000" name="street lamp" />
+	<item id="10978" article="a" name="lizard weapon rack">
+		<attribute key="weight" value="5500" />
+	</item>
+	<item id="10979" article="a" name="lizard weapon rack">
+		<attribute key="weight" value="5500" />
+	</item>
+	<item id="10981" article="a" name="lizard weapon rack">
+		<attribute key="weight" value="5500" />
+	</item>
+	<item id="10982" article="a" name="lizard weapon rack">
+		<attribute key="weight" value="5500" />
+	</item>
 	<item fromid="11059" toid="11060" name="glowing switch">
 		<attribute key="walkStack" value="0" />
 	</item>
+	<item fromid="10997" toid="11004" article="a" name="dragon statue" />
 	<item fromid="11061" toid="11072" article="a" name="window" />
 	<item id="11095" article="a" name="magic wall">
 		<attribute key="type" value="magicfield" />
@@ -17033,6 +17096,11 @@
 		<attribute key="type" value="magicfield" />
 		<attribute key="decayTo" value="0" />
 		<attribute key="duration" value="45" />
+	</item>
+	<item id="11100" article="a" name="crystal ball" />
+	<item id="11101" article="a" name="rare crystal">
+		<attribute key="weight" value="5500" />
+		<attribute key="description" value="An extremely rare crystal you recovered from the Lost Mines." />
 	</item>
 	<item id="11109" article="a" name="orc tooth" plural="orc teeth">
 		<attribute key="weight" value="100" />
@@ -17064,7 +17132,28 @@
 	<item id="11117" article="a" name="stone stairs">
 		<attribute key="floorchange" value="north" />
 	</item>
-	<item fromid="11123" toid="11126" name="dragon statue" />
+	<item id="11121" article="a" name="lizard weapon rack">
+		<attribute key="weight" value="5500" />
+		<attribute key="rotateTo" value="11122" />
+		<attribute key="containerSize" value="25" />
+	</item>
+	<item id="11122" article="a" name="lizard weapon rack">
+		<attribute key="weight" value="5500" />
+		<attribute key="rotateTo" value="11121" />
+		<attribute key="containerSize" value="25" />
+	</item>
+	<item id="11123" article="a" name="dragon statue">
+		<attribute key="rotateTo" value="11124" />
+	</item>
+	<item id="11124" article="a" name="dragon statue">
+		<attribute key="rotateTo" value="11125" />
+	</item>
+	<item id="11125" article="a" name="dragon statue">
+		<attribute key="rotateTo" value="11126" />
+	</item>
+	<item id="11126" article="a" name="dragon statue">
+		<attribute key="rotateTo" value="11123" />
+	</item>
 	<item id="11128" name="tome of knowledge">
 		<attribute key="description" value="Bring this encrypted book to a sage in Farmine to gain wisdom or unlock more of Zao's culture." />
 		<attribute key="weight" value="1500" />
@@ -17072,6 +17161,7 @@
 	<item id="11130" name="crocodile steak">
 		<attribute key="weight" value="440" />
 	</item>
+	<item fromid="11136" toid="11137" article="a" name="shrine" />
 	<item id="11138" name="nightmare doll">
 		<attribute key="weight" value="1800" />
 	</item>
@@ -17112,7 +17202,12 @@
 	<item id="11194" name="half-digested piece of meat" plural="half-digested pieces of meat">
 		<attribute key="weight" value="124" />
 	</item>
-	<item fromid="11197" toid="11198" name="dragon throne" />
+	<item id="11197" article="a" name="dragon throne">
+		<attribute key="rotateTo" value="11198" />
+	</item>
+	<item id="11198" article="a" name="dragon throne">
+		<attribute key="rotateTo" value="11197" />
+	</item>
 	<item id="11200" name="red lantern">
 		<attribute key="weight" value="116" />
 	</item>
@@ -17425,6 +17520,7 @@
 		<attribute key="slotType" value="necklace" />
 		<attribute key="showattributes" value="1" />
 	</item>
+	<item fromid="11379" toid="11386" article="a" name="part of a giant stone dragon" />
 	<item id="11388" name="lucky clover amulet">
 		<attribute key="description" value="It is rumoured to bring you good luck! Luck sponsored by TibiaLottery." />
 		<attribute key="weight" value="150" />
