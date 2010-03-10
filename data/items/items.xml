@@ -12634,7 +12634,9 @@
 		<attribute key="duration" value="600" />
 		<attribute key="corpseType" value="blood" />
 	</item>
-	<item fromid="7632" toid="7633" />
+	<item fromid="7632" toid="7633" article="a" name="giant shimmering pearl">
+		<attribute key="weight" value="80" />
+	</item>
 	<item id="7634" article="an" name="empty potion flask">
 		<attribute key="weight" value="200" />
 		<attribute key="description" value="Return it to a magic store for deposit." />
@@ -12644,7 +12646,7 @@
 		<attribute key="description" value="Return it to a magic store for deposit." />
 	</item>
 	<item id="7636" article="an" name="empty potion flask">
-		<attribute key="weight" value="180" />
+		<attribute key="weight" value="170" />
 		<attribute key="description" value="Return it to a magic store for deposit." />
 	</item>
 	<item id="7637" article="a" name="dead cat">
