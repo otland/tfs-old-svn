@@ -75,8 +75,6 @@ bool CreatureEvents::registerEvent(Event* event, xmlNodePtr, bool override)
 		{
 			if(!oldEvent->isLoaded() || override)
 				oldEvent->copyEvent(creatureEvent);
-			else
-				delete creatureEvent;
 
 			return override;
 		}
