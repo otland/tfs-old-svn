@@ -215,7 +215,7 @@ void allocationHandler()
 {
 	puts("Allocation failed, server out of memory!\nDecrease size of your map or compile in a 64-bit mode.");
 	char buffer[1024];
-	fgets(buffer, 1024, stdin);
+	delete fgets(buffer, 1024, stdin);
 	exit(-1);
 }
 
