@@ -104,7 +104,8 @@ bool CreatureEvents::playerLogin(Player* player)
 	bool result = true;
 	for(CreatureEventList::iterator it = m_creatureEvents.begin(); it != m_creatureEvents.end(); ++it)
 	{
-		if((*it)->getEventType() == CREATURE_EVENT_LOGIN && !(*it)->executeLogin(player) && result)
+		if((*it)->getEventType() == CREATURE_EVENT_LOGIN && (*it)->isLoaded()
+			&& !(*it)->executeLogin(player) && result)
 			result = false;
 	}
 
@@ -117,7 +118,8 @@ bool CreatureEvents::playerLogout(Player* player, bool forceLogout)
 	bool result = true;
 	for(CreatureEventList::iterator it = m_creatureEvents.begin(); it != m_creatureEvents.end(); ++it)
 	{
-		if((*it)->getEventType() == CREATURE_EVENT_LOGOUT && !(*it)->executeLogout(player, forceLogout) && result)
+		if((*it)->getEventType() == CREATURE_EVENT_LOGOUT && (*it)->isLoaded()
+			&& !(*it)->executeLogout(player, forceLogout) && result)
 			result = false;
 	}
 
