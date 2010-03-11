@@ -26,6 +26,7 @@ bool Mission::isStarted(Player* player)
 
 	std::string value;
 	player->getStorage(storageId, value);
+std::cout<<name<<"start,"<<value<<","<<startValue<<std::endl;
 	return atoi(value.c_str()) >= startValue;
 }
 
@@ -36,6 +37,7 @@ bool Mission::isCompleted(Player* player)
 
 	std::string value;
 	player->getStorage(storageId, value);
+std::cout<<name<<"end,"<<value<<","<<endValue<<std::endl;
 	return atoi(value.c_str()) >= endValue;
 }
 
@@ -51,7 +53,11 @@ std::string Mission::getDescription(Player* player)
 	}
 
 	if(atoi(value.c_str()) >= endValue)
-		return states.rbegin()->second;
+	{
+		std::string ret = states.rbegin()->second;
+		replaceString(ret, "|STATE|", value);
+		return ret;
+	}
 
 	for(int32_t i = endValue; i >= startValue; --i)
 	{
@@ -197,14 +203,14 @@ bool Quests::parseQuestNode(xmlNodePtr p, bool checkDuplicate)
 			missionState = strValue;
 
 		uint32_t storageId = 0;
-		if(readXMLInteger(missionNode, "storageid", intValue) || readXMLInteger(p, "storageId", intValue))
+		if(readXMLInteger(missionNode, "storageid", intValue) || readXMLInteger(missionNode, "storageId", intValue))
 			storageId = intValue;
 
 		int32_t startValue = 0, endValue = 0;
-		if(readXMLInteger(missionNode, "startvalue", intValue) || readXMLInteger(p, "startValue", intValue))
+		if(readXMLInteger(missionNode, "startvalue", intValue) || readXMLInteger(missionNode, "startValue", intValue))
 			startValue = intValue;
 
-		if(readXMLInteger(missionNode, "endvalue", intValue) || readXMLInteger(p, "endValue", intValue))
+		if(readXMLInteger(missionNode, "endvalue", intValue) || readXMLInteger(missionNode, "endValue", intValue))
 			endValue = intValue;
 
 		if(Mission* mission = new Mission(missionName, missionState, storageId, startValue, endValue))

@@ -30,8 +30,8 @@ class Mission
 		{
 			name = _name;
 			state = _state;
-			endValue = _endValue;
 			startValue = _startValue;
+			endValue = _endValue;
 			storageId = _storageId;
 		}
 		virtual ~Mission() {states.clear();}
@@ -60,8 +60,8 @@ class Quest
 		{
 			name = _name;
 			id = _id;
-			storageId = _storageId;
 			storageValue = _storageValue;
+			storageId = _storageId;
 		}
 		virtual ~Quest();
 
