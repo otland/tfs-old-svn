@@ -72,7 +72,7 @@ class CreatureEvents : public BaseEvents
 		bool playerLogin(Player* player);
 		bool playerLogout(Player* player, bool forceLogout);
 
-		CreatureEvent* getEventByName(const std::string& name, bool forceLoaded = true);
+		CreatureEvent* getEventByName(const std::string& name);
 
 	protected:
 		virtual std::string getScriptBaseName() const {return "creaturescripts";}
@@ -85,7 +85,7 @@ class CreatureEvents : public BaseEvents
 		LuaInterface m_interface;
 
 		//creature events
-		typedef std::map<std::string, CreatureEvent*> CreatureEventList;
+		typedef std::vector<CreatureEvent*> CreatureEventList;
 		CreatureEventList m_creatureEvents;
 };
 

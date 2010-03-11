@@ -1543,7 +1543,7 @@ void Creature::setNormalCreatureLight()
 bool Creature::registerCreatureEvent(const std::string& name)
 {
 	CreatureEvent* event = g_creatureEvents->getEventByName(name);
-	if(!event) //check for existance
+	if(!event && event->isLoaded()) //check for existance
 		return false;
 
 	for(CreatureEventList::iterator it = eventsList.begin(); it != eventsList.end(); ++it)
@@ -1559,7 +1559,7 @@ bool Creature::registerCreatureEvent(const std::string& name)
 bool Creature::unregisterCreatureEvent(const std::string& name)
 {
 	CreatureEvent* event = g_creatureEvents->getEventByName(name);
-	if(!event) //check for existance
+	if(!event && event->isLoaded()) //check for existance
 		return false;
 
 	for(CreatureEventList::iterator it = eventsList.begin(); it != eventsList.end(); ++it)
@@ -1579,7 +1579,7 @@ CreatureEventList Creature::getCreatureEvents(CreatureEventType_t type)
 	CreatureEventList retList;
 	for(CreatureEventList::iterator it = eventsList.begin(); it != eventsList.end(); ++it)
 	{
-		if((*it)->getEventType() == type)
+		if((*it)->getEventType() == type && (*it)->isLoaded())
 			retList.push_back(*it);
 	}
 

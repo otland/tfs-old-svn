@@ -307,7 +307,7 @@ void otserv(StringVec, ServiceManager* services)
 
 	std::clog << STATUS_SERVER_NAME << ", version " << STATUS_SERVER_VERSION << " (" << STATUS_SERVER_CODENAME << ")" << std::endl
 		<< "Compiled with " << BOOST_COMPILER << " at " << __DATE__ << ", " << __TIME__ << "." << std::endl
-		<< "A server developed by Elf, Talaturen, KaczooH, Stian, Chojrak, Sentielo and Kornholijo." << std::endl
+		<< "A server developed by Elf, Talaturen, KaczooH, Stian and Kornholijo." << std::endl
 		<< "Visit our forum for updates, support and resources: http://otland.net." << std::endl << std::endl;
 	std::stringstream ss;
 #ifdef __DEBUG__
@@ -388,6 +388,7 @@ void otserv(StringVec, ServiceManager* services)
 		SetPriorityClass(GetCurrentProcess(), ABOVE_NORMAL_PRIORITY_CLASS);
 
 #else
+#ifndef MACOS
 		cpu_set_t mask;
 		CPU_ZERO(&mask);
 		for(IntegerVec::iterator it = cores.begin(); it != cores.end(); ++it)
@@ -395,6 +396,7 @@ void otserv(StringVec, ServiceManager* services)
 
 		sched_setaffinity(getpid(), (int32_t)sizeof(mask), &mask);
 	}
+#endif
 
 	std::string runPath = g_config.getString(ConfigManager::RUNFILE);
 	if(runPath != "" && runPath.length() > 2)
@@ -596,7 +598,7 @@ void otserv(StringVec, ServiceManager* services)
 		startupErrorMessage("Unable to load game servers!");
 
 	#endif
-	
+
 	std::clog << ">> Checking world type... ";
 	std::string worldType = asLowerCaseString(g_config.getString(ConfigManager::WORLD_TYPE));
 	if(worldType == "open" || worldType == "2" || worldType == "openpvp")

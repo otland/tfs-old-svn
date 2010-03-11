@@ -31,16 +31,17 @@ m_interface("CreatureScript Interface")
 
 CreatureEvents::~CreatureEvents()
 {
-	CreatureEventList::iterator it;
-	for(it = m_creatureEvents.begin(); it != m_creatureEvents.end(); ++it)
-		delete it->second;
+	for(CreatureEventList::iterator it = m_creatureEvents.begin(); it != m_creatureEvents.end(); ++it)
+		delete (*it);
+
+	m_creatureEvents.clear();
 }
 
 void CreatureEvents::clear()
 {
 	//clear creature events
 	for(CreatureEventList::iterator it = m_creatureEvents.begin(); it != m_creatureEvents.end(); ++it)
-		it->second->clearEvent();
+		(*it)->clearEvent();
 
 	//clear lua state
 	m_interface.reInitState();
@@ -70,26 +71,28 @@ bool CreatureEvents::registerEvent(Event* event, xmlNodePtr, bool override)
 	if(CreatureEvent* oldEvent = getEventByName(creatureEvent->getName(), false))
 	{
 		//if there was an event with the same type that is not loaded (happens when realoading), it is reused
-		if(oldEvent->getEventType() == creatureEvent->getEventType() && (!oldEvent->isLoaded() || override))
-			oldEvent->copyEvent(creatureEvent);
+		if(oldEvent->getEventType() == creatureEvent->getEventType())
+		{
+			if(!oldEvent->isLoaded() || override))
+				oldEvent->copyEvent(creatureEvent);
+			else
+				delete creatureEvent;
 
-		/*delete creatureEvent;
-		return override;*/
-		return false;
+			return override;
+		}
 	}
 
 	//if not, register it normally
-	m_creatureEvents[creatureEvent->getName()] = creatureEvent;
+	m_creatureEvents.push_back(creatureEvent);
 	return true;
 }
 
-CreatureEvent* CreatureEvents::getEventByName(const std::string& name, bool forceLoaded /*= true*/)
+CreatureEvent* CreatureEvents::getEventByName(const std::string& name)
 {
-	CreatureEventList::iterator it = m_creatureEvents.find(name);
-	if(it != m_creatureEvents.end())
+	for(CreatureEventList::iterator it = m_creatureEvents.begin(); it != m_creatureEvents.end(); ++it)
 	{
-		if(!forceLoaded || it->second->isLoaded())
-			return it->second;
+		if((*it)->getName() == name)
+			return (*it);
 	}
 
 	return NULL;
@@ -101,8 +104,7 @@ bool CreatureEvents::playerLogin(Player* player)
 	bool result = true;
 	for(CreatureEventList::iterator it = m_creatureEvents.begin(); it != m_creatureEvents.end(); ++it)
 	{
-		if(it->second->getEventType() == CREATURE_EVENT_LOGIN &&
-			!it->second->executeLogin(player) && result)
+		if((*it)->getEventType() == CREATURE_EVENT_LOGIN && !(*it)->executeLogin(player) && result)
 			result = false;
 	}
 
@@ -115,12 +117,11 @@ bool CreatureEvents::playerLogout(Player* player, bool forceLogout)
 	bool result = true;
 	for(CreatureEventList::iterator it = m_creatureEvents.begin(); it != m_creatureEvents.end(); ++it)
 	{
-		if(it->second->getEventType() == CREATURE_EVENT_LOGOUT &&
-			!it->second->executeLogout(player, forceLogout) && result)
+		if((*it)->getEventType() == CREATURE_EVENT_LOGOUT && !(*it)->executeLogout(player, forceLogout) && result)
 			result = false;
 	}
 
-	return forceLogout || result;
+	return result;
 }
 
 /////////////////////////////////////
