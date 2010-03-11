@@ -8739,7 +8739,6 @@ int32_t LuaInterface::luaGetCreatureMaster(lua_State* L)
 {
 	//getCreatureMaster(cid)
 	uint32_t cid = popNumber(L);
-
 	ScriptEnviroment* env = getEnv();
 
 	Creature* creature = env->getCreatureByUID(cid);
@@ -8750,8 +8749,11 @@ int32_t LuaInterface::luaGetCreatureMaster(lua_State* L)
 		return 1;
 	}
 
-	Creature* master = creature->getMaster();
-	lua_pushnumber(L, master ? env->addThing(master) : cid);
+	if(Creature* master = creature->getMaster())
+		lua_pushnumber(L, env->addThing(master));
+	else
+		lua_pushnil(L);
+
 	return 1;
 }
 
