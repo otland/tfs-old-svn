@@ -26,7 +26,6 @@ bool Mission::isStarted(Player* player)
 
 	std::string value;
 	player->getStorage(storageId, value);
-std::cout<<name<<"start,"<<value<<","<<startValue<<std::endl;
 	return atoi(value.c_str()) >= startValue;
 }
 
@@ -37,7 +36,6 @@ bool Mission::isCompleted(Player* player)
 
 	std::string value;
 	player->getStorage(storageId, value);
-std::cout<<name<<"end,"<<value<<","<<endValue<<std::endl;
 	return atoi(value.c_str()) >= endValue;
 }
 
