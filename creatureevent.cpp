@@ -68,12 +68,12 @@ bool CreatureEvents::registerEvent(Event* event, xmlNodePtr, bool override)
 		return false;
 	}
 
-	if(CreatureEvent* oldEvent = getEventByName(creatureEvent->getName(), false))
+	if(CreatureEvent* oldEvent = getEventByName(creatureEvent->getName()))
 	{
 		//if there was an event with the same type that is not loaded (happens when realoading), it is reused
 		if(oldEvent->getEventType() == creatureEvent->getEventType())
 		{
-			if(!oldEvent->isLoaded() || override))
+			if(!oldEvent->isLoaded() || override)
 				oldEvent->copyEvent(creatureEvent);
 			else
 				delete creatureEvent;
