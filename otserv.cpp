@@ -151,7 +151,7 @@ bool argumentsHandler(StringVec args)
 		else if(tmp[0] == "--log")
 			g_config.setString(ConfigManager::OUTPUT_LOG, tmp[1]);
 		else if(tmp[0] == "--closed")
-			g_config.setBool(ConfigManager::START_CLOSED, booleanString(tmp[1]));
+			g_config.setBool(ConfigManager::START_CLOSED, true);
 	}
 
 	return true;
