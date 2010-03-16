@@ -743,7 +743,11 @@ void Container::__internalAddThing(Thing* thing)
 	__internalAddThing(0, thing);
 }
 
-void Container::__internalAddThing(uint32_t, Thing* thing)
+void Container::__internalAddThing(uint32_t
+#ifdef __DEBUG_MOVESYS__
+	index 
+#endif
+				, Thing* thing)
 {
 #ifdef __DEBUG_MOVESYS__
 	std::clog << "[Container::__internalAddThing] index: " << index << std::endl;

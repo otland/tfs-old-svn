@@ -95,6 +95,9 @@ bool DatabaseSQLite::executeQuery(const std::string& query)
 		return false;
 
 	std::string buf = _parse(query);
+#ifdef __SQL_QUERY_DEBUG__
+	std::clog << "SQLLITE DEBUG, executeQuery: " << buf << std::endl;
+#endif
 	sqlite3_stmt* stmt;
 	// prepares statement
 	if(OTSYS_SQLITE3_PREPARE(m_handle, buf.c_str(), buf.length(), &stmt, NULL) != SQLITE_OK)
@@ -126,6 +129,9 @@ DBResult* DatabaseSQLite::storeQuery(const std::string& query)
 		return NULL;
 
 	std::string buf = _parse(query);
+#ifdef __SQL_QUERY_DEBUG__
+	std::clog << "SQLLITE DEBUG, storeQuery: " << buf << std::endl;
+#endif
 	sqlite3_stmt* stmt;
 	// prepares statement
 	if(OTSYS_SQLITE3_PREPARE(m_handle, buf.c_str(), buf.length(), &stmt, NULL) != SQLITE_OK)
