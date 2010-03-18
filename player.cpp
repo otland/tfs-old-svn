@@ -4797,9 +4797,14 @@ bool Player::isGuildInvited(uint32_t guildId) const
 void Player::leaveGuild()
 {
 	sendClosePrivate(CHANNEL_GUILD);
+#ifdef __WAR_SYSTEM__
+	warMap.clear();
+	updateCreatureEmblem(this);
+
+#endif
 	guildLevel = GUILDLEVEL_NONE;
 	guildId = rankId = 0;
-	guildName = rankName = guildNick = "";
+	guildName = rankName = guildNick = std::string();
 }
 
 bool Player::isPremium() const
