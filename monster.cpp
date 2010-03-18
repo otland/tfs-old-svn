@@ -1200,7 +1200,7 @@ Item* Monster::createCorpse(DeathList deathList)
 	if(!owner)
 		return corpse;
 
-	uint64_t stamina = g_config.getNumber(ConfigManager::STAMINA_LOOT_DESTROY);
+	uint64_t stamina = g_config.getNumber(ConfigManager::STAMINA_DESTROY_LOOT);
 	if(stamina && owner->getStamina() <= (stamina * STAMINA_MULTIPLIER))
 		lootDrop = LOOT_DROP_NONE;
 
