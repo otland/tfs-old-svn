@@ -4799,7 +4799,7 @@ void Player::leaveGuild()
 	sendClosePrivate(CHANNEL_GUILD);
 #ifdef __WAR_SYSTEM__
 	warMap.clear();
-	updateCreatureEmblem(this);
+	g_game.updateCreatureEmblem(this);
 
 #endif
 	guildLevel = GUILDLEVEL_NONE;

@@ -169,6 +169,7 @@ class ConfigManager
 			ADMIN_CONNECTIONS_LIMIT,
 			VIPLIST_DEFAULT_LIMIT,
 			VIPLIST_DEFAULT_PREMIUM_LIMIT,
+			STAMINA_DESTROY_LOOT,
 			LAST_NUMBER_CONFIG /* this must be the last one */
 		};
 
