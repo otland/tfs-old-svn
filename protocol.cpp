@@ -163,7 +163,7 @@ bool Protocol::XTEA_decrypt(NetworkMessage& msg)
 		uint32_t v0 = buffer[readPos], v1 = buffer[readPos + 1], delta = 0x61C88647, sum = 0xC6EF3720;
 		for(int32_t i = 0; i < 32; i++)
 		{
-			v1 -= ((v0 << 4 ^ v0 >> 5) + v0) ^ (sum + k[sum>>11 & 3]);
+			v1 -= ((v0 << 4 ^ v0 >> 5) + v0) ^ (sum + k[sum >> 11 & 3]);
 			sum += delta;
 			v0 -= ((v1 << 4 ^ v1 >> 5) + v1) ^ (sum + k[sum & 3]);
 		}
@@ -172,7 +172,6 @@ bool Protocol::XTEA_decrypt(NetworkMessage& msg)
 		buffer[readPos + 1] = v1;
 		readPos += 2;
 	}
-	//
 
 	int32_t tmp = msg.get<uint16_t>();
 	if(tmp > msg.size() - 8)
@@ -199,7 +198,12 @@ bool Protocol::RSA_decrypt(RSA* rsa, NetworkMessage& msg)
 {
 	if(msg.size() - msg.position() != 128)
 	{
-		std::clog << "[Warning - Protocol::RSA_decrypt] Not valid packet size" << std::endl;
+		std::clog << "[Warning - Protocol::RSA_decrypt] Not valid packet size";
+		int32_t ip = getIP();
+		if(ip)
+			std::clog << " (IP: " << convertIPAddress(ip) << ")";
+
+		std::clog << std::endl;
 		return false;
 	}
 
@@ -207,7 +211,12 @@ bool Protocol::RSA_decrypt(RSA* rsa, NetworkMessage& msg)
 	if(!msg.get<char>())
 		return true;
 
-	std::clog << "[Warning - Protocol::RSA_decrypt] First byte != 0" << std::endl;
+	std::clog << "[Warning - Protocol::RSA_decrypt] First byte != 0";
+	int32_t ip = getIP();
+	if(ip)
+		std::clog << " (IP: " << convertIPAddress(ip) << ")";
+
+	std::clog << std::endl;
 	return false;
 }
 
