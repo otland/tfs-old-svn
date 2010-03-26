@@ -49,7 +49,7 @@ int32_t MoveEventScript::luaCallFunction(lua_State* L)
 	{
 		error(__FUNCTION__, "MoveEvent not set!");
 		lua_pushboolean(L, false);
-		return 0;
+		return 1;
 	}
 
 	if(event->getEventType() == MOVE_EVENT_EQUIP || event->getEventType() == MOVE_EVENT_DE_EQUIP)
@@ -119,7 +119,7 @@ int32_t MoveEventScript::luaCallFunction(lua_State* L)
 
 	error(__FUNCTION__, "callFunction not available for current event.");
 	lua_pushboolean(L, false);
-	return 0;
+	return 1;
 }
 
 MoveEvents::MoveEvents():
@@ -1228,7 +1228,7 @@ uint32_t MoveEvent::executeStep(Creature* actor, Creature* creature, Item* item,
 
 bool MoveEvent::fireEquip(Player* player, Item* item, slots_t slot, bool boolean)
 {
-	if(isScripted())
+	if(isScripted() && (m_eventType != MOVE_EVENT_EQUIP || !boolean))
 		return executeEquip(player, item, slot);
 
 	return equipFunction(this, player, item, slot, boolean);

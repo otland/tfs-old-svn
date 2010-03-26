@@ -1,6 +1,8 @@
 --[[
  * File containing deprecated functions and constants used by alot of scripts and other engines
 ]]--
+--bit = require("bit")
+
 TRUE = true
 FALSE = false
 LUA_ERROR = false
@@ -198,6 +200,7 @@ PlayerFlag_CannotMoveCreatures = 43
 PlayerFlag_CanReportBugs = 44
 PlayerFlag_45 = 45 -- ignore
 PlayerFlag_CannotBeSeen = 46
+PlayerFlag_HideHealth = 47
 
 PlayerCustomFlag_AllowIdle = 0
 PlayerCustomFlag_CanSeePosition	= 1
@@ -217,8 +220,8 @@ PlayerCustomFlag_IsProtected = 14
 PlayerCustomFlag_IsImmune = 15
 PlayerCustomFlag_NotGainSkull = 16
 PlayerCustomFlag_NotGainUnjustified = 17
-PlayerCustomFlag_HideLevel = 18
-PlayerCustomFlag_IgnorePacification = 19
+PlayerCustomFlag_IgnorePacification = 18
+PlayerCustomFlag_IgnoreLoginDelay = 19
 PlayerCustomFlag_CanStairhop = 20
 PlayerCustomFlag_CanTurnhop = 21
 PlayerCustomFlag_IgnoreHouseRent = 22

@@ -2869,6 +2869,7 @@ int32_t LuaInterface::luaDoPlayerSetNameDescription(lua_State* L)
 		errorEx(getError(LUA_ERROR_PLAYER_NOT_FOUND));
 		lua_pushboolean(L, false);
 	}
+	
 	return 1;
 }
 
@@ -2888,6 +2889,7 @@ int32_t LuaInterface::luaDoPlayerSetSpecialDescription(lua_State* L)
 		errorEx(getError(LUA_ERROR_PLAYER_NOT_FOUND));
 		lua_pushboolean(L, false);
 	}
+
 	return 1;
 }
 
@@ -3086,6 +3088,7 @@ int32_t LuaInterface::luaGetPlayerInstantSpellCount(lua_State* L)
 		errorEx(getError(LUA_ERROR_PLAYER_NOT_FOUND));
 		lua_pushboolean(L, false);
 	}
+
 	return 1;
 }
 
@@ -3186,6 +3189,7 @@ int32_t LuaInterface::luaDoPlayerRemoveItem(lua_State* L)
 		errorEx(getError(LUA_ERROR_PLAYER_NOT_FOUND));
 		lua_pushboolean(L, false);
 	}
+
 	return 1;
 }
 
@@ -3205,6 +3209,7 @@ int32_t LuaInterface::luaDoFeedPlayer(lua_State* L)
 		errorEx(getError(LUA_ERROR_PLAYER_NOT_FOUND));
 		lua_pushboolean(L, false);
 	}
+
 	return 1;
 }
 
@@ -3223,6 +3228,7 @@ int32_t LuaInterface::luaDoPlayerSendCancel(lua_State* L)
 		errorEx(getError(LUA_ERROR_PLAYER_NOT_FOUND));
 		lua_pushboolean(L, false);
 	}
+
 	return 1;
 }
 
@@ -3299,6 +3305,7 @@ int32_t LuaInterface::luaGetClosestFreeTile(lua_State* L)
 		errorEx(getError(LUA_ERROR_CREATURE_NOT_FOUND));
 		lua_pushboolean(L, false);
 	}
+
 	return 1;
 }
 
@@ -3324,6 +3331,7 @@ int32_t LuaInterface::luaDoTeleportThing(lua_State* L)
 		errorEx(getError(LUA_ERROR_THING_NOT_FOUND));
 		lua_pushboolean(L, false);
 	}
+
 	return 1;
 }
 
@@ -3498,6 +3506,7 @@ int32_t LuaInterface::luaDoPlayerAddSkillTry(lua_State* L)
 		errorEx(getError(LUA_ERROR_PLAYER_NOT_FOUND));
 		lua_pushboolean(L, false);
 	}
+
 	return 1;
 }
 
@@ -3512,6 +3521,7 @@ int32_t LuaInterface::luaGetCreatureSpeakType(lua_State* L)
 		errorEx(getError(LUA_ERROR_CREATURE_NOT_FOUND));
 		lua_pushboolean(L, false);
 	}
+
 	return 1;
 }
 
@@ -3538,6 +3548,7 @@ int32_t LuaInterface::luaDoCreatureSetSpeakType(lua_State* L)
 		errorEx(getError(LUA_ERROR_CREATURE_NOT_FOUND));
 		lua_pushboolean(L, false);
 	}
+
 	return 1;
 }
 
@@ -3553,6 +3564,7 @@ int32_t LuaInterface::luaGetCreatureHideHealth(lua_State* L)
 		errorEx(getError(LUA_ERROR_CREATURE_NOT_FOUND));
 		lua_pushboolean(L, false);
 	}
+
 	return 1;
 }
 
@@ -3573,6 +3585,7 @@ int32_t LuaInterface::luaDoCreatureSetHideHealth(lua_State* L)
 		errorEx(getError(LUA_ERROR_CREATURE_NOT_FOUND));
 		lua_pushboolean(L, false);
 	}
+
 	return 1;
 }
 
@@ -3634,6 +3647,7 @@ int32_t LuaInterface::luaDoCreatureAddMana(lua_State* L)
 		errorEx(getError(LUA_ERROR_CREATURE_NOT_FOUND));
 		lua_pushboolean(L, false);
 	}
+
 	return 1;
 }
 
@@ -3656,6 +3670,7 @@ int32_t LuaInterface::luaDoPlayerAddSpentMana(lua_State* L)
 		errorEx(getError(LUA_ERROR_PLAYER_NOT_FOUND));
 		lua_pushboolean(L, false);
 	}
+
 	return 1;
 }
 
@@ -4046,6 +4061,7 @@ int32_t LuaInterface::luaGetPlayerSkillLevel(lua_State* L)
 		errorEx(getError(LUA_ERROR_PLAYER_NOT_FOUND));
 		lua_pushboolean(L, false);
 	}
+
 	return 1;
 }
 
@@ -4067,6 +4083,7 @@ int32_t LuaInterface::luaGetPlayerSkillTries(lua_State* L)
 		errorEx(getError(LUA_ERROR_PLAYER_NOT_FOUND));
 		lua_pushboolean(L, false);
 	}
+
 	return 1;
 }
 
@@ -4111,6 +4128,7 @@ int32_t LuaInterface::luaGetPlayerLossPercent(lua_State* L)
 		errorEx(getError(LUA_ERROR_PLAYER_NOT_FOUND));
 		lua_pushboolean(L, false);
 	}
+
 	return 1;
 }
 
@@ -4136,6 +4154,7 @@ int32_t LuaInterface::luaDoPlayerSetLossPercent(lua_State* L)
 		errorEx(getError(LUA_ERROR_PLAYER_NOT_FOUND));
 		lua_pushboolean(L, false);
 	}
+
 	return 1;
 }
 
@@ -4155,6 +4174,7 @@ int32_t LuaInterface::luaDoPlayerSetLossSkill(lua_State* L)
 		errorEx(getError(LUA_ERROR_PLAYER_NOT_FOUND));
 		lua_pushboolean(L, false);
 	}
+
 	return 1;
 }
 
@@ -4176,6 +4196,7 @@ int32_t LuaInterface::luaDoShowTextDialog(lua_State* L)
 		errorEx(getError(LUA_ERROR_PLAYER_NOT_FOUND));
 		lua_pushboolean(L, false);
 	}
+
 	return 1;
 }
 
@@ -4194,6 +4215,7 @@ int32_t LuaInterface::luaDoDecayItem(lua_State* L)
 		errorEx(getError(LUA_ERROR_ITEM_NOT_FOUND));
 		lua_pushboolean(L, false);
 	}
+
 	return 1;
 }
 
@@ -4812,6 +4834,7 @@ int32_t LuaInterface::luaDoRemoveCreature(lua_State* L)
 		errorEx(getError(LUA_ERROR_CREATURE_NOT_FOUND));
 		lua_pushboolean(L, false);
 	}
+
 	return 1;
 }
 
@@ -4831,6 +4854,7 @@ int32_t LuaInterface::luaDoPlayerAddMoney(lua_State* L)
 		errorEx(getError(LUA_ERROR_PLAYER_NOT_FOUND));
 		lua_pushboolean(L, false);
 	}
+
 	return 1;
 }
 
@@ -4847,6 +4871,7 @@ int32_t LuaInterface::luaDoPlayerRemoveMoney(lua_State* L)
 		errorEx(getError(LUA_ERROR_PLAYER_NOT_FOUND));
 		lua_pushboolean(L, false);
 	}
+
 	return 1;
 }
 
@@ -4864,6 +4889,7 @@ int32_t LuaInterface::luaDoPlayerTransferMoneyTo(lua_State* L)
 		errorEx(getError(LUA_ERROR_PLAYER_NOT_FOUND));
 		lua_pushboolean(L, false);
 	}
+
 	return 1;
 }
 
@@ -4888,6 +4914,7 @@ int32_t LuaInterface::luaDoPlayerSetPzLocked(lua_State* L)
 		errorEx(getError(LUA_ERROR_PLAYER_NOT_FOUND));
 		lua_pushboolean(L, false);
 	}
+
 	return 1;
 }
 
@@ -4913,6 +4940,7 @@ int32_t LuaInterface::luaDoPlayerSetTown(lua_State* L)
 		errorEx(getError(LUA_ERROR_PLAYER_NOT_FOUND));
 		lua_pushboolean(L, false);
 	}
+
 	return 1;
 }
 
@@ -4932,6 +4960,7 @@ int32_t LuaInterface::luaDoPlayerSetVocation(lua_State* L)
 		errorEx(getError(LUA_ERROR_PLAYER_NOT_FOUND));
 		lua_pushboolean(L, false);
 	}
+
 	return 1;
 }
 
@@ -4951,6 +4980,7 @@ int32_t LuaInterface::luaDoPlayerSetSex(lua_State* L)
 		errorEx(getError(LUA_ERROR_PLAYER_NOT_FOUND));
 		lua_pushboolean(L, false);
 	}
+
 	return 1;
 }
 
@@ -4970,6 +5000,7 @@ int32_t LuaInterface::luaDoPlayerAddSoul(lua_State* L)
 		errorEx(getError(LUA_ERROR_PLAYER_NOT_FOUND));
 		lua_pushboolean(L, false);
 	}
+
 	return 1;
 }
 
@@ -4989,6 +5020,7 @@ int32_t LuaInterface::luaGetPlayerItemCount(lua_State* L)
 		errorEx(getError(LUA_ERROR_PLAYER_NOT_FOUND));
 		lua_pushboolean(L, false);
 	}
+
 	return 1;
 }
 
@@ -5003,6 +5035,7 @@ int32_t LuaInterface::luaGetPlayerMoney(lua_State* L)
 		errorEx(getError(LUA_ERROR_PLAYER_NOT_FOUND));
 		lua_pushboolean(L, false);
 	}
+
 	return 1;
 }
 
@@ -5065,6 +5098,7 @@ int32_t LuaInterface::luaGetHouseAccessList(lua_State* L)
 		errorEx(getError(LUA_ERROR_HOUSE_NOT_FOUND));
 		lua_pushnil(L);
 	}
+
 	return 1;
 }
 
@@ -5094,6 +5128,7 @@ int32_t LuaInterface::luaSetHouseAccessList(lua_State* L)
 		errorEx(getError(LUA_ERROR_HOUSE_NOT_FOUND));
 		lua_pushboolean(L, false);
 	}
+
 	return 1;
 }
 
@@ -5112,6 +5147,7 @@ int32_t LuaInterface::luaSetHouseOwner(lua_State* L)
 		errorEx(getError(LUA_ERROR_HOUSE_NOT_FOUND));
 		lua_pushboolean(L, false);
 	}
+
 	return 1;
 }
 
@@ -5208,6 +5244,7 @@ int32_t LuaInterface::luaGetPlayerLight(lua_State* L)
 		errorEx(getError(LUA_ERROR_PLAYER_NOT_FOUND));
 		lua_pushboolean(L, false);
 	}
+
 	return 1;
 }
 
@@ -5236,6 +5273,7 @@ int32_t LuaInterface::luaDoPlayerAddExperience(lua_State* L)
 		errorEx(getError(LUA_ERROR_PLAYER_NOT_FOUND));
 		lua_pushboolean(L, false);
 	}
+
 	return 1;
 }
 
@@ -5257,6 +5295,7 @@ int32_t LuaInterface::luaGetPlayerSlotItem(lua_State* L)
 		errorEx(getError(LUA_ERROR_PLAYER_NOT_FOUND));
 		pushThing(L, NULL, 0);
 	}
+
 	return 1;
 }
 
@@ -5280,6 +5319,7 @@ int32_t LuaInterface::luaGetPlayerWeapon(lua_State* L)
 		errorEx(getError(LUA_ERROR_PLAYER_NOT_FOUND));
 		lua_pushnil(L);
 	}
+
 	return 1;
 }
 
@@ -5327,6 +5367,7 @@ int32_t LuaInterface::luaGetThing(lua_State* L)
 		errorEx(getError(LUA_ERROR_THING_NOT_FOUND));
 		pushThing(L, NULL, 0);
 	}
+
 	return 1;
 }
 
@@ -5390,6 +5431,7 @@ int32_t LuaInterface::luaDoItemRaidUnref(lua_State* L)
 		errorEx(getError(LUA_ERROR_ITEM_NOT_FOUND));
 		lua_pushboolean(L, false);
 	}
+
 	return 1;
 }
 
@@ -5619,6 +5661,7 @@ int32_t LuaInterface::luaSetCombatParam(lua_State* L)
 		combat->setParam(key, value);
 		lua_pushboolean(L, true);
 	}
+
 	return 1;
 }
 
@@ -6812,6 +6855,7 @@ int32_t LuaInterface::luaDoChangeSpeed(lua_State* L)
 		errorEx(getError(LUA_ERROR_CREATURE_NOT_FOUND));
 		lua_pushboolean(L, false);
 	}
+
 	return 1;
 }
 
@@ -6829,6 +6873,7 @@ int32_t LuaInterface::luaSetCreatureOutfit(lua_State* L)
 		errorEx(getError(LUA_ERROR_CREATURE_NOT_FOUND));
 		lua_pushboolean(L, false);
 	}
+
 	return 1;
 }
 
@@ -6843,6 +6888,7 @@ int32_t LuaInterface::luaGetCreatureOutfit(lua_State* L)
 		errorEx(getError(LUA_ERROR_CREATURE_NOT_FOUND));
 		lua_pushboolean(L, false);
 	}
+
 	return 1;
 }
 
@@ -6860,6 +6906,7 @@ int32_t LuaInterface::luaSetMonsterOutfit(lua_State* L)
 		errorEx(getError(LUA_ERROR_CREATURE_NOT_FOUND));
 		lua_pushboolean(L, false);
 	}
+
 	return 1;
 }
 
@@ -6877,6 +6924,7 @@ int32_t LuaInterface::luaSetItemOutfit(lua_State* L)
 		errorEx(getError(LUA_ERROR_CREATURE_NOT_FOUND));
 		lua_pushboolean(L, false);
 	}
+
 	return 1;
 }
 
@@ -6940,6 +6988,7 @@ int32_t LuaInterface::luaGetPlayerDepotItems(lua_State* L)
 		errorEx(getError(LUA_ERROR_PLAYER_NOT_FOUND));
 		lua_pushboolean(L, false);
 	}
+
 	return 1;
 }
 
@@ -6971,6 +7020,7 @@ int32_t LuaInterface::luaDoPlayerSetGuildId(lua_State* L)
 		errorEx(getError(LUA_ERROR_PLAYER_NOT_FOUND));
 		lua_pushboolean(L, false);
 	}
+
 	return 1;
 }
 
@@ -7327,6 +7377,7 @@ int32_t LuaInterface::luaGetContainerSize(lua_State* L)
 		errorEx(getError(LUA_ERROR_CONTAINER_NOT_FOUND));
 		lua_pushboolean(L, false);
 	}
+
 	return 1;
 }
 
@@ -7341,6 +7392,7 @@ int32_t LuaInterface::luaGetContainerCap(lua_State* L)
 		errorEx(getError(LUA_ERROR_CONTAINER_NOT_FOUND));
 		lua_pushboolean(L, false);
 	}
+
 	return 1;
 }
 
@@ -7362,6 +7414,7 @@ int32_t LuaInterface::luaGetContainerItem(lua_State* L)
 		errorEx(getError(LUA_ERROR_CONTAINER_NOT_FOUND));
 		pushThing(L, NULL, 0);
 	}
+
 	return 1;
 
 }
@@ -7639,6 +7692,7 @@ int32_t LuaInterface::luaDoCreatureChangeOutfit(lua_State* L)
 		errorEx(getError(LUA_ERROR_CREATURE_NOT_FOUND));
 		lua_pushboolean(L, false);
 	}
+
 	return 1;
 }
 
@@ -7658,6 +7712,7 @@ int32_t LuaInterface::luaDoPlayerPopupFYI(lua_State* L)
 		errorEx(getError(LUA_ERROR_PLAYER_NOT_FOUND));
 		lua_pushboolean(L, false);
 	}
+
 	return 1;
 }
 
@@ -8283,6 +8338,7 @@ int32_t LuaInterface::luaGetPlayerBlessing(lua_State* L)
 		errorEx(getError(LUA_ERROR_PLAYER_NOT_FOUND));
 		lua_pushboolean(L, false);
 	}
+
 	return 1;
 }
 
@@ -8306,6 +8362,7 @@ int32_t LuaInterface::luaDoPlayerAddBlessing(lua_State* L)
 		errorEx(getError(LUA_ERROR_PLAYER_NOT_FOUND));
 		lua_pushboolean(L, false);
 	}
+
 	return 1;
 }
 
@@ -8324,6 +8381,7 @@ int32_t LuaInterface::luaDoPlayerSetPromotionLevel(lua_State* L)
 		errorEx(getError(LUA_ERROR_PLAYER_NOT_FOUND));
 		lua_pushboolean(L, false);
 	}
+
 	return 1;
 }
 
@@ -8347,6 +8405,7 @@ int32_t LuaInterface::luaDoPlayerSetGroupId(lua_State* L)
 		errorEx(getError(LUA_ERROR_PLAYER_NOT_FOUND));
 		lua_pushboolean(L, false);
 	}
+
 	return 1;
 }
 
@@ -8361,6 +8420,7 @@ int32_t LuaInterface::luaGetCreatureMana(lua_State* L)
 		errorEx(getError(LUA_ERROR_CREATURE_NOT_FOUND));
 		lua_pushboolean(L, false);
 	}
+
 	return 1;
 }
 
@@ -8375,6 +8435,7 @@ int32_t LuaInterface::luaGetCreatureMaxMana(lua_State* L)
 		errorEx(getError(LUA_ERROR_CREATURE_NOT_FOUND));
 		lua_pushboolean(L, false);
 	}
+
 	return 1;
 }
 
@@ -8389,6 +8450,7 @@ int32_t LuaInterface::luaGetCreatureHealth(lua_State* L)
 		errorEx(getError(LUA_ERROR_CREATURE_NOT_FOUND));
 		lua_pushboolean(L, false);
 	}
+
 	return 1;
 }
 
@@ -8404,6 +8466,7 @@ int32_t LuaInterface::luaGetCreatureLookDirection(lua_State* L)
 		errorEx(getError(LUA_ERROR_CREATURE_NOT_FOUND));
 		lua_pushboolean(L, false);
 	}
+
 	return 1;
 }
 
@@ -8418,6 +8481,7 @@ int32_t LuaInterface::luaGetCreatureMaxHealth(lua_State* L)
 		errorEx(getError(LUA_ERROR_CREATURE_NOT_FOUND));
 		lua_pushboolean(L, false);
 	}
+
 	return 1;
 }
 
@@ -8437,6 +8501,7 @@ int32_t LuaInterface::luaDoPlayerSetStamina(lua_State* L)
 		errorEx(getError(LUA_ERROR_PLAYER_NOT_FOUND));
 		lua_pushboolean(L, false);
 	}
+
 	return 1;
 }
 
@@ -8456,6 +8521,7 @@ int32_t LuaInterface::luaDoPlayerAddStamina(lua_State* L)
 		errorEx(getError(LUA_ERROR_PLAYER_NOT_FOUND));
 		lua_pushboolean(L, false);
 	}
+
 	return 1;
 }
 
@@ -8475,6 +8541,7 @@ int32_t LuaInterface::luaDoPlayerSetBalance(lua_State* L)
 		errorEx(getError(LUA_ERROR_PLAYER_NOT_FOUND));
 		lua_pushboolean(L, false);
 	}
+
 	return 1;
 }
 
@@ -8675,6 +8742,7 @@ int32_t LuaInterface::luaGetPlayersOnline(lua_State* L)
 		lua_pushnumber(L, env->addThing(it->second));
 		pushTable(L);
 	}
+
 	return 1;
 }
 
@@ -8694,6 +8762,7 @@ int32_t LuaInterface::luaSetCreatureMaxHealth(lua_State* L)
 		errorEx(getError(LUA_ERROR_CREATURE_NOT_FOUND));
 		lua_pushboolean(L, false);
 	}
+
 	return 1;
 }
 
@@ -8713,6 +8782,7 @@ int32_t LuaInterface::luaSetCreatureMaxMana(lua_State* L)
 		errorEx(getError(LUA_ERROR_CREATURE_NOT_FOUND));
 		lua_pushboolean(L, false);
 	}
+
 	return 1;
 }
 
@@ -8732,6 +8802,7 @@ int32_t LuaInterface::luaDoPlayerSetMaxCapacity(lua_State* L)
 		errorEx(getError(LUA_ERROR_PLAYER_NOT_FOUND));
 		lua_pushboolean(L, false);
 	}
+
 	return 1;
 }
 
@@ -8799,6 +8870,7 @@ int32_t LuaInterface::luaDoPlayerSetIdleTime(lua_State* L)
 		errorEx(getError(LUA_ERROR_PLAYER_NOT_FOUND));
 		lua_pushboolean(L, false);
 	}
+
 	return 1;
 }
 
@@ -8886,6 +8958,7 @@ int32_t LuaInterface::luaDoPlayerSwitchSaving(lua_State* L)
 		errorEx(getError(LUA_ERROR_PLAYER_NOT_FOUND));
 		lua_pushboolean(L, false);
 	}
+
 	return 1;
 }
 
@@ -8907,6 +8980,7 @@ int32_t LuaInterface::luaDoPlayerSave(lua_State* L)
 		errorEx(getError(LUA_ERROR_PLAYER_NOT_FOUND));
 		lua_pushboolean(L, false);
 	}
+
 	return 1;
 }
 
