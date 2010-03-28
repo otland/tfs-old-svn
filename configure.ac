@@ -246,5 +246,4 @@ echo Build with SQLite........... : $useSQLite
 echo Build with PostgreSQL....... : $usePostgreSQL
 echo
 
-echo Configure complete, now you may type \'make\'.
-echo Developers might want to use \'build.sh\'.
+echo Configure complete, now you may type \'./build.sh\'.
