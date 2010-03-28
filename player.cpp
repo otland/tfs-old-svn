@@ -1722,7 +1722,8 @@ void Player::onThink(uint32_t interval)
 			setAttackedCreature(NULL);
 	}
 
-	if((timeNow - lastPong) >= 60000 && !isConnecting && !pzLocked && !getTile()->hasFlag(TILESTATE_NOLOGOUT))
+	if((timeNow - lastPong) >= 60000 && !getTile()->hasFlag(TILESTATE_NOLOGOUT)
+		&& !isConnecting && !pzLocked && !hasCondition(CONDITION_INFIGHT))
 	{
 		if(client)
 			client->logout(true, true);
