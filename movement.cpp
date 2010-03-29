@@ -55,6 +55,7 @@ int32_t MoveEventScript::luaCallFunction(lua_State* L)
 	if(event->getEventType() == MOVE_EVENT_EQUIP || event->getEventType() == MOVE_EVENT_DE_EQUIP)
 	{
 		ScriptEnviroment* env = getEnv();
+		bool boolean = popNumber(L);
 		slots_t slot = (slots_t)popNumber(L);
 
 		Item* item = env->getItemByUID(popNumber(L));
@@ -74,9 +75,9 @@ int32_t MoveEventScript::luaCallFunction(lua_State* L)
 		}
 
 		if(event->getEventType() != MOVE_EVENT_EQUIP)
-			lua_pushboolean(L, MoveEvent::DeEquipItem(event, player, item, slot, true));
+			lua_pushboolean(L, MoveEvent::DeEquipItem(event, player, item, slot, boolean));
 		else
-			lua_pushboolean(L, MoveEvent::EquipItem(event, player, item, slot, false));
+			lua_pushboolean(L, MoveEvent::EquipItem(event, player, item, slot, boolean));
 
 		return 1;
 	}
@@ -778,7 +779,7 @@ std::string MoveEvent::getScriptEventParams() const
 
 		case MOVE_EVENT_EQUIP:
 		case MOVE_EVENT_DE_EQUIP:
-			return "cid, item, slot";
+			return "cid, item, slot, boolean";
 
 		case MOVE_EVENT_ADD_ITEM:
 		case MOVE_EVENT_REMOVE_ITEM:
@@ -924,10 +925,7 @@ bool MoveEvent::loadFunction(const std::string& functionName)
 MoveEvent_t MoveEvent::getEventType() const
 {
 	if(m_eventType == MOVE_EVENT_NONE)
-	{
 		std::clog << "[Error - MoveEvent::getEventType] MOVE_EVENT_NONE" << std::endl;
-		return (MoveEvent_t)0;
-	}
 
 	return m_eventType;
 }
@@ -1228,16 +1226,16 @@ uint32_t MoveEvent::executeStep(Creature* actor, Creature* creature, Item* item,
 
 bool MoveEvent::fireEquip(Player* player, Item* item, slots_t slot, bool boolean)
 {
-	if(isScripted() && (m_eventType != MOVE_EVENT_EQUIP || !boolean))
-		return executeEquip(player, item, slot);
+	if(isScripted())
+		return executeEquip(player, item, slot, boolean);
 
 	return equipFunction(this, player, item, slot, boolean);
 }
 
-bool MoveEvent::executeEquip(Player* player, Item* item, slots_t slot)
+bool MoveEvent::executeEquip(Player* player, Item* item, slots_t slot, bool boolean)
 {
-	//onEquip(cid, item, slot)
-	//onDeEquip(cid, item, slot)
+	//onEquip(cid, item, slot, boolean)
+	//onDeEquip(cid, item, slot, boolean)
 	if(m_interface->reserveEnv())
 	{
 		MoveEventScript::event = this;
@@ -1250,6 +1248,7 @@ bool MoveEvent::executeEquip(Player* player, Item* item, slots_t slot)
 			scriptstream << "local cid = " << env->addThing(player) << std::endl;
 			env->streamThing(scriptstream, "item", item, env->addThing(item));
 			scriptstream << "local slot = " << slot << std::endl;
+			scriptstream << "local boolean = " << (boolean ? "true" : "false") << std::endl;
 
 			scriptstream << m_scriptData;
 			bool result = true;
@@ -1279,8 +1278,9 @@ bool MoveEvent::executeEquip(Player* player, Item* item, slots_t slot)
 			lua_pushnumber(L, env->addThing(player));
 			LuaInterface::pushThing(L, item, env->addThing(item));
 			lua_pushnumber(L, slot);
+			lua_pushboolean(L, boolean);
 
-			bool result = m_interface->callFunction(3);
+			bool result = m_interface->callFunction(4);
 			m_interface->releaseEnv();
 			return result;
 		}

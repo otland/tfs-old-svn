@@ -129,7 +129,7 @@ class MoveEvent : public Event
 		bool fireEquip(Player* player, Item* item, slots_t slot, bool boolean);
 
 		uint32_t executeStep(Creature* actor, Creature* creature, Item* item, const Position& pos, const Position& fromPos, const Position& toPos);
-		bool executeEquip(Player* player, Item* item, slots_t slot);
+		bool executeEquip(Player* player, Item* item, slots_t slot, bool boolean);
 		uint32_t executeAddRemItem(Creature* actor, Item* item, Item* tileItem, const Position& pos);
 
 		static StepFunction StepInField;
