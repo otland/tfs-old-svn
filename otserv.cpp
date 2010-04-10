@@ -680,6 +680,15 @@ void otserv(StringVec, ServiceManager* services)
 	for(std::list<uint16_t>::iterator it = ports.begin(); it != ports.end(); ++it)
 		std::clog << (*it) << "\t";
 
+	// This wil solve that that the users are still logged after a crash and when the server starts.
+	std::clog  << std::endl << ">> Reseting online state of users...";
+	DBQuery query;
+	query << "UPDATE `players` SET `online` = 0 WHERE `online` = 1";
+	if(db->executeQuery(query.str()))
+		std::clog << "Done!" << std::endl;
+	else
+		std::clog << "Failed!" << std::endl;
+
 	std::clog << std::endl << ">> All modules were loaded, server is starting up..." << std::endl;
 	g_game.setGameState(g_config.getBool(ConfigManager::START_CLOSED) ? GAMESTATE_CLOSED : GAMESTATE_NORMAL);
 	g_game.start(services);

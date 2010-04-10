@@ -113,6 +113,10 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 	}
 
 	uint32_t headerVersion = rootHeader->version;
+
+#ifndef __DISABLE_OTB_HEADERCHECK__
+	uint32_t headerMajorItems = rootHeader->majorVersionItems;
+
 	if(headerVersion <= 0)
 	{
 		//In otbm version 1 the count variable after splashes/fluidcontainers and stackables
@@ -128,7 +132,7 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 		return false;
 	}
 
-	uint32_t headerMajorItems = rootHeader->majorVersionItems;
+	
 	if(headerMajorItems < 3)
 	{
 		setLastErrorString("This map needs to be upgraded by using the latest map editor version to be able to load correctly.");
@@ -140,7 +144,7 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 		setLastErrorString("The map was saved with a different items.otb version, an upgraded items.otb is required.");
 		return false;
 	}
-
+#endif
 	uint32_t headerMinorItems = rootHeader->minorVersionItems;
 	if(headerMinorItems < CLIENT_VERSION_810)
 	{
@@ -350,13 +354,19 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 									ss << "[x:" << px << ", y:" << py << ", z:" << pz << "] Failed to create item.";
 
 									setLastErrorString(ss.str());
+									
+#ifndef __DISABLE_OTB_HEADERCHECK__
 									return false;
+#else
+									delete item;
+									break;
+#endif
 								}
 
-								if(item->getItemCount() <= 0)
+								if(item && item->getItemCount() <= 0)
 									item->setItemCount(1);
 
-								if(house && item->isMoveable())
+								if(item && house && item->isMoveable())
 								{
 									std::clog << "[Warning - IOMap::loadMap] Movable item in house: " << house->getId();
 									std::clog << ", item type: " << item->getID() << ", at position " << px << "/" << py << "/";
@@ -415,8 +425,15 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 								std::stringstream ss;
 								ss << "[x:" << px << ", y:" << py << ", z:" << pz << "] Failed to create item.";
 
+								
+#ifndef __DISABLE_OTB_HEADERCHECK__
 								setLastErrorString(ss.str());
 								return false;
+#else
+								std::cout << ss.str() << std::endl;
+								delete item;
+								break;
+#endif
 							}
 
 							if(item->unserializeItemNode(f, nodeItem, propStream))

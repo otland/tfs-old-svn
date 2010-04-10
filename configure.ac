@@ -54,6 +54,11 @@ AC_ARG_ENABLE(root-permission, [  --enable-root-permission	enable running on roo
 	[OPTIONAL_FLAGS="$OPTIONAL_FLAGS -D__ROOT_PERMISSION__"]
 	rootPermission=yes
 )
+disableOtbHeaderCheck=no
+AC_ARG_ENABLE(otb-headercheck, [  --disable-otb-headercheck	disable the OTB headercheck],
+	[if ! $enableval; then OPTIONAL_FLAGS="$OPTIONAL_FLAGS -D__DISABLE_OTB_HEADERCHECK__"
+	disableOtbHeaderCheck=yes
+fi ])
 AC_SUBST(OPTIONAL_FLAGS)
 
 # check if we want a debug build
@@ -239,6 +244,7 @@ echo OTAdmin protocol............ : $otAdmin
 echo Root run permission......... : $rootPermission
 echo Home-directory configuration : $homedirConf
 echo OTServ custom allocator..... : $otservAllocator
+echo Disable OTB headercheck..... : $disableOtbHeaderCheck
 echo Debug build................. : $debugBuild
 echo
 echo Build with MySQL............ : $useMySQL
