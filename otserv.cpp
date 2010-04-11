@@ -438,6 +438,9 @@ void otserv(StringVec, ServiceManager* services)
 	else
 	{
 		g_config.setNumber(ConfigManager::ENCRYPTION, ENCRYPTION_PLAIN);
+		std::clog << "> WARNING: Your using plaintext password, this is not safe!" << std::endl;
+		std::clog << "> Please set encryptionType = \"sha1\" (or one of the other methods) in config.lua" << std::endl << std::endl;
+		boost::this_thread::sleep(boost::posix_time::seconds(10)); 
 		std::clog << "> Using plaintext encryption" << std::endl;
 	}
 
