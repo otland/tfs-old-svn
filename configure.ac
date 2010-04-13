@@ -56,19 +56,11 @@ AC_ARG_ENABLE(root-permission, [  --enable-root-permission	enable running on roo
 )
 
 # check if we want to use luajit instead of lua
-useLuaJIT=no
-AC_ARG_ENABLE(lua-jit, [  --use-luajit	use luajit instead of lua],
+luaJIT=no
+AC_ARG_ENABLE(luajit, [  --enable-luajit		enable luajit instead of lua],
 	[OPTIONAL_FLAGS="$OPTIONAL_FLAGS -D__LUAJIT__"]
-	useLuaJIT=yes
+	luaJIT=yes
 )
-
-# check if we want to disable otb haeder check
-disableOtbHeaderCheck=no
-AC_ARG_ENABLE(otb-headercheck, [  --disable-otb-headercheck	disable the OTB headercheck],
-	[if ! $enableval; then OPTIONAL_FLAGS="$OPTIONAL_FLAGS -D__DISABLE_OTB_HEADERCHECK__"
-	disableOtbHeaderCheck=yes
-fi ])
-AC_SUBST(OPTIONAL_FLAGS)
 
 # check if we want a debug build
 debugBuild=no
@@ -253,9 +245,8 @@ echo OTAdmin protocol............ : $otAdmin
 echo Root run permission......... : $rootPermission
 echo Home-directory configuration : $homedirConf
 echo OTServ custom allocator..... : $otservAllocator
-echo Disable OTB headercheck..... : $disableOtbHeaderCheck
 echo Debug build................. : $debugBuild
-echo Using LuaJIT................ : $useLuaJIT
+echo Using LuaJIT................ : $luaJIT
 echo
 echo Build with MySQL............ : $useMySQL
 echo Build with SQLite........... : $useSQLite

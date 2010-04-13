@@ -75,7 +75,7 @@ function onStartup()
 		end
 	end
 
-	db.executeQuery("UPDATE `players` SET `online` = 0 WHERE `world_id` = " .. getConfigValue('worldId') .. " AND `online` >= 1;")
+	db.executeQuery("UPDATE `players` SET `online` = 0 WHERE `world_id` = " .. getConfigValue('worldId') .. " AND `online` > 0;")
 	return true
 end
 

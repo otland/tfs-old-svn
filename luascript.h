@@ -18,7 +18,6 @@
 #ifndef __LUASCRIPT__
 #define __LUASCRIPT__
 #include "otsystem.h"
-
 #ifdef __LUAJIT__
 #include <lua.hpp>
 
@@ -28,6 +27,7 @@ extern "C"
 	#include <lualib.h>
 }
 #else
+
 extern "C"
 {
 	#include "lua.h"
