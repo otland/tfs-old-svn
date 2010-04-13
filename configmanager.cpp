@@ -26,7 +26,7 @@ ConfigManager::ConfigManager()
 	m_loaded = false;
 	m_startup = true;
 
-	m_confNumber[ENCRYPTION] = ENCRYPTION_PLAIN;
+	m_confNumber[ENCRYPTION] = ENCRYPTION_SHA1;
 	m_confString[CONFIG_FILE] = getFilePath(FILE_TYPE_CONFIG, "config.lua");
 
 	m_confNumber[LOGIN_PORT] = m_confNumber[GAME_PORT] = m_confNumber[ADMIN_PORT] = m_confNumber[MANAGER_PORT] = m_confNumber[STATUS_PORT] = 0;
@@ -110,7 +110,7 @@ bool ConfigManager::load()
 		#ifndef __LOGIN_SERVER__
 		m_confBool[LOGIN_ONLY_LOGINSERVER] = getGlobalBool("loginOnlyWithLoginServer", false);
 		#endif
-		m_confString[ENCRYPTION_TYPE] = getGlobalString("encryptionType", "plain");
+		m_confString[ENCRYPTION_TYPE] = getGlobalString("encryptionType", "sha1");
 	}
 
 	m_confString[MAP_AUTHOR] = getGlobalString("mapAuthor", "Unknown");
