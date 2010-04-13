@@ -19,12 +19,22 @@
 #define __LUASCRIPT__
 #include "otsystem.h"
 
+#ifdef __LUAJIT__
+#include <lua.hpp>
+
+extern "C"
+{
+	#include <lauxlib.h>
+	#include <lualib.h>
+}
+#else
 extern "C"
 {
 	#include "lua.h"
 	#include "lualib.h"
 	#include "lauxlib.h"
 }
+#endif
 
 #include "database.h"
 #include "position.h"

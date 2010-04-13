@@ -2801,6 +2801,7 @@ int32_t NpcScript::luaCloseShopWindow(lua_State* L)
 	if(merchant == npc)
 		player->closeShopWindow(true, npc, onBuy, onSell);
 
+	lua_pushboolean(L, true);
 	return 1;
 }
 

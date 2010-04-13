@@ -855,6 +855,10 @@ bool LuaInterface::initState()
 		return false;
 
 	luaL_openlibs(m_luaState);
+#ifdef __LUAJIT__
+	luaJIT_setmode(m_luaState, 0, LUAJIT_MODE_ENGINE | LUAJIT_MODE_ON);
+#endif
+
 	registerFunctions();
 	if(!loadDirectory(getFilePath(FILE_TYPE_OTHER, "lib/"), NULL))
 		std::clog << "[Warning - LuaInterface::initState] Cannot load " << getFilePath(FILE_TYPE_OTHER, "lib/") << std::endl;
