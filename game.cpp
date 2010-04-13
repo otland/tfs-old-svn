@@ -6056,6 +6056,16 @@ bool Game::reloadInfo(ReloadInfo_t reload, uint32_t playerId/* = 0*/)
 		}
 
 		case RELOAD_MODS:
+		{
+			done = true;
+			if(!ScriptManager::getInstance()->reloadMods())
+			{
+				std::clog << "[Error - Game::reloadInfo] Failed to reload mods." << std::endl;
+				done = false;
+			}
+
+			break;
+		}
 		case RELOAD_ALL:
 		{
 			done = true;
@@ -6063,12 +6073,6 @@ bool Game::reloadInfo(ReloadInfo_t reload, uint32_t playerId/* = 0*/)
 			{
 				if(!reloadInfo((ReloadInfo_t)i) && done)
 					done = false;
-			}
-
-			if(!ScriptManager::getInstance()->reloadMods())
-			{
-				std::clog << "[Error - Game::reloadInfo] Failed to reload mods." << std::endl;
-				done = false;
 			}
 
 			break;
