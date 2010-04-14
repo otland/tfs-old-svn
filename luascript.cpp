@@ -2873,7 +2873,7 @@ int32_t LuaInterface::luaDoPlayerSetNameDescription(lua_State* L)
 		errorEx(getError(LUA_ERROR_PLAYER_NOT_FOUND));
 		lua_pushboolean(L, false);
 	}
-	
+
 	return 1;
 }
 
@@ -5190,7 +5190,7 @@ int32_t LuaInterface::luaGetWorldLight(lua_State* L)
 	g_game.getWorldLightInfo(lightInfo);
 	lua_pushnumber(L, lightInfo.level);
 	lua_pushnumber(L, lightInfo.color);
-	return 1;
+	return 2;
 }
 
 int32_t LuaInterface::luaGetWorldCreatures(lua_State* L)
@@ -5242,14 +5242,14 @@ int32_t LuaInterface::luaGetPlayerLight(lua_State* L)
 		player->getCreatureLight(lightInfo);
 		lua_pushnumber(L, lightInfo.level);
 		lua_pushnumber(L, lightInfo.color);
+		return 2;
 	}
 	else
 	{
 		errorEx(getError(LUA_ERROR_PLAYER_NOT_FOUND));
 		lua_pushboolean(L, false);
+		return 1;
 	}
-
-	return 1;
 }
 
 int32_t LuaInterface::luaDoPlayerAddExperience(lua_State* L)
@@ -10330,7 +10330,7 @@ int32_t LuaInterface::luaResultGetDataStream(lua_State* L)
 	lua_pushstring(L, res->getDataStream(s, length));
 
 	lua_pushnumber(L, length);
-	return 1;
+	return 2;
 }
 
 int32_t LuaInterface::luaResultNext(lua_State* L)
