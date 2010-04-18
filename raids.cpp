@@ -839,7 +839,7 @@ bool AreaSpawnEvent::configureRaidEvent(xmlNodePtr eventNode)
 
 			std::string name = strValue;
 			int32_t min = 0, max = 0;
-			if(readXMLInteger(monsterNode, "min", intValue) || readXMLInteger(monsterNode, "maxamount", intValue))
+			if(readXMLInteger(monsterNode, "min", intValue) || readXMLInteger(monsterNode, "minamount", intValue))
 				min = intValue;
 
 			if(readXMLInteger(monsterNode, "max", intValue) || readXMLInteger(monsterNode, "maxamount", intValue))
