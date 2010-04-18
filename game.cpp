@@ -3728,7 +3728,7 @@ bool Game::playerWhisper(Player* player, const std::string& text)
 
 bool Game::playerYell(Player* player, const std::string& text)
 {
-	if(player->getLevel() <= 1)
+	if(player->getLevel() <= 1) && (!player->hasFlag(PlayerFlag_CannotBeMuted))
 	{
 		player->sendTextMessage(MSG_STATUS_SMALL, "You may not yell as long as you are on level 1.");
 		return true;
