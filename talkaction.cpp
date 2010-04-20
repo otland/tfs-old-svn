@@ -284,6 +284,8 @@ bool TalkAction::loadFunction(const std::string& functionName)
 		m_function = addSkill;
 	else if(tmpFunctionName == "ghost")
 		m_function = ghost;
+	else if(tmpFunctionName == "software")
+		m_function = software;
 	else
 	{
 		std::clog << "[Warning - TalkAction::loadFunction] Function \"" << functionName << "\" does not exist." << std::endl;
@@ -1087,54 +1089,45 @@ bool TalkAction::diagnostics(Creature* creature, const std::string&, const std::
 	Player* player = creature->getPlayer();
 	if(!player)
 		return false;
-
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
-	std::stringstream text;
-	text << "Server diagonostic:\n";
-	player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, text.str().c_str());
 
-	text.str("");
-	text << "World:" << "\n";
-	text << "--------------------\n";
-	text << "Player: " << g_game.getPlayersOnline() << " (" << Player::playerCount << ")" << std::endl;
-	text << "Npc: " << g_game.getNpcsOnline() << " (" << Npc::npcCount << ")" << std::endl;
-	text << "Monster: " << g_game.getMonstersOnline() << " (" << Monster::monsterCount << ")" << std::endl << std::endl;
-	player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, text.str().c_str());
+	std::stringstream s;
+	s << "Server diagonostic:" << std::endl;
+	player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, s.str());
 
-	text.str("");
-	text << "Protocols:" << "\n";
-	text << "--------------------\n";
-	text << "ProtocolGame: " << ProtocolGame::protocolGameCount << std::endl;
-	text << "ProtocolLogin: " << ProtocolLogin::protocolLoginCount << std::endl;
+	s.str("");
+	s << "World:" << std::endl
+		<< "--------------------" << std::endl
+		<< "Player: " << g_game.getPlayersOnline() << " (" << Player::playerCount << ")" << std::endl
+		<< "Npc: " << g_game.getNpcsOnline() << " (" << Npc::npcCount << ")" << std::endl
+		<< "Monster: " << g_game.getMonstersOnline() << " (" << Monster::monsterCount << ")" << std::endl << std::endl;
+	player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, s.str());
+
+	s.str("");
+	s << "Protocols:" << std::endl
+		<< "--------------------" << std::endl
+		<< "ProtocolGame: " << ProtocolGame::protocolGameCount << std::endl
+		<< "ProtocolLogin: " << ProtocolLogin::protocolLoginCount << std::endl
 #ifdef __OTADMIN__
-	text << "ProtocolAdmin: " << ProtocolAdmin::protocolAdminCount << std::endl;
+		<< "ProtocolAdmin: " << ProtocolAdmin::protocolAdminCount << std::endl
 #endif
-	text << "ProtocolManager: " << ProtocolManager::protocolManagerCount << std::endl;
-	text << "ProtocolStatus: " << ProtocolStatus::protocolStatusCount << std::endl;
-	text << "ProtocolOld: " << ProtocolOld::protocolOldCount << std::endl << std::endl;
-	player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, text.str().c_str());
+		<< "ProtocolManager: " << ProtocolManager::protocolManagerCount << std::endl
+		<< "ProtocolStatus: " << ProtocolStatus::protocolStatusCount << std::endl
+		<< "ProtocolOld: " << ProtocolOld::protocolOldCount << std::endl << std::endl;
+	player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, s.str());
 
-	text.str("");
-	text << "Connections:\n";
-	text << "--------------------\n";
-	text << "Active connections: " << Connection::connectionCount << "\n";
-	text << "Total message pool: " << OutputMessagePool::getInstance()->getTotalMessageCount() << std::endl;
-	text << "Auto message pool: " << OutputMessagePool::getInstance()->getAutoMessageCount() << std::endl;
-	text << "Queued message pool: " << OutputMessagePool::getInstance()->getQueuedMessageCount() << std::endl;
-	text << "Free message pool: " << OutputMessagePool::getInstance()->getAvailableMessageCount() << std::endl << std::endl;
-	player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, text.str().c_str());
+	s.str("");
+	s << "Connections:" << std::endl
+		<< "--------------------" << std::endl
+		<< "Active connections: " << Connection::connectionCount << std::endl
+		<< "Total message pool: " << OutputMessagePool::getInstance()->getTotalMessageCount() << std::endl
+		<< "Auto message pool: " << OutputMessagePool::getInstance()->getAutoMessageCount() << std::endl
+		<< "Queued message pool: " << OutputMessagePool::getInstance()->getQueuedMessageCount() << std::endl
+		<< "Free message pool: " << OutputMessagePool::getInstance()->getAvailableMessageCount() << std::endl;
+	player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, s.str());
 
-	text.str("");
-	text << "Libraries:\n";
-	text << "--------------------\n";
-	text << "Platform: " << BOOST_PLATFORM << std::endl;
-	text << "Compiler: " << BOOST_COMPILER << std::endl;
-	text << "Boost: " << BOOST_VERSION << std::endl;
-	text << "ASIO: " << BOOST_ASIO_VERSION << std::endl;
-	text << "XML: " << XML_DEFAULT_VERSION << std::endl;
-	text << "Lua: " << LUA_VERSION << std::endl;
-	player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, text.str().c_str());
-
+#else
+	player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, "Command not available, please rebuild your software with -D__ENABLE_SERVER_DIAG__");
 #endif
 	return true;
 }
@@ -1250,5 +1243,33 @@ bool TalkAction::ghost(Creature* creature, const std::string&, const std::string
 		player->sendTextMessage(MSG_INFO_DESCR, "You are now invisible.");
 	}
 
+	return true;
+}
+
+bool TalkAction::software(Creature* creature, const std::string&, const std::string&)
+{
+	Player* player = creature->getPlayer();
+	if(!player)
+		return false;
+
+	std::stringstream s;
+	s << STATUS_SERVER_NAME << ", version " << STATUS_SERVER_VERSION << " (" << STATUS_SERVER_CODENAME << ")" << std::endl;
+	player->sendTextMessage(MSG_INFO_DESCR, s.str());
+
+	s.str("");
+	s << "Compiled at: " << __DATE__ << ", " << __TIME__ << "." << std::endl;
+	player->sendTextMessage(MSG_INFO_DESCR, s.str());
+
+	s.str("");
+	s << "Libraries:" << std::endl
+		<< "--------------------" << std::endl
+		<< "Platform: " << BOOST_PLATFORM << std::endl
+		<< "Compiler: " << BOOST_COMPILER << std::endl
+		<< "Boost: " << BOOST_VERSION << std::endl
+		<< "ASIO: " << BOOST_ASIO_VERSION << std::endl
+		<< "XML: " << XML_DEFAULT_VERSION << std::endl
+		<< "Lua: " << LUA_VERSION << std::endl;
+
+	player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, s.str());
 	return true;
 }

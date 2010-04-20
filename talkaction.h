@@ -105,6 +105,7 @@ class TalkAction : public Event
 		static TalkFunction diagnostics;
 		static TalkFunction addSkill;
 		static TalkFunction ghost;
+		static TalkFunction software;
 
 		std::string m_words;
 		TalkFunction* m_function;

@@ -55,18 +55,19 @@
 	<talkaction log="yes" access="2" words="/b" event="script" value="broadcast.lua"/>
 
 	<!-- Tutors -->
-	<talkaction log="yes" words="/baninfo" access="1" event="function" value="banishmentInfo"/>
-	<talkaction log="yes" access="1" words="/pos" event="script" value="position.lua"/>
+	<talkaction log="yes" words="/baninfo;!baninfo" access="1" event="function" value="banishmentInfo"/>
+	<talkaction log="yes" access="1" words="/pos;!pos" event="script" value="position.lua"/>
 
 	<!-- Players -->
-	<talkaction words="!frags" event="script" value="frags.lua"/>
-	<talkaction words="!online" event="script" value="online.lua"/>
-	<talkaction words="!uptime" event="script" value="uptime.lua"/>
-	<talkaction words="!deathlist" event="script" value="deathlist.lua"/>
-	<talkaction words="!pvp" event="script" value="pvp.lua"/>
+	<talkaction words="!frags;/frags" event="script" value="frags.lua"/>
+	<talkaction words="!online;/online" event="script" value="online.lua"/>
+	<talkaction words="!uptime;/uptime" event="script" value="uptime.lua"/>
+	<talkaction words="!deathlist;/deathlist" event="script" value="deathlist.lua"/>
+	<talkaction words="!pvp;/pvp" event="script" value="pvp.lua"/>
 	<talkaction words="!q" event="script" value="money.lua"/>
-	<talkaction words="!serverinfo" event="script" value="serverinfo.lua"/>
-	<talkaction words="/commands" event="script" value="commands.lua"/>
+	<talkaction words="!serverinfo;/serverinfo" event="script" value="serverinfo.lua"/>
+	<talkaction words="!commands;/commands" event="script" value="commands.lua"/>
+	<talkaction words="!software;/software" event="function" value="software"/>
 
 	<!-- Houses -->
 	<talkaction words="alana res" filter="word-spaced" event="function" value="houseBuy"/>
@@ -78,14 +79,6 @@
 	<talkaction words="alana som" filter="word-spaced" event="script" value="leavehouse.lua"/>
 
 	<!-- Guilds -->
-	<talkaction words="!createguild" event="function" value="guildCreate"/>
-	<talkaction words="!joinguild" event="function" value="guildJoin"/>
-
-	<!-- (Deprecated) Redirect old '/' to '!' -->
-	<talkaction words="/online" hide="yes" event="script" value="online.lua"/>
-	<talkaction words="/uptime" hide="yes" event="script" value="uptime.lua"/>
-	<talkaction words="/deathlist" hide="yes" event="script" value="deathlist.lua"/>
-	<talkaction words="/pvp" hide="yes" event="script" value="pvp.lua"/>
-	<talkaction words="/serverinfo" hide="yes" event="script" value="serverinfo.lua"/>
-	<talkaction log="yes" access="1" hide="yes" words="!pos" event="script" value="position.lua"/>
+	<talkaction words="!createguild;/createguild" event="function" value="guildCreate"/>
+	<talkaction words="!joinguild;/joinguild" event="function" value="guildJoin"/>
 </talkactions>
