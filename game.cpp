@@ -6195,6 +6195,10 @@ void Game::shutdown()
 	std::clog << "- done." << std::endl;
 	if(services)
 		services->stop();
+#ifndef __DEBUG_EXIT__
+
+	exit(-1);
+#endif
 }
 
 void Game::cleanup()
