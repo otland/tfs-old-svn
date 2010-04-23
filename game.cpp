@@ -951,38 +951,44 @@ bool Game::removeCreature(Creature* creature, bool isLogout /*= true*/)
 
 	Tile* tile = creature->getTile();
 	SpectatorVec list;
-
-	SpectatorVec::iterator it;
 	getSpectators(list, tile->getPosition(), false, true);
 
+	SpectatorVec::iterator it;
+	for(it = list.begin(); it != list.end(); ++it)
+		(*it)->onCreatureDisappear(creature, isLogout);
+
+	if(!map->removeCreature(creature))
+		return false;
+
+	if(tile != creature->getTile())
+	{
+		tile = creature->getTile();
+		getSpectators(list, tile->getPosition(), false, true);
+	}
+
 	Player* player = NULL;
-	std::vector<uint32_t> oldStackPosVector;
+	std::vector<uint32_t> oldStackposVector;
 	for(it = list.begin(); it != list.end(); ++it)
 	{
 		if((player = (*it)->getPlayer()) && player->canSeeCreature(creature))
-			oldStackPosVector.push_back(tile->getClientIndexOfThing(player, creature));
+			oldStackposVector.push_back(tile->getClientIndexOfThing(player, creature));
 	}
-
-	int32_t oldIndex = tile->__getIndexOfThing(creature);
-	if(!map->removeCreature(creature))
-		return false;
 
 	//send to client
 	uint32_t i = 0;
 	for(it = list.begin(); it != list.end(); ++it)
 	{
-		if(!(player = (*it)->getPlayer()) || !player->canSeeCreature(creature))
-			continue;
+		if((player = (*it)->getPlayer()) && player->canSeeCreature(creature))
+		{
+			player->sendCreatureDisappear(creature, oldStackposVector[i]);
+			++i;
+		}
 
-		player->sendCreatureDisappear(creature, oldStackPosVector[i]);
-		++i;
+		if(creature != (*it))
+			(*it)->updateTileCache(tile);
 	}
 
-	//event method
-	for(it = list.begin(); it != list.end(); ++it)
-		(*it)->onCreatureDisappear(creature, isLogout);
-
-	creature->getParent()->postRemoveNotification(NULL, creature, NULL, oldIndex, true);
+	creature->getParent()->postRemoveNotification(NULL, creature, NULL, tile->__getIndexOfThing(creature), true);
 	creature->onRemovedCreature();
 
 	autoList.erase(creature->getID());
@@ -1690,11 +1696,12 @@ ReturnValue Game::internalRemoveItem(Creature* actor, Item* item, int32_t count 
 	return RET_NOERROR;
 }
 
-ReturnValue Game::internalPlayerAddItem(Creature* actor, Player* player, Item* item, bool dropOnMap /*= true*/)
+ReturnValue Game::internalPlayerAddItem(Creature* actor, Player* player, Item* item,
+	bool dropOnMap/* = true*/, slots_t slot/* = SLOT_WHEREEVER*/)
 {
-	ReturnValue ret = internalAddItem(actor, player, item);
+	ReturnValue ret = internalAddItem(actor, player, item, (int32_t)slot);
 	if(ret != RET_NOERROR && dropOnMap)
-		ret = internalAddItem(actor, player->getTile(), item, INDEX_WHEREEVER, FLAG_NOLIMIT);
+		ret = internalAddItem(actor, player->getTile(), item, (int32_t)slot, FLAG_NOLIMIT);
 
 	return ret;
 }
@@ -2143,9 +2150,7 @@ bool Game::playerMove(uint32_t playerId, Direction dir)
 		return false;
 	}
 
-	player->setFollowCreature(NULL);
 	player->onWalk(dir);
-
 	player->setIdleTime(0);
 	return internalMoveCreature(player, dir) == RET_NOERROR;
 }

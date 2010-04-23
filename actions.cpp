@@ -48,6 +48,7 @@ Actions::Actions():
 m_interface("Action Interface")
 {
 	m_interface.initState();
+	defaultAction = NULL;
 }
 
 Actions::~Actions()
@@ -70,6 +71,11 @@ void Actions::clear()
 	clearMap(actionItemMap);
 
 	m_interface.reInitState();
+	if(defaultAction)
+	{
+		delete defaultAction;
+		defaultAction = NULL;
+	}
 }
 
 Event* Actions::getEvent(const std::string& nodeName)
@@ -86,15 +92,27 @@ bool Actions::registerEvent(Event* event, xmlNodePtr p, bool override)
 	if(!action)
 		return false;
 
-	StringVec strVector;
-	IntegerVec intVector, endIntVector;
+	std::string strValue;
+	if(readXMLString(p, "default", strValue) && booleanString(strValue))
+	{
+		if(!defaultAction)
+			defaultAction = action;
+		else if(override)
+		{
+			delete defaultAction;
+			defaultAction = action;
+		}
+		else
+			std::cout << "[Warning - Actions::registerEvent] You cannot define more than one default action." << std::endl;
 
-	std::string strValue, endStrValue;
-	int32_t tmp = 0;
+		return true;
+	}
 
 	bool success = true;
+	std::string endValue;
 	if(readXMLString(p, "itemid", strValue))
 	{
+		IntegerVec intVector;
 		if(!parseIntegerVec(strValue, intVector))
 		{
 			std::clog << "[Warning - Actions::registerEvent] Invalid itemid - '" << strValue << "'" << std::endl;
@@ -131,24 +149,23 @@ bool Actions::registerEvent(Event* event, xmlNodePtr p, bool override)
 			useItemMap[intVector[i]] = new Action(action);
 		}
 	}
-
-	if(readXMLString(p, "fromid", strValue) && readXMLString(p, "toid", endStrValue))
+	else if(readXMLString(p, "fromid", strValue) && readXMLString(p, "toid", endValue))
 	{
-		intVector = vectorAtoi(explodeString(strValue, ";"));
-		endIntVector = vectorAtoi(explodeString(endStrValue, ";"));
-		if(intVector[0] && endIntVector[0] && intVector.size() == endIntVector.size())
+		IntegerVec intVector = vectorAtoi(explodeString(strValue, ";")), endVector = vectorAtoi(explodeString(endValue, ";"));
+		if(intVector[0] && endVector[0] && intVector.size() == endVector.size())
 		{
+			int32_t tmp = 0;
 			for(size_t i = 0, size = intVector.size(); i < size; ++i)
 			{
 				tmp = intVector[i];
-				while(intVector[i] <= endIntVector[i])
+				while(intVector[i] <= endVector[i])
 				{
 					if(useItemMap.find(intVector[i]) != useItemMap.end())
 					{
 						if(!override)
 						{
 							std::clog << "[Warning - Actions::registerEvent] Duplicate registered item with id: " << intVector[i] <<
-								", in fromid: " << tmp << " and toid: " << endIntVector[i] << std::endl;
+								", in fromid: " << tmp << " and toid: " << endVector[i] << std::endl;
 							intVector[i]++;
 							continue;
 						}
@@ -162,11 +179,12 @@ bool Actions::registerEvent(Event* event, xmlNodePtr p, bool override)
 		}
 		else
 			std::clog << "[Warning - Actions::registerEvent] Malformed entry (from item: \"" << strValue <<
-				"\", to item: \"" << endStrValue << "\")" << std::endl;
+				"\", to item: \"" << endValue << "\")" << std::endl;
 	}
 
 	if(readXMLString(p, "uniqueid", strValue))
 	{
+		IntegerVec intVector;
 		if(!parseIntegerVec(strValue, intVector))
 		{
 			std::clog << "[Warning - Actions::registerEvent] Invalid uniqueid - '" << strValue << "'" << std::endl;
@@ -203,24 +221,23 @@ bool Actions::registerEvent(Event* event, xmlNodePtr p, bool override)
 			uniqueItemMap[intVector[i]] = new Action(action);
 		}
 	}
-
-	if(readXMLString(p, "fromuid", strValue) && readXMLString(p, "touid", endStrValue))
+	else if(readXMLString(p, "fromuid", strValue) && readXMLString(p, "touid", endValue))
 	{
-		intVector = vectorAtoi(explodeString(strValue, ";"));
-		endIntVector = vectorAtoi(explodeString(endStrValue, ";"));
-		if(intVector[0] && endIntVector[0] && intVector.size() == endIntVector.size())
+		IntegerVec intVector = vectorAtoi(explodeString(strValue, ";")), endVector = vectorAtoi(explodeString(endValue, ";"));
+		if(intVector[0] && endVector[0] && intVector.size() == endVector.size())
 		{
+			int32_t tmp = 0;
 			for(size_t i = 0, size = intVector.size(); i < size; ++i)
 			{
 				tmp = intVector[i];
-				while(intVector[i] <= endIntVector[i])
+				while(intVector[i] <= endVector[i])
 				{
 					if(uniqueItemMap.find(intVector[i]) != uniqueItemMap.end())
 					{
 						if(!override)
 						{
 							std::clog << "[Warning - Actions::registerEvent] Duplicate registered item with uid: " << intVector[i] <<
-								", in fromuid: " << tmp << " and touid: " << endIntVector[i] << std::endl;
+								", in fromuid: " << tmp << " and touid: " << endVector[i] << std::endl;
 							intVector[i]++;
 							continue;
 						}
@@ -234,11 +251,12 @@ bool Actions::registerEvent(Event* event, xmlNodePtr p, bool override)
 		}
 		else
 			std::clog << "[Warning - Actions::registerEvent] Malformed entry (from unique: \"" << strValue <<
-				"\", to unique: \"" << endStrValue << "\")" << std::endl;
+				"\", to unique: \"" << endValue << "\")" << std::endl;
 	}
 
 	if(readXMLString(p, "actionid", strValue))
 	{
+		IntegerVec intVector;
 		if(!parseIntegerVec(strValue, intVector))
 		{
 			std::clog << "[Warning - Actions::registerEvent] Invalid actionid - '" << strValue << "'" << std::endl;
@@ -275,24 +293,23 @@ bool Actions::registerEvent(Event* event, xmlNodePtr p, bool override)
 			actionItemMap[intVector[i]] = new Action(action);
 		}
 	}
-
-	if(readXMLString(p, "fromaid", strValue) && readXMLString(p, "toaid", endStrValue))
+	else if(readXMLString(p, "fromaid", strValue) && readXMLString(p, "toaid", endValue))
 	{
-		intVector = vectorAtoi(explodeString(strValue, ";"));
-		endIntVector = vectorAtoi(explodeString(endStrValue, ";"));
-		if(intVector[0] && endIntVector[0] && intVector.size() == endIntVector.size())
+		IntegerVec intVector = vectorAtoi(explodeString(strValue, ";")), endVector = vectorAtoi(explodeString(endValue, ";"));
+		if(intVector[0] && endVector[0] && intVector.size() == endVector.size())
 		{
+			int32_t tmp = 0;
 			for(size_t i = 0, size = intVector.size(); i < size; ++i)
 			{
 				tmp = intVector[i];
-				while(intVector[i] <= endIntVector[i])
+				while(intVector[i] <= endVector[i])
 				{
 					if(actionItemMap.find(intVector[i]) != actionItemMap.end())
 					{
 						if(!override)
 						{
 							std::clog << "[Warning - Actions::registerEvent] Duplicate registered item with aid: " << intVector[i] <<
-								", in fromaid: " << tmp << " and toaid: " << endIntVector[i] << std::endl;
+								", in fromaid: " << tmp << " and toaid: " << endVector[i] << std::endl;
 							intVector[i]++;
 							continue;
 						}
@@ -306,7 +323,7 @@ bool Actions::registerEvent(Event* event, xmlNodePtr p, bool override)
 		}
 		else
 			std::clog << "[Warning - Actions::registerEvent] Malformed entry (from action: \"" << strValue <<
-				"\", to action: \"" << endStrValue << "\")" << std::endl;
+				"\", to action: \"" << endValue << "\")" << std::endl;
 	}
 
 	return success;
@@ -344,6 +361,9 @@ ReturnValue Actions::canUse(const Player* player, const Position& pos, const Ite
 
 	if((action = getAction(item, ACTION_RUNEID)))
 		return action->canExecuteAction(player, pos);
+
+	if(defaultAction)
+		return defaultAction->canExecuteAction(player, pos);
 
 	return RET_NOERROR;
 }
@@ -396,6 +416,12 @@ Action* Actions::getAction(const Item* item, ActionType_t type/* = ACTION_ANY*/)
 	{
 		if(Action* runeSpell = g_spells->getRuneSpell(item->getID()))
 			return runeSpell;
+	}
+
+	if(type == ACTION_ANY)
+	{
+		if(defaultAction)
+			return defaultAction;
 	}
 
 	return NULL;
@@ -487,6 +513,22 @@ ReturnValue Actions::internalUseItem(Player* player, const Position& pos, uint8_
 		executed = true;
 	}
 
+	if(!executed && defaultAction)
+	{
+		if(defaultAction->isScripted())
+		{
+			if(executeUse(defaultAction, player, item, posEx, creatureId))
+				return RET_NOERROR;
+		}
+		else if(defaultAction->function)
+		{
+			if(defaultAction->function(player, item, posEx, posEx, false, creatureId))
+				return RET_NOERROR;
+		}
+
+		executed = true;
+	}
+
 	if(BedItem* bed = item->getBed())
 	{
 		if(!bed->canUse(player))
@@ -550,10 +592,7 @@ ReturnValue Actions::internalUseItem(Player* player, const Position& pos, uint8_
 		return RET_NOERROR;
 	}
 
-	if(!executed)
-		return RET_CANNOTUSETHISOBJECT;
-
-	return RET_NOERROR;
+	return executed ? RET_NOERROR : RET_CANNOTUSETHISOBJECT;
 }
 
 bool Actions::useItem(Player* player, const Position& pos, uint8_t index, Item* item)
@@ -583,6 +622,7 @@ bool Actions::executeUseEx(Action* action, Player* player, Item* item, const Pos
 ReturnValue Actions::internalUseItemEx(Player* player, const PositionEx& fromPosEx, const PositionEx& toPosEx,
 	Item* item, bool isHotkey, uint32_t creatureId)
 {
+	bool executed = false;
 	Action* action = NULL;
 	if((action = getAction(item, ACTION_UNIQUEID)))
 	{
@@ -593,6 +633,8 @@ ReturnValue Actions::internalUseItemEx(Player* player, const PositionEx& fromPos
 		//only continue with next action in the list if the previous returns false
 		if(executeUseEx(action, player, item, fromPosEx, toPosEx, isHotkey, creatureId))
 			return RET_NOERROR;
+
+		executed = true;
 	}
 
 	if((action = getAction(item, ACTION_ACTIONID)))
@@ -604,6 +646,8 @@ ReturnValue Actions::internalUseItemEx(Player* player, const PositionEx& fromPos
 		//only continue with next action in the list if the previous returns false
 		if(executeUseEx(action, player, item, fromPosEx, toPosEx, isHotkey, creatureId))
 			return RET_NOERROR;
+
+		executed = true;
 	}
 
 	if((action = getAction(item, ACTION_ITEMID)))
@@ -615,6 +659,8 @@ ReturnValue Actions::internalUseItemEx(Player* player, const PositionEx& fromPos
 		//only continue with next action in the list if the previous returns false
 		if(executeUseEx(action, player, item, fromPosEx, toPosEx, isHotkey, creatureId))
 			return RET_NOERROR;
+
+		executed = true;
 	}
 
 	if((action = getAction(item, ACTION_RUNEID)))
@@ -626,9 +672,24 @@ ReturnValue Actions::internalUseItemEx(Player* player, const PositionEx& fromPos
 		//only continue with next action in the list if the previous returns false
 		if(executeUseEx(action, player, item, fromPosEx, toPosEx, isHotkey, creatureId))
 			return RET_NOERROR;
+
+		executed = true;
 	}
 
-	return RET_CANNOTUSETHISOBJECT;
+	if(!executed && defaultAction)
+	{
+		ReturnValue ret = defaultAction->canExecuteAction(player, toPosEx);
+		if(ret != RET_NOERROR)
+			return ret;
+
+		//only continue with next action in the list if the previous returns false
+		if(executeUseEx(defaultAction, player, item, fromPosEx, toPosEx, isHotkey, creatureId))
+			return RET_NOERROR;
+
+		executed = true;
+	}
+
+	return executed ? RET_NOERROR : RET_CANNOTUSETHISOBJECT;
 }
 
 bool Actions::useItemEx(Player* player, const Position& fromPos, const Position& toPos,
@@ -641,8 +702,7 @@ bool Actions::useItemEx(Player* player, const Position& fromPos, const Position&
 	player->stopWalk();
 	player->setNextAction(OTSYS_TIME() + g_config.getNumber(ConfigManager::EX_ACTIONS_DELAY_INTERVAL) - SCHEDULER_MINTICKS);
 
-	Action* action = getAction(item);
-	if(!action)
+	if(!getAction(item))
 	{
 		player->sendCancelMessage(RET_CANNOTUSETHISOBJECT);
 		return false;

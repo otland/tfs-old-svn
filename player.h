@@ -135,7 +135,6 @@ typedef std::map<uint32_t, War_t> WarMap;
 #define SPEED_MIN 10
 #define STAMINA_MAX (42 * 60 * 60 * 1000)
 #define STAMINA_MULTIPLIER (60 * 1000)
-#define FIST_ATTACK 7
 
 class Player : public Creature, public Cylinder
 {

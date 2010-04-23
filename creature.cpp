@@ -369,6 +369,12 @@ void Creature::validateMapCache()
 }
 #endif
 
+void Creature::updateTileCache(const Tile* tile)
+{
+	if(isMapLoaded && creature != this && tile->getPosition().z == getPosition().z)
+		updateTileCache(tile, tile->getPosition());
+}
+
 void Creature::updateTileCache(const Tile* tile, int32_t dx, int32_t dy)
 {
 	if((std::abs(dx) <= (mapWalkWidth - 1) / 2) && (std::abs(dy) <= (mapWalkHeight - 1) / 2))
@@ -466,8 +472,6 @@ void Creature::onCreatureAppear(const Creature* creature)
 void Creature::onCreatureDisappear(const Creature* creature, bool)
 {
 	internalCreatureDisappear(creature, true);
-	if(creature != this && isMapLoaded && creature->getPosition().z == getPosition().z)
-		updateTileCache(creature->getTile(), creature->getPosition());
 }
 
 void Creature::onRemovedCreature()
@@ -1062,6 +1066,7 @@ bool Creature::setFollowCreature(Creature* creature, bool /*fullPathSearch = fal
 		followCreature = NULL;
 	}
 
+	g_game.updateCreatureWalk(id);
 	onFollowCreature(creature);
 	return true;
 }

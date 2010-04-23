@@ -170,6 +170,7 @@ class ConfigManager
 			VIPLIST_DEFAULT_LIMIT,
 			VIPLIST_DEFAULT_PREMIUM_LIMIT,
 			STAMINA_DESTROY_LOOT,
+			FIST_BASE_ATTACK,
 			LAST_NUMBER_CONFIG /* this must be the last one */
 		};
 

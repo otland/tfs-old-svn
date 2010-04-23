@@ -1680,12 +1680,12 @@ void LuaInterface::registerFunctions()
 	//doPlayerAddSoul(cid, soul)
 	lua_register(m_luaState, "doPlayerAddSoul", LuaInterface::luaDoPlayerAddSoul);
 
-	//doPlayerAddItem(cid, itemid[, count/subtype[, canDropOnMap]])
-	//doPlayerAddItem(cid, itemid[, count[, canDropOnMap[, subtype]]])
+	//doPlayerAddItem(cid, itemid[, count/subtype = 1[, canDropOnMap = true[, slot = 0]]])
+	//doPlayerAddItem(cid, itemid[, count = 1[, canDropOnMap = true[, subtype = 1[, slot = 0]]]])
 	//Returns uid of the created item
 	lua_register(m_luaState, "doPlayerAddItem", LuaInterface::luaDoPlayerAddItem);
 
-	//doPlayerAddItemEx(cid, uid[, canDropOnMap = FALSE])
+	//doPlayerAddItemEx(cid, uid[, canDropOnMap = false[, slot = 0]])
 	lua_register(m_luaState, "doPlayerAddItemEx", LuaInterface::luaDoPlayerAddItemEx);
 
 	//doPlayerSendTextMessage(cid, MessageClasses, message)
@@ -1774,7 +1774,7 @@ void LuaInterface::registerFunctions()
 	//doRemoveCreature(cid[, forceLogout = true])
 	lua_register(m_luaState, "doRemoveCreature", LuaInterface::luaDoRemoveCreature);
 
-	//doMoveCreature(cid, direction)
+	//doMoveCreature(cid, direction[, flag = FLAG_NOLIMIT])
 	lua_register(m_luaState, "doMoveCreature", LuaInterface::luaDoMoveCreature);
 
 	//doPlayerSetPzLocked(cid, locked)
@@ -3680,11 +3680,19 @@ int32_t LuaInterface::luaDoPlayerAddSpentMana(lua_State* L)
 
 int32_t LuaInterface::luaDoPlayerAddItem(lua_State* L)
 {
-	//doPlayerAddItem(cid, itemid[, count/subtype[, canDropOnMap]])
-	//doPlayerAddItem(cid, itemid[, count[, canDropOnMap[, subtype]]])
-	int32_t params = lua_gettop(L), subType = 1;
+	//doPlayerAddItem(cid, itemid[, count/subtype = 1[, canDropOnMap = true[, slot = 0]]])
+	//doPlayerAddItem(cid, itemid[, count = 1[, canDropOnMap = true[, subtype = 1[, slot = 0]]]])
+	int32_t params = lua_gettop(L), subType = 1, slot = SLOT_WHEREEVER;
+	if(params > 5)
+		slot = popNumber(L);
+
 	if(params > 4)
-		subType = popNumber(L);
+	{
+		if(params > 5)
+			subType = popNumber(L);
+		else
+			slot = popNumber(L);
+	}
 
 	bool canDropOnMap = true;
 	if(params > 3)
@@ -3695,8 +3703,14 @@ int32_t LuaInterface::luaDoPlayerAddItem(lua_State* L)
 		count = popNumber(L);
 
 	uint32_t itemId = popNumber(L);
-	ScriptEnviroment* env = getEnv();
+	if(slot > SLOT_AMMO)
+	{
+		errorEx("Invalid slot.");
+		lua_pushboolean(L, false);
+		return 1;
+	}
 
+	ScriptEnviroment* env = getEnv();
 	Player* player = env->getPlayerByUID((uint32_t)popNumber(L));
 	if(!player)
 	{
@@ -3731,7 +3745,7 @@ int32_t LuaInterface::luaDoPlayerAddItem(lua_State* L)
 		if(it.stackable)
 			subType -= stackCount;
 
-		ReturnValue ret = g_game.internalPlayerAddItem(NULL, player, newItem, canDropOnMap);
+		ReturnValue ret = g_game.internalPlayerAddItem(NULL, player, newItem, canDropOnMap, (slots_t)slot);
 		if(ret != RET_NOERROR)
 		{
 			delete newItem;
@@ -3757,14 +3771,24 @@ int32_t LuaInterface::luaDoPlayerAddItem(lua_State* L)
 
 int32_t LuaInterface::luaDoPlayerAddItemEx(lua_State* L)
 {
-	//doPlayerAddItemEx(cid, uid[, canDropOnMap = false])
+	//doPlayerAddItemEx(cid, uid[, canDropOnMap = false[, slot = 0]])
+	int32_t params = lua_gettop(L), slot = SLOT_WHEREEVER;
+	if(params > 3)
+		slot = popNumber(L);
+
 	bool canDropOnMap = false;
-	if(lua_gettop(L) > 2)
+	if(params > 2)
 		canDropOnMap = popNumber(L);
 
 	uint32_t uid = (uint32_t)popNumber(L);
-	ScriptEnviroment* env = getEnv();
+	if(slot > SLOT_AMMO)
+	{
+		errorEx("Invalid slot.");
+		lua_pushboolean(L, false);
+		return 1;
+	}
 
+	ScriptEnviroment* env = getEnv();
 	Player* player = env->getPlayerByUID(popNumber(L));
 	if(!player)
 	{
@@ -3782,7 +3806,7 @@ int32_t LuaInterface::luaDoPlayerAddItemEx(lua_State* L)
 	}
 
 	if(item->getParent() == VirtualCylinder::virtualCylinder)
-		lua_pushnumber(L, g_game.internalPlayerAddItem(NULL, player, item, canDropOnMap));
+		lua_pushnumber(L, g_game.internalPlayerAddItem(NULL, player, item, canDropOnMap, (slots_t)slot));
 	else
 		lua_pushboolean(L, false);
 
@@ -7094,7 +7118,11 @@ int32_t LuaInterface::luaGetGuildMotd(lua_State* L)
 
 int32_t LuaInterface::luaDoMoveCreature(lua_State* L)
 {
-	//doMoveCreature(cid, direction)
+	//doMoveCreature(cid, direction[, flag = FLAG_NOLIMIT])
+	uint32_t flags = FLAG_NOLIMIT;
+	if(lua_gettop(L) > 2)
+		flags = popNumber(L);
+
 	int32_t direction = popNumber(L);
 	if(direction < NORTH || direction > NORTHEAST)
 	{
@@ -7104,7 +7132,7 @@ int32_t LuaInterface::luaDoMoveCreature(lua_State* L)
 
 	ScriptEnviroment* env = getEnv();
 	if(Creature* creature = env->getCreatureByUID(popNumber(L)))
-		lua_pushnumber(L, g_game.internalMoveCreature(creature, (Direction)direction, FLAG_NOLIMIT));
+		lua_pushnumber(L, g_game.internalMoveCreature(creature, (Direction)direction, flag));
 	else
 	{
 		errorEx(getError(LUA_ERROR_CREATURE_NOT_FOUND));

@@ -536,6 +536,7 @@ class Creature : public AutoId, virtual public Thing
 		#endif
 		void updateMapCache();
 
+		void updateTileCache(const Tile* tile);
 		void updateTileCache(const Tile* tile, int32_t dx, int32_t dy);
 		void updateTileCache(const Tile* tile, const Position& pos);
 

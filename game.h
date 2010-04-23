@@ -354,7 +354,8 @@ class Game
 			uint32_t flags = 0, bool test = false);
 		ReturnValue internalRemoveItem(Creature* actor, Item* item, int32_t count = -1,  bool test = false, uint32_t flags = 0);
 
-		ReturnValue internalPlayerAddItem(Creature* actor, Player* player, Item* item, bool dropOnMap = true);
+		ReturnValue internalPlayerAddItem(Creature* actor, Player* player, Item* item,
+			bool dropOnMap = true, slots_t slot = SLOT_WHEREEVER);
 
 		/**
 		  * Find an item of a certain type

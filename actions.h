@@ -50,6 +50,8 @@ class Actions : public BaseEvents
 		bool hasAction(const Item* item) const {return getAction(item);}
 
 	protected:
+		Action* defaultAction;
+
 		virtual std::string getScriptBaseName() const {return "actions";}
 		virtual void clear();
 

@@ -224,19 +224,12 @@ bool House::kickPlayer(Player* player, Player* target)
 	if(!houseTile || houseTile->getHouse() != this)
 		return false;
 
-	if(player == target)
-	{
-		removePlayer(target, true);
-		return true;
-	}
+	bool self = player == target;
+	if(getHouseAccessLevel(player) < getHouseAccessLevel(target) && !self)
+		return false;
 
-	if(getHouseAccessLevel(player) >= getHouseAccessLevel(target))
-	{
-		removePlayer(target, false);
-		return true;
-	}
-
-	return false;
+	removePlayer(target, self);
+	return true;
 }
 
 void House::clean()

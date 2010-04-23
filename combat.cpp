@@ -995,7 +995,7 @@ void ValueCallback::getMinMaxValues(Player* player, int32_t& min, int32_t& max, 
 			else
 			{
 				lua_pushnumber(L, player->getSkill(SKILL_FIST, SKILL_LEVEL));
-				lua_pushnumber(L, FIST_ATTACK);
+				lua_pushnumber(L, g_config.getNumber(ConfigManager::FIST_BASE_ATTACK));
 			}
 
 			lua_pushnumber(L, player->getAttackFactor());
