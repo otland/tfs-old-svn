@@ -7132,7 +7132,7 @@ int32_t LuaInterface::luaDoMoveCreature(lua_State* L)
 
 	ScriptEnviroment* env = getEnv();
 	if(Creature* creature = env->getCreatureByUID(popNumber(L)))
-		lua_pushnumber(L, g_game.internalMoveCreature(creature, (Direction)direction, flag));
+		lua_pushnumber(L, g_game.internalMoveCreature(creature, (Direction)direction, flags));
 	else
 	{
 		errorEx(getError(LUA_ERROR_CREATURE_NOT_FOUND));

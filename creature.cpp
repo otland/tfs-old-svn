@@ -371,7 +371,7 @@ void Creature::validateMapCache()
 
 void Creature::updateTileCache(const Tile* tile)
 {
-	if(isMapLoaded && creature != this && tile->getPosition().z == getPosition().z)
+	if(isMapLoaded && tile->getPosition().z == getPosition().z)
 		updateTileCache(tile, tile->getPosition());
 }
 
