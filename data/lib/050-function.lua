@@ -442,7 +442,7 @@ function getBooleanFromString(input)
 end
 
 function doCopyItem(item, attributes)
-	local attributes = attributes or { "aid" }
+	local attributes = ((type(attributes) == 'table') and attributes or { "aid" })
 
 	local ret = doCreateItemEx(item.itemid, item.type)
 	for _, key in ipairs(attributes) do
