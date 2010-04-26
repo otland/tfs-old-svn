@@ -573,7 +573,7 @@ bool AccessList::addExpression(const std::string& expression)
 	}
 
 	// Fix the regex a little
-	replaceString(out, "******", "");
+	replaceString(out, "**", "");
 	replaceString(out, "*", ".*");
 	replaceString(out, "?", ".?");
 
