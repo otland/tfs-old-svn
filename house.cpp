@@ -572,8 +572,11 @@ bool AccessList::addExpression(const std::string& expression)
 		out += (*it);
 	}
 
+	// Fix the regex a little
+	replaceString(out, "******", "");
 	replaceString(out, "*", ".*");
 	replaceString(out, "?", ".?");
+
 	try
 	{
 		if(out.length() > 0)
