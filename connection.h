@@ -37,7 +37,7 @@ typedef boost::shared_ptr<ServicePort> ServicePort_ptr;
 
 #ifdef __DEBUG_NET__
 #define PRINT_ASIO_ERROR(description) \
-	std::cout << "[Error - " << __FUNCTION__ << "] " << description << " - "
+	std::cout << "[Error - " << __FUNCTION__ << "] " << description << " - " \
 		<< error.message() << " (" << error.message() << ")" << std::endl;
 #else
 #define PRINT_ASIO_ERROR(x)
