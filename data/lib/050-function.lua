@@ -442,12 +442,13 @@ function getBooleanFromString(input)
 end
 
 function doCopyItem(item, attributes)
-	local attributes = attributes or false
+	local attributes = attributes or { "aid" }
 
 	local ret = doCreateItemEx(item.itemid, item.type)
-	if(attributes) then
-		if(item.actionid > 0) then
-			doItemSetAttribute(ret, "aid", item.actionid)
+	for _, key in ipairs(attributes) do
+		local value = getItemAttribute(item.uid, key)
+		if(value ~= nil) then
+			doItemSetAttribute(ret, key, value)
 		end
 	end
 
