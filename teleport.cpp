@@ -50,6 +50,9 @@ bool Teleport::serializeAttr(PropWriteStream& propWriteStream) const
 
 void Teleport::__addThing(Creature* actor, int32_t, Thing* thing)
 {
+	if(!thing || thing->isRemoved())
+		return;
+
 	Tile* destTile = g_game.getTile(destination);
 	if(!destTile)
 		return;
@@ -63,7 +66,7 @@ void Teleport::__addThing(Creature* actor, int32_t, Thing* thing)
 	else if(Item* item = thing->getItem())
 	{
 		g_game.addMagicEffect(item->getPosition(), MAGIC_EFFECT_TELEPORT);
-		g_game.internalMoveItem(actor, getTile(), destTile, INDEX_WHEREEVER, item, item->getItemCount(), NULL);
+		g_game.internalMoveItem(actor, item->getTile(), destTile, INDEX_WHEREEVER, item, item->getItemCount(), NULL);
 		g_game.addMagicEffect(destTile->getPosition(), MAGIC_EFFECT_TELEPORT);
 	}
 }
