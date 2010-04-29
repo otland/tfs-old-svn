@@ -2045,8 +2045,8 @@ BlockType_t Player::blockHit(Creature* attacker, CombatType_t combatType, int32_
 	Item* item = NULL;
 	for(int32_t slot = SLOT_FIRST; slot < SLOT_LAST; ++slot)
 	{
-		if(!(item = getInventoryItem((slots_t)slot)) || (g_moveEvents->hasEquipEvent(item)
-			&& !isItemAbilityEnabled((slots_t)slot)))
+		if(!(item = getInventoryItem((slots_t)slot)) || item->isRemoved() ||
+			(g_moveEvents->hasEquipEvent(item) && !isItemAbilityEnabled((slots_t)slot)))
 			continue;
 
 		const ItemType& it = Item::items[item->getID()];
@@ -2129,8 +2129,8 @@ bool Player::onDeath()
 		Item* item = NULL;
 		for(int32_t i = SLOT_FIRST; ((skillLoss || lootDrop == LOOT_DROP_FULL) && i < SLOT_LAST); ++i)
 		{
-			if(!(item = getInventoryItem((slots_t)i)) || (g_moveEvents->hasEquipEvent(
-				item) && !isItemAbilityEnabled((slots_t)i)))
+			if(!(item = getInventoryItem((slots_t)i)) || item->isRemoved() ||
+				(g_moveEvents->hasEquipEvent(item) && !isItemAbilityEnabled((slots_t)i)))
 				continue;
 
 			const ItemType& it = Item::items[item->getID()];
@@ -4977,8 +4977,8 @@ void Player::increaseCombatValues(int32_t& min, int32_t& max, bool useCharges, b
 	int32_t minValue = 0, maxValue = 0, i = SLOT_FIRST;
 	for(; i < SLOT_LAST; ++i)
 	{
-		if(!(item = getInventoryItem((slots_t)i)) || (g_moveEvents->hasEquipEvent(item)
-			&& !isItemAbilityEnabled((slots_t)i)))
+		if(!(item = getInventoryItem((slots_t)i)) || item->isRemoved() || 
+			(g_moveEvents->hasEquipEvent(item) && !isItemAbilityEnabled((slots_t)i)))
 			continue;
 
 		const ItemType& it = Item::items[item->getID()];
