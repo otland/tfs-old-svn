@@ -573,10 +573,15 @@ bool AccessList::addExpression(const std::string& expression)
 	}
 
 	// Fix the regex a little
+#ifdef __WINDOWS__
+	// Windows bugs...
+	replaceString(out, "*", "");
+	replaceString(out, "?", "");
+#else
 	replaceString(out, "**", "");
 	replaceString(out, "*", ".*");
 	replaceString(out, "?", ".?");
-
+#endif
 	try
 	{
 		if(out.length() > 0)
