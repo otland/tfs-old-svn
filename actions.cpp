@@ -577,7 +577,7 @@ ReturnValue Actions::internalUseItem(Player* player, const Position& pos, uint8_
 		return RET_CANNOTUSETHISOBJECT;
 
 	if(defaultAction->isScripted())
-		executeUse(defaultAction, player, item, posEx, creatureId))
+		executeUse(defaultAction, player, item, posEx, creatureId);
 	else if(defaultAction->function)
 		defaultAction->function(player, item, posEx, posEx, false, creatureId);
 
