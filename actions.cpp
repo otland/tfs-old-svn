@@ -418,12 +418,6 @@ Action* Actions::getAction(const Item* item, ActionType_t type/* = ACTION_ANY*/)
 			return runeSpell;
 	}
 
-	if(type == ACTION_ANY)
-	{
-		if(defaultAction)
-			return defaultAction;
-	}
-
 	return NULL;
 }
 
@@ -513,22 +507,6 @@ ReturnValue Actions::internalUseItem(Player* player, const Position& pos, uint8_
 		executed = true;
 	}
 
-	if(!executed && defaultAction)
-	{
-		if(defaultAction->isScripted())
-		{
-			if(executeUse(defaultAction, player, item, posEx, creatureId))
-				return RET_NOERROR;
-		}
-		else if(defaultAction->function)
-		{
-			if(defaultAction->function(player, item, posEx, posEx, false, creatureId))
-				return RET_NOERROR;
-		}
-
-		executed = true;
-	}
-
 	if(BedItem* bed = item->getBed())
 	{
 		if(!bed->canUse(player))
@@ -592,7 +570,18 @@ ReturnValue Actions::internalUseItem(Player* player, const Position& pos, uint8_
 		return RET_NOERROR;
 	}
 
-	return executed ? RET_NOERROR : RET_CANNOTUSETHISOBJECT;
+	if(executed)
+		return RET_NOERROR;
+
+	if(!defaultAction)
+		return RET_CANNOTUSETHISOBJECT;
+
+	if(defaultAction->isScripted())
+		executeUse(defaultAction, player, item, posEx, creatureId))
+	else if(defaultAction->function)
+		defaultAction->function(player, item, posEx, posEx, false, creatureId);
+
+	return RET_NOERROR;
 }
 
 bool Actions::useItem(Player* player, const Position& pos, uint8_t index, Item* item)
@@ -676,20 +665,19 @@ ReturnValue Actions::internalUseItemEx(Player* player, const PositionEx& fromPos
 		executed = true;
 	}
 
-	if(!executed && defaultAction)
-	{
-		ReturnValue ret = defaultAction->canExecuteAction(player, toPosEx);
-		if(ret != RET_NOERROR)
-			return ret;
+	if(executed)
+		return RET_NOERROR;
 
-		//only continue with next action in the list if the previous returns false
-		if(executeUseEx(defaultAction, player, item, fromPosEx, toPosEx, isHotkey, creatureId))
-			return RET_NOERROR;
+	if(!defaultAction)
+		return RET_CANNOTUSETHISOBJECT;
 
-		executed = true;
-	}
+	ReturnValue ret = defaultAction->canExecuteAction(player, toPosEx);
+	if(ret != RET_NOERROR)
+		return ret;
 
-	return executed ? RET_NOERROR : RET_CANNOTUSETHISOBJECT;
+	//only continue with next action in the list if the previous returns false
+	executeUseEx(defaultAction, player, item, fromPosEx, toPosEx, isHotkey, creatureId);
+	return RET_NOERROR;
 }
 
 bool Actions::useItemEx(Player* player, const Position& fromPos, const Position& toPos,

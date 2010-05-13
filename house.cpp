@@ -572,9 +572,7 @@ bool AccessList::addExpression(const std::string& expression)
 		out += (*it);
 	}
 
-	// Fix the regex a little
 #ifdef __WINDOWS__
-	// Windows bugs...
 	replaceString(out, "*", "");
 	replaceString(out, "?", "");
 #else
@@ -582,6 +580,7 @@ bool AccessList::addExpression(const std::string& expression)
 	replaceString(out, "*", ".*");
 	replaceString(out, "?", ".?");
 #endif
+
 	try
 	{
 		if(out.length() > 0)

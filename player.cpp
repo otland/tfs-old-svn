@@ -1,4 +1,4 @@
-////////////////////////////////////////////////////////////////////////
+f////////////////////////////////////////////////////////////////////////
 // OpenTibia - an opensource roleplaying game
 ////////////////////////////////////////////////////////////////////////
 // This program is free software: you can redistribute it and/or modify
@@ -1321,7 +1321,6 @@ void Player::onCreatureAppear(const Creature* creature)
 		g_moveEvents->onPlayerEquip(this, item, (slots_t)slot, false);
 	}
 
-	updateWeapon();
 	if(BedItem* bed = Beds::getInstance()->getBedBySleeper(guid))
 		bed->wakeUp();
 
@@ -3093,7 +3092,6 @@ void Player::postAddNotification(Creature*, Thing* thing, const Cylinder* oldPar
 
 		updateInventoryWeight();
 		updateItemsLight();
-		updateWeapon();
 		sendStats();
 	}
 
@@ -3141,7 +3139,6 @@ void Player::postRemoveNotification(Creature*, Thing* thing, const Cylinder* new
 
 		updateInventoryWeight();
 		updateItemsLight();
-		updateWeapon();
 		sendStats();
 	}
 
@@ -3288,6 +3285,7 @@ void Player::doAttacking(uint32_t)
 		return;
 	}
 
+	updateWeapon();
 	Item* item = getWeapon(false);
 	if(const Weapon* _weapon = g_weapons->getWeapon(item))
 	{
@@ -3298,10 +3296,7 @@ void Player::doAttacking(uint32_t)
 			setNextActionTask(task);
 		}
 		else if((!_weapon->hasExhaustion() || !hasCondition(CONDITION_EXHAUST, EXHAUST_COMBAT)) && _weapon->useWeapon(this, item, attackedCreature))
-		{
 			lastAttack = OTSYS_TIME();
-			updateWeapon();
-		}
 	}
 	else if(Weapon::useFist(this, attackedCreature))
 		lastAttack = OTSYS_TIME();
