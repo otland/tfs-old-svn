@@ -37,6 +37,7 @@ CREATE TABLE `accounts`
 	`id` INT NOT NULL AUTO_INCREMENT,
 	`name` VARCHAR(32) NOT NULL DEFAULT '',
 	`password` VARCHAR(255) NOT NULL/* VARCHAR(32) NOT NULL COMMENT 'MD5'*//* VARCHAR(40) NOT NULL COMMENT 'SHA1'*/,
+	`salt` VARCHAR(40) NOT NULL DEFAULT '',
 	`premdays` INT NOT NULL DEFAULT 0,
 	`lastday` INT UNSIGNED NOT NULL DEFAULT 0,
 	`email` VARCHAR(255) NOT NULL DEFAULT '',
@@ -47,7 +48,7 @@ CREATE TABLE `accounts`
 	PRIMARY KEY (`id`), UNIQUE (`name`)
 ) ENGINE = InnoDB;
 
-INSERT INTO `accounts` VALUES (1, '1', '1', 65535, 0, '', '0', 0, 0, 1);
+INSERT INTO `accounts` VALUES (1, '1', '1', '', 65535, 0, '', '0', 0, 0, 1);
 
 CREATE TABLE `players`
 (
@@ -370,7 +371,7 @@ CREATE TABLE `server_config`
 	UNIQUE (`config`)
 ) ENGINE = InnoDB;
 
-INSERT INTO `server_config` VALUES ('db_version', 25);
+INSERT INTO `server_config` VALUES ('db_version', 26);
 
 CREATE TABLE `server_motd`
 (

@@ -4,7 +4,7 @@ CREATE TABLE "server_config" (
 	UNIQUE ("config")
 );
 
-INSERT INTO "server_config" VALUES ('db_version', 25);
+INSERT INTO "server_config" VALUES ('db_version', 26);
 
 CREATE TABLE "server_motd" (
 	"id" INTEGER NOT NULL,
@@ -40,6 +40,7 @@ CREATE TABLE "accounts" (
 	"id" INTEGER PRIMARY KEY NOT NULL,
 	"name" VARCHAR(255) NOT NULL,
 	"password" VARCHAR(255) NOT NULL,
+	"salt" VARCHAR(40) NOT NULL DEFAULT '',
 	"premdays" INTEGER NOT NULL DEFAULT 0,
 	"lastday" INTEGER NOT NULL DEFAULT 0,
 	"email" VARCHAR(255) NOT NULL DEFAULT '',
@@ -50,7 +51,7 @@ CREATE TABLE "accounts" (
 	UNIQUE ("name")
 );
 
-INSERT INTO "accounts" VALUES (1, '1', '1', 65535, 0, '', '0', 0, 0, 1);
+INSERT INTO "accounts" VALUES (1, '1', '1', '', 65535, 0, '', '0', 0, 0, 1);
 
 CREATE TABLE "players" (
 	"id" INTEGER PRIMARY KEY NOT NULL,
