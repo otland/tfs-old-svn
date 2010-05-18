@@ -467,9 +467,8 @@ bool ProtocolGame::parseFirstPacket(NetworkMessage& msg)
 		return false;
 	}
 
-	std::string hash;
-	Account account = IOLoginData::getInstance()->loadAccount(id);
-	if(!encryptTest(account.salt+password, account.password))
+	std::string hash, salt;
+	if(!IOLoginData::getInstance()->getPassword(id, hash, salt, character) || !encryptTest(salt + password, hash))
 	{
 		ConnectionManager::getInstance()->addAttempt(getIP(), protocolId, false);
 		disconnectClient(0x14, "Invalid password.");

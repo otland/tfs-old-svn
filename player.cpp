@@ -1321,6 +1321,7 @@ void Player::onCreatureAppear(const Creature* creature)
 		g_moveEvents->onPlayerEquip(this, item, (slots_t)slot, false);
 	}
 
+	//updateWeapon(); # FIXME: make it actually work, lol
 	if(BedItem* bed = Beds::getInstance()->getBedBySleeper(guid))
 		bed->wakeUp();
 
@@ -3092,6 +3093,7 @@ void Player::postAddNotification(Creature*, Thing* thing, const Cylinder* oldPar
 
 		updateInventoryWeight();
 		updateItemsLight();
+		updateWeapon();
 		sendStats();
 	}
 
@@ -3139,6 +3141,7 @@ void Player::postRemoveNotification(Creature*, Thing* thing, const Cylinder* new
 
 		updateInventoryWeight();
 		updateItemsLight();
+		updateWeapon();
 		sendStats();
 	}
 
@@ -3285,7 +3288,7 @@ void Player::doAttacking(uint32_t)
 		return;
 	}
 
-	updateWeapon();
+	updateWeapon(); // REMOVEME: temporarily, look for commented updateWeapon
 	Item* item = getWeapon(false);
 	if(const Weapon* _weapon = g_weapons->getWeapon(item))
 	{
@@ -3393,7 +3396,7 @@ void Player::getCreatureLight(LightInfo& light) const
 		light = itemsLight;
 }
 
-void Player::updateItemsLight(bool internal/* =false*/)
+void Player::updateItemsLight(bool internal/* = false*/)
 {
 	LightInfo maxLight, curLight;
 	Item* item = NULL;
