@@ -637,9 +637,18 @@ bool Chat::talkToChannel(Player* player, SpeakClasses type, const std::string& t
 	{
 		if(player->getGuildLevel() < GUILDLEVEL_LEADER)
 		{
-			sprintf(buffer, "%s has left the guild.", player->getName().c_str());
-			channel->talk(player, SPEAK_CHANNEL_W, buffer);
-			player->leaveGuild();
+#ifdef __WAR_SYSTEM__
+			if(!player->hasEnemy())
+			{
+#endif
+				sprintf(buffer, "%s has left the guild.", player->getName().c_str());
+				channel->talk(player, SPEAK_CHANNEL_W, buffer);
+				player->leaveGuild();
+#ifdef __WAR_SYSTEM__
+			}
+			else
+				player->sendCancel("Your guild is currently at war, you cannot leave it right now.");
+#endif
 		}
 		else
 			player->sendCancel("You cannot leave your guild because you are the leader of it, you have to pass the leadership to another member of your guild or disband the guild.");
@@ -785,9 +794,18 @@ bool Chat::talkToChannel(Player* player, SpeakClasses type, const std::string& t
 							{
 								if(player->getGuildLevel() > paramPlayer->getGuildLevel())
 								{
-									sprintf(buffer, "%s has been kicked from the guild by %s.", paramPlayer->getName().c_str(), player->getName().c_str());
-									channel->talk(player, SPEAK_CHANNEL_W, buffer);
-									paramPlayer->leaveGuild();
+#ifdef __WAR_SYSTEM__
+									if(!player->hasEnemy())
+									{
+#endif
+										sprintf(buffer, "%s has been kicked from the guild by %s.", paramPlayer->getName().c_str(), player->getName().c_str());
+										channel->talk(player, SPEAK_CHANNEL_W, buffer);
+										paramPlayer->leaveGuild();
+#ifdef __WAR_SYSTEM__
+									}
+									else
+										player->sendCancel("Your guild is currently at war, you cannot kick right now.");
+#endif
 								}
 								else
 									player->sendCancel("You may only kick players with a guild rank below your.");
