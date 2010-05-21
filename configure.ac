@@ -61,6 +61,7 @@ AC_ARG_ENABLE(luajit, [  --enable-luajit		enable luajit instead of lua],
 	[OPTIONAL_FLAGS="$OPTIONAL_FLAGS -D__LUAJIT__"]
 	luaJIT=yes
 )
+AC_SUBST(OPTIONAL_FLAGS)
 
 # check if we want a debug build
 debugBuild=no
