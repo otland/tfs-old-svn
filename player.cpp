@@ -3989,7 +3989,7 @@ Skulls_t Player::getSkullType(const Creature* creature) const
 
 		if((player == this || (skull != SKULL_NONE && player->getSkull() < SKULL_RED)) && player->hasAttacked(this)
 #ifdef __WAR_SYSTEM__
-			&& !player->isEnemy(this, true)
+			&& !player->isEnemy(this, false)
 #endif
 			)
 			return SKULL_YELLOW;
