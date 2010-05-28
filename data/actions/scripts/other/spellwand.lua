@@ -1,0 +1,20 @@
+local config = {
+	outfits = {"rat", "green frog", "chicken"}, -- possible outfits
+	duration = 45, -- duration of the outfit in seconds
+	breakChance = 1 -- a chance of losing the wand
+}
+
+function onUse(cid, item, fromPosition, itemEx, toPosition)
+	if(math.random(100) <= config.breakChance) then
+		doSummonCreature("Mad Sheep", toPosition)
+		doRemoveItem(item.uid, 1)
+		return TRUE
+	end
+
+	if(isPlayer(itemEx.uid)) then
+		doSetMonsterOutfit(itemEx.uid, config.outfits[math.random(#outfits)], config.duration * 1000)
+		doSendMagicEffect(toPosition, CONST_ME_MAGIC_BLUE)
+	end
+
+	return TRUE
+end

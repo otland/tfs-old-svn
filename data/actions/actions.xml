@@ -255,10 +255,11 @@
 	<action fromid="5086" toid="5088" event="script" value="other/constructionkits.lua"/>
 	<action fromid="6114" toid="6115" event="script" value="other/constructionkits.lua"/>
 	<action fromid="6372" toid="6373" event="script" value="other/constructionkits.lua"/>
+	<action itemid="7700" event="script" value="other/constructionkits.lua"/>
+	<action itemid="7503" event="script" value="other/constructionkits.lua"/>
 	<action fromid="7960" toid="7962" event="script" value="other/constructionkits.lua"/>
 	<action fromid="8692" toid="8693" event="script" value="other/constructionkits.lua"/>
-	<action itemid="7503" event="script" value="other/constructionkits.lua"/>
-	<action itemid="7700" event="script" value="other/constructionkits.lua"/>
+	<action itemid="9974" event="script" value="other/constructionkits.lua"/>
 
 	<!-- Bed construction kits -->
 	<action fromid="7904" toid="7907" event="script" value="other/furniturebeds.lua"/>
@@ -365,4 +366,7 @@
 	<action itemid="6578" event="script" value="other/partyhat.lua"/>
 	<action itemid="2785" event="script" value="other/blueberrybush.lua"/>
 	<action itemid="2579" event="script" value="other/trap.lua"/>
+	<action itemid="8110" event="script" value="other/present.lua"/>
+	<action itemid="7735" event="script" value="other/spellwand.lua"/>
+	<action itemid="7537" script="other/spideregg.lua" />
 </actions>

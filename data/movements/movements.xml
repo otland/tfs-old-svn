@@ -202,6 +202,9 @@
 	<movevent type="AddItem" itemid="1424" event="function" value="onAddField"/>
 	<movevent type="StepIn" itemid="1425" event="function" value="onStepInField"/>
 	<movevent type="AddItem" itemid="1425" event="function" value="onAddField"/>
+	
+	<!-- Others -->
+	<movevent type="StepIn" itemid="8072" event="script" value="yellowpillow.lua"/>
 
 	<!-- Fields -->
 	<movevent type="StepIn" itemid="1487" event="function" value="onStepInField"/>
