@@ -542,10 +542,11 @@ void otserv(StringVec, ServiceManager* services)
 	else
 		startupErrorMessage("Couldn't estabilish connection to SQL database!");
 
-	std::clog << ">> Loading items" << std::endl;
+	std::clog << ">> Loading items (OTB)" << std::endl;
 	if(Item::items.loadFromOtb(getFilePath(FILE_TYPE_OTHER, "items/items.otb")))
 		startupErrorMessage("Unable to load items (OTB)!");
 
+	std::clog << ">> Loading items (XML)" << std::endl;
 	if(!Item::items.loadFromXml())
 	{
 		std::clog << "Unable to load items (XML)! Continue? (y/N)" << std::endl;
@@ -553,6 +554,14 @@ void otserv(StringVec, ServiceManager* services)
 		if(buffer != 121 && buffer != 89)
 			startupErrorMessage("Unable to load items (XML)!");
 	}
+
+	std::clog << ">> Loading chat channels" << std::endl;
+	if(!g_chat.loadFromXml())
+		startupErrorMessage("Unable to load chat channels!");
+
+	std::clog << ">> Loading outfits" << std::endl;
+	if(!Outfits::getInstance()->loadFromXml())
+		startupErrorMessage("Unable to load outfits!");
 
 	std::clog << ">> Loading groups" << std::endl;
 	if(!Groups::getInstance()->loadFromXml())
@@ -566,14 +575,16 @@ void otserv(StringVec, ServiceManager* services)
 	if(!ScriptManager::getInstance()->loadSystem())
 		startupErrorMessage();
 
-	std::clog << ">> Loading chat channels" << std::endl;
-	if(!g_chat.loadFromXml())
-		startupErrorMessage("Unable to load chat channels!");
+	std::clog << ">> Loading mods..." << std::endl;
+	if(!ScriptManager::getInstance()->loadMods())
+		startupErrorMessage();
 
-	std::clog << ">> Loading outfits" << std::endl;
-	if(!Outfits::getInstance()->loadFromXml())
-		startupErrorMessage("Unable to load outfits!");
+	#ifdef __LOGIN_SERVER__
+	std::clog << ">> Loading game servers" << std::endl;
+	if(!GameServers::getInstance()->loadFromXml(true))
+		startupErrorMessage("Unable to load game servers!");
 
+	#endif
 	std::clog << ">> Loading experience stages" << std::endl;
 	if(!g_game.loadExperienceStages())
 		startupErrorMessage("Unable to load experience stages!");
@@ -587,20 +598,9 @@ void otserv(StringVec, ServiceManager* services)
 			startupErrorMessage("Unable to load monsters!");
 	}
 
-	std::clog << ">> Loading mods..." << std::endl;
-	if(!ScriptManager::getInstance()->loadMods())
-		startupErrorMessage();
-
 	std::clog << ">> Loading map and spawns..." << std::endl;
 	if(!g_game.loadMap(g_config.getString(ConfigManager::MAP_NAME)))
 		startupErrorMessage();
-
-	#ifdef __LOGIN_SERVER__
-	std::clog << ">> Loading game servers" << std::endl;
-	if(!GameServers::getInstance()->loadFromXml(true))
-		startupErrorMessage("Unable to load game servers!");
-
-	#endif
 
 	std::clog << ">> Checking world type... ";
 	std::string worldType = asLowerCaseString(g_config.getString(ConfigManager::WORLD_TYPE));
