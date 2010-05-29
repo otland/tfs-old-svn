@@ -52,7 +52,7 @@ extern Game g_game;
 extern Chat g_chat;
 extern TalkActions* g_talkActions;
 
-TalkActions::TalkActions() :
+TalkActions::TalkActions():
 m_interface("TalkAction Interface")
 {
 	m_interface.initState();

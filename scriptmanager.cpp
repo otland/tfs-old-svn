@@ -54,52 +54,58 @@ extern Chat g_chat;
 extern ConfigManager g_config;
 extern Monsters g_monsters;
 
-bool ScriptManager::loadSystem()
+ScriptingManager::ScriptingManager():
+modsLoaded(false)
 {
 	g_weapons = new Weapons();
+	g_spells = new Spells();
+	g_actions = new Actions();
+	g_talkActions = new TalkActions();
+	g_moveEvents = new MoveEvents();
+	g_creatureEvents = new CreatureEvents();
+	g_globalEvents = new GlobalEvents();
+}
+
+bool ScriptManager::loadSystem()
+{
+	g_weapons->loadDefaults();
+
 	if(!g_weapons->loadFromXml())
 	{
 		std::clog << "> ERROR: Unable to load Weapons!" << std::endl;
 		return false;
 	}
 
-	g_weapons->loadDefaults();
-	g_spells = new Spells();
 	if(!g_spells->loadFromXml())
 	{
 		std::clog << "> ERROR: Unable to load Spells!" << std::endl;
 		return false;
 	}
 
-	g_actions = new Actions();
 	if(!g_actions->loadFromXml())
 	{
 		std::clog << "> ERROR: Unable to load Actions!" << std::endl;
 		return false;
 	}
 
-	g_talkActions = new TalkActions();
 	if(!g_talkActions->loadFromXml())
 	{
 		std::clog << "> ERROR: Unable to load TalkActions!" << std::endl;
 		return false;
 	}
 
-	g_moveEvents = new MoveEvents();
 	if(!g_moveEvents->loadFromXml())
 	{
 		std::clog << "> ERROR: Unable to load MoveEvents!" << std::endl;
 		return false;
 	}
 
-	g_creatureEvents = new CreatureEvents();
 	if(!g_creatureEvents->loadFromXml())
 	{
 		std::clog << "> ERROR: Unable to load CreatureEvents!" << std::endl;
 		return false;
 	}
 
-	g_globalEvents = new GlobalEvents();
 	if(!g_globalEvents->loadFromXml())
 	{
 		std::clog << "> ERROR: Unable to load GlobalEvents!" << std::endl;
@@ -111,7 +117,7 @@ bool ScriptManager::loadSystem()
 
 bool ScriptManager::loadMods()
 {
-	boost::filesystem::path modsPath(getFilePath(FILE_TYPE_MOD, ""));
+	boost::filesystem::path modsPath(getFilePath(FILE_TYPE_MOD));
 	if(!boost::filesystem::exists(modsPath))
 	{
 		std::clog << "[Error - ScriptManager::loadMods] Couldn't locate main directory" << std::endl;

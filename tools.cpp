@@ -1665,7 +1665,7 @@ uint32_t adlerChecksum(uint8_t* data, size_t length)
 	return (uint32_t)(((uint16_t)digest[0] << 8 | digest[1]) << 16) | ((uint16_t)digest[2] << 8 | digest[3]);
 }
 
-std::string getFilePath(FileType_t filetype, std::string filename)
+std::string getFilePath(FileType_t type, std::string name/* = ""*/)
 {
 	#ifdef __FILESYSTEM_HIERARCHY_STANDARD__
 	std::string path = "/var/lib/tfs/";

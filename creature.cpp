@@ -71,6 +71,7 @@ Creature::Creature()
 	hasFollowPath = false;
 	removed = false;
 	eventWalk = 0;
+	cancelNextWalk = false;
 	forceUpdateFollowPath = false;
 	isMapLoaded = false;
 	isUpdatingPath = false;
@@ -195,7 +196,7 @@ void Creature::onThink(uint32_t interval)
 	if(isUpdatingPath)
 	{
 		isUpdatingPath = false;
-		getPathToFollowCreature();
+		goToFollowCreature();
 	}
 
 	onAttacking(interval);
@@ -233,12 +234,23 @@ void Creature::onWalk()
 	{
 		Direction dir;
 		uint32_t flags = FLAG_IGNOREFIELDDAMAGE;
-		if(getNextStep(dir, flags) && g_game.internalMoveCreature(this, dir, flags) != RET_NOERROR)
+		if(!getNextStep(dir, flags))
+		{
+			if(listWalkDir.empty())
+				onWalkComplete();
+
+			stopEventWalk();
+		}
+		else if(g_game.internalMoveCreature(this, dir, flags) != RET_NOERROR)
 			forceUpdateFollowPath = true;
 	}
 
-	if(listWalkDir.empty())
-		onWalkComplete();
+	if(cancelNextWalk)
+	{
+		cancelNextWalk = false;
+		listWalkDir.clear();
+		onWalkAborted();
+ 	}
 
 	if(eventWalk)
 	{
@@ -295,19 +307,25 @@ bool Creature::startAutoWalk(std::list<Direction>& listDir)
 	}
 
 	listWalkDir = listDir;
-	addEventWalk();
+	addEventWalk(listDir.size() > 1);
 	return true;
 }
 
-void Creature::addEventWalk()
+void Creature::addEventWalk(bool firstStep/* = false*/)
 {
-	if(eventWalk)
+	cancelNextWalk = false;
+	if(getSpeed() < 1 || eventWalk)
 		return;
 
-	int64_t ticks = getEventStepTicks();
-	if(ticks > 0)
-		eventWalk = Scheduler::getInstance().addEvent(createSchedulerTask(ticks,
-			boost::bind(&Game::checkCreatureWalk, &g_game, getID())));
+	int64_t ticks = getEventStepTicks(firstStep);
+	if(ticks < 1)
+		return;
+
+	if(ticks == 1)
+		g_game.checkCreatureWalk(getID());
+
+	eventWalk = Scheduler::getInstance().addEvent(createSchedulerTask(std::max((int64_t)SCHEDULER_MINTICKS, ticks),
+		boost::bind(&Game::checkCreatureWalk, &g_game, id)));
 }
 
 void Creature::stopEventWalk()
@@ -317,11 +335,6 @@ void Creature::stopEventWalk()
 
 	Scheduler::getInstance().stopEvent(eventWalk);
 	eventWalk = 0;
-	if(!listWalkDir.empty())
-	{
-		listWalkDir.clear();
-		onWalkAborted();
-	}
 }
 
 void Creature::internalCreatureDisappear(const Creature* creature, bool isLogout)
@@ -341,18 +354,18 @@ void Creature::internalCreatureDisappear(const Creature* creature, bool isLogout
 
 void Creature::updateMapCache()
 {
-	const Position& myPos = getPosition();
-	Position pos(0, 0, myPos.z);
+	const Position& pos = getPosition();
+	Position dest(0, 0, pos.z);
 
 	Tile* tile = NULL;
 	for(int32_t y = -((mapWalkHeight - 1) / 2); y <= ((mapWalkHeight - 1) / 2); ++y)
 	{
 		for(int32_t x = -((mapWalkWidth - 1) / 2); x <= ((mapWalkWidth - 1) / 2); ++x)
 		{
-			pos.x = myPos.x + x;
-			pos.y = myPos.y + y;
-			if((tile = g_game.getTile(pos.x, pos.y, myPos.z)))
-				updateTileCache(tile, pos);
+			dest.x = pos.x + x;
+			dest.y = pos.y + y;
+			if((tile = g_game.getTile(dest)))
+				updateTileCache(tile, dest);
 		}
 	}
 }
@@ -505,8 +518,8 @@ void Creature::onCreatureMove(const Creature* creature, const Tile* newTile, con
 		setLastPosition(oldPos);
 		if(!teleport)
 		{
-			if(oldPos.z != newPos.z || (std::abs(newPos.x - oldPos.x) >= 1 && std::abs(newPos.y - oldPos.y) >= 1))
-				lastStepCost = 2;
+			if(std::abs(newPos.x - oldPos.x) >= 1 && std::abs(newPos.y - oldPos.y) >= 1)
+				lastStepCost = 3;
 		}
 		else
 			stopEventWalk();
@@ -1019,7 +1032,7 @@ void Creature::getPathSearchParams(const Creature*, FindPathParams& fpp) const
 	fpp.minTargetDist = fpp.maxTargetDist = 1;
 }
 
-void Creature::getPathToFollowCreature()
+void Creature::goToFollowCreature()
 {
 	if(followCreature)
 	{
@@ -1527,13 +1540,16 @@ int32_t Creature::getStepDuration() const
 	return ((1000 * Item::items[tile->ground->getID()].speed) / stepSpeed) * lastStepCost;
 }
 
-int64_t Creature::getEventStepTicks() const
+int64_t Creature::getEventStepTicks(bool onlyDelay/* = false*/) const
 {
 	int64_t ret = getWalkDelay();
 	if(ret > 0)
 		return ret;
 
-	return getStepDuration();
+	if(!onlyDelay)
+		return getStepDuration();
+
+	return 1;
 }
 
 void Creature::getCreatureLight(LightInfo& light) const

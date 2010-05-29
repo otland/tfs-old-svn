@@ -3232,19 +3232,17 @@ bool Player::setFollowCreature(Creature* creature, bool fullPathSearch /*= false
 			deny = true;
 	}
 
-	if(deny || !Creature::setFollowCreature(creature, fullPathSearch))
-	{
-		setFollowCreature(NULL);
-		setAttackedCreature(NULL);
-		if(!deny)
-			sendCancelMessage(RET_THEREISNOWAY);
+	if(!deny && Creature::setFollowCreature(creature, fullPathSearch))
+		return true;
 
-		sendCancelTarget();
-		stopEventWalk();
-		return false;
-	}
+	setFollowCreature(NULL);
+	setAttackedCreature(NULL);
+	if(!deny)
+		sendCancelMessage(RET_THEREISNOWAY);
 
-	return true;
+	sendCancelTarget();
+	cancelNextWalk = true;
+	return false;
 }
 
 bool Player::setAttackedCreature(Creature* creature)
@@ -3267,6 +3265,12 @@ bool Player::setAttackedCreature(Creature* creature)
 		Dispatcher::getInstance().addTask(createTask(boost::bind(&Game::checkCreatureAttack, &g_game, getID())));
 
 	return true;
+}
+
+void Player::goToFollowCreature()
+{
+	if(!walkTask)
+		Creature::goToFollowCreature();
 }
 
 void Player::getPathSearchParams(const Creature* creature, FindPathParams& fpp) const
@@ -3342,7 +3346,7 @@ double Player::getGainedExperience(Creature* attacker) const
 void Player::onFollowCreature(const Creature* creature)
 {
 	if(!creature)
-		stopEventWalk();
+		cancelNextWalk = true;
 }
 
 void Player::setChaseMode(chaseMode_t mode)
@@ -3361,7 +3365,7 @@ void Player::setChaseMode(chaseMode_t mode)
 	else if(attackedCreature)
 	{
 		setFollowCreature(NULL);
-		stopEventWalk();
+		cancelNextWalk = true;
 	}
 }
 
@@ -3378,14 +3382,6 @@ void Player::onWalkComplete()
 
 	walkTaskEvent = Scheduler::getInstance().addEvent(walkTask);
 	walkTask = NULL;
-}
-
-void Player::stopWalk()
-{
-	if(listWalkDir.empty())
-		return;
-
-	stopEventWalk();
 }
 
 void Player::getCreatureLight(LightInfo& light) const

@@ -136,5 +136,5 @@ bool parseIntegerVec(std::string str, IntegerVec& intVector);
 bool fileExists(const char* filename);
 uint32_t adlerChecksum(uint8_t *data, size_t length);
 
-std::string getFilePath(FileType_t filetype, std::string filename);
+std::string getFilePath(FileType_t type, std::string name = "");
 #endif

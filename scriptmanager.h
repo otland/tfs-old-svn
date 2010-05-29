@@ -35,12 +35,14 @@ typedef std::map<std::string, LibBlock> LibMap;
 class ScriptManager
 {
 	public:
-		virtual ~ScriptManager() {clearMods();}
 		static ScriptManager* getInstance()
 		{
 			static ScriptManager instance;
 			return &instance;
 		}
+
+		ScriptManager();
+		virtual ~ScriptManager() {clearMods();}
 
 		bool loadSystem();
 		bool loadMods();
@@ -58,7 +60,6 @@ class ScriptManager
 		bool loadFromXml(const std::string& file, bool& enabled);
 
 	private:
-		ScriptManager(): modsLoaded(false) {}
 		bool modsLoaded;
 
 		LibMap libMap;

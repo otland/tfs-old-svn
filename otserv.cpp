@@ -122,7 +122,7 @@ bool argumentsHandler(StringVec args)
 		{
 			std::clog << SERVER_NAME << ", version " << SERVER_VERSION << " (" << SERVER_CODENAME << ")\n"
 			"Compiled with " << BOOST_COMPILER << " at " << __DATE__ << ", " << __TIME__ << ".\n"
-			"A server developed by Elf, Talaturen, KaczooH, Stian, Chojrak, Sentielo and Kornholijo.\n"
+			"A server developed by Elf, Talaturen, KaczooH, Stian and Kornholijo.\n"
 			"Visit our forum for updates, support and resources: http://otland.net.\n";
 			return false;
 		}
@@ -152,6 +152,8 @@ bool argumentsHandler(StringVec args)
 			g_config.setString(ConfigManager::OUTPUT_LOG, tmp[1]);
 		else if(tmp[0] == "--closed")
 			g_config.setBool(ConfigManager::START_CLOSED, true);
+		else if(tmp[0] == "--no-script")
+			g_config.setBool(ConfigManager::SCRIPT_SYSTEM, false);
 	}
 
 	return true;
@@ -504,7 +506,7 @@ void otserv(StringVec, ServiceManager* services)
 		xmlFreeDoc(doc);
 	}
 	else
-		std::clog << "failed - could not parse remote file (are you connected to the internet?)" << std::endl;
+		std::clog << "failed - could not parse remote file (are you connected to any network?)" << std::endl;
 
 	std::clog << ">> Loading RSA key" << std::endl;
 	const char* p("14299623962416399520070177382898895550795403345466153217470516082934737582776038882967213386204600674145392845853859217990626450972452084065728686565928113");
@@ -532,7 +534,7 @@ void otserv(StringVec, ServiceManager* services)
 			while(version < VERSION_DATABASE);
 		}
 		else
-			startupErrorMessage("The database you have specified in config.lua is empty, please import schemas/<dbengine>.sql to the database.");
+			startupErrorMessage("The database you have specified in config.lua is empty, please import schemas/<engine>.sql to the database.");
 
 		DatabaseManager::getInstance()->checkTriggers();
 		DatabaseManager::getInstance()->checkEncryption();
@@ -571,9 +573,14 @@ void otserv(StringVec, ServiceManager* services)
 	if(!Vocations::getInstance()->loadFromXml())
 		startupErrorMessage("Unable to load vocations!");
 
-	std::clog << ">> Loading script systems" << std::endl;
-	if(!ScriptManager::getInstance()->loadSystem())
-		startupErrorMessage();
+	if(g_config.getBool(ConfigManager::SCRIPT_SYSTEM))
+	{
+		std::clog << ">> Loading script systems" << std::endl;
+		if(!ScriptManager::getInstance()->loadSystem())
+			startupErrorMessage();
+	}
+	else
+		ScriptManager::getInstance();
 
 	std::clog << ">> Loading mods..." << std::endl;
 	if(!ScriptManager::getInstance()->loadMods())

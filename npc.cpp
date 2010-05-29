@@ -1187,14 +1187,17 @@ void Npc::onThink(uint32_t interval)
 	if((uint32_t)(MAX_RAND_RANGE / idleInterval) >= (uint32_t)random_range(0, MAX_RAND_RANGE))
 		idleResponse = true;
 
+	if(getTimeSinceLastMove() >= walkTicks)
+		addEventWalk();
+
 	isIdle = true;
 	for(StateList::iterator it = stateList.begin(); it != stateList.end();)
 	{
 		NpcState* npcState = *it;
-		Player* player = g_game.getPlayerByID(npcState->respondToCreature);
-
 		const NpcResponse* response = NULL;
 		bool closeConversation = false, idleTimeout = false;
+
+		Player* player = g_game.getPlayerByID(npcState->respondToCreature);
 		if(!npcState->isQueued)
 		{
 			if(!npcState->prevInteraction)
@@ -1349,7 +1352,7 @@ void Npc::executeResponse(Player* player, NpcState* npcState, const NpcResponse*
 
 				case ACTION_SETIDLE:
 				{
-					npcState->isIdle = (it->intValue == 1);
+					npcState->isIdle = it->intValue;
 					break;
 				}
 

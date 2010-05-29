@@ -201,6 +201,7 @@ class ConfigManager
 		enum bool_config_t
 		{
 			GLOBALSAVE_ENABLED = 0,
+			SCRIPT_SYSTEM,
 			START_CLOSED,
 			START_CHOOSEVOC,
 			ON_OR_OFF_CHARLIST,
