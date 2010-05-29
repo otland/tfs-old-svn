@@ -68,7 +68,7 @@ class ServicePort : boost::noncopyable, public boost::enable_shared_from_this<Se
 		virtual ~ServicePort() {close();}
 
 		bool add(Service_ptr);
-		static void onOpen(boost::weak_ptr<ServicePort> weakService, IPAddress ips, uint16_t port);
+		static void service(boost::weak_ptr<ServicePort> weakService, IPAddress ips, uint16_t port);
 
 		void open(IPAddressList ips, uint16_t port);
 		void close();
