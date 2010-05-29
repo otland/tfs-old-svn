@@ -35,74 +35,78 @@
 #include <boost/foreach.hpp>
 #include <boost/shared_ptr.hpp>
 
-#include <stddef.h>
-#include <stdlib.h>
-#include <stdint.h>
-
-#include <time.h>
-#include <assert.h>
-#ifdef WINDOWS
-#include <windows.h>
-#include <sys/timeb.h>
-
-#ifndef access
-#define access _access
-#endif
-
-#ifndef timeb
-#define timeb _timeb
-#endif
-
-#ifndef ftime
-#define ftime _ftime
-#endif
-
-#ifndef EWOULDBLOCK
-#define EWOULDBLOCK WSAEWOULDBLOCK
-#endif
-
-#ifndef errno
-#define errno WSAGetLastError()
-#endif
-
-#ifndef OTSYS_SLEEP
-#define OTSYS_SLEEP(n) Sleep(n)
-#endif
+#include <cstddef>
+#include <cstdlib>
+#ifdef __GXX_EXPERIMENTAL_CXX0X__
+	#include <cstdint>
 #else
-#include <sys/timeb.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-
-#include <unistd.h>
-#include <netdb.h>
-#include <errno.h>
-
-#include <arpa/inet.h>
-#include <netinet/in.h>
-
-#ifndef SOCKET
-#define SOCKET int32_t
+	#include <stdint.h>
 #endif
 
-#ifndef closesocket
-#define closesocket close
-#endif
+#include <ctime>
+#include <cassert>
+#ifdef WINDOWS
+	#include <windows.h>
+	#include <sys/timeb.h>
 
-#ifndef SOCKADDR
-#define SOCKADDR sockaddr
-#endif
+	#ifndef access
+	#define access _access
+	#endif
 
-#ifndef SOCKET_ERROR
-#define SOCKET_ERROR -1
-#endif
+	#ifndef timeb
+	#define timeb _timeb
+	#endif
 
-inline void OTSYS_SLEEP(int32_t n)
-{
-	timespec tv;
-	tv.tv_sec  = n / 1000;
-	tv.tv_nsec = (n % 1000) * 1000000;
-	nanosleep(&tv, NULL);
-}
+	#ifndef ftime
+	#define ftime _ftime
+	#endif
+
+	#ifndef EWOULDBLOCK
+	#define EWOULDBLOCK WSAEWOULDBLOCK
+	#endif
+
+	#ifndef errno
+	#define errno WSAGetLastError()
+	#endif
+
+	#ifndef OTSYS_SLEEP
+		#define OTSYS_SLEEP(n) Sleep(n)
+	#endif
+#else
+	#include <sys/timeb.h>
+	#include <sys/types.h>
+	#include <sys/socket.h>
+
+	#include <unistd.h>
+	#include <netdb.h>
+	#include <errno.h>
+
+	#include <arpa/inet.h>
+	#include <netinet/in.h>
+
+	#ifndef SOCKET
+	#define SOCKET int32_t
+	#endif
+
+	#ifndef closesocket
+	#define closesocket close
+	#endif
+
+	#ifndef SOCKADDR
+	#define SOCKADDR sockaddr
+	#endif
+
+	#ifndef SOCKET_ERROR
+	#define SOCKET_ERROR -1
+	#endif
+
+	inline void OTSYS_SLEEP(int32_t n)
+	{
+		timespec tv;
+		tv.tv_sec  = n / 1000;
+		tv.tv_nsec = (n % 1000) * 1000000;
+		nanosleep(&tv, NULL);
+	}
 #endif
 
 inline int64_t OTSYS_TIME()
@@ -112,14 +116,6 @@ inline int64_t OTSYS_TIME()
 	return ((int64_t)t.millitm) + ((int64_t)t.time) * 1000;
 }
 
-#ifdef __GNUC__
-	#define __OTSERV_FUNCTION__ __PRETTY_FUNCTION__
-#elif defined(_MSC_VER)
-	#define __OTSERV_FUNCTION__ __FUNCDNAME__
-#endif
-
 #define foreach BOOST_FOREACH
 #define reverse_foreach BOOST_REVERSE_FOREACH
-
-typedef std::vector<std::pair<uint32_t, uint32_t> > IpList;
 #endif

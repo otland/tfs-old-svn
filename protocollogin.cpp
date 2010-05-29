@@ -33,7 +33,7 @@
 extern ConfigManager g_config;
 extern Game g_game;
 
-extern IpList serverIps;
+extern std::vector<std::pair<uint32_t, uint32_t> > serverIps;
 
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
 uint32_t ProtocolLogin::protocolLoginCount = 0;

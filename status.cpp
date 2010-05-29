@@ -124,9 +124,9 @@ std::string Status::getStatusString(bool sendPlayers) const
 	xmlSetProp(p, (const xmlChar*)"port", (const xmlChar*)buffer);
 	xmlSetProp(p, (const xmlChar*)"location", (const xmlChar*)g_config.getString(ConfigManager::LOCATION).c_str());
 	xmlSetProp(p, (const xmlChar*)"url", (const xmlChar*)g_config.getString(ConfigManager::URL).c_str());
-	xmlSetProp(p, (const xmlChar*)"server", (const xmlChar*)STATUS_SERVER_NAME);
-	xmlSetProp(p, (const xmlChar*)"version", (const xmlChar*)STATUS_SERVER_VERSION);
-	xmlSetProp(p, (const xmlChar*)"client", (const xmlChar*)STATUS_SERVER_PROTOCOL);
+	xmlSetProp(p, (const xmlChar*)"server", (const xmlChar*)SERVER_NAME);
+	xmlSetProp(p, (const xmlChar*)"version", (const xmlChar*)SERVER_VERSION);
+	xmlSetProp(p, (const xmlChar*)"client", (const xmlChar*)SERVER_PROTOCOL);
 	xmlAddChild(root, p);
 
 	p = xmlNewNode(NULL,(const xmlChar*)"owner");
@@ -171,7 +171,7 @@ std::string Status::getStatusString(bool sendPlayers) const
 	xmlAddChild(root, p);
 
 	p = xmlNewNode(NULL,(const xmlChar*)"map");
-	xmlSetProp(p, (const xmlChar*)"name", (const xmlChar*)m_mapName.c_str());
+	xmlSetProp(p, (const xmlChar*)"name", (const xmlChar*)g_config.getString(ConfigManager::MAP_NAME).c_str());
 	xmlSetProp(p, (const xmlChar*)"author", (const xmlChar*)g_config.getString(ConfigManager::MAP_AUTHOR).c_str());
 
 	uint32_t mapWidth, mapHeight;
@@ -241,7 +241,7 @@ void Status::getInfo(uint32_t requestedInfo, OutputMessage_ptr output, NetworkMe
 	if(requestedInfo & REQUEST_SERVER_MAP_INFO)
 	{
 		output->put<char>(0x30);
-		output->putString(m_mapName.c_str());
+		output->putString(g_config.getString(ConfigManager::MAP_NAME).c_str());
 		output->putString(g_config.getString(ConfigManager::MAP_AUTHOR).c_str());
 
 		uint32_t mapWidth, mapHeight;
@@ -283,8 +283,8 @@ void Status::getInfo(uint32_t requestedInfo, OutputMessage_ptr output, NetworkMe
 	if(requestedInfo & REQUEST_SERVER_SOFTWARE_INFO)
 	{
 		output->put<char>(0x23);
-		output->putString(STATUS_SERVER_NAME);
-		output->putString(STATUS_SERVER_VERSION);
-		output->putString(STATUS_SERVER_PROTOCOL);
+		output->putString(SERVER_NAME);
+		output->putString(SERVER_VERSION);
+		output->putString(SERVER_PROTOCOL);
 	}
 }

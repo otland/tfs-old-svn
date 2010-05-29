@@ -30,16 +30,6 @@
 	Deprecate several hardcoded systems (guild management, etc) and rescript them in Lua
 		Assigned to: ?
 
-
-	Maybe make RSA use Crypto++ (no data about the speed)
-		Assigned to: Stian ("thestian")
-		[
-			Seems to give some diffrent data, maybe signature or something?
-			Put to on-hold as the implantation in TFS ain't that bad
-
-			What exactly? Also, why we didn't try that OpenSSL solution?
-		]
-
-	Change from mysql to mysql++ (more object oriented, fits better into C++ projects)
+	Add mysql++ support as default DB driver (more object oriented, fits better into C++ projects)
 		Assigned to: Elf
 ]

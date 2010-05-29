@@ -279,18 +279,6 @@ bool booleanString(std::string source)
 	return (source == "yes" || source == "true" || atoi(source.c_str()) > 0);
 }
 
-bool readXMLInteger(xmlNodePtr node, const char* tag, int& value)
-{
-	char* nodeValue = (char*)xmlGetProp(node, (xmlChar*)tag);
-	if(!nodeValue)
-		return false;
-
-	value = atoi(nodeValue);
-	xmlFree(nodeValue);
-	return true;
-}
-
-#if defined WINDOWS && !defined __GNUC__
 bool readXMLInteger(xmlNodePtr node, const char* tag, int32_t& value)
 {
 	char* nodeValue = (char*)xmlGetProp(node, (xmlChar*)tag);
@@ -301,7 +289,6 @@ bool readXMLInteger(xmlNodePtr node, const char* tag, int32_t& value)
 	xmlFree(nodeValue);
 	return true;
 }
-#endif
 
 bool readXMLInteger64(xmlNodePtr node, const char* tag, int64_t& value)
 {

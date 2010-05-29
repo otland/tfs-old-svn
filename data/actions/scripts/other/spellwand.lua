@@ -5,16 +5,16 @@ local config = {
 }
 
 function onUse(cid, item, fromPosition, itemEx, toPosition)
-	if(math.random(100) <= config.breakChance) then
+	if(math.random(1, 100) <= config.breakChance) then
 		doSummonCreature("Mad Sheep", toPosition)
 		doRemoveItem(item.uid, 1)
-		return TRUE
+		return true
 	end
 
 	if(isPlayer(itemEx.uid)) then
-		doSetMonsterOutfit(itemEx.uid, config.outfits[math.random(#outfits)], config.duration * 1000)
+		doSetMonsterOutfit(itemEx.uid, config.outfits[math.random(1, table.maxn(outfits))], config.duration * 1000)
 		doSendMagicEffect(toPosition, CONST_ME_MAGIC_BLUE)
 	end
 
-	return TRUE
+	return true
 end

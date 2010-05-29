@@ -55,6 +55,13 @@ AC_ARG_ENABLE(root-permission, [  --enable-root-permission	enable running on roo
 	rootPermission=yes
 )
 
+# check do we want to be a login server for multiworld
+loginServer=no
+AC_ARG_ENABLE(login-server, [  --enable-login-server  enable running in a login server mode],
+	[OPTIONAL_FLAGS="$OPTIONAL_FLAGS -D__LOGIN_SERVER__"]
+	loginServer=yes
+)
+
 # check if we want to use luajit instead of lua
 luaJIT=no
 AC_ARG_ENABLE(luajit, [  --enable-luajit		enable luajit instead of lua],
@@ -244,6 +251,7 @@ echo Server diagnostics.......... : $serverDiag
 echo Login server mode........... : $loginServer
 echo OTAdmin protocol............ : $otAdmin
 echo Root run permission......... : $rootPermission
+echo Login server mode........... : $loginServer
 echo Home-directory configuration : $homedirConf
 echo OTServ custom allocator..... : $otservAllocator
 echo Debug build................. : $debugBuild

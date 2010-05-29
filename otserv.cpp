@@ -85,7 +85,7 @@ Npcs g_npcs;
 RSA g_RSA;
 Chat g_chat;
 
-IpList serverIps;
+std::vector<std::pair<uint32_t, uint32_t> > serverIps;
 boost::mutex g_loaderLock;
 boost::condition_variable g_loaderSignal;
 boost::unique_lock<boost::mutex> g_loaderUniqueLock(g_loaderLock);
@@ -120,7 +120,7 @@ bool argumentsHandler(StringVec args)
 
 		if((*it) == "--version")
 		{
-			std::clog << STATUS_SERVER_NAME << ", version " << STATUS_SERVER_VERSION << " (" << STATUS_SERVER_CODENAME << ")\n"
+			std::clog << SERVER_NAME << ", version " << SERVER_VERSION << " (" << SERVER_CODENAME << ")\n"
 			"Compiled with " << BOOST_COMPILER << " at " << __DATE__ << ", " << __TIME__ << ".\n"
 			"A server developed by Elf, Talaturen, KaczooH, Stian, Chojrak, Sentielo and Kornholijo.\n"
 			"Visit our forum for updates, support and resources: http://otland.net.\n";
@@ -290,14 +290,14 @@ void otserv(StringVec, ServiceManager* services)
 {
 	srand((uint32_t)OTSYS_TIME());
 #if defined(WINDOWS)
-	SetConsoleTitle(STATUS_SERVER_NAME);
+	SetConsoleTitle(SERVER_NAME);
 
 #endif
 	g_game.setGameState(GAMESTATE_STARTUP);
 #if !defined(WINDOWS) && !defined(__ROOT_PERMISSION__)
 	if(!getuid() || !geteuid())
 	{
-		std::clog << "> WARNING: " << STATUS_SERVER_NAME << " has been executed as super user! It is "
+		std::clog << "> WARNING: " << SERVER_NAME << " has been executed as super user! It is "
 			<< "recommended to run as a normal user." << std::endl << "Continue? (y/N)" << std::endl;
 		char buffer = getchar();
 		if(buffer != 121 && buffer != 89)
@@ -305,7 +305,7 @@ void otserv(StringVec, ServiceManager* services)
 	}
 #endif
 
-	std::clog << STATUS_SERVER_NAME << ", version " << STATUS_SERVER_VERSION << " (" << STATUS_SERVER_CODENAME << ")" << std::endl
+	std::clog << SERVER_NAME << ", version " << SERVER_VERSION << " (" << SERVER_CODENAME << ")" << std::endl
 		<< "Compiled with " << BOOST_COMPILER << " at " << __DATE__ << ", " << __TIME__ << "." << std::endl
 		<< "A server developed by Elf, Talaturen, KaczooH, Stian and Kornholijo." << std::endl
 		<< "Visit our forum for updates, support and resources: http://otland.net." << std::endl << std::endl;
@@ -457,7 +457,7 @@ void otserv(StringVec, ServiceManager* services)
 				int32_t patch, build, timestamp;
 
 				bool tmp = false;
-				if(readXMLString(p, "version", version) && version != STATUS_SERVER_VERSION)
+				if(readXMLString(p, "version", version) && version != SERVER_VERSION)
 					tmp = true;
 
 				if(readXMLInteger(p, "patch", patch) && patch > VERSION_PATCH)
@@ -478,7 +478,7 @@ void otserv(StringVec, ServiceManager* services)
 						std::clog << "outdated, please consider upgrading!";
 
 					std::clog << std::endl << "> Current version information - version: "
-						<< STATUS_SERVER_VERSION << ", patch: " << VERSION_PATCH
+						<< SERVER_VERSION << ", patch: " << VERSION_PATCH
 						<< ", build: " << VERSION_BUILD << ", timestamp: " << VERSION_TIMESTAMP
 						<< "." << std::endl << "> Latest version information - version: "
 						<< version << ", patch: " << patch << ", build: " << build
@@ -625,44 +625,79 @@ void otserv(StringVec, ServiceManager* services)
 		startupErrorMessage("Unknown world type: " + g_config.getString(ConfigManager::WORLD_TYPE));
 	}
 
-	std::clog << ">> Initializing game state modules and registering services..." << std::endl;
+	std::clog << ">> Initializing game state and binding services..." << std::endl;
 	g_game.setGameState(GAMESTATE_INIT);
+	IPAddressList ipList;
 
 	std::string ip = g_config.getString(ConfigManager::IP);
-	std::clog << "> Global address: " << ip << std::endl;
-	serverIps.push_back(std::make_pair(LOCALHOST, 0xFFFFFFFF));
+	if(asLowerCaseString(ip) == "auto")
+	{
+		// TODO: automatic shit
+	}
+
+	IPAddress m_ip;
+	if(ip.size())
+	{
+		std::clog << "> Global IP address: ";
+		uint32_t resolvedIp = inet_addr(ip.c_str());
+		if(resolvedIp == INADDR_NONE)
+		{
+			hostent* host = gethostbyname(ip.c_str());
+			if(!host)
+			{
+				std::clog << "..." << std::endl;
+				startupErrorMessage("Cannot resolve " + ip + "!");
+			}
+
+			resolvedIp = *(uint32_t*)host->h_addr;
+		}
+
+		serverIps.push_back(std::make_pair(resolvedIp, 0));
+		m_ip = boost::asio::ip::address_v4(swap_uint32(resolvedIp));
+		ipList.push_back(m_ip);
+		std::clog << m_ip.to_string() << std::endl;
+	}
+
+	ipList.push_back(boost::asio::ip::address_v4(INADDR_LOOPBACK));
+	bool owned = false;
 
 	char hostName[128];
-	hostent* host = NULL;
-	if(!gethostname(hostName, 128) && (host = gethostbyname(hostName)))
+	if(!gethostname(hostName, 128))
 	{
-		uint8_t** address = (uint8_t**)host->h_addr_list;
-		while(address[0] != NULL)
+		if(hostent* host = gethostbyname(hostName))
 		{
-			serverIps.push_back(std::make_pair(*(uint32_t*)(*address), 0x0000FFFF));
-			address++;
+			std::clog << "> Local IP address(es): ";
+			for(uint8_t** addr = (uint8_t**)host->h_addr_list; addr[0]; addr++)
+			{
+				std::clog << (int32_t)(addr[0][0]) << "." << (int32_t)(addr[0][1]) << "."
+					<< (int32_t)(addr[0][2]) << "." << (int32_t)(addr[0][3]) << "\t";
+
+				ipList.push_back(boost::asio::ip::address_v4(*(uint32_t*)(*addr)));
+				if(ipList.back() == m_ip)
+					owned = true; // fuck yeah
+
+				serverIps.insert(std::make_pair(*(uint32_t*)(*addr), 0x0000FFFF));
+				addr++;
+			}
+
+			std::clog << std::endl;
 		}
 	}
 
-	uint32_t resolvedIp = inet_addr(ip.c_str());
-	if(resolvedIp == INADDR_NONE)
+	serverIps.insert(std::make_pair(LOCALHOST, 0xFFFFFFFF));
+	if(ip.size() && !owned)
 	{
-		if((host = gethostbyname(ip.c_str())))
-			resolvedIp = *(uint32_t*)host->h_addr;
-		else
-			startupErrorMessage("Cannot resolve " + ip + "!");
+		ipList.clear();
+		ipList.push_back(boost::asio::ip::address_v4(INADDR_ANY));
 	}
 
-	serverIps.push_back(std::make_pair(resolvedIp, 0));
-	Status::getInstance()->setMapName(g_config.getString(ConfigManager::MAP_NAME));
-
-	services->add<ProtocolStatus>(g_config.getNumber(ConfigManager::STATUS_PORT));
-	services->add<ProtocolManager>(g_config.getNumber(ConfigManager::MANAGER_PORT));
+	services->add<ProtocolStatus>(g_config.getNumber(ConfigManager::STATUS_PORT), ipList);
+	services->add<ProtocolManager>(g_config.getNumber(ConfigManager::MANAGER_PORT), ipList);
 	#ifdef __OTADMIN__
-	services->add<ProtocolAdmin>(g_config.getNumber(ConfigManager::ADMIN_PORT));
+	services->add<ProtocolAdmin>(g_config.getNumber(ConfigManager::ADMIN_PORT), ipList);
 	#endif
 
-	//services->add<ProtocolHTTP>(8080);
+	//services->add<ProtocolHTTP>(8080, ipList);
 	if(
 #ifdef __LOGIN_SERVER__
 	true
@@ -671,19 +706,19 @@ void otserv(StringVec, ServiceManager* services)
 #endif
 	)
 	{
-		services->add<ProtocolLogin>(g_config.getNumber(ConfigManager::LOGIN_PORT));
-		services->add<ProtocolOldLogin>(g_config.getNumber(ConfigManager::LOGIN_PORT));
+		services->add<ProtocolLogin>(g_config.getNumber(ConfigManager::LOGIN_PORT), ipList);
+		services->add<ProtocolOldLogin>(g_config.getNumber(ConfigManager::LOGIN_PORT), ipList);
 	}
 
-	services->add<ProtocolGame>(g_config.getNumber(ConfigManager::GAME_PORT));
-	services->add<ProtocolOldGame>(g_config.getNumber(ConfigManager::LOGIN_PORT));
-	std::clog << "> Local ports: ";
+	services->add<ProtocolGame>(g_config.getNumber(ConfigManager::GAME_PORT), ipList);
+	services->add<ProtocolOldGame>(g_config.getNumber(ConfigManager::LOGIN_PORT), ipList);
+	std::clog << "> Bound ports: ";
 
 	std::list<uint16_t> ports = services->getPorts();
 	for(std::list<uint16_t>::iterator it = ports.begin(); it != ports.end(); ++it)
 		std::clog << (*it) << "\t";
 
-	std::clog << std::endl << ">> All modules were loaded, server is starting up..." << std::endl;
+	std::clog << std::endl << ">> Everything smells good, server is starting up..." << std::endl;
 	g_game.setGameState(g_config.getBool(ConfigManager::START_CLOSED) ? GAMESTATE_CLOSED : GAMESTATE_NORMAL);
 	g_game.start(services);
 	g_loaderSignal.notify_all();

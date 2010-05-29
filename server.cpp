@@ -23,6 +23,7 @@
 
 #include "game.h"
 #include "configmanager.h"
+#include "tools.h"
 
 extern Game g_game;
 extern ConfigManager g_config;
@@ -41,79 +42,84 @@ bool ServicePort::add(Service_ptr newService)
 	return true;
 }
 
-void ServicePort::onOpen(boost::weak_ptr<ServicePort> weakService, uint16_t port)
+void ServicePort::onOpen(boost::weak_ptr<ServicePort> weakServicee, IPAddress ip, uint16_t port)
 {
 	if(weakService.expired())
 		return;
 
-	if(ServicePort_ptr service = weakService.lock())
-	{
-		#ifdef __DEBUG_NET_DETAIL__
-		std::clog << "ServicePort::onOpen" << std::endl;
-		#endif
-		service->open(port);
-	}
+	ServicePort_ptr service = weakService.lock();
+	if(!service)
+		return;
+
+	IPAddressList ips;
+	ips.push_back(ip);
+	service->open(ips, port);
 }
 
-void ServicePort::open(uint16_t port)
+void ServicePort::open(IPAddressList ips, uint16_t port)
 {
 	m_serverPort = port;
-	m_pendingStart = false;
-	try
+	bool error = false;
+	for(IPAddressList::iterator it = ips.begin(); it != ips.end(); ++it)
 	{
-		if(g_config.getBool(ConfigManager::BIND_IP_ONLY))
-			m_acceptor = new boost::asio::ip::tcp::acceptor(m_io_service, boost::asio::ip::tcp::endpoint(
-				boost::asio::ip::address(boost::asio::ip::address_v4::from_string(
-				g_config.getString(ConfigManager::IP))), m_serverPort));
-		else
-			m_acceptor = new boost::asio::ip::tcp::acceptor(m_io_service, boost::asio::ip::tcp::endpoint(
-				boost::asio::ip::address(boost::asio::ip::address_v4(INADDR_ANY)), m_serverPort));
-
-		accept();
-	}
-	catch(boost::system::system_error& e)
-	{
-		if(m_logError)
+		try
 		{
-			LOG_MESSAGE(LOGTYPE_ERROR, e.what(), "NETWORK")
-			m_logError = false;
-		}
+			Acceptor_ptr tmp(new boost::asio::ip::tcp::acceptor(m_io_service,
+				boost::asio::ip::tcp::endpoint(*it, m_serverPort)));
 
-		m_pendingStart = true;
+			accept(tmp);
+			m_acceptors.push_back(tmp);
+		}
+		catch(boost::system::system_error& e)
+		{
+			if(m_logError)
+			{
+				if(!error)
+					error = true;
+
+				LOG_MESSAGE(LOGTYPE_WARNING, e.what(), "NETWORK")
+			}
+		}
+	}
+
+	if(error)
+		m_logError = false;
+
+	if(!m_acceptors.size())
 		Scheduler::getInstance().addEvent(createSchedulerTask(5000, boost::bind(
 			&ServicePort::onOpen, boost::weak_ptr<ServicePort>(shared_from_this()), m_serverPort)));
-	}
+	else
+		m_pendingStart = false;
 }
 
 void ServicePort::close()
 {
-	if(!m_acceptor)
+	if(!m_acceptors.size())
 		return;
 
-	if(m_acceptor->is_open())
+	for(AcceptorVec::iterator it = m_acceptors.begin(); it != m_acceptors.end(); ++it)
 	{
+		if(!(*it)->is_open())
+			continue;
+
 		boost::system::error_code error;
-		m_acceptor->close(error);
+		(*it)->close(error);
 		if(error)
 		{
 			PRINT_ASIO_ERROR("Closing listen socket");
 		}
 	}
 
-	delete m_acceptor;
-	m_acceptor = NULL;
+	m_acceptors.clear();
 }
 
-void ServicePort::accept()
+void ServicePort::accept(Acceptor_ptr acceptor)
 {
-	if(!m_acceptor)
-		return;
-
 	try
 	{
 		boost::asio::ip::tcp::socket* socket = new boost::asio::ip::tcp::socket(m_io_service);
 		m_acceptor->async_accept(*socket, boost::bind(
-			&ServicePort::handle, this, socket, boost::asio::placeholders::error));
+			&ServicePort::handle, this, acceptor, socket, boost::asio::placeholders::error));
 	}
 	catch(boost::system::system_error& e)
 	{
@@ -125,7 +131,7 @@ void ServicePort::accept()
 	}
 }
 
-void ServicePort::handle(boost::asio::ip::tcp::socket* socket, const boost::system::error_code& error)
+void ServicePort::handle(Acceptor_ptr acceptor, boost::asio::ip::tcp::socket* socket, const boost::system::error_code& error)
 {
 	if(!error)
 	{
@@ -166,7 +172,7 @@ void ServicePort::handle(boost::asio::ip::tcp::socket* socket, const boost::syst
 #ifdef __DEBUG_NET_DETAIL__
 		std::clog << "handle - OK" << std::endl;
 #endif
-		accept();
+		accept(acceptor);
 	}
 	else if(error != boost::asio::error::operation_aborted)
 	{
@@ -176,7 +182,8 @@ void ServicePort::handle(boost::asio::ip::tcp::socket* socket, const boost::syst
 		{
 			m_pendingStart = true;
 			Scheduler::getInstance().addEvent(createSchedulerTask(5000, boost::bind(
-				&ServicePort::onOpen, boost::weak_ptr<ServicePort>(shared_from_this()), m_serverPort)));
+				&ServicePort::onOpen, boost::weak_ptr<ServicePort>(shared_from_this()),
+				acceptor->local_endpoint().address().to_v4(), m_serverPort)));
 		}
 	}
 #ifdef __DEBUG_NET__

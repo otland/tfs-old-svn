@@ -1,13 +1,7 @@
 function onUse(cid, item, fromPosition, itemEx, toPosition)
-	if(fromPosition.x ~= CONTAINER_POSITION) then
-		doSendMagicEffect(fromPosition, CONST_ME_EXPLOSIONAREA)
-		doRemoveItem(item.uid, 1)
-		doCreatureSay(cid, "KABOOOOOOOOOOM!", TALKTYPE_ORANGE_1)
-	else
-		doSendMagicEffect(fromPosition, CONST_ME_EXPLOSIONAREA)
-		doRemoveItem(item.uid, 1)
-		doCreatureSay(cid, "KABOOOOOOOOOOM!", TALKTYPE_ORANGE_1)
-	end
+	doSendMagicEffect(fromPosition, CONST_ME_EXPLOSIONAREA)
+	doCreatureSay(cid, "KABOOOOOOOOOOM!", TALKTYPE_MONSTER)
 
-	return TRUE
+	doRemoveItem(item.uid, 1)
+	return true
 end
