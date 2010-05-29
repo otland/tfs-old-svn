@@ -120,7 +120,7 @@ bool argumentsHandler(StringVec args)
 
 		if((*it) == "--version")
 		{
-			std::clog << SOFTWARE_SERVER_NAME << ", version " << SERVER_VERSION << " (" << SERVER_CODENAME << ")\n"
+			std::clog << SOFTWARE_NAME << ", version " << SOFTWARE_VERSION << " (" << SOFTWARE_CODENAME << ")\n"
 			"Compiled with " << BOOST_COMPILER << " at " << __DATE__ << ", " << __TIME__ << ".\n"
 			"A server developed by Elf, Talaturen, KaczooH, Stian and Kornholijo.\n"
 			"Visit our forum for updates, support and resources: http://otland.net.\n";
@@ -299,7 +299,7 @@ void otserv(StringVec, ServiceManager* services)
 #if !defined(WINDOWS) && !defined(__ROOT_PERMISSION__)
 	if(!getuid() || !geteuid())
 	{
-		std::clog << "> WARNING: " << SOFTWARE_SERVER_NAME << " has been executed as super user! It is "
+		std::clog << "> WARNING: " << SOFTWARE_NAME << " has been executed as super user! It is "
 			<< "recommended to run as a normal user." << std::endl << "Continue? (y/N)" << std::endl;
 		char buffer = getchar();
 		if(buffer != 121 && buffer != 89)
@@ -307,7 +307,7 @@ void otserv(StringVec, ServiceManager* services)
 	}
 #endif
 
-	std::clog << SOFTWARE_SERVER_NAME << ", version " << SERVER_VERSION << " (" << SERVER_CODENAME << ")" << std::endl
+	std::clog << SOFTWARE_NAME << ", version " << SOFTWARE_VERSION << " (" << SOFTWARE_CODENAME << ")" << std::endl
 		<< "Compiled with " << BOOST_COMPILER << " at " << __DATE__ << ", " << __TIME__ << "." << std::endl
 		<< "A server developed by Elf, Talaturen, KaczooH, Stian and Kornholijo." << std::endl
 		<< "Visit our forum for updates, support and resources: http://otland.net." << std::endl << std::endl;
@@ -459,7 +459,7 @@ void otserv(StringVec, ServiceManager* services)
 				int32_t patch, build, timestamp;
 
 				bool tmp = false;
-				if(readXMLString(p, "version", version) && version != SERVER_VERSION)
+				if(readXMLString(p, "version", version) && version != SOFTWARE_VERSION)
 					tmp = true;
 
 				if(readXMLInteger(p, "patch", patch) && patch > VERSION_PATCH)
@@ -480,7 +480,7 @@ void otserv(StringVec, ServiceManager* services)
 						std::clog << "outdated, please consider upgrading!";
 
 					std::clog << std::endl << "> Current version information - version: "
-						<< SERVER_VERSION << ", patch: " << VERSION_PATCH
+						<< SOFTWARE_VERSION << ", patch: " << VERSION_PATCH
 						<< ", build: " << VERSION_BUILD << ", timestamp: " << VERSION_TIMESTAMP
 						<< "." << std::endl << "> Latest version information - version: "
 						<< version << ", patch: " << patch << ", build: " << build
@@ -660,7 +660,7 @@ void otserv(StringVec, ServiceManager* services)
 		}
 
 		serverIps.push_back(std::make_pair(resolvedIp, 0));
-		m_ip = boost::asio::ip::address_v4(resolvedIp);
+		m_ip = boost::asio::ip::address_v4(swap_uint32(resolvedIp)); // did you test this before reverting?
 
 		ipList.push_back(m_ip);
 		std::clog << m_ip.to_string() << std::endl;
@@ -685,7 +685,6 @@ void otserv(StringVec, ServiceManager* services)
 					owned = true; // fuck yeah
 
 				serverIps.insert(std::make_pair(*(uint32_t*)(*addr), 0x0000FFFF));
-				//addr++;
 			}
 
 			std::clog << std::endl;

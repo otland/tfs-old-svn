@@ -62,7 +62,7 @@ class Logger
 };
 
 #define LOG_MESSAGE(type, message, channel) \
-	Logger::getInstance()->log(__FUNCTION__, type, message, channel);
+	Logger::getInstance()->log(__PRETTY_FUNCTION__, type, message, channel);
 
 class OutputHandler : public std::streambuf
 {
