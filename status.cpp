@@ -124,7 +124,7 @@ std::string Status::getStatusString(bool sendPlayers) const
 	xmlSetProp(p, (const xmlChar*)"port", (const xmlChar*)buffer);
 	xmlSetProp(p, (const xmlChar*)"location", (const xmlChar*)g_config.getString(ConfigManager::LOCATION).c_str());
 	xmlSetProp(p, (const xmlChar*)"url", (const xmlChar*)g_config.getString(ConfigManager::URL).c_str());
-	xmlSetProp(p, (const xmlChar*)"server", (const xmlChar*)SERVER_NAME);
+	xmlSetProp(p, (const xmlChar*)"server", (const xmlChar*)SOFTWARE_SERVER_NAME);
 	xmlSetProp(p, (const xmlChar*)"version", (const xmlChar*)SERVER_VERSION);
 	xmlSetProp(p, (const xmlChar*)"client", (const xmlChar*)SERVER_PROTOCOL);
 	xmlAddChild(root, p);
@@ -283,7 +283,7 @@ void Status::getInfo(uint32_t requestedInfo, OutputMessage_ptr output, NetworkMe
 	if(requestedInfo & REQUEST_SERVER_SOFTWARE_INFO)
 	{
 		output->put<char>(0x23);
-		output->putString(SERVER_NAME);
+		output->putString(SOFTWARE_SERVER_NAME);
 		output->putString(SERVER_VERSION);
 		output->putString(SERVER_PROTOCOL);
 	}

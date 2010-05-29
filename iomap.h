@@ -24,6 +24,9 @@
 
 #include "spawn.h"
 #include "item.h"
+#include "configmanager.h"
+
+extern ConfigManager g_config;
 
 enum OTBM_AttrTypes_t
 {
@@ -118,8 +121,7 @@ class IOMap
 			{
 				//OTBM file doesn't tell us about the spawnfile,
 				//lets guess it is mapname-spawn.xml.
-				map->spawnfile = Status::getInstance()->getMapName();
-				map->spawnfile += "-spawn.xml";
+				map->spawnfile =  g_config.getString(ConfigManager::MAP_NAME) + "-spawn.xml";
 			}
 
 			return Spawns::getInstance()->loadFromXml(map->spawnfile);
@@ -135,8 +137,7 @@ class IOMap
 			{
 				//OTBM file doesn't tell us about the housefile,
 				//lets guess it is mapname-house.xml.
-				map->housefile = Status::getInstance()->getMapName();
-				map->housefile += "-house.xml";
+				map->housefile = g_config.getString(ConfigManager::MAP_NAME) + "-house.xml";
 			}
 
 			return Houses::getInstance()->loadFromXml(map->housefile);
