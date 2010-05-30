@@ -229,11 +229,15 @@ bool encryptTest(std::string plain, std::string& hash)
 
 bool replaceString(std::string& text, const std::string key, const std::string value)
 {
-	std::string::size_type start = text.find(key), pos = 0;
-	for(; start != std::string::npos; start = text.find(key, pos))
+	if(text.find(key) == std::string::npos)
+		return false;
+
+	std::string::size_type start = 0, pos = 0;
+	while((start = text.find(key, pos)) != std::string::npos)
 	{
 		text.replace(start, key.size(), value);
-		pos = start + value.size() + 1;
+		//text = text.substr(0, start) + value + text.substr(start + key.size());
+		pos = start + value.size();
 	}
 
 	return true;

@@ -572,14 +572,9 @@ bool AccessList::addExpression(const std::string& expression)
 		out += (*it);
 	}
 
-#ifdef __WINDOWS__
-	replaceString(out, "*", "");
-	replaceString(out, "?", "");
-#else
 	replaceString(out, "**", "");
 	replaceString(out, "*", ".*");
 	replaceString(out, "?", ".?");
-#endif
 
 	try
 	{
