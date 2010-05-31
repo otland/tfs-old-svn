@@ -1069,8 +1069,8 @@ bool Game::playerMoveCreature(uint32_t playerId, uint32_t movingCreatureId,
 		{
 			Dispatcher::getInstance().addTask(createTask(boost::bind(&Game::playerAutoWalk,
 				this, player->getID(), listDir)));
-			SchedulerTask* task = createSchedulerTask(player->getStepDuration(), boost::bind(&Game::playerMoveCreature, this,
-				playerId, movingCreatureId, movingCreaturePos, toPos));
+			SchedulerTask* task = createSchedulerTask(std::max((int32_t)SCHEDULER_MINTICKS, player->getStepDuration()),
+				boost::bind(&Game::playerMoveCreature, this, playerId, movingCreatureId, movingCreaturePos, toPos));
 
 			player->setNextWalkActionTask(task);
 			return true;
@@ -1320,10 +1320,8 @@ bool Game::playerMoveItem(uint32_t playerId, const Position& fromPos,
 		return false;
 	}
 
-	const Position& mapFromPos = fromCylinder->getTile()->getPosition();
-	const Position& mapToPos = toCylinder->getTile()->getPosition();
-
-	const Position& playerPos = player->getPosition();
+	const Position &mapToPos = toCylinder->getTile()->getPosition(), &playerPos = player->getPosition(),
+		&mapFromPos = fromCylinder->getTile()->getPosition();
 	if(playerPos.z > mapFromPos.z && !player->hasCustomFlag(PlayerCustomFlag_CanThrowAnywhere))
 	{
 		player->sendCancelMessage(RET_FIRSTGOUPSTAIRS);
@@ -1344,8 +1342,8 @@ bool Game::playerMoveItem(uint32_t playerId, const Position& fromPos,
 		{
 			Dispatcher::getInstance().addTask(createTask(boost::bind(&Game::playerAutoWalk,
 				this, player->getID(), listDir)));
-			SchedulerTask* task = createSchedulerTask(player->getStepDuration(), boost::bind(&Game::playerMoveItem, this,
-				playerId, fromPos, spriteId, fromStackpos, toPos, count));
+			SchedulerTask* task = createSchedulerTask(std::max((int32_t)SCHEDULER_MINTICKS, player->getStepDuration()),
+				boost::bind(&Game::playerMoveItem, this, playerId, fromPos, spriteId, fromStackpos, toPos, count));
 
 			player->setNextWalkActionTask(task);
 			return true;
@@ -1408,8 +1406,8 @@ bool Game::playerMoveItem(uint32_t playerId, const Position& fromPos,
 			{
 				Dispatcher::getInstance().addTask(createTask(boost::bind(&Game::playerAutoWalk,
 					this, player->getID(), listDir)));
-				SchedulerTask* task = createSchedulerTask(player->getStepDuration(), boost::bind(&Game::playerMoveItem, this,
-					playerId, itemPos, spriteId, itemStackpos, toPos, count));
+				SchedulerTask* task = createSchedulerTask(std::max((int32_t)SCHEDULER_MINTICKS, player->getStepDuration()),
+					boost::bind(&Game::playerMoveItem, this, playerId, itemPos, spriteId, itemStackpos, toPos, count));
 
 				player->setNextWalkActionTask(task);
 				return true;
