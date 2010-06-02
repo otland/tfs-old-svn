@@ -20,6 +20,9 @@
 #include "configmanager.h"
 #include "tools.h"
 
+#include "houses.h"
+#include "databasemanager.h"
+
 ConfigManager::ConfigManager()
 {
 	L = NULL;
@@ -315,7 +318,18 @@ bool ConfigManager::load()
 
 bool ConfigManager::reload()
 {
-	return m_loaded ? load() : false;
+	if(!m_loaded)
+		return false;
+
+	uint32_t tmp = m_confNumber[HOUSE_PRICE];
+	if(!load())
+		return false;
+
+	if(m_confNumber[HOUSE_PRICE] != tmp)
+		DatabaseManager::getInstance()->registerDatabaseConfig(
+			"house_price", Houses::getInstance()->updatePrices());
+
+	return true;
 }
 
 const std::string& ConfigManager::getString(uint32_t _what) const

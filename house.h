@@ -261,7 +261,7 @@ class Houses
 		}
 
 		bool loadFromXml(std::string filename);
-		bool reloadPrices();
+		uint32_t updatePrices() const;
 
 		void payHouses();
 		bool payHouse(House* house, time_t _time, uint32_t bid);

@@ -5920,16 +5920,6 @@ bool Game::reloadInfo(ReloadInfo_t reload, uint32_t playerId/* = 0*/)
 			break;
 		}
 
-		case RELOAD_HOUSEPRICES:
-		{
-			if(Houses::getInstance()->reloadPrices())
-				done = true;
-			else
-				std::clog << "[Error - Game::reloadInfo] Failed to reload house prices." << std::endl;
-
-			break;
-		}
-
 		case RELOAD_ITEMS:
 		{
 			//TODO

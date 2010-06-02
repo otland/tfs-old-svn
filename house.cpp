@@ -792,16 +792,16 @@ bool Houses::loadFromXml(std::string filename)
 	return true;
 }
 
-bool Houses::reloadPrices()
+uint32_t Houses::updatePrices() const
 {
 	if(g_config.getBool(ConfigManager::HOUSE_RENTASPRICE))
-		return true;
+		return 0;
 
-	const uint32_t tilePrice = g_config.getNumber(ConfigManager::HOUSE_PRICE);
-	for(HouseMap::iterator it = houseMap.begin(); it != houseMap.end(); ++it)
-		it->second->setPrice(tilePrice * it->second->getTilesCount(), true);
+	uint32_t _price = g_config.getNumber(ConfigManager::HOUSE_PRICE);
+	for(HouseMap::const_iterator it = houseMap.begin(); it != houseMap.end(); ++it)
+		it->second->setPrice(_price * it->second->getTilesCount(), true);
 
-	return true;
+	return _price;
 }
 
 void Houses::payHouses()

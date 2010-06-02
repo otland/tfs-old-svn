@@ -485,8 +485,8 @@ void otserv(StringVec, ServiceManager* services)
 						<< "." << std::endl << "> Latest version information - version: "
 						<< version << ", patch: " << patch << ", build: " << build
 						<< ", timestamp: " << timestamp << "." << std::endl;
-					if(g_config.getBool(ConfigManager::CONFIM_OUTDATED_VERSION)
-						&& version.find("_SVN") == std::string::npos)
+					if(g_config.getBool(ConfigManager::CONFIM_OUTDATED_VERSION) &&
+						asLoweCaseString(version).find("_svn") == std::string::npos)
 					{
 						std::clog << "Continue? (y/N)" << std::endl;
 						char buffer = getchar();
@@ -608,6 +608,15 @@ void otserv(StringVec, ServiceManager* services)
 	std::clog << ">> Loading map and spawns..." << std::endl;
 	if(!g_game.loadMap(g_config.getString(ConfigManager::MAP_NAME)))
 		startupErrorMessage();
+
+	int32_t value;
+	if(!DatabaseManager::getInstance()->getDatabaseConfig("house_price",
+		value) || g_config.getNumber(ConfigManager::HOUSE_PRICE) != value)
+	{
+		std::clog << "> Updating house prices" << std::endl;
+		DatabaseManager::getInstance()->registerDatabaseConfig(
+			"house_price", Houses::getInstance()->updatePrices());
+	}
 
 	std::clog << ">> Checking world type... ";
 	std::string worldType = asLowerCaseString(g_config.getString(ConfigManager::WORLD_TYPE));
