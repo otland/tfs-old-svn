@@ -95,13 +95,6 @@ Door* House::getDoorByPosition(const Position& pos)
 	return NULL;
 }
 
-void House::setPrice(uint32_t _price, bool update/* = false*/)
-{
-	price = _price;
-	if(update && !owner)
-		updateDoorDescription();
-}
-
 void House::setOwner(uint32_t guid)
 {
 	owner = guid;
@@ -768,17 +761,10 @@ bool Houses::loadFromXml(std::string filename)
 			rent = intValue;
 
 		uint32_t price = house->getTilesCount() * g_config.getNumber(ConfigManager::HOUSE_PRICE);
-		if(g_config.getBool(ConfigManager::HOUSE_RENTASPRICE))
-		{
-			uint32_t tmp = rent;
-			if(!tmp)
-				tmp = price;
+		if(g_config.getBool(ConfigManager::HOUSE_RENTASPRICE) && rent)
+			price = rent;
 
-			house->setPrice(tmp);
-		}
-		else
-			house->setPrice(price);
-
+		house->setPrice(price);
 		if(g_config.getBool(ConfigManager::HOUSE_PRICEASRENT))
 			house->setRent(price);
 		else
@@ -790,18 +776,6 @@ bool Houses::loadFromXml(std::string filename)
 
 	xmlFreeDoc(doc);
 	return true;
-}
-
-uint32_t Houses::updatePrices() const
-{
-	if(g_config.getBool(ConfigManager::HOUSE_RENTASPRICE))
-		return 0;
-
-	uint32_t _price = g_config.getNumber(ConfigManager::HOUSE_PRICE);
-	for(HouseMap::const_iterator it = houseMap.begin(); it != houseMap.end(); ++it)
-		it->second->setPrice(_price * it->second->getTilesCount(), true);
-
-	return _price;
 }
 
 void Houses::payHouses()
@@ -816,7 +790,7 @@ void Houses::payHouses()
 	for(HouseMap::iterator it = houseMap.begin(); it != houseMap.end(); ++it)
 		payHouse(it->second, currentTime, 0);
 
-	std::clog << "> Houses paid in " << (OTSYS_TIME() - start) / (1000.) << " seconds." << std::endl;
+	std::clog << "Houses paid in " << (OTSYS_TIME() - start) / (1000.) << " seconds." << std::endl;
 }
 
 bool Houses::payRent(Player* player, House* house, uint32_t bid, time_t _time/* = 0*/)

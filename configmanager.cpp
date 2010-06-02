@@ -18,10 +18,8 @@
 #include <iostream>
 
 #include "configmanager.h"
-#include "tools.h"
-
 #include "houses.h"
-#include "databasemanager.h"
+#include "tools.h"
 
 ConfigManager::ConfigManager()
 {
@@ -321,13 +319,31 @@ bool ConfigManager::reload()
 	if(!m_loaded)
 		return false;
 
-	uint32_t tmp = m_confNumber[HOUSE_PRICE];
+	uint32_t price = m_confNumber[HOUSE_PRICE];
 	if(!load())
 		return false;
 
-	if(m_confNumber[HOUSE_PRICE] != tmp)
-		DatabaseManager::getInstance()->registerDatabaseConfig(
-			"house_price", Houses::getInstance()->updatePrices());
+	if(m_confNumber[HOUSE_PRICE] == price)
+		return true;
+
+	price = house->getTilesCount() * m_confNumber[HOUSE_PRICE];
+	for(HouseMap::iterator it = Houses::getInstance()->getHouseBegin();
+		it != Houses::getInstance()->getHouseEnd(); ++it)
+	{
+		if(m_confBool[HOUSE_RENTASPRICE])
+		{
+			uint32_t tmp = it->second->getRent();
+			if(!m_confBool[HOUSE_PRICEASRENT] && it->second->getPrice() != tmp)
+				price = tmp;
+		}
+
+		it->second->setPrice(price);
+		if(m_confBool[HOUSE_PRICEASRENT])
+			it->second->setRent(price);
+
+		if(!it->second->getOwner())
+			it->second->updateDoorDescription();
+	}
 
 	return true;
 }

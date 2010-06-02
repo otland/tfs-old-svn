@@ -28,10 +28,26 @@ extern Game g_game;
 
 bool IOMapSerialize::loadMap(Map* map)
 {
+	bool result = false;
 	if(g_config.getBool(ConfigManager::HOUSE_STORAGE))
-		return loadMapBinary(map);
+		result = loadMapBinary(map);
+	else
+		result = loadMapRelational(map);
 
-	return loadMapRelational(map);
+	if(!result)
+		return false;
+
+	for(HouseMap::iterator it = Houses::getInstance()->getHouseBegin();
+		it != Houses::getInstance()->getHouseEnd(); ++it)
+	{
+		if(!it->second->hasSyncFlag(House::HOUSE_SYNC_UPDATE))
+			continue;
+
+		it->second->resetSyncFlag(House::HOUSE_SYNC_UPDATE);
+		it->second->updateDoorDescription();
+	}
+
+	return true;
 }
 
 bool IOMapSerialize::saveMap(Map* map)
@@ -93,11 +109,14 @@ bool IOMapSerialize::loadHouses()
 
 		house->setRentWarnings(result->getDataInt("warnings"));
 		house->setLastWarning(result->getDataInt("lastwarning"));
-		house->setPaidUntil(result->getDataInt("paid"));
 
-		house->setOwner(result->getDataInt("owner"));
+		house->setPaidUntil(result->getDataInt("paid"));
 		if(result->getDataInt("clear"))
 			house->setPendingTransfer(true);
+
+		house->setOwner(result->getDataInt("owner"));
+		if(house->getOwner() && house->hasSyncFlag(House::HOUSE_SYNC_UPDATE))
+			house->resetSyncFlag(House::HOUSE_SYNC_UPDATE);
 	}
 	while(result->next());
 	result->free();
@@ -133,10 +152,13 @@ bool IOMapSerialize::updateHouses()
 		if(!(house = it->second))
 			continue;
 
-		query << "SELECT 1 FROM `houses` WHERE `id` = " << house->getId() << " AND `world_id` = "
+		query << "SELECT `price` FROM `houses` WHERE `id` = " << house->getId() << " AND `world_id` = "
 			<< g_config.getNumber(ConfigManager::WORLD_ID) << " LIMIT 1";
 		if(DBResult* result = db->storeQuery(query.str()))
 		{
+			if(result->getDataInt("price") != house->getPrice())
+				house->setSyncFlag(House::HOUSE_SYNC_UPDATE);
+
 			result->free();
 			query.str("");
 

@@ -609,15 +609,6 @@ void otserv(StringVec, ServiceManager* services)
 	if(!g_game.loadMap(g_config.getString(ConfigManager::MAP_NAME)))
 		startupErrorMessage();
 
-	int32_t value;
-	if(!DatabaseManager::getInstance()->getDatabaseConfig("house_price",
-		value) || g_config.getNumber(ConfigManager::HOUSE_PRICE) != value)
-	{
-		std::clog << "> Updating house prices" << std::endl;
-		DatabaseManager::getInstance()->registerDatabaseConfig(
-			"house_price", Houses::getInstance()->updatePrices());
-	}
-
 	std::clog << ">> Checking world type... ";
 	std::string worldType = asLowerCaseString(g_config.getString(ConfigManager::WORLD_TYPE));
 	if(worldType == "open" || worldType == "2" || worldType == "openpvp")

@@ -155,7 +155,8 @@ class House
 			HOUSE_SYNC_SIZE = 1 << 2,
 			HOUSE_SYNC_GUILD = 1 << 3,
 			HOUSE_SYNC_PRICE = 1 << 4,
-			HOUSE_SYNC_RENT = 1 << 5
+			HOUSE_SYNC_RENT = 1 << 5,
+			HOUSE_SYNC_UPDATE = 1 << 6
 		};
 
 		House(uint32_t houseId);
@@ -177,7 +178,7 @@ class House
 		void setRent(uint32_t _rent) {rent = _rent;}
 		uint32_t getRent() const {return rent;}
 
-		void setPrice(uint32_t _price, bool update = false);
+		void setPrice(uint32_t _price) {price = _price;}
 		uint32_t getPrice() const {return price;}
 
 		void setLastWarning(time_t _lastWarning) {lastWarning = _lastWarning;}
@@ -203,6 +204,7 @@ class House
 		uint32_t getTilesCount() const {return houseTiles.size();}
 
 		bool hasSyncFlag(syncflags_t flag) const {return ((syncFlags & (uint32_t)flag) == (uint32_t)flag);}
+		void setSyncFlag(syncflags_t flag) {syncFlags |= (uint32_t)flag;}
 		void resetSyncFlag(syncflags_t flag) {syncFlags &= ~(uint32_t)flag;}
 
 		bool canEditAccessList(uint32_t listId, const Player* player);
@@ -261,7 +263,6 @@ class Houses
 		}
 
 		bool loadFromXml(std::string filename);
-		uint32_t updatePrices() const;
 
 		void payHouses();
 		bool payHouse(House* house, time_t _time, uint32_t bid);
