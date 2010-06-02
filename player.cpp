@@ -343,7 +343,7 @@ void Player::updateWeapon()
 	ItemVector weapons = getWeapons();
 	if(weapons.empty())
 		weapon = NULL;
-	else if(weapons.size() == 1 || weapons[1] == weapon)
+	else if(!weapon || weapons.size() == 1 || weapons[1] == weapon)
 		weapon = weapons[0];
 	else if(weapons[0] == weapon)
 		weapon = weapons[1];
@@ -1321,7 +1321,7 @@ void Player::onCreatureAppear(const Creature* creature)
 		g_moveEvents->onPlayerEquip(this, item, (slots_t)slot, false);
 	}
 
-	//updateWeapon(); # FIXME: make it actually work, lol
+	updateWeapon();
 	if(BedItem* bed = Beds::getInstance()->getBedBySleeper(guid))
 		bed->wakeUp();
 
@@ -3288,7 +3288,6 @@ void Player::doAttacking(uint32_t)
 		return;
 	}
 
-	updateWeapon(); // REMOVEME: temporarily, look for commented updateWeapon
 	Item* item = getWeapon(false);
 	if(const Weapon* _weapon = g_weapons->getWeapon(item))
 	{
