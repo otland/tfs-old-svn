@@ -292,7 +292,7 @@ void otserv(StringVec, ServiceManager* services)
 {
 	srand((uint32_t)OTSYS_TIME());
 #if defined(WINDOWS)
-	SetConsoleTitle(SERVER_NAME);
+	SetConsoleTitle(SOFTWARE_NAME);
 
 #endif
 	g_game.setGameState(GAMESTATE_STARTUP);
