@@ -187,7 +187,7 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 		output->putString(motd);
 
 		uint32_t serverIp = serverIps[0].first;
-		for(IpList::iterator it = serverIps.begin(); it != serverIps.end(); ++it)
+		for(std::vector<std::pair<uint32_t, uint32_t> >::iterator it = serverIps.begin(); it != serverIps.end(); ++it)
 		{
 			if((it->first & it->second) != (clientIp & it->second))
 				continue;
