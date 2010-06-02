@@ -156,7 +156,7 @@ bool IOMapSerialize::updateHouses()
 			<< g_config.getNumber(ConfigManager::WORLD_ID) << " LIMIT 1";
 		if(DBResult* result = db->storeQuery(query.str()))
 		{
-			if(result->getDataInt("price") != house->getPrice())
+			if((uint32_t)result->getDataInt("price") != house->getPrice())
 				house->setSyncFlag(House::HOUSE_SYNC_UPDATE);
 
 			result->free();

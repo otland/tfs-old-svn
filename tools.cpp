@@ -1675,41 +1675,41 @@ std::string getFilePath(FileType_t type, std::string name/* = ""*/)
 	std::string path = "/var/lib/tfs/";
 	#endif
 	std::string path = g_config.getString(ConfigManager::DATA_DIRECTORY);
-	switch(filetype)
+	switch(type)
 	{
 		case FILE_TYPE_OTHER:
-			path += filename;
+			path += name;
 			break;
 		case FILE_TYPE_XML:
-			path += "XML/" + filename;
+			path += "XML/" + name;
 			break;
 		case FILE_TYPE_LOG:
 			#ifndef __FILESYSTEM_HIERARCHY_STANDARD__
-			path += "logs/" + filename;
+			path += "logs/" + name;
 			#else
-			path = "/var/log/tfs/" + filename;
+			path = "/var/log/tfs/" + name;
 			#endif
 			break;
 		case FILE_TYPE_MOD:
 		{
 			#ifndef __FILESYSTEM_HIERARCHY_STANDARD__
-			path = "mods/" + filename;
+			path = "mods/" + name;
 			#else
-			path = "/usr/share/tfs/" + filename;
+			path = "/usr/share/tfs/" + name;
 			#endif
 			break;
 		}
 		case FILE_TYPE_CONFIG:
 		{
 			#if defined(__HOMEDIR_CONF__)
-			if(fileExists("~/.tfs/" + filename))
-				path = "~/.tfs/" + filename;
+			if(fileExists("~/.tfs/" + name))
+				path = "~/.tfs/" + name;
 			else
 			#endif
 			#if defined(__FILESYSTEM_HIERARCHY_STANDARD__)
-				path = "/etc/tfs/" + filename;
+				path = "/etc/tfs/" + name;
 			#else
-				path = filename;
+				path = name;
 			#endif
 			break;
 		}

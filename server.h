@@ -73,7 +73,7 @@ class ServicePort : boost::noncopyable, public boost::enable_shared_from_this<Se
 		void open(IPAddressList ips, uint16_t port);
 		void close();
 
-		void handle(Acceptor_ptr acceptor, const boost::system::error_code& error);
+		void handle(Acceptor_ptr acceptor, boost::asio::ip::tcp::socket* socket, const boost::system::error_code& error);
 
 		bool isSingleSocket() const {return m_services.size() && m_services.front()->isSingleSocket();}
 		std::string getProtocolNames() const;

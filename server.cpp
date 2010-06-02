@@ -44,10 +44,10 @@ bool ServicePort::add(Service_ptr newService)
 
 void ServicePort::service(boost::weak_ptr<ServicePort> weakServicee, IPAddress ip, uint16_t port)
 {
-	if(weakService.expired())
+	if(weakServicee.expired())
 		return;
 
-	ServicePort_ptr service = weakService.lock();
+	ServicePort_ptr service = weakServicee.lock();
 	if(!service)
 		return;
 
@@ -117,7 +117,7 @@ void ServicePort::accept(Acceptor_ptr acceptor)
 	try
 	{
 		boost::asio::ip::tcp::socket* socket = new boost::asio::ip::tcp::socket(m_io_service);
-		m_acceptor->async_accept(*socket, boost::bind(
+		m_acceptors->async_accept(*socket, boost::bind(
 			&ServicePort::handle, this, acceptor, socket, boost::asio::placeholders::error));
 	}
 	catch(boost::system::system_error& e)

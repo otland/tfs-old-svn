@@ -116,6 +116,7 @@ inline int64_t OTSYS_TIME()
 	return ((int64_t)t.millitm) + ((int64_t)t.time) * 1000;
 }
 
+
 #define foreach BOOST_FOREACH
 #define reverse_foreach BOOST_REVERSE_FOREACH
 #endif

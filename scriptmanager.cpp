@@ -54,7 +54,7 @@ extern Chat g_chat;
 extern ConfigManager g_config;
 extern Monsters g_monsters;
 
-ScriptingManager::ScriptingManager():
+ScriptManager::ScriptManager():
 modsLoaded(false)
 {
 	g_weapons = new Weapons();

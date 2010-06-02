@@ -18,7 +18,7 @@
 #include <iostream>
 
 #include "configmanager.h"
-#include "houses.h"
+#include "house.h"
 #include "tools.h"
 
 ConfigManager::ConfigManager()
@@ -323,7 +323,7 @@ bool ConfigManager::reload()
 	if(!load())
 		return false;
 
-	if(m_confNumber[HOUSE_PRICE] == tmp)
+	if((uint32_t)m_confNumber[HOUSE_PRICE] == tmp)
 		return true;
 
 	for(HouseMap::iterator it = Houses::getInstance()->getHouseBegin();
