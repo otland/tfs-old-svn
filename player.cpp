@@ -3298,7 +3298,10 @@ void Player::doAttacking(uint32_t)
 			setNextActionTask(task);
 		}
 		else if((!_weapon->hasExhaustion() || !hasCondition(CONDITION_EXHAUST, EXHAUST_COMBAT)) && _weapon->useWeapon(this, item, attackedCreature))
+		{
 			lastAttack = OTSYS_TIME();
+			updateWeapon();
+		}
 	}
 	else if(Weapon::useFist(this, attackedCreature))
 		lastAttack = OTSYS_TIME();
