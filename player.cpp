@@ -3297,9 +3297,11 @@ void Player::doAttacking(uint32_t)
 				boost::bind(&Game::checkCreatureAttack, &g_game, getID()));
 			setNextActionTask(task);
 		}
-		else if((!_weapon->hasExhaustion() || !hasCondition(CONDITION_EXHAUST, EXHAUST_COMBAT)) && _weapon->useWeapon(this, item, attackedCreature))
+		else
 		{
-			lastAttack = OTSYS_TIME();
+			if((!_weapon->hasExhaustion() || !hasCondition(CONDITION_EXHAUST, EXHAUST_COMBAT)) && _weapon->useWeapon(this, item, attackedCreature))
+				lastAttack = OTSYS_TIME();
+
 			updateWeapon();
 		}
 	}
