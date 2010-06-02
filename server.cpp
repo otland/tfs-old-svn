@@ -117,7 +117,7 @@ void ServicePort::accept(Acceptor_ptr acceptor)
 	try
 	{
 		boost::asio::ip::tcp::socket* socket = new boost::asio::ip::tcp::socket(m_io_service);
-		m_acceptors->async_accept(*socket, boost::bind(
+		acceptor->async_accept(*socket, boost::bind(
 			&ServicePort::handle, this, acceptor, socket, boost::asio::placeholders::error));
 	}
 	catch(boost::system::system_error& e)
