@@ -319,22 +319,22 @@ bool ConfigManager::reload()
 	if(!m_loaded)
 		return false;
 
-	uint32_t price = m_confNumber[HOUSE_PRICE];
+	uint32_t tmp = m_confNumber[HOUSE_PRICE];
 	if(!load())
 		return false;
 
-	if(m_confNumber[HOUSE_PRICE] == price)
+	if(m_confNumber[HOUSE_PRICE] == tmp)
 		return true;
 
-	price = house->getTilesCount() * m_confNumber[HOUSE_PRICE];
 	for(HouseMap::iterator it = Houses::getInstance()->getHouseBegin();
 		it != Houses::getInstance()->getHouseEnd(); ++it)
 	{
+		uint32_t price = it->second->getTilesCount() * m_confNumber[HOUSE_PRICE];
 		if(m_confBool[HOUSE_RENTASPRICE])
 		{
-			uint32_t tmp = it->second->getRent();
-			if(!m_confBool[HOUSE_PRICEASRENT] && it->second->getPrice() != tmp)
-				price = tmp;
+			uint32_t rent = it->second->getRent();
+			if(!m_confBool[HOUSE_PRICEASRENT] && it->second->getPrice() != rent)
+				price = rent;
 		}
 
 		it->second->setPrice(price);
