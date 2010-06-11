@@ -116,7 +116,7 @@ inline int64_t OTSYS_TIME()
 	return ((int64_t)t.millitm) + ((int64_t)t.time) * 1000;
 }
 
-uint32_t swap_uint32(uint32_t val)
+inline uint32_t swap_uint32(uint32_t val)
 {
     val = ((val << 8) & 0xFF00FF00) | ((val >> 8) & 0xFF00FF ); 
     return (val << 16) | (val >> 16);

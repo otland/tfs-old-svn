@@ -43,7 +43,6 @@ class SchedulerTask : public Task
 
 inline SchedulerTask* createSchedulerTask(uint32_t delay, const boost::function<void (void)>& f)
 {
-	assert(delay);
 	if(delay < SCHEDULER_MINTICKS)
 		delay = SCHEDULER_MINTICKS;
 
