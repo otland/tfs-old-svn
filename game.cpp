@@ -162,9 +162,7 @@ void Game::start(ServiceManager* servicer)
 		return;
 
 	uint32_t timeLeft = (hoursLeft * 3600000) + minutesLeft * 60000;
-	Scheduler saveThread;
-	//saveThread = new Scheduler;
-	saveEvent = saveThread.getInstance().addEvent(createSchedulerTask(timeLeft,
+	saveEvent = Scheduler::getInstance().addEvent(createSchedulerTask(timeLeft,
 		boost::bind(&Game::prepareGlobalSave, this)));
 }
 

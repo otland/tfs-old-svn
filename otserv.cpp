@@ -90,14 +90,6 @@ boost::mutex g_loaderLock;
 boost::condition_variable g_loaderSignal;
 boost::unique_lock<boost::mutex> g_loaderUniqueLock(g_loaderLock);
 
-// Swap function from the Samba project
-uint32_t swap_uint32( uint32_t val )
-{
-    val = ((val << 8) & 0xFF00FF00) | ((val >> 8) & 0xFF00FF ); 
-    return (val << 16) | (val >> 16);
-}
-
-
 bool argumentsHandler(StringVec args)
 {
 	StringVec tmp;
@@ -692,14 +684,14 @@ void otserv(StringVec, ServiceManager* services)
 				if(ipList.back() == m_ip)
 					owned = true; // fuck yeah
 
-				serverIps.push_back(std::make_pair(*(uint32_t*)(*addr), 0x0000FFFF));
+				serverIps.insert(std::make_pair(*(uint32_t*)(*addr), 0x0000FFFF));
 			}
 
 			std::clog << std::endl;
 		}
 	}
 
-	serverIps.push_back(std::make_pair(LOCALHOST, 0xFFFFFFFF));
+	serverIps.insert(std::make_pair(LOCALHOST, 0xFFFFFFFF));
 	if(ip.size() && !owned)
 	{
 		ipList.clear();

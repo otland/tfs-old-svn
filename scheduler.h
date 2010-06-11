@@ -60,7 +60,6 @@ typedef std::set<uint32_t> EventIds;
 class Scheduler
 {
 	public:
-		Scheduler();
 		virtual ~Scheduler() {}
 		static Scheduler& getInstance()
 		{
@@ -77,7 +76,7 @@ class Scheduler
 		static void schedulerThread(void* p);
 
 	protected:
-		
+		Scheduler();
 		enum SchedulerState
 		{
 			STATE_RUNNING,

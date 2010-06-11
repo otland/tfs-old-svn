@@ -42,12 +42,12 @@ bool ServicePort::add(Service_ptr newService)
 	return true;
 }
 
-void ServicePort::service(boost::weak_ptr<ServicePort> weakServicee, IPAddress ip, uint16_t port)
+void ServicePort::service(boost::weak_ptr<ServicePort> weakService, IPAddress ip, uint16_t port)
 {
-	if(weakServicee.expired())
+	if(weakService.expired())
 		return;
 
-	ServicePort_ptr service = weakServicee.lock();
+	ServicePort_ptr service = weakService.lock();
 	if(!service)
 		return;
 
@@ -194,7 +194,7 @@ void ServicePort::handle(Acceptor_ptr acceptor, boost::asio::ip::tcp::socket* so
 std::string ServicePort::getProtocolNames() const
 {
 	if(m_services.empty())
-		return "";
+		return std::string();
 
 	std::string str = m_services.front()->getProtocolName();
 	for(int32_t i = 1, j = m_services.size(); i < j; ++i)
