@@ -20,6 +20,8 @@
 #include <iostream>
 #include <fstream>
 #include <iomanip>
+#include <unistd.h>
+#include <termios.h>
 
 #ifndef WINDOWS
 #include <unistd.h>
@@ -87,6 +89,7 @@ Chat g_chat;
 
 std::vector<std::pair<uint32_t, uint32_t> > serverIps;
 std::vector<std::pair<uint32_t, uint32_t> >::iterator serverIpsIt;
+
 boost::mutex g_loaderLock;
 boost::condition_variable g_loaderSignal;
 boost::unique_lock<boost::mutex> g_loaderUniqueLock(g_loaderLock);
@@ -230,7 +233,22 @@ void startupErrorMessage(std::string error = "")
 	getchar();
 	exit(-1);
 }
+int getch(void)
+{
+	int ch;
+	struct termios oldt;
+	struct termios newt;
 
+	tcgetattr(STDIN_FILENO, &oldt);
+	newt = oldt; 
+
+	newt.c_lflag &= ~(ICANON | ECHO);  
+	tcsetattr(STDIN_FILENO, TCSANOW, &newt); 
+
+	ch = getchar();  
+	tcsetattr(STDIN_FILENO, TCSANOW, &oldt); 
+	return ch; 
+}
 void otserv(StringVec args, ServiceManager* services);
 int main(int argc, char* argv[])
 {
@@ -302,7 +320,7 @@ void otserv(StringVec, ServiceManager* services)
 	{
 		std::clog << "> WARNING: " << SOFTWARE_NAME << " has been executed as super user! It is "
 			<< "recommended to run as a normal user." << std::endl << "Continue? (y/N)" << std::endl;
-		char buffer = getchar();
+		char buffer = getch();
 		if(buffer != 121 && buffer != 89)
 			startupErrorMessage("Aborted.");
 	}
@@ -636,6 +654,7 @@ void otserv(StringVec, ServiceManager* services)
 	std::clog << ">> Initializing game state and binding services..." << std::endl;
 	g_game.setGameState(GAMESTATE_INIT);
 	IPAddressList ipList;
+	serverIpsIt = serverIps.begin();
 
 	std::string ip = g_config.getString(ConfigManager::IP);
 	if(asLowerCaseString(ip) == "auto")
@@ -660,7 +679,7 @@ void otserv(StringVec, ServiceManager* services)
 			resolvedIp = *(uint32_t*)host->h_addr;
 		}
 
-		serverIps.insert(serverIpsIt, std::make_pair(resolvedIp, 0));
+		serverIpsIt = serverIps.insert(serverIpsIt, std::make_pair(resolvedIp, 0));
 		m_ip = boost::asio::ip::address_v4(swap_uint32(resolvedIp)); // did you test this before reverting?
 
 		ipList.push_back(m_ip);
@@ -685,14 +704,14 @@ void otserv(StringVec, ServiceManager* services)
 				if(ipList.back() == m_ip)
 					owned = true; // fuck yeah
 
-				serverIps.insert(serverIpsIt, std::make_pair(*(uint32_t*)(*addr), 0x0000FFFF));
+				serverIpsIt = serverIps.insert(serverIpsIt, std::make_pair(*(uint32_t*)(*addr), 0x0000FFFF));
 			}
 
 			std::clog << std::endl;
 		}
 	}
 
-	serverIps.insert(serverIpsIt, std::make_pair(LOCALHOST, 0xFFFFFFFF));
+	serverIpsIt = serverIps.insert(serverIpsIt, std::make_pair(LOCALHOST, 0xFFFFFFFF));
 	if(ip.size() && !owned)
 	{
 		ipList.clear();
