@@ -20,11 +20,12 @@
 #include <iostream>
 #include <fstream>
 #include <iomanip>
-#include <unistd.h>
-#include <termios.h>
 
 #ifndef WINDOWS
 #include <unistd.h>
+#include <termios.h>
+#else
+#include <conio.h>
 #endif
 #include <boost/config.hpp>
 
@@ -224,15 +225,7 @@ void allocationHandler()
 	delete fgets(buffer, 1024, stdin);
 	exit(-1);
 }
-
-void startupErrorMessage(std::string error = "")
-{
-	if(error.length() > 0)
-		std::clog << std::endl << "> ERROR: " << error << std::endl;
-
-	getchar();
-	exit(-1);
-}
+#ifndef WINDOWS
 int getch(void)
 {
 	int ch;
@@ -249,6 +242,16 @@ int getch(void)
 	tcsetattr(STDIN_FILENO, TCSANOW, &oldt); 
 	return ch; 
 }
+#endif
+void startupErrorMessage(std::string error = "")
+{
+	if(error.length() > 0)
+		std::clog << std::endl << "> ERROR: " << error << std::endl;
+
+	getch();
+	exit(-1);
+}
+
 void otserv(StringVec args, ServiceManager* services);
 int main(int argc, char* argv[])
 {
