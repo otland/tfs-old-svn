@@ -88,12 +88,10 @@ Npcs g_npcs;
 RSA g_RSA;
 Chat g_chat;
 
-std::vector<std::pair<uint32_t, uint32_t> > serverIps;
-std::vector<std::pair<uint32_t, uint32_t> >::iterator serverIpsIt;
-
 boost::mutex g_loaderLock;
 boost::condition_variable g_loaderSignal;
 boost::unique_lock<boost::mutex> g_loaderUniqueLock(g_loaderLock);
+std::vector<std::pair<uint32_t, uint32_t> > serverIps;
 
 bool argumentsHandler(StringVec args)
 {
@@ -165,6 +163,20 @@ bool argumentsHandler(StringVec args)
 }
 
 #ifndef WINDOWS
+int32_t getch()
+{
+	struct termios oldt;
+	tcgetattr(STDIN_FILENO, &oldt);
+
+	struct termios newt = oldt; 
+	newt.c_lflag &= ~(ICANON | ECHO);  
+	tcsetattr(STDIN_FILENO, TCSANOW, &newt); 
+
+	int32_t ch = getchar();  
+	tcsetattr(STDIN_FILENO, TCSANOW, &oldt); 
+	return ch; 
+}
+
 void signalHandler(int32_t sig)
 {
 	switch(sig)
@@ -216,6 +228,11 @@ void runfileHandler(void)
 	std::ofstream runfile(g_config.getString(ConfigManager::RUNFILE).c_str(), std::ios::trunc | std::ios::out);
 	runfile.close();
 }
+#else
+int32_t getch()
+{
+	return (int32_t)getchar();
+}
 #endif
 
 void allocationHandler()
@@ -225,24 +242,7 @@ void allocationHandler()
 	delete fgets(buffer, 1024, stdin);
 	exit(-1);
 }
-#ifndef WINDOWS
-int getch(void)
-{
-	int ch;
-	struct termios oldt;
-	struct termios newt;
 
-	tcgetattr(STDIN_FILENO, &oldt);
-	newt = oldt; 
-
-	newt.c_lflag &= ~(ICANON | ECHO);  
-	tcsetattr(STDIN_FILENO, TCSANOW, &newt); 
-
-	ch = getchar();  
-	tcsetattr(STDIN_FILENO, TCSANOW, &oldt); 
-	return ch; 
-}
-#endif
 void startupErrorMessage(std::string error = "")
 {
 	if(error.length() > 0)
@@ -265,7 +265,7 @@ int main(int argc, char* argv[])
 
 #ifdef __OTSERV_ALLOCATOR_STATS__
 	boost::thread(boost::bind(&allocatorStatsThread, (void*)NULL));
-	// TODO: destroy this thread
+	// TODO: shutdown this thread?
 #endif
 #ifdef __EXCEPTION_TRACER__
 	ExceptionHandler mainExceptionHandler;
@@ -511,7 +511,7 @@ void otserv(StringVec, ServiceManager* services)
 						asLowerCaseString(version).find("_svn") == std::string::npos)
 					{
 						std::clog << "Continue? (y/N)" << std::endl;
-						char buffer = getchar();
+						char buffer = getch();
 						if(buffer != 121 && buffer != 89)
 							startupErrorMessage("Aborted.");
 					}
@@ -574,7 +574,7 @@ void otserv(StringVec, ServiceManager* services)
 	if(!Item::items.loadFromXml())
 	{
 		std::clog << "Unable to load items (XML)! Continue? (y/N)" << std::endl;
-		char buffer = getchar();
+		char buffer = getch();
 		if(buffer != 121 && buffer != 89)
 			startupErrorMessage("Unable to load items (XML)!");
 	}
@@ -622,7 +622,7 @@ void otserv(StringVec, ServiceManager* services)
 	if(!g_monsters.loadFromXml())
 	{
 		std::clog << "Unable to load monsters! Continue? (y/N)" << std::endl;
-		char buffer = getchar();
+		char buffer = getch();
 		if(buffer != 121 && buffer != 89)
 			startupErrorMessage("Unable to load monsters!");
 	}
@@ -657,7 +657,6 @@ void otserv(StringVec, ServiceManager* services)
 	std::clog << ">> Initializing game state and binding services..." << std::endl;
 	g_game.setGameState(GAMESTATE_INIT);
 	IPAddressList ipList;
-	serverIpsIt = serverIps.begin();
 
 	std::string ip = g_config.getString(ConfigManager::IP);
 	if(asLowerCaseString(ip) == "auto")
@@ -682,8 +681,8 @@ void otserv(StringVec, ServiceManager* services)
 			resolvedIp = *(uint32_t*)host->h_addr;
 		}
 
-		serverIpsIt = serverIps.insert(serverIpsIt, std::make_pair(resolvedIp, 0));
-		m_ip = boost::asio::ip::address_v4(swap_uint32(resolvedIp)); // did you test this before reverting?
+		serverIps.push_back(std::make_pair(resolvedIp, 0));
+		m_ip = boost::asio::ip::address_v4(swap_uint32(resolvedIp));
 
 		ipList.push_back(m_ip);
 		std::clog << m_ip.to_string() << std::endl;
@@ -707,14 +706,14 @@ void otserv(StringVec, ServiceManager* services)
 				if(ipList.back() == m_ip)
 					owned = true; // fuck yeah
 
-				serverIpsIt = serverIps.insert(serverIpsIt, std::make_pair(*(uint32_t*)(*addr), 0x0000FFFF));
+				serverIps.insert(serverIps.begin(), std::make_pair(*(uint32_t*)(*addr), 0x0000FFFF));
 			}
 
 			std::clog << std::endl;
 		}
 	}
 
-	serverIpsIt = serverIps.insert(serverIpsIt, std::make_pair(LOCALHOST, 0xFFFFFFFF));
+	serverIps.insert(serverIps.begin(), std::make_pair(LOCALHOST, 0xFFFFFFFF));
 	if(ip.size() && !owned)
 	{
 		ipList.clear();
