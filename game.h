@@ -172,11 +172,10 @@ class Game
 		  * \param width width of the map
 		  * \param height height of the map
 		  */
-		void getMapDimensions(uint32_t& width, uint32_t& height)
+		inline void getMapDimensions(uint32_t& width, uint32_t& height)
 		{
 			width = map->mapWidth;
 			height = map->mapHeight;
-			return;
 		}
 
 		void setWorldType(WorldType_t type) {worldType = type;}
@@ -543,7 +542,7 @@ class Game
 			bool clearSight = true, int32_t maxSearchDist = -1);
 
 		Position getClosestFreeTile(Creature* creature, Position pos, bool extended = false, bool ignoreHouse = true);
-		std::string getSearchString(const Position fromPos, const Position toPos, bool fromIsCreature = false, bool toIsCreature = false);
+		std::string getSearchString(const Position& fromPos, const Position& toPos, bool fromIsCreature = false, bool toIsCreature = false);
 
 		void changeLight(const Creature* creature);
 		void changeSpeed(Creature* creature, int32_t varSpeedDelta);

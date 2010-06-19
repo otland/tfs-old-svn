@@ -95,8 +95,8 @@ class FileLoader
 		bool openFile(std::string name, bool write, bool caching = false);
 		const uint8_t* getProps(const NODE, uint32_t &size);
 		bool getProps(const NODE, PropStream& props);
-		NODE getChildNode(const NODE parent, uint32_t &type) const;
-		NODE getNextNode(const NODE prev, uint32_t &type) const;
+		NODE getChildNode(const NODE& parent, uint32_t &type) const;
+		NODE getNextNode(const NODE& prev, uint32_t &type) const;
 
 		void startNode(uint8_t type);
 		void endNode();
@@ -116,7 +116,7 @@ class FileLoader
 
 		inline bool readByte(int32_t &value);
 		inline bool readBytes(unsigned char* buffer, int32_t size, int32_t pos);
-		inline bool checks(const NODE node);
+		inline bool checks(const NODE& node);
 		inline bool safeSeek(uint32_t pos);
 		inline bool safeTell(int32_t &pos);
 

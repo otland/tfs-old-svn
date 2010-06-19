@@ -71,11 +71,10 @@ void Actions::clear()
 	clearMap(actionItemMap);
 
 	m_interface.reInitState();
-	if(defaultAction)
-	{
-		delete defaultAction;
-		defaultAction = NULL;
-	}
+
+	delete defaultAction;
+	defaultAction = NULL;
+	
 }
 
 Event* Actions::getEvent(const std::string& nodeName)

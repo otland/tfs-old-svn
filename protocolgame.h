@@ -303,7 +303,7 @@ class ProtocolGame : public Protocol
 		void parseViolationWindow(NetworkMessage& msg);
 
 		//shop
-		void AddShopItem(NetworkMessage_ptr msg, const ShopInfo item);
+		void AddShopItem(NetworkMessage_ptr msg, const ShopInfo& item);
 
 		#define addGameTask(f, ...) addGameTaskInternal(0, boost::bind(f, &g_game, __VA_ARGS__))
 		#define addGameTaskTimed(delay, f, ...) addGameTaskInternal(delay, boost::bind(f, &g_game, __VA_ARGS__))

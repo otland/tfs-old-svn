@@ -3097,7 +3097,7 @@ void ProtocolGame::sendChannelMessage(std::string author, std::string text, Spea
 	}
 }
 
-void ProtocolGame::AddShopItem(NetworkMessage_ptr msg, const ShopInfo item)
+void ProtocolGame::AddShopItem(NetworkMessage_ptr msg, const ShopInfo& item)
 {
 	const ItemType& it = Item::items[item.itemId];
 	msg->put<uint16_t>(it.clientId);

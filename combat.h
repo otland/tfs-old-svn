@@ -298,8 +298,8 @@ class Combat
 
 		void setArea(CombatArea* _area)
 		{
-			if(area)
-				delete area;
+
+			delete area;
 
 			area = _area;
 		}

@@ -46,7 +46,7 @@ class Spells : public BaseEvents
 		RuneSpell* getRuneSpell(uint32_t id);
 		RuneSpell* getRuneSpellByName(const std::string& name);
 
-		InstantSpell* getInstantSpell(const std::string words);
+		InstantSpell* getInstantSpell(const std::string& words);
 		InstantSpell* getInstantSpellByName(const std::string& name);
 		InstantSpell* getInstantSpellByIndex(const Player* player, uint32_t index);
 
@@ -134,7 +134,7 @@ class Spell : public BaseSpell
 		virtual bool isInstant() const = 0;
 		bool isLearnable() const {return learnable;}
 
-		static ReturnValue CreateIllusion(Creature* creature, const Outfit_t outfit, int32_t time);
+		static ReturnValue CreateIllusion(Creature* creature, const Outfit_t& outfit, int32_t time);
 		static ReturnValue CreateIllusion(Creature* creature, const std::string& name, int32_t time);
 		static ReturnValue CreateIllusion(Creature* creature, uint32_t itemId, int32_t time);
 

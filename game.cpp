@@ -5345,7 +5345,7 @@ Position Game::getClosestFreeTile(Creature* creature, Position pos, bool extende
 	return Position(0, 0, 0);
 }
 
-std::string Game::getSearchString(const Position fromPos, const Position toPos, bool fromIsCreature/* = false*/, bool toIsCreature/* = false*/)
+std::string Game::getSearchString(const Position& fromPos, const Position& toPos, bool fromIsCreature/* = false*/, bool toIsCreature/* = false*/)
 {
 	/*
 	 * When the position is on same level and 0 to 4 squares away, they are "[toIsCreature: standing] next to you"

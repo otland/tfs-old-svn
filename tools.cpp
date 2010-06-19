@@ -227,7 +227,7 @@ bool encryptTest(std::string plain, std::string& hash)
 	return plain == hash;
 }
 
-bool replaceString(std::string& text, const std::string key, const std::string value)
+bool replaceString(std::string& text, const std::string& key, const std::string& value)
 {
 	if(text.find(key) == std::string::npos)
 		return false;

@@ -254,10 +254,10 @@ class Items
 
 		uint16_t getRandomizedItem(uint16_t id);
 		uint8_t getRandomizationChance() const {return m_randomizationChance;}
-		RandomizationBlock getRandomization(int16_t id) {return randomizationMap[id];}
+		const RandomizationBlock getRandomization(int16_t id) {return randomizationMap[id];}
 
 		uint32_t size() {return items.size();}
-		IntegerMap getMoneyMap() {return moneyMap;}
+		const IntegerMap getMoneyMap() {return moneyMap;}
 		const ItemType* getElement(uint32_t id) const {return items.getElement(id);}
 
 		static uint32_t dwMajorVersion;

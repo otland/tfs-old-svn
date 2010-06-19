@@ -93,22 +93,22 @@ class Position
 			return !(*this < p);
 		}
 
-		bool operator==(const Position p) const
+		bool operator==(const Position& p) const
 		{
 			return (p.x == x && p.y == y && p.z == z);
 		}
 
-		bool operator!=(const Position p) const
+		bool operator!=(const Position& p) const
 		{
 			return !(*this == p);
 		}
 
-		Position operator+(const Position p1)
+		Position operator+(const Position& p1)
 		{
 			return Position(x + p1.x, y + p1.y, z + p1.z);
 		}
 
-		Position operator-(const Position p1)
+		Position operator-(const Position& p1)
 		{
 			return Position(x - p1.x, y - p1.y, z - p1.z);
 		}
@@ -131,12 +131,12 @@ class PositionEx : public Position
 
 		int16_t stackpos;
 
-		bool operator==(const PositionEx p) const
+		bool operator==(const PositionEx& p) const
 		{
 			return (p.x == x && p.y == y && p.z == z && p.stackpos == stackpos);
 		}
 
-		bool operator!=(const PositionEx p) const
+		bool operator!=(const PositionEx& p) const
 		{
 			return !(p.x == x && p.y == y && p.z == z && p.stackpos != stackpos);
 		}

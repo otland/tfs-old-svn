@@ -20,7 +20,6 @@
 #include "player.h"
 
 typedef std::vector<Player*> PlayerVector;
-typedef std::vector<Item*> ItemVector;
 
 class Player;
 class Party;
