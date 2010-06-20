@@ -186,7 +186,7 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 		sprintf(motd, "%d\n%s", g_game.getMotdId(), g_config.getString(ConfigManager::MOTD).c_str());
 		output->putString(motd);
 
-		uint32_t serverIp = serverIps[0].first;
+		uint32_t serverIp = serverIps.front().first;
 		for(std::list<std::pair<uint32_t, uint32_t> >::iterator it = serverIps.begin(); it != serverIps.end(); ++it)
 		{
 			if((it->first & it->second) != (clientIp & it->second))
