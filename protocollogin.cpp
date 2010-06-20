@@ -33,7 +33,7 @@
 extern ConfigManager g_config;
 extern Game g_game;
 
-extern std::vector<std::pair<uint32_t, uint32_t> > serverIps;
+extern std::list<std::pair<uint32_t, uint32_t> > serverIps;
 
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
 uint32_t ProtocolLogin::protocolLoginCount = 0;
@@ -167,7 +167,7 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 		return false;
 	}
 
-	//Remove premium days
+	// remove premium days
 	IOLoginData::getInstance()->removePremium(account);
 	if(!g_config.getBool(ConfigManager::ACCOUNT_MANAGER) && !account.charList.size())
 	{
@@ -187,7 +187,7 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 		output->putString(motd);
 
 		uint32_t serverIp = serverIps[0].first;
-		for(std::vector<std::pair<uint32_t, uint32_t> >::iterator it = serverIps.begin(); it != serverIps.end(); ++it)
+		for(std::list<std::pair<uint32_t, uint32_t> >::iterator it = serverIps.begin(); it != serverIps.end(); ++it)
 		{
 			if((it->first & it->second) != (clientIp & it->second))
 				continue;
