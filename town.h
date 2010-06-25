@@ -80,6 +80,8 @@ class Towns
 			return NULL;
 		}
 
+		const TownMap& getTownMap() const {return townMap;}
+
 	private:
 		TownMap townMap;
 };

@@ -152,6 +152,7 @@ print = std.cout
 getPosByDir = getPositionByDirection
 db.updateQueryLimitOperator = db.updateLimiter
 db.stringComparisonOperator = db.stringComparison
+db.query = db.executeQuery
 
 PlayerFlag_CannotUseCombat = 0
 PlayerFlag_CannotAttackPlayer = 1

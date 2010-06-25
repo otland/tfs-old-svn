@@ -1621,7 +1621,7 @@ void LuaInterface::registerFunctions()
 	lua_register(m_luaState, "doRemoveItem", LuaInterface::luaDoRemoveItem);
 
 	//doPlayerFeed(cid, food)
-	lua_register(m_luaState, "doPlayerFeed", LuaInterface::luaDoFeedPlayer);
+	lua_register(m_luaState, "doPlayerFeed", LuaInterface::luaDoPlayerFeed);
 
 	//doPlayerSendCancel(cid, text)
 	lua_register(m_luaState, "doPlayerSendCancel", LuaInterface::luaDoPlayerSendCancel);
@@ -2227,6 +2227,9 @@ void LuaInterface::registerFunctions()
 
 	//getGroupInfo(id)
 	lua_register(m_luaState, "getGroupInfo", LuaInterface::luaGetGroupInfo);
+
+	//getTownList()
+	lua_register(m_luaState, "getTownList", LuaInterface::luaGetTownList);
 
 	//getWaypointList()
 	lua_register(m_luaState, "getWaypointList", LuaInterface::luaGetWaypointList);
@@ -3197,9 +3200,9 @@ int32_t LuaInterface::luaDoPlayerRemoveItem(lua_State* L)
 	return 1;
 }
 
-int32_t LuaInterface::luaDoFeedPlayer(lua_State* L)
+int32_t LuaInterface::luaDoPlayerFeed(lua_State* L)
 {
-	//doFeedPlayer(cid, food)
+	//doPlayerFeed(cid, food)
 	int32_t food = (int32_t)popNumber(L);
 
 	ScriptEnviroment* env = getEnv();
@@ -6676,8 +6679,11 @@ int32_t LuaInterface::luaGetTalkActionList(lua_State* L)
 		setField(L, "access", it->second->getAccess());
 
 		setFieldBool(L, "log", it->second->isLogged());
+		setFieldBool(L, "logged", it->second->isLogged());
 		setFieldBool(L, "hide", it->second->isHidden());
+		setFieldBool(L, "hidden", it->second->isHidden());
 
+		setField(L, "function", it->second->getFunctionName());
 		setField(L, "channel", it->second->getChannel());
 		pushTable(L);
 	}
@@ -9119,6 +9125,24 @@ int32_t LuaInterface::luaGetHighscoreString(lua_State* L)
 		lua_pushstring(L, g_game.getHighscoreString(skillId).c_str());
 	else
 		lua_pushboolean(L, false);
+
+	return 1;
+}
+
+int32_t LuaInterface::luaGetTownList(lua_State* L)
+{
+	//getTownList()
+	TownMap townMap = Towns::getInstance()->getTownMap();
+	TownMap::iterator it = townMap.begin();
+
+	lua_newtable(L);
+	for(uint32_t i = 1; it != townMap.end(); ++it, ++i)
+	{
+		createTable(L, i);
+		setField(L, "id", it->first);
+		setField(L, "name", it->second->getName());
+		pushTable(L);
+	}
 
 	return 1;
 }

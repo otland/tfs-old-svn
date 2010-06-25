@@ -5,7 +5,16 @@ function onSay(cid, words, param, channel)
 		stopEvent(savingEvent)
 		save(tonumber(param) * 60 * 1000)
 	else
-		doSaveServer()
+		if(param == '') then
+			doSaveServer()
+		else
+			local tid = getPlayerByNameWildcard(param)
+			if(not tid or (isPlayerGhost(tid) and getPlayerGhostAccess(tid) > getPlayerGhostAccess(cid))) then
+				doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Player " .. param .. " not found.")
+			else
+				doPlayerSave(tid)
+			end
+		end
 	end
 	return true
 end

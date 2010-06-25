@@ -2,6 +2,7 @@ local config = {
 	removeOnUse = "no",
 	usableOnTarget = "yes", -- can be used on target? (fe. healing friend)
 	splashable = "no",
+	range = -1,
 	realAnimation = "no", -- make text effect visible only for players in range 1x1
 	healthMultiplier = 1.0,
 	manaMultiplier = 1.0
@@ -61,6 +62,10 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 		return true
 	end
 
+	if(config.range > 0 and cid ~= itemEx.uid and getDistanceBetween(getCreaturePosition(cid), getCreaturePosition(itemEx.uid)) > config.range) then
+		return false
+	end
+
 	local health = potion.health
 	if(health and not doCreatureAddHealth(itemEx.uid, math.ceil(math.random(health[1], health[2]) * config.healthMultiplier))) then
 		return false
@@ -72,7 +77,7 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 	end
 
 	doSendMagicEffect(getThingPos(itemEx.uid), CONST_ME_MAGIC_BLUE)
-	if(not realAnimation) then
+	if(not config.realAnimation) then
 		doCreatureSay(itemEx.uid, "Aaaah...", TALKTYPE_ORANGE_1)
 	else
 		for i, tid in ipairs(getSpectators(getCreaturePosition(cid), 1, 1)) do

@@ -74,6 +74,7 @@ class TalkAction : public Event
 
 		int32_t executeSay(Creature* creature, const std::string& words, std::string param, uint16_t channel);
 
+		std::string getFunctionName() const {return m_functionName;}
 		std::string getWords() const {return m_words;}
 		void setWords(const std::string& words) {m_words = words;}
 
@@ -107,7 +108,7 @@ class TalkAction : public Event
 		static TalkFunction ghost;
 		static TalkFunction software;
 
-		std::string m_words;
+		std::string m_words, m_functionName;
 		TalkFunction* m_function;
 		TalkActionFilter m_filter;
 		uint32_t m_access;

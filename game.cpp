@@ -279,7 +279,11 @@ int32_t Game::loadMap(std::string filename)
 	if(!map)
 		map = new Map;
 
-	return map->loadMap(getFilePath(FILE_TYPE_OTHER, std::string("world/" + filename)));
+	std::string file = "world/" + filename;
+	if(!fileExists(file.c_str()))
+		file = getFilePath(FILE_TYPE_OTHER, "world/" + filename);
+	
+	return map->loadMap(file);
 }
 
 void Game::cleanMapEx(uint32_t& count)
@@ -962,10 +966,10 @@ bool Game::removeCreature(Creature* creature, bool isLogout /*= true*/)
 		if((player = (*it)->getPlayer()) && player->canSeeCreature(creature))
 			oldStackPosVector.push_back(tile->getClientIndexOfThing(player, creature));
 	}
+
 	int32_t oldIndex = tile->__getIndexOfThing(creature);
 	if(!map->removeCreature(creature))
 		return false;
-
 
 	//send to client
 	uint32_t i = 0;
@@ -973,9 +977,9 @@ bool Game::removeCreature(Creature* creature, bool isLogout /*= true*/)
 	{
 		if(!(player = (*it)->getPlayer()) || !player->canSeeCreature(creature))
 			continue;
+
 		player->sendCreatureDisappear(creature, oldStackPosVector[i]);
 		++i;
-
 	}
 
 	//event method

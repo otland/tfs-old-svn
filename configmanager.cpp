@@ -31,7 +31,7 @@ ConfigManager::ConfigManager()
 	m_confString[CONFIG_FILE] = getFilePath(FILE_TYPE_CONFIG, "config.lua");
 
 	m_confNumber[LOGIN_PORT] = m_confNumber[GAME_PORT] = m_confNumber[ADMIN_PORT] = m_confNumber[MANAGER_PORT] = m_confNumber[STATUS_PORT] = 0;
-	m_confString[DATA_DIRECTORY] = m_confString[IP] = m_confString[RUNFILE] = m_confString[OUTPUT_LOG] = m_confString[ENCRYPTION_KEY] = "";
+	m_confString[DATA_DIRECTORY] = m_confString[LOGS_DIRECTORY] = m_confString[IP] = m_confString[RUNFILE] = m_confString[OUTPUT_LOG] = m_confString[ENCRYPTION_KEY] = "";
 	m_confBool[LOGIN_ONLY_LOGINSERVER] = m_confBool[START_CLOSED] = false;
 	m_confBool[SCRIPT_SYSTEM] = true;
 }
@@ -58,6 +58,9 @@ bool ConfigManager::load()
 	{
 		if(m_confString[DATA_DIRECTORY] == "")
 			m_confString[DATA_DIRECTORY] = getGlobalString("dataDirectory", "data/");
+
+		if(m_confString[LOGS_DIRECTORY] == "")
+			m_confString[LOGS_DIRECTORY] = getGlobalString("logsDirectory", "logs/");
 
 		if(m_confString[IP] == "")
 			m_confString[IP] = getGlobalString("ip", "127.0.0.1");
@@ -251,7 +254,7 @@ bool ConfigManager::load()
 	m_confBool[SHOW_HEALING_DAMAGE_MONSTER] = getGlobalBool("showHealingDamageForMonsters", false);
 	m_confBool[CHECK_CORPSE_OWNER] = getGlobalBool("checkCorpseOwner ", true);
 	m_confBool[BUFFER_SPELL_FAILURE] = getGlobalBool("bufferMutedOnSpellFailure", false);
-	m_confBool[CONFIM_OUTDATED_VERSION] = getGlobalBool("confirmOutdatedVersion", true);
+	m_confBool[CONFIRM_OUTDATED_VERSION] = getGlobalBool("confirmOutdatedVersion", true);
 	m_confNumber[GUILD_PREMIUM_DAYS] = getGlobalNumber("premiumDaysToFormGuild", 0);
 	m_confNumber[PUSH_CREATURE_DELAY] = getGlobalNumber("pushCreatureDelay", 2 * 1000);
 	m_confNumber[DEATH_CONTAINER] = getGlobalNumber("deathContainerId", 1987);

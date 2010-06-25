@@ -1,4 +1,4 @@
-local HIDDEN = {"passwordType", "sql"}
+local HIDDEN = {"adminPassword", "managerPassword", "encryptionType", "^sql"}
 
 function onSay(cid, words, param, channel)
 	param = param:trim()

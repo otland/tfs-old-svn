@@ -5,9 +5,9 @@ local config = {
 function onSay(cid, words, param, channel)
 	local playerAccess, t = getPlayerAccess(cid), {}
 	for i, talk in ipairs(getTalkActionList()) do
-		if(not talk.hide and playerAccess >= talk.access) then
+		if(not talk.hidden and playerAccess >= talk.access) then
 			local tmp = talk.words:sub(1, 1):trim()
-			if((guildTalksEnabled or (talk.words ~= "!joinguild" and talk.words ~= "!createguild")) and (tmp == "!" or tmp == "/")) then
+			if((guildTalksEnabled or (talk.function ~= "guildjoin" and talk.function ~= "guildcreate")) and (tmp == "!" or tmp == "/")) then
 				table.insert(t, talk)
 			end
 		end

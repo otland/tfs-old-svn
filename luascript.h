@@ -325,7 +325,7 @@ class LuaInterface
 
 		//lua functions
 		static int32_t luaDoRemoveItem(lua_State* L);
-		static int32_t luaDoFeedPlayer(lua_State* L);
+		static int32_t luaDoPlayerFeed(lua_State* L);
 		static int32_t luaDoPlayerSendCancel(lua_State* L);
 		static int32_t luaDoSendDefaultCancel(lua_State* L);
 		static int32_t luaGetSearchString(lua_State* L);
@@ -647,6 +647,7 @@ class LuaInterface
 		static int32_t luaDoItemEraseAttribute(lua_State* L);
 		static int32_t luaGetTalkActionList(lua_State* L);
 		static int32_t luaGetExperienceStageList(lua_State* L);
+		static int32_t luaGetTownList(lua_State* L);
 		static int32_t luaGetWaypointList(lua_State* L);
 		static int32_t luaGetWaypointPosition(lua_State* L);
 		static int32_t luaDoWaypointAddTemporial(lua_State* L);

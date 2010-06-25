@@ -3,7 +3,12 @@ function onSay(cid, words, param, channel)
 	if(words == '/t') then
 		master = true
 	elseif(param == '') then
-		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Command requires param.")
+		local str = ""
+		for i, town in ipairs(getTownList()) do
+			str = str .. town.name .. "\n"
+		end
+
+		doShowTextDialog(cid, 2160, str)
 		return true
 	end
 

@@ -257,38 +257,38 @@ bool TalkAction::configureEvent(xmlNodePtr p)
 
 bool TalkAction::loadFunction(const std::string& functionName)
 {
-	std::string tmpFunctionName = asLowerCaseString(functionName);
-	if(tmpFunctionName == "housebuy")
+	m_functionName = asLowerCaseString(functionName);
+	if(m_functionName == "housebuy")
 		m_function = houseBuy;
- 	else if(tmpFunctionName == "housesell")
+ 	else if(m_functionName == "housesell")
 		m_function = houseSell;
-	else if(tmpFunctionName == "housekick")
+	else if(m_functionName == "housekick")
 		m_function = houseKick;
-	else if(tmpFunctionName == "housedoorlist")
+	else if(m_functionName == "housedoorlist")
 		m_function = houseDoorList;
-	else if(tmpFunctionName == "houseguestlist")
+	else if(m_functionName == "houseguestlist")
 		m_function = houseGuestList;
-	else if(tmpFunctionName == "housesubownerlist")
+	else if(m_functionName == "housesubownerlist")
 		m_function = houseSubOwnerList;
- 	else if(tmpFunctionName == "guildjoin")
+ 	else if(m_functionName == "guildjoin")
 		m_function = guildJoin;
- 	else if(tmpFunctionName == "guildcreate")
+ 	else if(m_functionName == "guildcreate")
 		m_function = guildCreate;
-	else if(tmpFunctionName == "thingproporties")
+	else if(m_functionName == "thingproporties")
 		m_function = thingProporties;
-	else if(tmpFunctionName == "banishmentinfo")
+	else if(m_functionName == "banishmentinfo")
 		m_function = banishmentInfo;
-	else if(tmpFunctionName == "diagnostics")
+	else if(m_functionName == "diagnostics")
 		m_function = diagnostics;
-	else if(tmpFunctionName == "addskill")
+	else if(m_functionName == "addskill")
 		m_function = addSkill;
-	else if(tmpFunctionName == "ghost")
+	else if(m_functionName == "ghost")
 		m_function = ghost;
-	else if(tmpFunctionName == "software")
+	else if(m_functionName == "software")
 		m_function = software;
 	else
 	{
-		std::clog << "[Warning - TalkAction::loadFunction] Function \"" << functionName << "\" does not exist." << std::endl;
+		std::clog << "[Warning - TalkAction::loadFunction] Function \"" << m_functionName << "\" does not exist." << std::endl;
 		return false;
 	}
 

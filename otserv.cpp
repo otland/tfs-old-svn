@@ -382,6 +382,13 @@ void otserv(StringVec, ServiceManager* services)
 	if(!g_config.load())
 		startupErrorMessage("Unable to load " + g_config.getString(ConfigManager::CONFIG_FILE) + "!");
 
+	// silently append trailing slash
+	std::string path = g_config.getString(ConfigManager::DATA_DIRECTORY);
+	g_config.setString(ConfigManager::DATA_DIRECTORY, path.erase(path.find_last_not_of("/") + 1) + "/");
+
+	path = g_config.getString(ConfigManager::LOGS_DIRECTORY);
+	g_config.setString(ConfigManager::LOGS_DIRECTORY, path.erase(path.find_last_not_of("/") + 1) + "/");
+
 	std::clog << ">> Opening logs" << std::endl;
 	Logger::getInstance()->open();
 
@@ -507,7 +514,7 @@ void otserv(StringVec, ServiceManager* services)
 						<< "." << std::endl << "> Latest version information - version: "
 						<< version << ", patch: " << patch << ", build: " << build
 						<< ", timestamp: " << timestamp << "." << std::endl;
-					if(g_config.getBool(ConfigManager::CONFIM_OUTDATED_VERSION) &&
+					if(g_config.getBool(ConfigManager::CONFIRM_OUTDATED_VERSION) &&
 						asLowerCaseString(version).find("_svn") == std::string::npos)
 					{
 						std::clog << "Continue? (y/N)" << std::endl;

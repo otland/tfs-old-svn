@@ -1685,7 +1685,7 @@ std::string getFilePath(FileType_t type, std::string name/* = ""*/)
 			break;
 		case FILE_TYPE_LOG:
 			#ifndef __FILESYSTEM_HIERARCHY_STANDARD__
-			path += "logs/" + name;
+			path = g_config.getString(ConfigManager::LOGS_DIRECTORY) + name;
 			#else
 			path = "/var/log/tfs/" + name;
 			#endif

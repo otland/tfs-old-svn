@@ -196,6 +196,7 @@
 	-- NOTE: promptExceptionTracerErrorBox works only with precompiled support feature,
 	-- called "exception tracer" (__EXCEPTION_TRACER__ flag).
 	dataDirectory = "data/"
+	logsDirectory = "data/logs/"
 	bankSystem = true
 	displaySkillLevelOnAdvance = false
 	promptExceptionTracerErrorBox = true
