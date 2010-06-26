@@ -20,13 +20,18 @@ function onSay(cid, words, param, channel)
 		end
 	end
 
-	if(t[1] <= 1 or t[1] == 135 or (t[1] > 160 and t[1] < 192) or t[1] > 351) then
-		local item = getItemInfo(t[1])
-		if(item) then
-			doSetItemOutfit(cid, t[1], -1)
-			return true
+	local item = getItemInfo(t[1])
+	if(item) then
+		local period, tmp = -1, tonumber(t[3])
+		if(t[3] and tmp) then
+			period = tmp
 		end
 
+		doSetItemOutfit(pid, t[1], period)
+		return true
+	end
+
+	if(t[1] <= 1 or t[1] == 135 or (t[1] > 160 and t[1] < 192) or t[1] > 351) then
 		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Such outfit does not exist.")
 		return true
 	end

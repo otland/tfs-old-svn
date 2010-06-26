@@ -307,14 +307,14 @@ bool Creature::startAutoWalk(std::list<Direction>& listDir)
 	}
 
 	listWalkDir = listDir;
-	addEventWalk(listDir.size() > 1);
+	addEventWalk(listDir.size() == 1);
 	return true;
 }
 
 void Creature::addEventWalk(bool firstStep/* = false*/)
 {
 	cancelNextWalk = false;
-	if(getSpeed() < 1 || eventWalk)
+	if(getStepSpeed() < 1 || eventWalk)
 		return;
 
 	int64_t ticks = getEventStepTicks(firstStep);

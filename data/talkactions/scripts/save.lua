@@ -1,21 +1,21 @@
 local savingEvent = 0
 
 function onSay(cid, words, param, channel)
-	if(isNumber(param)) then
+	local tmp = tonumber(param)
+	if(tmp ~= nil) then
 		stopEvent(savingEvent)
-		save(tonumber(param) * 60 * 1000)
+		save(tmp * 60 * 1000)
+	elseif(param == '') then
+		doSaveServer()
 	else
-		if(param == '') then
-			doSaveServer()
+		local tid = getPlayerByNameWildcard(param)
+		if(not tid or (isPlayerGhost(tid) and getPlayerGhostAccess(tid) > getPlayerGhostAccess(cid))) then
+			doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Player " .. param .. " not found.")
 		else
-			local tid = getPlayerByNameWildcard(param)
-			if(not tid or (isPlayerGhost(tid) and getPlayerGhostAccess(tid) > getPlayerGhostAccess(cid))) then
-				doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Player " .. param .. " not found.")
-			else
-				doPlayerSave(tid)
-			end
+			doPlayerSave(tid)
 		end
 	end
+
 	return true
 end
 

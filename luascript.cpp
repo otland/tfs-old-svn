@@ -6758,11 +6758,11 @@ int32_t LuaInterface::luaDoRemoveCondition(lua_State* L)
 		return 1;
 	}
 
-	Condition* condition = creature->getCondition(conditionType, CONDITIONID_COMBAT, subId);
-	if(!condition)
-		condition = creature->getCondition(conditionType, CONDITIONID_DEFAULT, subId);
+	Condition* condition = NULL;
+	while((condition = creature->getCondition(conditionType, CONDITIONID_COMBAT, subId)))
+		creature->removeCondition(condition);
 
-	if(condition)
+	while((condition = creature->getCondition(conditionType, CONDITIONID_DEFAULT, subId)))
 		creature->removeCondition(condition);
 
 	lua_pushboolean(L, true);
@@ -9132,11 +9132,9 @@ int32_t LuaInterface::luaGetHighscoreString(lua_State* L)
 int32_t LuaInterface::luaGetTownList(lua_State* L)
 {
 	//getTownList()
-	TownMap townMap = Towns::getInstance()->getTownMap();
-	TownMap::iterator it = townMap.begin();
-
 	lua_newtable(L);
-	for(uint32_t i = 1; it != townMap.end(); ++it, ++i)
+	TownMap::const_iterator it = Towns::getInstance()->getFirstTown();
+	for(uint32_t i = 1; it != Towns::getInstance()->getLastTown(); ++it, ++i)
 	{
 		createTable(L, i);
 		setField(L, "id", it->first);

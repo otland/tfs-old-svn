@@ -105,7 +105,8 @@ class TileItemVector
 		bool empty() {return items.empty();}
 		bool empty() const {return items.empty();}
 
-		void push_back(Item* item) {return items.push_back(item);}
+		void push_back(Item* item) {items.push_back(item);}
+		void push_front(Item* item) {items.insert(items.begin(), item);}
 		ItemVector::iterator insert(ItemVector::iterator _where, Item* item) {return items.insert(_where, item);}
 		ItemVector::iterator erase(ItemVector::iterator _pos) {return items.erase(_pos);}
 

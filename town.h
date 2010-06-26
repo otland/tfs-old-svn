@@ -80,7 +80,8 @@ class Towns
 			return NULL;
 		}
 
-		const TownMap& getTownMap() const {return townMap;}
+		TownMap::const_iterator getFirstTown() const {return townMap.begin();}
+		TownMap::const_iterator getLastTown() const {return townMap.end();}
 
 	private:
 		TownMap townMap;

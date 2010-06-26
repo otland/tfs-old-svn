@@ -279,7 +279,7 @@ int32_t Game::loadMap(std::string filename)
 	if(!map)
 		map = new Map;
 
-	std::string file = "world/" + filename;
+	std::string file = getFilePath(FILE_TYPE_CONFIG, "world/" + filename);
 	if(!fileExists(file.c_str()))
 		file = getFilePath(FILE_TYPE_OTHER, "world/" + filename);
 	
@@ -2371,6 +2371,7 @@ bool Game::playerAutoWalk(uint32_t playerId, std::list<Direction>& listDir)
 	}
 
 	player->setNextWalkTask(NULL);
+	player->setNextWalkActionTask(NULL);
 	return player->startAutoWalk(listDir);
 }
 
