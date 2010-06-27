@@ -436,7 +436,7 @@ bool Monster::searchTarget(TargetSearchType_t searchType /*= TARGETSEARCH_DEFAUL
 			continue;
 
 #ifdef __DEBUG__
-		std::clog << "Selecting target " << (*it)->getName() << std::endl;
+		/*std::clog << "Selecting target " << (*it)->getName() << std::endl;*/ // Caused a strange crash, will look at it later
 #endif
 		return true;
 	}

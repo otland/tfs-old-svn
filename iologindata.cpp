@@ -1058,7 +1058,7 @@ bool IOLoginData::saveItems(const Player* player, const ItemBlockList& itemList,
 			stackList.push_back(Stack(container, runningId));
 	}
 
-	while(stackList.size() > 0)
+	while(stackList.size())
 	{
 		Stack stack = stackList.front();
 		stackList.pop_front();
@@ -1101,8 +1101,8 @@ bool IOLoginData::playerDeath(Player* _player, const DeathList& dl)
 	if(!db->query(query.str()))
 		return false;
 
-	int32_t i = 0, size = dl.size(), tmp = g_config.getNumber(ConfigManager::DEATH_ASSISTS) + 1;
-	if(tmp > 0 && size > tmp)
+	uint32_t i = 0, size = dl.size(), tmp = g_config.getNumber(ConfigManager::DEATH_ASSISTS) + 1;
+	if(size > tmp)
 		size = tmp;
 
 #ifdef __WAR_SYSTEM__
