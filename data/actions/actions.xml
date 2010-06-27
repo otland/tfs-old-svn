@@ -259,7 +259,7 @@
 	<action itemid="7503" event="script" value="other/constructionkits.lua"/>
 	<action fromid="7960" toid="7962" event="script" value="other/constructionkits.lua"/>
 	<action fromid="8692" toid="8693" event="script" value="other/constructionkits.lua"/>
-	<action itemid="9974" event="script" value="other/constructionkits.lua"/>
+	<!-- <action itemid="9974" event="script" value="other/constructionkits.lua"/> - Dupplicate, please check it -->
 
 	<!-- Bed construction kits -->
 	<action fromid="7904" toid="7907" event="script" value="other/furniturebeds.lua"/>
