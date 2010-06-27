@@ -88,7 +88,7 @@ std::string DatabaseSQLite::_parse(const std::string& s)
 	return query;
 }
 
-bool DatabaseSQLite::executeQuery(const std::string& query)
+bool DatabaseSQLite::query(const std::string& query)
 {
 	boost::recursive_mutex::scoped_lock lockClass(sqliteLock);
 	if(!m_connected)
@@ -96,7 +96,7 @@ bool DatabaseSQLite::executeQuery(const std::string& query)
 
 	std::string buf = _parse(query);
 #ifdef __SQL_QUERY_DEBUG__
-	std::clog << "SQLLITE DEBUG, executeQuery: " << buf << std::endl;
+	std::clog << "SQLLITE DEBUG, query: " << buf << std::endl;
 #endif
 	sqlite3_stmt* stmt;
 	// prepares statement

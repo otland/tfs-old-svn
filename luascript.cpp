@@ -141,7 +141,7 @@ bool ScriptEnviroment::saveGameState()
 	DBQuery query;
 
 	query << "DELETE FROM `global_storage` WHERE `world_id` = " << g_config.getNumber(ConfigManager::WORLD_ID) << ";";
-	if(!db->executeQuery(query.str()))
+	if(!db->query(query.str()))
 		return false;
 
 	DBInsert query_insert(db);
@@ -2413,7 +2413,11 @@ void LuaInterface::registerFunctions()
 
 const luaL_Reg LuaInterface::luaDatabaseTable[] =
 {
-	//db.executeQuery(query)
+	//db.query(query)
+	{"query", LuaInterface::luaDatabaseExecute},
+
+	// For compatibility reasons, no need to break almost every script.
+	//db.executequery(query)
 	{"executeQuery", LuaInterface::luaDatabaseExecute},
 
 	//db.storeQuery(query)
@@ -10261,9 +10265,9 @@ int32_t LuaInterface::luaStdVAHash(lua_State* L)
 
 int32_t LuaInterface::luaDatabaseExecute(lua_State* L)
 {
-	//db.executeQuery(query)
+	//db.query(query)
 	DBQuery query; //lock mutex
-	lua_pushboolean(L, Database::getInstance()->executeQuery(popString(L)));
+	lua_pushboolean(L, Database::getInstance()->query(popString(L)));
 	return 1;
 }
 

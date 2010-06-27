@@ -34,11 +34,11 @@ class DatabaseSQLite : public _Database
 
 		DATABASE_VIRTUAL bool getParam(DBParam_t param);
 
-		DATABASE_VIRTUAL bool beginTransaction() {return executeQuery("BEGIN");}
-		DATABASE_VIRTUAL bool rollback() {return executeQuery("ROLLBACK");}
-		DATABASE_VIRTUAL bool commit() {return executeQuery("COMMIT");}
+		DATABASE_VIRTUAL bool beginTransaction() {return query("BEGIN");}
+		DATABASE_VIRTUAL bool rollback() {return query("ROLLBACK");}
+		DATABASE_VIRTUAL bool commit() {return query("COMMIT");}
 
-		DATABASE_VIRTUAL bool executeQuery(const std::string& query);
+		DATABASE_VIRTUAL bool query(const std::string& query);
 		DATABASE_VIRTUAL DBResult* storeQuery(const std::string& query);
 
 		DATABASE_VIRTUAL std::string escapeString(const std::string& s);

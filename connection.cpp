@@ -80,7 +80,7 @@ void ConnectionManager::shutdown()
 			(*it)->m_socket->shutdown(boost::asio::ip::tcp::socket::shutdown_both, error);
 			(*it)->m_socket->close(error);
 		}
-		catch(boost::system::system_error&) {}
+		catch(std::exception&) {}
 	}
 
 	m_connections.clear();
@@ -244,7 +244,7 @@ void Connection::closeSocket()
 				PRINT_ASIO_ERROR("Close");
 			}
 		}
-		catch(boost::system::system_error& e)
+		catch(std::exception& e)
 		{
 			if(m_logError)
 			{
@@ -282,7 +282,7 @@ void Connection::onStop()
 			m_socket->close();
 		}
 	}
-	catch(boost::system::system_error&) {}
+	catch(std::exception&) {}
 	delete m_socket;
 	m_socket = NULL;
 
@@ -298,7 +298,7 @@ void Connection::deleteConnection()
 	{
 		m_service.dispatch(boost::bind(&Connection::onStop, this));
 	}
-	catch(boost::system::system_error& e)
+	catch(std::exception& e)
 	{
 		if(m_logError)
 		{
@@ -329,7 +329,7 @@ void Connection::accept()
 			boost::asio::buffer(m_msg.buffer(), NETWORK_HEADER_SIZE),
 			boost::bind(&Connection::parseHeader, shared_from_this(), boost::asio::placeholders::error));
 	}
-	catch(boost::system::system_error& e)
+	catch(std::exception& e)
 	{
 		if(m_logError)
 		{
@@ -369,7 +369,7 @@ void Connection::parseHeader(const boost::system::error_code& error)
 		boost::asio::async_read(getHandle(), boost::asio::buffer(m_msg.bodyBuffer(), size),
 			boost::bind(&Connection::parsePacket, shared_from_this(), boost::asio::placeholders::error));
 	}
-	catch(boost::system::system_error& e)
+	catch(std::exception& e)
 	{
 		if(m_logError)
 		{
@@ -445,7 +445,7 @@ void Connection::parsePacket(const boost::system::error_code& error)
 			boost::asio::buffer(m_msg.buffer(), NETWORK_HEADER_SIZE),
 			boost::bind(&Connection::parseHeader, shared_from_this(), boost::asio::placeholders::error));
 	}
-	catch(boost::system::system_error& e)
+	catch(std::exception& e)
 	{
 		if(m_logError)
 		{
@@ -512,7 +512,7 @@ void Connection::internalSend(OutputMessage_ptr msg)
 			boost::asio::buffer(msg->getOutputBuffer(), msg->size()),
 			boost::bind(&Connection::onWrite, shared_from_this(), msg, boost::asio::placeholders::error));
 	}
-	catch(boost::system::system_error& e)
+	catch(std::exception& e)
 	{
 		if(m_logError)
 		{

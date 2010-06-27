@@ -128,13 +128,13 @@ bool DatabaseMySQL::commit()
 	return true;
 }
 
-bool DatabaseMySQL::executeQuery(const std::string &query)
+bool DatabaseMySQL::query(const std::string &query)
 {
 	if(!m_connected)
 		return false;
 
 #ifdef __SQL_QUERY_DEBUG__
-	std::clog << "MYSQL DEBUG, executeQuery: " << query.c_str() << std::endl;
+	std::clog << "MYSQL DEBUG, query: " << query.c_str() << std::endl;
 #endif
 	if(mysql_real_query(&m_handle, query.c_str(), query.length()))
 	{

@@ -127,7 +127,7 @@ class _Database
 		* @param std::string query command
 		* @return true on success, false on error
 		*/
-		DATABASE_VIRTUAL bool executeQuery(const std::string&) {return 0;}
+		DATABASE_VIRTUAL bool query(const std::string&) {return 0;}
 
 		/**
 		* Queries database.

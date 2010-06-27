@@ -90,7 +90,7 @@ void DBInsert::setQuery(const std::string& query)
 bool DBInsert::addRow(const std::string& row)
 {
 	if(!m_multiLine) // executes INSERT for current row
-		return m_db->executeQuery(m_query + "(" + row + ")");
+		return m_db->query(m_query + "(" + row + ")");
 
 	m_rows++;
 	int32_t size = m_buf.length();
@@ -124,7 +124,7 @@ bool DBInsert::execute()
 
 	m_rows = 0;
 	// executes buffer
-	bool ret = m_db->executeQuery(m_query + m_buf);
+	bool ret = m_db->query(m_query + m_buf);
 	m_buf = "";
 	return ret;
 }

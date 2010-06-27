@@ -77,7 +77,7 @@ bool IOMapSerialize::updateAuctions()
 		query.str("");
 		query << "DELETE FROM `house_auctions` WHERE `house_id` = " << result->getDataInt("house_id");
 		if(!(house = Houses::getInstance()->getHouse(result->getDataInt(
-			"house_id"))) || !db->executeQuery(query.str()))
+			"house_id"))) || !db->query(query.str()))
 		{
 			success = false;
 			continue;
@@ -198,7 +198,7 @@ bool IOMapSerialize::updateHouses()
 				<< house->getTilesCount() << ", " << house->isGuild() << ")";
 		}
 
-		if(!db->executeQuery(query.str()))
+		if(!db->query(query.str()))
 			return false;
 
 		query.str("");
@@ -227,13 +227,13 @@ bool IOMapSerialize::saveHouse(Database* db, House* house)
 		<< house->getPaidUntil() << ", `warnings` = " << house->getRentWarnings() << ", `lastwarning` = "
 		<< house->getLastWarning() << ", `clear` = 0 WHERE `id` = " << house->getId() << " AND `world_id` = "
 		<< g_config.getNumber(ConfigManager::WORLD_ID) << db->getUpdateLimiter();
-	if(!db->executeQuery(query.str()))
+	if(!db->query(query.str()))
 		return false;
 
 	query.str("");
 	query << "DELETE FROM `house_lists` WHERE `house_id` = " << house->getId() << " AND `world_id` = "
 		<< g_config.getNumber(ConfigManager::WORLD_ID);
-	if(!db->executeQuery(query.str()))
+	if(!db->query(query.str()))
 		return false;
 
 	DBInsert queryInsert(db);
@@ -383,12 +383,12 @@ bool IOMapSerialize::saveMapRelational(Map*)
 	//clear old tile data
 	DBQuery query;
 	query << "DELETE FROM `tile_items` WHERE `world_id` = " << g_config.getNumber(ConfigManager::WORLD_ID);
-	if(!db->executeQuery(query.str()))
+	if(!db->query(query.str()))
 		return false;
 
 	query.str("");
 	query << "DELETE FROM `tiles` WHERE `world_id` = " << g_config.getNumber(ConfigManager::WORLD_ID);
-	if(!db->executeQuery(query.str()))
+	if(!db->query(query.str()))
 		return false;
 
 	uint32_t tileId = 0;
@@ -480,7 +480,7 @@ bool IOMapSerialize::saveMapBinary(Map*)
 
 	DBQuery query;
 	query << "DELETE FROM `house_data` WHERE `world_id` = " << g_config.getNumber(ConfigManager::WORLD_ID);
-	if(!db->executeQuery(query.str()))
+	if(!db->query(query.str()))
  		return false;
 
 	DBInsert stmt(db);
@@ -656,7 +656,7 @@ bool IOMapSerialize::saveItems(Database* db, uint32_t& tileId, uint32_t houseId,
 			query << "INSERT INTO `tiles` (`id`, `world_id`, `house_id`, `x`, `y`, `z`) VALUES ("
 			<< tileId << ", " << g_config.getNumber(ConfigManager::WORLD_ID) << ", " << houseId << ", "
 			<< tilePosition.x << ", " << tilePosition.y << ", " << tilePosition.z << ")";
-			if(!db->executeQuery(query.str()))
+			if(!db->query(query.str()))
 				return false;
 
 			stored = true;

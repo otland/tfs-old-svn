@@ -75,7 +75,8 @@
 
 #ifdef __NO_BOOST_EXCEPTIONS__
 #include <exception>
-void boost::throw_exception(std::exception const & e)
+
+inline void boost::throw_exception(std::exception const & e)
 {
 	std::clog << "Boost exception: " << e.what() << std::endl;
 }

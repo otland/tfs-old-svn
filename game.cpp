@@ -5783,7 +5783,7 @@ int32_t Game::getMotdId()
 
 	DBQuery query;
 	query << "INSERT INTO `server_motd` (`id`, `world_id`, `text`) VALUES (" << ++lastMotdId << ", " << g_config.getNumber(ConfigManager::WORLD_ID) << ", " << db->escapeString(lastMotd) << ")";
-	if(db->executeQuery(query.str()))
+	if(db->query(query.str()))
 		return lastMotdId;
 
 	return --lastMotdId;

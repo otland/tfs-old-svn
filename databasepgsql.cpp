@@ -48,7 +48,7 @@ bool DatabasePgSQL::getParam(DBParam_t param)
 	return false;
 }
 
-bool DatabasePgSQL::executeQuery(const std::string& query)
+bool DatabasePgSQL::query(const std::string& query)
 {
 	if(!m_connected)
 		return false;

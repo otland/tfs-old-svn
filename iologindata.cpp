@@ -100,7 +100,7 @@ bool IOLoginData::saveAccount(Account account)
 	Database* db = Database::getInstance();
 	DBQuery query;
 	query << "UPDATE `accounts` SET `premdays` = " << account.premiumDays << ", `warnings` = " << account.warnings << ", `lastday` = " << account.lastDay << " WHERE `id` = " << account.number << db->getUpdateLimiter();
-	return db->executeQuery(query.str());
+	return db->query(query.str());
 }
 
 bool IOLoginData::getAccountId(const std::string& name, uint32_t& number)
@@ -281,7 +281,7 @@ bool IOLoginData::setPassword(uint32_t accountId, std::string newPassword)
 	DBQuery query;
 
 	query << "UPDATE `accounts` SET `password` = " << db->escapeString(newPassword) << ", `salt` = "<< db->escapeString(salt) << " WHERE `id` = " << accountId << db->getUpdateLimiter();
-	return db->executeQuery(query.str());
+	return db->query(query.str());
 }
 
 bool IOLoginData::validRecoveryKey(uint32_t accountId, std::string recoveryKey)
@@ -308,7 +308,7 @@ bool IOLoginData::setRecoveryKey(uint32_t accountId, std::string newRecoveryKey)
 
 	DBQuery query;
 	query << "UPDATE `accounts` SET `key` = " << db->escapeString(newRecoveryKey) << " WHERE `id` = " << accountId << db->getUpdateLimiter();
-	return db->executeQuery(query.str());
+	return db->query(query.str());
 }
 
 uint64_t IOLoginData::createAccount(std::string name, std::string password)
@@ -321,7 +321,7 @@ uint64_t IOLoginData::createAccount(std::string name, std::string password)
 	DBQuery query;
 
 	query << "INSERT INTO `accounts` (`id`, `name`, `password`, `salt`) VALUES (NULL, " << db->escapeString(name) << ", " << db->escapeString(password) << ", " << db->escapeString(salt) << ")";
-	if(!db->executeQuery(query.str()))
+	if(!db->query(query.str()))
 		return 0;
 
 	return db->getLastInsertId();
@@ -787,7 +787,7 @@ bool IOLoginData::savePlayer(Player* player, bool preSave/* = true*/, bool shall
 	if(!save || !player->isSaving())
 	{
 		query << " WHERE `id` = " << player->getGUID() << db->getUpdateLimiter();
-		if(!db->executeQuery(query.str()))
+		if(!db->query(query.str()))
 			return false;
 
 		return trans.commit();
@@ -876,7 +876,7 @@ bool IOLoginData::savePlayer(Player* player, bool preSave/* = true*/, bool shall
 		tmpVoc = Vocations::getInstance()->getVocation(tmpVoc->getFromVocation());
 
 	query << "`vocation` = " << tmpVoc->getId() << " WHERE `id` = " << player->getGUID() << db->getUpdateLimiter();
-	if(!db->executeQuery(query.str()))
+	if(!db->query(query.str()))
 		return false;
 
 	// skills
@@ -884,7 +884,7 @@ bool IOLoginData::savePlayer(Player* player, bool preSave/* = true*/, bool shall
 	{
 		query.str("");
 		query << "UPDATE `player_skills` SET `value` = " << player->skills[i][SKILL_LEVEL] << ", `count` = " << player->skills[i][SKILL_TRIES] << " WHERE `player_id` = " << player->getGUID() << " AND `skillid` = " << i << db->getUpdateLimiter();
-		if(!db->executeQuery(query.str()))
+		if(!db->query(query.str()))
 			return false;
 	}
 
@@ -894,7 +894,7 @@ bool IOLoginData::savePlayer(Player* player, bool preSave/* = true*/, bool shall
 	// learned spells
 	query.str("");
 	query << "DELETE FROM `player_spells` WHERE `player_id` = " << player->getGUID();
-	if(!db->executeQuery(query.str()))
+	if(!db->query(query.str()))
 		return false;
 
 	char buffer[280];
@@ -914,7 +914,7 @@ bool IOLoginData::savePlayer(Player* player, bool preSave/* = true*/, bool shall
 	//item saving
 	query.str("");
 	query << "DELETE FROM `player_items` WHERE `player_id` = " << player->getGUID();
-	if(!db->executeQuery(query.str()))
+	if(!db->query(query.str()))
 		return false;
 
 	ItemBlockList itemList;
@@ -947,7 +947,7 @@ bool IOLoginData::savePlayer(Player* player, bool preSave/* = true*/, bool shall
 	{*/
 		query.str("");
 		query << "DELETE FROM `player_depotitems` WHERE `player_id` = " << player->getGUID();// << " AND `pid` IN (" << s.substr(0, --size) << ")";
-		if(!db->executeQuery(query.str()))
+		if(!db->query(query.str()))
 			return false;
 
 		query_insert.setQuery("INSERT INTO `player_depotitems` (`player_id`, `pid`, `sid`, `itemtype`, `count`, `attributes`) VALUES ");
@@ -959,7 +959,7 @@ bool IOLoginData::savePlayer(Player* player, bool preSave/* = true*/, bool shall
 
 	query.str("");
 	query << "DELETE FROM `player_storage` WHERE `player_id` = " << player->getGUID();
-	if(!db->executeQuery(query.str()))
+	if(!db->query(query.str()))
 		return false;
 
 	player->generateReservedStorage();
@@ -979,7 +979,7 @@ bool IOLoginData::savePlayer(Player* player, bool preSave/* = true*/, bool shall
 		//save guild invites
 		query.str("");
 		query << "DELETE FROM `guild_invites` WHERE player_id = " << player->getGUID();
-		if(!db->executeQuery(query.str()))
+		if(!db->query(query.str()))
 			return false;
 
 		query_insert.setQuery("INSERT INTO `guild_invites` (`player_id`, `guild_id`) VALUES ");
@@ -1001,7 +1001,7 @@ bool IOLoginData::savePlayer(Player* player, bool preSave/* = true*/, bool shall
 	else
 		query << "DELETE FROM `player_viplist` WHERE `player_id` = " << player->getGUID();
 
-	if(!db->executeQuery(query.str()))
+	if(!db->query(query.str()))
 		return false;
 
 	if(!g_config.getBool(ConfigManager::VIPLIST_PER_PLAYER))
@@ -1098,7 +1098,7 @@ bool IOLoginData::playerDeath(Player* _player, const DeathList& dl)
 
 	query << "INSERT INTO `player_deaths` (`player_id`, `date`, `level`) VALUES (" << _player->getGUID()
 		<< ", " << time(NULL) << ", " << _player->getLevel() << ")";
-	if(!db->executeQuery(query.str()))
+	if(!db->query(query.str()))
 		return false;
 
 	int32_t i = 0, size = dl.size(), tmp = g_config.getNumber(ConfigManager::DEATH_ASSISTS) + 1;
@@ -1121,7 +1121,7 @@ bool IOLoginData::playerDeath(Player* _player, const DeathList& dl)
 			<< ", " << it->getWar().war
 #endif
 			<< ")";
-		if(!db->executeQuery(query.str()))
+		if(!db->query(query.str()))
 			return false;
 
 		std::string name;
@@ -1146,7 +1146,7 @@ bool IOLoginData::playerDeath(Player* _player, const DeathList& dl)
 				query.str("");
 				query << "INSERT INTO `player_killers` (`kill_id`, `player_id`) VALUES ("
 					<< killId << ", " << player->getGUID() << ")";
-				if(!db->executeQuery(query.str()))
+				if(!db->query(query.str()))
 					return false;
 			}
 			else
@@ -1160,7 +1160,7 @@ bool IOLoginData::playerDeath(Player* _player, const DeathList& dl)
 			query.str("");
 			query << "INSERT INTO `environment_killers` (`kill_id`, `name`) VALUES ("
 				<< killId << ", " << db->escapeString(name) << ")";
-			if(!db->executeQuery(query.str()))
+			if(!db->query(query.str()))
 				return false;
 		}
 	}
@@ -1477,12 +1477,12 @@ bool IOLoginData::changeName(uint32_t guid, std::string newName, std::string old
 
 	query << "INSERT INTO `player_namelocks` (`player_id`, `name`, `new_name`, `date`) VALUES ("<< guid << ", "
 		<< db->escapeString(oldName) << ", " << db->escapeString(newName) << ", " << time(NULL) << ")";
-	if(!db->executeQuery(query.str()))
+	if(!db->query(query.str()))
 		return false;
 
 	query.str("");
 	query << "UPDATE `players` SET `name` = " << db->escapeString(newName) << " WHERE `id` = " << guid << db->getUpdateLimiter();
-	if(!db->executeQuery(query.str()))
+	if(!db->query(query.str()))
 		return false;
 
 	GuidCacheMap::iterator it = guidCacheMap.find(oldName);
@@ -1531,7 +1531,7 @@ bool IOLoginData::createCharacter(uint32_t accountId, std::string characterName,
 	DBQuery query;
 
 	query << "INSERT INTO `players` (`id`, `name`, `world_id`, `group_id`, `account_id`, `level`, `vocation`, `health`, `healthmax`, `experience`, `lookbody`, `lookfeet`, `lookhead`, `looklegs`, `looktype`, `lookaddons`, `maglevel`, `mana`, `manamax`, `manaspent`, `soul`, `town_id`, `posx`, `posy`, `posz`, `conditions`, `cap`, `sex`, `lastlogin`, `lastip`, `skull`, `skulltime`, `save`, `rank_id`, `guildnick`, `lastlogout`, `blessings`, `online`) VALUES (NULL, " << db->escapeString(characterName) << ", " << g_config.getNumber(ConfigManager::WORLD_ID) << ", 1, " << accountId << ", " << level << ", " << vocationId << ", " << healthMax << ", " << healthMax << ", " << exp << ", 68, 76, 78, 39, " << lookType << ", 0, " << g_config.getNumber(ConfigManager::START_MAGICLEVEL) << ", " << manaMax << ", " << manaMax << ", 0, 100, " << g_config.getNumber(ConfigManager::SPAWNTOWN_ID) << ", " << g_config.getNumber(ConfigManager::SPAWNPOS_X) << ", " << g_config.getNumber(ConfigManager::SPAWNPOS_Y) << ", " << g_config.getNumber(ConfigManager::SPAWNPOS_Z) << ", 0, " << capMax << ", " << sex << ", 0, 0, 0, 0, 1, 0, '', 0, 0, 0)";
-	return db->executeQuery(query.str());
+	return db->query(query.str());
 }
 
 DeleteCharacter_t IOLoginData::deleteCharacter(uint32_t accountId, const std::string characterName)
@@ -1559,16 +1559,16 @@ DeleteCharacter_t IOLoginData::deleteCharacter(uint32_t accountId, const std::st
 
 	query.str("");
 	query << "UPDATE `players` SET `deleted` = " << time(NULL) << " WHERE `id` = " << id << db->getUpdateLimiter();
-	if(!db->executeQuery(query.str()))
+	if(!db->query(query.str()))
 		return DELETE_INTERNAL;
 
 	query.str("");
 	query << "DELETE FROM `guild_invites` WHERE `player_id` = " << id;
-	db->executeQuery(query.str());
+	db->query(query.str());
 
 	query.str("");
 	query << "DELETE FROM `player_viplist` WHERE `vip_id` = " << id;
-	db->executeQuery(query.str());
+	db->query(query.str());
 
 	for(AutoList<Player>::iterator it = Player::autoList.begin(); it != Player::autoList.end(); ++it)
 	{
@@ -1724,7 +1724,7 @@ bool IOLoginData::updateOnlineStatus(uint32_t guid, bool login)
 	}
 
 	query << "UPDATE `players` SET `online` = " << value << " WHERE `id` = " << guid << db->getUpdateLimiter();
-	return db->executeQuery(query.str());
+	return db->query(query.str());
 }
 
 bool IOLoginData::resetGuildInformation(uint32_t guid)
@@ -1732,5 +1732,5 @@ bool IOLoginData::resetGuildInformation(uint32_t guid)
 	Database* db = Database::getInstance();
 	DBQuery query;
 	query << "UPDATE `players` SET `rank_id` = 0, `guildnick` = '' WHERE `id` = " << guid << " AND `deleted` = 0" << db->getUpdateLimiter();
-	return db->executeQuery(query.str());
+	return db->query(query.str());
 }

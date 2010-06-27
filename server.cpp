@@ -72,7 +72,7 @@ void ServicePort::open(IPAddressList ips, uint16_t port)
 			accept(tmp);
 			m_acceptors.push_back(tmp);
 		}
-		catch(boost::system::system_error& e)
+		catch(std::exception& e)
 		{
 			if(m_logError)
 			{
@@ -120,7 +120,7 @@ void ServicePort::accept(Acceptor_ptr acceptor)
 		acceptor->async_accept(*socket, boost::bind(
 			&ServicePort::handle, this, acceptor, socket, boost::asio::placeholders::error));
 	}
-	catch(boost::system::system_error& e)
+	catch(std::exception& e)
 	{
 		if(m_logError)
 		{
@@ -226,7 +226,7 @@ void ServiceManager::run()
 		m_io_service.run();
 		running = true;
 	}
-	catch(boost::system::system_error& e)
+	catch(std::exception& e)
 	{
 		LOG_MESSAGE(LOGTYPE_ERROR, e.what(), "NETWORK")
 	}
@@ -244,7 +244,7 @@ void ServiceManager::stop()
 		{
 			m_io_service.post(boost::bind(&ServicePort::close, it->second));
 		}
-		catch(boost::system::system_error& e)
+		catch(std::exception& e)
 		{
 			LOG_MESSAGE(LOGTYPE_ERROR, e.what(), "NETWORK")
 		}
