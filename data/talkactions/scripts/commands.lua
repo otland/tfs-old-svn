@@ -7,7 +7,7 @@ function onSay(cid, words, param, channel)
 	for i, talk in ipairs(getTalkActionList()) do
 		if(not talk.hidden and playerAccess >= talk.access) then
 			local tmp = talk.words:sub(1, 1):trim()
-			if((ingameGuilds or (talk.functionName ~= "guildjoin" and talk.functionName ~= "guildcreate")) and (tmp == "!" or tmp == "/")) then
+			if((config.ingameGuilds or (talk.functionName ~= "guildjoin" and talk.functionName ~= "guildcreate")) and (tmp == "!" or tmp == "/")) then
 				table.insert(t, talk)
 			end
 		end

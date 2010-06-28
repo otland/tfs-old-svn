@@ -68,13 +68,12 @@ modsLoaded(false)
 
 bool ScriptManager::loadSystem()
 {
-	
-
 	if(!g_weapons->loadFromXml())
 	{
 		std::clog << "> ERROR: Unable to load Weapons!" << std::endl;
 		return false;
 	}
+
 	g_weapons->loadDefaults();
 	if(!g_spells->loadFromXml())
 	{

@@ -2417,7 +2417,7 @@ const luaL_Reg LuaInterface::luaDatabaseTable[] =
 	{"query", LuaInterface::luaDatabaseExecute},
 
 	// For compatibility reasons, no need to break almost every script.
-	//db.executequery(query)
+	//db.executeQuery(query)
 	{"executeQuery", LuaInterface::luaDatabaseExecute},
 
 	//db.storeQuery(query)
