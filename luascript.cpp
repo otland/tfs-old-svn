@@ -6687,7 +6687,7 @@ int32_t LuaInterface::luaGetTalkActionList(lua_State* L)
 		setFieldBool(L, "hide", it->second->isHidden());
 		setFieldBool(L, "hidden", it->second->isHidden());
 
-		setField(L, "function", it->second->getFunctionName());
+		setField(L, "functionName", it->second->getFunctionName());
 		setField(L, "channel", it->second->getChannel());
 		pushTable(L);
 	}
