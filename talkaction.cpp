@@ -781,7 +781,7 @@ bool TalkAction::guildCreate(Creature* creature, const std::string&, const std::
 	}
 
 	const int32_t premiumDays = g_config.getNumber(ConfigManager::GUILD_PREMIUM_DAYS);
-	if(player->getPremiumDays() < premiumDays)
+	if((player->getPremiumDays() < premiumDays) && (!g_config.getBool(ConfigManager::FREE_PREMIUM)));
 	{
 		char buffer[70 + premiumDays];
 		sprintf(buffer, "You need to have at least %d premium days to form a guild.", premiumDays);
