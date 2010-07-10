@@ -587,14 +587,6 @@ void otserv(StringVec, ServiceManager* services)
 			startupErrorMessage("Unable to load items (XML)!");
 	}
 
-	std::clog << ">> Loading chat channels" << std::endl;
-	if(!g_chat.loadFromXml())
-		startupErrorMessage("Unable to load chat channels!");
-
-	std::clog << ">> Loading outfits" << std::endl;
-	if(!Outfits::getInstance()->loadFromXml())
-		startupErrorMessage("Unable to load outfits!");
-
 	std::clog << ">> Loading groups" << std::endl;
 	if(!Groups::getInstance()->loadFromXml())
 		startupErrorMessage("Unable to load groups!");
@@ -602,6 +594,14 @@ void otserv(StringVec, ServiceManager* services)
 	std::clog << ">> Loading vocations" << std::endl;
 	if(!Vocations::getInstance()->loadFromXml())
 		startupErrorMessage("Unable to load vocations!");
+
+	std::clog << ">> Loading outfits" << std::endl;
+	if(!Outfits::getInstance()->loadFromXml())
+		startupErrorMessage("Unable to load outfits!");
+
+	std::clog << ">> Loading chat channels" << std::endl;
+	if(!g_chat.loadFromXml())
+		startupErrorMessage("Unable to load chat channels!");
 
 	if(g_config.getBool(ConfigManager::SCRIPT_SYSTEM))
 	{
