@@ -351,6 +351,8 @@ class Game
 
 		ReturnValue internalAddItem(Creature* actor, Cylinder* toCylinder, Item* item, int32_t index = INDEX_WHEREEVER,
 			uint32_t flags = 0, bool test = false);
+		ReturnValue internalAddItem(Creature* actor, Cylinder* toCylinder, Item* item, int32_t index,
+			uint32_t flags, bool test, uint32_t& remainderCount);
 		ReturnValue internalRemoveItem(Creature* actor, Item* item, int32_t count = -1,  bool test = false, uint32_t flags = 0);
 
 		ReturnValue internalPlayerAddItem(Creature* actor, Player* player, Item* item,
@@ -510,7 +512,7 @@ class Game
 		bool playerJoinParty(uint32_t playerId, uint32_t leaderId);
 		bool playerRevokePartyInvitation(uint32_t playerId, uint32_t invitedId);
 		bool playerPassPartyLeadership(uint32_t playerId, uint32_t newLeaderId);
-		bool playerLeaveParty(uint32_t playerId);
+		bool playerLeaveParty(uint32_t playerId, bool forced = false);
 		bool playerSharePartyExperience(uint32_t playerId, bool activate, uint8_t unknown);
 
 		void kickPlayer(uint32_t playerId, bool displayEffect);

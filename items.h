@@ -54,6 +54,7 @@ enum ItemTypes_t
 	ITEM_TYPE_TELEPORT,
 	ITEM_TYPE_BED,
 	ITEM_TYPE_KEY,
+	ITEM_TYPE_RUNE,
 	ITEM_TYPE_LAST
 };
 
@@ -124,12 +125,12 @@ class ItemType
 		bool isDepot() const {return (type == ITEM_TYPE_DEPOT);}
 		bool isMailbox() const {return (type == ITEM_TYPE_MAILBOX);}
 		bool isTrashHolder() const {return (type == ITEM_TYPE_TRASHHOLDER);}
+		bool isRune() const {return (type == ITEM_TYPE_RUNE);}
 		bool isBed() const {return (type == ITEM_TYPE_BED);}
 
-		bool isRune() const {return clientCharges;}
 		bool hasSubType() const {return (isFluidContainer() || isSplash() || stackable || charges);}
 
-		bool stopTime, showCount, clientCharges, stackable, showDuration, showCharges, showAttributes, dualWield,
+		bool stopTime, showCount, stackable, showDuration, showCharges, showAttributes, dualWield,
 			allowDistRead, canReadText, canWriteText, forceSerialize, isVertical, isHorizontal, isHangable,
 			useable, moveable, pickupable, rotable, replaceable, lookThrough, walkStack, hasHeight, blockSolid,
 			blockPickupable, blockProjectile, blockPathFind, allowPickupable, alwaysOnTop, floorChange[CHANGE_LAST];

@@ -282,7 +282,7 @@ int32_t Game::loadMap(std::string filename)
 	std::string file = getFilePath(FILE_TYPE_CONFIG, "world/" + filename);
 	if(!fileExists(file.c_str()))
 		file = getFilePath(FILE_TYPE_OTHER, "world/" + filename);
-	
+
 	return map->loadMap(file);
 }
 
@@ -1028,7 +1028,7 @@ bool Game::playerMoveThing(uint32_t playerId, const Position& fromPos,
 	if(Creature* movingCreature = thing->getCreature())
 	{
 		uint32_t delay = g_config.getNumber(ConfigManager::PUSH_CREATURE_DELAY);
-		if(Position::areInRange<1,1,0>(movingCreature->getPosition(), player->getPosition()) && delay > 0)
+		if(Position::areInRange<1,1,0>(movingCreature->getPosition(), player->getPosition()) && delay > 0 && !player->hasCustomFlag(PlayerCustomFlag_CanThrowAnywhere))
 		{
 			SchedulerTask* task = createSchedulerTask(delay, boost::bind(&Game::playerMoveCreature, this,
 				player->getID(), movingCreature->getID(), movingCreature->getPosition(), toCylinder->getPosition()));
@@ -1595,58 +1595,75 @@ ReturnValue Game::internalMoveItem(Creature* actor, Cylinder* fromCylinder, Cyli
 ReturnValue Game::internalAddItem(Creature* actor, Cylinder* toCylinder, Item* item, int32_t index /*= INDEX_WHEREEVER*/,
 	uint32_t flags /*= 0*/, bool test /*= false*/)
 {
+	uint32_t remainderCount = 0;
+	return internalAddItem(actor, toCylinder, item, index, flags, test, remainderCount);
+}
+
+ReturnValue Game::internalAddItem(Creature* actor, Cylinder* toCylinder, Item* item, int32_t index,
+	uint32_t flags, bool test, uint32_t& remainderCount)
+{
+	remainderCount = 0;
 	if(!toCylinder || !item)
 		return RET_NOTPOSSIBLE;
+
+	Cylinder* origToCylinder = toCylinder;
 
 	Item* toItem = NULL;
 	toCylinder = toCylinder->__queryDestination(index, item, &toItem, flags);
 
+	//check if we can add this item
 	ReturnValue ret = toCylinder->__queryAdd(index, item, item->getItemCount(), flags);
 	if(ret != RET_NOERROR)
 		return ret;
 
+	/*
+	Check if we can move add the whole amount, we do this by checking against the original cylinder,
+	since the queryDestination can return a cylinder that might only hold a part of the full amount.
+	*/
 	uint32_t maxQueryCount = 0;
-	ret = toCylinder->__queryMaxCount(index, item, item->getItemCount(), maxQueryCount, flags);
+	ret = origToCylinder->__queryMaxCount(INDEX_WHEREEVER, item, item->getItemCount(), maxQueryCount, flags);
 	if(ret != RET_NOERROR)
 		return ret;
 
 	if(test)
 		return RET_NOERROR;
 
-	uint32_t m = maxQueryCount;
-	if(item->isStackable())
-		m = std::min((uint32_t)item->getItemCount(), maxQueryCount);
-
-	Item* moveItem = item;
-	if(item->isStackable() && toItem && toItem->getID() == item->getID())
+	if(item->isStackable() && toItem)
 	{
-		uint32_t n = std::min((uint32_t)100 - toItem->getItemCount(), m);
-		toCylinder->__updateThing(toItem, toItem->getID(), toItem->getItemCount() + n);
+		uint32_t m = std::min((uint32_t)item->getItemCount(), maxQueryCount);
+
+		if(toItem->getID() == item->getID())
+		{
+			uint32_t n = std::min((uint32_t)100 - toItem->getItemCount(), m);
+			toCylinder->__updateThing(toItem, toItem->getID(), toItem->getItemCount() + n);
+		}
+
 		if(m - n > 0)
 		{
 			if(m - n != item->getItemCount())
-				moveItem = Item::CreateItem(item->getID(), m - n);
+			{
+				Item* remainderItem = Item::CreateItem(item->getID(), m - n);
+				if(internalAddItem(origToCylinder, remainderItem, INDEX_WHEREEVER, flags, false) != RET_NOERROR)
+				{
+					freeThing(remainderItem);
+					remainderCount = m - n;
+				}
+			}
 		}
 		else
 		{
-			moveItem = NULL;
-			if(item->getParent() != VirtualCylinder::virtualCylinder)
-			{
+			//fully merged with toItem, item will be destroyed
+			//if(item->getParent() != VirtualCylinder::virtualCylinder)
+			//{
 				item->onRemoved();
 				freeThing(item);
-			}
+			//}
 		}
-	}
-
-	if(moveItem)
-	{
-		toCylinder->__addThing(actor, index, moveItem);
-		int32_t moveItemIndex = toCylinder->__getIndexOfThing(moveItem);
-		if(moveItemIndex != -1)
-			toCylinder->postAddNotification(actor, moveItem, NULL, moveItemIndex);
 	}
 	else
 	{
+		toCylinder->__addThing(index, item);
+
 		int32_t itemIndex = toCylinder->__getIndexOfThing(item);
 		if(itemIndex != -1)
 			toCylinder->postAddNotification(actor, item, NULL, itemIndex);
@@ -1695,7 +1712,17 @@ ReturnValue Game::internalRemoveItem(Creature* actor, Item* item, int32_t count 
 ReturnValue Game::internalPlayerAddItem(Creature* actor, Player* player, Item* item,
 	bool dropOnMap/* = true*/, slots_t slot/* = SLOT_WHEREEVER*/)
 {
-	ReturnValue ret = internalAddItem(actor, player, item, (int32_t)slot);
+	uint32_t remainderCount = 0;
+	ReturnValue ret = internalAddItem(actor, player, item, (int32_t)slot, 0, false, remainderCount);
+
+	if(remainderCount > 0)
+	{
+		Item* remainderItem = Item::CreateItem(item->getID(), remainderCount);
+		ReturnValue remaindRet = internalAddItem(player->getTile(), remainderItem, INDEX_WHEREEVER, FLAG_NOLIMIT);
+		if(remaindRet != RET_NOERROR)
+			freeThing(remainderItem);
+	}
+
 	if(ret != RET_NOERROR && dropOnMap)
 		ret = internalAddItem(actor, player->getTile(), item, (int32_t)slot, FLAG_NOLIMIT);
 
@@ -3518,8 +3545,8 @@ bool Game::playerSetFightModes(uint32_t playerId, fightMode_t fightMode, chaseMo
 
 	player->setFightMode(fightMode);
 	player->setChaseMode(chaseMode);
-
 	player->setSecureMode(secureMode);
+
 	return true;
 }
 
@@ -4557,7 +4584,7 @@ void Game::addAnimatedText(const SpectatorVec& list, const Position& pos, uint8_
 	}
 }
 
-void Game::addMagicEffect(const Position& pos, uint8_t effect, bool ghostMode /* = false */)
+void Game::addMagicEffect(const Position& pos, uint8_t effect, bool ghostMode/* = false*/)
 {
 	if(ghostMode)
 		return;
@@ -4903,13 +4930,13 @@ bool Game::playerPassPartyLeadership(uint32_t playerId, uint32_t newLeaderId)
 	return player->getParty()->passLeadership(newLeader);
 }
 
-bool Game::playerLeaveParty(uint32_t playerId)
+bool Game::playerLeaveParty(uint32_t playerId, bool forced/* = false*/)
 {
 	Player* player = getPlayerByID(playerId);
-	if(!player || player->isRemoved())
+	if(!player || player->isRemoved() || !player->getParty())
 		return false;
 
-	if(!player->getParty() || player->hasCondition(CONDITION_INFIGHT))
+	if(player->hasCondition(CONDITION_INFIGHT) && !forced)
 		return false;
 
 	return player->getParty()->leave(player);
@@ -4977,7 +5004,7 @@ bool Game::playerViolationWindow(uint32_t playerId, std::string name, uint8_t re
 			StringVec tec = explodeString((*it), "+");
 			for(StringVec::iterator tit = tec.begin(); tit != tec.end(); ++tit)
 			{
-				std::string tmp = (*it);
+				std::string tmp = (*tit);
 				if(tmp[0] != 's' && tmp[0] != 'm' && tmp[0] != 'h' && tmp[0] != 'd'
 					&& tmp[0] != 'w' && tmp[0] != 'o' && tmp[0] != 'y')
 					continue;

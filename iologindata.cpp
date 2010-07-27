@@ -449,7 +449,7 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool preLo
 			delete condition;
 	}
 
-	player->vocation_id = result->getDataInt("vocation");
+	player->vocationId = result->getDataInt("vocation");
 	player->setPromotionLevel(result->getDataInt("promotion"));
 
 	player->health = result->getDataInt("health");

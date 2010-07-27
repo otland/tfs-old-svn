@@ -93,6 +93,7 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 		return true
 	end
 
-	doTransformItem(item.uid, potion.empty)
+	doRemoveItem(item.uid, 1)
+	doPlayerAddItem(cid, potion.empty, 1)
 	return true
 end

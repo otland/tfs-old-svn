@@ -122,7 +122,7 @@ bool ConfigManager::load()
 	m_confNumber[RETRY_TIMEOUT] = getGlobalNumber("retryTimeout", 30 * 1000);
 	m_confNumber[LOGIN_TIMEOUT] = getGlobalNumber("loginTimeout", 5 * 1000);
 	m_confNumber[MAX_MESSAGEBUFFER] = getGlobalNumber("maxMessageBuffer", 4);
-	m_confNumber[MAX_PLAYERS] = getGlobalNumber("maxPlayers");
+	m_confNumber[MAX_PLAYERS] = getGlobalNumber("maxPlayers", 1000);
 	m_confNumber[DEFAULT_DESPAWNRANGE] = getGlobalNumber("deSpawnRange", 2);
 	m_confNumber[DEFAULT_DESPAWNRADIUS] = getGlobalNumber("deSpawnRadius", 50);
 	m_confNumber[PZ_LOCKED] = getGlobalNumber("pzLocked", 60 * 1000);
@@ -277,8 +277,9 @@ bool ConfigManager::load()
 	m_confNumber[EXPERIENCE_SHARE_ACTIVITY] = getGlobalNumber("experienceShareActivity", 2 * 60 * 1000);
 	m_confBool[GHOST_SPELL_EFFECTS] = getGlobalBool("ghostModeSpellEffects", true);
 	m_confBool[PVPZONE_ADDMANASPENT] = getGlobalBool("addManaSpentInPvPZone", true);
-	m_confNumber[ITEMLIMIT_PROTECTIONZONE] = getGlobalNumber("maxItemsPerPZTile", 0);
-	m_confNumber[ITEMLIMIT_HOUSETILE] = getGlobalNumber("maxItemsPerHouseTile", 0);
+	m_confNumber[TILE_LIMIT] = getGlobalNumber("tileLimit", 0);
+	m_confNumber[PROTECTION_TILE_LIMIT] = getGlobalNumber("protectionTileLimit", 0);
+	m_confNumber[HOUSE_TILE_LIMIT] = getGlobalNumber("houseTileLimit", 0);
 	m_confString[MAILBOX_DISABLED_TOWNS] = getGlobalString("mailboxDisabledTowns", "");
 	m_confNumber[SQUARE_COLOR] = getGlobalNumber("squareColor", 0);
 	m_confBool[USE_BLACK_SKULL] = getGlobalBool("useBlackSkull", false);

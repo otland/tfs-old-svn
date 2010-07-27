@@ -1322,6 +1322,9 @@ void ProtocolGame::parseFightModes(NetworkMessage& msg)
 void ProtocolGame::parseAttack(NetworkMessage& msg)
 {
 	uint32_t creatureId = msg.get<uint32_t>();
+	msg.get<uint32_t>();
+	msg.get<uint32_t>();
+
 	addGameTask(&Game::playerSetAttackedCreature, player->getID(), creatureId);
 }
 
@@ -2037,6 +2040,7 @@ void ProtocolGame::sendCancelTarget()
 	{
 		TRACK_MESSAGE(msg);
 		msg->put<char>(0xA3);
+		msg->put<uint32_t>(0);
 	}
 }
 

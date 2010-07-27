@@ -679,12 +679,10 @@ ReturnValue Tile::__queryAdd(int32_t, const Thing* thing, uint32_t,
 			}
 		}
 
-		if(hasFlag(TILESTATE_PROTECTIONZONE))
-		{
-			const uint32_t itemLimit = g_config.getNumber(ConfigManager::ITEMLIMIT_PROTECTIONZONE);
-			if(itemLimit && getThingCount() > itemLimit)
-				return RET_TILEISFULL;
-		}
+		const uint32_t itemLimit = g_config.getNumber(
+				hasFlag(TILESTATE_PROTECTIONZONE) ? ConfigManager::PROTECTION_TILE_LIMIT : ConfigManager::TILE_LIMIT);
+		if(itemLimit && getThingCount() > itemLimit)
+			return RET_TILEISFULL;
 
 		bool hasHangable = false, supportHangable = false;
 		if(items)
@@ -1405,15 +1403,7 @@ uint32_t Tile::__getItemTypeCount(uint16_t itemId, int32_t subType /*= -1*/, boo
 			if(item->getID() != itemId || (subType != -1 && subType != item->getSubType()))
 				continue;
 
-			if(!itemCount)
-			{
-				if(item->isRune())
-					count+= item->getCharges();
-				else
-					count+= item->getItemCount();
-			}
-			else
-				count+= item->getItemCount();
+			count += item->getItemCount();
 		}
 	}
 

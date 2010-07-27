@@ -56,6 +56,7 @@ TalkActions::TalkActions():
 m_interface("TalkAction Interface")
 {
 	m_interface.initState();
+	defaultTalkAction = NULL;
 }
 
 TalkActions::~TalkActions()
@@ -70,6 +71,9 @@ void TalkActions::clear()
 
 	talksMap.clear();
 	m_interface.reInitState();
+
+	delete defaultTalkAction;
+	defaultTalkAction = NULL;
 }
 
 Event* TalkActions::getEvent(const std::string& nodeName)
@@ -86,11 +90,34 @@ bool TalkActions::registerEvent(Event* event, xmlNodePtr p, bool override)
 	if(!talkAction)
 		return false;
 
-	std::string sep;
-	if(!readXMLString(p, "separator", sep) || sep.empty())
-		sep = ";";
+	std::string strValue;
+	if(readXMLString(p, "default", strValue) && booleanString(strValue))
+	{
+		if(!defaultTalkAction)
+			defaultTalkAction = talkAction;
+		else if(override)
+		{
+			delete defaultTalkAction;
+			defaultTalkAction = talkAction;
+		}
+		else
+			std::cout << "[Warning - TalkAction::registerEvent] You cannot define more than one default talkAction." << std::endl;
 
-	StringVec strVector = explodeString(talkAction->getWords(), sep);
+		return true;
+	}
+
+	if(readXMLString(p, "words", strValue))
+		talkAction->setWords(strValue);
+	else
+	{
+		std::clog << "[Error - TalkAction::registerEvent] No words for TalkAction." << std::endl;
+		return false;
+	}
+
+	if(!readXMLString(p, "separator", strValue) || strValue.empty())
+		strValue = ";";
+
+	StringVec strVector = explodeString(talkAction->getWords(), strValue);
 	for(StringVec::iterator it = strVector.begin(); it != strVector.end(); ++it)
 	{
 		trimString(*it);
@@ -99,7 +126,7 @@ bool TalkActions::registerEvent(Event* event, xmlNodePtr p, bool override)
 		{
 			if(!override)
 			{
-				std::clog << "[Warning - TalkAction::configureEvent] Duplicate registered talkaction with words: " << (*it) << std::endl;
+				std::clog << "[Warning - TalkAction::registerEvent] Duplicate registered talkaction with words: " << (*it) << std::endl;
 				continue;
 			}
 			else
@@ -113,7 +140,7 @@ bool TalkActions::registerEvent(Event* event, xmlNodePtr p, bool override)
 	return true;
 }
 
-bool TalkActions::onPlayerSay(Creature* creature, uint16_t channelId, const std::string& words, bool ignoreAccess)
+bool TalkActions::onPlayerSay(Creature* creature, uint16_t channelId, const std::string& words, bool ignoreAccess, bool isDefault)
 {
 	std::string cmdstring[TALKFILTER_LAST] = words, paramstring[TALKFILTER_LAST] = "";
 	std::string::size_type loc = words.find('"', 0);
@@ -149,7 +176,10 @@ bool TalkActions::onPlayerSay(Creature* creature, uint16_t channelId, const std:
 		}
 	}
 
-	if(!talkAction || (talkAction->getChannel() != -1 && talkAction->getChannel() != channelId))
+	if(!talkAction && defaultTalkAction)
+		talkaction = defaultTalkAction;
+
+	if(talkAction->getChannel() != -1 && talkAction->getChannel() != channelId)
 		return false;
 
 	Player* player = creature->getPlayer();
@@ -212,14 +242,6 @@ Event(copy)
 bool TalkAction::configureEvent(xmlNodePtr p)
 {
 	std::string strValue;
-	if(readXMLString(p, "words", strValue))
-		m_words = strValue;
-	else
-	{
-		std::clog << "[Error - TalkAction::configureEvent] No words for TalkAction." << std::endl;
-		return false;
-	}
-
 	if(readXMLString(p, "filter", strValue))
 	{
 		std::string tmpStrValue = asLowerCaseString(strValue);

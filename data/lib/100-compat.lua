@@ -151,8 +151,10 @@ hasClient = hasPlayerClient
 print = std.cout
 getPosByDir = getPositionByDirection
 db.updateQueryLimitOperator = db.updateLimiter
-db.stringComparisonOperator = db.stringComparison
+db.stringComparisonOperator = db.stringComparer
+db.stringComparison = db.stringComparer
 db.executeQuery = db.query
+isNumber = isNumeric
 
 PlayerFlag_CannotUseCombat = 0
 PlayerFlag_CannotAttackPlayer = 1

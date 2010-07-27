@@ -91,21 +91,23 @@
 			type
 				Server events, script can be executed at server start, shutdown or players record.
 				Values:
-					start
+					startup
 					shutdown
+					globalsave
 					record
 			interval
-				Script will be executed every x seconds.
+				Script will be executed every x miliseconds.
 				Ignored if 'type' specified.
 			time
 				Script will be executed at specified time.
-				For example: '12:00'
+				For example: '12:00:55'
 		Functions
-			onThink(interval, lastExecution, thinkInterval)
+			onThink(interval)
 			onStartup()
 			onShutdown()
+			onGlobalSave
 			onRecord(current, old, cid)
-			onTimer()
+			onTime()
 
 	*MOVEMENTS
 		File: movements/movements.xml
@@ -179,10 +181,10 @@
 					If you use 'word' - you will need to write /goto PlayerName
 					If you use 'word-spaced' - you are able to make seperate commands with space between word(s)
 				Values: quotation/word/word-spaced
-			log
+			logged
 				Defines if talkaction should be logged.
 				Default: no
-			hide
+			hidden
 				Defines if talkaction should be hidden from displaying it when using /commands
 			case-sensitive
 				Defines if talkaction should be case sensitive. Is 'no' - then /command will be same as /CoMmAnD

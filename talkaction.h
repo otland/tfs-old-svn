@@ -43,12 +43,13 @@ class TalkActions : public BaseEvents
 		TalkActions();
 		virtual ~TalkActions();
 
-		bool onPlayerSay(Creature* creature, uint16_t channelId, const std::string& words, bool ignoreAccess);
+		bool onPlayerSay(Creature* creature, uint16_t channelId, const std::string& words, bool ignoreAccess, bool isDefault);
 
 		inline TalkActionsMap::const_iterator getFirstTalk() const {return talksMap.begin();}
 		inline TalkActionsMap::const_iterator getLastTalk() const {return talksMap.end();}
 
 	protected:
+		TalkAction* defaultTalkAction;
 		TalkActionsMap talksMap;
 
 		virtual std::string getScriptBaseName() const {return "talkactions";}

@@ -4,7 +4,7 @@ function onSay(cid, words, param, channel)
 		return true
 	end
 
-	local t = string.explode(param, ",")
+	local t = string.explode(param, " ", 1)
 	local tmp = t[1]
 	if(t[2]) then
 		tmp = t[2]

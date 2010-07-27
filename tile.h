@@ -274,12 +274,12 @@ class Tile : public Cylinder
 
 		virtual void __internalAddThing(Thing* thing) {__internalAddThing(0, thing);}
 		virtual void __internalAddThing(uint32_t index, Thing* thing);
+		void onUpdateTile();
 
 	private:
 		void onAddTileItem(Item* item);
 		void onUpdateTileItem(Item* oldItem, const ItemType& oldType, Item* newItem, const ItemType& newType);
 		void onRemoveTileItem(const SpectatorVec& list, std::vector<uint32_t>& oldStackPosVector, Item* item);
-		void onUpdateTile();
 
 		void updateTileFlags(Item* item, bool remove);
 

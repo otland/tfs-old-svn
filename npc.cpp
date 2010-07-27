@@ -467,6 +467,13 @@ ResponseList Npc::loadInteraction(xmlNodePtr node)
 							//optional
 							if(readXMLInteger(tmpNode, "subtype", intValue))
 								li.subType = intValue;
+							else
+							{
+								if(it.stackable)
+									li.subType = 1;
+								else if(it.isFluidContainer() || it.isSplash())
+									li.subType = 0;
+							}
 
 							if(readXMLString(tmpNode, "name", strValue))
 								li.name = strValue;

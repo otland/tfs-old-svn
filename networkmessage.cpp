@@ -14,8 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////
-#include "otpch.h" 
-#include <iostream> 
+#include "otpch.h"
+#include <iostream>
 
 #include "networkmessage.h"
 #include "position.h"
@@ -205,7 +205,7 @@ void NetworkMessage::putItem(uint16_t id, uint8_t count)
 {
 	const ItemType &it = Item::items[id];
 	put<uint16_t>(it.clientId);
-	if(it.stackable || it.isRune())
+	if(it.stackable)
 		put<char>(count);
 	else if(it.isSplash() || it.isFluidContainer())
 		put<char>(fluidMap[count % 8]);
@@ -215,7 +215,7 @@ void NetworkMessage::putItem(const Item* item)
 {
 	const ItemType& it = Item::items[item->getID()];
 	put<uint16_t>(it.clientId);
-	if(it.stackable || it.isRune())
+	if(it.stackable)
 		put<char>(item->getSubType());
 	else if(it.isSplash() || it.isFluidContainer())
 		put<char>(fluidMap[item->getSubType() % 8]);

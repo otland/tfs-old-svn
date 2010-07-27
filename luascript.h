@@ -380,7 +380,6 @@ class LuaInterface
 		static int32_t luaDoPlayerSetVocation(lua_State* L);
 		static int32_t luaDoPlayerRemoveItem(lua_State* L);
 		static int32_t luaDoPlayerAddSoul(lua_State* L);
-		static int32_t luaDoPlayerAddStamina(lua_State* L);
 		static int32_t luaDoPlayerSetStamina(lua_State* L);
 		static int32_t luaDoPlayerAddExperience(lua_State* L);
 		static int32_t luaDoPlayerSetGuildId(lua_State* L);
@@ -437,6 +436,7 @@ class LuaInterface
 		static int32_t luaGetBanReason(lua_State* L);
 		static int32_t luaGetBanAction(lua_State* L);
 		static int32_t luaGetBanList(lua_State* L);
+		static int32_t luaGetPlayerModes(lua_State* L);
 		static int32_t luaGetPlayerRates(lua_State* L);
 		static int32_t luaDoPlayerSetRate(lua_State* L);
 		static int32_t luaDoCreatureSetDropLoot(lua_State* L);
@@ -498,6 +498,7 @@ class LuaInterface
 		static int32_t luaGetPlayerIp(lua_State* L);
 		static int32_t luaGetPlayerLastLoad(lua_State* L);
 		static int32_t luaGetPlayerLastLogin(lua_State* L);
+		static int32_t luaGetPlayerTradeState(lua_State* L);
 		static int32_t luaGetPlayerAccountManager(lua_State* L);
 		static int32_t luaGetPlayerAccountId(lua_State* L);
 		static int32_t luaGetPlayerAccount(lua_State* L);
@@ -532,6 +533,7 @@ class LuaInterface
 		static int32_t luaDoPlayerSetPartner(lua_State* L);
 		static int32_t luaGetPlayerParty(lua_State* L);
 		static int32_t luaDoPlayerJoinParty(lua_State* L);
+		static int32_t luaDoPlayerLeaveParty(lua_State* L);
 		static int32_t luaGetPartyMembers(lua_State* L);
 		static int32_t luaGetCreatureStorage(lua_State* L);
 		static int32_t luaDoCreatureSetStorage(lua_State* L);
@@ -642,6 +644,7 @@ class LuaInterface
 		static int32_t luaGetItemIdByName(lua_State* L);
 		static int32_t luaGetItemInfo(lua_State* L);
 		static int32_t luaGetItemWeight(lua_State* L);
+		static int32_t luaGetItemParent(lua_State* L);
 		static int32_t luaGetItemAttribute(lua_State* L);
 		static int32_t luaDoItemSetAttribute(lua_State* L);
 		static int32_t luaDoItemEraseAttribute(lua_State* L);
@@ -668,7 +671,7 @@ class LuaInterface
 		static int32_t luaDatabaseEscapeString(lua_State* L);
 		static int32_t luaDatabaseEscapeBlob(lua_State* L);
 		static int32_t luaDatabaseLastInsertId(lua_State* L);
-		static int32_t luaDatabaseStringComparison(lua_State* L);
+		static int32_t luaDatabaseStringComparer(lua_State* L);
 		static int32_t luaDatabaseUpdateLimiter(lua_State* L);
 
 		static const luaL_Reg luaResultTable[7];
@@ -749,7 +752,8 @@ class LuaInterface
 			PlayerInfoClient,
 			PlayerInfoLastLoad,
 			PlayerInfoLastLogin,
-			PlayerInfoAccountManager
+			PlayerInfoAccountManager,
+			PlayerInfoTradeState
 		};
 		static int32_t internalGetPlayerInfo(lua_State* L, PlayerInfo_t info);
 

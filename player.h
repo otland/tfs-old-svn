@@ -291,8 +291,8 @@ class Player : public Creature, public Cylinder
 		void removeEnemy(uint32_t guild) {warMap.erase(guild);}
 #endif
 
-		uint32_t getVocationId() const {return vocation_id;}
-		void setVocation(uint32_t vocId);
+		uint32_t getVocationId() const {return vocationId;}
+		void setVocation(uint32_t id);
 		uint16_t getSex(bool full) const {return full ? sex : sex % 2;}
 		void setSex(uint16_t);
 
@@ -419,10 +419,12 @@ class Player : public Creature, public Cylinder
 		void closeShopWindow(bool send = true, Npc* npc = NULL, int32_t onBuy = -1, int32_t onSell = -1);
 		bool canShopItem(uint16_t itemId, uint8_t subType, ShopEvent_t event);
 
+		chaseMode_t getChaseMode() const {return chaseMode;}
 		void setChaseMode(chaseMode_t mode);
+		fightMode_t getFightMode() const {return fightMode;}
 		void setFightMode(fightMode_t mode) {fightMode = mode;}
-		void setSecureMode(secureMode_t mode) {secureMode = mode;}
 		secureMode_t getSecureMode() const {return secureMode;}
+		void setSecureMode(secureMode_t mode) {secureMode = mode;}
 
 		//combat functions
 		virtual bool setAttackedCreature(Creature* creature);
@@ -838,7 +840,7 @@ class Player : public Creature, public Cylinder
 		int32_t premiumDays;
 		int32_t soul;
 		int32_t soulMax;
-		int32_t vocation_id;
+		int32_t vocationId;
 		int32_t groupId;
 		int32_t managerNumber, managerNumber2;
 		int32_t purchaseCallback;

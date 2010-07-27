@@ -74,7 +74,6 @@ void Actions::clear()
 
 	delete defaultAction;
 	defaultAction = NULL;
-	
 }
 
 Event* Actions::getEvent(const std::string& nodeName)

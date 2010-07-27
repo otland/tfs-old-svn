@@ -83,8 +83,12 @@ function doPlayerDepositMoney(cid, amount)
 	return true
 end
 
+function doPlayerAddStamina(cid, minutes)
+	return doPlayerSetStamina(cid, getPlayerStamina(cid) + minutes)
+end
+
 function isPremium(cid)
-	return (isPlayer(cid) and (getPlayerPremiumDays(cid) > 0 or getBooleanFromString(getConfigInfo('freePremium'))))
+	return (isPlayer(cid) and (getPlayerPremiumDays(cid) > 0 or getBooleanFromString(getConfigValue('freePremium'))))
 end
 
 function getMonthDayEnding(day)
@@ -107,7 +111,7 @@ function getArticle(str)
 	return str:find("[AaEeIiOoUuYy]") == 1 and "an" or "a"
 end
 
-function isNumber(str)
+function isNumeric(str)
 	return tonumber(str) ~= nil
 end
 
@@ -346,7 +350,7 @@ function doPlayerAddMagLevel(cid, amount)
 		doPlayerAddSpentMana(cid, (getPlayerRequiredMana(cid, getPlayerMagLevel(cid, true) + 1) - getPlayerSpentMana(cid)) / getConfigInfo('rateMagic'))
 	end
 	return true
-end  
+end
 
 function doPlayerAddSkill(cid, skill, amount, round)
 	if(skill == SKILL__LEVEL) then
@@ -533,7 +537,7 @@ function getItemDescriptions(uid)
 		text = getItemAttribute(uid, "text") or "",
 		writer = getItemAttribute(uid, "writer") or "",
 		date = getItemAttribute(uid, "date") or 0
-	}	
+	}
 end
 
 function getItemWeightById(itemid, count, precision)
@@ -599,22 +603,22 @@ end
 
 function isItemRune(itemid)
 	local item = getItemInfo(itemid)
-	return item and item.clientCharges or false
+	return item and item.type == ITEM_TYPE_RUNE or false
 end
 
 function isItemDoor(itemid)
 	local item = getItemInfo(itemid)
-	return item and item.type == 5 or false
+	return item and item.type == ITEM_TYPE_DOOR or false
 end
 
 function isItemContainer(itemid)
 	local item = getItemInfo(itemid)
-	return item and item.group == 2 or false
+	return item and item.group == ITEM_GROUP_CONTAINER or false
 end
 
 function isItemFluidContainer(itemid)
 	local item = getItemInfo(itemid)
-	return item and item.group == 12 or false
+	return item and item.group == ITEM_GROUP_FLUID or false
 end
 
 function isItemMovable(itemid)

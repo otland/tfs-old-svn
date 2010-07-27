@@ -177,21 +177,22 @@ bool Item::loadContainer(xmlNodePtr parentNode, Container* parent)
 Item::Item(const uint16_t type, uint16_t amount/* = 0*/):
 	ItemAttributes(), id(type)
 {
-	count = 1;
 	raid = NULL;
 	loadedFromMap = false;
 
-	const ItemType& it = items[id];
-	if(it.charges)
-		setCharges(it.charges);
-
+	setItemCount(1);
 	setDefaultDuration();
+
+	const ItemType& it = items[id];
 	if(it.isFluidContainer() || it.isSplash())
 		setFluidType(amount);
-	else if(it.stackable && amount)
-		count = amount;
-	else if(it.charges && amount)
-		setCharges(amount);
+	else if(it.stackable)
+	{
+		if(amount || it.charges)
+			setItemCount(amount ? amount : it.charges);
+	}
+	else if(it.charges)
+		setCharges(amount ? amount : it.charges);
 }
 
 Item* Item::clone() const
@@ -235,7 +236,7 @@ void Item::onRemoved()
 
 void Item::setDefaultSubtype()
 {
-	count = 1;
+	setItemCount(1);
 	const ItemType& it = items[id];
 	if(it.charges)
 		setCharges(it.charges);

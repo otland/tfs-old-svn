@@ -638,7 +638,7 @@
 			Default: yes
 
 		saveGlobalStorage
-		
+			Save global storage in database? Otherwise, they will be cleared everytime server starts.
 			Global storages are stored in `global_storage` table.
 			Default: yes
 
@@ -661,7 +661,7 @@
 
 		storePlayerDirection
 			Should players look direction be saved and restored while logging?
-			In global tibia it's disabled.
+			In global Tibia it's disabled.
 			Default: no
 
 		monsterLootMessage
@@ -702,12 +702,16 @@
 		playerQueryDeepness
 			Default: 2
 
-		maxItemsPerPZTile
+		protectionTileLimit
 			Maximum items which can be placed on 1 protection zone tile.
 			Default: 0 (means no limit!)
 
-		maxItemsPerHouseTile
+		houseTileLimit
 			Maximum items which can be placed on 1 house tile.
+			Default: 0 (means no limit!)
+
+		tileLimit
+			Items limit on any other tile.
 			Default: 0 (means no limit!)
 
 	*PREMIUM-RELATED

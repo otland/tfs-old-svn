@@ -68,7 +68,7 @@ Player::Player(const std::string& _name, ProtocolGame* p):
 	promotionLevel = walkTaskEvent = actionTaskEvent = nextStepEvent = bloodHitCount = shieldBlockCount = 0;
 	lastAttack = idleTime = marriage = blessings = balance = premiumDays = mana = manaMax = manaSpent = 0;
 	soul = guildId = levelPercent = magLevelPercent = magLevel = experience = damageImmunities = 0;
-	conditionImmunities = conditionSuppressions = groupId = vocation_id = managerNumber2 = town = skullEnd = 0;
+	conditionImmunities = conditionSuppressions = groupId = vocationId = managerNumber2 = town = skullEnd = 0;
 	lastLogin = lastLogout = lastIP = messageTicks = messageBuffer = nextAction = 0;
 	editListId = maxWriteLen = windowTextId = rankId = 0;
 
@@ -147,10 +147,10 @@ Player::~Player()
 		it->second.first->unRef();
 }
 
-void Player::setVocation(uint32_t vocId)
+void Player::setVocation(uint32_t id)
 {
-	vocation_id = vocId;
-	vocation = Vocations::getInstance()->getVocation(vocId);
+	vocationId = id;
+	vocation = Vocations::getInstance()->getVocation(id);
 
 	soulMax = vocation->getGain(GAIN_SOUL);
 	if(Condition* condition = getCondition(CONDITION_REGENERATION, CONDITIONID_DEFAULT))
@@ -175,7 +175,7 @@ std::string Player::getDescription(int32_t lookDistance) const
 		s << "yourself.";
 		if(hasFlag(PlayerFlag_ShowGroupNameInsteadOfVocation))
 			s << " You are " << group->getName();
-		else if(vocation_id != 0)
+		else if(vocationId != 0)
 			s << " You are " << vocation->getDescription();
 		else
 			s << " You have no vocation";
@@ -189,7 +189,7 @@ std::string Player::getDescription(int32_t lookDistance) const
 		s << ". " << (sex % 2 ? "He" : "She");
 		if(hasFlag(PlayerFlag_ShowGroupNameInsteadOfVocation))
 			s << " is " << group->getName();
-		else if(vocation_id != 0)
+		else if(vocationId != 0)
 			s << " is " << vocation->getDescription();
 		else
 			s << " has no vocation";
@@ -201,7 +201,7 @@ std::string Player::getDescription(int32_t lookDistance) const
 	if(marriage && IOLoginData::getInstance()->getNameByGuid(marriage, tmp))
 	{
 		s << ", ";
-		if(vocation_id == 0)
+		if(vocationId == 0)
 		{
 			if(lookDistance == -1)
 				s << "and you are";
@@ -1514,7 +1514,7 @@ bool Player::canShopItem(uint16_t itemId, uint8_t subType, ShopEvent_t event)
 			return true;
 
 		const ItemType& it = Item::items[id];
-		if(it.isFluidContainer() || it.isSplash() || it.isRune())
+		if(it.isFluidContainer() || it.isSplash())
 			return sit->subType == subType;
 
 		return true;
@@ -2691,26 +2691,74 @@ ReturnValue Player::__queryMaxCount(int32_t index, const Thing* thing, uint32_t 
 		return RET_NOTPOSSIBLE;
 	}
 
-	const Thing* destThing = __getThing(index);
-	const Item* destItem = NULL;
-	if(destThing)
-		destItem = destThing->getItem();
-
-	if(destItem)
+	if(index == INDEX_WHEREEVER)
 	{
-		if(destItem->isStackable() && item->getID() == destItem->getID())
-			maxQueryCount = 100 - destItem->getItemCount();
-		else
-			maxQueryCount = 0;
+		uint32_t n = 0;
+		for(int slotIndex = SLOT_FIRST; slotIndex < SLOT_LAST; ++slotIndex)
+		{
+			Item* inventoryItem = inventory[slotIndex];
+			if(inventoryItem)
+			{
+				if(Container* subContainer = inventoryItem->getContainer())
+				{
+					uint32_t queryCount = 0;
+					subContainer->__queryMaxCount(INDEX_WHEREEVER, item, item->getItemCount(), queryCount, flags);
+					n += queryCount;
+
+					//iterate through all items, including sub-containers (deep search)
+					for(ContainerIterator cit = subContainer->begin(); cit != subContainer->end(); ++cit)
+					{
+						if(Container* tmpContainer  = (*cit)->getContainer())
+						{
+							queryCount = 0;
+							tmpContainer->__queryMaxCount(INDEX_WHEREEVER, item, item->getItemCount(), queryCount, flags);
+							n += queryCount;
+						}
+					}
+				}
+				else if(inventoryItem->isStackable() && item->getID() == inventoryItem->getID() && inventoryItem->getItemCount() < 100)
+				{
+					uint32_t remainder = (100 - inventoryItem->getItemCount());
+					if(__queryAdd(slotIndex, item, remainder, flags) == RET_NOERROR)
+						n += remainder;
+				}
+			}
+			//empty slot
+			else if(__queryAdd(slotIndex, item, item->getItemCount(), flags) == RET_NOERROR)
+			{
+				if(item->isStackable())
+					n += 100;
+				else
+					n += 1;
+			}
+		}
+
+		maxQueryCount = n;
 	}
 	else
 	{
-		if(item->isStackable())
-			maxQueryCount = 100;
-		else
-			maxQueryCount = 1;
+		const Thing* destThing = __getThing(index);
+		const Item* destItem = NULL;
+		if(destThing)
+			destItem = destThing->getItem();
 
-		return RET_NOERROR;
+		if(destItem)
+		{
+			if(destItem->isStackable() && item->getID() == destItem->getID() && destItem->getItemCount() < 100)
+				maxQueryCount = 100 - destItem->getItemCount();
+			else
+				maxQueryCount = 0;
+		}
+		//empty slot
+		else if(__queryAdd(index, item, item->getItemCount(), flags) == RET_NOERROR)
+		{
+			if(item->isStackable())
+				maxQueryCount = 100;
+			else
+				maxQueryCount = 1;
+
+			return RET_NOERROR;
+		}
 	}
 
 	if(maxQueryCount < count)
@@ -2748,33 +2796,45 @@ Cylinder* Player::__queryDestination(int32_t& index, const Thing* thing, Item** 
 		if(!item)
 			return this;
 
-		//find a appropiate slot
-		for(int32_t i = SLOT_FIRST; i < SLOT_LAST; ++i)
-		{
-			if(!inventory[i] && __queryAdd(i, item, item->getItemCount(), 0) == RET_NOERROR)
-			{
-				index = i;
-				return this;
-			}
-		}
-
-		//try containers
+		//find an appropiate slot
 		std::list<std::pair<Container*, int32_t> > deepList;
 		for(int32_t i = SLOT_FIRST; i < SLOT_LAST; ++i)
 		{
-			if(inventory[i] == tradeItem)
+			Item* inventoryItem = inventory[i];
+			if(inventoryItem == tradeItem)
 				continue;
 
-			if(Container* container = dynamic_cast<Container*>(inventory[i]))
+			if(inventoryItem)
 			{
-				if(container->__queryAdd(-1, item, item->getItemCount(), 0) == RET_NOERROR)
+				//try find an already existing item to stack with
+				if(inventoryItem != item && item->isStackable() && inventoryItem->getID() == item->getID() && inventoryItem->getItemCount() < 100)
 				{
-					index = INDEX_WHEREEVER;
-					*destItem = NULL;
-					return container;
+					*destItem = inventoryItem;
+					index = i;
+					return this;
 				}
+				//check sub-containers
+				else if(Container* container = inventoryItem->getContainer())
+				{
+					Cylinder* tmpCylinder = NULL;
+					int32_t tmpIndex = INDEX_WHEREEVER;
+					Item* tmpDestItem = NULL;
 
-				deepList.push_back(std::make_pair(container, 0));
+					tmpCylinder = container->__queryDestination(tmpIndex, item, &tmpDestItem, flags);
+					if(tmpCylinder && tmpCylinder->__queryAdd(tmpIndex, item, item->getItemCount(), flags) == RET_NOERROR)
+					{
+						index = tmpIndex;
+						*destItem = tmpDestItem;
+						return tmpCylinder;
+					}
+
+					deepList.push_back(std::make_pair(container, 0));
+				}
+			}
+			else if(__queryAdd(i, item, item->getItemCount(), 0) == RET_NOERROR)
+			{
+				index = i;
+				return this;
 			}
 		}
 
@@ -2794,11 +2854,15 @@ Cylinder* Player::__queryDestination(int32_t& index, const Thing* thing, Item** 
 
 				if(Container* subContainer = dynamic_cast<Container*>(*it))
 				{
-					if(subContainer->__queryAdd(-1, item, item->getItemCount(), 0) == RET_NOERROR)
+					Cylinder* tmpCylinder = NULL;
+					int32_t tmpIndex = INDEX_WHEREEVER;
+					Item* tmpDestItem = NULL;
+					tmpCylinder = subContainer->__queryDestination(tmpIndex, item, &tmpDestItem, flags);
+					if(tmpCylinder && tmpCylinder->__queryAdd(tmpIndex, item, item->getItemCount(), flags) == RET_NOERROR)
 					{
-						index = INDEX_WHEREEVER;
-						*destItem = NULL;
-						return subContainer;
+						index = tmpIndex;
+						*destItem = tmpDestItem;
+						return tmpCylinder;
 					}
 
 					if(deepness < 0 || level < deepness)
@@ -4122,7 +4186,7 @@ void Player::setPromotionLevel(uint32_t pLevel)
 {
 	if(pLevel > promotionLevel)
 	{
-		uint32_t tmpLevel = 0, currentVoc = vocation_id;
+		uint32_t tmpLevel = 0, currentVoc = vocationId;
 		for(uint32_t i = promotionLevel; i < pLevel; ++i)
 		{
 			currentVoc = Vocations::getInstance()->getPromotedVocation(currentVoc);
@@ -4134,14 +4198,14 @@ void Player::setPromotionLevel(uint32_t pLevel)
 			if(voc->isPremiumNeeded() && !isPremium() && g_config.getBool(ConfigManager::PREMIUM_FOR_PROMOTION))
 				continue;
 
-			vocation_id = currentVoc;
+			vocationId = currentVoc;
 		}
 
 		promotionLevel += tmpLevel;
 	}
 	else if(pLevel < promotionLevel)
 	{
-		uint32_t tmpLevel = 0, currentVoc = vocation_id;
+		uint32_t tmpLevel = 0, currentVoc = vocationId;
 		for(uint32_t i = pLevel; i < promotionLevel; ++i)
 		{
 			Vocation* voc = Vocations::getInstance()->getVocation(currentVoc);
@@ -4153,13 +4217,13 @@ void Player::setPromotionLevel(uint32_t pLevel)
 			if(voc->isPremiumNeeded() && !isPremium() && g_config.getBool(ConfigManager::PREMIUM_FOR_PROMOTION))
 				continue;
 
-			vocation_id = currentVoc;
+			vocationId = currentVoc;
 		}
 
 		promotionLevel -= tmpLevel;
 	}
 
-	setVocation(vocation_id);
+	setVocation(vocationId);
 }
 
 uint16_t Player::getBlessings() const
@@ -4971,7 +5035,7 @@ void Player::increaseCombatValues(int32_t& min, int32_t& max, bool useCharges, b
 	int32_t minValue = 0, maxValue = 0, i = SLOT_FIRST;
 	for(; i < SLOT_LAST; ++i)
 	{
-		if(!(item = getInventoryItem((slots_t)i)) || item->isRemoved() || 
+		if(!(item = getInventoryItem((slots_t)i)) || item->isRemoved() ||
 			(g_moveEvents->hasEquipEvent(item) && !isItemAbilityEnabled((slots_t)i)))
 			continue;
 

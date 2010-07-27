@@ -69,7 +69,6 @@ ItemType::ItemType()
 	stopTime = false;
 	corpseType = RACE_NONE;
 	fluidSource = FLUID_NONE;
-	clientCharges = false;
 	allowDistRead = false;
 
 	isVertical = isHorizontal = isHangable = false;
@@ -178,7 +177,7 @@ int32_t Items::loadFromOtb(std::string file)
 		std::clog << "[Error - Items::loadFromOtb] New version detected, an older version of items.otb is required." << std::endl;
 		return ERROR_INVALID_FORMAT;
 	}
-	else if(Items::dwMinorVersion != CLIENT_VERSION_854)
+	else if(Items::dwMinorVersion != CLIENT_VERSION_860)
 	{
 		std::clog << "[Error - Items::loadFromOtb] Another (client) version of items.otb is required." << std::endl;
 		return ERROR_INVALID_FORMAT;
@@ -243,7 +242,6 @@ int32_t Items::loadFromOtb(std::string file)
 		iType->allowDistRead = hasBitSet(FLAG_ALLOWDISTREAD, flags);
 		iType->rotable = hasBitSet(FLAG_ROTABLE, flags);
 		iType->canReadText = hasBitSet(FLAG_READABLE, flags);
-		iType->clientCharges = hasBitSet(FLAG_CLIENTCHARGES, flags);
 		iType->lookThrough = hasBitSet(FLAG_LOOKTHROUGH, flags);
 
 		attribute_t attr;
@@ -553,6 +551,8 @@ void Items::parseItemNode(xmlNodePtr itemNode, uint32_t id)
 						it.type = ITEM_TYPE_DOOR;
 					else if(tmpStrValue == "bed")
 						it.type = ITEM_TYPE_BED;
+					else if(tmpStrValue == "rune")
+						it.type = ITEM_TYPE_RUNE;
 					else
 						std::clog << "[Warning - Items::loadFromXml] Unknown type " << strValue << std::endl;
 				}

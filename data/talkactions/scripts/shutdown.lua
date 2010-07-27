@@ -6,7 +6,7 @@ function onSay(cid, words, param, channel)
 		return true
 	end
 
-	if(param:lower() == "stop") then
+	if(isInArray({"cancel", "stop"}, param:lower())) then
 		stopEvent(shutdownEvent)
 		shutdownEvent = 0
 		return true
