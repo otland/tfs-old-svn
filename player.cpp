@@ -2682,7 +2682,7 @@ ReturnValue Player::__queryAdd(int32_t index, const Thing* thing, uint32_t count
 }
 
 ReturnValue Player::__queryMaxCount(int32_t index, const Thing* thing, uint32_t count, uint32_t& maxQueryCount,
-	uint32_t) const
+	uint32_t flags) const
 {
 	const Item* item = thing->getItem();
 	if(!item)
@@ -2787,7 +2787,7 @@ ReturnValue Player::__queryRemove(const Thing* thing, uint32_t count, uint32_t f
 }
 
 Cylinder* Player::__queryDestination(int32_t& index, const Thing* thing, Item** destItem,
-	uint32_t&)
+	uint32_t& flags)
 {
 	if(index == 0 /*drop to capacity window*/ || index == INDEX_WHEREEVER)
 	{
@@ -3097,7 +3097,7 @@ uint32_t Player::__getItemTypeCount(uint16_t itemId, int32_t subType /*= -1*/, b
 			continue;
 
 		if(item->getID() == itemId)
-			count += Item::countByType(item, subType, itemCount);
+			count += Item::countByType(item, subType);
 
 		if(!(container = item->getContainer()))
 			continue;
@@ -3105,7 +3105,7 @@ uint32_t Player::__getItemTypeCount(uint16_t itemId, int32_t subType /*= -1*/, b
 		for(ContainerIterator it = container->begin(), end = container->end(); it != end; ++it)
 		{
 			if((*it)->getID() == itemId)
-				count += Item::countByType(*it, subType, itemCount);
+				count += Item::countByType(*it, subType);
 		}
 	}
 
@@ -3123,12 +3123,12 @@ std::map<uint32_t, uint32_t>& Player::__getAllItemTypeCount(std::map<uint32_t,
 		if(!(item = inventory[i]))
 			continue;
 
-		countMap[item->getID()] += Item::countByType(item, -1, itemCount);
+		countMap[item->getID()] += Item::countByType(item, -1);
 		if(!(container = item->getContainer()))
 			continue;
 
 		for(ContainerIterator it = container->begin(), end = container->end(); it != end; ++it)
-			countMap[(*it)->getID()] += Item::countByType(*it, -1, itemCount);
+			countMap[(*it)->getID()] += Item::countByType(*it, -1);
 	}
 
 	return countMap;

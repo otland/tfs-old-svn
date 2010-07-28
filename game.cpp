@@ -1643,7 +1643,7 @@ ReturnValue Game::internalAddItem(Creature* actor, Cylinder* toCylinder, Item* i
 			if(m - n != item->getItemCount())
 			{
 				Item* remainderItem = Item::CreateItem(item->getID(), m - n);
-				if(internalAddItem(origToCylinder, remainderItem, INDEX_WHEREEVER, flags, false) != RET_NOERROR)
+				if(internalAddItem(NULL, origToCylinder, remainderItem, INDEX_WHEREEVER, flags, false) != RET_NOERROR)
 				{
 					freeThing(remainderItem);
 					remainderCount = m - n;
@@ -1662,7 +1662,7 @@ ReturnValue Game::internalAddItem(Creature* actor, Cylinder* toCylinder, Item* i
 	}
 	else
 	{
-		toCylinder->__addThing(index, item);
+		toCylinder->__addThing(NULL, index, item);
 
 		int32_t itemIndex = toCylinder->__getIndexOfThing(item);
 		if(itemIndex != -1)

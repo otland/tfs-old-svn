@@ -1475,7 +1475,7 @@ void ProtocolGame::parsePassPartyLeadership(NetworkMessage& msg)
 
 void ProtocolGame::parseLeaveParty(NetworkMessage&)
 {
-	addGameTask(&Game::playerLeaveParty, player->getID());
+	addGameTask(&Game::playerLeaveParty, player->getID(), false);
 }
 
 void ProtocolGame::parseSharePartyExperience(NetworkMessage& msg)

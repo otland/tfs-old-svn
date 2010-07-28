@@ -140,7 +140,7 @@ bool TalkActions::registerEvent(Event* event, xmlNodePtr p, bool override)
 	return true;
 }
 
-bool TalkActions::onPlayerSay(Creature* creature, uint16_t channelId, const std::string& words, bool ignoreAccess, bool isDefault)
+bool TalkActions::onPlayerSay(Creature* creature, uint16_t channelId, const std::string& words, bool ignoreAccess)
 {
 	std::string cmdstring[TALKFILTER_LAST] = words, paramstring[TALKFILTER_LAST] = "";
 	std::string::size_type loc = words.find('"', 0);
@@ -177,7 +177,7 @@ bool TalkActions::onPlayerSay(Creature* creature, uint16_t channelId, const std:
 	}
 
 	if(!talkAction && defaultTalkAction)
-		talkaction = defaultTalkAction;
+		talkAction = defaultTalkAction;
 
 	if(talkAction->getChannel() != -1 && talkAction->getChannel() != channelId)
 		return false;

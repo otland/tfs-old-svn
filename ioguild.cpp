@@ -34,7 +34,7 @@ bool IOGuild::getGuildId(uint32_t& id, const std::string& name)
 	DBResult* result;
 
 	DBQuery query;
-	query << "SELECT `id` FROM `guilds` WHERE `name` " << db->getStringComparison() << db->escapeString(name) << " AND `world_id` = " << g_config.getNumber(ConfigManager::WORLD_ID) << " LIMIT 1";
+	query << "SELECT `id` FROM `guilds` WHERE `name` " << db->getStringComparer() << db->escapeString(name) << " AND `world_id` = " << g_config.getNumber(ConfigManager::WORLD_ID) << " LIMIT 1";
 	if(!(result = db->storeQuery(query.str())))
 		return false;
 
@@ -93,7 +93,7 @@ uint32_t IOGuild::getRankIdByName(uint32_t guild, const std::string& name)
 	DBResult* result;
 
 	DBQuery query;
-	query << "SELECT `id` FROM `guild_ranks` WHERE `guild_id` = " << guild << " AND `name` " << db->getStringComparison() << db->escapeString(name) << " LIMIT 1";
+	query << "SELECT `id` FROM `guild_ranks` WHERE `guild_id` = " << guild << " AND `name` " << db->getStringComparer() << db->escapeString(name) << " LIMIT 1";
 	if(!(result = db->storeQuery(query.str())))
 		return 0;
 
@@ -160,7 +160,7 @@ bool IOGuild::changeRank(uint32_t guild, const std::string& oldName, const std::
 	DBResult* result;
 
 	DBQuery query;
-	query << "SELECT `id` FROM `guild_ranks` WHERE `guild_id` = " << guild << " AND `name` " << db->getStringComparison() << db->escapeString(oldName) << " LIMIT 1";
+	query << "SELECT `id` FROM `guild_ranks` WHERE `guild_id` = " << guild << " AND `name` " << db->getStringComparer() << db->escapeString(oldName) << " LIMIT 1";
 	if(!(result = db->storeQuery(query.str())))
 		return false;
 

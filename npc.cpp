@@ -449,6 +449,8 @@ ResponseList Npc::loadInteraction(xmlNodePtr node)
 							}
 
 							li.itemId = intValue;
+							const ItemType& it = Item::items[li.itemId];
+
 							if(readXMLInteger(tmpNode, "sellprice", intValue))
 								li.sellPrice = intValue;
 

@@ -1048,7 +1048,7 @@ uint32_t DatabaseManager::updateDatabase()
 				}
 			}
 
-			query << "DELETE FROM `server_config` WHERE `config` " << db->getStringComparison() << "'password_type';";
+			query << "DELETE FROM `server_config` WHERE `config` " << db->getStringComparer() << "'password_type';";
 			db->query(query.str());
 			query.str("");
 

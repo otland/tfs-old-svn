@@ -9715,7 +9715,7 @@ int32_t LuaInterface::luaGetItemWeight(lua_State* L)
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaGetItemParent(lua_State* L)
+int32_t LuaInterface::luaGetItemParent(lua_State* L)
 {
 	//getItemParent(uid)
 	ScriptEnviroment* env = getEnv();

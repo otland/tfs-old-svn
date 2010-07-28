@@ -332,7 +332,7 @@ class Item : virtual public Thing, public ItemAttributes
 
 		void setDefaultSubtype();
 		virtual void __startDecaying();
-		static uint32_t countByType(const Item* item, int32_t checkType, bool multiCount);
+		static uint32_t countByType(const Item* item, int32_t checkType);
 
 	protected:
 		uint16_t id;
@@ -574,7 +574,7 @@ inline ItemDecayState_t Item::getDecaying() const
 	return DECAYING_FALSE;
 }
 
-inline uint32_t Item::countByType(const Item* item, int32_t checkType, bool multiCount)
+inline uint32_t Item::countByType(const Item* item, int32_t checkType)
 {
 	if(checkType != -1 && checkType != (int32_t)item->getSubType())
 		return 0;
