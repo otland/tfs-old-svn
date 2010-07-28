@@ -675,7 +675,7 @@ if(Modules == nil) then
 				items = items .. v[3]
 			end
 		end
-	
+
 		module.npcHandler:say('Do you want ' .. keywords[1] .. ' ' .. (addon == 0 and "outfit" or "addon") .. ' for ' .. items .. '?', cid)
 		return true
 
@@ -1164,6 +1164,10 @@ if(Modules == nil) then
 
 		if(shopItem.buy == -1) then
 			print("[ShopModule.onSell]", "Attempt to purchase an item which only sellable")
+			return false
+		end
+
+		if(amount <= 0) then
 			return false
 		end
 

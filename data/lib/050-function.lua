@@ -115,6 +115,16 @@ function isNumeric(str)
 	return tonumber(str) ~= nil
 end
 
+function doNumberFormat(i)
+	local str = string.gsub(i, "(%d)(%d%d%d)$", "%1,%2", 1)
+	while true do
+		str, found = string.gsub(ret, "(%d)(%d%d%d),", "%1,%2,", 1)
+		if found == 0 then break end
+	end
+
+	return str
+end
+
 function doPlayerAddAddons(cid, addon)
 	for i = 0, table.maxn(maleOutfits) do
 		doPlayerAddOutfit(cid, maleOutfits[i], addon)
@@ -217,8 +227,16 @@ function getHouseTown(houseId)
 	return getHouseInfo(houseId).town
 end
 
+function getHouseDoorsCount(houseId)
+	return table.maxn(getHouseInfo(houseId).doors)
+end
+
+function getHouseBedsCount(houseId)
+	return table.maxn(getHouseInfo(houseId).beds)
+end
+
 function getHouseTilesCount(houseId)
-	return getHouseInfo(houseId).tiles
+	return table.maxn(getHouseInfo(houseId).tiles)
 end
 
 function getItemNameById(itemid)

@@ -26,6 +26,7 @@
 #include "player.h"
 #include "item.h"
 #include "teleport.h"
+#include "bed.h"
 
 #include "town.h"
 #include "house.h"
@@ -2411,6 +2412,9 @@ void LuaInterface::registerFunctions()
 	//errors(var)
 	lua_register(m_luaState, "errors", LuaInterface::luaL_errors);
 
+	//os table
+	luaL_register(m_luaState, "os", LuaInterface::luaSystemTable);
+
 	//db table
 	luaL_register(m_luaState, "db", LuaInterface::luaDatabaseTable);
 
@@ -2423,6 +2427,14 @@ void LuaInterface::registerFunctions()
 	//std table
 	luaL_register(m_luaState, "std", LuaInterface::luaStdTable);
 }
+
+const luaL_Reg LuaInterface::luaSystemTable[] =
+{
+	//os.mtime()
+	{"mtime", LuaInterface::luaSystemTime},
+
+	{NULL, NULL}
+};
 
 const luaL_Reg LuaInterface::luaDatabaseTable[] =
 {
@@ -2447,7 +2459,7 @@ const luaL_Reg LuaInterface::luaDatabaseTable[] =
 	//db.updateLimiter()
 	{"updateLimiter", LuaInterface::luaDatabaseUpdateLimiter},
 
-	{NULL,NULL}
+	{NULL, NULL}
 };
 
 const luaL_Reg LuaInterface::luaResultTable[] =
@@ -2470,7 +2482,7 @@ const luaL_Reg LuaInterface::luaResultTable[] =
 	//result.free(resId)
 	{"free", LuaInterface::luaResultFree},
 
-	{NULL,NULL}
+	{NULL, NULL}
 };
 
 const luaL_Reg LuaInterface::luaBitTable[] =
@@ -2493,7 +2505,7 @@ const luaL_Reg LuaInterface::luaBitTable[] =
 	{"urshift", LuaInterface::luaBitURightShift},
 	//{"uarshift", LuaInterface::luaBitUArithmeticalRightShift},
 
-	{NULL,NULL}
+	{NULL, NULL}
 };
 
 const luaL_Reg LuaInterface::luaStdTable[] =
@@ -5141,10 +5153,39 @@ int32_t LuaInterface::luaGetHouseInfo(lua_State* L)
 
 	setFieldBool(L, "guildHall", house->isGuild());
 	setField(L, "size", house->getSize());
-	setField(L, "doors", house->getDoorsCount());
-	setField(L, "beds", house->getBedsCount());
-	setField(L, "tiles", house->getTilesCount());
+	createTable(L, "doors");
 
+	HouseDoorList::iterator dit = house->getHouseDoorBegin();
+	for(uint32_t i = 1; dit != house->getHouseDoorEnd(); ++dit, ++i)
+	{
+		lua_pushnumber(L, i);
+		pushPosition(L, (*dit)->getParent()->getPosition(), 0);
+		pushTable(L);
+	}
+
+	pushTable(L);
+	createTable(L, "beds");
+
+	HouseBedList::iterator bit = house->getHouseBedsBegin();
+	for(uint32_t i = 1; bit != house->getHouseBedsEnd(); ++bit, ++i)
+	{
+		lua_pushnumber(L, i);
+		pushPosition(L, (*bit)->getParent()->getPosition(), 0);
+		pushTable(L);
+	}
+
+	pushTable(L);
+	createTable(L, "tiles");
+
+	HouseTileList::iterator tit = house->getHouseTileBegin();
+	for(uint32_t i = 1; tit != house->getHouseTileEnd(); ++tit, ++i)
+	{
+		lua_pushnumber(L, i);
+		pushPosition(L, (*tit)->getPosition(), 0);
+		pushTable(L);
+	}
+
+	pushTable(L);
 	return 1;
 }
 
@@ -6706,8 +6747,9 @@ int32_t LuaInterface::luaGetMonsterInfo(lua_State* L)
 int32_t LuaInterface::luaGetTalkActionList(lua_State* L)
 {
 	//getTalkactionList()
-	TalkActionsMap::const_iterator it = g_talkActions->getFirstTalk();
 	lua_newtable(L);
+
+	TalkActionsMap::const_iterator it = g_talkActions->getFirstTalk();
 	for(uint32_t i = 1; it != g_talkActions->getLastTalk(); ++it, ++i)
 	{
 		createTable(L, i);
@@ -10363,6 +10405,13 @@ int32_t LuaInterface::luaStdVAHash(lua_State* L)
 		upperCase = popNumber(L);
 
 	lua_pushstring(L, transformToVAHash(popString(L), upperCase).c_str());
+	return 1;
+}
+
+int32_t LuaScriptInterface::luaSystemTime(lua_State* L)
+{
+	//os.mtime()
+	lua_pushnumber(L, OTSYS_TIME());
 	return 1;
 }
 
