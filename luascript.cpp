@@ -26,7 +26,7 @@
 #include "player.h"
 #include "item.h"
 #include "teleport.h"
-#include "bed.h"
+#include "beds.h"
 
 #include "town.h"
 #include "house.h"
@@ -10408,7 +10408,7 @@ int32_t LuaInterface::luaStdVAHash(lua_State* L)
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaSystemTime(lua_State* L)
+int32_t LuaInterface::luaSystemTime(lua_State* L)
 {
 	//os.mtime()
 	lua_pushnumber(L, OTSYS_TIME());
