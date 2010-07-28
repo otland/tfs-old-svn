@@ -14,6 +14,8 @@ function onSay(cid, words, param, channel)
 		pos = getCreaturePosition(player)
 	elseif(creature ~= nil and (not isPlayer(creature) or (not isPlayerGhost(creature) or getPlayerGhostAccess(creature) <= getPlayerGhostAccess(cid)))) then
 		pos = getCreaturePosition(creature)
+	elseif(isInArray({'back', 'last'}, param:lower())) then
+		pos = getCreatureLastPosition(cid)
 	elseif(type(waypoint) == 'table' and waypoint.x ~= 0 and waypoint.y ~= 0) then
 		pos = waypoint
 	elseif(tile[2] and tile[3]) then

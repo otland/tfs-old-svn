@@ -5159,7 +5159,7 @@ int32_t LuaInterface::luaGetHouseInfo(lua_State* L)
 	for(uint32_t i = 1; dit != house->getHouseDoorEnd(); ++dit, ++i)
 	{
 		lua_pushnumber(L, i);
-		pushPosition(L, (*dit)->getParent()->getPosition(), 0);
+		pushPosition(L, (*dit)->getPosition(), 0);
 		pushTable(L);
 	}
 
@@ -5170,7 +5170,7 @@ int32_t LuaInterface::luaGetHouseInfo(lua_State* L)
 	for(uint32_t i = 1; bit != house->getHouseBedsEnd(); ++bit, ++i)
 	{
 		lua_pushnumber(L, i);
-		pushPosition(L, (*bit)->getParent()->getPosition(), 0);
+		pushPosition(L, (*bit)->getPosition(), 0);
 		pushTable(L);
 	}
 

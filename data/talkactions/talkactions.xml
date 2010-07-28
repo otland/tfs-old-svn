@@ -16,7 +16,7 @@
 	<talkaction log="yes" words="/m" access="4" event="script" value="creature.lua"/>
 	<talkaction log="yes" words="/reload" access="4" event="script" value="reload.lua"/>
 	<talkaction log="yes" words="/raid" access="4" event="script" value="raid.lua"/>
-	<talkaction log="yes" words="/newtype" access="4" event="script" value="newtype.lua"/>
+	<talkaction log="yes" words="/newtype;/o" access="4" event="script" value="newtype.lua"/>
 	<talkaction log="yes" words="/r" access="4" event="script" value="remove.lua"/>
 	<talkaction log="yes" words="/owner" access="4" event="script" value="owner.lua"/>
 	<talkaction log="yes" words="/storage" access="4" event="script" value="storage.lua"/>
