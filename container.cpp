@@ -384,7 +384,7 @@ ReturnValue Container::__queryRemove(const Thing* thing, uint32_t count, uint32_
 	return RET_NOERROR;
 }
 
-Cylinder* Container::__queryDestination(int32_t& index, const Thing*, Item** destItem,
+Cylinder* Container::__queryDestination(int32_t& index, const Thing* thing, Item** destItem,
 	uint32_t&)
 {
 	if(index == 254 /*move up*/)

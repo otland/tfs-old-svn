@@ -1630,11 +1630,11 @@ ReturnValue Game::internalAddItem(Creature* actor, Cylinder* toCylinder, Item* i
 
 	if(item->isStackable() && toItem)
 	{
-		uint32_t m = std::min((uint32_t)item->getItemCount(), maxQueryCount);
+		uint32_t m = std::min((uint32_t)item->getItemCount(), maxQueryCount), n = 0;
 
 		if(toItem->getID() == item->getID())
 		{
-			uint32_t n = std::min((uint32_t)100 - toItem->getItemCount(), m);
+			n = std::min((uint32_t)100 - toItem->getItemCount(), m);
 			toCylinder->__updateThing(toItem, toItem->getID(), toItem->getItemCount() + n);
 		}
 
@@ -1718,7 +1718,7 @@ ReturnValue Game::internalPlayerAddItem(Creature* actor, Player* player, Item* i
 	if(remainderCount > 0)
 	{
 		Item* remainderItem = Item::CreateItem(item->getID(), remainderCount);
-		ReturnValue remaindRet = internalAddItem(player->getTile(), remainderItem, INDEX_WHEREEVER, FLAG_NOLIMIT);
+		ReturnValue remaindRet = internalAddItem(actor, player->getTile(), remainderItem, INDEX_WHEREEVER, FLAG_NOLIMIT);
 		if(remaindRet != RET_NOERROR)
 			freeThing(remainderItem);
 	}
