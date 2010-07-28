@@ -106,14 +106,6 @@ bool TalkActions::registerEvent(Event* event, xmlNodePtr p, bool override)
 		return true;
 	}
 
-	if(readXMLString(p, "words", strValue))
-		talkAction->setWords(strValue);
-	else
-	{
-		std::clog << "[Error - TalkAction::registerEvent] No words for TalkAction." << std::endl;
-		return false;
-	}
-
 	if(!readXMLString(p, "separator", strValue) || strValue.empty())
 		strValue = ";";
 
@@ -179,7 +171,7 @@ bool TalkActions::onPlayerSay(Creature* creature, uint16_t channelId, const std:
 	if(!talkAction && defaultTalkAction)
 		talkAction = defaultTalkAction;
 
-	if(talkAction->getChannel() != -1 && talkAction->getChannel() != channelId)
+	if(!talkAction || (talkAction->getChannel() != -1 && talkAction->getChannel() != channelId))
 		return false;
 
 	Player* player = creature->getPlayer();
@@ -242,6 +234,14 @@ Event(copy)
 bool TalkAction::configureEvent(xmlNodePtr p)
 {
 	std::string strValue;
+	if(readXMLString(p, "words", strValue))
+		m_words = strValue;
+	else if(!readXMLString(p, "default", strValue) || !booleanString(strValue))
+	{
+		std::clog << "[Error - TalkAction::configureEvent] No words for TalkAction." << std::endl;
+		return false;
+	}
+
 	if(readXMLString(p, "filter", strValue))
 	{
 		std::string tmpStrValue = asLowerCaseString(strValue);
