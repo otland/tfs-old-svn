@@ -783,11 +783,9 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 	bool dot = true;
 	if(it.isRune())
 	{
-		s << "(";
 		if(!it.runeSpellName.empty())
-			s << "\"" << it.runeSpellName << "\", ";
+			s << "(\"" << it.runeSpellName << "\")";
 
-		s << "Charges:" << subType << ")";
 		if(it.runeLevel > 0 || it.runeMagLevel > 0 || (it.vocationString != "" && it.wieldInfo == 0))
 		{
 			s << "." << std::endl << "It can only be used";
