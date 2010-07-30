@@ -360,8 +360,8 @@ ReturnValue Actions::canUse(const Player* player, const Position& pos, const Ite
 	if((action = getAction(item, ACTION_RUNEID)))
 		return action->canExecuteAction(player, pos);
 
-	if(defaultAction)
-		return defaultAction->canExecuteAction(player, pos);
+	/*if(defaultAction)
+		return defaultAction->canExecuteAction(player, pos);*/
 
 	return RET_NOERROR;
 }
@@ -438,8 +438,6 @@ ReturnValue Actions::internalUseItem(Player* player, const Position& pos, uint8_
 		tmp = item->getParent()->__getIndexOfThing(item);
 
 	PositionEx posEx(pos, tmp);
-	bool executed = false;
-
 	Action* action = NULL;
 	if((action = getAction(item, ACTION_UNIQUEID)))
 	{
@@ -453,8 +451,6 @@ ReturnValue Actions::internalUseItem(Player* player, const Position& pos, uint8_
 			if(action->function(player, item, posEx, posEx, false, creatureId))
 				return RET_NOERROR;
 		}
-
-		executed = true;
 	}
 
 	if((action = getAction(item, ACTION_ACTIONID)))
@@ -469,8 +465,6 @@ ReturnValue Actions::internalUseItem(Player* player, const Position& pos, uint8_
 			if(action->function(player, item, posEx, posEx, false, creatureId))
 				return RET_NOERROR;
 		}
-
-		executed = true;
 	}
 
 	if((action = getAction(item, ACTION_ITEMID)))
@@ -485,8 +479,6 @@ ReturnValue Actions::internalUseItem(Player* player, const Position& pos, uint8_
 			if(action->function(player, item, posEx, posEx, false, creatureId))
 				return RET_NOERROR;
 		}
-
-		executed = true;
 	}
 
 	if((action = getAction(item, ACTION_RUNEID)))
@@ -501,8 +493,20 @@ ReturnValue Actions::internalUseItem(Player* player, const Position& pos, uint8_
 			if(action->function(player, item, posEx, posEx, false, creatureId))
 				return RET_NOERROR;
 		}
+	}
 
-		executed = true;
+	if(defaultAction)
+	{
+		if(defaultAction->isScripted())
+		{
+			if(executeUse(defaultAction, player, item, posEx, creatureId))
+				return RET_NOERROR;
+		}
+		else if(defaultAction->function)
+		{
+			if(defaultAction->function(player, item, posEx, posEx, false, creatureId))
+				return RET_NOERROR;
+		}
 	}
 
 	if(BedItem* bed = item->getBed())
@@ -568,18 +572,7 @@ ReturnValue Actions::internalUseItem(Player* player, const Position& pos, uint8_
 		return RET_NOERROR;
 	}
 
-	if(executed)
-		return RET_NOERROR;
-
-	if(!defaultAction)
-		return RET_CANNOTUSETHISOBJECT;
-
-	if(defaultAction->isScripted())
-		executeUse(defaultAction, player, item, posEx, creatureId);
-	else if(defaultAction->function)
-		defaultAction->function(player, item, posEx, posEx, false, creatureId);
-
-	return RET_NOERROR;
+	return RET_CANNOTUSETHISOBJECT;
 }
 
 bool Actions::useItem(Player* player, const Position& pos, uint8_t index, Item* item)
@@ -609,7 +602,6 @@ bool Actions::executeUseEx(Action* action, Player* player, Item* item, const Pos
 ReturnValue Actions::internalUseItemEx(Player* player, const PositionEx& fromPosEx, const PositionEx& toPosEx,
 	Item* item, bool isHotkey, uint32_t creatureId)
 {
-	bool executed = false;
 	Action* action = NULL;
 	if((action = getAction(item, ACTION_UNIQUEID)))
 	{
@@ -620,8 +612,6 @@ ReturnValue Actions::internalUseItemEx(Player* player, const PositionEx& fromPos
 		//only continue with next action in the list if the previous returns false
 		if(executeUseEx(action, player, item, fromPosEx, toPosEx, isHotkey, creatureId))
 			return RET_NOERROR;
-
-		executed = true;
 	}
 
 	if((action = getAction(item, ACTION_ACTIONID)))
@@ -634,7 +624,6 @@ ReturnValue Actions::internalUseItemEx(Player* player, const PositionEx& fromPos
 		if(executeUseEx(action, player, item, fromPosEx, toPosEx, isHotkey, creatureId))
 			return RET_NOERROR;
 
-		executed = true;
 	}
 
 	if((action = getAction(item, ACTION_ITEMID)))
@@ -646,8 +635,6 @@ ReturnValue Actions::internalUseItemEx(Player* player, const PositionEx& fromPos
 		//only continue with next action in the list if the previous returns false
 		if(executeUseEx(action, player, item, fromPosEx, toPosEx, isHotkey, creatureId))
 			return RET_NOERROR;
-
-		executed = true;
 	}
 
 	if((action = getAction(item, ACTION_RUNEID)))
@@ -659,23 +646,20 @@ ReturnValue Actions::internalUseItemEx(Player* player, const PositionEx& fromPos
 		//only continue with next action in the list if the previous returns false
 		if(executeUseEx(action, player, item, fromPosEx, toPosEx, isHotkey, creatureId))
 			return RET_NOERROR;
-
-		executed = true;
 	}
 
-	if(executed)
-		return RET_NOERROR;
+	if(defaultAction)
+	{
+		ReturnValue ret = defaultAction->canExecuteAction(player, toPosEx);
+		if(ret != RET_NOERROR)
+			return ret;
 
-	if(!defaultAction)
-		return RET_CANNOTUSETHISOBJECT;
+		//only continue with next action in the list if the previous returns false
+		if(executeUseEx(defaultAction, player, item, fromPosEx, toPosEx, isHotkey, creatureId))
+			return RET_NOERROR;
+	}
 
-	ReturnValue ret = defaultAction->canExecuteAction(player, toPosEx);
-	if(ret != RET_NOERROR)
-		return ret;
-
-	//only continue with next action in the list if the previous returns false
-	executeUseEx(defaultAction, player, item, fromPosEx, toPosEx, isHotkey, creatureId);
-	return RET_NOERROR;
+	return RET_CANNOTUSETHISOBJECT;
 }
 
 bool Actions::useItemEx(Player* player, const Position& fromPos, const Position& toPos,
