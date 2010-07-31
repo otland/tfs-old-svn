@@ -1616,10 +1616,6 @@ ReturnValue Game::internalAddItem(Creature* actor, Cylinder* toCylinder, Item* i
 	if(ret != RET_NOERROR)
 		return ret;
 
-	/*
-	Check if we can move add the whole amount, we do this by checking against the original cylinder,
-	since the queryDestination can return a cylinder that might only hold a part of the full amount.
-	*/
 	uint32_t maxQueryCount = 0;
 	ret = origToCylinder->__queryMaxCount(INDEX_WHEREEVER, item, item->getItemCount(), maxQueryCount, flags);
 	if(ret != RET_NOERROR)
@@ -1631,7 +1627,6 @@ ReturnValue Game::internalAddItem(Creature* actor, Cylinder* toCylinder, Item* i
 	if(item->isStackable() && toItem)
 	{
 		uint32_t m = std::min((uint32_t)item->getItemCount(), maxQueryCount), n = 0;
-
 		if(toItem->getID() == item->getID())
 		{
 			n = std::min((uint32_t)100 - toItem->getItemCount(), m);
@@ -1652,18 +1647,16 @@ ReturnValue Game::internalAddItem(Creature* actor, Cylinder* toCylinder, Item* i
 		}
 		else
 		{
-			//fully merged with toItem, item will be destroyed
-			//if(item->getParent() != VirtualCylinder::virtualCylinder)
-			//{
+			if(item->getParent() != VirtualCylinder::virtualCylinder)
+			{
 				item->onRemoved();
 				freeThing(item);
-			//}
+			}
 		}
 	}
 	else
 	{
 		toCylinder->__addThing(NULL, index, item);
-
 		int32_t itemIndex = toCylinder->__getIndexOfThing(item);
 		if(itemIndex != -1)
 			toCylinder->postAddNotification(actor, item, NULL, itemIndex);
@@ -4933,10 +4926,7 @@ bool Game::playerPassPartyLeadership(uint32_t playerId, uint32_t newLeaderId)
 bool Game::playerLeaveParty(uint32_t playerId, bool forced/* = false*/)
 {
 	Player* player = getPlayerByID(playerId);
-	if(!player || player->isRemoved() || !player->getParty())
-		return false;
-
-	if(player->hasCondition(CONDITION_INFIGHT) && !forced)
+	if(!player || player->isRemoved() || !player->getParty() || (player->hasCondition(CONDITION_INFIGHT) && !forced))
 		return false;
 
 	return player->getParty()->leave(player);

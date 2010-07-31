@@ -2723,7 +2723,6 @@ ReturnValue Player::__queryMaxCount(int32_t index, const Thing* thing, uint32_t 
 						n += remainder;
 				}
 			}
-			//empty slot
 			else if(__queryAdd(slotIndex, item, item->getItemCount(), flags) == RET_NOERROR)
 			{
 				if(item->isStackable())
@@ -2749,7 +2748,6 @@ ReturnValue Player::__queryMaxCount(int32_t index, const Thing* thing, uint32_t 
 			else
 				maxQueryCount = 0;
 		}
-		//empty slot
 		else if(__queryAdd(index, item, item->getItemCount(), flags) == RET_NOERROR)
 		{
 			if(item->isStackable())
@@ -2816,11 +2814,10 @@ Cylinder* Player::__queryDestination(int32_t& index, const Thing* thing, Item** 
 				//check sub-containers
 				else if(Container* container = inventoryItem->getContainer())
 				{
-					Cylinder* tmpCylinder = NULL;
 					int32_t tmpIndex = INDEX_WHEREEVER;
 					Item* tmpDestItem = NULL;
 
-					tmpCylinder = container->__queryDestination(tmpIndex, item, &tmpDestItem, flags);
+					Cylinder* tmpCylinder = container->__queryDestination(tmpIndex, item, &tmpDestItem, flags);
 					if(tmpCylinder && tmpCylinder->__queryAdd(tmpIndex, item, item->getItemCount(), flags) == RET_NOERROR)
 					{
 						index = tmpIndex;
@@ -2854,10 +2851,10 @@ Cylinder* Player::__queryDestination(int32_t& index, const Thing* thing, Item** 
 
 				if(Container* subContainer = dynamic_cast<Container*>(*it))
 				{
-					Cylinder* tmpCylinder = NULL;
 					int32_t tmpIndex = INDEX_WHEREEVER;
 					Item* tmpDestItem = NULL;
-					tmpCylinder = subContainer->__queryDestination(tmpIndex, item, &tmpDestItem, flags);
+
+					Cylinder* tmpCylinder = subContainer->__queryDestination(tmpIndex, item, &tmpDestItem, flags);
 					if(tmpCylinder && tmpCylinder->__queryAdd(tmpIndex, item, item->getItemCount(), flags) == RET_NOERROR)
 					{
 						index = tmpIndex;

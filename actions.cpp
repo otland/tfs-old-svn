@@ -360,8 +360,8 @@ ReturnValue Actions::canUse(const Player* player, const Position& pos, const Ite
 	if((action = getAction(item, ACTION_RUNEID)))
 		return action->canExecuteAction(player, pos);
 
-	/*if(defaultAction)
-		return defaultAction->canExecuteAction(player, pos);*/
+	if(defaultAction)
+		return defaultAction->canExecuteAction(player, pos);
 
 	return RET_NOERROR;
 }

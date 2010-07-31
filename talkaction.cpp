@@ -134,34 +134,34 @@ bool TalkActions::registerEvent(Event* event, xmlNodePtr p, bool override)
 
 bool TalkActions::onPlayerSay(Creature* creature, uint16_t channelId, const std::string& words, bool ignoreAccess)
 {
-	std::string cmdstring[TALKFILTER_LAST] = words, paramstring[TALKFILTER_LAST] = "";
+	std::string cmd[TALKFILTER_LAST] = words, param[TALKFILTER_LAST] = "";
 	std::string::size_type loc = words.find('"', 0);
 	if(loc != std::string::npos)
 	{
-		cmdstring[TALKFILTER_QUOTATION] = std::string(words, 0, loc);
-		paramstring[TALKFILTER_QUOTATION] = std::string(words, (loc + 1), (words.size() - (loc - 1)));
-		trimString(cmdstring[TALKFILTER_QUOTATION]);
+		cmd[TALKFILTER_QUOTATION] = std::string(words, 0, loc);
+		param[TALKFILTER_QUOTATION] = std::string(words, (loc + 1), (words.size() - (loc - 1)));
+		trimString(cmd[TALKFILTER_QUOTATION]);
 	}
 
 	loc = words.find(" ", 0);
 	if(loc != std::string::npos)
 	{
-		cmdstring[TALKFILTER_WORD] = std::string(words, 0, loc);
-		paramstring[TALKFILTER_WORD] = std::string(words, (loc + 1), (words.size() - (loc - 1)));
+		cmd[TALKFILTER_WORD] = std::string(words, 0, loc);
+		param[TALKFILTER_WORD] = std::string(words, (loc + 1), (words.size() - (loc - 1)));
 
 		std::string::size_type spaceLoc = words.find(" ", ++loc);
 		if(spaceLoc != std::string::npos)
 		{
-			cmdstring[TALKFILTER_WORD_SPACED] = std::string(words, 0, spaceLoc);
-			paramstring[TALKFILTER_WORD_SPACED] = std::string(words, (spaceLoc + 1), (words.size() - (spaceLoc - 1)));
+			cmd[TALKFILTER_WORD_SPACED] = std::string(words, 0, spaceLoc);
+			param[TALKFILTER_WORD_SPACED] = std::string(words, (spaceLoc + 1), (words.size() - (spaceLoc - 1)));
 		}
 	}
 
 	TalkAction* talkAction = NULL;
 	for(TalkActionsMap::iterator it = talksMap.begin(); it != talksMap.end(); ++it)
 	{
-		if(it->first == cmdstring[it->second->getFilter()] || (!it->second->isSensitive() &&
-			!strcasecmp(it->first.c_str(), cmdstring[it->second->getFilter()].c_str())))
+		if(it->first == cmd[it->second->getFilter()] || (!it->second->isSensitive() &&
+			!strcasecmp(it->first.c_str(), cmd[it->second->getFilter()].c_str())))
 		{
 			talkAction = it->second;
 			break;
@@ -171,7 +171,7 @@ bool TalkActions::onPlayerSay(Creature* creature, uint16_t channelId, const std:
 	if(!talkAction && defaultTalkAction)
 		talkAction = defaultTalkAction;
 
-	if(!talkAction || (talkAction->getChannel() != -1 && talkAction->getChannel() != channelId))
+	if(talkAction->getChannel() != -1 && talkAction->getChannel() != channelId)
 		return false;
 
 	Player* player = creature->getPlayer();
@@ -198,10 +198,10 @@ bool TalkActions::onPlayerSay(Creature* creature, uint16_t channelId, const std:
 	}
 
 	if(talkAction->isScripted())
-		return talkAction->executeSay(creature, cmdstring[talkAction->getFilter()], paramstring[talkAction->getFilter()], channelId);
+		return talkAction->executeSay(creature, cmd[talkAction->getFilter()], param[talkAction->getFilter()], channelId);
 
 	if(TalkFunction* function = talkAction->getFunction())
-		return function(creature, cmdstring[talkAction->getFilter()], paramstring[talkAction->getFilter()]);
+		return function(creature, cmd[talkAction->getFilter()], param[talkAction->getFilter()]);
 
 	return false;
 }

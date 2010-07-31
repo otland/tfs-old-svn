@@ -116,12 +116,10 @@ function isNumeric(str)
 end
 
 function doNumberFormat(i)
-	local str = string.gsub(i, "(%d)(%d%d%d)$", "%1,%2", 1)
-	while true do
+	local str, found = string.gsub(i, "(%d)(%d%d%d)$", "%1,%2", 1), 0
+	repeat
 		str, found = string.gsub(ret, "(%d)(%d%d%d),", "%1,%2,", 1)
-		if found == 0 then break end
-	end
-
+	until found == 0
 	return str
 end
 

@@ -2197,7 +2197,7 @@ void LuaInterface::registerFunctions()
 	//doPlayerSetPartner(cid, guid)
 	lua_register(m_luaState, "doPlayerSetPartner", LuaInterface::luaDoPlayerSetPartner);
 
-	//doPlayerFollowCreature(cid)
+	//doPlayerFollowCreature(cid, target)
 	lua_register(m_luaState, "doPlayerFollowCreature", LuaInterface::luaDoPlayerFollowCreature);
 
 	//getPlayerParty(cid)
