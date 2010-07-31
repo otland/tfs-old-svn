@@ -171,7 +171,7 @@ bool TalkActions::onPlayerSay(Creature* creature, uint16_t channelId, const std:
 	if(!talkAction && defaultTalkAction)
 		talkAction = defaultTalkAction;
 
-	if(!talkAction && (talkAction->getChannel() != -1 && talkAction->getChannel() != channelId))
+	if(!talkAction || (talkAction->getChannel() != -1 && talkAction->getChannel() != channelId))
 		return false;
 
 	Player* player = creature->getPlayer();
