@@ -1028,7 +1028,8 @@ bool Game::playerMoveThing(uint32_t playerId, const Position& fromPos,
 	if(Creature* movingCreature = thing->getCreature())
 	{
 		uint32_t delay = g_config.getNumber(ConfigManager::PUSH_CREATURE_DELAY);
-		if(Position::areInRange<1,1,0>(movingCreature->getPosition(), player->getPosition()) && delay > 0 && !player->hasCustomFlag(PlayerCustomFlag_CanThrowAnywhere))
+		if(Position::areInRange<1,1,0>(movingCreature->getPosition(), player->getPosition()) && delay > 0
+			&& !player->hasCustomFlag(PlayerCustomFlag_CanThrowAnywhere))
 		{
 			SchedulerTask* task = createSchedulerTask(delay, boost::bind(&Game::playerMoveCreature, this,
 				player->getID(), movingCreature->getID(), movingCreature->getPosition(), toCylinder->getPosition()));
@@ -2856,6 +2857,13 @@ bool Game::playerRequestTrade(uint32_t playerId, const Position& pos, int16_t st
 		return false;
 	}
 
+	if(!canThrowObjectTo(tradePartner->getPosition(), player->getPosition())
+		&& !player->hasCustomFlag(PlayerCustomFlag_CanThrowAnywhere))
+	{
+		player->sendCancelMessage(RET_CREATUREISNOTREACHABLE);
+		return false;
+	}
+
 	Item* tradeItem = dynamic_cast<Item*>(internalGetThing(player, pos, stackpos, spriteId, STACKPOS_USE));
 	if(!tradeItem || tradeItem->getClientID() != spriteId || !tradeItem->isPickupable() || (tradeItem->isLoadedFromMap() &&
 		(tradeItem->getUniqueId() != 0 || (tradeItem->getActionId() != 0 && tradeItem->getContainer()))))
@@ -2971,15 +2979,23 @@ bool Game::internalStartTrade(Player* player, Player* tradePartner, Item* tradeI
 bool Game::playerAcceptTrade(uint32_t playerId)
 {
 	Player* player = getPlayerByID(playerId);
-	if(!player || player->isRemoved())
+	if(!player || player->isRemoved() || (player->getTradeState() != TRADE_ACKNOWLEDGE
+		&& player->getTradeState() != TRADE_INITIATED))
 		return false;
 
-	if(!(player->getTradeState() == TRADE_ACKNOWLEDGE || player->getTradeState() == TRADE_INITIATED))
+	Player* tradePartner = player->tradePartner;
+	if(!tradePartner)
 		return false;
+
+	if(!canThrowObjectTo(tradePartner->getPosition(), player->getPosition())
+		&& !player->hasCustomFlag(PlayerCustomFlag_CanThrowAnywhere))
+	{
+		player->sendCancelMessage(RET_CREATUREISNOTREACHABLE);
+		return false;
+	}
 
 	player->setTradeState(TRADE_ACCEPT);
-	Player* tradePartner = player->tradePartner;
-	if(!tradePartner || tradePartner->getTradeState() != TRADE_ACCEPT)
+	if(tradePartner->getTradeState() != TRADE_ACCEPT)
 		return false;
 
 	Item* tradeItem1 = player->tradeItem;
@@ -3900,9 +3916,8 @@ bool Game::playerContinueReport(Player* player, const std::string& text)
 	return true;
 }
 
-//--
 bool Game::canThrowObjectTo(const Position& fromPos, const Position& toPos, bool checkLineOfSight /*= true*/,
-	int32_t rangex /*= Map::maxClientViewportX*/, int32_t rangey /*= Map::maxClientViewportY*/)
+	int32_t rangex/* = Map::maxClientViewportX*/, int32_t rangey/* = Map::maxClientViewportY*/)
 {
 	return map->canThrowObjectTo(fromPos, toPos, checkLineOfSight, rangex, rangey);
 }
