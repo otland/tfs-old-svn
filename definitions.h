@@ -144,7 +144,7 @@
 	//Windows Seven 0x0601
 
 	#define _WIN32_WINNT 0x0501
-#elifdef __GNUC__
+#elif defined __GNUC__
 	#define __USE_ZLIB__
 #endif
 

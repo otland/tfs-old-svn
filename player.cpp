@@ -3082,7 +3082,7 @@ int32_t Player::__getLastIndex() const
 	return SLOT_LAST;
 }
 
-uint32_t Player::__getItemTypeCount(uint16_t itemId, int32_t subType /*= -1*/, bool itemCount /*= true*/) const
+uint32_t Player::__getItemTypeCount(uint16_t itemId, int32_t subType /*= -1*/, bool /*= true*/) const
 {
 	Item* item = NULL;
 	Container* container = NULL;
@@ -3111,7 +3111,7 @@ uint32_t Player::__getItemTypeCount(uint16_t itemId, int32_t subType /*= -1*/, b
 }
 
 std::map<uint32_t, uint32_t>& Player::__getAllItemTypeCount(std::map<uint32_t,
-	uint32_t>& countMap, bool itemCount/* = true*/) const
+	uint32_t>& countMap, bool/* = true*/) const
 {
 	Item* item = NULL;
 	Container* container = NULL;
