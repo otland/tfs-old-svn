@@ -26,6 +26,8 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 
 	doAddCondition(cid, exhaust)
 	doCreatureSay(itemEx.uid, "Aaaah...", TALKTYPE_ORANGE_1)
-	doTransformItem(item.uid, EMPTY_POTION)
+
+	doRemoveItem(item.uid, 1)
+	doPlayerAddItem(cid, potion.empty, 1)
 	return true
 end

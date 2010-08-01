@@ -46,7 +46,9 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 		end
 
 		doDecayItem(doCreateItem(2016, potion.splash, toPosition))
-		doTransformItem(item.uid, potion.empty)
+		doRemoveItem(item.uid, 1)
+
+		doPlayerAddItem(cid, potion.empty, 1)
 		return true
 	end
 
@@ -88,12 +90,11 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 	end
 
 	doAddCondition(cid, exhaust)
+	doRemoveItem(item.uid, 1)
 	if(not potion.empty or config.removeOnUse) then
-		doRemoveItem(item.uid)
 		return true
 	end
 
-	doRemoveItem(item.uid, 1)
 	doPlayerAddItem(cid, potion.empty, 1)
 	return true
 end
