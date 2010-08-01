@@ -2694,18 +2694,17 @@ ReturnValue Player::__queryMaxCount(int32_t index, const Thing* thing, uint32_t 
 	if(index == INDEX_WHEREEVER)
 	{
 		uint32_t n = 0;
-		for(int slotIndex = SLOT_FIRST; slotIndex < SLOT_LAST; ++slotIndex)
+		for(int32_t i = SLOT_FIRST; i < SLOT_LAST; ++i)
 		{
-			Item* inventoryItem = inventory[slotIndex];
-			if(inventoryItem)
+			if(Item* inventoryItem = inventory[i])
 			{
 				if(Container* subContainer = inventoryItem->getContainer())
 				{
 					uint32_t queryCount = 0;
 					subContainer->__queryMaxCount(INDEX_WHEREEVER, item, item->getItemCount(), queryCount, flags);
-					n += queryCount;
 
 					//iterate through all items, including sub-containers (deep search)
+					n += queryCount;
 					for(ContainerIterator cit = subContainer->begin(); cit != subContainer->end(); ++cit)
 					{
 						if(Container* tmpContainer  = (*cit)->getContainer())
@@ -2719,11 +2718,11 @@ ReturnValue Player::__queryMaxCount(int32_t index, const Thing* thing, uint32_t 
 				else if(inventoryItem->isStackable() && item->getID() == inventoryItem->getID() && inventoryItem->getItemCount() < 100)
 				{
 					uint32_t remainder = (100 - inventoryItem->getItemCount());
-					if(__queryAdd(slotIndex, item, remainder, flags) == RET_NOERROR)
+					if(__queryAdd(i, item, remainder, flags) == RET_NOERROR)
 						n += remainder;
 				}
 			}
-			else if(__queryAdd(slotIndex, item, item->getItemCount(), flags) == RET_NOERROR)
+			else if(__queryAdd(i, item, item->getItemCount(), flags) == RET_NOERROR)
 			{
 				if(item->isStackable())
 					n += 100;
@@ -2775,7 +2774,7 @@ ReturnValue Player::__queryRemove(const Thing* thing, uint32_t count, uint32_t f
 	if(!item)
 		return RET_NOTPOSSIBLE;
 
-	if(count == 0 || (item->isStackable() && count > item->getItemCount()))
+	if(!count || (item->isStackable() && count > item->getItemCount()))
 		return RET_NOTPOSSIBLE;
 
 	 if(!item->isMoveable() && !hasBitSet(FLAG_IGNORENOTMOVEABLE, flags))
@@ -2787,7 +2786,7 @@ ReturnValue Player::__queryRemove(const Thing* thing, uint32_t count, uint32_t f
 Cylinder* Player::__queryDestination(int32_t& index, const Thing* thing, Item** destItem,
 	uint32_t& flags)
 {
-	if(index == 0 /*drop to capacity window*/ || index == INDEX_WHEREEVER)
+	if(!index /*drop to capacity window*/ || index == INDEX_WHEREEVER)
 	{
 		*destItem = NULL;
 		const Item* item = thing->getItem();
@@ -2795,42 +2794,47 @@ Cylinder* Player::__queryDestination(int32_t& index, const Thing* thing, Item** 
 			return this;
 
 		//find an appropiate slot
-		std::list<std::pair<Container*, int32_t> > deepList;
+		std::list<std::pair<Item*, int32_t> > itemList;
 		for(int32_t i = SLOT_FIRST; i < SLOT_LAST; ++i)
 		{
 			if(Item* inventoryItem = inventory[i])
 			{
-				if(inventoryItem == tradeItem)
-					continue;
-
-				//try find an already existing item to stack with
-				if(inventoryItem != item && item->isStackable() && inventoryItem->getID() == item->getID() && inventoryItem->getItemCount() < 100)
-				{
-					*destItem = inventoryItem;
-					index = i;
-					return this;
-				}
-				//check sub-containers
-				else if(Container* container = inventoryItem->getContainer())
-				{
-					int32_t tmpIndex = INDEX_WHEREEVER;
-					Item* tmpDestItem = NULL;
-
-					Cylinder* tmpCylinder = container->__queryDestination(tmpIndex, item, &tmpDestItem, flags);
-					if(tmpCylinder && tmpCylinder->__queryAdd(tmpIndex, item, item->getItemCount(), flags) == RET_NOERROR)
-					{
-						index = tmpIndex;
-						*destItem = tmpDestItem;
-						return tmpCylinder;
-					}
-
-					deepList.push_back(std::make_pair(container, 0));
-				}
+				if(inventoryItem != tradeItem)
+					itemList.push_back(std::make_pair(inventoryItem, i));					
 			}
 			else if(__queryAdd(i, item, item->getItemCount(), 0) == RET_NOERROR)
 			{
 				index = i;
 				return this;
+			}
+		}
+
+		//try containers
+		std::list<std::pair<Container*, int32_t> > deepList;
+		for(std::list<std::pair<Item*, int32_t> >::iterator it = itemList.begin(); it != itemList.end(); ++it)
+		{
+			//try find an already existing item to stack with
+			if((*it).first != item && item->isStackable() && (*it).first->getID() == item->getID() && (*it).first->getItemCount() < 100)
+			{
+				*destItem = (*it).first;
+				index = (*it).second;
+				return this;
+			}
+			//check sub-containers
+			else if(Container* container = (*it).first->getContainer())
+			{
+				int32_t tmpIndex = INDEX_WHEREEVER;
+				Item* tmpDestItem = NULL;
+
+				Cylinder* tmpCylinder = container->__queryDestination(tmpIndex, item, &tmpDestItem, flags);
+				if(tmpCylinder && tmpCylinder->__queryAdd(tmpIndex, item, item->getItemCount(), flags) == RET_NOERROR)
+				{
+					index = tmpIndex;
+					*destItem = tmpDestItem;
+					return tmpCylinder;
+				}
+
+				deepList.push_back(std::make_pair(container, 0));
 			}
 		}
 
