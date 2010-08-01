@@ -1607,8 +1607,7 @@ ReturnValue Game::internalAddItem(Creature* actor, Cylinder* toCylinder, Item* i
 	if(!toCylinder || !item)
 		return RET_NOTPOSSIBLE;
 
-	Cylinder* origToCylinder = toCylinder;
-
+	Cylinder* destCylinder = toCylinder;
 	Item* toItem = NULL;
 	toCylinder = toCylinder->__queryDestination(index, item, &toItem, flags);
 
@@ -1618,7 +1617,7 @@ ReturnValue Game::internalAddItem(Creature* actor, Cylinder* toCylinder, Item* i
 		return ret;
 
 	uint32_t maxQueryCount = 0;
-	ret = origToCylinder->__queryMaxCount(INDEX_WHEREEVER, item, item->getItemCount(), maxQueryCount, flags);
+	ret = destCylinder->__queryMaxCount(INDEX_WHEREEVER, item, item->getItemCount(), maxQueryCount, flags);
 	if(ret != RET_NOERROR)
 		return ret;
 
@@ -1639,20 +1638,17 @@ ReturnValue Game::internalAddItem(Creature* actor, Cylinder* toCylinder, Item* i
 			if(m - n != item->getItemCount())
 			{
 				Item* remainderItem = Item::CreateItem(item->getID(), m - n);
-				if(internalAddItem(NULL, origToCylinder, remainderItem, INDEX_WHEREEVER, flags, false) != RET_NOERROR)
+				if(internalAddItem(NULL, destCylinder, remainderItem, INDEX_WHEREEVER, flags, false) != RET_NOERROR)
 				{
 					freeThing(remainderItem);
 					remainderCount = m - n;
 				}
 			}
 		}
-		else
+		else if(item->getParent() != VirtualCylinder::virtualCylinder)
 		{
-			if(item->getParent() != VirtualCylinder::virtualCylinder)
-			{
-				item->onRemoved();
-				freeThing(item);
-			}
+			item->onRemoved();
+			freeThing(item);
 		}
 	}
 	else
@@ -1708,12 +1704,11 @@ ReturnValue Game::internalPlayerAddItem(Creature* actor, Player* player, Item* i
 {
 	uint32_t remainderCount = 0;
 	ReturnValue ret = internalAddItem(actor, player, item, (int32_t)slot, 0, false, remainderCount);
-
 	if(remainderCount > 0)
 	{
 		Item* remainderItem = Item::CreateItem(item->getID(), remainderCount);
-		ReturnValue remaindRet = internalAddItem(actor, player->getTile(), remainderItem, INDEX_WHEREEVER, FLAG_NOLIMIT);
-		if(remaindRet != RET_NOERROR)
+		ReturnValue remainderRet = internalAddItem(actor, player->getTile(), remainderItem, INDEX_WHEREEVER, FLAG_NOLIMIT);
+		if(remainderRet != RET_NOERROR)
 			freeThing(remainderItem);
 	}
 
