@@ -2392,7 +2392,6 @@ bool Game::playerAutoWalk(uint32_t playerId, std::list<Direction>& listDir)
 	}
 
 	player->setNextWalkTask(NULL);
-	player->setNextWalkActionTask(NULL);
 	return player->startAutoWalk(listDir);
 }
 
