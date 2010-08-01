@@ -63,11 +63,19 @@ function doNpcSellItem(cid, itemid, amount, subType, ignoreCap, inBackpacks, bac
 
 	local item = 0
 	if(isItemStackable(itemid)) then
-		item = doCreateItemEx(itemid, amount)
-		if(doPlayerAddItemEx(cid, item, ignoreCap) ~= RETURNVALUE_NOERROR) then
-			return 0, 0
+		if(isItemRune(itemid)) then
+			amount = amount * subType
 		end
 
+		local count = amount
+		repeat
+			item = doCreateItemEx(itemid, math.min(100, amount))
+			if(doPlayerAddItemEx(cid, item, ignoreCap) ~= RETURNVALUE_NOERROR) then
+				return 0, 0
+			end
+
+			count = count - math.min(100, amount)
+		until count == 0
 		return amount, 0
 	end
 
@@ -114,7 +122,7 @@ function doNpcSellItem(cid, itemid, amount, subType, ignoreCap, inBackpacks, bac
 	return a, 0
 end
 
-function doRemoveItemIdFromPos (id, n, position)
+function doRemoveItemIdFromPos(id, n, position)
 	local thing = getThingFromPos({x = position.x, y = position.y, z = position.z, stackpos = 1})
 	if(thing.itemid == id) then
 		doRemoveItem(thing.uid, n)

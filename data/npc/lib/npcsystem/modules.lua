@@ -864,7 +864,7 @@ if(Modules == nil) then
 
 			if(SHOPMODULE_MODE == SHOPMODULE_MODE_TRADE) then
 				if(itemid ~= nil and cost ~= nil) then
-					if((isItemRune(itemid) or isItemFluidContainer(itemid)) and subType == nil) then
+					if(isItemFluidContainer(itemid) and subType == nil) then
 						print('[Warning] NpcSystem:', 'SubType missing for parameter item:', item)
 					else
 						self:addBuyableItem(nil, itemid, cost, subType, realName)
@@ -873,7 +873,7 @@ if(Modules == nil) then
 					print('[Warning] NpcSystem:', 'Parameter(s) missing for item:', itemid, cost)
 				end
 			elseif(name ~= nil and itemid ~= nil and cost ~= nil) then
-				if((isItemRune(itemid) or isItemFluidContainer(itemid)) and subType == nil) then
+				if(isItemFluidContainer(itemid) and subType == nil) then
 					print('[Warning] NpcSystem:', 'SubType missing for parameter item:', item)
 				else
 					local names = {}
@@ -945,7 +945,7 @@ if(Modules == nil) then
 			end
 
 			if(name ~= nil and container ~= nil and itemid ~= nil and cost ~= nil) then
-				if((isItemRune(itemid) or isItemFluidContainer(itemid)) and subType == nil) then
+				if(isItemFluidContainer(itemid) and subType == nil) then
 					print('[Warning] NpcSystem:', 'SubType missing for parameter item:', item)
 				else
 					local names = {}
@@ -1168,6 +1168,7 @@ if(Modules == nil) then
 		end
 
 		if(amount <= 0) then
+			print("[ShopModule.onSell]", "Attempt to purchase " .. amount .. " items")
 			return false
 		end
 
