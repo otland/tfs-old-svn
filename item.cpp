@@ -42,7 +42,7 @@ extern ConfigManager g_config;
 extern MoveEvents* g_moveEvents;
 
 Items Item::items;
-Item* Item::CreateItem(const uint16_t type, uint16_t amount/* = 1*/)
+Item* Item::CreateItem(const uint16_t type, uint16_t amount/* = 0*/)
 {
 	const ItemType& it = Item::items[type];
 	if(it.group == ITEM_GROUP_DEPRECATED)

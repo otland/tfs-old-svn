@@ -139,7 +139,7 @@ class Item : virtual public Thing, public ItemAttributes
 		static Items items;
 
 		//Factory member to create item of right type based on type
-		static Item* CreateItem(const uint16_t type, uint16_t amount = 1);
+		static Item* CreateItem(const uint16_t type, uint16_t amount = 0);
 		static Item* CreateItem(PropStream& propStream);
 
 		static bool loadItem(xmlNodePtr node, Container* parent);

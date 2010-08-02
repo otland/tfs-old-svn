@@ -2843,7 +2843,7 @@ Cylinder* Player::__queryDestination(int32_t& index, const Thing* thing, Item** 
 		for(std::list<std::pair<Container*, int32_t> >::iterator dit = deepList.begin(); dit != deepList.end(); ++dit)
 		{
 			Container* c = (*dit).first;
-			if(!c || c->empty())
+			if(!c)
 				continue;
 
 			int32_t level = (*dit).second;
@@ -3085,7 +3085,7 @@ int32_t Player::__getLastIndex() const
 	return SLOT_LAST;
 }
 
-uint32_t Player::__getItemTypeCount(uint16_t itemId, int32_t subType /*= -1*/, bool /*= true*/) const
+uint32_t Player::__getItemTypeCount(uint16_t itemId, int32_t subType /*= -1*/) const
 {
 	Item* item = NULL;
 	Container* container = NULL;
@@ -3096,25 +3096,26 @@ uint32_t Player::__getItemTypeCount(uint16_t itemId, int32_t subType /*= -1*/, b
 		if(!(item = inventory[i]))
 			continue;
 
-		if(item->getID() == itemId)
-			count += Item::countByType(item, subType);
-
-		if(!(container = item->getContainer()))
-			continue;
-
-		for(ContainerIterator it = container->begin(), end = container->end(); it != end; ++it)
+		if(item->getID() != itemId)
 		{
-			if((*it)->getID() == itemId)
-				count += Item::countByType(*it, subType);
+			if(!(container = item->getContainer()))
+				continue;
+
+			for(ContainerIterator it = container->begin(), end = container->end(); it != end; ++it)
+			{
+				if((*it)->getID() == itemId)
+					count += Item::countByType(*it, subType);
+			}
 		}
+		else
+			count += Item::countByType(item, subType);
 	}
 
 	return count;
 
 }
 
-std::map<uint32_t, uint32_t>& Player::__getAllItemTypeCount(std::map<uint32_t,
-	uint32_t>& countMap, bool/* = true*/) const
+std::map<uint32_t, uint32_t>& Player::__getAllItemTypeCount(std::map<uint32_t, uint32_t>& countMap) const
 {
 	Item* item = NULL;
 	Container* container = NULL;

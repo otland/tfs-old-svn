@@ -1389,7 +1389,7 @@ int32_t Tile::__getIndexOfThing(const Thing* thing) const
 	return -1;
 }
 
-uint32_t Tile::__getItemTypeCount(uint16_t itemId, int32_t subType /*= -1*/, bool /*= true*/) const
+uint32_t Tile::__getItemTypeCount(uint16_t itemId, int32_t subType /*= -1*/) const
 {
 	uint32_t count = 0;
 	Thing* thing = NULL;
@@ -1400,10 +1400,8 @@ uint32_t Tile::__getItemTypeCount(uint16_t itemId, int32_t subType /*= -1*/, boo
 
 		if(const Item* item = thing->getItem())
 		{
-			if(item->getID() != itemId || (subType != -1 && subType != item->getSubType()))
-				continue;
-
-			count += item->getItemCount();
+			if(item->getID() == itemId)
+				count += Item::countByType(item, subType);
 		}
 	}
 

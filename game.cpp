@@ -6234,11 +6234,13 @@ void Game::freeThing(Thing* thing)
 void Game::showHotkeyUseMessage(Player* player, Item* item)
 {
 	const ItemType& it = Item::items[item->getID()];
+	uint32_t count = player->__getItemTypeCount(item->getID(), -1);
+
 	char buffer[40 + it.name.size()];
-	if(item->getItemCount() == 1)
+	if(count == 1)
 		sprintf(buffer, "Using the last %s...", it.name.c_str());
 	else
-		sprintf(buffer, "Using one of %d %s...", item->getItemCount(), it.pluralName.c_str());
+		sprintf(buffer, "Using one of %d %s...", count, it.pluralName.c_str());
 
 	player->sendTextMessage(MSG_INFO_DESCR, buffer);
 }
