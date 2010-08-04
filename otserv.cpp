@@ -721,7 +721,7 @@ void otserv(StringVec, ServiceManager* services)
 		}
 	}
 
-	serverIps.push_front(std::make_pair(LOCALHOST, 0xFFFFFFFF));
+	serverIps.push_front(std::make_pair(LOCALHOST, 0xFFFFFFFF)); // we gotta check it!
 	if(ip.size() && !owned)
 	{
 		ipList.clear();
