@@ -6623,6 +6623,10 @@ int32_t LuaInterface::luaGetMonsterInfo(lua_State* L)
 	setFieldBool(L, "convinceable", mType->isConvinceable);
 	setFieldBool(L, "attackable", mType->isAttackable);
 	setFieldBool(L, "hostile", mType->isHostile);
+
+	lua_pushstring(L, "outfit"); // name the table created by pushOutfit
+	pushOutfit(L, mType->outfit);
+	pushTable(L);
 	createTable(L, "defenses");
 
 	SpellList::const_iterator it = mType->spellDefenseList.begin();

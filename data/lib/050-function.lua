@@ -680,3 +680,8 @@ function getMonsterSummonList(name)
 	local monster = getMonsterInfo(name)
 	return monster and monster.summons or false
 end
+
+function choose(...)
+	local arg = {...}
+	return arg[math.random(1, table.maxn(arg))]
+end 
