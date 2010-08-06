@@ -67,9 +67,9 @@ bool FileLoader::openFile(std::string name, bool write, bool caching/* = false*/
 			name += ".gz";
 
 #ifdef __USE_ZLIB__
-                m_file = gzopen(name.c_str(), "wb");
+				m_file = gzopen(name.c_str(), "wb");
 #else
-                m_file = fopen(name.c_str(), "wb");
+				m_file = fopen(name.c_str(), "wb");
 #endif
 		if(m_file)
 		{

@@ -245,7 +245,6 @@ bool ProtocolGame::login(const std::string& name, uint32_t id, const std::string
 		{
 			disconnectClient(0x14, "Temple position is wrong. Contact with the administration.");
 			return false;
-
 		}
 
 		player->lastIP = player->getIP();
