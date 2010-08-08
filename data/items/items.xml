@@ -14090,7 +14090,7 @@
 		<attribute key="slotType" value="head" />
 	</item>
 	<item id="7940" name="cave entrance">
-		<attribute key="floorchange" value="west" />
+		<attribute key="floorchange" value="down" />
 	</item>
 	<item fromid="7943" toid="7954" name="shallow water">
 		<attribute key="fluidSource" value="water" />
@@ -14218,7 +14218,7 @@
 	</item>
 	<item id="8194" article="a" name="birthday cake" />
 	<item fromid="8202" toid="8203" name="cave entrance">
-		<attribute key="floorchange" value="north" />
+		<attribute key="floorchange" value="down" />
 	</item>
 	<item id="8204" name="easily inflammable sulphur">
 		<attribute key="weight" value="50" />
@@ -14232,10 +14232,10 @@
 		<attribute key="duration" value="120" />
 	</item>
 	<item id="8210" name="cave entrance">
-		<attribute key="floorchange" value="north" />
+		<attribute key="floorchange" value="down" />
 	</item>
 	<item fromid="8211" toid="8213" name="cave entrance">
-		<attribute key="floorchange" value="west" />
+		<attribute key="floorchange" value="down" />
 	</item>
 	<item fromid="8233" toid="8236" name="dragon head" />
 	<item fromid="8237" toid="8239" name="jagged stones" />
