@@ -427,8 +427,8 @@ Cylinder* Container::__queryDestination(int32_t& index, const Thing* thing, Item
 		if(item->getParent() != this)
 		{
 			//try find a suitable item to stack with
-			uint32_t n = 0;
-			for(ItemList::iterator cit = itemlist.begin(); cit != itemlist.end(); ++cit)
+			uint32_t n = itemlist.size();
+			for(ItemList::iterator cit = itemlist.end(); true; --cit)
 			{
 				if((*cit) != item && (*cit)->getID() == item->getID() && (*cit)->getItemCount() < 100)
 				{
@@ -436,8 +436,10 @@ Cylinder* Container::__queryDestination(int32_t& index, const Thing* thing, Item
 					index = n;
 					return this;
 				}
+				if(cit == itemlist.begin())
+					break;
 
-				++n;
+				--n;
 			}
 		}
 	}
@@ -794,6 +796,21 @@ void Container::__startDecaying()
 		(*it)->__startDecaying();
 }
 
+Item* Container::findRecursiveItem(uint16_t itemId, uint16_t freeCount /*= 0*/)
+{
+	Item* retItem = NULL;
+	for(ItemList::const_reverse_iterator it = this->getReversedItems(); it != this->getReversedEnd(); ++it) {
+		if((*it) && (*it)->getID() == itemId && ((*it)->getItemCount() + freeCount) <= 100) {
+			retItem = (*it);
+			break;	
+		} else if((*it) && (*it)->isContainer()) {
+			retItem = dynamic_cast<Container*>(*it)->findRecursiveItem(itemId, freeCount);
+			if(retItem) break;
+		}
+	}
+	return retItem;
+}
+
 ContainerIterator Container::begin()
 {
 	ContainerIterator cit(this);
@@ -905,5 +922,34 @@ ContainerIterator ContainerIterator::operator++(int32_t)
 {
 	ContainerIterator tmp(*this);
 	++*this;
+	return tmp;
+}
+ContainerIterator& ContainerIterator::operator--()
+{
+	assert(base);
+	if(Item* item = *current)
+	{
+		Container* container = item->getContainer();
+		if(container && !container->empty())
+			over.push(container);
+	}
+
+	--current;
+	if(current == over.front()->itemlist.begin())
+	{
+		/*over.pop();
+		if(over.empty())
+			return *this;*/
+
+		current = over.front()->itemlist.end();
+	}
+
+	return *this;
+}
+
+ContainerIterator ContainerIterator::operator--(int32_t)
+{
+	ContainerIterator tmp(*this);
+	--*this;
 	return tmp;
 }

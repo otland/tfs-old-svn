@@ -1515,7 +1515,7 @@ bool ConjureSpell::loadFunction(const std::string& functionName)
 }
 
 ReturnValue ConjureSpell::internalConjureItem(Player* player, uint32_t conjureId, uint32_t conjureCount,
-	bool transform/* = false*/, uint32_t reagentId/* = 0*/, slots_t slot/* = SLOT_WHEREVER*/, bool test/* = false*/)
+	bool transform/* = false*/, uint32_t reagentId/* = 0*/, slots_t, bool test/* = false*/)
 {
 	if(!transform)
 	{
@@ -1533,20 +1533,71 @@ ReturnValue ConjureSpell::internalConjureItem(Player* player, uint32_t conjureId
 	if(!reagentId)
 		return RET_NOTPOSSIBLE;
 
-	Item* item = player->getInventoryItem(slot);
-	if(item && item->getID() == reagentId)
-	{
-		if(item->isStackable() && item->getItemCount() != 1)
-			return RET_YOUNEEDTOSPLITYOURSPEARS;
+	Item* item = NULL;
+	Item* fromitem = NULL;
+	Item* toitem = NULL;
+	Container* backpack = NULL;
 
+	/* Find items to stack with */
+	for(int32_t i = SLOT_FIRST; i < SLOT_LAST; ++i) {
+		item = player->getInventoryItem((slots_t)i);
+
+		if(!item)
+			continue;		
+
+		if(item->getID() == reagentId) {
+			fromitem = item;
+		} else if(item->getID() == conjureId && (item->getItemCount()) != 100) {
+			toitem = item;
+		} else if(i == SLOT_BACKPACK) {
+			backpack = dynamic_cast<Container*>(item);
+			// Search for reagent runes
+			fromitem = backpack->findRecursiveItem((uint16_t)reagentId);
+			// Search for conjured runes with free space
+			toitem = backpack->findRecursiveItem((uint16_t)conjureId, (uint16_t)1);
+		}
+	}
+
+	if(fromitem)
+	{
+		
+			if(!backpack)
+				return RET_YOUNEEDTOSPLITYOURSPEARS;
+
+			if(!toitem) {
+				Item* newItem = Item::CreateItem(conjureId, conjureCount);
+	
+				ReturnValue ret = g_game.internalAddItem(player, player, newItem, INDEX_WHEREEVER);
+				if(ret == RET_NOERROR) {
+					g_game.transformItem(fromitem, fromitem->getID(), fromitem->getItemCount()-1);
+					g_game.startDecay(newItem);
+
+					return RET_NOERROR;
+				}
+			} else {
+				
+				if(toitem->getItemCount() + conjureCount > 100) {
+					uint16_t rest = (toitem->getItemCount() + conjureCount) - 100;
+					conjureCount = conjureCount - rest;
+					Item* newItem = Item::CreateItem(conjureId, rest);
+					ReturnValue ret = g_game.internalAddItem(player, player, newItem, INDEX_WHEREEVER);
+
+					if(ret == RET_NOERROR) {
+						g_game.startDecay(newItem);
+					} else {
+						return RET_NOTPOSSIBLE;	
+					}				
+				}
+				g_game.transformItem(fromitem, fromitem->getID(), fromitem->getItemCount()-1);
+				Item* newItem = g_game.transformItem(toitem, conjureId, toitem->getItemCount()+conjureCount);
+				g_game.startDecay(newItem);
+
+				return RET_NOERROR;
+			}
+			return RET_YOUNEEDTOSPLITYOURSPEARS;
 		if(test)
 			return RET_NOERROR;
 
-		Item* newItem = g_game.transformItem(item, conjureId, conjureCount);
-		if(!newItem)
-			return RET_NOTPOSSIBLE;
-
-		g_game.startDecay(newItem);
 		return RET_NOERROR;
 	}
 
@@ -1570,39 +1621,16 @@ bool ConjureSpell::ConjureItem(const ConjureSpell* spell, Creature* creature, co
 	if(spell->getReagentId() != 0)
 	{
 		ReturnValue resLeft = internalConjureItem(player, spell->getConjureId(), spell->getConjureCount(),
-			true, spell->getReagentId(), SLOT_LEFT, true);
+			true, spell->getReagentId(), SLOT_LEFT);
 		if(resLeft == RET_NOERROR)
 		{
-			resLeft = internalConjureItem(player, spell->getConjureId(), spell->getConjureCount(),
-				true, spell->getReagentId(), SLOT_LEFT);
-			if(resLeft == RET_NOERROR)
-				spell->postSpell(player, false);
-		}
-
-		ReturnValue resRight = internalConjureItem(player, spell->getConjureId(), spell->getConjureCount(),
-			true, spell->getReagentId(), SLOT_RIGHT, true);
-		if(resRight == RET_NOERROR)
-		{
-			if(resLeft == RET_NOERROR && !spell->checkSpell(player))
-				return false;
-
-			resRight = internalConjureItem(player, spell->getConjureId(), spell->getConjureCount(),
-				true, spell->getReagentId(), SLOT_RIGHT);
-			if(resRight == RET_NOERROR)
-				spell->postSpell(player, false);
-		}
-
-		if(resLeft == RET_NOERROR || resRight == RET_NOERROR)
-		{
+			spell->postSpell(player, false);
 			spell->postSpell(player, true, false);
 			g_game.addMagicEffect(player->getPosition(), MAGIC_EFFECT_WRAPS_RED);
 			return true;
 		}
 
 		result = resLeft;
-		if((result == RET_NOERROR && resRight != RET_NOERROR) ||
-			(result == RET_YOUNEEDAMAGICITEMTOCASTSPELL && resRight == RET_YOUNEEDTOSPLITYOURSPEARS))
-			result = resRight;
 	}
 	else if(internalConjureItem(player, spell->getConjureId(), spell->getConjureCount()) == RET_NOERROR)
 	{
