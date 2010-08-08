@@ -169,13 +169,13 @@ int32_t getch()
 	struct termios oldt;
 	tcgetattr(STDIN_FILENO, &oldt);
 
-	struct termios newt = oldt; 
-	newt.c_lflag &= ~(ICANON | ECHO);  
-	tcsetattr(STDIN_FILENO, TCSANOW, &newt); 
+	struct termios newt = oldt;
+	newt.c_lflag &= ~(ICANON | ECHO);
+	tcsetattr(STDIN_FILENO, TCSANOW, &newt);
 
-	int32_t ch = getchar();  
-	tcsetattr(STDIN_FILENO, TCSANOW, &oldt); 
-	return ch; 
+	int32_t ch = getchar();
+	tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
+	return ch;
 }
 
 void signalHandler(int32_t sig)
@@ -673,7 +673,8 @@ void otserv(StringVec, ServiceManager* services)
 	}
 
 	IPAddress m_ip;
-	if(ip.size())
+	bool bindAll = (!ip.size() || ip == "0.0.0.0");
+	if(!bindAll)
 	{
 		std::clog << "> Global IP address: ";
 		uint32_t resolvedIp = inet_addr(ip.c_str());
@@ -697,35 +698,38 @@ void otserv(StringVec, ServiceManager* services)
 	}
 
 	ipList.push_back(boost::asio::ip::address_v4(INADDR_LOOPBACK));
-	bool owned = false;
-
-	char hostName[128];
-	if(!gethostname(hostName, 128))
+	if(bindAll)
 	{
-		if(hostent* host = gethostbyname(hostName))
+		bool owned = false;
+
+		char hostName[128];
+		if(!gethostname(hostName, 128))
 		{
-			std::clog << "> Local IP address(es): ";
-			for(uint8_t** addr = (uint8_t**)host->h_addr_list; addr[0]; addr++)
+			if(hostent* host = gethostbyname(hostName))
 			{
-				std::clog << (int32_t)(addr[0][0]) << "." << (int32_t)(addr[0][1]) << "."
-					<< (int32_t)(addr[0][2]) << "." << (int32_t)(addr[0][3]) << "\t";
+				std::clog << "> Local IP address(es): ";
+				for(uint8_t** addr = (uint8_t**)host->h_addr_list; addr[0]; addr++)
+				{
+					std::clog << (int32_t)(addr[0][0]) << "." << (int32_t)(addr[0][1]) << "."
+						<< (int32_t)(addr[0][2]) << "." << (int32_t)(addr[0][3]) << "\t";
 
-				ipList.push_back(boost::asio::ip::address_v4(*(uint32_t*)(*addr)));
-				if(ipList.back() == m_ip)
-					owned = true; // fuck yeah
+					ipList.push_back(boost::asio::ip::address_v4(*(uint32_t*)(*addr)));
+					if(ipList.back() == m_ip)
+						owned = true; // fuck yeah
 
-				serverIps.push_front(std::make_pair(*(uint32_t*)(*addr), 0x0000FFFF));
+					serverIps.push_front(std::make_pair(*(uint32_t*)(*addr), 0x0000FFFF));
+				}
+
+				std::clog << std::endl;
 			}
-
-			std::clog << std::endl;
 		}
-	}
 
-	serverIps.push_front(std::make_pair(LOCALHOST, 0xFFFFFFFF)); // we gotta check it!
-	if(ip.size() && !owned)
-	{
-		ipList.clear();
-		ipList.push_back(boost::asio::ip::address_v4(INADDR_ANY));
+		serverIps.push_front(std::make_pair(LOCALHOST, 0xFFFFFFFF)); // we gotta check it!
+		if(ip.size() && !owned)
+		{
+			ipList.clear();
+			ipList.push_back(boost::asio::ip::address_v4(INADDR_ANY));
+		}
 	}
 
 	services->add<ProtocolStatus>(g_config.getNumber(ConfigManager::STATUS_PORT), ipList);
