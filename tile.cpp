@@ -911,6 +911,7 @@ void Tile::__addThing(Creature* actor, int32_t, Thing* thing)
 
 			onUpdateTileItem(oldGround, oldType, item, Item::items[item->getID()]);
 			postRemoveNotification(actor, oldGround, NULL, oldGroundIndex, true);
+			onUpdateTile();
 		}
 		else
 		{

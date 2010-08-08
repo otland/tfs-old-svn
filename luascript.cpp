@@ -4548,8 +4548,6 @@ int32_t LuaInterface::luaDoCreateItem(lua_State* L)
 			tile = IOMap::createTile(item, NULL, pos.x, pos.y, pos.z);
 
 			g_game.setTile(tile);
-			tile->onUpdateTile();
-
 			lua_pushnumber(L, env->addThing(item));
 			return 1;
 		}
