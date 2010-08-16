@@ -410,8 +410,8 @@ Cylinder* Container::__queryDestination(int32_t& index, const Thing* thing, Item
 		if you have a container, maximize it to show all 20 slots
 		then you open a bag that is inside the container you will have a bag with 8 slots
 		and a "grey" area where the other 12 slots where from the container
-		if you drop the item on that grey area
-		the client calculates the slot position as if the bag has 20 slots
+		if you drop the item on that grey area the client calculates the slot position
+		as if the bag has 20 slots
 		*/
 
 		index = INDEX_WHEREEVER;
@@ -426,9 +426,10 @@ Cylinder* Container::__queryDestination(int32_t& index, const Thing* thing, Item
 	{
 		if(item->getParent() != this)
 		{
-			//try find a suitable item to stack with
+			//try to find a suitable item to stack with
 			uint32_t n = itemlist.size();
-			for(ItemList::iterator cit = itemlist.end(); true; --cit)
+			ItemList::iterator cit = itemlist.end();
+			while(cit != itemlist.begin())
 			{
 				if((*cit) != item && (*cit)->getID() == item->getID() && (*cit)->getItemCount() < 100)
 				{
@@ -436,9 +437,8 @@ Cylinder* Container::__queryDestination(int32_t& index, const Thing* thing, Item
 					index = n;
 					return this;
 				}
-				if(cit == itemlist.begin())
-					break;
 
+				--cit;
 				--n;
 			}
 		}
@@ -796,19 +796,22 @@ void Container::__startDecaying()
 		(*it)->__startDecaying();
 }
 
-Item* Container::findRecursiveItem(uint16_t itemId, uint16_t freeCount /*= 0*/)
+Item* Container::findRecursiveItem(uint16_t itemId, uint16_t freeCount/* = 0*/)
 {
-	Item* retItem = NULL;
-	for(ItemList::const_reverse_iterator it = this->getReversedItems(); it != this->getReversedEnd(); ++it) {
-		if((*it) && (*it)->getID() == itemId && ((*it)->getItemCount() + freeCount) <= 100) {
-			retItem = (*it);
-			break;	
-		} else if((*it) && (*it)->isContainer()) {
-			retItem = dynamic_cast<Container*>(*it)->findRecursiveItem(itemId, freeCount);
-			if(retItem) break;
+	for(ItemList::const_reverse_iterator it = itemlist.rbegin(); it != itemlist.rend(); ++it)
+	{
+		if((*it)->getID() == itemId && ((*it)->getItemCount() + freeCount) <= 100)
+			return (*it);
+
+		if((*it)->isContainer())
+		{
+			Item* item = dynamic_cast<Container*>(*it)->findRecursiveItem(itemId, freeCount);
+			if(item)
+				return item;
 		}
 	}
-	return retItem;
+
+	return NULL;
 }
 
 ContainerIterator Container::begin()
@@ -924,6 +927,7 @@ ContainerIterator ContainerIterator::operator++(int32_t)
 	++*this;
 	return tmp;
 }
+
 ContainerIterator& ContainerIterator::operator--()
 {
 	assert(base);
@@ -937,9 +941,9 @@ ContainerIterator& ContainerIterator::operator--()
 	--current;
 	if(current == over.front()->itemlist.begin())
 	{
-		/*over.pop();
+		over.shift();
 		if(over.empty())
-			return *this;*/
+			return *this;
 
 		current = over.front()->itemlist.end();
 	}

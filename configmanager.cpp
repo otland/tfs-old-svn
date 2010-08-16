@@ -115,6 +115,7 @@ bool ConfigManager::load()
 		m_confBool[LOGIN_ONLY_LOGINSERVER] = getGlobalBool("loginOnlyWithLoginServer", false);
 		#endif
 		m_confString[ENCRYPTION_TYPE] = getGlobalString("encryptionType", "sha1");
+		m_confBool[BIND_ONLY_GLOBAL_ADDRESS] = getGlobalBool("bindOnlyGlobalAddress", false);
 	}
 
 	m_confString[MAP_AUTHOR] = getGlobalString("mapAuthor", "Unknown");

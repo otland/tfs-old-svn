@@ -283,6 +283,7 @@ class ConfigManager
 #ifdef __WAR_SYSTEM__
 			OPTIONAL_WAR_ATTACK_ALLY,
 #endif
+			BIND_ONLY_GLOBAL_ADDRESS,
 			LAST_BOOL_CONFIG /* this must be the last one */
 		};
 

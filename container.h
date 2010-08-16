@@ -35,10 +35,13 @@ class ContainerIterator
 		ContainerIterator& operator=(const ContainerIterator& rhs);
 		bool operator==(const ContainerIterator& rhs);
 		bool operator!=(const ContainerIterator& rhs);
+
 		ContainerIterator& operator++();
 		ContainerIterator operator++(int32_t);
+
 		ContainerIterator& operator--();
 		ContainerIterator operator--(int32_t);
+
 		Item* operator*();
 		Item* operator->();
 
@@ -86,6 +89,7 @@ class Container : public Item, public Cylinder
 		void addItem(Item* item);
 		Item* getItem(uint32_t index);
 		bool isHoldingItem(const Item* item) const;
+		virtual Item* findRecursiveItem(uint16_t itemId, uint16_t freeCount = 0);
 
 		ContainerIterator begin();
 		ContainerIterator end();
@@ -95,9 +99,6 @@ class Container : public Item, public Cylinder
 
 		ItemList::const_iterator getItems() const {return itemlist.begin();}
 		ItemList::const_iterator getEnd() const {return itemlist.end();}
-
-		ItemList::const_reverse_iterator getReversedItems() const {return itemlist.rbegin();}
-		ItemList::const_reverse_iterator getReversedEnd() const {return itemlist.rend();}
 
 		//cylinder implementations
 		virtual Cylinder* getParent() {return Thing::getParent();}
@@ -144,7 +145,6 @@ class Container : public Item, public Cylinder
 		virtual void __internalAddThing(Thing* thing);
 		virtual void __internalAddThing(uint32_t index, Thing* thing);
 		virtual void __startDecaying();
-		virtual Item* findRecursiveItem(uint16_t itemId, uint16_t freeCount = 0);
 
 	private:
 		void onAddContainerItem(Item* item);

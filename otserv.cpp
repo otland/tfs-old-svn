@@ -673,8 +673,7 @@ void otserv(StringVec, ServiceManager* services)
 	}
 
 	IPAddress m_ip;
-	bool bindAll = (!ip.size() || ip == "0.0.0.0");
-	if(!bindAll)
+	if(ip.size())
 	{
 		std::clog << "> Global IP address: ";
 		uint32_t resolvedIp = inet_addr(ip.c_str());
@@ -697,9 +696,9 @@ void otserv(StringVec, ServiceManager* services)
 		std::clog << m_ip.to_string() << std::endl;
 	}
 
-	ipList.push_back(boost::asio::ip::address_v4(INADDR_LOOPBACK));
-	if(bindAll)
+	if(g_config.getBool(ConfigManager::BIND_ONLY_GLOBAL_ADDRESS))
 	{
+		ipList.push_back(boost::asio::ip::address_v4(INADDR_LOOPBACK));
 		bool owned = false;
 
 		char hostName[128];
@@ -724,13 +723,15 @@ void otserv(StringVec, ServiceManager* services)
 			}
 		}
 
-		serverIps.push_front(std::make_pair(LOCALHOST, 0xFFFFFFFF)); // we gotta check it!
+		serverIps.push_front(std::make_pair(LOCALHOST, 0xFFFFFFFF));
 		if(ip.size() && !owned)
 		{
 			ipList.clear();
 			ipList.push_back(boost::asio::ip::address_v4(INADDR_ANY));
 		}
 	}
+	else if(ipList.empty())
+		startupErrorMessage("Unable to bind any IP address! You may want to disable \"bindOnlyGlobalAddress\" setting in config.lua");
 
 	services->add<ProtocolStatus>(g_config.getNumber(ConfigManager::STATUS_PORT), ipList);
 	services->add<ProtocolManager>(g_config.getNumber(ConfigManager::MANAGER_PORT), ipList);
