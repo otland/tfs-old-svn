@@ -428,8 +428,7 @@ Cylinder* Container::__queryDestination(int32_t& index, const Thing* thing, Item
 		{
 			//try to find a suitable item to stack with
 			uint32_t n = itemlist.size();
-			ItemList::iterator cit = itemlist.end();
-			while(cit != itemlist.begin())
+			for(ItemList::iterator cit = itemlist.end(); cit != itemlist.begin(); --cit, --n)
 			{
 				if((*cit) != item && (*cit)->getID() == item->getID() && (*cit)->getItemCount() < 100)
 				{
@@ -437,9 +436,6 @@ Cylinder* Container::__queryDestination(int32_t& index, const Thing* thing, Item
 					index = n;
 					return this;
 				}
-
-				--cit;
-				--n;
 			}
 		}
 	}
