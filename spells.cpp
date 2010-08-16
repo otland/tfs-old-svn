@@ -932,7 +932,7 @@ bool Spell::checkRuneSpell(Player* player, const Position& toPos)
 	return true;
 }
 
-void Spell::postSpell(Player* player, bool finishedCast /*= true*/, bool payCost /*= true*/) const
+void Spell::postSpell(Player* player) const
 {
 	if(finishedCast)
 	{
@@ -1515,7 +1515,7 @@ bool ConjureSpell::loadFunction(const std::string& functionName)
 }
 
 ReturnValue ConjureSpell::internalConjureItem(Player* player, uint32_t conjureId, uint32_t conjureCount,
-	bool transform/* = false*/, uint32_t reagentId/* = 0*/, slots_t, bool test/* = false*/)
+	bool transform/* = false*/, uint32_t reagentId/* = 0*/)
 {
 	if(!transform)
 	{
@@ -1561,8 +1561,8 @@ ReturnValue ConjureSpell::internalConjureItem(Player* player, uint32_t conjureId
 	if(fromitem)
 	{
 		
-			if(!backpack)
-				return RET_YOUNEEDTOSPLITYOURSPEARS;
+			if(!backpack) // what for is this?
+				return RET_YOUNEEDTOSPLITREAGENTS;
 
 			if(!toitem) {
 				Item* newItem = Item::CreateItem(conjureId, conjureCount);
@@ -1594,11 +1594,7 @@ ReturnValue ConjureSpell::internalConjureItem(Player* player, uint32_t conjureId
 
 				return RET_NOERROR;
 			}
-			return RET_YOUNEEDTOSPLITYOURSPEARS;
-		if(test)
-			return RET_NOERROR;
-
-		return RET_NOERROR;
+			return RET_YOUNEEDTOSPLITREAGENTS;
 	}
 
 	return RET_YOUNEEDAMAGICITEMTOCASTSPELL;
@@ -1617,31 +1613,24 @@ bool ConjureSpell::ConjureItem(const ConjureSpell* spell, Creature* creature, co
 		return false;
 	}
 
-	ReturnValue result = RET_NOERROR;
+	ReturnValue result = RET_NOTPOSSIBLE;
 	if(spell->getReagentId() != 0)
 	{
-		ReturnValue resLeft = internalConjureItem(player, spell->getConjureId(), spell->getConjureCount(),
-			true, spell->getReagentId(), SLOT_LEFT);
-		if(resLeft == RET_NOERROR)
+		if((result = internalConjureItem(player, spell->getConjureId(), spell->getConjureCount(), true, spell->getReagentId())) == RET_NOERROR)
 		{
-			spell->postSpell(player, false);
-			spell->postSpell(player, true, false);
+			spell->postSpell(player);
 			g_game.addMagicEffect(player->getPosition(), MAGIC_EFFECT_WRAPS_RED);
 			return true;
 		}
-
-		result = resLeft;
 	}
-	else if(internalConjureItem(player, spell->getConjureId(), spell->getConjureCount()) == RET_NOERROR)
+	else if((result = internalConjureItem(player, spell->getConjureId(), spell->getConjureCount())) == RET_NOERROR)
 	{
 		spell->postSpell(player);
 		g_game.addMagicEffect(player->getPosition(), MAGIC_EFFECT_WRAPS_RED);
 		return true;
 	}
 
-	if(result != RET_NOERROR)
-		player->sendCancelMessage(result);
-
+	player->sendCancelMessage(result);
 	g_game.addMagicEffect(player->getPosition(), MAGIC_EFFECT_POFF);
 	return false;
 }
