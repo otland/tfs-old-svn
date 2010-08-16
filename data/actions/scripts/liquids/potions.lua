@@ -45,10 +45,15 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 			toPosition = getThingPos(item.uid)
 		end
 
-		doDecayItem(doCreateItem(2016, potion.splash, toPosition))
+		doDecayItem(doCreateItem(2016, potion.splash, toPosition)) --TODO: make 2016 a constant: ITEM_SPLASH
 		doRemoveItem(item.uid, 1)
 
-		doPlayerAddItem(cid, potion.empty, 1)
+		if(fromPosition ~= CONTAINER_POSITION) then
+			doCreateItem(potion.empty, fromPosition)
+		else
+			doPlayerAddItem(cid, potion.empty, 1)
+		end
+
 		return true
 	end
 
@@ -95,6 +100,11 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 		return true
 	end
 
-	doPlayerAddItem(cid, potion.empty, 1)
+	if(fromPosition ~= CONTAINER_POSITION) then
+		doCreateItem(potion.empty, fromPosition)
+	else
+		doPlayerAddItem(cid, potion.empty, 1)
+	end
+
 	return true
 end

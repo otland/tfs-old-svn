@@ -27,6 +27,11 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 	doCreatureSay(itemEx.uid, "Aaaah...", TALKTYPE_ORANGE_1)
 
 	doRemoveItem(item.uid, 1)
-	doPlayerAddItem(cid, potion.empty, 1)
+	if(fromPosition ~= CONTAINER_POSITION) then
+		doCreateItem(potion.empty, fromPosition)
+	else
+		doPlayerAddItem(cid, potion.empty, 1)
+	end
+
 	return true
 end

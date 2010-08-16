@@ -1026,18 +1026,7 @@ bool Game::playerMoveThing(uint32_t playerId, const Position& fromPos,
 	}
 
 	if(Creature* movingCreature = thing->getCreature())
-	{
-		uint32_t delay = g_config.getNumber(ConfigManager::PUSH_CREATURE_DELAY);
-		if(Position::areInRange<1,1,0>(movingCreature->getPosition(), player->getPosition()) && delay > 0
-			&& !player->hasCustomFlag(PlayerCustomFlag_CanThrowAnywhere))
-		{
-			SchedulerTask* task = createSchedulerTask(delay, boost::bind(&Game::playerMoveCreature, this,
-				player->getID(), movingCreature->getID(), movingCreature->getPosition(), toCylinder->getPosition()));
-			player->setNextActionTask(task);
-		}
-		else
-			playerMoveCreature(playerId, movingCreature->getID(), movingCreature->getPosition(), toCylinder->getPosition());
-	}
+		playerMoveCreature(playerId, movingCreature->getID(), movingCreature->getPosition(), toCylinder->getPosition(), true);
 	else if(thing->getItem())
 		playerMoveItem(playerId, fromPos, spriteId, fromStackpos, toPos, count);
 
@@ -1045,7 +1034,7 @@ bool Game::playerMoveThing(uint32_t playerId, const Position& fromPos,
 }
 
 bool Game::playerMoveCreature(uint32_t playerId, uint32_t movingCreatureId,
-	const Position& movingCreaturePos, const Position& toPos)
+	const Position& movingCreaturePos, const Position& toPos, bool delay)
 {
 	Player* player = getPlayerByID(playerId);
 	if(!player || player->isRemoved() || player->hasFlag(PlayerFlag_CannotMoveCreatures))
@@ -1075,7 +1064,7 @@ bool Game::playerMoveCreature(uint32_t playerId, uint32_t movingCreatureId,
 			Dispatcher::getInstance().addTask(createTask(boost::bind(&Game::playerAutoWalk,
 				this, player->getID(), listDir)));
 			SchedulerTask* task = createSchedulerTask(std::max((int32_t)SCHEDULER_MINTICKS, player->getStepDuration()),
-				boost::bind(&Game::playerMoveCreature, this, playerId, movingCreatureId, movingCreaturePos, toPos));
+				boost::bind(&Game::playerMoveCreature, this, playerId, movingCreatureId, movingCreaturePos, toPos, true));
 
 			player->setNextWalkActionTask(task);
 			return true;
@@ -1083,6 +1072,17 @@ bool Game::playerMoveCreature(uint32_t playerId, uint32_t movingCreatureId,
 
 		player->sendCancelMessage(RET_THEREISNOWAY);
 		return false;
+	}
+	else if(delay)
+	{
+		uint32_t delayTime = g_config.getNumber(ConfigManager::PUSH_CREATURE_DELAY);
+		if(delayTime > 0)
+		{
+			SchedulerTask* task = createSchedulerTask(delayTime,
+				boost::bind(&Game::playerMoveCreature, this, playerId, movingCreatureId, movingCreaturePos, toPos, false));
+			player->setNextActionTask(task);
+			return true;
+		}
 	}
 
 	Tile* toTile = map->getTile(toPos);
