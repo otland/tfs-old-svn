@@ -853,11 +853,11 @@ bool TalkAction::thingProporties(Creature* creature, const std::string&, const s
 		toLowerCaseString(action);
 		if(Item* item = thing->getItem())
 		{
-			if(action == "set")
+			if(action == "set" || action == "add" || action == "new")
 			{
 				std::string type = parseParams(it, tokens.end()), key = parseParams(it,
 					tokens.end()), value = parseParams(it, tokens.end());
-				if(type == "integer" || type == "number" || type == "int")
+				if(type == "integer" || type == "number" || type == "int" || type == "num")
 					item->setAttribute(key, atoi(value.c_str()));
 				else if(type == "float" || type == "double")
 					item->setAttribute(key, (float)atof(value.c_str()));
@@ -866,7 +866,7 @@ bool TalkAction::thingProporties(Creature* creature, const std::string&, const s
 				else
 					item->setAttribute(key, value);
 			}
-			else if(action == "erase" || action == "remove")
+			else if(action == "erase" || action == "remove" || action == "delete")
 				item->eraseAttribute(parseParams(it, tokens.end()));
 			else if(action == "action" || action == "actionid" || action == "aid")
 			{
@@ -882,8 +882,8 @@ bool TalkAction::thingProporties(Creature* creature, const std::string&, const s
 				if(tmp >= 1000 || tmp <= 0xFFFF)
 					item->setUniqueId(tmp);
 			}
-			else if(action == "destination" || action == "position"
-				|| action == "pos" || action == "dest") //TODO: doesn't work
+			else if(action == "destination" || action == "position" || action == "pos"
+				|| action == "dest" || action == "loc" || action == "location") //TODO: doesn't work
 			{
 				if(Teleport* teleport = item->getTeleport())
 					teleport->setDestination(Position(atoi(parseParams(it, tokens.end()).c_str()), atoi(

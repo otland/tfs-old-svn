@@ -849,6 +849,8 @@ bool MoveEvent::configureEvent(xmlNodePtr p)
 					slot = SLOTP_AMMO;
 				else if(tmpStrValue == "pickupable")
 					slot = SLOTP_RIGHT | SLOTP_LEFT | SLOTP_AMMO;
+				else if(tmpStrValue == "wherever" || tmpStrValue == "any")
+					slot = SLOTP_WHEREEVER;
 				else
 					std::clog << "[Warning - MoveEvent::configureMoveEvent] Unknown slot type \"" << strValue << "\"" << std::endl;
 			}
