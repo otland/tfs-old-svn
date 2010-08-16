@@ -9273,7 +9273,8 @@ int32_t LuaInterface::luaGetChannelList(lua_State* L)
 	lua_newtable(L);
 	ChannelList list = g_chat.getPublicChannels();
 
-	for(ChannelList::const_iterator it = list.begin(); it != list.end(); ++it)
+	ChannelList::const_iterator it = list.begin();
+	for(uint32_t i = 1; it != list.end(); ++it, ++i)
 	{
 		createTable(L, i);
 		setField(L, "id", (*it)->getId());
