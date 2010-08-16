@@ -155,6 +155,7 @@ db.stringComparisonOperator = db.stringComparer
 db.stringComparison = db.stringComparer
 db.executeQuery = db.query
 isNumber = isNumeric
+doSetItemActionId = doItemSetActionId
 
 PlayerFlag_CannotUseCombat = 0
 PlayerFlag_CannotAttackPlayer = 1

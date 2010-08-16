@@ -2239,6 +2239,9 @@ void LuaInterface::registerFunctions()
 	//getGroupInfo(id[, premium = false])
 	lua_register(m_luaState, "getGroupInfo", LuaInterface::luaGetGroupInfo);
 
+	//getChannelList()
+	lua_register(m_luaState, "getChannelList", LuaInterface::luaGetChannelList);
+
 	//getTownList()
 	lua_register(m_luaState, "getTownList", LuaInterface::luaGetTownList);
 
@@ -4900,7 +4903,7 @@ int32_t LuaInterface::luaDoRemoveCreature(lua_State* L)
 	if(Creature* creature = env->getCreatureByUID(popNumber(L)))
 	{
 		if(Player* player = creature->getPlayer())
-			player->kickPlayer(true, forceLogout); //Players will get kicked without restrictions
+			player->kick(true, forceLogout); //Players will get kicked without restrictions
 		else
 			g_game.removeCreature(creature); //Monsters/NPCs will get removed
 
@@ -8621,6 +8624,7 @@ int32_t LuaInterface::luaDoPlayerSetStamina(lua_State* L)
 	if(Player* player = env->getPlayerByUID(popNumber(L)))
 	{
 		player->setStaminaMinutes(minutes);
+		player->sendStats();
 		lua_pushboolean(L, true);
 	}
 	else
@@ -9259,6 +9263,27 @@ int32_t LuaInterface::luaGetHighscoreString(lua_State* L)
 		lua_pushstring(L, g_game.getHighscoreString(skillId).c_str());
 	else
 		lua_pushboolean(L, false);
+
+	return 1;
+}
+
+int32_t LuaInterface::luaGetChannelList(lua_State* L)
+{
+	//getChannelList()
+	lua_newtable(L);
+	ChannelList list = g_chat.getPublicChannels();
+
+	for(ChannelList::const_iterator it = list.begin(); it != list.end(); ++it)
+	{
+		createTable(L, i);
+		setField(L, "id", (*it)->getId());
+		setField(L, "name", (*it)->getName());
+
+		setField(L, "flags", (*it)->getFlags());
+		setField(L, "level", (*it)->getLevel());
+		setField(L, "access", (*it)->getAccess());
+		pushTable(L);
+	}
 
 	return 1;
 }

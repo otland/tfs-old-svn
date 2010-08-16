@@ -2407,7 +2407,7 @@ void Player::addList()
 	Manager::getInstance()->addUser(this);
 }
 
-void Player::kickPlayer(bool displayEffect, bool forceLogout)
+void Player::kick(bool displayEffect, bool forceLogout)
 {
 	if(!client)
 	{
@@ -2803,7 +2803,7 @@ Cylinder* Player::__queryDestination(int32_t& index, const Thing* thing, Item** 
 			if(Item* inventoryItem = inventory[i])
 			{
 				if(inventoryItem != tradeItem)
-					itemList.push_back(std::make_pair(inventoryItem, i));					
+					itemList.push_back(std::make_pair(inventoryItem, i));
 			}
 			else if(__queryAdd(i, item, item->getItemCount(), 0) == RET_NOERROR)
 			{
@@ -3679,7 +3679,7 @@ void Player::onPlacedCreature()
 {
 	//scripting event - onLogin
 	if(!g_creatureEvents->playerLogin(this))
-		kickPlayer(true, true);
+		kick(true, true);
 }
 
 void Player::onAttackedCreatureDrain(Creature* target, int32_t points)

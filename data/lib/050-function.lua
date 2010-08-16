@@ -118,7 +118,7 @@ end
 function doNumberFormat(i)
 	local str, found = string.gsub(i, "(%d)(%d%d%d)$", "%1,%2", 1), 0
 	repeat
-		str, found = string.gsub(ret, "(%d)(%d%d%d),", "%1,%2,", 1)
+		str, found = string.gsub(str, "(%d)(%d%d%d),", "%1,%2,", 1)
 	until found == 0
 	return str
 end
@@ -308,9 +308,8 @@ function doSummonCreature(name, pos, displayError)
 end
 
 function getOnlinePlayers()
-	local tmp = getPlayersOnline()
 	local players = {}
-	for i, cid in ipairs(tmp) do
+	for i, cid in ipairs(getPlayersOnline()) do
 		table.insert(players, getCreatureName(cid))
 	end
 
@@ -412,8 +411,7 @@ function doBroadcastMessage(text, class)
 		return false
 	end
 
-	local players = getPlayersOnline()
-	for _, pid in ipairs(players) do
+	for _, pid in ipairs(getPlayersOnline()) do
 		doPlayerSendTextMessage(pid, class, text)
 	end
 
@@ -438,8 +436,7 @@ function doPlayerBroadcastMessage(cid, text, class, checkFlag, ghost)
 		return false
 	end
 
-	local players = getPlayersOnline()
-	for _, pid in ipairs(players) do
+	for _, pid in ipairs(getPlayersOnline()) do
 		doCreatureSay(cid, text, class, ghost, pid)
 	end
 
@@ -527,6 +524,10 @@ function doSetItemText(uid, text, writer, date)
 	end
 
 	return true
+end
+
+function doItemSetActionId(uid, aid)
+	return doItemSetAttribute(uid, "aid", aid)
 end
 
 function getFluidSourceType(itemid)
@@ -684,4 +685,4 @@ end
 function choose(...)
 	local arg = {...}
 	return arg[math.random(1, table.maxn(arg))]
-end 
+end
