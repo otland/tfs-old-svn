@@ -854,19 +854,13 @@ bool Player::canSeeCreature(const Creature* creature) const
 
 bool Player::canWalkthrough(const Creature* creature) const
 {
-	if(creature == this)
-		return true;
-
-	if(hasCustomFlag(PlayerCustomFlag_CanWalkthrough) || creature->isWalkable())
+	if(creature == this || hasCustomFlag(PlayerCustomFlag_CanWalkthrough) ||
+		(creature->getMaster() && canWalkthrough(creature->getMaster())))
 		return true;
 
 	const Player* player = creature->getPlayer();
 	if(!player)
-	{
-		player = creature->getPlayerMaster();
-		if(!player)
-			return false;
-	}
+		return Creature::canWalkthrough(creature);
 
 	if((((g_game.getWorldType() == WORLDTYPE_OPTIONAL &&
 #ifdef __WAR_SYSTEM__
@@ -878,7 +872,7 @@ bool Player::canWalkthrough(const Creature* creature) const
 		|| player->getAccess() <= getAccess()))
 		return true;
 
-	return (player->isGhost() && getGhostAccess() < player->getGhostAccess())
+	return player->isWalkable() || (player->isGhost() && getGhostAccess() < player->getGhostAccess())
 		|| (isGhost() && getGhostAccess() > player->getGhostAccess());
 }
 

@@ -147,8 +147,10 @@ bool Creature::canWalkthrough(const Creature* creature) const
 		if(canWalkthrough(_master))
 			return true;
 	}
+	else if(isGhost() || (master && master->canWalkthrough(creature)))
+		return true;
 	
-	return isGhost() || creature->isGhost() || creature->isWalkable() || (master && master->canWalkthrough(creature));
+	return creature->isGhost() || creature->isWalkable();
 }
 
 int64_t Creature::getTimeSinceLastMove() const

@@ -797,14 +797,14 @@ Item* Container::findRecursiveItem(uint16_t itemId, uint16_t freeCount/* = 0*/)
 	for(ItemList::const_reverse_iterator it = itemlist.rbegin(); it != itemlist.rend(); ++it)
 	{
 		if((*it)->getID() == itemId && ((*it)->getItemCount() + freeCount) <= 100)
-			return (*it);
+			return *it;
 
-		if((*it)->isContainer())
-		{
-			Item* item = dynamic_cast<Container*>(*it)->findRecursiveItem(itemId, freeCount);
-			if(item)
-				return item;
-		}
+		Container* tmp = (*it)->getContainer();
+		if(!tmp)
+			continue;
+
+		if(Item* item = tmp->findRecursiveItem(itemId, freeCount);
+			return item;
 	}
 
 	return NULL;
@@ -937,7 +937,7 @@ ContainerIterator& ContainerIterator::operator--()
 	--current;
 	if(current == over.front()->itemlist.begin())
 	{
-		over.shift();
+		over.pop();
 		if(over.empty())
 			return *this;
 
