@@ -803,7 +803,7 @@ Item* Container::findRecursiveItem(uint16_t itemId, uint16_t freeCount/* = 0*/)
 		if(!tmp)
 			continue;
 
-		if(Item* item = tmp->findRecursiveItem(itemId, freeCount);
+		if(Item* item = tmp->findRecursiveItem(itemId, freeCount))
 			return item;
 	}
 
