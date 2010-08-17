@@ -865,7 +865,11 @@ bool Player::canWalkthrough(const Creature* creature) const
 
 	const Player* player = creature->getPlayer();
 	if(!player)
-		return false;
+	{
+		player = creature->getPlayerMaster();
+		if(!player)
+			return false;
+	}
 
 	if((((g_game.getWorldType() == WORLDTYPE_OPTIONAL &&
 #ifdef __WAR_SYSTEM__
