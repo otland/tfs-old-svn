@@ -1044,7 +1044,7 @@ bool Game::playerMoveCreature(uint32_t playerId, uint32_t movingCreatureId,
 	{
 		uint32_t delay = player->getNextActionTime();
 		SchedulerTask* task = createSchedulerTask(delay, boost::bind(&Game::playerMoveCreature,
-			this, playerId, movingCreatureId, movingCreaturePos, toPos));
+			this, playerId, movingCreatureId, movingCreaturePos, toPos, true));
 
 		player->setNextActionTask(task);
 		return false;
@@ -4003,8 +4003,8 @@ bool Game::getPathToEx(const Creature* creature, const Position& targetPos,
 }
 
 bool Game::getPathToEx(const Creature* creature, const Position& targetPos, std::list<Direction>& dirList,
-	uint32_t minTargetDist, uint32_t maxTargetDist, bool fullPathSearch /*= true*/,
-	bool clearSight /*= true*/, int32_t maxSearchDist /*= -1*/)
+	uint32_t minTargetDist, uint32_t maxTargetDist, bool fullPathSearch/* = true*/,
+	bool clearSight/* = true*/, int32_t maxSearchDist/* = -1*/)
 {
 	FindPathParams fpp;
 	fpp.fullPathSearch = fullPathSearch;
@@ -4013,6 +4013,32 @@ bool Game::getPathToEx(const Creature* creature, const Position& targetPos, std:
 	fpp.minTargetDist = minTargetDist;
 	fpp.maxTargetDist = maxTargetDist;
 	return getPathToEx(creature, targetPos, dirList, fpp);
+}
+
+bool Game::steerCreature(Creature* creature, const Position& position)
+{
+	FindPathParams fpp;
+	fpp.fullPathSearch = true;
+	fpp.maxSearchDist = -1;
+	fpp.clearSight = true;
+	fpp.minTargetDist = 0;
+	fpp.maxTargetDist = 1;
+
+	std::list<Direction> dirList;
+	if(!getPathToEx(creature, position, dirList, fpp))
+		return false;
+
+	if(!Position::areInRange<1,1,0>(creature->getPosition(), position))
+	{
+		SchedulerTask* task = createSchedulerTask(std::max((int32_t)SCHEDULER_MINTICKS,
+			creature->getStepDuration()), boost::bind(&Game::steerCreature, this, creature, position));
+
+		if(Player* player = creature->getPlayer())
+			player->setNextWalkActionTask(task);
+	}
+
+	creature->startAutoWalk(dirList);
+	return true;
 }
 
 void Game::checkCreatureWalk(uint32_t creatureId)

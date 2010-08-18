@@ -53,8 +53,7 @@ bool ConfigManager::load()
 		return false;
 	}
 
-	//parse config
-	if(!m_loaded) //info that must be loaded one time (unless we reset the modules involved)
+	if(!m_loaded) //info that must be loaded one time- unless we reset the modules involved
 	{
 		if(m_confString[DATA_DIRECTORY] == "")
 			m_confString[DATA_DIRECTORY] = getGlobalString("dataDirectory", "data/");

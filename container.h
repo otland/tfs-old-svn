@@ -100,6 +100,9 @@ class Container : public Item, public Cylinder
 		ItemList::const_iterator getItems() const {return itemlist.begin();}
 		ItemList::const_iterator getEnd() const {return itemlist.end();}
 
+		ItemList::const_reverse_iterator getReversedItems() const {return itemlist.rbegin();}
+		ItemList::const_reverse_iterator getReversedEnd() const {return itemlist.rend();}
+
 		//cylinder implementations
 		virtual Cylinder* getParent() {return Thing::getParent();}
 		virtual const Cylinder* getParent() const {return Thing::getParent();}

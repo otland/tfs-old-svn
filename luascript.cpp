@@ -1779,6 +1779,9 @@ void LuaInterface::registerFunctions()
 	//doMoveCreature(cid, direction[, flag = FLAG_NOLIMIT])
 	lua_register(m_luaState, "doMoveCreature", LuaInterface::luaDoMoveCreature);
 
+	//doSteerCreature(cid, position)
+	lua_register(m_luaState, "doSteerCreature", LuaInterface::luaDoSteerCreature);
+
 	//doPlayerSetPzLocked(cid, locked)
 	lua_register(m_luaState, "doPlayerSetPzLocked", LuaInterface::luaDoPlayerSetPzLocked);
 
@@ -7231,6 +7234,24 @@ int32_t LuaInterface::luaDoMoveCreature(lua_State* L)
 	ScriptEnviroment* env = getEnv();
 	if(Creature* creature = env->getCreatureByUID(popNumber(L)))
 		lua_pushnumber(L, g_game.internalMoveCreature(creature, (Direction)direction, flags));
+	else
+	{
+		errorEx(getError(LUA_ERROR_CREATURE_NOT_FOUND));
+		lua_pushboolean(L, false);
+	}
+
+	return 1;
+}
+
+int32_t LuaInterface::luaDoSteerCreature(lua_State* L)
+{
+	//doSteerCreature(cid, position)
+	PositionEx pos;
+	popPosition(L, pos);
+
+	ScriptEnviroment* env = getEnv();
+	if(Creature* creature = env->getCreatureByUID(popNumber(L)))
+		lua_pushboolean(L, g_game.steerCreature(creature, pos));
 	else
 	{
 		errorEx(getError(LUA_ERROR_CREATURE_NOT_FOUND));

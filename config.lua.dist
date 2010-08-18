@@ -158,7 +158,7 @@
 
 	-- Map
 	-- NOTE: storeTrash costs more memory, but will perform alot faster cleaning.
-	mapName = "forgotten.otbm.gz"
+	mapName = "forgotten.otbm"
 	mapAuthor = "Komic"
 	randomizeTiles = true
 	storeTrash = true

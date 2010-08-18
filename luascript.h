@@ -355,6 +355,7 @@ class LuaInterface
 		static int32_t luaDoRemoveConditions(lua_State* L);
 		static int32_t luaDoRemoveCreature(lua_State* L);
 		static int32_t luaDoMoveCreature(lua_State* L);
+		static int32_t luaDoSteerCreature(lua_State* L);
 		static int32_t luaDoCreatureSay(lua_State* L);
 		static int32_t luaDoPlayerAddSkillTry(lua_State* L);
 		static int32_t luaDoCreatureAddHealth(lua_State* L);

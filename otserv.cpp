@@ -697,7 +697,7 @@ void otserv(StringVec, ServiceManager* services)
 	}
 
 	ipList.push_back(boost::asio::ip::address_v4(INADDR_LOOPBACK));
-	if(g_config.getBool(ConfigManager::BIND_ONLY_GLOBAL_ADDRESS))
+	if(!g_config.getBool(ConfigManager::BIND_ONLY_GLOBAL_ADDRESS))
 	{
 		bool own = false;
 		char hostName[128];

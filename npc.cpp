@@ -1780,11 +1780,7 @@ void Npc::doMove(Direction dir)
 
 void Npc::doMoveTo(Position target)
 {
-	std::list<Direction> listDir;
-	if(!g_game.getPathToEx(this, target, listDir, 1, 1, true, true))
-		return;
-
-	startAutoWalk(listDir);
+	g_game.roadCreature(this, target);
 }
 
 uint32_t Npc::getListItemPrice(uint16_t itemId, ShopEvent_t type)
@@ -1897,18 +1893,11 @@ bool Npc::canWalkTo(const Position& fromPos, Direction dir)
 bool Npc::getRandomStep(Direction& dir)
 {
 	std::vector<Direction> dirList;
-	const Position& creaturePos = getPosition();
-	if(canWalkTo(creaturePos, NORTH))
-		dirList.push_back(NORTH);
-
-	if(canWalkTo(creaturePos, SOUTH))
-		dirList.push_back(SOUTH);
-
-	if(canWalkTo(creaturePos, EAST))
-		dirList.push_back(EAST);
-
-	if(canWalkTo(creaturePos, WEST))
-		dirList.push_back(WEST);
+	for(int32_t i = NORTH; i < SOUTHWEST; ++i)
+	{
+		if(canWalkTo(getPosition(), (Direction)i))
+			dirList.push_back((Direction)i);
+	}
 
 	if(dirList.empty())
 		return false;

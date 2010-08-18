@@ -23,15 +23,15 @@
 #define CLIENT_VERSION_STRING "Only clients with protocol 8.6 allowed!"
 
 #define SOFTWARE_NAME "The Forgotten Server"
-#define SOFTWARE_VERSION "0.4.0-alpha1"
-#define SOFTWARE_CODENAME "Doomed Elderberry"
+#define SOFTWARE_VERSION "0.3"
+#define SOFTWARE_CODENAME "Crying Damson"
 #define SOFTWARE_PROTOCOL "8.6"
 
 #define VERSION_CHECK "http://forgottenserver.otland.net/version.xml"
-#define VERSION_PATCH 0
+#define VERSION_PATCH 7
 #define VERSION_TIMESTAMP 0
 #define VERSION_BUILD 0
-#define VERSION_DATABASE 25
+#define VERSION_DATABASE 26
 
 #undef MULTI_SQL_DRIVERS
 #define SQL_DRIVERS __USE_SQLITE__+__USE_MYSQL__+__USE_PGSQL__

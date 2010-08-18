@@ -934,17 +934,13 @@ bool Spell::checkRuneSpell(Player* player, const Position& toPos)
 
 void Spell::postSpell(Player* player) const
 {
-	if(finishedCast)
-	{
-		if(!player->hasFlag(PlayerFlag_HasNoExhaustion) && exhaustion > 0)
-			player->addExhaust(exhaustion, isAggressive ? EXHAUST_COMBAT : EXHAUST_HEALING);
+	if(!player->hasFlag(PlayerFlag_HasNoExhaustion) && exhaustion > 0)
+		player->addExhaust(exhaustion, isAggressive ? EXHAUST_COMBAT : EXHAUST_HEALING);
 
-		if(isAggressive && !player->hasFlag(PlayerFlag_NotGainInFight))
-			player->addInFightTicks(false);
-	}
+	if(isAggressive && !player->hasFlag(PlayerFlag_NotGainInFight))
+		player->addInFightTicks(false);
 
-	if(payCost)
-		postSpell(player, (uint32_t)getManaCost(player), (uint32_t)getSoulCost());
+	postSpell(player, (uint32_t)getManaCost(player), (uint32_t)getSoulCost());
 }
 
 void Spell::postSpell(Player* player, uint32_t manaCost, uint32_t soulCost) const
