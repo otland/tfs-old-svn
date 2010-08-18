@@ -1780,7 +1780,7 @@ void Npc::doMove(Direction dir)
 
 void Npc::doMoveTo(Position target)
 {
-	g_game.roadCreature(this, target);
+	g_game.steerCreature(this, target);
 }
 
 uint32_t Npc::getListItemPrice(uint16_t itemId, ShopEvent_t type)
