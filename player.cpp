@@ -1142,10 +1142,6 @@ void Player::sendCancelMessage(ReturnValue message) const
 			sendCancel("You cannot conjure items here.");
 			break;
 
-		case RET_YOUNEEDTOSPLITREAGENTS:
-			sendCancel("You need to split the reagents first.");
-			break;
-
 		case RET_NAMEISTOOAMBIGUOUS:
 			sendCancel("Name is too ambiguous.");
 			break;

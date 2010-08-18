@@ -70,13 +70,13 @@
 	<talkaction words="!software;/software" event="function" value="software"/>
 
 	<!-- Houses -->
-	<talkaction words="alana res" filter="word-spaced" event="function" value="houseBuy"/>
-	<talkaction words="alana grav" filter="word-spaced" event="function" value="houseSell"/>
+	<talkaction words="alevo grav" filter="word-spaced" event="function" value="houseBuy"/>
+	<talkaction words="alito som" filter="word-spaced" event="function" value="houseSell"/>
 	<talkaction words="alana sio" filter="word-spaced" event="function" value="houseKick"/>
 	<talkaction words="aleta grav" filter="word-spaced" event="function" value="houseDoorList"/>
 	<talkaction words="aleta sio" filter="word-spaced" event="function" value="houseGuestList"/>
 	<talkaction words="aleta som" filter="word-spaced" event="function" value="houseSubOwnerList"/>
-	<talkaction words="alana som" filter="word-spaced" event="script" value="leavehouse.lua"/>
+	<talkaction words="alito sio" filter="word-spaced" event="script" value="leavehouse.lua"/>
 
 	<!-- Guilds -->
 	<talkaction words="!createguild;/createguild" event="function" value="guildCreate"/>

@@ -1529,71 +1529,78 @@ ReturnValue ConjureSpell::internalConjureItem(Player* player, uint32_t conjureId
 	if(!reagentId)
 		return RET_NOTPOSSIBLE;
 
-	Item* item = NULL;
-	Item* fromitem = NULL;
-	Item* toitem = NULL;
-	Container* backpack = NULL;
+	std::list<Container*> containers;
+	std::list<Item*> toItem;
 
-	/* Find items to stack with */
-	for(int32_t i = SLOT_FIRST; i < SLOT_LAST; ++i) {
-		item = player->getInventoryItem((slots_t)i);
-
-		if(!item)
-			continue;		
-
-		if(item->getID() == reagentId) {
-			fromitem = item;
-		} else if(item->getID() == conjureId && (item->getItemCount()) != 100) {
-			toitem = item;
-		} else if(i == SLOT_BACKPACK) {
-			backpack = dynamic_cast<Container*>(item);
-			// Search for reagent runes
-			fromitem = backpack->findRecursiveItem((uint16_t)reagentId);
-			// Search for conjured runes with free space
-			toitem = backpack->findRecursiveItem((uint16_t)conjureId, (uint16_t)1);
-		}
-	}
-
-	if(fromitem)
+	Item *item = NULL, *fromItem = NULL;
+	for(int32_t i = SLOT_FIRST; i < SLOT_LAST; ++i)
 	{
-		
-			if(!backpack) // what for is this?
-				return RET_YOUNEEDTOSPLITREAGENTS;
+		if(!(item = player->getInventoryItem((slots_t)i)))
+			continue;
 
-			if(!toitem) {
-				Item* newItem = Item::CreateItem(conjureId, conjureCount);
-	
-				ReturnValue ret = g_game.internalAddItem(player, player, newItem, INDEX_WHEREEVER);
-				if(ret == RET_NOERROR) {
-					g_game.transformItem(fromitem, fromitem->getID(), fromitem->getItemCount()-1);
-					g_game.startDecay(newItem);
-
-					return RET_NOERROR;
-				}
-			} else {
-				
-				if(toitem->getItemCount() + conjureCount > 100) {
-					uint16_t rest = (toitem->getItemCount() + conjureCount) - 100;
-					conjureCount = conjureCount - rest;
-					Item* newItem = Item::CreateItem(conjureId, rest);
-					ReturnValue ret = g_game.internalAddItem(player, player, newItem, INDEX_WHEREEVER);
-
-					if(ret == RET_NOERROR) {
-						g_game.startDecay(newItem);
-					} else {
-						return RET_NOTPOSSIBLE;	
-					}				
-				}
-				g_game.transformItem(fromitem, fromitem->getID(), fromitem->getItemCount()-1);
-				Item* newItem = g_game.transformItem(toitem, conjureId, toitem->getItemCount()+conjureCount);
-				g_game.startDecay(newItem);
-
-				return RET_NOERROR;
-			}
-			return RET_YOUNEEDTOSPLITREAGENTS;
+		if(!fromItem && item->getID() == reagentId)
+			fromItem = item;
+		else if(item->getID() == conjureId && item->getItemCount() < 100)
+			toItem.push_back(item);
+		else if(Container* container = item->getContainer())
+			containers.push_back(container);
 	}
 
-	return RET_YOUNEEDAMAGICITEMTOCASTSPELL;
+	for(std::list<Container*>::iterator it = containers.begin(); it != containers.end(); ++it)
+	{
+		if(!fromItem)
+			fromItem = (*it)->findRecursiveItem((uint16_t)reagentId);
+
+		if((item = (*it)->findRecursiveItem((uint16_t)conjureId, 1)))
+			toItem.push_back(item);
+	}
+
+	if(!fromItem)
+		return RET_YOUNEEDAMAGICITEMTOCASTSPELL;
+
+	if(toItem.empty())
+	{
+		item = Item::CreateItem(conjureId, conjureCount);
+		ReturnValue ret = g_game.internalAddItem(NULL, player, item, INDEX_WHEREEVER);
+		if(ret != RET_NOERROR)
+			return ret;
+
+		g_game.transformItem(fromItem, reagentId, fromItem->getItemCount() - 1);
+		g_game.startDecay(item);
+		return RET_NOERROR;
+	}
+
+	std::list<Item*> items;
+	for(std::list<Item*>::iterator it = toItem.begin(); it != toItem.end(); ++it)
+	{
+		if((*it)->getItemCount() + conjureCount < 101)
+		{
+			g_game.transformItem(fromItem, reagentId, fromItem->getItemCount() - 1);
+			g_game.transformItem((*it), conjureId, (*it)->getItemCount() + conjureCount);
+
+			conjureCount = 0;
+			break;
+		}
+
+		conjureCount -= (*it)->getItemCount() + conjureCount - 100;
+		items.push_back(*it);
+	}
+
+	if(conjureCount > 0)
+	{
+		item = Item::CreateItem(conjureId, conjureCount);
+		ReturnValue ret = g_game.internalAddItem(NULL, player, item, INDEX_WHEREEVER);
+		if(ret != RET_NOERROR)
+			return ret;
+
+		g_game.transformItem(fromItem, reagentId, fromItem->getItemCount() - 1);
+		g_game.startDecay(item);
+	}
+
+	for(std::list<Item*>::iterator it = items.begin(); it != items.end(); ++it)
+		g_game.transformItem((*it), conjureId, 100);
+
+	return RET_NOERROR;
 }
 
 bool ConjureSpell::ConjureItem(const ConjureSpell* spell, Creature* creature, const std::string&)
