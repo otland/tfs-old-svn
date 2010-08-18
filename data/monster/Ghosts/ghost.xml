@@ -28,6 +28,7 @@
 		<element deathPercent="100"/>
 	</elements>
 	<immunities>
+		<immunity physical="1"/>
 		<immunity lifedrain="1"/>
 		<immunity paralyze="1"/>
 	</immunities>
