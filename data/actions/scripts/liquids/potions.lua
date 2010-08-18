@@ -4,8 +4,10 @@ local config = {
 	splashable = "no",
 	range = -1,
 	realAnimation = "no", -- make text effect visible only for players in range 1x1
-	healthMultiplier = 1.0,
-	manaMultiplier = 1.0
+	multiplier = {
+		health = 1.0,
+		mana = 1.0
+	}
 }
 
 config.removeOnUse = getBooleanFromString(config.removeOnUse)
