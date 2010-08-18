@@ -10,6 +10,8 @@ JUNGLE_GRASS = {2782, 3985}
 SPIDER_WEB = {7538, 7539}
 WILD_GROWTH = {1499, 11095}
 
+POOL = 2016
+
 SPECIAL_FOODS = {
 	[9992] = "Gulp.", [9993] = "Chomp.", [9994] = "Chomp.", [9995] = "Chomp.", [9997] = "Yum.",
 	[9998] = "Munch.", [9999] = "Chomp.", [10000] = "Mmmm.", [10001] = "Smack."

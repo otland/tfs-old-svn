@@ -1,20 +1,25 @@
 local DISTILLERY = {5513, 5514, 5469, 5470}
 local ITEM_RUM_FLASK = 5553
-local ITEM_POOL = 2016
 
 local TYPE_EMPTY = 0
 local TYPE_WATER = 1
 local TYPE_BLOOD = 2
 local TYPE_BEER = 3
 local TYPE_SLIME = 4
+local TYPE_LEMONADE = 5
+local TYPE_MILK = 6
 local TYPE_MANA_FLUID = 7
 local TYPE_LIFE_FLUID = 10
 local TYPE_OIL = 11
+local TYPE_URINE = 13
+local TYPE_COCONUT_MILK = 14
 local TYPE_WINE = 15
 local TYPE_MUD = 19
+local TYPE_FRUIT_JUICE = 21
 local TYPE_LAVA = 26
 local TYPE_RUM = 27
 local TYPE_SWAMP = 28
+local TYPE_TEA = 35
 
 local oilLamps = {[2046] = 2044}
 local casks = {[1771] = TYPE_WATER, [1772] = TYPE_BEER, [1773] = TYPE_WINE}
@@ -133,7 +138,7 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 		end
 	end
 
-	doDecayItem(doCreateItem(ITEM_POOL, item.type, toPosition))
+	doDecayItem(doCreateItem(POOL, item.type, toPosition))
 	doChangeTypeItem(item.uid, TYPE_EMPTY)
 	return true
 end

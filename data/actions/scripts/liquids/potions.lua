@@ -14,17 +14,17 @@ config.splashable = getBooleanFromString(config.splashable)
 config.realAnimation = getBooleanFromString(config.realAnimation)
 
 local POTIONS = {
-	[8704] = {empty = 7636, splash = 2, health = {50, 100}}, -- small health potion
-	[7618] = {empty = 7636, splash = 2, health = {100, 200}}, -- health potion
-	[7588] = {empty = 7634, splash = 2, health = {200, 400}, level = 50, vocations = {3, 4, 7, 8}, vocStr = "knights and paladins"}, -- strong health potion
-	[7591] = {empty = 7635, splash = 2, health = {500, 700}, level = 80, vocations = {4, 8}, vocStr = "knights"}, -- great health potion
-	[8473] = {empty = 7635, splash = 2, health = {800, 1000}, level = 130, vocations = {4, 8}, vocStr = "knights"}, -- ultimate health potion
+	[8704] = {empty = 7636, splash = 42, health = {50, 100}}, -- small health potion
+	[7618] = {empty = 7636, splash = 42, health = {100, 200}}, -- health potion
+	[7588] = {empty = 7634, splash = 42, health = {200, 400}, level = 50, vocations = {3, 4, 7, 8}, vocStr = "knights and paladins"}, -- strong health potion
+	[7591] = {empty = 7635, splash = 42, health = {500, 700}, level = 80, vocations = {4, 8}, vocStr = "knights"}, -- great health potion
+	[8473] = {empty = 7635, splash = 42, health = {800, 1000}, level = 130, vocations = {4, 8}, vocStr = "knights"}, -- ultimate health potion
 
-	[7620] = {empty = 7636, splash = 7, mana = {70, 130}}, -- mana potion
-	[7589] = {empty = 7634, splash = 7, mana = {110, 190}, level = 50, vocations = {1, 2, 3, 5, 6, 7}, vocStr = "sorcerers, druids and paladins"}, -- strong mana potion
-	[7590] = {empty = 7635, splash = 7, mana = {200, 300}, level = 80, vocations = {1, 2, 5, 6}, vocStr = "sorcerers and druids"}, -- great mana potion
+	[7620] = {empty = 7636, splash = 47, mana = {70, 130}}, -- mana potion
+	[7589] = {empty = 7634, splash = 47, mana = {110, 190}, level = 50, vocations = {1, 2, 3, 5, 6, 7}, vocStr = "sorcerers, druids and paladins"}, -- strong mana potion
+	[7590] = {empty = 7635, splash = 47, mana = {200, 300}, level = 80, vocations = {1, 2, 5, 6}, vocStr = "sorcerers and druids"}, -- great mana potion
 
-	[8472] = {empty = 7635, splash = 3, health = {200, 400}, mana = {110, 190}, level = 80, vocations = {3, 7}, vocStr = "paladins"} -- great spirit potion
+	[8472] = {empty = 7635, splash = 43, health = {200, 400}, mana = {110, 190}, level = 80, vocations = {3, 7}, vocStr = "paladins"} -- great spirit potion
 }
 
 local exhaust = createConditionObject(CONDITION_EXHAUST)
@@ -42,13 +42,16 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 		end
 
 		if(toPosition.x == CONTAINER_POSITION) then
-			toPosition = getThingPos(item.uid)
+			toPosition = getThingPosition(item.uid)
 		end
 
-		doDecayItem(doCreateItem(2016, potion.splash, toPosition)) --TODO: make 2016 a constant: ITEM_SPLASH
+		doDecayItem(doCreateItem(POOL, potion.splash, toPosition))
 		doRemoveItem(item.uid, 1)
+		if(not potion.empty or config.removeOnUse) then
+			return true
+		end
 
-		if(fromPosition ~= CONTAINER_POSITION) then
+		if(fromPosition.x ~= CONTAINER_POSITION) then
 			doCreateItem(potion.empty, fromPosition)
 		else
 			doPlayerAddItem(cid, potion.empty, 1)
@@ -74,20 +77,20 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 	end
 
 	local health = potion.health
-	if(health and not doCreatureAddHealth(itemEx.uid, math.ceil(math.random(health[1], health[2]) * config.healthMultiplier))) then
+	if(health and not doCreatureAddHealth(itemEx.uid, math.ceil(math.random(health[1], health[2]) * config.multiplier.health))) then
 		return false
 	end
 
 	local mana = potion.mana
-	if(mana and not doPlayerAddMana(itemEx.uid, math.ceil(math.random(mana[1], mana[2]) * config.manaMultiplier))) then
+	if(mana and not doPlayerAddMana(itemEx.uid, math.ceil(math.random(mana[1], mana[2]) * config.multiplier.mana))) then
 		return false
 	end
 
-	doSendMagicEffect(getThingPos(itemEx.uid), CONST_ME_MAGIC_BLUE)
+	doSendMagicEffect(getThingPosition(itemEx.uid), CONST_ME_MAGIC_BLUE)
 	if(not config.realAnimation) then
 		doCreatureSay(itemEx.uid, "Aaaah...", TALKTYPE_ORANGE_1)
 	else
-		for i, tid in ipairs(getSpectators(getCreaturePosition(cid), 1, 1)) do
+		for i, tid in ipairs(getSpectators(getThingPosition(itemEx.uid), 1, 1)) do
 			if(isPlayer(tid)) then
 				doCreatureSay(itemEx.uid, "Aaaah...", TALKTYPE_ORANGE_1, false, tid)
 			end
@@ -100,7 +103,7 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 		return true
 	end
 
-	if(fromPosition ~= CONTAINER_POSITION) then
+	if(fromPosition.x ~= CONTAINER_POSITION) then
 		doCreateItem(potion.empty, fromPosition)
 	else
 		doPlayerAddItem(cid, potion.empty, 1)

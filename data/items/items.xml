@@ -17771,4 +17771,8 @@
 	<item id="20027" name="rum" />
 	<item id="20028" name="swamp" />
 	<item id="20035" name="tea" />
+	<item id="20041" name="antidote potion" />
+	<item id="20042" name="health potion" />
+	<item id="20043" name="spirit potion" />
+	<item id="20047" name="mana potion" />
 </items>
