@@ -794,7 +794,7 @@ void Container::__startDecaying()
 
 Item* Container::findRecursiveItem(uint16_t itemId, uint16_t freeCount/* = 0*/)
 {
-	for(ItemList::const_reverse_iterator it = itemlist.rbegin(); it != itemlist.rend(); ++it)
+	for(ItemList::reverse_iterator it = itemlist.rbegin(); it != itemlist.rend(); ++it)
 	{
 		if((*it)->getID() == itemId && ((*it)->getItemCount() + freeCount) <= 100)
 			return *it;
