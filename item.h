@@ -266,7 +266,7 @@ class Item : virtual public Thing, public ItemAttributes
 		virtual double getWeight() const;
 		void getLight(LightInfo& lightInfo);
 
-		int32_t getMaxWriteLength() const {return items[id].maxTextLen;}
+		int32_t getMaxWriteLength() const {return items[id].maxTextLength;}
 		int32_t getWorth() const {return getItemCount() * items[id].worth;}
 		virtual int32_t getThrowRange() const {return (isPickupable() ? 15 : 2);}
 
@@ -490,7 +490,7 @@ inline std::string Item::getText() const
 	if(v)
 		return *v;
 
-	return "";
+	return items[id].text;
 }
 
 inline time_t Item::getDate() const
@@ -499,7 +499,7 @@ inline time_t Item::getDate() const
 	if(v)
 		return (time_t)*v;
 
-	return 0;
+	return items[id].date;
 }
 
 inline std::string Item::getWriter() const
@@ -508,7 +508,7 @@ inline std::string Item::getWriter() const
 	if(v)
 		return *v;
 
-	return "";
+	return items[id].writer;
 }
 
 inline int32_t Item::getActionId() const

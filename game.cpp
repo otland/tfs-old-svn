@@ -1109,15 +1109,9 @@ bool Game::playerMoveCreature(uint32_t playerId, uint32_t movingCreatureId,
 
 	if(player != movingCreature)
 	{
-		if(toTile->hasProperty(BLOCKPATH))
-		{
-			player->sendCancelMessage(RET_NOTENOUGHROOM);
-			return false;
-		}
-
-		if((movingCreature->getZone() == ZONE_PROTECTION || movingCreature->getZone() == ZONE_OPTIONAL)
-			&& !toTile->hasFlag(TILESTATE_OPTIONALZONE) && !toTile->hasFlag(TILESTATE_PROTECTIONZONE)
-			&& !player->hasFlag(PlayerFlag_IgnoreProtectionZone))
+		if(!player->hasFlag(PlayerFlag_IgnoreProtectionZone) && (movingCreature->getZone() == ZONE_PROTECTION
+			|| movingCreature->getZone() == ZONE_OPTIONAL) && !toTile->hasFlag(TILESTATE_OPTIONALZONE)
+			&& !toTile->hasFlag(TILESTATE_PROTECTIONZONE))
 		{
 			player->sendCancelMessage(RET_NOTPOSSIBLE);
 			return false;
@@ -1125,12 +1119,6 @@ bool Game::playerMoveCreature(uint32_t playerId, uint32_t movingCreatureId,
 
 		if(!player->hasFlag(PlayerFlag_CanPushAllCreatures))
 		{
-			if(toTile->getCreatures() && !toTile->getCreatures()->empty())
-			{
-				player->sendCancelMessage(RET_NOTPOSSIBLE);
-				return false;
-			}
-
 			uint32_t protectionLevel = g_config.getNumber(ConfigManager::PROTECTION_LEVEL);
 			if(player->getLevel() < protectionLevel && player->getVocation()->isAttackable())
 			{
@@ -1138,7 +1126,7 @@ bool Game::playerMoveCreature(uint32_t playerId, uint32_t movingCreatureId,
 				if(movingPlayer && movingPlayer->getLevel() >= protectionLevel
 					&& movingPlayer->getVocation()->isAttackable())
 				{
-					player->sendCancelMessage(RET_PLAYERISNOTREACHABLE);
+					player->sendCancelMessage(RET_NOTMOVEABLE);
 					return false;
 				}
 			}
@@ -1159,7 +1147,7 @@ bool Game::playerMoveCreature(uint32_t playerId, uint32_t movingCreatureId,
 	ReturnValue ret = internalMoveCreature(player, movingCreature, movingCreature->getTile(), toTile);
 	if(ret != RET_NOERROR)
 	{
-		if(!player->hasCustomFlag(PlayerCustomFlag_CanMoveFromFar) || !player->hasCustomFlag(PlayerCustomFlag_CanMoveAnywhere))
+		if(!player->hasCustomFlag(PlayerCustomFlag_CanMoveAnywhere))
 		{
 			player->sendCancelMessage(ret);
 			return false;
@@ -1168,11 +1156,10 @@ bool Game::playerMoveCreature(uint32_t playerId, uint32_t movingCreatureId,
 		if(!toTile->ground)
 		{
 			player->sendCancelMessage(RET_NOTPOSSIBLE);
-			return true;
+			return false;
 		}
 
 		internalTeleport(movingCreature, toTile->getPosition(), false);
-		return true;
 	}
 
 	if(Player* movingPlayer = movingCreature->getPlayer())
@@ -1220,7 +1207,7 @@ ReturnValue Game::internalMoveCreature(Creature* creature, Direction direction, 
 		ret = internalMoveCreature(NULL, creature, fromTile, toTile, flags);
 
 	if(ret == RET_NOERROR)
-		return ret;
+		return RET_NOERROR;
 
 	Player* player = creature->getPlayer();
 	if(!player)

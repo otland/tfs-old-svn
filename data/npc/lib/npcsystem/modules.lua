@@ -38,7 +38,7 @@ if(Modules == nil) then
 	function StdModule.say(cid, message, keywords, parameters, node)
 		local npcHandler = parameters.npcHandler
 		if(npcHandler == nil) then
-			print('StdModule.say called without any npcHandler instance.')
+			print('[Warning - ' .. getCreatureName(getNpcId()) .. '] NpcSystem:', 'StdModule.say - Call without any npcHandler instance.')
 			return false
 		end
 
@@ -65,7 +65,7 @@ if(Modules == nil) then
 	function StdModule.promotePlayer(cid, message, keywords, parameters, node)
 		local npcHandler = parameters.npcHandler
 		if(npcHandler == nil) then
-			print('StdModule.promotePlayer called without any npcHandler instance.')
+			print('[Warning - ' .. getCreatureName(getNpcId()) .. '] NpcSystem:', 'StdModule.promotePlayer - Call without any npcHandler instance.')
 			return false
 		end
 
@@ -95,7 +95,7 @@ if(Modules == nil) then
 	function StdModule.learnSpell(cid, message, keywords, parameters, node)
 		local npcHandler = parameters.npcHandler
 		if(npcHandler == nil) then
-			print('StdModule.learnSpell called without any npcHandler instance.')
+			print('[Warning - ' .. getCreatureName(getNpcId()) .. '] NpcSystem:', 'StdModule.learnSpell - Call without any npcHandler instance.')
 			return false
 		end
 
@@ -127,7 +127,7 @@ if(Modules == nil) then
 	function StdModule.bless(cid, message, keywords, parameters, node)
 		local npcHandler = parameters.npcHandler
 		if(npcHandler == nil) then
-			print('StdModule.bless called without any npcHandler instance.')
+			print('[Warning - ' .. getCreatureName(getNpcId()) .. '] NpcSystem:', 'StdModule.bless - Call without any npcHandler instance.')
 			return false
 		end
 
@@ -165,7 +165,7 @@ if(Modules == nil) then
 	function StdModule.travel(cid, message, keywords, parameters, node)
 		local npcHandler = parameters.npcHandler
 		if(npcHandler == nil) then
-			print('StdModule.travel called without any npcHandler instance.')
+			print('[Warning - ' .. getCreatureName(getNpcId()) .. '] NpcSystem:', 'StdModule.travel - Call without any npcHandler instance.')
 			return false
 		end
 
@@ -307,10 +307,10 @@ if(Modules == nil) then
 				if(reply ~= nil) then
 					self:addKeyword(keywords, reply)
 				else
-					print('[Warning] NpcSystem:', 'Parameter \'' .. 'keyword_reply' .. n .. '\' missing. Skipping...')
+					print('[Warning - ' .. getCreatureName(getNpcId()) .. '] NpcSystem:', 'Parameter \'' .. 'keyword_reply' .. n .. '\' missing. Skipping...')
 				end
 			else
-				print('[Warning] NpcSystem:', 'No keywords found for keyword set #' .. n .. '. Skipping...')
+				print('[Warning - ' .. getCreatureName(getNpcId()) .. '] NpcSystem:', 'No keywords found for keyword set #' .. n .. '. Skipping...')
 			end
 
 			n = n + 1
@@ -373,7 +373,7 @@ if(Modules == nil) then
 				elseif(i == 6) then
 					premium = getBooleanFromString(tmp)
 				else
-					print('[Warning] NpcSystem:', 'Unknown parameter found in travel destination parameter.', tmp, destination)
+					print('[Warning - ' .. getCreatureName(getNpcId()) .. '] NpcSystem:', 'Unknown parameter found in travel destination parameter.', tmp, destination)
 				end
 
 				i = i + 1
@@ -382,7 +382,7 @@ if(Modules == nil) then
 			if(name ~= nil and pos.x ~= nil and pos.y ~= nil and pos.z ~= nil and cost ~= nil) then
 				self:addDestination(name, pos, cost, premium)
 			else
-				print('[Warning] NpcSystem:', 'Parameter(s) missing for travel destination:', name, pos, cost, premium)
+				print('[Warning - ' .. getCreatureName(getNpcId()) .. '] NpcSystem:', 'Parameter(s) missing for travel destination:', name, pos, cost, premium)
 			end
 		end
 	end
@@ -551,10 +551,10 @@ if(Modules == nil) then
 				if(ret ~= nil) then
 					self:parseList(keywords, ret)
 				else
-					print('[Warning] NpcSystem:', 'Missing \'outfit' .. n .. '\' parameter, skipping...')
+					print('[Warning - ' .. getCreatureName(getNpcId()) .. '] NpcSystem:', 'Missing \'outfit' .. n .. '\' parameter, skipping...')
 				end
 			else
-				print('[Warning] NpcSystem:', 'No keywords found for outfit set #' .. n .. ', skipping...')
+				print('[Warning - ' .. getCreatureName(getNpcId()) .. '] NpcSystem:', 'No keywords found for outfit set #' .. n .. ', skipping...')
 			end
 
 			n = n + 1
@@ -575,7 +575,7 @@ if(Modules == nil) then
 				elseif(e == 4) then
 					d = tmp
 				else
-					print('[Warning] NpcSystem:', 'Unknown parameter found in outfit list while parsing ' .. (outfit == nil and 'outfit' or 'item') .. '.', tmp, list)
+					print('[Warning - ' .. getCreatureName(getNpcId()) .. '] NpcSystem:', 'Unknown parameter found in outfit list while parsing ' .. (outfit == nil and 'outfit' or 'item') .. '.', tmp, list)
 				end
 
 				e = e + 1
@@ -594,10 +594,10 @@ if(Modules == nil) then
 
 					items[a] = {b, tmp, c}
 				else
-					print('[Warning] NpcSystem:', 'Missing parameter(s) for outfit items.', b, c, d)
+					print('[Warning - ' .. getCreatureName(getNpcId()) .. '] NpcSystem:', 'Missing parameter(s) for outfit items.', b, c, d)
 				end
 			else
-				print('[Warning] NpcSystem:', 'Missing base parameter for outfit items.', a)
+				print('[Warning - ' .. getCreatureName(getNpcId()) .. '] NpcSystem:', 'Missing base parameter for outfit items.', a)
 			end
 		end
 
@@ -613,7 +613,7 @@ if(Modules == nil) then
 			if(tmp and table.maxn(items) > 0) then
 				self:addOutfit(keywords, outfit, items)
 			else
-				print('[Warning] NpcSystem:', 'Invalid outfit, addon or empty items pool.', data)
+				print('[Warning - ' .. getCreatureName(getNpcId()) .. '] NpcSystem:', 'Invalid outfit, addon or empty items pool.', data)
 			end
 		end
 	end
@@ -856,7 +856,7 @@ if(Modules == nil) then
 				elseif(i == 5) then
 					realName = tmp
 				else
-					print('[Warning] NpcSystem:', 'Unknown parameter found in buyable items parameter.', tmp, item)
+					print('[Warning - ' .. getCreatureName(getNpcId()) .. '] NpcSystem:', 'Unknown parameter found in buyable items parameter.', tmp, item)
 				end
 
 				i = i + 1
@@ -865,23 +865,23 @@ if(Modules == nil) then
 			if(SHOPMODULE_MODE == SHOPMODULE_MODE_TRADE) then
 				if(itemid ~= nil and cost ~= nil) then
 					if(isItemFluidContainer(itemid) and subType == nil) then
-						print('[Warning] NpcSystem:', 'SubType missing for parameter item:', item)
+						print('[Warning - ' .. getCreatureName(getNpcId()) .. '] NpcSystem:', 'SubType missing for parameter item:', item)
 					else
 						self:addBuyableItem(nil, itemid, cost, subType, realName)
 					end
 				else
-					print('[Warning] NpcSystem:', 'Parameter(s) missing for item:', itemid, cost)
+					print('[Warning - ' .. getCreatureName(getNpcId()) .. '] NpcSystem:', 'Parameter(s) missing for item:', itemid, cost)
 				end
 			elseif(name ~= nil and itemid ~= nil and cost ~= nil) then
 				if(isItemFluidContainer(itemid) and subType == nil) then
-					print('[Warning] NpcSystem:', 'SubType missing for parameter item:', item)
+					print('[Warning - ' .. getCreatureName(getNpcId()) .. '] NpcSystem:', 'SubType missing for parameter item:', item)
 				else
 					local names = {}
 					table.insert(names, name)
 					self:addBuyableItem(names, itemid, cost, subType, realName)
 				end
 			else
-				print('[Warning] NpcSystem:', 'Parameter(s) missing for item:', name, itemid, cost)
+				print('[Warning - ' .. getCreatureName(getNpcId()) .. '] NpcSystem:', 'Parameter(s) missing for item:', name, itemid, cost)
 			end
 		end
 	end
@@ -900,7 +900,7 @@ if(Modules == nil) then
 				elseif(i == 4) then
 					realName = temp
 				else
-					print('[Warning] NpcSystem:', 'Unknown parameter found in sellable items parameter.', temp, item)
+					print('[Warning - ' .. getCreatureName(getNpcId()) .. '] NpcSystem:', 'Unknown parameter found in sellable items parameter.', temp, item)
 				end
 				i = i + 1
 			end
@@ -909,14 +909,14 @@ if(Modules == nil) then
 				if(itemid ~= nil and cost ~= nil) then
 					self:addSellableItem(nil, itemid, cost, realName)
 				else
-					print('[Warning] NpcSystem:', 'Parameter(s) missing for item:', itemid, cost)
+					print('[Warning - ' .. getCreatureName(getNpcId()) .. '] NpcSystem:', 'Parameter(s) missing for item:', itemid, cost)
 				end
 			elseif(name ~= nil and itemid ~= nil and cost ~= nil) then
 				local names = {}
 				table.insert(names, name)
 				self:addSellableItem(names, itemid, cost, realName)
 			else
-				print('[Warning] NpcSystem:', 'Parameter(s) missing for item:', name, itemid, cost)
+				print('[Warning - ' .. getCreatureName(getNpcId()) .. '] NpcSystem:', 'Parameter(s) missing for item:', name, itemid, cost)
 			end
 		end
 	end
@@ -939,21 +939,21 @@ if(Modules == nil) then
 				elseif(i == 6) then
 					realName = temp
 				else
-					print('[Warning] NpcSystem:', 'Unknown parameter found in buyable items parameter.', temp, item)
+					print('[Warning - ' .. getCreatureName(getNpcId()) .. '] NpcSystem:', 'Unknown parameter found in buyable items parameter.', temp, item)
 				end
 				i = i + 1
 			end
 
 			if(name ~= nil and container ~= nil and itemid ~= nil and cost ~= nil) then
 				if(isItemFluidContainer(itemid) and subType == nil) then
-					print('[Warning] NpcSystem:', 'SubType missing for parameter item:', item)
+					print('[Warning - ' .. getCreatureName(getNpcId()) .. '] NpcSystem:', 'SubType missing for parameter item:', item)
 				else
 					local names = {}
 					table.insert(names, name)
 					self:addBuyableItemContainer(names, container, itemid, cost, subType, realName)
 				end
 			else
-				print('[Warning] NpcSystem:', 'Parameter(s) missing for item:', name, container, itemid, cost)
+				print('[Warning - ' .. getCreatureName(getNpcId()) .. '] NpcSystem:', 'Parameter(s) missing for item:', name, container, itemid, cost)
 			end
 		end
 	end
@@ -1158,17 +1158,17 @@ if(Modules == nil) then
 		end
 
 		if(shopItem == nil) then
-			print("[ShopModule.onBuy]", "Item not found on shopItems list")
+			print('[Warning - ' .. getCreatureName(getNpcId()) .. '] NpcSystem:', 'ShopModule.onBuy - Item not found on shopItems list')
 			return false
 		end
 
 		if(shopItem.buy == -1) then
-			print("[ShopModule.onSell]", "Attempt to purchase an item which only sellable")
+			print('[Warning - ' .. getCreatureName(getNpcId()) .. '] NpcSystem:', 'ShopModule.onBuy - Attempt to purchase an item which only sellable')
 			return false
 		end
 
 		if(amount <= 0) then
-			print("[ShopModule.onSell]", "Attempt to purchase " .. amount .. " items")
+			print('[Warning - ' .. getCreatureName(getNpcId()) .. '] NpcSystem:', 'ShopModule.onBuy - Attempt to purchase ' .. amount .. ' items')
 			return false
 		end
 
@@ -1240,12 +1240,12 @@ if(Modules == nil) then
 		end
 
 		if(shopItem == nil) then
-			print("[ShopModule.onBuy]", "Item not found on shopItems list")
+			print('[Warning - ' .. getCreatureName(getNpcId()) .. '] NpcSystem:', 'ShopModule.onSell - Item not found on shopItems list')
 			return false
 		end
 
 		if(shopItem.sell == -1) then
-			print("[ShopModule.onSell]", "Attempt to sell an item which is only buyable")
+			print('[Warning - ' .. getCreatureName(getNpcId()) .. '] NpcSystem:', 'ShopModule.onSell - Attempt to sell an item which is only buyable')
 			return false
 		end
 

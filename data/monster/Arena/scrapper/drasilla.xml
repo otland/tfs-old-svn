@@ -2,19 +2,15 @@
 <monster name="Drasilla" nameDescription="drasilla" race="blood" experience="700" speed="170" manacost="0">
 	<health now="1320" max="1320"/>
 	<look type="34" corpse="7349"/>
-	<targetchange interval="2000" chance="5"/>
 	<strategy attack="100" defense="0"/>
 	<flags>
 		<flag summonable="0"/>
 		<flag attackable="1"/>
 		<flag hostile="1"/>
-		<flag illusionable="1"/>
+		<flag illusionable="0"/>
 		<flag convinceable="0"/>
 		<flag pushable="0"/>
 		<flag canpushitems="1"/>
-		<flag staticattack="78"/>
-		<flag lightlevel="0"/>
-		<flag lightcolor="0"/>
 		<flag targetdistance="1"/>
 		<flag runonhealth="100"/>
 	</flags>
@@ -38,6 +34,8 @@
 		<element icePercent="-10"/>
 	</elements>
 	<immunities>
+		<immunity outfit="1"/>
+		<immunity drunk="1"/>
 		<immunity invisible="1"/>
 	</immunities>
 	<voices interval="2000" chance="5">

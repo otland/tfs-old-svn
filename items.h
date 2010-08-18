@@ -146,14 +146,14 @@ class ItemType
 		Ammo_t ammoType;
 
 		uint16_t transformUseTo[2], transformToFree, transformEquipTo, transformDeEquipTo,
-			id, clientId, maxItems, slotPosition, wieldPosition, speed, maxTextLen, writeOnceItemId;
+			id, clientId, maxItems, slotPosition, wieldPosition, speed, maxTextLength, writeOnceItemId;
 
 		int32_t attack, extraAttack, defense, extraDefense, armor, breakChance, hitChance, maxHitChance,
 			runeLevel, runeMagLevel, lightLevel, lightColor, decayTo, rotateTo, alwaysOnTopOrder;
 		uint32_t shootRange, charges, decayTime, attackSpeed, wieldInfo, minReqLevel, minReqMagicLevel,
-			worth, levelDoor;
+			worth, levelDoor, date;
 
-		std::string name, pluralName, article, description, runeSpellName, vocationString;
+		std::string name, pluralName, article, description, text, writer, runeSpellName, vocationString;
 
 		Condition* condition;
 		Abilities abilities;

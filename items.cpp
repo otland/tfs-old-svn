@@ -74,8 +74,9 @@ ItemType::ItemType()
 	isVertical = isHorizontal = isHangable = false;
 	lightLevel = lightColor = 0;
 
-	maxTextLen = 0;
+	maxTextLength = 0;
 	canReadText = canWriteText = false;
+	date = 0;
 	writeOnceItemId = 0;
 
 	transformEquipTo = transformDeEquipTo = 0;
@@ -720,7 +721,22 @@ void Items::parseItemNode(xmlNodePtr itemNode, uint32_t id)
 			else if(tmpStrValue == "maxtextlen" || tmpStrValue == "maxtextlength")
 			{
 				if(readXMLInteger(itemAttributesNode, "value", intValue))
-					it.maxTextLen = intValue;
+					it.maxTextLength = intValue;
+			}
+			else if(tmpStrValue == "text")
+			{
+				if(readXMLString(itemAttributesNode, "value", strValue))
+					it.text = strValue;
+			}
+			else if(tmpStrValue == "author" || tmpStrValue == "writer")
+			{
+				if(readXMLString(itemAttributesNode, "value", strValue))
+					it.writer = strValue;
+			}
+			else if(tmpStrValue == "date")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+					it.date = intValue;
 			}
 			else if(tmpStrValue == "writeonceitemid")
 			{

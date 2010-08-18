@@ -9577,8 +9577,11 @@ int32_t LuaInterface::luaGetItemInfo(lua_State* L)
 	setField(L, "slotPosition", item->slotPosition);
 	setField(L, "wieldPosition", item->wieldPosition);
 	setField(L, "speed", item->speed);
-	setField(L, "maxTextLength", item->maxTextLen);
+	setField(L, "maxTextLength", item->maxTextLength);
 	setField(L, "writeOnceItemId", item->writeOnceItemId);
+	setField(L, "date", item->date);
+	setField(L, "writer", item->writer);
+	setField(L, "text", item->text);
 	setField(L, "attack", item->attack);
 	setField(L, "extraAttack", item->extraAttack);
 	setField(L, "defense", item->defense);
