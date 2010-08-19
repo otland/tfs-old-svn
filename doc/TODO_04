@@ -12,21 +12,18 @@
 			* database/main.lua
 			* config.lua/.xml
 			* Przeniesione data/XML/
-		* logs/
-			* tfadmin.log
-			* crash.log
-			* client_assertions.log
-			* bots/
-			* talkactions/
-			* chat/
-			* server/
-		* world/
-			data/world/ - łatwiejsza podmiana data/
 		* langs/
 			Tłumaczenia: polish.lua, english.lua, etc
 		* data/
-			Po staremu prócz world/, XML/ i logs/
-		* docs/
-		* TheForgottenServer.exe
-		* forgottenserver.s3db
+			Po staremu prócz XML/
 ]
+
+
+	Patch IndexedTile changes from revscriptsys2
+		Assigned to: Elf
+
+	Deprecate several hardcoded systems (guild management, etc) and rescript them in Lua
+		Assigned to: slawkens
+
+	Add mysql++ support as default DB driver (more object oriented, fits better into C++ projects)
+		Assigned to: stian

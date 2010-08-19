@@ -21,15 +21,6 @@
 ]
 
 [ TASKS
-	Patch IndexedTile changes from revscriptsys2
-		Assigned to: Elf
-
 	Finish documentation as its incomplete
 		Assigned to: KaczooH
-
-	Deprecate several hardcoded systems (guild management, etc) and rescript them in Lua
-		Assigned to: ?
-
-	Add mysql++ support as default DB driver (more object oriented, fits better into C++ projects)
-		Assigned to: Elf
 ]
