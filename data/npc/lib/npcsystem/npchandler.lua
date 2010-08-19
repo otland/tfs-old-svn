@@ -72,7 +72,7 @@ if(NpcHandler == nil) then
 		talkStart = nil,
 		idleTime = 300,
 		talkRadius = 3,
-		talkDelayTime = 1, -- Seconds to delay outgoing messages.
+		talkDelayTime = 1000, -- Seconds to delay outgoing messages.
 		queue = nil,
 		talkDelay = nil,
 		callbackFunctions = nil,
@@ -118,6 +118,7 @@ if(NpcHandler == nil) then
 			obj.focuses = 0
 			obj.talkStart = 0
 		end
+
 		obj.talkDelay = {}
 		obj.keywordHandler = keywordHandler
 		obj.messages = {}
@@ -457,18 +458,21 @@ if(NpcHandler == nil) then
 	function NpcHandler:onThink()
 		local callback = self:getCallback(CALLBACK_ONTHINK)
 		if(callback == nil or callback()) then
-			if(NPCHANDLER_TALKDELAY == TALKDELAY_ONTHINK) then
-				if(NPCHANDLER_CONVBEHAVIOR ~= CONVERSATION_DEFAULT) then
-					for cid, talkDelay in pairs(self.talkDelay) do
-						if(talkDelay.time ~= nil and talkDelay.message ~= nil and os.time() >= talkDelay.time) then
-							selfSay(talkDelay.message, cid)
-							self.talkDelay[cid] = nil
+			for i, talkDelay in ipairs(self.talkDelay) do
+				if(talkDelay.time ~= nil and talkDelay.message ~= nil and talkDelay.cid ~= nil and talkDelay.start ~= nil) then
+					if(os.mtime() >= talkDelay.time) then
+						if(self:isFocused(talkDelay.cid) and self.talkStart[cid] == talkDelay.start) then
+							if(NPCHANDLER_CONVBEHAVIOR ~= CONVERSATION_DEFAULT) then
+								selfSay(talkDelay.message, talkDelay.cid)
+							else
+								selfSay(talkDelay.message)
+							end
 						end
+
+						self.talkDelay[i] = nil
 					end
-				elseif(self.talkDelay.time ~= nil and self.talkDelay.message ~= nil and os.time() >= self.talkDelay.time) then
-					selfSay(self.talkDelay.message)
-					self.talkDelay.time = nil
-					self.talkDelay.message = nil
+				else
+					self.talkDelay[i] = nil
 				end
 			end
 
@@ -488,7 +492,7 @@ if(NpcHandler == nil) then
 				elseif(self.focuses ~= 0) then
 					if(not self:isInRange(self.focuses)) then
 						self:onWalkAway(self.focuses)
-					elseif(os.time()-self.talkStart > self.idleTime) then
+					elseif((os.time() - self.talkStart) > self.idleTime) then
 						self:unGreet(self.focuses)
 					else
 						self:updateFocus()
@@ -573,30 +577,24 @@ if(NpcHandler == nil) then
 
 	-- Makes the npc represented by this instance of NpcHandler say something.
 	--	This implements the currently set type of talkdelay.
-	--	shallDelay is a boolean value. If it is false, the message is not delayed. Default value is false.
-	function NpcHandler:say(message, focus, shallDelay)
-		local shallDelay = shallDelay or false
-		if(NPCHANDLER_TALKDELAY == TALKDELAY_NONE or not shallDelay) then
+	function NpcHandler:say(message, focus, delay)
+		local delay = delay or 0
+		if(NPCHANDLER_TALKDELAY == TALKDELAY_NONE and delay < 100) then
 			if(NPCHANDLER_CONVBEHAVIOR ~= CONVERSATION_DEFAULT) then
 				selfSay(message, focus)
-				return
 			else
 				selfSay(message)
-				return
 			end
+
+			return
 		end
 
 		-- TODO: Add an event handling method for delayed messages
-		if(NPCHANDLER_CONVBEHAVIOR ~= CONVERSATION_DEFAULT) then
-			self.talkDelay[focus] = {
-				message = message,
-				time = os.time() + self.talkDelayTime,
-			}
-		else
-			self.talkDelay = {
-				message = message,
-				time = os.time() + self.talkDelayTime
-			}
-		end
+		table.insert(self.talkDelay, {
+			cid = focus,
+			message = message,
+			time = os.mtime() + (delay < 100 and self.talkDelayTime or delay),
+			start = os.time()
+		})
 	end
 end
