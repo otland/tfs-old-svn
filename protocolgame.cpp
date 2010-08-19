@@ -1504,12 +1504,14 @@ void ProtocolGame::parseViolationWindow(NetworkMessage& msg)
 	std::string statement = msg.getString();
 	uint32_t statementId = (uint32_t)msg.get<uint16_t>();
 	bool ipBanishment = msg.get<char>();
-	addGameTask(&Game::playerViolationWindow, player->getID(), target, reason, action, comment, statement, statementId, ipBanishment);
+	addGameTask(&Game::playerViolationWindow, player->getID(), target,
+		reason, action, comment, statement, statementId, ipBanishment);
 }
 
 void ProtocolGame::parseViolationReport(NetworkMessage& msg)
 {
-	// TODO
+	msg.skip(msg.size() - msg.position());
+	// addGameTask(&Game::playerViolationReport, player->getID(), ...);
 }
 
 //********************** Send methods *******************************//
