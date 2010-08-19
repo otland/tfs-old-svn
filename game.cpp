@@ -1706,15 +1706,18 @@ ReturnValue Game::internalPlayerAddItem(Creature* actor, Player* player, Item* i
 	ReturnValue ret = internalAddItem(actor, player, item, (int32_t)slot, 0, false, remainderCount);
 	if(ret == RET_NOERROR)
 		return RET_NOERROR;
-
-	if(remainderCount > 0)
+		
+	if(remainderCount > 0) // this should occur rarely
 	{
 		Item* remainderItem = Item::CreateItem(item->getID(), remainderCount);
 		ReturnValue remainderRet = internalAddItem(actor, player->getTile(), remainderItem, INDEX_WHEREEVER, FLAG_NOLIMIT);
-		if(remainderRet != RET_NOERROR)
+		if(remainderRet != RET_NOERROR) // this basicaly should occur
 			delete remainderItem;
+
+		return RET_NOERROR;
 	}
-	else if(dropOnMap)
+
+	if(dropOnMap)
 		ret = internalAddItem(actor, player->getTile(), item, (int32_t)slot, FLAG_NOLIMIT);
 
 	return ret;
