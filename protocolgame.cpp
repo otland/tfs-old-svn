@@ -510,8 +510,7 @@ void ProtocolGame::parsePacket(NetworkMessage &msg)
 		return;
 
 	uint8_t recvbyte = msg.get<char>();
-	//a dead player cannot performs actions
-	if(player->isRemoved() && recvbyte != 0x14)
+	if(player->isRemoved() && recvbyte != 0x14) //a dead player cannot performs actions
 		return;
 
 	if(player->isAccountManager())
@@ -790,6 +789,10 @@ void ProtocolGame::parsePacket(NetworkMessage &msg)
 				parseQuestInfo(msg);
 				break;
 
+			case 0xF2:
+				parseViolationReport(msg);
+				break;
+
 			default:
 			{
 				if(g_config.getBool(ConfigManager::BAN_UNKNOWN_BYTES))
@@ -821,11 +824,8 @@ void ProtocolGame::parsePacket(NetworkMessage &msg)
 					}
 				}
 
-				std::stringstream hex, s;
+				std::stringstream hex;
 				hex << "0x" << std::hex << (int16_t)recvbyte << std::dec;
-				s << player->getName() << " sent unknown byte: " << hex << std::endl;
-
-				LOG_MESSAGE(LOGTYPE_NOTICE, s.str(), "PLAYER")
 				Logger::getInstance()->eFile(getFilePath(FILE_TYPE_LOG, "bots/" + player->getName() + ".log").c_str(),
 					"[" + formatDate() + "] Received byte " + hex.str(), false);
 				break;
@@ -1505,6 +1505,11 @@ void ProtocolGame::parseViolationWindow(NetworkMessage& msg)
 	uint32_t statementId = (uint32_t)msg.get<uint16_t>();
 	bool ipBanishment = msg.get<char>();
 	addGameTask(&Game::playerViolationWindow, player->getID(), target, reason, action, comment, statement, statementId, ipBanishment);
+}
+
+void ProtocolGame::parseViolationReport(NetworkMessage& msg)
+{
+	// TODO
 }
 
 //********************** Send methods *******************************//
