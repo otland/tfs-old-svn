@@ -1620,31 +1620,37 @@ ReturnValue Game::internalAddItem(Creature* actor, Cylinder* toCylinder, Item* i
 			toCylinder->__updateThing(toItem, toItem->getID(), toItem->getItemCount() + n);
 		}
 
-		if(m - n > 0)
+		uint32_t count = m - n;
+		if(count > 0)
 		{
-			if(m - n != item->getItemCount())
+			if(item->getItemCount() != count)
 			{
-				Item* remainderItem = Item::CreateItem(item->getID(), m - n);
-				if(internalAddItem(NULL, destCylinder, remainderItem, INDEX_WHEREEVER, flags, false) != RET_NOERROR)
-				{
-					freeThing(remainderItem);
-					remainderCount = m - n;
-				}
+				Item* remainderItem = Item::CreateItem(item->getID(), count);
+				ret = internalAddItem(NULL, destCylinder, remainderItem, INDEX_WHEREEVER, flags, false);
+				if(ret == RET_NOERROR)
+					return RET_NOERROR;
+
+				freeThing(remainderItem);
+				remainderCount = count;
+				return ret;
 			}
 		}
-		else if(item->getParent() != VirtualCylinder::virtualCylinder)
+		else
 		{
-			item->onRemoved();
-			freeThing(item);
+			if(item->getParent() != VirtualCylinder::virtualCylinder)
+			{
+				item->onRemoved();
+				freeThing(item);
+			}
+			
+			return RET_NOERROR;
 		}
 	}
-	else
-	{
-		toCylinder->__addThing(NULL, index, item);
-		int32_t itemIndex = toCylinder->__getIndexOfThing(item);
-		if(itemIndex != -1)
-			toCylinder->postAddNotification(actor, item, NULL, itemIndex);
-	}
+
+	toCylinder->__addThing(NULL, index, item);
+	int32_t itemIndex = toCylinder->__getIndexOfThing(item);
+	if(itemIndex != -1)
+		toCylinder->postAddNotification(actor, item, NULL, itemIndex);
 
 	return RET_NOERROR;
 }
@@ -1691,15 +1697,17 @@ ReturnValue Game::internalPlayerAddItem(Creature* actor, Player* player, Item* i
 {
 	uint32_t remainderCount = 0;
 	ReturnValue ret = internalAddItem(actor, player, item, (int32_t)slot, 0, false, remainderCount);
-	if(remainderCount > 0)
+	if(ret == RET_NOERROR)
 	{
-		Item* remainderItem = Item::CreateItem(item->getID(), remainderCount);
-		ReturnValue remainderRet = internalAddItem(actor, player->getTile(), remainderItem, INDEX_WHEREEVER, FLAG_NOLIMIT);
-		if(remainderRet != RET_NOERROR)
-			freeThing(remainderItem);
+		if(remainderCount > 0)
+		{
+			Item* remainderItem = Item::CreateItem(item->getID(), remainderCount);
+			ReturnValue remainderRet = internalAddItem(actor, player->getTile(), remainderItem, INDEX_WHEREEVER, FLAG_NOLIMIT);
+			if(remainderRet != RET_NOERROR)
+				freeThing(remainderItem);
+		}
 	}
-
-	if(ret != RET_NOERROR && dropOnMap)
+	else if(dropOnMap)
 		ret = internalAddItem(actor, player->getTile(), item, (int32_t)slot, FLAG_NOLIMIT);
 
 	return ret;

@@ -101,7 +101,7 @@ bool TalkActions::registerEvent(Event* event, xmlNodePtr p, bool override)
 			defaultTalkAction = talkAction;
 		}
 		else
-			std::cout << "[Warning - TalkAction::registerEvent] You cannot define more than one default talkAction." << std::endl;
+			std::clog << "[Warning - TalkAction::registerEvent] You cannot define more than one default talkAction." << std::endl;
 
 		return true;
 	}

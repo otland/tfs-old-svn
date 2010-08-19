@@ -322,7 +322,7 @@ ReturnValue Container::__queryMaxCount(int32_t index, const Thing* thing, uint32
 	if(item->isStackable())
 	{
 		uint32_t n = 0;
-		if(index != INDEX_WHEREEVER)
+		if(index == INDEX_WHEREEVER)
 		{
 			//Iterate through every item and check how much free stackable slots there is.
 			uint32_t slotIndex = 0;
@@ -428,9 +428,9 @@ Cylinder* Container::__queryDestination(int32_t& index, const Thing* thing, Item
 		{
 			//try to find a suitable item to stack with
 			uint32_t n = itemlist.size();
-			for(ItemList::iterator cit = itemlist.end(); cit != itemlist.begin(); --cit, --n)
+			for(ItemList::reverse_iterator cit = itemlist.rbegin(); cit != itemlist.rend(); ++cit, --n)
 			{
-				if((*cit) != item && (*cit)->getID() == item->getID() && (*cit)->getItemCount() < 100)
+				if((*cit)->getID() == item->getID() && (*cit)->getItemCount() < 100)
 				{
 					*destItem = (*cit);
 					index = n;
@@ -792,24 +792,6 @@ void Container::__startDecaying()
 		(*it)->__startDecaying();
 }
 
-Item* Container::findRecursiveItem(uint16_t itemId, uint16_t freeCount/* = 0*/)
-{
-	for(ItemList::reverse_iterator it = itemlist.rbegin(); it != itemlist.rend(); ++it)
-	{
-		if((*it)->getID() == itemId && ((*it)->getItemCount() + freeCount) <= 100)
-			return *it;
-
-		Container* tmp = (*it)->getContainer();
-		if(!tmp)
-			continue;
-
-		if(Item* item = tmp->findRecursiveItem(itemId, freeCount))
-			return item;
-	}
-
-	return NULL;
-}
-
 ContainerIterator Container::begin()
 {
 	ContainerIterator cit(this);
@@ -921,35 +903,5 @@ ContainerIterator ContainerIterator::operator++(int32_t)
 {
 	ContainerIterator tmp(*this);
 	++*this;
-	return tmp;
-}
-
-ContainerIterator& ContainerIterator::operator--()
-{
-	assert(base);
-	if(Item* item = *current)
-	{
-		Container* container = item->getContainer();
-		if(container && !container->empty())
-			over.push(container);
-	}
-
-	--current;
-	if(current == over.front()->itemlist.begin())
-	{
-		over.pop();
-		if(over.empty())
-			return *this;
-
-		current = over.front()->itemlist.end();
-	}
-
-	return *this;
-}
-
-ContainerIterator ContainerIterator::operator--(int32_t)
-{
-	ContainerIterator tmp(*this);
-	--*this;
 	return tmp;
 }

@@ -39,9 +39,6 @@ class ContainerIterator
 		ContainerIterator& operator++();
 		ContainerIterator operator++(int32_t);
 
-		ContainerIterator& operator--();
-		ContainerIterator operator--(int32_t);
-
 		Item* operator*();
 		Item* operator->();
 
@@ -89,7 +86,6 @@ class Container : public Item, public Cylinder
 		void addItem(Item* item);
 		Item* getItem(uint32_t index);
 		bool isHoldingItem(const Item* item) const;
-		virtual Item* findRecursiveItem(uint16_t itemId, uint16_t freeCount = 0);
 
 		ContainerIterator begin();
 		ContainerIterator end();

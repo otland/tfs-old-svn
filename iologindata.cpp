@@ -240,17 +240,16 @@ bool IOLoginData::getPassword(uint32_t accountId, std::string& password, std::st
 	if(!(result = db->storeQuery(query.str())))
 		return false;
 
+	std::string tmpPassword = result->getDataString("password"), tmpSalt = result->getDataString("salt");
+	result->free();
 	if(name.empty() || name == "Account Manager")
 	{
-		password = result->getDataString("password");
-		result->free();
+		password = tmpPassword;
+		salt = tmpSalt;
 		return true;
 	}
 
-	std::string tmpPassword = result->getDataString("password"), tmpSalt = result->getDataString("salt");
-	result->free();
 	query.str("");
-
 	query << "SELECT `name` FROM `players` WHERE `account_id` = " << accountId;
 	if(!(result = db->storeQuery(query.str())))
 		return false;
@@ -273,13 +272,17 @@ bool IOLoginData::getPassword(uint32_t accountId, std::string& password, std::st
 
 bool IOLoginData::setPassword(uint32_t accountId, std::string newPassword)
 {
-	std::string salt = generateRecoveryKey(2, 19, true);
-	newPassword = salt + newPassword;
-	_encrypt(newPassword, false);
+	std::string salt;
+	if(g_config.getBool(ConfigManager::GENERATE_ACCOUNT_SALT))
+	{
+		salt = generateRecoveryKey(2, 19, true);
+		newPassword = salt + newPassword;
+	}
 
 	Database* db = Database::getInstance();
 	DBQuery query;
 
+	_encrypt(newPassword, false);
 	query << "UPDATE `accounts` SET `password` = " << db->escapeString(newPassword) << ", `salt` = "<< db->escapeString(salt) << " WHERE `id` = " << accountId << db->getUpdateLimiter();
 	return db->query(query.str());
 }

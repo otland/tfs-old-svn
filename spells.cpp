@@ -1530,8 +1530,6 @@ ReturnValue ConjureSpell::internalConjureItem(Player* player, uint32_t conjureId
 		return RET_NOTPOSSIBLE;
 
 	std::list<Container*> containers;
-	std::list<Item*> toItem;
-
 	Item *item = NULL, *fromItem = NULL;
 	for(int32_t i = SLOT_FIRST; i < SLOT_LAST; ++i)
 	{
@@ -1540,66 +1538,38 @@ ReturnValue ConjureSpell::internalConjureItem(Player* player, uint32_t conjureId
 
 		if(!fromItem && item->getID() == reagentId)
 			fromItem = item;
-		else if(item->getID() == conjureId && item->getItemCount() < 100)
-			toItem.push_back(item);
 		else if(Container* container = item->getContainer())
 			containers.push_back(container);
 	}
 
-	for(std::list<Container*>::iterator it = containers.begin(); it != containers.end(); ++it)
+	if(!fromItem)
 	{
-		if(!fromItem)
-			fromItem = (*it)->findRecursiveItem((uint16_t)reagentId);
+		for(std::list<Container*>::iterator cit = containers.begin(); cit != containers.end(); ++cit)
+		{
+			for(ItemList::const_reverse_iterator it = (*cit)->getReversedItems(); it != (*cit)->getReversedEnd(); ++it)
+			{
+				if((*it)->getID() == reagentId)
+				{
+					fromItem = (*it);
+					break;
+				}
 
-		if((item = (*it)->findRecursiveItem((uint16_t)conjureId, 1)))
-			toItem.push_back(item);
+				if(Container* tmp = (*it)->getContainer())
+					containers.push_back(tmp);
+			}
+		}
 	}
 
 	if(!fromItem)
 		return RET_YOUNEEDAMAGICITEMTOCASTSPELL;
 
-	if(toItem.empty())
-	{
-		item = Item::CreateItem(conjureId, conjureCount);
-		ReturnValue ret = g_game.internalAddItem(NULL, player, item, INDEX_WHEREEVER);
-		if(ret != RET_NOERROR)
-			return ret;
+	item = Item::CreateItem(conjureId, conjureCount);
+	ReturnValue ret = g_game.internalAddItem(NULL, player, item, INDEX_WHEREEVER);
+	if(ret != RET_NOERROR)
+		return ret;
 
-		g_game.transformItem(fromItem, reagentId, fromItem->getItemCount() - 1);
-		g_game.startDecay(item);
-		return RET_NOERROR;
-	}
-
-	std::list<Item*> items;
-	for(std::list<Item*>::iterator it = toItem.begin(); it != toItem.end(); ++it)
-	{
-		if((*it)->getItemCount() + conjureCount < 101)
-		{
-			g_game.transformItem(fromItem, reagentId, fromItem->getItemCount() - 1);
-			g_game.transformItem((*it), conjureId, (*it)->getItemCount() + conjureCount);
-
-			conjureCount = 0;
-			break;
-		}
-
-		conjureCount -= (*it)->getItemCount() + conjureCount - 100;
-		items.push_back(*it);
-	}
-
-	if(conjureCount > 0)
-	{
-		item = Item::CreateItem(conjureId, conjureCount);
-		ReturnValue ret = g_game.internalAddItem(NULL, player, item, INDEX_WHEREEVER);
-		if(ret != RET_NOERROR)
-			return ret;
-
-		g_game.transformItem(fromItem, reagentId, fromItem->getItemCount() - 1);
-		g_game.startDecay(item);
-	}
-
-	for(std::list<Item*>::iterator it = items.begin(); it != items.end(); ++it)
-		g_game.transformItem((*it), conjureId, 100);
-
+	g_game.transformItem(fromItem, reagentId, fromItem->getItemCount() - 1);
+	g_game.startDecay(item);
 	return RET_NOERROR;
 }
 

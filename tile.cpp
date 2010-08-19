@@ -898,20 +898,17 @@ void Tile::__addThing(Creature* actor, int32_t, Thing* thing)
 	{
 		if(ground)
 		{
-			const ItemType& oldType = Item::items[ground->getID()];
 			int32_t oldGroundIndex = __getIndexOfThing(ground);
 			Item* oldGround = ground;
-
 			ground->setParent(NULL);
-			g_game.freeThing(ground);
-			ground = item;
 
+			ground = item;
 			updateTileFlags(oldGround, true);
 			updateTileFlags(item, false);
 
-			onUpdateTileItem(oldGround, oldType, item, Item::items[item->getID()]);
-			postRemoveNotification(actor, oldGround, NULL, oldGroundIndex, true);
 			onUpdateTile();
+			postRemoveNotification(actor, oldGround, NULL, oldGroundIndex, true);
+			g_game.freeThing(oldGround);
 		}
 		else
 		{
