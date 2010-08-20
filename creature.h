@@ -562,7 +562,6 @@ class Creature : public AutoId, virtual public Thing
 		virtual void dropCorpse(DeathList deathList);
 
 		virtual void doAttacking(uint32_t) {}
-		void internalCreatureDisappear(const Creature* creature, bool isLogout);
 
 		friend class Game;
 		friend class Map;

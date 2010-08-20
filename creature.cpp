@@ -186,10 +186,10 @@ void Creature::onThink(uint32_t interval)
 	}
 
 	if(followCreature && master != followCreature && !canSeeCreature(followCreature))
-		internalCreatureDisappear(followCreature, false);
+		onCreatureDisappear(followCreature, false);
 
 	if(attackedCreature && master != attackedCreature && !canSeeCreature(attackedCreature))
-		internalCreatureDisappear(attackedCreature, false);
+		onCreatureDisappear(attackedCreature, false);
 
 	blockTicks += interval;
 	if(blockTicks >= 1000)
@@ -353,21 +353,6 @@ void Creature::stopEventWalk()
 	eventWalk = 0;
 }
 
-void Creature::internalCreatureDisappear(const Creature* creature, bool isLogout)
-{
-	if(attackedCreature == creature)
-	{
-		setAttackedCreature(NULL);
-		onAttackedCreatureDisappear(isLogout);
-	}
-
-	if(followCreature == creature)
-	{
-		setFollowCreature(NULL);
-		onFollowCreatureDisappear(isLogout);
-	}
-}
-
 void Creature::updateMapCache()
 {
 	const Position& pos = getPosition();
@@ -398,12 +383,6 @@ void Creature::validateMapCache()
 }
 #endif
 
-void Creature::updateTileCache(const Tile* tile)
-{
-	if(isMapLoaded && tile->getPosition().z == getPosition().z)
-		updateTileCache(tile, tile->getPosition());
-}
-
 void Creature::updateTileCache(const Tile* tile, int32_t dx, int32_t dy)
 {
 	if((std::abs(dx) <= (mapWalkWidth - 1) / 2) && (std::abs(dy) <= (mapWalkHeight - 1) / 2))
@@ -423,6 +402,12 @@ void Creature::updateTileCache(const Tile* tile, const Position& pos)
 	const Position& myPos = getPosition();
 	if(pos.z == myPos.z)
 		updateTileCache(tile, pos.x - myPos.x, pos.y - myPos.y);
+}
+
+void Creature::updateTileCache(const Tile* tile)
+{
+	if(isMapLoaded && tile->getPosition().z == getPosition().z)
+		updateTileCache(tile, tile->getPosition());
 }
 
 int32_t Creature::getWalkCache(const Position& pos) const
@@ -498,9 +483,19 @@ void Creature::onCreatureAppear(const Creature* creature)
 		updateTileCache(creature->getTile(), creature->getPosition());
 }
 
-void Creature::onCreatureDisappear(const Creature* creature, bool)
+void Creature::onCreatureDisappear(const Creature* creature, bool isLogout)
 {
-	internalCreatureDisappear(creature, true);
+	if(attackedCreature == creature)
+	{
+		setAttackedCreature(NULL);
+		onAttackedCreatureDisappear(isLogout);
+	}
+
+	if(followCreature == creature)
+	{
+		setFollowCreature(NULL);
+		onFollowCreatureDisappear(isLogout);
+	}
 }
 
 void Creature::onRemovedCreature()
@@ -514,13 +509,13 @@ void Creature::onRemovedCreature()
 void Creature::onChangeZone(ZoneType_t zone)
 {
 	if(attackedCreature && zone == ZONE_PROTECTION)
-		internalCreatureDisappear(attackedCreature, false);
+		onCreatureDisappear(attackedCreature, false);
 }
 
 void Creature::onAttackedCreatureChangeZone(ZoneType_t zone)
 {
 	if(zone == ZONE_PROTECTION)
-		internalCreatureDisappear(attackedCreature, false);
+		onCreatureDisappear(attackedCreature, false);
 }
 
 void Creature::onCreatureMove(const Creature* creature, const Tile* newTile, const Position& newPos,
@@ -668,7 +663,7 @@ void Creature::onCreatureMove(const Creature* creature, const Tile* newTile, con
 		}
 
 		if(newPos.z != oldPos.z || !canSee(followCreature->getPosition()))
-			internalCreatureDisappear(followCreature, false);
+			onCreatureDisappear(followCreature, false);
 	}
 
 	if(creature == attackedCreature || (creature == this && attackedCreature))
@@ -683,7 +678,7 @@ void Creature::onCreatureMove(const Creature* creature, const Tile* newTile, con
 				onAttackedCreatureChangeZone(attackedCreature->getZone());
 		}
 		else
-			internalCreatureDisappear(attackedCreature, false);
+			onCreatureDisappear(attackedCreature, false);
 	}
 }
 

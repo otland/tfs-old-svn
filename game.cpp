@@ -955,9 +955,17 @@ bool Game::removeCreature(Creature* creature, bool isLogout /*= true*/)
 
 	Tile* tile = creature->getTile();
 	SpectatorVec list;
+	getSpectators(list, tile->getPosition(), false, true);
 
 	SpectatorVec::iterator it;
-	getSpectators(list, tile->getPosition(), false, true);
+	for(it = list.begin(); it != list.end(); ++it)
+		(*it)->onCreatureDisappear(creature, isLogout);
+
+	if(tile != creature->getTile())
+	{
+		tile = creature->getTile();
+		getSpectators(list, tile->getPosition(), false, true);
+	}
 
 	Player* player = NULL;
 	std::vector<uint32_t> oldStackPosVector;
@@ -980,11 +988,10 @@ bool Game::removeCreature(Creature* creature, bool isLogout /*= true*/)
 
 		player->sendCreatureDisappear(creature, oldStackPosVector[i]);
 		++i;
-	}
 
-	//event method
-	for(it = list.begin(); it != list.end(); ++it)
-		(*it)->onCreatureDisappear(creature, isLogout);
+		if(creature != (*it))
+			(*it)->updateTileCache(tile); 
+	}
 
 	creature->getParent()->postRemoveNotification(NULL, creature, NULL, oldIndex, true);
 	creature->onRemovedCreature();
