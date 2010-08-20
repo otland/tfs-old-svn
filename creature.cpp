@@ -186,10 +186,10 @@ void Creature::onThink(uint32_t interval)
 	}
 
 	if(followCreature && master != followCreature && !canSeeCreature(followCreature))
-		onCreatureDisappear(followCreature, false);
+		internalCreatureDisappear(followCreature, false);
 
 	if(attackedCreature && master != attackedCreature && !canSeeCreature(attackedCreature))
-		onCreatureDisappear(attackedCreature, false);
+		internalCreatureDisappear(attackedCreature, false);
 
 	blockTicks += interval;
 	if(blockTicks >= 1000)
@@ -483,7 +483,7 @@ void Creature::onCreatureAppear(const Creature* creature)
 		updateTileCache(creature->getTile(), creature->getPosition());
 }
 
-void Creature::onCreatureDisappear(const Creature* creature, bool isLogout)
+void Creature::internalCreatureDisappear(const Creature* creature, bool isLogout)
 {
 	if(attackedCreature == creature)
 	{
@@ -509,13 +509,13 @@ void Creature::onRemovedCreature()
 void Creature::onChangeZone(ZoneType_t zone)
 {
 	if(attackedCreature && zone == ZONE_PROTECTION)
-		onCreatureDisappear(attackedCreature, false);
+		internalCreatureDisappear(attackedCreature, false);
 }
 
 void Creature::onAttackedCreatureChangeZone(ZoneType_t zone)
 {
 	if(zone == ZONE_PROTECTION)
-		onCreatureDisappear(attackedCreature, false);
+		internalCreatureDisappear(attackedCreature, false);
 }
 
 void Creature::onCreatureMove(const Creature* creature, const Tile* newTile, const Position& newPos,
@@ -663,7 +663,7 @@ void Creature::onCreatureMove(const Creature* creature, const Tile* newTile, con
 		}
 
 		if(newPos.z != oldPos.z || !canSee(followCreature->getPosition()))
-			onCreatureDisappear(followCreature, false);
+			internalCreatureDisappear(followCreature, false);
 	}
 
 	if(creature == attackedCreature || (creature == this && attackedCreature))
@@ -678,7 +678,7 @@ void Creature::onCreatureMove(const Creature* creature, const Tile* newTile, con
 				onAttackedCreatureChangeZone(attackedCreature->getZone());
 		}
 		else
-			onCreatureDisappear(attackedCreature, false);
+			internalCreatureDisappear(attackedCreature, false);
 	}
 }
 

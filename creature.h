@@ -399,7 +399,7 @@ class Creature : public AutoId, virtual public Thing
 		virtual void onUpdateTile(const Tile*, const Position&) {}
 
 		virtual void onCreatureAppear(const Creature* creature);
-		virtual void onCreatureDisappear(const Creature* creature, bool isLogout);
+		virtual void onCreatureDisappear(const Creature* creature, bool isLogout) {internalCreatureDisappear(creature, true);}
 		virtual void onCreatureMove(const Creature* creature, const Tile* newTile, const Position& newPos,
 			const Tile* oldTile, const Position& oldPos, bool teleport);
 
@@ -547,6 +547,8 @@ class Creature : public AutoId, virtual public Thing
 		void updateTileCache(const Tile* tile);
 		void updateTileCache(const Tile* tile, int32_t dx, int32_t dy);
 		void updateTileCache(const Tile* tile, const Position& pos);
+
+		void internalCreatureDisappear(const Creature* creature, bool isLogout);
 
 		virtual bool hasExtraSwing() {return false;}
 
