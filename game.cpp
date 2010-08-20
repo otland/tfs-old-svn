@@ -983,14 +983,14 @@ bool Game::removeCreature(Creature* creature, bool isLogout /*= true*/)
 	uint32_t i = 0;
 	for(it = list.begin(); it != list.end(); ++it)
 	{
+		if(creature != (*it))
+			(*it)->updateTileCache(tile);
+
 		if(!(player = (*it)->getPlayer()) || !player->canSeeCreature(creature))
 			continue;
 
 		player->sendCreatureDisappear(creature, oldStackPosVector[i]);
 		++i;
-
-		if(creature != (*it))
-			(*it)->updateTileCache(tile); 
 	}
 
 	creature->getParent()->postRemoveNotification(NULL, creature, NULL, oldIndex, true);
