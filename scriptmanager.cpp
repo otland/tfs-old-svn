@@ -232,7 +232,7 @@ bool ScriptManager::loadFromXml(const std::string& file, bool& enabled)
 				id = asLowerCaseString(strValue);
 
 			IntegerVec protocol;
-			protocol[0] = CLIENT_VERSION_MIN;
+			protocol.push_back(CLIENT_VERSION_MIN);
 			if(readXMLString(versionNode, "protocol", strValue))
 				protocol = vectorAtoi(explodeString(strValue, "-"));
 
