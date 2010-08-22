@@ -316,8 +316,8 @@ int32_t Weapon::playerWeaponCheck(Player* player, Creature* target) const
 			return 0;
 
 		double penalty = (getReqLevel() - player->getLevel()) * 0.02;
-		if(penatly > 0.5)
-			penatly = 0.5;
+		if(penalty > 0.5)
+			penalty = 0.5;
 
 		modifier -= (int32_t)(modifier * penalty);
 	}
@@ -328,8 +328,8 @@ int32_t Weapon::playerWeaponCheck(Player* player, Creature* target) const
 			return 0;
 
 		double penalty = (getReqMagLv() - player->getMagicLevel()) * 0.02;
-		if(penatly > 0.5)
-			penatly = 0.5;
+		if(penalty > 0.5)
+			penalty = 0.5;
 
 		modifier -= (int32_t)(modifier * penalty);
 	}
