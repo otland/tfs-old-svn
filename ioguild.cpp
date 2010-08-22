@@ -470,8 +470,6 @@ bool IOGuild::updateWar(War_t& war)
 void IOGuild::finishWar(War_t war)
 {
 	Database* db = Database::getInstance();
-	DBResult* result;
-
 	DBQuery query;
 	query << "UPDATE `guilds` SET `balance` = `balance` + " << (war.payment * 2) << " WHERE `id` = " << war.ids[war.type];
 	if(!db->query(query.str()))
@@ -510,9 +508,7 @@ void IOGuild::finishWar(War_t war)
 
 void IOGuild::frag(Player* player, uint64_t deathId, const DeathList& list)
 {
-	Database* db = Database::getInstance();
 	War_t war;
-
 	std::stringstream s;
 	for(DeathList::const_iterator it = list.begin(); it != list.end(); )
 	{
@@ -553,7 +549,9 @@ void IOGuild::frag(Player* player, uint64_t deathId, const DeathList& list)
 		channel->talk("", SPEAK_CHANNEL_RA, s.str());
 	}
 
+	Database* db = Database::getInstance();
 	DBQuery query;
+
 	query << "INSERT INTO `guild_kills` (`guild_id`, `war_id`, `death_id`) VALUES (" << war.ids[war.type] << ", " << war.war << ", " << deathId << ");";
 	db->query(query.str());
 }
