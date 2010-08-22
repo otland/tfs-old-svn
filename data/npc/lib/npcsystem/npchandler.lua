@@ -161,8 +161,8 @@ if(NpcHandler == nil) then
 	-- Function used to verify if npc is focused to certain player
 	function NpcHandler:isFocused(focus)
 		if(NPCHANDLER_CONVBEHAVIOR ~= CONVERSATION_DEFAULT) then
-			for k,v in pairs(self.focuses) do
-				if v == focus then
+			for _, v in pairs(self.focuses) do
+				if(v == focus) then
 					return true
 				end
 			end
@@ -170,14 +170,14 @@ if(NpcHandler == nil) then
 			return false
 		end
 
-		return (self.focuses == focus)
+		return self.focuses == focus
 	end
 
 	-- This function should be called on each onThink and makes sure the npc faces the player it is talking to.
 	--	Should also be called whenever a new player is focused.
 	function NpcHandler:updateFocus()
 		if(NPCHANDLER_CONVBEHAVIOR ~= CONVERSATION_DEFAULT) then
-			for pos, focus in pairs(self.focuses) do
+			for _, focus in pairs(self.focuses) do
 				if(focus ~= nil) then
 					doNpcSetCreatureFocus(focus)
 					return
@@ -198,13 +198,15 @@ if(NpcHandler == nil) then
 			end
 
 			local pos = nil
-			for k,v in pairs(self.focuses) do
+			for k, v in pairs(self.focuses) do
 				if v == focus then
 					pos = k
 				end
 			end
+
 			table.remove(self.focuses, pos)
 			self.talkStart[focus] = nil
+
 			closeShopWindow(focus) --Even if it can not exist, we need to prevent it.
 			self:updateFocus()
 		else
@@ -248,7 +250,7 @@ if(NpcHandler == nil) then
 	-- Calls the callback function represented by id for all modules added to this npchandler with the given arguments.
 	function NpcHandler:processModuleCallback(id, ...)
 		local ret = true
-		for i, module in pairs(self.modules) do
+		for _, module in pairs(self.modules) do
 			local tmpRet = true
 			if(id == CALLBACK_CREATURE_APPEAR and module.callbackOnCreatureAppear ~= nil) then
 				tmpRet = module:callbackOnCreatureAppear(unpack(arg))
@@ -459,7 +461,8 @@ if(NpcHandler == nil) then
 			for i, speech in pairs(self.talkDelay) do
 				if(speech.time ~= nil and speech.message ~= nil and speech.cid ~= nil and speech.start ~= nil) then
 					if(os.mtime() >= speech.time) then
-						if(self:isFocused(speech.cid) and self.talkStart[speech.cid] == speech.start) then
+						local talkStart = (NPCHANDLER_CONVBEHAVIOR ~= CONVERSATION_DEFAULT and self.talkStart[speech.cid] or self.talkStart)
+						if(self:isFocused(speech.cid) and talkStart == speech.start) then
 							if(NPCHANDLER_CONVBEHAVIOR ~= CONVERSATION_DEFAULT) then
 								selfSay(speech.message, speech.cid)
 							else
