@@ -224,7 +224,7 @@ bool ScriptManager::loadFromXml(const std::string& file, bool& enabled)
 		if(xmlStrcmp(p->name, (const xmlChar*)"server"))
 			continue;
 
-		support = false;
+		supported = false;
 		for(xmlNodePtr versionNode = p->children; versionNode; versionNode = versionNode->next)
 		{
 			std::string id = SOFTWARE_VERSION;
@@ -236,7 +236,7 @@ bool ScriptManager::loadFromXml(const std::string& file, bool& enabled)
 			if(readXMLString(versionNode, "protocol", strValue))
 				protocol = vectorAtoi(explodeString(strValue, "-"));
 
-			patch = VERSION_PATCH, database = VERSION_DATABASE;
+			int16_t patch = VERSION_PATCH, database = VERSION_DATABASE;
 			if(readXMLInteger(versionNode, "patch", intValue))
 				patch = intValue;
 

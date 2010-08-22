@@ -406,13 +406,13 @@ std::string IOGuild::getMotd(uint32_t guild)
 
 void IOGuild::checkWars()
 {
-	Database* db = database::getInstance();
+	Database* db = Database::getInstance();
 	DBResult* result;
 
 	DBQuery query;
 	query << "SELECT `g`.`name` AS `guild_name`, `e`.`name` AS `enemy_name`, `w`.* FROM `guild_wars` w INNER JOIN `guilds` g ON `w`.`guild_id` = `g`.`id` INNER JOIN `guilds` e ON `w`.`enemy_id` = `e`.`id` WHERE `w`.`status` IN (1,4) AND `w`.`end` <= " << time(NULL);
 	if(!(result = db->storeQuery(query.str())))
-		return false;
+		return;
 
 	War_t tmp;
 	do

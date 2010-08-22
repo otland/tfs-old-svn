@@ -302,7 +302,7 @@ struct War_t
 		memset(ids, 0, sizeof(ids));
 		memset(frags, 0, sizeof(frags));
 
-		limit = end = status = payment = 0;
+		limit = payment = 0;
 	}
 
 	uint32_t war;

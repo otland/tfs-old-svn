@@ -1122,11 +1122,12 @@ bool IOLoginData::playerDeath(Player* _player, const DeathList& dl)
 			<< ") VALUES (" << deathId << ", " << it->isLast() << ", " << it->isUnjustified();
 #ifdef __WAR_SYSTEM__
 
-		bool war = it->getWar().frags[it->getWar().type == WAR_GUILD] < it->getWar().limit && it->getWar().frags[it->getWar().type] < it->getWar().limit;
+		bool war = it->getWar().war && it->getWar().frags[it->getWar().type == WAR_GUILD]
+			< it->getWar().limit && it->getWar().frags[it->getWar().type] < it->getWar().limit;
 		if(war)
-			<< ", " << it->getWar().war;
+			query << ", " << it->getWar().war;
 		else
-			<< ", 0";
+			query << ", 0";
 #endif
 
 		query << ")";
