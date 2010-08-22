@@ -419,7 +419,7 @@ bool ProtocolGame::parseFirstPacket(NetworkMessage& msg)
 	enableXTEAEncryption();
 	setXTEAKey(key);
 
-	bool gamemaster = false; msg.get<char>();
+	bool gamemaster = msg.get<char>();
 	std::string name = msg.getString(), character = msg.getString(), password = msg.getString();
 
 	msg.skip(6); //841- wtf?
