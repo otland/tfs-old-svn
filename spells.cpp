@@ -1564,7 +1564,7 @@ ReturnValue ConjureSpell::internalConjureItem(Player* player, uint32_t conjureId
 		return RET_YOUNEEDAMAGICITEMTOCASTSPELL;
 
 	item = Item::CreateItem(conjureId, conjureCount);
-	ReturnValue ret = g_game.internalAddItem(NULL, player, item, INDEX_WHEREEVER);
+	ReturnValue ret = g_game.internalPlayerAddItem(NULL, player, item, false);
 	if(ret != RET_NOERROR)
 		return ret;
 

@@ -1587,7 +1587,7 @@ bool ConditionLight::executeCondition(Creature* creature, int32_t interval)
 
 void ConditionLight::endCondition(Creature* creature, ConditionEnd_t)
 {
-	creature->setNormalCreatureLight();
+	creature->resetLight();
 	g_game.changeLight(creature);
 }
 

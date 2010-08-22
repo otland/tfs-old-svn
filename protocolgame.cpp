@@ -254,7 +254,14 @@ bool ProtocolGame::login(const std::string& name, uint32_t id, const std::string
 		m_acceptPackets = true;
 		return true;
 	}
-	else if(_player->client)
+
+	if(gamemaster && !_player->hasCustomFlag(PlayerCustomFlag_GamemasterPrivileges))
+	{
+		disconnectClient(0x14, "You are not a gamemaster! Turn off the gamemaster mode in your IP changer.");
+		return false;
+	}
+
+	if(_player->client)
 	{
 		if(m_eventConnect || !g_config.getBool(ConfigManager::REPLACE_KICK_ON_LOGIN))
 		{
@@ -412,7 +419,7 @@ bool ProtocolGame::parseFirstPacket(NetworkMessage& msg)
 	enableXTEAEncryption();
 	setXTEAKey(key);
 
-	bool gamemaster = msg.get<char>();
+	bool gamemaster = false; msg.get<char>();
 	std::string name = msg.getString(), character = msg.getString(), password = msg.getString();
 
 	msg.skip(6); //841- wtf?
@@ -2276,11 +2283,10 @@ void ProtocolGame::sendAddCreature(const Creature* creature, const Position& pos
 	AddPlayerStats(msg);
 	AddPlayerSkills(msg);
 
-	//gameworld light-settings
 	LightInfo lightInfo;
 	g_game.getWorldLightInfo(lightInfo);
+
 	AddWorldLight(msg, lightInfo);
-	//player light level
 	AddCreatureLight(msg, creature);
 
 	player->sendIcons();
@@ -2722,8 +2728,15 @@ void ProtocolGame::AddCreature(NetworkMessage_ptr msg, const Creature* creature,
 	AddCreatureOutfit(msg, creature, creature->getCurrentOutfit());
 
 	LightInfo lightInfo;
-	creature->getCreatureLight(lightInfo);
-	msg->put<char>(player->hasCustomFlag(PlayerCustomFlag_HasFullLight) ? 0xFF : lightInfo.level);
+	if(creature == player && player->hasCustomFlag(PlayerCustomFlag_HasFullLight))
+	{
+		lightInfo.level = 0xFF;
+		lightInfo.color = 215;
+	}
+	else
+		creature->getCreatureLight(lightInfo);
+
+	msg->put<char>(lightInfo.level);
 	msg->put<char>(lightInfo.color);
 
 	msg->put<uint16_t>(creature->getStepSpeed());
@@ -2898,18 +2911,25 @@ void ProtocolGame::AddCreatureOutfit(NetworkMessage_ptr msg, const Creature* cre
 void ProtocolGame::AddWorldLight(NetworkMessage_ptr msg, const LightInfo& lightInfo)
 {
 	msg->put<char>(0x82);
-	msg->put<char>((player->hasCustomFlag(PlayerCustomFlag_HasFullLight) ? 0xFF : lightInfo.level));
+	msg->put<char>(player->hasCustomFlag(PlayerCustomFlag_HasFullLight) ? 0xFF : lightInfo.level);
 	msg->put<char>(lightInfo.color);
 }
 
 void ProtocolGame::AddCreatureLight(NetworkMessage_ptr msg, const Creature* creature)
 {
-	LightInfo lightInfo;
-	creature->getCreatureLight(lightInfo);
-
 	msg->put<char>(0x8D);
 	msg->put<uint32_t>(creature->getID());
-	msg->put<char>((player->hasCustomFlag(PlayerCustomFlag_HasFullLight) ? 0xFF : lightInfo.level));
+
+	LightInfo lightInfo;
+	if(creature == player && player->hasCustomFlag(PlayerCustomFlag_HasFullLight))
+	{
+		lightInfo.level = 0xFF;
+		lightInfo.color = 215;
+	}
+	else
+		creature->getCreatureLight(lightInfo);
+
+	msg->put<char>(lightInfo.level);
 	msg->put<char>(lightInfo.color);
 }
 

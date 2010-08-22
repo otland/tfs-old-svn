@@ -99,7 +99,7 @@ class Monster : public Creature
 		virtual bool challengeCreature(Creature* creature);
 		virtual bool convinceCreature(Creature* creature);
 
-		virtual void setNormalCreatureLight();
+		virtual void resetLight();
 		virtual bool getCombatValues(int32_t& min, int32_t& max);
 
 		virtual void doAttacking(uint32_t interval);

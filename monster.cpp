@@ -1318,7 +1318,7 @@ bool Monster::isImmune(CombatType_t type) const
 	return it->second >= 100;
 }
 
-void Monster::setNormalCreatureLight()
+void Monster::resetLight()
 {
 	internalLight.level = mType->lightLevel;
 	internalLight.color = mType->lightColor;

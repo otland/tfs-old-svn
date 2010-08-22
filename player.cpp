@@ -854,13 +854,13 @@ bool Player::canSeeCreature(const Creature* creature) const
 
 bool Player::canWalkthrough(const Creature* creature) const
 {
-	if(creature == this || hasCustomFlag(PlayerCustomFlag_CanWalkthrough) ||
-		(creature->getMaster() && canWalkthrough(creature->getMaster())))
+	if(creature == this || hasCustomFlag(PlayerCustomFlag_CanWalkthrough) || creature->isWalkable() ||
+		(creature->getMaster() && creature->getMaster() != this && canWalkthrough(creature->getMaster())))
 		return true;
 
 	const Player* player = creature->getPlayer();
 	if(!player)
-		return Creature::canWalkthrough(creature);
+		return false;
 
 	if((((g_game.getWorldType() == WORLDTYPE_OPTIONAL &&
 #ifdef __WAR_SYSTEM__
@@ -872,7 +872,7 @@ bool Player::canWalkthrough(const Creature* creature) const
 		|| player->getAccess() <= getAccess()))
 		return true;
 
-	return player->isWalkable() || (player->isGhost() && getGhostAccess() < player->getGhostAccess())
+	return (player->isGhost() && getGhostAccess() < player->getGhostAccess())
 		|| (isGhost() && getGhostAccess() > player->getGhostAccess());
 }
 
@@ -3465,7 +3465,7 @@ void Player::updateItemsLight(bool internal/* = false*/)
 			maxLight = curLight;
 	}
 
-	if(itemsLight.level != maxLight.level || itemsLight.color != maxLight.color)
+	if(maxLight.level > itemsLight.level || (maxLight.level == itemsLight.level && maxLight.color != itemsLight.color))
 	{
 		itemsLight = maxLight;
 		if(!internal)

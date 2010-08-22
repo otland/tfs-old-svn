@@ -963,6 +963,7 @@ bool Game::removeCreature(Creature* creature, bool isLogout /*= true*/)
 
 	if(tile != creature->getTile())
 	{
+		list.clear();
 		tile = creature->getTile();
 		getSpectators(list, tile->getPosition(), false, true);
 	}
@@ -1588,7 +1589,7 @@ ReturnValue Game::internalMoveItem(Creature* actor, Cylinder* fromCylinder, Cyli
 }
 
 ReturnValue Game::internalAddItem(Creature* actor, Cylinder* toCylinder, Item* item, int32_t index /*= INDEX_WHEREEVER*/,
-	uint32_t flags /*= 0*/, bool test /*= false*/)
+	uint32_t flags/* = 0*/, bool test/* = false*/)
 {
 	uint32_t remainderCount = 0;
 	return internalAddItem(actor, toCylinder, item, index, flags, test, remainderCount);
@@ -1597,13 +1598,20 @@ ReturnValue Game::internalAddItem(Creature* actor, Cylinder* toCylinder, Item* i
 ReturnValue Game::internalAddItem(Creature* actor, Cylinder* toCylinder, Item* item, int32_t index,
 	uint32_t flags, bool test, uint32_t& remainderCount)
 {
+	Item* stackItem = NULL;
+	return internalAddItem(actor, toCylinder, item, index, flags, test, remainderCount, &stackItem);
+}
+
+ReturnValue Game::internalAddItem(Creature* actor, Cylinder* toCylinder, Item* item, int32_t index,
+	uint32_t flags, bool test, uint32_t& remainderCount, Item** stackItem)
+{
+	*stackItem = NULL;
 	remainderCount = 0;
 	if(!toCylinder || !item)
 		return RET_NOTPOSSIBLE;
 
 	Cylinder* destCylinder = toCylinder;
-	Item* toItem = NULL;
-	toCylinder = toCylinder->__queryDestination(index, item, &toItem, flags);
+	toCylinder = toCylinder->__queryDestination(index, item, stackItem, flags);
 
 	//check if we can add this item
 	ReturnValue ret = toCylinder->__queryAdd(index, item, item->getItemCount(), flags);
@@ -1618,6 +1626,7 @@ ReturnValue Game::internalAddItem(Creature* actor, Cylinder* toCylinder, Item* i
 	if(test)
 		return RET_NOERROR;
 
+	Item* toItem = *stackItem;
 	if(item->isStackable() && toItem)
 	{
 		uint32_t m = std::min((uint32_t)item->getItemCount(), maxQueryCount), n = 0;
@@ -1709,23 +1718,28 @@ ReturnValue Game::internalRemoveItem(Creature* actor, Item* item, int32_t count 
 ReturnValue Game::internalPlayerAddItem(Creature* actor, Player* player, Item* item,
 	bool dropOnMap/* = true*/, slots_t slot/* = SLOT_WHEREEVER*/)
 {
-	uint32_t remainderCount = 0;
-	ReturnValue ret = internalAddItem(actor, player, item, (int32_t)slot, 0, false, remainderCount);
+	Item* toItem = NULL;
+	uint32_t remainderCount = 0, count = item->getItemCount();
+
+	ReturnValue ret = internalAddItem(actor, player, item, (int32_t)slot, 0, false, remainderCount, &toItem);
 	if(ret == RET_NOERROR)
 		return RET_NOERROR;
-		
-	if(remainderCount > 0) // this should occur rarely
-	{
-		Item* remainderItem = Item::CreateItem(item->getID(), remainderCount);
-		ReturnValue remainderRet = internalAddItem(actor, player->getTile(), remainderItem, INDEX_WHEREEVER, FLAG_NOLIMIT);
-		if(remainderRet != RET_NOERROR) // this basicaly should occur
-			delete remainderItem;
-
-		return RET_NOERROR;
-	}
 
 	if(dropOnMap)
-		ret = internalAddItem(actor, player->getTile(), item, (int32_t)slot, FLAG_NOLIMIT);
+	{
+		if(!remainderCount)
+			return internalAddItem(actor, player->getTile(), item, (int32_t)slot, FLAG_NOLIMIT);
+
+		Item* remainderItem = Item::CreateItem(item->getID(), remainderCount);
+		ReturnValue remainderRet = internalAddItem(actor, player->getTile(), remainderItem, INDEX_WHEREEVER, FLAG_NOLIMIT);
+		if(remainderRet == RET_NOERROR)
+			return RET_NOERROR;
+
+		delete remainderItem;
+	}
+
+	if(remainderCount && toItem)
+		transformItem(toItem, toItem->getID(), (toItem->getItemCount() - (count - remainderCount)));
 
 	return ret;
 }
@@ -1999,9 +2013,19 @@ void Game::addMoney(Cylinder* cylinder, int64_t money, uint32_t flags /*= 0*/)
 
 		do
 		{
-			Item* remainItem = Item::CreateItem(it->second, std::min((int64_t)100, tmp));
-			if(internalAddItem(NULL, cylinder, remainItem, INDEX_WHEREEVER, flags) != RET_NOERROR)
-				internalAddItem(NULL, cylinder->getTile(), remainItem, INDEX_WHEREEVER, FLAG_NOLIMIT);
+			uint32_t remainderCount = 0;
+			Item* item = Item::CreateItem(it->second, std::min((int64_t)100, tmp));
+			if(internalAddItem(NULL, cylinder, item, INDEX_WHEREEVER, flags, false, remainderCount) != RET_NOERROR)
+			{
+				if(remainderCount)
+				{
+					delete item;
+					item = Item::CreateItem(it->second, remainderCount);
+				}
+
+				if(internalAddItem(NULL, cylinder->getTile(), item, INDEX_WHEREEVER, FLAG_NOLIMIT) != RET_NOERROR)
+					delete item;
+			}
 
 			tmp -= std::min((int64_t)100, tmp);
 		}
@@ -2149,7 +2173,6 @@ ReturnValue Game::internalTeleport(Thing* thing, const Position& newPos, bool fo
 	return RET_NOTPOSSIBLE;
 }
 
-//Implementation of player invoked events
 bool Game::playerMove(uint32_t playerId, Direction dir)
 {
 	Player* player = getPlayerByID(playerId);
@@ -4224,7 +4247,7 @@ void Game::changeLight(const Creature* creature)
 	Player* tmpPlayer = NULL;
 	for(SpectatorVec::const_iterator it = list.begin(); it != list.end(); ++it)
 	{
-		if((tmpPlayer = (*it)->getPlayer()))
+		if((tmpPlayer = (*it)->getPlayer()) && !tmpPlayer->hasCustomFlag(PlayerCustomFlag_HasFullLight))
 			tmpPlayer->sendCreatureLight(creature);
 	}
 }
@@ -4798,7 +4821,10 @@ void Game::checkLight()
 		LightInfo lightInfo;
 		getWorldLightInfo(lightInfo);
 		for(AutoList<Player>::iterator it = Player::autoList.begin(); it != Player::autoList.end(); ++it)
-			it->second->sendWorldLight(lightInfo);
+		{
+			if(!it->second->hasCustomFlag(PlayerCustomFlag_HasFullLight))
+				it->second->sendWorldLight(lightInfo);
+		}
 	}
 }
 

@@ -353,6 +353,8 @@ class Game
 			uint32_t flags = 0, bool test = false);
 		ReturnValue internalAddItem(Creature* actor, Cylinder* toCylinder, Item* item, int32_t index,
 			uint32_t flags, bool test, uint32_t& remainderCount);
+		ReturnValue internalAddItem(Creature* actor, Cylinder* toCylinder, Item* item, int32_t index,
+			uint32_t flags, bool test, uint32_t& remainderCount, Item** stackItem);
 		ReturnValue internalRemoveItem(Creature* actor, Item* item, int32_t count = -1,  bool test = false, uint32_t flags = 0);
 
 		ReturnValue internalPlayerAddItem(Creature* actor, Player* player, Item* item,

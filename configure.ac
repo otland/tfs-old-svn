@@ -237,10 +237,13 @@ fi
 if test "$useMySQL" = "no" ; then
 	if test "$useSQLite" = "no" ; then
 		if test "$usePostgreSQL" = "no" ; then
-			echo Error: no database driver was enabled! To enable a database driver, configure with --enable-\<dbdriver\> \(example: --enable-mysql\).
+			AM_CONDITIONAL(USE_SQLITE, true)
+			SQLITE_FLAGS=-D__USE_SQLITE__
+			AC_SUBST(SQLITE_FLAGS)
+			useSQLite=yes
+
+			echo WARNING: Any of available database drivers wasn't enabled, using SQLite as default. To enable a database driver, configure with --enable-\<driver\> \(example: --enable-mysql\)
 			echo
-			exit 1
-			return 1
 		fi
 	fi
 fi

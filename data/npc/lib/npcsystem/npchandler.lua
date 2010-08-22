@@ -395,12 +395,10 @@ if(NpcHandler == nil) then
 									self.talkStart = os.time()
 								end
 							end
+						elseif(NPCHANDLER_CONVBEHAVIOR ~= CONVERSATION_DEFAULT) then
+							self.talkStart[cid] = os.time()
 						else
-							if(NPCHANDLER_CONVBEHAVIOR ~= CONVERSATION_DEFAULT) then
-								self.talkStart[cid] = os.time()
-							else
-								self.talkStart = os.time()
-							end
+							self.talkStart = os.time()
 						end
 					end
 				end
@@ -458,14 +456,14 @@ if(NpcHandler == nil) then
 	function NpcHandler:onThink()
 		local callback = self:getCallback(CALLBACK_ONTHINK)
 		if(callback == nil or callback()) then
-			for i, talkDelay in ipairs(self.talkDelay) do
-				if(talkDelay.time ~= nil and talkDelay.message ~= nil and talkDelay.cid ~= nil and talkDelay.start ~= nil) then
-					if(os.mtime() >= talkDelay.time) then
-						if(self:isFocused(talkDelay.cid) and self.talkStart[cid] == talkDelay.start) then
+			for i, speech in pairs(self.talkDelay) do
+				if(speech.time ~= nil and speech.message ~= nil and speech.cid ~= nil and speech.start ~= nil) then
+					if(os.mtime() >= speech.time) then
+						if(self:isFocused(speech.cid) and self.talkStart[speech.cid] == speech.start) then
 							if(NPCHANDLER_CONVBEHAVIOR ~= CONVERSATION_DEFAULT) then
-								selfSay(talkDelay.message, talkDelay.cid)
+								selfSay(speech.message, speech.cid)
 							else
-								selfSay(talkDelay.message)
+								selfSay(speech.message)
 							end
 						end
 
@@ -478,7 +476,7 @@ if(NpcHandler == nil) then
 
 			if(self:processModuleCallback(CALLBACK_ONTHINK)) then
 				if(NPCHANDLER_CONVBEHAVIOR ~= CONVERSATION_DEFAULT) then
-					for pos, focus in pairs(self.focuses) do
+					for _, focus in pairs(self.focuses) do
 						if(focus ~= nil) then
 							if(not self:isInRange(focus)) then
 								self:onWalkAway(focus)

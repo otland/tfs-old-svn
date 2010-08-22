@@ -384,7 +384,7 @@ class Creature : public AutoId, virtual public Thing
 		virtual void onIdleStatus();
 
 		virtual void getCreatureLight(LightInfo& light) const;
-		virtual void setNormalCreatureLight();
+		virtual void resetLight();
 		void setCreatureLight(LightInfo& light) {internalLight = light;}
 
 		virtual void onThink(uint32_t interval);

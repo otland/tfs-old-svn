@@ -139,18 +139,17 @@ bool Creature::canSeeCreature(const Creature* creature) const
 
 bool Creature::canWalkthrough(const Creature* creature) const
 {
-	if(creature == this)
+	if(creature == this || isGhost())
 		return true;
 
 	if(const Creature* _master = creature->getMaster())
-	{
-		if(canWalkthrough(_master))
+	{	
+		if(_master != this && canWalkthrough(_master))
 			return true;
 	}
-	else if(isGhost() || (master && master->canWalkthrough(creature)))
-		return true;
 	
-	return creature->isGhost() || creature->isWalkable();
+	return creature->isGhost() || creature->isWalkable() || (master &&
+		master != creature && master->canWalkthrough(creature));
 }
 
 int64_t Creature::getTimeSinceLastMove() const
@@ -1568,7 +1567,7 @@ void Creature::getCreatureLight(LightInfo& light) const
 	light = internalLight;
 }
 
-void Creature::setNormalCreatureLight()
+void Creature::resetLight()
 {
 	internalLight.level = internalLight.color = 0;
 }

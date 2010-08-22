@@ -3,7 +3,24 @@ table.empty = function (t)
 	return next(t) == nil
 end
 
-table.find = function (table, value)
+table.size = function (t)
+	return #t
+end
+
+table.find = function (table, value, sensitive)
+	local sensitive = sensitive or true
+	if(not sensitive and type(value) == "string") then
+		for i, v in pairs(table) do
+			if(type(v) == "string") then
+				if(v:lower() == value:lower()) then
+					return i
+				end
+			end
+		end
+
+		return nil
+	end
+
 	for i, v in pairs(table) do
 		if(v == value) then
 			return i
@@ -90,14 +107,13 @@ function table.serialize(x, recur)
 
 		local s = "{"
 		for k, v in pairs(x) do
-			s = s .. "[" .. table.serialize(k, recur) .. "]"
-			s = s .. " = " .. table.serialize(v, recur) .. ","
+			s = s .. "[" .. table.serialize(k, recur) .. "]" .. " = " .. table.serialize(v, recur) .. ", "
 		end
-		s = s .. "}"
-		return s
-	else
-		error("Can not serialize value of type '" .. t .. "'.")
+
+		return s:sub(0, s:len() - 2) .. "}"
 	end
+
+	error("Can not serialize value of type '" .. t .. "'.")
 end
 
 function table.unserialize(str)
