@@ -313,8 +313,6 @@ struct War_t
 	uint16_t frags[WAR_LAST + 1];
 
 	uint16_t limit;
-	time_t end;
-	int8_t status;
 	uint64_t payment;
 };
 #endif

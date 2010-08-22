@@ -86,6 +86,9 @@ Game::Game()
 	lightState = LIGHT_STATE_DAY;
 
 	lastBucket = checkCreatureLastIndex = checkLightEvent = checkCreatureEvent = checkDecayEvent = saveEvent = 0;
+#ifdef __WAR_SYSTEM__
+	checkWarsEvent = 0;
+#endif
 }
 
 Game::~Game()
@@ -102,6 +105,10 @@ void Game::start(ServiceManager* servicer)
 		boost::bind(&Game::checkCreatures, this)));
 	checkLightEvent = Scheduler::getInstance().addEvent(createSchedulerTask(EVENT_LIGHTINTERVAL,
 		boost::bind(&Game::checkLight, this)));
+#ifdef __WAR_SYSTEM__
+	checkWarsEvent = Scheduler::getInstance().addEvent(createSchedulerTask(EVENT_WARSINTERVAL,
+		boost::bind(&IOGuild::checkWars, IOGuild::getInstance())));
+#endif
 
 	services = servicer;
 	if(!g_config.getBool(ConfigManager::GLOBALSAVE_ENABLED) || g_config.getNumber(ConfigManager::GLOBALSAVE_H) < 1 ||

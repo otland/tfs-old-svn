@@ -309,23 +309,41 @@ int32_t Weapon::playerWeaponCheck(Player* player, Creature* target) const
 	if(!vocWeaponMap.empty() && vocWeaponMap.find(player->getVocationId()) == vocWeaponMap.end())
 		return 0;
 
-	int32_t damageModifier = 100;
+	int32_t modifier = 100;
 	if(player->getLevel() < getReqLevel())
-		damageModifier = (isWieldedUnproperly() ? damageModifier / 2 : 0);
+	{
+		if(!isWieldedUnproperly())
+			return 0;
+
+		double penalty = (getReqLevel() - player->getLevel()) * 0.02;
+		if(penatly > 0.5)
+			penatly = 0.5;
+
+		modifier -= (int32_t)(modifier * penalty);
+	}
 
 	if(player->getMagicLevel() < getReqMagLv())
-		damageModifier = (isWieldedUnproperly() ? damageModifier / 2 : 0);
+	{
+		if(isWieldedUnproperly())
+			return 0;
 
-	return damageModifier;
+		double penalty = (getReqMagLv() - player->getMagicLevel()) * 0.02;
+		if(penatly > 0.5)
+			penatly = 0.5;
+
+		modifier -= (int32_t)(modifier * penalty);
+	}
+
+	return modifier;
 }
 
 bool Weapon::useWeapon(Player* player, Item* item, Creature* target) const
 {
-	int32_t damageModifier = playerWeaponCheck(player, target);
-	if(!damageModifier)
+	int32_t modifier = playerWeaponCheck(player, target);
+	if(!modifier)
 		return false;
 
-	return internalUseWeapon(player, item, target, damageModifier);
+	return internalUseWeapon(player, item, target, modifier);
 }
 
 bool Weapon::useFist(Player* player, Creature* target)
@@ -364,7 +382,7 @@ bool Weapon::useFist(Player* player, Creature* target)
 	return true;
 }
 
-bool Weapon::internalUseWeapon(Player* player, Item* item, Creature* target, int32_t damageModifier) const
+bool Weapon::internalUseWeapon(Player* player, Item* item, Creature* target, int32_t modifier) const
 {
 	if(isScripted())
 	{
@@ -375,7 +393,7 @@ bool Weapon::internalUseWeapon(Player* player, Item* item, Creature* target, int
 	}
 	else
 	{
-		int32_t damage = (getWeaponDamage(player, target, item) * damageModifier) / 100;
+		int32_t damage = (getWeaponDamage(player, target, item) * modifier) / 100;
 		Combat::doCombatHealth(player, target, damage, damage, params);
 	}
 
@@ -698,8 +716,8 @@ int32_t WeaponDistance::playerWeaponCheck(Player* player, Creature* target) cons
 
 bool WeaponDistance::useWeapon(Player* player, Item* item, Creature* target) const
 {
-	int32_t damageModifier = playerWeaponCheck(player, target);
-	if(!damageModifier)
+	int32_t modifier = playerWeaponCheck(player, target);
+	if(!modifier)
 		return false;
 
 	int32_t chance = hitChance;
@@ -849,7 +867,7 @@ bool WeaponDistance::useWeapon(Player* player, Item* item, Creature* target) con
 		Weapon::internalUseWeapon(player, item, destTile);
 	}
 	else
-		Weapon::internalUseWeapon(player, item, target, damageModifier);
+		Weapon::internalUseWeapon(player, item, target, modifier);
 
 	return true;
 }
