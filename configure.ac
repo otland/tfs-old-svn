@@ -242,7 +242,7 @@ if test "$useMySQL" = "no" ; then
 			AC_SUBST(SQLITE_FLAGS)
 			useSQLite=yes
 
-			echo WARNING: Any of available database drivers wasn't enabled, using SQLite as default. To enable a database driver, configure with --enable-\<driver\> \(example: --enable-mysql\)
+			echo WARNING: Any of available database drivers was enabled, using SQLite as default. To enable a database driver, configure with --enable-\<driver\> \(example: --enable-mysql\)
 			echo
 		fi
 	fi
