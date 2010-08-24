@@ -107,7 +107,7 @@ void Game::start(ServiceManager* servicer)
 		boost::bind(&Game::checkLight, this)));
 #ifdef __WAR_SYSTEM__
 	checkWarsEvent = Scheduler::getInstance().addEvent(createSchedulerTask(EVENT_WARSINTERVAL,
-		boost::bind(&IOGuild::checkWars, IOGuild::getInstance())));
+		boost::bind(&Game::checkWars, this)));
 #endif
 
 	services = servicer;
@@ -204,6 +204,8 @@ void Game::setGameState(GameState_t newState)
 				IOBan::getInstance()->clearTemporials();
 				if(g_config.getBool(ConfigManager::INIT_PREMIUM_UPDATE))
 					IOLoginData::getInstance()->updatePremiumDays();
+
+				IOGuild::getInstance()->checkWars();
 				break;
 			}
 
@@ -4144,7 +4146,7 @@ void Game::removeCreatureCheck(Creature* creature)
 
 void Game::checkCreatures()
 {
-	Scheduler::getInstance().addEvent(createSchedulerTask(
+	checkCreatureEvent = Scheduler::getInstance().addEvent(createSchedulerTask(
 		EVENT_CHECK_CREATURE_INTERVAL, boost::bind(&Game::checkCreatures, this)));
 	checkCreatureLastIndex++;
 	if(checkCreatureLastIndex == EVENT_CREATURECOUNT)
@@ -4729,7 +4731,7 @@ void Game::internalDecayItem(Item* item)
 
 void Game::checkDecay()
 {
-	Scheduler::getInstance().addEvent(createSchedulerTask(EVENT_DECAYINTERVAL,
+	checkDecayEvent = Scheduler::getInstance().addEvent(createSchedulerTask(EVENT_DECAYINTERVAL,
 		boost::bind(&Game::checkDecay, this)));
 
 	size_t bucket = (lastBucket + 1) % EVENT_DECAYBUCKETS;
@@ -4778,7 +4780,7 @@ void Game::checkDecay()
 
 void Game::checkLight()
 {
-	Scheduler::getInstance().addEvent(createSchedulerTask(EVENT_LIGHTINTERVAL,
+	checkLightEvent = Scheduler::getInstance().addEvent(createSchedulerTask(EVENT_LIGHTINTERVAL,
 		boost::bind(&Game::checkLight, this)));
 
 	lightHour = lightHour + lightHourDelta;
@@ -4833,6 +4835,13 @@ void Game::checkLight()
 				it->second->sendWorldLight(lightInfo);
 		}
 	}
+}
+
+void Game::checkWars()
+{
+	IOGuild::getInstance()->checkWars();
+	checkWarsEvent = Scheduler::getInstance().addEvent(createSchedulerTask(EVENT_WARSINTERVAL,
+		boost::bind(&Game::checkWars, this)));
 }
 
 void Game::getWorldLightInfo(LightInfo& lightInfo)

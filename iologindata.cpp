@@ -1110,6 +1110,8 @@ bool IOLoginData::playerDeath(Player* _player, const DeathList& dl)
 
 #ifdef __WAR_SYSTEM__
 	DeathList wl;
+	bool war = false;
+
 #endif
 	uint64_t deathId = db->getLastInsertId();
 	for(DeathList::const_iterator it = dl.begin(); i < size && it != dl.end(); ++it, ++i)
@@ -1121,9 +1123,14 @@ bool IOLoginData::playerDeath(Player* _player, const DeathList& dl)
 #endif
 			<< ") VALUES (" << deathId << ", " << it->isLast() << ", " << it->isUnjustified();
 #ifdef __WAR_SYSTEM__
+		if(it->isLast()) //last hit is always first and we got stored war data only there
+		{
+			War_t tmp = it->getWar();
+			if(tmp.war && tmp.frags[tmp.type == WAR_GUILD]
+				< tmp.limit && tmp.frags[tmp.type] < tmp.limit)
+				war = true;
+		}
 
-		bool war = it->getWar().war && it->getWar().frags[it->getWar().type == WAR_GUILD]
-			< it->getWar().limit && it->getWar().frags[it->getWar().type] < it->getWar().limit;
 		if(war)
 			query << ", " << it->getWar().war;
 		else
@@ -1149,7 +1156,7 @@ bool IOLoginData::playerDeath(Player* _player, const DeathList& dl)
 			if(player)
 			{
 #ifdef __WAR_SYSTEM__
-				if(war && _player->isEnemy(player, false))
+				if(_player->isEnemy(player, false))
 					wl.push_back(*it);
 
 #endif
@@ -1177,7 +1184,7 @@ bool IOLoginData::playerDeath(Player* _player, const DeathList& dl)
 #ifdef __WAR_SYSTEM__
 
 	if(!wl.empty())
-		IOGuild::getInstance()->frag(_player, deathId, wl);
+		IOGuild::getInstance()->frag(_player, deathId, wl, war);
 #endif
 
 	return trans.commit();

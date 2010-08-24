@@ -506,13 +506,18 @@ void IOGuild::finishWar(War_t war)
 	g_game.broadcastMessage(s.str().c_str(), MSG_EVENT_ADVANCE);
 }
 
-void IOGuild::frag(Player* player, uint64_t deathId, const DeathList& list)
+void IOGuild::frag(Player* player, uint64_t deathId, const DeathList& list, bool score)
 {
 	War_t war;
 	std::stringstream s;
 	for(DeathList::const_iterator it = list.begin(); it != list.end(); )
 	{
-		if(it->isLast())
+		if(score)
+		{
+			if(it->isLast())
+				war = it->getWar();
+		}
+		else if(!war.war)
 			war = it->getWar();
 
 		Creature* creature = it->getKillerCreature();
@@ -536,23 +541,30 @@ void IOGuild::frag(Player* player, uint64_t deathId, const DeathList& list)
 	ChatChannel* channel = NULL;
 	if((channel = g_chat.getChannel(player, CHANNEL_GUILD)))
 	{
-		s << "Guild member " << player->getName() << " was killed by " << killers << ". The new score is " << war.frags[
-			war.type == WAR_GUILD] << ":" << war.frags[war.type] << " frags (limit " << war.limit << ").";
+		s << "Guild member " << player->getName() << " was killed by " << killers << ".";
+		if(score)
+			s << " The new score is " << war.frags[war.type == WAR_GUILD] << ":"
+				<< war.frags[war.type] << " frags (limit " << war.limit << ").";
+
 		channel->talk("", SPEAK_CHANNEL_RA, s.str());
 	}
 
 	s.str("");
 	if((channel = g_chat.getChannel(list[0].getKillerCreature()->getPlayer(), CHANNEL_GUILD)))
 	{
-		s << "Opponent " << player->getName() << " was killed by " << killers << ". The new score is " << war.frags[
-			war.type] << ":" << war.frags[war.type == WAR_GUILD] << " frags (limit " << war.limit << ").";
+		s << "Opponent " << player->getName() << " was killed by " << killers << "."
+		if(score)
+			s << " The new score is " << war.frags[war.type] << ":"
+				<< war.frags[war.type == WAR_GUILD] << " frags (limit " << war.limit << ").";
+
 		channel->talk("", SPEAK_CHANNEL_RA, s.str());
 	}
 
 	Database* db = Database::getInstance();
 	DBQuery query;
 
-	query << "INSERT INTO `guild_kills` (`guild_id`, `war_id`, `death_id`) VALUES (" << war.ids[war.type] << ", " << war.war << ", " << deathId << ");";
+	query << "INSERT INTO `guild_kills` (`guild_id`, `war_id`, `death_id`) VALUES ("
+		<< war.ids[war.type] << ", " << war.war << ", " << deathId << ");";
 	db->query(query.str());
 }
 #endif
