@@ -552,7 +552,7 @@ void IOGuild::frag(Player* player, uint64_t deathId, const DeathList& list, bool
 	s.str("");
 	if((channel = g_chat.getChannel(list[0].getKillerCreature()->getPlayer(), CHANNEL_GUILD)))
 	{
-		s << "Opponent " << player->getName() << " was killed by " << killers << "."
+		s << "Opponent " << player->getName() << " was killed by " << killers << ".";
 		if(score)
 			s << " The new score is " << war.frags[war.type] << ":"
 				<< war.frags[war.type == WAR_GUILD] << " frags (limit " << war.limit << ").";
