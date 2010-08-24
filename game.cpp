@@ -1136,6 +1136,15 @@ bool Game::playerMoveCreature(uint32_t playerId, uint32_t movingCreatureId,
 
 		if(!player->hasFlag(PlayerFlag_CanPushAllCreatures))
 		{
+			if(MagicField* field = toTile->getFieldItem())
+			{
+				if(field->isBlocking(movingCreature) || !movingCreature->isImmune(field->getCombatType()))
+				{
+					player->sendCancelMessage(RET_NOTPOSSIBLE);
+					return false;
+				}
+			}
+
 			uint32_t protectionLevel = g_config.getNumber(ConfigManager::PROTECTION_LEVEL);
 			if(player->getLevel() < protectionLevel && player->getVocation()->isAttackable())
 			{
