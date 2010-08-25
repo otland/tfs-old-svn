@@ -1127,7 +1127,7 @@ bool IOLoginData::playerDeath(Player* _player, const DeathList& dl)
 		{
 			War_t tmp = it->getWar();
 			if(tmp.war && tmp.frags[tmp.type == WAR_GUILD]
-				< tmp.limit && tmp.frags[tmp.type] < tmp.limit)
+				<= tmp.limit && tmp.frags[tmp.type] <= tmp.limit)
 				war = true;
 		}
 
