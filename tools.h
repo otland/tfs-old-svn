@@ -75,7 +75,7 @@ bool parseXMLContentString(xmlNodePtr node, std::string& value);
 std::string getLastXMLError();
 bool utf8ToLatin1(char* intext, std::string& outtext);
 
-StringVec explodeString(const std::string& string, const std::string& separator);
+StringVec explodeString(const std::string& string, const std::string& separator, bool trim = false);
 IntegerVec vectorAtoi(StringVec stringVector);
 bool hasBitSet(uint32_t flag, uint32_t flags);
 
