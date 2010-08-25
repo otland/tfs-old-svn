@@ -585,7 +585,9 @@ class Game
 		void checkCreatureAttack(uint32_t creatureId);
 		void checkCreatures();
 		void checkLight();
+#ifdef __WAR_SYSTEM__
 		void checkWars();
+#endif
 
 		bool combatBlockHit(CombatType_t combatType, Creature* attacker, Creature* target,
 			int32_t& healthChange, bool checkDefense, bool checkArmor);

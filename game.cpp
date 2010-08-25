@@ -205,7 +205,9 @@ void Game::setGameState(GameState_t newState)
 				if(g_config.getBool(ConfigManager::INIT_PREMIUM_UPDATE))
 					IOLoginData::getInstance()->updatePremiumDays();
 
+#ifdef __WAR_SYSTEM__
 				IOGuild::getInstance()->checkWars();
+#endif
 				break;
 			}
 
@@ -4845,6 +4847,7 @@ void Game::checkLight()
 		}
 	}
 }
+#ifdef __WAR_SYSTEM__
 
 void Game::checkWars()
 {
@@ -4852,6 +4855,7 @@ void Game::checkWars()
 	checkWarsEvent = Scheduler::getInstance().addEvent(createSchedulerTask(EVENT_WARSINTERVAL,
 		boost::bind(&Game::checkWars, this)));
 }
+#endif
 
 void Game::getWorldLightInfo(LightInfo& lightInfo)
 {
