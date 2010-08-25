@@ -139,7 +139,7 @@ bool Creature::canSeeCreature(const Creature* creature) const
 
 bool Creature::canWalkthrough(const Creature* creature) const
 {
-	if(creature == this || isGhost())
+	if(creature == this)
 		return true;
 
 	if(const Creature* _master = creature->getMaster())

@@ -138,7 +138,7 @@ typedef std::map<int32_t, float> StageList;
 #define EVENT_DECAYBUCKETS 16
 #define STATE_DELAY 1000
 #ifdef __WAR_SYSTEM__
-#define EVENT_WARSINTERVAL 15 * 60 * 1000
+#define EVENT_WARSINTERVAL 900000
 #endif
 
 /**
