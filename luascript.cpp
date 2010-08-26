@@ -9307,8 +9307,8 @@ int32_t LuaInterface::luaGetVocationList(lua_State* L)
 	for(uint32_t i = 1; it != Vocations::getInstance()->getLastVocation(); ++i, ++it)
 	{
 		createTable(L, i);
-		setField(L, "id", (*it)->getId());
-		setField(L, "name", (*it)->getName());
+		setField(L, "id", it->first);
+		setField(L, "name", it->second->getName());
 		pushTable(L);
 	}
 
@@ -9323,8 +9323,8 @@ int32_t LuaInterface::luaGetGroupList(lua_State* L)
 	for(uint32_t i = 1; it != Groups::getInstance()->getLastGroup(); ++i, ++it)
 	{
 		createTable(L, i);
-		setField(L, "id", (*it)->getId());
-		setField(L, "name", (*it)->getName());
+		setField(L, "id", it->first);
+		setField(L, "name", it->second->getName());
 		pushTable(L);
 	}
 
