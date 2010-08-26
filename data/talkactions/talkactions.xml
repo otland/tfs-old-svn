@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <talkactions>
 	<!-- Gods -->
-	<talkaction log="yes" words="/addskill" access="5" event="function" value="addSkill"/>
 	<talkaction log="yes" words="/attr" access="5" event="function" value="thingProporties"/>
 	<talkaction log="yes" words="/serverdiag" access="5" event="function" value="diagnostics"/>
 	<talkaction log="yes" words="/closeserver" access="5" event="script" value="closeopen.lua"/>
 	<talkaction log="yes" words="/openserver" access="5" event="script" value="closeopen.lua"/>
 	<talkaction log="yes" words="/promote;/demote" access="5" event="script" value="promote.lua"/>
+	<talkaction log="yes" words="/skill;/addskill" access="5" event="script" value="skill.lua"/>
 	<talkaction log="yes" words="/shutdown" access="5" event="script" value="shutdown.lua"/>
 	<talkaction log="yes" access="5" words="/mode" event="script" value="mode.lua"/>
 

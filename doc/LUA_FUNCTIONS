@@ -754,10 +754,14 @@
 	doUpdateHouseAuctions()
 	loadmodlib(lib)
 	domodlib(lib)
-	dodirectory(dir)
+	dodirectory(dir[, recursively = false])
 	errors(var)
 	getDataDir()
 	getLogsDir()
+	getVocationList()
+	getGroupList()
+	getChannelList()
+	getTownList()
 	getWaypointList()
 	getTalkActionList()
 	getExperienceStageList()
@@ -803,6 +807,7 @@
 	doSetCreatureOutfit(cid, outfit[, time = -1])
 	doRemoveCreature(cid[, forceLogout = true])
 	doMoveCreature(cid, direction[, flag = FLAG_NOLIMIT])
+	doSteerCreature(cid, position)
 	doConvinceCreature(cid, target)
 	doChallengeCreature(cid, target)
 	doChangeSpeed(cid, delta)
@@ -1011,6 +1016,10 @@
 	std.sha512(string[, upperCase = false])
 	std.vahash(string[, upperCase = false])
 
+	//os table
+	os.time()
+	os.mtime()
+
 	//compats
 	table.getPos = table.find
 	doSetCreatureDropLoot = doCreatureSetDropLoot
@@ -1124,9 +1133,9 @@
 	doPlayerWithdrawAllMoney(cid)
 	doPlayerDepositAllMoney(cid)
 	doPlayerTransferAllMoneyTo(cid, target)
-	doPlayerAddLevel(cid, amount, round)
-	doPlayerAddMagLevel(cid, amount)
-	doPlayerAddSkill(cid, amount)
+	doPlayerAddLevel(cid[, amount = 1[, round = false]])
+	doPlayerAddMagLevel(cid[, amount = 1])
+	doPlayerAddSkill(cid, skill[, amount = 1[, round = false]])
 	playerExists(name)
 	getTibiaTime()
 	doWriteLogFile(file, text)
@@ -1189,4 +1198,5 @@
 	string.split(str)
 	string.trim(str)
 	string.explode(str, sep)
+	choose(...)
 ]

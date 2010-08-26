@@ -1,7 +1,6 @@
 local HIDDEN = {"adminPassword", "managerPassword", "encryptionType", "^sql"}
 
 function onSay(cid, words, param, channel)
-	param = param:trim()
 	for _, str in ipairs(HIDDEN) do
 		if(param:find(str) ~= nil) then
 			doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Config value \"" .. param .. "\" does not exists.")

@@ -3,12 +3,11 @@ local config = {
 }
 
 function onSay(cid, words, param, channel)
-	local players = getPlayersOnline()
-	local strings = {""}
+	local strings = {}
 
 	local i, position = 1, 1
 	local added = false
-	for _, pid in ipairs(players) do
+	for _, pid in ipairs(getPlayersOnline()) do
 		if(added) then
 			if(i > (position * 7)) then
 				strings[position] = strings[position] .. ","
@@ -28,7 +27,7 @@ function onSay(cid, words, param, channel)
 		end
 	end
 
-	doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, (i - 1) .. " player(s) online:")
+	doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, (i - 1) .. " player" .. (i > 1 and "s" or "") .. " online:")
 	for i, str in ipairs(strings) do
 		if(str:sub(str:len()) ~= ",") then
 			str = str .. "."

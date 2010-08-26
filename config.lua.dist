@@ -337,7 +337,7 @@
 	prefixChannelLogs = ""
 	runFile = ""
 	outputLog = ""
-	truncateLogsOnStartup = false
+	truncateLogOnStartup = false
 
 	-- Manager
 	-- NOTE: managerPassword left blank disables manager.

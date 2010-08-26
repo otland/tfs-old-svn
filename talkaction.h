@@ -105,7 +105,6 @@ class TalkAction : public Event
 		static TalkFunction thingProporties;
 		static TalkFunction banishmentInfo;
 		static TalkFunction diagnostics;
-		static TalkFunction addSkill;
 		static TalkFunction ghost;
 		static TalkFunction software;
 

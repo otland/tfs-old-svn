@@ -326,11 +326,7 @@ function isPlayer(cid)
 end
 
 function isPlayerGhost(cid)
-	if(not isPlayer(cid)) then
-		return false
-	end
-
-	return getCreatureCondition(cid, CONDITION_GAMEMASTER, GAMEMASTER_INVISIBLE) or getPlayerFlagValue(cid, PLAYERFLAG_CANNOTBESEEN)
+	return isPlayer(cid) and (getCreatureCondition(cid, CONDITION_GAMEMASTER, GAMEMASTER_INVISIBLE) or getPlayerFlagValue(cid, PLAYERFLAG_CANNOTBESEEN))
 end
 
 function isMonster(cid)
@@ -350,7 +346,7 @@ function doPlayerSetMagicRate(cid, value)
 end
 
 function doPlayerAddLevel(cid, amount, round)
-	local experience, level = 0, getPlayerLevel(cid)
+	local experience, level, amount = 0, getPlayerLevel(cid), amount or 1
 	if(amount > 0) then
 		experience = getExperienceForLevel(level + amount) - (round and getPlayerExperience(cid) or getExperienceForLevel(level))
 	else
@@ -362,19 +358,25 @@ end
 
 function doPlayerAddMagLevel(cid, amount)
 	for i = 1, amount do
-		doPlayerAddSpentMana(cid, (getPlayerRequiredMana(cid, getPlayerMagLevel(cid, true) + 1) - getPlayerSpentMana(cid)) / getConfigInfo('rateMagic'))
+		doPlayerAddSpentMana(cid, getPlayerRequiredMana(cid, getPlayerMagLevel(cid, true) + 1) - getPlayerSpentMana(cid), false)
 	end
+
 	return true
 end
 
 function doPlayerAddSkill(cid, skill, amount, round)
+	local amount = amount or 1
 	if(skill == SKILL__LEVEL) then
 		return doPlayerAddLevel(cid, amount, round)
 	elseif(skill == SKILL__MAGLEVEL) then
 		return doPlayerAddMagLevel(cid, amount)
 	end
 
-	return doPlayerAddSkillTry(cid, skill, (getPlayerRequiredSkillTries(cid, skill, getPlayerSkillLevel(cid, skill) + 1) - getPlayerSkillTries(cid, skill)) / getConfigInfo('rateSkill'))
+	for i = 1, amount do
+		doPlayerAddSkillTry(cid, skill, getPlayerRequiredSkillTries(cid, skill, getPlayerSkillLevel(cid, skill) + 1) - getPlayerSkillTries(cid, skill), false)
+	end
+
+	return true
 end
 
 function getPartyLeader(cid)

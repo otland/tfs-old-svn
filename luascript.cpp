@@ -733,13 +733,18 @@ bool LuaInterface::loadFile(const std::string& file, Npc* npc/* = NULL*/)
 	return true;
 }
 
-bool LuaInterface::loadDirectory(const std::string& dir, Npc* npc/* = NULL*/)
+bool LuaInterface::loadDirectory(const std::string& dir, Npc* npc/* = NULL*/, bool recursively/* = false*/)
 {
 	StringVec files;
 	for(boost::filesystem::directory_iterator it(dir), end; it != end; ++it)
 	{
 		std::string s = it->leaf();
-		if(!boost::filesystem::is_directory(it->status()) && (s.size() > 4 ? s.substr(s.size() - 4) : "") == ".lua")
+		if(boost::filesystem::is_directory(it->status()))
+		{
+			if(recursively && !loadDirectory(it->path().filename() + "/" + s, npc, recursively))
+				return false;
+		}
+		else if((s.size() > 4 ? s.substr(s.size() - 4) : "") == ".lua")
 			files.push_back(s);
 	}
 
@@ -2242,6 +2247,12 @@ void LuaInterface::registerFunctions()
 	//getGroupInfo(id[, premium = false])
 	lua_register(m_luaState, "getGroupInfo", LuaInterface::luaGetGroupInfo);
 
+	//getVocationList()
+	lua_register(m_luaState, "getVocationList", LuaInterface::luaGetVocationList);
+
+	//getGroupList()
+	lua_register(m_luaState, "getGroupList", LuaInterface::luaGetGroupList);
+
 	//getChannelList()
 	lua_register(m_luaState, "getChannelList", LuaInterface::luaGetChannelList);
 
@@ -2412,7 +2423,7 @@ void LuaInterface::registerFunctions()
 	//domodlib(lib)
 	lua_register(m_luaState, "domodlib", LuaInterface::luaL_domodlib);
 
-	//dodirectory(dir)
+	//dodirectory(dir[, recursively = false])
 	lua_register(m_luaState, "dodirectory", LuaInterface::luaL_dodirectory);
 
 	//errors(var)
@@ -2978,12 +2989,12 @@ int32_t LuaInterface::luaGetPlayerRequiredMana(lua_State* L)
 
 int32_t LuaInterface::luaGetPlayerRequiredSkillTries(lua_State* L)
 {
-	//getPlayerRequiredSkillTries(cid, skillId, skillLevel)
-	int32_t sLevel = popNumber(L), sId = popNumber(L);
+	//getPlayerRequiredSkillTries(cid, skill, level)
+	int32_t level = popNumber(L), skill = popNumber(L);
 
 	ScriptEnviroment* env = getEnv();
 	if(Player* player = env->getPlayerByUID(popNumber(L)))
-		lua_pushnumber(L, player->vocation->getReqSkillTries(sId, sLevel));
+		lua_pushnumber(L, player->vocation->getReqSkillTries(skill, level));
 	else
 	{
 		errorEx(getError(LUA_ERROR_PLAYER_NOT_FOUND));
@@ -9288,6 +9299,38 @@ int32_t LuaInterface::luaGetHighscoreString(lua_State* L)
 	return 1;
 }
 
+int32_t LuaInterface::luaGetVocationList(lua_State* L)
+{
+	//getVocationList()
+	VocationsMap::iterator it = Vocations::getInstance()->getFirstVocation();
+	lua_newtable(L);
+	for(uint32_t i = 1; it != Vocations::getInstance()->getLastVocation(); ++i, ++it)
+	{
+		createTable(L, i);
+		setField(L, "id", (*it)->getId());
+		setField(L, "name", (*it)->getName());
+		pushTable(L);
+	}
+
+	return 1;
+}
+
+int32_t LuaInterface::luaGetGroupList(lua_State* L)
+{
+	//getGroupList()
+	GroupsMap::iterator it = Groups::getInstance()->getFirstGroup();
+	lua_newtable(L);
+	for(uint32_t i = 1; it != Groups::getInstance()->getLastGroup(); ++i, ++it)
+	{
+		createTable(L, i);
+		setField(L, "id", (*it)->getId());
+		setField(L, "name", (*it)->getName());
+		pushTable(L);
+	}
+
+	return 1;
+}
+
 int32_t LuaInterface::luaGetChannelList(lua_State* L)
 {
 	//getChannelList()
@@ -10364,9 +10407,13 @@ int32_t LuaInterface::luaL_domodlib(lua_State* L)
 
 int32_t LuaInterface::luaL_dodirectory(lua_State* L)
 {
-	//dodirectory(dir)
+	//dodirectory(dir[, recursively = false])
+	bool recursively = false;
+	if(lua_gettop(L) > 1)
+		recursively = popNumber(L);
+
 	std::string dir = popString(L);
-	if(!getEnv()->getInterface()->loadDirectory(dir, NULL))
+	if(!getEnv()->getInterface()->loadDirectory(dir, NULL, recursively))
 	{
 		errorEx("Failed to load directory " + dir + ".");
 		lua_pushboolean(L, false);

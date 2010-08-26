@@ -122,7 +122,7 @@ bool argumentsHandler(StringVec args)
 			return false;
 		}
 
-		if((*it) == "--version")
+		if((*it) == "--version" || (*it) == "-V")
 		{
 			std::clog << SOFTWARE_NAME << ", version " << SOFTWARE_VERSION << " (" << SOFTWARE_CODENAME << ")\n"
 			"Compiled with " << BOOST_COMPILER << " at " << __DATE__ << ", " << __TIME__ << ".\n"

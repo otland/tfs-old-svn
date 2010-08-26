@@ -251,7 +251,7 @@ class LuaInterface
 
 		bool loadBuffer(const std::string& text, Npc* npc = NULL);
 		bool loadFile(const std::string& file, Npc* npc = NULL);
-		bool loadDirectory(const std::string& dir, Npc* npc = NULL);
+		bool loadDirectory(const std::string& dir, Npc* npc = NULL, bool recursively = false);
 
 		std::string getName() {return m_interfaceName;}
 		std::string getScript(int32_t scriptId);
@@ -650,6 +650,8 @@ class LuaInterface
 		static int32_t luaGetItemAttribute(lua_State* L);
 		static int32_t luaDoItemSetAttribute(lua_State* L);
 		static int32_t luaDoItemEraseAttribute(lua_State* L);
+		static int32_t luaGetVocationList(lua_State* L);
+		static int32_t luaGetGroupList(lua_State* L);
 		static int32_t luaGetChannelList(lua_State* L);
 		static int32_t luaGetTalkActionList(lua_State* L);
 		static int32_t luaGetExperienceStageList(lua_State* L);
