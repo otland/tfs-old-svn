@@ -580,7 +580,7 @@ if(NpcHandler == nil) then
 	--	This implements the currently set type of talkdelay.
 	function NpcHandler:say(message, focus, delay)
 		local delay = delay or 0
-		if(NPCHANDLER_TALKDELAY == TALKDELAY_NONE and delay < 100) then
+		if(NPCHANDLER_TALKDELAY == TALKDELAY_NONE and delay <= 0) then
 			if(NPCHANDLER_CONVBEHAVIOR ~= CONVERSATION_DEFAULT) then
 				selfSay(message, focus)
 			else
@@ -594,7 +594,7 @@ if(NpcHandler == nil) then
 		table.insert(self.talkDelay, {
 			cid = focus,
 			message = message,
-			time = os.mtime() + (delay < 100 and self.talkDelayTime or delay),
+			time = os.mtime() + (delay <= 0 and self.talkDelayTime or delay),
 			start = os.time()
 		})
 	end

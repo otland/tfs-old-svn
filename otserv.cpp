@@ -393,7 +393,7 @@ void otserv(StringVec, ServiceManager* services)
 	std::clog << ">> Opening logs" << std::endl;
 	Logger::getInstance()->open();
 
-	IntegerVec cores = vectorAtoi(explodeString(g_config.getString(ConfigManager::CORES_USED), ",", true));
+	IntegerVec cores = vectorAtoi(explodeString(g_config.getString(ConfigManager::CORES_USED), ","));
 	if(cores[0] != -1)
 	{
 #ifdef WINDOWS

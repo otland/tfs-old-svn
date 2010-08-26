@@ -414,7 +414,7 @@ bool utf8ToLatin1(char* intext, std::string& outtext)
 	return true;
 }
 
-StringVec explodeString(const std::string& string, const std::string& separator, bool trim/* = false*/)
+StringVec explodeString(const std::string& string, const std::string& separator, bool trim/* = true*/)
 {
 	StringVec returnVector;
 	size_t start = 0, end = 0;
