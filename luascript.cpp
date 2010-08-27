@@ -1704,6 +1704,9 @@ void LuaInterface::registerFunctions()
 	//doPlayerSendToChannel(cid, targetId, SpeakClasses, message, channel[, time])
 	lua_register(m_luaState, "doPlayerSendToChannel", LuaInterface::luaDoPlayerSendToChannel);
 
+	//doPlayerOpenChannel(cid, channelId)
+	lua_register(m_luaState, "doPlayerOpenChannel", LuaInterface::luaDoPlayerOpenChannel);
+
 	//doPlayerAddMoney(cid, money)
 	lua_register(m_luaState, "doPlayerAddMoney", LuaInterface::luaDoPlayerAddMoney);
 
@@ -4064,6 +4067,24 @@ int32_t LuaInterface::luaDoPlayerSendToChannel(lua_State* L)
 
 	player->sendToChannel(creature, (SpeakClasses)speakClass, text, channelId, time);
 	lua_pushboolean(L, true);
+	return 1;
+}
+
+int32_t LuaInterface::luaDoPlayerOpenChannel(lua_State* L)
+{
+	//doPlayerOpenChannel(cid, channelId)
+	uint16_t channelId = popNumber(L);
+	uint32_t cid = popNumber(L);
+
+	ScriptEnviroment* env = getEnv();
+	if(Player* player = env->getPlayerByUID(cid))
+	{
+		lua_pushboolean(L, g_game.playerOpenChannel(cid, channelId));
+		return 1;
+	}
+
+	errorEx(getError(LUA_ERROR_PLAYER_NOT_FOUND));
+	lua_pushboolean(L, false);
 	return 1;
 }
 
