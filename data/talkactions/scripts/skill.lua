@@ -19,13 +19,14 @@ function onSay(cid, words, param, channel)
 	t[2] = t[2]:lower()
 	local skill = SKILL_IDS[t[2]]
 	if(not skill) then
-		if(t[2][1] == 'l' or t[2][1] == 'e') then
+		local tmp = t[2]:sub(1, 1)
+		if(tmp == 'l' or tmp == 'e') then
 			skill = SKILL__LEVEL
-		elseif(t[2][1] == 'm') then
+		elseif(tmp == 'm') then
 			skill = SKILL__MAGLEVEL
 		else
 			skill = tonumber(t[2])
-			if(skill < SKILL_FIRST or SKILL > SKILL__LAST) then
+			if(not skill or skill < SKILL_FIRST or SKILL > SKILL__LAST) then
 				doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Such skill does not exists.")
 				return true
 			end
