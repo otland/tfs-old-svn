@@ -3,7 +3,7 @@ local config = {
 }
 
 function onSay(cid, words, param, channel)
-	local strings = {}
+	local strings = {""}
 
 	local i, position = 1, 1
 	local added = false

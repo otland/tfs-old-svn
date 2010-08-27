@@ -172,7 +172,6 @@ DBResult* DatabaseMySQL::storeQuery(const std::string &query)
 
 		std::clog << "mysql_real_query(): " << query << " - MYSQL ERROR: " << mysql_error(&m_handle) << " (" << error << ")" << std::endl;
 		return NULL;
-
 	}
 
 	if(MYSQL_RES* presult = mysql_store_result(&m_handle))
