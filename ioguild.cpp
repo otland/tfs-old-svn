@@ -410,23 +410,17 @@ void IOGuild::checkWars()
 	DBResult* result;
 
 	DBQuery query;
-	query << "SELECT `g`.`name` AS `guild_name`, `e`.`name` AS `enemy_name`, `w`.* FROM `guild_wars` w INNER JOIN `guilds` g ON `w`.`guild_id` = `g`.`id` INNER JOIN `guilds` e ON `w`.`enemy_id` = `e`.`id` WHERE `w`.`status` IN (1,4) AND `w`.`end` <= " << time(NULL);
+	query << "SELECT `id`, `guild_id`, `enemy_id` FROM `guild_wars` WHERE `status` IN (1,4) AND `end` <= " << time(NULL);
 	if(!(result = db->storeQuery(query.str())))
 		return;
 
 	War_t tmp;
 	do
 	{
+		tmp.war = result->getDataInt("id");
 		tmp.ids[WAR_GUILD] = result->getDataInt("guild_id");
 		tmp.ids[WAR_ENEMY] = result->getDataInt("enemy_id");
-		tmp.names[WAR_GUILD] = result->getDataString("guild_name");
-		tmp.names[WAR_ENEMY] = result->getDataString("enemy_name");
-
-		tmp.frags[WAR_GUILD] = result->getDataInt("guild_kills");
-		tmp.frags[WAR_ENEMY] = result->getDataInt("enemy_kills");
-
-		tmp.payment = result->getDataInt("payment");
-		finishWar(tmp);
+		finishWar(tmp, false);
 	}
 	while(result->next());
 	result->free();
@@ -458,7 +452,7 @@ bool IOGuild::updateWar(War_t& war)
 	if(war.frags[WAR_GUILD] >= war.limit || war.frags[WAR_ENEMY] >= war.limit)
 	{
 		Scheduler::getInstance().addEvent(createSchedulerTask(3000,
-			boost::bind(&IOGuild::finishWar, this, war)));
+			boost::bind(&IOGuild::finishWar, this, war, true)));
 		return true;
 	}
 
@@ -467,16 +461,24 @@ bool IOGuild::updateWar(War_t& war)
 	return db->query(query.str());
 }
 
-void IOGuild::finishWar(War_t war)
+void IOGuild::finishWar(War_t war, bool finished)
 {
 	Database* db = Database::getInstance();
 	DBQuery query;
-	query << "UPDATE `guilds` SET `balance` = `balance` + " << (war.payment * 2) << " WHERE `id` = " << war.ids[war.type];
-	if(!db->query(query.str()))
-		return;
+	if(finished)
+	{
+		query << "UPDATE `guilds` SET `balance` = `balance` + " << (war.payment * 2) << " WHERE `id` = " << war.ids[war.type];
+		if(!db->query(query.str()))
+			return;
 
-	query.str("");
-	query << "UPDATE `guild_wars` SET `guild_kills` = " << war.frags[WAR_GUILD] << ", `enemy_kills` = " << war.frags[WAR_ENEMY] << ", `end` = " << time(NULL) << ", `status` = 5 WHERE `id` = " << war.war;
+		query.str("");
+	}
+
+	query << "UPDATE `guild_wars` SET ";
+	if(finished)
+		query << "`guild_kills` = " << war.frags[WAR_GUILD] << ", `enemy_kills` = " << war.frags[WAR_ENEMY] << ",";
+
+	query << "`end` = " << time(NULL) << ", `status` = 5 WHERE `id` = " << war.war;
 	if(!db->query(query.str()))
 		return;
 
@@ -501,9 +503,12 @@ void IOGuild::finishWar(War_t war)
 			g_game.updateCreatureEmblem(it->second);
 	}
 
-	std::stringstream s;
-	s << war.names[war.type] << " has just won the war against " << war.names[war.type == WAR_GUILD] << ".";
-	g_game.broadcastMessage(s.str().c_str(), MSG_EVENT_ADVANCE);
+	if(finished)
+	{
+		std::stringstream s;
+		s << war.names[war.type] << " has just won the war against " << war.names[war.type == WAR_GUILD] << ".";
+		g_game.broadcastMessage(s.str().c_str(), MSG_EVENT_ADVANCE);
+	}
 }
 
 void IOGuild::frag(Player* player, uint64_t deathId, const DeathList& list, bool score)

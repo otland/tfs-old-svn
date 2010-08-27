@@ -1132,12 +1132,18 @@ bool Game::playerMoveCreature(uint32_t playerId, uint32_t movingCreatureId,
 			|| movingCreature->getZone() == ZONE_OPTIONAL) && !toTile->hasFlag(TILESTATE_OPTIONALZONE)
 			&& !toTile->hasFlag(TILESTATE_PROTECTIONZONE))
 		{
-			player->sendCancelMessage(RET_NOTPOSSIBLE);
+			player->sendCancelMessage(RET_ACTIONNOTPERMITTEDINANOPVPZONE);
 			return false;
 		}
 
 		if(!player->hasFlag(PlayerFlag_CanPushAllCreatures))
 		{
+			if(movingCreature->getTile()->ground && !Item::items[movingCreature->getTile()->ground->getID()].walkStack)
+			{
+				player->sendCancelMessage(RET_NOTPOSSIBLE);
+				return false;
+			}
+
 			if(MagicField* field = toTile->getFieldItem())
 			{
 				if(field->isBlocking(movingCreature) || !movingCreature->isImmune(field->getCombatType()))
