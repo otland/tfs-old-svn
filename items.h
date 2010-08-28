@@ -26,7 +26,9 @@
 #include "position.h"
 #include <libxml/parser.h>
 
-#define ITEMS 11500
+#define ITEMS 13000
+#define RANDOMIZATION 50
+
 #define SLOTP_WHEREEVER 0xFFFFFFFF
 #define SLOTP_HEAD 1 << 0
 #define	SLOTP_NECKLACE 1 << 1
@@ -237,7 +239,7 @@ typedef std::map<int32_t, int32_t> IntegerMap;
 class Items
 {
 	public:
-		Items(): m_randomizationChance(50), items(ITEMS) {}
+		Items(): m_randomizationChance(RANDOMIZATION), items(ITEMS) {}
 		virtual ~Items() {clear();}
 
 		bool reload();
