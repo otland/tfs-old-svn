@@ -4077,8 +4077,7 @@ int32_t LuaInterface::luaDoPlayerOpenChannel(lua_State* L)
 	uint32_t cid = popNumber(L);
 
 	ScriptEnviroment* env = getEnv();
-	Player* player = env->getPlayerByUID(cid);
-	if(player)
+	if(env->getPlayerByUID(cid))
 	{
 		lua_pushboolean(L, g_game.playerOpenChannel(cid, channelId));
 		return 1;

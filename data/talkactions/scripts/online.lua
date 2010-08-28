@@ -3,10 +3,7 @@ local config = {
 }
 
 function onSay(cid, words, param, channel)
-	local strings = {""}
-
-	local i, position = 1, 1
-	local added = false
+	local strings, i, position, added = {""}, 1, 1, false
 	for _, pid in ipairs(getPlayersOnline()) do
 		if(added) then
 			if(i > (position * 7)) then
@@ -18,12 +15,11 @@ function onSay(cid, words, param, channel)
 			end
 		end
 
+		added = false
 		if((config.showGamemasters or getPlayerCustomFlagValue(cid, PLAYERCUSTOMFLAG_GAMEMASTERPRIVILEGES) or not getPlayerCustomFlagValue(pid, PLAYERCUSTOMFLAG_GAMEMASTERPRIVILEGES)) and (not isPlayerGhost(pid) or getPlayerGhostAccess(cid) >= getPlayerGhostAccess(pid))) then
 			strings[position] = strings[position] .. getCreatureName(pid) .. " [" .. getPlayerLevel(pid) .. "]"
 			i = i + 1
 			added = true
-		else
-			added = false
 		end
 	end
 
