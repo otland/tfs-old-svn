@@ -848,6 +848,7 @@
 	doPlayerSendTextMessage(cid, MessageClasses, message)
 	doPlayerSendChannelMessage(cid, author, message, SpeakClasses, channel)
 	doPlayerSendToChannel(cid, targetId, SpeakClasses, message, channel[, time])
+	doPlayerOpenChannel(cid, channelId)
 	doPlayerAddMoney(cid, money)
 	doPlayerRemoveMoney(cid, money)
 	doPlayerTransferMoneyTo(cid, target, money)

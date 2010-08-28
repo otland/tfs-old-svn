@@ -5088,7 +5088,7 @@ bool Game::playerViolationWindow(uint32_t playerId, std::string name, uint8_t re
 	if(end != std::string::npos)
 	{
 		int32_t i = 0;
-		StringVec vec = explodeString(comment.substr(start + 1, end - 1), ",");
+		StringVec vec = explodeString(comment.substr(start + 1, end - start - 1), ",");
 		for(StringVec::iterator it = vec.begin(); it != vec.end() && i < 4; ++it, ++i)
 		{
 			if((*it) == "delete")
@@ -5103,17 +5103,29 @@ bool Game::playerViolationWindow(uint32_t playerId, std::string name, uint8_t re
 			for(StringVec::iterator tit = tec.begin(); tit != tec.end(); ++tit)
 			{
 				std::string tmp = (*tit);
-				if(tmp[0] != 's' && tmp[0] != 'm' && tmp[0] != 'h' && tmp[0] != 'd'
-					&& tmp[0] != 'w' && tmp[0] != 'o' && tmp[0] != 'y')
-					continue;
 
 				uint32_t count = 1;
 				if(tmp.size() > 1)
 				{
-					count = atoi(tmp.substr(1).c_str());
+					std::string str;
+					uint32_t textLength = tmp.length();
+					for(uint32_t size = 0; size < textLength; size++)
+					{
+						if(isNumber(tmp.at(size)))
+							str += tmp.at(size);
+					}
+
+					count = atoi(str.c_str());
 					if(!count)
 						count = 1;
+					else
+						tmp = tmp.substr(str.length(), 1);
 				}
+
+				toLowerCaseString(tmp);
+				if(tmp[0] != 's' && tmp[0] != 'm' && tmp[0] != 'h' && tmp[0] != 'd'
+					&& tmp[0] != 'w' && tmp[0] != 'o' && tmp[0] != 'y')
+					continue;
 
 				if(tmp[0] == 's')
 					banTime += count;
@@ -5140,7 +5152,7 @@ bool Game::playerViolationWindow(uint32_t playerId, std::string name, uint8_t re
 			}
 		}
 
-		comment = comment.substr(end + 1);
+		comment = comment.substr(0, start - 1);
 	}
 
 	int16_t nameFlags = group->getNameViolationFlags(), statementFlags = group->getStatementViolationFlags();
@@ -5151,6 +5163,7 @@ bool Game::playerViolationWindow(uint32_t playerId, std::string name, uint8_t re
 		return false;
 	}
 
+	trimString(comment);
 	uint32_t commentSize = g_config.getNumber(ConfigManager::MAX_VIOLATIONCOMMENT_SIZE);
 	if(comment.size() > commentSize)
 	{

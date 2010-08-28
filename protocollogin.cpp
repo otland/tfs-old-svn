@@ -161,7 +161,7 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 			(deletion ? "deleted" : "banished"), formatDateEx(ban.added, "%d %b %Y").c_str(), name_.c_str(),
 			getReason(ban.reason).c_str(), getAction(ban.action, false).c_str(), ban.comment.c_str(),
 			(deletion ? "account won't be undeleted" : "banishment will be lifted at:\n"),
-			(deletion ? "." : formatDateEx(ban.expires).c_str()));
+			(deletion ? "" : formatDateEx(ban.expires).c_str()));
 
 		disconnectClient(0x0A, buffer);
 		return false;
