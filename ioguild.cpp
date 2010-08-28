@@ -410,7 +410,7 @@ void IOGuild::checkWars()
 	DBResult* result;
 
 	DBQuery query;
-	query << "SELECT `id`, `guild_id`, `enemy_id` FROM `guild_wars` WHERE `status` IN (1,4) AND `end` <= " << time(NULL);
+	query << "SELECT `id`, `guild_id`, `enemy_id` FROM `guild_wars` WHERE `status` IN (1,4) AND `end` > 0 AND `end` < " << time(NULL);
 	if(!(result = db->storeQuery(query.str())))
 		return;
 
