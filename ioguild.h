@@ -72,7 +72,7 @@ class IOGuild
 
 		void checkWars();
 		bool updateWar(War_t& enemy);
-		void finishWar(War_t& enemy, bool finished);
+		void finishWar(War_t enemy, bool finished);
 		void frag(Player* player, uint64_t deathId, const DeathList& list, bool score);
 #endif
 

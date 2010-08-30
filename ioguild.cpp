@@ -461,7 +461,7 @@ bool IOGuild::updateWar(War_t& war)
 	return db->query(query.str());
 }
 
-void IOGuild::finishWar(War_t& war, bool finished)
+void IOGuild::finishWar(War_t war, bool finished)
 {
 	Database* db = Database::getInstance();
 	DBQuery query;
