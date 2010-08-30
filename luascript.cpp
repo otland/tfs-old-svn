@@ -1405,13 +1405,13 @@ void LuaInterface::registerFunctions()
 	//getCreatureHealth(cid)
 	lua_register(m_luaState, "getCreatureHealth", LuaInterface::luaGetCreatureHealth);
 
-	//getCreatureMaxHealth(cid)
+	//getCreatureMaxHealth(cid[, ignoreModifiers = false])
 	lua_register(m_luaState, "getCreatureMaxHealth", LuaInterface::luaGetCreatureMaxHealth);
 
 	//getCreatureMana(cid)
 	lua_register(m_luaState, "getCreatureMana", LuaInterface::luaGetCreatureMana);
 
-	//getCreatureMaxMana(cid)
+	//getCreatureMaxMana(cid[, ignoreModifiers = false])
 	lua_register(m_luaState, "getCreatureMaxMana", LuaInterface::luaGetCreatureMaxMana);
 
 	//getCreatureHideHealth(cid)
@@ -1435,7 +1435,7 @@ void LuaInterface::registerFunctions()
 	//getPlayerExperience(cid)
 	lua_register(m_luaState, "getPlayerExperience", LuaInterface::luaGetPlayerExperience);
 
-	//getPlayerMagLevel(cid[, ignoreBuffs = false])
+	//getPlayerMagLevel(cid[, ignoreModifiers = false])
 	lua_register(m_luaState, "getPlayerMagLevel", LuaInterface::luaGetPlayerMagLevel);
 
 	//getPlayerSpentMana(cid)
@@ -1450,10 +1450,10 @@ void LuaInterface::registerFunctions()
 	//getPlayerGhostAccess(cid)
 	lua_register(m_luaState, "getPlayerGhostAccess", LuaInterface::luaGetPlayerGhostAccess);
 
-	//getPlayerSkillLevel(cid, skillid)
+	//getPlayerSkillLevel(cid, skill[, ignoreModifiers = false])
 	lua_register(m_luaState, "getPlayerSkillLevel", LuaInterface::luaGetPlayerSkillLevel);
 
-	//getPlayerSkillTries(cid, skillid)
+	//getPlayerSkillTries(cid, skill)
 	lua_register(m_luaState, "getPlayerSkillTries", LuaInterface::luaGetPlayerSkillTries);
 
 	//getPlayerTown(cid)
@@ -1477,7 +1477,7 @@ void LuaInterface::registerFunctions()
 	//getPlayerMoney(cid)
 	lua_register(m_luaState, "getPlayerMoney", LuaInterface::luaGetPlayerMoney);
 
-	//getPlayerSoul(cid)
+	//getPlayerSoul(cid[, ignoreModifiers = false])
 	lua_register(m_luaState, "getPlayerSoul", LuaInterface::luaGetPlayerSoul);
 
 	//getPlayerFreeCap(cid)
@@ -1684,7 +1684,7 @@ void LuaInterface::registerFunctions()
 	//doPlayerAddSpentMana(cid, amount[, useMultiplier = true])
 	lua_register(m_luaState, "doPlayerAddSpentMana", LuaInterface::luaDoPlayerAddSpentMana);
 
-	//doPlayerAddSoul(cid, soul)
+	//doPlayerAddSoul(cid, amount)
 	lua_register(m_luaState, "doPlayerAddSoul", LuaInterface::luaDoPlayerAddSoul);
 
 	//doPlayerAddItem(cid, itemid[, count/subtype = 1[, canDropOnMap = true[, slot = 0]]])
@@ -2610,8 +2610,8 @@ int32_t LuaInterface::internalGetPlayerInfo(lua_State* L, PlayerInfo_t info)
 		case PlayerInfoVocation:
 			value = player->getVocationId();
 			break;
-		case PlayerInfoSoul:
-			value = player->getSoul();
+		case PlayerInfoMoney:
+			value = g_game.getMoney(player);
 			break;
 		case PlayerInfoFreeCap:
 			value = (int64_t)player->getFreeCapacity();
@@ -2743,9 +2743,9 @@ int32_t LuaInterface::luaGetPlayerVocation(lua_State* L)
 	return internalGetPlayerInfo(L, PlayerInfoVocation);
 }
 
-int32_t LuaInterface::luaGetPlayerSoul(lua_State* L)
+int32_t LuaInterface::luaGetPlayerMoney(lua_State* L)
 {
-	return internalGetPlayerInfo(L, PlayerInfoSoul);
+	return internalGetPlayerInfo(L, PlayerInfoMoney);
 }
 
 int32_t LuaInterface::luaGetPlayerFreeCap(lua_State* L)
@@ -2956,14 +2956,14 @@ int32_t LuaInterface::luaDoPlayerSetSpecialDescription(lua_State* L)
 
 int32_t LuaInterface::luaGetPlayerMagLevel(lua_State* L)
 {
-	//getPlayerMagLevel(cid[, ignoreBuffs = false])
-	bool ignoreBuffs = false;
+	//getPlayerMagLevel(cid[, ignoreModifiers = false])
+	bool ignoreModifiers = false;
 	if(lua_gettop(L) > 1)
-		ignoreBuffs = popNumber(L);
+		ignoreModifiers = popNumber(L);
 
 	ScriptEnviroment* env = getEnv();
 	if(const Player* player = env->getPlayerByUID(popNumber(L)))
-		lua_pushnumber(L, (ignoreBuffs ? player->magLevel : player->getMagicLevel()));
+		lua_pushnumber(L, ignoreModifiers ? player->magLevel : player->getMagicLevel());
 	else
 	{
 		errorEx(getError(LUA_ERROR_PLAYER_NOT_FOUND));
@@ -4099,15 +4099,15 @@ int32_t LuaInterface::luaDoSendCreatureSquare(lua_State* L)
 			list.push_back(creature);
 	}
 
-        uint8_t color = popNumber(L);
+	uint8_t color = popNumber(L);
 	if(Creature* creature = env->getCreatureByUID(popNumber(L)))
 	{
-	        if(!list.empty())
-        	        g_game.addCreatureSquare(list, creature, color);
-	        else
-        	        g_game.addCreatureSquare(creature, color);
+		if(!list.empty())
+			g_game.addCreatureSquare(list, creature, color);
+		else
+			g_game.addCreatureSquare(creature, color);
 
-	        lua_pushboolean(L, true);
+		lua_pushboolean(L, true);
 	}
 	else
 	{
@@ -4115,7 +4115,7 @@ int32_t LuaInterface::luaDoSendCreatureSquare(lua_State* L)
 		lua_pushboolean(L, false);
 	}
 
-        return 1;
+	return 1;
 }
 
 int32_t LuaInterface::luaDoSendAnimatedText(lua_State* L)
@@ -4148,14 +4148,19 @@ int32_t LuaInterface::luaDoSendAnimatedText(lua_State* L)
 
 int32_t LuaInterface::luaGetPlayerSkillLevel(lua_State* L)
 {
-	//getPlayerSkillLevel(cid, skillid)
-	uint32_t skillId = popNumber(L);
+	//getPlayerSkillLevel(cid, skill[, ignoreModifiers = false])
+	bool ignoreModifiers = false;
+	if(lua_gettop(L) > 2)
+		ignoreModifiers = popNumber(L);
+
+	uint32_t skill = popNumber(L);
 
 	ScriptEnviroment* env = getEnv();
 	if(const Player* player = env->getPlayerByUID(popNumber(L)))
 	{
 		if(skillId <= SKILL_LAST)
-			lua_pushnumber(L, player->skills[skillId][SKILL_LEVEL]);
+			lua_pushnumber(L, ignoreModifiers ? player->skills[skill][SKILL_LEVEL] :
+				player->skills[skill][SKILL_LEVEL] + player->getVarSkill(skill)));
 		else
 			lua_pushboolean(L, false);
 	}
@@ -4170,14 +4175,14 @@ int32_t LuaInterface::luaGetPlayerSkillLevel(lua_State* L)
 
 int32_t LuaInterface::luaGetPlayerSkillTries(lua_State* L)
 {
-	//getPlayerSkillTries(cid, skillid)
-	uint32_t skillid = popNumber(L);
+	//getPlayerSkillTries(cid, skill)
+	uint32_t skill = popNumber(L);
 
 	ScriptEnviroment* env = getEnv();
 	if(const Player* player = env->getPlayerByUID(popNumber(L)))
 	{
 		if(skillid <= SKILL_LAST)
-			lua_pushnumber(L, player->skills[skillid][SKILL_TRIES]);
+			lua_pushnumber(L, player->skills[skill][SKILL_TRIES]);
 		else
 			lua_pushboolean(L, false);
 	}
@@ -5101,13 +5106,13 @@ int32_t LuaInterface::luaDoPlayerSetSex(lua_State* L)
 
 int32_t LuaInterface::luaDoPlayerAddSoul(lua_State* L)
 {
-	//doPlayerAddSoul(cid, soul)
-	int32_t soul = popNumber(L);
+	//doPlayerAddSoul(cid, amount)
+	int32_t amount = popNumber(L);
 
 	ScriptEnviroment* env = getEnv();
 	if(Player* player = env->getPlayerByUID(popNumber(L)))
 	{
-		player->changeSoul(soul);
+		player->changeSoul(amount);
 		lua_pushboolean(L, true);
 	}
 	else
@@ -5130,21 +5135,6 @@ int32_t LuaInterface::luaGetPlayerItemCount(lua_State* L)
 	ScriptEnviroment* env = getEnv();
 	if(const Player* player = env->getPlayerByUID(popNumber(L)))
 		lua_pushnumber(L, player->__getItemTypeCount(itemId, subType));
-	else
-	{
-		errorEx(getError(LUA_ERROR_PLAYER_NOT_FOUND));
-		lua_pushboolean(L, false);
-	}
-
-	return 1;
-}
-
-int32_t LuaInterface::luaGetPlayerMoney(lua_State* L)
-{
-	//getPlayerMoney(cid)
-	ScriptEnviroment* env = getEnv();
-	if(Player* player = env->getPlayerByUID(popNumber(L)))
-		lua_pushnumber(L, g_game.getMoney(player));
 	else
 	{
 		errorEx(getError(LUA_ERROR_PLAYER_NOT_FOUND));
@@ -5392,6 +5382,25 @@ int32_t LuaInterface::luaGetPlayerLight(lua_State* L)
 	}
 }
 
+int32_t LuaInterface::luaGetPlayerMagLevel(lua_State* L)
+{
+	//getPlayerSoul(cid[, ignoreModifiers = false])
+	bool ignoreModifiers = false;
+	if(lua_gettop(L) > 1)
+		ignoreModifiers = popNumber(L);
+
+	ScriptEnviroment* env = getEnv();
+	if(const Player* player = env->getPlayerByUID(popNumber(L)))
+		lua_pushnumber(L, ignoreModifiers ? player->soul : player->getSoul());
+	else
+	{
+		errorEx(getError(LUA_ERROR_PLAYER_NOT_FOUND));
+		lua_pushboolean(L, false);
+	}
+
+	return 1;
+}
+
 int32_t LuaInterface::luaDoPlayerAddExperience(lua_State* L)
 {
 	//doPlayerAddExperience(cid, amount)
@@ -5629,6 +5638,12 @@ bool LuaInterface::getArea(lua_State* L, std::list<uint32_t>& list, uint32_t& ro
 	rows = 0;
 	uint32_t i = 0;
 
+	if(!lua_istable(L, -1))
+	{
+		errorEx("Object on the stack is not a table.");
+		return false;
+	}
+
 	lua_pushnil(L);
 	while(lua_next(L, -2))
 	{
@@ -5670,13 +5685,6 @@ int32_t LuaInterface::luaCreateCombatArea(lua_State* L)
 		getArea(L, listExtArea, rowsExtArea);
 		/*setup all possible rotations*/
 		area->setupExtArea(listExtArea, rowsExtArea);
-	}
-
-	if(lua_isnoneornil(L, -1)) //prevent crash
-	{
-		lua_pop(L, 2);
-		lua_pushboolean(L, false);
-		return 1;
 	}
 
 	uint32_t rowsArea = 0;
@@ -8609,10 +8617,14 @@ int32_t LuaInterface::luaGetCreatureMana(lua_State* L)
 
 int32_t LuaInterface::luaGetCreatureMaxMana(lua_State* L)
 {
-	//getCreatureMaxMana(cid)
+	//getCreatureMaxMana(cid[, ignoreModifiers = false])
+	bool ignoreModifiers = false;
+	if(lua_gettop(L) > 1)
+		ignoreModifiers = popNumber(L);
+
 	ScriptEnviroment* env = getEnv();
 	if(Creature* creature = env->getCreatureByUID(popNumber(L)))
-		lua_pushnumber(L, creature->getMaxMana());
+		lua_pushnumber(L, creature->getPlayer() && ignoreModifiers ? creature->manaMax : creature->getMaxMana());
 	else
 	{
 		errorEx(getError(LUA_ERROR_CREATURE_NOT_FOUND));
@@ -8655,10 +8667,15 @@ int32_t LuaInterface::luaGetCreatureLookDirection(lua_State* L)
 
 int32_t LuaInterface::luaGetCreatureMaxHealth(lua_State* L)
 {
-	//getCreatureMaxHealth(cid)
+	//getCreatureMaxHealth(cid[, ignoreModifiers = false])
+	bool ignoreModifiers = false;
+	if(lua_gettop(L) > 1)
+		ignoreModifiers = popNumber(L);
+
 	ScriptEnviroment* env = getEnv();
 	if(Creature* creature = env->getCreatureByUID(popNumber(L)))
-		lua_pushnumber(L, creature->getMaxHealth());
+		lua_pushnumber(L, creature->getPlayer() && ignoreModifiers ? creature->healthMax : creature->getMaxHealth());
+	}
 	else
 	{
 		errorEx(getError(LUA_ERROR_CREATURE_NOT_FOUND));

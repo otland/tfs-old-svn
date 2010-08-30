@@ -733,7 +733,7 @@ class LuaInterface
 			PlayerInfoVocation,
 			PlayerInfoTown,
 			PlayerInfoPromotionLevel,
-			PlayerInfoSoul,
+			PlayerInfoMoney,
 			PlayerInfoFreeCap,
 			PlayerInfoGuildId,
 			PlayerInfoGuildName,
