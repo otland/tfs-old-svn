@@ -18,6 +18,6 @@ function onStepIn(cid, item, position, lastPosition, fromPosition, toPosition, a
 		doSendMagicEffect(fromPosition, CONST_ME_TELEPORT)
 	end
 
-	doTeleportThing(cid, fromPosition, true)
+	doTeleportThing(cid, lastPosition, true)
 	return true
 end

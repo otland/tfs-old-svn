@@ -51,7 +51,7 @@ enum ITEMPROPERTY
 	BLOCKPATH,
 	ISVERTICAL,
 	ISHORIZONTAL,
-	MOVEABLE,
+	MOVABLE,
 	IMMOVABLEBLOCKSOLID,
 	IMMOVABLEBLOCKPATH,
 	IMMOVABLENOFIELDBLOCKPATH,
@@ -282,7 +282,7 @@ class Item : virtual public Thing, public ItemAttributes
 		virtual bool canTransform() const {return true;}
 		bool canWriteText() const {return items[id].canWriteText;}
 
-		virtual bool isPushable() const {return isMoveable();}
+		virtual bool isPushable() const {return isMovable();}
 		virtual bool isBlocking(const Creature*) const {return items[id].blockSolid;}
 		bool isGroundTile() const {return items[id].isGroundTile();}
 		bool isContainer() const {return items[id].isContainer();}
@@ -299,9 +299,9 @@ class Item : virtual public Thing, public ItemAttributes
 		bool isRune() const {return items[id].isRune();}
 		bool isStackable() const {return items[id].stackable;}
 		bool isAlwaysOnTop() const {return items[id].alwaysOnTop;}
-		bool isMoveable() const {return items[id].moveable;}
+		bool isMovable() const {return items[id].movable;}
 		bool isPickupable() const {return items[id].pickupable;}
-		bool isUseable() const {return items[id].useable;}
+		bool isUsable() const {return items[id].usable;}
 		bool isHangable() const {return items[id].isHangable;}
 		bool isRoteable() const {const ItemType& it = items[id]; return it.rotable && it.rotateTo;}
 		bool isWeapon() const {return (items[id].weaponType != WEAPON_NONE);}

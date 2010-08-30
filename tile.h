@@ -164,7 +164,6 @@ class Tile : public Cylinder
 		Creature* getTopCreature();
 		Item* getTopTopItem();
 		Item* getTopDownItem();
-		bool isMoveableBlocking() const;
 		Thing* getTopVisibleThing(const Creature* creature);
 		Creature* getTopVisibleCreature(const Creature* creature);
 		const Creature* getTopVisibleCreature(const Creature* creature) const;

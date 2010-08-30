@@ -36,9 +36,9 @@ ItemType::ItemType()
 {
 	group = ITEM_GROUP_NONE;
 	type = ITEM_TYPE_NONE;
-	stackable = useable = alwaysOnTop = lookThrough = pickupable = rotable = hasHeight = forceSerialize = false;
+	stackable = usable = alwaysOnTop = lookThrough = pickupable = rotable = hasHeight = forceSerialize = false;
 	blockSolid = blockProjectile = blockPathFind = allowPickupable = false;
-	moveable = walkStack = true;
+	movable = walkStack = true;
 	alwaysOnTopOrder = 0;
 	rotateTo = 0;
 
@@ -88,7 +88,7 @@ ItemType::ItemType()
 	condition = NULL;
 	combatType = COMBAT_NONE;
 
-	replaceable = true;
+	replacable = true;
 	worth = 0;
 
 	bedPartnerDir = NORTH;
@@ -231,9 +231,9 @@ int32_t Items::loadFromOtb(std::string file)
 		iType->blockProjectile = hasBitSet(FLAG_BLOCK_PROJECTILE, flags);
 		iType->blockPathFind = hasBitSet(FLAG_BLOCK_PATHFIND, flags);
 		iType->hasHeight = hasBitSet(FLAG_HAS_HEIGHT, flags);
-		iType->useable = hasBitSet(FLAG_USEABLE, flags);
+		iType->usable = hasBitSet(FLAG_USABLE, flags);
 		iType->pickupable = hasBitSet(FLAG_PICKUPABLE, flags);
-		iType->moveable = hasBitSet(FLAG_MOVEABLE, flags);
+		iType->movable = hasBitSet(FLAG_MOVABLE, flags);
 		iType->stackable = hasBitSet(FLAG_STACKABLE, flags);
 
 		iType->alwaysOnTop = hasBitSet(FLAG_ALWAYSONTOP, flags);
@@ -628,10 +628,10 @@ void Items::parseItemNode(xmlNodePtr itemNode, uint32_t id)
 				if(readXMLInteger(itemAttributesNode, "value", intValue))
 					it.rotateTo = intValue;
 			}
-			else if(tmpStrValue == "moveable" || tmpStrValue == "movable")
+			else if(tmpStrValue == "movable" || tmpStrValue == "moveable")
 			{
 				if(readXMLInteger(itemAttributesNode, "value", intValue))
-					it.moveable = (intValue != 0);
+					it.movable = (intValue != 0);
 			}
 			else if(tmpStrValue == "blockprojectile")
 			{
@@ -1694,10 +1694,10 @@ void Items::parseItemNode(xmlNodePtr itemNode, uint32_t id)
 					it.abilities.elementType = COMBAT_UNDEFINEDDAMAGE;
 				}
 			}
-			else if(tmpStrValue == "replaceable" || tmpStrValue == "replacable")
+			else if(tmpStrValue == "replacable" || tmpStrValue == "replaceable")
 			{
 				if(readXMLInteger(itemAttributesNode, "value", intValue))
-					it.replaceable = (intValue != 0);
+					it.replacable = (intValue != 0);
 			}
 			else if(tmpStrValue == "partnerdirection")
 			{

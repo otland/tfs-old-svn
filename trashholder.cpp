@@ -26,7 +26,7 @@ void TrashHolder::__addThing(Creature* actor, int32_t, Thing* thing)
 {
 	if(Item* item = thing->getItem())
 	{
-		if(item == this || !item->isMoveable())
+		if(item == this || !item->isMovable())
 			return;
 
 		if(g_game.isSwimmingPool(this, getTile(), true))

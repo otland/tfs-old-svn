@@ -900,7 +900,7 @@ void Monster::pushItems(Tile* tile)
 	for(int32_t i = downItemsSize - 1; i >= 0; --i)
 	{
 		assert(i >= 0 && i < downItemsSize);
-		if((item = items->at(i)) && item->hasProperty(MOVEABLE) &&
+		if((item = items->at(i)) && item->hasProperty(MOVABLE) &&
 			(item->hasProperty(BLOCKPATH) || item->hasProperty(BLOCKSOLID)))
 		{
 			if(moveCount < 20 && pushItem(item, 1))

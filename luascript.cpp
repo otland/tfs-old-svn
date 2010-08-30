@@ -1736,7 +1736,7 @@ void LuaInterface::registerFunctions()
 	lua_register(m_luaState, "doAddContainerItemEx", LuaInterface::luaDoAddContainerItemEx);
 
 	//doRelocate(pos, posTo[, creatures = true[, unmovable = true]])
-	//Moves all moveable objects from pos to posTo
+	//Moves all movable objects from pos to posTo
 	lua_register(m_luaState, "doRelocate", LuaInterface::luaDoRelocate);
 
 	//doCleanTile(pos[, forceMapLoaded = false])
@@ -3905,7 +3905,7 @@ int32_t LuaInterface::luaDoTileAddItemEx(lua_State* L)
 int32_t LuaInterface::luaDoRelocate(lua_State* L)
 {
 	//doRelocate(pos, posTo[, creatures = true[, unmovable = true]])
-	//Moves all moveable objects from pos to posTo
+	//Moves all movable objects from pos to posTo
 	bool unmovable = true, creatures = true;
 	int32_t params = lua_gettop(L);
 	if(params > 3)
@@ -3946,7 +3946,7 @@ int32_t LuaInterface::luaDoRelocate(lua_State* L)
 				{
 					const ItemType& it = Item::items[item->getID()];
 					if(!it.isGroundTile() && !it.alwaysOnTop && !it.isMagicField())
-						g_game.internalTeleport(item, toPos, true, unmovable ? FLAG_IGNORENOTMOVEABLE : 0);
+						g_game.internalTeleport(item, toPos, true, unmovable ? FLAG_IGNORENOTMOVABLE : 0);
 				}
 				else if(creatures)
 				{
@@ -4346,7 +4346,7 @@ int32_t LuaInterface::luaGetThingFromPos(lua_State* L)
 			if(!(thing = tile->getTopCreature()))
 			{
 				Item* item = tile->getTopDownItem();
-				if(item && item->isMoveable())
+				if(item && item->isMovable())
 					thing = item;
 			}
 		}
@@ -9617,11 +9617,11 @@ int32_t LuaInterface::luaGetItemInfo(lua_State* L)
 	setFieldBool(L, "vertical", item->isVertical);
 	setFieldBool(L, "horizontal", item->isHorizontal);
 	setFieldBool(L, "hangable", item->isHangable);
-	setFieldBool(L, "usable", item->useable);
-	setFieldBool(L, "movable", item->moveable);
+	setFieldBool(L, "usable", item->usable);
+	setFieldBool(L, "movable", item->movable);
 	setFieldBool(L, "pickupable", item->pickupable);
 	setFieldBool(L, "rotable", item->rotable);
-	setFieldBool(L, "replacable", item->replaceable);
+	setFieldBool(L, "replacable", item->replacable);
 	setFieldBool(L, "hasHeight", item->hasHeight);
 	setFieldBool(L, "blockSolid", item->blockSolid);
 	setFieldBool(L, "blockPickupable", item->blockPickupable);

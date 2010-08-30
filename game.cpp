@@ -327,7 +327,7 @@ void Game::cleanMapEx(uint32_t& count)
 				tit = tile->getItemList()->begin();
 				while(tile->getItemList() && tit != tile->getItemList()->end())
 				{
-					if((*tit)->isMoveable() && !(*tit)->isLoadedFromMap()
+					if((*tit)->isMovable() && !(*tit)->isLoadedFromMap()
 						&& !(*tit)->isScriptProtected())
 					{
 						internalRemoveItem(NULL, *tit);
@@ -358,7 +358,7 @@ void Game::cleanMapEx(uint32_t& count)
 				tit = tile->getItemList()->begin();
 				while(tile->getItemList() && tit != tile->getItemList()->end())
 				{
-					if((*tit)->isMoveable() && !(*tit)->isLoadedFromMap()
+					if((*tit)->isMovable() && !(*tit)->isLoadedFromMap()
 						&& !(*tit)->isScriptProtected())
 					{
 						internalRemoveItem(NULL, *tit);
@@ -390,7 +390,7 @@ void Game::cleanMapEx(uint32_t& count)
 					tit = tile->getItemList()->begin();
 					while(tile->getItemList() && tit != tile->getItemList()->end())
 					{
-						if((*tit)->isMoveable() && !(*tit)->isLoadedFromMap()
+						if((*tit)->isMovable() && !(*tit)->isLoadedFromMap()
 							&& !(*tit)->isScriptProtected())
 						{
 							internalRemoveItem(NULL, *tit);
@@ -421,7 +421,7 @@ void Game::cleanMapEx(uint32_t& count)
 					tit = tile->getItemList()->begin();
 					while(tile->getItemList() && tit != tile->getItemList()->end())
 					{
-						if((*tit)->isMoveable() && !(*tit)->isLoadedFromMap()
+						if((*tit)->isMovable() && !(*tit)->isLoadedFromMap()
 							&& !(*tit)->isScriptProtected())
 						{
 							internalRemoveItem(NULL, *tit);
@@ -580,7 +580,7 @@ Thing* Game::internalGetThing(Player* player, const Position& pos, int32_t index
 			case STACKPOS_MOVE:
 			{
 				Item* item = tile->getTopDownItem();
-				if(item && item->isMoveable())
+				if(item && item->isMovable())
 					thing = item;
 				else
 					thing = tile->getTopVisibleCreature(player);
@@ -1113,7 +1113,7 @@ bool Game::playerMoveCreature(uint32_t playerId, uint32_t movingCreatureId,
 
 	if((!movingCreature->isPushable() && !player->hasFlag(PlayerFlag_CanPushAllCreatures)) || !player->canSeeCreature(movingCreature))
 	{
-		player->sendCancelMessage(RET_NOTMOVEABLE);
+		player->sendCancelMessage(RET_NOTMOVABLE);
 		return false;
 	}
 
@@ -1146,7 +1146,7 @@ bool Game::playerMoveCreature(uint32_t playerId, uint32_t movingCreatureId,
 
 			if(MagicField* field = toTile->getFieldItem())
 			{
-				if(field->isBlocking(movingCreature) || !movingCreature->isImmune(field->getCombatType()))
+				if(field->isUnstepable() || !movingCreature->isImmune(field->getCombatType()))
 				{
 					player->sendCancelMessage(RET_NOTPOSSIBLE);
 					return false;
@@ -1160,7 +1160,7 @@ bool Game::playerMoveCreature(uint32_t playerId, uint32_t movingCreatureId,
 				if(movingPlayer && movingPlayer->getLevel() >= protectionLevel
 					&& movingPlayer->getVocation()->isAttackable())
 				{
-					player->sendCancelMessage(RET_NOTMOVEABLE);
+					player->sendCancelMessage(RET_NOTMOVABLE);
 					return false;
 				}
 			}
@@ -1342,7 +1342,7 @@ bool Game::playerMoveItem(uint32_t playerId, const Position& fromPos,
 	if(!player->hasCustomFlag(PlayerCustomFlag_CanPushAllItems) && (!item->isPushable() || (item->isLoadedFromMap() &&
 		(item->getUniqueId() != 0 || (item->getActionId() != 0 && item->getContainer())))))
 	{
-		player->sendCancelMessage(RET_NOTMOVEABLE);
+		player->sendCancelMessage(RET_NOTMOVABLE);
 		return false;
 	}
 
@@ -1714,7 +1714,7 @@ ReturnValue Game::internalRemoveItem(Creature* actor, Item* item, int32_t count 
 		count = item->getItemCount();
 
 	//check if we can remove this item
-	ReturnValue ret = cylinder->__queryRemove(item, count, flags | FLAG_IGNORENOTMOVEABLE);
+	ReturnValue ret = cylinder->__queryRemove(item, count, flags | FLAG_IGNORENOTMOVABLE);
 	if(ret != RET_NOERROR)
 		return ret;
 
@@ -2479,7 +2479,7 @@ bool Game::playerUseItemEx(uint32_t playerId, const Position& fromPos, int16_t f
 	}
 
 	Item* item = thing->getItem();
-	if(!item || !item->isUseable())
+	if(!item || !item->isUsable())
 	{
 		player->sendCancelMessage(RET_CANNOTUSETHISOBJECT);
 		return false;
@@ -2572,7 +2572,7 @@ bool Game::playerUseItem(uint32_t playerId, const Position& pos, int16_t stackpo
 	}
 
 	Item* item = thing->getItem();
-	if(!item || item->isUseable())
+	if(!item || item->isUsable())
 	{
 		player->sendCancelMessage(RET_CANNOTUSETHISOBJECT);
 		return false;

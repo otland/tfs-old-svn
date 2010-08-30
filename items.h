@@ -134,7 +134,7 @@ class ItemType
 
 		bool stopTime, showCount, stackable, showDuration, showCharges, showAttributes, dualWield,
 			allowDistRead, canReadText, canWriteText, forceSerialize, isVertical, isHorizontal, isHangable,
-			useable, moveable, pickupable, rotable, replaceable, lookThrough, walkStack, hasHeight, blockSolid,
+			usable, movable, pickupable, rotable, replacable, lookThrough, walkStack, hasHeight, blockSolid,
 			blockPickupable, blockProjectile, blockPathFind, allowPickupable, alwaysOnTop, floorChange[CHANGE_LAST];
 
 		MagicEffect_t magicEffect;
