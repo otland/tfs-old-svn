@@ -4158,9 +4158,9 @@ int32_t LuaInterface::luaGetPlayerSkillLevel(lua_State* L)
 	ScriptEnviroment* env = getEnv();
 	if(const Player* player = env->getPlayerByUID(popNumber(L)))
 	{
-		if(skillId <= SKILL_LAST)
+		if(skill <= SKILL_LAST)
 			lua_pushnumber(L, ignoreModifiers ? player->skills[skill][SKILL_LEVEL] :
-				player->skills[skill][SKILL_LEVEL] + player->getVarSkill(skill)));
+				player->skills[skill][SKILL_LEVEL] + player->getVarSkill((skills_t)skill));
 		else
 			lua_pushboolean(L, false);
 	}
@@ -4181,7 +4181,7 @@ int32_t LuaInterface::luaGetPlayerSkillTries(lua_State* L)
 	ScriptEnviroment* env = getEnv();
 	if(const Player* player = env->getPlayerByUID(popNumber(L)))
 	{
-		if(skillid <= SKILL_LAST)
+		if(skill <= SKILL_LAST)
 			lua_pushnumber(L, player->skills[skill][SKILL_TRIES]);
 		else
 			lua_pushboolean(L, false);
@@ -5382,7 +5382,7 @@ int32_t LuaInterface::luaGetPlayerLight(lua_State* L)
 	}
 }
 
-int32_t LuaInterface::luaGetPlayerMagLevel(lua_State* L)
+int32_t LuaInterface::luaGetPlayerSoul(lua_State* L)
 {
 	//getPlayerSoul(cid[, ignoreModifiers = false])
 	bool ignoreModifiers = false;
@@ -8675,7 +8675,6 @@ int32_t LuaInterface::luaGetCreatureMaxHealth(lua_State* L)
 	ScriptEnviroment* env = getEnv();
 	if(Creature* creature = env->getCreatureByUID(popNumber(L)))
 		lua_pushnumber(L, creature->getPlayer() && ignoreModifiers ? creature->healthMax : creature->getMaxHealth());
-	}
 	else
 	{
 		errorEx(getError(LUA_ERROR_CREATURE_NOT_FOUND));
