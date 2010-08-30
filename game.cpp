@@ -1138,9 +1138,10 @@ bool Game::playerMoveCreature(uint32_t playerId, uint32_t movingCreatureId,
 
 		if(!player->hasFlag(PlayerFlag_CanPushAllCreatures))
 		{
-			if(movingCreature->getTile()->ground && !Item::items[movingCreature->getTile()->ground->getID()].walkStack)
+			if(toTile->hasProperty(BLOCKPATH) || (toTile->getCreatureCount() &&
+				!Item::items[movingCreature->getTile()->ground->getID()].walkStack))
 			{
-				player->sendCancelMessage(RET_NOTPOSSIBLE);
+				player->sendCancelMessage(RET_NOTENOUGHROOM);
 				return false;
 			}
 
@@ -1195,8 +1196,7 @@ bool Game::playerMoveCreature(uint32_t playerId, uint32_t movingCreatureId,
 
 		internalTeleport(movingCreature, toTile->getPosition(), false);
 	}
-
-	if(Player* movingPlayer = movingCreature->getPlayer())
+	else if(Player* movingPlayer = movingCreature->getPlayer())
 	{
 		uint64_t delay = OTSYS_TIME() + movingPlayer->getStepDuration();
 		if(delay > movingPlayer->getNextActionTime())
