@@ -26,9 +26,8 @@
 #include "outputmessage.h"
 
 #include "tools.h"
-#include "rsa.h"
-
-extern RSA g_RSA;
+#include <openssl/rsa.h>
+extern RSA *g_RSA;
 
 void Protocol::onSendMessage(OutputMessage_ptr msg)
 {
@@ -191,11 +190,6 @@ bool Protocol::XTEA_decrypt(NetworkMessage& msg)
 
 bool Protocol::RSA_decrypt(NetworkMessage& msg)
 {
-	return RSA_decrypt(&g_RSA, msg);
-}
-
-bool Protocol::RSA_decrypt(RSA* rsa, NetworkMessage& msg)
-{
 	if(msg.size() - msg.position() != 128)
 	{
 		std::clog << "[Warning - Protocol::RSA_decrypt] Not valid packet size";
@@ -206,8 +200,13 @@ bool Protocol::RSA_decrypt(RSA* rsa, NetworkMessage& msg)
 		std::clog << std::endl;
 		return false;
 	}
-
-	rsa->decrypt((char*)(msg.buffer() + msg.position()));
+	// Use OpenSSL to decrypt the packet
+	RSA_private_decrypt(128, ((const unsigned char*)(msg.buffer() + msg.position())), msg.m_buffer, g_RSA, RSA_NO_PADDING);
+	
+	// Reset the packet since we just overwrote the data
+	msg.setSize(128);
+	msg.setPosition(0);
+	
 	if(!msg.get<char>())
 		return true;
 

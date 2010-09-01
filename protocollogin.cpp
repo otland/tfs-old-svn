@@ -19,7 +19,6 @@
 
 #include "protocollogin.h"
 #include "tools.h"
-#include "rsa.h"
 
 #include "iologindata.h"
 #include "ioban.h"

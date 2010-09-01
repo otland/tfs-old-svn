@@ -18,7 +18,6 @@
 #ifndef __PROTOCOL__
 #define __PROTOCOL__
 #include "otsystem.h"
-#include "rsa.h"
 
 class OutputMessage;
 typedef boost::shared_ptr<OutputMessage> OutputMessage_ptr;
@@ -26,7 +25,6 @@ typedef boost::shared_ptr<OutputMessage> OutputMessage_ptr;
 class Connection;
 typedef boost::shared_ptr<Connection> Connection_ptr;
 
-class RSA;
 class NetworkMessage;
 
 class Protocol : boost::noncopyable
@@ -74,7 +72,6 @@ class Protocol : boost::noncopyable
 		void XTEA_encrypt(OutputMessage& msg);
 		bool XTEA_decrypt(NetworkMessage& msg);
 		bool RSA_decrypt(NetworkMessage& msg);
-		bool RSA_decrypt(RSA* rsa, NetworkMessage& msg);
 
 		virtual void releaseProtocol();
 		virtual void deleteProtocolTask();

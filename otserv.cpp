@@ -38,7 +38,10 @@
 #include "game.h"
 #include "chat.h"
 #include "tools.h"
-#include "rsa.h"
+#include <openssl/rsa.h>
+#include <openssl/bn.h>
+#include <openssl/err.h>
+
 
 #include "protocollogin.h"
 #include "protocolgame.h"
@@ -86,7 +89,8 @@ ConfigManager g_config;
 Game g_game;
 Monsters g_monsters;
 Npcs g_npcs;
-RSA g_RSA;
+RSA *g_RSA;
+
 Chat g_chat;
 
 boost::mutex g_loaderLock;
@@ -539,11 +543,24 @@ void otserv(StringVec, ServiceManager* services)
 		std::clog << "failed - could not parse remote file (are you connected to any network?)" << std::endl;
 
 	std::clog << ">> Loading RSA key" << std::endl;
-	const char* p("14299623962416399520070177382898895550795403345466153217470516082934737582776038882967213386204600674145392845853859217990626450972452084065728686565928113");
-	const char* q("7630979195970404721891201847792002125535401292779123937207447574596692788513647179235335529307251350570728407373705564708871762033017096809910315212884101");
-	const char* d("46730330223584118622160180015036832148732986808519344675210555262940258739805766860224610646919605860206328024326703361630109888417839241959507572247284807035235569619173792292786907845791904955103601652822519121908367187885509270025388641700821735345222087940578381210879116823013776808975766851829020659073");
 
-	g_RSA.initialize(p, q, d);
+	g_RSA = RSA_new();
+	BN_dec2bn(&g_RSA->p, g_config.getString(ConfigManager::RSA_PRIME1).c_str());
+	BN_dec2bn(&g_RSA->q, g_config.getString(ConfigManager::RSA_PRIME2).c_str());
+	BN_dec2bn(&g_RSA->d, g_config.getString(ConfigManager::RSA_PRIVATE).c_str());
+	BN_dec2bn(&g_RSA->n, g_config.getString(ConfigManager::RSA_PUBLIC).c_str());
+	BN_dec2bn(&g_RSA->e, "65537");
+	// TODO: dmp1, dmq1, iqmp?
+	
+	// This check will vertify new keys added to config.lua
+	if(!RSA_check_key(g_RSA)) {
+		ERR_load_crypto_strings();
+		std::clog << "OpenSSL failed:" << std::endl;
+		startupErrorMessage(ERR_error_string(ERR_get_error(), NULL));
+	}
+		
+
+	
 	std::clog << ">> Starting SQL connection" << std::endl;
 
 	Database* db = Database::getInstance();
