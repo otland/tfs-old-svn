@@ -29,6 +29,10 @@
 #endif
 #include <boost/config.hpp>
 
+#include <openssl/rsa.h>
+#include <openssl/bn.h>
+#include <openssl/err.h>
+
 #include "server.h"
 #ifdef __LOGIN_SERVER__
 #include "gameservers.h"
@@ -38,10 +42,6 @@
 #include "game.h"
 #include "chat.h"
 #include "tools.h"
-#include <openssl/rsa.h>
-#include <openssl/bn.h>
-#include <openssl/err.h>
-
 
 #include "protocollogin.h"
 #include "protocolgame.h"
@@ -89,7 +89,7 @@ ConfigManager g_config;
 Game g_game;
 Monsters g_monsters;
 Npcs g_npcs;
-RSA *g_RSA;
+RSA* g_RSA;
 
 Chat g_chat;
 
@@ -394,7 +394,7 @@ void otserv(StringVec, ServiceManager* services)
 	path = g_config.getString(ConfigManager::LOGS_DIRECTORY);
 	g_config.setString(ConfigManager::LOGS_DIRECTORY, path.erase(path.find_last_not_of("/") + 1) + "/");
 
-	std::clog << ">> Opening logs" << std::endl;
+	std::clog << "> Opening logs" << std::endl;
 	Logger::getInstance()->open();
 
 	IntegerVec cores = vectorAtoi(explodeString(g_config.getString(ConfigManager::CORES_USED), ","));
@@ -543,26 +543,27 @@ void otserv(StringVec, ServiceManager* services)
 		std::clog << "failed - could not parse remote file (are you connected to any network?)" << std::endl;
 
 	std::clog << ">> Loading RSA key" << std::endl;
-
 	g_RSA = RSA_new();
+
 	BN_dec2bn(&g_RSA->p, g_config.getString(ConfigManager::RSA_PRIME1).c_str());
 	BN_dec2bn(&g_RSA->q, g_config.getString(ConfigManager::RSA_PRIME2).c_str());
 	BN_dec2bn(&g_RSA->d, g_config.getString(ConfigManager::RSA_PRIVATE).c_str());
-	BN_dec2bn(&g_RSA->n, g_config.getString(ConfigManager::RSA_PUBLIC).c_str());
-	BN_dec2bn(&g_RSA->e, "65537");
+	BN_dec2bn(&g_RSA->n, g_config.getString(ConfigManager::RSA_MODULUS).c_str());
+	BN_dec2bn(&g_RSA->e, g_config.getString(ConfigManager::RSA_PUBLIC).c_str());
 	// TODO: dmp1, dmq1, iqmp?
 	
-	// This check will vertify new keys added to config.lua
-	if(!RSA_check_key(g_RSA)) {
+	// This check will verify keys set in config.lua
+	if(!RSA_check_key(g_RSA))
+	{
+		std::stringstream s;
+		s << "OpenSSL failed - ";
+	
 		ERR_load_crypto_strings();
-		std::clog << "OpenSSL failed:" << std::endl;
-		startupErrorMessage(ERR_error_string(ERR_get_error(), NULL));
+		s << ERR_error_string(ERR_get_error(), NULL);
+		startupErrorMessage(s.str());
 	}
-		
-
 	
 	std::clog << ">> Starting SQL connection" << std::endl;
-
 	Database* db = Database::getInstance();
 	if(db && db->isConnected())
 	{

@@ -20,14 +20,14 @@
 #endif
 
 #include "protocol.h"
-#include "scheduler.h"
+#include "tools.h"
 
+#include "scheduler.h"
 #include "connection.h"
 #include "outputmessage.h"
 
-#include "tools.h"
 #include <openssl/rsa.h>
-extern RSA *g_RSA;
+extern RSA* g_RSA;
 
 void Protocol::onSendMessage(OutputMessage_ptr msg)
 {
@@ -200,13 +200,12 @@ bool Protocol::RSA_decrypt(NetworkMessage& msg)
 		std::clog << std::endl;
 		return false;
 	}
-	// Use OpenSSL to decrypt the packet
-	RSA_private_decrypt(128, ((const unsigned char*)(msg.buffer() + msg.position())), msg.m_buffer, g_RSA, RSA_NO_PADDING);
-	
-	// Reset the packet since we just overwrote the data
-	msg.setSize(128);
+
+	uint16_t size = msg.size();
+	RSA_private_decrypt(128, (uint8_t*)(msg.buffer() + msg.position()), (uint8_t*)msg.buffer(), g_RSA, RSA_NO_PADDING);
+	msg.setSize(size);
+
 	msg.setPosition(0);
-	
 	if(!msg.get<char>())
 		return true;
 

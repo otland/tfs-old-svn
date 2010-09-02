@@ -107,11 +107,11 @@ class Vocation
 		void setSkillMultiplier(skills_t s, float v) {skillMultipliers[s] = v;}
 		void setSkillBase(skills_t s, uint32_t v) {skillBase[s] = v;}
 
-		uint32_t getReqSkillTries(int32_t skill, int32_t level);
+		uint64_t getReqSkillTries(int32_t skill, int32_t level);
 		uint64_t getReqMana(uint32_t magLevel);
 
 	private:
-		typedef std::map<uint32_t, uint32_t> cacheMap;
+		typedef std::map<uint32_t, uint64_t> cacheMap;
 		cacheMap cacheSkill[SKILL_LAST + 1];
 		cacheMap cacheMana;
 

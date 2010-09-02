@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <CodeBlocks_project_file>
-	<FileVersion major="1" minor="6" />
+	<FileVersion major="1" minor="7" />
 	<Project>
 		<Option title="TheForgottenServer" />
 		<Option pch_mode="0" />
@@ -33,6 +33,8 @@
 					<Add option="-lboost_thread" />
 					<Add option="-lboost_regex" />
 					<Add option="-lz" />
+					<Add option="-lcryptopp" />
+					<Add option="-leay32" />
 					<Add option="-lwsock32" />
 					<Add option="-lws2_32" />
 					<Add option="-Wl,-Map=C:\theforgottenserver\theforgottenserver.map" />
@@ -62,6 +64,8 @@
 					<Add option="-lboost_thread" />
 					<Add option="-lboost_regex" />
 					<Add option="-lz" />
+					<Add option="-lcryptopp" />
+					<Add option="-leay32" />
 					<Add option="-lwsock32" />
 					<Add option="-lws2_32" />
 				</Linker>
@@ -74,12 +78,12 @@
 		</VirtualTargets>
 		<Compiler>
 			<Add option="-Wall" />
+			<Add option="-Wextra" />
+			<Add option="-Werror" />
+			<Add option="-Wno-strict-aliasing" />
 			<Add option="-Wno-unused-parameter" />
-			<Add option="-O1" />
+			<Add option="-O2" />
 		</Compiler>
-		<Unit filename="..\Makefile.am">
-			<Option target="&lt;{~None~}&gt;" />
-		</Unit>
 		<Unit filename="..\account.h" />
 		<Unit filename="..\actions.cpp" />
 		<Unit filename="..\actions.h" />
@@ -87,9 +91,6 @@
 		<Unit filename="..\admin.h" />
 		<Unit filename="..\allocator.cpp" />
 		<Unit filename="..\allocator.h" />
-		<Unit filename="..\autogen.sh">
-			<Option target="&lt;{~None~}&gt;" />
-		</Unit>
 		<Unit filename="..\baseevents.cpp" />
 		<Unit filename="..\baseevents.h" />
 		<Unit filename="..\beds.cpp" />
@@ -100,14 +101,8 @@
 		<Unit filename="..\combat.h" />
 		<Unit filename="..\condition.cpp" />
 		<Unit filename="..\condition.h" />
-		<Unit filename="..\config.lua.dist">
-			<Option target="&lt;{~None~}&gt;" />
-		</Unit>
 		<Unit filename="..\configmanager.cpp" />
 		<Unit filename="..\configmanager.h" />
-		<Unit filename="..\configure.ac">
-			<Option target="&lt;{~None~}&gt;" />
-		</Unit>
 		<Unit filename="..\connection.cpp" />
 		<Unit filename="..\connection.h" />
 		<Unit filename="..\const.h" />
@@ -132,51 +127,6 @@
 		<Unit filename="..\depot.h" />
 		<Unit filename="..\dispatcher.cpp" />
 		<Unit filename="..\dispatcher.h" />
-		<Unit filename="..\doc\ACTION_IDS">
-			<Option target="&lt;{~None~}&gt;" />
-		</Unit>
-		<Unit filename="..\doc\CHANGELOG">
-			<Option target="&lt;{~None~}&gt;" />
-		</Unit>
-		<Unit filename="..\doc\COMMANDS_HELP">
-			<Option target="&lt;{~None~}&gt;" />
-		</Unit>
-		<Unit filename="..\doc\CONFIG_HELP">
-			<Option target="&lt;{~None~}&gt;" />
-		</Unit>
-		<Unit filename="..\doc\GROUPS">
-			<Option target="&lt;{~None~}&gt;" />
-		</Unit>
-		<Unit filename="..\doc\LICENSE">
-			<Option target="&lt;{~None~}&gt;" />
-		</Unit>
-		<Unit filename="..\doc\LIQUIDS">
-			<Option target="&lt;{~None~}&gt;" />
-		</Unit>
-		<Unit filename="..\doc\LUA_FUNCTIONS">
-			<Option target="&lt;{~None~}&gt;" />
-		</Unit>
-		<Unit filename="..\doc\MYSQL_HELP">
-			<Option target="&lt;{~None~}&gt;" />
-		</Unit>
-		<Unit filename="..\doc\README">
-			<Option target="&lt;{~None~}&gt;" />
-		</Unit>
-		<Unit filename="..\doc\RESERVED_IDS">
-			<Option target="&lt;{~None~}&gt;" />
-		</Unit>
-		<Unit filename="..\doc\SCRIPTSYSTEM_HELP">
-			<Option target="&lt;{~None~}&gt;" />
-		</Unit>
-		<Unit filename="..\doc\SIGNALS">
-			<Option target="&lt;{~None~}&gt;" />
-		</Unit>
-		<Unit filename="..\doc\SQL_QUERIES">
-			<Option target="&lt;{~None~}&gt;" />
-		</Unit>
-		<Unit filename="..\doc\TODO">
-			<Option target="&lt;{~None~}&gt;" />
-		</Unit>
 		<Unit filename="..\enums.h" />
 		<Unit filename="..\exception.cpp" />
 		<Unit filename="..\exception.h" />
@@ -219,8 +169,6 @@
 		<Unit filename="..\manager.h" />
 		<Unit filename="..\map.cpp" />
 		<Unit filename="..\map.h" />
-		<Unit filename="..\md5.cpp" />
-		<Unit filename="..\md5.h" />
 		<Unit filename="..\monster.cpp" />
 		<Unit filename="..\monster.h" />
 		<Unit filename="..\monsters.cpp" />
@@ -258,25 +206,12 @@
 		<Unit filename="..\quests.h" />
 		<Unit filename="..\raids.cpp" />
 		<Unit filename="..\raids.h" />
-		<Unit filename="..\rsa.cpp" />
-		<Unit filename="..\rsa.h" />
 		<Unit filename="..\scheduler.cpp" />
 		<Unit filename="..\scheduler.h" />
-		<Unit filename="..\schemas\mysql.sql">
-			<Option target="&lt;{~None~}&gt;" />
-		</Unit>
-		<Unit filename="..\schemas\pgsql.sql">
-			<Option target="&lt;{~None~}&gt;" />
-		</Unit>
-		<Unit filename="..\schemas\sqlite.sql">
-			<Option target="&lt;{~None~}&gt;" />
-		</Unit>
 		<Unit filename="..\scriptmanager.cpp" />
 		<Unit filename="..\scriptmanager.h" />
 		<Unit filename="..\server.cpp" />
 		<Unit filename="..\server.h" />
-		<Unit filename="..\sha1.cpp" />
-		<Unit filename="..\sha1.h" />
 		<Unit filename="..\spawn.cpp" />
 		<Unit filename="..\spawn.h" />
 		<Unit filename="..\spells.cpp" />
@@ -290,9 +225,6 @@
 		<Unit filename="..\templates.h" />
 		<Unit filename="..\textlogger.cpp" />
 		<Unit filename="..\textlogger.h" />
-		<Unit filename="..\theforgottenserver.s3db">
-			<Option target="&lt;{~None~}&gt;" />
-		</Unit>
 		<Unit filename="..\thing.cpp" />
 		<Unit filename="..\thing.h" />
 		<Unit filename="..\tile.cpp" />

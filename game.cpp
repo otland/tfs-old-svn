@@ -1070,7 +1070,7 @@ bool Game::playerMoveCreature(uint32_t playerId, uint32_t movingCreatureId,
 	}
 
 	Creature* movingCreature = getCreatureByID(movingCreatureId);
-	if(!movingCreature || movingCreature->isRemoved() || movingCreature->getNoMove())
+	if(!movingCreature || movingCreature->isRemoved() || !player->canSeeCreature(movingCreature))
 		return false;
 
 	player->setNextActionTask(NULL);
@@ -1111,10 +1111,25 @@ bool Game::playerMoveCreature(uint32_t playerId, uint32_t movingCreatureId,
 		return false;
 	}
 
-	if((!movingCreature->isPushable() && !player->hasFlag(PlayerFlag_CanPushAllCreatures)) || !player->canSeeCreature(movingCreature))
+	if(!player->hasFlag(PlayerFlag_CanPushAllCreatures))
 	{
-		player->sendCancelMessage(RET_NOTMOVABLE);
-		return false;
+		if(!movingCreature->isPushable())
+		{
+			player->sendCancelMessage(RET_NOTMOVABLE);
+			return false;
+		}
+
+		if(movingCreature->getNoMove())
+		{
+			player->sendCancelMessage(RET_NOTPOSSIBLE);
+			return false;
+		}
+
+		if(toTile->hasProperty(BLOCKPATH))
+		{
+			player->sendCancelMessage(RET_NOTENOUGHROOM);
+			return false;
+		}
 	}
 
 	//check throw distance
@@ -1138,8 +1153,8 @@ bool Game::playerMoveCreature(uint32_t playerId, uint32_t movingCreatureId,
 
 		if(!player->hasFlag(PlayerFlag_CanPushAllCreatures))
 		{
-			if(toTile->hasProperty(BLOCKPATH) || (toTile->getCreatureCount() &&
-				!Item::items[movingCreature->getTile()->ground->getID()].walkStack))
+			if(toTile->getCreatureCount() && !Item::items[
+				movingCreature->getTile()->ground->getID()].walkStack)
 			{
 				player->sendCancelMessage(RET_NOTENOUGHROOM);
 				return false;
@@ -5103,13 +5118,12 @@ bool Game::playerViolationWindow(uint32_t playerId, std::string name, uint8_t re
 			for(StringVec::iterator tit = tec.begin(); tit != tec.end(); ++tit)
 			{
 				std::string tmp = (*tit);
-
 				uint32_t count = 1;
 				if(tmp.size() > 1)
 				{
 					std::string str;
 					uint32_t textLength = tmp.length();
-					for(uint32_t size = 0; size < textLength; size++)
+					for(uint32_t size = 0; size < textLength; ++size)
 					{
 						if(isNumber(tmp.at(size)))
 							str += tmp.at(size);
@@ -5152,7 +5166,7 @@ bool Game::playerViolationWindow(uint32_t playerId, std::string name, uint8_t re
 			}
 		}
 
-		comment = comment.substr(0, start - 1);
+		comment = comment.substr(0, start);
 	}
 
 	int16_t nameFlags = group->getNameViolationFlags(), statementFlags = group->getStatementViolationFlags();

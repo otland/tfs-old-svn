@@ -1,7 +1,7 @@
 [Project]
 FileName=TheForgottenServer.dev
 Name=TheForgottenServer
-UnitCount=159
+UnitCount=157
 Type=1
 Ver=1
 ObjFiles=
@@ -12,9 +12,9 @@ ResourceIncludes=
 MakeIncludes=
 Compiler=
 CppCompiler=-D__USE_MYSQL___@@_-D__USE_SQLITE___@@_-D__ENABLE_SERVER_DIAGNOSTIC___@@_
-Linker=-O1_@@_-lboost_system_@@_-lgmp_@@_-llua5.1_@@_-lmysql_@@_-lboost_regex_@@_-lsqlite3_@@_-lwsock32_@@_-lxml2_@@_-lmysql_@@_-lws2_32_@@_-s_@@_-lboost_filesystem_@@_-lboost_thread_@@_-lz_@@_-lcryptopp_@@_
+Linker=-O2_@@_-Wall_@@_-Wextra_@@_-Werror_@@_-Wno-strict-aliasing_@@_-Wno-unused-parameter_@@_-lboost_system_@@_-llua5.1_@@_-lmysql_@@_-lboost_regex_@@_-lsqlite3_@@_-lwsock32_@@_-lxml2_@@_-lmysql_@@_-lws2_32_@@_-s_@@_-lboost_filesystem_@@_-lboost_thread_@@_-lz_@@_-lcryptopp_@@_-leay32_@@_
 IsCpp=1
-Icon=
+Icon=TheForgottenServer.ico
 ExeOutput=
 ObjectOutput=obj/
 OverrideOutput=0
@@ -618,16 +618,6 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit59]
-FileName=..\rsa.cpp
-CompileCpp=1
-Folder=TheForgottenServer
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit60]
 FileName=..\scheduler.cpp
 CompileCpp=1
 Folder=TheForgottenServer
@@ -637,7 +627,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit61]
+[Unit60]
 FileName=..\scriptmanager.cpp
 CompileCpp=1
 Folder=TheForgottenServer
@@ -647,7 +637,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit62]
+[Unit61]
 FileName=..\server.cpp
 CompileCpp=1
 Folder=TheForgottenServer
@@ -657,7 +647,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit63]
+[Unit62]
 FileName=..\spawn.cpp
 CompileCpp=1
 Folder=TheForgottenServer
@@ -667,7 +657,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit64]
+[Unit63]
 FileName=..\spells.cpp
 CompileCpp=1
 Folder=TheForgottenServer
@@ -677,7 +667,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit65]
+[Unit64]
 FileName=..\status.cpp
 CompileCpp=1
 Folder=TheForgottenServer
@@ -687,7 +677,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit66]
+[Unit65]
 FileName=..\talkaction.cpp
 CompileCpp=1
 Folder=TheForgottenServer
@@ -697,7 +687,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit67]
+[Unit66]
 FileName=..\teleport.cpp
 CompileCpp=1
 Folder=TheForgottenServer
@@ -707,7 +697,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit68]
+[Unit67]
 FileName=..\textlogger.cpp
 CompileCpp=1
 Folder=TheForgottenServer
@@ -717,7 +707,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit69]
+[Unit68]
 FileName=..\thing.cpp
 CompileCpp=1
 Folder=TheForgottenServer
@@ -727,7 +717,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit70]
+[Unit69]
 FileName=..\tile.cpp
 CompileCpp=1
 Folder=TheForgottenServer
@@ -737,7 +727,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit71]
+[Unit70]
 FileName=..\tools.cpp
 CompileCpp=1
 Folder=TheForgottenServer
@@ -747,7 +737,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit72]
+[Unit71]
 FileName=..\trashholder.cpp
 CompileCpp=1
 Folder=TheForgottenServer
@@ -757,7 +747,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit73]
+[Unit72]
 FileName=..\vocation.cpp
 CompileCpp=1
 Folder=TheForgottenServer
@@ -767,7 +757,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit74]
+[Unit73]
 FileName=..\waitlist.cpp
 CompileCpp=1
 Folder=TheForgottenServer
@@ -777,7 +767,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit75]
+[Unit74]
 FileName=..\weapons.cpp
 CompileCpp=1
 Folder=TheForgottenServer
@@ -787,7 +777,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit76]
+[Unit75]
 FileName=..\account.h
 CompileCpp=1
 Folder=TheForgottenServer
@@ -797,7 +787,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit77]
+[Unit76]
 FileName=..\actions.h
 CompileCpp=1
 Folder=TheForgottenServer
@@ -807,7 +797,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit78]
+[Unit77]
 FileName=..\admin.h
 CompileCpp=1
 Folder=TheForgottenServer
@@ -817,7 +807,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit79]
+[Unit78]
 FileName=..\allocator.h
 CompileCpp=1
 Folder=TheForgottenServer
@@ -827,7 +817,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit80]
+[Unit79]
 FileName=..\baseevents.h
 CompileCpp=1
 Folder=TheForgottenServer
@@ -837,7 +827,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit81]
+[Unit80]
 FileName=..\beds.h
 CompileCpp=1
 Folder=TheForgottenServer
@@ -847,7 +837,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit82]
+[Unit81]
 FileName=..\chat.h
 CompileCpp=1
 Folder=TheForgottenServer
@@ -857,7 +847,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit83]
+[Unit82]
 FileName=..\combat.h
 CompileCpp=1
 Folder=TheForgottenServer
@@ -867,7 +857,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit84]
+[Unit83]
 FileName=..\condition.h
 CompileCpp=1
 Folder=TheForgottenServer
@@ -877,7 +867,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit85]
+[Unit84]
 FileName=..\configmanager.h
 CompileCpp=1
 Folder=TheForgottenServer
@@ -887,7 +877,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit86]
+[Unit85]
 FileName=..\connection.h
 CompileCpp=1
 Folder=TheForgottenServer
@@ -897,7 +887,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit87]
+[Unit86]
 FileName=..\const.h
 CompileCpp=1
 Folder=TheForgottenServer
@@ -907,7 +897,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit88]
+[Unit87]
 FileName=..\container.h
 CompileCpp=1
 Folder=TheForgottenServer
@@ -917,7 +907,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit89]
+[Unit88]
 FileName=..\creature.h
 CompileCpp=1
 Folder=TheForgottenServer
@@ -927,7 +917,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit90]
+[Unit89]
 FileName=..\creatureevent.h
 CompileCpp=1
 Folder=TheForgottenServer
@@ -937,7 +927,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit91]
+[Unit90]
 FileName=..\cylinder.h
 CompileCpp=1
 Folder=TheForgottenServer
@@ -947,7 +937,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit92]
+[Unit91]
 FileName=..\database.h
 CompileCpp=1
 Folder=TheForgottenServer
@@ -957,7 +947,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit93]
+[Unit92]
 FileName=..\databasemanager.h
 CompileCpp=1
 Folder=TheForgottenServer
@@ -967,7 +957,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit94]
+[Unit93]
 FileName=..\databasemysql.h
 CompileCpp=1
 Folder=TheForgottenServer
@@ -977,7 +967,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit95]
+[Unit94]
 FileName=..\databasesqlite.h
 CompileCpp=1
 Folder=TheForgottenServer
@@ -987,7 +977,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit96]
+[Unit95]
 FileName=..\definitions.h
 CompileCpp=1
 Folder=TheForgottenServer
@@ -997,8 +987,18 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
+[Unit96]
+FileName=..\depot.h
+CompileCpp=1
+Folder=TheForgottenServer
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
 [Unit98]
-FileName=..\dispatcher.h
+FileName=..\enums.h
 CompileCpp=1
 Folder=TheForgottenServer
 Compile=1
@@ -1008,16 +1008,6 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit100]
-FileName=..\exception.h
-CompileCpp=1
-Folder=TheForgottenServer
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit101]
 FileName=..\fileloader.h
 CompileCpp=1
 Folder=TheForgottenServer
@@ -1027,7 +1017,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit102]
+[Unit101]
 FileName=..\game.h
 CompileCpp=1
 Folder=TheForgottenServer
@@ -1037,7 +1027,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit103]
+[Unit102]
 FileName=..\gameservers.h
 CompileCpp=1
 Folder=TheForgottenServer
@@ -1047,7 +1037,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit104]
+[Unit103]
 FileName=..\globalevent.h
 CompileCpp=1
 Folder=TheForgottenServer
@@ -1057,7 +1047,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit105]
+[Unit104]
 FileName=..\group.h
 CompileCpp=1
 Folder=TheForgottenServer
@@ -1067,7 +1057,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit106]
+[Unit105]
 FileName=..\house.h
 CompileCpp=1
 Folder=TheForgottenServer
@@ -1077,7 +1067,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit107]
+[Unit106]
 FileName=..\housetile.h
 CompileCpp=1
 Folder=TheForgottenServer
@@ -1087,7 +1077,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit108]
+[Unit107]
 FileName=..\ioban.h
 CompileCpp=1
 Folder=TheForgottenServer
@@ -1097,7 +1087,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit109]
+[Unit108]
 FileName=..\ioguild.h
 CompileCpp=1
 Folder=TheForgottenServer
@@ -1107,7 +1097,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit110]
+[Unit109]
 FileName=..\iologindata.h
 CompileCpp=1
 Folder=TheForgottenServer
@@ -1117,7 +1107,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit111]
+[Unit110]
 FileName=..\iomap.h
 CompileCpp=1
 Folder=TheForgottenServer
@@ -1127,7 +1117,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit112]
+[Unit111]
 FileName=..\iomapserialize.h
 CompileCpp=1
 Folder=TheForgottenServer
@@ -1137,7 +1127,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit113]
+[Unit112]
 FileName=..\item.h
 CompileCpp=1
 Folder=TheForgottenServer
@@ -1147,7 +1137,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit114]
+[Unit113]
 FileName=..\itemattributes.h
 CompileCpp=1
 Folder=TheForgottenServer
@@ -1157,7 +1147,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit115]
+[Unit114]
 FileName=..\itemloader.h
 CompileCpp=1
 Folder=TheForgottenServer
@@ -1167,7 +1157,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit116]
+[Unit115]
 FileName=..\items.h
 CompileCpp=1
 Folder=TheForgottenServer
@@ -1177,7 +1167,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit117]
+[Unit116]
 FileName=..\luascript.h
 CompileCpp=1
 Folder=TheForgottenServer
@@ -1187,7 +1177,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit118]
+[Unit117]
 FileName=..\mailbox.h
 CompileCpp=1
 Folder=TheForgottenServer
@@ -1197,7 +1187,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit119]
+[Unit118]
 FileName=..\manager.h
 CompileCpp=1
 Folder=TheForgottenServer
@@ -1207,7 +1197,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit120]
+[Unit119]
 FileName=..\map.h
 CompileCpp=1
 Folder=TheForgottenServer
@@ -1217,7 +1207,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit121]
+[Unit120]
 FileName=..\monster.h
 CompileCpp=1
 Folder=TheForgottenServer
@@ -1227,7 +1217,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit122]
+[Unit121]
 FileName=..\monsters.h
 CompileCpp=1
 Folder=TheForgottenServer
@@ -1237,7 +1227,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit123]
+[Unit122]
 FileName=..\movement.h
 CompileCpp=1
 Folder=TheForgottenServer
@@ -1247,7 +1237,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit124]
+[Unit123]
 FileName=..\networkmessage.h
 CompileCpp=1
 Folder=TheForgottenServer
@@ -1257,7 +1247,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit125]
+[Unit124]
 FileName=..\npc.h
 CompileCpp=1
 Folder=TheForgottenServer
@@ -1267,7 +1257,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit126]
+[Unit125]
 FileName=..\otpch.h
 CompileCpp=1
 Folder=TheForgottenServer
@@ -1277,7 +1267,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit127]
+[Unit126]
 FileName=..\otsystem.h
 CompileCpp=1
 Folder=TheForgottenServer
@@ -1287,7 +1277,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit128]
+[Unit127]
 FileName=..\outfit.h
 CompileCpp=1
 Folder=TheForgottenServer
@@ -1297,7 +1287,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit129]
+[Unit128]
 FileName=..\outputmessage.h
 CompileCpp=1
 Folder=TheForgottenServer
@@ -1307,7 +1297,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit130]
+[Unit129]
 FileName=..\party.h
 CompileCpp=1
 Folder=TheForgottenServer
@@ -1317,7 +1307,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit131]
+[Unit130]
 FileName=..\player.h
 CompileCpp=1
 Folder=TheForgottenServer
@@ -1327,7 +1317,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit132]
+[Unit131]
 FileName=..\position.h
 CompileCpp=1
 Folder=TheForgottenServer
@@ -1337,7 +1327,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit133]
+[Unit132]
 FileName=..\protocol.h
 CompileCpp=1
 Folder=TheForgottenServer
@@ -1347,7 +1337,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit134]
+[Unit133]
 FileName=..\protocolgame.h
 CompileCpp=1
 Folder=TheForgottenServer
@@ -1357,7 +1347,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit135]
+[Unit134]
 FileName=..\protocolhttp.h
 CompileCpp=1
 Folder=TheForgottenServer
@@ -1367,7 +1357,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit136]
+[Unit135]
 FileName=..\protocollogin.h
 CompileCpp=1
 Folder=TheForgottenServer
@@ -1377,7 +1367,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit137]
+[Unit136]
 FileName=..\protocolold.h
 CompileCpp=1
 Folder=TheForgottenServer
@@ -1387,7 +1377,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit138]
+[Unit137]
 FileName=..\quests.h
 CompileCpp=1
 Folder=TheForgottenServer
@@ -1397,7 +1387,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit139]
+[Unit138]
 FileName=..\raids.h
 CompileCpp=1
 Folder=TheForgottenServer
@@ -1407,17 +1397,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit140]
-FileName=..\rsa.h
-CompileCpp=1
-Folder=TheForgottenServer
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit141]
+[Unit139]
 FileName=..\scheduler.h
 CompileCpp=1
 Folder=TheForgottenServer
@@ -1427,7 +1407,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit142]
+[Unit140]
 FileName=..\scriptmanager.h
 CompileCpp=1
 Folder=TheForgottenServer
@@ -1437,7 +1417,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit143]
+[Unit141]
 FileName=..\server.h
 CompileCpp=1
 Folder=TheForgottenServer
@@ -1447,7 +1427,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit144]
+[Unit142]
 FileName=..\spawn.h
 CompileCpp=1
 Folder=TheForgottenServer
@@ -1457,7 +1437,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit145]
+[Unit143]
 FileName=..\spells.h
 CompileCpp=1
 Folder=TheForgottenServer
@@ -1467,7 +1447,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit146]
+[Unit144]
 FileName=..\status.h
 CompileCpp=1
 Folder=TheForgottenServer
@@ -1477,7 +1457,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit147]
+[Unit145]
 FileName=..\talkaction.h
 CompileCpp=1
 Folder=TheForgottenServer
@@ -1487,7 +1467,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit148]
+[Unit146]
 FileName=..\teleport.h
 CompileCpp=1
 Folder=TheForgottenServer
@@ -1497,7 +1477,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit149]
+[Unit147]
 FileName=..\templates.h
 CompileCpp=1
 Folder=TheForgottenServer
@@ -1507,7 +1487,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit150]
+[Unit148]
 FileName=..\textlogger.h
 CompileCpp=1
 Folder=TheForgottenServer
@@ -1517,7 +1497,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit151]
+[Unit149]
 FileName=..\thing.h
 CompileCpp=1
 Folder=TheForgottenServer
@@ -1527,7 +1507,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit152]
+[Unit150]
 FileName=..\tile.h
 CompileCpp=1
 Folder=TheForgottenServer
@@ -1537,7 +1517,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit153]
+[Unit151]
 FileName=..\tools.h
 CompileCpp=1
 Folder=TheForgottenServer
@@ -1547,7 +1527,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit154]
+[Unit152]
 FileName=..\town.h
 CompileCpp=1
 Folder=TheForgottenServer
@@ -1557,7 +1537,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit155]
+[Unit153]
 FileName=..\trashholder.h
 CompileCpp=1
 Folder=TheForgottenServer
@@ -1567,7 +1547,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit156]
+[Unit154]
 FileName=..\vocation.h
 CompileCpp=1
 Folder=TheForgottenServer
@@ -1577,8 +1557,28 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit157]
+[Unit155]
 FileName=..\waitlist.h
+CompileCpp=1
+Folder=TheForgottenServer
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit156]
+FileName=..\waypoints.h
+CompileCpp=1
+Folder=TheForgottenServer
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit157]
+FileName=..\weapons.h
 CompileCpp=1
 Folder=TheForgottenServer
 Compile=1
@@ -1698,7 +1698,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit97]
-FileName=..\depot.h
+FileName=..\dispatcher.h
 CompileCpp=1
 Folder=TheForgottenServer
 Compile=1
@@ -1708,7 +1708,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit99]
-FileName=..\enums.h
+FileName=..\exception.h
 CompileCpp=1
 Folder=TheForgottenServer
 Compile=1

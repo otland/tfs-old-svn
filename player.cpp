@@ -586,19 +586,19 @@ int32_t Player::getSkill(skills_t skilltype, skillsid_t skillinfo) const
 	return std::max((int32_t)0, ret);
 }
 
-void Player::addSkillAdvance(skills_t skill, uint32_t count, bool useMultiplier/* = true*/)
+void Player::addSkillAdvance(skills_t skill, uint64_t count, bool useMultiplier/* = true*/)
 {
 	if(!count)
 		return;
 
 	//player has reached max skill
-	uint32_t currReqTries = vocation->getReqSkillTries(skill, skills[skill][SKILL_LEVEL]),
+	uint64_t currReqTries = vocation->getReqSkillTries(skill, skills[skill][SKILL_LEVEL]),
 		nextReqTries = vocation->getReqSkillTries(skill, skills[skill][SKILL_LEVEL] + 1);
 	if(currReqTries > nextReqTries)
 		return;
 
 	if(useMultiplier)
-		count = uint32_t((double)count * rates[skill] * g_config.getDouble(ConfigManager::RATE_SKILL));
+		count = uint64_t((double)count * rates[skill] * g_config.getDouble(ConfigManager::RATE_SKILL));
 
 	std::stringstream s;
 	while(skills[skill][SKILL_TRIES] + count >= nextReqTries)
@@ -632,7 +632,7 @@ void Player::addSkillAdvance(skills_t skill, uint32_t count, bool useMultiplier/
 		skills[skill][SKILL_TRIES] += count;
 
 	//update percent
-	uint32_t newPercent = Player::getPercentLevel(skills[skill][SKILL_TRIES], nextReqTries);
+	uint16_t newPercent = Player::getPercentLevel(skills[skill][SKILL_TRIES], nextReqTries);
  	if(skills[skill][SKILL_PERCENT] != newPercent)
 	{
 		skills[skill][SKILL_PERCENT] = newPercent;
@@ -1842,7 +1842,7 @@ void Player::addManaSpent(uint64_t amount, bool useMultiplier/* = true*/)
 	if(amount)
 		manaSpent += amount;
 
-	uint32_t newPercent = Player::getPercentLevel(manaSpent, nextReqMana);
+	uint16_t newPercent = Player::getPercentLevel(manaSpent, nextReqMana);
 	if(magLevelPercent != newPercent)
 	{
 		magLevelPercent = newPercent;
@@ -1932,8 +1932,8 @@ void Player::removeExperience(uint64_t exp, bool updateStats/* = true*/)
 		sendTextMessage(MSG_EVENT_ADVANCE, advMsg);
 	}
 
-	uint64_t currLevelExp = Player::getExpForLevel(level);
-	uint64_t nextLevelExp = Player::getExpForLevel(level + 1);
+	uint64_t currLevelExp = Player::getExpForLevel(level),
+		nextLevelExp = Player::getExpForLevel(level + 1);
 	if(nextLevelExp > currLevelExp)
 		levelPercent = Player::getPercentLevel(experience - currLevelExp, nextLevelExp - currLevelExp);
 	else
@@ -1943,7 +1943,7 @@ void Player::removeExperience(uint64_t exp, bool updateStats/* = true*/)
 		sendStats();
 }
 
-uint32_t Player::getPercentLevel(uint64_t count, uint64_t nextLevelCount)
+uint16_t Player::getPercentLevel(uint64_t count, uint64_t nextLevelCount)
 {
 	if(nextLevelCount > 0)
 		return std::min((uint32_t)100, std::max((uint32_t)0, uint32_t(count * 100 / nextLevelCount)));
@@ -1969,9 +1969,8 @@ void Player::onAttackedCreatureBlockHit(Creature* target, BlockType_t blockType)
 	{
 		case BLOCK_NONE:
 		{
+			bloodHitCount = shieldBlockCount = 30;
 			addAttackSkillPoint = true;
-			bloodHitCount = 30;
-			shieldBlockCount = 30;
 			break;
 		}
 
@@ -2168,8 +2167,7 @@ bool Player::onDeath()
 		double percent = 1. - ((double)(experience - lossExperience) / experience);
 
 		//Magic level loss
-		uint32_t sumMana = 0;
-		uint64_t lostMana = 0;
+		uint64_t sumMana = 0, lostMana = 0;
 		for(uint32_t i = 1; i <= magLevel; ++i)
 			sumMana += vocation->getReqMana(i);
 
@@ -2190,7 +2188,7 @@ bool Player::onDeath()
 			magLevelPercent = 0;
 
 		//Skill loss
-		uint32_t lostSkillTries, sumSkillTries;
+		uint64_t lostSkillTries, sumSkillTries;
 		for(int16_t i = 0; i < 7; ++i) //for each skill
 		{
 			lostSkillTries = sumSkillTries = 0;
@@ -2198,7 +2196,7 @@ bool Player::onDeath()
 				sumSkillTries += vocation->getReqSkillTries(i, c);
 
 			sumSkillTries += skills[i][SKILL_TRIES];
-			lostSkillTries = (uint32_t)std::ceil(sumSkillTries * ((double)(percent * lossPercent[LOSS_SKILLS]) / 100.));
+			lostSkillTries = (uint64_t)std::ceil(sumSkillTries * ((double)(percent * lossPercent[LOSS_SKILLS]) / 100.));
 			while(lostSkillTries > skills[i][SKILL_TRIES])
 			{
 				lostSkillTries -= skills[i][SKILL_TRIES];

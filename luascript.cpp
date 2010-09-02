@@ -3555,7 +3555,9 @@ int32_t LuaInterface::luaDoPlayerAddSkillTry(lua_State* L)
 	if(lua_gettop(L) > 3)
 		multiplier = popNumber(L);
 
-	uint32_t n = popNumber(L), skillid = popNumber(L);
+	uint64_t n = popNumber(L);
+	uint16_t skillid = popNumber(L);
+
 	ScriptEnviroment* env = getEnv();
 	if(Player* player = env->getPlayerByUID(popNumber(L)))
 	{

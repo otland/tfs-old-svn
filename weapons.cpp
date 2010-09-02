@@ -427,7 +427,7 @@ void Weapon::onUsedWeapon(Player* player, Item* item, Tile*) const
 	if(!player->hasFlag(PlayerFlag_NotGainSkill))
 	{
 		skills_t skillType;
-		uint32_t skillPoint = 0;
+		uint64_t skillPoint = 0;
 		if(getSkillType(player, item, skillType, skillPoint))
 			player->addSkillAdvance(skillType, skillPoint);
 	}
@@ -572,21 +572,20 @@ bool WeaponMelee::useWeapon(Player* player, Item* item, Creature* target) const
 }
 
 bool WeaponMelee::getSkillType(const Player* player, const Item* item,
-	skills_t& skill, uint32_t& skillpoint) const
+	skills_t& skill, uint64_t& skillPoint) const
 {
-	skillpoint = 0;
+	skillPoint = 0;
 	if(player->getAddAttackSkill())
 	{
 		switch(player->getLastAttackBlockType())
 		{
 			case BLOCK_ARMOR:
 			case BLOCK_NONE:
-				skillpoint = 1;
+				skillPoint = 1;
 				break;
 
 			case BLOCK_DEFENSE:
 			default:
-				skillpoint = 0;
 				break;
 		}
 	}
@@ -923,29 +922,28 @@ int32_t WeaponDistance::getWeaponDamage(const Player* player, const Creature* ta
 }
 
 bool WeaponDistance::getSkillType(const Player* player, const Item*,
-	skills_t& skill, uint32_t& skillpoint) const
+	skills_t& skill, uint64_t& skillPoint) const
 {
 	skill = SKILL_DIST;
-	skillpoint = 0;
-
+	skillPoint = 0;
 	if(player->getAddAttackSkill())
 	{
 		switch(player->getLastAttackBlockType())
 		{
 			case BLOCK_NONE:
-				skillpoint = 2;
+				skillPoint = 2;
 				break;
 
 			case BLOCK_ARMOR:
-				skillpoint = 1;
+				skillPoint = 1;
 				break;
 
 			case BLOCK_DEFENSE:
 			default:
-				skillpoint = 0;
 				break;
 		}
 	}
+
 	return true;
 }
 

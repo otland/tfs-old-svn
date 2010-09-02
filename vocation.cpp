@@ -500,7 +500,7 @@ int16_t Vocation::getReflect(CombatType_t combat) const
 	return 0;
 }
 
-uint32_t Vocation::getReqSkillTries(int32_t skill, int32_t level)
+uint64_t Vocation::getReqSkillTries(int32_t skill, int32_t level)
 {
 	if(skill < SKILL_FIRST || skill > SKILL_LAST)
 		return 0;
@@ -510,7 +510,7 @@ uint32_t Vocation::getReqSkillTries(int32_t skill, int32_t level)
 	if(it != cacheSkill[skill].end())
 		return it->second;
 
-	skillMap[level] = (uint32_t)(skillBase[skill] * std::pow(skillMultipliers[skill], (level - 11)));
+	skillMap[level] = (uint64_t)(skillBase[skill] * std::pow(skillMultipliers[skill], (level - 11)));
 	return skillMap[level];
 }
 
