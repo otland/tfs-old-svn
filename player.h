@@ -178,7 +178,7 @@ class Player : public Creature, public Cylinder
 			std::map<uint32_t, uint64_t>::iterator it = cache.find(lv);
 			if(it != cache.end())
 				return it->second;
-			
+
 			uint64_t exp = ((50ULL * lv * lv * lv) - (150ULL * lv * lv) + (400ULL * lv)) / 3ULL;
 			cache[lv] = exp;
 			return exp;
@@ -870,7 +870,6 @@ class Player : public Creature, public Cylinder
 		uint32_t damageImmunities;
 		uint32_t conditionImmunities;
 		uint32_t conditionSuppressions;
-		uint32_t condition; //?
 		uint32_t nextStepEvent;
 		uint32_t actionTaskEvent;
 		uint32_t walkTaskEvent;

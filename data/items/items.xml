@@ -2444,7 +2444,7 @@
 	</item>
 	<item id="2260" article="a" name="blank rune">
 		<attribute key="type" value="rune" />
-		<attribute key="weight" value="120" />
+		<attribute key="weight" value="210" />
 	</item>
 	<item id="2261" article="a" name="destroy field rune">
 		<attribute key="runeSpellName" value="adito grav" />
@@ -12565,28 +12565,28 @@
 		<attribute key="slotType" value="backpack" />
 	</item>
 	<item id="7588" article="a" name="strong health potion">
-		<attribute key="weight" value="200" />
+		<attribute key="weight" value="290" />
 		<attribute key="description" value="This potion can only be consumed by paladins and knights of level 50 or higher." />
 	</item>
 	<item id="7589" article="a" name="strong mana potion">
-		<attribute key="weight" value="200" />
+		<attribute key="weight" value="290" />
 		<attribute key="description" value="This potion can only be consumed by sorcerers, druids and paladins of level 50 or higher." />
 	</item>
 	<item id="7590" article="a" name="great mana potion">
-		<attribute key="weight" value="220" />
+		<attribute key="weight" value="310" />
 		<attribute key="description" value="This potion can only be consumed by sorcerers and druids of level 80 or higher." />
 	</item>
 	<item id="7591" article="a" name="great health potion">
-		<attribute key="weight" value="220" />
+		<attribute key="weight" value="310" />
 		<attribute key="description" value="This potion can only be consumed by knights of level 80 or higher." />
 	</item>
 	<item fromid="7592" toid="7617" article="a" name="tent" />
 	<item id="7618" article="a" name="health potion">
-		<attribute key="weight" value="180" />
+		<attribute key="weight" value="270" />
 	</item>
 	<item id="7619" article="a" name="tent" />
 	<item id="7620" article="a" name="mana potion">
-		<attribute key="weight" value="180" />
+		<attribute key="weight" value="270" />
 	</item>
 	<item id="7621" article="a" name="dead dragon hatchling">
 		<attribute key="containerSize" value="10" />
@@ -14436,11 +14436,11 @@
 	<item id="8459" article="a" name="strange statue" />
 	<item fromid="8460" toid="8471" name="earth" />
 	<item id="8472" article="a" name="great spirit potion">
-		<attribute key="weight" value="220" />
+		<attribute key="weight" value="310" />
 		<attribute key="description" value="This potion can only be consumed by paladins of level 80 or higher." />
 	</item>
 	<item id="8473" article="an" name="ultimate health potion">
-		<attribute key="weight" value="220" />
+		<attribute key="weight" value="310" />
 		<attribute key="description" value="This potion can only be consumed by knights of level 130 or higher." />
 	</item>
 	<item id="8474" article="an" name="antidote potion">
