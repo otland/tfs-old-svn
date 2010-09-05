@@ -57,7 +57,6 @@ class NpcScript : public LuaInterface
 		static int32_t luaActionFollow(lua_State* L);
 
 		static int32_t luaGetNpcId(lua_State* L);
-		static int32_t luaGetNpcDistanceTo(lua_State* L);
 		static int32_t luaGetNpcParameter(lua_State* L);
 
 		static int32_t luaGetNpcState(lua_State* L);

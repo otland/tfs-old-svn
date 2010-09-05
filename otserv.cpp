@@ -301,6 +301,7 @@ int main(int argc, char* argv[])
 	Dispatcher::getInstance().addTask(createTask(boost::bind(otserv, args, &servicer)));
 
 	g_loaderSignal.wait(g_loaderUniqueLock);
+	boost::this_thread::sleep(boost::posix_time::milliseconds(10000));
 	if(servicer.isRunning())
 	{
 		std::clog << ">> " << g_config.getString(ConfigManager::SERVER_NAME) << " server Online!" << std::endl << std::endl;

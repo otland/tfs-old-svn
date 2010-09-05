@@ -17158,12 +17158,12 @@
 		<attribute key="walkStack" value="0" />
 	</item>
 	<item fromid="11064" toid="11075" article="a" name="window" />
-	<item id="11095" article="a" name="magic wall">
+	<item id="11098" article="a" name="magic wall">
 		<attribute key="type" value="magicfield" />
 		<attribute key="decayTo" value="0" />
 		<attribute key="duration" value="20" />
 	</item>
-	<item id="11096" article="a" name="rush wood">
+	<item id="11099" article="a" name="rush wood">
 		<attribute key="type" value="magicfield" />
 		<attribute key="decayTo" value="0" />
 		<attribute key="duration" value="45" />

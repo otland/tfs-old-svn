@@ -72,7 +72,7 @@ if(NpcHandler == nil) then
 		talkStart = nil,
 		idleTime = 300,
 		talkRadius = 3,
-		talkDelayTime = 1000, -- Seconds to delay outgoing messages.
+		talkDelayTime = 400, -- Seconds to delay outgoing messages.
 		queue = nil,
 		talkDelay = nil,
 		callbackFunctions = nil,
@@ -144,8 +144,12 @@ if(NpcHandler == nil) then
 
 	-- Function used to change the focus of this npc.
 	function NpcHandler:addFocus(newFocus)
+		if(not isCreature(newFocus)) then
+			return
+		end
+
 		if(NPCHANDLER_CONVBEHAVIOR ~= CONVERSATION_DEFAULT) then
-			if(self:isFocused(newFocus)) then
+			if(self:isFocused(newFocus, true)) then
 				return
 			end
 
@@ -154,40 +158,53 @@ if(NpcHandler == nil) then
 			self.focuses = newFocus
 		end
 
-		self:updateFocus()
+		self:updateFocus(true)
 	end
-	NpcHandler.changeFocus = NpcHandler.addFocus --"changeFocus" looks better for CONVERSATION_DEFAULT
+	NpcHandler.changeFocus = NpcHandler.addFocus -- "changeFocus" looks better for CONVERSATION_DEFAULT
 
 	-- Function used to verify if npc is focused to certain player
-	function NpcHandler:isFocused(focus)
+	function NpcHandler:isFocused(focus, creatureCheck)
+		local creatureCheck = creatureCheck or false
 		if(NPCHANDLER_CONVBEHAVIOR ~= CONVERSATION_DEFAULT) then
-			for _, v in pairs(self.focuses) do
+			for k, v in pairs(self.focuses) do
 				if(v == focus) then
-					return true
+					if(creatureCheck or isCreature(v)) then
+						return true
+					end
+
+					internalReleaseFocus(focus, k)
+					return false
 				end
 			end
 
 			return false
 		end
 
-		return self.focuses == focus
+		if(creatureCheck or isCreature(self.focuses)) then
+			return self.focuses == focus
+		end
+
+		self:changeFocus(0)
+		return false
 	end
 
 	-- This function should be called on each onThink and makes sure the npc faces the player it is talking to.
 	--	Should also be called whenever a new player is focused.
-	function NpcHandler:updateFocus()
+	function NpcHandler:updateFocus(creatureCheck)
+		local creatureCheck = creatureCheck or false
 		if(NPCHANDLER_CONVBEHAVIOR ~= CONVERSATION_DEFAULT) then
 			for _, focus in pairs(self.focuses) do
-				if(focus ~= nil) then
+				if(creatureCheck or isCreature(focus)) then
 					doNpcSetCreatureFocus(focus)
 					return
 				end
 			end
-
-			doNpcSetCreatureFocus(0)
-		else
+		elseif(creatureCheck or isCreature(self.focuses)) then
 			doNpcSetCreatureFocus(self.focuses)
+			return
 		end
+
+		doNpcSetCreatureFocus(0)
 	end
 
 	-- Used when the npc should un-focus the player.
@@ -199,20 +216,28 @@ if(NpcHandler == nil) then
 
 			local pos = nil
 			for k, v in pairs(self.focuses) do
-				if v == focus then
+				if(v == focus) then
 					pos = k
 				end
 			end
 
-			table.remove(self.focuses, pos)
-			self.talkStart[focus] = nil
-
-			closeShopWindow(focus) --Even if it can not exist, we need to prevent it.
-			self:updateFocus()
-		else
-			closeShopWindow(focus)
+			internalReleaseFocus(focus, pos)
+			if(pos ~= nil) then
+				closeShopWindow(focus)
+			end
+		elseif(self.focuses == focus) then
 			self:changeFocus(0)
+			if(isCreature(focus)) then
+				closeShopWindow(focus)
+			end
 		end
+	end
+
+	-- Internal un-focusing function, beware using!
+	function NpcHandler:internalReleaseFocus(focus, pos)
+		table.remove(self.focuses, pos)
+		self.talkStart[focus] = nil
+		self:updateFocus()
 	end
 
 	-- Returns the callback function with the specified id or nil if no such callback function exists.
@@ -306,12 +331,13 @@ if(NpcHandler == nil) then
 
 	-- Translates all message tags found in msg using parseInfo
 	function NpcHandler:parseMessage(msg, parseInfo)
-		local ret = msg
 		for search, replace in pairs(parseInfo) do
-			ret = string.gsub(ret, search, replace)
+			if(search ~= nil and replace ~= nil) then
+				msg = string.gsub(msg, search, replace)
+			end
 		end
 
-		return ret
+		return msg
 	end
 
 	-- Makes sure the npc un-focuses the currently focused player
@@ -459,7 +485,7 @@ if(NpcHandler == nil) then
 		local callback = self:getCallback(CALLBACK_ONTHINK)
 		if(callback == nil or callback()) then
 			for i, speech in pairs(self.talkDelay) do
-				if(speech.time ~= nil and speech.message ~= nil and speech.cid ~= nil and speech.start ~= nil) then
+				if(speech.cid ~= nil and isCreature(cid) and speech.start ~= nil and speech.time ~= nil and speech.message ~= nil) then
 					if(os.mtime() >= speech.time) then
 						local talkStart = (NPCHANDLER_CONVBEHAVIOR ~= CONVERSATION_DEFAULT and self.talkStart[speech.cid] or self.talkStart)
 						if(self:isFocused(speech.cid) and talkStart == speech.start) then
@@ -560,12 +586,8 @@ if(NpcHandler == nil) then
 
 	-- Returns true if cid is within the talkRadius of this npc.
 	function NpcHandler:isInRange(cid)
-		local distance = getDistanceTo(cid) or -1
-		if(distance == -1) then
-			return false
-		end
-
-		return (distance <= self.talkRadius)
+		local distance = getNpcDistanceTo(cid) or -1
+		return distance ~= -1 and distance <= self.talkRadius
 	end
 
 	-- Resets the npc into it's initial state (in regard of the keyrodhandler).

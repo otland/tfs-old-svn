@@ -1006,10 +1006,11 @@ NpcState* Npc::getState(const Player* player, bool makeNew /*= true*/)
 
 bool Npc::canSee(const Position& pos) const
 {
-	if(pos.z != getPosition().z)
+	Position tmp = getPosition();
+	if(pos.z != tmp.z)
 		return false;
 
-	return Creature::canSee(getPosition(), pos, Map::maxClientViewportX, Map::maxClientViewportY);
+	return Creature::canSee(tmp, pos, Map::maxClientViewportX, Map::maxClientViewportY);
 }
 
 void Npc::onCreatureAppear(const Creature* creature)
@@ -1032,8 +1033,7 @@ void Npc::onCreatureAppear(const Creature* creature)
 	//only players for script events
 	if(Player* player = const_cast<Player*>(creature->getPlayer()))
 	{
-		NpcState* npcState = getState(player);
-		if(npcState && canSee(player->getPosition()))
+		if(NpcState* npcState = getState(player))
 		{
 			npcState->respondToCreature = player->getID();
 			onPlayerEnter(player, npcState);
@@ -1046,7 +1046,6 @@ void Npc::onCreatureDisappear(const Creature* creature, bool isLogout)
 	Creature::onCreatureDisappear(creature, isLogout);
 	if(creature == this)
 	{
-		//Close all open shop window's
 		closeAllShopWindows();
 		return;
 	}
@@ -1056,8 +1055,7 @@ void Npc::onCreatureDisappear(const Creature* creature, bool isLogout)
 
 	if(Player* player = const_cast<Player*>(creature->getPlayer()))
 	{
-		NpcState* npcState = getState(player);
-		if(npcState)
+		if(NpcState* npcState = getState(player))
 		{
 			npcState->respondToCreature = player->getID();
 			onPlayerLeave(player, npcState);
@@ -1074,8 +1072,7 @@ void Npc::onCreatureMove(const Creature* creature, const Tile* newTile, const Po
 
 	if(Player* player = const_cast<Player*>(creature->getPlayer()))
 	{
-		NpcState* npcState = getState(player);
-		if(npcState)
+		if(NpcState* npcState = getState(player))
 		{
 			bool canSeeNewPos = canSee(newPos), canSeeOldPos = canSee(oldPos);
 			if(canSeeNewPos && !canSeeOldPos)
@@ -1113,16 +1110,13 @@ void Npc::onCreatureSay(const Creature* creature, SpeakClasses type, const std::
 				destPos = (*pos);
 
 			const Position& myPos = getPosition();
-			if(canSee(myPos))
+			if(canSee(myPos) && (destPos.x >= myPos.x - talkRadius) && (destPos.x <= myPos.x + talkRadius)
+				&& (destPos.y >= myPos.y - talkRadius) && (destPos.y <= myPos.y + talkRadius))
 			{
-				if((destPos.x >= myPos.x - talkRadius) && (destPos.x <= myPos.x + talkRadius) &&
-					(destPos.y >= myPos.y - talkRadius) && (destPos.y <= myPos.y + talkRadius))
+				if(NpcState* npcState = getState(player))
 				{
-					if(NpcState* npcState = getState(player))
-					{
-						npcState->respondToText = text;
-						npcState->respondToCreature = player->getID();
-					}
+					npcState->respondToText = text;
+					npcState->respondToCreature = player->getID();
 				}
 			}
 		}
@@ -2445,7 +2439,6 @@ void NpcScript::registerFunctions()
 	lua_register(m_luaState, "selfFollow", NpcScript::luaActionFollow);
 
 	lua_register(m_luaState, "getNpcId", NpcScript::luaGetNpcId);
-	lua_register(m_luaState, "getNpcDistanceTo", NpcScript::luaGetNpcDistanceTo);
 	lua_register(m_luaState, "getNpcParameter", NpcScript::luaGetNpcParameter);
 
 	lua_register(m_luaState, "getNpcState", NpcScript::luaGetNpcState);
@@ -2578,34 +2571,9 @@ int32_t NpcScript::luaGetNpcId(lua_State* L)
 	return 1;
 }
 
-int32_t NpcScript::luaGetNpcDistanceTo(lua_State* L)
-{
-	//getNpcDistanceTo(uid)
-	ScriptEnviroment* env = getEnv();
-	Npc* npc = env->getNpc();
-
-	Thing* thing = env->getThingByUID(popNumber(L));
-	if(thing && npc)
-	{
-		Position thingPos = thing->getPosition();
-		Position npcPos = npc->getPosition();
-		if(npcPos.z == thingPos.z)
-			lua_pushnumber(L, std::max(std::abs(npcPos.x - thingPos.x), std::abs(npcPos.y - thingPos.y)));
-		else
-			lua_pushnumber(L, -1);
-	}
-	else
-	{
-		errorEx(getError(LUA_ERROR_THING_NOT_FOUND));
-		lua_pushnil(L);
-	}
-
-	return 1;
-}
-
 int32_t NpcScript::luaGetNpcParameter(lua_State* L)
 {
-	//getNpcParameter(paramKey)
+	//getNpcParameter(key)
 	ScriptEnviroment* env = getEnv();
 	if(Npc* npc = env->getNpc())
 	{

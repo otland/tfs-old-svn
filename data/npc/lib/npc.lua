@@ -1,9 +1,5 @@
 function selfIdle()
-	following = false
-	attacking = false
-
 	selfAttackCreature(0)
-	target = 0
 end
 
 function selfSayChannel(cid, message)
@@ -24,19 +20,22 @@ function selfMoveToCreature(id)
 	return
 end
 
-function getNpcDistanceToCreature(id)
-	if(not id or id == 0) then
-		selfIdle()
+function getNpcDistanceTo(id)
+	errors(false)
+	local thing = getThing(id)
+
+	errors(true)
+	if(thing.uid == 0) then
 		return nil
 	end
 
 	local c = getCreaturePosition(id)
-	if(not c.x or c.x == 0) then
+	if(not isValidPosition(c)) then
 		return nil
 	end
 
 	local s = getCreaturePosition(getNpcId())
-	if(not s.x or s.x == 0 or s.z ~= c.z) then
+	if(not isValidPosition(s) or s.z ~= c.z) then
 		return nil
 	end
 
@@ -57,11 +56,7 @@ function doMessageCheck(message, keyword)
 end
 
 function doNpcSellItem(cid, itemid, amount, subType, ignoreCap, inBackpacks, backpack)
-	local amount = amount or 1
-	local subType = subType or 1
-	local ignoreCap = ignoreCap and true or false
-
-	local item = 0
+	local amount, subType, ignoreCap, item = amount or 1, subType or 1, ignoreCap and true or false, 0
 	if(isItemStackable(itemid)) then
 		if(isItemRune(itemid)) then
 			amount = amount * subType
@@ -81,8 +76,7 @@ function doNpcSellItem(cid, itemid, amount, subType, ignoreCap, inBackpacks, bac
 
 	local a = 0
 	if(inBackpacks) then
-		local container = doCreateItemEx(backpack, 1)
-		local b = 1
+		local container, b = doCreateItemEx(backpack, 1), 1
 		for i = 1, amount do
 			item = doAddContainerItem(container, itemid, subType)
 			if(itemid == ITEM_PARCEL) then
@@ -156,4 +150,5 @@ doNpcBuyItem = doPlayerRemoveItem
 doNpcSetCreatureFocus = selfFocus
 getNpcCid = getNpcId
 getDistanceTo = getNpcDistanceTo
-getDistanceToCreature = getNpcDistanceToCreature
+getDistanceToCreature = getNpcDistanceTo
+getNpcDistanceToCreature = getNpcDistanceTo

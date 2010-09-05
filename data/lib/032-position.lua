@@ -86,7 +86,7 @@ function getArea(position, x, y)
 end
 
 function Position(x, y, z, stackpos)
-	local position = {x = 0, y = 0, z = 0}
+	local position, stackpos = {x = 0, y = 0, z = 0}, stackpos or nil
 	if(isNumeric(x .. y .. z)) then
 		position = {x = x, y = y, z = z}
 		if(isNumeric(stackpos)) then
@@ -95,4 +95,8 @@ function Position(x, y, z, stackpos)
 	end
 
 	return position
+end
+
+function isValidPosition(position)
+	return position.x and position.y and position.z and position.x > 0 and position.y > 0 and position.z >= 0 and position.z <= 15
 end
