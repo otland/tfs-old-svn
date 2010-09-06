@@ -172,7 +172,7 @@ if(NpcHandler == nil) then
 						return true
 					end
 
-					internalReleaseFocus(focus, k)
+					self:internalReleaseFocus(focus, k)
 					return false
 				end
 			end
@@ -222,7 +222,7 @@ if(NpcHandler == nil) then
 			end
 
 			if(pos ~= nil) then
-				internalReleaseFocus(focus, pos)
+				self:internalReleaseFocus(focus, pos)
 				closeShopWindow(focus)
 			end
 		elseif(self.focuses == focus) then
