@@ -1762,21 +1762,6 @@ void Npc::doSay(const std::string& text, SpeakClasses type, Player* player)
 	}
 }
 
-void Npc::doTurn(Direction dir)
-{
-	g_game.internalCreatureTurn(this, dir);
-}
-
-void Npc::doMove(Direction dir)
-{
-	g_game.internalMoveCreature(this, dir);
-}
-
-void Npc::doMoveTo(Position target)
-{
-	g_game.steerCreature(this, target);
-}
-
 uint32_t Npc::getListItemPrice(uint16_t itemId, ShopEvent_t type)
 {
 	for(ItemListMap::iterator it = itemListMap.begin(); it != itemListMap.end(); ++it)
@@ -2432,10 +2417,6 @@ void NpcScript::registerFunctions()
 	LuaInterface::registerFunctions();
 	lua_register(m_luaState, "selfFocus", NpcScript::luaActionFocus);
 	lua_register(m_luaState, "selfSay", NpcScript::luaActionSay);
-
-	lua_register(m_luaState, "selfTurn", NpcScript::luaActionTurn);
-	lua_register(m_luaState, "selfMove", NpcScript::luaActionMove);
-	lua_register(m_luaState, "selfMoveTo", NpcScript::luaActionMoveTo);
 	lua_register(m_luaState, "selfFollow", NpcScript::luaActionFollow);
 
 	lua_register(m_luaState, "getNpcId", NpcScript::luaGetNpcId);
@@ -2492,46 +2473,6 @@ int32_t NpcScript::luaActionSay(lua_State* L)
 	}
 
 	npc->doSay(popString(L), (SpeakClasses)type, player);
-	return 0;
-}
-
-int32_t NpcScript::luaActionTurn(lua_State* L)
-{
-	//selfTurn(direction)
-	ScriptEnviroment* env = getEnv();
-	if(Npc* npc = env->getNpc())
-		npc->doTurn((Direction)popNumber(L));
-
-	return 0;
-}
-
-int32_t NpcScript::luaActionMove(lua_State* L)
-{
-	//selfMove(direction)
-	ScriptEnviroment* env = getEnv();
-	if(Npc* npc = env->getNpc())
-		npc->doMove((Direction)popNumber(L));
-
-	return 0;
-}
-
-int32_t NpcScript::luaActionMoveTo(lua_State* L)
-{
-	//selfMoveTo({x, y, z|pos})
-	PositionEx pos;
-	if(!lua_istable(L, -1))
-	{
-		pos.z = (uint16_t)popNumber(L);
-		pos.y = (uint16_t)popNumber(L);
-		pos.x = (uint16_t)popNumber(L);
-	}
-	else
-		popPosition(L, pos);
-
-	ScriptEnviroment* env = getEnv();
-	if(Npc* npc = env->getNpc())
-		npc->doMoveTo(pos);
-
 	return 0;
 }
 

@@ -1,5 +1,6 @@
 function isInRange(position, fromPosition, toPosition)
-	return position.x >= fromPosition.x and position.y >= fromPosition.y and position.z >= fromPosition.z and position.x <= toPosition.x and position.y <= toPosition.y and position.z <= toPosition.z
+	return (position.x >= fromPosition.x and position.y >= fromPosition.y and position.z >= fromPosition.z
+		and position.x <= toPosition.x and position.y <= toPosition.y and position.z <= toPosition.z)
 end
 
 function getDistanceBetween(fromPosition, toPosition)
@@ -13,7 +14,7 @@ function getDistanceBetween(fromPosition, toPosition)
 end
 
 function getDirectionTo(pos1, pos2)
-	local dir = NORTH
+	local dir = SOUTH
 	if(pos1.x > pos2.x) then
 		dir = WEST
 		if(pos1.y > pos2.y) then
@@ -28,12 +29,10 @@ function getDirectionTo(pos1, pos2)
 		elseif(pos1.y < pos2.y) then
 			dir = SOUTHEAST
 		end
-	else
-		if(pos1.y > pos2.y) then
-			dir = NORTH
-		elseif(pos1.y < pos2.y) then
-			dir = SOUTH
-		end
+	elseif(pos1.y > pos2.y) then
+		dir = NORTH
+	elseif(pos1.y < pos2.y) then
+		dir = SOUTH
 	end
 
 	return dir
@@ -86,7 +85,7 @@ function getArea(position, x, y)
 end
 
 function Position(x, y, z, stackpos)
-	local position, stackpos = {x = 0, y = 0, z = 0}, stackpos or nil
+	local position = {x = 0, y = 0, z = 0}
 	if(isNumeric(x .. y .. z)) then
 		position = {x = x, y = y, z = z}
 		if(isNumeric(stackpos)) then
@@ -98,5 +97,6 @@ function Position(x, y, z, stackpos)
 end
 
 function isValidPosition(position)
-	return position.x and position.y and position.z and position.x > 0 and position.y > 0 and position.z >= 0 and position.z <= 15
+	return (isNumeric(position.x .. position.y .. position.z) and position.x > 0
+		and position.y > 0 and position.z >= 0 and position.z <= 15)
 end

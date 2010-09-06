@@ -50,10 +50,6 @@ class NpcScript : public LuaInterface
 
 		static int32_t luaActionFocus(lua_State* L);
 		static int32_t luaActionSay(lua_State* L);
-
-		static int32_t luaActionTurn(lua_State* L);
-		static int32_t luaActionMove(lua_State* L);
-		static int32_t luaActionMoveTo(lua_State* L);
 		static int32_t luaActionFollow(lua_State* L);
 
 		static int32_t luaGetNpcId(lua_State* L);
@@ -378,9 +374,6 @@ class Npc : public Creature
 		virtual const std::string& getNameDescription() const {return nameDescription;}
 
 		void doSay(const std::string& text, SpeakClasses type, Player* player);
-		void doTurn(Direction dir);
-		void doMove(Direction dir);
-		void doMoveTo(Position pos);
 
 		void onPlayerTrade(Player* player, ShopEvent_t type, int32_t callback, uint16_t itemId, uint8_t count,
 			uint8_t amount, bool ignoreCap = false, bool inBackpacks = false);

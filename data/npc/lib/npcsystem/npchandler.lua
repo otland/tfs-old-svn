@@ -221,8 +221,8 @@ if(NpcHandler == nil) then
 				end
 			end
 
-			internalReleaseFocus(focus, pos)
 			if(pos ~= nil) then
+				internalReleaseFocus(focus, pos)
 				closeShopWindow(focus)
 			end
 		elseif(self.focuses == focus) then
@@ -235,6 +235,10 @@ if(NpcHandler == nil) then
 
 	-- Internal un-focusing function, beware using!
 	function NpcHandler:internalReleaseFocus(focus, pos)
+		if(type(self.focuses) ~= "table" or pos == nil or self.focuses[pos] == nil) then
+			return
+		end
+
 		table.remove(self.focuses, pos)
 		self.talkStart[focus] = nil
 		self:updateFocus()
@@ -332,8 +336,8 @@ if(NpcHandler == nil) then
 	-- Translates all message tags found in msg using parseInfo
 	function NpcHandler:parseMessage(msg, parseInfo)
 		for search, replace in pairs(parseInfo) do
-			if(search ~= nil and replace ~= nil) then
-				msg = string.gsub(msg, search, replace)
+			if(replace ~= nil and not isNumeric(replace)) then
+				msg = msg:gsub(search, replace)
 			end
 		end
 
