@@ -2986,7 +2986,7 @@ bool Game::playerRequestTrade(uint32_t playerId, const Position& pos, int16_t st
 	}
 
 	Container* tradeContainer = tradeItem->getContainer();
-	if(tradeContainer && tradeContainer->getItemHoldingCount() + 1 > 100)
+	if(tradeContainer && tradeContainer->getItemHoldingCount() + 1 > g_config.getNumber(ConfigManager::TRADE_LIMIT))
 	{
 		player->sendTextMessage(MSG_INFO_DESCR, "You cannot trade more than 100 items.");
 		return false;

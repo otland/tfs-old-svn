@@ -286,6 +286,7 @@ bool ConfigManager::load()
 	m_confNumber[TILE_LIMIT] = getGlobalNumber("tileLimit", 0);
 	m_confNumber[PROTECTION_TILE_LIMIT] = getGlobalNumber("protectionTileLimit", 0);
 	m_confNumber[HOUSE_TILE_LIMIT] = getGlobalNumber("houseTileLimit", 0);
+	m_confNumber[TRADE_LIMIT] = getGlobalNumber("tradeLimit", 100);
 	m_confString[MAILBOX_DISABLED_TOWNS] = getGlobalString("mailboxDisabledTowns", "");
 	m_confNumber[SQUARE_COLOR] = getGlobalNumber("squareColor", 0);
 	m_confBool[USE_BLACK_SKULL] = getGlobalBool("useBlackSkull", false);
