@@ -78,6 +78,7 @@ void ServicePort::open(IPAddressList ips, uint16_t port)
 		{
 			Acceptor_ptr tmp(new boost::asio::ip::tcp::acceptor(m_io_service,
 				boost::asio::ip::tcp::endpoint(*it, m_serverPort)));
+			tmp->set_option(boost::asio::ip::tcp::acceptor::reuse_address(true));
 
 			accept(tmp);
 			m_acceptors.push_back(tmp);

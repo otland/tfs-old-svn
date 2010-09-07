@@ -187,7 +187,7 @@ bool IOGuild::createGuild(Player* player)
 	DBResult* result;
 
 	DBQuery query;
-	query << "INSERT INTO `guilds` (`id`, `world_id`, `name`, `ownerid`, `creationdata`, `motd`) VALUES (NULL, " << g_config.getNumber(ConfigManager::WORLD_ID) << ", " << db->escapeString(player->getGuildName()) << ", " << player->getGUID() << ", " << time(NULL) << ", 'Your guild has been successfully created, to view all available commands type: !commands. If you would like to remove this message use !cleanmotd and to set new motd use !setmotd text.')";
+	query << "INSERT INTO `guilds` (`id`, `world_id`, `name`, `ownerid`, `creationdata`, `motd`, `checkdata`) VALUES (NULL, " << g_config.getNumber(ConfigManager::WORLD_ID) << ", " << db->escapeString(player->getGuildName()) << ", " << player->getGUID() << ", " << time(NULL) << ", 'Your guild has been successfully created, to view all available commands type: !commands. If you would like to remove this message use !cleanmotd and to set new motd use !setmotd text.', 0)";
 	if(!db->query(query.str()))
 		return false;
 

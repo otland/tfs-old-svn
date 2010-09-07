@@ -146,18 +146,16 @@ ItemList MonsterType::createLoot(const LootBlock& lootBlock)
 		item = lootBlock.ids[random_range((size_t)0, lootBlock.ids.size() - 1)];
 
 	ItemList items;
-	if(Item::items[item].stackable)
-	{
-		if(random < lootBlock.chance)
-			count = random % lootBlock.count + 1;
-	}
-	else if(random < lootBlock.chance)
-		count = 1;
+	if(random < lootBlock.chance)
+		count = random % lootBlock.count + 1;
 
 	Item* tmpItem = NULL;
 	while(count > 0)
 	{
-		uint16_t n = std::min(count, (uint16_t)100);
+		uint16_t n = 1;
+		if(Item::items[item].stackable)
+			n = std::min(count, (uint16_t)100);
+
 		if(!(tmpItem = Item::CreateItem(item, n)))
 			break;
 
