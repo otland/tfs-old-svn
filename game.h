@@ -21,6 +21,7 @@
 
 #include "enums.h"
 #include "templates.h"
+#include "server.h"
 #include "scheduler.h"
 
 #include "map.h"
@@ -31,7 +32,6 @@
 #include "npc.h"
 #include "monster.h"
 
-class ServiceManager;
 class Creature;
 class Player;
 class Monster;
