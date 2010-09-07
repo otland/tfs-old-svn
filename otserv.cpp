@@ -85,13 +85,12 @@ inline void boost::throw_exception(std::exception const & e)
 }
 #endif
 
+RSA* g_RSA;
 ConfigManager g_config;
 Game g_game;
+Chat g_chat;
 Monsters g_monsters;
 Npcs g_npcs;
-RSA* g_RSA;
-
-Chat g_chat;
 
 boost::mutex g_loaderLock;
 boost::condition_variable g_loaderSignal;

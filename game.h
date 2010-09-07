@@ -626,6 +626,7 @@ class Game
 		Map* getMap() {return map;}
 		const Map* getMap() const {return map;}
 
+		bool isRunning() const {return services && services->isRunning();}
 		int32_t getLightHour() {return lightHour;}
 		void startDecay(Item* item);
 

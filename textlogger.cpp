@@ -20,9 +20,11 @@
 #include "manager.h"
 
 #include "configmanager.h"
+#include "game.h"
 #include "tools.h"
 
 extern ConfigManager g_config;
+extern Game g_game;
 
 void Logger::open()
 {
@@ -37,10 +39,12 @@ void Logger::open()
 		m_files[LOGFILE_OUTPUT] = fopen(path.c_str(), (g_config.getBool(ConfigManager::TRUNCATE_LOG) ? "w" : "a"));
 
 	m_files[LOGFILE_ASSERTIONS] = fopen(getFilePath(FILE_TYPE_LOG, "client_assertions.log").c_str(), "a");
+	m_loaded = true;
 }
 
 void Logger::close()
 {
+	m_loaded = false;
 	for(uint8_t i = 0; i <= LOGFILE_LAST; i++)
 	{
 		if(m_files[i])
@@ -50,7 +54,7 @@ void Logger::close()
 
 void Logger::iFile(LogFile_t file, std::string output, bool newLine)
 {
-	if(!m_files[file])
+	if(!m_loaded || !m_files[file])
 		return;
 
 	internal(m_files[file], output, newLine);
@@ -80,6 +84,9 @@ void Logger::internal(FILE* file, std::string output, bool newLine)
 
 void Logger::log(const char* func, LogType_t type, std::string message, std::string channel/* = ""*/, bool newLine/* = true*/)
 {
+	if(!m_loaded)
+		return;
+
 	std::stringstream ss;
 	ss << "[" << formatDate() << "]" << " (";
 	switch(type)
@@ -134,7 +141,7 @@ std::streambuf::int_type OutputHandler::overflow(std::streambuf::int_type c/* = 
 		std::cout << "[" << formatTime(0, true) << "] ";
 
 	std::cout.write(m_cache.c_str(), m_cache.size());
-	if(g_config.isLoaded())
+	if(Logger::getInstance()->isLoaded())
 	{
 		std::stringstream s;
 		if(m_cache.size() > 1)
@@ -142,7 +149,8 @@ std::streambuf::int_type OutputHandler::overflow(std::streambuf::int_type c/* = 
 
 		s.write(m_cache.c_str(), m_cache.size());
 		Logger::getInstance()->iFile(LOGFILE_OUTPUT, s.str(), false);
-		Manager::getInstance()->output(m_cache);
+		if(g_game.isRunning())
+			Manager::getInstance()->output(m_cache);
 	}
 
 	m_cache.clear();
