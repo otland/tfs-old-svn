@@ -105,7 +105,7 @@
 	forceSlowConnectionsToDisconnect = false
 	loginOnlyWithLoginServer = false
 	premiumPlayerSkipWaitList = false
-	
+
 	-- RSA
 	-- NOTE: These should not be changed unless you know what your doing!
 	-- Prime1 - known as p; Prime2 - known as q; Public - known as e;
@@ -196,6 +196,7 @@
 	bufferMutedOnSpellFailure = false
 	spellNameInsteadOfWords = false
 	emoteSpells = false
+	unifiedSpells = true
 
 	-- Outfits
 	allowChangeOutfit = true

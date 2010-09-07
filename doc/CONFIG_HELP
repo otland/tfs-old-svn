@@ -654,6 +654,12 @@
 			Anti spam feature.
 			Default: no
 
+		unifiedSpells
+			In the screen and the default channel it will be show only the name of the spell.
+				For example: "Ex Ura" or "exura ""im the best sorcer" will be show as exura.
+			In global Tibia it's enabled. (it has been added in 8.6 update)
+			Default: yes
+
 		promptExceptionTracerErrorBox
 			Works only on Windows with precompiled support feature,
 				"exception tracer" (__EXCEPTION_TRACER__ flag)

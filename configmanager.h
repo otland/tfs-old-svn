@@ -291,6 +291,7 @@ class ConfigManager
 			OPTIONAL_WAR_ATTACK_ALLY,
 #endif
 			BIND_ONLY_GLOBAL_ADDRESS,
+			UNIFIED_SPELLS,
 			LAST_BOOL_CONFIG /* this must be the last one */
 		};
 

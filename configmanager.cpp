@@ -313,6 +313,7 @@ bool ConfigManager::load()
 	m_confString[ADMIN_ENCRYPTION] = getGlobalString("adminEncryption", "");
 	m_confString[ADMIN_ENCRYPTION_DATA] = getGlobalString("adminEncryptionData", "");
 	m_confBool[ADDONS_PREMIUM] = getGlobalBool("addonsOnlyPremium", true);
+	m_confBool[UNIFIED_SPELLS] = getGlobalBool("unifiedSpells", true);
 #ifdef __WAR_SYSTEM__
 	m_confBool[OPTIONAL_WAR_ATTACK_ALLY] = getGlobalBool("optionalWarAttackableAlly", false);
 #endif
