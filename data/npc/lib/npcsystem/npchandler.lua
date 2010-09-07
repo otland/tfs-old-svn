@@ -336,7 +336,7 @@ if(NpcHandler == nil) then
 	-- Translates all message tags found in msg using parseInfo
 	function NpcHandler:parseMessage(msg, parseInfo)
 		for search, replace in pairs(parseInfo) do
-			if(replace ~= nil and not isNumeric(replace)) then
+			if(replace ~= nil) then
 				msg = msg:gsub(search, replace)
 			end
 		end
@@ -489,7 +489,7 @@ if(NpcHandler == nil) then
 		local callback = self:getCallback(CALLBACK_ONTHINK)
 		if(callback == nil or callback()) then
 			for i, speech in pairs(self.talkDelay) do
-				if(speech.cid ~= nil and isCreature(cid) and speech.start ~= nil and speech.time ~= nil and speech.message ~= nil) then
+				if(speech.cid ~= nil and isCreature(speech.cid) and speech.start ~= nil and speech.time ~= nil and speech.message ~= nil) then
 					if(os.mtime() >= speech.time) then
 						local talkStart = (NPCHANDLER_CONVBEHAVIOR ~= CONVERSATION_DEFAULT and self.talkStart[speech.cid] or self.talkStart)
 						if(self:isFocused(speech.cid) and talkStart == speech.start) then
