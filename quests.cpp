@@ -180,9 +180,9 @@ bool Quests::parseQuestNode(xmlNodePtr p, bool checkDuplicate)
 	if(readXMLString(p, "name", strValue))
 		name = strValue;
 
-	uint32_t startStorageId = 0;
-	if(readXMLInteger(p, "startstorageid", intValue) || readXMLInteger(p, "storageId", intValue))
-		startStorageId = intValue;
+	std::string startStorageId = 0;
+	if(readXMLString(p, "startstorageid", strValue) || readXMLString(p, "storageId", strValue))
+		startStorageId = strValue;
 
 	int32_t startStorageValue = 0;
 	if(readXMLInteger(p, "startstoragevalue", intValue) || readXMLInteger(p, "storageValue", intValue))
@@ -204,9 +204,9 @@ bool Quests::parseQuestNode(xmlNodePtr p, bool checkDuplicate)
 		if(readXMLString(missionNode, "state", strValue) || readXMLString(missionNode, "description", strValue))
 			missionState = strValue;
 
-		uint32_t storageId = 0;
-		if(readXMLInteger(missionNode, "storageid", intValue) || readXMLInteger(missionNode, "storageId", intValue))
-			storageId = intValue;
+		std::string storageId = 0;
+		if(readXMLString(missionNode, "storageid", strValue) || readXMLString(missionNode, "storageId", strValue))
+			storageId = strValue;
 
 		int32_t startValue = 0, endValue = 0;
 		if(readXMLInteger(missionNode, "startvalue", intValue) || readXMLInteger(missionNode, "startValue", intValue))

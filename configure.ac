@@ -199,11 +199,19 @@ AC_CHECK_LIB(cryptopp, main, , [AC_MSG_ERROR("Linking against Crypto++ library f
 AC_CHECK_HEADERS([openssl/rsa.h openssl/bn.h openssl/err.h], , [AC_MSG_ERROR("Required OpenSSL headers not found.")])
 AC_CHECK_LIB(crypto, main, , [AC_MSG_ERROR("Linking against OpenSSL library failed")])
 
+
 # check for Lua
-PKG_CHECK_MODULES(LUA, lua5.1 >= 5.1, , [
-	AC_CHECK_HEADERS([lua.hpp], , [AC_MSG_ERROR("Lua header not found.")])
-	AC_CHECK_LIB(lua, main, , [AC_MSG_ERROR("Linking against Lua library failed.")])
-])
+if test "$luaJIT" = "yes"; then 
+	PKG_CHECK_MODULES(LUA, luajit, , [
+		AC_CHECK_HEADERS([lua.hpp], , [AC_MSG_ERROR("LuaJIT header not found.")])
+		AC_CHECK_LIB(luajit, main, , [AC_MSG_ERROR("Linking against LuaJIT library failed.")])
+	])
+elif test "$luaJIT" = "no"; then
+	PKG_CHECK_MODULES(LUA, lua5.1 >= 5.1, , [
+		AC_CHECK_HEADERS([lua.hpp], , [AC_MSG_ERROR("Lua header not found.")])
+		AC_CHECK_LIB(lua, main, , [AC_MSG_ERROR("Linking against Lua library failed.")])
+	])
+fi
 AC_SUBST(LUA_CFLAGS)
 AC_SUBST(LUA_LIBS)
 

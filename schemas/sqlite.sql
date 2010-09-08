@@ -121,7 +121,7 @@ CREATE TABLE "account_viplist" (
 );
 
 CREATE TABLE "global_storage" (
-	"key" INTEGER NOT NULL,
+	"key" VARCHAR(32) NOT NULL,
 	"world_id" INTEGER NOT NULL DEFAULT 0,
 	"value" VARCHAR(255) NOT NULL DEFAULT '0',
 	UNIQUE ("key", "world_id")
@@ -263,7 +263,7 @@ CREATE TABLE "player_skills" (
 
 CREATE TABLE "player_storage" (
 	"player_id" INTEGER NOT NULL,
-	"key" INTEGER NOT NULL,
+	"key" VARCHAR(32) NOT NULL,
 	"value" VARCHAR(255) NOT NULL DEFAULT '0',
 	UNIQUE ("player_id", "key"),
 	FOREIGN KEY ("player_id") REFERENCES "players" ("id")

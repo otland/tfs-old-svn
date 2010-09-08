@@ -62,15 +62,15 @@ bool Outfits::parseOutfitNode(xmlNodePtr p)
 	if(readXMLInteger(p, "access", intValue))
 		newOutfit.accessLevel = intValue;
 
-	if(readXMLInteger(p, "quest", intValue))
+	if(readXMLString(p, "quest", strValue))
 	{
-		newOutfit.storageId = intValue;
+		newOutfit.storageId = strValue;
 		newOutfit.storageValue = "1";
 	}
 	else
 	{
-		if(readXMLInteger(p, "storageId", intValue))
-			newOutfit.storageId = intValue;
+		if(readXMLString(p, "storageId", strValue))
+			newOutfit.storageId = strValue;
 
 		if(readXMLString(p, "storageValue", strValue))
 			newOutfit.storageValue = strValue;

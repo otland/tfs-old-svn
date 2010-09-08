@@ -1132,7 +1132,14 @@ uint32_t DatabaseManager::updateDatabase()
 			registerDatabaseConfig("db_version", 26);
 			return 26;
 		}
-
+		case 26:
+		{
+			std::clog << "> Updating database to version 27..." << std::endl;
+			db->query(std::string("ALTER TABLE `player_storage` CHANGE `key` `key` VARCHAR( 32 ) NOT NULL DEFAULT '0'"));
+			db->query(std::string("ALTER TABLE `global_storage` CHANGE `key` `key` VARCHAR( 32 ) NOT NULL DEFAULT '0'"));
+			registerDatabaseConfig("db_version", 26);
+			return 27;
+		}
 		default:
 			break;
 	}

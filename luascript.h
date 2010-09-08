@@ -19,12 +19,14 @@
 #define __LUASCRIPT__
 #include "otsystem.h"
 #ifdef __LUAJIT__
-#include <lua.hpp>
+#include <luajit-2.0/lua.hpp>
+
 
 extern "C"
 {
-	#include <lauxlib.h>
-	#include <lualib.h>
+	#include <luajit-2.0/luajit.h>
+	#include <luajit-2.0/lauxlib.h>
+	#include <luajit-2.0/lualib.h>
 }
 #else
 
@@ -89,9 +91,9 @@ class ScriptEnviroment
 		static bool saveGameState();
 		static bool loadGameState();
 
-		bool getStorage(const uint32_t key, std::string& value) const;
-		void setStorage(const uint32_t key, const std::string& value) {m_storageMap[key] = value;}
-		void eraseStorage(const uint32_t key) {m_storageMap.erase(key);}
+		bool getStorage(const std::string key, std::string& value) const;
+		void setStorage(const std::string key, const std::string& value) {m_storageMap[key] = value;}
+		void eraseStorage(const std::string key) {m_storageMap.erase(key);}
 
 		int32_t getScriptId() {return m_scriptId;}
 		void setScriptId(int32_t scriptId, LuaInterface* interface)
@@ -165,7 +167,7 @@ class ScriptEnviroment
 		typedef std::list<Item*> ItemList;
 		typedef std::map<ScriptEnviroment*, ItemList> TempItemListMap;
 
-		typedef std::map<uint32_t, std::string> StorageMap;
+		typedef std::map<std::string, std::string> StorageMap;
 		typedef std::map<uint32_t, CombatArea*> AreaMap;
 		typedef std::map<uint32_t, Combat*> CombatMap;
 		typedef std::map<uint32_t, Condition*> ConditionMap;

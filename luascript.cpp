@@ -151,7 +151,7 @@ bool ScriptEnviroment::saveGameState()
 	for(StorageMap::const_iterator it = m_storageMap.begin(); it != m_storageMap.end(); ++it)
 	{
 		char buffer[25 + it->second.length()];
-		sprintf(buffer, "%u, %u, %s", it->first, g_config.getNumber(ConfigManager::WORLD_ID), db->escapeString(it->second).c_str());
+		sprintf(buffer, "%s, %u, %s", db->escapeString(it->first).c_str(), g_config.getNumber(ConfigManager::WORLD_ID), db->escapeString(it->second).c_str());
 		if(!query_insert.addRow(buffer))
 			return false;
 	}
@@ -169,7 +169,7 @@ bool ScriptEnviroment::loadGameState()
 	if((result = db->storeQuery(query.str())))
 	{
 		do
-			m_storageMap[result->getDataInt("key")] = result->getDataString("value");
+			m_storageMap[result->getDataString("key")] = result->getDataString("value");
 		while(result->next());
 		result->free();
 	}
@@ -470,7 +470,7 @@ DBResult* ScriptEnviroment::getResultByID(uint32_t id)
 	return NULL;
 }
 
-bool ScriptEnviroment::getStorage(const uint32_t key, std::string& value) const
+bool ScriptEnviroment::getStorage(const std::string key, std::string& value) const
 {
 	StorageMap::const_iterator it = m_storageMap.find(key);
 	if(it != m_storageMap.end())
@@ -4727,7 +4727,7 @@ int32_t LuaInterface::luaDoCreateTeleport(lua_State* L)
 int32_t LuaInterface::luaGetCreatureStorage(lua_State* L)
 {
 	//getCreatureStorage(cid, key)
-	uint32_t key = popNumber(L);
+	std::string key = popString(L);
 	ScriptEnviroment* env = getEnv();
 	if(Creature* creature = env->getCreatureByUID(popNumber(L)))
 	{
@@ -4768,7 +4768,7 @@ int32_t LuaInterface::luaDoCreatureSetStorage(lua_State* L)
 			lua_pop(L, 1);
 	}
 
-	uint32_t key = popNumber(L);
+	std::string key = popString(L);
 	ScriptEnviroment* env = getEnv();
 	if(Creature* creature = env->getCreatureByUID(popNumber(L)))
 	{
@@ -7104,7 +7104,7 @@ int32_t LuaInterface::luaGetStorage(lua_State* L)
 	//getStorage(key)
 	ScriptEnviroment* env = getEnv();
 	std::string strValue;
-	if(env->getStorage(popNumber(L), strValue))
+	if(env->getStorage(popString(L), strValue))
 	{
 		int32_t intValue = atoi(strValue.c_str());
 		if(intValue || strValue == "0")
@@ -7133,9 +7133,9 @@ int32_t LuaInterface::luaDoSetStorage(lua_State* L)
 
 	ScriptEnviroment* env = getEnv();
 	if(!nil)
-		env->setStorage(popNumber(L), value);
+		env->setStorage(popString(L), value);
 	else
-		env->eraseStorage(popNumber(L));
+		env->eraseStorage(popString(L));
 
 	lua_pushboolean(L, true);
 	return 1;

@@ -793,12 +793,13 @@ void Player::dropLoot(Container* corpse)
 	}
 }
 
-bool Player::setStorage(const uint32_t key, const std::string& value)
+bool Player::setStorage(const std::string key, const std::string& value)
 {
-	if(!IS_IN_KEYRANGE(key, RESERVED_RANGE))
+	uint32_t numbericKey = atol(key.c_str());
+	if(!numbericKey || !IS_IN_KEYRANGE(numbericKey, RESERVED_RANGE))
 		return Creature::setStorage(key, value);
 
-	if(IS_IN_KEYRANGE(key, OUTFITS_RANGE))
+	if(IS_IN_KEYRANGE(numbericKey, OUTFITS_RANGE))
 	{
 		uint32_t lookType = atoi(value.c_str()) >> 16, addons = atoi(value.c_str()) & 0xFF;
 		if(addons < 4)
@@ -811,7 +812,7 @@ bool Player::setStorage(const uint32_t key, const std::string& value)
 			std::clog << "[Warning - Player::setStorage] Invalid addons value key: " << key
 				<< ", value: " << value << " for player: " << getName() << std::endl;
 	}
-	else if(IS_IN_KEYRANGE(key, OUTFITSID_RANGE))
+	else if(IS_IN_KEYRANGE(numbericKey, OUTFITSID_RANGE))
 	{
 		uint32_t outfitId = atoi(value.c_str()) >> 16, addons = atoi(value.c_str()) & 0xFF;
 		if(addons < 4)
@@ -826,10 +827,10 @@ bool Player::setStorage(const uint32_t key, const std::string& value)
 	return false;
 }
 
-void Player::eraseStorage(const uint32_t key)
+void Player::eraseStorage(const std::string key)
 {
 	Creature::eraseStorage(key);
-	if(IS_IN_KEYRANGE(key, RESERVED_RANGE))
+	if(IS_IN_KEYRANGE(atol(key.c_str()), RESERVED_RANGE))
 		std::clog << "[Warning - Player::eraseStorage] Unknown reserved key: " << key << " for player: " << name << std::endl;
 }
 
@@ -3980,7 +3981,7 @@ bool Player::canWearOutfit(uint32_t outfitId, uint32_t addons)
 		|| ((it->second.addons & addons) != addons && !hasCustomFlag(PlayerCustomFlag_CanWearAllAddons)))
 		return false;
 
-	if(!it->second.storageId)
+	if(it->second.storageId.empty())
 		return true;
 
 	std::string value;
@@ -4032,6 +4033,7 @@ bool Player::removeOutfit(uint32_t outfitId, uint32_t addons)
 
 void Player::generateReservedStorage()
 {
+	// Reserved keys are still numbers
 	uint32_t baseKey = PSTRG_OUTFITSID_RANGE_START + 1;
 	const OutfitMap& defaultOutfits = Outfits::getInstance()->getOutfits(sex);
 	for(OutfitMap::const_iterator it = outfits.begin(); it != outfits.end(); ++it)
@@ -4042,8 +4044,10 @@ void Player::generateReservedStorage()
 			continue;
 
 		std::stringstream ss;
+		std::stringstream strKey;
 		ss << ((it->first << 16) | (it->second.addons & 0xFF));
-		storageMap[baseKey] = ss.str();
+		strKey << baseKey;
+		storageMap[strKey.str()] = ss.str();
 
 		baseKey++;
 		if(baseKey <= PSTRG_OUTFITSID_RANGE_START + PSTRG_OUTFITSID_RANGE_SIZE)

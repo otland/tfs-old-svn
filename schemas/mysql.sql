@@ -186,7 +186,7 @@ CREATE TABLE `player_spells`
 CREATE TABLE `player_storage`
 (
 	`player_id` INT NOT NULL DEFAULT 0,
-	`key` INT UNSIGNED NOT NULL DEFAULT 0,
+	`key` VARCHAR(32) NOT NULL DEFAULT '0',
 	`value` VARCHAR(255) NOT NULL DEFAULT '0',
 	KEY (`player_id`), UNIQUE (`player_id`, `key`),
 	FOREIGN KEY (`player_id`) REFERENCES `players`(`id`) ON DELETE CASCADE
@@ -358,7 +358,7 @@ CREATE TABLE `bans`
 
 CREATE TABLE `global_storage`
 (
-	`key` INT UNSIGNED NOT NULL,
+	`key` VARCHAR(32) NOT NULL,
 	`world_id` TINYINT(2) UNSIGNED NOT NULL DEFAULT 0,
 	`value` VARCHAR(255) NOT NULL DEFAULT '0',
 	UNIQUE  (`key`, `world_id`)

@@ -188,14 +188,15 @@ struct ResponseAction
 		ResponseAction()
 		{
 			actionType = ACTION_NONE;
-			key = intValue = 0;
+			intValue = 0;
+			key = "";
 			strValue = "";
 			pos = Position();
 		}
 
 		ReponseActionParam_t actionType;
-		int32_t key, intValue;
-		std::string strValue;
+		int32_t intValue;
+		std::string key, strValue;
 		Position pos;
 };
 
@@ -254,7 +255,8 @@ class NpcResponse
 			InteractType_t interactType;
 			ResponseType_t responseType;
 			StorageComparision_t storageComp;
-			int32_t topic, amount, focusStatus, storageId;
+			int32_t topic, amount, focusStatus;
+			std::string storageId;
 			uint32_t params;
 			std::string output, knowSpell, storageValue;
 			ActionList actionList;
@@ -294,7 +296,7 @@ class NpcResponse
 		std::string getInputText() const {return (prop.inputList.empty() ? "" : *prop.inputList.begin());}
 		int32_t getTopic() const {return prop.topic;}
 		int32_t getFocusState() const {return prop.focusStatus;}
-		int32_t getStorageId() const {return prop.storageId;}
+		std::string getStorageId() const {return prop.storageId;}
 		std::string getStorage() const {return prop.storageValue;}
 		ResponseType_t getResponseType() const {return prop.responseType;}
 		InteractType_t getInteractType() const {return prop.interactType;}
