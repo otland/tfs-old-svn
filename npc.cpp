@@ -515,8 +515,8 @@ ResponseList Npc::loadInteraction(xmlNodePtr node)
 			if(readXMLInteger(node, "focus", intValue))
 				prop.focusStatus = intValue;
 
-			if(readXMLInteger(node, "storageId", intValue))
-				prop.storageId = intValue;
+			if(readXMLString(node, "storageId", strValue))
+				prop.storageId = strValue;
 
 			if(readXMLString(node, "storageValue", strValue))
 				prop.storageValue = strValue;
@@ -1426,7 +1426,7 @@ void Npc::executeResponse(Player* player, NpcState* npcState, const NpcResponse*
 
 				case ACTION_SETSTORAGE:
 				{
-					if(atoi(it->key.c_str()) > 0)
+					if(!it->key.empty())
 						player->setStorage(it->key, it->strValue);
 
 					break;

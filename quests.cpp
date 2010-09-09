@@ -48,7 +48,7 @@ std::string Mission::parseStorages(std::string state, std::string value)
 			continue;
 
 		std::string value, storage = state.substr(start, end - start)
-		player->getStorage(atoi(storage.c_str()), value);
+		player->getStorage(storage, value);
 		state.replace(start, end, value);
 	} requires testing and probably fixing, inspired by QuaS code*/
 
@@ -197,14 +197,13 @@ bool Quests::parseQuestNode(xmlNodePtr p, bool checkDuplicate)
 		if(xmlStrcmp(missionNode->name, (const xmlChar*)"mission"))
 			continue;
 
-		std::string missionName, missionState;
+		std::string missionName, missionState, storageId;
 		if(readXMLString(missionNode, "name", strValue))
 			missionName = strValue;
 
 		if(readXMLString(missionNode, "state", strValue) || readXMLString(missionNode, "description", strValue))
 			missionState = strValue;
 
-		std::string storageId = 0;
 		if(readXMLString(missionNode, "storageid", strValue) || readXMLString(missionNode, "storageId", strValue))
 			storageId = strValue;
 

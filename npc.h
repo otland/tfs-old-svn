@@ -241,13 +241,10 @@ class NpcResponse
 			ResponseProperties()
 			{
 				topic = amount = focusStatus = -1;
-				output = "";
 				interactType = INTERACT_TEXT;
 				responseType = RESPONSE_DEFAULT;
 				params = 0;
-				storageId = -1;
 				storageComp = STORAGE_EQUAL;
-				knowSpell = "";
 				publicize = true;
 			}
 
@@ -256,9 +253,8 @@ class NpcResponse
 			ResponseType_t responseType;
 			StorageComparision_t storageComp;
 			int32_t topic, amount, focusStatus;
-			std::string storageId;
 			uint32_t params;
-			std::string output, knowSpell, storageValue;
+			std::string output, knowSpell, storageId, storageValue;
 			ActionList actionList;
 			std::list<std::string> inputList;
 			std::list<ListItem> itemList;

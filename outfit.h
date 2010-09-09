@@ -61,7 +61,7 @@ struct Outfit
 		speed, healthGain, healthTicks, manaGain, manaTicks, conditionSuppressions;
 
 	uint32_t outfitId, lookType;
-	std::string name, storageValue, storageId;
+	std::string name, storageId, storageValue;
 };
 
 typedef std::list<Outfit> OutfitList;

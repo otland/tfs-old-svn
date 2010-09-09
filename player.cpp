@@ -795,11 +795,11 @@ void Player::dropLoot(Container* corpse)
 
 bool Player::setStorage(const std::string key, const std::string& value)
 {
-	uint32_t numbericKey = atol(key.c_str());
-	if(!numbericKey || !IS_IN_KEYRANGE(numbericKey, RESERVED_RANGE))
+	uint32_t numericKey = atol(key.c_str());
+	if(!IS_IN_KEYRANGE(numericKey, RESERVED_RANGE))
 		return Creature::setStorage(key, value);
 
-	if(IS_IN_KEYRANGE(numbericKey, OUTFITS_RANGE))
+	if(IS_IN_KEYRANGE(numericKey, OUTFITS_RANGE))
 	{
 		uint32_t lookType = atoi(value.c_str()) >> 16, addons = atoi(value.c_str()) & 0xFF;
 		if(addons < 4)
@@ -812,7 +812,7 @@ bool Player::setStorage(const std::string key, const std::string& value)
 			std::clog << "[Warning - Player::setStorage] Invalid addons value key: " << key
 				<< ", value: " << value << " for player: " << getName() << std::endl;
 	}
-	else if(IS_IN_KEYRANGE(numbericKey, OUTFITSID_RANGE))
+	else if(IS_IN_KEYRANGE(numericKey, OUTFITSID_RANGE))
 	{
 		uint32_t outfitId = atoi(value.c_str()) >> 16, addons = atoi(value.c_str()) & 0xFF;
 		if(addons < 4)
@@ -4033,8 +4033,7 @@ bool Player::removeOutfit(uint32_t outfitId, uint32_t addons)
 
 void Player::generateReservedStorage()
 {
-	// Reserved keys are still numbers
-	uint32_t baseKey = PSTRG_OUTFITSID_RANGE_START + 1;
+	uint32_t key = PSTRG_OUTFITSID_RANGE_START + 1;
 	const OutfitMap& defaultOutfits = Outfits::getInstance()->getOutfits(sex);
 	for(OutfitMap::const_iterator it = outfits.begin(); it != outfits.end(); ++it)
 	{
@@ -4043,14 +4042,12 @@ void Player::generateReservedStorage()
 			& it->second.addons) == it->second.addons))
 			continue;
 
-		std::stringstream ss;
-		std::stringstream strKey;
-		ss << ((it->first << 16) | (it->second.addons & 0xFF));
-		strKey << baseKey;
-		storageMap[strKey.str()] = ss.str();
+		std::stringstream k, v;
+		k << key++; // this may not work as intended, revalidate it
+		v << ((it->first << 16) | (it->second.addons & 0xFF));
 
-		baseKey++;
-		if(baseKey <= PSTRG_OUTFITSID_RANGE_START + PSTRG_OUTFITSID_RANGE_SIZE)
+		storageMap[k.str()] = v.str();
+		if(key <= PSTRG_OUTFITSID_RANGE_START + PSTRG_OUTFITSID_RANGE_SIZE)
 			continue;
 
 		std::clog << "[Warning - Player::genReservedStorageRange] Player " << getName() << " with more than 500 outfits!" << std::endl;
