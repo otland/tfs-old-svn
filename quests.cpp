@@ -180,7 +180,7 @@ bool Quests::parseQuestNode(xmlNodePtr p, bool checkDuplicate)
 	if(readXMLString(p, "name", strValue))
 		name = strValue;
 
-	std::string startStorageId = 0;
+	std::string startStorageId = "";
 	if(readXMLString(p, "startstorageid", strValue) || readXMLString(p, "storageId", strValue))
 		startStorageId = strValue;
 
