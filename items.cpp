@@ -576,7 +576,10 @@ void Items::parseItemNode(xmlNodePtr itemNode, uint32_t id)
 			else if(tmpStrValue == "clientid")
 			{
 				if(readXMLInteger(itemAttributesNode, "value", intValue))
+				{
 					it.clientId = intValue;
+					if(it.group == ITEM_GROUP_DEPRECATED)
+						it.group = ITEM_GROUP_NONE;
 			}
 			else if(tmpStrValue == "blocksolid" || tmpStrValue == "blocking")
 			{
