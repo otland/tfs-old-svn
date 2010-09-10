@@ -91,21 +91,21 @@ class ScriptEnviroment
 		static bool saveGameState();
 		static bool loadGameState();
 
-		bool getStorage(const std::string key, std::string& value) const;
-		void setStorage(const std::string key, const std::string& value) {m_storageMap[key] = value;}
-		void eraseStorage(const std::string key) {m_storageMap.erase(key);}
+		bool getStorage(const std::string& key, std::string& value) const;
+		void setStorage(const std::string& key, const std::string& value) {m_storageMap[key] = value;}
+		void eraseStorage(const std::string& key) {m_storageMap.erase(key);}
 
-		int32_t getScriptId() {return m_scriptId;}
+		int32_t getScriptId() const {return m_scriptId;};
 		void setScriptId(int32_t scriptId, LuaInterface* interface)
 			{m_scriptId = scriptId; m_interface = interface;}
 
-		int32_t getCallbackId() {return m_callbackId;}
+		int32_t getCallbackId() const {return m_callbackId;};
 		bool setCallbackId(int32_t callbackId, LuaInterface* interface);
 
-		std::string getEvent() {return m_event;}
+		std::string getEvent() const {return m_event;};
 		void setEvent(const std::string& desc) {m_event = desc;}
 
-		Position getRealPos() {return m_realPos;}
+		Position getRealPos() const {return m_realPos;};
 		void setRealPos(const Position& realPos) {m_realPos = realPos;}
 
 		Npc* getNpc() const {return m_curNpc;}
@@ -255,7 +255,7 @@ class LuaInterface
 		bool loadFile(const std::string& file, Npc* npc = NULL);
 		bool loadDirectory(const std::string& dir, Npc* npc = NULL, bool recursively = false);
 
-		std::string getName() {return m_interfaceName;}
+		std::string getName() const {return m_interfaceName;};
 		std::string getScript(int32_t scriptId);
 		std::string getLastError() const {return m_lastError;}
 

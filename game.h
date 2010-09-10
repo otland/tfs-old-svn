@@ -175,7 +175,7 @@ class Game
 		  * \param width width of the map
 		  * \param height height of the map
 		  */
-		inline void getMapDimensions(uint32_t& width, uint32_t& height)
+		inline void getMapDimensions(uint32_t& width, uint32_t& height) const 
 		{
 			width = map->mapWidth;
 			height = map->mapHeight;
@@ -335,7 +335,7 @@ class Game
 		uint32_t getNpcsOnline() {return (uint32_t)Npc::autoList.size();}
 		uint32_t getCreaturesOnline() {return (uint32_t)autoList.size();}
 
-		uint32_t getPlayersRecord() {return playersRecord;}
+		uint32_t getPlayersRecord() const {return playersRecord;}
 		void getWorldLightInfo(LightInfo& lightInfo);
 
 		void getSpectators(SpectatorVec& list, const Position& centerPos, bool checkforduplicate = false, bool multifloor = false,
@@ -627,7 +627,7 @@ class Game
 		const Map* getMap() const {return map;}
 
 		bool isRunning() const {return services && services->isRunning();}
-		int32_t getLightHour() {return lightHour;}
+		int32_t getLightHour() const {return lightHour;}
 		void startDecay(Item* item);
 
 	protected:

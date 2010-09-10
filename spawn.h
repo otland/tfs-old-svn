@@ -46,8 +46,8 @@ class Spawns
 		void startup();
 		void clear();
 
-		bool isLoaded() {return loaded;}
-		bool isStarted() {return started;}
+		bool isLoaded() const {return loaded;}
+		bool isStarted() const {return started;}
 
 	private:
 		Spawns();

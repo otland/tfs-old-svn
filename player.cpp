@@ -793,7 +793,7 @@ void Player::dropLoot(Container* corpse)
 	}
 }
 
-bool Player::setStorage(const std::string key, const std::string& value)
+bool Player::setStorage(const std::string& key, const std::string& value)
 {
 	uint32_t numericKey = atol(key.c_str());
 	if(!IS_IN_KEYRANGE(numericKey, RESERVED_RANGE))
@@ -827,7 +827,7 @@ bool Player::setStorage(const std::string key, const std::string& value)
 	return false;
 }
 
-void Player::eraseStorage(const std::string key)
+void Player::eraseStorage(const std::string& key)
 {
 	Creature::eraseStorage(key);
 	if(IS_IN_KEYRANGE(atol(key.c_str()), RESERVED_RANGE))

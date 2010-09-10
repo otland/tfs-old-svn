@@ -182,7 +182,7 @@ class House
 		uint32_t getPrice() const {return price;}
 
 		void setLastWarning(time_t _lastWarning) {lastWarning = _lastWarning;}
-		time_t getLastWarning() {return lastWarning;}
+		time_t getLastWarning() const {return lastWarning;}
 
 		void setRentWarnings(uint32_t warnings) {rentWarnings = warnings;}
 		uint32_t getRentWarnings() const {return rentWarnings;}

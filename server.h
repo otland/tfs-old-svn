@@ -97,7 +97,6 @@ class ServicePort : boost::noncopyable, public boost::enable_shared_from_this<Se
 		static bool m_logError;
 };
 
-typedef boost::shared_ptr<ServicePort> ServicePort_ptr;
 class ServiceManager : boost::noncopyable
 {
 	ServiceManager(const ServiceManager&);

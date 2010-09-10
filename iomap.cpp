@@ -375,8 +375,7 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 								}
 								else if(item->isGroundTile())
 								{
-									if(ground)
-										delete ground;
+									delete ground;
 
 									ground = item;
 								}
@@ -443,8 +442,7 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 								}
 								else if(item->isGroundTile())
 								{
-									if(ground)
-										delete ground;
+									delete ground;
 
 									ground = item;
 								}

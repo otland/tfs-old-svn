@@ -887,7 +887,7 @@ void Creature::changeMana(int32_t manaChange)
 		mana = std::max((int32_t)0, mana + manaChange);
 }
 
-bool Creature::getStorage(const std::string key, std::string& value) const
+bool Creature::getStorage(const std::string& key, std::string& value) const
 {
 	StorageMap::const_iterator it = storageMap.find(key);
 	if(it != storageMap.end())
@@ -900,7 +900,7 @@ bool Creature::getStorage(const std::string key, std::string& value) const
 	return false;
 }
 
-bool Creature::setStorage(const std::string key, const std::string& value)
+bool Creature::setStorage(const std::string& key, const std::string& value)
 {
 	storageMap[key] = value;
 	return true;

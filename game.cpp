@@ -93,8 +93,7 @@ Game::Game()
 
 Game::~Game()
 {
-	if(map)
-		delete map;
+	delete map;
 }
 
 void Game::start(ServiceManager* servicer)
@@ -1559,7 +1558,8 @@ ReturnValue Game::internalMoveItem(Creature* actor, Cylinder* fromCylinder, Cyli
 	if(retMaxCount != RET_NOERROR && !maxQueryCount)
 		return retMaxCount;
 
-	uint32_t m = maxQueryCount, n = 0;
+	uint32_t m = maxQueryCount;
+	uint8_t n = 0;
 	if(item->isStackable())
 		m = std::min((uint32_t)count, m);
 
@@ -3935,7 +3935,7 @@ bool Game::playerSpeakToNpc(Player* player, const std::string& text)
 	getSpectators(list, player->getPosition());
 
 	//send to npcs only
-	Npc* tmpNpc = NULL;
+	Npc* tmpNpc;
 	for(it = list.begin(); it != list.end(); ++it)
 	{
 		if((tmpNpc = (*it)->getNpc()))
