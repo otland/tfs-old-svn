@@ -654,6 +654,7 @@
 		<attribute key="type" value="magicfield" />
 		<attribute key="decayTo" value="0" />
 		<attribute key="duration" value="20" />
+		<attribute key="blocksolid" value="1" />
 	</item>
 	<item id="1498" article="a" name="magic wall">
 		<attribute key="type" value="magicfield" />
@@ -662,6 +663,7 @@
 		<attribute key="type" value="magicfield" />
 		<attribute key="decayTo" value="0" />
 		<attribute key="duration" value="45" />
+		<attribute key="blocksolid" value="1" />
 	</item>
 	<item id="1500" article="a" name="fire field">
 		<attribute key="type" value="magicfield" />
@@ -5377,6 +5379,7 @@
 		<attribute key="weight" value="50000" />
 	</item>
 	<item id="2949" article="a" name="slain mummy">
+		<attribute key="type" value="container" />
 		<attribute key="weight" value="1000" />
 		<attribute key="containerSize" value="10" />
 		<attribute key="decayTo" value="2950" />
@@ -9452,6 +9455,7 @@
 		<attribute key="fluidSource" value="blood" />
 	</item>
 	<item id="6004" article="a" name="slain mummy">
+		<attribute key="type" value="container" />
 		<attribute key="containerSize" value="10" />
 		<attribute key="decayTo" value="2949" />
 		<attribute key="duration" value="10" />

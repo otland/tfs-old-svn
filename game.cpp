@@ -1162,7 +1162,8 @@ bool Game::playerMoveCreature(uint32_t playerId, uint32_t movingCreatureId,
 
 			if(MagicField* field = toTile->getFieldItem())
 			{
-				if(field->isUnstepable() || !movingCreature->isImmune(field->getCombatType()))
+				if(field->isUnstepable() || field->isBlocking(movingCreature)
+					|| !movingCreature->isImmune(field->getCombatType()))
 				{
 					player->sendCancelMessage(RET_NOTPOSSIBLE);
 					return false;

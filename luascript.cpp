@@ -1898,6 +1898,9 @@ void LuaInterface::registerFunctions()
 	//getContainerCap(uid)
 	lua_register(m_luaState, "getContainerCap", LuaInterface::luaGetContainerCap);
 
+	//getContainerItems(uid)
+	lua_register(m_luaState, "getContainerItems", LuaInterface::luaGetContainerItems);
+
 	//getContainerItem(uid, slot)
 	lua_register(m_luaState, "getContainerItem", LuaInterface::luaGetContainerItem);
 
@@ -7589,11 +7592,34 @@ int32_t LuaInterface::luaGetContainerCap(lua_State* L)
 	return 1;
 }
 
+int32_t LuaInterface::luaGetContainerItems(lua_State* L)
+{
+	//getContainerItems(uid)
+	ScriptEnviroment* env = getEnv();
+	if(Container* container = env->getContainerByUID(popNumber(L)))
+	{
+		ItemList::const_iterator it = container->getItems();
+		lua_newtable(L);
+		for(int32_t i = 1; it != container->getEnd(); ++it, ++i)
+		{
+			lua_pushnumber(L, i);
+			pushThing(L, *it, env->addThing(*it));
+			pushTable(L);
+		}
+	}
+	else
+	{
+		errorEx(getError(LUA_ERROR_CONTAINER_NOT_FOUND));
+		lua_pushboolean(L, false);
+	}
+
+	return 1;
+}
+
 int32_t LuaInterface::luaGetContainerItem(lua_State* L)
 {
 	//getContainerItem(uid, slot)
 	uint32_t slot = popNumber(L);
-
 	ScriptEnviroment* env = getEnv();
 	if(Container* container = env->getContainerByUID(popNumber(L)))
 	{
@@ -7609,7 +7635,6 @@ int32_t LuaInterface::luaGetContainerItem(lua_State* L)
 	}
 
 	return 1;
-
 }
 
 int32_t LuaInterface::luaDoAddContainerItemEx(lua_State* L)
@@ -9273,7 +9298,7 @@ int32_t LuaInterface::luaGetTownTemplePosition(lua_State* L)
 
 int32_t LuaInterface::luaGetTownHouses(lua_State* L)
 {
-	//getTownHouses(townId)
+	//getTownHouses([townId])
 	uint32_t townId = 0;
 	if(lua_gettop(L) > 0)
 		townId = popNumber(L);
@@ -9282,7 +9307,7 @@ int32_t LuaInterface::luaGetTownHouses(lua_State* L)
 	lua_newtable(L);
 	for(uint32_t i = 1; it != Houses::getInstance()->getHouseEnd(); ++i, ++it)
 	{
-		if(townId != 0 && it->second->getTownId() != townId)
+		if(townId && it->second->getTownId() != townId)
 			continue;
 
 		lua_pushnumber(L, i);
@@ -9395,8 +9420,8 @@ int32_t LuaInterface::luaGetChannelList(lua_State* L)
 int32_t LuaInterface::luaGetTownList(lua_State* L)
 {
 	//getTownList()
-	lua_newtable(L);
 	TownMap::const_iterator it = Towns::getInstance()->getFirstTown();
+	lua_newtable(L);
 	for(uint32_t i = 1; it != Towns::getInstance()->getLastTown(); ++it, ++i)
 	{
 		createTable(L, i);

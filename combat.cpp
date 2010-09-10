@@ -1376,7 +1376,7 @@ void CombatArea::setupExtArea(const std::list<uint32_t>& list, uint32_t rows)
 
 bool MagicField::isBlocking(const Creature* creature) const
 {
-	if(id != ITEM_MAGICWALL_SAFE && id != ITEM_WILDGROWTH_SAFE)
+	if(!isUnstepable())
 		return Item::isBlocking(creature);
 
 	if(!creature || !creature->getPlayer())
@@ -1396,7 +1396,7 @@ bool MagicField::isBlocking(const Creature* creature) const
 
 void MagicField::onStepInField(Creature* creature, bool purposeful/* = true*/)
 {
-	if(isUnstepable())
+	if(isUnstepable() || isBlocking(creature))
 	{
 		if(!creature->isGhost())
 			g_game.internalRemoveItem(creature, this, 1);

@@ -573,6 +573,36 @@ void Items::parseItemNode(xmlNodePtr itemNode, uint32_t id)
 				if(readXMLString(itemAttributesNode, "value", strValue))
 					it.pluralName = strValue;
 			}
+			else if(tmpStrValue == "clientid")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+					it.clientId = intValue;
+			}
+			else if(tmpStrValue == "blocksolid" || tmpStrValue == "blocking")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+					it.blockSolid = (intValue != 0);
+			}
+			else if(tmpStrValue == "blockprojectile")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+					it.blockProjectile = (intValue != 0);
+			}
+			else if(tmpStrValue == "blockpathfind" || tmpStrValue == "blockpathing" || tmpStrValue == "blockpath")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+					it.blockPathFind = (intValue != 0);
+			}
+			else if(tmpStrValue == "lightlevel")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+					it.lightLevel = intValue;
+			}
+			else if(tmpStrValue == "lightcolor")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+					it.lightColor = intValue;
+			}
 			else if(tmpStrValue == "description")
 			{
 				if(readXMLString(itemAttributesNode, "value", strValue))
@@ -632,11 +662,6 @@ void Items::parseItemNode(xmlNodePtr itemNode, uint32_t id)
 			{
 				if(readXMLInteger(itemAttributesNode, "value", intValue))
 					it.movable = (intValue != 0);
-			}
-			else if(tmpStrValue == "blockprojectile")
-			{
-				if(readXMLInteger(itemAttributesNode, "value", intValue))
-					it.blockProjectile = (intValue != 0);
 			}
 			else if(tmpStrValue == "pickupable")
 			{
@@ -895,12 +920,12 @@ void Items::parseItemNode(xmlNodePtr itemNode, uint32_t id)
 				if(readXMLInteger(itemAttributesNode, "value", intValue))
 					it.decayTo = intValue;
 			}
-			else if(tmpStrValue == "transformequipto")
+			else if(tmpStrValue == "transformequipto" || tmpStrValue == "onequipto")
 			{
 				if(readXMLInteger(itemAttributesNode, "value", intValue))
 					it.transformEquipTo = intValue;
 			}
-			else if(tmpStrValue == "transformdeequipto")
+			else if(tmpStrValue == "transformdeequipto" || tmpStrValue == "ondeequipto")
 			{
 				if(readXMLInteger(itemAttributesNode, "value", intValue))
 					it.transformDeEquipTo = intValue;
