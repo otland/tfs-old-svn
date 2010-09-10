@@ -450,6 +450,16 @@
 			/mc 127.0.0.1 (Display all players with IP = 127.0.0.1)
 			/mc Tester (Display all players with same IP as Tester)
 
+	/mute
+		Mute player.
+		Parameters
+			playerName
+			<optional>time (in seconds)
+
+		Examples
+			/mute Tester (mute forever)
+			/mute Tester, 30 (mute for 30 seconds)
+
 	/wp
 		Displays map waypoints.
 
