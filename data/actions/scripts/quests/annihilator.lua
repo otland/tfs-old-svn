@@ -1,13 +1,11 @@
-local playerPosition =
-{
+local playerPosition = {
 	{x = 247, y = 659, z = 13, stackpos = STACKPOS_TOP_CREATURE},
 	{x = 247, y = 660, z = 13, stackpos = STACKPOS_TOP_CREATURE},
 	{x = 247, y = 661, z = 13, stackpos = STACKPOS_TOP_CREATURE},
 	{x = 247, y = 662, z = 13, stackpos = STACKPOS_TOP_CREATURE}
 }
 
-local newPosition =
-{
+local newPosition = {
 	{x = 189, y = 650, z = 13},
  	{x = 189, y = 651, z = 13},
 	{x = 189, y = 652, z = 13},
@@ -42,8 +40,8 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 			doSendMagicEffect(newPosition[i], CONST_ME_ENERGYAREA)
 		end
 		doTransformItem(item.uid, item.itemid + 1)
-	elseif item.itemid == 1946 then
-		doPlayerSendCancel(cid, "Sorry, not possible.")
+		return true
 	end
+	doTransformItem(item.uid, item.itemid - 1)
 	return TRUE
 end
