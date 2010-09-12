@@ -282,7 +282,7 @@ class ConditionDamage: public Condition
 		bool getNextDamage(int32_t& damage);
 		bool doDamage(Creature* creature, int32_t damage);
 
-		bool forceUpdate, delayed;
+		bool delayed, forceUpdate, field;
 		int32_t maxDamage, minDamage, startDamage, periodDamage, periodDamageTick, tickInterval;
 		uint32_t owner;
 

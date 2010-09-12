@@ -2005,9 +2005,9 @@ bool Player::hasShield() const
 }
 
 BlockType_t Player::blockHit(Creature* attacker, CombatType_t combatType, int32_t& damage,
-	bool checkDefense/* = false*/, bool checkArmor/* = false*/, bool reflect/* = true*/)
+	bool checkDefense/* = false*/, bool checkArmor/* = false*/, bool reflect/* = true*/, bool field/* = false*/)
 {
-	BlockType_t blockType = Creature::blockHit(attacker, combatType, damage, checkDefense, checkArmor);
+	BlockType_t blockType = Creature::blockHit(attacker, combatType, damage, checkDefense, checkArmor, reflect, field);
 	if(attacker)
 	{
 		int16_t color = g_config.getNumber(ConfigManager::SQUARE_COLOR);
@@ -2020,9 +2020,8 @@ BlockType_t Player::blockHit(Creature* attacker, CombatType_t combatType, int32_
 	if(blockType != BLOCK_NONE)
 		return blockType;
 
-	if(vocation->getMultiplier(MULTIPLIER_MAGICDEFENSE) != 1.0 && combatType != COMBAT_NONE &&
-		combatType != COMBAT_PHYSICALDAMAGE && combatType != COMBAT_UNDEFINEDDAMAGE &&
-		combatType != COMBAT_DROWNDAMAGE)
+	if(vocation->getMultiplier(MULTIPLIER_MAGICDEFENSE) != 1.0 && combatType != COMBAT_PHYSICALDAMAGE &&
+		combatType != COMBAT_NONE && combatType != COMBAT_UNDEFINEDDAMAGE && combatType != COMBAT_DROWNDAMAGE)
 		damage -= (int32_t)std::ceil((double)(damage * vocation->getMultiplier(MULTIPLIER_MAGICDEFENSE)) / 100.);
 
 	if(damage <= 0)
@@ -2040,9 +2039,18 @@ BlockType_t Player::blockHit(Creature* attacker, CombatType_t combatType, int32_
 			continue;
 
 		const ItemType& it = Item::items[item->getID()];
-		if(it.abilities.absorb[combatType])
+		if(!field)
 		{
-			blocked += (int32_t)std::ceil((double)(damage * it.abilities.absorb[combatType]) / 100.);
+			if(it.abilities.absorb[combatType])
+			{
+				blocked += (int32_t)std::ceil((double)(damage * it.abilities.absorb[combatType]) / 100.);
+				if(item->hasCharges())
+					g_game.transformItem(item, item->getID(), std::max((int32_t)0, (int32_t)item->getCharges() - 1));
+			}
+		}
+		else if(it.abilities.fieldAbsorb[combatType])
+		{
+			blocked += (int32_t)std::ceil((double)(damage * it.abilities.fieldAbsorb[combatType]) / 100.);
 			if(item->hasCharges())
 				g_game.transformItem(item, item->getID(), std::max((int32_t)0, (int32_t)item->getCharges() - 1));
 		}
@@ -2090,7 +2098,7 @@ BlockType_t Player::blockHit(Creature* attacker, CombatType_t combatType, int32_
 		if(combatType != COMBAT_HEALING)
 			reflected = -reflected;
 
-		if(attacker->blockHit(this, combatType, reflected, false, false, false) == BLOCK_NONE)
+		if(attacker->blockHit(this, combatType, reflected, false, false, false, false) == BLOCK_NONE)
 			g_game.combatChangeHealth(combatType, NULL, attacker, reflected);
 	}
 

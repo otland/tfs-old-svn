@@ -1421,7 +1421,7 @@ void MagicField::onStepInField(Creature* creature, bool purposeful/* = true*/)
 			if((g_game.getWorldType() == WORLDTYPE_OPTIONAL || getTile()->hasFlag(TILESTATE_OPTIONALZONE))
 				&& (owner->getPlayer() || owner->isPlayerSummon()))
 				harmful = false;
-			else if(Player* targetPlayer = creature->getPlayer())
+			else if(Player* player = creature->getPlayer())
 			{
 				if(owner->getPlayer() && Combat::isProtected(owner->getPlayer(), targetPlayer))
 					harmful = false;
