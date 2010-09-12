@@ -1423,7 +1423,7 @@ void MagicField::onStepInField(Creature* creature, bool purposeful/* = true*/)
 				harmful = false;
 			else if(Player* player = creature->getPlayer())
 			{
-				if(owner->getPlayer() && Combat::isProtected(owner->getPlayer(), targetPlayer))
+				if(owner->getPlayer() && Combat::isProtected(owner->getPlayer(), player))
 					harmful = false;
 			}
 
