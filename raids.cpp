@@ -198,7 +198,7 @@ Raid* Raids::getRaidByName(const std::string& name)
 	RaidList::iterator it;
 	for(it = raidList.begin(); it != raidList.end(); it++)
 	{
-		if(!strcasecmp((*it)->getName().c_str(), name.c_str()))
+		if(boost::algorithm::iequals((*it)->getName(), name))
 			return (*it);
 	}
 

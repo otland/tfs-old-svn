@@ -41,7 +41,6 @@ void Dispatcher::dispatcherThread(void* p)
 	ExceptionHandler dispatcherExceptionHandler;
 	dispatcherExceptionHandler.InstallHandler();
 	#endif
-	srand((uint32_t)OTSYS_TIME());
 
 	OutputMessagePool* outputPool = NULL;
 	boost::unique_lock<boost::mutex> taskLockUnique(dispatcher->m_taskLock, boost::defer_lock);

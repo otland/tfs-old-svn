@@ -203,7 +203,7 @@ RuneSpell* Spells::getRuneSpellByName(const std::string& name)
 {
 	for(RunesMap::iterator it = runes.begin(); it != runes.end(); ++it)
 	{
-		if(strcasecmp(it->second->getName().c_str(), name.c_str()) == 0)
+		if(boost::algorithm::iequals(it->second->getName(), name))
 			return it->second;
 	}
 
@@ -216,7 +216,8 @@ InstantSpell* Spells::getInstantSpell(const std::string& words)
 	for(InstantsMap::iterator it = instants.begin(); it != instants.end(); ++it)
 	{
 		InstantSpell* instantSpell = it->second;
-		if(strncasecmp(instantSpell->getWords().c_str(), words.c_str(), instantSpell->getWords().length()) == 0)
+		if(!asLowerCaseString(words).compare(0, instantSpell->getWords().length(),
+			asLowerCaseString(instantSpell->getWords())))
 		{
 			if(!result || instantSpell->getWords().length() > result->getWords().length())
 				result = instantSpell;
@@ -497,7 +498,7 @@ bool Spell::configureSpell(xmlNodePtr p)
 
 		for(uint32_t i = 0; i < sizeof(reservedList) / sizeof(const char*); ++i)
 		{
-			if(!strcasecmp(reservedList[i], name.c_str()))
+			if(boost::algorithm::iequals(reservedList[i], name.c_str()))
 			{
 				std::clog << "Error: [Spell::configureSpell] Spell is using a reserved name: " << reservedList[i] << std::endl;
 				return false;

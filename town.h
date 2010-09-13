@@ -64,7 +64,7 @@ class Towns
 		{
 			for(TownMap::iterator it = townMap.begin(); it != townMap.end(); ++it)
 			{
-				if(!strcasecmp(it->second->getName().c_str(), townName.c_str()))
+				if(boost::algorithm::iequals(it->second->getName(), townName))
 					return it->second;
 			}
 

@@ -259,6 +259,7 @@ void startupErrorMessage(std::string error = "")
 void otserv(StringVec args, ServiceManager* services);
 int main(int argc, char* argv[])
 {
+	std::srand((uint32_t)OTSYS_TIME());
 	StringVec args = StringVec(argv, argv + argc);
 	if(argc > 1 && !argumentsHandler(args))
 		return 0;
@@ -298,8 +299,8 @@ int main(int argc, char* argv[])
 
 	OutputHandler::getInstance();
 	Dispatcher::getInstance().addTask(createTask(boost::bind(otserv, args, &servicer)));
-
 	g_loaderSignal.wait(g_loaderUniqueLock);
+
 	boost::this_thread::sleep(boost::posix_time::milliseconds(10000));
 	if(servicer.isRunning())
 	{
@@ -312,6 +313,7 @@ int main(int argc, char* argv[])
 #ifdef __EXCEPTION_TRACER__
 	mainExceptionHandler.RemoveHandler();
 #endif
+	std::exit(0);
 	return 0;
 }
 

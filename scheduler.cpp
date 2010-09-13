@@ -36,7 +36,6 @@ void Scheduler::schedulerThread(void* p)
 	ExceptionHandler schedulerExceptionHandler;
 	schedulerExceptionHandler.InstallHandler();
 	#endif
-	srand((uint32_t)OTSYS_TIME());
 
 	boost::unique_lock<boost::mutex> eventLockUnique(scheduler->m_eventLock, boost::defer_lock);
 	while(Scheduler::m_threadState != Scheduler::STATE_TERMINATED)

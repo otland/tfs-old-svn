@@ -160,8 +160,8 @@ bool TalkActions::onPlayerSay(Creature* creature, uint16_t channelId, const std:
 	TalkAction* talkAction = NULL;
 	for(TalkActionsMap::iterator it = talksMap.begin(); it != talksMap.end(); ++it)
 	{
-		if(it->first == cmd[it->second->getFilter()] || (!it->second->isSensitive() &&
-			!strcasecmp(it->first.c_str(), cmd[it->second->getFilter()].c_str())))
+		if(it->first == cmd[it->second->getFilter()] || (!it->second->isSensitive()
+			&& boost::algorithm::iequals(it->first, cmd[it->second->getFilter()])))
 		{
 			talkAction = it->second;
 			break;

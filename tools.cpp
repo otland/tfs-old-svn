@@ -1271,7 +1271,7 @@ MagicEffect_t getMagicEffect(const std::string& strValue)
 {
 	for(uint32_t i = 0; i < sizeof(magicEffectNames) / sizeof(MagicEffectNames); ++i)
 	{
-		if(!strcasecmp(strValue.c_str(), magicEffectNames[i].name))
+		if(boost::algorithm::iequals(strValue.c_str(), magicEffectNames[i].name))
 			return magicEffectNames[i].magicEffect;
 	}
 
@@ -1282,7 +1282,7 @@ ShootEffect_t getShootType(const std::string& strValue)
 {
 	for(uint32_t i = 0; i < sizeof(shootTypeNames) / sizeof(ShootTypeNames); ++i)
 	{
-		if(!strcasecmp(strValue.c_str(), shootTypeNames[i].name))
+		if(boost::algorithm::iequals(strValue.c_str(), shootTypeNames[i].name))
 			return shootTypeNames[i].shootType;
 	}
 
@@ -1293,7 +1293,7 @@ CombatType_t getCombatType(const std::string& strValue)
 {
 	for(uint32_t i = 0; i < sizeof(combatTypeNames) / sizeof(CombatTypeNames); ++i)
 	{
-		if(!strcasecmp(strValue.c_str(), combatTypeNames[i].name))
+		if(boost::algorithm::iequals(strValue.c_str(), combatTypeNames[i].name))
 			return combatTypeNames[i].combatType;
 	}
 
@@ -1304,7 +1304,7 @@ Ammo_t getAmmoType(const std::string& strValue)
 {
 	for(uint32_t i = 0; i < sizeof(ammoTypeNames) / sizeof(AmmoTypeNames); ++i)
 	{
-		if(!strcasecmp(strValue.c_str(), ammoTypeNames[i].name))
+		if(boost::algorithm::iequals(strValue.c_str(), ammoTypeNames[i].name))
 			return ammoTypeNames[i].ammoType;
 	}
 
@@ -1315,7 +1315,7 @@ AmmoAction_t getAmmoAction(const std::string& strValue)
 {
 	for(uint32_t i = 0; i < sizeof(ammoActionNames) / sizeof(AmmoActionNames); ++i)
 	{
-		if(!strcasecmp(strValue.c_str(), ammoActionNames[i].name))
+		if(boost::algorithm::iequals(strValue.c_str(), ammoActionNames[i].name))
 			return ammoActionNames[i].ammoAction;
 	}
 
@@ -1326,7 +1326,7 @@ FluidTypes_t getFluidType(const std::string& strValue)
 {
 	for(uint32_t i = 0; i < sizeof(fluidTypeNames) / sizeof(FluidTypeNames); ++i)
 	{
-		if(!strcasecmp(strValue.c_str(), fluidTypeNames[i].name))
+		if(boost::algorithm::iequals(strValue.c_str(), fluidTypeNames[i].name))
 			return fluidTypeNames[i].fluidType;
 	}
 
@@ -1337,7 +1337,7 @@ skills_t getSkillId(const std::string& strValue)
 {
 	for(uint32_t i = 0; i < sizeof(skillIdNames) / sizeof(SkillIdNames); ++i)
 	{
-		if(!strcasecmp(strValue.c_str(), skillIdNames[i].name))
+		if(boost::algorithm::iequals(strValue.c_str(), skillIdNames[i].name))
 			return skillIdNames[i].skillId;
 	}
 

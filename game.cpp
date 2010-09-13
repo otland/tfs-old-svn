@@ -6322,7 +6322,7 @@ void Game::shutdown()
 		services->stop();
 #ifndef __DONT_FORCE_SHUTDOWN__
 
-	exit(-1);
+	std::exit(0);
 #endif
 }
 

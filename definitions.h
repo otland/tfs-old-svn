@@ -60,16 +60,6 @@
 	#endif
 
 	#include <cstring>
-	inline int strcasecmp(const char * s1, const char * s2)
-	{
-		return ::_stricmp(s1, s2);
-	}
-
-	inline int strncasecmp(const char * s1, const char * s2, size_t n)
-	{
-		return ::_strnicmp(s1, s2, n);
-	}
-
 	#define atoll _atoi64
 	#if VISUALC_VERSION < 10
 		typedef unsigned long long uint64_t;

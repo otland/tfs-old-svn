@@ -143,7 +143,7 @@ int32_t Groups::getGroupId(const std::string& name)
 {
 	for(GroupsMap::iterator it = groupsMap.begin(); it != groupsMap.end(); ++it)
 	{
-		if(!strcasecmp(it->second->getName().c_str(), name.c_str()))
+		if(boost::algorithm::iequals(it->second->getName(), name))
 			return it->first;
 	}
 

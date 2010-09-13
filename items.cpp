@@ -1871,7 +1871,7 @@ int32_t Items::getItemIdByName(const std::string& name)
 		ItemType* iType = NULL;
 		do
 		{
-			if((iType = items.getElement(i)) && !strcasecmp(name.c_str(), iType->name.c_str()))
+			if((iType = items.getElement(i)) && boost::algorithm::iequals(name, iType->name))
 				return i;
 
 			i++;
