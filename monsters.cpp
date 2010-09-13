@@ -152,7 +152,7 @@ ItemList MonsterType::createLoot(const LootBlock& lootBlock)
 	Item* tmpItem = NULL;
 	while(count > 0)
 	{
-		uint16_t n = 1;
+		uint16_t n = 0;
 		if(Item::items[item].stackable)
 			n = std::min(count, (uint16_t)100);
 

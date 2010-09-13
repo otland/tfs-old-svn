@@ -188,8 +188,10 @@ Item::Item(const uint16_t type, uint16_t amount/* = 0*/):
 		setFluidType(amount);
 	else if(it.stackable)
 	{
-		if(amount || it.charges)
-			setItemCount(amount ? amount : it.charges);
+		if(amount)
+			setItemCount(amount);
+		else if(it.charges)
+			setItemCount(it.charges);
 	}
 	else if(it.charges)
 		setCharges(amount ? amount : it.charges);
