@@ -1631,19 +1631,19 @@ void Items::parseItemNode(xmlNodePtr itemNode, uint32_t id)
 										std::list<int32_t> damageList;
 										ConditionDamage::generateDamageList(damage, start, damageList);
 										for(std::list<int32_t>::iterator it = damageList.begin(); it != damageList.end(); ++it)
-											it.condition->addDamage(1, ticks, -*it);
+											conditionDamage->addDamage(1, ticks, -*it);
 
 										start = 0;
 									}
 									else
-										it.condition->addDamage(count, ticks, damage);
+										conditionDamage->addDamage(count, ticks, damage);
 								}
 							}
 						}
 
-						it.condition->setParam(CONDITIONPARAM_FIELD, true);
-						if(it.condition->getTotalDamage() > 0)
-							it.condition->setParam(CONDITIONPARAM_FORCEUPDATE, true);
+						conditionDamage->setParam(CONDITIONPARAM_FIELD, true);
+						if(conditionDamage->getTotalDamage() > 0)
+							conditionDamage->setParam(CONDITIONPARAM_FORCEUPDATE, true);
 					}
 				}
 			}
