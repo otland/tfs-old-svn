@@ -590,7 +590,7 @@ class Game
 #endif
 
 		bool combatBlockHit(CombatType_t combatType, Creature* attacker, Creature* target,
-			int32_t& healthChange, bool checkDefense, bool checkArmor);
+			int32_t& healthChange, bool checkDefense, bool checkArmor, bool field = false);
 
 		bool combatChangeHealth(CombatType_t combatType, Creature* attacker, Creature* target, int32_t healthChange,
 			MagicEffect_t hitEffect = MAGIC_EFFECT_UNKNOWN, Color_t hitColor = COLOR_UNKNOWN, bool force = false);
