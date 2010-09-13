@@ -46,6 +46,7 @@
 	C++ Programmer(s)
 		Elf
 		Stian
+		Slawkens
 		Talaturen
 
 	LUA Scripter(s)
@@ -59,7 +60,7 @@
 		Chojrak
 		Elf
 		KaczooH
-		Sentielo
+
 
 	Documentation Manager(s)
 		KaczooH
@@ -82,16 +83,21 @@
 ]
 
 [ COMPILING
-	GNU\Linux - Debian (...and forks, eg. Ubuntu)
-		A detailed and always up-to-date tutorial may be found here:
+	GNU\Linux
+		Debian
+			A detailed and always up-to-date tutorial may be found here:
 			http://otland.net/f137/linux-ultimate-compile-guide-debian-ubuntu-included-2868/
+
+		Ubuntu
+			http://otland.net/f479/ubuntu-nothing-complete-server-forgotten-server-modernaac-mysql-lighttpd-89001/
+			
 
 		Root
 			You need to get on root user or use sudo for almost all below operations.
 
-		Download required packages
+		Download required packages (Debian)
 			Launch a terminal, and paste in the following commands:
-				apt-get install libboost1.38-dev liblua5.1-0 liblua5.1-0-dev liblua50 liblua50-dev liblualib50 liblualib50-dev lua50 libsqlite0 libsqlite0-dev libsqlite3-0 libsqlite3-dev sqlite3 lua5.1 libmysql++-dev libgmp3-dev subversion make g++ libxml2 libxml2-dev libxml++2.6-dev libmysqlclient15-dev mysql-client-5.0 mysql-common mysql-server-5.0 gcc cpp automake autoconf pkg-config zlib1g-dev ccache libcrypto++-dev
+				apt-get install libboost1.38-dev liblua5.1-0 liblua5.1-0-dev liblua50 liblua50-dev liblualib50 liblualib50-dev lua50 libsqlite0 libsqlite0-dev libsqlite3-0 libsqlite3-dev sqlite3 lua5.1 libmysql++-dev libgmp3-dev subversion make g++ libxml2 libxml2-dev libxml++2.6-dev libmysqlclient15-dev mysql-client-5.0 mysql-common mysql-server-5.0 gcc cpp automake autoconf pkg-config zlib1g-dev ccache libcrypto++-dev libssl-dev
 
 		Download sources
 			Launch a terminal, and paste in this command:
@@ -116,7 +122,7 @@
 	Windows
 		Dev-Cpp
 			Download TheForgottenDev-Cpp and the sources from:
-				http://otland.net/showthread.php?t=1024
+				http://otland.net/f19/stians-dev-cpp-repack-0-2-crypto-64bit-62455/
 
 			Extract them anywhere and then run devcpp.exe, press on the menuitem
 			"File -> Open Project or File" and choose C:\path\to\sources\dev-cpp\TheForgottenServer.dev.
