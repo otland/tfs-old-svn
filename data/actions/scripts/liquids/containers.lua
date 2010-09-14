@@ -1,4 +1,3 @@
-local DISTILLERY = {5513, 5514, 5469, 5470}
 local ITEM_RUM_FLASK = 5553
 
 local TYPE_EMPTY = 0
@@ -21,6 +20,7 @@ local TYPE_RUM = 27
 local TYPE_SWAMP = 28
 local TYPE_TEA = 35
 
+local distillery = {[5513] = 5469, [5514] = 5470}
 local oilLamps = {[2046] = 2044}
 local casks = {[1771] = TYPE_WATER, [1772] = TYPE_BEER, [1773] = TYPE_WINE}
 local alcoholDrinks = {TYPE_BEER, TYPE_WINE, TYPE_RUM}
@@ -37,11 +37,19 @@ setConditionParam(poison, CONDITION_PARAM_STARTVALUE, -5) -- The damage the cond
 setConditionParam(poison, CONDITION_PARAM_TICKINTERVAL, 4000) -- Delay between damages
 setConditionParam(poison, CONDITION_PARAM_FORCEUPDATE, true) -- Re-update condition when adding it(ie. min/max value)
 
+local burn = createConditionObject(CONDITION_FIRE)
+setConditionParam(burn, CONDITION_PARAM_DELAYED, true) -- Condition will delay the first damage from when it's added
+setConditionParam(burn, CONDITION_PARAM_MINVALUE, -70) -- Minimum damage the condition can do at total
+setConditionParam(burn, CONDITION_PARAM_MAXVALUE, -150) -- Maximum damage
+setConditionParam(burn, CONDITION_PARAM_STARTVALUE, -10) -- The damage the condition will do on the first hit
+setConditionParam(burn, CONDITION_PARAM_TICKINTERVAL, 10000) -- Delay between damages
+setConditionParam(burn, CONDITION_PARAM_FORCEUPDATE, true) -- Re-update condition when adding it(ie. min/max value)
+
 local exhaust = createConditionObject(CONDITION_EXHAUST)
 setConditionParam(exhaust, CONDITION_PARAM_TICKS, (getConfigInfo('timeBetweenExActions') - 100))
 
 function onUse(cid, item, fromPosition, itemEx, toPosition)
-	if(itemEx.uid == cid) then
+	if(isPlayer(itemEx.uid)) then
 		if(item.type == TYPE_EMPTY) then
 			doPlayerSendCancel(cid, "It is empty.")
 			return true
@@ -53,11 +61,11 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 				return true
 			end
 
-			if(not doPlayerAddMana(cid, math.random(80, 160))) then
+			if(not doPlayerAddMana(itemEx.uid, math.random(80, 160))) then
 				return false
 			end
 
-			doCreatureSay(cid, "Aaaah...", TALKTYPE_ORANGE_1)
+			doCreatureSay(itemEx.uid, "Aaaah...", TALKTYPE_MONSTER)
 			doSendMagicEffect(toPosition, CONST_ME_MAGIC_BLUE)
 			doAddCondition(cid, exhaust)
 		elseif(item.type == TYPE_LIFE_FLUID) then
@@ -66,27 +74,38 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 				return true
 			end
 
-			if(not doCreatureAddHealth(cid, math.random(40, 75))) then
+			if(not doCreatureAddHealth(itemEx.uid, math.random(40, 75))) then
 				return false
 			end
 
-			doCreatureSay(cid, "Aaaah...", TALKTYPE_ORANGE_1)
+			doCreatureSay(itemEx.uid, "Aaaah...", TALKTYPE_MONSTER)
 			doSendMagicEffect(toPosition, CONST_ME_MAGIC_BLUE)
 			doAddCondition(cid, exhaust)
-		elseif(isInArray(alcoholDrinks, item.type)) then
-			if(not doTargetCombatCondition(0, cid, drunk, CONST_ME_NONE)) then
-				return false
-			end
+		elseif(itemEx.uid == cid) then
+			if(isInArray(alcoholDrinks, item.type)) then
+				if(not doTargetCombatCondition(0, cid, drunk, CONST_ME_NONE)) then
+					return false
+				end
 
-			doCreatureSay(cid, "Aaah...", TALKTYPE_ORANGE_1)
-		elseif(isInArray(poisonDrinks, item.type)) then
-			if(not doTargetCombatCondition(0, cid, poison, CONST_ME_NONE)) then
-				return false
-			end
+				doCreatureSay(cid, "Aaah...", TALKTYPE_MONSTER)
+			elseif(isInArray(poisonDrinks, item.type)) then
+				if(not doTargetCombatCondition(0, cid, poison, CONST_ME_NONE)) then
+					return false
+				end
 
-			doCreatureSay(cid, "Urgh!", TALKTYPE_ORANGE_1)
+				doCreatureSay(cid, "Urgh!", TALKTYPE_MONSTER)
+			elseif(item.type == TYPE_LAVA) then
+				if(not doTargetCombatCondition(0, cid, burn, CONST_ME_NONE)) then
+					return false
+				end
+
+				doCreatureSay(cid, "Urgh!", TALKTYPE_MONSTER)
+			else
+				doCreatureSay(cid, "Gulp.", TALKTYPE_MONSTER)
+			end
 		else
-			doCreatureSay(cid, "Gulp.", TALKTYPE_ORANGE_1)
+			doPlayerSendDefaultCancel(cid, RETURNVALUE_NOTPOSSIBLE)
+			return true
 		end
 
 		doChangeTypeItem(item.uid, TYPE_EMPTY)
@@ -95,14 +114,15 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 
 	if(not isCreature(itemEx.uid)) then
 		if(item.type == TYPE_EMPTY) then
-			if(item.itemid == ITEM_RUM_FLASK and isInArray(DISTILLERY, itemEx.itemid)) then
-				if(itemEx.actionid == 100) then
-					doItemEraseAttribute(itemEx.uid, "description")
-					doItemEraseAttribute(itemEx.uid, "aid")
+			if(item.itemid == ITEM_RUM_FLASK) then
+				local tmp = DISTILLERY[itemEx.itemid]
+				if(tmp ~= nil) then
+					doTransformItem(itemEx.uid, tmp)
 					doChangeTypeItem(item.uid, TYPE_RUM)
 				else
 					doPlayerSendCancel(cid, "You have to process the bunch into the distillery to get rum.")
 				end
+
 				return true
 			end
 
@@ -112,14 +132,13 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 				return true
 			end
 
-			if(casks[itemEx.itemid] ~= nil) then
-				doChangeTypeItem(item.uid, casks[itemEx.itemid])
-				return true
+			local tmp = casks[itemEx.itemid]
+			if(tmp == nil) then
+				tmp = getFluidSourceType(itemEx.itemid)
 			end
 
-			local fluidEx = getFluidSourceType(itemEx.itemid)
-			if(fluidEx ~= false) then
-				doChangeTypeItem(item.uid, fluidEx)
+			if(tmp)
+				doChangeTypeItem(item.uid, tmp)
 				return true
 			end
 
@@ -127,9 +146,16 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 			return true
 		end
 
-		if(item.type == TYPE_OIL and oilLamps[itemEx.itemid] ~= nil) then
-			doTransformItem(itemEx.uid, oilLamps[itemEx.itemid])
+		local tmp = oilLamps[itemEx.itemid]
+		if(item.type == TYPE_OIL and tmp ~= nil) then
+			doTransformItem(itemEx.uid, tmp)
 			doChangeTypeItem(item.uid, TYPE_NONE)
+			return true
+		end
+
+		if(isItemFluidContainer(itemEx.itemid) and itemEx.type == TYPE_EMPTY) then
+			doChangeTypeItem(itemEx.uid, itemEx.type)
+			doChangeTypeItem(item.uid, TYPE_EMPTY)
 			return true
 		end
 

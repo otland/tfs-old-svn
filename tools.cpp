@@ -436,7 +436,11 @@ IntegerVec vectorAtoi(StringVec stringVector)
 {
 	IntegerVec returnVector;
 	for(StringVec::iterator it = stringVector.begin(); it != stringVector.end(); ++it)
-		returnVector.push_back(atoi((*it).c_str()));
+	{
+		int32_t number = atoi((*it).c_str());
+		if(number || (*it) == "0")
+			returnVector.push_back(number);
+	}
 
 	return returnVector;
 }
