@@ -115,7 +115,7 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 	if(not isCreature(itemEx.uid)) then
 		if(item.type == TYPE_EMPTY) then
 			if(item.itemid == ITEM_RUM_FLASK) then
-				local tmp = DISTILLERY[itemEx.itemid]
+				local tmp = distillery[itemEx.itemid]
 				if(tmp ~= nil) then
 					doTransformItem(itemEx.uid, tmp)
 					doChangeTypeItem(item.uid, TYPE_RUM)
