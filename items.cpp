@@ -362,7 +362,7 @@ bool Items::loadFromXml()
 		return false;
 	}
 
-	xmlNodePtr root = xmlDocGetRootElement(doc)
+	xmlNodePtr root = xmlDocGetRootElement(doc);
 	if(xmlStrcmp(root->name,(const xmlChar*)"items"))
 	{
 		xmlFreeDoc(doc);
@@ -435,7 +435,7 @@ bool Items::loadFromXml()
 		return false;
 	}
 
-	root = xmlDocGetRootElement(doc)
+	root = xmlDocGetRootElement(doc);
 	if(xmlStrcmp(root->name,(const xmlChar*)"randomization"))
 	{
 		xmlFreeDoc(doc);

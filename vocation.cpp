@@ -431,7 +431,7 @@ int32_t Vocations::getVocationId(const std::string& name)
 {
 	for(VocationsMap::iterator it = vocationsMap.begin(); it != vocationsMap.end(); ++it)
 	{
-		if(boost::algorithm::iequals(it->second->getName, name))
+		if(boost::algorithm::iequals<std::string, std::string>(it->second->getName(), name))
 			return it->first;
 	}
 

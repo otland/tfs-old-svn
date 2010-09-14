@@ -61,10 +61,10 @@ class Vocation
 		uint32_t getFromVocation() const {return fromVocation;}
 		void setFromVocation(int32_t v) {fromVocation = v;}
 
-		const std::string& getName() const {return name;}
+		std::string getName() const {return name;}
 		void setName(const std::string& v) {name = v;}
 
-		const std::string& getDescription() const {return description;}
+		std::string getDescription() const {return description;}
 		void setDescription(const std::string& v) {description = v;}
 
 		bool isAttackable() const {return attackable;}
