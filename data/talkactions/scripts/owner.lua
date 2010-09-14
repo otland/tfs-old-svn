@@ -2,7 +2,7 @@ local NO_OWNER_PHRASE = {"none", "nobody", "0"}
 
 function onSay(cid, words, param, channel)
 	if(param == '') then
-		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Command requires param.")
+		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Command param required.")
 		return true
 	end
 

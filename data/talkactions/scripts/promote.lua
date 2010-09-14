@@ -20,13 +20,13 @@ function onSay(cid, words, param, channel)
 		return true
 	end
 
-	local g = 1
+	local g, group = 1, getPlayerGroupId(pid)
 	if(words:sub(2, 2) == "d") then
 		g = -1
 	end
 
-	local group, newGroup = getPlayerGroupId(pid), group + g
-	if(t[2]) then
+	local newGroup = group + g
+	if(t[2] ~= nil) then
 		for i, id in ipairs(getGroupList()) do
 			local tmp = getGroupInfo(id)
 			if(isInArray({tmp.id, tmp.name}, t[2])) then

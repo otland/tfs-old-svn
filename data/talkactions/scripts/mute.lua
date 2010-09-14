@@ -17,10 +17,11 @@ function onSay(cid, words, param, channel)
 	end
 
 	local time = tonumber(t[2])
-	if(not time or time <= 0) then
+	if(not time or time < 1) then
 		time = -1
 	end
 
 	doMutePlayer(pid, time)
+	doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, getCreatureName(pid) .. " has been muted for " .. seconds .. " seconds.")
 	return true
 end
