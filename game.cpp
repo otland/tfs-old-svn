@@ -3800,9 +3800,7 @@ bool Game::playerWhisper(Player* player, const std::string& text)
 {
 	SpectatorVec list;
 	SpectatorVec::const_iterator it;
-	getSpectators(list, player->getPosition(), false, false,
-		Map::maxClientViewportX, Map::maxClientViewportX,
-		Map::maxClientViewportY, Map::maxClientViewportY);
+	getSpectators(list, player->getPosition(), false, false, 1, 1);
 
 	//send to client
 	Player* tmpPlayer = NULL;
