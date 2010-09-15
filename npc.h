@@ -419,24 +419,30 @@ class Npc : public Creature
 		std::string formatResponse(Creature* creature, const NpcState* npcState, const NpcResponse* response) const;
 		void executeResponse(Player* player, NpcState* npcState, const NpcResponse* response);
 
-		void onPlayerEnter(Player* player, NpcState* state);
-		void onPlayerLeave(Player* player, NpcState* state);
-
-		typedef std::map<std::string, std::string> ParametersMap;
-		ParametersMap m_parameters;
-
 		uint32_t loadParams(xmlNodePtr node);
 		ResponseList loadInteraction(xmlNodePtr node);
+
+		void onPlayerEnter(Player* player, NpcState* state);
+		void onPlayerLeave(Player* player, NpcState* state);
 
 		void addShopPlayer(Player* player);
 		void removeShopPlayer(const Player* player);
 		void closeAllShopWindows();
 
-		uint32_t walkTicks;
-		std::string name, nameDescription, m_filename;
-		int32_t talkRadius, idleTime, idleInterval, focusCreature;
 		bool floorChange, attackable, walkable, isIdle, hasBusyReply, hasScriptedFocus, defaultPublic;
+		Direction baseDirection;
+
+		int32_t talkRadius, idleTime, idleInterval, focusCreature;
+		uint32_t walkTicks;
 		int64_t lastVoice;
+
+		std::string name, nameDescription, m_filename;
+
+		typedef std::map<std::string, std::list<ListItem> > ItemListMap;
+		ItemListMap itemListMap;
+
+		typedef std::map<std::string, std::string> ParametersMap;
+		ParametersMap m_parameters;
 
 		typedef std::list<Player*> ShopPlayerList;
 		ShopPlayerList shopPlayerList;
@@ -449,9 +455,6 @@ class Npc : public Creature
 
 		typedef std::list<Voice> VoiceList;
 		VoiceList voiceList;
-
-		typedef std::map<std::string, std::list<ListItem> > ItemListMap;
-		ItemListMap itemListMap;
 
 		ResponseScriptMap responseScriptMap;
 		ResponseList responseList;

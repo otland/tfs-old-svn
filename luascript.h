@@ -21,7 +21,6 @@
 #ifdef __LUAJIT__
 #include <luajit-2.0/lua.hpp>
 
-
 extern "C"
 {
 	#include <luajit-2.0/luajit.h>
@@ -220,8 +219,14 @@ enum ErrorCode_t
 	LUA_ERROR_SPELL_NOT_FOUND
 };
 
-#define errorEx(a) error(__FUNCTION__, a)
+enum Recursive_t
+{
+	RECURSE_NONE = 0,
+	RECURSE_FIRST = 1,
+	RECURSE_ALL = 2
+};
 
+#define errorEx(a) error(__FUNCTION__, a)
 class LuaInterface
 {
 	public:
@@ -274,7 +279,7 @@ class LuaInterface
 		void dumpStack(lua_State* L = NULL);
 
 		//push/pop common structures
-		static void pushThing(lua_State* L, Thing* thing, uint32_t id = 0);
+		static void pushThing(lua_State* L, Thing* thing, uint32_t id = 0, Recursive_t recursive = RECURSE_FIRST);
 		static void pushVariant(lua_State* L, const LuaVariant& var);
 		static void pushPosition(lua_State* L, const PositionEx& position) {pushPosition(L, position, position.stackpos);}
 		static void pushPosition(lua_State* L, const Position& position, uint32_t stackpos);

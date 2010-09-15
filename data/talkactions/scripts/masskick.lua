@@ -8,8 +8,7 @@ function onSay(cid, words, param, channel)
 	if(param:sub(1, 1) ~= '*') then
 		local t = string.explode(param, ",")
 		if(not t[2]) then
-			doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Not enough params.")
-			return true
+			t[2] = t[1]
 		end
 
 		local multifloor = false

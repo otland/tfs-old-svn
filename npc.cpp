@@ -127,6 +127,7 @@ void Npc::reset()
 	idleInterval = 5 * 60;
 	lastVoice = OTSYS_TIME();
 	defaultPublic = true;
+	baseDirection = SOUTH;
 
 	delete m_npcEventHandler;
 	m_npcEventHandler = NULL;
@@ -206,12 +207,18 @@ bool Npc::loadFromXml(const std::string& filename)
 
 	if(readXMLInteger(root, "autowalk", intValue))
 	{
-		std::clog << "[Notice - Npc::Npc] NPC Name: " << name << " - autowalk has been deprecated, use walkinterval." << std::endl;
+		std::clog << "[Notice - Npc::Npc] NPC: " << name << " - autowalk attribute has been deprecated, use walkinterval instead." << std::endl;
 		walkTicks = 2000;
 	}
 
 	if(readXMLInteger(root, "walkinterval", intValue))
 		walkTicks = intValue;
+
+	if(readXMLInteger(root, "direction", intValue) && intValue >= NORTH && intValue <= WEST)
+	{
+		direction = (Direction)intValue;
+		baseDirection = direction;
+	}
 
 	if(readXMLString(root, "floorchange", strValue))
 		floorChange = booleanString(strValue);
@@ -1890,13 +1897,13 @@ void Npc::setCreatureFocus(Creature* creature)
 {
 	if(!creature)
 	{
+		g_game.internalCreatureTurn(this, baseDirection);
 		focusCreature = 0;
 		return;
 	}
 
-	const Position& creaturePos = creature->getPosition();
-	const Position& myPos = getPosition();
-	int32_t dx = myPos.x - creaturePos.x, dy = myPos.y - creaturePos.y;
+	Position pos = creature->getPosition(), _pos = getPosition();
+	int32_t dx = _pos.x - pos.x, dy = _pos.y - pos.y;
 
 	float tan = 10;
 	if(dx != 0)
@@ -1913,8 +1920,8 @@ void Npc::setCreatureFocus(Creature* creature)
 	else if(dy > 0)
 		dir = NORTH;
 
-	focusCreature = creature->getID();
 	g_game.internalCreatureTurn(this, dir);
+	focusCreature = creature->getID();
 }
 
 const NpcResponse* Npc::getResponse(const ResponseList& list, const Player* player,

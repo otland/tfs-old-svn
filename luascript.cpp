@@ -1012,7 +1012,7 @@ void LuaInterface::pushVariant(lua_State* L, const LuaVariant& var)
 	}
 }
 
-void LuaInterface::pushThing(lua_State* L, Thing* thing, uint32_t id/* = 0*/)
+void LuaInterface::pushThing(lua_State* L, Thing* thing, uint32_t id/* = 0*/, Recursive_t recursive/* = RECURSE_FIRST*/)
 {
 	lua_newtable(L);
 	if(thing && thing->getItem())
@@ -1029,6 +1029,26 @@ void LuaInterface::pushThing(lua_State* L, Thing* thing, uint32_t id/* = 0*/)
 			setField(L, "type", 0);
 
 		setField(L, "actionid", item->getActionId());
+		if(recursive != RECURSE_NONE)
+		{
+			Container* container = item->getContainer();
+			if(container && !container->empty())
+			{
+				if(recursive == RECURSE_FIRST)
+					recursive = RECURSE_NONE;
+
+				ItemList::const_iterator it = container->getItems();
+				createTable(L, "items");
+				for(int32_t i = 1; it != container->getEnd(); ++it, ++i)
+				{
+					lua_pushnumber(L, i);
+					pushThing(L, *it, env->addThing(*it), recursive);
+					pushTable(L);
+				}
+
+				pushTable(L);
+			}
+		}
 	}
 	else if(thing && thing->getCreature())
 	{
@@ -1600,7 +1620,7 @@ void LuaInterface::registerFunctions()
 	//getThingFromPos(pos[, displayError = true])
 	lua_register(m_luaState, "getThingFromPos", LuaInterface::luaGetThingFromPos);
 
-	//getThing(uid)
+	//getThing(uid[, recursive = RECURSE_FIRST])
 	lua_register(m_luaState, "getThing", LuaInterface::luaGetThing);
 
 	//doTileQueryAdd(uid, pos[, flags[, displayError = true]])
@@ -1897,9 +1917,6 @@ void LuaInterface::registerFunctions()
 
 	//getContainerCap(uid)
 	lua_register(m_luaState, "getContainerCap", LuaInterface::luaGetContainerCap);
-
-	//getContainerItems(uid)
-	lua_register(m_luaState, "getContainerItems", LuaInterface::luaGetContainerItems);
 
 	//getContainerItem(uid, slot)
 	lua_register(m_luaState, "getContainerItem", LuaInterface::luaGetContainerItem);
@@ -5514,12 +5531,15 @@ int32_t LuaInterface::luaGetPlayerItemById(lua_State* L)
 
 int32_t LuaInterface::luaGetThing(lua_State* L)
 {
-	//getThing(uid)
-	uint32_t uid = popNumber(L);
+	//getThing(uid[, recursive = RECURSE_FIRST])
+	Recursive_t recursive = RECURSE_FIRST;
+	if(lua_gettop(L) > 1)
+		recursive = (Recursive_t)popNumber(L);
 
+	uint32_t uid = popNumber(L);
 	ScriptEnviroment* env = getEnv();
 	if(Thing* thing = env->getThingByUID(uid))
-		pushThing(L, thing, uid);
+		pushThing(L, thing, uid, recursive);
 	else
 	{
 		errorEx(getError(LUA_ERROR_THING_NOT_FOUND));
@@ -7583,30 +7603,6 @@ int32_t LuaInterface::luaGetContainerCap(lua_State* L)
 	ScriptEnviroment* env = getEnv();
 	if(Container* container = env->getContainerByUID(popNumber(L)))
 		lua_pushnumber(L, container->capacity());
-	else
-	{
-		errorEx(getError(LUA_ERROR_CONTAINER_NOT_FOUND));
-		lua_pushboolean(L, false);
-	}
-
-	return 1;
-}
-
-int32_t LuaInterface::luaGetContainerItems(lua_State* L)
-{
-	//getContainerItems(uid)
-	ScriptEnviroment* env = getEnv();
-	if(Container* container = env->getContainerByUID(popNumber(L)))
-	{
-		ItemList::const_iterator it = container->getItems();
-		lua_newtable(L);
-		for(int32_t i = 1; it != container->getEnd(); ++it, ++i)
-		{
-			lua_pushnumber(L, i);
-			pushThing(L, *it, env->addThing(*it));
-			pushTable(L);
-		}
-	}
 	else
 	{
 		errorEx(getError(LUA_ERROR_CONTAINER_NOT_FOUND));
