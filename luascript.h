@@ -221,9 +221,9 @@ enum ErrorCode_t
 
 enum Recursive_t
 {
+	RECURSE_FIRST = -1,
 	RECURSE_NONE = 0,
-	RECURSE_FIRST = 1,
-	RECURSE_ALL = 2
+	RECURSE_ALL = 1
 };
 
 #define errorEx(a) error(__FUNCTION__, a)
