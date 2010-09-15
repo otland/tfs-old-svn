@@ -23,17 +23,25 @@
 
 extern "C"
 {
-	#include <luajit-2.0/luajit.h>
 	#include <luajit-2.0/lauxlib.h>
 	#include <luajit-2.0/lualib.h>
+	#include <luajit-2.0/luajit.h>
 }
-#else
+#elif defined(__ALT_LUA_PATH__)
+#include "lua5.1/lua.hpp"
 
 extern "C"
 {
-	#include "lua.h"
-	#include "lualib.h"
+	#include "lua5.1/lauxlib.h"
+	#include "lua5.1/lualib.h"
+}
+#else
+#include "lua.hpp"
+
+extern "C"
+{
 	#include "lauxlib.h"
+	#include "lualib.h"
 }
 #endif
 

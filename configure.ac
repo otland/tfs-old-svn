@@ -69,7 +69,6 @@ AC_ARG_ENABLE(luajit, [  --enable-luajit		enable luajit instead of lua],
 	[OPTIONAL_FLAGS="$OPTIONAL_FLAGS -D__LUAJIT__"]
 	luaJIT=yes
 )
-AC_SUBST(OPTIONAL_FLAGS)
 
 # check if we want a debug build
 debugBuild=no
@@ -201,24 +200,48 @@ AC_CHECK_LIB(crypto, main, , [AC_MSG_ERROR("Linking against OpenSSL library fail
 
 
 # check for Lua
-if test "$luaJIT" = "yes"; then 
+if test "$luaJIT" = "yes" ; then 
 	PKG_CHECK_MODULES(LUA, luajit, , [
-		AC_CHECK_HEADERS([lua.hpp], , [AC_MSG_ERROR("LuaJIT header not found.")])
-		AC_CHECK_LIB(luajit, main, , [AC_MSG_ERROR("Linking against LuaJIT library failed.")])
+		AC_CHECK_HEADERS([luajit-2.0/lua.hpp], ,[AC_MSG_ERROR("LuaJIT header not found.")])
+		AC_CHECK_LIB(luajit, main, , [
+			AC_CHECK_LIB(luajit-5.1, main, , [AC_MSG_ERROR("Linking against LuaJIT library failed.")])
+		])
 	])
-elif test "$luaJIT" = "no"; then
+else
 	PKG_CHECK_MODULES(LUA, lua5.1 >= 5.1, , [
-		AC_CHECK_HEADERS([lua.hpp], , [AC_MSG_ERROR("Lua header not found.")])
-		AC_CHECK_LIB(lua, main, , [AC_MSG_ERROR("Linking against Lua library failed.")])
+		AC_CHECK_HEADERS([lua.hpp], , [
+			OPTIONAL_FLAGS="$OPTIONAL_FLAGS -D__ALT_LUA_PATH__"
+			AC_CHECK_HEADERS([lua5.1/lua.hpp], , [AC_MSG_ERROR("Lua header not found.")])
+		])
+		AC_CHECK_LIB(lua, main, , [
+			AC_CHECK_LIB(lua5.1, main, , [AC_MSG_ERROR("Linking against Lua library failed.")])
+		])
 	])
 fi
+
+AC_SUBST(OPTIONAL_FLAGS)
 AC_SUBST(LUA_CFLAGS)
 AC_SUBST(LUA_LIBS)
 
 # check for mysql if it is enabled
 if test -n "$MYSQL_FLAGS"; then
 	AC_CHECK_HEADERS([mysql/mysql.h],[MYSQL_LIBS=-lmysqlclient],[AC_MSG_ERROR("MySQL headers missing.")])
-	AC_CHECK_LIB(mysqlclient, main,[],[AC_MSG_ERROR("Linking against mysql-client failed.")])
+	AC_CHECK_LIB(mysqlclient, main,[],[
+		if test -d /usr/lib64/mysql ; then
+			echo "NOTICE -- Copying mysqlclient files into the /usr/lib64 directory."
+			echo "NOTICE -- If mysqlclient is not found, please re-run the configure script."
+			cp -Rsf /usr/lib64/mysql/libmysqlclient* /usr/lib64
+			AC_CHECK_LIB(mysqlclient, main,[], [AC_MSG_ERROR("Linking against mysqlclient failed.")])
+		elif test -d /usr/lib/mysql ; then
+			echo "NOTICE -- Copying mysqlclient files into the /usr/lib directory."
+			echo "NOTICE -- If mysqlclient is not found, please re-run the configure script."
+			cp -Rsf /usr/lib/mysql/libmysqlclient* /usr/lib
+			AC_CHECK_LIB(mysqlclient, main,[], [AC_MSG_ERROR("Linking against mysqlclient failed.")])
+		else
+			AC_MSG_ERROR("Linking against mysql-client failed.")
+		fi
+	])
+
 	AC_SUBST(MYSQL_LIBS)
 fi
 
