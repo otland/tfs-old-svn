@@ -137,7 +137,7 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 				tmp = getFluidSourceType(itemEx.itemid)
 			end
 
-			if(tmp)
+			if(tmp) then
 				doChangeTypeItem(item.uid, tmp)
 				return true
 			end
