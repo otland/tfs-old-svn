@@ -419,6 +419,7 @@ class LuaInterface
 		static int32_t luaGetPlayerByNameWildcard(lua_State* L);
 		static int32_t luaGetPlayerGUIDByName(lua_State* L);
 		static int32_t luaGetPlayerNameByGUID(lua_State* L);
+		static int32_t luaDoPlayerChangeName(lua_State* L);
 		static int32_t luaGetPlayersByAccountId(lua_State* L);
 		static int32_t luaGetAccountIdByName(lua_State* L);
 		static int32_t luaGetAccountByName(lua_State* L);

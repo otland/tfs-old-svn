@@ -4376,8 +4376,7 @@ void Player::manageAccount(const std::string &text)
 					std::string tmp = asLowerCaseString(managerString);
 					if(tmp.substr(0, 4) != "god " && tmp.substr(0, 3) != "cm " && tmp.substr(0, 3) != "gm ")
 					{
-						talkState[1] = true;
-						talkState[2] = true;
+						talkState[1] = talkState[2] = true;
 						msg << managerString << ", are you sure?";
 					}
 					else
@@ -4398,12 +4397,12 @@ void Player::manageAccount(const std::string &text)
 						IOLoginData::getInstance()->changeName(tmp, managerString, managerString2) &&
 						IOBan::getInstance()->removePlayerBanishment(tmp, PLAYERBAN_LOCK))
 					{
+						msg << "Your character has been successfully renamed, you should now be able to login at it without any problems.";
 						if(House* house = Houses::getInstance()->getHouseByPlayerId(tmp))
 							house->updateDoorDescription(managerString);
 
 						talkState[1] = true;
 						talkState[2] = false;
-						msg << "Your character has been successfully renamed, you should now be able to login at it without any problems.";
 					}
 					else
 					{

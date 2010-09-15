@@ -1906,6 +1906,9 @@ void LuaInterface::registerFunctions()
 	//getPlayerNameByGUID(guid[, multiworld = false[, displayError = true]])
 	lua_register(m_luaState, "getPlayerNameByGUID", LuaInterface::luaGetPlayerNameByGUID);
 
+	//doPlayerChangeName(guid, oldName, newName)
+	lua_register(m_luaState, "doPlayerChangeName", LuaInterface::luaDoPlayerChangeName);
+
 	//registerCreatureEvent(uid, eventName)
 	lua_register(m_luaState, "registerCreatureEvent", LuaInterface::luaRegisterCreatureEvent);
 
@@ -7442,6 +7445,24 @@ int32_t LuaInterface::luaGetPlayerNameByGUID(lua_State* L)
 	}
 
 	lua_pushstring(L, name.c_str());
+	return 1;
+}
+
+int32_t LuaInterface::luaDoPlayerChangeName(lua_State* L)
+{
+	//doPlayerChangeName(guid, oldName, newName)
+	std::string newName = popString(L), oldName = popString(L);
+	uint32_t guid = popNumber(L);
+	if(IOLoginData::getInstance()->changeName(guid, newName, oldName))
+	{
+		if(House* house = Houses::getInstance()->getHouseByPlayerId(guid))
+			house->updateDoorDescription(newName);
+
+		lua_pushboolean(L, true);
+	}
+	else
+		lua_pushboolean(L, false);
+
 	return 1;
 }
 
