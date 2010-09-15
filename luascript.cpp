@@ -1031,7 +1031,7 @@ void LuaInterface::pushThing(lua_State* L, Thing* thing, uint32_t id/* = 0*/, Re
 		setField(L, "actionid", item->getActionId());
 		if(recursive != RECURSE_NONE)
 		{
-			Container* container = item->getContainer();
+			const Container* container = item->getContainer();
 			if(container && !container->empty())
 			{
 				if(recursive == RECURSE_FIRST)
@@ -1042,7 +1042,7 @@ void LuaInterface::pushThing(lua_State* L, Thing* thing, uint32_t id/* = 0*/, Re
 				for(int32_t i = 1; it != container->getEnd(); ++it, ++i)
 				{
 					lua_pushnumber(L, i);
-					pushThing(L, *it, env->addThing(*it), recursive);
+					pushThing(L, *it, getEnv()->addThing(*it), recursive);
 					pushTable(L);
 				}
 
