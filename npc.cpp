@@ -155,7 +155,7 @@ void Npc::reload()
 	if(m_npcEventHandler)
 		m_npcEventHandler->onCreatureAppear(this);
 
-	if(walkTicks > 0)
+	if(walkTicks)
 		addEventWalk();
 }
 
@@ -206,10 +206,7 @@ bool Npc::loadFromXml(const std::string& filename)
 		walkable = booleanString(strValue);
 
 	if(readXMLInteger(root, "autowalk", intValue))
-	{
 		std::clog << "[Notice - Npc::Npc] NPC: " << name << " - autowalk attribute has been deprecated, use walkinterval instead." << std::endl;
-		walkTicks = 2000;
-	}
 
 	if(readXMLInteger(root, "walkinterval", intValue))
 		walkTicks = intValue;
@@ -1025,7 +1022,7 @@ void Npc::onCreatureAppear(const Creature* creature)
 	Creature::onCreatureAppear(creature);
 	if(creature == this)
 	{
-		if(walkTicks > 0)
+		if(walkTicks)
 			addEventWalk();
 
 		if(m_npcEventHandler)
@@ -1853,7 +1850,7 @@ bool Npc::getNextStep(Direction& dir, uint32_t& flags)
 	if(Creature::getNextStep(dir, flags))
 		return true;
 
-	if(walkTicks <= 0 || !isIdle || focusCreature || getTimeSinceLastMove() < walkTicks)
+	if(!walkTicks || !isIdle || focusCreature || getTimeSinceLastMove() < walkTicks)
 		return false;
 
 	return getRandomStep(dir);
@@ -1897,7 +1894,9 @@ void Npc::setCreatureFocus(Creature* creature)
 {
 	if(!creature)
 	{
-		g_game.internalCreatureTurn(this, baseDirection);
+		if(!walkTicks)
+			g_game.internalCreatureTurn(this, baseDirection);
+
 		focusCreature = 0;
 		return;
 	}
