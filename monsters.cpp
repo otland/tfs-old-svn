@@ -159,7 +159,7 @@ ItemList MonsterType::createLoot(const LootBlock& lootBlock)
 		if(!(tmpItem = Item::CreateItem(item, n)))
 			break;
 
-		count -= n;
+		count -= (!n ? 1 : n);
 		if(lootBlock.subType != -1)
 			tmpItem->setSubType(lootBlock.subType);
 
