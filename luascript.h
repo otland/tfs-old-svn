@@ -36,13 +36,9 @@ extern "C"
 	#include "lua5.1/lualib.h"
 }
 #else
+
 #include <lua.hpp>
 
-extern "C"
-{
-	#include <lauxlib.h>
-	#include <lualib.h>
-}
 #endif
 
 #include "database.h"
