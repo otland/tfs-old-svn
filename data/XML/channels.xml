@@ -9,7 +9,7 @@
 	 -->
 	<channel id="1" name="Party"/>
 	<channel id="2" name="Staff" access="3"/>
-	<channel id="3" name="Rule Violations" logged="yes"/>
+	<!-- <channel id="3" name="Rule Violations" logged="yes"/> -->
 	<channel id="4" name="Counselor" access="1"/>
 	<channel id="5" name="Game-Chat" level="2"/>
 	<channel id="6" name="Trade" level="8" muted="120" conditionId="2" conditionMessage="You may only place one offer in two minutes.">

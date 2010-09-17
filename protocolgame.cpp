@@ -1280,7 +1280,9 @@ void ProtocolGame::parseSay(NetworkMessage& msg)
 			break;
 
 		case SPEAK_CHANNEL_Y:
+		case SPEAK_CHANNEL_W:
 		case SPEAK_CHANNEL_RN:
+		case SPEAK_CHANNEL_O:
 		case SPEAK_CHANNEL_RA:
 			channelId = msg.get<uint16_t>();
 			break;
@@ -2230,15 +2232,15 @@ void ProtocolGame::sendAddCreature(const Creature* creature, const Position& pos
 	msg->put<uint16_t>(0x32);
 
 	msg->put<char>(player->hasFlag(PlayerFlag_CanReportBugs));
-	if(Group* group = player->getGroup())
+	/*if(Group* group = player->getGroup())
 	{
-		int32_t reasons = group->getViolationReasons();
-		if(reasons > 1)
+		int32_t reasons = 0; group->getViolationReasons();
+		if(reasons)
 		{
 			msg->put<char>(0x0B);
-			for(int32_t i = 0; i < 20; ++i)
+			for(int32_t i = 0; i < 20; ++i) // number of total violation reasons
 			{
-				if(i < 4)
+				if(i < 4) // number of name violation reasons
 					msg->put<char>(group->getNameViolationFlags());
 				else if(i < reasons)
 					msg->put<char>(group->getStatementViolationFlags());
@@ -2246,7 +2248,7 @@ void ProtocolGame::sendAddCreature(const Creature* creature, const Position& pos
 					msg->put<char>(0x00);
 			}
 		}
-	}
+	}*/
 
 	AddMapDescription(msg, pos);
 	for(int32_t i = SLOT_FIRST; i < SLOT_LAST; ++i)
