@@ -209,9 +209,9 @@ if test "$luaJIT" = "yes" ; then
 	])
 else
 	PKG_CHECK_MODULES(LUA, lua5.1 >= 5.1, , [
-		AC_CHECK_HEADERS([lua.hpp], , [
+		AC_CHECK_HEADERS([lua.h], , [
 			OPTIONAL_FLAGS="$OPTIONAL_FLAGS -D__ALT_LUA_PATH__"
-			AC_CHECK_HEADERS([lua5.1/lua.hpp], , [AC_MSG_ERROR("Lua header not found.")])
+			AC_CHECK_HEADERS([lua5.1/lua.h], , [AC_MSG_ERROR("Lua header not found.")])
 		])
 		AC_CHECK_LIB(lua, main, , [
 			AC_CHECK_LIB(lua5.1, main, , [AC_MSG_ERROR("Linking against Lua library failed.")])
