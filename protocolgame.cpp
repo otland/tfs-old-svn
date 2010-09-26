@@ -389,7 +389,7 @@ bool ProtocolGame::parseFirstPacket(NetworkMessage& msg)
 
 	if(version < 854)
 	{
-		disconnectClient(0x0A, "Only clients with protocol 8.54 allowed!");
+		disconnectClient(0x14, "Only clients with protocol 8.54 to 8.57 allowed!");
 		return false;
 	}
 
@@ -435,6 +435,7 @@ bool ProtocolGame::parseFirstPacket(NetworkMessage& msg)
 	if(!(IOLoginData::getInstance()->getPassword(accnumber, name, acc_pass) && passwordTest(password, acc_pass)) && name != "Account Manager")
 	{
 		g_bans.addLoginAttempt(getIP(), false);
+		disconnectClient(0x14, "Account number or password is not correct.");
 		getConnection()->closeConnection();
 		return false;
 	}
@@ -1341,6 +1342,9 @@ void ProtocolGame::parsePlayerPurchase(NetworkMessage &msg)
 	uint16_t id = msg.GetU16();
 	uint8_t count = msg.GetByte();
 	uint8_t amount = msg.GetByte();
+	if(amount == 0)
+		return;
+
 	bool ignoreCap = msg.GetByte() == 0x01;
 	bool inBackpacks = msg.GetByte() == 0x01;
 	addGameTask(&Game::playerPurchaseItem, player->getID(), id, count, amount, ignoreCap, inBackpacks);
@@ -2737,7 +2741,7 @@ void ProtocolGame::AddCreature(NetworkMessage_ptr msg, const Creature* creature,
 	msg->AddByte(player->getPartyShield(creature->getPlayer()));
 
 	if(!known)
-		msg->AddByte(0x00); // war emblem
+		msg->AddByte(player->getGuildEmblem(creature->getPlayer()));
 
 	msg->AddByte(player->isAccessPlayer() ? 0x00 : 0x01);
 }
@@ -2750,7 +2754,7 @@ void ProtocolGame::AddPlayerStats(NetworkMessage_ptr msg)
 	msg->AddU16(player->getPlayerInfo(PLAYERINFO_MAXHEALTH));
 	msg->AddU32(uint32_t(player->getFreeCapacity() * 100));
 	uint64_t experience = player->getExperience();
-	if(experience > 0x7FFFFFFF) // client debugs after 2,147,483,647 exp
+	if(experience > 0x7FFFFFFF)
 		msg->AddU32(0x7FFFFFFF);
 	else
 		msg->AddU32(experience);

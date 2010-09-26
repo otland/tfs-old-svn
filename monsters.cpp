@@ -158,7 +158,7 @@ void MonsterType::createLoot(Container* corpse)
 		if(owner)
 		{
 			std::stringstream ss;
-			ss << "Loot of " << nameDescription << ": " << corpse->getContentDescription() << ".";
+			ss << "Loot of " << nameDescription << ": " << corpse->getContentDescription();
 			if(owner->getParty())
 				owner->getParty()->broadcastPartyLoot(ss.str());
 			else

@@ -160,7 +160,12 @@ bool Items::reload()
 
 	this->items->reset();
 	loadFromOtb("data/items/items.otb");
-	return loadFromXml();
+	if(!loadFromXml())
+		return false;
+
+	g_moveEvents->reload();
+	g_weapons->reload();
+	return true;
 }
 
 int32_t Items::loadFromOtb(std::string file)

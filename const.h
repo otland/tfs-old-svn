@@ -382,6 +382,14 @@ enum PartyShields_t
 	SHIELD_YELLOW_NOSHAREDEXP = 10
 };
 
+enum GuildEmblems_t
+{
+	EMBLEM_NONE = 0,
+	EMBLEM_GREEN,
+	EMBLEM_RED,
+	EMBLEM_BLUE
+};
+
 enum item_t
 {
 	ITEM_FIREFIELD_PVP	= 1487,

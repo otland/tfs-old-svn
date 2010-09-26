@@ -874,9 +874,12 @@ bool IOLoginData::savePlayer(Player* player, bool preSave)
 		query_insert.setQuery("INSERT INTO `guild_invites` (`player_id`, `guild_id`) VALUES ");
 		for(InvitedToGuildsList::const_iterator it = player->invitedToGuildsList.begin(); it != player->invitedToGuildsList.end(); ++it)
 		{
-			sprintf(buffer, "(%d, %d)", player->getGUID(), *it);
-			if(!query_insert.addRow(buffer))
-				return false;
+			if(IOGuild::getInstance()->guildExists(*it))
+			{
+				sprintf(buffer, "(%d, %d)", player->getGUID(), *it);
+				if(!query_insert.addRow(buffer))
+					return false;
+			}
 		}
 		if(!query_insert.executeQuery())
 			return false;

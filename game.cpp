@@ -223,11 +223,11 @@ void Game::saveGameState()
 
 	stateTime = 0;
 	std::cout << "Saving server..." << std::endl;
-	IOLoginData* io = IOLoginData::getInstance();
+	IOLoginData* ioLoginData = IOLoginData::getInstance();
 	for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
 	{
 		(*it).second->loginPosition = (*it).second->getPosition();
-		io->savePlayer((*it).second, false);
+		ioLoginData->savePlayer((*it).second, false);
 	}
 
 	map->saveMap();
@@ -808,7 +808,7 @@ bool Game::playerMoveThing(uint32_t playerId, const Position& fromPos,
 	{
 		if(Position::areInRange<1,1,0>(movingCreature->getPosition(), player->getPosition()))
 		{
-			SchedulerTask* task = createSchedulerTask(2000,
+			SchedulerTask* task = createSchedulerTask(1000,
 				boost::bind(&Game::playerMoveCreature, this, player->getID(),
 				movingCreature->getID(), movingCreature->getPosition(), toCylinder->getPosition()));
 			player->setNextActionTask(task);
@@ -1950,28 +1950,11 @@ bool Game::playerMove(uint32_t playerId, Direction direction)
 	if(!player || player->isRemoved())
 		return false;
 
-	if(player->getNoMove())
-	{
-		player->sendCancelWalk();
-		return false;
-	}
-
-	player->stopWalk();
-
-	int32_t delay = player->getWalkDelay(direction);
-	if(delay > 0)
-	{
-		player->setNextAction(OTSYS_TIME() + player->getStepDuration(direction) - 1);
-		SchedulerTask* task = createSchedulerTask(((uint32_t)delay), boost::bind(&Game::playerMove, this, playerId, direction));
-		player->setNextWalkTask(task);
-		return false;
-	}
-
 	player->resetIdleTime();
-	player->setFollowCreature(NULL);
-	player->onWalk(direction);
 
-	return (internalMoveCreature(player, direction) == RET_NOERROR);
+	std::list<Direction> dirs;
+	dirs.push_back(direction);
+	return player->startAutoWalk(dirs);
 }
 
 bool Game::playerBroadcastMessage(Player* player, const std::string& text)
@@ -2194,6 +2177,7 @@ bool Game::playerAutoWalk(uint32_t playerId, std::list<Direction>& listDir)
 		return false;
 
 	player->resetIdleTime();
+	player->setNextWalkActionTask(NULL);
 	player->setNextWalkTask(NULL);
 	return player->startAutoWalk(listDir);
 }
@@ -3171,6 +3155,7 @@ bool Game::playerSetAttackedCreature(uint32_t playerId, uint32_t creatureId)
 	}
 
 	player->setAttackedCreature(attackCreature);
+	g_dispatcher.addTask(createTask(boost::bind(&Game::updateCreatureWalk, this, player->getID())));
 	return true;
 }
 
@@ -3185,6 +3170,7 @@ bool Game::playerFollowCreature(uint32_t playerId, uint32_t creatureId)
 	if(creatureId != 0)
 		followCreature = getCreatureByID(creatureId);
 
+	g_dispatcher.addTask(createTask(boost::bind(&Game::updateCreatureWalk, this, player->getID())));
 	return player->setFollowCreature(followCreature);
 }
 
@@ -3727,7 +3713,7 @@ void Game::updateCreatureWalk(uint32_t creatureId)
 {
 	Creature* creature = getCreatureByID(creatureId);
 	if(creature && creature->getHealth() > 0)
-		creature->getPathToFollowCreature();
+		creature->goToFollowCreature();
 }
 
 void Game::checkCreatureAttack(uint32_t creatureId)
@@ -5331,4 +5317,22 @@ bool Game::playerDebugAssert(uint32_t playerId, std::string assertLine, std::str
 		fclose(file);
 	}
 	return true;
+}
+
+void Game::forceAddCondition(uint32_t creatureId, Condition* condition)
+{
+	Creature* creature = getCreatureByID(creatureId);
+	if(!creature || creature->isRemoved())
+		return;
+
+	creature->addCondition(condition, true);
+}
+
+void Game::forceRemoveCondition(uint32_t creatureId, ConditionType_t type)
+{
+	Creature* creature = getCreatureByID(creatureId);
+	if(!creature || creature->isRemoved())
+		return;
+
+	creature->removeCondition(type, true);
 }

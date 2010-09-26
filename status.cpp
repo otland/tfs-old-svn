@@ -76,7 +76,7 @@ void ProtocolStatus::onRecvFirstMessage(NetworkMessage& msg)
 		//XML info protocol
 		case 0xFF:
 		{
-			if(msg.GetString(4) == "info") // in case some automatics would request players from 0.3
+			if(msg.GetString(4) == "info")
 			{
 				OutputMessage_ptr output = OutputMessagePool::getInstance()->getOutputMessage(this, false);
 				if(output)
@@ -239,7 +239,6 @@ void Status::getInfo(uint32_t requestedInfo, OutputMessage_ptr output, NetworkMe
 		output->AddString(g_config.getString(ConfigManager::URL).c_str());
 		output->AddU32((uint32_t)(running >> 32));
 		output->AddU32((uint32_t)(running));
-		output->AddString(STATUS_SERVER_VERSION);
   	}
 
 	if(requestedInfo & REQUEST_PLAYERS_INFO)

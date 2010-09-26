@@ -698,6 +698,9 @@ bool LuaScriptInterface::initState()
 		return false;
 
 	luaL_openlibs(m_luaState);
+	#ifdef __LUAJIT__
+	luaJIT_setmode(m_luaState, 0, LUAJIT_MODE_ENGINE | LUAJIT_MODE_ON);
+	#endif
 
 	#if defined __USE_MYSQL__ && defined __USE_SQLITE__
 	if(g_config.getNumber(ConfigManager::SQLTYPE) == SQL_TYPE_MYSQL)
@@ -2135,7 +2138,8 @@ int32_t LuaScriptInterface::luaGetPlayerLearnedInstantSpell(lua_State* L)
 	ScriptEnviroment* env = getScriptEnv();
 
 	Player* player = env->getPlayerByUID(cid);
-	if(!player){
+	if(!player)
+	{
 		reportErrorFunc(getErrorDesc(LUA_ERROR_PLAYER_NOT_FOUND));
 		lua_pushnumber(L, LUA_ERROR);
 		return 1;
@@ -2682,6 +2686,7 @@ int32_t LuaScriptInterface::luaDoCreatureAddHealth(lua_State* L)
 			g_game.combatChangeHealth(COMBAT_HEALING, NULL, creature, healthChange);
 		else
 			g_game.combatChangeHealth(COMBAT_UNDEFINEDDAMAGE, NULL, creature, healthChange);
+
 		lua_pushnumber(L, LUA_NO_ERROR);
 	}
 	else
@@ -3060,6 +3065,8 @@ int32_t LuaScriptInterface::luaDoSendAnimatedText(lua_State* L)
 		pos = env->getRealPos();
 
 	g_game.addAnimatedText(pos, color, text);
+
+	lua_pushnumber(L, LUA_NO_ERROR);
 	return 1;
 }
 
@@ -3123,14 +3130,16 @@ int32_t LuaScriptInterface::luaDoSetCreatureDropLoot(lua_State* L)
 	ScriptEnviroment* env = getScriptEnv();
 
 	Creature* creature = env->getCreatureByUID(cid);
-	if(creature){
+	if(creature)
+	{
 		creature->setDropLoot(doDrop);
+		lua_pushnumber(L, LUA_NO_ERROR);
 	}
-	else{
+	else
+	{
 		reportErrorFunc(getErrorDesc(LUA_ERROR_CREATURE_NOT_FOUND));
 		lua_pushnumber(L, LUA_ERROR);
 	}
-
 	return 1;
 }
 
@@ -3199,6 +3208,7 @@ int LuaScriptInterface::luaDoAddMark(lua_State *L)
 	{
 		reportErrorFunc(getErrorDesc(LUA_ERROR_PLAYER_NOT_FOUND));
 		lua_pushnumber(L, LUA_ERROR);
+		return 1;
 	}
 
 	player->sendAddMarker(pos, type, description);
@@ -4364,7 +4374,7 @@ int32_t LuaScriptInterface::luaGetWorldLight(lua_State* L)
 	g_game.getWorldLightInfo(lightInfo);
 	lua_pushnumber(L, lightInfo.level);
 	lua_pushnumber(L, lightInfo.color);
-	return 1;
+	return 2;
 }
 
 int32_t LuaScriptInterface::luaGetWorldCreatures(lua_State* L)
@@ -4378,20 +4388,23 @@ int32_t LuaScriptInterface::luaGetWorldCreatures(lua_State* L)
 		case 0:
 			value = g_game.getPlayersOnline();
 			break;
+
 		case 1:
 			value = g_game.getMonstersOnline();
 			break;
+
 		case 2:
 			value = g_game.getNpcsOnline();
 			break;
+
 		case 3:
 			value = g_game.getCreaturesOnline();
 			break;
+
 		default:
 			reportErrorFunc("Wrong creature type.");
 			lua_pushnumber(L, LUA_ERROR);
 			return 1;
-			break;
 	}
 	lua_pushnumber(L, value);
 	return 1;
@@ -4404,6 +4417,7 @@ int32_t LuaScriptInterface::luaGetWorldUpTime(lua_State* L)
 	Status* status = Status::getInstance();
 	if(status)
 		uptime = status->getUptime();
+
 	lua_pushnumber(L, uptime);
 	return 1;
 }
@@ -4440,13 +4454,14 @@ int32_t LuaScriptInterface::luaGetPlayerLight(lua_State* L)
 		player->getCreatureLight(lightInfo);
 		lua_pushnumber(L, lightInfo.level);
 		lua_pushnumber(L, lightInfo.color);//color
+		return 2;
 	}
 	else
 	{
 		reportErrorFunc(getErrorDesc(LUA_ERROR_PLAYER_NOT_FOUND));
 		lua_pushnumber(L, LUA_ERROR);
+		return 1;
 	}
-	return 1;
 }
 
 int32_t LuaScriptInterface::luaDoPlayerAddExp(lua_State* L)
@@ -4631,7 +4646,8 @@ int32_t LuaScriptInterface::luaCreateCombatObject(lua_State* L)
 	//createCombatObject()
 	ScriptEnviroment* env = getScriptEnv();
 
-	if(env->getScriptId() != EVENT_ID_LOADING){
+	if(env->getScriptId() != EVENT_ID_LOADING)
+	{
 		reportError(__FUNCTION__, "This function can only be used while loading the script.");
 		lua_pushnumber(L, LUA_ERROR);
 		return 1;
@@ -5038,7 +5054,8 @@ int32_t LuaScriptInterface::luaSetCombatFormula(lua_State* L)
 		combat->setPlayerCombatValues(type, mina, minb, maxa, maxb);
 		lua_pushnumber(L, LUA_NO_ERROR);
 	}
-	else{
+	else
+	{
 		reportErrorFunc(getErrorDesc(LUA_ERROR_COMBAT_NOT_FOUND));
 		lua_pushnumber(L, LUA_ERROR);
 	}
@@ -5050,7 +5067,8 @@ int32_t LuaScriptInterface::luaSetConditionFormula(lua_State* L)
 	//setConditionFormula(condition, mina, minb, maxa, maxb)
 	ScriptEnviroment* env = getScriptEnv();
 
-	if(env->getScriptId() != EVENT_ID_LOADING){
+	if(env->getScriptId() != EVENT_ID_LOADING)
+	{
 		reportError(__FUNCTION__, "This function can only be used while loading the script.");
 		lua_pushnumber(L, LUA_ERROR);
 		return 1;
@@ -5174,7 +5192,6 @@ int32_t LuaScriptInterface::luaDoCombat(lua_State* L)
 			reportErrorFunc(getErrorDesc(LUA_ERROR_VARIANT_UNKNOWN));
 			lua_pushnumber(L, LUA_ERROR);
 			return 1;
-			break;
 		}
 	}
 
@@ -5862,9 +5879,8 @@ int32_t LuaScriptInterface::luaVariantToNumber(lua_State* L)
 	LuaVariant var = popVariant(L);
 
 	uint32_t number = 0;
-	if(var.type == VARIANT_NUMBER){
+	if(var.type == VARIANT_NUMBER)
 		number = var.number;
-	}
 
 	lua_pushnumber(L, number);
 	return 1;
@@ -5972,7 +5988,6 @@ int32_t LuaScriptInterface::luaGetCreatureOutfit(lua_State* L)
 		setField(L, "lookLegs", outfit.lookLegs);
 		setField(L, "lookFeet", outfit.lookFeet);
 		setField(L, "lookAddons", outfit.lookAddons);
-		return 1;
 	}
 	else
 	{
@@ -6046,6 +6061,7 @@ int32_t LuaScriptInterface::luaGetGlobalStorageValue(lua_State* L)
 		lua_pushnumber(L, value);
 	else
 		lua_pushnumber(L, -1);
+
 	return 1;
 }
 
@@ -6192,7 +6208,6 @@ int32_t LuaScriptInterface::luaDoMoveCreature(lua_State* L)
 			reportErrorFunc("No valid direction");
 			lua_pushnumber(L, LUA_ERROR);
 			return 1;
-			break;
 	}
 
 	ScriptEnviroment* env = getScriptEnv();
@@ -6938,7 +6953,10 @@ int32_t LuaScriptInterface::luaGetItemWeight(lua_State* L)
 	if(parameters > 2)
 		precise = popNumber(L) == LUA_TRUE;
 
-	int32_t count = popNumber(L);
+	int32_t count = 1;
+	if(parameters > 1)
+		count = popNumber(L);
+
 	uint32_t itemid = popNumber(L);
 
 	const ItemType& it = Item::items[itemid];
@@ -7479,7 +7497,8 @@ int32_t LuaScriptInterface::luaGetCreatureMaxHealth(lua_State* L)
 {
 	uint32_t cid = popNumber(L);
 	ScriptEnviroment* env = getScriptEnv();
-	if(Creature* creature = env->getCreatureByUID(cid))
+	Creature* creature = env->getCreatureByUID(cid);
+	if(creature)
 	{
 		Player* player = creature->getPlayer();
 		if(player)
@@ -7499,6 +7518,7 @@ int32_t LuaScriptInterface::luaSaveData(lua_State* L)
 {
 	g_dispatcher.addTask(
 		createTask(boost::bind(&Game::saveGameState, &g_game)));
+	lua_pushnumber(L, LUA_NO_ERROR);
 	return 1;
 }
 
@@ -7506,6 +7526,7 @@ int32_t LuaScriptInterface::luaRefreshMap(lua_State* L)
 {
 	g_dispatcher.addTask(
 		createTask(boost::bind(&Game::refreshMap, &g_game)));
+	lua_pushnumber(L, LUA_NO_ERROR);
 	return 1;
 }
 
@@ -7513,6 +7534,7 @@ int32_t LuaScriptInterface::luaCleanMap(lua_State* L)
 {
 	g_dispatcher.addTask(
 		createTask(boost::bind(&Game::cleanMap, &g_game)));
+	lua_pushnumber(L, LUA_NO_ERROR);
 	return 1;
 }
 

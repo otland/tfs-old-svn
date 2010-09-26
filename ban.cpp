@@ -178,7 +178,7 @@ bool IOBan::getBanInformation(uint32_t account, uint32_t& bannedBy, uint32_t& ba
 		banTime = result.getDataInt("time");
 		reason = result.getDataInt("reason_id");
 		action = result.getDataInt("action_id");
-		comment = result.getDataInt("comment");
+		comment = result.getDataString("comment");
 		deletion = false;
 		return true;
 	}

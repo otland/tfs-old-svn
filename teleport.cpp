@@ -104,7 +104,7 @@ void Teleport::__addThing(int32_t index, Thing* thing)
 		if(Creature* creature = thing->getCreature())
 		{
 			g_game.internalCreatureTurn(creature, creature->getPosition().x > getDestPos().x ? WEST : EAST);
-			creature->getTile()->moveCreature(creature, destTile);
+			getTile()->moveCreature(creature, destTile);
 			g_game.addMagicEffect(destTile->getPosition(), NM_ME_TELEPORT);
 		}
 		else if(Item* item = thing->getItem())

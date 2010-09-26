@@ -166,6 +166,8 @@ class Player : public Creature, public Cylinder
 		int8_t getGuildLevel() const {return guildLevel;}
 		void setGuildLevel(GuildLevel_t newGuildLevel);
 
+		bool isGuildMate(const Player* player) const;
+
 		bool hasRequestedOutfit() const {return requestedOutfit;}
 		void hasRequestedOutfit(bool newValue) {requestedOutfit = newValue;}
 
@@ -185,6 +187,8 @@ class Player : public Creature, public Cylinder
 		bool addPartyInvitation(Party* party);
 		bool removePartyInvitation(Party* party);
 		void clearPartyInvitations();
+
+		GuildEmblems_t getGuildEmblem(const Player* player) const;
 
 		uint64_t getSpentMana() const {return manaSpent;}
 		const std::string& getGuildName() const {return guildName;}
@@ -349,6 +353,7 @@ class Player : public Creature, public Cylinder
 
 		//follow functions
 		virtual bool setFollowCreature(Creature* creature, bool fullPathSearch = false);
+		virtual void goToFollowCreature();
 
 		//follow events
 		virtual void onFollowCreature(const Creature* creature);
@@ -423,7 +428,7 @@ class Player : public Creature, public Cylinder
 		virtual void onAttackedCreatureDrainHealth(Creature* target, int32_t points);
 		virtual void onTargetCreatureGainHealth(Creature* target, int32_t points);
 		virtual bool onKilledCreature(Creature* target, bool lastHit = true);
-		virtual void onGainExperience(uint64_t gainExp);
+		virtual void onGainExperience(uint64_t gainExp, Creature* target);
 		virtual void onGainSharedExperience(uint64_t gainExp);
 		virtual void onAttackedCreatureBlockHit(Creature* target, BlockType_t blockType);
 		virtual void onBlockHit(BlockType_t blockType);

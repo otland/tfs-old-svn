@@ -93,7 +93,6 @@ std::string parseParams(tokenizer::iterator &it, tokenizer::iterator end);
 std::string formatDate(time_t time);
 std::string formatDateShort(time_t time);
 std::string convertIPToString(uint32_t ip);
-std::string formatTime(int32_t hours, int32_t minutes);
 
 std::string trimString(std::string& str);
 

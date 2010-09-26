@@ -122,6 +122,9 @@ class Game
 
 		void start(ServiceManager* servicer);
 
+		void forceAddCondition(uint32_t creatureId, Condition* condition);
+		void forceRemoveCondition(uint32_t creatureId, ConditionType_t type);
+
 		Highscore getHighscore(unsigned short skill);
 		void timedHighscoreUpdate();
 		bool reloadHighscores();

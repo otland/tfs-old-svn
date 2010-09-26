@@ -1431,14 +1431,14 @@ bool Commands::playerKills(Creature* creature, const std::string& cmd, const std
 		int32_t fragTime = g_config.getNumber(ConfigManager::FRAG_TIME);
 		if(player->redSkullTicks && fragTime > 0)
 		{
-			int32_t frags = (player->redSkullTicks / fragTime) + 1;
-			int32_t remainingTime = player->redSkullTicks - (fragTime * (frags - 1));
-			int32_t hours = ((remainingTime / 1000) / 60) / 60;
-			int32_t minutes = ((remainingTime / 1000) / 60) - (hours * 60);
+			int32_t frags = ceil(player->redSkullTicks / (double)fragTime);
+			int32_t remainingTime = (player->redSkullTicks % fragTime) / 1000;
+			int32_t hours = floor(remainingTime / 3600);
+			int32_t minutes = floor((remainingTime % 3600) / 60);
 
-			char buffer[175];
-			sprintf(buffer, "You have %d unjustified frag%s. The amount of unjustified frags will decrease after: %s.", frags, (frags > 1 ? "s" : ""), formatTime(hours, minutes).c_str());
-			player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, buffer);
+			std::stringstream ss;
+			ss << "You have " << frags << " unjustified kill" << (frags > 1 ? "s" : "") << ". The amount of unjustified kills will decrease after: " << hours << " hour" << (hours != 1 ? "s" : "") << " and " << minutes << " minute" << (minutes != 1 ? "s" : "") << ".";
+			player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, ss.str());
 		}
 		else
 			player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, "You do not have any unjustified frag.");

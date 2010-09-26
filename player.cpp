@@ -3232,7 +3232,7 @@ bool Player::setFollowCreature(Creature* creature, bool fullPathSearch /*= false
 
 		sendCancelMessage(RET_THEREISNOWAY);
 		sendCancelTarget();
-		stopEventWalk();
+		stopWalk();
 		return false;
 	}
 
@@ -3264,6 +3264,12 @@ bool Player::setAttackedCreature(Creature* creature)
 			boost::bind(&Game::checkCreatureAttack, &g_game, getID())));
 	}
 	return true;
+}
+
+void Player::goToFollowCreature()
+{
+	if(!walkTask)
+		Creature::goToFollowCreature();
 }
 
 void Player::getPathSearchParams(const Creature* creature, FindPathParams& fpp) const
@@ -3343,7 +3349,7 @@ uint64_t Player::getGainedExperience(Creature* attacker) const
 void Player::onFollowCreature(const Creature* creature)
 {
 	if(!creature)
-		stopEventWalk();
+		stopWalk();
 }
 
 void Player::setChaseMode(chaseMode_t mode)
@@ -3364,7 +3370,7 @@ void Player::setChaseMode(chaseMode_t mode)
 		else if(attackedCreature)
 		{
 			setFollowCreature(NULL);
-			stopEventWalk();
+			cancelNextWalk = true;
 		}
 	}
 }
@@ -3391,8 +3397,7 @@ void Player::onWalkComplete()
 
 void Player::stopWalk()
 {
-	if(!listWalkDir.empty())
-		stopEventWalk();
+	cancelNextWalk = true;
 }
 
 void Player::getCreatureLight(LightInfo& light) const
@@ -3537,7 +3542,7 @@ void Player::onAttackedCreature(Creature* target)
 					sendIcons();
 				}
 
-				if(!isPartner(targetPlayer) && !Combat::isInPvpZone(this, targetPlayer) && !targetPlayer->hasAttacked(this))
+				if(!isPartner(targetPlayer) && !Combat::isInPvpZone(this, targetPlayer) && !targetPlayer->hasAttacked(this) && !isGuildMate(targetPlayer))
 				{
 					addAttacked(targetPlayer);
 					if(targetPlayer->getSkull() == SKULL_NONE && getSkull() == SKULL_NONE)
@@ -3640,6 +3645,7 @@ bool Player::onKilledCreature(Creature* target, bool lastHit/* = true*/)
 				!Combat::isInPvpZone(this, targetPlayer) &&
 				!targetPlayer->hasAttacked(this) &&
 				targetPlayer->getSkull() == SKULL_NONE &&
+				!isGuildMate(targetPlayer) &&
 				targetPlayer != this)
 			{
 				addUnjustifiedDead(targetPlayer);
@@ -3674,13 +3680,13 @@ void Player::gainExperience(uint64_t gainExp)
 	}
 }
 
-void Player::onGainExperience(uint64_t gainExp)
+void Player::onGainExperience(uint64_t gainExp, Creature* target)
 {
 	if(hasFlag(PlayerFlag_NotGainExperience))
 		gainExp = 0;
 
 	Party* party = getParty();
-	if(party && party->isSharedExperienceActive() && party->isSharedExperienceEnabled())
+	if(target && !target->getPlayer() && party && party->isSharedExperienceActive() && party->isSharedExperienceEnabled())
 	{
 		party->shareExperience(gainExp);
 		//We will get a share of the experience through the sharing mechanism
@@ -4586,6 +4592,14 @@ bool Player::isPartner(const Player* player) const
 	return (getParty() == player->getParty());
 }
 
+bool Player::isGuildMate(const Player* player) const
+{
+	if(!player || guildId == 0 || player->getGuildId() == 0)
+		return false;
+
+	return guildId == player->getGuildId();
+}
+
 void Player::sendPlayerPartyIcons(Player* player)
 {
 	sendCreatureShield(player);
@@ -4632,4 +4646,9 @@ void Player::clearPartyInvitations()
 		for(PartyList::iterator it = list.begin(); it != list.end(); ++it)
 			(*it)->removeInvite(this);
 	}
+}
+
+GuildEmblems_t Player::getGuildEmblem(const Player* player) const
+{
+	return EMBLEM_NONE;
 }

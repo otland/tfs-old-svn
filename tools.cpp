@@ -701,18 +701,6 @@ Position getNextPosition(Direction direction, Position pos)
 	return pos;
 }
 
-std::string formatTime(int32_t hours, int32_t minutes)
-{
-	std::stringstream time("");
-	if(hours)
-		time << hours << " " << (hours > 1 ? "hours" : "hour") << (minutes ? " and " : "");
-
-	if(minutes)
-		time << minutes << " " << (minutes > 1 ? "minutes" : "minute");
-
-	return time.str();
-}
-
 struct MagicEffectNames
 {
 	const char* name;

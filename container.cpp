@@ -152,6 +152,10 @@ std::ostringstream& Container::getContentDescription(std::ostringstream& os) con
 	{
 		Item* i = *cit;
 
+		Container* container = i->getContainer();
+		if(container && container->size() != 0)
+			continue;
+
 		if(firstitem)
 			firstitem = false;
 		else

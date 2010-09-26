@@ -872,7 +872,7 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance,
 		s << " (Vol:" << (int32_t)it.maxItems << ")";
 	else if(it.abilities.speed > 0)
 		s << " (speed " << std::showpos << (it.abilities.speed / 2) << std::noshowpos << ")";
-	else if(((it.abilities.conditionSuppressions & CONDITION_DRUNK) == CONDITION_DRUNK))
+	else if(hasBitSet(CONDITION_DRUNK, it.abilities.conditionSuppressions))
 		s << " (hard drinking)";
 	else if(it.abilities.invisible)
 		s << " (invisibility)";
@@ -951,7 +951,6 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance,
 	if(!it.allowDistRead || item->getText() == "" || (it.id >= 7369 && it.id <= 7371))
 		s << ".";
 
-
 	if(it.wieldInfo != 0)
 	{
 		s << std::endl << "It can only be wielded properly by ";
@@ -1003,7 +1002,7 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance,
 
 	if(it.allowDistRead && it.id >= 7369 && it.id <= 7371 && item->getText() != "")
 		s << std::endl << item->getText();
-		
+
 	return s.str();
 }
 

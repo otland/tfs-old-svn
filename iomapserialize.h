@@ -45,6 +45,9 @@ class IOMapSerialize
 		void loadMapBinary(Map* map);
 		bool saveMapBinary(Map* map);
 
+		void loadMapBinaryTileBased(Map* map);
+		bool saveMapBinaryTileBased(Map* map);
+
 		void saveItem(PropWriteStream& stream, const Item* item);
 		void saveTile(PropWriteStream& stream, const Tile* tile);
 

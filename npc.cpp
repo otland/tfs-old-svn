@@ -1410,6 +1410,9 @@ void Npc::onThink(uint32_t interval)
 	if(m_npcEventHandler)
 		m_npcEventHandler->onThink();
 
+	if(getTimeSinceLastMove() >= walkTicks)
+		addEventWalk();
+
 	isIdle = true;
 	hasUsedIdleReply = false;
 
@@ -3395,6 +3398,7 @@ int32_t NpcScriptInterface::luaCloseShopWindow(lua_State* L)
 
 	int32_t buyCallback;
 	int32_t sellCallback;
+
 	Npc* merchant = player->getShopOwner(buyCallback, sellCallback);
 
 	//Check if we actually have a shop window with this player.
@@ -3404,12 +3408,15 @@ int32_t NpcScriptInterface::luaCloseShopWindow(lua_State* L)
 
 		if(buyCallback != -1)
 			luaL_unref(L, LUA_REGISTRYINDEX, buyCallback);
+
 		if(sellCallback != -1)
 			luaL_unref(L, LUA_REGISTRYINDEX, sellCallback);
 
 		player->setShopOwner(NULL, -1, -1);
 		npc->removeShopPlayer(player);
 	}
+
+	lua_pushnumber(L, LUA_NO_ERROR);
 	return 1;
 }
 

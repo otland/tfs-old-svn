@@ -126,8 +126,6 @@ class Creature : public AutoID, virtual public Thing
 		virtual Monster* getMonster() {return NULL;}
 		virtual const Monster* getMonster() const {return NULL;}
 
-		void getPathToFollowCreature();
-
 		virtual const std::string& getName() const = 0;
 		virtual const std::string& getNameDescription() const = 0;
 		virtual std::string getDescription(int32_t lookDistance) const;
@@ -168,7 +166,7 @@ class Creature : public AutoID, virtual public Thing
 		int32_t getWalkDelay() const;
 		int64_t getTimeSinceLastMove() const;
 
-		int64_t getEventStepTicks() const;
+		int64_t getEventStepTicks(bool onlyDelay = false) const;
 		int32_t getStepDuration(Direction dir) const;
 		int32_t getStepDuration() const;
 		virtual int32_t getStepSpeed() const {return getSpeed();}
@@ -178,7 +176,10 @@ class Creature : public AutoID, virtual public Thing
 			int32_t oldSpeed = getSpeed();
 			varSpeed = varSpeedDelta;
 			if(getSpeed() <= 0)
+			{
 				stopEventWalk();
+				cancelNextWalk = true;
+			}
 			else if(oldSpeed <= 0 && !listWalkDir.empty())
 				addEventWalk();
 		}
@@ -199,8 +200,9 @@ class Creature : public AutoID, virtual public Thing
 
 		//walk functions
 		bool startAutoWalk(std::list<Direction>& listDir);
-		void addEventWalk();
+		void addEventWalk(bool firstStep = false);
 		void stopEventWalk();
+		void goToFollowCreature();
 
 		//walk events
 		virtual void onWalk(Direction& dir);
@@ -235,12 +237,13 @@ class Creature : public AutoID, virtual public Thing
 		virtual float getAttackFactor() const {return 1.0f;}
 		virtual float getDefenseFactor() const {return 1.0f;}
 
-		bool addCondition(Condition* condition);
+		bool addCondition(Condition* condition, bool force = false);
 		bool addCombatCondition(Condition* condition);
-		void removeCondition(ConditionType_t type, ConditionId_t id);
-		void removeCondition(ConditionType_t type);
-		void removeCondition(Condition* condition);
+		void removeCondition(ConditionType_t type, ConditionId_t id, bool force = false);
+		void removeCondition(ConditionType_t type, bool force = false);
+		void removeCondition(Condition* condition, bool force = false);
 		void removeCondition(const Creature* attacker, ConditionType_t type);
+		Condition* getCondition(ConditionType_t type) const;
 		Condition* getCondition(ConditionType_t type, ConditionId_t id, uint32_t subId = 0) const;
 		void executeConditions(uint32_t interval);
 		bool hasCondition(ConditionType_t type) const;
@@ -279,7 +282,7 @@ class Creature : public AutoID, virtual public Thing
 		virtual void onTargetCreatureGainHealth(Creature* target, int32_t points);
 		virtual void onAttackedCreatureKilled(Creature* target);
 		virtual bool onKilledCreature(Creature* target, bool lastHit = true);
-		virtual void onGainExperience(uint64_t gainExp);
+		virtual void onGainExperience(uint64_t gainExp, Creature* target);
 		virtual void onGainSharedExperience(uint64_t gainExp);
 		virtual void onAttackedCreatureBlockHit(Creature* target, BlockType_t blockType);
 		virtual void onBlockHit(BlockType_t blockType);
@@ -391,6 +394,7 @@ class Creature : public AutoID, virtual public Thing
 		//follow variables
 		Creature* followCreature;
 		uint32_t eventWalk;
+		bool cancelNextWalk;
 		std::list<Direction> listWalkDir;
 		uint32_t walkUpdateTicks;
 		bool hasFollowPath;

@@ -26,9 +26,16 @@
 #include <list>
 #include <vector>
 
+#ifdef __LUAJIT__
+#include <lua.hpp>
+#endif
+
 extern "C"
 {
+	#ifndef __LUAJIT__
 	#include <lua.h>
+	#endif
+
 	#ifdef __USE_MYSQL__
 	extern int luaopen_luasql_mysql(lua_State*);
 	#endif

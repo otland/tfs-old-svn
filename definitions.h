@@ -57,10 +57,10 @@ enum passwordType_t
 	PASSWORD_TYPE_SHA1
 };
 
-#if defined _WIN32
-#  ifndef WIN32
-#    define WIN32
-#  endif
+#ifdef _WIN32
+#ifndef WIN32
+#define WIN32
+#endif
 #endif
 
 #if defined __WINDOWS__ || defined WIN32
@@ -127,14 +127,18 @@ enum passwordType_t
 		return ::_strnicmp(s1, s2, n);
 	}
 
-	typedef signed long long int64_t;
-	typedef unsigned long uint32_t;
-	typedef signed long int32_t;
-	typedef unsigned short uint16_t;
-	typedef signed short int16_t;
-	typedef unsigned char uint8_t;
-	typedef signed char int8_t;
-
+	#if VISUALC_VERSION >= 10
+		#include <stdint.h>
+	#else
+		typedef signed long long int64_t;
+		// Int is 4 bytes on all x86 and x86-64 platforms
+		typedef unsigned int uint32_t;
+		typedef signed int int32_t;
+		typedef unsigned short uint16_t;
+		typedef signed short int16_t;
+		typedef unsigned char uint8_t;
+		typedef signed char int8_t;
+	#endif
 	#define ATOI64 _atoi64
 
 	#pragma warning(disable:4786) // msvc too long debug names in stl

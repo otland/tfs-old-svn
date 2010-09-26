@@ -32,10 +32,15 @@ bool IOMapSerialize::loadMap(Map* map)
 	int64_t start = OTSYS_TIME();
 	bool s = false;
 
-	if(g_config.getString(ConfigManager::MAP_STORAGE_TYPE) == "binary")
+	if(g_config.getString(ConfigManager::MAP_STORAGE_TYPE) == "binary-tilebased")
 	{
-		loadMapBinary(map);
 		s = true;
+		loadMapBinaryTileBased(map);
+	}
+	else if(g_config.getString(ConfigManager::MAP_STORAGE_TYPE) == "binary")
+	{
+		s = true;
+		loadMapBinary(map);
 	}
 	else
 		s = loadMapRelational(map);
@@ -51,7 +56,9 @@ bool IOMapSerialize::saveMap(Map* map)
 	int64_t start = OTSYS_TIME();
 	bool s = false;
 
-	if(g_config.getString(ConfigManager::MAP_STORAGE_TYPE) == "binary")
+	if(g_config.getString(ConfigManager::MAP_STORAGE_TYPE) == "binary-tilebased")
+		s = saveMapBinaryTileBased(map);
+	else if(g_config.getString(ConfigManager::MAP_STORAGE_TYPE) == "binary")
 		s = saveMapBinary(map);
 	else
 		s = saveMapRelational(map);
@@ -390,6 +397,55 @@ void IOMapSerialize::loadMapBinary(Map* map)
 	}
 }
 
+void IOMapSerialize::loadMapBinaryTileBased(Map* map)
+{
+	Database* db = Database::getInstance();
+
+	DBQuery query;
+	query.reset();
+	query << "SELECT `id` FROM `houses`;";
+
+	DBResult result;
+
+	if(db->storeQuery(query, result))
+	{
+		for(uint32_t i = 0; i < result.getNumRows(); ++i)
+		{
+			query.reset();
+			query << "SELECT `data` FROM `tile_store` WHERE `house_id` = " << result.getDataInt("id", i) << ";";
+			DBResult tileResult;
+			if(db->storeQuery(query, tileResult))
+			{
+				for(uint32_t i = 0; i < tileResult.getNumRows(); ++i)
+				{
+					unsigned long attrSize = 0;
+					const char* attr = tileResult.getDataBlob("data", attrSize, i);
+
+					PropStream propStream;
+					propStream.init(attr, attrSize);
+
+					uint16_t x = 0, y = 0;
+					uint8_t z = 0;
+					propStream.GET_USHORT(x);
+					propStream.GET_USHORT(y);
+					propStream.GET_UCHAR(z);
+					if(x == 0 || y == 0)
+						continue;
+
+					Tile* tile = map->getTile(x, y, z);
+					if(!tile)
+						continue;
+
+					uint32_t item_count = 0;
+					propStream.GET_ULONG(item_count);
+					while(item_count--)
+						loadItem(propStream, tile);
+				}
+ 			}
+		}
+	}
+}
+
 bool IOMapSerialize::loadContainer(PropStream& propStream, Container* container)
 {
 	while(container->serializationCount > 0)
@@ -565,6 +621,59 @@ bool IOMapSerialize::saveMapBinary(Map* map)
  	return trans.success();
 }
 
+bool IOMapSerialize::saveMapBinaryTileBased(Map* map)
+{
+ 	Database* db = Database::getInstance();
+	if(!db->connect())
+		return false;
+
+	//Start the transaction
+	DBTransaction trans(db);
+	if(!trans.start())
+		return false;
+
+ 	DBQuery query;
+	DBResult result;
+	query << "DELETE FROM `tile_store`;";
+	if(!db->executeQuery(query))
+ 		return false;
+
+	DBSplitInsert query_insert(db);
+	query_insert.setQuery("INSERT INTO `tile_store` (`house_id`, `data`) VALUES ");
+
+	//clear old tile data
+ 	for(HouseMap::iterator it = Houses::getInstance().getHouseBegin();
+		it != Houses::getInstance().getHouseEnd();
+		++it)
+	{
+ 		//save house items
+ 		House* house = it->second;
+		for(HouseTileList::iterator tile_iter = house->getHouseTileBegin(); tile_iter != house->getHouseTileEnd(); ++tile_iter)
+		{
+			PropWriteStream stream;
+			saveTile(stream, *tile_iter);
+			uint32_t attributesSize;
+			const char* attributes = stream.getStream(attributesSize);
+
+			if(attributesSize > 0)
+			{
+				query << "(" << it->second->getHouseId() << ", " <<
+					db->escapeBlob(attributes, attributesSize) << ")";
+
+				if(!query_insert.addRow(query.str()))
+					return false;
+			}
+
+			query.str("");
+		}
+	}
+	if(!query_insert.executeQuery())
+		return false;
+
+ 	//End the transaction
+ 	return trans.success();
+}
+
 void IOMapSerialize::saveItem(PropWriteStream& stream, const Item* item)
 {
 	const Container* container = item->getContainer();
@@ -632,7 +741,7 @@ bool IOMapSerialize::loadHouseInfo(Map* map)
 	if(!db->connect())
 		return false;
 
-	query << "SELECT * FROM `houses`";
+	query << "SELECT `id`, `owner`, `paid`, `warnings` FROM `houses`";
 	if(!db->storeQuery(query, result) || result.getNumRows() == 0)
 		return false;
 
