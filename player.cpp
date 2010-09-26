@@ -3693,7 +3693,7 @@ void Player::onGainExperience(uint64_t gainExp, Creature* target)
 		gainExp = 0;
 	}
 
-	Creature::onGainExperience(gainExp);
+	Creature::onGainExperience(gainExp, target);
 	gainExperience(gainExp);
 }
 
