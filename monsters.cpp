@@ -220,7 +220,7 @@ bool Monsters::loadFromXml(bool reloading /*= false*/)
 		return false;
 	}
 
-	xmlNodePtr p, root = xmlDocGetRootElement(doc);
+	xmlNodePtr root = xmlDocGetRootElement(doc);
 	if(xmlStrcmp(root->name,(const xmlChar*)"monsters"))
 	{
 		std::clog << "[Error - Monsters::loadFromXml] Malformed monsters file." << std::endl;
@@ -228,30 +228,23 @@ bool Monsters::loadFromXml(bool reloading /*= false*/)
 		return false;
 	}
 
-	p = root->children;
-	while(p)
+	while(xmlNodePtr p = root->children; p; p->next)
 	{
 		if(p->type != XML_ELEMENT_NODE)
-		{
-			p = p->next;
 			continue;
-		}
 
 		if(xmlStrcmp(p->name, (const xmlChar*)"monster"))
 		{
 			std::clog << "[Warning - Monsters::loadFromXml] Unknown node name (" << p->name << ")." << std::endl;
-			p = p->next;
 			continue;
 		}
 
 		std::string file, name;
-		if(readXMLString(p, "file", file) && readXMLString(p, "name", name))
-		{
-			file = getFilePath(FILE_TYPE_OTHER, "monster/" + file);
-			loadMonster(file, name, reloading);
-		}
+		if(!readXMLString(p, "file", file) || !readXMLString(p, "name", name))
+			continue;
 
-		p = p->next;
+		file = getFilePath(FILE_TYPE_OTHER, "monster/" + file);
+		loadMonster(file, name, reloading);
 	}
 
 	xmlFreeDoc(doc);
@@ -396,22 +389,40 @@ bool Monsters::deserializeSpell(xmlNodePtr node, spellBlock_t& sb, const std::st
 				sb.maxCombatValue = -Weapons::getMaxMeleeDamage(skill, attack);
 			}
 
-			uint32_t tickInterval = 10000;
+			uint32_t tickInterval = 2000;
 			ConditionType_t conditionType = CONDITION_NONE;
 			if(readXMLInteger(node, "physical", intValue))
 				conditionType = CONDITION_PHYSICAL;
 			else if(readXMLInteger(node, "fire", intValue))
+			{
 				conditionType = CONDITION_FIRE;
+				tickInterval = 9000;
+			}
 			else if(readXMLInteger(node, "energy", intValue))
+			{
 				conditionType = CONDITION_ENERGY;
+				tickInterval = 10000;
+			}
 			else if(readXMLInteger(node, "earth", intValue))
+			{
 				conditionType = CONDITION_POISON;
+				tickInterval = 5000;
+			}
 			else if(readXMLInteger(node, "freeze", intValue))
+			{
 				conditionType = CONDITION_FREEZING;
+				tickInterval = 8000;
+			}
 			else if(readXMLInteger(node, "dazzle", intValue))
+			{
 				conditionType = CONDITION_DAZZLED;
+				tickInterval = 10000;
+			}
 			else if(readXMLInteger(node, "curse", intValue))
+			{
 				conditionType = CONDITION_CURSED;
+				tickInterval = 4000;
+			}
 			else if(readXMLInteger(node, "drown", intValue))
 			{
 				conditionType = CONDITION_DROWN;
@@ -764,10 +775,7 @@ bool Monsters::deserializeSpell(xmlNodePtr node, spellBlock_t& sb, const std::st
 			ConditionType_t conditionType = CONDITION_NONE;
 			uint32_t tickInterval = 2000;
 			if(tmpName == "physicalcondition")
-			{
 				conditionType = CONDITION_PHYSICAL;
-				tickInterval = 6000;
-			}
 			else if(tmpName == "firecondition")
 			{
 				conditionType = CONDITION_FIRE;
@@ -835,8 +843,7 @@ bool Monsters::deserializeSpell(xmlNodePtr node, spellBlock_t& sb, const std::st
 		combat->setPlayerCombatValues(FORMULA_VALUE, sb.minCombatValue, 0, sb.maxCombatValue, 0, 0, 0, 0, 0, 0, 0);
 		combatSpell = new CombatSpell(combat, needTarget, needDirection);
 
-		xmlNodePtr attributeNode = node->children;
-		while(attributeNode)
+		while(xmlNodePtr attributeNode = node->children; attributeNode; attributesNode = attributesNode->next)
 		{
 			if(!xmlStrcmp(attributeNode->name, (const xmlChar*)"attribute"))
 			{
@@ -869,7 +876,6 @@ bool Monsters::deserializeSpell(xmlNodePtr node, spellBlock_t& sb, const std::st
 						std::clog << "[Warning - Monsters::deserializeSpells] Effect type \"" << strValue << "\" does not exist." << std::endl;
 				}
 			}
-			attributeNode = attributeNode->next;
 		}
 	}
 
@@ -916,7 +922,7 @@ bool Monsters::loadMonster(const std::string& file, const std::string& monsterNa
 	}
 
 	monsterLoad = true;
-	xmlNodePtr p, root = xmlDocGetRootElement(doc);
+	xmlNodePtr root = xmlDocGetRootElement(doc);
 	if(xmlStrcmp(root->name,(const xmlChar*)"monster"))
 	{
 		std::clog << "[Error - Monsters::loadMonster] Malformed monster (" << monsterName << ") file (" << file << ")." << std::endl;
@@ -942,18 +948,24 @@ bool Monsters::loadMonster(const std::string& file, const std::string& monsterNa
 	if(readXMLString(root, "race", strValue))
 	{
 		std::string tmpStrValue = asLowerCaseString(strValue);
-		if(tmpStrValue == "venom" || atoi(strValue.c_str()) == 1)
+		if(tmpStrValue == "venom")
 			mType->race = RACE_VENOM;
-		else if(tmpStrValue == "blood" || atoi(strValue.c_str()) == 2)
+		else if(tmpStrValue == "blood")
 			mType->race = RACE_BLOOD;
-		else if(tmpStrValue == "undead" || atoi(strValue.c_str()) == 3)
+		else if(tmpStrValue == "undead")
 			mType->race = RACE_UNDEAD;
-		else if(tmpStrValue == "fire" || atoi(strValue.c_str()) == 4)
+		else if(tmpStrValue == "fire")
 			mType->race = RACE_FIRE;
-		else if(tmpStrValue == "energy" || atoi(strValue.c_str()) == 5)
+		else if(tmpStrValue == "energy")
 			mType->race = RACE_ENERGY;
 		else
-			SHOW_XML_WARNING("Unknown race type " << strValue);
+		{
+			int32_t race = atoi(strValue.c_str());
+			if(race < RACE_VENOM || race > RACE_ENERGY)
+				SHOW_XML_WARNING("Unknown race type " << strValue);
+			else
+				mType->race = (RaceType_t)race;
+		}
 	}
 
 	if(readXMLInteger(root, "experience", intValue))
@@ -974,39 +986,31 @@ bool Monsters::loadMonster(const std::string& file, const std::string& monsterNa
 	if(readXMLString(root, "emblem", strValue))
 		mType->guildEmblem = getEmblems(strValue);
 
-	p = root->children;
-	while(p && monsterLoad)
+	while(xmlNodePtr p = root->children; p; p = p->next)
 	{
 		if(p->type != XML_ELEMENT_NODE)
-		{
-			p = p->next;
 			continue;
-		}
 
 		if(!xmlStrcmp(p->name, (const xmlChar*)"health"))
 		{
-			if(readXMLInteger(p, "now", intValue))
-				mType->health = intValue;
-			else
-			{
-				SHOW_XML_ERROR("Missing health.now");
-				monsterLoad = false;
-			}
-
-			if(readXMLInteger(p, "max", intValue))
-				mType->healthMax = intValue;
-			else
+			if(!readXMLInteger(p, "max", intValue))
 			{
 				SHOW_XML_ERROR("Missing health.max");
 				monsterLoad = false;
+				break;
 			}
+
+			mType->healthMax = intValue;
+			if(!readXMLInteger(p, "now", intValue))
+				mType->health = mType->healthMax;
+			else
+				mType->health = intValue;
 		}
 		else if(!xmlStrcmp(p->name, (const xmlChar*)"flags"))
 		{
-			xmlNodePtr tmpNode = p->children;
-			while(tmpNode)
+			for(xmlNodePtr tmpNode = p->children; tmpNode; tmpNode = tmpNode->next)
 			{
-				if(xmlStrcmp(tmpNode->name, (const xmlChar*)"flag") == 0)
+				if(!xmlStrcmp(tmpNode->name, (const xmlChar*)"flag"))
 				{
 					if(readXMLString(tmpNode, "summonable", strValue))
 						mType->isSummonable = booleanString(strValue);
@@ -1084,8 +1088,6 @@ bool Monsters::loadMonster(const std::string& file, const std::string& monsterNa
 					if(readXMLString(tmpNode, "emblem", strValue))
 						mType->guildEmblem = getEmblems(strValue);
 				}
-
-				tmpNode = tmpNode->next;
 			}
 
 			//if a monster can push creatures, it should not be pushable
@@ -1148,8 +1150,7 @@ bool Monsters::loadMonster(const std::string& file, const std::string& monsterNa
 		}
 		else if(!xmlStrcmp(p->name, (const xmlChar*)"attacks"))
 		{
-			xmlNodePtr tmpNode = p->children;
-			while(tmpNode)
+			for(xmlNodePtr tmpNode = p->children; tmpNode; tmpNode = tmpNode->next)
 			{
 				if(!xmlStrcmp(tmpNode->name, (const xmlChar*)"attack"))
 				{
@@ -1159,8 +1160,6 @@ bool Monsters::loadMonster(const std::string& file, const std::string& monsterNa
 					else
 						SHOW_XML_WARNING("Cant load spell");
 				}
-
-				tmpNode = tmpNode->next;
 			}
 		}
 		else if(!xmlStrcmp(p->name, (const xmlChar*)"defenses"))
@@ -1171,8 +1170,7 @@ bool Monsters::loadMonster(const std::string& file, const std::string& monsterNa
 			if(readXMLInteger(p, "armor", intValue))
 				mType->armor = intValue;
 
-			xmlNodePtr tmpNode = p->children;
-			while(tmpNode)
+			for(xmlNodePtr tmpNode = p->children; tmpNode; tmpNode = tmpNode->next)
 			{
 				if(!xmlStrcmp(tmpNode->name, (const xmlChar*)"defense"))
 				{
@@ -1182,14 +1180,11 @@ bool Monsters::loadMonster(const std::string& file, const std::string& monsterNa
 					else
 						SHOW_XML_WARNING("Cant load spell");
 				}
-
-				tmpNode = tmpNode->next;
 			}
 		}
 		else if(!xmlStrcmp(p->name, (const xmlChar*)"immunities"))
 		{
-			xmlNodePtr tmpNode = p->children;
-			while(tmpNode)
+			for(xmlNodePtr tmpNode = p->children; tmpNode; tmpNode = tmpNode->next)
 			{
 				if(!xmlStrcmp(tmpNode->name, (const xmlChar*)"immunity"))
 				{
@@ -1305,8 +1300,6 @@ bool Monsters::loadMonster(const std::string& file, const std::string& monsterNa
 					else if(readXMLString(tmpNode, "invisible", strValue) && booleanString(strValue))
 						mType->conditionImmunities |= CONDITION_INVISIBLE;
 				}
-
-				tmpNode = tmpNode->next;
 			}
 		}
 		else if(!xmlStrcmp(p->name, (const xmlChar*)"voices"))
@@ -1321,8 +1314,7 @@ bool Monsters::loadMonster(const std::string& file, const std::string& monsterNa
 			else
 				SHOW_XML_WARNING("Missing voices.chance");
 
-			xmlNodePtr tmpNode = p->children;
-			while(tmpNode)
+			for(xmlNodePtr tmpNode = p->children; tmpNode; tmpNode = tmpNode->next)
 			{
 				if(!xmlStrcmp(tmpNode->name, (const xmlChar*)"voice"))
 				{
@@ -1340,34 +1332,25 @@ bool Monsters::loadMonster(const std::string& file, const std::string& monsterNa
 
 					mType->voiceVector.push_back(vb);
 				}
-
-				tmpNode = tmpNode->next;
 			}
 		}
 		else if(!xmlStrcmp(p->name, (const xmlChar*)"loot"))
 		{
-			xmlNodePtr tmpNode = p->children;
-			while(tmpNode)
+			for(xmlNodePtr tmpNode = p->children; tmpNode; tmpNode = tmpNode->next)
 			{
 				if(tmpNode->type != XML_ELEMENT_NODE)
-				{
-					tmpNode = tmpNode->next;
 					continue;
-				}
 
 				LootBlock rootBlock;
 				if(loadLoot(tmpNode, rootBlock))
 					mType->lootItems.push_back(rootBlock);
 				else
 					SHOW_XML_WARNING("Cant load loot");
-
-				tmpNode = tmpNode->next;
 			}
 		}
 		else if(!xmlStrcmp(p->name, (const xmlChar*)"elements"))
 		{
-			xmlNodePtr tmpNode = p->children;
-			while(tmpNode)
+			for(xmlNodePtr tmpNode = p->children; tmpNode; tmpNode = tmpNode->next)
 			{
 				if(!xmlStrcmp(tmpNode->name, (const xmlChar*)"element"))
 				{
@@ -1396,8 +1379,6 @@ bool Monsters::loadMonster(const std::string& file, const std::string& monsterNa
 					else if(readXMLInteger(tmpNode, "undefinedPercent", intValue))
 						mType->elementMap[COMBAT_UNDEFINEDDAMAGE] = intValue;
 				}
-
-				tmpNode = tmpNode->next;
 			}
 		}
 		else if(!xmlStrcmp(p->name, (const xmlChar*)"summons"))
@@ -1405,8 +1386,7 @@ bool Monsters::loadMonster(const std::string& file, const std::string& monsterNa
 			if(readXMLInteger(p, "maxSummons", intValue) || readXMLInteger(p, "max", intValue))
 				mType->maxSummons = intValue;
 
-			xmlNodePtr tmpNode = p->children;
-			while(tmpNode)
+			for(xmlNodePtr tmpNode = p->children; tmpNode; tmpNode = tmpNode->next)
 			{
 				if(!xmlStrcmp(tmpNode->name, (const xmlChar*)"summon"))
 				{
@@ -1433,14 +1413,11 @@ bool Monsters::loadMonster(const std::string& file, const std::string& monsterNa
 					else
 						SHOW_XML_WARNING("Missing summon.name");
 				}
-
-				tmpNode = tmpNode->next;
 			}
 		}
 		else if(!xmlStrcmp(p->name, (const xmlChar*)"script"))
 		{
-			xmlNodePtr tmpNode = p->children;
-			while(tmpNode)
+			for(xmlNodePtr tmpNode = p->children; tmpNode; tmpNode = tmpNode->next)
 			{
 				if(!xmlStrcmp(tmpNode->name, (const xmlChar*)"event"))
 				{
@@ -1449,34 +1426,29 @@ bool Monsters::loadMonster(const std::string& file, const std::string& monsterNa
 					else
 						SHOW_XML_WARNING("Missing name for script event");
 				}
-
-				tmpNode = tmpNode->next;
 			}
 		}
 		else
 			SHOW_XML_WARNING("Unknown attribute type - " << p->name);
-
-		p = p->next;
 	}
 
 	xmlFreeDoc(doc);
-	if(monsterLoad)
+	if(!monsterLoad)
 	{
-		static uint32_t id = 0;
 		if(new_mType)
-		{
-			id++;
-			monsterNames[asLowerCaseString(monsterName)] = id;
-			monsters[id] = mType;
-		}
+			delete mType;
 
-		return true;
+		return false;
 	}
 
+	static uint32_t id = 0;
 	if(new_mType)
-		delete mType;
+	{
+		monsterNames[asLowerCaseString(monsterName)] = ++id;
+		monsters[id] = mType;
+	}
 
-	return false;
+	return true;
 }
 
 bool Monsters::loadLoot(xmlNodePtr node, LootBlock& lootBlock)
@@ -1544,30 +1516,23 @@ bool Monsters::loadChildLoot(xmlNodePtr node, LootBlock& parentBlock)
 	if(!node)
 		return false;
 
-	xmlNodePtr p = node->children, insideNode;
-	while(p)
+	for(xmlNodePtr p = node->children; p; p = p->next)
 	{
-		if(!xmlStrcmp(p->name, (const xmlChar*)"inside"))
+		if(xmlStrcmp(p->name, (const xmlChar*)"inside"))
 		{
-			insideNode = p->children;
-			while(insideNode)
-			{
-				LootBlock childBlock;
-				if(loadLoot(insideNode, childBlock))
-					parentBlock.childLoot.push_back(childBlock);
+			LootBlock childBlock;
+			if(loadLoot(p, childBlock))
+				parentBlock.childLoot.push_back(childBlock);
 
-				insideNode = insideNode->next;
-			}
-
-			p = p->next;
 			continue;
 		}
 
-		LootBlock childBlock;
-		if(loadLoot(p, childBlock))
-			parentBlock.childLoot.push_back(childBlock);
-
-		p = p->next;
+		for(xmlNodePtr insideNode = p->children; insideNode; insideNode->next)
+		{
+			LootBlock childBlock;
+			if(loadLoot(insideNode, childBlock))
+				parentBlock.childLoot.push_back(childBlock);
+		}
 	}
 
 	return true;
