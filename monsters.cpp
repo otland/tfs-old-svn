@@ -228,7 +228,7 @@ bool Monsters::loadFromXml(bool reloading /*= false*/)
 		return false;
 	}
 
-	while(xmlNodePtr p = root->children; p; p->next)
+	for(xmlNodePtr p = root->children; p; p->next)
 	{
 		if(p->type != XML_ELEMENT_NODE)
 			continue;
@@ -843,7 +843,7 @@ bool Monsters::deserializeSpell(xmlNodePtr node, spellBlock_t& sb, const std::st
 		combat->setPlayerCombatValues(FORMULA_VALUE, sb.minCombatValue, 0, sb.maxCombatValue, 0, 0, 0, 0, 0, 0, 0);
 		combatSpell = new CombatSpell(combat, needTarget, needDirection);
 
-		while(xmlNodePtr attributeNode = node->children; attributeNode; attributesNode = attributesNode->next)
+		for(xmlNodePtr attributeNode = node->children; attributeNode; attributesNode = attributesNode->next)
 		{
 			if(!xmlStrcmp(attributeNode->name, (const xmlChar*)"attribute"))
 			{
@@ -986,7 +986,7 @@ bool Monsters::loadMonster(const std::string& file, const std::string& monsterNa
 	if(readXMLString(root, "emblem", strValue))
 		mType->guildEmblem = getEmblems(strValue);
 
-	while(xmlNodePtr p = root->children; p; p = p->next)
+	for(xmlNodePtr p = root->children; p; p = p->next)
 	{
 		if(p->type != XML_ELEMENT_NODE)
 			continue;
