@@ -1236,7 +1236,7 @@ void Creature::onAttackedCreatureKilled(Creature* target)
 		return;
 
 	double gainExp = target->getGainedExperience(this);
-	onGainExperience(gainExp, !target->getPlayer(), false);
+	onGainExperience(gainExp, target, false);
 }
 
 bool Creature::onKilledCreature(Creature* target, DeathEntry& entry)
@@ -1263,7 +1263,7 @@ bool Creature::onKilledCreature(Creature* target, DeathEntry& entry)
 	return ret;
 }
 
-void Creature::onGainExperience(double& gainExp, bool fromMonster, bool multiplied)
+void Creature::onGainExperience(double& gainExp, Creature* target, bool multiplied)
 {
 	if(gainExp <= 0)
 		return;
@@ -1271,7 +1271,7 @@ void Creature::onGainExperience(double& gainExp, bool fromMonster, bool multipli
 	if(master)
 	{
 		gainExp = gainExp / 2;
-		master->onGainExperience(gainExp, fromMonster, multiplied);
+		master->onGainExperience(gainExp, target, multiplied);
 	}
 	else if(!multiplied)
 		gainExp *= g_config.getDouble(ConfigManager::RATE_EXPERIENCE);
@@ -1285,7 +1285,7 @@ void Creature::onGainExperience(double& gainExp, bool fromMonster, bool multipli
 	g_game.addAnimatedText(getPosition(), (uint8_t)color, ss.str());
 }
 
-void Creature::onGainSharedExperience(double& gainExp, bool fromMonster, bool multiplied)
+void Creature::onGainSharedExperience(double& gainExp, Creature* target, bool multiplied)
 {
 	if(gainExp <= 0)
 		return;
@@ -1293,7 +1293,7 @@ void Creature::onGainSharedExperience(double& gainExp, bool fromMonster, bool mu
 	if(master)
 	{
 		gainExp = gainExp / 2;
-		master->onGainSharedExperience(gainExp, fromMonster, multiplied);
+		master->onGainSharedExperience(gainExp, target, multiplied);
 	}
 	else if(!multiplied)
 		gainExp *= g_config.getDouble(ConfigManager::RATE_EXPERIENCE);

@@ -20,9 +20,10 @@
 
 #include "items.h"
 #include "condition.h"
-#include "weapons.h"
-
 #include "configmanager.h"
+
+#include "movement.h"
+#include "weapons.h"
 #include "spells.h"
 
 extern Spells* g_spells;
@@ -107,21 +108,28 @@ ItemType::~ItemType()
 
 void Items::clear()
 {
-	//TODO: clear items?
 	moneyMap.clear();
 	randomizationMap.clear();
+
 	reverseItemMap.clear();
+	if(items)
+		items->clear();
 }
 
 bool Items::reload()
 {
-	//TODO: reload items?
-	/*for(ItemMap::iterator it = items.begin(); it != items.end(); ++it)
-		delete it->second->condition;
-
 	clear();
-	return loadFromXml();*/
-	return false;
+	if(!items)
+		return false;
+
+	items->reload();
+	loadFromOtb("data/items/items.otb");
+	if(!loadFromXml())
+		return false;
+
+	g_moveEvents->reload();
+	g_weapons->reload();
+	return true;
 }
 
 int32_t Items::loadFromOtb(std::string file)

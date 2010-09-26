@@ -65,12 +65,12 @@ function doMessageCheck(message, keyword)
 		return table.isStrIn(keyword, message)
 	end
 
-	local a, b = message:lower():find(keyword:lower())
-	if(a ~= nil and b ~= nil) then
+	local a, b = message:lower(), keyword:lower()
+	if(keyword == message) then
 		return true
 	end
 
-	return false
+	return message:find(keyword) and not message:find('(%w+)' .. keyword)
 end
 
 function doNpcSellItem(cid, itemid, amount, subType, ignoreCap, inBackpacks, backpack)

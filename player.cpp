@@ -3856,9 +3856,9 @@ bool Player::onKilledCreature(Creature* target, DeathEntry& entry)
 	return true;
 }
 
-bool Player::gainExperience(double& gainExp, bool fromMonster)
+bool Player::gainExperience(double& gainExp, Creature* target)
 {
-	if(!rateExperience(gainExp, fromMonster))
+	if(!rateExperience(gainExp, target))
 		return false;
 
 	//soul regeneration
@@ -3879,12 +3879,12 @@ bool Player::gainExperience(double& gainExp, bool fromMonster)
 	return true;
 }
 
-bool Player::rateExperience(double& gainExp, bool fromMonster)
+bool Player::rateExperience(double& gainExp, Creature* target)
 {
 	if(hasFlag(PlayerFlag_NotGainExperience) || gainExp <= 0)
 		return false;
 
-	if(!fromMonster)
+	if(target->isPlayer())
 		return true;
 
 	gainExp *= rates[SKILL__LEVEL] * g_game.getExperienceStage(level,
@@ -3908,23 +3908,23 @@ bool Player::rateExperience(double& gainExp, bool fromMonster)
 	return true;
 }
 
-void Player::onGainExperience(double& gainExp, bool fromMonster, bool multiplied)
+void Player::onGainExperience(double& gainExp, Creature* target, bool multiplied)
 {
 	if(party && party->isSharedExperienceEnabled() && party->isSharedExperienceActive())
 	{
-		party->shareExperience(gainExp, fromMonster, multiplied);
-		rateExperience(gainExp, fromMonster);
+		party->shareExperience(gainExp, target, multiplied);
+		rateExperience(gainExp, target);
 		return; //we will get a share of the experience through the sharing mechanism
 	}
 
-	if(gainExperience(gainExp, fromMonster))
-		Creature::onGainExperience(gainExp, fromMonster, true);
+	if(gainExperience(gainExp, target))
+		Creature::onGainExperience(gainExp, target, true);
 }
 
-void Player::onGainSharedExperience(double& gainExp, bool fromMonster, bool)
+void Player::onGainSharedExperience(double& gainExp, Creature* target, bool)
 {
-	if(gainExperience(gainExp, fromMonster))
-		Creature::onGainSharedExperience(gainExp, fromMonster, true);
+	if(gainExperience(gainExp, target))
+		Creature::onGainSharedExperience(gainExp, target, true);
 }
 
 bool Player::isImmune(CombatType_t type) const

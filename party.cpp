@@ -314,7 +314,7 @@ bool Party::setSharedExperience(Player* player, bool _sharedExpActive)
 	return true;
 }
 
-void Party::shareExperience(double experience, bool fromMonster, bool multiplied)
+void Party::shareExperience(double experience, Creature* target, bool multiplied)
 {
 	double shareExperience = experience;
 	if(experience >= (double)g_config.getNumber(ConfigManager::EXTRA_PARTY_LIMIT))
@@ -323,11 +323,11 @@ void Party::shareExperience(double experience, bool fromMonster, bool multiplied
 	shareExperience /= memberList.size() + 1;
 	double tmpExperience = shareExperience; //we need this, as onGainSharedExperience increases the value
 
-	leader->onGainSharedExperience(tmpExperience, fromMonster, multiplied);
+	leader->onGainSharedExperience(tmpExperience, target, multiplied);
 	for(PlayerVector::iterator it = memberList.begin(); it != memberList.end(); ++it)
 	{
 		tmpExperience = shareExperience;
-		(*it)->onGainSharedExperience(tmpExperience, fromMonster, multiplied);
+		(*it)->onGainSharedExperience(tmpExperience, target, multiplied);
 	}
 }
 

@@ -26,8 +26,9 @@
 #include "position.h"
 #include <libxml/parser.h>
 
-#define ITEMS 13000
-#define RANDOMIZATION 50
+#define ITEMS_SIZE 13000
+#define ITEMS_INCREMENT 500
+#define ITEMS_RANDOMIZATION 50
 
 #define SLOTP_WHEREEVER 0xFFFFFFFF
 #define SLOTP_HEAD 1 << 0
@@ -170,12 +171,15 @@ class Array
 {
 	public:
 		Array(uint32_t n);
-		virtual ~Array();
+		virtual ~Array() {clear();}
+
+		void clear() {free(m_data);}
+		void reload();
 
 		A getElement(uint32_t id);
 		const A getElement(uint32_t id) const;
-		void addElement(A a, uint32_t pos);
 
+		void addElement(A a, uint32_t pos);
 		uint32_t size() {return m_size;}
 
 	private:
@@ -192,9 +196,10 @@ Array<A>::Array(uint32_t n)
 }
 
 template<typename A>
-Array<A>::~Array()
+void Array<A>::reload()
 {
-	free(m_data);
+	m_data = (A*)malloc(sizeof(A) * m_size);
+	memset(m_data, 0, sizeof(A) * m_size);
 }
 
 template<typename A>
@@ -218,12 +223,11 @@ const A Array<A>::getElement(uint32_t id) const
 template<typename A>
 void Array<A>::addElement(A a, uint32_t pos)
 {
-	#define INCREMENT 5000
 	if(pos >= m_size)
 	{
-		m_data = (A*)realloc(m_data, sizeof(A) * (pos + INCREMENT));
-		memset(m_data + m_size, 0, sizeof(A) * (pos + INCREMENT - m_size));
-		m_size = pos + INCREMENT;
+		m_data = (A*)realloc(m_data, sizeof(A) * (pos + ITEMS_INCREMENT));
+		memset(m_data + m_size, 0, sizeof(A) * (pos + ITEMS_INCREMENT - m_size));
+		m_size = pos + ITEMS_INCREMENT;
 	}
 
 	m_data[pos] = a;
@@ -240,7 +244,7 @@ typedef std::map<int32_t, int32_t> IntegerMap;
 class Items
 {
 	public:
-		Items(): m_randomizationChance(RANDOMIZATION), items(ITEMS) {}
+		Items(): m_randomizationChance(ITEMS_RANDOMIZATION), items(ITEMS_SIZE) {}
 		virtual ~Items() {clear();}
 
 		bool reload();

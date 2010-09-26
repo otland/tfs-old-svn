@@ -142,6 +142,10 @@ std::stringstream& Container::getContentDescription(std::stringstream& s) const
 	Container* evil = const_cast<Container*>(this);
 	for(ContainerIterator it = evil->begin(); it != evil->end(); ++it)
 	{
+		Container* tmp = (*it)->getContainer();
+		if(tmp && !tmp->empty())
+			continue;
+		
 		if(!begin)
 			s << ", ";
 		else
