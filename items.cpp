@@ -28,7 +28,8 @@
 
 extern Spells* g_spells;
 extern ConfigManager g_config;
-
+extern MoveEvents* g_moveEvents;
+extern Weapons* g_weapons;
 uint32_t Items::dwMajorVersion = 0;
 uint32_t Items::dwMinorVersion = 0;
 uint32_t Items::dwBuildNumber = 0;
@@ -112,17 +113,17 @@ void Items::clear()
 	randomizationMap.clear();
 
 	reverseItemMap.clear();
-	if(items)
-		items->clear();
+	if(items.size())
+		items.clear();
 }
 
 bool Items::reload()
 {
 	clear();
-	if(!items)
+	if(!items.size())
 		return false;
 
-	items->reload();
+	items.reload();
 	loadFromOtb("data/items/items.otb");
 	if(!loadFromXml())
 		return false;

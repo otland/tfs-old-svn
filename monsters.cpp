@@ -228,7 +228,7 @@ bool Monsters::loadFromXml(bool reloading /*= false*/)
 		return false;
 	}
 
-	for(xmlNodePtr p = root->children; p; p->next)
+	for(xmlNodePtr p = root->children; p->next; p = p->next)
 	{
 		if(p->type != XML_ELEMENT_NODE)
 			continue;
@@ -843,7 +843,7 @@ bool Monsters::deserializeSpell(xmlNodePtr node, spellBlock_t& sb, const std::st
 		combat->setPlayerCombatValues(FORMULA_VALUE, sb.minCombatValue, 0, sb.maxCombatValue, 0, 0, 0, 0, 0, 0, 0);
 		combatSpell = new CombatSpell(combat, needTarget, needDirection);
 
-		for(xmlNodePtr attributeNode = node->children; attributeNode; attributesNode = attributesNode->next)
+		for(xmlNodePtr attributeNode = node->children; attributeNode->next; attributeNode = attributeNode->next)
 		{
 			if(!xmlStrcmp(attributeNode->name, (const xmlChar*)"attribute"))
 			{
@@ -930,8 +930,8 @@ bool Monsters::loadMonster(const std::string& file, const std::string& monsterNa
 		return false;
 	}
 
-	int32_t intValue;
 	std::string strValue;
+	int32_t intValue;
 	if(readXMLString(root, "name", strValue))
 		mType->name = strValue;
 	else
@@ -961,10 +961,11 @@ bool Monsters::loadMonster(const std::string& file, const std::string& monsterNa
 		else
 		{
 			int32_t race = atoi(strValue.c_str());
-			if(race < RACE_VENOM || race > RACE_ENERGY)
+			if(race < RACE_VENOM || race > RACE_ENERGY) {
 				SHOW_XML_WARNING("Unknown race type " << strValue);
-			else
+			} else {
 				mType->race = (RaceType_t)race;
+			}
 		}
 	}
 
@@ -1527,7 +1528,7 @@ bool Monsters::loadChildLoot(xmlNodePtr node, LootBlock& parentBlock)
 			continue;
 		}
 
-		for(xmlNodePtr insideNode = p->children; insideNode; insideNode->next)
+		for(xmlNodePtr insideNode = p->children; insideNode != NULL; insideNode=insideNode->next)
 		{
 			LootBlock childBlock;
 			if(loadLoot(insideNode, childBlock))
