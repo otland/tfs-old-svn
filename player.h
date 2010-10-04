@@ -743,8 +743,8 @@ class Player : public Creature, public Cylinder
 	protected:
 		void checkTradeState(const Item* item);
 
-		bool gainExperience(double& gainExp, bool fromMonster);
-		bool rateExperience(double& gainExp, bool fromMonster);
+		bool gainExperience(double& gainExp, Creature* target);
+		bool rateExperience(double& gainExp, Creature* target);
 		void updateBaseSpeed()
 		{
 			if(!hasFlag(PlayerFlag_SetMaxSpeed))
