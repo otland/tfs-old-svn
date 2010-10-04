@@ -961,10 +961,11 @@ bool Monsters::loadMonster(const std::string& file, const std::string& monsterNa
 		else
 		{
 			int32_t race = atoi(strValue.c_str());
-			if(race < RACE_VENOM || race > RACE_ENERGY)
+			if(race < RACE_VENOM || race > RACE_ENERGY) {
 				SHOW_XML_WARNING("Unknown race type " << strValue);
-			else
+			} else {
 				mType->race = (RaceType_t)race;
+			}
 		}
 	}
 

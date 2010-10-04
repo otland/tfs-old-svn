@@ -96,7 +96,7 @@ bool IOMapSerialize::loadHouses()
 	Database* db = Database::getInstance();
 	DBQuery query;
 
-	query << "SELECT * FROM `houses` WHERE `world_id` = " << g_config.getNumber(ConfigManager::WORLD_ID);
+	query << "SELECT h.*, l.`listid`, l.`list` FROM `houses` AS h LEFT JOIN `house_lists` AS l ON l.`house_id` = h.`id` WHERE h.`world_id` = " << g_config.getNumber(ConfigManager::WORLD_ID);
 	DBResult* result;
 	if(!(result = db->storeQuery(query.str())))
 		return false;
@@ -117,26 +117,12 @@ bool IOMapSerialize::loadHouses()
 		house->setOwner(result->getDataInt("owner"));
 		if(house->getOwner() && house->hasSyncFlag(House::HOUSE_SYNC_UPDATE))
 			house->resetSyncFlag(House::HOUSE_SYNC_UPDATE);
+			
+		if(result->getDataInt("listid"))
+			house->setAccessList(result->getDataInt("listid"), result->getDataString("list"));
 	}
 	while(result->next());
 	result->free();
-
-	for(HouseMap::iterator it = Houses::getInstance()->getHouseBegin(); it != Houses::getInstance()->getHouseEnd(); ++it)
-	{
-		if(!(house = it->second) || !house->getId() || !house->getOwner())
-			continue;
-
-		query.str("");
-		query << "SELECT `listid`, `list` FROM `house_lists` WHERE `house_id` = " << house->getId();
-		query << " AND `world_id` = " << g_config.getNumber(ConfigManager::WORLD_ID);
-		if(!(result = db->storeQuery(query.str())))
-			continue;
-
-		do
-			house->setAccessList(result->getDataInt("listid"), result->getDataString("list"));
-		while(result->next());
-		result->free();
-	}
 
 	return true;
 }

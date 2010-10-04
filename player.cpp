@@ -3884,7 +3884,7 @@ bool Player::rateExperience(double& gainExp, Creature* target)
 	if(hasFlag(PlayerFlag_NotGainExperience) || gainExp <= 0)
 		return false;
 
-	if(target->isPlayer())
+	if(target->getPlayer())
 		return true;
 
 	gainExp *= rates[SKILL__LEVEL] * g_game.getExperienceStage(level,
