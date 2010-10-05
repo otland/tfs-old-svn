@@ -320,7 +320,11 @@ class PropWriteStream
 			if((bufferSize - size) < sizeof(T))
 			{
 				bufferSize += ((sizeof(T) + 0x1F) & 0xFFFFFFE0);
-				buffer = (char*)realloc(buffer, bufferSize);
+				char* tmp = (char*)realloc(buffer, bufferSize);
+				if(tmp != NULL)
+					buffer = tmp;
+				else
+					std::clog << "[Error - PropWriteStream::addType] Failed to allocate memory" << std::endl;
 			}
 
 			memcpy(&buffer[size], &add, sizeof(T));
@@ -334,7 +338,11 @@ class PropWriteStream
 			if((bufferSize - size) < sizeof(T))
 			{
 				bufferSize += ((sizeof(T) + 0x1F) & 0xFFFFFFE0);
-				buffer = (char*)realloc(buffer, bufferSize);
+				char* tmp = (char*)realloc(buffer, bufferSize);
+				if(tmp != NULL)
+					buffer = tmp;
+				else
+					std::clog << "[Error - PropWriteStream::addStruct] Failed to allocate memory" << std::endl;
 			}
 
 			memcpy(&buffer[size], (char*)add, sizeof(T));
@@ -353,7 +361,11 @@ class PropWriteStream
 			if((bufferSize - size) < strLen)
 			{
 				bufferSize += ((strLen + 0x1F) & 0xFFFFFFE0);
-				buffer = (char*)realloc(buffer, bufferSize);
+				char* tmp = (char*)realloc(buffer, bufferSize);
+				if(tmp != NULL)
+					buffer = tmp;
+				else
+					std::clog << "[Error - PropWriteStream::addString] Failed to allocate memory" << std::endl;
 			}
 
 			memcpy(&buffer[size], add.c_str(), strLen);
@@ -367,7 +379,11 @@ class PropWriteStream
 			if((bufferSize - size) < strLen)
 			{
 				bufferSize += ((strLen + 0x1F) & 0xFFFFFFE0);
-				buffer = (char*)realloc(buffer, bufferSize);
+				char* tmp = (char*)realloc(buffer, bufferSize);
+				if(tmp != NULL)
+					buffer = tmp;
+				else
+					std::clog << "[Error - PropWriteStream::addLongString] Failed to allocate memory" << std::endl;
 			}
 
 			memcpy(&buffer[size], add.c_str(), strLen);

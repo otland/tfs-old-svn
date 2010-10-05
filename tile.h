@@ -33,7 +33,6 @@ class Creature;
 class HouseTile;
 class QTreeLeafNode;
 
-typedef std::list<Player*> PlayerList;
 typedef std::list<Creature*> SpectatorVec;
 typedef std::vector<Creature*> CreatureVector;
 typedef std::map<Position, boost::shared_ptr<SpectatorVec> > SpectatorCache;

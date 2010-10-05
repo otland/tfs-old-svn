@@ -18,17 +18,12 @@
 #ifndef __SERVER__
 #define __SERVER__
 #include "otsystem.h"
+#include "connection.h"
 #include <boost/enable_shared_from_this.hpp>
 
 class ServiceBase;
-typedef boost::shared_ptr<ServiceBase> Service_ptr;
-
 class ServicePort;
-typedef boost::shared_ptr<ServicePort> ServicePort_ptr;
-
 class Connection;
-typedef boost::shared_ptr<Connection> Connection_ptr;
-
 class Protocol;
 class NetworkMessage;
 

@@ -1190,7 +1190,7 @@ std::string LuaInterface::popString(lua_State* L)
 {
 	lua_pop(L, 1);
 	const char* str = lua_tostring(L, 0);
-	if(!str || !strlen(str))
+	if(*str == '\0')
 		return std::string();
 
 	return str;

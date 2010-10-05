@@ -566,8 +566,6 @@ void otserv(StringVec, ServiceManager* services)
 		BN_mod(g_RSA->dmq1, g_RSA->d, r2, ctx);
 
 		BN_mod_inverse(g_RSA->iqmp, g_RSA->q, g_RSA->p, ctx);		
-		BN_CTX_end(ctx);
-		BN_CTX_free(ctx);
 
 	}
 

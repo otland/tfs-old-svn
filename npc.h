@@ -24,7 +24,6 @@
 #include "luascript.h"
 
 class Npc;
-typedef std::list<Npc*> NpcList;
 
 class Npcs
 {

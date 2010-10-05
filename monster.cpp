@@ -943,7 +943,7 @@ void Monster::pushCreatures(Tile* tile)
 
 	bool effect = false;
 	Monster* monster = NULL;
-	for(uint32_t i = 0; i < creatures->size();)
+	for(uint32_t i = 0; i < creatures->size(); ++i)
 	{
 		if((monster = creatures->at(i)->getMonster()) && monster->isPushable())
 		{
@@ -955,8 +955,6 @@ void Monster::pushCreatures(Tile* tile)
 			if(!effect)
 				effect = true;
 		}
-
-		++i;
 	}
 
 	if(effect)

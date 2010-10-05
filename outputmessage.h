@@ -136,8 +136,6 @@ class OutputMessage : public NetworkMessage, boost::noncopyable
 		uint32_t m_outputBufferStart;
 };
 
-typedef boost::shared_ptr<OutputMessage> OutputMessage_ptr;
-
 class OutputMessagePool
 {
 	private:

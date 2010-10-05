@@ -18,13 +18,10 @@
 #ifndef __PROTOCOL__
 #define __PROTOCOL__
 #include "otsystem.h"
+#include "connection.h"
 
 class OutputMessage;
-typedef boost::shared_ptr<OutputMessage> OutputMessage_ptr;
-
 class Connection;
-typedef boost::shared_ptr<Connection> Connection_ptr;
-
 class NetworkMessage;
 
 class Protocol : boost::noncopyable

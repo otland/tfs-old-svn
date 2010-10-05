@@ -115,7 +115,7 @@ class NetworkMessage
 #endif
 	protected:
 		// used to check available space while writing
-		inline bool hasSpace(int32_t size) {return (size + m_position < NETWORK_MAX_SIZE - 16);}
+		inline bool hasSpace(int32_t size) const {return (size + m_position < NETWORK_MAX_SIZE - 16);}
 
 		// message propeties
 		uint16_t m_size;

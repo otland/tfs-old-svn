@@ -323,8 +323,7 @@ CombatSpell::CombatSpell(Combat* _combat, bool _needTarget, bool _needDirection)
 
 CombatSpell::~CombatSpell()
 {
-	if(combat)
-		delete combat;
+	delete combat;
 }
 
 bool CombatSpell::loadScriptCombat()
