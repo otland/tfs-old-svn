@@ -558,20 +558,19 @@ void otserv(StringVec, ServiceManager* services)
 	{
 		std::clog << std::endl << "> Calculating dmp1, dmq1 and iqmp for RSA...";
 		// Ok, now we calculate a few things, dmp1, dmq1 and iqmp
-		BN_CTX *ctx = BN_CTX_new();
+		BN_CTX* ctx = BN_CTX_new();
 		BN_CTX_start(ctx);	
-		BIGNUM *r1=NULL,*r2=NULL;
-		r1 = BN_CTX_get(ctx);
-		r2 = BN_CTX_get(ctx);
 
-		BN_mod(g_RSA->dmp1,g_RSA->d,r1,ctx);
-		BN_mod(g_RSA->dmq1,g_RSA->d,r2,ctx);
-		BN_mod_inverse(g_RSA->iqmp,g_RSA->q,g_RSA->p,ctx);
-		
+		BIGNUM *r1 =  BN_CTX_get(ctx), *r2 =  BN_CTX_get(ctx);
+		BN_mod(g_RSA->dmp1, g_RSA->d, r1, ctx);
+		BN_mod(g_RSA->dmq1, g_RSA->d, r2, ctx);
+
+		BN_mod_inverse(g_RSA->iqmp, g_RSA->q, g_RSA->p, ctx);		
 		BN_CTX_end(ctx);
 		BN_CTX_free(ctx);
 
 	}
+
 	// So it's fucked now?
 	if(!RSA_check_key(g_RSA))
 	{
@@ -581,9 +580,9 @@ void otserv(StringVec, ServiceManager* services)
 		ERR_load_crypto_strings();
 		s << ERR_error_string(ERR_get_error(), NULL);
 		startupErrorMessage(s.str());
-	} else {
-		std::clog << " done" << std::endl;
 	}
+	else
+		std::clog << " done" << std::endl;
 	
 	std::clog << ">> Starting SQL connection" << std::endl;
 	Database* db = Database::getInstance();
