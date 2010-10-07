@@ -50,7 +50,7 @@ Spells::~Spells()
 	clear();
 }
 
-TalkActionResult_t Spells::playerSaySpell(Player* player, SpeakClasses type, const std::string& words)
+TalkActionResult_t Spells::playerSaySpell(Player* player, SpeakClasses type, std::string& words)
 {
 	std::string str_words = words;
 
@@ -84,9 +84,14 @@ TalkActionResult_t Spells::playerSaySpell(Player* player, SpeakClasses type, con
 	}
 
 	if(instantSpell->playerCastInstant(player, param))
+	{
+		words = instantSpell->getWords();
+		if(instantSpell->getHasParam())
+			words += " \"" + param + "\"";
+
 		return TALKACTION_BREAK;
-	else
-		return TALKACTION_FAILED;
+	}
+	return TALKACTION_FAILED;
 }
 
 void Spells::clear()
@@ -2109,8 +2114,8 @@ bool RuneSpell::executeUse(Player* player, Item* item, const PositionEx& posFrom
 		{
 			if(g_config.getBoolean(ConfigManager::REMOVE_RUNE_CHARGES))
 			{
-				int32_t newCharge = std::max((int32_t)0, ((int32_t)item->getCharges()) - 1);
-				g_game.transformItem(item, item->getID(), newCharge);
+				int32_t newCount = std::max((int32_t)0, ((int32_t)item->getItemCount()) - 1);
+				g_game.transformItem(item, item->getID(), newCount);
 			}
 		}
 	}

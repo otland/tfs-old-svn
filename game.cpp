@@ -1368,8 +1368,18 @@ ReturnValue Game::internalMoveItem(Cylinder* fromCylinder, Cylinder* toCylinder,
 ReturnValue Game::internalAddItem(Cylinder* toCylinder, Item* item, int32_t index /*= INDEX_WHEREEVER*/,
 	uint32_t flags /*= 0*/, bool test /*= false*/)
 {
+	uint32_t remainderCount = 0;
+	return internalAddItem(toCylinder, item, index, flags, test, remainderCount);
+}
+
+ReturnValue Game::internalAddItem(Cylinder* toCylinder, Item* item, int32_t index,
+	uint32_t flags, bool test, uint32_t& remainderCount)
+{
+	remainderCount = 0;
 	if(toCylinder == NULL || item == NULL)
 		return RET_NOTPOSSIBLE;
+
+	Cylinder* origToCylinder = toCylinder;
 
 	Item* toItem = NULL;
 	toCylinder = toCylinder->__queryDestination(index, item, &toItem, flags);
@@ -1379,29 +1389,26 @@ ReturnValue Game::internalAddItem(Cylinder* toCylinder, Item* item, int32_t inde
 	if(ret != RET_NOERROR)
 		return ret;
 
-	//check how much we can move
+	/*
+	Check if we can move add the whole amount, we do this by checking against the original cylinder,
+	since the queryDestination can return a cylinder that might only hold a part of the full amount.
+	*/
 	uint32_t maxQueryCount = 0;
-	ret = toCylinder->__queryMaxCount(index, item, item->getItemCount(), maxQueryCount, flags);
+	ret = origToCylinder->__queryMaxCount(INDEX_WHEREEVER, item, item->getItemCount(), maxQueryCount, flags);
 
 	if(ret != RET_NOERROR)
 		return ret;
 
-	uint32_t m = 0;
-	uint32_t n = 0;
-
-	if(item->isStackable())
-		m = std::min((uint32_t)item->getItemCount(), maxQueryCount);
-	else
-		m = maxQueryCount;
-
 	if(!test)
 	{
-		Item* moveItem = item;
-
-		//update item(s)
-		if(item->isStackable())
+		if(item->isStackable() && toItem)
 		{
-			if(toItem && toItem->getID() == item->getID())
+			uint32_t m = 0;
+			uint32_t n = 0;
+
+			m = std::min((uint32_t)item->getItemCount(), maxQueryCount);
+
+			if(toItem->getID() == item->getID())
 			{
 				n = std::min((uint32_t)100 - toItem->getItemCount(), m);
 				toCylinder->__updateThing(toItem, toItem->getID(), toItem->getItemCount() + n);
@@ -1410,28 +1417,26 @@ ReturnValue Game::internalAddItem(Cylinder* toCylinder, Item* item, int32_t inde
 			if(m - n > 0)
 			{
 				if(m - n != item->getItemCount())
-					moveItem = Item::CreateItem(item->getID(), m - n);
-			}
-			else
-			{
-				moveItem = NULL;
-				if(item->getParent() != VirtualCylinder::virtualCylinder)
 				{
-					item->onRemoved();
-					FreeThing(item);
+					Item* remainderItem = Item::CreateItem(item->getID(), m - n);
+					if(internalAddItem(origToCylinder, remainderItem, INDEX_WHEREEVER, flags, false) != RET_NOERROR)
+					{
+						FreeThing(remainderItem);
+						remainderCount = m - n;
+					}
 				}
 			}
-		}
-
-		if(moveItem)
-		{
-			toCylinder->__addThing(index, moveItem);
-			int32_t moveItemIndex = toCylinder->__getIndexOfThing(moveItem);
-			if(moveItemIndex != -1)
-				toCylinder->postAddNotification(moveItem, NULL, moveItemIndex);
+			else if(item->getParent() != VirtualCylinder::virtualCylinder)
+			{
+				//fully merged with toItem, item will be destroyed
+				item->onRemoved();
+				FreeThing(item);
+			}
 		}
 		else
 		{
+			toCylinder->__addThing(index, item);
+
 			int32_t itemIndex = toCylinder->__getIndexOfThing(item);
 			if(itemIndex != -1)
 				toCylinder->postAddNotification(item, NULL, itemIndex);
@@ -1475,9 +1480,18 @@ ReturnValue Game::internalRemoveItem(Item* item, int32_t count /*= -1*/, bool te
 	return RET_NOERROR;
 }
 
-ReturnValue Game::internalPlayerAddItem(Player* player, Item* item, bool dropOnMap /*= true*/)
+ReturnValue Game::internalPlayerAddItem(Player* player, Item* item, bool dropOnMap /*= true*/, slots_t slot /*= SLOT_WHEREEVER*/)
 {
-	ReturnValue ret = internalAddItem(player, item);
+	uint32_t remainderCount = 0;
+	ReturnValue ret = internalAddItem(player, item, (int32_t)slot, 0, false, remainderCount);
+	if(remainderCount > 0)
+	{
+		Item* remainderItem = Item::CreateItem(item->getID(), remainderCount);
+		ReturnValue remaindRet = internalAddItem(player->getTile(), remainderItem, INDEX_WHEREEVER, FLAG_NOLIMIT);
+		if(remaindRet != RET_NOERROR)
+			FreeThing(remainderItem);
+	}
+
 	if(ret != RET_NOERROR && dropOnMap)
 		ret = internalAddItem(player->getTile(), item, INDEX_WHEREEVER, FLAG_NOLIMIT);
 
@@ -1512,7 +1526,7 @@ Item* Game::findItemOfType(Cylinder* cylinder, uint16_t itemId,
 			++i;
 	}
 
-	while(listContainer.size() > 0)
+	while(!listContainer.empty())
 	{
 		Container* container = listContainer.front();
 		listContainer.pop_front();
@@ -1584,7 +1598,7 @@ bool Game::removeItemOfType(Cylinder* cylinder, uint16_t itemId, int32_t count, 
 			++i;
 	}
 
-	while(listContainer.size() > 0 && count > 0)
+	while(!listContainer.empty() && count > 0)
 	{
 		Container* container = listContainer.front();
 		listContainer.pop_front();
@@ -1652,7 +1666,7 @@ uint32_t Game::getMoney(const Cylinder* cylinder)
 			moneyCount += item->getWorth();
 	}
 
-	while(listContainer.size() > 0)
+	while(!listContainer.empty())
 	{
 		Container* container = listContainer.front();
 		listContainer.pop_front();
@@ -1703,7 +1717,7 @@ bool Game::removeMoney(Cylinder* cylinder, int32_t money, uint32_t flags /*= 0*/
 		}
 	}
 
-	while(listContainer.size() > 0 && money > 0)
+	while(!listContainer.empty() && money > 0)
 	{
 		Container* container = listContainer.front();
 		listContainer.pop_front();
@@ -2623,6 +2637,12 @@ bool Game::playerRequestTrade(uint32_t playerId, const Position& pos, uint8_t st
 		return false;
 	}
 
+	if(!canThrowObjectTo(tradePartner->getPosition(), player->getPosition()))
+	{
+		player->sendCancelMessage(RET_CREATUREISNOTREACHABLE);
+		return false;
+	}
+
 	Item* tradeItem = dynamic_cast<Item*>(internalGetThing(player, pos, stackPos, spriteId, STACKPOS_USE));
 	if(!tradeItem || tradeItem->getClientID() != spriteId || !tradeItem->isPickupable() || tradeItem->getUniqueId() != 0)
 	{
@@ -2728,9 +2748,18 @@ bool Game::playerAcceptTrade(uint32_t playerId)
 	if(!(player->getTradeState() == TRADE_ACKNOWLEDGE || player->getTradeState() == TRADE_INITIATED))
 		return false;
 
-	player->setTradeState(TRADE_ACCEPT);
 	Player* tradePartner = player->tradePartner;
-	if(tradePartner && tradePartner->getTradeState() == TRADE_ACCEPT)
+	if(!tradePartner)
+		return false;
+
+	if(!canThrowObjectTo(tradePartner->getPosition(), player->getPosition()))
+	{
+		player->sendCancelMessage(RET_CREATUREISNOTREACHABLE);
+		return false;
+	}
+
+	player->setTradeState(TRADE_ACCEPT);
+	if(tradePartner->getTradeState() == TRADE_ACCEPT)
 	{
 		Item* tradeItem1 = player->tradeItem;
 		Item* tradeItem2 = tradePartner->tradeItem;
@@ -2881,7 +2910,7 @@ bool Game::playerLookInTrade(uint32_t playerId, bool lookAtCounterOffer, int ind
 	Container* tmpContainer = NULL;
 
 	listContainer.push_back(tradeContainer);
-	while(!foundItem && listContainer.size() > 0)
+	while(!foundItem && !listContainer.empty())
 	{
 		const Container* container = listContainer.front();
 		listContainer.pop_front();
@@ -3355,14 +3384,14 @@ bool Game::playerSaySpell(Player* player, SpeakClasses type, const std::string& 
 	if(player->getName() == "Account Manager")
 		return internalCreatureSay(player, SPEAK_SAY, text, false);
 
-	TalkActionResult_t result;
-	result = g_talkActions->playerSaySpell(player, type, text);
+	std::string words = text;
+	TalkActionResult_t result = g_talkActions->playerSaySpell(player, type, words);
 	if(result == TALKACTION_BREAK)
 		return true;
 
-	result = g_spells->playerSaySpell(player, type, text);
+	result = g_spells->playerSaySpell(player, type, words);
 	if(result == TALKACTION_BREAK)
-		return internalCreatureSay(player, SPEAK_SAY, text, false);
+		return internalCreatureSay(player, SPEAK_SAY, words, false);
 	else if(result == TALKACTION_FAILED)
 		return true;
 

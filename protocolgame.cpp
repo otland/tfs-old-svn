@@ -1306,6 +1306,8 @@ void ProtocolGame::parseFightModes(NetworkMessage& msg)
 void ProtocolGame::parseAttack(NetworkMessage& msg)
 {
 	uint32_t creatureId = msg.GetU32();
+	msg.GetU32();
+	msg.GetU32();
 	addGameTask(&Game::playerSetAttackedCreature, player->getID(), creatureId);
 }
 
@@ -1947,7 +1949,7 @@ void ProtocolGame::sendTradeItemRequest(const Player* player, const Item* item, 
 
 			std::list<const Item*> listItem;
 			listItem.push_back(tradeContainer);
-			while(listContainer.size() > 0)
+			while(!listContainer.empty())
 			{
 				const Container* container = listContainer.front();
 				listContainer.pop_front();
@@ -1960,7 +1962,7 @@ void ProtocolGame::sendTradeItemRequest(const Player* player, const Item* item, 
 			}
 
 			msg->AddByte(listItem.size());
-			while(listItem.size() > 0)
+			while(!listItem.empty())
 			{
 				const Item* item = listItem.front();
 				listItem.pop_front();
@@ -2054,6 +2056,7 @@ void ProtocolGame::sendCancelTarget()
 	{
 		TRACK_MESSAGE(msg);
 		msg->AddByte(0xA3);
+		msg->AddU32(0x00);
 	}
 }
 
@@ -2102,7 +2105,7 @@ void ProtocolGame::sendPing()
 
 void ProtocolGame::sendDistanceShoot(const Position& from, const Position& to, uint8_t type)
 {
-	if((canSee(from) || canSee(to)) && type <= 41)
+	if((canSee(from) || canSee(to)) && type <= NM_SHOOT_LAST)
 	{
 		NetworkMessage_ptr msg = getOutputBuffer();
 		if(msg)
@@ -2115,7 +2118,7 @@ void ProtocolGame::sendDistanceShoot(const Position& from, const Position& to, u
 
 void ProtocolGame::sendMagicEffect(const Position& pos, uint8_t type)
 {
-	if(canSee(pos) && type <= 68)
+	if(canSee(pos) && type <= NM_ME_LAST)
 	{
 		NetworkMessage_ptr msg = getOutputBuffer();
 		if(msg)
@@ -2793,6 +2796,9 @@ void ProtocolGame::AddCreatureSpeak(NetworkMessage_ptr msg, const Creature* crea
 	std::string text, uint16_t channelId, uint32_t time/*= 0*/, Position* pos/* = NULL*/)
 {
 	if(!creature)
+		return;
+
+	if(type < SPEAK_FIRST || type > SPEAK_LAST)
 		return;
 
 	msg->AddByte(0xAA);

@@ -468,9 +468,7 @@ ResponseList Npc::loadInteraction(xmlNodePtr node)
 								li.subType = intValue;
 							else
 							{
-								if(it.isRune())
-									li.subType = it.charges;
-								else if(it.stackable)
+								if(it.stackable)
 									li.subType = 1;
 								else if(it.isFluidContainer() || it.isSplash())
 									li.subType = 0;
@@ -2824,7 +2822,7 @@ void Npc::addShopPlayer(Player* player)
 
 void Npc::removeShopPlayer(const Player* player)
 {
-	if(shopPlayerList.size() == 0)
+	if(shopPlayerList.empty())
 		return;
 
 	ShopPlayerList::iterator it = std::find(shopPlayerList.begin(), shopPlayerList.end(), player);
@@ -3435,7 +3433,11 @@ int32_t NpcScriptInterface::luaDoSellItem(lua_State* L)
 
 	uint32_t subType = 1;
 	if(parameters > 3)
-		subType = popNumber(L);
+	{
+		int32_t n = popNumber(L);
+		if(n != -1)
+			subType = n;
+	}
 
 	uint32_t amount = (uint32_t)popNumber(L);
 	uint32_t itemId = (uint32_t)popNumber(L);

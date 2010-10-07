@@ -9130,7 +9130,7 @@
 		<attribute key="description" value="It contains a love poem, written by an unknown elven poet."/>
 		<attribute key="weight" value="120"/>
 	</item>
-	<item id="5953" name=""/>
+	<item id="5953" />
 	<item id="5954" article="a" name="demon horn">
 		<attribute key="weight" value="1000"/>
 	</item>
@@ -13018,7 +13018,7 @@
 	<item id="7727" article="a" name="blank paper">
 		<attribute key="weight" value="100"/>
 	</item>
-	<item fromid="7728" toid="7729" name=""/>
+	<item fromid="7728" toid="7729" />
 	<item id="7730" name="blue legs">
 		<attribute key="weight" value="1800"/>
 		<attribute key="armor" value="8"/>
@@ -16007,7 +16007,7 @@
 		<attribute key="decayTo" value="0"/>
 		<attribute key="duration" value="60"/>
 	</item>
-	<item fromid="9013" toid="9018" name=""/>
+	<item fromid="9013" toid="9018" />
 	<item id="9019" article="a" name="vampire doll">
 		<attribute key="weight" value="940"/>
 	</item>

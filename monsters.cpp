@@ -131,21 +131,26 @@ uint32_t Monsters::getLootRandom()
 
 void MonsterType::createLoot(Container* corpse)
 {
-	for(LootItems::const_iterator it = lootItems.begin(); it != lootItems.end() && (corpse->capacity() - corpse->size() > 0); it++)
+	for(LootItems::const_iterator it = lootItems.begin(); it != lootItems.end() && (corpse->capacity() - corpse->size()) > 0; it++)
 	{
-		Item* tmpItem = createLootItem(*it);
-		if(tmpItem)
+		std::list<Item*> itemList = createLootItem(*it);
+		if(!itemList.empty())
 		{
-			//check containers
-			if(Container* container = tmpItem->getContainer())
+			for(std::list<Item*>::iterator iit = itemList.begin(); iit != itemList.end(); ++iit)
 			{
-				if(!createLootContainer(container, *it))
-					delete container;
+				Item* tmpItem = *iit;
+
+				//check containers
+				if(Container* container = tmpItem->getContainer())
+				{
+					if(!createLootContainer(container, *it))
+						delete container;
+					else
+						corpse->__internalAddThing(tmpItem);
+				}
 				else
 					corpse->__internalAddThing(tmpItem);
 			}
-			else
-				corpse->__internalAddThing(tmpItem);
 		}
 	}
 
@@ -167,26 +172,27 @@ void MonsterType::createLoot(Container* corpse)
 	}
 }
 
-Item* MonsterType::createLootItem(const LootBlock& lootBlock)
+std::list<Item*> MonsterType::createLootItem(const LootBlock& lootBlock)
 {
 	Item* tmpItem = NULL;
-	if(Item::items[lootBlock.id].stackable)
+	int32_t itemCount = 0;
+
+	uint32_t randvalue = Monsters::getLootRandom();
+	if(randvalue < lootBlock.chance)
 	{
-		uint32_t randvalue = Monsters::getLootRandom();
-		if(randvalue < lootBlock.chance)
-		{
-			uint16_t n = randvalue % lootBlock.countmax + 1;
-			tmpItem = Item::CreateItem(lootBlock.id, n);
-		}
-	}
-	else
-	{
-		if(Monsters::getLootRandom() < lootBlock.chance)
-			tmpItem = Item::CreateItem(lootBlock.id, 0);
+		if(Item::items[lootBlock.id].stackable)
+			itemCount = randvalue % lootBlock.countmax + 1;
+		else
+			itemCount = 1;
 	}
 
-	if(tmpItem)
+	std::list<Item*> itemList;
+	while(itemCount > 0)
 	{
+		uint16_t n = (uint16_t)std::min(itemCount, (int32_t)100);
+		tmpItem = Item::CreateItem(lootBlock.id, n);
+		itemCount -= n;
+
 		if(lootBlock.subType != -1)
 			tmpItem->setSubType(lootBlock.subType);
 
@@ -196,10 +202,10 @@ Item* MonsterType::createLootItem(const LootBlock& lootBlock)
 		if(lootBlock.text != "")
 			tmpItem->setText(lootBlock.text);
 
-		return tmpItem;
+		itemList.push_back(tmpItem);
 	}
 
-	return NULL;
+	return itemList;
 }
 
 bool MonsterType::createLootContainer(Container* parent, const LootBlock& lootblock)
@@ -210,18 +216,22 @@ bool MonsterType::createLootContainer(Container* parent, const LootBlock& lootbl
 
 	for(; it != lootblock.childLoot.end() && parent->size() < parent->capacity(); it++)
 	{
-		Item* tmpItem = createLootItem(*it);
-		if(tmpItem)
+		std::list<Item*> itemList = createLootItem(*it);
+		if(!itemList.empty())
 		{
-			if(Container* container = tmpItem->getContainer())
+			for(std::list<Item*>::iterator iit = itemList.begin(); iit != itemList.end(); ++iit)
 			{
-				if(!createLootContainer(container, *it))
-					delete container;
+				Item* tmpItem = *iit;
+				if(Container* container = tmpItem->getContainer())
+				{
+					if(!createLootContainer(container, *it))
+						delete container;
+					else
+						parent->__internalAddThing(container);
+				}
 				else
-					parent->__internalAddThing(container);
+					parent->__internalAddThing(tmpItem);
 			}
-			else
-				parent->__internalAddThing(tmpItem);
 		}
 	}
 	return parent->size() != 0;
@@ -1372,7 +1382,7 @@ bool Monsters::loadLootItem(xmlNodePtr node, LootBlock& lootBlock)
 		return false;
 
 	if(readXMLInteger(node, "countmax", intValue))
-		lootBlock.countmax = std::max(1, std::min(100, intValue));
+		lootBlock.countmax = std::max(1, intValue);
 	else
 		lootBlock.countmax = 1;
 

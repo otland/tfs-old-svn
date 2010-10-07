@@ -3,7 +3,7 @@
 		The Forgotten Server
 
 	Version
-		0.2.7
+		0.2.8
 
 	Codenamed
 		"Mystic Spirit"
@@ -15,27 +15,27 @@
 		http://otland.net/
 ]
 
-[ FLUIDTYPE	NAME		COLOR
-	2	blood			RED
-	10	lifefluid		RED
-	18	lava			RED
+[ FLUIDTYPE     NAME            COLOR
+        2       blood           RED
+        10      lifefluid       RED
+        18      lava            RED
 
-	3	beer			BROWN
-	11	oil				BROWN
-	19	mud				BROWN
-	27	rum				BROWN
+        3       beer            BROWN
+        11      oil             BROWN
+        19      mud             BROWN
+        27      rum             BROWN
 
-	4	slime			GREEN
+        4       slime           GREEN
 
-	5	lemonade		YELLOW
-	13	urine			YELLOW
-	21	fruit juice		YELLOW
+        5       lemonade        YELLOW
+        13      urine           YELLOW
+        21      fruit juice     YELLOW
 
-	6	milk			WHITE
-	14	coconut milk	WHITE
+        6       milk            WHITE
+        14      coconut milk    WHITE
 
-	7	manafluid		PURPLE
-	15	wine			PURPLE
+        7       manafluid       PURPLE
+        15      wine            PURPLE
 
-	9	water			BLUE
+        9       water           BLUE
 ]

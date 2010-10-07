@@ -318,7 +318,7 @@ bool IOMapSerialize::saveTile(Database* db, uint32_t tileId, const Tile* tile)
 			containerStackList.push_back(ContainerStackList_Pair(item->getContainer(), runningID));
 	}
 
-	while(containerStackList.size() > 0)
+	while(!containerStackList.empty())
 	{
 		ContainerStackList_Pair csPair = containerStackList.front();
 		container = csPair.first;
@@ -716,7 +716,7 @@ void IOMapSerialize::saveTile(PropWriteStream& stream, const Tile* tile)
 		items.push_back(item);
 	}
 
-	if(items.size() > 0)
+	if(!items.empty())
 	{
 		stream.ADD_USHORT(tile->getPosition().x);
 		stream.ADD_USHORT(tile->getPosition().y);

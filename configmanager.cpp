@@ -89,6 +89,7 @@ bool ConfigManager::loadFile(const std::string& _filename)
 	m_confBoolean[SHOW_GAMEMASTERS_ONLINE] = (getGlobalString(L, "displayGamemastersWithOnlineCommand", "no") == "yes");
 	m_confBoolean[REMOVE_AMMO] = (getGlobalString(L, "removeAmmoWhenUsingDistanceWeapon", "yes") == "yes");
 	m_confBoolean[REMOVE_RUNE_CHARGES] = (getGlobalString(L, "removeChargesFromRunes", "yes") == "yes");
+	m_confBoolean[REMOVE_WEAPON_CHARGES] = (getGlobalString(L, "removeChargesFromWeapons", "yes") == "yes");
 	m_confBoolean[RANDOMIZE_TILES] = (getGlobalString(L, "randomizeTiles", "yes") == "yes");
 	m_confBoolean[EXPERIENCE_FROM_PLAYERS] = (getGlobalString(L, "experienceByKillingPlayers", "no") == "yes");
 	m_confBoolean[SHUTDOWN_AT_SERVERSAVE] = (getGlobalString(L, "shutdownAtServerSave", "no") == "yes");

@@ -165,7 +165,7 @@ int32_t Weapons::getMaxWeaponDamage(uint32_t level, int32_t attackSkill, int32_t
 Weapon::Weapon(LuaScriptInterface* _interface) :
 	Event(_interface)
 {
-	m_scripted = true;
+	m_scripted = false;
 	id = 0;
 	level = 0;
 	magLevel = 0;
@@ -187,7 +187,6 @@ Weapon::~Weapon()
 
 void Weapon::setCombatParam(const CombatParams& _params)
 {
-	m_scripted = false;
 	params = _params;
 }
 
@@ -318,6 +317,9 @@ bool Weapon::loadFunction(const std::string& functionName)
 		if(configureWeapon(Item::items[getID()]))
 			return true;
 	}
+	else if(tmpFunctionName == "script")
+		m_scripted = true;
+
 	return false;
 }
 
@@ -580,7 +582,6 @@ bool WeaponMelee::configureEvent(xmlNodePtr p)
 
 bool WeaponMelee::configureWeapon(const ItemType& it)
 {
-	m_scripted = false;
 	elementType = it.abilities.elementType;
 	elementDamage = it.abilities.elementDamage;
 	return Weapon::configureWeapon(it);
@@ -599,6 +600,12 @@ bool WeaponMelee::useWeapon(Player* player, Item* item, Creature* target) const
 		eParams.isAggressive = true;
 		eParams.useCharges = true;
 		Combat::doCombatHealth(player, target, damage, damage, eParams);
+
+		if(g_config.getBoolean(ConfigManager::REMOVE_WEAPON_CHARGES))
+		{
+			int32_t newCount = std::max(0, item->getItemCount() - 1);
+			g_game.transformItem(item, item->getID(), newCount);
+		}
 	}
 	return true;
 }
@@ -757,8 +764,6 @@ bool WeaponDistance::configureEvent(xmlNodePtr p)
 
 bool WeaponDistance::configureWeapon(const ItemType& it)
 {
-	m_scripted = false;
-
 	//default values
 	if(it.ammoType != AMMO_NONE)
 	{
@@ -882,24 +887,24 @@ bool WeaponDistance::useWeapon(Player* player, Item* item, Creature* target) con
 		Tile* destTile = target->getTile();
 		if(!Position::areInRange<1,1,0>(player->getPosition(), target->getPosition()))
 		{
-			typedef std::pair<int32_t, int32_t> dPair;
-			std::vector<dPair> destList;
-			destList.push_back(dPair(-1, -1));
-			destList.push_back(dPair(-1, 0));
-			destList.push_back(dPair(-1, 1));
-			destList.push_back(dPair(0, -1));
-			destList.push_back(dPair(0, 0));
-			destList.push_back(dPair(0, 1));
-			destList.push_back(dPair(1, -1));
-			destList.push_back(dPair(1, 0));
-			destList.push_back(dPair(1, 1));
+			typedef std::vector<std::pair<int32_t, int32_t> > RelPosList;
+			RelPosList destList;
+			destList.push_back(std::make_pair(-1, -1));
+			destList.push_back(std::make_pair(-1, 0));
+			destList.push_back(std::make_pair(-1, 1));
+			destList.push_back(std::make_pair(0, -1));
+			destList.push_back(std::make_pair(0, 0));
+			destList.push_back(std::make_pair(0, 1));
+			destList.push_back(std::make_pair(1, -1));
+			destList.push_back(std::make_pair(1, 0));
+			destList.push_back(std::make_pair(1, 1));
 
 			std::random_shuffle(destList.begin(), destList.end());
 
 			Position destPos = target->getPosition();
 			Tile* tmpTile = NULL;
 
-			for(std::vector<dPair>::iterator it = destList.begin(); it != destList.end(); ++it)
+			for(RelPosList::iterator it = destList.begin(); it != destList.end(); ++it)
 			{
 				tmpTile = g_game.getTile(destPos.x + it->first, destPos.y + it->second, destPos.z);
 				// Blocking tiles or tiles without ground ain't valid targets for spears
@@ -1043,7 +1048,6 @@ bool WeaponWand::configureEvent(xmlNodePtr p)
 
 bool WeaponWand::configureWeapon(const ItemType& it)
 {
-	m_scripted = false;
 	range = it.shootRange;
 	params.distanceEffect = it.shootType;
 

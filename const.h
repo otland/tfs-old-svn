@@ -27,7 +27,8 @@
 
 enum MagicEffectClasses
 {
-	NM_ME_DRAW_BLOOD	= 0x00,
+	NM_ME_FIRST		= 0x00,
+	NM_ME_DRAW_BLOOD	= NM_ME_FIRST,
 	NM_ME_LOSE_ENERGY	= 0x01,
 	NM_ME_POFF		= 0x02,
 	NM_ME_BLOCKHIT		= 0x03,
@@ -96,6 +97,8 @@ enum MagicEffectClasses
 	NM_ME_BATS		= 0x42, //66
 	NM_ME_SMOKE		= 0x43, //67
 	NM_ME_INSECTS		= 0x44, //68
+	NM_ME_DRAGONHEAD	= 0x45, //69
+	NM_ME_LAST		= NM_ME_DRAGONHEAD,
 
 	//for internal use, dont send to client
 	NM_ME_NONE             = 0xFF,
@@ -104,7 +107,8 @@ enum MagicEffectClasses
 
 enum ShootType_t
 {
-	NM_SHOOT_SPEAR		= 0x00,
+	NM_SHOOT_FIRST		= 0x00,
+	NM_SHOOT_SPEAR		= NM_SHOOT_FIRST,
 	NM_SHOOT_BOLT		= 0x01,
 	NM_SHOOT_ARROW		= 0x02,
 	NM_SHOOT_FIRE		= 0x03,
@@ -146,6 +150,7 @@ enum ShootType_t
 	NM_SHOOT_EARTHARROW	= 0x27, //39
 	NM_SHOOT_EXPLOSION	= 0x28, //40
 	NM_SHOOT_CAKE		= 0x29, //41
+	NM_SHOOT_LAST		= NM_SHOOT_CAKE,
 
 	//for internal use, dont send to client
 	NM_SHOOT_WEAPONTYPE	= 0xFE, //254
@@ -155,7 +160,8 @@ enum ShootType_t
 
 enum SpeakClasses
 {
-	SPEAK_SAY		= 0x01,
+	SPEAK_FIRST		= 0x01,
+	SPEAK_SAY		= SPEAK_FIRST,
 	SPEAK_WHISPER		= 0x02,
 	SPEAK_YELL		= 0x03,
 	SPEAK_PRIVATE_PN	= 0x04,
@@ -163,34 +169,37 @@ enum SpeakClasses
 	SPEAK_PRIVATE		= 0x06,
 	SPEAK_CHANNEL_Y		= 0x07,
 	SPEAK_CHANNEL_W		= 0x08,
-	SPEAK_RVR_CHANNEL	= 0x09,
-	SPEAK_RVR_ANSWER	= 0x0A,
-	SPEAK_RVR_CONTINUE	= 0x0B,
-	SPEAK_BROADCAST		= 0x0C,
-	SPEAK_CHANNEL_R1	= 0x0D, //red - #c text
-	SPEAK_PRIVATE_RED	= 0x0E,	//@name@text
-	SPEAK_CHANNEL_O		= 0x0F,
-	//SPEAK_UNKNOWN_1		= 0x10,
-	SPEAK_CHANNEL_R2	= 0x11,	//red anonymous - #d text
-	//SPEAK_UNKNOWN_2		= 0x12,
-	SPEAK_MONSTER_SAY	= 0x13,
-	SPEAK_MONSTER_YELL	= 0x14
+	SPEAK_BROADCAST		= 0x09,
+	//SPEAK_ 		= 0x0A, // unknown
+	//SPEAK_ 		= 0x0B, // red text with name
+	//SPEAK_ 		= 0x0C, // unknown
+	SPEAK_MONSTER_SAY	= 0x0D,
+	SPEAK_MONSTER_YELL	= 0x0E,
+	SPEAK_LAST		= SPEAK_MONSTER_YELL,
+
+	SPEAK_RVR_CHANNEL	= 0xFF + 1,
+	SPEAK_RVR_ANSWER	= 0xFF + 2,
+	SPEAK_RVR_CONTINUE	= 0xFF + 3,
+	SPEAK_CHANNEL_O		= 0xFF + 4,
+	SPEAK_CHANNEL_R2	= 0xFF + 5, //red anonymous - #d text
+	SPEAK_CHANNEL_R1	= 0xFF + 6, //red - #c text
+	SPEAK_PRIVATE_RED	= 0xFF + 7  //@name@text
 };
 
 enum MessageClasses
 {
-	MSG_CLASS_FIRST			= 0x12,
-	MSG_STATUS_CONSOLE_RED		= MSG_CLASS_FIRST, /*Red message in the console*/
-	MSG_EVENT_ORANGE		= 0x13, /*Orange message in the console*/
-	MSG_STATUS_CONSOLE_ORANGE	= 0x14, /*Orange message in the console*/
-	MSG_STATUS_WARNING		= 0x15, /*Red message in game window and in the console*/
-	MSG_EVENT_ADVANCE		= 0x16, /*White message in game window and in the console*/
-	MSG_EVENT_DEFAULT		= 0x17, /*White message at the bottom of the game window and in the console*/
-	MSG_STATUS_DEFAULT		= 0x18, /*White message at the bottom of the game window and in the console*/
-	MSG_INFO_DESCR			= 0x19, /*Green message in game window and in the console*/
-	MSG_STATUS_SMALL		= 0x1A, /*White message at the bottom of the game window"*/
-	MSG_STATUS_CONSOLE_BLUE		= 0x1B, /*Blue message in the console*/
-	MSG_CLASS_LAST			= MSG_STATUS_CONSOLE_BLUE
+	MSG_CLASS_FIRST			= 0x0D,
+	MSG_EVENT_ORANGE		= MSG_CLASS_FIRST, /*Orange message in the console*/
+	MSG_STATUS_CONSOLE_ORANGE	= 0x0E, /*Orange message in the console*/
+	MSG_STATUS_WARNING		= 0x0F, /*Red message in game window and in the console*/
+	MSG_EVENT_ADVANCE		= 0x10, /*White message in game window and in the console*/
+	MSG_EVENT_DEFAULT		= 0x11, /*White message at the bottom of the game window and in the console*/
+	MSG_STATUS_DEFAULT		= 0x12, /*White message at the bottom of the game window and in the console*/
+	MSG_INFO_DESCR			= 0x13, /*Green message in game window and in the console*/
+	MSG_STATUS_SMALL		= 0x14, /*White message at the bottom of the game window"*/
+	MSG_STATUS_CONSOLE_BLUE		= 0x15, /*Blue message in the console*/
+	MSG_STATUS_CONSOLE_RED		= 0x16, /*Red message in the console*/
+	MSG_CLASS_LAST			= MSG_STATUS_CONSOLE_RED
 };
 
 enum FluidColors_t
@@ -400,6 +409,12 @@ enum item_t
 
 	ITEM_ENERGYFIELD_PVP	= 1491,
 	ITEM_ENERGYFIELD_NOPVP	= 1504,
+
+	ITEM_MAGICWALL		= 1497,
+	ITEM_MAGICWALL_SAFE	= 11098,
+
+	ITEM_WILDGROWTH		= 1499,
+	ITEM_WILDGROWTH_SAFE	= 11099,
 
 	ITEM_COINS_GOLD		= 2148,
 	ITEM_COINS_PLATINUM	= 2152,

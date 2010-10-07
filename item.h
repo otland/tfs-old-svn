@@ -253,7 +253,7 @@ class Item : virtual public Thing, public ItemAttributes
 {
 	public:
 		//Factory member to create item of right type based on type
-		static Item* CreateItem(const uint16_t _type, uint16_t _count = 1);
+		static Item* CreateItem(const uint16_t _type, uint16_t _count = 0);
 		static Item* CreateItem(PropStream& propStream);
 		static Items items;
 
@@ -345,7 +345,7 @@ class Item : virtual public Thing, public ItemAttributes
 		bool isDoor() const {return items[id].isDoor();}
 		bool isBed() const {return items[id].isBed();}
 		bool isLevelDoor() const {return items[id].isLevelDoor();}
-		bool hasCharges() const {return items[id].charges != 0;}
+		bool hasCharges() const {return getCharges() > 0;}
 
 		bool floorChangeDown() const {return items[id].floorChangeDown;}
 		bool floorChangeNorth() const {return items[id].floorChangeNorth;}
@@ -363,7 +363,7 @@ class Item : virtual public Thing, public ItemAttributes
 		uint16_t getItemCount() const {return count;}
 		void setItemCount(uint8_t n) {count = n;}
 
-		static uint32_t countByType(const Item* i, int32_t checkType, bool multiCount);
+		static uint32_t countByType(const Item* i, int32_t subType);
 
 		void setDefaultSubtype();
 		bool hasSubType() const;
@@ -403,18 +403,11 @@ class Item : virtual public Thing, public ItemAttributes
 
 typedef std::list<Item *> ItemList;
 
-inline uint32_t Item::countByType(const Item* i, int32_t checkType, bool multiCount)
+inline uint32_t Item::countByType(const Item* i, int32_t subType)
 {
-	if(checkType == -1 || checkType == i->getSubType())
-	{
-		if(multiCount)
-			return i->getItemCount();
-
-		if(i->isRune())
-			return i->getCharges();
-
+	if(subType == -1 || subType == i->getSubType())
 		return i->getItemCount();
-	}
+
 	return 0;
 }
 

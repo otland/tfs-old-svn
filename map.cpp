@@ -207,33 +207,34 @@ bool Map::placeCreature(const Position& centerPos, Creature* creature, bool exte
 			foundTile = true;
 	}
 
-	typedef std::pair<int32_t, int32_t> relPair;
-	std::vector<relPair> relList;
+	typedef std::vector<std::pair<int32_t, int32_t> > RelPosList;
+	RelPosList relPosList;
 	if(extendedPos)
 	{
-		relList.push_back(relPair(0, -2));
-		relList.push_back(relPair(-2, 0));
-		relList.push_back(relPair(0, 2));
-		relList.push_back(relPair(2, 0));
-		std::random_shuffle(relList.begin(), relList.end());
+		relPosList.push_back(std::make_pair(0, -2));
+		relPosList.push_back(std::make_pair(-2, 0));
+		relPosList.push_back(std::make_pair(0, 2));
+		relPosList.push_back(std::make_pair(2, 0));
+
+		std::random_shuffle(relPosList.begin(), relPosList.end());
 	}
 
-	relList.push_back(relPair(-1, -1));
-	relList.push_back(relPair(-1, 0));
-	relList.push_back(relPair(-1, 1));
-	relList.push_back(relPair(0, -1));
-	relList.push_back(relPair(0, 1));
-	relList.push_back(relPair(1, -1));
-	relList.push_back(relPair(1, 0));
-	relList.push_back(relPair(1, 1));
+	relPosList.push_back(std::make_pair(-1, -1));
+	relPosList.push_back(std::make_pair(-1, 0));
+	relPosList.push_back(std::make_pair(-1, 1));
+	relPosList.push_back(std::make_pair(0, -1));
+	relPosList.push_back(std::make_pair(0, 1));
+	relPosList.push_back(std::make_pair(1, -1));
+	relPosList.push_back(std::make_pair(1, 0));
+	relPosList.push_back(std::make_pair(1, 1));
 
-	std::random_shuffle(relList.begin() + (extendedPos? 4 : 0), relList.end());
+	std::random_shuffle(relPosList.begin() + (extendedPos? 4 : 0), relPosList.end());
 	uint32_t radius = 1;
 
 	Position tryPos;
 	for(uint32_t n = 1; n <= radius && !foundTile; ++n)
 	{
-		for(std::vector<relPair>::iterator it = relList.begin(); it != relList.end() && !foundTile; ++it)
+		for(RelPosList::iterator it = relPosList.begin(); it != relPosList.end() && !foundTile; ++it)
 		{
 			int32_t dx = it->first * n;
 			int32_t dy = it->second * n;

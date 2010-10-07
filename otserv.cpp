@@ -37,6 +37,10 @@
 
 #include "iologindata.h"
 
+#if !defined(__WINDOWS__)
+#include <signal.h> // for sigemptyset()
+#endif
+
 #include "monsters.h"
 #include "commands.h"
 #include "outfit.h"
@@ -194,16 +198,24 @@ int main(int argc, char *argv[])
 	OTSYS_THREAD_LOCK(g_loaderLock, "main()");
 	OTSYS_THREAD_WAITSIGNAL(g_loaderSignal, g_loaderLock);
 
-	std::cout << ">> " << g_config.getString(ConfigManager::SERVER_NAME) << " Server Online!" << std::endl << std::endl;
-	#ifndef __CONSOLE__
-	SendMessage(gui.m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Status: Online!");
-	gui.m_connections = true;
-	#endif
+	boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
 
 	if(servicer.is_running())
+	{
+		std::cout << ">> " << g_config.getString(ConfigManager::SERVER_NAME) << " Server Online!" << std::endl << std::endl;
+		#ifndef __CONSOLE__
+		SendMessage(gui.m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Status: Online!");
+		gui.m_connections = true;
+		#endif
 		servicer.run();
+	}
 	else
-		std::cout << "No services running. The server is NOT online." << std::endl;
+	{
+		std::cout << ">> No services running. The server is NOT online." << std::endl;
+		#ifndef __CONSOLE__
+		SendMessage(gui.m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Status: Offline (no services running)!");
+		#endif
+	}
 
 #ifdef __EXCEPTION_TRACER__
 	mainExceptionHandler.RemoveHandler();
@@ -594,8 +606,8 @@ void mainLoader(ServiceManager* service_manager)
 	#endif
 
 	IOLoginData::getInstance()->resetOnlineStatus();
-	g_game.setGameState(GAME_STATE_NORMAL);
 	g_game.start(service_manager);
+	g_game.setGameState(GAME_STATE_NORMAL);
 	OTSYS_THREAD_SIGNAL_SEND(g_loaderSignal);
 }
 

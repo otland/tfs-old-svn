@@ -801,7 +801,8 @@ MagicEffectNames magicEffectNames[] =
 	{"yalaharighost",	NM_ME_YALAHARIGHOST},
 	{"bats",		NM_ME_BATS},
 	{"smoke",		NM_ME_SMOKE},
-	{"insects",		NM_ME_INSECTS}
+	{"insects",		NM_ME_INSECTS},
+	{"dragonhead",		NM_ME_DRAGONHEAD}
 };
 
 ShootTypeNames shootTypeNames[] =

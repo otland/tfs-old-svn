@@ -3,7 +3,7 @@
 		The Forgotten Server
 
 	Version
-		0.2.7
+		0.2.8
 
 	Codenamed
 		"Mystic Spirit"
@@ -20,9 +20,6 @@
 	code base (SourceForge.net usernames, in alphabetical order):
 		acidgame, jiddo, mips_act, nfries88, otserv_simone, primer13r,
 		remere, shivoc, smygflik, snack, tliffrag and wrzasq.
-
-	Second, some of the credits for contributing to this release goes to:
-		barker, Cykotitan and Hani.
 
 	The rest of the credits goes to following The Forgotten Server developers:
 		Talaturen
@@ -53,7 +50,7 @@
 	Having trouble with any of the instructions, or is there
 	anything you just want to ask?
 		Create a new thread and ask here:
-			http://otland.net/forumdisplay.php?f=55
+			http://otland.net/f55/
 ]
 
 [ DONATIONS
@@ -73,10 +70,10 @@
 			Debian \ Ubuntu
 				Launch a terminal, and paste in this command:
 					sudo apt-get install subversion autoconf automake make g++ libxml2 libxml2-dev libxml++2.6-dev lua5.1 liblua5.1-0 liblua5.1-0-dev libboost-dev libboost-date-time-dev libboost-regex-dev libboost-thread-dev libmysql++-dev libgmp3-dev liblua5.1-sql-mysql2 liblua5.1-sql-sqlite2 liblua5.1-sql-mysql-dev liblua5.1-sql-sqlite-dev libsqlite3-dev
-					wget http://heanet.dl.sourceforge.net/sourceforge/asio/boost_asio_1_4_1.tar.gz
-					tar -xf boost_asio_1_4_1.tar.gz
-					sudo cp -ar boost_asio_1_4_1/boost/* /usr/include/boost/
-					sudo g++ boost_asio_1_4_1/libs/system/src/error_code.cpp -c -o /usr/lib/libboost_system.a
+					wget http://heanet.dl.sourceforge.net/sourceforge/asio/boost_asio_1_4_5.tar.gz
+					tar -xf boost_asio_1_4_5.tar.gz
+					sudo cp -ar boost_asio_1_4_5/boost/* /usr/include/boost/
+					sudo g++ boost_asio_1_4_5/libs/system/src/error_code.cpp -c -o /usr/lib/libboost_system.a
 
 			sudo: command not found
 				If you're running Debian it's possible that you don't
@@ -86,11 +83,11 @@
 
 		Download sourcecode
 			Launch a terminal, and paste in this command:
-				svn co http://svn.otland.net/public/forgottenserver/tags/0.2.7
+				svn co svn://svn.otland.net/public/forgottenserver/tags/0.2.8
 
 		Compiling
 			Launch a terminal, and type this command:
-				cd 0.2.7/ && make
+				cd 0.2.8/ && make
 
 		Linker eror
 			If you receive a linker error saying something with 'libboost',

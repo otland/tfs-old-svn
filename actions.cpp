@@ -378,12 +378,8 @@ bool Actions::useItem(Player* player, const Position& pos, uint8_t index, Item* 
 
 	if(isHotkey)
 	{
-		int32_t subType = -1;
-		if(item->hasSubType() && !item->hasCharges())
-			subType = item->getSubType();
-
-		itemCount = player->__getItemTypeCount(item->getID(), subType, false);
 		itemId = item->getID();
+		itemCount = player->__getItemTypeCount(itemId, -1);
 	}
 
 	ReturnValue ret = internalUseItem(player, pos, index, item, 0);
@@ -428,12 +424,8 @@ bool Actions::useItemEx(Player* player, const Position& fromPos, const Position&
 
 	if(isHotkey)
 	{
-		int32_t subType = -1;
-		if(item->hasSubType() && !item->hasCharges())
-			subType = item->getSubType();
-
-		itemCount = player->__getItemTypeCount(item->getID(), subType, false);
 		itemId = item->getID();
+		itemCount = player->__getItemTypeCount(itemId, -1);
 	}
 
 	int32_t fromStackPos = item->getParent()->__getIndexOfThing(item);

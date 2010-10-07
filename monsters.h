@@ -30,7 +30,7 @@
 struct LootBlock
 {
 	uint16_t id;
-	uint16_t countmax;
+	uint32_t countmax;
 	uint32_t chance;
 
 	//optional
@@ -144,7 +144,7 @@ class MonsterType
 
 		void createLoot(Container* corpse);
 		bool createLootContainer(Container* parent, const LootBlock& lootblock);
-		Item* createLootItem(const LootBlock& lootblock);
+		std::list<Item*> createLootItem(const LootBlock& lootblock);
 };
 
 class Monsters

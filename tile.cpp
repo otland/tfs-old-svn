@@ -262,10 +262,8 @@ Creature* Tile::getTopVisibleCreature(const Creature* creature)
 		{
 			for(CreatureVector::const_iterator cit = creatures->begin(); cit != creatures->end(); ++cit)
 			{
-				if((*cit)->getPlayer() && (*cit)->getPlayer()->isInGhostMode())
-					continue;
-
-				return (*cit);
+				if ((creature && creature->canSeeCreature(*cit)) || (!creature && !((*cit)->isInvisible() || ((*cit)->getPlayer() && (*cit)->getPlayer()->isInGhostMode()))))
+					return (*cit);
 			}
 		}
 	}
@@ -282,10 +280,8 @@ const Creature* Tile::getTopVisibleCreature(const Creature* creature) const
 		{
 			for(CreatureVector::const_iterator cit = creatures->begin(); cit != creatures->end(); ++cit)
 			{
-				if((*cit)->getPlayer() && (*cit)->getPlayer()->isInGhostMode())
-					continue;
-
-				return (*cit);
+				if ((creature && creature->canSeeCreature(*cit)) || (!creature && !((*cit)->isInvisible() || ((*cit)->getPlayer() && (*cit)->getPlayer()->isInGhostMode()))))
+					return (*cit);
 			}
 		}
 	}
@@ -1437,28 +1433,17 @@ int32_t Tile::__getLastIndex() const
 	return getThingCount();
 }
 
-uint32_t Tile::__getItemTypeCount(uint16_t itemId, int32_t subType /*= -1*/, bool itemCount /*= true*/) const
+uint32_t Tile::__getItemTypeCount(uint16_t itemId, int32_t subType /*= -1*/) const
 {
 	uint32_t count = 0;
 	Thing* thing = NULL;
 	for(uint32_t i = 0; i < getThingCount(); ++i)
 	{
 		thing = __getThing(i);
-
 		if(const Item* item = thing->getItem())
 		{
-			if(item->getID() == itemId && (subType == -1 || subType == item->getSubType()))
-			{
-				if(itemCount)
-					count+= item->getItemCount();
-				else
-				{
-					if(item->isRune())
-						count+= item->getCharges();
-					else
-						count+= item->getItemCount();
-				}
-			}
+			if(item->getID() == itemId)
+				count += Item::countByType(item, subType);
 		}
 	}
 	return count;

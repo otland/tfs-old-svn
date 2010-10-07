@@ -640,7 +640,7 @@ bool IOLoginData::saveItems(const Player* player, const ItemBlockList& itemList,
 			stack.push_back(containerBlock(container, runningId));
 	}
 
-	while(stack.size() > 0)
+	while(!stack.empty())
 	{
 		const containerBlock& cb = stack.front();
 		Container* container = cb.first;

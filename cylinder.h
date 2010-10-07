@@ -39,7 +39,8 @@ enum cylinderflags_t
 	FLAG_CHILDISOWNER = 8,		//Used by containers to query capacity of the carrier (player)
 	FLAG_PATHFINDING = 16,		//An additional check is done for floor changing/teleport items
 	FLAG_IGNOREFIELDDAMAGE = 32,	//Bypass field damage checks
-	FLAG_IGNORENOTMOVEABLE = 64	//Bypass check for movability
+	FLAG_IGNORENOTMOVEABLE = 64,	//Bypass check for movability
+	FLAG_IGNOREAUTOSTACK = 128    //__queryDestination will not try to stack items together
 };
 
 enum cylinderlink_t
@@ -182,18 +183,16 @@ class Cylinder : virtual public Thing
 		  * Get the amount of items of a certain type
 		  * \param itemId is the item type to the get the count of
 		  * \param subType is the extra type an item can have such as charges/fluidtype, -1 means not used
-		  * \param itemCount if set to true it will only count items and not other subtypes like charges
 		  * \param returns the amount of items of the asked item type
 		  */
-		virtual uint32_t __getItemTypeCount(uint16_t itemId, int32_t subType = -1, bool itemCount = true) const;
+		virtual uint32_t __getItemTypeCount(uint16_t itemId, int32_t subType = -1) const;
 
 		/**
 		  * Get the amount of items of a all types
 		  * \param countMap a map to put the itemID:count mapping in
-		  * \param itemCount if set to true it will only count items and not other subtypes like charges
 		  * \param returns a map mapping item id to count (same as first argument)
 		  */
-		virtual std::map<uint32_t, uint32_t>& __getAllItemTypeCount(std::map<uint32_t, uint32_t>& countMap, bool itemCount = true) const;
+		virtual std::map<uint32_t, uint32_t>& __getAllItemTypeCount(std::map<uint32_t, uint32_t>& countMap) const;
 
 		/**
 		  * Adds an object to the cylinder without sending to the client(s)

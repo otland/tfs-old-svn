@@ -3,7 +3,7 @@
 		The Forgotten Server
 
 	Version
-		0.2.7
+		0.2.8
 
 	Codenamed
 		"Mystic Spirit"
@@ -21,61 +21,28 @@
 	A = Added.
 
 	M The Forgotten Server.exe
+	M config.lua
 	M data/global.lua
-	M data/items/items.otb
-	M data/items/items.xml
-	M data/npc/lib/npc.lua
+	M data/XML/outfits.xml
 ]
 
 [ Milestone
-	Protocol 8.54 support.
-	Improved networking code - should fix a deadlock which could occur during a DoS attack.
-	Improved NPC code - with better compatibility for buy with backpacks and ignore capacity.
-	Fixed several items.xml loading bugs.
-	Fixed a mailbox bug, and added "New mail has arrived" message.
-	Extended buffer size for look description to prevent overflows.
-	Fixed !createguild crash which would occur if database connection failed or triggers weren't properly imported.
-	Fixed player saving in SQLite.
-	Look description will now say "They weigh" for stackable items instead of "It weighs".
-	New Lua function: setCreatureLookDir(cid, dir).
-	Additional parameters to Lua function: doPlayerAddExp(cid, exp, <optional/NEW> usemultiplier, <optional/NEW> sendtext)
-	Monster code fixes.
-	New Lua functions: getTileThingByTopOrder(pos, topOrder), getPlayerMasterPos(cid).
-	Monster AI improvements.
-	Fixed an issue with NPC amounts.
-	Added missing magic effects in tools.cpp.
-	Increase or decrease function call from actions will now also try to decay the item.
-	Extended reload command with weapons and quests.
-	Corrected TEXTCOLOR_DARKRED value.
-	Corrected ids of field items and corpses.
-	Most damage killer and two unjustified (bool) are now also accessible in onDeath event.
-	Attempt to make the NPC shop system work with fluid containers.
-	Fixed a crash related to trading.
-	Changed the house system to use rent instead of x gold per house tile.
-	Corrected some errors in Item::getDescription.
-	items.xml: allowpickupable, showattributes, added tea and mead to fluidsources.
-	Reload items will now also reload movements and weapons otherwise it breaks them.
-	Extended doCreatureSay with three more optional parameters (..., ghost, cid, pos)
-	New Lua functions: doCreateNpc(name, pos), getItemWeightByUID(uid).
-	Events from a Lua interface will now be stopped at reload.
-	Third parameter in doTeleportThing (pushMovement) will now default to false.
-	doTeleportThing and normal teleports will also update the look direction of a player.
-	doRelocate will no longer move doors.
-	ITEM_TYPE_DEPOT is now supported in getTileItemByType.
-	getItemDescriptions will now also include description in the table it returns.
-	doTransformItem will no longer try to transform an item to the same ID.
-	Applied a patch from 0.3 that fixes a bug which would prevent monsters from dropping empty containers (such as key rings).
-	Corrected condition tick intervals in monsters.
-	Added support for freezecondition, cursecondition and dazzlecondition in monsters.
-	Added drownPercent, lifedrainPercent and physicalPercent to monster immunity elements, and also error handling for incorrect elements.
-	Fixed crashes and compatibility issues in the NPC code.
-	Corrected RET_BOTHHANDSNEEDTOBEFREE, RET_NOTENOUGHCAPACITY and RET_CANNOTPICKUP cancel messages.
-	Corrected the "You have been idle for x minutes" message.
-	Increased knownCreatureList max size to 250 which is supported in newer clients.
-	Gamemasters can now walk and teleport through creatures.
-	Fixed some issues with raids.
-	Removed the blacklist code as it is no longer in use.
-	The msgcontains function has been improved.
-	Heavily updated items.xml file.
+	Protocol 8.62 support.
+	Fixed a bug with the reading of banishment comment.
+	Rewritten the way the amount of frags are calculated as an attempt to make it more accurate, and removed the formatTime function from tools.
+	The "Loot of" message will no longer list containers that aren't empty.
+	Removed the trailing dot from the "Loot of" message.
+	Changes to the movement code to make map-clicking smoother.
+	Players can no longer heal paralyze during movement, it will instead be healed once the player finishes his/her current move.
+	Fixed a bug with player saving.
+	Added a new way to save house items: binary-tilebased, a safer way. In case of stream failure, it will just wipe the tiles it fails at instead of entire houses.
+	Fixed a lot of Lua binding errors, and added support for LuaJIT (compile with -D__LUAJIT__ to use LuaJIT).
+	Experience will no longer be shared in a party when the victim is a player.
+	Players will no longer receive an unjustified kills for killing guild mates.
+	Corrected a disconnect message in gameworld connection.
+	Added missing disconnect message when auth fails in gameworld connection.
+	Fixed possible shop system exploit.
+	Status protocol compatibility.
 	Code cleanup, formating & optimizations.
+	New configurable variable (removeChargesFromWeapons, default: "yes").
 ]
