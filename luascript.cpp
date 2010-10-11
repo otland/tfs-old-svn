@@ -2258,7 +2258,7 @@ void LuaInterface::registerFunctions()
 	//getTownName(townId)
 	lua_register(m_luaState, "getTownName", LuaInterface::luaGetTownName);
 
-	//getTownTemplePosition(townId[, displayError])
+	//getTownTemplePosition(townId)
 	lua_register(m_luaState, "getTownTemplePosition", LuaInterface::luaGetTownTemplePosition);
 
 	//getTownHouses(townId)
