@@ -46,13 +46,8 @@ DatabaseMySQL::DatabaseMySQL() :
 
 	my_bool reconnect = true;
 	mysql_options(&m_handle, MYSQL_OPT_RECONNECT, &reconnect);
-	if(!mysql_real_connect(&m_handle, g_config.getString(ConfigManager::SQL_HOST).c_str(), g_config.getString(
-		ConfigManager::SQL_USER).c_str(), g_config.getString(ConfigManager::SQL_PASS).c_str(), g_config.getString(
-		ConfigManager::SQL_DB).c_str(), g_config.getNumber(ConfigManager::SQL_PORT), NULL, 0))
-	{
-		std::clog << "Failed connecting to database - MYSQL ERROR: " << mysql_error(&m_handle) << " (" << mysql_errno(&m_handle) << ")" << std::endl;
+	if(!sqlConnect(false))
 		return;
-	}
 
 	m_connected = true;
 	if(mysql_get_client_version() <= 50019)
@@ -86,7 +81,19 @@ DatabaseMySQL::~DatabaseMySQL()
 	if(m_timeoutTask != 0)
 		Scheduler::getInstance().stopEvent(m_timeoutTask);
 }
-
+bool DatabaseMySQL::sqlConnect(bool _reconnect)
+{
+	if(_reconnect)
+		std::clog << "MYSQL Lost connection, attempting to reconnect..." << std::endl;
+	if(!mysql_real_connect(&m_handle, g_config.getString(ConfigManager::SQL_HOST).c_str(), g_config.getString(
+		ConfigManager::SQL_USER).c_str(), g_config.getString(ConfigManager::SQL_PASS).c_str(), g_config.getString(
+		ConfigManager::SQL_DB).c_str(), g_config.getNumber(ConfigManager::SQL_PORT), NULL, 0))
+	{
+		std::clog << "Failed connecting to database - MYSQL ERROR: " << mysql_error(&m_handle) << " (" << mysql_errno(&m_handle) << ")" << std::endl;
+		return false;
+	}
+	return true;
+}
 bool DatabaseMySQL::getParam(DBParam_t param)
 {
 	switch(param)
@@ -130,7 +137,7 @@ bool DatabaseMySQL::commit()
 
 bool DatabaseMySQL::query(const std::string &query)
 {
-	if(!m_connected)
+	if(!m_connected && !sqlConnect(true))
 		return false;
 
 #ifdef __SQL_QUERY_DEBUG__
@@ -157,7 +164,7 @@ bool DatabaseMySQL::query(const std::string &query)
 
 DBResult* DatabaseMySQL::storeQuery(const std::string &query)
 {
-	if(!m_connected)
+	if(!m_connected && !sqlConnect(true))
 		return NULL;
 
 	int32_t error = 0;

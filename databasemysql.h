@@ -35,6 +35,7 @@ class DatabaseMySQL : public _Database
 		DatabaseMySQL();
 		DATABASE_VIRTUAL ~DatabaseMySQL();
 
+		DATABASE_VIRTUAL bool sqlConnect(bool _reconnect);
 		DATABASE_VIRTUAL bool getParam(DBParam_t param);
 
 		DATABASE_VIRTUAL bool beginTransaction() {return query("BEGIN");}
