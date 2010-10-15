@@ -980,6 +980,7 @@
 	db.lastInsertId()
 	db.stringComparison()
 	db.updateLimiter()
+	db.connected()
 
 	//result table
 	result.getDataInt(resId, s)

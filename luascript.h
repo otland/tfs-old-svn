@@ -689,6 +689,7 @@ class LuaInterface
 		static int32_t luaDatabaseLastInsertId(lua_State* L);
 		static int32_t luaDatabaseStringComparer(lua_State* L);
 		static int32_t luaDatabaseUpdateLimiter(lua_State* L);
+		static int32_t luaDatabaseConnected(lua_State* L);
 
 		static const luaL_Reg luaResultTable[7];
 		static int32_t luaResultGetDataInt(lua_State* L);

@@ -2502,6 +2502,9 @@ const luaL_Reg LuaInterface::luaDatabaseTable[] =
 	//db.updateLimiter()
 	{"updateLimiter", LuaInterface::luaDatabaseUpdateLimiter},
 
+	//db.connected()
+	{"connected", LuaInterface::luaDatabaseConnected},
+
 	{NULL, NULL}
 };
 
@@ -9300,7 +9303,6 @@ int32_t LuaInterface::luaGetTownName(lua_State* L)
 int32_t LuaInterface::luaGetTownTemplePosition(lua_State* L)
 {
 	//getTownTemplePosition(townId)
-
 	uint32_t townId = popNumber(L);
 	if(Town* town = Towns::getInstance()->getTown(townId))
 		pushPosition(L, town->getPosition(), 255);
@@ -10651,6 +10653,13 @@ int32_t LuaInterface::luaDatabaseUpdateLimiter(lua_State* L)
 {
 	//db.updateLimiter()
 	lua_pushstring(L, Database::getInstance()->getUpdateLimiter().c_str());
+	return 1;
+}
+
+int32_t LuaInterface::luaDatabaseConnected(lua_State* L)
+{
+	//db.connected()
+	lua_pushboolean(L, Database::getInstance()->isConnected());
 	return 1;
 }
 
