@@ -681,7 +681,7 @@ class LuaInterface
 		static const luaL_Reg luaSystemTable[2];
 		static int32_t luaSystemTime(lua_State* L);
 
-		static const luaL_Reg luaDatabaseTable[8];
+		static const luaL_Reg luaDatabaseTable[9];
 		static int32_t luaDatabaseExecute(lua_State* L);
 		static int32_t luaDatabaseStoreQuery(lua_State* L);
 		static int32_t luaDatabaseEscapeString(lua_State* L);
