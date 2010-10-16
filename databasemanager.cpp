@@ -615,7 +615,6 @@ uint32_t DatabaseManager::updateDatabase()
 			for(uint32_t i = 0; i < sizeof(queryList) / sizeof(std::string); i++)
 				db->query(queryList[i]);
 
-
 			registerDatabaseConfig("db_version", 13);
 			return 13;
 		}
@@ -1033,24 +1032,23 @@ uint32_t DatabaseManager::updateDatabase()
 				query << " '0';";
 				if(DBResult* result = db->storeQuery(query.str()))
 				{
-					query.str("");
 					do
 					{
 						std::string key = result->getDataString("key");
 						_encrypt(key, false);
 
+						query.str("");
 						query << "UPDATE `accounts` SET `key` = " << db->escapeString(key) << " WHERE `id` = " << result->getDataInt("id") << db->getUpdateLimiter();
 						db->query(query.str());
-						query.str("");
 					}
 					while(result->next());
 					result->free();
 				}
 			}
 
+			query.str("");
 			query << "DELETE FROM `server_config` WHERE `config` " << db->getStringComparer() << "'password_type';";
 			db->query(query.str());
-			query.str("");
 
 			registerDatabaseConfig("encryption", g_config.getNumber(ConfigManager::ENCRYPTION));
 			registerDatabaseConfig("db_version", 23);
@@ -1132,6 +1130,7 @@ uint32_t DatabaseManager::updateDatabase()
 			registerDatabaseConfig("db_version", 26);
 			return 26;
 		}
+
 		case 26:
 		{
 			std::clog << "> Updating database to version 27..." << std::endl;
@@ -1140,6 +1139,7 @@ uint32_t DatabaseManager::updateDatabase()
 			registerDatabaseConfig("db_version", 27);
 			return 27;
 		}
+
 		default:
 			break;
 	}
