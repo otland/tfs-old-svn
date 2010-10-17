@@ -615,6 +615,11 @@ function getItemLevelDoor(itemid)
 	return item and item.levelDoor or false
 end
 
+function isContainer(uid)
+	local thing = getThing(uid)
+	return thing.uid > 0 and type(thing.items) == 'table' and not table.empty(thing.items)
+end
+
 function isItemStackable(itemid)
 	local item = getItemInfo(itemid)
 	return item and item.stackable or false

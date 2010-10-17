@@ -1885,9 +1885,6 @@ void LuaInterface::registerFunctions()
 	//isCreature(cid)
 	lua_register(m_luaState, "isCreature", LuaInterface::luaIsCreature);
 
-	//isContainer(uid)
-	lua_register(m_luaState, "isContainer", LuaInterface::luaIsContainer);
-
 	//isMovable(uid)
 	lua_register(m_luaState, "isMovable", LuaInterface::luaIsMovable);
 
@@ -7337,14 +7334,6 @@ int32_t LuaInterface::luaIsCreature(lua_State* L)
 	//isCreature(cid)
 	ScriptEnviroment* env = getEnv();
 	lua_pushboolean(L, env->getCreatureByUID(popNumber(L)) ? true : false);
-	return 1;
-}
-
-int32_t LuaInterface::luaIsContainer(lua_State* L)
-{
-	//isContainer(uid)
-	ScriptEnviroment* env = getEnv();
-	lua_pushboolean(L, env->getContainerByUID(popNumber(L)) ? true : false);
 	return 1;
 }
 
