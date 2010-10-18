@@ -293,8 +293,8 @@ bool IOLoginData::validRecoveryKey(uint32_t accountId, std::string recoveryKey)
 	Database* db = Database::getInstance();
 
 	DBQuery query;
-	query << "SELECT `id` FROM `accounts` WHERE `id` = " << accountId << " AND `key` ";
-	query << db->getStringComparer() << db->escapeString(recoveryKey) << " LIMIT 1";
+	query << "SELECT `id` FROM `accounts` WHERE `id` = " << accountId << " AND `key` "
+		<< db->getStringComparer() << db->escapeString(recoveryKey) << " LIMIT 1";
 
 	DBResult* result;
 	if(!(result = db->storeQuery(query.str())))

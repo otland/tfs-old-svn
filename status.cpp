@@ -75,7 +75,7 @@ void ProtocolStatus::onRecvFirstMessage(NetworkMessage& msg)
 
 		case 0x01:
 		{
-			uint32_t requestedInfo = msg.get<uint16_t>(); //Only a Byte is necessary, though we could add new infos here
+			uint32_t requestedInfo = msg.get<uint16_t>(); // only a byte is necessary, though we could add new infos here
 			if(OutputMessage_ptr output = OutputMessagePool::getInstance()->getOutputMessage(this, false))
 			{
 				TRACK_MESSAGE(output);

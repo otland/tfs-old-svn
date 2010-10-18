@@ -200,7 +200,7 @@ AC_CHECK_LIB(crypto, main, , [AC_MSG_ERROR("Linking against OpenSSL library fail
 
 
 # check for Lua
-if test "$luaJIT" = "yes" ; then 
+if test "$luaJIT" = "yes" ; then
 	PKG_CHECK_MODULES(LUA, luajit, , [
 		AC_CHECK_HEADERS([luajit-2.0/lua.hpp], ,[AC_MSG_ERROR("LuaJIT header not found.")])
 		AC_CHECK_LIB(luajit, main, , [
@@ -222,6 +222,20 @@ fi
 AC_SUBST(OPTIONAL_FLAGS)
 AC_SUBST(LUA_CFLAGS)
 AC_SUBST(LUA_LIBS)
+
+if test "$useMySQL" = "no" ; then
+	if test "$useSQLite" = "no" ; then
+		if test "$usePostgreSQL" = "no" ; then
+			AM_CONDITIONAL(USE_SQLITE, true)
+			SQLITE_FLAGS=-D__USE_SQLITE__
+			AC_SUBST(SQLITE_FLAGS)
+			useSQLite=yes
+
+			echo WARNING: Any of available database drivers was enabled, using SQLite as default. To enable a database driver, configure with --enable-\<driver\> \(example: --enable-mysql\)
+			echo
+		fi
+	fi
+fi
 
 # check for mysql if it is enabled
 if test -n "$MYSQL_FLAGS"; then
@@ -259,19 +273,6 @@ if test -n "$SQLITE_FLAGS"; then
 	AC_SUBST(SQLITE_LIBS)
 fi
 
-if test "$useMySQL" = "no" ; then
-	if test "$useSQLite" = "no" ; then
-		if test "$usePostgreSQL" = "no" ; then
-			AM_CONDITIONAL(USE_SQLITE, true)
-			SQLITE_FLAGS=-D__USE_SQLITE__
-			AC_SUBST(SQLITE_FLAGS)
-			useSQLite=yes
-
-			echo WARNING: Any of available database drivers was enabled, using SQLite as default. To enable a database driver, configure with --enable-\<driver\> \(example: --enable-mysql\)
-			echo
-		fi
-	fi
-fi
 AC_CONFIG_FILES([Makefile])
 AC_OUTPUT
 

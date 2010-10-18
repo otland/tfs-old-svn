@@ -363,7 +363,7 @@ void ProtocolManager::output(const std::string& message)
 	if(!msg)
 		return;
 
-	TRACK_MESSAGE(msg)
+	TRACK_MESSAGE(msg);
 	msg->put<char>(MP_MSG_OUTPUT);
 	msg->putString(message);
 }
@@ -374,7 +374,7 @@ void ProtocolManager::addUser(Player* player)
 	if(!msg)
 		return;
 
-	TRACK_MESSAGE(msg)
+	TRACK_MESSAGE(msg);
 	msg->put<char>(MP_MSG_USER_ADD);
 
 	msg->put<uint32_t>(player->getID());
@@ -387,7 +387,7 @@ void ProtocolManager::removeUser(uint32_t playerId)
 	if(!msg)
 		return;
 
-	TRACK_MESSAGE(msg)
+	TRACK_MESSAGE(msg);
 	msg->put<char>(MP_MSG_USER_REMOVE);
 	msg->put<uint32_t>(playerId);
 }
@@ -398,7 +398,7 @@ void ProtocolManager::talk(uint32_t playerId, uint16_t channelId, SpeakClasses t
 	if(!msg)
 		return;
 
-	TRACK_MESSAGE(msg)
+	TRACK_MESSAGE(msg);
 	msg->put<char>(MP_MSG_CHAT_MESSAGE);
 	msg->put<uint32_t>(playerId);
 
@@ -413,7 +413,7 @@ void ProtocolManager::addUser(uint32_t playerId, uint16_t channelId)
 	if(!msg)
 		return;
 
-	TRACK_MESSAGE(msg)
+	TRACK_MESSAGE(msg);
 	msg->put<char>(MP_MSG_CHAT_USER_ADD);
 
 	msg->put<uint32_t>(playerId);
@@ -426,7 +426,7 @@ void ProtocolManager::removeUser(uint32_t playerId, uint16_t channelId)
 	if(!msg)
 		return;
 
-	TRACK_MESSAGE(msg)
+	TRACK_MESSAGE(msg);
 	msg->put<char>(MP_MSG_CHAT_USER_REMOVE);
 
 	msg->put<uint32_t>(playerId);

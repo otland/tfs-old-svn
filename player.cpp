@@ -2117,6 +2117,7 @@ bool Player::onDeath()
 {
 	Item* preventLoss = NULL;
 	Item* preventDrop = NULL;
+
 	if(getZone() == ZONE_HARDCORE)
 	{
 		setDropLoot(LOOT_DROP_NONE);

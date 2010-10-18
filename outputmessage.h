@@ -55,7 +55,7 @@ class OutputMessage : public NetworkMessage, boost::noncopyable
 		}
 
 #ifdef __TRACK_NETWORK__
-		virtual void Track(std::string file, int32_t line, std::string func)
+		virtual void track(std::string file, int32_t line, std::string func)
 		{
 			if(lastUses.size() >= 25)
 				lastUses.pop_front();
@@ -70,7 +70,7 @@ class OutputMessage : public NetworkMessage, boost::noncopyable
 			lastUses.clear();
 		}
 
-		void PrintTrace()
+		void printTrace()
 		{
 			uint32_t n = 1;
 			for(std::list<std::string>::const_reverse_iterator it = lastUses.rbegin(); it != lastUses.rend(); ++it, ++n)
@@ -190,7 +190,7 @@ class OutputMessagePool
 };
 
 #ifdef __TRACK_NETWORK__
-	#define TRACK_MESSAGE(omsg) (omsg)->Track(__FILE__, __LINE__, __FUNCTION__)
+	#define TRACK_MESSAGE(omsg) (omsg)->track(__FILE__, __LINE__, __FUNCTION__)
 #else
 	#define TRACK_MESSAGE(omsg)
 #endif

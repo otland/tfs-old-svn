@@ -83,7 +83,7 @@ ReturnValue Spells::onPlayerSay(Player* player, const std::string& words)
 		{
 			reWords = instantSpell->getWords();
 			if(instantSpell->getHasParam())
-				reWords += " \"" + param + "\"";
+				reWords += " \"" + reParam + "\"";
 		}
 
 		return g_game.internalCreatureSay(player, type, reWords, player->isGhost()) ?

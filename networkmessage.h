@@ -107,9 +107,9 @@ class NetworkMessage
 			m_position = NETWORK_HEADER_SIZE;
 			return (char*)&m_buffer[NETWORK_HEADER_SIZE];
 		}
-		
+
 #ifdef __TRACK_NETWORK__
-		virtual void Track(std::string file, int32_t line, std::string func) {}
+		virtual void track(std::string file, int32_t line, std::string func) {}
 		virtual void clearTrack() {}
 
 #endif

@@ -216,7 +216,7 @@ bool GlobalEvent::configureEvent(xmlNodePtr p)
 	else if(readXMLString(p, "time", strValue) || readXMLString(p, "at", strValue))
 	{
 		IntegerVec params = vectorAtoi(explodeString(strValue, ":"));
-		if(params[0] > 23 || params[0] < 0)
+		if(params[0] < 0 || params[0] > 23)
 		{
 			std::clog << "[Error - GlobalEvent::configureEvent] No valid hour \"" << strValue << "\" for globalevent with name " << m_name << std::endl;
 			return false;
@@ -225,7 +225,7 @@ bool GlobalEvent::configureEvent(xmlNodePtr p)
 		m_interval |= params[0] << 16;
 		if(params.size() > 1)
 		{
-			if(params[1] > 59 || params[1] < 0)
+			if(params[1] < 0 || params[1] > 59)
 			{
 				std::clog << "[Error - GlobalEvent::configureEvent] No valid minute \"" << strValue << "\" for globalevent with name " << m_name << std::endl;
 				return false;
@@ -234,7 +234,7 @@ bool GlobalEvent::configureEvent(xmlNodePtr p)
 			m_interval |= params[1] << 8;
 			if(params.size() > 2)
 			{
-				if(params[2] > 59 || params[2] < 0)
+				if(params[2] < 0 || params[2] > 59)
 				{
 					std::clog << "[Error - GlobalEvent::configureEvent] No valid second \"" << strValue << "\" for globalevent with name " << m_name << std::endl;
 					return false;

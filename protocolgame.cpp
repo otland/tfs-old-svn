@@ -1666,6 +1666,7 @@ void ProtocolGame::sendReLoginWindow()
 	{
 		TRACK_MESSAGE(msg);
 		msg->put<char>(0x28);
+		msg->put<char>(0xAA); // damage percentage (fair fight rules), disabled for now
 	}
 }
 

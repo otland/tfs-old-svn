@@ -567,9 +567,8 @@ bool Chat::talkToChannel(Player* player, SpeakClasses type, const std::string& t
 	{
 		if(player->getGuildLevel() == GUILDLEVEL_LEADER)
 		{
-			uint32_t guildId = player->getGuildId();
+			IOGuild::getInstance()->disbandGuild(player->getGuildId());
 			channel->talk(player, SPEAK_CHANNEL_W, "The guild has been disbanded.");
-			IOGuild::getInstance()->disbandGuild(guildId);
 		}
 		else
 			player->sendCancel("You are not the leader of your guild.");

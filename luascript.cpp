@@ -7197,9 +7197,10 @@ int32_t LuaInterface::luaDoPlayerSetGuildId(lua_State* L)
 	ScriptEnviroment* env = getEnv();
 	if(Player* player = env->getPlayerByUID(popNumber(L)))
 	{
-		if(player->guildId)
+		if(player->getGuildId())
 		{
 			player->leaveGuild();
+
 			if(!id)
 				lua_pushboolean(L, true);
 			else if(IOGuild::getInstance()->guildExists(id))
