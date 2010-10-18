@@ -523,6 +523,14 @@ bool TalkAction::houseSell(Creature* creature, const std::string&, const std::st
 		return false;
 	}
 
+	Tile* tile = g_game.getTile(player->getPosition());
+	if(!tile || !tile->getHouseTile() || tile->getHouseTile()->getHouse() != house)
+	{
+		player->sendCancel("You have to be inside a house that you would like to sell.");
+		g_game.addMagicEffect(player->getPosition(), MAGIC_EFFECT_POFF);
+		return false;
+	}
+
 	Player* tradePartner = NULL;
 	ReturnValue ret = g_game.getPlayerByNameWildcard(param, tradePartner);
 	if(ret != RET_NOERROR)
