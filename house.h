@@ -197,6 +197,8 @@ class House
 		void addBed(BedItem* bed);
 		HouseBedItemList::iterator getHouseBedsBegin() {return bedsList.begin();}
 		HouseBedItemList::iterator getHouseBedsEnd() {return bedsList.end();}
+		size_t getBedTiles() {return bedsList.size();}
+		uint32_t getBedCount() {return (uint32_t)std::ceil((double)getBedTiles() / 2);} //each bed takes 2 sqms of space, ceil is just for bad maps
 
 	private:
 		void updateDoorDescription();

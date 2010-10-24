@@ -375,7 +375,7 @@ uint32_t CreatureEvent::executeOnPrepareDeath(Player* player, Creature* killer)
 
 uint32_t CreatureEvent::executeOnDeath(Creature* creature, Item* corpse, Creature* killer, Creature* mostDamageKiller, bool lastHitUnjustified, bool mostDamageUnjustified)
 {
-	//onDeath(cid, corpse, killer, mostdamage, unjustified, mostdamageunjustified)
+	//onDeath(cid, corpse, lasthitkiller, mostdamagekiller, lasthitunjustified, mostdamageunjustified)
 	if(m_scriptInterface->reserveScriptEnv())
 	{
 		ScriptEnviroment* env = m_scriptInterface->getScriptEnv();

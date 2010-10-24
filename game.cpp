@@ -4551,12 +4551,11 @@ bool Game::reloadHighscores()
 
 void Game::timedHighscoreUpdate()
 {
-	reloadHighscores();
-
 	int highscoreUpdateTime = g_config.getNumber(ConfigManager::HIGHSCORES_UPDATETIME) * 1000 * 60;
 	if(highscoreUpdateTime <= 0)
 		return;
 
+	reloadHighscores();
 	g_scheduler.addEvent(createSchedulerTask(highscoreUpdateTime, boost::bind(&Game::timedHighscoreUpdate, this)));
 }
 

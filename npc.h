@@ -47,8 +47,8 @@ class NpcScriptInterface : public LuaScriptInterface
 
 		bool loadNpcLib(std::string file);
 
-		static void pushState(lua_State *L, NpcState* state);
-		static void popState(lua_State *L, NpcState* &state);
+		static void pushState(lua_State* L, NpcState* state);
+		static void popState(lua_State* L, NpcState* &state);
 
 	protected:
 		virtual void registerFunctions();
