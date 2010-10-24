@@ -23,6 +23,7 @@
 	M The Forgotten Server.exe
 	M config.lua
 	M data/global.lua
+	A data/items/items.xsd
 	M data/XML/outfits.xml
 ]
 
