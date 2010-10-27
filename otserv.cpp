@@ -301,7 +301,7 @@ int main(int argc, char* argv[])
 	Dispatcher::getInstance().addTask(createTask(boost::bind(otserv, args, &servicer)));
 	g_loaderSignal.wait(g_loaderUniqueLock);
 
-	boost::this_thread::sleep(boost::posix_time::milliseconds(10000));
+	boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
 	if(servicer.isRunning())
 	{
 		std::clog << ">> " << g_config.getString(ConfigManager::SERVER_NAME) << " server Online!" << std::endl << std::endl;
@@ -552,21 +552,21 @@ void otserv(StringVec, ServiceManager* services)
 	BN_dec2bn(&g_RSA->d, g_config.getString(ConfigManager::RSA_PRIVATE).c_str());
 	BN_dec2bn(&g_RSA->n, g_config.getString(ConfigManager::RSA_MODULUS).c_str());
 	BN_dec2bn(&g_RSA->e, g_config.getString(ConfigManager::RSA_PUBLIC).c_str());
-	
+
 	// This check will verify keys set in config.lua
 	if(RSA_check_key(g_RSA))
 	{
 		std::clog << std::endl << "> Calculating dmp1, dmq1 and iqmp for RSA...";
+
 		// Ok, now we calculate a few things, dmp1, dmq1 and iqmp
 		BN_CTX* ctx = BN_CTX_new();
-		BN_CTX_start(ctx);	
+		BN_CTX_start(ctx);
 
 		BIGNUM *r1 =  BN_CTX_get(ctx), *r2 =  BN_CTX_get(ctx);
 		BN_mod(g_RSA->dmp1, g_RSA->d, r1, ctx);
 		BN_mod(g_RSA->dmq1, g_RSA->d, r2, ctx);
 
-		BN_mod_inverse(g_RSA->iqmp, g_RSA->q, g_RSA->p, ctx);		
-
+		BN_mod_inverse(g_RSA->iqmp, g_RSA->q, g_RSA->p, ctx);
 	}
 
 	// So it's fucked now?
@@ -574,14 +574,14 @@ void otserv(StringVec, ServiceManager* services)
 	{
 		std::stringstream s;
 		s << std::endl << "> OpenSSL failed - ";
-	
+
 		ERR_load_crypto_strings();
 		s << ERR_error_string(ERR_get_error(), NULL);
 		startupErrorMessage(s.str());
 	}
 	else
 		std::clog << " done" << std::endl;
-	
+
 	std::clog << ">> Starting SQL connection" << std::endl;
 	Database* db = Database::getInstance();
 	if(db && db->isConnected())

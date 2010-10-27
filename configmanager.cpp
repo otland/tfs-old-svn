@@ -99,7 +99,7 @@ bool ConfigManager::load()
 		m_confNumber[MYSQL_READ_TIMEOUT] = getGlobalNumber("mysqlReadTimeout", 10);
 		m_confNumber[MYSQL_WRITE_TIMEOUT] = getGlobalNumber("mysqlWriteTimeout", 10);
 		m_confBool[OPTIMIZE_DATABASE] = getGlobalBool("startupDatabaseOptimization", true);
-		m_confString[MAP_NAME] = getGlobalString("mapName", "forgotten.otbm.gz");
+		m_confString[MAP_NAME] = getGlobalString("mapName", "forgotten.otbm");
 		m_confBool[GLOBALSAVE_ENABLED] = getGlobalBool("globalSaveEnabled", true);
 		m_confNumber[GLOBALSAVE_H] = getGlobalNumber("globalSaveHour", 8);
 		m_confNumber[GLOBALSAVE_M] = getGlobalNumber("globalSaveMinute", 0);
@@ -107,7 +107,6 @@ bool ConfigManager::load()
 		m_confNumber[WORLD_ID] = getGlobalNumber("worldId", 0);
 		m_confBool[RANDOMIZE_TILES] = getGlobalBool("randomizeTiles", true);
 		m_confBool[STORE_TRASH] = getGlobalBool("storeTrash", true);
-		m_confBool[EXPERIENCE_STAGES] = getGlobalBool("experienceStages", false);
 		m_confString[DEFAULT_PRIORITY] = getGlobalString("defaultPriority", "high");
 		m_confBool[GUILD_HALLS] = getGlobalBool("guildHalls", false);
 		#ifndef __LOGIN_SERVER__
@@ -139,6 +138,7 @@ bool ConfigManager::load()
 	m_confString[LOCATION] = getGlobalString("location");
 	m_confString[MOTD] = getGlobalString("motd");
 	m_confNumber[ALLOW_CLONES] = getGlobalNumber("allowClones", 0);
+	m_confBool[EXPERIENCE_STAGES] = getGlobalBool("experienceStages", false);
 	m_confDouble[RATE_EXPERIENCE] = getGlobalDouble("rateExperience", 1);
 	m_confDouble[RATE_SKILL] = getGlobalDouble("rateSkill", 1);
 	m_confDouble[RATE_MAGIC] = getGlobalDouble("rateMagic", 1);

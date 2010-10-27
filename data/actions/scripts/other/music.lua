@@ -40,7 +40,7 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 		position.x = position.x + 1
 
 		doSendMagicEffect(fromPosition, CONST_ME_SOUND_PURPLE)
-		doSummonCreature("Wolf", pos)
+		doSummonCreature("Wolf", position)
 	else
 		local effect = CONST_ME_SOUND_BLUE
 		if(item.itemid == HORN) then

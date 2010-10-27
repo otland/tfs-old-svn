@@ -76,8 +76,6 @@ Game::Game()
 	worldType = WORLDTYPE_OPEN;
 	map = NULL;
 	playersRecord = lastStageLevel = 0;
-	for(int32_t i = 0; i < 3; i++)
-		globalSaveMessage[i] = false;
 
 	//(1440 minutes/day) * 10 seconds event interval / (3600 seconds/day)
 	lightHourDelta = 1440 * 10 / 3600;
@@ -110,66 +108,92 @@ void Game::start(ServiceManager* servicer)
 #endif
 
 	services = servicer;
-	if(!g_config.getBool(ConfigManager::GLOBALSAVE_ENABLED) || g_config.getNumber(ConfigManager::GLOBALSAVE_H) < 1 ||
-		g_config.getNumber(ConfigManager::GLOBALSAVE_H) > 24 || g_config.getNumber(ConfigManager::GLOBALSAVE_M) < 0
-		|| g_config.getNumber(ConfigManager::GLOBALSAVE_M) > 59)
+	if(!g_config.getBool(ConfigManager::GLOBALSAVE_ENABLED))
 		return;
+
+	int32_t prepareHour = g_config.getNumber(ConfigManager::GLOBALSAVE_H),
+		prepareMinute = g_config.getNumber(ConfigManager::GLOBALSAVE_M);
+
+	if(prepareHour < 0 || prepareHour > 24)
+	{
+		std::clog << "> WARNING: No valid hour (" << prepareHour << ") for a global save, should be between 0-23. Global save disabled." << std::endl;
+		return;
+	}
+
+	if(prepareMinute < 0 || prepareMinute > 59)
+	{
+		std::clog << "> WARNING: No valid minute (" << prepareMinute << ") for a global save, should be between 0-59. Global save disabled." << std::endl;
+		return;
+	}
 
 	time_t timeNow = time(NULL);
 	const tm* theTime = localtime(&timeNow);
 
-	int32_t prepareHour = g_config.getNumber(ConfigManager::GLOBALSAVE_H),
-		prepareMinute = g_config.getNumber(ConfigManager::GLOBALSAVE_M) - 5,
-		hoursLeft = 0, minutesLeft = 0;
-	if(theTime->tm_hour > prepareHour)
+	int32_t hour = theTime->tm_hour, minute = theTime->tm_min, second = theTime->tm_sec,
+		hoursLeft = 0, minutesLeft = 0, broadcast = 5;
+
+	if(prepareHour == 0)
+		prepareHour = 24;
+
+	if(hour != prepareHour)
 	{
-		hoursLeft = 23 - (theTime->tm_hour - prepareHour);
-		if(theTime->tm_min > prepareMinute)
+		if(prepareMinute >= 5)
+			prepareMinute -= 5;
+		else
 		{
-			minutesLeft = 60 - (theTime->tm_min - prepareMinute);
+			prepareHour--;
+			prepareMinute = 55 + prepareMinute;
+		}
+
+		if(hour > prepareHour)
+			hoursLeft = 24 - (hour - prepareHour);
+		else
+			hoursLeft = prepareHour - hour;
+
+		if(minute > prepareMinute)
+		{
+			minutesLeft = 60 - (minute - prepareMinute);
 			hoursLeft--;
 		}
-		else if(theTime->tm_min != prepareMinute)
-			minutesLeft = prepareMinute - theTime->tm_min;
-	}
-	else if(theTime->tm_hour == prepareHour)
-	{
-		if(theTime->tm_min > (prepareMinute - 1) && theTime->tm_min < (prepareMinute + 6))
-		{
-			if(theTime->tm_min > (prepareMinute + 1))
-				setGlobalSaveMessage(0, true);
-
-			if(theTime->tm_min > (prepareMinute + 3))
-				setGlobalSaveMessage(1, true);
-
-			prepareGlobalSave();
-		}
-		else if(theTime->tm_min > prepareMinute)
-		{
-			minutesLeft = 60 - (theTime->tm_min - prepareMinute);
-			hoursLeft = 23;
-		}
-		else
-			minutesLeft = prepareMinute - theTime->tm_min;
+		else if(minute != prepareMinute)
+			minutesLeft = prepareMinute - minute;
 	}
 	else
 	{
-		hoursLeft = prepareHour - theTime->tm_hour;
-		if(theTime->tm_min > prepareMinute)
+		if(minute > prepareMinute)
 		{
-			minutesLeft = 60 - (theTime->tm_min - prepareMinute);
-			hoursLeft--;
+			minutesLeft = 55 - (minute - prepareMinute);
+			hoursLeft = 23;
 		}
-		else if(theTime->tm_min != prepareMinute)
-			minutesLeft = prepareMinute - theTime->tm_min;
+		else
+		{
+			minutesLeft = prepareMinute - minute;
+			if(minutesLeft >= 5)
+				minutesLeft = minutesLeft - 5;
+			else if(minutesLeft == 3 || minutesLeft == 1)
+			{
+				prepareGlobalSave(minutesLeft);
+				return;
+			}
+			else if(minutesLeft > 0)
+			{
+				broadcast = (minutesLeft == 2 ? 1 : 3);
+				minutesLeft = 1;
+			}
+		}
 	}
-
-	if(!hoursLeft || !minutesLeft)
-		return;
-
-	uint32_t timeLeft = (hoursLeft * 3600000) + minutesLeft * 60000;
-	saveEvent = Scheduler::getInstance().addEvent(createSchedulerTask(timeLeft,
-		boost::bind(&Game::prepareGlobalSave, this)));
+/*
+	std::clog << "Hours left: " << hoursLeft << std::endl;
+	std::clog << "Minutes left: " << minutesLeft << std::endl;
+	std::clog << "broadcast: " << broadcast << std::endl;
+*/
+	uint32_t timeLeft = (hoursLeft * 60 * 60 * 1000) + (minutesLeft * 60 * 1000);
+	if(timeLeft > 0)
+	{
+		timeLeft -= second * 1000;
+		saveEvent = Scheduler::getInstance().addEvent(createSchedulerTask(timeLeft,
+			boost::bind(&Game::prepareGlobalSave, this, broadcast)));
+	}
 }
 
 void Game::loadGameState()
@@ -5722,7 +5746,11 @@ double Game::getExperienceStage(uint32_t level, double divider/* = 1.*/)
 bool Game::loadExperienceStages()
 {
 	if(!g_config.getBool(ConfigManager::EXPERIENCE_STAGES))
+	{
+		if(!stages.empty())
+			stages.clear();
 		return true;
+	}
 
 	xmlDocPtr doc = xmlParseFile(getFilePath(FILE_TYPE_XML, "stages.xml").c_str());
 	if(!doc)
@@ -6212,7 +6240,7 @@ bool Game::reloadInfo(ReloadInfo_t reload, uint32_t playerId/* = 0*/)
 		}
 	}
 
-	if(reload != RELOAD_MODS && !ScriptManager::getInstance()->reloadMods())
+	if(reload != RELOAD_CONFIG && reload != RELOAD_MODS && !ScriptManager::getInstance()->reloadMods())
 		std::clog << "[Error - Game::reloadInfo] Failed to reload mods." << std::endl;
 
 	if(!playerId)
@@ -6236,30 +6264,36 @@ bool Game::reloadInfo(ReloadInfo_t reload, uint32_t playerId/* = 0*/)
 	return false;
 }
 
-void Game::prepareGlobalSave()
+void Game::prepareGlobalSave(uint8_t minutes)
 {
-	if(!globalSaveMessage[0])
+	std::clog << "Game::prepareGlobalSave in " << (uint32_t)minutes << " minutes" << std::endl;
+	switch(minutes)
 	{
-		setGameState(GAMESTATE_CLOSING);
-		globalSaveMessage[0] = true;
+		case 5:
+			setGameState(GAMESTATE_CLOSING);
+			broadcastMessage("Server is going down for a global save within 5 minutes. Please logout.", MSG_STATUS_WARNING);
+			Scheduler::getInstance().addEvent(createSchedulerTask(2 * 60000, boost::bind(&Game::prepareGlobalSave, this, 3)));
+			break;
 
-		broadcastMessage("Server is going down for a global save within 5 minutes. Please logout.", MSG_STATUS_WARNING);
-		Scheduler::getInstance().addEvent(createSchedulerTask(120000, boost::bind(&Game::prepareGlobalSave, this)));
+		case 3:
+			broadcastMessage("Server is going down for a global save within 3 minutes. Please logout.", MSG_STATUS_WARNING);
+			Scheduler::getInstance().addEvent(createSchedulerTask(2 * 60000, boost::bind(&Game::prepareGlobalSave, this, 1)));
+			break;
+
+		case 1:
+			broadcastMessage("Server is going down for a global save in one minute, please logout!", MSG_STATUS_WARNING);
+			Scheduler::getInstance().addEvent(createSchedulerTask(60000, boost::bind(&Game::prepareGlobalSave, this, 0)));
+			break;
+
+		case 0:
+			globalSave();
+			break;
+
+		default:
+			if(minutes > 5)
+				Scheduler::getInstance().addEvent(createSchedulerTask((minutes - 5) * 1000, boost::bind(&Game::prepareGlobalSave, this, 5)));
+			break;
 	}
-	else if(!globalSaveMessage[1])
-	{
-		globalSaveMessage[1] = true;
-		broadcastMessage("Server is going down for a global save within 3 minutes. Please logout.", MSG_STATUS_WARNING);
-		Scheduler::getInstance().addEvent(createSchedulerTask(120000, boost::bind(&Game::prepareGlobalSave, this)));
-	}
-	else if(!globalSaveMessage[2])
-	{
-		globalSaveMessage[2] = true;
-		broadcastMessage("Server is going down for a global save in one minute, please logout!", MSG_STATUS_WARNING);
-		Scheduler::getInstance().addEvent(createSchedulerTask(60000, boost::bind(&Game::prepareGlobalSave, this)));
-	}
-	else
-		globalSave();
 }
 
 void Game::globalSave()
@@ -6293,12 +6327,9 @@ void Game::globalSave()
 
 	//reload everything
 	reloadInfo(RELOAD_ALL);
-	//reset variables
-	for(int16_t i = 0; i < 3; i++)
-		setGlobalSaveMessage(i, false);
 
 	//prepare for next global save after 24 hours
-	Scheduler::getInstance().addEvent(createSchedulerTask(86100000, boost::bind(&Game::prepareGlobalSave, this)));
+	Scheduler::getInstance().addEvent(createSchedulerTask(((24 * 60 * 60) - (5 * 60)) * 1000, boost::bind(&Game::prepareGlobalSave, this, 5)));
 	//open server
 	Dispatcher::getInstance().addTask(createTask(boost::bind(&Game::setGameState, this, GAMESTATE_NORMAL)));
 }

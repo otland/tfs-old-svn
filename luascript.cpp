@@ -10507,7 +10507,17 @@ int32_t LuaInterface::luaL_errors(lua_State* L)
 	{\
 		StringVec data;\
 		for(int32_t i = 0, params = lua_gettop(L); i < params; ++i)\
-			data.push_back(popString(L));\
+		{\
+			if(lua_isnil(L, -1))\
+			{\
+				data.push_back("nil");\
+				lua_pop(L, 1);\
+			}\
+			else if(lua_istable(L, -1)) {/* "table: address" */}\
+			else if(lua_isfunction(L, -1)) {/* "function: address" */}\
+			else\
+				data.push_back(popString(L));\
+		}\
 \
 		for(StringVec::reverse_iterator it = data.rbegin(); it != data.rend(); ++it)\
 			Stream << (*it) << std::endl;\

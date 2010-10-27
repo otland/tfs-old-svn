@@ -43,11 +43,12 @@ DatabaseSQLite::DatabaseSQLite()
 	// Initialize sqlite
 	if(sqlite3_open(g_config.getString(ConfigManager::SQL_FILE).c_str(), &m_handle) != SQLITE_OK)
 	{
-		std::clog << "Failed to initialize SQLite connection." << std::endl;
+		std::clog << "Failed to initialize SQLite connection: " << sqlite3_errmsg(m_handle) << " (" << sqlite3_errcode(m_handle) << ")" << std::endl;
 		sqlite3_close(m_handle);
+		return;
 	}
-	else
-		m_connected = true;
+
+	m_connected = true;
 }
 
 bool DatabaseSQLite::getParam(DBParam_t param)

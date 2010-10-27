@@ -1,10 +1,5 @@
-local config = {
-	useFragHandler = getBooleanFromString(getConfigValue('useFragHandler')),
-	advancedFragList = getBooleanFromString(getConfigValue('advancedFragList'))
-}
-
 function onSay(cid, words, param, channel)
-	if(not config.useFragHandler) then
+	if(not getBooleanFromString(getConfigValue('useFragHandler'))) then
 		return false
 	end
 
@@ -35,7 +30,8 @@ function onSay(cid, words, param, channel)
 		week = table.maxn(contents.week),
 		month = table.maxn(contents.month)
 	}
-	if(config.advancedFragList) then
+
+	if(getBooleanFromString(getConfigValue('advancedFragList'))) then
 		local result = "Frags gained today: " .. size.day .. "."
 		if(size.day > 0) then
 			for _, content in ipairs(contents.day) do

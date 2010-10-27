@@ -554,7 +554,7 @@ void Manager::removeUser(uint32_t playerId, uint16_t channelId)
 	{
 		if(it->second && it->first->checkChannel(channelId))
 			it->first->removeUser(playerId, channelId);
-        }
+	}
 }
 
 void ProtocolManager::addLogLine(LogType_t type, std::string message)

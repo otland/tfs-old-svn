@@ -450,9 +450,9 @@
 
 				Example
 					if getPlayerFlagValue(cid, PlayerFlag_CanSummonAll) then --if can
-						doSummonCreature("Demon", fromPosition.x + 1)
+						doSummonCreature("Demon", fromPosition)
 					else --if cant
-						doSummonCreature("Rat", fromPosition.x + 1)
+						doSummonCreature("Rat", fromPosition)
 					end
 
 			getPlayerCustomFlagValue(cid, flag)
@@ -582,7 +582,7 @@
 
 				Example
 					if getPlayerLevel(cid) >= 10 then --checking level
-						doSummonCreature("Chicken", fromPosition.x + 1)
+						doSummonCreature("Chicken", fromPosition)
 					else
 						doPlayerSendCancel(cid, "Sorry, your level isnt enought to summon this monster.")
 					end
@@ -1170,7 +1170,7 @@
 	getTileZoneInfo(pos)
 	debugPrint(text)
 	doShutdown()
-	doSummonCreature(name, pos)
+	doSummonCreature(name, pos[, extend = false[, force = false[, displayError = true]]])
 	getOnlinePlayers()
 	getPlayerByName(name)
 	isPlayerGhost(cid)

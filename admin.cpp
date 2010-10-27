@@ -531,7 +531,7 @@ void ProtocolAdmin::adminCommandSendMail(const std::string& xmlData)
 	OutputMessagePool::getInstance()->send(output);
 }
 
-Admin::Admin(): m_currrentConnections(0), m_encrypted(false),
+Admin::Admin(): m_currentConnections(0), m_encrypted(false),
 	m_key_RSA1024XTEA(NULL)
 {
 	std::string strValue = g_config.getString(ConfigManager::ADMIN_ENCRYPTION);
@@ -562,17 +562,17 @@ Admin::~Admin()
 
 bool Admin::addConnection()
 {
-	if(m_currrentConnections >= g_config.getNumber(ConfigManager::ADMIN_CONNECTIONS_LIMIT))
+	if(m_currentConnections >= g_config.getNumber(ConfigManager::ADMIN_CONNECTIONS_LIMIT))
 		return false;
 
-	m_currrentConnections++;
+	m_currentConnections++;
 	return true;
 }
 
 void Admin::removeConnection()
 {
-	if(m_currrentConnections > 0)
-		m_currrentConnections--;
+	if(m_currentConnections > 0)
+		m_currentConnections--;
 }
 
 uint16_t Admin::getPolicy() const

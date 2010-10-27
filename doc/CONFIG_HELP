@@ -16,15 +16,16 @@
 ]
 
 [ ABOUT
-	List with all, possible to use in config.lua file, config values.
-	It contains info, possible and default value.
+	List of all possible config options, containing default values and additional informations.
+	Config file is loaded at server startup and can be reloaded while server is running.
+	However, there are few options that cannot be reloaded.
 ]
 
 [ LIST
 	*ACCOUNT MANAGER
 		accountManager
 			Defines if account manager should be enabled.
-			Disable it if you're using website and don't need such feature (it's a part of AAC).
+			Should be disabled if you're using website to manage accounts.
 			Default: yes
 
 		namelockManager
@@ -34,34 +35,35 @@
 			Default: no
 
 		newPlayerChooseVoc
-			Ignore if your account manager is disabled.
+			Ignored if account manager is disabled.
 			Default: no
 
 		newPlayerSpawnPosX
-			Ignore if your account manager is disabled.
+			Ignored if account manager is disabled.
 			Default: 100
 
 		newPlayerSpawnPosY
-			Ignore if your account manager is disabled.
+			Ignored if account manager is disabled.
 			Default: 100
 
 		newPlayerSpawnPosZ
-			Ignore if your account manager is disabled.
+			Ignored if account manager is disabled.
 			Default: 7
 
 		newPlayerTownId
-			Ignore if your account manager is disabled.
+			Ignored if account manager is disabled.
 			Default: 1
 
 		newPlayerLevel
-			Ignore if your account manager is disabled.
+			Ignored if account manager is disabled.
 			Default: 1
 
 		newPlayerMagicLevel
-			Ignore if your account manager is disabled.
+			Ignored if account manager is disabled.
 			Default: 0
 
 		generateAccountNumber
+			Ignored if account manager is disabled.
 			Default: yes
 
 	*UNJUSTIFIED KILLS
@@ -301,10 +303,6 @@
 			so please keep in mind the default configuration that is easy and works.
 			Default: 7172
 
-		adminPort
-			Port where admin protocol will listen.
-			Default: 7171
-
 		statusPort
 			Port where status protocol will listen.
 			Default: 7171
@@ -342,10 +340,10 @@
 			Default: yes
 
 		allowClones
-			Allow multiple client logins on one character.
-			Mostly used on pvp-enfo servers where you have a few characters
+			How many different clients can be logged on one character simultaneously.
+			Mostly used on pvp-enfo servers where you have a few common characters.
 				and all of them are able to login on one character, e.g 'Master Sorcerer'
-			Default: no
+			Default: 0
 
 		serverName
 			Default: Forgotten
@@ -358,11 +356,11 @@
 			Minimal interval for specified IP address to request server status again.
 			Use lower value, if you use website which is requesting status frequently.
 			In miliseconds.
-			Default: 5 * 60 * 1000 (5 hours)
+			Default: 5 * 60 * 1000 (5 minutes)
 
 		replaceKickOnLogin
-			If player is online and other player tries to connect,
-				should player in game be kicked and new client be able to connect and replace him?
+			If character is online and other client tries to connect,
+				should client in game be kicked and new client be able to connect replacing old one?
 			Default: yes
 
 		forceSlowConnectionsToDisconnect
@@ -419,13 +417,13 @@
 
 		encryptionType
 			Defines how passwords should be stored in database.
-			*WARNING: Using plain passwords is not recommented!*
-			Values: plain, md5, sha1
-			Default: plain
+				WARNING: Using plain passwords is not recommended and may lead
+			Values: md5, sha1, sha256, sha512, vahash, plain
+			Default: sha1
 
 	*DEATHLIST
 		deathListEnabled
-			Should players' deaths be storaged in database?
+			Should players' deaths be stored in database?
 			Default: yes
 
 		deathListRequiredTime
@@ -499,7 +497,8 @@
 			Default: no
 
 		housePriceEachSquare
-			House price
+			House price for each square.
+				Final price for a house is: number of squares * price
 			Default: 1000
 
 		houseRentPeriod
@@ -512,7 +511,7 @@
 			Default: 0
 
 		guildHalls
-			Use guild halls system, allowing to buy guild hall only bu guild leader. All members will be auto invited.
+			Use guild halls system, allowing to buy guild hall only by guild leader. All members will be auto invited.
 				You can mark house as guild hall in map editor.
 			Default: no
 
@@ -538,9 +537,8 @@
 
 	*MAP
 		mapName
-			Map name which server will load.
-			NOTE: if map file is named 'somemap.otbm' then just paste here 'somemap'.
-			Default: forgotten
+			Map file name. Have to be located in world/ directory.
+			Default: forgotten.otbm
 
 		mapAuthor
 			Map author. Used by status protocol (ots lists)
@@ -612,8 +610,12 @@
 
 	*MISCELLANEOUS
 		dataDirectory
-			Directory, from where all data used be server is loaded.
+			Directory where server should lookup for all its files.
 			Default: data/
+
+		logsDirectory
+			Directory, where server should save its log files.
+			Default: logs/
 
 		allowChangeOutfit
 			Should player's be able to change their outfits?
@@ -655,8 +657,8 @@
 			Default: no
 
 		unifiedSpells
-			In the screen and the default channel it will be show only the name of the spell.
-				For example: "Ex Ura" or "exura ""im the best sorcer" will be show as exura.
+			In the screen and the default channel it will show only the name of the spell.
+				For example: "Ex Ura" or "exura ""im the best sorcer" will be shown as exura.
 			In global Tibia it's enabled. (it has been added in 8.6 update)
 			Default: yes
 
@@ -681,8 +683,8 @@
 
 		monsterLootMessageType
 			Type/id(color) of loot message.
-			You can use values from 18 to 27.
-			Default: 25 (green)
+			Valid range: 13-22.
+			Default: 19 (green)
 
 	*GHOST MODE
 		ghostModeInvisibleEffect
@@ -691,8 +693,8 @@
 			Default: no
 
 		ghostModeSpellEffects
-			Display effects while casting spells in ghost mode?
-			If 'no', then no one will see that ghost GM casted a spell.
+			Display effects while casting spells in a ghost mode?
+			If 'no', then no one will see that character in a ghost mode casted a spell.
 			Default: yes
 
 	*LIMITS
@@ -951,4 +953,32 @@
 
 		truncateLogsOnStartup
 			Default: no
+
+
+	*ADMIN
+	adminPort = 7171
+	adminLogs = true
+	adminPassword = ""
+	adminLocalhostOnly = true
+	adminConnectionsLimit = 1
+	adminRequireLogin = true
+	adminEncryption = ""
+	adminEncryptionData = ""
+
+	*MANAGER
+		managerPort
+			Default: 7171
+
+		managerLogs
+			Default: true
+
+		managerPassword
+			Left blank disables manager.
+			Default: ""
+
+		managerLocalhostOnly
+			Default: true
+
+		managerConnectionsLimit
+			Default: 1
 ]

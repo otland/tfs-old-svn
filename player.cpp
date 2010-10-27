@@ -2226,7 +2226,7 @@ bool Player::onDeath()
 
 		blessings = 0;
 		loginPosition = masterPosition;
-		if(!inventory[SLOT_BACKPACK])
+		if(!inventory[SLOT_BACKPACK]) // TODO: you should receive the bag after you login back
 			__internalAddThing(SLOT_BACKPACK, Item::CreateItem(g_config.getNumber(ConfigManager::DEATH_CONTAINER)));
 
 		sendIcons();
@@ -4162,12 +4162,11 @@ bool Player::addUnjustifiedKill(const Player* attacked, bool countNow)
 		PlayerCustomFlag_NotGainSkull) || attacked == this)
 		return false;
 
-	if(client && countNow)
+	if(countNow)
 	{
 		char buffer[90];
-		sprintf(buffer, "Warning! The murder of %s was not justified.",
-			attacked->getName().c_str());
-		client->sendTextMessage(MSG_STATUS_WARNING, buffer);
+		sprintf(buffer, "Warning! The murder of %s was not justified.", attacked->getName().c_str());
+		sendTextMessage(MSG_STATUS_WARNING, buffer);
 	}
 
 	time_t now = time(NULL), today = (now - 84600), week = (now - (7 * 84600));

@@ -160,7 +160,7 @@ class Game
 
 		bool isSwimmingPool(Item* item, const Tile* tile, bool checkProtection) const;
 
-		void prepareGlobalSave();
+		void prepareGlobalSave(uint8_t minutes);
 		void globalSave();
 
 		/**
@@ -175,7 +175,7 @@ class Game
 		  * \param width width of the map
 		  * \param height height of the map
 		  */
-		inline void getMapDimensions(uint32_t& width, uint32_t& height) const 
+		inline void getMapDimensions(uint32_t& width, uint32_t& height) const
 		{
 			width = map->mapWidth;
 			height = map->mapHeight;
@@ -620,9 +620,6 @@ class Game
 		inline StageList::const_iterator getLastStage() const {return stages.end();}
 		size_t getStagesCount() const {return stages.size();}
 
-		void setGlobalSaveMessage(int16_t key, bool value) {globalSaveMessage[key] = value;}
-		bool getGlobalSaveMessage(int16_t key) const {return globalSaveMessage[key];}
-
 		Map* getMap() {return map;}
 		const Map* getMap() const {return map;}
 
@@ -683,8 +680,6 @@ class Game
 #ifdef __WAR_SYSTEM__
 		uint32_t checkWarsEvent;
 #endif
-		bool globalSaveMessage[2];
-
 		RefreshTiles refreshTiles;
 		Trash trash;
 

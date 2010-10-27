@@ -160,7 +160,7 @@ class Admin
 	protected:
 		Admin();
 
-		int32_t m_currrentConnections;
+		int32_t m_currentConnections;
 		bool m_encrypted;
 
 		RSA* m_key_RSA1024XTEA;
