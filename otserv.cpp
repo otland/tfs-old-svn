@@ -468,11 +468,6 @@ void otserv(StringVec, ServiceManager* services)
 		g_config.setNumber(ConfigManager::ENCRYPTION, ENCRYPTION_SHA512);
 		std::clog << "> Using SHA512 encryption" << std::endl;
 	}
-	else if(encryptionType == "vahash")
-	{
-		g_config.setNumber(ConfigManager::ENCRYPTION, ENCRYPTION_VAHASH);
-		std::clog << "> Using VAHash encryption" << std::endl;
-	}
 	else
 	{
 		g_config.setNumber(ConfigManager::ENCRYPTION, ENCRYPTION_PLAIN);
@@ -481,69 +476,71 @@ void otserv(StringVec, ServiceManager* services)
 			<< "> Please set encryptionType = \"sha1\" (or any other available method) in config.lua" << std::endl;
 		boost::this_thread::sleep(boost::posix_time::seconds(30));
 	}
-
-	std::clog << ">> Checking software version...";
-	if(xmlDocPtr doc = xmlParseFile(VERSION_CHECK))
-	{
-		xmlNodePtr p, root = xmlDocGetRootElement(doc);
-		if(!xmlStrcmp(root->name, (const xmlChar*)"versions"))
+	if(VERSION_BUILD) {
+		std::clog << ">> Checking software version...";
+		if(xmlDocPtr doc = xmlParseFile(VERSION_CHECK))
 		{
-			p = root->children->next;
-			if(!xmlStrcmp(p->name, (const xmlChar*)"entry"))
+			xmlNodePtr p, root = xmlDocGetRootElement(doc);
+			if(!xmlStrcmp(root->name, (const xmlChar*)"versions"))
 			{
-				std::string version;
-				int32_t patch, build, timestamp;
-
-				bool tmp = false;
-				if(readXMLString(p, "version", version) && version != SOFTWARE_VERSION)
-					tmp = true;
-
-				if(readXMLInteger(p, "patch", patch) && patch > VERSION_PATCH)
-					tmp = true;
-
-				if(readXMLInteger(p, "build", build) && build > VERSION_BUILD)
-					tmp = true;
-
-				if(readXMLInteger(p, "timestamp", timestamp) && timestamp > VERSION_TIMESTAMP)
-					tmp = true;
-
-				if(tmp)
+				p = root->children->next;
+				if(!xmlStrcmp(p->name, (const xmlChar*)"entry"))
 				{
-					std::clog << " ";
-					if(version.find("_SVN") == std::string::npos)
-						std::clog << "running sub version, please mind it's unstable and only for testing purposes!";
-					else
-						std::clog << "outdated, please consider upgrading!";
+					std::string version;
+					int32_t patch, build, timestamp;
 
-					std::clog << std::endl << "> Current version information - version: "
-						<< SOFTWARE_VERSION << ", patch: " << VERSION_PATCH
-						<< ", build: " << VERSION_BUILD << ", timestamp: " << VERSION_TIMESTAMP
-						<< "." << std::endl << "> Latest version information - version: "
-						<< version << ", patch: " << patch << ", build: " << build
-						<< ", timestamp: " << timestamp << "." << std::endl;
-					if(g_config.getBool(ConfigManager::CONFIRM_OUTDATED_VERSION) &&
-						asLowerCaseString(version).find("_svn") == std::string::npos)
+					bool tmp = false;
+					if(readXMLString(p, "version", version) && version != SOFTWARE_VERSION)
+						tmp = true;
+
+					if(readXMLInteger(p, "patch", patch) && patch > VERSION_PATCH)
+						tmp = true;
+
+					if(readXMLInteger(p, "build", build) && build > VERSION_BUILD)
+						tmp = true;
+
+					if(readXMLInteger(p, "timestamp", timestamp) && timestamp > VERSION_TIMESTAMP)
+						tmp = true;
+
+					if(tmp)
 					{
-						std::clog << "Continue? (y/N)" << std::endl;
-						char buffer = getch();
-						if(buffer != 121 && buffer != 89)
-							startupErrorMessage("Aborted.");
+						std::clog << " ";
+						if(version.find("_SVN") == std::string::npos)
+							std::clog << "running sub version, please mind it's unstable and only for testing purposes!";
+						else
+							std::clog << "outdated, please consider upgrading!";
+
+						std::clog << std::endl << "> Current version information - version: "
+							<< SOFTWARE_VERSION << ", patch: " << VERSION_PATCH
+							<< ", build: " << VERSION_BUILD << ", timestamp: " << VERSION_TIMESTAMP
+							<< "." << std::endl << "> Latest version information - version: "
+							<< version << ", patch: " << patch << ", build: " << build
+							<< ", timestamp: " << timestamp << "." << std::endl;
+						if(g_config.getBool(ConfigManager::CONFIRM_OUTDATED_VERSION) &&
+							asLowerCaseString(version).find("_svn") == std::string::npos)
+						{
+							std::clog << "Continue? (y/N)" << std::endl;
+							char buffer = getch();
+							if(buffer != 121 && buffer != 89)
+								startupErrorMessage("Aborted.");
+						}
 					}
+					else
+						std::clog << "up to date!" << std::endl;
 				}
 				else
-					std::clog << "up to date!" << std::endl;
+					std::clog << "failed checking - malformed entry." << std::endl;
 			}
 			else
-				std::clog << "failed checking - malformed entry." << std::endl;
+				std::clog << "failed checking - malformed file." << std::endl;
+
+			xmlFreeDoc(doc);
 		}
 		else
-			std::clog << "failed checking - malformed file." << std::endl;
-
-		xmlFreeDoc(doc);
+			std::clog << "failed - could not parse remote file (are you connected to any network?)" << std::endl;
 	}
 	else
-		std::clog << "failed - could not parse remote file (are you connected to any network?)" << std::endl;
-
+		std::clog << "Ignoring version check, using SVN" << std::endl;
 	std::clog << ">> Loading RSA key";
 	g_RSA = RSA_new();
 

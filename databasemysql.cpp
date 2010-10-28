@@ -47,9 +47,6 @@ DatabaseMySQL::DatabaseMySQL() :
 	my_bool reconnect = true;
 	mysql_options(&m_handle, MYSQL_OPT_RECONNECT, &reconnect);
 
-	if(asLowerCaseString(g_config.getString(ConfigManager::SQL_HOST)) == "localhost")
-		g_config.setString(ConfigManager::SQL_HOST, "127.0.0.1");
-
 	if(!connect(false))
 		return;
 
