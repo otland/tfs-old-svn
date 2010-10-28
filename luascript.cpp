@@ -52,6 +52,7 @@
 #include "status.h"
 #include "game.h"
 #include "chat.h"
+#include "tools.h"
 
 extern Game g_game;
 extern Monsters g_monsters;
@@ -75,8 +76,8 @@ uint32_t ScriptEnviroment::m_lastConditionId = 0;
 ScriptEnviroment::ConditionMap ScriptEnviroment::m_tempConditionMap;
 
 ScriptEnviroment::ThingMap ScriptEnviroment::m_globalMap;
-ScriptEnviroment::StorageMap ScriptEnviroment::m_storageMap;
 ScriptEnviroment::TempItemListMap ScriptEnviroment::m_tempItems;
+StorageMap ScriptEnviroment::m_storageMap;
 
 ScriptEnviroment::ScriptEnviroment()
 {
@@ -1596,11 +1597,17 @@ void LuaInterface::registerFunctions()
 	//getInstantSpellInfo(cid, name)
 	lua_register(m_luaState, "getInstantSpellInfo", LuaInterface::luaGetInstantSpellInfo);
 
+	//getCreatureStorageList(cid)
+	lua_register(m_luaState, "getCreatureStorageList", LuaInterface::luaGetCreatureStorageList);
+
 	//getCreatureStorage(uid, key)
 	lua_register(m_luaState, "getCreatureStorage", LuaInterface::luaGetCreatureStorage);
 
 	//doCreatureSetStorage(uid, key, value)
 	lua_register(m_luaState, "doCreatureSetStorage", LuaInterface::luaDoCreatureSetStorage);
+
+	//getStorageList()
+	lua_register(m_luaState, "getStorageList", LuaInterface::luaGetStorageList);
 
 	//getStorage(key)
 	lua_register(m_luaState, "getStorage", LuaInterface::luaGetStorage);
@@ -3042,9 +3049,7 @@ int32_t LuaInterface::luaGetPlayerFlagValue(lua_State* L)
 			lua_pushboolean(L, player->hasFlag((PlayerFlags)index));
 		else
 		{
-			std::stringstream ss;
-			ss << index;
-			errorEx("No valid flag index - " + ss.str());
+			errorEx("No valid flag index - " + asString<uint32_t>(index));
 			lua_pushboolean(L, false);
 		}
 	}
@@ -3069,9 +3074,7 @@ int32_t LuaInterface::luaGetPlayerCustomFlagValue(lua_State* L)
 			lua_pushboolean(L, player->hasCustomFlag((PlayerCustomFlags)index));
 		else
 		{
-			std::stringstream ss;
-			ss << index;
-			errorEx("No valid flag index - " + ss.str());
+			errorEx("No valid flag index - " + asString<uint32_t>(index));
 			lua_pushboolean(L, false);
 		}
 	}
@@ -4747,6 +4750,31 @@ int32_t LuaInterface::luaDoCreateTeleport(lua_State* L)
 	return 1;
 }
 
+int32_t LuaInterface::luaGetCreatureStorageList(lua_State* L)
+{
+	//getCreatureStorageList(cid)
+	ScriptEnviroment* env = getEnv();
+
+	if(Creature* creature = env->getCreatureByUID(popNumber(L)))
+	{
+		StorageMap::const_iterator it = creature->getStorageBegin();
+		lua_newtable(L);
+		for(uint32_t i = 1; it != creature->getStorageEnd(); ++i, ++it)
+		{
+			lua_pushnumber(L, i);
+			lua_pushstring(L, it->first.c_str());
+			pushTable(L);
+		}
+	}
+	else
+	{
+		errorEx(getError(LUA_ERROR_CREATURE_NOT_FOUND));
+		lua_pushboolean(L, false);
+	}
+
+	return 1;
+}
+
 int32_t LuaInterface::luaGetCreatureStorage(lua_State* L)
 {
 	//getCreatureStorage(cid, key)
@@ -5932,10 +5960,7 @@ int32_t LuaInterface::luaSetCombatCallBack(lua_State* L)
 	CallBack* callback = combat->getCallback(key);
 	if(!callback)
 	{
-		std::stringstream ss;
-		ss << key;
-
-		errorEx(ss.str() + " is not a valid callback key.");
+		errorEx(asString<uint32_t>(key) + " is not a valid callback key.");
 		lua_pushboolean(L, false);
 		return 1;
 	}
@@ -7120,6 +7145,23 @@ int32_t LuaInterface::luaSetItemOutfit(lua_State* L)
 	{
 		errorEx(getError(LUA_ERROR_CREATURE_NOT_FOUND));
 		lua_pushboolean(L, false);
+	}
+
+	return 1;
+}
+
+int32_t LuaInterface::luaGetStorageList(lua_State* L)
+{
+	//getStorageList()
+	ScriptEnviroment* env = getEnv();
+
+	StorageMap::const_iterator it = env->getStorageBegin();
+	lua_newtable(L);
+	for(uint32_t i = 1; it != env->getStorageEnd(); ++i, ++it)
+	{
+		lua_pushnumber(L, i);
+		lua_pushstring(L, it->first.c_str());
+		pushTable(L);
 	}
 
 	return 1;

@@ -64,6 +64,8 @@ struct LuaVariant
 	uint32_t number;
 };
 
+typedef std::map<std::string, std::string> StorageMap;
+
 class Game;
 class Thing;
 class LuaInterface;
@@ -92,6 +94,9 @@ class ScriptEnviroment
 		bool getStorage(const std::string& key, std::string& value) const;
 		void setStorage(const std::string& key, const std::string& value) {m_storageMap[key] = value;}
 		void eraseStorage(const std::string& key) {m_storageMap.erase(key);}
+
+		inline StorageMap::const_iterator getStorageBegin() const {return m_storageMap.begin();}
+		inline StorageMap::const_iterator getStorageEnd() const {return m_storageMap.end();}
 
 		int32_t getScriptId() const {return m_scriptId;};
 		void setScriptId(int32_t scriptId, LuaInterface* interface)
@@ -165,7 +170,6 @@ class ScriptEnviroment
 		typedef std::list<Item*> ItemList;
 		typedef std::map<ScriptEnviroment*, ItemList> TempItemListMap;
 
-		typedef std::map<std::string, std::string> StorageMap;
 		typedef std::map<uint32_t, CombatArea*> AreaMap;
 		typedef std::map<uint32_t, Combat*> CombatMap;
 		typedef std::map<uint32_t, Condition*> ConditionMap;
@@ -545,6 +549,7 @@ class LuaInterface
 		static int32_t luaDoPlayerJoinParty(lua_State* L);
 		static int32_t luaDoPlayerLeaveParty(lua_State* L);
 		static int32_t luaGetPartyMembers(lua_State* L);
+		static int32_t luaGetCreatureStorageList(lua_State* L);
 		static int32_t luaGetCreatureStorage(lua_State* L);
 		static int32_t luaDoCreatureSetStorage(lua_State* L);
 		static int32_t luaDoPlayerAddBlessing(lua_State* L);
@@ -553,6 +558,7 @@ class LuaInterface
 		static int32_t luaDoGuildAddEnemy(lua_State* L);
 		static int32_t luaDoGuildRemoveEnemy(lua_State* L);
 #endif
+		static int32_t luaGetStorageList(lua_State* L);
 		static int32_t luaGetStorage(lua_State* L);
 		static int32_t luaDoSetStorage(lua_State* L);
 		static int32_t luaDoPlayerAddOutfit(lua_State* L);

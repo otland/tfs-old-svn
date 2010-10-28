@@ -384,6 +384,10 @@
 			Default: sqlite
 
 		sqlHost
+			If you have problems connecting to a local database server, try using "127.0.0.1" as a host.
+			Default value should work on in most cases, however it was reported by our users
+				that they had problems connecting and this solution worked,
+				so you may save some time trying this one.
 			Default: localhost
 
 		sqlPort

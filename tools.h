@@ -66,6 +66,31 @@ std::string asLowerCaseString(const std::string& source);
 std::string asUpperCaseString(const std::string& source);
 bool booleanString(std::string source);
 
+template <typename T>
+inline void asString(const T& object, const std::string& s)
+{
+	std::ostringstream ss;
+	ss << object;
+	s = ss.str();
+}
+
+template <typename T>
+inline std::string asString(const T& object)
+{
+	std::ostringstream ss;
+	ss << object;
+	return ss.str();
+}
+
+template<class T>
+inline T fromString(const std::string& s)
+{
+	std::istringstream ss (s);
+	T t;
+	ss >> t;
+	return t;
+}
+
 bool readXMLInteger(xmlNodePtr node, const char* tag, int32_t& value);
 bool readXMLInteger64(xmlNodePtr node, const char* tag, int64_t& value);
 bool readXMLFloat(xmlNodePtr node, const char* tag, float& value);
