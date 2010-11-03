@@ -200,7 +200,7 @@ class House
 		bool isGuild() const;
 
 		uint32_t getDoorsCount() const {return doorList.size();}
-		uint32_t getBedsCount() const {return bedsList.size();}
+		uint32_t getBedsCount() const {return (uint32_t)std::ceil((double)bedsList.size() / 2);}
 		uint32_t getTilesCount() const {return houseTiles.size();}
 
 		bool hasSyncFlag(syncflags_t flag) const {return ((syncFlags & (uint32_t)flag) == (uint32_t)flag);}

@@ -182,11 +182,7 @@ void Game::start(ServiceManager* servicer)
 			}
 		}
 	}
-/*
-	std::clog << "Hours left: " << hoursLeft << std::endl;
-	std::clog << "Minutes left: " << minutesLeft << std::endl;
-	std::clog << "broadcast: " << broadcast << std::endl;
-*/
+
 	uint32_t timeLeft = (hoursLeft * 60 * 60 * 1000) + (minutesLeft * 60 * 1000);
 	if(timeLeft > 0)
 	{
@@ -5749,6 +5745,7 @@ bool Game::loadExperienceStages()
 	{
 		if(!stages.empty())
 			stages.clear();
+
 		return true;
 	}
 

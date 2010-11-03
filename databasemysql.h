@@ -18,6 +18,7 @@
 #ifndef __DATABASEMYSQL__
 #define __DATABASEMYSQL__
 
+#define MAX_RECONNECT_ATTEMPTS 3
 #ifndef __DATABASE__
 #error "database.h should be included first."
 #endif
@@ -55,6 +56,7 @@ class DatabaseMySQL : public _Database
 		DATABASE_VIRTUAL void keepAlive();
 
 		MYSQL m_handle;
+		uint16_t m_attempts;
 		uint32_t m_timeoutTask;
 };
 

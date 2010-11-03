@@ -257,12 +257,9 @@ bool IOGuild::disbandGuild(uint32_t guildId)
 	{
 		if(it->second->getGuildId() == guildId)
 			it->second->leaveGuild();
-		else
-		{
-			iit = std::find(it->second->invitedToGuildsList.begin(), it->second->invitedToGuildsList.end(), guildId);
-			if(iit != it->second->invitedToGuildsList.end())
-				it->second->invitedToGuildsList.erase(iit);
-		}
+		else if((iit = std::find(it->second->invitedToGuildsList.begin(), it->second->invitedToGuildsList.end(),
+			guildId)) != it->second->invitedToGuildsList.end())
+			it->second->invitedToGuildsList.erase(iit);
 	}
 
 	query.str("");

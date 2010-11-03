@@ -86,17 +86,25 @@ DatabaseMySQL::~DatabaseMySQL()
 bool DatabaseMySQL::connect(bool _reconnect)
 {
 	if(_reconnect)
-		std::clog << "MYSQL Lost connection, attempting to reconnect..." << std::endl;
+	{
+		std::clog << "WARNING: MYSQL Lost connection, attempting to reconnect..." << std::endl;
+		if(++m_atempts > MAX_RECONNECT_ATTEMPTS)
+		{
+			std::clog << "Failed connection to database - maximum reconnect attempts passed." << std::endl;
+			return false;
+		}
+	}
 
-	if(!mysql_real_connect(&m_handle, g_config.getString(ConfigManager::SQL_HOST).c_str(), g_config.getString(
+	if(mysql_real_connect(&m_handle, g_config.getString(ConfigManager::SQL_HOST).c_str(), g_config.getString(
 		ConfigManager::SQL_USER).c_str(), g_config.getString(ConfigManager::SQL_PASS).c_str(), g_config.getString(
 		ConfigManager::SQL_DB).c_str(), g_config.getNumber(ConfigManager::SQL_PORT), NULL, 0))
 	{
-		std::clog << "Failed connecting to database - MYSQL ERROR: " << mysql_error(&m_handle) << " (" << mysql_errno(&m_handle) << ")" << std::endl;
-		return false;
+		m_attempts = 0;
+		return true;
 	}
 
-	return true;
+	std::clog << "Failed connecting to database - MYSQL ERROR: " << mysql_error(&m_handle) << " (" << mysql_errno(&m_handle) << ")" << std::endl;
+	return false;
 }
 
 bool DatabaseMySQL::getParam(DBParam_t param)
