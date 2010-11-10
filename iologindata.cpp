@@ -579,7 +579,10 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool preLo
 		if((result = db->storeQuery(query.str())))
 		{
 			do
-				player->invitedToGuildsList.push_back((uint32_t)result->getDataInt("guild_id"));
+			{
+				if(IOGuild::getInstance()->guildExists((uint32_t)result->getDataInt("guild_id")))
+					player->invitedToGuildsList.push_back((uint32_t)result->getDataInt("guild_id"));
+			}
 			while(result->next());
 			result->free();
 		}
@@ -988,6 +991,12 @@ bool IOLoginData::savePlayer(Player* player, bool preSave/* = true*/, bool shall
 		query_insert.setQuery("INSERT INTO `guild_invites` (`player_id`, `guild_id`) VALUES ");
 		for(InvitedToGuildsList::const_iterator it = player->invitedToGuildsList.begin(); it != player->invitedToGuildsList.end(); ++it)
 		{
+			if(!IOGuild::getInstance()->guildExists(*it))
+			{
+				player->invitedToGuildsList.erase(it);
+				continue;
+			}
+
 			sprintf(buffer, "%d, %d", player->getGUID(), *it);
 			if(!query_insert.addRow(buffer))
 				return false;
