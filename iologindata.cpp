@@ -579,10 +579,7 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool preLo
 		if((result = db->storeQuery(query.str())))
 		{
 			do
-			{
-				if(IOGuild::getInstance()->guildExists((uint32_t)result->getDataInt("guild_id")))
-					player->invitedToGuildsList.push_back((uint32_t)result->getDataInt("guild_id"));
-			}
+				player->invitedToGuildsList.push_back((uint32_t)result->getDataInt("guild_id"));
 			while(result->next());
 			result->free();
 		}
