@@ -990,7 +990,7 @@ bool IOLoginData::savePlayer(Player* player, bool preSave/* = true*/, bool shall
 		{
 			if(!IOGuild::getInstance()->guildExists(*it))
 			{
-				player->invitedToGuildsList.erase(it);
+				it = player->invitedToGuildsList.erase(it);
 				continue;
 			}
 
