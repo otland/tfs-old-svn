@@ -2248,6 +2248,7 @@ void ProtocolGame::sendAddCreature(const Creature* creature, const Position& pos
 				else
 					msg->AddByte(0x00);
 
+				/*
 				if(violationReasons[player->getAccountType()] > 0)
 				{
 					msg->AddByte(0x0B);
@@ -2259,6 +2260,7 @@ void ProtocolGame::sendAddCreature(const Creature* creature, const Position& pos
 							msg->AddByte(Action_None);
 					}
 				}
+				*/
 
 				AddMapDescription(msg, pos);
 
