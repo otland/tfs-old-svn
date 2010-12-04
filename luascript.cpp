@@ -1190,6 +1190,9 @@ double LuaInterface::popFloatNumber(lua_State* L)
 std::string LuaInterface::popString(lua_State* L)
 {
 	lua_pop(L, 1);
+	if(!lua_isstring(L, 0) && !lua_isnumber(L, 0)) 
+		return std::string();
+
 	const char* str = lua_tostring(L, 0);
 	if(*str == '\0')
 		return std::string();
