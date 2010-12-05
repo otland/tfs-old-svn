@@ -43,6 +43,7 @@ class ChatChannel
 		bool removeUser(Player* player);
 
 		bool talk(Player* fromPlayer, SpeakClasses type, const std::string& text, uint32_t time = 0);
+		void sendToAll(std::string message, SpeakClasses type);
 
 		const std::string& getName() {return m_name;}
 		const uint16_t getId() {return m_id;}

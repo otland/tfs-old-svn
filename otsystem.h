@@ -59,7 +59,7 @@ inline int64_t OTSYS_TIME()
 {
 	_timeb t;
 	_ftime(&t);
-	return ((int64_t)t.millitm) + ((int64_t)t.time) * 1000;
+	return int64_t(t.millitm) + int64_t(t.time) * 1000;
 }
 
 inline int OTSYS_THREAD_WAITSIGNAL(OTSYS_THREAD_SIGNALVAR& signal, OTSYS_THREAD_LOCKVAR& lock)

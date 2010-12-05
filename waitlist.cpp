@@ -22,8 +22,11 @@
 #include <iostream>
 #include <sstream>
 
+#include "configmanager.h"
 #include "waitlist.h"
 #include "status.h"
+
+extern ConfigManager g_config;
 
 WaitingList::WaitingList()
 {
@@ -72,7 +75,7 @@ int32_t WaitingList::getTimeOut(int32_t slot)
 
 bool WaitingList::clientLogin(const Player* player)
 {
-	if(player->hasFlag(PlayerFlag_CanAlwaysLogin) || player->getName() == "Account Manager" || player->getAccountType() >= ACCOUNT_TYPE_GAMEMASTER)
+	if(player->hasFlag(PlayerFlag_CanAlwaysLogin) || player->getAccountType() >= ACCOUNT_TYPE_GAMEMASTER || (g_config.getBoolean(ConfigManager::ACCOUNT_MANAGER) && player->getName() == "Account Manager"))
 		return true;
 
 	if(waitList.empty() && Status::getInstance()->getPlayersOnline() < Status::getInstance()->getMaxPlayersOnline())

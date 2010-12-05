@@ -17,13 +17,7 @@
 			<xsd:attribute name="id" type="xsd:positiveInteger"/>
 			<xsd:attribute name="fromid" type="xsd:positiveInteger"/>
 			<xsd:attribute name="toid" type="xsd:positiveInteger"/>
-			<xsd:attribute name="name" default="unknown item">
-				<xsd:simpleType>
-					<xsd:restriction base="xsd:string">
-						<xsd:minLength value="1"/>
-					</xsd:restriction>
-				</xsd:simpleType>
-			</xsd:attribute>
+			<xsd:attribute name="name" type="xsd:string"/>
 			<xsd:attribute name="article" type="xsd:string"/>
 			<xsd:attribute name="plural" type="xsd:string"/>
 			<xsd:attribute name="editorsuffix" type="xsd:string"/>

@@ -78,29 +78,6 @@ enum LightState_t
 	LIGHT_STATE_SUNRISE
 };
 
-struct RuleViolation
-{
-	RuleViolation(Player* _reporter, const std::string& _text, uint32_t _time) :
-		reporter(_reporter),
-		gamemaster(NULL),
-		text(_text),
-		time(_time),
-		isOpen(true)
-	{
-	}
-
-	Player* reporter;
-	Player* gamemaster;
-	std::string text;
-	uint32_t time;
-	bool isOpen;
-
-	private:
-		RuleViolation(const RuleViolation&);
-};
-
-typedef std::map< uint32_t, shared_ptr<RuleViolation> > RuleViolationsMap;
-
 #define EVENT_LIGHTINTERVAL 10000
 #define EVENT_DECAYINTERVAL 1000
 #define EVENT_DECAY_BUCKETS 16
@@ -163,6 +140,8 @@ class Game
 		void internalGetPosition(Item* item, Position& pos, uint8_t& stackpos);
 
 		std::string getTradeErrorDescription(ReturnValue ret, Item* item);
+
+		bool violationWindow(Player* player, std::string targetPlayerName, int32_t reason, int32_t action, std::string banComment, bool IPBanishment);
 
 		/**
 		  * Get a single tile of the map.
@@ -266,8 +245,6 @@ class Game
 
 		void addCreatureCheck(Creature* creature);
 		void removeCreatureCheck(Creature* creature);
-
-		bool violationWindow(uint32_t playerId, std::string targetPlayerName, int32_t reasonId, int32_t actionId, std::string banComment, std::string statement, bool IPBanishment);
 
 		uint32_t getPlayersOnline() {return (uint32_t)Player::listPlayer.list.size();}
 		uint32_t getMonstersOnline() {return (uint32_t)Monster::listMonster.list.size();}
@@ -395,7 +372,6 @@ class Game
 		void checkPlayersRecord();
 
 		void sendGuildMotd(uint32_t playerId, uint32_t guildId);
-		void sendRVRDisabled(uint32_t playerId);
 		void kickPlayer(uint32_t playerId, bool displayEffect);
 		bool playerReportBug(uint32_t playerId, std::string bug);
 		bool playerDebugAssert(uint32_t playerId, std::string assertLine, std::string date, std::string description, std::string comment);
@@ -421,9 +397,6 @@ class Game
 		bool playerCloseChannel(uint32_t playerId, uint16_t channelId);
 		bool playerOpenPrivateChannel(uint32_t playerId, std::string& receiver);
 		bool playerCloseNpcChannel(uint32_t playerId);
-		bool playerProcessRuleViolation(uint32_t playerId, const std::string& name);
-		bool playerCloseRuleViolation(uint32_t playerId, const std::string& name);
-		bool playerCancelRuleViolation(uint32_t playerId);
 		bool playerReceivePing(uint32_t playerId);
 		bool playerAutoWalk(uint32_t playerId, std::list<Direction>& listDir);
 		bool playerStopAutoWalk(uint32_t playerId);
@@ -543,10 +516,6 @@ class Game
 		int getLightHour() {return light_hour;}
 		bool npcSpeakToPlayer(Npc* npc, Player* player, const std::string& text, bool publicize);
 
-		const RuleViolationsMap& getRuleViolations() const {return ruleViolations;}
-		bool cancelRuleViolation(Player* player);
-		bool closeRuleViolation(Player* player);
-
 		bool loadExperienceStages();
 		uint64_t getExperienceStage(uint32_t level);
 
@@ -561,8 +530,6 @@ class Game
 		bool playerSpeakTo(Player* player, SpeakClasses type, const std::string& receiver, const std::string& text);
 		bool playerTalkToChannel(Player* player, SpeakClasses type, const std::string& text, unsigned short channelId);
 		bool playerSpeakToNpc(Player* player, const std::string& text);
-		bool playerReportRuleViolation(Player* player, const std::string& text);
-		bool playerContinueReport(Player* player, const std::string& text);
 
 		Highscore highscoreStorage[9];
 		time_t lastHSUpdate;
@@ -578,9 +545,6 @@ class Game
 
 		//list of items that are in trading state, mapped to the player
 		std::map<Item*, uint32_t> tradeItems;
-
-		//list of reported rule violations, for correct channel listing
-		RuleViolationsMap ruleViolations;
 
 		AutoList<Creature> listCreature;
 

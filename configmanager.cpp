@@ -101,7 +101,6 @@ bool ConfigManager::loadFile(const std::string& _filename)
 	m_confBoolean[REPLACE_KICK_ON_LOGIN] = (getGlobalString(L, "replaceKickOnLogin", "yes") == "yes");
 	m_confBoolean[OLD_CONDITION_ACCURACY] = (getGlobalString(L, "oldConditionAccuracy", "no") == "yes");
 	m_confBoolean[ANIMATION_TEXT_ON_HEAL] = (getGlobalString(L, "animationTextOnHeal", "yes") == "yes");
-	m_confBoolean[ENABLE_RULE_VIOLATION_REPORTS] = (getGlobalString(L, "enableRuleViolationReports", "no") == "yes");
 	m_confBoolean[ALLOW_CLONES] = getGlobalNumber(L, "allowClones", 0);
 
 	m_confString[DEFAULT_PRIORITY] = getGlobalString(L, "defaultPriority", "high");

@@ -170,20 +170,12 @@ enum SpeakClasses
 	SPEAK_CHANNEL_Y		= 0x07,
 	SPEAK_CHANNEL_W		= 0x08,
 	SPEAK_BROADCAST		= 0x09,
-	//SPEAK_ 		= 0x0A, // unknown
-	//SPEAK_ 		= 0x0B, // red text with name
-	//SPEAK_ 		= 0x0C, // unknown
+	SPEAK_CHANNEL_R1        = 0x0A, //red - #c text
+	SPEAK_PRIVATE_RED       = 0x0B, //@name@text
+	SPEAK_CHANNEL_O         = 0x0C,
 	SPEAK_MONSTER_SAY	= 0x0D,
 	SPEAK_MONSTER_YELL	= 0x0E,
-	SPEAK_LAST		= SPEAK_MONSTER_YELL,
-
-	SPEAK_RVR_CHANNEL	= 0xFF + 1,
-	SPEAK_RVR_ANSWER	= 0xFF + 2,
-	SPEAK_RVR_CONTINUE	= 0xFF + 3,
-	SPEAK_CHANNEL_O		= 0xFF + 4,
-	SPEAK_CHANNEL_R2	= 0xFF + 5, //red anonymous - #d text
-	SPEAK_CHANNEL_R1	= 0xFF + 6, //red - #c text
-	SPEAK_PRIVATE_RED	= 0xFF + 7  //@name@text
+	SPEAK_LAST		= SPEAK_MONSTER_YELL
 };
 
 enum MessageClasses
@@ -497,7 +489,6 @@ enum PlayerFlags
 	PlayerFlag_IgnoreWeaponCheck,
 	PlayerFlag_CannotBeMuted,
 	PlayerFlag_IsAlwaysPremium,
-	PlayerFlag_CanAnswerRuleViolations,
 
 	//add new flags here
 	PlayerFlag_LastFlag
@@ -566,6 +557,16 @@ const int violationReasons[6] =
 	 */
 	20,
 };
+
+#define CHANNEL_GUILD 0x00
+#define CHANNEL_GAMEMASTER 0x01
+#define CHANNEL_TUTOR 0x02
+#define CHANNEL_WORLDCHAT 0x03
+#define CHANNEL_ADVERTISING 0x04
+#define CHANNEL_ADVERTISINGROOKGAARD 0x05
+#define CHANNEL_PARTY 0x06
+#define CHANNEL_HELP 0x07
+#define CHANNEL_PRIVATE 0xFFFF
 
 //Reserved player storage key ranges
 //[10000000 - 20000000]

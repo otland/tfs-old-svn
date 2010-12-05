@@ -1031,7 +1031,7 @@ bool Items::parseItemNode(xmlNodePtr itemNode, uint32_t id)
 				if(readXMLInteger(itemAttributesNode, "value", intValue))
 					it.abilities.statsPercent[STAT_MAGICPOINTS] = intValue;
 			}
-			else if(tmpStrValue == "absorbpercentall")
+			else if(tmpStrValue == "absorbpercentall" || tmpStrValue == "absorbpercentallelements")
 			{
 				if(readXMLInteger(itemAttributesNode, "value", intValue))
 				{
@@ -1277,7 +1277,7 @@ bool Items::parseItemNode(xmlNodePtr itemNode, uint32_t id)
 				if(readXMLString(itemAttributesNode, "value", strValue))
 					it.bedPartnerDir = getDirection(strValue);
 			}
-			else if(tmpStrValue == "maletransformto")
+			else if(tmpStrValue == "maletransformto" || tmpStrValue == "malesleeper")
 			{
 				if(readXMLInteger(itemAttributesNode, "value", intValue))
 				{
@@ -1290,7 +1290,7 @@ bool Items::parseItemNode(xmlNodePtr itemNode, uint32_t id)
 						it.transformToOnUse[PLAYERSEX_FEMALE] = intValue;
 				}
 			}
-			else if(tmpStrValue == "femaletransformto")
+			else if(tmpStrValue == "femaletransformto" || tmpStrValue == "femalesleeper")
 			{
 				if(readXMLInteger(itemAttributesNode, "value", intValue))
 					it.transformToOnUse[PLAYERSEX_FEMALE] = intValue;

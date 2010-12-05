@@ -121,11 +121,14 @@ bool ProtocolGame::login(const std::string& name, uint32_t accnumber, const std:
 {
 	//dispatcher thread
 	Player* _player = g_game.getPlayerByName(name);
-	if(!_player || g_config.getBoolean(ConfigManager::ALLOW_CLONES) || name == "Account Manager")
+	bool isAccountManager = g_config.getBoolean(ConfigManager::ACCOUNT_MANAGER) && name == "Account Manager";
+	if(!_player || g_config.getBoolean(ConfigManager::ALLOW_CLONES) || isAccountManager)
 	{
 		player = new Player(name, this);
 
-		bool letNamelockedLogin = true;
+		player->useThing2();
+		player->setID();
+
 		if(IOBan::getInstance()->isPlayerNamelocked(name) && accnumber > 1)
 		{
 			if(g_config.getBoolean(ConfigManager::ACCOUNT_MANAGER))
@@ -134,11 +137,17 @@ bool ProtocolGame::login(const std::string& name, uint32_t accnumber, const std:
 				player->namelockedPlayer = name;
 			}
 			else
-				letNamelockedLogin = false;
+			{
+				disconnectClient(0x14, "Your character has been namelocked.");
+				return false;
+			}
 		}
 
-		player->useThing2();
-		player->setID();
+		if(isAccountManager && accnumber > 1 && !player->accountManager)
+		{
+			player->accountManager = true;
+			player->realAccount = accnumber;
+		}
 
 		if(!IOLoginData::getInstance()->loadPlayer(player, name, true))
 		{
@@ -149,17 +158,27 @@ bool ProtocolGame::login(const std::string& name, uint32_t accnumber, const std:
 			return false;
 		}
 
-		if(player->name == "Account Manager" && accnumber > 1 && !player->accountManager && g_config.getBoolean(ConfigManager::ACCOUNT_MANAGER))
-		{
-			player->accountManager = true;
-			player->realAccount = accnumber;
-		}
-
-		player->setOperatingSystem((OperatingSystem_t)operatingSystem);
-
-		if(gamemasterLogin == 1 && player->getAccountType() < ACCOUNT_TYPE_GAMEMASTER && player->getName() != "Account Manager")
+		if(gamemasterLogin == 1 && player->getAccountType() < ACCOUNT_TYPE_GAMEMASTER && !isAccountManager)
 		{
 			disconnectClient(0x14, "You are not a gamemaster!");
+			return false;
+		}
+
+		if(g_game.getGameState() == GAME_STATE_CLOSING && !player->hasFlag(PlayerFlag_CanAlwaysLogin))
+		{
+			disconnectClient(0x14, "The game is just going down.\nPlease try again later.");
+			return false;
+		}
+
+		if(g_game.getGameState() == GAME_STATE_CLOSED && !player->hasFlag(PlayerFlag_CanAlwaysLogin))
+		{
+			disconnectClient(0x14, "Server is currently closed. Please try again later.");
+			return false;
+		}
+
+		if(g_config.getBoolean(ConfigManager::ONE_PLAYER_ON_ACCOUNT) && player->getAccountType() < ACCOUNT_TYPE_GAMEMASTER && !isAccountManager && g_game.getPlayerByAccount(player->getAccount()))
+		{
+			disconnectClient(0x14, "You may only login with one character\nof your account at the same time.");
 			return false;
 		}
 
@@ -191,30 +210,6 @@ bool ProtocolGame::login(const std::string& name, uint32_t accnumber, const std:
 					return false;
 				}
 			}
-		}
-
-		if(!letNamelockedLogin || (player->getName() == "Account Manager" && !g_config.getBoolean(ConfigManager::ACCOUNT_MANAGER)))
-		{
-			disconnectClient(0x14, "Your character has been namelocked.");
-			return false;
-		}
-
-		if(g_game.getGameState() == GAME_STATE_CLOSING && !player->hasFlag(PlayerFlag_CanAlwaysLogin))
-		{
-			disconnectClient(0x14, "The game is just going down.\nPlease try again later.");
-			return false;
-		}
-
-		if(g_game.getGameState() == GAME_STATE_CLOSED && !player->hasFlag(PlayerFlag_CanAlwaysLogin))
-		{
-			disconnectClient(0x14, "Server is currently closed. Please try again later.");
-			return false;
-		}
-
-		if(g_config.getBoolean(ConfigManager::ONE_PLAYER_ON_ACCOUNT) && player->getAccountType() < ACCOUNT_TYPE_GAMEMASTER && player->getName() != "Account Manager" && g_game.getPlayerByAccount(player->getAccount()))
-		{
-			disconnectClient(0x14, "You may only login with one character\nof your account at the same time.");
-			return false;
 		}
 
 		if(!WaitingList::getInstance()->clientLogin(player))
@@ -256,6 +251,7 @@ bool ProtocolGame::login(const std::string& name, uint32_t accnumber, const std:
 
 		player->lastIP = player->getIP();
 		player->lastLoginSaved = std::max(time(NULL), player->lastLoginSaved + 1);
+		player->setOperatingSystem((OperatingSystem_t)operatingSystem);
 		m_acceptPackets = true;
 		return true;
 	}
@@ -382,7 +378,7 @@ bool ProtocolGame::parseFirstPacket(NetworkMessage& msg)
 
 	uint8_t isSetGM = msg.GetByte();
 	uint32_t accnumber = atoi(msg.GetString().c_str());
-	const std::string name = msg.GetString();
+	std::string name = msg.GetString();
 	std::string password = msg.GetString();
 
 	msg.SkipBytes(3);
@@ -431,8 +427,15 @@ bool ProtocolGame::parseFirstPacket(NetworkMessage& msg)
 		return false;
 	}
 
+	if(!IOLoginData::getInstance()->playerExists(name))
+	{
+		disconnectClient(0x14, "Player not found.");
+		return false;
+	}
+
 	std::string acc_pass;
-	if(!(IOLoginData::getInstance()->getPassword(accnumber, name, acc_pass) && passwordTest(password, acc_pass)) && name != "Account Manager")
+	bool isAccountManager = g_config.getBoolean(ConfigManager::ACCOUNT_MANAGER) && name == "Account Manager";
+	if(!(IOLoginData::getInstance()->getPassword(accnumber, name, acc_pass) && passwordTest(password, acc_pass)) && !isAccountManager)
 	{
 		g_bans.addLoginAttempt(getIP(), false);
 		disconnectClient(0x14, "Account number or password is not correct.");
@@ -511,7 +514,7 @@ void ProtocolGame::parsePacket(NetworkMessage &msg)
 	if((player->isRemoved() || player->getHealth() <= 0) && recvbyte != 0x14)
 		return;
 
-	if(player->getName() == "Account Manager")
+	if(g_config.getBoolean(ConfigManager::ACCOUNT_MANAGER) && player->getName() == "Account Manager")
 	{
 		switch(recvbyte)
 		{
@@ -670,18 +673,6 @@ void ProtocolGame::parsePacket(NetworkMessage &msg)
 				parseOpenPriv(msg);
 				break;
 
-			case 0x9B: //process report
-				parseProcessRuleViolation(msg);
-				break;
-
-			case 0x9C: //gm closes report
-				parseCloseRuleViolation(msg);
-				break;
-
-			case 0x9D: //player cancels report
-				parseCancelRuleViolation(msg);
-				break;
-
 			case 0x9E: // close NPC
 				parseCloseNpc(msg);
 				break;
@@ -764,10 +755,6 @@ void ProtocolGame::parsePacket(NetworkMessage &msg)
 
 			case 0xE6:
 				parseBugReport(msg);
-				break;
-
-			case 0xE7:
-				parseViolationWindow(msg);
 				break;
 
 			case 0xE8:
@@ -1054,23 +1041,6 @@ void ProtocolGame::parseOpenPriv(NetworkMessage& msg)
 	addGameTask(&Game::playerOpenPrivateChannel, player->getID(), receiver);
 }
 
-void ProtocolGame::parseProcessRuleViolation(NetworkMessage& msg)
-{
-	const std::string reporter = msg.GetString();
-	addGameTask(&Game::playerProcessRuleViolation, player->getID(), reporter);
-}
-
-void ProtocolGame::parseCloseRuleViolation(NetworkMessage& msg)
-{
-	const std::string reporter = msg.GetString();
-	addGameTask(&Game::playerCloseRuleViolation, player->getID(), reporter);
-}
-
-void ProtocolGame::parseCancelRuleViolation(NetworkMessage& msg)
-{
-	addGameTask(&Game::playerCancelRuleViolation, player->getID());
-}
-
 void ProtocolGame::parseCloseNpc(NetworkMessage& msg)
 {
 	addGameTask(&Game::playerCloseNpcChannel, player->getID());
@@ -1259,13 +1229,11 @@ void ProtocolGame::parseSay(NetworkMessage& msg)
 	{
 		case SPEAK_PRIVATE:
 		case SPEAK_PRIVATE_RED:
-		case SPEAK_RVR_ANSWER:
 			receiver = msg.GetString();
 			break;
 
 		case SPEAK_CHANNEL_Y:
 		case SPEAK_CHANNEL_R1:
-		case SPEAK_CHANNEL_R2:
 			channelId = msg.GetU16();
 			break;
 
@@ -1493,18 +1461,6 @@ void ProtocolGame::parseQuestLine(NetworkMessage& msg)
 	}
 }
 
-void ProtocolGame::parseViolationWindow(NetworkMessage& msg)
-{
-	std::string targetPlayerName = msg.GetString();
-	uint8_t reasonId = msg.GetByte();
-	uint8_t actionId = msg.GetByte();
-	std::string comment = msg.GetString();
-	std::string statement = msg.GetString();
-	msg.GetU16();
-	bool ipBanishment = msg.GetByte();
-	addGameTask(&Game::violationWindow, player->getID(), targetPlayerName, reasonId, actionId, comment, statement, ipBanishment);
-}
-
 //********************** Send methods *******************************//
 void ProtocolGame::sendOpenPrivateChannel(const std::string& receiver)
 {
@@ -1652,6 +1608,7 @@ void ProtocolGame::sendReLoginWindow()
 	{
 		TRACK_MESSAGE(msg);
 		msg->AddByte(0x28);
+		msg->AddByte(0xFF);
 	}
 }
 
@@ -1681,7 +1638,7 @@ void ProtocolGame::sendClosePrivate(uint16_t channelId)
 	if(msg)
 	{
 		TRACK_MESSAGE(msg);
-		if(channelId == 0x00 || channelId == 0x08)
+		if(channelId == CHANNEL_GUILD || channelId == CHANNEL_PARTY)
 			g_chat.removeUserFromChannel(player, channelId);
 
 		msg->AddByte(0xB3);
@@ -1731,56 +1688,6 @@ void ProtocolGame::sendChannel(uint16_t channelId, const std::string& channelNam
 		msg->AddByte(0xAC);
 		msg->AddU16(channelId);
 		msg->AddString(channelName);
-	}
-}
-
-void ProtocolGame::sendRuleViolationsChannel(uint16_t channelId)
-{
-	NetworkMessage_ptr msg = getOutputBuffer();
-	if(msg)
-	{
-		TRACK_MESSAGE(msg);
-		msg->AddByte(0xAE);
-		msg->AddU16(channelId);
-		RuleViolationsMap::const_iterator it = g_game.getRuleViolations().begin();
-		for( ; it != g_game.getRuleViolations().end(); ++it)
-		{
-			RuleViolation& rvr = *it->second;
-			if(rvr.isOpen && rvr.reporter)
-				AddCreatureSpeak(msg, rvr.reporter, SPEAK_RVR_CHANNEL, rvr.text, channelId, rvr.time);
-		}
-	}
-}
-
-void ProtocolGame::sendRemoveReport(const std::string& name)
-{
-	NetworkMessage_ptr msg = getOutputBuffer();
-	if(msg)
-	{
-		TRACK_MESSAGE(msg);
-		msg->AddByte(0xAF);
-		msg->AddString(name);
-	}
-}
-
-void ProtocolGame::sendRuleViolationCancel(const std::string& name)
-{
-	NetworkMessage_ptr msg = getOutputBuffer();
-	if(msg)
-	{
-		TRACK_MESSAGE(msg);
-		msg->AddByte(0xB0);
-		msg->AddString(name);
-	}
-}
-
-void ProtocolGame::sendLockRuleViolation()
-{
-	NetworkMessage_ptr msg = getOutputBuffer();
-	if(msg)
-	{
-		TRACK_MESSAGE(msg);
-		msg->AddByte(0xB1);
 	}
 }
 
@@ -2248,20 +2155,6 @@ void ProtocolGame::sendAddCreature(const Creature* creature, const Position& pos
 				else
 					msg->AddByte(0x00);
 
-				/*
-				if(violationReasons[player->getAccountType()] > 0)
-				{
-					msg->AddByte(0x0B);
-					for(int32_t i = 0; i < 20; i++)
-					{
-						if(i <= violationReasons[player->getAccountType()])
-							msg->AddByte(violationActions[player->getAccountType()]);
-						else
-							msg->AddByte(Action_None);
-					}
-				}
-				*/
-
 				AddMapDescription(msg, pos);
 
 				if(isLogin)
@@ -2292,7 +2185,7 @@ void ProtocolGame::sendAddCreature(const Creature* creature, const Position& pos
 				if(isLogin)
 				{
 					std::string tempstring = g_config.getString(ConfigManager::LOGIN_MSG);
-					if(player->getName() != "Account Manager")
+					if(!(g_config.getBoolean(ConfigManager::ACCOUNT_MANAGER) && player->getName() == "Account Manager"))
 					{
 						if(!player->getLastLoginSaved() > 0)
 						{
@@ -2311,7 +2204,7 @@ void ProtocolGame::sendAddCreature(const Creature* creature, const Position& pos
 						}
 						AddTextMessage(msg, MSG_STATUS_DEFAULT, tempstring);
 					}
-					else if(player->getName() == "Account Manager")
+					else
 					{
 						if(player->getNamelockedPlayer() != "")
 							AddTextMessage(msg, MSG_STATUS_CONSOLE_ORANGE, "Hello, it appears that your character has been namelocked, what would you like as your new name?");
@@ -2806,24 +2699,15 @@ void ProtocolGame::AddCreatureSpeak(NetworkMessage_ptr msg, const Creature* crea
 	msg->AddByte(0xAA);
 	msg->AddU32(0x00);
 
-	//Do not add name for anonymous channel talk
-	if(type != SPEAK_CHANNEL_R2)
-	{
-		if(type != SPEAK_RVR_ANSWER)
-			msg->AddString(creature->getName());
-		else
-			msg->AddString("Gamemaster");
-	}
-	else
-		msg->AddString("");
+	msg->AddString(creature->getName());
 
 	//Add level only for players
 	if(const Player* speaker = creature->getPlayer())
 	{
-		if(type != SPEAK_RVR_ANSWER && speaker->getName() != "Account Manager")
-			msg->AddU16(speaker->getPlayerInfo(PLAYERINFO_LEVEL));
-		else
+		if(g_config.getBoolean(ConfigManager::ACCOUNT_MANAGER) && speaker->getName() == "Account Manager")
 			msg->AddU16(0x00);
+		else
+			msg->AddU16(speaker->getPlayerInfo(PLAYERINFO_LEVEL));
 	}
 	else
 		msg->AddU16(0x00);
@@ -2848,14 +2732,9 @@ void ProtocolGame::AddCreatureSpeak(NetworkMessage_ptr msg, const Creature* crea
 
 		case SPEAK_CHANNEL_Y:
 		case SPEAK_CHANNEL_R1:
-		case SPEAK_CHANNEL_R2:
 		case SPEAK_CHANNEL_O:
 		case SPEAK_CHANNEL_W:
 			msg->AddU16(channelId);
-			break;
-
-		case SPEAK_RVR_CHANNEL:
-			msg->AddU32(uint32_t(OTSYS_TIME() / 1000 & 0xFFFFFFFF) - time);
 			break;
 
 		default:

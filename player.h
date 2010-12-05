@@ -609,14 +609,6 @@ class Player : public Creature, public Cylinder
 			{if(client) client->sendCloseContainer(cid);}
 		void sendChannel(uint16_t channelId, const std::string& channelName)
 			{if(client) client->sendChannel(channelId, channelName);}
-		void sendRuleViolationsChannel(uint16_t channelId)
-			{if(client) client->sendRuleViolationsChannel(channelId);}
-		void sendRemoveReport(const std::string& name)
-			{if(client) client->sendRemoveReport(name);}
-		void sendLockRuleViolation()
-			{if(client) client->sendLockRuleViolation();}
-		void sendRuleViolationCancel(const std::string& name)
-			{if(client) client->sendRuleViolationCancel(name);}
 		void sendTutorial(uint8_t tutorialId)
 			{if(client) client->sendTutorial(tutorialId);}
 		void sendAddMarker(const Position& pos, uint8_t markType, const std::string& desc)

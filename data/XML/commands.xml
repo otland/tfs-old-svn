@@ -28,6 +28,7 @@
 	<command cmd="/town" group="2" acctype="4"/>
 	<command cmd="/raid" group="2" acctype="4"/>
 	<command cmd="/addskill" group="2" acctype="5"/>
+	<command cmd="/ban" group="1" acctype="3"/>
 	<command cmd="/unban" group="1" acctype="4"/>
 	<command cmd="/clean" group="2" acctype="5"/>
 	<command cmd="/mccheck" group="2" acctype="5"/>

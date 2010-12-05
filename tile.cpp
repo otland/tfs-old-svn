@@ -628,30 +628,28 @@ ReturnValue Tile::__queryAdd(int32_t index, const Thing* thing, uint32_t count,
 				return RET_NOTPOSSIBLE;
 			}
 
-			if(player->isPzLocked() && !player->getTile()->hasFlag(TILESTATE_PVPZONE) && hasFlag(TILESTATE_PVPZONE))
+			if(player->getTile() && player->isPzLocked())
 			{
-				//player is trying to enter a pvp zone while being pz-locked
-				return RET_PLAYERISPZLOCKEDENTERPVPZONE;
-			}
+				if(!player->getTile()->hasFlag(TILESTATE_PVPZONE))
+				{
+					//player is trying to enter a pvp zone while being pz-locked
+					if(hasFlag(TILESTATE_PVPZONE))
+						return RET_PLAYERISPZLOCKEDENTERPVPZONE;
+				}
+				else if(!hasFlag(TILESTATE_PVPZONE)) //player is trying to leave a pvp zone while being pz-locked
+					return RET_PLAYERISPZLOCKEDLEAVEPVPZONE;
 
-			if(player->isPzLocked() && player->getTile()->hasFlag(TILESTATE_PVPZONE) && !hasFlag(TILESTATE_PVPZONE))
-			{
-				//player is trying to leave a pvp zone while being pz-locked
-				return RET_PLAYERISPZLOCKEDLEAVEPVPZONE;
 			}
 
 			if((hasFlag(TILESTATE_NOPVPZONE) || hasFlag(TILESTATE_PROTECTIONZONE)) && player->isPzLocked())
 				return RET_PLAYERISPZLOCKED;
 		}
-		else
+		else if(creatures && !creatures->empty() && !hasBitSet(FLAG_IGNOREBLOCKCREATURE, flags))
 		{
-			if(creatures && !creatures->empty() && !hasBitSet(FLAG_IGNOREBLOCKCREATURE, flags))
+			for(CreatureVector::const_iterator cit = creatures->begin(); cit != creatures->end(); ++cit)
 			{
-				for(CreatureVector::const_iterator cit = creatures->begin(); cit != creatures->end(); ++cit)
-				{
-					if(!(*cit)->isInGhostMode())
-						return RET_NOTENOUGHROOM;
-				}
+				if(!(*cit)->isInGhostMode())
+					return RET_NOTENOUGHROOM;
 			}
 		}
 

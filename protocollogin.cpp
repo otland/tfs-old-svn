@@ -186,7 +186,7 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 
 		//Add char list
 		output->AddByte(0x64);
-		if(accnumber != 1 && g_config.getBoolean(ConfigManager::ACCOUNT_MANAGER))
+		if(g_config.getBoolean(ConfigManager::ACCOUNT_MANAGER) && accnumber != 1)
 		{
 			output->AddByte((uint8_t)account.charList.size() + 1);
 			output->AddString("Account Manager");
@@ -217,7 +217,7 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 
 		//Add premium days
 		if(g_config.getBoolean(ConfigManager::FREE_PREMIUM))
-			output->AddU16(65535); //client displays free premium
+			output->AddU16(0xFFFF); //client displays free premium
 		else
 			output->AddU16(account.premiumDays);
 

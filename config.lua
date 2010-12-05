@@ -63,6 +63,7 @@
 
 	-- Guilds
 	ingameGuildSystem = "yes"
+	levelToCreateGuild = 8
 
 	-- Highscores
 	highscoreDisplayPlayers = 15
@@ -86,7 +87,6 @@
 	mapStorageType = "relational"
 
 	-- Messaging
-	enableRuleViolationReports = "no"
 	maxMessageBuffer = 4
 
 	-- MySQL

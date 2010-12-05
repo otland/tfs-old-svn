@@ -671,7 +671,7 @@ bool Game::placeCreature(Creature* creature, const Position& pos, bool extendedP
 				player->addCondition(conditionMuted->clone());
 		}
 
-		Condition* conditionTrade = player->getCondition(CONDITION_TRADETICKS, CONDITIONID_DEFAULT);
+		Condition* conditionTrade = player->getCondition(CONDITION_ADVERTISINGTICKS, CONDITIONID_DEFAULT);
 		if(conditionTrade && conditionTrade->getTicks() > 0)
 		{
 			conditionTrade->setTicks(conditionTrade->getTicks() - (time(NULL) - player->getLastLogout()) * 1000);
@@ -982,14 +982,6 @@ ReturnValue Game::internalMoveCreature(Creature* creature, Direction direction, 
 	if(toTile != NULL)
 		ret = internalMoveCreature(creature, fromTile, toTile, flags);
 
-	if(ret != RET_NOERROR)
-	{
-		if(Player* player = creature->getPlayer())
-		{
-			player->sendCancelMessage(ret);
-			player->sendCancelWalk();
-		}
-	}
 	return ret;
 }
 
@@ -1965,6 +1957,7 @@ bool Game::playerMove(uint32_t playerId, Direction direction)
 		return false;
 
 	player->resetIdleTime();
+	player->setNextWalkActionTask(NULL);
 
 	std::list<Direction> dirs;
 	dirs.push_back(direction);
@@ -1979,6 +1972,7 @@ bool Game::playerBroadcastMessage(Player* player, const std::string& text)
 	std::cout << "> " << player->getName() << " broadcasted: \"" << text << "\"." << std::endl;
 	for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
 		(*it).second->sendCreatureSay(player, SPEAK_BROADCAST, text);
+
 	return true;
 }
 
@@ -1988,7 +1982,7 @@ bool Game::playerCreatePrivateChannel(uint32_t playerId)
 	if(!player || player->isRemoved() || !player->isPremium())
 		return false;
 
-	ChatChannel* channel = g_chat.createChannel(player, 0xFFFF);
+	ChatChannel* channel = g_chat.createChannel(player, CHANNEL_PRIVATE);
 	if(!channel || !channel->addUser(player))
 		return false;
 
@@ -2052,12 +2046,6 @@ bool Game::playerOpenChannel(uint32_t playerId, uint16_t channelId)
 	if(!channel)
 		return false;
 
-	if(channel->getId() == 0x03 && g_config.getBoolean(ConfigManager::ENABLE_RULE_VIOLATION_REPORTS))
-	{
-		player->sendRuleViolationsChannel(channel->getId());
-		return true;
-	}
-
 	player->sendChannel(channel->getId(), channel->getName());
 	return true;
 }
@@ -2086,73 +2074,6 @@ bool Game::playerOpenPrivateChannel(uint32_t playerId, std::string& receiver)
 
 	player->sendOpenPrivateChannel(receiver);
 	return true;
-}
-
-bool Game::playerProcessRuleViolation(uint32_t playerId, const std::string& name)
-{
-	if(!g_config.getBoolean(ConfigManager::ENABLE_RULE_VIOLATION_REPORTS))
-		return false;
-
-	Player* player = getPlayerByID(playerId);
-	if(!player || player->isRemoved())
-		return false;
-
-	if(!player->hasFlag(PlayerFlag_CanAnswerRuleViolations) && player->getAccountType() < ACCOUNT_TYPE_GAMEMASTER)
-		return false;
-
-	Player* reporter = getPlayerByName(name);
-	if(!reporter)
-		return false;
-
-	RuleViolationsMap::iterator it = ruleViolations.find(reporter->getID());
-	if(it == ruleViolations.end())
-		return false;
-
-	RuleViolation& rvr = *it->second;
-	if(!rvr.isOpen)
-		return false;
-
-	rvr.isOpen = false;
-	rvr.gamemaster = player;
-
-	ChatChannel* channel = g_chat.getChannelById(0x03);
-	if(channel)
-	{
-		for(UsersMap::const_iterator it = channel->getUsers().begin(); it != channel->getUsers().end(); ++it)
-		{
-			if(it->second)
-				it->second->sendRemoveReport(reporter->getName());
-		}
-	}
-	return true;
-}
-
-bool Game::playerCloseRuleViolation(uint32_t playerId, const std::string& name)
-{
-	if(!g_config.getBoolean(ConfigManager::ENABLE_RULE_VIOLATION_REPORTS))
-		return false;
-
-	Player* player = getPlayerByID(playerId);
-	if(!player || player->isRemoved())
-		return false;
-
-	Player* reporter = getPlayerByName(name);
-	if(!reporter)
-		return false;
-
-	return closeRuleViolation(reporter);
-}
-
-bool Game::playerCancelRuleViolation(uint32_t playerId)
-{
-	if(!g_config.getBoolean(ConfigManager::ENABLE_RULE_VIOLATION_REPORTS))
-		return false;
-
-	Player* player = getPlayerByID(playerId);
-	if(!player || player->isRemoved())
-		return false;
-
-	return cancelRuleViolation(player);
 }
 
 bool Game::playerCloseNpcChannel(uint32_t playerId)
@@ -2192,7 +2113,6 @@ bool Game::playerAutoWalk(uint32_t playerId, std::list<Direction>& listDir)
 
 	player->resetIdleTime();
 	player->setNextWalkActionTask(NULL);
-	player->setNextWalkTask(NULL);
 	return player->startAutoWalk(listDir);
 }
 
@@ -3329,32 +3249,19 @@ bool Game::playerSay(uint32_t playerId, uint16_t channelId, SpeakClasses type,
 
 		case SPEAK_PRIVATE:
 		case SPEAK_PRIVATE_RED:
-		case SPEAK_RVR_ANSWER:
 			return playerSpeakTo(player, type, receiver, text);
 
 		case SPEAK_CHANNEL_O:
 		case SPEAK_CHANNEL_Y:
 		case SPEAK_CHANNEL_R1:
-		case SPEAK_CHANNEL_R2:
 		case SPEAK_CHANNEL_W:
-		{
-			if(playerTalkToChannel(player, type, text, channelId))
-				return true;
-			else
-				return playerSay(playerId, 0, SPEAK_SAY, receiver, text);
-		}
+			return playerTalkToChannel(player, type, text, channelId);
 
 		case SPEAK_PRIVATE_PN:
 			return playerSpeakToNpc(player, text);
 
 		case SPEAK_BROADCAST:
 			return playerBroadcastMessage(player, text);
-
-		case SPEAK_RVR_CHANNEL:
-			return playerReportRuleViolation(player, text);
-
-		case SPEAK_RVR_CONTINUE:
-			return playerContinueReport(player, text);
 
 		default:
 			break;
@@ -3364,7 +3271,7 @@ bool Game::playerSay(uint32_t playerId, uint16_t channelId, SpeakClasses type,
 
 bool Game::playerSayCommand(Player* player, SpeakClasses type, const std::string& text)
 {
-	if(player->getName() == "Account Manager")
+	if(g_config.getBoolean(ConfigManager::ACCOUNT_MANAGER) && player->getName() == "Account Manager")
 		return internalCreatureSay(player, SPEAK_SAY, text, false);
 
 	//First, check if this was a command
@@ -3381,7 +3288,7 @@ bool Game::playerSayCommand(Player* player, SpeakClasses type, const std::string
 
 bool Game::playerSaySpell(Player* player, SpeakClasses type, const std::string& text)
 {
-	if(player->getName() == "Account Manager")
+	if(g_config.getBoolean(ConfigManager::ACCOUNT_MANAGER) && player->getName() == "Account Manager")
 		return internalCreatureSay(player, SPEAK_SAY, text, false);
 
 	std::string words = text;
@@ -3481,14 +3388,14 @@ bool Game::playerTalkToChannel(Player* player, SpeakClasses type, const std::str
 	{
 		case SPEAK_CHANNEL_Y:
 		{
-			if(channelId == 0x09 && (player->hasFlag(PlayerFlag_TalkOrangeHelpChannel) || player->getAccountType() > ACCOUNT_TYPE_NORMAL))
+			if(channelId == CHANNEL_HELP && (player->hasFlag(PlayerFlag_TalkOrangeHelpChannel) || player->getAccountType() > ACCOUNT_TYPE_NORMAL))
 				type = SPEAK_CHANNEL_O;
 			break;
 		}
 
 		case SPEAK_CHANNEL_O:
 		{
-			if(channelId != 0x09 || (!player->hasFlag(PlayerFlag_TalkOrangeHelpChannel) && player->getAccountType() == ACCOUNT_TYPE_NORMAL))
+			if(channelId != CHANNEL_HELP || (!player->hasFlag(PlayerFlag_TalkOrangeHelpChannel) && player->getAccountType() == ACCOUNT_TYPE_NORMAL))
 				type = SPEAK_CHANNEL_Y;
 			break;
 		}
@@ -3496,13 +3403,6 @@ bool Game::playerTalkToChannel(Player* player, SpeakClasses type, const std::str
 		case SPEAK_CHANNEL_R1:
 		{
 			if(!player->hasFlag(PlayerFlag_CanTalkRedChannel) && player->getAccountType() < ACCOUNT_TYPE_GAMEMASTER)
-				type = SPEAK_CHANNEL_Y;
-			break;
-		}
-
-		case SPEAK_CHANNEL_R2:
-		{
-			if(!player->hasFlag(PlayerFlag_CanTalkRedChannel) && player->getAccountType() < ACCOUNT_TYPE_GOD)
 				type = SPEAK_CHANNEL_Y;
 			break;
 		}
@@ -3562,55 +3462,6 @@ bool Game::npcSpeakToPlayer(Npc* npc, Player* player, const std::string& text, b
 	return true;
 }
 
-bool Game::playerReportRuleViolation(Player* player, const std::string& text)
-{
-	//Do not allow reports on multiclones worlds
-	//Since reports are name-based
-	if(g_config.getBoolean(ConfigManager::ALLOW_CLONES) || !g_config.getBoolean(ConfigManager::ENABLE_RULE_VIOLATION_REPORTS))
-	{
-		player->sendTextMessage(MSG_INFO_DESCR, "Rule Violation Reports are disabled.");
-		return false;
-	}
-
-	cancelRuleViolation(player);
-
-	boost::shared_ptr<RuleViolation> rvr(new RuleViolation(
-		player,
-		text,
-		std::time(NULL)
-	));
-
-	ruleViolations[player->getID()] = rvr;
-
-	ChatChannel* channel = g_chat.getChannelById(0x03); //Rule Violations channel
-	if(channel)
-	{
-		channel->talk(player, SPEAK_RVR_CHANNEL, text, rvr->time);
-		return true;
-	}
-	return false;
-}
-
-bool Game::playerContinueReport(Player* player, const std::string& text)
-{
-	if(!g_config.getBoolean(ConfigManager::ENABLE_RULE_VIOLATION_REPORTS))
-		return false;
-
-	RuleViolationsMap::iterator it = ruleViolations.find(player->getID());
-	if(it == ruleViolations.end())
-		return false;
-
-	RuleViolation& rvr = *it->second;
-	Player* toPlayer = rvr.gamemaster;
-	if(!toPlayer)
-		return false;
-
-	toPlayer->sendCreatureSay(player, SPEAK_RVR_CONTINUE, text);
-
-	player->sendTextMessage(MSG_STATUS_SMALL, "Message sent to Gamemaster.");
-	return true;
-}
-
 //--
 bool Game::canThrowObjectTo(const Position& fromPos, const Position& toPos, bool checkLineOfSight /*= true*/,
 	int32_t rangex /*= Map::maxClientViewportX*/, int32_t rangey /*= Map::maxClientViewportY*/)
@@ -3654,11 +3505,14 @@ bool Game::internalCreatureTurn(Creature* creature, Direction dir)
 bool Game::internalCreatureSay(Creature* creature, SpeakClasses type, const std::string& text,
 	bool ghostMode, SpectatorVec* listPtr/* = NULL*/, Position* pos/* = NULL*/)
 {
-	Player* player = creature->getPlayer();
-	if(player && player->getName() == "Account Manager")
+	if(g_config.getBoolean(ConfigManager::ACCOUNT_MANAGER))
 	{
-		player->manageAccount(text);
-		return true;
+		Player* player = creature->getPlayer();
+		if(player && player->getName() == "Account Manager")
+		{
+			player->manageAccount(text);
+			return true;
+		}
 	}
 
 	Position destPos = creature->getPosition();
@@ -4420,64 +4274,6 @@ void Game::getWorldLightInfo(LightInfo& lightInfo)
 	lightInfo.color = 0xD7;
 }
 
-bool Game::cancelRuleViolation(Player* player)
-{
-	if(!g_config.getBoolean(ConfigManager::ENABLE_RULE_VIOLATION_REPORTS))
-		return false;
-
-	RuleViolationsMap::iterator it = ruleViolations.find(player->getID());
-	if(it == ruleViolations.end())
-		return false;
-
-	Player* gamemaster = it->second->gamemaster;
-	if(!it->second->isOpen && gamemaster)
-	{
-		//Send to the responser
-		gamemaster->sendRuleViolationCancel(player->getName());
-	}
-	else
-	{
-		//Send to channel
-		ChatChannel* channel = g_chat.getChannelById(0x03);
-		if(channel)
-		{
-			for(UsersMap::const_iterator ut = channel->getUsers().begin(); ut != channel->getUsers().end(); ++ut)
-			{
-				if(ut->second)
-					ut->second->sendRemoveReport(player->getName());
-			}
-		}
-	}
-
-	//Now erase it
-	ruleViolations.erase(it);
-	return true;
-}
-
-bool Game::closeRuleViolation(Player* player)
-{
-	if(!g_config.getBoolean(ConfigManager::ENABLE_RULE_VIOLATION_REPORTS))
-		return false;
-
-	RuleViolationsMap::iterator it = ruleViolations.find(player->getID());
-	if(it == ruleViolations.end())
-		return false;
-
-	ruleViolations.erase(it);
-	player->sendLockRuleViolation();
-
-	ChatChannel* channel = g_chat.getChannelById(0x03);
-	if(channel)
-	{
-		for(UsersMap::const_iterator ut = channel->getUsers().begin(); ut != channel->getUsers().end(); ++ut)
-		{
-			if(ut->second)
-				ut->second->sendRemoveReport(player->getName());
-		}
-	}
-	return true;
-}
-
 void Game::addCommandTag(std::string tag)
 {
 	bool found = false;
@@ -4890,231 +4686,6 @@ void Game::loadPlayersRecord()
 	fclose(file);
 }
 
-bool Game::violationWindow(uint32_t playerId, std::string targetPlayerName, int32_t reason, int32_t action, std::string banComment, std::string statement, bool IPBanishment)
-{
-	Player* player = getPlayerByID(playerId);
-	if(!player || player->isRemoved())
-		return false;
-
-	if((0 == (violationActions[player->getAccountType()] & (1 << action)))
-		|| reason > violationReasons[player->getAccountType()]
-		|| (IPBanishment && (violationActions[player->getAccountType()] & Action_IpBan) != Action_IpBan))
-	{
-		player->sendCancel("You do not have authorization for this action.");
-		return false;
-	}
-
-	//If this will be configurable, the field in the database has to be edited
-	//since its a VARCHAR(60).
-	if(banComment.size() > 60)
-	{
-		player->sendCancel("The comment may not exceed the limit of 60 characters.");
-		return false;
-	}
-
-	//Statements cannot be this long, player has most likely faked the message.
-	if(statement.size() > 300)
-		return false;
-
-	bool playerExists = false;
-	if(IOLoginData::getInstance()->playerExists(targetPlayerName))
-		playerExists = true;
-
-	toLowerCaseString(targetPlayerName);
-	if(!playerExists || targetPlayerName == "account manager")
-	{
-		player->sendCancel("A player with this name does not exist.");
-		return false;
-	}
-
-	AccountType_t targetAccountType = ACCOUNT_TYPE_NORMAL;
-	Account account;
-	uint32_t guid;
-	Player* targetPlayer = getPlayerByName(targetPlayerName);
-	if(targetPlayer)
-	{
-		targetAccountType = targetPlayer->getAccountType();
-		guid = targetPlayer->getGUID();
-		account = IOLoginData::getInstance()->loadAccount(targetPlayer->getAccount());
-		targetPlayerName = targetPlayer->getName();
-	}
-	else
-	{
-		targetAccountType = IOLoginData::getInstance()->getAccountType(targetPlayerName);
-		IOLoginData::getInstance()->getGuidByName(guid, targetPlayerName);
-		account = IOLoginData::getInstance()->loadAccount(IOLoginData::getInstance()->getAccountNumberByName(targetPlayerName));
-	}
-
-	if(targetAccountType >= player->getAccountType())
-	{
-		player->sendCancel("You do not have authorization for this action.");
-		return false;
-	}
-
-	bool isNotation = false;
-	switch(action)
-	{
-		case 0:
-		{
-			IOBan::getInstance()->addAccountNotation(account.accnumber, time(NULL), reason, action, banComment, player->getGUID());
-			if(IOBan::getInstance()->getNotationsCount(account.accnumber) > 2)
-			{
-				account.warnings++;
-				if(account.warnings > 3)
-				{
-					action = 7;
-					IOBan::getInstance()->addAccountDeletion(account.accnumber, time(NULL), reason, action, banComment, player->getGUID());
-				}
-				else if(account.warnings == 3)
-					IOBan::getInstance()->addAccountBan(account.accnumber, (time(NULL) + (g_config.getNumber(ConfigManager::FINAL_BAN_DAYS) * 86400)), reason, action, banComment, player->getGUID());
-				else
-					IOBan::getInstance()->addAccountBan(account.accnumber, (time(NULL) + (g_config.getNumber(ConfigManager::BAN_DAYS) * 86400)), reason, action, "4 notations received, auto banishment.", player->getGUID());
-			}
-			else
-				isNotation = true;
-
-			break;
-		}
-
-		case 1:
-		{
-			IOBan::getInstance()->addPlayerNamelock(guid, time(NULL), reason, action, banComment, player->getGUID());
-			break;
-		}
-
-		case 3:
-		{
-			account.warnings++;
-			if(account.warnings > 3)
-			{
-				action = 7;
-				IOBan::getInstance()->addAccountDeletion(account.accnumber, time(NULL), reason, action, banComment, player->getGUID());
-			}
-			else
-			{
-				if(account.warnings == 3)
-					IOBan::getInstance()->addAccountBan(account.accnumber, (time(NULL) + (g_config.getNumber(ConfigManager::FINAL_BAN_DAYS) * 86400)), reason, action, banComment, player->getGUID());
-				else
-					IOBan::getInstance()->addAccountBan(account.accnumber, (time(NULL) + (g_config.getNumber(ConfigManager::BAN_DAYS) * 86400)), reason, action, banComment, player->getGUID());
-
-				IOBan::getInstance()->addPlayerNamelock(guid, time(NULL), reason, action, banComment, player->getGUID());
-			}
-			break;
-		}
-
-		case 4:
-		{
-			if(account.warnings < 3)
-			{
-				account.warnings = 3;
-				IOBan::getInstance()->addAccountBan(account.accnumber, (time(NULL) + (g_config.getNumber(ConfigManager::FINAL_BAN_DAYS) * 86400)), reason, action, banComment, player->getGUID());
-			}
-			else
-			{
-				action = 7;
-				account.warnings++;
-				IOBan::getInstance()->addAccountDeletion(account.accnumber, time(NULL), reason, action, banComment, player->getGUID());
-			}
-			break;
-		}
-
-		case 5:
-		{
-			if(account.warnings < 3)
-			{
-				account.warnings = 3;
-				IOBan::getInstance()->addAccountBan(account.accnumber, (time(NULL) + (g_config.getNumber(ConfigManager::FINAL_BAN_DAYS) * 86400)), reason, action, banComment, player->getGUID());
-				IOBan::getInstance()->addPlayerNamelock(guid, time(NULL), reason, action, banComment, player->getGUID());
-			}
-			else
-			{
-				action = 7;
-				account.warnings++;
-				IOBan::getInstance()->addAccountDeletion(account.accnumber, time(NULL), reason, action, banComment, player->getGUID());
-			}
-			break;
-		}
-
-		default:
-		{
-			account.warnings++;
-			if(account.warnings > 3)
-			{
-				action = 7;
-				IOBan::getInstance()->addAccountDeletion(account.accnumber, time(NULL), reason, action, banComment, player->getGUID());
-			}
-			else
-			{
-				if(account.warnings == 3)
-					IOBan::getInstance()->addAccountBan(account.accnumber, (time(NULL) + (g_config.getNumber(ConfigManager::FINAL_BAN_DAYS) * 86400)), reason, action, banComment, player->getGUID());
-				else
-					IOBan::getInstance()->addAccountBan(account.accnumber, (time(NULL) + (g_config.getNumber(ConfigManager::BAN_DAYS) * 86400)), reason, action, banComment, player->getGUID());
-			}
-			break;
-		}
-	}
-
-	char buffer[800];
-	if(g_config.getBoolean(ConfigManager::BROADCAST_BANISHMENTS))
-	{
-		if(isNotation)
-			sprintf(buffer, "%s has received a notation by %s (%d more to ban).", targetPlayerName.c_str(), player->getName().c_str(), (3 - IOBan::getInstance()->getNotationsCount(account.accnumber)));
-		else
-		{
-			if(action == 6)
-				sprintf(buffer, "%s has taken the action \"%s\" for the statement: \"%s\" against: %s (Warnings: %d), with reason: \"%s\", and comment: \"%s\".", player->getName().c_str(), getAction(action, IPBanishment).c_str(), statement.c_str(), targetPlayerName.c_str(), account.warnings, getReason(reason).c_str(), banComment.c_str());
-			else
-				sprintf(buffer, "%s has taken the action \"%s\" against: %s (Warnings: %d), with reason: \"%s\", and comment: \"%s\".", player->getName().c_str(), getAction(action, IPBanishment).c_str(), targetPlayerName.c_str(), account.warnings, getReason(reason).c_str(), banComment.c_str());
-		}
-
-		broadcastMessage(buffer, MSG_STATUS_WARNING);
-	}
-	else
-	{
-		if(isNotation)
-			sprintf(buffer, "You have taken the action notation against %s (%d more to ban).", targetPlayerName.c_str(), (3 - IOBan::getInstance()->getNotationsCount(account.accnumber)));
-		else
-		{
-			if(action == 6)
-				sprintf(buffer, "You have taken the action \"%s\" for the statement: \"%s\" against: %s (Warnings: %d), with reason: \"%s\", and comment: \"%s\".", getAction(action, IPBanishment).c_str(), statement.c_str(), targetPlayerName.c_str(), account.warnings, getReason(reason).c_str(), banComment.c_str());
-			else
-				sprintf(buffer, "You have taken the action \"%s\" against: %s (Warnings: %d), with reason: \"%s\", and comment: \"%s\".", getAction(action, IPBanishment).c_str(), targetPlayerName.c_str(), account.warnings, getReason(reason).c_str(), banComment.c_str());
-		}
-
-		player->sendTextMessage(MSG_STATUS_CONSOLE_RED, buffer);
-	}
-
-	if(targetPlayer)
-	{
-		if(IPBanishment)
-		{
-			uint32_t ip = targetPlayer->lastIP;
-			if(ip > 0)
-				IOBan::getInstance()->addIpBan(ip, 0xFFFFFFFF, (time(NULL) + 86400));
-		}
-
-		if(!isNotation)
-		{
-			addMagicEffect(targetPlayer->getPosition(), NM_ME_MAGIC_POISON);
-
-			uint32_t playerId = targetPlayer->getID();
-			g_scheduler.addEvent(createSchedulerTask(1000, boost::bind(&Game::kickPlayer, this, playerId, false)));
-		}
-	}
-	else if(IPBanishment)
-	{
-		uint32_t lastip = IOLoginData::getInstance()->getLastIPByName(targetPlayerName);
-		if(lastip != 0)
-			IOBan::getInstance()->addIpBan(lastip, 0xFFFFFFFF, (time(NULL) + 86400));
-	}
-
-	if(!isNotation)
-		IOBan::getInstance()->removeAccountNotations(account.accnumber);
-
-	IOLoginData::getInstance()->saveAccount(account);
-	return true;
-}
-
 uint64_t Game::getExperienceStage(uint32_t level)
 {
 	if(stagesEnabled)
@@ -5292,16 +4863,7 @@ void Game::sendGuildMotd(uint32_t playerId, uint32_t guildId)
 	if(!player || player->isRemoved())
 		return;
 
-	player->sendChannelMessage("Message of the Day", IOGuild::getInstance()->getMotd(guildId), SPEAK_CHANNEL_R1, 0x00);
-}
-
-void Game::sendRVRDisabled(uint32_t playerId)
-{
-	Player* player = getPlayerByID(playerId);
-	if(!player || player->isRemoved())
-		return;
-
-	player->sendChannelMessage("Rule Violation Reports", "This feature is disabled.", SPEAK_CHANNEL_R1, 0x03);
+	player->sendChannelMessage("Message of the Day", IOGuild::getInstance()->getMotd(guildId), SPEAK_CHANNEL_R1, CHANNEL_GUILD);
 }
 
 void Game::kickPlayer(uint32_t playerId, bool displayEffect)
@@ -5363,4 +4925,211 @@ void Game::forceRemoveCondition(uint32_t creatureId, ConditionType_t type)
 		return;
 
 	creature->removeCondition(type, true);
+}
+
+bool Game::violationWindow(Player* player, std::string targetPlayerName, int32_t reason, int32_t action, std::string banComment, bool IPBanishment)
+{
+	if((0 == (violationActions[player->getAccountType()] & (1 << action)))
+		|| reason > violationReasons[player->getAccountType()]
+		|| (IPBanishment && (violationActions[player->getAccountType()] & Action_IpBan) != Action_IpBan))
+	{
+		player->sendCancel("You do not have authorization for this action.");
+		return false;
+	}
+
+	//If this will be configurable, the field in the database has to be edited
+	//since its a VARCHAR(60).
+	if(banComment.size() > 60)
+	{
+		player->sendCancel("The comment may not exceed the limit of 60 characters.");
+		return false;
+	}
+
+	bool playerExists = false;
+	if(IOLoginData::getInstance()->playerExists(targetPlayerName))
+		playerExists = true;
+
+	toLowerCaseString(targetPlayerName);
+	if(!playerExists || targetPlayerName == "account manager")
+	{
+		player->sendCancel("A player with this name does not exist.");
+		return false;
+	}
+
+	AccountType_t targetAccountType = ACCOUNT_TYPE_NORMAL;
+	Account account;
+	uint32_t guid;
+	Player* targetPlayer = getPlayerByName(targetPlayerName);
+	if(targetPlayer)
+	{
+		targetAccountType = targetPlayer->getAccountType();
+		guid = targetPlayer->getGUID();
+		account = IOLoginData::getInstance()->loadAccount(targetPlayer->getAccount());
+		targetPlayerName = targetPlayer->getName();
+	}
+	else
+	{
+		targetAccountType = IOLoginData::getInstance()->getAccountType(targetPlayerName);
+		IOLoginData::getInstance()->getGuidByName(guid, targetPlayerName);
+		account = IOLoginData::getInstance()->loadAccount(IOLoginData::getInstance()->getAccountNumberByName(targetPlayerName));
+	}
+
+	if(targetAccountType >= player->getAccountType())
+	{
+		player->sendCancel("You do not have authorization for this action.");
+		return false;
+	}
+
+	bool isNotation = false;
+	switch(action)
+	{
+		case 0:
+		{
+			IOBan::getInstance()->addAccountNotation(account.accnumber, time(NULL), reason, action, banComment, player->getGUID());
+			if(IOBan::getInstance()->getNotationsCount(account.accnumber) > 2)
+			{
+				account.warnings++;
+				if(account.warnings > 3)
+				{
+					action = 7;
+					IOBan::getInstance()->addAccountDeletion(account.accnumber, time(NULL), reason, action, banComment, player->getGUID());
+				}
+				else if(account.warnings == 3)
+					IOBan::getInstance()->addAccountBan(account.accnumber, (time(NULL) + (g_config.getNumber(ConfigManager::FINAL_BAN_DAYS) * 86400)), reason, action, banComment, player->getGUID());
+				else
+					IOBan::getInstance()->addAccountBan(account.accnumber, (time(NULL) + (g_config.getNumber(ConfigManager::BAN_DAYS) * 86400)), reason, action, "4 notations received, auto banishment.", player->getGUID());
+			}
+			else
+				isNotation = true;
+
+			break;
+		}
+
+		case 1:
+		{
+			IOBan::getInstance()->addPlayerNamelock(guid, time(NULL), reason, action, banComment, player->getGUID());
+			break;
+		}
+
+		case 3:
+		{
+			account.warnings++;
+			if(account.warnings > 3)
+			{
+				action = 7;
+				IOBan::getInstance()->addAccountDeletion(account.accnumber, time(NULL), reason, action, banComment, player->getGUID());
+			}
+			else
+			{
+				if(account.warnings == 3)
+					IOBan::getInstance()->addAccountBan(account.accnumber, (time(NULL) + (g_config.getNumber(ConfigManager::FINAL_BAN_DAYS) * 86400)), reason, action, banComment, player->getGUID());
+				else
+					IOBan::getInstance()->addAccountBan(account.accnumber, (time(NULL) + (g_config.getNumber(ConfigManager::BAN_DAYS) * 86400)), reason, action, banComment, player->getGUID());
+
+				IOBan::getInstance()->addPlayerNamelock(guid, time(NULL), reason, action, banComment, player->getGUID());
+			}
+			break;
+		}
+
+		case 4:
+		{
+			if(account.warnings < 3)
+			{
+				account.warnings = 3;
+				IOBan::getInstance()->addAccountBan(account.accnumber, (time(NULL) + (g_config.getNumber(ConfigManager::FINAL_BAN_DAYS) * 86400)), reason, action, banComment, player->getGUID());
+			}
+			else
+			{
+				action = 7;
+				account.warnings++;
+				IOBan::getInstance()->addAccountDeletion(account.accnumber, time(NULL), reason, action, banComment, player->getGUID());
+			}
+			break;
+		}
+
+		case 5:
+		{
+			if(account.warnings < 3)
+			{
+				account.warnings = 3;
+				IOBan::getInstance()->addAccountBan(account.accnumber, (time(NULL) + (g_config.getNumber(ConfigManager::FINAL_BAN_DAYS) * 86400)), reason, action, banComment, player->getGUID());
+				IOBan::getInstance()->addPlayerNamelock(guid, time(NULL), reason, action, banComment, player->getGUID());
+			}
+			else
+			{
+				action = 7;
+				account.warnings++;
+				IOBan::getInstance()->addAccountDeletion(account.accnumber, time(NULL), reason, action, banComment, player->getGUID());
+			}
+			break;
+		}
+
+		default:
+		{
+			account.warnings++;
+			if(account.warnings > 3)
+			{
+				action = 7;
+				IOBan::getInstance()->addAccountDeletion(account.accnumber, time(NULL), reason, action, banComment, player->getGUID());
+			}
+			else
+			{
+				if(account.warnings == 3)
+					IOBan::getInstance()->addAccountBan(account.accnumber, (time(NULL) + (g_config.getNumber(ConfigManager::FINAL_BAN_DAYS) * 86400)), reason, action, banComment, player->getGUID());
+				else
+					IOBan::getInstance()->addAccountBan(account.accnumber, (time(NULL) + (g_config.getNumber(ConfigManager::BAN_DAYS) * 86400)), reason, action, banComment, player->getGUID());
+			}
+			break;
+		}
+	}
+
+	char buffer[800];
+	if(g_config.getBoolean(ConfigManager::BROADCAST_BANISHMENTS))
+	{
+		if(isNotation)
+			sprintf(buffer, "%s has received a notation by %s (%d more to ban).", targetPlayerName.c_str(), player->getName().c_str(), (3 - IOBan::getInstance()->getNotationsCount(account.accnumber)));
+		else
+			sprintf(buffer, "%s has taken the action \"%s\" against: %s (Warnings: %d), with reason: \"%s\", and comment: \"%s\".", player->getName().c_str(), getAction(action, IPBanishment).c_str(), targetPlayerName.c_str(), account.warnings, getReason(reason).c_str(), banComment.c_str());
+
+		broadcastMessage(buffer, MSG_STATUS_WARNING);
+	}
+	else
+	{
+		if(isNotation)
+			sprintf(buffer, "You have taken the action notation against %s (%d more to ban).", targetPlayerName.c_str(), (3 - IOBan::getInstance()->getNotationsCount(account.accnumber)));
+		else
+			sprintf(buffer, "You have taken the action \"%s\" against: %s (Warnings: %d), with reason: \"%s\", and comment: \"%s\".", getAction(action, IPBanishment).c_str(), targetPlayerName.c_str(), account.warnings, getReason(reason).c_str(), banComment.c_str());
+
+		player->sendTextMessage(MSG_STATUS_CONSOLE_RED, buffer);
+	}
+
+	if(targetPlayer)
+	{
+		if(IPBanishment)
+		{
+			uint32_t ip = targetPlayer->lastIP;
+			if(ip > 0)
+				IOBan::getInstance()->addIpBan(ip, 0xFFFFFFFF, (time(NULL) + 86400));
+		}
+
+		if(!isNotation)
+		{
+			addMagicEffect(targetPlayer->getPosition(), NM_ME_MAGIC_POISON);
+
+			uint32_t playerId = targetPlayer->getID();
+			g_scheduler.addEvent(createSchedulerTask(1000, boost::bind(&Game::kickPlayer, this, playerId, false)));
+		}
+	}
+	else if(IPBanishment)
+	{
+		uint32_t lastip = IOLoginData::getInstance()->getLastIPByName(targetPlayerName);
+		if(lastip != 0)
+			IOBan::getInstance()->addIpBan(lastip, 0xFFFFFFFF, (time(NULL) + 86400));
+	}
+
+	if(!isNotation)
+		IOBan::getInstance()->removeAccountNotations(account.accnumber);
+
+	IOLoginData::getInstance()->saveAccount(account);
+	return true;
 }

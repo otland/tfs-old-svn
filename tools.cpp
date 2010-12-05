@@ -242,13 +242,14 @@ bool readXMLContentString(xmlNodePtr node, std::string& value)
 	return false;
 }
 
-std::vector<std::string> explodeString(const std::string& inString, const std::string& separator)
+std::vector<std::string> explodeString(const std::string& inString, const std::string& separator, int32_t limit/* = -1*/)
 {
 	std::vector<std::string> returnVector;
 	std::string::size_type start = 0;
 	std::string::size_type end = 0;
 
-	while((end = inString.find(separator, start)) != std::string::npos)
+	int32_t n = 0;
+	while(n++ != limit && (end = inString.find(separator, start)) != std::string::npos)
 	{
 		returnVector.push_back(inString.substr(start, end - start));
 		start = end + separator.size();
@@ -1016,6 +1017,48 @@ skills_t getSkillId(std::string param)
 		return SKILL_FISH;
 	else
 		return SKILL_FIST;
+}
+
+int32_t reasonStringToInt(std::string reason)
+{
+	reason = asLowerCaseString(reason);
+	if (reason == "offensive name") return 0;
+	else if (reason == "invalid name format") return 1;
+	else if (reason == "unsuitable name") return 2;
+	else if (reason == "name inciting rule violation") return 3;
+	else if (reason == "offensive statement") return 4;
+	else if (reason == "spamming") return 5;
+	else if (reason == "illegal advertising") return 6;
+	else if (reason == "off-topic public statement") return 7;
+	else if (reason == "non-english public statement") return 8;
+	else if (reason == "inciting rule violation") return 9;
+	else if (reason == "bug abuse") return 10;
+	else if (reason == "game weakness abuse") return 11;
+	else if (reason == "using unofficial software to play") return 12;
+	else if (reason == "hacking") return 13;
+	else if (reason == "multi-clienting") return 14;
+	else if (reason == "account trading or sharing") return 15;
+	else if (reason == "threatening gamemaster") return 16;
+	else if (reason == "pretending to have influence on rule enforcement") return 17;
+	else if (reason == "false report to gamemaster") return 18;
+	else if (reason == "destructive behaviour") return 19;
+	else if (reason == "excessive unjustified player killing") return 20;
+	else if (reason == "spoiling auction") return 21;
+	else return -1;
+}
+
+int32_t actionStringToInt(std::string action)
+{
+	action = asLowerCaseString(action);
+	if (action == "notation") return 0;
+	else if (action == "name report" || action == "namelock") return 1;
+	else if (action == "ban" || action == "banishment") return 2;
+	else if (action == "namelock + ban" || action == "namelock + banishment" || action == "name report + ban" || action == "name report + banishment") return 3;
+	else if (action == "ban + final warning" || action == "banishment + final warning") return 4;
+	else if (action == "namelock + ban + final warning" || action == "namelock + banishment + final warning" || action == "name report + ban + final warning" || action == "name report + banishment + final warning") return 5;
+	else if (action == "statement report") return 6;
+	else if (action == "delete" || action == "deletion") return 7;
+	else return -1;
 }
 
 std::string getReason(int32_t reasonId)

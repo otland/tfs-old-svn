@@ -1504,21 +1504,6 @@ void Player::onCreatureDisappear(const Creature* creature, uint32_t stackpos, bo
 		if(getParty())
 			getParty()->leaveParty(this);
 
-		g_game.cancelRuleViolation(this);
-
-		if(hasFlag(PlayerFlag_CanAnswerRuleViolations))
-		{
-			std::list<Player*> closeReportList;
-			for(RuleViolationsMap::const_iterator it = g_game.getRuleViolations().begin(); it != g_game.getRuleViolations().end(); ++it)
-			{
-				if(it->second->gamemaster == this)
-					closeReportList.push_back(it->second->reporter);
-			}
-
-			for(std::list<Player*>::iterator it = closeReportList.begin(); it != closeReportList.end(); ++it)
-				g_game.closeRuleViolation(*it);
-		}
-
 		g_chat.removeUserFromAllChannels(this);
 
 		#ifndef __CONSOLE__
@@ -4575,7 +4560,7 @@ bool Player::isInvitedToGuild(uint32_t guild_id) const
 
 void Player::leaveGuild()
 {
-	sendClosePrivate(0x00);
+	sendClosePrivate(CHANNEL_GUILD);
 	guildId = 0;
 	guildName = "";
 	guildRank = "";

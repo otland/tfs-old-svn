@@ -263,8 +263,17 @@ void Creature::onWalk()
 		uint32_t flags = FLAG_IGNOREFIELDDAMAGE;
 		if(getNextStep(dir, flags))
 		{
-			if(g_game.internalMoveCreature(this, dir, flags) != RET_NOERROR)
+			ReturnValue ret = g_game.internalMoveCreature(this, dir, flags);
+			if(ret != RET_NOERROR)
+			{
+				if(Player* player = getPlayer())
+				{
+					player->sendCancelMessage(ret);
+					player->sendCancelWalk();
+				}
+
 				forceUpdateFollowPath = true;
+			}
 		}
 		else
 		{
@@ -332,13 +341,16 @@ bool Creature::startAutoWalk(std::list<Direction>& listDir)
 	}
 
 	listWalkDir = listDir;
-	addEventWalk(listDir.size() > 1);
+	addEventWalk(listDir.size() == 1);
 	return true;
 }
 
 void Creature::addEventWalk(bool firstStep)
 {
 	cancelNextWalk = false;
+
+	if(getStepSpeed() <= 0)
+		return;
 
 	if(eventWalk == 0)
 	{

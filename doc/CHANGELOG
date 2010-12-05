@@ -23,7 +23,10 @@
 	M The Forgotten Server.exe
 	M config.lua
 	M data/global.lua
+	M data/items/items.otb
+	M data/items/items.xml
 	A data/items/items.xsd
+	M data/XML/commands.xml
 	M data/XML/outfits.xml
 ]
 
@@ -46,4 +49,11 @@
 	Status protocol compatibility.
 	Code cleanup, formating & optimizations.
 	New configurable variable (removeChargesFromWeapons, default: "yes").
+	Removed Rule Violation Reports channel (Ctrl + R) as it no longer exists in protocol 8.62.
+	Removed protocol code for Rule Violation Window (Ctrl + Y) as it no longer exists in protocol 8.62.
+	A command to ban has been added: /ban playername, action (1-x, or strin, i.e "Ban"), reason (1-21, or string, i.e "Multi-clienting"), ipbanishment (1 or 0), comment. It uses the Rule Violation Window code, so days etc. are still configured in config.lua.
+	Fixed so that there won't be any kind of issues with a player named Account Manager when the ingame account manager code is disabled.
+	Replaced items.xml and items.otb with the ones from OpenTibia and fixed compatibility stuff.
+	Further support for OpenTibia items.xml format: absorbPercentAllElements, femaleSleeper, maleSleeper.
+	A lot of miscellaneous cleanups, improvements and fixes.
 ]
