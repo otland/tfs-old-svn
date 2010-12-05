@@ -1223,6 +1223,7 @@ void ProtocolGame::parseLookAt(NetworkMessage& msg)
 void ProtocolGame::parseSay(NetworkMessage& msg)
 {
 	SpeakClasses type = (SpeakClasses)msg.GetByte();
+
 	std::string receiver;
 	uint16_t channelId = 0;
 	switch(type)
@@ -1234,6 +1235,7 @@ void ProtocolGame::parseSay(NetworkMessage& msg)
 
 		case SPEAK_CHANNEL_Y:
 		case SPEAK_CHANNEL_R1:
+		case SPEAK_CHANNEL_R2:
 			channelId = msg.GetU16();
 			break;
 
@@ -2693,13 +2695,16 @@ void ProtocolGame::AddCreatureSpeak(NetworkMessage_ptr msg, const Creature* crea
 	if(!creature)
 		return;
 
-	if(type < SPEAK_FIRST || type > SPEAK_LAST)
-		return;
-
 	msg->AddByte(0xAA);
 	msg->AddU32(0x00);
 
-	msg->AddString(creature->getName());
+	if(type == SPEAK_CHANNEL_R2)
+	{
+		msg->AddString("");
+		type = SPEAK_CHANNEL_R1;
+	}
+	else
+		msg->AddString(creature->getName());
 
 	//Add level only for players
 	if(const Player* speaker = creature->getPlayer())
