@@ -55,5 +55,6 @@
 	Fixed so that there won't be any kind of issues with a player named Account Manager when the ingame account manager code is disabled.
 	Replaced items.xml and items.otb with the ones from OpenTibia and fixed compatibility stuff.
 	Further support for OpenTibia items.xml format: absorbPercentAllElements, femaleSleeper, maleSleeper.
+	Access players will now speak in orange by default in channels.
 	A lot of miscellaneous cleanups, improvements and fixes.
 ]
