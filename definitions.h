@@ -88,6 +88,7 @@ enum passwordType_t
 
 #ifdef __GNUC__
 	#include <stdint.h>
+	#include <string.h>
 	#if __GNUC__ >= 4
 		#include <tr1/unordered_map>
 		#include <tr1/unordered_set>
