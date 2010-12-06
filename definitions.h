@@ -87,6 +87,7 @@ enum passwordType_t
 #define _WIN32_WINNT 0x0501
 
 #ifdef __GNUC__
+	#include <stdint.h>
 	#if __GNUC__ >= 4
 		#include <tr1/unordered_map>
 		#include <tr1/unordered_set>
