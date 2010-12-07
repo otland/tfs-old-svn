@@ -49,7 +49,6 @@
 	Added missing disconnect message when auth fails in gameworld connection.
 	Fixed possible shop system exploit.
 	Status protocol compatibility.
-	Code cleanup, formating & optimizations.
 	New configurable variable (removeChargesFromWeapons, default: "yes").
 	Removed Rule Violation Reports channel (Ctrl + R) as it no longer exists in protocol 8.62.
 	Removed protocol code for Rule Violation Window (Ctrl + Y) as it no longer exists in protocol 8.62.
@@ -59,5 +58,5 @@
 	Further support for OpenTibia items.xml format: absorbPercentAllElements, femaleSleeper, maleSleeper.
 	Access players will now speak in orange by default in channels.
 	Fixed a memory leak with LuaSQL.
-	A lot of miscellaneous cleanups, improvements and fixes.
+	A lot of miscellaneous cleanups, formating, improvements and fixes.
 ]
