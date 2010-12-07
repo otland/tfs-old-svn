@@ -383,9 +383,9 @@ bool ProtocolGame::parseFirstPacket(NetworkMessage& msg)
 
 	msg.SkipBytes(3);
 
-	if(version < 854)
+	if(version < 862)
 	{
-		disconnectClient(0x14, "Only clients with protocol 8.54 to 8.57 allowed!");
+		disconnectClient(0x14, "Only clients with protocol 8.62 allowed!");
 		return false;
 	}
 
