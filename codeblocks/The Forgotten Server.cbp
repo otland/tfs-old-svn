@@ -6,39 +6,46 @@
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
 		<Build>
-			<Target title="Release">
-				<Option output="bin\Release\The Forgotten Server" prefix_auto="1" extension_auto="1" />
-				<Option object_output="obj\Release\" />
+			<Target title="GUI">
+				<Option output="bin\GUI\The Forgotten Server" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj\GUI\" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+			</Target>
+			<Target title="Console">
+				<Option output="bin\Console\The Forgotten Server" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj\Console\" />
 				<Option type="1" />
 				<Option compiler="gcc" />
+				<Option use_console_runner="0" />
 				<Compiler>
-					<Add option="-O2" />
-					<Add option="-D__LUAJIT__" />
-					<Add option="-D__USE_SQLITE__" />
-					<Add option="-D__USE_MYSQL__" />
 					<Add option="-D__CONSOLE__" />
 				</Compiler>
-				<Linker>
-					<Add option="-s" />
-					<Add option="-lws2_32" />
-					<Add option="-lluajit.dll" />
-					<Add option="-lxml2.dll" />
-					<Add option="-lboost_system" />
-					<Add option="-lboost_regex" />
-					<Add option="-lmysql" />
-					<Add option="-lsqlite3" />
-					<Add option="-lgmp" />
-					<Add option="-liconv" />
-					<Add option="-lwsock32" />
-					<Add option="-lluajitsql_sqlite3.dll" />
-					<Add option="-lluajitsql_mysql.dll" />
-				</Linker>
 			</Target>
 		</Build>
 		<Compiler>
+			<Add option="-O2" />
 			<Add option="-Wall" />
 			<Add option="-fexceptions" />
+			<Add option="-D__LUAJIT__" />
+			<Add option="-D__USE_SQLITE__" />
+			<Add option="-D__USE_MYSQL__" />
 		</Compiler>
+		<Linker>
+			<Add option="-s" />
+			<Add option="-lws2_32" />
+			<Add option="-lluajit.dll" />
+			<Add option="-lxml2.dll" />
+			<Add option="-lboost_system" />
+			<Add option="-lboost_regex" />
+			<Add option="-lmysql" />
+			<Add option="-lsqlite3" />
+			<Add option="-lgmp" />
+			<Add option="-liconv" />
+			<Add option="-lwsock32" />
+			<Add option="-lluajitsql_sqlite3.dll" />
+			<Add option="-lluajitsql_mysql.dll" />
+		</Linker>
 		<Unit filename="..\account.cpp" />
 		<Unit filename="..\account.h" />
 		<Unit filename="..\actions.cpp" />
