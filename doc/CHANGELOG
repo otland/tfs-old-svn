@@ -23,9 +23,11 @@
 	M The Forgotten Server.exe
 	M config.lua
 	M data/global.lua
+	M data/creaturescripts/scripts/playerdeath.lua
 	M data/items/items.otb
 	M data/items/items.xml
 	A data/items/items.xsd
+	M data/talkactions/scripts/deathlist.lua
 	M data/XML/commands.xml
 	M data/XML/outfits.xml
 ]
@@ -56,5 +58,6 @@
 	Replaced items.xml and items.otb with the ones from OpenTibia and fixed compatibility stuff.
 	Further support for OpenTibia items.xml format: absorbPercentAllElements, femaleSleeper, maleSleeper.
 	Access players will now speak in orange by default in channels.
+	Fixed a memory leak with LuaSQL.
 	A lot of miscellaneous cleanups, improvements and fixes.
 ]

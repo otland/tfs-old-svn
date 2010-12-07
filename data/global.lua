@@ -562,10 +562,9 @@ function isPremium(cid)
 	return (isPlayer(cid) == TRUE and (getPlayerPremiumDays(cid) > 0 or getConfigInfo('freePremium') == "yes")) and TRUE or FALSE
 end
 
-function rows(connection, sql_statement)
-	local cursor = assert(connection:execute(sql_statement))
+function rows(result)
 	return function ()
-		return cursor:fetch()
+		return result:fetch()
 	end
 end
 
@@ -614,14 +613,14 @@ function doPlayerAddAddons(cid, addon)
 	end
 end
 
-function numRows(cursor)
-	local row = cursor:fetch()
+function numRows(result)
+	local row = result:fetch()
 	local rows = 0
 	while row do
 		rows = rows + 1
-		row = cursor:fetch()
+		row = result:fetch()
 	end
-	cursor:close()
+	result:close()
 	return rows
 end
 
