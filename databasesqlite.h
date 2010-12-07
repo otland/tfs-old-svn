@@ -24,7 +24,7 @@
 #include <sqlite3.h>
 #include "database.h"
 
-class DatabaseSqLite : protected _Database
+class DatabaseSqLite : public _Database
 {
 	public:
 		DatabaseSqLite();

@@ -101,6 +101,8 @@ enum passwordType_t
 		#define OTSERV_HASH_SET __gnu_cxx::hash_set
 	#endif
 	#include <assert.h>
+	#include <time.h>
+
 	#define ATOI64 atoll
 #else
 	typedef unsigned long long uint64_t;

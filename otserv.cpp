@@ -197,8 +197,7 @@ int main(int argc, char *argv[])
 
 	OTSYS_THREAD_LOCK(g_loaderLock, "main()");
 	OTSYS_THREAD_WAITSIGNAL(g_loaderSignal, g_loaderLock);
-
-	boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+	OTSYS_SLEEP(1000);
 
 	if(servicer.is_running())
 	{
