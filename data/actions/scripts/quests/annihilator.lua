@@ -40,8 +40,8 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 			doSendMagicEffect(newPosition[i], CONST_ME_ENERGYAREA)
 		end
 		doTransformItem(item.uid, item.itemid + 1)
-		return true
+	elseif item.itemid == 1946 then
+		doPlayerSendCancel(cid, "Sorry, not possible.")
 	end
-	doTransformItem(item.uid, item.itemid - 1)
 	return TRUE
 end
