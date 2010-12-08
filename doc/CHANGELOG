@@ -23,6 +23,7 @@
 	M The Forgotten Server.exe
 	M config.lua
 	M data/global.lua
+	M data/actions/scripts/other/potions.lua
 	M data/creaturescripts/scripts/playerdeath.lua
 	M data/items/items.otb
 	M data/items/items.xml
