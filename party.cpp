@@ -333,7 +333,7 @@ void Party::shareExperience(double experience, Creature* target, bool multiplied
 
 bool Party::canUseSharedExperience(const Player* player, uint32_t highestLevel/* = 0*/) const
 {
-	if(!player || player->isRemoved())
+	if(!player || player->isRemoved() || !memberList.size())
 		return false;
 
 	if(!highestLevel)

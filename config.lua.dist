@@ -119,7 +119,7 @@
 	-- Database
 	-- NOTE: sqlFile is used only by sqlite database, and sqlKeepAlive by mysql database.
 	-- To disable sqlKeepAlive such as mysqlReadTimeout use 0 value.
-	-- encryptionType can be plain, md5, sha1, sha256, sha512 or vahash.
+	-- encryptionType can be plain, sha1, sha256 or sha512. md5 should ONLY be used for backward compatibility
 	sqlType = "sqlite"
 	sqlHost = "localhost"
 	sqlPort = 3306

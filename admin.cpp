@@ -19,7 +19,9 @@
 #include <iostream>
 
 #include "admin.h"
-#include "rsa.h"
+#include <openssl/rsa.h>
+#include <openssl/bn.h>
+#include <openssl/err.h>
 #include "tools.h"
 
 #include "configmanager.h"

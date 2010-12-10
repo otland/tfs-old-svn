@@ -16,7 +16,7 @@
 ////////////////////////////////////////////////////////////////////////
 #include "otpch.h"
 #include "otsystem.h"
-
+#include <signal.h>
 #include <iostream>
 #include <fstream>
 #include <iomanip>
@@ -169,7 +169,10 @@ bool argumentsHandler(StringVec args)
 #ifndef WINDOWS
 int32_t getch()
 {
-	struct termios oldt;
+	// PTFS, disable this
+	boost::this_thread::sleep(boost::posix_time::seconds(3));
+	return 13;
+/*	struct termios oldt;
 	tcgetattr(STDIN_FILENO, &oldt);
 
 	struct termios newt = oldt;
@@ -179,6 +182,7 @@ int32_t getch()
 	int32_t ch = getchar();
 	tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
 	return ch;
+*/
 }
 
 void signalHandler(int32_t sig)
@@ -235,6 +239,7 @@ void runfileHandler(void)
 #else
 int32_t getch()
 {
+	timeout(5000);
 	return (int32_t)getchar();
 }
 #endif
@@ -551,7 +556,7 @@ void otserv(StringVec, ServiceManager* services)
 	BN_dec2bn(&g_RSA->e, g_config.getString(ConfigManager::RSA_PUBLIC).c_str());
 
 	// This check will verify keys set in config.lua
-	if(RSA_check_key(g_RSA))
+	/*if(RSA_check_key(g_RSA))
 	{
 		std::clog << std::endl << "> Calculating dmp1, dmq1 and iqmp for RSA...";
 
@@ -564,7 +569,7 @@ void otserv(StringVec, ServiceManager* services)
 		BN_mod(g_RSA->dmq1, g_RSA->d, r2, ctx);
 
 		BN_mod_inverse(g_RSA->iqmp, g_RSA->q, g_RSA->p, ctx);
-	}
+	}*/
 
 	// So it's fucked now?
 	if(!RSA_check_key(g_RSA))

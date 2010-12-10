@@ -334,12 +334,15 @@ class Item : virtual public Thing, public ItemAttributes
 		virtual void __startDecaying();
 		static uint32_t countByType(const Item* item, int32_t checkType);
 
+		bool isCached;
+
 	protected:
 		uint16_t id;
 		uint8_t count;
 
 		Raid* raid;
 		bool loadedFromMap;
+		
 };
 
 inline std::string Item::getName() const

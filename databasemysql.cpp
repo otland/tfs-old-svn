@@ -154,7 +154,7 @@ bool DatabaseMySQL::query(const std::string &query)
 		return false;
 
 #ifdef __SQL_QUERY_DEBUG__
-	std::clog << "MYSQL DEBUG, query: " << query.c_str() << std::endl;
+	/*std::clog << "MYSQL DEBUG, query: " << query.c_str() << std::endl;*/
 #endif
 	if(mysql_real_query(&m_handle, query.c_str(), query.length()))
 	{
@@ -182,7 +182,7 @@ DBResult* DatabaseMySQL::storeQuery(const std::string &query)
 
 	int32_t error = 0;
 #ifdef __SQL_QUERY_DEBUG__
-	std::clog << "MYSQL DEBUG, storeQuery: " << query.c_str() << std::endl;
+	/*std::clog << "MYSQL DEBUG, storeQuery: " << query.c_str() << std::endl;*/
 #endif
 	if(mysql_real_query(&m_handle, query.c_str(), query.length()))
 	{

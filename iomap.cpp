@@ -61,16 +61,27 @@ typedef uint32_t flags_t;
 	|--- OTBM_ITEM_DEF (not implemented)
 */
 
+std::map<uint16_t, Item*> itemCache;
+std::map<uint16_t, Tile*> tileCache;
+uint64_t cachedItems = 0;
+uint64_t nullTiles = 0;
+uint64_t testTiles = 0;
+Tile* blockTile = new StaticTile(0xfffe, 0xfffe, 0xfffe);
 Tile* IOMap::createTile(Item*& ground, Item* item, uint16_t px, uint16_t py, uint16_t pz)
 {
+	testTiles++;
 	Tile* tile = NULL;
 	if(ground)
 	{
-		if((item && item->isBlocking(NULL)) || ground->isBlocking(NULL)) //tile is blocking with possibly some decoration, should be static
+		if((item && item->isBlocking(NULL)) || ground->isBlocking(NULL)) { //tile is blocking with possibly some decoration, should be static
+			
 			tile = new StaticTile(px, py, pz);
-		else //tile is not blocking with possibly multiple items, use dynamic
+			
+		}
+		else { //tile is not blocking with possibly multiple items, use dynamic
 			tile = new DynamicTile(px, py, pz);
-
+		}
+		
 		tile->__internalAddThing(ground);
 		if(ground->getDecaying() != DECAYING_TRUE)
 		{
@@ -80,8 +91,11 @@ Tile* IOMap::createTile(Item*& ground, Item* item, uint16_t px, uint16_t py, uin
 
 		ground = NULL;
 	}
-	else //no ground on this tile, so it will always block
-		tile = new StaticTile(px, py, pz);
+	else { //no ground on this tile, so it will always block
+		tile = &*blockTile;
+		nullTiles++;
+		
+	}
 
 	return tile;
 }
@@ -376,8 +390,16 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 								else if(item->isGroundTile())
 								{
 									delete ground;
-
-									ground = item;
+									if(itemCache.count(item->getID())) {
+										ground = &*itemCache[item->getID()];
+										cachedItems++;
+										delete item;
+										
+									} else {
+										item->isCached = true;
+										itemCache[item->getID()] = item;
+										ground = &*itemCache[item->getID()];	
+									}
 								}
 								else
 								{
@@ -443,11 +465,20 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 								else if(item->isGroundTile())
 								{
 									delete ground;
-
-									ground = item;
+									if(itemCache.count(item->getID())) {
+										ground = &*itemCache[item->getID()];
+										cachedItems++;
+										delete item;
+										
+									} else {
+										item->isCached = true;
+										itemCache[item->getID()] = item;
+										ground = &*itemCache[item->getID()];	
+									}
 								}
 								else
 								{
+
 									tile = createTile(ground, item, px, py, pz);
 									tile->__internalAddThing(item);
 
@@ -591,7 +622,7 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 
 		nodeMapData = f.getNextNode(nodeMapData, type);
 	}
-
+	std::clog << "[NOTE] Total tiles cached: " << cachedItems << "[+" << nullTiles << " blank tiles, " << testTiles-cachedItems << " uncached], saving ~" << (sizeof(Item) * cachedItems) / 1024.0 / 1024.0 << "MB ram" << std::endl;
 	return true;
 }
 
