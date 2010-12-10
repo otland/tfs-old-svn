@@ -6,74 +6,23 @@
 			items = {2050, 2382}
 		}
 	]]></config>
-	<event type="login" name="FirstItems" event="script"><![CDATA[
+	<event type="login" name="FirstItems" event="buffer"><![CDATA[
 		domodlib('firstitems_config')
+		if(getPlayerStorageValue(cid, config.storage) > 0) then
+			return
+		end
 
-		function onLogin(cid)
-    if getPlayerStorageValue(cid, 30001) == -1 then
-        if getPlayerVocation(cid) == 1 then
-            doPlayerAddItem(cid, 2190, 1)--Wand Of Vortex
-            doPlayerAddItem(cid, 2175, 1)--Spellbook
-            doPlayerAddItem(cid, 8820, 1)--Mage hat
-            doPlayerAddItem(cid, 8819, 1)--Magician Robe
-            doPlayerAddItem(cid, 2648, 1)--Chain Legs
-            doPlayerAddItem(cid, 2173, 1)--Amulet of loss
-            doPlayerAddItem(cid, 2643, 1)--Leather Boots
-            doPlayerAddItem(cid, 2004, 1)--Golden Backpack
-            doPlayerAddItem(cid, 2152, 25)--Money
-            doPlayerAddItem(cid, 2273, 50)--UH
-            doPlayerAddItem(cid, 2268, 50)--SD
-            doPlayerAddItem(cid, 2282, 50)--MANA
-        doPlayerSendTextMessage(cid,22,""..getPlayerName(cid).." you now have the first Wizard items.")
-        end
-        if getPlayerVocation(cid) == 2 then
-            doPlayerAddItem(cid, 2182, 1)--Snakekbite Rod
-            doPlayerAddItem(cid, 2175, 1)--Spellbook
-            doPlayerAddItem(cid, 8820, 1)--Mage hat
-            doPlayerAddItem(cid, 8819, 1)--Magician Robe
-            doPlayerAddItem(cid, 2648, 1)--Chain Legs
-            doPlayerAddItem(cid, 2173, 1)--Amulet of loss
-            doPlayerAddItem(cid, 2643, 1)--Leather Boots
-            doPlayerAddItem(cid, 2004, 1)--Golden Backpack
-            doPlayerAddItem(cid, 2152, 25)--Money
-            doPlayerAddItem(cid, 2273, 50)--UH
-            doPlayerAddItem(cid, 2268, 50)--SD
-            doPlayerAddItem(cid, 2282, 50)--MANA
-        doPlayerSendTextMessage(cid,22,""..getPlayerName(cid).." you now have the first Prophet items.")
-        end
-        if getPlayerVocation(cid) == 3 then
-            doPlayerAddItem(cid, 2389, 2)--Spear
-            doPlayerAddItem(cid, 2530, 1)--Copper Shield
-            doPlayerAddItem(cid, 2660, 1)--Cloak
-            doPlayerAddItem(cid, 8923, 1)--Legs
-            doPlayerAddItem(cid, 2173, 1)--Amulet of loss
-            doPlayerAddItem(cid, 2643, 1)--Leather Boots
-            doPlayerAddItem(cid, 2004, 1)--Golden Backpack
-			doPlayerAddItem(cid, 2456, 1)--Bow
-            doPlayerAddItem(cid, 2152, 25)--Money
-            doPlayerAddItem(cid, 2273, 50)--UH
-            doPlayerAddItem(cid, 2300, 50)--MANA
-        doPlayerSendTextMessage(cid,22,""..getPlayerName(cid).." you now have the first Assassin items.")
-        end
-        if getPlayerVocation(cid) == 4 then
-            doPlayerAddItem(cid, 2481, 1)--Soldier Helmet
-            doPlayerAddItem(cid, 2465, 1)--Brass Armor
-            doPlayerAddItem(cid, 2509, 1)--Steel Shield
-            doPlayerAddItem(cid, 2478, 1)--Brass Legs
-            doPlayerAddItem(cid, 2173, 1)--Amulet of loss
-            doPlayerAddItem(cid, 2643, 1)--Leather Boots
-            doPlayerAddItem(cid, 2004, 1)--Golden Backpack
-            doPlayerAddItem(cid, 8602, 1)--Sword
-            doPlayerAddItem(cid, 2439, 1)--Club
-            doPlayerAddItem(cid, 8601, 1)--Axe
-            doPlayerAddItem(cid, 2152, 25)--Money
-            doPlayerAddItem(cid, 2273, 50)--UH
-            doPlayerAddItem(cid, 2306, 50)--MANA    
-        doPlayerSendTextMessage(cid,22,""..getPlayerName(cid).." you now have the first Warrior items.")
-        end
-            setPlayerStorageValue(cid, 30001, 1)
-    end
-     return TRUE
-end 
+		for _, id in ipairs(config.items) do
+			doPlayerAddItem(cid, id, 1)
+		end
+
+		if(getPlayerSex(cid) == PLAYERSEX_FEMALE) then
+			doPlayerAddItem(cid, 2651, 1)
+		else
+			doPlayerAddItem(cid, 2650, 1)
+		end
+
+		doAddContainerItem(doPlayerAddItem(cid, 1987, 1), 2674, 1)
+		setPlayerStorageValue(cid, config.storage, 1)
 	]]></event>
 </mod>

@@ -178,6 +178,7 @@ class Connection : public boost::enable_shared_from_this<Connection>, boost::non
 		uint32_t m_refCount;
 
 		static bool m_logError;
+		boost::recursive_mutex m_connectionLock;
 };
 
 #endif

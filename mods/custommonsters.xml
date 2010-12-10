@@ -5,23 +5,6 @@
 	<monster name="Bad Rabbit" file="Custom/bad rabbit.xml"/>
 	<monster name="Hero Hacker" file="Custom/hero hacker.xml"/>
 
-	<monster name="Phyro Colossus" file="Custom/Phyro Colossus.xml"/>
-	<monster name="King Kong" file="Custom/King Kong.xml"/>
-	<monster name="Cursed Pharadeon" file="Custom/Cursed Pharadeon.xml"/>
-	<monster name="Tormentor" file="Custom/Tormentor.xml"/>
-	<monster name="Elder Frost Dragon" file="Custom/Elder frost dragon.xml"/>
-	<monster name="Undead Pharaoh" file="Custom/Undead Pharaoh.xml"/>
-	<monster name="Warmaster" file="Custom/Warmaster.xml"/>
-	<monster name="Apocalypse" file="Custom/apocalypse.xml"/>
-	<monster name="Swamp Giant" file="Custom/Swamp Giant.xml"/>
-	<monster name="Cursed Angel" file="Custom/Cursed Angel.xml"/>
-	<monster name="PedObear" file="Custom/PedObear.xml"/>
-	<monster name="Chakal" file="Custom/Chakal.xml"/>
-	<monster name="Molten Golem" file="Custom/Molten Golem.xml"/>
-	<monster name="Emperor" file="Custom/Emperor.xml"/>
-	<monster name="Dejavu" file="Custom/dejavu.xml"/>
-	<monster name="Dejavo" file="Custom/dejavo.xml"/>
-	<monster name="Dejave" file="Custom/dejave.xml"/>
-	<monster name="Pycotitan" file="Custom/Pycotitan.xml"/>
-	<monster name="Cykotitan" file="Custom/cykotitan.xml"/>
+	<!-- Training Monk -->
+	<monster name="Training Monk" file="Custom/training monk.xml"/>
 </mod>

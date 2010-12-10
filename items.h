@@ -173,7 +173,7 @@ class Array
 		Array(uint32_t n);
 		virtual ~Array() {clear();}
 
-		void clear() {if(m_data && m_size) { free(m_data); m_size = 0;} }
+		void clear() {free(m_data);}
 		void reload();
 
 		A getElement(uint32_t id);
