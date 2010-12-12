@@ -99,11 +99,13 @@ void Spells::clear()
 	RunesMap::iterator it;
 	for(it = runes.begin(); it != runes.end(); ++it)
 		delete it->second;
+
 	runes.clear();
 
 	InstantsMap::iterator it2;
 	for(it2 = instants.begin(); it2 != instants.end(); ++it2)
 		delete it2->second;
+
 	instants.clear();
 }
 
@@ -126,8 +128,8 @@ Event* Spells::getEvent(const std::string& nodeName)
 		return new InstantSpell(&m_scriptInterface);
 	else if(tmpNodeName == "conjure")
 		return new ConjureSpell(&m_scriptInterface);
-	else
-		return NULL;
+
+	return NULL;
 }
 
 bool Spells::registerEvent(Event* event, xmlNodePtr p)
@@ -164,8 +166,10 @@ Spell* Spells::getSpellByName(const std::string& name)
 	Spell* spell;
 	if((spell = getRuneSpellByName(name)))
 		return spell;
+
 	if((spell = getInstantSpellByName(name)))
 		return spell;
+
 	return NULL;
 }
 
@@ -174,6 +178,7 @@ RuneSpell* Spells::getRuneSpell(uint32_t id)
 	RunesMap::iterator it = runes.find(id);
 	if(it != runes.end())
 		return it->second;
+
 	return NULL;
 }
 
@@ -373,10 +378,10 @@ bool CombatSpell::executeCastSpell(Creature* creature, const LuaVariant& var)
 		lua_pushnumber(L, cid);
 		m_scriptInterface->pushVariant(L, var);
 
-		int32_t result = m_scriptInterface->callFunction(2);
+		bool result = m_scriptInterface->callFunction(2);
 		m_scriptInterface->releaseScriptEnv();
 
-		return (result != LUA_ERROR);
+		return result;
 	}
 	else
 	{
@@ -517,8 +522,8 @@ bool Spell::configureSpell(xmlNodePtr p)
 	if(readXMLInteger(p, "soul", intValue))
 	 	soul = intValue;
 
-	if(readXMLInteger(p, "exhaustion", intValue) || readXMLInteger(p, "cooldown", intValue))
-		cooldown = intValue;
+	if(readXMLInteger(p, "exhaustion", intValue))
+		exhaustion = intValue;
 
 	if(readXMLInteger(p, "prem", intValue))
 		premium = (intValue == 1);
@@ -1264,10 +1269,10 @@ bool InstantSpell::executeCastSpell(Creature* creature, const LuaVariant& var)
 		lua_pushnumber(L, cid);
 		m_scriptInterface->pushVariant(L, var);
 
-		int32_t result = m_scriptInterface->callFunction(2);
+		bool result = m_scriptInterface->callFunction(2);
 		m_scriptInterface->releaseScriptEnv();
 
-		return (result != LUA_ERROR);
+		return result;
 	}
 	else
 	{
@@ -2240,10 +2245,10 @@ bool RuneSpell::executeCastSpell(Creature* creature, const LuaVariant& var)
 		lua_pushnumber(L, cid);
 		m_scriptInterface->pushVariant(L, var);
 
-		int32_t result = m_scriptInterface->callFunction(2);
+		bool result = m_scriptInterface->callFunction(2);
 		m_scriptInterface->releaseScriptEnv();
 
-		return (result != LUA_ERROR);
+		return result;
 	}
 	else
 	{

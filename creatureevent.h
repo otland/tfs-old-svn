@@ -23,6 +23,7 @@
 
 #include "luascript.h"
 #include "baseevents.h"
+#include "enums.h"
 
 enum CreatureEventType_t
 {
@@ -32,7 +33,8 @@ enum CreatureEventType_t
 	CREATURE_EVENT_THINK,
 	CREATURE_EVENT_PREPAREDEATH,
 	CREATURE_EVENT_DEATH,
-	CREATURE_EVENT_KILL
+	CREATURE_EVENT_KILL,
+	CREATURE_EVENT_ADVANCE
 };
 
 class CreatureEvent;
@@ -46,6 +48,7 @@ class CreatureEvents : public BaseEvents
 		// global events
 		uint32_t playerLogin(Player* player);
 		uint32_t playerLogout(Player* player);
+		uint32_t playerAdvance(Player* player, skills_t, uint32_t, uint32_t);
 
 		CreatureEvent* getEventByName(const std::string& name, bool forceLoaded = true);
 
@@ -85,6 +88,7 @@ class CreatureEvent : public Event
 		uint32_t executeOnPrepareDeath(Player* player, Creature* killer);
 		uint32_t executeOnDeath(Creature* creature, Item* corpse, Creature* killer, Creature* mostDamageKiller, bool lastHitUnjustified, bool mostDamageUnjustified);
 		uint32_t executeOnKill(Creature* creature, Creature* target);
+		uint32_t executeAdvance(Creature*, skills_t, uint32_t, uint32_t);
 		//
 
 	protected:

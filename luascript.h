@@ -62,15 +62,6 @@ class Combat;
 class Condition;
 class Npc;
 
-enum LUA_RET_CODE
-{
-	LUA_NO_ERROR = 0,
-	LUA_ERROR = -1,
-	LUA_TRUE = 1,
-	LUA_FALSE = 0,
-	LUA_NULL = 0,
-};
-
 enum LuaVariantType_t
 {
 	VARIANT_NONE = 0,
@@ -214,7 +205,8 @@ class ScriptEnviroment
 
 class Position;
 
-enum PlayerInfo_t{
+enum PlayerInfo_t
+{
 	PlayerInfoFood,
 	PlayerInfoAccess,
 	PlayerInfoLevel,
@@ -240,7 +232,8 @@ enum PlayerInfo_t{
 	PlayerInfoPremiumDays,
 	PlayerInfoSkullType,
 	PlayerInfoPzLock,
-	PlayerInfoGhostStatus
+	PlayerInfoGhostStatus,
+	PlayerInfoIp
 };
 
 #define reportErrorFunc(a)  reportError(__FUNCTION__, a)
@@ -316,7 +309,7 @@ class LuaScriptInterface
 		bool pushFunction(int32_t functionId);
 
 		static int32_t luaErrorHandler(lua_State* L);
-		int32_t callFunction(uint32_t nParams);
+		bool callFunction(uint32_t nParams);
 
 		//push/pop common structures
 		static void pushThing(lua_State* L, Thing* thing, uint32_t thingid);
@@ -379,6 +372,7 @@ class LuaScriptInterface
 		static int32_t luaDoRemoveCreature(lua_State* L);
 		static int32_t luaDoMoveCreature(lua_State* L);
 		static int32_t luaGetHouseTilesSize(lua_State* L);
+		static int32_t luaGetTileInfo(lua_State* L);
 
 		static int32_t luaDoCreatureSay(lua_State* L);
 		static int32_t luaDoPlayerAddSkillTry(lua_State* L);
@@ -402,6 +396,7 @@ class LuaScriptInterface
 		static int32_t luaDoPlayerSetGuildRank(lua_State* L);
 		static int32_t luaDoPlayerSetGuildNick(lua_State* L);
 		static int32_t luaDoPlayerSetSex(lua_State* L);
+		static int32_t luaDoPlayerChangeName(lua_State* L);
 		static int32_t luaDoSetCreatureLight(lua_State* L);
 		static int32_t luaDoSetCreatureDropLoot(lua_State* L);
 		static int32_t luaGetPlayerSkullType(lua_State* L);
@@ -450,6 +445,7 @@ class LuaScriptInterface
 
 		//get creature info functions
 		static int32_t luaGetPlayerFood(lua_State* L);
+		static int32_t luaGetPlayerIp(lua_State* L);
 		static int32_t luaGetPlayerAccess(lua_State* L);
 		static int32_t luaGetPlayerLevel(lua_State* L);
 		static int32_t luaGetPlayerMagLevel(lua_State* L);

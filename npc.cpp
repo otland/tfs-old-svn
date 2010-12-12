@@ -2965,7 +2965,8 @@ int32_t NpcScriptInterface::luaActionSay(lua_State* L)
 	bool publicize = true;
 
 	if(parameters >= 3)
-		publicize = (popNumber(L) == LUA_TRUE);
+
+		publicize = (popNumber(L) == 1);
 
 	if(parameters >= 2)
 	{
@@ -3324,7 +3325,7 @@ int32_t NpcScriptInterface::luaOpenShopWindow(lua_State* L)
 	if(lua_istable(L, -1) == 0)
 	{
 		reportError(__FUNCTION__, "item list is not a table.");
-		lua_pushnumber(L, LUA_ERROR);
+		lua_pushboolean(L, false);
 		return 1;
 	}
 
@@ -3351,7 +3352,7 @@ int32_t NpcScriptInterface::luaOpenShopWindow(lua_State* L)
 	if(!player)
 	{
 		reportErrorFunc(getErrorDesc(LUA_ERROR_PLAYER_NOT_FOUND));
-		lua_pushnumber(L, LUA_ERROR);
+		lua_pushboolean(L, false);
 		return 1;
 	}
 
@@ -3361,7 +3362,7 @@ int32_t NpcScriptInterface::luaOpenShopWindow(lua_State* L)
 	if(!npc)
 	{
 		reportErrorFunc(getErrorDesc(LUA_ERROR_CREATURE_NOT_FOUND));
-		lua_pushnumber(L, LUA_ERROR);
+		lua_pushboolean(L, false);
 		return 1;
 	}
 
@@ -3369,7 +3370,7 @@ int32_t NpcScriptInterface::luaOpenShopWindow(lua_State* L)
 	player->setShopOwner(npc, buyCallback, sellCallback);
 	player->openShopWindow(items);
 
-	lua_pushnumber(L, LUA_NO_ERROR);
+	lua_pushboolean(L, true);
 	return 1;
 }
 
@@ -3382,7 +3383,7 @@ int32_t NpcScriptInterface::luaCloseShopWindow(lua_State* L)
 	if(!player)
 	{
 		reportErrorFunc(getErrorDesc(LUA_ERROR_PLAYER_NOT_FOUND));
-		lua_pushnumber(L, LUA_ERROR);
+		lua_pushboolean(L, false);
 		return 1;
 	}
 
@@ -3390,7 +3391,7 @@ int32_t NpcScriptInterface::luaCloseShopWindow(lua_State* L)
 	if(!npc)
 	{
 		reportErrorFunc(getErrorDesc(LUA_ERROR_CREATURE_NOT_FOUND));
-		lua_pushnumber(L, LUA_ERROR);
+		lua_pushboolean(L, false);
 		return 1;
 	}
 
@@ -3414,7 +3415,7 @@ int32_t NpcScriptInterface::luaCloseShopWindow(lua_State* L)
 		npc->removeShopPlayer(player);
 	}
 
-	lua_pushnumber(L, LUA_NO_ERROR);
+	lua_pushboolean(L, true);
 	return 1;
 }
 
@@ -3448,7 +3449,7 @@ int32_t NpcScriptInterface::luaDoSellItem(lua_State* L)
 	if(!player)
 	{
 		reportErrorFunc(getErrorDesc(LUA_ERROR_PLAYER_NOT_FOUND));
-		lua_pushnumber(L, LUA_ERROR);
+		lua_pushboolean(L, false);
 		return 1;
 	}
 

@@ -40,7 +40,6 @@
 #include "creatureevent.h"
 #include "status.h"
 #include "beds.h"
-#include "mounts.h"
 #ifndef __CONSOLE__
 #include "gui.h"
 #endif
@@ -648,6 +647,8 @@ void Player::addSkillAdvance(skills_t skill, uint32_t count)
 		char advMsg[50];
 		sprintf(advMsg, "You advanced in %s.", getSkillName(skill).c_str());
 		sendTextMessage(MSG_EVENT_ADVANCE, advMsg);
+
+		g_creatureEvents->playerAdvance(this, skill, (skills[skill][SKILL_LEVEL] - 1), skills[skill][SKILL_LEVEL]);
 		advance = true;
 
 		if(vocation->getReqSkillTries(skill, skills[skill][SKILL_LEVEL]) > vocation->getReqSkillTries(skill, skills[skill][SKILL_LEVEL] + 1))
@@ -838,15 +839,10 @@ void Player::addStorageValue(const uint32_t key, const int32_t value)
 			else
 				m_playerOutfits.addOutfit(outfit);
 		}
-		else if(IS_IN_KEYRANGE(key, MOUNTS_RANGE))
-		{
-			//don't do anything special
-		}
 		else
 			std::cout << "Warning: unknown reserved key: " << key << " player: " << getName() << std::endl;
 	}
-
-	if(value == -1)
+	else if(value == -1)
 		storageMap.erase(key);
 	else
 		storageMap[key] = value;
@@ -1969,6 +1965,7 @@ void Player::addExperience(uint64_t exp, bool useMult/* = false*/, bool sendText
 
 		char levelMsg[60];
 		sprintf(levelMsg, "You advanced from Level %d to Level %d.", prevLevel, newLevel);
+		g_creatureEvents->playerAdvance(this, LEVEL, prevLevel, newLevel);
 		sendTextMessage(MSG_EVENT_ADVANCE, levelMsg);
 	}
 
@@ -3875,7 +3872,7 @@ void Player::genReservedStorageRange()
 			base_key++;
 			if(base_key > PSTRG_OUTFITS_RANGE_START + PSTRG_OUTFITS_RANGE_SIZE)
 			{
-				std::cout << "Warning: [Player::genReservedStorageRange()] Player " << getName() << " with more than 500 outfits!" << std::endl;
+				std::cout << "Warning: [Player::genReservedStorageRange()] Player " << getName() << " with more than 500 outfits!." << std::endl;
 				break;
 			}
 		}
@@ -4734,90 +4731,4 @@ void Player::clearPartyInvitations()
 GuildEmblems_t Player::getGuildEmblem(const Player* player) const
 {
 	return EMBLEM_NONE;
-}
-
-uint8_t Player::getCurrentMount() const
-{
-	int32_t value;
-	if(getStorageValue(PSTRG_MOUNTS_CURRENTMOUNT, value))
-		return value;
-
-	return 0;
-}
-
-void Player::setCurrentMount(uint8_t mount)
-{
-	addStorageValue(PSTRG_MOUNTS_CURRENTMOUNT, mount);
-}
-
-void Player::toggleMount(bool mount)
-{
-	if(mount)
-	{
-		if(_tile->hasFlag(TILESTATE_PROTECTIONZONE))
-			sendCancelMessage(RET_ACTIONNOTPERMITTEDINPROTECTIONZONE);
-		else
-		{
-			uint8_t currentMount = getCurrentMount();
-			if(currentMount == 0)
-				sendOutfitWindow();
-			else if(!isMounted())
-			{
-				Mount* mount = Mounts::getInstance()->getMountByID(currentMount);
-				if(mount)
-				{
-					defaultOutfit.lookMount = mount->getClientID();
-					if(mount->getSpeed() != 0)
-						g_game.changeSpeed(this, mount->getSpeed());
-
-					g_game.internalCreatureChangeOutfit(this, defaultOutfit);
-				}
-			}
-		}
-	}
-	else if(isMounted())
-		dismount();
-}
-
-bool Player::tameMount(uint8_t mountId)
-{
-	if(!Mounts::getInstance()->getMountByID(mountId))
-		return false;
-
-	mountId--;
-	int key = PSTRG_MOUNTS_RANGE_START + (mountId / 31);
-	int32_t value = 0;
-	if(getStorageValue(key, value))
-		value |= (int32_t)pow(2, mountId % 31);
-	else
-		value = pow(2, mountId % 31);
-
-	addStorageValue(key, value);
-	return true;
-}
-
-bool Player::untameMount(uint8_t mountId)
-{
-	if(!Mounts::getInstance()->getMountByID(mountId))
-		return false;
-
-	mountId--;
-	int key = PSTRG_MOUNTS_RANGE_START + (mountId / 31);
-	int32_t value = 0;
-	if(!getStorageValue(key, value))
-		return true;
-
-	value ^= (int32_t)pow(2, mountId % 31);
-	addStorageValue(key, value);
-	return true;
-}
-
-void Player::dismount()
-{
-	Mount* mount = Mounts::getInstance()->getMountByID(getCurrentMount());
-	if(mount && mount->getSpeed() > 0)
-		g_game.changeSpeed(this, -mount->getSpeed());
-
-	defaultOutfit.lookMount = 0;
-	g_game.internalCreatureChangeOutfit(this, defaultOutfit);
 }

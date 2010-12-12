@@ -1,5 +1,5 @@
-TRUE = 1
-FALSE = 0
+TRUE = true
+FALSE = false
 
 LUA_ERROR = -1
 LUA_NO_ERROR = 0
@@ -494,20 +494,20 @@ function doPlayerGiveItem(cid, itemid, count, charges)
 			tempcount = math.min (100, count)
 		end
 		local ret = doPlayerAddItem(cid, itemid, tempcount, charges)
-		if(ret == LUA_ERROR) then
+		if(not ret) then
 			ret = doCreateItem(itemid, tempcount, getPlayerPosition(cid))
 		end
-		if(ret ~= LUA_ERROR) then
+		if(ret) then
 			if(hasCharges) then
 				count = count - 1
 			else
 				count = count - tempcount
 			end
 		else
-			return LUA_ERROR
+			return false
 		end
 	end
-	return LUA_NO_ERROR
+	return true
 end
 
 function doPlayerTakeItem(cid, itemid, count)
@@ -520,17 +520,17 @@ function doPlayerTakeItem(cid, itemid, count)
 				tempcount = 1
 			end
 			local ret = doPlayerRemoveItem(cid, itemid, tempcount)
-			if(ret ~= LUA_ERROR) then
+			if(ret) then
 				count = count-tempcount
 			else
-				return LUA_ERROR
+				return false
 			end
 		end
 		if(count == 0) then
-			return LUA_NO_ERROR
+			return true
 		end
 	else
-		return LUA_ERROR
+		return false
 	end
 end
 
@@ -538,7 +538,7 @@ function doPlayerBuyItem(cid, itemid, count, cost, charges)
 	if(doPlayerRemoveMoney(cid, cost) == TRUE) then
 		return doPlayerGiveItem(cid, itemid, count, charges)
 	end
-	return LUA_ERROR
+	return false
 end
 
 function doPlayerSellItem(cid, itemid, count, cost)
@@ -546,20 +546,20 @@ function doPlayerSellItem(cid, itemid, count, cost)
 		if doPlayerAddMoney(cid, cost) ~= TRUE then
 			error('Could not add money to ' .. getPlayerName(cid) .. '(' .. cost .. 'gp)')
 		end
-		return LUA_NO_ERROR
+		return true
 	end
-	return LUA_ERROR
+	return false
 end
 
 function isInRange(pos, fromPos, toPos)
 	if pos.x >= fromPos.x and pos.y >= fromPos.y and pos.z >= fromPos.z and pos.x <= toPos.x and pos.y <= toPos.y and pos.z <= toPos.z then
-		return TRUE
+		return true
 	end
-	return FALSE
+	return false
 end
 
 function isPremium(cid)
-	return (isPlayer(cid) == TRUE and (getPlayerPremiumDays(cid) > 0 or getConfigInfo('freePremium') == "yes")) and TRUE or FALSE
+	return (isPlayer(cid) == TRUE and (getPlayerPremiumDays(cid) > 0 or getConfigInfo('freePremium') == "yes")) and true or false
 end
 
 function rows(result)
@@ -589,7 +589,7 @@ function getArticle(str)
 end
 
 function isNumber(str)
-	return tonumber(str) ~= nil and TRUE or FALSE
+	return tonumber(str) ~= nil and true or false
 end
 
 function getDistanceBetween(firstPosition, secondPosition)
@@ -630,7 +630,7 @@ function isSorcerer(cid)
 		return false
 	end
 
-	return (isInArray({1,5}, getPlayerVocation(cid)) == TRUE)
+	return isInArray({1,5}, getPlayerVocation(cid))
 end
 
 function isDruid(cid)
@@ -639,7 +639,7 @@ function isDruid(cid)
 		return false
 	end
 
-	return (isInArray({2,6}, getPlayerVocation(cid)) == TRUE)
+	return isInArray({2,6}, getPlayerVocation(cid))
 end
 
 function isPaladin(cid)
@@ -648,7 +648,7 @@ function isPaladin(cid)
 		return false
 	end
 
-	return (isInArray({3,7}, getPlayerVocation(cid)) == TRUE)
+	return isInArray({3,7}, getPlayerVocation(cid))
 end
 
 function isKnight(cid)
@@ -689,23 +689,23 @@ function doPlayerBuyItemContainer(cid, containerid, itemid, count, cost, charges
 			end
 			doPlayerAddItemEx(cid, container, 1)
 		end
-		return LUA_NO_ERROR
+		return true
 	end
-	return LUA_ERROR
+	return false
 end
 
-string.trim = function (str)
-	return str:gsub("^%s*(.-)%s*$", "%1")
+function string:trim()
+	return self:gsub("^%s*(.-)%s*$", "%1")
 end
 
-string.explode = function (str, sep, limit)
-	if(type(sep) ~= 'string' or isInArray({tostring(str):len(), sep:len()}, 0)) then
+function string:explode(sep, limit)
+	if(type(sep) ~= 'string' or isInArray({tostring(self):len(), sep:len()}, 0)) then
 		return {}
 	end
 
 	local i, pos, tmp, t = 0, 1, "", {}
-	for s, e in function() return string.find(str, sep, pos) end do
-		tmp = str:sub(pos, s - 1):trim()
+	for s, e in function() return string.find(self, sep, pos) end do
+		tmp = self:sub(pos, s - 1):trim()
 		table.insert(t, tmp)
 		pos = e + 1
 
@@ -715,7 +715,7 @@ string.explode = function (str, sep, limit)
 		end
 	end
 
-	tmp = str:sub(pos):trim()
+	tmp = self:sub(pos):trim()
 	table.insert(t, tmp)
 	return t
 end

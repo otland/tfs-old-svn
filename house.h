@@ -141,6 +141,7 @@ class House
 		~House();
 
 		void addTile(HouseTile* tile);
+		void updateDoorDescription();
 
 		bool canEditAccessList(uint32_t listId, const Player* player);
 		// listId special values:
@@ -201,7 +202,6 @@ class House
 		uint32_t getBedCount() {return (uint32_t)std::ceil((double)getBedTiles() / 2);} //each bed takes 2 sqms of space, ceil is just for bad maps
 
 	private:
-		void updateDoorDescription();
 		bool transferToDepot();
 
 		bool isLoaded;
