@@ -522,8 +522,8 @@ bool Spell::configureSpell(xmlNodePtr p)
 	if(readXMLInteger(p, "soul", intValue))
 	 	soul = intValue;
 
-	if(readXMLInteger(p, "exhaustion", intValue))
-		exhaustion = intValue;
+	if(readXMLInteger(p, "exhaustion", intValue) || readXMLInteger(p, "cooldown", intValue))
+		cooldown = intValue;
 
 	if(readXMLInteger(p, "prem", intValue))
 		premium = (intValue == 1);

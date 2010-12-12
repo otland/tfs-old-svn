@@ -40,6 +40,7 @@
 #include "creatureevent.h"
 #include "status.h"
 #include "beds.h"
+#include "mounts.h"
 #ifndef __CONSOLE__
 #include "gui.h"
 #endif
@@ -2619,6 +2620,91 @@ ReturnValue Player::__queryAdd(int32_t index, const Thing* thing, uint32_t count
 	}
 
 	return ret;
+}
+uint8_t Player::getCurrentMount() const
+{
+	int32_t value;
+	if(getStorageValue(PSTRG_MOUNTS_CURRENTMOUNT, value))
+		return value;
+
+	return 0;
+}
+ 
+void Player::setCurrentMount(uint8_t mount)
+{
+	addStorageValue(PSTRG_MOUNTS_CURRENTMOUNT, mount);
+}
+ 
+void Player::toggleMount(bool mount)
+{
+	if(mount)
+	{
+		if(_tile->hasFlag(TILESTATE_PROTECTIONZONE))
+			sendCancelMessage(RET_ACTIONNOTPERMITTEDINPROTECTIONZONE);
+		else
+		{
+			uint8_t currentMount = getCurrentMount();
+			if(currentMount == 0)
+				sendOutfitWindow();
+			else if(!isMounted())
+			{
+				Mount* mount = Mounts::getInstance()->getMountByID(currentMount);
+				if(mount)
+				{
+					defaultOutfit.lookMount = mount->getClientID();
+					if(mount->getSpeed() != 0)
+						g_game.changeSpeed(this, mount->getSpeed());
+ 
+					g_game.internalCreatureChangeOutfit(this, defaultOutfit);
+				}
+			}
+		}
+	}
+	else if(isMounted())
+		dismount();
+}
+
+bool Player::tameMount(uint8_t mountId)
+{
+	if(!Mounts::getInstance()->getMountByID(mountId))
+		return false;
+ 
+	mountId--;
+	int key = PSTRG_MOUNTS_RANGE_START + (mountId / 31);
+	int32_t value = 0;
+	if(getStorageValue(key, value))
+		value |= (int32_t)pow(2, mountId % 31);
+	else
+		value = pow(2, mountId % 31);
+
+	addStorageValue(key, value);
+	return true;
+}
+ 
+bool Player::untameMount(uint8_t mountId)
+{
+	if(!Mounts::getInstance()->getMountByID(mountId))
+		return false;
+ 
+	mountId--;
+	int key = PSTRG_MOUNTS_RANGE_START + (mountId / 31);
+	int32_t value = 0;
+	if(!getStorageValue(key, value))
+		return true;
+ 
+	value ^= (int32_t)pow(2, mountId % 31);
+	addStorageValue(key, value);
+	return true;
+}
+ 
+void Player::dismount()
+{
+	Mount* mount = Mounts::getInstance()->getMountByID(getCurrentMount());
+	if(mount && mount->getSpeed() > 0)
+		g_game.changeSpeed(this, -mount->getSpeed());
+ 
+	defaultOutfit.lookMount = 0;
+	g_game.internalCreatureChangeOutfit(this, defaultOutfit);
 }
 
 ReturnValue Player::__queryMaxCount(int32_t index, const Thing* thing, uint32_t count, uint32_t& maxQueryCount,
