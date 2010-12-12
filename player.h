@@ -590,6 +590,7 @@ class Player : public Creature, public Cylinder
 		void setMounted(bool value);
 		void dismount();
 		bool tameMount(uint8_t mountId);
+		bool untameMount(uint8_t mountId);
 
 		//cooldown
 		// TODO

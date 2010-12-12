@@ -2251,11 +2251,14 @@ void LuaInterface::registerFunctions()
 	//doPlayerLeaveParty(cid[, forced = false])
 	lua_register(m_luaState, "doPlayerLeaveParty", LuaInterface::luaDoPlayerLeaveParty);
 
-	//doPlayerTame(cid, mountId)
-	lua_register(m_luaState, "doPlayerTame", LuaInterface::luaDoPlayerTame);
+	//doPlayerAddMount(cid, mountId)
+	lua_register(m_luaState, "doPlayerAddMount", LuaInterface::luaDoPlayerAddMount);
 
-	//doPlayerCanMount(cid, mountId)
-	lua_register(m_luaState, "doPlayerCanMount", LuaInterface::luaDoPlayerCanMount);
+	//doPlayerRemoveMount(cid, mountId)
+	lua_register(m_luaState, "doPlayerRemoveMount", LuaScriptInterface::luaDoPlayerRemoveMount);
+
+	//getPlayerMount(cid, mountid)
+	lua_register(m_luaState, "getPlayerMount", LuaScriptInterface::luaGetPlayerMount);
 
 	//getPartyMembers(lid)
 	lua_register(m_luaState, "getPartyMembers", LuaInterface::luaGetPartyMembers);
@@ -8925,13 +8928,12 @@ int32_t LuaInterface::luaDoPlayerLeaveParty(lua_State* L)
 	return 1;
 }
 
-int32_t LuaInterface::luaDoPlayerTame(lua_State* L)
+int32_t LuaInterface::luaDoPlayerAddMount(lua_State* L)
 {
-	//doPlayerTame(cid, mountId)
-
+	//doPlayerAddMount(cid, mountId)
+	uint8_t mountId = (uint8_t)popNumber(L);
 	ScriptEnviroment* env = getEnv();
 	Player* player = env->getPlayerByUID(popNumber(L));
-	
 	if(!player)
 	{
 		errorEx(getError(LUA_ERROR_PLAYER_NOT_FOUND));
@@ -8939,20 +8941,38 @@ int32_t LuaInterface::luaDoPlayerTame(lua_State* L)
 	}
 	else
 	{
-		lua_pushboolean(L, player->tameMount(popNumber(L)));
+		lua_pushboolean(L, player->tameMount(mountId));
 	}
 
 	return 1;
-
 }
 
-int32_t LuaInterface::luaDoPlayerCanMount(lua_State* L)
+int32_t LuaScriptInterface::luaDoPlayerRemoveMount(lua_State* L)
 {
-	//doPlayerCanMount(cid, mountId)
+	//doPlayerRemoveMount(cid, mountId)
+	uint8_t mountId = (uint8_t)popNumber(L);
+	ScriptEnviroment* env = getEnv();
+	Player* player = env->getPlayerByUID(popNumber(L));
+	if(!player)
+	{
+		errorEx(getError(LUA_ERROR_PLAYER_NOT_FOUND));
+		lua_pushboolean(L, false);
+	}
+	else
+	{
+		lua_pushboolean(L, player->untameMount(mountId));
+	}
+
+	return 1;
+}
+
+int32_t LuaScriptInterface::luaGetPlayerMount(lua_State* L)
+{
+	//getPlayerMount(cid, mountId)
+	uint8_t mountid = (uint8_t)popNumber(L);
 
 	ScriptEnviroment* env = getEnv();
 	Player* player = env->getPlayerByUID(popNumber(L));
-	
 	if(!player)
 	{
 		errorEx(getError(LUA_ERROR_PLAYER_NOT_FOUND));
@@ -8968,7 +8988,6 @@ int32_t LuaInterface::luaDoPlayerCanMount(lua_State* L)
 	}
 
 	return 1;
-
 }
 
 int32_t LuaInterface::luaGetPartyMembers(lua_State* L)

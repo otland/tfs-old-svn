@@ -5154,9 +5154,9 @@ void Player::sendCritical() const
 void Player::setMounted(bool doMount)
 {
 	std::clog << "DEBUG MOUNT: set mount (" << doMount << " && mount = " << (uint16_t)mount << ")" << std::endl;
-        if(doMount)
-        {
-                if(_tile->hasFlag(TILESTATE_PROTECTIONZONE))
+	if(doMount)
+	{
+		if(_tile->hasFlag(TILESTATE_PROTECTIONZONE))
                         sendCancelMessage(RET_ACTIONNOTPERMITTEDINPROTECTIONZONE);
                 else if(mount == 0)
                         sendOutfitWindow();
@@ -5200,4 +5200,20 @@ bool Player::tameMount(uint8_t mountId)
 
         setStorage((const std::string&)key, (std::string&)value);
         return true;
+}
+
+bool Player::untameMount(uint8_t mountId)
+{
+	if(!Mounts::getInstance()->getMountByID(mountId))
+		return false;
+
+	mountId--;
+	int key = PSTRG_MOUNTS_RANGE_START + (mountId / 31);
+	int32_t value = 0;
+	if(!getStorageValue((const std::string&)key, (const std::string&)value))
+ 		return true;
+
+	value ^= (int32_t)pow(2, mountId % 31);
+	setStorage((const std::string&)key, (const std::string&)value);
+	return true;
 }
