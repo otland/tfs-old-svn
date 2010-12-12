@@ -1,0 +1,107 @@
+////////////////////////////////////////////////////////////////////////
+// OpenTibia - an opensource roleplaying game
+////////////////////////////////////////////////////////////////////////
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+////////////////////////////////////////////////////////////////////////
+
+#include "otpch.h"
+
+#include "quests.h"
+#include "mounts.h"
+
+void Mounts::clear()
+{
+	for(MountList::iterator it = mounts.begin(); it != mounts.end(); it++)
+		delete (*it);
+
+	mounts.clear();
+}
+
+bool Mounts::reload()
+{
+	clear();
+	return loadFromXml();
+}
+
+bool Mounts::loadFromXml()
+{
+	xmlDocPtr doc = xmlParseFile(getFilePath(FILE_TYPE_XML, "mounts.xml").c_str());
+	if(!doc)
+	{
+		std::clog << "[Warning - Mounts::loadFromXml] Cannot load mounts file." << std::endl;
+		std::clog << getLastXMLError() << std::endl;
+		return false;
+	}
+
+	xmlNodePtr p, root = xmlDocGetRootElement(doc);
+	if(xmlStrcmp(root->name,(const xmlChar*)"quests"))
+	{
+		std::clog << "[Error - Mounts::loadFromXml] Malformed mounts file." << std::endl;
+		xmlFreeDoc(doc);
+		return false;
+	}
+
+	p = root->children;
+	while(p)
+	{
+		parseMountNode(p);
+		p = p->next;
+	}
+
+	xmlFreeDoc(doc);
+	return true;
+}
+
+bool Mounts::parseMountNode(xmlNodePtr p)
+{
+	if(xmlStrcmp(p->name, (const xmlChar*)"mount"))
+		return false;
+
+	int32_t intValue;
+	std::string strValue;
+
+	int16_t mountId;
+	if(readXMLInteger(p, "id", intValue))
+		mountId = intValue;
+
+	std::string name;
+	if(readXMLString(p, "name", strValue))
+		name = strValue;
+
+	std::string storageId;
+	if(readXMLString(p, "storageId", strValue))
+		storageId = strValue;
+
+	int32_t speed = 0;
+	if(readXMLInteger(p, "speed", intValue))
+		speed = intValue;
+
+	Mount* mount = new Mount(name, mountId, storageId, speed);
+	if(!mount)
+		return false;
+
+	mounts.push_back(mount);
+	mountCount++;
+	return true;
+}
+Mount* Mounts::getMountById(uint16_t id) const
+{
+	for(MountList::const_iterator it = mounts.begin(); it != mounts.end(); it++)
+	{
+		if((*it)->getId() == id)
+			return (*it);
+	}
+
+	return NULL;
+}

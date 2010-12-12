@@ -38,6 +38,7 @@
 #include "actions.h"
 #include "creatureevent.h"
 #include "quests.h"
+#include "mounts.h"
 
 #include "chat.h"
 #include "configmanager.h"
@@ -1200,7 +1201,7 @@ void ProtocolGame::parseSetOutfit(NetworkMessage& msg)
 
 void ProtocolGame::parseMountStatus(NetworkMessage& msg)
 {
-	player->setMountStatus(msg.get<char>());
+	player->setMounted(msg.get<char>());
 }
 
 void ProtocolGame::parseUseItem(NetworkMessage& msg)
@@ -2572,12 +2573,29 @@ void ProtocolGame::sendOutfitWindow()
 			msg->putString("Your outfit");
 			msg->put<char>(player->getDefaultOutfit().lookAddons);
 		}
-		// TODO Send mounts
-		msg->put<char>(0);
-		/*
-			uint16_t mountId
-			string mountName
-		*/
+
+		if(g_config.getBool(ConfigManager::ALLOW_MOUNTS)) {
+			std::list<Mount> mountList;
+			MountList::iterator it = Mounts->getInstance()->getFirstMount();
+			for(NULL; it != Mounts->getInstance()->getLastMount(); ++it)
+			{
+				if(player->canUseMount(*it))
+					MountList.push_back(*it);
+
+			}
+			if (mountList.size()) {
+				msg->put<char>(mountList.size());
+				std::list<Mount>::iterator it = mountList.begin();
+				for(NULL; it != mountList.end(); ++it)
+				{
+					msg->put<uint16_t>(it->getId());
+					msg->putString(it->getName());
+				}				
+			}
+		} else {
+			msg->put<char>(0);
+		}		
+
 		player->hasRequestedOutfit(true);
 	}
 }
