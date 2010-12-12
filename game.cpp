@@ -6231,6 +6231,16 @@ bool Game::reloadInfo(ReloadInfo_t reload, uint32_t playerId/* = 0*/)
 			break;
 		}
 
+		case RELOAD_MOUNTS:
+		{
+			if(Mounts::getInstance()->reload())
+				done = true;
+			else
+				std::clog << "[Notice - Game::reloadInfo] Reload type does not work." << std::endl;
+
+			break;
+		}
+
 		case RELOAD_ALL:
 		{
 			done = true;

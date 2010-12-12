@@ -146,6 +146,13 @@ class Spell : public BaseSpell
 
 		int32_t level;
 		int32_t magLevel;
+
+		uint8_t speedId;
+		SpellGroup_t group;
+		uint32_t groupCooldown;
+		SpellGroup_t secondaryGroup;
+		uint32_t secondaryGroupCooldown;
+
 		bool premium;
 		bool learnable;
 		bool enabled;
