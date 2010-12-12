@@ -219,6 +219,7 @@ bool ConfigManager::load()
 	m_confBool[EMOTE_SPELLS] = getGlobalBool("emoteSpells", false);
 	m_confNumber[MAX_PLAYER_SUMMONS] = getGlobalNumber("maxPlayerSummons", 2);
 	m_confBool[SAVE_GLOBAL_STORAGE] = getGlobalBool("saveGlobalStorage", true);
+	m_confBool[SAVE_PLAYER_DATA] = getGlobalBool("savePlayerData", true);
 	m_confBool[FORCE_CLOSE_SLOW_CONNECTION] = getGlobalBool("forceSlowConnectionsToDisconnect", false);
 	m_confBool[BLESSINGS] = getGlobalBool("blessings", true);
 	m_confBool[BLESSING_ONLY_PREMIUM] = getGlobalBool("blessingOnlyPremium", true);
@@ -321,6 +322,7 @@ bool ConfigManager::load()
 	m_confNumber[VIPLIST_DEFAULT_PREMIUM_LIMIT] = getGlobalNumber("vipListDefaultPremiumLimit", 100);
 	m_confNumber[STAMINA_DESTROY_LOOT] = getGlobalNumber("staminaLootLimit", 14 * 60);
 	m_confNumber[FIST_BASE_ATTACK] = getGlobalNumber("fistBaseAttack", 7);
+
 
 	m_loaded = true;
 	return true;

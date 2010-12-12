@@ -16,6 +16,7 @@
 ////////////////////////////////////////////////////////////////////////
 #include "otpch.h"
 #include "otsystem.h"
+#include <signal.h>
 
 #include <iostream>
 #include <fstream>
@@ -551,22 +552,6 @@ void otserv(StringVec, ServiceManager* services)
 	BN_dec2bn(&g_RSA->e, g_config.getString(ConfigManager::RSA_PUBLIC).c_str());
 
 	// This check will verify keys set in config.lua
-	if(RSA_check_key(g_RSA))
-	{
-		std::clog << std::endl << "> Calculating dmp1, dmq1 and iqmp for RSA...";
-
-		// Ok, now we calculate a few things, dmp1, dmq1 and iqmp
-		BN_CTX* ctx = BN_CTX_new();
-		BN_CTX_start(ctx);
-
-		BIGNUM *r1 =  BN_CTX_get(ctx), *r2 =  BN_CTX_get(ctx);
-		BN_mod(g_RSA->dmp1, g_RSA->d, r1, ctx);
-		BN_mod(g_RSA->dmq1, g_RSA->d, r2, ctx);
-
-		BN_mod_inverse(g_RSA->iqmp, g_RSA->q, g_RSA->p, ctx);
-	}
-
-	// So it's fucked now?
 	if(!RSA_check_key(g_RSA))
 	{
 		std::stringstream s;

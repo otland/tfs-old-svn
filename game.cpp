@@ -1754,6 +1754,18 @@ ReturnValue Game::internalRemoveItem(Creature* actor, Item* item, int32_t count 
 
 	if(!test)
 	{
+		if(item->isCached())
+		{
+			Item* newItem = Item::CreateItem(item->getID(), item->getItemCount());
+
+			if(!newItem)
+				return RET_NOTPOSSIBLE;
+
+			newItem->copyAttributes(item);
+			if(internalAddItem(NULL, cylinder, newItem, INDEX_WHEREEVER, FLAG_NOLIMIT) != RET_NOERROR)
+				return RET_NOTPOSSIBLE;
+			item = newItem;
+		}
 		//remove the item
 		int32_t index = cylinder->__getIndexOfThing(item);
 		cylinder->__removeThing(item, count);
@@ -2113,6 +2125,7 @@ Item* Game::transformItem(Item* item, uint16_t newId, int32_t newCount /*= -1*/)
 
 	const ItemType& curType = Item::items[item->getID()];
 	const ItemType& newType = Item::items[newId];
+
 	if(curType.alwaysOnTop != newType.alwaysOnTop)
 	{
 		//This only occurs when you transform items on tiles from a downItem to a topItem (or vice versa)

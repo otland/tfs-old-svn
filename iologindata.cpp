@@ -769,18 +769,11 @@ bool IOLoginData::savePlayer(Player* player, bool preSave/* = true*/, bool shall
 			player->mana = player->manaMax;
 		}
 	}
-
 	Database* db = Database::getInstance();
 	DBQuery query;
-	query << "SELECT `save` FROM `players` WHERE `id` = " << player->getGUID() << " LIMIT 1";
 
-	DBResult* result;
-	if(!(result = db->storeQuery(query.str())))
-		return false;
-
-	const bool save = result->getDataInt("save");
-	result->free();
-
+	bool save = g_config.getNumber(ConfigManager::SAVE_PLAYER_DATA);
+	
 	DBTransaction trans(db);
 	if(!trans.begin())
 		return false;

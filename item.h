@@ -310,6 +310,9 @@ class Item : virtual public Thing, public ItemAttributes
 		bool isLoadedFromMap() const {return loadedFromMap;}
 		void setLoadedFromMap(bool value) {loadedFromMap = value;}
 
+		bool isCached() const {return cached;}
+		void setCached(bool value) {cached = value;}
+
 		uint16_t getItemCount() const {return count;}
 		void setItemCount(uint16_t n) {count = n;}
 
@@ -340,6 +343,7 @@ class Item : virtual public Thing, public ItemAttributes
 
 		Raid* raid;
 		bool loadedFromMap;
+		bool cached;
 };
 
 inline std::string Item::getName() const
