@@ -1147,15 +1147,15 @@ uint32_t DatabaseManager::updateDatabase()
 			{
 				case DATABASE_ENGINE_SQLITE:
 				{
-					query << "ALTER TABLE `players` ADD `lookmount` INT(11) NOT NULL DEFAULT '';";
-					db->query(query.str());
+					db->query(std::string("ALTER TABLE `players` ADD `lookmount` INT(11) NOT NULL DEFAULT '';"));
+					db->query(std::string("ALTER TABLE `players` ADD `currmount` INT(11) NOT NULL DEFAULT '';"));
 					break;
 				}
 
 				case DATABASE_ENGINE_MYSQL:
 				{
-					query << "ALTER TABLE `players` ADD `lookmount` INT(11) NOT NULL DEFAULT '' AFTER `lookaddons`;";
-					db->query(query.str());
+					db->query(std::string("ALTER TABLE `players` ADD `lookmount` INT(11) NOT NULL DEFAULT '' AFTER `lookaddons`;"));
+					db->query(std::string("ALTER TABLE `players` ADD `currmount` INT(11) NOT NULL DEFAULT '' AFTER `lookmount`;"));
 					break;
 				}
 
