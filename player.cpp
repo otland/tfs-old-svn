@@ -5182,6 +5182,10 @@ void Player::dismount()
 {
 	std::clog << "DEBUG MOUNT: dismounting" << std::endl;
 	if(isMounted()) {
+		Mount* mount = Mounts::getInstance()->getMountById(mount);
+		if(mount && mount->getSpeed() > 0)
+			g_game.changeSpeed(this, -mount->getSpeed());
+
 		mounted = false;
 		defaultOutfit.lookMount = 0;
 		g_game.internalCreatureChangeOutfit(this, defaultOutfit);
