@@ -1191,8 +1191,10 @@ void ProtocolGame::parseSetOutfit(NetworkMessage& msg)
 	else
 		msg.skip(1);
 
-	if(g_config.getBool(ConfigManager::ALLOW_MOUNTS))
-		newOutfit.mountId = msg.get<uint16_t>(); /* 368 - 379 */
+	if(g_config.getBool(ConfigManager::ALLOW_MOUNTS)) {
+		player->setMountId(Mounts::getInstance()->getMountByCid(msg.get<uint16_t>())->getId()); // We can mount/unmount, it will change the lookMount, but not the stored mount
+		newOutfit.lookMount = 0; /* 368 - 379 */
+	}
 	else
 		msg.skip(2);
 
@@ -1201,7 +1203,9 @@ void ProtocolGame::parseSetOutfit(NetworkMessage& msg)
 
 void ProtocolGame::parseMountStatus(NetworkMessage& msg)
 {
-	player->setMounted(msg.get<char>());
+	uint8_t status = msg.get<char>();
+	std::clog << "DEBUG MOUNT: " << (uint32_t)status << std::endl; 
+	player->setMounted(status != 0);
 }
 
 void ProtocolGame::parseUseItem(NetworkMessage& msg)
@@ -2575,21 +2579,21 @@ void ProtocolGame::sendOutfitWindow()
 		}
 
 		if(g_config.getBool(ConfigManager::ALLOW_MOUNTS)) {
-			std::list<Mount> mountList;
-			MountList::iterator it = Mounts->getInstance()->getFirstMount();
-			for(NULL; it != Mounts->getInstance()->getLastMount(); ++it)
+			std::list<Mount*> mountList;
+			MountList::const_iterator it = Mounts::getInstance()->getFirstMount();
+			for(; it != Mounts::getInstance()->getLastMount(); ++it)
 			{
-				if(player->canUseMount(*it))
-					MountList.push_back(*it);
+				if((*it)->isTamed(player))
+					mountList.push_back((*it));
 
 			}
 			if (mountList.size()) {
 				msg->put<char>(mountList.size());
-				std::list<Mount>::iterator it = mountList.begin();
-				for(NULL; it != mountList.end(); ++it)
+				std::list<Mount*>::iterator it = mountList.begin();
+				for(; it != mountList.end(); ++it)
 				{
-					msg->put<uint16_t>(it->getId());
-					msg->putString(it->getName());
+					msg->put<uint16_t>((*it)->getClientId());
+					msg->putString((*it)->getName());
 				}				
 			}
 		} else {
@@ -2937,7 +2941,7 @@ void ProtocolGame::AddCreatureOutfit(NetworkMessage_ptr msg, const Creature* cre
 			msg->put<char>(outfit.lookLegs);
 			msg->put<char>(outfit.lookFeet);
 			msg->put<char>(outfit.lookAddons);
-			msg->put<uint16_t>(outfit.mountId);
+			msg->put<uint16_t>(outfit.lookMount);
 		}
 		else if(outfit.lookTypeEx)
 			msg->putItemId(outfit.lookTypeEx);

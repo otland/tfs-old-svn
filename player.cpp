@@ -26,6 +26,7 @@
 #include "town.h"
 #include "house.h"
 #include "beds.h"
+#include "mounts.h"
 
 #include "combat.h"
 #include "movement.h"
@@ -5149,4 +5150,54 @@ void Player::sendCritical() const
 {
 	if(g_config.getBool(ConfigManager::DISPLAY_CRITICAL_HIT))
 		g_game.addAnimatedText(getPosition(), COLOR_DARKRED, "CRITICAL!");
+}
+void Player::setMounted(bool doMount)
+{
+	std::clog << "DEBUG MOUNT: set mount (" << doMount << " && mount = " << (uint16_t)mount << ")" << std::endl;
+        if(doMount)
+        {
+                if(_tile->hasFlag(TILESTATE_PROTECTIONZONE))
+                        sendCancelMessage(RET_ACTIONNOTPERMITTEDINPROTECTIONZONE);
+                else if(mount == 0)
+                        sendOutfitWindow();
+                else if(!isMounted())
+                {
+			Mount* myMount = Mounts::getInstance()->getMountById(mount);
+			if(myMount) {	
+				mounted = true;
+		                defaultOutfit.lookMount = myMount->getClientId();
+		                
+		                if(myMount->getSpeed())
+		                        g_game.changeSpeed(this, myMount->getSpeed());
+			
+		                g_game.internalCreatureChangeOutfit(this, defaultOutfit);
+			}
+                }
+        }
+        else
+		dismount();
+}
+
+void Player::dismount()
+{
+	std::clog << "DEBUG MOUNT: dismounting" << std::endl;
+	if(isMounted()) {
+		mounted = false;
+		defaultOutfit.lookMount = 0;
+		g_game.internalCreatureChangeOutfit(this, defaultOutfit);
+	}
+}
+bool Player::tameMount(uint8_t mountId)
+{
+        if(!Mounts::getInstance()->getMountById(mountId))
+                return false;
+
+        mountId--;
+        int key = PSTRG_MOUNTS_RANGE_START + mountId;
+        int32_t value = 0;
+        if(getStorage((const std::string&)key, (std::string&)value))
+                return true;
+
+        setStorage((const std::string&)key, (std::string&)value);
+        return true;
 }

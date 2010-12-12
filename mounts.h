@@ -25,26 +25,26 @@
 class Mount
 {
 	public:
-		Mount(std::string _name, uint16_t _id, std::string _storageId, int32_t _speed)
+		Mount(std::string _name, uint16_t _id, uint16_t _clientId, int32_t _speed)
 		{
 			name = _name;
 			id = _id;
 			speed = _speed;
-			storageId = _storageId;
+			clientId = _clientId;
 		}
-		virtual ~Mount();
-
+		bool isTamed(Player* player) const;
 		uint16_t getId() const {return id;}
 		const std::string& getName() const {return name;}
 		uint32_t getSpeed() const {return speed;}
-		const std::string& getStorageId() const {return storageId;}
+		uint16_t getClientId() const {return clientId;}
+		
 		
 	private:
 		std::string name;
 
-		uint16_t id;
+		uint8_t id;
+		uint16_t clientId;
 		int32_t speed;
-		std::string storageId;
 };
 
 typedef std::list<Mount*> MountList;
@@ -68,6 +68,7 @@ class Mounts
 		inline MountList::const_iterator getLastMount() const {return mounts.end();}
 
 		Mount* getMountById(uint16_t id) const;
+		Mount* getMountByCid(uint16_t id) const;
 		uint8_t getMountCount() const {return mountCount;}
 		
 	private:

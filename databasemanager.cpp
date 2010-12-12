@@ -1140,6 +1140,34 @@ uint32_t DatabaseManager::updateDatabase()
 			return 27;
 		}
 
+		case 27:
+		{
+			std::clog << "> Updating database to version 28..." << std::endl;
+			switch(db->getDatabaseEngine())
+			{
+				case DATABASE_ENGINE_SQLITE:
+				{
+					query << "ALTER TABLE `players` ADD `lookmount` INT(11) NOT NULL DEFAULT '';";
+					db->query(query.str());
+					break;
+				}
+
+				case DATABASE_ENGINE_MYSQL:
+				{
+					query << "ALTER TABLE `players` ADD `lookmount` INT(11) NOT NULL DEFAULT '' AFTER `lookaddons`;";
+					db->query(query.str());
+					break;
+				}
+
+				default:
+					break;
+			}
+
+			query.str("");
+			registerDatabaseConfig("db_version", 28);		
+			return 28;
+		}
+
 		default:
 			break;
 	}

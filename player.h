@@ -584,10 +584,12 @@ class Player : public Creature, public Cylinder
 			{if(client) client->sendRemoveInventoryItem(slot);}
 
 		//mount
-		bool isMounted() const {return mounted;}
+		bool isMounted() {return mounted;}
 		uint16_t getMountId() {return mount;}
+		void setMountId(uint8_t mountId) {mount = mountId;}
 		void setMounted(bool value);
 		void dismount();
+		bool tameMount(uint8_t mountId);
 
 		//cooldown
 		// TODO
@@ -853,7 +855,7 @@ class Player : public Creature, public Cylinder
 		int16_t blessings;
 		uint16_t maxWriteLen;
 		uint16_t sex;
-		uint16_t mount;
+		uint8_t mount;
 
 		int32_t premiumDays;
 		int32_t soul;

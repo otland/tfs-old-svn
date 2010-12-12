@@ -42,6 +42,7 @@
 #include "spells.h"
 #include "combat.h"
 #include "condition.h"
+#include "mounts.h"
 
 #include "baseevents.h"
 #include "monsters.h"
@@ -2249,6 +2250,12 @@ void LuaInterface::registerFunctions()
 
 	//doPlayerLeaveParty(cid[, forced = false])
 	lua_register(m_luaState, "doPlayerLeaveParty", LuaInterface::luaDoPlayerLeaveParty);
+
+	//doPlayerTame(cid, mountId)
+	lua_register(m_luaState, "doPlayerTame", LuaInterface::luaDoPlayerTame);
+
+	//doPlayerCanMount(cid, mountId)
+	lua_register(m_luaState, "doPlayerCanMount", LuaInterface::luaDoPlayerCanMount);
 
 	//getPartyMembers(lid)
 	lua_register(m_luaState, "getPartyMembers", LuaInterface::luaGetPartyMembers);
@@ -8916,6 +8923,52 @@ int32_t LuaInterface::luaDoPlayerLeaveParty(lua_State* L)
 	g_game.playerLeaveParty(player->getID(), forced);
 	lua_pushboolean(L, true);
 	return 1;
+}
+
+int32_t LuaInterface::luaDoPlayerTame(lua_State* L)
+{
+	//doPlayerTame(cid, mountId)
+
+	ScriptEnviroment* env = getEnv();
+	Player* player = env->getPlayerByUID(popNumber(L));
+	
+	if(!player)
+	{
+		errorEx(getError(LUA_ERROR_PLAYER_NOT_FOUND));
+		lua_pushboolean(L, false);
+	}
+	else
+	{
+		lua_pushboolean(L, player->tameMount(popNumber(L)));
+	}
+
+	return 1;
+
+}
+
+int32_t LuaInterface::luaDoPlayerCanMount(lua_State* L)
+{
+	//doPlayerCanMount(cid, mountId)
+
+	ScriptEnviroment* env = getEnv();
+	Player* player = env->getPlayerByUID(popNumber(L));
+	
+	if(!player)
+	{
+		errorEx(getError(LUA_ERROR_PLAYER_NOT_FOUND));
+		lua_pushboolean(L, false);
+	}
+	else
+	{
+		Mount* mount = Mounts::getInstance()->getMountById(popNumber(L));
+		if(mount)
+			lua_pushboolean(L, mount->isTamed(player));
+		else
+			lua_pushboolean(L, false);
+	}
+
+	return 1;
+
 }
 
 int32_t LuaInterface::luaGetPartyMembers(lua_State* L)

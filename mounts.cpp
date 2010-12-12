@@ -20,6 +20,24 @@
 #include "quests.h"
 #include "mounts.h"
 
+bool Mount::isTamed(Player* player) const
+{
+        if(!player)
+                return false;
+
+	// TODO: Flags
+
+        uint8_t tmpId = id - 1;
+
+        std::string value = "";
+        if(!player->getStorage((const char*)(PSTRG_MOUNTS_RANGE_START + tmpId), value))
+                return false;
+
+        if(value > "0")
+		return true;
+
+	return false;
+}
 void Mounts::clear()
 {
 	for(MountList::iterator it = mounts.begin(); it != mounts.end(); it++)
@@ -45,7 +63,7 @@ bool Mounts::loadFromXml()
 	}
 
 	xmlNodePtr p, root = xmlDocGetRootElement(doc);
-	if(xmlStrcmp(root->name,(const xmlChar*)"quests"))
+	if(xmlStrcmp(root->name,(const xmlChar*)"mounts"))
 	{
 		std::clog << "[Error - Mounts::loadFromXml] Malformed mounts file." << std::endl;
 		xmlFreeDoc(doc);
@@ -71,7 +89,7 @@ bool Mounts::parseMountNode(xmlNodePtr p)
 	int32_t intValue;
 	std::string strValue;
 
-	int16_t mountId;
+	uint8_t mountId;
 	if(readXMLInteger(p, "id", intValue))
 		mountId = intValue;
 
@@ -79,19 +97,20 @@ bool Mounts::parseMountNode(xmlNodePtr p)
 	if(readXMLString(p, "name", strValue))
 		name = strValue;
 
-	std::string storageId;
-	if(readXMLString(p, "storageId", strValue))
-		storageId = strValue;
+	uint16_t clientId;
+	if(readXMLInteger(p, "clientid", intValue))
+		clientId = intValue;
 
 	int32_t speed = 0;
 	if(readXMLInteger(p, "speed", intValue))
 		speed = intValue;
 
-	Mount* mount = new Mount(name, mountId, storageId, speed);
+	Mount* mount = new Mount(name, mountId, clientId, speed);
 	if(!mount)
 		return false;
 
 	mounts.push_back(mount);
+
 	mountCount++;
 	return true;
 }
@@ -100,6 +119,16 @@ Mount* Mounts::getMountById(uint16_t id) const
 	for(MountList::const_iterator it = mounts.begin(); it != mounts.end(); it++)
 	{
 		if((*it)->getId() == id)
+			return (*it);
+	}
+
+	return NULL;
+}
+Mount* Mounts::getMountByCid(uint16_t id) const
+{
+	for(MountList::const_iterator it = mounts.begin(); it != mounts.end(); it++)
+	{
+		if((*it)->getClientId() == id)
 			return (*it);
 	}
 
