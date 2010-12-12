@@ -74,6 +74,7 @@
 #include "protocollogin.h"
 #include "status.h"
 #include "admin.h"
+#include "mounts.h"
 
 #ifdef __OTSERV_ALLOCATOR__
 #include "allocator.h"

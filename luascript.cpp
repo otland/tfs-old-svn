@@ -6921,7 +6921,7 @@ int32_t LuaScriptInterface::luaGetPlayerMount(lua_State* L)
 			lua_pushboolean(L, false);
 		}
 		else
-			lua_pushnumber(L, mount->isTamed(player) ? LUA_TRUE : LUA_FALSE);
+			lua_pushboolean(L, mount->isTamed(player));
 	}
 	else
 	{
