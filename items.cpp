@@ -187,11 +187,11 @@ int32_t Items::loadFromOtb(std::string file)
 		std::clog << "[Error - Items::loadFromOtb] New version detected, an older version of items.otb is required." << std::endl;
 		return ERROR_INVALID_FORMAT;
 	}
-	else if(Items::dwMinorVersion != CLIENT_VERSION_862)
+	/*else if(Items::dwMinorVersion != CLIENT_VERSION_870)
 	{
 		std::clog << "[Error - Items::loadFromOtb] Another (client) version of items.otb is required." << std::endl;
 		return ERROR_INVALID_FORMAT;
-	}
+	}*/
 
 	uint16_t lastId = 99;
 	for(node = f.getChildNode(node, type); node != NO_NODE; node = f.getNextNode(node, type))

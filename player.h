@@ -583,6 +583,13 @@ class Player : public Creature, public Cylinder
 		void sendRemoveInventoryItem(slots_t slot, const Item*)
 			{if(client) client->sendRemoveInventoryItem(slot);}
 
+		//mount
+		bool getMountStatus() const {return mounted;}
+		void setMountStatus(bool value) {mounted = value;}
+
+		//cooldown
+		// TODO
+
 		//event methods
 		virtual void onUpdateTileItem(const Tile* tile, const Position& pos, const Item* oldItem,
 			const ItemType& oldType, const Item* newItem, const ItemType& newType);
@@ -829,6 +836,7 @@ class Player : public Creature, public Cylinder
 		bool requestedOutfit;
 		bool outfitAttributes;
 		bool addAttackSkillPoint;
+		bool mounted;
 
 		OperatingSystem_t operatingSystem;
 		AccountManager_t accountManager;

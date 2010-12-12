@@ -765,9 +765,14 @@ void ProtocolGame::parsePacket(NetworkMessage &msg)
 			case 0xD3: // set outfit
 				if((!player->hasCustomFlag(PlayerCustomFlag_GamemasterPrivileges) || !g_config.getBool(ConfigManager::DISABLE_OUTFITS_PRIVILEGED))
 					&& (g_config.getBool(ConfigManager::ALLOW_CHANGECOLORS) || g_config.getBool(ConfigManager::ALLOW_CHANGEOUTFIT)))
-				parseSetOutfit(msg);
+					parseSetOutfit(msg);
 				break;
 
+			case 0xD4: // Mount/unmount 
+				if(g_config.getBool(ConfigManager::ALLOW_MOUNTS))
+					parseMountStatus(msg);
+
+				break;
 			case 0xDC:
 				parseAddVip(msg);
 				break;
@@ -1185,7 +1190,17 @@ void ProtocolGame::parseSetOutfit(NetworkMessage& msg)
 	else
 		msg.skip(1);
 
+	if(g_config.getBool(ConfigManager::ALLOW_MOUNTS))
+		newOutfit.mountId = msg.get<uint16_t>(); /* 368 - 379 */
+	else
+		msg.skip(2);
+
 	addGameTask(&Game::playerChangeOutfit, player->getID(), newOutfit);
+}
+
+void ProtocolGame::parseMountStatus(NetworkMessage& msg)
+{
+	player->setMountStatus(msg.get<char>());
 }
 
 void ProtocolGame::parseUseItem(NetworkMessage& msg)
@@ -2557,7 +2572,12 @@ void ProtocolGame::sendOutfitWindow()
 			msg->putString("Your outfit");
 			msg->put<char>(player->getDefaultOutfit().lookAddons);
 		}
-
+		// TODO Send mounts
+		msg->put<char>(0);
+		/*
+			uint16_t mountId
+			string mountName
+		*/
 		player->hasRequestedOutfit(true);
 	}
 }
@@ -2757,11 +2777,9 @@ void ProtocolGame::AddPlayerStats(NetworkMessage_ptr msg)
 	msg->put<uint16_t>(player->getHealth());
 	msg->put<uint16_t>(player->getPlayerInfo(PLAYERINFO_MAXHEALTH));
 	msg->put<uint32_t>(uint32_t(player->getFreeCapacity() * 100));
+	
 	uint64_t experience = player->getExperience();
-	if(experience > 0x7FFFFFFF) // client debugs after 2,147,483,647 exp
-		msg->put<uint32_t>(0x7FFFFFFF);
-	else
-		msg->put<uint32_t>(experience);
+	msg->put<uint64_t>(experience);
 
 	msg->put<uint16_t>(player->getPlayerInfo(PLAYERINFO_LEVEL));
 	msg->put<char>(player->getPlayerInfo(PLAYERINFO_LEVELPERCENT));
@@ -2901,6 +2919,7 @@ void ProtocolGame::AddCreatureOutfit(NetworkMessage_ptr msg, const Creature* cre
 			msg->put<char>(outfit.lookLegs);
 			msg->put<char>(outfit.lookFeet);
 			msg->put<char>(outfit.lookAddons);
+			msg->put<uint16_t>(outfit.mountId);
 		}
 		else if(outfit.lookTypeEx)
 			msg->putItemId(outfit.lookTypeEx);

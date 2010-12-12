@@ -323,6 +323,9 @@ bool ConfigManager::load()
 	m_confNumber[STAMINA_DESTROY_LOOT] = getGlobalNumber("staminaLootLimit", 14 * 60);
 	m_confNumber[FIST_BASE_ATTACK] = getGlobalNumber("fistBaseAttack", 7);
 
+	m_confBool[ALLOW_MOUNTS] = getGlobalBool("useMounts", false);
+	m_confBool[ENABLE_COOLDOWNS] = getGlobalBool("enableCooldowns", false);
+
 
 	m_loaded = true;
 	return true;

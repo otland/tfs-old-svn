@@ -320,8 +320,8 @@ struct War_t
 
 struct Outfit_t
 {
-	Outfit_t() {lookHead = lookBody = lookLegs = lookFeet = lookType = lookTypeEx = lookAddons = 0;}
-	uint16_t lookType, lookTypeEx;
+	Outfit_t() {lookHead = lookBody = lookLegs = lookFeet = lookType = lookTypeEx = lookAddons = mountId = 0;}
+	uint16_t lookType, mountId, lookTypeEx;
 	uint8_t lookHead, lookBody, lookLegs, lookFeet, lookAddons;
 
 	bool operator==(const Outfit_t& o) const
