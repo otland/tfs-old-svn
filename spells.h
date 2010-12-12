@@ -140,6 +140,12 @@ class Spell : public BaseSpell
 		bool playerInstantSpellCheck(Player* player, const Position& toPos);
 		bool playerRuneSpellCheck(Player* player, const Position& toPos);
 
+		uint8_t spellId;
+		SpellGroup_t group;
+		uint32_t groupCooldown;
+		SpellGroup_t secondaryGroup;
+		uint32_t secondaryGroupCooldown;
+
 		bool learnable;
 		bool enabled;
 		bool premium;
@@ -150,7 +156,7 @@ class Spell : public BaseSpell
 		int32_t manaPercent;
 		int32_t soul;
 		int32_t range;
-		uint32_t exhaustion;
+		uint32_t cooldown;
 		bool needTarget;
 		bool needWeapon;
 		bool selfTarget;

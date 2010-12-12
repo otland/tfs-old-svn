@@ -11,5 +11,4 @@
 	<!-- test talkactions -->
 	<talkaction words="!z" script="magiceffect.lua"/>
 	<talkaction words="!x" script="animationeffect.lua"/>
-	<talkaction words="!addons" script="addons.lua"/>
 </talkactions>

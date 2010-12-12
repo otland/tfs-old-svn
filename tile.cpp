@@ -641,6 +641,9 @@ ReturnValue Tile::__queryAdd(int32_t index, const Thing* thing, uint32_t count,
 
 			}
 
+			if(hasFlag(TILESTATE_PROTECTIONZONE) && player->isMounted())
+				const_cast<Player*>(player)->dismount();
+
 			if((hasFlag(TILESTATE_NOPVPZONE) || hasFlag(TILESTATE_PROTECTIONZONE)) && player->isPzLocked())
 				return RET_PLAYERISPZLOCKED;
 		}

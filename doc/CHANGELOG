@@ -3,7 +3,7 @@
 		The Forgotten Server
 
 	Version
-		0.2.8
+		0.2.9
 
 	Codenamed
 		"Mystic Spirit"
@@ -21,43 +21,23 @@
 	A = Added.
 
 	M The Forgotten Server.exe
-	M config.lua
-	M data/global.lua
-	M data/actions/scripts/other/potions.lua
-	M data/creaturescripts/scripts/playerdeath.lua
-	M data/items/items.otb
 	M data/items/items.xml
-	A data/items/items.xsd
-	M data/talkactions/scripts/deathlist.lua
-	M data/XML/commands.xml
+	M data/items/items.otb
+	M data/monsters/monsters.xml
+	D data/monsters/beholder.xml
+	A data/monsters/bonelord.xml
+	M data/spells/spells.xml
+	D data/spells/scripts/summon/undead legion.lua
+	M data/talkactions/talkactions.xml
+	M data/talkactions/scripts/changesex.lua
+	D data/talkactions/scripts/addons.lua
+	A data/XML/mounts.xml
 	M data/XML/outfits.xml
 ]
 
 [ Milestone
-	Protocol 8.62 support.
-	Fixed a bug with the reading of banishment comment.
-	Rewritten the way the amount of frags are calculated as an attempt to make it more accurate, and removed the formatTime function from tools.
-	The "Loot of" message will no longer list containers that aren't empty.
-	Removed the trailing dot from the "Loot of" message.
-	Changes to the movement code to make map-clicking smoother.
-	Players can no longer heal paralyze during movement, it will instead be healed once the player finishes his/her current move.
-	Fixed a bug with player saving.
-	Added a new way to save house items: binary-tilebased, a safer way. In case of stream failure, it will just wipe the tiles it fails at instead of entire houses.
-	Fixed a lot of Lua binding errors, and added support for LuaJIT (compile with -D__LUAJIT__ to use LuaJIT).
-	Experience will no longer be shared in a party when the victim is a player.
-	Players will no longer receive an unjustified kills for killing guild mates.
-	Corrected a disconnect message in gameworld connection.
-	Added missing disconnect message when auth fails in gameworld connection.
-	Fixed possible shop system exploit.
-	Status protocol compatibility.
-	New configurable variable (removeChargesFromWeapons, default: "yes").
-	Removed Rule Violation Reports channel (Ctrl + R) as it no longer exists in protocol 8.62.
-	Removed protocol code for Rule Violation Window (Ctrl + Y) as it no longer exists in protocol 8.62.
-	A command to ban has been added: /ban playername, action (1-x, or strin, i.e "Ban"), reason (1-21, or string, i.e "Multi-clienting"), ipbanishment (1 or 0), comment. It uses the Rule Violation Window code, so days etc. are still configured in config.lua.
-	Fixed so that there won't be any kind of issues with a player named Account Manager when the ingame account manager code is disabled.
-	Replaced items.xml and items.otb with the ones from OpenTibia and fixed compatibility stuff.
-	Further support for OpenTibia items.xml format: absorbPercentAllElements, femaleSleeper, maleSleeper.
-	Access players will now speak in orange by default in channels.
-	Fixed a memory leak with LuaSQL.
+	Protocol 8.7 support.
+	Mounts system with mounts.xml.
+	Spell groups with the new cooldown system.
 	A lot of miscellaneous cleanups, formating, improvements and fixes.
 ]

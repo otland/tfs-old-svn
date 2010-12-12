@@ -133,6 +133,8 @@ class ProtocolGame : public Protocol
 		void parseLeaveParty(NetworkMessage& msg);
 		void parseEnableSharedPartyExperience(NetworkMessage& msg);
 
+		void parseToggleMount(NetworkMessage& msg);
+
 		//trade methods
 		void parseRequestTrade(NetworkMessage& msg);
 		void parseLookInTrade(NetworkMessage& msg);
@@ -162,7 +164,7 @@ class ProtocolGame : public Protocol
 		void sendChannelsDialog();
 		void sendChannel(uint16_t channelId, const std::string& channelName);
 		void sendOpenPrivateChannel(const std::string& receiver);
-		void sendToChannel(const Creature* creature, SpeakClasses type, const std::string& text, uint16_t channelId, uint32_t time = 0);
+		void sendToChannel(const Creature* creature, SpeakClasses type, const std::string& text, uint16_t channelId);
 		void sendIcons(int32_t icons);
 		void sendFYIBox(const std::string& message);
 
@@ -212,6 +214,9 @@ class ProtocolGame : public Protocol
 
 		void sendCreatureSquare(const Creature* creature, SquareColor_t color);
 
+		void sendSpellCooldown(uint8_t spellId, uint32_t time);
+		void sendSpellGroupCooldown(SpellGroup_t groupId, uint32_t time);
+
 		//tiles
 		void sendAddTileItem(const Tile* tile, const Position& pos, uint32_t stackpos, const Item* item);
 		void sendUpdateTileItem(const Tile* tile, const Position& pos, uint32_t stackpos, const Item* item);
@@ -257,7 +262,7 @@ class ProtocolGame : public Protocol
 		void AddCreature(NetworkMessage_ptr msg, const Creature* creature, bool known, uint32_t remove);
 		void AddPlayerStats(NetworkMessage_ptr msg);
 		void AddCreatureSpeak(NetworkMessage_ptr msg, const Creature* creature, SpeakClasses type,
-			std::string text, uint16_t channelId, uint32_t time = 0, Position* pos = NULL);
+			std::string text, uint16_t channelId, Position* pos = NULL);
 		void AddCreatureHealth(NetworkMessage_ptr msg, const Creature* creature);
 		void AddCreatureOutfit(NetworkMessage_ptr msg, const Creature* creature, const Outfit_t& outfit);
 		void AddCreatureInvisible(NetworkMessage_ptr msg, const Creature* creature);

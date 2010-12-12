@@ -147,7 +147,7 @@ void ChatChannel::sendToAll(std::string message, SpeakClasses type)
 		it->second->sendChannelMessage("", message, type, m_id);
 }
 
-bool ChatChannel::talk(Player* fromPlayer, SpeakClasses type, const std::string& text, uint32_t time /*= 0*/)
+bool ChatChannel::talk(Player* fromPlayer, SpeakClasses type, const std::string& text)
 {
 	if(m_users.find(fromPlayer->getID()) == m_users.end())
 		return false;
@@ -159,7 +159,7 @@ bool ChatChannel::talk(Player* fromPlayer, SpeakClasses type, const std::string&
 	}
 
 	for(UsersMap::iterator it = m_users.begin(); it != m_users.end(); ++it)
-		it->second->sendToChannel(fromPlayer, type, text, getId(), time);
+		it->second->sendToChannel(fromPlayer, type, text, getId());
 
 	return true;
 }

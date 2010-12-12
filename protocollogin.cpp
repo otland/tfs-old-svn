@@ -86,7 +86,7 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 	msg.SkipBytes(12);
 
 	if(version <= 760)
-		disconnectClient(0x0A, "Only clients with protocol 8.62 allowed!");
+		disconnectClient(0x0A, "Only clients with protocol 8.7 allowed!");
 
 	if(!RSA_decrypt(msg))
 	{
@@ -119,9 +119,9 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 		}
 	}
 
-	if(version < 862)
+	if(version < 870)
 	{
-		disconnectClient(0x0A, "Only clients with protocol 8.62 allowed!");
+		disconnectClient(0x0A, "Only clients with protocol 8.7 allowed!");
 		return false;
 	}
 

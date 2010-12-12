@@ -387,13 +387,14 @@ bool CombatSpell::executeCastSpell(Creature* creature, const LuaVariant& var)
 
 Spell::Spell()
 {
+	spellId = 0;
 	level = 0;
 	magLevel = 0;
 	mana = 0;
 	manaPercent = 0;
 	soul = 0;
 	range = -1;
-	exhaustion = 1000;
+	cooldown = 1000;
 	needTarget = false;
 	needWeapon = false;
 	selfTarget = false;
@@ -403,6 +404,10 @@ Spell::Spell()
 	enabled = true;
 	isAggressive = true;
 	learnable = false;
+	group = SPELLGROUP_NONE;
+	groupCooldown = 1000;
+	secondaryGroup = SPELLGROUP_NONE;
+	secondaryGroupCooldown = 0;
 }
 
 bool Spell::configureSpell(xmlNodePtr p)
@@ -454,6 +459,49 @@ bool Spell::configureSpell(xmlNodePtr p)
 		return false;
 	}
 
+	if(readXMLInteger(p, "spellid", intValue))
+		spellId = intValue;
+
+	if(readXMLString(p, "group", strValue))
+	{
+		std::string tmpStr = asLowerCaseString(strValue);
+		if(tmpStr == "none")
+			group = SPELLGROUP_NONE;
+		else if(tmpStr == "attack")
+			group = SPELLGROUP_ATTACK;
+		else if(tmpStr == "healing")
+			group = SPELLGROUP_HEALING;
+		else if(tmpStr == "support")
+			group = SPELLGROUP_SUPPORT;
+		else if(tmpStr == "special")
+			group = SPELLGROUP_SPECIAL;
+		else
+			std::cout << "Warning: [Spell::configureSpell] Unknown group: " << strValue << std::endl;
+	}
+
+	if(readXMLInteger(p, "groupcooldown", intValue))
+	 	groupCooldown = intValue;
+
+	if(readXMLString(p, "secondarygroup", strValue))
+	{
+		std::string tmpStr = asLowerCaseString(strValue);
+		if(tmpStr == "none")
+			secondaryGroup = SPELLGROUP_NONE;
+		else if(tmpStr == "attack")
+			secondaryGroup = SPELLGROUP_ATTACK;
+		else if(tmpStr == "healing")
+			secondaryGroup = SPELLGROUP_HEALING;
+		else if(tmpStr == "support")
+			secondaryGroup = SPELLGROUP_SUPPORT;
+		else if(tmpStr == "special")
+			secondaryGroup = SPELLGROUP_SPECIAL;
+		else
+			std::cout << "Warning: [Spell::configureSpell] Unknown secondarygroup: " << strValue << std::endl;
+	}
+
+	if(readXMLInteger(p, "secondarygroupcooldown", intValue))
+	 	secondaryGroupCooldown = intValue;
+
 	if(readXMLInteger(p, "lvl", intValue))
 	 	level = intValue;
 
@@ -469,8 +517,8 @@ bool Spell::configureSpell(xmlNodePtr p)
 	if(readXMLInteger(p, "soul", intValue))
 	 	soul = intValue;
 
-	if(readXMLInteger(p, "exhaustion", intValue))
-		exhaustion = intValue;
+	if(readXMLInteger(p, "exhaustion", intValue) || readXMLInteger(p, "cooldown", intValue))
+		cooldown = intValue;
 
 	if(readXMLInteger(p, "prem", intValue))
 		premium = (intValue == 1);
@@ -547,121 +595,122 @@ bool Spell::playerSpellCheck(Player* player, bool ignoreExhaust/* = false*/) con
 	if(player->hasFlag(PlayerFlag_CannotUseSpells))
 		return false;
 
-	if(!player->hasFlag(PlayerFlag_IgnoreSpellCheck))
+	if(player->hasFlag(PlayerFlag_IgnoreSpellCheck))
+		return true;
+
+	if(!enabled)
+		return false;
+
+	bool exhaust = false;
+	if(isAggressive)
 	{
-		if(!enabled)
+		if(!player->hasFlag(PlayerFlag_IgnoreProtectionZone) && player->getZone() == ZONE_PROTECTION)
+		{
+			player->sendCancelMessage(RET_ACTIONNOTPERMITTEDINPROTECTIONZONE);
 			return false;
-
-		bool exhaust = false;
-		if(isAggressive)
-		{
-			if(!player->hasFlag(PlayerFlag_IgnoreProtectionZone) && player->getZone() == ZONE_PROTECTION)
-			{
-				player->sendCancelMessage(RET_ACTIONNOTPERMITTEDINPROTECTIONZONE);
-				return false;
-			}
-
-			if(!ignoreExhaust)
-			{
-				if(player->hasCondition(CONDITION_EXHAUST_COMBAT) || (OTSYS_TIME() - player->getLastCombatExhaust()) <= g_config.getNumber(ConfigManager::ALTERNATIVE_EXHAUST))
-					exhaust = true;
-				else
-					player->setLastCombatExhaust(OTSYS_TIME());
-			}
 		}
-		else if(!ignoreExhaust)
+
+		if(!ignoreExhaust)
 		{
-			if(player->hasCondition(CONDITION_EXHAUST_HEAL) || (OTSYS_TIME() - player->getLastHealExhaust()) <= g_config.getNumber(ConfigManager::ALTERNATIVE_EXHAUST))
+			if(player->hasCondition(CONDITION_EXHAUST_COMBAT) || (OTSYS_TIME() - player->getLastCombatExhaust()) <= g_config.getNumber(ConfigManager::ALTERNATIVE_EXHAUST))
 				exhaust = true;
 			else
-				player->setLastHealExhaust(OTSYS_TIME());
+				player->setLastCombatExhaust(OTSYS_TIME());
 		}
+	}
+	else if(!ignoreExhaust)
+	{
+		if(player->hasCondition(CONDITION_EXHAUST_HEAL) || (OTSYS_TIME() - player->getLastHealExhaust()) <= g_config.getNumber(ConfigManager::ALTERNATIVE_EXHAUST))
+			exhaust = true;
+		else
+			player->setLastHealExhaust(OTSYS_TIME());
+	}
 
-		if(exhaust)
+	if(!exhaust)
+	{
+		if(player->hasCondition(CONDITION_SPELLGROUPCOOLDOWN, group))
+			exhaust = true;
+		else if(player->hasCondition(CONDITION_SPELLCOOLDOWN, spellId))
+			exhaust = true;
+	}
+
+	if(exhaust)
+	{
+		player->sendCancelMessage(RET_YOUAREEXHAUSTED);
+
+		if(isInstant())
+			g_game.addMagicEffect(player->getPosition(), NM_ME_POFF);
+
+		return false;
+	}
+
+	if((int32_t)player->getLevel() < level)
+	{
+		player->sendCancelMessage(RET_NOTENOUGHLEVEL);
+		g_game.addMagicEffect(player->getPosition(), NM_ME_POFF);
+		return false;
+	}
+
+	if((int32_t)player->getMagicLevel() < magLevel)
+	{
+		player->sendCancelMessage(RET_NOTENOUGHMAGICLEVEL);
+		g_game.addMagicEffect(player->getPosition(), NM_ME_POFF);
+		return false;
+	}
+
+	if(player->getMana() < getManaCost(player) && !player->hasFlag(PlayerFlag_HasInfiniteMana))
+	{
+		player->sendCancelMessage(RET_NOTENOUGHMANA);
+		g_game.addMagicEffect(player->getPosition(), NM_ME_POFF);
+		return false;
+	}
+
+	if(player->getPlayerInfo(PLAYERINFO_SOUL) < soul && !player->hasFlag(PlayerFlag_HasInfiniteSoul))
+	{
+		player->sendCancelMessage(RET_NOTENOUGHSOUL);
+		g_game.addMagicEffect(player->getPosition(), NM_ME_POFF);
+		return false;
+	}
+
+	if(isInstant() && isLearnable())
+	{
+		if(!player->hasLearnedInstantSpell(getName()))
 		{
-			player->sendCancelMessage(RET_YOUAREEXHAUSTED);
-
-			if(isInstant())
-				g_game.addMagicEffect(player->getPosition(), NM_ME_POFF);
-
-			return false;
-		}
-
-		if((int32_t)player->getLevel() < level)
-		{
-			player->sendCancelMessage(RET_NOTENOUGHLEVEL);
+			player->sendCancelMessage(RET_YOUNEEDTOLEARNTHISSPELL);
 			g_game.addMagicEffect(player->getPosition(), NM_ME_POFF);
 			return false;
 		}
+	}
+	else if(!vocSpellMap.empty() && vocSpellMap.find(player->getVocationId()) == vocSpellMap.end())
+	{
+		player->sendCancelMessage(RET_YOURVOCATIONCANNOTUSETHISSPELL);
+		g_game.addMagicEffect(player->getPosition(), NM_ME_POFF);
+		return false;
+	}
 
-		if((int32_t)player->getMagicLevel() < magLevel)
+	if(needWeapon)
+	{
+		switch(player->getWeaponType())
 		{
-			player->sendCancelMessage(RET_NOTENOUGHMAGICLEVEL);
-			g_game.addMagicEffect(player->getPosition(), NM_ME_POFF);
-			return false;
-		}
+			case WEAPON_SWORD:
+			case WEAPON_CLUB:
+			case WEAPON_AXE:
+				break;
 
-		if(player->getMana() < getManaCost(player) && !player->hasFlag(PlayerFlag_HasInfiniteMana))
-		{
-			player->sendCancelMessage(RET_NOTENOUGHMANA);
-			g_game.addMagicEffect(player->getPosition(), NM_ME_POFF);
-			return false;
-		}
-
-		if(player->getPlayerInfo(PLAYERINFO_SOUL) < soul && !player->hasFlag(PlayerFlag_HasInfiniteSoul))
-		{
-			player->sendCancelMessage(RET_NOTENOUGHSOUL);
-			g_game.addMagicEffect(player->getPosition(), NM_ME_POFF);
-			return false;
-		}
-
-		if(isInstant() && isLearnable())
-		{
-			if(!player->hasLearnedInstantSpell(getName()))
+			default:
 			{
-				player->sendCancelMessage(RET_YOUNEEDTOLEARNTHISSPELL);
+				player->sendCancelMessage(RET_YOUNEEDAWEAPONTOUSETHISSPELL);
 				g_game.addMagicEffect(player->getPosition(), NM_ME_POFF);
 				return false;
 			}
 		}
-		else
-		{
-			if(!vocSpellMap.empty())
-			{
-				if(vocSpellMap.find(player->getVocationId()) == vocSpellMap.end())
-				{
-					player->sendCancelMessage(RET_YOURVOCATIONCANNOTUSETHISSPELL);
-					g_game.addMagicEffect(player->getPosition(), NM_ME_POFF);
-					return false;
-				}
-			}
-		}
+	}
 
-		if(needWeapon)
-		{
-			switch(player->getWeaponType())
-			{
-				case WEAPON_SWORD:
-				case WEAPON_CLUB:
-				case WEAPON_AXE:
-					break;
-
-				default:
-				{
-					player->sendCancelMessage(RET_YOUNEEDAWEAPONTOUSETHISSPELL);
-					g_game.addMagicEffect(player->getPosition(), NM_ME_POFF);
-					return false;
-					break;
-				}
-			}
-		}
-
-		if(isPremium() && !player->isPremium())
-		{
-			player->sendCancelMessage(RET_YOUNEEDPREMIUMACCOUNT);
-			g_game.addMagicEffect(player->getPosition(), NM_ME_POFF);
-			return false;
-		}
+	if(isPremium() && !player->isPremium())
+	{
+		player->sendCancelMessage(RET_YOUNEEDPREMIUMACCOUNT);
+		g_game.addMagicEffect(player->getPosition(), NM_ME_POFF);
+		return false;
 	}
 	return true;
 }
@@ -807,12 +856,27 @@ void Spell::postCastSpell(Player* player, bool finishedCast /*= true*/, bool pay
 	{
 		if(!player->hasFlag(PlayerFlag_HasNoExhaustion))
 		{
-			if(exhaustion > 0)
+			if(cooldown > 0)
 			{
-				if(isAggressive)
-					player->addCombatExhaust(exhaustion);
-				else
-					player->addHealExhaust(exhaustion);
+				Condition* condition = Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_SPELLCOOLDOWN, cooldown, 0, false, spellId);
+				player->addCondition(condition);
+				player->sendSpellCooldown(spellId, cooldown);
+			}
+
+			if(groupCooldown > 0)
+			{
+				Condition* condition = Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_SPELLGROUPCOOLDOWN, groupCooldown, 0, false, group);
+				player->addCondition(condition);
+				if(group != 0)
+					player->sendSpellGroupCooldown(group, groupCooldown);
+			}
+
+			if(secondaryGroupCooldown > 0)
+			{
+				Condition* condition = Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_SPELLGROUPCOOLDOWN, secondaryGroupCooldown, 0, false, secondaryGroup);
+				player->addCondition(condition);
+				if(secondaryGroup != 0)
+					player->sendSpellGroupCooldown(secondaryGroup, secondaryGroupCooldown);
 			}
 		}
 

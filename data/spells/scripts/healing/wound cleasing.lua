@@ -5,8 +5,6 @@ setCombatParam(combat, COMBAT_PARAM_AGGRESSIVE, FALSE)
 setCombatParam(combat, COMBAT_PARAM_DISPEL, CONDITION_PARALYZE)
 
 function getCombatFormulas(cid, lv, maglv)
-	-- Formulas completly NOT accurate, and I never testes this spell. Please, someone send me an accurate formula
-	-- Pedro B. at OTFans.net
 	local formula_min = ((lv*3 + maglv*2) * 0.55) + 15
 	local formula_max = ((lv*4 + maglv*1) * 0.95) + 20
 

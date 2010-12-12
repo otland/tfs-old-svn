@@ -41,6 +41,15 @@ enum OperatingSystem_t
 	CLIENTOS_WINDOWS = 0x02
 };
 
+enum SpellGroup_t
+{
+	SPELLGROUP_NONE = 0,
+	SPELLGROUP_ATTACK = 1,
+	SPELLGROUP_HEALING = 2,
+	SPELLGROUP_SUPPORT = 3,
+	SPELLGROUP_SPECIAL = 4
+};
+
 enum AccountType_t
 {
 	ACCOUNT_TYPE_NORMAL = 0x01,
@@ -256,6 +265,7 @@ struct Outfit_t
 		lookType   = 0;
 		lookTypeEx = 0;
 		lookAddons = 0;
+		lookMount  = 0;
 	}
 
 	uint16_t lookType;
@@ -265,6 +275,7 @@ struct Outfit_t
 	uint8_t lookLegs;
 	uint8_t lookFeet;
 	uint8_t lookAddons;
+	uint16_t lookMount;
 };
 
 struct LightInfo

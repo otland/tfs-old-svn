@@ -37,6 +37,7 @@
 #include "house.h"
 #include "waitlist.h"
 #include "quests.h"
+#include "mounts.h"
 #include "ban.h"
 #include "connection.h"
 #include "creatureevent.h"
@@ -383,9 +384,9 @@ bool ProtocolGame::parseFirstPacket(NetworkMessage& msg)
 
 	msg.SkipBytes(3);
 
-	if(version < 862)
+	if(version < 870)
 	{
-		disconnectClient(0x14, "Only clients with protocol 8.62 allowed!");
+		disconnectClient(0x14, "Only clients with protocol 8.7 allowed!");
 		return false;
 	}
 
@@ -743,6 +744,10 @@ void ProtocolGame::parsePacket(NetworkMessage &msg)
 
 			case 0xD3: // set outfit
 				parseSetOutfit(msg);
+				break;
+
+			case 0xD4:
+				parseToggleMount(msg);
 				break;
 
 			case 0xDC:
@@ -1134,6 +1139,7 @@ void ProtocolGame::parseSetOutfit(NetworkMessage& msg)
 	uint8_t looklegs = msg.GetByte();
 	uint8_t lookfeet = msg.GetByte();
 	uint8_t lookaddons = msg.GetByte();
+	uint16_t lookmount = msg.GetU16();
 
 	Outfit_t newOutfit;
 	newOutfit.lookType = looktype;
@@ -1142,7 +1148,14 @@ void ProtocolGame::parseSetOutfit(NetworkMessage& msg)
 	newOutfit.lookLegs = looklegs;
 	newOutfit.lookFeet = lookfeet;
 	newOutfit.lookAddons = lookaddons;
+	newOutfit.lookMount = lookmount;
 	addGameTask(&Game::playerChangeOutfit, player->getID(), newOutfit);
+}
+
+void ProtocolGame::parseToggleMount(NetworkMessage& msg)
+{
+	bool mount = msg.GetByte() != 0;
+	addGameTask(&Game::playerToggleMount, player->getID(), mount);
 }
 
 void ProtocolGame::parseUseItem(NetworkMessage& msg)
@@ -1934,17 +1947,17 @@ void ProtocolGame::sendCreatureSay(const Creature* creature, SpeakClasses type, 
 	if(msg)
 	{
 		TRACK_MESSAGE(msg);
-		AddCreatureSpeak(msg, creature, type, text, 0, 0, pos);
+		AddCreatureSpeak(msg, creature, type, text, 0, pos);
 	}
 }
 
-void ProtocolGame::sendToChannel(const Creature* creature, SpeakClasses type, const std::string& text, uint16_t channelId, uint32_t time /*= 0*/)
+void ProtocolGame::sendToChannel(const Creature* creature, SpeakClasses type, const std::string& text, uint16_t channelId)
 {
 	NetworkMessage_ptr msg = getOutputBuffer();
 	if(msg)
 	{
 		TRACK_MESSAGE(msg);
-		AddCreatureSpeak(msg, creature, type, text, channelId, time);
+		AddCreatureSpeak(msg, creature, type, text, channelId);
 	}
 }
 
@@ -2014,7 +2027,7 @@ void ProtocolGame::sendPing()
 
 void ProtocolGame::sendDistanceShoot(const Position& from, const Position& to, uint8_t type)
 {
-	if((canSee(from) || canSee(to)) && type <= NM_SHOOT_LAST)
+	if(type <= NM_SHOOT_LAST && (canSee(from) || canSee(to)))
 	{
 		NetworkMessage_ptr msg = getOutputBuffer();
 		if(msg)
@@ -2027,7 +2040,7 @@ void ProtocolGame::sendDistanceShoot(const Position& from, const Position& to, u
 
 void ProtocolGame::sendMagicEffect(const Position& pos, uint8_t type)
 {
-	if(canSee(pos) && type <= NM_ME_LAST)
+	if(type <= NM_ME_LAST && canSee(pos))
 	{
 		NetworkMessage_ptr msg = getOutputBuffer();
 		if(msg)
@@ -2464,72 +2477,74 @@ void ProtocolGame::sendOutfitWindow()
 {
 	#define MAX_NUMBER_OF_OUTFITS 25
 	NetworkMessage_ptr msg = getOutputBuffer();
-	if(msg)
+	if(!msg)
+		return;
+
+	TRACK_MESSAGE(msg);
+	msg->AddByte(0xC8);
+	AddCreatureOutfit(msg, player, player->getDefaultOutfit());
+
+	const OutfitListType& global_outfits = Outfits::getInstance()->getOutfits(player->getSex());
+	int32_t count_outfits = global_outfits.size();
+
+	if(count_outfits > MAX_NUMBER_OF_OUTFITS)
+		count_outfits = MAX_NUMBER_OF_OUTFITS;
+	else if(count_outfits == 0)
+		return;
+
+	OutfitListType::const_iterator it, it_;
+	if(!player->isAccessPlayer())
 	{
-		TRACK_MESSAGE(msg);
-		msg->AddByte(0xC8);
-		AddCreatureOutfit(msg, player, player->getDefaultOutfit());
-
-		const OutfitListType& global_outfits = Outfits::getInstance()->getOutfits(player->getSex());
-		int32_t count_outfits = global_outfits.size();
-
-		if(count_outfits > MAX_NUMBER_OF_OUTFITS)
-			count_outfits = MAX_NUMBER_OF_OUTFITS;
-		else if(count_outfits == 0)
-			return;
-
-		OutfitListType::const_iterator it, it_;
-		if(!player->isAccessPlayer())
+		for(it = global_outfits.begin(); it != global_outfits.end(); ++it)
 		{
-			for(it = global_outfits.begin(); it != global_outfits.end(); ++it)
-			{
-				if((*it)->premium && !player->isPremium())
-					count_outfits--;
-			}
+			if((*it)->premium && !player->isPremium())
+				count_outfits--;
 		}
-		msg->AddByte(count_outfits);
+	}
+	msg->AddByte(count_outfits);
 
-		if(player->isAccessPlayer())
+	if(player->isAccessPlayer())
+	{
+		for(it = global_outfits.begin(); it != global_outfits.end() && (count_outfits > 0); ++it)
 		{
-			for(it = global_outfits.begin(); it != global_outfits.end() && (count_outfits > 0); ++it)
+			msg->AddU16((*it)->looktype);
+			msg->AddString(Outfits::getInstance()->getOutfitName((*it)->looktype));
+			msg->AddByte(0x03);
+			count_outfits--;
+		}
+	}
+	else
+	{
+		bool addedAddon;
+		const OutfitListType& player_outfits = player->getPlayerOutfits();
+		for(it = global_outfits.begin(); it != global_outfits.end() && (count_outfits > 0); ++it)
+		{
+			if(((*it)->premium && player->isPremium()) || !(*it)->premium)
 			{
+				addedAddon = false;
 				msg->AddU16((*it)->looktype);
 				msg->AddString(Outfits::getInstance()->getOutfitName((*it)->looktype));
-				msg->AddByte(0x03);
+				//TODO: Try to avoid using loop to get addons
+				for(it_ = player_outfits.begin(); it_ != player_outfits.end(); ++it_)
+				{
+					if((*it_)->looktype == (*it)->looktype)
+					{
+						msg->AddByte((*it_)->addons);
+						addedAddon = true;
+						break;
+					}
+				}
+
+				if(!addedAddon)
+					msg->AddByte(0x00);
+
 				count_outfits--;
 			}
 		}
-		else
-		{
-			bool addedAddon;
-			const OutfitListType& player_outfits = player->getPlayerOutfits();
-			for(it = global_outfits.begin(); it != global_outfits.end() && (count_outfits > 0); ++it)
-			{
-				if(((*it)->premium && player->isPremium()) || !(*it)->premium)
-				{
-					addedAddon = false;
-					msg->AddU16((*it)->looktype);
-					msg->AddString(Outfits::getInstance()->getOutfitName((*it)->looktype));
-					//TODO: Try to avoid using loop to get addons
-					for(it_ = player_outfits.begin(); it_ != player_outfits.end(); ++it_)
-					{
-						if((*it_)->looktype == (*it)->looktype)
-						{
-							msg->AddByte((*it_)->addons);
-							addedAddon = true;
-							break;
-						}
-					}
-
-					if(!addedAddon)
-						msg->AddByte(0x00);
-
-					count_outfits--;
-				}
-			}
-		}
-		player->hasRequestedOutfit(true);
 	}
+
+	Mounts::getInstance()->sendMountsList(player, msg);
+	player->hasRequestedOutfit(true);
 }
 
 void ProtocolGame::sendVIPLogIn(uint32_t guid)
@@ -2564,6 +2579,33 @@ void ProtocolGame::sendVIP(uint32_t guid, const std::string& name, bool isOnline
 		msg->AddU32(guid);
 		msg->AddString(name);
 		msg->AddByte(isOnline == true ? 1 : 0);
+	}
+}
+
+void ProtocolGame::sendSpellCooldown(uint8_t spellId, uint32_t time)
+{
+	if(spellId == 0 || spellId > 160)
+		return;
+
+	NetworkMessage_ptr msg = getOutputBuffer();
+	if(msg)
+	{
+		TRACK_MESSAGE(msg);
+		msg->AddByte(0xA4);
+		msg->AddByte(spellId);
+		msg->AddU32(time);
+	}
+}
+
+void ProtocolGame::sendSpellGroupCooldown(SpellGroup_t groupId, uint32_t time)
+{
+	NetworkMessage_ptr msg = getOutputBuffer();
+	if(msg)
+	{
+		TRACK_MESSAGE(msg);
+		msg->AddByte(0xA5);
+		msg->AddByte(groupId);
+		msg->AddU32(time);
 	}
 }
 
@@ -2653,12 +2695,7 @@ void ProtocolGame::AddPlayerStats(NetworkMessage_ptr msg)
 	msg->AddU16(player->getHealth());
 	msg->AddU16(player->getPlayerInfo(PLAYERINFO_MAXHEALTH));
 	msg->AddU32(uint32_t(player->getFreeCapacity() * 100));
-	uint64_t experience = player->getExperience();
-	if(experience > 0x7FFFFFFF)
-		msg->AddU32(0x7FFFFFFF);
-	else
-		msg->AddU32(experience);
-
+	msg->AddU64(player->getExperience());
 	msg->AddU16(player->getPlayerInfo(PLAYERINFO_LEVEL));
 	msg->AddByte(player->getPlayerInfo(PLAYERINFO_LEVELPERCENT));
 	msg->AddU16(player->getMana());
@@ -2690,13 +2727,13 @@ void ProtocolGame::AddPlayerSkills(NetworkMessage_ptr msg)
 }
 
 void ProtocolGame::AddCreatureSpeak(NetworkMessage_ptr msg, const Creature* creature, SpeakClasses type,
-	std::string text, uint16_t channelId, uint32_t time/*= 0*/, Position* pos/* = NULL*/)
+	std::string text, uint16_t channelId, Position* pos/* = NULL*/)
 {
 	if(!creature)
 		return;
 
 	msg->AddByte(0xAA);
-	msg->AddU32(0x00);
+	msg->AddU32(0x01);
 
 	if(type == SPEAK_CHANNEL_R2)
 	{
@@ -2780,6 +2817,8 @@ void ProtocolGame::AddCreatureOutfit(NetworkMessage_ptr msg, const Creature* cre
 	}
 	else
 		msg->AddItemId(outfit.lookTypeEx);
+
+	msg->AddU16(outfit.lookMount);
 }
 
 void ProtocolGame::AddWorldLight(NetworkMessage_ptr msg, const LightInfo& lightInfo)

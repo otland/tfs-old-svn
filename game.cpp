@@ -51,6 +51,7 @@
 #include "server.h"
 #include "ioguild.h"
 #include "quests.h"
+#include "mounts.h"
 
 extern ConfigManager g_config;
 extern Actions* g_actions;
@@ -149,6 +150,8 @@ void Game::setGameState(GameState_t newState)
 				Raids::getInstance()->startup();
 
 				Quests::getInstance()->loadFromXml();
+
+				Mounts::getInstance()->loadFromXml();
 
 				loadMotd();
 				loadPlayersRecord();
@@ -1358,7 +1361,7 @@ ReturnValue Game::internalMoveItem(Cylinder* fromCylinder, Cylinder* toCylinder,
 }
 
 ReturnValue Game::internalAddItem(Cylinder* toCylinder, Item* item, int32_t index /*= INDEX_WHEREEVER*/,
-	uint32_t flags /*= 0*/, bool test /*= false*/)
+	uint32_t flags/* = 0*/, bool test/* = false*/)
 {
 	uint32_t remainderCount = 0;
 	return internalAddItem(toCylinder, item, index, flags, test, remainderCount);
@@ -1371,8 +1374,7 @@ ReturnValue Game::internalAddItem(Cylinder* toCylinder, Item* item, int32_t inde
 	if(toCylinder == NULL || item == NULL)
 		return RET_NOTPOSSIBLE;
 
-	Cylinder* origToCylinder = toCylinder;
-
+	Cylinder* destCylinder = toCylinder;
 	Item* toItem = NULL;
 	toCylinder = toCylinder->__queryDestination(index, item, &toItem, flags);
 
@@ -1386,53 +1388,59 @@ ReturnValue Game::internalAddItem(Cylinder* toCylinder, Item* item, int32_t inde
 	since the queryDestination can return a cylinder that might only hold a part of the full amount.
 	*/
 	uint32_t maxQueryCount = 0;
-	ret = origToCylinder->__queryMaxCount(INDEX_WHEREEVER, item, item->getItemCount(), maxQueryCount, flags);
-
+	ret = destCylinder->__queryMaxCount(INDEX_WHEREEVER, item, item->getItemCount(), maxQueryCount, flags);
 	if(ret != RET_NOERROR)
 		return ret;
 
-	if(!test)
+	if(test)
+		return RET_NOERROR;
+
+	if(item->isStackable() && toItem && toItem->getID() == item->getID())
 	{
-		if(item->isStackable() && toItem)
+		uint32_t m = std::min((uint32_t)item->getItemCount(), maxQueryCount);
+		uint32_t n = 0;
+
+		if(toItem->getID() == item->getID())
 		{
-			uint32_t m = 0;
-			uint32_t n = 0;
+			n = std::min((uint32_t)100 - toItem->getItemCount(), m);
+			toCylinder->__updateThing(toItem, toItem->getID(), toItem->getItemCount() + n);
+		}
 
-			m = std::min((uint32_t)item->getItemCount(), maxQueryCount);
-
-			if(toItem->getID() == item->getID())
+		int32_t count = m - n;
+		if(count > 0)
+		{
+			if(item->getItemCount() != count)
 			{
-				n = std::min((uint32_t)100 - toItem->getItemCount(), m);
-				toCylinder->__updateThing(toItem, toItem->getID(), toItem->getItemCount() + n);
-			}
-
-			if(m - n > 0)
-			{
-				if(m - n != item->getItemCount())
+				Item* remainderItem = Item::CreateItem(item->getID(), m - n);
+				if(internalAddItem(destCylinder, remainderItem, INDEX_WHEREEVER, flags, false) != RET_NOERROR)
 				{
-					Item* remainderItem = Item::CreateItem(item->getID(), m - n);
-					if(internalAddItem(origToCylinder, remainderItem, INDEX_WHEREEVER, flags, false) != RET_NOERROR)
-					{
-						FreeThing(remainderItem);
-						remainderCount = m - n;
-					}
+					FreeThing(remainderItem);
+					remainderCount = m - n;
 				}
 			}
-			else if(item->getParent() != VirtualCylinder::virtualCylinder)
+			else
 			{
-				//fully merged with toItem, item will be destroyed
-				item->onRemoved();
-				FreeThing(item);
+				toCylinder->__addThing(index, item);
+
+				int32_t itemIndex = toCylinder->__getIndexOfThing(item);
+				if(itemIndex != -1)
+					toCylinder->postAddNotification(item, NULL, itemIndex);
 			}
 		}
 		else
 		{
-			toCylinder->__addThing(index, item);
-
-			int32_t itemIndex = toCylinder->__getIndexOfThing(item);
-			if(itemIndex != -1)
-				toCylinder->postAddNotification(item, NULL, itemIndex);
+			//fully merged with toItem, item will be destroyed
+			item->onRemoved();
+			FreeThing(item);
 		}
+	}
+	else
+	{
+		toCylinder->__addThing(index, item);
+
+		int32_t itemIndex = toCylinder->__getIndexOfThing(item);
+		if(itemIndex != -1)
+			toCylinder->postAddNotification(item, NULL, itemIndex);
 	}
 	return RET_NOERROR;
 }
@@ -2112,7 +2120,7 @@ bool Game::playerAutoWalk(uint32_t playerId, std::list<Direction>& listDir)
 		return false;
 
 	player->resetIdleTime();
-	player->setNextWalkActionTask(NULL);
+	player->setNextWalkTask(NULL);
 	return player->startAutoWalk(listDir);
 }
 
@@ -3192,11 +3200,44 @@ bool Game::playerRequestOutfit(uint32_t playerId)
 	return true;
 }
 
+bool Game::playerToggleMount(uint32_t playerId, bool mount)
+{
+	Player* player = getPlayerByID(playerId);
+	if(!player || player->isRemoved())
+		return false;
+
+	player->toggleMount(mount);
+	return true;
+}
+
 bool Game::playerChangeOutfit(uint32_t playerId, Outfit_t outfit)
 {
 	Player* player = getPlayerByID(playerId);
 	if(!player || player->isRemoved())
 		return false;
+
+	if(outfit.lookMount != 0)
+	{
+		Mount* mount = Mounts::getInstance()->getMountByClientID(outfit.lookMount);
+		if(!mount || !mount->isTamed(player))
+			return false;
+
+		if(player->isMounted())
+		{
+			Mount* prevMount = Mounts::getInstance()->getMountByID(player->getCurrentMount());
+			if(prevMount)
+				changeSpeed(player, mount->getSpeed() - prevMount->getSpeed());
+
+			player->setCurrentMount(mount->getID());
+		}
+		else if(!player->isMounted())
+		{
+			player->setCurrentMount(mount->getID());
+			outfit.lookMount = 0;
+		}
+	}
+	else if(player->isMounted())
+		player->dismount();
 
 	if(player->canWear(outfit.lookType, outfit.lookAddons) && player->hasRequestedOutfit())
 	{

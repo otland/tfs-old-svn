@@ -3,7 +3,7 @@
 		The Forgotten Server
 
 	Version
-		0.2.8
+		0.2.9
 
 	Codenamed
 		"Mystic Spirit"
@@ -513,6 +513,9 @@
 	doPlayerSetGuildNick(cid, nick)
 	doPlayerAddOutfit(cid,looktype,addons)
 	doPlayerRemOutfit(cid,looktype,addons)
+	doPlayerAddMount(cid, mountid)
+	doPlayerRemoveMount(cid, mountid)
+	getPlayerMount(cid, mountid)
 	doSetCreatureLight(cid, lightLevel, lightColor, time)
 	doSetCreatureDropLoot(cid, doDrop)
 	getCreatureCondition(cid, condition)

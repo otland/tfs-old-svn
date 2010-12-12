@@ -43,6 +43,7 @@
 #include "raids.h"
 #include "chat.h"
 #include "quests.h"
+#include "mounts.h"
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
 #include "outputmessage.h"
 #include "connection.h"
@@ -580,10 +581,14 @@ void Commands::reloadInfo(Player* player, const std::string& cmd, const std::str
 		Quests::getInstance()->reload();
 		player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, "Reloaded quests.");
 	}
+	else if(tmpParam == "mount" || tmpParam == "mounts")
+	{
+		Mounts::getInstance()->reload();
+		player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, "Reloaded mounts.");
+	}
 	else
 		player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, "Reload type not found.");
 }
-
 
 void Commands::teleportToTown(Player* player, const std::string& cmd, const std::string& param)
 {
@@ -1019,8 +1024,12 @@ void Commands::removeThing(Player* player, const std::string& cmd, const std::st
 void Commands::newType(Player* player, const std::string& cmd, const std::string& param)
 {
 	int32_t lookType = atoi(param.c_str());
-	if(lookType >= 0 && lookType != 1 && lookType != 135 && (lookType <= 160 || lookType >= 192) && lookType <= 367)
-		g_game.internalCreatureChangeOutfit(player, (const Outfit_t&)lookType);
+	if(lookType >= 0 && lookType != 1 && lookType != 135 && (lookType <= 160 || lookType >= 192) && lookType <= 386)
+	{
+		Outfit_t newOutfit = player->getDefaultOutfit();
+		newOutfit.lookType = lookType;
+		g_game.internalCreatureChangeOutfit(player, newOutfit);
+	}
 	else
 		player->sendTextMessage(MSG_STATUS_SMALL, "This looktype does not exist.");
 }
@@ -1283,10 +1292,10 @@ void Commands::playerKills(Player* player, const std::string& cmd, const std::st
 	int32_t fragTime = g_config.getNumber(ConfigManager::FRAG_TIME);
 	if(player->redSkullTicks && fragTime > 0)
 	{
-		int32_t frags = ceil(player->redSkullTicks / (double)fragTime);
+		int32_t frags = (int32_t)ceil(player->redSkullTicks / (double)fragTime);
 		int32_t remainingTime = (player->redSkullTicks % fragTime) / 1000;
-		int32_t hours = floor(remainingTime / 3600);
-		int32_t minutes = floor((remainingTime % 3600) / 60);
+		int32_t hours = (int32_t)floor(remainingTime / 3600);
+		int32_t minutes = (int32_t)floor((remainingTime % 3600) / 60);
 
 		std::stringstream ss;
 		ss << "You have " << frags << " unjustified kill" << (frags > 1 ? "s" : "") << ". The amount of unjustified kills will decrease after: " << hours << " hour" << (hours != 1 ? "s" : "") << " and " << minutes << " minute" << (minutes != 1 ? "s" : "") << ".";

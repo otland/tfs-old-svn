@@ -248,8 +248,7 @@ std::vector<std::string> explodeString(const std::string& inString, const std::s
 	std::string::size_type start = 0;
 	std::string::size_type end = 0;
 
-	int32_t n = 0;
-	while(n++ != limit && (end = inString.find(separator, start)) != std::string::npos)
+	while(--limit != -1 && (end = inString.find(separator, start)) != std::string::npos)
 	{
 		returnVector.push_back(inString.substr(start, end - start));
 		start = end + separator.size();

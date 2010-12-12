@@ -238,29 +238,29 @@ if(NpcHandler == nil) then
 		for i, module in pairs(self.modules) do
 			local tmpRet = true
 			if(id == CALLBACK_CREATURE_APPEAR and module.callbackOnCreatureAppear ~= nil) then
-				tmpRet = module:callbackOnCreatureAppear(unpack(arg))
+				tmpRet = module:callbackOnCreatureAppear(...)
 			elseif(id == CALLBACK_CREATURE_DISAPPEAR and module.callbackOnCreatureDisappear ~= nil) then
-				tmpRet = module:callbackOnCreatureDisappear(unpack(arg))
+				tmpRet = module:callbackOnCreatureDisappear(...)
 			elseif(id == CALLBACK_CREATURE_SAY and module.callbackOnCreatureSay ~= nil) then
-				tmpRet = module:callbackOnCreatureSay(unpack(arg))
+				tmpRet = module:callbackOnCreatureSay(...)
 			elseif(id == CALLBACK_PLAYER_ENDTRADE and module.callbackOnPlayerEndTrade ~= nil) then
-				tmpRet = module:callbackOnPlayerEndTrade(unpack(arg))
+				tmpRet = module:callbackOnPlayerEndTrade(...)
 			elseif(id == CALLBACK_PLAYER_CLOSECHANNEL and module.callbackOnPlayerCloseChannel ~= nil) then
-				tmpRet = module:callbackOnPlayerCloseChannel(unpack(arg))
+				tmpRet = module:callbackOnPlayerCloseChannel(...)
 			elseif(id == CALLBACK_ONBUY and module.callbackOnBuy ~= nil) then
-				tmpRet = module:callbackOnBuy(unpack(arg))
+				tmpRet = module:callbackOnBuy(...)
 			elseif(id == CALLBACK_ONSELL and module.callbackOnSell ~= nil) then
-				tmpRet = module:callbackOnSell(unpack(arg))
+				tmpRet = module:callbackOnSell(...)
 			elseif(id == CALLBACK_ONTHINK and module.callbackOnThink ~= nil) then
-				tmpRet = module:callbackOnThink(unpack(arg))
+				tmpRet = module:callbackOnThink(...)
 			elseif(id == CALLBACK_GREET and module.callbackOnGreet ~= nil) then
-				tmpRet = module:callbackOnGreet(unpack(arg))
+				tmpRet = module:callbackOnGreet(...)
 			elseif(id == CALLBACK_FAREWELL and module.callbackOnFarewell ~= nil) then
-				tmpRet = module:callbackOnFarewell(unpack(arg))
+				tmpRet = module:callbackOnFarewell(...)
 			elseif(id == CALLBACK_MESSAGE_DEFAULT and module.callbackOnMessageDefault ~= nil) then
-				tmpRet = module:callbackOnMessageDefault(unpack(arg))
+				tmpRet = module:callbackOnMessageDefault(...)
 			elseif(id == CALLBACK_MODULE_RESET and module.callbackOnModuleReset ~= nil) then
-				tmpRet = module:callbackOnModuleReset(unpack(arg))
+				tmpRet = module:callbackOnModuleReset(...)
 			end
 			if(not tmpRet) then
 				ret = false

@@ -11,12 +11,13 @@
 	<monster name="Bat" file="bat.xml"/>
 	<monster name="Bear" file="bear.xml"/>
 	<monster name="Behemoth" file="behemoth.xml"/>
-	<monster name="Beholder" file="beholder.xml"/>
+	<monster name="Beholder" file="bonelord.xml"/>
 	<monster name="Black Knight" file="blackknight.xml"/>
 	<monster name="Black Sheep" file="blacksheep.xml"/>
 	<monster name="Blood Crab" file="bloodcrab.xml"/>
 	<monster name="Blue Djinn" file="bluedjinn.xml"/>
 	<monster name="Bone Beast" file="bonebeast.xml"/>
+	<monster name="Bonelord" file="bonelord.xml"/>
 	<monster name="Bug" file="bug.xml"/>
 	<monster name="Butterfly" file="butterfly.xml"/>
 	<monster name="Pink Butterfly" file="butterflypurple.xml"/>

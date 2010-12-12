@@ -1470,7 +1470,7 @@ void Creature::executeConditions(uint32_t interval)
 	}
 }
 
-bool Creature::hasCondition(ConditionType_t type) const
+bool Creature::hasCondition(ConditionType_t type, uint32_t subId/* = 0*/) const
 {
 	if(type == CONDITION_EXHAUST_COMBAT && g_game.getStateTime() == 0)
 		return true;
@@ -1480,7 +1480,7 @@ bool Creature::hasCondition(ConditionType_t type) const
 
 	for(ConditionList::const_iterator it = conditions.begin(); it != conditions.end(); ++it)
 	{
-		if((*it)->getType() == type)
+		if((*it)->getType() == type && (*it)->getSubId() == subId)
 		{
 			if(g_config.getBoolean(ConfigManager::OLD_CONDITION_ACCURACY))
 				return true;

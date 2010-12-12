@@ -751,6 +751,16 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 					}
 					break;
 
+				case ID_MENU_GAME_RELOAD_MOUNTS:
+					if(g_game.getGameState() != GAME_STATE_STARTUP)
+					{
+						if(Mounts::getInstance()->reload())
+							std::cout << "Reloaded mounts." << std::endl;
+						else
+							std::cout << "Failed to reload mounts." << std::endl;
+					}
+					break;
+
 				case ID_MENU_GAME_RELOAD_MOVEMENTS:
 					if(g_game.getGameState() != GAME_STATE_STARTUP)
 					{
@@ -810,66 +820,47 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 					break;
 
 				case ID_MENU_GAME_RELOAD_RELOADALL:
-					if(g_game.getGameState() != GAME_STATE_STARTUP)
-					{
-						if(g_monsters.reload())
-						{
-							if(commands.reload())
-							{
-								if(Quests::getInstance()->reload())
-								{
-									if(g_game.reloadHighscores())
-									{
-										if(g_config.reload())
-										{
-											if(g_actions->reload())
-											{
-												if(g_moveEvents->reload())
-												{
-													if(g_talkActions->reload())
-													{
-														if(g_spells->reload())
-														{
-															if(g_creatureEvents->reload())
-															{
-																if(Raids::getInstance()->reload() && Raids::getInstance()->startup())
-																{
-																	g_npcs.reload();
-																	std::cout << "Reloaded all." << std::endl;
-																}
-																else
-																	std::cout << "Failed to reload raids." << std::endl;
-															}
-															else
-																std::cout << "Failed to reload creature events." << std::endl;
-														}
-														else
-															std::cout << "Failed to reload spells." << std::endl;
-													}
-													else
-														std::cout << "Failed to reload talkactions." << std::endl;
-												}
-												else
-													std::cout << "Failed to reload movements." << std::endl;
-											}
-											else
-												std::cout << "Failed to reload actions." << std::endl;
-										}
-										else
-											std::cout << "Failed to reload config." << std::endl;
-									}
-									else
-										std::cout << "Failed to reload highscores." << std::endl;
-								}
-								else
-									std::cout << "Failed to reload quests." << std::endl;
-							}
-							else
-								std::cout << "Failed to reload commands." << std::endl;
-						}
-						else
-							std::cout << "Failed to reload monsters." << std::endl;
-					}
+					if(g_game.getGameState() == GAME_STATE_STARTUP)
+						break;
+
+					if(!g_config.reload())
+						std::cout << "Failed to reload config." << std::endl;
+
+					if(!g_monsters.reload())
+						std::cout << "Failed to reload monsters." << std::endl;
+
+					if(!commands.reload())
+						std::cout << "Failed to reload commands." << std::endl;
+
+					if(!Quests::getInstance()->reload())
+						std::cout << "Failed to reload quests." << std::endl;
+
+					if(!Mounts::getInstance()->reload())
+						std::cout << "Failed to reload mounts." << std::endl;
+
+					if(!g_game.reloadHighscores())
+						std::cout << "Failed to reload highscores." << std::endl;
+
+					if(!g_actions->reload())
+						std::cout << "Failed to reload actions." << std::endl;
+
+					if(!g_moveEvents->reload())
+						std::cout << "Failed to reload movements." << std::endl;
+
+					if(!g_talkActions->reload())
+						std::cout << "Failed to reload talkactions." << std::endl;
+
+					if(!g_spells->reload())
+						std::cout << "Failed to reload spells." << std::endl;
+
+					if(!g_creatureEvents->reload())
+						std::cout << "Failed to reload creature events." << std::endl;
+
+					if(!Raids::getInstance()->reload() || !Raids::getInstance()->startup())
+						std::cout << "Failed to reload raids." << std::endl;
+
+					g_npcs.reload();
+					std::cout << "Reloaded all." << std::endl;
 					break;
 
 				case ID_MENU_GAME_WORLDTYPE_PVP:

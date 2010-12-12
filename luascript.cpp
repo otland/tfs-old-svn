@@ -41,6 +41,7 @@
 #include "vocation.h"
 #include "teleport.h"
 #include "ban.h"
+#include "mounts.h"
 
 extern Game g_game;
 extern Monsters g_monsters;
@@ -1423,6 +1424,15 @@ void LuaScriptInterface::registerFunctions()
 
 	//canPlayerWearOutfit(cid, looktype, addons)
 	lua_register(m_luaState, "canPlayerWearOutfit", LuaScriptInterface::luaCanPlayerWearOutfit);
+
+	//doPlayerAddMount(cid, mountid)
+	lua_register(m_luaState, "doPlayerAddMount", LuaScriptInterface::luaDoPlayerAddMount);
+
+	//doPlayerRemoveMount(cid, mountid)
+	lua_register(m_luaState, "doPlayerRemoveMount", LuaScriptInterface::luaDoPlayerRemoveMount);
+
+	//getPlayerMount(cid, mountid)
+	lua_register(m_luaState, "getPlayerMount", LuaScriptInterface::luaGetPlayerMount);
 
 	//doSetCreatureLight(cid, lightLevel, lightColor, time)
 	lua_register(m_luaState, "doSetCreatureLight", LuaScriptInterface::luaDoSetCreatureLight);
@@ -6747,6 +6757,85 @@ int32_t LuaScriptInterface::luaDoPlayerRemOutfit(lua_State* L)
 	{
 		player->remOutfit(looktype, addon);
 		lua_pushnumber(L, LUA_NO_ERROR);
+	}
+	else
+	{
+		reportErrorFunc(getErrorDesc(LUA_ERROR_PLAYER_NOT_FOUND));
+		lua_pushnumber(L, LUA_ERROR);
+	}
+	return 1;
+}
+
+int32_t LuaScriptInterface::luaDoPlayerAddMount(lua_State* L)
+{
+	//doPlayerAddMount(cid, mountid)
+	uint8_t mountid = (uint8_t)popNumber(L);
+	uint32_t cid = popNumber(L);
+
+	ScriptEnviroment* env = getScriptEnv();
+	Player* player = env->getPlayerByUID(cid);
+	if(player)
+	{
+		if(!player->tameMount(mountid))
+		{
+			reportErrorFunc("There is no mount with the specified id.");
+			lua_pushnumber(L, LUA_ERROR);
+		}
+		else
+			lua_pushnumber(L, LUA_NO_ERROR);
+	}
+	else
+	{
+		reportErrorFunc(getErrorDesc(LUA_ERROR_PLAYER_NOT_FOUND));
+		lua_pushnumber(L, LUA_ERROR);
+	}
+	return 1;
+}
+
+int32_t LuaScriptInterface::luaDoPlayerRemoveMount(lua_State* L)
+{
+	//doPlayerRemoveMount(cid, mountid)
+	uint8_t mountid = (uint8_t)popNumber(L);
+	uint32_t cid = popNumber(L);
+
+	ScriptEnviroment* env = getScriptEnv();
+	Player* player = env->getPlayerByUID(cid);
+	if(player)
+	{
+		if(!player->untameMount(mountid))
+		{
+			reportErrorFunc("There is no mount with the specified id.");
+			lua_pushnumber(L, LUA_ERROR);
+		}
+		else
+			lua_pushnumber(L, LUA_NO_ERROR);
+	}
+	else
+	{
+		reportErrorFunc(getErrorDesc(LUA_ERROR_PLAYER_NOT_FOUND));
+		lua_pushnumber(L, LUA_ERROR);
+	}
+	return 1;
+}
+
+int32_t LuaScriptInterface::luaGetPlayerMount(lua_State* L)
+{
+	//getPlayerMount(cid, mountid)
+	uint8_t mountid = (uint8_t)popNumber(L);
+	uint32_t cid = popNumber(L);
+
+	ScriptEnviroment* env = getScriptEnv();
+	Player* player = env->getPlayerByUID(cid);
+	if(player)
+	{
+		Mount* mount = Mounts::getInstance()->getMountByID(mountid);
+		if(!mount)
+		{
+			reportErrorFunc("There is no mount with the specified id.");
+			lua_pushnumber(L, LUA_ERROR);
+		}
+		else
+			lua_pushnumber(L, mount->isTamed(player) ? LUA_TRUE : LUA_FALSE);
 	}
 	else
 	{
