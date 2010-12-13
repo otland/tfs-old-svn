@@ -180,7 +180,7 @@ bool ScriptEnviroment::setCallbackId(int32_t callbackId, LuaScriptInterface* scr
 	{
 		//nested callbacks are not allowed
 		if(m_interface)
-			m_interface->reportError(__FUNCTION__, "Nested callbacks!");
+			m_interface->reportErrorFunc("Nested callbacks!");
 
 		return false;
 	}
@@ -528,12 +528,16 @@ bool LuaScriptInterface::reInitState()
 	return initState();
 }
 
-void LuaScriptInterface::dumpLuaStack()
+/// Same as lua_pcall, but adds stack trace to error strings in called function.
+int32_t LuaScriptInterface::protectedCall(lua_State* L, int32_t nargs, int32_t nresults)
 {
-	int32_t a = lua_gettop(m_luaState);
-	std::cout << "stack size: " << a << std::endl;
-	for(int32_t i = 1; i <= a ; ++i)
-		std::cout << lua_typename(m_luaState, lua_type(m_luaState,-i)) << " " << lua_topointer(m_luaState, -i) << std::endl;
+	int error_index = lua_gettop(L) - nargs;
+	lua_pushcfunction(L, luaErrorHandler);
+	lua_insert(L, error_index);
+
+	int ret = lua_pcall(L, nargs, nresults, error_index);
+	lua_remove(L, error_index);
+	return ret;
 }
 
 int32_t LuaScriptInterface::loadFile(const std::string& file, Npc* npc /* = NULL*/)
@@ -557,7 +561,7 @@ int32_t LuaScriptInterface::loadFile(const std::string& file, Npc* npc /* = NULL
 	env->setNpc(npc);
 
 	//execute it
-	ret = lua_pcall(m_luaState, 0, 0, 0);
+	ret = protectedCall(m_luaState, 0, 0);
 	if(ret != 0)
 	{
 		reportError(NULL, popString(m_luaState));
@@ -592,7 +596,7 @@ int32_t LuaScriptInterface::loadBuffer(const std::string& text, Npc* npc /* = NU
 	env->setNpc(npc);
 
 	//execute it
-	ret = lua_pcall(m_luaState, 0, 0, 0);
+	ret = protectedCall(m_luaState, 0, 0);
 	if(ret != 0)
 	{
 		reportError(NULL, popString(m_luaState));
@@ -652,7 +656,31 @@ const std::string& LuaScriptInterface::getFileById(int32_t scriptId)
 		return m_loadingFile;
 }
 
-void LuaScriptInterface::reportError(const char* function, const std::string& error_desc)
+std::string LuaScriptInterface::getStackTrace(const std::string& error_desc)
+{
+	lua_State* L = m_luaState;
+	lua_getfield(L, LUA_GLOBALSINDEX, "debug");
+	if(!lua_istable(L, -1))
+	{
+		lua_pop(L, 1);
+		return error_desc;
+	}
+
+	lua_getfield(L, -1, "traceback");
+	if(!lua_isfunction(L, -1))
+	{
+		lua_pop(L, 1);
+		return error_desc;
+	}
+
+	lua_pushstring(L, error_desc.c_str());
+	lua_call(L, 1, 1);
+	std::string trace(lua_tostring(L, -1));
+	lua_pop(L, 1);
+	return trace;
+}
+
+void LuaScriptInterface::reportError(const char* function, const std::string& error_desc, bool stack_trace/* = false*/)
 {
 	ScriptEnviroment* env = getScriptEnv();
 	int32_t scriptId;
@@ -668,15 +696,23 @@ void LuaScriptInterface::reportError(const char* function, const std::string& er
 		std::cout << "[" << scriptInterface->getInterfaceName() << "] " << std::endl;
 		if(timerEvent)
 			std::cout << "in a timer event called from: " << std::endl;
+
 		if(callbackId)
 			std::cout << "in callback: " << scriptInterface->getFileById(callbackId) << std::endl;
+
 		std::cout << scriptInterface->getFileById(scriptId) << std::endl;
 	}
-	std::cout << event_desc << std::endl;
+
+	if(!event_desc.empty())
+		std::cout <<"Event: " << event_desc << std::endl;
+
 	if(function)
 		std::cout << function << "(). ";
 
-	std::cout << error_desc << std::endl;
+	if(stack_trace)
+		std::cout << scriptInterface->getStackTrace(error_desc) << std::endl;
+	else
+		std::cout << error_desc << std::endl;
 }
 
 bool LuaScriptInterface::pushFunction(int32_t functionId)
@@ -790,40 +826,21 @@ void LuaScriptInterface::executeTimerEvent(uint32_t eventIndex)
 
 int32_t LuaScriptInterface::luaErrorHandler(lua_State* L)
 {
-	lua_getfield(L, LUA_GLOBALSINDEX, "debug");
-	if (!lua_istable(L, -1))
-	{
-		lua_pop(L, 1);
-		return 1;
-	}
-	lua_getfield(L, -1, "traceback");
-	if (!lua_isfunction(L, -1))
-	{
-		lua_pop(L, 2);
-		return 1;
-	}
-	lua_pushvalue(L, 1);
-	lua_pushinteger(L, 2);
-	lua_call(L, 2, 1);
+	std::string err_msg(lua_tostring(L, -1));
+	lua_pop(L, 1);
+	lua_pushstring(L, getScriptEnv()->getScriptInterface()->getStackTrace(err_msg).c_str());
 	return 1;
 }
 
 bool LuaScriptInterface::callFunction(uint32_t nParams)
 {
 	bool result = false;
-
 	int32_t size0 = lua_gettop(m_luaState);
-	int32_t error_index = lua_gettop(m_luaState) - nParams;
-	lua_pushcfunction(m_luaState, luaErrorHandler);
-	lua_insert(m_luaState, error_index);
-
-	int32_t ret = lua_pcall(m_luaState, nParams, 1, error_index);
+	int32_t ret = protectedCall(m_luaState, nParams, 1);
 	if(ret != 0)
 		LuaScriptInterface::reportError(NULL, LuaScriptInterface::popString(m_luaState));
 	else
 		result = lua_toboolean(m_luaState, 0);
-
-	lua_remove(m_luaState, error_index);
 
 	if((lua_gettop(m_luaState) + (int)nParams + 1) != size0)
 		LuaScriptInterface::reportError(NULL, "Stack size changed!");
@@ -4748,7 +4765,7 @@ int32_t LuaScriptInterface::luaCreateCombatObject(lua_State* L)
 
 	if(env->getScriptId() != EVENT_ID_LOADING)
 	{
-		reportError(__FUNCTION__, "This function can only be used while loading the script.");
+		reportErrorFunc("This function can only be used while loading the script.");
 		lua_pushboolean(L, false);
 		return 1;
 	}
@@ -4807,7 +4824,7 @@ int32_t LuaScriptInterface::luaCreateCombatArea(lua_State* L)
 
 	if(env->getScriptId() != EVENT_ID_LOADING)
 	{
-		reportError(__FUNCTION__, "This function can only be used while loading the script.");
+		reportErrorFunc("This function can only be used while loading the script.");
 		lua_pushboolean(L, false);
 		return 1;
 	}
@@ -4824,7 +4841,7 @@ int32_t LuaScriptInterface::luaCreateCombatArea(lua_State* L)
 		std::list<uint32_t> listExtArea;
 		if(!getArea(L, listExtArea, rowsExtArea))
 		{
-			reportError(__FUNCTION__, "Invalid extended area table.");
+			reportErrorFunc("Invalid extended area table.");
 			lua_pushboolean(L, false);
 			return 1;
 		}
@@ -4837,7 +4854,7 @@ int32_t LuaScriptInterface::luaCreateCombatArea(lua_State* L)
 	std::list<uint32_t> listArea;
 	if(!getArea(L, listArea, rowsArea))
 	{
-		reportError(__FUNCTION__, "Invalid area table.");
+		reportErrorFunc("Invalid area table.");
 		lua_pushboolean(L, false);
 		return 1;
 	}
@@ -4857,7 +4874,7 @@ int32_t LuaScriptInterface::luaCreateConditionObject(lua_State* L)
 
 	if(env->getScriptId() != EVENT_ID_LOADING)
 	{
-		reportError(__FUNCTION__, "This function can only be used while loading the script.");
+		reportErrorFunc("This function can only be used while loading the script.");
 		lua_pushboolean(L, false);
 		return 1;
 	}
@@ -4888,7 +4905,7 @@ int32_t LuaScriptInterface::luaSetCombatArea(lua_State* L)
 
 	if(env->getScriptId() != EVENT_ID_LOADING)
 	{
-		reportError(__FUNCTION__, "This function can only be used while loading the script.");
+		reportErrorFunc("This function can only be used while loading the script.");
 		lua_pushboolean(L, false);
 		return 1;
 	}
@@ -4925,7 +4942,7 @@ int32_t LuaScriptInterface::luaSetCombatCondition(lua_State* L)
 
 	if(env->getScriptId() != EVENT_ID_LOADING)
 	{
-		reportError(__FUNCTION__, "This function can only be used while loading the script.");
+		reportErrorFunc("This function can only be used while loading the script.");
 		lua_pushboolean(L, false);
 		return 1;
 	}
@@ -4964,7 +4981,7 @@ int32_t LuaScriptInterface::luaSetCombatParam(lua_State* L)
 
 	if(env->getScriptId() != EVENT_ID_LOADING)
 	{
-		reportError(__FUNCTION__, "This function can only be used while loading the script.");
+		reportErrorFunc("This function can only be used while loading the script.");
 		lua_pushboolean(L, false);
 		return 1;
 	}
@@ -4995,7 +5012,7 @@ int32_t LuaScriptInterface::luaSetConditionParam(lua_State* L)
 
 	if(env->getScriptId() != EVENT_ID_LOADING)
 	{
-		reportError(__FUNCTION__, "This function can only be used while loading the script.");
+		reportErrorFunc("This function can only be used while loading the script.");
 		lua_pushboolean(L, false);
 		return 1;
 	}
@@ -5026,7 +5043,7 @@ int32_t LuaScriptInterface::luaAddDamageCondition(lua_State* L)
 
 	if(env->getScriptId() != EVENT_ID_LOADING)
 	{
-		reportError(__FUNCTION__, "This function can only be used while loading the script.");
+		reportErrorFunc("This function can only be used while loading the script.");
 		lua_pushboolean(L, false);
 		return 1;
 	}
@@ -5061,7 +5078,7 @@ int32_t LuaScriptInterface::luaAddOutfitCondition(lua_State* L)
 
 	if(env->getScriptId() != EVENT_ID_LOADING)
 	{
-		reportError(__FUNCTION__, "This function can only be used while loading the script.");
+		reportErrorFunc("This function can only be used while loading the script.");
 		lua_pushboolean(L, false);
 		return 1;
 	}
@@ -5090,7 +5107,7 @@ int32_t LuaScriptInterface::luaSetCombatCallBack(lua_State* L)
 	ScriptEnviroment* env = getScriptEnv();
 	if(env->getScriptId() != EVENT_ID_LOADING)
 	{
-		reportError(__FUNCTION__, "This function can only be used while loading the script.");
+		reportErrorFunc("This function can only be used while loading the script.");
 		lua_pushboolean(L, false);
 		return 1;
 	}
@@ -5111,14 +5128,14 @@ int32_t LuaScriptInterface::luaSetCombatCallBack(lua_State* L)
 	{
 		char buffer[80];
 		sprintf(buffer, "%d is not a valid callback key.", key);
-		reportError(__FUNCTION__, buffer);
+		reportErrorFunc(buffer);
 		lua_pushboolean(L, false);
 		return 1;
 	}
 
 	if(!callback->loadCallBack(scriptInterface, function))
 	{
-		reportError(__FUNCTION__, "Can not load callback");
+		reportErrorFunc("Can not load callback");
 		lua_pushboolean(L, false);
 		return 1;
 	}
@@ -5134,7 +5151,7 @@ int32_t LuaScriptInterface::luaSetCombatFormula(lua_State* L)
 
 	if(env->getScriptId() != EVENT_ID_LOADING)
 	{
-		reportError(__FUNCTION__, "This function can only be used while loading the script.");
+		reportErrorFunc("This function can only be used while loading the script.");
 		lua_pushboolean(L, false);
 		return 1;
 	}
@@ -5169,7 +5186,7 @@ int32_t LuaScriptInterface::luaSetConditionFormula(lua_State* L)
 
 	if(env->getScriptId() != EVENT_ID_LOADING)
 	{
-		reportError(__FUNCTION__, "This function can only be used while loading the script.");
+		reportErrorFunc("This function can only be used while loading the script.");
 		lua_pushboolean(L, false);
 		return 1;
 	}
@@ -7500,7 +7517,7 @@ int32_t LuaScriptInterface::luaAddEvent(lua_State* L)
 	LuaScriptInterface* script_interface = env->getScriptInterface();
 	if(!script_interface)
 	{
-		reportError(__FUNCTION__, "No valid script interface!");
+		reportErrorFunc("No valid script interface!");
 		lua_pushboolean(L, false);
 		return 1;
 	}
@@ -7508,7 +7525,7 @@ int32_t LuaScriptInterface::luaAddEvent(lua_State* L)
 	int32_t parameters = lua_gettop(L);
 	if(lua_isfunction(L, -parameters) == 0) //-parameters means the first parameter from left to right
 	{
-		reportError(__FUNCTION__, "callback parameter should be a function.");
+		reportErrorFunc("callback parameter should be a function.");
 		lua_pushboolean(L, false);
 		return 1;
 	}
@@ -7543,7 +7560,7 @@ int32_t LuaScriptInterface::luaStopEvent(lua_State* L)
 	LuaScriptInterface* script_interface = env->getScriptInterface();
 	if(!script_interface)
 	{
-		reportError(__FUNCTION__, "No valid script interface!");
+		reportErrorFunc("No valid script interface!");
 		lua_pushboolean(L, false);
 		return 1;
 	}

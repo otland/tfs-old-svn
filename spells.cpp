@@ -607,37 +607,14 @@ bool Spell::playerSpellCheck(Player* player, bool ignoreExhaust/* = false*/) con
 		return false;
 
 	bool exhaust = false;
-	if(isAggressive)
+	if(isAggressive && !player->hasFlag(PlayerFlag_IgnoreProtectionZone) && player->getZone() == ZONE_PROTECTION)
 	{
-		if(!player->hasFlag(PlayerFlag_IgnoreProtectionZone) && player->getZone() == ZONE_PROTECTION)
-		{
-			player->sendCancelMessage(RET_ACTIONNOTPERMITTEDINPROTECTIONZONE);
-			return false;
-		}
-
-		if(!ignoreExhaust)
-		{
-			if(player->hasCondition(CONDITION_EXHAUST_COMBAT) || (OTSYS_TIME() - player->getLastCombatExhaust()) <= g_config.getNumber(ConfigManager::ALTERNATIVE_EXHAUST))
-				exhaust = true;
-			else
-				player->setLastCombatExhaust(OTSYS_TIME());
-		}
-	}
-	else if(!ignoreExhaust)
-	{
-		if(player->hasCondition(CONDITION_EXHAUST_HEAL) || (OTSYS_TIME() - player->getLastHealExhaust()) <= g_config.getNumber(ConfigManager::ALTERNATIVE_EXHAUST))
-			exhaust = true;
-		else
-			player->setLastHealExhaust(OTSYS_TIME());
+		player->sendCancelMessage(RET_ACTIONNOTPERMITTEDINPROTECTIONZONE);
+		return false;
 	}
 
-	if(!exhaust)
-	{
-		if(player->hasCondition(CONDITION_SPELLGROUPCOOLDOWN, group))
-			exhaust = true;
-		else if(player->hasCondition(CONDITION_SPELLCOOLDOWN, spellId))
-			exhaust = true;
-	}
+	if(!exhaust && (player->hasCondition(CONDITION_SPELLGROUPCOOLDOWN, group) || player->hasCondition(CONDITION_SPELLCOOLDOWN, spellId)))
+		exhaust = true;
 
 	if(exhaust)
 	{

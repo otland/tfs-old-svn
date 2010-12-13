@@ -236,7 +236,7 @@ enum PlayerInfo_t
 	PlayerInfoIp
 };
 
-#define reportErrorFunc(a)  reportError(__FUNCTION__, a)
+#define reportErrorFunc(a)  reportError(__FUNCTION__, a, true)
 
 enum ErrorCode_t
 {
@@ -298,11 +298,10 @@ class LuaScriptInterface
 			}
 		}
 
-		static void reportError(const char* function, const std::string& error_desc);
+		static void reportError(const char* function, const std::string& error_desc, bool stack_trace = false);
 
 		std::string getInterfaceName() {return m_interfaceName;}
 		const std::string& getLastLuaError() const {return m_lastLuaError;}
-		void dumpLuaStack();
 
 		lua_State* getLuaState() {return m_luaState;}
 
@@ -672,6 +671,9 @@ class LuaScriptInterface
 
 		typedef std::map<uint32_t , LuaTimerEventDesc > LuaTimerEvents;
 		LuaTimerEvents m_timerEvents;
+
+		static int32_t protectedCall(lua_State* L, int32_t nargs, int32_t nresults);
+		std::string getStackTrace(const std::string& error_desc);
 
 		void executeTimerEvent(uint32_t eventIndex);
 
