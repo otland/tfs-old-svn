@@ -198,11 +198,7 @@ bool CreatureEvent::configureEvent(xmlNodePtr p)
 	}
 	else
 	{
-<<<<<<< .mine
 		std::cout << "[Error - CreatureEvent::configureEvent] No type for creature event."  << std::endl;
-=======
-		std::cout << "Error: [CreatureEvent::configureEvent] No type for creature event." << std::endl;
->>>>>>> .r3994
 		return false;
 	}
 	m_isLoaded = true;

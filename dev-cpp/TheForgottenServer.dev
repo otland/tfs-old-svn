@@ -1,7 +1,7 @@
 [Project]
 FileName=TheForgottenServer.dev
 Name=The Forgotten Server
-UnitCount=161
+UnitCount=163
 Type=0
 Ver=1
 ObjFiles=
@@ -1656,4 +1656,24 @@ OriginalFilename=The Forgotten Server.exe
 ProductName=The Forgotten Server
 ProductVersion=0.2.7
 AutoIncBuildNr=0
+
+[Unit162]
+FileName=..\mounts.h
+CompileCpp=1
+Folder=The Forgotten Server
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit163]
+FileName=..\mounts.cpp
+CompileCpp=1
+Folder=The Forgotten Server
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
 
