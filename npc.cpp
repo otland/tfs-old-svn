@@ -2965,7 +2965,6 @@ int32_t NpcScriptInterface::luaActionSay(lua_State* L)
 	bool publicize = true;
 
 	if(parameters >= 3)
-
 		publicize = (popNumber(L) == 1);
 
 	if(parameters >= 2)
