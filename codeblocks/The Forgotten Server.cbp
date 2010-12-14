@@ -135,6 +135,8 @@
 		<Unit filename="..\monster.h" />
 		<Unit filename="..\monsters.cpp" />
 		<Unit filename="..\monsters.h" />
+		<Unit filename="..\mounts.cpp" />
+		<Unit filename="..\mounts.h" />
 		<Unit filename="..\movement.cpp" />
 		<Unit filename="..\movement.h" />
 		<Unit filename="..\networkmessage.cpp" />
