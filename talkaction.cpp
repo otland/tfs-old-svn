@@ -109,7 +109,7 @@ TalkActionResult_t TalkActions::playerSaySpell(Player* player, SpeakClasses type
 		if(it->first == str_words)
 		{
 			TalkAction* talkAction = it->second;
-			int32_t ret =  talkAction->executeSay(player, str_words, str_param);
+			int32_t ret = talkAction->executeSay(player, str_words, str_param);
 			if(ret == 1)
 				return TALKACTION_CONTINUE;
 			else

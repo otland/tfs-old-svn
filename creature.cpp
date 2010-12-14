@@ -55,8 +55,8 @@ Creature::Creature() :
 	lootDrop = true;
 	skillLoss = true;
 
-	health     = 1000;
-	healthMax  = 1000;
+	health = 1000;
+	healthMax = 1000;
 	mana = 0;
 	manaMax = 0;
 

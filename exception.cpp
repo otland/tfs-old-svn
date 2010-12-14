@@ -62,13 +62,13 @@ void printPointer(std::ostream* output,uint32_t p);
 
 #ifndef COMPILER_STRING
 #ifdef __GNUC__
-#define COMPILER_STRING  "gcc " __VERSION__
+#define COMPILER_STRING "gcc " __VERSION__
 #else
-#define COMPILER_STRING  ""
+#define COMPILER_STRING ""
 #endif
 #endif
 
-#define COMPILATION_DATE  __DATE__ " " __TIME__
+#define COMPILATION_DATE __DATE__ " " __TIME__
 
 ExceptionHandler::ExceptionHandler()
 {
@@ -296,7 +296,7 @@ EXCEPTION_DISPOSITION
 
 		if(esp - stackstart < 20 || nparameters < 10 || std::abs(esp - next_ret) < 10 || frame_param_counter < 8)
 		{
-			*outdriver  << (uint32_t)esp << " | ";
+			*outdriver << (uint32_t)esp << " | ";
 			printPointer(outdriver,stack_val);
 			if(esp == next_ret)
 				*outdriver << " \\\\\\\\\\\\ stack frame //////";

@@ -1175,8 +1175,8 @@ bool Monster::canWalkTo(Position pos, Direction dir)
 	switch(dir)
 	{
 		case NORTH: pos.y += -1; break;
-		case WEST:  pos.x += -1; break;
-		case EAST:  pos.x += 1; break;
+		case WEST: pos.x += -1; break;
+		case EAST: pos.x += 1; break;
 		case SOUTH: pos.y += 1; break;
 		default:
 			break;

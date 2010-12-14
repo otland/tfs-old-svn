@@ -1733,7 +1733,7 @@ void Npc::processResponse(Player* player, NpcState* npcState, const NpcResponse*
 							g_game.removeMoney(player, moneyCount);
 						}
 						else
-							std::cout << "Error [Npc::processResponse] Not enough money: " << player->getName()  << "\tNpc: " << getName() << std::endl;
+							std::cout << "Error [Npc::processResponse] Not enough money: " << player->getName() << "\tNpc: " << getName() << std::endl;
 					}
 					break;
 				}
@@ -1829,7 +1829,7 @@ void Npc::processResponse(Player* player, NpcState* npcState, const NpcResponse*
 						for(std::list<ListItem>::const_iterator iit = response->prop.itemList.begin(); iit != response->prop.itemList.end(); ++iit)
 						{
 							bool addDelim = (n + 1 != response->prop.itemList.size());
-							scriptstream <<  "{id = " << iit->itemId
+							scriptstream << "{id = " << iit->itemId
 								<< ", subtype = " << iit->subType
 								<< ", buy=" << iit->buyPrice
 								<< ", sell=" << iit->sellPrice << "}";
@@ -2876,7 +2876,7 @@ bool NpcScriptInterface::loadNpcLib(std::string file)
 
 	if(loadFile(file) == -1)
 	{
-		std::cout << "Warning: [NpcScriptInterface::loadNpcLib] Can not load " << file  << std::endl;
+		std::cout << "Warning: [NpcScriptInterface::loadNpcLib] Can not load " << file << std::endl;
 		return false;
 	}
 

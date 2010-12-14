@@ -712,7 +712,7 @@ bool Monsters::deserializeSpell(xmlNodePtr node, spellBlock_t& sb, const std::st
 		}
 		else
 		{
-			std::cout << "Error: [Monsters::deserializeSpell] - " << description <<  " - Unknown spell name: " << name << std::endl;
+			std::cout << "Error: [Monsters::deserializeSpell] - " << description << " - Unknown spell name: " << name << std::endl;
 			delete combat;
 			return false;
 		}
@@ -737,7 +737,7 @@ bool Monsters::deserializeSpell(xmlNodePtr node, spellBlock_t& sb, const std::st
 							if(shoot != NM_SHOOT_UNK)
 								combat->setParam(COMBATPARAM_DISTANCEEFFECT, shoot);
 							else
-								std::cout << "Warning: [Monsters::deserializeSpell] - "  << description << " - Unknown shootEffect: " << strValue << std::endl;
+								std::cout << "Warning: [Monsters::deserializeSpell] - " << description << " - Unknown shootEffect: " << strValue << std::endl;
 						}
 					}
 					else if(tmpStrValue == "areaeffect")
@@ -748,7 +748,7 @@ bool Monsters::deserializeSpell(xmlNodePtr node, spellBlock_t& sb, const std::st
 							if(effect != NM_ME_UNK)
 								combat->setParam(COMBATPARAM_EFFECT, effect);
 							else
-								std::cout << "Warning: [Monsters::deserializeSpell] - "  << description << " - Unknown areaEffect: " << strValue << std::endl;
+								std::cout << "Warning: [Monsters::deserializeSpell] - " << description << " - Unknown areaEffect: " << strValue << std::endl;
 						}
 					}
 					else

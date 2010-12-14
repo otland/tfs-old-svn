@@ -309,10 +309,10 @@ void mainLoader(ServiceManager* service_manager)
 	if(defaultPriority == "realtime")
 		SetPriorityClass(GetCurrentProcess(), REALTIME_PRIORITY_CLASS);
 	else if(defaultPriority == "high")
-  	 	SetPriorityClass(GetCurrentProcess(), HIGH_PRIORITY_CLASS);
-  	else if(defaultPriority == "higher")
-  		SetPriorityClass(GetCurrentProcess(), ABOVE_NORMAL_PRIORITY_CLASS);
-  	#endif
+		SetPriorityClass(GetCurrentProcess(), HIGH_PRIORITY_CLASS);
+	else if(defaultPriority == "higher")
+		SetPriorityClass(GetCurrentProcess(), ABOVE_NORMAL_PRIORITY_CLASS);
+	#endif
 
 	//load RSA key
 	std::cout << ">> Loading RSA key" << std::endl;
@@ -560,7 +560,7 @@ void mainLoader(ServiceManager* service_manager)
 	std::cout << ">> All modules has been loaded, server starting up..." << std::endl;
 
 	std::pair<uint32_t, uint32_t> IpNetMask;
-	IpNetMask.first  = inet_addr("127.0.0.1");
+	IpNetMask.first = inet_addr("127.0.0.1");
 	IpNetMask.second = 0xFFFFFFFF;
 	serverIPs.push_back(IpNetMask);
 
@@ -573,7 +573,7 @@ void mainLoader(ServiceManager* service_manager)
 			unsigned char** addr = (unsigned char**)he->h_addr_list;
 			while(addr[0] != NULL)
 			{
-				IpNetMask.first  = *(uint32_t*)(*addr);
+				IpNetMask.first = *(uint32_t*)(*addr);
 				IpNetMask.second = 0x0000FFFF;
 				serverIPs.push_back(IpNetMask);
 				addr++;
@@ -596,7 +596,7 @@ void mainLoader(ServiceManager* service_manager)
 		}
 	}
 
-	IpNetMask.first  = resolvedIp;
+	IpNetMask.first = resolvedIp;
 	IpNetMask.second = 0;
 	serverIPs.push_back(IpNetMask);
 
@@ -1008,8 +1008,8 @@ int32_t WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszA
 	wincl.lpfnWndProc = WindowProcedure;
 	wincl.style = CS_DBLCLKS;
 	wincl.cbSize = sizeof(WNDCLASSEX);
-	wincl.hIcon  = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(ID_ICON));
-	wincl.hIconSm  = (HICON)LoadImage(GetModuleHandle(NULL), MAKEINTRESOURCE(ID_ICON), IMAGE_ICON, 16, 16, 0);
+	wincl.hIcon = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(ID_ICON));
+	wincl.hIconSm = (HICON)LoadImage(GetModuleHandle(NULL), MAKEINTRESOURCE(ID_ICON), IMAGE_ICON, 16, 16, 0);
 	wincl.hCursor = LoadCursor(NULL, IDC_ARROW);
 	wincl.lpszMenuName = MAKEINTRESOURCE(ID_MENU);
 	wincl.cbClsExtra = 0;

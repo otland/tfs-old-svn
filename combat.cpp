@@ -1015,7 +1015,7 @@ void ValueCallback::getMinMaxValues(Player* player, int32_t& min, int32_t& max, 
 			min = LuaScriptInterface::popNumber(L);
 		}
 
-		if((lua_gettop(L) + parameters /*nParams*/  + 1) != size0)
+		if((lua_gettop(L) + parameters /*nParams*/ + 1) != size0)
 			LuaScriptInterface::reportError(NULL, "Stack size changed!");
 
 		env->resetCallback();
@@ -1088,7 +1088,7 @@ void TargetCallback::onTargetCombat(Creature* creature, Creature* target) const
 		if(lua_pcall(L, 2, 0 /*nReturnValues*/, 0) != 0)
 			LuaScriptInterface::reportError(NULL, LuaScriptInterface::popString(L));
 
-		if((lua_gettop(L) + 2 /*nParams*/  + 1) != size0)
+		if((lua_gettop(L) + 2 /*nParams*/ + 1) != size0)
 			LuaScriptInterface::reportError(NULL, "Stack size changed!");
 
 		env->resetCallback();
@@ -1146,7 +1146,7 @@ bool AreaCombat::getList(const Position& centerPos, const Position& targetPos, s
 			{
 				if(tmpPosX >= 0 && tmpPosX < 0xFFFF &&
 					tmpPosY >= 0 && tmpPosY < 0xFFFF &&
-					tmpPosZ  >= 0 && tmpPosZ < MAP_MAX_LAYERS)
+					tmpPosZ >= 0 && tmpPosZ < MAP_MAX_LAYERS)
 				{
 					if(g_game.isSightClear(targetPos, Position(tmpPosX, tmpPosY, tmpPosZ), true))
 					{

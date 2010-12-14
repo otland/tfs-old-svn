@@ -194,7 +194,7 @@ bool utf8ToLatin1(char* intext, std::string& outtext)
 	if(intext == NULL)
 		return false;
 
-	int32_t inlen  = strlen(intext);
+	int32_t inlen = strlen(intext);
 	if(inlen == 0)
 		return false;
 

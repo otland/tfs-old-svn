@@ -112,7 +112,7 @@ bool Map::saveMap()
 
 Tile* Map::getTile(int32_t x, int32_t y, int32_t z)
 {
-	if(x < 0 || x >= 0xFFFF || y < 0 || y >= 0xFFFF || z  < 0 || z >= MAP_MAX_LAYERS)
+	if(x < 0 || x >= 0xFFFF || y < 0 || y >= 0xFFFF || z < 0 || z >= MAP_MAX_LAYERS)
 		return NULL;
 
 	QTreeLeafNode* leaf = QTreeNode::getLeafStatic(&root, x, y);
@@ -132,7 +132,7 @@ Tile* Map::getTile(const Position& pos)
 
 void Map::setTile(int32_t x, int32_t y, int32_t z, Tile* newTile)
 {
-	if(x < 0 || x >= 0xFFFF || y < 0 || y >= 0xFFFF || z  < 0 || z >= MAP_MAX_LAYERS)
+	if(x < 0 || x >= 0xFFFF || y < 0 || y >= 0xFFFF || z < 0 || z >= MAP_MAX_LAYERS)
 	{
 		std::cout << "ERROR: Attempt to set tile on invalid coordinate " << Position(x, y, z) << "!" << std::endl;
 		return;
@@ -651,13 +651,13 @@ bool Map::checkSightLine(const Position& fromPos, const Position& toPos) const
 
 		if(2*ey >= dx)
 		{
-			y  += sy;
+			y += sy;
 			ey -= dx;
 		}
 
 		if(2*ez >= dx)
 		{
-			z  += sz;
+			z += sz;
 			ez -= dx;
 		}
 	}
@@ -1260,7 +1260,7 @@ QTreeLeafNode* QTreeNode::createLeaf(uint32_t x, uint32_t y, uint32_t level)
 }
 
 
-//************ LeafNode  ************************
+//************ LeafNode ************************
 bool QTreeLeafNode::newLeaf = false;
 QTreeLeafNode::QTreeLeafNode()
 {

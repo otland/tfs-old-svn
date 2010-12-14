@@ -71,7 +71,7 @@ bool DatabaseMySQL::connect()
 	// Connect to the MySQL host
 	if(!mysql_real_connect(&m_handle, g_config.getString(ConfigManager::MYSQL_HOST).c_str(), g_config.getString(ConfigManager::MYSQL_USER).c_str(), g_config.getString(ConfigManager::MYSQL_PASS).c_str(), g_config.getString(ConfigManager::MYSQL_DB).c_str(), g_config.getNumber(ConfigManager::SQL_PORT), NULL, 0))
 	{
-		std::cout << "> MySQL ERROR mysql_real_connect: " << mysql_error(&m_handle)  << std::endl;
+		std::cout << "> MySQL ERROR mysql_real_connect: " << mysql_error(&m_handle) << std::endl;
 		return false;
 	}
 
@@ -111,7 +111,7 @@ bool DatabaseMySQL::executeQuery(DBQuery &q)
 	// Execute the query
 	if(mysql_real_query(&m_handle, querytext, querylength) != 0)
 	{
-		std::cout << "> MySQL ERROR mysql_real_query: " << q.str() << " " << mysql_error(&m_handle)  << std::endl;
+		std::cout << "> MySQL ERROR mysql_real_query: " << q.str() << " " << mysql_error(&m_handle) << std::endl;
 		int32_t error = mysql_errno(&m_handle);
 		if(error == CR_SERVER_LOST || error == CR_SERVER_GONE_ERROR)
 			m_connected = false;
@@ -156,7 +156,7 @@ bool DatabaseMySQL::storeQuery(DBQuery &q, DBResult &dbres)
 	r = mysql_store_result(&m_handle);
 	if(!r)
 	{
-		std::cout << "> MySQL ERROR mysql_store_result: " << q.getText() << " " << mysql_error(&m_handle)  << std::endl;
+		std::cout << "> MySQL ERROR mysql_store_result: " << q.getText() << " " << mysql_error(&m_handle) << std::endl;
 		int32_t error = mysql_errno(&m_handle);
 		if(error == CR_SERVER_LOST || error == CR_SERVER_GONE_ERROR)
 			m_connected = false;
@@ -200,7 +200,7 @@ bool DatabaseMySQL::rollback()
 	#endif
 	if(mysql_rollback(&m_handle) != 0)
 	{
-		std::cout << "> MySQL ERROR mysql_rollback: " << mysql_error(&m_handle)  << std::endl;
+		std::cout << "> MySQL ERROR mysql_rollback: " << mysql_error(&m_handle) << std::endl;
 		return false;
 	}
 	return true;
@@ -216,7 +216,7 @@ bool DatabaseMySQL::commit()
 	#endif
 	if(mysql_commit(&m_handle) != 0)
 	{
-		std::cout << "> MySQL ERROR mysql_commit: " << mysql_error(&m_handle)  << std::endl;
+		std::cout << "> MySQL ERROR mysql_commit: " << mysql_error(&m_handle) << std::endl;
 		return false;
 	}
 	return true;

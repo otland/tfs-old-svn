@@ -877,7 +877,7 @@ bool Player::canSeeCreature(const Creature* creature) const
 	if(creature->isInGhostMode() && !accessLevel)
 		return false;
 
-	if(creature->isInvisible() && !creature->getPlayer()  && !canSeeInvisibility())
+	if(creature->isInvisible() && !creature->getPlayer() && !canSeeInvisibility())
 		return false;
 
 	return true;
@@ -2732,7 +2732,7 @@ ReturnValue Player::__queryMaxCount(int32_t index, const Thing* thing, uint32_t 
 					//iterate through all items, including sub-containers (deep search)
 					for(ContainerIterator cit = subContainer->begin(); cit != subContainer->end(); ++cit)
 					{
-						if(Container* tmpContainer  = (*cit)->getContainer())
+						if(Container* tmpContainer = (*cit)->getContainer())
 						{
 							queryCount = 0;
 							tmpContainer->__queryMaxCount(INDEX_WHEREEVER, item, item->getItemCount(), queryCount, flags);
@@ -3023,7 +3023,7 @@ void Player::__replaceThing(uint32_t index, Thing* thing)
 	if(index < 0 || index > 11)
 	{
 #ifdef __DEBUG__MOVESYS__
-		std::cout << "Failure: [Player::__replaceThing], " << "player: " << getName() << ", index: " << index << ",  index < 0 || index > 11" << std::endl;
+		std::cout << "Failure: [Player::__replaceThing], " << "player: " << getName() << ", index: " << index << ", index < 0 || index > 11" << std::endl;
 		DEBUG_REPORT
 #endif
 		return /*RET_NOTPOSSIBLE*/;

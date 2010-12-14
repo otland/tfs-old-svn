@@ -86,7 +86,7 @@ Tile* Thing::getTile()
 
 	#ifdef __DEBUG__MOVESYS__
 	if(!cylinder){
-		std::cout << "Failure: [Thing::getTile()],  NULL tile" << std::endl;
+		std::cout << "Failure: [Thing::getTile()], NULL tile" << std::endl;
 		DEBUG_REPORT
 		return &(Tile::null_tile);
 	}
@@ -105,7 +105,7 @@ const Tile* Thing::getTile() const
 
 	#ifdef __DEBUG__MOVESYS__
 	if(!cylinder){
-		std::cout << "Failure: [Thing::getTile() const],  NULL tile" << std::endl;
+		std::cout << "Failure: [Thing::getTile() const], NULL tile" << std::endl;
 		DEBUG_REPORT
 		return &(Tile::null_tile);
 	}
@@ -126,7 +126,7 @@ const Position& Thing::getPosition() const
 	}
 	else{
 		#ifdef __DEBUG__MOVESYS__
-		std::cout << "Failure: [Thing::getPosition],  NULL tile" << std::endl;
+		std::cout << "Failure: [Thing::getPosition], NULL tile" << std::endl;
 		DEBUG_REPORT
 		#endif
 		return Tile::null_tile.getTilePosition();

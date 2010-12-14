@@ -221,14 +221,14 @@ void Status::getInfo(uint32_t requestedInfo, OutputMessage_ptr output, NetworkMe
 		char buffer[10];
 		sprintf(buffer, "%d", g_config.getNumber(ConfigManager::LOGIN_PORT));
 		output->AddString(buffer);
-  	}
+	}
 
 	if(requestedInfo & REQUEST_OWNER_SERVER_INFO)
 	{
 		output->AddByte(0x11);
 		output->AddString(g_config.getString(ConfigManager::OWNER_NAME).c_str());
 		output->AddString(g_config.getString(ConfigManager::OWNER_EMAIL).c_str());
-  	}
+	}
 
 	if(requestedInfo & REQUEST_MISC_SERVER_INFO)
 	{
@@ -239,7 +239,7 @@ void Status::getInfo(uint32_t requestedInfo, OutputMessage_ptr output, NetworkMe
 		output->AddString(g_config.getString(ConfigManager::URL).c_str());
 		output->AddU32((uint32_t)(running >> 32));
 		output->AddU32((uint32_t)(running));
-  	}
+	}
 
 	if(requestedInfo & REQUEST_PLAYERS_INFO)
 	{
@@ -247,9 +247,9 @@ void Status::getInfo(uint32_t requestedInfo, OutputMessage_ptr output, NetworkMe
 		output->AddU32(m_playersOnline);
 		output->AddU32(m_playersMax);
 		output->AddU32(g_game.getLastPlayersRecord());
-  	}
+	}
 
-  	if(requestedInfo & REQUEST_MAP_INFO)
+	if(requestedInfo & REQUEST_MAP_INFO)
 	{
 		output->AddByte(0x30);
 		output->AddString(m_mapName.c_str());
@@ -258,7 +258,7 @@ void Status::getInfo(uint32_t requestedInfo, OutputMessage_ptr output, NetworkMe
 		g_game.getMapDimensions(mapWidth, mapHeight);
 		output->AddU16(mapWidth);
 		output->AddU16(mapHeight);
-  	}
+	}
 
 	if(requestedInfo & REQUEST_EXT_PLAYERS_INFO)
 	{
@@ -289,7 +289,6 @@ void Status::getInfo(uint32_t requestedInfo, OutputMessage_ptr output, NetworkMe
 		output->AddString(STATUS_SERVER_VERSION);
 		output->AddString(STATUS_SERVER_PROTOCOL);
 	}
-
 	return;
 }
 

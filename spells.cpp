@@ -1212,7 +1212,7 @@ bool InstantSpell::internalCastSpell(Creature* creature, const LuaVariant& var)
 	bool result = false;
 
 	if(m_scripted)
-		result =  executeCastSpell(creature, var);
+		result = executeCastSpell(creature, var);
 	else
 	{
 		if(function)
@@ -1932,7 +1932,7 @@ bool ConjureSpell::playerCastInstant(Player* player, const std::string& param)
 		LuaVariant var;
 		var.type = VARIANT_STRING;
 		var.text = param;
-		result =  executeCastSpell(player, var);
+		result = executeCastSpell(player, var);
 	}
 	else
 	{

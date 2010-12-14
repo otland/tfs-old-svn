@@ -62,7 +62,7 @@ bool ProtocolOld::parseFirstPacket(NetworkMessage& msg)
 	}
 
 	/*uint16_t clientOS =*/ msg.GetU16();
-	uint16_t version  = msg.GetU16();
+	uint16_t version = msg.GetU16();
 	msg.SkipBytes(12);
 
 	if(version <= 760)

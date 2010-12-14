@@ -82,7 +82,7 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 	uint32_t clientip = getConnection()->getIP();
 
 	/*uint16_t clientos = */msg.GetU16();
-	uint16_t version  = msg.GetU16();
+	uint16_t version = msg.GetU16();
 	msg.SkipBytes(12);
 
 	if(version <= 760)
