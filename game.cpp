@@ -1411,11 +1411,11 @@ ReturnValue Game::internalAddItem(Cylinder* toCylinder, Item* item, int32_t inde
 		{
 			if(item->getItemCount() != count)
 			{
-				Item* remainderItem = Item::CreateItem(item->getID(), m - n);
+				Item* remainderItem = Item::CreateItem(item->getID(), count);
 				if(internalAddItem(destCylinder, remainderItem, INDEX_WHEREEVER, flags, false) != RET_NOERROR)
 				{
 					FreeThing(remainderItem);
-					remainderCount = m - n;
+					remainderCount = count;
 				}
 			}
 			else
