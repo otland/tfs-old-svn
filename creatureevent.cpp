@@ -279,9 +279,6 @@ uint32_t CreatureEvent::executeOnLogin(Player* player)
 		bool result = m_scriptInterface->callFunction(1);
 		m_scriptInterface->releaseScriptEnv();
 
-		if(!result)
-			std::cout << "[Warning] result = false CreatureEvent::executeOnLogin" << std::endl;
-
 		return result;
 	}
 	else
