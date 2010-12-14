@@ -385,7 +385,7 @@ bool CombatSpell::executeCastSpell(Creature* creature, const LuaVariant& var)
 	}
 	else
 	{
-		std::cout << "[Error] Call stack overflow. CombatSpell::executeCastSpell" << std::endl;
+		std::cout << "[Error - ComatSpell::executeCastSpell] Call stack overflow." << std::endl;
 		return false;
 	}
 }
@@ -453,14 +453,14 @@ bool Spell::configureSpell(xmlNodePtr p)
 		{
 			if(strcasecmp(reservedList[i], name.c_str()) == 0)
 			{
-				std::cout << "Error: [Spell::configureSpell] Spell is using a reserved name: " << reservedList[i] << std::endl;
+				std::cout << "[Error - Spell::configureSpell] Spell is using a reserved name: " << reservedList[i] << std::endl;
 				return false;
 			}
 		}
 	}
 	else
 	{
-		std::cout << "Error: [Spell::configureSpell] Spell without name." << std::endl;
+		std::cout << "[Error - Spell::configureSpell] Spell without name." << std::endl;
 		return false;
 	}
 
@@ -481,7 +481,7 @@ bool Spell::configureSpell(xmlNodePtr p)
 		else if(tmpStr == "special")
 			group = SPELLGROUP_SPECIAL;
 		else
-			std::cout << "Warning: [Spell::configureSpell] Unknown group: " << strValue << std::endl;
+			std::cout << "[Warning - Spell::configureSpell] Unknown group: " << strValue << std::endl;
 	}
 
 	if(readXMLInteger(p, "groupcooldown", intValue))
@@ -501,7 +501,7 @@ bool Spell::configureSpell(xmlNodePtr p)
 		else if(tmpStr == "special")
 			secondaryGroup = SPELLGROUP_SPECIAL;
 		else
-			std::cout << "Warning: [Spell::configureSpell] Unknown secondarygroup: " << strValue << std::endl;
+			std::cout << "[Warning - Spell::configureSpell] Unknown secondarygroup: " << strValue << std::endl;
 	}
 
 	if(readXMLInteger(p, "secondarygroupcooldown", intValue))
@@ -587,7 +587,7 @@ bool Spell::configureSpell(xmlNodePtr p)
 						vocSpellMap[promotedVocation] = true;
 				}
 				else
-					std::cout << "Warning: [Spell::configureSpell] Wrong vocation name: " << strValue << std::endl;
+					std::cout << "[Warning - Spell::configureSpell] Wrong vocation name: " << strValue << std::endl;
 			}
 		}
 		vocationNode = vocationNode->next;
@@ -1253,7 +1253,7 @@ bool InstantSpell::executeCastSpell(Creature* creature, const LuaVariant& var)
 	}
 	else
 	{
-		std::cout << "[Error] Call stack overflow. InstantSpell::executeCastSpell" << std::endl;
+		std::cout << "[Error - InstantSpell::executeCastSpell] Call stack overflow." << std::endl;
 		return false;
 	}
 }
@@ -1975,7 +1975,7 @@ bool RuneSpell::configureEvent(xmlNodePtr p)
 		runeId = intValue;
 	else
 	{
-		std::cout << "Error: [RuneSpell::configureSpell] Rune spell without id." << std::endl;
+		std::cout << "[Error - RuneSpell::configureSpell] Rune spell without id." << std::endl;
 		return false;
 	}
 
@@ -2229,7 +2229,7 @@ bool RuneSpell::executeCastSpell(Creature* creature, const LuaVariant& var)
 	}
 	else
 	{
-		std::cout << "[Error] Call stack overflow. RuneSpell::executeCastSpell" << std::endl;
+		std::cout << "[Error - RuneSpell::executeCastSpell] Call stack overflow." << std::endl;
 		return false;
 	}
 }

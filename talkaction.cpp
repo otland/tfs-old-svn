@@ -181,7 +181,7 @@ int32_t TalkAction::executeSay(Creature* creature, const std::string& words, con
 	}
 	else
 	{
-		std::cout << "[Error] Call stack overflow. TalkAction::executeSay" << std::endl;
+		std::cout << "[Error - Talkaction::executeSay] Call stack overflow." << std::endl;
 		return 0;
 	}
 }

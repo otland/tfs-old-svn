@@ -192,13 +192,17 @@ bool CreatureEvent::configureEvent(xmlNodePtr p)
 			m_type = CREATURE_EVENT_ADVANCE;
 		else
 		{
-			std::cout << "Error: [CreatureEvent::configureEvent] No valid type for creature event." << str << std::endl;
+			std::cout << "[Error - CreatureEvent::configureEvent] No valid type for creature event." << str << std::endl;
 			return false;
 		}
 	}
 	else
 	{
+<<<<<<< .mine
+		std::cout << "[Error - CreatureEvent::configureEvent] No type for creature event."  << std::endl;
+=======
 		std::cout << "Error: [CreatureEvent::configureEvent] No type for creature event." << std::endl;
+>>>>>>> .r3994
 		return false;
 	}
 	m_isLoaded = true;
@@ -283,7 +287,7 @@ uint32_t CreatureEvent::executeOnLogin(Player* player)
 	}
 	else
 	{
-		std::cout << "[Error] Call stack overflow. CreatureEvent::executeOnLogin" << std::endl;
+		std::cout << "[Error - CreatureEvent::executeOnLogin] Call stack overflow." << std::endl;
 		return 0;
 	}
 }
@@ -318,7 +322,7 @@ uint32_t CreatureEvent::executeOnLogout(Player* player)
 	}
 	else
 	{
-		std::cout << "[Error] Call stack overflow. CreatureEvent::executeOnLogout" << std::endl;
+		std::cout << "[Error - CreatureEvent::executeOnLogout] Call stack overflow." << std::endl;
 		return 0;
 	}
 }
@@ -354,7 +358,7 @@ uint32_t CreatureEvent::executeOnThink(Creature* creature, uint32_t interval)
 	}
 	else
 	{
-		std::cout << "[Error] Call stack overflow. CreatureEvent::executeOnThink" << std::endl;
+		std::cout << "[Error - CreatureEvent::executeOnThink] Call stack overflow." << std::endl;
 		return 0;
 	}
 }
@@ -391,7 +395,7 @@ uint32_t CreatureEvent::executeOnPrepareDeath(Player* player, Creature* killer)
 	}
 	else
 	{
-		std::cout << "[Error] Call stack overflow. CreatureEvent::executeOnPrepareDeath" << std::endl;
+		std::cout << "[Error - CreatureEvent::executeOnPrepareDeath] Call stack overflow." << std::endl;
 		return 0;
 	}
 }
@@ -434,7 +438,7 @@ uint32_t CreatureEvent::executeOnDeath(Creature* creature, Item* corpse, Creatur
 	}
 	else
 	{
-		std::cout << "[Error] Call stack overflow. CreatureEvent::executeOnDeath" << std::endl;
+		std::cout << "[Error - CreatureEvent::executeOnDeath] Call stack overflow." << std::endl;
 		return 0;
 	}
 }
@@ -467,7 +471,6 @@ uint32_t CreatureEvent::executeAdvance(Creature* creature, skills_t skill, uint3
 
 		bool result = m_scriptInterface->callFunction(4);
 		m_scriptInterface->releaseScriptEnv();
-
 		return result;
 	}
 	else
@@ -509,7 +512,7 @@ uint32_t CreatureEvent::executeOnKill(Creature* creature, Creature* target)
 	}
 	else
 	{
-		std::cout << "[Error] Call stack overflow. CreatureEvent::executeOnKill" << std::endl;
+		std::cout << "[Error - CreatureEvent::executeOnKill] Call stack overflow." << std::endl;
 		return 0;
 	}
 }
