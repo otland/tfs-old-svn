@@ -3,7 +3,7 @@
 	<mount id="1" clientid="368" name="Widow Queen" speed="20" />
 	<mount id="2" clientid="369" name="Racing Bird" speed="0" />
 	<mount id="3" clientid="370" name="War Bear" speed="20" />
-	<mount id="4" clientid="371" name="Black Sheep" speed="20" />
+	<mount id="4" clientid="371" name="Black Sheep" speed="40" />
 	<mount id="5" clientid="372" name="Midnight Panther" speed="0" />
 	<mount id="6" clientid="373" name="Draptor" speed="0" />
 	<mount id="7" clientid="374" name="Titanica" speed="0" />
