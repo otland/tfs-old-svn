@@ -3230,7 +3230,7 @@ bool Game::playerChangeOutfit(uint32_t playerId, Outfit_t outfit)
 
 			player->setCurrentMount(mount->getID());
 		}
-		else if(!player->isMounted())
+		else
 		{
 			player->setCurrentMount(mount->getID());
 			outfit.lookMount = 0;

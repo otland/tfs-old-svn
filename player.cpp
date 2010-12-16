@@ -836,15 +836,21 @@ void Player::addStorageValue(const uint32_t key, const int32_t value)
 				std::cout << "Warning: No valid addons value key:" << key << " value: " << (int32_t)value << " player: " << getName() << std::endl;
 			else
 				m_playerOutfits.addOutfit(outfit);
+
+			return;
 		}
 		else if(IS_IN_KEYRANGE(key, MOUNTS_RANGE))
 		{
 			// do nothing
 		}
 		else
+		{
 			std::cout << "Warning: unknown reserved key: " << key << " player: " << getName() << std::endl;
+			return;
+		}
 	}
-	else if(value == -1)
+
+	if(value == -1)
 		storageMap.erase(key);
 	else
 		storageMap[key] = value;
