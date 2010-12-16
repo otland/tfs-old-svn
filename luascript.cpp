@@ -840,7 +840,7 @@ bool LuaScriptInterface::callFunction(uint32_t nParams)
 	if(ret != 0)
 		LuaScriptInterface::reportError(NULL, LuaScriptInterface::popString(m_luaState));
 	else
-		result = lua_toboolean(m_luaState, 0);
+		result = LuaScriptInterface::popBoolean(m_luaState);
 
 	if((lua_gettop(m_luaState) + (int)nParams + 1) != size0)
 		LuaScriptInterface::reportError(NULL, "Stack size changed!");
@@ -1019,6 +1019,12 @@ std::string LuaScriptInterface::popString(lua_State* L)
 int32_t LuaScriptInterface::popCallback(lua_State* L)
 {
 	return luaL_ref(L, LUA_REGISTRYINDEX);
+}
+
+bool LuaScriptInterface::popBoolean(lua_State* L)
+{
+	lua_pop(L, 1);
+	return lua_toboolean(L, 0);
 }
 
 void LuaScriptInterface::setField(lua_State* L, const char* index, double val)

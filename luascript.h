@@ -324,6 +324,7 @@ class LuaScriptInterface
 		static double popFloatNumber(lua_State* L);
 		static std::string popString(lua_State* L);
 		static int32_t popCallback(lua_State* L);
+		static bool popBoolean(lua_State* L);
 
 		static int32_t getField(lua_State* L, const char* key);
 		static uint32_t getFieldU32(lua_State* L, const char* key);
