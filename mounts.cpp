@@ -89,7 +89,7 @@ bool Mounts::parseMountNode(xmlNodePtr p)
 	int32_t intValue;
 	std::string strValue;
 
-	uint8_t mountId;
+	uint8_t mountId = 0;
 	if(readXMLInteger(p, "id", intValue))
 		mountId = intValue;
 
@@ -97,7 +97,7 @@ bool Mounts::parseMountNode(xmlNodePtr p)
 	if(readXMLString(p, "name", strValue))
 		name = strValue;
 
-	uint16_t clientId;
+	uint16_t clientId = 0;
 	if(readXMLInteger(p, "clientid", intValue))
 		clientId = intValue;
 
@@ -105,6 +105,10 @@ bool Mounts::parseMountNode(xmlNodePtr p)
 	if(readXMLInteger(p, "speed", intValue))
 		speed = intValue;
 
+	if(!clientId || !mountId) {
+		std::clog << "[Error - Mounts::parseMountNode] Entry without clientId and/or mountId" << std::endl;
+		return false;
+	}
 	Mount* mount = new Mount(name, mountId, clientId, speed);
 	if(!mount)
 		return false;
