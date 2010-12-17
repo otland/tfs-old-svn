@@ -1192,9 +1192,23 @@ void ProtocolGame::parseSetOutfit(NetworkMessage& msg)
 		msg.skip(1);
 
 	if(g_config.getBool(ConfigManager::ALLOW_MOUNTS)) {
-		player->setMountId(Mounts::getInstance()->getMountByCid(msg.get<uint16_t>())->getId()); // We can mount/unmount, it will change the lookMount, but not the stored mount
-		newOutfit.lookMount = 0; /* 368 - 379 */
+		// Do we have an id? 0 usully means no mount
+		uint16_t mountId = msg.get<uint16_t>();
+		if(mountId) {
+			Mount* myMount = Mounts::getInstance()->getMountByCid(mountId);
+			// Can we use this mount?
+			if(myMount && myMount->isTamed(player)) { 
+				// Set the new mount
+				player->setMountId(myMount->getId()); 
+				// Lets dismount now
+				player->dismount();
+			}
+		}
+		// Either way, lets go 0 since we're dismounted if we choose a valid mount, you will start bugging if you try to cheat this by sending a bungous Id
+		newOutfit.lookMount = 0;
+		
 	}
+	
 	else
 		msg.skip(2);
 
@@ -2565,7 +2579,7 @@ void ProtocolGame::sendOutfitWindow()
 		{
 			msg->put<char>((size_t)std::min((size_t)OUTFITS_MAX_NUMBER, outfitList.size()));
 			std::list<Outfit>::iterator it = outfitList.begin();
-			for(int32_t i = 0; it != outfitList.end() && i < OUTFITS_MAX_NUMBER; ++it, ++i)
+			for(uint8_t i = 0; it != outfitList.end() && i < OUTFITS_MAX_NUMBER; ++it, ++i)
 			{
 				msg->put<uint16_t>(it->lookType);
 				msg->putString(it->name);
@@ -2588,7 +2602,7 @@ void ProtocolGame::sendOutfitWindow()
 		if(g_config.getBool(ConfigManager::ALLOW_MOUNTS) && player->isPremium()) {
 			std::list<Mount*> mountList;
 			MountList::const_iterator it = Mounts::getInstance()->getFirstMount();
-			for(; it != Mounts::getInstance()->getLastMount(); ++it)
+			for(uint8_t i = 0; it != Mounts::getInstance()->getLastMount() && i < OUTFITS_MAX_NUMBER; ++it, ++i)
 			{
 				if((*it)->isTamed(player))
 					mountList.push_back((*it));
