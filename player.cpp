@@ -5158,6 +5158,8 @@ void Player::setMounted(bool doMount)
 	{
 		if(_tile->hasFlag(TILESTATE_PROTECTIONZONE))
                         sendCancelMessage(RET_ACTIONNOTPERMITTEDINPROTECTIONZONE);
+		else if(isPremium())
+			sendCancelMessage(RET_YOUNEEDPREMIUMACCOUNT);
                 else if(mount == 0)
                         sendOutfitWindow();
                 else if(!isMounted())
