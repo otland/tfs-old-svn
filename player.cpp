@@ -4584,7 +4584,7 @@ bool Player::isPremium() const
 	if(g_config.getBoolean(ConfigManager::FREE_PREMIUM) || hasFlag(PlayerFlag_IsAlwaysPremium))
 		return true;
 
-	return premiumDays;
+	return premiumDays > 0;
 }
 
 void Player::setGuildLevel(GuildLevel_t newGuildLevel)
@@ -4755,33 +4755,50 @@ void Player::setCurrentMount(uint8_t mount)
 	addStorageValue(PSTRG_MOUNTS_CURRENTMOUNT, mount);
 }
 
-void Player::toggleMount(bool mount)
+bool Player::toggleMount(bool mount)
 {
 	if(mount)
 	{
-		if(_tile->hasFlag(TILESTATE_PROTECTIONZONE))
-			sendCancelMessage(RET_ACTIONNOTPERMITTEDINPROTECTIONZONE);
-		else
-		{
-			uint8_t currentMount = getCurrentMount();
-			if(currentMount == 0)
-				sendOutfitWindow();
-			else if(!isMounted())
-			{
-				Mount* mount = Mounts::getInstance()->getMountByID(currentMount);
-				if(mount)
-				{
-					defaultOutfit.lookMount = mount->getClientID();
-					if(mount->getSpeed() != 0)
-						g_game.changeSpeed(this, mount->getSpeed());
+		if(isMounted())
+			return false;
 
-					g_game.internalCreatureChangeOutfit(this, defaultOutfit);
-				}
-			}
+		if(_tile->hasFlag(TILESTATE_PROTECTIONZONE))
+		{
+			sendCancelMessage(RET_ACTIONNOTPERMITTEDINPROTECTIONZONE);
+			return false;
 		}
+
+		if(!isPremium())
+		{
+			sendCancelMessage(RET_YOUNEEDPREMIUMACCOUNT);
+			return false;
+		}
+
+		uint8_t currentMountId = getCurrentMount();
+		if(currentMountId == 0)
+		{
+			sendOutfitWindow();
+			return false;
+		}
+
+		Mount* currentMount = Mounts::getInstance()->getMountByID(currentMountId);
+		if(!currentMount)
+			return false;
+
+		defaultOutfit.lookMount = currentMount->getClientID();
+		if(currentMount->getSpeed() != 0)
+			g_game.changeSpeed(this, currentMount->getSpeed());
+
+		g_game.internalCreatureChangeOutfit(this, defaultOutfit);
 	}
-	else if(isMounted())
+	else
+	{
+		if(!isMounted())
+			return false;
+
 		dismount();
+	}
+	return true;
 }
 
 bool Player::tameMount(uint8_t mountId)

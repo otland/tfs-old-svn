@@ -187,7 +187,11 @@ bool Commands::loadFromXml()
 						else
 							std::cout << "missing acctype tag for " << strCmd << std::endl;
 					}
+					#ifdef __ENABLE_SERVER_DIAGNOSTIC__
 					else
+					#else
+					else if(strCmd != "/serverdiag")
+					#endif
 						std::cout << "Unknown command " << strCmd << std::endl;
 				}
 				else

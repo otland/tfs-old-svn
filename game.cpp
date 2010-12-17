@@ -3206,8 +3206,7 @@ bool Game::playerToggleMount(uint32_t playerId, bool mount)
 	if(!player || player->isRemoved())
 		return false;
 
-	player->toggleMount(mount);
-	return true;
+	return player->toggleMount(mount);
 }
 
 bool Game::playerChangeOutfit(uint32_t playerId, Outfit_t outfit)

@@ -557,7 +557,7 @@ void mainLoader(ServiceManager* service_manager)
 
 	g_npcs.reload();
 
-	std::cout << ">> All modules has been loaded, server starting up..." << std::endl;
+	std::cout << ">> Loaded all modules, server starting up..." << std::endl;
 
 	std::pair<uint32_t, uint32_t> IpNetMask;
 	IpNetMask.first = inet_addr("127.0.0.1");
