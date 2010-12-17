@@ -1,7 +1,7 @@
 [Project]
 FileName=TheForgottenServer.dev
 Name=TheForgottenServer
-UnitCount=157
+UnitCount=169
 Type=1
 Ver=1
 ObjFiles=
@@ -1709,6 +1709,26 @@ BuildCmd=
 
 [Unit99]
 FileName=..\exception.h
+CompileCpp=1
+Folder=TheForgottenServer
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit168]
+FileName=..\mounts.cpp
+CompileCpp=1
+Folder=TheForgottenServer
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit169]
+FileName=..\mounts.h
 CompileCpp=1
 Folder=TheForgottenServer
 Compile=1
