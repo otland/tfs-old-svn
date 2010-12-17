@@ -226,8 +226,7 @@ class ProtocolGame : public Protocol
 		void sendVIPLogOut(uint32_t guid);
 		void sendVIP(uint32_t guid, const std::string& name, bool isOnline);
 
-		void sendSpellCooldown(uint8_t spellid, uint32_t time);
-		void sendSpellGroupCooldown(SpellGroup_t groupdId, uint32_t time);
+		void sendSpellCooldown(uint16_t spellId, uint32_t cooldown, bool isGroup);
 
 		void sendCreatureLight(const Creature* creature);
 		void sendWorldLight(const LightInfo& lightInfo);

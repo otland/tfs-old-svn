@@ -34,6 +34,7 @@ class Spell;
 
 typedef std::map<uint32_t, RuneSpell*> RunesMap;
 typedef std::map<std::string, InstantSpell*> InstantsMap;
+typedef std::map<SpellGroup_t, uint32_t> SpellGroup;
 
 class Spells : public BaseEvents
 {
@@ -68,6 +69,8 @@ class Spells : public BaseEvents
 		InstantsMap instants;
 
 		friend class CombatSpell;
+
+		uint32_t currentSpellId;
 };
 
 typedef bool (InstantSpellFunction)(const InstantSpell* spell, Creature* creature, const std::string& param);
@@ -128,6 +131,11 @@ class Spell : public BaseSpell
 		int32_t getMana() const {return mana;}
 		int32_t getManaPercent() const {return manaPercent;}
 		uint32_t getExhaustion() const {return exhaustion;}
+		Spells_t getIcon() const {return icon;}
+		SpellGroup getGroupExhaustions() const {return groupExhaustions;}
+		uint16_t getId() const {return spellId;}
+		void setId(uint16_t id) {spellId = id;}
+
 		bool isEnabled() const {return enabled;}
 		bool isPremium() const {return premium;}
 
@@ -139,6 +147,7 @@ class Spell : public BaseSpell
 		static ReturnValue CreateIllusion(Creature* creature, uint32_t itemId, int32_t time);
 
 	protected:
+		uint16_t spellId;
 		bool checkSpell(Player* player) const;
 		bool checkInstantSpell(Player* player, Creature* creature);
 		bool checkInstantSpell(Player* player, const Position& toPos);
@@ -147,12 +156,8 @@ class Spell : public BaseSpell
 		int32_t level;
 		int32_t magLevel;
 
-		uint8_t speedId;
-		SpellGroup_t group;
-		uint32_t groupCooldown;
-		SpellGroup_t secondaryGroup;
-		uint32_t secondaryGroupCooldown;
 
+		uint8_t speedId;
 		bool premium;
 		bool learnable;
 		bool enabled;
@@ -172,6 +177,8 @@ class Spell : public BaseSpell
 
 		VocationMap vocSpellMap;
 		StringVec vocStringVec;
+		Spells_t icon;
+		SpellGroup groupExhaustions;
 
 	private:
 		std::string name;

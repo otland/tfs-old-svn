@@ -1547,7 +1547,7 @@ void Player::onCreatureMove(const Creature* creature, const Tile* newTile, const
 		int32_t ticks = g_config.getNumber(ConfigManager::STAIRHOP_DELAY);
 		if(ticks > 0)
 		{
-			addExhaust(ticks, EXHAUST_COMBAT);
+			addExhaust(ticks);
 			if(Condition* condition = Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_PACIFIED, ticks))
 				addCondition(condition);
 		}
@@ -2329,10 +2329,16 @@ Item* Player::createCorpse(DeathList deathList)
 	return corpse;
 }
 
-void Player::addExhaust(uint32_t ticks, Exhaust_t type)
+void Player::addExhaust(uint32_t ticks)
 {
 	if(Condition* condition = Condition::createCondition(CONDITIONID_DEFAULT,
-		CONDITION_EXHAUST, ticks, 0, false, (uint32_t)type))
+		CONDITION_EXHAUST, ticks, 0, false))
+		addCondition(condition);
+}
+void Player::addSpellExhaust(SpellGroup_t group, uint32_t ticks)
+{
+	if(Condition* condition = Condition::createCondition(CONDITIONID_DEFAULT,
+		(ConditionType_t)(1 << (20 + group)), ticks, 0, false))
 		addCondition(condition);
 }
 
@@ -3408,7 +3414,7 @@ void Player::doAttacking(uint32_t)
 		}
 		else
 		{
-			if((!_weapon->hasExhaustion() || !hasCondition(CONDITION_EXHAUST, EXHAUST_COMBAT)) && _weapon->useWeapon(this, item, attackedCreature))
+			if((!_weapon->hasExhaustion() || !hasCondition(CONDITION_EXHAUST)) && _weapon->useWeapon(this, item, attackedCreature))
 				lastAttack = OTSYS_TIME();
 
 			updateWeapon();
@@ -5175,6 +5181,7 @@ void Player::setMounted(bool doMount)
 		                        g_game.changeSpeed(this, myMount->getSpeed());
 
 		                g_game.internalCreatureChangeOutfit(this, defaultOutfit);
+				lastMountStatusChange = OTSYS_TIME();
 			}
                 }
         }
@@ -5192,6 +5199,7 @@ void Player::dismount()
 		mounted = false;
 		defaultOutfit.lookMount = 0;
 		g_game.internalCreatureChangeOutfit(this, defaultOutfit);
+		lastMountStatusChange = OTSYS_TIME();
 	}
 }
 bool Player::tameMount(uint8_t mountId)

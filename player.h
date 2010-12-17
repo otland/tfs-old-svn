@@ -114,12 +114,6 @@ enum GamemasterCondition_t
 	GAMEMASTER_TELEPORT = 2
 };
 
-enum Exhaust_t
-{
-	EXHAUST_COMBAT = 1,
-	EXHAUST_HEALING = 2
-};
-
 typedef std::set<uint32_t> VIPSet;
 typedef std::vector<std::pair<uint32_t, Container*> > ContainerVector;
 typedef std::map<uint32_t, std::pair<Depot*, bool> > DepotMap;
@@ -480,7 +474,8 @@ class Player : public Creature, public Cylinder
 		virtual float getAttackFactor() const;
 		virtual float getDefenseFactor() const;
 
-		void addExhaust(uint32_t ticks, Exhaust_t type);
+		void addExhaust(uint32_t ticks);
+		void addSpellExhaust(SpellGroup_t group, uint32_t ticks);
 		void addInFightTicks(bool pzLock, int32_t ticks = 0);
 		void addDefaultRegeneration(uint32_t addTicks);
 
@@ -567,6 +562,8 @@ class Player : public Creature, public Cylinder
 			{if(client) client->sendCreatureEmblem(creature);}
 		void sendCreatureImpassable(const Creature* creature)
 			{if(client) client->sendCreatureImpassable(creature);}
+		void sendSpellCooldown(uint16_t spellId, uint32_t cooldown, bool isGroup)
+			{if(client) client->sendSpellCooldown(spellId, cooldown, isGroup);}
 
 		//container
 		void sendAddContainerItem(const Container* container, const Item* item);
@@ -591,9 +588,11 @@ class Player : public Creature, public Cylinder
 		void dismount();
 		bool tameMount(uint8_t mountId);
 		bool untameMount(uint8_t mountId);
+		time_t getLastMountStatusChange() const {return lastMountStatusChange; }
 
 		//cooldown
-		// TODO
+		void setExhaustion(uint16_t spellId, uint32_t exhaustion) {exhaustionMap[spellId] = int64_t(exhaustion) + OTSYS_TIME();}
+		bool hasExhaustion(uint16_t spellId) {return (exhaustionMap[spellId] > OTSYS_TIME());}
 
 		//event methods
 		virtual void onUpdateTileItem(const Tile* tile, const Position& pos, const Item* oldItem,
@@ -900,6 +899,7 @@ class Player : public Creature, public Cylinder
 		time_t skullEnd;
 		time_t lastLogin;
 		time_t lastLogout;
+		time_t lastMountStatusChange;
 		int64_t lastLoad;
 		int64_t lastPong;
 		int64_t lastPing;
@@ -944,7 +944,7 @@ class Player : public Creature, public Cylinder
 #ifdef __WAR_SYSTEM__
 		WarMap warMap;
 #endif
-
+		std::map<uint16_t, int64_t> exhaustionMap;
 		friend class Game;
 		friend class LuaInterface;
 		friend class Npc;

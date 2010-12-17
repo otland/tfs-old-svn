@@ -1203,9 +1203,16 @@ void ProtocolGame::parseSetOutfit(NetworkMessage& msg)
 
 void ProtocolGame::parseMountStatus(NetworkMessage& msg)
 {
-	uint8_t status = msg.get<char>();
-	std::clog << "DEBUG MOUNT: " << (uint32_t)status << std::endl; 
-	player->setMounted(status != 0);
+	bool status = msg.get<char>() != 0;
+	if((OTSYS_TIME() - player->getLastMountStatusChange()) >= 2000) {
+		player->setMounted(status);
+	} else {
+		if(status)
+			player->sendCancel("Please wait 2 seconds before trying to mount again.");
+		else
+			player->sendCancel("Please wait 2 seconds before typing to dismount again.");
+	}
+	
 }
 
 void ProtocolGame::parseUseItem(NetworkMessage& msg)
@@ -1686,7 +1693,7 @@ void ProtocolGame::sendReLoginWindow()
 	{
 		TRACK_MESSAGE(msg);
 		msg->put<char>(0x28);
-		msg->put<char>(0xAA); // damage percentage (fair fight rules), disabled for now
+		msg->put<char>(0x64); // damage percentage (fair fight rules), disabled for now
 	}
 }
 
@@ -2578,7 +2585,7 @@ void ProtocolGame::sendOutfitWindow()
 			msg->put<char>(player->getDefaultOutfit().lookAddons);
 		}
 
-		if(g_config.getBool(ConfigManager::ALLOW_MOUNTS)) {
+		if(g_config.getBool(ConfigManager::ALLOW_MOUNTS) && player->isPremium()) {
 			std::list<Mount*> mountList;
 			MountList::const_iterator it = Mounts::getInstance()->getFirstMount();
 			for(; it != Mounts::getInstance()->getLastMount(); ++it)
@@ -2684,30 +2691,18 @@ void ProtocolGame::sendVIP(uint32_t guid, const std::string& name, bool isOnline
 }
 
 
-void ProtocolGame::sendSpellCooldown(uint8_t spellId, uint32_t time)
+void ProtocolGame::sendSpellCooldown(uint16_t spellId, uint32_t cooldown, bool isGroup)
 {
-	if(spellId == 0 || spellId > 160)
+	if(!spellId || !cooldown) // No point to send anything if there are no cooldowns anyway
 		return;
 
 	NetworkMessage_ptr msg = getOutputBuffer();
 	if(msg)
 	{
 		TRACK_MESSAGE(msg);
-		msg->put<char>(0xA4);
+		msg->put<char>((isGroup)?0xA5:0xA4);
 		msg->put<char>(spellId);
-		msg->put<uint32_t>(time);
-	}
-}
-
-void ProtocolGame::sendSpellGroupCooldown(SpellGroup_t groupId, uint32_t time)
-{
-	NetworkMessage_ptr msg = getOutputBuffer();
-	if(msg)
-	{
-		TRACK_MESSAGE(msg);
-		msg->put<char>(0xA5);
-		msg->put<char>(groupId);
-		msg->put<uint32_t>(time);
+		msg->put<uint32_t>(cooldown);
 	}
 }
 

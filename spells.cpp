@@ -38,6 +38,7 @@ extern ConfigManager g_config;
 Spells::Spells():
 m_interface("Spell Interface")
 {
+	currentSpellId = 0;
 	m_interface.initState();
 }
 
@@ -118,6 +119,7 @@ void Spells::clear()
 		delete it->second;
 
 	instants.clear();
+	currentSpellId = 0;
 	m_interface.reInitState();
 }
 
@@ -141,6 +143,8 @@ bool Spells::registerEvent(Event* event, xmlNodePtr, bool override)
 	if(InstantSpell* instant = dynamic_cast<InstantSpell*>(event))
 	{
 		InstantsMap::iterator it = instants.find(instant->getWords());
+		instant->setId(currentSpellId++);
+
 		if(it == instants.end())
 		{
 			instants[instant->getWords()] = instant;
@@ -161,6 +165,8 @@ bool Spells::registerEvent(Event* event, xmlNodePtr, bool override)
 	if(RuneSpell* rune = dynamic_cast<RuneSpell*>(event))
 	{
 		RunesMap::iterator it = runes.find(rune->getRuneItemId());
+		rune->setId(currentSpellId++);
+
 		if(it == runes.end())
 		{
 			runes[rune->getRuneItemId()] = rune;
@@ -462,6 +468,7 @@ bool CombatSpell::executeCastSpell(Creature* creature, const LuaVariant& var)
 
 Spell::Spell()
 {
+	spellId = 0;
 	level = 0;
 	magLevel = 0;
 	mana = 0;
@@ -478,6 +485,7 @@ Spell::Spell()
 	premium = false;
 	isAggressive = true;
 	learnable = false;
+	icon = SPELL_NONE;
 }
 
 bool Spell::configureSpell(xmlNodePtr p)
@@ -567,7 +575,24 @@ bool Spell::configureSpell(xmlNodePtr p)
 
 	if(readXMLString(p, "aggressive", strValue))
 		isAggressive = booleanString(strValue);
+	if(readXMLInteger(p, "icon", intValue))
+		icon = (Spells_t)intValue;
 
+	if(readXMLString(p, "group", strValue)) {
+		std::vector<std::string> split = explodeString(strValue, ",");
+		for(std::vector<std::string>::iterator it = split.begin(); it != split.end(); ++it)
+			groupExhaustions[(SpellGroup_t)atoi((*it).c_str())] = 0;
+		
+	}
+	
+	if(readXMLString(p, "groupexhaustions", strValue) || readXMLString(p, "groupcooldown", strValue)) {
+		std::vector<std::string> split = explodeString(strValue, ",");
+		int i = 0;
+		for(std::map<SpellGroup_t, uint32_t>::iterator it = groupExhaustions.begin(); it != groupExhaustions.end(); ++it)
+			groupExhaustions[it->first] = atoi(split[i].c_str());
+	}
+
+	
 	std::string error = "";
 	xmlNodePtr vocationNode = p->children;
 	while(vocationNode)
@@ -592,7 +617,6 @@ bool Spell::checkSpell(Player* player) const
 	if(!isEnabled())
 		return false;
 
-	bool exhausted = false;
 	if(isAggressive)
 	{
 		if(!player->hasFlag(PlayerFlag_IgnoreProtectionZone) && player->getZone() == ZONE_PROTECTION)
@@ -600,14 +624,10 @@ bool Spell::checkSpell(Player* player) const
 			player->sendCancelMessage(RET_ACTIONNOTPERMITTEDINPROTECTIONZONE);
 			return false;
 		}
-
-		if(player->hasCondition(CONDITION_EXHAUST, EXHAUST_COMBAT))
-			exhausted = true;
 	}
-	else if(player->hasCondition(CONDITION_EXHAUST, EXHAUST_HEALING))
-		exhausted = true;
 
-	if(exhausted && !player->hasFlag(PlayerFlag_HasNoExhaustion))
+	
+	if(player->hasExhaustion(getId()) && !player->hasFlag(PlayerFlag_HasNoExhaustion))
 	{
 		player->sendCancelMessage(RET_YOUAREEXHAUSTED);
 		if(isInstant())
@@ -615,6 +635,15 @@ bool Spell::checkSpell(Player* player) const
 
 		return false;
 	}
+
+	for(SpellGroup::const_iterator it = groupExhaustions.begin(); it != groupExhaustions.end(); it++)
+		if(player->hasCondition((ConditionType_t)(1 << (20 + it->first)))) {
+			player->sendCancelMessage(RET_YOUAREEXHAUSTED);
+			if(isInstant())
+				g_game.addMagicEffect(player->getPosition(), MAGIC_EFFECT_POFF);
+
+			return false;			
+		}
 
 	if(isPremium() && !player->isPremium())
 	{
@@ -943,8 +972,16 @@ bool Spell::checkRuneSpell(Player* player, const Position& toPos)
 
 void Spell::postSpell(Player* player) const
 {
-	if(!player->hasFlag(PlayerFlag_HasNoExhaustion) && exhaustion > 0)
-		player->addExhaust(exhaustion, isAggressive ? EXHAUST_COMBAT : EXHAUST_HEALING);
+	if(!player->hasFlag(PlayerFlag_HasNoExhaustion) && exhaustion > 0) {
+		for(std::map<SpellGroup_t, uint32_t>::const_iterator it = groupExhaustions.begin(); it != groupExhaustions.end(); it++) {
+			player->addSpellExhaust(it->first, it->second); 
+			player->sendSpellCooldown(uint16_t(it->first), it->second, true); 
+		}
+
+		player->setExhaustion(getExhaustion(), getId());
+		player->sendSpellCooldown(uint16_t(getIcon()), getExhaustion(), false); 
+	}
+
 
 	if(isAggressive && !player->hasFlag(PlayerFlag_NotGainInFight))
 		player->addInFightTicks(false);
