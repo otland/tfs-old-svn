@@ -5152,26 +5152,28 @@ void Player::sendCritical() const
 	if(g_config.getBool(ConfigManager::DISPLAY_CRITICAL_HIT))
 		g_game.addAnimatedText(getPosition(), COLOR_DARKRED, "CRITICAL!");
 }
+
 void Player::setMounted(bool doMount)
 {
 	if(doMount)
 	{
 		if(_tile->hasFlag(TILESTATE_PROTECTIONZONE))
                         sendCancelMessage(RET_ACTIONNOTPERMITTEDINPROTECTIONZONE);
-		else if(isPremium())
+		else if(!isPremium())
 			sendCancelMessage(RET_YOUNEEDPREMIUMACCOUNT);
                 else if(mount == 0)
                         sendOutfitWindow();
                 else if(!isMounted())
                 {
 			Mount* myMount = Mounts::getInstance()->getMountById(mount);
-			if(myMount) {	
+			if(myMount)
+			{
 				mounted = true;
 		                defaultOutfit.lookMount = myMount->getClientId();
-		                
+
 		                if(myMount->getSpeed())
 		                        g_game.changeSpeed(this, myMount->getSpeed());
-			
+
 		                g_game.internalCreatureChangeOutfit(this, defaultOutfit);
 			}
                 }
