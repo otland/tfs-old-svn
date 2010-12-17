@@ -374,7 +374,7 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool preLo
 	DBQuery query;
 	query << "SELECT `id`, `account_id`, `group_id`, `world_id`, `sex`, `vocation`, `experience`, `level`, "
 	<< "`maglevel`, `health`, `healthmax`, `blessings`, `mana`, `manamax`, `manaspent`, `soul`, `lookbody`, "
-	<< "`lookfeet`, `lookhead`, `looklegs`, `looktype`, `lookaddons`, `lookmount`, `currmount` `posx`, `posy`, `posz`, `cap`, "
+	<< "`lookfeet`, `lookhead`, `looklegs`, `looktype`, `lookaddons`, `lookmount`, `currmount`, `posx`, `posy`, `posz`, `cap`, "
 	<< "`lastlogin`, `lastlogout`, `lastip`, `conditions`, `skull`, `skulltime`, `guildnick`, `rank_id`, "
 	<< "`town_id`, `balance`, `stamina`, `direction`, `loss_experience`, `loss_mana`, `loss_skills`, "
 	<< "`loss_containers`, `loss_items`, `marriage`, `promotion`, `description` FROM `players` WHERE "

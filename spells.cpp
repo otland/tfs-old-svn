@@ -462,14 +462,13 @@ bool CombatSpell::executeCastSpell(Creature* creature, const LuaVariant& var)
 
 Spell::Spell()
 {
-	spellId = 0;
 	level = 0;
 	magLevel = 0;
 	mana = 0;
 	manaPercent = 0;
 	soul = 0;
 	range = -1;
-	cooldown = 1000;
+	exhaustion = 1000;
 	needTarget = false;
 	needWeapon = false;
 	selfTarget = false;
@@ -479,10 +478,6 @@ Spell::Spell()
 	premium = false;
 	isAggressive = true;
 	learnable = false;
-	group = SPELLGROUP_NONE;
-	groupCooldown = 1000;
-	secondaryGroup = SPELLGROUP_NONE;
-	secondaryGroupCooldown = 0;
 }
 
 bool Spell::configureSpell(xmlNodePtr p)
@@ -515,49 +510,6 @@ bool Spell::configureSpell(xmlNodePtr p)
 		return false;
 	}
 
-        if(readXMLInteger(p, "spellid", intValue))
-                spellId = intValue;
-
-        if(readXMLString(p, "group", strValue))
-        {
-                std::string tmpStr = asLowerCaseString(strValue);
-                if(tmpStr == "none")
-                        group = SPELLGROUP_NONE;
-                else if(tmpStr == "attack")
-                        group = SPELLGROUP_ATTACK;
-                else if(tmpStr == "healing")
-                        group = SPELLGROUP_HEALING;
-                else if(tmpStr == "support")
-                        group = SPELLGROUP_SUPPORT;
-                else if(tmpStr == "special")
-                        group = SPELLGROUP_SPECIAL;
-                else
-                        std::cout << "Warning: [Spell::configureSpell] Unknown group: " << strValue << std::endl;
-        }
-
-        if(readXMLInteger(p, "groupcooldown", intValue))
-                groupCooldown = intValue;
-
-        if(readXMLString(p, "secondarygroup", strValue))
-        {
-                std::string tmpStr = asLowerCaseString(strValue);
-                if(tmpStr == "none")
-                        secondaryGroup = SPELLGROUP_NONE;
-                else if(tmpStr == "attack")
-                        secondaryGroup = SPELLGROUP_ATTACK;
-                else if(tmpStr == "healing")
-                        secondaryGroup = SPELLGROUP_HEALING;
-                else if(tmpStr == "support")
-                        secondaryGroup = SPELLGROUP_SUPPORT;
-                else if(tmpStr == "special")
-                        secondaryGroup = SPELLGROUP_SPECIAL;
-                else
-                        std::cout << "Warning: [Spell::configureSpell] Unknown secondarygroup: " << strValue << std::endl;
-        }
-
-        if(readXMLInteger(p, "secondarygroupcooldown", intValue))
-                secondaryGroupCooldown = intValue;
-
 	if(readXMLInteger(p, "lvl", intValue) || readXMLInteger(p, "level", intValue))
 	 	level = intValue;
 
@@ -573,8 +525,8 @@ bool Spell::configureSpell(xmlNodePtr p)
 	if(readXMLInteger(p, "soul", intValue))
 	 	soul = intValue;
 
-	if(readXMLInteger(p, "exhaustion", intValue) || readXMLInteger(p, "cooldown", intValue))
-		cooldown = intValue;
+	if(readXMLInteger(p, "exhaustion", intValue))
+		exhaustion = intValue;
 
 	if(readXMLString(p, "enabled", strValue))
 		enabled = booleanString(strValue);

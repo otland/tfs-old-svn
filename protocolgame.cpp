@@ -2595,6 +2595,8 @@ void ProtocolGame::sendOutfitWindow()
 					msg->put<uint16_t>((*it)->getClientId());
 					msg->putString((*it)->getName());
 				}				
+			} else {
+				msg->put<char>(0);
 			}
 		} else {
 			msg->put<char>(0);

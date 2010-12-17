@@ -16,6 +16,7 @@
 ////////////////////////////////////////////////////////////////////////
 #include "otpch.h"
 #include <iostream>
+#include <boost/lexical_cast.hpp>
 
 #include "player.h"
 #include "manager.h"
@@ -797,7 +798,7 @@ void Player::dropLoot(Container* corpse)
 bool Player::setStorage(const std::string& key, const std::string& value)
 {
 	uint32_t numericKey = atol(key.c_str());
-	if(!IS_IN_KEYRANGE(numericKey, RESERVED_RANGE))
+	if(!IS_IN_KEYRANGE(numericKey, RESERVED_RANGE) || IS_IN_KEYRANGE(numericKey, MOUNTS_RANGE))
 		return Creature::setStorage(key, value);
 
 	if(IS_IN_KEYRANGE(numericKey, OUTFITS_RANGE))
@@ -5153,7 +5154,6 @@ void Player::sendCritical() const
 }
 void Player::setMounted(bool doMount)
 {
-	std::clog << "DEBUG MOUNT: set mount (" << doMount << " && mount = " << (uint16_t)mount << ")" << std::endl;
 	if(doMount)
 	{
 		if(_tile->hasFlag(TILESTATE_PROTECTIONZONE))
@@ -5180,11 +5180,10 @@ void Player::setMounted(bool doMount)
 
 void Player::dismount()
 {
-	std::clog << "DEBUG MOUNT: dismounting" << std::endl;
 	if(isMounted()) {
-		Mount* mount = Mounts::getInstance()->getMountById(mount);
-		if(mount && mount->getSpeed() > 0)
-			g_game.changeSpeed(this, -mount->getSpeed());
+		Mount* myMount = Mounts::getInstance()->getMountById(mount);
+		if(myMount && myMount->getSpeed() > 0)
+			g_game.changeSpeed(this, -myMount->getSpeed());
 
 		mounted = false;
 		defaultOutfit.lookMount = 0;
@@ -5197,27 +5196,34 @@ bool Player::tameMount(uint8_t mountId)
                 return false;
 
         mountId--;
-        int key = PSTRG_MOUNTS_RANGE_START + mountId;
+        int key = PSTRG_MOUNTS_RANGE_START + (mountId / 31);
         int32_t value = 0;
-        if(getStorage((const std::string&)key, (std::string&)value))
-                return true;
+	std::string tmp = "";
+        if(getStorage(boost::lexical_cast<std::string>(key), tmp)) {
+		value = atoi(tmp.c_str());
+                value |= (int32_t)pow(2, mountId % 31);
+        } else
+                value = pow(2, mountId % 31);
 
-        setStorage((const std::string&)key, (std::string&)value);
+
+        setStorage(boost::lexical_cast<std::string>(key), boost::lexical_cast<std::string>(value));
         return true;
 }
 
 bool Player::untameMount(uint8_t mountId)
 {
-	if(!Mounts::getInstance()->getMountByID(mountId))
-		return false;
+        if(!Mounts::getInstance()->getMountById(mountId))
+                return false;
 
-	mountId--;
-	int key = PSTRG_MOUNTS_RANGE_START + (mountId / 31);
-	int32_t value = 0;
-	if(!getStorageValue((const std::string&)key, (const std::string&)value))
- 		return true;
+        mountId--;
+        int key = PSTRG_MOUNTS_RANGE_START + (mountId / 31);
+        int32_t value = 0;
+	std::string tmp = "";
+        if(!getStorage(boost::lexical_cast<std::string>(key), tmp))
+                return true;
 
-	value ^= (int32_t)pow(2, mountId % 31);
-	setStorage((const std::string&)key, (const std::string&)value);
-	return true;
+	value = atoi(tmp.c_str());
+        value ^= (int32_t)pow(2, mountId % 31);
+        setStorage(boost::lexical_cast<std::string>(key), boost::lexical_cast<std::string>(value));
+        return true;
 }

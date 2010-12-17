@@ -19,6 +19,7 @@
 
 #include "quests.h"
 #include "mounts.h"
+#include <boost/lexical_cast.hpp>
 
 bool Mount::isTamed(Player* player) const
 {
@@ -30,13 +31,12 @@ bool Mount::isTamed(Player* player) const
         uint8_t tmpId = id - 1;
 
         std::string value = "";
-        if(!player->getStorage((const char*)(PSTRG_MOUNTS_RANGE_START + tmpId), value))
+	int key = PSTRG_MOUNTS_RANGE_START + (tmpId / 31);
+	if(!player->getStorage(boost::lexical_cast<std::string>(key), value))
                 return false;
 
-        if(value > "0")
-		return true;
-
-	return false;
+        int32_t tmp = pow(2, tmpId % 31);
+        return (tmp & atoi(value.c_str())) == tmp;
 }
 void Mounts::clear()
 {
@@ -116,21 +116,23 @@ bool Mounts::parseMountNode(xmlNodePtr p)
 }
 Mount* Mounts::getMountById(uint16_t id) const
 {
-	for(MountList::const_iterator it = mounts.begin(); it != mounts.end(); it++)
-	{
-		if((*it)->getId() == id)
-			return (*it);
-	}
+	if(id)
+		for(MountList::const_iterator it = mounts.begin(); it != mounts.end(); it++)
+		{
+			if((*it)->getId() == id)
+				return (*it);
+		}
 
 	return NULL;
 }
 Mount* Mounts::getMountByCid(uint16_t id) const
 {
-	for(MountList::const_iterator it = mounts.begin(); it != mounts.end(); it++)
-	{
-		if((*it)->getClientId() == id)
-			return (*it);
-	}
+	if(id)
+		for(MountList::const_iterator it = mounts.begin(); it != mounts.end(); it++)
+		{
+			if((*it)->getClientId() == id)
+				return (*it);
+		}
 
 	return NULL;
 }

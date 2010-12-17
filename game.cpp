@@ -50,6 +50,7 @@
 #include "spells.h"
 #include "talkaction.h"
 #include "weapons.h"
+#include "mounts.h"
 
 #include "vocation.h"
 #include "group.h"

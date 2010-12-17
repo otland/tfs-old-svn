@@ -584,8 +584,8 @@ class Player : public Creature, public Cylinder
 			{if(client) client->sendRemoveInventoryItem(slot);}
 
 		//mount
-		bool isMounted() {return mounted;}
-		uint16_t getMountId() {return mount;}
+		bool isMounted() const {return mounted;}
+		uint16_t getMountId() const {return mount;}
 		void setMountId(uint8_t mountId) {mount = mountId;}
 		void setMounted(bool value);
 		void dismount();
