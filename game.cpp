@@ -51,6 +51,7 @@
 #include "server.h"
 #include "ioguild.h"
 #include "quests.h"
+#include "globalevent.h"
 #include "mounts.h"
 
 extern ConfigManager g_config;
@@ -60,6 +61,7 @@ extern Chat g_chat;
 extern TalkActions* g_talkActions;
 extern Spells* g_spells;
 extern Vocations g_vocations;
+extern GlobalEvents* g_globalEvents;
 
 Game::Game()
 {
@@ -157,11 +159,13 @@ void Game::setGameState(GameState_t newState)
 				loadPlayersRecord();
 
 				loadGameState();
+				g_globalEvents->startup();
 				break;
 			}
 
 			case GAME_STATE_SHUTDOWN:
 			{
+				g_globalEvents->execute(GLOBALEVENT_SHUTDOWN);
 				//kick all players that are still online
 				AutoList<Player>::listiterator it = Player::listPlayer.list.begin();
 				while(it != Player::listPlayer.list.end())
@@ -4697,10 +4701,12 @@ void Game::checkPlayersRecord()
 {
 	if(getPlayersOnline() > lastPlayersRecord)
 	{
+		uint32_t tmplPlayersRecord = lastPlayersRecord;
 		lastPlayersRecord = getPlayersOnline();
-		char buffer[60];
-		sprintf(buffer, "New record: %d players are logged in.", lastPlayersRecord);
-		broadcastMessage(buffer, MSG_STATUS_DEFAULT);
+		GlobalEventMap reocrdEvents = g_globalEvents->getEventMap(GLOBALEVENT_RECORD);
+		for(GlobalEventMap::iterator it = reocrdEvents.begin(); it != reocrdEvents.end(); ++it)
+			it->second->executeRecord(lastPlayersRecord, tmplPlayersRecord);
+
 		savePlayersRecord();
 	}
 }

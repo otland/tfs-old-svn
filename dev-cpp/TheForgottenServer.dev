@@ -1,7 +1,7 @@
 [Project]
 FileName=TheForgottenServer.dev
 Name=The Forgotten Server
-UnitCount=163
+UnitCount=165
 Type=0
 Ver=1
 ObjFiles=
@@ -1669,6 +1669,26 @@ BuildCmd=
 
 [Unit163]
 FileName=..\mounts.cpp
+CompileCpp=1
+Folder=The Forgotten Server
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit164]
+FileName=..\globalevent.cpp
+CompileCpp=1
+Folder=The Forgotten Server
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit165]
+FileName=..\globalevent.h
 CompileCpp=1
 Folder=The Forgotten Server
 Compile=1

@@ -96,7 +96,7 @@ BedItem* BedItem::getNextBedItem()
 	Position targetPos = getNextPosition(dir, getPosition());
 
 	Tile* tile = g_game.getMap()->getTile(targetPos);
-	if(tile != NULL)
+	if(tile)
 		return tile->getBedItem();
 
 	return NULL;
@@ -104,7 +104,7 @@ BedItem* BedItem::getNextBedItem()
 
 bool BedItem::canUse(Player* player)
 {
-	if(player == NULL || house == NULL || !player->isPremium())
+	if(!player || !house || !player->isPremium())
 		return false;
 	else if(player->hasCondition(CONDITION_INFIGHT))
 		return false;
@@ -142,7 +142,7 @@ bool BedItem::canUse(Player* player)
 void BedItem::sleep(Player* player)
 {
 	// avoid crashes
-	if((house == NULL) || (player == NULL) || player->isRemoved())
+	if((!house) || (!player) || player->isRemoved())
 		return;
 
 	if(sleeperGUID != 0)
@@ -183,12 +183,12 @@ void BedItem::sleep(Player* player)
 void BedItem::wakeUp(Player* player)
 {
 	// avoid crashes
-	if(house == NULL)
+	if(!house)
 		return;
 
 	if(sleeperGUID != 0)
 	{
-		if(player == NULL)
+		if(!player)
 		{
 			std::string name;
 			if(IOLoginData::getInstance()->getNameByGuid(sleeperGUID, name))

@@ -74,6 +74,7 @@
 #include "protocollogin.h"
 #include "status.h"
 #include "admin.h"
+#include "globalevent.h"
 #include "mounts.h"
 
 #ifdef __OTSERV_ALLOCATOR__
@@ -110,6 +111,7 @@ TextLogger logger;
 GUI gui;
 extern Actions* g_actions;
 extern CreatureEvents* g_creatureEvents;
+extern GlobalEvents* g_globalEvents;
 extern MoveEvents* g_moveEvents;
 extern Spells* g_spells;
 extern TalkActions* g_talkActions;
@@ -859,6 +861,9 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 
 					if(!Raids::getInstance()->reload() || !Raids::getInstance()->startup())
 						std::cout << "Failed to reload raids." << std::endl;
+
+					if(!g_globalEvents->reload())
+						std::cout << "Failed to reload global events." << std::endl;
 
 					g_npcs.reload();
 					std::cout << "Reloaded all." << std::endl;
