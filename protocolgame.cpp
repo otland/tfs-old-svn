@@ -1218,13 +1218,10 @@ void ProtocolGame::parseSetOutfit(NetworkMessage& msg)
 void ProtocolGame::parseMountStatus(NetworkMessage& msg)
 {
 	bool status = msg.get<char>() != 0;
-	if((OTSYS_TIME() - player->getLastMountStatusChange()) >= 2000) {
+	if(!status || (OTSYS_TIME() - player->getLastMountStatusChange()) >= 2000) {
 		player->setMounted(status);
 	} else {
-		if(status)
-			player->sendCancel("Please wait 2 seconds before trying to mount again.");
-		else
-			player->sendCancel("Please wait 2 seconds before typing to dismount again.");
+		player->sendCancel("Please wait 2 seconds before trying to mount again.");
 	}
 	
 }

@@ -588,7 +588,7 @@ class Player : public Creature, public Cylinder
 		void dismount();
 		bool tameMount(uint8_t mountId);
 		bool untameMount(uint8_t mountId);
-		time_t getLastMountStatusChange() const {return lastMountStatusChange; }
+		int64_t getLastMountStatusChange() const {return lastMountStatusChange; }
 
 		//cooldown
 		void setExhaustion(uint16_t spellId, uint32_t exhaustion) {exhaustionMap[spellId] = int64_t(exhaustion) + OTSYS_TIME();}
@@ -899,11 +899,12 @@ class Player : public Creature, public Cylinder
 		time_t skullEnd;
 		time_t lastLogin;
 		time_t lastLogout;
-		time_t lastMountStatusChange;
+		
 		int64_t lastLoad;
 		int64_t lastPong;
 		int64_t lastPing;
 		int64_t nextAction;
+		int64_t lastMountStatusChange;
 		uint64_t stamina;
 		uint64_t experience;
 		uint64_t manaSpent;

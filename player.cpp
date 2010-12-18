@@ -5199,7 +5199,6 @@ void Player::dismount()
 		mounted = false;
 		defaultOutfit.lookMount = 0;
 		g_game.internalCreatureChangeOutfit(this, defaultOutfit);
-		lastMountStatusChange = OTSYS_TIME();
 	}
 }
 bool Player::tameMount(uint8_t mountId)
