@@ -179,7 +179,6 @@ Item::Item(const uint16_t type, uint16_t amount/* = 0*/):
 {
 	raid = NULL;
 	loadedFromMap = false;
-	cached = false;
 
 	setItemCount(1);
 	setDefaultDuration();

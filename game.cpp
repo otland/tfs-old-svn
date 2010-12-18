@@ -1755,18 +1755,6 @@ ReturnValue Game::internalRemoveItem(Creature* actor, Item* item, int32_t count 
 
 	if(!test)
 	{
-		if(item->isCached())
-		{
-			Item* newItem = Item::CreateItem(item->getID(), item->getItemCount());
-
-			if(!newItem)
-				return RET_NOTPOSSIBLE;
-
-			newItem->copyAttributes(item);
-			if(internalAddItem(NULL, cylinder, newItem, INDEX_WHEREEVER, FLAG_NOLIMIT) != RET_NOERROR)
-				return RET_NOTPOSSIBLE;
-			item = newItem;
-		}
 		//remove the item
 		int32_t index = cylinder->__getIndexOfThing(item);
 		cylinder->__removeThing(item, count);

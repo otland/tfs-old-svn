@@ -134,6 +134,6 @@ class Thing
 
 	private:
 		Cylinder* parent;
-		int32_t refCount;
+		int16_t refCount;
 };
 #endif
