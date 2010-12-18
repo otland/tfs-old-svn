@@ -35,6 +35,8 @@
 #include <boost/foreach.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/algorithm/string/predicate.hpp>
+#include <boost/lexical_cast.hpp>
+
 
 #include <cstddef>
 #include <cstdlib>

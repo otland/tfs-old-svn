@@ -16,7 +16,6 @@
 ////////////////////////////////////////////////////////////////////////
 #include "otpch.h"
 #include <iostream>
-#include <boost/lexical_cast.hpp>
 
 #include "player.h"
 #include "manager.h"

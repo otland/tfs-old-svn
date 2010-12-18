@@ -16,10 +16,7 @@
 ////////////////////////////////////////////////////////////////////////
 
 #include "otpch.h"
-
-#include "quests.h"
 #include "mounts.h"
-#include <boost/lexical_cast.hpp>
 
 bool Mount::isTamed(Player* player) const
 {

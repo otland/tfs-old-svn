@@ -41,7 +41,6 @@ class Mount
 		
 	private:
 		std::string name;
-
 		uint8_t id;
 		uint16_t clientId;
 		int32_t speed;
