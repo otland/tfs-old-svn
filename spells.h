@@ -283,7 +283,6 @@ class RuneSpell : public Action, public Spell
 
 		//scripting
 		bool executeCastSpell(Creature* creature, const LuaVariant& var);
-
 		virtual bool isInstant() const {return false;}
 		uint32_t getRuneItemId(){return runeId;}
 
@@ -293,6 +292,7 @@ class RuneSpell : public Action, public Spell
 
 		static RuneSpellFunction Illusion;
 		static RuneSpellFunction Convince;
+		static RuneSpellFunction Soulfire;
 
 		bool internalCastSpell(Creature* creature, const LuaVariant& var);
 

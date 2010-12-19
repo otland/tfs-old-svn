@@ -578,21 +578,29 @@ bool Spell::configureSpell(xmlNodePtr p)
 	if(readXMLInteger(p, "icon", intValue))
 		icon = (Spells_t)intValue;
 
-	if(readXMLString(p, "group", strValue)) {
+	if(readXMLString(p, "groups", strValue)) {
 		std::vector<std::string> split = explodeString(strValue, ",");
 		for(std::vector<std::string>::iterator it = split.begin(); it != split.end(); ++it)
 			groupExhaustions[(SpellGroup_t)atoi((*it).c_str())] = 0;
 		
 	}
-	
-	if(readXMLString(p, "groupexhaustions", strValue) || readXMLString(p, "groupcooldown", strValue)) {
+
+	if(readXMLString(p, "groupexhaustions", strValue)) {
 		std::vector<std::string> split = explodeString(strValue, ",");
 		int i = 0;
 		for(std::map<SpellGroup_t, uint32_t>::iterator it = groupExhaustions.begin(); it != groupExhaustions.end(); ++it)
 			groupExhaustions[it->first] = atoi(split[i].c_str());
 	}
 
-	
+	if(groupExhaustions.empty()){
+		if(isAggressive){
+			groupExhaustions[SPELLGROUP_ATTACK] = 1;
+		}
+		else{
+			groupExhaustions[SPELLGROUP_HEALING] = 2;
+		}
+	}
+
 	std::string error = "";
 	xmlNodePtr vocationNode = p->children;
 	while(vocationNode)
@@ -1715,6 +1723,8 @@ bool RuneSpell::loadFunction(const std::string& functionName)
 		function = Illusion;
 	else if(tmpFunctionName == "convince")
 		function = Convince;
+	else if(tmpFunctionName == "soulfire")
+		function = Soulfire;
 	else
 	{
 		std::clog << "[Warning - RuneSpell::loadFunction] Function \"" << functionName << "\" does not exist." << std::endl;
@@ -1820,6 +1830,41 @@ bool RuneSpell::Convince(const RuneSpell* spell, Creature* creature, Item*, cons
 	g_game.addMagicEffect(player->getPosition(), MAGIC_EFFECT_WRAPS_RED);
 	return true;
 }
+
+bool RuneSpell::Soulfire(const RuneSpell* spell, Creature* creature, Item*, const Position&, const Position& posTo)
+{
+	Player* player = creature->getPlayer();
+	if(!player){
+		return false;
+	}
+
+	Thing* thing = g_game.internalGetThing(player, posTo, 0, 0, STACKPOS_LOOK);
+	if(!thing){
+		player->sendCancelMessage(RET_NOTPOSSIBLE);
+		g_game.addMagicEffect(player->getPosition(), MAGIC_EFFECT_POFF);
+		return false;
+	}
+
+	Creature* hitCreature = thing->getCreature();
+	if(!hitCreature){
+		player->sendCancelMessage(RET_NOTPOSSIBLE);
+		g_game.addMagicEffect(player->getPosition(), MAGIC_EFFECT_POFF);
+		return false;
+	}
+
+	ConditionDamage* soulfireCondition = new ConditionDamage(CONDITIONID_COMBAT, CONDITION_FIRE, false, 0);
+	soulfireCondition->setParam(CONDITIONPARAM_SUBID, 1);
+	soulfireCondition->addDamage(std::ceil((player->getLevel()+player->getMagicLevel()) / 3.), 9000, -10);
+	if(!hitCreature->addCondition(soulfireCondition)){
+		player->sendCancelMessage(RET_NOTPOSSIBLE);
+		g_game.addMagicEffect(player->getPosition(), MAGIC_EFFECT_POFF);
+		return false;
+	}
+
+	spell->postSpell(player, true, false);
+	return true;
+}
+
 
 ReturnValue RuneSpell::canExecuteAction(const Player* player, const Position& toPos)
 {
