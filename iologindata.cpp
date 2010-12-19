@@ -894,21 +894,23 @@ bool IOLoginData::savePlayer(Player* player, bool preSave/* = true*/, bool shall
 	query.str("");
 	query << "DELETE FROM `player_spells` WHERE `player_id` = " << player->getGUID();
 	if(!db->query(query.str()))
-		return false;
+		return false;'
 
-	char buffer[280];
-	DBInsert query_insert(db);
+	if(player->learnedInstantSpellList.size()) {
+		char buffer[280];
+		DBInsert query_insert(db);
 
-	query_insert.setQuery("INSERT INTO `player_spells` (`player_id`, `name`) VALUES ");
-	for(LearnedInstantSpellList::const_iterator it = player->learnedInstantSpellList.begin(); it != player->learnedInstantSpellList.end(); ++it)
-	{
-		sprintf(buffer, "%d, %s", player->getGUID(), db->escapeString(*it).c_str());
-		if(!query_insert.addRow(buffer))
+		query_insert.setQuery("INSERT INTO `player_spells` (`player_id`, `name`) VALUES ");
+		for(LearnedInstantSpellList::const_iterator it = player->learnedInstantSpellList.begin(); it != player->learnedInstantSpellList.end(); ++it)
+		{
+			sprintf(buffer, "%d, %s", player->getGUID(), db->escapeString(*it).c_str());
+			if(!query_insert.addRow(buffer))
+				return false;
+		}
+
+		if(!query_insert.execute())
 			return false;
 	}
-
-	if(!query_insert.execute())
-		return false;
 
 	//item saving
 	query.str("");
@@ -944,16 +946,21 @@ bool IOLoginData::savePlayer(Player* player, bool preSave/* = true*/, bool shall
 	size_t size = s.length();
 	if(size > 0)
 	{*/
+	
 		query.str("");
 		query << "DELETE FROM `player_depotitems` WHERE `player_id` = " << player->getGUID();// << " AND `pid` IN (" << s.substr(0, --size) << ")";
 		if(!db->query(query.str()))
 			return false;
 
-		query_insert.setQuery("INSERT INTO `player_depotitems` (`player_id`, `pid`, `sid`, `itemtype`, `count`, `attributes`) VALUES ");
-		if(!saveItems(player, itemList, query_insert))
-			return false;
+		if(itemList.size()) {
+			query_insert.setQuery("INSERT INTO `player_depotitems` (`player_id`, `pid`, `sid`, `itemtype`, `count`, `attributes`) VALUES ");
+			if(!saveItems(player, itemList, query_insert))
+				return false;
 
-		itemList.clear();
+			itemList.clear();
+		}
+		
+	}
 	//}
 
 	query.str("");
