@@ -1204,11 +1204,11 @@ void ProtocolGame::parseSetOutfit(NetworkMessage& msg)
 				player->dismount();
 			}
 		}
+
 		// Either way, lets go 0 since we're dismounted if we choose a valid mount, you will start bugging if you try to cheat this by sending a bungous Id
 		newOutfit.lookMount = 0;
-		
 	}
-	
+
 	else
 		msg.skip(2);
 
@@ -1223,7 +1223,6 @@ void ProtocolGame::parseMountStatus(NetworkMessage& msg)
 	} else {
 		player->sendCancel("Please wait 2 seconds before trying to mount again.");
 	}
-	
 }
 
 void ProtocolGame::parseUseItem(NetworkMessage& msg)

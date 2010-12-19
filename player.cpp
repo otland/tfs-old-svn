@@ -93,6 +93,10 @@ Player::Player(const std::string& _name, ProtocolGame* p):
 	setVocation(0);
 	setParty(NULL);
 
+	mount = 0;
+	mounted = false;
+	lastMountStatusChange = 0;
+
 	transferContainer.setParent(NULL);
 	for(int32_t i = 0; i < 11; i++)
 	{
