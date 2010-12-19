@@ -894,12 +894,12 @@ bool IOLoginData::savePlayer(Player* player, bool preSave/* = true*/, bool shall
 	query.str("");
 	query << "DELETE FROM `player_spells` WHERE `player_id` = " << player->getGUID();
 	if(!db->query(query.str()))
-		return false;'
+		return false;
+
+	char buffer[280];
+	DBInsert query_insert(db);
 
 	if(player->learnedInstantSpellList.size()) {
-		char buffer[280];
-		DBInsert query_insert(db);
-
 		query_insert.setQuery("INSERT INTO `player_spells` (`player_id`, `name`) VALUES ");
 		for(LearnedInstantSpellList::const_iterator it = player->learnedInstantSpellList.begin(); it != player->learnedInstantSpellList.end(); ++it)
 		{
@@ -960,7 +960,7 @@ bool IOLoginData::savePlayer(Player* player, bool preSave/* = true*/, bool shall
 			itemList.clear();
 		}
 		
-	}
+	
 	//}
 
 	query.str("");

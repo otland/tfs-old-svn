@@ -191,7 +191,7 @@ void Connection::closeConnection()
 	//m_connectionLock.lock();
 	if(m_connectionState != CONNECTION_STATE_REQUEST_CLOSE)
 	{
-		std::clog << "[Error - Connection::closeConnection] m_connectionState = " << m_connectionState << std::endl;
+		//std::clog << "[Error - Connection::closeConnection] m_connectionState = " << m_connectionState << std::endl;
 		//m_connectionLock.unlock();
 		return;
 	}
