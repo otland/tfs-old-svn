@@ -1194,19 +1194,31 @@ void ProtocolGame::parseSetOutfit(NetworkMessage& msg)
 	if(g_config.getBool(ConfigManager::ALLOW_MOUNTS)) {
 		// Do we have an id? 0 usully means no mount
 		uint16_t mountId = msg.get<uint16_t>();
+		bool sendMount = false;
+
 		if(mountId) {
 			Mount* myMount = Mounts::getInstance()->getMountByCid(mountId);
+
 			// Can we use this mount?
 			if(myMount && myMount->isTamed(player)) { 
 				// Set the new mount
 				player->setMountId(myMount->getId()); 
-				// Lets dismount now
-				player->dismount();
+
+				// Lets change mount now if hes mounted
+				if(player->isMounted()) {
+					player->dismount();
+					player->setMounted(1);
+					sendMount = true;
+				}
+				
 			}
 		}
 
-		// Either way, lets go 0 since we're dismounted if we choose a valid mount, you will start bugging if you try to cheat this by sending a bungous Id
-		newOutfit.lookMount = 0;
+		// Should we send the new lookMount?
+		if(sendMount)
+			newOutfit.lookMount = mountId;
+		else
+			newOutfit.lookMount = 0;
 	}
 
 	else
