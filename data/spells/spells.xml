@@ -215,7 +215,7 @@
 		<vocation id="7"/>
 		<vocation id="8"/>
 	</instant>
-	<instant name="Find Person" words="exiva" lvl="8" mana="20" aggressive="0" params="1" groupsexhaustions="2000" groups="3" icon="20" needlearn="0" event="function" value="searchPlayer">
+	<instant name="Find Person" words="exiva" lvl="8" mana="20" aggressive="0" params="1" groupexhaustions="2000" groups="3" icon="20" needlearn="0" event="function" value="searchPlayer">
 		<vocation id="1"/>
 		<vocation id="2"/>
 		<vocation id="3"/>

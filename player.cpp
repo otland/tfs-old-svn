@@ -5241,11 +5241,10 @@ bool Player::untameMount(uint8_t mountId)
         setStorage(boost::lexical_cast<std::string>(key), boost::lexical_cast<std::string>(value));
 
 	// If it's our current mount, unmount it
-	if(mount == mountId) {
-		if(isMounted())
-			dismount();
+	if(mount == (mountId + 1)) {
+		dismount();
 		mount = 0;
 	}
-		
+
         return true;
 }
