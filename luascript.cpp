@@ -8969,7 +8969,7 @@ int32_t LuaInterface::luaDoPlayerRemoveMount(lua_State* L)
 int32_t LuaInterface::luaGetPlayerMount(lua_State* L)
 {
 	//getPlayerMount(cid, mountId)
-
+	uint8_t mountId = popNumber(L);
 	ScriptEnviroment* env = getEnv();
 	Player* player = env->getPlayerByUID(popNumber(L));
 	if(!player)
@@ -8979,7 +8979,7 @@ int32_t LuaInterface::luaGetPlayerMount(lua_State* L)
 	}
 	else
 	{
-		Mount* mount = Mounts::getInstance()->getMountById(popNumber(L));
+		Mount* mount = Mounts::getInstance()->getMountById(mountId);
 		if(mount)
 			lua_pushboolean(L, mount->isTamed(player));
 		else
