@@ -2984,8 +2984,10 @@ void ProtocolGame::AddCreatureOutfit(NetworkMessage_ptr msg, const Creature* cre
 
 		msg->put<uint16_t>(outfit.lookMount);
 	}
-	else
+	else {
 		msg->put<uint32_t>(0x00);
+		msg->put<uint16_t>(0x00);
+	}
 }
 
 void ProtocolGame::AddWorldLight(NetworkMessage_ptr msg, const LightInfo& lightInfo)
