@@ -464,21 +464,21 @@ bool Spell::configureSpell(xmlNodePtr p)
 		return false;
 	}
 
-	if(readXMLInteger(p, "spellid", intValue))
+	if(readXMLInteger(p, "spellid", intValue) || readXMLInteger(p, "icon", intValue))
 		spellId = intValue;
 
 	if(readXMLString(p, "group", strValue))
 	{
 		std::string tmpStr = asLowerCaseString(strValue);
-		if(tmpStr == "none")
+		if(tmpStr == "none" || tmpStr == "0")
 			group = SPELLGROUP_NONE;
-		else if(tmpStr == "attack")
+		else if(tmpStr == "attack" || tmpStr == "1")
 			group = SPELLGROUP_ATTACK;
-		else if(tmpStr == "healing")
+		else if(tmpStr == "healing" || tmpStr == "2")
 			group = SPELLGROUP_HEALING;
-		else if(tmpStr == "support")
+		else if(tmpStr == "support" || tmpStr == "3")
 			group = SPELLGROUP_SUPPORT;
-		else if(tmpStr == "special")
+		else if(tmpStr == "special" || tmpStr == "4")
 			group = SPELLGROUP_SPECIAL;
 		else
 			std::cout << "[Warning - Spell::configureSpell] Unknown group: " << strValue << std::endl;
@@ -568,8 +568,63 @@ bool Spell::configureSpell(xmlNodePtr p)
 			std::cout << "[Warning - Spell::configureSpell] Blocktype \"" <<strValue << "\" does not exist." << std::endl;
 	}
 
-	if(readXMLInteger(p, "aggressive", intValue))
-		isAggressive = (intValue == 1);
+	if(readXMLString(p, "aggressive", strValue))
+		isAggressive = (strValue == "1" || asLowerCaseString(strValue) == "yes");
+
+	if(readXMLString(p, "groups", strValue))
+	{
+		std::vector<std::string> split = explodeString(strValue, ",", 2);
+		std::vector<std::string>::iterator it = split.begin();
+		if(it != split.end())
+		{
+			std::string tmpStr = asLowerCaseString(*it);
+			if(tmpStr == "none" || tmpStr == "0")
+				group = SPELLGROUP_NONE;
+			else if(tmpStr == "attack" || tmpStr == "1")
+				group = SPELLGROUP_ATTACK;
+			else if(tmpStr == "healing" || tmpStr == "2")
+				group = SPELLGROUP_HEALING;
+			else if(tmpStr == "support" || tmpStr == "3")
+				group = SPELLGROUP_SUPPORT;
+			else if(tmpStr == "special" || tmpStr == "4")
+				group = SPELLGROUP_SPECIAL;
+			else
+				std::cout << "[Warning - Spell::configureSpell] Unknown groups (primary): " << strValue << std::endl;
+		}
+		++it;
+
+		if(it != split.end())
+		{
+			std::string tmpStr = asLowerCaseString(*it);
+			if(tmpStr == "none" || tmpStr == "0")
+				secondaryGroup = SPELLGROUP_NONE;
+			else if(tmpStr == "attack" || tmpStr == "1")
+				secondaryGroup = SPELLGROUP_ATTACK;
+			else if(tmpStr == "healing" || tmpStr == "2")
+				secondaryGroup = SPELLGROUP_HEALING;
+			else if(tmpStr == "support" || tmpStr == "3")
+				secondaryGroup = SPELLGROUP_SUPPORT;
+			else if(tmpStr == "special" || tmpStr == "4")
+				secondaryGroup = SPELLGROUP_SPECIAL;
+			else
+				std::cout << "[Warning - Spell::configureSpell] Unknown groups (secondary): " << strValue << std::endl;
+		}
+	}
+
+	if(readXMLString(p, "groupexhaustions", strValue))
+	{
+		std::vector<std::string> split = explodeString(strValue, ",", 2);
+		std::vector<std::string>::iterator it = split.begin();
+		if(it != split.end())
+			groupCooldown = atoi((*it).c_str());
+
+		++it;
+		if(it != split.end())
+			secondaryGroupCooldown = atoi((*it).c_str());
+	}
+
+	if(group == SPELLGROUP_NONE)
+		group = (isAggressive ? SPELLGROUP_ATTACK : SPELLGROUP_HEALING);
 
 	xmlNodePtr vocationNode = p->children;
 	while(vocationNode)

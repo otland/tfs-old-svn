@@ -4831,6 +4831,12 @@ bool Player::untameMount(uint8_t mountId)
 
 	value ^= (int32_t)pow(2, mountId % 31);
 	addStorageValue(key, value);
+
+	if(isMounted() && getCurrentMount() == (mountId + 1))
+	{
+		dismount();
+		setCurrentMount(0);
+	}
 	return true;
 }
 
