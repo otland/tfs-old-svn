@@ -2800,6 +2800,7 @@ void ProtocolGame::AddCreatureInvisible(NetworkMessage_ptr msg, const Creature* 
 	{
 		msg->AddU16(0x00);
 		msg->AddU16(0x00);
+		msg->AddU16(0x00);
 	}
 }
 
