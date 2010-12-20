@@ -2703,7 +2703,8 @@ void ProtocolGame::sendVIP(uint32_t guid, const std::string& name, bool isOnline
 
 void ProtocolGame::sendSpellCooldown(uint16_t spellId, uint32_t cooldown, bool isGroup)
 {
-
+	if(!spellId)
+		return;
 	NetworkMessage_ptr msg = getOutputBuffer();
 	if(msg)
 	{
