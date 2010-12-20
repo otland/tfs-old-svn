@@ -89,7 +89,7 @@
 		<vocation id="1"/>
 		<vocation id="5"/>
 	</instant>
-	<instant name="Groundshaker" words="exori mas" lvl="33" mana="160" prem="1" needweapon="1" exhaustion="2000" needlearn="0" event="script" value="attack/groundshaker.lua">
+	<instant name="Groundshaker" words="exori mas" lvl="33" mana="160" prem="1" needweapon="1" icon="45" exhaustion="2000" needlearn="0" event="script" value="attack/groundshaker.lua">
 		<vocation id="4"/>
 		<vocation id="8"/>
 	</instant>
@@ -215,7 +215,7 @@
 		<vocation id="7"/>
 		<vocation id="8"/>
 	</instant>
-	<instant name="Find Person" words="exiva" lvl="8" mana="20" aggressive="0" params="1" exhaustion="1000" needlearn="0" event="function" value="searchPlayer">
+	<instant name="Find Person" words="exiva" lvl="8" mana="20" aggressive="0" params="1" groupsexhaustions="2000" groups="3" icon="20" needlearn="0" event="function" value="searchPlayer">
 		<vocation id="1"/>
 		<vocation id="2"/>
 		<vocation id="3"/>
@@ -224,7 +224,7 @@
 		<vocation id="6"/>
 		<vocation id="7"/>
 		<vocation id="8"/>
-	</instant>
+	</instant> 
 	<instant name="Magic Rope" words="exani tera" lvl="9" mana="20" prem="1" aggressive="0" selftarget="1" exhaustion="1000" needlearn="0" event="script" value="support/magic rope.lua">
 		<vocation id="1"/>
 		<vocation id="2"/>
@@ -306,7 +306,7 @@
 		<vocation id="1"/>
 		<vocation id="5"/>
 	</instant>
-	<instant name="Invisibility" words="utana vid" lvl="35" mana="440" aggressive="0" selftarget="1" exhaustion="1000" needlearn="0" event="script" value="support/invisible.lua">
+	<instant name="Invisibility" words="utana vid" lvl="35" mana="440" aggressive="0" selftarget="1" exhaustion="2000" groups="support" groupexhaustions="2000" icon="45" needlearn="0" event="script" value="support/invisible.lua">
 		<vocation id="1"/>
 		<vocation id="2"/>
 		<vocation id="3"/>
