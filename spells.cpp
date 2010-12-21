@@ -1854,7 +1854,7 @@ bool RuneSpell::Soulfire(const RuneSpell* spell, Creature* creature, Item*, cons
 
 	ConditionDamage* soulfireCondition = new ConditionDamage(CONDITIONID_COMBAT, CONDITION_FIRE, false, 0);
 	soulfireCondition->setParam(CONDITIONPARAM_SUBID, 1);
-	soulfireCondition->addDamage((int32_t)std::ceil((player->getLevel()+player->getMagicLevel()) / 3.), 9000, -10);
+	soulfireCondition->addDamage(static_cast<int32_t>(std::ceil((player->getLevel()+player->getMagicLevel()) / 3.)), 9000, -10);
 	if(!hitCreature->addCondition(soulfireCondition)){
 		player->sendCancelMessage(RET_NOTPOSSIBLE);
 		g_game.addMagicEffect(player->getPosition(), MAGIC_EFFECT_POFF);

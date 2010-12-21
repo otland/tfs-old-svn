@@ -5206,22 +5206,23 @@ void Player::dismount()
 }
 bool Player::tameMount(uint8_t mountId)
 {
-        if(!Mounts::getInstance()->getMountById(mountId))
-                return false;
+	if(!Mounts::getInstance()->getMountById(mountId))
+		return false;
 
-        mountId--;
-        int key = PSTRG_MOUNTS_RANGE_START + (mountId / 31);
-        int32_t value = 0;
+	mountId--;
+	int key = PSTRG_MOUNTS_RANGE_START + (mountId / 31);
+	int32_t value = 0;
 	std::string tmp = "";
-        if(getStorage(boost::lexical_cast<std::string>(key), tmp)) {
+	if(getStorage(boost::lexical_cast<std::string>(key), tmp))
+	{
 		value = atoi(tmp.c_str());
-                value |= (int32_t)pow(2, mountId % 31);
-        } else
-                value = (int32_t)pow(2, mountId % 31);
+		value |= static_cast<int32_t>(pow(2, mountId % 31));
+	} 
+	else
+		value = static_cast<int32_t>(pow(2, mountId % 31));
 
-
-        setStorage(boost::lexical_cast<std::string>(key), boost::lexical_cast<std::string>(value));
-        return true;
+	setStorage(boost::lexical_cast<std::string>(key), boost::lexical_cast<std::string>(value));
+	return true;
 }
 
 bool Player::untameMount(uint8_t mountId)
