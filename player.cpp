@@ -5217,7 +5217,7 @@ bool Player::tameMount(uint8_t mountId)
 		value = atoi(tmp.c_str());
                 value |= (int32_t)pow(2, mountId % 31);
         } else
-                value = pow(2, mountId % 31);
+                value = (int32_t)pow(2, mountId % 31);
 
 
         setStorage(boost::lexical_cast<std::string>(key), boost::lexical_cast<std::string>(value));
