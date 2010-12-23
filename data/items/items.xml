@@ -14475,10 +14475,10 @@
 	<item id="7919" name="armillary sphere" article="an" />
 	<item fromid="7920" toid="7923" name="chalk board" article="a" />
 	<item id="7924" name="stone stairs">
-		<attribute key="floorchange" value="south" />
+		<attribute key="floorchange" value="southalt" />
 	</item>
 	<item id="7925" name="stone stairs">
-		<attribute key="floorchange" value="east" />
+		<attribute key="floorchange" value="eastalt" />
 	</item>
 	<item id="7926" name="dead troll" article="a">
 		<attribute key="containerSize" value="7" />
