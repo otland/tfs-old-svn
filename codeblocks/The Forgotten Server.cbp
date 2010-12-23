@@ -100,6 +100,8 @@
 		<Unit filename="..\fileloader.h" />
 		<Unit filename="..\game.cpp" />
 		<Unit filename="..\game.h" />
+		<Unit filename="..\globalevent.cpp" />
+		<Unit filename="..\globalevent.h" />
 		<Unit filename="..\gui.cpp" />
 		<Unit filename="..\gui.h" />
 		<Unit filename="..\house.cpp" />
