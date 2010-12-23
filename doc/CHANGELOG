@@ -22,24 +22,40 @@
 
 	M The Forgotten Server.exe
 	M config.lua
-	M data/global.lua
-	M data/items/items.xml
-	M data/items/items.otb
-	M data/monsters/monsters.xml
-	D data/monsters/beholder.xml
-	A data/monsters/bonelord.xml
-	M data/spells/spells.xml
-	D data/spells/scripts/summon/undead legion.lua
-	M data/talkactions/talkactions.xml
-	M data/talkactions/scripts/changesex.lua
-	D data/talkactions/scripts/addons.lua
-	A data/XML/mounts.xml
-	M data/XML/outfits.xml
+	  data/
+	M	global.lua
+	A	globalevents/
+	A		globalevents.xml
+	A		lib/
+	A			globalevents.lua
+	A		scripts/
+	A			record.lua
+		items/
+	M		items.xml
+	M		items.otb
+		monsters/
+	D		beholder.xml
+	A		bonelord.xml
+	M		monsters.xml
+		spells/
+	M		spells.xml
+	D		scripts/summon/undead legion.lua
+		talkactions/
+	M		talkactions.xml
+			scripts/
+	D			addons.lua
+	M			changesex.lua
+		XML/
+	A		mounts.xml
+	M		outfits.xml
 ]
 
 [ Milestone
 	Protocol 8.7 support.
 	Mounts system with mounts.xml.
 	Spell groups with the new cooldown system.
+	Global events (ported from 0.3).
+	Extended 0.3 compatibility support.
+	New configurable option: bindOnlyGlobalAddress. Default: "no". It will only bind the IP specified in config.lua for the the server if it is set to "yes", this allows you to run multiple servers on same computer with different IP-addresses but on the same port.
 	A lot of miscellaneous cleanups, formating, improvements and fixes.
 ]

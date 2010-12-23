@@ -65,6 +65,7 @@ class ConfigManager
 			FREE_MEMORY_AT_SHUTDOWN,
 			ANIMATION_TEXT_ON_HEAL,
 			ALLOW_CLONES,
+			BIND_ONLY_GLOBAL_ADDRESS,
 			LAST_BOOLEAN_CONFIG /* this must be the last one */
 		};
 

@@ -39,6 +39,7 @@
 
 	-- Connection Config
 	ip = "127.0.0.1"
+	bindOnlyGlobalAddress = "no"
 	loginProtocolPort = 7171
 	gameProtocolPort = 7172
 	adminProtocolPort = 7171

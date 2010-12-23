@@ -340,7 +340,7 @@ void mainLoader(ServiceManager* service_manager)
 	else if(sqlType == "sqlite")
 	{
 		g_config.setNumber(ConfigManager::SQLTYPE, SQL_TYPE_SQLITE);
-		std::cout << "SqLite." << std::endl;
+		std::cout << "SQLite." << std::endl;
 		FILE* sqliteFile = fopen(g_config.getString(ConfigManager::SQLITE_DB).c_str(), "r");
 		if(sqliteFile == NULL)
 			startupErrorMessage("Failed to connect to sqlite database file, make sure it exists and is readable.");
@@ -354,7 +354,7 @@ void mainLoader(ServiceManager* service_manager)
 	if(!db->connect())
 		startupErrorMessage("Failed to connect to database, read doc/MYSQL_HELP for information or try SqLite which doesn't require any connection.");
 	#elif defined __USE_SQLITE__
-	std::cout << "SqLite." << std::endl;
+	std::cout << "SQLite." << std::endl;
 	FILE* sqliteFile = fopen(g_config.getString(ConfigManager::SQLITE_DB).c_str(), "r");
 	if(sqliteFile == NULL)
 		startupErrorMessage("Failed to connect to sqlite database file, make sure it exists and is readable.");
@@ -489,7 +489,7 @@ void mainLoader(ServiceManager* service_manager)
 	if(!g_game.loadMap(g_config.getString(ConfigManager::MAP_NAME)))
 		startupErrorMessage("");
 
-	std::cout << ">> Setting gamestate to: GAME_STATE_INIT" << std::endl;
+	std::cout << ">> Initializing gamestate" << std::endl;
 	g_game.setGameState(GAME_STATE_INIT);
 
 	// Tibia protocols

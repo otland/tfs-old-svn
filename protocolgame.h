@@ -135,6 +135,8 @@ class ProtocolGame : public Protocol
 
 		void parseToggleMount(NetworkMessage& msg);
 
+		void parseRuleViolationReport(NetworkMessage& msg);
+
 		//trade methods
 		void parseRequestTrade(NetworkMessage& msg);
 		void parseLookInTrade(NetworkMessage& msg);

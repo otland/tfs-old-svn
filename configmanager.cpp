@@ -76,6 +76,8 @@ bool ConfigManager::loadFile(const std::string& _filename)
 		m_confString[SQL_TYPE] = getGlobalString(L, "sqlType", "sqlite");
 		m_confInteger[SQLTYPE] = SQL_TYPE_NONE;
 		#endif
+
+		m_confBoolean[BIND_ONLY_GLOBAL_ADDRESS] = (getGlobalString(L, "bindOnlyGlobalAddress", "no") == "yes");
 	}
 
 	m_confBoolean[FREE_MEMORY_AT_SHUTDOWN] = (getGlobalString(L, "freeMemoryAtShutdown", "yes") == "yes");

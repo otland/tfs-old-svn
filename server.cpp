@@ -23,6 +23,9 @@
 #include "server.h"
 #include "connection.h"
 #include "scheduler.h"
+#include "configmanager.h"
+
+extern ConfigManager g_config;
 
 ServiceManager::ServiceManager()
 	: m_io_service(), death_timer(m_io_service), running(false)
@@ -190,12 +193,7 @@ Protocol* ServicePort::make_protocol(bool checksummed, NetworkMessage& msg) cons
 		if(protocolID != service->get_protocol_identifier())
 			continue;
 
-		if(checksummed)
-		{
-			if(service->is_checksummed())
-				return service->make_protocol(Connection_ptr());
-		}
-		else if(!service->is_checksummed())
+		if((checksummed && service->is_checksummed()) || !service->is_checksummed())
 			return service->make_protocol(Connection_ptr());
 	}
 	return NULL;
@@ -224,8 +222,16 @@ void ServicePort::open(uint16_t port)
 
 	try
 	{
-		m_acceptor = new boost::asio::ip::tcp::acceptor(m_io_service, boost::asio::ip::tcp::endpoint(
-			boost::asio::ip::address(boost::asio::ip::address_v4(INADDR_ANY)), m_serverPort));
+		if(g_config.getBoolean(ConfigManager::BIND_ONLY_GLOBAL_ADDRESS))
+		{
+			m_acceptor = new boost::asio::ip::tcp::acceptor(m_io_service, boost::asio::ip::tcp::endpoint(
+				boost::asio::ip::address(boost::asio::ip::address_v4::from_string(g_config.getString(ConfigManager::IP))), m_serverPort));
+		}
+		else
+		{
+			m_acceptor = new boost::asio::ip::tcp::acceptor(m_io_service, boost::asio::ip::tcp::endpoint(
+				boost::asio::ip::address(boost::asio::ip::address_v4(INADDR_ANY)), m_serverPort));
+		}
 		accept();
 	}
 	catch(boost::system::system_error& e)

@@ -774,6 +774,10 @@ void ProtocolGame::parsePacket(NetworkMessage &msg)
 				parseQuestLine(msg);
 				break;
 
+			case 0xF2:
+				parseRuleViolationReport(msg);
+				break;
+
 			default:
 				std::cout << "Player: " << player->getName() << " sent an unknown packet header: 0x" << std::hex << (int16_t)recvbyte << std::dec << "!" << std::endl;
 				break;
@@ -1474,6 +1478,11 @@ void ProtocolGame::parseQuestLine(NetworkMessage& msg)
 		if(quest)
 			quest->getMissionList(player, _msg);
 	}
+}
+
+void ProtocolGame::parseRuleViolationReport(NetworkMessage& msg)
+{
+	// TODO
 }
 
 //********************** Send methods *******************************//
