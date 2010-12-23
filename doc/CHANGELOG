@@ -39,7 +39,11 @@
 	M		monsters.xml
 		spells/
 	M		spells.xml
-	D		scripts/summon/undead legion.lua
+			scripts/
+				summon/
+	D				undead legion.lua
+				support/
+	M				haste.lua
 		talkactions/
 	M		talkactions.xml
 			scripts/
