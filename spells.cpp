@@ -634,24 +634,30 @@ bool Spell::checkSpell(Player* player) const
 		}
 	}
 
-	
-	if(player->hasExhaustion(getId()) && !player->hasFlag(PlayerFlag_HasNoExhaustion))
+	if(!player->hasFlag(PlayerFlag_HasNoExhaustion))
 	{
-		player->sendCancelMessage(RET_YOUAREEXHAUSTED);
-		if(isInstant())
-			g_game.addMagicEffect(player->getPosition(), MAGIC_EFFECT_POFF);
+		bool exhausted = player->hasExhaustion(getId());
+		if(!exhausted)
+		{
+			for(SpellGroup::const_iterator it = groupExhaustions.begin(); it != groupExhaustions.end(); it++)
+			{
+				if(!player->hasCondition(CONDITION_SPELLGROUPCOOLDOWN, it->first))
+					continue;
 
-		return false;
-	}
+				exhausted = true;
+				break;
+			}
+		}
 
-	for(SpellGroup::const_iterator it = groupExhaustions.begin(); it != groupExhaustions.end(); it++)
-		if(player->hasCondition((ConditionType_t)(1 << (20 + it->first)))) {
+		if(exhausted)
+		{
 			player->sendCancelMessage(RET_YOUAREEXHAUSTED);
 			if(isInstant())
 				g_game.addMagicEffect(player->getPosition(), MAGIC_EFFECT_POFF);
 
-			return false;			
+			return false;
 		}
+	}
 
 	if(isPremium() && !player->isPremium())
 	{
@@ -980,16 +986,23 @@ bool Spell::checkRuneSpell(Player* player, const Position& toPos)
 
 void Spell::postSpell(Player* player) const
 {
-	if(!player->hasFlag(PlayerFlag_HasNoExhaustion) && exhaustion > 0) {
-		for(std::map<SpellGroup_t, uint32_t>::const_iterator it = groupExhaustions.begin(); it != groupExhaustions.end(); it++) {
-			player->addSpellExhaust(it->first, it->second); 
-			player->sendSpellCooldown(uint16_t(it->first), it->second, true); 
+	if(!player->hasFlag(PlayerFlag_HasNoExhaustion))
+	{
+		for(std::map<SpellGroup_t, uint32_t>::const_iterator it = groupExhaustions.begin(); it != groupExhaustions.end(); it++)
+		{
+			if(it->second <= 0)
+				continue;
+
+			player->addCondition(Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_SPELLGROUPCOOLDOWN, it->second, 0, false, it->first));
+			player->sendSpellCooldown(uint16_t(it->first), it->second, true);
 		}
 
-		player->setExhaustion(getExhaustion(), getId());
-		player->sendSpellCooldown(uint16_t(getIcon()), getExhaustion(), false); 
+		if(exhaustion > 0)
+		{
+			player->setExhaustion(getExhaustion(), getId());
+			player->sendSpellCooldown(uint16_t(getIcon()), getExhaustion(), false);
+		}
 	}
-
 
 	if(isAggressive && !player->hasFlag(PlayerFlag_NotGainInFight))
 		player->addInFightTicks(false);

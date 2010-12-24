@@ -2338,12 +2338,6 @@ void Player::addExhaust(uint32_t ticks)
 		CONDITION_EXHAUST, ticks, 0, false))
 		addCondition(condition);
 }
-void Player::addSpellExhaust(SpellGroup_t group, uint32_t ticks)
-{
-	if(Condition* condition = Condition::createCondition(CONDITIONID_DEFAULT,
-		(ConditionType_t)(1 << (20 + group)), ticks, 0, false))
-		addCondition(condition);
-}
 
 void Player::addInFightTicks(bool pzLock, int32_t ticks/* = 0*/)
 {

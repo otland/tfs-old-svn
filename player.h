@@ -475,7 +475,6 @@ class Player : public Creature, public Cylinder
 		virtual float getDefenseFactor() const;
 
 		void addExhaust(uint32_t ticks);
-		void addSpellExhaust(SpellGroup_t group, uint32_t ticks);
 		void addInFightTicks(bool pzLock, int32_t ticks = 0);
 		void addDefaultRegeneration(uint32_t addTicks);
 
