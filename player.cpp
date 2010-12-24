@@ -4812,7 +4812,7 @@ bool Player::tameMount(uint8_t mountId)
 	if(getStorageValue(key, value))
 		value |= (int32_t)pow(2, mountId % 31);
 	else
-		value = pow(2, mountId % 31);
+		value = (int32_t)pow(2, mountId % 31);
 
 	addStorageValue(key, value);
 	return true;
