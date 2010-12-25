@@ -44,6 +44,7 @@
 #include "chat.h"
 #include "quests.h"
 #include "mounts.h"
+#include "globalevent.h"
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
 #include "outputmessage.h"
 #include "connection.h"
@@ -65,6 +66,7 @@ extern Weapons* g_weapons;
 extern Game g_game;
 extern Chat g_chat;
 extern CreatureEvents* g_creatureEvents;
+extern GlobalEvents* g_globalEvents;
 
 s_defcommands Commands::defined_commands[] =
 {
@@ -589,6 +591,11 @@ void Commands::reloadInfo(Player* player, const std::string& cmd, const std::str
 	{
 		Mounts::getInstance()->reload();
 		player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, "Reloaded mounts.");
+	}
+	else if(tmpParam == "globalevents" || tmpParam == "globalevent" || tmpParam == "ge")
+	{
+		g_globalEvents->reload();
+		player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, "Reloaded globalevents.");
 	}
 	else
 		player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, "Reload type not found.");

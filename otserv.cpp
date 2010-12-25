@@ -822,6 +822,16 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 					}
 					break;
 
+				case ID_MENU_GAME_RELOAD_GLOBALEVENTS:
+					if(g_game.getGameState() != GAME_STATE_STARTUP)
+					{
+						if(g_globalEvents->reload())
+							std::cout << "Reloaded globalevents." << std::endl;
+						else
+							std::cout << "Failed to reload globalevents." << std::endl;
+					}
+					break;
+
 				case ID_MENU_GAME_RELOAD_RELOADALL:
 					if(g_game.getGameState() == GAME_STATE_STARTUP)
 						break;
