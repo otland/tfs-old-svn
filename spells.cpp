@@ -636,7 +636,7 @@ bool Spell::checkSpell(Player* player) const
 
 	if(!player->hasFlag(PlayerFlag_HasNoExhaustion))
 	{
-		bool exhausted = player->hasExhaustion(getId());
+		bool exhausted = player->hasCondition(CONDITION_SPELLCOOLDOWN, spellId);
 		if(!exhausted)
 		{
 			for(SpellGroup::const_iterator it = groupExhaustions.begin(); it != groupExhaustions.end(); it++)
@@ -999,8 +999,8 @@ void Spell::postSpell(Player* player) const
 
 		if(exhaustion > 0)
 		{
-			player->setExhaustion(getExhaustion(), getId());
-			player->sendSpellCooldown(uint16_t(getIcon()), getExhaustion(), false);
+			player->addCondition(Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_SPELLCOOLDOWN, exhaustion, 0, false, spellId));
+			player->sendSpellCooldown(uint16_t(icon), exhaustion, false);
 		}
 	}
 

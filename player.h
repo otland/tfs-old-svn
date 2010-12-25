@@ -589,10 +589,6 @@ class Player : public Creature, public Cylinder
 		bool untameMount(uint8_t mountId);
 		int64_t getLastMountStatusChange() const {return lastMountStatusChange; }
 
-		//cooldown
-		void setExhaustion(uint16_t spellId, uint32_t exhaustion) {exhaustionMap[spellId] = int64_t(exhaustion) + OTSYS_TIME();}
-		bool hasExhaustion(uint16_t spellId) {return (exhaustionMap[spellId] > OTSYS_TIME());}
-
 		//event methods
 		virtual void onUpdateTileItem(const Tile* tile, const Position& pos, const Item* oldItem,
 			const ItemType& oldType, const Item* newItem, const ItemType& newType);
@@ -944,7 +940,6 @@ class Player : public Creature, public Cylinder
 #ifdef __WAR_SYSTEM__
 		WarMap warMap;
 #endif
-		std::map<uint16_t, int64_t> exhaustionMap;
 		friend class Game;
 		friend class LuaInterface;
 		friend class Npc;
