@@ -23,7 +23,10 @@ bool Mount::isTamed(Player* player) const
 	if(!player)
 		return false;
 
-	// TODO: Flags
+	if(player->hasCustomFlag(PlayerCustomFlag_CanUseAllMounts))
+		return true;
+
+
 	uint8_t tmpId = id - 1;
 
 	std::string value = "";
