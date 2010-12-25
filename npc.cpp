@@ -254,6 +254,9 @@ bool Npc::loadFromXml(const std::string& filename)
 				else if(readXMLInteger(p, "typeex", intValue))
 					defaultOutfit.lookTypeEx = intValue;
 
+				if(readXMLInteger(p, "mount", intValue))
+					defaultOutfit.lookMount = intValue;
+
 				currentOutfit = defaultOutfit;
 			}
 			else if(xmlStrcmp(p->name, (const xmlChar*)"parameters") == 0)

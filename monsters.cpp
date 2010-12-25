@@ -68,6 +68,7 @@ void MonsterType::reset()
 	outfit.lookType = 0;
 	outfit.lookTypeEx = 0;
 	outfit.lookAddons = 0;
+	outfit.lookMount = 0;
 	lookcorpse = 0;
 
 	conditionImmunities = 0;
@@ -988,6 +989,9 @@ bool Monsters::loadMonster(const std::string& file, const std::string& monster_n
 					mType->outfit.lookTypeEx = intValue;
 				else
 					SHOW_XML_WARNING("Missing look type/typeex");
+
+				if(readXMLInteger(p, "mount", intValue))
+					mType->outfit.lookMount = intValue;
 
 				if(readXMLInteger(p, "corpse", intValue))
 					mType->lookcorpse = intValue;
