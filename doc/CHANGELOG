@@ -3,13 +3,13 @@
 		The Forgotten Server
 
 	Version
-		0.2.9
+		0.2.10
 
 	Codenamed
 		"Mystic Spirit"
 
 	License
-		GNU GPLv3
+		GNU GPLv2
 
 	Forum
 		http://otland.net/
@@ -21,45 +21,13 @@
 	A = Added.
 
 	M The Forgotten Server.exe
-	M config.lua
 	  data/
-	M	global.lua
-	A	globalevents/
-	A		globalevents.xml
-	A		lib/
-	A			globalevents.lua
-	A		scripts/
-	A			record.lua
-		items/
-	M		items.xml
-	M		items.otb
+	M	items/items.xml
 		monsters/
-	D		beholder.xml
-	A		bonelord.xml
+	D		elderbeholder.xml
+	A		elderbonelord.xml
 	M		monsters.xml
-		spells/
-	M		spells.xml
-			scripts/
-				summon/
-	D				undead legion.lua
-				support/
-	M				haste.lua
-		talkactions/
-	M		talkactions.xml
-			scripts/
-	D			addons.lua
-	M			changesex.lua
-		XML/
-	A		mounts.xml
-	M		outfits.xml
 ]
 
 [ Milestone
-	Protocol 8.7 support.
-	Mounts system with mounts.xml.
-	Spell groups with the new cooldown system.
-	Global events (ported from 0.3).
-	Extended 0.3 compatibility support.
-	New configurable option: bindOnlyGlobalAddress. Default: "no". It will only bind the IP specified in config.lua for the the server if it is set to "yes", this allows you to run multiple servers on same computer with different IP-addresses but on the same port.
-	A lot of miscellaneous cleanups, formating, improvements and fixes.
 ]

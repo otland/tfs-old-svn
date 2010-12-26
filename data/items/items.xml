@@ -3892,7 +3892,7 @@
 		<attribute key="defense" value="33" />
 		<attribute key="weaponType" value="shield" />
 	</item>
-	<item id="2518" name="beholder shield" article="a">
+	<item id="2518" name="bonelord shield" article="a">
 		<attribute key="weight" value="4700" />
 		<attribute key="defense" value="28" />
 		<attribute key="weaponType" value="shield" />
@@ -5244,20 +5244,20 @@
 		<attribute key="duration" value="600" />
 		<attribute key="corpseType" value="blood" />
 	</item>
-	<item id="2908" name="dead beholder" article="a">
+	<item id="2908" name="dead bonelord" article="a">
 		<attribute key="containerSize" value="15" />
 		<attribute key="decayTo" value="2909" />
 		<attribute key="duration" value="600" />
 		<attribute key="corpseType" value="venom" />
 		<attribute key="fluidSource" value="slime" />
 	</item>
-	<item id="2909" name="dead beholder" article="a">
+	<item id="2909" name="dead bonelord" article="a">
 		<attribute key="containerSize" value="15" />
 		<attribute key="decayTo" value="2910" />
 		<attribute key="duration" value="600" />
 		<attribute key="corpseType" value="venom" />
 	</item>
-	<item id="2910" name="dead beholder" article="a">
+	<item id="2910" name="dead bonelord" article="a">
 		<attribute key="decayTo" value="0" />
 		<attribute key="duration" value="600" />
 		<attribute key="corpseType" value="venom" />
@@ -6121,19 +6121,19 @@
 		<attribute key="duration" value="600" />
 		<attribute key="corpseType" value="blood" />
 	</item>
-	<item id="3052" name="dead beholder" article="a">
+	<item id="3052" name="dead bonelord" article="a">
 		<attribute key="containerSize" value="10" />
 		<attribute key="decayTo" value="3053" />
 		<attribute key="duration" value="600" />
 		<attribute key="corpseType" value="venom" />
 		<attribute key="fluidSource" value="slime" />
 	</item>
-	<item id="3053" name="dead beholder" article="a">
+	<item id="3053" name="dead bonelord" article="a">
 		<attribute key="decayTo" value="3054" />
 		<attribute key="duration" value="600" />
 		<attribute key="corpseType" value="venom" />
 	</item>
-	<item id="3054" name="dead elder beholder" article="a">
+	<item id="3054" name="dead elder bonelord" article="a">
 		<attribute key="decayTo" value="0" />
 		<attribute key="duration" value="600" />
 		<attribute key="corpseType" value="venom" />
@@ -7229,7 +7229,7 @@
 		<attribute key="armor" value="2" />
 		<attribute key="slotType" value="head" />
 	</item>
-	<item id="3972" name="beholder helmet" article="a">
+	<item id="3972" name="bonelord helmet" article="a">
 		<attribute key="weight" value="4600" />
 		<attribute key="armor" value="7" />
 		<attribute key="slotType" value="head" />
@@ -9160,7 +9160,7 @@
 	<item id="5897" name="wolf paw" article="a">
 		<attribute key="weight" value="80" />
 	</item>
-	<item id="5898" name="beholder eye" article="a">
+	<item id="5898" name="bonelord eye" article="a">
 		<attribute key="description" value="You could swear it just winked at you." />
 		<attribute key="weight" value="500" />
 	</item>
@@ -9594,7 +9594,7 @@
 		<attribute key="corpseType" value="blood" />
 		<attribute key="fluidSource" value="blood" />
 	</item>
-	<item id="5992" name="dead beholder" article="a">
+	<item id="5992" name="dead bonelord" article="a">
 		<attribute key="containerSize" value="15" />
 		<attribute key="decayTo" value="2908" />
 		<attribute key="duration" value="10" />
@@ -9895,7 +9895,7 @@
 		<attribute key="corpseType" value="blood" />
 		<attribute key="fluidSource" value="blood" />
 	</item>
-	<item id="6037" name="dead elder beholder" article="a">
+	<item id="6037" name="dead elder bonelord" article="a">
 		<attribute key="containerSize" value="10" />
 		<attribute key="decayTo" value="3052" />
 		<attribute key="duration" value="10" />
@@ -18432,7 +18432,7 @@
 	<item id="11192" name="carrion worm fang">
 		<attribute key="weight" value="88" />
 	</item>
-	<item id="11193" name="elder beholder tentacle">
+	<item id="11193" name="elder bonelord tentacle">
 		<attribute key="weight" value="75" />
 	</item>
 	<item id="11194" name="bony tail">

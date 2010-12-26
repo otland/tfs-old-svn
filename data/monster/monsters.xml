@@ -49,7 +49,8 @@
 	<monster name="Dworc Venomsniper" file="dworcvenomsniper.xml"/>
 	<monster name="Dworc Voodoomaster" file="dworcvoodoomaster.xml"/>
 	<monster name="Efreet" file="efreet.xml"/>
-	<monster name="Elder Beholder" file="elderbeholder.xml"/>
+	<monster name="Elder Beholder" file="elderbonelord.xml"/>
+	<monster name="Elder Bonelord" file="elderbonelord.xml"/>
 	<monster name="Elephant" file="elephant.xml"/>
 	<monster name="Elf" file="elf.xml"/>
 	<monster name="Elf Arcanist" file="elfarcanist.xml"/>

@@ -592,7 +592,7 @@ void Commands::reloadInfo(Player* player, const std::string& cmd, const std::str
 		Mounts::getInstance()->reload();
 		player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, "Reloaded mounts.");
 	}
-	else if(tmpParam == "globalevents" || tmpParam == "globalevent" || tmpParam == "ge")
+	else if(tmpParam == "globalevents" || tmpParam == "globalevent")
 	{
 		g_globalEvents->reload();
 		player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, "Reloaded globalevents.");
