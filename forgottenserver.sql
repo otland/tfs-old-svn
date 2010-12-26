@@ -268,6 +268,13 @@ CREATE TABLE `tile_items`
 	INDEX (`sid`)
 ) ENGINE = InnoDB;
 
+CREATE TABLE `tile_store`
+(
+	`house_id` INT(11) NOT NULL,
+	`data` LONGBLOB NOT NULL,
+	FOREIGN KEY (`house_id`) REFERENCES `houses` (`id`) ON DELETE CASCADE
+) ENGINE = InnoDB;
+
 DELIMITER |
 
 CREATE TRIGGER `ondelete_accounts`
