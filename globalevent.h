@@ -22,7 +22,7 @@
 
 #include "const.h"
 
-#define TIMER_INTERVAL 10
+#define TIMER_INTERVAL 1000
 
 enum GlobalEvent_t
 {
@@ -62,6 +62,7 @@ class GlobalEvents : public BaseEvents
 		LuaScriptInterface m_scriptInterface;
 
 		GlobalEventMap thinkMap, serverMap, timerMap;
+		int32_t thinkEventId, timerEventId;
 };
 
 class GlobalEvent : public Event
@@ -83,12 +84,16 @@ class GlobalEvent : public Event
 		int64_t getLastExecution() const {return m_lastExecution;}
 		void setLastExecution(int64_t time) {m_lastExecution = time;}
 
+		time_t getNextExecution() const {return m_nextExecution;}
+		void setNextExecution(time_t time) {m_nextExecution = time;}
+
 	protected:
 		GlobalEvent_t m_eventType;
 
 		virtual std::string getScriptEventName();
 
 		std::string m_name;
+		time_t m_nextExecution;
 		int64_t m_lastExecution;
 		uint32_t m_interval;
 };
