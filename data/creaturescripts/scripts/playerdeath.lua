@@ -10,12 +10,12 @@ function onDeath(cid, corpse, killer)
 			env = luasql.sqlite3()
 			sql = env:connect(sqliteDatabase)
 		end
-		local byPlayer = FALSE
+		local byPlayer = 0
 		if killer == FALSE then
 			killerName = "field item"
 		else
 			if isPlayer(killer) == TRUE then
-				byPlayer = TRUE
+				byPlayer = 1
 			end
 			killerName = getCreatureName(killer)
 		end
@@ -32,7 +32,7 @@ function onDeath(cid, corpse, killer)
 				delete = sql:execute("DELETE FROM `player_deaths` WHERE `rowid` = (SELECT `rowid` FROM `player_deaths` WHERE `player_id` = " .. getPlayerGUID(cid) .. " ORDER BY `time` LIMIT 1);")
 				deathRecords = deathRecords - 1
 			end
-		end			
+		end
 		sql:close()
 		env:close()
 	end
