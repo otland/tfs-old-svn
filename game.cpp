@@ -360,8 +360,6 @@ void Game::cleanMapEx(uint32_t& count)
 						++tit;
 				}
 			}
-
-			trash.clear();
 		}
 		else
 		{
@@ -391,9 +389,8 @@ void Game::cleanMapEx(uint32_t& count)
 						++tit;
 				}
 			}
-
-			trash.clear();
 		}
+		trash.clear();
 	}
 	else if(g_config.getBool(ConfigManager::CLEAN_PROTECTED_ZONES))
 	{
