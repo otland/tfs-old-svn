@@ -490,15 +490,15 @@ bool Spell::configureSpell(xmlNodePtr p)
 	if(readXMLString(p, "secondarygroup", strValue))
 	{
 		std::string tmpStr = asLowerCaseString(strValue);
-		if(tmpStr == "none")
+		if(tmpStr == "none" || tmpStr == "0")
 			secondaryGroup = SPELLGROUP_NONE;
-		else if(tmpStr == "attack")
+		else if(tmpStr == "attack" || tmpStr == "1")
 			secondaryGroup = SPELLGROUP_ATTACK;
-		else if(tmpStr == "healing")
+		else if(tmpStr == "healing" || tmpStr == "2")
 			secondaryGroup = SPELLGROUP_HEALING;
-		else if(tmpStr == "support")
+		else if(tmpStr == "support" || tmpStr == "3")
 			secondaryGroup = SPELLGROUP_SUPPORT;
-		else if(tmpStr == "special")
+		else if(tmpStr == "special" || tmpStr == "4")
 			secondaryGroup = SPELLGROUP_SPECIAL;
 		else
 			std::cout << "[Warning - Spell::configureSpell] Unknown secondarygroup: " << strValue << std::endl;
