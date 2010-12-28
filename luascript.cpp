@@ -2477,7 +2477,7 @@ int32_t LuaScriptInterface::luaDoTeleportThing(lua_State* L)
 
 	bool pushMovement = false;
 	if(parameters > 2)
-		pushMovement = popNumber(L) == 1;
+		pushMovement = popBoolean(L);
 
 	PositionEx pos;
 	popPosition(L, pos);
