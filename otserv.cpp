@@ -147,7 +147,18 @@ void mainLoader(
 #endif
 	ServiceManager* servicer
 );
-void badAllocationHandler();
+void badAllocationHandler()
+{
+	// Use functions that only use stack allocation
+	puts("Allocation failed, server out of memory.\nDecrese the size of your map or compile in 64 bits mode.");
+	char buf[1024];
+	if(fgets(buf, 1024, stdin))
+	{
+		exit(-1);
+		return;
+	}
+	exit(-1);
+}
 
 #ifndef __CONSOLE__
 void serverMain(void* param)
@@ -227,15 +238,6 @@ int main(int argc, char *argv[])
 #else
 	return 0;
 #endif
-}
-
-void badAllocationHandler()
-{
-	// Use functions that only use stack allocation
-	puts("Allocation failed, server out of memory.\nDecrese the size of your map or compile in 64-bit mode.");
-	char buf[1024];
-	fgets(buf, 1024, stdin);
-	exit(-1);
 }
 
 #ifdef __CONSOLE__
