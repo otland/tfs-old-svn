@@ -635,10 +635,10 @@ void otserv(StringVec, ServiceManager* services)
 	if(!Outfits::getInstance()->loadFromXml())
 		startupErrorMessage("Unable to load outfits!");
 
-	std::clog << ">> Loading outfits" << std::endl;
+	std::clog << ">> Loading mounts" << std::endl;
 	if(!Mounts::getInstance()->loadFromXml())
 		startupErrorMessage("Unable to load mounts!");
-		
+
 	std::clog << ">> Loading chat channels" << std::endl;
 	if(!g_chat.loadFromXml())
 		startupErrorMessage("Unable to load chat channels!");
