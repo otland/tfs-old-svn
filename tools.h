@@ -63,8 +63,11 @@ bool readXMLFloat(xmlNodePtr node, const char* tag, float& value);
 bool readXMLString(xmlNodePtr node, const char* tag, std::string& value);
 bool readXMLContentString(xmlNodePtr node, std::string& value);
 
-std::vector<std::string> explodeString(const std::string& inString, const std::string& separator, int32_t limit = -1);
-std::vector<int32_t> vectorAtoi(std::vector<std::string> stringVector);
+typedef std::vector<std::string> StringVec;
+typedef std::vector<int32_t> IntegerVec;
+
+StringVec explodeString(const std::string& inString, const std::string& separator, int32_t limit = -1);
+IntegerVec  vectorAtoi(std::vector<std::string> stringVector);
 bool hasBitSet(uint32_t flag, uint32_t flags);
 
 std::string generateRecoveryKey(int32_t fieldCount, int32_t fieldLength);
