@@ -1078,19 +1078,23 @@ void ProtocolGame::parseOpenPriv(NetworkMessage& msg)
 
 void ProtocolGame::parseProcessRuleViolation(NetworkMessage& msg)
 {
-	const std::string reporter = msg.getString();
+	/*const std::string reporter = msg.getString();
 	addGameTask(&Game::playerProcessRuleViolation, player->getID(), reporter);
+	*/
 }
 
 void ProtocolGame::parseCloseRuleViolation(NetworkMessage& msg)
 {
-	const std::string reporter = msg.getString();
+	/*const std::string reporter = msg.getString();
 	addGameTask(&Game::playerCloseRuleViolation, player->getID(), reporter);
+	*/
 }
 
 void ProtocolGame::parseCancelRuleViolation(NetworkMessage&)
 {
+	/*
 	addGameTask(&Game::playerCancelRuleViolation, player->getID());
+	*/
 }
 
 void ProtocolGame::parseCloseNpc(NetworkMessage&)
