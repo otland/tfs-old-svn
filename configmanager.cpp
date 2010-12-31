@@ -41,6 +41,7 @@ bool ConfigManager::loadFile(const std::string& _filename)
 
 	if(luaL_dofile(L, _filename.c_str()))
 	{
+		std::clog << "[Error - ConfigManager::loadFile] With file = " << _filename << ", " << lua_tostring(L, -1) << std::endl;
 		lua_close(L);
 		return false;
 	}
