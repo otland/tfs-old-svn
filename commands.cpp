@@ -1202,7 +1202,7 @@ void Commands::createGuild(Player* player, const std::string& cmd, const std::st
 
 void Commands::ban(Player* player, const std::string& cmd, const std::string& param)
 {
-	std::vector<std::string> exploded = explodeString(param, ", ", 4);
+	StringVec exploded = explodeString(param, ", ", 4);
 	if(!exploded.size() || exploded.size() < 5)
 	{
 		player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, "Not enough params.");

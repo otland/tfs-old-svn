@@ -41,6 +41,7 @@
 			<Add option="-lmysql" />
 			<Add option="-lsqlite3" />
 			<Add option="-lgmp" />
+			<Add option="-lboost_thread" />
 			<Add option="-liconv" />
 			<Add option="-lwsock32" />
 			<Add option="-lluajitsql_sqlite3.dll" />
