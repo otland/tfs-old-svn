@@ -1076,14 +1076,14 @@ void ProtocolGame::parseOpenPriv(NetworkMessage& msg)
 	addGameTask(&Game::playerOpenPrivateChannel, player->getID(), receiver);
 }
 
-void ProtocolGame::parseProcessRuleViolation(NetworkMessage& msg)
+void ProtocolGame::parseProcessRuleViolation(NetworkMessage&)
 {
 	/*const std::string reporter = msg.getString();
 	addGameTask(&Game::playerProcessRuleViolation, player->getID(), reporter);
 	*/
 }
 
-void ProtocolGame::parseCloseRuleViolation(NetworkMessage& msg)
+void ProtocolGame::parseCloseRuleViolation(NetworkMessage&)
 {
 	/*const std::string reporter = msg.getString();
 	addGameTask(&Game::playerCloseRuleViolation, player->getID(), reporter);
