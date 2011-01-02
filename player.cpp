@@ -5191,7 +5191,7 @@ void Player::dismount()
 {
 	if(isMounted()) {
 		if(!mount) {
-			player->sendCancel("No mount");
+			this->sendCancel("No mount");
 			return;
 		}
 		Mount* myMount = Mounts::getInstance()->getMountById(mount);
