@@ -54,24 +54,25 @@ CREATE TABLE `players`
 (
 	`id` INT NOT NULL AUTO_INCREMENT,
 	`name` VARCHAR(255) NOT NULL,
-	`world_id` TINYINT(2) UNSIGNED NOT NULL DEFAULT 0,
+	`world_id` TINYINT(4) UNSIGNED NOT NULL DEFAULT 0,
 	`group_id` INT NOT NULL DEFAULT 1,
 	`account_id` INT NOT NULL DEFAULT 0,
 	`level` INT NOT NULL DEFAULT 1,
 	`vocation` INT NOT NULL DEFAULT 0,
 	`health` INT NOT NULL DEFAULT 150,
 	`healthmax` INT NOT NULL DEFAULT 150,
-	`experience` BIGINT NOT NULL DEFAULT 0,
+	`experience` BIGINT UNSIGNED NOT NULL DEFAULT 0,
 	`lookbody` INT NOT NULL DEFAULT 0,
 	`lookfeet` INT NOT NULL DEFAULT 0,
 	`lookhead` INT NOT NULL DEFAULT 0,
 	`looklegs` INT NOT NULL DEFAULT 0,
 	`looktype` INT NOT NULL DEFAULT 136,
 	`lookaddons` INT NOT NULL DEFAULT 0,
+	`currmount` INT NOT NULL DEFAULT 0, 
 	`maglevel` INT NOT NULL DEFAULT 0,
 	`mana` INT NOT NULL DEFAULT 0,
 	`manamax` INT NOT NULL DEFAULT 0,
-	`manaspent` INT NOT NULL DEFAULT 0,
+	`manaspent` BIGINT UNSIGNED NOT NULL DEFAULT 0,
 	`soul` INT UNSIGNED NOT NULL DEFAULT 0,
 	`town_id` INT NOT NULL DEFAULT 0,
 	`posx` INT NOT NULL DEFAULT 0,
@@ -90,7 +91,7 @@ CREATE TABLE `players`
 	`lastlogout` BIGINT UNSIGNED NOT NULL DEFAULT 0,
 	`blessings` TINYINT(2) NOT NULL DEFAULT 0,
 	`balance` BIGINT NOT NULL DEFAULT 0,
-	`stamina` BIGINT NOT NULL DEFAULT 151200000 COMMENT 'stored in miliseconds',
+	`stamina` BIGINT UNSIGNED NOT NULL DEFAULT 151200000 COMMENT 'stored in miliseconds',
 	`direction` INT NOT NULL DEFAULT 2,
 	`loss_experience` INT NOT NULL DEFAULT 100,
 	`loss_mana` INT NOT NULL DEFAULT 100,
@@ -114,7 +115,7 @@ INSERT INTO `players` VALUES (1, 'Account Manager', 0, 1, 1, 1, 0, 150, 150, 0, 
 CREATE TABLE `account_viplist`
 (
 	`account_id` INT NOT NULL,
-	`world_id` TINYINT(2) UNSIGNED NOT NULL DEFAULT 0,
+	`world_id` TINYINT(4) UNSIGNED NOT NULL DEFAULT 0,
 	`player_id` INT NOT NULL,
 	KEY (`account_id`), KEY (`player_id`), KEY (`world_id`), UNIQUE (`account_id`, `player_id`),
 	FOREIGN KEY (`account_id`) REFERENCES `accounts`(`id`) ON DELETE CASCADE,
@@ -229,7 +230,7 @@ CREATE TABLE `environment_killers`
 CREATE TABLE `houses`
 (
 	`id` INT UNSIGNED NOT NULL,
-	`world_id` TINYINT(2) UNSIGNED NOT NULL DEFAULT 0,
+	`world_id` TINYINT(4) UNSIGNED NOT NULL DEFAULT 0,
 	`owner` INT NOT NULL,
 	`paid` INT UNSIGNED NOT NULL DEFAULT 0,
 	`warnings` INT NOT NULL DEFAULT 0,
@@ -250,7 +251,7 @@ CREATE TABLE `houses`
 CREATE TABLE `house_auctions`
 (
 	`house_id` INT UNSIGNED NOT NULL,
-	`world_id` TINYINT(2) UNSIGNED NOT NULL DEFAULT 0,
+	`world_id` TINYINT(4) UNSIGNED NOT NULL DEFAULT 0,
 	`player_id` INT NOT NULL,
 	`bid` INT UNSIGNED NOT NULL DEFAULT 0,
 	`limit` INT UNSIGNED NOT NULL DEFAULT 0,
@@ -263,7 +264,7 @@ CREATE TABLE `house_auctions`
 CREATE TABLE `house_lists`
 (
 	`house_id` INT UNSIGNED NOT NULL,
-	`world_id` TINYINT(2) UNSIGNED NOT NULL DEFAULT 0,
+	`world_id` TINYINT(4) UNSIGNED NOT NULL DEFAULT 0,
 	`listid` INT NOT NULL,
 	`list` TEXT NOT NULL,
 	UNIQUE (`house_id`, `world_id`, `listid`),
@@ -273,7 +274,7 @@ CREATE TABLE `house_lists`
 CREATE TABLE `house_data`
 (
 	`house_id` INT UNSIGNED NOT NULL,
-	`world_id` TINYINT(2) UNSIGNED NOT NULL DEFAULT 0,
+	`world_id` TINYINT(4) UNSIGNED NOT NULL DEFAULT 0,
 	`data` LONGBLOB NOT NULL,
 	UNIQUE (`house_id`, `world_id`),
 	FOREIGN KEY (`house_id`, `world_id`) REFERENCES `houses`(`id`, `world_id`) ON DELETE CASCADE
@@ -282,7 +283,7 @@ CREATE TABLE `house_data`
 CREATE TABLE `tiles`
 (
 	`id` INT UNSIGNED NOT NULL,
-	`world_id` TINYINT(2) UNSIGNED NOT NULL DEFAULT 0,
+	`world_id` TINYINT(4) UNSIGNED NOT NULL DEFAULT 0,
 	`house_id` INT UNSIGNED NOT NULL,
 	`x` INT(5) UNSIGNED NOT NULL,
 	`y` INT(5) UNSIGNED NOT NULL,
@@ -295,7 +296,7 @@ CREATE TABLE `tiles`
 CREATE TABLE `tile_items`
 (
 	`tile_id` INT UNSIGNED NOT NULL,
-	`world_id` TINYINT(2) UNSIGNED NOT NULL DEFAULT 0,
+	`world_id` TINYINT(4) UNSIGNED NOT NULL DEFAULT 0,
 	`sid` INT NOT NULL,
 	`pid` INT NOT NULL DEFAULT 0,
 	`itemtype` INT NOT NULL,
@@ -308,7 +309,7 @@ CREATE TABLE `tile_items`
 CREATE TABLE `guilds`
 (
 	`id` INT NOT NULL AUTO_INCREMENT,
-	`world_id` TINYINT(2) UNSIGNED NOT NULL DEFAULT 0,
+	`world_id` TINYINT(4) UNSIGNED NOT NULL DEFAULT 0,
 	`name` VARCHAR(255) NOT NULL,
 	`ownerid` INT NOT NULL,
 	`creationdata` INT NOT NULL,
@@ -359,7 +360,7 @@ CREATE TABLE `bans`
 CREATE TABLE `global_storage`
 (
 	`key` VARCHAR(32) NOT NULL,
-	`world_id` TINYINT(2) UNSIGNED NOT NULL DEFAULT 0,
+	`world_id` TINYINT(4) UNSIGNED NOT NULL DEFAULT 0,
 	`value` VARCHAR(255) NOT NULL DEFAULT '0',
 	UNIQUE  (`key`, `world_id`)
 ) ENGINE = InnoDB;
@@ -371,12 +372,12 @@ CREATE TABLE `server_config`
 	UNIQUE (`config`)
 ) ENGINE = InnoDB;
 
-INSERT INTO `server_config` VALUES ('db_version', 26);
+INSERT INTO `server_config` VALUES ('db_version', 28);
 
 CREATE TABLE `server_motd`
 (
 	`id` INT UNSIGNED NOT NULL,
-	`world_id` TINYINT(2) UNSIGNED NOT NULL DEFAULT 0,
+	`world_id` TINYINT(4) UNSIGNED NOT NULL DEFAULT 0,
 	`text` TEXT NOT NULL,
 	UNIQUE (`id`, `world_id`)
 ) ENGINE = InnoDB;
@@ -386,7 +387,7 @@ INSERT INTO `server_motd` VALUES (1, 0, 'Welcome to The Forgotten Server!');
 CREATE TABLE `server_record`
 (
 	`record` INT NOT NULL,
-	`world_id` TINYINT(2) UNSIGNED NOT NULL DEFAULT 0,
+	`world_id` TINYINT(4) UNSIGNED NOT NULL DEFAULT 0,
 	`timestamp` BIGINT NOT NULL,
 	UNIQUE (`record`, `world_id`, `timestamp`)
 ) ENGINE = InnoDB;
@@ -396,7 +397,7 @@ INSERT INTO `server_record` VALUES (0, 0, 0);
 CREATE TABLE `server_reports`
 (
 	`id` INT NOT NULL AUTO_INCREMENT,
-	`world_id` TINYINT(2) UNSIGNED NOT NULL DEFAULT 0,
+	`world_id` TINYINT(4) UNSIGNED NOT NULL DEFAULT 0,
 	`player_id` INT NOT NULL DEFAULT 1,
 	`posx` INT NOT NULL DEFAULT 0,
 	`posy` INT NOT NULL DEFAULT 0,
