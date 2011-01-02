@@ -5172,13 +5172,14 @@ void Player::setMounted(bool doMount)
 			if(myMount)
 			{
 				mounted = true;
+				lastMountStatusChange = OTSYS_TIME();
+
 		                defaultOutfit.lookMount = myMount->getClientId();
 
 		                if(myMount->getSpeed())
 		                        g_game.changeSpeed(this, myMount->getSpeed());
 
 		                g_game.internalCreatureChangeOutfit(this, defaultOutfit);
-				lastMountStatusChange = OTSYS_TIME();
 			}
                 }
         }
@@ -5190,10 +5191,12 @@ void Player::dismount()
 {
 	if(isMounted()) {
 		Mount* myMount = Mounts::getInstance()->getMountById(mount);
+		mounted = false;
+		lastMountStatusChange = OTSYS_TIME();
+
 		if(myMount && myMount->getSpeed() > 0)
 			g_game.changeSpeed(this, -myMount->getSpeed());
 
-		mounted = false;
 		defaultOutfit.lookMount = 0;
 		g_game.internalCreatureChangeOutfit(this, defaultOutfit);
 	}
