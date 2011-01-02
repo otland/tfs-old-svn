@@ -5190,6 +5190,10 @@ void Player::setMounted(bool doMount)
 void Player::dismount()
 {
 	if(isMounted()) {
+		if(!mount) {
+			player->sendCancel("No mount");
+			return;
+		}
 		Mount* myMount = Mounts::getInstance()->getMountById(mount);
 		mounted = false;
 		lastMountStatusChange = OTSYS_TIME();
