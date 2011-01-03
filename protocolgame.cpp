@@ -1234,10 +1234,12 @@ void ProtocolGame::parseSetOutfit(NetworkMessage& msg)
 void ProtocolGame::parseMountStatus(NetworkMessage& msg)
 {
 	bool status = msg.get<char>() != 0;
-	if(!status || (OTSYS_TIME() - player->getLastMountStatusChange()) >= 2000) {
+	if(!status || (OTSYS_TIME() - player->getLastMountStatusChange()) >= g_config.getNumber(ConfigManager::MOUNT_COOLDOWN)) {
 		player->setMounted(status);
 	} else {
-		player->sendCancel("Please wait 2 seconds before trying to mount again.");
+		std::stringstream ss;
+		ss << "Please wait "<< (g_config.getNumber(ConfigManager::MOUNT_COOLDOWN) / 1000) << " seconds before trying to mount again.";
+		player->sendCancel(ss.str());
 	}
 }
 

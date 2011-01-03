@@ -294,6 +294,9 @@ class ConfigManager
 			BIND_ONLY_GLOBAL_ADDRESS,
 			UNIFIED_SPELLS,
 			ALLOW_MOUNTS,
+			UNMOUNT_PLAYER_IN_PZ,
+			MOUNT_COOLDOWN,
+			
 			ENABLE_COOLDOWNS,
 			LAST_BOOL_CONFIG /* this must be the last one */
 		};
