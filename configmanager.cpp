@@ -328,7 +328,7 @@ bool ConfigManager::load()
 	m_confNumber[MOUNT_COOLDOWN]			= getGlobalNumber("mountCooldown", 2000);
 	
 	m_confBool[ENABLE_COOLDOWNS] 			= getGlobalBool("enableCooldowns", true);
-
+	m_confBool[MONSTER_SPAWN_WALKBACK] 		= getGlobalBool("monstersGoBackToSpawn", true);
 
 	m_loaded = true;
 	return true;

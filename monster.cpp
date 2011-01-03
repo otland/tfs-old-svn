@@ -126,6 +126,9 @@ void Monster::onAttackedCreatureDisappear(bool)
 #endif
 	attackTicks = 0;
 	extraMeleeAttack = true;
+	
+	if(g_config.getBool(ConfigManager::MONSTER_SPAWN_WALKBACK))
+		g_game.internalTeleport(this, getMasterPosition(), false);
 }
 
 void Monster::onAttackedCreatureDrain(Creature* target, int32_t points)

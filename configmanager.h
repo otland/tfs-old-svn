@@ -296,8 +296,8 @@ class ConfigManager
 			ALLOW_MOUNTS,
 			UNMOUNT_PLAYER_IN_PZ,
 			MOUNT_COOLDOWN,
-			
 			ENABLE_COOLDOWNS,
+			MONSTER_SPAWN_WALKBACK,
 			LAST_BOOL_CONFIG /* this must be the last one */
 		};
 
