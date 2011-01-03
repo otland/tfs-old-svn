@@ -23,7 +23,9 @@
 	M The Forgotten Server.exe
 	  data/
 	M	creaturescripts/scripts/playerdeath.lua
-	M	items/items.xml
+		items/
+	M		items.otb
+	M		items.xml
 		monsters/
 	D		elderbeholder.xml
 	A		elderbonelord.xml
