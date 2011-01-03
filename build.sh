@@ -47,4 +47,4 @@ MAKEOPT=$(($CORES + 1))
 echo ""
 echo "Start building on $CORES cores, using $MAKEOPT processes"
 echo ""
-make -j $MAKEOPT
+make V=0 -j $MAKEOPT

@@ -1,8 +1,9 @@
 AC_PREREQ([2.50])
 AC_INIT([TheForgottenServer], [0.4])
-AM_INIT_AUTOMAKE([1.10 foreign])
+AM_INIT_AUTOMAKE([1.10 foreign silent-rules])
 AC_CONFIG_SRCDIR([account.h])
 AM_CONFIG_HEADER([config.h])
+AM_SILENT_RULES
 
 AC_PROG_CXX
 AC_LANG(C++)
