@@ -2257,9 +2257,14 @@ void LuaInterface::registerFunctions()
 	//doPlayerRemoveMount(cid, mountId)
 	lua_register(m_luaState, "doPlayerRemoveMount", LuaInterface::luaDoPlayerRemoveMount);
 
-	//getPlayerMount(cid, mountid)
+	//getPlayerMount(cid, mountId)
 	lua_register(m_luaState, "getPlayerMount", LuaInterface::luaGetPlayerMount);
 
+	//doPlayerSetMount(cid, mountId)
+	lua_register(m_luaState, "doPlayerSetMount", LuaInterface::luaDoPlayerSetMount);
+
+	//doPlayerSetMountStatus(cid, mounted)
+	lua_register(m_luaState, "doPlayerSetMountStatus", LuaInterface::luaDoPlayerSetMountStatus);
 	//getPartyMembers(lid)
 	lua_register(m_luaState, "getPartyMembers", LuaInterface::luaGetPartyMembers);
 
@@ -3415,7 +3420,7 @@ int32_t LuaInterface::luaDoTeleportThing(lua_State* L)
 	bool fullTeleport = true, pushMove = true;
 	int32_t params = lua_gettop(L);
 	if(params > 3)
-		fullTeleport = popNumber(L);
+		fullTeleport = popBoolean(L);
 
 	if(params > 2)
 		pushMove = popNumber(L);
@@ -8984,6 +8989,51 @@ int32_t LuaInterface::luaGetPlayerMount(lua_State* L)
 			lua_pushboolean(L, mount->isTamed(player));
 		else
 			lua_pushboolean(L, false);
+	}
+
+	return 1;
+}
+
+int32_t LuaInterface::luaDoPlayerSetMount(lua_State* L)
+{
+	//doPlayerSetMount(cid, mountId)
+	uint8_t mountId = popNumber(L);
+	ScriptEnviroment* env = getEnv();
+	Player* player = env->getPlayerByUID(popNumber(L));
+	if(!player)
+	{
+		errorEx(getError(LUA_ERROR_PLAYER_NOT_FOUND));
+		lua_pushboolean(L, false);
+	}
+	else
+	{
+		Mount* mount = Mounts::getInstance()->getMountById(mountId);
+		if(mount && mount->isTamed(player)) {
+			player->setMountId(mountId);		
+			lua_pushboolean(L, true);
+		} else
+			lua_pushboolean(L, false);
+	}
+
+	return 1;
+}
+
+int32_t LuaInterface::luaDoPlayerSetMountStatus(lua_State* L)
+{
+	//doPlayerSetMountStatus(cid, mounted)
+	bool mounted = popBoolean(L);
+	ScriptEnviroment* env = getEnv();
+	Player* player = env->getPlayerByUID(popNumber(L));
+	if(!player)
+	{
+		errorEx(getError(LUA_ERROR_PLAYER_NOT_FOUND));
+		lua_pushboolean(L, false);
+	}
+	else
+	{
+		player->setMounted(mounted);
+
+		lua_pushboolean(L, true);
 	}
 
 	return 1;
