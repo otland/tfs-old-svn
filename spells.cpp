@@ -636,8 +636,9 @@ bool Spell::checkSpell(Player* player) const
 
 	if(!player->hasFlag(PlayerFlag_HasNoExhaustion))
 	{
-		bool exhausted = player->hasCondition(CONDITION_SPELLCOOLDOWN, spellId);
-		if(!exhausted)
+		static bool useCooldowns = g_config.getBool(ConfigManager::ENABLE_COOLDOWNS);
+		bool exhausted = player->hasCondition(CONDITION_SPELLCOOLDOWN, (useCooldowns)?spellId:0);
+		if(!exhausted && useCooldowns)
 		{
 			for(SpellGroup::const_iterator it = groupExhaustions.begin(); it != groupExhaustions.end(); it++)
 			{
@@ -988,18 +989,22 @@ void Spell::postSpell(Player* player) const
 {
 	if(!player->hasFlag(PlayerFlag_HasNoExhaustion))
 	{
-		for(std::map<SpellGroup_t, uint32_t>::const_iterator it = groupExhaustions.begin(); it != groupExhaustions.end(); it++)
-		{
-			if(it->second <= 0)
-				continue;
+		static bool useCooldowns = g_config.getBool(ConfigManager::ENABLE_COOLDOWNS);
 
-			player->addCondition(Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_SPELLGROUPCOOLDOWN, it->second, 0, false, it->first));
-			player->sendSpellCooldown(uint16_t(it->first), it->second, true);
+		if(useCooldowns) {
+			for(std::map<SpellGroup_t, uint32_t>::const_iterator it = groupExhaustions.begin(); it != groupExhaustions.end(); it++)
+			{
+				if(it->second <= 0)
+					continue;
+
+				player->addCondition(Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_SPELLGROUPCOOLDOWN, it->second, 0, false, it->first));
+				player->sendSpellCooldown(uint16_t(it->first), it->second, true);
+			}
 		}
 
 		if(exhaustion > 0)
 		{
-			player->addCondition(Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_SPELLCOOLDOWN, exhaustion, 0, false, spellId));
+			player->addCondition(Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_SPELLCOOLDOWN, exhaustion, 0, false, (useCooldowns)?spellId:0));
 			player->sendSpellCooldown(uint16_t(icon), exhaustion, false);
 		}
 	}
