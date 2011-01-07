@@ -200,10 +200,15 @@ if(NpcHandler == nil) then
 			end
 			table.remove(self.focuses, pos)
 			self.talkStart[focus] = nil
-			closeShopWindow(focus) --Even if it can not exist, we need to prevent it.
+
+			if isPlayer(focus) then
+				closeShopWindow(focus) --Even if it can not exist, we need to prevent it.
+			end
 			self:updateFocus()
 		else
-			closeShopWindow(focus)
+			if isPlayer(focus) then
+				closeShopWindow(focus)
+			end
 			self:changeFocus(0)
 		end
 	end
@@ -536,6 +541,10 @@ if(NpcHandler == nil) then
 
 	-- Returns true if cid is within the talkRadius of this npc.
 	function NpcHandler:isInRange(cid)
+		if not isPlayer(cid) then
+			return false
+		end
+
 		local distance = getDistanceTo(cid) or -1
 		if distance == -1 then
 			return false
