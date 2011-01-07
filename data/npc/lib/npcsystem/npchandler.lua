@@ -529,7 +529,12 @@ if(NpcHandler == nil) then
 				if(self:processModuleCallback(CALLBACK_CREATURE_DISAPPEAR, cid)) then
 					if(self.queue == nil or not self.queue:greetNext()) then
 						local msg = self:getMessage(MESSAGE_WALKAWAY)
-						local parseInfo = { [TAG_PLAYERNAME] = getPlayerName(cid) }
+						local playerName = getPlayerName(cid)
+						if not playerName then
+							playerName = -1
+						end
+
+						local parseInfo = { [TAG_PLAYERNAME] = playerName }
 						msg = self:parseMessage(msg, parseInfo)
 						self:say(msg, cid, true)
 						self:releaseFocus(cid)
