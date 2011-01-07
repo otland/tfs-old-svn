@@ -576,7 +576,7 @@ if(NpcHandler == nil) then
 				if(self:processModuleCallback(CALLBACK_CREATURE_DISAPPEAR, cid)) then
 					if(self.queue == nil or not self.queue:greetNext()) then
 						local msg = self:getMessage(MESSAGE_WALKAWAY)
-						local parseInfo = { [TAG_PLAYERNAME] = getPlayerName(cid) }
+						local parseInfo = { [TAG_PLAYERNAME] = getPlayerName(cid) or -1 }
 						msg = self:parseMessage(msg, parseInfo)
 
 						self:say(msg, cid)
@@ -590,6 +590,10 @@ if(NpcHandler == nil) then
 
 	-- Returns true if cid is within the talkRadius of this npc.
 	function NpcHandler:isInRange(cid)
+		if not isPlayer(cid) then
+			return false
+		end
+
 		local distance = getNpcDistanceTo(cid) or -1
 		return distance ~= -1 and distance <= self.talkRadius
 	end

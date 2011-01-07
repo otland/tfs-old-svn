@@ -2265,6 +2265,10 @@ void LuaInterface::registerFunctions()
 
 	//doPlayerSetMountStatus(cid, mounted)
 	lua_register(m_luaState, "doPlayerSetMountStatus", LuaInterface::luaDoPlayerSetMountStatus);
+
+	//getMountInfo([mountId])
+	lua_register(m_luaState, "getMountInfo", LuaInterface::luaGetMountInfo);
+
 	//getPartyMembers(lid)
 	lua_register(m_luaState, "getPartyMembers", LuaInterface::luaGetPartyMembers);
 
@@ -9036,6 +9040,41 @@ int32_t LuaInterface::luaDoPlayerSetMountStatus(lua_State* L)
 		lua_pushboolean(L, true);
 	}
 
+	return 1;
+}
+
+int32_t LuaInterface::luaGetMountInfo(lua_State* L)
+{
+	//getMountInfo([mountId])
+	uint16_t mountId = popNumber(L);
+
+	if(mountId) {
+		Mount* mount = Mounts::getInstance()->getMountById(mountId);
+		if(!mount) {
+			lua_pushboolean(L, false);
+			return 1;
+		}
+		lua_newtable(L);
+		createTable(L, 1);
+		setField(L, "name", mount->getName().c_str());
+		setField(L, "speed", mount->getSpeed());
+		setField(L, "clientId", mount->getClientId());
+		pushTable(L);
+		
+	} else {
+
+		lua_newtable(L);
+		MountList::const_iterator it = Mounts::getInstance()->getFirstMount();
+		for(uint32_t i = 1; it != Mounts::getInstance()->getLastMount(); ++it, ++i)
+		{
+			createTable(L, i);
+			setField(L, "id", (*it)->getId());
+			setField(L, "name", (*it)->getName().c_str());
+			setField(L, "speed", (*it)->getSpeed());
+			setField(L, "clientId", (*it)->getClientId());
+			pushTable(L);
+		}
+	}
 	return 1;
 }
 
