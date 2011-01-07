@@ -1004,7 +1004,11 @@ void Spell::postSpell(Player* player) const
 
 		if(exhaustion > 0)
 		{
-			player->addCondition(Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_SPELLCOOLDOWN, exhaustion, 0, false, (useCooldowns)?spellId:0));
+			player->addCondition(Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_SPELLCOOLDOWN, exhaustion, 0, false, (useCooldowns)?spellId:(int)isAggressive));
+			// Cipsoft alike: You can send a spell with diffrent agressive state 0.5sec after
+			if(!useCooldowns)
+				player->addCondition(Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_SPELLCOOLDOWN, 500, 0, false, (int)!isAggressive));
+
 			player->sendSpellCooldown(uint16_t(icon), exhaustion, false);
 		}
 	}
