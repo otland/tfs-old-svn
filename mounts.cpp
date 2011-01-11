@@ -26,7 +26,6 @@ bool Mount::isTamed(Player* player) const
 	if(player->hasCustomFlag(PlayerCustomFlag_CanUseAllMounts))
 		return true;
 
-
 	uint8_t tmpId = id - 1;
 
 	std::string value = "";
@@ -104,10 +103,12 @@ bool Mounts::parseMountNode(xmlNodePtr p)
 	if(readXMLInteger(p, "speed", intValue))
 		speed = intValue;
 
-	if(!clientId || !mountId) {
+	if(!clientId || !mountId || (!speed || speed <= 0))
+	{
 		std::clog << "[Error - Mounts::parseMountNode] Entry without clientId and/or mountId" << std::endl;
 		return false;
 	}
+
 	Mount* mount = new Mount(name, mountId, clientId, speed);
 	if(!mount)
 		return false;
@@ -117,6 +118,7 @@ bool Mounts::parseMountNode(xmlNodePtr p)
 	mountCount++;
 	return true;
 }
+
 Mount* Mounts::getMountById(uint16_t id) const
 {
 	if(id)
