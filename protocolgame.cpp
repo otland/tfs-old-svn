@@ -1211,7 +1211,7 @@ void ProtocolGame::parseSetOutfit(NetworkMessage& msg)
 				// Lets change mount now if hes mounted
 				if(player->isMounted()) {
 					player->dismount();
-					player->setMounted(1);
+					player->setMounted(true);
 					sendMount = true;
 				}
 				
@@ -1234,13 +1234,9 @@ void ProtocolGame::parseSetOutfit(NetworkMessage& msg)
 void ProtocolGame::parseMountStatus(NetworkMessage& msg)
 {
 	bool status = msg.get<char>() != 0;
-	if(!status || (OTSYS_TIME() - player->getLastMountStatusChange()) >= g_config.getNumber(ConfigManager::MOUNT_COOLDOWN)) {
-		player->setMounted(status);
-	} else {
-		std::stringstream ss;
-		ss << "Please wait "<< (g_config.getNumber(ConfigManager::MOUNT_COOLDOWN) / 1000) << " seconds before trying to mount again.";
-		player->sendCancel(ss.str());
-	}
+
+	addGameTask(&Game::playerChangeMountStatus, player->getID(), status);
+
 }
 
 void ProtocolGame::parseUseItem(NetworkMessage& msg)

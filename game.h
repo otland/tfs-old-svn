@@ -514,6 +514,7 @@ class Game
 		bool playerSay(uint32_t playerId, uint16_t channelId, SpeakClasses type,
 			const std::string& receiver, const std::string& text);
 		bool playerChangeOutfit(uint32_t playerId, Outfit_t outfit);
+		bool playerChangeMountStatus(uint32_t playerId, bool status);
 		bool playerInviteToParty(uint32_t playerId, uint32_t invitedId);
 		bool playerJoinParty(uint32_t playerId, uint32_t leaderId);
 		bool playerRevokePartyInvitation(uint32_t playerId, uint32_t invitedId);

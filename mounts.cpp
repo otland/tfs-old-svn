@@ -103,9 +103,9 @@ bool Mounts::parseMountNode(xmlNodePtr p)
 	if(readXMLInteger(p, "speed", intValue))
 		speed = intValue;
 
-	if(!clientId || !mountId || (!speed || speed <= 0))
+	if(!clientId || !mountId)
 	{
-		std::clog << "[Error - Mounts::parseMountNode] Entry without clientId and/or mountId and/or speed" << std::endl;
+		std::clog << "[Error - Mounts::parseMountNode] Entry without clientId and/or mountId" << std::endl;
 		return false;
 	}
 

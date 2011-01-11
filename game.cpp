@@ -3735,6 +3735,26 @@ bool Game::playerChangeOutfit(uint32_t playerId, Outfit_t outfit)
 	return true;
 }
 
+bool Game::playerChangeMountStatus(uint32_t playerId, bool status)
+{
+	Player* player = getPlayerByID(playerId);
+
+	if(!player || player->isRemoved())
+		return false;
+	
+	if(!status || (OTSYS_TIME() - player->getLastMountStatusChange()) >= g_config.getNumber(ConfigManager::MOUNT_COOLDOWN)) {
+		player->setMounted(status);
+		return true;
+		
+	} else {
+		std::stringstream ss;
+		ss << "Please wait "<< (g_config.getNumber(ConfigManager::MOUNT_COOLDOWN) / 1000) << " seconds before trying to mount again.";
+		player->sendCancel(ss.str());
+	}
+
+	return false;
+}
+
 bool Game::playerSay(uint32_t playerId, uint16_t channelId, SpeakClasses type, const std::string& receiver, const std::string& text)
 {
 	Player* player = getPlayerByID(playerId);
