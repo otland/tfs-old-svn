@@ -1210,8 +1210,8 @@ void ProtocolGame::parseSetOutfit(NetworkMessage& msg)
 
 				// Lets change mount now if hes mounted
 				if(player->isMounted()) {
-					player->dismount();
-					player->setMounted(true);
+					addGameTask(&Game::playerChangeMountStatus, player->getID(), false);
+					addGameTask(&Game::playerChangeMountStatus, player->getID(), true);
 					sendMount = true;
 				}
 				
