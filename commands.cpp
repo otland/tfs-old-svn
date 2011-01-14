@@ -1221,10 +1221,7 @@ void Commands::ban(Player* player, const std::string& cmd, const std::string& pa
 
 	bool ipBan = (atoi(exploded[3].c_str()) != 0);
 
-	std::string comment = "";
-	for (int32_t i = 4; i < exploded.size(); ++i)
-		comment += exploded[static_cast<size_t>(i)];
-
+	std::string comment = exploded[4];
 	g_game.violationWindow(player, targetName, reason, action, comment, ipBan);
 }
 
