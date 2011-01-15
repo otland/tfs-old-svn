@@ -535,30 +535,28 @@ class Player : public Creature, public Cylinder
 		void sendChannelMessage(std::string author, std::string text, SpeakClasses type, uint8_t channel)
 			{if(client) client->sendChannelMessage(author, text, type, channel);}
 		void sendCreatureAppear(const Creature* creature)
-			{if(client) client->sendAddCreature(creature, creature->getPosition(), creature->getTile()->getClientIndexOfThing(
-				this, creature));}
+			{if(client && canSeeCreature(creature)) client->sendAddCreature(creature, creature->getPosition(), creature->getTile()->getClientIndexOfThing(this, creature));}
 		void sendCreatureDisappear(const Creature* creature, uint32_t stackpos)
-			{if(client) client->sendRemoveCreature(creature, creature->getPosition(), stackpos);}
+			{if(client && canSeeCreature(creature)) client->sendRemoveCreature(creature, creature->getPosition(), stackpos);}
 		void sendCreatureMove(const Creature* creature, const Tile* newTile, const Position& newPos,
 			const Tile* oldTile, const Position& oldPos, uint32_t oldStackpos, bool teleport)
-			{if(client) client->sendMoveCreature(creature, newTile, newPos, newTile->getClientIndexOfThing(
-				this, creature), oldTile, oldPos, oldStackpos, teleport);}
+			{if(client && canSeeCreature(creature)) client->sendMoveCreature(creature, newTile, newPos, newTile->getClientIndexOfThing(this, creature), oldTile, oldPos, oldStackpos, teleport);}
 
 		void sendCreatureTurn(const Creature* creature)
-			{if(client) client->sendCreatureTurn(creature, creature->getTile()->getClientIndexOfThing(this, creature));}
+			{if(client && canSeeCreature(creature)) client->sendCreatureTurn(creature, creature->getTile()->getClientIndexOfThing(this, creature));}
 		void sendCreatureSay(const Creature* creature, SpeakClasses type, const std::string& text, Position* pos = NULL)
 			{if(client) client->sendCreatureSay(creature, type, text, pos);}
 		void sendCreatureSquare(const Creature* creature, uint8_t color)
 			{if(client) client->sendCreatureSquare(creature, color);}
 		void sendCreatureChangeOutfit(const Creature* creature, const Outfit_t& outfit)
-			{if(client) client->sendCreatureOutfit(creature, outfit);}
+			{if(client && canSeeCreature(creature)) client->sendCreatureOutfit(creature, outfit);}
 		void sendCreatureChangeVisible(const Creature* creature, Visible_t visible);
 		void sendCreatureLight(const Creature* creature)
 			{if(client) client->sendCreatureLight(creature);}
 		void sendCreatureShield(const Creature* creature)
-			{if(client) client->sendCreatureShield(creature);}
+			{if(client && canSeeCreature(creature)) client->sendCreatureShield(creature);}
 		void sendCreatureEmblem(const Creature* creature)
-			{if(client) client->sendCreatureEmblem(creature);}
+			{if(client && canSeeCreature(creature)) client->sendCreatureEmblem(creature);}
 		void sendCreatureImpassable(const Creature* creature)
 			{if(client) client->sendCreatureImpassable(creature);}
 		void sendSpellCooldown(uint16_t spellId, uint32_t cooldown, bool isGroup)
@@ -641,9 +639,9 @@ class Player : public Creature, public Cylinder
 		void sendCancelWalk() const
 			{if(client) client->sendCancelWalk();}
 		void sendChangeSpeed(const Creature* creature, uint32_t newSpeed) const
-			{if(client) client->sendChangeSpeed(creature, newSpeed);}
+			{if(client && canSeeCreature(creature)) client->sendChangeSpeed(creature, newSpeed);}
 		void sendCreatureHealth(const Creature* creature) const
-			{if(client) client->sendCreatureHealth(creature);}
+			{if(client && canSeeCreature(creature)) client->sendCreatureHealth(creature);}
 		void sendDistanceShoot(const Position& from, const Position& to, uint8_t type) const
 			{if(client) client->sendDistanceShoot(from, to, type);}
 		void sendHouseWindow(House* house, uint32_t listId) const;
@@ -651,7 +649,7 @@ class Player : public Creature, public Cylinder
 		void sendQuests() const {if(client) client->sendQuests();}
 		void sendQuestInfo(Quest* quest) const {if(client) client->sendQuestInfo(quest);}
 		void sendCreatureSkull(const Creature* creature) const
-			{if(client) client->sendCreatureSkull(creature);}
+			{if(client && canSeeCreature(creature)) client->sendCreatureSkull(creature);}
 		void sendFYIBox(std::string message)
 			{if(client) client->sendFYIBox(message);}
 		void sendCreatePrivateChannel(uint16_t channelId, const std::string& channelName)
