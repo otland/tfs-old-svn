@@ -11,7 +11,7 @@ function onDeath(cid, corpse, killer)
 			sql = env:connect(sqliteDatabase)
 		end
 		local byPlayer = 0
-		if killer == FALSE then
+		if killer == 0 then
 			killerName = "field item"
 		else
 			if isPlayer(killer) == TRUE then
