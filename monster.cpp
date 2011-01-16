@@ -1138,9 +1138,14 @@ bool Monster::canWalkTo(Position pos, Direction dir)
 		return false;
 
 	Tile* tile = g_game.getTile(pos);
+	MagicField* field = NULL;
 	if(!tile || g_game.isSwimmingPool(NULL, getTile(), false) != g_game.isSwimmingPool(NULL, tile, false)) // prevent monsters entering/exiting to swimming pool
 		return false;
 
+	// If we don't follow, or attack, and we can't handle the damage, then we can't move on this field
+	if(!followCreature && !attackedCreature && hasBitSet(FLAG_IGNOREFIELDDAMAGE, flags) && (field = tile->getFieldItem()) && isImmune(field->getCombatType()) )
+		return false;
+		
 	return !tile->getTopVisibleCreature(this) && tile->__queryAdd(
 		0, this, 1, FLAG_PATHFINDING) == RET_NOERROR;
 }
