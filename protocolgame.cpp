@@ -1201,22 +1201,30 @@ void ProtocolGame::parseSetOutfit(NetworkMessage& msg)
 		bool sendMount = false;
 
 		if(mountId) {
-			Mount* myMount = Mounts::getInstance()->getMountByCid(mountId);
+			// No diffrence
+			if(mountId == player->getMountId())
+				sendMount = true;
+			else {
+				Mount* myMount = Mounts::getInstance()->getMountByCid(mountId);
 
-			// Can we use this mount?
-			if(myMount && myMount->isTamed(player)) { 
-				// Set the new mount
-				player->setMountId(myMount->getId()); 
+				// Can we use this mount?
+				if(myMount && myMount->isTamed(player)) { 
+					// Set the new mount
+					player->setMountId(myMount->getId()); 
 
-				// Lets change mount now if hes mounted
-				if(player->isMounted()) {
+					// Lets change mount now if hes mounted
+					if(player->isMounted()) {
+						addGameTask(&Game::playerChangeMountStatus, player->getID(), false);
+						addGameTask(&Game::playerChangeMountStatus, player->getID(), true);
+						sendMount = true;
+					}
+				
+				} else if(player->isMounted())
 					addGameTask(&Game::playerChangeMountStatus, player->getID(), false);
-					addGameTask(&Game::playerChangeMountStatus, player->getID(), true);
-					sendMount = true;
-				}
 				
 			}
-		}
+		} else if(player->isMounted())
+			addGameTask(&Game::playerChangeMountStatus, player->getID(), false);
 
 		// Should we send the new lookMount?
 		if(sendMount)
