@@ -19,7 +19,7 @@
 //////////////////////////////////////////////////////////////////////
 
 #ifndef __CONSOLE__
-#ifdef WIN32
+#ifdef _WIN32
 #include "gui.h"
 
 void GUI::initTrayMenu()

@@ -1766,6 +1766,12 @@ void LuaScriptInterface::registerFunctions()
 	//getItemIdByName(name)
 	lua_register(m_luaState, "getItemIdByName", LuaScriptInterface::luaGetItemIdByName);
 
+	//getTownName(townId)
+	lua_register(m_luaState, "getTownName", LuaScriptInterface::luaGetTownName);
+
+	//getTownTemplePosition(townId)
+	lua_register(m_luaState, "getTownTemplePosition", LuaScriptInterface::luaGetTownTemplePosition);
+
 	//isSightClear(fromPos, toPos, floorCheck)
 	lua_register(m_luaState, "isSightClear", LuaScriptInterface::luaIsSightClear);
 
@@ -7338,6 +7344,30 @@ int32_t LuaScriptInterface::luaGetItemIdByName(lua_State* L)
 		return 1;
 	}
 	lua_pushnumber(L, itemid);
+	return 1;
+}
+
+int32_t LuaScriptInterface::luaGetTownTemplePosition(lua_State* L)
+{
+	//getTownTemplePosition(townId)
+	uint32_t townId = popNumber(L);
+	if(Town* town = Towns::getInstance().getTown(townId))
+		pushPosition(L, town->getTemplePosition(), 255);
+	else
+		lua_pushboolean(L, false);
+
+	return 1;
+}
+
+int32_t LuaScriptInterface::luaGetTownName(lua_State* L)
+{
+	//getTownName(townId)
+	uint32_t townId = popNumber(L);
+	if(Town* town = Towns::getInstance().getTown(townId))
+		lua_pushstring(L, town->getName().c_str());
+	else
+		lua_pushboolean(L, false);
+
 	return 1;
 }
 

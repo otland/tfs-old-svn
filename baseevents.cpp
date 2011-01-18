@@ -38,13 +38,13 @@ bool BaseEvents::loadFromXml()
 {
 	if(m_loaded)
 	{
-		std::cout << "Error: [BaseEvents::loadFromXml] loaded == true" << std::endl;
+		std::cout << "[Error - BaseEvents::loadFromXml] It's already fucking loaded." << std::endl;
 		return false;
 	}
 	Event* event = NULL;
 	std::string scriptsName = getScriptBaseName();
 	if(getScriptInterface().loadFile(std::string("data/" + scriptsName + "/lib/" + scriptsName + ".lua")) == -1)
-		std::cout << "Warning: [BaseEvents::loadFromXml] Can not load " << scriptsName << " lib/" << scriptsName << ".lua" << std::endl;
+		std::cout << "[Warning - BaseEvents::loadFromXml] Can not load " << scriptsName << " lib/" << scriptsName << ".lua" << std::endl;
 
 	std::string filename = "data/" + scriptsName + "/" + scriptsName + ".xml";
 	xmlDocPtr doc = xmlParseFile(filename.c_str());
@@ -54,7 +54,7 @@ bool BaseEvents::loadFromXml()
 		xmlNodePtr root, p;
 		root = xmlDocGetRootElement(doc);
 
-		if(xmlStrcmp(root->name,(const xmlChar*)scriptsName.c_str()) != 0)
+		if(xmlStrcmp(root->name, (const xmlChar*)scriptsName.c_str()))
 		{
 			xmlFreeDoc(doc);
 			return false;
