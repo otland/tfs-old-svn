@@ -38,7 +38,7 @@ bool BaseEvents::loadFromXml()
 {
 	if(m_loaded)
 	{
-		std::cout << "[Error - BaseEvents::loadFromXml] It's already fucking loaded." << std::endl;
+		std::cout << "[Error - BaseEvents::loadFromXml] It's already loaded." << std::endl;
 		return false;
 	}
 	Event* event = NULL;
