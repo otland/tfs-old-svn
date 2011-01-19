@@ -1443,13 +1443,10 @@ void Player::onChangeZone(ZoneType_t zone)
 {
 	if(zone == ZONE_PROTECTION)
 	{
-		if(attackedCreature)
+		if(attackedCreature && !hasFlag(PlayerFlag_IgnoreProtectionZone))
 		{
-			if(!hasFlag(PlayerFlag_IgnoreProtectionZone))
-			{
-				setAttackedCreature(NULL);
-				onAttackedCreatureDisappear(false);
-			}
+			setAttackedCreature(NULL);
+			onAttackedCreatureDisappear(false);
 		}
 
 		if(isMounted())
