@@ -42,6 +42,7 @@
 	Fixed a few errors in the NPC system.
 	Fixed a bug in the player death script caused by the changes related to Lua interface in the previous release.
 	Fixed an issue with global events and optimized the code (it will no longer affect server performance when not being used with timers/think events).
+	Fixed an issue that would dismount players when attempting to enter protection zone with pz-lock while being mounted.
 	Replaced "beholder" strings with "bonelord".
 	A lot of miscellaneous cleanups, formating, improvements and fixes.
 ]

@@ -861,8 +861,10 @@ uint32_t MoveEvent::DeEquipItem(MoveEvent* moveEvent, Player* player, Item* item
 		g_game.changeSpeed(player, -it.abilities.speed);
 
 	if(it.abilities.conditionSuppressions != 0)
+	{
 		player->setConditionSuppressions(it.abilities.conditionSuppressions, true);
 		player->sendIcons();
+	}
 
 	if(it.abilities.regeneration)
 		player->removeCondition(CONDITION_REGENERATION, (ConditionId_t)slot);
@@ -900,6 +902,7 @@ uint32_t MoveEvent::DeEquipItem(MoveEvent* moveEvent, Player* player, Item* item
 
 	if(needUpdateStats)
 		player->sendStats();
+
 	return 1;
 }
 
