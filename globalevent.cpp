@@ -266,7 +266,7 @@ bool GlobalEvent::configureEvent(xmlNodePtr p)
 		}
 
 		time_t current_time = time(NULL);
-		struct tm* timeinfo = localtime(&current_time);
+		tm* timeinfo = localtime(&current_time);
 		timeinfo->tm_hour = hour;
 		timeinfo->tm_min = min;
 		timeinfo->tm_sec = sec;
