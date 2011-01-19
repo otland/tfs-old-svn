@@ -1973,12 +1973,12 @@ int32_t LuaScriptInterface::internalGetPlayerInfo(lua_State* L, PlayerInfo_t inf
 				break;
 
 			case PlayerInfoPzLock:
-				value = player->isPzLocked();
-				break;
+				lua_pushboolean(L, player->isPzLocked());
+				return 1;
 
 			case PlayerInfoGhostStatus:
-				value = player->isInGhostMode();
-				break;
+				lua_pushboolean(L, player->isInGhostMode());
+				return 1;
 
 			case PlayerInfoIp:
 				value = (int32_t)player->getIP();
