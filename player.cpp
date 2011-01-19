@@ -1385,10 +1385,16 @@ void Player::onFollowCreatureDisappear(bool isLogout)
 
 void Player::onChangeZone(ZoneType_t zone)
 {
-	if(attackedCreature && zone == ZONE_PROTECTION && !hasFlag(PlayerFlag_IgnoreProtectionZone))
+	if(zone == ZONE_PROTECTION)
 	{
-		setAttackedCreature(NULL);
-		onAttackedCreatureDisappear(false);
+		if(attackedCreature && !hasFlag(PlayerFlag_IgnoreProtectionZone))
+		{
+			setAttackedCreature(NULL);
+			onAttackedCreatureDisappear(false);
+		}
+
+		if(g_config.getNumber(ConfigManager::UNMOUNT_PLAYER_IN_PZ) && isMounted())
+			dismount();
 	}
 	sendIcons();
 }

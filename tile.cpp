@@ -610,8 +610,6 @@ ReturnValue Tile::__queryAdd(int32_t, const Thing* thing, uint32_t,
 				return RET_PLAYERISPZLOCKED;
 
 			if(hasFlag(TILESTATE_PROTECTIONZONE)) {
-				if(g_config.getNumber(ConfigManager::UNMOUNT_PLAYER_IN_PZ) && player->isMounted())
-					((Player*)player)->dismount();
 				if(player->isPzLocked())
 					return RET_PLAYERISPZLOCKED;
 			}
