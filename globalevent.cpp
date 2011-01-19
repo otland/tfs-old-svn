@@ -270,7 +270,7 @@ bool GlobalEvent::configureEvent(xmlNodePtr p)
 		timeinfo->tm_hour = hour;
 		timeinfo->tm_min = min;
 		timeinfo->tm_sec = sec;
-		time_t difference = difftime(mktime(timeinfo), current_time);
+		time_t difference = (time_t)difftime(mktime(timeinfo), current_time);
 		if(difference < 0)
 			difference += 86400;
 
