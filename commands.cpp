@@ -683,18 +683,17 @@ void Commands::getInfo(Player* player, const std::string& cmd, const std::string
 void Commands::closeServer(Player* player, const std::string& cmd, const std::string& param)
 {
 	(void) cmd;
-	(void) param;
-/*	if(param == "shutdown")
+	if(param == "shutdown")
 	{
 		g_dispatcher.addTask(
 			createTask(boost::bind(&Game::setGameState, &g_game, GAME_STATE_SHUTDOWN)));
 	}
 	else
-	{*/
-	g_dispatcher.addTask(
-		createTask(boost::bind(&Game::setGameState, &g_game, GAME_STATE_CLOSED)));
-	player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, "Server is now closed.");
-//	}
+	{
+		g_dispatcher.addTask(
+			createTask(boost::bind(&Game::setGameState, &g_game, GAME_STATE_CLOSED)));
+		player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, "Server is now closed.");
+	}
 }
 
 void Commands::openServer(Player* player, const std::string& cmd, const std::string& param)
