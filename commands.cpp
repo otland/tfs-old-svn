@@ -682,7 +682,6 @@ void Commands::getInfo(Player* player, const std::string& cmd, const std::string
 
 void Commands::closeServer(Player* player, const std::string& cmd, const std::string& param)
 {
-	(void) cmd;
 	if(param == "shutdown")
 	{
 		g_dispatcher.addTask(
