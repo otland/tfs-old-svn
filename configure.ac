@@ -9,7 +9,7 @@ AC_PROG_CXX
 AC_LANG(C++)
 
 OPTIONAL_FLAGS=""
-DEBUG_FLAGS="-O2 -fomit-frame-pointer"
+DEBUG_FLAGS="-Os -march=native -fomit-frame-pointer"
 
 # check if we want server diag enabled
 serverDiag=no
