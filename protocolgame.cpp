@@ -1198,39 +1198,23 @@ void ProtocolGame::parseSetOutfit(NetworkMessage& msg)
 	if(g_config.getBool(ConfigManager::ALLOW_MOUNTS)) {
 		// Do we have an id? 0 usully means no mount
 		uint16_t mountId = msg.get<uint16_t>();
-		bool sendMount = false;
 
-		if(mountId) {
-			// No diffrence
-			if(mountId == player->getMountId())
-				sendMount = true;
-			else {
-				Mount* myMount = Mounts::getInstance()->getMountByCid(mountId);
+		if(mountId && mountId != player->getMountId() ) {
+			Mount* myMount = Mounts::getInstance()->getMountByCid(mountId);
 
-				// Can we use this mount?
-				if(myMount && myMount->isTamed(player)) { 
-					// Set the new mount
-					player->setMountId(myMount->getId()); 
-
-					// Lets change mount now if hes mounted
-					if(player->isMounted()) {
-						addGameTask(&Game::playerChangeMountStatus, player->getID(), false);
-						addGameTask(&Game::playerChangeMountStatus, player->getID(), true);
-						sendMount = true;
-					}
-				
-				} else if(player->isMounted())
-					addGameTask(&Game::playerChangeMountStatus, player->getID(), false);
+			// Can we use this mount?
+			if(myMount && myMount->isTamed(player)) { 
+				// Set the new mount
+				player->setMountId(myMount->getId()); 
 				
 			}
-		} else if(player->isMounted())
+				
+		}
+		if(player->isMounted())
 			addGameTask(&Game::playerChangeMountStatus, player->getID(), false);
 
-		// Should we send the new lookMount?
-		if(sendMount)
-			newOutfit.lookMount = mountId;
-		else
-			newOutfit.lookMount = 0;
+		// Always say we are dismounted
+		newOutfit.lookMount = 0;
 	}
 
 	else
