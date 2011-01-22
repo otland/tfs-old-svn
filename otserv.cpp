@@ -189,7 +189,7 @@ int main(int argc, char *argv[])
 	#ifdef WIN32
 	//nothing yet
 	#else
-	sigaction sigh;
+	struct sigaction sigh;
 	sigh.sa_handler = SIG_IGN;
 	sigh.sa_flags = 0;
 	sigemptyset(&sigh.sa_mask);
