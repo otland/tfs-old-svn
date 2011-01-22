@@ -24,6 +24,8 @@
 #include "server.h"
 
 #include <string>
+#include <cstring>
+#include <errno.h>
 #include <iostream>
 #include <iomanip>
 
@@ -105,7 +107,7 @@ Vocations g_vocations;
 RSA g_RSA;
 
 #ifndef __CONSOLE__
-#ifdef WIN32
+#ifdef _WIN32
 NOTIFYICONDATA NID;
 TextLogger logger;
 GUI gui;
@@ -147,16 +149,15 @@ void mainLoader(
 #endif
 	ServiceManager* servicer
 );
+
 void badAllocationHandler()
 {
 	// Use functions that only use stack allocation
-	puts("Allocation failed, server out of memory.\nDecrese the size of your map or compile in 64 bits mode.");
+	puts("Aieeee, restarting server: out of memory\n");
+	//TODO: make a restarter?
+	//puts("Allocation failed, server out of memory.\nDecrese the size of your map or compile in 64 bits mode.");
 	char buf[1024];
-	if(fgets(buf, 1024, stdin))
-	{
-		exit(-1);
-		return;
-	}
+	delete fgets(buf, sizeof(buf), stdin);
 	exit(-1);
 }
 
@@ -169,7 +170,7 @@ int main(int argc, char *argv[])
 	// Setup bad allocation handler
 	std::set_new_handler(badAllocationHandler);
 
-	#ifdef WIN32
+	#ifdef _WIN32
 	#ifndef __CONSOLE__
 	std::cout.rdbuf(&logger);
 	#endif
@@ -188,7 +189,7 @@ int main(int argc, char *argv[])
 	#ifdef WIN32
 	//nothing yet
 	#else
-	struct sigaction sigh;
+	sigaction sigh;
 	sigh.sa_handler = SIG_IGN;
 	sigh.sa_flags = 0;
 	sigemptyset(&sigh.sa_mask);
@@ -257,7 +258,7 @@ void mainLoader(ServiceManager* service_manager)
 	#endif
 	std::cout << STATUS_SERVER_NAME << " - Version " << STATUS_SERVER_VERSION << " (" << STATUS_SERVER_CODENAME << ")." << std::endl;
 	std::cout << "A server developed by Talaturen, Kornholijo, Elf, and Fallen." << std::endl;
-	std::cout << "Visit our forum for updates, support and resources: http://otland.net/." << std::endl;
+	std::cout << "Visit our forum for updates, support, and resources: http://otland.net/." << std::endl;
 
 	#if defined __DEBUG__MOVESYS__ || defined __DEBUG_HOUSES__ || defined __DEBUG_MAILBOX__ || defined __DEBUG_LUASCRIPTS__ || defined __DEBUG_RAID__ || defined __DEBUG_NET__
 	std::cout << ">> Debugging:";
@@ -286,7 +287,7 @@ void mainLoader(ServiceManager* service_manager)
 	gui.m_connections = false;
 	#endif
 
-	#if !defined(WIN32) && !defined(__ROOT_PERMISSION__)
+	#if !defined(_WIN32) && !defined(__ROOT_PERMISSION__)
 	if(getuid() == 0 || geteuid() == 0)
 		std::cout << "> WARNING: " << STATUS_SERVER_NAME << " has been executed as root user, it is recommended to execute is as a normal user." << std::endl;
 	#endif
@@ -344,8 +345,10 @@ void mainLoader(ServiceManager* service_manager)
 		g_config.setNumber(ConfigManager::SQLTYPE, SQL_TYPE_SQLITE);
 		std::cout << "SQLite." << std::endl;
 		FILE* sqliteFile = fopen(g_config.getString(ConfigManager::SQLITE_DB).c_str(), "r");
-		if(sqliteFile == NULL)
-			startupErrorMessage("Failed to connect to sqlite database file, make sure it exists and is readable.");
+		if(!sqliteFile)
+			startupErrorMessage("Failed to load sqlite file: " + std::string(strerror(errno)) + "\n");
+
+			//startupErrorMessage("Failed to connect to sqlite database file, make sure it exists and is readable.");
 		fclose(sqliteFile);
 	}
 	else
@@ -399,7 +402,7 @@ void mainLoader(ServiceManager* service_manager)
 
 	if(!Item::items.loadFromXml())
 	{
-		#ifndef __CONSOLE__
+		#if defined(_WIN32) && !defined(__CONSOLE__)
 		if(MessageBoxA(gui.m_mainWindow, "Unable to load items (XML)! Continue?", "Items (XML)", MB_YESNO) == IDNO)
 		#endif
 			startupErrorMessage("Unable to load items (XML)!");

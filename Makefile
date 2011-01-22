@@ -6,12 +6,52 @@ INCLUDEDIRS = -I. -I/usr/include/libxml2 \
 
 LIBDIRS =
 
-FLAGS = -D_THREAD_SAFE -D_REENTRANT -D__NO_HOMEDIR_CONF__ -D__ENABLE_SERVER_DIAGNOSTIC__ -D__USE_SQLITE__ -D__USE_MYSQL__
+FLAGS = -D_THREAD_SAFE -D_REENTRANT -D__NO_HOMEDIR_CONF__ -D__ENABLE_SERVER_DIAGNOSTIC__ -D__USE_MYSQL__
 
-CXXFLAGS = $(INCLUDEDIRS) $(FLAGS) -Werror -Wall -O2
+CXXFLAGS = $(INCLUDEDIRS) $(FLAGS) -Wunused -Werror -Wall -O2
 CXX = g++
 
 LIBS = -lxml2 -lpthread -llua5.1 -lgmp -lmysqlclient -lsqlite3 -lboost_regex -llua5.1-sql-mysql -ldl -lboost_system -lboost_thread
+
+#For windows:
+#	mingw32-make SQLITE=1
+#For Linux:
+#	make SQLITE=1
+
+ifdef SQLITE
+	#I dont know the exact name for the lib //Fallen
+	LIBS += -llua5.1-sql-sqlite3
+	FLAGS += -D__USE_SQLITE__
+endif
+
+#mingw32-make WIN32=1 LATEST_MINGW=1
+
+#TODO: fix this
+ifdef WIN32
+	#@echo "Building with platform win32, with options: "
+	ifdef LATEST_MINGW
+		#@echo "Latest MinGW\n"
+		LIBS -= -lboost_thread
+		LIBS -= -lboost_regex
+		LIBS -= -lboost_system
+		LIBS -= -llua5.1-sql-mysql
+		LIBS -= -ldl
+		LIBS -= lpthread
+		LIBS += -lboost_system-mgw45-1_45 -lboost_thread-mgw45-mt-1_45 -lboost_regex-mgw45-1_45
+	else
+		#@echo "None\n"
+		LIBS -= lpthread
+		LIBS -= -llua5.1-sql-mysql
+		LIBS -= -ldl
+	endif
+endif
+
+#mingw32-make DEBUG=1
+#make DEBUG=1
+
+ifdef DEBUG
+	CXXFLAGS += -g
+endif
 
 LDFLAGS = $(LIBDIRS) $(LIBS)
 
@@ -22,6 +62,7 @@ CXXOBJECTS = $(CXXSOURCES:.cpp=.o)
 all: $(TFS)
 
 clean:
+	$(RM) *.o
 	$(RM) $(CXXOBJECTS)
 
 $(TFS): $(CXXOBJECTS)

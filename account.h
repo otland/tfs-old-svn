@@ -29,8 +29,8 @@
 class Account
 {
 	public:
-		Account();
-		~Account();
+		Account() {accnumber = 0;}
+		~Account() {charList.clear();}
 
 		uint32_t accnumber, lastDay, premiumDays;
 		AccountType_t accountType;

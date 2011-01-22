@@ -27,8 +27,13 @@
 #include "configmanager.h"
 #include "md5.h"
 #include "sha1.h"
+
 #include <sstream>
 #include <iomanip>
+
+#if !defined __GNUC__ || __GNUC__ < 3
+	#include <ctype.h>
+#endif
 
 extern ConfigManager g_config;
 
@@ -77,11 +82,19 @@ bool passwordTest(const std::string &plain, std::string &hash)
 	switch(g_config.getNumber(ConfigManager::PASSWORD_TYPE))
 	{
 		case PASSWORD_TYPE_MD5:
+#if defined(__GNUC__) && __GNUC__ >= 3
+			std::transform(hash.begin(), hash.end(), hash.begin(), toupper);
+#else
 			std::transform(hash.begin(), hash.end(), hash.begin(), upchar);
+#endif
 			return transformToMD5(plain, true) == hash;
 
 		case PASSWORD_TYPE_SHA1:
+#if defined(__GNUC__) && __GNUC__ >= 3
+			std::transform(hash.begin(), hash.end(), hash.begin(), toupper);
+#else
 			std::transform(hash.begin(), hash.end(), hash.begin(), upchar);
+#endif
 			return transformToSHA1(plain, true) == hash;
 
 		default:
@@ -120,7 +133,11 @@ void toLowerCaseString(std::string& source)
 
 void toUpperCaseString(std::string& source)
 {
+#if defined(__GNUC__) && __GNUC__ >= 3
+	std::transform(source.begin(), source.end(), source.begin(), toupper);
+#else
 	std::transform(source.begin(), source.end(), source.begin(), upchar);
+#endif
 }
 
 std::string asLowerCaseString(const std::string& source)
@@ -244,9 +261,8 @@ bool readXMLContentString(xmlNodePtr node, std::string& value)
 
 StringVec explodeString(const std::string& inString, const std::string& separator, int32_t limit/* = -1*/)
 {
-	std::vector<std::string> returnVector;
-	std::string::size_type start = 0;
-	std::string::size_type end = 0;
+	StringVec returnVector;
+	std::string::size_type start = 0, end = 0;
 
 	while(--limit != -1 && (end = inString.find(separator, start)) != std::string::npos)
 	{
@@ -258,9 +274,9 @@ StringVec explodeString(const std::string& inString, const std::string& separato
 	return returnVector;
 }
 
-IntegerVec vectorAtoi(std::vector<std::string> stringVector)
+IntegerVec vectorAtoi(StringVec stringVector)
 {
-	std::vector<int32_t> returnVector;
+	IntegerVec returnVector;
 	for(std::vector<std::string>::iterator it = stringVector.begin(); it != stringVector.end(); ++it)
 		returnVector.push_back(atoi((*it).c_str()));
 
@@ -349,6 +365,7 @@ int32_t random_range(int32_t lowest_number, int32_t highest_number, Distribution
 	}
 }
 
+#if !defined(__GNUC__) || __GNUC__ < 3
 // Upcase a char.
 char upchar(char c)
 {
@@ -357,6 +374,7 @@ char upchar(char c)
 
 	return c;
 }
+#endif
 
 bool isNumber(char character)
 {
@@ -1115,7 +1133,7 @@ bool fileExists(const char* filename)
 {
 	FILE* f = fopen(filename, "rb");
 	bool exists = (f != NULL);
-	if(f != NULL)
+	if(exists)
 		fclose(f);
 
 	return exists;

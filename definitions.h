@@ -131,7 +131,8 @@ enum passwordType_t
 		return ::_strnicmp(s1, s2, n);
 	}
 
-	#if VISUALC_VERSION >= 10
+	//#if VISUALC_VERSION >= 10
+	#if defined(_MSC_VER) && _MSC_VER >= 10
 		#include <stdint.h>
 	#else
 		typedef signed long long int64_t;
