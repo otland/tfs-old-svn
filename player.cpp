@@ -1393,7 +1393,7 @@ void Player::onChangeZone(ZoneType_t zone)
 			onAttackedCreatureDisappear(false);
 		}
 
-		if(g_config.getNumber(ConfigManager::UNMOUNT_PLAYER_IN_PZ) && isMounted())
+		if(g_config.getNumber(ConfigManager::UNMOUNT_PLAYER_IN_PZ))
 			dismount();
 	}
 	sendIcons();
