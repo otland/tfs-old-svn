@@ -153,7 +153,7 @@ void mainLoader(
 void badAllocationHandler()
 {
 	// Use functions that only use stack allocation
-	puts("Allocation failed, server out of memory.\nDecrese the size of your map or compile in 64 bits mode.");
+	puts("Allocation failed, server out of memory.\nDecrease the size of your map or compile in 64 bits mode.");
 	char buf[1024];
 	if(fgets(buf, sizeof(buf), stdin));
 	exit(-1);
