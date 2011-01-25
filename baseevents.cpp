@@ -56,6 +56,8 @@ bool BaseEvents::loadFromXml()
 
 		if(xmlStrcmp(root->name, (const xmlChar*)scriptsName.c_str()))
 		{
+			std::clog << "[Error - " << scriptsName << "::loadFromXml] Malformed " << scriptsName << " file."
+				<< std::endl;
 			xmlFreeDoc(doc);
 			return false;
 		}

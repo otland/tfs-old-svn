@@ -1898,6 +1898,7 @@ void Player::addManaSpent(uint64_t amount, bool withMultiplier /*= true*/)
 			char MaglvMsg[50];
 			sprintf(MaglvMsg, "You advanced to magic level %d.", magLevel);
 			sendTextMessage(MSG_EVENT_ADVANCE, MaglvMsg);
+			g_creatureEvents->playerAdvance(this, MAGLEVEL, magLevel-1, magLevel);
 
 			currReqMana = nextReqMana;
 			nextReqMana = vocation->getReqMana(magLevel + 1);
