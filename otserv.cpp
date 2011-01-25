@@ -165,8 +165,6 @@ void serverMain(void* param)
 int main(int argc, char *argv[])
 #endif
 {
-	badAllocationHandler();
-
 	// Setup bad allocation handler
 	std::set_new_handler(badAllocationHandler);
 
