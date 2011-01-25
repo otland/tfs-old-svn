@@ -155,7 +155,7 @@ void badAllocationHandler()
 	// Use functions that only use stack allocation
 	puts("Allocation failed, server out of memory.\nDecrease the size of your map or compile in 64 bits mode.");
 	char buf[1024];
-	if(fgets(buf, sizeof(buf), stdin));
+	assert(fgets(buf, sizeof(buf), stdin));
 	exit(-1);
 }
 
@@ -165,6 +165,8 @@ void serverMain(void* param)
 int main(int argc, char *argv[])
 #endif
 {
+	badAllocationHandler();
+
 	// Setup bad allocation handler
 	std::set_new_handler(badAllocationHandler);
 
