@@ -155,7 +155,8 @@ void badAllocationHandler()
 	// Use functions that only use stack allocation
 	puts("Allocation failed, server out of memory.\nDecrease the size of your map or compile in 64 bits mode.");
 	char buf[1024];
-	assert(fgets(buf, sizeof(buf), stdin));
+	char* tmp = fgets(buf, sizeof(buf), stdin);
+	assert(0 != tmp && "Virtual memory exhausted: cannot allocate memory");
 	exit(-1);
 }
 
