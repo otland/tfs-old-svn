@@ -86,11 +86,11 @@
 
 		Download sourcecode
 			Launch a terminal, and paste in this command:
-				svn co svn://svn.otland.net/public/forgottenserver/tags/0.2.9
+				svn co svn://svn.otland.net/public/forgottenserver/tags/0.2.10
 
 		Compiling
 			Launch a terminal, and type this command:
-				cd 0.2.9/ && make
+				cd 0.2.10/ && make
 
 		Linker eror
 			If you receive a linker error saying something with 'libboost',
