@@ -6,7 +6,7 @@ INCLUDEDIRS = -I. -I/usr/include/libxml2 \
 
 LIBDIRS =
 
-FLAGS = -D_THREAD_SAFE -D_REENTRANT -D__NO_HOMEDIR_CONF__ -D__ENABLE_SERVER_DIAGNOSTIC__ -D__USE_MYSQL__
+FLAGS = -D_THREAD_SAFE -D_REENTRANT -D__NO_HOMEDIR_CONF__ -D__ENABLE_SERVER_DIAGNOSTIC__ -D__USE_MYSQL__ -D__USE_SQLITE__
 
 CXXFLAGS = $(INCLUDEDIRS) $(FLAGS) -Werror -Wall -O2
 CXX = g++
@@ -14,21 +14,16 @@ CXX = g++
 LIBS = -lxml2 -lpthread -llua5.1 -lgmp -lmysqlclient -lsqlite3 -lboost_regex -llua5.1-sql-mysql -ldl -lboost_system -lboost_thread
 
 #For windows:
-#	mingw32-make SQLITE=1
+#	mingw32-make
 #For Linux:
-#	make SQLITE=1
-
-ifdef SQLITE
-	#I dont know the exact name for the lib //Fallen
-	LIBS += -llua5.1-sql-sqlite3
-	FLAGS += -D__USE_SQLITE__
-endif
+#	make
 
 #mingw32-make WIN32=1 LATEST_MINGW=1
 
 #TODO: fix this
 ifdef WIN32
 	#@echo "Building with platform win32, with options: "
+	LIBS += -llua5.1-sql-sqlite3
 	ifdef LATEST_MINGW
 		#@echo "Latest MinGW\n"
 		LIBS -= -lboost_thread
