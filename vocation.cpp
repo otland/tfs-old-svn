@@ -123,7 +123,7 @@ bool Vocations::loadFromXml()
 							if(readXMLInteger(configNode, "id", intVal))
 							{
 								skill_id = intVal;
-								if(skill_id < SKILL_FIRST || skill_id > SKILL_LAST)
+								if(skill_id > SKILL_LAST)
 									std::cout << "No valid skill id. " << skill_id << std::endl;
 								else
 								{

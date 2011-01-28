@@ -297,7 +297,7 @@ void FileLoader::endNode()
 	writeData(&nodeEnd, sizeof(nodeEnd), false);
 }
 
-const NODE FileLoader::getChildNode(const NODE parent, uint32_t &type)
+NODE FileLoader::getChildNode(const NODE parent, uint32_t &type)
 {
 	if(parent)
 	{
@@ -312,7 +312,7 @@ const NODE FileLoader::getChildNode(const NODE parent, uint32_t &type)
 	return m_root;
 }
 
-const NODE FileLoader::getNextNode(const NODE prev, uint32_t &type)
+NODE FileLoader::getNextNode(const NODE prev, uint32_t &type)
 {
 	if(prev)
 	{

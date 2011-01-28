@@ -178,12 +178,16 @@ void Connection::closeSocket()
 					//Transport endpoint is not connected.
 				}
 				else
+				{
 					PRINT_ASIO_ERROR("Shutdown");
+				}
 			}
 			m_socket->close(error);
 
 			if(error)
+			{
 				PRINT_ASIO_ERROR("Close");
+			}
 		}
 		catch(boost::system::system_error& e)
 		{

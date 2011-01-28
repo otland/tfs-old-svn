@@ -88,8 +88,8 @@ TalkActionResult_t TalkActions::playerSaySpell(Player* player, SpeakClasses type
 
 	std::string str_words;
 	std::string str_param;
-	size_t loc = words.find( '"', 0 );
-	if(loc != std::string::npos && loc >= 0)
+	size_t loc = words.find('"', 0);
+	if(loc != std::string::npos)
 	{
 		str_words = std::string(words, 0, loc);
 		str_param = std::string(words, (loc+1), words.size()-loc-1);

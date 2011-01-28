@@ -193,7 +193,7 @@ class Creature : public AutoID, virtual public Thing
 		virtual int32_t getMaxMana() const {return manaMax;}
 
 		const Outfit_t getCurrentOutfit() const {return currentOutfit;}
-		const void setCurrentOutfit(Outfit_t outfit) {currentOutfit = outfit;}
+		void setCurrentOutfit(Outfit_t outfit) {currentOutfit = outfit;}
 		const Outfit_t getDefaultOutfit() const {return defaultOutfit;}
 		bool isInvisible() const {return hasCondition(CONDITION_INVISIBLE);}
 		ZoneType_t getZone() const {return getTile()->getZone();}

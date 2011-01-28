@@ -253,7 +253,9 @@ void ServicePort::close()
 			boost::system::error_code error;
 			m_acceptor->close(error);
 			if(error)
+			{
 				PRINT_ASIO_ERROR("Closing listen socket");
+			}
 		}
 		delete m_acceptor;
 		m_acceptor = NULL;

@@ -82,11 +82,11 @@ class Weapon : public Event
 		virtual int32_t getWeaponDamage(const Player* player, const Creature* target, const Item* item, bool maxDamage = false) const = 0;
 		virtual int32_t getElementDamage(const Player* player, const Creature* target) const {return 0;}
 
-		const uint32_t getReqLevel() const {return level;}
-		const int32_t getReqMagLv() const {return magLevel;}
-		const bool hasExhaustion() const {return exhaustion;}
-		const bool isPremium() const {return premium;}
-		const bool isWieldedUnproperly() const {return wieldUnproperly;}
+		uint32_t getReqLevel() const {return level;}
+		int32_t getReqMagLv() const {return magLevel;}
+		bool hasExhaustion() const {return exhaustion;}
+		bool isPremium() const {return premium;}
+		bool isWieldedUnproperly() const {return wieldUnproperly;}
 
 	protected:
 		virtual std::string getScriptEventName();

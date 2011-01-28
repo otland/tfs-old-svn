@@ -46,10 +46,10 @@ class ChatChannel
 		void sendToAll(std::string message, SpeakClasses type);
 
 		const std::string& getName() {return m_name;}
-		const uint16_t getId() {return m_id;}
+		uint16_t getId() {return m_id;}
 		const UsersMap& getUsers() {return m_users;}
 
-		virtual const uint32_t getOwner() {return 0;}
+		virtual uint32_t getOwner() {return 0;}
 
 	protected:
 		UsersMap m_users;
@@ -63,7 +63,7 @@ class PrivateChatChannel : public ChatChannel
 		PrivateChatChannel(uint16_t channelId, std::string channelName);
 		virtual ~PrivateChatChannel(){}
 
-		virtual const uint32_t getOwner() {return m_owner;}
+		virtual uint32_t getOwner() {return m_owner;}
 		void setOwner(uint32_t id) {m_owner = id;}
 
 		bool isInvited(const Player* player);
