@@ -188,8 +188,8 @@ AC_CHECK_LIB(boost_filesystem-gcc-mt, main, , [
 	])
 ])
 
-# check for boost::unordered_set
-AC_CHECK_HEADERS([boost/tr1/unordered_set.hpp], , [AC_MSG_ERROR("boost::unordered_set header not found. Please update your boost to at least 1.40.")])
+# check for boost::unordered_set (should only check if gnu compiler version is below 4)
+# AC_CHECK_HEADERS([boost/tr1/unordered_set.hpp], , [AC_MSG_ERROR("boost::unordered_set header not found. Please update your boost to at least 1.40.")])
 
 # check for Crypto++
 AC_CHECK_HEADERS([cryptopp/sha.h cryptopp/md5.h cryptopp/adler32.h cryptopp/hex.h cryptopp/base64.h cryptopp/hmac.h cryptopp/cryptlib.h], , [AC_MSG_ERROR("Required Crypto++ headers not found.")])
