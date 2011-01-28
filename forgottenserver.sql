@@ -243,7 +243,7 @@ CREATE TABLE `player_viplist`
 CREATE TABLE `map_store`
 (
 	`house_id` int(10) unsigned NOT NULL,
-	`data` blob NOT NULL,
+	`data` LONGBLOB NOT NULL,
 	KEY `house_id` (`house_id`)
 ) ENGINE = InnoDB;
 
