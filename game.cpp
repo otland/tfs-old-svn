@@ -3892,7 +3892,7 @@ bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creat
 		if(target->getHealth() <= 0)
 			return false;
 
-		if(attacker && attacker->defaultOutfit.lookFeet == target->defaultOutfit.lookFeet && g_config.getBoolean(ConfigManager::CANNOT_ATTACK_SAME_LOOKFEET) && combatType != COMBAT_HEALING)
+		if(g_config.getBoolean(ConfigManager::CANNOT_ATTACK_SAME_LOOKFEET) && attacker && attacker->getPlayer() && target->getPlayer() && attacker->defaultOutfit.lookFeet == target->defaultOutfit.lookFeet && combatType != COMBAT_HEALING)
 			return false;
 
 		target->changeHealth(healthChange);
@@ -3916,7 +3916,7 @@ bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creat
 			return true;
 		}
 
-		if(attacker && attacker->defaultOutfit.lookFeet == target->defaultOutfit.lookFeet && g_config.getBoolean(ConfigManager::CANNOT_ATTACK_SAME_LOOKFEET) && combatType != COMBAT_HEALING)
+		if(g_config.getBoolean(ConfigManager::CANNOT_ATTACK_SAME_LOOKFEET) && attacker && attacker->getPlayer() && target->getPlayer() && attacker->defaultOutfit.lookFeet == target->defaultOutfit.lookFeet && combatType != COMBAT_HEALING)
 			return false;
 
 		int32_t damage = -healthChange;
@@ -4082,7 +4082,7 @@ bool Game::combatChangeMana(Creature* attacker, Creature* target, int32_t manaCh
 
 	if(manaChange > 0)
 	{
-		if(attacker && target && attacker->defaultOutfit.lookFeet == target->defaultOutfit.lookFeet && g_config.getBoolean(ConfigManager::CANNOT_ATTACK_SAME_LOOKFEET))
+		if(g_config.getBoolean(ConfigManager::CANNOT_ATTACK_SAME_LOOKFEET) && attacker && attacker->getPlayer() && target->getPlayer() && attacker->defaultOutfit.lookFeet == target->defaultOutfit.lookFeet)
 			return false;
 
 		target->changeMana(manaChange);
@@ -4095,7 +4095,7 @@ bool Game::combatChangeMana(Creature* attacker, Creature* target, int32_t manaCh
 			return false;
 		}
 
-		if(attacker && target && attacker->defaultOutfit.lookFeet == target->defaultOutfit.lookFeet && g_config.getBoolean(ConfigManager::CANNOT_ATTACK_SAME_LOOKFEET))
+		if(g_config.getBoolean(ConfigManager::CANNOT_ATTACK_SAME_LOOKFEET) && attacker && attacker->getPlayer() && target->getPlayer() && attacker->defaultOutfit.lookFeet == target->defaultOutfit.lookFeet)
 			return false;
 
 		int32_t manaLoss = std::min(target->getMana(), -manaChange);

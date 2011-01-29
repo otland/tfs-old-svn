@@ -3,7 +3,7 @@
 		The Forgotten Server
 
 	Version
-		0.2.10
+		0.2.11
 
 	Codenamed
 		"Mystic Spirit"
@@ -21,28 +21,8 @@
 	A = Added.
 
 	M The Forgotten Server.exe
-	  data/
-	M	creaturescripts/scripts/playerdeath.lua
-		items/
-	M		items.otb
-	M		items.xml
-		monsters/
-	D		elderbeholder.xml
-	A		elderbonelord.xml
-	M		monsters.xml
-	M	npc/lib/npcsystem/npchandler.lua
-		XML/
-	M		mounts.xml
-	M		outfits.xml
 ]
 
 [ Milestone
-	Added warmaster outfit to outfits.xml.
-	Corrected all mounts speed bonus in mounts.xml.
-	Fixed a few errors in the NPC system.
-	Fixed a bug in the player death script caused by the changes related to Lua interface in the previous release.
-	Fixed an issue with global events and optimized the code (it will no longer affect server performance when not being used with timers/think events).
-	Fixed an issue that would dismount players when attempting to enter protection zone with pz-lock while being mounted.
-	Replaced "beholder" strings with "bonelord".
-	A lot of miscellaneous cleanups, formating, improvements and fixes.
+	Fixed a bug when noDamageToSameLookfeet was enabled that caused no damage between monsters and players if they have the same lookfeet.
 ]
