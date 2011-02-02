@@ -32,17 +32,15 @@ class Town
 {
 	public:
 		Town(uint32_t _townid)
-		{
-			townid = _townid;
-		}
+			: townid(_townid) {}
 
-		~Town(){}
+		~Town() {}
 
 		const Position& getTemplePosition() const {return posTemple;}
 		const std::string& getName() const {return townName;}
 
 		void setTemplePos(const Position& pos) {posTemple = pos;}
-		void setName(std::string _townName) {townName = _townName;}
+		void setName(const std::string& _townName) {townName = _townName;}
 		uint32_t getTownID() const {return townid;}
 
 	private:
@@ -58,8 +56,8 @@ class Towns
 	public:
 		static Towns& getInstance()
 		{
-			static Towns instance;
-			return instance;
+			static Towns singleton;
+			return singleton;
 		}
 
 		bool addTown(uint32_t _townid, Town* town)

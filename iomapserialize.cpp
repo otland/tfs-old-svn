@@ -45,7 +45,7 @@ bool IOMapSerialize::loadMap(Map* map)
 	else
 		s = loadMapRelational(map);
 
-	std::cout << "Notice: Map load (" << g_config.getString(ConfigManager::MAP_STORAGE_TYPE) << ") took : " <<
+	std::cout << "Notice: Map load (" << g_config.getString(ConfigManager::MAP_STORAGE_TYPE) << ") took: " <<
 		(OTSYS_TIME() - start)/(1000.) << " s" << std::endl;
 
 	return s;

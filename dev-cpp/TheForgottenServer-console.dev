@@ -29,16 +29,6 @@ SupportXPThemes=0
 CompilerSet=0
 CompilerSettings=0000000001100000000000
 
-[Unit1]
-FileName=..\account.cpp
-CompileCpp=1
-Folder=TheForgottenServer
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
 [Unit2]
 FileName=..\account.h
 CompileCpp=1

@@ -141,9 +141,7 @@ bool DatabaseSqLite::storeQuery(DBQuery &q, DBResult &dbres)
 
 bool DatabaseSqLite::rollback()
 {
-	DBQuery query;
-	query << "ROLLBACK;";
-	return executeQuery(query);
+	return executeQuery(DBQuery("ROLLBACK;"));
 }
 
 bool DatabaseSqLite::commit()

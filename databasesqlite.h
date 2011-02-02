@@ -30,8 +30,12 @@ class DatabaseSqLite : public _Database
 		DatabaseSqLite();
 		virtual ~DatabaseSqLite();
 
-		/** Connect to a mysql DatabaseSqLite
-		*\returns
+		/*!
+		* \fn
+		*	connect()
+		* \brief 
+		**	Connect to a sqlite database
+		* \return
 		* 	TRUE if the connection is ok
 		* 	FALSE if the connection fails
 		*/

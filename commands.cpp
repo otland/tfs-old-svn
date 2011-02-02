@@ -22,6 +22,8 @@
 #include <string>
 #include <fstream>
 #include <utility>
+#include <cstring>
+#include <cerrno>
 
 #include "commands.h"
 #include "player.h"
@@ -144,8 +146,9 @@ bool Commands::loadFromXml()
 		xmlNodePtr root, p;
 		root = xmlDocGetRootElement(doc);
 
-		if(xmlStrcmp(root->name,(const xmlChar*)"commands") != 0)
+		if(xmlStrcmp(root->name,(const xmlChar*)"commands"))
 		{
+			std::clog << "[Error - Commands::loadFromXml] Malformed commands file." << std::endl;
 			xmlFreeDoc(doc);
 			return false;
 		}
@@ -273,7 +276,15 @@ bool Commands::exeCommand(Creature* creature, const std::string& cmd)
 		const tm* now = localtime(&ticks);
 		char buf[32], buffer[100];
 		strftime(buf, sizeof(buf), "%d/%m/%Y %H:%M", now);
-		sprintf(buffer, "data/logs/%s commands.log", player->name.c_str());
+		if(dirExists("data/logs") || createDir("data/logs"))
+			sprintf(buffer, "data/logs/%s commands.log", player->name.c_str());
+		else
+			std::clog << "[Warning - Commands::exeCommand] Cannot access \"data/logs\" for writing: " << strerror(errno) << "." << std::endl;
+
+		//avoid seg fault from std::ofstream just incase the directory does not exist
+		if (*buffer == '\0')
+			return true;
+
 		std::ofstream out(buffer, std::ios::app);
 		out << "[" << buf << "] " << cmd << std::endl;
 		out.close();

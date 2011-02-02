@@ -21,6 +21,7 @@
 	A = Added.
 
 	M The Forgotten Server.exe
+	M		Makefile (now supports windows)
 ]
 
 [ Milestone

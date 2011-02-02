@@ -1139,6 +1139,28 @@ bool fileExists(const char* filename)
 	return exists;
 }
 
+bool dirExists(const std::string& dirName)
+{
+	return access(dirName.c_str(), 0) == 0;
+}
+
+bool createDir(const std::string& dirName)
+{
+	if (dirExists(dirName))
+		return false;
+
+	if (
+#ifdef _WIN32
+		mkdir(dirName.c_str(), 0)
+#else
+		mkdir(dirName.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH)
+#endif
+		!= 0)
+		return false;
+
+	return true;
+}
+
 uint32_t adlerChecksum(uint8_t *data, size_t length)
 {
 	if(length > NETWORKMESSAGE_MAXSIZE)
@@ -1162,3 +1184,13 @@ uint32_t adlerChecksum(uint8_t *data, size_t length)
 	}
 	return (b << 16) | a;
 }
+
+#ifdef __USE_TEMPLATES__
+template<typename _Tp>
+inline std::string toString(_Tp __p)
+{
+	std::stringstream ss;
+	ss << __p;
+	return ss.str();
+}
+#endif

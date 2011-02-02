@@ -27,8 +27,32 @@
 #endif
 #endif
 
+#ifdef _WIN32
+#include <io.h>
+#include <process.h>
+#include <direct.h>
+#else /* Not _WIN32 */
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#endif /* _WIN32 */
+
+#ifdef _WIN32
+#ifdef _MSC_VER
+#define mkdir(dirname, mode) _mkdir(dirname)
+#else /* Not _MSC_VER */
+#define mkdir(dirname, mode) _mkdir(dirname)
+#endif /* _MSC_VER */
+#endif /* _WIN32 */
+
+#ifndef __USE_TEMPLATES__
+#define toString(str) std::string(#str)
+#endif
+
 #ifndef WIN32
-	#define __CONSOLE__
+#ifndef __CONSOLE__
+#define __CONSOLE__
+#endif
 #endif
 
 #ifdef XML_GCC_FREE
