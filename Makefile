@@ -1,4 +1,4 @@
-# Makefile for Linux(Ubuntu, Debian)/Windows(mingw, probably supports MSVC too)
+# Makefile for Linux (Ubuntu, Debian), Windows (mingw, probably supports MSVC too)
 TFS = forgottenserver
 
 INCLUDEDIRS = -I"." -I"/usr/include/libxml2" \
@@ -20,22 +20,41 @@ LIBS = -lxml2 -lpthread -llua5.1 -lgmp
 #	make
 
 ifdef MYSQL
-	#I dont know the exact name for the lib //Fallen
-	ifdef WIN32
-		LIBS += -lluasql_mysql -lmysqlclient
+	ifdef SQLITE
+		ifdef WIN32
+			LIBS += -lluasql_mysql -lluasql_sqlite
+		else
+			LIBS += -llua5.1-sql-sqlite3
+		endif
+		LIBS += -lmysqlclient -lsqlite3
+		FLAGS += -D__USE_MYSQL__ -D__USE_SQLITE__
+	else
+		ifdef WIN32
+			LIBS += -lluasql_mysql -lmysqlclient
+			FLAGS += -D__USE_SQLITE__
+		else
+			LIBS += -llua5.1-sql-mysql -lmysql
+		endif
+		FLAGS += -D__USE_MYSQL__
+	endif
+else
+	ifdef SQLITE
+		ifdef WIN32
+			LIBS += -lluasql_sqlite
+		else
+			LIBS += -llua5.1-sql-sqlite3
+		endif
+		LIBS += -lsqlite3
 		FLAGS += -D__USE_SQLITE__
 	else
-		LIBS += -llua5.1-sql-mysql -lmysql
+		ifdef WIN32
+			LIBS += -lluasql_mysql -lluasql_sqlite
+		else
+			LIBS += -llua5.1-sql-sqlite3
+		endif
+		LIBS += -lmysqlclient -lsqlite3
+		FLAGS += -D__USE_MYSQL__ -D__USE_SQLITE__
 	endif
-	FLAGS += -D__USE_MYSQL__
-else
-	ifdef WIN32
-		LIBS += -lluasql_sqlite
-	else
-		LIBS += -llua5.1-sql-sqlite3
-	endif
-	LIBS += -lsqlite3
-	FLAGS += -D__USE_SQLITE__
 endif
 
 #mingw32-make WIN32=1 LATEST_MINGW=1
