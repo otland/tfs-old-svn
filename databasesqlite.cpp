@@ -141,7 +141,9 @@ bool DatabaseSqLite::storeQuery(DBQuery &q, DBResult &dbres)
 
 bool DatabaseSqLite::rollback()
 {
-	return executeQuery(*dynamic_cast<DBQuery*>(new std::stringstream(std::string("ROLLBACK;"))));
+	DBQuery query;
+	query << "ROLLBACK;";
+	return executeQuery(query);
 }
 
 bool DatabaseSqLite::commit()
