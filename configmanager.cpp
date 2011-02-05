@@ -21,7 +21,9 @@
 
 #include "definitions.h"
 #include "configmanager.h"
+
 #include <iostream>
+#include <stdexcept>
 
 ConfigManager::ConfigManager()
 {
@@ -37,7 +39,7 @@ bool ConfigManager::loadFile(const std::string& _filename)
 {
 	lua_State* L = lua_open();
 	if(!L)
-		return false;
+		throw std::runtime_error("Failed to allocate memory");
 
 	if(luaL_dofile(L, _filename.c_str()))
 	{
