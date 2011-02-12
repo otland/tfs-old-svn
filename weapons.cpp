@@ -110,9 +110,7 @@ bool Weapons::loadDefaults()
 					break;
 				}
 				default:
-				{
 					break;
-				}
 			}
 		}
 	}
@@ -129,8 +127,8 @@ Event* Weapons::getEvent(const std::string& nodeName)
 		return new WeaponDistance(&m_scriptInterface);
 	else if(tmpNodeName == "wand" || tmpNodeName == "rod")
 		return new WeaponWand(&m_scriptInterface);
-	else
-		return NULL;
+
+	return NULL;
 }
 
 bool Weapons::registerEvent(Event* event, xmlNodePtr p)
