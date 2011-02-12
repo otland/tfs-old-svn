@@ -34,8 +34,8 @@
 		<Linker>
 			<Add option="-s" />
 			<Add option="-lws2_32" />
-			<Add option="-lluajit.dll" />
-			<Add option="-lxml2.dll" />
+			<Add option="-lluajit" />
+			<Add option="-lxml2" />
 			<Add option="-lboost_system" />
 			<Add option="-lboost_regex" />
 			<Add option="-lmysql" />
@@ -44,10 +44,9 @@
 			<Add option="-lboost_thread" />
 			<Add option="-liconv" />
 			<Add option="-lwsock32" />
-			<Add option="-lluajitsql_sqlite3.dll" />
-			<Add option="-lluajitsql_mysql.dll" />
+			<Add option="-lluajitsql_sqlite3" />
+			<Add option="-lluajitsql_mysql" />
 		</Linker>
-		<Unit filename="..\account.cpp" />
 		<Unit filename="..\account.h" />
 		<Unit filename="..\actions.cpp" />
 		<Unit filename="..\actions.h" />
