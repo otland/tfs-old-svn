@@ -32,7 +32,7 @@
 #include <iomanip>
 
 #if defined __GNUC__ && __GNUC__ > 3
-#	include <ctype.h>
+#include <ctype.h>
 #endif
 
 extern ConfigManager g_config;
