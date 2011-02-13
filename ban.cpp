@@ -41,60 +41,101 @@ void Ban::init()
 	loginTimeout = (uint32_t)g_config.getNumber(ConfigManager::LOGIN_TIMEOUT) / 1000;
 }
 
+bool Ban::acceptConnection(uint32_t clientip)
+{
+	if(clientip == 0)
+		return false;
+
+	OTSYS_THREAD_LOCK(banLock, "");
+
+	uint64_t currentTime = OTSYS_TIME();
+	IpConnectMap::iterator it = ipConnectMap.find(clientip);
+	if(it == ipConnectMap.end())
+	{
+		ConnectBlock cb;
+		cb.startTime = currentTime;
+		cb.blockTime = 0;
+		cb.count = 1;
+
+		ipConnectMap[clientip] = cb;
+		OTSYS_THREAD_UNLOCK(banLock, "");
+		return true;
+	}
+
+	it->second.count++;
+	if(it->second.blockTime > currentTime)
+	{
+		OTSYS_THREAD_UNLOCK(banLock, "");
+		return false;
+	}
+
+	if(currentTime - it->second.startTime > 1000)
+	{
+		uint32_t connectionPerSec = it->second.count;
+		it->second.startTime = currentTime;
+		it->second.count = 0;
+		it->second.blockTime = 0;
+		if(connectionPerSec > 10)
+		{
+			it->second.blockTime = currentTime + 10000;
+			OTSYS_THREAD_UNLOCK(banLock, "");
+			return false;
+		}
+	}
+
+	OTSYS_THREAD_UNLOCK(banLock, "");
+	return true;
+}
+
 void Ban::addLoginAttempt(uint32_t clientip, bool isSuccess)
 {
-	if(clientip != 0)
+	if(clientip == 0)
+		return;
+
+	OTSYS_THREAD_LOCK(banLock, "");
+
+	time_t currentTime = time(NULL);
+	IpLoginMap::iterator it = ipLoginMap.find(clientip);
+	if(it == ipLoginMap.end())
 	{
-		OTSYS_THREAD_LOCK(banLock, "");
+		LoginBlock lb;
+		lb.lastLoginTime = 0;
+		lb.numberOfLogins = 0;
 
-		uint32_t currentTime = time(NULL);
-
-		IpLoginMap::iterator it = ipLoginMap.find(clientip);
-		if(it == ipLoginMap.end())
-		{
-			LoginBlock lb;
-			lb.lastLoginTime = 0;
-			lb.numberOfLogins = 0;
-
-			ipLoginMap[clientip] = lb;
-			it = ipLoginMap.find(clientip);
-		}
-
-		if(it->second.numberOfLogins >= maxLoginTries)
-			it->second.numberOfLogins = 0;
-
-		if(!isSuccess || (currentTime < it->second.lastLoginTime + retryTimeout))
-			++it->second.numberOfLogins;
-		else
-			it->second.numberOfLogins = 0;
-
-		it->second.lastLoginTime = currentTime;
-
-		OTSYS_THREAD_UNLOCK(banLock, "");
+		ipLoginMap[clientip] = lb;
+		it = ipLoginMap.find(clientip);
 	}
+
+	if(it->second.numberOfLogins >= maxLoginTries)
+		it->second.numberOfLogins = 0;
+
+	if(!isSuccess || ((uint32_t)currentTime < (uint32_t)it->second.lastLoginTime + retryTimeout))
+		++it->second.numberOfLogins;
+	else
+		it->second.numberOfLogins = 0;
+
+	it->second.lastLoginTime = currentTime;
+	OTSYS_THREAD_UNLOCK(banLock, "");
 }
 
 bool Ban::isIpDisabled(uint32_t clientip)
 {
-	if(maxLoginTries == 0)
+	if(maxLoginTries == 0 || clientip == 0)
 		return false;
 
-	if(clientip != 0)
-	{
-		OTSYS_THREAD_LOCK(banLock, "");
+	OTSYS_THREAD_LOCK(banLock, "");
 
-		uint32_t currentTime = time(NULL);
-		IpLoginMap::const_iterator it = ipLoginMap.find(clientip);
-		if(it != ipLoginMap.end())
+	time_t currentTime = time(NULL);
+	IpLoginMap::iterator it = ipLoginMap.find(clientip);
+	if(it != ipLoginMap.end())
+	{
+		if((it->second.numberOfLogins >= maxLoginTries) && ((uint32_t)currentTime < it->second.lastLoginTime + loginTimeout))
 		{
-			if((it->second.numberOfLogins >= maxLoginTries) && (currentTime < it->second.lastLoginTime + loginTimeout))
-			{
-				OTSYS_THREAD_UNLOCK(banLock, "");
-				return true;
-			}
+			OTSYS_THREAD_UNLOCK(banLock, "");
+			return true;
 		}
-		OTSYS_THREAD_UNLOCK(banLock, "");
 	}
+	OTSYS_THREAD_UNLOCK(banLock, "");
 	return false;
 }
 

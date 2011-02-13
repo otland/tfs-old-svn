@@ -24,8 +24,10 @@
 #include "connection.h"
 #include "scheduler.h"
 #include "configmanager.h"
+#include "ban.h"
 
 extern ConfigManager g_config;
+extern Ban g_bans;
 
 ServiceManager::ServiceManager()
 	: m_io_service(), death_timer(m_io_service), running(false)
@@ -149,7 +151,7 @@ void ServicePort::onAccept(boost::asio::ip::tcp::socket* socket, const boost::sy
 		if(!error)
 			remote_ip = htonl(endpoint.address().to_v4().to_ulong());
 
-		if(remote_ip != 0/* && g_bans.acceptConnection(remote_ip)*/)
+		if(remote_ip != 0 && g_bans.acceptConnection(remote_ip))
 		{
 			Connection_ptr connection = ConnectionManager::getInstance()->createConnection(socket, m_io_service, shared_from_this());
 			if(m_services.front()->is_single_socket())

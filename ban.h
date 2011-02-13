@@ -91,12 +91,21 @@ struct LoginBlock
 	uint32_t numberOfLogins;
 };
 
+struct ConnectBlock
+{
+	uint64_t startTime;
+	uint64_t blockTime;
+	uint32_t count;
+};
+
 typedef std::list< IpBanStruct > IpBanList;
 typedef std::list< PlayerNamelockStruct > PlayerNamelockList;
 typedef std::list< AccountNotationStruct > AccountNotationList;
 typedef std::list< AccountBanStruct > AccountBanList;
 typedef std::list< AccountDeletionStruct > AccountDeletionList;
+
 typedef std::map<uint32_t, LoginBlock > IpLoginMap;
+typedef std::map<uint32_t, ConnectBlock > IpConnectMap;
 
 enum BanType_t
 {
@@ -114,11 +123,13 @@ class Ban
 		virtual ~Ban() {}
 
 		void init();
+		bool acceptConnection(uint32_t clientip);
 		void addLoginAttempt(uint32_t clientip, bool isSuccess);
 		bool isIpDisabled(uint32_t clientip);
 
 	protected:
 		IpLoginMap ipLoginMap;
+		IpConnectMap ipConnectMap;
 
 		uint32_t loginTimeout;
 		uint32_t maxLoginTries;
