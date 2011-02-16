@@ -476,11 +476,19 @@ bool Manager::allow(uint32_t ip) const
 
 bool Manager::execute(const std::string& script)
 {
-	if(!m_interface.reserveEnv())
+	if(!m_interface)
+	{
+		// create upon first execution to save some memory and
+		// avoid any startup crashes related to creation on load
+		m_interface = new LuaInterface("Manager Interface");
+		m_interface->initState();
+	}
+
+	if(!m_interface->reserveEnv())
 		return false;
 
-	m_interface.loadBuffer(script);
-	m_interface.releaseEnv();
+	m_interface->loadBuffer(script);
+	m_interface->releaseEnv();
 	return true;
 }
 

@@ -84,8 +84,8 @@ class Manager
 		void removeUser(uint32_t playerId, uint16_t channelId);
 
 	protected:
-		Manager(): m_interface("Manager Interface") {m_interface.initState();}
-		LuaInterface m_interface;
+		Manager() {}
+		LuaInterface* m_interface;
 
 		typedef std::map<ProtocolManager*, bool> ClientMap;
 		ClientMap m_clients;
