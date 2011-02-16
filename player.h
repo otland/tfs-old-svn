@@ -224,7 +224,7 @@ class Player : public Creature, public Cylinder
 		bool hasCustomFlag(PlayerCustomFlags value) const {return group != NULL && group->hasCustomFlag(value);}
 
 		void addBlessing(int16_t blessing) {blessings += blessing;}
-		bool hasBlessing(int16_t value) const {return (blessings & ((int16_t)1 << value));}
+		bool hasBlessing(int16_t value) const {return ((blessings & ((int16_t)1 << value)) != 0);}
 		uint16_t getBlessings() const;
 
 		OperatingSystem_t getOperatingSystem() const {return operatingSystem;}
@@ -232,7 +232,7 @@ class Player : public Creature, public Cylinder
 		uint32_t getClientVersion() const {return clientVersion;}
 		void setClientVersion(uint32_t version) {clientVersion = version;}
 
-		bool hasClient() const {return client;}
+		bool hasClient() const {return (client != NULL);}
 		bool isVirtual() const {return (getID() == 0);}
 		void disconnect() {if(client) client->disconnect();}
 		uint32_t getIP() const;
@@ -266,7 +266,7 @@ class Player : public Creature, public Cylinder
 		void setIdleTime(uint32_t amount) {idleTime = amount;}
 
 		bool checkLoginDelay(uint32_t playerId) const;
-		bool isTrading() const {return tradePartner;}
+		bool isTrading() const {return (tradePartner != NULL);}
 
 		uint32_t getAccount() const {return accountId;}
 		std::string getAccountName() const {return account;}
@@ -557,8 +557,8 @@ class Player : public Creature, public Cylinder
 			{if(client) client->sendCreatureShield(creature);}
 		void sendCreatureEmblem(const Creature* creature)
 			{if(client) client->sendCreatureEmblem(creature);}
-		void sendCreatureImpassable(const Creature* creature)
-			{if(client) client->sendCreatureImpassable(creature);}
+		void sendCreatureWalkthrough(const Creature* creature, bool walkthrough)
+			{if(client) client->sendCreatureWalkthrough(creature, walkthrough);}
 		void sendSpellCooldown(uint16_t spellId, uint32_t cooldown, bool isGroup)
 			{if(client) client->sendSpellCooldown(spellId, cooldown, isGroup);}
 

@@ -335,7 +335,7 @@ void IOLoginData::removePremium(Account account)
 	uint64_t timeNow = time(NULL);
 	if(account.premiumDays > 0 && account.premiumDays < 65535)
 	{
-		uint32_t days = (uint32_t)std::ceil((timeNow - account.lastDay) / 86400);
+		uint32_t days = (uint32_t)std::ceil((timeNow - account.lastDay) / 86400.);
 		if(days > 0)
 		{
 			if(account.premiumDays >= days)
@@ -774,7 +774,7 @@ bool IOLoginData::savePlayer(Player* player, bool preSave/* = true*/, bool shall
 	Database* db = Database::getInstance();
 	DBQuery query;
 
-	bool save = g_config.getNumber(ConfigManager::SAVE_PLAYER_DATA);
+	bool save = g_config.getNumber(ConfigManager::SAVE_PLAYER_DATA) != 0;
 	
 	DBTransaction trans(db);
 	if(!trans.begin())
@@ -1059,10 +1059,15 @@ bool IOLoginData::saveItems(const Player* player, const ItemBlockList& itemList,
 
 		uint32_t attributesSize = 0;
 		const char* attributes = propWriteStream.getStream(attributesSize);
+#ifndef _MSC_VER
 		char buffer[attributesSize * 3 + 100]; //MUST be (size * 2), else people can crash server when filling writable with native characters
-
 		sprintf(buffer, "%d, %d, %d, %d, %d, %s", player->getGUID(), it->first, runningId, item->getID(),
 			(int32_t)item->getSubType(), db->escapeBlob(attributes, attributesSize).c_str());
+#else
+		std::stringstream buffer;
+		buffer << player->getGUID() << ", " << it->first << ", " << runningId << ", " << item->getID() << ", "
+			   << (int32_t)item->getSubType() << ", " << db->escapeBlob(attributes, attributesSize).c_str();
+#endif
 		if(!query_insert.addRow(buffer))
 			return false;
 
@@ -1087,10 +1092,15 @@ bool IOLoginData::saveItems(const Player* player, const ItemBlockList& itemList,
 
 			uint32_t attributesSize = 0;
 			const char* attributes = propWriteStream.getStream(attributesSize);
+#ifndef _MSC_VER
 			char buffer[attributesSize * 3 + 100]; //MUST be (size * 2), else people can crash server when filling writable with native characters
-
 			sprintf(buffer, "%d, %d, %d, %d, %d, %s", player->getGUID(), stack.second, runningId, item->getID(),
 				(int32_t)item->getSubType(), db->escapeBlob(attributes, attributesSize).c_str());
+#else
+			std::stringstream buffer;
+			buffer << player->getGUID() << ", " << stack.second << ", " << runningId << ", " << item->getID() << ", "
+				   << (int32_t)item->getSubType() << ", " << db->escapeBlob(attributes, attributesSize).c_str();
+#endif
 			if(!query_insert.addRow(buffer))
 				return false;
 		}
@@ -1338,7 +1348,7 @@ bool IOLoginData::isPremium(uint32_t guid)
 
 	const uint32_t premium = result->getDataInt("premdays");
 	result->free();
-	return premium;
+	return (premium != 0);
 }
 
 bool IOLoginData::playerExists(uint32_t guid, bool multiworld /*= false*/, bool checkCache /*= true*/)

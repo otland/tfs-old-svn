@@ -1393,7 +1393,7 @@ void Player::onChangeZone(ZoneType_t zone)
 			onAttackedCreatureDisappear(false);
 		}
 
-		if(g_config.getNumber(ConfigManager::UNMOUNT_PLAYER_IN_PZ))
+		if(g_config.getBool(ConfigManager::UNMOUNT_PLAYER_IN_PZ))
 			dismount();
 	}
 	sendIcons();
@@ -4910,7 +4910,7 @@ bool Player::isPremium() const
 	if(g_config.getBool(ConfigManager::FREE_PREMIUM) || hasFlag(PlayerFlag_IsAlwaysPremium))
 		return true;
 
-	return premiumDays;
+	return (premiumDays != 0);
 }
 
 bool Player::setGuildLevel(GuildLevel_t newLevel, uint32_t rank/* = 0*/)
@@ -5197,6 +5197,7 @@ void Player::dismount()
 		g_game.internalCreatureChangeOutfit(this, defaultOutfit);
 	}
 }
+
 bool Player::tameMount(uint8_t mountId)
 {
 	if(!Mounts::getInstance()->getMountById(mountId))
@@ -5209,10 +5210,10 @@ bool Player::tameMount(uint8_t mountId)
 	if(getStorage(boost::lexical_cast<std::string>(key), tmp))
 	{
 		value = atoi(tmp.c_str());
-		value |= static_cast<int32_t>(pow(2, mountId % 31));
+		value |= static_cast<int32_t>(pow(2., mountId % 31));
 	} 
 	else
-		value = static_cast<int32_t>(pow(2, mountId % 31));
+		value = static_cast<int32_t>(pow(2., mountId % 31));
 
 	setStorage(boost::lexical_cast<std::string>(key), boost::lexical_cast<std::string>(value));
 	return true;
@@ -5231,7 +5232,7 @@ bool Player::untameMount(uint8_t mountId)
                 return true;
 
 	value = atoi(tmp.c_str());
-        value ^= (int32_t)pow(2, mountId % 31);
+        value ^= (int32_t)pow(2., mountId % 31);
         setStorage(boost::lexical_cast<std::string>(key), boost::lexical_cast<std::string>(value));
 
 	// If it's our current mount, unmount it

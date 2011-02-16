@@ -79,7 +79,7 @@ class Container : public Item, public Cylinder
 			if(maxSize)
 				return itemlist.size() >= maxSize;
 
-			return 255;
+			return true;
 		}
 		bool empty() const {return itemlist.empty();}
 

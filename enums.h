@@ -21,6 +21,8 @@
 #include <string>
 #include <list>
 
+#pragma warning(disable:4244)
+
 enum DatabaseEngine_t
 {
 	DATABASE_ENGINE_NONE = 0,

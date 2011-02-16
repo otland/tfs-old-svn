@@ -155,6 +155,7 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 		else
 			IOLoginData::getInstance()->getNameByGuid(ban.adminId, name_, true);
 
+#ifndef _MSC_VER
 		char buffer[500 + ban.comment.length()];
 		sprintf(buffer, "Your account has been %s at:\n%s by: %s,\nfor the following reason:\n%s.\nThe action taken was:\n%s.\nThe comment given was:\n%s.\nYour %s%s.",
 			(deletion ? "deleted" : "banished"), formatDateEx(ban.added, "%d %b %Y").c_str(), name_.c_str(),
@@ -163,6 +164,15 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 			(deletion ? "" : formatDateEx(ban.expires).c_str()));
 
 		disconnectClient(0x0A, buffer);
+#else
+		std::stringstream stream;
+		stream << "Your account has been " << (deletion ? "deleted" : "banished") << " at:\n" << formatDateEx(ban.added, "%d %b %Y").c_str() << " by: "
+			   << name_.c_str() << ",\nfor the following reason:\n" << getReason(ban.reason).c_str() << ".\nThe action taken was:\n" << getAction(ban.action, false).c_str()
+			   << ".\nThe comment given was:\n" << ban.comment.c_str() << ".\nYour " << (deletion ? "account won't be undeleted" : "banishment will be lifted at:\n")
+			   << (deletion ? "" : formatDateEx(ban.expires).c_str()) << ".";
+		
+		disconnectClient(0x0A, stream.str().c_str());
+#endif
 		return false;
 	}
 

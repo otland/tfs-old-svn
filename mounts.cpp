@@ -33,7 +33,7 @@ bool Mount::isTamed(Player* player) const
 	if(!player->getStorage(boost::lexical_cast<std::string>(key), value))
 		return false;
 
-	int32_t tmp = static_cast<int32_t>(pow(2, tmpId % 31));
+	int32_t tmp = static_cast<int32_t>(pow(2., tmpId % 31));
 	return (tmp & atoi(value.c_str())) == tmp;
 }
 void Mounts::clear()
