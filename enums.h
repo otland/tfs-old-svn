@@ -21,7 +21,9 @@
 #include <string>
 #include <list>
 
-#pragma warning(disable:4244)
+#ifdef _MSC_VER
+	#pragma warning(disable:4244)
+#endif
 
 enum DatabaseEngine_t
 {
