@@ -114,7 +114,7 @@ typedef std::list<ChatChannel*> ChannelList;
 class Chat
 {
 	public:
-		Chat(): statement(0), dummyPrivate(NULL), partyName("Party") {}
+		Chat(): dummyPrivate(NULL), partyName("Party") {}
 		virtual ~Chat();
 
 		bool reload();
