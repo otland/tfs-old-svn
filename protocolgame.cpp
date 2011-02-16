@@ -1285,6 +1285,9 @@ void ProtocolGame::parseSay(NetworkMessage& msg)
 	{
 		case SPEAK_PRIVATE:
 		case SPEAK_PRIVATE_RED:
+			receiver = msg.getString();
+			break;
+
 		case SPEAK_CHANNEL_RA:
 		case SPEAK_CHANNEL_RN:
 		case SPEAK_CHANNEL_Y:

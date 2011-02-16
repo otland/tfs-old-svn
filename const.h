@@ -171,9 +171,6 @@ enum SpeakClasses
 	SPEAK_CLASS_LAST 	= SPEAK_MONSTER_YELL,
 
 	// removed from game
-	SPEAK_RVR_CHANNEL	= 0xFF + 1,
-	SPEAK_RVR_ANSWER	= 0xFF + 2,
-	SPEAK_RVR_CONTINUE	= 0xFF + 3,
 	SPEAK_CHANNEL_RA	= 0xFF + 4
 };
 
