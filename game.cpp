@@ -3747,6 +3747,7 @@ bool Game::playerSay(uint32_t playerId, uint16_t channelId, SpeakClasses type, c
 			return playerYell(player, text);
 		case SPEAK_PRIVATE:
 		case SPEAK_PRIVATE_RED:
+			return playerSpeakTo(player, type, receiver, text);
 		case SPEAK_CHANNEL_O:
 		case SPEAK_CHANNEL_Y:
 		case SPEAK_CHANNEL_RN:
