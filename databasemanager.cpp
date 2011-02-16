@@ -1134,8 +1134,16 @@ uint32_t DatabaseManager::updateDatabase()
 		case 26:
 		{
 			std::clog << "> Updating database to version 27..." << std::endl;
-			db->query(std::string("ALTER TABLE `player_storage` CHANGE `key` `key` VARCHAR(32) NOT NULL DEFAULT '0'"));
-			db->query(std::string("ALTER TABLE `global_storage` CHANGE `key` `key` VARCHAR(32) NOT NULL DEFAULT '0'"));
+			if(db->getDatabaseEngine() != DATABASE_ENGINE_SQLITE)
+			{
+				db->query(std::string("ALTER TABLE `player_storage` CHANGE `key` `key` VARCHAR(32) NOT NULL DEFAULT '0'"));
+				db->query(std::string("ALTER TABLE `global_storage` CHANGE `key` `key` VARCHAR(32) NOT NULL DEFAULT '0'"));
+			}
+			else
+			{
+				// SQLite doesn't support changing datatypes, TODO.
+			}
+
 			registerDatabaseConfig("db_version", 27);
 			return 27;
 		}
@@ -1162,7 +1170,7 @@ uint32_t DatabaseManager::updateDatabase()
 			}
 
 			query.str("");
-			registerDatabaseConfig("db_version", 28);		
+			registerDatabaseConfig("db_version", 28);
 			return 28;
 		}
 
