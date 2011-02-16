@@ -671,8 +671,8 @@ class Player : public Creature, public Cylinder
 			{if(client) client->sendTextWindow(windowTextId, item, maxLen, canWrite);}
 		void sendTextWindow(uint32_t itemId, const std::string& text) const
 			{if(client) client->sendTextWindow(windowTextId, itemId, text);}
-		void sendToChannel(Creature* creature, SpeakClasses type, const std::string& text, uint16_t channelId, uint32_t time = 0) const
-			{if(client) client->sendToChannel(creature, type, text, channelId, time);}
+		void sendToChannel(Creature* creature, SpeakClasses type, const std::string& text, uint16_t channelId) const
+			{if(client) client->sendToChannel(creature, type, text, channelId); }
 		void sendShop() const
 			{if(client) client->sendShop(shopOffer);}
 		void sendGoods() const
@@ -695,14 +695,6 @@ class Player : public Creature, public Cylinder
 			{if(client) client->sendCloseContainer(cid);}
 		void sendChannel(uint16_t channelId, const std::string& channelName)
 			{if(client) client->sendChannel(channelId, channelName);}
-		void sendRuleViolationsChannel(uint16_t channelId)
-			{if(client) client->sendRuleViolationsChannel(channelId);}
-		void sendRemoveReport(const std::string& name)
-			{if(client) client->sendRemoveReport(name);}
-		void sendLockRuleViolation()
-			{if(client) client->sendLockRuleViolation();}
-		void sendRuleViolationCancel(const std::string& name)
-			{if(client) client->sendRuleViolationCancel(name);}
 		void sendTutorial(uint8_t tutorialId)
 			{if(client) client->sendTutorial(tutorialId);}
 		void sendAddMarker(const Position& pos, MapMarks_t markType, const std::string& desc)

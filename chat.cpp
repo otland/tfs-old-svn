@@ -150,7 +150,7 @@ bool ChatChannel::removeUser(Player* player)
 	return true;
 }
 
-bool ChatChannel::talk(Player* player, SpeakClasses type, const std::string& text, uint32_t _time/* = 0*/)
+bool ChatChannel::talk(Player* player, SpeakClasses type, const std::string& text)
 {
 	UsersMap::iterator it = m_users.find(player->getID());
 	if(it == m_users.end())
@@ -163,7 +163,7 @@ bool ChatChannel::talk(Player* player, SpeakClasses type, const std::string& tex
 	}
 
 	for(it = m_users.begin(); it != m_users.end(); ++it)
-		it->second->sendToChannel(player, type, text, m_id, _time);
+		it->second->sendToChannel(player, type, text, m_id);
 
 	if(hasFlag(CHANNELFLAG_LOGGED) && m_file->is_open())
 		*m_file << "[" << formatDate() << "] " << player->getName() << ": " << text << std::endl;
@@ -1179,9 +1179,6 @@ ChatChannel* Chat::getChannel(Player* player, uint16_t channelId)
 			#endif
 			return NULL;
 		}
-
-		if(channelId == CHANNEL_RVR && !player->hasFlag(PlayerFlag_CanAnswerRuleViolations))
-			return NULL;
 
 		#ifdef __DEBUG_CHAT__
 		std::clog << "Chat::getChannel - endpoint return" << std::endl;

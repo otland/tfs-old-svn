@@ -4091,9 +4091,8 @@ int32_t LuaInterface::luaDoPlayerSendToChannel(lua_State* L)
 {
 	//doPlayerSendToChannel(cid, targetId, SpeakClasses, message, channel[, time])
 	ScriptEnviroment* env = getEnv();
-	uint32_t time = 0;
-	if(lua_gettop(L) > 5)
-		time = popNumber(L);
+	if(lua_gettop(L) > 5) /* time isn't used, keep for compatibility */
+		popNumber(L);
 
 	uint16_t channelId = popNumber(L);
 	std::string text = popString(L);
@@ -4115,7 +4114,7 @@ int32_t LuaInterface::luaDoPlayerSendToChannel(lua_State* L)
 		return 1;
 	}
 
-	player->sendToChannel(creature, (SpeakClasses)speakClass, text, channelId, time);
+	player->sendToChannel(creature, (SpeakClasses)speakClass, text, channelId);
 	lua_pushboolean(L, true);
 	return 1;
 }

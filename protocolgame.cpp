@@ -680,18 +680,6 @@ void ProtocolGame::parsePacket(NetworkMessage &msg)
 				parseOpenPriv(msg);
 				break;
 
-			case 0x9B: //process report
-				parseProcessRuleViolation(msg);
-				break;
-
-			case 0x9C: //gm closes report
-				parseCloseRuleViolation(msg);
-				break;
-
-			case 0x9D: //player cancels report
-				parseCancelRuleViolation(msg);
-				break;
-
 			case 0x9E: // close NPC
 				parseCloseNpc(msg);
 				break;
@@ -1076,27 +1064,6 @@ void ProtocolGame::parseOpenPriv(NetworkMessage& msg)
 	addGameTask(&Game::playerOpenPrivateChannel, player->getID(), receiver);
 }
 
-void ProtocolGame::parseProcessRuleViolation(NetworkMessage&)
-{
-	/*const std::string reporter = msg.getString();
-	addGameTask(&Game::playerProcessRuleViolation, player->getID(), reporter);
-	*/
-}
-
-void ProtocolGame::parseCloseRuleViolation(NetworkMessage&)
-{
-	/*const std::string reporter = msg.getString();
-	addGameTask(&Game::playerCloseRuleViolation, player->getID(), reporter);
-	*/
-}
-
-void ProtocolGame::parseCancelRuleViolation(NetworkMessage&)
-{
-	/*
-	addGameTask(&Game::playerCancelRuleViolation, player->getID());
-	*/
-}
-
 void ProtocolGame::parseCloseNpc(NetworkMessage&)
 {
 	addGameTask(&Game::playerCloseNpcChannel, player->getID());
@@ -1318,15 +1285,11 @@ void ProtocolGame::parseSay(NetworkMessage& msg)
 	{
 		case SPEAK_PRIVATE:
 		case SPEAK_PRIVATE_RED:
-		case SPEAK_RVR_ANSWER:
-			receiver = msg.getString();
-			break;
-
+		case SPEAK_CHANNEL_RA:
+		case SPEAK_CHANNEL_RN:
 		case SPEAK_CHANNEL_Y:
 		case SPEAK_CHANNEL_W:
-		case SPEAK_CHANNEL_RN:
 		case SPEAK_CHANNEL_O:
-		case SPEAK_CHANNEL_RA:
 			channelId = msg.get<uint16_t>();
 			break;
 
@@ -1791,55 +1754,6 @@ void ProtocolGame::sendChannel(uint16_t channelId, const std::string& channelNam
 	}
 }
 
-void ProtocolGame::sendRuleViolationsChannel(uint16_t channelId)
-{
-	NetworkMessage_ptr msg = getOutputBuffer();
-	if(msg)
-	{
-		TRACK_MESSAGE(msg);
-		msg->put<char>(0xAE);
-		msg->put<uint16_t>(channelId);
-		for(RuleViolationsMap::const_iterator it = g_game.getRuleViolations().begin(); it != g_game.getRuleViolations().end(); ++it)
-		{
-			RuleViolation& rvr = *it->second;
-			if(rvr.isOpen && rvr.reporter)
-				AddCreatureSpeak(msg, rvr.reporter, SPEAK_RVR_CHANNEL, rvr.text, channelId, rvr.time);
-		}
-	}
-}
-
-void ProtocolGame::sendRemoveReport(const std::string& name)
-{
-	NetworkMessage_ptr msg = getOutputBuffer();
-	if(msg)
-	{
-		TRACK_MESSAGE(msg);
-		msg->put<char>(0xAF);
-		msg->putString(name);
-	}
-}
-
-void ProtocolGame::sendRuleViolationCancel(const std::string& name)
-{
-	NetworkMessage_ptr msg = getOutputBuffer();
-	if(msg)
-	{
-		TRACK_MESSAGE(msg);
-		msg->put<char>(0xB0);
-		msg->putString(name);
-	}
-}
-
-void ProtocolGame::sendLockRuleViolation()
-{
-	NetworkMessage_ptr msg = getOutputBuffer();
-	if(msg)
-	{
-		TRACK_MESSAGE(msg);
-		msg->put<char>(0xB1);
-	}
-}
-
 void ProtocolGame::sendIcons(int32_t icons)
 {
 	NetworkMessage_ptr msg = getOutputBuffer();
@@ -2040,17 +1954,17 @@ void ProtocolGame::sendCreatureSay(const Creature* creature, SpeakClasses type, 
 	if(msg)
 	{
 		TRACK_MESSAGE(msg);
-		AddCreatureSpeak(msg, creature, type, text, 0, 0, pos);
+		AddCreatureSpeak(msg, creature, type, text, 0, pos);
 	}
 }
 
-void ProtocolGame::sendToChannel(const Creature* creature, SpeakClasses type, const std::string& text, uint16_t channelId, uint32_t time /*= 0*/)
+void ProtocolGame::sendToChannel(const Creature* creature, SpeakClasses type, const std::string& text, uint16_t channelId)
 {
 	NetworkMessage_ptr msg = getOutputBuffer();
 	if(msg)
 	{
 		TRACK_MESSAGE(msg);
-		AddCreatureSpeak(msg, creature, type, text, channelId, time);
+		AddCreatureSpeak(msg, creature, type, text, channelId);
 	}
 }
 
@@ -2276,23 +2190,6 @@ void ProtocolGame::sendAddCreature(const Creature* creature, const Position& pos
 	msg->put<uint16_t>(0x32);
 
 	msg->put<char>(player->hasFlag(PlayerFlag_CanReportBugs));
-	/*if(Group* group = player->getGroup())
-	{
-		int32_t reasons = 0; group->getViolationReasons();
-		if(reasons)
-		{
-			msg->put<char>(0x0B);
-			for(int32_t i = 0; i < 20; ++i) // number of total violation reasons
-			{
-				if(i < 4) // number of name violation reasons
-					msg->put<char>(group->getNameViolationFlags());
-				else if(i < reasons)
-					msg->put<char>(group->getStatementViolationFlags());
-				else
-					msg->put<char>(0x00);
-			}
-		}
-	}*/
 
 	AddMapDescription(msg, pos);
 	for(int32_t i = SLOT_FIRST; i < SLOT_LAST; ++i)
@@ -2873,7 +2770,7 @@ void ProtocolGame::AddPlayerSkills(NetworkMessage_ptr msg)
 }
 
 void ProtocolGame::AddCreatureSpeak(NetworkMessage_ptr msg, const Creature* creature, SpeakClasses type,
-	std::string text, uint16_t channelId, uint32_t time/*= 0*/, Position* pos/* = NULL*/)
+	std::string text, uint16_t channelId, Position* pos/* = NULL*/)
 {
 	msg->put<char>(0xAA);
 	if(creature)
@@ -2890,25 +2787,15 @@ void ProtocolGame::AddCreatureSpeak(NetworkMessage_ptr msg, const Creature* crea
 		if(creature->getSpeakType() != SPEAK_CLASS_NONE)
 			type = creature->getSpeakType();
 
-		switch(type)
-		{
-			case SPEAK_CHANNEL_RA:
-				msg->putString("");
-				break;
-			case SPEAK_RVR_ANSWER:
-				msg->putString("Gamemaster");
-				break;
-			default:
-				msg->putString(!creature->getHideName() ? creature->getName() : "");
-				break;
-		}
+		if(type == SPEAK_CHANNEL_RA)
+			msg->putString("");
+		else
+			msg->putString(!creature->getHideName() ? creature->getName() : "");
 
-		if(speaker && type != SPEAK_RVR_ANSWER && !speaker->isAccountManager()
-			&& !speaker->hasCustomFlag(PlayerCustomFlag_HideLevel))
+		if(speaker && !speaker->isAccountManager() && !speaker->hasCustomFlag(PlayerCustomFlag_HideLevel))
 			msg->put<uint16_t>(speaker->getPlayerInfo(PLAYERINFO_LEVEL));
 		else
 			msg->put<uint16_t>(0x00);
-
 	}
 	else
 	{
@@ -2917,7 +2804,11 @@ void ProtocolGame::AddCreatureSpeak(NetworkMessage_ptr msg, const Creature* crea
 		msg->put<uint16_t>(0x00);
 	}
 
-	msg->put<char>(type);
+	if(type == SPEAK_CHANNEL_RA)
+		msg->put<char>(SPEAK_CHANNEL_RN);
+	else
+		msg->put<char>(type);
+
 	switch(type)
 	{
 		case SPEAK_SAY:
@@ -2938,18 +2829,12 @@ void ProtocolGame::AddCreatureSpeak(NetworkMessage_ptr msg, const Creature* crea
 		}
 
 		case SPEAK_CHANNEL_Y:
-		case SPEAK_CHANNEL_RN:
 		case SPEAK_CHANNEL_RA:
+		case SPEAK_CHANNEL_RN:
 		case SPEAK_CHANNEL_O:
 		case SPEAK_CHANNEL_W:
 			msg->put<uint16_t>(channelId);
 			break;
-
-		case SPEAK_RVR_CHANNEL:
-		{
-			msg->put<uint32_t>(uint32_t(OTSYS_TIME() / 1000 & 0xFFFFFFFF) - time);
-			break;
-		}
 
 		default:
 			break;

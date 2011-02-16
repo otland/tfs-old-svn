@@ -68,7 +68,7 @@ class ChatChannel
 		bool addUser(Player* player);
 		bool removeUser(Player* player);
 
-		bool talk(Player* player, SpeakClasses type, const std::string& text, uint32_t _time = 0);
+		bool talk(Player* player, SpeakClasses type, const std::string& text);
 		bool talk(std::string nick, SpeakClasses type, std::string text);
 
 	protected:
@@ -141,7 +141,7 @@ class Chat
 
 		ChannelList getPublicChannels() const;
 		bool isPublicChannel(uint16_t cid) const {return cid != CHANNEL_GUILD && cid
-			!= CHANNEL_PARTY && cid != CHANNEL_RVR && !isPrivateChannel(cid);}
+			!= CHANNEL_PARTY && !isPrivateChannel(cid);}
 
 		uint32_t statement;
 		StatementMap statementMap;

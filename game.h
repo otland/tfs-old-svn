@@ -107,28 +107,12 @@ enum ReloadInfo_t
 	RELOAD_LAST = RELOAD_WEAPONS
 };
 
-struct RuleViolation
-{
-	RuleViolation(Player* _reporter, const std::string& _text, uint32_t _time):
-		reporter(_reporter), gamemaster(NULL), text(_text), time(_time), isOpen(true) {}
-
-	Player* reporter;
-	Player* gamemaster;
-	std::string text;
-	uint32_t time;
-	bool isOpen;
-
-	private:
-		RuleViolation(const RuleViolation&);
-};
-
 struct RefreshBlock_t
 {
 	TileItemVector list;
 	uint64_t lastRefresh;
 };
 
-typedef std::map<uint32_t, shared_ptr<RuleViolation> > RuleViolationsMap;
 typedef std::map<Tile*, RefreshBlock_t> RefreshTiles;
 typedef std::vector< std::pair<std::string, uint32_t> > Highscore;
 typedef std::list<Position> Trash;
@@ -471,9 +455,6 @@ class Game
 		bool playerCloseChannel(uint32_t playerId, uint16_t channelId);
 		bool playerOpenPrivateChannel(uint32_t playerId, std::string& receiver);
 		bool playerCloseNpcChannel(uint32_t playerId);
-		bool playerProcessRuleViolation(uint32_t playerId, const std::string& name);
-		bool playerCloseRuleViolation(uint32_t playerId, const std::string& name);
-		bool playerCancelRuleViolation(uint32_t playerId);
 		bool playerReceivePing(uint32_t playerId);
 		bool playerAutoWalk(uint32_t playerId, std::list<Direction>& listDir);
 		bool playerStopAutoWalk(uint32_t playerId);
@@ -611,10 +592,6 @@ class Game
 		void addDistanceEffect(const SpectatorVec& list, const Position& fromPos, const Position& toPos, uint8_t effect);
 		void addDistanceEffect(const Position& fromPos, const Position& toPos, uint8_t effect);
 
-		const RuleViolationsMap& getRuleViolations() const {return ruleViolations;}
-		bool cancelRuleViolation(Player* player);
-		bool closeRuleViolation(Player* player);
-
 		bool loadExperienceStages();
 		double getExperienceStage(uint32_t level, double divider = 1.);
 
@@ -635,8 +612,6 @@ class Game
 		bool playerSpeakTo(Player* player, SpeakClasses type, const std::string& receiver, const std::string& text);
 		bool playerTalkToChannel(Player* player, SpeakClasses type, const std::string& text, uint16_t channelId);
 		bool playerSpeakToNpc(Player* player, const std::string& text);
-		bool playerReportRuleViolation(Player* player, const std::string& text);
-		bool playerContinueReport(Player* player, const std::string& text);
 
 		struct GameEvent
 		{
@@ -648,7 +623,6 @@ class Game
 		std::vector<Thing*> releaseThings;
 		std::map<Item*, uint32_t> tradeItems;
 		AutoList<Creature> autoList;
-		RuleViolationsMap ruleViolations;
 
 		size_t checkCreatureLastIndex;
 		std::vector<Creature*> checkCreatureVectors[EVENT_CREATURECOUNT];
