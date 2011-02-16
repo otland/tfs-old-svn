@@ -1138,9 +1138,11 @@ uint32_t DatabaseManager::updateDatabase()
 			{
 				query << "ALTER TABLE `player_storage` CHANGE `key` `key` VARCHAR(32) NOT NULL DEFAULT '0'";
 				db->query(query.str());
+				query.str("");
 
 				query << "ALTER TABLE `global_storage` CHANGE `key` `key` VARCHAR(32) NOT NULL DEFAULT '0'";
 				db->query(query.str());
+				query.str("");
 			}
 			else
 			{
