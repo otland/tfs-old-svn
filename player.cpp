@@ -134,6 +134,8 @@ Player::~Player()
 	playerCount--;
 #endif
 	setWriteItem(NULL);
+
+	transferContainer.setParent(NULL);
 	for(int32_t i = 0; i < 11; i++)
 	{
 		if(inventory[i])
