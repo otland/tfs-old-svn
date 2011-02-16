@@ -339,10 +339,10 @@ void Spawn::checkSpawn()
 		}
 		else
 		{
-			/*if(spawnId && !isInSpawnZone(monster->getPosition()) && monster->getIdleStatus())
+			if(g_config.getBool(ConfigManager::MONSTER_SPAWN_WALKBACK) && spawnId && !isInSpawnZone(monster->getPosition()) && monster->getIdleStatus())
 				g_game.internalTeleport(monster, monster->getMasterPosition(), true);
 
-			*/++it;
+			++it;
 		}
 	}
 
