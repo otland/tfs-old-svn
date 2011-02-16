@@ -530,11 +530,7 @@ void Monster::setIdle(bool _idle)
 		onIdleStatus();
 		clearTargetList();
 		clearFriendList();
-
 		g_game.removeCreatureCheck(this);
-		if(g_config.getBool(ConfigManager::MONSTER_SPAWN_WALKBACK)
-			&& getPosition() != getMasterPosition())
-			g_game.steerCreature(this, getMasterPosition());
 	}
 	else
 		g_game.addCreatureCheck(this);
