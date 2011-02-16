@@ -4337,15 +4337,31 @@ int32_t LuaInterface::luaDoPlayerSetLossSkill(lua_State* L)
 
 int32_t LuaInterface::luaDoShowTextDialog(lua_State* L)
 {
-	//doShowTextDialog(cid, itemid, text)
-	std::string text = popString(L);
-	uint32_t itemId = popNumber(L);
+	//doShowTextDialog(cid, itemid[, text[, canWrite[, length]]])
+	int32_t length = -1, params = lua_gettop(L);
+	if(params > 4)
+		length = std::abs(popNumber(L));
 
+	bool canWrite = false;
+	if(params > 3)
+		canWrite = popNumber(L);
+
+	std::string text;
+	if(params > 2)
+		text = popString(L);
+
+	uint32_t itemId = popNumber(L);
 	ScriptEnviroment* env = getEnv();
 	if(Player* player = env->getPlayerByUID(popNumber(L)))
 	{
-		player->setWriteItem(NULL, 0);
-		player->sendTextWindow(itemId, text);
+		Item* item = Item::CreateItem(itemid);
+		if(length < 0)
+			length = item->getMaxWriteLength();
+
+		player->transferContainer.__addThing(NULL, item);
+		player->setWriteItem(item, length);
+
+		player->sendTextWindow(item, length, canWrite);
 		lua_pushboolean(L, true);
 	}
 	else

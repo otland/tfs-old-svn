@@ -669,8 +669,6 @@ class Player : public Creature, public Cylinder
 			{if(client) client->sendReLoginWindow();}
 		void sendTextWindow(Item* item, uint16_t maxLen, bool canWrite) const
 			{if(client) client->sendTextWindow(windowTextId, item, maxLen, canWrite);}
-		void sendTextWindow(uint32_t itemId, const std::string& text) const
-			{if(client) client->sendTextWindow(windowTextId, itemId, text);}
 		void sendToChannel(Creature* creature, SpeakClasses type, const std::string& text, uint16_t channelId) const
 			{if(client) client->sendToChannel(creature, type, text, channelId); }
 		void sendShop() const
@@ -716,7 +714,7 @@ class Player : public Creature, public Cylinder
 		uint32_t getNextActionTime() const;
 
 		Item* getWriteItem(uint32_t& _windowTextId, uint16_t& _maxWriteLen);
-		void setWriteItem(Item* item, uint16_t _maxWriteLen = 0);
+		void setWriteItem(Item* item, uint16_t _maxLen = 0);
 
 		House* getEditHouse(uint32_t& _windowTextId, uint32_t& _listId);
 		void setEditHouse(House* house, uint32_t listId = 0);

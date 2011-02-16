@@ -208,7 +208,6 @@ class ProtocolGame : public Protocol
 		void sendCloseTrade();
 
 		void sendTextWindow(uint32_t windowTextId, Item* item, uint16_t maxLen, bool canWrite);
-		void sendTextWindow(uint32_t windowTextId, uint32_t itemId, const std::string& text);
 		void sendHouseWindow(uint32_t windowTextId, House* house, uint32_t listId, const std::string& text);
 
 		void sendOutfitWindow();

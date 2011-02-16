@@ -2423,24 +2423,6 @@ void ProtocolGame::sendTextWindow(uint32_t windowTextId, Item* item, uint16_t ma
 	}
 }
 
-void ProtocolGame::sendTextWindow(uint32_t windowTextId, uint32_t itemId, const std::string& text)
-{
-	NetworkMessage_ptr msg = getOutputBuffer();
-	if(msg)
-	{
-		TRACK_MESSAGE(msg);
-		msg->put<char>(0x96);
-		msg->put<uint32_t>(windowTextId);
-		msg->putItemId(itemId);
-
-		msg->put<uint16_t>(text.size());
-		msg->putString(text);
-
-		msg->putString("");
-		msg->putString("");
-	}
-}
-
 void ProtocolGame::sendHouseWindow(uint32_t windowTextId, House*,
 	uint32_t, const std::string& text)
 {

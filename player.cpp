@@ -97,7 +97,7 @@ Player::Player(const std::string& _name, ProtocolGame* p):
 	mounted = false;
 	lastMountStatusChange = 0;
 
-	transferContainer.setParent(NULL);
+	transferContainer.setParent(this);
 	for(int32_t i = 0; i < 11; i++)
 	{
 		inventory[i] = NULL;
@@ -147,7 +147,6 @@ Player::~Player()
 	}
 
 	setNextWalkActionTask(NULL);
-	transferContainer.setParent(NULL);
 	for(DepotMap::iterator it = depots.begin(); it != depots.end(); it++)
 		it->second.first->unRef();
 }
@@ -1185,7 +1184,7 @@ Item* Player::getWriteItem(uint32_t& _windowTextId, uint16_t& _maxWriteLen)
 	return writeItem;
 }
 
-void Player::setWriteItem(Item* item, uint16_t _maxWriteLen/* = 0*/)
+void Player::setWriteItem(Item* item, uint16_t _maxLen/* = 0*/)
 {
 	windowTextId++;
 	if(writeItem)

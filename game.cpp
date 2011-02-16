@@ -2811,8 +2811,16 @@ bool Game::playerWriteItem(uint32_t playerId, uint32_t windowTextId, const std::
 			deny = true;
 	}
 
+	player->setWriteItem(NULL);
 	if(deny)
 		return false;
+
+	if(writeItem->getParent() == player->transferContainer)
+	{
+		player->transferContainer.__removeThing(writeItem, writeItem->getItemCount());
+		g_game.freeThing(writeItem);
+		return true;
+	}	
 
 	if(!text.empty())
 	{
@@ -2834,7 +2842,6 @@ bool Game::playerWriteItem(uint32_t playerId, uint32_t windowTextId, const std::
 	if(newId != 0)
 		transformItem(writeItem, newId);
 
-	player->setWriteItem(NULL);
 	return true;
 }
 

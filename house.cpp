@@ -419,15 +419,12 @@ bool TransferItem::onTradeEvent(TradeEvents_t event, Player* owner, Player* sell
 				house->setOwnerEx(owner->getGUID(), true);
 
 			g_game.internalRemoveItem(NULL, this, 1);
-			seller->transferContainer.setParent(NULL);
 			break;
 		}
 
 		case ON_TRADE_CANCEL:
 		{
-			owner->transferContainer.setParent(NULL);
 			owner->transferContainer.__removeThing(this, getItemCount());
-
 			g_game.freeThing(this);
 			break;
 		}
