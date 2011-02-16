@@ -2808,10 +2808,9 @@ void ProtocolGame::AddCreatureSpeak(NetworkMessage_ptr msg, const Creature* crea
 	}
 
 	if(type == SPEAK_CHANNEL_RA)
-		msg->put<char>(SPEAK_CHANNEL_RN);
-	else
-		msg->put<char>(type);
+		type = SPEAK_CHANNEL_RN;
 
+	msg->put<char>(type);
 	switch(type)
 	{
 		case SPEAK_SAY:
