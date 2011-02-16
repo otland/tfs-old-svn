@@ -374,7 +374,7 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool preLo
 	DBQuery query;
 	query << "SELECT `id`, `account_id`, `group_id`, `world_id`, `sex`, `vocation`, `experience`, `level`, "
 	<< "`maglevel`, `health`, `healthmax`, `blessings`, `mana`, `manamax`, `manaspent`, `soul`, `lookbody`, "
-	<< "`lookfeet`, `lookhead`, `looklegs`, `looktype`, `lookaddons`, `currmount`, `posx`, `posy`, `posz`, `cap`, "
+	<< "`lookfeet`, `lookhead`, `looklegs`, `looktype`, `lookaddons`, `lookmount`, `posx`, `posy`, `posz`, `cap`, "
 	<< "`lastlogin`, `lastlogout`, `lastip`, `conditions`, `skull`, `skulltime`, `guildnick`, `rank_id`, "
 	<< "`town_id`, `balance`, `stamina`, `direction`, `loss_experience`, `loss_mana`, `loss_skills`, "
 	<< "`loss_containers`, `loss_items`, `marriage`, `promotion`, `description` FROM `players` WHERE "
@@ -500,7 +500,7 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool preLo
 	player->defaultOutfit.lookFeet = result->getDataInt("lookfeet");
 	player->defaultOutfit.lookAddons = result->getDataInt("lookaddons");
 	player->defaultOutfit.lookMount = 0; // Always initialize unmounted, otherwise they might bug speed
-	player->setMountId(result->getDataInt("currmount"));
+	player->setMountId(result->getDataInt("lookmount"));
 
 	player->currentOutfit = player->defaultOutfit;
 	Skulls_t skull = SKULL_RED;
@@ -803,7 +803,7 @@ bool IOLoginData::savePlayer(Player* player, bool preSave/* = true*/, bool shall
 	query << "`looklegs` = " << (uint32_t)player->defaultOutfit.lookLegs << ", ";
 	query << "`looktype` = " << (uint32_t)player->defaultOutfit.lookType << ", ";
 	query << "`lookaddons` = " << (uint32_t)player->defaultOutfit.lookAddons << ", ";
-	query << "`currmount` = " << (uint32_t)player->getMountId() << ", ";
+	query << "`lookmount` = " << (uint32_t)player->getMountId() << ", ";
 	query << "`maglevel` = " << player->magLevel << ", ";
 	query << "`mana` = " << player->mana << ", ";
 	query << "`manamax` = " << player->manaMax << ", ";

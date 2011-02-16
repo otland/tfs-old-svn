@@ -107,15 +107,6 @@ bool Groups::parseGroupNode(xmlNodePtr p)
 	else
 		group->setGhostAccess(group->getAccess());
 
-	if(readXMLInteger(p, "violationReasons", intValue))
-		group->setViolationReasons(intValue);
-
-	if(readXMLInteger(p, "nameViolationFlags", intValue))
-		group->setNameViolationFlags(intValue);
-
-	if(readXMLInteger(p, "statementViolationFlags", intValue))
-		group->setStatementViolationFlags(intValue);
-
 	if(readXMLInteger(p, "depotLimit", intValue))
 		group->setDepotLimit(intValue);
 

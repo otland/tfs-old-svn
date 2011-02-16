@@ -4,7 +4,7 @@ CREATE TABLE "server_config" (
 	UNIQUE ("config")
 );
 
-INSERT INTO "server_config" VALUES ('db_version', 28);
+INSERT INTO "server_config" VALUES ('db_version', 29);
 
 CREATE TABLE "server_motd" (
 	"id" INTEGER NOT NULL,
@@ -70,7 +70,7 @@ CREATE TABLE "players" (
 	"looklegs" INTEGER NOT NULL DEFAULT 10,
 	"looktype" INTEGER NOT NULL DEFAULT 136,
 	"lookaddons" INTEGER NOT NULL DEFAULT 0,
-	"currmount" INTEGER NOT NULL DEFAULT 0,
+	"lookmount" INTEGER NOT NULL DEFAULT 0,
 	"maglevel" INTEGER NOT NULL DEFAULT 0,
 	"mana" INTEGER NOT NULL DEFAULT 100,
 	"manamax" INTEGER NOT NULL DEFAULT 100,

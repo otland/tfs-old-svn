@@ -161,7 +161,7 @@ class ProtocolGame : public Protocol
 		void parseCloseNpc(NetworkMessage& msg);
 
 		//rule violation
-		void parseViolationWindow(NetworkMessage& msg);
+		//void parseViolationWindow(NetworkMessage& msg);
 		void parseViolationReport(NetworkMessage& msg);
 
 		//Send functions

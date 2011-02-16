@@ -1136,12 +1136,15 @@ uint32_t DatabaseManager::updateDatabase()
 			std::clog << "> Updating database to version 27..." << std::endl;
 			if(db->getDatabaseEngine() != DATABASE_ENGINE_SQLITE)
 			{
-				db->query(std::string("ALTER TABLE `player_storage` CHANGE `key` `key` VARCHAR(32) NOT NULL DEFAULT '0'"));
-				db->query(std::string("ALTER TABLE `global_storage` CHANGE `key` `key` VARCHAR(32) NOT NULL DEFAULT '0'"));
+				query << "ALTER TABLE `player_storage` CHANGE `key` `key` VARCHAR(32) NOT NULL DEFAULT '0'";
+				db->query(query.str());
+
+				query << "ALTER TABLE `global_storage` CHANGE `key` `key` VARCHAR(32) NOT NULL DEFAULT '0'";
+				db->query(query.str());
 			}
 			else
 			{
-				// SQLite doesn't support changing datatypes, TODO.
+				// TODO
 			}
 
 			registerDatabaseConfig("db_version", 27);
@@ -1155,13 +1158,15 @@ uint32_t DatabaseManager::updateDatabase()
 			{
 				case DATABASE_ENGINE_SQLITE:
 				{
-					db->query(std::string("ALTER TABLE `players` ADD `currmount` INT NOT NULL DEFAULT 0;"));
+					/*query << "ALTER TABLE `players` ADD `currmount` INT NOT NULL DEFAULT 0;";
+					db->query(query.str());*/
 					break;
 				}
 
 				case DATABASE_ENGINE_MYSQL:
 				{
-					db->query(std::string("ALTER TABLE `players` ADD `currmount` INT NOT NULL DEFAULT 0 AFTER `lookaddons`;"));
+					query << "ALTER TABLE `players` ADD `currmount` INT NOT NULL DEFAULT 0 AFTER `lookaddons`;";
+					db->query(query.str());
 					break;
 				}
 
@@ -1172,6 +1177,32 @@ uint32_t DatabaseManager::updateDatabase()
 			query.str("");
 			registerDatabaseConfig("db_version", 28);
 			return 28;
+		}
+
+		case 28:
+		{
+			std::clog << "> Updating database to version 29..." << std::endl;
+			switch(db->getDatabaseEngine())
+			{
+				case DATABASE_ENGINE_SQLITE:
+				{
+					query << "ALTER TABLE `players` ADD `lookmount` INT NOT NULL DEFAULT 0;";
+					break;
+				}
+
+				case DATABASE_ENGINE_MYSQL:
+				{
+					query << "ALTER TABLE `players` CHANGE `currmount` `lookmount` INT NOT NULL DEFAULT 0";
+					break;
+				}
+
+				default:
+					break;
+			}
+
+			query.str("");
+			registerDatabaseConfig("db_version", 29);
+			return 29;
 		}
 
 		default:

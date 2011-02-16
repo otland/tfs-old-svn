@@ -4978,7 +4978,7 @@ bool Game::playerReportBug(uint32_t playerId, std::string comment)
 	return true;
 }
 
-bool Game::playerViolationWindow(uint32_t playerId, std::string name, uint8_t reason, ViolationAction_t action,
+/*bool Game::playerViolationWindow(uint32_t playerId, std::string name, uint8_t reason, ViolationAction_t action,
 	std::string comment, std::string statement, uint32_t statementId, bool ipBanishment)
 {
 	Player* player = getPlayerByID(playerId);
@@ -5321,7 +5321,7 @@ bool Game::playerViolationWindow(uint32_t playerId, std::string name, uint8_t re
 
 	IOLoginData::getInstance()->saveAccount(account);
 	return true;
-}
+}*/
 
 void Game::kickPlayer(uint32_t playerId, bool displayEffect)
 {

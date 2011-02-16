@@ -9159,9 +9159,6 @@ int32_t LuaInterface::luaGetGroupInfo(lua_State* L)
 	setField(L, "name", group->getName().c_str());
 	setField(L, "access", group->getAccess());
 	setField(L, "ghostAccess", group->getGhostAccess());
-	setField(L, "violationReasons", group->getViolationReasons());
-	setField(L, "statementViolationFlags", group->getStatementViolationFlags());
-	setField(L, "nameViolationFlags", group->getNameViolationFlags());
 	setField(L, "flags", group->getFlags());
 	setField(L, "customFlags", group->getCustomFlags());
 	setField(L, "depotLimit", group->getDepotLimit(premium));
