@@ -2781,8 +2781,9 @@ void ProtocolGame::AddCreatureSpeak(NetworkMessage_ptr msg, const Creature* crea
 		const Player* speaker = creature->getPlayer();
 		if(speaker)
 		{
-			msg->put<uint32_t>(++g_chat.statement);
-			g_chat.statementMap[g_chat.statement] = text;
+			msg->put<uint32_t>(0x01);
+			//msg->put<uint32_t>(++g_chat.statement);
+			//g_chat.statementMap[g_chat.statement] = text;
 		}
 		else
 			msg->put<uint32_t>(0x00);

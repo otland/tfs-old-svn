@@ -109,7 +109,7 @@ class PrivateChatChannel : public ChatChannel
 };
 
 typedef std::list<ChatChannel*> ChannelList;
-typedef std::map<uint32_t, std::string> StatementMap;
+//typedef std::map<uint32_t, std::string> StatementMap;
 
 class Chat
 {
@@ -143,8 +143,8 @@ class Chat
 		bool isPublicChannel(uint16_t cid) const {return cid != CHANNEL_GUILD && cid
 			!= CHANNEL_PARTY && !isPrivateChannel(cid);}
 
-		uint32_t statement;
-		StatementMap statementMap;
+		//uint32_t statement;
+		//StatementMap statementMap;
 
 	private:
 		void clear();
