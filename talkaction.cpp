@@ -806,45 +806,27 @@ bool TalkAction::guildCreate(Creature* creature, const std::string&, const std::
 	const uint32_t levelToFormGuild = g_config.getNumber(ConfigManager::LEVEL_TO_FORM_GUILD);
 	if(player->getLevel() < levelToFormGuild)
 	{
-#ifndef _MSC_VER
-		char buffer[70 + levelToFormGuild];
-		sprintf(buffer, "You have to be at least Level %d to form a guild.", levelToFormGuild);
-		player->sendCancel(buffer);
-#else
 		std::stringstream stream;
 		stream << "You have to be at least Level " << levelToFormGuild << " to form a guild.";
 		player->sendCancel(stream.str().c_str());
-#endif
 		return true;
 	}
 
 	const int32_t premiumDays = g_config.getNumber(ConfigManager::GUILD_PREMIUM_DAYS);
 	if(player->getPremiumDays() < premiumDays && !g_config.getBool(ConfigManager::FREE_PREMIUM))
 	{
-#ifndef _MSC_VER
-		char buffer[70 + premiumDays];
-		sprintf(buffer, "You need to have at least %d premium days to form a guild.", premiumDays);
-		player->sendCancel(buffer);
-#else
 		std::stringstream stream;
 		stream << "You need to have at least " << premiumDays << " premium days to form a guild.";
 		player->sendCancel(stream.str().c_str());
-#endif
 		return true;
 	}
 
 	player->setGuildName(param_);
 	IOGuild::getInstance()->createGuild(player);
 
-#ifndef _MSC_VER
-	char buffer[50 + maxLength];
-	sprintf(buffer, "You have formed guild \"%s\"!", param_.c_str());
-	player->sendTextMessage(MSG_INFO_DESCR, buffer);
-#else
 	std::stringstream stream;
 	stream << "You have formed guild \"" << param.c_str() << "\"!";
 	player->sendTextMessage(MSG_INFO_DESCR, stream.str().c_str());
-#endif
 	return true;
 }
 
@@ -1125,14 +1107,6 @@ bool TalkAction::banishmentInfo(Creature* creature, const std::string&, const st
 	if(deletion)
 		end = what + (std::string)" won't be undeleted";
 
-#ifndef _MSC_VER
-	char buffer[500 + ban.comment.length()];
-	sprintf(buffer, "%s has been %s at:\n%s by: %s,\nfor the following reason:\n%s.\nThe action taken was:\n%s.\nThe comment given was:\n%s.\n%s%s.",
-		what.c_str(), (deletion ? "deleted" : "banished"), formatDateEx(ban.added, "%d %b %Y").c_str(), admin.c_str(), getReason(ban.reason).c_str(),
-		getAction(ban.action, false).c_str(), ban.comment.c_str(), end.c_str(), (deletion ? "." : formatDateEx(ban.expires).c_str()));
-
-	player->sendFYIBox(buffer);
-#else
 	std::stringstream stream;
 	stream << what.c_str() << " has been " << (deletion ? "deleted" : "banished") << " at:\n" << formatDateEx(ban.added, "%d %b %Y").c_str()
 		   << " by: " << admin.c_str() << ",\nfor the following reason:\n" << getReason(ban.reason).c_str() << ".\nThe action taken was:\n"
@@ -1140,7 +1114,6 @@ bool TalkAction::banishmentInfo(Creature* creature, const std::string&, const st
 		   << (deletion ? "." : formatDateEx(ban.expires).c_str()) << ".";
 	
 	player->sendFYIBox(stream.str().c_str());
-#endif
 	return true;
 }
 
