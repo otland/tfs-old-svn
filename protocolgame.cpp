@@ -1160,15 +1160,15 @@ void ProtocolGame::parseSetOutfit(NetworkMessage& msg)
 	else
 		msg.skip(1);
 
-	if(g_config.getBool(ConfigManager::ALLOW_MOUNTS)) {
-		// Do we have an id? 0 usully means no mount
+	if(g_config.getBool(ConfigManager::ALLOW_MOUNTS))
+	{
 		uint16_t mountId = msg.get<uint16_t>();
 
-		if(mountId && mountId != player->getMountId() ) {
+		if(mountId && mountId != player->getMountId())
+		{
 			Mount* myMount = Mounts::getInstance()->getMountByCid(mountId);
-
-			// Can we use this mount?
-			if(myMount && myMount->isTamed(player)) { 
+			if(myMount && myMount->isTamed(player))
+			{ 
 				// Set the new mount
 				player->setMountId(myMount->getId()); 
 				
@@ -1178,10 +1178,8 @@ void ProtocolGame::parseSetOutfit(NetworkMessage& msg)
 		if(player->isMounted())
 			addGameTask(&Game::playerChangeMountStatus, player->getID(), false);
 
-		// Always say we are dismounted
 		newOutfit.lookMount = 0;
 	}
-
 	else
 		msg.skip(2);
 
