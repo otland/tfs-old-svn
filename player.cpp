@@ -5172,13 +5172,12 @@ void Player::setMounted(bool mounting)
 		sendOutfitWindow();
 	else if(!mounted)
 	{
-		if(Mount* mount = Mounts::getInstance()->getMountById(defaultOutfit.lookMount))
+		if(Mount* mount = Mounts::getInstance()->getMountByCid(defaultOutfit.lookMount))
 		{
-			defaultOutfit.lookMount = mount->getClientId();
+			mounted = true;
 			if(mount->getSpeed())
 				g_game.changeSpeed(this, mount->getSpeed());
 
-			mounted = true;
 			g_game.internalCreatureChangeOutfit(this, defaultOutfit);
 		}
 	}
@@ -5193,7 +5192,7 @@ void Player::dismount()
 	if(!defaultOutfit.lookMount)
 		return;
 
-	Mount* mount = Mounts::getInstance()->getMountById(defaultOutfit.lookMount);
+	Mount* mount = Mounts::getInstance()->getMountByCid(defaultOutfit.lookMount);
 	if(mount && mount->getSpeed() > 0)
 		g_game.changeSpeed(this, -mount->getSpeed());
 

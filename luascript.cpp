@@ -9026,11 +9026,11 @@ int32_t LuaInterface::luaCanPlayerRideMount(lua_State* L)
 int32_t LuaInterface::luaDoPlayerSetMounted(lua_State* L)
 {
 	//doPlayerSetMounted(cid, mounting[, force])
-	bool force = true, mounted;
+	bool force = true, mounting;
 	if(lua_gettop(L) > 2)
 		force = popNumber(L);
 
-	mounted = popNumber(L);
+	mounting = popNumber(L);
 	ScriptEnviroment* env = getEnv();
 	
 	Player* player = env->getPlayerByUID(popNumber(L));
@@ -9044,7 +9044,7 @@ int32_t LuaInterface::luaDoPlayerSetMounted(lua_State* L)
 		Mount* mount = Mounts::getInstance()->getMountByCid(player->getDefaultOutfit().lookMount);
 		if(mount && (force || mount->isTamed(player)))
 		{
-			player->setMounted(mounted);
+			player->setMounted(mounting);
 			lua_pushboolean(L, true);
 		}
 		else
