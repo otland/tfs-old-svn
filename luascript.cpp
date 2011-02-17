@@ -4364,7 +4364,7 @@ int32_t LuaInterface::luaDoShowTextDialog(lua_State* L)
 	ScriptEnviroment* env = getEnv();
 	if(Player* player = env->getPlayerByUID(popNumber(L)))
 	{
-		Item* item = Item::CreateItem(itemid);
+		Item* item = Item::CreateItem(itemId);
 		if(length < 0)
 			length = item->getMaxWriteLength();
 
