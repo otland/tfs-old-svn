@@ -1195,7 +1195,7 @@ void Player::setWriteItem(Item* item, uint16_t _maxLen/* = 0*/)
 	if(item)
 	{
 		writeItem = item;
-		maxWriteLen = _maxWriteLen;
+		maxWriteLen = _maxLen;
 		writeItem->addRef();
 	}
 	else

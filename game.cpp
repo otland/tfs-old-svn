@@ -2815,10 +2815,10 @@ bool Game::playerWriteItem(uint32_t playerId, uint32_t windowTextId, const std::
 	if(deny)
 		return false;
 
-	if(writeItem->getParent() == player->transferContainer)
+	if((Container*)writeItem->getParent() == &player->transferContainer)
 	{
 		player->transferContainer.__removeThing(writeItem, writeItem->getItemCount());
-		g_game.freeThing(writeItem);
+		freeThing(writeItem);
 		return true;
 	}	
 
