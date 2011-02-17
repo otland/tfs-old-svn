@@ -232,7 +232,7 @@ bool Npc::loadFromXml(const std::string& filename)
 	p = root->children;
 	while(p)
 	{
-		if(xmlStrcmp(p->name, (const xmlChar*)"health") == 0)
+		if(!xmlStrcmp(p->name, (const xmlChar*)"health"))
 		{
 			if(readXMLInteger(p, "now", intValue))
 				health = intValue;
@@ -244,7 +244,7 @@ bool Npc::loadFromXml(const std::string& filename)
 			else
 				healthMax = 100;
 		}
-		else if(xmlStrcmp(p->name, (const xmlChar*)"look") == 0)
+		else if(!xmlStrcmp(p->name, (const xmlChar*)"look"))
 		{
 			if(readXMLInteger(p, "type", intValue))
 			{
@@ -270,16 +270,13 @@ bool Npc::loadFromXml(const std::string& filename)
 			else if(readXMLInteger(p, "typeex", intValue))
 				defaultOutfit.lookTypeEx = intValue;
 
-			if(readXMLInteger(p, "mount", intValue))
-				defaultOutfit.lookMount = intValue;
-
 			currentOutfit = defaultOutfit;
 		}
-		else if(xmlStrcmp(p->name, (const xmlChar*)"voices") == 0)
+		else if(!xmlStrcmp(p->name, (const xmlChar*)"voices"))
 		{
 			for(xmlNodePtr q = p->children; q != NULL; q = q->next)
 			{
-				if(xmlStrcmp(q->name, (const xmlChar*)"voice") == 0)
+				if(!xmlStrcmp(q->name, (const xmlChar*)"voice"))
 				{
 					if(!readXMLString(q, "text", strValue))
 						continue;
@@ -311,11 +308,11 @@ bool Npc::loadFromXml(const std::string& filename)
 				}
 			}
 		}
-		else if(xmlStrcmp(p->name, (const xmlChar*)"parameters") == 0)
+		else if(!xmlStrcmp(p->name, (const xmlChar*)"parameters"))
 		{
 			for(xmlNodePtr q = p->children; q != NULL; q = q->next)
 			{
-				if(xmlStrcmp(q->name, (const xmlChar*)"parameter") == 0)
+				if(!xmlStrcmp(q->name, (const xmlChar*)"parameter"))
 				{
 					std::string paramKey, paramValue;
 					if(!readXMLString(q, "key", paramKey))
@@ -328,7 +325,7 @@ bool Npc::loadFromXml(const std::string& filename)
 				}
 			}
 		}
-		else if(xmlStrcmp(p->name, (const xmlChar*)"interaction") == 0)
+		else if(!xmlStrcmp(p->name, (const xmlChar*)"interaction"))
 		{
 			if(readXMLInteger(p, "talkradius", intValue))
 				talkRadius = intValue;
@@ -411,7 +408,7 @@ ResponseList Npc::loadInteraction(xmlNodePtr node)
 	ResponseList _responseList;
 	while(node)
 	{
-		if(xmlStrcmp(node->name, (const xmlChar*)"include") == 0)
+		if(!xmlStrcmp(node->name, (const xmlChar*)"include"))
 		{
 			if(readXMLString(node, "file", strValue))
 			{
@@ -1312,7 +1309,7 @@ void Npc::executeResponse(Player* player, NpcState* npcState, const NpcResponse*
 	if(response)
 	{
 		npcState->lastResponse = response;
-		npcState->isIdle = response->getFocusState() == 0;
+		npcState->isIdle = !response->getFocusState();
 
 		bool resetTopic = true;
 		if(response->getAmount() != -1)
@@ -2646,13 +2643,13 @@ int32_t NpcScript::luaOpenShopWindow(lua_State* L)
 	}
 
 	int32_t sellCallback = -1;
-	if(lua_isfunction(L, -1) == 0)
+	if(!lua_isfunction(L, -1))
 		lua_pop(L, 1); // skip it - use default value
 	else
 		sellCallback = popCallback(L);
 
 	int32_t buyCallback = -1;
-	if(lua_isfunction(L, -1) == 0)
+	if(!lua_isfunction(L, -1))
 		lua_pop(L, 1);
 	else
 		buyCallback = popCallback(L);
