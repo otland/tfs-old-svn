@@ -42,7 +42,7 @@ void MonsterType::reset()
 	canPushItems = canPushCreatures = isSummonable = isIllusionable = isConvinceable = isLureable = isWalkable = hideName = hideHealth = false;
 	pushable = isAttackable = isHostile = true;
 
-	outfit.lookHead = outfit.lookBody = outfit.lookLegs = outfit.lookFeet = outfit.lookType = outfit.lookTypeEx = outfit.lookAddons = 0;
+	outfit.lookHead = outfit.lookBody = outfit.lookLegs = outfit.lookFeet = outfit.lookType = outfit.lookTypeEx = outfit.lookAddons = outfit.lookMount = 0;
 	runAwayHealth = manaCost = lightLevel = lightColor = yellSpeedTicks = yellChance = changeTargetSpeed = changeTargetChance = 0;
 	experience = defense = armor = lookCorpse = corpseUnique = corpseAction = conditionImmunities = damageImmunities = 0;
 
@@ -599,6 +599,9 @@ bool Monsters::deserializeSpell(xmlNodePtr node, spellBlock_t& sb, const std::st
 					if(readXMLInteger(tmpNode, "addons", intValue))
 						outfit.lookAddons = intValue;
 
+					if(readXMLInteger(tmpNode, "mount", intValue))
+						outfit.lookMount = intValue;
+
 					outfits.push_back(outfit);
 				}
 
@@ -636,6 +639,9 @@ bool Monsters::deserializeSpell(xmlNodePtr node, spellBlock_t& sb, const std::st
 
 					if(readXMLInteger(node, "addons", intValue))
 						outfit.lookAddons = intValue;
+
+					if(readXMLInteger(tmpNode, "mount", intValue))
+						outfit.lookMount = intValue;
 
 					outfits.push_back(outfit);
 				}
@@ -1141,6 +1147,9 @@ bool Monsters::loadMonster(const std::string& file, const std::string& monsterNa
 
 				if(readXMLInteger(p, "addons", intValue))
 					mType->outfit.lookAddons = intValue;
+
+				if(readXMLInteger(p, "mount", intValue))
+					mType->outfit.lookMount = intValue;
 			}
 			else if(readXMLInteger(p, "typeex", intValue))
 				mType->outfit.lookTypeEx = intValue;
