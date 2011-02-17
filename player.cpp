@@ -5196,7 +5196,7 @@ void Player::dismount()
 	if(mount && mount->getSpeed() > 0)
 		g_game.changeSpeed(this, -mount->getSpeed());
 
-	g_game.internalCreatureChangeOutfit(this, defaultOutfit);
+	g_game.internalCreatureChangeOutfit(this, defaultOutfit, true);
 }
 
 bool Player::tameMount(uint8_t mountId)
