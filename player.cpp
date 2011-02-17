@@ -5236,11 +5236,10 @@ bool Player::untameMount(uint8_t mountId)
 	value = atoi(tmp.c_str());
 	value ^= (int32_t)std::pow(2., mountId % 31);
 
-	setStorage(boost::lexical_cast<std::string>(key), boost::lexical_cast<std::string>(value));
-	
-	Mount* mount = Mounts::getInstance()->getMountByCid(currentOutfit.lookMount);
+	Mount* mount = Mounts::getInstance()->getMountByCid(defaultOutfit.lookMount);
 	if(mount->getId() == (mountId + 1))
 		dismount();
 
+	setStorage(boost::lexical_cast<std::string>(key), boost::lexical_cast<std::string>(value));
 	return true;
 }
