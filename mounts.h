@@ -32,7 +32,9 @@ class Mount
 			speed = _speed;
 			clientId = _clientId;
 		}
+
 		bool isTamed(Player* player) const;
+
 		uint16_t getId() const {return id;}
 		const std::string& getName() const {return name;}
 		uint32_t getSpeed() const {return speed;}

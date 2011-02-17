@@ -3673,12 +3673,18 @@ bool Game::playerChangeOutfit(uint32_t playerId, Outfit_t outfit)
 	if(!player || player->isRemoved())
 		return false;
 
+	uint8_t oldMount = player->getDefaultOutfit().lookMount;
 	if(!player->changeOutfit(outfit, true))
 		return false;
 
 	player->setIdleTime(0);
 	if(!player->hasCondition(CONDITION_OUTFIT, -1))
+	{
+		if(player->isMounted() && outfit.lookMount != oldMount)
+			player->setMounted(false);
+
 		internalCreatureChangeOutfit(player, outfit);
+	}
 
 	return true;
 }
@@ -3686,21 +3692,16 @@ bool Game::playerChangeOutfit(uint32_t playerId, Outfit_t outfit)
 bool Game::playerChangeMountStatus(uint32_t playerId, bool status)
 {
 	Player* player = getPlayerByID(playerId);
-
 	if(!player || player->isRemoved())
 		return false;
-	
-	if(!status || (OTSYS_TIME() - player->getLastMountStatusChange()) >= g_config.getNumber(ConfigManager::MOUNT_COOLDOWN)) {
-		player->setMounted(status);
-		return true;
-		
-	} else {
-		std::stringstream ss;
-		ss << "Please wait "<< (g_config.getNumber(ConfigManager::MOUNT_COOLDOWN) / 1000) << " seconds before trying to mount again.";
-		player->sendCancel(ss.str());
-	}
 
-	return false;
+	if((OTSYS_TIME() - player->getLastMountAction()) <
+		g_config.getNumber(ConfigManager::MOUNT_COOLDOWN))
+		return false;
+		
+	player->setMounted(status);
+	player->setLastMountAction(OTSYS_TIME());
+	return true;
 }
 
 bool Game::playerSay(uint32_t playerId, uint16_t channelId, SpeakClasses type, const std::string& receiver, const std::string& text)

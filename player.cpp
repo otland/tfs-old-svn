@@ -93,9 +93,8 @@ Player::Player(const std::string& _name, ProtocolGame* p):
 	setVocation(0);
 	setParty(NULL);
 
-	mount = 0;
 	mounted = false;
-	lastMountStatusChange = 0;
+	lastMountAction = OTSYS_TIME();
 
 	transferContainer.setParent(this);
 	for(int32_t i = 0; i < 11; i++)
@@ -1397,6 +1396,7 @@ void Player::onChangeZone(ZoneType_t zone)
 		if(g_config.getBool(ConfigManager::UNMOUNT_PLAYER_IN_PZ))
 			dismount();
 	}
+
 	sendIcons();
 }
 
@@ -3969,6 +3969,13 @@ bool Player::changeOutfit(Outfit_t outfit, bool checkList)
 	if(checkList && (!canWearOutfit(outfitId, outfit.lookAddons) || !requestedOutfit))
 		return false;
 
+	if(outfit.lookMount && outfit.lookMount != getDefaultOutfit().lookMount)
+	{
+		Mount* mount = Mounts::getInstance()->getMountByCid(outfit.lookMount);
+		if(!mount || !mount->isTamed(this))
+			return false;
+	}
+
 	requestedOutfit = false;
 	if(outfitAttributes)
 	{
@@ -5149,56 +5156,48 @@ void Player::sendCritical() const
 		g_game.addAnimatedText(getPosition(), COLOR_DARKRED, "CRITICAL!");
 }
 
-void Player::setMounted(bool doMount)
+void Player::setMounted(bool mounting)
 {
-	if(doMount)
+	if(!mounting)
 	{
-		if(_tile->hasFlag(TILESTATE_PROTECTIONZONE))
-                        sendCancelMessage(RET_ACTIONNOTPERMITTEDINPROTECTIONZONE);
-		else if(!isPremium())
-			sendCancelMessage(RET_YOUNEEDPREMIUMACCOUNT);
-                else if(mount == 0)
-                        sendOutfitWindow();
-                else if(!isMounted())
-                {
-			Mount* myMount = Mounts::getInstance()->getMountById(mount);
-			if(myMount)
-			{
-				mounted = true;
-				lastMountStatusChange = OTSYS_TIME();
-
-		                defaultOutfit.lookMount = myMount->getClientId();
-
-		                if(myMount->getSpeed())
-		                        g_game.changeSpeed(this, myMount->getSpeed());
-
-		                g_game.internalCreatureChangeOutfit(this, defaultOutfit);
-			}
-                }
-        }
-        else
 		dismount();
+		return;
+	}
+
+	if(_tile->hasFlag(TILESTATE_PROTECTIONZONE))
+		sendCancelMessage(RET_ACTIONNOTPERMITTEDINPROTECTIONZONE);
+	else if(!isPremium()) // TODO: configurable for mounts being premium (maybe per mount?...)
+		sendCancelMessage(RET_YOUNEEDPREMIUMACCOUNT);
+	else if(!defaultOutfit.lookMount)
+		sendOutfitWindow();
+	else if(!mounted)
+	{
+		if(Mount* mount = Mounts::getInstance()->getMountById(defaultOutfit.lookMount))
+		{
+			defaultOutfit.lookMount = mount->getClientId();
+			if(mount->getSpeed())
+				g_game.changeSpeed(this, mount->getSpeed());
+
+			mounted = true;
+			g_game.internalCreatureChangeOutfit(this, defaultOutfit);
+		}
+	}
 }
 
 void Player::dismount()
 {
-	if(isMounted())
-	{
-		if(!mount)
-		{
-			sendCancel("No mount");
-			return;
-		}
-		Mount* myMount = Mounts::getInstance()->getMountById(mount);
-		mounted = false;
-		lastMountStatusChange = OTSYS_TIME();
+	if(!mounted)
+		return;
 
-		if(myMount && myMount->getSpeed() > 0)
-			g_game.changeSpeed(this, -myMount->getSpeed());
+	mounted = false;
+	if(!defaultOutfit.lookMount)
+		return;
 
-		defaultOutfit.lookMount = 0;
-		g_game.internalCreatureChangeOutfit(this, defaultOutfit);
-	}
+	Mount* mount = Mounts::getInstance()->getMountById(defaultOutfit.lookMount);
+	if(mount && mount->getSpeed() > 0)
+		g_game.changeSpeed(this, -mount->getSpeed());
+
+	g_game.internalCreatureChangeOutfit(this, defaultOutfit);
 }
 
 bool Player::tameMount(uint8_t mountId)
@@ -5206,17 +5205,17 @@ bool Player::tameMount(uint8_t mountId)
 	if(!Mounts::getInstance()->getMountById(mountId))
 		return false;
 
+	int32_t key = PSTRG_MOUNTS_RANGE_START + (mountId / 31), value = 0;
+	std::string tmp;
+
 	mountId--;
-	int key = PSTRG_MOUNTS_RANGE_START + (mountId / 31);
-	int32_t value = 0;
-	std::string tmp = "";
 	if(getStorage(boost::lexical_cast<std::string>(key), tmp))
 	{
 		value = atoi(tmp.c_str());
-		value |= static_cast<int32_t>(pow(2., mountId % 31));
+		value |= (int32_t)pow(2., mountId % 31);
 	} 
 	else
-		value = static_cast<int32_t>(pow(2., mountId % 31));
+		value = (int32_t)pow(2., mountId % 31);
 
 	setStorage(boost::lexical_cast<std::string>(key), boost::lexical_cast<std::string>(value));
 	return true;
@@ -5227,22 +5226,19 @@ bool Player::untameMount(uint8_t mountId)
 	if(!Mounts::getInstance()->getMountById(mountId))
 		return false;
 
+	int32_t key = PSTRG_MOUNTS_RANGE_START + (mountId / 31), value = 0;
+	std::string tmp;
+
 	mountId--;
-	int key = PSTRG_MOUNTS_RANGE_START + (mountId / 31);
-	int32_t value = 0;
-	std::string tmp = "";
 	if(!getStorage(boost::lexical_cast<std::string>(key), tmp))
 		return true;
 
 	value = atoi(tmp.c_str());
-	value ^= (int32_t)pow(2., mountId % 31);
-	setStorage(boost::lexical_cast<std::string>(key), boost::lexical_cast<std::string>(value));
+	value ^= (int32_t)std::pow(2., mountId % 31);
 
+	setStorage(boost::lexical_cast<std::string>(key), boost::lexical_cast<std::string>(value));
 	if(mount == (mountId + 1))
-	{
 		dismount();
-		mount = 0;
-	}
 
 	return true;
 }

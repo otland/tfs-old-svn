@@ -579,13 +579,13 @@ class Player : public Creature, public Cylinder
 
 		//mount
 		bool isMounted() const {return mounted;}
-		uint16_t getMountId() const {return mount;}
-		void setMountId(uint8_t mountId) {mount = mountId;}
-		void setMounted(bool value);
-		void dismount();
+		void setMounted(bool mounting);
+
 		bool tameMount(uint8_t mountId);
 		bool untameMount(uint8_t mountId);
-		int64_t getLastMountStatusChange() const {return lastMountStatusChange; }
+
+		void setLastMountAction(int64_t _time) {lastMountAction = _time;}
+		int64_t getLastMountAction() const {return lastMountAction; }
 
 		//event methods
 		virtual void onUpdateTileItem(const Tile* tile, const Position& pos, const Item* oldItem,
@@ -761,6 +761,7 @@ class Player : public Creature, public Cylinder
 
 		virtual void dropCorpse(DeathList deathList);
 		virtual void dropLoot(Container* corpse);
+		void dismount();
 
 		//cylinder implementations
 		virtual ReturnValue __queryAdd(int32_t index, const Thing* thing, uint32_t count,
@@ -838,7 +839,6 @@ class Player : public Creature, public Cylinder
 		int16_t blessings;
 		uint16_t maxWriteLen;
 		uint16_t sex;
-		uint8_t mount;
 
 		int32_t premiumDays;
 		int32_t soul;
@@ -887,7 +887,7 @@ class Player : public Creature, public Cylinder
 		int64_t lastPong;
 		int64_t lastPing;
 		int64_t nextAction;
-		int64_t lastMountStatusChange;
+		int64_t lastMountAction;
 		uint64_t stamina;
 		uint64_t experience;
 		uint64_t manaSpent;

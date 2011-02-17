@@ -755,7 +755,7 @@ void ProtocolGame::parsePacket(NetworkMessage &msg)
 					parseSetOutfit(msg);
 				break;
 
-			case 0xD4: // Mount/unmount 
+			case 0xD4: // set mount
 				if(g_config.getBool(ConfigManager::ALLOW_MOUNTS))
 					parseMountStatus(msg);
 
@@ -1161,25 +1161,7 @@ void ProtocolGame::parseSetOutfit(NetworkMessage& msg)
 		msg.skip(1);
 
 	if(g_config.getBool(ConfigManager::ALLOW_MOUNTS))
-	{
-		uint16_t mountId = msg.get<uint16_t>();
-
-		if(mountId && mountId != player->getMountId())
-		{
-			Mount* myMount = Mounts::getInstance()->getMountByCid(mountId);
-			if(myMount && myMount->isTamed(player))
-			{ 
-				// Set the new mount
-				player->setMountId(myMount->getId()); 
-				
-			}
-				
-		}
-		if(player->isMounted())
-			addGameTask(&Game::playerChangeMountStatus, player->getID(), false);
-
-		newOutfit.lookMount = 0;
-	}
+		newOutfit.lookMount = msg.get<uint16_t>();
 	else
 		msg.skip(2);
 
@@ -1188,7 +1170,7 @@ void ProtocolGame::parseSetOutfit(NetworkMessage& msg)
 
 void ProtocolGame::parseMountStatus(NetworkMessage& msg)
 {
-	bool status = (msg.get<char>() != (char)0);
+	bool status = msg.get<char>() != (char)0;
 	addGameTask(&Game::playerChangeMountStatus, player->getID(), status);
 }
 
@@ -2475,29 +2457,30 @@ void ProtocolGame::sendOutfitWindow()
 			msg->put<char>(player->getDefaultOutfit().lookAddons);
 		}
 
-		if(g_config.getBool(ConfigManager::ALLOW_MOUNTS) && player->isPremium()) {
+		if(g_config.getBool(ConfigManager::ALLOW_MOUNTS) && player->isPremium()) // TODO: premium only a configurable
+		{
 			std::list<Mount*> mountList;
 			MountList::const_iterator it = Mounts::getInstance()->getFirstMount();
 			for(uint8_t i = 0; it != Mounts::getInstance()->getLastMount() && i < OUTFITS_MAX_NUMBER; ++it, ++i)
 			{
 				if((*it)->isTamed(player))
 					mountList.push_back((*it));
-
 			}
-			if (mountList.size()) {
+
+			if(mountList.size())
+			{
 				msg->put<char>(mountList.size());
-				std::list<Mount*>::iterator it = mountList.begin();
-				for(; it != mountList.end(); ++it)
+				for(std::list<Mount*>::iterator it = mountList.begin(); it != mountList.end(); ++it)
 				{
 					msg->put<uint16_t>((*it)->getClientId());
 					msg->putString((*it)->getName());
-				}				
-			} else {
-				msg->put<char>(0);
+				}
 			}
-		} else {
-			msg->put<char>(0);
-		}		
+			else
+				msg->put<char>(0);
+		}
+		else
+			msg->put<char>(0);	
 
 		player->hasRequestedOutfit(true);
 	}
@@ -2832,7 +2815,8 @@ void ProtocolGame::AddCreatureHealth(NetworkMessage_ptr msg,const Creature* crea
 
 void ProtocolGame::AddCreatureOutfit(NetworkMessage_ptr msg, const Creature* creature, const Outfit_t& outfit, bool outfitWindow/* = false*/)
 {
-	if(outfitWindow || !creature->getPlayer() || (!creature->isInvisible() && (!creature->isGhost()
+	Player* player = creature->getPlayer();
+	if(outfitWindow || !player || (!creature->isInvisible() && (!creature->isGhost()
 		|| !g_config.getBool(ConfigManager::GHOST_INVISIBLE_EFFECT))))
 	{
 		msg->put<uint16_t>(outfit.lookType);
@@ -2850,9 +2834,14 @@ void ProtocolGame::AddCreatureOutfit(NetworkMessage_ptr msg, const Creature* cre
 		else
 			msg->put<uint16_t>(outfit.lookTypeEx);
 
-		msg->put<uint16_t>(outfit.lookMount);
+		
+		if(!player || player->isMounted())
+			msg->put<uint16_t>(outfit.lookMount);
+		else
+			msg->put<uint16_t>(0x00);
 	}
-	else {
+	else
+	{
 		msg->put<uint32_t>(0x00);
 		msg->put<uint16_t>(0x00);
 	}

@@ -594,7 +594,8 @@ void ScriptEnviroment::streamOutfit(std::stringstream& stream, const std::string
 	stream << "lookLegs = " << outfit.lookLegs << "," << std::endl;
 	stream << "lookFeet = " << outfit.lookFeet << "," << std::endl;
 
-	stream << "lookAddons = " << outfit.lookAddons << std::endl;
+	stream << "lookAddons = " << outfit.lookAddons << "," << std::endl;
+	stream << "lookMount = " << outfit.lookMount << std::endl;
 	if(!local.empty())
 		stream << "}" << std::endl;
 }
@@ -1100,6 +1101,7 @@ void LuaInterface::pushOutfit(lua_State* L, const Outfit_t& outfit)
 	setField(L, "lookLegs", outfit.lookLegs);
 	setField(L, "lookFeet", outfit.lookFeet);
 	setField(L, "lookAddons", outfit.lookAddons);
+	setField(L, "lookMount", outfit.lookMount);
 }
 
 void LuaInterface::pushCallback(lua_State* L, int32_t callback)
@@ -1209,6 +1211,7 @@ int32_t LuaInterface::popCallback(lua_State* L)
 Outfit_t LuaInterface::popOutfit(lua_State* L)
 {
 	Outfit_t outfit;
+	outfit.lookMount = getField(L, "lookMount");
 	outfit.lookAddons = getField(L, "lookAddons");
 
 	outfit.lookFeet = getField(L, "lookFeet");
@@ -2257,14 +2260,11 @@ void LuaInterface::registerFunctions()
 	//doPlayerRemoveMount(cid, mountId)
 	lua_register(m_luaState, "doPlayerRemoveMount", LuaInterface::luaDoPlayerRemoveMount);
 
-	//getPlayerMount(cid, mountId)
-	lua_register(m_luaState, "getPlayerMount", LuaInterface::luaGetPlayerMount);
+	//canPlayerRideMount(cid, mountId)
+	lua_register(m_luaState, "canPlayerRideMount", LuaInterface::luaCanPlayerRideMount);
 
-	//doPlayerSetMount(cid, mountId)
-	lua_register(m_luaState, "doPlayerSetMount", LuaInterface::luaDoPlayerSetMount);
-
-	//doPlayerSetMountStatus(cid, mounted)
-	lua_register(m_luaState, "doPlayerSetMountStatus", LuaInterface::luaDoPlayerSetMountStatus);
+	//doPlayerSetMounted(cid, mounting[, force])
+	lua_register(m_luaState, "doPlayerSetMounted", LuaInterface::luaDoPlayerSetMounted);
 
 	//getMountInfo([mountId])
 	lua_register(m_luaState, "getMountInfo", LuaInterface::luaGetMountInfo);
@@ -8972,6 +8972,7 @@ int32_t LuaInterface::luaDoPlayerAddMount(lua_State* L)
 	//doPlayerAddMount(cid, mountId)
 	uint8_t mountId = (uint8_t)popNumber(L);
 	ScriptEnviroment* env = getEnv();
+
 	Player* player = env->getPlayerByUID(popNumber(L));
 	if(!player)
 	{
@@ -8979,9 +8980,7 @@ int32_t LuaInterface::luaDoPlayerAddMount(lua_State* L)
 		lua_pushboolean(L, false);
 	}
 	else
-	{
 		lua_pushboolean(L, player->tameMount(mountId));
-	}
 
 	return 1;
 }
@@ -8991,6 +8990,7 @@ int32_t LuaInterface::luaDoPlayerRemoveMount(lua_State* L)
 	//doPlayerRemoveMount(cid, mountId)
 	uint8_t mountId = (uint8_t)popNumber(L);
 	ScriptEnviroment* env = getEnv();
+
 	Player* player = env->getPlayerByUID(popNumber(L));
 	if(!player)
 	{
@@ -8998,18 +8998,41 @@ int32_t LuaInterface::luaDoPlayerRemoveMount(lua_State* L)
 		lua_pushboolean(L, false);
 	}
 	else
-	{
 		lua_pushboolean(L, player->untameMount(mountId));
-	}
 
 	return 1;
 }
 
-int32_t LuaInterface::luaGetPlayerMount(lua_State* L)
+int32_t LuaInterface::luaCanPlayerRideMount(lua_State* L)
 {
-	//getPlayerMount(cid, mountId)
+	//canPlayerRideMount(cid, mountId)
 	uint8_t mountId = popNumber(L);
 	ScriptEnviroment* env = getEnv();
+
+	Player* player = env->getPlayerByUID(popNumber(L));
+	if(!player)
+	{
+		errorEx(getError(LUA_ERROR_PLAYER_NOT_FOUND));
+		lua_pushboolean(L, false);
+	}
+	else if(Mount* mount = Mounts::getInstance()->getMountById(mountId))
+		lua_pushboolean(L, mount->isTamed(player));
+	else
+		lua_pushboolean(L, false);
+
+	return 1;
+}
+
+int32_t LuaInterface::luaDoPlayerSetMounted(lua_State* L)
+{
+	//doPlayerSetMounted(cid, mounting[, force])
+	bool force = true, mounted;
+	if(lua_gettop(L) > 2)
+		force = popNumber(L);
+
+	mounting = popNumber(L);
+	ScriptEnviroment* env = getEnv();
+	
 	Player* player = env->getPlayerByUID(popNumber(L));
 	if(!player)
 	{
@@ -9018,56 +9041,14 @@ int32_t LuaInterface::luaGetPlayerMount(lua_State* L)
 	}
 	else
 	{
-		Mount* mount = Mounts::getInstance()->getMountById(mountId);
-		if(mount)
-			lua_pushboolean(L, mount->isTamed(player));
+		Mount* mount = Mounts::getInstance()->getMountByCid(player->getDefaultOutfit().lookMount);
+		if(mount && (force || mount->isTamed(player)))
+		{
+			player->setMounted(mounting);
+			lua_pushboolean(L, true);
+		}
 		else
 			lua_pushboolean(L, false);
-	}
-
-	return 1;
-}
-
-int32_t LuaInterface::luaDoPlayerSetMount(lua_State* L)
-{
-	//doPlayerSetMount(cid, mountId)
-	uint8_t mountId = popNumber(L);
-	ScriptEnviroment* env = getEnv();
-	Player* player = env->getPlayerByUID(popNumber(L));
-	if(!player)
-	{
-		errorEx(getError(LUA_ERROR_PLAYER_NOT_FOUND));
-		lua_pushboolean(L, false);
-	}
-	else
-	{
-		Mount* mount = Mounts::getInstance()->getMountById(mountId);
-		if(mount && mount->isTamed(player)) {
-			player->setMountId(mountId);		
-			lua_pushboolean(L, true);
-		} else
-			lua_pushboolean(L, false);
-	}
-
-	return 1;
-}
-
-int32_t LuaInterface::luaDoPlayerSetMountStatus(lua_State* L)
-{
-	//doPlayerSetMountStatus(cid, mounted)
-	bool mounted = popBoolean(L);
-	ScriptEnviroment* env = getEnv();
-	Player* player = env->getPlayerByUID(popNumber(L));
-	if(!player)
-	{
-		errorEx(getError(LUA_ERROR_PLAYER_NOT_FOUND));
-		lua_pushboolean(L, false);
-	}
-	else
-	{
-		player->setMounted(mounted);
-
-		lua_pushboolean(L, true);
 	}
 
 	return 1;
@@ -9077,22 +9058,22 @@ int32_t LuaInterface::luaGetMountInfo(lua_State* L)
 {
 	//getMountInfo([mountId])
 	uint16_t mountId = popNumber(L);
-
-	if(mountId) {
+	if(mountId)
+	{
 		Mount* mount = Mounts::getInstance()->getMountById(mountId);
-		if(!mount) {
+		if(!mount)
+		{
 			lua_pushboolean(L, false);
 			return 1;
 		}
-		lua_newtable(L);
+
 		createTable(L, 1);
 		setField(L, "name", mount->getName().c_str());
 		setField(L, "speed", mount->getSpeed());
 		setField(L, "clientId", mount->getClientId());
-		pushTable(L);
-		
-	} else {
-
+	}
+	else
+	{
 		lua_newtable(L);
 		MountList::const_iterator it = Mounts::getInstance()->getFirstMount();
 		for(uint32_t i = 1; it != Mounts::getInstance()->getLastMount(); ++it, ++i)
@@ -9105,6 +9086,7 @@ int32_t LuaInterface::luaGetMountInfo(lua_State* L)
 			pushTable(L);
 		}
 	}
+
 	return 1;
 }
 

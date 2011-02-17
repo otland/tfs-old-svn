@@ -499,8 +499,7 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool preLo
 	player->defaultOutfit.lookLegs = result->getDataInt("looklegs");
 	player->defaultOutfit.lookFeet = result->getDataInt("lookfeet");
 	player->defaultOutfit.lookAddons = result->getDataInt("lookaddons");
-	player->defaultOutfit.lookMount = 0; // Always initialize unmounted, otherwise they might bug speed
-	player->setMountId(result->getDataInt("lookmount"));
+	player->defaultOutfit.lookMount = result->getDataInt("lookmount");
 
 	player->currentOutfit = player->defaultOutfit;
 	Skulls_t skull = SKULL_RED;

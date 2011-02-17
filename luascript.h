@@ -680,9 +680,8 @@ class LuaInterface
 
 		static int32_t luaDoPlayerAddMount(lua_State* L);
 		static int32_t luaDoPlayerRemoveMount(lua_State* L);
-		static int32_t luaGetPlayerMount(lua_State* L);
-		static int32_t luaDoPlayerSetMount(lua_State* L);
-		static int32_t luaDoPlayerSetMountStatus(lua_State* L);
+		static int32_t luaCanPlayerRideMount(lua_State* L);
+		static int32_t luaDoPlayerSetMounted(lua_State* L);
 		static int32_t luaGetMountInfo(lua_State* L);
 
 		static int32_t luaL_errors(lua_State* L);
