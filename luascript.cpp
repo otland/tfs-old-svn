@@ -4368,14 +4368,14 @@ int32_t LuaInterface::luaDoShowTextDialog(lua_State* L)
 		if(length < 0)
 			length = item->getMaxWriteLength();
 
-		player->setWriteItem(item, length);
+		player->transferContainer.__addThing(NULL, item);
 		if(text.size())
 		{
 			item->setText(text);
 			length = std::max((int32_t)text.size(), length);
 		}
 
-		player->transferContainer.__addThing(NULL, item);
+		player->setWriteItem(item, length);
 		player->sendTextWindow(item, length, canWrite);
 		lua_pushboolean(L, true);
 	}
