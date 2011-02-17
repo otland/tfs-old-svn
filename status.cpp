@@ -19,6 +19,7 @@
 #include <libxml/parser.h>
 
 #include "status.h"
+#include "const.h"
 #include "tools.h"
 
 #include "connection.h"
@@ -38,11 +39,14 @@ IpConnectMap ProtocolStatus::ipConnectMap;
 
 void ProtocolStatus::onRecvFirstMessage(NetworkMessage& msg)
 {
-	IpConnectMap::const_iterator it = ipConnectMap.find(getIP());
-	if(it != ipConnectMap.end() && OTSYS_TIME() < it->second + g_config.getNumber(ConfigManager::STATUSQUERY_TIMEOUT))
+	if(getIP() != LOCALHOST)
 	{
-		getConnection()->close();
-		return;
+		IpConnectMap::const_iterator it = ipConnectMap.find(getIP());
+		if(it != ipConnectMap.end() && OTSYS_TIME() < it->second + g_config.getNumber(ConfigManager::STATUSQUERY_TIMEOUT))
+		{
+			getConnection()->close();
+			return;
+		}
 	}
 
 	ipConnectMap[getIP()] = OTSYS_TIME();
