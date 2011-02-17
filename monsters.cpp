@@ -640,7 +640,7 @@ bool Monsters::deserializeSpell(xmlNodePtr node, spellBlock_t& sb, const std::st
 					if(readXMLInteger(node, "addons", intValue))
 						outfit.lookAddons = intValue;
 
-					if(readXMLInteger(tmpNode, "mount", intValue))
+					if(readXMLInteger(node, "mount", intValue))
 						outfit.lookMount = intValue;
 
 					outfits.push_back(outfit);

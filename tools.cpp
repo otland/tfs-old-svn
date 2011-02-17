@@ -37,7 +37,6 @@ extern ConfigManager g_config;
 #define __NO_CRYPTOPP__
 std::string transformToMD5(std::string plainText, bool upperCase)
 {
-#ifndef __NO_CRYPTOPP__
 	// Crypto++ MD5 object
 	CryptoPP::Weak::MD5 hash;
 
@@ -63,15 +62,6 @@ std::string transformToMD5(std::string plainText, bool upperCase)
 		return output;
 
 	return asLowerCaseString(output);
-#else
-	// Convert to lowercase if needed*/
-	std::stringstream stream;
-	stream << std::hex << plainText;
-	if(upperCase)
-		return stream.str();
-	
-	return asLowerCaseString(stream.str());
-#endif
 }
 
 std::string transformToSHA1(std::string plainText, bool upperCase)
