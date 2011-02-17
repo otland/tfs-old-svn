@@ -5178,7 +5178,7 @@ void Player::setMounted(bool mounting)
 			if(mount->getSpeed())
 				g_game.changeSpeed(this, mount->getSpeed());
 
-			g_game.internalCreatureChangeOutfit(this, defaultOutfit);
+			g_game.internalCreatureChangeOutfit(this, defaultOutfit, true);
 		}
 	}
 }
