@@ -114,7 +114,6 @@ bool Mounts::parseMountNode(xmlNodePtr p)
 		return false;
 
 	mounts.push_back(mount);
-
 	mountCount++;
 	return true;
 }
