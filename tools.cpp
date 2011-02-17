@@ -20,23 +20,27 @@
 #include <iostream>
 #include <iomanip>
 
-#include <cryptopp/sha.h>
-#include <cryptopp/md5.h>
-#include <cryptopp/adler32.h>
-#include <cryptopp/hmac.h>
-
-#include <cryptopp/hex.h>
-#include <cryptopp/base64.h>
-#include <cryptopp/cryptlib.h>
+#ifndef __NO_CRYPTOPP__
+	#include <cryptopp/sha.h>
+	#include <cryptopp/md5.h>
+	#include <cryptopp/hmac.h>
+	#include <cryptopp/adler32.h>
+	#include <cryptopp/hex.h>
+	#include <cryptopp/base64.h>
+	#include <cryptopp/cryptlib.h>
+#else
+	#include <openssl/sha.h>
+	#include <openssl/md5.h>
+#endif
 
 #include "vocation.h"
 #include "configmanager.h"
 
 extern ConfigManager g_config;
 
-#define __NO_CRYPTOPP__
 std::string transformToMD5(std::string plainText, bool upperCase)
 {
+#ifndef __NO_CRYPTOPP__
 	// Crypto++ MD5 object
 	CryptoPP::Weak::MD5 hash;
 
@@ -62,10 +66,26 @@ std::string transformToMD5(std::string plainText, bool upperCase)
 		return output;
 
 	return asLowerCaseString(output);
+#else
+	MD5_CTX c;
+	MD5_Init(&c);
+	MD5_Update(&c, plainText.c_str(), plainText.length());
+
+	uint8_t md[MD5_DIGEST_LENGTH];
+	MD5_Final(md, &c);
+
+	char output[MD5_DIGEST_LENGTH*2+1] = "";
+	for(int i = 0; i < sizeof(md); i++)
+		sprintf(output, "%s%.2X", output, md[i]);
+
+	if(upperCase) return std::string(output);
+	return asLowerCaseString(std::string(output));
+#endif
 }
 
 std::string transformToSHA1(std::string plainText, bool upperCase)
 {
+#ifndef __NO_CRYPTOPP__
 	// Crypto++ SHA1 object
 	CryptoPP::SHA1 hash;
 
@@ -92,10 +112,26 @@ std::string transformToSHA1(std::string plainText, bool upperCase)
 
 	// Convert to lowercase if needed
 	return asLowerCaseString(output);
+#else
+	SHA_CTX c;
+	SHA1_Init(&c);
+	SHA1_Update(&c, plainText.c_str(), plainText.length());
+
+	uint8_t md[SHA_DIGEST_LENGTH];
+	SHA1_Final(md, &c);
+
+	char output[SHA_DIGEST_LENGTH*2+1] = "";
+	for(int i = 0; i < sizeof(md); i++)
+		sprintf(output, "%s%.2X", output, md[i]);
+
+	if(upperCase) return std::string(output);
+	return asLowerCaseString(std::string(output));
+#endif
 }
 
 std::string transformToSHA256(std::string plainText, bool upperCase)
 {
+#ifndef __NO_CRYPTOPP__
 	// Crypto++ SHA256 object
 	CryptoPP::SHA256 hash;
 
@@ -122,10 +158,26 @@ std::string transformToSHA256(std::string plainText, bool upperCase)
 
 	// Convert to lowercase if needed
 	return asLowerCaseString(output);
+#else
+	SHA256_CTX c;
+	SHA256_Init(&c);
+	SHA256_Update(&c, plainText.c_str(), plainText.length());
+
+	uint8_t md[SHA256_DIGEST_LENGTH];
+	SHA256_Final(md, &c);
+
+	char output[SHA256_DIGEST_LENGTH*2+1] = "";
+	for(int i = 0; i < sizeof(md); i++)
+		sprintf(output, "%s%.2X", output, md[i]);
+
+	if(upperCase) return std::string(output);
+	return asLowerCaseString(std::string(output));
+#endif
 }
 
 std::string transformToSHA512(std::string plainText, bool upperCase)
 {
+#ifndef __NO_CRYPTOPP__
 	// Crypto++ SHA512 object
 	CryptoPP::SHA512 hash;
 
@@ -152,10 +204,26 @@ std::string transformToSHA512(std::string plainText, bool upperCase)
 
 	// Convert to lowercase if needed
 	return asLowerCaseString(output);
+#else
+	SHA512_CTX c;
+	SHA512_Init(&c);
+	SHA512_Update(&c, plainText.c_str(), plainText.length());
+
+	uint8_t md[SHA512_DIGEST_LENGTH];
+	SHA512_Final(md, &c);
+
+	char output[SHA512_DIGEST_LENGTH*2+1] = "";
+	for(int i = 0; i < sizeof(md); i++)
+		sprintf(output, "%s%.2X", output, md[i]);
+
+	if(upperCase) return std::string(output);
+	return asLowerCaseString(std::string(output));
+#endif
 }
 
 std::string transformToVAHash(std::string plainText, bool upperCase)
 {
+#ifndef __NO_CRYPTOPP__
 	std::string key = g_config.getString(ConfigManager::ENCRYPTION_KEY);
 	// This is basicaly a base64 string out of a sha512 lowcase string of the HMAC of the plaintext sha256 string with a configurated key
 	// Currently this removes all known weaknesses in the sha-2 implantation
@@ -189,6 +257,8 @@ std::string transformToVAHash(std::string plainText, bool upperCase)
 
 	// Convert to lowercase if needed
 	return asLowerCaseString(output);
+#endif
+	return "";
 }
 
 void _encrypt(std::string& str, bool upperCase)
@@ -1663,6 +1733,7 @@ bool fileExists(const char* filename)
 
 uint32_t adlerChecksum(uint8_t* data, size_t length)
 {
+#ifndef __NO_CRYPTOPP__
 	// Keep this check, rarely used I think
 	if(length > NETWORK_MAX_SIZE || !length)
 		return 0;
@@ -1676,6 +1747,29 @@ uint32_t adlerChecksum(uint8_t* data, size_t length)
 	adler.CalculateDigest(digest, (const byte*)data, length);
 	// return uint32_t cast type
 	return (uint32_t)(((uint16_t)digest[0] << 8 | digest[1]) << 16) | ((uint16_t)digest[2] << 8 | digest[3]);
+#else
+	if(length > NETWORK_MAX_SIZE || length < 0)
+		return 0;
+
+	const uint16_t adler = 65521;
+	uint32_t a = 1, b = 0;
+	while(length > 0)
+	{
+		size_t tmp = length > 5552 ? 5552 : length;
+		length -= tmp;
+		do
+		{
+			a += *data++;
+			b += a;
+		}
+		while(--tmp);
+		
+		a %= adler;
+		b %= adler;
+	}
+	
+	return (b << 16) | a;
+#endif
 }
 
 std::string getFilePath(FileType_t type, std::string name/* = ""*/)
