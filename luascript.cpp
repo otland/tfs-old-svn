@@ -1747,7 +1747,7 @@ void LuaInterface::registerFunctions()
 	//doPlayerTransferMoneyTo(cid, target, money)
 	lua_register(m_luaState, "doPlayerTransferMoneyTo", LuaInterface::luaDoPlayerTransferMoneyTo);
 
-	//doShowTextDialog(cid, itemid, text)
+	//doShowTextDialog(cid, itemid[, (text/canWrite)[, (canWrite/length)[, length]]])
 	lua_register(m_luaState, "doShowTextDialog", LuaInterface::luaDoShowTextDialog);
 
 	//doDecayItem(uid)
@@ -4337,18 +4337,28 @@ int32_t LuaInterface::luaDoPlayerSetLossSkill(lua_State* L)
 
 int32_t LuaInterface::luaDoShowTextDialog(lua_State* L)
 {
-	//doShowTextDialog(cid, itemid[, text[, canWrite[, length]]])
+	//doShowTextDialog(cid, itemid[, (text/canWrite)[, (canWrite/length)[, length]]])
 	int32_t length = -1, params = lua_gettop(L);
 	if(params > 4)
 		length = std::abs(popNumber(L));
 
 	bool canWrite = false;
 	if(params > 3)
-		canWrite = popNumber(L);
+	{
+		if(lua_isboolean(L, -1))
+			canWrite = popNumber(L);
+		else
+			length = popNumber(L);
+	}
 
 	std::string text;
 	if(params > 2)
-		text = popString(L);
+	{
+		if(lua_isboolean(L, -1))
+			canWrite = popNumber(L);
+		else
+			text = popString(L);
+	}
 
 	uint32_t itemId = popNumber(L);
 	ScriptEnviroment* env = getEnv();
@@ -4358,9 +4368,14 @@ int32_t LuaInterface::luaDoShowTextDialog(lua_State* L)
 		if(length < 0)
 			length = item->getMaxWriteLength();
 
-		player->transferContainer.__addThing(NULL, item);
 		player->setWriteItem(item, length);
+		if(text.size())
+		{
+			item->setText(text);
+			length = std::max((int32_t)text.size(), length);
+		}
 
+		player->transferContainer.__addThing(NULL, item);
 		player->sendTextWindow(item, length, canWrite);
 		lua_pushboolean(L, true);
 	}
