@@ -292,7 +292,7 @@ bool Outfits::parseOutfitNode(xmlNodePtr p)
 			{
 				if(readXMLInteger(configNode, "percentAll", intValue))
 				{
-					for(int32_t i = COMBAT_FIRST; i <= COMBAT_LAST; i++)
+					for(int32_t i = COMBAT_FIRST; i <= COMBAT_LAST; i = std::pow(2., i))
 						outfit.absorb[(CombatType_t)i] += intValue;
 				}
 

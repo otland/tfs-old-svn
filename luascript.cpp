@@ -9030,7 +9030,7 @@ int32_t LuaInterface::luaDoPlayerSetMounted(lua_State* L)
 	if(lua_gettop(L) > 2)
 		force = popNumber(L);
 
-	mounting = popNumber(L);
+	mounted = popNumber(L);
 	ScriptEnviroment* env = getEnv();
 	
 	Player* player = env->getPlayerByUID(popNumber(L));
@@ -9044,7 +9044,7 @@ int32_t LuaInterface::luaDoPlayerSetMounted(lua_State* L)
 		Mount* mount = Mounts::getInstance()->getMountByCid(player->getDefaultOutfit().lookMount);
 		if(mount && (force || mount->isTamed(player)))
 		{
-			player->setMounted(mounting);
+			player->setMounted(mounted);
 			lua_pushboolean(L, true);
 		}
 		else

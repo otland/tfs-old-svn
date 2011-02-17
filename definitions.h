@@ -74,7 +74,7 @@
 
 	#pragma warning(disable:4786) // msvc too long debug names in stl
 	#pragma warning(disable:4250) // 'class1' : inherits 'class2::member' via dominance
-	//#pragma warning(disable:4244) I think we want to see datatype converting to I'm commenting this out (Dalkon)
+	#pragma warning(disable:4244)
 	#pragma warning(disable:4267)
 	#pragma warning(disable:4018)
 	#pragma warning(disable:4309)

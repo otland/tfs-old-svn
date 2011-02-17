@@ -909,7 +909,7 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 		if(!show)
 		{
 			bool tmp = true;
-			for(int32_t i = COMBAT_FIRST; i <= COMBAT_LAST; i++)
+			for(int32_t i = COMBAT_FIRST; i <= COMBAT_LAST; i = std::pow(2., i))
 			{
 				if(!it.abilities.absorb[i])
 					continue;
@@ -960,7 +960,7 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 		if(!show)
 		{
 			bool tmp = true;
-			for(int32_t i = COMBAT_FIRST; i <= COMBAT_LAST; i++)
+			for(int32_t i = COMBAT_FIRST; i <= COMBAT_LAST; i = std::pow(2., i))
 			{
 				if(!it.abilities.reflect[REFLECT_CHANCE][i] || !it.abilities.reflect[REFLECT_PERCENT][i])
 					continue;
@@ -1176,7 +1176,7 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 		if(!show)
 		{
 			bool tmp = true;
-			for(int32_t i = COMBAT_FIRST; i <= COMBAT_LAST; i++)
+			for(int32_t i = COMBAT_FIRST; i <= COMBAT_LAST; i = std::pow(2., i))
 			{
 				if(!it.abilities.absorb[i])
 					continue;
@@ -1227,7 +1227,7 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 		if(!show)
 		{
 			bool tmp = true;
-			for(int32_t i = COMBAT_FIRST; i <= COMBAT_LAST; i++)
+			for(int32_t i = COMBAT_FIRST; i <= COMBAT_LAST; i = std::pow(2., i))
 			{
 				if(!it.abilities.reflect[REFLECT_CHANCE][i] || !it.abilities.reflect[REFLECT_PERCENT][i])
 					continue;

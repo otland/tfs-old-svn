@@ -5237,7 +5237,9 @@ bool Player::untameMount(uint8_t mountId)
 	value ^= (int32_t)std::pow(2., mountId % 31);
 
 	setStorage(boost::lexical_cast<std::string>(key), boost::lexical_cast<std::string>(value));
-	if(mount == (mountId + 1))
+	
+	Mount* mount = Mounts::getInstance()->getMountByCid(currentOutfit.lookMount);
+	if(mount->getId() == (mountId + 1))
 		dismount();
 
 	return true;
