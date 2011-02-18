@@ -546,9 +546,7 @@ void Items::parseItemNode(xmlNodePtr itemNode, uint32_t id)
 			itemAttributesNode = itemAttributesNode->next;
 			continue;
 		}
-#ifdef _MSC_VER
-		bool notloaded = false;
-#endif
+
 		std::string tmpStrValue = asLowerCaseString(strValue);
 		if(tmpStrValue == "type")
 		{
@@ -1361,18 +1359,7 @@ void Items::parseItemNode(xmlNodePtr itemNode, uint32_t id)
 			if(readXMLInteger(itemAttributesNode, "value", intValue))
 				it.abilities.reflect[REFLECT_PERCENT][COMBAT_UNDEFINEDDAMAGE] += intValue;
 		}
-#ifndef _MSC_VER
 		else if(tmpStrValue == "reflectchanceall")
-#else
-		else notloaded = true;
-		if(!notloaded)
-		{
-			itemAttributesNode = itemAttributesNode->next;
-			continue;
-		}
-
-		if(tmpStrValue == "reflectchanceall")
-#endif
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue))
 			{

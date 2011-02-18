@@ -45,6 +45,7 @@ void* operator new(size_t bytes, int32_t dummy)
 	return malloc(bytes);
 }
 #ifdef _MSC_VER
+
 void* operator new[](size_t bytes, int32_t dummy)
 {
 	return malloc(bytes);
