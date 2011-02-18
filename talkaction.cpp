@@ -137,7 +137,7 @@ bool TalkActions::onPlayerSay(Creature* creature, uint16_t channelId, const std:
 #ifndef _MSC_VER
 	std::string cmd[TALKFILTER_LAST] = words, param[TALKFILTER_LAST] = "";
 #else
-	std::string cmd[TALKFILTER_LAST], param[TALKFILTER_LAST];
+	std::string cmd[TALKFILTER_LAST] = {words, words, words}, param[TALKFILTER_LAST] = {"", "", ""};
 #endif
 	std::string::size_type loc = words.find('"', 0);
 	if(loc != std::string::npos)
