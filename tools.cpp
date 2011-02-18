@@ -892,6 +892,9 @@ std::string convertIPAddress(uint32_t ip)
 Skulls_t getSkulls(std::string strValue)
 {
 	std::string tmpStrValue = asLowerCaseString(strValue);
+	if(tmpStrValue == "orange" || tmpStrValue == "6")
+		return SKULL_ORANGE;
+
 	if(tmpStrValue == "black" || tmpStrValue == "5")
 		return SKULL_BLACK;
 
