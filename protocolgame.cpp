@@ -2572,9 +2572,10 @@ void ProtocolGame::sendSpellCooldown(uint16_t spellId, uint32_t cooldown, bool i
 	if(msg)
 	{
 		TRACK_MESSAGE(msg);
-		msg->put<char>((isGroup)?0xA5:0xA4);
-		msg->put<char>(spellId);
-		msg->put<uint32_t>(cooldown);
+		msg->put<char>(isGroup ? 0xA5 : 0xA4);
+		msg->put<uint16_t>(spellId);
+		msg->put<uint16_t>(cooldown);
+		msg->put<char>(0x00);
 	}
 }
 

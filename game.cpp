@@ -1018,6 +1018,7 @@ bool Game::removeCreature(Creature* creature, bool isLogout /*= true*/)
 		if(!(player = (*it)->getPlayer()) || !player->canSeeCreature(creature))
 			continue;
 
+		player->setWalkthrough(creature, false);
 		player->sendCreatureDisappear(creature, oldStackPosVector[i]);
 		++i;
 	}

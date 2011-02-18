@@ -864,6 +864,10 @@ bool Player::canWalkthrough(const Creature* creature) const
 		(creature->getMaster() && creature->getMaster() != this && canWalkthrough(creature->getMaster())))
 		return true;
 
+	std::vector<uint32_t>::const_iterator it = std::find(forceWalkthrough.begin(), forceWalkthrough.end(), creature->getID());
+	if(it != forceWalkthrough.end())
+		return true;
+
 	const Player* player = creature->getPlayer();
 	if(!player)
 		return false;
@@ -880,6 +884,17 @@ bool Player::canWalkthrough(const Creature* creature) const
 
 	return (player->isGhost() && getGhostAccess() < player->getGhostAccess())
 		|| (isGhost() && getGhostAccess() > player->getGhostAccess());
+}
+
+void Player::setWalkthrough(const Creature* creature, bool walkthrough)
+{
+	std::vector<uint32_t>::iterator it = std::find(forceWalkthrough.begin(), forceWalkthrough.end(), creature->getID());
+	if(walkthrough && it == forceWalkthrough.end())
+		forceWalkthrough.push_back(creature->getID());
+	else if(!walkthrough && it != forceWalkthrough.end())
+		forceWalkthrough.erase(it);
+
+	sendCreatureWalkthrough(creature, !walkthrough ? canWalkthrough(creature) : walkthrough);
 }
 
 Depot* Player::getDepot(uint32_t depotId, bool autoCreateDepot)
