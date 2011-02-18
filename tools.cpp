@@ -74,11 +74,13 @@ std::string transformToMD5(std::string plainText, bool upperCase)
 	uint8_t md[MD5_DIGEST_LENGTH];
 	MD5_Final(md, &c);
 
-	char output[MD5_DIGEST_LENGTH*2+1] = "";
-	for(int i = 0; i < sizeof(md); i++)
+	char output[MD5_DIGEST_LENGTH * 2 + 1] = "";
+	for(int32_t i = 0; i < sizeof(md); i++)
 		sprintf(output, "%s%.2X", output, md[i]);
 
-	if(upperCase) return std::string(output);
+	if(upperCase)
+		return std::string(output);
+
 	return asLowerCaseString(std::string(output));
 #endif
 }
@@ -120,11 +122,13 @@ std::string transformToSHA1(std::string plainText, bool upperCase)
 	uint8_t md[SHA_DIGEST_LENGTH];
 	SHA1_Final(md, &c);
 
-	char output[SHA_DIGEST_LENGTH*2+1] = "";
-	for(int i = 0; i < sizeof(md); i++)
+	char output[SHA_DIGEST_LENGTH * 2 + 1] = "";
+	for(int32_t i = 0; i < sizeof(md); i++)
 		sprintf(output, "%s%.2X", output, md[i]);
 
-	if(upperCase) return std::string(output);
+	if(upperCase)
+		return std::string(output);
+
 	return asLowerCaseString(std::string(output));
 #endif
 }
@@ -166,11 +170,13 @@ std::string transformToSHA256(std::string plainText, bool upperCase)
 	uint8_t md[SHA256_DIGEST_LENGTH];
 	SHA256_Final(md, &c);
 
-	char output[SHA256_DIGEST_LENGTH*2+1] = "";
-	for(int i = 0; i < sizeof(md); i++)
+	char output[SHA256_DIGEST_LENGTH * 2 + 1] = "";
+	for(int32_t i = 0; i < sizeof(md); i++)
 		sprintf(output, "%s%.2X", output, md[i]);
 
-	if(upperCase) return std::string(output);
+	if(upperCase)
+		return std::string(output);
+
 	return asLowerCaseString(std::string(output));
 #endif
 }
@@ -212,11 +218,13 @@ std::string transformToSHA512(std::string plainText, bool upperCase)
 	uint8_t md[SHA512_DIGEST_LENGTH];
 	SHA512_Final(md, &c);
 
-	char output[SHA512_DIGEST_LENGTH*2+1] = "";
-	for(int i = 0; i < sizeof(md); i++)
+	char output[SHA512_DIGEST_LENGTH * 2 + 1] = "";
+	for(int32_t i = 0; i < sizeof(md); i++)
 		sprintf(output, "%s%.2X", output, md[i]);
 
-	if(upperCase) return std::string(output);
+	if(upperCase)
+		return std::string(output);
+
 	return asLowerCaseString(std::string(output));
 #endif
 }
@@ -277,9 +285,11 @@ void _encrypt(std::string& str, bool upperCase)
 		case ENCRYPTION_SHA512:
 			str = transformToSHA512(str, upperCase);
 			break;
+#ifndef __NO_CRYPTOPP__
 		case ENCRYPTION_VAHASH:
 			str = transformToVAHash(str, upperCase);
 			break;
+#endif
 		default:
 		{
 			if(upperCase)
@@ -1748,7 +1758,7 @@ uint32_t adlerChecksum(uint8_t* data, size_t length)
 	// return uint32_t cast type
 	return (uint32_t)(((uint16_t)digest[0] << 8 | digest[1]) << 16) | ((uint16_t)digest[2] << 8 | digest[3]);
 #else
-	if(length > NETWORK_MAX_SIZE || length < 0)
+	if(length > NETWORK_MAX_SIZE || !length)
 		return 0;
 
 	const uint16_t adler = 65521;
@@ -1763,7 +1773,6 @@ uint32_t adlerChecksum(uint8_t* data, size_t length)
 			b += a;
 		}
 		while(--tmp);
-		
 		a %= adler;
 		b %= adler;
 	}
