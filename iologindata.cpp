@@ -507,6 +507,8 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool preLo
 		skull = (Skulls_t)result->getDataInt("skull");
 
 	player->setSkullEnd((time_t)result->getDataInt("skulltime"), true, skull);
+	player->saving = result->getDataInt("save");
+
 	player->town = result->getDataInt("town_id");
 	if(Town* town = Towns::getInstance()->getTown(player->town))
 		player->setMasterPosition(town->getPosition());
@@ -517,11 +519,11 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool preLo
 	player->setLossPercent(LOSS_CONTAINERS, result->getDataInt("loss_containers"));
 	player->setLossPercent(LOSS_ITEMS, result->getDataInt("loss_items"));
 
-	player->loginPosition = Position(result->getDataInt("posx"), result->getDataInt("posy"), result->getDataInt("posz"));
 	player->lastLogin = result->getDataLong("lastlogin");
 	player->lastLogout = result->getDataLong("lastlogout");
-
 	player->lastIP = result->getDataInt("lastip");
+
+	player->loginPosition = Position(result->getDataInt("posx"), result->getDataInt("posy"), result->getDataInt("posz"));
 	if(!player->loginPosition.x || !player->loginPosition.y)
 		player->loginPosition = player->getMasterPosition();
 
@@ -772,8 +774,6 @@ bool IOLoginData::savePlayer(Player* player, bool preSave/* = true*/, bool shall
 	}
 	Database* db = Database::getInstance();
 	DBQuery query;
-
-	bool save = g_config.getNumber(ConfigManager::SAVE_PLAYER_DATA) != 0;
 	
 	DBTransaction trans(db);
 	if(!trans.begin())
@@ -781,7 +781,7 @@ bool IOLoginData::savePlayer(Player* player, bool preSave/* = true*/, bool shall
 
 	query.str("");
 	query << "UPDATE `players` SET `lastlogin` = " << player->lastLogin << ", `lastip` = " << player->lastIP;
-	if(!save || !player->isSaving())
+	if(!player->isSaving() || !g_config.getBool(ConfigManager::SAVE_PLAYER_DATA))
 	{
 		query << " WHERE `id` = " << player->getGUID() << db->getUpdateLimiter();
 		if(!db->query(query.str()))
