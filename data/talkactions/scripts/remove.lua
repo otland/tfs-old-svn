@@ -15,7 +15,7 @@ function onSay(cid, words, param, channel)
 	toPos.stackpos = STACKPOS_TOP_MOVEABLE_ITEM_OR_CREATURE
 	local tmp = getThingFromPos(toPos)
 	if(tmp.uid ~= 0) then
-		if(isCreature(tmp.uid)) then
+		if(isCreature(tmp.uid) and (not isPlayer(tmp.uid) or (not isPlayerGhost(tmp.uid) or getPlayerGhostAccess(cid) >= getPlayerGhostAccess(tmp.uid)))) then
 			doRemoveCreature(tmp.uid)
 		else
 			doRemoveItem(tmp.uid, math.min(math.max(1, tmp.type), amount))
