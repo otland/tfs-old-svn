@@ -628,7 +628,8 @@ bool Spell::checkSpell(Player* player) const
 	if(!player->hasFlag(PlayerFlag_HasNoExhaustion))
 	{
 		bool useCooldowns = g_config.getBool(ConfigManager::ENABLE_COOLDOWNS),
-			exhausted = player->hasCooldown(useCooldowns ? spellId : isAggressive);
+			exhausted = player->hasCondition(CONDITION_SPELLCOOLDOWN,
+			useCooldowns ? spellId : isAggressive);
 		if(!exhausted && useCooldowns)
 		{
 			for(SpellGroup::const_iterator it = groupExhaustions.begin(); it != groupExhaustions.end(); it++)

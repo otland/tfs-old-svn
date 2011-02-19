@@ -3704,7 +3704,7 @@ bool Game::playerChangeMountStatus(uint32_t playerId, bool status)
 		g_config.getNumber(ConfigManager::MOUNT_COOLDOWN))
 		return false;
 		
-	player->setMounted(status, true);
+	player->setMounted(status);
 	player->setLastMountAction(OTSYS_TIME());
 	return true;
 }

@@ -2348,45 +2348,15 @@ Item* Player::createCorpse(DeathList deathList)
 
 void Player::addCooldown(uint32_t ticks, uint16_t spellId)
 {
-	for(ConditionList::const_iterator it = conditions.begin(); it != conditions.end(); ++it)
-	{
-		if((*it)->getType() != CONDITION_SPELLCOOLDOWN || (*it)->getSpellId() != (int32_t)spellId)
-			continue;
-
-		(*it)->setTicks((int32_t)ticks);
-		return;
-	}
-
-	Condition* condition = Condition::createCondition(CONDITIONID_DEFAULT,
-		CONDITION_SPELLCOOLDOWN, (int32_t)ticks, (int32_t)spellId);
-	if(condition && condition->startCondition(this))
-	{
-		conditions.push_back(condition);
-		onAddCondition(CONDITION_SPELLCOOLDOWN, false);
-	}
-}
-
-void Player::hasCooldown(uint16_t spellId)
-{
-	if(isSuppress(type))
-		return false;
-
-	for(ConditionList::const_iterator it = conditions.begin(); it != conditions.end(); ++it)
-	{
-		if((*it)->getType() != CONDITION_SPELLCOOLDOWN || (*it)->getSpellId() == (int32_t)spellId)
-			continue;
-
-		if(!(*it)->getEndTime() || (*it)->getEndTime() >= OTSYS_TIME())
-			return true;
-	}
-
-	return false;
+	if(Condition* condition = Condition::createCondition(CONDITIONID_DEFAULT,
+		CONDITION_SPELLCOOLDOWN, ticks, 0, false, spellId))
+		addCondition(condition);
 }
 
 void Player::addExhaust(uint32_t ticks, Exhaust_t exhaust)
 {
 	if(Condition* condition = Condition::createCondition(CONDITIONID_DEFAULT,
-		CONDITION_EXHAUST, ticks, 0, false, (uint8_t)exhaust))
+		CONDITION_EXHAUST, ticks, 0, false, (int32_t)exhaust))
 		addCondition(condition);
 }
 
