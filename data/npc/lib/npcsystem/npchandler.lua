@@ -69,6 +69,7 @@ if(NpcHandler == nil) then
 	NpcHandler = {
 		keywordHandler = nil,
 		focuses = nil,
+		focusesGarbage = nil,
 		talkStart = nil,
 		idleTime = 300,
 		talkRadius = 3,
@@ -112,10 +113,12 @@ if(NpcHandler == nil) then
 		obj.modules = {}
 		if(NPCHANDLER_CONVBEHAVIOR ~= CONVERSATION_DEFAULT) then
 			obj.focuses = {}
+			obj.focusesGarbage = {}
 			obj.talkStart = {}
 		else
 			obj.queue = Queue:new(obj)
 			obj.focuses = 0
+			obj.focusesGarbage = {}
 			obj.talkStart = 0
 		end
 
@@ -172,7 +175,7 @@ if(NpcHandler == nil) then
 						return true
 					end
 
-					self:internalReleaseFocus(focus, k)
+					self:internalUnFocus(focus, k)
 					return false
 				end
 			end
@@ -207,8 +210,17 @@ if(NpcHandler == nil) then
 		doNpcSetCreatureFocus(0)
 	end
 
-	-- Used when the npc should un-focus the player.
+	-- Used to properly unFocus when delaying messages.
 	function NpcHandler:releaseFocus(focus)
+		if(self.talkDelayTime > 0)
+			table.insert(self.focusesGarbage, focus)
+		else
+			self:unFocus(focus)
+		end
+	end
+
+	-- Used when the npc should un-focus the player.
+	function NpcHandler:unFocus(focus)
 		if(NPCHANDLER_CONVBEHAVIOR ~= CONVERSATION_DEFAULT) then
 			if(not self:isFocused(focus)) then
 				return
@@ -222,7 +234,7 @@ if(NpcHandler == nil) then
 			end
 
 			if(pos ~= nil) then
-				self:internalReleaseFocus(focus, pos)
+				self:internalUnFocus(focus, pos)
 				closeShopWindow(focus)
 			end
 		elseif(self.focuses == focus) then
@@ -234,7 +246,7 @@ if(NpcHandler == nil) then
 	end
 
 	-- Internal un-focusing function, beware using!
-	function NpcHandler:internalReleaseFocus(focus, pos)
+	function NpcHandler:internalUnFocus(focus, pos)
 		if(type(self.focuses) ~= "table" or pos == nil or self.focuses[pos] == nil) then
 			return
 		end
@@ -505,6 +517,16 @@ if(NpcHandler == nil) then
 				else
 					self.talkDelay[i] = nil
 				end
+			end
+
+			if(NPCHANDLER_CONVBEHAVIOR ~= CONVERSATION_DEFAULT) then
+				if(not table.empty(self.focusesGarbage)) then
+					for _, focus in ipairs(self.focusesGarbage) do
+						self:unFocus(focus)
+					end
+				end
+			elseif(self.focusesGarbage ~= 0) then
+				self:unFocus(self.focusesGarbage)
 			end
 
 			if(self:processModuleCallback(CALLBACK_ONTHINK)) then
