@@ -806,8 +806,7 @@ DeathList Creature::getKillers()
 	if((lhc = g_game.getCreatureByID(lastHitCreature)))
 	{
 		int32_t damage = 0;
-		it = damageMap.find(lastHitCreature);
-		if(it != damageMap.end())
+		if((it = damageMap.find(lastHitCreature)) != damageMap.end())
 			damage = it->second.total;
 
 		list.push_back(DeathEntry(lhc, damage));

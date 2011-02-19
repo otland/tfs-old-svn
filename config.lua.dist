@@ -197,6 +197,7 @@
 	spellNameInsteadOfWords = false
 	emoteSpells = false
 	unifiedSpells = true
+	enableCooldowns = true
 
 	-- Outfits
 	allowChangeOutfit = true
@@ -216,8 +217,11 @@
 	maximumDoorLevel = 500
 	maxMessageBuffer = 4
 	tradeLimit = 100
-	enableCooldowns = 0
-	useMounts = 0
+
+	-- Mounts
+	useMounts = true
+	mountCooldown = 2000
+	unmountPlayerInPz = true
 
 	-- VIP list
 	separateVipListPerCharacter = false
@@ -257,11 +261,17 @@
 	-- Blessings
 	-- NOTE: blessingReduction* regards items/containers loss.
 	-- eachBlessReduction is how much each bless reduces the experience/magic/skills loss.
+	-- pvpBlessingThreshold is damage percent received from PvP that is required to
+	-- enable pvpBlessing.
+	-- fairFightTimeRange is last X seconds from which damage to player counts.
+	-- Applies to pvp blessing.
 	blessings = true
 	blessingOnlyPremium = true
 	blessingReductionBase = 30
 	blessingReductionDecrement = 5
 	eachBlessReduction = 8
+	pvpBlessingThreshold = 40
+	fairFightTimeRange = 60
 
 	-- Rates
 	-- NOTE: experienceStages configuration is located in data/XML/stages.xml.
@@ -331,6 +341,7 @@
 	-- Spawns
 	deSpawnRange = 2
 	deSpawnRadius = 50
+	monsterSpawnWalkback = true
 
 	-- Summons
 	maxPlayerSummons = 2

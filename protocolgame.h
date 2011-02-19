@@ -191,7 +191,7 @@ class ProtocolGame : public Protocol
 		void sendCreatureOutfit(const Creature* creature, const Outfit_t& outfit);
 		void sendStats();
 		void sendTextMessage(MessageClasses mclass, const std::string& message);
-		void sendReLoginWindow();
+		void sendReLoginWindow(uint8_t pvpPercent);
 
 		void sendTutorial(uint8_t tutorialId);
 		void sendAddMarker(const Position& pos, MapMarks_t markType, const std::string& desc);

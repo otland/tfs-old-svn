@@ -373,10 +373,10 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool preLo
 	Database* db = Database::getInstance();
 	DBQuery query;
 	query << "SELECT `id`, `account_id`, `group_id`, `world_id`, `sex`, `vocation`, `experience`, `level`, "
-	<< "`maglevel`, `health`, `healthmax`, `blessings`, `mana`, `manamax`, `manaspent`, `soul`, `lookbody`, "
-	<< "`lookfeet`, `lookhead`, `looklegs`, `looktype`, `lookaddons`, `lookmount`, `posx`, `posy`, `posz`, `cap`, "
-	<< "`lastlogin`, `lastlogout`, `lastip`, `conditions`, `skull`, `skulltime`, `guildnick`, `rank_id`, "
-	<< "`town_id`, `balance`, `stamina`, `direction`, `loss_experience`, `loss_mana`, `loss_skills`, "
+	<< "`maglevel`, `health`, `healthmax`, `blessings`, `pvp_blessing`, `mana`, `manamax`, `manaspent`, `soul`, "
+	<< "`lookbody`, `lookfeet`, `lookhead`, `looklegs`, `looktype`, `lookaddons`, `lookmount`, `posx`, `posy`, "
+	<< "`posz`, `cap`, `lastlogin`, `lastlogout`, `lastip`, `conditions`, `skull`, `skulltime`, `guildnick`, "
+	<< "`rank_id`, `town_id`, `balance`, `stamina`, `direction`, `loss_experience`, `loss_mana`, `loss_skills`, "
 	<< "`loss_containers`, `loss_items`, `marriage`, `promotion`, `description`, `save` FROM `players` WHERE "
 	<< "`name` " << db->getStringComparer() << db->escapeString(name) << " AND `world_id` = "
 	<< g_config.getNumber(ConfigManager::WORLD_ID) << " AND `deleted` = 0 LIMIT 1";
@@ -435,7 +435,10 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool preLo
 	player->balance = result->getDataLong("balance");
 	if(g_config.getBool(ConfigManager::BLESSINGS) && (player->isPremium()
 		|| !g_config.getBool(ConfigManager::BLESSING_ONLY_PREMIUM)))
+	{
 		player->blessings = result->getDataInt("blessings");
+		player->setPVPBlessing(result->getDataInt("pvp_blessing"));
+	}
 
 	uint64_t conditionsSize = 0;
 	const char* conditions = result->getDataStream("conditions", conditionsSize);
@@ -731,6 +734,52 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool preLo
 		result->free();
 	}
 
+	query.str("");
+	query << "SELECT `pd`.`player_id`, `pd`.`date` FROM `player_killers` pk LEFT JOIN `killers` k"
+		<< " ON `pk`.`kill_id` = `k`.`id` LEFT JOIN `player_deaths` pd ON `k`.`death_id` = `pd`.`id`"
+		<< " WHERE `pk`.`player_id` = " << player->getGUID() << " AND `k`.`unjustified` = 0 AND "
+		<< "`pd`.`date` >= " << (time(NULL) - (7 * 86400));
+#ifdef __WAR_SYSTEM__
+	query << " AND `k`.`war` = 0";
+#endif
+
+	std::map<uint32_t, time_t> kills;
+	if(result = db->storeQuery(query.str()))
+	{
+		do
+		{
+			if(!kills[result->getDataInt('player_id')] || kills[result->getDataInt(
+				'player_id')] < (time_t)result->getDataInt('date')) // pick up the latest date
+				kills[result->getDataInt('player_id')] = (time_t)result->getDataInt('date');
+		}
+		while(result->next());
+		result->free();
+	}
+
+	if(!kills.empty())
+	{
+		query.str("");
+		query << "SELECT `pk`.`player_id`, `pd`.`date` FROM `player_killers` pk LEFT JOIN `killers` k"
+			<< " ON `pk`.`kill_id` = `k`.`id` LEFT JOIN `player_deaths` pd ON `k`.`death_id` = `pd`.`id`"
+			<< " WHERE `pd`.`player_id` = " << player->getGUID() << " AND `k`.`unjustified` = 1 AND "
+			<< "`pd`.`date` >= " << (time(NULL) - (7 * 86400));
+	#ifdef __WAR_SYSTEM__
+
+		query << " AND `k`.`war` = 0";
+	#endif
+		if(result = db->storeQuery(query.str()))
+		{
+			do
+			{
+				if(!kills[result->getDataInt('player_id')] || kills[result->getDataInt(
+					'player_id')] < (time_t)result->getDataInt('date'))
+					player->addRevenge(result->getDataInt('player_id'));
+			}
+			while(result->next());
+			result->free();
+		}
+	}
+
 	player->updateInventoryWeight();
 	player->updateItemsLight(true);
 	player->updateBaseSpeed();
@@ -860,7 +909,10 @@ bool IOLoginData::savePlayer(Player* player, bool preSave/* = true*/, bool shall
 	query << "`lastlogout` = " << player->getLastLogout() << ", ";
 	if(g_config.getBool(ConfigManager::BLESSINGS) && (player->isPremium()
 		|| !g_config.getBool(ConfigManager::BLESSING_ONLY_PREMIUM)))
+	{
 		query << "`blessings` = " << player->blessings << ", ";
+		query << "`pvp_blessing` = " << player->hasPVPBlessing() << ", ";
+	}
 
 	query << "`marriage` = " << player->marriage << ", ";
 	if(g_config.getBool(ConfigManager::INGAME_GUILD_MANAGEMENT))

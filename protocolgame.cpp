@@ -1642,14 +1642,14 @@ void ProtocolGame::sendAddMarker(const Position& pos, MapMarks_t markType, const
 	}
 }
 
-void ProtocolGame::sendReLoginWindow()
+void ProtocolGame::sendReLoginWindow(uint8_t pvpPercent)
 {
 	NetworkMessage_ptr msg = getOutputBuffer();
 	if(msg)
 	{
 		TRACK_MESSAGE(msg);
 		msg->put<char>(0x28);
-		msg->put<char>(0x64); // damage percentage (fair fight rules), disabled for now
+		msg->put<char>(pvpPercent);
 	}
 }
 

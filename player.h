@@ -224,7 +224,9 @@ class Player : public Creature, public Cylinder
 		bool hasCustomFlag(PlayerCustomFlags value) const {return group != NULL && group->hasCustomFlag(value);}
 
 		void addBlessing(int16_t blessing) {blessings += blessing;}
-		bool hasBlessing(int16_t value) const {return ((blessings & ((int16_t)1 << value)) != 0);}
+		bool hasBlessing(int16_t blessing) const {return ((blessings & ((int16_t)1 << blessing)) != 0);}
+		void setPVPBlessing(bool value) {pvpBlessing = value;}
+		bool hasPVPBlessing() const {return pvpBlessing;}
 		uint16_t getBlessings() const;
 
 		OperatingSystem_t getOperatingSystem() const {return operatingSystem;}
@@ -475,6 +477,12 @@ class Player : public Creature, public Cylinder
 		virtual float getAttackFactor() const;
 		virtual float getDefenseFactor() const;
 
+		void addRevenge(uint32_t playerId) {revengeList.push_back(playerId);}
+		bool needRevenge(uint32_t playerId) const
+		{
+			return std::find(revengeList.start(), revengeList.end(), playerId) != revengeList.end();
+		}
+
 		void addCooldown(uint32_t ticks, uint16_t spellId);
 		void addExhaust(uint32_t ticks, Exhaust_t exhaust);
 		void addInFightTicks(bool pzLock, int32_t ticks = 0);
@@ -670,8 +678,8 @@ class Player : public Creature, public Cylinder
 			{if(client) client->sendSkills();}
 		void sendTextMessage(MessageClasses type, const std::string& message) const
 			{if(client) client->sendTextMessage(type, message);}
-		void sendReLoginWindow() const
-			{if(client) client->sendReLoginWindow();}
+		void sendReLoginWindow(uint8_t pvpPercent) const
+			{if(client) client->sendReLoginWindow(pvpPercent);}
 		void sendTextWindow(Item* item, uint16_t maxLen, bool canWrite) const
 			{if(client) client->sendTextWindow(windowTextId, item, maxLen, canWrite);}
 		void sendToChannel(Creature* creature, SpeakClasses type, const std::string& text, uint16_t channelId) const
@@ -829,6 +837,7 @@ class Player : public Creature, public Cylinder
 		bool outfitAttributes;
 		bool addAttackSkillPoint;
 		bool mounted;
+		bool pvpBlessing;
 
 		OperatingSystem_t operatingSystem;
 		AccountManager_t accountManager;
@@ -924,6 +933,7 @@ class Player : public Creature, public Cylinder
 		Item* weapon;
 
 		std::vector<uint32_t> forceWalkthrough;
+		std::vector<uint32_t> revengeList;
 
 		typedef std::set<uint32_t> AttackedSet;
 		AttackedSet attackedSet;

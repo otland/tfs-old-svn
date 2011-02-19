@@ -1081,8 +1081,6 @@ uint32_t DatabaseManager::updateDatabase()
 					db->query(query.str());
 
 					query << "CREATE TABLE `server_config` (`config` VARCHAR(35) NOT NULL DEFAULT '', `value` VARCHAR(255) NOT NULL DEFAULT '', UNIQUE (`config`));";
-					db->query(query.str());
-
 					registerDatabaseConfig("encryption", g_config.getNumber(ConfigManager::ENCRYPTION));
 					break;
 				}
@@ -1090,7 +1088,6 @@ uint32_t DatabaseManager::updateDatabase()
 				case DATABASE_ENGINE_MYSQL:
 				{
 					query << "ALTER TABLE `server_config` CHANGE `value` `value` VARCHAR(255) NOT NULL DEFAULT '';";
-					db->query(query.str());
 					break;
 				}
 
@@ -1098,7 +1095,9 @@ uint32_t DatabaseManager::updateDatabase()
 					break;
 			}
 
+			db->query(query.str());
 			query.str("");
+
 			registerDatabaseConfig("db_version", 25);
 			return 25;
 		}
@@ -1111,14 +1110,12 @@ uint32_t DatabaseManager::updateDatabase()
 				case DATABASE_ENGINE_SQLITE:
 				{
 					query << "ALTER TABLE `accounts` ADD `salt` VARCHAR(40) NOT NULL DEFAULT '';";
-					db->query(query.str());
 					break;
 				}
 
 				case DATABASE_ENGINE_MYSQL:
 				{
 					query << "ALTER TABLE `accounts` ADD `salt` VARCHAR(40) NOT NULL DEFAULT '' AFTER `password`;";
-					db->query(query.str());
 					break;
 				}
 
@@ -1126,7 +1123,9 @@ uint32_t DatabaseManager::updateDatabase()
 					break;
 			}
 
+			db->query(query.str());
 			query.str("");
+
 			registerDatabaseConfig("db_version", 26);
 			return 26;
 		}
@@ -1160,15 +1159,13 @@ uint32_t DatabaseManager::updateDatabase()
 			{
 				case DATABASE_ENGINE_SQLITE:
 				{
-					/*query << "ALTER TABLE `players` ADD `currmount` INT NOT NULL DEFAULT 0;";
-					db->query(query.str());*/
+					//query << "ALTER TABLE `players` ADD `currmount` INT NOT NULL DEFAULT 0;";
 					break;
 				}
 
 				case DATABASE_ENGINE_MYSQL:
 				{
 					query << "ALTER TABLE `players` ADD `currmount` INT NOT NULL DEFAULT 0 AFTER `lookaddons`;";
-					db->query(query.str());
 					break;
 				}
 
@@ -1176,7 +1173,9 @@ uint32_t DatabaseManager::updateDatabase()
 					break;
 			}
 
+			db->query(query.str());
 			query.str("");
+
 			registerDatabaseConfig("db_version", 28);
 			return 28;
 		}
@@ -1202,7 +1201,9 @@ uint32_t DatabaseManager::updateDatabase()
 					break;
 			}
 
+			db->query(query.str());
 			query.str("");
+
 			registerDatabaseConfig("db_version", 29);
 			return 29;
 		}
@@ -1228,9 +1229,40 @@ uint32_t DatabaseManager::updateDatabase()
 					break;
 			}
 
+			db->query(query.str());
 			query.str("");
+
 			registerDatabaseConfig("db_version", 30);
 			return 30;
+		}
+
+		case 30:
+		{
+			std::cout << "> Updating database to version 31..." << std::endl;
+			switch(db->getDatabaseEngine())
+			{
+				case DATABASE_ENGINE_SQLITE:
+				{
+					query << "ALTER TABLE `players` ADD `pvp_blessing` BOOLEAN NOT NULL DEFAULT FALSE;";
+					db->query(query.str());
+					break;
+				}
+
+				case DATABASE_ENGINE_MYSQL:
+				{
+					query << "ALTER TABLE `players` ADD `pvp_blessing` TINYINT(1) NOT NULL DEFAULT 0 AFTER `blessings`;";
+					break;
+				}
+
+				default:
+					break;
+			}
+
+			db->query(query.str());
+			query.str("");
+
+			registerDatabaseConfig("db_version", 31);
+			return 31;
 		}
 
 		default:

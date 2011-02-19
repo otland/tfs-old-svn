@@ -91,6 +91,7 @@ CREATE TABLE `players`
 	`guildnick` VARCHAR(255) NOT NULL DEFAULT '',
 	`lastlogout` BIGINT UNSIGNED NOT NULL DEFAULT 0,
 	`blessings` TINYINT(2) NOT NULL DEFAULT 0,
+	`pvp_blessing` TINYINT(1) NOT NULL DEFAULT 0,
 	`balance` BIGINT NOT NULL DEFAULT 0,
 	`stamina` BIGINT UNSIGNED NOT NULL DEFAULT 151200000 COMMENT 'stored in miliseconds',
 	`direction` INT NOT NULL DEFAULT 2,
@@ -381,7 +382,7 @@ CREATE TABLE `server_config`
 	UNIQUE (`config`)
 ) ENGINE = InnoDB;
 
-INSERT INTO `server_config` VALUES ('db_version', 30);
+INSERT INTO `server_config` VALUES ('db_version', 31);
 
 CREATE TABLE `server_motd`
 (

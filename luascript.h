@@ -554,6 +554,8 @@ class LuaInterface
 		static int32_t luaDoCreatureSetStorage(lua_State* L);
 		static int32_t luaDoPlayerAddBlessing(lua_State* L);
 		static int32_t luaGetPlayerBlessing(lua_State* L);
+		static int32_t luaDoPlayerSetPVPBlessing(lua_State* L);
+		static int32_t luaGetPlayerPVPBlessing(lua_State* L);
 #ifdef __WAR_SYSTEM__
 		static int32_t luaDoGuildAddEnemy(lua_State* L);
 		static int32_t luaDoGuildRemoveEnemy(lua_State* L);

@@ -56,7 +56,7 @@ Player::Player(const std::string& _name, ProtocolGame* p):
 	if(client)
 		client->setPlayer(this);
 
-	pzLocked = isConnecting = addAttackSkillPoint = requestedOutfit = false;
+	pvpBlessing = pzLocked = isConnecting = addAttackSkillPoint = requestedOutfit = mounted = false;
 	saving = true;
 
 	lastAttackBlockType = BLOCK_NONE;
@@ -79,7 +79,7 @@ Player::Player(const std::string& _name, ProtocolGame* p):
 	soulMax = 100;
 	capacity = 400.00;
 	stamina = STAMINA_MAX;
-	lastLoad = lastPing = lastPong = OTSYS_TIME();
+	lastLoad = lastPing = lastPong = lastMountAction = OTSYS_TIME();
 
 	writeItem = NULL;
 	group = NULL;
@@ -92,9 +92,6 @@ Player::Player(const std::string& _name, ProtocolGame* p):
 
 	setVocation(0);
 	setParty(NULL);
-
-	mounted = false;
-	lastMountAction = OTSYS_TIME();
 
 	transferContainer.setParent(this);
 	for(int32_t i = 0; i < 11; i++)
@@ -2134,9 +2131,7 @@ uint32_t Player::getIP() const
 
 bool Player::onDeath()
 {
-	Item* preventLoss = NULL;
-	Item* preventDrop = NULL;
-
+	Item *preventLoss = NULL, *preventDrop = NULL;
 	if(getZone() == ZONE_HARDCORE)
 	{
 		setDropLoot(LOOT_DROP_NONE);
@@ -2171,18 +2166,42 @@ bool Player::onDeath()
 		return false;
 	}
 
+	uint32_t totalDamage = 0, pvpDamage = 0;
+	for(CountMap::iterator it = damageMap.begin(); it != damageMap.end(); ++it)
+	{
+		totalDamage += it->second.total;
+		// its enough when we use IDs range comparison here instead of overheating autoList
+		// FIXME: any idea to not use hardcoded values?
+		if(((OTSYS_TIME() - it->second.ticks) / 1000) <= g_config.getNumber(
+			ConfigManager::FAIRFIGHT_TIMERANGE) && it->first >= 0x10000000
+			&& it->first < 0x40000000)
+			pvpDamage += it->second.total;
+	}
+
+	bool usePVPBlessing = false;
+	uint8_t pvpPercent = (int32_t)std::ceil((double)pvpDamage * 100 / totalDamage);
+	if(pvpBlessing && pvpPercent >= (uint8_t)g_config.getNumber(
+		ConfigManager::PVP_BLESSING_THRESHOLD))
+	{
+		usePVPBlessing = true;
+		pvpBlessing = false;
+	}
+
 	if(preventLoss)
 	{
 		setLossSkill(false);
-		if(preventLoss->getCharges() > 1) //weird, but transform failed to remove for some hosters
-			g_game.transformItem(preventLoss, preventLoss->getID(), std::max(0, ((int32_t)preventLoss->getCharges() - 1)));
-		else
-			g_game.internalRemoveItem(NULL, preventDrop);
+		if(!usePVPBlessing) // TODO: need to reconsider this, because players will be immune to any loss
+		{
+			if(preventLoss->getCharges() > 1) // weird, but transform failed to remove for some hosters
+				g_game.transformItem(preventLoss, preventLoss->getID(), std::max(0, ((int32_t)preventLoss->getCharges() - 1)));
+			else
+				g_game.internalRemoveItem(NULL, preventDrop);
+		}
 	}
 
-	if(preventDrop && preventDrop != preventLoss)
+	if(preventDrop && preventDrop != preventLoss && !usePVPBlessing)
 	{
-		if(preventDrop->getCharges() > 1) //weird, but transform failed to remove for some hosters
+		if(preventDrop->getCharges() > 1) // weird, but transform failed to remove for some hosters
 			g_game.transformItem(preventDrop, preventDrop->getID(), std::max(0, ((int32_t)preventDrop->getCharges() - 1)));
 		else
 			g_game.internalRemoveItem(NULL, preventDrop);
@@ -2195,7 +2214,7 @@ bool Player::onDeath()
 		removeExperience(lossExperience, false);
 		double percent = 1. - ((double)(experience - lossExperience) / experience);
 
-		//Magic level loss
+		// magic level loss
 		uint64_t sumMana = 0, lostMana = 0;
 		for(uint32_t i = 1; i <= magLevel; ++i)
 			sumMana += vocation->getReqMana(i);
@@ -2216,12 +2235,12 @@ bool Player::onDeath()
 		else
 			magLevelPercent = 0;
 
-		//Skill loss
+		// skill loss
 		uint64_t lostSkillTries, sumSkillTries;
-		for(int16_t i = 0; i < 7; ++i) //for each skill
+		for(int16_t i = 0; i < 7; ++i) // for each skill
 		{
 			lostSkillTries = sumSkillTries = 0;
-			for(uint32_t c = 11; c <= skills[i][SKILL_LEVEL]; ++c) //sum up all required tries for all skill levels
+			for(uint32_t c = 11; c <= skills[i][SKILL_LEVEL]; ++c) // sum up all required tries for all skill levels
 				sumSkillTries += vocation->getReqSkillTries(i, c);
 
 			sumSkillTries += skills[i][SKILL_TRIES];
@@ -2243,9 +2262,11 @@ bool Player::onDeath()
 			skills[i][SKILL_TRIES] = std::max((int32_t)0, (int32_t)(skills[i][SKILL_TRIES] - lostSkillTries));
 		}
 
-		blessings = 0;
+		if(!usePVPBlessing)
+			blessings = 0;
+
 		loginPosition = masterPosition;
-		if(!inventory[SLOT_BACKPACK]) // TODO: you should receive the bag after you login back
+		if(!inventory[SLOT_BACKPACK]) // FIXME: you should receive the bag after you login back...
 			__internalAddThing(SLOT_BACKPACK, Item::CreateItem(g_config.getNumber(ConfigManager::DEATH_CONTAINER)));
 
 		sendIcons();
@@ -2254,7 +2275,7 @@ bool Player::onDeath()
 
 		g_creatureEvents->playerLogout(this, true);
 		g_game.removeCreature(this, false);
-		sendReLoginWindow();
+		sendReLoginWindow(pvpPercent);
 	}
 	else
 	{
@@ -2263,6 +2284,7 @@ bool Player::onDeath()
 		{
 			loginPosition = masterPosition;
 			g_creatureEvents->playerLogout(this, true);
+
 			g_game.removeCreature(this, false);
 			sendReLoginWindow();
 		}
@@ -3706,7 +3728,7 @@ void Player::onAttackedCreature(Creature* target)
 		)
 		return;
 
-	if(targetPlayer->getSkull() != SKULL_NONE)
+	if(targetPlayer->getSkull() != SKULL_NONE || needRevenge(targetPlayer->getID()))
 		targetPlayer->sendCreatureSkull(this);
 	else if(!hasCustomFlag(PlayerCustomFlag_NotGainSkull))
 	{
@@ -3863,14 +3885,14 @@ bool Player::onKilledCreature(Creature* target, DeathEntry& entry)
 	War_t enemy;
 	if(targetPlayer->getEnemy(this, enemy) && (!entry.isLast() || IOGuild::getInstance()->updateWar(enemy)))
 		entry.setWar(enemy);
-
 #endif
 
 	if(!entry.isJustify() || !hasCondition(CONDITION_INFIGHT))
 		return true;
 
-	if(!targetPlayer->hasAttacked(this) && target->getSkull() == SKULL_NONE && targetPlayer != this
-		&& (addUnjustifiedKill(targetPlayer,
+	std::vector<uint32_t>::iterator it = std::find(revengeList.begin(), revengeList.end(), target->getID());
+	if(!targetPlayer->hasAttacked(this) && target->getSkull() == SKULL_NONE && it == revengeList.end()
+		&& targetPlayer != this && (addUnjustifiedKill(targetPlayer,
 #ifndef __WAR_SYSTEM__
 		true
 #else
@@ -3878,6 +3900,9 @@ bool Player::onKilledCreature(Creature* target, DeathEntry& entry)
 #endif
 		) || entry.isLast()))
 		entry.setUnjustified();
+
+	if(it != revengeList.end())
+		revengeList.erase(it);
 
 	addInFightTicks(true, g_config.getNumber(ConfigManager::WHITE_SKULL_TIME));
 	return true;
@@ -4123,7 +4148,11 @@ Skulls_t Player::getSkullType(const Creature* creature) const
 		if(g_game.getWorldType() != WORLDTYPE_OPEN)
 			return SKULL_NONE;
 
-		if((player == this || (skull != SKULL_NONE && player->getSkull() < SKULL_RED)) && player->hasAttacked(this)
+		if(needRevenge(player->getID()))
+			return SKULL_ORANGE;
+
+		if((player == this || ((skull != SKULL_NONE || player->needRevenge(id))
+			&& player->getSkull() < SKULL_RED)) && player->hasAttacked(this)
 #ifdef __WAR_SYSTEM__
 			&& !player->isEnemy(this, false)
 #endif

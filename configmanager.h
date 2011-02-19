@@ -204,6 +204,8 @@ class ConfigManager
 			RATE_MONSTER_DEFENSE,
 			FORMULA_LEVEL,
 			FORMULA_MAGIC,
+			PVP_BLESSING_THRESHOLD,
+			FAIRFIGHT_TIMERANGE,
 			LAST_DOUBLE_CONFIG /* this must be the last one */
 		};
 
