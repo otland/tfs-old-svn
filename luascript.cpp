@@ -9103,8 +9103,11 @@ int32_t LuaInterface::luaDoPlayerSetMounted(lua_State* L)
 int32_t LuaInterface::luaGetMountInfo(lua_State* L)
 {
 	//getMountInfo([mountId])
-	uint16_t mountId = popNumber(L);
-	if(mountId)
+	uint16_t mountId = 0;
+	if(lua_gettop(L) > 0)
+		mountId = popNumber(L);
+
+	if(mountId > 0)
 	{
 		Mount* mount = Mounts::getInstance()->getMountById(mountId);
 		if(!mount)
