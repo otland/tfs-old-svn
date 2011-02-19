@@ -991,7 +991,7 @@ void Spell::postSpell(Player* player) const
 					continue;
 
 				player->addExhaust(it->second, (Exhaust_t)((int32_t)it->first + 1));
-				player->sendSpellGroupCooldown((char)it->first, it->second);
+				player->sendSpellGroupCooldown(it->first, it->second);
 			}
 		}
 
