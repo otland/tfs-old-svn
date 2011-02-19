@@ -96,7 +96,7 @@ bool Mounts::parseMountNode(xmlNodePtr p)
 		name = strValue;
 
 	uint16_t clientId = 0;
-	if(readXMLInteger(p, "clientid", intValue))
+	if(readXMLInteger(p, "clientid", intValue) || readXMLInteger(p, "clientId", intValue) || readXMLInteger(p, "cid", intValue))
 		clientId = intValue;
 
 	int32_t speed = 0;
