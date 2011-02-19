@@ -897,7 +897,7 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 
 		// TODO: we should find some better way of completing this
 		int32_t show = it.abilities.absorb[COMBAT_FIRST];
-		for(int32_t i = (COMBAT_FIRST + 1); i <= COMBAT_LAST; i++)
+		for(int32_t i = (COMBAT_FIRST + 1); i <= COMBAT_LAST; i = std::pow(2., i))
 		{
 			if(it.abilities.absorb[i] == show)
 				continue;
@@ -948,7 +948,7 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 
 		// TODO: same case as absorbs...
 		show = it.abilities.reflect[REFLECT_CHANCE][COMBAT_FIRST];
-		for(int32_t i = (COMBAT_FIRST + 1); i <= COMBAT_LAST; i++)
+		for(int32_t i = (COMBAT_FIRST + 1); i <= COMBAT_LAST; i = std::pow(2., i))
 		{
 			if(it.abilities.reflect[REFLECT_CHANCE][i] == show)
 				continue;
@@ -1010,7 +1010,7 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 				s << ", ";
 
 			int32_t tmp = it.abilities.reflect[REFLECT_PERCENT][COMBAT_FIRST];
-			for(int32_t i = (COMBAT_FIRST + 1); i <= COMBAT_LAST; i++)
+			for(int32_t i = (COMBAT_FIRST + 1); i <= COMBAT_LAST; i = std::pow(2., i))
 			{
 				if(it.abilities.reflect[REFLECT_PERCENT][i] == tmp)
 					continue;
@@ -1164,7 +1164,7 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 
 		// TODO: we should find some better way of completing this
 		int32_t show = it.abilities.absorb[COMBAT_FIRST];
-		for(int32_t i = (COMBAT_FIRST + 1); i <= COMBAT_LAST; i++)
+		for(int32_t i = (COMBAT_FIRST + 1); i <= COMBAT_LAST; i = std::pow(2., i))
 		{
 			if(it.abilities.absorb[i] == show)
 				continue;
@@ -1215,7 +1215,7 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 
 		// TODO: same case as absorbs...
 		show = it.abilities.reflect[REFLECT_CHANCE][COMBAT_FIRST];
-		for(int32_t i = (COMBAT_FIRST + 1); i <= COMBAT_LAST; i++)
+		for(int32_t i = (COMBAT_FIRST + 1); i <= COMBAT_LAST; i = std::pow(2., i))
 		{
 			if(it.abilities.reflect[REFLECT_CHANCE][i] == show)
 				continue;
@@ -1277,7 +1277,7 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 				s << ", ";
 
 			int32_t tmp = it.abilities.reflect[REFLECT_PERCENT][COMBAT_FIRST];
-			for(int32_t i = (COMBAT_FIRST + 1); i <= COMBAT_LAST; i++)
+			for(int32_t i = (COMBAT_FIRST + 1); i <= COMBAT_LAST; i = std::pow(2., i))
 			{
 				if(it.abilities.reflect[REFLECT_PERCENT][i] == tmp)
 					continue;
