@@ -69,7 +69,6 @@ if(NpcHandler == nil) then
 	NpcHandler = {
 		keywordHandler = nil,
 		focuses = nil,
-		focusesGarbage = nil,
 		talkStart = nil,
 		idleTime = 300,
 		talkRadius = 3,
@@ -113,12 +112,10 @@ if(NpcHandler == nil) then
 		obj.modules = {}
 		if(NPCHANDLER_CONVBEHAVIOR ~= CONVERSATION_DEFAULT) then
 			obj.focuses = {}
-			obj.focusesGarbage = {}
 			obj.talkStart = {}
 		else
 			obj.queue = Queue:new(obj)
 			obj.focuses = 0
-			obj.focusesGarbage = {}
 			obj.talkStart = 0
 		end
 
@@ -175,7 +172,7 @@ if(NpcHandler == nil) then
 						return true
 					end
 
-					self:internalUnFocus(focus, k)
+					self:unsetFocus(focus, k)
 					return false
 				end
 			end
@@ -210,17 +207,8 @@ if(NpcHandler == nil) then
 		doNpcSetCreatureFocus(0)
 	end
 
-	-- Used to properly unFocus when delaying messages.
-	function NpcHandler:releaseFocus(focus)
-		if(self.talkDelayTime > 0) then
-			table.insert(self.focusesGarbage, focus)
-		else
-			self:unFocus(focus)
-		end
-	end
-
 	-- Used when the npc should un-focus the player.
-	function NpcHandler:unFocus(focus)
+	function NpcHandler:releaseFocus(focus)
 		if(NPCHANDLER_CONVBEHAVIOR ~= CONVERSATION_DEFAULT) then
 			if(not self:isFocused(focus)) then
 				return
@@ -234,7 +222,7 @@ if(NpcHandler == nil) then
 			end
 
 			if(pos ~= nil) then
-				self:internalUnFocus(focus, pos)
+				self:unsetFocus(focus, pos)
 				closeShopWindow(focus)
 			end
 		elseif(self.focuses == focus) then
@@ -246,7 +234,7 @@ if(NpcHandler == nil) then
 	end
 
 	-- Internal un-focusing function, beware using!
-	function NpcHandler:internalUnFocus(focus, pos)
+	function NpcHandler:unsetFocus(focus, pos)
 		if(type(self.focuses) ~= "table" or pos == nil or self.focuses[pos] == nil) then
 			return
 		end
@@ -370,9 +358,9 @@ if(NpcHandler == nil) then
 					local parseInfo = { [TAG_PLAYERNAME] = getPlayerName(cid) }
 					msg = self:parseMessage(msg, parseInfo)
 
-					self:say(msg, cid)
+					self:say(msg, cid, 0, true)
 					self:releaseFocus(cid)
-					self:say(msg)
+					self:say(msg, 0, 0, true)
 				end
 			end
 		end
@@ -504,7 +492,7 @@ if(NpcHandler == nil) then
 				if(speech.cid ~= nil and isCreature(speech.cid) and speech.start ~= nil and speech.time ~= nil and speech.message ~= nil) then
 					if(os.mtime() >= speech.time) then
 						local talkStart = (NPCHANDLER_CONVBEHAVIOR ~= CONVERSATION_DEFAULT and self.talkStart[speech.cid] or self.talkStart)
-						if(self:isFocused(speech.cid) and talkStart == speech.start) then
+						if(speech.force or (self:isFocused(speech.cid) and talkStart == speech.start)) then
 							if(NPCHANDLER_CONVBEHAVIOR ~= CONVERSATION_DEFAULT) then
 								selfSay(speech.message, speech.cid)
 							else
@@ -517,16 +505,6 @@ if(NpcHandler == nil) then
 				else
 					self.talkDelay[i] = nil
 				end
-			end
-
-			if(NPCHANDLER_CONVBEHAVIOR ~= CONVERSATION_DEFAULT) then
-				if(not table.empty(self.focusesGarbage)) then
-					for _, focus in ipairs(self.focusesGarbage) do
-						self:unFocus(focus)
-					end
-				end
-			elseif(self.focusesGarbage ~= 0) then
-				self:unFocus(self.focusesGarbage)
 			end
 
 			if(self:processModuleCallback(CALLBACK_ONTHINK)) then
@@ -601,9 +579,9 @@ if(NpcHandler == nil) then
 						local parseInfo = { [TAG_PLAYERNAME] = getPlayerName(cid) or -1 }
 						msg = self:parseMessage(msg, parseInfo)
 
-						self:say(msg, cid)
+						self:say(msg, cid, 0, true)
 						self:releaseFocus(cid)
-						self:say(msg)
+						self:say(msg, 0, 0, true)
 					end
 				end
 			end
@@ -630,8 +608,8 @@ if(NpcHandler == nil) then
 
 	-- Makes the npc represented by this instance of NpcHandler say something.
 	--	This implements the currently set type of talkdelay.
-	function NpcHandler:say(message, focus, delay)
-		local delay = delay or 0
+	function NpcHandler:say(message, focus, delay, force)
+		local delay, force = delay or 0, force or false
 		if(NPCHANDLER_TALKDELAY == TALKDELAY_NONE and delay <= 0) then
 			if(NPCHANDLER_CONVBEHAVIOR ~= CONVERSATION_DEFAULT) then
 				selfSay(message, focus)
@@ -647,7 +625,8 @@ if(NpcHandler == nil) then
 			cid = focus,
 			message = message,
 			time = os.mtime() + (delay <= 0 and self.talkDelayTime or delay),
-			start = os.time()
+			start = os.time(),
+			force = force
 		})
 	end
 end

@@ -9107,10 +9107,10 @@ int32_t LuaInterface::luaGetMountInfo(lua_State* L)
 	if(lua_gettop(L) > 0)
 		mountId = popNumber(L);
 
-	if(mountId > 0)
+	if(mountId)
 	{
 		Mount* mount = Mounts::getInstance()->getMountById(mountId);
-		if(!mount)
+		if(!mount && !(mount = Mounts::getInstance()->getMountByCid(mountId)))
 		{
 			lua_pushboolean(L, false);
 			return 1;
