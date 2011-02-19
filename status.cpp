@@ -59,13 +59,26 @@ std::map<uint32_t, int64_t> ProtocolStatus::ipConnectMap;
 
 void ProtocolStatus::onRecvFirstMessage(NetworkMessage& msg)
 {
-	std::map<uint32_t, int64_t>::const_iterator it = ipConnectMap.find(getIP());
-	if(it != ipConnectMap.end())
+	std::string ip = convertIPToString(getIP());
+	if(ip != "127.0.0.1")
 	{
-		if(OTSYS_TIME() < it->second + g_config.getNumber(ConfigManager::STATUSQUERY_TIMEOUT))
+		if(!g_game.isInWhitelist(ip))
 		{
-			getConnection()->closeConnection();
-			return;
+			if(g_game.isInBlacklist(ip))
+			{
+				getConnection()->closeConnection();
+				return;
+			}
+
+			std::map<uint32_t, int64_t>::const_iterator it = ipConnectMap.find(getIP());
+			if(it != ipConnectMap.end())
+			{
+				if(OTSYS_TIME() < it->second + g_config.getNumber(ConfigManager::STATUSQUERY_TIMEOUT))
+				{
+					getConnection()->closeConnection();
+					return;
+				}
+			}
 		}
 	}
 

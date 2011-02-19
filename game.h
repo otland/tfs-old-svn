@@ -85,6 +85,7 @@ enum LightState_t
 
 typedef std::map<int32_t, int32_t> StageList;
 typedef std::vector< std::pair<std::string, unsigned int> > Highscore;
+typedef std::vector<std::string> StatusList;
 
 /**
   * Main Game class.
@@ -523,6 +524,11 @@ class Game
 		void setServerSaveMessage(int16_t key, bool value) {serverSaveMessage[key] = value;}
 		bool getServerSaveMessage(int16_t key) const {return serverSaveMessage[key];}
 
+		bool loadStatuslist();
+
+		bool isInBlacklist(std::string ip) const { for (StatusList::const_iterator it = blacklist.begin(); it != blacklist.end(); ++it) { if (*it == ip) return true; } return false; }
+		bool isInWhitelist(std::string ip) const { for (StatusList::const_iterator it = whitelist.begin(); it != whitelist.end(); ++it) { if (*it == ip) return true; } return false; }
+
 	protected:
 		bool playerSayCommand(Player* player, SpeakClasses type, const std::string& text);
 		bool playerSaySpell(Player* player, SpeakClasses type, const std::string& text);
@@ -597,5 +603,8 @@ class Game
 		bool useLastStageLevel;
 
 		std::vector<std::string> commandTags;
+
+		StatusList blacklist;
+		StatusList whitelist;
 };
 #endif
