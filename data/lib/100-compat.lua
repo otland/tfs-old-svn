@@ -156,6 +156,7 @@ setPlayerStorageValue = doPlayerSetStorageValue
 getPlayerStorageValue = getCreatureStorage
 getGlobalStorageValue = getStorage
 setGlobalStorageValue = doSetStorage
+getPlayerMount = canPlayerRideMount
 setPlayerBalance = doPlayerSetBalance
 doAddMapMark = doPlayerAddMapMark
 doSendTutorial = doPlayerSendTutorial
