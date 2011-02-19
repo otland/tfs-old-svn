@@ -9113,24 +9113,23 @@ int32_t LuaInterface::luaGetMountInfo(lua_State* L)
 			return 1;
 		}
 
-		createTable(L, 1);
+		lua_newtable(L);
 		setField(L, "name", mount->getName().c_str());
 		setField(L, "speed", mount->getSpeed());
 		setField(L, "clientId", mount->getClientId());
+		return 1;
 	}
-	else
+
+	lua_newtable(L);
+	MountList::const_iterator it = Mounts::getInstance()->getFirstMount();
+	for(uint32_t i = 1; it != Mounts::getInstance()->getLastMount(); ++it, ++i)
 	{
-		lua_newtable(L);
-		MountList::const_iterator it = Mounts::getInstance()->getFirstMount();
-		for(uint32_t i = 1; it != Mounts::getInstance()->getLastMount(); ++it, ++i)
-		{
-			createTable(L, i);
-			setField(L, "id", (*it)->getId());
-			setField(L, "name", (*it)->getName().c_str());
-			setField(L, "speed", (*it)->getSpeed());
-			setField(L, "clientId", (*it)->getClientId());
-			pushTable(L);
-		}
+		createTable(L, i);
+		setField(L, "id", (*it)->getId());
+		setField(L, "name", (*it)->getName().c_str());
+		setField(L, "speed", (*it)->getSpeed());
+		setField(L, "clientId", (*it)->getClientId());
+		pushTable(L);
 	}
 
 	return 1;
