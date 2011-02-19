@@ -744,13 +744,15 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool preLo
 #endif
 
 	std::map<uint32_t, time_t> kills;
-	if(result = db->storeQuery(query.str()))
+	if((result = db->storeQuery(query.str())))
 	{
 		do
 		{
-			if(!kills[result->getDataInt('player_id')] || kills[result->getDataInt(
-				'player_id')] < (time_t)result->getDataInt('date')) // pick up the latest date
-				kills[result->getDataInt('player_id')] = (time_t)result->getDataInt('date');
+			if(!kills[result->getDataInt("player_id")] || kills[result->getDataInt("player_id")]
+				< (time_t)result->getDataInt("date")) // pick up the latest date
+			{
+				kills[result->getDataInt("player_id")] = (time_t)result->getDataInt("date");
+			}
 		}
 		while(result->next());
 		result->free();
@@ -767,13 +769,12 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool preLo
 
 		query << " AND `k`.`war` = 0";
 	#endif
-		if(result = db->storeQuery(query.str()))
+		if((result = db->storeQuery(query.str())))
 		{
 			do
 			{
-				if(!kills[result->getDataInt('player_id')] || kills[result->getDataInt(
-					'player_id')] < (time_t)result->getDataInt('date'))
-					player->addRevenge(result->getDataInt('player_id'));
+				if(!kills[result->getDataInt("player_id")] || kills[result->getDataInt("player_id")] < (time_t)result->getDataInt("date"))
+					player->addRevenge(result->getDataInt("player_id"));
 			}
 			while(result->next());
 			result->free();

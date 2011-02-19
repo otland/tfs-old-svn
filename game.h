@@ -609,8 +609,8 @@ class Game
 
 		bool loadStatuslist();
 
-		bool isInBlacklist(std::string ip) const { for (StatusList::const_iterator it = blacklist.begin(); it != blacklist.end(); ++it) { if (*it == ip) return true; } return false; }
-		bool isInWhitelist(std::string ip) const { for (StatusList::const_iterator it = whitelist.begin(); it != whitelist.end(); ++it) { if (*it == ip) return true; } return false; }
+		bool isInBlacklist(std::string ip) const { return std::find(blacklist.begin(), blacklist.end(), ip) != blacklist.end(); }
+		bool isInWhitelist(std::string ip) const { return std::find(whitelist.begin(), whitelist.end(), ip) != whitelist.end(); }
 
 	protected:
 		bool playerWhisper(Player* player, const std::string& text);

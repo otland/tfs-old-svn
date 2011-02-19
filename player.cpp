@@ -2286,7 +2286,7 @@ bool Player::onDeath()
 			g_creatureEvents->playerLogout(this, true);
 
 			g_game.removeCreature(this, false);
-			sendReLoginWindow();
+			sendReLoginWindow(pvpPercent);
 		}
 	}
 

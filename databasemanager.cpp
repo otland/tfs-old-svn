@@ -1244,7 +1244,6 @@ uint32_t DatabaseManager::updateDatabase()
 				case DATABASE_ENGINE_SQLITE:
 				{
 					query << "ALTER TABLE `players` ADD `pvp_blessing` BOOLEAN NOT NULL DEFAULT FALSE;";
-					db->query(query.str());
 					break;
 				}
 
