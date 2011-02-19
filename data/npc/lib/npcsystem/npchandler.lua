@@ -212,7 +212,7 @@ if(NpcHandler == nil) then
 
 	-- Used to properly unFocus when delaying messages.
 	function NpcHandler:releaseFocus(focus)
-		if(self.talkDelayTime > 0)
+		if(self.talkDelayTime > 0) then
 			table.insert(self.focusesGarbage, focus)
 		else
 			self:unFocus(focus)
