@@ -4143,7 +4143,8 @@ Skulls_t Player::getSkull() const
 
 Skulls_t Player::getSkullType(const Creature* creature) const
 {
-	if(const Player* player = creature->getPlayer())
+	const Player* player = creature->getPlayer();
+	if(player && player->getSkull() == SKULL_NONE)
 	{
 		if(g_game.getWorldType() != WORLDTYPE_OPEN)
 			return SKULL_NONE;
@@ -4151,15 +4152,15 @@ Skulls_t Player::getSkullType(const Creature* creature) const
 		if(needRevenge(player->getID()))
 			return SKULL_ORANGE;
 
-		if((player == this || ((skull != SKULL_NONE || player->needRevenge(id))
-			&& player->getSkull() < SKULL_RED)) && player->hasAttacked(this)
+		if((player == this || (skull != SKULL_NONE || player->needRevenge(id)))
+			&& player->hasAttacked(this)
 #ifdef __WAR_SYSTEM__
 			&& !player->isEnemy(this, false)
 #endif
 			)
 			return SKULL_YELLOW;
 
-		if(player->getSkull() == SKULL_NONE &&
+		if(
 #ifndef __WAR_SYSTEM__
 			isPartner(player) &&
 #else
