@@ -4,7 +4,7 @@ CREATE TABLE "server_config" (
 	UNIQUE ("config")
 );
 
-INSERT INTO "server_config" VALUES ('db_version', 29);
+INSERT INTO "server_config" VALUES ('db_version', 30);
 
 CREATE TABLE "server_motd" (
 	"id" INTEGER NOT NULL,
@@ -332,6 +332,14 @@ CREATE TABLE "bans" (
 	"reason" INTEGER NOT NULL DEFAULT 0,
 	"action" INTEGER  NOT NULL DEFAULT 0,
 	"statement" VARCHAR(255) NOT NULL DEFAULT ''
+);
+
+CREATE TABLE "tile_store"
+(
+	"house_id" INTEGER NOT NULL,
+	"world_id" INTEGER NOT NULL DEFAULT 0,
+	"data" LONGBLOB NOT NULL,
+	FOREIGN KEY ("house_id") REFERENCES "houses" ("id")
 );
 
 CREATE TRIGGER "oncreate_guilds"

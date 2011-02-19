@@ -195,6 +195,7 @@ bool ConfigManager::load()
 	m_confBool[HOUSE_NEED_PREMIUM] = getGlobalBool("houseNeedPremium", true);
 	m_confBool[HOUSE_RENTASPRICE] = getGlobalBool("houseRentAsPrice", false);
 	m_confBool[HOUSE_PRICEASRENT] = getGlobalBool("housePriceAsRent", false);
+	m_confString[HOUSE_STORAGE] = getGlobalString("houseDataStorage", "binary");
 	m_confNumber[RED_SKULL_LENGTH] = getGlobalNumber("redSkullLength", 30 * 24 * 60 * 60);
 	m_confNumber[BLACK_SKULL_LENGTH] = getGlobalNumber("blackSkullLength", 45 * 24 * 60 * 60);
 	m_confNumber[MAX_VIOLATIONCOMMENT_SIZE] = getGlobalNumber("maxViolationCommentSize", 60);
@@ -230,7 +231,6 @@ bool ConfigManager::load()
 	m_confNumber[EXTRA_PARTY_PERCENT] = getGlobalNumber("extraPartyExperiencePercent", 5);
 	m_confNumber[EXTRA_PARTY_LIMIT] = getGlobalNumber("extraPartyExperienceLimit", 20);
 	m_confBool[DISABLE_OUTFITS_PRIVILEGED] = getGlobalBool("disableOutfitsForPrivilegedPlayers", false);
-	m_confBool[HOUSE_STORAGE] = getGlobalBool("useHouseDataStorage", false);
 	m_confBool[TRACER_BOX] = getGlobalBool("promptExceptionTracerErrorBox", true);
 	m_confNumber[LOGIN_PROTECTION] = getGlobalNumber("loginProtectionPeriod", 10 * 1000);
 	m_confBool[STORE_DIRECTION] = getGlobalBool("storePlayerDirection", false);

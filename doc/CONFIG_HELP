@@ -553,10 +553,12 @@
 			You can configure this in data/XML/randomization.xml file.
 			Default: yes
 
-		useHouseDataStorage
-			New house data storage system. Performs much faster map saving. (up to 60x faster!)
-			If enabled - items will be saved binary in `house_data` table, otherwise `tiles` and `tile_items` will be used.
-			Default: no
+		houseDataStorage
+			House data storage system. Binary and binary-tilestore performs much faster map saving than relational (up to 60x faster!).
+			Binary - uses house_data table to store house data in giant blob for each house.
+			Binary-tilebased - uses tile_store table to store house data in blob for each tile (benefit: if blob becomes corrupted, only specific tile will be wiped, not entire house).
+			Relational - uses `tiles` and `tile_items` tables, doesn't store data in blob, easier to manage but is up to 60 times slower and uses up more space in database.
+			Default: binary
 
 		storeTrash
 			Define if trash items should be stored in memory.

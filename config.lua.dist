@@ -225,9 +225,9 @@
 	vipListDefaultPremiumLimit = 100
 
 	-- Saving-related
-	-- useHouseDataStorage usage may be found at README.
+	-- houseDataStorage usage may be found at README.
+	houseDataStorage = "binary"
 	saveGlobalStorage = true
-	useHouseDataStorage = false
 	storePlayerDirection = false
 	savePlayerData = true
 

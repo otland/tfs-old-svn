@@ -1207,6 +1207,32 @@ uint32_t DatabaseManager::updateDatabase()
 			return 29;
 		}
 
+		case 29:
+		{
+			std::cout << "> Updating database to version 30..." << std::endl;
+			switch(db->getDatabaseEngine())
+			{
+				case DATABASE_ENGINE_SQLITE:
+				{
+					query << "CREATE TABLE \"tile_store\" ( \"house_id\" INTEGER NOT NULL, \"world_id\" INTEGER NOT NULL DEFAULT 0, \"data\" LONGBLOB NOT NULL, FOREIGN KEY (\"house_id\") REFERENCES \"houses\" (\"id\") );";
+					break;
+				}
+
+				case DATABASE_ENGINE_MYSQL:
+				{
+					query << "CREATE TABLE `tile_store` ( `house_id` INT UNSIGNED NOT NULL, `world_id` TINYINT(4) UNSIGNED NOT NULL DEFAULT 0, `data` LONGBLOB NOT NULL, FOREIGN (`house_id`) REFERENCES `houses` (`id`) ON DELETE CASCADE ) ENGINE = InnoDB;";
+					break;
+				}
+
+				default:
+					break;
+			}
+
+			query.str("");
+			registerDatabaseConfig("db_version", 30);
+			return 30;
+		}
+
 		default:
 			break;
 	}

@@ -6,6 +6,7 @@ DROP TRIGGER IF EXISTS `ondelete_accounts`;
 
 DROP TABLE IF EXISTS `player_depotitems`;
 DROP TABLE IF EXISTS `tile_items`;
+DROP TABLE IF EXISTS `tile_store`;
 DROP TABLE IF EXISTS `tiles`;
 DROP TABLE IF EXISTS `bans`;
 DROP TABLE IF EXISTS `house_lists`;
@@ -248,6 +249,14 @@ CREATE TABLE `houses`
 	UNIQUE (`id`, `world_id`)
 ) ENGINE = InnoDB;
 
+CREATE TABLE `tile_store`
+(
+	`house_id` INT UNSIGNED NOT NULL,
+	`world_id` TINYINT(4) UNSIGNED NOT NULL DEFAULT 0,
+	`data` LONGBLOB NOT NULL,
+	FOREIGN (`house_id`) REFERENCES `houses` (`id`) ON DELETE CASCADE
+) ENGINE = InnoDB;
+
 CREATE TABLE `house_auctions`
 (
 	`house_id` INT UNSIGNED NOT NULL,
@@ -372,7 +381,7 @@ CREATE TABLE `server_config`
 	UNIQUE (`config`)
 ) ENGINE = InnoDB;
 
-INSERT INTO `server_config` VALUES ('db_version', 29);
+INSERT INTO `server_config` VALUES ('db_version', 30);
 
 CREATE TABLE `server_motd`
 (

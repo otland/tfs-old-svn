@@ -409,7 +409,7 @@ TransferItem* TransferItem::createTransferItem(House* house)
 	return transferItem;
 }
 
-bool TransferItem::onTradeEvent(TradeEvents_t event, Player* owner, Player* seller)
+bool TransferItem::onTradeEvent(TradeEvents_t event, Player* owner)
 {
 	switch(event)
 	{

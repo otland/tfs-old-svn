@@ -29,7 +29,9 @@ extern Game g_game;
 bool IOMapSerialize::loadMap(Map* map)
 {
 	bool result = false;
-	if(g_config.getBool(ConfigManager::HOUSE_STORAGE))
+	if(g_config.getString(ConfigManager::HOUSE_STORAGE) == "binary-tilebased")
+		result = loadMapBinaryTileBased(map);
+	else if(g_config.getString(ConfigManager::HOUSE_STORAGE) == "binary")
 		result = loadMapBinary(map);
 	else
 		result = loadMapRelational(map);
@@ -46,13 +48,14 @@ bool IOMapSerialize::loadMap(Map* map)
 		it->second->resetSyncFlag(House::HOUSE_SYNC_UPDATE);
 		it->second->updateDoorDescription();
 	}
-
 	return true;
 }
 
 bool IOMapSerialize::saveMap(Map* map)
 {
-	if(g_config.getBool(ConfigManager::HOUSE_STORAGE))
+	if(g_config.getString(ConfigManager::HOUSE_STORAGE) == "binary-tilebased")
+		return saveMapBinaryTileBased(map);
+	else if(g_config.getString(ConfigManager::HOUSE_STORAGE) == "binary")
 		return saveMapBinary(map);
 
 	return saveMapRelational(map);
@@ -513,13 +516,126 @@ bool IOMapSerialize::saveMapBinary(Map*)
  	return transaction.commit();
 }
 
+bool IOMapSerialize::loadMapBinaryTileBased(Map* map)
+{
+	Database* db = Database::getInstance();
+	DBResult* result;
+
+	DBQuery query;
+	query << "SELECT `house_id`, `data` FROM `tile_store` WHERE `world_id` = " << g_config.getNumber(ConfigManager::WORLD_ID);
+	if(!(result = db->storeQuery(query.str())))
+		return false;
+
+	House* house = NULL;
+	do
+	{
+		int32_t houseId = result->getDataInt("house_id");
+		house = Houses::getInstance()->getHouse(houseId);
+
+		uint64_t attrSize = 0;
+		const char* attr = result->getDataStream("data", attrSize);
+
+		PropStream propStream;
+		propStream.init(attr, attrSize);
+		while(propStream.size())
+		{
+			uint16_t x = 0, y = 0;
+			uint8_t z = 0;
+
+			propStream.getShort(x);
+			propStream.getShort(y);
+			propStream.getByte(z);
+
+			uint32_t itemCount = 0;
+			propStream.getLong(itemCount);
+
+			Position pos(x, y, (int16_t)z);
+			if(house && house->hasPendingTransfer())
+			{
+				if(Player* player = g_game.getPlayerByGuidEx(house->getOwner()))
+				{
+					Depot* depot = player->getDepot(player->getTown(), true);
+					while(itemCount--)
+						loadItem(propStream, depot, true);
+
+					if(player->isVirtual())
+					{
+						IOLoginData::getInstance()->savePlayer(player);
+						delete player;
+					}
+				}
+			}
+			else if(Tile* tile = map->getTile(pos))
+			{
+				while(itemCount--)
+					loadItem(propStream, tile, false);
+			}
+			else
+			{
+				std::clog << "[Error - IOMapSerialize::loadMapBinary] Unserialization of invalid tile"
+					<< " at position " << pos << std::endl;
+				break;
+			}
+ 		}
+	}
+	while(result->next());
+	result->free();
+ 	return true;
+}
+
+bool IOMapSerialize::saveMapBinaryTileBased(Map*)
+{
+ 	Database* db = Database::getInstance();
+	//Start the transaction
+ 	DBTransaction transaction(db);
+ 	if(!transaction.begin())
+ 		return false;
+
+	DBQuery query;
+	query << "DELETE FROM `tile_store` WHERE `world_id` = " << g_config.getNumber(ConfigManager::WORLD_ID);
+	if(!db->query(query.str()))
+ 		return false;
+
+	DBInsert stmt(db);
+	stmt.setQuery("INSERT INTO `tile_store` (`house_id`, `world_id`, `data`) VALUES ");
+ 	for(HouseMap::iterator it = Houses::getInstance()->getHouseBegin(); it != Houses::getInstance()->getHouseEnd(); ++it)
+	{
+ 		//save house items
+		House* house = it->second;
+		for(HouseTileList::iterator tit = house->getHouseTileBegin(); tit != house->getHouseTileEnd(); ++tit)
+		{
+			PropWriteStream stream;
+			saveTile(stream, *tit);
+
+			uint32_t attributesSize = 0;
+			const char* attributes = stream.getStream(attributesSize);
+
+			query.str("");
+			if(attributesSize > 0)
+			{
+				query << it->second->getId() << ", " << g_config.getNumber(ConfigManager::WORLD_ID)
+					<< ", " << db->escapeBlob(attributes, attributesSize);
+
+				if(!stmt.addRow(query))
+					return false;
+			}
+ 		}
+ 	}
+
+	query.str("");
+	if(!stmt.execute())
+		return false;
+
+ 	//End the transaction
+ 	return transaction.commit();
+}
+
 bool IOMapSerialize::loadItems(Database*, DBResult* result, Cylinder* parent, bool depotTransfer/* = false*/)
 {
 	ItemMap itemMap;
 	Tile* tile = NULL;
 	if(!parent->getItem())
 		tile = parent->getTile();
-
 
 	Item* item = NULL;
 	int32_t sid, pid, id, count;

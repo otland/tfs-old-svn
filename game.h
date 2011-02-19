@@ -117,6 +117,7 @@ typedef std::map<Tile*, RefreshBlock_t> RefreshTiles;
 typedef std::vector< std::pair<std::string, uint32_t> > Highscore;
 typedef std::list<Position> Trash;
 typedef std::map<int32_t, float> StageList;
+typedef std::vector<std::string> StatusList;
 
 #define EVENT_LIGHTINTERVAL 10000
 #define EVENT_DECAYINTERVAL 1000
@@ -606,6 +607,11 @@ class Game
 		int32_t getLightHour() const {return lightHour;}
 		void startDecay(Item* item);
 
+		bool loadStatuslist();
+
+		bool isInBlacklist(std::string ip) const { for (StatusList::const_iterator it = blacklist.begin(); it != blacklist.end(); ++it) { if (*it == ip) return true; } return false; }
+		bool isInWhitelist(std::string ip) const { for (StatusList::const_iterator it = whitelist.begin(); it != whitelist.end(); ++it) { if (*it == ip) return true; } return false; }
+
 	protected:
 		bool playerWhisper(Player* player, const std::string& text);
 		bool playerYell(Player* player, const std::string& text);
@@ -664,5 +670,8 @@ class Game
 
 		Highscore highscoreStorage[9];
 		time_t lastHighscoreCheck;
+
+		StatusList blacklist;
+		StatusList whitelist;
 };
 #endif

@@ -3,7 +3,7 @@
 		The Forgotten Server
 
 	Version
-		0.4.0_DEV
+		0.3.7
 
 	Codenamed
 		Crying Damson
@@ -40,17 +40,14 @@
 		Talaturen
 
 	Founder(s)
-		Kiper
 		Talaturen
 
 	C++ Programmer(s)
 		Elf
-		Stian
 		Slawkens
 		Talaturen
 
 	LUA Scripter(s)
-		Chojrak
 		Elf
 
 	PHP Programmer(s)
@@ -61,9 +58,12 @@
 		Elf
 		KaczooH
 
-
 	Documentation Manager(s)
 		KaczooH
+
+	Mapper(s)
+		Clinten
+		Siramix
 ]
 
 [ FORUM
@@ -90,7 +90,6 @@
 
 		Ubuntu
 			http://otland.net/f479/ubuntu-nothing-complete-server-forgotten-server-modernaac-mysql-lighttpd-89001/
-			
 
 		Root
 			You need to get on root user or use sudo for almost all below operations.
@@ -101,11 +100,11 @@
 
 		Download sources
 			Launch a terminal, and paste in this command:
-				svn co http://svn.otland.net/public/forgottenserver/tags/0.4.0_DEV
+				svn co http://svn.otland.net/public/forgottenserver/tags/0.3.7
 
 		Compiling
 			Launch a terminal, and type this:
-				cd 0.4.0_DEV && ./autogen.sh && ./configure --enable-sqlite --enable-server-diag && ./build.sh
+				cd 0.3.7 && ./autogen.sh && ./configure --enable-sqlite --enable-server-diag && ./build.sh
 
 		Linker error
 			If you receive a linker error saying something with 'libboost', try pasting the following commands to terminal and then move back to compiling again:
@@ -121,7 +120,7 @@
 
 	Windows
 		Dev-Cpp
-			Download TheForgottenDev-Cpp and the sources from:
+			Download The Forgotten Dev-Cpp and the sources from:
 				http://otland.net/f19/stians-dev-cpp-repack-0-2-crypto-64bit-62455/
 
 			Extract them anywhere and then run devcpp.exe, press on the menuitem
