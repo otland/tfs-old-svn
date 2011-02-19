@@ -583,16 +583,19 @@ bool Spell::configureSpell(xmlNodePtr p)
 		for(std::vector<std::string>::iterator it = strVector.begin(); it != strVector.end(); ++it)
 		{
 			tmpVector = explodeString((*it), ",");
-			groupExhaustions[(SpellGroup_t)atoi(tmpVector[0].c_str())] = tmpVector[1];
+			if(tmpVector.size() > 1)
+				groupExhaustions[(SpellGroup_t)atoi(tmpVector[0].c_str())] = atoi(tmpVector[1].c_str());
+			else
+				groupExhaustions[(SpellGroup_t)atoi(tmpVector[0].c_str())] = 0;
 		}
 	}
 
 	if(groupExhaustions.empty())
 	{
 		if(isAggressive)
-			groupExhaustions[SPELLGROUP_ATTACK] = 1;
+			groupExhaustions[SPELLGROUP_ATTACK] = 2000;
 		else
-			groupExhaustions[SPELLGROUP_HEALING] = 2;
+			groupExhaustions[SPELLGROUP_HEALING] = 1000;
 	}
 
 	std::string error;
@@ -994,9 +997,9 @@ void Spell::postSpell(Player* player) const
 
 		if(exhaustion > 0)
 		{
-			player->addCooldown(exhaustion, (useCooldowns ? spellId : isAggressive)));
+			player->addCooldown(exhaustion, (useCooldowns ? spellId : isAggressive));
 			if(!useCooldowns)
-				player->addCooldown(500, !isAggressive)); // CHECKME: what the heck is this?
+				player->addCooldown(500, !isAggressive); // CHECKME: what the heck is this?
 
 			player->sendSpellCooldown(icon, exhaustion);
 		}

@@ -2565,6 +2565,9 @@ void ProtocolGame::sendVIP(uint32_t guid, const std::string& name, bool isOnline
 
 void ProtocolGame::sendSpellCooldown(Spells_t icon, uint32_t cooldown)
 {
+	if(!icon)
+		return;
+
 	NetworkMessage_ptr msg = getOutputBuffer();
 	if(msg)
 	{
@@ -2575,8 +2578,11 @@ void ProtocolGame::sendSpellCooldown(Spells_t icon, uint32_t cooldown)
 	}
 }
 
-void ProtocolGame::sendSpellGroupCooldown(char groupId, uint32_t cooldown)
+void ProtocolGame::sendSpellGroupCooldown(SpellGroup_t groupId, uint32_t cooldown)
 {
+	if(!groupId)
+		return;
+
 	NetworkMessage_ptr msg = getOutputBuffer();
 	if(msg)
 	{

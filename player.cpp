@@ -5188,7 +5188,7 @@ void Player::setMounted(bool mounting)
 {
 	if(!mounting)
 	{
-		dismount();
+		dismount(true);
 		return;
 	}
 
