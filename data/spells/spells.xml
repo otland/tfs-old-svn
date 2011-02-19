@@ -215,7 +215,7 @@
 		<vocation id="7"/>
 		<vocation id="8"/>
 	</instant>
-	<instant name="Find Person" words="exiva" lvl="8" mana="20" aggressive="0" params="1" groupexhaustions="2000" groups="3" icon="20" needlearn="0" event="function" value="searchPlayer">
+	<instant name="Find Person" words="exiva" lvl="8" mana="20" aggressive="0" params="1" groups="3,2000" icon="20" needlearn="0" event="function" value="searchPlayer">
 		<vocation id="1"/>
 		<vocation id="2"/>
 		<vocation id="3"/>
@@ -306,7 +306,7 @@
 		<vocation id="1"/>
 		<vocation id="5"/>
 	</instant>
-	<instant name="Invisibility" words="utana vid" lvl="35" mana="440" aggressive="0" selftarget="1" exhaustion="2000" groups="support" groupexhaustions="2000" icon="45" needlearn="0" event="script" value="support/invisible.lua">
+	<instant name="Invisibility" words="utana vid" lvl="35" mana="440" aggressive="0" selftarget="1" exhaustion="2000" groups="3,2000" icon="45" needlearn="0" event="script" value="support/invisible.lua">
 		<vocation id="1"/>
 		<vocation id="2"/>
 		<vocation id="3"/>
