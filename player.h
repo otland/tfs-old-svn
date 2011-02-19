@@ -475,7 +475,10 @@ class Player : public Creature, public Cylinder
 		virtual float getAttackFactor() const;
 		virtual float getDefenseFactor() const;
 
-		void addExhaust(uint32_t ticks);
+		void addCooldown(uint32_t ticks, uint16_t spellId);
+		bool hasCooldown(uint16_t spellId);
+
+		void addExhaust(uint32_t ticks, Exhaust_t exhaust);
 		void addInFightTicks(bool pzLock, int32_t ticks = 0);
 		void addDefaultRegeneration(uint32_t addTicks);
 
@@ -560,8 +563,10 @@ class Player : public Creature, public Cylinder
 			{if(client) client->sendCreatureEmblem(creature);}
 		void sendCreatureWalkthrough(const Creature* creature, bool walkthrough)
 			{if(client) client->sendCreatureWalkthrough(creature, walkthrough);}
-		void sendSpellCooldown(uint16_t spellId, uint32_t cooldown, bool isGroup)
-			{if(client) client->sendSpellCooldown(spellId, cooldown, isGroup);}
+		void sendSpellCooldown(Spells_t icon, uint32_t cooldown)
+			{if(client) client->sendSpellCooldown(icon, cooldown);}
+		void sendSpellGroupCooldown(char groupId, uint32_t cooldown)
+			{if(client) client->sendSpellGroupCooldown(groupId, cooldown);}
 
 		//container
 		void sendAddContainerItem(const Container* container, const Item* item);
@@ -581,6 +586,7 @@ class Player : public Creature, public Cylinder
 		//mount
 		bool isMounted() const {return mounted;}
 		void setMounted(bool mounting);
+		void dismount(bool update);
 
 		bool tameMount(uint8_t mountId);
 		bool untameMount(uint8_t mountId);
@@ -762,7 +768,6 @@ class Player : public Creature, public Cylinder
 
 		virtual void dropCorpse(DeathList deathList);
 		virtual void dropLoot(Container* corpse);
-		void dismount();
 
 		//cylinder implementations
 		virtual ReturnValue __queryAdd(int32_t index, const Thing* thing, uint32_t count,

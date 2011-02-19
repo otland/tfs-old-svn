@@ -45,9 +45,6 @@ setConditionParam(burn, CONDITION_PARAM_STARTVALUE, -10) -- The damage the condi
 setConditionParam(burn, CONDITION_PARAM_TICKINTERVAL, 10000) -- Delay between damages
 setConditionParam(burn, CONDITION_PARAM_FORCEUPDATE, true) -- Re-update condition when adding it(ie. min/max value)
 
-local exhaust = createConditionObject(CONDITION_EXHAUST)
-setConditionParam(exhaust, CONDITION_PARAM_TICKS, (getConfigInfo('timeBetweenExActions') - 100))
-
 function onUse(cid, item, fromPosition, itemEx, toPosition)
 	if(isPlayer(itemEx.uid)) then
 		if(item.type == TYPE_EMPTY) then
@@ -56,31 +53,19 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 		end
 
 		if(item.type == TYPE_MANA_FLUID) then
-			if(hasCondition(cid, CONDITION_EXHAUST_HEAL)) then
-				doPlayerSendDefaultCancel(cid, RETURNVALUE_YOUAREEXHAUSTED)
-				return true
-			end
-
 			if(not doPlayerAddMana(itemEx.uid, math.random(80, 160))) then
 				return false
 			end
 
 			doCreatureSay(itemEx.uid, "Aaaah...", TALKTYPE_MONSTER)
 			doSendMagicEffect(toPosition, CONST_ME_MAGIC_BLUE)
-			doAddCondition(cid, exhaust)
 		elseif(item.type == TYPE_LIFE_FLUID) then
-			if(hasCondition(cid, CONDITION_EXHAUST_HEAL)) then
-				doPlayerSendDefaultCancel(cid, RETURNVALUE_YOUAREEXHAUSTED)
-				return true
-			end
-
 			if(not doCreatureAddHealth(itemEx.uid, math.random(40, 75))) then
 				return false
 			end
 
 			doCreatureSay(itemEx.uid, "Aaaah...", TALKTYPE_MONSTER)
 			doSendMagicEffect(toPosition, CONST_ME_MAGIC_BLUE)
-			doAddCondition(cid, exhaust)
 		elseif(itemEx.uid == cid) then
 			if(isInArray(alcoholDrinks, item.type)) then
 				if(not doTargetCombatCondition(0, cid, drunk, CONST_ME_NONE)) then

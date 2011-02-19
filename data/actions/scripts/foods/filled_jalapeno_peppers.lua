@@ -2,16 +2,13 @@ local condition = createConditionObject(CONDITION_HASTE)
 setConditionParam(condition, CONDITION_PARAM_TICKS, 60 * 60 * 1000)
 setConditionParam(condition, CONDITION_PARAM_SPEED, 40)
 
-local exhaust = createConditionObject(CONDITION_EXHAUST)
-setConditionParam(exhaust, CONDITION_PARAM_TICKS, (getConfigInfo('timeBetweenExActions') - 100))
-
 function onUse(cid, item, fromPosition, itemEx, toPosition)
 	local food = SPECIAL_FOODS[item.itemid]
 	if(food == nil) then
 		return false
 	end
 
-	if(not doAddCondition(cid, condition) or not doAddCondition(cid, exhaust)) then
+	if(not doAddCondition(cid, condition)) then
 		return true
 	end
 

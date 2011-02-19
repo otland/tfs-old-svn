@@ -212,6 +212,9 @@ Condition* Condition::createCondition(ConditionId_t _id, ConditionType_t _type, 
 		case CONDITION_MANASHIELD:
 			return new ConditionManaShield(_id, _type, _ticks, _buff, _subId);
 
+		case CONDITION_SPELLCOOLDOWN:
+			return new ConditionSpellCooldown(_id, _type, _ticks, _buff, _subId, param);
+
 		case CONDITION_ATTRIBUTES:
 			return new ConditionAttributes(_id, _type, _ticks, _buff, _subId);
 
@@ -223,8 +226,6 @@ Condition* Condition::createCondition(ConditionId_t _id, ConditionType_t _type, 
 		case CONDITION_DRUNK:
 		case CONDITION_PACIFIED:
 		case CONDITION_GAMEMASTER:
-		case CONDITION_SPELLCOOLDOWN:
-		case CONDITION_SPELLGROUPCOOLDOWN:
 			return new ConditionGeneric(_id, _type, _ticks, _buff, _subId);
 
 		default:
@@ -335,6 +336,59 @@ Icons_t ConditionManaShield::getIcons() const
 		return icon;
 
 	return ICON_MANASHIELD;
+}
+
+ConditionSpellCooldown::ConditionSpellCooldown(ConditionId_t _id, ConditionType_t _type, int32_t _ticks, bool _buff, uint32_t _subId, int32_t param):
+ConditionGeneric(_id, _type, _ticks, _buff, _subId)
+{
+	spellId = param;
+}
+
+bool ConditionSpellCooldown::setParam(ConditionParam_t param, int32_t value)
+{
+	bool ret = ConditionGeneric::setParam(param, value);
+	switch(param)
+	{
+		case CONDITIONPARAM_SPELLID:
+			spellId = value;
+			return true;
+
+		default:
+			break;
+	}
+
+	return ret;
+}
+
+bool ConditionSpellCooldown::unserializeProp(ConditionAttr_t attr, PropStream& propStream)
+{
+	switch(attr)
+	{
+		case CONDITIONATTR_SPELLID:
+		{
+			int32_t _spellId = 0;
+			if(!propStream.getType(_spellId))
+				return false;
+
+			spellId = _spellId;
+			return true;
+		}
+
+		default:
+			break;
+	}
+
+	return ConditionGeneric::unserializeProp(attr, propStream);
+}
+
+bool ConditionSpellCooldown::serialize(PropWriteStream& propWriteStream)
+{
+	if(!ConditionGeneric::serialize(propWriteStream))
+		return false;
+
+	propWriteStream.addByte(CONDITIONATTR_SPELLID);
+	propWriteStream.addType(spellId);
+	return true;
 }
 
 ConditionAttributes::ConditionAttributes(ConditionId_t _id, ConditionType_t _type, int32_t _ticks, bool _buff, uint32_t _subId):

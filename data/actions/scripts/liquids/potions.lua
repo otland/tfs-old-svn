@@ -29,9 +29,6 @@ local POTIONS = {
 	[8472] = {empty = 7635, splash = 43, health = {200, 400}, mana = {110, 190}, level = 80, vocations = {3, 7}, vocStr = "paladins"} -- great spirit potion
 }
 
-local exhaust = createConditionObject(CONDITION_EXHAUST)
-setConditionParam(exhaust, CONDITION_PARAM_TICKS, (getConfigInfo('timeBetweenExActions') - 100))
-
 function onUse(cid, item, fromPosition, itemEx, toPosition)
 	local potion = POTIONS[item.itemid]
 	if(not potion) then
@@ -59,11 +56,6 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 			doPlayerAddItem(cid, potion.empty, 1)
 		end
 
-		return true
-	end
-
-	if(hasCondition(cid, CONDITION_EXHAUST)) then
-		doPlayerSendDefaultCancel(cid, RETURNVALUE_YOUAREEXHAUSTED)
 		return true
 	end
 
@@ -99,7 +91,6 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 		end
 	end
 
-	doAddCondition(cid, exhaust)
 	doRemoveItem(item.uid, 1)
 	if(not potion.empty or config.removeOnUse) then
 		return true

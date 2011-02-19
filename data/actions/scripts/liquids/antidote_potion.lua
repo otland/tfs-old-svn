@@ -17,9 +17,6 @@ setCombatParam(combat, COMBAT_PARAM_TARGETCASTERORTOPMOST, true)
 setCombatParam(combat, COMBAT_PARAM_AGGRESSIVE, false)
 setCombatParam(combat, COMBAT_PARAM_DISPEL, CONDITION_POISON)
 
-local exhaust = createConditionObject(CONDITION_EXHAUST)
-setConditionParam(exhaust, CONDITION_PARAM_TICKS, (getConfigInfo('timeBetweenExActions') - 100))
-
 function onUse(cid, item, fromPosition, itemEx, toPosition)
 	if(not isPlayer(itemEx.uid) or (not config.usableOnTarget and cid ~= itemEx.uid)) then
 		if(config.splash < 1) then
@@ -45,11 +42,6 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 		return true
 	end
 
-	if(hasCondition(cid, CONDITION_EXHAUST_HEAL)) then
-		doPlayerSendDefaultCancel(cid, RETURNVALUE_YOUAREEXHAUSTED)
-		return true
-	end
-
 	if(config.range > 0 and cid ~= itemEx.uid and getDistanceBetween(getCreaturePosition(cid), getCreaturePosition(itemEx.uid)) > config.range) then
 		return true
 	end
@@ -69,7 +61,6 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 		end
 	end
 
-	doAddCondition(cid, exhaust)
 	doRemoveItem(item.uid, 1)
 	if(not config.flask or config.removeOnUse) then
 		return true

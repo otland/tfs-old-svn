@@ -2563,19 +2563,27 @@ void ProtocolGame::sendVIP(uint32_t guid, const std::string& name, bool isOnline
 	}
 }
 
-
-void ProtocolGame::sendSpellCooldown(uint16_t spellId, uint32_t cooldown, bool isGroup)
+void ProtocolGame::sendSpellCooldown(Spells_t icon, uint32_t cooldown)
 {
-	if(!spellId)
-		return;
 	NetworkMessage_ptr msg = getOutputBuffer();
 	if(msg)
 	{
 		TRACK_MESSAGE(msg);
-		msg->put<char>(isGroup ? 0xA5 : 0xA4);
-		msg->put<uint16_t>(spellId);
-		msg->put<uint16_t>(cooldown);
-		msg->put<char>(0x00);
+		msg->put<char>(0xA4);
+		msg->put<char>(icon);
+		msg->put<uint32_t>(cooldown);
+	}
+}
+
+void ProtocolGame::sendSpellGroupCooldown(char groupId, uint32_t cooldown)
+{
+	NetworkMessage_ptr msg = getOutputBuffer();
+	if(msg)
+	{
+		TRACK_MESSAGE(msg);
+		msg->put<char>(0xA5);
+		msg->put<char>(groupId);
+		msg->put<uint32_t>(cooldown);
 	}
 }
 
@@ -2593,8 +2601,8 @@ void ProtocolGame::reloadCreature(const Creature* creature)
 	if(msg)
 	{
 		TRACK_MESSAGE(msg);
-		std::list<uint32_t>::iterator it = std::find(knownCreatureList.begin(), knownCreatureList.end(), creature->getID());
-		if(it != knownCreatureList.end())
+		if(std::find(knownCreatureList.begin(), knownCreatureList.end(),
+			creature->getID()) != knownCreatureList.end())
 		{
 			RemoveTileItem(msg, creature->getPosition(), stackpos);
 			msg->put<char>(0x6A);

@@ -58,8 +58,7 @@ enum ConditionType_t
 	CONDITION_PACIFIED = 1 << 21,
 	CONDITION_GAMEMASTER = 1 << 22,
 	CONDITION_HUNTING = 1 << 23,
-	CONDITION_SPELLCOOLDOWN = 1 << 24,
-	CONDITION_SPELLGROUPCOOLDOWN = 1 << 25
+	CONDITION_SPELLCOOLDOWN = 1 << 24
 };
 
 enum ConditionEnd_t
@@ -99,6 +98,7 @@ enum ConditionAttr_t
 	CONDITIONATTR_PERIODDAMAGE = 25,
 	CONDITIONATTR_BUFF = 26,
 	CONDITIONATTR_SUBID = 27,
+	CONDITIONATTR_SPELLID = 28,
 
 	//reserved for serialization
 	CONDITIONATTR_END = 254
@@ -178,6 +178,26 @@ class ConditionManaShield : public ConditionGeneric
 		virtual Icons_t getIcons() const;
 
 		virtual ConditionManaShield* clone() const {return new ConditionManaShield(*this);}
+};
+
+class ConditionSpellCooldown : public ConditionGeneric
+{
+	public:
+		ConditionSpellCooldown(ConditionId_t _id, ConditionType_t _type, int32_t _ticks, bool _buff, uint32_t _subId, int32_t param);
+		virtual ~ConditionSpellCooldown() {}
+
+		virtual ConditionSpellCooldown* clone() const {return new ConditionSpellCooldown(*this);}
+
+		virtual bool setParam(ConditionParam_t param, int32_t value);
+
+		//serialization
+		virtual bool serialize(PropWriteStream& propWriteStream);
+		virtual bool unserializeProp(ConditionAttr_t attr, PropStream& propStream);
+
+		int32_t getSpellId() const {return spellId;}
+
+	protected:
+		int32_t spellId;
 };
 
 class ConditionAttributes : public ConditionGeneric

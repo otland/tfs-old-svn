@@ -144,7 +144,6 @@ bool Spells::registerEvent(Event* event, xmlNodePtr, bool override)
 	{
 		InstantsMap::iterator it = instants.find(instant->getWords());
 		instant->setId(currentSpellId++);
-
 		if(it == instants.end())
 		{
 			instants[instant->getWords()] = instant;
@@ -166,7 +165,6 @@ bool Spells::registerEvent(Event* event, xmlNodePtr, bool override)
 	{
 		RunesMap::iterator it = runes.find(rune->getRuneItemId());
 		rune->setId(currentSpellId++);
-
 		if(it == runes.end())
 		{
 			runes[rune->getRuneItemId()] = rune;
@@ -575,40 +573,33 @@ bool Spell::configureSpell(xmlNodePtr p)
 
 	if(readXMLString(p, "aggressive", strValue))
 		isAggressive = booleanString(strValue);
-	if(readXMLInteger(p, "icon", intValue))
+
+	if(readXMLInteger(p, "icon", intValue)) // TODO: needs a string values parser, like skulls etc.
 		icon = (Spells_t)intValue;
 
-	if(readXMLString(p, "groups", strValue)) {
-		std::vector<std::string> split = explodeString(strValue, ",");
-		for(std::vector<std::string>::iterator it = split.begin(); it != split.end(); ++it)
-			groupExhaustions[(SpellGroup_t)atoi((*it).c_str())] = 0;
-		
+	if(readXMLString(p, "groups", strValue)) // TODO: same as up
+	{
+		std::vector<std::string> strVector = explodeString(strValue, ";"), tmpVector;
+		for(std::vector<std::string>::iterator it = strVector.begin(); it != strVector.end(); ++it)
+		{
+			tmpVector = explodeString((*it), ",");
+			groupExhaustions[(SpellGroup_t)atoi(tmpVector[0].c_str())] = tmpVector[1];
+		}
 	}
 
-	if(readXMLString(p, "groupexhaustions", strValue)) {
-		std::vector<std::string> split = explodeString(strValue, ",");
-		int i = 0;
-		for(std::map<SpellGroup_t, uint32_t>::iterator it = groupExhaustions.begin(); it != groupExhaustions.end(); ++it)
-			groupExhaustions[it->first] = atoi(split[i].c_str());
-	}
-
-	if(groupExhaustions.empty()){
-		if(isAggressive){
+	if(groupExhaustions.empty())
+	{
+		if(isAggressive)
 			groupExhaustions[SPELLGROUP_ATTACK] = 1;
-		}
-		else{
+		else
 			groupExhaustions[SPELLGROUP_HEALING] = 2;
-		}
 	}
 
-	std::string error = "";
-	xmlNodePtr vocationNode = p->children;
-	while(vocationNode)
+	std::string error;
+	for(xmlNodePtr vocationNode = p->children; vocationNode != NULL; vocationNode = vocationNode->next)
 	{
 		if(!parseVocationNode(vocationNode, vocSpellMap, vocStringVec, error))
-			std::clog << "[Warning - Spell::configureSpell] " << error << std::endl;
-
-		vocationNode = vocationNode->next;
+			std::clog << "[Warning - Spell::configureSpell] (Spell: " << name << ") " << error << std::endl;
 	}
 
 	return true;
@@ -636,13 +627,13 @@ bool Spell::checkSpell(Player* player) const
 
 	if(!player->hasFlag(PlayerFlag_HasNoExhaustion))
 	{
-		static bool useCooldowns = g_config.getBool(ConfigManager::ENABLE_COOLDOWNS);
-		bool exhausted = player->hasCondition(CONDITION_SPELLCOOLDOWN, (useCooldowns)?spellId:(int)isAggressive);
+		bool useCooldowns = g_config.getBool(ConfigManager::ENABLE_COOLDOWNS),
+			exhausted = player->hasCooldown(useCooldowns ? spellId : isAggressive);
 		if(!exhausted && useCooldowns)
 		{
 			for(SpellGroup::const_iterator it = groupExhaustions.begin(); it != groupExhaustions.end(); it++)
 			{
-				if(!player->hasCondition(CONDITION_SPELLGROUPCOOLDOWN, it->first))
+				if(!player->hasCondition(CONDITION_EXHAUST, (Exhaust_t)((int32_t)it->first + 1)))
 					continue;
 
 				exhausted = true;
@@ -875,7 +866,7 @@ bool Spell::checkInstantSpell(Player* player, const Position& toPos)
 		return false;
 	}
 
-	if(player->getSkull() == SKULL_BLACK && isAggressive && range == -1) //-1 is (usually?) an area spell
+	if(player->getSkull() == SKULL_BLACK && isAggressive && range == -1) // CHECKME: -1 is (usually?) an area spell
 	{
 		player->sendCancelMessage(RET_YOUMAYNOTCASTAREAONBLACKSKULL);
 		g_game.addMagicEffect(player->getPosition(), MAGIC_EFFECT_POFF);
@@ -975,41 +966,38 @@ bool Spell::checkRuneSpell(Player* player, const Position& toPos)
 		return false;
 	}
 
-	if(player->getSkull() == SKULL_BLACK)
-	{
-		player->sendCancelMessage(RET_YOUMAYNOTATTACKTHISPLAYER);
-		g_game.addMagicEffect(player->getPosition(), MAGIC_EFFECT_POFF);
-		return false;
-	}
+	if(player->getSkull() != SKULL_BLACK)
+		return true;
 
-	return true;
+	player->sendCancelMessage(RET_YOUMAYNOTATTACKTHISPLAYER);
+	g_game.addMagicEffect(player->getPosition(), MAGIC_EFFECT_POFF);
+	return false;
 }
 
 void Spell::postSpell(Player* player) const
 {
 	if(!player->hasFlag(PlayerFlag_HasNoExhaustion))
 	{
-		static bool useCooldowns = g_config.getBool(ConfigManager::ENABLE_COOLDOWNS);
-
-		if(useCooldowns) {
+		bool useCooldowns = g_config.getBool(ConfigManager::ENABLE_COOLDOWNS);
+		if(useCooldowns)
+		{
 			for(std::map<SpellGroup_t, uint32_t>::const_iterator it = groupExhaustions.begin(); it != groupExhaustions.end(); it++)
 			{
 				if(it->second <= 0)
 					continue;
 
-				player->addCondition(Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_SPELLGROUPCOOLDOWN, it->second, 0, false, it->first));
-				player->sendSpellCooldown(uint16_t(it->first), it->second, true);
+				player->addExhaust(it->second, (Exhaust_t)((int32_t)it->first + 1));
+				player->sendSpellGroupCooldown((char)it->first, it->second);
 			}
 		}
 
 		if(exhaustion > 0)
 		{
-			player->addCondition(Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_SPELLCOOLDOWN, exhaustion, 0, false, (useCooldowns)?spellId:(int)isAggressive));
-			// Cipsoft alike: You can send a spell with diffrent agressive state 0.5sec after
+			player->addCooldown(exhaustion, (useCooldowns ? spellId : isAggressive)));
 			if(!useCooldowns)
-				player->addCondition(Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_SPELLCOOLDOWN, 500, 0, false, (int)!isAggressive));
+				player->addCooldown(500, !isAggressive)); // CHECKME: what the heck is this?
 
-			player->sendSpellCooldown(uint16_t(icon), exhaustion, false);
+			player->sendSpellCooldown(icon, exhaustion);
 		}
 	}
 

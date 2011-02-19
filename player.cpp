@@ -861,11 +861,8 @@ bool Player::canSeeCreature(const Creature* creature) const
 bool Player::canWalkthrough(const Creature* creature) const
 {
 	if(creature == this || hasFlag(PlayerFlag_CanPassThroughAllCreatures) || creature->isWalkable() ||
-		(creature->getMaster() && creature->getMaster() != this && canWalkthrough(creature->getMaster())))
-		return true;
-
-	std::vector<uint32_t>::const_iterator it = std::find(forceWalkthrough.begin(), forceWalkthrough.end(), creature->getID());
-	if(it != forceWalkthrough.end())
+		std::find(forceWalkthrough.begin(), forceWalkthrough.end(), creature->getID()) != forceWalkthrough.end()
+		|| (creature->getMaster() && creature->getMaster() != this && canWalkthrough(creature->getMaster())))
 		return true;
 
 	const Player* player = creature->getPlayer();
@@ -888,13 +885,22 @@ bool Player::canWalkthrough(const Creature* creature) const
 
 void Player::setWalkthrough(const Creature* creature, bool walkthrough)
 {
-	std::vector<uint32_t>::iterator it = std::find(forceWalkthrough.begin(), forceWalkthrough.end(), creature->getID());
+	std::vector<uint32_t>::iterator it = std::find(forceWalkthrough.begin(),
+		forceWalkthrough.end(), creature->getID());
+	bool update = false;
 	if(walkthrough && it == forceWalkthrough.end())
+	{
 		forceWalkthrough.push_back(creature->getID());
+		update = true;
+	}
 	else if(!walkthrough && it != forceWalkthrough.end())
+	{
 		forceWalkthrough.erase(it);
+		update = true;
+	}
 
-	sendCreatureWalkthrough(creature, !walkthrough ? canWalkthrough(creature) : walkthrough);
+	if(update)
+		sendCreatureWalkthrough(creature, !walkthrough ? canWalkthrough(creature) : walkthrough);
 }
 
 Depot* Player::getDepot(uint32_t depotId, bool autoCreateDepot)
@@ -1409,7 +1415,7 @@ void Player::onChangeZone(ZoneType_t zone)
 		}
 
 		if(g_config.getBool(ConfigManager::UNMOUNT_PLAYER_IN_PZ))
-			dismount();
+			dismount(true);
 	}
 
 	sendIcons();
@@ -1558,7 +1564,7 @@ void Player::onCreatureMove(const Creature* creature, const Tile* newTile, const
 		int32_t ticks = g_config.getNumber(ConfigManager::STAIRHOP_DELAY);
 		if(ticks > 0)
 		{
-			addExhaust(ticks);
+			addExhaust(ticks, EXHAUST_MELEE);
 			if(Condition* condition = Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_PACIFIED, ticks))
 				addCondition(condition);
 		}
@@ -2340,10 +2346,47 @@ Item* Player::createCorpse(DeathList deathList)
 	return corpse;
 }
 
-void Player::addExhaust(uint32_t ticks)
+void Player::addCooldown(uint32_t ticks, uint16_t spellId)
+{
+	for(ConditionList::const_iterator it = conditions.begin(); it != conditions.end(); ++it)
+	{
+		if((*it)->getType() != CONDITION_SPELLCOOLDOWN || (*it)->getSpellId() != (int32_t)spellId)
+			continue;
+
+		(*it)->setTicks((int32_t)ticks);
+		return;
+	}
+
+	Condition* condition = Condition::createCondition(CONDITIONID_DEFAULT,
+		CONDITION_SPELLCOOLDOWN, (int32_t)ticks, (int32_t)spellId);
+	if(condition && condition->startCondition(this))
+	{
+		conditions.push_back(condition);
+		onAddCondition(CONDITION_SPELLCOOLDOWN, false);
+	}
+}
+
+void Player::hasCooldown(uint16_t spellId)
+{
+	if(isSuppress(type))
+		return false;
+
+	for(ConditionList::const_iterator it = conditions.begin(); it != conditions.end(); ++it)
+	{
+		if((*it)->getType() != CONDITION_SPELLCOOLDOWN || (*it)->getSpellId() == (int32_t)spellId)
+			continue;
+
+		if(!(*it)->getEndTime() || (*it)->getEndTime() >= OTSYS_TIME())
+			return true;
+	}
+
+	return false;
+}
+
+void Player::addExhaust(uint32_t ticks, Exhaust_t exhaust)
 {
 	if(Condition* condition = Condition::createCondition(CONDITIONID_DEFAULT,
-		CONDITION_EXHAUST, ticks, 0, false))
+		CONDITION_EXHAUST, ticks, 0, false, (uint8_t)exhaust))
 		addCondition(condition);
 }
 
@@ -5198,7 +5241,7 @@ void Player::setMounted(bool mounting)
 	}
 }
 
-void Player::dismount()
+void Player::dismount(bool update)
 {
 	if(!mounted)
 		return;
@@ -5209,9 +5252,10 @@ void Player::dismount()
 
 	Mount* mount = Mounts::getInstance()->getMountByCid(defaultOutfit.lookMount);
 	if(mount && mount->getSpeed() > 0)
-		g_game.changeSpeed(this, -mount->getSpeed());
+		g_game.changeSpeed(this, -(int32_t)mount->getSpeed());
 
-	g_game.internalCreatureChangeOutfit(this, defaultOutfit, true);
+	if(update)
+		g_game.internalCreatureChangeOutfit(this, defaultOutfit, true);
 }
 
 bool Player::tameMount(uint8_t mountId)
@@ -5252,7 +5296,7 @@ bool Player::untameMount(uint8_t mountId)
 
 	Mount* mount = Mounts::getInstance()->getMountByCid(defaultOutfit.lookMount);
 	if(mount->getId() == (mountId + 1))
-		dismount();
+		dismount(true);
 
 	setStorage(boost::lexical_cast<std::string>(key), boost::lexical_cast<std::string>(value));
 	return true;

@@ -10586,24 +10586,26 @@ int32_t LuaInterface::luaDoPlayerSetWalkthrough(lua_State* L)
 	//doPlayerSetWalkthrough(cid, uid, walkthrough)
 	bool walkthrough = popBoolean(L);
 	uint32_t uid = popNumber(L);
-	uint32_t cid = popNumber(L);
 
 	ScriptEnviroment* env = getEnv();
-	Player* player = env->getPlayerByUID(cid);
-	if(!player){
+	Player* player = env->getPlayerByUID(popNumber(L));
+	if(!player)
+	{
 		errorEx(getError(LUA_ERROR_PLAYER_NOT_FOUND));
 		lua_pushboolean(L, false);
 		return 1;
 	}
 
 	Creature* creature = env->getCreatureByUID(uid);
-	if(!creature){
+	if(!creature)
+	{
 		errorEx(getError(LUA_ERROR_CREATURE_NOT_FOUND));
 		lua_pushboolean(L, false);
 		return 1;
 	}
 
-	if(player != creature){
+	if(player != creature)
+	{
 		player->setWalkthrough(creature, walkthrough);
 		lua_pushboolean(L, true);
 	}

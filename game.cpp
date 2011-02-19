@@ -3682,7 +3682,7 @@ bool Game::playerChangeOutfit(uint32_t playerId, Outfit_t outfit)
 	if(!player->hasCondition(CONDITION_OUTFIT, -1))
 	{
 		if(player->isMounted() && outfit.lookMount != oldMount)
-			player->setMounted(false);
+			player->dismount(false);
 
 		internalCreatureChangeOutfit(player, outfit);
 	}
@@ -3700,7 +3700,7 @@ bool Game::playerChangeMountStatus(uint32_t playerId, bool status)
 		g_config.getNumber(ConfigManager::MOUNT_COOLDOWN))
 		return false;
 		
-	player->setMounted(status);
+	player->setMounted(status, true);
 	player->setLastMountAction(OTSYS_TIME());
 	return true;
 }
