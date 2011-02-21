@@ -57,18 +57,25 @@ AC_ARG_ENABLE(root-permission, [  --enable-root-permission	enable running on roo
 	rootPermission=yes
 )
 
-# check do we want to be a login server for multiworld
-loginServer=no
-AC_ARG_ENABLE(login-server, [  --enable-login-server  enable running in a login server mode],
-	[OPTIONAL_FLAGS="$OPTIONAL_FLAGS -D__LOGIN_SERVER__"]
-	loginServer=yes
-)
-
 # check if we want to use luajit instead of lua
 luaJIT=no
 AC_ARG_ENABLE(luajit, [  --enable-luajit		enable luajit instead of lua],
 	[OPTIONAL_FLAGS="$OPTIONAL_FLAGS -D__LUAJIT__"]
 	luaJIT=yes
+)
+
+# check if we want to use openssl for hashing instead of crypto++
+noCrypto=no
+AC_ARG_ENABLE(nocrypto, [  --enable-nocrypto		enable openssl for hashing instead of crypto++],
+	[OPTIONAL_FLAGS="$OPTIONAL_FLAGS -D__NO_CRYPTOPP__"]
+	noCrypto=yes
+)
+
+# check if we want to cache ground items
+groundCache=no
+AC_ARG_ENABLE(groundcache, [  --enable-groundcache		enable caching of ground items],
+	[OPTIONAL_FLAGS="$OPTIONAL_FLAGS -D__GROUND_CACHE__"]
+	groundCache=yes
 )
 
 # check if we want a debug build
@@ -192,13 +199,18 @@ AC_CHECK_LIB(boost_filesystem-gcc-mt, main, , [
 # AC_CHECK_HEADERS([boost/tr1/unordered_set.hpp], , [AC_MSG_ERROR("boost::unordered_set header not found. Please update your boost to at least 1.40.")])
 
 # check for Crypto++
-AC_CHECK_HEADERS([cryptopp/sha.h cryptopp/md5.h cryptopp/adler32.h cryptopp/hex.h cryptopp/base64.h cryptopp/hmac.h cryptopp/cryptlib.h], , [AC_MSG_ERROR("Required Crypto++ headers not found.")])
-AC_CHECK_LIB(cryptopp, main, , [AC_MSG_ERROR("Linking against Crypto++ library failed")])
+if test "$noCrytpo" = "no" ; then
+	AC_CHECK_HEADERS([cryptopp/sha.h cryptopp/md5.h cryptopp/adler32.h cryptopp/hex.h cryptopp/base64.h cryptopp/hmac.h cryptopp/cryptlib.h], , [AC_MSG_ERROR("Required Crypto++ headers not found.")])
+	AC_CHECK_LIB(cryptopp, main, , [AC_MSG_ERROR("Linking against Crypto++ library failed")])
+fi
 
 # check for OpenSSL
-AC_CHECK_HEADERS([openssl/rsa.h openssl/bn.h openssl/err.h], , [AC_MSG_ERROR("Required OpenSSL headers not found.")])
+if test "$noCrypto" = "yes" ; then
+	AC_CHECK_HEADERS([openssl/rsa.h openssl/bn.h openssl/err.h openssl/sha.h openssl/md5.h], , [AC_MSG_ERROR("Required OpenSSL headers not found.")])
+else
+	AC_CHECK_HEADERS([openssl/rsa.h openssl/bn.h openssl/err.h], , [AC_MSG_ERROR("Required OpenSSL headers not found.")])
+fi
 AC_CHECK_LIB(crypto, main, , [AC_MSG_ERROR("Linking against OpenSSL library failed")])
-
 
 # check for Lua
 if test "$luaJIT" = "yes" ; then
@@ -281,15 +293,16 @@ echo
 #echo The Forgotten Server 0.4
 echo $PACKAGE $VERSION
 echo
+echo Using LuaJIT................ : $luaJIT
+echo Using ground cache.......... : $groundCache
 echo Server diagnostics.......... : $serverDiag
-echo Login server mode........... : $loginServer
-echo OTAdmin protocol............ : $otAdmin
+echo Home-directory configuration : $homedirConf
 echo Root run permission......... : $rootPermission
 echo Login server mode........... : $loginServer
-echo Home-directory configuration : $homedirConf
+echo Disabled Crypto++........... : $noCrypto
+echo OTAdmin protocol............ : $otAdmin
 echo OTServ custom allocator..... : $otservAllocator
 echo Debug build................. : $debugBuild
-echo Using LuaJIT................ : $luaJIT
 echo
 echo Build with MySQL............ : $useMySQL
 echo Build with SQLite........... : $useSQLite
