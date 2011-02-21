@@ -39,6 +39,9 @@ extern MoveEvents* g_moveEvents;
 
 StaticTile reallyNullTile(0xFFFF, 0xFFFF, 0xFFFF);
 Tile& Tile::nullTile = reallyNullTile;
+#ifdef __GROUND_CACHE__
+std::map<Item*, int32_t> g_grounds;
+#endif
 
 bool Tile::hasProperty(enum ITEMPROPERTY prop) const
 {
@@ -904,12 +907,30 @@ void Tile::__addThing(Creature* actor, int32_t, Thing* thing)
 			Item* oldGround = ground;
 			ground = item;
 
-			oldGround->setParent(NULL);
+#ifdef __GROUND_CACHE__
+			std::map<Item*, int32_t>::iterator it = g_grounds.find(ground);
+			bool erase = it == g_grounds.end();
+			if(!erase)
+			{
+				it->second--;
+				erase = it->second < 1;
+				if(erase)
+					g_grounds.erase(it);
+			}
+
+			if(erase)
+			{
+#endif
+				oldGround->setParent(NULL);
+				g_game.freeThing(oldGround);
+#ifdef __GROUND_CACHE__
+			}
+#endif
+
 			updateTileFlags(oldGround, true);
 			updateTileFlags(item, false);
 
 			onUpdateTile();
-			g_game.freeThing(oldGround);
 			postRemoveNotification(actor, oldGround, NULL, oldGroundIndex, true);
 		}
 		else
@@ -1130,7 +1151,11 @@ void Tile::__replaceThing(uint32_t index, Thing* thing)
 	if(oldItem)
 	{
 		onUpdateTileItem(oldItem, Item::items[oldItem->getID()], item, Item::items[item->getID()]);
-		oldItem->setParent(NULL);
+#ifdef __GROUND_CACHE__
+		if(g_grounds.find(oldItem) == g_grounds.end())
+#endif
+			oldItem->setParent(NULL);
+
 		return/* RET_NOERROR*/;
 	}
 #ifdef __DEBUG_MOVESYS__
@@ -1197,10 +1222,14 @@ void Tile::__removeThing(Thing* thing, uint32_t count)
 				oldStackposVector.push_back(getClientIndexOfThing(tmpPlayer, ground));
 		}
 
-		ground->setParent(NULL);
-		ground = NULL;
+#ifdef __GROUND_CACHE__
+		if(g_grounds.find(ground) == g_grounds.end())
+#endif
+			ground->setParent(NULL);
 
+		ground = NULL;
 		--thingCount;
+
 		onRemoveTileItem(list, oldStackposVector, item);
 		return/* RET_NOERROR*/;
 	}

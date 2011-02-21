@@ -948,10 +948,11 @@ bool IOLoginData::savePlayer(Player* player, bool preSave/* = true*/, bool shall
 	if(!db->query(query.str()))
 		return false;
 
-	char buffer[280];
-	DBInsert query_insert(db);
+	if(player->learnedInstantSpellList.size())
+	{
+		char buffer[280];
+		DBInsert query_insert(db);
 
-	if(player->learnedInstantSpellList.size()) {
 		query_insert.setQuery("INSERT INTO `player_spells` (`player_id`, `name`) VALUES ");
 		for(LearnedInstantSpellList::const_iterator it = player->learnedInstantSpellList.begin(); it != player->learnedInstantSpellList.end(); ++it)
 		{
