@@ -35,6 +35,7 @@ extern ConfigManager g_config;
 extern Game g_game;
 #ifdef __GROUND_CACHE__
 extern std::map<Item*, int32_t> g_grounds;
+#endif
 
 typedef uint8_t attribute_t;
 typedef uint32_t flags_t;
