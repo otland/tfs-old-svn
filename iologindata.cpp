@@ -510,7 +510,7 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool preLo
 		skull = (Skulls_t)result->getDataInt("skull");
 
 	player->setSkullEnd((time_t)result->getDataInt("skulltime"), true, skull);
-	player->saving = result->getDataInt("save");
+	player->saving = !result->getDataInt("save");
 
 	player->town = result->getDataInt("town_id");
 	if(Town* town = Towns::getInstance()->getTown(player->town))
