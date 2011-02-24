@@ -510,7 +510,7 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool preLo
 		skull = (Skulls_t)result->getDataInt("skull");
 
 	player->setSkullEnd((time_t)result->getDataInt("skulltime"), true, skull);
-	player->saving = !result->getDataInt("save");
+	player->saving = result->getDataInt("save") != 0;
 
 	player->town = result->getDataInt("town_id");
 	if(Town* town = Towns::getInstance()->getTown(player->town))
@@ -912,7 +912,7 @@ bool IOLoginData::savePlayer(Player* player, bool preSave/* = true*/, bool shall
 		|| !g_config.getBool(ConfigManager::BLESSING_ONLY_PREMIUM)))
 	{
 		query << "`blessings` = " << player->blessings << ", ";
-		query << "`pvp_blessing` = " << player->hasPVPBlessing() << ", ";
+		query << "`pvp_blessing` = " << (player->hasPVPBlessing() ? "1" : "0") << ", ";
 	}
 
 	query << "`marriage` = " << player->marriage << ", ";

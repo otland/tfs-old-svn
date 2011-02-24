@@ -222,14 +222,15 @@ if(NpcHandler == nil) then
 			end
 
 			if(pos ~= nil) then
-				self:unsetFocus(focus, pos)
 				closeShopWindow(focus)
+				self:unsetFocus(focus, pos)
 			end
 		elseif(self.focuses == focus) then
-			self:changeFocus(0)
 			if(isCreature(focus)) then
 				closeShopWindow(focus)
 			end
+
+			self:changeFocus(0)
 		end
 	end
 
