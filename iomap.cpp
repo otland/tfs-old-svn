@@ -571,7 +571,7 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 					if(!tile)
 						tile = createTile(ground, NULL, px, py, pz);
 
-					tile->setFlag((flags_t)flags);
+					tile->setFlag((tileflags_t)flags);
 					map->setTile(px, py, pz, tile);
 				}
 				else
