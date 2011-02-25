@@ -45,7 +45,7 @@ class Mission
 		std::string getDescription(Player* player);
 
 	private:
-		std::string parseStorages(std::string state, std::string value);
+		std::string parseStorages(std::string state, std::string value, Player* player);
 
 		std::string name, state;
 		StateMap states;
