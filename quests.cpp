@@ -41,16 +41,16 @@ bool Mission::isCompleted(Player* player)
 
 std::string Mission::parseStorages(std::string state, std::string value)
 {
-	/*std::string::size_type start, end;
-	while((start = state.find("|STORAGE:")) != std::string::npos)
+	std::string::size_type start, end;
+	while((start = state.find("|STORAGE:", end)) != std::string::npos)
 	{
 		if((end = state.find("|", start)) = std::string::npos)
-			continue;
+			break;
 
 		std::string value, storage = state.substr(start, end - start)
 		player->getStorage(storage, value);
 		state.replace(start, end, value);
-	} requires testing and probably fixing, inspired by QuaS code*/
+	}
 
 	replaceString(state, "|STATE|", value);
 	return state;

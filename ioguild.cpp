@@ -555,7 +555,7 @@ void IOGuild::frag(Player* player, uint64_t deathId, const DeathList& list, bool
 			s << " The new score is " << war.frags[war.type == WAR_GUILD] << ":"
 				<< war.frags[war.type] << " frags (limit " << war.limit << ").";
 
-		channel->talk("", SPEAK_CHANNEL_RA, s.str());
+		channel->talk("", SPEAK_CHANNEL_W, s.str());
 	}
 
 	s.str("");
@@ -566,7 +566,7 @@ void IOGuild::frag(Player* player, uint64_t deathId, const DeathList& list, bool
 			s << " The new score is " << war.frags[war.type] << ":"
 				<< war.frags[war.type == WAR_GUILD] << " frags (limit " << war.limit << ").";
 
-		channel->talk("", SPEAK_CHANNEL_RA, s.str());
+		channel->talk("", SPEAK_CHANNEL_W, s.str());
 	}
 
 	Database* db = Database::getInstance();

@@ -2460,8 +2460,8 @@ void ProtocolGame::sendOutfitWindow()
 		if(g_config.getBool(ConfigManager::ALLOW_MOUNTS) && player->isPremium()) // TODO: premium only a configurable
 		{
 			std::list<Mount*> mountList;
-			MountList::const_iterator it = Mounts::getInstance()->getFirstMount();
-			for(uint8_t i = 0; it != Mounts::getInstance()->getLastMount() && i < OUTFITS_MAX_NUMBER; ++it, ++i)
+			for(MountList::const_iterator it = Mounts::getInstance()->getFirstMount();
+				it != Mounts::getInstance()->getLastMount(); ++it)
 			{
 				if((*it)->isTamed(player))
 					mountList.push_back((*it));
@@ -2469,8 +2469,9 @@ void ProtocolGame::sendOutfitWindow()
 
 			if(mountList.size())
 			{
-				msg->put<char>(mountList.size());
-				for(std::list<Mount*>::iterator it = mountList.begin(); it != mountList.end(); ++it)
+				msg->put<char>((size_t)std::min((size_t)OUTFITS_MAX_NUMBER, mountList.size()));
+				std::list<Mount*>::iterator it = mountList.begin();
+				for(uint8_t i = 0; it != mountList.end() && i < OUTFITS_MAX_NUMBER; ++it, ++i)
 				{
 					msg->put<uint16_t>((*it)->getClientId());
 					msg->putString((*it)->getName());

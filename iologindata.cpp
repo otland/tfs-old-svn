@@ -335,7 +335,7 @@ void IOLoginData::removePremium(Account account)
 	uint64_t timeNow = time(NULL);
 	if(account.premiumDays > 0 && account.premiumDays < 65535)
 	{
-		uint32_t days = (uint32_t)std::ceil((timeNow - account.lastDay) / 86400.);
+		uint32_t days = (uint32_t)std::ceil((double)(timeNow - account.lastDay) / 86400.);
 		if(days > 0)
 		{
 			if(account.premiumDays >= days)
@@ -1392,7 +1392,7 @@ bool IOLoginData::isPremium(uint32_t guid)
 
 	const uint32_t premium = result->getDataInt("premdays");
 	result->free();
-	return (premium != 0);
+	return premium > 0;
 }
 
 bool IOLoginData::playerExists(uint32_t guid, bool multiworld /*= false*/, bool checkCache /*= true*/)
