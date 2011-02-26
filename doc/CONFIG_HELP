@@ -555,9 +555,9 @@
 
 		houseDataStorage
 			House data storage system. Binary and binary-tilestore performs much faster map saving than relational (up to 60x faster!).
-			Binary - uses house_data table to store house data in giant blob for each house.
-			Binary-tilebased - uses tile_store table to store house data in blob for each tile (benefit: if blob becomes corrupted, only specific tile will be wiped, not entire house).
-			Relational - uses `tiles` and `tile_items` tables, doesn't store data in blob, easier to manage but is up to 60 times slower and uses up more space in database.
+			binary - uses house_data table to store house data in giant blob for each house.
+			binary-tilebased - uses tile_store table to store house data in blob for each tile (benefit: if blob becomes corrupted, only specific tile will be wiped, not entire house).
+			relational - uses `tiles` and `tile_items` tables, doesn't store data in blob, easier to manage but is up to 60 times slower and uses up more space in database.
 			Default: binary
 
 		storeTrash

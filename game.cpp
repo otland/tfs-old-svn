@@ -296,17 +296,13 @@ void Game::saveGameState(bool shallow)
 		io->savePlayer(it->second, false, shallow);
 	}
 
-	std::string storage = "relational";
-	if(g_config.getBool(ConfigManager::HOUSE_STORAGE))
-		storage = "binary";
-
 	map->saveMap();
 	ScriptEnviroment::saveGameState();
 	if(gameState == GAMESTATE_MAINTAIN)
 		setGameState(GAMESTATE_NORMAL);
 
 	std::clog << "> SAVE: Complete in " << (OTSYS_TIME() - start) / (1000.) << " seconds using "
-		<< storage << " house storage." << std::endl;
+		<< g_config.getString(ConfigManager::HOUSE_STORAGE) << " house storage." << std::endl;
 }
 
 int32_t Game::loadMap(std::string filename)
