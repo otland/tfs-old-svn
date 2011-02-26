@@ -46,11 +46,10 @@ else
 		FLAGS += -D__USE_SQLITE__
 	else
 		ifdef WIN32
-			LIBS += -lluasql_mysql -lluasql_sqlite
+			LIBS += -lluasql_mysql -lluasql_sqlite -lmysql -lsqlite3
 		else
-			LIBS += -llua5.1-sql-mysql
+			LIBS += -llua5.1-sql-mysql -lsqlite3 -lmysqlclient
 		endif
-		LIBS += -lmysqlclient -lsqlite3
 		FLAGS += -D__USE_MYSQL__ -D__USE_SQLITE__
 	endif
 endif
