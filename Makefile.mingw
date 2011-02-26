@@ -1,0 +1,83 @@
+#######################################################
+#Makefile for windows (MinGW)
+#Copyright (C) 2011 Fallen <janneangeselva@hotmail.com>
+#######################################################
+CXX = g++
+
+CXXFLAGS = -O2 -Wall -D_THREAD_SAFE -D_REENTRANT -D__ENABLE_SERVER_DIAGNOSTIC__
+
+LIBS = -llua5.1 -lboost_system-mgw45-1_45 -lboost_thread-mgw45-mt-1_45 -lboost_regex-mgw45-1_45
+
+ifdef USE_MYSQL
+    MAYBE_MYSQL = databasemysql.cpp
+    CXXFLAGS += -D__USE_MYSQL__
+    LIBS += -lmysql
+endif
+ifdef USE_SQLITE
+    MAYBE_SQLITE = databasesqlite.cpp
+    CXXFLAGS += -D__USE_SQLITE__
+    LIBS += -lsqlite3
+endif
+ifdef USE_PGSQL
+    MAYBE_PGSQL = databasepgsql.cpp
+endif
+ifdef LOGIN_SERVER
+    MAYBE_LOGIN = gameservers.cpp
+endif
+ifdef OT_ADMIN
+    MAYBE_OTADMIN = admin.cpp
+endif
+
+SRC = account.h actions.cpp $(MAYBE_OTADMIN) \
+	allocator.cpp baseevents.cpp beds.cpp \
+	chat.cpp combat.cpp condition.cpp \
+	configmanager.cpp connection.cpp \
+	container.cpp creature.cpp \
+	creatureevent.cpp cylinder.cpp database.cpp \
+	databasemanager.cpp $(MAYBE_MYSQL) \
+	$(MAYBE_SQLITE) $(MAYBE_PGSQL) depot.cpp dispatcher.cpp \
+	exception.cpp fileloader.cpp \
+	game.cpp $(MAYBE_LOGIN) globalevent.cpp group.cpp \
+	house.cpp house.h housetile.cpp ioban.cpp \
+	ioguild.cpp iologindata.cpp iomap.cpp \
+	iomapserialize.cpp item.cpp itemattributes.cpp \
+	items.cpp luascript.cpp \
+	mailbox.cpp manager.cpp map.cpp monster.cpp \
+	monsters.cpp mounts.cpp movement.cpp \
+	networkmessage.cpp npc.cpp otserv.cpp \
+	outfit.cpp outputmessage.cpp \
+	party.cpp player.cpp position.cpp \
+	protocol.cpp protocolgame.cpp \
+	protocolhttp.cpp protocollogin.cpp \
+	protocolold.cpp quests.cpp raids.cpp \
+	scheduler.cpp scriptmanager.cpp \
+	server.cpp spawn.cpp spells.cpp \
+	status.cpp talkaction.cpp teleport.cpp \
+	textlogger.cpp thing.cpp \
+	tile.cpp tools.cpp trashholder.cpp \
+	waitlist.cpp weapons.cpp vocation.cpp
+
+INCPATH = -I"."
+
+LFLAGS = -enable-stdcall-fixup -enable-auto-import -enable-runtime-pseudo-reloc $(CXXFLAGS)
+
+DEL = del
+
+TARGET = theforgottenserver
+
+OBJDIR = obj
+
+OBJ = $(SRC:%.cpp=$(OBJDIR)/%.o)
+
+.PHONY: all clean
+
+all: $(TARGET)
+
+$(TARGET): $(OBJ)
+	$(CXX) $(LFLAGS) -o $@ $(OBJ) $(LIBS)
+
+$(OBJDIR)/%.o: %.cpp
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o $@ $<
+
+clean:
+	-$(DEL) $(OBJ) $(TARGET)
