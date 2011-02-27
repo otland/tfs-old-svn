@@ -479,7 +479,7 @@ void otserv(StringVec, ServiceManager* services)
 		boost::this_thread::sleep(boost::posix_time::seconds(15));
 	}
 	if(VERSION_BUILD)
-    {
+	{
 		std::clog << ">> Checking software version...";
 		if(xmlDocPtr doc = xmlParseFile(VERSION_CHECK))
 		{
@@ -568,7 +568,7 @@ void otserv(StringVec, ServiceManager* services)
 
 		 BN_mod_inverse(g_RSA->iqmp, g_RSA->q, g_RSA->p, ctx);
     } 
-    else if(!RSA_check_key(g_RSA))
+	else if(!RSA_check_key(g_RSA))
 	{
 		std::stringstream s;
 		s << std::endl << "> OpenSSL failed - ";
