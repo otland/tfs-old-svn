@@ -20,7 +20,7 @@
 #include <iostream>
 #include <iomanip>
 
-#ifndef __NO_CRYPTO__
+#ifndef __NO_CRYPTOPP__
 	#include <cryptopp/sha.h>
 	#include <cryptopp/md5.h>
 	#include <cryptopp/hmac.h>
@@ -40,7 +40,7 @@ extern ConfigManager g_config;
 
 std::string transformToMD5(std::string plainText, bool upperCase)
 {
-#ifndef __NO_CRYPTO__
+#ifndef __NO_CRYPTOPP__
 	// Crypto++ MD5 object
 	CryptoPP::Weak::MD5 hash;
 
@@ -87,7 +87,7 @@ std::string transformToMD5(std::string plainText, bool upperCase)
 
 std::string transformToSHA1(std::string plainText, bool upperCase)
 {
-#ifndef __NO_CRYPTO__
+#ifndef __NO_CRYPTOPP__
 	// Crypto++ SHA1 object
 	CryptoPP::SHA1 hash;
 
@@ -135,7 +135,7 @@ std::string transformToSHA1(std::string plainText, bool upperCase)
 
 std::string transformToSHA256(std::string plainText, bool upperCase)
 {
-#ifndef __NO_CRYPTO__
+#ifndef __NO_CRYPTOPP__
 	// Crypto++ SHA256 object
 	CryptoPP::SHA256 hash;
 
@@ -183,7 +183,7 @@ std::string transformToSHA256(std::string plainText, bool upperCase)
 
 std::string transformToSHA512(std::string plainText, bool upperCase)
 {
-#ifndef __NO_CRYPTO__
+#ifndef __NO_CRYPTOPP__
 	// Crypto++ SHA512 object
 	CryptoPP::SHA512 hash;
 
@@ -231,7 +231,7 @@ std::string transformToSHA512(std::string plainText, bool upperCase)
 
 std::string transformToVAHash(std::string plainText, bool upperCase)
 {
-#ifndef __NO_CRYPTO__
+#ifndef __NO_CRYPTOPP__
 	std::string key = g_config.getString(ConfigManager::ENCRYPTION_KEY);
 	// This is basicaly a base64 string out of a sha512 lowcase string of the HMAC of the plaintext sha256 string with a configurated key
 	// Currently this removes all known weaknesses in the sha-2 implantation
@@ -285,7 +285,7 @@ void _encrypt(std::string& str, bool upperCase)
 		case ENCRYPTION_SHA512:
 			str = transformToSHA512(str, upperCase);
 			break;
-#ifndef __NO_CRYPTO__
+#ifndef __NO_CRYPTOPP__
 		case ENCRYPTION_VAHASH:
 			str = transformToVAHash(str, upperCase);
 			break;
@@ -1746,7 +1746,7 @@ bool fileExists(const char* filename)
 
 uint32_t adlerChecksum(uint8_t* data, size_t length)
 {
-#ifndef __NO_CRYPTO__
+#ifndef __NO_CRYPTOPP__
 	// Keep this check, rarely used I think
 	if(length > NETWORK_MAX_SIZE || !length)
 		return 0;
