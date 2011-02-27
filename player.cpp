@@ -2191,21 +2191,11 @@ bool Player::onDeath()
 	{
 		setLossSkill(false);
 		if(!usePVPBlessing) // TODO: need to reconsider this, because players will be immune to any loss
-		{
-			if(preventLoss->getCharges() > 1) // weird, but transform failed to remove for some hosters
-				g_game.transformItem(preventLoss, preventLoss->getID(), std::max(0, ((int32_t)preventLoss->getCharges() - 1)));
-			else
-				g_game.internalRemoveItem(NULL, preventDrop);
-		}
+			g_game.transformItem(preventLoss, preventLoss->getID(), (int32_t)preventLoss->getCharges() - 1);
 	}
 
 	if(preventDrop && preventDrop != preventLoss && !usePVPBlessing)
-	{
-		if(preventDrop->getCharges() > 1) // weird, but transform failed to remove for some hosters
-			g_game.transformItem(preventDrop, preventDrop->getID(), std::max(0, ((int32_t)preventDrop->getCharges() - 1)));
-		else
-			g_game.internalRemoveItem(NULL, preventDrop);
-	}
+		g_game.transformItem(preventDrop, preventDrop->getID(), (int32_t)preventDrop->getCharges() - 1);
 
 	removeConditions(CONDITIONEND_DEATH);
 	if(skillLoss)
