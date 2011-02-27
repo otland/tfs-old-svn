@@ -61,7 +61,7 @@ DatabaseMySQL::DatabaseMySQL() :
 		m_timeoutTask = Scheduler::getInstance().addEvent(createSchedulerTask(timeout,
 			boost::bind(&DatabaseMySQL::keepAlive, this)));
 
-	if(g_config.getString(ConfigManager::HOUSE_STORAGE) == "relational")
+	if(asLowerCaseString(g_config.getString(ConfigManager::HOUSE_STORAGE)) == "relational")
 		return;
 
 	//we cannot lock mutex here :)

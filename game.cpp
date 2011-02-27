@@ -302,7 +302,8 @@ void Game::saveGameState(bool shallow)
 		setGameState(GAMESTATE_NORMAL);
 
 	std::clog << "> SAVE: Complete in " << (OTSYS_TIME() - start) / (1000.) << " seconds using "
-		<< g_config.getString(ConfigManager::HOUSE_STORAGE) << " house storage." << std::endl;
+		<< asLowerCaseString(g_config.getString(ConfigManager::HOUSE_STORAGE))
+		<< " house storage." << std::endl;
 }
 
 int32_t Game::loadMap(std::string filename)

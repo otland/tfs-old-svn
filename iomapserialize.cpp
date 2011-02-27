@@ -28,10 +28,11 @@ extern Game g_game;
 
 bool IOMapSerialize::loadMap(Map* map)
 {
+	std::string config = asLowerCaseString(g_config.getString(ConfigManager::HOUSE_STORAGE));
 	bool result = false;
-	if(g_config.getString(ConfigManager::HOUSE_STORAGE) == "binary-tilebased")
+	if(config == "binary-tilebased")
 		result = loadMapBinaryTileBased(map);
-	else if(g_config.getString(ConfigManager::HOUSE_STORAGE) == "binary")
+	else if(config == "binary")
 		result = loadMapBinary(map);
 	else
 		result = loadMapRelational(map);
@@ -53,9 +54,10 @@ bool IOMapSerialize::loadMap(Map* map)
 
 bool IOMapSerialize::saveMap(Map* map)
 {
-	if(g_config.getString(ConfigManager::HOUSE_STORAGE) == "binary-tilebased")
+	std::string config = asLowerCaseString(g_config.getString(ConfigManager::HOUSE_STORAGE));
+	if(config == "binary-tilebased")
 		return saveMapBinaryTileBased(map);
-	else if(g_config.getString(ConfigManager::HOUSE_STORAGE) == "binary")
+	else if(config == "binary")
 		return saveMapBinary(map);
 
 	return saveMapRelational(map);
