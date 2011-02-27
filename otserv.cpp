@@ -428,7 +428,7 @@ void otserv(StringVec, ServiceManager* services)
 		SetPriorityClass(GetCurrentProcess(), ABOVE_NORMAL_PRIORITY_CLASS);
 
 #else
-#ifndef MACOS
+#ifndef __APPLE__
 		cpu_set_t mask;
 		CPU_ZERO(&mask);
 		for(IntegerVec::iterator it = cores.begin(); it != cores.end(); ++it)
@@ -439,7 +439,7 @@ void otserv(StringVec, ServiceManager* services)
 #endif
 
 	std::string runPath = g_config.getString(ConfigManager::RUNFILE);
-	if(runPath != "" && runPath.length() > 2)
+	if(!runPath.empty() && runPath.length() > 2)
 	{
 		std::ofstream runFile(runPath.c_str(), std::ios::trunc | std::ios::out);
 		runFile << getpid();
@@ -476,9 +476,10 @@ void otserv(StringVec, ServiceManager* services)
 		std::clog << "> Using plaintext encryption" << std::endl << std::endl
 			<< "> WARNING: This method is completely unsafe!" << std::endl
 			<< "> Please set encryptionType = \"sha1\" (or any other available method) in config.lua" << std::endl;
-		boost::this_thread::sleep(boost::posix_time::seconds(30));
+		boost::this_thread::sleep(boost::posix_time::seconds(15));
 	}
-	if(VERSION_BUILD) {
+	if(VERSION_BUILD)
+    {
 		std::clog << ">> Checking software version...";
 		if(xmlDocPtr doc = xmlParseFile(VERSION_CHECK))
 		{
@@ -566,10 +567,8 @@ void otserv(StringVec, ServiceManager* services)
 		BN_mod(g_RSA->dmq1, g_RSA->d, r2, ctx);
 
 		 BN_mod_inverse(g_RSA->iqmp, g_RSA->q, g_RSA->p, ctx);
-        }
-
-	// This check will verify keys set in config.lua
-	if(!RSA_check_key(g_RSA))
+    } 
+    else if(!RSA_check_key(g_RSA))
 	{
 		std::stringstream s;
 		s << std::endl << "> OpenSSL failed - ";
@@ -745,7 +744,7 @@ void otserv(StringVec, ServiceManager* services)
 			if(hostent* host = gethostbyname(hostName))
 			{
 				std::stringstream s;
-				for(uint8_t** addr = (uint8_t**)host->h_addr_list; addr[0] != NULL; addr++)
+				for(uint8_t** addr = (uint8_t**)host->h_addr_list; addr[0]; addr++)
 				{
 					uint32_t resolved = swap_uint32(*(uint32_t*)(*addr));
 					if(m_ip.to_v4().to_ulong() == resolved)
