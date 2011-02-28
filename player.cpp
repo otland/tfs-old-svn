@@ -3562,7 +3562,13 @@ void Player::updateItemsLight(bool internal/* = false*/)
 void Player::onAddCondition(ConditionType_t type, bool hadCondition)
 {
 	Creature::onAddCondition(type, hadCondition);
-	if(getLastPosition().x && type != CONDITION_GAMEMASTER) // don't send if player have just logged in (its already done in protocolgame), or condition have no icons
+	if(type == CONDITION_GAMEMASTER)
+		return;
+
+	if(type == CONDITION_INVISIBLE && !hadCondition && player->isMounted())
+		dismount();
+	
+	if(getLastPosition().x) // don't send if player have just logged in (its already done in protocolgame), or condition have no icons
 		sendIcons();
 }
 
