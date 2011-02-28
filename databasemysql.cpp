@@ -23,6 +23,7 @@
 
 #include "scheduler.h"
 #include "configmanager.h"
+#include "tools.h"
 
 extern ConfigManager g_config;
 

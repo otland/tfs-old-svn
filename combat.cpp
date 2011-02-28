@@ -603,10 +603,10 @@ bool Combat::CombatDispelFunc(Creature* caster, Creature* target, const CombatPa
 
 	Player* player = target->getPlayer();
 	if(player && (g_game.getWorldType() == WORLDTYPE_HARDCORE
-		|| getTile()->hasFlag(TILESTATE_HARDCOREZONE)) &&
-		random_range(0, 100) <= 10) // CHECKME: needs confirmation
+		|| player->getTile()->hasFlag(TILESTATE_HARDCOREZONE)) &&
+		random_range(1, 100) <= 10) // CHECKME: needs confirmation
 	{
-		Item* player->getEquippedItem(SLOT_RING);
+		Item* item = player->getEquippedItem(SLOT_RING);
 		if(item && item->getID() == ITEM_STEALTH_RING)
 			g_game.internalRemoveItem(NULL, item);
 	}	
