@@ -97,7 +97,8 @@ CXXSOURCES = actions.cpp admin.cpp allocator.cpp ban.cpp baseevents.cpp beds.cpp
 	sha1.cpp spawn.cpp spells.cpp status.cpp talkaction.cpp tasks.cpp teleport.cpp textlogger.cpp \
 	thing.cpp tile.cpp tools.cpp trashholder.cpp vocation.cpp waitlist.cpp weapons.cpp
 
-CXXOBJECTS = $(CXXSOURCES:.cpp=.o)
+OBJDIR = obj
+CXXOBJECTS = $(CXXSOURCES:%.cpp=$(OBJDIR)/%.o)
 
 all: $(TFS)
 
@@ -111,5 +112,5 @@ endif
 $(TFS): $(CXXOBJECTS)
 	$(CXX) $(CXXFLAGS) -o $@ $(CXXOBJECTS) $(LDFLAGS)
 
-.cpp.o:
+$(OBJDIR)/%.o: %.cpp
 	$(CXX) -c $(CXXFLAGS) -o $@ $<
