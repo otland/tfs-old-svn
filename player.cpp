@@ -3565,8 +3565,8 @@ void Player::onAddCondition(ConditionType_t type, bool hadCondition)
 	if(type == CONDITION_GAMEMASTER)
 		return;
 
-	if(type == CONDITION_INVISIBLE && !hadCondition && player->isMounted())
-		dismount();
+	if(type == CONDITION_INVISIBLE && !hadCondition && isMounted())
+		dismount(true);
 	
 	if(getLastPosition().x) // don't send if player have just logged in (its already done in protocolgame), or condition have no icons
 		sendIcons();
