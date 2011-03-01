@@ -180,6 +180,7 @@ class ConfigManager
 			VIPLIST_DEFAULT_PREMIUM_LIMIT,
 			STAMINA_DESTROY_LOOT,
 			FIST_BASE_ATTACK,
+			PVP_BLESSING_THRESHOLD,
 			FAIRFIGHT_TIMERANGE,
 			LAST_NUMBER_CONFIG /* this must be the last one */
 		};
@@ -205,7 +206,6 @@ class ConfigManager
 			RATE_MONSTER_DEFENSE,
 			FORMULA_LEVEL,
 			FORMULA_MAGIC,
-			PVP_BLESSING_THRESHOLD,
 			LAST_DOUBLE_CONFIG /* this must be the last one */
 		};
 
