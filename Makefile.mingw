@@ -4,9 +4,9 @@
 #######################################################
 CXX = g++
 
-CXXFLAGS = -O2 -Wall -D_THREAD_SAFE -D_REENTRANT -D__ENABLE_SERVER_DIAGNOSTIC__
+CXXFLAGS = -O2 -Wall -D_THREAD_SAFE -D_REENTRANT -D__ENABLE_SERVER_DIAGNOSTIC__ -D__NO_CRYPTOPP__
 
-LIBS = -llua5.1 -lboost_system-mgw45-1_45 -lboost_thread-mgw45-mt-1_45 -lboost_regex-mgw45-1_45
+LIBS = -llua5.1 -lboost_system-mgw45-1_45 -lboost_thread-mgw45-mt-1_45 -lboost_regex-mgw45-1_45 -lboost_filesystem-mgw45-1_45 -leay32 -lxml2 -lws2_32 -lwsock32
 
 ifdef USE_MYSQL
     MAYBE_MYSQL = databasemysql.cpp
@@ -28,34 +28,23 @@ ifdef OT_ADMIN
     MAYBE_OTADMIN = admin.cpp
 endif
 
-SRC = account.h actions.cpp $(MAYBE_OTADMIN) \
-	allocator.cpp baseevents.cpp beds.cpp \
-	chat.cpp combat.cpp condition.cpp \
-	configmanager.cpp connection.cpp \
-	container.cpp creature.cpp \
-	creatureevent.cpp cylinder.cpp database.cpp \
-	databasemanager.cpp $(MAYBE_MYSQL) \
-	$(MAYBE_SQLITE) $(MAYBE_PGSQL) depot.cpp dispatcher.cpp \
-	exception.cpp fileloader.cpp \
-	game.cpp $(MAYBE_LOGIN) globalevent.cpp group.cpp \
-	house.cpp house.h housetile.cpp ioban.cpp \
-	ioguild.cpp iologindata.cpp iomap.cpp \
-	iomapserialize.cpp item.cpp itemattributes.cpp \
-	items.cpp luascript.cpp \
-	mailbox.cpp manager.cpp map.cpp monster.cpp \
-	monsters.cpp mounts.cpp movement.cpp \
-	networkmessage.cpp npc.cpp otserv.cpp \
-	outfit.cpp outputmessage.cpp \
-	party.cpp player.cpp position.cpp \
-	protocol.cpp protocolgame.cpp \
-	protocolhttp.cpp protocollogin.cpp \
-	protocolold.cpp quests.cpp raids.cpp \
-	scheduler.cpp scriptmanager.cpp \
-	server.cpp spawn.cpp spells.cpp \
-	status.cpp talkaction.cpp teleport.cpp \
-	textlogger.cpp thing.cpp \
-	tile.cpp tools.cpp trashholder.cpp \
-	waitlist.cpp weapons.cpp vocation.cpp
+SRC = weapons.cpp waitlist.cpp vocation.cpp trashholder.cpp tools.cpp \
+	tile.cpp thing.cpp textlogger.cpp teleport.cpp talkaction.cpp \
+	status.cpp spells.cpp spawn.cpp server.cpp scriptmanager.cpp \
+	scheduler.cpp raids.cpp quests.cpp protocolold.cpp protocollogin.cpp \
+	protocolhttp.cpp protocolgame.cpp protocol.cpp position.cpp player.cpp \
+	party.cpp outputmessage.cpp outfit.cpp otserv.cpp npc.cpp \
+	networkmessage.cpp movement.cpp mounts.cpp monsters.cpp monster.cpp \
+	map.cpp manager.cpp mailbox.cpp luascript.cpp items.cpp \
+	itemattributes.cpp item.cpp iomapserialize.cpp iomap.cpp iologindata.cpp \
+	ioguild.cpp ioban.cpp housetile.cpp house.cpp group.cpp \
+	globalevent.cpp gameservers.cpp game.cpp fileloader.cpp exception.cpp \
+	dispatcher.cpp depot.cpp \
+	databasemanager.cpp database.cpp cylinder.cpp creatureevent.cpp creature.cpp \
+	container.cpp connection.cpp configmanager.cpp condition.cpp combat.cpp \
+	chat.cpp beds.cpp baseevents.cpp allocator.cpp admin.cpp \
+	actions.cpp $(MAYBE_MYSQL) $(MAYBE_SQLITE) $(MAYBE_PGSQL)  \
+	$(MAYBE_LOGIN) $(MAYBE_OTADMIN)
 
 INCPATH = -I"."
 
