@@ -2898,21 +2898,23 @@ Cylinder* Player::__queryDestination(int32_t& index, const Thing* thing, Item** 
 						*destItem = NULL;
 						return tmpContainer;
 					}
+
 					n--;
 				}
 
+				Item* tmpItem = NULL;
 				for(uint32_t n = 0; n < tmpContainer->capacity(); ++n)
 				{
-					Item* tmpItem = tmpContainer->getItem(n);
-					if(tmpItem)
+					if(!(tmpItem = tmpContainer->getItem(n)))
+						continue;
+
+					if(Container* subContainer = tmpItem->getContainer())
 					{
-						if(Container* subContainer = tmpItem->getContainer())
-						{
-							if(deepness < 0 || level < deepness)
-								containers.push_back(std::make_pair(subContainer, level + 1));
-						}
+						if(deepness < 0 || level < deepness)
+							containers.push_back(std::make_pair(subContainer, level + 1));
 					}
 				}
+
 				continue;
 			}
 

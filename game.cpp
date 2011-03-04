@@ -3699,8 +3699,12 @@ bool Game::playerChangeMountStatus(uint32_t playerId, bool status)
 		return false;
 
 	if((OTSYS_TIME() - player->getLastMountAction()) <
-		g_config.getNumber(ConfigManager::MOUNT_COOLDOWN))
+		g_config.getNumber(ConfigManager::MOUNT_COOLDOWN)
+		|| player->hasCondition(CONDITION_INVISIBLE))
+	{
+		player->sendCancelMessage(RET_NOTPOSSIBLE);
 		return false;
+	}
 		
 	player->setMounted(status);
 	player->setLastMountAction(OTSYS_TIME());
