@@ -2886,6 +2886,36 @@ Cylinder* Player::__queryDestination(int32_t& index, const Thing* thing, Item** 
 			if(!tmpContainer)
 				continue;
 
+			if(!(autoStack && item->isStackable()))
+			{
+				//we need to find first empty container as fast as we can for non-stackable items
+				uint16_t n = tmpContainer->capacity() - tmpContainer->size();
+				while(n)
+				{
+					if(tmpContainer->__queryAdd(tmpContainer->capacity() - n, item, item->getItemCount(), flags) == RET_NOERROR)
+					{
+						index = tmpContainer->size() + n;
+						*destItem = NULL;
+						return tmpContainer;
+					}
+					n--;
+				}
+
+				for(uint32_t n = 0; n < tmpContainer->capacity(); ++n)
+				{
+					Item* tmpItem = tmpContainer->getItem(n);
+					if(tmpItem)
+					{
+						if(Container* subContainer = tmpItem->getContainer())
+						{
+							if(deepness < 0 || level < deepness)
+								containers.push_back(std::make_pair(subContainer, level + 1));
+						}
+					}
+				}
+				continue;
+			}
+
 			for(uint32_t n = 0; n < tmpContainer->capacity(); ++n)
 			{
 				if(Item* tmpItem = tmpContainer->getItem(n))
@@ -2893,8 +2923,7 @@ Cylinder* Player::__queryDestination(int32_t& index, const Thing* thing, Item** 
 					if(tmpItem == item || tmpItem == tradeItem)
 						continue;
 
-					if(autoStack && item->isStackable() && tmpContainer->__queryAdd(n, item, item->getItemCount(),
-						0) == RET_NOERROR && tmpItem->getID() == item->getID() && tmpItem->getItemCount() < 100)
+					if(tmpContainer->__queryAdd(n, item, item->getItemCount(), 0) == RET_NOERROR && tmpItem->getID() == item->getID() && tmpItem->getItemCount() < 100)
 					{
 						index = n;
 						*destItem = tmpItem;
