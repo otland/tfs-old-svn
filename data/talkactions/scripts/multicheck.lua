@@ -10,6 +10,9 @@ function onSay(cid, words, param, channel)
 					_ip = nil
 				else
 					_ip = getPlayerIp(tid)
+					if(_ip == 0) then
+						_ip = nil
+					end
 				end
 			else
 				_ip = doConvertIpToInteger(revertIp)
@@ -21,6 +24,10 @@ function onSay(cid, words, param, channel)
 	local players = getPlayersOnline()
 	for i, pid in ipairs(players) do
 		local ip = getPlayerIp(pid)
+		if(ip == 0) then
+			continue
+		end
+
 		local tmp = table.find(ips, ip)
 		if(tmp ~= nil and (not _ip or _ip == ip)) then
 			if(table.countElements(list, ip) == 0) then
