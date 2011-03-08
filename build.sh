@@ -1,5 +1,5 @@
 #!/bin/bash
-# CCache + multicore compilation script by Stian
+# CCache + multicore compilation script
 # For "The Forgotten Server"
 
 # Example:

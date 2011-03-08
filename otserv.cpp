@@ -131,7 +131,7 @@ bool argumentsHandler(StringVec args)
 		{
 			std::clog << SOFTWARE_NAME << ", version " << SOFTWARE_VERSION << " (" << SOFTWARE_CODENAME << ")\n"
 			"Compiled with " << BOOST_COMPILER << " at " << __DATE__ << ", " << __TIME__ << ".\n"
-			"A server developed by Elf, Talaturen, Stian, Slawkens, KaczooH  and Kornholijo.\n"
+			"A server developed by Elf, Talaturen, Dalkon, Slawkens, KaczooH and Kornholijo.\n"
 			"Visit our forum for updates, support and resources: http://otland.net.\n";
 			return false;
 		}
@@ -340,7 +340,7 @@ void otserv(StringVec, ServiceManager* services)
 
 	std::clog << SOFTWARE_NAME << ", version " << SOFTWARE_VERSION << " (" << SOFTWARE_CODENAME << ")" << std::endl
 		<< "Compiled with " << BOOST_COMPILER << " at " << __DATE__ << ", " << __TIME__ << "." << std::endl
-		<< "A server developed by Elf, Talaturen, Stian, Slawkens, KaczooH  and Kornholijo." << std::endl
+		<< "A server developed by Elf, Talaturen, Dalkon, Slawkens, KaczooH and Kornholijo." << std::endl
 		<< "Visit our forum for updates, support and resources: http://otland.net." << std::endl << std::endl;
 	std::stringstream ss;
 #ifdef __DEBUG__
@@ -562,12 +562,12 @@ void otserv(StringVec, ServiceManager* services)
 		BN_CTX* ctx = BN_CTX_new();
 		BN_CTX_start(ctx);
 
-		BIGNUM *r1 =  BN_CTX_get(ctx), *r2 =  BN_CTX_get(ctx);
+		BIGNUM *r1 = BN_CTX_get(ctx), *r2 = BN_CTX_get(ctx);
 		BN_mod(g_RSA->dmp1, g_RSA->d, r1, ctx);
 		BN_mod(g_RSA->dmq1, g_RSA->d, r2, ctx);
 
-		 BN_mod_inverse(g_RSA->iqmp, g_RSA->q, g_RSA->p, ctx);
-    } 
+		BN_mod_inverse(g_RSA->iqmp, g_RSA->q, g_RSA->p, ctx);
+	}
 	else if(!RSA_check_key(g_RSA))
 	{
 		std::stringstream s;
