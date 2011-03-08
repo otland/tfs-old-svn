@@ -24,20 +24,18 @@ function onSay(cid, words, param, channel)
 	local players = getPlayersOnline()
 	for i, pid in ipairs(players) do
 		local ip = getPlayerIp(pid)
-		if(ip == 0) then
-			continue
-		end
+		if(ip ~= 0) then
+			local tmp = table.find(ips, ip)
+			if(tmp ~= nil and (not _ip or _ip == ip)) then
+				if(table.countElements(list, ip) == 0) then
+					list[players[tmp]] = ip
+				end
 
-		local tmp = table.find(ips, ip)
-		if(tmp ~= nil and (not _ip or _ip == ip)) then
-			if(table.countElements(list, ip) == 0) then
-				list[players[tmp]] = ip
+				list[pid] = ip
 			end
 
-			list[pid] = ip
+			table.insert(ips, ip)
 		end
-
-		table.insert(ips, ip)
 	end
 
 	if(table.maxn(list) > 0) then
