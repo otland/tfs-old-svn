@@ -109,7 +109,7 @@ bool ProtocolGame::login(const std::string& name, uint32_t id, const std::string
 		}
 
 		Ban ban;
-		ban.value = player->getID();
+		ban.value = player->getGUID();
 		ban.param = PLAYERBAN_BANISHMENT;
 
 		ban.type = BAN_PLAYER;
