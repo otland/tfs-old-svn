@@ -297,7 +297,7 @@ enum SpellGroup_t
 	SPELLGROUP_HEALING = 2,
 	SPELLGROUP_SUPPORT = 3,
 	SPELLGROUP_SPECIAL = 4
-};
+}; // Those are basically constant values!
 
 enum PlayerSex_t
 {

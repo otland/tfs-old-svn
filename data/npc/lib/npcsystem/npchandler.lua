@@ -361,7 +361,7 @@ if(NpcHandler == nil) then
 
 					self:say(msg, cid, 0, true)
 					self:releaseFocus(cid)
-					self:say(msg, 0, 0, true)
+					self:say(msg)
 				end
 			end
 		end
@@ -490,7 +490,12 @@ if(NpcHandler == nil) then
 		local callback = self:getCallback(CALLBACK_ONTHINK)
 		if(callback == nil or callback()) then
 			for i, speech in pairs(self.talkDelay) do
-				if(speech.cid ~= nil and isCreature(speech.cid) and speech.start ~= nil and speech.time ~= nil and speech.message ~= nil) then
+				if((speech.cid == nil or speech.cid == 0) and speech.time ~= nil and speech.message ~= nil) then
+					if(os.mtime() >= speech.time) then
+						selfSay(speech.message)
+						self.talkDelay[i] = nil
+					end
+				elseif(isCreature(speech.cid) and speech.start ~= nil and speech.time ~= nil and speech.message ~= nil) then
 					if(os.mtime() >= speech.time) then
 						local talkStart = (NPCHANDLER_CONVBEHAVIOR ~= CONVERSATION_DEFAULT and self.talkStart[speech.cid] or self.talkStart)
 						if(speech.force or (self:isFocused(speech.cid) and talkStart == speech.start)) then
@@ -582,7 +587,7 @@ if(NpcHandler == nil) then
 
 						self:say(msg, cid, 0, true)
 						self:releaseFocus(cid)
-						self:say(msg, 0, 0, true)
+						self:say(msg)
 					end
 				end
 			end

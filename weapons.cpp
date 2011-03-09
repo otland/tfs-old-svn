@@ -877,7 +877,7 @@ void WeaponDistance::onUsedAmmo(Player* player, Item* item, Tile* destTile) cons
 		return;
 
 	if(ammoAction == AMMOACTION_MOVEBACK && breakChance > 0 && random_range(1, 100) < breakChance)
-		g_game.transformItem(item, item->getID(), std::max(0, item->getItemCount() - 1));
+		g_game.transformItem(item, item->getID(), std::max((int32_t)0, (int32_t)item->getItemCount() - 1));
 	else
 		Weapon::onUsedAmmo(player, item, destTile);
 }

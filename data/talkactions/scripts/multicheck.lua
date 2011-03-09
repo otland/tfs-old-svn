@@ -20,8 +20,7 @@ function onSay(cid, words, param, channel)
 		end
 	end
 
-	local list, ips = {}, {}
-	local players = getPlayersOnline()
+	local list, ips, players = {}, {}, getPlayersOnline()
 	for i, pid in ipairs(players) do
 		local ip = getPlayerIp(pid)
 		if(ip ~= 0) then

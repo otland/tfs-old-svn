@@ -2191,11 +2191,11 @@ bool Player::onDeath()
 	{
 		setLossSkill(false);
 		if(!usePVPBlessing) // TODO: need to reconsider this, because players will be immune to any loss
-			g_game.transformItem(preventLoss, preventLoss->getID(), (int32_t)preventLoss->getCharges() - 1);
+			g_game.transformItem(preventLoss, preventLoss->getID(), std::max((int32_t)0, (int32_t)preventLoss->getCharges() - 1));
 	}
 
 	if(preventDrop && preventDrop != preventLoss && !usePVPBlessing)
-		g_game.transformItem(preventDrop, preventDrop->getID(), (int32_t)preventDrop->getCharges() - 1);
+		g_game.transformItem(preventDrop, preventDrop->getID(), std::max((int32_t)0, (int32_t)preventDrop->getCharges() - 1));
 
 	removeConditions(CONDITIONEND_DEATH);
 	if(skillLoss)
@@ -5218,9 +5218,9 @@ void Player::setMounted(bool mounting)
 		return;
 	}
 
-	if(_tile->hasFlag(TILESTATE_PROTECTIONZONE))
+	if(_tile->hasFlag(TILESTATE_PROTECTIONZONE) && g_config.getBool(ConfigManager::UNMOUNT_PLAYER_IN_PZ))
 		sendCancelMessage(RET_ACTIONNOTPERMITTEDINPROTECTIONZONE);
-	else if(!isPremium()) // TODO: configurable for mounts being premium (maybe per mount?...)
+	else if(Mounts::getInstance()->isPremium() && !isPremium())
 		sendCancelMessage(RET_YOUNEEDPREMIUMACCOUNT);
 	else if(!defaultOutfit.lookMount)
 		sendOutfitWindow();
