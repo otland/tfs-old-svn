@@ -544,6 +544,7 @@ void otserv(StringVec, ServiceManager* services)
 	}
 	else
 		std::clog << "Ignoring version check, using SVN" << std::endl;
+
 	std::clog << ">> Loading RSA key";
 	g_RSA = RSA_new();
 
@@ -567,18 +568,16 @@ void otserv(StringVec, ServiceManager* services)
 		BN_mod(g_RSA->dmq1, g_RSA->d, r2, ctx);
 
 		BN_mod_inverse(g_RSA->iqmp, g_RSA->q, g_RSA->p, ctx);
-	}
-	else if(!RSA_check_key(g_RSA))
-	{
-		std::stringstream s;
-		s << std::endl << "> OpenSSL failed - ";
-
-		ERR_load_crypto_strings();
-		s << ERR_error_string(ERR_get_error(), NULL);
-		startupErrorMessage(s.str());
+		std::clog << " done" << std::endl;
 	}
 	else
-		std::clog << " done" << std::endl;
+	{	
+		ERR_load_crypto_strings();
+		std::stringstream s;
+	
+		s << std::endl << "> OpenSSL failed - " << ERR_error_string(ERR_get_error(), NULL);
+		startupErrorMessage(s.str());
+	}
 
 	std::clog << ">> Starting SQL connection" << std::endl;
 	Database* db = Database::getInstance();
