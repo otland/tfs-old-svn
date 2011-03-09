@@ -2092,8 +2092,7 @@ void Game::addMoney(Cylinder* cylinder, int64_t money, uint32_t flags /*= 0*/)
 
 Item* Game::transformItem(Item* item, uint16_t newId, int32_t newCount/* = -1*/)
 {
-	if(item->getID() == newId && ((newCount == -1 && item->getSubType() > 0)
-		|| (newCount == item->getSubType() && newCount != 0)))
+	if(item->getID() == newId && (newCount == -1 || newCount == item->getSubType()))
 		return item;
 
 	Cylinder* cylinder = item->getParent();

@@ -291,7 +291,7 @@ Icons_t Condition::getIcons() const
 ConditionGeneric::ConditionGeneric(ConditionId_t _id, ConditionType_t _type, int32_t _ticks, bool _buff, uint32_t _subId):
 Condition(_id, _type, _ticks, _buff, _subId)
 {
-	// TODO: Get rid of this?
+	// TODO: get rid of this?
 }
 
 void ConditionGeneric::addCondition(Creature*, const Condition* addCondition)

@@ -41,7 +41,7 @@ bool Mission::isCompleted(Player* player)
 
 std::string Mission::parseStorages(std::string state, std::string value, Player* player)
 {
-	std::string::size_type start, end;
+	std::string::size_type start = 0, end = 0;
 	while((start = state.find("|STORAGE:", end)) != std::string::npos)
 	{
 		if((end = state.find("|", start)) = std::string::npos)

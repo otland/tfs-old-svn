@@ -26,6 +26,9 @@ bool Mount::isTamed(Player* player) const
 	if(player->hasCustomFlag(PlayerCustomFlag_CanUseAllMounts))
 		return true;
 
+	if(premium && !player->isPremium())
+		return false;
+
 	uint8_t tmpId = id - 1;
 	std::string value;
 
@@ -103,18 +106,21 @@ bool Mounts::parseMountNode(xmlNodePtr p)
 	if(readXMLInteger(p, "speed", intValue))
 		speed = intValue;
 
+	bool premium = true;
+	if(readXMLString(p, "premium", strValue))
+		premium = booleanString(strValue);
+
 	if(!clientId || !mountId)
 	{
 		std::clog << "[Error - Mounts::parseMountNode] Entry without clientId and/or mountId" << std::endl;
 		return false;
 	}
 
-	Mount* mount = new Mount(name, mountId, clientId, speed);
+	Mount* mount = new Mount(name, mountId, clientId, speed, premium);
 	if(!mount)
 		return false;
 
 	mounts.push_back(mount);
-	mountCount++;
 	return true;
 }
 
@@ -131,6 +137,7 @@ Mount* Mounts::getMountById(uint16_t id) const
 
 	return NULL;
 }
+
 Mount* Mounts::getMountByCid(uint16_t id) const
 {
 	if(!id)
@@ -143,4 +150,15 @@ Mount* Mounts::getMountByCid(uint16_t id) const
 	}
 
 	return NULL;
+}
+
+bool Mounts::isPremium() const
+{
+	for(MountList::const_iterator it = mounts.begin(); it != mounts.end(); it++)
+	{
+		if(!(*it)->isPremium())
+			return false;
+	}
+
+	return true;
 }

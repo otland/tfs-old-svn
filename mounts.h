@@ -25,12 +25,13 @@
 class Mount
 {
 	public:
-		Mount(std::string _name, uint16_t _id, uint16_t _clientId, int32_t _speed)
+		Mount(std::string _name, uint16_t _id, uint16_t _clientId, int32_t _speed, bool _premium)
 		{
 			name = _name;
 			id = _id;
 			speed = _speed;
 			clientId = _clientId;
+			premium = _premium;
 		}
 
 		bool isTamed(Player* player) const;
@@ -39,6 +40,7 @@ class Mount
 		const std::string& getName() const {return name;}
 		uint32_t getSpeed() const {return speed;}
 		uint16_t getClientId() const {return clientId;}
+		bool isPremium() const {return premium;}
 		
 		
 	private:
@@ -46,6 +48,7 @@ class Mount
 		uint8_t id;
 		uint16_t clientId;
 		int32_t speed;
+		bool premium;
 };
 
 typedef std::list<Mount*> MountList;
@@ -70,10 +73,11 @@ class Mounts
 
 		Mount* getMountById(uint16_t id) const;
 		Mount* getMountByCid(uint16_t id) const;
-		uint8_t getMountCount() const {return mountCount;}
+
+		uint8_t getMountCount() const {return (uint8_t)mounts.size();}
+		bool isPremium() const;
 		
 	private:
 		MountList mounts;
-		uint8_t mountCount;
 };
 #endif

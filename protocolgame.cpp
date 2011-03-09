@@ -2457,7 +2457,7 @@ void ProtocolGame::sendOutfitWindow()
 			msg->put<char>(player->getDefaultOutfit().lookAddons);
 		}
 
-		if(g_config.getBool(ConfigManager::ALLOW_MOUNTS) && player->isPremium()) // TODO: premium only a configurable
+		if(g_config.getBool(ConfigManager::ALLOW_MOUNTS))
 		{
 			std::list<Mount*> mountList;
 			for(MountList::const_iterator it = Mounts::getInstance()->getFirstMount();

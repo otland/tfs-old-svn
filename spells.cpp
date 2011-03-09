@@ -998,8 +998,8 @@ void Spell::postSpell(Player* player) const
 		if(exhaustion > 0)
 		{
 			player->addCooldown(exhaustion, (useCooldowns ? spellId : isAggressive));
-			if(!useCooldowns)
-				player->addCooldown(500, !isAggressive); // CHECKME: what the heck is this?
+			/*if(!useCooldowns)
+				player->addCooldown(500, !isAggressive); // CHECKME: what the heck is this?*/
 
 			player->sendSpellCooldown(icon, exhaustion);
 		}
@@ -1636,7 +1636,7 @@ ReturnValue ConjureSpell::internalConjureItem(Player* player, uint32_t conjureId
 	if(ret != RET_NOERROR)
 		return ret;
 
-	g_game.transformItem(fromItem, reagentId, fromItem->getItemCount() - 1);
+	g_game.transformItem(fromItem, reagentId, std::max((int32_t)0, ((int32_t)fromItem->getItemCount()) - 1));
 	g_game.startDecay(item);
 	return RET_NOERROR;
 }

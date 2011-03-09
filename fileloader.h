@@ -331,7 +331,7 @@ class PropWriteStream
 			size += sizeof(T);
 		}
 
-		//TODO: might need temp buffer and zero fill the memory chunk allocated by realloc
+		//TODO: might need tmp buffer and zero fill the memory chunk allocated by realloc
 		template <typename T>
 		inline void addStruct(T* add)
 		{
