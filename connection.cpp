@@ -127,7 +127,7 @@ void ConnectionManager::addAttempt(uint32_t clientIp, int32_t protocolId, bool s
 
 		ipLoginMap[clientIp] = tmp;
 		it = ipLoginMap.find(clientIp);
-        }
+	}
 
 	if(it->second.loginsAmount > g_config.getNumber(ConfigManager::LOGIN_TRIES))
 		it->second.loginsAmount = 0;
