@@ -1454,6 +1454,15 @@ void Player::onCreatureDisappear(const Creature* creature, bool isLogout)
 		lastLogout = time(NULL);
 	}
 
+	Item* item = NULL;
+	for(int32_t slot = SLOT_FIRST; slot < SLOT_LAST; ++slot)
+	{
+		if(!(item = getInventoryItem((slots_t)slot)))
+			continue;
+
+		g_moveEvents->onPlayerDeEquip(this, item, (slots_t)slot, false);
+	}
+
 	if(eventWalk)
 		setFollowCreature(NULL);
 
