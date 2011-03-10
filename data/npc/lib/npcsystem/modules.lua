@@ -750,7 +750,7 @@ if(Modules == nil) then
 					module.npcHandler:say('I will not dress you with addon of outfit you cannot wear!', cid)
 				end
 			else
-				module.npcHandler:say('You alrady have this ' .. (parent.addon == 0 and 'outfit' or 'addon') .. '!', cid)
+				module.npcHandler:say('You already have this ' .. (parent.addon == 0 and 'outfit' or 'addon') .. '!', cid)
 			end
 		else
 			module.npcHandler:say('Sorry, I dress only premium players.', cid)
