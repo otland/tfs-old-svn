@@ -870,8 +870,8 @@ bool Player::canWalkthrough(const Creature* creature) const
 #ifdef __WAR_SYSTEM__
 		!player->isEnemy(this, true) &&
 #endif
-		player->getVocation()->isAttackable()) || (player->getVocation()->isAttackable() &&
-		player->getLevel() < (uint32_t)g_config.getNumber(ConfigManager::PROTECTION_LEVEL))) && player->getTile()->ground &&
+		player->getVocation()->isAttackable()) || player->getTile()->hasFlag(TILESTATE_PROTECTIONZONE) || (player->getVocation()->isAttackable()
+		&& player->getLevel() < (uint32_t)g_config.getNumber(ConfigManager::PROTECTION_LEVEL))) && player->getTile()->ground &&
 		Item::items[player->getTile()->ground->getID()].walkStack) && (!player->hasCustomFlag(PlayerCustomFlag_GamemasterPrivileges)
 		|| player->getAccess() <= getAccess()))
 		return true;
