@@ -227,9 +227,11 @@ class Item : virtual public Thing, public ItemAttributes
 		int32_t getUniqueId() const;
 
 		void setCharges(uint16_t charges) {setAttribute("charges", charges);}
+		void resetCharges() {eraseAttribute("charges");}
 		uint16_t getCharges() const;
 
 		void setFluidType(uint16_t fluidType) {setAttribute("fluidtype", fluidType);}
+		void resetFluidType() {eraseAttribute("fluidtype");}
 		uint16_t getFluidType() const;
 
 		void setOwner(uint32_t owner) {setAttribute("owner", (int32_t)owner);}
@@ -324,14 +326,15 @@ class Item : virtual public Thing, public ItemAttributes
 				setDuration(duration);
 		}
 
+		void setDefaultSubtype();
+
 		Raid* getRaid() {return raid;}
 		void setRaid(Raid* _raid) {raid = _raid;}
 
+		virtual void __startDecaying();
 		virtual void onRemoved();
 		virtual bool onTradeEvent(TradeEvents_t, Player*, Player*) {return true;}
 
-		void setDefaultSubtype();
-		virtual void __startDecaying();
 		static uint32_t countByType(const Item* item, int32_t checkType);
 
 	protected:

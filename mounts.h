@@ -25,12 +25,16 @@
 class Mount
 {
 	public:
-		Mount(std::string _name, uint16_t _id, uint16_t _clientId, int32_t _speed, bool _premium)
+		Mount(std::string _name, uint16_t _id, uint16_t _clientId, int32_t _speed,
+			bool _premium, std::string _storageId, std::string _storageValue)
 		{
 			name = _name;
-			id = _id;
+			storageId = _storageId;
+			storageValue = _storageValue;
+
 			speed = _speed;
 			clientId = _clientId;
+			id = _id;
 			premium = _premium;
 		}
 
@@ -44,10 +48,10 @@ class Mount
 		
 		
 	private:
-		std::string name;
-		uint8_t id;
-		uint16_t clientId;
+		std::string name, storageId, storageValue;
 		int32_t speed;
+		uint16_t clientId;
+		uint8_t id;
 		bool premium;
 };
 

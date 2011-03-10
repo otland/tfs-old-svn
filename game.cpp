@@ -2147,13 +2147,11 @@ Item* Game::transformItem(Item* item, uint16_t newId, int32_t newCount/* = -1*/)
 			if(item->hasCharges() && (!item->getDefaultDuration() || item->getDuration() <= 0))
 			{
 				int32_t tmpId = newId;
-				if(curType.id == newId)
+				if(curType.id == newType.id)
 					tmpId = curType.decayTo;
 
-				if(tmpId == -1)
-					return item;
-
-				return transformItem(item, tmpId);
+				if(tmpId != -1)
+					return transformItem(item, tmpId);
 			}
 
 			internalRemoveItem(NULL, item);
@@ -2169,6 +2167,12 @@ Item* Game::transformItem(Item* item, uint16_t newId, int32_t newCount/* = -1*/)
 			itemId = newId;
 			if(newType.group != curType.group)
 				item->setDefaultSubtype();
+
+			if(curType.hasSubType() && !newType.hasSubType())
+			{
+				item->resetFluidType();
+				item->resetCharges();
+			}
 		}
 
 		if(newCount != -1 && newType.hasSubType())

@@ -23,22 +23,40 @@ bool Mount::isTamed(Player* player) const
 	if(!player)
 		return false;
 
-	if(player->hasCustomFlag(PlayerCustomFlag_CanUseAllMounts))
-		return true;
-
 	if(premium && !player->isPremium())
 		return false;
+
+	if(player->hasCustomFlag(PlayerCustomFlag_CanUseAllMounts))
+		return true;
 
 	uint8_t tmpId = id - 1;
 	std::string value;
 
 	int32_t key = PSTRG_MOUNTS_RANGE_START + (tmpId / 31);
-	if(!player->getStorage(boost::lexical_cast<std::string>(key), value))
+	if(player->getStorage(boost::lexical_cast<std::string>(key), value))
+	{
+		int32_t tmp = (int32_t)std::pow(2., tmpId % 31);
+		return (tmp & atoi(value.c_str())) == tmp;
+	}
+
+	if(storageId.empty())
 		return false;
 
-	int32_t tmp = (int32_t)std::pow(2., tmpId % 31);
-	return (tmp & atoi(value.c_str())) == tmp;
+	player->getStorage(storageId, value);
+	if(value == storageValue)
+		return true;
+
+	int32_t intValue = atoi(value.c_str());
+	if(!intValue && value != "0")
+		return false;
+
+	int32_t tmp = atoi(storageValue.c_str());
+	if(!tmp && storageValue != "0")
+		return false;
+
+	return intValue >= tmp;
 }
+
 void Mounts::clear()
 {
 	for(MountList::iterator it = mounts.begin(); it != mounts.end(); it++)
@@ -110,13 +128,35 @@ bool Mounts::parseMountNode(xmlNodePtr p)
 	if(readXMLString(p, "premium", strValue))
 		premium = booleanString(strValue);
 
-	if(!clientId || !mountId)
+	std::string storageId, storageValue;
+	if(readXMLString(p, "quest", strValue))
 	{
-		std::clog << "[Error - Mounts::parseMountNode] Entry without clientId and/or mountId" << std::endl;
+		storageId = strValue;
+		storageValue = "1";
+	}
+	else
+	{
+		if(readXMLString(p, "storageId", strValue))
+			storageId = strValue;
+
+		if(readXMLString(p, "storageValue", strValue))
+			storageValue = strValue;
+	}
+
+	if(!mountId)
+	{
+		std::clog << "[Error - Mounts::parseMountNode] Entry without mountId" << std::endl;
 		return false;
 	}
 
-	Mount* mount = new Mount(name, mountId, clientId, speed, premium);
+	if(!clientId)
+	{
+		std::clog << "[Error - Mounts::parseMountNode] Entry without clientId" << std::endl;
+		return false;
+	}
+
+	Mount* mount = new Mount(name, mountId, clientId,
+		speed, premium, storageId, storageValue);
 	if(!mount)
 		return false;
 
