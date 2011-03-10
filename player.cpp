@@ -1415,6 +1415,7 @@ void Player::onChangeZone(ZoneType_t zone)
 			dismount(true);
 	}
 
+	g_game.updateCreatureWalkthrough(this);
 	sendIcons();
 }
 
