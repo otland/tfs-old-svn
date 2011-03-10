@@ -11,7 +11,7 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 		return true
 	elseif(isInArray(ROPABLE, itemEx.itemid)) then
 		local hole = getThingFromPos({x = toPosition.x, y = toPosition.y, z = toPosition.z + 1, stackpos = STACKPOS_TOP_MOVEABLE_ITEM_OR_CREATURE})
-		if(hole.itemid > 0) then
+		if(isPlayer(hole.uid) and (not isPlayerGhost(hole.uid) or getPlayerGhostAccess(cid) >= getPlayerGhostAccess(hole.uid))) then
 			doTeleportThing(hole.uid, {x = toPosition.x, y = toPosition.y + 1, z = toPosition.z}, false)
 		else
 			doPlayerSendDefaultCancel(cid, RETURNVALUE_NOTPOSSIBLE)
