@@ -2371,6 +2371,9 @@ void LuaInterface::registerFunctions()
 	//doAddAccountBanishment(...)
 	lua_register(m_luaState, "doAddAccountBanishment", LuaInterface::luaDoAddAccountBanishment);
 
+	//doAddAccountWarnings(...)
+	lua_register(m_luaState, "doAddAccountWarnings", LuaInterface::luaDoAddAccountWarnings);
+
 	//doAddNotation(...)
 	lua_register(m_luaState, "doAddNotation", LuaInterface::luaDoAddNotation);
 
@@ -2386,11 +2389,17 @@ void LuaInterface::registerFunctions()
 	//doRemoveAccountBanishment(accountId[, playerId])
 	lua_register(m_luaState, "doRemoveAccountBanishment", LuaInterface::luaDoRemoveAccountBanishment);
 
+	//doRemoveAccountWarnings(accountId[, warnings])
+	lua_register(m_luaState, "doRemoveAccountWarnings", LuaInterface::luaDoRemoveAccountWarnings);
+
 	//doRemoveNotations(accountId[, playerId])
 	lua_register(m_luaState, "doRemoveNotations", LuaInterface::luaDoRemoveNotations);
 
 	//doRemoveStatements(name/guid[, channelId])
 	lua_register(m_luaState, "doRemoveStatements", LuaInterface::luaDoRemoveStatements);
+
+	//getAccountWarnings(accountId)
+	lua_register(m_luaState, "getAccountWarnings", LuaInterface::luaGetAccountWarnings);
 
 	//getNotationsCount(accountId[, playerId])
 	lua_register(m_luaState, "getNotationsCount", LuaInterface::luaGetNotationsCount);
@@ -10363,6 +10372,21 @@ int32_t LuaInterface::luaDoAddAccountBanishment(lua_State* L)
 	return 1;
 }
 
+int32_t LuaInterface::luaDoAddAccountWarnings(lua_State* L)
+{
+	//doAddAccountWarnings(accountId[, warnings])
+	uint32_t warnings = 1;
+	int32_t params = lua_gettop(L);
+	if(params > 1)
+		warnings = popNumber(L);
+
+	Account account = IOLoginData::getInstance()->loadAccount(popNumber(L), true);
+	account.warnings += warnings;
+	IOLoginData::getInstance()->saveAccount(account);
+	lua_pushboolean(L, true);
+	return 1;
+}
+
 int32_t LuaInterface::luaDoAddNotation(lua_State* L)
 {
 	//doAddNotation(accountId[, playerId[, reason[, comment[, admin[, statement]]]]]])
@@ -10456,6 +10480,21 @@ int32_t LuaInterface::luaDoRemoveAccountBanishment(lua_State* L)
 	return 1;
 }
 
+int32_t LuaInterface::luaDoRemoveAccountWarnings(lua_State* L)
+{
+	//doRemoveAccountWarnings(accountId[, warnings])
+	uint32_t warnings = 1;
+	int32_t params = lua_gettop(L);
+	if(params > 1)
+		warnings = popNumber(L);
+
+	Account account = IOLoginData::getInstance()->loadAccount(popNumber(L), true);
+	account.warnings -= warnings;
+	IOLoginData::getInstance()->saveAccount(account);
+	lua_pushboolean(L, true);
+	return 1;
+}
+
 int32_t LuaInterface::luaDoRemoveNotations(lua_State* L)
 {
 	//doRemoveNotations(accountId[, playerId])
@@ -10479,6 +10518,14 @@ int32_t LuaInterface::luaDoRemoveStatements(lua_State* L)
 	else
 		lua_pushboolean(L, IOBan::getInstance()->removeStatements(popString(L), channelId));
 
+	return 1;
+}
+
+int32_t LuaInterface::luaGetAccountWarnings(lua_State* L)
+{
+	//getAccountWarnings(accountId)
+	Account account = IOLoginData::getInstance()->loadAccount(popNumber(L));
+	lua_pushnumber(L, account.warnings);
 	return 1;
 }
 
