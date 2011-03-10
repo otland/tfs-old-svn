@@ -5001,7 +5001,7 @@ int32_t LuaInterface::luaDoCreateMonster(lua_State* L)
 		if(displayError)
 			errorEx("Cannot create monster: " + name);
 
-		lua_pushboolean(L, true);
+		lua_pushboolean(L, false);
 		return 1;
 	}
 
