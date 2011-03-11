@@ -391,7 +391,7 @@ bool Monsters::deserializeSpell(xmlNodePtr node, spellBlock_t& sb, const std::st
 
 			uint32_t tickInterval = 2000;
 			ConditionType_t conditionType = CONDITION_NONE;
-			if(readXMLInteger(node, "physical", intValue) || readXMLInteger(node, "bleed", intValue))
+			if(readXMLInteger(node, "bleed", intValue) || readXMLInteger(node, "physical", intValue))
 			{
 				conditionType = CONDITION_BLEEDING;
 				tickInterval = 5000;
@@ -406,22 +406,22 @@ bool Monsters::deserializeSpell(xmlNodePtr node, spellBlock_t& sb, const std::st
 				conditionType = CONDITION_ENERGY;
 				tickInterval = 10000;
 			}
-			else if(readXMLInteger(node, "earth", intValue) || readXMLInteger(node, "poison", intValue))
+			else if(readXMLInteger(node, "poison", intValue) || readXMLInteger(node, "earth", intValue))
 			{
 				conditionType = CONDITION_POISON;
 				tickInterval = 5000;
 			}
-			else if(readXMLInteger(node, "freeze", intValue))
+			else if(readXMLInteger(node, "freeze", intValue) || readXMLInteger(node, "ice", intValue))
 			{
 				conditionType = CONDITION_FREEZING;
 				tickInterval = 8000;
 			}
-			else if(readXMLInteger(node, "dazzle", intValue))
+			else if(readXMLInteger(node, "dazzle", intValue) || readXMLInteger(node, "holy", intValue))
 			{
 				conditionType = CONDITION_DAZZLED;
 				tickInterval = 10000;
 			}
-			else if(readXMLInteger(node, "curse", intValue))
+			else if(readXMLInteger(node, "curse", intValue) || readXMLInteger(node, "death", intValue))
 			{
 				conditionType = CONDITION_CURSED;
 				tickInterval = 4000;
@@ -806,17 +806,17 @@ bool Monsters::deserializeSpell(xmlNodePtr node, spellBlock_t& sb, const std::st
 				conditionType = CONDITION_POISON;
 				tickInterval = 5000;
 			}
-			else if(tmpName == "freezecondition")
+			else if(tmpName == "icecondition" || tmpName == "freezecondition")
 			{
 				conditionType = CONDITION_FREEZING;
 				tickInterval = 8000;
 			}
-			else if(tmpName == "cursecondition")
+			else if(tmpName == "deathcondition" || tmpName == "cursecondition")
 			{
 				conditionType = CONDITION_CURSED;
 				tickInterval = 4000;
 			}
-			else if(tmpName == "dazzlecondition")
+			else if(tmpName == "holycondition" || tmpName == "dazzlecondition")
 			{
 				conditionType = CONDITION_DAZZLED;
 				tickInterval = 10000;
