@@ -46,7 +46,8 @@ struct LootBlock
 
 	LootBlock()
 	{
-		count = chance = 0;
+		count = 1;
+		chance = 0;
 		subType = actionId = uniqueId = -1;
 	}
 };

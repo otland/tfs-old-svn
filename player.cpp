@@ -503,7 +503,7 @@ void Player::sendIcons() const
 	if(!client)
 		return;
 
-	uint32_t icons = 0;
+	uint32_t icons = ICON_NONE;
 	for(ConditionList::const_iterator it = conditions.begin(); it != conditions.end(); ++it)
 	{
 		if(!isSuppress((*it)->getType()))
@@ -511,10 +511,10 @@ void Player::sendIcons() const
 	}
 
 	if(getZone() == ZONE_PROTECTION)
-		icons |= ICON_PROTECTIONZONE;
+		icons |= ICON_PZ;
 
 	if(pzLocked)
-		icons |= ICON_PZ;
+		icons |= ICON_PZBLOCK;
 
 	client->sendIcons(icons);
 }
@@ -3614,6 +3614,9 @@ void Player::onAddCombatCondition(ConditionType_t type, bool)
 			break;
 		case CONDITION_PARALYZE:
 			tmp = "paralyzed";
+			break;
+		case CONDITION_PHYSICAL:
+			tmp = "bleeding";
 			break;
 		/*case CONDITION_MANASHIELD:
 			tmp = "protected by a magic shield";

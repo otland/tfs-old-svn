@@ -1251,6 +1251,9 @@ Icons_t ConditionDamage::getIcons() const
 		case CONDITION_DROWN:
 			return ICON_DROWNING;
 
+		case CONDITION_PHYSICAL:
+			return ICON_BLEED;
+
 		default:
 			break;
 	}

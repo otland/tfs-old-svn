@@ -337,8 +337,9 @@ enum Icons_t
 	ICON_DAZZLED = 1 << 10,
 	ICON_CURSED = 1 << 11,
 	ICON_BUFF = 1 << 12,
-	ICON_PZ = 1 << 13,
-	ICON_PROTECTIONZONE = 1 << 14
+	ICON_PZBLOCK = 1 << 13,
+	ICON_PZ = 1 << 14,
+	ICON_BLEED = 1 << 15
 };
 
 enum WeaponType_t
