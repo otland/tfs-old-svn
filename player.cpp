@@ -3615,7 +3615,7 @@ void Player::onAddCombatCondition(ConditionType_t type, bool)
 		case CONDITION_PARALYZE:
 			tmp = "paralyzed";
 			break;
-		case CONDITION_PHYSICAL:
+		case CONDITION_BLEEDING:
 			tmp = "bleeding";
 			break;
 		/*case CONDITION_MANASHIELD:

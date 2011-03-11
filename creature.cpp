@@ -1200,8 +1200,20 @@ void Creature::onTickCondition(ConditionType_t type, int32_t, bool& _remove)
 			case CONDITION_POISON:
 				_remove = field->getCombatType() != COMBAT_EARTHDAMAGE;
 				break;
+			case CONDITION_FREEZING:
+				_remove = field->getCombatType() != COMBAT_ICEDAMAGE;
+				break;
+			case CONDITION_DAZZLED:
+				_remove = field->getCombatType() != COMBAT_HOLYDAMAGE;
+				break;
+			case CONDITION_CURSED:
+				_remove = field->getCombatType() != COMBAT_DEATHDAMAGE;
+				break;
 			case CONDITION_DROWN:
 				_remove = field->getCombatType() != COMBAT_DROWNDAMAGE;
+				break;
+			case CONDITION_BLEEDING:
+				_remove = field->getCombatType() != COMBAT_PHYSICALDAMAGE;
 				break;
 			default:
 				break;

@@ -393,7 +393,7 @@ bool Monsters::deserializeSpell(xmlNodePtr node, spellBlock_t& sb, const std::st
 			ConditionType_t conditionType = CONDITION_NONE;
 			if(readXMLInteger(node, "physical", intValue) || readXMLInteger(node, "bleed", intValue))
 			{
-				conditionType = CONDITION_PHYSICAL;
+				conditionType = CONDITION_BLEEDING;
 				tickInterval = 5000;
 			}
 			else if(readXMLInteger(node, "fire", intValue))
@@ -788,7 +788,7 @@ bool Monsters::deserializeSpell(xmlNodePtr node, spellBlock_t& sb, const std::st
 			uint32_t tickInterval = 2000;
 			if(tmpName == "physicalcondition" || tmpName == "bleedcondition")
 			{
-				conditionType = CONDITION_PHYSICAL;
+				conditionType = CONDITION_BLEEDING;
 				tickInterval = 5000;
 			}
 			else if(tmpName == "firecondition")
@@ -1209,7 +1209,7 @@ bool Monsters::loadMonster(const std::string& file, const std::string& monsterNa
 						if(tmpStrValue == "physical")
 						{
 							mType->damageImmunities |= COMBAT_PHYSICALDAMAGE;
-							mType->conditionImmunities |= CONDITION_PHYSICAL;
+							mType->conditionImmunities |= CONDITION_BLEEDING;
 						}
 						else if(tmpStrValue == "energy")
 						{
@@ -1259,14 +1259,14 @@ bool Monsters::loadMonster(const std::string& file, const std::string& monsterNa
 						else if(tmpStrValue == "invisible")
 							mType->conditionImmunities |= CONDITION_INVISIBLE;
 						else if(tmpStrValue == "bleed")
-							mType->conditionImmunities |= CONDITION_PHYSICAL;
+							mType->conditionImmunities |= CONDITION_BLEEDING;
 						else
 							SHOW_XML_WARNING("Unknown immunity name " << strValue);
 					}
 					else if(readXMLString(tmpNode, "physical", strValue) && booleanString(strValue))
 					{
 						mType->damageImmunities |= COMBAT_PHYSICALDAMAGE;
-						mType->conditionImmunities |= CONDITION_PHYSICAL;
+						mType->conditionImmunities |= CONDITION_BLEEDING;
 					}
 					else if(readXMLString(tmpNode, "energy", strValue) && booleanString(strValue))
 					{
@@ -1317,7 +1317,7 @@ bool Monsters::loadMonster(const std::string& file, const std::string& monsterNa
 					else if(readXMLString(tmpNode, "invisible", strValue) && booleanString(strValue))
 						mType->conditionImmunities |= CONDITION_INVISIBLE;
 					else if(readXMLString(tmpNode, "bleed", strValue) && booleanString(strValue))
-						mType->conditionImmunities |= CONDITION_PHYSICAL;
+						mType->conditionImmunities |= CONDITION_BLEEDING;
 				}
 			}
 		}

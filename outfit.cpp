@@ -472,7 +472,7 @@ bool Outfits::parseOutfitNode(xmlNodePtr p)
 					outfit.conditionSuppressions |= CONDITION_ENERGY;
 
 				if(readXMLString(configNode, "physical", strValue) && booleanString(strValue))
-					outfit.conditionSuppressions |= CONDITION_PHYSICAL;
+					outfit.conditionSuppressions |= CONDITION_BLEEDING;
 
 				if(readXMLString(configNode, "haste", strValue) && booleanString(strValue))
 					outfit.conditionSuppressions |= CONDITION_HASTE;

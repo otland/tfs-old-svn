@@ -190,7 +190,7 @@ Condition* Condition::createCondition(ConditionId_t _id, ConditionType_t _type, 
 		case CONDITION_DAZZLED:
 		case CONDITION_CURSED:
 		case CONDITION_DROWN:
-		case CONDITION_PHYSICAL:
+		case CONDITION_BLEEDING:
 			return new ConditionDamage(_id, _type, _buff, _subId);
 
 		case CONDITION_HASTE:
@@ -1251,7 +1251,7 @@ Icons_t ConditionDamage::getIcons() const
 		case CONDITION_DROWN:
 			return ICON_DROWNING;
 
-		case CONDITION_PHYSICAL:
+		case CONDITION_BLEEDING:
 			return ICON_BLEED;
 
 		default:
