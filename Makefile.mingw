@@ -6,7 +6,7 @@ CXX = g++
 
 CXXFLAGS = -O2 -Wall -D_THREAD_SAFE -D_REENTRANT -D__ENABLE_SERVER_DIAGNOSTIC__ -D__NO_CRYPTOPP__
 
-LIBS = -llua5.1 -lboost_system-mgw45-1_45 -lboost_thread-mgw45-mt-1_45 -lboost_regex-mgw45-1_45 -lboost_filesystem-mgw45-1_45 -leay32 -lxml2 -lws2_32 -lwsock32
+LIBS = -llua5.1 -lboost_system-mgw45-mt-1_46 -lboost_thread-mgw45-mt-1_46 -lboost_regex-mgw45-mt-1_46 -lboost_filesystem-mgw45-mt-1_46 -leay32 -lxml2 -lws2_32 -lwsock32
 
 ifdef USE_MYSQL
     MAYBE_MYSQL = databasemysql.cpp
