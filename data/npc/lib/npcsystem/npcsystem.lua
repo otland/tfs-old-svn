@@ -1,7 +1,6 @@
 -- Advanced NPC System (Created by Jiddo),
--- Modified by Talaturen.
+-- Modified by Cykotitan, Gesior and Talaturen.
 
--- modified by Gesior
 shop_amount = {}
 shop_cost = {}
 shop_rlname = {}
@@ -15,7 +14,7 @@ shop_premium = {}
 
 npcs_loaded_shop = {}
 npcs_loaded_travel = {}
--- end
+
 if(NpcSystem == nil) then
 	-- Loads the underlying classes of the npcsystem.
 	dofile('data/npc/lib/npcsystem/keywordhandler.lua')

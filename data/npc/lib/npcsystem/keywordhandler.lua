@@ -1,5 +1,5 @@
 -- Advanced NPC System (Created by Jiddo),
--- Modified by Talaturen.
+-- Modified by Cykotitan and Talaturen.
 
 if(KeywordHandler == nil) then
 	KeywordNode = {

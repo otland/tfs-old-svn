@@ -1,6 +1,5 @@
 -- Advanced NPC System (Created by Jiddo),
--- Modified by Talaturen.
--- Modified by Elf.
+-- Modified by Cykotitan, Elf and Talaturen.
 
 if(Modules == nil) then
 	-- default words for greeting and ungreeting the npc. Should be a table containing all such words.
