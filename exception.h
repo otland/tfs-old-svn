@@ -21,7 +21,7 @@
 
 #include "otsystem.h"
 #ifdef __WINDOWS__
-	#include <Windows.h>
+	#include <windows.h>
 	#include <dbghelp.h>
 #endif
 
