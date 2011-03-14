@@ -182,6 +182,8 @@ class ConfigManager
 			FIST_BASE_ATTACK,
 			PVP_BLESSING_THRESHOLD,
 			FAIRFIGHT_TIMERANGE,
+			DEFAULT_DEPOT_SIZE_PREMIUM,
+			DEFAULT_DEPOT_SIZE,
 			LAST_NUMBER_CONFIG /* this must be the last one */
 		};
 
@@ -300,6 +302,7 @@ class ConfigManager
 			MOUNT_COOLDOWN,
 			ENABLE_COOLDOWNS,
 			MONSTER_SPAWN_WALKBACK,
+			USE_CAPACITY,
 			LAST_BOOL_CONFIG /* this must be the last one */
 		};
 

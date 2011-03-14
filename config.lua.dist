@@ -217,6 +217,11 @@
 	maximumDoorLevel = 500
 	maxMessageBuffer = 4
 	tradeLimit = 100
+	useCapacity = true
+
+	-- Depot
+	defaultDepotSizePremium = 2000
+	defaultDepotSize = 1000
 
 	-- Mounts
 	useMounts = true

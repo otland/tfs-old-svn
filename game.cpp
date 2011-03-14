@@ -3909,10 +3909,10 @@ bool Game::playerTalkToChannel(Player* player, SpeakClasses type, const std::str
 		default:
 			break;
 	}
-	if(text.length() > 250)
-		player->sendCancel("Chat message is too long");
-	else
+	if(text.length() < 251)
 		return g_chat.talkToChannel(player, type, text, channelId);
+
+	player->sendCancelMessage(RET_NOTPOSSIBLE);
 	return false;
 }
 

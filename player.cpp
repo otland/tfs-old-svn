@@ -522,7 +522,8 @@ void Player::sendIcons() const
 void Player::updateInventoryWeight()
 {
 	inventoryWeight = 0.00;
-	if(hasFlag(PlayerFlag_HasInfiniteCapacity))
+	if(hasFlag(PlayerFlag_HasInfiniteCapacity)
+		|| g_config.getBool(ConfigManager::USE_CAPACITY))
 		return;
 
 	for(int32_t i = SLOT_FIRST; i < SLOT_LAST; ++i)
@@ -1801,6 +1802,17 @@ void Player::removeMessageBuffer()
 	char buffer[50];
 	sprintf(buffer, "You are muted for %d seconds.", muteTime);
 	sendTextMessage(MSG_STATUS_SMALL, buffer);
+}
+
+double Player::getFreeCapacity() const
+{
+	if(hasFlag(PlayerFlag_CannotPickupItem))
+		return 0.00;
+	else if(hasFlag(PlayerFlag_HasInfiniteCapacity)
+		|| g_config.getBool(ConfigManager::USE_CAPACITY))
+		return 10000.00;
+
+	return std::max(0.00, capacity - inventoryWeight);
 }
 
 void Player::drainHealth(Creature* attacker, CombatType_t combatType, int32_t damage)

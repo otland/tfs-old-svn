@@ -326,16 +326,7 @@ class Player : public Creature, public Cylinder
 
 		double getCapacity() const {return capacity;}
 		void setCapacity(double newCapacity) {capacity = newCapacity;}
-
-		double getFreeCapacity() const
-		{
-			if(hasFlag(PlayerFlag_CannotPickupItem))
-				return 0.00;
-			else if(hasFlag(PlayerFlag_HasInfiniteCapacity))
-				return 10000.00;
-
-			return std::max(0.00, capacity - inventoryWeight);
-		}
+		double getFreeCapacity() const;
 
 		virtual int32_t getSoul() const {return getPlayerInfo(PLAYERINFO_SOUL);}
 		virtual int32_t getMaxHealth() const {return getPlayerInfo(PLAYERINFO_MAXHEALTH);}
