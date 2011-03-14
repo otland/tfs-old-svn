@@ -21,9 +21,18 @@
 	A = Added.
 
 	M The Forgotten Server.exe
-	M		Makefile (now supports windows)
+	  data/
+	M	global.lua
+	  npc/lib/
+	M	npc.lua
+		npcsystem/
+	M		keywordhandler.lua
+	M		npcsystem.lua
+	M		modules.lua
+	M		npchandler.lua
 ]
 
 [ Milestone
 	Fixed a bug when noDamageToSameLookfeet was enabled that caused no damage between monsters and players if they have the same lookfeet.
+	Revised NPC system and extended global.lua with more Lua functions (thanks to Cykotitan).
 ]

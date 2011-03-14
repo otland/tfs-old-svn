@@ -1,34 +1,6 @@
 -- Including the Advanced NPC System
 dofile('data/npc/lib/npcsystem/npcsystem.lua')
 
-do
-	doPlayerAddStackable = doPlayerAddItem
-	--Returns table with UIDs of added items
-	doPlayerAddItem = function(cid, itemid, amount, subType)
-		local amount = amount or 1
-		local subAmount = 0
-		local subType = subType or 0
-
-		if(isItemStackable(itemid) == TRUE) then
-			return doPlayerAddStackable(cid, itemid, amount), amount
-		end
-
-		local items = {}
-		local ret = 0
-		local a = 0
-		for i = 1, amount do
-			items[i] = doCreateItemEx(itemid, subType)
-			ret = doPlayerAddItemEx(cid, items[i], 1)
-			if(ret ~= RETURNVALUE_NOERROR) then
-				break
-			end
-			a = a + 1
-		end
-
-		return items, a
-	end
-end
-
 function getDistanceToCreature(id)
 	if id == 0 or id == nil then
 		selfGotoIdle()
@@ -71,7 +43,7 @@ function selfGotoIdle()
 end
 
 function isPlayerPremiumCallback(cid)
-	return isPremium(cid) == TRUE and true or false
+	return isPremium(cid)
 end
 
 function msgcontains(message, keyword)
@@ -79,6 +51,7 @@ function msgcontains(message, keyword)
 	if message == keyword then
 		return true
 	end
+
 	return message:find(keyword) and not message:find('(%w+)' .. keyword)
 end
 
@@ -94,4 +67,61 @@ function doPosRemoveItem(_itemid, n, position)
 		return false
 	end
 	return true
+end
+
+function doNpcSellItem(cid, itemid, amount, subType, ignoreCap, inBackpacks, backpack)
+	local amount, subType, ignoreCap, item = amount or 1, subType or 0, ignoreCap and TRUE or FALSE, 0
+	ignoreCap = FALSE
+	if(isItemStackable(itemid) == TRUE) then
+		if(inBackpacks) then
+			stuff = doCreateItemEx(backpack, 1)
+			item = doAddContainerItem(stuff, itemid, amount)
+		else
+			stuff = doCreateItemEx(itemid, amount)
+		end
+		return doPlayerAddItemEx(cid, stuff, ignoreCap) ~= RETURNVALUE_NOERROR and 0 or amount, 0
+	end
+
+	local a = 0
+	if(inBackpacks) then
+		local container, b = doCreateItemEx(backpack, 1), 1
+		for i = 1, amount do
+			local item = doAddContainerItem(container, itemid, subType)
+			if(isInArray({(getContainerCapById(backpack) * b), amount}, i) == TRUE) then
+				if(doPlayerAddItemEx(cid, container, ignoreCap) ~= RETURNVALUE_NOERROR) then
+					b = b - 1 --
+					break
+				end
+				a = i -- a = a + i
+				if(amount > i) then
+					container = doCreateItemEx(backpack, 1)
+					b = b + 1
+				end
+			end
+		end
+		return a, b
+	end
+
+	for i = 1, amount do -- normal method for non-stackable items
+		local item = doCreateItemEx(itemid, subType)
+		if(doPlayerAddItemEx(cid, item, ignoreCap) ~= RETURNVALUE_NOERROR) then
+			break
+		end
+		a = i
+	end
+	return a, 0
+end
+
+local func = function(pars)
+	if isPlayer(pars.pcid) == TRUE then
+		doCreatureSay(pars.cid, pars.text, pars.type, false, pars.pcid, getCreaturePosition(pars.cid))
+		pars.e.done = TRUE
+	end
+end
+
+function doCreatureSayWithDelay(cid, text, type, delay, e, pcid)
+	if isPlayer(pcid) == TRUE then
+		e.done = FALSE
+		e.event = addEvent(func, delay < 1 and 1000 or delay, {cid=cid, text=text, type=type, e=e, pcid=pcid})
+	end
 end
