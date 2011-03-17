@@ -271,9 +271,10 @@ int main(int argc, char* argv[])
 		return 0;
 
 	g_config.startup();
+#ifndef WINDOWS
 	if(g_config.getBool(ConfigManager::DAEMONIZE) && fork())
 		exit(0);
-
+#endif
 	std::set_new_handler(allocationHandler);
 	ServiceManager servicer;
 

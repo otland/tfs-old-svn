@@ -163,7 +163,7 @@
 	#define DEBUG_REPORT
 #endif
 
-#include <boost/config.hpp>
+#include <boost/version.hpp>
 #if defined(BOOST_VERSION) && ((BOOST_VERSION / 100) % 100) >= 5
 	#define BOOST_LEAF path().filename().string()
 #else
