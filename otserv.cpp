@@ -274,7 +274,7 @@ int main(int argc, char* argv[])
 #ifndef WINDOWS
 	if(g_config.getBool(ConfigManager::DAEMONIZE) && fork())
 		exit(0);
-#endif
+
 #endif
 	std::set_new_handler(allocationHandler);
 	ServiceManager servicer;
