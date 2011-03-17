@@ -358,9 +358,6 @@ void otserv(StringVec, ServiceManager* services)
 #ifdef __DEBUG_CHAT__
 	ss << " CHAT";
 #endif
-#ifdef __DEBUG_EXCEPTION_REPORT__
-	ss << " EXCEPTION-REPORT";
-#endif
 #ifdef __DEBUG_HOUSES__
 	ss << " HOUSES";
 #endif
