@@ -303,6 +303,7 @@ class ConfigManager
 			ENABLE_COOLDOWNS,
 			MONSTER_SPAWN_WALKBACK,
 			USE_CAPACITY,
+			DAEMONIZE,
 			LAST_BOOL_CONFIG /* this must be the last one */
 		};
 

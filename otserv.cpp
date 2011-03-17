@@ -127,7 +127,7 @@ bool argumentsHandler(StringVec args)
 			return false;
 		}
 
-		if((*it) == "--version" || (*it) == "-V")
+		if((*it) == "--version" || (*it) == "-v")
 		{
 			std::clog << SOFTWARE_NAME << ", version " << SOFTWARE_VERSION << " (" << SOFTWARE_CODENAME << ")\n"
 			"Compiled with " << BOOST_COMPILER << " at " << __DATE__ << ", " << __TIME__ << ".\n"
@@ -159,6 +159,10 @@ bool argumentsHandler(StringVec args)
 #endif
 		else if(tmp[0] == "--log")
 			g_config.setString(ConfigManager::OUTPUT_LOG, tmp[1]);
+#ifndef WINDOWS
+		else if(tmp[0] == "--daemon" || tmp[0] == "-d")
+			g_config.setBool(ConfigManager::DAEMONIZE, true);
+#endif
 		else if(tmp[0] == "--closed")
 			g_config.setBool(ConfigManager::START_CLOSED, true);
 		else if(tmp[0] == "--no-script")
@@ -261,22 +265,20 @@ void startupErrorMessage(std::string error = "")
 void otserv(StringVec args, ServiceManager* services);
 int main(int argc, char* argv[])
 {
-#ifndef _WIN32
-	if (fork())
-		exit(0);
-#endif
 	std::srand((uint32_t)OTSYS_TIME());
 	StringVec args = StringVec(argv, argv + argc);
 	if(argc > 1 && !argumentsHandler(args))
 		return 0;
 
+	g_config.startup();
+	if(g_config.getBool(ConfigManager::DAEMONIZE) && fork())
+		exit(0);
+
 	std::set_new_handler(allocationHandler);
 	ServiceManager servicer;
-	g_config.startup();
 
 #ifdef __OTSERV_ALLOCATOR_STATS__
-	boost::thread(boost::bind(&allocatorStatsThread, (void*)NULL));
-	// TODO: shutdown this thread?
+	boost::thread(boost::bind(&allocatorStatsThread, (void*)NULL)); // TODO: shutdown this thread?
 #endif
 #ifdef __EXCEPTION_TRACER__
 	ExceptionHandler mainExceptionHandler;
@@ -645,6 +647,10 @@ void otserv(StringVec, ServiceManager* services)
 	if(!g_chat.loadFromXml())
 		startupErrorMessage("Unable to load chat channels!");
 
+	std::clog << ">> Starting to dominate the world...";
+	boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+
+	std::clog << " success!" << std::endl;
 	if(g_config.getBool(ConfigManager::SCRIPT_SYSTEM))
 	{
 		std::clog << ">> Loading script systems" << std::endl;

@@ -1,7 +1,5 @@
-#######################################################
-#Makefile for windows (MinGW)
-#Copyright (C) 2011 Fallen <janneangeselva@hotmail.com>
-#######################################################
+# Makefile for Windows (MinGW)
+# Copyright (C) 2011 Fallen <janneangeselva@hotmail.com>
 CXX = g++
 
 CXXFLAGS = -O2 -Wall -Wno-strict-aliasing -D_THREAD_SAFE -D_REENTRANT -D__ENABLE_SERVER_DIAGNOSTIC__ -D__NO_CRYPTOPP__

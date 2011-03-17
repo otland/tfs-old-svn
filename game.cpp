@@ -3077,8 +3077,8 @@ bool Game::playerAcceptTrade(uint32_t playerId)
 			internalMoveItem(player, cylinder1, tradePartner, INDEX_WHEREEVER, tradeItem1, tradeItem1->getItemCount(), NULL);
 			internalMoveItem(tradePartner, cylinder2, player, INDEX_WHEREEVER, tradeItem2, tradeItem2->getItemCount(), NULL);
 
-			tradeItem1->onTradeEvent(ON_TRADE_TRANSFER, tradePartner, player);
-			tradeItem2->onTradeEvent(ON_TRADE_TRANSFER, player, tradePartner);
+			tradeItem1->onTradeEvent(ON_TRADE_TRANSFER, tradePartner);
+			tradeItem2->onTradeEvent(ON_TRADE_TRANSFER, player);
 			success = true;
 		}
 	}
@@ -3090,14 +3090,14 @@ bool Game::playerAcceptTrade(uint32_t playerId)
 		{
 			error = getTradeErrorDescription(ret1, tradeItem1);
 			tradePartner->sendTextMessage(MSG_INFO_DESCR, error);
-			tradeItem2->onTradeEvent(ON_TRADE_CANCEL, tradePartner, NULL);
+			tradeItem2->onTradeEvent(ON_TRADE_CANCEL, tradePartner);
 		}
 
 		if(tradeItem1)
 		{
 			error = getTradeErrorDescription(ret2, tradeItem2);
 			player->sendTextMessage(MSG_INFO_DESCR, error);
-			tradeItem1->onTradeEvent(ON_TRADE_CANCEL, player, NULL);
+			tradeItem1->onTradeEvent(ON_TRADE_CANCEL, player);
 		}
 	}
 
@@ -3274,7 +3274,7 @@ bool Game::internalCloseTrade(Player* player)
 			tradeItems.erase(it);
 		}
 
-		player->tradeItem->onTradeEvent(ON_TRADE_CANCEL, player, NULL);
+		player->tradeItem->onTradeEvent(ON_TRADE_CANCEL, player);
 		player->tradeItem = NULL;
 	}
 
@@ -3294,7 +3294,7 @@ bool Game::internalCloseTrade(Player* player)
 				tradeItems.erase(it);
 			}
 
-			tradePartner->tradeItem->onTradeEvent(ON_TRADE_CANCEL, tradePartner, NULL);
+			tradePartner->tradeItem->onTradeEvent(ON_TRADE_CANCEL, tradePartner);
 			tradePartner->tradeItem = NULL;
 		}
 

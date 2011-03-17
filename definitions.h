@@ -156,12 +156,16 @@
 	#endif
 #endif
 
-#ifdef __DEBUG_EXCEPTION_REPORT__
-	#define DEBUG_REPORT int *a = NULL; *a = 1;
-#elif defined __EXCEPTION_TRACER__
+#ifdef __EXCEPTION_TRACER__
 	#include "exception.h"
 	#define DEBUG_REPORT ExceptionHandler::dumpStack();
 #else
 	#define DEBUG_REPORT
+#endif
+
+#if defined(BOOST_VERSION) && ((BOOST_VERSION / 100) % 100) >= 5
+	#define BOOST_FILESYSTEM_PATH path().filename().string()
+#else
+	#define BOOST_FILESYSTEM_PATH leaf()
 #endif
 #endif

@@ -333,7 +333,7 @@ class Item : virtual public Thing, public ItemAttributes
 
 		virtual void __startDecaying();
 		virtual void onRemoved();
-		virtual bool onTradeEvent(TradeEvents_t, Player*, Player*) {return true;}
+		virtual bool onTradeEvent(TradeEvents_t, Player*) {return true;}
 
 		static uint32_t countByType(const Item* item, int32_t checkType);
 
