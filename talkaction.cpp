@@ -17,9 +17,6 @@
 #include "otpch.h"
 #include "talkaction.h"
 
-#include <boost/config.hpp>
-#include <boost/version.hpp>
-
 #include "iologindata.h"
 #include "ioban.h"
 
@@ -622,7 +619,7 @@ bool TalkAction::houseSell(Creature* creature, const std::string&, const std::st
 	Item* transferItem = TransferItem::createTransferItem(house);
 	player->transferContainer.__addThing(NULL, transferItem);
 	if(!g_game.internalStartTrade(player, tradePartner, transferItem))
-		transferItem->onTradeEvent(ON_TRADE_CANCEL, player, NULL);
+		transferItem->onTradeEvent(ON_TRADE_CANCEL, player);
 
 	g_game.addMagicEffect(player->getPosition(), MAGIC_EFFECT_WRAPS_BLUE);
 	return false;

@@ -275,6 +275,7 @@ int main(int argc, char* argv[])
 	if(g_config.getBool(ConfigManager::DAEMONIZE) && fork())
 		exit(0);
 #endif
+#endif
 	std::set_new_handler(allocationHandler);
 	ServiceManager servicer;
 
