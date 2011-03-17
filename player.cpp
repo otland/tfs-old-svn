@@ -3749,7 +3749,7 @@ void Player::onAttackedCreature(Creature* target)
 		)
 		return;
 
-	if(targetPlayer->getSkull() != SKULL_NONE || needRevenge(targetPlayer->getID()))
+	if(targetPlayer->getSkull() != SKULL_NONE || canRevenge(targetPlayer->getID()))
 		targetPlayer->sendCreatureSkull(this);
 	else if(!hasCustomFlag(PlayerCustomFlag_NotGainSkull))
 	{
@@ -4168,10 +4168,10 @@ Skulls_t Player::getSkullType(const Creature* creature) const
 		if(g_game.getWorldType() != WORLDTYPE_OPEN)
 			return SKULL_NONE;
 
-		if(needRevenge(player->getID()))
+		if(canRevenge(player->getID()))
 			return SKULL_ORANGE;
 
-		if((player == this || (skull != SKULL_NONE || player->needRevenge(id)))
+		if((player == this || (skull != SKULL_NONE || player->canRevenge(id)))
 			&& player->hasAttacked(this)
 #ifdef __WAR_SYSTEM__
 			&& !player->isEnemy(this, false)

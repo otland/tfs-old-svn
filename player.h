@@ -469,7 +469,7 @@ class Player : public Creature, public Cylinder
 		virtual float getDefenseFactor() const;
 
 		void addRevenge(uint32_t playerId) {revengeList.push_back(playerId);}
-		bool needRevenge(uint32_t playerId) const
+		bool canRevenge(uint32_t playerId) const
 		{
 			return std::find(revengeList.begin(), revengeList.end(), playerId) != revengeList.end();
 		}
