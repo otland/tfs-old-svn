@@ -271,11 +271,6 @@ int main(int argc, char* argv[])
 		return 0;
 
 	g_config.startup();
-#ifndef WINDOWS
-	if(g_config.getBool(ConfigManager::DAEMONIZE) && fork())
-		exit(0);
-
-#endif
 	std::set_new_handler(allocationHandler);
 	ServiceManager servicer;
 
@@ -395,6 +390,11 @@ void otserv(StringVec, ServiceManager* services)
 	std::clog << ">> Loading config (" << g_config.getString(ConfigManager::CONFIG_FILE) << ")" << std::endl;
 	if(!g_config.load())
 		startupErrorMessage("Unable to load " + g_config.getString(ConfigManager::CONFIG_FILE) + "!");
+
+#ifndef WINDOWS
+	if(g_config.getBool(ConfigManager::DAEMONIZE) && fork())
+		exit(0);
+#endif
 
 	// silently append trailing slash
 	std::string path = g_config.getString(ConfigManager::DATA_DIRECTORY);

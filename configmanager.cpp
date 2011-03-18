@@ -332,6 +332,7 @@ bool ConfigManager::load()
 	m_confNumber[DEFAULT_DEPOT_SIZE_PREMIUM] = getGlobalNumber("defaultDepotSizePremium", 2000);
 	m_confNumber[DEFAULT_DEPOT_SIZE] = getGlobalNumber("defaultDepotSize", 2000);
 	m_confBool[USE_CAPACITY] = getGlobalBool("useCapacity", true);
+	m_confBool[DAEMONIZE] = getGlobalBool("daemonize", false);
 
 	m_loaded = true;
 	return true;
