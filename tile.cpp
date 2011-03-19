@@ -1613,7 +1613,7 @@ void Tile::relocateItem(Item* item, bool remove)
 	if(!items)
 		return;
 
-	g_moveEvents->onItemMove(NULL, item, this, remove);
+	g_moveEvents->onItemMove(NULL, item, this, !remove);
 	if(remove)
 	{
 		for(ItemVector::iterator it = items->getBeginDownItem(); it != items->getEndDownItem(); ++it)
