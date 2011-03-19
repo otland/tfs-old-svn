@@ -391,6 +391,7 @@ void Game::cleanMapEx(uint32_t& count)
 				}
 			}
 		}
+
 		trash.clear();
 	}
 	else if(g_config.getBool(ConfigManager::CLEAN_PROTECTED_ZONES))

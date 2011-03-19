@@ -714,10 +714,8 @@ void otserv(StringVec, ServiceManager* services)
 		startupErrorMessage("Unknown world type: " + g_config.getString(ConfigManager::WORLD_TYPE));
 	}
 
-	std::clog << ">> Starting to dominate the world...";
-	boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
-	std::clog << " done." << std::endl << ">> Initializing game state and binding services..." << std::endl;
-
+	std::clog << ">> Starting to dominate the world... done." << std::endl
+		<< ">> Initializing game state and binding services..." << std::endl;
 	g_game.setGameState(GAMESTATE_INIT);
 	IPAddressList ipList;
 
