@@ -129,7 +129,8 @@ class TileItemVector
 		Item* getTopTopItem();
 		Item* getTopDownItem();
 
-		void setDownItemCount(int32_t amount) {downItemCount += amount;}
+		void addDownItem() {++downItemCount;}
+		void removeDownItem() {--downItemCount;}
 
 	private:
 		friend class Tile;
@@ -172,8 +173,11 @@ class Tile : public Cylinder
 		Item* getItemByTopOrder(uint32_t topOrder);
 
 		uint32_t getThingCount() const {return thingCount;}
+		void updateThingCount(int32_t amount) {thingCount += amount;}
+
 		uint32_t getCreatureCount() const;
 		uint32_t getItemCount() const;
+
 		uint32_t getTopItemCount() const;
 		uint32_t getDownItemCount() const;
 
@@ -278,7 +282,6 @@ class Tile : public Cylinder
 		virtual void __internalAddThing(uint32_t index, Thing* thing);
 
 		void onUpdateTile();
-		void setThingCount(int32_t amount) {thingCount += amount;}
 		void updateTileFlags(Item* item, bool remove);
 
 	private:

@@ -4027,7 +4027,7 @@ int32_t LuaInterface::luaDoRelocate(lua_State* L)
 				if(Item* item = (*it))
 				{
 					it = fromItems->erase(it);
-					fromItems->setDownItemCount(-1);
+					fromItems->removeDownItem();
 					fromTile->updateTileFlags(item, true);
 
 					g_moveEvents->onItemMove(NULL, item, fromTile, false);
@@ -4037,7 +4037,7 @@ int32_t LuaInterface::luaDoRelocate(lua_State* L)
 					++count;
 
 					toItems->insert(toItems->getBeginDownItem(), item);
-					toItems->setDownItemCount(1);
+					toItems->addDownItem();
 					toTile->updateTileFlags(item, false);
 
 					g_moveEvents->onAddTileItem(toTile, item);
@@ -4050,8 +4050,8 @@ int32_t LuaInterface::luaDoRelocate(lua_State* L)
 				++it;
 		}
 
-		fromTile->setThingCount(-count);
-		toTile->setThingCount(count);
+		fromTile->updateThingCount(-count);
+		toTile->updateThingCount(count);
 
 		fromTile->onUpdateTile();
 		toTile->onUpdateTile();
