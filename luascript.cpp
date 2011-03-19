@@ -38,15 +38,17 @@
 #include "iomap.h"
 #include "iomapserialize.h"
 
-#include "talkaction.h"
+#include "monsters.h"
+#include "movement.h"
 #include "spells.h"
+#include "talkaction.h"
+
 #include "combat.h"
 #include "condition.h"
-#include "mounts.h"
 
 #include "baseevents.h"
-#include "monsters.h"
 #include "raids.h"
+#include "mounts.h"
 
 #include "configmanager.h"
 #include "vocation.h"
@@ -55,10 +57,11 @@
 #include "chat.h"
 #include "tools.h"
 
-extern Game g_game;
-extern Monsters g_monsters;
-extern Chat g_chat;
 extern ConfigManager g_config;
+extern Game g_game;
+extern Chat g_chat;
+extern Monsters g_monsters;
+extern MoveEvents* g_moveEvents;
 extern Spells* g_spells;
 extern TalkActions* g_talkActions;
 
@@ -3973,7 +3976,8 @@ int32_t LuaInterface::luaDoTileAddItemEx(lua_State* L)
 int32_t LuaInterface::luaDoRelocate(lua_State* L)
 {
 	//doRelocate(pos, posTo[, creatures = true[, unmovable = true]])
-	//Moves all movable objects from pos to posTo
+	//Moves all[ movable] objects from pos to posTo
+	//Uses protected methods for optimal speed
 	bool unmovable = true, creatures = true;
 	int32_t params = lua_gettop(L);
 	if(params > 3)
@@ -4004,37 +4008,68 @@ int32_t LuaInterface::luaDoRelocate(lua_State* L)
 		return 1;
 	}
 
-	if(fromTile != toTile)
+	if(fromTile == toTile)
 	{
-		for(int32_t i = fromTile->getThingCount() - 1; i >= 0; --i)
+		lua_pushboolean(L, false);
+		return 1;
+	}
+
+	TileItemVector *toItems = toTile->getItemList(),
+		*fromItems = fromTile->getItemList();
+	if(fromItems && toItems)
+	{
+		int32_t count = 0;
+		for(ItemVector::iterator it = fromItems->getBeginDownItem(); it != fromItems->getEndDownItem(); )
 		{
-			if(Thing* thing = fromTile->__getThing(i))
+			const ItemType& iType = Item::items[(*it)->getID()];
+			if(!iType.isGroundTile() && !iType.alwaysOnTop && !iType.isMagicField() && (unmovable || iType.movable))
 			{
-				if(Item* item = thing->getItem())
+				if(Item* item = (*it))
 				{
-					const ItemType& it = Item::items[item->getID()];
-					if(it.isGroundTile() || it.alwaysOnTop || it.isMagicField() || (!unmovable && !it.movable))
-						continue;
+					it = fromItems->erase(it);
+					fromItems->setDownItemCount(-1);
+					fromTile->updateTileFlags(item, true);
 
-					fromTile->relocateItem(item, true);
+					g_moveEvents->onItemMove(NULL, item, fromTile, false);
+					g_moveEvents->onRemoveTileItem(fromTile, item);
+
 					item->setParent(toTile);
-					toTile->relocateItem(item, false);
-				}
-				else if(!creatures)
-					continue;
+					++count;
 
-				if(Creature* creature = thing->getCreature())
-					g_game.internalTeleport(creature, toPos, false);
+					toItems->insert(toItems->getBeginDownItem(), item);
+					toItems->setDownItemCount(1);
+					toTile->updateTileFlags(item, false);
+
+					g_moveEvents->onAddTileItem(toTile, item);
+					g_moveEvents->onItemMove(NULL, item, toTile, true);
+				}
+				else
+					++it;
 			}
+			else
+				++it;
 		}
 
-		toTile->onUpdateTile();
+		fromTile->setThingCount(-count);
+		toTile->setThingCount(count);
+
 		fromTile->onUpdateTile();
+		toTile->onUpdateTile();
 		if(g_config.getBool(ConfigManager::STORE_TRASH)
 			&& fromTile->hasFlag(TILESTATE_TRASHED))
 		{
 			g_game.addTrash(toPos);
 			toTile->setFlag(TILESTATE_TRASHED);
+		}
+	}
+
+	if(creatures)
+	{
+		CreatureVector* creatureVector = fromTile->getCreatures();
+		for(CreatureVector::iterator it = creatureVector->begin(); it != creatureVector->end(); ++it)
+		{
+			if(Creature* creature = (*it))
+				g_game.internalTeleport(creature, toPos, false);
 		}
 	}
 

@@ -129,10 +129,13 @@ class TileItemVector
 		Item* getTopTopItem();
 		Item* getTopDownItem();
 
+		void setDownItemCount(int32_t amount) {downItemCount += amount;}
+
 	private:
+		friend class Tile;
+
 		ItemVector items;
 		uint16_t downItemCount;
-		friend class Tile;
 };
 
 class Tile : public Cylinder
@@ -275,14 +278,13 @@ class Tile : public Cylinder
 		virtual void __internalAddThing(uint32_t index, Thing* thing);
 
 		void onUpdateTile();
-		void relocateItem(Item* item, bool remove);
+		void setThingCount(int32_t amount) {thingCount += amount;}
+		void updateTileFlags(Item* item, bool remove);
 
 	private:
 		void onAddTileItem(Item* item);
 		void onUpdateTileItem(Item* oldItem, const ItemType& oldType, Item* newItem, const ItemType& newType);
 		void onRemoveTileItem(const SpectatorVec& list, std::vector<uint32_t>& oldStackPosVector, Item* item);
-
-		void updateTileFlags(Item* item, bool remove);
 
 	protected:
 		bool isDynamic() const {return (m_flags & TILESTATE_DYNAMIC_TILE);}

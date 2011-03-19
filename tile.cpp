@@ -1232,11 +1232,9 @@ void Tile::__removeThing(Thing* thing, uint32_t count)
 
 	if(item->isAlwaysOnTop())
 	{
-		for(ItemVector::iterator it = items->getBeginTopItem(); it != items->getEndTopItem(); ++it)
+		ItemVector::iterator it = std::find(items->getBeginTopItem(), items->getEndTopItem(), item);
+		if(it != items->end())
 		{
-			if(*it != item)
-				continue;
-
 			const SpectatorVec& list = g_game.getSpectators(pos);
 			std::vector<uint32_t> oldStackposVector;
 
@@ -1244,10 +1242,10 @@ void Tile::__removeThing(Thing* thing, uint32_t count)
 			for(SpectatorVec::const_iterator iit = list.begin(); iit != list.end(); ++iit)
 			{
 				if((tmpPlayer = (*iit)->getPlayer()))
-					oldStackposVector.push_back(getClientIndexOfThing(tmpPlayer, *it));
+					oldStackposVector.push_back(getClientIndexOfThing(tmpPlayer, item));
 			}
 
-			(*it)->setParent(NULL);
+			item->setParent(NULL);
 			items->erase(it);
 
 			--thingCount;
@@ -1257,11 +1255,9 @@ void Tile::__removeThing(Thing* thing, uint32_t count)
 	}
 	else
 	{
-		for(ItemVector::iterator it = items->getBeginDownItem(); it != items->getEndDownItem(); ++it)
+		ItemVector::iterator it = std::find(items->getBeginDownItem(), items->getEndDownItem(), item);
+		if(it != items->end())
 		{
-			if((*it) != item)
-				continue;
-
 			if(item->isStackable() && count != item->getItemCount())
 			{
 				uint8_t newCount = (uint8_t)std::max((int32_t)0, (int32_t)(item->getItemCount() - count));
@@ -1282,10 +1278,10 @@ void Tile::__removeThing(Thing* thing, uint32_t count)
 				for(SpectatorVec::const_iterator iit = list.begin(); iit != list.end(); ++iit)
 				{
 					if((tmpPlayer = (*iit)->getPlayer()))
-						oldStackposVector.push_back(getClientIndexOfThing(tmpPlayer, *it));
+						oldStackposVector.push_back(getClientIndexOfThing(tmpPlayer, item));
 				}
 
-				(*it)->setParent(NULL);
+				item->setParent(NULL);
 				items->erase(it);
 
 				--items->downItemCount;
@@ -1605,40 +1601,6 @@ void Tile::__internalAddThing(uint32_t, Thing* thing)
 	}
 
 	updateTileFlags(item, false);
-}
-
-void Tile::relocateItem(Item* item, bool remove)
-{
-	TileItemVector* items = getItemList();
-	if(!items)
-		return;
-
-	g_moveEvents->onItemMove(NULL, item, this, !remove);
-	if(remove)
-	{
-		for(ItemVector::iterator it = items->getBeginDownItem(); it != items->getEndDownItem(); ++it)
-		{
-			if((*it) != item)
-				continue;
-
-			g_moveEvents->onRemoveTileItem(this, item);
-			items->erase(it);
-
-			--items->downItemCount;
-			--thingCount;
-			break;
-		}
-	}
-	else
-	{
-		g_moveEvents->onAddTileItem(this, item);
-		items->insert(items->getBeginDownItem(), item);
-
-		++items->downItemCount;
-		++thingCount;
-	}
-
-	updateTileFlags(item, remove);
 }
 
 void Tile::updateTileFlags(Item* item, bool remove)

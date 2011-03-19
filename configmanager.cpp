@@ -198,7 +198,6 @@ bool ConfigManager::load()
 	m_confString[HOUSE_STORAGE] = getGlobalString("houseDataStorage", "binary");
 	m_confNumber[RED_SKULL_LENGTH] = getGlobalNumber("redSkullLength", 30 * 24 * 60 * 60);
 	m_confNumber[BLACK_SKULL_LENGTH] = getGlobalNumber("blackSkullLength", 45 * 24 * 60 * 60);
-	m_confNumber[MAX_VIOLATIONCOMMENT_SIZE] = getGlobalNumber("maxViolationCommentSize", 60);
 	m_confNumber[NOTATIONS_TO_BAN] = getGlobalNumber("notationsToBan", 3);
 	m_confNumber[WARNINGS_TO_FINALBAN] = getGlobalNumber("warningsToFinalBan", 4);
 	m_confNumber[WARNINGS_TO_DELETION] = getGlobalNumber("warningsToDeletion", 5);

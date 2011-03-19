@@ -1,12 +1,12 @@
--- Banishment book, because a ban hammer wouldnt work :(
+-- Banishment book, because a ban hammer didn't work :(
 --
 -- type,playerName : type can be account, ip or player
 -- extraParameters : these are not neccesary.
 
 local config = {
+	accessNotation = 2,
 	accessBan = 3,
 	accessIpBan = 4,
-	accessNotation = 2,
 
 	banLength = getConfigValue("banLength"),
 	ipBanLength = getConfigValue("ipBanishmentLength"),
@@ -62,11 +62,8 @@ function onTextEdit(cid, item, text)
 		t[k] = v:explode(",")
 	end
 	
-	local message = ""
-	local kick = 3
-	local _type, value = t[1][1], t[1][2]
-	local player = getPlayerByName(value)
-	local account = getAccountIdByName(value)
+	local message, kick, _type, value = "", 3, t[1][1], t[1][2]
+	local player, account = getPlayerByName(value), getAccountIdByName(value)
 	if(getPlayerAccess(cid) <= getPlayerAccess(player))then
 		doPlayerSendCancel(cid, "You may not give banishment, notations or statements to " .. getPlayerName(_player) .. ".")
 		return false
@@ -78,9 +75,7 @@ function onTextEdit(cid, item, text)
 			return false
 		end
 	
-		local length = os.time() + (tonumber(t[2][1]) or config.banLength)
-		local action = (tonumber(t[2][2]) or config.defaultBanAction)
-		
+		local length, action = os.time() + (tonumber(t[2][1]) or config.banLength), (tonumber(t[2][2]) or config.defaultBanAction)
 		message = "taken the action \"" .. getAction(action) .. "\" on account " .. account .. "."
 		doAddAccountBanishment(account, getPlayerGUIDByName(value), length, 21, action, t[3][1] or "", getPlayerGUID(cid), "")
 	elseif(isInArray({"ip", "i"}, _type))then
@@ -89,18 +84,12 @@ function onTextEdit(cid, item, text)
 			return false
 		end
 		
-		local ip = getIpByName(value)
-		local length = os.time() + (tonumber(t[2][2]) or config.ipBanLength)
-		
+		local ip, length = getIpByName(value), os.time() + (tonumber(t[2][2]) or config.ipBanLength)
 		message = "taken the action \"Ip Banishment\" on \"" .. ip .. "\"."
 		doAddIpBanishment(ip, tonumber(t[2][1]) or 0xFFFFFFFF, length, 21, t[3][1] or "", getPlayerGUID(cid), "")
 	elseif(isInArray({"player", "p"}, _type))then
-		local length = os.time()
-		local bantype = (tonumber(t[2][1]) or config.defaultPlayerBanType)
-		local action = (tonumber(t[3][1]) or config.defaultBanAction)
-		local comment = (t[3][2] or "")
-		
-		local forced = false
+		local length, bantype, action, comment, forced = os.time(), (tonumber(t[2][1]) or config.defaultPlayerBanType),
+			(tonumber(t[3][1]) or config.defaultBanAction), (t[3][2] or ""), false
 		if(action == ACTION_NAMEREPORT)then
 			bantype = bantype == PLAYERBAN_NONE and config.nameReportActionType or bantype
 			if(bantype == PLAYERBAN_BANISHMENT)then

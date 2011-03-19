@@ -772,10 +772,6 @@ void ProtocolGame::parsePacket(NetworkMessage &msg)
 				parseBugReport(msg);
 				break;
 
-			/*case 0xE7:
-				parseViolationWindow(msg);
-				break;*/
-
 			case 0xE8:
 				parseDebugAssert(msg);
 				break;
@@ -1488,19 +1484,6 @@ void ProtocolGame::parseQuestInfo(NetworkMessage& msg)
 	uint16_t questId = msg.get<uint16_t>();
 	addGameTask(&Game::playerQuestInfo, player->getID(), questId);
 }
-
-/*void ProtocolGame::parseViolationWindow(NetworkMessage& msg)
-{
-	std::string target = msg.getString();
-	uint8_t reason = msg.get<char>();
-	ViolationAction_t action = (ViolationAction_t)msg.get<char>();
-	std::string comment = msg.getString();
-	std::string statement = msg.getString();
-	uint32_t statementId = (uint32_t)msg.get<uint16_t>();
-	bool ipBanishment = (msg.get<char>() != (char)0);
-	addGameTask(&Game::playerViolationWindow, player->getID(), target,
-		reason, action, comment, statement, statementId, ipBanishment);
-}*/
 
 void ProtocolGame::parseViolationReport(NetworkMessage& msg)
 {

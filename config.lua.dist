@@ -48,7 +48,6 @@
 	finalBanLength = 30 * 24 * 60 * 60
 	ipBanishmentLength = 1 * 24 * 60 * 60
 	broadcastBanishments = true
-	maxViolationCommentSize = 200
 	violationNameReportActionType = 2
 	autoBanishUnknownBytes = false
 
