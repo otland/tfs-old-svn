@@ -65,7 +65,7 @@ function onTextEdit(cid, item, text)
 	local message, kick, _type, value = "", 3, t[1][1], t[1][2]
 	local player, account = getPlayerByName(value), getAccountIdByName(value)
 	if(getPlayerAccess(cid) <= getPlayerAccess(player))then
-		doPlayerSendCancel(cid, "You may not give banishment, notations or statements to " .. getPlayerName(_player) .. ".")
+		doPlayerSendCancel(cid, "You may not give banishment, notations or statements to " .. getPlayerName(player) .. ".")
 		return false
 	end
 
@@ -76,7 +76,7 @@ function onTextEdit(cid, item, text)
 		end
 	
 		local length, action = os.time() + (tonumber(t[2][1]) or config.banLength), (tonumber(t[2][2]) or config.defaultBanAction)
-		message = "taken the action \"" .. getAction(action) .. "\" on account " .. account .. "."
+		message = "taken the action \"" .. getAction(action) .. "\" on player " .. getPlayerName(player) .. "."
 		doAddAccountBanishment(account, getPlayerGUIDByName(value), length, 21, action, t[3][1] or "", getPlayerGUID(cid), "")
 	elseif(isInArray({"ip", "i"}, _type))then
 		if(getPlayerAccess(cid) < config.accessIpBan)then
@@ -85,7 +85,7 @@ function onTextEdit(cid, item, text)
 		end
 		
 		local ip, length = getIpByName(value), os.time() + (tonumber(t[2][2]) or config.ipBanLength)
-		message = "taken the action \"Ip Banishment\" on \"" .. ip .. "\"."
+		message = "taken the action \"Ip Banishment\" on \"" .. getPlayerName(player) .. "\"."
 		doAddIpBanishment(ip, tonumber(t[2][1]) or 0xFFFFFFFF, length, 21, t[3][1] or "", getPlayerGUID(cid), "")
 	elseif(isInArray({"player", "p"}, _type))then
 		local length, bantype, action, comment, forced = os.time(), (tonumber(t[2][1]) or config.defaultPlayerBanType),
