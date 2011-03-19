@@ -1222,7 +1222,7 @@ void ProtocolGame::parseUpArrowContainer(NetworkMessage& msg)
 void ProtocolGame::parseUpdateTile(NetworkMessage& msg)
 {
 	Position pos = msg.getPosition();
-	//addGameTask(&Game::playerUpdateTile, player->getID(), pos);
+	addGameTask(&Game::playerUpdateTile, player->getID(), pos);
 }
 
 void ProtocolGame::parseUpdateContainer(NetworkMessage& msg)

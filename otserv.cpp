@@ -270,9 +270,9 @@ int main(int argc, char* argv[])
 	if(argc > 1 && !argumentsHandler(args))
 		return 0;
 
-	g_config.startup();
 	std::set_new_handler(allocationHandler);
 	ServiceManager servicer;
+	g_config.startup();
 
 #ifdef __OTSERV_ALLOCATOR_STATS__
 	boost::thread(boost::bind(&allocatorStatsThread, (void*)NULL)); // TODO: shutdown this thread?
@@ -392,10 +392,19 @@ void otserv(StringVec, ServiceManager* services)
 		startupErrorMessage("Unable to load " + g_config.getString(ConfigManager::CONFIG_FILE) + "!");
 
 #ifndef WINDOWS
-	if(g_config.getBool(ConfigManager::DAEMONIZE) && fork())
-		exit(0);
-#endif
+	if(g_config.getBool(ConfigManager::DAEMONIZE))
+	{
+		std::clog << "> Daemonization... ";
+		if(fork())
+		{
+			std::clog << "succeed, bye!" << std::endl;
+			exit(0);
+		}
+		else
+			std::clog << "failed, continuing." << std::endl;
+	}
 
+#endif
 	// silently append trailing slash
 	std::string path = g_config.getString(ConfigManager::DATA_DIRECTORY);
 	g_config.setString(ConfigManager::DATA_DIRECTORY, path.erase(path.find_last_not_of("/") + 1) + "/");
@@ -646,10 +655,6 @@ void otserv(StringVec, ServiceManager* services)
 	if(!g_chat.loadFromXml())
 		startupErrorMessage("Unable to load chat channels!");
 
-	std::clog << ">> Starting to dominate the world...";
-	boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
-
-	std::clog << " success!" << std::endl;
 	if(g_config.getBool(ConfigManager::SCRIPT_SYSTEM))
 	{
 		std::clog << ">> Loading script systems" << std::endl;
@@ -709,7 +714,10 @@ void otserv(StringVec, ServiceManager* services)
 		startupErrorMessage("Unknown world type: " + g_config.getString(ConfigManager::WORLD_TYPE));
 	}
 
-	std::clog << ">> Initializing game state and binding services..." << std::endl;
+	std::clog << ">> Starting to dominate the world...";
+	boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
+	std::clog << " done." << std::endl << ">> Initializing game state and binding services..." << std::endl;
+
 	g_game.setGameState(GAMESTATE_INIT);
 	IPAddressList ipList;
 

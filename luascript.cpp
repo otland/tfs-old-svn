@@ -4013,15 +4013,28 @@ int32_t LuaInterface::luaDoRelocate(lua_State* L)
 				if(Item* item = thing->getItem())
 				{
 					const ItemType& it = Item::items[item->getID()];
-					if(!it.isGroundTile() && !it.alwaysOnTop && !it.isMagicField())
-						g_game.internalTeleport(item, toPos, true, unmovable ? FLAG_IGNORENOTMOVABLE : 0);
+					if(it.isGroundTile() || it.alwaysOnTop || it.isMagicField() || (!unmovable && !it.movable))
+						continue;
+
+					fromTile->relocateItem(item, true);
+					item->setParent(toTile);
+					toTile->relocateItem(item, false);
 				}
-				else if(creatures)
-				{
-					if(Creature* creature = thing->getCreature())
-						g_game.internalTeleport(creature, toPos, false);
-				}
+				else if(!creatures)
+					continue;
+
+				if(Creature* creature = thing->getCreature())
+					g_game.internalTeleport(creature, toPos, false);
 			}
+		}
+
+		toTile->onUpdateTile();
+		fromTile->onUpdateTile();
+		if(g_config.getBool(ConfigManager::STORE_TRASH)
+			&& fromTile->hasFlag(TILESTATE_TRASHED))
+		{
+			g_game.addTrash(toPos);
+			toTile->setFlag(TILESTATE_TRASHED);
 		}
 	}
 
@@ -4605,7 +4618,6 @@ int32_t LuaInterface::luaGetTileThingByPos(lua_State* L)
 	//getTileThingByPos(pos)
 	PositionEx pos;
 	popPosition(L, pos);
-
 	ScriptEnviroment* env = getEnv();
 
 	Tile* tile = g_game.getTile(pos.x, pos.y, pos.z);

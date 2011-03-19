@@ -177,10 +177,11 @@
 	mailboxDisabledTowns = ""
 
 	-- Process
-	-- NOTE: defaultPriority works only on Windows and niceLevel on *nix
-	-- niceLevel works only on *nix systems
+	-- NOTE: daemonize works only on *nix, same as niceLevel, while
+	-- defaultPriority works only on Windows.
 	-- coresUsed are seperated by comma cores ids used by server process,
 	-- default is -1, so it stays untouched (automaticaly assigned by OS).
+	daemonize = false
 	defaultPriority = "high"
 	niceLevel = 5
 	coresUsed = "-1"
@@ -189,7 +190,6 @@
 	startupDatabaseOptimization = true
 	updatePremiumStateAtStartup = true
 	confirmOutdatedVersion = false
-	daemonize = false
 
 	-- Spells
 	formulaLevel = 5.0

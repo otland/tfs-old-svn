@@ -262,8 +262,9 @@ class Tile : public Cylinder
 		virtual int32_t __getIndexOfThing(const Thing* thing) const;
 		virtual int32_t __getFirstIndex() const {return 0;}
 		virtual int32_t __getLastIndex() const {return thingCount;}
-		virtual uint32_t __getItemTypeCount(uint16_t itemId, int32_t subType = -1) const;
+
 		virtual Thing* __getThing(uint32_t index) const;
+		virtual uint32_t __getItemTypeCount(uint16_t itemId, int32_t subType = -1) const;
 
 		virtual void postAddNotification(Creature* actor, Thing* thing, const Cylinder* oldParent,
 			int32_t index, cylinderlink_t link = LINK_OWNER);
@@ -272,7 +273,9 @@ class Tile : public Cylinder
 
 		virtual void __internalAddThing(Thing* thing) {__internalAddThing(0, thing);}
 		virtual void __internalAddThing(uint32_t index, Thing* thing);
+
 		void onUpdateTile();
+		void relocateItem(Item* item, bool remove);
 
 	private:
 		void onAddTileItem(Item* item);

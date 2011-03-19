@@ -614,17 +614,14 @@ Thing* Game::internalGetThing(Player* player, const Position& pos, int32_t index
 
 			case STACKPOS_USEITEM:
 			{
-				Item* downItem = tile->getTopDownItem();
+				thing = tile->getTopDownItem();
 				Item* item = tile->getItemByTopOrder(2);
 				if(item && g_actions->hasAction(item))
 				{
 					const ItemType& it = Item::items[item->getID()];
-					if(!downItem || (!it.hasHeight && !it.allowPickupable))
+					if(!thing || (!it.hasHeight && !it.allowPickupable))
 						thing = item;
 				}
-
-				if(!thing)
-					thing = downItem;
 
 				if(!thing)
 					thing = tile->getTopTopItem();

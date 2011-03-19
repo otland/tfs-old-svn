@@ -1875,6 +1875,7 @@ bool RuneSpell::Soulfire(const RuneSpell* spell, Creature* creature, Item*, cons
 
 	ConditionDamage* soulfireCondition = new ConditionDamage(CONDITIONID_COMBAT, CONDITION_FIRE, false, 0);
 	soulfireCondition->setParam(CONDITIONPARAM_SUBID, 1);
+	soulfireCondition->setParam(CONDITIONPARAM_OWNER, player->getID());
 
 	soulfireCondition->addDamage(std::ceil((player->getLevel() + player->getMagicLevel()) / 3.), 9000, -10);
 	if(!target->addCondition(soulfireCondition))
