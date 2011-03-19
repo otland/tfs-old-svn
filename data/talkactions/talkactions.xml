@@ -54,6 +54,7 @@
 	<talkaction log="yes" words="/info" access="2" event="script" value="playerinfo.lua"/>
 	<talkaction log="yes" words="/gethouse;/house" access="2" event="script" value="gethouse.lua"/>
 	<talkaction log="yes" access="2" words="/b" event="script" value="broadcast.lua"/>
+	<talkaction log="yes" words="/ban" access="2" event="script" value="ban.lua"/>
 
 	<!-- Tutors -->
 	<talkaction log="yes" words="/baninfo;!baninfo" access="1" event="function" value="banishmentInfo"/>
