@@ -163,7 +163,7 @@ bool Vocations::parseVocationNode(xmlNodePtr p)
 			if(readXMLInteger(configNode, "id", intValue))
 			{
 				skills_t skill = (skills_t)intValue;
-				if(intValue < SKILL_FIRST || intValue >= SKILL__LAST)
+				if(skill < SKILL_FIRST || skill >= SKILL__LAST)
 				{
 					std::clog << "[Error - Vocations::parseVocationNode] No valid skill id (" << intValue << ")." << std::endl;
 					continue;
