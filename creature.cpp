@@ -276,7 +276,7 @@ void Creature::onWalk()
 
 void Creature::onWalk(Direction& dir)
 {
-	if(!hasCondition(CONDITION_DRUNK))
+	if(!hasCondition(CONDITION_DRUNK, -1))
 		return;
 
 	uint32_t r = random_range(0, 16);
@@ -1160,7 +1160,7 @@ void Creature::onAddCondition(ConditionType_t type, bool hadCondition)
 
 		case CONDITION_PARALYZE:
 		{
-			if(hasCondition(CONDITION_HASTE))
+			if(hasCondition(CONDITION_HASTE, -1, false))
 				removeCondition(CONDITION_HASTE);
 
 			break;
@@ -1168,7 +1168,7 @@ void Creature::onAddCondition(ConditionType_t type, bool hadCondition)
 
 		case CONDITION_HASTE:
 		{
-			if(hasCondition(CONDITION_PARALYZE))
+			if(hasCondition(CONDITION_PARALYZE, -1, false))
 				removeCondition(CONDITION_PARALYZE);
 
 			break;

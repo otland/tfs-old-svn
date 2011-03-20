@@ -598,16 +598,16 @@ bool Combat::CombatConditionFunc(Creature* caster, Creature* target, const Comba
 
 bool Combat::CombatDispelFunc(Creature* caster, Creature* target, const CombatParams& params, void*)
 {
-	if(!target->hasCondition(params.dispelType))
+	if(!target->hasCondition(params.dispelType, -1, false))
 		return false;
 
-	Player* player = target->getPlayer();
-	if(player && (g_game.getWorldType() == WORLDTYPE_HARDCORE
-		|| player->getTile()->hasFlag(TILESTATE_HARDCOREZONE)) &&
-		random_range(1, 100) <= 10) // CHECKME: needs confirmation
+	if(Player* player = target->getPlayer())
 	{
 		Item* item = player->getEquippedItem(SLOT_RING);
-		if(item && item->getID() == ITEM_STEALTH_RING)
+		if(item && item->getID() == ITEM_STEALTH_RING &&
+			(g_game.getWorldType() == WORLDTYPE_HARDCORE ||
+			player->getTile()->hasFlag(TILESTATE_HARDCOREZONE))
+			&& random_range(1, 100) <= 10) // CHECKME: needs confirmation
 			g_game.internalRemoveItem(NULL, item);
 	}	
 
