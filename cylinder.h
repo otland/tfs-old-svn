@@ -256,9 +256,8 @@ class VirtualCylinder : public Cylinder
 		virtual void __removeThing(Thing*, uint32_t) {}
 
 		virtual void postAddNotification(Creature*, Thing*, const Cylinder*,
-			int32_t, CylinderLink_t /*link = LINK_OWNER*/) {}
+			int32_t, CylinderLink_t/* link = LINK_OWNER*/) {}
 		virtual void postRemoveNotification(Creature*, Thing*, const Cylinder*,
-			int32_t, bool,
-			CylinderLink_t /*link = LINK_OWNER*/) {}
+			int32_t, CylinderLink_t/* link = LINK_OWNER*/) {}
 };
 #endif

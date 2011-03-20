@@ -490,7 +490,7 @@ void Tile::moveCreature(Creature* actor, Creature* creature, Cylinder* toCylinde
 	for(it = list.begin(); it != list.end(); ++it)
 		(*it)->onCreatureMove(creature, newTile, newPos, this, pos, teleport);
 
-	postRemoveNotification(actor, creature, toCylinder, oldStackpos, true);
+	postRemoveNotification(actor, creature, toCylinder, oldStackpos);
 	newTile->postAddNotification(actor, creature, this, newStackpos);
 }
 
@@ -922,7 +922,7 @@ void Tile::__addThing(Creature* actor, int32_t, Thing* thing)
 			updateTileFlags(item, false);
 
 			onUpdateTile();
-			postRemoveNotification(actor, oldGround, NULL, oldGroundIndex, true);
+			postRemoveNotification(actor, oldGround, NULL, oldGroundIndex);
 		}
 		else
 		{
@@ -950,7 +950,7 @@ void Tile::__addThing(Creature* actor, int32_t, Thing* thing)
 					oldSplash->setParent(NULL);
 					g_game.freeThing(oldSplash);
 
-					postRemoveNotification(actor, oldSplash, NULL, oldSplashIndex, true);
+					postRemoveNotification(actor, oldSplash, NULL, oldSplashIndex);
 					break;
 				}
 			}
@@ -1004,7 +1004,7 @@ void Tile::__addThing(Creature* actor, int32_t, Thing* thing)
 						oldField->setParent(NULL);
 						g_game.freeThing(oldField);
 
-						postRemoveNotification(actor, oldField, NULL, oldFieldIndex, true);
+						postRemoveNotification(actor, oldField, NULL, oldFieldIndex);
 						break;
 					}
 
@@ -1523,7 +1523,7 @@ void Tile::postRemoveNotification(Creature* actor, Thing* thing, const Cylinder*
 	for(it = list.begin(); it != list.end(); ++it)
 	{
 		if((tmpPlayer = (*it)->getPlayer()))
-			tmpPlayer->postRemoveNotification(actor, thing, newParent, index, isCompleteRemoval, LINK_NEAR);
+			tmpPlayer->postRemoveNotification(actor, thing, newParent, index, LINK_NEAR);
 	}
 
 	//calling movement scripts

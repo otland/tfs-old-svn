@@ -3289,7 +3289,7 @@ void Player::postRemoveNotification(Creature*, Thing* thing, const Cylinder* new
 	int32_t index, CylinderLink_t link/* = LINK_OWNER*/)
 {
 	if(link == LINK_OWNER) //calling movement scripts
-		g_moveEvents->onPlayerDeEquip(this, thing->getItem(), (slots_t)index, item->isRemoved());
+		g_moveEvents->onPlayerDeEquip(this, thing->getItem(), (slots_t)index, thing->isRemoved());
 
 	bool requireListUpdate = true;
 	if(link == LINK_OWNER || link == LINK_TOPPARENT)

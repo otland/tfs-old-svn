@@ -1022,7 +1022,7 @@ bool Game::removeCreature(Creature* creature, bool isLogout /*= true*/)
 		++i;
 	}
 
-	creature->getParent()->postRemoveNotification(NULL, creature, NULL, oldIndex, true);
+	creature->getParent()->postRemoveNotification(NULL, creature, NULL, oldIndex);
 	creature->onRemovedCreature();
 
 	autoList.erase(creature->getID());
@@ -1556,7 +1556,7 @@ ReturnValue Game::internalMoveItem(Creature* actor, Cylinder* fromCylinder, Cyli
 
 				fromCylinder->__addThing(actor, toItem);
 				if(oldToItemIndex != -1)
-					toCylinder->postRemoveNotification(actor, toItem, fromCylinder, oldToItemIndex, true);
+					toCylinder->postRemoveNotification(actor, toItem, fromCylinder, oldToItemIndex);
 
 				int32_t newToItemIndex = fromCylinder->__getIndexOfThing(toItem);
 				if(newToItemIndex != -1)
@@ -2156,7 +2156,7 @@ Item* Game::transformItem(Item* item, uint16_t newId, int32_t newCount/* = -1*/)
 		uint16_t itemId = item->getID();
 		int32_t count = item->getSubType();
 
-		cylinder->postRemoveNotification(NULL, item, cylinder, itemIndex, false);
+		cylinder->postRemoveNotification(NULL, item, cylinder, itemIndex);
 		if(curType.id != newType.id)
 		{
 			itemId = newId;
@@ -2197,7 +2197,7 @@ Item* Game::transformItem(Item* item, uint16_t newId, int32_t newCount/* = -1*/)
 	cylinder->postAddNotification(NULL, newItem, cylinder, itemIndex);
 
 	item->setParent(NULL);
-	cylinder->postRemoveNotification(NULL, item, cylinder, itemIndex, true);
+	cylinder->postRemoveNotification(NULL, item, cylinder, itemIndex);
 
 	freeThing(item);
 	return newItem;
