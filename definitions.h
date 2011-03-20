@@ -164,7 +164,7 @@
 #endif
 
 #include <boost/version.hpp>
-#if defined(BOOST_VERSION) && ((BOOST_VERSION / 100) % 100) >= 5
+#if defined(BOOST_VERSION) && ((BOOST_VERSION / 100) % 100) >= 50
 	#define BOOST_LEAF path().filename().string()
 #else
 	#define BOOST_LEAF leaf()

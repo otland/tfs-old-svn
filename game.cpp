@@ -1589,7 +1589,6 @@ ReturnValue Game::internalMoveItem(Creature* actor, Cylinder* fromCylinder, Cyli
 	//remove the item
 	int32_t itemIndex = fromCylinder->__getIndexOfThing(item);
 	fromCylinder->__removeThing(item, m);
-	bool isCompleteRemoval = item->isRemoved();
 
 	Item* updateItem = NULL;
 	if(item->isStackable())
@@ -1615,7 +1614,7 @@ ReturnValue Game::internalMoveItem(Creature* actor, Cylinder* fromCylinder, Cyli
 		toCylinder->__addThing(actor, index, moveItem);
 
 	if(itemIndex != -1)
-		fromCylinder->postRemoveNotification(actor, item, toCylinder, itemIndex, isCompleteRemoval);
+		fromCylinder->postRemoveNotification(actor, item, toCylinder, itemIndex);
 
 	if(moveItem)
 	{
@@ -1736,7 +1735,7 @@ ReturnValue Game::internalAddItem(Creature* actor, Cylinder* toCylinder, Item* i
 	return RET_NOERROR;
 }
 
-ReturnValue Game::internalRemoveItem(Creature* actor, Item* item, int32_t count /*= -1*/, bool test /*= false*/, uint32_t flags /*= 0*/)
+ReturnValue Game::internalRemoveItem(Creature* actor, Item* item, int32_t count/* = -1*/, bool test/* = false*/, uint32_t flags/* = 0*/)
 {
 	Cylinder* cylinder = item->getParent();
 	if(!cylinder)
@@ -1759,14 +1758,9 @@ ReturnValue Game::internalRemoveItem(Creature* actor, Item* item, int32_t count 
 		int32_t index = cylinder->__getIndexOfThing(item);
 		cylinder->__removeThing(item, count);
 
-		bool isCompleteRemoval = false;
+		cylinder->postRemoveNotification(actor, item, NULL, index);
 		if(item->isRemoved())
-		{
-			isCompleteRemoval = true;
 			freeThing(item);
-		}
-
-		cylinder->postRemoveNotification(actor, item, NULL, index, isCompleteRemoval);
 	}
 
 	item->onRemoved();

@@ -714,7 +714,7 @@ std::map<uint32_t, uint32_t>& Container::__getAllItemTypeCount(std::map<uint32_t
 }
 
 void Container::postAddNotification(Creature* actor, Thing* thing, const Cylinder* oldParent,
-	int32_t index, cylinderlink_t/* link = LINK_OWNER*/)
+	int32_t index, CylinderLink_t/* link = LINK_OWNER*/)
 {
 	Cylinder* topParent = getTopParent();
 	if(!topParent->getCreature())
@@ -733,7 +733,7 @@ void Container::postAddNotification(Creature* actor, Thing* thing, const Cylinde
 }
 
 void Container::postRemoveNotification(Creature* actor, Thing* thing, const Cylinder* newParent,
-	int32_t index, bool isCompleteRemoval, cylinderlink_t/* link = LINK_OWNER*/)
+	int32_t index, CylinderLink_t/* link = LINK_OWNER*/)
 {
 	Cylinder* topParent = getTopParent();
 	if(!topParent->getCreature())
@@ -742,16 +742,13 @@ void Container::postRemoveNotification(Creature* actor, Thing* thing, const Cyli
 		{
 			//let the tile class notify surrounding players
 			if(topParent->getParent())
-				topParent->getParent()->postRemoveNotification(actor, thing,
-					newParent, index, isCompleteRemoval, LINK_NEAR);
+				topParent->getParent()->postRemoveNotification(actor, thing, newParent, index, LINK_NEAR);
 		}
 		else
-			topParent->postRemoveNotification(actor, thing, newParent,
-				index, isCompleteRemoval, LINK_PARENT);
+			topParent->postRemoveNotification(actor, thing, newParent, index, LINK_PARENT);
 	}
 	else
-		topParent->postRemoveNotification(actor, thing, newParent,
-			index, isCompleteRemoval, LINK_TOPPARENT);
+		topParent->postRemoveNotification(actor, thing, newParent, index, LINK_TOPPARENT);
 }
 
 void Container::__internalAddThing(Thing* thing)

@@ -709,9 +709,9 @@ class Player : public Creature, public Cylinder
 		uint32_t getAttackSpeed() const;
 
 		virtual void postAddNotification(Creature* actor, Thing* thing, const Cylinder* oldParent,
-			int32_t index, cylinderlink_t link = LINK_OWNER);
+			int32_t index, CylinderLink_t link = LINK_OWNER);
 		virtual void postRemoveNotification(Creature* actor, Thing* thing, const Cylinder* newParent,
-			int32_t index, bool isCompleteRemoval, cylinderlink_t link = LINK_OWNER);
+			int32_t index, CylinderLink_t link = LINK_OWNER);
 
 		void setNextAction(int64_t time) {if(time > nextAction) {nextAction = time;}}
 		bool canDoAction() const {return nextAction <= OTSYS_TIME();}

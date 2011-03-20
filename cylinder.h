@@ -23,19 +23,19 @@
 class Item;
 class Creature;
 
-enum cylinderflags_t
+enum CylinderFlags_t
 {
 	FLAG_NOLIMIT = 1,				//Bypass limits like capacity/container limits, blocking items/creatures etc.
 	FLAG_IGNOREBLOCKITEM = 2,		//Bypass movable blocking item checks
 	FLAG_IGNOREBLOCKCREATURE = 4,	//Bypass creature checks
 	FLAG_CHILDISOWNER = 8,			//Used by containers to query capacity of the carrier (player)
 	FLAG_PATHFINDING = 16,			//An additional check is done for floor changing/teleport items
-	FLAG_IGNOREFIELDDAMAGE = 32,	//Bypass field damage checks
+	FLAG_IGNOREFIELDDAMAGE = 32,	//Bypass field damage hecks
 	FLAG_IGNORENOTMOVABLE = 64,		//Bypass check for movability
 	FLAG_IGNOREAUTOSTACK = 128		//__queryDestination will not try to stack items together
 };
 
-enum cylinderlink_t
+enum CylinderLink_t
 {
 	LINK_OWNER,
 	LINK_PARENT,
@@ -152,18 +152,17 @@ class Cylinder
 		  * \param link holds the relation the object has to the cylinder
 		  */
 		virtual void postAddNotification(Creature* actor, Thing* thing, const Cylinder* oldParent,
-			int32_t index, cylinderlink_t link = LINK_OWNER) = 0;
+			int32_t index, CylinderLink_t link = LINK_OWNER) = 0;
 
 		/**
 		  * Is sent after an operation (move/remove) to update internal values
 		  * \param actor is the creature that is responsible (can be NULL)
 		  * \param thing is the object that has been removed
 		  * \param index is the previous index of the removed object
-		  * \param isCompleteRemoval indicates if the item was completely removed or just partially (stackables)
 		  * \param link holds the relation the object has to the cylinder
 		  */
 		virtual void postRemoveNotification(Creature* actor, Thing* thing, const Cylinder* newParent,
-			int32_t index, bool isCompleteRemoval, cylinderlink_t link = LINK_OWNER) = 0;
+			int32_t index, CylinderLink_t link = LINK_OWNER) = 0;
 
 		/**
 		  * Gets the index of an object
@@ -257,9 +256,9 @@ class VirtualCylinder : public Cylinder
 		virtual void __removeThing(Thing*, uint32_t) {}
 
 		virtual void postAddNotification(Creature*, Thing*, const Cylinder*,
-			int32_t, cylinderlink_t /*link = LINK_OWNER*/) {}
+			int32_t, CylinderLink_t /*link = LINK_OWNER*/) {}
 		virtual void postRemoveNotification(Creature*, Thing*, const Cylinder*,
 			int32_t, bool,
-			cylinderlink_t /*link = LINK_OWNER*/) {}
+			CylinderLink_t /*link = LINK_OWNER*/) {}
 };
 #endif

@@ -657,14 +657,20 @@ ReturnValue Tile::__queryAdd(int32_t, const Thing* thing, uint32_t,
 			std::clog << "[Notice - Tile::__queryAdd] thing->getParent() == NULL" << std::endl;
 
 #endif
-		if(items && items->size() >= 0xFFFF)
-			return RET_NOTPOSSIBLE;
+		int32_t itemLimit = 0xFFFF;
+		if(hasFlag(TILESTATE_PROTECTIONZONE))
+			itemLimit = g_config.getNumber(ConfigManager::PROTECTION_TILE_LIMIT);
+		else
+			itemLimit = g_config.getNumber(ConfigManager::TILE_LIMIT);
+
+		if(items && items->size() >= itemLimit)
+			return RET_TILEISFULL;
 
 		if(hasBitSet(FLAG_NOLIMIT, flags))
 			return RET_NOERROR;
 
-		bool itemIsHangable = item->isHangable();
-		if(!ground && !itemIsHangable)
+		bool isHangable = item->isHangable();
+		if(!ground && !isHangable)
 			return RET_NOTPOSSIBLE;
 
 		if(creatures && !creatures->empty() && !hasBitSet(FLAG_IGNOREBLOCKCREATURE, flags))
@@ -675,11 +681,6 @@ ReturnValue Tile::__queryAdd(int32_t, const Thing* thing, uint32_t,
 					return RET_NOTENOUGHROOM; //NOTPOSSIBLE
 			}
 		}
-
-		const uint32_t itemLimit = g_config.getNumber(
-				hasFlag(TILESTATE_PROTECTIONZONE) ? ConfigManager::PROTECTION_TILE_LIMIT : ConfigManager::TILE_LIMIT);
-		if(itemLimit && getThingCount() > itemLimit)
-			return RET_TILEISFULL;
 
 		bool hasHangable = false, supportHangable = false;
 		if(items)
@@ -697,24 +698,22 @@ ReturnValue Tile::__queryAdd(int32_t, const Thing* thing, uint32_t,
 					if(iType.isHorizontal || iType.isVertical)
 						supportHangable = true;
 
-					if(itemIsHangable && (iType.isHorizontal || iType.isVertical))
+					if((isHangable && (iType.isHorizontal || iType.isVertical)) || !iItem->isBlocking(NULL))
 						continue;
-					else if(iItem->isBlocking(NULL))
-					{
-						if(!item->isPickupable())
-							return RET_NOTPOSSIBLE;
 
-						if(iType.allowPickupable)
-							continue;
+					if(!item->isPickupable())
+						return RET_NOTPOSSIBLE;
 
-						if(!iType.hasHeight || iType.pickupable || iType.isBed())
-							return RET_NOTPOSSIBLE;
-					}
+					if(iType.allowPickupable)
+						continue;
+
+					if(!iType.hasHeight || iType.pickupable || iType.isBed())
+						return RET_NOTPOSSIBLE;
 				}
 			}
 		}
 
-		if(itemIsHangable && hasHangable && supportHangable)
+		if(isHangable && hasHangable && supportHangable)
 			return RET_NEEDEXCHANGE;
 	}
 
@@ -1460,7 +1459,7 @@ Thing* Tile::__getThing(uint32_t index) const
 }
 
 void Tile::postAddNotification(Creature* actor, Thing* thing, const Cylinder* oldParent,
-	int32_t index, cylinderlink_t link/* = LINK_OWNER*/)
+	int32_t index, CylinderLink_t link/* = LINK_OWNER*/)
 {
 	const SpectatorVec& list = g_game.getSpectators(pos);
 	SpectatorVec::const_iterator it;
@@ -1513,12 +1512,12 @@ void Tile::postAddNotification(Creature* actor, Thing* thing, const Cylinder* ol
 }
 
 void Tile::postRemoveNotification(Creature* actor, Thing* thing, const Cylinder* newParent,
-	int32_t index, bool isCompleteRemoval, cylinderlink_t /*link = LINK_OWNER*/)
+	int32_t index, CylinderLink_t/* link = LINK_OWNER*/)
 {
 	const SpectatorVec& list = g_game.getSpectators(pos);
 	SpectatorVec::const_iterator it;
-	if(/*isCompleteRemoval && */getThingCount() > 8)
-		onUpdateTile();
+	/*if(getThingCount() > 8)
+		onUpdateTile();*/
 
 	Player* tmpPlayer = NULL;
 	for(it = list.begin(); it != list.end(); ++it)

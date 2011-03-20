@@ -276,9 +276,9 @@ class Tile : public Cylinder
 		virtual uint32_t __getItemTypeCount(uint16_t itemId, int32_t subType = -1) const;
 
 		virtual void postAddNotification(Creature* actor, Thing* thing, const Cylinder* oldParent,
-			int32_t index, cylinderlink_t link = LINK_OWNER);
+			int32_t index, CylinderLink_t link = LINK_OWNER);
 		virtual void postRemoveNotification(Creature* actor, Thing* thing, const Cylinder* newParent,
-			int32_t index, bool isCompleteRemoval, cylinderlink_t link = LINK_OWNER);
+			int32_t index, CylinderLink_t link = LINK_OWNER);
 
 		virtual void __internalAddThing(Thing* thing) {__internalAddThing(0, thing);}
 		virtual void __internalAddThing(uint32_t index, Thing* thing);

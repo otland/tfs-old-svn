@@ -3238,7 +3238,7 @@ std::map<uint32_t, uint32_t>& Player::__getAllItemTypeCount(std::map<uint32_t, u
 }
 
 void Player::postAddNotification(Creature*, Thing* thing, const Cylinder* oldParent,
-	int32_t index, cylinderlink_t link /*= LINK_OWNER*/)
+	int32_t index, CylinderLink_t link /*= LINK_OWNER*/)
 {
 	if(link == LINK_OWNER) //calling movement scripts
 		g_moveEvents->onPlayerEquip(this, thing->getItem(), (slots_t)index, false);
@@ -3286,10 +3286,10 @@ void Player::postAddNotification(Creature*, Thing* thing, const Cylinder* oldPar
 }
 
 void Player::postRemoveNotification(Creature*, Thing* thing, const Cylinder* newParent,
-	int32_t index, bool isCompleteRemoval, cylinderlink_t link /*= LINK_OWNER*/)
+	int32_t index, CylinderLink_t link/* = LINK_OWNER*/)
 {
 	if(link == LINK_OWNER) //calling movement scripts
-		g_moveEvents->onPlayerDeEquip(this, thing->getItem(), (slots_t)index, isCompleteRemoval);
+		g_moveEvents->onPlayerDeEquip(this, thing->getItem(), (slots_t)index, item->isRemoved());
 
 	bool requireListUpdate = true;
 	if(link == LINK_OWNER || link == LINK_TOPPARENT)

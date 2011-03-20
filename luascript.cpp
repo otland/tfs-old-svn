@@ -4018,9 +4018,13 @@ int32_t LuaInterface::luaDoRelocate(lua_State* L)
 		*fromItems = fromTile->getItemList();
 	if(fromItems && toItems)
 	{
-		int32_t count = 0;
+		int32_t itemLimit = g_config.getNumber(toTile->hasFlag(TILESTATE_PROTECTIONZONE)
+			? ConfigManager::PROTECTION_TILE_LIMIT : ConfigManager::TILE_LIMIT), count = 0;
 		for(ItemVector::iterator it = fromItems->getBeginDownItem(); it != fromItems->getEndDownItem(); )
 		{
+			if(itemLimit && (int32_t)toItems->size() > itemLimit)
+				break;
+
 			const ItemType& iType = Item::items[(*it)->getID()];
 			if(!iType.isGroundTile() && !iType.alwaysOnTop && !iType.isMagicField() && (unmovable || iType.movable))
 			{

@@ -11,15 +11,14 @@ function onStepOut(cid, item, position, fromPosition)
 	end
 
 	doRelocate(position, newPosition)
-	local tmpPos = position
-	tmpPos.stackpos = -1
+	position.stackpos = -1
 
-	local i, tmpItem, tileCount = 1, {uid = 1}, getTileThingByPos(tmpPos)
-	while(tmpItem.uid ~= 0 and i < tileCount) do
-		tmpPos.stackpos = i
-		tmpItem = getTileThingByPos(tmpPos)
-		if(tmpItem.uid ~= 0 and tmpItem.uid ~= item.uid and isMovable(tmpItem.uid)) then
-			doRemoveItem(tmpItem.uid)
+	local i, tileItem, tileCount = 1, {uid = 1}, getTileThingByPos(position)
+	while(tileItem.uid ~= 0 and i < tileCount) do
+		position.stackpos = i
+		tileItem = getTileThingByPos(position)
+		if(tileItem.uid ~= 0 and tileItem.uid ~= item.uid and isMovable(tileItem.uid)) then
+			doRemoveItem(tileItem.uid)
 		else
 			i = i + 1
 		end
