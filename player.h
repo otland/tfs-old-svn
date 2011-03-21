@@ -909,6 +909,7 @@ class Player : public Creature, public Cylinder
 
 		Position loginPosition;
 		LightInfo itemsLight;
+		std::pair<Container*, int32_t> backpack;
 
 		Vocation* vocation;
 		ProtocolGame* client;

@@ -1579,9 +1579,11 @@ void Player::onCreatureMove(const Creature* creature, const Tile* newTile, const
 	}
 }
 
-void Player::onAddContainerItem(const Container*, const Item* item)
+void Player::onAddContainerItem(const Container* container, const Item* item)
 {
 	checkTradeState(item);
+	if(const_cast<Container*>(container) != backpack.first || backpack.first->full())
+		backpack.first = NULL;
 }
 
 void Player::onUpdateContainerItem(const Container* container, uint8_t slot,
@@ -1596,6 +1598,7 @@ void Player::onUpdateContainerItem(const Container* container, uint8_t slot,
 
 void Player::onRemoveContainerItem(const Container* container, uint8_t, const Item* item)
 {
+	backpack.first = NULL;
 	if(tradeState == TRADE_TRANSFER)
 		return;
 
@@ -2876,10 +2879,11 @@ Cylinder* Player::__queryDestination(int32_t& index, const Thing* thing, Item** 
 
 				if(Container* container = invItem->getContainer())
 				{
-					if(!autoStack && container->__queryAdd(INDEX_WHEREEVER,
-						item, item->getItemCount(), flags) == RET_NOERROR)
+					if(!autoStack && !backpack.first && container->__queryAdd(
+						INDEX_WHEREEVER, item, item->getItemCount(), flags) == RET_NOERROR)
 					{
 						index = INDEX_WHEREEVER;
+						backpack = std::make_pair(container, index);
 						return container;
 					}
 
@@ -2896,6 +2900,12 @@ Cylinder* Player::__queryDestination(int32_t& index, const Thing* thing, Item** 
 			}
 			else
 				freeSlots.push_back(std::make_pair(this, i));
+		}
+
+		if(backpack.first && backpack.first->__queryAdd(backpack.second, item, item->getItemCount(), flags))
+		{
+			index = backpack.second;
+			return backpack.first;
 		}
 
 		int32_t deepness = g_config.getNumber(ConfigManager::PLAYER_DEEPNESS);
@@ -2929,6 +2939,7 @@ Cylinder* Player::__queryDestination(int32_t& index, const Thing* thing, Item** 
 							item, item->getItemCount(), flags) == RET_NOERROR)
 						{
 							index = INDEX_WHEREEVER;
+							backpack = std::make_pair(container, index);
 							return container;
 						}
 
@@ -2943,6 +2954,7 @@ Cylinder* Player::__queryDestination(int32_t& index, const Thing* thing, Item** 
 						if(tmpContainer->__queryAdd(n, item, item->getItemCount(), 0) == RET_NOERROR)
 						{
 							index = n;
+							backpack = std::make_pair(tmpContainer, index);
 							return tmpContainer;
 						}
 					}
