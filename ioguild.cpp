@@ -239,7 +239,7 @@ bool IOGuild::joinGuild(Player* player, uint32_t guildId, bool creation/* = fals
 		level = GUILDLEVEL_LEADER;
 
 	player->setGuildLevel(level, rankId);
-	player->invitedToGuildsList.clear();
+	player->invitationsList.clear();
 	return true;
 }
 
@@ -252,14 +252,14 @@ bool IOGuild::disbandGuild(uint32_t guildId)
 	if(!db->query(query.str()))
 		return false;
 
-	InvitedToGuildsList::iterator iit;
+	InvitationsList::iterator iit;
 	for(AutoList<Player>::iterator it = Player::autoList.begin(); it != Player::autoList.end(); ++it)
 	{
 		if(it->second->getGuildId() == guildId)
 			it->second->leaveGuild();
-		else if((iit = std::find(it->second->invitedToGuildsList.begin(), it->second->invitedToGuildsList.end(),
-			guildId)) != it->second->invitedToGuildsList.end())
-			it->second->invitedToGuildsList.erase(iit);
+		else if((iit = std::find(it->second->invitationsList.begin(), it->second->invitationsList.end(),
+			guildId)) != it->second->invitationsList.end())
+			it->second->invitationsList.erase(iit);
 	}
 
 	query.str("");

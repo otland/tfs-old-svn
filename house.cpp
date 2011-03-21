@@ -250,23 +250,23 @@ bool House::transferToDepot()
 			player = g_game.getPlayerByGuidEx(tmp);
 	}
 
-	Item* item = NULL;
 	Container* tmpContainer = NULL;
+	TileItemVector* items = NULL;
 
 	ItemList moveList;
 	for(HouseTileList::iterator it = houseTiles.begin(); it != houseTiles.end(); ++it)
 	{
-		for(uint32_t i = 0; i < (*it)->getThingCount(); ++i)
-		{
-			if(!(item = (*it)->__getThing(i)->getItem()))
-				continue;
+		if(!(items = (*it)->getItemList()))
+			continue;
 
-			if(item->isPickupable())
-				moveList.push_back(item);
-			else if((tmpContainer = item->getContainer()))
+		for(ItemVector::iterator iit = items->begin(); iit != items->end(); ++iit)
+		{
+			if((*iit)->isPickupable())
+				moveList.push_back(*iit);
+			else if((tmpContainer = (*iit)->getContainer()))
 			{
-				for(ItemList::const_iterator it = tmpContainer->getItems(); it != tmpContainer->getEnd(); ++it)
-					moveList.push_back(*it);
+				for(ItemList::const_iterator cit = tmpContainer->getItems(); cit != tmpContainer->getEnd(); ++cit)
+					moveList.push_back(*cit);
 			}
 		}
 	}

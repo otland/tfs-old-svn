@@ -592,7 +592,7 @@ bool Chat::talkToChannel(Player* player, SpeakClasses type, const std::string& t
 							paramPlayer->sendTextMessage(MSG_INFO_DESCR, buffer);
 							sprintf(buffer, "%s has invited %s to the guild.", player->getName().c_str(), paramPlayer->getName().c_str());
 							channel->talk(player, SPEAK_CHANNEL_W, buffer);
-							paramPlayer->invitedToGuildsList.push_back(player->getGuildId());
+							paramPlayer->invitationsList.push_back(player->getGuildId());
 						}
 						else
 							player->sendCancel("A player with that name has already been invited to your guild.");
@@ -665,14 +665,14 @@ bool Chat::talkToChannel(Player* player, SpeakClasses type, const std::string& t
 				{
 					if(paramPlayer->getGuildId() == 0)
 					{
-						InvitedToGuildsList::iterator it = std::find(paramPlayer->invitedToGuildsList.begin(),paramPlayer->invitedToGuildsList.end(), player->getGuildId());
-						if(it != paramPlayer->invitedToGuildsList.end())
+						InvitationsList::iterator it = std::find(paramPlayer->invitationsList.begin(),paramPlayer->invitationsList.end(), player->getGuildId());
+						if(it != paramPlayer->invitationsList.end())
 						{
 							sprintf(buffer, "%s has revoked your invite to %s guild.", player->getName().c_str(), (player->getSex(false) ? "his" : "her"));
 							paramPlayer->sendTextMessage(MSG_INFO_DESCR, buffer);
 							sprintf(buffer, "%s has revoked the guildinvite of %s.", player->getName().c_str(), paramPlayer->getName().c_str());
 							channel->talk(player, SPEAK_CHANNEL_W, buffer);
-							paramPlayer->invitedToGuildsList.erase(it);
+							paramPlayer->invitationsList.erase(it);
 							return true;
 						}
 						else

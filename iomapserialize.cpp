@@ -675,28 +675,27 @@ bool IOMapSerialize::loadItems(Database*, DBResult* result, Cylinder* parent, bo
 		else if(tile)
 		{
 			//find this type in the tile
-			Item* findItem = NULL;
-			for(uint32_t i = 0; i < tile->getThingCount(); ++i)
+			if(TileItemVector* items = tile->getItemList())
 			{
-				if(!(findItem = tile->__getThing(i)->getItem()))
-					continue;
-
-				if(findItem->getID() == id)
+				for(ItemVector::iterator it = items->begin(); it != items->end(); ++it)
 				{
-					item = findItem;
-					break;
-				}
+					if((*it)->getID() == id)
+					{
+						item = *it;
+						break;
+					}
 
-				if(iType.isDoor() && findItem->getDoor())
-				{
-					item = findItem;
-					break;
-				}
+					if(iType.isDoor() && (*it)->getDoor())
+					{
+						item = *it;
+						break;
+					}
 
-				if(iType.isBed() && findItem->getBed())
-				{
-					item = findItem;
-					break;
+					if(iType.isBed() && (*it)->getBed())
+					{
+						item = *it;
+						break;
+					}
 				}
 			}
 		}
@@ -763,38 +762,41 @@ bool IOMapSerialize::saveItems(Database* db, uint32_t& tileId, uint32_t houseId,
 	query_insert.setQuery("INSERT INTO `tile_items` (`tile_id`, `world_id`, `sid`, `pid`, `itemtype`, `count`, `attributes`) VALUES ");
 
 	DBQuery query;
-	for(int32_t i = 0; i < thingCount; ++i)
+	if(TileItemVector* items = tile->getItemList())
 	{
-		if(!(item = tile->__getThing(i)->getItem()) || (!item->isMovable() && !item->forceSerialize()))
-			continue;
-
-		if(!stored)
+		for(ItemVector::iterator it = items->begin(); it != items->end(); ++it)
 		{
-			Position tilePosition = tile->getPosition();
-			query << "INSERT INTO `tiles` (`id`, `world_id`, `house_id`, `x`, `y`, `z`) VALUES ("
-			<< tileId << ", " << g_config.getNumber(ConfigManager::WORLD_ID) << ", " << houseId << ", "
-			<< tilePosition.x << ", " << tilePosition.y << ", " << tilePosition.z << ")";
-			if(!db->query(query.str()))
+			if(!(item = *it) || (!item->isMovable() && !item->forceSerialize()))
+				continue;
+
+			if(!stored)
+			{
+				Position tilePosition = tile->getPosition();
+				query << "INSERT INTO `tiles` (`id`, `world_id`, `house_id`, `x`, `y`, `z`) VALUES ("
+					<< tileId << ", " << g_config.getNumber(ConfigManager::WORLD_ID) << ", " << houseId << ", "
+					<< tilePosition.x << ", " << tilePosition.y << ", " << tilePosition.z << ")";
+				if(!db->query(query.str()))
+					return false;
+
+				stored = true;
+				query.str("");
+			}
+
+			PropWriteStream propWriteStream;
+			item->serializeAttr(propWriteStream);
+
+			uint32_t attributesSize = 0;
+			const char* attributes = propWriteStream.getStream(attributesSize);
+
+			query << tileId << ", " << g_config.getNumber(ConfigManager::WORLD_ID) << ", " << ++runningId << ", " << parentId << ", "
+				<< item->getID() << ", " << (int32_t)item->getSubType() << ", " << db->escapeBlob(attributes, attributesSize);
+			if(!query_insert.addRow(query.str()))
 				return false;
 
-			stored = true;
 			query.str("");
+			if(item->getContainer())
+				containerStackList.push_back(std::make_pair(item->getContainer(), runningId));
 		}
-
-		PropWriteStream propWriteStream;
-		item->serializeAttr(propWriteStream);
-
-		uint32_t attributesSize = 0;
-		const char* attributes = propWriteStream.getStream(attributesSize);
-
-		query << tileId << ", " << g_config.getNumber(ConfigManager::WORLD_ID) << ", " << ++runningId << ", " << parentId << ", "
-			<< item->getID() << ", " << (int32_t)item->getSubType() << ", " << db->escapeBlob(attributes, attributesSize);
-		if(!query_insert.addRow(query.str()))
-			return false;
-
-		query.str("");
-		if(item->getContainer())
-			containerStackList.push_back(std::make_pair(item->getContainer(), runningId));
 	}
 
 	Container* container = NULL;
@@ -804,7 +806,7 @@ bool IOMapSerialize::saveItems(Database* db, uint32_t& tileId, uint32_t houseId,
 		parentId = cit->second;
 		for(ItemList::const_iterator it = container->getItems(); it != container->getEnd(); ++it)
 		{
-			if(!(item = (*it)))
+			if(!(item = *it))
 				continue;
 
 			PropWriteStream propWriteStream;
@@ -898,28 +900,27 @@ bool IOMapSerialize::loadItem(PropStream& propStream, Cylinder* parent, bool dep
 	if(tile)
 	{
 		//Stationary items
-		Item* findItem = NULL;
-		for(uint32_t i = 0; i < tile->getThingCount(); ++i)
+		if(TileItemVector* items = tile->getItemList())
 		{
-			if(!(findItem = tile->__getThing(i)->getItem()))
-				continue;
-
-			if(findItem->getID() == id)
+			for(ItemVector::iterator it = items->begin(); it != items->end(); ++it)
 			{
-				item = findItem;
-				break;
-			}
+				if((*it)->getID() == id)
+				{
+					item = *it;
+					break;
+				}
 
-			if(iType.isDoor() && findItem->getDoor())
-			{
-				item = findItem;
-				break;
-			}
+				if(iType.isDoor() && (*it)->getDoor())
+				{
+					item = *it;
+					break;
+				}
 
-			if(iType.isBed() && findItem->getBed())
-			{
-				item = findItem;
-				break;
+				if(iType.isBed() && (*it)->getBed())
+				{
+					item = *it;
+					break;
+				}
 			}
 		}
 	}

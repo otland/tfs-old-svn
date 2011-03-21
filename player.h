@@ -119,7 +119,7 @@ typedef std::vector<std::pair<uint32_t, Container*> > ContainerVector;
 typedef std::map<uint32_t, std::pair<Depot*, bool> > DepotMap;
 typedef std::map<uint32_t, uint32_t> MuteCountMap;
 typedef std::list<std::string> LearnedInstantSpellList;
-typedef std::list<uint32_t> InvitedToGuildsList;
+typedef std::list<uint32_t> InvitationsList;
 typedef std::list<Party*> PartyList;
 #ifdef __WAR_SYSTEM__
 typedef std::map<uint32_t, War_t> WarMap;
@@ -729,20 +729,26 @@ class Player : public Creature, public Cylinder
 
 		VIPSet VIPList;
 		ContainerVector containerVec;
-		InvitedToGuildsList invitedToGuildsList;
+		InvitationsList invitationsList;
 		ConditionList storedConditionList;
 		DepotMap depots;
+		Container transferContainer;
 
+		// TODO: make it private?
 		uint32_t marriage;
 		uint64_t balance;
 		double rates[SKILL__LAST + 1];
-		Container transferContainer;
 
 	protected:
 		void checkTradeState(const Item* item);
 
 		bool gainExperience(double& gainExp, Creature* target);
 		bool rateExperience(double& gainExp, Creature* target);
+
+		void updateInventoryWeight();
+		void updateInventoryGoods(uint32_t itemId);
+		void updateItemsLight(bool internal = false);
+		void updateWeapon();
 		void updateBaseSpeed()
 		{
 			if(!hasFlag(PlayerFlag_SetMaxSpeed))
@@ -750,11 +756,6 @@ class Player : public Creature, public Cylinder
 			else
 				baseSpeed = SPEED_MAX;
 		}
-
-		void updateInventoryWeight();
-		void updateInventoryGoods(uint32_t itemId);
-		void updateItemsLight(bool internal = false);
-		void updateWeapon();
 
 		void setNextWalkActionTask(SchedulerTask* task);
 		void setNextWalkTask(SchedulerTask* task);

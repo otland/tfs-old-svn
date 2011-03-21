@@ -4980,7 +4980,7 @@ void Player::manageAccount(const std::string &text)
 
 bool Player::isGuildInvited(uint32_t guildId) const
 {
-	for(InvitedToGuildsList::const_iterator it = invitedToGuildsList.begin(); it != invitedToGuildsList.end(); ++it)
+	for(InvitationsList::const_iterator it = invitationsList.begin(); it != invitationsList.end(); ++it)
 	{
 		if((*it) == guildId)
 			return true;

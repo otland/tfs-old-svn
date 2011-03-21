@@ -4100,16 +4100,16 @@ int32_t LuaInterface::luaDoCleanTile(lua_State* L)
 		return 1;
 	}
 
+	Thing* thing = NULL;
+	Item* item = NULL;
+
 	for(int32_t i = tile->getThingCount() - 1; i >= 1; --i) //ignore ground
 	{
-		if(Thing* thing = tile->__getThing(i))
-		{
-			if(Item* item = thing->getItem())
-			{
-				if(!item->isLoadedFromMap() || forceMapLoaded)
-					g_game.internalRemoveItem(NULL, item);
-			}
-		}
+		if(!(thing = tile->__getThing(i)) || !(item = thing->getItem()))
+			continue;
+
+		if(!item->isLoadedFromMap() || forceMapLoaded)
+			g_game.internalRemoveItem(NULL, item);
 	}
 
 	lua_pushboolean(L, true);
@@ -4635,17 +4635,16 @@ int32_t LuaInterface::luaGetTileItemByType(lua_State* L)
 	}
 
 	ScriptEnviroment* env = getEnv();
-	Item* item = NULL;
-	for(uint32_t i = 0; i < tile->getThingCount(); ++i)
+	if(TileItemVector* items = tile->getItemList())
 	{
-		if(!(item = tile->__getThing(i)->getItem()))
-			continue;
+		for(ItemVector::iterator it = items->begin(); it != items->end(); ++it)
+		{
+			if(Item::items[(*it)->getID()].type != (ItemTypes_t)rType)
+				continue;
 
-		if(Item::items[item->getID()].type != (ItemTypes_t)rType)
-			continue;
-
-		pushThing(L, item, env->addThing(item));
-		return 1;
+			pushThing(L, *it, env->addThing(*it));
+			return 1;
+		}
 	}
 
 	pushThing(L, NULL, 0);
