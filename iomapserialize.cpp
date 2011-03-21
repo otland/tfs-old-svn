@@ -762,41 +762,38 @@ bool IOMapSerialize::saveItems(Database* db, uint32_t& tileId, uint32_t houseId,
 	query_insert.setQuery("INSERT INTO `tile_items` (`tile_id`, `world_id`, `sid`, `pid`, `itemtype`, `count`, `attributes`) VALUES ");
 
 	DBQuery query;
-	if(TileItemVector* items = tile->getItemList())
+	for(int32_t i = 0; i < thingCount; ++i)
 	{
-		for(ItemVector::iterator it = items->begin(); it != items->end(); ++it)
+		if(!(item = tile->__getThing(i)->getItem()) || (!item->isMovable() && !item->forceSerialize()))
+			continue;
+
+		if(!stored)
 		{
-			if(!(item = *it) || (!item->isMovable() && !item->forceSerialize()))
-				continue;
-
-			if(!stored)
-			{
-				Position tilePosition = tile->getPosition();
-				query << "INSERT INTO `tiles` (`id`, `world_id`, `house_id`, `x`, `y`, `z`) VALUES ("
-					<< tileId << ", " << g_config.getNumber(ConfigManager::WORLD_ID) << ", " << houseId << ", "
-					<< tilePosition.x << ", " << tilePosition.y << ", " << tilePosition.z << ")";
-				if(!db->query(query.str()))
-					return false;
-
-				stored = true;
-				query.str("");
-			}
-
-			PropWriteStream propWriteStream;
-			item->serializeAttr(propWriteStream);
-
-			uint32_t attributesSize = 0;
-			const char* attributes = propWriteStream.getStream(attributesSize);
-
-			query << tileId << ", " << g_config.getNumber(ConfigManager::WORLD_ID) << ", " << ++runningId << ", " << parentId << ", "
-				<< item->getID() << ", " << (int32_t)item->getSubType() << ", " << db->escapeBlob(attributes, attributesSize);
-			if(!query_insert.addRow(query.str()))
+			Position tilePosition = tile->getPosition();
+			query << "INSERT INTO `tiles` (`id`, `world_id`, `house_id`, `x`, `y`, `z`) VALUES ("
+			<< tileId << ", " << g_config.getNumber(ConfigManager::WORLD_ID) << ", " << houseId << ", "
+			<< tilePosition.x << ", " << tilePosition.y << ", " << tilePosition.z << ")";
+			if(!db->query(query.str()))
 				return false;
 
+			stored = true;
 			query.str("");
-			if(item->getContainer())
-				containerStackList.push_back(std::make_pair(item->getContainer(), runningId));
 		}
+
+		PropWriteStream propWriteStream;
+		item->serializeAttr(propWriteStream);
+
+		uint32_t attributesSize = 0;
+		const char* attributes = propWriteStream.getStream(attributesSize);
+
+		query << tileId << ", " << g_config.getNumber(ConfigManager::WORLD_ID) << ", " << ++runningId << ", " << parentId << ", "
+			<< item->getID() << ", " << (int32_t)item->getSubType() << ", " << db->escapeBlob(attributes, attributesSize);
+		if(!query_insert.addRow(query.str()))
+			return false;
+
+		query.str("");
+		if(item->getContainer())
+			containerStackList.push_back(std::make_pair(item->getContainer(), runningId));
 	}
 
 	Container* container = NULL;
