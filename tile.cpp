@@ -685,31 +685,26 @@ ReturnValue Tile::__queryAdd(int32_t, const Thing* thing, uint32_t,
 		bool hasHangable = false, supportHangable = false;
 		if(items)
 		{
-			Thing* iThing = NULL;
-			for(uint32_t i = 0; i < getThingCount(); ++i)
+			for(ItemVector::iterator it = items->begin(); it != items->end(); ++it)
 			{
-				iThing = __getThing(i);
-				if(const Item* iItem = iThing->getItem())
-				{
-					const ItemType& iType = Item::items[iItem->getID()];
-					if(iType.isHangable)
-						hasHangable = true;
+				const ItemType& iType = Item::items[(*it)->getID()];
+				if(iType.isHangable)
+					hasHangable = true;
 
-					if(iType.isHorizontal || iType.isVertical)
-						supportHangable = true;
+				if(iType.isHorizontal || iType.isVertical)
+					supportHangable = true;
 
-					if((isHangable && (iType.isHorizontal || iType.isVertical)) || !iItem->isBlocking(NULL))
-						continue;
+				if((isHangable && (iType.isHorizontal || iType.isVertical)) || !(*it)->isBlocking(NULL))
+					continue;
 
-					if(!item->isPickupable())
-						return RET_NOTPOSSIBLE;
+				if(!item->isPickupable())
+					return RET_NOTPOSSIBLE;
 
-					if(iType.allowPickupable)
-						continue;
+				if(iType.allowPickupable)
+					continue;
 
-					if(!iType.hasHeight || iType.pickupable || iType.isBed())
-						return RET_NOTPOSSIBLE;
-				}
+				if(!iType.hasHeight || iType.pickupable || iType.isBed())
+					return RET_NOTPOSSIBLE;
 			}
 		}
 
@@ -1407,18 +1402,15 @@ int32_t Tile::__getIndexOfThing(const Thing* thing) const
 
 uint32_t Tile::__getItemTypeCount(uint16_t itemId, int32_t subType /*= -1*/) const
 {
-	uint32_t count = 0;
-	Thing* thing = NULL;
-	for(uint32_t i = 0; i < getThingCount(); ++i)
-	{
-		if(!(thing = __getThing(i)))
-			continue;
+	TileItemVector* items = getItemList();
+	if(!items)
+		return 0;
 
-		if(const Item* item = thing->getItem())
-		{
-			if(item->getID() == itemId)
-				count += Item::countByType(item, subType);
-		}
+	uint32_t count = 0;
+	for(ItemVector::iterator it = items->begin(); it != items->end(); ++it)
+	{
+		if((*it)->getID() == itemId)
+			count += Item::countByType(*it, subType);
 	}
 
 	return count;
@@ -1516,7 +1508,7 @@ void Tile::postRemoveNotification(Creature* actor, Thing* thing, const Cylinder*
 {
 	const SpectatorVec& list = g_game.getSpectators(pos);
 	SpectatorVec::const_iterator it;
-	/*if(getThingCount() > 8)
+	/*if(!thing->isRemoved() && getThingCount() > 8)
 		onUpdateTile();*/
 
 	Player* tmpPlayer = NULL;
