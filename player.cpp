@@ -1582,7 +1582,7 @@ void Player::onCreatureMove(const Creature* creature, const Tile* newTile, const
 void Player::onAddContainerItem(const Container* container, const Item* item)
 {
 	checkTradeState(item);
-	if(const_cast<Container*>(container) != backpack.first || backpack.first->full())
+	if(backpack.first && (const_cast<Container*>(container) != backpack.first || backpack.first->full()))
 		backpack.first = NULL;
 }
 
