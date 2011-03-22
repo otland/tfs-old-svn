@@ -3809,6 +3809,9 @@ void Player::onTargetDrain(Creature* target, int32_t points)
 		&& target->getMonster() && target->getMonster()->isHostile()) //we have fulfilled a requirement for shared experience
 		getParty()->addPlayerDamageMonster(this, points);
 
+	if(!points)
+		return;
+
 	char buffer[100];
 	sprintf(buffer, "You deal %d damage to %s.", points, target->getNameDescription().c_str());
 	sendTextMessage(MSG_STATUS_DEFAULT, buffer);
@@ -3817,26 +3820,28 @@ void Player::onTargetDrain(Creature* target, int32_t points)
 void Player::onSummonTargetDrain(Creature* summon, Creature* target, int32_t points)
 {
 	Creature::onSummonTargetDrain(summon, target, points);
+	if(!points)
+		return;
 
 	char buffer[100];
 	sprintf(buffer, "Your %s deals %d damage to %s.", summon->getName().c_str(), points, target->getNameDescription().c_str());
 	sendTextMessage(MSG_EVENT_DEFAULT, buffer);
 }
 
-void Player::onTargetGainHealth(Creature* target, int32_t points)
+void Player::onTargetGain(Creature* target, int32_t points)
 {
-	Creature::onTargetGainHealth(target, points);
-	if(target && getParty())
-	{
-		Player* tmpPlayer = NULL;
-		if(target->getPlayer())
-			tmpPlayer = target->getPlayer();
-		else if(target->getMaster() && target->getMaster()->getPlayer())
-			tmpPlayer = target->getMaster()->getPlayer();
+	Creature::onTargetGain(target, points);
+	if(!target || !getParty())
+		return;
 
-		if(isPartner(tmpPlayer))
-			party->addPlayerHealedMember(this, points);
-	}
+	Player* tmpPlayer = NULL;
+	if(target->getPlayer())
+		tmpPlayer = target->getPlayer();
+	else if(target->getMaster() && target->getMaster()->getPlayer())
+		tmpPlayer = target->getMaster()->getPlayer();
+
+	if(isPartner(tmpPlayer))
+		party->addPlayerHealedMember(this, points);
 }
 #ifdef __WAR_SYSTEM__
 
