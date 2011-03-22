@@ -3823,9 +3823,9 @@ void Player::onSummonTargetDrain(Creature* summon, Creature* target, int32_t poi
 	sendTextMessage(MSG_EVENT_DEFAULT, buffer);
 }
 
-void Player::onTargetCreatureGainHealth(Creature* target, int32_t points)
+void Player::onTargetGainHealth(Creature* target, int32_t points)
 {
-	Creature::onTargetCreatureGainHealth(target, points);
+	Creature::onTargetGainHealth(target, points);
 	if(target && getParty())
 	{
 		Player* tmpPlayer = NULL;
