@@ -363,24 +363,26 @@ class Creature : public AutoId, virtual public Thing
 		virtual void onEndCondition(ConditionType_t type);
 		virtual void onTickCondition(ConditionType_t type, int32_t interval, bool& _remove);
 		virtual void onCombatRemoveCondition(const Creature* attacker, Condition* condition);
-		virtual void onAttackedCreature(Creature*) {}
-		virtual void onSummonAttackedCreature(Creature*, Creature*) {}
+		virtual void onTarget(Creature*) {}
+		virtual void onSummonTarget(Creature*, Creature*) {}
 		virtual void onAttacked() {}
-		virtual void onAttackedCreatureDrainHealth(Creature* target, int32_t points);
-		virtual void onSummonAttackedCreatureDrainHealth(Creature*, Creature*, int32_t) {}
-		virtual void onAttackedCreatureDrainMana(Creature* target, int32_t points);
-		virtual void onSummonAttackedCreatureDrainMana(Creature*, Creature*, int32_t) {}
-		virtual void onAttackedCreatureDrain(Creature* target, int32_t points);
-		virtual void onSummonAttackedCreatureDrain(Creature*, Creature*, int32_t) {}
-		virtual void onTargetCreatureGainHealth(Creature* target, int32_t points);
-		virtual void onAttackedCreatureKilled(Creature* target);
+		virtual void onTargetDrainHealth(Creature* target, int32_t points);
+		virtual void onSummonTargetDrainHealth(Creature*, Creature*, int32_t) {}
+		virtual void onTargetDrainMana(Creature* target, int32_t points);
+		virtual void onSummonTargetDrainMana(Creature*, Creature*, int32_t) {}
+		virtual void onTargetDrain(Creature* target, int32_t points);
+		virtual void onSummonTargetDrain(Creature*, Creature*, int32_t) {}
+		virtual void onTargetGainHealth(Creature* target, int32_t points);
+		virtual void onTargetGainMana(Creature* target, int32_t points);
+		virtual void onTargetGain(Creature* target, int32_t points);
+		virtual void onTargetKilled(Creature* target);
 		virtual bool onKilledCreature(Creature* target, DeathEntry& entry);
 		virtual void onGainExperience(double& gainExp, Creature* target, bool multiplied);
 		virtual void onGainSharedExperience(double& gainExp, Creature* target, bool multiplied);
-		virtual void onAttackedCreatureBlockHit(Creature*, BlockType_t) {}
+		virtual void onTargetBlockHit(Creature*, BlockType_t) {}
 		virtual void onBlockHit(BlockType_t) {}
 		virtual void onChangeZone(ZoneType_t zone);
-		virtual void onAttackedCreatureChangeZone(ZoneType_t zone);
+		virtual void onTargetChangeZone(ZoneType_t zone);
 		virtual void onIdleStatus();
 
 		virtual void getCreatureLight(LightInfo& light) const;
@@ -403,7 +405,7 @@ class Creature : public AutoId, virtual public Thing
 		virtual void onCreatureMove(const Creature* creature, const Tile* newTile, const Position& newPos,
 			const Tile* oldTile, const Position& oldPos, bool teleport);
 
-		virtual void onAttackedCreatureDisappear(bool) {}
+		virtual void onTargetDisappear(bool) {}
 		virtual void onFollowCreatureDisappear(bool) {}
 
 		virtual void onCreatureTurn(const Creature*) {}

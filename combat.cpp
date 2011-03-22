@@ -584,11 +584,16 @@ bool Combat::CombatConditionFunc(Creature* caster, Creature* target, const Comba
 		if(caster != target && target->isImmune((*it)->getType()))
 			continue;
 
+		if(params.isAggressive)
+			caster->onTargetDrain(target, 0);
+		else
+			caster->onTargetGain(target, 0);
+
 		Condition* tmp = (*it)->clone();
 		if(caster)
 			tmp->setParam(CONDITIONPARAM_OWNER, caster->getID());
 
-		//TODO: infight condition until all aggressive conditions has ended
+		//TODO: infight condition until all aggressive conditions has ended [?]
 		if(!target->addCombatCondition(tmp) && result)
 			result = false;
 	}

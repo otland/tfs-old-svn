@@ -80,9 +80,9 @@ class Monster : public Creature
 		void setSpawn(Spawn* _spawn) {spawn = _spawn;}
 		void setRaid(Raid* _raid) {raid = _raid;}
 
-		virtual void onAttackedCreature(Creature* target);
-		virtual void onAttackedCreatureDisappear(bool isLogout);
-		virtual void onAttackedCreatureDrain(Creature* target, int32_t points);
+		virtual void onTarget(Creature* target);
+		virtual void onTargetDisappear(bool isLogout);
+		virtual void onTargetDrain(Creature* target, int32_t points);
 
 		virtual void onCreatureAppear(const Creature* creature);
 		virtual void onCreatureDisappear(const Creature* creature, bool isLogout);

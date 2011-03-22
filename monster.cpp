@@ -112,14 +112,14 @@ Monster::~Monster()
 	}
 }
 
-void Monster::onAttackedCreature(Creature* target)
+void Monster::onTarget(Creature* target)
 {
-	Creature::onAttackedCreature(target);
+	Creature::onTarget(target);
 	if(isSummon())
-		master->onSummonAttackedCreature(this, target);
+		master->onSummonTarget(this, target);
 }
 
-void Monster::onAttackedCreatureDisappear(bool)
+void Monster::onTargetDisappear(bool)
 {
 #ifdef __DEBUG__
 	std::clog << "Attacked creature disappeared." << std::endl;
@@ -128,11 +128,11 @@ void Monster::onAttackedCreatureDisappear(bool)
 	extraMeleeAttack = true;
 }
 
-void Monster::onAttackedCreatureDrain(Creature* target, int32_t points)
+void Monster::onTargetDrain(Creature* target, int32_t points)
 {
-	Creature::onAttackedCreatureDrain(target, points);
+	Creature::onTargetDrain(target, points);
 	if(isSummon())
-		master->onSummonAttackedCreatureDrain(this, target, points);
+		master->onSummonTargetDrain(this, target, points);
 }
 
 void Monster::onCreatureAppear(const Creature* creature)

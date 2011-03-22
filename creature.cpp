@@ -487,7 +487,7 @@ void Creature::internalCreatureDisappear(const Creature* creature, bool isLogout
 	if(attackedCreature == creature)
 	{
 		setAttackedCreature(NULL);
-		onAttackedCreatureDisappear(isLogout);
+		onTargetDisappear(isLogout);
 	}
 
 	if(followCreature == creature)
@@ -511,7 +511,7 @@ void Creature::onChangeZone(ZoneType_t zone)
 		internalCreatureDisappear(attackedCreature, false);
 }
 
-void Creature::onAttackedCreatureChangeZone(ZoneType_t zone)
+void Creature::onTargetChangeZone(ZoneType_t zone)
 {
 	if(zone == ZONE_PROTECTION)
 		internalCreatureDisappear(attackedCreature, false);
@@ -674,7 +674,7 @@ void Creature::onCreatureMove(const Creature* creature, const Tile* newTile, con
 					boost::bind(&Game::checkCreatureAttack, &g_game, getID())));
 
 			if(newTile->getZone() != oldTile->getZone())
-				onAttackedCreatureChangeZone(attackedCreature->getZone());
+				onTargetChangeZone(attackedCreature->getZone());
 		}
 		else
 			internalCreatureDisappear(attackedCreature, false);
@@ -736,7 +736,7 @@ bool Creature::onDeath()
 	for(CountMap::iterator it = damageMap.begin(); it != damageMap.end(); ++it)
 	{
 		if((tmp = g_game.getCreatureByID(it->first)))
-			tmp->onAttackedCreatureKilled(this);
+			tmp->onTargetKilled(this);
 	}
 
 	dropCorpse(deathList);
@@ -914,7 +914,7 @@ void Creature::gainHealth(Creature* caster, int32_t healthGain)
 
 		int32_t effectiveGain = getHealth() - prevHealth;
 		if(caster)
-			caster->onTargetCreatureGainHealth(this, effectiveGain);
+			caster->onTargetGainHealth(this, effectiveGain);
 	}
 	else
 		changeHealth(healthGain);
@@ -927,7 +927,7 @@ void Creature::drainHealth(Creature* attacker, CombatType_t combatType, int32_t 
 
 	changeHealth(-damage);
 	if(attacker)
-		attacker->onAttackedCreatureDrainHealth(this, damage);
+		attacker->onTargetDrainHealth(this, damage);
 }
 
 void Creature::drainMana(Creature* attacker, CombatType_t combatType, int32_t damage)
@@ -937,7 +937,7 @@ void Creature::drainMana(Creature* attacker, CombatType_t combatType, int32_t da
 
 	changeMana(-damage);
 	if(attacker)
-		attacker->onAttackedCreatureDrainMana(this, damage);
+		attacker->onTargetDrainMana(this, damage);
 }
 
 BlockType_t Creature::blockHit(Creature* attacker, CombatType_t combatType, int32_t& damage,
@@ -1000,8 +1000,8 @@ BlockType_t Creature::blockHit(Creature* attacker, CombatType_t combatType, int3
 
 	if(attacker)
 	{
-		attacker->onAttackedCreature(this);
-		attacker->onAttackedCreatureBlockHit(this, blockType);
+		attacker->onTarget(this);
+		attacker->onTargetBlockHit(this, blockType);
 	}
 
 	onAttacked();
@@ -1023,7 +1023,7 @@ bool Creature::setAttackedCreature(Creature* creature)
 	attackedCreature = creature;
 	if(attackedCreature)
 	{
-		onAttackedCreature(attackedCreature);
+		onTarget(attackedCreature);
 		attackedCreature->onAttacked();
 	}
 
@@ -1235,27 +1235,37 @@ void Creature::onIdleStatus()
 	}
 }
 
-void Creature::onAttackedCreatureDrainHealth(Creature* target, int32_t points)
+void Creature::onTargetDrainHealth(Creature* target, int32_t points)
 {
-	onAttackedCreatureDrain(target, points);
+	onTargetDrain(target, points);
 }
 
-void Creature::onAttackedCreatureDrainMana(Creature* target, int32_t points)
+void Creature::onTargetDrainMana(Creature* target, int32_t points)
 {
-	onAttackedCreatureDrain(target, points);
+	onTargetDrain(target, points);
 }
 
-void Creature::onAttackedCreatureDrain(Creature* target, int32_t points)
+void Creature::onTargetDrain(Creature* target, int32_t points)
 {
 	target->addDamagePoints(this, points);
 }
 
-void Creature::onTargetCreatureGainHealth(Creature* target, int32_t points)
+void Creature::onTargetGainHealth(Creature* target, int32_t points)
+{
+	onTargetGain(target, points);
+}
+
+void Creature::onTargetGainMana(Creature* target, int32_t points)
+{
+	onTargetGain(target, points);
+}
+
+void Creature::onTargetGain(Creature* target, int32_t points)
 {
 	target->addHealPoints(this, points);
 }
 
-void Creature::onAttackedCreatureKilled(Creature* target)
+void Creature::onTargetKilled(Creature* target)
 {
 	if(target == this)
 		return;

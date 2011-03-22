@@ -685,7 +685,7 @@ ReturnValue Tile::__queryAdd(int32_t, const Thing* thing, uint32_t,
 		bool hasHangable = false, supportHangable = false;
 		if(items)
 		{
-			for(ItemVector::iterator it = items->begin(); it != items->end(); ++it)
+			for(ItemVector::const_iterator it = items->begin(); it != items->end(); ++it)
 			{
 				const ItemType& iType = Item::items[(*it)->getID()];
 				if(iType.isHangable)

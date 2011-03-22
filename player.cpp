@@ -1388,7 +1388,7 @@ void Player::onCreatureAppear(const Creature* creature)
 		std::clog << name << " has logged in." << std::endl;
 }
 
-void Player::onAttackedCreatureDisappear(bool isLogout)
+void Player::onTargetDisappear(bool isLogout)
 {
 	sendCancelTarget();
 	if(!isLogout)
@@ -1409,7 +1409,7 @@ void Player::onChangeZone(ZoneType_t zone)
 		if(attackedCreature && !hasFlag(PlayerFlag_IgnoreProtectionZone))
 		{
 			setAttackedCreature(NULL);
-			onAttackedCreatureDisappear(false);
+			onTargetDisappear(false);
 		}
 
 		if(g_config.getBool(ConfigManager::UNMOUNT_PLAYER_IN_PZ))
@@ -1420,17 +1420,17 @@ void Player::onChangeZone(ZoneType_t zone)
 	sendIcons();
 }
 
-void Player::onAttackedCreatureChangeZone(ZoneType_t zone)
+void Player::onTargetChangeZone(ZoneType_t zone)
 {
 	if(zone == ZONE_PROTECTION && !hasFlag(PlayerFlag_IgnoreProtectionZone))
 	{
 		setAttackedCreature(NULL);
-		onAttackedCreatureDisappear(false);
+		onTargetDisappear(false);
 	}
 	else if(zone == ZONE_OPTIONAL && attackedCreature->getPlayer() && !hasFlag(PlayerFlag_IgnoreProtectionZone))
 	{
 		setAttackedCreature(NULL);
-		onAttackedCreatureDisappear(false);
+		onTargetDisappear(false);
 	}
 	else if(zone == ZONE_OPEN && g_game.getWorldType() == WORLDTYPE_OPTIONAL && attackedCreature->getPlayer()
 #ifdef __WAR_SYSTEM__
@@ -1440,7 +1440,7 @@ void Player::onAttackedCreatureChangeZone(ZoneType_t zone)
 	{
 		//attackedCreature can leave a pvp zone if not pzlocked
 		setAttackedCreature(NULL);
-		onAttackedCreatureDisappear(false);
+		onTargetDisappear(false);
 	}
 }
 
@@ -2003,9 +2003,9 @@ void Player::onBlockHit(BlockType_t)
 	}
 }
 
-void Player::onAttackedCreatureBlockHit(Creature* target, BlockType_t blockType)
+void Player::onTargetBlockHit(Creature* target, BlockType_t blockType)
 {
-	Creature::onAttackedCreatureBlockHit(target, blockType);
+	Creature::onTargetBlockHit(target, blockType);
 	lastAttackBlockType = blockType;
 	switch(blockType)
 	{
@@ -3719,9 +3719,9 @@ void Player::onTickCondition(ConditionType_t type, int32_t interval, bool& _remo
 		useStamina(-(interval * g_config.getNumber(ConfigManager::RATE_STAMINA_LOSS)));
 }
 
-void Player::onAttackedCreature(Creature* target)
+void Player::onTarget(Creature* target)
 {
-	Creature::onAttackedCreature(target);
+	Creature::onTarget(target);
 	if(hasFlag(PlayerFlag_NotGainInFight))
 		return;
 
@@ -3770,10 +3770,10 @@ void Player::onAttackedCreature(Creature* target)
 	}
 }
 
-void Player::onSummonAttackedCreature(Creature* summon, Creature* target)
+void Player::onSummonTarget(Creature* summon, Creature* target)
 {
-	Creature::onSummonAttackedCreature(summon, target);
-	onAttackedCreature(target);
+	Creature::onSummonTarget(summon, target);
+	onTarget(target);
 }
 
 void Player::onAttacked()
@@ -3802,9 +3802,9 @@ void Player::onPlacedCreature()
 		kick(true, true);
 }
 
-void Player::onAttackedCreatureDrain(Creature* target, int32_t points)
+void Player::onTargetDrain(Creature* target, int32_t points)
 {
-	Creature::onAttackedCreatureDrain(target, points);
+	Creature::onTargetDrain(target, points);
 	if(party && target && (!target->getMaster() || !target->getMaster()->getPlayer())
 		&& target->getMonster() && target->getMonster()->isHostile()) //we have fulfilled a requirement for shared experience
 		getParty()->addPlayerDamageMonster(this, points);
@@ -3814,9 +3814,9 @@ void Player::onAttackedCreatureDrain(Creature* target, int32_t points)
 	sendTextMessage(MSG_STATUS_DEFAULT, buffer);
 }
 
-void Player::onSummonAttackedCreatureDrain(Creature* summon, Creature* target, int32_t points)
+void Player::onSummonTargetDrain(Creature* summon, Creature* target, int32_t points)
 {
-	Creature::onSummonAttackedCreatureDrain(summon, target, points);
+	Creature::onSummonTargetDrain(summon, target, points);
 
 	char buffer[100];
 	sprintf(buffer, "Your %s deals %d damage to %s.", summon->getName().c_str(), points, target->getNameDescription().c_str());
@@ -3923,7 +3923,7 @@ bool Player::onKilledCreature(Creature* target, DeathEntry& entry)
 	if(!entry.isJustify() || !hasCondition(CONDITION_INFIGHT))
 		return true;
 
-	std::vector<uint32_t>::iterator it = std::find(revengeList.begin(), revengeList.end(), target->getGUID());
+	std::vector<uint32_t>::iterator it = std::find(revengeList.begin(), revengeList.end(), targetPlayer->getGUID());
 	if(!targetPlayer->hasAttacked(this) && target->getSkull() == SKULL_NONE && it == revengeList.end()
 		&& targetPlayer != this && (addUnjustifiedKill(targetPlayer,
 #ifndef __WAR_SYSTEM__
