@@ -3761,7 +3761,7 @@ void Player::onAttackedCreature(Creature* target)
 		)
 		return;
 
-	if(targetPlayer->getSkull() != SKULL_NONE || canRevenge(targetPlayer->getID()))
+	if(targetPlayer->getSkull() != SKULL_NONE || canRevenge(targetPlayer->getGUID()))
 		targetPlayer->sendCreatureSkull(this);
 	else if(!hasCustomFlag(PlayerCustomFlag_NotGainSkull))
 	{
@@ -3923,7 +3923,7 @@ bool Player::onKilledCreature(Creature* target, DeathEntry& entry)
 	if(!entry.isJustify() || !hasCondition(CONDITION_INFIGHT))
 		return true;
 
-	std::vector<uint32_t>::iterator it = std::find(revengeList.begin(), revengeList.end(), target->getID());
+	std::vector<uint32_t>::iterator it = std::find(revengeList.begin(), revengeList.end(), target->getGUID());
 	if(!targetPlayer->hasAttacked(this) && target->getSkull() == SKULL_NONE && it == revengeList.end()
 		&& targetPlayer != this && (addUnjustifiedKill(targetPlayer,
 #ifndef __WAR_SYSTEM__
@@ -4180,10 +4180,10 @@ Skulls_t Player::getSkullType(const Creature* creature) const
 		if(g_game.getWorldType() != WORLDTYPE_OPEN)
 			return SKULL_NONE;
 
-		if(canRevenge(player->getID()))
+		if(canRevenge(player->getGUID()))
 			return SKULL_ORANGE;
 
-		if((player == this || (skull != SKULL_NONE || player->canRevenge(id)))
+		if((player == this || (skull != SKULL_NONE || player->canRevenge(guid)))
 			&& player->hasAttacked(this)
 #ifdef __WAR_SYSTEM__
 			&& !player->isEnemy(this, false)

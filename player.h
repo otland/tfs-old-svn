@@ -468,10 +468,10 @@ class Player : public Creature, public Cylinder
 		virtual float getAttackFactor() const;
 		virtual float getDefenseFactor() const;
 
-		void addRevenge(uint32_t playerId) {revengeList.push_back(playerId);}
-		bool canRevenge(uint32_t playerId) const
+		void addRevenge(uint32_t playerGUID) {revengeList.push_back(playerGUID);}
+		bool canRevenge(uint32_t playerGUID) const
 		{
-			return std::find(revengeList.begin(), revengeList.end(), playerId) != revengeList.end();
+			return std::find(revengeList.begin(), revengeList.end(), playerGUID) != revengeList.end();
 		}
 
 		void addCooldown(uint32_t ticks, uint16_t spellId);

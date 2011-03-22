@@ -735,45 +735,45 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool preLo
 	}
 
 	query.str("");
-	query << "SELECT `pd`.`player_id`, `pd`.`date` FROM `player_killers` pk LEFT JOIN `killers` k"
+	query << "SELECT `pk`.`player_id`, `pd`.`date` FROM `player_killers` pk LEFT JOIN `killers` k"
 		<< " ON `pk`.`kill_id` = `k`.`id` LEFT JOIN `player_deaths` pd ON `k`.`death_id` = `pd`.`id`"
-		<< " WHERE `pk`.`player_id` = " << player->getGUID() << " AND `k`.`unjustified` = 0 AND "
+		<< " WHERE `pd`.`player_id` = " << player->getGUID() << " AND `k`.`unjustified` = 1 AND "
 		<< "`pd`.`date` >= " << (time(NULL) - (7 * 86400));
 #ifdef __WAR_SYSTEM__
 	query << " AND `k`.`war` = 0";
 #endif
 
-	std::map<uint32_t, time_t> kills;
+	std::map<uint32_t, time_t> deaths;
 	if((result = db->storeQuery(query.str())))
 	{
 		do
 		{
-			if(!kills[result->getDataInt("player_id")] || kills[result->getDataInt("player_id")]
+			if(!deaths[result->getDataInt("player_id")] || deaths[result->getDataInt("player_id")]
 				< (time_t)result->getDataInt("date")) // pick up the latest date
 			{
-				kills[result->getDataInt("player_id")] = (time_t)result->getDataInt("date");
+				deaths[result->getDataInt("player_id")] = (time_t)result->getDataInt("date");
 			}
 		}
 		while(result->next());
 		result->free();
 	}
 
-	if(!kills.empty())
+	if(!deaths.empty())
 	{
 		query.str("");
-		query << "SELECT `pk`.`player_id`, `pd`.`date` FROM `player_killers` pk LEFT JOIN `killers` k"
+		query << "SELECT `pd`.`player_id`, `pd`.`date` FROM `player_killers` pk LEFT JOIN `killers` k"
 			<< " ON `pk`.`kill_id` = `k`.`id` LEFT JOIN `player_deaths` pd ON `k`.`death_id` = `pd`.`id`"
-			<< " WHERE `pd`.`player_id` = " << player->getGUID() << " AND `k`.`unjustified` = 1 AND "
+			<< " WHERE `pk`.`player_id` = " << player->getGUID() << " AND `k`.`unjustified` = 0 AND "
 			<< "`pd`.`date` >= " << (time(NULL) - (7 * 86400));
-	#ifdef __WAR_SYSTEM__
+#ifdef __WAR_SYSTEM__
 
 		query << " AND `k`.`war` = 0";
-	#endif
+#endif
 		if((result = db->storeQuery(query.str())))
 		{
 			do
 			{
-				if(!kills[result->getDataInt("player_id")] || kills[result->getDataInt("player_id")] < (time_t)result->getDataInt("date"))
+				if(!deaths[result->getDataInt("player_id")] || deaths[result->getDataInt("player_id")] < (time_t)result->getDataInt("date"))
 					player->addRevenge(result->getDataInt("player_id"));
 			}
 			while(result->next());
