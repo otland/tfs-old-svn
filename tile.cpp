@@ -657,7 +657,7 @@ ReturnValue Tile::__queryAdd(int32_t, const Thing* thing, uint32_t,
 			std::clog << "[Notice - Tile::__queryAdd] thing->getParent() == NULL" << std::endl;
 
 #endif
-		int32_t itemLimit = 0xFFFF;
+		uint32_t itemLimit = 0xFFFF;
 		if(hasFlag(TILESTATE_PROTECTIONZONE))
 			itemLimit = g_config.getNumber(ConfigManager::PROTECTION_TILE_LIMIT);
 		else
@@ -1402,12 +1402,12 @@ int32_t Tile::__getIndexOfThing(const Thing* thing) const
 
 uint32_t Tile::__getItemTypeCount(uint16_t itemId, int32_t subType /*= -1*/) const
 {
-	TileItemVector* items = getItemList();
+	const TileItemVector* items = getItemList();
 	if(!items)
 		return 0;
 
 	uint32_t count = 0;
-	for(ItemVector::iterator it = items->begin(); it != items->end(); ++it)
+	for(ItemVector::const_iterator it = items->begin(); it != items->end(); ++it)
 	{
 		if((*it)->getID() == itemId)
 			count += Item::countByType(*it, subType);
