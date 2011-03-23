@@ -229,46 +229,6 @@ std::string transformToSHA512(std::string plainText, bool upperCase)
 #endif
 }
 
-std::string transformToVAHash(std::string plainText, bool upperCase)
-{
-#ifndef __NO_CRYPTOPP__
-	std::string key = g_config.getString(ConfigManager::ENCRYPTION_KEY);
-	// This is basicaly a base64 string out of a sha512 lowcase string of the HMAC of the plaintext sha256 string with a configurated key
-	// Currently this removes all known weaknesses in the sha-2 implantation
-	// base64(HMAC<SHA512>(key, SHA256(plainText)));
-
-	// Get SHA256
-	std::string sha256 = transformToSHA256(plainText, false);
-
-	// This holds the HMAC
-	// Use native byte instead of casting chars
-	byte digest[CryptoPP::SHA512::DIGESTSIZE];
-
-	// Do the actual calculation and setup, require a byte value so we need a cast on the key and the input
-	CryptoPP::HMAC<CryptoPP::SHA512>((const byte*)key.c_str(), key.length()).CalculateDigest(
-		digest, (const byte*)sha256.c_str(), CryptoPP::SHA256::DIGESTSIZE);
-
-	// Crypto++ Base64Encoder object
-	CryptoPP::Base64Encoder encoder;
-
-	// Our output
-	std::string output;
-
-	// Encode to base64
-	encoder.Attach(new CryptoPP::StringSink(output));
-	encoder.Put(digest, sizeof(digest));
-	encoder.MessageEnd();
-
-	// Make sure we want uppercase
-	if(upperCase)
-		return output;
-
-	// Convert to lowercase if needed
-	return asLowerCaseString(output);
-#endif
-	return "";
-}
-
 void _encrypt(std::string& str, bool upperCase)
 {
 	switch(g_config.getNumber(ConfigManager::ENCRYPTION))
@@ -285,11 +245,6 @@ void _encrypt(std::string& str, bool upperCase)
 		case ENCRYPTION_SHA512:
 			str = transformToSHA512(str, upperCase);
 			break;
-#ifndef __NO_CRYPTOPP__
-		case ENCRYPTION_VAHASH:
-			str = transformToVAHash(str, upperCase);
-			break;
-#endif
 		default:
 		{
 			if(upperCase)
