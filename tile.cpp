@@ -663,7 +663,7 @@ ReturnValue Tile::__queryAdd(int32_t, const Thing* thing, uint32_t,
 		else
 			itemLimit = g_config.getNumber(ConfigManager::TILE_LIMIT);
 
-		if(items && items->size() >= itemLimit)
+		if(items && itemLimit != 0 && items->size() >= itemLimit)
 			return RET_TILEISFULL;
 
 		if(hasBitSet(FLAG_NOLIMIT, flags))
