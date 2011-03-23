@@ -44,11 +44,6 @@
 	#define	__FUNCTION__ __func__
 #endif
 
-#ifndef __NO_CRYPTOPP__
-	#define CRYPTOPP_ENABLE_NAMESPACE_WEAK 1
-	#define CRYPTOPP_DEFAULT_NO_DLL
-#endif
-
 #define BOOST_FILESYSTEM_VERSION 2
 #define BOOST_ASIO_ENABLE_CANCELIO 1
 #ifdef _MSC_VER

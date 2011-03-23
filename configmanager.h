@@ -52,7 +52,6 @@ class ConfigManager
 			#endif
 			SQL_FILE,
 			ENCRYPTION_TYPE,
-			ENCRYPTION_KEY,
 			RSA_PRIME1,
 			RSA_PRIME2,
 			RSA_PUBLIC,
