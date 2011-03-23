@@ -3992,7 +3992,7 @@ int32_t LuaInterface::luaDoRelocate(lua_State* L)
 	PositionEx fromPos;
 	popPosition(L, fromPos);
 
-	Tile* fromTile = g_game.getTile(fromPos.x, fromPos.y, fromPos.z);
+	Tile* fromTile = g_game.getTile(fromPos);
 	if(!fromTile)
 	{
 		errorEx(getError(LUA_ERROR_TILE_NOT_FOUND));
@@ -4000,7 +4000,7 @@ int32_t LuaInterface::luaDoRelocate(lua_State* L)
 		return 1;
 	}
 
-	Tile* toTile = g_game.getTile(toPos.x, toPos.y, toPos.z);
+	Tile* toTile = g_game.getTile(toPos);
 	if(!toTile)
 	{
 		errorEx(getError(LUA_ERROR_TILE_NOT_FOUND));
@@ -4073,7 +4073,7 @@ int32_t LuaInterface::luaDoRelocate(lua_State* L)
 		for(CreatureVector::iterator it = creatureVector->begin(); it != creatureVector->end(); ++it)
 		{
 			if(Creature* creature = (*it))
-				g_game.internalTeleport(creature, toPos, false);
+				g_game.internalMoveCreature(NULL, creature, fromTile, toTile, FLAG_NOLIMIT);
 		}
 	}
 
@@ -5811,9 +5811,6 @@ int32_t LuaInterface::luaCreateCombatObject(lua_State* L)
 
 bool LuaInterface::getArea(lua_State* L, std::list<uint32_t>& list, uint32_t& rows)
 {
-	rows = 0;
-	uint32_t i = 0;
-
 	if(!lua_istable(L, -1))
 	{
 		errorEx("Object on the stack is not a table.");
@@ -5821,6 +5818,9 @@ bool LuaInterface::getArea(lua_State* L, std::list<uint32_t>& list, uint32_t& ro
 	}
 
 	lua_pushnil(L);
+	rows = 0;
+
+	uint32_t i = 0;
 	while(lua_next(L, -2))
 	{
 		lua_pushnil(L);
@@ -5837,12 +5837,12 @@ bool LuaInterface::getArea(lua_State* L, std::list<uint32_t>& list, uint32_t& ro
 	}
 
 	lua_pop(L, 1);
-	return (rows != 0);
+	return rows;
 }
 
 int32_t LuaInterface::luaCreateCombatArea(lua_State* L)
 {
-	//createCombatArea( {area}[, {extArea}])
+	//createCombatArea({area}[, {extArea}])
 	ScriptEnviroment* env = getEnv();
 	if(env->getScriptId() != EVENT_ID_LOADING)
 	{

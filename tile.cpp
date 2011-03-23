@@ -657,13 +657,16 @@ ReturnValue Tile::__queryAdd(int32_t, const Thing* thing, uint32_t,
 			std::clog << "[Notice - Tile::__queryAdd] thing->getParent() == NULL" << std::endl;
 
 #endif
-		uint32_t itemLimit = 0xFFFF;
+		uint32_t itemLimit = 0;
 		if(hasFlag(TILESTATE_PROTECTIONZONE))
 			itemLimit = g_config.getNumber(ConfigManager::PROTECTION_TILE_LIMIT);
 		else
 			itemLimit = g_config.getNumber(ConfigManager::TILE_LIMIT);
 
-		if(items && itemLimit != 0 && items->size() >= itemLimit)
+		if(!itemLimit)
+			itemLimit = 0xFFFF;
+
+		if(items && items->size() >= itemLimit)
 			return RET_TILEISFULL;
 
 		if(hasBitSet(FLAG_NOLIMIT, flags))
