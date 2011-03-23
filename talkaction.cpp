@@ -30,6 +30,7 @@
 #include "status.h"
 #include "textlogger.h"
 
+#include <boost/version.hpp>
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
 #include "outputmessage.h"
 #include "connection.h"

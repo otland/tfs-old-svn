@@ -744,10 +744,10 @@ bool LuaInterface::loadDirectory(const std::string& dir, Npc* npc/* = NULL*/, bo
 	StringVec files;
 	for(boost::filesystem::directory_iterator it(dir), end; it != end; ++it)
 	{
-		std::string s = it->BOOST_LEAF;
+		std::string s = it->leaf();
 		if(boost::filesystem::is_directory(it->status()))
 		{
-			if(recursively && !loadDirectory(it->BOOST_LEAF + "/" + s, npc, recursively))
+			if(recursively && !loadDirectory(it->leaf() + "/" + s, npc, recursively))
 				return false;
 		}
 		else if((s.size() > 4 ? s.substr(s.size() - 4) : "") == ".lua")

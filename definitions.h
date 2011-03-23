@@ -49,6 +49,7 @@
 	#define CRYPTOPP_DEFAULT_NO_DLL
 #endif
 
+#define BOOST_FILESYSTEM_VERSION 2
 #define BOOST_ASIO_ENABLE_CANCELIO 1
 #ifdef _MSC_VER
 	#define __PRETTY_FUNCTION__ __FUNCDNAME__
@@ -161,12 +162,5 @@
 	#define DEBUG_REPORT ExceptionHandler::dumpStack();
 #else
 	#define DEBUG_REPORT
-#endif
-
-#include <boost/version.hpp>
-#if defined(BOOST_VERSION) && ((BOOST_VERSION / 100) % 100) >= 50
-	#define BOOST_LEAF path().filename().string()
-#else
-	#define BOOST_LEAF leaf()
 #endif
 #endif
