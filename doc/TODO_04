@@ -18,12 +18,5 @@
 			Po staremu prócz XML/
 ]
 
-
-	Patch IndexedTile changes from revscriptsys2
-		Assigned to: Elf
-
 	Deprecate several hardcoded systems (guild management, etc) and rescript them in Lua
 		Assigned to: slawkens
-
-	Add mysql++ support as default DB driver (more object oriented, fits better into C++ projects)
-		Assigned to: -

@@ -688,9 +688,11 @@
 			//
 		]
 	]
-	[ 0.4.0_DEV
+	[ 0.3.5 && 0.3.6
 		[ Note
 			We just had no time to finish this, as there are just too many of these files...
+			Preferably update your whole data, what should be usual with new release.
+			Mind it has been 4 months since last release.
 		]
 
 		[ A...
@@ -866,7 +868,7 @@
 			getGroupInfo(id), doPlayerAddFrags(cid, amount) (slawkens)
 		Possibility to update from 0.2.1 (Elf)
 	]
-	[ 0.4.0_DEV
+	[ 0.3.5
 		Full protocol 8.5 support (Elf, OpenTibia SVN, Talaturen)
 		Modifications system 'aka mods & moved custom things there (Elf, slawkens)
 		Guildhall support (Elf)
@@ -922,6 +924,12 @@
 		New doc: SQL_QUERIES (slawkens)
 		Updated license on all CPP/H files headers (Elf)
 	]
+	[ 0.3.6
+		New spells formulas!
+		NPCs OutfitModule (Elf)
+		Full 8.53 support, without wars (Elf)
+		Full 8.54 support (Elf)
+	]
 ]
 
 [ Deprecated
@@ -959,9 +967,12 @@
 		LuaFunction: getPlayerLookDir(cid), use getCreatureLookDirection(cid)
 		Integer return values of Lua functions, use booleans instead
 	]
-	[ 0.4.0_DEV
+	[ 0.3.5
 		LuaFunctions: getHouse*(houseId) (getHouseName, getHouseRent etc) - use getHouseInfo(houseId).name/owner/entry/rent/price/town, etc
 		LuaConstants: All are listed in compat.lua, though
+	]
+	[ 0.3.6
+		LuaFunctions: All item stats modifier, use now getItemAttribute, doItemSetAttribute and doItemEraseAttribute
 	]
 ]
 
@@ -1076,7 +1087,7 @@
 
 		... and few more.
 	]
-	[ 0.4.0_DEV
+	[ 0.3.5
 		NPC voices (Elf)
 		Some vocation attributes not working or working unproperly (Elf)
 		Account name cannot be same as password anymore (Elf)
@@ -1101,8 +1112,18 @@
 		Ghost Gamemaster showing effect(s) while casting spells- configurable (slawkens)
 		Ghost debugging players (OpenTibia SVN, Elf)
 		Promotion downgrading (Elf)
-		Some console errors.. (slawkens)
+		Some console errors... (slawkens)
+	]
+	[ 0.3.6
+		Spell spamming issue (Elf)
+		Premium stamina recovering (Elf)
+		Clean (Elf)
+		No yellow skull when player attacked self (Elf)
+		Some outfit ones (Elf)
+		Ghost (Elf)
+		All fixes from OpenTibia SVN (Open Tibia SVN, Elf)
+		All possible crashes (Elf)
 
-			and more more ... (Should be really stable & bug free!)
+			and much more ... (IT IS really stable & bug free!)
 	]
 ]

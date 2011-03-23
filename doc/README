@@ -24,10 +24,10 @@
 
 	.. also a thanks to the following people who has helped this
 	project by contributing something: Cayan, TheMask,
-		Rafael Hamdan, Fare-Fray, Kiwi Dan,
+		Stian, Rafael Hamdan, Fare-Fray, Kiwi Dan,
 		Piotrek1447, Hermes, Gesior.pl, levandi,
 		Casa, Winghawk, Nexoz, Godely, buzzbuzz2,
-		Chojrak.
+		Chojrak, Kiper
 ]
 
 [ LICENSE
@@ -44,10 +44,10 @@
 		Talaturen
 
 	C++ Programmer(s)
-		Dalkon
 		Elf
-		Fallen
 		Slawkens
+		Dalkon
+		Fallen
 		Talaturen
 
 	Lua Scripter(s)
@@ -59,6 +59,9 @@
 
 	Data Directory Manager(s)
 		Elf
+		Slawkens
+		Dalkon
+		Fallen
 		KaczooH
 
 	Documentation Manager(s)
@@ -99,7 +102,7 @@
 
 		Download required packages (Debian)
 			Launch a terminal, and paste in the following commands:
-				apt-get install libboost1.38-dev liblua5.1-0 liblua5.1-0-dev liblua50 liblua50-dev liblualib50 liblualib50-dev lua50 libsqlite0 libsqlite0-dev libsqlite3-0 libsqlite3-dev sqlite3 lua5.1 libmysql++-dev libgmp3-dev subversion make g++ libxml2 libxml2-dev libxml++2.6-dev libmysqlclient15-dev mysql-client-5.0 mysql-common mysql-server-5.0 gcc cpp automake autoconf pkg-config zlib1g-dev ccache libcrypto++-dev libssl-dev
+				apt-get install libboost1.38-dev liblua5.1-0 liblua5.1-0-dev liblua50 liblua50-dev liblualib50 liblualib50-dev lua50 libsqlite0 libsqlite0-dev libsqlite3-0 libsqlite3-dev sqlite3 lua5.1 libmysql++-dev libgmp3-dev subversion make g++ libxml2 libxml2-dev libxml++2.6-dev libmysqlclient15-dev mysql-client-5.0 mysql-common mysql-server-5.0 gcc cpp automake autoconf pkg-config zlib1g-dev ccache libssl-dev
 
 		Download sources
 			Launch a terminal, and paste in this command:
