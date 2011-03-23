@@ -66,10 +66,10 @@ class Event
 		virtual bool isScripted() const {return m_scripted != EVENT_SCRIPT_FALSE;}
 
 		bool loadBuffer(const std::string& buffer);
-		bool checkBuffer(const std::string& buffer) const;
+		bool checkBuffer(const std::string& base, const std::string& buffer) const;
 
 		bool loadScript(const std::string& script, bool file);
-		bool checkScript(const std::string& script, bool file) const;
+		bool checkScript(const std::string& base, const std::string& script, bool file) const;
 
 		virtual bool loadFunction(const std::string&) {return false;}
 

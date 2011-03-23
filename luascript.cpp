@@ -5811,6 +5811,7 @@ int32_t LuaInterface::luaCreateCombatObject(lua_State* L)
 
 bool LuaInterface::getArea(lua_State* L, std::list<uint32_t>& list, uint32_t& rows)
 {
+	rows = 0;
 	if(!lua_istable(L, -1))
 	{
 		errorEx("Object on the stack is not a table.");
@@ -5818,22 +5819,17 @@ bool LuaInterface::getArea(lua_State* L, std::list<uint32_t>& list, uint32_t& ro
 	}
 
 	lua_pushnil(L);
-	rows = 0;
-
-	uint32_t i = 0;
 	while(lua_next(L, -2))
 	{
 		lua_pushnil(L);
 		while(lua_next(L, -2))
 		{
 			list.push_back((uint32_t)lua_tonumber(L, -1));
-			lua_pop(L, 1); //removes value, keeps key for next iteration
-			++i;
+			lua_pop(L, 1);
 		}
 
-		lua_pop(L, 1); //removes value, keeps key for next iteration
+		lua_pop(L, 1);
 		++rows;
-		i = 0;
 	}
 
 	lua_pop(L, 1);
@@ -5852,23 +5848,24 @@ int32_t LuaInterface::luaCreateCombatArea(lua_State* L)
 	}
 
 	CombatArea* area = new CombatArea;
-	if(lua_gettop(L) > 1)
+	if(lua_gettop(L) > 1) //has extra parameter with diagonal area information
 	{
-		//has extra parameter with diagonal area information
-		uint32_t rowsExtArea;
+		uint32_t rowsExtArea = 0;
 		std::list<uint32_t> listExtArea;
-
-		getArea(L, listExtArea, rowsExtArea);
-		/*setup all possible rotations*/
-		area->setupExtArea(listExtArea, rowsExtArea);
+		if(getArea(L, listExtArea, rowsExtArea))
+			area->setupExtArea(listExtArea, rowsExtArea);
 	}
 
 	uint32_t rowsArea = 0;
 	std::list<uint32_t> listArea;
-	getArea(L, listArea, rowsArea);
-
-	area->setupArea(listArea, rowsArea);
-	lua_pushnumber(L, env->addCombatArea(area));
+	if(getArea(L, listArea, rowsArea))
+	{
+		area->setupArea(listArea, rowsArea);
+		lua_pushnumber(L, env->addCombatArea(area));
+	}
+	else
+		lua_pushboolean(L, false);
+	
 	return 1;
 }
 
