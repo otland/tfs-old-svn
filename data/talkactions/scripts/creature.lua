@@ -14,9 +14,11 @@ function onSay(cid, words, param, channel)
 		end
 	end
 
-	local position = getCreaturePosition(pid)
-	local effect = CONST_ME_MAGIC_RED
+	local position, effect = getCreaturePosition(pid), CONST_ME_MAGIC_RED
+	errors(false)
 	local ret = func(t[1], position, false)
+	errors(true)
+
 	if(tonumber(ret) == nil) then
 		effect = CONST_ME_POFF
 		doPlayerSendDefaultCancel(cid, (ret == false and RETURNVALUE_NOTPOSSIBLE or RETURNVALUE_NOTENOUGHROOM))

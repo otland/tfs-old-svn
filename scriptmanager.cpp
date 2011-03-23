@@ -69,49 +69,63 @@ modsLoaded(false)
 
 bool ScriptManager::loadSystem()
 {
+	std::clog << "> Loading weapons... ";
 	if(!g_weapons->loadFromXml())
 	{
-		std::clog << "> ERROR: Unable to load Weapons!" << std::endl;
+		std::clog << "failed!" << std::endl;
 		return false;
 	}
 
-	g_weapons->loadDefaults();
+	std::clog << "done." << std::endl << "> Preparing weapons... ";
+	if(!g_weapons->loadDefaults())
+	{
+		std::clog << "failed!" << std::endl;
+		return false;
+	}
+
+	std::clog << "done." << std::endl << "> Loading spells... ";
 	if(!g_spells->loadFromXml())
 	{
-		std::clog << "> ERROR: Unable to load Spells!" << std::endl;
+		std::clog << "failed!" << std::endl;
 		return false;
 	}
 
+	std::clog << "done." << std::endl << "> Loading actions... ";
 	if(!g_actions->loadFromXml())
 	{
-		std::clog << "> ERROR: Unable to load Actions!" << std::endl;
+		std::clog << "failed!" << std::endl;
 		return false;
 	}
 
+	std::clog << "done." << std::endl << "> Loading talkactions... ";
 	if(!g_talkActions->loadFromXml())
 	{
-		std::clog << "> ERROR: Unable to load TalkActions!" << std::endl;
+		std::clog << "failed!" << std::endl;
 		return false;
 	}
 
+	std::clog << "done." << std::endl << "> Loading movements... ";
 	if(!g_moveEvents->loadFromXml())
 	{
-		std::clog << "> ERROR: Unable to load MoveEvents!" << std::endl;
+		std::clog << "failed!" << std::endl;
 		return false;
 	}
 
+	std::clog << "done." << std::endl << "> Loading creaturescripts... ";
 	if(!g_creatureEvents->loadFromXml())
 	{
-		std::clog << "> ERROR: Unable to load CreatureEvents!" << std::endl;
+		std::clog << "failed!" << std::endl;
 		return false;
 	}
 
+	std::clog << "done." << std::endl << "> Loading globalscripts... ";
 	if(!g_globalEvents->loadFromXml())
 	{
-		std::clog << "> ERROR: Unable to load GlobalEvents!" << std::endl;
+		std::clog << "failed!" << std::endl;
 		return false;
 	}
 
+	std::clog << "done." << std::endl;
 	return true;
 }
 
@@ -120,7 +134,7 @@ bool ScriptManager::loadMods()
 	boost::filesystem::path modsPath(getFilePath(FILE_TYPE_MOD));
 	if(!boost::filesystem::exists(modsPath))
 	{
-		std::clog << "[Error - ScriptManager::loadMods] Couldn't locate main directory" << std::endl;
+		std::clog << "[Error - ScriptManager::loadMods] Could not locate mods directory" << std::endl;
 		return false;
 	}
 
