@@ -14,8 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////
-#ifdef __OTADMIN__
 #include "otpch.h"
+#ifdef __OTADMIN__
 #include <iostream>
 
 #include "admin.h"
