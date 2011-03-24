@@ -1812,7 +1812,7 @@ double Player::getFreeCapacity() const
 	if(hasFlag(PlayerFlag_CannotPickupItem))
 		return 0.00;
 	else if(hasFlag(PlayerFlag_HasInfiniteCapacity)
-		|| g_config.getBool(ConfigManager::USE_CAPACITY))
+		|| !g_config.getBool(ConfigManager::USE_CAPACITY))
 		return 10000.00;
 
 	return std::max(0.00, capacity - inventoryWeight);

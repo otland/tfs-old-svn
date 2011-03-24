@@ -72,7 +72,7 @@ bool BaseEvents::parseEventNode(xmlNodePtr p, std::string scriptsPath, bool over
 		return false;
 	}
 
-	bool success = false;
+	bool success = true;
 	std::string strValue, tmpStrValue;
 	if(readXMLString(p, "event", strValue))
 	{
@@ -81,55 +81,58 @@ bool BaseEvents::parseEventNode(xmlNodePtr p, std::string scriptsPath, bool over
 		{
 			bool file = readXMLString(p, "value", strValue);
 			if(!file)
-				parseXMLContentString(p->children, strValue);
+				success = parseXMLContentString(p->children, strValue);
 			else
 				strValue = scriptsPath + strValue;
 
-			success = event->checkScript(getScriptBaseName(), strValue, file) && event->loadScript(strValue, file);
+			if(success)
+				success = event->checkScript(getScriptBaseName(), strValue, file) && event->loadScript(strValue, file);
 		}
 		else if(tmpStrValue == "buffer")
 		{
 			if(!readXMLString(p, "value", strValue))
-				parseXMLContentString(p->children, strValue);
+				success = parseXMLContentString(p->children, strValue);
 
-			success = event->checkBuffer(getScriptBaseName(), strValue) && event->loadBuffer(strValue);
+			if(success)
+				success = event->checkBuffer(getScriptBaseName(), strValue) && event->loadBuffer(strValue);
 		}
 		else if(tmpStrValue == "function")
 		{
 			if(readXMLString(p, "value", strValue))
 				success = event->loadFunction(strValue);
+			else
+				success = false;
 		}
 	}
 	else if(readXMLString(p, "script", strValue))
 	{
 		bool file = asLowerCaseString(strValue) != "cdata";
 		if(!file)
-			parseXMLContentString(p->children, strValue);
+			success = parseXMLContentString(p->children, strValue);
 		else
 			strValue = scriptsPath + strValue;
 
-		success = event->checkScript(getScriptBaseName(), strValue, file) && event->loadScript(strValue, file);
+		if(success)
+			success = event->checkScript(getScriptBaseName(), strValue, file) && event->loadScript(strValue, file);
 	}
 	else if(readXMLString(p, "buffer", strValue))
 	{
 		if(asLowerCaseString(strValue) == "cdata")
-			parseXMLContentString(p->children, strValue);
+			success = parseXMLContentString(p->children, strValue);
 
-		success = event->checkBuffer(getScriptBaseName(), strValue) && event->loadBuffer(strValue);
+		if(success)
+			success = event->checkBuffer(getScriptBaseName(), strValue) && event->loadBuffer(strValue);
 	}
-	else if(readXMLString(p, "function", strValue))
-		success = event->loadFunction(strValue);
-	else if(parseXMLContentString(p->children, strValue) && event->checkBuffer(getScriptBaseName(), strValue))
-		success = event->loadBuffer(strValue);
+	else if((readXMLString(p, "function", strValue) && event->loadFunction(strValue))
+		|| (parseXMLContentString(p->children, strValue) && event->checkBuffer(
+		getScriptBaseName(), strValue) && event->loadBuffer(strValue)))
+		success = true;
 
 	if(!override && readXMLString(p, "override", strValue) && booleanString(strValue))
 		override = true;
 
 	if(success && !registerEvent(event, p, override) && event)
-	{
 		delete event;
-		event = NULL;
-	}
 
 	return success;
 }

@@ -16807,17 +16807,35 @@
 		<attribute key="weight" value="40" />
 		<attribute key="slotType" value="ring" />
 	</item>
-	<item fromid="10511" toid="10512" name="squeezing gear of girlpower">
+	<item id="10511" name="squeezing gear of girlpower">
 		<attribute key="description" value="This nifty gadget can be used for many vital and less vital purposes. If it's not jammed, that is." />
 		<attribute key="weight" value="300" />
 	</item>
-	<item fromid="10513" toid="10514" name="sneaky stabber of eliteness">
+	<item id="10512" name="squeezing gear of girlpower">
+		<attribute key="description" value="This nifty gadget can be used for many vital and less vital purposes. If it's not jammed, that is." />
+		<attribute key="weight" value="300" />
+		<attribute key="decayTo" value="10511" />
+		<attribute key="duration" value="60" />
+	</item>
+	<item id="10513" name="sneaky stabber of eliteness">
 		<attribute key="description" value="This nifty gadget can be used for many vital and less vital purposes. If it's not jammed, that is." />
 		<attribute key="weight" value="300" />
 	</item>
-	<item fromid="10515" toid="10516" name="whacking driller of fate">
+	<item id="10514" name="sneaky stabber of eliteness">
 		<attribute key="description" value="This nifty gadget can be used for many vital and less vital purposes. If it's not jammed, that is." />
 		<attribute key="weight" value="300" />
+		<attribute key="decayTo" value="10513" />
+		<attribute key="duration" value="60" />
+	</item>
+	<item id="10515" name="whacking driller of fate">
+		<attribute key="description" value="This nifty gadget can be used for many vital and less vital purposes. If it's not jammed, that is." />
+		<attribute key="weight" value="300" />
+	</item>
+	<item id="10516" name="whacking driller of fate">
+		<attribute key="description" value="This nifty gadget can be used for many vital and less vital purposes. If it's not jammed, that is." />
+		<attribute key="weight" value="300" />
+		<attribute key="decayTo" value="10515" />
+		<attribute key="duration" value="60" />
 	</item>
 	<!-- 10517 is empty -->
 	<item id="10518" article="a" name="demon backpack">

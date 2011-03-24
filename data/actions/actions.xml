@@ -29,6 +29,7 @@
 	<action itemid="7731" event="script" value="tools/rope.lua"/>
 	<action itemid="2553" event="script" value="tools/pick.lua"/>
 	<action itemid="5908;5942" event="script" value="tools/skinning.lua"/>
+	<action itemid="10511;10513;10515" event="script" value="tools/squeeze.lua"/>
 
 	<!-- Liquids -->
 	<action itemid="1775" event="script" value="liquids/containers.lua"/>
@@ -327,7 +328,7 @@
 	<action fromid="10780" toid="10786" event="script" value="other/doors.lua"/>
 	<action fromid="10789" toid="10792" event="script" value="other/doors.lua"/>
 
-	<!-- Watch -->
+	<!-- Watches -->
 	<action fromid="1728" toid="1731" event="script" value="other/watch.lua"/>
 	<action itemid="1877" event="script" value="other/watch.lua"/>
 	<action itemid="1881" event="script" value="other/watch.lua"/>
@@ -335,7 +336,7 @@
 	<action fromid="6091" toid="6092" event="script" value="other/watch.lua"/>
 	<action itemid="8187" event="script" value="other/watch.lua"/>
 
-	<!-- Decay To -->
+	<!-- Decaying -->
 	<action fromid="2041" toid="2042" event="script" value="other/decayto.lua"/>
 	<action fromid="2044" toid="2045" event="script" value="other/decayto.lua"/>
 	<action fromid="2047" toid="2048" event="script" value="other/decayto.lua"/>
