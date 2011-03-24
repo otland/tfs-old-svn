@@ -25,6 +25,8 @@
 extern Game g_game;
 extern ConfigManager g_config;
 
+LuaInterface ScriptEvent::m_interface("Raid Interface");
+
 Raids::Raids()
 {
 	running = NULL;
@@ -118,12 +120,12 @@ bool Raids::loadFromXml()
 	xmlDocPtr doc = xmlParseFile(getFilePath(FILE_TYPE_OTHER, "raids/raids.xml").c_str());
 	if(!doc)
 	{
-		std::clog << "[Warning - Raids::loadFromXml] Could not load raids file." << std::endl;
-		std::clog << getLastXMLError() << std::endl;
+		std::clog << "[Warning - Raids::loadFromXml] Could not load raids file."
+			<< std::endl << getLastXMLError() << std::endl;
 		return false;
 	}
 
-	xmlNodePtr raidNode, root = xmlDocGetRootElement(doc);
+	xmlNodePtr root = xmlDocGetRootElement(doc);
 	if(xmlStrcmp(root->name,(const xmlChar*)"raids"))
 	{
 		std::clog << "[Error - Raids::loadFromXml] Malformed raids file." << std::endl;
@@ -131,12 +133,8 @@ bool Raids::loadFromXml()
 		return false;
 	}
 
-	raidNode = root->children;
-	while(raidNode)
-	{
-		parseRaidNode(raidNode, false, FILE_TYPE_OTHER);
-		raidNode = raidNode->next;
-	}
+	for(xmlNodePtr p = root->children; p; p = p->next)
+		parseRaidNode(p, false, FILE_TYPE_OTHER);
 
 	xmlFreeDoc(doc);
 	loaded = true;
@@ -928,27 +926,32 @@ bool AreaSpawnEvent::executeEvent() const
 	return true;
 }
 
-LuaInterface ScriptEvent::m_interface("Raid Interface");
-
 bool ScriptEvent::configureRaidEvent(xmlNodePtr eventNode)
 {
 	if(!RaidEvent::configureRaidEvent(eventNode))
 		return false;
 
 	std::string scriptsName = Raids::getInstance()->getScriptBaseName();
-	if(!m_interface.loadDirectory(getFilePath(FILE_TYPE_OTHER, std::string(scriptsName + "/lib/"))))
-		std::clog << "[Warning - ScriptEvent::configureRaidEvent] Cannot load " << scriptsName << "/lib/" << std::endl;
+	if(!m_interface.m_luaState)
+	{
+		m_interface.initState();
+		std::string path = getFilePath(FILE_TYPE_OTHER, std::string(scriptsName + "/lib/"));
+		if(!m_interface.loadDirectory(path))
+			std::clog << "[Warning - ScriptEvent::configureRaidEvent] Cannot load " << path << std::endl;
+	}
 
 	std::string strValue;
 	if(readXMLString(eventNode, "file", strValue))
 	{
-		if(!loadScript(getFilePath(FILE_TYPE_OTHER, std::string(scriptsName + "/scripts/" + strValue)), true))
+		std::string path = getFilePath(FILE_TYPE_OTHER, std::string(scriptsName + "/scripts/" + strValue));
+		if(!checkScript(scriptsName, path, true) || !loadScript(path, true))
 		{
-			std::clog << "[Error - ScriptEvent::configureRaidEvent] Cannot load raid script file (" << strValue << ")." << std::endl;
+			std::clog << "[Error - ScriptEvent::configureRaidEvent] Cannot load script " << path << std::endl;
 			return false;
 		}
 	}
-	else if(parseXMLContentString(eventNode->children, strValue) && loadBuffer(strValue))
+	else if(parseXMLContentString(eventNode->children, strValue) &&
+		checkBuffer(scriptsName, strValue) && loadBuffer(strValue))
 		return true;
 
 	std::clog << "[Error - ScriptEvent::configureRaidEvent] Cannot load raid script buffer." << std::endl;
@@ -964,7 +967,7 @@ bool ScriptEvent::executeEvent() const
 		if(m_scripted == EVENT_SCRIPT_BUFFER)
 		{
 			bool result = true;
-			if(m_interface.loadBuffer(m_scriptData))
+			if(m_scriptData && m_interface.loadBuffer(m_scriptData))
 			{
 				lua_State* L = m_interface.getState();
 				result = m_interface.getGlobalBool(L, "_result", true);

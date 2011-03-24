@@ -160,14 +160,14 @@ bool Event::loadBuffer(const std::string& buffer)
 		return false;
 	}
 
-	if(!m_scriptData.empty())
+	if(m_scriptData)
 	{
-		std::clog << "[Error - Event::loadBuffer] m_scriptData != \"\"" << std::endl;
+		std::clog << "[Error - Event::loadBuffer] m_scriptData != NULL" << std::endl;
 		return false;
 	}
 
 	m_scripted = EVENT_SCRIPT_BUFFER;
-	m_scriptData = buffer;
+	m_scriptData = new std::string(buffer);
 	return true;
 }
 
@@ -180,9 +180,9 @@ bool Event::checkBuffer(const std::string& base, const std::string& script) cons
 	if(!testInterface.loadDirectory(path))
 		std::clog << "[Warning - Event::checkBuffer] Cannot load " << path << std::endl;
 
-	if(!m_scriptData.empty())
+	if(m_scriptData)
 	{
-		std::clog << "[Error - Event::checkBuffer] m_scriptData != \"\"" << std::endl;
+		std::clog << "[Error - Event::checkBuffer] m_scriptData != NULL" << std::endl;
 		return false;
 	}
 

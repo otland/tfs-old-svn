@@ -244,7 +244,7 @@ class ScriptEvent : public RaidEvent, public Event
 {
 	public:
 		ScriptEvent(Raid* raid, bool ref): RaidEvent(raid, ref),
-			Event(&m_interface) {m_interface.initState();}
+			Event(&m_interface) {}
 		virtual ~ScriptEvent() {}
 
 		virtual bool configureRaidEvent(xmlNodePtr eventNode);

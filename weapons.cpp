@@ -500,7 +500,9 @@ bool Weapon::executeUseWeapon(Player* player, const LuaVariant& var) const
 			scriptstream << "local cid = " << env->addThing(player) << std::endl;
 			env->streamVariant(scriptstream, "var", var);
 
-			scriptstream << m_scriptData;
+			if(m_scriptData)
+				scriptstream << m_scriptData;
+
 			bool result = true;
 			if(m_interface->loadBuffer(scriptstream.str()))
 			{

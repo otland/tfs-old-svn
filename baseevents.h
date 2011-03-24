@@ -58,7 +58,7 @@ class Event
 {
 	public:
 		Event(LuaInterface* _interface): m_interface(_interface),
-			m_scripted(EVENT_SCRIPT_FALSE), m_scriptId(0) {}
+			m_scripted(EVENT_SCRIPT_FALSE), m_scriptId(0), m_scriptData(NULL) {}
 		Event(const Event* copy);
 		virtual ~Event() {}
 
@@ -81,7 +81,7 @@ class Event
 		EventScript_t m_scripted;
 
 		int32_t m_scriptId;
-		std::string m_scriptData;
+		std::string* m_scriptData;
 };
 
 class CallBack
