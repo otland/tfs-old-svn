@@ -19,12 +19,9 @@
 	Fix revenges (orange skull)
 		Assigned to: Dalkon, Elf
 
-	Patch IndexedTile changes from revscriptsys2
-		Assigned to: Talaturen
-
 	Optimize packets to only one-per-tile after cleaning map or house
 		Assigned to: Elf
 
 	Finish documentation as its incomplete
-		Assigned to: KaczooH
+		Assigned to: Talaturen (CHANGELOG), Dalkon (CONFIG_HELP, MSVC Guide), Fallen (LUA_FUNCTIONS, C::B Guide), KaczooH
 ]
