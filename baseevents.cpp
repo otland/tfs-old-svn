@@ -31,7 +31,7 @@ bool BaseEvents::loadFromXml()
 
 	std::string path = getFilePath(FILE_TYPE_OTHER, std::string(scriptsName + "/lib/"));
 	if(!getInterface().loadDirectory(path))
-		std::clog << "[Warning - BaseEvents::loadFromXml] Cannot load " << getFilePath(FILE_TYPE_OTHER, std::string(scriptsName + "/lib/")) << std::endl;
+		std::clog << "[Warning - BaseEvents::loadFromXml] Cannot load " << path << std::endl;
 
 	path = getFilePath(FILE_TYPE_OTHER, std::string(scriptsName + "/" + scriptsName + ".xml"));
 	xmlDocPtr doc = xmlParseFile(path.c_str());
