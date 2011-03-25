@@ -121,13 +121,13 @@ void Monster::onTarget(Creature* target)
 
 void Monster::onTargetDisappear(bool)
 {
-//#ifdef __DEBUG__
+#ifdef __DEBUG__
 	std::clog << "Attacked creature disappeared." << std::endl;
-//#endif
+#endif
 	attackTicks = 0;
 	extraMeleeAttack = true;
 	if(g_config.getBool(ConfigManager::MONSTER_SPAWN_WALKBACK))
-		g_game.steerCreature(this, masterPosition, 10000);
+		g_game.steerCreature(this, masterPosition, 5000);
 }
 
 void Monster::onTargetDrain(Creature* target, int32_t points)

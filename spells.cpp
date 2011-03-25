@@ -425,7 +425,7 @@ bool CombatSpell::executeCastSpell(Creature* creature, const LuaVariant& var)
 			scriptstream << "local cid = " << env->addThing(creature) << std::endl;
 			env->streamVariant(scriptstream, "var", var);
 
-			scriptstream << m_scriptData;
+			scriptstream << *m_scriptData;
 			bool result = true;
 			if(m_interface->loadBuffer(scriptstream.str()))
 			{
@@ -1314,7 +1314,7 @@ bool InstantSpell::executeCastSpell(Creature* creature, const LuaVariant& var)
 			scriptstream << "local cid = " << env->addThing(creature) << std::endl;
 			env->streamVariant(scriptstream, "var", var);
 
-			scriptstream << m_scriptData;
+			scriptstream << *m_scriptData;
 			bool result = true;
 			if(m_interface->loadBuffer(scriptstream.str()))
 			{
@@ -1987,7 +1987,7 @@ bool RuneSpell::executeCastSpell(Creature* creature, const LuaVariant& var)
 			scriptstream << "local cid = " << env->addThing(creature) << std::endl;
 			env->streamVariant(scriptstream, "var", var);
 
-			scriptstream << m_scriptData;
+			scriptstream << *m_scriptData;
 			bool result = true;
 			if(m_interface->loadBuffer(scriptstream.str()))
 			{

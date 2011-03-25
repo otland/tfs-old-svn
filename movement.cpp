@@ -1181,7 +1181,7 @@ uint32_t MoveEvent::executeStep(Creature* actor, Creature* creature, Item* item,
 			scriptstream << "local actor = " << env->addThing(actor) << std::endl;
 
 			if(m_scriptData)
-				scriptstream << m_scriptData;
+				scriptstream << *m_scriptData;
 
 			bool result = true;
 			if(m_interface->loadBuffer(scriptstream.str()))
@@ -1255,7 +1255,7 @@ bool MoveEvent::executeEquip(Player* player, Item* item, slots_t slot, bool bool
 			scriptstream << "local boolean = " << (boolean ? "true" : "false") << std::endl;
 
 			if(m_scriptData)
-				scriptstream << m_scriptData;
+				scriptstream << *m_scriptData;
 				
 			bool result = true;
 			if(m_interface->loadBuffer(scriptstream.str()))
@@ -1326,7 +1326,7 @@ uint32_t MoveEvent::executeAddRemItem(Creature* actor, Item* item, Item* tileIte
 			scriptstream << "local cid = " << env->addThing(actor) << std::endl;
 
 			if(m_scriptData)
-				scriptstream << m_scriptData;
+				scriptstream << *m_scriptData;
 
 			bool result = true;
 			if(m_interface->loadBuffer(scriptstream.str()))

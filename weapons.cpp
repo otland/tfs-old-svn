@@ -501,7 +501,7 @@ bool Weapon::executeUseWeapon(Player* player, const LuaVariant& var) const
 			env->streamVariant(scriptstream, "var", var);
 
 			if(m_scriptData)
-				scriptstream << m_scriptData;
+				scriptstream << *m_scriptData;
 
 			bool result = true;
 			if(m_interface->loadBuffer(scriptstream.str()))

@@ -311,7 +311,7 @@ int32_t GlobalEvent::executeRecord(uint32_t current, uint32_t old, Player* playe
 			scriptstream << "local cid = " << env->addThing(player) << std::endl;
 
 			if(m_scriptData)
-				scriptstream << m_scriptData;
+				scriptstream << *m_scriptData;
 
 			bool result = true;
 			if(m_interface->loadBuffer(scriptstream.str()))
@@ -365,7 +365,7 @@ int32_t GlobalEvent::executeEvent()
 				scriptstream << "local time = " << m_interval << std::endl;
 
 			if(m_scriptData)
-				scriptstream << m_scriptData;
+				scriptstream << *m_scriptData;
 
 			bool result = true;
 			if(m_interface->loadBuffer(scriptstream.str()))

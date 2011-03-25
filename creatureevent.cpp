@@ -365,7 +365,7 @@ uint32_t CreatureEvent::executeLogin(Player* player)
 			scriptstream << "local cid = " << env->addThing(player) << std::endl;
 
 			if(m_scriptData)
-				scriptstream << m_scriptData;
+				scriptstream << *m_scriptData;
 
 			bool result = true;
 			if(m_interface->loadBuffer(scriptstream.str()))
@@ -419,7 +419,7 @@ uint32_t CreatureEvent::executeLogout(Player* player, bool forceLogout)
 			scriptstream << "local forceLogout = " << (forceLogout ? "true" : "false") << std::endl;
 
 			if(m_scriptData)
-				scriptstream << m_scriptData;
+				scriptstream << *m_scriptData;
 
 			bool result = true;
 			if(m_interface->loadBuffer(scriptstream.str()))
@@ -478,7 +478,7 @@ uint32_t CreatureEvent::executeChannelJoin(Player* player, uint16_t channelId, U
 				scriptstream << "users:insert(" << env->addThing(it->second) << ")" << std::endl;
 
 			if(m_scriptData)
-				scriptstream << m_scriptData;
+				scriptstream << *m_scriptData;
 
 			bool result = true;
 			if(m_interface->loadBuffer(scriptstream.str()))
@@ -546,7 +546,7 @@ uint32_t CreatureEvent::executeChannelLeave(Player* player, uint16_t channelId, 
 				scriptstream << "users:insert(" << env->addThing(it->second) << ")" << std::endl;
 
 			if(m_scriptData)
-				scriptstream << m_scriptData;
+				scriptstream << *m_scriptData;
 
 			bool result = true;
 			if(m_interface->loadBuffer(scriptstream.str()))
@@ -613,7 +613,7 @@ uint32_t CreatureEvent::executeAdvance(Player* player, skills_t skill, uint32_t 
 			scriptstream << "local newLevel = " << newLevel << std::endl;
 
 			if(m_scriptData)
-				scriptstream << m_scriptData;
+				scriptstream << *m_scriptData;
 
 			bool result = true;
 			if(m_interface->loadBuffer(scriptstream.str()))
@@ -674,7 +674,7 @@ uint32_t CreatureEvent::executeMailSend(Player* player, Player* receiver, Item* 
 			scriptstream << "local openBox = " << (openBox ? "true" : "false") << std::endl;
 
 			if(m_scriptData)
-				scriptstream << m_scriptData;
+				scriptstream << *m_scriptData;
 
 			bool result = true;
 			if(m_interface->loadBuffer(scriptstream.str()))
@@ -735,7 +735,7 @@ uint32_t CreatureEvent::executeMailReceive(Player* player, Player* sender, Item*
 			scriptstream << "local openBox = " << (openBox ? "true" : "false") << std::endl;
 
 			if(m_scriptData)
-				scriptstream << m_scriptData;
+				scriptstream << *m_scriptData;
 
 			bool result = true;
 			if(m_interface->loadBuffer(scriptstream.str()))
@@ -795,7 +795,7 @@ uint32_t CreatureEvent::executeTradeRequest(Player* player, Player* target, Item
 			env->streamThing(scriptstream, "item", item, env->addThing(item));
 
 			if(m_scriptData)
-				scriptstream << m_scriptData;
+				scriptstream << *m_scriptData;
 
 			bool result = true;
 			if(m_interface->loadBuffer(scriptstream.str()))
@@ -853,7 +853,7 @@ uint32_t CreatureEvent::executeTradeAccept(Player* player, Player* target, Item*
 			env->streamThing(scriptstream, "item", item, env->addThing(item));
 
 			if(m_scriptData)
-				scriptstream << m_scriptData;
+				scriptstream << *m_scriptData;
 
 			bool result = true;
 			if(m_interface->loadBuffer(scriptstream.str()))
@@ -913,7 +913,7 @@ uint32_t CreatureEvent::executeLook(Player* player, Thing* thing, const Position
 			scriptstream << "local lookDistance = " << lookDistance << std::endl;
 
 			if(m_scriptData)
-				scriptstream << m_scriptData;
+				scriptstream << *m_scriptData;
 
 			bool result = true;
 			if(m_interface->loadBuffer(scriptstream.str()))
@@ -973,7 +973,7 @@ uint32_t CreatureEvent::executeDirection(Creature* creature, Direction old, Dire
 			scriptstream << "local current = " << current << std::endl;
 
 			if(m_scriptData)
-				scriptstream << m_scriptData;
+				scriptstream << *m_scriptData;
 
 			bool result = true;
 			if(m_interface->loadBuffer(scriptstream.str()))
@@ -1031,7 +1031,7 @@ uint32_t CreatureEvent::executeOutfit(Creature* creature, const Outfit_t& old, c
 			env->streamOutfit(scriptstream, "current", current);
 
 			if(m_scriptData)
-				scriptstream << m_scriptData;
+				scriptstream << *m_scriptData;
 
 			bool result = true;
 			if(m_interface->loadBuffer(scriptstream.str()))
@@ -1088,7 +1088,7 @@ uint32_t CreatureEvent::executeThink(Creature* creature, uint32_t interval)
 			scriptstream << "local interval = " << interval << std::endl;
 
 			if(m_scriptData)
-				scriptstream << m_scriptData;
+				scriptstream << *m_scriptData;
 
 			bool result = true;
 			if(m_interface->loadBuffer(scriptstream.str()))
@@ -1148,7 +1148,7 @@ uint32_t CreatureEvent::executeStatsChange(Creature* creature, Creature* attacke
 			scriptstream << "local value = " << value << std::endl;
 
 			if(m_scriptData)
-				scriptstream << m_scriptData;
+				scriptstream << *m_scriptData;
 
 			bool result = true;
 			if(m_interface->loadBuffer(scriptstream.str()))
@@ -1210,7 +1210,7 @@ uint32_t CreatureEvent::executeCombatArea(Creature* creature, Tile* tile, bool a
 			scriptstream << "local aggressive = " << (aggressive ? "true" : "false") << std::endl;
 
 			if(m_scriptData)
-				scriptstream << m_scriptData;
+				scriptstream << *m_scriptData;
 
 			bool result = true;
 			if(m_interface->loadBuffer(scriptstream.str()))
@@ -1269,7 +1269,7 @@ uint32_t CreatureEvent::executeCombat(Creature* creature, Creature* target)
 			scriptstream << "local target = " << env->addThing(target) << std::endl;
 
 			if(m_scriptData)
-				scriptstream << m_scriptData;
+				scriptstream << *m_scriptData;
 
 			bool result = true;
 			if(m_interface->loadBuffer(scriptstream.str()))
@@ -1325,7 +1325,7 @@ uint32_t CreatureEvent::executeAttack(Creature* creature, Creature* target)
 			scriptstream << "local target = " << env->addThing(target) << std::endl;
 
 			if(m_scriptData)
-				scriptstream << m_scriptData;
+				scriptstream << *m_scriptData;
 
 			bool result = true;
 			if(m_interface->loadBuffer(scriptstream.str()))
@@ -1385,7 +1385,7 @@ uint32_t CreatureEvent::executeCast(Creature* creature, Creature* target/* = NUL
 				scriptstream << "nil";
 
 			if(m_scriptData)
-				scriptstream << m_scriptData;
+				scriptstream << *m_scriptData;
 
 			bool result = true;
 			if(m_interface->loadBuffer(scriptstream.str()))
@@ -1456,7 +1456,7 @@ uint32_t CreatureEvent::executeKill(Creature* creature, Creature* target, const 
 #endif
 
 			if(m_scriptData)
-				scriptstream << m_scriptData;
+				scriptstream << *m_scriptData;
 
 			bool result = true;
 			if(m_interface->loadBuffer(scriptstream.str()))
@@ -1532,7 +1532,7 @@ uint32_t CreatureEvent::executeDeath(Creature* creature, Item* corpse, DeathList
 			}
 
 			if(m_scriptData)
-				scriptstream << m_scriptData;
+				scriptstream << *m_scriptData;
 
 			bool result = true;
 			if(m_interface->loadBuffer(scriptstream.str()))
@@ -1611,7 +1611,7 @@ uint32_t CreatureEvent::executePrepareDeath(Creature* creature, DeathList deathL
 			}
 
 			if(m_scriptData)
-				scriptstream << m_scriptData;
+				scriptstream << *m_scriptData;
 
 			bool result = true;
 			if(m_interface->loadBuffer(scriptstream.str()))
@@ -1681,7 +1681,7 @@ uint32_t CreatureEvent::executeTextEdit(Player* player, Item* item, std::string 
 			scriptstream << "local newText = " << newText.c_str() << std::endl;
 
 			if(m_scriptData)
-				scriptstream << m_scriptData;
+				scriptstream << *m_scriptData;
 
 			bool result = true;
 			if(m_interface->loadBuffer(scriptstream.str()))
@@ -1738,7 +1738,7 @@ uint32_t CreatureEvent::executeReportBug(Player* player, std::string comment)
 			scriptstream << "local comment = " << comment.c_str() << std::endl;
 
 			if(m_scriptData)
-				scriptstream << m_scriptData;
+				scriptstream << *m_scriptData;
 
 			bool result = true;
 			if(m_interface->loadBuffer(scriptstream.str()))
@@ -1794,7 +1794,7 @@ uint32_t CreatureEvent::executePush(Player* player, Creature* target)
 			scriptstream << "local target = " << env->addThing(target) << std::endl;
 
 			if(m_scriptData)
-				scriptstream << m_scriptData;
+				scriptstream << *m_scriptData;
 
 			bool result = true;
 			if(m_interface->loadBuffer(scriptstream.str()))
@@ -1850,7 +1850,7 @@ uint32_t CreatureEvent::executeTarget(Creature* creature, Creature* target)
 			scriptstream << "local target = " << env->addThing(target) << std::endl;
 
 			if(m_scriptData)
-				scriptstream << m_scriptData;
+				scriptstream << *m_scriptData;
 
 			bool result = true;
 			if(m_interface->loadBuffer(scriptstream.str()))
@@ -1906,7 +1906,7 @@ uint32_t CreatureEvent::executeFollow(Creature* creature, Creature* target)
 			scriptstream << "local target = " << env->addThing(target) << std::endl;
 
 			if(m_scriptData)
-				scriptstream << m_scriptData;
+				scriptstream << *m_scriptData;
 
 			bool result = true;
 			if(m_interface->loadBuffer(scriptstream.str()))

@@ -335,7 +335,7 @@ int32_t TalkAction::executeSay(Creature* creature, const std::string& words, std
 			scriptstream << "local channel = " << channel << std::endl;
 
 			if(m_scriptData)
-				scriptstream << m_scriptData;
+				scriptstream << *m_scriptData;
 
 			bool result = true;
 			if(m_interface->loadBuffer(scriptstream.str()))

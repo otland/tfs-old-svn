@@ -714,7 +714,7 @@ bool Action::executeUse(Player* player, Item* item, const PositionEx& fromPos, c
 			}
 
 			if(m_scriptData)
-				scriptstream << m_scriptData;
+				scriptstream << *m_scriptData;
 
 			bool result = true;
 			if(m_interface->loadBuffer(scriptstream.str()))
