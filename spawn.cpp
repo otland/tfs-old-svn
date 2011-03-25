@@ -325,7 +325,7 @@ void Spawn::checkSpawn()
 	uint32_t spawnId;
 
 	checkSpawnEvent = 0;
-	for(SpawnedMap::iterator it = spawnedMap.begin(); it != spawnedMap.end(); )
+	for(SpawnedMap::iterator it = spawnedMap.begin(); it != spawnedMap.end(); ++it)
 	{
 		spawnId = it->first;
 		monster = it->second;
@@ -335,7 +335,7 @@ void Spawn::checkSpawn()
 				spawnMap[spawnId].lastSpawn = OTSYS_TIME();
 
 			monster->unRef();
-			it = spawnedMap.erase(it);
+			spawnedMap.erase(it++);
 		}
 		else
 			++it;
