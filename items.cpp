@@ -30,6 +30,7 @@ extern Spells* g_spells;
 extern ConfigManager g_config;
 extern MoveEvents* g_moveEvents;
 extern Weapons* g_weapons;
+
 uint32_t Items::dwMajorVersion = 0;
 uint32_t Items::dwMinorVersion = 0;
 uint32_t Items::dwBuildNumber = 0;
@@ -366,8 +367,8 @@ bool Items::loadFromXml()
 	xmlDocPtr doc = xmlParseFile(getFilePath(FILE_TYPE_OTHER, "items/items.xml").c_str());
 	if(!doc)
 	{
-		std::clog << "[Warning - Items::loadFromXml] Cannot load items file." << std::endl;
-		std::clog << getLastXMLError() << std::endl;
+		std::clog << "[Warning - Items::loadFromXml] Cannot load items file."
+			<< std::endl << getLastXMLError() << std::endl;
 		return false;
 	}
 
@@ -439,8 +440,8 @@ bool Items::loadFromXml()
 	xmlFreeDoc(doc);
 	if(!(doc = xmlParseFile(getFilePath(FILE_TYPE_OTHER, "items/randomization.xml").c_str())))
 	{
-		std::clog << "[Warning - Items::loadFromXml] Cannot load randomization file." << std::endl;
-		std::clog << getLastXMLError() << std::endl;
+		std::clog << "[Warning - Items::loadFromXml] Cannot load randomization file."
+			<< std::endl << getLastXMLError() << std::endl;
 		return false;
 	}
 

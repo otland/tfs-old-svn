@@ -69,10 +69,11 @@ enum Visible_t
 struct FindPathParams
 {
 	bool fullPathSearch, clearSight, allowDiagonal, keepDistance;
-	int32_t maxSearchDist, minTargetDist, maxTargetDist;
+	int32_t maxClosedNodes, maxSearchDist, minTargetDist, maxTargetDist;
 	FindPathParams()
 	{
 		fullPathSearch = clearSight = allowDiagonal = true;
+		maxClosedNodes = 100;
 		maxSearchDist = minTargetDist = maxTargetDist = -1;
 		keepDistance = false;
 	}

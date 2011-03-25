@@ -529,7 +529,7 @@ class Game
 			uint32_t minTargetDist, uint32_t maxTargetDist, bool fullPathSearch = true,
 			bool clearSight = true, int32_t maxSearchDist = -1);
 
-		bool steerCreature(Creature* creature, const Position& position);
+		bool steerCreature(Creature* creature, const Position& position, uint16_t maxNodes/* = 1000*/);
 
 		Position getClosestFreeTile(Creature* creature, Position pos, bool extended = false, bool ignoreHouse = true);
 		std::string getSearchString(const Position& fromPos, const Position& toPos, bool fromIsCreature = false, bool toIsCreature = false);

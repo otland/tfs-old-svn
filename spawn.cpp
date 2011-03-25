@@ -325,7 +325,7 @@ void Spawn::checkSpawn()
 	uint32_t spawnId;
 
 	checkSpawnEvent = 0;
-	for(SpawnedMap::iterator it = spawnedMap.begin(); it != spawnedMap.end();)
+	for(SpawnedMap::iterator it = spawnedMap.begin(); it != spawnedMap.end(); )
 	{
 		spawnId = it->first;
 		monster = it->second;
@@ -335,15 +335,10 @@ void Spawn::checkSpawn()
 				spawnMap[spawnId].lastSpawn = OTSYS_TIME();
 
 			monster->unRef();
-			spawnedMap.erase(it++);
+			it = spawnedMap.erase(it);
 		}
 		else
-		{
-			/*if(spawnId && !isInSpawnZone(monster->getPosition()) && monster->getIdleStatus())
-				g_game.internalTeleport(monster, monster->getMasterPosition(), true);*/
-
 			++it;
-		}
 	}
 
 	uint32_t spawnCount = 0;

@@ -234,25 +234,23 @@ bool Raid::loadFromXml(const std::string& _filename)
 	xmlDocPtr doc = xmlParseFile(_filename.c_str());
 	if(!doc)
 	{
-		std::clog << "[Error - Raid::loadFromXml] Could not load raid file (" << _filename << ")." << std::endl;
-		std::clog << getLastXMLError() << std::endl;
+		std::clog << "[Error - Raid::loadFromXml] Could not load raid file " << _filename
+			<< std::endl << std::clog << getLastXMLError() << std::endl;
 		return false;
 	}
 
-	xmlNodePtr root, eventNode;
-	root = xmlDocGetRootElement(doc);
+	xmlNodePtr root = xmlDocGetRootElement(doc);
 	if(xmlStrcmp(root->name,(const xmlChar*)"raid"))
 	{
-		std::clog << "[Error - Raid::loadFromXml] Malformed raid file (" << _filename << ")." << std::endl;
+		std::clog << "[Error - Raid::loadFromXml] Malformed raid file " << _filename << std::endl;
 		xmlFreeDoc(doc);
 		return false;
 	}
 
 	std::string strValue;
-	eventNode = root->children;
-	while(eventNode)
+	for(xmlNodePtr eventNode = root->children; eventNode; eventNode = eventNode->next)
 	{
-		RaidEvent* event;
+		RaidEvent* event = NULL;
 		if(!xmlStrcmp(eventNode->name, (const xmlChar*)"announce"))
 			event = new AnnounceEvent(this, ref);
 		else if(!xmlStrcmp(eventNode->name, (const xmlChar*)"effect"))
@@ -266,10 +264,7 @@ bool Raid::loadFromXml(const std::string& _filename)
 		else if(!xmlStrcmp(eventNode->name, (const xmlChar*)"script"))
 			event = new ScriptEvent(this, ref);
 		else
-		{
-			eventNode = eventNode->next;
 			continue;
-		}
 
 		if(!event->configureRaidEvent(eventNode))
 		{
@@ -278,8 +273,6 @@ bool Raid::loadFromXml(const std::string& _filename)
 		}
 		else
 			raidEvents.push_back(event);
-
-		eventNode = eventNode->next;
 	}
 
 	//sort by delay time
@@ -944,9 +937,18 @@ bool ScriptEvent::configureRaidEvent(xmlNodePtr eventNode)
 	if(readXMLString(eventNode, "file", strValue))
 	{
 		std::string path = getFilePath(FILE_TYPE_OTHER, std::string(scriptsName + "/scripts/" + strValue));
+		if(!fileExists(path.c_str()))
+			path = getFilePath(FILE_TYPE_MOD, std::string("/scripts/" + strValue));
+
+		if(!fileExists(path.c_str()))
+		{
+			std::clog << "[Error - ScriptEvent::configureRaidEvent] Cannot find script file " << strValue << std::endl;
+			return false;
+		}
+
 		if(!checkScript(scriptsName, path, true) || !loadScript(path, true))
 		{
-			std::clog << "[Error - ScriptEvent::configureRaidEvent] Cannot load script " << path << std::endl;
+			std::clog << "[Error - ScriptEvent::configureRaidEvent] Cannot load script file " << path << std::endl;
 			return false;
 		}
 	}
@@ -954,7 +956,7 @@ bool ScriptEvent::configureRaidEvent(xmlNodePtr eventNode)
 		checkBuffer(scriptsName, strValue) && loadBuffer(strValue))
 		return true;
 
-	std::clog << "[Error - ScriptEvent::configureRaidEvent] Cannot load raid script buffer." << std::endl;
+	std::clog << "[Error - ScriptEvent::configureRaidEvent] Cannot load script buffer." << std::endl;
 	return false;
 }
 

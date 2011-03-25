@@ -121,11 +121,13 @@ void Monster::onTarget(Creature* target)
 
 void Monster::onTargetDisappear(bool)
 {
-#ifdef __DEBUG__
+//#ifdef __DEBUG__
 	std::clog << "Attacked creature disappeared." << std::endl;
-#endif
+//#endif
 	attackTicks = 0;
 	extraMeleeAttack = true;
+	if(g_config.getBool(ConfigManager::MONSTER_SPAWN_WALKBACK))
+		g_game.steerCreature(this, masterPosition, 10000);
 }
 
 void Monster::onTargetDrain(Creature* target, int32_t points)
@@ -557,9 +559,7 @@ void Monster::onAddCondition(ConditionType_t type, bool hadCondition)
 {
 	Creature::onAddCondition(type, hadCondition);
 	//the walkCache need to be updated if the monster becomes "resistent" to the damage, see Tile::__queryAdd()
-	if(type == CONDITION_FIRE || type == CONDITION_ENERGY || type == CONDITION_POISON)
-		updateMapCache();
-
+	updateMapCache();
 	updateIdleStatus();
 }
 
@@ -567,9 +567,7 @@ void Monster::onEndCondition(ConditionType_t type)
 {
 	Creature::onEndCondition(type);
 	//the walkCache need to be updated if the monster loose the "resistent" to the damage, see Tile::__queryAdd()
-	if(type == CONDITION_FIRE || type == CONDITION_ENERGY || type == CONDITION_POISON)
-		updateMapCache();
-
+	updateMapCache();
 	updateIdleStatus();
 }
 
@@ -891,7 +889,7 @@ void Monster::pushItems(Tile* tile)
 	//We cannot use iterators here since we can push the item to another tile
 	//which will invalidate the iterator.
 	//start from the end to minimize the amount of traffic
-	int32_t moveCount = 0, removeCount = 0, downItemsSize = tile->getDownItemCount();
+	int32_t moveCount = 0, removeCount = 0, downItemsSize = items->getDownItemCount();
 	Item* item = NULL;
 	for(int32_t i = downItemsSize - 1; i >= 0; --i)
 	{
@@ -1135,12 +1133,12 @@ bool Monster::canWalkTo(Position pos, Direction dir)
 		return false;
 
 	Tile* tile = g_game.getTile(pos);
-	MagicField* field = NULL;
 	if(!tile || g_game.isSwimmingPool(NULL, getTile(), false) != g_game.isSwimmingPool(NULL, tile, false)) // prevent monsters entering/exiting to swimming pool
 		return false;
 
 	// If we don't follow, or attack, and we can't handle the damage, then we can't move on this field
-	if(!followCreature && !attackedCreature && (field = tile->getFieldItem()) && !isImmune(field->getCombatType()) )
+	MagicField* field = NULL;
+	if(!followCreature && !attackedCreature && (field = tile->getFieldItem()) && !isImmune(field->getCombatType()))
 		return false;
 		
 	return !tile->getTopVisibleCreature(this) && tile->__queryAdd(
@@ -1412,6 +1410,7 @@ void Monster::getPathSearchParams(const Creature* creature, FindPathParams& fpp)
 	Creature::getPathSearchParams(creature, fpp);
 	fpp.minTargetDist = 1;
 	fpp.maxTargetDist = mType->targetDistance;
+
 	if(isSummon())
 	{
 		if(master == creature)

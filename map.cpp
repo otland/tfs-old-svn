@@ -783,7 +783,7 @@ bool Map::getPathMatching(const Creature* creature, std::list<Direction>& dirLis
 	AStarNode* n = NULL;
 
 	const Tile* tile = NULL;
-	while(fpp.maxSearchDist != -1 || nodes.countClosedNodes() < 100)
+	while(fpp.maxSearchDist != -1 || nodes.countClosedNodes() < fpp.maxClosedNodes)
 	{
 		if(!(n = nodes.getBestNode()))
 		{

@@ -290,11 +290,11 @@ bool ScriptManager::loadFromXml(const std::string& file, bool& enabled)
 			else if(!xmlStrcmp(p->name, (const xmlChar*)"group"))
 				Groups::getInstance()->parseGroupNode(p); //duplicates checking is dangerous, shouldn't be performed until we find some good solution
 			else if(!xmlStrcmp(p->name, (const xmlChar*)"raid"))
-				Raids::getInstance()->parseRaidNode(p, modsLoaded, FILE_TYPE_MOD);
+				Raids::getInstance()->parseRaidNode(p, modsLoaded, FILE_TYPE_MOD); //TODO: support mods path
 			else if(!xmlStrcmp(p->name, (const xmlChar*)"spawn"))
 				Spawns::getInstance()->parseSpawnNode(p, modsLoaded);
 			else if(!xmlStrcmp(p->name, (const xmlChar*)"channel"))
-				g_chat.parseChannelNode(p); //TODO: duplicates- channel destructor needs to send closeChannel to users)
+				g_chat.parseChannelNode(p); //TODO: duplicates- channel destructor needs to send closeChannel to users!
 			else if(!xmlStrcmp(p->name, (const xmlChar*)"monster"))
 			{
 				std::string path, name;
@@ -304,7 +304,7 @@ bool ScriptManager::loadFromXml(const std::string& file, bool& enabled)
 			else if(!xmlStrcmp(p->name, (const xmlChar*)"item"))
 			{
 				if(readXMLInteger(p, "id", intValue))
-					Item::items.parseItemNode(p, intValue); //duplicates checking isn't necessary here
+					Item::items.parseItemNode(p, intValue);
 			}
 			if(!xmlStrcmp(p->name, (const xmlChar*)"description") || !xmlStrcmp(p->name, (const xmlChar*)"info"))
 			{

@@ -4045,27 +4045,19 @@ bool Game::getPathToEx(const Creature* creature, const Position& targetPos, std:
 	return getPathToEx(creature, targetPos, dirList, fpp);
 }
 
-bool Game::steerCreature(Creature* creature, const Position& position)
+bool Game::steerCreature(Creature* creature, const Position& position, uint16_t maxNodes/* = 1000*/)
 {
 	FindPathParams fpp;
+	fpp.maxClosedNodes = maxNodes;
+
 	fpp.fullPathSearch = true;
 	fpp.maxSearchDist = -1;
-	fpp.clearSight = true;
 	fpp.minTargetDist = 0;
 	fpp.maxTargetDist = 1;
 
 	std::list<Direction> dirList;
 	if(!getPathToEx(creature, position, dirList, fpp))
 		return false;
-
-	if(!Position::areInRange<1,1,0>(creature->getPosition(), position))
-	{
-		SchedulerTask* task = createSchedulerTask(std::max((int32_t)SCHEDULER_MINTICKS,
-			creature->getStepDuration()), boost::bind(&Game::steerCreature, this, creature, position));
-
-		if(Player* player = creature->getPlayer())
-			player->setNextWalkActionTask(task);
-	}
 
 	creature->startAutoWalk(dirList);
 	return true;

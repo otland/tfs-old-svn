@@ -124,8 +124,8 @@ class TileItemVector
 		ItemVector::iterator getEndTopItem() {return items.end();}
 		ItemVector::const_iterator getEndTopItem() const {return items.end();}
 
-		uint32_t getTopItemCount() const {return std::distance(getBeginTopItem(), getEndTopItem());}
-		uint32_t getDownItemCount() const {return std::distance(getBeginDownItem(), getEndDownItem());}
+		uint32_t getTopItemCount() const {return items.size() - downItemCount;}
+		uint32_t getDownItemCount() const {return downItemCount;}
 		Item* getTopTopItem();
 		Item* getTopDownItem();
 
