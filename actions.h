@@ -82,7 +82,6 @@ class Actions : public BaseEvents
 		void clearMap(ActionUseMap& map);
 };
 
-typedef bool (ActionFunction)(Player* player, Item* item, const PositionEx& posFrom, const PositionEx& posTo, bool extendedUse, uint32_t creatureId);
 class Action : public Event
 {
 	public:
@@ -91,7 +90,6 @@ class Action : public Event
 		virtual ~Action() {}
 
 		virtual bool configureEvent(xmlNodePtr p);
-		virtual bool loadFunction(const std::string& functionName);
 
 		//scripting
 		virtual bool executeUse(Player* player, Item* item, const PositionEx& posFrom,
@@ -106,14 +104,9 @@ class Action : public Event
 		virtual ReturnValue canExecuteAction(const Player* player, const Position& toPos);
 		virtual bool hasOwnErrorHandler() {return false;}
 
-		ActionFunction* function;
-
 	protected:
 		virtual std::string getScriptEventName() const {return "onUse";}
 		virtual std::string getScriptEventParams() const {return "cid, item, fromPosition, itemEx, toPosition";}
-
-		static ActionFunction increaseItemId;
-		static ActionFunction decreaseItemId;
 
 		bool allowFarUse;
 		bool checkLineOfSight;

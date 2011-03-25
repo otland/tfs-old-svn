@@ -71,7 +71,6 @@ void Actions::clear()
 	clearMap(actionItemMap);
 
 	m_interface.reInitState();
-
 	delete defaultAction;
 	defaultAction = NULL;
 }
@@ -441,72 +440,32 @@ ReturnValue Actions::internalUseItem(Player* player, const Position& pos, uint8_
 	Action* action = NULL;
 	if((action = getAction(item, ACTION_UNIQUEID)))
 	{
-		if(action->isScripted())
-		{
-			if(executeUse(action, player, item, posEx, creatureId))
-				return RET_NOERROR;
-		}
-		else if(action->function)
-		{
-			if(action->function(player, item, posEx, posEx, false, creatureId))
-				return RET_NOERROR;
-		}
+		if(executeUse(action, player, item, posEx, creatureId))
+			return RET_NOERROR;
 	}
 
 	if((action = getAction(item, ACTION_ACTIONID)))
 	{
-		if(action->isScripted())
-		{
-			if(executeUse(action, player, item, posEx, creatureId))
-				return RET_NOERROR;
-		}
-		else if(action->function)
-		{
-			if(action->function(player, item, posEx, posEx, false, creatureId))
-				return RET_NOERROR;
-		}
+		if(executeUse(action, player, item, posEx, creatureId))
+			return RET_NOERROR;
 	}
 
 	if((action = getAction(item, ACTION_ITEMID)))
 	{
-		if(action->isScripted())
-		{
-			if(executeUse(action, player, item, posEx, creatureId))
-				return RET_NOERROR;
-		}
-		else if(action->function)
-		{
-			if(action->function(player, item, posEx, posEx, false, creatureId))
-				return RET_NOERROR;
-		}
+		if(executeUse(action, player, item, posEx, creatureId))
+			return RET_NOERROR;
 	}
 
 	if((action = getAction(item, ACTION_RUNEID)))
 	{
-		if(action->isScripted())
-		{
-			if(executeUse(action, player, item, posEx, creatureId))
-				return RET_NOERROR;
-		}
-		else if(action->function)
-		{
-			if(action->function(player, item, posEx, posEx, false, creatureId))
-				return RET_NOERROR;
-		}
+		if(executeUse(action, player, item, posEx, creatureId))
+			return RET_NOERROR;
 	}
 
 	if(defaultAction)
 	{
-		if(defaultAction->isScripted())
-		{
-			if(executeUse(defaultAction, player, item, posEx, creatureId))
-				return RET_NOERROR;
-		}
-		else if(defaultAction->function)
-		{
-			if(defaultAction->function(player, item, posEx, posEx, false, creatureId))
-				return RET_NOERROR;
-		}
+		if(executeUse(defaultAction, player, item, posEx, creatureId))
+			return RET_NOERROR;
 	}
 
 	if(BedItem* bed = item->getBed())
@@ -716,43 +675,6 @@ bool Action::configureEvent(xmlNodePtr p)
 	if(readXMLString(p, "blockwalls", strValue) || readXMLString(p, "blockWalls", strValue))
 		setCheckLineOfSight(booleanString(strValue));
 
-	return true;
-}
-
-bool Action::loadFunction(const std::string& functionName)
-{
-	std::string tmpFunctionName = asLowerCaseString(functionName);
-	if(tmpFunctionName == "increaseitemid")
-		function = increaseItemId;
-	else if(tmpFunctionName == "decreaseitemid")
-		function = decreaseItemId;
-	else
-	{
-		std::clog << "[Warning - Action::loadFunction] Function \"" << functionName << "\" does not exist." << std::endl;
-		return false;
-	}
-
-	m_scripted = EVENT_SCRIPT_FALSE;
-	return true;
-}
-
-bool Action::increaseItemId(Player* player, Item* item, const PositionEx&, const PositionEx&, bool, uint32_t)
-{
-	if(!player || !item)
-		return false;
-
-	g_game.transformItem(item, item->getID() + 1);
-	g_game.startDecay(item);
-	return true;
-}
-
-bool Action::decreaseItemId(Player* player, Item* item, const PositionEx&, const PositionEx&, bool, uint32_t)
-{
-	if(!player || !item)
-		return false;
-
-	g_game.transformItem(item, item->getID() - 1);
-	g_game.startDecay(item);
 	return true;
 }
 

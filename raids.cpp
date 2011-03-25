@@ -932,7 +932,7 @@ bool ScriptEvent::configureRaidEvent(xmlNodePtr eventNode)
 		return false;
 
 	std::string scriptsName = Raids::getInstance()->getScriptBaseName();
-	if(!m_interface.m_luaState)
+	if(!m_interface.getState())
 	{
 		m_interface.initState();
 		std::string path = getFilePath(FILE_TYPE_OTHER, std::string(scriptsName + "/lib/"));
@@ -967,7 +967,7 @@ bool ScriptEvent::executeEvent() const
 		if(m_scripted == EVENT_SCRIPT_BUFFER)
 		{
 			bool result = true;
-			if(m_scriptData && m_interface.loadBuffer(m_scriptData))
+			if(m_scriptData && m_interface.loadBuffer(*m_scriptData))
 			{
 				lua_State* L = m_interface.getState();
 				result = m_interface.getGlobalBool(L, "_result", true);
