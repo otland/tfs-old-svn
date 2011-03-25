@@ -118,7 +118,7 @@
 	-- Database
 	-- NOTE: sqlFile is used only by sqlite database, and sqlKeepAlive by mysql database.
 	-- To disable sqlKeepAlive such as mysqlReadTimeout use 0 value.
-	-- encryptionType can be plain, md5, sha1, sha256, sha512 or vahash.
+	-- encryptionType can be plain, md5, sha1, sha256, sha512.
 	sqlType = "sqlite"
 	sqlHost = "localhost"
 	sqlPort = 3306
@@ -362,8 +362,6 @@
 	displayGamemastersWithOnlineCommand = false
 
 	-- Logs
-	-- NOTE: This kind of logging does not work in GUI version.
-	-- For such, please compile the software with __GUI_LOGS__ flag.
 	displayPlayersLogging = true
 	prefixChannelLogs = ""
 	runFile = ""
