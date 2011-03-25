@@ -1196,7 +1196,7 @@ double LuaInterface::popFloatNumber(lua_State* L)
 std::string LuaInterface::popString(lua_State* L)
 {
 	lua_pop(L, 1);
-	if(!lua_isstring(L, 0) && !lua_isnumber(L, 0)) 
+	if(!lua_isstring(L, 0) && !lua_isnumber(L, 0))
 		return std::string();
 
 	const char* str = lua_tostring(L, 0);
@@ -1941,7 +1941,7 @@ void LuaInterface::registerFunctions()
 	//doAddContainerItem(uid, itemid[, count/subType = 1])
 	lua_register(m_luaState, "doAddContainerItem", LuaInterface::luaDoAddContainerItem);
 
-	//getHouseInfo(houseId[, displayError = true])
+	//getHouseInfo(houseId[, displayError = true[, full = true]])
 	lua_register(m_luaState, "getHouseInfo", LuaInterface::luaGetHouseInfo);
 
 	//getHouseAccessList(houseid, listId)
@@ -1956,7 +1956,7 @@ void LuaInterface::registerFunctions()
 	//setHouseAccessList(houseid, listid, listtext)
 	lua_register(m_luaState, "setHouseAccessList", LuaInterface::luaSetHouseAccessList);
 
-	//setHouseOwner(houseId, owner[, clean])
+	//setHouseOwner(houseId, owner[, clean = true])
 	lua_register(m_luaState, "setHouseOwner", LuaInterface::luaSetHouseOwner);
 
 	//getWorldType()
@@ -5318,10 +5318,14 @@ int32_t LuaInterface::luaGetPlayerItemCount(lua_State* L)
 
 int32_t LuaInterface::luaGetHouseInfo(lua_State* L)
 {
-	//getHouseInfo(houseId[, displayError = true])
+	//getHouseInfo(houseId[, full = true[, displayError = true]])
 	bool displayError = true;
-	if(lua_gettop(L) > 1)
+	if(lua_gettop(L) > 2)
 		displayError = popBoolean(L);
+
+	bool full = true;
+	if(lua_gettop(L) > 1)
+		full = popBoolean(L);
 
 	House* house = Houses::getInstance()->getHouse(popNumber(L));
 	if(!house)
@@ -5351,39 +5355,44 @@ int32_t LuaInterface::luaGetHouseInfo(lua_State* L)
 
 	setFieldBool(L, "guildHall", house->isGuild());
 	setField(L, "size", house->getSize());
-	createTable(L, "doors");
 
-	HouseDoorList::iterator dit = house->getHouseDoorBegin();
-	for(uint32_t i = 1; dit != house->getHouseDoorEnd(); ++dit, ++i)
+	if(full)
 	{
-		lua_pushnumber(L, i);
-		pushPosition(L, (*dit)->getPosition(), 0);
+		createTable(L, "doors");
+
+		HouseDoorList::iterator dit = house->getHouseDoorBegin();
+		for(uint32_t i = 1; dit != house->getHouseDoorEnd(); ++dit, ++i)
+		{
+			lua_pushnumber(L, i);
+			pushPosition(L, (*dit)->getPosition(), 0);
+			pushTable(L);
+		}
+
+		pushTable(L);
+		createTable(L, "beds");
+
+		HouseBedList::iterator bit = house->getHouseBedsBegin();
+		for(uint32_t i = 1; bit != house->getHouseBedsEnd(); ++bit, ++i)
+		{
+			lua_pushnumber(L, i);
+			pushPosition(L, (*bit)->getPosition(), 0);
+			pushTable(L);
+		}
+
+		pushTable(L);
+		createTable(L, "tiles");
+
+		HouseTileList::iterator tit = house->getHouseTileBegin();
+		for(uint32_t i = 1; tit != house->getHouseTileEnd(); ++tit, ++i)
+		{
+			lua_pushnumber(L, i);
+			pushPosition(L, (*tit)->getPosition(), 0);
+			pushTable(L);
+		}
+
 		pushTable(L);
 	}
 
-	pushTable(L);
-	createTable(L, "beds");
-
-	HouseBedList::iterator bit = house->getHouseBedsBegin();
-	for(uint32_t i = 1; bit != house->getHouseBedsEnd(); ++bit, ++i)
-	{
-		lua_pushnumber(L, i);
-		pushPosition(L, (*bit)->getPosition(), 0);
-		pushTable(L);
-	}
-
-	pushTable(L);
-	createTable(L, "tiles");
-
-	HouseTileList::iterator tit = house->getHouseTileBegin();
-	for(uint32_t i = 1; tit != house->getHouseTileEnd(); ++tit, ++i)
-	{
-		lua_pushnumber(L, i);
-		pushPosition(L, (*tit)->getPosition(), 0);
-		pushTable(L);
-	}
-
-	pushTable(L);
 	return 1;
 }
 
@@ -5440,7 +5449,7 @@ int32_t LuaInterface::luaSetHouseAccessList(lua_State* L)
 
 int32_t LuaInterface::luaSetHouseOwner(lua_State* L)
 {
-	//setHouseOwner(houseId, owner[, clean])
+	//setHouseOwner(houseId, owner[, clean = true])
 	bool clean = true;
 	if(lua_gettop(L) > 2)
 		clean = popBoolean(L);
@@ -5864,7 +5873,7 @@ int32_t LuaInterface::luaCreateCombatArea(lua_State* L)
 	}
 	else
 		lua_pushboolean(L, false);
-	
+
 	return 1;
 }
 
@@ -9137,7 +9146,7 @@ int32_t LuaInterface::luaDoPlayerSetMounted(lua_State* L)
 
 	mounting = popNumber(L);
 	ScriptEnviroment* env = getEnv();
-	
+
 	Player* player = env->getPlayerByUID(popNumber(L));
 	if(!player)
 	{

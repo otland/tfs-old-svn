@@ -251,7 +251,7 @@ bool Actions::registerEvent(Event* event, xmlNodePtr p, bool override)
 				"\", to unique: \"" << endValue << "\")" << std::endl;
 	}
 
-	if(readXMLString(p, "actionid", strValue))
+	if(readXMLString(p, "actionid", strValue) || readXMLString(p, "aid", strValue))
 	{
 		IntegerVec intVector;
 		if(!parseIntegerVec(strValue, intVector))

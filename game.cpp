@@ -2820,7 +2820,7 @@ bool Game::playerWriteItem(uint32_t playerId, uint32_t windowTextId, const std::
 		player->transferContainer.__removeThing(writeItem, writeItem->getItemCount());
 		freeThing(writeItem);
 		return true;
-	}	
+	}
 
 	if(!text.empty())
 	{
@@ -3472,7 +3472,12 @@ bool Game::playerLookAt(uint32_t playerId, const Position& pos, uint16_t spriteI
 			ss << ".";
 			if(const Player* destPlayer = creature->getPlayer())
 			{
-				ss << std::endl << "IP: " << convertIPAddress(destPlayer->getIP()) << ", Client: " << destPlayer->getClientVersion() << ".";
+				ss << std::endl << "IP: " << convertIPAddress(destPlayer->getIP());
+#if CLIENT_VERSION_MIN != CLIENT_VERSION_MAX
+				ss << ", Client: " << destPlayer->getClientVersion();
+#endif
+				ss << ".";
+
 				if(destPlayer->isGhost())
 					ss << std::endl << "* Ghost mode *";
 			}
@@ -3702,7 +3707,7 @@ bool Game::playerChangeMountStatus(uint32_t playerId, bool status)
 		player->sendCancelMessage(RET_NOTPOSSIBLE);
 		return false;
 	}
-		
+
 	player->setMounted(status);
 	player->setLastMountAction(OTSYS_TIME());
 	return true;
