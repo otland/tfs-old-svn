@@ -3,7 +3,7 @@
 		The Forgotten Server
 
 	Version
-		0.4.0_DEV
+		0.3.7
 
 	Codenamed
 		Crying Damson
@@ -23,5 +23,5 @@
 		Assigned to: Elf
 
 	Finish documentation as its incomplete
-		Assigned to: Talaturen (CHANGELOG), Dalkon (CONFIG_HELP, MSVC Guide), Fallen (LUA_FUNCTIONS, C::B Guide), KaczooH
+		Assigned to: Dalkon (CONFIG_HELP, MSVC Guide), Fallen (LUA_FUNCTIONS, C::B Guide), KaczooH
 ]

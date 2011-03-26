@@ -3,7 +3,7 @@
 		The Forgotten Server
 
 	Version
-		0.4.0_DEV
+		0.3.7
 
 	Codenamed
 		Crying Damson
@@ -705,6 +705,11 @@
 			//
 		]
 	]
+	[ 0.3.7
+		[ Note
+			You are advised to update all your data files.
+		]
+	}
 ]
 
 [ Milestones
@@ -1126,4 +1131,83 @@
 
 			and much more ... (IT IS really stable & bug free!)
 	]
+	[ 0.3.7
+		Protocol 8.7 support (Talaturen)
+		Mounts system with mounts.xml (Talaturen, Elf))
+		New spell cooldown system (Elf, Dalkon, Talaturen)
+		Orange skull (Elf)
+		MD5, SHA1 and RSA implementations improved using OpenSSL (Dalkon)
+		LuaJIT support, up to 130 times faster Lua scripts (Talaturen, Elf)
+		A lot of Lua stack errors fixed (Elf, Talaturen)
+		Lua function doRelocate is now approximately 100 times faster (Elf)
+		New configurable variables in config.lua (Dalkon, Elf, slawkens, Talaturen):
+			separateVipListPerCharacter
+			vipListDefaultLimit
+			vipListDefaultPremiumLimit
+			globalSaveMinute
+			staminaLootLimit
+			fistBaseAttack
+			logsDirectory
+			tileLimit
+			protectionTileLimit (previously maxItemsPerPZTile)
+			houseTileLimit (previously maxItemsPerHouseTile)
+			bindOnlyGlobalAddress (previously bindOnlyConfiguredIpAddress)
+			rsaModulus
+			truncateLogOnStartup (previously truncateLogsOnStartup)
+			generateAccountSalt
+			tradeLimit
+			unifiedSpells
+			savePlayerData
+			enableCooldowns
+			useMounts
+			houseDataStorage (previously related to useHouseDataStorage)
+			mountCooldown
+			unmountPlayerInPz
+			pvpBlessingThreshold
+			fairFightTimeRange
+			monsterSpawnWalkback
+			useCapacity
+			defaultDepotSizePremium
+			defaultDepotSize
+			daemonize.
+		New Lua functions (Elf, slawkens, Dalkon, Talaturen):
+			std.sha256(string[, upperCase])
+			std.sha512(string[, upperCase])
+			unregisterCreatureEvent(uid, eventName)
+			errors(var)
+			getTownList()
+			db.query(query) (previously known as db.executeQuery)
+			getPlayerTradeState(cid)
+			getPlayerModes(cid)
+			doPlayerFollowCreature(cid)
+			doPlayerLeaveParty(cid[, forced = false])
+			getItemParent(uid)
+			db.stringComparer() (previously known as stringComparison)
+			os.mtime()
+			getChannelList()
+			doSteerCreature(cid, position[, maxNodes])
+			getVocationList()
+			getGroupList()
+			doPlayerOpenChannel(cid, channelId)
+			getContainerItems(uid)
+			doPlayerChangeName(guid, oldName, newName)
+			db.connected()
+			getCreatureStorageList(cid)
+			getStorageList()
+			doPlayerAddMount(cid, mountId)
+			doPlayerRemoveMount(cid, mountId)
+			getPlayerMount(cid, mountId)
+			doPlayerSetMount(cid, mountId)
+			doPlayerSetMountStatus(cid, mounted)
+			getMountInfo([mountId])
+			doPlayerSetWalkthrough(cid, uid, walkthrough)
+			getPlayerPVPBlessing(cid)
+			doPlayerSetPVPBlessing(cid[, value])
+			doAddAccountWarnings(accountId[, warnings])
+			getAccountWarnings(accountId)
+		Improved autobuild scripts for Linux (Elf, Fallen)
+		Fixed compiling in MSVC and added project files (Dalkon)
+		PVP Blessings (Elf)
+		A lot of miscellaneous cleanups, fixes and optimizations (Dalkon, Elf, slawkens, Talaturen)
+	}
 ]
