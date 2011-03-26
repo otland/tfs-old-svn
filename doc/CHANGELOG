@@ -23,13 +23,13 @@
 	M The Forgotten Server.exe
 	  data/
 	M	global.lua
-	  npc/lib/
-	M	npc.lua
-		npcsystem/
-	M		keywordhandler.lua
-	M		npcsystem.lua
-	M		modules.lua
-	M		npchandler.lua
+		npc/lib/
+	M		npc.lua
+			npcsystem/
+	M			keywordhandler.lua
+	M			npcsystem.lua
+	M			modules.lua
+	M			npchandler.lua
 ]
 
 [ Milestone
