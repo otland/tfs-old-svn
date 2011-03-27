@@ -1771,18 +1771,20 @@ void Npc::doSay(const std::string& text, SpeakClasses type, Player* player)
 
 uint32_t Npc::getListItemPrice(uint16_t itemId, ShopEvent_t type)
 {
+	std::list<ListItem> itemList;
 	for(ItemListMap::iterator it = itemListMap.begin(); it != itemListMap.end(); ++it)
 	{
-		std::list<ListItem>& itemList = it->second;
+		itemList = it->second;
 		for(std::list<ListItem>::iterator iit = itemList.begin(); iit != itemList.end(); ++iit)
 		{
-			if((*iit).itemId == itemId)
-			{
-				if(type == SHOPEVENT_BUY)
-					return (*iit).buyPrice;
-				else if(type == SHOPEVENT_SELL)
-					return (*iit).sellPrice;
-			}
+			if(iit->itemId != itemId)
+				continue;
+
+			if(type == SHOPEVENT_BUY)
+				return iit->buyPrice;
+
+			if(type == SHOPEVENT_SELL)
+				return iit->sellPrice;
 		}
 	}
 
@@ -1837,8 +1839,7 @@ void Npc::onPlayerEndTrade(Player* player, int32_t buyCallback,
 		luaL_unref(L, LUA_REGISTRYINDEX, sellCallback);
 
 	removeShopPlayer(player);
-	NpcState* npcState = getState(player, true);
-	if(npcState)
+	if(NpcState* npcState = getState(player, true))
 	{
 		const NpcResponse* response = getResponse(player, npcState, EVENT_PLAYER_SHOPCLOSE);
 		executeResponse(player, npcState, response);
@@ -2285,11 +2286,11 @@ const NpcResponse* Npc::getResponse(const Player*, NpcEvent_t eventType)
 	std::vector<NpcResponse*> result;
 	for(ResponseList::const_iterator it = responseList.begin(); it != responseList.end(); ++it)
 	{
-		if((*it)->getInteractType() == INTERACT_EVENT)
-		{
-			if((*it)->getInputText() == asLowerCaseString(eventName))
-				result.push_back(*it);
-		}
+		if((*it)->getInteractType() != INTERACT_EVENT)
+			continue;
+
+		if((*it)->getInputText() == asLowerCaseString(eventName))
+			result.push_back(*it);
 	}
 
 	if(result.empty())
@@ -2917,9 +2918,10 @@ void NpcEvents::onPlayerTrade(const Player* player, int32_t callback, uint16_t i
 
 void NpcEvents::onPlayerCloseChannel(const Player* player)
 {
+puts("lol3");
 	if(m_onPlayerCloseChannel == -1)
 		return;
-
+puts("lol");
 	//onPlayerCloseChannel(cid)
 	if(m_interface->reserveEnv())
 	{
@@ -2929,7 +2931,7 @@ void NpcEvents::onPlayerCloseChannel(const Player* player)
 		env->setScriptId(m_onPlayerCloseChannel, m_interface);
 		env->setRealPos(m_npc->getPosition());
 		env->setNpc(m_npc);
-
+puts("lol2");
 		m_interface->pushFunction(m_onPlayerCloseChannel);
 		lua_pushnumber(L, env->addThing(const_cast<Player*>(player)));
 
@@ -2942,7 +2944,7 @@ void NpcEvents::onPlayerCloseChannel(const Player* player)
 
 void NpcEvents::onPlayerEndTrade(const Player* player)
 {
-	if(m_onPlayerCloseChannel == -1)
+	if(m_onPlayerEndTrade == -1)
 		return;
 
 	//onPlayerEndTrade(cid)
