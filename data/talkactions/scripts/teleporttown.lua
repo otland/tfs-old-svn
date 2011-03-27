@@ -33,7 +33,7 @@ function onSay(cid, words, param, channel)
 		end
 	end
 
-	local pos = getTownTemplePosition(tmp, false)
+	local pos = getTownTemplePosition(tmp)
 	if(type(pos) ~= 'table' or isInArray({pos.x, pos.y}, 0)) then
 		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Town " .. t[1] .. " does not exists or has invalid temple position.")
 		return true
