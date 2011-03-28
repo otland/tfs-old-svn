@@ -7482,7 +7482,7 @@ int32_t LuaInterface::luaDoMoveCreature(lua_State* L)
 int32_t LuaInterface::luaDoSteerCreature(lua_State* L)
 {
 	//doSteerCreature(cid, position[, maxNodes])
-	uint16_t maxNodes = 1000;
+	uint16_t maxNodes = 100;
 	if(lua_gettop(L) > 2)
 		maxNodes = popNumber(L);
 

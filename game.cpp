@@ -4050,7 +4050,7 @@ bool Game::getPathToEx(const Creature* creature, const Position& targetPos, std:
 	return getPathToEx(creature, targetPos, dirList, fpp);
 }
 
-bool Game::steerCreature(Creature* creature, const Position& position, uint16_t maxNodes/* = 1000*/)
+bool Game::steerCreature(Creature* creature, const Position& position, uint16_t maxNodes/* = 100*/)
 {
 	FindPathParams fpp;
 	fpp.maxClosedNodes = maxNodes;
