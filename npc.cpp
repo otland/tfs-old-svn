@@ -2918,10 +2918,9 @@ void NpcEvents::onPlayerTrade(const Player* player, int32_t callback, uint16_t i
 
 void NpcEvents::onPlayerCloseChannel(const Player* player)
 {
-puts("lol3");
 	if(m_onPlayerCloseChannel == -1)
 		return;
-puts("lol");
+
 	//onPlayerCloseChannel(cid)
 	if(m_interface->reserveEnv())
 	{
@@ -2931,7 +2930,7 @@ puts("lol");
 		env->setScriptId(m_onPlayerCloseChannel, m_interface);
 		env->setRealPos(m_npc->getPosition());
 		env->setNpc(m_npc);
-puts("lol2");
+
 		m_interface->pushFunction(m_onPlayerCloseChannel);
 		lua_pushnumber(L, env->addThing(const_cast<Player*>(player)));
 
