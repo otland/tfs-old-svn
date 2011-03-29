@@ -979,7 +979,7 @@ ResponseList Npc::loadInteraction(xmlNodePtr node)
 	return _responseList;
 }
 
-NpcState* Npc::getState(const Player* player, bool makeNew /*= true*/)
+NpcState* Npc::getState(const Player* player, bool makeNew/* = true*/)
 {
 	for(StateList::iterator it = stateList.begin(); it != stateList.end(); ++it)
 	{
@@ -1038,13 +1038,14 @@ void Npc::onCreatureAppear(const Creature* creature)
 		m_npcEventHandler->onCreatureAppear(creature);
 
 	//only players for script events
-	if(Player* player = const_cast<Player*>(creature->getPlayer()))
+	Player* player = const_cast<Player*>(creature->getPlayer());
+	if(!player)
+		return;
+
+	if(NpcState* npcState = getState(player))
 	{
-		if(NpcState* npcState = getState(player))
-		{
-			npcState->respondToCreature = player->getID();
-			onPlayerEnter(player, npcState);
-		}
+		npcState->respondToCreature = player->getID();
+		onPlayerEnter(player, npcState);
 	}
 }
 
@@ -1060,13 +1061,14 @@ void Npc::onCreatureDisappear(const Creature* creature, bool isLogout)
 	if(m_npcEventHandler)
 		m_npcEventHandler->onCreatureDisappear(creature);
 
-	if(Player* player = const_cast<Player*>(creature->getPlayer()))
+	Player* player = const_cast<Player*>(creature->getPlayer());
+	if(!player)
+		return;
+
+	if(NpcState* npcState = getState(player))
 	{
-		if(NpcState* npcState = getState(player))
-		{
-			npcState->respondToCreature = player->getID();
-			onPlayerLeave(player, npcState);
-		}
+		npcState->respondToCreature = player->getID();
+		onPlayerLeave(player, npcState);
 	}
 }
 
@@ -1077,54 +1079,55 @@ void Npc::onCreatureMove(const Creature* creature, const Tile* newTile, const Po
 	if(m_npcEventHandler)
 		m_npcEventHandler->onCreatureMove(creature, oldPos, newPos);
 
-	if(Player* player = const_cast<Player*>(creature->getPlayer()))
+	Player* player = const_cast<Player*>(creature->getPlayer());
+	if(!player)
+		return;
+
+	if(NpcState* npcState = getState(player))
 	{
-		if(NpcState* npcState = getState(player))
+		bool canSeeNewPos = canSee(newPos), canSeeOldPos = canSee(oldPos);
+		if(canSeeNewPos && !canSeeOldPos)
 		{
-			bool canSeeNewPos = canSee(newPos), canSeeOldPos = canSee(oldPos);
-			if(canSeeNewPos && !canSeeOldPos)
-			{
-				npcState->respondToCreature = player->getID();
-				onPlayerEnter(player, npcState);
-			}
-			else if(!canSeeNewPos && canSeeOldPos)
-			{
-				npcState->respondToCreature = player->getID();
-				onPlayerLeave(player, npcState);
-			}
-			else if(canSeeNewPos && canSeeOldPos)
-			{
-				npcState->respondToCreature = player->getID();
-				const NpcResponse* response = getResponse(player, npcState, EVENT_PLAYER_MOVE);
-				executeResponse(player, npcState, response);
-			}
+			npcState->respondToCreature = player->getID();
+			onPlayerEnter(player, npcState);
+		}
+		else if(!canSeeNewPos && canSeeOldPos)
+		{
+			npcState->respondToCreature = player->getID();
+			onPlayerLeave(player, npcState);
+		}
+		else if(canSeeNewPos && canSeeOldPos)
+		{
+			npcState->respondToCreature = player->getID();
+			const NpcResponse* response = getResponse(player, npcState, EVENT_PLAYER_MOVE);
+			executeResponse(player, npcState, response);
 		}
 	}
 }
 
 void Npc::onCreatureSay(const Creature* creature, SpeakClasses type, const std::string& text, Position* pos/* = NULL*/)
 {
-	//only players for script events
-	if(const Player* player = creature->getPlayer())
+	if(m_npcEventHandler)
+		m_npcEventHandler->onCreatureSay(creature, type, text, pos);
+
+	const Player* player = creature->getPlayer();
+	if(!player)
+		return;
+
+	if(type == SPEAK_SAY || type == SPEAK_PRIVATE_PN)
 	{
-		if(m_npcEventHandler)
-			m_npcEventHandler->onCreatureSay(player, type, text, pos);
+		Position destPos = creature->getPosition();
+		if(pos)
+			destPos = (*pos);
 
-		if(type == SPEAK_SAY || type == SPEAK_PRIVATE_PN)
+		const Position& myPos = getPosition();
+		if(canSee(myPos) && (destPos.x >= myPos.x - talkRadius) && (destPos.x <= myPos.x + talkRadius)
+			&& (destPos.y >= myPos.y - talkRadius) && (destPos.y <= myPos.y + talkRadius))
 		{
-			Position destPos = creature->getPosition();
-			if(pos)
-				destPos = (*pos);
-
-			const Position& myPos = getPosition();
-			if(canSee(myPos) && (destPos.x >= myPos.x - talkRadius) && (destPos.x <= myPos.x + talkRadius)
-				&& (destPos.y >= myPos.y - talkRadius) && (destPos.y <= myPos.y + talkRadius))
+			if(NpcState* npcState = getState(player))
 			{
-				if(NpcState* npcState = getState(player))
-				{
-					npcState->respondToText = text;
-					npcState->respondToCreature = player->getID();
-				}
+				npcState->respondToText = text;
+				npcState->respondToCreature = player->getID();
 			}
 		}
 	}
@@ -1135,7 +1138,7 @@ void Npc::onPlayerCloseChannel(const Player* player)
 	if(NpcState* npcState = getState(player, true))
 	{
 		const NpcResponse* response = getResponse(player, npcState, EVENT_PLAYER_CHATCLOSE);
-		executeResponse(player, npcState, response);
+		executeResponse(const_cast<Player*>(player), npcState, response);
 	}
 
 	if(m_npcEventHandler)
@@ -1241,15 +1244,15 @@ void Npc::onThink(uint32_t interval)
 			}
 			else
 			{
-				Player* nextPlayer = NULL;
+				Player* tmpPlayer = NULL;
 				while(!queueList.empty())
 				{
-					if((nextPlayer = g_game.getPlayerByID(*queueList.begin())))
+					if((tmpPlayer = g_game.getPlayerByID(*queueList.begin())))
 					{
-						if(NpcState* nextPlayerState = getState(nextPlayer, false))
+						if(NpcState* tmpPlayerState = getState(tmpPlayer, false))
 						{
-							nextPlayerState->respondToText = nextPlayerState->prevRespondToText;
-							nextPlayerState->isQueued = false;
+							tmpPlayerState->respondToText = tmpPlayerState->prevRespondToText;
+							tmpPlayerState->isQueued = false;
 							break;
 						}
 					}
@@ -1259,7 +1262,7 @@ void Npc::onThink(uint32_t interval)
 			}
 
 			delete *it;
-			stateList.erase(it++);
+			it = stateList.erase(it);
 			continue;
 		}
 
@@ -1709,11 +1712,12 @@ void Npc::executeResponse(Player* player, NpcState* npcState, const NpcResponse*
 					lua_State* L = m_interface->getState();
 
 					env->setScriptId(functionId, m_interface);
-					Npc* prevNpc = env->getNpc();
 					env->setRealPos(getPosition());
-					env->setNpc(this);
 
+					Npc* prevNpc = env->getNpc();
+					env->setNpc(this);
 					m_interface->pushFunction(functionId);
+
 					int32_t paramCount = 0;
 					for(ActionList::const_iterator it = response->getFirstAction(); it != response->getEndAction(); ++it)
 					{
@@ -2423,7 +2427,7 @@ NpcScript* Npc::getInterface()
 	return m_interface;
 }
 
-NpcScript::NpcScript() :
+NpcScript::NpcScript():
 	LuaInterface("NpcScript Interface")
 {
 	initState();
@@ -2922,37 +2926,6 @@ void NpcEvents::onPlayerTrade(const Player* player, int32_t callback, uint16_t i
 		std::clog << "[Error - NpcEvents::onPlayerTrade] NPC Name: " << m_npc->getName() << " - Call stack overflow" << std::endl;
 }
 
-void NpcEvents::onPlayerCloseChannel(const Player* player)
-{
-	if(m_onPlayerCloseChannel == -1)
-		return;
-
-	//onPlayerCloseChannel(cid)
-	if(m_interface->reserveEnv())
-	{
-		ScriptEnviroment* env = m_interface->getEnv();
-		lua_State* L = m_interface->getState();
-
-		#ifdef __DEBUG_LUASCRIPTS__
-		std::stringstream desc;
-		desc << "npc " << m_npc->getName();
-		env->setEvent(desc.str());
-		#endif
-
-		env->setScriptId(m_onPlayerCloseChannel, m_interface);
-		env->setRealPos(m_npc->getPosition());
-		env->setNpc(m_npc);
-
-		m_interface->pushFunction(m_onPlayerCloseChannel);
-		lua_pushnumber(L, env->addThing(const_cast<Player*>(player)));
-
-		m_interface->callFunction(1);
-		m_interface->releaseEnv();
-	}
-	else
-		std::clog << "[Error - NpcEvents::onPlayerCloseChannel] NPC Name: " << m_npc->getName() << " - Call stack overflow" << std::endl;
-}
-
 void NpcEvents::onPlayerEndTrade(const Player* player)
 {
 	if(m_onPlayerEndTrade == -1)
@@ -2982,6 +2955,37 @@ void NpcEvents::onPlayerEndTrade(const Player* player)
 	}
 	else
 		std::clog << "[Error - NpcEvents::onPlayerEndTrade] NPC Name: " << m_npc->getName() << " - Call stack overflow" << std::endl;
+}
+
+void NpcEvents::onPlayerCloseChannel(const Player* player)
+{
+	if(m_onPlayerCloseChannel == -1)
+		return;
+
+	//onPlayerCloseChannel(cid)
+	if(m_interface->reserveEnv())
+	{
+		ScriptEnviroment* env = m_interface->getEnv();
+		lua_State* L = m_interface->getState();
+
+		#ifdef __DEBUG_LUASCRIPTS__
+		std::stringstream desc;
+		desc << "npc " << m_npc->getName();
+		env->setEvent(desc.str());
+		#endif
+
+		env->setScriptId(m_onPlayerCloseChannel, m_interface);
+		env->setRealPos(m_npc->getPosition());
+		env->setNpc(m_npc);
+
+		m_interface->pushFunction(m_onPlayerCloseChannel);
+		lua_pushnumber(L, env->addThing(const_cast<Player*>(player)));
+
+		m_interface->callFunction(1);
+		m_interface->releaseEnv();
+	}
+	else
+		std::clog << "[Error - NpcEvents::onPlayerCloseChannel] NPC Name: " << m_npc->getName() << " - Call stack overflow" << std::endl;
 }
 
 void NpcEvents::onThink()
