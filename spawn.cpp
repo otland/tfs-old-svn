@@ -309,9 +309,10 @@ bool Spawn::spawnMonster(uint32_t spawnId, MonsterType* mType, const Position& p
 
 void Spawn::startup()
 {
+	spawnBlock_t sb;
 	for(SpawnMap::iterator it = spawnMap.begin(); it != spawnMap.end(); ++it)
 	{
-		spawnBlock_t& sb = it->second;
+		sb = it->second;
 		spawnMonster(it->first, sb.mType, sb.pos, sb.direction, true);
 	}
 }
@@ -325,7 +326,7 @@ void Spawn::checkSpawn()
 	uint32_t spawnId;
 
 	checkSpawnEvent = 0;
-	for(SpawnedMap::iterator it = spawnedMap.begin(); it != spawnedMap.end(); ++it)
+	for(SpawnedMap::iterator it = spawnedMap.begin(); it != spawnedMap.end(); )
 	{
 		spawnId = it->first;
 		monster = it->second;

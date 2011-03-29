@@ -74,9 +74,9 @@ struct FindPathParams
 	FindPathParams()
 	{
 		fullPathSearch = clearSight = allowDiagonal = true;
-		maxSearchDist = minTargetDist = maxTargetDist = -1;
-		maxClosedNodes = 100;
 		keepDistance = false;
+		maxClosedNodes = 100;
+		maxSearchDist = minTargetDist = maxTargetDist = -1;
 	}
 };
 

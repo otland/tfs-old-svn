@@ -443,7 +443,7 @@ if(NpcHandler == nil) then
 	function NpcHandler:onPlayerEndTrade(cid)
 		local callback = self:getCallback(CALLBACK_PLAYER_ENDTRADE)
 		if(callback == nil or callback(cid)) then
-			if(self:processModuleCallback(CALLBACK_PLAYER_ENDTRADE, cid, class, msg)) then
+			if(self:processModuleCallback(CALLBACK_PLAYER_ENDTRADE, cid)) then
 				if(self:isFocused(cid)) then
 					local parseInfo = { [TAG_PLAYERNAME] = getPlayerName(cid) }
 					local msg = self:parseMessage(self:getMessage(MESSAGE_ONCLOSESHOP), parseInfo)
@@ -457,7 +457,7 @@ if(NpcHandler == nil) then
 	function NpcHandler:onPlayerCloseChannel(cid)
 		local callback = self:getCallback(CALLBACK_PLAYER_CLOSECHANNEL)
 		if(callback == nil or callback(cid)) then
-			if(self:processModuleCallback(CALLBACK_PLAYER_CLOSECHANNEL, cid, class, msg)) then
+			if(self:processModuleCallback(CALLBACK_PLAYER_CLOSECHANNEL, cid)) then
 				if(self:isFocused(cid)) then
 					self:unGreet(cid)
 				end

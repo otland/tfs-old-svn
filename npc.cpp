@@ -1829,8 +1829,7 @@ void Npc::onPlayerTrade(Player* player, ShopEvent_t type, int32_t callback, uint
 	player->sendGoods();
 }
 
-void Npc::onPlayerEndTrade(Player* player, int32_t buyCallback,
-	int32_t sellCallback)
+void Npc::onPlayerEndTrade(Player* player, int32_t buyCallback, int32_t sellCallback)
 {
 	lua_State* L = getInterface()->getState();
 	if(buyCallback != -1)
@@ -2717,8 +2716,7 @@ int32_t NpcScript::luaCloseShopWindow(lua_State* L)
 	}
 
 	int32_t onBuy, onSell;
-	Npc* merchant = player->getShopOwner(onBuy, onSell);
-	if(merchant == npc)
+	if(player->getShopOwner(onBuy, onSell) == npc)
 		player->closeShopWindow(true, npc, onBuy, onSell);
 
 	lua_pushboolean(L, true);
@@ -2927,6 +2925,12 @@ void NpcEvents::onPlayerCloseChannel(const Player* player)
 		ScriptEnviroment* env = m_interface->getEnv();
 		lua_State* L = m_interface->getState();
 
+		#ifdef __DEBUG_LUASCRIPTS__
+		std::stringstream desc;
+		desc << "npc " << m_npc->getName();
+		env->setEvent(desc.str());
+		#endif
+
 		env->setScriptId(m_onPlayerCloseChannel, m_interface);
 		env->setRealPos(m_npc->getPosition());
 		env->setNpc(m_npc);
@@ -2951,6 +2955,12 @@ void NpcEvents::onPlayerEndTrade(const Player* player)
 	{
 		ScriptEnviroment* env = m_interface->getEnv();
 		lua_State* L = m_interface->getState();
+
+		#ifdef __DEBUG_LUASCRIPTS__
+		std::stringstream desc;
+		desc << "npc " << m_npc->getName();
+		env->setEvent(desc.str());
+		#endif
 
 		env->setScriptId(m_onPlayerEndTrade, m_interface);
 		env->setRealPos(m_npc->getPosition());

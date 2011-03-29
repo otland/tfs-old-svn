@@ -43,12 +43,6 @@ for _, item in ipairs(itemWindow) do
 	items[item.id] = {buyPrice = item.buy, sellPrice = item.sell, subType = item.subType, realName = item.name}
 end
 
-local function getPlayerMoney(cid)
-	return ((getPlayerItemCount(cid, 2160) * 10000) +
-	(getPlayerItemCount(cid, 2152) * 100) +
-	getPlayerItemCount(cid, 2148))
-end
-
 local onBuy = function(cid, item, subType, amount, ignoreCap, inBackpacks)
 	if(items[item] == nil) then
 		selfSay("Ehm.. sorry... this shouldn't be there, I'm not selling it.", cid)
@@ -90,6 +84,7 @@ local onSell = function(cid, item, subType, amount, ignoreCap, inBackpacks)
 end
 
 function onCreatureAppear(cid)
+	--
 end
 
 function onCreatureDisappear(cid)
