@@ -369,18 +369,16 @@ if(NpcHandler == nil) then
 
 	-- Greets a new player.
 	function NpcHandler:greet(cid)
-		if(cid ~= 0) then
-			local callback = self:getCallback(CALLBACK_GREET)
-			if(callback == nil or callback(cid)) then
-				if(self:processModuleCallback(CALLBACK_GREET, cid)) then
-					local msg = self:getMessage(MESSAGE_GREET)
-					local parseInfo = { [TAG_PLAYERNAME] = getCreatureName(cid) }
-					msg = self:parseMessage(msg, parseInfo)
+		local callback = self:getCallback(CALLBACK_GREET)
+		if(callback == nil or callback(cid)) then
+			if(self:processModuleCallback(CALLBACK_GREET, cid)) then
+				local msg = self:getMessage(MESSAGE_GREET)
+				local parseInfo = { [TAG_PLAYERNAME] = getCreatureName(cid) }
+				msg = self:parseMessage(msg, parseInfo)
 
-					self:say(msg)
-					self:addFocus(cid)
-					self:say(msg, cid)
-				end
+				self:say(msg)
+				self:addFocus(cid)
+				self:say(msg, cid)
 			end
 		end
 	end

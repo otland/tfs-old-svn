@@ -585,24 +585,18 @@ bool Spell::configureSpell(xmlNodePtr p)
 			tmpVector = explodeString((*it), ",");
 			if(tmpVector.size() > 1)
 				groupExhaustions[(SpellGroup_t)atoi(tmpVector[0].c_str())] = atoi(tmpVector[1].c_str());
+			else if(isAggressive)
+				groupExhaustions[(SpellGroup_t)atoi(tmpVector[0].c_str())] = 2000;
 			else
-				groupExhaustions[(SpellGroup_t)atoi(tmpVector[0].c_str())] = 0;
+				groupExhaustions[(SpellGroup_t)atoi(tmpVector[0].c_str())] = 1000;
 		}
 	}
 
-	if(groupExhaustions.empty())
-	{
-		if(isAggressive)
-			groupExhaustions[SPELLGROUP_ATTACK] = 2000;
-		else
-			groupExhaustions[SPELLGROUP_HEALING] = 1000;
-	}
-
 	std::string error;
-	for(xmlNodePtr vocationNode = p->children; vocationNode != NULL; vocationNode = vocationNode->next)
+	for(xmlNodePtr vocationNode = p->children; vocationNode; vocationNode = vocationNode->next)
 	{
 		if(!parseVocationNode(vocationNode, vocSpellMap, vocStringVec, error))
-			std::clog << "[Warning - Spell::configureSpell] (Spell: " << name << ") " << error << std::endl;
+			std::clog << "[Warning - Spell::configureSpell] Spell: " << name << ", " << error << std::endl;
 	}
 
 	return true;

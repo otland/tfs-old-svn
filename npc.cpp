@@ -1132,6 +1132,12 @@ void Npc::onCreatureSay(const Creature* creature, SpeakClasses type, const std::
 
 void Npc::onPlayerCloseChannel(const Player* player)
 {
+	if(NpcState* npcState = getState(player, true))
+	{
+		const NpcResponse* response = getResponse(player, npcState, EVENT_PLAYER_CHATCLOSE);
+		executeResponse(player, npcState, response);
+	}
+
 	if(m_npcEventHandler)
 		m_npcEventHandler->onPlayerCloseChannel(player);
 }
@@ -2329,6 +2335,8 @@ std::string Npc::getEventResponseName(NpcEvent_t eventType)
 			return "onPlayerShopBuy";
 		case EVENT_PLAYER_SHOPCLOSE:
 			return "onPlayerShopClose";
+		case EVENT_PLAYER_CHATCLOSE:
+			return "onPlayerChatClose";
 		default:
 			break;
 	}
