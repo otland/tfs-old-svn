@@ -40,6 +40,7 @@
 	#define MULTI_SQL_DRIVERS
 #endif
 
+#define MAX_RAND_RANGE 10000000
 #ifndef __FUNCTION__
 	#define	__FUNCTION__ __func__
 #endif

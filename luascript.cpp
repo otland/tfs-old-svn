@@ -286,7 +286,7 @@ Thing* ScriptEnviroment::getThingByUID(uint32_t uid)
 	if(tmp && !tmp->isRemoved())
 		return tmp;
 
-	if(uid >= 0x10000000)
+	if(uid >= PLAYER_ID_RANGE)
 	{
 		tmp = g_game.getCreatureByID(uid);
 		if(tmp && !tmp->isRemoved())

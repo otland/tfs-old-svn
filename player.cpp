@@ -2196,10 +2196,9 @@ bool Player::onDeath()
 	{
 		totalDamage += it->second.total;
 		// its enough when we use IDs range comparison here instead of overheating autoList
-		// FIXME: any idea to not use hardcoded values?
 		if(((OTSYS_TIME() - it->second.ticks) / 1000) <= g_config.getNumber(
-			ConfigManager::FAIRFIGHT_TIMERANGE) && it->first >= 0x10000000
-			&& it->first < 0x40000000)
+			ConfigManager::FAIRFIGHT_TIMERANGE) && it->first >= PLAYER_ID_RANGE
+			&& it->first < MONSTER_ID_RANGE)
 			pvpDamage += it->second.total;
 	}
 

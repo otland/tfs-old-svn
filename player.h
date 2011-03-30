@@ -159,7 +159,7 @@ class Player : public Creature, public Cylinder
 		uint32_t getGUID() const {return guid;}
 
 		static AutoList<Player> autoList;
-		virtual uint32_t rangeId() {return 0x10000000;}
+		virtual uint32_t rangeId() {return PLAYER_ID_RANGE;}
 
 		void addList();
 		void removeList();

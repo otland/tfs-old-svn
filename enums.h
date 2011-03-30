@@ -21,6 +21,10 @@
 #include <string>
 #include <list>
 
+#define PLAYER_ID_RANGE 0x10000000
+#define MONSTER_ID_RANGE 0x40000000
+#define NPC_ID_RANGE 0x80000000
+
 #ifdef _MSC_VER
 	#pragma warning(disable:4244)
 #endif
@@ -50,17 +54,11 @@ enum GuildLevel_t
 	GUILDLEVEL_LEADER
 };
 
-enum OperatingSystem_t
-{
-	CLIENTOS_LINUX = 0x01,
-	CLIENTOS_WINDOWS = 0x02
-};
-
 enum Channels_t
 {
 	CHANNEL_GUILD = 0x00,
 	CHANNEL_PARTY = 0x01,
-	CHANNEL_HELP = 0x09,
+	CHANNEL_HELP = 0x06,
 	CHANNEL_DEFAULT = 0xFFFE, //internal usage only, there is no such channel
 	CHANNEL_PRIVATE = 0xFFFF
 };
@@ -78,8 +76,7 @@ enum ViolationAction_t
 	ACTION_DELETION,
 	ACTION_NAMELOCK,
 	ACTION_BANLOCK,
-	ACTION_BANLOCKFINAL,
-	ACTION_PLACEHOLDER
+	ACTION_BANLOCKFINAL
 };
 
 enum RaceType_t
@@ -226,22 +223,6 @@ enum Increment_t
 	INCREMENT_LAST = MAGIC_PERCENT
 };
 
-enum skills_t
-{
-	SKILL_FIRST = 0,
-	SKILL_FIST = SKILL_FIRST,
-	SKILL_CLUB,
-	SKILL_SWORD,
-	SKILL_AXE,
-	SKILL_DIST,
-	SKILL_SHIELD,
-	SKILL_FISH,
-	SKILL__MAGLEVEL,
-	SKILL__LEVEL,
-	SKILL_LAST = SKILL_FISH,
-	SKILL__LAST = SKILL__LEVEL
-};
-
 enum stats_t
 {
 	STAT_FIRST = 0,
@@ -288,15 +269,6 @@ enum ConditionId_t
 	CONDITIONID_AMMO,
 	CONDITIONID_OUTFIT
 };
-
-enum SpellGroup_t
-{
-	SPELLGROUP_NONE = 0,
-	SPELLGROUP_ATTACK = 1,
-	SPELLGROUP_HEALING = 2,
-	SPELLGROUP_SUPPORT = 3,
-	SPELLGROUP_SPECIAL = 4
-}; // Those are basically constant values!
 
 enum PlayerSex_t
 {

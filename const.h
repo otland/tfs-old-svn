@@ -19,6 +19,12 @@
 #define __CONST__
 #include "definitions.h"
 
+enum OperatingSystem_t
+{
+	CLIENTOS_LINUX = 0x01,
+	CLIENTOS_WINDOWS = 0x02
+};
+
 enum MagicEffect_t
 {
 	MAGIC_EFFECT_DRAW_BLOOD	= 0x00,
@@ -342,6 +348,22 @@ enum Icons_t
 	ICON_BLEED = 1 << 15
 };
 
+enum skills_t
+{
+	SKILL_FIRST = 0,
+	SKILL_FIST = SKILL_FIRST,
+	SKILL_CLUB,
+	SKILL_SWORD,
+	SKILL_AXE,
+	SKILL_DIST,
+	SKILL_SHIELD,
+	SKILL_FISH,
+	SKILL__MAGLEVEL,
+	SKILL__LEVEL,
+	SKILL_LAST = SKILL_FISH,
+	SKILL__LAST = SKILL__LEVEL
+};
+
 enum WeaponType_t
 {
 	WEAPON_NONE = 0,
@@ -418,6 +440,15 @@ enum GuildEmblems_t
 	EMBLEM_GREEN,
 	EMBLEM_RED,
 	EMBLEM_BLUE
+};
+
+enum SpellGroup_t
+{
+	SPELLGROUP_NONE = 0,
+	SPELLGROUP_ATTACK = 1,
+	SPELLGROUP_HEALING = 2,
+	SPELLGROUP_SUPPORT = 3,
+	SPELLGROUP_SPECIAL = 4
 };
 
 enum Spells_t

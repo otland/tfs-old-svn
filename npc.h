@@ -338,7 +338,6 @@ struct Voice
 	std::string text;
 };
 
-#define MAX_RAND_RANGE 10000000
 class Npc : public Creature
 {
 	public:
@@ -351,7 +350,7 @@ class Npc : public Creature
 		virtual Npc* getNpc() {return this;}
 		virtual const Npc* getNpc() const {return this;}
 
-		virtual uint32_t rangeId() {return 0x80000000;}
+		virtual uint32_t rangeId() {return NPC_ID_RANGE;}
 		static AutoList<Npc> autoList;
 
 		void addList() {autoList[id] = this;}
