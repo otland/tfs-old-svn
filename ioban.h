@@ -50,7 +50,7 @@ struct Ban
 	Ban()
 	{
 		type = BAN_NONE;
-		action = ACTION_PLACEHOLDER;
+		action = ACTION_NOTATION;
 		id = value = param = added = adminId = reason = expires = 0;
 	}
 };
