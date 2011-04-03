@@ -2121,6 +2121,11 @@ BlockType_t Player::blockHit(Creature* attacker, CombatType_t combatType, int32_
 		}
 	}
 
+	if(mounted)
+	{
+		// TODO: mount attributes
+	}
+
 	if(vocation->getAbsorb(combatType))
 		blocked += (int32_t)std::ceil((double)(damage * vocation->getAbsorb(combatType)) / 100.);
 
@@ -5269,6 +5274,7 @@ void Player::setMounted(bool mounting)
 			if(mount->getSpeed())
 				g_game.changeSpeed(this, mount->getSpeed());
 
+			// TODO: mount attributes
 			g_game.internalCreatureChangeOutfit(this, defaultOutfit, true);
 		}
 	}
@@ -5283,9 +5289,13 @@ void Player::dismount(bool update)
 	if(!defaultOutfit.lookMount)
 		return;
 
-	Mount* mount = Mounts::getInstance()->getMountByCid(defaultOutfit.lookMount);
-	if(mount && mount->getSpeed() > 0)
-		g_game.changeSpeed(this, -(int32_t)mount->getSpeed());
+	if(Mount* mount = Mounts::getInstance()->getMountByCid(defaultOutfit.lookMount))
+	{
+		if(mount->getSpeed() > 0)
+			g_game.changeSpeed(this, -(int32_t)mount->getSpeed());
+
+		// TODO: mount attributes
+	}
 
 	if(update)
 		g_game.internalCreatureChangeOutfit(this, defaultOutfit, true);
