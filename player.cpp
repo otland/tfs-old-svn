@@ -3209,19 +3209,17 @@ uint32_t Player::__getItemTypeCount(uint16_t itemId, int32_t subType /*= -1*/) c
 		if(!(item = inventory[i]))
 			continue;
 
-		if(item->getID() != itemId)
-		{
-			if(!(container = item->getContainer()))
-				continue;
-
-			for(ContainerIterator it = container->begin(), end = container->end(); it != end; ++it)
-			{
-				if((*it)->getID() == itemId)
-					count += Item::countByType(*it, subType);
-			}
-		}
-		else
+		if(item->getID() == itemId)
 			count += Item::countByType(item, subType);
+
+		if(!(container = item->getContainer()))
+			continue;
+
+		for(ContainerIterator it = container->begin(), end = container->end(); it != end; ++it)
+		{
+			if((*it)->getID() == itemId)
+				count += Item::countByType(*it, subType);
+		}
 	}
 
 	return count;
