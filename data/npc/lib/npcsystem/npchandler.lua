@@ -613,8 +613,8 @@ if(NpcHandler == nil) then
 	-- Makes the npc represented by this instance of NpcHandler say something.
 	--	This implements the currently set type of talkdelay.
 	function NpcHandler:say(message, focus, delay, force)
-		local delay, force = delay or nil, force or false
-		if(NPCHANDLER_TALKDELAY == TALKDELAY_NONE or delay <= 0) then
+		local force = force or false
+		if(NPCHANDLER_TALKDELAY == TALKDELAY_NONE or (delay ~= nil and delay <= 0)) then
 			if(NPCHANDLER_CONVBEHAVIOR ~= CONVERSATION_DEFAULT) then
 				selfSay(message, focus)
 			else

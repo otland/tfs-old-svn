@@ -20,6 +20,7 @@
 
 #include "otsystem.h"
 #include "enums.h"
+#include "const.h"
 
 #define OUTFITS_MAX_NUMBER 25
 

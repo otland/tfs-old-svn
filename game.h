@@ -368,9 +368,10 @@ class Game
 		  * \param count is the amount to remove
 		  * \param subType is the extra type an item can have such as charges/fluidtype, default is -1
 			* meaning it's not used
+		  * \param onlyContainers
 		  * \returns true if the removal was successful
 		  */
-		bool removeItemOfType(Cylinder* cylinder, uint16_t itemId, int32_t count, int32_t subType = -1);
+		bool removeItemOfType(Cylinder* cylinder, uint16_t itemId, int32_t count, int32_t subType = -1, bool onlyContainers = false);
 
 		/**
 		  * Get the amount of money in a a cylinder
@@ -475,7 +476,8 @@ class Game
 		bool playerLookInTrade(uint32_t playerId, bool lookAtCounterOffer, int index);
 		bool playerPurchaseItem(uint32_t playerId, uint16_t spriteId, uint8_t count, uint8_t amount,
 			bool ignoreCap = false, bool inBackpacks = false);
-		bool playerSellItem(uint32_t playerId, uint16_t spriteId, uint8_t count, uint8_t amount);
+		bool playerSellItem(uint32_t playerId, uint16_t spriteId, uint8_t count, uint8_t amount,
+			bool ignoreEquipped = false);
 		bool playerCloseShop(uint32_t playerId);
 		bool playerLookInShop(uint32_t playerId, uint16_t spriteId, uint8_t count);
 		bool playerCloseTrade(uint32_t playerId);

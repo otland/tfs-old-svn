@@ -1783,8 +1783,7 @@ ReturnValue Game::internalPlayerAddItem(Creature* actor, Player* player, Item* i
 			return internalAddItem(actor, player->getTile(), item, (int32_t)slot, FLAG_NOLIMIT);
 
 		Item* remainderItem = Item::CreateItem(item->getID(), remainderCount);
-		ReturnValue remainderRet = internalAddItem(actor, player->getTile(), remainderItem, INDEX_WHEREEVER, FLAG_NOLIMIT);
-		if(remainderRet == RET_NOERROR)
+		if(internalAddItem(actor, player->getTile(), remainderItem, INDEX_WHEREEVER, FLAG_NOLIMIT) == RET_NOERROR)
 			return RET_NOERROR;
 
 		delete remainderItem;
@@ -1804,48 +1803,45 @@ Item* Game::findItemOfType(Cylinder* cylinder, uint16_t itemId,
 
 	std::list<Container*> listContainer;
 	Container* tmpContainer = NULL;
+	Item* item = NULL;
 
 	Thing* thing = NULL;
-	Item* item = NULL;
 	for(int32_t i = cylinder->__getFirstIndex(); i < cylinder->__getLastIndex();)
 	{
 		if((thing = cylinder->__getThing(i)) && (item = thing->getItem()))
 		{
 			if(item->getID() == itemId && (subType == -1 || subType == item->getSubType()))
 				return item;
-			else
-			{
-				++i;
-				if(depthSearch && (tmpContainer = item->getContainer()))
-					listContainer.push_back(tmpContainer);
-			}
+
+			++i;
+			if(depthSearch && (tmpContainer = item->getContainer()))
+				listContainer.push_back(tmpContainer);
 		}
 		else
 			++i;
 	}
 
+	Container* container = NULL;
 	while(listContainer.size() > 0)
 	{
-		Container* container = listContainer.front();
+		container = listContainer.front();
 		listContainer.pop_front();
 		for(int32_t i = 0; i < (int32_t)container->size();)
 		{
 			Item* item = container->getItem(i);
 			if(item->getID() == itemId && (subType == -1 || subType == item->getSubType()))
 				return item;
-			else
-			{
-				++i;
-				if((tmpContainer = item->getContainer()))
-					listContainer.push_back(tmpContainer);
-			}
+
+			++i;
+			if((tmpContainer = item->getContainer()))
+				listContainer.push_back(tmpContainer);
 		}
 	}
 
 	return NULL;
 }
 
-bool Game::removeItemOfType(Cylinder* cylinder, uint16_t itemId, int32_t count, int32_t subType /*= -1*/)
+bool Game::removeItemOfType(Cylinder* cylinder, uint16_t itemId, int32_t count, int32_t subType/* = -1*/, bool onlyContainers/* = false*/)
 {
 	if(!cylinder || ((int32_t)cylinder->__getItemTypeCount(itemId, subType) < count))
 		return false;
@@ -1858,11 +1854,11 @@ bool Game::removeItemOfType(Cylinder* cylinder, uint16_t itemId, int32_t count, 
 	Item* item = NULL;
 
 	Thing* thing = NULL;
-	for(int32_t i = cylinder->__getFirstIndex(); i < cylinder->__getLastIndex() && count > 0;)
+	for(int32_t i = cylinder->__getFirstIndex(); i < cylinder->__getLastIndex() && count > 0; )
 	{
 		if((thing = cylinder->__getThing(i)) && (item = thing->getItem()))
 		{
-			if(item->getID() == itemId)
+			if(!onlyContainers && item->getID() == itemId)
 			{
 				if(item->isStackable())
 				{
@@ -1896,13 +1892,16 @@ bool Game::removeItemOfType(Cylinder* cylinder, uint16_t itemId, int32_t count, 
 			++i;
 	}
 
+	Container* container = NULL;
 	while(listContainer.size() > 0 && count > 0)
 	{
-		Container* container = listContainer.front();
+		container = listContainer.front();
 		listContainer.pop_front();
-		for(int32_t i = 0; i < (int32_t)container->size() && count > 0;)
+		for(int32_t i = 0; i < (int32_t)container->size() && count > 0; )
 		{
-			Item* item = container->getItem(i);
+			if(!(item = container->getItem(i)))
+				continue;
+
 			if(item->getID() == itemId)
 			{
 				if(item->isStackable())
@@ -3330,7 +3329,7 @@ bool Game::playerPurchaseItem(uint32_t playerId, uint16_t spriteId, uint8_t coun
 	return true;
 }
 
-bool Game::playerSellItem(uint32_t playerId, uint16_t spriteId, uint8_t count, uint8_t amount)
+bool Game::playerSellItem(uint32_t playerId, uint16_t spriteId, uint8_t count, uint8_t amount, bool ignoreEquipped)
 {
 	Player* player = getPlayerByID(playerId);
 	if(!player || player->isRemoved())
@@ -3352,7 +3351,7 @@ bool Game::playerSellItem(uint32_t playerId, uint16_t spriteId, uint8_t count, u
 	if(!player->canShopItem(it.id, subType, SHOPEVENT_SELL))
 		return false;
 
-	merchant->onPlayerTrade(player, SHOPEVENT_SELL, onSell, it.id, subType, amount);
+	merchant->onPlayerTrade(player, SHOPEVENT_SELL, onSell, it.id, subType, amount, ignoreEquipped);
 	return true;
 }
 

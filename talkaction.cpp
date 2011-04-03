@@ -890,7 +890,7 @@ bool TalkAction::thingProporties(Creature* creature, const std::string&, const s
 					item->setUniqueId(tmp);
 			}
 			else if(action == "destination" || action == "position" || action == "pos"
-				|| action == "dest" || action == "loc" || action == "location") //TODO: doesn't work
+				|| action == "dest" || action == "location" || action == "loc") //TODO: doesn't work
 			{
 				if(Teleport* teleport = item->getTeleport())
 					teleport->setDestination(Position(atoi(parseParams(it, tokens.end()).c_str()), atoi(

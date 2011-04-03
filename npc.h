@@ -75,7 +75,7 @@ class NpcEvents
 		virtual void onCreatureSay(const Creature* creature, SpeakClasses, const std::string& text, Position* pos = NULL);
 
 		virtual void onPlayerTrade(const Player* player, int32_t callback, uint16_t itemid,
-			uint8_t count, uint8_t amount, bool ignoreCap, bool inBackpacks);
+			uint8_t count, uint8_t amount, bool ignore, bool inBackpacks);
 		virtual void onPlayerEndTrade(const Player* player);
 		virtual void onPlayerCloseChannel(const Player* player);
 
@@ -320,7 +320,7 @@ class NpcResponse
 
 struct NpcState
 {
-	bool isIdle, isQueued, ignoreCap, inBackpacks;
+	bool isIdle, isQueued, ignore, inBackpacks;
 	int32_t topic, price, sellPrice, buyPrice, amount, itemId, subType, level;
 	uint32_t respondToCreature;
 	uint64_t prevInteraction;
@@ -373,7 +373,7 @@ class Npc : public Creature
 		void doSay(const std::string& text, SpeakClasses type, Player* player);
 
 		void onPlayerTrade(Player* player, ShopEvent_t type, int32_t callback, uint16_t itemId, uint8_t count,
-			uint8_t amount, bool ignoreCap = false, bool inBackpacks = false);
+			uint8_t amount, bool ignore = false, bool inBackpacks = false);
 		void onPlayerEndTrade(Player* player, int32_t buyCallback,
 			int32_t sellCallback);
 		void onPlayerCloseChannel(const Player* player);

@@ -1360,7 +1360,8 @@ void ProtocolGame::parsePlayerSale(NetworkMessage &msg)
 	uint16_t id = msg.get<uint16_t>();
 	uint8_t count = msg.get<char>();
 	uint8_t amount = msg.get<char>();
-	addGameTaskTimed(DISPATCHER_TASK_EXPIRATION, &Game::playerSellItem, player->getID(), id, count, amount);
+	bool ignoreEquipped = (msg.get<char>() != (char)0);
+	addGameTaskTimed(DISPATCHER_TASK_EXPIRATION, &Game::playerSellItem, player->getID(), id, count, amount, ignoreEquipped);
 }
 
 void ProtocolGame::parseCloseShop(NetworkMessage&)
@@ -1691,13 +1692,15 @@ void ProtocolGame::sendChannelsDialog()
 		msg->put<char>(0xAB);
 		ChannelList list = g_chat.getChannelList(player);
 		msg->put<char>(list.size());
+
+		ChatChannel* channel = NULL;
 		for(ChannelList::iterator it = list.begin(); it != list.end(); ++it)
 		{
-			if(ChatChannel* channel = (*it))
-			{
-				msg->put<uint16_t>(channel->getId());
-				msg->putString(channel->getName());
-			}
+			if(!(channel = (*it)))
+				continue;
+
+			msg->put<uint16_t>(channel->getId());
+			msg->putString(channel->getName());
 		}
 	}
 }
@@ -2734,8 +2737,7 @@ void ProtocolGame::AddCreatureSpeak(NetworkMessage_ptr msg, const Creature* crea
 		const Player* speaker = creature->getPlayer();
 		if(speaker)
 		{
-			msg->put<uint32_t>(0x01);
-			//msg->put<uint32_t>(++g_chat.statement);
+			msg->put<uint32_t>(++g_chat.statement);
 			//g_chat.statementMap[g_chat.statement] = text;
 		}
 		else

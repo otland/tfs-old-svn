@@ -3302,9 +3302,13 @@ int32_t LuaInterface::luaDoRemoveItem(lua_State* L)
 
 int32_t LuaInterface::luaDoPlayerRemoveItem(lua_State* L)
 {
-	//doPlayerRemoveItem(cid, itemid, count[, subType = -1])
-	int32_t subType = -1;
-	if(lua_gettop(L) > 3)
+	//doPlayerRemoveItem(cid, itemid, count[, subType = -1[, ignoreEquipped = false]])
+	int32_t params = lua_gettop(L), subType = -1;
+	bool ignoreEquipped = false;
+	if(params > 4)
+		ignoreEquipped = popNumber(L);
+
+	if(params > 3)
 		subType = popNumber(L);
 
 	uint32_t count = popNumber(L);
@@ -3312,7 +3316,7 @@ int32_t LuaInterface::luaDoPlayerRemoveItem(lua_State* L)
 
 	ScriptEnviroment* env = getEnv();
 	if(Player* player = env->getPlayerByUID(popNumber(L)))
-		lua_pushboolean(L, g_game.removeItemOfType(player, itemId, count, subType));
+		lua_pushboolean(L, g_game.removeItemOfType(player, itemId, count, subType, ignoreEquipped));
 	else
 	{
 		errorEx(getError(LUA_ERROR_PLAYER_NOT_FOUND));

@@ -37,31 +37,49 @@
 	/attr
 		Changes thing properties.
 		Parameters
-			type, value
+			[command[, type, ]]attribute, value
 
 		Values
-			type
-				* Items
-					description/desc
-					count/fluidtype/charges
+			command
+				* Items only
+					set/add/new
+					erase/remove/delete
 					action/actionid/aid
 					unique/uniqueid/uid
-					duration
-					writer
-					text
-					name
-					pluralname
-					article
-					attack
-					extraattack
-					defense
-					extradefense
-					armor
-					attackspeed
-					hitchance
-					shootrange
-					depot/depotid
-					destination/position/pos/destpos
+					destination/position/location/pos/dest/loc
+			type
+				* Items only - set/add/new & erase/remove/delete
+					bool/boolean
+					int/integer/num/number
+					float/double
+					string/text/*
+			attribute
+				* Items - set/add/new & erase/remove/delete
+					duration - number
+					description - string
+					text - string
+					date - number
+					writer - string
+					charges - number
+					fluidtype - number
+					owner - number
+					corpseowner - number
+					decaying - number
+					name - string
+					pluralname - string
+					article - string
+					scriptprotected - bool
+					attack - number
+					extraattack - number
+					defense - number
+					extradefense - number
+					armor - number
+					attackspeed - number
+					hitchance - number
+					shootrange - number
+					dualwield - bool
+					depotid - number
+					sleepstart - number
 				* Creatures
 					health
 					maxhealth
@@ -96,7 +114,7 @@
 
 		Examples
 			/attr aid 300
-			/attr text "Hello guys"
+			/attr set string text "Hello guys"
 			/attr skull 2
 
 	/serverdiag
