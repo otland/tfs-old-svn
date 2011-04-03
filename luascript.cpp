@@ -1356,9 +1356,9 @@ bool LuaInterface::getGlobalBool(lua_State* L, const std::string& _identifier, b
 	return val;
 }
 
-int32_t LuaInterface::getGlobalNumber(lua_State* L, const std::string& _identifier, const int32_t _default/* = 0*/)
+int64_t LuaInterface::getGlobalNumber(lua_State* L, const std::string& _identifier, const int64_t _default/* = 0*/)
 {
-	return (int32_t)LuaInterface::getGlobalDouble(L, _identifier, _default);
+	return (int64_t)LuaInterface::getGlobalDouble(L, _identifier, _default);
 }
 
 double LuaInterface::getGlobalDouble(lua_State* L, const std::string& _identifier, const double _default/* = 0*/)
@@ -1836,7 +1836,7 @@ void LuaInterface::registerFunctions()
 	//doPlayerSetVocation(cid,voc)
 	lua_register(m_luaState, "doPlayerSetVocation", LuaInterface::luaDoPlayerSetVocation);
 
-	//doPlayerRemoveItem(cid, itemid[, count[, subType = -1]])
+	//doPlayerRemoveItem(cid, itemid[, count[, subType = -1[, ignoreEquipped = false]]])
 	lua_register(m_luaState, "doPlayerRemoveItem", LuaInterface::luaDoPlayerRemoveItem);
 
 	//doPlayerAddExperience(cid, amount)

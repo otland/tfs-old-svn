@@ -317,7 +317,7 @@ class LuaInterface
 
 		static std::string getGlobalString(lua_State* L, const std::string& _identifier, const std::string& _default = "");
 		static bool getGlobalBool(lua_State* L, const std::string& _identifier, bool _default = false);
-		static int32_t getGlobalNumber(lua_State* L, const std::string& _identifier, const int32_t _default = 0);
+		static int64_t getGlobalNumber(lua_State* L, const std::string& _identifier, const int64_t _default = 0);
 		static double getGlobalDouble(lua_State* L, const std::string& _identifier, const double _default = 0);
 
 		static void getValue(const std::string& key, lua_State* L, lua_State* _L);

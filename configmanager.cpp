@@ -393,7 +393,7 @@ bool ConfigManager::getBool(uint32_t _what) const
 	return false;
 }
 
-int32_t ConfigManager::getNumber(uint32_t _what) const
+int64_t ConfigManager::getNumber(uint32_t _what) const
 {
 	if(m_loaded && _what < LAST_NUMBER_CONFIG)
 		return m_confNumber[_what];
@@ -427,7 +427,7 @@ bool ConfigManager::setString(uint32_t _what, const std::string& _value)
 	return false;
 }
 
-bool ConfigManager::setNumber(uint32_t _what, int32_t _value)
+bool ConfigManager::setNumber(uint32_t _what, int64_t _value)
 {
 	if(_what < LAST_NUMBER_CONFIG)
 	{

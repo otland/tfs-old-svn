@@ -368,7 +368,8 @@ class Game
 		  * \param count is the amount to remove
 		  * \param subType is the extra type an item can have such as charges/fluidtype, default is -1
 			* meaning it's not used
-		  * \param onlyContainers
+		  * \param onlyContainers if true it will remove only items from containers in cylinder, default is false
+			* meaning it's disabled
 		  * \returns true if the removal was successful
 		  */
 		bool removeItemOfType(Cylinder* cylinder, uint16_t itemId, int32_t count, int32_t subType = -1, bool onlyContainers = false);
