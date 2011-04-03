@@ -1826,15 +1826,19 @@ Item* Game::findItemOfType(Cylinder* cylinder, uint16_t itemId,
 	{
 		container = listContainer.front();
 		listContainer.pop_front();
-		for(int32_t i = 0; i < (int32_t)container->size();)
+		for(int32_t i = 0; i < (int32_t)container->size(); )
 		{
-			Item* item = container->getItem(i);
-			if(item->getID() == itemId && (subType == -1 || subType == item->getSubType()))
-				return item;
+			if((item = container->getItem(i)))
+			{
+				if(item->getID() == itemId && (subType == -1 || subType == item->getSubType()))
+					return item;
 
-			++i;
-			if((tmpContainer = item->getContainer()))
-				listContainer.push_back(tmpContainer);
+				++i;
+				if((tmpContainer = item->getContainer()))
+					listContainer.push_back(tmpContainer);
+			}
+			else
+				++i;
 		}
 	}
 
@@ -1899,42 +1903,44 @@ bool Game::removeItemOfType(Cylinder* cylinder, uint16_t itemId, int32_t count, 
 		listContainer.pop_front();
 		for(int32_t i = 0; i < (int32_t)container->size() && count > 0; )
 		{
-			if(!(item = container->getItem(i)))
-				continue;
-
-			if(item->getID() == itemId)
+			if((item = container->getItem(i)))
 			{
-				if(item->isStackable())
+				if(item->getID() == itemId)
 				{
-					if(item->getItemCount() > count)
+					if(item->isStackable())
 					{
-						internalRemoveItem(NULL, item, count);
-						count = 0;
+						if(item->getItemCount() > count)
+						{
+							internalRemoveItem(NULL, item, count);
+							count = 0;
+						}
+						else
+						{
+							count-= item->getItemCount();
+							internalRemoveItem(NULL, item);
+						}
 					}
-					else
+					else if(subType == -1 || subType == item->getSubType())
 					{
-						count-= item->getItemCount();
+						--count;
 						internalRemoveItem(NULL, item);
 					}
-				}
-				else if(subType == -1 || subType == item->getSubType())
-				{
-					--count;
-					internalRemoveItem(NULL, item);
+					else
+						++i;
 				}
 				else
+				{
 					++i;
+					if((tmpContainer = item->getContainer()))
+						listContainer.push_back(tmpContainer);
+				}
 			}
 			else
-			{
 				++i;
-				if((tmpContainer = item->getContainer()))
-					listContainer.push_back(tmpContainer);
-			}
 		}
 	}
 
-	return (count == 0);
+	return !count;
 }
 
 uint64_t Game::getMoney(const Cylinder* cylinder)
@@ -1944,9 +1950,10 @@ uint64_t Game::getMoney(const Cylinder* cylinder)
 
 	std::list<Container*> listContainer;
 	Container* tmpContainer = NULL;
-	Item* item = NULL;
 
 	Thing* thing = NULL;
+	Item* item = NULL;
+
 	uint64_t moneyCount = 0;
 	for(int32_t i = cylinder->__getFirstIndex(); i < cylinder->__getLastIndex(); ++i)
 	{
@@ -1955,20 +1962,21 @@ uint64_t Game::getMoney(const Cylinder* cylinder)
 
 		if((tmpContainer = item->getContainer()))
 			listContainer.push_back(tmpContainer);
-		else if(item->getWorth() != 0)
+		else if(item->getWorth())
 			moneyCount += item->getWorth();
 	}
 
+	Container* container = NULL;
 	while(listContainer.size() > 0)
 	{
-		Container* container = listContainer.front();
+		container = listContainer.front();
 		listContainer.pop_front();
 		for(ItemList::const_iterator it = container->getItems(); it != container->getEnd(); ++it)
 		{
 			item = *it;
 			if((tmpContainer = item->getContainer()))
 				listContainer.push_back(tmpContainer);
-			else if(item->getWorth() != 0)
+			else if(item->getWorth())
 				moneyCount += item->getWorth();
 		}
 	}
@@ -1994,25 +2002,25 @@ bool Game::removeMoney(Cylinder* cylinder, int64_t money, uint32_t flags /*= 0*/
 	Item* item = NULL;
 
 	int64_t moneyCount = 0;
-	for(int32_t i = cylinder->__getFirstIndex(); i < cylinder->__getLastIndex() && money > 0; ++i)
+	for(int32_t i = cylinder->__getFirstIndex(); i < cylinder->__getLastIndex(); ++i)
 	{
 		if(!(thing = cylinder->__getThing(i)) || !(item = thing->getItem()))
 			continue;
 
 		if((tmpContainer = item->getContainer()))
 			listContainer.push_back(tmpContainer);
-		else if(item->getWorth() != 0)
+		else if(item->getWorth())
 		{
 			moneyCount += item->getWorth();
 			moneyMap.insert(std::make_pair(item->getWorth(), item));
 		}
 	}
 
-	while(listContainer.size() > 0 && money > 0)
+	while(listContainer.size() > 0)
 	{
 		Container* container = listContainer.front();
 		listContainer.pop_front();
-		for(int32_t i = 0; i < (int32_t)container->size() && money > 0; i++)
+		for(int32_t i = 0; i < (int32_t)container->size(); i++)
 		{
 			Item* item = container->getItem(i);
 			if((tmpContainer = item->getContainer()))
@@ -2031,8 +2039,7 @@ bool Game::removeMoney(Cylinder* cylinder, int64_t money, uint32_t flags /*= 0*/
 
 	for(MoneyMultiMap::iterator mit = moneyMap.begin(); mit != moneyMap.end() && money > 0; ++mit)
 	{
-		Item* item = mit->second;
-		if(!item)
+		if(!(item = mit->second))
 			continue;
 
 		internalRemoveItem(NULL, item);
@@ -2049,7 +2056,7 @@ bool Game::removeMoney(Cylinder* cylinder, int64_t money, uint32_t flags /*= 0*/
 	}
 
 	moneyMap.clear();
-	return money == 0;
+	return !money;
 }
 
 void Game::addMoney(Cylinder* cylinder, int64_t money, uint32_t flags /*= 0*/)
