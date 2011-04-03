@@ -1641,6 +1641,8 @@ void Npc::executeResponse(Player* player, NpcState* npcState, const NpcResponse*
 						scriptstream << "itemid = " << npcState->itemId << ',' << std::endl;
 						scriptstream << "subtype = " << npcState->subType << ',' << std::endl;
 						scriptstream << "ignore = " << npcState->ignore << ',' << std::endl;
+						scriptstream << "ignorecapacity = ignore," << std::endl;
+						scriptstream << "ignoreequipped = ignore," << std::endl;
 						scriptstream << "inbackpacks = " << npcState->inBackpacks << ',' << std::endl;
 						scriptstream << "amount = " << npcState->amount << ',' << std::endl;
 						scriptstream << "price = " << npcState->price << ',' << std::endl;
@@ -2594,6 +2596,8 @@ void NpcScript::pushState(lua_State* L, NpcState* state)
 	setField(L, "itemid", state->itemId);
 	setField(L, "subtype", state->subType);
 	setFieldBool(L, "ignore", state->ignore);
+	setFieldBool(L, "ignorecapacity", state->ignore);
+	setFieldBool(L, "ignoreequipped", state->ignore);
 	setFieldBool(L, "inbackpacks", state->inBackpacks);
 	setField(L, "topic", state->topic);
 	setField(L, "level", state->level);
@@ -2621,7 +2625,8 @@ void NpcScript::popState(lua_State* L, NpcState* &state)
 	state->amount = getField(L, "amount");
 	state->itemId = getField(L, "itemid");
 	state->subType = getField(L, "subtype");
-	state->ignore = getFieldBool(L, "ignore");
+	state->ignore = getFieldBool(L, "ignore") || getFieldBool(L,
+		"ignorecapacity") || getFieldBool(L, "ignoreequipped");
 	state->inBackpacks = getFieldBool(L, "inbackpacks");
 	state->topic = getField(L, "topic");
 	state->level = getField(L, "level");
@@ -2893,7 +2898,7 @@ void NpcEvents::onPlayerTrade(const Player* player, int32_t callback, uint16_t i
 	if(callback == -1)
 		return;
 
-	//on"Buy/Sell"(cid, itemid, count, amount, ignore, inBackpacks)
+	//on"Buy/Sell"(cid, itemid, count, amount, "ignore", inBackpacks)
 	if(m_interface->reserveEnv())
 	{
 		ScriptEnviroment* env = m_interface->getEnv();
