@@ -39,7 +39,7 @@ struct NodeStruct
 	NodeStruct* next;
 	NodeStruct* child;
 
-	static void clearNet(NodeStruct* root) {if(root) clearChild(root); }
+	static void clearNet(NodeStruct* root) {if(root) clearChild(root);}
 	private:
 		static void clearNext(NodeStruct* node)
 		{
