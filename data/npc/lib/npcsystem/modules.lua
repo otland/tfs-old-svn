@@ -1094,13 +1094,14 @@ if(Modules == nil) then
 	--	cost = The price of one single item
 	--	realName - The real, full name for the item. Will be used as ITEMNAME in MESSAGE_ONBUY and MESSAGE_ONSELL if defined. Default value is nil (getItemNameById will be used)
 	function ShopModule:addSellableItem(names, itemid, cost, realName)
+		local v = getItemInfo(itemid)
 		if(SHOPMODULE_MODE ~= SHOPMODULE_MODE_TALK) then
 			local item = {
 				id = itemid,
 				buy = -1,
 				sell = cost,
-				subType = 1,
-				name = realName or getItemNameById(itemid)
+				subType = v.charges > 0 and 0 or 1,
+				name = realName or v.name
 			}
 
 			for i, shopItem in ipairs(self.npcHandler.shopItems) do
@@ -1126,7 +1127,7 @@ if(Modules == nil) then
 				cost = cost,
 				eventType = SHOPMODULE_SELL_ITEM,
 				module = self,
-				realName = realName or getItemNameById(itemid)
+				realName = realName or v.name
 			}
 
 			for i, name in pairs(names) do

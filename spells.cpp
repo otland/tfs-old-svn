@@ -1625,14 +1625,14 @@ ReturnValue ConjureSpell::internalConjureItem(Player* player, uint32_t conjureId
 	if(!fromItem)
 		return RET_YOUNEEDAMAGICITEMTOCASTSPELL;
 
-	if(Item::items[conjureId].stackable || fromItem->isStackable())
+	if((fromItem->isStackable() || fromItem->hasCharges()) && fromItem->getSubType() > 1)
 	{
 		item = Item::CreateItem(conjureId, conjureCount);
 		ReturnValue ret = g_game.internalPlayerAddItem(NULL, player, item, false);
 		if(ret != RET_NOERROR)
 			return ret;
 
-		g_game.transformItem(fromItem, reagentId, std::max((int32_t)0, ((int32_t)fromItem->getItemCount()) - 1));
+		g_game.transformItem(fromItem, reagentId, (int32_t)(fromItem->getItemCount() - 1));
 		g_game.startDecay(item);
 	}
 	else

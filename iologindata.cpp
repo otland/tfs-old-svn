@@ -1079,7 +1079,7 @@ bool IOLoginData::savePlayer(Player* player, bool preSave/* = true*/, bool shall
 			continue;
 
 		if(!g_config.getBool(ConfigManager::VIPLIST_PER_PLAYER))
-			sprintf(buffer, "%d, %d, %d", player->getAccount(), g_config.getNumber(ConfigManager::WORLD_ID), *it);
+			sprintf(buffer, "%d, %d, %d", player->getAccount(), (int32_t)g_config.getNumber(ConfigManager::WORLD_ID), *it);
 		else
 			sprintf(buffer, "%d, %d", player->getGUID(), *it);
 

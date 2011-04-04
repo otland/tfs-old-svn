@@ -269,7 +269,7 @@ class Item : virtual public Thing, public ItemAttributes
 		void getLight(LightInfo& lightInfo);
 
 		int32_t getMaxWriteLength() const {return items[id].maxTextLength;}
-		int32_t getWorth() const {return getItemCount() * items[id].worth;}
+		int32_t getWorth() const {return count * items[id].worth;}
 		virtual int32_t getThrowRange() const {return (isPickupable() ? 15 : 2);}
 
 		bool floorChange(FloorChange_t change = CHANGE_NONE) const;
@@ -277,7 +277,7 @@ class Item : virtual public Thing, public ItemAttributes
 
 		bool hasProperty(enum ITEMPROPERTY prop) const;
 		bool hasSubType() const {return items[id].hasSubType();}
-		bool hasCharges() const {return getCharges() > 0;}
+		bool hasCharges() const {return hasIntegerAttribute("charges");}
 
 		bool canDecay();
 		virtual bool canRemove() const {return true;}
