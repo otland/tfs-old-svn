@@ -134,7 +134,7 @@ std::string Status::getStatusString(bool sendPlayers) const
 	xmlSetProp(p, (const xmlChar*)"uptime", (const xmlChar*)buffer);
 	xmlSetProp(p, (const xmlChar*)"ip", (const xmlChar*)g_config.getString(ConfigManager::IP).c_str());
 	xmlSetProp(p, (const xmlChar*)"servername", (const xmlChar*)g_config.getString(ConfigManager::SERVER_NAME).c_str());
-	sprintf(buffer, "%d", g_config.getNumber(ConfigManager::LOGIN_PORT));
+	sprintf(buffer, "%d", (int32_t)g_config.getNumber(ConfigManager::LOGIN_PORT));
 	xmlSetProp(p, (const xmlChar*)"port", (const xmlChar*)buffer);
 	xmlSetProp(p, (const xmlChar*)"location", (const xmlChar*)g_config.getString(ConfigManager::LOCATION).c_str());
 	xmlSetProp(p, (const xmlChar*)"url", (const xmlChar*)g_config.getString(ConfigManager::URL).c_str());
@@ -151,7 +151,7 @@ std::string Status::getStatusString(bool sendPlayers) const
 	p = xmlNewNode(NULL,(const xmlChar*)"players");
 	sprintf(buffer, "%d", g_game.getPlayersOnline());
 	xmlSetProp(p, (const xmlChar*)"online", (const xmlChar*)buffer);
-	sprintf(buffer, "%d", g_config.getNumber(ConfigManager::MAX_PLAYERS));
+	sprintf(buffer, "%d", (int32_t)g_config.getNumber(ConfigManager::MAX_PLAYERS));
 	xmlSetProp(p, (const xmlChar*)"max", (const xmlChar*)buffer);
 	sprintf(buffer, "%d", g_game.getPlayersRecord());
 	xmlSetProp(p, (const xmlChar*)"peak", (const xmlChar*)buffer);
@@ -221,7 +221,7 @@ void Status::getInfo(uint32_t requestedInfo, OutputMessage_ptr output, NetworkMe
 		output->putString(g_config.getString(ConfigManager::IP).c_str());
 
 		char buffer[10];
-		sprintf(buffer, "%d", g_config.getNumber(ConfigManager::LOGIN_PORT));
+		sprintf(buffer, "%d", (int32_t)g_config.getNumber(ConfigManager::LOGIN_PORT));
 		output->putString(buffer);
 	}
 
@@ -248,7 +248,7 @@ void Status::getInfo(uint32_t requestedInfo, OutputMessage_ptr output, NetworkMe
 	{
 		output->put<char>(0x20);
 		output->put<uint32_t>(g_game.getPlayersOnline());
-		output->put<uint32_t>(g_config.getNumber(ConfigManager::MAX_PLAYERS));
+		output->put<uint32_t>((uint32_t)g_config.getNumber(ConfigManager::MAX_PLAYERS));
 		output->put<uint32_t>(g_game.getPlayersRecord());
 	}
 
