@@ -750,9 +750,7 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool preLo
 		{
 			if(!deaths[result->getDataInt("player_id")] || deaths[result->getDataInt("player_id")]
 				< (time_t)result->getDataInt("date")) // pick up the latest date
-			{
 				deaths[result->getDataInt("player_id")] = (time_t)result->getDataInt("date");
-			}
 		}
 		while(result->next());
 		result->free();
@@ -773,7 +771,8 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool preLo
 		{
 			do
 			{
-				if(!deaths[result->getDataInt("player_id")] || deaths[result->getDataInt("player_id")] < (time_t)result->getDataInt("date"))
+				if(!deaths[result->getDataInt("player_id")] || deaths[result->getDataInt("player_id")]
+					>= (time_t)result->getDataInt("date"))
 					player->addRevenge(result->getDataInt("player_id"));
 			}
 			while(result->next());
@@ -1011,8 +1010,6 @@ bool IOLoginData::savePlayer(Player* player, bool preSave/* = true*/, bool shall
 
 			itemList.clear();
 		}
-		
-	
 	//}
 
 	query.str("");
