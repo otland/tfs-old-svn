@@ -9479,6 +9479,7 @@ int32_t LuaInterface::luaDoCreatureSetNoMove(lua_State* L)
 	if(Creature* creature = env->getCreatureByUID(popNumber(L)))
 	{
 		creature->setNoMove(block);
+		creature->onWalkAborted();
 		lua_pushboolean(L, true);
 	}
 	else

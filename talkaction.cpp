@@ -779,8 +779,8 @@ bool TalkAction::guildCreate(Creature* creature, const std::string&, const std::
 		return true;
 	}
 
-	const uint32_t minLength = g_config.getNumber(ConfigManager::MIN_GUILDNAME);
-	const uint32_t maxLength = g_config.getNumber(ConfigManager::MAX_GUILDNAME);
+	uint32_t minLength = g_config.getNumber(ConfigManager::MIN_GUILDNAME),
+		maxLength = g_config.getNumber(ConfigManager::MAX_GUILDNAME);
 	if(param_.length() < minLength)
 	{
 		player->sendCancel("That guild name is too short, please select a longer name.");
@@ -921,7 +921,10 @@ bool TalkAction::thingProporties(Creature* creature, const std::string&, const s
 			else if(action == "lossskill")
 				_creature->setLossSkill(booleanString(parseParams(it, tokens.end())));
 			else if(action == "cannotmove")
+			{
 				_creature->setNoMove(booleanString(parseParams(it, tokens.end())));
+				_creature->onWalkAborted();
+			}
 			else if(action == "skull")
 			{
 				_creature->setSkull(getSkulls(parseParams(it, tokens.end())));
@@ -1007,25 +1010,28 @@ bool TalkAction::thingProporties(Creature* creature, const std::string&, const s
 		}
 	}
 
-	const SpectatorVec& list = g_game.getSpectators(pos);
-	SpectatorVec::const_iterator it;
-
-	Player* tmpPlayer = NULL;
-	for(it = list.begin(); it != list.end(); ++it)
+	if(invalid.empty())
 	{
-		if((tmpPlayer = (*it)->getPlayer()))
-			tmpPlayer->sendUpdateTile(tile, pos);
+		const SpectatorVec& list = g_game.getSpectators(pos);
+		SpectatorVec::const_iterator it;
+
+		Player* tmpPlayer = NULL;
+		for(it = list.begin(); it != list.end(); ++it)
+		{
+			if((tmpPlayer = (*it)->getPlayer()))
+				tmpPlayer->sendUpdateTile(tile, pos);
+		}
+
+		for(it = list.begin(); it != list.end(); ++it)
+			(*it)->onUpdateTile(tile, pos);
+	}
+	else
+	{
+		std::string tmp = "Following action was invalid: " + invalid;
+		player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, tmp.c_str());
 	}
 
-	for(it = list.begin(); it != list.end(); ++it)
-		(*it)->onUpdateTile(tile, pos);
-
 	g_game.addMagicEffect(pos, MAGIC_EFFECT_WRAPS_GREEN);
-	if(invalid.empty())
-		return true;
-
-	std::string tmp = "Following action was invalid: " + invalid;
-	player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, tmp.c_str());
 	return true;
 }
 
@@ -1185,8 +1191,8 @@ bool TalkAction::ghost(Creature* creature, const std::string&, const std::string
 		IOLoginData::getInstance()->updateOnlineStatus(player->getGUID(), true);
 		for(AutoList<Player>::iterator pit = Player::autoList.begin(); pit != Player::autoList.end(); ++pit)
 		{
-			if(!pit->second->canSeeCreature(player))
-				pit->second->notifyLogIn(player);
+			if((tmpPlayer = pit->second) && !tmpPlayer->canSeeCreature(player))
+				tmpPlayer->notifyLogIn(player);
 		}
 
 		for(it = list.begin(); it != list.end(); ++it)
@@ -1210,8 +1216,8 @@ bool TalkAction::ghost(Creature* creature, const std::string&, const std::string
 
 		for(AutoList<Player>::iterator pit = Player::autoList.begin(); pit != Player::autoList.end(); ++pit)
 		{
-			if(!pit->second->canSeeCreature(player))
-				pit->second->notifyLogOut(player);
+			if((tmpPlayer = pit->second) && !tmpPlayer->canSeeCreature(player))
+				tmpPlayer->notifyLogOut(player);
 		}
 
 		IOLoginData::getInstance()->updateOnlineStatus(player->getGUID(), false);

@@ -1108,7 +1108,7 @@ bool Monster::isInSpawnRange(const Position& toPos)
 
 bool Monster::canWalkTo(Position pos, Direction dir)
 {
-	if(getNoMove())
+	if(cannotMove)
 		return false;
 
 	switch(dir)

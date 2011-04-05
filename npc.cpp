@@ -1874,7 +1874,7 @@ bool Npc::getNextStep(Direction& dir, uint32_t& flags)
 
 bool Npc::canWalkTo(const Position& fromPos, Direction dir)
 {
-	if(getNoMove())
+	if(cannotMove)
 		return false;
 
 	Position toPos = getNextPosition(dir, fromPos);

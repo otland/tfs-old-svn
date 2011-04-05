@@ -1586,7 +1586,7 @@ void Player::onAddContainerItem(const Container* container, const Item* item)
 		backpack.first = NULL;
 }
 
-void Player::onUpdateContainerItem(const Container* container, uint8_t slot,
+void Player::onUpdateContainerItem(const Container* container, uint8_t,
 	const Item* oldItem, const ItemType&, const Item* newItem, const ItemType&)
 {
 	if(tradeState == TRADE_TRANSFER)
@@ -1642,7 +1642,7 @@ void Player::onSendContainer(const Container* container)
 	}
 }
 
-void Player::onUpdateInventoryItem(slots_t slot, Item* oldItem, const ItemType&,
+void Player::onUpdateInventoryItem(slots_t, Item* oldItem, const ItemType&,
 	Item* newItem, const ItemType&)
 {
 	if(tradeState == TRADE_TRANSFER)
@@ -2540,7 +2540,7 @@ bool Player::addVIP(uint32_t _guid, std::string& name, bool isOnline, bool inter
 		return false;
 	}
 
-	if(VIPList.size() > (group ? group->getMaxVips(isPremium()) : g_config.getNumber(ConfigManager::VIPLIST_DEFAULT_LIMIT)))
+	if(VIPList.size() > (size_t)(group ? group->getMaxVips(isPremium()) : g_config.getNumber(ConfigManager::VIPLIST_DEFAULT_LIMIT)))
 	{
 		if(!internal)
 			sendTextMessage(MSG_STATUS_SMALL, "You cannot add more buddies.");
