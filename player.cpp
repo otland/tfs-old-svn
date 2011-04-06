@@ -2908,11 +2908,11 @@ Cylinder* Player::__queryDestination(int32_t& index, const Thing* thing, Item** 
 
 				if(Container* container = invItem->getContainer())
 				{
-					if(!autoStack && !backpack.first && container->__queryAdd(
+					if(!autoStack && container->__queryAdd(
 						INDEX_WHEREEVER, item, item->getItemCount(), flags) == RET_NOERROR)
 					{
 						index = INDEX_WHEREEVER;
-						backpack = std::make_pair(container, index);
+						backpack = std::make_pair(container, index + 1);
 						return container;
 					}
 
@@ -2962,7 +2962,7 @@ Cylinder* Player::__queryDestination(int32_t& index, const Thing* thing, Item** 
 							item, item->getItemCount(), flags) == RET_NOERROR)
 						{
 							index = INDEX_WHEREEVER;
-							backpack = std::make_pair(container, index);
+							backpack = std::make_pair(container, index + 1);
 							return container;
 						}
 
@@ -2977,7 +2977,7 @@ Cylinder* Player::__queryDestination(int32_t& index, const Thing* thing, Item** 
 						if(tmpContainer->__queryAdd(n, item, item->getItemCount(), 0) == RET_NOERROR)
 						{
 							index = n;
-							backpack = std::make_pair(tmpContainer, index);
+							backpack = std::make_pair(tmpContainer, index + 1);
 							return tmpContainer;
 						}
 					}
