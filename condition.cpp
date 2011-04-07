@@ -1158,6 +1158,9 @@ bool ConditionDamage::doDamage(Creature* creature, int32_t damage)
 		return true;
 
 	Creature* attacker = g_game.getCreatureByID(owner);
+	if(damage < 0 && attacker && attacker->getPlayer() && creature->getPlayer() && creature->getPlayer()->getSkull() != SKULL_BLACK)
+		damage = damage / 2;
+
 	CombatType_t combatType = Combat::ConditionToDamageType(conditionType);
 	if(g_game.combatBlockHit(combatType, attacker, creature, damage, false, false, field))
 		return false;

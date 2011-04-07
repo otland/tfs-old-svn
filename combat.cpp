@@ -1427,14 +1427,19 @@ void MagicField::onStepInField(Creature* creature, bool purposeful/* = true*/)
 		return;
 
 	uint32_t ownerId = getOwner();
+	Tile* tile = getTile();
+
 	Condition* condition = it.condition->clone();
-	if(ownerId && !getTile()->hasFlag(TILESTATE_HARDCOREZONE))
+	if(ownerId && !tile->hasFlag(TILESTATE_HARDCOREZONE))
 	{
 		if(Creature* owner = g_game.getCreatureByID(ownerId))
 		{
 			bool harmful = true;
-			if((g_game.getWorldType() == WORLDTYPE_OPTIONAL || getTile()->hasFlag(TILESTATE_OPTIONALZONE))
-				&& (owner->getPlayer() || owner->isPlayerSummon()))
+			if(ownerId == creature->getID() || ((g_game.getWorldType() == WORLDTYPE_OPTIONAL
+				|| tile->hasFlag(TILESTATE_OPTIONALZONE)) && (owner->getPlayer()
+				|| owner->isPlayerSummon())) || (OTSYS_TIME() - createTime) <=
+				(uint32_t)g_config.getNumber(ConfigManager::FIELD_OWNERSHIP)
+				|| creature->hasBeenAttacked(ownerId))
 				harmful = false;
 			else if(Player* player = creature->getPlayer())
 			{
@@ -1442,8 +1447,7 @@ void MagicField::onStepInField(Creature* creature, bool purposeful/* = true*/)
 					harmful = false;
 			}
 
-			if(!harmful || (OTSYS_TIME() - createTime) <= (uint32_t)g_config.getNumber(
-				ConfigManager::FIELD_OWNERSHIP) || creature->hasBeenAttacked(ownerId))
+			if(!harmful)
 				condition->setParam(CONDITIONPARAM_OWNER, ownerId);
 		}
 	}
