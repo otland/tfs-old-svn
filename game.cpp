@@ -2163,7 +2163,7 @@ Item* Game::transformItem(Item* item, uint16_t newId, int32_t newCount/* = -1*/)
 		int32_t count = item->getSubType();
 
 		cylinder->postRemoveNotification(NULL, item, cylinder, itemIndex);
-		if(curType.id != newType.id)
+		if(curType.id != newId)
 		{
 			itemId = newId;
 			if(newType.group != curType.group)

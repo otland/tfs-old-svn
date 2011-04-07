@@ -2552,24 +2552,18 @@ void ProtocolGame::sendVIP(uint32_t guid, const std::string& name, bool isOnline
 
 void ProtocolGame::sendSpellCooldown(Spells_t icon, uint32_t cooldown)
 {
-	if(!icon)
-		return;
-
 	NetworkMessage_ptr msg = getOutputBuffer();
 	if(msg)
 	{
 		TRACK_MESSAGE(msg);
 		msg->put<char>(0xA4);
-		msg->put<char>(icon);
+		msg->put<char>((char)icon);
 		msg->put<uint32_t>(cooldown);
 	}
 }
 
 void ProtocolGame::sendSpellGroupCooldown(SpellGroup_t groupId, uint32_t cooldown)
 {
-	if(!groupId)
-		return;
-
 	NetworkMessage_ptr msg = getOutputBuffer();
 	if(msg)
 	{

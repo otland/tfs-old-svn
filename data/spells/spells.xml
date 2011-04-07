@@ -51,10 +51,10 @@
 	</rune>
 
 	<!-- Attack Spells -->
-  <instant name="Death Strike" words="exori mort" lvl="16" mana="20" prem="0" range="3" casterTargetOrDirection="1" blockwalls="1" exhaustion="2000" groups="1,1500" icon="87" needlearn="0" event="script" value="attack/death strike.lua">
-    <vocation id="1"/>
-    <vocation id="5"/>
-  </instant>
+	<instant name="Death Strike" words="exori mort" lvl="16" mana="20" prem="0" range="3" casterTargetOrDirection="1" blockwalls="1" exhaustion="2000" groups="1,1500" icon="87" needlearn="0" event="script" value="attack/death strike.lua">
+		<vocation id="1"/>
+		<vocation id="5"/>
+	</instant>
 	<instant name="Flame Strike" words="exori flam" lvl="12" mana="20" prem="0" range="3" casterTargetOrDirection="1" blockwalls="1" exhaustion="2000" groups="1,1500" icon="89" needlearn="0" event="script" value="attack/flame strike.lua">
 		<vocation id="1"/>
 		<vocation id="2"/>
@@ -79,14 +79,14 @@
 		<vocation id="3"/>
 		<vocation id="7"/>
 	</instant>
-  <instant name="Energy Beam" words="exevo vis lux" lvl="23" mana="40" direction="1" exhaustion="2000" groups="1,1500" icon="22" needlearn="0" event="script" value="attack/energy beam.lua">
-    <vocation id="1"/>
-    <vocation id="5"/>
-  </instant>
-  <instant name="Great Energy Beam" words="exevo gran vis lux" lvl="29" mana="110" direction="1" exhaustion="2000" groups="1,1500" icon="23" needlearn="0" event="script" value="attack/great energy beam.lua">
-    <vocation id="1"/>
-    <vocation id="5"/>
-  </instant>
+	<instant name="Energy Beam" words="exevo vis lux" lvl="23" mana="40" direction="1" exhaustion="2000" groups="1,1500" icon="22" needlearn="0" event="script" value="attack/energy beam.lua">
+		<vocation id="1"/>
+		<vocation id="5"/>
+	</instant>
+	<instant name="Great Energy Beam" words="exevo gran vis lux" lvl="29" mana="110" direction="1" exhaustion="2000" groups="1,1500" icon="23" needlearn="0" event="script" value="attack/great energy beam.lua">
+		<vocation id="1"/>
+		<vocation id="5"/>
+	</instant>
 	<instant name="Groundshaker" words="exori mas" lvl="33" mana="160" prem="0" needweapon="1" exhaustion="2000" groups="1,1500" icon="106" needlearn="0" event="script" value="attack/groundshaker.lua">
 		<vocation id="4"/>
 		<vocation id="8"/>
@@ -129,9 +129,9 @@
 		<vocation id="2"/>
 		<vocation id="6"/>
 	</instant>
-	<instant name="Ice Wave" words="exevo frigo hur" lvl="18" mana="25" direction="1"  exhaustion="2000" groups="1,1500" icon="121" needlearn="0" event="script" value="attack/ice wave.lua">
-    <vocation id="2"/>
-    <vocation id="6"/>
+	<instant name="Ice Wave" words="exevo frigo hur" lvl="18" mana="25" direction="1"	exhaustion="2000" groups="1,1500" icon="121" needlearn="0" event="script" value="attack/ice wave.lua">
+		<vocation id="2"/>
+		<vocation id="6"/>
 	</instant>
 	<instant name="Terra Strike" words="exori tera" lvl="13" mana="20" prem="0" range="3" casterTargetOrDirection="1" blockwalls="1" exhaustion="2000" groups="1,1500" icon="113" needlearn="0" event="script" value="attack/terra strike.lua">
 		<vocation id="1"/>
@@ -148,7 +148,7 @@
 		<vocation id="6"/>
 	</instant>
 
-  <!-- Healing Spells -->
+	<!-- Healing Spells -->
 	<instant name="Light Healing" words="exura" lvl="9" mana="20" aggressive="0" selftarget="1" exhaustion="1000" groups="2,1000" icon="1" needlearn="0" event="script" value="healing/light healing.lua">
 		<vocation id="1"/>
 		<vocation id="2"/>
@@ -171,13 +171,13 @@
 		<vocation id="7"/>
 		<vocation id="8"/>
 	</instant>
-  	<instant name="Cure Burning" words="exana flam" lvl="30" mana="30" aggressive="0" selftarget="1" exhaustion="1000" groups="2,1000" icon="145" needlearn="0" event="script" value="healing/cure burning.lua">
-    		<vocation id="2"/>
-    		<vocation id="6"/>
+	<instant name="Cure Burning" words="exana flam" lvl="30" mana="30" aggressive="0" selftarget="1" exhaustion="1000" groups="2,1000" icon="145" needlearn="0" event="script" value="healing/cure burning.lua">
+		<vocation id="2"/>
+		<vocation id="6"/>
  	</instant>
-  	<instant name="Cure Curse" words="exana mort" lvl="80" mana="40" aggressive="0" selftarget="1" exhaustion="1000" groups="2,1000" icon="147" needlearn="0" event="script" value="healing/cure curse.lua">
-  		<vocation id="3"/>
-  		<vocation id="7"/>
+	<instant name="Cure Curse" words="exana mort" lvl="80" mana="40" aggressive="0" selftarget="1" exhaustion="1000" groups="2,1000" icon="147" needlearn="0" event="script" value="healing/cure curse.lua">
+		<vocation id="3"/>
+		<vocation id="7"/>
  	</instant>
 	<instant name="Intense Healing" words="exura gran" lvl="11" mana="70" aggressive="0" selftarget="1" exhaustion="1000" groups="2,1000" icon="2" needlearn="0" event="script" value="healing/intense healing.lua">
 		<vocation id="1"/>
@@ -205,9 +205,9 @@
 		<vocation id="3"/>
 		<vocation id="7"/>
 	</instant>
-  
+	
 
-  <!-- Support Spells -->
+	<!-- Support Spells -->
 	<instant name="Light" words="utevo lux" lvl="8" mana="20" aggressive="0" selftarget="1" exhaustion="1000" groups="3,2000" icon="10" needlearn="0" event="script" value="support/light.lua">
 		<vocation id="1"/>
 		<vocation id="2"/>
@@ -218,17 +218,17 @@
 		<vocation id="7"/>
 		<vocation id="8"/>
 	</instant>
-  <instant name="Find Person" words="exiva" lvl="8" mana="20" aggressive="0" params="1" exhaustion="1000" groups="3,2000" icon="20" needlearn="0" event="function" value="searchPlayer">
-    <vocation id="1"/>
-    <vocation id="2"/>
-    <vocation id="3"/>
-    <vocation id="4"/>
-    <vocation id="5"/>
-    <vocation id="6"/>
-    <vocation id="7"/>
-    <vocation id="8"/>
-  </instant>
-  <instant name="Magic Rope" words="exani tera" lvl="9" mana="20" prem="0" aggressive="0" selftarget="1" exhaustion="1000" groups="3,2000" icon="76" needlearn="0" event="script" value="support/magic rope.lua">
+	<instant name="Find Person" words="exiva" lvl="8" mana="20" aggressive="0" params="1" exhaustion="1000" groups="3,2000" icon="20" needlearn="0" event="function" value="searchPlayer">
+		<vocation id="1"/>
+		<vocation id="2"/>
+		<vocation id="3"/>
+		<vocation id="4"/>
+		<vocation id="5"/>
+		<vocation id="6"/>
+		<vocation id="7"/>
+		<vocation id="8"/>
+	</instant>
+	<instant name="Magic Rope" words="exani tera" lvl="9" mana="20" prem="0" aggressive="0" selftarget="1" exhaustion="1000" groups="3,2000" icon="76" needlearn="0" event="script" value="support/magic rope.lua">
 		<vocation id="1"/>
 		<vocation id="2"/>
 		<vocation id="3"/>
@@ -264,7 +264,7 @@
 		<vocation id="5"/>
 		<vocation id="6"/>
 	</instant>
-	<instant name="Haste" words="utani hur" lvl="14" mana="60" prem="0" aggressive="0" selftarget="1" exhaustion="1000"  groups="3,2000" icon="6" needlearn="0" event="script" value="support/haste.lua">
+	<instant name="Haste" words="utani hur" lvl="14" mana="60" prem="0" aggressive="0" selftarget="1" exhaustion="1000"	groups="3,2000" icon="6" needlearn="0" event="script" value="support/haste.lua">
 		<vocation id="1"/>
 		<vocation id="2"/>
 		<vocation id="3"/>
@@ -307,12 +307,12 @@
 		<vocation id="3"/>
 		<vocation id="7"/>
 	</instant>
-  <instant name="Invisibility" words="utana vid" lvl="35" mana="440" aggressive="0" selftarget="1" exhaustion="1000" groups="3,2000" icon="45" needlearn="0" event="script" value="support/invisible.lua">
-    <vocation id="1"/>
-    <vocation id="2"/>
-    <vocation id="5"/>
-    <vocation id="6"/>
-  </instant>
+	<instant name="Invisibility" words="utana vid" lvl="35" mana="440" aggressive="0" selftarget="1" exhaustion="1000" groups="3,2000" icon="45" needlearn="0" event="script" value="support/invisible.lua">
+		<vocation id="1"/>
+		<vocation id="2"/>
+		<vocation id="5"/>
+		<vocation id="6"/>
+	</instant>
 	<instant name="Sharpshooter" words="utito tempo san" lvl="60" mana="450" prem="0" aggressive="0" selftarget="1" exhaustion="1000" groups="3,2000" icon="135" needlearn="0" event="script" value="support/sharpshooter.lua">
 		<vocation id="3"/>
 		<vocation id="7"/>
@@ -378,8 +378,8 @@
 		<vocation id="7"/>
 	</conjure>
 	<conjure name="Enchant Staff" words="exeta vis" lvl="41" mana="80" prem="0" conjureId="2433" reagentId="2401" needlearn="0" event="function" groups="3,2000" icon="23" value="conjureItem">
-    <vocation id="1"/>
-    <vocation id="5"/>
+		<vocation id="1"/>
+		<vocation id="5"/>
 	</conjure>
 	<conjure name="Enchant Spear" words="exeta con" lvl="45" mana="350" soul="3" prem="0" conjureId="7367" reagentId="2389" needlearn="0" event="function" groups="3,2000" icon="23" value="conjureItem">
 		<vocation id="3"/>

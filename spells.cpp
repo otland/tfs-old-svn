@@ -38,8 +38,8 @@ extern ConfigManager g_config;
 Spells::Spells():
 m_interface("Spell Interface")
 {
-	currentSpellId = 0;
 	m_interface.initState();
+	spellId = 0;
 }
 
 ReturnValue Spells::onPlayerSay(Player* player, const std::string& words)
@@ -119,7 +119,7 @@ void Spells::clear()
 		delete it->second;
 
 	instants.clear();
-	currentSpellId = 0;
+	spellId = 0;
 	m_interface.reInitState();
 }
 
@@ -143,7 +143,7 @@ bool Spells::registerEvent(Event* event, xmlNodePtr, bool override)
 	if(InstantSpell* instant = dynamic_cast<InstantSpell*>(event))
 	{
 		InstantsMap::iterator it = instants.find(instant->getWords());
-		instant->setId(currentSpellId++);
+		instant->setId(spellId++);
 		if(it == instants.end())
 		{
 			instants[instant->getWords()] = instant;
@@ -164,7 +164,7 @@ bool Spells::registerEvent(Event* event, xmlNodePtr, bool override)
 	if(RuneSpell* rune = dynamic_cast<RuneSpell*>(event))
 	{
 		RunesMap::iterator it = runes.find(rune->getRuneItemId());
-		rune->setId(currentSpellId++);
+		rune->setId(spellId++);
 		if(it == runes.end())
 		{
 			runes[rune->getRuneItemId()] = rune;
@@ -592,6 +592,14 @@ bool Spell::configureSpell(xmlNodePtr p)
 		}
 	}
 
+	if(groupExhaustions.empty())
+	{
+		if(isAggressive)
+			groupExhaustions[SPELLGROUP_ATTACK] = 2000;
+		else
+			groupExhaustions[SPELLGROUP_HEALING] = 1000;
+	}
+
 	std::string error;
 	for(xmlNodePtr vocationNode = p->children; vocationNode; vocationNode = vocationNode->next)
 	{
@@ -979,7 +987,7 @@ void Spell::postSpell(Player* player) const
 		bool useCooldowns = g_config.getBool(ConfigManager::ENABLE_COOLDOWNS);
 		if(useCooldowns)
 		{
-			for(std::map<SpellGroup_t, uint32_t>::const_iterator it = groupExhaustions.begin(); it != groupExhaustions.end(); it++)
+			for(SpellGroup::const_iterator it = groupExhaustions.begin(); it != groupExhaustions.end(); ++it)
 			{
 				if(it->second <= 0)
 					continue;
@@ -992,9 +1000,6 @@ void Spell::postSpell(Player* player) const
 		if(exhaustion > 0)
 		{
 			player->addCooldown(exhaustion, (useCooldowns ? spellId : isAggressive));
-			/*if(!useCooldowns)
-				player->addCooldown(500, !isAggressive); // CHECKME: what the heck is this?*/
-
 			player->sendSpellCooldown(icon, exhaustion);
 		}
 	}
@@ -1022,7 +1027,7 @@ void Spell::postSpell(Player* player, uint32_t manaCost, uint32_t soulCost) cons
 int32_t Spell::getManaCost(const Player* player) const
 {
 	if(player && manaPercent)
-		return (int32_t)std::floor(double(player->getMaxMana() * manaPercent) / 100);
+		return (int32_t)std::floor((double)(player->getMaxMana() * manaPercent) / 100.);
 
 	return mana;
 }

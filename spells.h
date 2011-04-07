@@ -68,9 +68,8 @@ class Spells : public BaseEvents
 		RunesMap runes;
 		InstantsMap instants;
 
+		uint32_t spellId;
 		friend class CombatSpell;
-
-		uint32_t currentSpellId;
 };
 
 typedef bool (InstantSpellFunction)(const InstantSpell* spell, Creature* creature, const std::string& param);
