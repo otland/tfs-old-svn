@@ -18,11 +18,11 @@ case "$1" in
    start|s)
      if [ -f theforgottenserver ];
      then
-        echo >&2 "Running file transfer server v$VERSION"
+        echo >&2 "Running The forgotten server v$VERSION"
         ./theforgottenserver
         echo >&2 "Done"
       else
-         echo >&2 "Could not start file transfer server"
+         echo >&2 "Could not start The forgotten server"
       fi
      ;;
    restart)
