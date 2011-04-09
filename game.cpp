@@ -1305,7 +1305,7 @@ ReturnValue Game::internalMoveCreature(Creature* actor, Creature* creature, Cyli
 	{
 		toCylinder->getTile()->moveCreature(actor, creature, subCylinder);
 		if(creature->getParent() != subCylinder) //could happen if a script move the creature
-			 break;
+			break;
 
 		toCylinder = subCylinder;
 		flags = 0;

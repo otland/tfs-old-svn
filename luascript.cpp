@@ -4073,9 +4073,10 @@ int32_t LuaInterface::luaDoRelocate(lua_State* L)
 	if(creatures)
 	{
 		CreatureVector* creatureVector = fromTile->getCreatures();
-		for(CreatureVector::iterator it = creatureVector->begin(); it != creatureVector->end(); ++it)
+		Creature* creature = NULL;
+		while(creatureVector && !creatureVector->empty())
 		{
-			if(Creature* creature = (*it))
+			if((creature = (*creatureVector->begin())))
 				g_game.internalMoveCreature(NULL, creature, fromTile, toTile, FLAG_NOLIMIT);
 		}
 	}
@@ -4981,6 +4982,17 @@ int32_t LuaInterface::luaGetTileInfo(lua_State* L)
 		setFieldBool(L, "house", tile->hasFlag(TILESTATE_HOUSE));
 		setFieldBool(L, "bed", tile->hasFlag(TILESTATE_BED));
 		setFieldBool(L, "depot", tile->hasFlag(TILESTATE_DEPOT));
+
+		createTable(L, "floorChange");
+		for(int32_t i = CHANGE_FIRST; i <= CHANGE_LAST; ++i)
+		{
+			lua_pushnumber(L, i);
+			lua_pushboolean(L, tile->floorChange((FloorChange_t)i));
+			pushTable(L);
+		}
+
+		pushTable(L);
+		setFieldBool(L, "teleport", tile->hasFlag(TILESTATE_TELEPORT));
 
 		setField(L, "things", tile->getThingCount());
 		setField(L, "creatures", tile->getCreatureCount());

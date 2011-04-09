@@ -516,10 +516,11 @@ void Creature::onCreatureMove(const Creature* creature, const Tile* newTile, con
 {
 	if(creature == this)
 	{
+		if(!oldTile->floorChange() && !oldTile->positionChange())
+			setLastPosition(oldPos);
+
 		lastStep = OTSYS_TIME();
 		lastStepCost = 1;
-
-		setLastPosition(oldPos);
 		if(!teleport)
 		{
 			if(std::abs(newPos.x - oldPos.x) >= 1 && std::abs(newPos.y - oldPos.y) >= 1)

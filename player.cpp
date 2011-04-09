@@ -1036,7 +1036,7 @@ void Player::sendCancelMessage(ReturnValue message) const
 			break;
 
 		case RET_DEPOTISFULL:
-			sendCancel("You cannot put more items in this depot.");
+			sendCancel("Your depot is full. Remove surplus items before storing new ones.");
 			break;
 
 		case RET_CANNOTUSETHISOBJECT:
@@ -1060,7 +1060,7 @@ void Player::sendCancelMessage(ReturnValue message) const
 			break;
 
 		case RET_YOUMAYNOTLOGOUTDURINGAFIGHT:
-			sendCancel("You may not logout during or immediately after a fight!");
+			sendCancel("You may not logout during or immediately after a fight.");
 			break;
 
 		case RET_DIRECTPLAYERSHOOT:
@@ -1187,12 +1187,11 @@ void Player::sendCancelMessage(ReturnValue message) const
 			sendCancel("You cannot add more items on this tile.");
 			break;
 
-		case RET_DONTSHOWMESSAGE:
+		case RET_NOTPOSSIBLE:		
+			sendCancel("Sorry, not possible.");
 			break;
 
-		case RET_NOTPOSSIBLE:
 		default:
-			sendCancel("Sorry, not possible.");
 			break;
 	}
 }

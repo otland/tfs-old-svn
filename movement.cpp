@@ -586,7 +586,7 @@ uint32_t MoveEvents::onCreatureMove(Creature* actor, Creature* creature, const T
 
 	//We cannot use iterators here since the scripts can invalidate the iterator
 	Thing* thing = NULL;
-	for(int32_t i = tile->__getFirstIndex(); i < tile->__getLastIndex(); ++i) //already checked the ground
+	for(int32_t i = tile->__getFirstIndex(), j = tile->__getLastIndex(); i < j; ++i) //already checked the ground
 	{
 		if(!(thing = tile->__getThing(i)) || !(tileItem = thing->getItem()))
 			continue;
@@ -659,7 +659,7 @@ uint32_t MoveEvents::onItemMove(Creature* actor, Item* item, Tile* tile, bool is
 
 	//we cannot use iterators here since the scripts can invalidate the iterator
 	Thing* thing = NULL;
-	for(int32_t i = tile->__getFirstIndex(); i < tile->__getLastIndex(); ++i) //already checked the ground
+	for(int32_t i = tile->__getFirstIndex(), j = tile->__getLastIndex(); i < j; ++i) //already checked the ground
 	{
 		if(!(thing = tile->__getThing(i)) || !(tileItem = thing->getItem()) || tileItem == item)
 			continue;
@@ -814,7 +814,11 @@ bool MoveEvent::configureEvent(xmlNodePtr p)
 			m_eventType = MOVE_EVENT_REMOVE_ITEM;
 		else
 		{
-			std::clog << "[Error - MoveEvent::configureMoveEvent] Unknown event type \"" << strValue << "\"" << std::endl;
+			if(tmpStrValue == "function" || tmpStrValue == "buffer" || tmpStrValue == "script")
+				std::clog << "[Error - MoveEvent::configureMoveEvent] No event type found." << std::endl;
+			else
+				std::clog << "[Error - MoveEvent::configureMoveEvent] Unknown event type \"" << strValue << "\"" << std::endl;
+
 			return false;
 		}
 
@@ -879,13 +883,10 @@ bool MoveEvent::configureEvent(xmlNodePtr p)
 
 			StringVec vocStringVec;
 			std::string error = "";
-			xmlNodePtr vocationNode = p->children;
-			while(vocationNode)
+			for(xmlNodePtr vocationNode = p->children; vocationNode; vocationNode = vocationNode->next)
 			{
 				if(!parseVocationNode(vocationNode, vocEquipMap, vocStringVec, error))
 					std::clog << "[Warning - MoveEvent::configureEvent] " << error << std::endl;
-
-				vocationNode = vocationNode->next;
 			}
 
 			if(!vocEquipMap.empty())
@@ -896,7 +897,7 @@ bool MoveEvent::configureEvent(xmlNodePtr p)
 	}
 	else
 	{
-		std::clog << "[Error - MoveEvent::configureMoveEvent] No event found." << std::endl;
+		std::clog << "[Error - MoveEvent::configureMoveEvent] No event type found." << std::endl;
 		return false;
 	}
 
