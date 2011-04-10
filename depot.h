@@ -56,7 +56,7 @@ class Depot : public Container
 		virtual void postAddNotification(Creature* actor, Thing* thing, const Cylinder* oldParent,
 			int32_t index, CylinderLink_t link = LINK_OWNER);
 		virtual void postRemoveNotification(Creature* actor, Thing* thing, const Cylinder* newParent,
-			int32_t index, CylinderLink_t link = LINK_OWNER);
+			int32_t index, bool isCompleteRemoval, CylinderLink_t link = LINK_OWNER);
 
 		//overrides
 		virtual bool canRemove() const {return false;}

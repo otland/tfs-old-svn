@@ -315,6 +315,12 @@ struct War_t
 struct Outfit_t
 {
 	Outfit_t() {lookHead = lookBody = lookLegs = lookFeet = lookType = lookTypeEx = lookAddons = lookMount = 0;}
+	Outfit_t(uint16_t _lookType)
+	{
+		lookType = _lookType;
+		lookHead = lookBody = lookLegs = lookFeet = lookTypeEx = lookAddons = lookMount = 0;
+	}
+
 	uint16_t lookType, lookMount, lookTypeEx;
 	uint8_t lookHead, lookBody, lookLegs, lookFeet, lookAddons;
 

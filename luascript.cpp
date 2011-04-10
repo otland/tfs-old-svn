@@ -110,14 +110,13 @@ ScriptEnviroment::~ScriptEnviroment()
 void ScriptEnviroment::reset()
 {
 	m_scriptId = m_callbackId = 0;
+	m_realPos = Position();
 	m_timerEvent = false;
 
-	m_realPos = Position();
 	m_interface = NULL;
 	for(TempItemListMap::iterator mit = m_tempItems.begin(); mit != m_tempItems.end(); ++mit)
 	{
-		ItemList itemList = mit->second;
-		for(ItemList::iterator it = itemList.begin(); it != itemList.end(); ++it)
+		for(ItemList::iterator it = mit->second.begin(); it != mit->second.end(); ++it)
 		{
 			if((*it)->getParent() == VirtualCylinder::virtualCylinder)
 				g_game.freeThing(*it);
@@ -270,10 +269,10 @@ uint32_t ScriptEnviroment::addThing(Thing* thing)
 
 void ScriptEnviroment::insertThing(uint32_t uid, Thing* thing)
 {
-	if(!m_localMap[uid])
-		m_localMap[uid] = thing;
-	else
+	if(m_localMap[uid])
 		std::clog << "[Error - ScriptEnviroment::insertThing] Thing uid already taken" << std::endl;
+	else
+		m_localMap[uid] = thing;
 }
 
 Thing* ScriptEnviroment::getThingByUID(uint32_t uid)
@@ -286,17 +285,14 @@ Thing* ScriptEnviroment::getThingByUID(uint32_t uid)
 	if(tmp && !tmp->isRemoved())
 		return tmp;
 
-	if(uid >= PLAYER_ID_RANGE)
-	{
-		tmp = g_game.getCreatureByID(uid);
-		if(tmp && !tmp->isRemoved())
-		{
-			m_localMap[uid] = tmp;
-			return tmp;
-		}
-	}
+	if(uid < PLAYER_ID_RANGE)
+		return NULL;
 
-	return NULL;
+	if(!(tmp = g_game.getCreatureByID(uid)) || tmp->isRemoved())
+		return NULL;
+
+	m_localMap[uid] = tmp;
+	return tmp;
 }
 
 Item* ScriptEnviroment::getItemByUID(uint32_t uid)
@@ -426,20 +422,19 @@ void ScriptEnviroment::addTempItem(ScriptEnviroment* env, Item* item)
 
 void ScriptEnviroment::removeTempItem(ScriptEnviroment* env, Item* item)
 {
-	ItemList itemList = m_tempItems[env];
-	ItemList::iterator it = std::find(itemList.begin(), itemList.end(), item);
-	if(it != itemList.end())
-		itemList.erase(it);
+	ItemList::iterator it = std::find(m_tempItems[env].begin(), m_tempItems[env].end(), item);
+	if(it != m_tempItems[env].end())
+		m_tempItems[env].erase(it);
 }
 
 void ScriptEnviroment::removeTempItem(Item* item)
 {
+	ItemList::iterator it;
 	for(TempItemListMap::iterator mit = m_tempItems.begin(); mit != m_tempItems.end(); ++mit)
 	{
-		ItemList itemList = mit->second;
-		ItemList::iterator it = std::find(itemList.begin(), itemList.end(), item);
-		if(it != itemList.end())
-			itemList.erase(it);
+		it = std::find(mit->second.begin(), mit->second.end(), item);
+		if(it != mit->second.end())
+			mit->second.erase(it);
 	}
 }
 
@@ -3937,7 +3932,13 @@ int32_t LuaInterface::luaDoPlayerAddItemEx(lua_State* L)
 	}
 
 	if(item->getParent() == VirtualCylinder::virtualCylinder)
-		lua_pushnumber(L, g_game.internalPlayerAddItem(NULL, player, item, canDropOnMap, (slots_t)slot));
+	{
+		ReturnValue ret = g_game.internalPlayerAddItem(NULL, player, item, canDropOnMap, (slots_t)slot);
+		if(ret == RET_NOERROR)
+			env->removeTempItem(env, item);
+
+		lua_pushnumber(L, ret);
+	}
 	else
 		lua_pushboolean(L, false);
 
@@ -3969,7 +3970,13 @@ int32_t LuaInterface::luaDoTileAddItemEx(lua_State* L)
 	}
 
 	if(item->getParent() == VirtualCylinder::virtualCylinder)
-		lua_pushnumber(L, g_game.internalAddItem(NULL, tile, item));
+	{
+		ReturnValue ret = g_game.internalAddItem(NULL, tile, item);
+		if(ret == RET_NOERROR)
+			env->removeTempItem(env, item);
+
+		lua_pushnumber(L, ret);
+	}
 	else
 		lua_pushboolean(L, false);
 
@@ -7857,7 +7864,7 @@ int32_t LuaInterface::luaDoAddContainerItemEx(lua_State* L)
 
 		ReturnValue ret = g_game.internalAddItem(NULL, container, item);
 		if(ret == RET_NOERROR)
-			env->removeTempItem(item);
+			env->removeTempItem(env, item);
 
 		lua_pushnumber(L, ret);
 		return 1;
@@ -8179,7 +8186,11 @@ int32_t LuaInterface::luaDoPlayerSendMailByName(lua_State* L)
 		return 1;
 	}
 
-	lua_pushboolean(L, IOLoginData::getInstance()->playerMail(actor, popString(L), town, item));
+	bool result = IOLoginData::getInstance()->playerMail(actor, popString(L), town, item);
+	if(result)
+		env->removeTempItem(env, item);
+
+	lua_pushboolean(L, result);
 	return 1;
 }
 

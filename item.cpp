@@ -1444,7 +1444,7 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 			else if(duration > 60)
 				s << "1 minute left";
 			else
-				s << " less than a minute left";
+				s << "less than a minute left";
 		}
 		else
 			s << " that is brand-new";

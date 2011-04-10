@@ -80,8 +80,8 @@ void Depot::postAddNotification(Creature* actor, Thing* thing, const Cylinder* o
 }
 
 void Depot::postRemoveNotification(Creature* actor, Thing* thing, const Cylinder* newParent,
-	int32_t index, CylinderLink_t /*link = LINK_OWNER*/)
+	int32_t index, bool isCompleteRemoval, CylinderLink_t /*link = LINK_OWNER*/)
 {
 	if(getParent())
-		getParent()->postRemoveNotification(actor, thing, newParent, index, LINK_PARENT);
+		getParent()->postRemoveNotification(actor, thing, newParent, index, isCompleteRemoval, LINK_PARENT);
 }

@@ -1558,8 +1558,8 @@ void Player::onCreatureMove(const Creature* creature, const Tile* newTile, const
 	if(creature != this)
 		return;
 
-	if(getParty())
-		getParty()->updateSharedExperience();
+	if(party)
+		party->updateSharedExperience();
 
 	//check if we should close trade
 	if(tradeState != TRADE_TRANSFER && ((tradeItem && !Position::areInRange<1,1,0>(tradeItem->getPosition(), getPosition()))
@@ -2747,20 +2747,19 @@ ReturnValue Player::__queryAdd(int32_t index, const Thing* thing, uint32_t count
 			break;
 	}
 
-	if(ret == RET_NOERROR || ret == RET_NOTENOUGHROOM)
+	if(ret == RET_NOERROR)
 	{
 		//need an exchange with source?
-		if(getInventoryItem((slots_t)index) != NULL && (!getInventoryItem((slots_t)index)->isStackable()
-			|| getInventoryItem((slots_t)index)->getID() != item->getID()))
+		Item* tmpItem = NULL;
+		if((tmpItem = getInventoryItem((slots_t)index)) && (!tmpItem->isStackable() || tmpItem->getID() != item->getID()))
 			return RET_NEEDEXCHANGE;
 
 		if(!g_moveEvents->onPlayerEquip(const_cast<Player*>(this), const_cast<Item*>(item), (slots_t)index, true))
 			return RET_CANNOTBEDRESSED;
-
-		//check if enough capacity
-		if(!hasCapacity(item, count))
-			return RET_NOTENOUGHCAPACITY;
 	}
+
+	if((ret == RET_NOERROR || ret == RET_NOTENOUGHROOM) && !hasCapacity(item, count)) //check if enough capacity
+		return RET_NOTENOUGHCAPACITY;
 
 	return ret;
 }
@@ -3318,10 +3317,10 @@ void Player::postAddNotification(Creature*, Thing* thing, const Cylinder* oldPar
 }
 
 void Player::postRemoveNotification(Creature*, Thing* thing, const Cylinder* newParent,
-	int32_t index, CylinderLink_t link/* = LINK_OWNER*/)
+	int32_t index, bool isCompleteRemoval, CylinderLink_t link/* = LINK_OWNER*/)
 {
 	if(link == LINK_OWNER) //calling movement scripts
-		g_moveEvents->onPlayerDeEquip(this, thing->getItem(), (slots_t)index, true);
+		g_moveEvents->onPlayerDeEquip(this, thing->getItem(), (slots_t)index, isCompleteRemoval);
 
 	bool requireListUpdate = true;
 	if(link == LINK_OWNER || link == LINK_TOPPARENT)
@@ -3811,8 +3810,8 @@ bool Player::checkLoginDelay(uint32_t playerId) const
 void Player::onIdleStatus()
 {
 	Creature::onIdleStatus();
-	if(getParty())
-		getParty()->clearPlayerPoints(this);
+	if(party)
+		party->clearPlayerPoints(this);
 }
 
 void Player::onPlacedCreature()
@@ -3824,10 +3823,13 @@ void Player::onPlacedCreature()
 
 void Player::onTargetDrain(Creature* target, int32_t points)
 {
+	if(points < 0)
+		return;
+
 	Creature::onTargetDrain(target, points);
 	if(party && target && (!target->getMaster() || !target->getMaster()->getPlayer())
 		&& target->getMonster() && target->getMonster()->isHostile()) //we have fulfilled a requirement for shared experience
-		getParty()->addPlayerDamageMonster(this, points);
+		party->addPlayerDamageMonster(this, points);
 
 	if(!points)
 		return;
@@ -3839,7 +3841,14 @@ void Player::onTargetDrain(Creature* target, int32_t points)
 
 void Player::onSummonTargetDrain(Creature* summon, Creature* target, int32_t points)
 {
+	if(points < 0)
+		return;
+
 	Creature::onSummonTargetDrain(summon, target, points);
+	if(party && target && (!target->getMaster() || !target->getMaster()->getPlayer())
+		&& target->getMonster() && target->getMonster()->isHostile()) //we have fulfilled a requirement for shared experience
+		party->addPlayerDamageMonster(this, points);
+
 	if(!points)
 		return;
 
@@ -3851,7 +3860,7 @@ void Player::onSummonTargetDrain(Creature* summon, Creature* target, int32_t poi
 void Player::onTargetGain(Creature* target, int32_t points)
 {
 	Creature::onTargetGain(target, points);
-	if(!target || !getParty())
+	if(!target || !party)
 		return;
 
 	Player* tmpPlayer = NULL;
@@ -5071,7 +5080,7 @@ PartyShields_t Player::getPartyShield(const Creature* creature) const
 	if(!player)
 		return Creature::getPartyShield(creature);
 
-	if(Party* party = getParty())
+	if(party)
 	{
 		if(party->getLeader() == player)
 		{

@@ -533,7 +533,9 @@ MoveEvent* MoveEvents::getEvent(const Tile* tile, MoveEvent_t eventType)
 
 bool MoveEvents::hasEquipEvent(Item* item)
 {
-	return getEvent(item, MOVE_EVENT_EQUIP) && getEvent(item, MOVE_EVENT_DE_EQUIP);
+	MoveEvent* event = NULL;
+	return (event = getEvent(item, MOVE_EVENT_EQUIP)) && !event->isScripted()
+		&& (event = getEvent(item, MOVE_EVENT_DE_EQUIP)) && !event->isScripted();
 }
 
 bool MoveEvents::hasTileEvent(Item* item)

@@ -19,6 +19,7 @@
 
 #include "game.h"
 #include "spells.h"
+#include "const.h"
 
 extern Game g_game;
 
@@ -51,23 +52,8 @@ void TrashHolder::__addThing(Creature* actor, int32_t, Thing* thing)
 		if(player && player->getPosition() == player->getLastPosition())
 		{
 			//player has just logged in a swimming pool
-			static Outfit_t outfit;
-			outfit.lookType = 267;
+			static Outfit_t outfit(SWIMMING_OUTFIT);
 			Spell::CreateIllusion(player, outfit, -1);
 		}
 	}
-}
-
-void TrashHolder::postAddNotification(Creature* actor, Thing* thing, const Cylinder* oldParent,
-	int32_t index, CylinderLink_t /*link = LINK_OWNER*/)
-{
-	if(getParent())
-		getParent()->postAddNotification(actor, thing, oldParent, index, LINK_PARENT);
-}
-
-void TrashHolder::postRemoveNotification(Creature* actor, Thing* thing, const Cylinder* newParent,
-	int32_t index, CylinderLink_t /*link = LINK_OWNER*/)
-{
-	if(getParent())
-		getParent()->postRemoveNotification(actor, thing, newParent, index, LINK_PARENT);
 }

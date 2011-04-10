@@ -159,10 +159,11 @@ class Cylinder
 		  * \param actor is the creature that is responsible (can be NULL)
 		  * \param thing is the object that has been removed
 		  * \param index is the previous index of the removed object
+		  * \param isCompleteRemoval indicates if the item was completely removed or just partially (stackables)
 		  * \param link holds the relation the object has to the cylinder
 		  */
 		virtual void postRemoveNotification(Creature* actor, Thing* thing, const Cylinder* newParent,
-			int32_t index, CylinderLink_t link = LINK_OWNER) = 0;
+			int32_t index, bool isCompleteRemoval, CylinderLink_t link = LINK_OWNER) = 0;
 
 		/**
 		  * Gets the index of an object
@@ -258,6 +259,6 @@ class VirtualCylinder : public Cylinder
 		virtual void postAddNotification(Creature*, Thing*, const Cylinder*,
 			int32_t, CylinderLink_t/* link = LINK_OWNER*/) {}
 		virtual void postRemoveNotification(Creature*, Thing*, const Cylinder*,
-			int32_t, CylinderLink_t/* link = LINK_OWNER*/) {}
+			int32_t, bool, CylinderLink_t/* link = LINK_OWNER*/) {}
 };
 #endif

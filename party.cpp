@@ -381,9 +381,6 @@ bool Party::canEnableSharedExperience()
 
 void Party::addPlayerHealedMember(Player* player, uint32_t points)
 {
-	if(points <= 0)
-		return;
-
 	CountMap::iterator it = pointMap.find(player->getID());
 	if(it != pointMap.end())
 	{
@@ -398,9 +395,6 @@ void Party::addPlayerHealedMember(Player* player, uint32_t points)
 
 void Party::addPlayerDamageMonster(Player* player, uint32_t points)
 {
-	if(points <= 0)
-		return;
-
 	CountMap::iterator it = pointMap.find(player->getID());
 	if(it != pointMap.end())
 	{

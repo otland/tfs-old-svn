@@ -768,6 +768,7 @@ enum PlayerCustomFlags
 
 #define IPBAN_FLAG 128
 #define LOCALHOST 2130706433
+#define SWIMMING_OUTFIT 267
 
 #define IS_IN_KEYRANGE(key, range) (key >= PSTRG_##range##_START && ((key - PSTRG_##range##_START) < PSTRG_##range##_SIZE))
 #endif

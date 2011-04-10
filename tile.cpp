@@ -490,7 +490,7 @@ void Tile::moveCreature(Creature* actor, Creature* creature, Cylinder* toCylinde
 	for(it = list.begin(); it != list.end(); ++it)
 		(*it)->onCreatureMove(creature, newTile, newPos, this, pos, teleport);
 
-	postRemoveNotification(actor, creature, toCylinder, oldStackpos);
+	postRemoveNotification(actor, creature, toCylinder, oldStackpos, true);
 	newTile->postAddNotification(actor, creature, this, newStackpos);
 }
 
@@ -920,7 +920,7 @@ void Tile::__addThing(Creature* actor, int32_t, Thing* thing)
 			updateTileFlags(item, false);
 
 			onUpdateTile();
-			postRemoveNotification(actor, oldGround, NULL, oldGroundIndex);
+			postRemoveNotification(actor, oldGround, NULL, oldGroundIndex, true);
 		}
 		else
 		{
@@ -948,7 +948,7 @@ void Tile::__addThing(Creature* actor, int32_t, Thing* thing)
 					oldSplash->setParent(NULL);
 					g_game.freeThing(oldSplash);
 
-					postRemoveNotification(actor, oldSplash, NULL, oldSplashIndex);
+					postRemoveNotification(actor, oldSplash, NULL, oldSplashIndex, true);
 					break;
 				}
 			}
@@ -1002,7 +1002,7 @@ void Tile::__addThing(Creature* actor, int32_t, Thing* thing)
 						oldField->setParent(NULL);
 						g_game.freeThing(oldField);
 
-						postRemoveNotification(actor, oldField, NULL, oldFieldIndex);
+						postRemoveNotification(actor, oldField, NULL, oldFieldIndex, true);
 						break;
 					}
 
@@ -1507,18 +1507,18 @@ void Tile::postAddNotification(Creature* actor, Thing* thing, const Cylinder* ol
 }
 
 void Tile::postRemoveNotification(Creature* actor, Thing* thing, const Cylinder* newParent,
-	int32_t index, CylinderLink_t/* link = LINK_OWNER*/)
+	int32_t index, bool isCompleteRemoval, CylinderLink_t/* link = LINK_OWNER*/)
 {
 	const SpectatorVec& list = g_game.getSpectators(pos);
 	SpectatorVec::const_iterator it;
-	/*if(!thing->isRemoved() && getThingCount() > 8)
+	/*if(isCompleteRemoval && getThingCount() > 8)
 		onUpdateTile();*/
 
 	Player* tmpPlayer = NULL;
 	for(it = list.begin(); it != list.end(); ++it)
 	{
 		if((tmpPlayer = (*it)->getPlayer()))
-			tmpPlayer->postRemoveNotification(actor, thing, newParent, index, LINK_NEAR);
+			tmpPlayer->postRemoveNotification(actor, thing, newParent, index, isCompleteRemoval, LINK_NEAR);
 	}
 
 	//calling movement scripts

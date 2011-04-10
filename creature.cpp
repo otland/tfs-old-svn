@@ -1242,7 +1242,8 @@ void Creature::onTargetDrainMana(Creature* target, int32_t points)
 
 void Creature::onTargetDrain(Creature* target, int32_t points)
 {
-	target->addDamagePoints(this, points);
+	if(points >= 0)
+		target->addDamagePoints(this, points);
 }
 
 void Creature::onTargetGainHealth(Creature* target, int32_t points)
@@ -1257,7 +1258,8 @@ void Creature::onTargetGainMana(Creature* target, int32_t points)
 
 void Creature::onTargetGain(Creature* target, int32_t points)
 {
-	target->addHealPoints(this, points);
+	if(points >= 0)
+		target->addHealPoints(this, points);
 }
 
 void Creature::onTargetKilled(Creature* target)
@@ -1265,8 +1267,8 @@ void Creature::onTargetKilled(Creature* target)
 	if(target == this)
 		return;
 
-	double gainExp = target->getGainedExperience(this);
-	onGainExperience(gainExp, target, false);
+	double exp = target->getGainedExperience(this);
+	onGainExperience(exp, target, false);
 }
 
 bool Creature::onKilledCreature(Creature* target, DeathEntry& entry)

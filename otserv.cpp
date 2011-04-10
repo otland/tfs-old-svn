@@ -492,9 +492,10 @@ void otserv(StringVec, ServiceManager* services)
 			<< "> Please set encryptionType = \"sha1\" (or any other available method) in config.lua" << std::endl;
 		boost::this_thread::sleep(boost::posix_time::seconds(15));
 	}
+
+	std::clog << ">> Checking software version...";
 	if(VERSION_BUILD)
 	{
-		std::clog << ">> Checking software version...";
 		if(xmlDocPtr doc = xmlParseFile(VERSION_CHECK))
 		{
 			xmlNodePtr p, root = xmlDocGetRootElement(doc);
@@ -557,7 +558,7 @@ void otserv(StringVec, ServiceManager* services)
 			std::clog << "failed - could not parse remote file (are you connected to any network?)" << std::endl;
 	}
 	else
-		std::clog << "Ignoring version check, using SVN" << std::endl;
+		std::clog << std::endl << "> Ignoring version check, using SVN" << std::endl;
 
 	std::clog << ">> Loading RSA key";
 	g_RSA = RSA_new();
