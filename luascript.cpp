@@ -3933,9 +3933,10 @@ int32_t LuaInterface::luaDoPlayerAddItemEx(lua_State* L)
 
 	if(item->getParent() == VirtualCylinder::virtualCylinder)
 	{
+		env->removeTempItem(env, item);
 		ReturnValue ret = g_game.internalPlayerAddItem(NULL, player, item, canDropOnMap, (slots_t)slot);
-		if(ret == RET_NOERROR)
-			env->removeTempItem(env, item);
+		if(ret != RET_NOERROR)
+			env->addTempItem(env, item);
 
 		lua_pushnumber(L, ret);
 	}
