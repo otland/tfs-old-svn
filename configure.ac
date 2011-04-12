@@ -172,6 +172,8 @@ AC_CHECK_LIB(boost_system-gcc-mt, main, , [
 	])
 ])
 
+AC_CHECK_LIB(pthread,main, , [AC_MSG_ERROR("Linking against pthread library failed)])
+
 AC_CHECK_LIB(boost_date_time-gcc-mt, main, , [
 	AC_CHECK_LIB(boost_date_time-mt, main, , [
 		AC_CHECK_LIB(boost_date_time, main, , [
