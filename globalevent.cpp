@@ -153,6 +153,9 @@ void GlobalEvents::think()
 		if(!it->second->executeEvent())
 			std::cout << "[Error - GlobalEvents::think] Failed to execute event: " << it->second->getName() << std::endl;
 	}
+
+	g_scheduler.addEvent(createSchedulerTask(SCHEDULER_MINTICKS,
+		boost::bind(&GlobalEvents::think, this)));
 }
 
 void GlobalEvents::execute(GlobalEvent_t type)
