@@ -34,5 +34,6 @@
 
 [ Milestone
 	Fixed a bug when noDamageToSameLookfeet was enabled that caused no damage between monsters and players if they have the same lookfeet.
+	Fixed a bug with "think" global events, they were only being executed once.
 	Revised NPC system and extended global.lua with more Lua functions (thanks to Cykotitan).
 ]
