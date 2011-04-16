@@ -20,7 +20,7 @@ case "$1" in
      then
         echo >&2 "Running The forgotten server v$VERSION"
         ./theforgottenserver
-        echo >&2 "Done"
+        echo >&2 "Exited with code $?"
       else
          echo >&2 "Could not start The forgotten server"
       fi
@@ -31,6 +31,7 @@ case "$1" in
      if [ -f theforgottenserver ];
      then
         ./theforgottenserver
+		echo >&2 "Exited with code $?"
      else
         echo >&2 "Failed"
      fi
