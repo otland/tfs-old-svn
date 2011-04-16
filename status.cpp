@@ -57,9 +57,9 @@ void ProtocolStatus::onRecvFirstMessage(NetworkMessage& msg)
 				return;
 			}
 		}
+		ipConnectMap[getIP()] = OTSYS_TIME();
 	}
 
-	ipConnectMap[getIP()] = OTSYS_TIME();
 	uint8_t type = msg.get<char>();
 	switch(type)
 	{
