@@ -410,7 +410,6 @@ class Player : public Creature, public Cylinder
 		virtual void onWalkAborted();
 		virtual void onWalkComplete();
 
-		void stopWalk() {cancelNextWalk = true;}
 		void openShopWindow();
 		void closeShopWindow(bool send = true, Npc* npc = NULL, int32_t onBuy = -1, int32_t onSell = -1);
 		bool canShopItem(uint16_t itemId, uint8_t subType, ShopEvent_t event);

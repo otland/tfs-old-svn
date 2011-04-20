@@ -919,8 +919,9 @@ void Tile::__addThing(Creature* actor, int32_t, Thing* thing)
 			updateTileFlags(oldGround, true);
 			updateTileFlags(item, false);
 
-			onUpdateTile();
 			postRemoveNotification(actor, oldGround, NULL, oldGroundIndex, true);
+			if(items && items->size() < 9)
+				onUpdateTile();
 		}
 		else
 		{
@@ -1511,8 +1512,8 @@ void Tile::postRemoveNotification(Creature* actor, Thing* thing, const Cylinder*
 {
 	const SpectatorVec& list = g_game.getSpectators(pos);
 	SpectatorVec::const_iterator it;
-	/*if(isCompleteRemoval && getThingCount() > 8)
-		onUpdateTile();*/
+	if(isCompleteRemoval && items && items->size() > 8)
+		onUpdateTile();
 
 	Player* tmpPlayer = NULL;
 	for(it = list.begin(); it != list.end(); ++it)

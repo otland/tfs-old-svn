@@ -2249,6 +2249,8 @@ bool Game::playerMove(uint32_t playerId, Direction dir)
 
 	std::list<Direction> dirs;
 	dirs.push_back(dir);
+
+	player->stopEventWalk();
 	return player->startAutoWalk(dirs);
 }
 
@@ -2498,8 +2500,8 @@ bool Game::playerUseItemEx(uint32_t playerId, const Position& fromPos, int16_t f
 				Dispatcher::getInstance().addTask(createTask(boost::bind(&Game::playerAutoWalk,
 					this, player->getID(), listDir)));
 
-				SchedulerTask* task = createSchedulerTask(400, boost::bind(&Game::playerUseItemEx, this,
-					playerId, itemPos, itemStackpos, fromSpriteId, toPos, toStackpos, toSpriteId, isHotkey));
+				SchedulerTask* task = createSchedulerTask(std::max((int32_t)SCHEDULER_MINTICKS, player->getStepDuration()),
+					boost::bind(&Game::playerUseItemEx, this, playerId, itemPos, itemStackpos, fromSpriteId, toPos, toStackpos, toSpriteId, isHotkey));
 
 				player->setNextWalkActionTask(task);
 				return true;
@@ -2564,8 +2566,8 @@ bool Game::playerUseItem(uint32_t playerId, const Position& pos, int16_t stackpo
 				Dispatcher::getInstance().addTask(createTask(boost::bind(&Game::playerAutoWalk,
 					this, player->getID(), listDir)));
 
-				SchedulerTask* task = createSchedulerTask(400, boost::bind(&Game::playerUseItem, this,
-					playerId, pos, stackpos, index, spriteId, isHotkey));
+				SchedulerTask* task = createSchedulerTask(std::max((int32_t)SCHEDULER_MINTICKS, player->getStepDuration()),
+					boost::bind(&Game::playerUseItem, this, playerId, pos, stackpos, index, spriteId, isHotkey));
 
 				player->setNextWalkActionTask(task);
 				return true;
@@ -2640,8 +2642,8 @@ bool Game::playerUseBattleWindow(uint32_t playerId, const Position& fromPos, int
 				Dispatcher::getInstance().addTask(createTask(boost::bind(&Game::playerAutoWalk,
 					this, player->getID(), listDir)));
 
-				SchedulerTask* task = createSchedulerTask(400, boost::bind(&Game::playerUseBattleWindow, this,
-					playerId, fromPos, fromStackpos, creatureId, spriteId, isHotkey));
+				SchedulerTask* task = createSchedulerTask(std::max((int32_t)SCHEDULER_MINTICKS, player->getStepDuration()),
+					boost::bind(&Game::playerUseBattleWindow, this, playerId, fromPos, fromStackpos, creatureId, spriteId, isHotkey));
 
 				player->setNextWalkActionTask(task);
 				return true;
@@ -2757,8 +2759,8 @@ bool Game::playerRotateItem(uint32_t playerId, const Position& pos, int16_t stac
 			Dispatcher::getInstance().addTask(createTask(boost::bind(&Game::playerAutoWalk,
 				this, player->getID(), listDir)));
 
-			SchedulerTask* task = createSchedulerTask(400, boost::bind(&Game::playerRotateItem, this,
-				playerId, pos, stackpos, spriteId));
+			SchedulerTask* task = createSchedulerTask(std::max((int32_t)SCHEDULER_MINTICKS, player->getStepDuration()),
+				boost::bind(&Game::playerRotateItem, this, playerId, pos, stackpos, spriteId));
 
 			player->setNextWalkActionTask(task);
 			return true;
@@ -2926,8 +2928,8 @@ bool Game::playerRequestTrade(uint32_t playerId, const Position& pos, int16_t st
 			Dispatcher::getInstance().addTask(createTask(boost::bind(&Game::playerAutoWalk,
 				this, player->getID(), listDir)));
 
-			SchedulerTask* task = createSchedulerTask(400, boost::bind(&Game::playerRequestTrade, this,
-				playerId, pos, stackpos, tradePlayerId, spriteId));
+			SchedulerTask* task = createSchedulerTask(std::max((int32_t)SCHEDULER_MINTICKS, player->getStepDuration()),
+				boost::bind(&Game::playerRequestTrade, this, playerId, pos, stackpos, tradePlayerId, spriteId));
 
 			player->setNextWalkActionTask(task);
 			return true;
@@ -4068,6 +4070,9 @@ bool Game::steerCreature(Creature* creature, const Position& position, uint16_t 
 	std::list<Direction> dirList;
 	if(!getPathToEx(creature, position, dirList, fpp))
 		return false;
+
+	if(Player* player = creature->getPlayer())
+		player->setNextWalkTask(NULL);
 
 	creature->startAutoWalk(dirList);
 	return true;

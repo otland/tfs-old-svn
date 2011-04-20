@@ -274,6 +274,7 @@ class Creature : public AutoId, virtual public Thing
 
 		//walk functions
 		bool startAutoWalk(std::list<Direction>& listDir);
+		void stopWalk() {cancelNextWalk = true;}
 		void addEventWalk(bool firstStep = false);
 		void stopEventWalk();
 		void goToFollowCreature();
