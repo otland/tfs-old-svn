@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<spawns>
+  <spawn centerx="1028" centery="1003" centerz="6" radius="5"/>
+  <spawn centerx="992" centery="1033" centerz="6" radius="2"/>
+  <spawn centerx="908" centery="964" centerz="7" radius="1"/>
+  <spawn centerx="892" centery="1025" centerz="7" radius="13">
+    <monster name="Snake" x="-2" y="-10" z="7" spawntime="60"/>
+    <monster name="Snake" x="3" y="-5" z="7" spawntime="60"/>
+    <monster name="Snake" x="-7" y="-3" z="7" spawntime="60"/>
+    <monster name="Snake" x="11" y="0" z="7" spawntime="60"/>
+    <monster name="Snake" x="-10" y="5" z="7" spawntime="60"/>
+    <monster name="Snake" x="5" y="7" z="7" spawntime="60"/>
+    <monster name="Snake" x="-4" y="8" z="7" spawntime="60"/>
+  </spawn>
+  <spawn centerx="915" centery="973" centerz="8" radius="5">
+    <monster name="Bear" x="1" y="0" z="8" spawntime="60"/>
+    <monster name="Bear" x="-2" y="5" z="8" spawntime="60"/>
+  </spawn>
+  <spawn centerx="918" centery="981" centerz="8" radius="5">
+    <monster name="Bear" x="-4" y="0" z="8" spawntime="60"/>
+    <monster name="Bear" x="4" y="1" z="8" spawntime="60"/>
+  </spawn>
+  <spawn centerx="890" centery="1032" centerz="8" radius="7">
+    <monster name="Snake" x="7" y="-5" z="8" spawntime="60"/>
+    <monster name="Snake" x="-1" y="-3" z="8" spawntime="60"/>
+    <monster name="Snake" x="5" y="-3" z="8" spawntime="60"/>
+    <monster name="Snake" x="-4" y="0" z="8" spawntime="60"/>
+    <monster name="Snake" x="-2" y="4" z="8" spawntime="60"/>
+    <monster name="Snake" x="3" y="4" z="8" spawntime="60"/>
+    <monster name="Snake" x="-5" y="5" z="8" spawntime="60"/>
+  </spawn>
+  <spawn centerx="923" centery="1061" centerz="12" radius="5">
+    <monster name="spider" x="2" y="-3" z="12" spawntime="60"/>
+    <monster name="Poison spider" x="-2" y="-1" z="12" spawntime="60"/>
+    <monster name="spider" x="2" y="1" z="12" spawntime="60"/>
+  </spawn>
+</spawns>
