@@ -1512,8 +1512,12 @@ void Tile::postRemoveNotification(Creature* actor, Thing* thing, const Cylinder*
 {
 	const SpectatorVec& list = g_game.getSpectators(pos);
 	SpectatorVec::const_iterator it;
-	if(isCompleteRemoval && items && items->size() > 8)
-		onUpdateTile();
+	if(isCompleteRemoval)
+	{
+		const TileItemVector* items = getItemList();
+		if(items && items->size() > 8)
+			onUpdateTile();
+	}
 
 	Player* tmpPlayer = NULL;
 	for(it = list.begin(); it != list.end(); ++it)
