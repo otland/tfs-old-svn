@@ -622,15 +622,13 @@ if(NpcHandler == nil) then
 			end
 
 			return
-		elseif(delay == nil) then
-			delay = self.talkDelayTime
 		end
 
 		-- TODO: Add an event handling method for delayed messages
 		table.insert(self.talkDelay, {
 			cid = focus,
 			message = message,
-			time = os.mtime() + delay,
+			time = os.mtime() + (delay and delay or self.talkDelayTime),
 			start = os.time(),
 			force = force
 		})

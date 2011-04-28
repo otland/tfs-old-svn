@@ -4203,13 +4203,13 @@ void Game::internalCreatureChangeOutfit(Creature* creature, const Outfit_t& outf
 	Player* tmpPlayer = NULL;
 	for(it = list.begin(); it != list.end(); ++it)
 	{
-		if((*it) && (tmpPlayer = (*it)->getPlayer()))
+		if((tmpPlayer = (*it)->getPlayer()))
 			tmpPlayer->sendCreatureChangeOutfit(creature, outfit);
 	}
 
 	//event method
 	for(it = list.begin(); it != list.end(); ++it)
-		if((*it)) (*it)->onCreatureChangeOutfit(creature, outfit);
+		(*it)->onCreatureChangeOutfit(creature, outfit);
 }
 
 void Game::internalCreatureChangeVisible(Creature* creature, Visible_t visible)

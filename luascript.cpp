@@ -1032,8 +1032,7 @@ void LuaInterface::pushThing(lua_State* L, Thing* thing, uint32_t id/* = 0*/, Re
 		setField(L, "actionid", item->getActionId());
 		if(recursive != RECURSE_NONE)
 		{
-			const Container* container = item->getContainer();
-			if(container && !container->empty())
+			if(const Container* container = item->getContainer())
 			{
 				if(recursive == RECURSE_FIRST)
 					recursive = RECURSE_NONE;

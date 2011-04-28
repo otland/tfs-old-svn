@@ -2223,7 +2223,7 @@ bool Player::onDeath()
 	}
 
 	bool usePVPBlessing = false;
-	uint8_t pvpPercent = (uint8_t)std::ceil((double)pvpDamage * 100 / totalDamage);
+	uint8_t pvpPercent = (uint8_t)std::ceil((double)pvpDamage * 100. / totalDamage);
 	if(pvpBlessing && pvpPercent >= (uint8_t)g_config.getNumber(
 		ConfigManager::PVP_BLESSING_THRESHOLD))
 	{
@@ -4217,7 +4217,7 @@ Skulls_t Player::getSkullType(const Creature* creature) const
 		if(canRevenge(player->getGUID()))
 			return SKULL_ORANGE;
 
-		if((player == this || (skull != SKULL_NONE || player->canRevenge(guid)))
+		if((/*player == this || */(skull != SKULL_NONE || player->canRevenge(guid)))
 			&& player->hasAttacked(this)
 #ifdef __WAR_SYSTEM__
 			&& !player->isEnemy(this, false)
