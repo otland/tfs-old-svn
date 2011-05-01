@@ -43,7 +43,7 @@ void MonsterType::reset()
 	pushable = isAttackable = isHostile = true;
 
 	outfit.lookHead = outfit.lookBody = outfit.lookLegs = outfit.lookFeet = outfit.lookType = outfit.lookTypeEx = outfit.lookAddons = outfit.lookMount = 0;
-	runAwayHealth = manaCost = lightLevel = lightColor = yellSpeedTicks = yellChance = changeTargetSpeed = changeTargetChance = 0;
+	runAwayHealth = healthMin = manaCost = lightLevel = lightColor = yellSpeedTicks = yellChance = changeTargetSpeed = changeTargetChance = 0;
 	experience = defense = armor = lookCorpse = corpseUnique = corpseAction = conditionImmunities = damageImmunities = 0;
 
 	maxSummons = -1;
@@ -1005,6 +1005,9 @@ bool Monsters::loadMonster(const std::string& file, const std::string& monsterNa
 
 		if(!xmlStrcmp(p->name, (const xmlChar*)"health"))
 		{
+			if(readXMLInteger(p, "min", intValue))
+				mType->healthMin = intValue;
+
 			if(!readXMLInteger(p, "max", intValue))
 			{
 				SHOW_XML_ERROR("Missing health.max");

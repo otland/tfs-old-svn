@@ -63,8 +63,11 @@ Monster::Monster(MonsterType* _mType):
 
 	double multiplier = g_config.getDouble(ConfigManager::RATE_MONSTER_HEALTH);
 	health = (int32_t)(mType->health * multiplier);
-	healthMax = (int32_t)(mType->healthMax * multiplier);
+	healthMin = mType->healthMin, healthMax = mType->healthMax;
+	if(healthMin > 0)
+		healthMax = random_range(healthMin, healthMax);
 
+	healthMax = (int32_t)healthMax * multiplier);
 	baseSpeed = mType->baseSpeed;
 	internalLight.level = mType->lightLevel;
 	internalLight.color = mType->lightColor;
@@ -1140,7 +1143,7 @@ bool Monster::canWalkTo(Position pos, Direction dir)
 	MagicField* field = NULL;
 	if(!followCreature && !attackedCreature && (field = tile->getFieldItem()) && !isImmune(field->getCombatType()))
 		return false;
-		
+
 	return !tile->getTopVisibleCreature(this) && tile->__queryAdd(
 		0, this, 1, FLAG_PATHFINDING) == RET_NOERROR;
 }

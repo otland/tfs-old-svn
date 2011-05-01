@@ -211,19 +211,15 @@ bool ScriptManager::loadFromXml(const std::string& file, bool& enabled)
 	}
 
 	if(!readXMLString(root, "name", strValue))
-	{
-		std::clog << "[Warning - ScriptManager::loadFromXml] Empty name in mod " << file << std::endl;
-		xmlFreeDoc(doc);
-		return false;
-	}
+		strValue = file;
 
 	ModBlock mod;
-	mod.enabled = false;
-	if(readXMLString(root, "enabled", strValue) && booleanString(strValue))
-		mod.enabled = true;
+	mod.enabled = true;
+	mod.name = strValue;
+	if(readXMLString(root, "enabled", strValue) && !booleanString(strValue))
+		mod.enabled = false;
 
 	mod.file = file;
-	mod.name = strValue;
 	if(readXMLString(root, "author", strValue))
 		mod.author = strValue;
 
@@ -318,11 +314,14 @@ bool ScriptManager::loadFromXml(const std::string& file, bool& enabled)
 			{
 				if(!readXMLString(p, "name", strValue))
 				{
-					std::clog << "[Warning - ScriptManager::loadFromXml] Lib without name in mod " << file << std::endl;
-					continue;
+					if(!xmlStrcmp(p->name, (const xmlChar*)"lib"))
+						strValue = mod.name + "-lib";
+					else if(!xmlStrcmp(p->name, (const xmlChar*)"config"))
+						strValue = mod.name + "-config";
 				}
+				else
+					toLowerCaseString(strValue);
 
-				toLowerCaseString(strValue);
 				std::string strLib;
 				if(parseXMLContentString(p->children, strLib))
 				{
