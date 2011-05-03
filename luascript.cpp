@@ -11143,7 +11143,7 @@ int32_t LuaInterface::luaResultGetDataStream(lua_State* L)
 	lua_pushstring(L, res->getDataStream(s, length));
 
 	lua_pushnumber(L, length);
-	return 1;
+	return 2;
 }
 
 int32_t LuaInterface::luaResultNext(lua_State* L)
