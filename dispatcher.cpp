@@ -23,6 +23,7 @@
 #endif
 
 #include "game.h"
+
 extern Game g_game;
 
 Dispatcher::DispatcherState Dispatcher::m_threadState = Dispatcher::STATE_TERMINATED;
