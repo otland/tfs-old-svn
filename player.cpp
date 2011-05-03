@@ -1411,7 +1411,6 @@ void Player::onChangeZone(ZoneType_t zone)
 			onTargetDisappear(false);
 		}
 
-		std::clog << "onChangeZone: " << (g_config.getBool(ConfigManager::UNMOUNT_PLAYER_IN_PZ) ? "true" : "false") << "." << std::endl;
 		if(g_config.getBool(ConfigManager::UNMOUNT_PLAYER_IN_PZ))
 			dismount(true);
 	}
