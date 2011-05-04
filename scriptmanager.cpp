@@ -134,9 +134,8 @@ bool ScriptManager::loadMods()
 	boost::filesystem::path modsPath(getFilePath(FILE_TYPE_MOD));
 	if(!boost::filesystem::exists(modsPath))
 	{
-		// silently ignore if directory wasn't found, but prompt user a notice
-		std::clog << "[Warning - ScriptManager::loadMods] Could not locate mods directory" << std::endl;
-		return true;
+		std::clog << "[Error - ScriptManager::loadMods] Could not locate mods directory" << std::endl;
+		return false;
 	}
 
 	int32_t i = 0, j = 0;
