@@ -526,9 +526,30 @@ void Items::parseItemNode(xmlNodePtr itemNode, uint32_t id)
 		items.addElement(iType, iType->id);
 	}
 
+	bool override = readXMLString(itemNode, "override", strValue) && booleanString(strValue);
+
 	ItemType& it = Item::items.getItemType(id);
-	if(!it.name.empty() && (!readXMLString(itemNode, "override", strValue) || !booleanString(strValue)))
+	if(!it.name.empty() && !override)
 		std::clog << "[Warning - Items::loadFromXml] Duplicate registered item with id " << id << std::endl;
+
+	if(override)
+	{
+		// setup some defaults
+		for(uint32_t i = COMBAT_FIRST; i <= COMBAT_LAST; i++)
+		{
+			if(it.abilities.fieldAbsorb[i] != 0)
+				it.abilities.fieldAbsorb[i] = 0;
+
+			if(it.abilities.absorb[i] != 0)
+				it.abilities.absorb[i] = 0;
+
+			for(uint32_t j = REFLECT_FIRST; j <= REFLECT_LAST; ++j)
+			{
+				if(it.abilities.reflect[j][i] != 0)
+					it.abilities.reflect[j][i] = 0;
+			}
+		}
+	}
 
 	if(readXMLString(itemNode, "name", strValue))
 		it.name = strValue;
@@ -803,7 +824,7 @@ void Items::parseItemNode(xmlNodePtr itemNode, uint32_t id)
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue))
 			{
-				if(moneyMap.find(intValue) != moneyMap.end() && (!readXMLString(itemNode, "override", strValue) || !booleanString(strValue)))
+				if(moneyMap.find(intValue) != moneyMap.end() && !override)
 					std::clog << "[Warning - Items::loadFromXml] Duplicated money item " << id << " with worth " << intValue << "!" << std::endl;
 				else
 				{
