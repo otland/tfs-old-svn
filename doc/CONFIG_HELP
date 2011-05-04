@@ -65,7 +65,7 @@
 		generateAccountNumber
 			Ignored if account manager is disabled.
 			Default: false
-			
+
 		generateAccountSalt
 			Ignored if account manager is disabled.
 			Default: false
@@ -74,7 +74,7 @@
 		useFragHandler
 			If not active, unjustified kills are not recorded.
 			Default: true
-			
+
 		redSkullLength
 			Default: 30 * 24 * 60 * 60
 
@@ -286,7 +286,7 @@
 		allowFightback
 			System introduced in 8.5, if you enable it then players who defend themselves from the attacks of other players do not get a protection zone block.
 			Default: true
-			
+
 		fistBaseAttack
 			Like attack on a weapon, except you are using your fists (No weapon)
 			Default: 7
@@ -301,6 +301,8 @@
 			Default: 127.0.0.1
 
 		bindOnlyConfiguredIpAddress
+			Defines if a server should bind to all available network interfaces on the machine.
+			Useful for ip failover configurations, otherwise default option is alright.
 			Default: false
 
 		loginPort
@@ -340,7 +342,7 @@
 
 		displayOnOrOffAtCharlist
 			Should character status be specified when displaying characters list? (Online/Offline)
-			If enabled, serverName won't be displayed on list.
+			If enabled, serverName won't be displayed on the list.
 			Default: false
 
 		onePlayerOnlinePerAccount
@@ -351,6 +353,7 @@
 			How many different clients can be logged on one character simultaneously.
 			Mostly used on pvp-enfo servers where you have a few common characters.
 				and all of them are able to login on one character, e.g 'Master Sorcerer'
+			0 to disable (means 0 additional clients can login simultaneously)
 			Default: 0
 
 		serverName
@@ -383,31 +386,28 @@
 			When there are too many players online,
 				this determines if premium players can login when the players online count is max.
 			Default: false
-			
+
 	*RSA
 		NOTE: These should not be changed unless you know what your doing!
 			Prime1 - known as p; Prime2 - known as q; Public - known as e;
 			Modulus - known as n; Private - known as d.
-			
+
 		rsaPrime1
 			Default: 14299623962416399520070177382898895550795403345466153217470516082934737582776038882967213386204600674145392845853859217990626450972452084065728686565928113
 
 		rsaPrime2
 			Default: 7630979195970404721891201847792002125535401292779123937207447574596692788513647179235335529307251350570728407373705564708871762033017096809910315212884101
-			
+
 		rsaPublic
 			Default: 65537
-			
+
 		rsaModulus
 			Default: 109120132967399429278860960508995541528237502902798129123468757937266291492576446330739696001110603907230888610072655818825358503429057592827629436413108566029093628212635953836686562675849720620786279431090218017681061521755056710823876476444260558147179707119674283982419152118103759076030616683978566631413
-			
+
 		rsaPrivate
 			Default: 46730330223584118622160180015036832148732986808519344675210555262940258739805766860224610646919605860206328024326703361630109888417839241959507572247284807035235569619173792292786907845791904955103601652822519121908367187885509270025388641700821735345222087940578381210879116823013776808975766851829020659073
-			
-	*DATABASE
-		NOTE: sqlFile is used only by sqlite database, and sqlKeepAlive by mysql database.
-		To disable sqlKeepAlive such as mysqlReadTimeout use 0 value.
 
+	*DATABASE
 		sqlType
 			Database storage engine.
 			Values: mysql, odbc, sqlite, pgsql
@@ -418,42 +418,57 @@
 			Default value should work on in most cases, however it was reported by our users
 				that they had problems connecting and this solution worked,
 				so you may save some time trying this one.
+			Not used by sqlite database.
 			Default: localhost
 
 		sqlPort
+			Port used to connect to the database server.
+			Not used by sqlite database.
 			Default: 3306
 
 		sqlUser
+			Not used by sqlite database.
 			Default: root
 
 		sqlPass
-			Default: ""
+			Not used by sqlite database.
+			Default: "" (means there is no password at all!)
 
 		sqlDatabase
+			Not used by sqlite database.
 			Default: theforgottenserver
 
 		sqlFile
-			Used only by sqlite database.
+			The only one configurable required for sqlite database storage.
+			Whole data used by the server is stored there (if using sqlite storage method).
 			Default: forgottenserver.s3db
 
 		sqlKeepAlive
 			Used only by mysql database.
-			Use 0 to disable.
+			How often server should connect to the mysql database and send dummy packet (ping) to refresh its connection timeout.
+			Useful when there are not a lot of queries send to the server, otherwise it is better to keep this option disabled.
+			In seconds, 0 to disable.
 			Default: 0
 
 		mysqlReadTimeout
-			Use 0 to disable.
+			"The timeout in seconds for attempts to read from the server.
+			Each attempt uses this timeout value and there are retries if necessary, so the total effective timeout value is three times the option value.
+			You can set the value so that a lost connection can be detected earlier than the TCP/IP Close_Wait_Timeout value of 10 minutes"
+				(from mysql manual, original source at: http://dev.mysql.com/doc/refman/5.5/en/mysql-options.html)
+			0 to disable.
 			Default: 10
 
 		mysqlWriteTimeout
-			Use 0 to disable.
+			"The timeout in seconds for attempts to write to the server. Each attempt uses this timeout value [...]"
+				(from mysql manual, original source at: http://dev.mysql.com/doc/refman/5.5/en/mysql-options.html)
+			0 to disable.
 			Default: 10
 
 		encryptionType
-			Defines how passwords should be stored in database.
-				WARNING: Using plain passwords is not recommended as it isn't encrypted.
+			Encryption method used to store passwords (and other sensitive data) safely in the database.
+				WARNING: Using plain passwords is not recommended and may lead to serious data leakage.
 			Values: md5, sha1, sha256, sha512, plain
-			Default: sha1
+			Default: sha256
 
 	*DEATHLIST
 		deathListEnabled
@@ -578,38 +593,37 @@
 			Specify if all items should be randomized while creating (like grass).
 			You can configure this in data/XML/randomization.xml file.
 			Default: true
-			
+
 		storeTrash
 			Define if trash items should be stored in memory.
 			It costs more memory but will perform a lot faster cleaning.
 			Otherwise, if you disable this option, cleaning will be performed by going through all the tiles
 				and looking for trash. (which of course consumes more CPU resources)
 			Default: true
-			
+
 		cleanProtectedZones
 			Should protection zone tiles be cleaned at map cleaning?
-			Default: yes
+			Default: true
 
 		mailboxDisabledTowns
 			Town IDs where player can't send parcel/letters.
 			Example "1,5,9"
 			Default: "" (Means, no towns disabled)
-			
+
 	*PROCESS
-		NOTE: daemonize works only on *nix, same as niceLevel,
-			while defaultPriority works only on Windows.
-		
 		daemonize
+			Works only on *nix.
 			Default: false
-			
+
 		defaultPriority
-			Works only on Windows
+			Works only on Windows.
 			Values: high, higher, realtime
 			Default: high
-			
+
 		niceLevel
+			Works only on *nix.
 			Default: 5
-			
+
 		coresUsed
 			Specifies a cores of CPU that are used to run TFS
 			Put a cores' numbers, counting from 0 and separate them with comma
@@ -632,23 +646,23 @@
 			while starting up when current version is not up-to-date
 			and wait for user interaction (true/false) until continuing start-up.
 			Default: false
-			
+
 	*SPELLS
 		formulaLevel
 			Level formula for spells if not defined.
 			Default: 5.0
-			
+
 		formulaMagic
 			Magic level formula for spells if not defined.
 			Default: 1.0
-			
+
 		bufferMutedOnSpellFailure
 			Default: false
-		
+
 		spellNameInsteadOfWords
 			E.g if you use 'exura', it will show 'Light Healing'.
 			Default: false
-			
+
 		emoteSpells
 			If enabled, spells wont be visible in 'Default' channel, but as orange effect.
 			Anti spam feature.
@@ -659,11 +673,11 @@
 				For example: "Ex Ura" or "exura ""im the best sorcer" will be shown as exura.
 			In global Tibia it's enabled. (it has been added in 8.6 update)
 			Default: true
-			
+
 		enableCooldown
 			New for 8.7 update, if active then cooldown icons are shown when using a spell.
 			Default: true
-			
+
 	*OUTFIT
 		allowChangeOutfit
 			Should player's be able to change their outfits?
@@ -681,7 +695,7 @@
 			Are privileged players able to change their outfits?
 			E.g gamemasters have default outfits and shouldn't be able to change them.
 			Default: false
-			
+
 		addonsOnlyPremium
 			Are addons enabled for only premium players?
 			Default: true
@@ -707,57 +721,57 @@
 			Works only on Windows with precompiled support feature,
 				"exception tracer" (__EXCEPTION_TRACER__ flag)
 			Default: true
-			
+
 		maximumDoorLevel
 			Default: 500
 
 		maxMessageBuffer
 			Default: 4
-			
+
 		tradeLimit
 			The max amount of items that can be traded at the same time.
 			Default: 100
-			
+
 		useCapacity
 			If disabled players can carry all they want.
 			Default: true
-			
+
 	*DEPOT
 		defaultDepotSizePremium
 			How many items should a premium player be able to store in their depot?
 			Default: 2000
-			
+
 		defaultDepotSize
 			How many items can a player without premium store in their depot?
 			Default: 1000
-			
+
 	*MOUNTS
 		useMounts
 			New in 8.7 determined if mounts are enabled or not.
 			Default: true
-			
+
 		mountCooldown
 			How long you have to wait until you can mount again.
 			(In milliseconds.)
 			Default: 2000
-			
+
 		unmountPlayerInPz
 			When entering a protection zone, will the player get unmounted?
 			Default: true
-			
+
 	*VIP LIST
 		separateVipListPerCharacter
 			If enabled, each character on your account has a separate vip list.
 			Default: false
-			
+
 		vipListDefaultLimit
 			How many can a player without premium have on their vip list?
 			Default: 20
-			
+
 		vipListDefaultPremiumLimit
 			How many can a premium player have on their vip list?
 			Default: 100
-	
+
 	*SAVING-RELATED
 		houseDataStorage
 			House data storage system. Binary and binary-tilestore performs much faster map saving than relational (up to 60x faster!).
@@ -765,23 +779,23 @@
 			binary-tilebased - uses tile_store table to store house data in blob for each tile (benefit: if blob becomes corrupted, only specific tile will be wiped, not entire house).
 			relational - uses `tiles` and `tile_items` tables, doesn't store data in blob, easier to manage but is up to 60 times slower and uses up more space in database.
 			Default: binary
-			
+
 		saveGlobalStorage
 			Save global storage in database? Otherwise, they will be cleared everytime server starts.
 			Global storages are stored in `global_storage` table.
 			Default: true
-			
+
 		storePlayerDirection
 			Should players look direction be saved and restored while logging?
 			In global Tibia it's disabled.
 			Default: false
-		
+
 	*LOOT
 		checkCorpseOwner
 			Defines if corpse should be checked for owner before opening.
 			So for first x seconds, only creature killer is able to open it.
 			Default: true
-			
+
 		monsterLootMessage
 			Defines how green message with loot in the middle of screen should be displayed.
 				0 - disable this message
@@ -823,7 +837,7 @@
 
 		playerQueryDeepness
 			Default: -1
-			
+
 		tileLimit
 			Items limit on any other tile.
 			Default: 0 (means no limit!)
@@ -848,11 +862,11 @@
 
 	*BLESSINGS
 		NOTE: blessingReduction* regards items/containers loss.
-		
+
 		blessings
 			Are blessings enabled?
 			Default: true
-			
+
 		blessingsOnlyPremium
 			Should only premium players be able to use blessings?
 			Default: true
@@ -866,11 +880,11 @@
 		eachBlessReduction
 			eachBlessReduction determine by how many percentage points does each bless decrease an experience/magic/skills loss.
 			Default: 8
-			
+
 		pvpBlessingThreshold
 			pvpBlessingThreshold is damage percent received from PvP that is required to enable pvpBlessing.
 			Default: 40
-			
+
 		fairFightTimeRange
 			Last X seconds from which damage to player counts.
 			(In seconds.)
@@ -905,7 +919,7 @@
 
 		rateSpawn
 			Default: 1
-			
+
 	*MONSTER RATES
 		rateMonsterHealth
 			Monster health multiplier.
@@ -959,7 +973,7 @@
 		staminaRatingLimitBottom
 			(In minutes.)
 			Default: 14 * 60
-			
+
 		staminaLootLimit
 			If your stamina is under this, loot is destroyed.
 			(In minutes.)
@@ -1028,7 +1042,7 @@
 
 		deSpawnRadius
 			Default: 50
-			
+
 		monsterSpawnWalkback
 			Should monsters walk back to their spawn after losing target?
 			Default: true
@@ -1050,7 +1064,7 @@
 		statusPort
 			Port where status protocol will listen.
 			Default: 7171
-			
+
 		ownerName
 			Default: ""
 
@@ -1107,26 +1121,26 @@
 	*ADMIN
 		adminPort
 			Default: 7171
-			
+
 		adminLogs
 			Default: true
-			
+
 		adminPassword
 			Left blank disables manager.
 			Default: ""
-			
+
 		adminLocalhostOnly
 			Default: true
-			
+
 		adminConnectionsLimit
 			Default: 1
-			
+
 		adminRequireLogin
 			Default: true
-			
+
 		adminEncryption
 			Default: ""
-			
+
 		adminEncryptionData
 			Default: ""
 ]

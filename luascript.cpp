@@ -33,6 +33,7 @@
 #include "housetile.h"
 
 #include "database.h"
+#include "databasemanager.h"
 #include "iologindata.h"
 #include "ioban.h"
 #include "iomap.h"
@@ -2545,6 +2546,9 @@ const luaL_Reg LuaInterface::luaDatabaseTable[] =
 
 	//db.connected()
 	{"connected", LuaInterface::luaDatabaseConnected},
+
+	//db.tableExists(name)
+	{"tableExists", LuaInterface::luaDatabaseTableExists},
 
 	{NULL, NULL}
 };
@@ -11081,6 +11085,13 @@ int32_t LuaInterface::luaDatabaseConnected(lua_State* L)
 {
 	//db.connected()
 	lua_pushboolean(L, Database::getInstance()->isConnected());
+	return 1;
+}
+
+int32_t LuaInterface::luaDatabaseTableExists(lua_State* L)
+{
+	//db.tableExists(table)
+	lua_pushboolean(L, DatabaseManager::getInstance()->tableExists(popString(L)));
 	return 1;
 }
 

@@ -27,7 +27,7 @@ ConfigManager::ConfigManager()
 	m_loaded = false;
 	m_startup = true;
 
-	m_confNumber[ENCRYPTION] = ENCRYPTION_SHA1;
+	m_confNumber[ENCRYPTION] = ENCRYPTION_SHA256;
 	m_confString[CONFIG_FILE] = getFilePath(FILE_TYPE_CONFIG, "config.lua");
 
 	m_confNumber[LOGIN_PORT] = m_confNumber[GAME_PORT] = m_confNumber[ADMIN_PORT] = m_confNumber[MANAGER_PORT] = m_confNumber[STATUS_PORT] = 0;
@@ -112,7 +112,7 @@ bool ConfigManager::load()
 		#ifndef __LOGIN_SERVER__
 		m_confBool[LOGIN_ONLY_LOGINSERVER] = getGlobalBool("loginOnlyWithLoginServer", false);
 		#endif
-		m_confString[ENCRYPTION_TYPE] = getGlobalString("encryptionType", "sha1");
+		m_confString[ENCRYPTION_TYPE] = getGlobalString("encryptionType", "sha256");
 		m_confString[RSA_PRIME1] = getGlobalString("rsaPrime1", "14299623962416399520070177382898895550795403345466153217470516082934737582776038882967213386204600674145392845853859217990626450972452084065728686565928113");
 		m_confString[RSA_PRIME2] = getGlobalString("rsaPrime2", "7630979195970404721891201847792002125535401292779123937207447574596692788513647179235335529307251350570728407373705564708871762033017096809910315212884101");
 		m_confString[RSA_PUBLIC] = getGlobalString("rsaPublic", "65537");
