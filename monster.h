@@ -124,6 +124,7 @@ class Monster : public Creature
 
 		MonsterType* mType;
 
+		int32_t healthMin;
 		int32_t minCombatValue;
 		int32_t maxCombatValue;
 		uint32_t attackTicks;

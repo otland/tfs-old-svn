@@ -141,8 +141,13 @@ bool argumentsHandler(StringVec args)
 			g_config.setString(ConfigManager::CONFIG_FILE, tmp[1]);
 		else if(tmp[0] == "--data-directory")
 			g_config.setString(ConfigManager::DATA_DIRECTORY, tmp[1]);
+		else if(tmp[0] == "--logs-directory")
+			g_config.setString(ConfigManager::LOGS_DIRECTORY, tmp[1]);
 		else if(tmp[0] == "--ip")
+		{
 			g_config.setString(ConfigManager::IP, tmp[1]);
+			g_config.setBool(ConfigManager::BIND_ONLY_GLOBAL_ADDRESS, true);
+		}
 		else if(tmp[0] == "--login-port")
 			g_config.setNumber(ConfigManager::LOGIN_PORT, atoi(tmp[1].c_str()));
 		else if(tmp[0] == "--game-port")
@@ -154,7 +159,7 @@ bool argumentsHandler(StringVec args)
 		else if(tmp[0] == "--status-port")
 			g_config.setNumber(ConfigManager::STATUS_PORT, atoi(tmp[1].c_str()));
 #ifndef WINDOWS
-		else if(tmp[0] == "--runfile")
+		else if(tmp[0] == "--runfile" || tmp[0] == "--run-file")
 			g_config.setString(ConfigManager::RUNFILE, tmp[1]);
 #endif
 		else if(tmp[0] == "--log")
@@ -586,10 +591,10 @@ void otserv(StringVec, ServiceManager* services)
 		std::clog << " done" << std::endl;
 	}
 	else
-	{	
+	{
 		ERR_load_crypto_strings();
 		std::stringstream s;
-	
+
 		s << std::endl << "> OpenSSL failed - " << ERR_error_string(ERR_get_error(), NULL);
 		startupErrorMessage(s.str());
 	}

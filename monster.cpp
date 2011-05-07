@@ -67,7 +67,7 @@ Monster::Monster(MonsterType* _mType):
 	if(healthMin > 0)
 		healthMax = random_range(healthMin, healthMax);
 
-	healthMax = (int32_t)healthMax * multiplier);
+	healthMax = (int32_t)(healthMax * multiplier);
 	baseSpeed = mType->baseSpeed;
 	internalLight.level = mType->lightLevel;
 	internalLight.color = mType->lightColor;
