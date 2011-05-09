@@ -29,11 +29,11 @@ typedef std::map<std::string, GameServer*> Characters;
 class Account
 {
 	public:
-		Account() {number = premiumDays = lastDay = warnings = 0;}
+		Account() {premiumDays = warnings = number = lastDay = 0;}
 		virtual ~Account() {charList.clear();}
 
-		uint32_t number, premiumDays, lastDay;
-		int32_t warnings;
+		uint16_t premiumDays, warnings;
+		uint32_t number, lastDay;
 		std::string name, password, recoveryKey, salt;
 		Characters charList;
 };

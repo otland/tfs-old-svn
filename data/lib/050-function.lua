@@ -617,7 +617,7 @@ end
 
 function isContainer(uid)
 	local thing = getThing(uid)
-	return thing.uid > 0 and type(thing.items) == 'table'
+	return thing.uid > 0 and thing.items ~= nil
 end
 
 function isItemStackable(itemid)

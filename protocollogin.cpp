@@ -19,6 +19,7 @@
 
 #include "protocollogin.h"
 #include "tools.h"
+#include "const.h"
 
 #include "iologindata.h"
 #include "ioban.h"
@@ -236,7 +237,7 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 
 		//Add premium days
 		if(g_config.getBool(ConfigManager::FREE_PREMIUM))
-			output->put<uint16_t>(65535); //client displays free premium
+			output->put<uint16_t>(GRATIS_PREMIUM);
 		else
 			output->put<uint16_t>(account.premiumDays);
 

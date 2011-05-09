@@ -18,9 +18,9 @@
 #ifndef __DEFINITIONS__
 #define __DEFINITIONS__
 
-#define CLIENT_VERSION_MIN 870
+#define CLIENT_VERSION_MIN 871
 #define CLIENT_VERSION_MAX 871
-#define CLIENT_VERSION_STRING "Only clients with protocol 8.7 allowed!"
+#define CLIENT_VERSION_STRING "Only clients with protocol 8.71 allowed!"
 
 #define SOFTWARE_NAME "The Forgotten Server"
 #define SOFTWARE_VERSION "0.4_SVN"
