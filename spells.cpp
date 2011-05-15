@@ -583,12 +583,14 @@ bool Spell::configureSpell(xmlNodePtr p)
 		for(std::vector<std::string>::iterator it = strVector.begin(); it != strVector.end(); ++it)
 		{
 			tmpVector = explodeString((*it), ",");
+			uint32_t id = atoi(tmpVector[0].c_str()), exhaust = isAggressive ? 2000 : 1000;
 			if(tmpVector.size() > 1)
-				groupExhaustions[(SpellGroup_t)atoi(tmpVector[0].c_str())] = atoi(tmpVector[1].c_str());
-			else if(isAggressive)
-				groupExhaustions[(SpellGroup_t)atoi(tmpVector[0].c_str())] = 2000;
-			else
-				groupExhaustions[(SpellGroup_t)atoi(tmpVector[0].c_str())] = 1000;
+				exhaust = atoi(tmpVector[1].c_str());
+
+			if(!id || !exhaust)
+				continue;
+
+			groupExhaustions[(SpellGroup_t)id] = exhaust;
 		}
 	}
 
@@ -989,9 +991,6 @@ void Spell::postSpell(Player* player) const
 		{
 			for(SpellGroup::const_iterator it = groupExhaustions.begin(); it != groupExhaustions.end(); ++it)
 			{
-				if(it->second <= 0)
-					continue;
-
 				player->addExhaust(it->second, (Exhaust_t)((int32_t)it->first + 1));
 				player->sendSpellGroupCooldown(it->first, it->second);
 			}
@@ -1000,7 +999,8 @@ void Spell::postSpell(Player* player) const
 		if(exhaustion > 0)
 		{
 			player->addCooldown(exhaustion, (useCooldowns ? spellId : isAggressive));
-			player->sendSpellCooldown(icon, exhaustion);
+			if(useCooldowns && icon)
+				player->sendSpellCooldown(icon, exhaustion);
 		}
 	}
 
