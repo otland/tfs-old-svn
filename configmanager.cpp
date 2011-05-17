@@ -41,7 +41,7 @@ bool ConfigManager::load()
 	if(L)
 		lua_close(L);
 
-	L = lua_open();
+	L = luaL_newstate();
 	if(!L)
 		return false;
 

@@ -897,9 +897,9 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 
 		// TODO: we should find some better way of completing this
 		int32_t show = it.abilities.absorb[COMBAT_FIRST];
-		for(int32_t i = (COMBAT_FIRST + 1); i <= COMBAT_LAST; i = std::pow(2., i))
+		for(int32_t i = 1, j = (COMBAT_FIRST + 1); j <= COMBAT_LAST; ++i, j = std::pow(2., i))
 		{
-			if(it.abilities.absorb[i] == show)
+			if(it.abilities.absorb[j] == show)
 				continue;
 
 			show = 0;
@@ -909,9 +909,9 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 		if(!show)
 		{
 			bool tmp = true;
-			for(int32_t i = COMBAT_FIRST; i <= COMBAT_LAST; i = std::pow(2., i))
+			for(int32_t i = 0, j = COMBAT_FIRST; j <= COMBAT_LAST; ++i, j = std::pow(2., i))
 			{
-				if(!it.abilities.absorb[i])
+				if(!it.abilities.absorb[j])
 					continue;
 
 				if(tmp)
@@ -930,7 +930,7 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 				else
 					s << ", ";
 
-				s << getCombatName((CombatType_t)i) << " " << std::showpos << it.abilities.absorb[i] << std::noshowpos << "%";
+				s << getCombatName((CombatType_t)j) << " " << std::showpos << it.abilities.absorb[j] << std::noshowpos << "%";
 			}
 		}
 		else
@@ -948,9 +948,9 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 
 		// TODO: same case as absorbs...
 		show = it.abilities.reflect[REFLECT_CHANCE][COMBAT_FIRST];
-		for(int32_t i = (COMBAT_FIRST + 1); i <= COMBAT_LAST; i = std::pow(2., i))
+		for(int32_t i = 1, j = (COMBAT_FIRST + 1); j <= COMBAT_LAST; ++i, j = std::pow(2., i))
 		{
-			if(it.abilities.reflect[REFLECT_CHANCE][i] == show)
+			if(it.abilities.reflect[REFLECT_CHANCE][j] == show)
 				continue;
 
 			show = 0;
@@ -960,9 +960,9 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 		if(!show)
 		{
 			bool tmp = true;
-			for(int32_t i = COMBAT_FIRST; i <= COMBAT_LAST; i = std::pow(2., i))
+			for(int32_t i = 0, j = COMBAT_FIRST; j <= COMBAT_LAST; ++i, j = std::pow(2., i))
 			{
-				if(!it.abilities.reflect[REFLECT_CHANCE][i] || !it.abilities.reflect[REFLECT_PERCENT][i])
+				if(!it.abilities.reflect[REFLECT_CHANCE][j] || !it.abilities.reflect[REFLECT_PERCENT][j])
 					continue;
 
 				if(tmp)
@@ -981,19 +981,19 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 				else
 					s << ", ";
 
-				s << it.abilities.reflect[REFLECT_CHANCE][i] << "% for ";
-				if(it.abilities.reflect[REFLECT_PERCENT][i] > 99)
+				s << it.abilities.reflect[REFLECT_CHANCE][j] << "% for ";
+				if(it.abilities.reflect[REFLECT_PERCENT][j] > 99)
 					s << "whole";
-				else if(it.abilities.reflect[REFLECT_PERCENT][i] >= 75)
+				else if(it.abilities.reflect[REFLECT_PERCENT][j] >= 75)
 					s << "huge";
-				else if(it.abilities.reflect[REFLECT_PERCENT][i] >= 50)
+				else if(it.abilities.reflect[REFLECT_PERCENT][j] >= 50)
 					s << "medium";
-				else if(it.abilities.reflect[REFLECT_PERCENT][i] >= 25)
+				else if(it.abilities.reflect[REFLECT_PERCENT][j] >= 25)
 					s << "small";
 				else
 					s << "tiny";
 
-				s << getCombatName((CombatType_t)i);
+				s << getCombatName((CombatType_t)j);
 			}
 
 			if(!tmp)
@@ -1010,9 +1010,9 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 				s << ", ";
 
 			int32_t tmp = it.abilities.reflect[REFLECT_PERCENT][COMBAT_FIRST];
-			for(int32_t i = (COMBAT_FIRST + 1); i <= COMBAT_LAST; i = std::pow(2., i))
+			for(int32_t i = 1, j = (COMBAT_FIRST + 1); j <= COMBAT_LAST; ++i, j = std::pow(2., i))
 			{
-				if(it.abilities.reflect[REFLECT_PERCENT][i] == tmp)
+				if(it.abilities.reflect[REFLECT_PERCENT][j] == tmp)
 					continue;
 
 				tmp = 0;
@@ -1164,9 +1164,9 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 
 		// TODO: we should find some better way of completing this
 		int32_t show = it.abilities.absorb[COMBAT_FIRST];
-		for(int32_t i = (COMBAT_FIRST + 1); i <= COMBAT_LAST; i = std::pow(2., i))
+		for(int32_t i = 1, j = (COMBAT_FIRST + 1); j <= COMBAT_LAST; ++i, j = std::pow(2., i))
 		{
-			if(it.abilities.absorb[i] == show)
+			if(it.abilities.absorb[j] == show)
 				continue;
 
 			show = 0;
@@ -1176,9 +1176,9 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 		if(!show)
 		{
 			bool tmp = true;
-			for(int32_t i = COMBAT_FIRST; i <= COMBAT_LAST; i = std::pow(2., i))
+			for(int32_t i = 0, j = COMBAT_FIRST; j <= COMBAT_LAST; ++i, j = std::pow(2., i))
 			{
-				if(!it.abilities.absorb[i])
+				if(!it.abilities.absorb[j])
 					continue;
 
 				if(tmp)
@@ -1197,7 +1197,7 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 				else
 					s << ", ";
 
-				s << getCombatName((CombatType_t)i) << " " << std::showpos << it.abilities.absorb[i] << std::noshowpos << "%";
+				s << getCombatName((CombatType_t)j) << " " << std::showpos << it.abilities.absorb[j] << std::noshowpos << "%";
 			}
 		}
 		else
@@ -1215,9 +1215,9 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 
 		// TODO: same case as absorbs...
 		show = it.abilities.reflect[REFLECT_CHANCE][COMBAT_FIRST];
-		for(int32_t i = (COMBAT_FIRST + 1); i <= COMBAT_LAST; i = std::pow(2., i))
+		for(int32_t i = 1, j = (COMBAT_FIRST + 1); j <= COMBAT_LAST; ++i, j = std::pow(2., i))
 		{
-			if(it.abilities.reflect[REFLECT_CHANCE][i] == show)
+			if(it.abilities.reflect[REFLECT_CHANCE][j] == show)
 				continue;
 
 			show = 0;
@@ -1227,9 +1227,9 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 		if(!show)
 		{
 			bool tmp = true;
-			for(int32_t i = COMBAT_FIRST; i <= COMBAT_LAST; i = std::pow(2., i))
+			for(int32_t i = 0, j = COMBAT_FIRST; j <= COMBAT_LAST; ++i, j = std::pow(2., i))
 			{
-				if(!it.abilities.reflect[REFLECT_CHANCE][i] || !it.abilities.reflect[REFLECT_PERCENT][i])
+				if(!it.abilities.reflect[REFLECT_CHANCE][j] || !it.abilities.reflect[REFLECT_PERCENT][j])
 					continue;
 
 				if(tmp)
@@ -1248,19 +1248,19 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 				else
 					s << ", ";
 
-				s << it.abilities.reflect[REFLECT_CHANCE][i] << "% for ";
-				if(it.abilities.reflect[REFLECT_PERCENT][i] > 99)
+				s << it.abilities.reflect[REFLECT_CHANCE][j] << "% for ";
+				if(it.abilities.reflect[REFLECT_PERCENT][j] > 99)
 					s << "whole";
-				else if(it.abilities.reflect[REFLECT_PERCENT][i] >= 75)
+				else if(it.abilities.reflect[REFLECT_PERCENT][j] >= 75)
 					s << "huge";
-				else if(it.abilities.reflect[REFLECT_PERCENT][i] >= 50)
+				else if(it.abilities.reflect[REFLECT_PERCENT][j] >= 50)
 					s << "medium";
-				else if(it.abilities.reflect[REFLECT_PERCENT][i] >= 25)
+				else if(it.abilities.reflect[REFLECT_PERCENT][j] >= 25)
 					s << "small";
 				else
 					s << "tiny";
 
-				s << getCombatName((CombatType_t)i);
+				s << getCombatName((CombatType_t)j);
 			}
 
 			if(!tmp)
@@ -1277,9 +1277,9 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 				s << ", ";
 
 			int32_t tmp = it.abilities.reflect[REFLECT_PERCENT][COMBAT_FIRST];
-			for(int32_t i = (COMBAT_FIRST + 1); i <= COMBAT_LAST; i = std::pow(2., i))
+			for(int32_t i = 1, j = (COMBAT_FIRST + 1); j <= COMBAT_LAST; ++i, j = std::pow(2., i))
 			{
-				if(it.abilities.reflect[REFLECT_PERCENT][i] == tmp)
+				if(it.abilities.reflect[REFLECT_PERCENT][j] == tmp)
 					continue;
 
 				tmp = 0;
