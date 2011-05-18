@@ -897,7 +897,7 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 
 		// TODO: we should find some better way of completing this
 		int32_t show = it.abilities.absorb[COMBAT_FIRST];
-		for(int32_t i = 1, j = (COMBAT_FIRST + 1); j <= COMBAT_LAST; ++i, j = std::pow(2., i))
+		for(int32_t i = 0, j = (COMBAT_FIRST + 1); j <= COMBAT_LAST; ++i, j = std::pow(2., i))
 		{
 			if(it.abilities.absorb[j] == show)
 				continue;
@@ -909,7 +909,7 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 		if(!show)
 		{
 			bool tmp = true;
-			for(int32_t i = 0, j = COMBAT_FIRST; j <= COMBAT_LAST; ++i, j = std::pow(2., i))
+			for(int32_t i = (-1), j = COMBAT_FIRST; j <= COMBAT_LAST; ++i, j = std::pow(2., i))
 			{
 				if(!it.abilities.absorb[j])
 					continue;
@@ -948,7 +948,7 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 
 		// TODO: same case as absorbs...
 		show = it.abilities.reflect[REFLECT_CHANCE][COMBAT_FIRST];
-		for(int32_t i = 1, j = (COMBAT_FIRST + 1); j <= COMBAT_LAST; ++i, j = std::pow(2., i))
+		for(int32_t i = 0, j = (COMBAT_FIRST + 1); j <= COMBAT_LAST; ++i, j = std::pow(2., i))
 		{
 			if(it.abilities.reflect[REFLECT_CHANCE][j] == show)
 				continue;
@@ -960,7 +960,7 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 		if(!show)
 		{
 			bool tmp = true;
-			for(int32_t i = 0, j = COMBAT_FIRST; j <= COMBAT_LAST; ++i, j = std::pow(2., i))
+			for(int32_t i = (-1), j = COMBAT_FIRST; j <= COMBAT_LAST; ++i, j = std::pow(2., i))
 			{
 				if(!it.abilities.reflect[REFLECT_CHANCE][j] || !it.abilities.reflect[REFLECT_PERCENT][j])
 					continue;
@@ -1010,7 +1010,7 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 				s << ", ";
 
 			int32_t tmp = it.abilities.reflect[REFLECT_PERCENT][COMBAT_FIRST];
-			for(int32_t i = 1, j = (COMBAT_FIRST + 1); j <= COMBAT_LAST; ++i, j = std::pow(2., i))
+			for(int32_t i = 0, j = (COMBAT_FIRST + 1); j <= COMBAT_LAST; ++i, j = std::pow(2., i))
 			{
 				if(it.abilities.reflect[REFLECT_PERCENT][j] == tmp)
 					continue;
@@ -1164,7 +1164,7 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 
 		// TODO: we should find some better way of completing this
 		int32_t show = it.abilities.absorb[COMBAT_FIRST];
-		for(int32_t i = 1, j = (COMBAT_FIRST + 1); j <= COMBAT_LAST; ++i, j = std::pow(2., i))
+		for(int32_t i = 0, j = (COMBAT_FIRST + 1); j <= COMBAT_LAST; ++i, j = std::pow(2., i))
 		{
 			if(it.abilities.absorb[j] == show)
 				continue;
@@ -1176,7 +1176,7 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 		if(!show)
 		{
 			bool tmp = true;
-			for(int32_t i = 0, j = COMBAT_FIRST; j <= COMBAT_LAST; ++i, j = std::pow(2., i))
+			for(int32_t i = (-1), j = COMBAT_FIRST; j <= COMBAT_LAST; ++i, j = std::pow(2., i))
 			{
 				if(!it.abilities.absorb[j])
 					continue;
@@ -1215,7 +1215,7 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 
 		// TODO: same case as absorbs...
 		show = it.abilities.reflect[REFLECT_CHANCE][COMBAT_FIRST];
-		for(int32_t i = 1, j = (COMBAT_FIRST + 1); j <= COMBAT_LAST; ++i, j = std::pow(2., i))
+		for(int32_t i = 0, j = (COMBAT_FIRST + 1); j <= COMBAT_LAST; ++i, j = std::pow(2., i))
 		{
 			if(it.abilities.reflect[REFLECT_CHANCE][j] == show)
 				continue;
@@ -1227,7 +1227,7 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 		if(!show)
 		{
 			bool tmp = true;
-			for(int32_t i = 0, j = COMBAT_FIRST; j <= COMBAT_LAST; ++i, j = std::pow(2., i))
+			for(int32_t i = (-1), j = COMBAT_FIRST; j <= COMBAT_LAST; ++i, j = std::pow(2., i))
 			{
 				if(!it.abilities.reflect[REFLECT_CHANCE][j] || !it.abilities.reflect[REFLECT_PERCENT][j])
 					continue;
@@ -1277,7 +1277,7 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 				s << ", ";
 
 			int32_t tmp = it.abilities.reflect[REFLECT_PERCENT][COMBAT_FIRST];
-			for(int32_t i = 1, j = (COMBAT_FIRST + 1); j <= COMBAT_LAST; ++i, j = std::pow(2., i))
+			for(int32_t i = 0, j = (COMBAT_FIRST + 1); j <= COMBAT_LAST; ++i, j = std::pow(2., i))
 			{
 				if(it.abilities.reflect[REFLECT_PERCENT][j] == tmp)
 					continue;
