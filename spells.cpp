@@ -1641,7 +1641,7 @@ ReturnValue ConjureSpell::internalConjureItem(Player* player, uint32_t conjureId
 		g_game.startDecay(item);
 	}
 	else
-		g_game.transformItem(fromItem, conjureId);
+		g_game.transformItem(fromItem, conjureId, conjureCount);
 	
 	return RET_NOERROR;
 }
