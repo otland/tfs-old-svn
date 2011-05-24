@@ -94,10 +94,6 @@
 		#define WINDOWS
 	#endif
 #else
-	#ifdef __USE_MINIDUMP__
-		#undef __USE_MINIDUMP__
-	#endif
-
 	#if defined _WIN32 || defined WIN32 || defined __WINDOWS__ || defined WINDOWS
 		#ifndef _WIN32
 			#define _WIN32
@@ -147,16 +143,7 @@
 	#define xmlFree(s) free(s)
 #endif
 
-#ifdef __USE_MINIDUMP__
-	#ifndef __EXCEPTION_TRACER__
-		#define __EXCEPTION_TRACER__
-	#endif
-#endif
-
-#ifdef __EXCEPTION_TRACER__
-	#include "exception.h"
-	#define DEBUG_REPORT ExceptionHandler::dumpStack();
-#else
+#ifndef __EXCEPTION_TRACER__
 	#define DEBUG_REPORT
 #endif
 #endif

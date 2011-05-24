@@ -25,7 +25,12 @@
 #include <map>
 #include "exception.h"
 
-#ifdef __WINDOWS__
+#ifdef DEBUG_REPORT
+	#undef DEBUG_REPORT
+#endif
+#define DEBUG_REPORT ExceptionHandler::dumpStack();
+
+#ifdef WINDOWS
 	int ExceptionHandler::ref_counter = 0;
 #else //Unix/Linux
 	#include <execinfo.h>
@@ -57,7 +62,7 @@ ExceptionHandler::~ExceptionHandler()
 
 bool ExceptionHandler::InstallHandler()
 {
-#ifdef __WINDOWS__
+#ifdef WINDOWS
 	++ref_counter;
 	if(ref_counter == 1){
 		SetUnhandledExceptionFilter(ExceptionHandler::MiniDumpExceptionHandler);
@@ -84,7 +89,7 @@ bool ExceptionHandler::RemoveHandler()
 		return false;
 	}
 
-#ifdef __WINDOWS__
+#ifdef WINDOWS
 	--ref_counter;
 	if(ref_counter == 0){
 		SetUnhandledExceptionFilter(NULL);
@@ -100,7 +105,7 @@ bool ExceptionHandler::RemoveHandler()
 	return true;
 }
 
-#ifdef __WINDOWS__
+#ifdef WINDOWS
 long ExceptionHandler::MiniDumpExceptionHandler(EXCEPTION_POINTERS* exceptionPointers /*= NULL*/)
 {
 	// Alerts the user about what is happening
