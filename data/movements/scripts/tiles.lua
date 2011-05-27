@@ -88,7 +88,7 @@ function onStepIn(cid, item, position, fromPosition)
 		return true
 	end
 
-	if(item.actionid >= 1000 and item.actionid <= config.maxLevel) then
+	if(item.actionid >= 1000 and item.actionid - 1000 <= config.maxLevel) then
 		if(getPlayerLevel(cid) < item.actionid - 1000) then
 			pushBack(cid, position, fromPosition, true)
 		end
