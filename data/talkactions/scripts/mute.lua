@@ -22,6 +22,6 @@ function onSay(cid, words, param, channel)
 	end
 
 	doMutePlayer(pid, time)
-	doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, getCreatureName(pid) .. " has been muted for " .. seconds .. " seconds.")
+	doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, getCreatureName(pid) .. " has been muted for" .. (time < 1 and "ever" or " " .. time .. " seconds") .. ".")
 	return true
 end

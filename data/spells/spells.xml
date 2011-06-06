@@ -165,7 +165,7 @@
 		<vocation id="1"/>
 		<vocation id="2"/>
 		<vocation id="3"/>
-		<vocation id="3"/>
+		<vocation id="4"/>
 		<vocation id="5"/>
 		<vocation id="6"/>
 		<vocation id="7"/>
@@ -378,7 +378,6 @@
 		<vocation id="7"/>
 	</conjure>
 	<conjure name="Enchant Staff" words="exeta vis" lvl="41" mana="80" prem="0" conjureId="2433" reagentId="2401" needlearn="0" event="function" groups="3,2000" icon="23" value="conjureItem">
-		<vocation id="1"/>
 		<vocation id="5"/>
 	</conjure>
 	<conjure name="Enchant Spear" words="exeta con" lvl="45" mana="350" soul="3" prem="0" conjureId="7367" reagentId="2389" needlearn="0" event="function" groups="3,2000" icon="23" value="conjureItem">
@@ -470,7 +469,7 @@
 		<vocation id="1"/>
 		<vocation id="5"/>
 	</conjure>
-	<conjure name="Energy Wall" words="adevo mas grav vis" lvl="41" mana="2000" soul="5" reagentId="2260" conjureId="2279" conjureCount="3" needlearn="0" groups="3,2000" icon="23" event="function" value="conjureRune">
+	<conjure name="Energy Wall" words="adevo mas grav vis" lvl="41" mana="1000" soul="5" reagentId="2260" conjureId="2279" conjureCount="3" needlearn="0" groups="3,2000" icon="23" event="function" value="conjureRune">
 		<vocation id="1"/>
 		<vocation id="2"/>
 		<vocation id="5"/>

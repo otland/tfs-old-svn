@@ -269,6 +269,10 @@ function getItemSpecialDescription(uid)
 	return getItemDescriptions(uid).special
 end
 
+function doSetItemSpecialDescription(uid, str)
+	return doItemSetAttribute(uid, "description", str)
+end
+
 function getItemWriter(uid)
 	return getItemDescriptions(uid).writer
 end

@@ -246,11 +246,6 @@
 	<action fromid="8900" toid="8904" event="script" value="other/spellbook.lua"/>
 	<action itemid="8918" event="script" value="other/spellbook.lua"/>
 
-	<!-- Change gold -->
-	<action itemid="2148" event="script" value="other/changegold.lua"/>
-	<action itemid="2152" event="script" value="other/changegold.lua"/>
-	<action itemid="2160" event="script" value="other/changegold.lua"/>
-
 	<!-- Construction kits -->
 	<action fromid="3901" toid="3938" event="script" value="other/constructionkits.lua"/>
 	<action fromid="5086" toid="5088" event="script" value="other/constructionkits.lua"/>

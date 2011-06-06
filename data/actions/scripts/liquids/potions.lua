@@ -1,7 +1,7 @@
 local config = {
 	removeOnUse = "no",
 	usableOnTarget = "yes", -- can be used on target? (fe. healing friend)
-	splashable = "no",
+	splashable = "yes",
 	range = -1,
 	realAnimation = "no", -- make text effect visible only for players in range 1x1
 	multiplier = {
@@ -9,11 +9,6 @@ local config = {
 		mana = 1.0
 	}
 }
-
-config.removeOnUse = getBooleanFromString(config.removeOnUse)
-config.usableOnTarget = getBooleanFromString(config.usableOnTarget)
-config.splashable = getBooleanFromString(config.splashable)
-config.realAnimation = getBooleanFromString(config.realAnimation)
 
 local POTIONS = {
 	[8704] = {empty = 7636, splash = 42, health = {50, 100}}, -- small health potion
@@ -29,14 +24,38 @@ local POTIONS = {
 	[8472] = {empty = 7635, splash = 43, health = {200, 400}, mana = {110, 190}, level = 80, vocations = {3, 7}, vocStr = "paladins"} -- great spirit potion
 }
 
+for _, potion in ipairs(POTIONS) do
+	for k, v in pairs(config) do
+		if(not potion[k]) then
+			potion[k] = v
+		end
+	end
+
+	if(potion.removeOnUse) then
+		potion.removeOnUse = getBooleanFromString(potion.removeOnUse)
+	end
+
+	if(potion.usableOnTarget) then
+		potion.usableOnTarget = getBooleanFromString(potion.usableOnTarget)
+	end
+
+	if(potion.splashable) then
+		potion.splashable = getBooleanFromString(potion.splashable)
+	end
+
+	if(potion.realAnimation) then
+		potion.realAnimation = getBooleanFromString(potion.realAnimation)
+	end
+end
+
 function onUse(cid, item, fromPosition, itemEx, toPosition)
 	local potion = POTIONS[item.itemid]
 	if(not potion) then
 		return false
 	end
 
-	if(not isPlayer(itemEx.uid) or (not config.usableOnTarget and cid ~= itemEx.uid)) then
-		if(not config.splashable) then
+	if(not isPlayer(itemEx.uid) or (not potion.usableOnTarget and cid ~= itemEx.uid)) then
+		if(not potion.splashable or not potion.splash) then
 			return false
 		end
 
@@ -46,7 +65,7 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 
 		doDecayItem(doCreateItem(POOL, potion.splash, toPosition))
 		doRemoveItem(item.uid, 1)
-		if(not potion.empty or config.removeOnUse) then
+		if(not potion.empty or potion.removeOnUse) then
 			return true
 		end
 
@@ -66,22 +85,22 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 		return true
 	end
 
-	if(config.range > 0 and cid ~= itemEx.uid and getDistanceBetween(getThingPosition(cid), getThingPosition(itemEx.uid)) > config.range) then
+	if(potion.range > 0 and cid ~= itemEx.uid and getDistanceBetween(getThingPosition(cid), getThingPosition(itemEx.uid)) > potion.range) then
 		return false
 	end
 
 	local health = potion.health
-	if(health and not doCreatureAddHealth(itemEx.uid, math.ceil(math.random(health[1], health[2]) * config.multiplier.health))) then
+	if(health and not doCreatureAddHealth(itemEx.uid, math.ceil(math.random(health[1], health[2]) * potion.multiplier.health))) then
 		return false
 	end
 
 	local mana = potion.mana
-	if(mana and not doPlayerAddMana(itemEx.uid, math.ceil(math.random(mana[1], mana[2]) * config.multiplier.mana))) then
+	if(mana and not doPlayerAddMana(itemEx.uid, math.ceil(math.random(mana[1], mana[2]) * potion.multiplier.mana))) then
 		return false
 	end
 
 	doSendMagicEffect(getThingPosition(itemEx.uid), CONST_ME_MAGIC_BLUE)
-	if(not config.realAnimation) then
+	if(not potion.realAnimation) then
 		doCreatureSay(itemEx.uid, "Aaaah...", TALKTYPE_ORANGE_1)
 	else
 		for i, tid in ipairs(getSpectators(getThingPosition(itemEx.uid), 1, 1)) do
@@ -92,7 +111,7 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 	end
 
 	doRemoveItem(item.uid, 1)
-	if(not potion.empty or config.removeOnUse) then
+	if(not potion.empty or potion.removeOnUse) then
 		return true
 	end
 
