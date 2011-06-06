@@ -79,6 +79,7 @@ uint32_t ScriptEnviroment::m_lastCombatId = 0;
 ScriptEnviroment::ConditionMap ScriptEnviroment::m_conditionMap;
 uint32_t ScriptEnviroment::m_lastConditionId = 0;
 ScriptEnviroment::ConditionMap ScriptEnviroment::m_tempConditionMap;
+uint32_t ScriptEnviroment::m_lastTempConditionId = 0;
 
 ScriptEnviroment::ThingMap ScriptEnviroment::m_globalMap;
 ScriptEnviroment::TempItemListMap ScriptEnviroment::m_tempItems;
@@ -399,8 +400,8 @@ uint32_t ScriptEnviroment::addConditionObject(Condition* condition)
 
 uint32_t ScriptEnviroment::addTempConditionObject(Condition* condition)
 {
-	m_conditionMap[++m_lastConditionId] = condition;
-	return m_lastConditionId;
+	m_tempConditionMap[++m_lastTempConditionId] = condition;
+	return m_lastTempConditionId;
 }
 
 Condition* ScriptEnviroment::getConditionObject(uint32_t conditionId)

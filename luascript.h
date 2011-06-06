@@ -193,7 +193,7 @@ class ScriptEnviroment
 		static uint32_t m_lastCombatId;
 		static CombatMap m_combatMap;
 
-		static uint32_t m_lastConditionId;
+		static uint32_t m_lastConditionId, m_lastTempConditionId;
 		static ConditionMap m_conditionMap;
 		static ConditionMap m_tempConditionMap;
 
