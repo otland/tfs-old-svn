@@ -614,10 +614,10 @@ int32_t Player::getPlayerInfo(playerinfo_t playerinfo) const
 	return 0;
 }
 
-int32_t Player::getSkill(skills_t skilltype, skillsid_t skillinfo, bool realLevel/* = false*/) const
+int32_t Player::getSkill(skills_t skilltype, skillsid_t skillinfo) const
 {
 	int32_t n = skills[skilltype][skillinfo];
-	if(skillinfo == SKILL_LEVEL && !realLevel)
+	if(skillinfo == SKILL_LEVEL)
 		n += varSkills[skilltype];
 
 	return std::max((int32_t)0, (int32_t)n);
@@ -703,19 +703,14 @@ int32_t Player::getDefaultStats(stats_t stat)
 	{
 		case STAT_MAXHITPOINTS:
 			return getMaxHealth() - getVarStats(STAT_MAXHITPOINTS);
-			break;
 		case STAT_MAXMANAPOINTS:
 			return getMaxMana() - getVarStats(STAT_MAXMANAPOINTS);
-			break;
 		case STAT_SOULPOINTS:
 			return getPlayerInfo(PLAYERINFO_SOUL) - getVarStats(STAT_SOULPOINTS);
-			break;
 		case STAT_MAGICPOINTS:
 			return getMagicLevel() - getVarStats(STAT_MAGICPOINTS);
-			break;
 		default:
 			return 0;
-			break;
 	}
 }
 

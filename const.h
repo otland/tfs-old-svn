@@ -187,10 +187,10 @@ enum MessageClasses
 	MSG_EVENT_ADVANCE		= 0x12, /*White message in game window and in the console*/
 	MSG_STATUS_SMALL		= 0x13, /*White message at the bottom of the game window"*/
 	MSG_INFO_DESCR			= 0x14, /*Green message in game window and in the console*/
-	MSG_DAMAGE_DEALED		= 0x15,
+	MSG_DAMAGE_DEALT		= 0x15,
 	MSG_DAMAGE_RECEIVED		= 0x16,
-	MSG_HEAL			= 0x17,
-	MSG_EXP				= 0x18,
+	MSG_HEALED			= 0x17,
+	MSG_EXPERIENCE			= 0x18,
 	MSG_EVENT_DEFAULT		= 0x1C, /*White message at the bottom of the game window and in the console*/
 	MSG_LOOT			= 0x1D,
 	MSG_EVENT_ORANGE		= 0x22, /*Orange message in the console*/

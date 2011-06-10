@@ -32,6 +32,7 @@
 class Player;
 
 typedef std::map<uint32_t, Player*> UsersMap;
+typedef std::map<uint32_t, Player*> InvitedMap;
 
 class ChatChannel
 {
@@ -76,9 +77,9 @@ class PrivateChatChannel : public ChatChannel
 
 		void closeChannel();
 
-	protected:
-		typedef std::map<uint32_t, Player*> InvitedMap;
+		const InvitedMap& getInvitedUsers() {return m_invites;}
 
+	protected:
 		InvitedMap m_invites;
 		uint32_t m_owner;
 };

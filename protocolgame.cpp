@@ -1743,7 +1743,16 @@ void ProtocolGame::sendChannel(uint16_t channelId, const std::string& channelNam
 			for(UsersMap::iterator it = channelUsers.begin(); it != channelUsers.end(); ++it)
 				msg->AddString(it->second->getName());
 
-			msg->AddU16(0x00); // invited users
+			PrivateChatChannel* privateChannel = dynamic_cast<PrivateChatChannel*>(channel);
+			if(privateChannel)
+			{
+				InvitedMap invitedUsers = privateChannel->getInvitedUsers();
+				msg->AddU16(invitedUsers.size());
+				for(InvitedMap::iterator it = invitedUsers.begin(); it != invitedUsers.end(); ++it)
+					msg->AddString(it->second->getName());
+			}
+			else
+				msg->AddU16(0x00);
 		}
 		else
 		{
@@ -2668,7 +2677,7 @@ void ProtocolGame::AddTextMessage(NetworkMessage_ptr msg, MessageClasses mclass,
 	msg->AddByte(mclass);
 	switch(mclass)
 	{
-		case MSG_DAMAGE_DEALED:
+		case MSG_DAMAGE_DEALT:
 		case MSG_DAMAGE_RECEIVED:
 		{
 			msg->AddPosition(*pos);
@@ -2679,8 +2688,8 @@ void ProtocolGame::AddTextMessage(NetworkMessage_ptr msg, MessageClasses mclass,
 			break;
 		}
 
-		case MSG_EXP:
-		case MSG_HEAL:
+		case MSG_EXPERIENCE:
+		case MSG_HEALED:
 		{
 			msg->AddPosition(*pos);
 			msg->AddU32(value);
@@ -2766,7 +2775,7 @@ void ProtocolGame::AddPlayerStats(NetworkMessage_ptr msg)
 	msg->AddU16(player->getPlayerInfo(PLAYERINFO_MAXHEALTH));
 
 	msg->AddU32(uint32_t(player->getFreeCapacity() * 100));
-	msg->AddU32(uint32_t(player->getFreeCapacity() * 100));
+	msg->AddU32(uint32_t(player->getCapacity() * 100));
 
 	msg->AddU64(player->getExperience());
 
@@ -2777,7 +2786,7 @@ void ProtocolGame::AddPlayerStats(NetworkMessage_ptr msg)
 	msg->AddU16(player->getPlayerInfo(PLAYERINFO_MAXMANA));
 
 	msg->AddByte(player->getMagicLevel());
-	msg->AddByte(player->getMagicLevel(true));
+	msg->AddByte(player->getBaseMagicLevel());
 	msg->AddByte(player->getPlayerInfo(PLAYERINFO_MAGICLEVELPERCENT));
 
 	msg->AddByte(player->getPlayerInfo(PLAYERINFO_SOUL));
@@ -2794,25 +2803,31 @@ void ProtocolGame::AddPlayerSkills(NetworkMessage_ptr msg)
 	msg->AddByte(0xA1);
 
 	msg->AddByte(player->getSkill(SKILL_FIST, SKILL_LEVEL));
-	msg->AddByte(player->getSkill(SKILL_FIST, SKILL_LEVEL, true));
+	msg->AddByte(player->getBaseSkill(SKILL_FIST));
 	msg->AddByte(player->getSkill(SKILL_FIST, SKILL_PERCENT));
+
 	msg->AddByte(player->getSkill(SKILL_CLUB, SKILL_LEVEL));
-	msg->AddByte(player->getSkill(SKILL_CLUB, SKILL_LEVEL, true));
+	msg->AddByte(player->getBaseSkill(SKILL_CLUB));
 	msg->AddByte(player->getSkill(SKILL_CLUB, SKILL_PERCENT));
+
 	msg->AddByte(player->getSkill(SKILL_SWORD, SKILL_LEVEL));
-	msg->AddByte(player->getSkill(SKILL_SWORD, SKILL_LEVEL, true));
+	msg->AddByte(player->getBaseSkill(SKILL_SWORD));
 	msg->AddByte(player->getSkill(SKILL_SWORD, SKILL_PERCENT));
+
 	msg->AddByte(player->getSkill(SKILL_AXE, SKILL_LEVEL));
-	msg->AddByte(player->getSkill(SKILL_AXE, SKILL_LEVEL, true));
+	msg->AddByte(player->getBaseSkill(SKILL_AXE));
 	msg->AddByte(player->getSkill(SKILL_AXE, SKILL_PERCENT));
+
 	msg->AddByte(player->getSkill(SKILL_DIST, SKILL_LEVEL));
-	msg->AddByte(player->getSkill(SKILL_DIST, SKILL_LEVEL, true));
+	msg->AddByte(player->getBaseSkill(SKILL_DIST));
 	msg->AddByte(player->getSkill(SKILL_DIST, SKILL_PERCENT));
+
 	msg->AddByte(player->getSkill(SKILL_SHIELD, SKILL_LEVEL));
-	msg->AddByte(player->getSkill(SKILL_SHIELD, SKILL_LEVEL, true));
+	msg->AddByte(player->getBaseSkill(SKILL_SHIELD));
 	msg->AddByte(player->getSkill(SKILL_SHIELD, SKILL_PERCENT));
+
 	msg->AddByte(player->getSkill(SKILL_FISH, SKILL_LEVEL));
-	msg->AddByte(player->getSkill(SKILL_FISH, SKILL_LEVEL, true));
+	msg->AddByte(player->getBaseSkill(SKILL_FISH));
 	msg->AddByte(player->getSkill(SKILL_FISH, SKILL_PERCENT));
 }
 

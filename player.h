@@ -248,7 +248,8 @@ class Player : public Creature, public Cylinder
 		uint32_t getAccount() const {return accountNumber;}
 		AccountType_t getAccountType() const {return accountType;}
 		uint32_t getLevel() const {return level;}
-		int32_t getMagicLevel(bool realLevel = false) const {return (realLevel ? std::max((uint32_t)0, magLevel) : getPlayerInfo(PLAYERINFO_MAGICLEVEL));}
+		int32_t getMagicLevel() const {return getPlayerInfo(PLAYERINFO_MAGICLEVEL);}
+		uint32_t getBaseMagicLevel() const {return magLevel;}
 		bool isAccessPlayer() const {return accessLevel;}
 		bool isPremium() const;
 
@@ -302,6 +303,8 @@ class Player : public Creature, public Cylinder
 
 		bool isItemAbilityEnabled(slots_t slot) const {return inventoryAbilities[slot];}
 		void setItemAbility(slots_t slot, bool enabled) {inventoryAbilities[slot] = enabled;}
+
+		int32_t getBaseSkill(skills_t skill) const {return skills[skill][SKILL_LEVEL];}
 
 		int32_t getVarSkill(skills_t skill) const {return varSkills[skill];}
 		void setVarSkill(skills_t skill, int32_t modifier) {varSkills[skill] += modifier;}
@@ -395,7 +398,7 @@ class Player : public Creature, public Cylinder
 		virtual bool hasExtraSwing() {return lastAttack > 0 && ((OTSYS_TIME() - lastAttack) >= getAttackSpeed());}
 		int32_t getShootRange() const {return shootRange;}
 
-		int32_t getSkill(skills_t skilltype, skillsid_t skillinfo, bool realLevel = false) const;
+		int32_t getSkill(skills_t skilltype, skillsid_t skillinfo) const;
 		bool getAddAttackSkill() const {return addAttackSkillPoint;}
 		BlockType_t getLastAttackBlockType() const {return lastAttackBlockType;}
 
