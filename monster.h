@@ -68,6 +68,8 @@ class Monster : public Creature
 		virtual const std::string& getNameDescription() const {return mType->nameDescription;}
 		virtual std::string getDescription(int32_t lookDistance) const {return strDescription + '.';}
 
+		virtual const CreatureType_t getType() const {return CREATURETYPE_MONSTER;}
+
 		virtual RaceType_t getRace() const {return mType->race;}
 		virtual int32_t getArmor() const {return mType->armor;}
 		virtual int32_t getDefense() const {return mType->defense;}

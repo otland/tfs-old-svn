@@ -160,8 +160,7 @@ enum ShootType_t
 
 enum SpeakClasses
 {
-	SPEAK_FIRST		= 0x01,
-	SPEAK_SAY		= SPEAK_FIRST,
+	SPEAK_SAY		= 0x01,
 	SPEAK_WHISPER		= 0x02,
 	SPEAK_YELL		= 0x03,
 	SPEAK_PRIVATE_PN	= 0x04,
@@ -175,25 +174,27 @@ enum SpeakClasses
 	SPEAK_CHANNEL_O         = 0x0C,
 	SPEAK_MONSTER_SAY	= 0x0D,
 	SPEAK_MONSTER_YELL	= 0x0E,
-	SPEAK_LAST		= SPEAK_MONSTER_YELL,
 
 	SPEAK_CHANNEL_R2	= 0xFF + 4 //#d
 };
 
 enum MessageClasses
 {
-	MSG_CLASS_FIRST			= 0x0D,
-	MSG_EVENT_ORANGE		= MSG_CLASS_FIRST, /*Orange message in the console*/
-	MSG_STATUS_CONSOLE_ORANGE	= 0x0E, /*Orange message in the console*/
-	MSG_STATUS_WARNING		= 0x0F, /*Red message in game window and in the console*/
-	MSG_EVENT_ADVANCE		= 0x10, /*White message in game window and in the console*/
-	MSG_EVENT_DEFAULT		= 0x11, /*White message at the bottom of the game window and in the console*/
-	MSG_STATUS_DEFAULT		= 0x12, /*White message at the bottom of the game window and in the console*/
-	MSG_INFO_DESCR			= 0x13, /*Green message in game window and in the console*/
-	MSG_STATUS_SMALL		= 0x14, /*White message at the bottom of the game window"*/
-	MSG_STATUS_CONSOLE_BLUE		= 0x15, /*Blue message in the console*/
-	MSG_STATUS_CONSOLE_RED		= 0x16, /*Red message in the console*/
-	MSG_CLASS_LAST			= MSG_STATUS_CONSOLE_RED
+	MSG_STATUS_CONSOLE_BLUE		= 0x04, /*FIXME Blue message in the console*/
+	MSG_STATUS_CONSOLE_RED		= 0x0C, /*Red message in the console*/
+	MSG_STATUS_DEFAULT		= 0x10, /*White message at the bottom of the game window and in the console*/
+	MSG_STATUS_WARNING		= 0x11, /*Red message in game window and in the console*/
+	MSG_EVENT_ADVANCE		= 0x12, /*White message in game window and in the console*/
+	MSG_STATUS_SMALL		= 0x13, /*White message at the bottom of the game window"*/
+	MSG_INFO_DESCR			= 0x14, /*Green message in game window and in the console*/
+	MSG_DAMAGE_DEALED		= 0x15,
+	MSG_DAMAGE_RECEIVED		= 0x16,
+	MSG_HEAL			= 0x17,
+	MSG_EXP				= 0x18,
+	MSG_EVENT_DEFAULT		= 0x1C, /*White message at the bottom of the game window and in the console*/
+	MSG_LOOT			= 0x1D,
+	MSG_EVENT_ORANGE		= 0x22, /*Orange message in the console*/
+	MSG_STATUS_CONSOLE_ORANGE	= 0x23  /*Orange message in the console*/
 };
 
 enum FluidColors_t

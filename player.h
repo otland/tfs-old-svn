@@ -132,6 +132,8 @@ class Player : public Creature, public Cylinder
 		virtual const std::string& getNameDescription() const {return name;}
 		virtual std::string getDescription(int32_t lookDistance) const;
 
+		virtual const CreatureType_t getType() const {return CREATURETYPE_PLAYER;}
+
 		uint8_t getCurrentMount() const;
 		void setCurrentMount(uint8_t mountId);
 		bool isMounted() const { return defaultOutfit.lookMount != 0; }
@@ -246,7 +248,7 @@ class Player : public Creature, public Cylinder
 		uint32_t getAccount() const {return accountNumber;}
 		AccountType_t getAccountType() const {return accountType;}
 		uint32_t getLevel() const {return level;}
-		int32_t getMagicLevel() const {return getPlayerInfo(PLAYERINFO_MAGICLEVEL);}
+		int32_t getMagicLevel(bool realLevel = false) const {return (realLevel ? std::max((uint32_t)0, magLevel) : getPlayerInfo(PLAYERINFO_MAGICLEVEL));}
 		bool isAccessPlayer() const {return accessLevel;}
 		bool isPremium() const;
 
@@ -366,7 +368,7 @@ class Player : public Creature, public Cylinder
 		virtual void onWalkComplete();
 
 		void stopWalk();
-		void openShopWindow(const std::list<ShopInfo>& shop);
+		void openShopWindow(Npc* npc, const std::list<ShopInfo>& shop);
 		void closeShopWindow(bool sendCloseShopWindow = true);
 		void updateSaleShopList(uint32_t itemId);
 		bool hasShopItemForSale(uint32_t itemId, uint8_t subType);
@@ -393,7 +395,7 @@ class Player : public Creature, public Cylinder
 		virtual bool hasExtraSwing() {return lastAttack > 0 && ((OTSYS_TIME() - lastAttack) >= getAttackSpeed());}
 		int32_t getShootRange() const {return shootRange;}
 
-		int32_t getSkill(skills_t skilltype, skillsid_t skillinfo) const;
+		int32_t getSkill(skills_t skilltype, skillsid_t skillinfo, bool realLevel = false) const;
 		bool getAddAttackSkill() const {return addAttackSkillPoint;}
 		BlockType_t getLastAttackBlockType() const {return lastAttackBlockType;}
 
@@ -593,8 +595,8 @@ class Player : public Creature, public Cylinder
 			{if(client) client->sendTextWindow(windowTextId, itemId, text);}
 		void sendToChannel(Creature* creature, SpeakClasses type, const std::string& text, uint16_t channelId) const
 			{if(client) client->sendToChannel(creature, type, text, channelId);}
-		void sendShop() const
-			{if(client) client->sendShop(shopItemList);}
+		void sendShop(Npc* npc) const
+			{if(client) client->sendShop(npc, shopItemList);}
 		void sendSaleItemList() const
 			{if(client) client->sendSaleItemList(shopItemList);}
 		void sendCloseShop() const

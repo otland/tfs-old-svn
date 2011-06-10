@@ -4436,14 +4436,10 @@ std::string Game::getHighscoreString(unsigned short skill)
 
 bool Game::broadcastMessage(const std::string& text, MessageClasses type)
 {
-	if(type >= MSG_CLASS_FIRST && type <= MSG_CLASS_LAST)
-	{
-		std::cout << "> Broadcasted message: \"" << text << "\"." << std::endl;
-		for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
-			(*it).second->sendTextMessage(type, text);
-		return true;
-	}
-	return false;
+	std::cout << "> Broadcasted message: \"" << text << "\"." << std::endl;
+	for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
+		(*it).second->sendTextMessage(type, text);
+	return true;
 }
 
 Highscore Game::getHighscore(unsigned short skill)
@@ -4913,7 +4909,7 @@ bool Game::playerLeaveParty(uint32_t playerId)
 	return player->getParty()->leaveParty(player);
 }
 
-bool Game::playerEnableSharedPartyExperience(uint32_t playerId, uint8_t sharedExpActive, uint8_t unknown)
+bool Game::playerEnableSharedPartyExperience(uint32_t playerId, bool sharedExpActive)
 {
 	Player* player = getPlayerByID(playerId);
 	if(!player || player->isRemoved())
@@ -4922,7 +4918,7 @@ bool Game::playerEnableSharedPartyExperience(uint32_t playerId, uint8_t sharedEx
 	if(!player->getParty() || player->hasCondition(CONDITION_INFIGHT))
 		return false;
 
-	return player->getParty()->setSharedExperience(player, sharedExpActive == 1);
+	return player->getParty()->setSharedExperience(player, sharedExpActive);
 }
 
 void Game::sendGuildMotd(uint32_t playerId, uint32_t guildId)

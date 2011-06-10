@@ -196,7 +196,7 @@ class ProtocolGame : public Protocol
 		void sendCreatureSkull(const Creature* creature);
 		void sendCreatureShield(const Creature* creature);
 
-		void sendShop(const ShopInfoList& itemList);
+		void sendShop(Npc* npc, const ShopInfoList& itemList);
 		void sendCloseShop();
 		void sendSaleItemList(const std::list<ShopInfo>& shop);
 		void sendTradeItemRequest(const Player* player, const Item* item, bool ack);
@@ -257,7 +257,9 @@ class ProtocolGame : public Protocol
 			int32_t width, int32_t height, NetworkMessage_ptr msg);
 
 		void AddMapDescription(NetworkMessage_ptr msg, const Position& pos);
-		void AddTextMessage(NetworkMessage_ptr msg,MessageClasses mclass, const std::string& message);
+		void AddTextMessage(NetworkMessage_ptr msg,MessageClasses mclass, const std::string& message, Position* pos = NULL,
+			uint32_t value = 0, TextColor_t color = TEXTCOLOR_NONE,
+			uint32_t value2 = 0, TextColor_t color2 = TEXTCOLOR_NONE);
 		void AddAnimatedText(NetworkMessage_ptr msg, const Position& pos, uint8_t color, const std::string& text);
 		void AddMagicEffect(NetworkMessage_ptr msg, const Position& pos, uint8_t type);
 		void AddDistanceShoot(NetworkMessage_ptr msg, const Position& from, const Position& to, uint8_t type);

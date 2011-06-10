@@ -87,7 +87,7 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 
 	if(version <= 760)
 	{
-		disconnectClient(0x0A, "Only clients with protocol 8.7 allowed!");
+		disconnectClient(0x0A, "Only clients with protocol 9.0 allowed!");
 		return false;
 	}
 
@@ -122,9 +122,9 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 		}
 	}
 
-	if(version < 870)
+	if(version < 900)
 	{
-		disconnectClient(0x0A, "Only clients with protocol 8.7 allowed!");
+		disconnectClient(0x0A, "Only clients with protocol 9.0 allowed!");
 		return false;
 	}
 

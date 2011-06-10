@@ -614,10 +614,10 @@ int32_t Player::getPlayerInfo(playerinfo_t playerinfo) const
 	return 0;
 }
 
-int32_t Player::getSkill(skills_t skilltype, skillsid_t skillinfo) const
+int32_t Player::getSkill(skills_t skilltype, skillsid_t skillinfo, bool realLevel/* = false*/) const
 {
 	int32_t n = skills[skilltype][skillinfo];
-	if(skillinfo == SKILL_LEVEL)
+	if(skillinfo == SKILL_LEVEL && !realLevel)
 		n += varSkills[skilltype];
 
 	return std::max((int32_t)0, (int32_t)n);
@@ -1549,10 +1549,10 @@ void Player::onCreatureDisappear(const Creature* creature, uint32_t stackpos, bo
 	}
 }
 
-void Player::openShopWindow(const std::list<ShopInfo>& shop)
+void Player::openShopWindow(Npc* npc, const std::list<ShopInfo>& shop)
 {
 	shopItemList = shop;
-	sendShop();
+	sendShop(npc);
 	sendSaleItemList();
 }
 
