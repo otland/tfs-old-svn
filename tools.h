@@ -93,9 +93,7 @@ OPENTIBIA_API Direction getDirection(std::string string);
 OPENTIBIA_API Direction getReverseDirection(Direction dir);
 OPENTIBIA_API Position getNextPosition(Direction direction, Position pos);
 
-#if !defined __GNUC__ || __GNUC__ < 3
 OPENTIBIA_API char upchar(char c);
-#endif
 
 OPENTIBIA_API std::string parseParams(tokenizer::iterator &it, tokenizer::iterator end);
 
@@ -131,6 +129,8 @@ OPENTIBIA_API uint32_t adlerChecksum(uint8_t* data, size_t len);
 template<typename _Tp>
 OPENTIBIA_API std::string toString(_Tp __p);
 #endif
+
+OPENTIBIA_API std::string ucfirst(std::string);
 
 #undef OPENTIBIA_API
 

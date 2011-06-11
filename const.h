@@ -172,8 +172,8 @@ enum SpeakClasses
 	SPEAK_CHANNEL_R1        = 0x0A, //red - #c text
 	SPEAK_PRIVATE_RED       = 0x0B, //@name@text
 	SPEAK_CHANNEL_O         = 0x0C,
-	SPEAK_MONSTER_SAY	= 0x0D,
-	SPEAK_MONSTER_YELL	= 0x0E,
+	SPEAK_MONSTER_SAY	= 0x22,
+	SPEAK_MONSTER_YELL	= 0x23,
 
 	SPEAK_CHANNEL_R2	= 0xFF + 4 //#d
 };
@@ -191,6 +191,9 @@ enum MessageClasses
 	MSG_DAMAGE_RECEIVED		= 0x16,
 	MSG_HEALED			= 0x17,
 	MSG_EXPERIENCE			= 0x18,
+	MSG_DAMAGE_OTHERS		= 0x19,
+	MSG_HEALED_OTHERS		= 0x1A,
+	MSG_EXPERIENCE_OTHERS		= 0x1B,
 	MSG_EVENT_DEFAULT		= 0x1C, /*White message at the bottom of the game window and in the console*/
 	MSG_LOOT			= 0x1D,
 	MSG_EVENT_ORANGE		= 0x22, /*Orange message in the console*/
@@ -316,7 +319,9 @@ enum Icons_t
 	ICON_CURSED = 2048,
 	ICON_PARTY_BUFF = 4096,
 	ICON_REDSWORDS = 8192,
-	ICON_PIGEON = 16384
+	ICON_PIGEON = 16384,
+	ICON_BLEEDING = 32768,
+	ICON_HUNGRY = 65536
 };
 
 enum WeaponType_t
@@ -562,13 +567,13 @@ const int violationReasons[6] =
 };
 
 #define CHANNEL_GUILD 0x00
-#define CHANNEL_GAMEMASTER 0x01
+#define CHANNEL_PARTY 0x01
 #define CHANNEL_TUTOR 0x02
 #define CHANNEL_WORLDCHAT 0x03
-#define CHANNEL_ADVERTISING 0x04
-#define CHANNEL_ADVERTISINGROOKGAARD 0x05
-#define CHANNEL_HELP 0x06
-#define CHANNEL_PARTY 0x07
+#define CHANNEL_ADVERTISING 0x05
+#define CHANNEL_ADVERTISINGROOKGAARD 0x06
+#define CHANNEL_GAMEMASTER 0x07
+#define CHANNEL_HELP 0x09
 #define CHANNEL_PRIVATE 0xFFFF
 
 //Reserved player storage key ranges

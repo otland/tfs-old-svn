@@ -523,6 +523,10 @@ void ProtocolGame::parsePacket(NetworkMessage &msg)
 				parseLogout(msg);
 				break;
 
+			case 0x1E: // keep alive / ping response
+				parseReceivePing(msg);
+				break;
+
 			case 0x96:
 				parseSay(msg);
 				break;
@@ -789,6 +793,7 @@ void ProtocolGame::GetTileDescription(const Tile* tile, NetworkMessage_ptr msg)
 {
 	if(tile)
 	{
+		msg->AddU16(0x00);
 		int32_t count = 0;
 		if(tile->ground)
 		{
@@ -1701,6 +1706,11 @@ void ProtocolGame::sendCreatePrivateChannel(uint16_t channelId, const std::strin
 		msg->AddByte(0xB2);
 		msg->AddU16(channelId);
 		msg->AddString(channelName);
+
+		msg->AddU16(0x01);
+		msg->AddString(player->getName());
+
+		msg->AddU16(0x00);
 	}
 }
 
@@ -2661,6 +2671,55 @@ void ProtocolGame::sendSpellGroupCooldown(SpellGroup_t groupId, uint32_t time)
 	}
 }
 
+void ProtocolGame::sendDamageMessage(MessageClasses mclass, const std::string& message, const Position& pos,
+	uint32_t primaryDamage/* = 0*/, TextColor_t primaryColor/* = TEXTCOLOR_NONE*/,
+	uint32_t secondaryDamage/* = 0*/, TextColor_t secondaryColor/* = TEXTCOLOR_NONE*/)
+{
+	NetworkMessage_ptr msg = getOutputBuffer();
+	if(!msg)
+		return;
+
+	TRACK_MESSAGE(msg);
+	msg->AddByte(0xB4);
+	msg->AddByte(mclass);
+	msg->AddPosition(pos);
+	msg->AddU32(primaryDamage);
+	msg->AddByte(primaryColor);
+	msg->AddU32(secondaryDamage);
+	msg->AddByte(secondaryColor);
+	msg->AddString(message);
+}
+
+void ProtocolGame::sendHealMessage(MessageClasses mclass, const std::string& message, const Position& pos, uint32_t heal, TextColor_t color)
+{
+	NetworkMessage_ptr msg = getOutputBuffer();
+	if(!msg)
+		return;
+
+	TRACK_MESSAGE(msg);
+	msg->AddByte(0xB4);
+	msg->AddByte(mclass);
+	msg->AddPosition(pos);
+	msg->AddU32(heal);
+	msg->AddByte(color);
+	msg->AddString(message);
+}
+
+void ProtocolGame::sendExperienceMessage(MessageClasses mclass, const std::string& message, const Position& pos, uint32_t exp, TextColor_t color)
+{
+	NetworkMessage_ptr msg = getOutputBuffer();
+	if(!msg)
+		return;
+
+	TRACK_MESSAGE(msg);
+	msg->AddByte(0xB4);
+	msg->AddByte(mclass);
+	msg->AddPosition(pos);
+	msg->AddU32(exp);
+	msg->AddByte(color);
+	msg->AddString(message);
+}
+
 ////////////// Add common messages
 void ProtocolGame::AddMapDescription(NetworkMessage_ptr msg, const Position& pos)
 {
@@ -2669,46 +2728,28 @@ void ProtocolGame::AddMapDescription(NetworkMessage_ptr msg, const Position& pos
 	GetMapDescription(pos.x - 8, pos.y - 6, pos.z, 18, 14, msg);
 }
 
-void ProtocolGame::AddTextMessage(NetworkMessage_ptr msg, MessageClasses mclass, const std::string& message, Position* pos/* = NULL*/,
-	uint32_t value/* = 0*/, TextColor_t color/* = TEXTCOLOR_NONE*/,
-	uint32_t value2/* = 0*/, TextColor_t color2/* = TEXTCOLOR_NONE*/)
+void ProtocolGame::AddTextMessage(NetworkMessage_ptr msg, MessageClasses mclass, const std::string& message)
 {
 	msg->AddByte(0xB4);
 	msg->AddByte(mclass);
-	switch(mclass)
-	{
-		case MSG_DAMAGE_DEALT:
-		case MSG_DAMAGE_RECEIVED:
-		{
-			msg->AddPosition(*pos);
-			msg->AddU32(value);
-			msg->AddByte(color);
-			msg->AddU32(value2);
-			msg->AddByte(color2);
-			break;
-		}
-
-		case MSG_EXPERIENCE:
-		case MSG_HEALED:
-		{
-			msg->AddPosition(*pos);
-			msg->AddU32(value);
-			msg->AddByte(color);
-			break;
-		}
-
-		default: break;
-	}
 	msg->AddString(message);
 }
 
 void ProtocolGame::AddAnimatedText(NetworkMessage_ptr msg, const Position& pos,
 	uint8_t color, const std::string& text)
 {
+	/*
 	msg->AddByte(0x84);
 	msg->AddPosition(pos);
 	msg->AddByte(color);
 	msg->AddString(text);
+	*/
+	msg->AddByte(0xB4);
+	msg->AddByte(MSG_EXPERIENCE);
+	msg->AddPosition(pos);
+	msg->AddU32(atoi(text.c_str()));
+	msg->AddByte(color);
+	msg->AddString("");
 }
 
 void ProtocolGame::AddMagicEffect(NetworkMessage_ptr msg,const Position& pos, uint8_t type)
@@ -2795,7 +2836,8 @@ void ProtocolGame::AddPlayerStats(NetworkMessage_ptr msg)
 
 	msg->AddU16(player->getBaseSpeed());
 
-	msg->AddU16(0x00); // fed
+	Condition* condition = player->getCondition(CONDITION_REGENERATION);
+	msg->AddU16(condition ? condition->getTicks() / 1000 : 0x00);
 }
 
 void ProtocolGame::AddPlayerSkills(NetworkMessage_ptr msg)
@@ -2834,7 +2876,7 @@ void ProtocolGame::AddPlayerSkills(NetworkMessage_ptr msg)
 void ProtocolGame::AddCreatureSpeak(NetworkMessage_ptr msg, const Creature* creature, SpeakClasses type,
 	std::string text, uint16_t channelId, Position* pos/* = NULL*/)
 {
-	if(!creature || text.length() > 512)
+	if(!creature)
 		return;
 
 	msg->AddByte(0xAA);

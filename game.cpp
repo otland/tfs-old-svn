@@ -3895,19 +3895,59 @@ bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creat
 		if(target->getHealth() <= 0)
 			return false;
 
-		if(g_config.getBoolean(ConfigManager::CANNOT_ATTACK_SAME_LOOKFEET) && attacker && attacker->getPlayer() && target->getPlayer() && attacker->defaultOutfit.lookFeet == target->defaultOutfit.lookFeet && combatType != COMBAT_HEALING)
+		Player* attackerPlayer = NULL;
+		if(attacker)
+			attackerPlayer = attacker->getPlayer();
+
+		Player* targetPlayer = target->getPlayer();
+		if(g_config.getBoolean(ConfigManager::CANNOT_ATTACK_SAME_LOOKFEET) && attackerPlayer && targetPlayer && attacker->defaultOutfit.lookFeet == target->defaultOutfit.lookFeet && combatType != COMBAT_HEALING)
 			return false;
 
 		target->changeHealth(healthChange);
 
-		if(g_config.getBoolean(ConfigManager::ANIMATION_TEXT_ON_HEAL) && !target->getMonster() && !target->isInGhostMode())
+		if(g_config.getBoolean(ConfigManager::ANIMATION_TEXT_ON_HEAL) && !target->isInGhostMode())
 		{
 			const SpectatorVec& list = getSpectators(targetPos);
-			std::stringstream ss;
-			ss << "+" << healthChange;
 			if(combatType != COMBAT_HEALING)
 				addMagicEffect(list, targetPos, NM_ME_MAGIC_ENERGY);
-			addAnimatedText(list, targetPos, TEXTCOLOR_GREEN, ss.str());
+
+			std::stringstream ss;
+			if(!attacker)
+				ss << ucfirst(target->getNameDescription()) << " was healed for " << healthChange << " hitpoint" << (healthChange != 1 ? "s." : ".");
+			else if(attackerPlayer == targetPlayer)
+				ss << ucfirst(attacker->getNameDescription()) << " healed " << (targetPlayer->getSex() == PLAYERSEX_FEMALE ? "herself for " : "himself for ") << healthChange << " hitpoint" << (healthChange != 1 ? "s." : ".");
+			else
+				ss << ucfirst(attacker->getNameDescription()) << " healed " << target->getNameDescription() << " for " << healthChange << " hitpoint" << (healthChange != 1 ? "s." : ".");
+
+			std::string message = ss.str();
+
+			Player* tmpPlayer = NULL;
+			for(SpectatorVec::const_iterator it = list.begin(); it != list.end(); ++it)
+			{
+				if((tmpPlayer = (*it)->getPlayer()))
+				{
+					if(tmpPlayer == attackerPlayer && attackerPlayer != targetPlayer)
+					{
+						std::stringstream tmpSs;
+						tmpSs << "You heal " << target->getNameDescription() << " for " << healthChange << " hitpoint" << (healthChange != 1 ? "s." : ".");
+						tmpPlayer->sendHealMessage(MSG_HEALED, tmpSs.str(), targetPos, healthChange, TEXTCOLOR_GREEN);
+					}
+					else if(tmpPlayer == targetPlayer)
+					{
+						std::stringstream tmpSs;
+						if(!attacker)
+							tmpSs << "You were healed by " << attacker->getNameDescription() << " for " << healthChange << " hitpoint" << (healthChange != 1 ? "s." : ".");
+						else if(targetPlayer == attackerPlayer)
+							tmpSs << "You healed yourself for " << healthChange << " hitpoint" << (healthChange != 1 ? "s." : ".");
+						else
+							tmpSs << "You were healed by " << attacker->getNameDescription() << " for " << healthChange << " hitpoint" << (healthChange != 1 ? "s." : ".");
+
+						tmpPlayer->sendHealMessage(MSG_HEALED, tmpSs.str(), targetPos, healthChange, TEXTCOLOR_GREEN);
+					}
+					else
+						tmpPlayer->sendHealMessage(MSG_HEALED_OTHERS, message, targetPos, healthChange, TEXTCOLOR_GREEN);
+				}
+			}
 		}
 	}
 	else
@@ -3919,7 +3959,12 @@ bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creat
 			return true;
 		}
 
-		if(g_config.getBoolean(ConfigManager::CANNOT_ATTACK_SAME_LOOKFEET) && attacker && attacker->getPlayer() && target->getPlayer() && attacker->defaultOutfit.lookFeet == target->defaultOutfit.lookFeet && combatType != COMBAT_HEALING)
+		Player* attackerPlayer = NULL;
+		if(attacker)
+			attackerPlayer = attacker->getPlayer();
+
+		Player* targetPlayer = target->getPlayer();
+		if(g_config.getBoolean(ConfigManager::CANNOT_ATTACK_SAME_LOOKFEET) && attackerPlayer && targetPlayer && attacker->defaultOutfit.lookFeet == target->defaultOutfit.lookFeet && combatType != COMBAT_HEALING)
 			return false;
 
 		int32_t damage = -healthChange;
@@ -3932,10 +3977,45 @@ bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creat
 				if(manaDamage != 0)
 				{
 					target->drainMana(attacker, manaDamage);
-					char buffer[20];
-					sprintf(buffer, "%d", manaDamage);
 					addMagicEffect(list, targetPos, NM_ME_LOSE_ENERGY);
-					addAnimatedText(list, targetPos, TEXTCOLOR_BLUE, buffer);
+
+					std::stringstream ss;
+					if(!attacker)
+						ss << ucfirst(target->getNameDescription()) << " loses " << manaDamage << " mana.";
+					else if(attackerPlayer == targetPlayer)
+						ss << ucfirst(target->getNameDescription()) << " loses " << manaDamage << " mana blocking an attack by " << (targetPlayer->getSex() == PLAYERSEX_FEMALE ? "herself." : "himself.");
+					else
+						ss << ucfirst(target->getNameDescription()) << " loses " << manaDamage << " mana blocking an attack by " << attacker->getNameDescription() << ".";
+
+					std::string message = ss.str();
+
+					Player* tmpPlayer = NULL;
+					for(SpectatorVec::const_iterator it = list.begin(); it != list.end(); ++it)
+					{
+						if((tmpPlayer = (*it)->getPlayer()))
+						{
+							if(tmpPlayer == attackerPlayer && attackerPlayer != targetPlayer)
+							{
+								std::stringstream tmpSs;
+								tmpSs << ucfirst(target->getNameDescription()) << " loses " << manaDamage << " mana blocking your attack.";
+								tmpPlayer->sendDamageMessage(MSG_DAMAGE_DEALT, tmpSs.str(), targetPos, manaDamage, TEXTCOLOR_BLUE);
+							}
+							else if(tmpPlayer == targetPlayer)
+							{
+								std::stringstream tmpSs;
+								if(!attacker)
+									tmpSs << "You lose " << manaDamage << " mana.";
+								else if(targetPlayer == attackerPlayer)
+									tmpSs << "You lose " << manaDamage << " mana blocking an attack by yourself.";
+								else
+									tmpSs << "You lose " << manaDamage << " mana blocking an attack by " << attacker->getNameDescription() << ".";
+
+								tmpPlayer->sendDamageMessage(MSG_DAMAGE_RECEIVED, tmpSs.str(), targetPos, manaDamage, TEXTCOLOR_BLUE);
+							}
+							else
+								tmpPlayer->sendDamageMessage(MSG_DAMAGE_OTHERS, message, targetPos, manaDamage, TEXTCOLOR_BLUE);
+						}
+					}
 				}
 			}
 
@@ -4067,10 +4147,45 @@ bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creat
 
 				if(textColor != TEXTCOLOR_NONE)
 				{
-					char buffer[20];
-					sprintf(buffer, "%d", damage);
 					addMagicEffect(list, targetPos, hitEffect);
-					addAnimatedText(list, targetPos, textColor, buffer);
+
+					std::stringstream ss;
+					if(!attacker)
+						ss << ucfirst(target->getNameDescription()) << " loses " << damage << " hitpoint" << (damage != 1 ? "s." : ".");
+					else if(attackerPlayer == targetPlayer)
+						ss << ucfirst(target->getNameDescription()) << " loses " << damage << " hitpoint" << (damage != 1 ? "s" : "") << " due to " << (targetPlayer->getSex() == PLAYERSEX_FEMALE ? "her" : "his") << " own attack.";
+					else
+						ss << ucfirst(target->getNameDescription()) << " loses " << damage << " hitpoint" << (damage != 1 ? "s" : "") << " due to an attack by " << attacker->getNameDescription() << ".";
+
+					std::string message = ss.str();
+
+					Player* tmpPlayer = NULL;
+					for(SpectatorVec::const_iterator it = list.begin(); it != list.end(); ++it)
+					{
+						if((tmpPlayer = (*it)->getPlayer()))
+						{
+							if(tmpPlayer == attackerPlayer && attackerPlayer != targetPlayer)
+							{
+								std::stringstream tmpSs;
+								tmpSs << ucfirst(target->getNameDescription()) << " loses " << damage << " hitpoint" << (damage != 1 ? "s" : "") << " due to your attack.";
+								tmpPlayer->sendDamageMessage(MSG_DAMAGE_DEALT, tmpSs.str(), targetPos, damage, textColor);
+							}
+							else if(tmpPlayer == targetPlayer)
+							{
+								std::stringstream tmpSs;
+								if(!attacker)
+									tmpSs << "You lose " << damage << " hitpoint" << (damage != 1 ? "s." : ".");
+								else if(targetPlayer == attackerPlayer)
+									tmpSs << "You lose " << damage << " hitpoint" << (damage != 1 ? "s" : "") << " due to your own attack.";
+								else
+									tmpSs << "You lose " << damage << " hitpoint" << (damage != 1 ? "s" : "") << " due to an attack by " << attacker->getNameDescription() << ".";
+
+								tmpPlayer->sendDamageMessage(MSG_DAMAGE_RECEIVED, tmpSs.str(), targetPos, damage, textColor);
+							}
+							else
+								tmpPlayer->sendDamageMessage(MSG_DAMAGE_OTHERS, message, targetPos, damage, textColor);
+						}
+					}
 				}
 			}
 		}
@@ -4098,7 +4213,12 @@ bool Game::combatChangeMana(Creature* attacker, Creature* target, int32_t manaCh
 			return false;
 		}
 
-		if(g_config.getBoolean(ConfigManager::CANNOT_ATTACK_SAME_LOOKFEET) && attacker && attacker->getPlayer() && target->getPlayer() && attacker->defaultOutfit.lookFeet == target->defaultOutfit.lookFeet)
+		Player* attackerPlayer = NULL;
+		if(attacker)
+			attackerPlayer = attacker->getPlayer();
+
+		Player* targetPlayer = target->getPlayer();
+		if(g_config.getBoolean(ConfigManager::CANNOT_ATTACK_SAME_LOOKFEET) && attackerPlayer && targetPlayer && attacker->defaultOutfit.lookFeet == target->defaultOutfit.lookFeet)
 			return false;
 
 		int32_t manaLoss = std::min(target->getMana(), -manaChange);
@@ -4113,9 +4233,44 @@ bool Game::combatChangeMana(Creature* attacker, Creature* target, int32_t manaCh
 		if(manaLoss > 0)
 		{
 			target->drainMana(attacker, manaLoss);
-			char buffer[20];
-			sprintf(buffer, "%d", manaLoss);
-			addAnimatedText(list, targetPos, TEXTCOLOR_BLUE, buffer);
+
+			std::stringstream ss;
+			if(!attacker)
+				ss << ucfirst(target->getNameDescription()) << " loses " << manaLoss << " mana.";
+			else if(attackerPlayer == targetPlayer)
+				ss << ucfirst(target->getNameDescription()) << " loses " << manaLoss << " mana blocking an attack by " << (targetPlayer->getSex() == PLAYERSEX_FEMALE ? "herself." : "himself.");
+			else
+				ss << ucfirst(target->getNameDescription()) << " loses " << manaLoss << " mana blocking an attack by " << attacker->getNameDescription() << ".";
+
+			std::string message = ss.str();
+
+			Player* tmpPlayer = NULL;
+			for(SpectatorVec::const_iterator it = list.begin(); it != list.end(); ++it)
+			{
+				if((tmpPlayer = (*it)->getPlayer()))
+				{
+					if(tmpPlayer == attackerPlayer && attackerPlayer != targetPlayer)
+					{
+						std::stringstream tmpSs;
+						tmpSs << ucfirst(target->getNameDescription()) << " loses " << manaLoss << " mana blocking your attack.";
+						tmpPlayer->sendDamageMessage(MSG_DAMAGE_DEALT, tmpSs.str(), targetPos, manaLoss, TEXTCOLOR_BLUE);
+					}
+					else if(tmpPlayer == targetPlayer)
+					{
+						std::stringstream tmpSs;
+						if(!attacker)
+							tmpSs << "You lose " << manaLoss << " mana.";
+						else if(targetPlayer == attackerPlayer)
+							tmpSs << "You lose " << manaLoss << " mana blocking an attack by yourself.";
+						else
+							tmpSs << "You lose " << manaLoss << " mana blocking an attack by " << attacker->getNameDescription() << ".";
+
+						tmpPlayer->sendDamageMessage(MSG_DAMAGE_RECEIVED, tmpSs.str(), targetPos, manaLoss, TEXTCOLOR_BLUE);
+					}
+					else
+						tmpPlayer->sendDamageMessage(MSG_DAMAGE_OTHERS, message, targetPos, manaLoss, TEXTCOLOR_BLUE);
+				}
+			}
 		}
 	}
 	return true;

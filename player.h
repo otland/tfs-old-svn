@@ -514,6 +514,15 @@ class Player : public Creature, public Cylinder
 		void sendSpellGroupCooldown(SpellGroup_t groupId, uint32_t time)
 			{if(client) client->sendSpellGroupCooldown(groupId, time);}
 
+		void sendDamageMessage(MessageClasses mclass, const std::string& message, const Position& pos,
+			uint32_t primaryDamage = 0, TextColor_t primaryColor = TEXTCOLOR_NONE,
+			uint32_t secondaryDamage = 0, TextColor_t secondaryColor = TEXTCOLOR_NONE)
+			{if(client) client->sendDamageMessage(mclass, message, pos, primaryDamage, primaryColor, secondaryDamage, secondaryColor);}
+		void sendHealMessage(MessageClasses mclass, const std::string& message, const Position& pos, uint32_t heal, TextColor_t color)
+			{if(client) client->sendHealMessage(mclass, message, pos, heal, color);}
+		void sendExperienceMessage(MessageClasses mclass, const std::string& message, const Position& pos, uint32_t exp, TextColor_t color)
+			{if(client) client->sendExperienceMessage(mclass, message, pos, exp, color);}
+
 		//container
 		void sendAddContainerItem(const Container* container, const Item* item);
 		void sendUpdateContainerItem(const Container* container, uint8_t slot, const Item* oldItem, const Item* newItem);

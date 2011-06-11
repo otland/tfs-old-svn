@@ -578,6 +578,9 @@ void Player::sendIcons() const
 		if(_tile->hasFlag(TILESTATE_PROTECTIONZONE))
 			icons |= ICON_PIGEON;
 
+		if(!getCondition(CONDITION_REGENERATION))
+			icons |= ICON_HUNGRY;
+
 		client->sendIcons(icons);
 	}
 }
@@ -1848,25 +1851,12 @@ void Player::drainHealth(Creature* attacker, CombatType_t combatType, int32_t da
 {
 	Creature::drainHealth(attacker, combatType, damage);
 	sendStats();
-	char buffer[150];
-	if(attacker)
-		sprintf(buffer, "You lose %d hitpoint%s due to an attack by %s.", damage, (damage != 1 ? "s" : ""), attacker->getNameDescription().c_str());
-	else
-		sprintf(buffer, "You lose %d hitpoint%s.", damage, (damage != 1 ? "s" : ""));
-
-	sendTextMessage(MSG_EVENT_DEFAULT, buffer);
 }
 
 void Player::drainMana(Creature* attacker, int32_t manaLoss)
 {
 	Creature::drainMana(attacker, manaLoss);
 	sendStats();
-	char buffer[150];
-	if(attacker)
-		sprintf(buffer, "You lose %d mana blocking an attack by %s.", manaLoss, attacker->getNameDescription().c_str());
-	else
-		sprintf(buffer, "You lose %d mana.", manaLoss);
-	sendTextMessage(MSG_EVENT_DEFAULT, buffer);
 }
 
 void Player::addManaSpent(uint64_t amount, bool withMultiplier /*= true*/)
@@ -3698,10 +3688,6 @@ void Player::onAttackedCreatureDrainHealth(Creature* target, int32_t points)
 				getParty()->addPlayerDamageMonster(this, points);
 			}
 		}
-
-		std::stringstream ss;
-		ss << "You deal " << points << " damage to " << target->getNameDescription() << ".";
-		sendTextMessage(MSG_EVENT_DEFAULT, ss.str());
 	}
 }
 

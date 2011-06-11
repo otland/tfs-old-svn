@@ -82,19 +82,11 @@ bool passwordTest(const std::string &plain, std::string &hash)
 	switch(g_config.getNumber(ConfigManager::PASSWORD_TYPE))
 	{
 		case PASSWORD_TYPE_MD5:
-#if defined(__GNUC__) && __GNUC__ >= 3
-			std::transform(hash.begin(), hash.end(), hash.begin(), toupper);
-#else
 			std::transform(hash.begin(), hash.end(), hash.begin(), upchar);
-#endif
 			return transformToMD5(plain, true) == hash;
 
 		case PASSWORD_TYPE_SHA1:
-#if defined(__GNUC__) && __GNUC__ >= 3
-			std::transform(hash.begin(), hash.end(), hash.begin(), toupper);
-#else
 			std::transform(hash.begin(), hash.end(), hash.begin(), upchar);
-#endif
 			return transformToSHA1(plain, true) == hash;
 
 		default:
@@ -133,11 +125,7 @@ void toLowerCaseString(std::string& source)
 
 void toUpperCaseString(std::string& source)
 {
-#if defined(__GNUC__) && __GNUC__ >= 3
-	std::transform(source.begin(), source.end(), source.begin(), toupper);
-#else
 	std::transform(source.begin(), source.end(), source.begin(), upchar);
-#endif
 }
 
 std::string asLowerCaseString(const std::string& source)
@@ -365,16 +353,18 @@ int32_t random_range(int32_t lowest_number, int32_t highest_number, Distribution
 	}
 }
 
-#if !defined(__GNUC__) || __GNUC__ < 3
 // Upcase a char.
 char upchar(char c)
 {
+#if defined(__GNUC__) && __GNUC__ >= 3
+	return toupper(c);
+#else
 	if((c >= 97 && c <= 122) || (c <= -1 && c >= -32 ))
 		c -= 32;
 
 	return c;
-}
 #endif
+}
 
 bool isNumber(char character)
 {
@@ -1194,3 +1184,16 @@ inline std::string toString(_Tp __p)
 	return ss.str();
 }
 #endif
+
+std::string ucfirst(std::string str)
+{
+	for(uint32_t i = 0; i < str.length(); ++i)
+	{
+		if(str[i] != ' ')
+		{
+			str[i] = upchar(str[i]);
+			break;
+		}
+	}
+	return str;
+}
