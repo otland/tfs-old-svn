@@ -293,11 +293,11 @@ bool Npc::loadFromXml(const std::string& filename)
 					else
 						voice.margin = 0;
 
-					voice.type = SPEAK_SAY;
+					voice.type = MSG_SPEAK_SAY;
 					if(readXMLInteger(q, "type", intValue))
-						voice.type = (SpeakClasses)intValue;
+						voice.type = (MessageClasses)intValue;
 					else if(readXMLString(q, "yell", strValue) && booleanString(strValue))
-						voice.type = SPEAK_YELL;
+						voice.type = MSG_SPEAK_YELL;
 
 					if(readXMLString(q, "randomspectator", strValue) || readXMLString(q, "randomSpectator", strValue))
 						voice.randomSpectator = booleanString(strValue);
@@ -1105,7 +1105,7 @@ void Npc::onCreatureMove(const Creature* creature, const Tile* newTile, const Po
 	}
 }
 
-void Npc::onCreatureSay(const Creature* creature, SpeakClasses type, const std::string& text, Position* pos/* = NULL*/)
+void Npc::onCreatureSay(const Creature* creature, MessageClasses type, const std::string& text, Position* pos/* = NULL*/)
 {
 	if(m_npcEventHandler)
 		m_npcEventHandler->onCreatureSay(creature, type, text, pos);
@@ -1114,7 +1114,7 @@ void Npc::onCreatureSay(const Creature* creature, SpeakClasses type, const std::
 	if(!player)
 		return;
 
-	if(type == SPEAK_SAY || type == SPEAK_PRIVATE_PN)
+	if(type == MSG_SPEAK_SAY || type == MSG_NPC_TO)
 	{
 		Position destPos = creature->getPosition();
 		if(pos)
@@ -1689,9 +1689,9 @@ void Npc::executeResponse(Player* player, NpcState* npcState, const NpcResponse*
 			if(!responseString.empty())
 			{
 				if(!response->publicize())
-					doSay(responseString, SPEAK_PRIVATE_NP, player);
+					doSay(responseString, MSG_NPC_FROM, player);
 				else
-					doSay(responseString, SPEAK_SAY, NULL);
+					doSay(responseString, MSG_SPEAK_SAY, NULL);
 			}
 		}
 		else
@@ -1765,7 +1765,7 @@ void Npc::executeResponse(Player* player, NpcState* npcState, const NpcResponse*
 	}
 }
 
-void Npc::doSay(const std::string& text, SpeakClasses type, Player* player)
+void Npc::doSay(const std::string& text, MessageClasses type, Player* player)
 {
 	if(!player)
 	{
@@ -2475,9 +2475,9 @@ int32_t NpcScript::luaActionSay(lua_State* L)
 {
 	//selfSay(words[, target[, type]])
 	int32_t params = lua_gettop(L), target = 0;
-	SpeakClasses type = SPEAK_CLASS_NONE;
+	MessageClasses type = MSG_NONE;
 	if(params > 2)
-		type = (SpeakClasses)popNumber(L);
+		type = (MessageClasses)popNumber(L);
 
 	if(params > 1)
 		target = popNumber(L);
@@ -2488,15 +2488,15 @@ int32_t NpcScript::luaActionSay(lua_State* L)
 		return 0;
 
 	Player* player = env->getPlayerByUID(target);
-	if(type == SPEAK_CLASS_NONE)
+	if(type == MSG_NONE)
 	{
 		if(player)
-			type = SPEAK_PRIVATE_NP;
+			type = MSG_NPC_FROM;
 		else
-			type = SPEAK_SAY;
+			type = MSG_SPEAK_SAY;
 	}
 
-	npc->doSay(popString(L), (SpeakClasses)type, player);
+	npc->doSay(popString(L), (MessageClasses)type, player);
 	return 0;
 }
 
@@ -2707,7 +2707,7 @@ int32_t NpcScript::luaOpenShopWindow(lua_State* L)
 	npc->addShopPlayer(player);
 
 	player->setShopOwner(npc, buyCallback, sellCallback, itemList);
-	player->openShopWindow();
+	player->openShopWindow(npc);
 
 	lua_pushboolean(L, true);
 	return 1;
@@ -2858,7 +2858,7 @@ void NpcEvents::onCreatureMove(const Creature* creature, const Position& oldPos,
 		std::clog << "[Error - NpcEvents::onCreatureMove] NPC Name: " << m_npc->getName() << " - Call stack overflow" << std::endl;
 }
 
-void NpcEvents::onCreatureSay(const Creature* creature, SpeakClasses type, const std::string& text, Position* /*pos = NULL*/)
+void NpcEvents::onCreatureSay(const Creature* creature, MessageClasses type, const std::string& text, Position* /*pos = NULL*/)
 {
 	if(m_onCreatureSay == -1)
 		return;

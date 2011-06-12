@@ -316,7 +316,7 @@ void ProtocolManager::parsePacket(NetworkMessage& msg)
 		{
 			std::string name = msg.getString();
 			uint16_t channelId = msg.get<uint16_t>();
-			SpeakClasses type = (SpeakClasses)msg.get<char>();
+			MessageClasses type = (MessageClasses)msg.get<char>();
 			std::string message = msg.getString();
 
 			ChatChannel* channel = NULL;
@@ -392,7 +392,7 @@ void ProtocolManager::removeUser(uint32_t playerId)
 	msg->put<uint32_t>(playerId);
 }
 
-void ProtocolManager::talk(uint32_t playerId, uint16_t channelId, SpeakClasses type, const std::string& message)
+void ProtocolManager::talk(uint32_t playerId, uint16_t channelId, MessageClasses type, const std::string& message)
 {
 	NetworkMessage_ptr msg = getOutputBuffer();
 	if(!msg)
@@ -529,7 +529,7 @@ void Manager::removeUser(uint32_t playerId)
 	}
 }
 
-void Manager::talk(uint32_t playerId, uint16_t channelId, SpeakClasses type, const std::string& message)
+void Manager::talk(uint32_t playerId, uint16_t channelId, MessageClasses type, const std::string& message)
 {
 	if(m_clients.empty())
 		return;

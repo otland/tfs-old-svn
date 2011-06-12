@@ -431,14 +431,14 @@ class Game
 		  * \param spectators Send message only to creatures pointed in vector
 		  * \param pos Appear as sent from different position
 		  */
-		bool internalCreatureSay(Creature* creature, SpeakClasses type, const std::string& text,
+		bool internalCreatureSay(Creature* creature, MessageClasses type, const std::string& text,
 			bool ghostMode, SpectatorVec* spectators = NULL, Position* pos = NULL);
 
 		bool internalStartTrade(Player* player, Player* partner, Item* tradeItem);
 		bool internalCloseTrade(Player* player);
 
 		//Implementation of player invoked events
-		bool playerBroadcastMessage(Player* player, SpeakClasses type, const std::string& text);
+		bool playerBroadcastMessage(Player* player, MessageClasses type, const std::string& text);
 		bool playerReportBug(uint32_t playerId, std::string bug);
 		bool playerMoveThing(uint32_t playerId, const Position& fromPos, uint16_t spriteId,
 			int16_t fromStackpos, const Position& toPos, uint8_t count);
@@ -493,7 +493,7 @@ class Game
 		bool playerRequestRemoveVip(uint32_t playerId, uint32_t guid);
 		bool playerTurn(uint32_t playerId, Direction dir);
 		bool playerRequestOutfit(uint32_t playerId);
-		bool playerSay(uint32_t playerId, uint16_t channelId, SpeakClasses type,
+		bool playerSay(uint32_t playerId, uint16_t channelId, MessageClasses type,
 			const std::string& receiver, const std::string& text);
 		bool playerChangeOutfit(uint32_t playerId, Outfit_t outfit);
 		bool playerChangeMountStatus(uint32_t playerId, bool status);
@@ -586,8 +586,8 @@ class Game
 		void addCreatureSquare(const Creature* target, uint8_t squareColor);
 		void addCreatureSquare(const SpectatorVec& list, const Creature* target, uint8_t squareColor);
 
-		void addAnimatedText(const Position& pos, uint8_t textColor, const std::string& text);
-		void addAnimatedText(const SpectatorVec& list, const Position& pos, uint8_t textColor, const std::string& text);
+		void addTextMessage(const Position& pos, MessageClasses mclass, const std::string& text);
+		void addTextMessage(const SpectatorVec& pos, MessageClasses mclass, const std::string& text);
 		void addMagicEffect(const Position& pos, uint8_t effect, bool ghostMode = false);
 		void addMagicEffect(const SpectatorVec& list, const Position& pos, uint8_t effect, bool ghostMode = false);
 		void addDistanceEffect(const SpectatorVec& list, const Position& fromPos, const Position& toPos, uint8_t effect);
@@ -615,8 +615,8 @@ class Game
 	protected:
 		bool playerWhisper(Player* player, const std::string& text);
 		bool playerYell(Player* player, const std::string& text);
-		bool playerSpeakTo(Player* player, SpeakClasses type, const std::string& receiver, const std::string& text);
-		bool playerTalkToChannel(Player* player, SpeakClasses type, const std::string& text, uint16_t channelId);
+		bool playerSpeakTo(Player* player, MessageClasses type, const std::string& receiver, const std::string& text);
+		bool playerTalkToChannel(Player* player, MessageClasses type, const std::string& text, uint16_t channelId);
 		bool playerSpeakToNpc(Player* player, const std::string& text);
 
 		struct GameEvent

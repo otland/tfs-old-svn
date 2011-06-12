@@ -49,7 +49,7 @@ Creature::Creature()
 	lootDrop = LOOT_DROP_FULL;
 	skillLoss = true;
 	hideName = hideHealth = cannotMove = false;
-	speakType = SPEAK_CLASS_NONE;
+	speakType = MSG_NONE;
 	skull = SKULL_NONE;
 	partyShield = SHIELD_NONE;
 	guildEmblem = EMBLEM_NONE;
@@ -299,7 +299,7 @@ void Creature::onWalk(Direction& dir)
 			break;
 	}
 
-	g_game.internalCreatureSay(this, SPEAK_MONSTER_SAY, "Hicks!", isGhost());
+	g_game.internalCreatureSay(this, MSG_SPEAK_MONSTER_SAY, "Hicks!", isGhost());
 }
 
 bool Creature::getNextStep(Direction& dir, uint32_t&)
@@ -1314,7 +1314,7 @@ void Creature::onGainExperience(double& gainExp, Creature* target, bool multipli
 
 	std::stringstream ss;
 	ss << (uint64_t)gainExp;
-	g_game.addAnimatedText(getPosition(), (uint8_t)color, ss.str());
+	//g_game.addAnimatedText(getPosition(), (uint8_t)color, ss.str());
 }
 
 void Creature::onGainSharedExperience(double& gainExp, Creature* target, bool multiplied)
@@ -1336,7 +1336,7 @@ void Creature::onGainSharedExperience(double& gainExp, Creature* target, bool mu
 
 	std::stringstream ss;
 	ss << (uint64_t)gainExp;
-	g_game.addAnimatedText(getPosition(), (uint8_t)color, ss.str());
+	//g_game.addAnimatedText(getPosition(), (uint8_t)color, ss.str());
 }
 
 void Creature::addSummon(Creature* creature)

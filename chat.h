@@ -68,8 +68,8 @@ class ChatChannel
 		bool addUser(Player* player);
 		bool removeUser(Player* player);
 
-		bool talk(Player* player, SpeakClasses type, const std::string& text);
-		bool talk(std::string nick, SpeakClasses type, std::string text);
+		bool talk(Player* player, MessageClasses type, const std::string& text);
+		bool talk(std::string nick, MessageClasses type, std::string text);
 
 	protected:
 		uint16_t m_id, m_flags;
@@ -103,6 +103,8 @@ class PrivateChatChannel : public ChatChannel
 
 		void closeChannel();
 
+		const InviteList& getInvitedUsers() {return m_invites;}
+
 	protected:
 		InviteList m_invites;
 		uint32_t m_owner;
@@ -128,7 +130,7 @@ class Chat
 		bool removeUserFromChannel(Player* player, uint16_t channelId);
 		void removeUserFromAllChannels(Player* player);
 
-		bool talkToChannel(Player* player, SpeakClasses type, const std::string& text, uint16_t channelId);
+		bool talkToChannel(Player* player, MessageClasses type, const std::string& text, uint16_t channelId);
 
 		ChatChannel* getChannel(Player* player, uint16_t channelId);
 		ChatChannel* getChannelById(uint16_t channelId);

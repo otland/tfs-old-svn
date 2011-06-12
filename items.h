@@ -138,7 +138,8 @@ class ItemType
 		bool stopTime, showCount, stackable, showDuration, showCharges, showAttributes, dualWield,
 			allowDistRead, canReadText, canWriteText, forceSerialize, isVertical, isHorizontal, isHangable,
 			usable, movable, pickupable, rotable, replacable, lookThrough, walkStack, hasHeight, blockSolid,
-			blockPickupable, blockProjectile, blockPathFind, allowPickupable, alwaysOnTop, floorChange[CHANGE_LAST];
+			blockPickupable, blockProjectile, blockPathFind, allowPickupable, alwaysOnTop, floorChange[CHANGE_LAST],
+			isAnimation;
 
 		MagicEffect_t magicEffect;
 		FluidTypes_t fluidSource;

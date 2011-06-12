@@ -72,7 +72,7 @@ class NpcEvents
 		virtual void onCreatureDisappear(const Creature* creature);
 
 		virtual void onCreatureMove(const Creature* creature, const Position& oldPos, const Position& newPos);
-		virtual void onCreatureSay(const Creature* creature, SpeakClasses, const std::string& text, Position* pos = NULL);
+		virtual void onCreatureSay(const Creature* creature, MessageClasses, const std::string& text, Position* pos = NULL);
 
 		virtual void onPlayerTrade(const Player* player, int32_t callback, uint16_t itemid,
 			uint8_t count, uint8_t amount, bool ignore, bool inBackpacks);
@@ -333,7 +333,7 @@ struct NpcState
 struct Voice
 {
 	bool randomSpectator;
-	SpeakClasses type;
+	MessageClasses type;
 	uint32_t interval, margin;
 	std::string text;
 };
@@ -349,6 +349,7 @@ class Npc : public Creature
 
 		virtual Npc* getNpc() {return this;}
 		virtual const Npc* getNpc() const {return this;}
+		virtual const CreatureType_t getType() const {return CREATURETYPE_NPC;}
 
 		virtual uint32_t rangeId() {return NPC_ID_RANGE;}
 		static AutoList<Npc> autoList;
@@ -370,7 +371,7 @@ class Npc : public Creature
 		virtual const std::string& getName() const {return name;}
 		virtual const std::string& getNameDescription() const {return nameDescription;}
 
-		void doSay(const std::string& text, SpeakClasses type, Player* player);
+		void doSay(const std::string& text, MessageClasses type, Player* player);
 
 		void onPlayerTrade(Player* player, ShopEvent_t type, int32_t callback, uint16_t itemId, uint8_t count,
 			uint8_t amount, bool ignore = false, bool inBackpacks = false);
@@ -389,7 +390,7 @@ class Npc : public Creature
 		virtual void onCreatureDisappear(const Creature* creature, bool isLogout);
 		virtual void onCreatureMove(const Creature* creature, const Tile* newTile, const Position& newPos,
 			const Tile* oldTile, const Position& oldPos, bool teleport);
-		virtual void onCreatureSay(const Creature* creature, SpeakClasses type, const std::string& text, Position* pos = NULL);
+		virtual void onCreatureSay(const Creature* creature, MessageClasses type, const std::string& text, Position* pos = NULL);
 		virtual void onThink(uint32_t interval);
 
 		bool isImmune(CombatType_t) const {return true;}

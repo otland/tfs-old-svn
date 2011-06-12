@@ -516,6 +516,9 @@ void Player::sendIcons() const
 	if(pzLocked)
 		icons |= ICON_PZBLOCK;
 
+	if(!getCondition(CONDITION_REGENERATION, CONDITIONID_DEFAULT))
+		icons |= ICON_HUNGRY;
+
 	client->sendIcons(icons);
 }
 
@@ -1501,9 +1504,9 @@ void Player::onCreatureDisappear(const Creature* creature, bool isLogout)
 #endif
 }
 
-void Player::openShopWindow()
+void Player::openShopWindow(Npc* npc)
 {
-	sendShop();
+	sendShop(npc);
 	sendGoods();
 }
 
@@ -1775,7 +1778,7 @@ void Player::onThink(uint32_t interval)
 	}
 }
 
-bool Player::isMuted(uint16_t channelId, SpeakClasses type, uint32_t& time)
+bool Player::isMuted(uint16_t channelId, MessageClasses type, uint32_t& time)
 {
 	time = 0;
 	if(hasFlag(PlayerFlag_CannotBeMuted))
@@ -1789,7 +1792,7 @@ bool Player::isMuted(uint16_t channelId, SpeakClasses type, uint32_t& time)
 	}
 
 	time = (uint32_t)muteTicks / 1000;
-	return type != SPEAK_PRIVATE_PN && (type != SPEAK_CHANNEL_Y || (channelId != CHANNEL_GUILD && !g_chat.isPrivateChannel(channelId)));
+	return type != MSG_NPC_TO && (type != MSG_CHANNEL || (channelId != CHANNEL_GUILD && !g_chat.isPrivateChannel(channelId)));
 }
 
 void Player::addMessageBuffer()
@@ -5276,7 +5279,7 @@ bool Player::transferMoneyTo(const std::string& name, uint64_t amount)
 void Player::sendCritical() const
 {
 	if(g_config.getBool(ConfigManager::DISPLAY_CRITICAL_HIT))
-		g_game.addAnimatedText(getPosition(), COLOR_DARKRED, "CRITICAL!");
+		sendTextMessage(MSG_STATUS_CONSOLE_RED, "You strike a critical hit!");
 }
 
 void Player::setMounted(bool mounting)

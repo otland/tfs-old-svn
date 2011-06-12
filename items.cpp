@@ -40,7 +40,7 @@ ItemType::ItemType()
 	group = ITEM_GROUP_NONE;
 	type = ITEM_TYPE_NONE;
 	stackable = usable = alwaysOnTop = lookThrough = pickupable = rotable = hasHeight = forceSerialize = false;
-	blockSolid = blockProjectile = blockPathFind = allowPickupable = false;
+	blockSolid = blockProjectile = blockPathFind = allowPickupable = isAnimation = false;
 	movable = walkStack = true;
 	alwaysOnTopOrder = 0;
 	rotateTo = 0;
@@ -188,7 +188,7 @@ int32_t Items::loadFromOtb(std::string file)
 		std::clog << "[Error - Items::loadFromOtb] New version detected, an older version of items.otb is required." << std::endl;
 		return ERROR_INVALID_FORMAT;
 	}
-	else if(Items::dwMinorVersion != CLIENT_VERSION_871)
+	else if(Items::dwMinorVersion != CLIENT_VERSION_900)
 	{
 		std::clog << "[Error - Items::loadFromOtb] Another (client) version of items.otb is required." << std::endl;
 		return ERROR_INVALID_FORMAT;
@@ -254,6 +254,7 @@ int32_t Items::loadFromOtb(std::string file)
 		iType->rotable = hasBitSet(FLAG_ROTABLE, flags);
 		iType->canReadText = hasBitSet(FLAG_READABLE, flags);
 		iType->lookThrough = hasBitSet(FLAG_LOOKTHROUGH, flags);
+		iType->isAnimation = hasBitSet(FLAG_ANIMATION, flags);
 
 		attribute_t attr;
 		while(props.getType(attr))

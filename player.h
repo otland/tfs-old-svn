@@ -141,6 +141,7 @@ class Player : public Creature, public Cylinder
 
 		virtual Player* getPlayer() {return this;}
 		virtual const Player* getPlayer() const {return this;}
+		virtual const CreatureType_t getType() const {return CREATURETYPE_PLAYER;}
 
 		static MuteCountMap muteCountMap;
 
@@ -278,6 +279,7 @@ class Player : public Creature, public Cylinder
 		uint32_t getLevel() const {return level;}
 		uint64_t getExperience() const {return experience;}
 		uint32_t getMagicLevel() const {return getPlayerInfo(PLAYERINFO_MAGICLEVEL);}
+		uint32_t getBaseMagicLevel() const {return magLevel;}
 		uint64_t getSpentMana() const {return manaSpent;}
 
 		bool isPremium() const;
@@ -320,7 +322,7 @@ class Player : public Creature, public Cylinder
 		virtual int32_t getThrowRange() const {return 1;}
 		virtual double getGainedExperience(Creature* attacker) const;
 
-		bool isMuted(uint16_t channelId, SpeakClasses type, uint32_t& time);
+		bool isMuted(uint16_t channelId, MessageClasses type, uint32_t& time);
 		void addMessageBuffer();
 		void removeMessageBuffer();
 
@@ -339,6 +341,7 @@ class Player : public Creature, public Cylinder
 		bool isItemAbilityEnabled(slots_t slot) const {return inventoryAbilities[slot];}
 		void setItemAbility(slots_t slot, bool enabled) {inventoryAbilities[slot] = enabled;}
 
+		int32_t getBaseSkill(skills_t skill) const {return skills[skill][SKILL_LEVEL];}
 		int32_t getVarSkill(skills_t skill) const {return varSkills[skill];}
 		void setVarSkill(skills_t skill, int32_t modifier) {varSkills[skill] += modifier;}
 
@@ -410,7 +413,7 @@ class Player : public Creature, public Cylinder
 		virtual void onWalkAborted();
 		virtual void onWalkComplete();
 
-		void openShopWindow();
+		void openShopWindow(Npc* npc);
 		void closeShopWindow(bool send = true, Npc* npc = NULL, int32_t onBuy = -1, int32_t onSell = -1);
 		bool canShopItem(uint16_t itemId, uint8_t subType, ShopEvent_t event);
 
@@ -532,7 +535,7 @@ class Player : public Creature, public Cylinder
 		void sendUpdateTile(const Tile* tile, const Position& pos)
 			{if(client) client->sendUpdateTile(tile, pos);}
 
-		void sendChannelMessage(std::string author, std::string text, SpeakClasses type, uint8_t channel)
+		void sendChannelMessage(std::string author, std::string text, MessageClasses type, uint8_t channel)
 			{if(client) client->sendChannelMessage(author, text, type, channel);}
 		void sendCreatureAppear(const Creature* creature)
 			{if(client) client->sendAddCreature(creature, creature->getPosition(), creature->getTile()->getClientIndexOfThing(this, creature));}
@@ -544,7 +547,7 @@ class Player : public Creature, public Cylinder
 
 		void sendCreatureTurn(const Creature* creature)
 			{if(client) client->sendCreatureTurn(creature, creature->getTile()->getClientIndexOfThing(this, creature));}
-		void sendCreatureSay(const Creature* creature, SpeakClasses type, const std::string& text, Position* pos = NULL)
+		void sendCreatureSay(const Creature* creature, MessageClasses type, const std::string& text, Position* pos = NULL)
 			{if(client) client->sendCreatureSay(creature, type, text, pos);}
 		void sendCreatureSquare(const Creature* creature, uint8_t color)
 			{if(client) client->sendCreatureSquare(creature, color);}
@@ -632,8 +635,6 @@ class Player : public Creature, public Cylinder
 			Item* newItem, const ItemType& newType);
 		void onRemoveInventoryItem(slots_t slot, Item* item);
 
-		void sendAnimatedText(const Position& pos, uint8_t color, std::string text) const
-			{if(client) client->sendAnimatedText(pos,color,text);}
 		void sendCancel(const std::string& msg) const
 			{if(client) client->sendCancel(msg);}
 		void sendCancelMessage(ReturnValue message) const;
@@ -672,10 +673,10 @@ class Player : public Creature, public Cylinder
 			{if(client) client->sendReLoginWindow(pvpPercent);}
 		void sendTextWindow(Item* item, uint16_t maxLen, bool canWrite) const
 			{if(client) client->sendTextWindow(windowTextId, item, maxLen, canWrite);}
-		void sendToChannel(Creature* creature, SpeakClasses type, const std::string& text, uint16_t channelId) const
+		void sendToChannel(Creature* creature, MessageClasses type, const std::string& text, uint16_t channelId) const
 			{if(client) client->sendToChannel(creature, type, text, channelId); }
-		void sendShop() const
-			{if(client) client->sendShop(shopOffer);}
+		void sendShop(Npc* npc) const
+			{if(client) client->sendShop(npc, shopOffer);}
 		void sendGoods() const
 			{if(client) client->sendGoods(shopOffer);}
 		void sendCloseShop() const

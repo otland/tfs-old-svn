@@ -209,6 +209,9 @@ void NetworkMessage::putItem(uint16_t id, uint8_t count)
 		put<char>(count);
 	else if(it.isSplash() || it.isFluidContainer())
 		put<char>(fluidMap[count % 8]);
+
+	if(it.isAnimation)
+		put<char>(0xFE);
 }
 
 void NetworkMessage::putItem(const Item* item)
@@ -219,6 +222,9 @@ void NetworkMessage::putItem(const Item* item)
 		put<char>(item->getSubType());
 	else if(it.isSplash() || it.isFluidContainer())
 		put<char>(fluidMap[item->getSubType() % 8]);
+	
+	if(it.isAnimation)
+		put<char>(0xFE);
 }
 
 void NetworkMessage::putItemId(const Item* item)

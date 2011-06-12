@@ -29,6 +29,20 @@
 	#pragma warning(disable:4244)
 #endif
 
+enum ReportType_t
+{
+	REPORTTYPE_NAME = 0,
+	REPORTTYPE_STATEMENT = 1,
+	REPORTTYPE_BOT = 2
+};
+
+enum CreatureType_t
+{
+	CREATURETYPE_PLAYER = 0,
+	CREATURETYPE_MONSTER = 1,
+	CREATURETYPE_NPC = 2
+};
+
 enum DatabaseEngine_t
 {
 	DATABASE_ENGINE_NONE = 0,

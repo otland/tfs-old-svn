@@ -79,7 +79,7 @@ class Manager
 		void addUser(Player* player);
 		void removeUser(uint32_t playerId);
 
-		void talk(uint32_t playerId, uint16_t channelId, SpeakClasses type, const std::string& message);
+		void talk(uint32_t playerId, uint16_t channelId, MessageClasses type, const std::string& message);
 		void addUser(uint32_t playerId, uint16_t channelId);
 		void removeUser(uint32_t playerId, uint16_t channelId);
 
@@ -127,7 +127,7 @@ class ProtocolManager : public Protocol
 		void addUser(Player* player);
 		void removeUser(uint32_t playerId);
 
-		void talk(uint32_t playerId, uint16_t channelId, SpeakClasses type, const std::string& message);
+		void talk(uint32_t playerId, uint16_t channelId, MessageClasses type, const std::string& message);
 		void addUser(uint32_t playerId, uint16_t channelId);
 		void removeUser(uint32_t playerId, uint16_t channelId);
 

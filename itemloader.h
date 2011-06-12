@@ -71,7 +71,8 @@ enum clientVersion_t
 	CLIENT_VERSION_870 = 23,
 	CLIENT_VERSION_871 = 24,
 	CLIENT_VERSION_872 = 25,
-	CLIENT_VERSION_873 = 26
+	CLIENT_VERSION_873 = 26,
+	CLIENT_VERSION_900 = 27
 };
 
 enum rootattrib_
@@ -142,7 +143,8 @@ enum itemflags_t
 	FLAG_ALLOWDISTREAD = 1 << 20,
 	FLAG_UNUSED = 1 << 21,
 	FLAG_CLIENTCHARGES = 1 << 22, //deprecated
-	FLAG_LOOKTHROUGH = 1 << 23
+	FLAG_LOOKTHROUGH = 1 << 23,
+	FLAG_ANIMATION = 1 << 24
 };
 
 #pragma pack(1)

@@ -531,6 +531,10 @@ void ProtocolGame::parsePacket(NetworkMessage &msg)
 				parseSay(msg);
 				break;
 
+			case 0x1E:
+				parseReceivePing(msg);
+				break;
+
 			default:
 				sendCancelWalk();
 				break;
@@ -834,6 +838,8 @@ void ProtocolGame::GetTileDescription(const Tile* tile, NetworkMessage_ptr msg)
 	if(!tile)
 		return;
 
+	msg->put<uint16_t>(0x00); // Enviromental effects, flash only
+
 	int32_t count = 0;
 	if(tile->ground)
 	{
@@ -906,9 +912,9 @@ void ProtocolGame::GetFloorDescription(NetworkMessage_ptr msg, int32_t x, int32_
 		int32_t width, int32_t height, int32_t offset, int32_t& skip)
 {
 	Tile* tile = NULL;
-	for(int32_t nx = 0; nx < width; nx++)
+	for(int32_t nx = 0; nx < width; ++nx)
 	{
-		for(int32_t ny = 0; ny < height; ny++)
+		for(int32_t ny = 0; ny < height; ++ny)
 		{
 			if((tile = g_game.getTile(Position(x + nx + offset, y + ny + offset, z))))
 			{
@@ -921,15 +927,11 @@ void ProtocolGame::GetFloorDescription(NetworkMessage_ptr msg, int32_t x, int32_
 				skip = 0;
 				GetTileDescription(tile, msg);
 			}
-			else
+			else if(++skip == 0xFF)
 			{
-				++skip;
-				if(skip == 0xFF)
-				{
-					msg->put<char>(0xFF);
-					msg->put<char>(0xFF);
-					skip = -1;
-				}
+				msg->put<char>(0xFF);
+				msg->put<char>(0xFF);
+				skip = -1;
 			}
 		}
 	}
@@ -1252,19 +1254,18 @@ void ProtocolGame::parseSay(NetworkMessage& msg)
 	std::string receiver;
 	uint16_t channelId = 0;
 
-	SpeakClasses type = (SpeakClasses)msg.get<char>();
+	MessageClasses type = (MessageClasses)msg.get<char>();
 	switch(type)
 	{
-		case SPEAK_PRIVATE:
-		case SPEAK_PRIVATE_RED:
+		case MSG_PRIVATE_FROM:
+		case MSG_GAMEMASTER_PRIVATE_FROM:
 			receiver = msg.getString();
 			break;
 
-		case SPEAK_CHANNEL_RA:
-		case SPEAK_CHANNEL_RN:
-		case SPEAK_CHANNEL_Y:
-		case SPEAK_CHANNEL_W:
-		case SPEAK_CHANNEL_O:
+		case MSG_CHANNEL:
+		case MSG_CHANNEL_HIGHLIGHT:
+		case MSG_CHANNEL_GUILD:
+		case MSG_GAMEMASTER_CHANNEL:
 			channelId = msg.get<uint16_t>();
 			break;
 
@@ -1680,6 +1681,9 @@ void ProtocolGame::sendCreatePrivateChannel(uint16_t channelId, const std::strin
 		msg->put<char>(0xB2);
 		msg->put<uint16_t>(channelId);
 		msg->putString(channelName);
+		msg->put<uint16_t>(0x01);
+		msg->putString(player->getName());
+		msg->put<uint16_t>(0x00);
 	}
 }
 
@@ -1714,6 +1718,30 @@ void ProtocolGame::sendChannel(uint16_t channelId, const std::string& channelNam
 		msg->put<char>(0xAC);
 		msg->put<uint16_t>(channelId);
 		msg->putString(channelName);
+
+		if(ChatChannel* channel = g_chat.getChannelById(channelId))
+		{
+			const UsersMap& users = channel->getUsers();
+			msg->put<uint16_t>(users.size());
+			for(UsersMap::const_iterator itt = users.begin(); itt != users.end(); ++itt)
+				msg->putString(itt->second->getName());
+
+			PrivateChatChannel* privateChannel = dynamic_cast<PrivateChatChannel*>(channel);
+			if(privateChannel)
+			{
+				InviteList invitedUsers = privateChannel->getInvitedUsers();
+				msg->put<uint16_t>(invitedUsers.size());
+				for(InviteList::iterator it = invitedUsers.begin(); it != invitedUsers.end(); ++it)
+				{
+					if(Player* player = g_game.getPlayerByID(*it))
+						msg->putString(player->getName());
+				}
+			}
+			else
+				msg->put<uint16_t>(0x00);
+		}
+		else
+			msg->put<uint32_t>(0x00);
 	}
 }
 
@@ -1742,7 +1770,7 @@ void ProtocolGame::sendContainer(uint32_t cid, const Container* container, bool 
 		msg->put<char>(container->capacity());
 
 		msg->put<char>(hasParent ? 0x01 : 0x00);
-		msg->put<char>(std::min(container->size(), (uint32_t)255));
+		msg->put<char>(std::min(container->size(), 255U));
 
 		ItemList::const_iterator cit = container->getItems();
 		for(uint32_t i = 0; cit != container->getEnd() && i < 255; ++cit, ++i)
@@ -1750,14 +1778,15 @@ void ProtocolGame::sendContainer(uint32_t cid, const Container* container, bool 
 	}
 }
 
-void ProtocolGame::sendShop(const ShopInfoList& shop)
+void ProtocolGame::sendShop(Npc* npc, const ShopInfoList& shop)
 {
 	NetworkMessage_ptr msg = getOutputBuffer();
 	if(msg)
 	{
 		TRACK_MESSAGE(msg);
 		msg->put<char>(0x7A);
-		msg->put<char>(std::min(shop.size(), (size_t)255));
+		msg->putString(npc->getName());
+		msg->put<char>(std::min(shop.size(), 255U));
 
 		ShopInfoList::const_iterator it = shop.begin();
 		for(uint32_t i = 0; it != shop.end() && i < 255; ++it, ++i)
@@ -1905,13 +1934,13 @@ void ProtocolGame::sendCreatureTurn(const Creature* creature, int16_t stackpos)
 		msg->put<char>(0x6B);
 		msg->putPosition(creature->getPosition());
 		msg->put<char>(stackpos);
-		msg->put<uint16_t>(0x63); /*99*/
+		msg->put<uint16_t>(0x63);
 		msg->put<uint32_t>(creature->getID());
 		msg->put<char>(creature->getDirection());
 	}
 }
 
-void ProtocolGame::sendCreatureSay(const Creature* creature, SpeakClasses type, const std::string& text, Position* pos/* = NULL*/)
+void ProtocolGame::sendCreatureSay(const Creature* creature, MessageClasses type, const std::string& text, Position* pos/* = NULL*/)
 {
 	NetworkMessage_ptr msg = getOutputBuffer();
 	if(msg)
@@ -1921,7 +1950,7 @@ void ProtocolGame::sendCreatureSay(const Creature* creature, SpeakClasses type, 
 	}
 }
 
-void ProtocolGame::sendToChannel(const Creature* creature, SpeakClasses type, const std::string& text, uint16_t channelId)
+void ProtocolGame::sendToChannel(const Creature* creature, MessageClasses type, const std::string& text, uint16_t channelId)
 {
 	NetworkMessage_ptr msg = getOutputBuffer();
 	if(msg)
@@ -2021,19 +2050,6 @@ void ProtocolGame::sendMagicEffect(const Position& pos, uint8_t type)
 	{
 		TRACK_MESSAGE(msg);
 		AddMagicEffect(msg, pos, type);
-	}
-}
-
-void ProtocolGame::sendAnimatedText(const Position& pos, uint8_t color, std::string text)
-{
-	if(!canSee(pos))
-		return;
-
-	NetworkMessage_ptr msg = getOutputBuffer();
-	if(msg)
-	{
-		TRACK_MESSAGE(msg);
-		AddAnimatedText(msg, pos, color, text);
 	}
 }
 
@@ -2610,23 +2626,43 @@ void ProtocolGame::AddMapDescription(NetworkMessage_ptr msg, const Position& pos
 	GetMapDescription(pos.x - 8, pos.y - 6, pos.z, 18, 14, msg);
 }
 
-void ProtocolGame::AddTextMessage(NetworkMessage_ptr msg, MessageClasses mclass, const std::string& message)
+void ProtocolGame::AddTextMessage(NetworkMessage_ptr msg, MessageClasses mclass, const std::string& message,
+	Position* pos/* = NULL*/)
 {
+	if(!pos)
+		pos = &player->getPosition();
+
 	msg->put<char>(0xB4);
 	msg->put<char>(mclass);
+	switch(mclass)
+	{
+		case MSG_DAMAGE_DEALT:
+		case MSG_DAMAGE_RECEIVED:
+		{
+			msg->putPosition(*pos);
+			msg->put<uint32_t>(0x00);
+			msg->put<char>(0x00);
+			msg->put<uint32_t>(0x00);
+			msg->put<char>(0x00);
+			break;
+		}
+
+		case MSG_EXPERIENCE:
+		case MSG_HEALED:
+		{
+			msg->putPosition(*pos);
+			msg->put<uint32_t>(0x00);
+			msg->put<char>(0x00);
+			break;
+		}
+
+		default: break;
+	}
+
 	msg->putString(message);
 }
 
-void ProtocolGame::AddAnimatedText(NetworkMessage_ptr msg, const Position& pos,
-	uint8_t color, const std::string& text)
-{
-	msg->put<char>(0x84);
-	msg->putPosition(pos);
-	msg->put<char>(color);
-	msg->putString(text);
-}
-
-void ProtocolGame::AddMagicEffect(NetworkMessage_ptr msg,const Position& pos, uint8_t type)
+void ProtocolGame::AddMagicEffect(NetworkMessage_ptr msg, const Position& pos, uint8_t type)
 {
 	msg->put<char>(0x83);
 	msg->putPosition(pos);
@@ -2649,6 +2685,7 @@ void ProtocolGame::AddCreature(NetworkMessage_ptr msg, const Creature* creature,
 		msg->put<uint16_t>(0x61);
 		msg->put<uint32_t>(remove);
 		msg->put<uint32_t>(creature->getID());
+		msg->put<char>(creature->getType());
 		msg->putString(creature->getHideName() ? "" : creature->getName());
 	}
 	else
@@ -2692,37 +2729,35 @@ void ProtocolGame::AddPlayerStats(NetworkMessage_ptr msg)
 	msg->put<uint16_t>(player->getHealth());
 	msg->put<uint16_t>(player->getPlayerInfo(PLAYERINFO_MAXHEALTH));
 	msg->put<uint32_t>(uint32_t(player->getFreeCapacity() * 100));
+	msg->put<uint32_t>(player->getCapacity());
 	msg->put<uint64_t>(player->getExperience());
 	msg->put<uint16_t>(player->getPlayerInfo(PLAYERINFO_LEVEL));
 	msg->put<char>(player->getPlayerInfo(PLAYERINFO_LEVELPERCENT));
 	msg->put<uint16_t>(player->getPlayerInfo(PLAYERINFO_MANA));
 	msg->put<uint16_t>(player->getPlayerInfo(PLAYERINFO_MAXMANA));
-	msg->put<char>(player->getPlayerInfo(PLAYERINFO_MAGICLEVEL));
+	msg->put<char>(player->getMagicLevel());
+	msg->put<char>(player->getBaseMagicLevel());
 	msg->put<char>(player->getPlayerInfo(PLAYERINFO_MAGICLEVELPERCENT));
 	msg->put<char>(player->getPlayerInfo(PLAYERINFO_SOUL));
 	msg->put<uint16_t>(player->getStaminaMinutes());
+	msg->put<uint16_t>(player->getSpeed());
+
+	Condition* condition = player->getCondition(CONDITION_REGENERATION, CONDITIONID_DEFAULT);
+	msg->put<uint16_t>(condition ? condition->getTicks() / 1000 : 0x00);
 }
 
 void ProtocolGame::AddPlayerSkills(NetworkMessage_ptr msg)
 {
 	msg->put<char>(0xA1);
-	msg->put<char>(player->getSkill(SKILL_FIST, SKILL_LEVEL));
-	msg->put<char>(player->getSkill(SKILL_FIST, SKILL_PERCENT));
-	msg->put<char>(player->getSkill(SKILL_CLUB, SKILL_LEVEL));
-	msg->put<char>(player->getSkill(SKILL_CLUB, SKILL_PERCENT));
-	msg->put<char>(player->getSkill(SKILL_SWORD, SKILL_LEVEL));
-	msg->put<char>(player->getSkill(SKILL_SWORD, SKILL_PERCENT));
-	msg->put<char>(player->getSkill(SKILL_AXE, SKILL_LEVEL));
-	msg->put<char>(player->getSkill(SKILL_AXE, SKILL_PERCENT));
-	msg->put<char>(player->getSkill(SKILL_DIST, SKILL_LEVEL));
-	msg->put<char>(player->getSkill(SKILL_DIST, SKILL_PERCENT));
-	msg->put<char>(player->getSkill(SKILL_SHIELD, SKILL_LEVEL));
-	msg->put<char>(player->getSkill(SKILL_SHIELD, SKILL_PERCENT));
-	msg->put<char>(player->getSkill(SKILL_FISH, SKILL_LEVEL));
-	msg->put<char>(player->getSkill(SKILL_FISH, SKILL_PERCENT));
+	for(uint8_t i = 0; i <= SKILL_LAST; ++i)
+	{
+		msg->put<char>(player->getSkill((skills_t)i, SKILL_LEVEL));
+		msg->put<char>(player->getBaseSkill((skills_t)i));
+		msg->put<char>(player->getSkill((skills_t)i, SKILL_PERCENT));
+	}
 }
 
-void ProtocolGame::AddCreatureSpeak(NetworkMessage_ptr msg, const Creature* creature, SpeakClasses type,
+void ProtocolGame::AddCreatureSpeak(NetworkMessage_ptr msg, const Creature* creature, MessageClasses type,
 	std::string text, uint16_t channelId, Position* pos/* = NULL*/)
 {
 	msg->put<char>(0xAA);
@@ -2737,10 +2772,10 @@ void ProtocolGame::AddCreatureSpeak(NetworkMessage_ptr msg, const Creature* crea
 		else
 			msg->put<uint32_t>(0x00);
 
-		if(creature->getSpeakType() != SPEAK_CLASS_NONE)
+		if(creature->getSpeakType() != MSG_NONE)
 			type = creature->getSpeakType();
 
-		if(type == SPEAK_CHANNEL_RA)
+		if(type == MSG_GAMEMASTER_CHANNEL)
 			msg->putString("");
 		else
 			msg->putString(!creature->getHideName() ? creature->getName() : "");
@@ -2757,18 +2792,19 @@ void ProtocolGame::AddCreatureSpeak(NetworkMessage_ptr msg, const Creature* crea
 		msg->put<uint16_t>(0x00);
 	}
 
-	if(type == SPEAK_CHANNEL_RA)
-		type = SPEAK_CHANNEL_RN;
+	if(type == MSG_GAMEMASTER_CHANNEL)
+		type = MSG_GAMEMASTER_PRIVATE_FROM;
 
 	msg->put<char>(type);
 	switch(type)
 	{
-		case SPEAK_SAY:
-		case SPEAK_WHISPER:
-		case SPEAK_YELL:
-		case SPEAK_MONSTER_SAY:
-		case SPEAK_MONSTER_YELL:
-		case SPEAK_PRIVATE_NP:
+		case MSG_SPEAK_SAY:
+		case MSG_SPEAK_WHISPER:
+		case MSG_SPEAK_YELL:
+		case MSG_SPEAK_MONSTER_SAY:
+		case MSG_SPEAK_MONSTER_YELL:
+		case MSG_SPEAK_SPELL:
+		case MSG_NPC_FROM:
 		{
 			if(pos)
 				msg->putPosition(*pos);
@@ -2780,11 +2816,9 @@ void ProtocolGame::AddCreatureSpeak(NetworkMessage_ptr msg, const Creature* crea
 			break;
 		}
 
-		case SPEAK_CHANNEL_Y:
-		case SPEAK_CHANNEL_RA:
-		case SPEAK_CHANNEL_RN:
-		case SPEAK_CHANNEL_O:
-		case SPEAK_CHANNEL_W:
+		case MSG_CHANNEL:
+		case MSG_CHANNEL_HIGHLIGHT:
+		case MSG_GAMEMASTER_CHANNEL:
 			msg->put<uint16_t>(channelId);
 			break;
 
@@ -3042,7 +3076,7 @@ void ProtocolGame::RemoveContainerItem(NetworkMessage_ptr msg, uint8_t cid, uint
 	msg->put<char>(slot);
 }
 
-void ProtocolGame::sendChannelMessage(std::string author, std::string text, SpeakClasses type, uint8_t channel)
+void ProtocolGame::sendChannelMessage(std::string author, std::string text, MessageClasses type, uint8_t channel)
 {
 	NetworkMessage_ptr msg = getOutputBuffer();
 	if(msg)
