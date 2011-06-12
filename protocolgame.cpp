@@ -838,8 +838,7 @@ void ProtocolGame::GetTileDescription(const Tile* tile, NetworkMessage_ptr msg)
 	if(!tile)
 		return;
 
-	msg->put<uint16_t>(0x00); // Enviromental effects, flash only
-
+	msg->put<uint16_t>(0x00); // enviromental effects, flash only
 	int32_t count = 0;
 	if(tile->ground)
 	{
@@ -1681,6 +1680,7 @@ void ProtocolGame::sendCreatePrivateChannel(uint16_t channelId, const std::strin
 		msg->put<char>(0xB2);
 		msg->put<uint16_t>(channelId);
 		msg->putString(channelName);
+
 		msg->put<uint16_t>(0x01);
 		msg->putString(player->getName());
 		msg->put<uint16_t>(0x00);
@@ -1694,6 +1694,7 @@ void ProtocolGame::sendChannelsDialog()
 	{
 		TRACK_MESSAGE(msg);
 		msg->put<char>(0xAB);
+
 		ChannelList list = g_chat.getChannelList(player);
 		msg->put<char>(list.size());
 
@@ -1716,9 +1717,9 @@ void ProtocolGame::sendChannel(uint16_t channelId, const std::string& channelNam
 	{
 		TRACK_MESSAGE(msg);
 		msg->put<char>(0xAC);
+
 		msg->put<uint16_t>(channelId);
 		msg->putString(channelName);
-
 		if(ChatChannel* channel = g_chat.getChannelById(channelId))
 		{
 			const UsersMap& users = channel->getUsers();
@@ -1726,10 +1727,9 @@ void ProtocolGame::sendChannel(uint16_t channelId, const std::string& channelNam
 			for(UsersMap::const_iterator itt = users.begin(); itt != users.end(); ++itt)
 				msg->putString(itt->second->getName());
 
-			PrivateChatChannel* privateChannel = dynamic_cast<PrivateChatChannel*>(channel);
-			if(privateChannel)
+			if(PrivateChatChannel* privateChannel = dynamic_cast<PrivateChatChannel*>(channel))
 			{
-				InviteList invitedUsers = privateChannel->getInvitedUsers();
+				const InviteList& invitedUsers = privateChannel->getInvitedUsers();
 				msg->put<uint16_t>(invitedUsers.size());
 				for(InviteList::iterator it = invitedUsers.begin(); it != invitedUsers.end(); ++it)
 				{
@@ -2626,18 +2626,19 @@ void ProtocolGame::AddMapDescription(NetworkMessage_ptr msg, const Position& pos
 	GetMapDescription(pos.x - 8, pos.y - 6, pos.z, 18, 14, msg);
 }
 
-void ProtocolGame::AddTextMessage(NetworkMessage_ptr msg, MessageClasses mclass, const std::string& message,
+void ProtocolGame::AddTextMessage(NetworkMessage_ptr msg, MessageClasses mClass, const std::string& message,
 	Position* pos/* = NULL*/)
 {
 	if(!pos)
 		pos = &player->getPosition();
 
 	msg->put<char>(0xB4);
-	msg->put<char>(mclass);
-	switch(mclass)
+	msg->put<char>(mClass);
+	switch(mClass)
 	{
 		case MSG_DAMAGE_DEALT:
 		case MSG_DAMAGE_RECEIVED:
+		case MSG_DAMAGE_OTHERS:
 		{
 			msg->putPosition(*pos);
 			msg->put<uint32_t>(0x00);
@@ -2648,7 +2649,9 @@ void ProtocolGame::AddTextMessage(NetworkMessage_ptr msg, MessageClasses mclass,
 		}
 
 		case MSG_EXPERIENCE:
+		case MSG_EXPERIENCE_OTHERS:
 		case MSG_HEALED:
+		case MSG_HEALED_OTHERS:
 		{
 			msg->putPosition(*pos);
 			msg->put<uint32_t>(0x00);
@@ -2656,7 +2659,8 @@ void ProtocolGame::AddTextMessage(NetworkMessage_ptr msg, MessageClasses mclass,
 			break;
 		}
 
-		default: break;
+		default:
+			break;
 	}
 
 	msg->putString(message);
@@ -2729,7 +2733,7 @@ void ProtocolGame::AddPlayerStats(NetworkMessage_ptr msg)
 	msg->put<uint16_t>(player->getHealth());
 	msg->put<uint16_t>(player->getPlayerInfo(PLAYERINFO_MAXHEALTH));
 	msg->put<uint32_t>(uint32_t(player->getFreeCapacity() * 100));
-	msg->put<uint32_t>(player->getCapacity());
+	msg->put<uint32_t>(uint32_t(player->getCapacity() * 100));
 	msg->put<uint64_t>(player->getExperience());
 	msg->put<uint16_t>(player->getPlayerInfo(PLAYERINFO_LEVEL));
 	msg->put<char>(player->getPlayerInfo(PLAYERINFO_LEVELPERCENT));

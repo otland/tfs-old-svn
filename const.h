@@ -193,12 +193,20 @@ enum MessageClasses
 	MSG_DAMAGE_RECEIVED			= 0x16,
 	MSG_HEALED					= 0x17,
 	MSG_EXPERIENCE				= 0x18,
+	MSG_DAMAGE_OTHERS			= 0x19
+	MSG_HEALED_OTHERS			= 0x1A,
+	MSG_EXPERIENCE_OTHERS		= 0x1B
 	MSG_EVENT_DEFAULT			= 0x1C, /*White message at the bottom of the game window and in the console*/
 	MSG_LOOT					= 0x1D,
 	MSG_TRADE_NPC				= 0x1E,
 	MSG_CHANNEL_GUILD			= 0x1F, /*SPEAK_CHANNEL_W(?) guild messages.*/
+	MSG_PARTY_MANAGEMENT		= 0x20,
+	MSG_PARTY					= 0x21,
 	MSG_EVENT_ORANGE			= 0x22, /*Orange message in the console*/
-	MSG_STATUS_CONSOLE_ORANGE	= 0x23 /*Orange message in the console*/
+	MSG_STATUS_CONSOLE_ORANGE	= 0x23, /*Orange message in the console*/
+	MSG_REPORT 					= 0x24,
+	MSG_HOTKEY_USE				= 0x25,
+	MSG_TUTORIAL_HINT			= 0x26
 };
 
 enum MapMarks_t

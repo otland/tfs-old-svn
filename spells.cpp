@@ -587,10 +587,8 @@ bool Spell::configureSpell(xmlNodePtr p)
 			if(tmpVector.size() > 1)
 				exhaust = atoi(tmpVector[1].c_str());
 
-			if(!id || !exhaust)
-				continue;
-
-			groupExhaustions[(SpellGroup_t)id] = exhaust;
+			if(id && exhaust)
+				groupExhaustions[(SpellGroup_t)id] = exhaust;
 		}
 	}
 
