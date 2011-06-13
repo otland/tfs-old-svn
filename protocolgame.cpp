@@ -1256,8 +1256,8 @@ void ProtocolGame::parseSay(NetworkMessage& msg)
 	MessageClasses type = (MessageClasses)msg.get<char>();
 	switch(type)
 	{
-		case MSG_PRIVATE_FROM:
-		case MSG_GAMEMASTER_PRIVATE_FROM:
+		case MSG_PRIVATE_TO:
+		case MSG_GAMEMASTER_PRIVATE_TO:
 			receiver = msg.getString();
 			break;
 
@@ -2629,8 +2629,8 @@ void ProtocolGame::AddMapDescription(NetworkMessage_ptr msg, const Position& pos
 void ProtocolGame::AddTextMessage(NetworkMessage_ptr msg, MessageClasses mClass, const std::string& message,
 	Position* pos/* = NULL*/)
 {
-	if(!pos)
-		pos = &player->getPosition();
+	if(mClass == MSG_STATUS_CONSOLE_BLUE)
+		mClass = MSG_STATUS_CONSOLE_RED;
 
 	msg->put<char>(0xB4);
 	msg->put<char>(mClass);
@@ -2640,7 +2640,10 @@ void ProtocolGame::AddTextMessage(NetworkMessage_ptr msg, MessageClasses mClass,
 		case MSG_DAMAGE_RECEIVED:
 		case MSG_DAMAGE_OTHERS:
 		{
-			msg->putPosition(*pos);
+			if(pos)
+				msg->putPosition(*pos);
+			else
+				msg->putPosition(player->getPosition());
 			msg->put<uint32_t>(0x00);
 			msg->put<char>(0x00);
 			msg->put<uint32_t>(0x00);
@@ -2653,7 +2656,10 @@ void ProtocolGame::AddTextMessage(NetworkMessage_ptr msg, MessageClasses mClass,
 		case MSG_HEALED:
 		case MSG_HEALED_OTHERS:
 		{
-			msg->putPosition(*pos);
+			if(pos)
+				msg->putPosition(*pos);
+			else
+				msg->putPosition(player->getPosition());
 			msg->put<uint32_t>(0x00);
 			msg->put<char>(0x00);
 			break;
@@ -2795,9 +2801,6 @@ void ProtocolGame::AddCreatureSpeak(NetworkMessage_ptr msg, const Creature* crea
 		msg->putString("");
 		msg->put<uint16_t>(0x00);
 	}
-
-	if(type == MSG_GAMEMASTER_CHANNEL)
-		type = MSG_GAMEMASTER_PRIVATE_FROM;
 
 	msg->put<char>(type);
 	switch(type)

@@ -3773,6 +3773,7 @@ bool Game::playerSay(uint32_t playerId, uint16_t channelId, MessageClasses type,
 		case MSG_PRIVATE_TO:
 		case MSG_GAMEMASTER_PRIVATE_TO:
 			return playerSpeakTo(player, type, receiver, text);
+		case MSG_CHANNEL:
 		case MSG_GAMEMASTER_CHANNEL: // SPEAK_CHANNEL_O, SPEAK_CHANNEL_Y, SPEAK_CHANNEL_RN
 		case MSG_CHANNEL_GUILD: // SPEAK_CHANNEL_W
 		{
@@ -3907,6 +3908,7 @@ bool Game::playerTalkToChannel(Player* player, MessageClasses type, const std::s
 		default:
 			break;
 	}
+
 	if(text.length() < 251)
 		return g_chat.talkToChannel(player, type, text, channelId);
 
@@ -4611,22 +4613,6 @@ void Game::addCreatureSquare(const SpectatorVec& list, const Creature* target, u
 	{
 		if((player = (*it)->getPlayer()))
 			player->sendCreatureSquare(target, squareColor);
-	}
-}
-
-void Game::addTextMessage(const Position& pos, MessageClasses mclass, const std::string& text)
-{
-	const SpectatorVec& list = getSpectators(pos);
-	addTextMessage(list, mclass, text);
-}
-
-void Game::addTextMessage(const SpectatorVec& list, MessageClasses mclass, const std::string& text)
-{
-	Player* player = NULL;
-	for(SpectatorVec::const_iterator it = list.begin(); it != list.end(); ++it)
-	{
-		if((player = (*it)->getPlayer()))
-			player->sendTextMessage(mclass, text);
 	}
 }
 

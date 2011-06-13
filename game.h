@@ -586,8 +586,6 @@ class Game
 		void addCreatureSquare(const Creature* target, uint8_t squareColor);
 		void addCreatureSquare(const SpectatorVec& list, const Creature* target, uint8_t squareColor);
 
-		void addTextMessage(const Position& pos, MessageClasses mclass, const std::string& text);
-		void addTextMessage(const SpectatorVec& pos, MessageClasses mclass, const std::string& text);
 		void addMagicEffect(const Position& pos, uint8_t effect, bool ghostMode = false);
 		void addMagicEffect(const SpectatorVec& list, const Position& pos, uint8_t effect, bool ghostMode = false);
 		void addDistanceEffect(const SpectatorVec& list, const Position& fromPos, const Position& toPos, uint8_t effect);
