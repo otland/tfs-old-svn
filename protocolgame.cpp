@@ -1731,7 +1731,7 @@ void ProtocolGame::sendChannel(uint16_t channelId, const std::string& channelNam
 			{
 				const InviteList& invitedUsers = privateChannel->getInvitedUsers();
 				msg->put<uint16_t>(invitedUsers.size());
-				for(InviteList::iterator it = invitedUsers.begin(); it != invitedUsers.end(); ++it)
+				for(InviteList::const_iterator it = invitedUsers.begin(); it != invitedUsers.end(); ++it)
 				{
 					if(Player* player = g_game.getPlayerByID(*it))
 						msg->putString(player->getName());
