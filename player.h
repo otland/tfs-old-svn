@@ -570,8 +570,6 @@ class Player : public Creature, public Cylinder
 			Item* newItem, const ItemType& newType);
 		void onRemoveInventoryItem(slots_t slot, Item* item);
 
-		void sendAnimatedText(const Position& pos, unsigned char color, std::string text) const
-			{if(client) client->sendAnimatedText(pos,color,text);}
 		void sendCancel(const std::string& msg) const
 			{if(client) client->sendCancel(msg);}
 		void sendCancelMessage(ReturnValue message) const;

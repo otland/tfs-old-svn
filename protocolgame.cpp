@@ -793,7 +793,8 @@ void ProtocolGame::GetTileDescription(const Tile* tile, NetworkMessage_ptr msg)
 {
 	if(tile)
 	{
-		msg->AddU16(0x00);
+		msg->AddU16(0x00); //environmental effects
+
 		int32_t count = 0;
 		if(tile->ground)
 		{
@@ -2113,19 +2114,6 @@ void ProtocolGame::sendMagicEffect(const Position& pos, uint8_t type)
 	}
 }
 
-void ProtocolGame::sendAnimatedText(const Position& pos, uint8_t color, std::string text)
-{
-	if(canSee(pos))
-	{
-		NetworkMessage_ptr msg = getOutputBuffer();
-		if(msg)
-		{
-			TRACK_MESSAGE(msg);
-			AddAnimatedText(msg, pos, color, text);
-		}
-	}
-}
-
 void ProtocolGame::sendCreatureHealth(const Creature* creature)
 {
 	NetworkMessage_ptr msg = getOutputBuffer();
@@ -2733,23 +2721,6 @@ void ProtocolGame::AddTextMessage(NetworkMessage_ptr msg, MessageClasses mclass,
 	msg->AddByte(0xB4);
 	msg->AddByte(mclass);
 	msg->AddString(message);
-}
-
-void ProtocolGame::AddAnimatedText(NetworkMessage_ptr msg, const Position& pos,
-	uint8_t color, const std::string& text)
-{
-	/*
-	msg->AddByte(0x84);
-	msg->AddPosition(pos);
-	msg->AddByte(color);
-	msg->AddString(text);
-	*/
-	msg->AddByte(0xB4);
-	msg->AddByte(MSG_EXPERIENCE);
-	msg->AddPosition(pos);
-	msg->AddU32(atoi(text.c_str()));
-	msg->AddByte(color);
-	msg->AddString("");
 }
 
 void ProtocolGame::AddMagicEffect(NetworkMessage_ptr msg,const Position& pos, uint8_t type)

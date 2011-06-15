@@ -3154,20 +3154,12 @@ int32_t LuaScriptInterface::luaDoPlayerSendTextMessage(lua_State* L)
 int32_t LuaScriptInterface::luaDoSendAnimatedText(lua_State* L)
 {
 	//doSendAnimatedText(pos, text, color)
-	uint32_t color = popNumber(L);
-	std::string text = popString(L);
+	popNumber(L);
+	popString(L);
 	PositionEx pos;
 	popPosition(L, pos);
 
-	ScriptEnviroment* env = getScriptEnv();
-
-	SpectatorVec list;
-	SpectatorVec::iterator it;
-
-	if(pos.x == 0xFFFF)
-		pos = env->getRealPos();
-
-	g_game.addAnimatedText(pos, color, text);
+	reportErrorFunc("Deprecated function.");
 
 	lua_pushboolean(L, true);
 	return 1;

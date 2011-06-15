@@ -1921,9 +1921,27 @@ void Player::addExperience(uint64_t exp, bool useMult/* = false*/, bool sendText
 	experience += gainExp;
 	if(sendText)
 	{
-		std::stringstream strExp;
-		strExp << gainExp;
-		g_game.addAnimatedText(getPosition(), TEXTCOLOR_WHITE_EXP, strExp.str());
+		std::stringstream ssExp;
+		ssExp << getNameDescription() << " gained " << gainExp << " experience points.";
+		std::string strExp = ssExp.str();
+
+		const Position& targetPos = getPosition();
+		const SpectatorVec& list = g_game.getSpectators(targetPos);
+		Player* tmpPlayer = NULL;
+		for(SpectatorVec::const_iterator it = list.begin(); it != list.end(); ++it)
+		{
+			if((tmpPlayer = (*it)->getPlayer()))
+			{
+				if(tmpPlayer == this)
+				{
+					std::stringstream ss;
+					ss << "You gained " << gainExp << " experience points.";
+					sendExperienceMessage(MSG_EXPERIENCE, ss.str(), targetPos, gainExp, TEXTCOLOR_WHITE_EXP);
+				}
+				else
+					tmpPlayer->sendExperienceMessage(MSG_EXPERIENCE_OTHERS, strExp, targetPos, gainExp, TEXTCOLOR_WHITE_EXP);
+			}
+		}
 	}
 
 	while(experience >= nextLevelExp)

@@ -52,7 +52,8 @@ enum GuildLevel_t
 enum OperatingSystem_t
 {
 	CLIENTOS_LINUX = 0x01,
-	CLIENTOS_WINDOWS = 0x02
+	CLIENTOS_WINDOWS = 0x02,
+	CLIENTOS_FLASH = 0x03
 };
 
 enum SpellGroup_t

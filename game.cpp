@@ -4292,24 +4292,6 @@ void Game::addCreatureHealth(const SpectatorVec& list, const Creature* target)
 	}
 }
 
-void Game::addAnimatedText(const Position& pos, uint8_t textColor,
-	const std::string& text)
-{
-	const SpectatorVec& list = getSpectators(pos);
-	addAnimatedText(list, pos, textColor, text);
-}
-
-void Game::addAnimatedText(const SpectatorVec& list, const Position& pos, uint8_t textColor,
-	const std::string& text)
-{
-	Player* player = NULL;
-	for(SpectatorVec::const_iterator it = list.begin(); it != list.end(); ++it)
-	{
-		if((player = (*it)->getPlayer()))
-			player->sendAnimatedText(pos, textColor, text);
-	}
-}
-
 void Game::addMagicEffect(const Position& pos, uint8_t effect, bool ghostMode /* = false */)
 {
 	if(ghostMode)
