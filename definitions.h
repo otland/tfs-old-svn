@@ -27,6 +27,14 @@
 #endif
 #endif
 
+#if __GNUC__ > 3
+#define FUNCTION_INFO __PRETTY_FUNCTION__
+#elif _MSC_VER
+#define FUNCTION_INFO __FUNCTION__ /// \note I don't know the macro for MSVC
+#else
+#define FUNCTION_INFO
+#endif
+
 #ifdef _WIN32
 #include <io.h>
 #include <process.h>
