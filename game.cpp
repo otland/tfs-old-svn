@@ -4328,14 +4328,31 @@ bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creat
 		if(g_config.getBool(ConfigManager::SHOW_HEALING_DAMAGE) && !target->isGhost() &&
 			(g_config.getBool(ConfigManager::SHOW_HEALING_DAMAGE_MONSTER) || !target->getMonster()))
 		{
-			char buffer[20];
-			sprintf(buffer, "+%d", healthChange);
-
 			const SpectatorVec& list = getSpectators(targetPos);
 			if(combatType != COMBAT_HEALING)
 				addMagicEffect(list, targetPos, MAGIC_EFFECT_WRAPS_BLUE);
 
-			//addAnimatedText(list, targetPos, COLOR_GREEN, buffer);
+			/*SpectatorVec textList;
+			for(SpectatorVec::const_iterator it = list.begin(); it != list.end(); ++it)
+			{
+				if(!(*it)->getPlayer())
+					continue;
+
+				if((*it) != attacker && (*it) != target)
+					textList.push_back(*it);
+			}
+
+			if(textList.empty())
+				return true;
+
+			char buffer[20];
+			sprintf(buffer, "+%d", healthChange);
+			if(Player* player = attacker->getPlayer())
+				player->message...
+
+			addStatsMessage(textList, targetPos, COLOR_GREEN, buffer, MSG_HEALED_OTHERS);
+			if(Player* player = target->getPlayer())
+				player->message...*/
 		}
 	}
 	else
@@ -4368,11 +4385,29 @@ bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creat
 						return false;
 
 					target->drainMana(attacker, combatType, manaDamage);
+					addMagicEffect(list, targetPos, MAGIC_EFFECT_LOSE_ENERGY);
+
+					/*SpectatorVec textList;
+					for(SpectatorVec::const_iterator it = list.begin(); it != list.end(); ++it)
+					{
+						if(!(*it)->getPlayer())
+							continue;
+
+						if((*it) != attacker && (*it) != target)
+							textList.push_back(*it);
+					}
+
+					if(textList.empty())
+						return true;
+
 					char buffer[20];
 					sprintf(buffer, "%d", manaDamage);
+					if(Player* player = attacker->getPlayer())
+						player->message...
 
-					addMagicEffect(list, targetPos, MAGIC_EFFECT_LOSE_ENERGY);
-					//addAnimatedText(list, targetPos, COLOR_BLUE, buffer);
+					addStatsMessage(textList, targetPos, COLOR_BLUE, buffer, MSG_DAMAGE_OTHERS);
+					if(Player* player = target->getPlayer())
+						player->message...*/
 				}
 			}
 
@@ -4509,11 +4544,28 @@ bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creat
 
 				if(textColor < COLOR_NONE && magicEffect < MAGIC_EFFECT_NONE)
 				{
+					addMagicEffect(list, targetPos, magicEffect);
+					/*SpectatorVec textList;
+					for(SpectatorVec::const_iterator it = list.begin(); it != list.end(); ++it)
+					{
+						if(!(*it)->getPlayer())
+							continue;
+
+						if((*it) != attacker && (*it) != target)
+							textList.push_back(*it);
+					}
+
+					if(textList.empty())
+						return true;
+
 					char buffer[20];
 					sprintf(buffer, "%d", damage);
+					if(Player* player = attacker->getPlayer())
+						player->message...
 
-					addMagicEffect(list, targetPos, magicEffect);
-					//addAnimatedText(list, targetPos, textColor, buffer);
+					addStatsMessage(textList, targetPos, textColor, buffer, MSG_DAMAGE_OTHERS);
+					if(Player* player = target->getPlayer())
+						player->message...*/
 				}
 			}
 		}
@@ -4542,11 +4594,28 @@ bool Game::combatChangeMana(Creature* attacker, Creature* target, int32_t manaCh
 		if(g_config.getBool(ConfigManager::SHOW_HEALING_DAMAGE) && !target->isGhost() &&
 			(g_config.getBool(ConfigManager::SHOW_HEALING_DAMAGE_MONSTER) || !target->getMonster()))
 		{
+			const SpectatorVec& list = getSpectators(targetPos);
+			/*SpectatorVec textList;
+			for(SpectatorVec::const_iterator it = list.begin(); it != list.end(); ++it)
+			{
+				if(!(*it)->getPlayer())
+					continue;
+
+				if((*it) != attacker && (*it) != target)
+					textList.push_back(*it);
+			}
+
+			if(textList.empty())
+				return true;
+
 			char buffer[20];
 			sprintf(buffer, "+%d", manaChange);
+			if(Player* player = attacker->getPlayer())
+				player->message...
 
-			const SpectatorVec& list = getSpectators(targetPos);
-			//addAnimatedText(list, targetPos, COLOR_DARKPURPLE, buffer);
+			addStatsMessage(textList, targetPos, COLOR_DARKPURPLE, buffer, MSG_HEALED_OTHERS);
+			if(Player* player = target->getPlayer())
+				player->message...*/
 		}
 	}
 	else
@@ -4580,10 +4649,27 @@ bool Game::combatChangeMana(Creature* attacker, Creature* target, int32_t manaCh
 				return false;
 
 			target->drainMana(attacker, COMBAT_MANADRAIN, manaLoss);
+			/*SpectatorVec textList;
+			for(SpectatorVec::const_iterator it = list.begin(); it != list.end(); ++it)
+			{
+				if(!(*it)->getPlayer())
+					continue;
+
+				if((*it) != attacker && (*it) != target)
+					textList.push_back(*it);
+			}
+
+			if(textList.empty())
+				return true;
+
 			char buffer[20];
 			sprintf(buffer, "%d", manaLoss);
+			if(Player* player = attacker->getPlayer())
+				player->message...
 
-			//addAnimatedText(list, targetPos, COLOR_BLUE, buffer);
+			addStatsMessage(textList, targetPos, COLOR_DARKPURPLE, buffer, MSG_HEALED_OTHERS);
+			if(Player* player = target->getPlayer())
+				player->message...*/
 		}
 	}
 
