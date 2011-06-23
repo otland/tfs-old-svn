@@ -4397,17 +4397,20 @@ bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creat
 							textList.push_back(*it);
 					}
 
-					if(textList.empty())
-						return true;
+					MessageDetails* details = new MessageDetails(manaDamage, COLOR_BLUE);
+					if(!textList.empty())
+						addStatsMessage(textList, MSG_DAMAGE_OTHERS, "", targetPos, details);
 
-					char buffer[20];
-					sprintf(buffer, "%d", manaDamage);
+					
 					if(Player* player = attacker->getPlayer())
-						player->message...
+						player->sendStatsMessage(MSG_DAMAGE_DEALED, "", targetPos, details);
 
-					addStatsMessage(textList, targetPos, COLOR_BLUE, buffer, MSG_DAMAGE_OTHERS);
 					if(Player* player = target->getPlayer())
-						player->message...*/
+						player->sendStatsMessage(MSG_DAMAGE_RECEIVED, "", targetPos, details);
+
+					THIS IS THE BEST EXAMPLE I THOUGHT OF, BUT REQUIRES EXTRA WORK:
+						- we need to get elemental damage before sending stats change,
+						so it can be sent in sub*/
 				}
 			}
 

@@ -1960,6 +1960,16 @@ void ProtocolGame::sendToChannel(const Creature* creature, MessageClasses type, 
 	}
 }
 
+/*void ProtocolGame::sendStatsMessage(MessageClasses type, const std::string& message, Position pos, MessageDetails* details = NULL)
+{
+	NetworkMessage_ptr msg = getOutputBuffer();
+	if(msg)
+	{
+		TRACK_MESSAGE(msg);
+		AddTextMessage(msg, type, message, &pos, details);
+	}
+}*/
+
 void ProtocolGame::sendCancel(const std::string& message)
 {
 	NetworkMessage_ptr msg = getOutputBuffer();
@@ -2627,7 +2637,7 @@ void ProtocolGame::AddMapDescription(NetworkMessage_ptr msg, const Position& pos
 }
 
 void ProtocolGame::AddTextMessage(NetworkMessage_ptr msg, MessageClasses mClass, const std::string& message,
-	Position* pos/* = NULL*/)
+	Position* pos/* = NULL*//*, MessageDetails* details = NULL*/)
 {
 	if(mClass == MSG_STATUS_CONSOLE_BLUE)
 		mClass = MSG_STATUS_CONSOLE_RED;
@@ -2644,10 +2654,20 @@ void ProtocolGame::AddTextMessage(NetworkMessage_ptr msg, MessageClasses mClass,
 				msg->putPosition(*pos);
 			else
 				msg->putPosition(player->getPosition());
-			msg->put<uint32_t>(0x00);
-			msg->put<char>(0x00);
-			msg->put<uint32_t>(0x00);
-			msg->put<char>(0x00);
+
+			msg->put<uint32_t>(0x00/*details->value*/);
+			msg->put<char>(0x00/*details->color*/);
+			/*if(details->sub)
+			{
+				msg->put<uint32_t>(details->sub->value);
+				msg->put<char>(details->sub->color);
+			}
+			else
+			{*/
+				msg->put<uint32_t>(0x00);
+				msg->put<char>(0x00);
+			//}
+
 			break;
 		}
 
@@ -2660,8 +2680,9 @@ void ProtocolGame::AddTextMessage(NetworkMessage_ptr msg, MessageClasses mClass,
 				msg->putPosition(*pos);
 			else
 				msg->putPosition(player->getPosition());
-			msg->put<uint32_t>(0x00);
-			msg->put<char>(0x00);
+
+			msg->put<uint32_t>(0x00/*details->value*/);
+			msg->put<char>(0x00/*details->color*/);
 			break;
 		}
 
