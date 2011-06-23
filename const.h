@@ -208,6 +208,7 @@ enum MessageClasses
 	MSG_REPORT 					= 0x24,
 	MSG_HOTKEY_USE				= 0x25,
 	MSG_TUTORIAL_HINT			= 0x26,
+
 	MSG_STATUS_CONSOLE_BLUE		= 0xFF
 };
 

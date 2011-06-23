@@ -2408,6 +2408,12 @@ bool Game::playerAutoWalk(uint32_t playerId, std::list<Direction>& listDir)
 		return false;
 
 	player->setIdleTime(0);
+	if(player->getNoMove())
+	{
+		player->sendCancelWalk();
+		return false;
+	}
+
 	if(player->hasCondition(CONDITION_GAMEMASTER, GAMEMASTER_TELEPORT))
 	{
 		Position pos = player->getPosition();
