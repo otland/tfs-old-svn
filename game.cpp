@@ -4332,27 +4332,45 @@ bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creat
 			if(combatType != COMBAT_HEALING)
 				addMagicEffect(list, targetPos, MAGIC_EFFECT_WRAPS_BLUE);
 
-			/*SpectatorVec textList;
+			SpectatorVec textList;
 			for(SpectatorVec::const_iterator it = list.begin(); it != list.end(); ++it)
 			{
 				if(!(*it)->getPlayer())
 					continue;
 
-				if((*it) != attacker && (*it) != target)
+				if(*it != attacker && *it != target)
 					textList.push_back(*it);
 			}
 
-			if(textList.empty())
-				return true;
-
-			char buffer[20];
-			sprintf(buffer, "+%d", healthChange);
+			std::stringstream ss;
+			std::string plural = (healthChange != 1 ? "s." : ".");
+			MessageDetails* details = new MessageDetails(healthChange, COLOR_GREEN);
+			if(!textList.empty())
+			{
+				ss << attacker->getNameDescription() << " heals " << target->getNameDescription() << " for " << healthChange << " hitpoint" << plural;
+				addStatsMessage(textList, MSG_HEALED_OTHERS, ss.str(), targetPos, details);
+				ss.str("");
+			}
+			
 			if(Player* player = attacker->getPlayer())
-				player->message...
+			{
+				if(attacker != target)
+					ss << "You heal " << target->getNameDescription() << " for " << healthChange << " hitpoint" << plural;
+				else
+					ss << "You heal yourself for " << healthChange << " hitpoint" << plural;
 
-			addStatsMessage(textList, targetPos, COLOR_GREEN, buffer, MSG_HEALED_OTHERS);
-			if(Player* player = target->getPlayer())
-				player->message...*/
+				player->sendStatsMessage(MSG_HEALED, ss.str(), targetPos, details);
+				ss.str("");
+			}
+
+			Player* player = target->getPlayer();
+			if(player && attacker != target)
+			{
+				ss << attacker->getNameDescription() << " heals you for " << healthChange << " hitpoint" << plural;
+				player->sendStatsMessage(MSG_HEALED, ss.str(), targetPos, details);
+			}
+
+			delete details;
 		}
 	}
 	else
@@ -4387,30 +4405,43 @@ bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creat
 					target->drainMana(attacker, combatType, manaDamage);
 					addMagicEffect(list, targetPos, MAGIC_EFFECT_LOSE_ENERGY);
 
-					/*SpectatorVec textList;
+					SpectatorVec textList;
 					for(SpectatorVec::const_iterator it = list.begin(); it != list.end(); ++it)
 					{
 						if(!(*it)->getPlayer())
 							continue;
 
-						if((*it) != attacker && (*it) != target)
+						if(*it != attacker && *it != target)
 							textList.push_back(*it);
 					}
 
+					std::stringstream ss;
+					std::string plural = (manaDamage != 1 ? "s" : "");
 					MessageDetails* details = new MessageDetails(manaDamage, COLOR_BLUE);
 					if(!textList.empty())
-						addStatsMessage(textList, MSG_DAMAGE_OTHERS, "", targetPos, details);
-
+					{
+						ss << target->getNameDescription() << " loses " << manaDamage << " mana due to an attack by " << attacker->getNameDescription();
+						addStatsMessage(textList, MSG_DAMAGE_OTHERS, ss.str(), targetPos, details);
+						ss.str("");
+					}
 					
 					if(Player* player = attacker->getPlayer())
-						player->sendStatsMessage(MSG_DAMAGE_DEALED, "", targetPos, details);
+					{
+						ss << target->getNameDescription() << " loses " << manaDamage << " mana due to your attack.";
+						player->sendStatsMessage(MSG_DAMAGE_DEALT, ss.str(), targetPos, details);
+						ss.str("");
+					}
 
 					if(Player* player = target->getPlayer())
-						player->sendStatsMessage(MSG_DAMAGE_RECEIVED, "", targetPos, details);
+					{
+						ss << "You lose " << manaDamage << " mana due to an attack by " << attacker->getNameDescription();
+						player->sendStatsMessage(MSG_DAMAGE_RECEIVED, ss.str(), targetPos, details);
+					}
 
-					THIS IS THE BEST EXAMPLE I THOUGHT OF, BUT REQUIRES EXTRA WORK:
+					/*THIS IS THE BEST EXAMPLE I THOUGHT OF, BUT REQUIRES EXTRA WORK:
 						- we need to get elemental damage before sending stats change,
 						so it can be sent in sub*/
+					delete details;
 				}
 			}
 
@@ -4548,7 +4579,8 @@ bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creat
 				if(textColor < COLOR_NONE && magicEffect < MAGIC_EFFECT_NONE)
 				{
 					addMagicEffect(list, targetPos, magicEffect);
-					/*SpectatorVec textList;
+					
+					SpectatorVec textList;
 					for(SpectatorVec::const_iterator it = list.begin(); it != list.end(); ++it)
 					{
 						if(!(*it)->getPlayer())
@@ -4557,18 +4589,31 @@ bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creat
 						if((*it) != attacker && (*it) != target)
 							textList.push_back(*it);
 					}
-
-					if(textList.empty())
-						return true;
-
-					char buffer[20];
-					sprintf(buffer, "%d", damage);
+					
+					std::stringstream ss;
+					std::string plural = (damage != 1 ? "s" : "");
+					MessageDetails* details = new MessageDetails(damage, textColor);
+					if(!textList.empty())
+					{
+						ss << target->getNameDescription() << " loses " << damage << " hitpoint" << plural << " due to an attack by " << attacker->getNameDescription();
+						addStatsMessage(textList, MSG_DAMAGE_OTHERS, ss.str(), targetPos, details);
+						ss.str("");
+					}
+					
 					if(Player* player = attacker->getPlayer())
-						player->message...
+					{
+						ss << target->getNameDescription() << " loses " << damage << " hitpoint" << plural << " due to your attack.";
+						player->sendStatsMessage(MSG_DAMAGE_DEALT, ss.str(), targetPos, details);
+						ss.str("");
+					}
 
-					addStatsMessage(textList, targetPos, textColor, buffer, MSG_DAMAGE_OTHERS);
 					if(Player* player = target->getPlayer())
-						player->message...*/
+					{
+						ss << "You lose " << damage << " hitpoint" << plural << " due to an attack by " << attacker->getNameDescription();
+						player->sendStatsMessage(MSG_DAMAGE_RECEIVED, ss.str(), targetPos, details);
+					}
+
+					delete details;
 				}
 			}
 		}
@@ -4750,6 +4795,17 @@ void Game::addDistanceEffect(const SpectatorVec& list, const Position& fromPos,
 	{
 		if((player = (*it)->getPlayer()))
 			player->sendDistanceShoot(fromPos, toPos, effect);
+	}
+}
+
+void Game::addStatsMessage(const SpectatorVec& list, MessageClasses mClass, const std::string& message,
+	const Position& pos, MessageDetails* details/* = NULL*/)
+{
+	Player* player = NULL;
+	for(SpectatorVec::const_iterator it = list.begin(); it != list.end(); ++it)
+	{
+		if((player = (*it)->getPlayer()))
+			player->sendStatsMessage(mClass, message, pos, details);
 	}
 }
 

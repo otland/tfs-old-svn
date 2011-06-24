@@ -165,6 +165,7 @@ class ProtocolGame : public Protocol
 
 		//Send functions
 		void sendChannelMessage(std::string author, std::string text, MessageClasses type, uint8_t channel);
+		void sendChannelEvent(uint16_t channelId, const std::string& playerName, ChannelEvent_t channelEvent);
 		void sendClosePrivate(uint16_t channelId);
 		void sendCreatePrivateChannel(uint16_t channelId, const std::string& channelName);
 		void sendChannelsDialog();
@@ -189,6 +190,8 @@ class ProtocolGame : public Protocol
 		void sendCreatureOutfit(const Creature* creature, const Outfit_t& outfit);
 		void sendStats();
 		void sendTextMessage(MessageClasses mclass, const std::string& message);
+		void sendStatsMessage(MessageClasses mclass, const std::string& message,
+			Position pos, MessageDetails* details = NULL);
 		void sendReLoginWindow(uint8_t pvpPercent);
 
 		void sendTutorial(uint8_t tutorialId);
@@ -264,7 +267,7 @@ class ProtocolGame : public Protocol
 
 		void AddMapDescription(NetworkMessage_ptr msg, const Position& pos);
 		void AddTextMessage(NetworkMessage_ptr msg, MessageClasses mclass, const std::string& message,
-			Position* pos = NULL);
+			Position* pos = NULL, MessageDetails* details = NULL);
 		void AddMagicEffect(NetworkMessage_ptr msg, const Position& pos, uint8_t type);
 		void AddDistanceShoot(NetworkMessage_ptr msg, const Position& from, const Position& to, uint8_t type);
 		void AddCreature(NetworkMessage_ptr msg, const Creature* creature, bool known, uint32_t remove);

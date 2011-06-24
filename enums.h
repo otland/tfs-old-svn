@@ -29,6 +29,14 @@
 	#pragma warning(disable:4244)
 #endif
 
+enum ChannelEvent_t
+{
+	CHANNELEVENT_JOIN = 0,
+	CHANNELEVENT_LEAVE = 1,
+	CHANNELEVENT_INVITE = 2,
+	CHANNELEVENT_EXCLUDE = 3
+};
+
 enum ReportType_t
 {
 	REPORTTYPE_NAME = 0,
@@ -291,8 +299,8 @@ enum PlayerSex_t
 	// DO NOT ADD HERE! Every higher sex is only for your
 	// own use- each female should be even and male odd.
 };
-#ifdef __WAR_SYSTEM__
 
+#ifdef __WAR_SYSTEM__
 enum WarType_t
 {
 	WAR_FIRST = 0,

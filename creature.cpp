@@ -1312,9 +1312,32 @@ void Creature::onGainExperience(double& gainExp, Creature* target, bool multipli
 	if(color < 0)
 		color = random_range(0, 255);
 
+	const Position& targetPos = getPosition();
+	const SpectatorVec& list = g_game.getSpectators(targetPos);
+
 	std::stringstream ss;
-	ss << (uint64_t)gainExp;
-	//g_game.addAnimatedText(getPosition(), (uint8_t)color, ss.str());
+	ss << getNameDescription() << " gained " << (uint64_t)gainExp << " experience points.";
+
+	SpectatorVec textList;
+	for(SpectatorVec::const_iterator it = list.begin(); it != list.end(); ++it)
+	{
+		if(!(*it)->getPlayer())
+			continue;
+
+		if(*it != this)
+			textList.push_back(*it);
+	}
+
+	MessageDetails* details = new MessageDetails(gainExp, (Color_t)color);
+	g_game.addStatsMessage(textList, MSG_EXPERIENCE_OTHERS, ss.str(), targetPos, details);
+	if(Player* player = getPlayer())
+	{
+		ss.str("");
+		ss << "You gained " << (uint64_t)gainExp << " experience points.";
+		player->sendStatsMessage(MSG_EXPERIENCE, ss.str(), targetPos, details);
+	}
+
+	delete details;
 }
 
 void Creature::onGainSharedExperience(double& gainExp, Creature* target, bool multiplied)
@@ -1334,9 +1357,30 @@ void Creature::onGainSharedExperience(double& gainExp, Creature* target, bool mu
 	if(color < 0)
 		color = random_range(0, 255);
 
+	const Position& targetPos = getPosition();
+	const SpectatorVec& list = g_game.getSpectators(targetPos);
+
 	std::stringstream ss;
-	ss << (uint64_t)gainExp;
-	//g_game.addAnimatedText(getPosition(), (uint8_t)color, ss.str());
+	ss << getNameDescription() << " gained " << (uint64_t)gainExp << " experience points.";
+
+	SpectatorVec textList;
+	for(SpectatorVec::const_iterator it = list.begin(); it != list.end(); ++it)
+	{
+		if(!(*it)->getPlayer())
+			continue;
+
+		if(*it != this)
+			textList.push_back(*it);
+	}
+
+	MessageDetails* details = new MessageDetails(gainExp, (Color_t)color);
+	g_game.addStatsMessage(textList, MSG_EXPERIENCE_OTHERS, ss.str(), targetPos, details);
+	if(Player* player = getPlayer())
+	{
+		ss.str("");
+		ss << "You gained " << (uint64_t)gainExp << " experience points.";
+		player->sendStatsMessage(MSG_EXPERIENCE, ss.str(), targetPos, details);
+	}
 }
 
 void Creature::addSummon(Creature* creature)

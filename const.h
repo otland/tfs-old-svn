@@ -180,7 +180,7 @@ enum MessageClasses
 	MSG_SPEAK_MONSTER_YELL		= 0x23,
 
 	MSG_SPEAK_FIRST				= MSG_SPEAK_SAY,
-	MSG_SPEAK_LAST				= MSG_GAMEMASTER_PRIVATE_FROM,
+	MSG_SPEAK_LAST				= MSG_GAMEMASTER_PRIVATE_TO,
 	MSG_SPEAK_MONSTER_FIRST		= MSG_SPEAK_MONSTER_SAY,
 	MSG_SPEAK_MONSTER_LAST		= MSG_SPEAK_MONSTER_YELL,
 
@@ -209,7 +209,7 @@ enum MessageClasses
 	MSG_HOTKEY_USE				= 0x25,
 	MSG_TUTORIAL_HINT			= 0x26,
 
-	MSG_STATUS_CONSOLE_BLUE		= 0xFF
+	MSG_STATUS_CONSOLE_BLUE		= MSG_STATUS_CONSOLE_RED /*Blue messages are removed from the game*/
 };
 
 enum MapMarks_t
@@ -757,6 +757,16 @@ enum PlayerCustomFlags
 	PlayerCustomFlag_CanUseAllMounts,			//2^25 = 33554432
 
 	PlayerCustomFlag_LastFlag
+};
+
+struct MessageDetails
+{
+	int32_t value;
+	Color_t color;
+	MessageDetails* sub;
+
+	MessageDetails(int32_t value = 0, Color_t color = COLOR_WHITE):
+		value(value), color(color), sub(NULL) {}
 };
 
 //Reserved player storage key ranges

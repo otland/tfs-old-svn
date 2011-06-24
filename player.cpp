@@ -3833,13 +3833,6 @@ void Player::onTargetDrain(Creature* target, int32_t points)
 	if(party && target && (!target->getMaster() || !target->getMaster()->getPlayer())
 		&& target->getMonster() && target->getMonster()->isHostile()) //we have fulfilled a requirement for shared experience
 		party->addPlayerDamageMonster(this, points);
-
-	if(!points)
-		return;
-
-	char buffer[100];
-	sprintf(buffer, "You deal %d damage to %s.", points, target->getNameDescription().c_str());
-	sendTextMessage(MSG_STATUS_DEFAULT, buffer);
 }
 
 void Player::onSummonTargetDrain(Creature* summon, Creature* target, int32_t points)
@@ -3851,13 +3844,6 @@ void Player::onSummonTargetDrain(Creature* summon, Creature* target, int32_t poi
 	if(party && target && (!target->getMaster() || !target->getMaster()->getPlayer())
 		&& target->getMonster() && target->getMonster()->isHostile()) //we have fulfilled a requirement for shared experience
 		party->addPlayerDamageMonster(this, points);
-
-	if(!points)
-		return;
-
-	char buffer[100];
-	sprintf(buffer, "Your %s deals %d damage to %s.", summon->getName().c_str(), points, target->getNameDescription().c_str());
-	sendTextMessage(MSG_EVENT_DEFAULT, buffer);
 }
 
 void Player::onTargetGain(Creature* target, int32_t points)
@@ -3875,8 +3861,8 @@ void Player::onTargetGain(Creature* target, int32_t points)
 	if(isPartner(tmpPlayer))
 		party->addPlayerHealedMember(this, points);
 }
-#ifdef __WAR_SYSTEM__
 
+#ifdef __WAR_SYSTEM__
 GuildEmblems_t Player::getGuildEmblem(const Creature* creature) const
 {
 	const Player* player = creature->getPlayer();
@@ -3950,8 +3936,8 @@ bool Player::onKilledCreature(Creature* target, DeathEntry& entry)
 #endif
 		)
 		return true;
-#ifdef __WAR_SYSTEM__
 
+#ifdef __WAR_SYSTEM__
 	War_t enemy;
 	if(targetPlayer->getEnemy(this, enemy) && (!entry.isLast() || IOGuild::getInstance()->updateWar(enemy)))
 		entry.setWar(enemy);

@@ -591,6 +591,9 @@ class Game
 		void addDistanceEffect(const SpectatorVec& list, const Position& fromPos, const Position& toPos, uint8_t effect);
 		void addDistanceEffect(const Position& fromPos, const Position& toPos, uint8_t effect);
 
+		void addStatsMessage(const SpectatorVec& list, MessageClasses mClass, const std::string& message,
+			const Position& pos, MessageDetails* details = NULL);
+
 		bool loadExperienceStages();
 		double getExperienceStage(uint32_t level, double divider = 1.);
 
