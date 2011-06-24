@@ -698,3 +698,7 @@ function choose(...)
 	local arg = {...}
 	return arg[math.random(1, table.maxn(arg))]
 end
+
+function doSendAnimatedText(...)
+	error("doSendAnimatedText is now a deprecated function.")
+end
