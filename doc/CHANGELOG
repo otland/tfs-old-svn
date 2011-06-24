@@ -39,6 +39,7 @@
 	Fixed a bug when noDamageToSameLookfeet was enabled that caused no damage between monsters and players if they have the same lookfeet.
 	Fixed a bug with "think" global events, they were only being executed once.
 	Fixed a bug with account manager which would lead to disconnect after approximately a minute.
+	Account Managers will now be disconnected after 150 seconds idle time.
 	Revised NPC system and extended global.lua with more Lua functions (thanks to Cykotitan).
 	Lua function: doSendAnimatedText has been deprecated (protocol no longer supporting it).
 ]

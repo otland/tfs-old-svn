@@ -240,6 +240,7 @@ class Player : public Creature, public Cylinder
 		void resetIdleTime() {idleTime = 0;}
 		bool getNoMove() const {return mayNotMove;}
 
+		bool isAccountManagerEx() const {return accountManagerEx;}
 		bool isAccountManager() const {return accountManager;}
 
 		bool isInGhostMode() const {return ghostMode;}
@@ -478,6 +479,8 @@ class Player : public Creature, public Cylinder
 
 		void sendChannelMessage(std::string author, std::string text, SpeakClasses type, unsigned char channel)
 			{if(client) client->sendChannelMessage(author, text, type, channel);}
+		void sendChannelEvent(uint16_t channelId, const std::string& playerName, ChannelEvent_t channelEvent)
+			{if(client) client->sendChannelEvent(channelId, playerName, channelEvent);}
 		void sendCreatureAppear(const Creature* creature, const Position& pos, bool isLogin)
 			{if(client) client->sendAddCreature(creature, pos, creature->getTile()->getClientIndexOfThing(this, creature), isLogin);}
 		void sendCreatureDisappear(const Creature* creature, uint32_t stackpos, bool isLogout)
@@ -750,7 +753,7 @@ class Player : public Creature, public Cylinder
 		bool ghostMode;
 		bool depotChange;
 
-		bool talkState[13], accountManager;
+		bool talkState[13], accountManager, accountManagerEx;
 		int32_t newVocation;
 		PlayerSex_t _newSex;
 		uint32_t realAccount, newAccount;

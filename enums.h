@@ -23,6 +23,14 @@
 #include <string>
 #include <list>
 
+enum ChannelEvent_t
+{
+	CHANNELEVENT_JOIN = 0,
+	CHANNELEVENT_LEAVE = 1,
+	CHANNELEVENT_INVITE = 2,
+	CHANNELEVENT_EXCLUDE = 3
+};
+
 enum ReportType_t
 {
 	REPORTTYPE_NAME = 0,

@@ -76,6 +76,7 @@ Creature()
 	depotChange = false;
 	accountNumber = 0;
 	name = _name;
+	accountManagerEx = g_config.getBoolean(ConfigManager::ACCOUNT_MANAGER) && name == "Account Manager";
 	setVocation(0);
 	capacity = 400.00;
 	mana = 0;
@@ -1786,7 +1787,15 @@ void Player::onThink(uint32_t interval)
 		addMessageBuffer();
 	}
 
-	if(!getTile()->hasFlag(TILESTATE_NOLOGOUT) && !mayNotMove && !isAccessPlayer())
+	if(accountManagerEx)
+	{
+		idleTime += interval;
+		if(idleTime > 150000)
+			kickPlayer(true);
+		else if(client && idleTime == 120000)
+			client->sendTextMessage(MSG_STATUS_WARNING, "You have been idle for two minutes, you will be disconnected in 30 seconds if you are still idle then.");
+	}
+	else if(!getTile()->hasFlag(TILESTATE_NOLOGOUT) && !mayNotMove && !isAccessPlayer())
 	{
 		idleTime += interval;
 		if(idleTime > (g_config.getNumber(ConfigManager::KICK_AFTER_MINUTES) * 60000) + 60000)
@@ -4570,6 +4579,7 @@ void Player::manageAccount(const std::string &text)
 			msg << "Sorry, but I can't understand you, please try to repeat that.";
 	}
 	sendTextMessage(MSG_STATUS_CONSOLE_BLUE, msg.str().c_str());
+	resetIdleTime();
 }
 
 bool Player::isInvitedToGuild(uint32_t guild_id) const

@@ -258,7 +258,7 @@ bool Commands::exeCommand(Creature* creature, const std::string& cmd)
 	if(it == commandMap.end())
 		return false;
 
-	if(it->second->groupId > player->groupId || it->second->accountType > player->accountType || (g_config.getBoolean(ConfigManager::ACCOUNT_MANAGER) && player->name == "Account Manager"))
+	if(it->second->groupId > player->groupId || it->second->accountType > player->accountType || player->isAccountManagerEx())
 	{
 		if(player->accessLevel)
 			player->sendTextMessage(MSG_STATUS_SMALL, "You can not execute this command.");

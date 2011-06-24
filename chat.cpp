@@ -80,6 +80,14 @@ void PrivateChatChannel::invitePlayer(Player* player, Player* invitePlayer)
 		msg = invitePlayer->getName();
 		msg += " has been invited.";
 		player->sendTextMessage(MSG_INFO_DESCR, msg.c_str());
+
+		UsersMap::iterator cit;
+		for(cit = m_users.begin(); cit != m_users.end(); ++cit)
+		{
+			Player* tmpPlayer = cit->second->getPlayer();
+			if(tmpPlayer)
+				tmpPlayer->sendChannelEvent(m_id, invitePlayer->getName(), CHANNELEVENT_INVITE);
+		}
 	}
 }
 
@@ -94,6 +102,14 @@ void PrivateChatChannel::excludePlayer(Player* player, Player* excludePlayer)
 		player->sendTextMessage(MSG_INFO_DESCR, msg.c_str());
 
 		excludePlayer->sendClosePrivate(getId());
+
+		UsersMap::iterator cit;
+		for(cit = m_users.begin(); cit != m_users.end(); ++cit)
+		{
+			Player* tmpPlayer = cit->second->getPlayer();
+			if(tmpPlayer)
+				tmpPlayer->sendChannelEvent(m_id, excludePlayer->getName(), CHANNELEVENT_EXCLUDE);
+		}
 	}
 }
 
@@ -127,6 +143,17 @@ bool ChatChannel::addUser(Player* player)
 			&Game::sendGuildMotd, &g_game, playerId, guildId)));
 	}
 
+	if(m_id == CHANNEL_GUILD || m_id == CHANNEL_PARTY || m_id == CHANNEL_PRIVATE)
+	{
+		UsersMap::iterator cit;
+		for(cit = m_users.begin(); cit != m_users.end(); ++cit)
+		{
+			Player* tmpPlayer = cit->second->getPlayer();
+			if(tmpPlayer)
+				tmpPlayer->sendChannelEvent(m_id, player->getName(), CHANNELEVENT_JOIN);
+		}
+	}
+
 	m_users[player->getID()] = player;
 	return true;
 }
@@ -138,6 +165,17 @@ bool ChatChannel::removeUser(Player* player)
 		return false;
 
 	m_users.erase(it);
+
+	if(m_id == CHANNEL_GUILD || m_id == CHANNEL_PARTY || m_id == CHANNEL_PRIVATE)
+	{
+		UsersMap::iterator cit;
+		for(cit = m_users.begin(); cit != m_users.end(); ++cit)
+		{
+			Player* tmpPlayer = cit->second->getPlayer();
+			if(tmpPlayer)
+				tmpPlayer->sendChannelEvent(m_id, player->getName(), CHANNELEVENT_LEAVE);
+		}
+	}
 	return true;
 }
 

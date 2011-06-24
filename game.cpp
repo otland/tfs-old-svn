@@ -3294,8 +3294,8 @@ bool Game::playerSay(uint32_t playerId, uint16_t channelId, SpeakClasses type,
 		case SPEAK_YELL:
 			return playerYell(player, text);
 
-		case SPEAK_PRIVATE:
-		case SPEAK_PRIVATE_RED:
+		case SPEAK_PRIVATE_TO:
+		case SPEAK_PRIVATE_RED_TO:
 			return playerSpeakTo(player, type, receiver, text);
 
 		case SPEAK_CHANNEL_O:
@@ -3319,7 +3319,7 @@ bool Game::playerSay(uint32_t playerId, uint16_t channelId, SpeakClasses type,
 
 bool Game::playerSayCommand(Player* player, SpeakClasses type, const std::string& text)
 {
-	if(g_config.getBoolean(ConfigManager::ACCOUNT_MANAGER) && player->getName() == "Account Manager")
+	if(player->isAccountManagerEx())
 		return internalCreatureSay(player, SPEAK_SAY, text, false);
 
 	//First, check if this was a command
@@ -3336,7 +3336,7 @@ bool Game::playerSayCommand(Player* player, SpeakClasses type, const std::string
 
 bool Game::playerSaySpell(Player* player, SpeakClasses type, const std::string& text)
 {
-	if(g_config.getBoolean(ConfigManager::ACCOUNT_MANAGER) && player->getName() == "Account Manager")
+	if(player->isAccountManagerEx())
 		return internalCreatureSay(player, SPEAK_SAY, text, false);
 
 	std::string words = text;
@@ -3413,8 +3413,10 @@ bool Game::playerSpeakTo(Player* player, SpeakClasses type, const std::string& r
 		return false;
 	}
 
-	if(type == SPEAK_PRIVATE_RED && (!player->hasFlag(PlayerFlag_CanTalkRedPrivate) || player->getAccountType() < ACCOUNT_TYPE_GAMEMASTER))
-		type = SPEAK_PRIVATE;
+	if(type == SPEAK_PRIVATE_TO || (type == SPEAK_PRIVATE_RED_TO && (!player->hasFlag(PlayerFlag_CanTalkRedPrivate) || player->getAccountType() < ACCOUNT_TYPE_GAMEMASTER)))
+		type = SPEAK_PRIVATE_FROM;
+	else if(type == SPEAK_PRIVATE_RED_TO)
+		type = SPEAK_PRIVATE_RED_FROM;
 
 	toPlayer->sendCreatureSay(player, type, text);
 	toPlayer->onCreatureSay(player, type, text);
@@ -3574,7 +3576,7 @@ bool Game::internalCreatureSay(Creature* creature, SpeakClasses type, const std:
 	if(g_config.getBoolean(ConfigManager::ACCOUNT_MANAGER))
 	{
 		Player* player = creature->getPlayer();
-		if(player && player->getName() == "Account Manager")
+		if(player && player->isAccountManagerEx())
 		{
 			player->manageAccount(text);
 			return true;
@@ -5151,7 +5153,7 @@ bool Game::violationWindow(Player* player, std::string targetPlayerName, int32_t
 		playerExists = true;
 
 	toLowerCaseString(targetPlayerName);
-	if(!playerExists || targetPlayerName == "account manager")
+	if(!playerExists || (g_config.getBoolean(ConfigManager::ACCOUNT_MANAGER) && targetPlayerName == "account manager"))
 	{
 		player->sendCancel("A player with this name does not exist.");
 		return false;

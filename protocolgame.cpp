@@ -515,7 +515,7 @@ void ProtocolGame::parsePacket(NetworkMessage &msg)
 	if((player->isRemoved() || player->getHealth() <= 0) && recvbyte != 0x14)
 		return;
 
-	if(g_config.getBoolean(ConfigManager::ACCOUNT_MANAGER) && player->getName() == "Account Manager")
+	if(player->isAccountManagerEx())
 	{
 		switch(recvbyte)
 		{
@@ -523,7 +523,7 @@ void ProtocolGame::parsePacket(NetworkMessage &msg)
 				parseLogout(msg);
 				break;
 
-			case 0x1E: // keep alive / ping response
+			case 0x1E:
 				parseReceivePing(msg);
 				break;
 
@@ -1251,8 +1251,8 @@ void ProtocolGame::parseSay(NetworkMessage& msg)
 	uint16_t channelId = 0;
 	switch(type)
 	{
-		case SPEAK_PRIVATE:
-		case SPEAK_PRIVATE_RED:
+		case SPEAK_PRIVATE_TO:
+		case SPEAK_PRIVATE_RED_TO:
 			receiver = msg.GetString();
 			break;
 
@@ -1525,6 +1525,19 @@ void ProtocolGame::sendOpenPrivateChannel(const std::string& receiver)
 	}
 }
 
+void ProtocolGame::sendChannelEvent(uint16_t channelId, const std::string& playerName, ChannelEvent_t channelEvent)
+{
+	NetworkMessage_ptr msg = getOutputBuffer();
+	if(!msg)
+		return;
+
+	TRACK_MESSAGE(msg);
+	msg->AddByte(0xF3);
+	msg->AddU16(channelId);
+	msg->AddString(playerName);
+	msg->AddByte(channelEvent);
+}
+
 void ProtocolGame::sendCreatureOutfit(const Creature* creature, const Outfit_t& outfit)
 {
 	if(canSee(creature))
@@ -1746,24 +1759,32 @@ void ProtocolGame::sendChannel(uint16_t channelId, const std::string& channelNam
 		msg->AddU16(channelId);
 		msg->AddString(channelName);
 
-		ChatChannel* channel = g_chat.getChannelById(channelId);
-		if(channel)
+		if(channelId == CHANNEL_GUILD || channelId == CHANNEL_PARTY || channelId == CHANNEL_PRIVATE)
 		{
-			UsersMap channelUsers = channel->getUsers();
-			msg->AddU16(channelUsers.size());
-			for(UsersMap::iterator it = channelUsers.begin(); it != channelUsers.end(); ++it)
-				msg->AddString(it->second->getName());
-
-			PrivateChatChannel* privateChannel = dynamic_cast<PrivateChatChannel*>(channel);
-			if(privateChannel)
+			ChatChannel* channel = g_chat.getChannel(player, channelId);
+			if(channel)
 			{
-				InvitedMap invitedUsers = privateChannel->getInvitedUsers();
-				msg->AddU16(invitedUsers.size());
-				for(InvitedMap::iterator it = invitedUsers.begin(); it != invitedUsers.end(); ++it)
+				UsersMap channelUsers = channel->getUsers();
+				msg->AddU16(channelUsers.size());
+				for(UsersMap::iterator it = channelUsers.begin(); it != channelUsers.end(); ++it)
 					msg->AddString(it->second->getName());
+
+				PrivateChatChannel* privateChannel = dynamic_cast<PrivateChatChannel*>(channel);
+				if(privateChannel)
+				{
+					InvitedMap invitedUsers = privateChannel->getInvitedUsers();
+					msg->AddU16(invitedUsers.size());
+					for(InvitedMap::iterator it = invitedUsers.begin(); it != invitedUsers.end(); ++it)
+						msg->AddString(it->second->getName());
+				}
+				else
+					msg->AddU16(0x00);
 			}
 			else
+			{
 				msg->AddU16(0x00);
+				msg->AddU16(0x00);
+			}
 		}
 		else
 		{
@@ -2250,7 +2271,7 @@ void ProtocolGame::sendAddCreature(const Creature* creature, const Position& pos
 				if(isLogin)
 				{
 					std::string tempstring = g_config.getString(ConfigManager::LOGIN_MSG);
-					if(!(g_config.getBoolean(ConfigManager::ACCOUNT_MANAGER) && player->getName() == "Account Manager"))
+					if(!player->isAccountManagerEx())
 					{
 						if(!player->getLastLoginSaved() > 0)
 						{
@@ -2864,7 +2885,7 @@ void ProtocolGame::AddCreatureSpeak(NetworkMessage_ptr msg, const Creature* crea
 	//Add level only for players
 	if(const Player* speaker = creature->getPlayer())
 	{
-		if(g_config.getBoolean(ConfigManager::ACCOUNT_MANAGER) && speaker->getName() == "Account Manager")
+		if(speaker->isAccountManagerEx())
 			msg->AddU16(0x00);
 		else
 			msg->AddU16(speaker->getPlayerInfo(PLAYERINFO_LEVEL));
