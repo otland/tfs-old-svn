@@ -3413,10 +3413,10 @@ bool Game::playerSpeakTo(Player* player, SpeakClasses type, const std::string& r
 		return false;
 	}
 
-	if(type == SPEAK_PRIVATE_TO || (type == SPEAK_PRIVATE_RED_TO && (!player->hasFlag(PlayerFlag_CanTalkRedPrivate) || player->getAccountType() < ACCOUNT_TYPE_GAMEMASTER)))
-		type = SPEAK_PRIVATE_FROM;
-	else if(type == SPEAK_PRIVATE_RED_TO)
+	if(type == SPEAK_PRIVATE_RED_TO && (player->hasFlag(PlayerFlag_CanTalkRedPrivate) || player->getAccountType() < ACCOUNT_TYPE_GAMEMASTER))
 		type = SPEAK_PRIVATE_RED_FROM;
+	else
+		type = SPEAK_PRIVATE_FROM;
 
 	toPlayer->sendCreatureSay(player, type, text);
 	toPlayer->onCreatureSay(player, type, text);
