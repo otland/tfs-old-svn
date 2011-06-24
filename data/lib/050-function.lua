@@ -361,6 +361,7 @@ function doPlayerAddLevel(cid, amount, round)
 end
 
 function doPlayerAddMagLevel(cid, amount)
+	local amount = amount or 1
 	for i = 1, amount do
 		doPlayerAddSpentMana(cid, getPlayerRequiredMana(cid, getPlayerMagLevel(cid, true) + 1) - getPlayerSpentMana(cid), false)
 	end
