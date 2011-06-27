@@ -3869,8 +3869,10 @@ bool Game::playerSpeakTo(Player* player, MessageClasses type, const std::string&
 		return false;
 	}
 
-	if(type == MSG_GAMEMASTER_PRIVATE_TO && !player->hasFlag(PlayerFlag_CanTalkRedPrivate))
-		type = MSG_PRIVATE_TO;
+	if(type == MSG_GAMEMASTER_PRIVATE_TO && player->hasFlag(PlayerFlag_CanTalkRedPrivate))
+		type = MSG_GAMEMASTER_PRIVATE_FROM;
+	else
+		type = MSG_PRIVATE_FROM;
 
 	toPlayer->sendCreatureSay(player, type, text);
 	toPlayer->onCreatureSay(player, type, text);
