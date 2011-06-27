@@ -4600,7 +4600,6 @@ bool Game::combatChangeMana(Creature* attacker, Creature* target, int32_t manaCh
 	CombatType_t combatType/* = COMBAT_MANADRAIN*/, bool inherited/* = false*/)
 {
 	const Position& targetPos = target->getPosition();
-	const SpectatorVec& list = getSpectators(targetPos);
 	if(manaChange > 0)
 	{
 		bool deny = false;
@@ -4618,6 +4617,7 @@ bool Game::combatChangeMana(Creature* attacker, Creature* target, int32_t manaCh
 		if(g_config.getBool(ConfigManager::SHOW_HEALING_DAMAGE) && !target->isGhost() &&
 			(g_config.getBool(ConfigManager::SHOW_HEALING_DAMAGE_MONSTER) || !target->getMonster()))
 		{
+			const SpectatorVec& list = getSpectators(targetPos);
 			SpectatorVec textList;
 			for(SpectatorVec::const_iterator it = list.begin(); it != list.end(); ++it)
 			{
@@ -4670,6 +4670,7 @@ bool Game::combatChangeMana(Creature* attacker, Creature* target, int32_t manaCh
 	}
 	else if(!inherited && (!target->isAttackable() || Combat::canDoCombat(attacker, target) != RET_NOERROR))
 	{
+		const SpectatorVec& list = getSpectators(targetPos);
 		addMagicEffect(list, targetPos, MAGIC_EFFECT_POFF);
 		return false;
 	}
@@ -4690,6 +4691,7 @@ bool Game::combatChangeMana(Creature* attacker, Creature* target, int32_t manaCh
 				return false;
 
 			target->drainMana(attacker, combatType, manaLoss);
+			const SpectatorVec& list = getSpectators(targetPos);
 
 			SpectatorVec textList;
 			for(SpectatorVec::const_iterator it = list.begin(); it != list.end(); ++it)
