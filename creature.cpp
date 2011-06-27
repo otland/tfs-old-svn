@@ -840,7 +840,6 @@ void Creature::dropCorpse()
 	if(corpse)
 	{
 		g_game.internalAddItem(tile, corpse, INDEX_WHEREEVER, FLAG_NOLIMIT);
-		dropLoot(corpse->getContainer());
 		g_game.startDecay(corpse);
 	}
 
@@ -848,6 +847,9 @@ void Creature::dropCorpse()
 	CreatureEvent* eventDeath = getCreatureEvent(CREATURE_EVENT_DEATH);
 	if(eventDeath)
 		eventDeath->executeOnDeath(this, corpse, _lastHitCreature, _mostDamageCreature, lastHitUnjustified, mostDamageUnjustified);
+
+	if(corpse)
+		dropLoot(corpse->getContainer());
 
 	g_game.removeCreature(this, false);
 }
