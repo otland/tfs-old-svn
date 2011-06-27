@@ -997,7 +997,7 @@ void Spell::postSpell(Player* player) const
 		if(exhaustion > 0)
 		{
 			player->addCooldown(exhaustion, (useCooldowns ? spellId : isAggressive));
-			if(useCooldowns && icon)
+			if(useCooldowns && icon != SPELL_NONE)
 				player->sendSpellCooldown(icon, exhaustion);
 		}
 	}

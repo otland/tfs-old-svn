@@ -536,19 +536,11 @@ void Items::parseItemNode(xmlNodePtr itemNode, uint32_t id)
 	if(override)
 	{
 		// setup some defaults
-		for(uint32_t i = COMBAT_FIRST; i <= COMBAT_LAST; i++)
+		for(uint32_t i = COMBAT_FIRST; i <= COMBAT_LAST; ++i)
 		{
-			if(it.abilities.fieldAbsorb[i] != 0)
-				it.abilities.fieldAbsorb[i] = 0;
-
-			if(it.abilities.absorb[i] != 0)
-				it.abilities.absorb[i] = 0;
-
+			it.abilities.fieldAbsorb[i] = it.abilities.absorb[i] = 0;
 			for(uint32_t j = REFLECT_FIRST; j <= REFLECT_LAST; ++j)
-			{
-				if(it.abilities.reflect[j][i] != 0)
-					it.abilities.reflect[j][i] = 0;
-			}
+				it.abilities.reflect[j][i] = 0;
 		}
 	}
 
@@ -1205,8 +1197,8 @@ void Items::parseItemNode(xmlNodePtr itemNode, uint32_t id)
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue))
 			{
-				for(int32_t i = (-1), j = COMBAT_FIRST; j <= COMBAT_LAST; ++i, j = std::pow(2., i))
-					it.abilities.absorb[j] += intValue;
+				for(int32_t i = COMBAT_FIRST; i <= COMBAT_LAST; ++i)
+					it.abilities.absorb[i] += intValue;
 			}
 		}
 		else if(tmpStrValue == "absorbpercentelements")
@@ -1305,8 +1297,8 @@ void Items::parseItemNode(xmlNodePtr itemNode, uint32_t id)
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue))
 			{
-				for(int32_t i = (-1), j = COMBAT_FIRST; j <= COMBAT_LAST; ++i, j = std::pow(2., i))
-					it.abilities.reflect[REFLECT_PERCENT][j] += intValue;
+				for(int32_t i = COMBAT_FIRST; i <= COMBAT_LAST; ++i)
+					it.abilities.reflect[REFLECT_PERCENT][i] += intValue;
 			}
 		}
 		else if(tmpStrValue == "reflectpercentelements")
@@ -1395,8 +1387,8 @@ void Items::parseItemNode(xmlNodePtr itemNode, uint32_t id)
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue))
 			{
-				for(int32_t i = (-1), j = COMBAT_FIRST; j <= COMBAT_LAST; ++i, j = std::pow(2., i))
-					it.abilities.reflect[REFLECT_CHANCE][j] += intValue;
+				for(int32_t i = COMBAT_FIRST; i <= COMBAT_LAST; ++i)
+					it.abilities.reflect[REFLECT_CHANCE][i] += intValue;
 			}
 		}
 		else if(tmpStrValue == "reflectchanceelements")
