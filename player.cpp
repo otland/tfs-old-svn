@@ -2634,7 +2634,8 @@ ReturnValue Player::__queryAdd(int32_t index, const Thing* thing, uint32_t count
 	if((item->getSlotPosition() & SLOTP_HEAD) || (item->getSlotPosition() & SLOTP_NECKLACE) ||
 		(item->getSlotPosition() & SLOTP_BACKPACK) || (item->getSlotPosition() & SLOTP_ARMOR) ||
 		(item->getSlotPosition() & SLOTP_LEGS) || (item->getSlotPosition() & SLOTP_FEET) ||
-		(item->getSlotPosition() & SLOTP_RING))
+		(item->getSlotPosition() & SLOTP_RING) || (!g_config.getBool(ConfigManager::TIBIA_SLOTS) &&
+		(item->getSlotPosition() & SLOTP_AMMO)))
 		ret = RET_CANNOTBEDRESSED;
 	else if(item->getSlotPosition() & SLOTP_TWO_HAND)
 		ret = RET_PUTTHISOBJECTINBOTHHANDS;
@@ -2660,10 +2661,19 @@ ReturnValue Player::__queryAdd(int32_t index, const Thing* thing, uint32_t count
 				ret = RET_NOERROR;
 			break;
 		case SLOT_RIGHT:
+		{
 			if(item->getSlotPosition() & SLOTP_RIGHT)
 			{
-				//check if we already carry an item in the other hand
-				if(item->getSlotPosition() & SLOTP_TWO_HAND)
+				if(!g_config.getBool(ConfigManager::TIBIA_SLOTS))
+				{
+					if(!item->isWeapon() || item->getWeaponType() == WEAPON_SHIELD)
+						ret = RET_NOTPOSSIBLE;
+					else if(inventory[SLOT_RIGHT] && item->getSlotPosition() & SLOTP_TWO_HAND)
+						ret = RET_BOTHHANDSNEEDTOBEFREE;
+					else
+						ret = RET_NOERROR;
+				}
+				else if(item->getSlotPosition() & SLOTP_TWO_HAND)
 				{
 					if(inventory[SLOT_LEFT] && inventory[SLOT_LEFT] != item)
 						ret = RET_BOTHHANDSNEEDTOBEFREE;
@@ -2696,7 +2706,16 @@ ReturnValue Player::__queryAdd(int32_t index, const Thing* thing, uint32_t count
 			if(item->getSlotPosition() & SLOTP_LEFT)
 			{
 				//check if we already carry an item in the other hand
-				if(item->getSlotPosition() & SLOTP_TWO_HAND)
+				if(!g_config.getBool(ConfigManager::TIBIA_SLOTS))
+				{
+					if(!item->isWeapon() || (item->getWeaponType() != WEAPON_SHIELD && !item->isDualWield()))
+						ret = RET_NOTPOSSIBLE;
+					else if(inventory[SLOT_LEFT] && inventory[SLOT_LEFT]->getSlotPosition() & SLOTP_TWO_HAND)
+						ret = RET_DROPTWOHANDEDITEM;
+					else
+						ret = RET_NOERROR;
+				}
+				else if(item->getSlotPosition() & SLOTP_TWO_HAND)
 				{
 					if(inventory[SLOT_RIGHT] && inventory[SLOT_RIGHT] != item)
 						ret = RET_BOTHHANDSNEEDTOBEFREE;

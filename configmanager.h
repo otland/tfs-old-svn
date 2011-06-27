@@ -302,6 +302,7 @@ class ConfigManager
 			MONSTER_SPAWN_WALKBACK,
 			USE_CAPACITY,
 			DAEMONIZE,
+			TIBIA_SLOTS,
 			LAST_BOOL_CONFIG /* this must be the last one */
 		};
 
