@@ -562,6 +562,9 @@ bool Combat::CombatManaFunc(Creature* caster, Creature* target, const CombatPara
 			change = random_range(var->minChange, var->maxChange, DISTRO_NORMAL);
 	}
 
+	if(g_game.combatBlockHit(COMBAT_MANADRAIN, caster, target, change, false, false))
+		return false;
+
 	if(change < 0 && caster && caster->getPlayer() && target->getPlayer() && target->getPlayer()->getSkull() != SKULL_BLACK)
 		change = change / 2;
 

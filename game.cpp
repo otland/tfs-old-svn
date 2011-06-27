@@ -4344,15 +4344,23 @@ bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creat
 
 			std::stringstream ss;
 			std::string plural = (healthChange != 1 ? "s." : ".");
+
 			MessageDetails* details = new MessageDetails(healthChange, COLOR_GREEN);
 			if(!textList.empty())
 			{
-				ss << attacker->getNameDescription() << " heals " << target->getNameDescription() << " for " << healthChange << " hitpoint" << plural;
+				if(!attacker)
+					ss << target->getNameDescription() << " is healed for " << healthChange << " hitpoint" << plural;
+				else if(attacker != target)
+					ss << attacker->getNameDescription() << " heals " << target->getNameDescription() << " for " << healthChange << " hitpoint" << plural;
+				else
+					ss << attacker->getNameDescription() << " heals himself for " << healthChange << " hitpoint" << plural;
+
 				addStatsMessage(textList, MSG_HEALED_OTHERS, ss.str(), targetPos, details);
 				ss.str("");
 			}
-			
-			if(Player* player = attacker->getPlayer())
+
+			Player* player = NULL;
+			if(attacker && (player = attacker->getPlayer()))
 			{
 				if(attacker != target)
 					ss << "You heal " << target->getNameDescription() << " for " << healthChange << " hitpoint" << plural;
@@ -4363,10 +4371,13 @@ bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creat
 				ss.str("");
 			}
 
-			Player* player = target->getPlayer();
-			if(player && attacker != target)
+			if((player = target->getPlayer()) && attacker != target)
 			{
-				ss << attacker->getNameDescription() << " heals you for " << healthChange << " hitpoint" << plural;
+				if(attacker)
+					ss << attacker->getNameDescription() << " heals you for " << healthChange << " hitpoint" << plural;
+				else
+					ss << "You are healed for " << healthChange << " hitpoint" << plural;
+
 				player->sendStatsMessage(MSG_HEALED, ss.str(), targetPos, details);
 			}
 
@@ -4389,60 +4400,8 @@ bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creat
 			{
 				int32_t manaDamage = std::min(target->getMana(), damage);
 				damage = std::max((int32_t)0, damage - manaDamage);
-				if(manaDamage != 0)
-				{
-					bool deny = false;
-					CreatureEventList statsChangeEvents = target->getCreatureEvents(CREATURE_EVENT_STATSCHANGE);
-					for(CreatureEventList::iterator it = statsChangeEvents.begin(); it != statsChangeEvents.end(); ++it)
-					{
-						if(!(*it)->executeStatsChange(target, attacker, STATSCHANGE_MANALOSS, combatType, manaDamage))
-							deny = true;
-					}
-
-					if(deny)
-						return false;
-
-					target->drainMana(attacker, combatType, manaDamage);
+				if(manaDamage != 0 && combatChangeMana(attacker, target, -manaDamage, combatType, true))
 					addMagicEffect(list, targetPos, MAGIC_EFFECT_LOSE_ENERGY);
-
-					SpectatorVec textList;
-					for(SpectatorVec::const_iterator it = list.begin(); it != list.end(); ++it)
-					{
-						if(!(*it)->getPlayer())
-							continue;
-
-						if(*it != attacker && *it != target)
-							textList.push_back(*it);
-					}
-
-					std::stringstream ss;
-					std::string plural = (manaDamage != 1 ? "s" : "");
-					MessageDetails* details = new MessageDetails(manaDamage, COLOR_BLUE);
-					if(!textList.empty())
-					{
-						ss << target->getNameDescription() << " loses " << manaDamage << " mana due to an attack by " << attacker->getNameDescription();
-						addStatsMessage(textList, MSG_DAMAGE_OTHERS, ss.str(), targetPos, details);
-						ss.str("");
-					}
-					
-					if(Player* player = attacker->getPlayer())
-					{
-						ss << target->getNameDescription() << " loses " << manaDamage << " mana due to your attack.";
-						player->sendStatsMessage(MSG_DAMAGE_DEALT, ss.str(), targetPos, details);
-						ss.str("");
-					}
-
-					if(Player* player = target->getPlayer())
-					{
-						ss << "You lose " << manaDamage << " mana due to an attack by " << attacker->getNameDescription();
-						player->sendStatsMessage(MSG_DAMAGE_RECEIVED, ss.str(), targetPos, details);
-					}
-
-					/*THIS IS THE BEST EXAMPLE I THOUGHT OF, BUT REQUIRES EXTRA WORK:
-						- we need to get elemental damage before sending stats change,
-						so it can be sent in sub*/
-					delete details;
-				}
 			}
 
 			damage = std::min(target->getHealth(), damage);
@@ -4579,7 +4538,6 @@ bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creat
 				if(textColor < COLOR_NONE && magicEffect < MAGIC_EFFECT_NONE)
 				{
 					addMagicEffect(list, targetPos, magicEffect);
-					
 					SpectatorVec textList;
 					for(SpectatorVec::const_iterator it = list.begin(); it != list.end(); ++it)
 					{
@@ -4592,24 +4550,40 @@ bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creat
 					
 					std::stringstream ss;
 					std::string plural = (damage != 1 ? "s" : "");
+
 					MessageDetails* details = new MessageDetails(damage, textColor);
 					if(!textList.empty())
 					{
-						ss << target->getNameDescription() << " loses " << damage << " hitpoint" << plural << " due to an attack by " << attacker->getNameDescription();
+						if(!attacker)
+							ss << target->getNameDescription() << " loses " << damage << " hitpoint" << plural << ".";
+						else if(attacker != target)
+							ss << target->getNameDescription() << " loses " << damage << " hitpoint" << plural << " due to an attack by " << attacker->getNameDescription();
+						else
+							ss << target->getNameDescription() << " loses " << damage << " hitpoint" << plural << " due to a self attack.";
+
 						addStatsMessage(textList, MSG_DAMAGE_OTHERS, ss.str(), targetPos, details);
 						ss.str("");
 					}
-					
-					if(Player* player = attacker->getPlayer())
+
+					Player* player = NULL;
+					if(attacker && (player = attacker->getPlayer()))
 					{
-						ss << target->getNameDescription() << " loses " << damage << " hitpoint" << plural << " due to your attack.";
+						if(attacker != target)
+							ss << target->getNameDescription() << " loses " << damage << " hitpoint" << plural << " due to your attack.";
+						else
+							ss << "You lose " << damage << " hitpoint" << plural << " due to your attack.";
+
 						player->sendStatsMessage(MSG_DAMAGE_DEALT, ss.str(), targetPos, details);
 						ss.str("");
 					}
 
-					if(Player* player = target->getPlayer())
+					if((player = target->getPlayer()) && attacker != target)
 					{
-						ss << "You lose " << damage << " hitpoint" << plural << " due to an attack by " << attacker->getNameDescription();
+						if(attacker)
+							ss << "You lose " << damage << " hitpoint" << plural << " due to an attack by " << attacker->getNameDescription();
+						else
+							ss << "You lose " << damage << " hitpoint" << plural << ".";
+
 						player->sendStatsMessage(MSG_DAMAGE_RECEIVED, ss.str(), targetPos, details);
 					}
 
@@ -4622,7 +4596,8 @@ bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creat
 	return true;
 }
 
-bool Game::combatChangeMana(Creature* attacker, Creature* target, int32_t manaChange)
+bool Game::combatChangeMana(Creature* attacker, Creature* target, int32_t manaChange,
+	CombatType_t combatType/* = COMBAT_MANADRAIN*/, bool inherited/* = false*/)
 {
 	const Position& targetPos = target->getPosition();
 	if(manaChange > 0)
@@ -4643,81 +4618,128 @@ bool Game::combatChangeMana(Creature* attacker, Creature* target, int32_t manaCh
 			(g_config.getBool(ConfigManager::SHOW_HEALING_DAMAGE_MONSTER) || !target->getMonster()))
 		{
 			const SpectatorVec& list = getSpectators(targetPos);
-			/*SpectatorVec textList;
+			SpectatorVec textList;
 			for(SpectatorVec::const_iterator it = list.begin(); it != list.end(); ++it)
 			{
 				if(!(*it)->getPlayer())
 					continue;
 
-				if((*it) != attacker && (*it) != target)
+				if(*it != attacker && *it != target)
 					textList.push_back(*it);
 			}
 
-			if(textList.empty())
-				return true;
+			std::stringstream ss;
+			MessageDetails* details = new MessageDetails(healthChange, COLOR_DARKPURPLE);
+			if(!textList.empty())
+			{
+				if(!attacker)
+					ss << target->getNameDescription() << " is regenerated with " << manaChange << " mana.";
+				else if(attacker != target)
+					ss << attacker->getNameDescription() << " regenerates " << target->getNameDescription() << " with " << manaChange << " mana.";
+				else
+					ss << attacker->getNameDescription() << " regenerates himself with " << manaChange << " mana.";
 
-			char buffer[20];
-			sprintf(buffer, "+%d", manaChange);
-			if(Player* player = attacker->getPlayer())
-				player->message...
+				addStatsMessage(textList, MSG_HEALED_OTHERS, ss.str(), targetPos, details);
+				ss.str("");
+			}
 
-			addStatsMessage(textList, targetPos, COLOR_DARKPURPLE, buffer, MSG_HEALED_OTHERS);
-			if(Player* player = target->getPlayer())
-				player->message...*/
+			Player* player = NULL;
+			if(attacker && (player = attacker->getPlayer()))
+			{
+				if(attacker != target)
+					ss << "You regenerate " << target->getNameDescription() << " with " << manaChange << " mana.";
+				else
+					ss << "You regenerate yourself with " << manaChange << " mana.";
+
+				player->sendStatsMessage(MSG_HEALED, ss.str(), targetPos, details);
+				ss.str("");
+			}
+
+			if((player = target->getPlayer()) && attacker != target)
+			{
+				if(attacker)
+					ss << attacker->getNameDescription() << " regenerates you with " << manaChange << " mana.";
+				else
+					ss << "You are regenerated with " << manaChange << " mana.";
+
+				player->sendStatsMessage(MSG_HEALED, ss.str(), targetPos, details);
+			}
+
+			delete details;
 		}
+	}
+	else if(!inherited && (!target->isAttackable() || Combat::canDoCombat(attacker, target) != RET_NOERROR))
+	{
+		addMagicEffect(list, targetPos, MAGIC_EFFECT_POFF);
+		return false;
 	}
 	else
 	{
-		const SpectatorVec& list = getSpectators(targetPos);
-		if(!target->isAttackable() || Combat::canDoCombat(attacker, target) != RET_NOERROR)
-		{
-			addMagicEffect(list, targetPos, MAGIC_EFFECT_POFF);
-			return false;
-		}
-
 		int32_t manaLoss = std::min(target->getMana(), -manaChange);
-		BlockType_t blockType = target->blockHit(attacker, COMBAT_MANADRAIN, manaLoss);
-		if(blockType != BLOCK_NONE)
-		{
-			addMagicEffect(list, targetPos, MAGIC_EFFECT_POFF);
-			return false;
-		}
-
 		if(manaLoss > 0)
 		{
 			bool deny = false;
 			CreatureEventList statsChangeEvents = target->getCreatureEvents(CREATURE_EVENT_STATSCHANGE);
 			for(CreatureEventList::iterator it = statsChangeEvents.begin(); it != statsChangeEvents.end(); ++it)
 			{
-				if(!(*it)->executeStatsChange(target, attacker, STATSCHANGE_MANALOSS, COMBAT_UNDEFINEDDAMAGE, manaChange))
+				if(!(*it)->executeStatsChange(target, attacker, STATSCHANGE_MANALOSS, combatType, manaLoss))
 					deny = true;
 			}
 
 			if(deny)
 				return false;
 
-			target->drainMana(attacker, COMBAT_MANADRAIN, manaLoss);
-			/*SpectatorVec textList;
+			target->drainMana(attacker, combatType, manaLoss);
+			const SpectatorVec& list = getSpectators(targetPos);
+
+			SpectatorVec textList;
 			for(SpectatorVec::const_iterator it = list.begin(); it != list.end(); ++it)
 			{
 				if(!(*it)->getPlayer())
 					continue;
 
-				if((*it) != attacker && (*it) != target)
+				if(*it != attacker && *it != target)
 					textList.push_back(*it);
 			}
 
-			if(textList.empty())
-				return true;
+			std::stringstream ss;
+			MessageDetails* details = new MessageDetails(manaLoss, COLOR_BLUE);
+			if(!textList.empty())
+			{
+				if(!attacker)
+					ss << target->getNameDescription() << " loses " << manaLoss << " mana.";
+				else if(attacker != target)
+					ss << target->getNameDescription() << " loses " << manaLoss << " mana due to an attack by " << attacker->getNameDescription();
+				else
+					ss << target->getNameDescription() << " loses " << manaLoss << " mana due to a self attack.";
 
-			char buffer[20];
-			sprintf(buffer, "%d", manaLoss);
-			if(Player* player = attacker->getPlayer())
-				player->message...
+				addStatsMessage(textList, MSG_DAMAGE_OTHERS, ss.str(), targetPos, details);
+				ss.str("");
+			}
 
-			addStatsMessage(textList, targetPos, COLOR_DARKPURPLE, buffer, MSG_HEALED_OTHERS);
-			if(Player* player = target->getPlayer())
-				player->message...*/
+			Player* player;
+			if(attacker && (player = attacker->getPlayer()))
+			{
+				if(attacker != target)
+					ss << target->getNameDescription() << " loses " << manaLoss << " mana due to your attack.";
+				else
+					ss << "You lose " << manaLoss << " mana due to your attack.";
+							
+				player->sendStatsMessage(MSG_DAMAGE_DEALT, ss.str(), targetPos, details);
+				ss.str("");
+			}
+
+			if((player = target->getPlayer()) && attacker != target)
+			{
+				if(attacker)
+					ss << "You lose " << manaLoss << " mana due to an attack by " << attacker->getNameDescription();
+				else
+					ss << "You lose " << manaLoss << " mana.";
+
+				player->sendStatsMessage(MSG_DAMAGE_RECEIVED, ss.str(), targetPos, details);
+			}
+
+			delete details;
 		}
 	}
 
