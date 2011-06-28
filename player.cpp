@@ -3471,7 +3471,7 @@ bool Player::setAttackedCreature(Creature* creature)
 		return false;
 	}
 
-	if(chaseMode == CHASEMODE_FOLLOW && creature && !player->getNoMove())
+	if(chaseMode == CHASEMODE_FOLLOW && creature && !getNoMove())
 	{
 		if(followCreature != creature) //chase opponent
 			setFollowCreature(creature);
@@ -3581,7 +3581,7 @@ void Player::setChaseMode(chaseMode_t mode)
 
 	if(chaseMode == CHASEMODE_FOLLOW)
 	{
-		if(!followCreature && attackedCreature && !player->getNoMove()) //chase opponent
+		if(!followCreature && attackedCreature && !getNoMove()) //chase opponent
 			setFollowCreature(attackedCreature);
 	}
 	else if(attackedCreature)
