@@ -2219,9 +2219,12 @@ bool Player::onDeath()
 	{
 		totalDamage += it->second.total;
 		// its enough when we use IDs range comparison here instead of overheating autoList
-		if(((OTSYS_TIME() - it->second.ticks) / 1000) <= g_config.getNumber(
-			ConfigManager::FAIRFIGHT_TIMERANGE) && it->first >= PLAYER_ID_RANGE
-			&& it->first < MONSTER_ID_RANGE)
+		if(((OTSYS_TIME() - it->second.ticks) / 1000) > g_config.getNumber(
+			ConfigManager::FAIRFIGHT_TIMERANGE))
+			continue;
+
+		Creature* creature = g_game.getCreatureByID(it->first);
+		if(creature->getPlayer() || creature->isPlayerSummon())
 			pvpDamage += it->second.total;
 	}
 
@@ -3468,7 +3471,7 @@ bool Player::setAttackedCreature(Creature* creature)
 		return false;
 	}
 
-	if(chaseMode == CHASEMODE_FOLLOW && creature)
+	if(chaseMode == CHASEMODE_FOLLOW && creature && !player->getNoMove())
 	{
 		if(followCreature != creature) //chase opponent
 			setFollowCreature(creature);
@@ -3578,7 +3581,7 @@ void Player::setChaseMode(chaseMode_t mode)
 
 	if(chaseMode == CHASEMODE_FOLLOW)
 	{
-		if(!followCreature && attackedCreature) //chase opponent
+		if(!followCreature && attackedCreature && !player->getNoMove()) //chase opponent
 			setFollowCreature(attackedCreature);
 	}
 	else if(attackedCreature)

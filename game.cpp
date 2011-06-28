@@ -1042,6 +1042,12 @@ bool Game::playerMoveThing(uint32_t playerId, const Position& fromPos,
 	if(!player || player->isRemoved())
 		return false;
 
+	if(player->getNoMove())
+	{
+		player->sendCancelMessage(RET_NOTPOSSIBLE);
+		return false;
+	}
+
 	uint8_t fromIndex = 0;
 	if(fromPos.x == 0xFFFF)
 	{
@@ -2501,6 +2507,12 @@ bool Game::playerUseItemEx(uint32_t playerId, const Position& fromPos, int16_t f
 				internalGetPosition(moveItem, itemPos, itemStackpos);
 			}
 
+			if(player->getNoMove())
+			{
+				player->sendCancelMessage(RET_NOTPOSSIBLE);
+				return false;
+			}
+
 			std::list<Direction> listDir;
 			if(getPathToEx(player, walkToPos, listDir, 0, 1, true, true, 10))
 			{
@@ -2567,6 +2579,12 @@ bool Game::playerUseItem(uint32_t playerId, const Position& pos, int16_t stackpo
 	{
 		if(ret == RET_TOOFARAWAY)
 		{
+			if(player->getNoMove())
+			{
+				player->sendCancelMessage(RET_NOTPOSSIBLE);
+				return false;
+			}
+
 			std::list<Direction> listDir;
 			if(getPathToEx(player, pos, listDir, 0, 1, true, true))
 			{
@@ -2643,6 +2661,12 @@ bool Game::playerUseBattleWindow(uint32_t playerId, const Position& fromPos, int
 	{
 		if(ret == RET_TOOFARAWAY)
 		{
+			if(player->getNoMove())
+			{
+				player->sendCancelMessage(RET_NOTPOSSIBLE);
+				return false;
+			}
+
 			std::list<Direction> listDir;
 			if(getPathToEx(player, item->getPosition(), listDir, 0, 1, true, true))
 			{
@@ -2760,6 +2784,12 @@ bool Game::playerRotateItem(uint32_t playerId, const Position& pos, int16_t stac
 
 	if(pos.x != 0xFFFF && !Position::areInRange<1,1,0>(pos, player->getPosition()))
 	{
+		if(player->getNoMove())
+		{
+			player->sendCancelMessage(RET_NOTPOSSIBLE);
+			return false;
+		}
+
 		std::list<Direction> listDir;
 		if(getPathToEx(player, pos, listDir, 0, 1, true, true))
 		{
@@ -2929,6 +2959,12 @@ bool Game::playerRequestTrade(uint32_t playerId, const Position& pos, int16_t st
 
 	if(!Position::areInRange<1,1,0>(tradeItem->getPosition(), player->getPosition()))
 	{
+		if(player->getNoMove())
+		{
+			player->sendCancelMessage(RET_NOTPOSSIBLE);
+			return false;
+		}
+
 		std::list<Direction> listDir;
 		if(getPathToEx(player, pos, listDir, 0, 1, true, true))
 		{
@@ -3586,7 +3622,15 @@ bool Game::playerFollowCreature(uint32_t playerId, uint32_t creatureId)
 
 	Creature* followCreature = NULL;
 	if(creatureId)
+	{
+		if(player->getNoMove())
+		{
+			player->sendCancelMessage(RET_NOTPOSSIBLE);
+			return false;
+		}
+
 		followCreature = getCreatureByID(creatureId);
+	}
 
 	player->setAttackedCreature(NULL);
 	Dispatcher::getInstance().addTask(createTask(boost::bind(
@@ -3602,8 +3646,8 @@ bool Game::playerSetFightModes(uint32_t playerId, fightMode_t fightMode, chaseMo
 
 	player->setFightMode(fightMode);
 	player->setChaseMode(chaseMode);
-	player->setSecureMode(secureMode);
 
+	player->setSecureMode(secureMode);
 	return true;
 }
 

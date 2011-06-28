@@ -16,8 +16,11 @@
 ]
 
 [ TASKS
-	Fix revenges (orange skull)
+	Fix revenges- orange skull)
 		Assigned to: Dalkon, Elf
+
+	Send weapon elemental damage together with physical
+		Assigned to: Elf
 
 	Optimize packets to only one-per-tile after cleaning map or house
 		Assigned to: Elf
