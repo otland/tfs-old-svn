@@ -301,17 +301,17 @@ TALKTYPE_TYPES = {
 	["yell"] = TALKTYPE_YELL,
 	["private-playernpc"] = TALKTYPE_PRIVATE_PN,
 	["private-npcplayer"] = TALKTYPE_PRIVATE_NP,
-	["private"] = TALKTYPE_PRIVATE,
-	["channel-yellow"] = TALKTYPE_CHANNEL_Y,
-	["channel-white"] = TALKTYPE_CHANNEL_W,
-	["broadcast"] = TALKTYPE_BROADCAST,
-	["channel-red"] = TALKTYPE_CHANNEL_RN,
-	["private-red"] = TALKTYPE_PRIVATE_RED,
-	["channel-orange"] = TALKTYPE_CHANNEL_O,
-	["monster"] = TALKTYPE_MONSTER,
+	["private"] = TALKTYPE_PRIVATE_FROM,
+	["channel-yellow"] = TALKTYPE_CHANNEL,
+	["channel-white"] = TALKTYPE_CHANNEL_MANAGEMENT,
+	["broadcast"] = TALKTYPE_GAMEMASTER_BROADCAST,
+	["channel-red"] = TALKTYPE_GAMEMASTER_CHANNEL,
+	["private-red"] = TALKTYPE_GAMEMASTER_PRIVATE_FROM,
+	["channel-orange"] = TALKTYPE_CHANNEL_HIGHLIGHT,
+	["monster"] = TALKTYPE_MONSTER_SAY,
 	["monster-yell"] = TALKTYPE_MONSTER_YELL,
 
-	["channel-redanonymous"] = TALKTYPE_CHANNEL_RA
+	["channel-redanonymous"] = TALKTYPE_GAMEMASTER_BROADCAST
 }
 
 MESSAGE_STATUS_CONSOLE_RED = 12
@@ -333,7 +333,7 @@ MESSAGE_TYPES = {
 	["info"] = MESSAGE_INFO_DESCR,
 	["green"] = MESSAGE_INFO_DESCR,
 	["small"] = MESSAGE_STATUS_SMALL,
-	["blue"] = MESSAGE_STATUS_CONSOLE_BLUE,
+	["blue"] = MESSAGE_STATUS_CONSOLE_RED,
 	["red"] = MESSAGE_STATUS_CONSOLE_RED,
 	["warning"] = MESSAGE_STATUS_WARNING,
 	["status"] = MESSAGE_STATUS_DEFAULT
