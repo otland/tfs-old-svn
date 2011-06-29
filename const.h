@@ -184,6 +184,7 @@ enum MessageClasses
 	MSG_SPEAK_MONSTER_FIRST		= MSG_SPEAK_MONSTER_SAY,
 	MSG_SPEAK_MONSTER_LAST		= MSG_SPEAK_MONSTER_YELL,
 
+	MSG_STATUS_CONSOLE_BLUE		= 0x04, /*Teal message in the console*/
 	MSG_STATUS_CONSOLE_RED		= 0x0C, /*Red message in the console*/
 	MSG_STATUS_DEFAULT			= 0x10, /*White message at the bottom of the game window and in the console*/
 	MSG_STATUS_WARNING			= 0x11, /*Red message in game window and in the console*/
@@ -207,9 +208,7 @@ enum MessageClasses
 	MSG_STATUS_CONSOLE_ORANGE	= 0x23, /*Orange message in the console*/
 	MSG_REPORT 					= 0x24,
 	MSG_HOTKEY_USE				= 0x25,
-	MSG_TUTORIAL_HINT			= 0x26,
-
-	MSG_STATUS_CONSOLE_BLUE		= MSG_STATUS_CONSOLE_RED /*Blue messages are removed from the game*/
+	MSG_TUTORIAL_HINT			= 0x26
 };
 
 enum MapMarks_t
