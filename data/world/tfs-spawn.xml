@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <spawns>
+  <spawn centerx="864" centery="1110" centerz="5" radius="5">
+    <monster name="Minotaur" x="1" y="0" z="5" spawntime="60"/>
+  </spawn>
   <spawn centerx="1028" centery="1003" centerz="6" radius="5"/>
   <spawn centerx="992" centery="1033" centerz="6" radius="2"/>
   <spawn centerx="908" centery="964" centerz="7" radius="1"/>
