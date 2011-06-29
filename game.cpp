@@ -1550,7 +1550,7 @@ ReturnValue Game::internalMoveItem(Creature* actor, Cylinder* fromCylinder, Cyli
 		{
 			//check how much we can move
 			uint32_t maxExchangeQueryCount = 0;
-			ReturnValue retExchangeMaxCount = fromCylinder->__queryMaxCount(-1, toItem, toItem->getItemCount(), maxExchangeQueryCount, 0);
+			ReturnValue retExchangeMaxCount = fromCylinder->__queryMaxCount(INDEX_WHEREEVER, toItem, toItem->getItemCount(), maxExchangeQueryCount, 0);
 
 			if(retExchangeMaxCount != RET_NOERROR && maxExchangeQueryCount == 0)
 				return retExchangeMaxCount;
