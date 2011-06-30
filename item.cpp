@@ -895,21 +895,11 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 			s << "magic level " << std::showpos << (int32_t)it.abilities.stats[STAT_MAGICLEVEL] << std::noshowpos;
 		}
 
-		// TODO: we should find some better way of completing this
-		int32_t show = it.abilities.absorb[COMBAT_FIRST];
-		for(int32_t i = (COMBAT_FIRST + 1); i <= COMBAT_LAST; i <<= 1)
-		{
-			if(it.abilities.absorb[i] == show)
-				continue;
-
-			show = 0;
-			break;
-		}
-
+		int32_t show = it.abilities.absorb[COMBAT_ALL];
 		if(!show)
 		{
 			bool tmp = true;
-			for(int32_t i = COMBAT_FIRST; i <= COMBAT_LAST; i <<= 1)
+			for(uint32_t i = (COMBAT_FIRST + 1); i <= COMBAT_LAST; i <<= 1)
 			{
 				if(!it.abilities.absorb[i])
 					continue;
@@ -946,21 +936,11 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 			s << "protection all " << std::showpos << show << std::noshowpos << "%";
 		}
 
-		// TODO: same case as absorbs...
-		show = it.abilities.reflect[REFLECT_CHANCE][COMBAT_FIRST];
-		for(int32_t i = (COMBAT_FIRST + 1); i <= COMBAT_LAST; i <<= 1)
-		{
-			if(it.abilities.reflect[REFLECT_CHANCE][i] == show)
-				continue;
-
-			show = 0;
-			break;
-		}
-
+		show = it.abilities.reflect[REFLECT_CHANCE][COMBAT_ALL];
 		if(!show)
 		{
 			bool tmp = true;
-			for(int32_t i = COMBAT_FIRST; i <= COMBAT_LAST; i <<= 1)
+			for(uint32_t i = (COMBAT_FIRST + 1); i <= COMBAT_LAST; i <<= 1)
 			{
 				if(!it.abilities.reflect[REFLECT_CHANCE][i] || !it.abilities.reflect[REFLECT_PERCENT][i])
 					continue;
@@ -968,7 +948,7 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 				if(tmp)
 				{
 					tmp = false;
-				       if(begin)
+					if(begin)
 					{
 						begin = false;
 						s << " (";
@@ -1009,16 +989,7 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 			else
 				s << ", ";
 
-			int32_t tmp = it.abilities.reflect[REFLECT_PERCENT][COMBAT_FIRST];
-			for(int32_t i = (COMBAT_FIRST + 1); i <= COMBAT_LAST; i <<= 1)
-			{
-				if(it.abilities.reflect[REFLECT_PERCENT][i] == tmp)
-					continue;
-
-				tmp = 0;
-				break;
-			}
-
+			int32_t tmp = it.abilities.reflect[REFLECT_PERCENT][COMBAT_ALL];
 			s << "reflect: " << show << "% for ";
 			if(tmp)
 			{
@@ -1162,21 +1133,11 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 			s << "magic level " << std::showpos << (int32_t)it.abilities.stats[STAT_MAGICLEVEL] << std::noshowpos;
 		}
 
-		// TODO: we should find some better way of completing this
-		int32_t show = it.abilities.absorb[COMBAT_FIRST];
-		for(int32_t i = (COMBAT_FIRST + 1); i <= COMBAT_LAST; i <<= 1)
-		{
-			if(it.abilities.absorb[i] == show)
-				continue;
-
-			show = 0;
-			break;
-		}
-
+		int32_t show = it.abilities.absorb[COMBAT_ALL];
 		if(!show)
 		{
 			bool tmp = true;
-			for(int32_t i = COMBAT_FIRST; i <= COMBAT_LAST; i <<= 1)
+			for(uint32_t i = (COMBAT_FIRST + 1); i <= COMBAT_LAST; i <<= 1)
 			{
 				if(!it.abilities.absorb[i])
 					continue;
@@ -1213,21 +1174,11 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 			s << "protection all " << std::showpos << show << std::noshowpos << "%";
 		}
 
-		// TODO: same case as absorbs...
-		show = it.abilities.reflect[REFLECT_CHANCE][COMBAT_FIRST];
-		for(int32_t i = (COMBAT_FIRST + 1); i <= COMBAT_LAST; i <<= 1)
-		{
-			if(it.abilities.reflect[REFLECT_CHANCE][i] == show)
-				continue;
-
-			show = 0;
-			break;
-		}
-
+		show = it.abilities.reflect[REFLECT_CHANCE][COMBAT_ALL];
 		if(!show)
 		{
 			bool tmp = true;
-			for(int32_t i = COMBAT_FIRST; i <= COMBAT_LAST; i <<= 1)
+			for(uint32_t i = (COMBAT_FIRST + 1); i <= COMBAT_LAST; i <<= 1)
 			{
 				if(!it.abilities.reflect[REFLECT_CHANCE][i] || !it.abilities.reflect[REFLECT_PERCENT][i])
 					continue;
@@ -1276,16 +1227,7 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 			else
 				s << ", ";
 
-			int32_t tmp = it.abilities.reflect[REFLECT_PERCENT][COMBAT_FIRST];
-			for(int32_t i = (COMBAT_FIRST + 1); i <= COMBAT_LAST; i <<= 1)
-			{
-				if(it.abilities.reflect[REFLECT_PERCENT][i] == tmp)
-					continue;
-
-				tmp = 0;
-				break;
-			}
-
+			int32_t tmp = it.abilities.reflect[REFLECT_PERCENT][COMBAT_ALL];
 			s << "reflect: " << show << "% for ";
 			if(tmp)
 			{

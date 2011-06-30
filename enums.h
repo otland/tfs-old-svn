@@ -114,6 +114,7 @@ enum RaceType_t
 enum CombatType_t
 {
 	COMBAT_NONE				= 0x00,
+	COMBAT_ALL				= COMBAT_NONE, /* for internal use only.*/
 
 	COMBAT_PHYSICALDAMAGE	= 1 << 0,
 	COMBAT_ENERGYDAMAGE		= 1 << 1,

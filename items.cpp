@@ -536,12 +536,10 @@ void Items::parseItemNode(xmlNodePtr itemNode, uint32_t id)
 	if(override)
 	{
 		// setup some defaults
-		for(uint32_t i = COMBAT_FIRST; i <= COMBAT_LAST; i <<= 1)
-		{
-			it.abilities.fieldAbsorb[i] = it.abilities.absorb[i] = 0;
-			for(uint32_t j = REFLECT_FIRST; j <= REFLECT_LAST; ++j)
-				it.abilities.reflect[j][i] = 0;
-		}
+		memset(it.abilities.fieldAbsorb, 0, sizeof(it.abilities.fieldAbsorb));
+		memset(it.abilities.absorb, 0, sizeof(it.abilities.absorb));
+		for(uint32_t j = REFLECT_FIRST; j <= REFLECT_LAST; ++j)
+			memset(it.abilities.reflect[j], 0, sizeof(it.abilities.reflect[j]));
 	}
 
 	if(readXMLString(itemNode, "name", strValue))
@@ -1197,7 +1195,7 @@ void Items::parseItemNode(xmlNodePtr itemNode, uint32_t id)
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue))
 			{
-				for(int32_t i = COMBAT_FIRST; i <= COMBAT_LAST; i <<= 1)
+				for(uint32_t i = (COMBAT_FIRST + 1); i <= COMBAT_LAST; i <<= 1)
 					it.abilities.absorb[i] += intValue;
 			}
 		}
@@ -1297,7 +1295,7 @@ void Items::parseItemNode(xmlNodePtr itemNode, uint32_t id)
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue))
 			{
-				for(int32_t i = COMBAT_FIRST; i <= COMBAT_LAST; i <<= 1)
+				for(uint32_t i = (COMBAT_FIRST + 1); i <= COMBAT_LAST; i <<= 1)
 					it.abilities.reflect[REFLECT_PERCENT][i] += intValue;
 			}
 		}
@@ -1387,7 +1385,7 @@ void Items::parseItemNode(xmlNodePtr itemNode, uint32_t id)
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue))
 			{
-				for(int32_t i = COMBAT_FIRST; i <= COMBAT_LAST; i <<= 1)
+				for(uint32_t i = (COMBAT_FIRST + 1); i <= COMBAT_LAST; i <<= 1)
 					it.abilities.reflect[REFLECT_CHANCE][i] += intValue;
 			}
 		}
@@ -1836,6 +1834,21 @@ void Items::parseItemNode(xmlNodePtr itemNode, uint32_t id)
 		it.pluralName = it.name;
 		if(it.showCount)
 			it.pluralName += "s";
+	}
+
+	it.abilities.absorb[COMBAT_ALL] = it.abilities.absorb[COMBAT_FIRST + 1];
+	it.abilities.reflect[REFLECT_PERCENT][COMBAT_ALL] = it.abilities.reflect[REFLECT_PERCENT][COMBAT_FIRST + 1];
+	it.abilities.reflect[REFLECT_CHANCE][COMBAT_ALL] = it.abilities.reflect[REFLECT_CHANCE][COMBAT_FIRST + 1];
+	for(uint32_t i = (COMBAT_FIRST + 1) << 1; i <= COMBAT_LAST; i <<= 1)
+	{
+		if(it.abilities.absorb[COMBAT_ALL] != it.abilities.absorb[i])
+			it.abilities.absorb[COMBAT_ALL] = 0;
+
+		if(it.abilities.reflect[REFLECT_PERCENT][COMBAT_ALL] != it.abilities.reflect[REFLECT_PERCENT][i])
+			it.abilities.reflect[REFLECT_PERCENT][COMBAT_ALL] = 0;
+
+		if(it.abilities.reflect[REFLECT_CHANCE][COMBAT_ALL] != it.abilities.reflect[REFLECT_CHANCE][i])
+			it.abilities.reflect[REFLECT_CHANCE][COMBAT_ALL] = 0;
 	}
 }
 

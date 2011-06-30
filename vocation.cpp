@@ -206,7 +206,7 @@ bool Vocations::parseVocationNode(xmlNodePtr p)
 		{
 			if(readXMLInteger(configNode, "percentAll", intValue))
 			{
-				for(int32_t i = COMBAT_FIRST; i <= COMBAT_LAST; i <<= 1)
+				for(uint32_t i = (COMBAT_FIRST + 1); i <= COMBAT_LAST; i <<= 1)
 					voc->increaseAbsorb((CombatType_t)i, intValue);
 			}
 
@@ -268,7 +268,7 @@ bool Vocations::parseVocationNode(xmlNodePtr p)
 		{
 			if(readXMLInteger(configNode, "percentAll", intValue))
 			{
-				for(int32_t i = COMBAT_FIRST; i <= COMBAT_LAST; i <<= 1)
+				for(uint32_t i = (COMBAT_FIRST + 1); i <= COMBAT_LAST; i <<= 1)
 					voc->increaseReflect(REFLECT_PERCENT, (CombatType_t)i, intValue);
 			}
 
@@ -328,7 +328,7 @@ bool Vocations::parseVocationNode(xmlNodePtr p)
 
 			if(readXMLInteger(configNode, "chanceAll", intValue))
 			{
-				for(int32_t i = COMBAT_FIRST; i <= COMBAT_LAST; i <<= 1)
+				for(uint32_t i = (COMBAT_FIRST + 1); i <= COMBAT_LAST; i <<= 1)
 					voc->increaseReflect(REFLECT_CHANCE, (CombatType_t)i, intValue);
 			}
 
