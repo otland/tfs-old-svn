@@ -1132,8 +1132,8 @@
 			and much more ... (IT IS really stable & bug free!)
 	]
 	[ 0.3.7
-		Protocol 8.7 support (Talaturen)
-		Mounts system with mounts.xml (Talaturen, Elf))
+		Protocol 9.0 support (Talaturen, Dalkon, Elf)
+		Mounts system with mounts.xml (Talaturen, Elf)
 		New spell cooldown system (Elf, Dalkon, Talaturen)
 		Orange skull (Elf)
 		MD5, SHA1 and RSA implementations improved using OpenSSL (Dalkon)
