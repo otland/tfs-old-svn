@@ -1257,8 +1257,7 @@ ReturnValue Game::internalMoveItem(Cylinder* fromCylinder, Cylinder* toCylinder,
 		{
 			//check how much we can move
 			uint32_t maxExchangeQueryCount = 0;
-			ReturnValue retExchangeMaxCount = fromCylinder->__queryMaxCount(-1, toItem, toItem->getItemCount(), maxExchangeQueryCount, 0);
-
+			ReturnValue retExchangeMaxCount = fromCylinder->__queryMaxCount(INDEX_WHEREEVER, toItem, toItem->getItemCount(), maxExchangeQueryCount, 0);
 			if(retExchangeMaxCount != RET_NOERROR && maxExchangeQueryCount == 0)
 				return retExchangeMaxCount;
 
@@ -3301,8 +3300,6 @@ bool Game::playerSay(uint32_t playerId, uint16_t channelId, SpeakClasses type,
 		case SPEAK_CHANNEL_O:
 		case SPEAK_CHANNEL_Y:
 		case SPEAK_CHANNEL_R1:
-		case SPEAK_CHANNEL_R2:
-		case SPEAK_CHANNEL_W:
 			return playerTalkToChannel(player, type, text, channelId);
 
 		case SPEAK_PRIVATE_PN:
@@ -3462,17 +3459,6 @@ bool Game::playerTalkToChannel(Player* player, SpeakClasses type, const std::str
 					type = SPEAK_CHANNEL_Y;
 			}
 			break;
-		}
-
-		case SPEAK_CHANNEL_R2:
-		{
-			if(!player->hasFlag(PlayerFlag_CanTalkRedChannel) && player->getAccountType() < ACCOUNT_TYPE_GOD)
-			{
-				if(channelId == CHANNEL_HELP && (player->hasFlag(PlayerFlag_TalkOrangeHelpChannel) || player->getAccountType() >= ACCOUNT_TYPE_TUTOR))
-					type = SPEAK_CHANNEL_O;
-				else
-					type = SPEAK_CHANNEL_Y;
-			}
 		}
 
 		default:

@@ -165,7 +165,6 @@ enum SpeakClasses
 	SPEAK_YELL		= 0x03,
 	SPEAK_PRIVATE_FROM	= 0x04,
 	SPEAK_PRIVATE_TO	= 0x05,
-	SPEAK_CHANNEL_W		= 0x06, //?
 	SPEAK_CHANNEL_Y		= 0x07,
 	SPEAK_CHANNEL_O		= 0x08,
 	SPEAK_PRIVATE_PN	= 0x0A,
@@ -177,7 +176,8 @@ enum SpeakClasses
 	SPEAK_MONSTER_SAY	= 0x22,
 	SPEAK_MONSTER_YELL	= 0x23,
 
-	SPEAK_CHANNEL_R2	= 0xFF + 4 //#d
+	SPEAK_CHANNEL_R2	= 0xFF + 4, //#d
+	SPEAK_CHANNEL_W		= 0xFF + 5
 };
 
 enum MessageClasses
