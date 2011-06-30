@@ -536,7 +536,7 @@ void Items::parseItemNode(xmlNodePtr itemNode, uint32_t id)
 	if(override)
 	{
 		// setup some defaults
-		for(uint32_t i = COMBAT_FIRST; i <= COMBAT_LAST; ++i)
+		for(uint32_t i = COMBAT_FIRST; i <= COMBAT_LAST; i <<= 1)
 		{
 			it.abilities.fieldAbsorb[i] = it.abilities.absorb[i] = 0;
 			for(uint32_t j = REFLECT_FIRST; j <= REFLECT_LAST; ++j)
@@ -1197,7 +1197,7 @@ void Items::parseItemNode(xmlNodePtr itemNode, uint32_t id)
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue))
 			{
-				for(int32_t i = COMBAT_FIRST; i <= COMBAT_LAST; ++i)
+				for(int32_t i = COMBAT_FIRST; i <= COMBAT_LAST; i <<= 1)
 					it.abilities.absorb[i] += intValue;
 			}
 		}
@@ -1297,7 +1297,7 @@ void Items::parseItemNode(xmlNodePtr itemNode, uint32_t id)
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue))
 			{
-				for(int32_t i = COMBAT_FIRST; i <= COMBAT_LAST; ++i)
+				for(int32_t i = COMBAT_FIRST; i <= COMBAT_LAST; i <<= 1)
 					it.abilities.reflect[REFLECT_PERCENT][i] += intValue;
 			}
 		}
@@ -1387,7 +1387,7 @@ void Items::parseItemNode(xmlNodePtr itemNode, uint32_t id)
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue))
 			{
-				for(int32_t i = COMBAT_FIRST; i <= COMBAT_LAST; ++i)
+				for(int32_t i = COMBAT_FIRST; i <= COMBAT_LAST; i <<= 1)
 					it.abilities.reflect[REFLECT_CHANCE][i] += intValue;
 			}
 		}

@@ -170,7 +170,7 @@ bool Outfits::parseOutfitNode(xmlNodePtr p)
 			{
 				if(readXMLInteger(configNode, "percentAll", intValue))
 				{
-					for(uint32_t i = COMBAT_FIRST; i <= COMBAT_LAST; i++)
+					for(uint32_t i = COMBAT_FIRST; i <= COMBAT_LAST; i <<= 1)
 						outfit.reflect[REFLECT_PERCENT][(CombatType_t)i] += intValue;
 				}
 
@@ -230,7 +230,7 @@ bool Outfits::parseOutfitNode(xmlNodePtr p)
 
 				if(readXMLInteger(configNode, "chanceAll", intValue))
 				{
-					for(uint32_t i = COMBAT_FIRST; i <= COMBAT_LAST; i++)
+					for(uint32_t i = COMBAT_FIRST; i <= COMBAT_LAST; i <<= 1)
 						outfit.reflect[REFLECT_CHANCE][(CombatType_t)i] += intValue;
 				}
 
@@ -292,7 +292,7 @@ bool Outfits::parseOutfitNode(xmlNodePtr p)
 			{
 				if(readXMLInteger(configNode, "percentAll", intValue))
 				{
-					for(int32_t i = COMBAT_FIRST; i <= COMBAT_LAST; ++i)
+					for(int32_t i = COMBAT_FIRST; i <= COMBAT_LAST; i <<= 1)
 						outfit.absorb[(CombatType_t)i] += intValue;
 				}
 
