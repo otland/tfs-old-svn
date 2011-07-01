@@ -1805,7 +1805,7 @@ void ProtocolGame::sendShop(Npc* npc, const ShopInfoList& shop)
 		TRACK_MESSAGE(msg);
 		msg->put<char>(0x7A);
 		msg->putString(npc->getName());
-		msg->put<char>(std::min(shop.size(), 255U));
+		msg->put<char>(std::min((uint32_t)shop.size(), 255U));
 
 		ShopInfoList::const_iterator it = shop.begin();
 		for(uint32_t i = 0; it != shop.end() && i < 255; ++it, ++i)
@@ -2603,7 +2603,7 @@ void ProtocolGame::sendSpellCooldown(Spells_t icon, uint32_t cooldown)
 	{
 		TRACK_MESSAGE(msg);
 		msg->put<char>(0xA4);
-		msg->put<char>((char)icon);
+		msg->put<char>(icon);
 		msg->put<uint32_t>(cooldown);
 	}
 }
