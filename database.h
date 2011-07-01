@@ -25,10 +25,12 @@
 #include <boost/thread.hpp>
 #include "otsystem.h"
 
+#ifdef __USE_MYSQL__
 #ifdef __MYSQL_ALT_INCLUDE__
 #include <mysql.h>
-#elif defined __USE_MYSQL__
+#else
 #include <mysql/mysql.h>
+#endif
 #endif
 #include <map>
 #include <sstream>
