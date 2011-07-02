@@ -171,8 +171,8 @@
 
 	-- Map
 	-- NOTE: storeTrash costs more memory, but will perform alot faster cleaning.
-	mapName = "forgotten.otbm"
-	mapAuthor = "Komic"
+	mapName = "tfs.otbm"
+	mapAuthor = "Siramix"
 	randomizeTiles = true
 	storeTrash = true
 	cleanProtectedZones = true
