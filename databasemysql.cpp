@@ -89,7 +89,8 @@ bool DatabaseMySQL::connect(bool _reconnect)
 	if(_reconnect)
 	{
 		std::clog << "WARNING: MYSQL Lost connection, attempting to reconnect..." << std::endl;
-		if(++m_attempts > MAX_RECONNECT_ATTEMPTS)
+		uint32_t maxAttempts = g_config.getNumber(ConfigManager::MYSQL_RECONNECTION_ATTEMPTS);
+		if(maxAttempts && ++m_attempts > maxAttempts)
 		{
 			std::clog << "Failed connection to database - maximum reconnect attempts passed." << std::endl;
 			return false;

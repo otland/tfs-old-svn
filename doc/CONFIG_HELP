@@ -463,6 +463,11 @@
 				(from mysql manual, original source at: http://dev.mysql.com/doc/refman/5.5/en/mysql-options.html)
 			0 to disable.
 			Default: 10
+			
+		mysqlReconnectionAttempts
+			How many times mysql is allowed to attempt and reconnect to the server.
+			0 for unlimited attempts.
+			Default: 3
 
 		encryptionType
 			Encryption method used to store passwords (and other sensitive data) safely in the database.

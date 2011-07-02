@@ -18,7 +18,6 @@
 #ifndef __DATABASEMYSQL__
 #define __DATABASEMYSQL__
 
-#define MAX_RECONNECT_ATTEMPTS 3
 #ifndef __DATABASE__
 #error "database.h should be included first."
 #endif
