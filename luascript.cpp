@@ -3664,8 +3664,8 @@ int32_t LuaInterface::luaDoCreatureSetSpeakType(lua_State* L)
 	ScriptEnviroment* env = getEnv();
 	if(Creature* creature = env->getCreatureByUID(popNumber(L)))
 	{
-		if(!(type >= MSG_SPEAK_FIRST && type <= MSG_SPEAK_LAST ||
-			type >= MSG_SPEAK_MONSTER_FIRST && type <= MSG_SPEAK_MONSTER_LAST))
+		if(!((type >= MSG_SPEAK_FIRST && type <= MSG_SPEAK_LAST) ||
+			(type >= MSG_SPEAK_MONSTER_FIRST && type <= MSG_SPEAK_MONSTER_LAST)))
 		{
 			errorEx("Invalid speak type!");
 			lua_pushboolean(L, false);

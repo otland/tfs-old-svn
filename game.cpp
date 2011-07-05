@@ -2262,8 +2262,8 @@ bool Game::playerMove(uint32_t playerId, Direction dir)
 
 bool Game::playerBroadcastMessage(Player* player, MessageClasses type, const std::string& text)
 {
-	if(!player->hasFlag(PlayerFlag_CanBroadcast) || !(type >= MSG_SPEAK_FIRST && type <= MSG_SPEAK_LAST ||
-			type >= MSG_SPEAK_MONSTER_FIRST && type <= MSG_SPEAK_MONSTER_LAST))
+	if(!player->hasFlag(PlayerFlag_CanBroadcast) || !((type >= MSG_SPEAK_FIRST && type <= MSG_SPEAK_LAST) ||
+			type >= (MSG_SPEAK_MONSTER_FIRST && type <= MSG_SPEAK_MONSTER_LAST)))
 		return false;
 
 	for(AutoList<Player>::iterator it = Player::autoList.begin(); it != Player::autoList.end(); ++it)
