@@ -141,7 +141,7 @@ class Player : public Creature, public Cylinder
 
 		virtual Player* getPlayer() {return this;}
 		virtual const Player* getPlayer() const {return this;}
-		virtual const CreatureType_t getType() const {return CREATURETYPE_PLAYER;}
+		virtual CreatureType_t getType() const {return CREATURETYPE_PLAYER;}
 
 		static MuteCountMap muteCountMap;
 

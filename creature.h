@@ -182,7 +182,7 @@ class Creature : public AutoId, virtual public Thing
 		virtual const Npc* getNpc() const {return NULL;}
 		virtual Monster* getMonster() {return NULL;}
 		virtual const Monster* getMonster() const {return NULL;}
-		virtual const CreatureType_t getType() const = 0;
+		virtual CreatureType_t getType() const = 0;
 
 		virtual const std::string& getName() const = 0;
 		virtual const std::string& getNameDescription() const = 0;

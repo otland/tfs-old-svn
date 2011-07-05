@@ -349,7 +349,7 @@ class Npc : public Creature
 
 		virtual Npc* getNpc() {return this;}
 		virtual const Npc* getNpc() const {return this;}
-		virtual const CreatureType_t getType() const {return CREATURETYPE_NPC;}
+		virtual CreatureType_t getType() const {return CREATURETYPE_NPC;}
 
 		virtual uint32_t rangeId() {return NPC_ID_RANGE;}
 		static AutoList<Npc> autoList;
