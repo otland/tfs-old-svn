@@ -18,14 +18,14 @@
 #ifndef __DEFINITIONS__
 #define __DEFINITIONS__
 
-#define CLIENT_VERSION_MIN 900
-#define CLIENT_VERSION_MAX 900
-#define CLIENT_VERSION_STRING "Only clients with protocol 9.0 allowed!"
+#define CLIENT_VERSION_MIN 910
+#define CLIENT_VERSION_MAX 910
+#define CLIENT_VERSION_STRING "Only clients with protocol 9.10 allowed!"
 
 #define SOFTWARE_NAME "The Forgotten Server"
 #define SOFTWARE_VERSION "0.4_SVN"
 #define SOFTWARE_CODENAME ""
-#define SOFTWARE_PROTOCOL "9.0"
+#define SOFTWARE_PROTOCOL "9.10"
 
 #define VERSION_CHECK "http://forgottenserver.otland.net/version.xml"
 #define VERSION_PATCH 0

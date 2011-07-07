@@ -44,6 +44,13 @@
 #include "configmanager.h"
 #include "game.h"
 
+/*
+Bytes not yet added:
+	0x87 -> Position swapping
+	0xF4 -> Flash client objects?
+	0xF5 -> Flash client inventory?
+*/
+
 extern Game g_game;
 extern ConfigManager g_config;
 extern Actions actions;
