@@ -98,7 +98,9 @@ enum MagicEffectClasses
 	NM_ME_SMOKE		= 0x43, //67
 	NM_ME_INSECTS		= 0x44, //68
 	NM_ME_DRAGONHEAD	= 0x45, //69
-	NM_ME_LAST		= NM_ME_DRAGONHEAD,
+	NM_ME_ORCSHAMAN		= 0x46, //70
+	NM_ME_ORCSHAMAN_FIRE	= 0x47, //71
+	NM_ME_LAST		= NM_ME_ORCSHAMAN_FIRE,
 
 	//for internal use, dont send to client
 	NM_ME_NONE             = 0xFF,
