@@ -24,7 +24,9 @@
 #error "database.h should be included first."
 #endif
 
-#pragma comment(lib, "sqlite.lib")
+#ifdef _MSC_VER
+	#pragma comment(lib, "sqlite.lib")
+#endif
 
 #include <sqlite3.h>
 #include <sstream>
