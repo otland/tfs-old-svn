@@ -46,6 +46,12 @@
 	#include <stdint.h>
 #endif
 
+#ifdef _M_X64 // msvc
+	#define __x86_64__ 1
+#else
+	#define __x86_64__ 0
+#endif
+
 #include <ctime>
 #include <cassert>
 #ifdef WINDOWS

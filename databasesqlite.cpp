@@ -14,9 +14,13 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////
+
 #include "otpch.h"
+
+#ifdef __USE_SQLITE__
 #include <iostream>
 #include <boost/regex.hpp>
+
 
 #include "database.h"
 #include "databasesqlite.h"
@@ -266,3 +270,4 @@ SQLiteResult::SQLiteResult(sqlite3_stmt* stmt)
 	for(int32_t i = 0; i < fields; i++)
 		m_listNames[sqlite3_column_name(m_handle, i)] = i;
 }
+#endif

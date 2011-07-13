@@ -18,9 +18,13 @@
 #ifndef __DATABASE_SQLITE__
 #define __DATABASE_SQLITE__
 
+#ifdef __USE_SQLITE__
+
 #ifndef __DATABASE__
 #error "database.h should be included first."
 #endif
+
+#pragma comment(lib, "sqlite.lib")
 
 #include <sqlite3.h>
 #include <sstream>
@@ -79,4 +83,5 @@ class SQLiteResult : public _DBResult
 
 		sqlite3_stmt* m_handle;
 };
+#endif
 #endif

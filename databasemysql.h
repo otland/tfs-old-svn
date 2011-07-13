@@ -18,11 +18,15 @@
 #ifndef __DATABASEMYSQL__
 #define __DATABASEMYSQL__
 
+#ifdef __USE_MYSQL__
+
 #ifndef __DATABASE__
 #error "database.h should be included first."
 #endif
 
-#include <mysql/mysql.h>
+#pragma comment(lib, "libmysql.lib")
+
+#include <mysql.h>
 #if defined WINDOWS
 #include <winsock2.h>
 #endif
@@ -81,4 +85,5 @@ class MySQLResult : public _DBResult
 		MYSQL_RES* m_handle;
 		MYSQL_ROW m_row;
 };
+#endif
 #endif

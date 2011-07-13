@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////
+
 #include "otpch.h"
 #include "otsystem.h"
 #include <signal.h>
@@ -28,6 +29,7 @@
 #else
 #include <conio.h>
 #endif
+
 #include <boost/config.hpp>
 
 #include <openssl/rsa.h>
@@ -130,7 +132,7 @@ bool argumentsHandler(StringVec args)
 		if((*it) == "--version" || (*it) == "-v")
 		{
 			std::clog << SOFTWARE_NAME << ", version " << SOFTWARE_VERSION << " (" << SOFTWARE_CODENAME << ")\n"
-			"Compiled with " << BOOST_COMPILER << " at " << __DATE__ << ", " << __TIME__ << ".\n"
+			"Compiled with " << BOOST_COMPILER << " (x86_64: " << __x86_64__ << ") at " << __DATE__ << ", " << __TIME__ << ".\n"
 			"A server developed by Elf, Talaturen, Dalkon, Slawkens, KaczooH and Kornholijo.\n"
 			"Visit our forum for updates, support and resources: http://otland.net.\n";
 			return false;
@@ -159,7 +161,7 @@ bool argumentsHandler(StringVec args)
 		else if(tmp[0] == "--status-port")
 			g_config.setNumber(ConfigManager::STATUS_PORT, atoi(tmp[1].c_str()));
 #ifndef WINDOWS
-		else if(tmp[0] == "--runfile" || tmp[0] == "--run-file")
+		else if(tmp[0] == "--runfile" || tmp[0] == "--run-file" || tmp[0] == "--pidfile" || tmp[0] == "--pid-file")
 			g_config.setString(ConfigManager::RUNFILE, tmp[1]);
 #endif
 		else if(tmp[0] == "--log")
@@ -347,7 +349,7 @@ void otserv(StringVec, ServiceManager* services)
 #endif
 
 	std::clog << SOFTWARE_NAME << ", version " << SOFTWARE_VERSION << " (" << SOFTWARE_CODENAME << ")" << std::endl
-		<< "Compiled with " << BOOST_COMPILER << " at " << __DATE__ << ", " << __TIME__ << "." << std::endl
+		<< "Compiled with " << BOOST_COMPILER << " (x86_64: " << __x86_64__ << ") at " << __DATE__ << ", " << __TIME__ << "." << std::endl
 		<< "A server developed by Elf, Talaturen, Dalkon, Slawkens, KaczooH and Kornholijo." << std::endl
 		<< "Visit our forum for updates, support and resources: http://otland.net." << std::endl << std::endl;
 	std::stringstream ss;

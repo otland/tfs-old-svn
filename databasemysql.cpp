@@ -15,7 +15,10 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////
 #include "otpch.h"
-#include <mysql/errmsg.h>
+
+#ifdef __USE_MYSQL__
+
+#include <errmsg.h>
 #include <iostream>
 
 #include "database.h"
@@ -331,3 +334,4 @@ MySQLResult::MySQLResult(MYSQL_RES* result)
 	while((field = mysql_fetch_field(m_handle)))
 		m_listNames[field->name] = i++;
 }
+#endif
