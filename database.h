@@ -26,11 +26,7 @@
 #include "otsystem.h"
 
 #ifdef __USE_MYSQL__
-#ifdef __MYSQL_ALT_INCLUDE__
 #include <mysql.h>
-#else
-#include <mysql/mysql.h>
-#endif
 #endif
 #include <map>
 #include <sstream>

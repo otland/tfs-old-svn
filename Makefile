@@ -1,8 +1,7 @@
 # Makefile for Linux (Ubuntu, Debian), Windows (mingw, probably supports MSVC too)
 TFS = forgottenserver
 
-INCLUDEDIRS = -I"." -I"/usr/include/libxml2" \
-		-I"/usr/include/lua5.1"
+INCLUDEDIRS = -I"." -I"/usr/include/libxml2" -I"/usr/include/lua5.1" -I"/usr/include/mysql"
 
 LIBDIRS =
 
