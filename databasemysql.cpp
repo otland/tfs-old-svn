@@ -18,7 +18,6 @@
 
 #ifdef __USE_MYSQL__
 
-#include <errmsg.h>
 #include <iostream>
 
 #include "database.h"
@@ -27,6 +26,13 @@
 #include "scheduler.h"
 #include "configmanager.h"
 #include "tools.h"
+
+#if defined WINDOWS
+	#include <errmsg.h>
+#else
+	#include <mysql/errmsg.h>
+#endif
+
 
 extern ConfigManager g_config;
 
