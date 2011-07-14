@@ -16,9 +16,11 @@
 	<mount id="14" clientid="388" name="Tiger Slug" speed="20" />
 	<mount id="15" clientid="389" name="Uniwheel" speed="20" />
 	<mount id="16" clientid="390" name="Crystal Wolf" speed="20" />
-	<mount id="17" clientid="392" name="War Horse" speed="20" />
+	<mount id="17" clientid="392" name="Brown War Horse" speed="20" />
 	<mount id="18" clientid="401" name="Kingly Deer" speed="20" />
 	<mount id="19" clientid="402" name="Tamed Panda" speed="20" />
 	<mount id="20" clientid="405" name="Dromedary" speed="20" />
 	<mount id="21" clientid="406" name="Sandstone Scorpion" speed="20" />
+	<mount id="22" clientid="421" name="Rented Horse" speed="20" />
+	<mount id="23" clientid="426" name="Fire War Horse" speed="20" />
 </mounts>

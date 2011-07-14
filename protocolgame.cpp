@@ -2545,7 +2545,6 @@ void ProtocolGame::sendHouseWindow(uint32_t windowTextId, House* _house,
 
 void ProtocolGame::sendOutfitWindow()
 {
-	//#define MAX_NUMBER_OF_OUTFITS 25
 	NetworkMessage_ptr msg = getOutputBuffer();
 	if(!msg)
 		return;
