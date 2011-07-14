@@ -1915,7 +1915,7 @@ void Player::addManaSpent(uint64_t amount, bool withMultiplier /*= true*/)
 
 void Player::addExperience(uint64_t exp, bool useMult/* = false*/, bool sendText/* = false*/)
 {
-	int32_t newLevel = getLevel();
+	int32_t newLevel = level;
 
 	uint64_t nextLevelExp = Player::getExpForLevel(newLevel + 1);
 	if(Player::getExpForLevel(newLevel) > nextLevelExp)
@@ -1930,24 +1930,23 @@ void Player::addExperience(uint64_t exp, bool useMult/* = false*/, bool sendText
 	experience += gainExp;
 	if(sendText)
 	{
+		const Position& targetPos = getPosition();
+
+		std::stringstream ss;
+		ss << "You gained " << gainExp << " experience points.";
+		sendExperienceMessage(MSG_EXPERIENCE, ss.str(), targetPos, gainExp, TEXTCOLOR_WHITE_EXP);
+
 		std::stringstream ssExp;
 		ssExp << getNameDescription() << " gained " << gainExp << " experience points.";
 		std::string strExp = ssExp.str();
 
-		const Position& targetPos = getPosition();
 		const SpectatorVec& list = g_game.getSpectators(targetPos);
 		Player* tmpPlayer = NULL;
 		for(SpectatorVec::const_iterator it = list.begin(); it != list.end(); ++it)
 		{
 			if((tmpPlayer = (*it)->getPlayer()))
 			{
-				if(tmpPlayer == this)
-				{
-					std::stringstream ss;
-					ss << "You gained " << gainExp << " experience points.";
-					sendExperienceMessage(MSG_EXPERIENCE, ss.str(), targetPos, gainExp, TEXTCOLOR_WHITE_EXP);
-				}
-				else
+				if(tmpPlayer != this)
 					tmpPlayer->sendExperienceMessage(MSG_EXPERIENCE_OTHERS, strExp, targetPos, gainExp, TEXTCOLOR_WHITE_EXP);
 			}
 		}
@@ -1969,7 +1968,7 @@ void Player::addExperience(uint64_t exp, bool useMult/* = false*/, bool sendText
 		}
 	}
 
-	int32_t prevLevel = getLevel();
+	int32_t prevLevel = level;
 	if(prevLevel != newLevel)
 	{
 		level = newLevel;

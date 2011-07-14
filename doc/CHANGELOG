@@ -3,7 +3,7 @@
 		The Forgotten Server
 
 	Version
-		0.2.12
+		0.2.11pl1
 
 	Codenamed
 		"Mystic Spirit"
@@ -15,18 +15,59 @@
 		http://otland.net/
 ]
 
+[ File changes (patch level 1)
+	D = Deleted.
+	M = Modified.
+	A = Added.
+
+	M The Forgotten Server.exe
+	  data/
+	M	global.lua
+		XML/
+	M		mounts.xml
+	M		outfits.xml
+]
+
+[ Milestone (patch level 1)
+	Added new outfits.
+	Added more new munts.
+	Removed outfits limit.
+	Players with no vocation will no longer lose items on death.
+	Players will now receive full health and mana on level advance.
+	Fixed a crash related to summons and the new damage messages.
+	Fixed client debugs when talking to NPC's.
+	Fixed a bug in the sqlite schema and rebuilt the sqlite database.
+	Fixed a bug with the loading of lastMotd.txt.
+]
+
 [ File changes
 	D = Deleted.
 	M = Modified.
 	A = Added.
 
 	M The Forgotten Server.exe
-	M data/XML/outfits.xml
+	  data/
+	M	global.lua
+		items/
+	M		items.otb
+		npc/lib/
+	M		npc.lua
+			npcsystem/
+	M			keywordhandler.lua
+	M			npcsystem.lua
+	M			modules.lua
+	M			npchandler.lua
+	M	spells/scripts/support/magic wall rune.lua
+	M	XML/mounts.xml
 ]
 
 [ Milestone
-	Added new outfits.
-	Removed outfits limit.
-	Players with no vocation will no longer lose items on death.
-	Players will now receive full health and mana on level advance.
+	Protocol 9.1 support.
+	Fixed a bug when noDamageToSameLookfeet was enabled that caused no damage between monsters and players if they have the same lookfeet.
+	Fixed a bug with "think" global events, they were only being executed once.
+	Fixed a bug with account manager which would lead to disconnect after approximately a minute.
+	Account Managers will now be disconnected after 150 seconds idle time.
+	Revised NPC system and extended global.lua with more Lua functions (thanks to Cykotitan).
+	Lua function: doSendAnimatedText has been deprecated (protocol no longer supporting it).
+	Added new mounts.
 ]

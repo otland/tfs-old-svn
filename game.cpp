@@ -23,6 +23,7 @@
 
 #include <string>
 #include <map>
+#include <fstream>
 
 #include <boost/config.hpp>
 #include <boost/bind.hpp>
@@ -3902,8 +3903,8 @@ bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creat
 			std::stringstream ss;
 			if(!attacker)
 				ss << ucfirst(target->getNameDescription()) << " was healed for " << healthChange << " hitpoint" << (healthChange != 1 ? "s." : ".");
-			else if(attackerPlayer == targetPlayer)
-				ss << ucfirst(attacker->getNameDescription()) << " healed " << (targetPlayer->getSex() == PLAYERSEX_FEMALE ? "herself for " : "himself for ") << healthChange << " hitpoint" << (healthChange != 1 ? "s." : ".");
+			else if(attacker == target)
+				ss << ucfirst(attacker->getNameDescription()) << " healed " << (targetPlayer ? (targetPlayer->getSex() == PLAYERSEX_FEMALE ? "herself for " : "himself for ") : "itself for ") << healthChange << " hitpoint" << (healthChange != 1 ? "s." : ".");
 			else
 				ss << ucfirst(attacker->getNameDescription()) << " healed " << target->getNameDescription() << " for " << healthChange << " hitpoint" << (healthChange != 1 ? "s." : ".");
 
@@ -3970,8 +3971,8 @@ bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creat
 					std::stringstream ss;
 					if(!attacker)
 						ss << ucfirst(target->getNameDescription()) << " loses " << manaDamage << " mana.";
-					else if(attackerPlayer == targetPlayer)
-						ss << ucfirst(target->getNameDescription()) << " loses " << manaDamage << " mana blocking an attack by " << (targetPlayer->getSex() == PLAYERSEX_FEMALE ? "herself." : "himself.");
+					else if(attacker == target)
+						ss << ucfirst(target->getNameDescription()) << " loses " << manaDamage << " mana blocking an attack by " << (targetPlayer ? (targetPlayer->getSex() == PLAYERSEX_FEMALE ? "herself." : "himself.") : "itself.");
 					else
 						ss << ucfirst(target->getNameDescription()) << " loses " << manaDamage << " mana blocking an attack by " << attacker->getNameDescription() << ".";
 
@@ -4140,8 +4141,8 @@ bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creat
 					std::stringstream ss;
 					if(!attacker)
 						ss << ucfirst(target->getNameDescription()) << " loses " << damage << " hitpoint" << (damage != 1 ? "s." : ".");
-					else if(attackerPlayer == targetPlayer)
-						ss << ucfirst(target->getNameDescription()) << " loses " << damage << " hitpoint" << (damage != 1 ? "s" : "") << " due to " << (targetPlayer->getSex() == PLAYERSEX_FEMALE ? "her" : "his") << " own attack.";
+					else if(attacker == target)
+						ss << ucfirst(target->getNameDescription()) << " loses " << damage << " hitpoint" << (damage != 1 ? "s" : "") << " due to " << (targetPlayer ? (targetPlayer->getSex() == PLAYERSEX_FEMALE ? "her" : "his") : "its") << " own attack.";
 					else
 						ss << ucfirst(target->getNameDescription()) << " loses " << damage << " hitpoint" << (damage != 1 ? "s" : "") << " due to an attack by " << attacker->getNameDescription() << ".";
 
@@ -4225,8 +4226,8 @@ bool Game::combatChangeMana(Creature* attacker, Creature* target, int32_t manaCh
 			std::stringstream ss;
 			if(!attacker)
 				ss << ucfirst(target->getNameDescription()) << " loses " << manaLoss << " mana.";
-			else if(attackerPlayer == targetPlayer)
-				ss << ucfirst(target->getNameDescription()) << " loses " << manaLoss << " mana blocking an attack by " << (targetPlayer->getSex() == PLAYERSEX_FEMALE ? "herself." : "himself.");
+			else if(attacker == target)
+				ss << ucfirst(target->getNameDescription()) << " loses " << manaLoss << " mana blocking an attack by " << (targetPlayer ? (targetPlayer->getSex() == PLAYERSEX_FEMALE ? "herself." : "himself.") : "itself.");
 			else
 				ss << ucfirst(target->getNameDescription()) << " loses " << manaLoss << " mana blocking an attack by " << attacker->getNameDescription() << ".";
 
@@ -4798,27 +4799,19 @@ int32_t Game::getMotdNum()
 
 void Game::loadMotd()
 {
-	FILE* file = fopen("lastMotd.txt", "r");
-	if(file == NULL)
+	std::ifstream file("lastMotd.txt");
+	if(!file)
 	{
 		std::cout << "> ERROR: Failed to load lastMotd.txt" << std::endl;
 		lastMotdNum = random_range(5, 500);
 		return;
 	}
 
-	char motdText[1250];
-	sprintf(motdText, "%s", lastMotdText.c_str());
-
-	int32_t tmp = fscanf(file, "%d\n%s", &lastMotdNum, motdText);
-	if(tmp == EOF)
-	{
-		std::cout << "> ERROR: Failed to load lastMotd.txt" << std::endl;
-		lastMotdNum = random_range(5, 500);
-		return;
-	}
-
-	lastMotdText = motdText;
-	fclose(file);
+	std::string tmpStr;
+	getline(file, tmpStr);
+	getline(file, lastMotdText);
+	lastMotdNum = atoi(tmpStr.c_str());
+	file.close();
 }
 
 void Game::checkPlayersRecord()
