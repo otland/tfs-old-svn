@@ -4663,9 +4663,7 @@ bool Game::combatChangeMana(Creature* attacker, Creature* target, int32_t manaCh
 		if(g_config.getBool(ConfigManager::SHOW_HEALING_DAMAGE) && !target->isGhost() &&
 			(g_config.getBool(ConfigManager::SHOW_HEALING_DAMAGE_MONSTER) || !target->getMonster()))
 		{
-			SpectatorVec list;
-			getSpectators(list, targetPos, false, false, Map::maxViewportX, Map::maxViewportX,
-				Map::maxViewportY, Map::maxViewportY);
+			const SpectatorVec& list = getSpectators(targetPos);
 
 			SpectatorVec textList;
 			for(SpectatorVec::const_iterator it = list.begin(); it != list.end(); ++it)
