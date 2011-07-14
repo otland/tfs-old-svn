@@ -3,7 +3,7 @@
 		The Forgotten Server
 
 	Version
-		0.2.11
+		0.2.12
 
 	Codenamed
 		"Mystic Spirit"
@@ -33,6 +33,9 @@
 			C++ Programmer
 
 		Elf
+			C++ Programmer
+
+		Dalkon
 			C++ Programmer
 
 		Fallen
@@ -88,11 +91,11 @@
 
 		Download sourcecode
 			Launch a terminal, and paste in this command:
-				svn co svn://svn.otland.net/public/forgottenserver/tags/0.2.11
+				svn co svn://svn.otland.net/public/forgottenserver/tags/0.2.12
 
 		Compiling
 			Launch a terminal, and type this command:
-				cd 0.2.11/ && make
+				cd 0.2.12/ && make
 
 		Linker eror
 			If you receive a linker error saying something with 'libboost',

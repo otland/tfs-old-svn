@@ -794,7 +794,7 @@ uint16_t Player::getLookCorpse() const
 
 void Player::dropLoot(Container* corpse)
 {
-	if(corpse && lootDrop)
+	if(corpse && lootDrop && getVocationId() != 0)
 	{
 		if(inventory[SLOT_NECKLACE] && inventory[SLOT_NECKLACE]->getID() == ITEM_AMULETOFLOSS &&
 			getSkull() != SKULL_RED && g_game.getWorldType() != WORLD_TYPE_PVP_ENFORCED)
@@ -1973,6 +1973,10 @@ void Player::addExperience(uint64_t exp, bool useMult/* = false*/, bool sendText
 	if(prevLevel != newLevel)
 	{
 		level = newLevel;
+
+		health = healthMax;
+		mana = manaMax;
+
 		updateBaseSpeed();
 
 		int32_t newSpeed = getBaseSpeed();

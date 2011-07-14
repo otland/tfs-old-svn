@@ -26,6 +26,8 @@
 	<outfit type="0" looktype="329" enabled="1" name="Wife" premium="1"/>
 	<outfit type="0" looktype="336" enabled="1" name="Warmaster" premium="1"/>
 	<outfit type="0" looktype="366" enabled="1" name="Wayfarer" premium="1"/>
+	<outfit type="0" looktype="430" enabled="1" name="Afflicated" premium="1"/>
+	<outfit type="0" looktype="432" enabled="1" name="Elementalist" premium="1"/>
 
 	<!-- Male outfits -->
 	<outfit type="1" looktype="128" enabled="1" name="Citizen" premium="0"/>
@@ -53,6 +55,8 @@
 	<outfit type="1" looktype="328" enabled="1" name="Husband" premium="1"/>
 	<outfit type="1" looktype="335" enabled="1" name="Warmaster" premium="1"/>
 	<outfit type="1" looktype="367" enabled="1" name="Wayfarer" premium="1"/>
+	<outfit type="1" looktype="431" enabled="1" name="Afflicated" premium="1"/>
+	<outfit type="1" looktype="433" enabled="1" name="Elementalist" premium="1"/>
 
 	<!-- Archdemon -->
 	<outfit type="2" looktype="12" enabled="1" name="Archdemon" premium="1"/>
