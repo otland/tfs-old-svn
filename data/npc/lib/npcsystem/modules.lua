@@ -1030,18 +1030,41 @@ if(Modules == nil) then
 				module.npcHandler:say(msg, cid)
 			end
 		elseif(shop_eventtype[cid] == SHOPMODULE_BUY_ITEM) then
-			local ret = doPlayerBuyItem(cid, shop_itemid[cid], shop_amount[cid], shop_cost[cid] * shop_amount[cid], shop_subtype[cid])
-			if(ret == LUA_NO_ERROR) then
-				if shop_itemid[cid] == ITEM_PARCEL then
-					doPlayerBuyItem(cid, ITEM_LABEL, shop_amount[cid], 0, shop_subtype[cid])
-				end
-				local msg = module.npcHandler:getMessage(MESSAGE_ONBUY)
-				msg = module.npcHandler:parseMessage(msg, parseInfo)
-				module.npcHandler:say(msg, cid)
-			else
+			local cost = shop_cost[cid] * shop_amount[cid]
+			if getPlayerMoney(cid) < cost then
 				local msg = module.npcHandler:getMessage(MESSAGE_MISSINGMONEY)
 				msg = module.npcHandler:parseMessage(msg, parseInfo)
 				module.npcHandler:say(msg, cid)
+				return false
+			end
+
+			local a, b = doNpcSellItem(cid, shop_itemid[cid], shop_amount[cid], shop_subtype[cid], false, false, 1988)
+			if(a < shop_amount[cid]) then
+				local msgId = MESSAGE_NEEDMORESPACE
+				if(a == 0) then
+					msgId = MESSAGE_NEEDSPACE
+				end
+
+				local msg = module.npcHandler:getMessage(msgId)
+				msg = module.npcHandler:parseMessage(msg, parseInfo)
+				module.npcHandler:say(msg, cid)
+				if(a > 0) then
+					doPlayerRemoveMoney(cid, a * shop_cost[cid])
+					if shop_itemid[cid] == ITEM_PARCEL then
+						doNpcSellItem(cid, ITEM_LABEL, shop_amount[cid], shop_subtype[cid], true, false, 1988)
+					end
+					return true
+				end
+				return false
+			else
+				local msg = module.npcHandler:getMessage(MESSAGE_ONBUY)
+				msg = module.npcHandler:parseMessage(msg, parseInfo)
+				module.npcHandler:say(msg, cid)
+				doPlayerRemoveMoney(cid, cost)
+				if shop_itemid[cid] == ITEM_PARCEL then
+					doNpcSellItem(cid, ITEM_LABEL, shop_amount[cid], shop_subtype[cid], true, false, 1988)
+				end
+				return true
 			end
 		elseif(shop_eventtype[cid] == SHOPMODULE_BUY_ITEM_CONTAINER) then
 			local ret = doPlayerBuyItemContainer(cid, shop_container[cid], shop_itemid[cid], shop_amount[cid], shop_cost[cid] * shop_amount[cid], shop_subtype[cid])

@@ -23,7 +23,11 @@
 #ifdef __USE_MYSQL__
 #include "otsystem.h"
 
+#ifdef WIN32
+#include <mysql/mysql.h>
+#else
 #include <mysql.h>
+#endif
 #include "database.h"
 
 class DatabaseMySQL : public _Database

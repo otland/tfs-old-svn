@@ -513,22 +513,25 @@ ITEM_PARCEL = 2595
 ITEM_LABEL = 2599
 
 function doPlayerGiveItem(cid, itemid, count, charges)
-	local hasCharges = (isItemRune(itemid) == TRUE or isItemFluidContainer(itemid) == TRUE)
-	if(hasCharges and charges == nil) then
+	local isFluidContainer = isItemFluidContainer(itemid) == TRUE
+	if isFluidContainer and charges == nil then
 		charges = 1
 	end
 	while count > 0 do
 		local tempcount = 1
 		if(isItemStackable(itemid) == TRUE) then
-			tempcount = math.min (100, count)
+			tempcount = math.min(100, count)
 		end
-		local ret = doPlayerAddItem(cid, itemid, tempcount, charges)
-		if(ret == LUA_ERROR) then
+		local ret = doPlayerAddItem(cid, itemid, tempcount, TRUE, charges)
+		if ret == false then
 			ret = doCreateItem(itemid, tempcount, getPlayerPosition(cid))
 		end
-		if(ret ~= LUA_ERROR) then
-			if(hasCharges) then
+
+		if(ret) then
+			if(isFluidContainer) then
 				count = count - 1
+			elseif isItemRune(itemid) then
+				return LUA_NO_ERROR
 			else
 				count = count - tempcount
 			end

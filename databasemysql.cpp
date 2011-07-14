@@ -27,7 +27,11 @@
 #endif
 #include "databasemysql.h"
 
+#ifdef WIN32
+#include <mysql/errmsg.h>
+#else
 #include <errmsg.h>
+#endif
 
 #include "configmanager.h"
 extern ConfigManager g_config;

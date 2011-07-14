@@ -26,7 +26,11 @@
 #include "otsystem.h"
 
 #ifdef __USE_MYSQL__
+#ifdef WIN32
+#include <mysql/mysql.h>
+#else
 #include <mysql.h>
+#endif
 #endif
 #include <map>
 #include <sstream>

@@ -72,12 +72,12 @@ end
 function doNpcSellItem(cid, itemid, amount, subType, ignoreCap, inBackpacks, backpack)
 	local amount, subType, ignoreCap, item = amount or 1, subType or 0, ignoreCap and TRUE or FALSE, 0
 	ignoreCap = FALSE
-	if(isItemStackable(itemid) == TRUE) then
+	if(isItemStackable(itemid) == TRUE and isItemRune(itemid) == FALSE) then
 		if(inBackpacks) then
 			stuff = doCreateItemEx(backpack, 1)
-			item = doAddContainerItem(stuff, itemid, amount)
+			item = doAddContainerItem(stuff, itemid, math.min(100, amount))
 		else
-			stuff = doCreateItemEx(itemid, amount)
+			stuff = doCreateItemEx(itemid, math.min(100, amount))
 		end
 		return doPlayerAddItemEx(cid, stuff, ignoreCap) ~= RETURNVALUE_NOERROR and 0 or amount, 0
 	end
