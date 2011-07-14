@@ -32,6 +32,7 @@
 	M			npcsystem.lua
 	M			modules.lua
 	M			npchandler.lua
+	M	spells/scripts/support/magic wall rune.lua
 	M	XML/mounts.xml
 ]
 
