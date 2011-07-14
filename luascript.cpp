@@ -4132,7 +4132,16 @@ int32_t LuaInterface::luaDoCleanTile(lua_State* L)
 
 int32_t LuaInterface::luaDoPlayerSendTextMessage(lua_State* L)
 {
-	//doPlayerSendTextMessage(cid, MessageClasses, message)
+	//doPlayerSendTextMessage(cid, MessageClasses, message[, position, value, color])
+	PositionEx position;
+	int32_t args = lua_gettop(L), value, color;
+	if(args > 5)
+	{
+		color = popNumber(L);
+		value = popNumber(L);
+		popPosition(L, position);
+	}
+
 	std::string text = popString(L);
 	uint32_t messageClass = popNumber(L);
 
@@ -4145,7 +4154,15 @@ int32_t LuaInterface::luaDoPlayerSendTextMessage(lua_State* L)
 		return 1;
 	}
 
-	player->sendTextMessage((MessageClasses)messageClass, text);
+	if(args < 6)
+		player->sendTextMessage((MessageClasses)messageClass, text);
+	else
+	{
+		MessageDetails* details = new MessageDetails(value, (Color_t)color);
+		player->sendStatsMessage((MessageClasses)messageClass, text, position, details);
+		delete details;
+	}
+
 	lua_pushboolean(L, true);
 	return 1;
 }

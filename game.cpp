@@ -4384,7 +4384,7 @@ bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creat
 				if(!(*it)->getPlayer())
 					continue;
 
-				if(*it != attacker && *it != target)
+				if((*it) != attacker && (*it) != target && (*it)->getPosition().z == target->getPosition().z)
 					textList.push_back(*it);
 			}
 
@@ -4590,7 +4590,7 @@ bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creat
 						if(!(*it)->getPlayer())
 							continue;
 
-						if((*it) != attacker && (*it) != target)
+						if((*it) != attacker && (*it) != target && (*it)->getPosition().z == target->getPosition().z)
 							textList.push_back(*it);
 					}
 					
@@ -4663,14 +4663,17 @@ bool Game::combatChangeMana(Creature* attacker, Creature* target, int32_t manaCh
 		if(g_config.getBool(ConfigManager::SHOW_HEALING_DAMAGE) && !target->isGhost() &&
 			(g_config.getBool(ConfigManager::SHOW_HEALING_DAMAGE_MONSTER) || !target->getMonster()))
 		{
-			const SpectatorVec& list = getSpectators(targetPos);
+			SpectatorVec list;
+			getSpectators(list, targetPos, false, false, Map::maxViewportX, Map::maxViewportX,
+				Map::maxViewportY, Map::maxViewportY);
+
 			SpectatorVec textList;
 			for(SpectatorVec::const_iterator it = list.begin(); it != list.end(); ++it)
 			{
 				if(!(*it)->getPlayer())
 					continue;
 
-				if(*it != attacker && *it != target)
+				if((*it) != attacker && (*it) != target && (*it)->getPosition().z == target->getPosition().z)
 					textList.push_back(*it);
 			}
 
@@ -4745,7 +4748,7 @@ bool Game::combatChangeMana(Creature* attacker, Creature* target, int32_t manaCh
 				if(!(*it)->getPlayer())
 					continue;
 
-				if(*it != attacker && *it != target)
+				if((*it) != attacker && (*it) != target && (*it)->getPosition().z == target->getPosition().z)
 					textList.push_back(*it);
 			}
 

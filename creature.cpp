@@ -1313,7 +1313,10 @@ void Creature::onGainExperience(double& gainExp, Creature* target, bool multipli
 		color = random_range(0, 255);
 
 	const Position& targetPos = getPosition();
-	const SpectatorVec& list = g_game.getSpectators(targetPos);
+
+	SpectatorVec list;
+	g_game.getSpectators(list, targetPos, false, false, Map::maxViewportX, Map::maxViewportX,
+		Map::maxViewportY, Map::maxViewportY);
 
 	std::stringstream ss;
 	ss << getNameDescription() << " gained " << (uint64_t)gainExp << " experience points.";
@@ -1324,7 +1327,7 @@ void Creature::onGainExperience(double& gainExp, Creature* target, bool multipli
 		if(!(*it)->getPlayer())
 			continue;
 
-		if(*it != this)
+		if((*it) != this)
 			textList.push_back(*it);
 	}
 
@@ -1358,7 +1361,10 @@ void Creature::onGainSharedExperience(double& gainExp, Creature* target, bool mu
 		color = random_range(0, 255);
 
 	const Position& targetPos = getPosition();
-	const SpectatorVec& list = g_game.getSpectators(targetPos);
+
+	SpectatorVec list;
+	g_game.getSpectators(list, targetPos, false, false, Map::maxViewportX, Map::maxViewportX,
+		Map::maxViewportY, Map::maxViewportY);
 
 	std::stringstream ss;
 	ss << getNameDescription() << " gained " << (uint64_t)gainExp << " experience points.";
@@ -1369,7 +1375,7 @@ void Creature::onGainSharedExperience(double& gainExp, Creature* target, bool mu
 		if(!(*it)->getPlayer())
 			continue;
 
-		if(*it != this)
+		if((*it) != this)
 			textList.push_back(*it);
 	}
 
@@ -1381,6 +1387,8 @@ void Creature::onGainSharedExperience(double& gainExp, Creature* target, bool mu
 		ss << "You gained " << (uint64_t)gainExp << " experience points.";
 		player->sendStatsMessage(MSG_EXPERIENCE, ss.str(), targetPos, details);
 	}
+
+	delete details;
 }
 
 void Creature::addSummon(Creature* creature)
