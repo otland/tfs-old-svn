@@ -207,7 +207,7 @@ CREATE TABLE "bans" (
     "banned_by" INTEGER NOT NULL DEFAULT 0
 );
 
-CREATE TABLE tile_store"
+CREATE TABLE "tile_store"
 (
     "house_id" INTEGER NOT NULL,
     "data" LONGBLOB NOT NULL,
