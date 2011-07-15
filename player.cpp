@@ -1839,27 +1839,13 @@ double Player::getFreeCapacity() const
 void Player::drainHealth(Creature* attacker, CombatType_t combatType, int32_t damage)
 {
 	Creature::drainHealth(attacker, combatType, damage);
-	char buffer[150];
-	if(attacker)
-		sprintf(buffer, "You lose %d hitpoint%s due to an attack by %s.", damage, (damage != 1 ? "s" : ""), attacker->getNameDescription().c_str());
-	else
-		sprintf(buffer, "You lose %d hitpoint%s.", damage, (damage != 1 ? "s" : ""));
-
 	sendStats();
-	sendTextMessage(MSG_EVENT_DEFAULT, buffer);
 }
 
 void Player::drainMana(Creature* attacker, CombatType_t combatType, int32_t damage)
 {
 	Creature::drainMana(attacker, combatType, damage);
-	char buffer[150];
-	if(attacker)
-		sprintf(buffer, "You lose %d mana blocking an attack by %s.", damage, attacker->getNameDescription().c_str());
-	else
-		sprintf(buffer, "You lose %d mana.", damage);
-
 	sendStats();
-	sendTextMessage(MSG_EVENT_DEFAULT, buffer);
 }
 
 void Player::addManaSpent(uint64_t amount, bool useMultiplier/* = true*/)
