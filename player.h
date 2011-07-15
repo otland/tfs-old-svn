@@ -598,8 +598,8 @@ class Player : public Creature, public Cylinder
 		void sendStats();
 		void sendSkills() const
 			{if(client) client->sendSkills();}
-		void sendTextMessage(MessageClasses mclass, const std::string& message) const
-			{if(client) client->sendTextMessage(mclass, message);}
+		void sendTextMessage(MessageClasses mclass, const std::string& message, Position* pos = NULL, uint32_t value = 0, TextColor_t color = TEXTCOLOR_NONE) const
+			{if(client) client->sendTextMessage(mclass, message, pos, value, color);}
 		void sendReLoginWindow() const
 			{if(client) client->sendReLoginWindow();}
 		void sendTextWindow(Item* item, uint16_t maxlen, bool canWrite) const

@@ -1237,7 +1237,7 @@ bool IOLoginData::createCharacter(uint32_t accountNumber, std::string characterN
 		return false;
 
 	Vocation* vocation = g_vocations.getVocation(vocationId);
-	Vocation* rookVoc = g_vocations.getVocation(0);
+	Vocation* rookVoc = g_vocations.getVocation(VOCATION_NONE);
 	uint16_t healthMax = 150, manaMax = 0, capMax = 400, lookType = 136;
 	if(sex == PLAYERSEX_MALE)
 		lookType = 128;

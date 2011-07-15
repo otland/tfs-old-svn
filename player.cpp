@@ -258,7 +258,7 @@ std::string Player::getDescription(int32_t lookDistance) const
 		s << "yourself.";
 		if(accessLevel != 0)
 			s << " You are " << groupName << ".";
-		else if(vocation_id != 0)
+		else if(vocation_id != VOCATION_NONE)
 			s << " You are " << vocation->getVocDescription() << ".";
 		else
 			s << " You have no vocation.";
@@ -277,7 +277,7 @@ std::string Player::getDescription(int32_t lookDistance) const
 
 		if(accessLevel != 0)
 			s << " is " << groupName << ".";
-		else if(vocation_id != 0)
+		else if(vocation_id != VOCATION_NONE)
 			s << " is " << vocation->getVocDescription() << ".";
 		else
 			s << " has no vocation.";
@@ -794,7 +794,7 @@ uint16_t Player::getLookCorpse() const
 
 void Player::dropLoot(Container* corpse)
 {
-	if(corpse && lootDrop && getVocationId() != 0)
+	if(corpse && lootDrop && vocation_id != VOCATION_NONE)
 	{
 		if(inventory[SLOT_NECKLACE] && inventory[SLOT_NECKLACE]->getID() == ITEM_AMULETOFLOSS &&
 			getSkull() != SKULL_RED && g_game.getWorldType() != WORLD_TYPE_PVP_ENFORCED)

@@ -3,7 +3,7 @@
 		The Forgotten Server
 
 	Version
-		0.2.11pl1
+		0.2.11pl2
 
 	Codenamed
 		"Mystic Spirit"
@@ -13,6 +13,21 @@
 
 	Forum
 		http://otland.net/
+]
+
+[ File changes (patch level 2)
+	D = Deleted.
+	M = Modified.
+	A = Added.
+
+	M The Forgotten Server.exe
+	M data/global.lua
+]
+
+[ Milestone (patch level 2)
+	Fixed a crash when using health potions.
+	Added three new optional parameters to doPlayerSendTextMessage (can be used for animated numbers): position, value and color.
+	Updated global.lua with more message constants.
 ]
 
 [ File changes (patch level 1)

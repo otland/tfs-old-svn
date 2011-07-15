@@ -1352,7 +1352,7 @@ void LuaScriptInterface::registerFunctions()
 	//doPlayerAddItemEx(cid, uid, <optional: default: 0> canDropOnMap)
 	lua_register(m_luaState, "doPlayerAddItemEx", LuaScriptInterface::luaDoPlayerAddItemEx);
 
-	//doPlayerSendTextMessage(cid, MessageClasses, message)
+	//doPlayerSendTextMessage(cid, MessageClasses, message[, position, value, color])
 	lua_register(m_luaState, "doPlayerSendTextMessage", LuaScriptInterface::luaDoPlayerSendTextMessage);
 
 	//doPlayerRemoveMoney(cid, money)
@@ -3131,7 +3131,17 @@ int32_t LuaScriptInterface::luaDoRelocate(lua_State* L)
 
 int32_t LuaScriptInterface::luaDoPlayerSendTextMessage(lua_State* L)
 {
-	//doPlayerSendTextMessage(cid, MessageClasses, message)
+	//doPlayerSendTextMessage(cid, MessageClasses, message[, position, value, color])
+	int parameters = lua_gettop(L);
+	PositionEx position;
+	uint32_t value;
+	TextColor_t color;
+	if(parameters > 5)
+	{
+		color = (TextColor_t)popNumber(L);
+		value = popNumber(L);
+		popPosition(L, position);
+	}
 	std::string text = popString(L);
 	uint32_t messageClass = popNumber(L);
 	uint32_t cid = popNumber(L);
@@ -3146,7 +3156,11 @@ int32_t LuaScriptInterface::luaDoPlayerSendTextMessage(lua_State* L)
 		return 1;
 	}
 
-	player->sendTextMessage((MessageClasses)messageClass, text);
+	if(parameters > 5)
+		player->sendTextMessage((MessageClasses)messageClass, text, &position, value, color);
+	else
+		player->sendTextMessage((MessageClasses)messageClass, text);
+
 	lua_pushboolean(L, true);
 	return 1;
 }
