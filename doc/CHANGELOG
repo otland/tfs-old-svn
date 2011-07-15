@@ -38,6 +38,7 @@
 	Fixed client debugs when talking to NPC's.
 	Fixed a bug in the sqlite schema and rebuilt the sqlite database.
 	Fixed a bug with the loading of lastMotd.txt.
+	Fixed selling in NPC trade window.
 ]
 
 [ File changes
