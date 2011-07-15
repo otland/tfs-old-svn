@@ -3202,7 +3202,7 @@ void ProtocolGame::AddShopItem(NetworkMessage_ptr msg, const ShopInfo item)
 	else if(it.isSplash() || it.isFluidContainer())
 		msg->AddByte(fluidMap[item.subType % 8]);
 	else
-		msg->AddByte(0x01);
+		msg->AddByte(0x00);
 
 	msg->AddString(item.realName);
 	msg->AddU32(uint32_t(it.weight * 100));
