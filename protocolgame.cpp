@@ -3171,7 +3171,7 @@ void ProtocolGame::AddShopItem(NetworkMessage_ptr msg, const ShopInfo& item)
 	else if(it.stackable || it.charges)
 		msg->put<char>(item.subType);
 	else
-		msg->put<char>(0x01);
+		msg->put<char>(0x00);
 
 	msg->putString(item.itemName);
 	msg->put<uint32_t>(uint32_t(it.weight * 100));
