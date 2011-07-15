@@ -3134,8 +3134,8 @@ int32_t LuaScriptInterface::luaDoPlayerSendTextMessage(lua_State* L)
 	//doPlayerSendTextMessage(cid, MessageClasses, message[, position, value, color])
 	int parameters = lua_gettop(L);
 	PositionEx position;
-	uint32_t value;
-	TextColor_t color;
+	uint32_t value = 0;
+	TextColor_t color = TEXTCOLOR_NONE;
 	if(parameters > 5)
 	{
 		color = (TextColor_t)popNumber(L);
