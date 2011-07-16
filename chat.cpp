@@ -573,7 +573,7 @@ bool Chat::talkToChannel(Player* player, MessageClasses type, const std::string&
 			switch(player->getGuildLevel())
 			{
 				case GUILDLEVEL_VICE:
-					return channel->talk(player, MSG_GAMEMASTER_CHANNEL, text); // SPEAK_CHANNEL_O
+					return channel->talk(player, MSG_CHANNEL_HIGHLIGHT, text); // SPEAK_CHANNEL_O
 				case GUILDLEVEL_LEADER:
 					return channel->talk(player, MSG_GAMEMASTER_CHANNEL, text); // SPEAK_CHANNEL_RN
 				default:

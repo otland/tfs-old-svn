@@ -2887,7 +2887,6 @@ void ProtocolGame::AddCreatureSpeak(NetworkMessage_ptr msg, const Creature* crea
 		case MSG_CHANNEL:
 		case MSG_CHANNEL_HIGHLIGHT:
 		case MSG_GAMEMASTER_CHANNEL:
-		case MSG_CHANNEL_GUILD:
 			msg->put<uint16_t>(channelId);
 			break;
 
