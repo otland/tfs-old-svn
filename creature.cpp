@@ -1319,7 +1319,7 @@ void Creature::onGainExperience(double& gainExp, Creature* target, bool multipli
 		Map::maxViewportY, Map::maxViewportY);
 
 	std::stringstream ss;
-	ss << getNameDescription() << " gained " << (uint64_t)gainExp << " experience points.";
+	ss << ucfirst(getNameDescription()) << " gained " << (uint64_t)gainExp << " experience points.";
 
 	SpectatorVec textList;
 	for(SpectatorVec::const_iterator it = list.begin(); it != list.end(); ++it)
@@ -1367,7 +1367,7 @@ void Creature::onGainSharedExperience(double& gainExp, Creature* target, bool mu
 		Map::maxViewportY, Map::maxViewportY);
 
 	std::stringstream ss;
-	ss << getNameDescription() << " gained " << (uint64_t)gainExp << " experience points.";
+	ss << ucfirst(getNameDescription()) << " gained " << (uint64_t)gainExp << " experience points.";
 
 	SpectatorVec textList;
 	for(SpectatorVec::const_iterator it = list.begin(); it != list.end(); ++it)

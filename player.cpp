@@ -768,7 +768,7 @@ uint16_t Player::getLookCorpse() const
 
 void Player::dropLoot(Container* corpse)
 {
-	if(!corpse || lootDrop != LOOT_DROP_FULL)
+	if(!corpse || lootDrop != LOOT_DROP_FULL || getVocationId() == 0)
 		return;
 
 	uint32_t loss = lossPercent[LOSS_CONTAINERS];
@@ -1927,6 +1927,9 @@ void Player::addExperience(uint64_t exp)
 
 	if(prevLevel != level)
 	{
+		health = healthMax;
+		mana = manaMax;
+
 		updateBaseSpeed();
 		g_game.changeSpeed(this, 0);
 

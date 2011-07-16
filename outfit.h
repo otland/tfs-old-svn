@@ -22,8 +22,6 @@
 #include "enums.h"
 #include "const.h"
 
-#define OUTFITS_MAX_NUMBER 30
-
 enum AddonRequirement_t
 {
 	REQUIREMENT_NONE = 0,

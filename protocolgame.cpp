@@ -2474,9 +2474,8 @@ void ProtocolGame::sendOutfitWindow()
 
  		if(outfitList.size())
 		{
-			msg->put<char>((size_t)std::min((size_t)OUTFITS_MAX_NUMBER, outfitList.size()));
-			std::list<Outfit>::iterator it = outfitList.begin();
-			for(uint8_t i = 0; it != outfitList.end() && i < OUTFITS_MAX_NUMBER; ++it, ++i)
+			msg->put<char>(outfitList.size());
+			for(std::list<Outfit>::iterator it = outfitList.begin(); it != outfitList.end(); ++it)
 			{
 				msg->put<uint16_t>(it->lookType);
 				msg->putString(it->name);
@@ -2508,9 +2507,8 @@ void ProtocolGame::sendOutfitWindow()
 
 			if(mountList.size())
 			{
-				msg->put<char>((size_t)std::min((size_t)OUTFITS_MAX_NUMBER, mountList.size()));
-				std::list<Mount*>::iterator it = mountList.begin();
-				for(uint8_t i = 0; it != mountList.end() && i < OUTFITS_MAX_NUMBER; ++it, ++i)
+				msg->put<char>(mountList.size());
+				for(std::list<Mount*>::iterator it = mountList.begin(); it != mountList.end(); ++it)
 				{
 					msg->put<uint16_t>((*it)->getClientId());
 					msg->putString((*it)->getName());
@@ -2889,6 +2887,7 @@ void ProtocolGame::AddCreatureSpeak(NetworkMessage_ptr msg, const Creature* crea
 		case MSG_CHANNEL:
 		case MSG_CHANNEL_HIGHLIGHT:
 		case MSG_GAMEMASTER_CHANNEL:
+		case MSG_CHANNEL_GUILD:
 			msg->put<uint16_t>(channelId);
 			break;
 

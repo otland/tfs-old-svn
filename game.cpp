@@ -4401,11 +4401,17 @@ bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creat
 			if(!textList.empty())
 			{
 				if(!attacker)
-					ss << target->getNameDescription() << " is healed for " << healthChange << " hitpoint" << plural;
+					ss << ucfirst(target->getNameDescription()) << " is healed for " << healthChange << " hitpoint" << plural;
 				else if(attacker != target)
-					ss << attacker->getNameDescription() << " heals " << target->getNameDescription() << " for " << healthChange << " hitpoint" << plural;
+					ss << ucfirst(attacker->getNameDescription()) << " heals " << target->getNameDescription() << " for " << healthChange << " hitpoint" << plural;
 				else
-					ss << attacker->getNameDescription() << " heals himself for " << healthChange << " hitpoint" << plural;
+				{
+					ss << ucfirst(attacker->getNameDescription()) << " heals ";
+					if(Player* attackerPlayer = attacker->getPlayer())
+						ss << (attackerPlayer->getSex(false) == PLAYERSEX_FEMALE ? "herself" : "himself") << " for " << healthChange << " hitpoint" << plural;
+					else
+						ss << "itself for " << healthChange << " hitpoint" << plural;
+				}
 
 				addStatsMessage(textList, MSG_HEALED_OTHERS, ss.str(), targetPos, details);
 				ss.str("");
@@ -4426,7 +4432,7 @@ bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creat
 			if((player = target->getPlayer()) && attacker != target)
 			{
 				if(attacker)
-					ss << attacker->getNameDescription() << " heals you for " << healthChange << " hitpoint" << plural;
+					ss << ucfirst(attacker->getNameDescription()) << " heals you for " << healthChange << " hitpoint" << plural;
 				else
 					ss << "You are healed for " << healthChange << " hitpoint" << plural;
 
@@ -4607,11 +4613,11 @@ bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creat
 					if(!textList.empty())
 					{
 						if(!attacker)
-							ss << target->getNameDescription() << " loses " << damage << " hitpoint" << plural << ".";
+							ss << ucfirst(target->getNameDescription()) << " loses " << damage << " hitpoint" << plural << ".";
 						else if(attacker != target)
-							ss << target->getNameDescription() << " loses " << damage << " hitpoint" << plural << " due to an attack by " << attacker->getNameDescription();
+							ss << ucfirst(target->getNameDescription()) << " loses " << damage << " hitpoint" << plural << " due to an attack by " << attacker->getNameDescription();
 						else
-							ss << target->getNameDescription() << " loses " << damage << " hitpoint" << plural << " due to a self attack.";
+							ss << ucfirst(target->getNameDescription()) << " loses " << damage << " hitpoint" << plural << " due to a self attack.";
 
 						addStatsMessage(textList, MSG_DAMAGE_OTHERS, ss.str(), targetPos, details);
 						ss.str("");
@@ -4621,7 +4627,7 @@ bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creat
 					if(attacker && (player = attacker->getPlayer()))
 					{
 						if(attacker != target)
-							ss << target->getNameDescription() << " loses " << damage << " hitpoint" << plural << " due to your attack.";
+							ss << ucfirst(target->getNameDescription()) << " loses " << damage << " hitpoint" << plural << " due to your attack.";
 						else
 							ss << "You lose " << damage << " hitpoint" << plural << " due to your attack.";
 
@@ -4686,11 +4692,11 @@ bool Game::combatChangeMana(Creature* attacker, Creature* target, int32_t manaCh
 			if(!textList.empty())
 			{
 				if(!attacker)
-					ss << target->getNameDescription() << " is regenerated with " << manaChange << " mana.";
+					ss << ucfirst(target->getNameDescription()) << " is regenerated with " << manaChange << " mana.";
 				else if(attacker != target)
-					ss << attacker->getNameDescription() << " regenerates " << target->getNameDescription() << " with " << manaChange << " mana.";
+					ss << ucfirst(attacker->getNameDescription()) << " regenerates " << target->getNameDescription() << " with " << manaChange << " mana.";
 				else
-					ss << attacker->getNameDescription() << " regenerates himself with " << manaChange << " mana.";
+					ss << ucfirst(attacker->getNameDescription()) << " regenerates himself with " << manaChange << " mana.";
 
 				addStatsMessage(textList, MSG_HEALED_OTHERS, ss.str(), targetPos, details);
 				ss.str("");
@@ -4711,7 +4717,7 @@ bool Game::combatChangeMana(Creature* attacker, Creature* target, int32_t manaCh
 			if((player = target->getPlayer()) && attacker != target)
 			{
 				if(attacker)
-					ss << attacker->getNameDescription() << " regenerates you with " << manaChange << " mana.";
+					ss << ucfirst(attacker->getNameDescription()) << " regenerates you with " << manaChange << " mana.";
 				else
 					ss << "You are regenerated with " << manaChange << " mana.";
 
@@ -4761,11 +4767,11 @@ bool Game::combatChangeMana(Creature* attacker, Creature* target, int32_t manaCh
 			if(!textList.empty())
 			{
 				if(!attacker)
-					ss << target->getNameDescription() << " loses " << manaLoss << " mana.";
+					ss << ucfirst(target->getNameDescription()) << " loses " << manaLoss << " mana.";
 				else if(attacker != target)
-					ss << target->getNameDescription() << " loses " << manaLoss << " mana due to an attack by " << attacker->getNameDescription();
+					ss << ucfirst(target->getNameDescription()) << " loses " << manaLoss << " mana due to an attack by " << attacker->getNameDescription();
 				else
-					ss << target->getNameDescription() << " loses " << manaLoss << " mana due to a self attack.";
+					ss << ucfirst(target->getNameDescription()) << " loses " << manaLoss << " mana due to a self attack.";
 
 				addStatsMessage(textList, MSG_DAMAGE_OTHERS, ss.str(), targetPos, details);
 				ss.str("");
@@ -4775,7 +4781,7 @@ bool Game::combatChangeMana(Creature* attacker, Creature* target, int32_t manaCh
 			if(attacker && (player = attacker->getPlayer()))
 			{
 				if(attacker != target)
-					ss << target->getNameDescription() << " loses " << manaLoss << " mana due to your attack.";
+					ss << ucfirst(target->getNameDescription()) << " loses " << manaLoss << " mana due to your attack.";
 				else
 					ss << "You lose " << manaLoss << " mana due to your attack.";
 							

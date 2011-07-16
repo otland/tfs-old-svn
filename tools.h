@@ -64,6 +64,7 @@ void toUpperCaseString(std::string& source);
 std::string asLowerCaseString(const std::string& source);
 std::string asUpperCaseString(const std::string& source);
 bool booleanString(std::string source);
+std::string ucfirst(std::string source);
 
 template <typename T>
 inline void asString(const T& object, const std::string& s)

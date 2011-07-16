@@ -193,6 +193,20 @@ bool booleanString(std::string source)
 	return (source == "yes" || source == "true" || atoi(source.c_str()) > 0);
 }
 
+std::string ucfirst(std::string source)
+{
+	for(uint16_t i = 0; i < (uint16_t)source.length(); ++i)
+	{
+		if(source[i] != ' ')
+		{
+			source[i] = upchar(source[i]);
+			break;
+		}
+	}
+
+	return source;
+}
+
 bool readXMLInteger(xmlNodePtr node, const char* tag, int32_t& value)
 {
 	char* nodeValue = (char*)xmlGetProp(node, (xmlChar*)tag);
