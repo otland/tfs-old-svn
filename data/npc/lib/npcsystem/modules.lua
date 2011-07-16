@@ -1014,7 +1014,7 @@ if(Modules == nil) then
 				id = itemid,
 				buy = cost,
 				sell = -1,
-				subType = subType or 1,
+				subType = subType or 0,
 				name = realName or getItemNameById(itemid)
 			}
 
@@ -1042,7 +1042,7 @@ if(Modules == nil) then
 				eventType = SHOPMODULE_BUY_ITEM,
 				module = self,
 				realName = realName or getItemNameById(itemid),
-				subType = subType or 1
+				subType = subType or 0
 			}
 
 			for i, name in pairs(names) do
@@ -1073,7 +1073,7 @@ if(Modules == nil) then
 				eventType = SHOPMODULE_BUY_ITEM_CONTAINER,
 				module = self,
 				realName = realName or getItemNameById(itemid),
-				subType = subType or 1
+				subType = subType or 0
 			}
 
 			for i, name in pairs(names) do
@@ -1100,7 +1100,7 @@ if(Modules == nil) then
 				id = itemid,
 				buy = -1,
 				sell = cost,
-				subType = v.charges > 0 and 0 or 1,
+				subType = 0,
 				name = realName or v.name
 			}
 
