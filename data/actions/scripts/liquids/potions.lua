@@ -90,12 +90,12 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 	end
 
 	local health = potion.health
-	if(health and not doCreatureAddHealth(itemEx.uid, math.ceil(math.random(health[1], health[2]) * potion.multiplier.health))) then
+	if(health and not doCreatureAddHealth(itemEx.uid, math.ceil(math.random(health[1], health[2]) * config.multiplier.health))) then
 		return false
 	end
 
 	local mana = potion.mana
-	if(mana and not doPlayerAddMana(itemEx.uid, math.ceil(math.random(mana[1], mana[2]) * potion.multiplier.mana))) then
+	if(mana and not doPlayerAddMana(itemEx.uid, math.ceil(math.random(mana[1], mana[2]) * config.multiplier.mana))) then
 		return false
 	end
 
