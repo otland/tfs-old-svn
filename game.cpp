@@ -4397,7 +4397,7 @@ bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creat
 			std::stringstream ss;
 			std::string plural = (healthChange != 1 ? "s." : ".");
 
-			MessageDetails* details = new MessageDetails(healthChange, COLOR_GREEN);
+			MessageDetails* details = new MessageDetails(healthChange, COLOR_MAYABLUE);
 			if(!textList.empty())
 			{
 				if(!attacker)
