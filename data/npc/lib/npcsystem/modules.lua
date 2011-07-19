@@ -1014,16 +1014,16 @@ if(Modules == nil) then
 				id = itemid,
 				buy = cost,
 				sell = -1,
-				subType = subType or 0,
+				subType = subType or 1,
 				name = realName or getItemNameById(itemid)
 			}
 
 			for i, shopItem in ipairs(self.npcHandler.shopItems) do
-				if(shopItem.id == item.id and shopItem.subType == item.subType) then
+				if(shopItem.id == item.id) then
 					if(item.sell ~= shopItem.sell) then
 						item.sell = shopItem.sell
 					end
-
+					
 					self.npcHandler.shopItems[i] = item
 					item = nil
 					break
@@ -1042,7 +1042,7 @@ if(Modules == nil) then
 				eventType = SHOPMODULE_BUY_ITEM,
 				module = self,
 				realName = realName or getItemNameById(itemid),
-				subType = subType or 0
+				subType = subType or 1
 			}
 
 			for i, name in pairs(names) do
@@ -1073,7 +1073,7 @@ if(Modules == nil) then
 				eventType = SHOPMODULE_BUY_ITEM_CONTAINER,
 				module = self,
 				realName = realName or getItemNameById(itemid),
-				subType = subType or 0
+				subType = subType or 1
 			}
 
 			for i, name in pairs(names) do
@@ -1105,7 +1105,7 @@ if(Modules == nil) then
 			}
 
 			for i, shopItem in ipairs(self.npcHandler.shopItems) do
-				if(shopItem.id == item.id and shopItem.subType == item.subType) then
+				if(shopItem.id == item.id) then
 					if(item.buy ~= shopItem.buy) then
 						item.buy = shopItem.buy
 					end
