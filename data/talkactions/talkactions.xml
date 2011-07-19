@@ -24,7 +24,6 @@
 	<talkaction log="yes" words="/i" access="4" event="script" value="createitem.lua"/>
 	<talkaction access="4" words="/z" event="script" value="magiceffect.lua"/>
 	<talkaction access="4" words="/x" event="script" value="animationeffect.lua"/>
-	<talkaction access="4" words="/y" event="script" value="animatedtext.lua"/>
 	<talkaction log="yes" words="/bc" access="4" event="script" value="broadcastclass.lua"/>
 	<talkaction log="yes" access="4" words="/mkick" event="script" value="masskick.lua"/>
 
