@@ -3,7 +3,7 @@
 		The Forgotten Server
 
 	Version
-		0.2.11pl2
+		0.2.12
 
 	Codenamed
 		"Mystic Spirit"
@@ -24,6 +24,7 @@
         11      oil             BROWN
         19      mud             BROWN
         27      rum             BROWN
+	35	tea		BROWN
 
         4       slime           GREEN
 
