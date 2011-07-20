@@ -3,7 +3,7 @@
 		The Forgotten Server
 
 	Version
-		0.2.11pl2
+		0.2.12
 
 	Codenamed
 		"Mystic Spirit"
@@ -140,12 +140,12 @@
 						3
 
 			Example
-				local playerPos = getCreaturePosition(cid)
-				if getPlayerTown(cid) == 1 then
-					doSendAnimatedText(playerPos, 'I am leaving in town with id: 1 (Main City)! :)', TEXTCOLOR_GOLD)
-				elseif getPlayerTown(cid) == 2 then
-					doSendAnimatedText(playerPos, 'I am leaving in town with id: 2 (Desert City)! :)', TEXTCOLOR_GOLD)
-				end
+			local playerTown = getPlayerTown(cid)
+			if playerTown == 1 then
+				doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, 'I am leaving in town with id: 1 (Main City)! :)')
+			elseif playerTown == 2 then
+				doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, 'I am leaving in town with id: 2 (Desert City)! :)')
+			end
 
 		getPlayerVocation(cid)
 			Info
@@ -292,12 +292,13 @@
 						1 - when player is male
 
 			Example
-				if getPlayerSex(cid) then --when female
-					doSendAnimatedText(playerPos, 'GiRl :*:*', TEXTCOLOR_GOLD)
-				elseif getPlayerSex(cid) then --male
-					doSendAnimatedText(playerPos, 'Wtf? I aM BoY.', TEXTCOLOR_GOLD)
-				else -- dont know how it is in english, but in polish = obojniak - something between boy and girl :P
-					doSendAnimatedText(playerPos, 'Wtf? I aM BoY.', TEXTCOLOR_GOLD)
+				local playerSex = getPlayerSex(cid)
+				if playerSex == PLAYERSEX_FEMALE then
+					doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, 'Girl!')
+				elseif playerSex == PLAYERSEX_MALE then
+					doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, 'Boy!')
+				else
+					doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, 'WTF?!')
 				end
 
 		getPlayerLookDir(cid)
@@ -403,7 +404,7 @@
 
 			Example
 				local guildName = getPlayerGuildName(cid)
-				doSendAnimatedText(getCreaturePosition(cid),guildName, TEXTCOLOR_GOLD)
+				doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, 'Your guild name is: ' .. guildName)
 
 		getPlayerGuildRank(cid)
 			Info
