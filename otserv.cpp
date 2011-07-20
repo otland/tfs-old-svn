@@ -316,6 +316,7 @@ int main(int argc, char* argv[])
 	boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
 	if(servicer.isRunning())
 	{
+		Status::getInstance();
 		std::clog << ">> " << g_config.getString(ConfigManager::SERVER_NAME) << " server Online!" << std::endl << std::endl;
 		servicer.run();
 	}
@@ -350,7 +351,7 @@ void otserv(StringVec, ServiceManager* services)
 
 	std::clog << SOFTWARE_NAME << ", version " << SOFTWARE_VERSION << " (" << SOFTWARE_CODENAME << ")" << std::endl
 		<< "Compiled with " << BOOST_COMPILER << " (x86_64: " << __x86_64__ << ") at " << __DATE__ << ", " << __TIME__ << "." << std::endl
-		<< "A server developed by Elf, Talaturen, Dalkon, Slawkens, KaczooH and Kornholijo." << std::endl
+		<< "A server developed by Elf, Talaturen, Dalkon and Kornholijo." << std::endl
 		<< "Visit our forum for updates, support and resources: http://otland.net." << std::endl << std::endl;
 	std::stringstream ss;
 #ifdef __DEBUG__
