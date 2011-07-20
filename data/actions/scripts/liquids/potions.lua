@@ -24,7 +24,7 @@ local POTIONS = {
 	[8472] = {empty = 7635, splash = 43, health = {200, 400}, mana = {110, 190}, level = 80, vocations = {3, 7}, vocStr = "paladins"} -- great spirit potion
 }
 
-for _, potion in ipairs(POTIONS) do
+for index, potion in ipairs(POTIONS) do
 	for k, v in pairs(config) do
 		if(not potion[k]) then
 			potion[k] = v
@@ -46,6 +46,8 @@ for _, potion in ipairs(POTIONS) do
 	if(potion.realAnimation) then
 		potion.realAnimation = getBooleanFromString(potion.realAnimation)
 	end
+	
+	POTIONS[index] = potion
 end
 
 function onUse(cid, item, fromPosition, itemEx, toPosition)
@@ -90,12 +92,12 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 	end
 
 	local health = potion.health
-	if(health and not doCreatureAddHealth(itemEx.uid, math.ceil(math.random(health[1], health[2]) * config.multiplier.health))) then
+	if(health and not doCreatureAddHealth(itemEx.uid, math.ceil(math.random(health[1], health[2]) * potion.multiplier.health))) then
 		return false
 	end
 
 	local mana = potion.mana
-	if(mana and not doPlayerAddMana(itemEx.uid, math.ceil(math.random(mana[1], mana[2]) * config.multiplier.mana))) then
+	if(mana and not doPlayerAddMana(itemEx.uid, math.ceil(math.random(mana[1], mana[2]) * potion.multiplier.mana))) then
 		return false
 	end
 
