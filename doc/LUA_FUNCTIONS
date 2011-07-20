@@ -522,20 +522,20 @@
 		getPlayerSkullType(cid)
 		getPromotedVocation(vocation)
 		getPlayerBlessing(cid, blessing)
-      	getTileThingByTopOrder(pos, topOrder)
-      	getTileItemByType(pos, type)
-       	getTopCreature(pos)
-       	getTileThingByPos(pos)
-       	getTileItemById(pos, itemId, <optional> subType)
-       	getOnlinePlayers()
-        getTileInfo(pos) 
-        getThingPos(uid)
-        getSpectators(centerPos, rangex, rangey, multifloor)
-        getPlayerStorageValue(uid, valueid)
-        getPlayerItemById(cid, deepSearch, itemId, <optional> subType)
-        getPlayerIp(cid)
-        getPlayerGuildLevel(cid)
-        getCreatureSummons(cid) - Returns: returns a table with all the summons of the creature
+		getTileThingByTopOrder(pos, topOrder)
+		getTileItemByType(pos, type)
+		getTopCreature(pos)
+		getTileThingByPos(pos)
+		getTileItemById(pos, itemId, <optional> subType)
+		getOnlinePlayers()
+		getTileInfo(pos) 
+		getThingPos(uid)
+		getSpectators(centerPos, rangex, rangey, multifloor)
+		getPlayerStorageValue(uid, valueid)
+		getPlayerItemById(cid, deepSearch, itemId, <optional> subType)
+		getPlayerIp(cid)
+		getPlayerGuildLevel(cid)
+		getCreatureSummons(cid) - Returns: returns a table with all the summons of the creature
 	
 	//*DO
 	
@@ -614,10 +614,10 @@
 		doCreatureSetLookDir(cid, direction)		
 		doPlayerFeed(cid, food)
 		doRemoveItem(uid, <optional> n)
-        doAddMapMark(cid, pos, type, <optional> description)    
-        doPlayerAddMoney(cid, money)
-        doPlayerChangeName(cid, newName) 
-        doSetCreatureDirection(cid, direction)
+		doAddMapMark(cid, pos, type, <optional> description)    
+		doPlayerAddMoney(cid, money)
+		doPlayerChangeName(cid, newName) 
+		doSetCreatureDirection(cid, direction)
 	
 	//*SET
 	
