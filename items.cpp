@@ -759,7 +759,14 @@ void Items::parseItemNode(xmlNodePtr itemNode, uint32_t id)
 		else if(tmpStrValue == "containersize")
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue))
+			{
 				it.maxItems = intValue;
+				if(it.group == ITEM_GROUP_NONE)
+				{
+					it.group = ITEM_GROUP_CONTAINER;
+					it.type = ITEM_TYPE_CONTAINER;
+				}
+			}
 		}
 		else if(tmpStrValue == "fluidsource")
 		{

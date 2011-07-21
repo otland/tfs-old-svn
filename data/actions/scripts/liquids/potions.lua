@@ -24,30 +24,32 @@ local POTIONS = {
 	[8472] = {empty = 7635, splash = 43, health = {200, 400}, mana = {110, 190}, level = 80, vocations = {3, 7}, vocStr = "paladins"} -- great spirit potion
 }
 
-for index, potion in ipairs(POTIONS) do
-	for k, v in pairs(config) do
-		if(not potion[k]) then
-			potion[k] = v
+for index, potion in pairs(POTIONS) do
+	if(type(index) == "number")then
+		for k, v in pairs(config) do
+			if(not potion[k]) then
+				potion[k] = v
+			end
 		end
-	end
 
-	if(potion.removeOnUse) then
-		potion.removeOnUse = getBooleanFromString(potion.removeOnUse)
-	end
+		if(potion.removeOnUse) then
+			potion.removeOnUse = getBooleanFromString(potion.removeOnUse)
+		end
 
-	if(potion.usableOnTarget) then
-		potion.usableOnTarget = getBooleanFromString(potion.usableOnTarget)
-	end
+		if(potion.usableOnTarget) then
+			potion.usableOnTarget = getBooleanFromString(potion.usableOnTarget)
+		end
 
-	if(potion.splashable) then
-		potion.splashable = getBooleanFromString(potion.splashable)
-	end
+		if(potion.splashable) then
+			potion.splashable = getBooleanFromString(potion.splashable)
+		end
 
-	if(potion.realAnimation) then
-		potion.realAnimation = getBooleanFromString(potion.realAnimation)
+		if(potion.realAnimation) then
+			potion.realAnimation = getBooleanFromString(potion.realAnimation)
+		end
+		
+		POTIONS[index] = potion
 	end
-	
-	POTIONS[index] = potion
 end
 
 function onUse(cid, item, fromPosition, itemEx, toPosition)
