@@ -2241,7 +2241,7 @@ bool Player::onDeath()
 	{
 		uint64_t lossExperience = getLostExperience();
 		removeExperience(lossExperience, false);
-		double percent = 1. - ((double)(experience - lossExperience) / std::max(1ULL, experience));
+		double percent = 1. - ((double)(experience - lossExperience) / std::max((uint64_t)1, experience));
 
 		// magic level loss
 		uint64_t sumMana = 0, lostMana = 0;
