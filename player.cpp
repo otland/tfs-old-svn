@@ -768,7 +768,7 @@ uint16_t Player::getLookCorpse() const
 
 void Player::dropLoot(Container* corpse)
 {
-	if(!corpse || lootDrop != LOOT_DROP_FULL || getVocationId() == 0)
+	if(!corpse || lootDrop != LOOT_DROP_FULL || vocationId == 0)
 		return;
 
 	uint32_t loss = lossPercent[LOSS_CONTAINERS];
@@ -2213,7 +2213,7 @@ bool Player::onDeath()
 			continue;
 
 		Creature* creature = g_game.getCreatureByID(it->first);
-		if(creature && creature->getPlayer() || creature->isPlayerSummon())
+		if(creature && (creature->getPlayer() || creature->isPlayerSummon()))
 			pvpDamage += it->second.total;
 	}
 
