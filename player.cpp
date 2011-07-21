@@ -2213,12 +2213,12 @@ bool Player::onDeath()
 			continue;
 
 		Creature* creature = g_game.getCreatureByID(it->first);
-		if(creature->getPlayer() || creature->isPlayerSummon())
+		if(creature && creature->getPlayer() || creature->isPlayerSummon())
 			pvpDamage += it->second.total;
 	}
 
 	bool usePVPBlessing = false;
-	uint8_t pvpPercent = (uint8_t)std::ceil((double)pvpDamage * 100. / totalDamage);
+	uint8_t pvpPercent = (uint8_t)std::ceil((double)pvpDamage * 100. / std::max(1U, totalDamage));
 	if(pvpBlessing && pvpPercent >= (uint8_t)g_config.getNumber(
 		ConfigManager::PVP_BLESSING_THRESHOLD))
 	{
@@ -2230,18 +2230,18 @@ bool Player::onDeath()
 	{
 		setLossSkill(false);
 		if(!usePVPBlessing) // TODO: need to reconsider this, because players will be immune to any loss
-			g_game.transformItem(preventLoss, preventLoss->getID(), std::max((int32_t)0, (int32_t)preventLoss->getCharges() - 1));
+			g_game.transformItem(preventLoss, preventLoss->getID(), std::max(0, (int32_t)preventLoss->getCharges() - 1));
 	}
 
 	if(preventDrop && preventDrop != preventLoss && !usePVPBlessing)
-		g_game.transformItem(preventDrop, preventDrop->getID(), std::max((int32_t)0, (int32_t)preventDrop->getCharges() - 1));
+		g_game.transformItem(preventDrop, preventDrop->getID(), std::max(0, (int32_t)preventDrop->getCharges() - 1));
 
 	removeConditions(CONDITIONEND_DEATH);
 	if(skillLoss)
 	{
 		uint64_t lossExperience = getLostExperience();
 		removeExperience(lossExperience, false);
-		double percent = 1. - ((double)(experience - lossExperience) / experience);
+		double percent = 1. - ((double)(experience - lossExperience) / std::max(1ULL, experience));
 
 		// magic level loss
 		uint64_t sumMana = 0, lostMana = 0;
