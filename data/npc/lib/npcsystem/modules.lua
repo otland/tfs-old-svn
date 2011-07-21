@@ -1013,7 +1013,7 @@ if(Modules == nil) then
 			local item = {
 				id = itemid,
 				buy = cost,
-				sell = -1,
+				sell = 0,
 				subType = subType or 1,
 				name = realName or getItemNameById(itemid)
 			}
@@ -1098,7 +1098,7 @@ if(Modules == nil) then
 		if(SHOPMODULE_MODE ~= SHOPMODULE_MODE_TALK) then
 			local item = {
 				id = itemid,
-				buy = -1,
+				buy = 0,
 				sell = cost,
 				subType = 0,
 				name = realName or v.name
