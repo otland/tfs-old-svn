@@ -433,11 +433,11 @@ uint32_t MoveEvents::onItemMove(Item* item, Tile* tile, bool isAdd)
 	uint32_t ret = 1;
 	MoveEvent* moveEvent = getEvent(tile, eventType1);
 	if(moveEvent)
-		ret = ret & moveEvent->fireAddRemItem(item, NULL, tile->getPosition());
+		ret &= moveEvent->fireAddRemItem(item, NULL, tile->getPosition());
 
 	moveEvent = getEvent(item, eventType1);
 	if(moveEvent)
-		ret = ret & moveEvent->fireAddRemItem(item, NULL, tile->getPosition());
+		ret &= moveEvent->fireAddRemItem(item, NULL, tile->getPosition());
 
 	int32_t j = tile->__getLastIndex();
 	Item* tileItem = NULL;
@@ -448,7 +448,7 @@ uint32_t MoveEvents::onItemMove(Item* item, Tile* tile, bool isAdd)
 		{
 			moveEvent = getEvent(tileItem, eventType2);
 			if(moveEvent)
-				ret = ret & moveEvent->fireAddRemItem(item, tileItem, tile->getPosition());
+				ret &= moveEvent->fireAddRemItem(item, tileItem, tile->getPosition());
 		}
 	}
 	return ret;
