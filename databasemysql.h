@@ -24,10 +24,6 @@
 #error "database.h should be included first."
 #endif
 
-#ifdef _MSC_VER
-	#pragma comment(lib, "libmysql.lib")
-#endif
-
 #if defined WINDOWS
 	#include <mysql.h>
 #else

@@ -279,7 +279,7 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>lua51.lib;mpir.lib;libxml2.lib;dbghelp.lib;libeay32MT.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>lua51.lib;mpir.lib;libxml2.lib;dbghelp.lib;libmysql.lib;sqlite.lib;libeay32MT.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <AdditionalLibraryDirectories>..\lib\win32;..\lib\win32\libxml2\lib;..\lib\win32\iconv\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <SubSystem>NotSet</SubSystem>
@@ -302,7 +302,7 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>lua51.lib;mpir.lib;libxml2.lib;dbghelp.lib;libeay32MT.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>lua51.lib;mpir.lib;libxml2.lib;dbghelp.lib;libmysql.lib;sqlite.lib;libeay32MT.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <AdditionalLibraryDirectories>..\lib\win64;..\lib\win64\libxml2\lib;..\lib\win64\iconv\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <SubSystem>NotSet</SubSystem>
@@ -327,7 +327,7 @@
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>lua51.lib;mpir.lib;libxml2.lib;dbghelp.lib;libeay32MT.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>lua51.lib;mpir.lib;libxml2.lib;dbghelp.lib;libmysql.lib;sqlite.lib;libeay32MT.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>NotSet</SubSystem>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <AdditionalLibraryDirectories>..\lib\win32;..\lib\win32\libxml2\lib;..\lib\win32\iconv\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -351,7 +351,7 @@
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>lua51.lib;mpir.lib;libxml2.lib;dbghelp.lib;libeay32MT.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>lua51.lib;mpir.lib;libxml2.lib;dbghelp.lib;libmysql.lib;sqlite.lib;libeay32MT.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>NotSet</SubSystem>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <AdditionalLibraryDirectories>..\lib\win64;..\lib\win64\libxml2\lib;..\lib\win64\iconv\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
