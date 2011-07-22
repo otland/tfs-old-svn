@@ -1140,7 +1140,7 @@
 		LuaJIT support, up to 130 times faster Lua scripts (Talaturen, Elf)
 		A lot of Lua stack errors fixed (Elf, Talaturen)
 		Lua function doRelocate is now approximately 100 times faster (Elf)
-		New configurable variables in config.lua (Dalkon, Elf, slawkens, Talaturen):
+		New configurable variables in config.lua (Dalkon, Elf, slawkens, Talaturen, Don Daniello):
 			separateVipListPerCharacter
 			vipListDefaultLimit
 			vipListDefaultPremiumLimit
@@ -1169,7 +1169,8 @@
 			useCapacity
 			defaultDepotSizePremium
 			defaultDepotSize
-			daemonize.
+			daemonize
+			skipItemsVersionCheck.
 		New Lua functions (Elf, slawkens, Dalkon, Talaturen):
 			std.sha256(string[, upperCase])
 			std.sha512(string[, upperCase])

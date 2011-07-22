@@ -652,6 +652,11 @@
 			and wait for user interaction (true/false) until continuing start-up.
 			Default: false
 
+		skipItemsVersionCheck
+			Should be items.otb version check skipped ?
+			If set to true, accepts all minor versions of items.otb.
+			Default: false
+
 	*SPELLS
 		formulaLevel
 			Level formula for spells if not defined.

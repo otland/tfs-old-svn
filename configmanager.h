@@ -304,6 +304,7 @@ class ConfigManager
 			USE_CAPACITY,
 			DAEMONIZE,
 			TIBIA_SLOTS,
+			SKIP_ITEMS_VERSION,
 			LAST_BOOL_CONFIG /* this must be the last one */
 		};
 
