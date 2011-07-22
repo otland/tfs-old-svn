@@ -497,8 +497,8 @@ if(NpcHandler == nil) then
 					if(os.mtime() >= speech.time) then
 						local talkStart = (NPCHANDLER_CONVBEHAVIOR ~= CONVERSATION_DEFAULT and self.talkStart[speech.cid] or self.talkStart)
 						if(speech.force or (self:isFocused(speech.cid) and talkStart == speech.start)) then
-							if(NPCHANDLER_CONVBEHAVIOR ~= CONVERSATION_DEFAULT) then
-								selfSay(speech.message, speech.cid)
+							if(isCreature(speech.id) and NPCHANDLER_CONVBEHAVIOR ~= CONVERSATION_DEFAULT) then
+								doCreatureSay(speech.id, speech.message, TALKTYPE_PRIVATE_NP, false, speech.cid, getCreaturePosition(speech.id))
 							else
 								selfSay(speech.message)
 							end
@@ -613,8 +613,8 @@ if(NpcHandler == nil) then
 	-- Makes the npc represented by this instance of NpcHandler say something.
 	--	This implements the currently set type of talkdelay.
 	function NpcHandler:say(message, focus, delay, force)
-		local force = force or false
-		if(NPCHANDLER_TALKDELAY == TALKDELAY_NONE or (delay ~= nil and delay <= 0)) then
+		delay = delay or 0
+		if(NPCHANDLER_TALKDELAY == TALKDELAY_NONE or delay <= 0) then
 			if(NPCHANDLER_CONVBEHAVIOR ~= CONVERSATION_DEFAULT) then
 				selfSay(message, focus)
 			else
@@ -626,11 +626,12 @@ if(NpcHandler == nil) then
 
 		-- TODO: Add an event handling method for delayed messages
 		table.insert(self.talkDelay, {
+			id = getNpcId(),
 			cid = focus,
 			message = message,
 			time = os.mtime() + (delay and delay or self.talkDelayTime),
 			start = os.time(),
-			force = force
+			force = force or false
 		})
 	end
 end
