@@ -1892,7 +1892,7 @@ void Player::addManaSpent(uint64_t amount, bool withMultiplier /*= true*/)
 			manaSpent = 0;
 
 			std::stringstream ss;
-			ss << "You advanced to magic level " << magLevel << ".":
+			ss << "You advanced to magic level " << magLevel << ".";
 			sendTextMessage(MSG_EVENT_ADVANCE, ss.str());
 
 			g_creatureEvents->playerAdvance(this, MAGLEVEL, magLevel-1, magLevel);
