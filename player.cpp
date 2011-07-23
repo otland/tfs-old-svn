@@ -646,9 +646,10 @@ void Player::addSkillAdvance(skills_t skill, uint32_t count)
 		skills[skill][SKILL_LEVEL]++;
 		skills[skill][SKILL_TRIES] = 0;
 		skills[skill][SKILL_PERCENT] = 0;
-		char advMsg[50];
-		sprintf(advMsg, "You advanced in %s.", getSkillName(skill).c_str());
-		sendTextMessage(MSG_EVENT_ADVANCE, advMsg);
+
+		std::stringstream ss;
+		ss << "You advanced to " << getSkillName(skill) << " level " << skills[skill][SKILL_LEVEL] << ".";
+		sendTextMessage(MSG_EVENT_ADVANCE, ss.str());
 
 		g_creatureEvents->playerAdvance(this, skill, (skills[skill][SKILL_LEVEL] - 1), skills[skill][SKILL_LEVEL]);
 		advance = true;
@@ -1889,9 +1890,11 @@ void Player::addManaSpent(uint64_t amount, bool withMultiplier /*= true*/)
 
 			magLevel++;
 			manaSpent = 0;
-			char MaglvMsg[50];
-			sprintf(MaglvMsg, "You advanced to magic level %d.", magLevel);
-			sendTextMessage(MSG_EVENT_ADVANCE, MaglvMsg);
+
+			std::stringstream ss;
+			ss << "You advanced to magic level " << magLevel << ".":
+			sendTextMessage(MSG_EVENT_ADVANCE, ss.str());
+
 			g_creatureEvents->playerAdvance(this, MAGLEVEL, magLevel-1, magLevel);
 
 			currReqMana = nextReqMana;
