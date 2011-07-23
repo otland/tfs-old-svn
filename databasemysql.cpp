@@ -27,12 +27,7 @@
 #include "configmanager.h"
 #include "tools.h"
 
-#if defined WINDOWS
-	#include <errmsg.h>
-#else
-	#include <mysql/errmsg.h>
-#endif
-
+#include <mysql/errmsg.h>
 
 extern ConfigManager g_config;
 

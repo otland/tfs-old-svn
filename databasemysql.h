@@ -24,11 +24,7 @@
 #error "database.h should be included first."
 #endif
 
-#if defined WINDOWS
-	#include <mysql.h>
-#else
-	#include <mysql/mysql.h>
-#endif
+#include <mysql/mysql.h>
 
 #if defined WINDOWS
 #include <winsock2.h>
