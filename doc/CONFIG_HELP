@@ -724,9 +724,6 @@
 			E.g if enabled, rent for a house will be taken from player's bank account.
 			Default: true
 
-		displaySkillLevelOnAdvance
-			Default: false
-
 		promptExceptionTracerErrorBox
 			Works only on Windows with precompiled support feature,
 				"exception tracer" (__EXCEPTION_TRACER__ flag)

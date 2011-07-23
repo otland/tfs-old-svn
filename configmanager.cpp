@@ -216,7 +216,6 @@ bool ConfigManager::load()
 	m_confBool[TELEPORT_PLAYER_SUMMONS]		= getGlobalBool("teleportPlayerSummons", false);
 	m_confBool[PVP_TILE_IGNORE_PROTECTION]		= getGlobalBool("pvpTileIgnoreLevelAndVocationProtection", true);
 	m_confBool[DISPLAY_CRITICAL_HIT]		= getGlobalBool("displayCriticalHitNotify", false);
-	m_confBool[ADVANCING_SKILL_LEVEL]		= getGlobalBool("displaySkillLevelOnAdvance", false);
 	m_confBool[CLEAN_PROTECTED_ZONES]		= getGlobalBool("cleanProtectedZones", true);
 	m_confBool[SPELL_NAME_INSTEAD_WORDS]		= getGlobalBool("spellNameInsteadOfWords", false);
 	m_confBool[EMOTE_SPELLS]			= getGlobalBool("emoteSpells", false);
