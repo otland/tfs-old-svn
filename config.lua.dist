@@ -216,7 +216,6 @@
 	dataDirectory = "data/"
 	logsDirectory = "data/logs/"
 	bankSystem = true
-	displaySkillLevelOnAdvance = false
 	promptExceptionTracerErrorBox = true
 	maximumDoorLevel = 500
 	maxMessageBuffer = 4
