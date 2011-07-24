@@ -652,7 +652,6 @@ void Monster::doAttacking(uint32_t interval)
 		return;
 
 	bool updateLook = true;
-	bool outOfRange = true;
 
 	resetTicks = interval != 0;
 	attackTicks += interval;
@@ -687,9 +686,7 @@ void Monster::doAttacking(uint32_t interval)
 			}
 		}
 
-		if(inRange)
-			outOfRange = false;
-		else if(it->isMelee)
+		if(!inRange && it->isMelee)
 		{
 			//melee swing out of reach
 			extraMeleeAttack = true;
