@@ -6543,7 +6543,7 @@ int32_t LuaScriptInterface::luaGetPlayersByIPAddress(lua_State* L)
 	ScriptEnviroment* env = getScriptEnv();
 
 	lua_newtable(L);
-	PlayerVector players = g_game.getPlayersByIP(ip);
+	PlayerVector players = g_game.getPlayersByIP(ip, mask);
 	int index = 0;
 	PlayerVector::iterator iter = players.begin();
 	while(iter != players.end())
