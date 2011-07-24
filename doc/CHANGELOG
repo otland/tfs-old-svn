@@ -29,6 +29,7 @@
 ]
 
 [ Milestone
+	Fixed a bug with Lua function getPlayersByIP, it was ignoring mask even if set.
 	Corrected the color of the healing numbers.
 	Corrected the new outfit looktypes.
 ]

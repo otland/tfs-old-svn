@@ -132,7 +132,7 @@ class Player : public Creature, public Cylinder
 		virtual const std::string& getNameDescription() const {return name;}
 		virtual std::string getDescription(int32_t lookDistance) const;
 
-		virtual const CreatureType_t getType() const {return CREATURETYPE_PLAYER;}
+		virtual CreatureType_t getType() const {return CREATURETYPE_PLAYER;}
 
 		uint8_t getCurrentMount() const;
 		void setCurrentMount(uint8_t mountId);
