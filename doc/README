@@ -24,9 +24,10 @@
 
 	.. also a thanks to the following people who has helped this
 	project by contributing something:
-		Stian, Cayan, TheMask, Kiper, King Komic, Rafael Hamdan,
-		Fare, Kiwi Dan, Piotrek1447, Hermes, Gesior.pl, levandi,
-		Casa, Winghawk, Nexoz, Chojrak, Pietia, Lithium, Jonern.
+		Cayan, TheMask, Kiper, King Komic, Rafael Hamdan, Fare,
+		Kiwi Dan, Piotrek1447, Hermes, Gesior.pl, levandi, Casa,
+		Winghawk, Nexoz, Chojrak, Pietia, Lithium, Jonern, KaczooH,
+		slawkens.
 ]
 
 [ LICENSE
@@ -44,7 +45,6 @@
 
 	C++ Programmer(s)
 		Elf
-		Slawkens
 		Dalkon
 		Fallen
 		Talaturen
@@ -53,20 +53,16 @@
 		Dalkon
 		Elf
 
-	PHP Programmer(s)
-		(none)
-
 	Data Directory Manager(s)
 		Elf
-		Slawkens
 		Dalkon
 		Fallen
-		KaczooH
 
 	Documentation Manager(s)
-		KaczooH
+		Shinmaru
 
 	Mapper(s)
+		Leftwing
 		Siramix
 ]
 
