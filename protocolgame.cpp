@@ -931,10 +931,10 @@ void ProtocolGame::checkCreatureAsKnown(uint32_t id, bool &known, uint32_t &remo
 	knownCreatureList.push_back(id);
 
 	// too many known creatures?
-	if(knownCreatureList.size() > 250)
+	if(knownCreatureList.size() > 1300)
 	{
 		// lets try to remove one from the end of the list
-		for(int32_t n = 0; n < 250; n++)
+		for(int32_t n = 0; n < 1300; n++)
 		{
 			removedKnown = knownCreatureList.front();
 
