@@ -263,7 +263,7 @@ bool IOMapSerialize::saveHouse(Database* db, House* house)
 			return false;
 	}
 
-	std::list<uint32_t> doorIds;
+	std::set<uint32_t> doorIds;
 	for(HouseDoorList::iterator it = house->getHouseDoorBegin(); it != house->getHouseDoorEnd(); ++it)
 	{
 		const Door* door = (*it);
@@ -273,7 +273,7 @@ bool IOMapSerialize::saveHouse(Database* db, House* house)
 		if(door->getAccessList(listText) && !listText.empty() && doorIds.find(door->getDoorId()) == doorIds.end())
 		{
 			query.str("");
-			doorIds.push_back(door->getDoorId());
+			doorIds.insert(door->getDoorId());
 			query << house->getId() << ", " << g_config.getNumber(ConfigManager::WORLD_ID) << ", "
 				<< door->getDoorId() << ", " << db->escapeString(listText);
 			if(!queryInsert.addRow(query.str()))
