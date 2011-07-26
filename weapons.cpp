@@ -592,7 +592,7 @@ bool WeaponMelee::useWeapon(Player* player, Item* item, Creature* target) const
 
 	if(elementDamage != 0)
 	{
-		int32_t damage = getElementDamage(player, item);
+		int32_t damage = getElementDamage();
 		CombatParams eParams;
 		eParams.combatType = elementType;
 		eParams.isAggressive = true;
@@ -644,48 +644,33 @@ bool WeaponMelee::getSkillType(const Player* player, const Item* item,
 	}
 
 	WeaponType_t weaponType = item->getWeaponType();
-
 	switch(weaponType)
 	{
 		case WEAPON_SWORD:
 		{
 			skill = SKILL_SWORD;
 			return true;
-			break;
 		}
 
 		case WEAPON_CLUB:
 		{
 			skill = SKILL_CLUB;
 			return true;
-			break;
 		}
 
 		case WEAPON_AXE:
 		{
 			skill = SKILL_AXE;
 			return true;
-			break;
 		}
 
-		default:
-			return false;
-			break;
+		default: return false;
 	}
 }
 
-int32_t WeaponMelee::getElementDamage(const Player* player, const Item* item) const
+int32_t WeaponMelee::getElementDamage() const
 {
-	int32_t attackSkill = player->getWeaponSkill(item);
-	float attackFactor = player->getAttackFactor();
-	int32_t maxValue = Weapons::getMaxWeaponDamage(player->getLevel(), attackSkill, elementDamage, attackFactor);
-
-	Vocation* vocation = player->getVocation();
-	if(vocation && vocation->meleeDamageMultipler != 1.0)
-		maxValue = int32_t(maxValue * vocation->meleeDamageMultipler);
-
-	return -random_range(0, maxValue, DISTRO_NORMAL);
-
+	return -random_range(0, elementDamage, DISTRO_NORMAL);
 }
 
 int32_t WeaponMelee::getWeaponDamage(const Player* player, const Creature* target, const Item* item, bool maxDamage /*= false*/) const

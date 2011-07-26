@@ -3894,12 +3894,8 @@ bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creat
 
 		target->changeHealth(healthChange);
 
-		if(g_config.getBoolean(ConfigManager::ANIMATION_TEXT_ON_HEAL) && !target->isInGhostMode())
+		if(healthChange > 0 && !target->isInGhostMode())
 		{
-			const SpectatorVec& list = getSpectators(targetPos);
-			if(combatType != COMBAT_HEALING)
-				addMagicEffect(list, targetPos, NM_ME_MAGIC_ENERGY);
-
 			std::stringstream ss;
 			if(!attacker)
 				ss << ucfirst(target->getNameDescription()) << " was healed for " << healthChange << " hitpoint" << (healthChange != 1 ? "s." : ".");
@@ -3911,6 +3907,7 @@ bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creat
 			std::string message = ss.str();
 
 			Player* tmpPlayer = NULL;
+			const SpectatorVec& list = getSpectators(targetPos);
 			for(SpectatorVec::const_iterator it = list.begin(); it != list.end(); ++it)
 			{
 				if((tmpPlayer = (*it)->getPlayer()))

@@ -21,6 +21,7 @@
 	A = Added.
 
 	M The Forgotten Server.exe
+	M config.lua
 	  data/
 	M	global.lua
 	M	actions/scripts/other/changegold.lua
@@ -30,6 +31,7 @@
 
 [ Milestone
 	Fixed a bug with Lua function getPlayersByIP, it was ignoring mask even if set.
+	Removed the config option for animation text on heal.
 	Corrected the color of the healing numbers.
 	Corrected the new outfit looktypes.
 ]
