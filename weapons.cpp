@@ -558,7 +558,8 @@ bool WeaponMelee::configureWeapon(const ItemType& it)
 
 bool WeaponMelee::useWeapon(Player* player, Item* item, Creature* target) const
 {
-	if(!Weapon::useWeapon(player, item, target))
+	int32_t modifier = playerWeaponCheck(player, target);
+	if(!modifier)
 		return false;
 
 	if(elementDamage && elementType != COMBAT_NONE)
@@ -569,7 +570,8 @@ bool WeaponMelee::useWeapon(Player* player, Item* item, Creature* target) const
 		int32_t damage = getElementDamage();
 		Combat::doCombatHealth(player, target, damage, damage, element);
 	}
-	return true;
+
+	return internalUseWeapon(player, item, target, modifier);
 }
 
 bool WeaponMelee::getSkillType(const Player* player, const Item* item,

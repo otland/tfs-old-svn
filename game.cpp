@@ -969,7 +969,10 @@ ReturnValue Game::placeSummon(Creature* creature, const std::string& name)
 	// Place the monster
 	creature->addSummon(monster);
 	if(placeCreature(monster, creature->getPosition(), true))
+	{
+		addMagicEffect(monster->getPosition(), MAGIC_EFFECT_TELEPORT);
 		return RET_NOERROR;
+	}
 
 	creature->removeSummon(monster);
 	return RET_NOTENOUGHROOM;
@@ -3738,18 +3741,12 @@ bool Game::playerChangeOutfit(uint32_t playerId, Outfit_t outfit)
 	if(!player || player->isRemoved())
 		return false;
 
-	uint8_t oldMount = player->getDefaultOutfit().lookMount;
 	if(!player->changeOutfit(outfit, true))
 		return false;
 
 	player->setIdleTime(0);
 	if(!player->hasCondition(CONDITION_OUTFIT, -1))
-	{
-		if(player->isMounted() && outfit.lookMount != oldMount)
-			player->dismount(false);
-
 		internalCreatureChangeOutfit(player, outfit);
-	}
 
 	return true;
 }
@@ -4378,8 +4375,9 @@ bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creat
 		if(deny)
 			return false;
 
+		int32_t currentHealth = target->getHealth();
 		target->gainHealth(attacker, healthChange);
-		if(healthChange > 0 && g_config.getBool(ConfigManager::SHOW_HEALING_DAMAGE) && !target->isGhost() &&
+		if(currentHealth != target->getHealth() && g_config.getBool(ConfigManager::SHOW_HEALING_DAMAGE) && !target->isGhost() &&
 			(g_config.getBool(ConfigManager::SHOW_HEALING_DAMAGE_MONSTER) || !target->getMonster()))
 		{
 			const SpectatorVec& list = getSpectators(targetPos);
