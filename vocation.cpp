@@ -478,23 +478,23 @@ void Vocation::reset()
 	skillBase[SKILL_SHIELD] = 100;
 	skillBase[SKILL_DIST] = 30;
 	skillBase[SKILL_FISH] = 20;
-	for(int32_t i = SKILL_FIST; i < SKILL_DIST; i++)
+	for(int32_t i = SKILL_FIST; i < SKILL_DIST; ++i)
 		skillBase[i] = 50;
 
 	skillMultipliers[SKILL_FIST] = 1.5f;
 	skillMultipliers[SKILL_FISH] = 1.1f;
 	skillMultipliers[SKILL__LEVEL] = 1.0f;
-	for(int32_t i = SKILL_CLUB; i < SKILL_FISH; i++)
+	for(int32_t i = SKILL_CLUB; i < SKILL_FISH; ++i)
 		skillMultipliers[i] = 2.0f;
 
 	formulaMultipliers[MULTIPLIER_MANA] = 4.0f;
-	for(int32_t i = MULTIPLIER_FIRST; i < MULTIPLIER_LAST; i++)
+	for(int32_t i = MULTIPLIER_FIRST; i < MULTIPLIER_LAST; ++i)
 		formulaMultipliers[i] = 1.0f;
 }
 
 int16_t Vocation::getReflect(CombatType_t combat) const
 {
-	if(reflect[REFLECT_CHANCE][combat] < random_range(0, 100))
+	if(reflect[REFLECT_CHANCE][combat] >= random_range(1, 100))
 		return reflect[REFLECT_PERCENT][combat];
 
 	return 0;

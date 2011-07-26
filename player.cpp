@@ -1857,15 +1857,16 @@ void Player::addManaSpent(uint64_t amount, bool useMultiplier/* = true*/)
 		amount = uint64_t((double)amount * rates[SKILL__MAGLEVEL] * g_config.getDouble(ConfigManager::RATE_MAGIC));
 
 	bool advance = false;
+	std::stringstream ss;
 	while(manaSpent + amount >= nextReqMana)
 	{
 		amount -= nextReqMana - manaSpent;
 		manaSpent = 0;
 		magLevel++;
 
-		char advMsg[50];
-		sprintf(advMsg, "You advanced to magic level %d.", magLevel);
-		sendTextMessage(MSG_EVENT_ADVANCE, advMsg);
+		ss << "You advanced to magic level " << magLevel << ".";
+		sendTextMessage(MSG_EVENT_ADVANCE, ss.str());
+		ss.str("");
 
 		advance = true;
 		CreatureEventList advanceEvents = getCreatureEvents(CREATURE_EVENT_ADVANCE);
@@ -1933,9 +1934,9 @@ void Player::addExperience(uint64_t exp)
 		if(party)
 			party->updateSharedExperience();
 
-		char advMsg[60];
-		sprintf(advMsg, "You advanced from Level %d to Level %d.", prevLevel, level);
-		sendTextMessage(MSG_EVENT_ADVANCE, advMsg);
+		std::stringstream ss;
+		ss << "You advanced from Level " << prevLevel << " to Level " << level << ".";
+		sendTextMessage(MSG_EVENT_ADVANCE, ss.str());
 
 		CreatureEventList advanceEvents = getCreatureEvents(CREATURE_EVENT_ADVANCE);
 		for(CreatureEventList::iterator it = advanceEvents.begin(); it != advanceEvents.end(); ++it)
@@ -1972,9 +1973,9 @@ void Player::removeExperience(uint64_t exp, bool updateStats/* = true*/)
 			g_game.addCreatureHealth(this);
 		}
 
-		char advMsg[90];
-		sprintf(advMsg, "You were downgraded from Level %d to Level %d.", prevLevel, level);
-		sendTextMessage(MSG_EVENT_ADVANCE, advMsg);
+		std::stringstream ss;
+		ss << "You were downgraded from Level " << prevLevel << " to Level " << level << ".";
+		sendTextMessage(MSG_EVENT_ADVANCE, ss.str());
 	}
 
 	uint64_t currLevelExp = Player::getExpForLevel(level),
@@ -2102,7 +2103,7 @@ BlockType_t Player::blockHit(Creature* attacker, CombatType_t combatType, int32_
 		if(!reflect)
 			continue;
 
-		if(it.abilities.reflect[REFLECT_PERCENT][combatType] && random_range(1, 100) < it.abilities.reflect[REFLECT_CHANCE][combatType])
+		if(it.abilities.reflect[REFLECT_PERCENT][combatType] && it.abilities.reflect[REFLECT_CHANCE][combatType] >= random_range(1, 100))
 		{
 			reflected += (int32_t)std::ceil((double)(damage * it.abilities.reflect[REFLECT_PERCENT][combatType]) / 100.);
 			if(item->hasCharges() && !it.abilities.absorb[combatType])

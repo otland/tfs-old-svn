@@ -821,7 +821,7 @@ int16_t Outfits::getOutfitReflect(uint32_t lookType, uint16_t sex, CombatType_t 
 		if(it->second.lookType != lookType)
 			continue;
 
-		if(it->second.reflect[REFLECT_PERCENT][combat] && random_range(1, 100) < it->second.reflect[REFLECT_CHANCE][combat])
+		if(it->second.reflect[REFLECT_PERCENT][combat] && it->second.reflect[REFLECT_CHANCE][combat] >= random_range(1, 100))
 			return it->second.reflect[REFLECT_PERCENT][combat];
 	}
 

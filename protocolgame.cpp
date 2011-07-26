@@ -850,7 +850,7 @@ void ProtocolGame::GetTileDescription(const Tile* tile, NetworkMessage_ptr msg)
 	if(tile->ground)
 	{
 		msg->putItem(tile->ground);
-		count++;
+		++count;
 	}
 
 	const TileItemVector* items = tile->getItemList();
@@ -875,7 +875,7 @@ void ProtocolGame::GetTileDescription(const Tile* tile, NetworkMessage_ptr msg)
 			checkCreatureAsKnown((*cit)->getID(), known, removedKnown);
 
 			AddCreature(msg, (*cit), known, removedKnown);
-			count++;
+			++count;
 		}
 	}
 
@@ -968,7 +968,7 @@ void ProtocolGame::checkCreatureAsKnown(uint32_t id, bool& known, uint32_t& remo
 	{
 		// lets try to remove one from the end of the list
 		Creature* c = NULL;
-		for(int32_t n = 0; n < 1300; n++)
+		for(int16_t n = 0; n < 1300; ++n)
 		{
 			removedKnown = knownCreatureList.front();
 			if(!(c = g_game.getCreatureByID(removedKnown)) || !canSee(c))
@@ -2846,11 +2846,8 @@ void ProtocolGame::AddCreatureSpeak(NetworkMessage_ptr msg, const Creature* crea
 		if(creature->getSpeakType() != MSG_NONE)
 			type = creature->getSpeakType();
 
-		if(type == MSG_GAMEMASTER_CHANNEL)
-			msg->putString("");
-		else
-			msg->putString(!creature->getHideName() ? creature->getName() : "");
-
+		// Which message should hide the creature name?
+		msg->putString(!creature->getHideName() ? creature->getName() : "");
 		if(speaker && !speaker->isAccountManager() && !speaker->hasCustomFlag(PlayerCustomFlag_HideLevel))
 			msg->put<uint16_t>(speaker->getPlayerInfo(PLAYERINFO_LEVEL));
 		else

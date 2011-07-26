@@ -1882,7 +1882,7 @@ uint16_t Items::getRandomizedItem(uint16_t id)
 		return id;
 
 	RandomizationBlock randomize = getRandomization(id);
-	if(randomize.chance > 0 && random_range(0, 100) <= randomize.chance)
+	if(randomize.chance >= random_range(1, 100))
 		id = random_range(randomize.fromRange, randomize.toRange);
 
 	return id;
