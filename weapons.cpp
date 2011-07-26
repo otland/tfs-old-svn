@@ -592,7 +592,7 @@ bool WeaponMelee::useWeapon(Player* player, Item* item, Creature* target) const
 
 	if(elementDamage != 0)
 	{
-		int32_t damage = getElementDamage();
+		int32_t damage = -random_range(0, elementDamage, DISTRO_NORMAL);
 		CombatParams eParams;
 		eParams.combatType = elementType;
 		eParams.isAggressive = true;
@@ -666,11 +666,6 @@ bool WeaponMelee::getSkillType(const Player* player, const Item* item,
 
 		default: return false;
 	}
-}
-
-int32_t WeaponMelee::getElementDamage() const
-{
-	return -random_range(0, elementDamage, DISTRO_NORMAL);
 }
 
 int32_t WeaponMelee::getWeaponDamage(const Player* player, const Creature* target, const Item* item, bool maxDamage /*= false*/) const
