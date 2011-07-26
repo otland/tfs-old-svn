@@ -4379,7 +4379,7 @@ bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creat
 			return false;
 
 		target->gainHealth(attacker, healthChange);
-		if(g_config.getBool(ConfigManager::SHOW_HEALING_DAMAGE) && !target->isGhost() &&
+		if(healthChange > 0 && g_config.getBool(ConfigManager::SHOW_HEALING_DAMAGE) && !target->isGhost() &&
 			(g_config.getBool(ConfigManager::SHOW_HEALING_DAMAGE_MONSTER) || !target->getMonster()))
 		{
 			const SpectatorVec& list = getSpectators(targetPos);

@@ -566,10 +566,9 @@ bool WeaponMelee::useWeapon(Player* player, Item* item, Creature* target) const
 		CombatParams element;
 		element.combatType = elementType;
 
-		int32_t damage = getElementDamage(player, item);
+		int32_t damage = getElementDamage();
 		Combat::doCombatHealth(player, target, damage, damage, element);
 	}
-
 	return true;
 }
 
@@ -649,23 +648,9 @@ int32_t WeaponMelee::getWeaponDamage(const Player* player, const Creature*, cons
 	return -random_range(0, ret, DISTRO_NORMAL);
 }
 
-int32_t WeaponMelee::getElementDamage(const Player* player, const Item* item) const
+int32_t WeaponMelee::getElementDamage() const
 {
-	int32_t attackSkill = player->getWeaponSkill(item);
-	float attackFactor = player->getAttackFactor();
-
-	double maxValue = Weapons::getMaxWeaponDamage(player->getLevel(), attackSkill, elementDamage, attackFactor);
-	if(random_range(1, 100) < g_config.getNumber(ConfigManager::CRITICAL_HIT_CHANCE))
-	{
-		maxValue = std::pow(maxValue, g_config.getDouble(ConfigManager::CRITICAL_HIT_MUL));
-		player->sendCritical();
-	}
-
-	Vocation* vocation = player->getVocation();
-	if(vocation && vocation->getMultiplier(MULTIPLIER_MELEE) != 1.0)
-		maxValue *= vocation->getMultiplier(MULTIPLIER_MELEE);
-
-	return -random_range(0, (int32_t)std::floor(maxValue), DISTRO_NORMAL);
+	return -random_range(0, elementDamage, DISTRO_NORMAL);
 }
 
 WeaponDistance::WeaponDistance(LuaInterface* _interface):
