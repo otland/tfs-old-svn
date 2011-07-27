@@ -1379,7 +1379,7 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 		if(item && item->hasIntegerAttribute("duration"))
 		{
 			int32_t duration = item->getDuration() / 1000;
-			s << " that has energy for ";
+			s << " that will expire in ";
 			if(duration >= 86400)
 			{
 				uint16_t days = duration / 86400;
