@@ -1380,13 +1380,32 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 		{
 			int32_t duration = item->getDuration() / 1000;
 			s << " that has energy for ";
-
-			if(duration >= 120)
-				s << duration / 60 << " minutes left";
-			else if(duration > 60)
-				s << "1 minute left";
+			if(duration >= 86400)
+			{
+				uint16_t days = duration / 86400;
+				uint16_t hours = (duration % 86400) / 3600;
+				s << days << " day" << (days > 1 ? "s" : "");
+				if(hours > 0)
+					s << " and " << hours << " hour" << (hours > 1 ? "s" : "");
+			}
+			else if(duration >= 3600)
+			{
+				uint16_t hours = duration / 3600;
+				uint16_t minutes = (duration % 3600) / 60;
+				s << hours << " hour" << (hours > 1 ? "s" : "");
+				if(hours > 0)
+					s << " and " << minutes << " minute" << (minutes > 1 ? "s" : "");
+			}
+			else if(duration >= 60)
+			{
+				uint16_t minutes = duration / 60;
+				uint16_t seconds = duration % 60;
+				s << minutes << " minute" << (minutes > 1 ? "s" : "");
+				if(seconds > 0)
+					s << " and " << seconds << " second" << (seconds > 1 ? "s" : "");
+			}
 			else
-				s << "less than a minute left";
+				s << duration << " second" << (duration > 1 ? "s" : "");
 		}
 		else
 			s << " that is brand-new";
