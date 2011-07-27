@@ -131,6 +131,7 @@ OPENTIBIA_API std::string toString(_Tp __p);
 #endif
 
 OPENTIBIA_API std::string ucfirst(std::string);
+OPENTIBIA_API bool booleanString(std::string);
 
 #undef OPENTIBIA_API
 

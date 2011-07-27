@@ -21,12 +21,13 @@
 #include "mounts.h"
 #include "tools.h"
 
-Mount::Mount(uint8_t _id, uint16_t _clientId, std::string _name, int32_t _speed)
+Mount::Mount(uint8_t _id, uint16_t _clientId, std::string _name, int32_t _speed, bool _premium)
 {
 	id = _id;
 	clientId = _clientId;
 	name = _name;
 	speed = _speed;
+	premium = _premium;
 }
 
 bool Mount::isTamed(Player* player) const
@@ -36,6 +37,9 @@ bool Mount::isTamed(Player* player) const
 
 	if(player->isAccessPlayer())
 		return true;
+
+	if(premium && !player->isPremium())
+		return false;
 
 	uint8_t tmpId = id - 1;
 
@@ -89,6 +93,7 @@ bool Mounts::loadFromXml()
 			int16_t clientid = 0;
 			std::string name = "";
 			int32_t speed = 0;
+			bool premium = true;
 			if(readXMLInteger(p, "id", intValue))
 				id = intValue;
 
@@ -101,7 +106,10 @@ bool Mounts::loadFromXml()
 			if(readXMLInteger(p, "speed", intValue))
 				speed = intValue;
 
-			mounts.push_back(new Mount(id, clientid, name, speed));
+			if(readXMLString(p, "premium", strValue))
+				premium = booleanString(strValue);
+
+			mounts.push_back(new Mount(id, clientid, name, speed, premium));
 		}
 		p = p->next;
 	}

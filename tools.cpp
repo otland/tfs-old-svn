@@ -1197,3 +1197,9 @@ std::string ucfirst(std::string str)
 	}
 	return str;
 }
+
+bool booleanString(std::string str)
+{
+	toLowerCaseString(str);
+	return (str == "yes" || str == "true" || str == "y" || atoi(str.c_str()) > 0);
+}

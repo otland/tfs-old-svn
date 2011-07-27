@@ -4797,12 +4797,6 @@ bool Player::toggleMount(bool mount)
 			return false;
 		}
 
-		if(!isPremium())
-		{
-			sendCancelMessage(RET_YOUNEEDPREMIUMACCOUNT);
-			return false;
-		}
-
 		uint8_t currentMountId = getCurrentMount();
 		if(currentMountId == 0)
 		{
@@ -4813,6 +4807,12 @@ bool Player::toggleMount(bool mount)
 		Mount* currentMount = Mounts::getInstance()->getMountByID(currentMountId);
 		if(!currentMount)
 			return false;
+
+		if(currentMount->isPremium() && !isPremium())
+		{
+			sendCancelMessage(RET_YOUNEEDPREMIUMACCOUNT);
+			return false;
+		}
 
 		defaultOutfit.lookMount = currentMount->getClientID();
 		if(currentMount->getSpeed() != 0)
