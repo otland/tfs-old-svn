@@ -1850,7 +1850,7 @@ void Player::addManaSpent(uint64_t amount, bool useMultiplier/* = true*/)
 		return;
 
 	uint64_t currReqMana = vocation->getReqMana(magLevel), nextReqMana = vocation->getReqMana(magLevel + 1);
-	if(currReqMana > nextReqMana) //player has reached max magic level
+	if(magLevel > 0 && currReqMana > nextReqMana) //player has reached max magic level
 		return;
 
 	if(useMultiplier)
@@ -1862,9 +1862,8 @@ void Player::addManaSpent(uint64_t amount, bool useMultiplier/* = true*/)
 	{
 		amount -= nextReqMana - manaSpent;
 		manaSpent = 0;
-		magLevel++;
 
-		ss << "You advanced to magic level " << magLevel << ".";
+		ss << "You advanced to magic level " << ++magLevel << ".";
 		sendTextMessage(MSG_EVENT_ADVANCE, ss.str());
 		ss.str("");
 
