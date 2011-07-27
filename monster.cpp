@@ -840,7 +840,10 @@ void Monster::onThinkDefense(uint32_t interval)
 					if(!g_game.placeCreature(summon, summonPos))
 						removeSummon(summon);
 					else
+					{
 						g_game.addMagicEffect(getPosition(), NM_ME_MAGIC_ENERGY);
+						g_game.addMagicEffect(summon->getPosition(), NM_ME_TELEPORT);
+					}
 				}
 			}
 		}

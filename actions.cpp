@@ -450,7 +450,9 @@ void Actions::showUseHotkeyMessage(Player* player, int32_t id, uint32_t count)
 {
 	const ItemType& it = Item::items[id];
 	std::stringstream ss;
-	if(count == 1)
+	if(!it.showCount)
+		ss << "Using one of " << it.name << "...";
+	else if(count == 1)
 		ss << "Using the last " << it.name << "...";
 	else
 		ss << "Using one of " << count << " " << it.pluralName << "...";

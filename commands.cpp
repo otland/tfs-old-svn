@@ -324,7 +324,10 @@ void Commands::placeMonster(Player* player, const std::string& cmd, const std::s
 
 	// Place the monster
 	if(g_game.placeCreature(monster, player->getPosition()))
+	{
+		g_game.addMagicEffect(monster->getPosition(), NM_ME_TELEPORT);
 		g_game.addMagicEffect(player->getPosition(), NM_ME_MAGIC_BLOOD);
+	}
 	else
 	{
 		delete monster;
@@ -351,6 +354,8 @@ void Commands::placeSummon(Player* player, const std::string& cmd, const std::st
 		player->sendCancelMessage(RET_NOTENOUGHROOM);
 		g_game.addMagicEffect(player->getPosition(), NM_ME_POFF);
 	}
+	else
+		g_game.addMagicEffect(monster->getPosition(), NM_ME_TELEPORT);
 }
 
 void Commands::broadcastMessage(Player* player, const std::string& cmd, const std::string& param)

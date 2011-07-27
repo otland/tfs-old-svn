@@ -79,8 +79,8 @@ enum LightState_t
 };
 
 #define EVENT_LIGHTINTERVAL 10000
-#define EVENT_DECAYINTERVAL 1000
-#define EVENT_DECAY_BUCKETS 16
+#define EVENT_DECAYINTERVAL 250
+#define EVENT_DECAY_BUCKETS 4
 #define STATE_TIME 1000
 
 typedef std::map<int32_t, int32_t> StageList;
