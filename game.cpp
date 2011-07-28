@@ -6159,12 +6159,12 @@ void Game::showHotkeyUseMessage(Player* player, Item* item)
 	uint32_t count = player->__getItemTypeCount(item->getID(), item->isFluidContainer() ? item->getFluidType() : -1);
 
 	std::stringstream stream;
-	if(count == 1)
-		stream << "Using the last " << it.name.c_str() << "...";
-	else if(it.showCount)
-		stream << "Using one of " << count << " " << it.pluralName.c_str() << "...";
-	else
+	if(!it.showCount)
 		stream << "Using one of " << it.name << "...";
+	else if(count == 1)
+		stream << "Using the last " << it.name.c_str() << "...";
+	else
+		stream << "Using one of " << count << " " << it.pluralName.c_str() << "...";
 
 	player->sendTextMessage(MSG_INFO_DESCR, stream.str().c_str());
 }
