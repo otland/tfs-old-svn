@@ -6161,7 +6161,7 @@ void Game::showHotkeyUseMessage(Player* player, Item* item)
 	std::stringstream stream;
 	if(count == 1)
 		stream << "Using the last " << it.name.c_str() << "...";
-	else if(!it.showCount)
+	else if(it.showCount)
 		stream << "Using one of " << count << " " << it.pluralName.c_str() << "...";
 	else
 		stream << "Using one of " << it.name << "...";
