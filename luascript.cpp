@@ -774,22 +774,7 @@ bool LuaScriptInterface::initState()
 	#ifdef __LUAJIT__
 	luaJIT_setmode(m_luaState, 0, LUAJIT_MODE_ENGINE | LUAJIT_MODE_ON);
 	#endif
-/*
-	#ifdef MULTI_SQL_DRIVERS
-	if(g_config.getNumber(ConfigManager::SQLTYPE) == SQL_TYPE_MYSQL)
-		luaopen_luasql_mysql(m_luaState);
-	#ifdef WIN32
-	else
-		luaopen_luasql_sqlite3(m_luaState);
-	#endif
-	#elif defined __USE_MYSQL__
-	luaopen_luasql_mysql(m_luaState);
-	#elif defined __USE_SQLITE__
-	#ifdef WIN32
-	luaopen_luasql_sqlite3(m_luaState);
-	#endif
-	#endif
-*/
+
 	registerFunctions();
 
 	if(loadFile("data/global.lua") == -1)

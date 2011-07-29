@@ -44,8 +44,6 @@
 			<Add option="-lboost_thread" />
 			<Add option="-liconv" />
 			<Add option="-lwsock32" />
-			<Add option="-lluajitsql_sqlite3" />
-			<Add option="-lluajitsql_mysql" />
 		</Linker>
 		<Unit filename="..\account.h" />
 		<Unit filename="..\actions.cpp" />

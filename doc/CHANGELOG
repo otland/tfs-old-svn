@@ -48,4 +48,5 @@
 	Healing message will now be precise on how much health the creature was healed up with.
 	Decay buckets are now 4, with 250ms intervals instead of 16 with 1000ms intervals for more accurate duration times (this may cause higher CPU usage).
 	Added premium attribute to mounts.
+	LuaSQL dependency removed (with backwards compatibility for most code).
 ]

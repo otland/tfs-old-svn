@@ -20,34 +20,26 @@ LIBS = -lxml2 -lpthread -llua5.1 -lgmp
 
 ifdef MYSQL
 	ifdef SQLITE
-		ifdef WIN32
-			LIBS += -lluasql_mysql -lluasql_sqlite
-		else
-			LIBS += -llua5.1-sql-mysql
-		endif
 		LIBS += -lmysqlclient -lsqlite3
 		FLAGS += -D__USE_MYSQL__ -D__USE_SQLITE__
 	else
 		ifdef WIN32
-			LIBS += -lluasql_mysql -lmysqlclient
+			LIBS += -lmysqlclient
 			FLAGS += -D__USE_SQLITE__
 		else
-			LIBS += -llua5.1-sql-mysql -lmysql
+			LIBS += -lmysql
 		endif
 		FLAGS += -D__USE_MYSQL__
 	endif
 else
 	ifdef SQLITE
-		ifdef WIN32
-			LIBS += -lluasql_sqlite
-		endif
 		LIBS += -lsqlite3
 		FLAGS += -D__USE_SQLITE__
 	else
 		ifdef WIN32
-			LIBS += -lluasql_mysql -lluasql_sqlite -lmysql -lsqlite3
+			LIBS += -lmysql -lsqlite3
 		else
-			LIBS += -llua5.1-sql-mysql -lsqlite3 -lmysqlclient
+			LIBS += -lsqlite3 -lmysqlclient
 		endif
 		FLAGS += -D__USE_MYSQL__ -D__USE_SQLITE__
 	endif

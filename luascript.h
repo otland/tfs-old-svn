@@ -36,15 +36,6 @@ extern "C"
 	#include <lua.h>
 	#endif
 
-	#ifdef __USE_MYSQL__
-	extern int luaopen_luasql_mysql(lua_State*);
-	#endif
-	#ifdef __USE_SQLITE__
-	#ifdef WIN32
-	extern int luaopen_luasql_sqlite3(lua_State*);
-	#endif
-	#endif
-
 	#include <lauxlib.h>
 	#include <lualib.h>
 }
