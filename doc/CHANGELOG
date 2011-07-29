@@ -26,11 +26,14 @@
 	M	global.lua
 	M	actions/scripts/other/changegold.lua
 	M	items/items.xml
-	M	XML/outfits.xml
-	M	XML/mounts.xml
+	M	talkactions/scripts/deathlist.lua
+		XML/
+	M		outfits.xml
+	M		mounts.xml
 ]
 
 [ Milestone
+	Revised database system.
 	Fixed element damages.
 	Fixed a bug with Lua function getPlayersByIP, it was ignoring mask even if set.
 	Healing messages will no longer show if health change is 0.
@@ -44,4 +47,5 @@
 	Fixed hotkey message for items without showCount.
 	Healing message will now be precise on how much health the creature was healed up with.
 	Decay buckets are now 4, with 250ms intervals instead of 16 with 1000ms intervals for more accurate duration times (this may cause higher CPU usage).
+	Added premium attribute to mounts.
 ]

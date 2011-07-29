@@ -21,7 +21,7 @@
 		acidgame, jiddo, mips_act, nfries88, otserv_simone, primer13r,
 		remere, shivoc, smygflik, snack, tliffrag and wrzasq.
 
-	The rest of the credits goes to following The Forgotten Server(TFS) developers:
+	The rest of the credits goes to following The Forgotten Server (TFS) developers:
 		Talaturen
 			Project Manager
 			C++ Programmer
@@ -135,6 +135,10 @@
 
 			After it get compiled, copy TheForgottenServer.exe from:
 				C:\path\to\sources\dev-cpp to directory above (C:\path\to\source_code)
+
+		Code::Blocks
+			Follow this tutorial:
+				http://otland.net/content/compiling-forgotten-server-0-2-code-blocks-windows-41/
 ]
 
 [ CONFIGURING

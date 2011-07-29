@@ -72,9 +72,6 @@ bool IOMapSerialize::saveMap(Map* map)
 bool IOMapSerialize::loadMapRelational(Map* map)
 {
 	Database* db = Database::getInstance();
-	if(!db->connect())
-		return false;
-
 	for(HouseMap::iterator it = Houses::getInstance().getHouseBegin(); it != Houses::getInstance().getHouseEnd(); ++it)
 	{
 		//load tile
@@ -93,35 +90,34 @@ bool IOMapSerialize::loadTile(Database& db, Tile* tile)
 	const Position& tilePos = tile->getPosition();
 
 	DBQuery query;
-
 	query << "SELECT `id` FROM `tiles` WHERE `x` = " << tilePos.x
 		<< " AND `y` = " << tilePos.y
 		<< " AND `z` = " << tilePos.z << ";";
 
-	DBResult result;
-	if(!db.storeQuery(query, result) || result.getNumRows() != 1)
+	DBResult* result;
+	if(!(result = db.storeQuery(query.str())))
 		return false;
 
-	int tileId = result.getDataInt("id");
+	int tileId = result->getDataInt("id");
+	db.freeResult(result);
 
 	query.str("");
 	query << "SELECT * FROM `tile_items` WHERE `tile_id` = "
 		<< tileId
 		<< " ORDER BY `sid` DESC;";
-	if(db.storeQuery(query, result) && (result.getNumRows() > 0))
+	if((result = db.storeQuery(query.str())))
 	{
 		Item* item = NULL;
-
-		for(uint32_t i = 0; i < result.getNumRows(); ++i)
+		do
 		{
-			int sid = result.getDataInt("sid", i);
-			int pid = result.getDataInt("pid", i);
-			int type = result.getDataInt("itemtype", i);
-			int count = result.getDataInt("count", i);
+			int sid = result->getDataInt("sid");
+			int pid = result->getDataInt("pid");
+			int type = result->getDataInt("itemtype");
+			int count = result->getDataInt("count");
 			item = NULL;
 
 			unsigned long attrSize = 0;
-			const char* attr = result.getDataBlob("attributes", attrSize, i);
+			const char* attr = result->getDataStream("attributes", attrSize);
 			PropStream propStream;
 			propStream.init(attr, attrSize);
 
@@ -193,6 +189,8 @@ bool IOMapSerialize::loadTile(Database& db, Tile* tile)
 			else
 				std::cout << "WARNING: IOMapSerialize::loadTile(). NULL item at " << tile->getPosition() << ". type = " << type << ", sid = " << sid << ", pid = " << pid << std::endl;
 		}
+		while(result->next());
+		db.freeResult(result);
 	}
 
 	ItemMap::reverse_iterator it;
@@ -219,22 +217,18 @@ bool IOMapSerialize::loadTile(Database& db, Tile* tile)
 bool IOMapSerialize::saveMapRelational(Map* map)
 {
 	Database* db = Database::getInstance();
-	if(!db->connect())
-		return false;
+	DBQuery query; // KEEP FOR DATABASE LOCKING!
 
 	//Start the transaction
-	DBTransaction trans(db);
-	if(!trans.start())
+	DBTransaction transaction(db);
+	if(!transaction.begin())
 		return false;
 
 	//clear old tile data
-	DBQuery query;
-	query << "DELETE FROM `tile_items`;";
-	if(!db->executeQuery(query))
+	if(!db->executeQuery("DELETE FROM `tile_items`;"))
 		return false;
 
-	query << "DELETE FROM `tiles`;";
-	if(!db->executeQuery(query))
+	if(!db->executeQuery("DELETE FROM `tiles`;"))
 		return false;
 
 	uint32_t tileId = 0;
@@ -248,8 +242,9 @@ bool IOMapSerialize::saveMapRelational(Map* map)
 			saveTile(db, tileId, *it);
 		}
 	}
+
 	//End the transaction
-	return trans.success();
+	return transaction.commit();
 }
 
 bool IOMapSerialize::saveTile(Database* db, uint32_t tileId, const Tile* tile)
@@ -267,8 +262,10 @@ bool IOMapSerialize::saveTile(Database* db, uint32_t tileId, const Tile* tile)
 	std::stringstream streamitems;
 	std::string itemsstring;
 
-	DBSplitInsert query_insert(db);
-	query_insert.setQuery("INSERT INTO `tile_items` (`tile_id`, `sid` , `pid` , `itemtype` , `count`, `attributes` ) VALUES ");
+	DBQuery tileListQuery;
+
+	DBInsert stmt(db);
+	stmt.setQuery("INSERT INTO `tile_items` (`tile_id`, `sid` , `pid` , `itemtype` , `count`, `attributes` ) VALUES ");
 	for(uint32_t i = 0; i < tile->getThingCount(); ++i)
 	{
 		item = tile->__getThing(i)->getItem();
@@ -288,14 +285,12 @@ bool IOMapSerialize::saveTile(Database* db, uint32_t tileId, const Tile* tile)
 
 		if(!storedTile)
 		{
-			DBQuery tileListQuery;
 			const Position& tilePos = tile->getPosition();
-			tileListQuery << "INSERT INTO `tiles` (`id`, `x` , `y` , `z` ) VALUES";
-			tileListQuery << "(" << tileId << "," << tilePos.x << "," << tilePos.y << "," << tilePos.z << ")";
-
-			if(!db->executeQuery(tileListQuery))
+			tileListQuery << "INSERT INTO `tiles` (`id`, `x` , `y` , `z` ) VALUES (" << tileId << "," << tilePos.x << "," << tilePos.y << "," << tilePos.z << ")";
+			if(!db->executeQuery(tileListQuery.str()))
 				return false;
 
+			tileListQuery.str("");
 			storedTile = true;
 		}
 		++runningID;
@@ -306,13 +301,10 @@ bool IOMapSerialize::saveTile(Database* db, uint32_t tileId, const Tile* tile)
 		item->serializeAttr(propWriteStream);
 		const char* attributes = propWriteStream.getStream(attributesSize);
 
-		streamitems << "(" << tileId << "," << runningID << "," << parentid << "," << item->getID() << ","
-			<< (int32_t)item->getSubType() << ",'" << Database::escapeString(attributes, attributesSize) << "')";
-
-		if(!query_insert.addRow(streamitems.str()))
+		streamitems << tileId << "," << runningID << "," << parentid << "," << item->getID() << ","
+			<< (int32_t)item->getSubType() << "," << db->escapeBlob(attributes, attributesSize);
+		if(!stmt.addRow(streamitems))
 			return false;
-
-		streamitems.str("");
 
 		if(item->getContainer())
 			containerStackList.push_back(ContainerStackList_Pair(item->getContainer(), runningID));
@@ -338,112 +330,103 @@ bool IOMapSerialize::saveTile(Database* db, uint32_t tileId, const Tile* tile)
 			item->serializeAttr(propWriteStream);
 			const char* attributes = propWriteStream.getStream(attributesSize);
 
-			streamitems << "(" << tileId << "," << runningID << "," << parentid << "," << item->getID() << ","
-				<< (int32_t)item->getSubType() << ",'" << Database::escapeString(attributes, attributesSize) << "')";
-
-			if(!query_insert.addRow(streamitems.str()))
+			streamitems << tileId << "," << runningID << "," << parentid << "," << item->getID() << ","
+				<< (int32_t)item->getSubType() << "," << db->escapeBlob(attributes, attributesSize);
+			if(!stmt.addRow(streamitems))
 				return false;
-
-			streamitems.str("");
 		}
 	}
-
-	if(!query_insert.executeQuery())
-		return false;
-
-	return true;
+	return stmt.execute();
 }
 
 void IOMapSerialize::loadMapBinary(Map* map)
 {
 	Database* db = Database::getInstance();
+	DBQuery query; // KEEP FOR DATABASE LOCKING!
 
-	DBQuery query;
-	query.reset();
-	query << "SELECT `house_id`, `data` FROM `map_store`;";
+	DBResult* result;
+	if(!(result = db->storeQuery("SELECT `house_id`, `data` FROM `map_store`;")))
+		return;
 
-	DBResult result;
-
-	if(db->storeQuery(query, result))
+	do
 	{
-		for(uint32_t i = 0; i < result.getNumRows(); ++i)
+		unsigned long attrSize = 0;
+		const char* attr = result->getDataStream("data", attrSize);
+		PropStream propStream;
+		propStream.init(attr, attrSize);
+		while(propStream.size())
 		{
-			unsigned long attrSize = 0;
-			const char* attr = result.getDataBlob("data", attrSize, i);
-			PropStream propStream;
-			propStream.init(attr, attrSize);
-			while(propStream.size())
+			uint32_t item_count = 0;
+			uint16_t x = 0, y = 0;
+			uint8_t z = 0;
+
+			propStream.GET_USHORT(x);
+			propStream.GET_USHORT(y);
+			propStream.GET_UCHAR(z);
+
+			Tile* tile = map->getTile(x, y, z);
+			if(!tile)
 			{
-				uint32_t item_count = 0;
-				uint16_t x = 0, y = 0;
-				uint8_t z = 0;
+				std::cout << "ERROR: Unserialization of invalid tile in IOMapSerialize::loadTile(), at position: [X: " << x << ", Y: " << y << ", Z: " << z << "]. House ID: " << result->getDataInt("house_id") << std::endl;
+				break;
+			}
 
-				propStream.GET_USHORT(x);
-				propStream.GET_USHORT(y);
-				propStream.GET_UCHAR(z);
-
-				Tile* tile = map->getTile(x, y, z);
-				if(!tile)
-				{
-					std::cout << "ERROR: Unserialization of invalid tile in IOMapSerialize::loadTile(), at position: [X: " << x << ", Y: " << y << ", Z: " << z << "]. House ID: " << result.getDataInt("house_id", i) << std::endl;
-					break;
-				}
-
-				propStream.GET_ULONG(item_count);
-				while(item_count--)
-					loadItem(propStream, tile);
- 			}
+			propStream.GET_ULONG(item_count);
+			while(item_count--)
+				loadItem(propStream, tile);
 		}
 	}
+	while(result->next());
+	db->freeResult(result);
 }
 
 void IOMapSerialize::loadMapBinaryTileBased(Map* map)
 {
 	Database* db = Database::getInstance();
-
 	DBQuery query;
-	query.reset();
-	query << "SELECT `id` FROM `houses`;";
 
-	DBResult result;
+	DBResult* result = db->storeQuery("SELECT `id` FROM `houses`;");
+	if(!result)
+		return;
 
-	if(db->storeQuery(query, result))
+	do
 	{
-		for(uint32_t i = 0; i < result.getNumRows(); ++i)
+		query.str("");
+		query << "SELECT `data` FROM `tile_store` WHERE `house_id` = " << result->getDataInt("id") << ";";
+		DBResult* tileResult = db->storeQuery(query.str());
+		if(!tileResult)
+			continue;
+
+		do
 		{
-			query.reset();
-			query << "SELECT `data` FROM `tile_store` WHERE `house_id` = " << result.getDataInt("id", i) << ";";
-			DBResult tileResult;
-			if(db->storeQuery(query, tileResult))
-			{
-				for(uint32_t i = 0; i < tileResult.getNumRows(); ++i)
-				{
-					unsigned long attrSize = 0;
-					const char* attr = tileResult.getDataBlob("data", attrSize, i);
+			unsigned long attrSize = 0;
+			const char* attr = tileResult->getDataStream("data", attrSize);
 
-					PropStream propStream;
-					propStream.init(attr, attrSize);
+			PropStream propStream;
+			propStream.init(attr, attrSize);
 
-					uint16_t x = 0, y = 0;
-					uint8_t z = 0;
-					propStream.GET_USHORT(x);
-					propStream.GET_USHORT(y);
-					propStream.GET_UCHAR(z);
-					if(x == 0 || y == 0)
-						continue;
+			uint16_t x = 0, y = 0;
+			uint8_t z = 0;
+			propStream.GET_USHORT(x);
+			propStream.GET_USHORT(y);
+			propStream.GET_UCHAR(z);
+			if(x == 0 || y == 0)
+				continue;
 
-					Tile* tile = map->getTile(x, y, z);
-					if(!tile)
-						continue;
+			Tile* tile = map->getTile(x, y, z);
+			if(!tile)
+				continue;
 
-					uint32_t item_count = 0;
-					propStream.GET_ULONG(item_count);
-					while(item_count--)
-						loadItem(propStream, tile);
-				}
- 			}
+			uint32_t item_count = 0;
+			propStream.GET_ULONG(item_count);
+			while(item_count--)
+				loadItem(propStream, tile);
 		}
+		while(tileResult->next());
+		db->freeResult(tileResult);
 	}
+	while(result->next());
+	db->freeResult(result);
 }
 
 bool IOMapSerialize::loadContainer(PropStream& propStream, Container* container)
@@ -574,22 +557,18 @@ bool IOMapSerialize::loadItem(PropStream& propStream, Cylinder* parent)
 bool IOMapSerialize::saveMapBinary(Map* map)
 {
  	Database* db = Database::getInstance();
-	if(!db->connect())
-		return false;
+	DBQuery query;
 
 	//Start the transaction
-	DBTransaction trans(db);
-	if(!trans.start())
+	DBTransaction transaction(db);
+	if(!transaction.begin())
 		return false;
 
- 	DBQuery query;
-	DBResult result;
-	query << "DELETE FROM `map_store`;";
-	if(!db->executeQuery(query))
+	if(!db->executeQuery("DELETE FROM `map_store`;"))
  		return false;
 
-	DBSplitInsert query_insert(db);
-	query_insert.setQuery("INSERT INTO `map_store` (`house_id`, `data`) VALUES ");
+	DBInsert stmt(db);
+	stmt.setQuery("INSERT INTO `map_store` (`house_id`, `data`) VALUES ");
 
 	//clear old tile data
  	for(HouseMap::iterator it = Houses::getInstance().getHouseBegin();
@@ -605,45 +584,37 @@ bool IOMapSerialize::saveMapBinary(Map* map)
 		uint32_t attributesSize;
 		const char* attributes = stream.getStream(attributesSize);
 
-		query << "(" << it->second->getHouseId() << ", " <<
-			db->escapeBlob(attributes, attributesSize) << ")";
-
-		if(!query_insert.addRow(query.str()))
+		query << it->second->getHouseId() << "," << db->escapeBlob(attributes, attributesSize);
+		if(!stmt.addRow(query))
 			return false;
+	}
 
-		query.str("");
- 	}
-
-	if(!query_insert.executeQuery())
+	if(!stmt.execute())
 		return false;
 
  	//End the transaction
- 	return trans.success();
+ 	return transaction.commit();
 }
 
 bool IOMapSerialize::saveMapBinaryTileBased(Map* map)
 {
  	Database* db = Database::getInstance();
-	if(!db->connect())
-		return false;
+ 	DBQuery query;
 
 	//Start the transaction
-	DBTransaction trans(db);
-	if(!trans.start())
+	DBTransaction transaction(db);
+	if(!transaction.begin())
 		return false;
 
- 	DBQuery query;
-	DBResult result;
-	query << "DELETE FROM `tile_store`;";
-	if(!db->executeQuery(query))
+	if(!db->executeQuery("DELETE FROM `tile_store`;"))
  		return false;
 
-	DBSplitInsert query_insert(db);
-	query_insert.setQuery("INSERT INTO `tile_store` (`house_id`, `data`) VALUES ");
+	DBInsert stmt(db);
+	stmt.setQuery("INSERT INTO `tile_store` (`house_id`, `data`) VALUES ");
 
 	//clear old tile data
  	for(HouseMap::iterator it = Houses::getInstance().getHouseBegin();
-		it != Houses::getInstance().getHouseEnd();
+ 		it != Houses::getInstance().getHouseEnd();
 		++it)
 	{
  		//save house items
@@ -657,21 +628,18 @@ bool IOMapSerialize::saveMapBinaryTileBased(Map* map)
 
 			if(attributesSize > 0)
 			{
-				query << "(" << it->second->getHouseId() << ", " <<
-					db->escapeBlob(attributes, attributesSize) << ")";
-
-				if(!query_insert.addRow(query.str()))
+				query << it->second->getHouseId() << "," << db->escapeBlob(attributes, attributesSize);
+				if(!stmt.addRow(query))
 					return false;
 			}
-
-			query.str("");
 		}
 	}
-	if(!query_insert.executeQuery())
+
+	if(!stmt.execute())
 		return false;
 
  	//End the transaction
- 	return trans.success();
+ 	return transaction.commit();
 }
 
 void IOMapSerialize::saveItem(PropWriteStream& stream, const Item* item)
@@ -736,46 +704,39 @@ bool IOMapSerialize::loadHouseInfo(Map* map)
 {
 	Database* db = Database::getInstance();
 	DBQuery query;
-	DBResult result;
 
-	if(!db->connect())
+	DBResult* result = db->storeQuery("SELECT `id`, `owner`, `paid`, `warnings` FROM `houses`");
+	if(!result)
 		return false;
 
-	query << "SELECT `id`, `owner`, `paid`, `warnings` FROM `houses`";
-	if(!db->storeQuery(query, result) || result.getNumRows() == 0)
-		return false;
-
-	for(uint32_t i = 0; i < result.getNumRows(); ++i)
+	do
 	{
-		int32_t houseid = result.getDataInt("id", i);
-		House* house = Houses::getInstance().getHouse(houseid);
+		House* house = Houses::getInstance().getHouse(result->getDataInt("id"));
 		if(house)
 		{
-			int32_t ownerid = result.getDataInt("owner", i);
-			int32_t paid = result.getDataInt("paid", i);
-			int32_t payRentWarnings = result.getDataInt("warnings", i);
-
-			house->setHouseOwner(ownerid);
-			house->setPaidUntil(paid);
-			house->setPayRentWarnings(payRentWarnings);
+			house->setHouseOwner(result->getDataInt("owner"));
+			house->setPaidUntil(result->getDataInt("paid"));
+			house->setPayRentWarnings(result->getDataInt("warnings"));
 		}
 	}
+	while(result->next());
+	db->freeResult(result);
 
 	for(HouseMap::iterator it = Houses::getInstance().getHouseBegin(); it != Houses::getInstance().getHouseEnd(); ++it)
 	{
-		query.reset();
 		House* house = it->second;
 		if(house->getHouseOwner() != 0 && house->getHouseId() != 0)
 		{
+			query.str("");
 			query << "SELECT `listid`, `list` FROM `house_lists` WHERE `house_id` = " << house->getHouseId();
-			if(db->storeQuery(query, result) && result.getNumRows() != 0)
+			if((result = db->storeQuery(query.str())))
 			{
-				for(uint32_t i = 0; i < result.getNumRows(); ++i)
+				do
 				{
-					int32_t listid = result.getDataInt("listid", i);
-					std::string list = result.getDataString("list", i);
-					house->setAccessList(listid, list);
+					house->setAccessList(result->getDataInt("listid"), result->getDataString("list"));
 				}
+				while(result->next());
+				db->freeResult(result);
 			}
 		}
 	}
@@ -785,67 +746,50 @@ bool IOMapSerialize::loadHouseInfo(Map* map)
 bool IOMapSerialize::saveHouseInfo(Map* map)
 {
 	Database* db = Database::getInstance();
-	if(!db->connect())
-		return false;
-
-	DBTransaction trans(db);
-	if(!trans.start())
-		return false;
-
 	DBQuery query;
-	query << "DELETE FROM `houses`;";
-	if(!db->executeQuery(query))
+
+	DBTransaction transaction(db);
+	if(!transaction.begin())
 		return false;
 
-	query << "DELETE FROM `house_lists`;";
-	if(!db->executeQuery(query))
+	if(!db->executeQuery("DELETE FROM `houses`;"))
 		return false;
 
-	std::stringstream housestream;
+	if(!db->executeQuery("DELETE FROM `house_lists`;"))
+		return false;
 
-	DBSplitInsert query_insert(db);
-	query_insert.setQuery("INSERT INTO `houses` (`id` , `owner` , `paid`, `warnings`) VALUES ");
-
+	DBInsert stmt(db);
+	stmt.setQuery("INSERT INTO `houses` (`id` , `owner` , `paid`, `warnings`) VALUES ");
 	for(HouseMap::iterator it = Houses::getInstance().getHouseBegin(); it != Houses::getInstance().getHouseEnd(); ++it)
 	{
 		House* house = it->second;
-		housestream << "(" << house->getHouseId() << "," << house->getHouseOwner() << "," << house->getPaidUntil() << "," << house->getPayRentWarnings() << ")";
-		if(!query_insert.addRow(housestream.str()))
-			return false;
 
-		housestream.str("");
+		query << house->getHouseId() << "," << house->getHouseOwner() << "," << house->getPaidUntil() << "," << house->getPayRentWarnings();
+		if(!stmt.addRow(query))
+			return false;
 	}
 
-	if(!query_insert.executeQuery())
+	if(!stmt.execute())
 		return false;
 
+	stmt.setQuery("INSERT INTO `house_lists` (`house_id` , `listid` , `list`) VALUES ");
 	for(HouseMap::iterator it = Houses::getInstance().getHouseBegin(); it != Houses::getInstance().getHouseEnd(); ++it)
 	{
-		bool save_lists = false;
-		query_insert.setQuery("INSERT INTO `house_lists` (`house_id` , `listid` , `list`) VALUES ");
 		House* house = it->second;
 
 		std::string listText;
 		if(house->getAccessList(GUEST_LIST, listText) && listText != "")
 		{
-			housestream << "(" << house->getHouseId() << "," << GUEST_LIST << ",'" << Database::escapeString(listText) << "')";
-			save_lists = true;
-
-			if(!query_insert.addRow(housestream.str()))
+			query << house->getHouseId() << "," << GUEST_LIST << "," << db->escapeString(listText);
+			if(!stmt.addRow(query))
 				return false;
-
-			housestream.str("");
 		}
 
 		if(house->getAccessList(SUBOWNER_LIST, listText) && listText != "")
 		{
-			housestream << "(" << house->getHouseId() << "," << SUBOWNER_LIST << ",'" << Database::escapeString(listText) << "')";
-			save_lists = true;
-
-			if(!query_insert.addRow(housestream.str()))
+			query << house->getHouseId() << "," << SUBOWNER_LIST << "," << db->escapeString(listText);
+			if(!stmt.addRow(query))
 				return false;
-
-			housestream.str("");
 		}
 
 		for(HouseDoorList::iterator it = house->getHouseDoorBegin(); it != house->getHouseDoorEnd(); ++it)
@@ -853,21 +797,15 @@ bool IOMapSerialize::saveHouseInfo(Map* map)
 			const Door* door = *it;
 			if(door->getAccessList(listText) && listText != "")
 			{
-				housestream << "(" << house->getHouseId() << "," << door->getDoorId() << ",'" << Database::escapeString(listText) << "')";
-				save_lists = true;
-
-				if(!query_insert.addRow(housestream.str()))
+				query << house->getHouseId() << "," << door->getDoorId() << "," << db->escapeString(listText);
+				if(!stmt.addRow(query))
 					return false;
-
-				housestream.str("");
 			}
 		}
-
-		if(save_lists)
-		{
-			if(!query_insert.executeQuery())
-				return false;
-		}
 	}
-	return trans.success();
+
+	if(!stmt.execute())
+		return false;
+
+	return transaction.commit();
 }

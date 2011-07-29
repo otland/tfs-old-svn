@@ -73,6 +73,13 @@ enum SpellGroup_t
 	SPELLGROUP_SPECIAL = 4
 };
 
+enum DatabaseEngine_t
+{
+	DATABASE_ENGINE_NONE = 0,
+	DATABASE_ENGINE_MYSQL,
+	DATABASE_ENGINE_SQLITE
+};
+
 enum AccountType_t
 {
 	ACCOUNT_TYPE_NORMAL = 0x01,

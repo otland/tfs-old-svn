@@ -920,7 +920,7 @@ uint32_t MoveEvent::executeStep(Creature* creature, Item* item, const Position& 
 	//onStepOut(cid, item, pos, fromPosition)
 	if(m_scriptInterface->reserveScriptEnv())
 	{
-		ScriptEnviroment* env = m_scriptInterface->getScriptEnv();
+		ScriptEnvironment* env = m_scriptInterface->getScriptEnv();
 
 		#ifdef __DEBUG_LUASCRIPTS__
 		std::stringstream desc;
@@ -968,7 +968,7 @@ uint32_t MoveEvent::executeEquip(Player* player, Item* item, slots_t slot)
 	//onDeEquip(cid, item, slot)
 	if(m_scriptInterface->reserveScriptEnv())
 	{
-		ScriptEnviroment* env = m_scriptInterface->getScriptEnv();
+		ScriptEnvironment* env = m_scriptInterface->getScriptEnv();
 
 		#ifdef __DEBUG_LUASCRIPTS__
 		std::stringstream desc;
@@ -1015,7 +1015,7 @@ uint32_t MoveEvent::executeAddRemItem(Item* item, Item* tileItem, const Position
 	//onRemoveItem(moveitem, tileitem, pos)
 	if(m_scriptInterface->reserveScriptEnv())
 	{
-		ScriptEnviroment* env = m_scriptInterface->getScriptEnv();
+		ScriptEnvironment* env = m_scriptInterface->getScriptEnv();
 
 		#ifdef __DEBUG_LUASCRIPTS__
 		std::stringstream desc;

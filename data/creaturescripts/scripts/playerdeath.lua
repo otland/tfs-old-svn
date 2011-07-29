@@ -10,6 +10,7 @@ function onDeath(cid, corpse, killer)
 			env = luasql.sqlite3()
 			sql = env:connect(sqliteDatabase)
 		end
+
 		local byPlayer = 0
 		if killer == 0 then
 			killerName = "field item"

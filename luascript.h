@@ -51,6 +51,7 @@ extern "C"
 
 #include "position.h"
 #include "definitions.h"
+#include "database.h"
 
 class Thing;
 class Creature;
@@ -94,11 +95,11 @@ class LuaScriptInterface;
 class Game;
 class Npc;
 
-class ScriptEnviroment
+class ScriptEnvironment
 {
 	public:
-		ScriptEnviroment();
-		~ScriptEnviroment();
+		ScriptEnvironment();
+		~ScriptEnvironment();
 
 		void resetEnv();
 		void resetCallback() {m_callbackId = 0;}
@@ -121,13 +122,17 @@ class ScriptEnviroment
 
 		void getEventInfo(int32_t& scriptId, std::string& desc, LuaScriptInterface*& scriptInterface, int32_t& callbackId, bool& timerEvent);
 
-		static void addTempItem(ScriptEnviroment* env, Item* item);
-		static void removeTempItem(ScriptEnviroment* env, Item* item);
+		static void addTempItem(ScriptEnvironment* env, Item* item);
+		static void removeTempItem(ScriptEnvironment* env, Item* item);
 		static void removeTempItem(Item* item);
 		static void addUniqueThing(Thing* thing);
 		static void removeUniqueThing(Thing* thing);
 		uint32_t addThing(Thing* thing);
 		void insertThing(uint32_t uid, Thing* thing);
+
+		DBResult* getResultByID(uint32_t id);
+		uint32_t addResult(DBResult* res);
+		bool removeResult(uint32_t id);
 
 		void addGlobalStorageValue(const uint32_t key, const int32_t value);
 		bool getGlobalStorageValue(const uint32_t key, int32_t& value) const;
@@ -163,6 +168,7 @@ class ScriptEnviroment
 		typedef std::map<uint32_t, AreaCombat*> AreaMap;
 		typedef std::map<uint32_t, Combat*> CombatMap;
 		typedef std::map<uint32_t, Condition*> ConditionMap;
+		typedef std::map<uint32_t, DBResult*> DBResultMap;
 		typedef std::list<Item*> ItemList;
 
 		//script file id
@@ -184,7 +190,7 @@ class ScriptEnviroment
 		ThingMap m_localMap;
 
 		//temporary item list
-		typedef std::map<ScriptEnviroment*, ItemList> TempItemListMap;
+		typedef std::map<ScriptEnvironment*, ItemList> TempItemListMap;
 		static TempItemListMap m_tempItems;
 
 		//area map
@@ -198,6 +204,10 @@ class ScriptEnviroment
 		//condition map
 		static uint32_t m_lastConditionId;
 		static ConditionMap m_conditionMap;
+
+		//result map
+		static uint32_t m_lastResultId;
+		static DBResultMap m_tempResults;
 
 		//for npc scripts
 		Npc* m_curNpc;
@@ -271,7 +281,7 @@ class LuaScriptInterface
 
 		int32_t getEvent(const std::string& eventName);
 
-		static ScriptEnviroment* getScriptEnv()
+		static ScriptEnvironment* getScriptEnv()
 		{
 			assert(m_scriptEnvIndex >= 0 && m_scriptEnvIndex < 16);
 			return &m_scriptEnv[m_scriptEnvIndex];
@@ -624,7 +634,6 @@ class LuaScriptInterface
 		static int32_t luaSaveData(lua_State* L);
 		static int32_t luaRefreshMap(lua_State* L);
 		static int32_t luaCleanMap(lua_State* L);
-		static int32_t luaEscapeString(lua_State* L);
 
 		static int32_t luaDoSendTutorial(lua_State* L);
 		static int32_t luaDoAddMark(lua_State* L);
@@ -636,24 +645,44 @@ class LuaScriptInterface
 		static int32_t internalGetPlayerInfo(lua_State* L, PlayerInfo_t info);
 
 		static const luaL_Reg luaBitReg[13];
-		static int luaBitNot(lua_State* L);
-		static int luaBitAnd(lua_State* L);
-		static int luaBitOr(lua_State* L);
-		static int luaBitXor(lua_State* L);
-		static int luaBitLeftShift(lua_State* L);
-		static int luaBitRightShift(lua_State* L);
-		static int luaBitUNot(lua_State* L);
-		static int luaBitUAnd(lua_State* L);
-		static int luaBitUOr(lua_State* L);
-		static int luaBitUXor(lua_State* L);
-		static int luaBitULeftShift(lua_State* L);
-		static int luaBitURightShift(lua_State* L);
+		static int32_t luaBitNot(lua_State* L);
+		static int32_t luaBitAnd(lua_State* L);
+		static int32_t luaBitOr(lua_State* L);
+		static int32_t luaBitXor(lua_State* L);
+		static int32_t luaBitLeftShift(lua_State* L);
+		static int32_t luaBitRightShift(lua_State* L);
+		static int32_t luaBitUNot(lua_State* L);
+		static int32_t luaBitUAnd(lua_State* L);
+		static int32_t luaBitUOr(lua_State* L);
+		static int32_t luaBitUXor(lua_State* L);
+		static int32_t luaBitULeftShift(lua_State* L);
+		static int32_t luaBitURightShift(lua_State* L);
+
+		static const luaL_Reg luaDatabaseTable[10];
+		static int32_t luaDatabaseExecute(lua_State* L);
+		static int32_t luaDatabaseStoreQuery(lua_State* L);
+		static int32_t luaDatabaseEscapeString(lua_State* L);
+		static int32_t luaDatabaseEscapeBlob(lua_State* L);
+		static int32_t luaDatabaseLastInsertId(lua_State* L);
+		static int32_t luaDatabaseStringComparer(lua_State* L);
+		static int32_t luaDatabaseUpdateLimiter(lua_State* L);
+		static int32_t luaDatabaseConnected(lua_State* L);
+		static int32_t luaDatabaseTableExists(lua_State* L);
+
+		static const luaL_Reg luaResultTable[8];
+		static int32_t luaResultGetDataInt(lua_State* L);
+		static int32_t luaResultGetDataLong(lua_State* L);
+		static int32_t luaResultGetDataString(lua_State* L);
+		static int32_t luaResultGetDataStream(lua_State* L);
+		static int32_t luaResultGetAllData(lua_State* L);
+		static int32_t luaResultNext(lua_State* L);
+		static int32_t luaResultFree(lua_State* L);
 
 		lua_State* m_luaState;
 		std::string m_lastLuaError;
 
 	private:
-		static ScriptEnviroment m_scriptEnv[16];
+		static ScriptEnvironment m_scriptEnv[16];
 		static int32_t m_scriptEnvIndex;
 
 		int32_t m_runningEventId;

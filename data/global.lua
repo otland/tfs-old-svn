@@ -627,8 +627,9 @@ function isPremium(cid)
 end
 
 function rows(result)
-	return function ()
-		return result:fetch()
+	return function()
+		print("Deprecated function")
+		return nil
 	end
 end
 
@@ -678,11 +679,9 @@ function doPlayerAddAddons(cid, addon)
 end
 
 function numRows(result)
-	local row = result:fetch()
 	local rows = 0
-	while row do
+	while result:fetch() do
 		rows = rows + 1
-		row = result:fetch()
 	end
 	result:close()
 	return rows
@@ -1139,4 +1138,101 @@ function isMonsterInRange(monsterName, fromPos, toPos)
 		end
 	end
 	return false
+end
+
+-- LuaSQL wrapper
+luasql_environment = {
+	connections = {}
+}
+function luasql_environment:new() return self end
+function luasql_environment:connect()
+	local connection = luasql_connection:new()
+	table.insert(self.connections, connection)
+	return connection
+end
+function luasql_environment:close()
+	for _, v in pairs(self.connections) do
+		v:close()
+	end
+	self.connections = {}
+	return true
+end
+
+luasql_connection = {
+	resultIds = {}
+}
+function luasql_connection:new() return self end
+function luasql_connection:close()
+	for _, v in ipairs(self.resultIds) do
+		result.free(v)
+	end
+	self.resultIds = {}
+	return true
+end
+function luasql_connection:execute(statement)
+	local cursor = luasql_cursor:new(self, statement)
+	if cursor.resultId ~= false then
+		table.insert(self.resultIds, cursor.resultId)
+	end
+	return cursor
+end
+function luasql_connection:closedCursor(resultId)
+	for k, v in ipairs(self.resultIds) do
+		if v == resultId then
+			table.remove(self.resultIds, k)
+			break
+		end
+	end
+end
+
+luasql_cursor = {
+	connection,
+	resultId
+}
+function luasql_cursor:new(connection, statement)
+	self.connection = connection
+	self.resultId = db.storeQuery(statement)
+	return self
+end
+function luasql_cursor:close()
+	if self.resultId == false then
+		return true
+	end
+
+	self.connection:closedCursor(self.resultId)
+	return result.free(self.resultId)
+end
+function luasql_cursor:fetch()
+	if self.resultId == false then
+		return nil
+	end
+
+	local ret = result.getAllData(self.resultId)
+	if ret == false then
+		self:close()
+		self.resultId = false
+		return nil
+	end
+
+	if result.next(self.resultId) == false then
+		self:close()
+		self.resultId = false
+	end
+	return ret
+end
+
+luasql = {
+	mysql = function() return luasql_environment:new() end,
+	sqlite3 = function() return luasql_environment:new() end,
+	odbc = function() return luasql_environment:new() end,
+	postgres = function() return luasql_environment:new() end
+}
+--
+
+function escapeString(str)
+	str = db.escapeString(str)
+	if str:len() <= 2 then
+		return ""
+	end
+	return str:sub(2, str:len() - 1)
 end

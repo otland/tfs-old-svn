@@ -317,7 +317,7 @@ uint32_t GlobalEvent::executeRecord(uint32_t current, uint32_t old)
 	//onRecord(current, old, cid)
 	if(m_scriptInterface->reserveScriptEnv())
 	{
-		ScriptEnviroment* env = m_scriptInterface->getScriptEnv();
+		ScriptEnvironment* env = m_scriptInterface->getScriptEnv();
 
 		#ifdef __DEBUG_LUASCRIPTS__
 		char desc[125];
@@ -348,7 +348,7 @@ uint32_t GlobalEvent::executeEvent()
 {
 	if(m_scriptInterface->reserveScriptEnv())
 	{
-		ScriptEnviroment* env = m_scriptInterface->getScriptEnv();
+		ScriptEnvironment* env = m_scriptInterface->getScriptEnv();
 
 		env->setScriptId(m_scriptId, m_scriptInterface);
 		lua_State* L = m_scriptInterface->getLuaState();

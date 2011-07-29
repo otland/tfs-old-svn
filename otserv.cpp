@@ -255,7 +255,7 @@ void mainLoader(ServiceManager* service_manager)
 	#endif
 	#endif
 	std::cout << STATUS_SERVER_NAME << " - Version " << STATUS_SERVER_VERSION << " (" << STATUS_SERVER_CODENAME << ")." << std::endl;
-	std::cout << "A server developed by Talaturen, Kornholijo, Elf, and Fallen." << std::endl;
+	std::cout << "A server developed by Talaturen, Kornholijo, Elf, Fallen and Dalkon." << std::endl;
 	std::cout << "Visit our forum for updates, support, and resources: http://otland.net/." << std::endl;
 
 	#if defined __DEBUG__MOVESYS__ || defined __DEBUG_HOUSES__ || defined __DEBUG_MAILBOX__ || defined __DEBUG_LUASCRIPTS__ || defined __DEBUG_RAID__ || defined __DEBUG_NET__
@@ -328,26 +328,23 @@ void mainLoader(ServiceManager* service_manager)
 	g_RSA.setKey(p, q, d);
 
 	std::cout << ">> Testing SQL connection... ";
-	#if defined __USE_MYSQL__ && defined __USE_SQLITE__
+	#ifdef MULTI_SQL_DRIVERS
 	std::string sqlType = asLowerCaseString(g_config.getString(ConfigManager::SQL_TYPE));
 	if(sqlType == "mysql")
 	{
 		g_config.setNumber(ConfigManager::SQLTYPE, SQL_TYPE_MYSQL);
 		std::cout << "MySQL." << std::endl;
 		Database* db = Database::getInstance();
-		if(!db->connect())
+		if(!db->isConnected())
 			startupErrorMessage("Failed to connect to database, read doc/MYSQL_HELP for information or try SqLite which doesn't require any connection.");
 	}
 	else if(sqlType == "sqlite")
 	{
 		g_config.setNumber(ConfigManager::SQLTYPE, SQL_TYPE_SQLITE);
 		std::cout << "SQLite." << std::endl;
-		FILE* sqliteFile = fopen(g_config.getString(ConfigManager::SQLITE_DB).c_str(), "r");
-		if(!sqliteFile)
-			startupErrorMessage("Failed to load sqlite file: " + std::string(strerror(errno)) + "\n");
-
-			//startupErrorMessage("Failed to connect to sqlite database file, make sure it exists and is readable.");
-		fclose(sqliteFile);
+		Database* db = Database::getInstance();
+		if(!db->isConnected())
+			startupErrorMessage("Failed to connect to sqlite database file, make sure it exists and is readable.");
 	}
 	else
 		startupErrorMessage("Unkwown sqlType, valid sqlTypes are: 'mysql' and 'sqlite'.");
@@ -912,7 +909,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 						gui.m_logText = "";
 						gui.m_lineCount = 0;
 						std::cout << STATUS_SERVER_NAME << " - Version " << STATUS_SERVER_VERSION << " (" << STATUS_SERVER_CODENAME << ")." << std::endl;
-						std::cout << "A server developed by Talaturen, Kornholijo, Elf, and Fallen." << std::endl;
+						std::cout << "A server developed by Talaturen, Kornholijo, Elf, Fallen and Dalkon." << std::endl;
 						std::cout << "Visit our forum for updates, support and resources: http://otland.net/." << std::endl << std::endl;
 					}
 					break;

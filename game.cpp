@@ -242,7 +242,7 @@ void Game::saveGameState()
 	}
 
 	map->saveMap();
-	ScriptEnviroment::saveGameState();
+	ScriptEnvironment::saveGameState();
 	stateTime = OTSYS_TIME() + STATE_TIME;
 
 	if(gameState == GAME_STATE_MAINTAIN)
@@ -251,7 +251,7 @@ void Game::saveGameState()
 
 void Game::loadGameState()
 {
-	ScriptEnviroment::loadGameState();
+	ScriptEnvironment::loadGameState();
 }
 
 int32_t Game::loadMap(std::string filename)
@@ -307,7 +307,7 @@ void Game::refreshMap()
 			if(ret == RET_NOERROR)
 			{
 				if(item->getUniqueId() != 0)
-					ScriptEnviroment::addUniqueThing(item);
+					ScriptEnvironment::addUniqueThing(item);
 
 				startDecay(item);
 			}
@@ -4570,62 +4570,62 @@ Highscore Game::getHighscore(unsigned short skill)
 {
 	Highscore hs;
 	Database* db = Database::getInstance();
-	if(!db->connect())
-		return hs;
 
 	DBQuery query;
-	DBResult result, tmpResult;
 	uint32_t highscoresTop = g_config.getNumber(ConfigManager::HIGHSCORES_TOP);
 	if(skill >= 7)
 	{
-		if(skill == 7)
+		if(skill == MAGLEVEL)
 			query << "SELECT `name`, `maglevel` FROM `players` ORDER BY `maglevel` DESC, `manaspent` DESC LIMIT " << highscoresTop;
 		else
 			query << "SELECT `name`, `level` FROM `players` ORDER BY `level` DESC, `experience` DESC LIMIT " << highscoresTop;
 
-		if(db->storeQuery(query, result))
+		DBResult* result;
+		if((result = db->storeQuery(query.str())))
 		{
-			for(uint32_t i = 0; i < result.getNumRows(); ++i)
+			do
 			{
 				uint32_t level;
 				if(skill == 7)
-					level = result.getDataInt("maglevel", i);
+					level = result->getDataInt("maglevel");
 				else
-					level = result.getDataInt("level", i);
+					level = result->getDataInt("level");
 
-				std::string name = result.getDataString("name", i);
-				if(name.length() > 0)
-					hs.push_back(make_pair(name, level));
+				hs.push_back(make_pair(result->getDataString("name"), level));
 
 				highscoresTop--;
 				if(highscoresTop == 0)
 					break;
 			}
+			while(result->next());
+			db->freeResult(result);
 		}
 	}
 	else
 	{
 		query << "SELECT * FROM `player_skills` WHERE `skillid`=" << skill << " ORDER BY `value` DESC, `count` DESC";
-		if(db->storeQuery(query, result))
+
+		DBResult* result;
+		if((result = db->storeQuery(query.str())))
 		{
-			for(uint32_t i = 0; i < result.getNumRows(); ++i)
+			do
 			{
-				uint32_t level = result.getDataInt("value", i);
-				uint32_t id = result.getDataInt("player_id", i);
-				std::string name;
-				query << "SELECT `name` FROM `players` WHERE `id` = " << id;
+				query.str("");
+				query << "SELECT `name` FROM `players` WHERE `id` = " << result->getDataInt("player_id") << ";";
 
-				if(db->storeQuery(query, tmpResult))
-					name = tmpResult.getDataString("name", 0);
-
-				query.reset();
-				if(name.length() > 0)
-					hs.push_back(make_pair(name, level));
+				DBResult* tmpResult;
+				if((tmpResult = db->storeQuery(query.str())))
+				{
+					hs.push_back(make_pair(tmpResult->getDataString("name"), result->getDataInt("value")));
+					db->freeResult(tmpResult);
+				}
 
 				highscoresTop--;
 				if(highscoresTop == 0)
 					break;
 			}
+			while(result->next());
+			db->freeResult(result);
 		}
 	}
 	return hs;

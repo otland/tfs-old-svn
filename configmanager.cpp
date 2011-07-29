@@ -75,7 +75,7 @@ bool ConfigManager::loadFile(const std::string& _filename)
 		m_confInteger[LOGIN_PORT] = getGlobalNumber(L, "loginProtocolPort", 7171);
 		m_confInteger[STATUS_PORT] = getGlobalNumber(L, "statusProtocolPort", 7171);
 
-		#if defined __USE_MYSQL__ && defined __USE_SQLITE__
+		#ifdef MULTI_SQL_DRIVERS
 		m_confString[SQL_TYPE] = getGlobalString(L, "sqlType", "sqlite");
 		m_confInteger[SQLTYPE] = SQL_TYPE_NONE;
 		#endif

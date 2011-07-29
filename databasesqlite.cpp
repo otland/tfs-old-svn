@@ -18,93 +18,194 @@
 // Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 //////////////////////////////////////////////////////////////////////
 
+#include "otpch.h"
+
 #ifdef __USE_SQLITE__
-#include <iostream>
+
+#include "database.h"
 #include "databasesqlite.h"
 #include "configmanager.h"
-#include "tools.h"
+#include <iostream>
+#include <fstream>
+#include <boost/regex.hpp>
 
 extern ConfigManager g_config;
 
-DatabaseSqLite::DatabaseSqLite()
-{
-	init();
-}
+#if SQLITE_VERSION_NUMBER < 3003009
+#define OTS_SQLITE3_PREPARE sqlite3_prepare
+#else
+#define OTS_SQLITE3_PREPARE sqlite3_prepare_v2
+#endif
 
-DatabaseSqLite::~DatabaseSqLite()
-{
-	disconnect();
-}
+/** DatabaseSQLite definitions */
 
-bool DatabaseSqLite::m_fieldnames = false;
-
-bool DatabaseSqLite::init()
+DatabaseSQLite::DatabaseSQLite()
 {
-	m_initialized = false;
 	m_connected = false;
 
 	// test for existence of database file;
-	// sqlite3_open will create a new one if it isn't there (what we don't want)
-	if(!fileExists(g_config.getString(ConfigManager::SQLITE_DB).c_str()))
-		return m_initialized;
+	// sqlite3_open will create a new one if it isn't there (which we don't want)
+	std::fstream fin(g_config.getString(ConfigManager::SQLITE_DB).c_str(), std::ios::in | std::ios::binary);
+	if(fin.fail())
+	{
+		std::cout << "Failed to initialize SQLite connection. File " << g_config.getString(ConfigManager::SQLITE_DB) <<
+				" does not exist." << std::endl;
+		return;
+	}
+	fin.close();
 
 	// Initialize sqlite
 	if(sqlite3_open(g_config.getString(ConfigManager::SQLITE_DB).c_str(), &m_handle) != SQLITE_OK)
 	{
-		std::cout << "SQLITE ERROR sqlite_init" << std::endl;
+		std::cout << "Failed to initialize SQLite connection." << std::endl;
 		sqlite3_close(m_handle);
+		return;
 	}
-	else
-		m_initialized = true;
 
-	return m_initialized;
-}
-
-bool DatabaseSqLite::connect()
-{
-	//don't need to connect
 	m_connected = true;
-	return true;
 }
 
-bool DatabaseSqLite::disconnect()
+DatabaseSQLite::~DatabaseSQLite()
 {
-	if(m_initialized)
-	{
-		sqlite3_close(m_handle);
-		m_initialized = false;
-		return true;
-	}
+	sqlite3_close(m_handle);
+}
+
+bool DatabaseSQLite::getParam(DBParam_t param)
+{
 	return false;
 }
 
-bool DatabaseSqLite::executeQuery(DBQuery &q)
+bool DatabaseSQLite::beginTransaction()
 {
-	if(!m_initialized || !m_connected)
+	return executeQuery("BEGIN");
+}
+
+bool DatabaseSQLite::rollback()
+{
+	return executeQuery("ROLLBACK");
+}
+
+bool DatabaseSQLite::commit()
+{
+	return executeQuery("COMMIT");
+}
+
+std::string DatabaseSQLite::_parse(const std::string &s)
+{
+	std::string query = "";
+
+	query.reserve(s.size());
+	bool inString = false;
+	uint8_t ch;
+	for(uint32_t a = 0; a < s.length(); ++a)
+	{
+		ch = s[a];
+		if(ch == '\'')
+			inString = (!inString || s[a + 1] == '\'');
+
+		if(ch == '`' && !inString)
+			ch = '"';
+
+		query += ch;
+	}
+	return query;
+}
+
+bool DatabaseSQLite::executeQuery(const std::string &query)
+{
+	boost::recursive_mutex::scoped_lock lockClass(sqliteLock);
+	if(!m_connected)
 		return false;
 
-	std::string s = q.str();
-	const char* querytext = s.c_str();
-	// Execute the query
-	if(sqlite3_exec(m_handle, querytext, 0, 0, &zErrMsg) != SQLITE_OK)
+	#ifdef __DEBUG_SQL__
+	std::cout << "SQLITE QUERY: " << query << std::endl;
+	#endif
+
+	std::string buf = _parse(query);
+	sqlite3_stmt* stmt;
+	// prepares statement
+	if(OTS_SQLITE3_PREPARE(m_handle, buf.c_str(), buf.length(), &stmt, NULL) != SQLITE_OK)
 	{
-		std::cout << "SQLITE ERROR sqlite_exec: " << q.str() << " " << zErrMsg << std::endl;
-		sqlite3_free(zErrMsg);
+		sqlite3_finalize(stmt);
+		std::cout << "OTS_SQLITE3_PREPARE(): SQLITE ERROR: " << sqlite3_errmsg(m_handle) << " (" << buf << ")" << std::endl;
 		return false;
 	}
 
-	// All is ok
-	q.reset();
+	// executes it once
+	int ret = sqlite3_step(stmt);
+	if(ret != SQLITE_OK && ret != SQLITE_DONE && ret != SQLITE_ROW)
+	{
+		sqlite3_finalize(stmt);
+		std::cout << "sqlite3_step(): SQLITE ERROR: " << sqlite3_errmsg(m_handle) << " (" << buf << ")" << std::endl;
+		return false;
+	}
+
+	// closes statement
+	// at all not sure if it should be debugged - query was executed correctly...
+	sqlite3_finalize(stmt);
 	return true;
 }
 
-std::string DatabaseSqLite::escapeBlob(const char* s, uint32_t length)
+DBResult* DatabaseSQLite::storeQuery(const std::string &query)
+{
+	boost::recursive_mutex::scoped_lock lockClass(sqliteLock);
+	if(!m_connected)
+		return NULL;
+
+	#ifdef __DEBUG_SQL__
+	std::cout << "SQLITE QUERY: " << query << std::endl;
+	#endif
+
+	std::string buf = _parse(query);
+	sqlite3_stmt* stmt;
+	// prepares statement
+	if(OTS_SQLITE3_PREPARE(m_handle, buf.c_str(), buf.length(), &stmt, NULL) != SQLITE_OK)
+	{
+		sqlite3_finalize(stmt);
+		std::cout << "OTS_SQLITE3_PREPARE(): SQLITE ERROR: " << sqlite3_errmsg(m_handle)  << " (" << buf << ")" << std::endl;
+		return NULL;
+	}
+
+	DBResult* results = new SQLiteResult(stmt);
+	return verifyResult(results);
+}
+
+uint64_t DatabaseSQLite::getLastInsertedRowID()
+{
+	return (uint64_t)sqlite3_last_insert_rowid(m_handle);
+}
+
+std::string DatabaseSQLite::escapeString(const std::string &s)
+{
+	// remember about quoiting even an empty string!
+	if(!s.size())
+		return std::string("''");
+
+	// the worst case is 2n + 1
+	char* output = new char[s.length() * 2 + 3];
+
+	// quotes escaped string and frees temporary buffer
+	sqlite3_snprintf(s.length() * 2 + 3, output, "%Q", s.c_str());
+	std::string r(output);
+	delete[] output;
+	return r;
+}
+
+std::string DatabaseSQLite::escapePatternString(const std::string &s)
+{
+	std::string str = escapeString(s);
+	str = boost::regex_replace(str, boost::regex("%"), "\\%");
+	str = boost::regex_replace(str, boost::regex("_"), "\\_");
+	return str;
+}
+
+std::string DatabaseSQLite::escapeBlob(const char* s, uint32_t length)
 {
 	std::string buf = "x'";
 
 	char* hex = new char[2 + 1]; //need one extra byte for null-character
 
-	for(uint32_t i = 0; i < length; i++)
+	for(uint32_t i = 0; i < length; ++i)
 	{
 		sprintf(hex, "%02x", ((unsigned char)s[i]));
 		buf += hex;
@@ -116,53 +217,81 @@ std::string DatabaseSqLite::escapeBlob(const char* s, uint32_t length)
 	return buf;
 }
 
-bool DatabaseSqLite::storeQuery(DBQuery &q, DBResult &dbres)
+void DatabaseSQLite::freeResult(DBResult* res)
 {
-	if(!m_initialized || !m_connected)
-		return false;
+	delete (SQLiteResult*)res;
+}
 
-	std::string s = q.str();
-	const char* querytext = s.c_str();
+/** SQLiteResult definitions */
 
-	q.reset();
-	dbres.clear();
-	// Execute the query
-	if(sqlite3_exec(m_handle, querytext, DatabaseSqLite::callback, &dbres, &zErrMsg) != SQLITE_OK)
+int32_t SQLiteResult::getDataInt(const std::string &s)
+{
+	listNames_t::iterator it = m_listNames.find(s);
+	if(it == m_listNames.end())
 	{
-		std::cout << "SQLITE ERROR sqlite_exec: " << q.str() << " " << zErrMsg << std::endl;
-		sqlite3_free(zErrMsg);
-		return false;
+		std::cout << "Error during getDataInt(" << s << ")." << std::endl;
+		return 0;
 	}
-	DatabaseSqLite::m_fieldnames = false;
-
-	// Check if there are rows in the query
-	return dbres.getNumRows() > 0;
+	return sqlite3_column_int(m_handle, it->second);
 }
 
-bool DatabaseSqLite::rollback()
+int64_t SQLiteResult::getDataLong(const std::string &s)
 {
-	DBQuery query;
-	query << "ROLLBACK;";
-	return executeQuery(query);
-}
-
-bool DatabaseSqLite::commit()
-{
-	DBQuery query;
-	query << "COMMIT;";
-	return executeQuery(query);
-}
-
-int DatabaseSqLite::callback(void *db, int num_fields, char **results, char **columnNames)
-{
-	DBResult* dbres = (DBResult*)db;
-	if(!DatabaseSqLite::m_fieldnames)
+	listNames_t::iterator it = m_listNames.find(s);
+	if(it == m_listNames.end())
 	{
-		for(int i = 0; i < num_fields; i++)
-			dbres->setFieldName(std::string(columnNames[i]), i);
-		DatabaseSqLite::m_fieldnames = true;
+		std::cout << "Error during getDataLong(" << s << ")." << std::endl;
+		return 0;
 	}
-	dbres->addRow(results, num_fields);
-	return 0;
+	return sqlite3_column_int64(m_handle, it->second);
 }
+
+std::string SQLiteResult::getDataString(const std::string &s)
+{
+	listNames_t::iterator it = m_listNames.find(s);
+	if(it == m_listNames.end())
+	{
+		std::cout << "Error during getDataString(" << s << ")." << std::endl;
+		return std::string("");
+	}
+
+	std::string value = (const char*)sqlite3_column_text(m_handle, it->second);
+	return value;
+}
+
+const char* SQLiteResult::getDataStream(const std::string &s, unsigned long &size)
+{
+	listNames_t::iterator it = m_listNames.find(s);
+	if(it == m_listNames.end())
+	{
+		std::cout << "Error during getDataStream(" << s << ")." << std::endl;
+		return NULL;
+	}
+
+	const char* value = (const char*)sqlite3_column_blob(m_handle, it->second);
+	size = sqlite3_column_bytes(m_handle, it->second);
+	return value;
+}
+
+bool SQLiteResult::next()
+{
+	// checks if after moving to next step we have a row result
+	return sqlite3_step(m_handle) == SQLITE_ROW;
+}
+
+SQLiteResult::SQLiteResult(sqlite3_stmt* stmt)
+{
+	m_handle = stmt;
+	m_listNames.clear();
+
+	int32_t fields = sqlite3_column_count(m_handle);
+	for(int32_t i = 0; i < fields; ++i)
+		m_listNames[sqlite3_column_name(m_handle, i)] = i;
+}
+
+SQLiteResult::~SQLiteResult()
+{
+	sqlite3_finalize(m_handle);
+}
+
 #endif

@@ -154,7 +154,7 @@ int32_t TalkAction::executeSay(Creature* creature, const std::string& words, con
 	//onSay(cid, words, param)
 	if(m_scriptInterface->reserveScriptEnv())
 	{
-		ScriptEnviroment* env = m_scriptInterface->getScriptEnv();
+		ScriptEnvironment* env = m_scriptInterface->getScriptEnv();
 
 		#ifdef __DEBUG_LUASCRIPTS__
 		char desc[125];

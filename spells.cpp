@@ -284,7 +284,7 @@ bool CombatSpell::loadScriptCombat()
 {
 	if(m_scriptInterface->reserveScriptEnv())
 	{
-		ScriptEnviroment* env = m_scriptInterface->getScriptEnv();
+		ScriptEnvironment* env = m_scriptInterface->getScriptEnv();
 		combat = env->getCombatObject(env->getLastCombatId());
 
 		env->resetCallback();
@@ -359,7 +359,7 @@ bool CombatSpell::executeCastSpell(Creature* creature, const LuaVariant& var)
 	//onCastSpell(cid, var)
 	if(m_scriptInterface->reserveScriptEnv())
 	{
-		ScriptEnviroment* env = m_scriptInterface->getScriptEnv();
+		ScriptEnvironment* env = m_scriptInterface->getScriptEnv();
 
 		#ifdef __DEBUG_LUASCRIPTS__
 		char desc[60];
@@ -1282,7 +1282,7 @@ bool InstantSpell::executeCastSpell(Creature* creature, const LuaVariant& var)
 	//onCastSpell(cid, var)
 	if(m_scriptInterface->reserveScriptEnv())
 	{
-		ScriptEnviroment* env = m_scriptInterface->getScriptEnv();
+		ScriptEnvironment* env = m_scriptInterface->getScriptEnv();
 
 		#ifdef __DEBUG_LUASCRIPTS__
 		char desc[60];
@@ -2259,7 +2259,7 @@ bool RuneSpell::executeCastSpell(Creature* creature, const LuaVariant& var)
 	//onCastSpell(cid, var)
 	if(m_scriptInterface->reserveScriptEnv())
 	{
-		ScriptEnviroment* env = m_scriptInterface->getScriptEnv();
+		ScriptEnvironment* env = m_scriptInterface->getScriptEnv();
 
 		#ifdef __DEBUG_LUASCRIPTS__
 		char desc[60];

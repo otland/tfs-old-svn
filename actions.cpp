@@ -586,7 +586,7 @@ bool Action::executeUse(Player* player, Item* item, const PositionEx& fromPos, c
 	//onUse(cid, item, fromPosition, itemEx, toPosition)
 	if(m_scriptInterface->reserveScriptEnv())
 	{
-		ScriptEnviroment* env = m_scriptInterface->getScriptEnv();
+		ScriptEnvironment* env = m_scriptInterface->getScriptEnv();
 
 		#ifdef __DEBUG_LUASCRIPTS__
 		std::stringstream desc;

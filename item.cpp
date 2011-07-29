@@ -255,9 +255,9 @@ void Item::setDefaultSubtype()
 
 void Item::onRemoved()
 {
-	ScriptEnviroment::removeTempItem(this);
+	ScriptEnvironment::removeTempItem(this);
 	if(getUniqueId() != 0)
-		ScriptEnviroment::removeUniqueThing(this);
+		ScriptEnvironment::removeUniqueThing(this);
 }
 
 void Item::setID(uint16_t newid)
@@ -1111,7 +1111,7 @@ void Item::setUniqueId(uint16_t n)
 		return;
 
 	ItemAttributes::setUniqueId(n);
-	ScriptEnviroment::addUniqueThing(this);
+	ScriptEnvironment::addUniqueThing(this);
 }
 
 bool Item::canDecay()

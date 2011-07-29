@@ -740,7 +740,7 @@ bool ScriptEvent::executeEvent()
 	//onRaid()
 	if(m_scriptInterface.reserveScriptEnv())
 	{
-		ScriptEnviroment* env = m_scriptInterface.getScriptEnv();
+		ScriptEnvironment* env = m_scriptInterface.getScriptEnv();
 
 		#ifdef __DEBUG_LUASCRIPTS__
 		env->setEventDesc("Raid event");

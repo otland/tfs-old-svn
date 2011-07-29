@@ -90,7 +90,7 @@ class ConfigManager
 			MYSQL_DB,
 			DEFAULT_PRIORITY,
 			SQLITE_DB,
-			#if defined __USE_MYSQL__ && defined __USE_SQLITE__
+			#ifdef MULTI_SQL_DRIVERS
 			SQL_TYPE,
 			#endif
 			PASSWORDTYPE,
@@ -136,7 +136,7 @@ class ConfigManager
 			PROTECTION_LEVEL,
 			DEATH_LOSE_PERCENT,
 			PASSWORD_TYPE,
-			#if defined __USE_MYSQL__ && defined __USE_SQLITE__
+			#ifdef MULTI_SQL_DRIVERS
 			SQLTYPE,
 			#endif
 			STATUSQUERY_TIMEOUT,

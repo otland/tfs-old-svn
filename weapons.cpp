@@ -529,7 +529,7 @@ bool Weapon::executeUseWeapon(Player* player, const LuaVariant& var) const
 	//onUseWeapon(cid, var)
 	if(m_scriptInterface->reserveScriptEnv())
 	{
-		ScriptEnviroment* env = m_scriptInterface->getScriptEnv();
+		ScriptEnvironment* env = m_scriptInterface->getScriptEnv();
 
 		#ifdef __DEBUG_LUASCRIPTS__
 		char desc[60];

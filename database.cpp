@@ -17,238 +17,25 @@
 // along with this program; if not, write to the Free Software Foundation,
 // Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 //////////////////////////////////////////////////////////////////////
+
 #include "otpch.h"
 
-#ifdef __USE_SQLITE__
-#include <boost/regex.hpp>
-#endif
-#include <iostream>
-#include <string>
 #include "database.h"
+#include <string>
 
 #ifdef __USE_MYSQL__
 #include "databasemysql.h"
 #endif
-
 #ifdef __USE_SQLITE__
 #include "databasesqlite.h"
 #endif
 
-#if defined __USE_MYSQL__ && defined __USE_SQLITE__
+#if defined MULTI_SQL_DRIVERS
 #include "configmanager.h"
 extern ConfigManager g_config;
 #endif
 
-OTSYS_THREAD_LOCKVAR DBQuery::database_lock;
-
-DBQuery::DBQuery()
-{
-	OTSYS_THREAD_LOCK(database_lock, NULL);
-}
-
-DBQuery::~DBQuery()
-{
-	OTSYS_THREAD_UNLOCK(database_lock, NULL);
-}
-
-DBResult::DBResult()
-{
-	m_numFields = 0;
-	m_numRows = 0;
-}
-
-DBResult::~DBResult()
-{
-	clear();
-}
-
-#ifdef __USE_MYSQL__
-void DBResult::addRow(MYSQL_ROW r, unsigned long* lengths, unsigned int num_fields)
-{
-	RowData* rd = new RowData;
-	rd->row = new char*[num_fields];
-	rd->length = new unsigned long*[num_fields];
-
-	for(unsigned int i=0; i < num_fields; ++i)
-	{
-		if(r[i] == NULL)
-		{
-			rd->row[i] = NULL;
-			rd->length[i] = NULL;
-			continue;
-		}
-
-		unsigned long colLen = lengths[i];
-		rd->row[i] = new char[colLen + 1];
-		rd->length[i] = new unsigned long;
-
-		memcpy(rd->row[i], r[i], colLen + 1);
-		memcpy(rd->length[i], &lengths[i], sizeof(unsigned long));
-	}
-
-	m_listRows[m_numRows] = rd;
-	m_numRows++;
-}
-#endif
-
-#ifdef __USE_SQLITE__
-void DBResult::addRow(char **results, unsigned int num_fields)
-{
-	RowData* rd = new RowData;
-	rd->row = new char*[num_fields];
-	rd->length = new unsigned long*[num_fields];
-
-	for(unsigned int i=0; i < num_fields; ++i)
-	{
-		if(results[i] == NULL)
-		{
-			rd->row[i] = NULL;
-			rd->length[i] = NULL;
-			continue;
-		}
-
-		unsigned long colLen = strlen(results[i]);
-		rd->row[i] = new char[colLen+1];
-		rd->length[i] = new unsigned long;
-		/*std::cout << "'" << colLen << "' : '" << results[i] << "'\n";*/
-		memcpy(rd->row[i], results[i], colLen+1);
-		*(rd->length[i]) = colLen;
-	}
-
-	m_listRows[m_numRows] = rd;
-	m_numRows++;
-}
-#endif
-
-void DBResult::clear()
-{
-	RowDataMap::iterator it;
-	for(it = m_listRows.begin(); it != m_listRows.end();)
-	{
-		for(unsigned int i = 0; i < m_numFields; ++i)
-		{
-			if(it->second->row[i] != NULL)
-				delete[] it->second->row[i];
-
-			if(it->second->length[i] != NULL)
-				delete it->second->length[i];
-		}
-		delete[] it->second->row;
-		delete[] it->second->length;
-		delete it->second;
-		m_listRows.erase(it++);
-	}
-
-	m_numRows = 0;
-	m_listNames.clear();
-	m_numFields = 0;
-}
-
-int32_t DBResult::getDataInt(const std::string &s, unsigned int nrow)
-{
-	listNames_type::iterator it=m_listNames.find(s);
-	if(it != m_listNames.end())
-	{
-		RowDataMap::iterator it2=m_listRows.find(nrow);
-		if(it2 != m_listRows.end())
-		{
-			if(it2->second->row[it->second] == NULL)
-				return 0;
-			else
-			{
-				#if defined __USE_MYSQL__ && defined __USE_SQLITE__
-				if(g_config.getNumber(ConfigManager::SQLTYPE) == SQL_TYPE_SQLITE)
-				{
-					if(std::string("TRUE").compare(it2->second->row[it->second]) == 0) //SqLite returns a string
-						return 1;
-				}
-				#elif defined __USE_SQLITE__
-				if(std::string("TRUE").compare(it2->second->row[it->second]) == 0) //SqLite returns a string
-					return 1;
-				#endif
-				return atoi(it2->second->row[it->second]);
-			}
-		}
-	}
-
-	std::cout << "SQL ERROR DBResult::GetDataInt() " << s << std::endl;
-	return 0; // Failed
-}
-
-int64_t DBResult::getDataLong(const std::string &s, unsigned int nrow)
-{
-	listNames_type::iterator it=m_listNames.find(s);
-	if(it != m_listNames.end())
-	{
-		RowDataMap::iterator it2=m_listRows.find(nrow);
-		if(it2 != m_listRows.end())
-		{
-			if(it2->second->row[it->second] == NULL)
-				return 0;
-			else
-				return ATOI64(it2->second->row[it->second]);
-		}
-	}
-
-	std::cout << "SQL ERROR DBResult::GetDataLong() " << s << std::endl;
-	return 0; // Failed
-}
-
-std::string DBResult::getDataString(const std::string &s, unsigned int nrow)
-{
-	listNames_type::iterator it=m_listNames.find(s);
-	if(it != m_listNames.end())
-	{
-		RowDataMap::iterator it2=m_listRows.find(nrow);
-		if(it2 != m_listRows.end())
-		{
-			if(it2->second->row[it->second] == NULL)
-				return std::string("");
-			else
-				return std::string(it2->second->row[it->second]);
-		}
-	}
-
-	std::cout << "SQL ERROR DBResult::GetDataString() " << s << std::endl;
-	return std::string(""); // Failed
-}
-
-const char* DBResult::getDataBlob(const std::string &s, unsigned long& size, unsigned int nrow)
-{
-	#if defined __USE_MYSQL__ && defined __USE_SQLITE__
-	if(g_config.getNumber(ConfigManager::SQLTYPE) == SQL_TYPE_SQLITE)
-	{
-		size = 0;
-		return NULL;
-	}
-	#elif defined __USE_SQLITE__
-	size = 0;
-	return NULL;
-	#endif
-
-	listNames_type::iterator it = m_listNames.find(s);
-	if(it != m_listNames.end())
-	{
-		RowDataMap::iterator it2 = m_listRows.find(nrow);
-		if(it2 != m_listRows.end())
-		{
-			if(it2->second->row[it->second] == NULL)
-			{
-				size = 0;
-				return NULL;
-			}
-			else
-			{
-				size = *it2->second->length[it->second];
-				return it2->second->row[it->second];
-			}
-		}
-	}
-
-	std::cout << "SQL ERROR DBResult::getDataBlob() " << s << std::endl;
-	size = 0;
-	return NULL;
-}
+boost::recursive_mutex DBQuery::database_lock;
 
 Database* _Database::_instance = NULL;
 
@@ -256,290 +43,96 @@ Database* _Database::getInstance()
 {
 	if(!_instance)
 	{
-		#if defined __USE_MYSQL__ && defined __USE_SQLITE__
-			if(g_config.getNumber(ConfigManager::SQLTYPE) == SQL_TYPE_MYSQL)
-				_instance = new DatabaseMySQL;
-			else
-				_instance = new DatabaseSqLite;
-		#elif defined __USE_MYSQL__
+#if defined MULTI_SQL_DRIVERS
+		if(g_config.getNumber(ConfigManager::SQLTYPE) == SQL_TYPE_MYSQL)
 			_instance = new DatabaseMySQL;
-		#elif defined __USE_SQLITE__
-			_instance = new DatabaseSqLite;
-		#endif
-		OTSYS_THREAD_LOCKVARINIT(DBQuery::database_lock);
+		else if(g_config.getNumber(ConfigManager::SQLTYPE) == SQL_TYPE_SQLITE)
+			_instance = new DatabaseSQLite;
+		else
+			_instance = new Database;
+#else
+		_instance = new Database;
+#endif
 	}
 	return _instance;
 }
 
-#ifdef __USE_SQLITE__
-void escape_string(std::string & s)
+DBResult* _Database::verifyResult(DBResult* result)
 {
-	if(!s.size())
-		return;
-
-	for(unsigned int i = 0; i < s.size(); i++)
+	if(!result->next())
 	{
-		switch(s[i])
-		{
-			case '\0': // Must be escaped for "mysql"
-				s[i] = '\\';
-				s.insert(i, "0", 1);
-				i++;
-				break;
-			case '\n': // Must be escaped for logs
-				s[i] = '\\';
-				s.insert(i, "n", 1);
-				i++;
-				break;
-			case '\r':
-				s[i] = '\\';
-				s.insert(i, "r", 1);
-				i++;
-				break;
-			case '\\':
-				s[i] = '\\';
-				s.insert(i, "\\", 1);
-				i++;
-				break;
-			case '\"':
-				s[i] = '\\';
-				s.insert(i, "\"", 1);
-				i++;
-				break;
-			case '\'': // Better safe than sorry
-				s[i] = '\\';
-				s.insert(i, "\'", 1);
-				i++;
-				break;
-			case '\032': // This gives problems on Win32
-				s[i] = '\\';
-				s.insert(i, "Z", 1);
-				i++;
-				break;
-			default:
-				break;
-		}
+		_instance->freeResult(result);
+		return NULL;
 	}
-}
-#endif
-
-std::string _Database::getUpdateQueryLimit(uint32_t limit/* = 1*/)
-{
-	#if defined __USE_MYSQL__ && defined __USE_SQLITE__
-	if(g_config.getNumber(ConfigManager::SQLTYPE) == SQL_TYPE_MYSQL)
-	{
-		std::stringstream ss;
-		ss << " LIMIT " << limit;
-		return ss.str();
-	}
-	else
-		return "";
-	#elif defined __USE_MYSQL__
-	std::stringstream ss;
-	ss << " LIMIT " << limit;
-	return ss.str();
-	#elif defined __USE_SQLITE__
-	return "";
-	#endif
+	return result;
 }
 
-std::string _Database::escapeString(const std::string &s)
+DBQuery::DBQuery()
 {
-	#if defined __USE_MYSQL__ && defined __USE_SQLITE__
-	if(g_config.getNumber(ConfigManager::SQLTYPE) == SQL_TYPE_MYSQL)
-		return escapeString(s.c_str(), s.size());
-	else
-	{
-		std::string r = std::string(s);
-		escape_string(r);
-		return r;
-	}
-	#elif defined __USE_MYSQL__
-	return escapeString(s.c_str(), s.size());
-	#elif defined __USE_SQLITE__
-	std::string r = std::string(s);
-	escape_string(r);
-	return r;
-	#endif
+	database_lock.lock();
 }
 
-#ifdef __USE_SQLITE__
-std::string _Database::escapePatternString(const std::string &s)
+DBQuery::~DBQuery()
 {
-	std::string r = std::string(s);
-	escape_string(r);
-
-	//escape % and _ because they can manipulate the pattern.
-	r = boost::regex_replace(r, boost::regex("%"), "\\%");
-	r = boost::regex_replace(r, boost::regex("_"), "\\_");
-
-	return r;
-}
-#endif
-
-// probably the mysql_escape_string version should be dropped as it's less generic
-// but i'm keeping it atm
-std::string _Database::escapeString(const char* s, unsigned long size)
-{
-	if(s == NULL)
-		return std::string("");
-
-	std::string r;
-	#if defined __USE_MYSQL__ && defined __USE_SQLITE__
-		if(g_config.getNumber(ConfigManager::SQLTYPE) == SQL_TYPE_MYSQL)
-		{
-			char* output = new char[size * 2 + 1];
-			mysql_escape_string(output, s, size);
-			r = std::string(output);
-			delete[] output;
-		}
-		else
-		{
-			r = std::string(s);
-			escape_string(r);
-		}
-	#elif defined __USE_MYSQL__
-		char* output = new char[size * 2 + 1];
-		mysql_escape_string(output, s, size);
-		r = std::string(output);
-		delete[] output;
-	#elif defined __USE_SQLITE__
-		r = std::string(s);
-		escape_string(r);
-	#endif
-	return r;
+	database_lock.unlock();
 }
 
-DBTransaction::DBTransaction(Database* database)
+DBInsert::DBInsert(Database* db)
 {
-	m_database = database;
-	m_state = STATE_NO_START;
+	m_db = db;
+	m_rows = 0;
+
+	// checks if current database engine supports multiline INSERTs
+	m_multiLine = m_db->getParam(DBPARAM_MULTIINSERT) != 0;
 }
 
-DBTransaction::~DBTransaction()
+void DBInsert::setQuery(const std::string& query)
 {
-	if(m_state == STATE_START)
-	{
-		if(!m_database->rollback())
-		{
-			//TODO: What to do here?
-		}
-	}
-}
-
-bool DBTransaction::start()
-{
-	DBQuery query;
-	#if defined __USE_MYSQL__ && defined __USE_SQLITE__
-	if(g_config.getNumber(ConfigManager::SQLTYPE) == SQL_TYPE_MYSQL)
-		query << "START TRANSACTION;";
-	else
-		query << "BEGIN;";
-	#elif defined __USE_MYSQL__
-	query << "START TRANSACTION;";
-	#elif defined __USE_SQLITE__
-	query << "BEGIN;";
-	#endif
-	if(m_database->executeQuery(query))
-	{
-		m_state = STATE_START;
-		return true;
-	}
-	return false;
-}
-
-bool DBTransaction::success()
-{
-	if(m_state == STATE_START)
-	{
-		m_state = STEATE_COMMIT;
-		return m_database->commit();
-	}
-	else
-		return false;
-}
-
-
-DBSplitInsert::DBSplitInsert(Database* database)
-{
-	m_database = database;
-}
-
-DBSplitInsert::~DBSplitInsert()
-{
-	//
-}
-
-void DBSplitInsert::clear()
-{
-	m_buffer.clear();
-	m_buffer.reserve(10240);
-}
-
-void DBSplitInsert::setQuery(const std::string& query)
-{
-	clear();
 	m_query = query;
+	m_buf = "";
+	m_rows = 0;
 }
 
-bool DBSplitInsert::addRow(const std::string& row)
+bool DBInsert::addRow(const std::string& row)
 {
-	#if defined __USE_MYSQL__ && defined __USE_SQLITE__
-		if(g_config.getNumber(ConfigManager::SQLTYPE) == SQL_TYPE_MYSQL)
-		{
-			int size = m_buffer.size();
-			if(size == 0)
-				m_buffer = row;
-			else if(size > 8192)
-			{
-				if(!internalExecuteQuery())
-					return false;
-				m_buffer = row;
-			}
-			else
-				m_buffer += "," + row;
-			return true;
-		}
-		else
-		{
-			m_buffer = row;
-			bool ret = internalExecuteQuery();
-			m_buffer = "";
-			return ret;
-		}
-	#elif defined __USE_MYSQL__
-		int size = m_buffer.size();
-		if(size == 0)
-			m_buffer = row;
-		else if(size > 8192)
-		{
-			if(!internalExecuteQuery())
-				return false;
-			m_buffer = row;
-		}
-		else
-			m_buffer += "," + row;
-		return true;
-	#elif defined __USE_SQLITE__
-		m_buffer = row;
-		bool ret = internalExecuteQuery();
-		m_buffer = "";
-		return ret;
-	#endif
-}
+	if(!m_multiLine)
+		return m_db->executeQuery(m_query + "(" + row + ")" ); // executes INSERT for current row
 
-bool DBSplitInsert::internalExecuteQuery()
-{
-	DBQuery subquery;
-	subquery << m_query;
-	subquery << m_buffer;
+	m_rows++;
 
-	return m_database->executeQuery(subquery);
-}
+	// adds new row to buffer
+	size_t size = m_buf.length();
+	if(size == 0)
+		m_buf = "(" + row + ")";
+	else if(size > 8192)
+	{
+		if(!execute())
+			return false;
 
-bool DBSplitInsert::executeQuery()
-{
-	if(m_buffer.size() != 0)
-		return internalExecuteQuery();
+		m_buf = "(" + row + ")";
+	}
+	else
+		m_buf += ",(" + row + ")";
+
 	return true;
+}
+
+bool DBInsert::addRow(std::stringstream& row)
+{
+	bool ret = addRow(row.str());
+	row.str("");
+	return ret;
+}
+
+bool DBInsert::execute()
+{
+	if(!m_multiLine || m_buf.length() == 0 || m_rows == 0)
+		return true;
+
+	m_rows = 0;
+
+	// executes buffer
+	bool res = m_db->executeQuery(m_query + m_buf);
+	m_buf = "";
+	return res;
 }

@@ -35,6 +35,13 @@
 #define FUNCTION_INFO
 #endif
 
+#undef MULTI_SQL_DRIVERS
+#define SQL_DRIVERS __USE_SQLITE__+__USE_MYSQL__
+
+#if SQL_DRIVERS > 1
+#define MULTI_SQL_DRIVERS
+#endif
+
 #ifdef _WIN32
 #include <io.h>
 #include <process.h>
