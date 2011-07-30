@@ -61,12 +61,28 @@
 		<vocation id="5"/>
 		<vocation id="6"/>
 	</instant>
+	<instant name="Strong Flame Strike" words="exori gran flam" lvl="70" mana="60" prem="1" range="3" casterTargetOrDirection="1" blockwalls="1" exhaustion="8000" groups="1,2000" icon="150" needlearn="0" event="script" value="attack/strong flame strike.lua"> 
+		<vocation id="1"/> 
+		<vocation id="5"/> 
+	</instant>
+	<instant name="Ultimate Flame Strike" words="exori max flam" lvl="90" mana="100" prem="1" range="3" casterTargetOrDirection="1" blockwalls="1" exhaustion="30000" groups="4,4000" icon="154" needlearn="0" event="script" value="attack/ultimate flame strike.lua">  
+		<vocation id="1"/> 
+		<vocation id="5"/>  
+	</instant> 
 	<instant name="Energy Strike" words="exori vis" lvl="12" mana="20" prem="0" range="3" casterTargetOrDirection="1" blockwalls="1" exhaustion="2000" groups="1,1500" icon="88" needlearn="0" event="script" value="attack/energy strike.lua">
 		<vocation id="1"/>
 		<vocation id="2"/>
 		<vocation id="5"/>
 		<vocation id="6"/>
 	</instant>
+	<instant name="Strong Energy Strike" words="exori gran vis" lvl="80" mana="60" prem="1" range="3" casterTargetOrDirection="1" blockwalls="1" exhaustion="8000" groups="1,2000" icon="151" needlearn="0" event="script" value="attack/strong energy strike.lua"> 
+		<vocation id="1"/> 
+		<vocation id="5"/> 
+	</instant>
+	<instant name="Ultimate Energy Strike" words="exori max vis" lvl="100" mana="100" prem="1" range="3" casterTargetOrDirection="1" blockwalls="1" exhaustion="30000" groups="4,4000" icon="155" needlearn="0" event="script" value="attack/ultimate energy strike.lua"> 
+		<vocation id="1"/> 
+		<vocation id="5"/> 
+	</instant> 
 	<instant name="Whirlwind Throw" words="exori hur" lvl="28" mana="40" prem="0" range="5" needtarget="1" blockwalls="1" needweapon="1" exhaustion="2000" groups="1,1500" icon="107" needlearn="0" event="script" value="attack/whirlwind throw.lua">
 		<vocation id="4"/>
 		<vocation id="8"/>
@@ -79,6 +95,10 @@
 		<vocation id="3"/>
 		<vocation id="7"/>
 	</instant>
+	<instant name="Strong Ethereal Spear" words="exori gran con" lvl="90" mana="55" prem="1" range="5" needtarget="1" exhaustion="8000" groups="1,2000" icon="57" blockwalls="1" needlearn="0" event="script" value="attack/strong ethereal spear.lua"> 
+		<vocation id="3"/> 
+		<vocation id="7"/>  
+	</instant> 
 	<instant name="Energy Beam" words="exevo vis lux" lvl="23" mana="40" direction="1" exhaustion="2000" groups="1,1500" icon="22" needlearn="0" event="script" value="attack/energy beam.lua">
 		<vocation id="1"/>
 		<vocation id="5"/>
@@ -94,6 +114,38 @@
 	<instant name="Berserk" words="exori" lvl="35" mana="115" prem="0" needweapon="1" exhaustion="2000" groups="1,1500" icon="80" needlearn="0" event="script" value="attack/berserk.lua">
 		<vocation id="4"/>
 		<vocation id="8"/>
+	</instant>
+    <instant name="Annihilation" words="exori gran ico" lvl="110" mana="300" prem="1" needweapon="1" exhaustion="30000" groups="4,4000" icon="62" needlearn="0" needtarget="1" event="script" value="attack/annihilation.lua">  
+		<vocation id="4"/>               
+		<vocation id="8"/> 
+	</instant> 
+	<instant name="Brutal Strike" words="exori ico" lvl="16" mana="30" prem="1" range="1" needtarget="1" blockwalls="1" needweapon="1" exhaustion="6000" groups="1,2000" icon="61" needlearn="0" event="script" value="attack/brutal strike.lua"> 
+		<vocation id="4"/> 
+		<vocation id="8"/> 
+	</instant>
+	<instant name="Front Sweep" words="exori min" lvl="70" mana="200" prem="1" needweapon="1" direction="1" exhaustion="6000" groups="1,2000" icon="59" needlearn="0" event="script" value="attack/front sweep.lua"> 
+		<vocation id="4"/> 
+		<vocation id="8"/> 
+	</instant> 
+    <instant name="Inflict Wound" words="utori kor" lvl="40" mana="30" prem="1" range="3" casterTargetOrDirection="1" blockwalls="1" needweapon="1" exhaustion="30000" groups="1,2000" icon="141" needlearn="0" event="script" value="attack/inflict wound.lua">
+		<vocation id="4"/>
+		<vocation id="8"/>
+	</instant>
+	<instant name="Ignite" words="utori flam" lvl="26" mana="30" prem="1" range="3" casterTargetOrDirection="1" blockwalls="1" exhaustion="30000" groups="1,2000" icon="138" needlearn="0" event="script" value="attack/ignite.lua"> 
+		<vocation id="1"/> 
+		<vocation id="5"/> 
+	</instant>
+	<instant name="Lightning" words="exori amp vis" lvl="55" mana="160" prem="1" range="4" casterTargetOrDirection="1" blockwalls="1" exhaustion="8000" groups="1,2000" icon="149" needlearn="0" event="script" value="attack/lightning.lua"> 
+		<vocation id="1"/> 
+		<vocation id="5"/> 
+	</instant>
+	<instant name="Curser" words="utori mort" lvl="75" mana="30" prem="1" range="3" casterTargetOrDirection="1" blockwalls="1" exhaustion="50000" groups="1,2000" icon="139" needlearn="0" event="script" value="attack/curse.lua"> 
+		<vocation id="1"/> 
+		<vocation id="5"/> 
+	</instant> 
+	<instant name="Electrify" words="utori vis" lvl="34" mana="30" prem="1" range="3" casterTargetOrDirection="1" blockwalls="1" exhaustion="30000" groups="1,2000" icon="140" needlearn="0" event="script" value="attack/electrify.lua"> 
+		<vocation id="1"/> 
+		<vocation id="5"/> 
 	</instant>
 	<instant name="Energy Wave" words="exevo vis hur" lvl="38" mana="170" direction="1" exhaustion="2000" groups="1,1500" icon="13" needlearn="0" event="script" value="attack/energy wave.lua">
 		<vocation id="1"/>
@@ -111,6 +163,10 @@
 		<vocation id="1"/>
 		<vocation id="5"/>
 	</instant>
+	<instant name="Holy Flash" words="utori san" lvl="70" mana="50" prem="1" range="5" casterTargetOrDirection="1" blockwalls="1" exhaustion="45000" groups="1,2000" icon="143" needlearn="0" event="script" value="attack/holy flash.lua"> 
+		<vocation id="3"/> 
+		<vocation id="7"/>
+	</instant>
 	<instant name="Divine Missile" words="exori san" lvl="40" mana="20" prem="0" range="3" casterTargetOrDirection="1" needlearn="0" blockwalls="1" exhaustion="2000" groups="1,1500" icon="122" event="script" value="attack/divine missile.lua">
 		<vocation id="3"/>
 		<vocation id="7"/>
@@ -118,6 +174,10 @@
 	<instant name="Divine Caldera" words="exevo mas san" lvl="50" mana="140" prem="0" selftarget="1" exhaustion="2000" groups="1,1500" icon="124" needlearn="0" event="script" value="attack/divine caldera.lua">
 		<vocation id="3"/>
 		<vocation id="7"/>
+	</instant>
+	<instant name="Physical Strike" words="exori moe ico" lvl="16" mana="20" prem="1" range="3" casterTargetOrDirection="1" blockwalls="1" exhaustion="2000" groups="1,2000" icon="148" needlearn="0" event="script" value="attack/physical strike.lua"> 
+		<vocation id="2"/> 
+		<vocation id="6"/> 
 	</instant>
 	<instant name="Eternal Winter" words="exevo gran mas frigo" lvl="60" mana="1050" prem="0" selftarget="1" exhaustion="2000" groups="1,1500" icon="118" needlearn="0" event="script" value="attack/eternal winter.lua">
 		<vocation id="2"/>
@@ -129,15 +189,35 @@
 		<vocation id="2"/>
 		<vocation id="6"/>
 	</instant>
+	<instant name="Strong Ice Strike" words="exori gran frigo" lvl="80" mana="60" prem="1" range="3" casterTargetOrDirection="1" blockwalls="1" exhaustion="8000" groups="1,2000" icon="152" needlearn="0" event="script" value="attack/strong ice strike.lua"> 
+		<vocation id="2"/> 
+		<vocation id="6"/> 
+	</instant>
+	<instant name="Ultimate Ice Strike" words="exori max frigo" lvl="100" mana="100" prem="1" range="3" casterTargetOrDirection="1" blockwalls="1" exhaustion="30000" groups="4,4000" icon="156" needlearn="0" event="script" value="attack/ultimate ice strike.lua"> 
+		<vocation id="2"/> 
+		<vocation id="6"/>  
+	</instant>
 	<instant name="Ice Wave" words="exevo frigo hur" lvl="18" mana="25" direction="1"	exhaustion="2000" groups="1,1500" icon="121" needlearn="0" event="script" value="attack/ice wave.lua">
 		<vocation id="2"/>
 		<vocation id="6"/>
 	</instant>
+	<instant name="Strong Ice Wave" words="exevo gran frigo hur" lvl="40" mana="170" direction="1" exhaustion="8000" groups="1,2000;4,800" icon="43" needlearn="0" event="script" value="attack/strong ice wave.lua"> 
+		<vocation id="2"/> 
+		<vocation id="6"/> 
+	</instant> 
 	<instant name="Terra Strike" words="exori tera" lvl="13" mana="20" prem="0" range="3" casterTargetOrDirection="1" blockwalls="1" exhaustion="2000" groups="1,1500" icon="113" needlearn="0" event="script" value="attack/terra strike.lua">
 		<vocation id="1"/>
 		<vocation id="5"/>
 		<vocation id="2"/>
 		<vocation id="6"/>
+	</instant>
+	<instant name="Strong Terra Strike" words="exori gran tera" lvl="70" mana="60" prem="1" range="3" casterTargetOrDirection="1" blockwalls="1" exhaustion="8000" groups="1,2000" icon="153" needlearn="0" event="script" value="attack/strong terra strike.lua"> 
+		<vocation id="2"/> 
+		<vocation id="6"/> 
+	</instant>
+	<instant name="Ultimate Terra Strike" words="exori max tera" lvl="90" mana="100" prem="1" range="3" casterTargetOrDirection="1" blockwalls="1" exhaustion="30000" groups="4,4000" icon="157" needlearn="0" event="script" value="attack/ultimate terra strike.lua"> 
+		<vocation id="2"/> 
+		<vocation id="6"/> 
 	</instant>
 	<instant name="Terra Wave" words="exevo tera hur" lvl="38" mana="210" direction="1" exhaustion="2000" groups="1,1500" icon="120" needlearn="0" event="script" value="attack/terra wave.lua">
 		<vocation id="2"/>
@@ -161,6 +241,14 @@
 		<vocation id="4"/>
 		<vocation id="8"/>
 	</instant>
+     <instant name="Cure Bleeding" words="exana kor" lvl="30" mana="30" aggressive="0" selftarget="1" exhaustion="6000" groups="2,1000" icon="144" needlearn="0" event="script" value="healing/cure bleeding.lua">
+		<vocation id="4"/>
+		<vocation id="8"/>
+	</instant>
+ 	<instant name="Cure Electrification" words="exana vis" lvl="22" mana="30" aggressive="0" selftarget="1" exhaustion="6000" groups="2,1000" icon="146" needlearn="0" event="script" value="healing/cure electrification.lua"> 
+ 	 	<vocation id="2"/> 
+ 	 	<vocation id="6"/> 
+ 	</instant>
 	<instant name="Cure Poison" words="exana pox" lvl="10" mana="30" aggressive="0" selftarget="1" exhaustion="1000" groups="2,1000" icon="29" needlearn="0" event="script" value="healing/cure poison.lua">
 		<vocation id="1"/>
 		<vocation id="2"/>
@@ -179,6 +267,16 @@
 		<vocation id="3"/>
 		<vocation id="7"/>
  	</instant>
+	<instant name="Recovery" words="utura" lvl="50" mana="75" prem="1" selftarget="1" aggressive="0" exhaustion="60000" groups="2,1000" icon="159" needlearn="0" event="script" value="healing/recovery.lua"> 
+		<vocation id="4"/>
+		<vocation id="8"/> 
+		<vocation id="3"/> 
+		<vocation id="7"/> 
+	</instant>
+	<instant name="Salvation" words="exura gran san" lvl="60" mana="210" prem="1" selftarget="1" aggressive="0" exhaustion="1000" groups="2,1000" icon="36" needlearn="0" event="script" value="healing/salvation.lua"> 
+		<vocation id="3"/> 
+		<vocation id="7"/> 
+	</instant> 
 	<instant name="Intense Healing" words="exura gran" lvl="11" mana="70" aggressive="0" selftarget="1" exhaustion="1000" groups="2,1000" icon="2" needlearn="0" event="script" value="healing/intense healing.lua">
 		<vocation id="1"/>
 		<vocation id="2"/>
