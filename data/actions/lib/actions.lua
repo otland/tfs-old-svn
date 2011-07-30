@@ -4,7 +4,7 @@ ROPABLE = { 294, 369, 370, 383, 392, 408, 409, 427, 428, 430, 462, 469, 470, 482
 
 HOLES = {468, 481, 483, 7932, 8579}
 SAND_HOLES = {[9059] = 489, [8568] = 8567}
-SAND = 231
+SAND = {231,9059}
 
 JUNGLE_GRASS = {2782, 3985}
 SPIDER_WEB = {7538, 7539}
@@ -158,7 +158,7 @@ TOOLS.SHOVEL = function(cid, item, fromPosition, itemEx, toPosition)
 
 		doDecayItem(itemEx.uid)
 		return true
-	elseif(itemEx.itemid == SAND and not isRookie(cid)) then
+	elseif(isInArray(SAND,itemEx.itemid) and not isRookie(cid)) then
 		local rand = math.random(1, 100)
 		if(rand >= 1 and rand <= 5) then
 			doCreateItem(ITEM_SCARAB_COIN, 1, toPosition)

@@ -2,21 +2,21 @@ local config = {
 	functions = {
 		[10511] = { -- squeezing gear of girlpower
 			TOOLS.ROPE,
-			TOOLS.SHOVER,
+			TOOLS.SHOVEL,
 			TOOLS.PICK,
 			TOOLS.MACHETE,
 			TOOLS.SCYTHE
 		},
 		[10513] = { -- sneaky stabber of eliteness
 			TOOLS.ROPE,
-			TOOLS.SHOVER,
+			TOOLS.SHOVEL,
 			TOOLS.PICK,
 			TOOLS.MACHETE,
 			TOOLS.KNIFE
 		},
 		[10515] = { -- whacking driller of fate
 			TOOLS.ROPE,
-			TOOLS.SHOVER,
+			TOOLS.SHOVEL,
 			TOOLS.PICK,
 			TOOLS.MACHETE,
 			TOOLS.KNIFE
