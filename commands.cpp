@@ -1320,8 +1320,8 @@ void Commands::playerKills(Player* player, const std::string& cmd, const std::st
 	{
 		int32_t frags = (int32_t)ceil(player->redSkullTicks / (double)fragTime);
 		int32_t remainingTime = (player->redSkullTicks % fragTime) / 1000;
-		int32_t hours = (int32_t)floor(remainingTime / 3600);
-		int32_t minutes = (int32_t)floor((remainingTime % 3600) / 60);
+		int32_t hours = remainingTime / 3600;
+		int32_t minutes = (remainingTime % 3600) / 60;
 
 		std::stringstream ss;
 		ss << "You have " << frags << " unjustified kill" << (frags > 1 ? "s" : "") << ". The amount of unjustified kills will decrease after: " << hours << " hour" << (hours != 1 ? "s" : "") << " and " << minutes << " minute" << (minutes != 1 ? "s" : "") << ".";
@@ -1334,9 +1334,13 @@ void Commands::playerKills(Player* player, const std::string& cmd, const std::st
 void Commands::clean(Player* player, const std::string& cmd, const std::string& param)
 {
 	uint32_t count = g_game.getMap()->clean();
-	char info[40];
-	sprintf(info, "Deleted %u item%s.", count, (count != 1 ? "s" : ""));
-	player->sendCancel(info);
+	std::stringstream ss;
+	if(count == 1)
+		ss << "Deleted 1 item.";
+	else
+		ss << "Deleted " << count << " items.";
+
+	player->sendCancel(ss.str());
 }
 
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
