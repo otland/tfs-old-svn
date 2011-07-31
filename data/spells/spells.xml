@@ -1,28 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <spells>
 	<!-- Attack Runes -->
-	<rune name="Poison Field" id="2285" allowfaruse="1" charges="3" lvl="14" maglv="0" groups="1,1500" icon="26" blocktype="solid" event="script" value="attack/poison field.lua"/>
-	<rune name="Poison Bomb" id="2286" allowfaruse="1" charges="2" lvl="25" maglv="3" groups="1,1500" icon="91" blocktype="solid" event="script" value="attack/poison bomb.lua"/>
-	<rune name="Poison Wall" id="2289" allowfaruse="1" charges="3" lvl="29" maglv="5" groups="1,1500" icon="26" blocktype="solid" event="script" value="attack/poison wall.lua"/>
-	<rune name="Fire Field" id="2301" allowfaruse="1" charges="3" lvl="15" maglv="1" groups="1,1500" icon="25" blocktype="solid" event="script" value="attack/fire field.lua"/>
-	<rune name="Firebomb" id="2305" allowfaruse="1" charges="2" lvl="27" maglv="5" groups="1,1500" icon="17" blocktype="solid" event="script" value="attack/fire bomb.lua"/>
-	<rune name="Fire Wall" id="2303" allowfaruse="1" charges="3" lvl="33" maglv="6" groups="1,1500" icon="25" blocktype="solid" event="script" value="attack/fire wall.lua"/>
-	<rune name="Soulfire" id="2308" allowfaruse="1" charges="3" lvl="27" maglv="7" groups="1,1500" icon="50" needtarget="1" blocktype="solid" event="function" value="soulfire"/>
-	<rune name="Fireball" id="2302" allowfaruse="1" charges="5" lvl="27" maglv="3" groups="1,1500" icon="15" needtarget="1" blocktype="solid" event="script" value="attack/fireball.lua"/>
-	<rune name="Great Fireball" id="2304" allowfaruse="1" charges="3" lvl="30" maglv="3" groups="1,1500" icon="16" blocktype="solid" event="script" value="attack/great fireball.lua"/>
-	<rune name="Energy Field" id="2277" allowfaruse="1" charges="3" lvl="18" maglv="3" groups="1,1500" icon="27" blocktype="solid" event="script" value="attack/energy field.lua"/>
-	<rune name="Energybomb" id="2262" allowfaruse="1" charges="2" lvl="37" maglv="10" groups="1,1500" icon="55" blocktype="solid" event="script" value="attack/energy bomb.lua"/>
-	<rune name="Energy Wall" id="2279" allowfaruse="1" charges="3" lvl="41" maglv="9" groups="1,1500" icon="33" blocktype="solid" event="script" value="attack/energy wall.lua"/>
-	<rune name="Light Magic Missile" id="2287" allowfaruse="1" charges="10" lvl="15" groups="1,1500" icon="7" maglv="0" needtarget="1" blocktype="solid" event="script" value="attack/light magic missile.lua"/>
-	<rune name="Heavy Magic Missile" id="2311" allowfaruse="1" charges="10" lvl="25" groups="1,1500" icon="8" maglv="3" needtarget="1" blocktype="solid" event="script" value="attack/heavy magic missile.lua"/>
-	<rune name="Explosion" id="2313" allowfaruse="1" charges="6" lvl="31" maglv="6" groups="1,1500" icon="18" blocktype="solid" event="script" value="attack/explosion.lua"/>
-	<rune name="Sudden Death" id="2268" allowfaruse="1" charges="3" lvl="45" maglv="15" groups= "1" icon="21" needtarget="1" blocktype="solid" event="script" value="attack/sudden death.lua"/>
-	<rune name="Icicle" id="2271" allowfaruse="1" charges="5" lvl="28" maglv="3" groups="1,1500" icon="114" needtarget="1" event="script" value="attack/icicle.lua"/>
-	<rune name="Avalanche" id="2274" allowfaruse="1" charges="3" lvl="30" maglv="3" groups="1,1500" icon="115" event="script" value="attack/avalanche.lua"/>
-	<rune name="Stone Shower" id="2288" allowfaruse="1" charges="3" lvl="28" maglv="3" groups="1,1500" icon="116" event="script" value="attack/stone shower.lua"/>
-	<rune name="Thunderstorm" id="2315" allowfaruse="1" charges="3" lvl="28" maglv="3" groups="1,1500" icon="117" event="script" value="attack/thunderstorm.lua"/>
-	<rune name="Stalagmite" id="2292" allowfaruse="1" charges="10" lvl="24" maglv="3" groups="1,1500" icon="77" needtarget="1" event="script" value="attack/stalagmite.lua"/>
-	<rune name="Holy Missile" id="2295" allowfaruse="1" charges="5" lvl="27" maglv="3" groups="1,1500" icon="130" needtarget="1" blocktype="solid" event="script" value="attack/holy missile.lua">
+	<rune name="Poison Field" id="2285" allowfaruse="1" charges="3" lvl="14" maglv="0" groups="1,2000" icon="26" blocktype="solid" event="script" value="attack/poison field.lua"/>
+	<rune name="Poison Bomb" id="2286" allowfaruse="1" charges="2" lvl="25" maglv="3" groups="1,2000" icon="91" blocktype="solid" event="script" value="attack/poison bomb.lua"/>
+	<rune name="Poison Wall" id="2289" allowfaruse="1" charges="3" lvl="29" maglv="5" groups="1,2000" icon="26" blocktype="solid" event="script" value="attack/poison wall.lua"/>
+	<rune name="Fire Field" id="2301" allowfaruse="1" charges="3" lvl="15" maglv="1" groups="1,2000" icon="25" blocktype="solid" event="script" value="attack/fire field.lua"/>
+	<rune name="Firebomb" id="2305" allowfaruse="1" charges="2" lvl="27" maglv="5" groups="1,2000" icon="17" blocktype="solid" event="script" value="attack/fire bomb.lua"/>
+	<rune name="Fire Wall" id="2303" allowfaruse="1" charges="3" lvl="33" maglv="6" groups="1,2000" icon="25" blocktype="solid" event="script" value="attack/fire wall.lua"/>
+	<rune name="Soulfire" id="2308" allowfaruse="1" charges="3" lvl="27" maglv="7" groups="1,2000" icon="50" needtarget="1" blocktype="solid" event="function" value="soulfire"/>
+	<rune name="Fireball" id="2302" allowfaruse="1" charges="5" lvl="27" maglv="3" groups="1,2000" icon="15" needtarget="1" blocktype="solid" event="script" value="attack/fireball.lua"/>
+	<rune name="Great Fireball" id="2304" allowfaruse="1" charges="3" lvl="30" maglv="3" groups="1,2000" icon="16" blocktype="solid" event="script" value="attack/great fireball.lua"/>
+	<rune name="Energy Field" id="2277" allowfaruse="1" charges="3" lvl="18" maglv="3" groups="1,2000" icon="27" blocktype="solid" event="script" value="attack/energy field.lua"/>
+	<rune name="Energybomb" id="2262" allowfaruse="1" charges="2" lvl="37" maglv="10" groups="1,2000" icon="55" blocktype="solid" event="script" value="attack/energy bomb.lua"/>
+	<rune name="Energy Wall" id="2279" allowfaruse="1" charges="3" lvl="41" maglv="9" groups="1,2000" icon="33" blocktype="solid" event="script" value="attack/energy wall.lua"/>
+	<rune name="Light Magic Missile" id="2287" allowfaruse="1" charges="10" lvl="15" groups="1,2000" icon="7" maglv="0" needtarget="1" blocktype="solid" event="script" value="attack/light magic missile.lua"/>
+	<rune name="Heavy Magic Missile" id="2311" allowfaruse="1" charges="10" lvl="25" groups="1,2000" icon="8" maglv="3" needtarget="1" blocktype="solid" event="script" value="attack/heavy magic missile.lua"/>
+	<rune name="Explosion" id="2313" allowfaruse="1" charges="6" lvl="31" maglv="6" groups="1,2000" icon="18" blocktype="solid" event="script" value="attack/explosion.lua"/>
+	<rune name="Sudden Death" id="2268" allowfaruse="1" charges="3" lvl="45" maglv="15" groups="1,2000" icon="21" needtarget="1" blocktype="solid" event="script" value="attack/sudden death.lua"/>
+	<rune name="Icicle" id="2271" allowfaruse="1" charges="5" lvl="28" maglv="3" groups="1,2000" icon="114" needtarget="1" event="script" value="attack/icicle.lua"/>
+	<rune name="Avalanche" id="2274" allowfaruse="1" charges="3" lvl="30" maglv="3" groups="1,2000" icon="115" event="script" value="attack/avalanche.lua"/>
+	<rune name="Stone Shower" id="2288" allowfaruse="1" charges="3" lvl="28" maglv="3" groups="1,2000" icon="116" event="script" value="attack/stone shower.lua"/>
+	<rune name="Thunderstorm" id="2315" allowfaruse="1" charges="3" lvl="28" maglv="3" groups="1,2000" icon="117" event="script" value="attack/thunderstorm.lua"/>
+	<rune name="Stalagmite" id="2292" allowfaruse="1" charges="10" lvl="24" maglv="3" groups="1,2000" icon="77" needtarget="1" event="script" value="attack/stalagmite.lua"/>
+	<rune name="Holy Missile" id="2295" allowfaruse="1" charges="5" lvl="27" maglv="3" groups="1,2000" icon="130" needtarget="1" blocktype="solid" event="script" value="attack/holy missile.lua">
 		<vocation id="3"/>
 		<vocation id="7" showInDescription="0"/>
 	</rune>
@@ -51,11 +51,11 @@
 	</rune>
 
 	<!-- Attack Spells -->
-	<instant name="Death Strike" words="exori mort" lvl="16" mana="20" prem="0" range="3" casterTargetOrDirection="1" blockwalls="1" exhaustion="2000" groups="1,1500" icon="87" needlearn="0" event="script" value="attack/death strike.lua">
+	<instant name="Death Strike" words="exori mort" lvl="16" mana="20" prem="0" range="3" casterTargetOrDirection="1" blockwalls="1" exhaustion="2000" groups="1,2000" icon="87" needlearn="0" event="script" value="attack/death strike.lua">
 		<vocation id="1"/>
 		<vocation id="5"/>
 	</instant>
-	<instant name="Flame Strike" words="exori flam" lvl="12" mana="20" prem="0" range="3" casterTargetOrDirection="1" blockwalls="1" exhaustion="2000" groups="1,1500" icon="89" needlearn="0" event="script" value="attack/flame strike.lua">
+	<instant name="Flame Strike" words="exori flam" lvl="12" mana="20" prem="0" range="3" casterTargetOrDirection="1" blockwalls="1" exhaustion="2000" groups="1,2000" icon="89" needlearn="0" event="script" value="attack/flame strike.lua">
 		<vocation id="1"/>
 		<vocation id="2"/>
 		<vocation id="5"/>
@@ -69,7 +69,7 @@
 		<vocation id="1"/> 
 		<vocation id="5"/>  
 	</instant> 
-	<instant name="Energy Strike" words="exori vis" lvl="12" mana="20" prem="0" range="3" casterTargetOrDirection="1" blockwalls="1" exhaustion="2000" groups="1,1500" icon="88" needlearn="0" event="script" value="attack/energy strike.lua">
+	<instant name="Energy Strike" words="exori vis" lvl="12" mana="20" prem="0" range="3" casterTargetOrDirection="1" blockwalls="1" exhaustion="2000" groups="1,2000" icon="88" needlearn="0" event="script" value="attack/energy strike.lua">
 		<vocation id="1"/>
 		<vocation id="2"/>
 		<vocation id="5"/>
@@ -83,15 +83,15 @@
 		<vocation id="1"/> 
 		<vocation id="5"/> 
 	</instant> 
-	<instant name="Whirlwind Throw" words="exori hur" lvl="28" mana="40" prem="0" range="5" needtarget="1" blockwalls="1" needweapon="1" exhaustion="2000" groups="1,1500" icon="107" needlearn="0" event="script" value="attack/whirlwind throw.lua">
+	<instant name="Whirlwind Throw" words="exori hur" lvl="28" mana="40" prem="0" range="5" needtarget="1" blockwalls="1" needweapon="1" exhaustion="2000" groups="1,2000" icon="107" needlearn="0" event="script" value="attack/whirlwind throw.lua">
 		<vocation id="4"/>
 		<vocation id="8"/>
 	</instant>
-	<instant name="Fire Wave" words="exevo flam hur" lvl="18" mana="25" direction="1" exhaustion="2000" groups="1,1500" icon="19" needlearn="0" event="script" value="attack/fire wave.lua">
+	<instant name="Fire Wave" words="exevo flam hur" lvl="18" mana="25" direction="1" exhaustion="2000" groups="1,2000" icon="19" needlearn="0" event="script" value="attack/fire wave.lua">
 		<vocation id="1"/>
 		<vocation id="5"/>
 	</instant>
-	<instant name="Ethereal Spear" words="exori con" lvl="23" mana="25" prem="0" range="5" needtarget="1" exhaustion="2000" groups="1,1500" icon="111" blockwalls="1" needlearn="0" event="script" value="attack/ethereal spear.lua">
+	<instant name="Ethereal Spear" words="exori con" lvl="23" mana="25" prem="0" range="5" needtarget="1" exhaustion="2000" groups="1,2000" icon="111" blockwalls="1" needlearn="0" event="script" value="attack/ethereal spear.lua">
 		<vocation id="3"/>
 		<vocation id="7"/>
 	</instant>
@@ -99,19 +99,19 @@
 		<vocation id="3"/> 
 		<vocation id="7"/>  
 	</instant> 
-	<instant name="Energy Beam" words="exevo vis lux" lvl="23" mana="40" direction="1" exhaustion="2000" groups="1,1500" icon="22" needlearn="0" event="script" value="attack/energy beam.lua">
+	<instant name="Energy Beam" words="exevo vis lux" lvl="23" mana="40" direction="1" exhaustion="2000" groups="1,2000" icon="22" needlearn="0" event="script" value="attack/energy beam.lua">
 		<vocation id="1"/>
 		<vocation id="5"/>
 	</instant>
-	<instant name="Great Energy Beam" words="exevo gran vis lux" lvl="29" mana="110" direction="1" exhaustion="2000" groups="1,1500" icon="23" needlearn="0" event="script" value="attack/great energy beam.lua">
+	<instant name="Great Energy Beam" words="exevo gran vis lux" lvl="29" mana="110" direction="1" exhaustion="2000" groups="1,2000" icon="23" needlearn="0" event="script" value="attack/great energy beam.lua">
 		<vocation id="1"/>
 		<vocation id="5"/>
 	</instant>
-	<instant name="Groundshaker" words="exori mas" lvl="33" mana="160" prem="0" needweapon="1" exhaustion="2000" groups="1,1500" icon="106" needlearn="0" event="script" value="attack/groundshaker.lua">
+	<instant name="Groundshaker" words="exori mas" lvl="33" mana="160" prem="0" needweapon="1" exhaustion="2000" groups="1,2000" icon="106" needlearn="0" event="script" value="attack/groundshaker.lua">
 		<vocation id="4"/>
 		<vocation id="8"/>
 	</instant>
-	<instant name="Berserk" words="exori" lvl="35" mana="115" prem="0" needweapon="1" exhaustion="2000" groups="1,1500" icon="80" needlearn="0" event="script" value="attack/berserk.lua">
+	<instant name="Berserk" words="exori" lvl="35" mana="115" prem="0" needweapon="1" exhaustion="2000" groups="1,2000" icon="80" needlearn="0" event="script" value="attack/berserk.lua">
 		<vocation id="4"/>
 		<vocation id="8"/>
 	</instant>
@@ -147,19 +147,19 @@
 		<vocation id="1"/> 
 		<vocation id="5"/> 
 	</instant>
-	<instant name="Energy Wave" words="exevo vis hur" lvl="38" mana="170" direction="1" exhaustion="2000" groups="1,1500" icon="13" needlearn="0" event="script" value="attack/energy wave.lua">
+	<instant name="Energy Wave" words="exevo vis hur" lvl="38" mana="170" direction="1" exhaustion="2000" groups="1,2000" icon="13" needlearn="0" event="script" value="attack/energy wave.lua">
 		<vocation id="1"/>
 		<vocation id="5"/>
 	</instant>
-	<instant name="Rage of the Skies" words="exevo gran mas vis" lvl="55" mana="650" selftarget="1" prem="0" exhaustion="2000" groups="1,1500" icon="119" needlearn="0" event="script" value="attack/rage of the skies.lua">
+	<instant name="Rage of the Skies" words="exevo gran mas vis" lvl="55" mana="650" selftarget="1" prem="0" exhaustion="2000" groups="1,2000" icon="119" needlearn="0" event="script" value="attack/rage of the skies.lua">
 		<vocation id="1"/>
 		<vocation id="5"/>
 	</instant>
-	<instant name="Fierce Berserk" words="exori gran" lvl="90" mana="340" prem="0" needweapon="1" exhaustion="2000" groups="1,1500" icon="105" needlearn="0" event="script" value="attack/fierce berserk.lua">
+	<instant name="Fierce Berserk" words="exori gran" lvl="90" mana="340" prem="0" needweapon="1" exhaustion="2000" groups="1,2000" icon="105" needlearn="0" event="script" value="attack/fierce berserk.lua">
 		<vocation id="4"/>
 		<vocation id="8"/>
 	</instant>
-		<instant name="Hells Core" words="exevo gran mas flam" lvl="60" mana="1200" prem="0" exhaustion="2000" groups="1,1500" icon="24" selftarget="1" needlearn="0" event="script" value="attack/hells core.lua">
+		<instant name="Hells Core" words="exevo gran mas flam" lvl="60" mana="1200" prem="0" exhaustion="2000" groups="1,2000" icon="24" selftarget="1" needlearn="0" event="script" value="attack/hells core.lua">
 		<vocation id="1"/>
 		<vocation id="5"/>
 	</instant>
@@ -167,11 +167,11 @@
 		<vocation id="3"/> 
 		<vocation id="7"/>
 	</instant>
-	<instant name="Divine Missile" words="exori san" lvl="40" mana="20" prem="0" range="3" casterTargetOrDirection="1" needlearn="0" blockwalls="1" exhaustion="2000" groups="1,1500" icon="122" event="script" value="attack/divine missile.lua">
+	<instant name="Divine Missile" words="exori san" lvl="40" mana="20" prem="0" range="3" casterTargetOrDirection="1" needlearn="0" blockwalls="1" exhaustion="2000" groups="1,2000" icon="122" event="script" value="attack/divine missile.lua">
 		<vocation id="3"/>
 		<vocation id="7"/>
 	</instant>
-	<instant name="Divine Caldera" words="exevo mas san" lvl="50" mana="140" prem="0" selftarget="1" exhaustion="2000" groups="1,1500" icon="124" needlearn="0" event="script" value="attack/divine caldera.lua">
+	<instant name="Divine Caldera" words="exevo mas san" lvl="50" mana="140" prem="0" selftarget="1" exhaustion="2000" groups="1,2000" icon="124" needlearn="0" event="script" value="attack/divine caldera.lua">
 		<vocation id="3"/>
 		<vocation id="7"/>
 	</instant>
@@ -179,11 +179,11 @@
 		<vocation id="2"/> 
 		<vocation id="6"/> 
 	</instant>
-	<instant name="Eternal Winter" words="exevo gran mas frigo" lvl="60" mana="1050" prem="0" selftarget="1" exhaustion="2000" groups="1,1500" icon="118" needlearn="0" event="script" value="attack/eternal winter.lua">
+	<instant name="Eternal Winter" words="exevo gran mas frigo" lvl="60" mana="1050" prem="0" selftarget="1" exhaustion="2000" groups="1,2000" icon="118" needlearn="0" event="script" value="attack/eternal winter.lua">
 		<vocation id="2"/>
 		<vocation id="6"/>
 	</instant>
-	<instant name="Ice Strike" words="exori frigo" lvl="15" mana="20" prem="0" range="3" casterTargetOrDirection="1" blockwalls="1" exhaustion="2000" groups="1,1500" icon="112" needlearn="0" event="script" value="attack/ice strike.lua">
+	<instant name="Ice Strike" words="exori frigo" lvl="15" mana="20" prem="0" range="3" casterTargetOrDirection="1" blockwalls="1" exhaustion="2000" groups="1,2000" icon="112" needlearn="0" event="script" value="attack/ice strike.lua">
 		<vocation id="1"/>
 		<vocation id="5"/>
 		<vocation id="2"/>
@@ -197,7 +197,7 @@
 		<vocation id="2"/> 
 		<vocation id="6"/>  
 	</instant>
-	<instant name="Ice Wave" words="exevo frigo hur" lvl="18" mana="25" direction="1"	exhaustion="2000" groups="1,1500" icon="121" needlearn="0" event="script" value="attack/ice wave.lua">
+	<instant name="Ice Wave" words="exevo frigo hur" lvl="18" mana="25" direction="1"	exhaustion="2000" groups="1,2000" icon="121" needlearn="0" event="script" value="attack/ice wave.lua">
 		<vocation id="2"/>
 		<vocation id="6"/>
 	</instant>
@@ -205,7 +205,7 @@
 		<vocation id="2"/> 
 		<vocation id="6"/> 
 	</instant> 
-	<instant name="Terra Strike" words="exori tera" lvl="13" mana="20" prem="0" range="3" casterTargetOrDirection="1" blockwalls="1" exhaustion="2000" groups="1,1500" icon="113" needlearn="0" event="script" value="attack/terra strike.lua">
+	<instant name="Terra Strike" words="exori tera" lvl="13" mana="20" prem="0" range="3" casterTargetOrDirection="1" blockwalls="1" exhaustion="2000" groups="1,2000" icon="113" needlearn="0" event="script" value="attack/terra strike.lua">
 		<vocation id="1"/>
 		<vocation id="5"/>
 		<vocation id="2"/>
@@ -219,11 +219,11 @@
 		<vocation id="2"/> 
 		<vocation id="6"/> 
 	</instant>
-	<instant name="Terra Wave" words="exevo tera hur" lvl="38" mana="210" direction="1" exhaustion="2000" groups="1,1500" icon="120" needlearn="0" event="script" value="attack/terra wave.lua">
+	<instant name="Terra Wave" words="exevo tera hur" lvl="38" mana="210" direction="1" exhaustion="2000" groups="1,2000" icon="120" needlearn="0" event="script" value="attack/terra wave.lua">
 		<vocation id="2"/>
 		<vocation id="6"/>
 	</instant>
-	<instant name="Wrath of Nature" words="exevo gran mas tera" lvl="55" mana="700" prem="0" selftarget="1" exhaustion="2000" groups="1,1500" icon="56" needlearn="0" event="script" value="attack/wrath of nature.lua">
+	<instant name="Wrath of Nature" words="exevo gran mas tera" lvl="55" mana="700" prem="0" selftarget="1" exhaustion="2000" groups="1,2000" icon="56" needlearn="0" event="script" value="attack/wrath of nature.lua">
 		<vocation id="2"/>
 		<vocation id="6"/>
 	</instant>
@@ -306,7 +306,7 @@
 	
 
 	<!-- Support Spells -->
-	<instant name="Light" words="utevo lux" lvl="8" mana="20" aggressive="0" selftarget="1" exhaustion="1000" groups="3,2000" icon="10" needlearn="0" event="script" value="support/light.lua">
+	<instant name="Light" words="utevo lux" lvl="8" mana="20" aggressive="0" selftarget="1" exhaustion="2000" groups="3,2000" icon="10" needlearn="0" event="script" value="support/light.lua">
 		<vocation id="1"/>
 		<vocation id="2"/>
 		<vocation id="3"/>
@@ -316,7 +316,7 @@
 		<vocation id="7"/>
 		<vocation id="8"/>
 	</instant>
-	<instant name="Find Person" words="exiva" lvl="8" mana="20" aggressive="0" params="1" exhaustion="1000" groups="3,2000" icon="20" needlearn="0" event="function" value="searchPlayer">
+	<instant name="Find Person" words="exiva" lvl="8" mana="20" aggressive="0" params="1" exhaustion="2000" groups="3,2000" icon="20" needlearn="0" event="function" value="searchPlayer">
 		<vocation id="1"/>
 		<vocation id="2"/>
 		<vocation id="3"/>
@@ -326,7 +326,7 @@
 		<vocation id="7"/>
 		<vocation id="8"/>
 	</instant>
-	<instant name="Magic Rope" words="exani tera" lvl="9" mana="20" prem="0" aggressive="0" selftarget="1" exhaustion="1000" groups="3,2000" icon="76" needlearn="0" event="script" value="support/magic rope.lua">
+	<instant name="Magic Rope" words="exani tera" lvl="9" mana="20" prem="0" aggressive="0" selftarget="1" exhaustion="2000" groups="3,2000" icon="76" needlearn="0" event="script" value="support/magic rope.lua">
 		<vocation id="1"/>
 		<vocation id="2"/>
 		<vocation id="3"/>
@@ -336,7 +336,7 @@
 		<vocation id="7"/>
 		<vocation id="8"/>
 	</instant>
-	<instant name="Levitate" words="exani hur" lvl="12" mana="50" prem="0" aggressive="0" exhaustion="1000" groups="3,2000" icon="81" params="1" needlearn="0" event="function" value="Levitate">
+	<instant name="Levitate" words="exani hur" lvl="12" mana="50" prem="0" aggressive="0" exhaustion="2000" groups="3,2000" icon="81" params="1" needlearn="0" event="function" value="Levitate">
 		<vocation id="1"/>
 		<vocation id="2"/>
 		<vocation id="3"/>
@@ -346,7 +346,7 @@
 		<vocation id="7"/>
 		<vocation id="8"/>
 	</instant>
-	<instant name="Great Light" words="utevo gran lux" lvl="13" mana="60" aggressive="0" selftarget="1" exhaustion="1000" groups="3,2000" icon="11" needlearn="0" event="script" value="support/great light.lua">
+	<instant name="Great Light" words="utevo gran lux" lvl="13" mana="60" aggressive="0" selftarget="1" exhaustion="2000" groups="3,2000" icon="11" needlearn="0" event="script" value="support/great light.lua">
 		<vocation id="1"/>
 		<vocation id="2"/>
 		<vocation id="3"/>
@@ -356,13 +356,13 @@
 		<vocation id="7"/>
 		<vocation id="8"/>
 	</instant>
-	<instant name="Magic Shield" words="utamo vita" lvl="14" mana="50" aggressive="0" selftarget="1" exhaustion="1000" groups="3,2000" icon="44" needlearn="0" event="script" value="support/magic shield.lua">
+	<instant name="Magic Shield" words="utamo vita" lvl="14" mana="50" aggressive="0" selftarget="1" exhaustion="2000" groups="3,2000" icon="44" needlearn="0" event="script" value="support/magic shield.lua">
 		<vocation id="1"/>
 		<vocation id="2"/>
 		<vocation id="5"/>
 		<vocation id="6"/>
 	</instant>
-	<instant name="Haste" words="utani hur" lvl="14" mana="60" prem="0" aggressive="0" selftarget="1" exhaustion="1000"	groups="3,2000" icon="6" needlearn="0" event="script" value="support/haste.lua">
+	<instant name="Haste" words="utani hur" lvl="14" mana="60" prem="0" aggressive="0" selftarget="1" exhaustion="2000"	groups="3,2000" icon="6" needlearn="0" event="script" value="support/haste.lua">
 		<vocation id="1"/>
 		<vocation id="2"/>
 		<vocation id="3"/>
@@ -372,54 +372,54 @@
 		<vocation id="7"/>
 		<vocation id="8"/>
 	</instant>
-	<instant name="Charge" words="utani tempo hur" lvl="25" mana="100" prem="0" aggressive="0" selftarget="1" exhaustion="1000" groups="3,2000" icon="131" needlearn="0" event="script" value="support/charge.lua">
-		<vocation id="3"/>
-		<vocation id="8"/>
-	</instant>
-	<instant name="Swift Foot" words="utamo tempo san" lvl="55" mana="400" prem="0" aggressive="0" selftarget="1" exhaustion="1000" groups="1,10000;3,2000" icon="134" needlearn="0" event="script" value="support/swift foot.lua">
-		<vocation id="3"/>
-		<vocation id="7"/>
-	</instant>
-	<instant name="Challenge" words="exeta res" lvl="20" mana="30" prem="0" aggressive="0" groups="3,2000" exhaustion="1000" icon="93" needlearn="0" event="script" value="support/challenge.lua">
-		<vocation id="8"/>
-	</instant>
-	<instant name="Strong Haste" words="utani gran hur" lvl="20" mana="100" prem="0" aggressive="0" selftarget="1" exhaustion="1000" groups="3,2000" icon="39" needlearn="0" event="script" value="support/strong haste.lua">
-		<vocation id="1"/>
-		<vocation id="2"/>
-		<vocation id="5"/>
-		<vocation id="6"/>
-	</instant>
-	<instant name="Creature Illusion" words="utevo res ina" lvl="23" mana="100" aggressive="0" params="1" exhaustion="1000" groups="3,2000" icon="38" needlearn="0" event="function" value="Illusion">
-		<vocation id="1"/>
-		<vocation id="2"/>
-		<vocation id="5"/>
-		<vocation id="6"/>
-	</instant>
-	<instant name="Ultimate Light" words="utevo vis lux" lvl="26" mana="140" prem="0" aggressive="0" selftarget="1" exhaustion="1000" groups="3,2000" icon="75" needlearn="0" event="script" value="support/ultimate light.lua">
-		<vocation id="1"/>
-		<vocation id="2"/>
-		<vocation id="5"/>
-		<vocation id="6"/>
-	</instant>
-	<instant name="Cancel Invisibility" words="exana ina" lvl="26" mana="200" prem="0" aggressive="0" selftarget="1" exhaustion="1000" groups="3,2000" icon="90" needlearn="0" event="script" value="support/cancel invisibility.lua">
-		<vocation id="3"/>
-		<vocation id="7"/>
-	</instant>
-	<instant name="Invisibility" words="utana vid" lvl="35" mana="440" aggressive="0" selftarget="1" exhaustion="1000" groups="3,2000" icon="45" needlearn="0" event="script" value="support/invisible.lua">
-		<vocation id="1"/>
-		<vocation id="2"/>
-		<vocation id="5"/>
-		<vocation id="6"/>
-	</instant>
-	<instant name="Sharpshooter" words="utito tempo san" lvl="60" mana="450" prem="0" aggressive="0" selftarget="1" exhaustion="1000" groups="2,10000;3,2000" icon="135" needlearn="0" event="script" value="support/sharpshooter.lua">
-		<vocation id="3"/>
-		<vocation id="7"/>
-	</instant>
-	<instant name="Protector" words="utamo tempo" lvl="55" mana="200" prem="0" aggressive="0" selftarget="1" exhaustion="100" groups="1,10000;3,2000" icon="132" needlearn="0" event="script" value="support/protector.lua">
+	<instant name="Charge" words="utani tempo hur" lvl="25" mana="100" prem="0" aggressive="0" selftarget="1" exhaustion="2000" groups="3,2000" icon="131" needlearn="0" event="script" value="support/charge.lua">
 		<vocation id="4"/>
 		<vocation id="8"/>
 	</instant>
-	<instant name="Blood Rage" words="utito tempo" lvl="60" mana="290" prem="0" aggressive="0" selftarget="1" exhaustion="1000" groups="3,2000" icon="133" needlearn="0" event="script" value="support/blood rage.lua">
+	<instant name="Swift Foot" words="utamo tempo san" lvl="55" mana="400" prem="0" aggressive="0" selftarget="1" exhaustion="2000" groups="1,10000;3,2000" icon="134" needlearn="0" event="script" value="support/swift foot.lua">
+		<vocation id="3"/>
+		<vocation id="7"/>
+	</instant>
+	<instant name="Challenge" words="exeta res" lvl="20" mana="30" prem="0" aggressive="0" exhaustion="2000" groups="3,2000" icon="93" needlearn="0" event="script" value="support/challenge.lua">
+		<vocation id="8"/>
+	</instant>
+	<instant name="Strong Haste" words="utani gran hur" lvl="20" mana="100" prem="0" aggressive="0" selftarget="1" exhaustion="2000" groups="3,2000" icon="39" needlearn="0" event="script" value="support/strong haste.lua">
+		<vocation id="1"/>
+		<vocation id="2"/>
+		<vocation id="5"/>
+		<vocation id="6"/>
+	</instant>
+	<instant name="Creature Illusion" words="utevo res ina" lvl="23" mana="100" aggressive="0" params="1" exhaustion="2000" groups="3,2000" icon="38" needlearn="0" event="function" value="Illusion">
+		<vocation id="1"/>
+		<vocation id="2"/>
+		<vocation id="5"/>
+		<vocation id="6"/>
+	</instant>
+	<instant name="Ultimate Light" words="utevo vis lux" lvl="26" mana="140" prem="0" aggressive="0" selftarget="1" exhaustion="2000" groups="3,2000" icon="75" needlearn="0" event="script" value="support/ultimate light.lua">
+		<vocation id="1"/>
+		<vocation id="2"/>
+		<vocation id="5"/>
+		<vocation id="6"/>
+	</instant>
+	<instant name="Cancel Invisibility" words="exana ina" lvl="26" mana="200" prem="0" aggressive="0" selftarget="1" exhaustion="2000" groups="3,2000" icon="90" needlearn="0" event="script" value="support/cancel invisibility.lua">
+		<vocation id="3"/>
+		<vocation id="7"/>
+	</instant>
+	<instant name="Invisibility" words="utana vid" lvl="35" mana="440" aggressive="0" selftarget="1" exhaustion="2000" groups="3,2000" icon="45" needlearn="0" event="script" value="support/invisible.lua">
+		<vocation id="1"/>
+		<vocation id="2"/>
+		<vocation id="5"/>
+		<vocation id="6"/>
+	</instant>
+	<instant name="Sharpshooter" words="utito tempo san" lvl="60" mana="450" prem="0" aggressive="0" selftarget="1" exhaustion="2000" groups="2,10000;3,2000" icon="135" needlearn="0" event="script" value="support/sharpshooter.lua">
+		<vocation id="3"/>
+		<vocation id="7"/>
+	</instant>
+	<instant name="Protector" words="utamo tempo" lvl="55" mana="200" prem="0" aggressive="0" selftarget="1" exhaustion="2000" groups="1,10000;3,2000" icon="132" needlearn="0" event="script" value="support/protector.lua">
+		<vocation id="4"/>
+		<vocation id="8"/>
+	</instant>
+	<instant name="Blood Rage" words="utito tempo" lvl="60" mana="290" prem="0" aggressive="0" selftarget="1" exhaustion="2000" groups="3,2000" icon="133" needlearn="0" event="script" value="support/blood rage.lua">
 		<vocation id="4"/>
 		<vocation id="8"/>
 	</instant>
@@ -434,7 +434,7 @@
 	<instant name="Heal Party" words="utura mas sio" lvl="32" mana="120" prem="0" aggressive="0" selftarget="1" exhaustion="2000" groups="3,2000" icon="128" needlearn="0" event="script" value="party/heal.lua">
 		<vocation id="6"/>
 	</instant>
-	<instant name="Enchant Party" words="utori mas sio" lvl="32" mana="120" prem="0" aggressive="0" selftarget="1" exhaustion="1000" groups="3,2000" icon="129" needlearn="0" event="script" value="party/enchant.lua">
+	<instant name="Enchant Party" words="utori mas sio" lvl="32" mana="120" prem="0" aggressive="0" selftarget="1" exhaustion="2000" groups="3,2000" icon="129" needlearn="0" event="script" value="party/enchant.lua">
 		<vocation id="5"/>
 	</instant>
 
@@ -451,7 +451,7 @@
 		<vocation id="3"/>
 		<vocation id="7"/>
 	</conjure>
-	<instant name="Food" words="exevo pan" lvl="14" mana="120" soul="1" aggressive="0" selftarget="1" groups="3,2000" icon="42" needlearn="1" event="script" value="support/conjure food.lua">
+	<instant name="Food" words="exevo pan" lvl="14" mana="120" soul="1" aggressive="0" selftarget="1" groups="3,2000" icon="42" needlearn="0" event="script" value="support/conjure food.lua">
 		<vocation id="2"/>
 		<vocation id="6"/>
 	</instant>
@@ -627,7 +627,7 @@
 		<vocation id="2"/>
 		<vocation id="6"/>
 	</conjure>
-	<conjure name="Paralyze" words="adana ani" lvl="54" mana="1400" soul="3" prem="0" reagentId="2260" conjureId="2278" conjureCount="1" needlearn="0" event="function" value="conjureRune">
+	<conjure name="Paralyze" words="adana ani" lvl="54" mana="1400" soul="3" prem="0" reagentId="2260" conjureId="2278" conjureCount="1" groups="3,2000" icon="23" needlearn="0" event="function" value="conjureRune">
 		<vocation id="2"/>
 		<vocation id="6"/>
 	</conjure>
