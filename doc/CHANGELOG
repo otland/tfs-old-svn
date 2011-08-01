@@ -24,8 +24,15 @@
 	M config.lua
 	  data/
 	M	global.lua
-	M	actions/scripts/other/changegold.lua
-	M	items/items.xml
+		actions/scripts/other/
+	M		changegold.lua
+	M		fluids.lua
+		items/
+	M		items.otb
+	M		items.xml
+		monster/
+	M		slime.xml
+	M		slime2.xml
 	M	talkactions/scripts/deathlist.lua
 		XML/
 	M		outfits.xml
@@ -49,4 +56,8 @@
 	Decay buckets are now 4, with 250ms intervals instead of 16 with 1000ms intervals for more accurate duration times (this may cause higher CPU usage).
 	Added premium attribute to mounts.
 	LuaSQL dependency removed (with backwards compatibility for most code).
+	Fixed a bug with vial, blue bottle, jug and waterskin.
+	Updated a lot of item attributes.
+	Corrected cheese and scarab cheese client id and stackable attribute.
+	Fixed so that vials (fluids.lua) will use fluidSource from items.xml.
 ]

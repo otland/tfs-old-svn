@@ -42,29 +42,20 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 			doChangeTypeItem(item.uid, 0)
 			doDecayItem(splash)
 		end
-	elseif (itemEx.itemid >= 490 and itemEx.itemid <= 493) or (itemEx.itemid >= 4608 and itemEx.itemid <= 4625) or (itemEx.itemid >= 618 and itemEx.itemid <= 629) or itemEx.itemid == 1771 then
-		doChangeTypeItem(item.uid, 9)
-	elseif itemEx.itemid == 103 then
-		doChangeTypeItem(item.uid, 19)
-	elseif (itemEx.itemid >= 598 and itemEx.itemid < 712) or itemEx.itemid == 1509 then
-		doChangeTypeItem(item.uid, 26)
-	elseif (itemEx.itemid >= 351 and itemEx.itemid <= 355) then
-		doChangeTypeItem(item.uid, 19)
-	elseif (itemEx.itemid >= 602 and itemEx.itemid <= 605) then
-		doChangeTypeItem(item.uid, 28)
-	elseif itemEx.itemid == 1772 then
-		doChangeTypeItem(item.uid, 3)
-	elseif itemEx.itemid == 1773 then
-		doChangeTypeItem(item.uid, 15)
-	elseif item.type == 0 then
-		doPlayerSendCancel(cid, "It is empty.")
 	else
-		if toPosition.x == CONTAINER_POSITION then
-			toPosition = getCreaturePosition(cid)
+		local fluidSource = getFluidSourceType(itemEx.itemid)
+		if fluidSource ~= 0 then
+			doChangeTypeItem(item.uid, fluidSource)
+		elseif item.type == 0 then
+			doPlayerSendCancel(cid, "It is empty.")
+		else
+			if toPosition.x == CONTAINER_POSITION then
+				toPosition = getCreaturePosition(cid)
+			end
+			splash = doCreateItem(2025, item.type, toPosition)
+			doChangeTypeItem(item.uid, 0)
+			doDecayItem(splash)
 		end
-		splash = doCreateItem(2025, item.type, toPosition)
-		doChangeTypeItem(item.uid, 0)
-		doDecayItem(splash)
 	end
 	return TRUE
 end
