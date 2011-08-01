@@ -2,11 +2,6 @@ local SPECIAL_QUESTS = {2001}
 
 function onStepIn(cid, item, position, lastPosition, fromPosition, toPosition, actor)
 
-	print((isContainer(item.uid) and not isInArray(SPECIAL_QUESTS, item.actionid) and item.uid > 65535))
-	print(not isPlayer(cid))
-	print(getTileInfo(fromPosition).floorChange[9])
-	print(getTileInfo(position).creatures < 1)
-
 	if(not isPlayer(cid) or (isContainer(item.uid) and not isInArray(SPECIAL_QUESTS, item.actionid)
 		and item.uid > 65535) or getTileInfo(fromPosition).floorChange[9] or
 		(not isContainer(item.uid) and getTileInfo(position).creatures <= 1)) then
