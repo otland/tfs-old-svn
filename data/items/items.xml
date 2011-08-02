@@ -1957,7 +1957,7 @@
 		<attribute key="weight" value="570" />
 		<attribute key="slotType" value="necklace" />
 	</item>
-	<item id="2134" name="silver brooch" article="a">
+	<item id="2134" name="silver brooch" article="a" plural="silver brooches">
 		<attribute key="weight" value="110" />
 	</item>
 	<item id="2135" name="scarab amulet" article="a">
