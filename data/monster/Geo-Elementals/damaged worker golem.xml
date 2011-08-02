@@ -46,13 +46,9 @@
 	</voices>
 	<loot>
 		<item id="2148" countmax="86" chance="21000"/><!-- gold coin -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
-				<item id="9808" chance="13275"/><!-- rusty armor -->
-				<item id="5880" chance="650"/><!-- iron ore -->
-				<item id="2207" chance="650"/><!-- sword ring -->
-				<item id="8309" countmax="3" chance="500"/><!-- nails -->
-			</inside>
-		</item>
+		<item id="9808" chance="13275"/><!-- rusty armor -->
+		<item id="5880" chance="650"/><!-- iron ore -->
+		<item id="2207" chance="650"/><!-- sword ring -->
+		<item id="8309" countmax="3" chance="500"/><!-- nails -->
 	</loot>
 </monster>

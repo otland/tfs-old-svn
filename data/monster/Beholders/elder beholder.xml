@@ -73,16 +73,12 @@
 		<item id="2175" chance="7500"/><!-- spellbook -->
 		<item id="2509" chance="6000"/><!-- steel shield -->
 		<item id="2377" chance="6000"/><!-- two handed sword -->
-		<item id="1987" chance="80000"><!-- bag -->
-			<inside>
 		<item id="7364" countmax="5" chance="10000"/><!-- sniper arrow -->
 		<item id="7589" chance="1000"/><!-- strong mana potion -->
 		<item id="5898" chance="1250"/><!-- beholder eye -->
 		<item id="2181" chance="1250"/><!-- terra rod -->
 		<item id="2518" chance="400"/><!-- beholder shield -->
 		<item id="2149" chance="750"/><!-- small emerald -->
-		<item id="3972" chance="400"/><!-- beholder helmet -->	
-			</inside>
-		</item>
+		<item id="3972" chance="400"/><!-- beholder helmet -->
 	</loot>
 </monster>

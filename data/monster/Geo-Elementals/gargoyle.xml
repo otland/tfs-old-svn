@@ -51,15 +51,11 @@
 		<item id="2666" countmax="2" chance="27500"/><!-- meat -->
 		<item id="2394" chance="1750"/><!-- morning star -->
 		<item id="2449" chance="10000"/><!-- bone club -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
-				<item id="2194" countmax="10" chance="8000"/><!-- small stone -->
-				<item id="2457" chance="6000"/><!-- steel helmet -->
-				<item id="2448" chance="5300"/><!-- studdedd club -->
-				<item id="2489" chance="750"/><!-- dark armor -->
-				<item id="2129" chance="500"/><!-- wolf tooth chain -->
-				<item id="2209" chance="300"/><!-- club ring -->				
-			</inside>
-		</item>
+		<item id="2194" countmax="10" chance="8000"/><!-- small stone -->
+		<item id="2457" chance="6000"/><!-- steel helmet -->
+		<item id="2448" chance="5300"/><!-- studdedd club -->
+		<item id="2489" chance="750"/><!-- dark armor -->
+		<item id="2129" chance="500"/><!-- wolf tooth chain -->
+		<item id="2209" chance="300"/><!-- club ring -->
 	</loot>
 </monster>

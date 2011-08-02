@@ -237,10 +237,14 @@
 		<vocation id="6"/>
 		<vocation id="7"/>
 	</instant>
-	<instant name="Wound Cleansing" words="exura ico" lvl="10" mana="40" aggressive="0" selftarget="1" exhaustion="1000" groups="2,1000" icon="123" needlearn="0" event="script" value="healing/intense wound cleansing.lua">
+	<instant name="Wound Cleansing" words="exura ico" lvl="10" mana="40" aggressive="0" selftarget="1" exhaustion="1000" groups="2,1000" icon="123" needlearn="0" event="script" value="healing/wound cleansing.lua">
 		<vocation id="4"/>
 		<vocation id="8"/>
 	</instant>
+	<instant name="Intense Wound Cleansing" words="exura gran ico" lvl="80" mana="200" prem="1" selftarget="1" aggressive="0" exhaustion="180000" groups="2,1000" icon="158" needlearn="0" event="script" value="healing/intense wound cleansing.lua"> 
+		<vocation id="4"/> 
+		<vocation id="8"/> 
+	</instant> 
      <instant name="Cure Bleeding" words="exana kor" lvl="30" mana="30" aggressive="0" selftarget="1" exhaustion="6000" groups="2,1000" icon="144" needlearn="0" event="script" value="healing/cure bleeding.lua">
 		<vocation id="4"/>
 		<vocation id="8"/>
@@ -269,6 +273,12 @@
  	</instant>
 	<instant name="Recovery" words="utura" lvl="50" mana="75" prem="1" selftarget="1" aggressive="0" exhaustion="60000" groups="2,1000" icon="159" needlearn="0" event="script" value="healing/recovery.lua"> 
 		<vocation id="4"/>
+		<vocation id="8"/> 
+		<vocation id="3"/> 
+		<vocation id="7"/> 
+	</instant>
+	<instant name="Intense Recovery" words="utura gran" lvl="100" mana="165" prem="1" selftarget="1" aggressive="0" exhaustion="60000" groups="2,1000" icon="160" needlearn="0" event="script" value="healing/intense recovery.lua"> 
+		<vocation id="4"/> 
 		<vocation id="8"/> 
 		<vocation id="3"/> 
 		<vocation id="7"/> 

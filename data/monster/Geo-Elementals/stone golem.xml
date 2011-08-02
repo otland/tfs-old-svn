@@ -38,14 +38,10 @@
 		<item id="2509" chance="9750"/><!-- steel shield -->
 		<item id="2050" chance="7250"/><!-- torch -->
 		<item id="2166" chance="5000"/><!-- power ring-->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>	
 		<item id="2483" chance="3250"/><!-- scale armor -->
 		<item id="2395" chance="1100"/><!-- carlin sword -->
 		<item id="5880" chance="2500"/><!-- iron ore -->
 		<item id="2124" chance="200"/><!-- crystal ring -->
 		<item id="2156" chance="150"/><!-- red gem -->
-			</inside>
-		</item>
 	</loot>
 </monster>

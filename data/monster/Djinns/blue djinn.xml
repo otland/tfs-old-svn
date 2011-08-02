@@ -62,13 +62,9 @@
 		<item id="2146" countmax="5" chance="1000"/><!-- small sapphire -->
 		<item id="2063" chance="6500"/><!-- small oil lamp -->
 		<item id="1971" chance="1750"/><!-- book -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
 		<item id="5912" chance="2000"/><!-- blue piece of cloth -->
 		<item id="7620" chance="1000"/><!-- mana potion -->
 		<item id="2745" chance="1000"/><!-- blue rose -->
 		<item id="2663" chance="350"/><!-- mystic turban -->
-			</inside>
-		</item>
 	</loot>
 </monster>

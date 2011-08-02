@@ -35,6 +35,5 @@
 		<immunity paralyze="1"/>
 		<immunity drunk="1"/>
 		<immunity outfit="1"/>
-		<immunity invisible="0"/>
 	</immunities>
 </monster>

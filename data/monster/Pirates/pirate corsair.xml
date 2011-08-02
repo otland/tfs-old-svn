@@ -50,8 +50,7 @@
 		<item id="2521" chance="2500"/><!-- dark shield -->
 		<item id="2399" countmax="12" chance="6000"/><!-- throwing star -->
 		<item id="5091" chance="1000"/><!-- treasure map -->
-		<item id="5926" chance="100000"><!-- pirate backpack -->
-			<inside>
+		<item id="5926" chance="1000"/><!-- pirate backpack -->
 		<item id="6097" chance="600"/><!-- hook -->
 		<item id="6126" chance="600"/><!-- peg leg -->
 		<item id="6098" chance="600"/><!-- eye patch -->
@@ -60,7 +59,5 @@
 		<item id="6096" chance="750"/><!-- pirate hat -->		
 		<item id="5462" chance="250"/><!-- pirate boots -->
 		<item id="2114" chance="100"/><!-- piggy bank -->
-			</inside>
-		</item>
 	</loot>
 </monster>

@@ -20,7 +20,7 @@
 		<attack name="melee" interval="2000" skill="90" attack="160"/>
 		<attack name="lifedrain" interval="2000" chance="40" length="8" spread="0" max="-300">
 			<attribute key="areaEffect" value="redshimmer"/>
-		</attack>	
+		</attack>
 		<attack name="earth" interval="2000" chance="50" radius="6"  min="-150" max="-270">
 			<attribute key="areaEffect" value="greenshimmer"/>
 		</attack>
@@ -33,9 +33,9 @@
 		<element icePercent="20"/>
 	</elements>
 	<immunities>
-	<immunity earth="1"/>
-	<immunity invisible="1"/>
-	<immunity paralyze="1"/>
+		<immunity earth="1"/>
+		<immunity invisible="1"/>
+		<immunity paralyze="1"/>
 	</immunities>
 	<voices interval="2000" chance="10">
 		<voice sentence="AHHH ZHE POWER..." yell="1"/>

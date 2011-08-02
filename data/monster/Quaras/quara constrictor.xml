@@ -50,13 +50,9 @@
 		<item id="2406" chance="7200"/><!-- short sword -->
 		<item id="2465" chance="2500"/><!-- brass armor -->
 		<item id="2460" chance="7500"/><!-- brass helmet -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
 		<item id="2397" chance="4600"/><!-- longsword -->
 		<item id="2670" countmax="5" chance="1000"/><!-- shrimp -->
 		<item id="5895" chance="2000"/><!-- fish fin -->
 		<item id="2150" chance="1000"/><!-- small amethyst -->
-			</inside>
-		</item>
 	</loot>
 </monster>

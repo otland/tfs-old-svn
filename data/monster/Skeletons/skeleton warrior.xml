@@ -5,17 +5,17 @@
 	<targetchange interval="2000" chance="0"/>
 	<strategy attack="100" defense="0"/>
 	<flags>
-			<flag summonable="1"/>
-			<flag attackable="1"/>
-			<flag hostile="1"/>
-			<flag illusionable="0"/>
-			<flag convinceable="1"/>
-			<flag pushable="0"/>
-			<flag canpushitems="0"/>
-			<flag canpushcreatures="0"/>
-			<flag targetdistance="1"/>
-			<flag staticattack="90"/>
-			<flag runonhealth="0"/>
+		<flag summonable="1"/>
+		<flag attackable="1"/>
+		<flag hostile="1"/>
+		<flag illusionable="0"/>
+		<flag convinceable="1"/>
+		<flag pushable="0"/>
+		<flag canpushitems="0"/>
+		<flag canpushcreatures="0"/>
+		<flag targetdistance="1"/>
+		<flag staticattack="90"/>
+		<flag runonhealth="0"/>
 	</flags>
 	<attacks>
 		<attack name="melee" interval="2000" skill="20" attack="20"/>
@@ -38,10 +38,6 @@
 		<item id="2398" chance="20000"/><!-- mace -->
 		<item id="2511" chance="15000"/><!-- brass shield -->
 		<item id="2787" countmax="3" chance="5000"/><!-- white mushroom -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>		
-				<item id="2789" chance="7500"/><!-- brown mushroom -->
-			</inside>
-		</item>
+		<item id="2789" chance="7500"/><!-- brown mushroom -->
 	</loot>
 </monster>

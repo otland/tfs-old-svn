@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <monster name="Draken Spellweaver" nameDescription="a draken spellweaver" race="blood" experience="2600" speed="240" manacost="0">
-<health now="5000" max="5000"/>
-<look type="340" corpse="11316"/>
-<targetchange interval="5000" chance="8"/>
-<strategy attack="100" defense="0"/>
+	<health now="5000" max="5000"/>
+	<look type="340" corpse="11316"/>
+	<targetchange interval="5000" chance="8"/>
+	<strategy attack="100" defense="0"/>
 	<flags>
 		<flag summonable="0"/>
 		<flag attackable="1"/>
@@ -16,7 +16,7 @@
 		<flag targetdistance="3"/>
 		<flag staticattack="90"/>
 		<flag runonhealth="0"/>
-	 </flags>
+	</flags>
 	<attacks>
 		<attack name="melee" interval="2000" skill="70" attack="50"/>
 		<attack name="fire" interval="2000" chance="15" range="7" radius="1" target="1" max="-250">
@@ -31,10 +31,7 @@
 			<attribute key="shootEffect" value="energyball"/>
 			<attribute key="areaEffect" value="energy"/>
 		</attack>
-		<attack name="earth" interval="2000" chance="6" target="0" radius="6" min="-200" max="-380">
-			<attribute key="areaEffect" value="poff"/>
-		</attack>
-	</attacks>
+		<attack name="earth" interval="2000" chance="6" target="0" radius="6" min="-200" max="-380">			<attribute key="areaEffect" value="poff"/>		</attack>	</attacks>
 	<defenses armor="25" defense="25">
 		<defense name="invisible" interval="2000" chance="10">
 			<attribute key="areaEffect" value="redshimmer"/>
@@ -61,14 +58,10 @@
 		<item id="2666" chance="30400" /><!-- meat -->
 		<item id="13294" chance="200"/> <!-- harness -->
 		<item id="11303" chance="2550" /><!-- zaoan shoes -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
-				<item id="2187" chance="2225" /><!-- wand of inferno -->
-				<item id="11314" chance="15525" /><!-- weaver's wandtip -->
-				<item id="7590" chance="2500" /><!-- great mana potion -->
-				<item id="2123" chance="950" /><!-- ring of the sky -->
-				<item id="13538" chance="100" /><!-- bamboo leaves -->
-			</inside>
-		</item>
+		<item id="2187" chance="2225" /><!-- wand of inferno -->
+		<item id="11314" chance="15525" /><!-- weaver's wandtip -->
+		<item id="7590" chance="2500" /><!-- great mana potion -->
+		<item id="2123" chance="950" /><!-- ring of the sky -->
+		<item id="13538" chance="100" /><!-- bamboo leaves -->
 	</loot>
 </monster>

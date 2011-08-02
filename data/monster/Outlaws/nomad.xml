@@ -41,12 +41,8 @@
 		<item id="2649" chance="13750"/><!-- leather legs -->
 		<item id="2398" chance="12500"/><!-- mace -->
 		<item id="2458" chance="4500"/><!-- chain helmet -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
 		<item id="2465" chance="1500"/><!-- brass armor -->
 		<item id="2509" chance="750"/><!-- steel shield -->
 		<item id="2459" chance="450"/><!-- iron helmet -->
-			</inside>
-		</item>
 	</loot>
 </monster>

@@ -59,8 +59,6 @@
 		<item id="2148" countmax="90" chance="6300"/><!-- gold coin -->
 		<item id="7441" chance="5000"/><!-- ice cube -->
 		<item id="2796" chance="1550"/><!-- green mushroom -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
 		<item id="7892" chance="500"/><!-- glacier shoes -->
 		<item id="7387" chance="225"/><!-- diamond sceptre -->
 		<item id="7449" chance="660"/><!-- crystal sword -->
@@ -70,7 +68,5 @@
 		<item id="2663" chance="750"/><!-- mystic turban -->
 		<item id="7896" chance="300"/><!-- glacier kilt -->
 		<item id="7459" chance="100"/><!-- ear muffs -->
-			</inside>
-		</item>
 	</loot>
 </monster>

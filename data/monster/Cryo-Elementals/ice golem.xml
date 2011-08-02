@@ -52,16 +52,12 @@
 		<item id="2144" chance="2700"/><!-- black pearl -->
 		<item id="7588" chance="1500"/><!-- strong health potion -->
 		<item id="2145" chance="500"/><!-- small diamond -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>		
-				<item id="2396" chance="550"/><!-- ice rapier -->
-				<item id="2146" chance="750"/><!-- small sapphire -->
-				<item id="7449" chance="500"/><!-- crystal sword -->
-				<item id="2479" chance="600"/><!-- strange helmet -->
-				<item id="7290" chance="350"/><!-- shard -->
-				<item id="2383" chance="300"/><!-- spike sword -->
-				<item id="7902" chance="250"/><!-- glacier mask -->
-			</inside>
-		</item>
+		<item id="2396" chance="550"/><!-- ice rapier -->
+		<item id="2146" chance="750"/><!-- small sapphire -->
+		<item id="7449" chance="500"/><!-- crystal sword -->
+		<item id="2479" chance="600"/><!-- strange helmet -->
+		<item id="7290" chance="350"/><!-- shard -->
+		<item id="2383" chance="300"/><!-- spike sword -->
+		<item id="7902" chance="250"/><!-- glacier mask -->
 	</loot>
 </monster>

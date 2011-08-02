@@ -39,10 +39,6 @@
 		<item id="2667" chance="25000"/><!-- fish -->
 		<item id="2398" chance="4500"/><!-- mace -->
 		<item id="2382" chance="7000"/><!-- club -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
 		<item id="2391" chance="250"/><!-- war hammer -->
-			</inside>
-		</item>
 	</loot>
 </monster>

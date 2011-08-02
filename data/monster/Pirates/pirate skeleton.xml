@@ -29,13 +29,9 @@
 		<item id="2148" countmax="35" chance="23000"/><!-- gold coin -->
 		<item id="2231" chance="11500"/><!-- big bone -->
 		<item id="2230" chance="6000"/><!-- bone -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
-				<item id="2406" chance="7000"/><!-- short sword -->
-				<item id="2376" chance="7000"/><!-- sword -->
-				<item id="2449" chance="7000"/><!-- bone club -->
-				<item id="2229" countmax="2" chance="2000"/><!-- skull -->
-			</inside>
-		</item>
+		<item id="2406" chance="7000"/><!-- short sword -->
+		<item id="2376" chance="7000"/><!-- sword -->
+		<item id="2449" chance="7000"/><!-- bone club -->
+		<item id="2229" countmax="2" chance="2000"/><!-- skull -->
 	</loot>
 </monster>

@@ -52,14 +52,10 @@
 		<item id="7620" chance="1500"/><!-- mana potion -->
 		<item id="2260" chance="4125"/><!-- blank rune -->
 		<item id="6079" chance="10500"/><!-- dead frog -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
 		<item id="2260" chance="4125"/><!-- blank rune -->
 		<item id="2191" chance="2200"/><!-- wand of dragonbreath -->
 		<item id="7620" chance="1500"/><!-- mana potion -->
 		<item id="7618" chance="3400"/><!-- health potion -->
 		<item id="2188" chance="100"/><!-- wand of decay -->
-			</inside>
-		</item>
 	</loot>
 </monster>

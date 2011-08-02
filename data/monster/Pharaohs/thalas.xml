@@ -59,8 +59,6 @@
 		<item id="2148" countmax="80" chance="50000"/><!-- gold coin -->
 		<item id="2148" countmax="80" chance="50000"/><!-- gold coin -->
 		<item id="2149" countmax="3" chance="7000"/><!-- small emerald -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
 		<item id="2411" chance="7000"/><!-- poison dagger -->
 		<item id="2169" chance="7000"/><!-- time ring -->
 		<item id="2165" chance="1500"/><!-- stealth ring -->
@@ -69,7 +67,5 @@
 		<item id="2155" chance="500"/><!-- green gem-->
 		<item id="2451" chance="200"/><!-- djinn blade -->
 		<item id="2351" chance="100000"/><!-- cobrafang dagger -->
-			</inside>
-		</item>
 	</loot>
 </monster>

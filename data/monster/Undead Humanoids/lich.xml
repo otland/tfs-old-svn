@@ -70,15 +70,11 @@
 		<item id="2237" chance="45000"/><!-- dirty cape -->
 		<item id="2479" chance="6000"/><!-- strange helmet -->
 		<item id="2178" chance="5500"/><!-- mind stone -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
 		<item id="7589" chance="2500"/><!-- strong mana potion -->
 		<item id="2171" chance="300"/><!-- platinium amulet -->
 		<item id="2214" chance="750"/><!-- ring of healing -->
 		<item id="7893" chance="600"/><!-- lightning boots -->
 		<item id="2656" chance="200"/><!-- blue robe -->
 		<item id="2535" chance="100"/><!-- castle shield -->
-			</inside>
-		</item>
 	</loot>
 </monster>

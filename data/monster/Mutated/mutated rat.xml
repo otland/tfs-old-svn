@@ -58,14 +58,10 @@
 		<item id="2799" chance="4500"/><!-- stone herb -->
 		<item id="2796" chance="1300"/><!-- green mushroom -->
 		<item id="2510" chance="5500"/><!-- plate shield -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
-				<item id="2381" chance="3000"/><!-- halberd -->
-				<item id="2165" chance="700"/><!-- stealth ring -->
-				<item id="8900" chance="325"/><!-- spellbook of enlightenment -->
-				<item id="7618" chance="800"/><!-- health potion -->
-				<item id="2528" chance="150"/><!-- tower shield -->
-			</inside>
-		</item>
+		<item id="2381" chance="3000"/><!-- halberd -->
+		<item id="2165" chance="700"/><!-- stealth ring -->
+		<item id="8900" chance="325"/><!-- spellbook of enlightenment -->
+		<item id="7618" chance="800"/><!-- health potion -->
+		<item id="2528" chance="150"/><!-- tower shield -->
 	</loot>
 </monster>

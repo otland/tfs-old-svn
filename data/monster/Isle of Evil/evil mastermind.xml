@@ -46,8 +46,8 @@
 			<attribute key="areaEffect" value="energy"/>
 		</defense>
 	</defenses>
-		<elements>
-	        <element icePercent="20"/>
+	<elements>
+		<element icePercent="20"/>
 		<element physicalPercent="5"/>
 		<element energyPercent="90"/>
 		<element holyPercent="-5"/>

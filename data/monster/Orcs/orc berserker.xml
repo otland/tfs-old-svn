@@ -40,12 +40,8 @@
 		<item id="2458" chance="13500"/><!-- chain helmet -->
 		<item id="2464" chance="12500"/><!-- chain armor -->
 		<item id="2044" chance="7000"/><!-- lamp -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
 		<item id="2381" chance="9000"/><!-- halberd -->
 		<item id="2378" chance="5500"/><!-- battle axe -->
 		<item id="3965" countmax="2" chance="5000"/><!-- hunting spear -->
-			</inside>
-		</item>
 	</loot>
 </monster>

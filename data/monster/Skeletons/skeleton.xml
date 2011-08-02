@@ -32,14 +32,9 @@
 		<item id="2230" chance="49750"/><!-- bone -->
 		<item id="2388" chance="23750"/><!-- hatchet -->
 		<item id="2398" chance="19500"/><!-- mace -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>	
-				<item id="2511" chance="13250"/><!-- brass shield -->
-				<item id="2050" chance="25000"/><!-- torch -->	
-				<item id="2473" chance="8250"/><!-- viking helmet -->
-				<item id="2376" chance="1500"/><!-- sword -->
-
-			</inside>
-		</item>
+		<item id="2511" chance="13250"/><!-- brass shield -->
+		<item id="2050" chance="25000"/><!-- torch -->	
+		<item id="2473" chance="8250"/><!-- viking helmet -->
+		<item id="2376" chance="1500"/><!-- sword -->
 	</loot>
 </monster>

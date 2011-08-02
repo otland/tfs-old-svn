@@ -65,8 +65,6 @@
 		<item id="6500" chance="20000"/><!-- demonic essence -->
 		<item id="7590" chance="3300" /><!-- great mana potion -->
 		<item id="2152" chance="1000" /><!-- platinum coin -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
 		<item id="9808" chance="8000" /><!-- rusty armor -->
 		<item id="2804" countmax="2" chance="15000"/><!-- shadow herb -->
 		<item id="2149" chance="9000" countmax="2"/><!-- small emerald -->
@@ -75,7 +73,5 @@
 		<item id="2487" chance="600" /><!-- crown armor -->
 		<item id="2165" chance="600" /><!-- stealth ring -->
 		<item id="6300" chance="200" /><!-- death ring -->
-			</inside>
-		</item>
 	</loot>
 </monster>

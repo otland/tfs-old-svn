@@ -47,8 +47,6 @@
 		<item id="2389" countmax="2" chance="4000"/><!-- spear -->
 		<item id="2510" chance="4800"/><!-- plate shield -->
 		<item id="2464" chance="2750"/><!-- chain armor -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
 		<item id="5091" chance="1125"/><!-- treasure map -->
 		<item id="5917" chance="1100"/><!-- bandana-->
 		<item id="6126" chance="600"/><!-- peg leg -->
@@ -58,7 +56,5 @@
 		<item id="5928" chance="200"/><!-- empty goldfish bowl -->
 		<item id="5792" chance="50"/><!-- dice -->		
 		<item id="5927" chance="500"/><!-- pirate bag -->
-			</inside>
-		</item>
 	</loot>
 </monster>

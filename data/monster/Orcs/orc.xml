@@ -35,14 +35,10 @@
 	<loot>
 		<item id="2148" countmax="15" chance="17500"/><!-- gold coin -->
 		<item id="2666" countmax="2" chance="22500"/><!-- meat -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
 		<item id="2484" chance="15000"/><!-- studded armor -->
 		<item id="2482" chance="10000"/><!-- studded helmet -->
 		<item id="2526" chance="1600"/><!-- studded shield -->
 		<item id="2385" chance="17500"/><!-- sabre -->
 		<item id="2386" chance="18000"/><!-- axe -->
-			</inside>
-		</item>
 	</loot>
 </monster>

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <monster name="Lizard Zaogun" nameDescription="a lizard zaogun" race="blood" experience="1700" speed="420" manacost="0">
-<health now="2955" max="2955"/>
-<look type="343" corpse="11284"/>
-<targetchange interval="5000" chance="8"/>
-<strategy attack="100" defense="0"/>
+	<health now="2955" max="2955"/>
+	<look type="343" corpse="11284"/>
+	<targetchange interval="5000" chance="8"/>
+	<strategy attack="100" defense="0"/>
 	<flags>
 		<flag summonable="0"/>
 		<flag attackable="1"/>
@@ -51,12 +51,8 @@
 		<item id="11206" chance="2625" /><!-- red lantern -->
 		<item id="2152" countmax="2" chance="4225" /><!-- platinum coin -->
 		<item id="2149" countmax="5" chance="2000" /><!-- small emerald -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
-				<item id="5876" chance="1375" /><!-- lizard leather -->
-				<item id="7588" chance="2550" /><!-- strong health potion -->
-				<item id="2528" chance="1425" /><!-- tower shield -->
-			</inside>
-		</item>
+		<item id="5876" chance="1375" /><!-- lizard leather -->
+		<item id="7588" chance="2550" /><!-- strong health potion -->
+		<item id="2528" chance="1425" /><!-- tower shield -->
 	</loot>
 </monster>

@@ -33,5 +33,6 @@
 	<loot>
 		<item id="2148" countmax="10" chance="47000"/><!-- gold coin -->
 		<item id="2667" chance="20000"/><!-- fish -->
+		<item id="11189" chance="16300"/> <!-- crab pincers -->
 	</loot>
 </monster>

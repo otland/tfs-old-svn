@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <monster name="Lizard Legionnaire" nameDescription="a lizard legionnaire" race="blood" experience="1100" speed="220" manacost="0">
-<health now="1400" max="1400"/>
-<look type="338" corpse="11276"/>
-<targetchange interval="5000" chance="8"/>
-<strategy attack="100" defense="0"/>
+	<health now="1400" max="1400"/>
+	<look type="338" corpse="11276"/>
+	<targetchange interval="5000" chance="8"/>
+	<strategy attack="100" defense="0"/>
 	<flags>
 		<flag summonable="0"/>
 		<flag attackable="1"/>
@@ -45,14 +45,10 @@
 		<item id="2148" countmax="65" chance="38450" /><!-- gold coin -->
 		<item id="5876" chance="1475" /><!-- lizard leather -->
 		<item id="11305" chance="1250" /><!-- drakinata -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
-				<item id="11206" chance="1100" /><!-- red lantern -->
-				<item id="11245" chance="2425" /><!-- bunch of ripe rice -->
-				<item id="2145" countmax="2" chance="1175" /><!-- small diamond -->
-				<item id="11303" chance="925" /><!-- zaoan shoes -->
-				<item id="11336" chance="500" /><!-- lizard trophy -->
-			</inside>
-		</item>
+		<item id="11206" chance="1100" /><!-- red lantern -->
+		<item id="11245" chance="2425" /><!-- bunch of ripe rice -->
+		<item id="2145" countmax="2" chance="1175" /><!-- small diamond -->
+		<item id="11303" chance="925" /><!-- zaoan shoes -->
+		<item id="11336" chance="500" /><!-- lizard trophy -->
 	</loot>
 </monster>

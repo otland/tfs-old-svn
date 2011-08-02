@@ -56,18 +56,14 @@
 		<item id="7439" chance="1000"/><!-- berserk potion -->
 		<item id="7428" chance="300"/><!-- bonebreaker -->
 		<item id="2438" chance="600"/><!-- epee -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
-				<item id="7383" chance="420"/><!-- relic sword -->
-				<item id="9809" chance="7800"/><!-- rusty armor -->
-				<item id="2197" chance="800"/><!-- stone skin amulet -->
-				<item id="7588" chance="5500"/><!-- strong health potion -->
-				<item id="2169" chance="700"/><!-- time ring -->
-				<item id="2805" chance="5000"/><!-- troll green -->
-				<item id="5897" chance="5200"/><!-- wolf paw -->
-				<item id="8473" chance="2400"/><!-- ultimate health potion -->		
-				<item id="7419" chance="200"/><!-- dreaded cleaver -->
-			</inside>
-		</item>
+		<item id="7383" chance="420"/><!-- relic sword -->
+		<item id="9809" chance="7800"/><!-- rusty armor -->
+		<item id="2197" chance="800"/><!-- stone skin amulet -->
+		<item id="7588" chance="5500"/><!-- strong health potion -->
+		<item id="2169" chance="700"/><!-- time ring -->
+		<item id="2805" chance="5000"/><!-- troll green -->
+		<item id="5897" chance="5200"/><!-- wolf paw -->
+		<item id="8473" chance="2400"/><!-- ultimate health potion -->		
+		<item id="7419" chance="200"/><!-- dreaded cleaver -->
 	</loot>
 </monster>

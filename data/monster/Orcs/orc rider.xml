@@ -39,16 +39,11 @@
 		<item id="2148" countmax="10" chance="16000"/><!-- gold coin -->
 		<item id="2666" countmax="3" chance="18000"/><!-- meat -->
 		<item id="2428" chance="26250"/><!-- orcish axe -->
-		<item id="1988" chance="20000"><!-- backpack -->
-			<inside>
-				<item id="2129" chance="10500"/><!-- wolf tooth chain -->
-				<item id="2482" chance="11000"/><!-- studded helmet -->
-				<item id="2050" chance="9000"/><!-- torch-->
-				<item id="2513" chance="3000"/><!-- battle shield -->
-				<item id="2483" chance="2500"/><!-- scale armor -->
-				<item id="2425" chance="1000"/><!-- obsidian lance -->
-
-			</inside>
-		</item>
+		<item id="2129" chance="10500"/><!-- wolf tooth chain -->
+		<item id="2482" chance="11000"/><!-- studded helmet -->
+		<item id="2050" chance="9000"/><!-- torch-->
+		<item id="2513" chance="3000"/><!-- battle shield -->
+		<item id="2483" chance="2500"/><!-- scale armor -->
+		<item id="2425" chance="1000"/><!-- obsidian lance -->
 	</loot>
 </monster>

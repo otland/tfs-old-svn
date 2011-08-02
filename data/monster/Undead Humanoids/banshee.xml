@@ -62,8 +62,6 @@
 		<item id="2071" chance="1333"/><!-- lyre -->
 		<item id="2560" chance="7250"/><!-- mirror -->
 		<item id="2411" chance="1600"/><!-- poison dagger -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
 		<item id="2655" chance="800"/><!-- red robe -->
 		<item id="2214" chance="860"/><!-- ring of healing -->
 		<item id="2170" chance="8300"/><!-- silver amulet -->	
@@ -76,7 +74,5 @@
 		<item id="7884" chance="240"/><!-- terra mantle -->
 		<item id="2121" chance="410"/><!-- wedding ring -->
 		<item id="2124" chance="100"/><!-- crystal ring -->
-			</inside>
-		</item>
 	</loot>
 </monster>

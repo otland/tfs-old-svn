@@ -41,13 +41,9 @@
 		<item id="2461" chance="9750"/><!-- leather helmet -->
 		<item id="2666" chance="11750"/><!-- meat -->
 		<item id="2120" chance="8750"/><!-- rope -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
-				<item id="2389" chance="12000"/><!-- spear -->
-				<item id="2512" chance="15000"/><!-- wooden shield -->
-				<item id="2448" chance="4500"/><!-- studded club -->
-				<item id="2170" chance="50"/><!-- silver amulet -->
-			</inside>
-		</item>
+		<item id="2389" chance="12000"/><!-- spear -->
+		<item id="2512" chance="15000"/><!-- wooden shield -->
+		<item id="2448" chance="4500"/><!-- studded club -->
+		<item id="2170" chance="50"/><!-- silver amulet -->
 	</loot>
 </monster>

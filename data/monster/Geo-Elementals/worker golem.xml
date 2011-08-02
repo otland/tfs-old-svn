@@ -59,17 +59,13 @@
 		<item id="9812" chance="2650"/><!-- rusty legs -->
 		<item id="8472" chance="1600"/><!-- great spirit potion -->
 		<item id="7591" chance="1900"/><!-- great health potion -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
-				<item id="7439" chance="1350"/><!-- berserk potion -->
-				<item id="9976" chance="1000"/><!-- crystal pedestal -->	
-				<item id="7452" chance="1500"/><!-- spiked squelcher -->	
-				<item id="2391" chance="1550"/><!-- war hammer -->		
-				<item id="2177" chance="750"/><!-- life crystal -->		
-				<item id="2164" chance="650"/><!-- might ring -->
-				<item id="7428" chance="200"/><!-- bonebreaker -->
-				<item id="7590" chance="1500"/><!-- great mana potion -->
-			</inside>
-		</item>
+		<item id="7439" chance="1350"/><!-- berserk potion -->
+		<item id="9976" chance="1000"/><!-- crystal pedestal -->	
+		<item id="7452" chance="1500"/><!-- spiked squelcher -->	
+		<item id="2391" chance="1550"/><!-- war hammer -->		
+		<item id="2177" chance="750"/><!-- life crystal -->		
+		<item id="2164" chance="650"/><!-- might ring -->
+		<item id="7428" chance="200"/><!-- bonebreaker -->
+		<item id="7590" chance="1500"/><!-- great mana potion -->
 	</loot>
 </monster>

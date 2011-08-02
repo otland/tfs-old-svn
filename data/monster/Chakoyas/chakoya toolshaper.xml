@@ -45,14 +45,10 @@
 		<item id="2398" chance="9000"/><!-- mace-->
 		<item id="2553" chance="7500"/><!-- pick -->
 		<item id="2541" chance="7000"/><!-- bone shield -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
 		<item id="7381" chance="2500"/><!-- mammoth whopper -->
 		<item id="7441" chance="1000"/><!-- ice cube -->
 		<item id="7159" chance="900"/><!-- green perch -->
 		<item id="2669" chance="700"/><!-- northern pike -->
 		<item id="7158" chance="750"/><!-- rainbow trout -->
-			</inside>
-		</item>
 	</loot>
 </monster>

@@ -24,5 +24,6 @@
 	<loot>
 		<item id="3976" chance="20000"/><!-- worm -->
 		<item id="2671" chance="20000"/><!-- ham -->
+		<item id="11213" chance="7325"/> <!-- acorn -->
 	</loot>
 </monster>

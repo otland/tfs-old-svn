@@ -50,8 +50,6 @@
 		<item id="2376" chance="5000"/><!-- sword -->
 		<item id="2513" chance="3500"/><!-- battle shield -->
 		<item id="5091" chance="1100"/><!-- treasure map -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
 		<item id="6095" chance="1000"/><!-- pirate shirt -->
 		<item id="2463" chance="950"/><!-- plate armor -->
 		<item id="6126" chance="600"/><!-- peg leg -->
@@ -60,7 +58,5 @@
 		<item id="6097" chance="600"/><!-- hook -->
 		<item id="5926" chance="500"/><!-- pirate backpack -->
 		<item id="5792" chance="50"/><!-- dice -->
-			</inside>
-		</item>
 	</loot>
 </monster>

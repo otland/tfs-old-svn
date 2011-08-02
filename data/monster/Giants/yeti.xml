@@ -33,7 +33,7 @@
 		<element earthPercent="-20"/>
 	</elements>
 	<immunities>
-	<immunity invisible="1"/>
+		<immunity invisible="1"/>
 	</immunities>
 	<voices interval="5000" chance="10">
 		<voice sentence="Yooodelaaahooohooo!"/>
@@ -46,6 +46,5 @@
 		<item id="2671" countmax="5" chance="10000"/><!-- ham -->
 		<item id="2111" countmax="22" chance="10000"/><!-- snowball -->
 		<item id="2644" chance="1333"/><!-- bunny slippers -->
-
 	</loot>
 </monster>

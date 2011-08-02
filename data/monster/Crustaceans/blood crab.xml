@@ -33,10 +33,6 @@
 		<item id="2667" chance="27000"/><!-- fish -->
 		<item id="2478" chance="7000"/><!-- brass legs -->
 		<item id="2464" chance="10000"/><!-- chain armor -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
 		<item id="2143" chance="1000"/><!-- white pearl -->
-			</inside>
-		</item>
 	</loot>
 </monster>

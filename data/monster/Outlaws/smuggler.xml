@@ -36,14 +36,10 @@
 		<item id="2649" chance="17650"/><!-- leather legs -->
 		<item id="2403" chance="10000"/><!-- knife -->
 		<item id="2671" countmax="2" chance="6000"/><!-- ham -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
-				<item id="2406" chance="8000"/><!-- short sword -->
-				<item id="2461" chance="7850"/><!-- leather helmet -->
-				<item id="2404" chance="4400"/><!-- combat knife -->
-				<item id="2376" chance="5650"/><!-- sword -->
-				<item id="7397" chance="500"/><!-- deer trophy -->
-			</inside>
-		</item>
+		<item id="2406" chance="8000"/><!-- short sword -->
+		<item id="2461" chance="7850"/><!-- leather helmet -->
+		<item id="2404" chance="4400"/><!-- combat knife -->
+		<item id="2376" chance="5650"/><!-- sword -->
+		<item id="7397" chance="500"/><!-- deer trophy -->
 	</loot>
 </monster>

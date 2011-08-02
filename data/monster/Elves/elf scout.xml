@@ -48,12 +48,8 @@
 		<item id="2642" chance="9370"/><!-- sandals -->
 		<item id="2397" chance="6500"/><!-- longsword -->
 		<item id="2482" chance="7000"/><!-- studded helmet -->
-		<item id="1987" chance="6666"><!-- bag -->
-			<inside>
 		<item id="2456" chance="4000"/><!-- bow -->
 		<item id="5921" chance="250"/><!-- heaven blossom -->
 		<item id="7438" chance="50"/><!-- elvish bow -->
-			</inside>
-		</item>
 	</loot>
 </monster>

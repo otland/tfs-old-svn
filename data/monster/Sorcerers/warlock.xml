@@ -80,8 +80,6 @@
 		<item id="2600" chance="10000"/><!-- inkwell -->
 		<item id="2178" chance="2500"/><!-- mind stone -->
 		<item id="2411" chance="3000"/><!-- poison dagger -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
 		<item id="2436" chance="3000"/><!-- skull staff -->
 		<item id="2151" chance="5500"/><!-- talon -->
 		<item id="7591" chance="12500"/><!-- great health potion -->
@@ -95,8 +93,6 @@
 		<item id="7898" chance="450"/><!-- lightning robe -->
 		<item id="7895" chance="450"/><!-- lightning legs -->
 		<item id="2466" chance="375"/><!-- golden armor -->
-		<item id="2114" chance="100"/><!-- piggy bank -->		
-			</inside>
-		</item>
+		<item id="2114" chance="100"/><!-- piggy bank -->
 	</loot>
 </monster>

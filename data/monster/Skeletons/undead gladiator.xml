@@ -57,20 +57,16 @@
 		<item id="2399" countmax="18" chance="12000"/><!-- throwing star -->
 		<item id="2647" chance="4444"/><!-- plate legs -->
 		<item id="2463" chance="3333"/><!-- plate armor -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>	
-				<item id="2200" chance="2000"/><!-- protection amulet -->
-				<item id="2377" chance="1875"/><!-- two handed sword -->	
-				<item id="2165" chance="1650"/><!-- stealth ring -->
-				<item id="2490" chance="1750"/><!-- dark helmet -->
-				<item id="2497" chance="800"/><!-- crusader helmet -->
-				<item id="7618" chance="750"/><!-- health potion -->
-				<item id="2430" chance="900"/><!-- knight axe -->
-				<item id="3962" chance="500"/><!-- beastslayer axe -->
-				<item id="5885" chance="400"/><!-- warrior's sweat -->
-				<item id="7389" chance="200"/><!-- mercenary sword -->
-				<item id="7454" chance="300"/><!-- glorius axe -->
-			</inside>
-		</item>
+		<item id="2200" chance="2000"/><!-- protection amulet -->
+		<item id="2377" chance="1875"/><!-- two handed sword -->	
+		<item id="2165" chance="1650"/><!-- stealth ring -->
+		<item id="2490" chance="1750"/><!-- dark helmet -->
+		<item id="2497" chance="800"/><!-- crusader helmet -->
+		<item id="7618" chance="750"/><!-- health potion -->
+		<item id="2430" chance="900"/><!-- knight axe -->
+		<item id="3962" chance="500"/><!-- beastslayer axe -->
+		<item id="5885" chance="400"/><!-- warrior's sweat -->
+		<item id="7389" chance="200"/><!-- mercenary sword -->
+		<item id="7454" chance="300"/><!-- glorius axe -->
 	</loot>
 </monster>

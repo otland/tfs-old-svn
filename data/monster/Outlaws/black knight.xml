@@ -60,20 +60,16 @@
 		<item id="2377" chance="5800"/><!-- two handed sword -->
 		<item id="2475"  chance="6800"/><!-- warrior helmet -->
 		<item id="2417" chance="3900"/><!-- battle hammer -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>		
-				<item id="2430" chance="3900"/><!-- knight axe -->
-				<item id="2476" chance="2000"/><!-- knight armor -->
-				<item id="2489" chance="1428"/><!-- dark armor -->
-				<item id="2490" chance="6666"/><!-- dark helmet -->
-				<item id="2387" chance="6666"/><!-- double axe -->
-				<item id="2477" chance="1000"/><!-- knight legs -->
-				<item id="2133" chance="1000"/><!-- ruby necklace -->
-				<item id="2414" chance="500"/><!-- dragon lance -->
-				<item id="7895" chance="375"/><!-- lightning legs -->
-				<item id="2114" chance="250"/><!-- piggy bank -->
-				<item id="2195" chance="200"/><!-- boots of haste -->
-			</inside>
-		</item>
+		<item id="2430" chance="3900"/><!-- knight axe -->
+		<item id="2476" chance="2000"/><!-- knight armor -->
+		<item id="2489" chance="1428"/><!-- dark armor -->
+		<item id="2490" chance="6666"/><!-- dark helmet -->
+		<item id="2387" chance="6666"/><!-- double axe -->
+		<item id="2477" chance="1000"/><!-- knight legs -->
+		<item id="2133" chance="1000"/><!-- ruby necklace -->
+		<item id="2414" chance="500"/><!-- dragon lance -->
+		<item id="7895" chance="375"/><!-- lightning legs -->
+		<item id="2114" chance="250"/><!-- piggy bank -->
+		<item id="2195" chance="200"/><!-- boots of haste -->
 	</loot>
 </monster>

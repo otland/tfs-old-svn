@@ -60,20 +60,16 @@
 		<item id="2146" countmax="3" chance="3500"/><!-- small saphire -->
 		<item id="7588" chance="5500"/><!-- strong health potion -->
 		<item id="7589" chance="3850"/><!-- strong mana potion -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
-				<item id="2409" chance="3500"/><!-- serpet sword -->
-				<item id="7590" chance="1000"/><!-- great mana potion -->
-				<item id="8870" chance="3500"/><!-- spirit cloak -->
-				<item id="2214" chance="1100"/><!-- ring of healing -->
-				<item id="8911" chance="1100"/><!-- northwind rod -->
-				<item id="7888" chance="800"/><!-- glacier amulet -->
-				<item id="2165" chance="400"/><!-- stealth ring -->
-				<item id="7896" chance="350"/><!-- glacier kilt -->
-				<item id="8871" chance="350"/><!-- focus cape -->
-				<item id="8884" chance="200"/><!-- leviathan's amulet -->
-				<item id="8878" chance="50"/><!-- crystalline armor -->
-				</inside>
-		</item>
+		<item id="2409" chance="3500"/><!-- serpet sword -->
+		<item id="7590" chance="1000"/><!-- great mana potion -->
+		<item id="8870" chance="3500"/><!-- spirit cloak -->
+		<item id="2214" chance="1100"/><!-- ring of healing -->
+		<item id="8911" chance="1100"/><!-- northwind rod -->
+		<item id="7888" chance="800"/><!-- glacier amulet -->
+		<item id="2165" chance="400"/><!-- stealth ring -->
+		<item id="7896" chance="350"/><!-- glacier kilt -->
+		<item id="8871" chance="350"/><!-- focus cape -->
+		<item id="8884" chance="200"/><!-- leviathan's amulet -->
+		<item id="8878" chance="50"/><!-- crystalline armor -->
 	</loot>
 </monster>

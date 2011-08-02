@@ -44,11 +44,7 @@
 	<loot>
 		<item id="2148" countmax="55" chance="33750"/><!-- gold coin -->
 		<item id="2672" chance="25000"/><!-- dragon ham -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
-			<item id="8900" chance="200"/><!-- spellbook of enlightenment -->
-			<item id="7618" chance="5000"/><!-- health potion -->
-			</inside>
-		</item>
+		<item id="8900" chance="200"/><!-- spellbook of enlightenment -->
+		<item id="7618" chance="5000"/><!-- health potion -->
 	</loot>
 </monster>

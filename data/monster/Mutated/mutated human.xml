@@ -53,8 +53,6 @@
 		<item id="2696" chance="6500"/><!-- cheese -->
 		<item id="2406" chance="10000"/><!-- short sword -->
 		<item id="2484" chance="9000"/><!-- studded armor -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
 		<item id="2161" chance="4600"/><!-- strange talisman -->
 		<item id="2460" chance="6825"/><!-- brass helmet -->
 		<item id="2483" chance="5900"/><!-- scale armor -->
@@ -63,7 +61,5 @@
 		<item id="7910" chance="600"/><!-- peanut -->
 		<item id="2801" chance="350"/><!-- fern -->
 		<item id="2170" chance="100"/><!-- silver amulet -->
-			</inside>
-		</item>
 	</loot>
 </monster>

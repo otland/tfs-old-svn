@@ -66,15 +66,11 @@
 		<item id="6558" chance="6500"/><!-- concentrated demonic blood -->
 		<item id="6500" chance="15000"/><!-- demonic essence -->
 		<item id="9971" chance="1000"/><!-- gold ingot -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
-				<item id="9808" chance="1500"/><!-- rusty armor -->
-				<item id="2393" chance="2500"/><!-- giant sword -->
-				<item id="5944" chance="7500"/><!-- soul orb -->
-				<item id="2430" chance="3000"/><!-- knight axe -->
-				<item id="2383" chance="275000"/><!-- spike sword -->
-				<item id="6553" chance="400"/><!-- ruthless axe -->
-			</inside>
-		</item>
+		<item id="9808" chance="1500"/><!-- rusty armor -->
+		<item id="2393" chance="2500"/><!-- giant sword -->
+		<item id="5944" chance="7500"/><!-- soul orb -->
+		<item id="2430" chance="3000"/><!-- knight axe -->
+		<item id="2383" chance="275000"/><!-- spike sword -->
+		<item id="6553" chance="400"/><!-- ruthless axe -->
 	</loot>
 </monster>

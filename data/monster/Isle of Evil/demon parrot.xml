@@ -22,9 +22,9 @@
 		<attack name="drunk" interval="1000" chance="30" length="5" spread="0">
 			<attribute key="areaEffect" value="rednote"/>
 		</attack>
-                <attack name="lifedrain" interval="1000" chance="30" range="5" min="-25" max="-45">
-                <attribute key="shootEffect" value="suddendeath"/>
-                </attack>
+		<attack name="lifedrain" interval="1000" chance="30" range="5" min="-25" max="-45">
+			<attribute key="shootEffect" value="suddendeath"/>
+		</attack>
 		<attack name="lifedrain" interval="1000" chance="30" range="1" min="-15" max="-45"/>
 	</attacks>
 	<defenses armor="30" defense="35"/>

@@ -40,8 +40,6 @@
 		<item id="2643" chance="40000"/><!-- leather boots -->
 		<item id="2150" chance="100"/><!-- small amethyst -->
 		<item id="2457" chance="1333"/><!-- steel helmet -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
 		<item id="2513" chance="5000"/><!-- battle shield -->
 		<item id="2417" chance="4000"/><!-- battle hammer -->
 		<item id="2787" countmax="3" chance="28500"/><!-- white mushroom -->
@@ -49,7 +47,5 @@
 		<item id="2387" chance="450"/><!-- double axe -->
 		<item id="2459" chance="250"/><!-- iron helmet -->
 		<item id="2208" chance="100"/><!-- axe ring -->
-			</inside>
-		</item>
 	</loot>
 </monster>

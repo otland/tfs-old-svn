@@ -72,20 +72,16 @@
 		<item id="8840" countmax="5" chance="5500"/><!-- raspberry -->
 		<item id="2436" chance="6100"/><!-- skull staff -->
 		<item id="7760" chance="5050"/><!-- small enchanted ruby -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>		
-				<item id="5911" chance="2300"/><!-- red piece of cloth -->
-				<item id="2167" chance="2000"/><!-- energy ring -->
-				<item id="8902" chance="500"/><!-- spellbook of mind control -->
-				<item id="5904" chance="350"/><!-- magic sulphur -->
-				<item id="1986" chance="50"/><!-- red tome -->
-				<item id="9971" chance="250"/><!-- gold ingot -->
-				<item id="9969" chance="250"/><!-- black skull -->
-				<item id="7410" chance="150"/><!-- queens sceptre -->
-				<item id="7891" chance="100"/><!-- magma boots -->
-				<item id="9980" chance="100"/><!-- crystal of power -->
-				<item id="2114" chance="150"/><!-- piggy bank -->
-			</inside>
-		</item>
+		<item id="5911" chance="2300"/><!-- red piece of cloth -->
+		<item id="2167" chance="2000"/><!-- energy ring -->
+		<item id="8902" chance="500"/><!-- spellbook of mind control -->
+		<item id="5904" chance="350"/><!-- magic sulphur -->
+		<item id="1986" chance="50"/><!-- red tome -->
+		<item id="9971" chance="250"/><!-- gold ingot -->
+		<item id="9969" chance="250"/><!-- black skull -->
+		<item id="7410" chance="150"/><!-- queens sceptre -->
+		<item id="7891" chance="100"/><!-- magma boots -->
+		<item id="9980" chance="100"/><!-- crystal of power -->
+		<item id="2114" chance="150"/><!-- piggy bank -->
 	</loot>
 </monster>

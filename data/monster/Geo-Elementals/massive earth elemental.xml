@@ -51,10 +51,7 @@
 		<item id="1294" countmax="10" chance="1200"/><!-- small stone -->
 		<item id="2510" chance="8750"/><!-- plate shield-->
 		<item id="2666" chance="9000"/><!-- meat -->
-
 		<item id="2200" chance="9000"/><!-- protection amulet -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
 		<item id="2145" countmax="2" chance="1000"/><!-- small diamond -->
 		<item id="2436" chance="10000"/><!-- plate armor -->
 		<item id="9809" chance="3500"/><!-- rusty armor -->
@@ -63,7 +60,5 @@
 		<item id="2197" chance="300"/><!-- stone skin amulet -->
 		<item id="7887" chance="250"/><!-- terra amulet -->
 		<item id="7387" chance="200"/><!-- diamond sceptre-->
-			</inside>
-		</item>
 	</loot>
 </monster>

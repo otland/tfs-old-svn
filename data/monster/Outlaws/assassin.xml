@@ -51,8 +51,6 @@
 		<item id="7366" chance="15500"/><!-- viper star -->
 		<item id="2403" chance="7500"/><!-- knife -->
 		<item id="2404" chance="4750"/><!-- combat knife -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
 		<item id="2050" chance="22500"/><!-- torch -->
 		<item id="2457" chance="4350"/><!-- steel helmet -->
 		<item id="2510" chance="1600"/><!-- plate shield -->
@@ -60,7 +58,5 @@
 		<item id="2513" chance="400"/><!-- battle shield -->
 		<item id="2145" countmax="2" chance="200"/><!-- small diamond -->
 		<item id="3969" chance="100"/><!-- horseman helmet -->
-			</inside>
-		</item>
 	</loot>
 </monster>

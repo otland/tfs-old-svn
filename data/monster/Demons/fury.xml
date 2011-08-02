@@ -49,7 +49,7 @@
 	</elements>
 	<immunities>
 		<immunity paralyze="1"/>
-	<immunity invisible="1"/>
+		<immunity invisible="1"/>
 	</immunities>
 	<voices interval="3000" chance="30">
 		<voice sentence="Ahhhhrrrr!"/>
@@ -69,8 +69,6 @@
 		<item id="5022" countmax="3" chance="1300"/><!-- orichalcum pearl -->
 		<item id="2152" countmax="3" chance="2000"/><!-- platinum coin -->
 		<item id="5911" chance="3650"/><!-- red piece of cloth -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
 		<item id="9813" chance="11000"/><!-- rusty legs -->
 		<item id="2120" countmax="3" chance="6000"/><!-- small amethyst -->
 		<item id="5944" chance="21500"/><!-- soul orb -->
@@ -79,9 +77,7 @@
 		<item id="7404" chance="100"/><!-- assassin dagger -->
 		<item id="2487" chance="500"/><!-- crown armor -->
 		<item id="5944" chance="7368"/><!-- assassin star -->
-		<item id="2124" chance="750"/><!-- crystal ring-->	
-		<item id="2156" chance="900"/><!-- red gem -->	
-			</inside>
-		</item>
+		<item id="2124" chance="750"/><!-- crystal ring-->
+		<item id="2156" chance="900"/><!-- red gem -->
 	</loot>
 </monster>

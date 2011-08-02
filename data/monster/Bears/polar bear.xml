@@ -34,6 +34,6 @@
 	<loot>
 		<item id="2671" countmax="2" chance="24000"/><!-- ham -->
 		<item id="2666" countmax="4" chance="19750"/><!-- meat -->
-		<item id="5896" chance="1000"/><!-- bear paw -->
+		<item id="10567" chance="1825"/> <!-- polar bear paw -->
 	</loot>
 </monster>

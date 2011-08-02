@@ -77,8 +77,6 @@
 		<item id="2796" chance="18200"/><!-- green mushroom -->
 		<item id="2177" chance="650"/><!-- life crystal -->
 		<item id="2168" chance="5750"/><!-- life ring -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
 		<item id="7386" chance="2070"/><!-- mercenary sword -->
 		<item id="7456" chance="750"/><!-- noble axe -->
 		<item id="2148" countmax="3" chance="1000"/><!-- onyx arrow -->
@@ -91,8 +89,6 @@
 		<item id="8880" chance="100"/><!-- swamplair armor -->
 		<item id="2528" chance="830"/><!-- tower shield -->
 		<item id="2475" chance="1000"/><!-- warrior helmet -->
-		<item id="2473" chance="15400"/><!-- viking helmet -->		
-			</inside>
-		</item>
+		<item id="2473" chance="15400"/><!-- viking helmet -->
 	</loot>
 </monster>

@@ -74,14 +74,10 @@
 		<item id="2450" chance="8000"/><!-- bone sword -->
 		<item id="2423" chance="7000"/><!-- clerical mace -->
 		<item id="2509" chance="5000"/><!-- steel shield -->
-		<item id="1987" chance="80000"><!-- bag -->
-			<inside>
 		<item id="5898" chance="1500"/><!-- beholder eye -->
 		<item id="7407" chance="1000"/><!-- haunted blade -->
 		<item id="2518" chance="750"/><!-- beholder shield -->
 		<item id="7452" chance="950"/><!-- spiked squelcher-->
 		<item id="3972" chance="500"/><!-- beholder helmet -->
-			</inside>
-		</item>
 	</loot>
 </monster>

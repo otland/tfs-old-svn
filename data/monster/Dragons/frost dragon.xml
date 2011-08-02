@@ -49,9 +49,9 @@
 	</elements>
 	<immunities>
 		<immunity lifedrain="1"/>
-			<immunity paralyze="1"/>
-			<immunity invisible="1"/>
-		</immunities>
+		<immunity paralyze="1"/>
+		<immunity invisible="1"/>
+	</immunities>
 	<voices interval="5000" chance="10">
 		<voice sentence="YOU WILL FREEZE!" yell="1"/>
 		<voice sentence="ZCHHHHH!" yell="1"/>
@@ -71,8 +71,6 @@
 		<item id="7441" chance="5500"/><!-- ice cube -->
 		<item id="2167" chance="5500"/><!-- energy ring -->
 		<item id="2033" chance="3000"/><!-- golden mug -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
 		<item id="7290" chance="500"/><!-- shard -->
 		<item id="2177" chance="400"/><!-- life crystal -->
 		<item id="2492" chance="300"/><!-- dragon scale mail -->
@@ -81,7 +79,5 @@
 		<item id="2528" chance="200"/><!-- tower shield -->
 		<item id="7402" chance="100"/><!-- dragon slayer -->
 		<item id="2396" chance="100"/><!-- ice rapier -->
-			</inside>
-		</item>
 	</loot>
 </monster>

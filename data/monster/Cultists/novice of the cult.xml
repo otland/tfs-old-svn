@@ -54,15 +54,11 @@
 		<item id="2398" chance="6000"/><!-- mace -->
 		<item id="2661" chance="3250"/><!-- scarf -->
 		<item id="2190" chance="600"/><!-- wand of vortex -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>		
-				<item id="1962" chance="500"/><!-- orange book -->		
-				<item id="5810" chance="555"/><!-- pirate voodoo doll -->
-				<item id="2213" chance="450"/><!-- dwarven ring -->
-				<item id="6087" chance="500"/><!-- music sheet 1st verse -->
-				<item id="2145" chance="350"/><!-- small diamond -->
-				<item id="2199" chance="250"/><!-- garlic necklace -->
-			</inside>
-		</item>
+		<item id="1962" chance="500"/><!-- orange book -->
+		<item id="5810" chance="555"/><!-- pirate voodoo doll -->
+		<item id="2213" chance="450"/><!-- dwarven ring -->
+		<item id="6087" chance="500"/><!-- music sheet 1st verse -->
+		<item id="2145" chance="350"/><!-- small diamond -->
+		<item id="2199" chance="250"/><!-- garlic necklace -->
 	</loot>
 </monster>

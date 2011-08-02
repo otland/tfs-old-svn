@@ -64,15 +64,11 @@
 		<item id="2152" countmax="6" chance="29425" /><!-- platinum coin -->
 		<item id="8473" chance="9700" /><!-- ultimate health potion -->
 		<item id="12636" chance="15250" /><!-- lizard essence -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
-				<item id="2148" countmax="100" chance="33400" /><!-- gold coin -->
-				<item id="2148" countmax="100" chance="33400" /><!-- gold coin -->
-				<item id="2185" chance="1550" /><!-- necrotic rod -->
-				<item id="12635" chance="525" /><!-- souleater trophy -->
-				<item id="6300" chance="800" /><!-- death ring -->
-				<item id="5884" chance="600" /><!-- spirit container -->
-			</inside>
-		</item>
+		<item id="2148" countmax="100" chance="33400" /><!-- gold coin -->
+		<item id="2148" countmax="100" chance="33400" /><!-- gold coin -->
+		<item id="2185" chance="1550" /><!-- necrotic rod -->
+		<item id="12635" chance="525" /><!-- souleater trophy -->
+		<item id="6300" chance="800" /><!-- death ring -->
+		<item id="5884" chance="600" /><!-- spirit container -->
 	</loot>
 </monster>

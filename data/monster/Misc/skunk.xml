@@ -27,5 +27,6 @@
 	<loot>
 		<item id="3976" chance="3000"/><!-- worm -->
 		<item id="2666" chance="1000"/><!-- meat -->
+		<item id="11191" chance="700"/> <!-- skunk tail -->
 	</loot>
 </monster>

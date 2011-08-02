@@ -37,14 +37,10 @@
 		<item id="2385" chance="51850"/><!-- sabre -->
 		<item id="2512" chance="23333"/><!-- wooden shield -->
 		<item id="2666" chance="16000"/><!-- meat -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>		
-				<item id="2464" chance="10750"/><!-- chain armor -->
-				<item id="2007" chance="9750"/><!-- blue bottle -->
-				<item id="2530" chance="400"/><!-- copper shield -->
-				<item id="2448" chance="400"/><!-- studded club -->
-				<item id="2411" chance="400"/><!-- poison dagger -->
-			</inside>
-		</item>
+		<item id="2464" chance="10750"/><!-- chain armor -->
+		<item id="2007" chance="9750"/><!-- blue bottle -->
+		<item id="2530" chance="400"/><!-- copper shield -->
+		<item id="2448" chance="400"/><!-- studded club -->
+		<item id="2411" chance="400"/><!-- poison dagger -->
 	</loot>
 </monster>

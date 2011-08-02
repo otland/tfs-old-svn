@@ -48,15 +48,11 @@
 		<item id="2483" chance="9000"/><!-- scale armor -->
 		<item id="2473" chance="3850"/><!-- viking helmet -->
 		<item id="2320" chance="2600"/><!-- skull -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
 		<item id="5913" chance="2500"/><!-- brown piece of cloth -->
 		<item id="7618" chance="2000"/><!-- health potion -->
 		<item id="2168" chance="750"/><!-- life ring-->
 		<item id="7461" chance="500"/><!-- krimhorn helmet -->
 		<item id="7449" chance="650"/><!-- crystal sword -->
 		<item id="7457" chance="300"/><!-- fur boots -->
-			</inside>
-		</item>
 	</loot>
 </monster>

@@ -56,8 +56,6 @@
 		<item id="2509" chance="14000"/><!-- steel shield -->
 		<item id="2455" chance="10000"/><!-- crossbow -->
 		<item id="2397" chance="5000"/><!-- longsword -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
 		<item id="2457" chance="3000"/><!-- steel helmet -->
 		<item id="2647" chance="2000"/><!-- plate legs -->
 		<item id="2413" chance="1950"/><!-- broadsword -->
@@ -71,8 +69,6 @@
 		<item id="2516" chance="400"/><!-- dragon shield -->
 		<item id="2409" chance="400"/><!-- serpent sword -->
 		<item id="7430" chance="250"/><!-- dragonbone staff -->
-		<item id="2177" chance="150"/><!-- life crystal -->	
-			</inside>
-		</item>
+		<item id="2177" chance="150"/><!-- life crystal -->
 	</loot>
 </monster>

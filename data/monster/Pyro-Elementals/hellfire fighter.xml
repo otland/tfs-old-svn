@@ -49,8 +49,6 @@
 		<item id="6500" chance="14500"/><!-- demonic essence -->
 		<item id="2127" chance="2200"/><!-- emerald bangle -->
 		<item id="2392" chance="5000"/><!-- fire sword -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
 		<item id="7894" chance="850"/><!-- magma legs -->
 		<item id="7899" chance="1300"/><!-- magma coat -->
 		<item id="5022" countmax="2" chance="4000"/><!-- orichalcum pearl -->
@@ -61,7 +59,5 @@
 		<item id="2187" chance="8000"/><!-- wand of inferno -->
 		<item id="2432" chance="800"/><!-- fire axe -->
 		<item id="2136" chance="300"/><!-- demonbone amulet -->
-			</inside>
-		</item>
 	</loot>
 </monster>

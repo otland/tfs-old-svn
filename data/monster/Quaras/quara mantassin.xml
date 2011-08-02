@@ -46,16 +46,12 @@
 		<item id="2229" chance="11800"/><!-- skull -->
 		<item id="2654" chance="8750"/><!-- cape -->
 		<item id="2670" countmax="5" chance="1300"/><!-- shrimp -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
-				<item id="2381" chance="4800"/><!-- halberd -->
-				<item id="5895"  chance="1200"/><!-- fish fin -->
-				<item id="2165" chance="2000"/><!-- stealth ring -->
-				<item id="2146" chance="750"/><!-- small sapphire -->
-				<item id="2479" chance="300"/><!-- strange helmet -->
-				<item id="2656" chance="500"/><!-- blue robe -->
-				<item id="7892" chance="200"/><!-- glacier shoes -->
-			</inside>
-		</item>
+		<item id="2381" chance="4800"/><!-- halberd -->
+		<item id="5895"  chance="1200"/><!-- fish fin -->
+		<item id="2165" chance="2000"/><!-- stealth ring -->
+		<item id="2146" chance="750"/><!-- small sapphire -->
+		<item id="2479" chance="300"/><!-- strange helmet -->
+		<item id="2656" chance="500"/><!-- blue robe -->
+		<item id="7892" chance="200"/><!-- glacier shoes -->
 	</loot>
 </monster>

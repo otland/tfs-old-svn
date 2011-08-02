@@ -66,22 +66,18 @@
 		<item id="5944" chance="10000"/><!-- soul orb-->
 		<item id="2383" chance="8750"/><!-- spike sword -->
 		<item id="2178" chance="7000"/><!-- mind stone -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>		
-				<item id="7590" chance="1000"/><!-- great mana potion-->
-				<item id="6300" chance="900"/><!-- death ring -->
-				<item id="7416" chance="750"/><!-- bloody edge -->
-				<item id="2173" chance="100"/><!-- amulet of loss -->
-				<item id="5799" chance="50"/><!-- golden figurine -->
-				<item id="5741" chance="1250"/><!-- skull helmet -->
-				<item id="6500" chance="7500"/><!-- demonic essence -->
-				<item id="2145" chance="7500"/><!-- small diamond -->
-				<item id="5022" countmax="2" chance="9000"/><!-- orichalcum pearl -->
-				<item id="2394" chance="16250"/><!-- morning star -->
-				<item id="2387" chance="27500"/><!-- double axe -->
-				<item id="2417" chance="3750"/><!-- battle hammer -->
-				<item id="2152" countmax="4" chance="4100"/><!-- platinum coin -->
-			</inside>
-		</item>
+		<item id="7590" chance="1000"/><!-- great mana potion-->
+		<item id="6300" chance="900"/><!-- death ring -->
+		<item id="7416" chance="750"/><!-- bloody edge -->
+		<item id="2173" chance="100"/><!-- amulet of loss -->
+		<item id="5799" chance="50"/><!-- golden figurine -->
+		<item id="5741" chance="1250"/><!-- skull helmet -->
+		<item id="6500" chance="7500"/><!-- demonic essence -->
+		<item id="2145" chance="7500"/><!-- small diamond -->
+		<item id="5022" countmax="2" chance="9000"/><!-- orichalcum pearl -->
+		<item id="2394" chance="16250"/><!-- morning star -->
+		<item id="2387" chance="27500"/><!-- double axe -->
+		<item id="2417" chance="3750"/><!-- battle hammer -->
+		<item id="2152" countmax="4" chance="4100"/><!-- platinum coin -->
 	</loot>
 </monster>

@@ -42,13 +42,8 @@
 		<item id="2649" chance="9500"/><!-- leather legs -->
 		<item id="2478" chance="7000"/><!-- brass legs -->
 		<item id="2260" chance="6000"/><!-- blank rune -->
-		<item id="1988" chance="100000"><!-- backpack -->
-			<inside>
-				<item id="2412" chance="5500"/><!-- katana -->
-				<item id="2425" chance="1000"/><!-- obsidian lance -->		
-				<item id="2165" chance="300"/><!-- stealth ring -->		
-
-			</inside>
-		</item>
+		<item id="2412" chance="5500"/><!-- katana -->
+		<item id="2425" chance="1000"/><!-- obsidian lance -->
+		<item id="2165" chance="300"/><!-- stealth ring -->
 	</loot>
 </monster>

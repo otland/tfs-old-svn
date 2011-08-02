@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <monster name="Lizard Chosen" nameDescription="a lizard chosen" race="blood" experience="2200" speed="240" manacost="0">
-<health now="3050" max="3050"/>
-<look type="344" corpse="11288"/>
-<targetchange interval="5000" chance="8"/>
-<strategy attack="100" defense="0"/>
+	<health now="3050" max="3050"/>
+	<look type="344" corpse="11288"/>
+	<targetchange interval="5000" chance="8"/>
+	<strategy attack="100" defense="0"/>
 	<flags>
 		<flag summonable="0"/>
 		<flag attackable="1"/>
@@ -57,13 +57,9 @@
 		<item id="11327" chance="5800" /><!-- cursed shoulder spikes -->
 		<item id="7591" countmax="3" chance="5350" /><!-- great health potion -->
 		<item id="11303" chance="1225" /><!-- zaoan shoes -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
-				<item id="2145" countmax="5" chance="2150" /><!-- small diamond -->
-				<item id="11326" chance="3350" /><!-- corrupted flag -->
-				<item id="5881" countmax="3" chance="1475" /><!-- lizard scale -->
-				<item id="2528" chance="1450" /><!-- tower shield -->
-			</inside>
-		</item>
+		<item id="2145" countmax="5" chance="2150" /><!-- small diamond -->
+		<item id="11326" chance="3350" /><!-- corrupted flag -->
+		<item id="5881" countmax="3" chance="1475" /><!-- lizard scale -->
+		<item id="2528" chance="1450" /><!-- tower shield -->
 	</loot>
 </monster>

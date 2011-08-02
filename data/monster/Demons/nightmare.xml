@@ -65,8 +65,6 @@
 		<item id="6500" chance="10000"/><!-- demonic essence -->
 		<item id="2387" chance="15000"/><!-- double axe -->
 		<item id="2671" countmax="2" chance="15000"/><!-- ham -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
 		<item id="2477" chance="3333"/><!-- knight legs -->
 		<item id="2666" countmax="4" chance="17500"/><!-- meat -->
 		<item id="5669" chance="100"/><!-- mysterious voodoo skull -->
@@ -76,7 +74,5 @@
 		<item id="5944" chance="20000"/><!-- soul orb -->
 		<item id="2457" chance="500"/><!-- steel helmet -->
 		<item id="2454" chance="100"/><!-- war axe -->
-			</inside>
-		</item>
 	</loot>
 </monster>

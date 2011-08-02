@@ -43,15 +43,11 @@
 		<item id="2556" chance="6500"/><!-- wooden hammer  -->
 		<item id="2570" chance="4850"/><!-- rolling pin -->
 		<item id="2744" chance="4800"/><!-- red rose -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
-				<item id="1681" chance="2500"/><!-- blue pillow -->
-				<item id="5553" chance="850"/><!-- rum flak -->
-				<item id="2802" chance="800"/><!-- sling herb -->		
-				<item id="9808" chance="750"/><!-- rusty armor -->
-				<item id="2213" chance="200"/><!-- dwarven ring -->
-				<item id="2072" chance="7500"/><!-- lute -->
-			</inside>
-		</item>
+		<item id="1681" chance="2500"/><!-- blue pillow -->
+		<item id="5553" chance="850"/><!-- rum flak -->
+		<item id="2802" chance="800"/><!-- sling herb -->		
+		<item id="9808" chance="750"/><!-- rusty armor -->
+		<item id="2213" chance="200"/><!-- dwarven ring -->
+		<item id="2072" chance="7500"/><!-- lute -->
 	</loot>
 </monster>

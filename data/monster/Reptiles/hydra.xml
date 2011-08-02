@@ -61,8 +61,6 @@
 		<item id="2177" chance="500"/><!-- life crystal -->
 		<item id="2197" chance="900"/><!-- stone skin amulet -->
 		<item id="2146" chance="5000"/><!-- small sapphire -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
 		<item id="4850" chance="600"/><!-- hydra egg -->
 		<item id="2214" chance="1050"/><!-- ring of healing -->
 		<item id="2475" chance="1000"/><!-- warrior helmet -->
@@ -70,7 +68,5 @@
 		<item id="2536" chance="200"/><!-- medusa shield -->
 		<item id="2498" chance="200"/><!-- royal helmet -->
 		<item id="2195" chance="120"/><!-- boots of haste -->
-			</inside>
-		</item>
 	</loot>
 </monster>

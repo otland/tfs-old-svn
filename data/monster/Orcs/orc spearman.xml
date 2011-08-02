@@ -35,15 +35,11 @@
 	</voices>
 	<loot>
 		<item id="2148" countmax="11" chance="22500"/><!-- gold coin -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
-				<item id="2420" chance="17250"/><!-- machete -->
-				<item id="2666" chance="30000"/><!-- meat -->
-				<item id="2389" chance="12000"/><!-- spear -->
-				<item id="2482" chance="12000"/><!-- studded helmet -->
-				<item id="2468" chance="12000"/><!-- studded legs -->
-				<item id="2220" chance="7000"/><!-- dirty fur -->
-			</inside>
-		</item>
+		<item id="2420" chance="17250"/><!-- machete -->
+		<item id="2666" chance="30000"/><!-- meat -->
+		<item id="2389" chance="12000"/><!-- spear -->
+		<item id="2482" chance="12000"/><!-- studded helmet -->
+		<item id="2468" chance="12000"/><!-- studded legs -->
+		<item id="2220" chance="7000"/><!-- dirty fur -->
 	</loot>
 </monster>

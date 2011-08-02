@@ -41,8 +41,6 @@
 		<item id="2389" countmax="3" chance="12000"/><!-- spear -->
 		<item id="2464" chance="10000"/><!-- chain armor -->
 		<item id="2483" chance="8800"/><!-- scale armor -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
 		<item id="3965" chance="6000"/><!-- hunting spear -->
 		<item id="5881" chance="650"/><!-- lizard scale -->
 		<item id="2425" chance="3000"/><!-- obsidian lance -->
@@ -51,7 +49,5 @@
 		<item id="7618" chance="500"/><!-- health potion -->
 		<item id="2381" chance="2000"/><!-- halberd -->
 		<item id="2145" chance="300"/><!-- small diamond -->
-			</inside>
-		</item>
 	</loot>
 </monster>

@@ -47,15 +47,11 @@
 		<item id="2394" chance="5000"/><!-- morning star -->
 		<item id="2381" chance="2222"/><!-- halberd -->
 		<item id="2670" countmax="5" chance="20000"/><!-- shrimp -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
-				<item id="2147" chance="1538"/><!-- small ruby -->
-				<item id="5895" chance="2000"/><!-- fish fin -->
-				<item id="2475" chance="1333"/><!-- warrior helmet -->
-				<item id="7897" chance="1333"/><!-- glacier robe -->
-				<item id="7591" chance="1333"/><!-- great health potion -->		
-				<item id="2487" chance="500"/><!-- crown armor -->
-			</inside>
-		</item>
+		<item id="2147" chance="1538"/><!-- small ruby -->
+		<item id="5895" chance="2000"/><!-- fish fin -->
+		<item id="2475" chance="1333"/><!-- warrior helmet -->
+		<item id="7897" chance="1333"/><!-- glacier robe -->
+		<item id="7591" chance="1333"/><!-- great health potion -->		
+		<item id="2487" chance="500"/><!-- crown armor -->
 	</loot>
 </monster>

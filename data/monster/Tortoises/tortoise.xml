@@ -32,13 +32,9 @@
 		<item id="2671" countmax="2" chance="4000"/><!-- ham -->
 		<item id="2510" chance="4500"/><!-- plate shield -->
 		<item id="2667" chance="4000"/><!-- fish -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
 		<item id="5678" countmax="3" chance="1000"/><!-- tortoise egg -->
 		<item id="6131" chance="450"/><!-- tortoise shield -->
 		<item id="5899" chance="1300"/><!-- turtle shell -->
 		<item id="2417" chance="450"/><!-- battle hammer -->
-			</inside>
-		</item>
 	</loot>
 </monster>

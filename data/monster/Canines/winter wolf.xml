@@ -30,5 +30,6 @@
 	</elements>
 	<loot>
 		<item id="2666" countmax="2" chance="15000"/><!-- meat -->
+		<item id="11212" chance="9425"/> <!-- winter wolf fur -->
 	</loot>
 </monster>

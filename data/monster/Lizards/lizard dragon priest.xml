@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <monster name="Lizard Dragon Priest" nameDescription="a lizard dragon priest" race="blood" experience="1320" speed="320" manacost="0">
-<health now="1450" max="1450"/>
-<look type="339" corpse="11280"/>
-<targetchange interval="5000" chance="8"/>
-<strategy attack="100" defense="0"/>
+	<health now="1450" max="1450"/>
+	<look type="339" corpse="11280"/>
+	<targetchange interval="5000" chance="8"/>
+	<strategy attack="100" defense="0"/>
 	<flags>
 		<flag summonable="0"/>
 		<flag attackable="1"/>
@@ -56,17 +56,13 @@
 		<item id="7589" chance="12575" /><!-- strong mana potion -->
 		<item id="5876" chance="1375" /><!-- lizard leather -->
 		<item id="2181" chance="1550" /><!-- terra rod -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
-				<item id="7590" chance="8625" /><!-- great mana potion -->
-				<item id="2148" countmax="100" chance="38450" /><!-- gold coin -->
-				<item id="2148" countmax="90" chance="38450" /><!-- gold coin -->
-				<item id="11356" chance="775" /><!-- zaoan robe -->
-				<item id="2187" chance="2000" /><!-- wand of inferno -->
-				<item id="5881" countmax="3" chance="1525" /><!-- lizard scale -->
-				<item id="11303" chance="950" /><!-- zaoan shoes -->
-				<item id="2168" chance="1350" /><!-- life ring -->
-			</inside>
-		</item>
+		<item id="7590" chance="8625" /><!-- great mana potion -->
+		<item id="2148" countmax="100" chance="38450" /><!-- gold coin -->
+		<item id="2148" countmax="90" chance="38450" /><!-- gold coin -->
+		<item id="11356" chance="775" /><!-- zaoan robe -->
+		<item id="2187" chance="2000" /><!-- wand of inferno -->
+		<item id="5881" countmax="3" chance="1525" /><!-- lizard scale -->
+		<item id="11303" chance="950" /><!-- zaoan shoes -->
+		<item id="2168" chance="1350" /><!-- life ring -->
 	</loot>
 </monster>

@@ -66,8 +66,6 @@
 		<item id="6558" chance="37000"/><!-- concentrated demonic blood -->
 		<item id="2162" chance="8150"/><!-- magic lightwand -->
 		<item id="7590" chance="7850"/><!-- great mana potion -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
 		<item id="2521" chance="3100"/><!-- dark shield -->
 		<item id="2550" chance="9500"/><!-- scythe -->
 		<item id="8910" chance="700"/><!-- underworld rod -->
@@ -76,8 +74,6 @@
 		<item id="7418" chance="450"/><!-- nightmare blade -->
 		<item id="5022" countmax="4" chance="1500"/><!-- orichalcum pearl -->
 		<item id="8889" chance="560"/><!-- skullcracker armor -->
-		<item id="6300" chance="280"/><!-- death ring -->		
-			</inside>
-		</item>
+		<item id="6300" chance="280"/><!-- death ring -->
 	</loot>
 </monster>

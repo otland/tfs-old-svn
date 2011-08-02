@@ -44,10 +44,8 @@
 		<element icePercent="-15"/>
 	</elements>
 	<immunities>
-		<immunity physical="0"/>
 		<immunity energy="1"/>
 		<immunity fire="1"/>
-		<immunity poison="0"/>
 		<immunity lifedrain="1"/>
 		<immunity paralyze="1"/>
 		<immunity outfit="1"/>

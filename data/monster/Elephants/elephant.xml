@@ -35,11 +35,7 @@
 	<loot>
 		<item id="2671" countmax="4" chance="15000"/><!-- ham -->
 		<item id="2666" countmax="3" chance="30000"/><!-- meat -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
 		<item id="3956" countmax="2" chance="3500"/><!-- elephant tusk -->
 		<item id="3973" chance="200"/><!-- tusk shield -->
-			</inside>
-		</item>
 	</loot>
 </monster>

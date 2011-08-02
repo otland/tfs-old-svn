@@ -62,8 +62,6 @@
 		<item id="2796" chance="12000"/><!-- green mushroom -->
 		<item id="2177" chance="950"/><!-- life crystal -->	
 		<item id="2547" countmax="7" chance="2500"/><!-- power bolt -->	
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
 		<item id="5948" chance="750"/><!-- red dragon leather -->
 		<item id="5882" chance="1750"/><!-- red dragon scale -->
 		<item id="2498" chance="250"/><!-- royal helmet -->
@@ -74,7 +72,5 @@
 		<item id="2528" chance="950"/><!-- tower shield -->
 		<item id="7402" chance="150"/><!-- dragon slayer -->
 		<item id="2492" chance="200"/><!-- dragon scale mail -->
-			</inside>
-		</item>
 	</loot>
 </monster>

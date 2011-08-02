@@ -82,8 +82,6 @@
 		<item id="7590" chance="10000"/><!-- great mana potion -->
 		<item id="7590" chance="10000"/><!-- great mana potion -->
 		<item id="2396" chance="1000"/><!-- ice rapier -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
 		<item id="2472" chance="150"/><!-- magic plate armor -->
 		<item id="2514" chance="550"/><!-- mastermind shield -->
 		<item id="2176" chance="3000"/><!-- orb -->
@@ -101,7 +99,5 @@
 		<item id="7382" chance="950"/><!-- demonrage sword -->
 		<item id="2470" chance="450"/><!-- golden legs -->
 		<item id="7393" chance="50"/><!-- demon trophy -->
-			</inside>
-		</item>
 	</loot>
 </monster>

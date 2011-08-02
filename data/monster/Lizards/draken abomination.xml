@@ -66,15 +66,11 @@
 		<item id="9970" countmax="4" chance="2500" /><!-- small topaz -->
 		<item id="8472" countmax="3" chance="3775" /><!-- great spirit potion -->
 		<item id="7903" chance="2450" /><!-- terra hood -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
-				<item id="12629" chance="1167" /><!-- scale of corruption -->
-				<item id="8922" chance="1450" /><!-- wand of voodoo -->
-				<item id="12646" chance="1025" /><!-- draken boots -->
-				<item id="12644" chance="200" /><!-- shield of corruption -->
-				<item id="12647" chance="200" /><!-- snake god's wristguard -->
-				<item id="13538" chance="400" /><!-- bamboo leaves -->
-			</inside>
-		</item>
+		<item id="12629" chance="1167" /><!-- scale of corruption -->
+		<item id="8922" chance="1450" /><!-- wand of voodoo -->
+		<item id="12646" chance="1025" /><!-- draken boots -->
+		<item id="12644" chance="200" /><!-- shield of corruption -->
+		<item id="12647" chance="200" /><!-- snake god's wristguard -->
+		<item id="13538" chance="400" /><!-- bamboo leaves -->
 	</loot>
 </monster>

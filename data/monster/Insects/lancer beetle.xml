@@ -47,12 +47,8 @@
 		<item id="2148" countmax="60" chance1="2000" chancemax="6400"/><!-- gold coin -->
 		<item id="10609" chance="17500"/><!-- lump of dirt -->
 		<item id="10557" chance="12500"/><!-- poisonous slime -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
-				<item id="11372" chance="7000"/><!-- lancer beetle shell -->
-				<item id="11374" chance="400"/><!-- beetle necklace -->
-				<item id="2150" chance="800"/><!-- small amethyst -->
-			</inside>
-		</item>
+		<item id="11372" chance="7000"/><!-- lancer beetle shell -->
+		<item id="11374" chance="400"/><!-- beetle necklace -->
+		<item id="2150" chance="800"/><!-- small amethyst -->
 	</loot>
 </monster>

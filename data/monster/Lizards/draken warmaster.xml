@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <monster name="Draken Warmaster" nameDescription="a draken warmaster" race="blood" experience="2400" speed="220" manacost="0">
-<health now="4150" max="4150"/>
-<look type="334" corpse="11107"/>
-<targetchange interval="5000" chance="8"/>
-<strategy attack="100" defense="0"/>
+	<health now="4150" max="4150"/>
+	<look type="334" corpse="11107"/>
+	<targetchange interval="5000" chance="8"/>
+	<strategy attack="100" defense="0"/>
 	<flags>
 		<flag summonable="0"/>
 		<flag attackable="1"/>
@@ -43,16 +43,12 @@
 		<item id="2152" countmax="5" chance="30625" /><!-- platinum coin -->
 		<item id="11323" chance="8225" /><!-- zaoan halberd -->
 		<item id="8473" chance="4350" /><!-- ultimate health potion -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
-				<item id="2666" chance="30300" /><!-- meat -->
-				<item id="2148" countmax="100" chance="41000" /><!-- gold coin -->
-				<item id="2148" countmax="100" chance="41000" /><!-- gold coin -->
-				<item id="11303" chance="2500" /><!-- zaoan shoes -->
-				<item id="2123" chance="700" /><!-- ring of the sky -->
-				<item id="2147" countmax="5" chance="1425" /><!-- small ruby -->
-				<item id="11305" chance="1175" /><!-- drakinata -->
-			</inside>
-		</item>
+		<item id="2666" chance="30300" /><!-- meat -->
+		<item id="2148" countmax="100" chance="41000" /><!-- gold coin -->
+		<item id="2148" countmax="100" chance="41000" /><!-- gold coin -->
+		<item id="11303" chance="2500" /><!-- zaoan shoes -->
+		<item id="2123" chance="700" /><!-- ring of the sky -->
+		<item id="2147" countmax="5" chance="1425" /><!-- small ruby -->
+		<item id="11305" chance="1175" /><!-- drakinata -->
 	</loot>
 </monster>

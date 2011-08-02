@@ -54,18 +54,14 @@
 		<item id="2649" chance="13500"/><!-- leather legs -->
 		<item id="2403" chance="10000"/><!-- knife -->
 		<item id="2461" chance="8000"/><!-- leather helmet -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
-				<item id="2817" chance="17500"/><!-- dead snake -->
-				<item id="2050" chance="20000"/><!-- torch -->
-				<item id="2465" chance="3500"/><!-- brass armor -->
-				<item id="5878" chance="3250"/><!-- minotaur leather -->
-				<item id="2404" chance="3000"/><!-- combat knife -->
-				<item id="2648" chance="2500"/><!-- chain legs -->
-				<item id="7425" chance="1000"/><!-- taurus mace -->
-				<item id="2189" chance="1000"/><!-- wand of cosmic energy -->
-				<item id="7620" chance="750"/><!-- mana potion -->
-			</inside>
-		</item>
+		<item id="2817" chance="17500"/><!-- dead snake -->
+		<item id="2050" chance="20000"/><!-- torch -->
+		<item id="2465" chance="3500"/><!-- brass armor -->
+		<item id="5878" chance="3250"/><!-- minotaur leather -->
+		<item id="2404" chance="3000"/><!-- combat knife -->
+		<item id="2648" chance="2500"/><!-- chain legs -->
+		<item id="7425" chance="1000"/><!-- taurus mace -->
+		<item id="2189" chance="1000"/><!-- wand of cosmic energy -->
+		<item id="7620" chance="750"/><!-- mana potion -->
 	</loot>
 </monster>

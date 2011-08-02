@@ -55,20 +55,16 @@
 		<item id="2200" chance="7500"/><!-- protection amulet -->
 		<item id="2647" chance="6000"/><!-- plate legs -->
 		<item id="3965" chance="7000"/><!-- hunting spear -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
-				<item id="2478" chance="9000"/><!-- brass legs -->
-				<item id="2465" chance="9000"/><!-- brass armor -->		
-				<item id="2490" chance="6500"/><!-- dark helmet -->
-				<item id="2377" chance="5000"/><!-- two-handed sword -->
-				<item id="2434" chance="1000"/><!-- dragon hammer -->
-				<item id="2497" chance="750"/><!-- crusader helmet -->
-				<item id="2165" chance="900"/><!-- stealth ring -->
-				<item id="7618" chance="1000"/><!-- health potion -->
-				<item id="7395" chance="100"/><!-- orc trophy -->
-				<item id="2179" chance="100"/><!-- golden ring -->
-				<item id="7891" chance="100"/><!-- magma boots -->
-			</inside>
-		</item>
+		<item id="2478" chance="9000"/><!-- brass legs -->
+		<item id="2465" chance="9000"/><!-- brass armor -->		
+		<item id="2490" chance="6500"/><!-- dark helmet -->
+		<item id="2377" chance="5000"/><!-- two-handed sword -->
+		<item id="2434" chance="1000"/><!-- dragon hammer -->
+		<item id="2497" chance="750"/><!-- crusader helmet -->
+		<item id="2165" chance="900"/><!-- stealth ring -->
+		<item id="7618" chance="1000"/><!-- health potion -->
+		<item id="7395" chance="100"/><!-- orc trophy -->
+		<item id="2179" chance="100"/><!-- golden ring -->
+		<item id="7891" chance="100"/><!-- magma boots -->
 	</loot>
 </monster>

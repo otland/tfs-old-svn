@@ -47,14 +47,10 @@
 		<item id="2406" chance="10000"/><!-- short sword -->
 		<item id="2230" chance="15000"/><!-- bone -->
 		<item id="2379" chance="20000"/><!-- dagger -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
-				<item id="2467" chance="10000"/><!-- leather armor -->
-				<item id="2559" chance="8750"/><!-- small axe -->
-				<item id="1294" countmax="4" chance="9000"/><!-- small stone -->
-				<item id="2235" chance="9000"/><!-- moldy cheese -->
-				<item id="2461" chance="13000"/><!-- leather helmet -->
-			</inside>
-		</item>
+		<item id="2467" chance="10000"/><!-- leather armor -->
+		<item id="2559" chance="8750"/><!-- small axe -->
+		<item id="1294" countmax="4" chance="9000"/><!-- small stone -->
+		<item id="2235" chance="9000"/><!-- moldy cheese -->
+		<item id="2461" chance="13000"/><!-- leather helmet -->
 	</loot>
 </monster>

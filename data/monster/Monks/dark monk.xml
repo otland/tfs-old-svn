@@ -51,15 +51,11 @@
 		<item id="2015" chance="10000"/><!-- brown flask -->
 		<item id="2044" chance="11750"/><!-- lamp -->
 		<item id="2467" chance="3500"/><!-- leather armor -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
-				<item id="2177" chance="2750"/><!-- life crystal -->
-				<item id="7620" chance="700"/><!-- mana potion -->
-				<item id="2166" chance="500"/><!-- power ring -->
-				<item id="1949" chance="18000"/><!-- scroll -->
-				<item id="2401" chance="20000"/><!-- staff -->
-				<item id="2642" chance="8250"/><!-- sandals -->	
-			</inside>
-		</item>
+		<item id="2177" chance="2750"/><!-- life crystal -->
+		<item id="7620" chance="700"/><!-- mana potion -->
+		<item id="2166" chance="500"/><!-- power ring -->
+		<item id="1949" chance="18000"/><!-- scroll -->
+		<item id="2401" chance="20000"/><!-- staff -->
+		<item id="2642" chance="8250"/><!-- sandals -->
 	</loot>
 </monster>

@@ -50,11 +50,7 @@
 		<item id="2148" chance="50000" countmax="60"/><!-- gold coin -->
 		<item id="2148" chance="50000" countmax="40"/><!-- gold coin -->
 		<item id="2152" chance="5000" countmax="3"/><!-- platinum coin -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
 		<item id="8306" chance="100000"/><!-- pure energy -->
 		<item id="8879" chance="1000"/><!-- voltage armor -->
-			</inside>
-		</item>
 	</loot>
 </monster>

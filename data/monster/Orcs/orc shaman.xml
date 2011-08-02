@@ -53,13 +53,9 @@
 		<item id="2686" countmax="2" chance="10000"/><!-- corncob -->
 		<item id="2458" chance="9500"/><!-- chain helmet -->
 		<item id="2464" chance="8000"/><!-- chain armor -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
-				<item id="2389" chance="6350"/><!-- spear -->
-				<item id="1958"  chance="3500"/><!-- book -->
-				<item id="2188" chance="1500"/><!-- wand of decay -->
-				<item id="2401" chance="3000"/><!-- staff -->
-			</inside>
-		</item>
+		<item id="2389" chance="6350"/><!-- spear -->
+		<item id="1958"  chance="3500"/><!-- book -->
+		<item id="2188" chance="1500"/><!-- wand of decay -->
+		<item id="2401" chance="3000"/><!-- staff -->
 	</loot>
 </monster>

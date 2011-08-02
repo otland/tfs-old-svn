@@ -49,13 +49,9 @@
 		<item id="2148" countmax="60" chance="41000"/><!-- gold coin -->
 		<item id="7439" chance="1250"/><!-- berserk potion -->
 		<item id="8303" chance="20750" /><!-- energy soil -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
 		<item id="7591" chance="12000" /><!-- great health potion -->
 		<item id="2150" countmax="2" chance="4000"/><!-- small amethyst -->
 		<item id="2214" chance="4500"/><!-- ring of healing -->
 		<item id="8920" chance="650"/><!-- wand of starstorm -->
-			</inside>
-		</item>
 	</loot>
 </monster>

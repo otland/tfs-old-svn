@@ -51,13 +51,9 @@
 		<item id="2148" countmax="69" chance="18000"/><!-- gold coin -->
 		<item id="2237" chance="9000"/><!-- dirty cape -->
 		<item id="2236" chance="6000"/><!-- torn book -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
 		<item id="2165" chance="800"/><!-- stealth ring -->
 		<item id="1951" chance="1250"/><!-- parchment -->
 		<item id="2383" chance="600"/><!-- spike sword -->
 		<item id="2655" chance="400"/><!-- red robe -->
-			</inside>
-		</item>
 	</loot>
 </monster>

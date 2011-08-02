@@ -53,18 +53,14 @@
 		<item id="2148" countmax="50" chance="41000"/><!-- gold coin -->
 		<item id="2195" chance="200"/><!-- boots of haste -->
 		<item id="2127" chance="900"/><!-- emerald bangle -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
-				<item id="8873" chance="1250"/><!-- hibiscus dress -->
-				<item id="2186" chance="4900"/><!-- moonlight rod -->
-				<item id="5670" chance="110"/><!-- mysterious voodo skull -->
-				<item id="2152" countmax="4" chance="2500"/><!-- platinum coin -->
-				<item id="9809" chance="950"/><!-- rusty armor -->
-				<item id="2145" countmax="2" chance="1000"/><!-- small diamond -->
-				<item id="7589" chance="9750"/><!-- strong mana potion -->
-				<item id="7588" chance="4800"/><!-- strong health potion -->
-				<item id="9837" chance="925"/><!-- velvet tapestry -->		
-			</inside>
-		</item>
+		<item id="8873" chance="1250"/><!-- hibiscus dress -->
+		<item id="2186" chance="4900"/><!-- moonlight rod -->
+		<item id="5670" chance="110"/><!-- mysterious voodo skull -->
+		<item id="2152" countmax="4" chance="2500"/><!-- platinum coin -->
+		<item id="9809" chance="950"/><!-- rusty armor -->
+		<item id="2145" countmax="2" chance="1000"/><!-- small diamond -->
+		<item id="7589" chance="9750"/><!-- strong mana potion -->
+		<item id="7588" chance="4800"/><!-- strong health potion -->
+		<item id="9837" chance="925"/><!-- velvet tapestry -->		
 	</loot>
 </monster>

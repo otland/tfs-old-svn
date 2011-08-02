@@ -66,22 +66,18 @@
 		<item id="2227" countmax="2" chance="25000"/><!-- rotten meat -->
 		<item id="9808" chance="7000"/><!-- rusty armor -->
 		<item id="2483" chance="10500"/><!-- scale armor -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
-				<item id="9808" chance="7000"/><!-- rusty armor -->
-				<item id="5806" chance="4500"/><!-- silver goblet -->
-				<item id="2457" chance="10500"/><!-- steel helmet -->
-				<item id="2133" chance="1500"/><!-- ruby necklace -->
-				<item id="5944" chance="4500"/><!-- soul orb -->
-				<item id="2197" chance="2000"/><!-- stone skin amulet -->
-				<item id="7413" chance="2500"/><!-- titan axe -->
-				<item id="6300" chance="750"/><!-- death ring -->
-				<item id="6526" chance="900"/><!-- skeleton decoration -->
-				<item id="5801" chance="500"/><!-- key ring -->
-				<item id="2436" chance="650"/><!-- skull staff -->
-				<item id="2173" chance="50"/><!-- amulet of loss -->
-				<item id="8903" chance="100"/><!-- spellbook of lost souls -->
-			</inside>
-		</item>
+		<item id="9808" chance="7000"/><!-- rusty armor -->
+		<item id="5806" chance="4500"/><!-- silver goblet -->
+		<item id="2457" chance="10500"/><!-- steel helmet -->
+		<item id="2133" chance="1500"/><!-- ruby necklace -->
+		<item id="5944" chance="4500"/><!-- soul orb -->
+		<item id="2197" chance="2000"/><!-- stone skin amulet -->
+		<item id="7413" chance="2500"/><!-- titan axe -->
+		<item id="6300" chance="750"/><!-- death ring -->
+		<item id="6526" chance="900"/><!-- skeleton decoration -->
+		<item id="5801" chance="500"/><!-- key ring -->
+		<item id="2436" chance="650"/><!-- skull staff -->
+		<item id="2173" chance="50"/><!-- amulet of loss -->
+		<item id="8903" chance="100"/><!-- spellbook of lost souls -->
 	</loot>
 </monster>

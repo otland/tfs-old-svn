@@ -25,8 +25,8 @@
 		</attack>
 		<attack name="energy" interval="1000" chance="25" range="7" target="1" min="-60" max="-150">
 			<attribute key="shootEffect" value="energy"/>
-		<attribute key="areaEffect" value="energy"/>
-	</attack>
+			<attribute key="areaEffect" value="energy"/>
+		</attack>
 	</attacks>
 	<defenses armor="25" defense="20">
 		<defense name="speed" interval="3000" chance="40" speedchange="380" duration="80000">
@@ -40,7 +40,6 @@
 		<element energyPercent="-20"/>
 	</elements>
 	<immunities>
-		<immunity lifedrain="0"/>
 		<immunity paralyze="1"/>
 		<immunity outfit="1"/>
 		<immunity drunk="1"/>
@@ -57,19 +56,15 @@
 		<item id="2463" chance="6500"/><!-- plate armor -->
 		<item id="2463" chance="4000"/><!-- ice cube -->
 		<item id="2457" chance="4000"/><!-- steel helmet -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
-				<item id="7437" chance="1100"/><!-- sapphire hammer -->
-				<item id="5879" chance="1100"/><!-- spider silk-->
-				<item id="7449" chance="725"/><!-- crystal sword -->
-				<item id="7589" chance="500"/><!-- strong mana potion -->
-				<item id="2477" chance="200"/><!-- knight legs -->
-				<item id="7290" chance="500"/><!-- shard -->
-				<item id="2169" chance="450"/><!-- time ring -->
-				<item id="7902" chance="300"/><!-- glacier mask -->
-				<item id="2476" chance="200"/><!-- knight armor -->
-				<item id="2171" chance="250"/><!-- platinum amulet -->
-			</inside>
-		</item>
+		<item id="7437" chance="1100"/><!-- sapphire hammer -->
+		<item id="5879" chance="1100"/><!-- spider silk-->
+		<item id="7449" chance="725"/><!-- crystal sword -->
+		<item id="7589" chance="500"/><!-- strong mana potion -->
+		<item id="2477" chance="200"/><!-- knight legs -->
+		<item id="7290" chance="500"/><!-- shard -->
+		<item id="2169" chance="450"/><!-- time ring -->
+		<item id="7902" chance="300"/><!-- glacier mask -->
+		<item id="2476" chance="200"/><!-- knight armor -->
+		<item id="2171" chance="250"/><!-- platinum amulet -->
 	</loot>
 </monster>

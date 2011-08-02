@@ -60,16 +60,12 @@
 		<item id="2406" chance="14000"/><!-- short sword -->
 		<item id="2483" chance="10500"/><!-- scale armor -->
 		<item id="2796" chance="3000"/><!-- green mushroom -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
-				<item id="2423" chance="1700"/><!-- clerical mace -->
-				<item id="7589" chance="1250"/><!-- strong mana potion -->
-				<item id="2663" chance="375"/><!-- mystic turban -->
-				<item id="2436" chance="125"/><!-- skull staff -->
-				<item id="7456" chance="50"/><!-- noble axe -->
-				<item id="8901" chance="125"/><!-- spellbook of warding -->
-				<item id="2195" chance="275"/><!-- boots of haste -->
-			</inside>
-		</item>
+		<item id="2423" chance="1700"/><!-- clerical mace -->
+		<item id="7589" chance="1250"/><!-- strong mana potion -->
+		<item id="2663" chance="375"/><!-- mystic turban -->
+		<item id="2436" chance="125"/><!-- skull staff -->
+		<item id="7456" chance="50"/><!-- noble axe -->
+		<item id="8901" chance="125"/><!-- spellbook of warding -->
+		<item id="2195" chance="275"/><!-- boots of haste -->
 	</loot>
 </monster>

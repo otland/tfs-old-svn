@@ -66,8 +66,6 @@
 		<item id="2600" chance="11750"/><!-- inkwell -->
 		<item id="2802" chance="4250"/><!-- sling herb -->
 		<item id="2047" chance="22000"/><!-- candlestick-->
-			<item id="1987" chance="100000"><!-- bag -->
-			<inside>
 		<item id="2198" chance="1666"/><!-- elven amulet -->
 		<item id="5922" countmax="2" chance="1500"/><!-- holy orchid -->
 		<item id="7589" chance="3500"/><!-- strong mana potion -->
@@ -75,7 +73,5 @@
 		<item id="2189" chance="400"/><!-- wand of cosmic energy -->
 		<item id="2177" chance="950"/><!-- life crystal -->
 		<item id="2154" chance="375"/><!-- yellow gem -->
-			</inside>
-		</item>
 	</loot>
 </monster>

@@ -42,17 +42,12 @@
 		<item id="2455" chance="9500"/><!-- crossbow -->
 		<item id="2666" chance="9500"/><!-- meat -->
 		<item id="2649" chance="5500"/><!-- leather legs -->
-		<item id="2461" chance="4700"/><!-- leather helmet -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
-				<item id="2465" chance="2750"/><!--  brass armor-->
-				<item id="5878" chance="2000"/><!-- minotaur leather -->
-				<item id="2481" chance="700"/><!-- soldier helmet -->
-				<item id="2483" chance="500"/><!-- scale armor -->
-				<item id="2464" chance="7000"/><!-- chain armor -->
-				<item id="2648" chance="7500"/><!-- chain legs -->
-				<item id="2513" chance="300"/><!-- battle shield -->		
-			</inside>
-		</item>
+		<item id="2465" chance="2750"/><!--  brass armor-->
+		<item id="5878" chance="2000"/><!-- minotaur leather -->
+		<item id="2481" chance="700"/><!-- soldier helmet -->
+		<item id="2483" chance="500"/><!-- scale armor -->
+		<item id="2464" chance="7000"/><!-- chain armor -->
+		<item id="2648" chance="7500"/><!-- chain legs -->
+		<item id="2513" chance="300"/><!-- battle shield -->
 	</loot>
 </monster>

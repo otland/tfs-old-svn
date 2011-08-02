@@ -25,11 +25,11 @@
 	</attacks>
 	<defenses armor="20" defense="30"/>
 	<elements>
-	<element firePercent="100"/>
-	<element energyPercent="20"/>
-	<element holyPercent="10"/>
-	<element earthPercent="-10"/>
-	<element deathPercent="-5"/>
+		<element firePercent="100"/>
+		<element energyPercent="20"/>
+		<element holyPercent="10"/>
+		<element earthPercent="-10"/>
+		<element deathPercent="-5"/>
 	</elements>
 	<voices interval="5000" chance="10">
 		<voice sentence="Ulderek futgyr human!"/>
@@ -41,17 +41,13 @@
 		<item id="2410" countmax="4" chance="6250"/><!-- throwing knife -->
 		<item id="2666" countmax="2" chance="12500"/><!-- meat -->
 		<item id="2419" chance="6700"/><!-- scimitar -->
-		<item id="1988" chance="20000"><!-- backpack -->
-			<inside>
-				<item id="2478" chance="2500"/><!-- brass legs -->
-				<item id="2463" chance="1250"/><!-- plate armor -->
-				<item id="7378" chance="1000"/><!-- royal spear -->
-				<item id="2207" chance="750"/><!-- sword ring -->
-				<item id="2647" chance="800"/><!-- plate legs -->
-				<item id="2413" chance="750"/><!-- broadsword -->	
-				<item id="7618" chance="400"/><!-- health potion -->	
-				<item id="2475" chance="200"/><!-- warrior helmet -->
-			</inside>
-		</item>
+		<item id="2478" chance="2500"/><!-- brass legs -->
+		<item id="2463" chance="1250"/><!-- plate armor -->
+		<item id="7378" chance="1000"/><!-- royal spear -->
+		<item id="2207" chance="750"/><!-- sword ring -->
+		<item id="2647" chance="800"/><!-- plate legs -->
+		<item id="2413" chance="750"/><!-- broadsword -->	
+		<item id="7618" chance="400"/><!-- health potion -->	
+		<item id="2475" chance="200"/><!-- warrior helmet -->
 	</loot>
 </monster>

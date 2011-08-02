@@ -41,11 +41,7 @@
 		<item id="3976" countmax="6" chance="46325" /><!-- worm -->
 		<item id="2148" countmax="29" chance="38150" /><!-- gold coin -->
 		<item id="2403" chance="33825" /><!-- knife -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
-				<item id="2050" chance="58825" /><!-- torch -->
-				<item id="2460" chance="17175" /><!-- brass helmet -->
-			</inside>
-		</item>
+		<item id="2050" chance="58825" /><!-- torch -->
+		<item id="2460" chance="17175" /><!-- brass helmet -->
 	</loot>
 </monster>

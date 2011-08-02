@@ -48,14 +48,9 @@
 		<item id="2559" chance="14250"/><!-- small axe -->
 		<item id="2667" chance="12500"/><!-- fish -->
 		<item id="2461" chance="12500"/><!-- leather helmet -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
 		<item id="2235" chance="6000"/><!-- moldy cheese -->
 		<item id="2406" chance="8200"/><!-- short sword -->
 		<item id="2467" chance="4000"/><!-- leather armor -->
-		<item id="2449" chance="8000"/><!-- bone club -->	
-			</inside>
-		</item>
+		<item id="2449" chance="8000"/><!-- bone club -->
 	</loot>
 </monster>
-

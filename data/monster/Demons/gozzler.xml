@@ -54,12 +54,8 @@
 		<item id="2510" chance="10000"/><!-- plate shield -->
 		<item id="2385" chance="7250"/><!-- sabre -->
 		<item id="2051" chance="7500"/><!-- torch -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>			
-				<item id="2409" chance="1000"/><!-- serpent sword -->
-				<item id="2213" chance="400"/><!-- dwarven ring -->
-				<item id="2146" chance="300"/><!-- small sapphire -->
-			</inside>
-		</item>
+		<item id="2409" chance="1000"/><!-- serpent sword -->
+		<item id="2213" chance="400"/><!-- dwarven ring -->
+		<item id="2146" chance="300"/><!-- small sapphire -->
 	</loot>
 </monster>

@@ -59,8 +59,6 @@
 		<item id="2178" chance="5000"/><!-- mind stone -->
 		<item id="2127" chance="6000"/><!-- emerald bangle -->
 		<item id="6558" countmax="4" chance="7500"/><!-- concentrated demonic blood -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
 		<item id="6500" chance="2500"/><!-- demonic essence -->
 		<item id="2171" chance="2350"/><!-- platinum amulet-->
 		<item id="2187" chance="2900"/><!-- wand of inferno -->
@@ -71,7 +69,5 @@
 		<item id="2153" chance="300"/><!-- violet gem -->
 		<item id="5799" chance="100"/><!-- golden figurine -->
 		<item id="7414" chance="100"/><!-- abyss hammer -->
-			</inside>
-		</item>
 	</loot>
 </monster>

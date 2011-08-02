@@ -25,7 +25,7 @@
 		</attack>
 		<attack name="energy strike" interval="2000" chance="25" min="0" max="-30"/>
 		<attack name="speed" interval="3000" chance="10" range="7" target="1" duration="2000" speedchange="-300">			
-			<attribute key="areaEffect" value="redshimmer"/>		
+			<attribute key="areaEffect" value="redshimmer"/>
 		</attack> 
 	</attacks>
 	<defenses armor="15" defense="20">
@@ -58,15 +58,11 @@
 		<item id="2787" countmax="3" chance="5000"/><!-- white mushroom -->
 		<item id="2308" chance="7750"/><!-- powder herb -->
 		<item id="2177" chance="2700"/><!-- life crystal -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
-				<item id="2162" chance="3000"/><!-- magic lightwand -->
-				<item id="7762" chance="700"/><!-- small enchanted amethyst -->		
-				<item id="6324" chance="350"/><!-- cream cake -->
-				<item id="2687" countmax="5" chance="500"/><!-- cookie -->
-				<item id="2190" chance="200"/><!-- wand of vortex -->
-				<item id="7440" chance="1500"/><!-- mastermind potion -->
-			</inside>
-		</item>
+		<item id="2162" chance="3000"/><!-- magic lightwand -->
+		<item id="7762" chance="700"/><!-- small enchanted amethyst -->		
+		<item id="6324" chance="350"/><!-- cream cake -->
+		<item id="2687" countmax="5" chance="500"/><!-- cookie -->
+		<item id="2190" chance="200"/><!-- wand of vortex -->
+		<item id="7440" chance="1500"/><!-- mastermind potion -->
 	</loot>
 </monster>

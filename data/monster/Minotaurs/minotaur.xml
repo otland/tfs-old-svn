@@ -36,17 +36,13 @@
 		<item id="2649" chance="15000"/><!-- leather legs -->
 		<item id="2398" chance="8500"/><!-- mace -->
 		<item id="2376" chance="9500"/><!-- sword -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>	
-			<item id="2464" chance="9200"/><!-- chain armor -->
-			<item id="2666" chance="9000"/><!-- meat -->
-			<item id="2460" chance="7250"/><!-- brass helmet -->
-			<item id="2458" chance="4500"/><!-- chain helmet -->
-			<item id="2386" chance="3950"/><!-- axe -->
-			<item id="2554" chance="2400"/><!-- shovel -->
-			<item id="5878" chance="850"/><!-- minotaur leather -->
-			<item id="2172" chance="250"/><!-- bronze amulet -->
-			</inside>
-		</item>
+		<item id="2464" chance="9200"/><!-- chain armor -->
+		<item id="2666" chance="9000"/><!-- meat -->
+		<item id="2460" chance="7250"/><!-- brass helmet -->
+		<item id="2458" chance="4500"/><!-- chain helmet -->
+		<item id="2386" chance="3950"/><!-- axe -->
+		<item id="2554" chance="2400"/><!-- shovel -->
+		<item id="5878" chance="850"/><!-- minotaur leather -->
+		<item id="2172" chance="250"/><!-- bronze amulet -->
 	</loot>
 </monster>

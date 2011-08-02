@@ -50,25 +50,21 @@
 		<item id="2148" countmax="90" chance="50000"/><!-- gold coin -->
 		<item id="2148" countmax="90" chance="50000"/><!-- gold coin -->
 		<item id="7368" countmax="2" chance="1500"/><!-- assassin star -->
-		<item id="7412"  chance="200"/><!-- butcher axe -->
+		<item id="7412" chance="200"/><!-- butcher axe -->
 		<item id="5480" chance="1200"/><!-- cat's paw -->
 		<item id="23500" countmax="3" chance="4555"/><!-- concentrated demonic blood -->
 		<item id="6300" chance="1650"/><!-- death ring -->
 		<item id="6500" chance="6500"/><!-- demonic essence -->
 		<item id="7591" chance="10000"/><!-- great health potion -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>		
-				<item id="2671" countmax="8" chance="10500"/><!-- ham -->
-				<item id="5801" chance="650"/><!-- key ring -->
-				<item id="5022" countmax="2" chance="600"/><!-- orichalcum pearl -->
-				<item id="2152" countmax="3" chance="12500"/><!-- platinum coin -->
-				<item id="2558" chance="1700"/><!-- saw -->
-				<item id="5944" chance="13000"/><!-- soul orb -->
-				<item id="2645" chance="5000"/><!-- steel boots -->
-				<item id="7388" chance="600"/><!-- vile axe -->
-				<item id="2470" chance="100"/><!-- golden legs -->
-				<item id="9971" chance="300"/><!-- gold ingot -->
-			</inside>
-		</item>
+		<item id="2671" countmax="8" chance="10500"/><!-- ham -->
+		<item id="5801" chance="650"/><!-- key ring -->
+		<item id="5022" countmax="2" chance="600"/><!-- orichalcum pearl -->
+		<item id="2152" countmax="3" chance="12500"/><!-- platinum coin -->
+		<item id="2558" chance="1700"/><!-- saw -->
+		<item id="5944" chance="13000"/><!-- soul orb -->
+		<item id="2645" chance="5000"/><!-- steel boots -->
+		<item id="7388" chance="600"/><!-- vile axe -->
+		<item id="2470" chance="100"/><!-- golden legs -->
+		<item id="9971" chance="300"/><!-- gold ingot -->
 	</loot>
 </monster>

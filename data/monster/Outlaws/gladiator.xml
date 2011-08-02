@@ -42,14 +42,10 @@
 		<item id="2510" chance="9500"/><!-- plate shield -->
 		<item id="2376" chance="9500"/><!-- sword -->
 		<item id="2398" chance="9500"/><!-- mace -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
-				<item id="2465" chance="4750"/><!-- brass armor -->
-				<item id="2458" chance="2400"/><!-- chain helmet -->
-				<item id="2509" chance="2500"/><!-- steel shield -->
-				<item id="8872" chance="750"/><!-- belted cape -->
-				<item id="2459" chance="900"/><!-- iron helmet -->
-			</inside>
-		</item>
+		<item id="2465" chance="4750"/><!-- brass armor -->
+		<item id="2458" chance="2400"/><!-- chain helmet -->
+		<item id="2509" chance="2500"/><!-- steel shield -->
+		<item id="8872" chance="750"/><!-- belted cape -->
+		<item id="2459" chance="900"/><!-- iron helmet -->
 	</loot>
 </monster>

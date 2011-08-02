@@ -34,13 +34,9 @@
 		<item id="2148" countmax="5" chance="31500"/><!-- gold coin -->
 		<item id="2667" chance="63500"/><!-- fish -->
 		<item id="2379" chance="27500"/><!-- dagger -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
-				<item id="2050" chance="15750"/><!-- torch -->
-				<item id="2389" chance="14700"/><!-- spear -->
-				<item id="2643" chance="9500"/><!-- leather boots -->
-				<item id="2580" chance="150"/><!-- fishing rod -->
-			</inside>
-		</item>
+		<item id="2050" chance="15750"/><!-- torch -->
+		<item id="2389" chance="14700"/><!-- spear -->
+		<item id="2643" chance="9500"/><!-- leather boots -->
+		<item id="2580" chance="150"/><!-- fishing rod -->
 	</loot>
 </monster>

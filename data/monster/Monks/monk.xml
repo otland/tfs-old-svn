@@ -50,12 +50,8 @@
 		<item id="2642" chance="6666"/><!-- sandals -->
 		<item id="2467" chance="4000"/><!-- leather armor -->
 		<item id="2401" chance="20000"/><!-- staff -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
-					<item id="2177" chance="3000"/><!-- life crystal -->
-					<item id="2193" chance="1500"/><!-- ankh -->
-					<item id="2166" chance="700"/><!-- power ring -->
-			</inside>
-		</item>
+		<item id="2177" chance="3000"/><!-- life crystal -->
+		<item id="2193" chance="1500"/><!-- ankh -->
+		<item id="2166" chance="700"/><!-- power ring -->
 	</loot>
 </monster>

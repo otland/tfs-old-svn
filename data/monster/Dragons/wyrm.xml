@@ -60,8 +60,6 @@
 		<item id="2647" chance="1750"/><!-- plate legs -->
 		<item id="8921" chance="700"/><!-- wand of draconia -->
 		<item id="2145" countmax="3" chance="750"/><!-- small diamonds-->
-		<item id="1987" chance="10000"><!-- bag -->
-			<inside>
 		<item id="7589" chance="4000"/><!-- strong mana potion -->
 		<item id="2455" chance="15000"/><!-- crossbow -->
 		<item id="2457" chance="7500"/><!-- steel helmet -->
@@ -71,7 +69,5 @@
 		<item id="8873" chance="750"/><!-- hubiscus dress -->
 		<item id="7430" chance="300"/><!-- dragonbone staff -->
 		<item id="8855" chance="200"/><!-- composite hornbow -->
-			</inside>
-		</item>
 	</loot>
 </monster>

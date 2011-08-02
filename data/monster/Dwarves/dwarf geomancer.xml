@@ -57,15 +57,11 @@
 		<item id="2673" countmax="7" chance="2000"/><!-- pear -->
 		<item id="2162" chance="13000"/><!-- magic lightwand -->
 		<item id="2468" chance="26000"/><!-- studded legs -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
 		<item id="2175" chance="2500"/><!-- Spellbook -->
 		<item id="2423" chance="750"/><!-- Clerical Mace -->
 		<item id="2213" chance="600"/><!-- Dwarven ring -->
 		<item id="2146" chance="500"/><!-- Small sapphire -->
 		<item id="5880" chance="400"/><!-- Iron Ore -->
 		<item id="7886" chance="300"/><!-- Terra Boots -->
-			</inside>
-		</item>
 	</loot>
 </monster>

@@ -52,15 +52,11 @@
 		<item id="2406" chance="8350"/><!-- short sword -->
 		<item id="2134" chance="5000"/><!-- silver brooch -->
 		<item id="2161" chance="4650"/><!-- strange talisman -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
-				<item id="2124" chance="2222"/><!-- crystal ring -->
-				<item id="2411" chance="1900"/><!-- poison dagger -->
-				<item id="2144" chance="1270"/><!-- black pearl -->
-				<item id="2170" chance="110"/><!-- silver amulet -->
-				<item id="5914" chance="250"/><!-- yellow piece of cloth -->
-				<item id="2529" chance="110"/><!-- black shield -->
-			</inside>
-		</item>
+		<item id="2124" chance="2222"/><!-- crystal ring -->
+		<item id="2411" chance="1900"/><!-- poison dagger -->
+		<item id="2144" chance="1270"/><!-- black pearl -->
+		<item id="2170" chance="110"/><!-- silver amulet -->
+		<item id="5914" chance="250"/><!-- yellow piece of cloth -->
+		<item id="2529" chance="110"/><!-- black shield -->
 	</loot>
 </monster>

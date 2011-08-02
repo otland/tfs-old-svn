@@ -40,8 +40,6 @@
 		<item id="2554" chance="11250"/><!-- shovel -->
 		<item id="2481" chance="10000"/><!-- soldier helmet -->
 		<item id="2464" chance="8500"/><!-- chain armor -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
 		<item id="7363" countmax="3" chance="1500"/><!-- piercing bolt -->
 		<item id="2378" chance="3500"/><!-- battle axe -->
 		<item id="2455" chance="3400"/><!-- crossbow -->
@@ -49,7 +47,5 @@
 		<item id="2208" chance="360"/><!-- axe ring -->
 		<item id="5880" chance="300"/><!-- iron ore -->
 		<item id="2213" chance="500"/><!-- dwarven ring -->
-			</inside>
-		</item>
 	</loot>
 </monster>

@@ -42,14 +42,10 @@
 		<item id="2671" countmax="2" chance="11000"/><!-- ham -->
 		<item id="2406" chance="8000"/><!-- short sword -->
 		<item id="2510" chance="1600"/><!-- plate shield -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
 		<item id="2513" chance="1300"/><!-- battle shield -->
 		<item id="2381" chance="850"/><!-- halberd -->
 		<item id="7398" chance="150"/><!-- cyclops trophy -->
 		<item id="2490" chance="250"/><!-- dark helmet -->
 		<item id="7588" chance="600"/><!-- strong health potion -->
-			</inside>
-		</item>
 	</loot>
 </monster>
