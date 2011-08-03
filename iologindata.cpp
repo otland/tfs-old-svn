@@ -335,7 +335,7 @@ void IOLoginData::removePremium(Account account)
 	uint64_t timeNow = time(NULL);
 	if(account.premiumDays > 0 && account.premiumDays < (uint16_t)GRATIS_PREMIUM)
 	{
-		uint32_t days = (uint32_t)std::floor((timeNow - account.lastDay) / 86400.);
+		uint32_t days = (timeNow - account.lastDay) / 86400;
 		if(days > 0)
 		{
 			if(account.premiumDays >= days)

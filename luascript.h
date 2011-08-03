@@ -241,8 +241,7 @@ class LuaInterface
 
 		static bool reserveEnv()
 		{
-			++m_scriptEnvIndex;
-			if(m_scriptEnvIndex > 20)
+			if(++m_scriptEnvIndex > 20)
 			{
 				--m_scriptEnvIndex;
 				return false;

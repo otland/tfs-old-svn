@@ -2725,18 +2725,7 @@ int32_t NpcScript::luaCloseShopWindow(lua_State* L)
 		return 1;
 	}
 
-	Npc* npc = env->getNpc();
-	if(!npc)
-	{
-		errorEx(getError(LUA_ERROR_CREATURE_NOT_FOUND));
-		lua_pushboolean(L, false);
-		return 1;
-	}
-
-	int32_t onBuy, onSell;
-	if(player->getShopOwner(onBuy, onSell) == npc)
-		player->closeShopWindow(true, npc, onBuy, onSell);
-
+	player->closeShopWindow();
 	lua_pushboolean(L, true);
 	return 1;
 }

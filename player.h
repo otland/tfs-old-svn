@@ -414,7 +414,7 @@ class Player : public Creature, public Cylinder
 		virtual void onWalkComplete();
 
 		void openShopWindow(Npc* npc);
-		void closeShopWindow(bool send = true, Npc* npc = NULL, int32_t onBuy = -1, int32_t onSell = -1);
+		void closeShopWindow(bool send = true);
 		bool canShopItem(uint16_t itemId, uint8_t subType, ShopEvent_t event);
 
 		chaseMode_t getChaseMode() const {return chaseMode;}

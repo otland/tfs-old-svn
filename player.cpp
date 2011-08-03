@@ -1506,9 +1506,10 @@ void Player::openShopWindow(Npc* npc)
 	sendGoods();
 }
 
-void Player::closeShopWindow(bool send/* = true*/, Npc* npc/* = NULL*/, int32_t onBuy/* = -1*/, int32_t onSell/* = -1*/)
+void Player::closeShopWindow(bool send/* = true*/)
 {
-	if(npc || (npc = getShopOwner(onBuy, onSell)))
+	int32_t onBuy = -1, onSell = -1;
+	if(Npc* npc = getShopOwner(onBuy, onSell))
 		npc->onPlayerEndTrade(this, onBuy, onSell);
 
 	if(shopOwner)
