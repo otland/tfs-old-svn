@@ -1006,7 +1006,7 @@ if(Modules == nil) then
 	--	names = A table containing one or more strings of alternative names to this item. Used only for old buy/sell system.
 	--	itemid = The itemid of the buyable item
 	--	cost = The price of one single item
-	--	subType - The subType of each rune or fluidcontainer item. Can be left out if it is not a rune/fluidcontainer. Default value is 1.
+	--	subType - The subType of each rune or fluidcontainer item. Can be left out if it is not a rune/fluidcontainer. Default value is 0.
 	--	realName - The real, full name for the item. Will be used as ITEMNAME in MESSAGE_ONBUY and MESSAGE_ONSELL if defined. Default value is nil (getItemNameById will be used)
 	function ShopModule:addBuyableItem(names, itemid, cost, subType, realName)
 		if(SHOPMODULE_MODE ~= SHOPMODULE_MODE_TALK) then
@@ -1014,7 +1014,7 @@ if(Modules == nil) then
 				id = itemid,
 				buy = cost,
 				sell = 0,
-				subType = subType or 1,
+				subType = subType or 0,
 				name = realName or getItemNameById(itemid)
 			}
 
@@ -1042,7 +1042,7 @@ if(Modules == nil) then
 				eventType = SHOPMODULE_BUY_ITEM,
 				module = self,
 				realName = realName or getItemNameById(itemid),
-				subType = subType or 1
+				subType = subType or 0
 			}
 
 			for i, name in pairs(names) do
@@ -1062,7 +1062,7 @@ if(Modules == nil) then
 	--	container = Backpack, bag or any other itemid of container where bought items will be stored
 	--	itemid = The itemid of the buyable item
 	--	cost = The price of one single item
-	--	subType - The subType of each rune or fluidcontainer item. Can be left out if it is not a rune/fluidcontainer. Default value is 1.
+	--	subType - The subType of each rune or fluidcontainer item. Can be left out if it is not a rune/fluidcontainer. Default value is 0.
 	--	realName - The real, full name for the item. Will be used as ITEMNAME in MESSAGE_ONBUY and MESSAGE_ONSELL if defined. Default value is nil (getItemNameById will be used)
 	function ShopModule:addBuyableItemContainer(names, container, itemid, cost, subType, realName)
 		if(names ~= nil) then
@@ -1073,7 +1073,7 @@ if(Modules == nil) then
 				eventType = SHOPMODULE_BUY_ITEM_CONTAINER,
 				module = self,
 				realName = realName or getItemNameById(itemid),
-				subType = subType or 1
+				subType = subType or 0
 			}
 
 			for i, name in pairs(names) do

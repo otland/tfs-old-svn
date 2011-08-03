@@ -732,13 +732,19 @@ bool ConditionRegeneration::executeCondition(Creature* creature, int32_t interva
 		if(internalHealthTicks >= healthTicks)
 		{
 			internalHealthTicks = 0;
-			creature->changeHealth(healthGain);
+			if(getSubId() != 0)
+				g_game.combatChangeHealth(COMBAT_HEALING, creature, creature, healthGain);
+			else
+				creature->changeHealth(healthGain);
 		}
 
 		if(internalManaTicks >= manaTicks)
 		{
 			internalManaTicks = 0;
-			creature->changeMana(manaGain);
+			if(getSubId() != 0)
+				g_game.combatChangeMana(creature, creature, manaGain);
+			else
+				creature->changeMana(manaGain);
 		}
 	}
 

@@ -3375,8 +3375,8 @@ bool Game::playerPurchaseItem(uint32_t playerId, uint16_t spriteId, uint8_t coun
 	uint8_t subType = count;
 	if(it.isFluidContainer() && count < uint8_t(sizeof(reverseFluidMap) / sizeof(int8_t)))
 		subType = reverseFluidMap[count];
-	else if(!subType)
-		subType = 1;
+	else if(!it.hasSubType())
+		subType = 0;
 
 	if(!player->canShopItem(it.id, subType, SHOPEVENT_BUY))
 		return false;
@@ -3403,6 +3403,8 @@ bool Game::playerSellItem(uint32_t playerId, uint16_t spriteId, uint8_t count, u
 	uint8_t subType = count;
 	if(it.isFluidContainer() && count < uint8_t(sizeof(reverseFluidMap) / sizeof(int8_t)))
 		subType = reverseFluidMap[count];
+	else if(!it.hasSubType())
+		subType = 0;
 
 	if(!player->canShopItem(it.id, subType, SHOPEVENT_SELL))
 		return false;
