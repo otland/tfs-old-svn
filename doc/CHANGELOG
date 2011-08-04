@@ -60,4 +60,5 @@
 	Updated a lot of item attributes.
 	Corrected cheese and scarab cheese client id and stackable attribute.
 	Fixed so that vials (fluids.lua) will use fluidSource from items.xml.
+	NPC's can now be pushed by players inside their spawn radius.
 ]

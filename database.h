@@ -186,6 +186,7 @@ class _Database
 		* @return the case insensitive operator
 		*/
 		DATABASE_VIRTUAL std::string getStringComparer() {return "= ";}
+
 		DATABASE_VIRTUAL std::string getUpdateLimiter() {return " LIMIT 1;";}
 
 		/**
@@ -194,6 +195,27 @@ class _Database
 		* @return the database engine type
 		*/
 		DATABASE_VIRTUAL DatabaseEngine_t getDatabaseEngine() {return DATABASE_ENGINE_NONE;}
+
+		/**
+		* Get database engine name
+		*
+		* @return the database engine name
+		*/
+		DATABASE_VIRTUAL std::string getClientName() {return "";}
+
+		/**
+		* Get database engine version
+		*
+		* @return the database engine version
+		*/
+		DATABASE_VIRTUAL const char* getClientVersion() {return "";}
+
+		/**
+		* Get database engine version
+		*
+		* @return the database engine version
+		*/
+		DATABASE_VIRTUAL uint64_t getClientVersionNumeric() {return 0;}
 
 	protected:
 		_Database() : m_connected(false) {};

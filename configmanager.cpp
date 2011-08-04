@@ -54,6 +54,7 @@ bool ConfigManager::loadFile(const std::string& _filename)
 		m_confBoolean[SERVERSAVE_ENABLED] = (getGlobalString(L, "serverSaveEnabled", "yes") == "yes");
 		m_confBoolean[SAVE_GLOBAL_STORAGE] = (getGlobalString(L, "saveGlobalStorage", "no") == "yes");
 		m_confBoolean[INGAME_GUILD_SYSTEM] = (getGlobalString(L, "ingameGuildSystem", "yes") == "yes");
+		m_confBoolean[BIND_ONLY_GLOBAL_ADDRESS] = (getGlobalString(L, "bindOnlyGlobalAddress", "no") == "yes");
 
 		m_confString[CONFIG_FILE] = _filename;
 		m_confString[IP] = getGlobalString(L, "ip", "127.0.0.1");
@@ -77,10 +78,7 @@ bool ConfigManager::loadFile(const std::string& _filename)
 
 		#ifdef MULTI_SQL_DRIVERS
 		m_confString[SQL_TYPE] = getGlobalString(L, "sqlType", "sqlite");
-		m_confInteger[SQLTYPE] = SQL_TYPE_NONE;
 		#endif
-
-		m_confBoolean[BIND_ONLY_GLOBAL_ADDRESS] = (getGlobalString(L, "bindOnlyGlobalAddress", "no") == "yes");
 	}
 
 	m_confBoolean[FREE_MEMORY_AT_SHUTDOWN] = (getGlobalString(L, "freeMemoryAtShutdown", "yes") == "yes");

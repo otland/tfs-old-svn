@@ -61,6 +61,10 @@ class DatabaseSQLite : public _Database
 		DATABASE_VIRTUAL std::string getUpdateLimiter() {return ";";}
 		DATABASE_VIRTUAL DatabaseEngine_t getDatabaseEngine() {return DATABASE_ENGINE_SQLITE;}
 
+		DATABASE_VIRTUAL std::string getClientName() {return "SQLite";}
+		DATABASE_VIRTUAL const char* getClientVersion() {return sqlite3_libversion();}
+		DATABASE_VIRTUAL uint64_t getClientVersionNumeric() {return sqlite3_libversion_number();}
+
 	protected:
 		std::string _parse(const std::string &s);
 

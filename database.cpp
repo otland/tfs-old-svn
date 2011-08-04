@@ -31,6 +31,7 @@
 #endif
 
 #if defined MULTI_SQL_DRIVERS
+#include "tools.h"
 #include "configmanager.h"
 extern ConfigManager g_config;
 #endif
@@ -44,9 +45,10 @@ Database* _Database::getInstance()
 	if(!_instance)
 	{
 #if defined MULTI_SQL_DRIVERS
-		if(g_config.getNumber(ConfigManager::SQLTYPE) == SQL_TYPE_MYSQL)
+		std::string sqlType = asLowerCaseString(g_config.getString(ConfigManager::SQL_TYPE));
+		if(sqlType == "mysql")
 			_instance = new DatabaseMySQL;
-		else if(g_config.getNumber(ConfigManager::SQLTYPE) == SQL_TYPE_SQLITE)
+		else if(sqlType == "sqlite")
 			_instance = new DatabaseSQLite;
 		else
 			_instance = new Database;

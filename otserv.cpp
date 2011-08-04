@@ -317,51 +317,32 @@ void mainLoader(ServiceManager* service_manager)
 		SetPriorityClass(GetCurrentProcess(), ABOVE_NORMAL_PRIORITY_CLASS);
 	#endif
 
-	//load RSA key
-	std::cout << ">> Loading RSA key" << std::endl;
-	#ifndef __CONSOLE__
-	SendMessage(gui.m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Loading RSA Key");
-	#endif
+	//set RSA key
 	const char* p("14299623962416399520070177382898895550795403345466153217470516082934737582776038882967213386204600674145392845853859217990626450972452084065728686565928113");
 	const char* q("7630979195970404721891201847792002125535401292779123937207447574596692788513647179235335529307251350570728407373705564708871762033017096809910315212884101");
 	const char* d("46730330223584118622160180015036832148732986808519344675210555262940258739805766860224610646919605860206328024326703361630109888417839241959507572247284807035235569619173792292786907845791904955103601652822519121908367187885509270025388641700821735345222087940578381210879116823013776808975766851829020659073");
 	g_RSA.setKey(p, q, d);
 
-	std::cout << ">> Testing SQL connection... ";
-	#ifdef MULTI_SQL_DRIVERS
-	std::string sqlType = asLowerCaseString(g_config.getString(ConfigManager::SQL_TYPE));
-	if(sqlType == "mysql")
-	{
-		g_config.setNumber(ConfigManager::SQLTYPE, SQL_TYPE_MYSQL);
-		std::cout << "MySQL." << std::endl;
-		Database* db = Database::getInstance();
-		if(!db->isConnected())
-			startupErrorMessage("Failed to connect to database, read doc/MYSQL_HELP for information or try SqLite which doesn't require any connection.");
-	}
-	else if(sqlType == "sqlite")
-	{
-		g_config.setNumber(ConfigManager::SQLTYPE, SQL_TYPE_SQLITE);
-		std::cout << "SQLite." << std::endl;
-		Database* db = Database::getInstance();
-		if(!db->isConnected())
-			startupErrorMessage("Failed to connect to sqlite database file, make sure it exists and is readable.");
-	}
-	else
-		startupErrorMessage("Unkwown sqlType, valid sqlTypes are: 'mysql' and 'sqlite'.");
-	#elif defined __USE_MYSQL__
-	std::cout << "MySQL." << std::endl;
+	std::cout << ">> Connecting SQL driver..." << std::flush;
 	Database* db = Database::getInstance();
-	if(!db->connect())
-		startupErrorMessage("Failed to connect to database, read doc/MYSQL_HELP for information or try SqLite which doesn't require any connection.");
-	#elif defined __USE_SQLITE__
-	std::cout << "SQLite." << std::endl;
-	FILE* sqliteFile = fopen(g_config.getString(ConfigManager::SQLITE_DB).c_str(), "r");
-	if(sqliteFile == NULL)
-		startupErrorMessage("Failed to connect to sqlite database file, make sure it exists and is readable.");
-	fclose(sqliteFile);
-	#else
-	startupErrorMessage("Unknown sqlType... terminating!");
-	#endif
+	if(!db->isConnected())
+	{
+		switch(db->getDatabaseEngine())
+		{
+			case DATABASE_ENGINE_MYSQL:
+				startupErrorMessage("Failed to connect to database, read doc/MYSQL_HELP for information or try SqLite which doesn't require any connection.");
+				break;
+
+			case DATABASE_ENGINE_SQLITE:
+				startupErrorMessage("Failed to connect to sqlite database file, make sure it exists and is readable.");
+				break;
+
+			default:
+				startupErrorMessage("Unkwown sqlType in config.lua, valid sqlTypes are: \"mysql\" and \"sqlite\".");
+				break;
+		}
+	}
+	std::cout << " " << db->getClientName() << " " << db->getClientVersion() << std::endl;
 
 	//load bans
 	std::cout << ">> Loading bans" << std::endl;
