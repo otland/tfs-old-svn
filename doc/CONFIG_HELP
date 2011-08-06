@@ -584,6 +584,14 @@
 		hotkeyAimbotEnabled
 			Should system with attacking via hotkeys and battle window be enabled? (Cipsoft antibot features)
 			Default: true
+			
+		tibiaClassicSlots
+			Should system use the classical Tibia slots allowing global use of the 'arrow' slot?
+			Default: true
+			
+		canOnlyRopePlayers
+			Should players only be allowed to rope players? (false: allow players to rope monsters, items, and players)
+			Default: true
 
 	*MAP
 		mapName

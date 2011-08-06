@@ -110,8 +110,10 @@
 	<movevent type="StepOut" itemid="10476" event="script" value="closingdoor.lua"/>
 	<movevent type="StepOut" itemid="10483" event="script" value="closingdoor.lua"/>
 	<movevent type="StepOut" itemid="10485" event="script" value="closingdoor.lua"/>
+	<movevent type="StepOut" itemid="10777" event="script" value="closingdoor.lua"/>
 	<movevent type="StepOut" itemid="10781" event="script" value="closingdoor.lua"/>
 	<movevent type="StepOut" itemid="10783" event="script" value="closingdoor.lua"/>
+	<movevent type="StepOut" itemid="10786" event="script" value="closingdoor.lua"/>
 	<movevent type="StepOut" itemid="10790" event="script" value="closingdoor.lua"/>
 	<movevent type="StepOut" itemid="10792" event="script" value="closingdoor.lua"/>
 	<movevent type="StepIn" itemid="1228" event="script" value="walkback.lua"/>
@@ -180,14 +182,16 @@
 	<movevent type="StepIn" itemid="10476" event="script" value="walkback.lua"/>
 	<movevent type="StepIn" itemid="10483" event="script" value="walkback.lua"/>
 	<movevent type="StepIn" itemid="10485" event="script" value="walkback.lua"/>
+	<movevent type="StepIn" itemid="10777" event="script" value="walkback.lua"/>
 	<movevent type="StepIn" itemid="10781" event="script" value="walkback.lua"/>
 	<movevent type="StepIn" itemid="10783" event="script" value="walkback.lua"/>
+	<movevent type="StepIn" itemid="10786" event="script" value="walkback.lua"/>
 	<movevent type="StepIn" itemid="10790" event="script" value="walkback.lua"/>
 	<movevent type="StepIn" itemid="10792" event="script" value="walkback.lua"/>
 
 	<!-- Snow footprint tiles -->
 	<movevent type="StepIn" itemid="670" event="script" value="snow.lua"/>
-	<movevent type="StepIn" itemid="6594" event="script" value="snow.lua"/>
+	<movevent type="StepIn" fromid="6580" toid="6594" event="script" value="snow.lua"/>
 
 	<!-- Cooking -->
 	<!-- Create bread movements -->
@@ -882,7 +886,6 @@
 		<vocation id="8" showInDescription="0"/>
 	</movevent>
 	<movevent type="DeEquip" itemid="12642" slot="armor" event="function" value="onDeEquipItem"/>
-
 
 
 	<!-- Legs -->

@@ -140,6 +140,11 @@
 	<action itemid="8868" event="script" value="foods/food.lua"/>
 	<action itemid="9005" event="script" value="foods/food.lua"/>
 	<action itemid="10454" event="script" value="foods/food.lua"/>
+	<action itemid="11246" event="script" value="foods/food.lua"/>
+	<action itemid="11429" event="script" value="foods/food.lua"/>
+	<action itemid="12415" event="script" value="foods/food.lua"/>
+	<action itemid="12637" event="script" value="foods/food.lua"/>
+	<action itemid="12639" event="script" value="foods/food.lua"/>
 	<action itemid="9992" event="script" value="foods/rotworm_stew.lua"/>
 	<action itemid="9993" event="script" value="foods/hydra_tongue_salad.lua"/>
 	<action itemid="9994" event="script" value="foods/roasted_dragon_wings.lua"/>
@@ -364,5 +369,6 @@
 	<action itemid="2579" event="script" value="other/trap.lua"/>
 	<action itemid="8110" event="script" value="other/present.lua"/>
 	<action itemid="7735" event="script" value="other/spellwand.lua"/>
-	<action itemid="7537" script="other/spideregg.lua" />
+	<action itemid="7537" event="script" value="other/spideregg.lua" />
+	<action itemid="6561" event="script" value="other/ceremonialankh.lua"/>
 </actions>
