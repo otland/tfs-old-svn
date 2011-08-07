@@ -32,5 +32,6 @@
 	<loot>
 		<item id="2666" countmax="4" chance="17500"/><!-- meat -->
 		<item id="2671" countmax="2" chance="20000"/><!-- ham -->
+		<item id="12401" chance="7000"/><!-- bamboo stick -->
 	</loot>
 </monster>

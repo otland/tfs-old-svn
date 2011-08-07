@@ -341,6 +341,13 @@ function isNpc(cid)
 	return isCreature(cid) and cid >= AUTOID_NPCS
 end
 
+function isSummon(cid)
+	if getCreatureMaster(cid) == cid or getCreatureMaster(cid) == nil then
+		return false
+	end
+	return true
+end
+
 function doPlayerSetExperienceRate(cid, value)
 	return doPlayerSetRate(cid, SKILL__LEVEL, value)
 end

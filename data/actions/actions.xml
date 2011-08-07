@@ -329,6 +329,15 @@
 	<action itemid="8977" event="script" value="other/dolls.lua"/>
 	<action itemid="8981" event="script" value="other/dolls.lua"/>
 	<action itemid="8982" event="script" value="other/dolls.lua"/>
+	
+	<!-- Destory -->
+	<action itemid="2321;2376-2388;2390-2398;2400-2404;2406-2409;2411-2417;2419;2421-2441;2443-2454" event="script" value="other/destroy.lua"/>
+	<action itemid="3961-3964;3966" event="script" value="other/destroy.lua"/>
+	<action itemid="4846" event="script" value="other/destroy.lua"/>
+	<action itemid="6101;6528;6553" event="script" value="other/destroy.lua"/>
+	<action itemid="7379-7392;7402-7437;7449;7451-7456;7744-7758;7763-7777;7854-7883;7958" event="script" value="other/destroy.lua"/>
+	<action itemid="8601-8602;8924-8932" event="script" value="other/destroy.lua"/>
+	<action itemid="10293" event="script" value="other/destroy.lua"/>
 
 	<!-- Other -->
 	<action itemid="2566" event="script" value="other/pumpkinhead.lua"/>
