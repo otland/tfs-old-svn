@@ -1579,8 +1579,15 @@ bool IOLoginData::changeName(uint32_t guid, std::string newName, std::string old
 
 bool IOLoginData::createCharacter(uint32_t accountId, std::string characterName, int32_t vocationId, uint16_t sex)
 {
-	if(playerExists(characterName))
+	Database* db = Database::getInstance();
+	DBQuery query;
+	query << "SELECT `id` FROM `players` WHERE `name` " << db->getStringComparer() <<  << db->escapeString(characterName) << ";";
+	DBResult* result = db->storeQuery(query.str());
+	if(result)
+	{
+		result->free();
 		return false;
+	}
 
 	Vocation* vocation = Vocations::getInstance()->getVocation(vocationId);
 	Vocation* rookVoc = Vocations::getInstance()->getVocation(0);
@@ -1608,9 +1615,7 @@ bool IOLoginData::createCharacter(uint32_t accountId, std::string characterName,
 		}
 	}
 
-	Database* db = Database::getInstance();
-	DBQuery query;
-
+	query.str("");
 	query << "INSERT INTO `players` (`id`, `name`, `world_id`, `group_id`, `account_id`, `level`, `vocation`, `health`, `healthmax`, `experience`, `lookbody`, `lookfeet`, `lookhead`, `looklegs`, `looktype`, `lookaddons`, `maglevel`, `mana`, `manamax`, `manaspent`, `soul`, `town_id`, `posx`, `posy`, `posz`, `conditions`, `cap`, `sex`, `lastlogin`, `lastip`, `skull`, `skulltime`, `save`, `rank_id`, `guildnick`, `lastlogout`, `blessings`, `online`) VALUES (NULL, " << db->escapeString(characterName) << ", " << g_config.getNumber(ConfigManager::WORLD_ID) << ", 1, " << accountId << ", " << level << ", " << vocationId << ", " << healthMax << ", " << healthMax << ", " << exp << ", 68, 76, 78, 39, " << lookType << ", 0, " << g_config.getNumber(ConfigManager::START_MAGICLEVEL) << ", " << manaMax << ", " << manaMax << ", 0, 100, " << g_config.getNumber(ConfigManager::SPAWNTOWN_ID) << ", " << g_config.getNumber(ConfigManager::SPAWNPOS_X) << ", " << g_config.getNumber(ConfigManager::SPAWNPOS_Y) << ", " << g_config.getNumber(ConfigManager::SPAWNPOS_Z) << ", 0, " << capMax << ", " << sex << ", 0, 0, 0, 0, 1, 0, '', 0, 0, 0)";
 	return db->query(query.str());
 }
@@ -1657,6 +1662,14 @@ DeleteCharacter_t IOLoginData::deleteCharacter(uint32_t accountId, const std::st
 		if(it_ != it->second->VIPList.end())
 			it->second->VIPList.erase(it_);
 	}
+
+	GuidCacheMap::iterator it = guidCacheMap.find(characterName);
+	if(it != guidCacheMap.end())
+		guidCacheMap.erase(it);
+
+	NameCacheMap::iterator it2 = nameCacheMap.find(id);
+	if(it2 != nameCacheMap.end())
+		nameCacheMap.erase(it2);
 
 	return DELETE_SUCCESS;
 }
