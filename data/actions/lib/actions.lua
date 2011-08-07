@@ -17,7 +17,8 @@ POOL = 2016
 
 SPECIAL_FOODS = {
 	[9992] = "Gulp.", [9993] = "Chomp.", [9994] = "Chomp.", [9995] = "Chomp.", [9997] = "Yum.",
-	[9998] = "Munch.", [9999] = "Chomp.", [10000] = "Mmmm.", [10001] = "Smack."
+	[9998] = "Munch.", [9999] = "Chomp.", [10000] = "Mmmm.", [10001] = "Smack.", [12540] = "Yum.", 
+	[12542] = "Gulp.", [12543] = "?", [12544] = "Slurp!"
 }
 
 function destroyItem(cid, itemEx, toPosition)

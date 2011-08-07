@@ -67,84 +67,33 @@
 	<!-- Food -->
 	<action itemid="2328" event="script" value="foods/food.lua"/>
 	<action itemid="2362" event="script" value="foods/food.lua"/>
-	<action itemid="2666" event="script" value="foods/food.lua"/>
-	<action itemid="2667" event="script" value="foods/food.lua"/>
-	<action itemid="2668" event="script" value="foods/food.lua"/>
-	<action itemid="2669" event="script" value="foods/food.lua"/>
-	<action itemid="2670" event="script" value="foods/food.lua"/>
-	<action itemid="2671" event="script" value="foods/food.lua"/>
-	<action itemid="2672" event="script" value="foods/food.lua"/>
-	<action itemid="2673" event="script" value="foods/food.lua"/>
-	<action itemid="2674" event="script" value="foods/food.lua"/>
-	<action itemid="2675" event="script" value="foods/food.lua"/>
-	<action itemid="2676" event="script" value="foods/food.lua"/>
-	<action itemid="2677" event="script" value="foods/food.lua"/>
-	<action itemid="2678" event="script" value="foods/food.lua"/>
-	<action itemid="2679" event="script" value="foods/food.lua"/>
-	<action itemid="2680" event="script" value="foods/food.lua"/>
-	<action itemid="2681" event="script" value="foods/food.lua"/>
-	<action itemid="2682" event="script" value="foods/food.lua"/>
-	<action itemid="2683" event="script" value="foods/food.lua"/>
-	<action itemid="2684" event="script" value="foods/food.lua"/>
-	<action itemid="2685" event="script" value="foods/food.lua"/>
-	<action itemid="2686" event="script" value="foods/food.lua"/>
-	<action itemid="2687" event="script" value="foods/food.lua"/>
-	<action itemid="2688" event="script" value="foods/food.lua"/>
-	<action itemid="2689" event="script" value="foods/food.lua"/>
-	<action itemid="2690" event="script" value="foods/food.lua"/>
-	<action itemid="2691" event="script" value="foods/food.lua"/>
+	<action fromid="2666" toid="2691" event="script" value="foods/food.lua"/>
 	<action itemid="2695" event="script" value="foods/food.lua"/>
 	<action itemid="2696" event="script" value="foods/food.lua"/>
-	<action itemid="2787" event="script" value="foods/food.lua"/>
-	<action itemid="2788" event="script" value="foods/food.lua"/>
-	<action itemid="2789" event="script" value="foods/food.lua"/>
-	<action itemid="2790" event="script" value="foods/food.lua"/>
-	<action itemid="2791" event="script" value="foods/food.lua"/>
-	<action itemid="2792" event="script" value="foods/food.lua"/>
-	<action itemid="2793" event="script" value="foods/food.lua"/>
-	<action itemid="2794" event="script" value="foods/food.lua"/>
-	<action itemid="2795" event="script" value="foods/food.lua"/>
-	<action itemid="2796" event="script" value="foods/food.lua"/>
+	<action fromid="2787" toid="2796" event="script" value="foods/food.lua"/>
 	<action itemid="5097" event="script" value="foods/food.lua"/>
 	<action itemid="5678" event="script" value="foods/food.lua"/>
 	<action itemid="6125" event="script" value="foods/food.lua"/>
-	<action itemid="6278" event="script" value="foods/food.lua"/>
-	<action itemid="6279" event="script" value="foods/food.lua"/>
-	<action itemid="6280" event="script" value="foods/food.lua"/>
+	<action fromid="6278" toid="6280" event="script" value="foods/food.lua"/>
 	<action itemid="6393" event="script" value="foods/food.lua"/>
 	<action itemid="6394" event="script" value="foods/food.lua"/>
 	<action itemid="6501" event="script" value="foods/food.lua"/>
-	<action itemid="6541" event="script" value="foods/food.lua"/>
-	<action itemid="6542" event="script" value="foods/food.lua"/>
-	<action itemid="6543" event="script" value="foods/food.lua"/>
-	<action itemid="6544" event="script" value="foods/food.lua"/>
-	<action itemid="6545" event="script" value="foods/food.lua"/>
+	<action fromid="6541" toid="6545" event="script" value="foods/food.lua"/>
 	<action itemid="7158" event="script" value="foods/food.lua"/>
 	<action itemid="7159" event="script" value="foods/food.lua"/>
-	<action itemid="7372" event="script" value="foods/food.lua"/>
-	<action itemid="7373" event="script" value="foods/food.lua"/>
-	<action itemid="7374" event="script" value="foods/food.lua"/>
-	<action itemid="7375" event="script" value="foods/food.lua"/>
-	<action itemid="7376" event="script" value="foods/food.lua"/>
-	<action itemid="7377" event="script" value="foods/food.lua"/>
+	<action fromid="7372" toid="7377" event="script" value="foods/food.lua"/>
 	<action itemid="7963" event="script" value="foods/food.lua"/>
-	<action itemid="8838" event="script" value="foods/food.lua"/>
-	<action itemid="8839" event="script" value="foods/food.lua"/>
-	<action itemid="8840" event="script" value="foods/food.lua"/>
-	<action itemid="8841" event="script" value="foods/food.lua"/>
-	<action itemid="8842" event="script" value="foods/food.lua"/>
-	<action itemid="8843" event="script" value="foods/food.lua"/>
-	<action itemid="8844" event="script" value="foods/food.lua"/>
-	<action itemid="8845" event="script" value="foods/food.lua"/>
+	<action fromid="8838" toid="8845" event="script" value="foods/food.lua"/>
 	<action itemid="8847" event="script" value="foods/food.lua"/>
 	<action itemid="8868" event="script" value="foods/food.lua"/>
 	<action itemid="9005" event="script" value="foods/food.lua"/>
 	<action itemid="10454" event="script" value="foods/food.lua"/>
 	<action itemid="11246" event="script" value="foods/food.lua"/>
 	<action itemid="11429" event="script" value="foods/food.lua"/>
-	<action itemid="12415" event="script" value="foods/food.lua"/>
-	<action itemid="12637" event="script" value="foods/food.lua"/>
-	<action itemid="12639" event="script" value="foods/food.lua"/>
+	<action fromid="12415" toid="12418" event="script" value="foods/food.lua"/>
+	<action fromid="12637" toid="12639" event="script" value="foods/food.lua"/>
+	
+	<!-- Special Food -->
 	<action itemid="9992" event="script" value="foods/rotworm_stew.lua"/>
 	<action itemid="9993" event="script" value="foods/hydra_tongue_salad.lua"/>
 	<action itemid="9994" event="script" value="foods/roasted_dragon_wings.lua"/>
@@ -155,6 +104,10 @@
 	<action itemid="9999" event="script" value="foods/blessed_steak.lua"/>
 	<action itemid="10000" event="script" value="foods/carrot_cake.lua"/>
 	<action itemid="10001" event="script" value="foods/northern_fishburger.lua"/>
+	<action itemid="12540" event="script" value="foods/coconut_shrimp_bake.lua"/>
+	<action itemid="12542" event="script" value="foods/pot_of_blackjack.lua"/>
+	<action itemid="12543" event="script" value="foods/demonic_candy_ball.lua"/>
+	<action itemid="12544" event="script" value="foods/sweet_mangonaise_elixir.lua"/>
 
 	<!-- Increase/Decrease ItemId -->
 	<action itemid="461" event="script" value="increase.lua"/>
@@ -244,6 +197,26 @@
 	<action itemid="10998" event="script" value="decrease.lua"/>
 	<action itemid="10999" event="script" value="increase.lua"/>
 	<action itemid="11000" event="script" value="decrease.lua"/>
+	<action itemid="11995" event="script" value="increase.lua"/>
+	<action itemid="11996" event="script" value="decrease.lua"/>
+	<action itemid="11997" event="script" value="increase.lua"/>
+	<action itemid="11998" event="script" value="decrease.lua"/>
+	<action itemid="11999" event="script" value="increase.lua"/>
+	<action itemid="12000" event="script" value="decrease.lua"/>
+	<action itemid="12001" event="script" value="increase.lua"/>
+	<action itemid="12002" event="script" value="decrease.lua"/>
+	<action itemid="12005" event="script" value="increase.lua"/>
+	<action itemid="12006" event="script" value="decrease.lua"/>
+	<action itemid="12007" event="script" value="increase.lua"/>
+	<action itemid="12008" event="script" value="decrease.lua"/>
+	<action itemid="12191" event="script" value="increase.lua"/>
+	<action itemid="12192" event="script" value="decrease.lua"/>
+	<action itemid="12200" event="script" value="increase.lua"/>
+	<action itemid="12201" event="script" value="decrease.lua"/>
+	<action itemid="12208" event="script" value="increase.lua"/>
+	<action itemid="12209" event="script" value="decrease.lua"/>
+	<action itemid="12210" event="script" value="increase.lua"/>
+	<action itemid="12211" event="script" value="decrease.lua"/>
 
 	<!-- Spellbooks -->
 	<action itemid="2175" event="script" value="other/spellbook.lua"/>
