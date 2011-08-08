@@ -8,10 +8,10 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 		return false
 	end
 	
-	if(not ring) then
+	if(ring.itemid == 0) then
 		doPlayerSendTextMessage(cid, MESSAGE_STATUS_SMALL, "You may want to equip a ring before eating this.")
-		doSendMagicEffect(getCreaturePosition(cid), CONST_ME_POFF)
-		return false
+		doSendMagicEffect(fromPosition, CONST_ME_POFF)
+		return true
 	end
 	
 	if(getItemInfo(ring.itemid).showDuration) then
@@ -19,8 +19,8 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 
 		if(pFreeCap < capRequired) then
 			doPlayerSendTextMessage(cid, MESSAGE_STATUS_SMALL, "You may want to free some capacity before doing this.")
-			doSendMagicEffect(getCreaturePosition(cid), CONST_ME_POFF)
-			return false
+			doSendMagicEffect(fromPosition, CONST_ME_POFF)
+			return true
 		end
 		
 		for i=1,config.amount do
@@ -28,8 +28,8 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 		end
 	else
 		doPlayerSendTextMessage(cid, MESSAGE_STATUS_SMALL, "You may want to equip the correct type of ring before eating this.")
-		doSendMagicEffect(getCreaturePosition(cid), CONST_ME_POFF)
-		return false
+		doSendMagicEffect(fromPosition, CONST_ME_POFF)
+		return true
 	end
 
 	doRemoveItem(item.uid, 1)

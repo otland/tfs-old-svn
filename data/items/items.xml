@@ -7044,7 +7044,14 @@
 	<item id="3957" article="a" name="war horn">
 		<attribute key="weight" value="1500" />
 	</item>
-	<item fromid="3958" toid="3959" article="a" name="garbage" />
+	<item id="3958" article="a" name="broken wall">
+		<attribute key="decayTo" value="3798" />
+		<attribute key="duration" value="60" />
+	</item>
+	<item id="3959" article="a" name="broken wall">
+		<attribute key="decayTo" value="3799" />
+		<attribute key="duration" value="60" />
+	</item>
 	<item id="3960" article="an" name="old and used backpack">
 		<attribute key="description" value="A label on the backpack reads: Property of Sam, Thais." />
 		<attribute key="weight" value="1800" />
