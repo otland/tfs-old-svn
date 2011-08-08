@@ -1581,7 +1581,7 @@ bool IOLoginData::createCharacter(uint32_t accountId, std::string characterName,
 {
 	Database* db = Database::getInstance();
 	DBQuery query;
-	query << "SELECT `id` FROM `players` WHERE `name` " << db->getStringComparer() <<  << db->escapeString(characterName) << ";";
+	query << "SELECT `id` FROM `players` WHERE `name` " << db->getStringComparer() << db->escapeString(characterName) << ";";
 	DBResult* result = db->storeQuery(query.str());
 	if(result)
 	{
