@@ -35,7 +35,9 @@
 		<voice sentence="Chrchrchr" yell="1"/>
 	</voices>
 	<loot>
-		<item id="2148" countmax="80" chance1="40000" chancemax="954"/>
-		<item id="2148" countmax="39" chance1="40000" chancemax="954"/>
+		<item id="2148" countmax="80" chance1="40000" chancemax="954"/><!-- gp -->
+		<item id="2148" countmax="39" chance1="40000" chancemax="954"/><!-- gp -->
+		<item id="13304" chance="5500"/><!-- giant crab pincer -->
+		<item id="7589" chance="7000"/><!-- strong mana potion -->
 	</loot>
 </monster>

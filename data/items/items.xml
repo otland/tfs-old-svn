@@ -20168,6 +20168,7 @@
 		<attribute key="defense" value="14"/>
 		<attribute key="weaponType" value="shield"/>
 	</item>
+	<!-- 12648 unknown spectre -->
 	<item id="12649" article="a" name="blade of corruption">
 		<attribute key="weight" value="6400"/>
 		<attribute key="defense" value="29"/>
@@ -20216,6 +20217,7 @@
 	<item id="12703" article="a" name="wooden wall"/>
 	<item id="12755" article="a" name="stone wall"/>
 	<item id="12756" article="a" name="stone wall"/>
+	<item fromid="12776" toid="12779" article="a" name="roof decoration"/>
 	<item fromid="12787" toid="12794" article="a" name="wooden chair"/>
 	<item id="12795" article="a" name="wooden stool"/>
 	<item fromid="12802" toid="12805" article="a" name="ruined tapestry"/>
@@ -20224,7 +20226,9 @@
 	<item fromid="12857" toid="12869" article="a" name="stone wall"/>
 	<item fromid="12870" toid="12874" article="a" name="stone pillar"/>
 	<item fromid="12875" toid="12876" article="a" name="skull pillar"/>
-	<item fromid="12877" toid="12879" article="a" name="stone pillar"/>
+	<item id="12877" article="a" name="stone pillar"/>
+	<item id="12878" article="a" name="skull pillar"/>
+	<item id="12879" article="a" name="dark pillar"/>
 	<item fromid="12880" toid="12883" article="a" name="stone wall"/>
 	<item id="12884" article="a" name="skull pillar"/>
 	<item fromid="12885" toid="12911" article="a" name="stone wall"/>
@@ -20239,6 +20243,10 @@
 	<item fromid="12972" toid="12973" article="a" name="stone wall"/>
 	<item id="12974" article="a" name="stone archway"/>
 	<item fromid="12975" toid="12978" article="a" name="stone wall"/>
+	<item fromid="12979" toid="13006" article="a" name="stone carving"/>
+	<item fromid="13007" toid="13009" article="a" name="wooden table"/>
+	<item id="13010" article="a" name="ladder"/> <!-- change level? -->
+	<item fromid="13011" toid="13018" article="a" name="clock"/>
 	
 	<item id="13026" article="a" name="panther head">
 		<attribute key="weight" value="150" />
@@ -20250,6 +20258,26 @@
 		<attribute key="description" value="A hermit near Carlin might be able to tell you more about it."/>
 		<attribute key="weight" value="200"/>
 	</item>
+	
+	<item fromid="13072" toid="13076" article="a" name="giant cake"/>
+	<item id="13092" article="a" name="giant cake"/>
+	<item id="13094" article="a" name="giant cake"/>
+	<item id="13096" article="a" name="giant cake"/>
+	<item id="13098" article="a" name="giant cake"/>
+	<item fromid="13101" toid="13109" article="a" name="giant pot of slime"/>
+	<item id="13110" article="a" name="broom stick"/>
+	<item id="13115" article="a" name="tool box"/>
+	<item id="13122" article="a" name="whirl pool"/>
+	<item fromid="13123" toid="13125" article="a" name="alter of fire"/>
+	<item id="13127" article="a" name="alter of fire"/>
+	<item fromid="13134" toid="13142" article="a" name="giant cake"/>
+	<item fromid="13143" toid="13144" article="a" name="stone wall"/>
+	<item fromid="13177" toid="13180" article="a" name="stone wall"/>
+	<item fromid="13182" toid="13184" article="a" name="stone wall"/>
+	<item id="13186" article="a" name="stone wall"/>
+	<item fromid="13199" toid="13200" article="a" name="stone"/>
+	<item fromid="13288" toid="13289" article="a" name="giant pot of slime"/>
+	
 	<item id="13291" article="a" name="maxilla maximus">
 		<attribute key="description" value="A hermit near Carlin might be able to tell you more about it."/>
 		<attribute key="weight" value="200"/>

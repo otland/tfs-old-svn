@@ -342,10 +342,7 @@ function isNpc(cid)
 end
 
 function isSummon(cid)
-	if getCreatureMaster(cid) == cid or getCreatureMaster(cid) == nil then
-		return false
-	end
-	return true
+	return getCreatureMaster(cid) and getCreatureMaster(cid) ~= cid
 end
 
 function doPlayerSetExperienceRate(cid, value)

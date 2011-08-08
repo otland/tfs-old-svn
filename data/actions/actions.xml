@@ -330,7 +330,7 @@
 	<action itemid="8981" event="script" value="other/dolls.lua"/>
 	<action itemid="8982" event="script" value="other/dolls.lua"/>
 	
-	<!-- Destory -->
+	<!-- Destroy -->
 	<action itemid="2321;2376-2388;2390-2398;2400-2404;2406-2409;2411-2417;2419;2421-2441;2443-2454" event="script" value="other/destroy.lua"/>
 	<action itemid="3961-3964;3966" event="script" value="other/destroy.lua"/>
 	<action itemid="4846" event="script" value="other/destroy.lua"/>
