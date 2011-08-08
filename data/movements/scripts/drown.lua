@@ -15,7 +15,7 @@ function onStepIn(cid, item, position, fromPosition)
 	doAddCondition(cid, condition_drown)
 	
 	--Coconut Shrimp Bake food condition check
-	local helmet = getPlayerSlotItem(cid, CONST_SLOT_HELMET)
+	local helmet = getPlayerSlotItem(cid, CONST_SLOT_HEAD)
 	if(getCreatureCondition(cid, CONDITION_OTHER) and not getCreatureCondition(cid, CONDITION_HASTE, 1)) then
 		--TODO: Change the item id to 12541 rather than add the condition_speed.
 		if(helmet.itemid == 5461) then
