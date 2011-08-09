@@ -142,7 +142,7 @@
 	<instant name="Curser" words="utori mort" lvl="75" mana="30" prem="1" range="3" casterTargetOrDirection="1" blockwalls="1" exhaustion="50000" groups="1,2000" icon="139" needlearn="0" event="script" value="attack/curse.lua"> 
 		<vocation id="1"/> 
 		<vocation id="5"/> 
-	</instant> 
+	</instant>
 	<instant name="Electrify" words="utori vis" lvl="34" mana="30" prem="1" range="3" casterTargetOrDirection="1" blockwalls="1" exhaustion="30000" groups="1,2000" icon="140" needlearn="0" event="script" value="attack/electrify.lua"> 
 		<vocation id="1"/> 
 		<vocation id="5"/> 
@@ -204,7 +204,11 @@
 	<instant name="Strong Ice Wave" words="exevo gran frigo hur" lvl="40" mana="170" direction="1" exhaustion="8000" groups="1,2000;4,800" icon="43" needlearn="0" event="script" value="attack/strong ice wave.lua"> 
 		<vocation id="2"/> 
 		<vocation id="6"/> 
-	</instant> 
+	</instant>
+	<instant name="Envenom" words="utori pox" lvl="50" mana="30" prem="1" range="3" casterTargetOrDirection="1" blockwalls="1" exhaustion="40000" groups="1,2000" icon="142" needlearn="0" event="script" value="attack/envenom.lua"> 
+		<vocation id="2"/> 
+		<vocation id="6"/>
+	</instant>
 	<instant name="Terra Strike" words="exori tera" lvl="13" mana="20" prem="0" range="3" casterTargetOrDirection="1" blockwalls="1" exhaustion="2000" groups="1,2000" icon="113" needlearn="0" event="script" value="attack/terra strike.lua">
 		<vocation id="1"/>
 		<vocation id="5"/>
