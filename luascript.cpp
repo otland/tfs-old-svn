@@ -4134,6 +4134,7 @@ int32_t LuaInterface::luaDoPlayerSendTextMessage(lua_State* L)
 {
 	//doPlayerSendTextMessage(cid, MessageClasses, message[, value[, color[, position]]])
 	int32_t args = lua_gettop(L), value = 0, color = COLOR_WHITE;
+	PositionEx position;
 	if(args > 5)
 		popPosition(L, position);
 
