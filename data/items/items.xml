@@ -20822,56 +20822,6 @@
 		<attribute key="duration" value="600" />
 		<attribute key="corpseType" value="venom" />
 	</item>
-	<item id="13859" article="a" name="dead thornfire wolf">
-		<attribute key="containerSize" value="10" />
-		<attribute key="decayTo" value="13860" />
-		<attribute key="duration" value="10" />
-		<attribute key="corpseType" value="blood" />
-		<attribute key="fluidSource" value="blood" />
-	</item>
-	<item id="13860" article="a" name="dead thornfire wolf">
-		<attribute key="containerSize" value="10" />
-		<attribute key="decayTo" value="13861" />
-		<attribute key="duration" value="900" />
-		<attribute key="corpseType" value="blood" />
-		<attribute key="fluidSource" value="blood" />
-	</item>
-	<item id="13861" article="a" name="dead thornfire wolf">
-		<attribute key="containerSize" value="10" />
-		<attribute key="decayTo" value="13862" />
-		<attribute key="duration" value="600" />
-		<attribute key="corpseType" value="blood" />
-	</item>
-	<item id="13862" article="a" name="dead thornfire wolf">
-		<attribute key="decayTo" value="0" />
-		<attribute key="duration" value="600" />
-		<attribute key="corpseType" value="blood" />
-	</item>
-	<item id="13752" article="a" name="dead yielothax">
-		<attribute key="containerSize" value="10" />
-		<attribute key="decayTo" value="13753" />
-		<attribute key="duration" value="10" />
-		<attribute key="corpseType" value="blood" />
-		<attribute key="fluidSource" value="blood" />
-	</item>
-	<item id="13753" article="a" name="dead yielothax">
-		<attribute key="containerSize" value="10" />
-		<attribute key="decayTo" value="13754" />
-		<attribute key="duration" value="900" />
-		<attribute key="corpseType" value="blood" />
-		<attribute key="fluidSource" value="blood" />
-	</item>
-	<item id="13754" article="a" name="dead yielothax">
-		<attribute key="containerSize" value="10" />
-		<attribute key="decayTo" value="13755" />
-		<attribute key="duration" value="600" />
-		<attribute key="corpseType" value="blood" />
-	</item>
-	<item id="13755" article="a" name="dead yielothax">
-		<attribute key="decayTo" value="0" />
-		<attribute key="duration" value="600" />
-		<attribute key="corpseType" value="blood" />
-	</item>
 	<item id="13508" article="a" name="slug drug">
 		<attribute key="description" value="A hermit near Carlin might be able to tell you more about it."/>
 		<attribute key="weight" value="200"/>
@@ -20899,26 +20849,39 @@
 		<attribute key="description" value="A hermit near Carlin might be able to tell you more about it."/>
 		<attribute key="weight" value="200"/>
 	</item>
+	<item id="13752" article="a" name="dead yielothax">
+		<attribute key="containerSize" value="10" />
+		<attribute key="decayTo" value="13753" />
+		<attribute key="duration" value="10" />
+		<attribute key="corpseType" value="blood" />
+		<attribute key="fluidSource" value="blood" />
+	</item>
+	<item id="13753" article="a" name="dead yielothax">
+		<attribute key="containerSize" value="10" />
+		<attribute key="decayTo" value="13754" />
+		<attribute key="duration" value="900" />
+		<attribute key="corpseType" value="blood" />
+		<attribute key="fluidSource" value="blood" />
+	</item>
+	<item id="13754" article="a" name="dead yielothax">
+		<attribute key="containerSize" value="10" />
+		<attribute key="decayTo" value="13755" />
+		<attribute key="duration" value="600" />
+		<attribute key="corpseType" value="blood" />
+	</item>
+	<item id="13755" article="a" name="dead yielothax">
+		<attribute key="decayTo" value="0" />
+		<attribute key="duration" value="600" />
+		<attribute key="corpseType" value="blood" />
+	</item>
 	<item id="13756" article="a" name="mage's cap">
 		<attribute key="weight" value="650" />
 	</item>
 	<item id="13758" article="a" name="slime mould">
 		<attribute key="weight" value="300" />
 	</item>
-	<item id="13838" article="a" name="heavy trident">
-		<attribute key="weight" value="650" />
-	</item>
 	<item id="13757" article="a" name="coal">
 		<attribute key="weight" value="500" />
-	</item>
-	<item id="13943" article="a" name="flintstone">
-		<attribute key="weight" value="375" />
-	</item>
-	<item id="13942" article="a" name="yielocks">
-		<attribute key="weight" value="295" />
-	</item>
-	<item id="13940" name="elemental spikes">
-		<attribute key="weight" value="1200" />
 	</item>
 	<item id="13834" article="a" name="dead raging mage">
 		<attribute key="weight" value="26000" />
@@ -20947,6 +20910,9 @@
 		<attribute key="duration" value="600" />
 		<attribute key="corpseType" value="blood" />
 	</item>
+	<item id="13838" article="a" name="heavy trident">
+		<attribute key="weight" value="650" />
+	</item>
 	<item id="13839" article="a" name="dead deepling scout">
 		<attribute key="weight" value="26000" />
 		<attribute key="containerSize" value="8" />
@@ -20974,21 +20940,73 @@
 		<attribute key="duration" value="600" />
 		<attribute key="corpseType" value="blood" />
 	</item>
-	<item id="13871" article="a" name="shimmer sword">
-		<attribute key="weight" value="6500" />
+	<item id="13859" article="a" name="dead thornfire wolf">
+		<attribute key="containerSize" value="10" />
+		<attribute key="decayTo" value="13860" />
+		<attribute key="duration" value="10" />
+		<attribute key="corpseType" value="blood" />
+		<attribute key="fluidSource" value="blood" />
 	</item>
-	<item id="13872" article="a" name="shimmer rod">
-		<attribute key="weight" value="6500" />
+	<item id="13860" article="a" name="dead thornfire wolf">
+		<attribute key="containerSize" value="10" />
+		<attribute key="decayTo" value="13861" />
+		<attribute key="duration" value="900" />
+		<attribute key="corpseType" value="blood" />
+		<attribute key="fluidSource" value="blood" />
 	</item>
-	<item id="13873" article="a" name="shimmer bow">
-		<attribute key="weight" value="6500" />
+	<item id="13861" article="a" name="dead thornfire wolf">
+		<attribute key="containerSize" value="10" />
+		<attribute key="decayTo" value="13862" />
+		<attribute key="duration" value="600" />
+		<attribute key="corpseType" value="blood" />
 	</item>
-	<item id="13875" article="a" name="shimmer glower">
-		<attribute key="weight" value="6500" />
+	<item id="13862" article="a" name="dead thornfire wolf">
+		<attribute key="decayTo" value="0" />
+		<attribute key="duration" value="600" />
+		<attribute key="corpseType" value="blood" />
 	</item>
-	<item id="13877" article="a" name="broken ring of ending">
-		<attribute key="weight" value="6500" />
-	</item>
+     <item id="13871" article="a" name="shimmer sword">
+         <attribute key="weight" value="5200" />
+         <attribute key="defense" value="20" />
+         <attribute key="attack" value="42" />
+         <attribute key="weaponType" value="sword" />
+         <attribute key="decayTo" value="0" />
+         <attribute key="duration" value="604800" />
+         <attribute key="showduration" value="0" /> 
+     </item>
+     <item id="13872" article="a" name="shimmer rod">
+         <attribute key="description" value="It feels cold and smooth." />
+         <attribute key="weight" value="3100" />
+         <attribute key="weaponType" value="wand" />
+         <attribute key="shootType" value="smallice" />
+         <attribute key="range" value="4" />
+         <attribute key="decayTo" value="0" />
+         <attribute key="duration" value="604800" />
+         <attribute key="showduration" value="0" /> 
+     </item>
+     <item id="13873" article="a" name="shimmer bow">
+         <attribute key="weight" value="4800" />
+         <attribute key="weaponType" value="distance" />
+         <attribute key="slotType" value="two-handed" />
+         <attribute key="ammoType" value="arrow" />
+         <attribute key="range" value="6" />
+         <attribute key="attack" value="1" />
+         <attribute key="hitChance" value="7" />
+         <attribute key="decayTo" value="0" />    
+         <attribute key="duration" value="604800" />
+         <attribute key="showduration" value="0" />    
+     </item>
+     <item id="13875" article="a" name="shimmer glower">
+         <attribute key="weight" value="1000" />
+         <attribute key="decayTo" value="0" />
+         <attribute key="duration" value="604800" />
+         <attribute key="showduration" value="0" />
+     </item>
+     <item id="13877" article="a" name="broken ring of ending">
+         <attribute key="weight" value="60" />
+         <attribute key="description" value="It seems all its former  magical power has left this broken carcass of a ring." />
+         <attribute key="slotType" value="ring" />
+     </item>
 	<item id="13880" article="a" name="shimmer wand">
 		<attribute key="weight" value="6500" />
 	</item>
@@ -21003,11 +21021,20 @@
 		<attribute key="description" value="A hermit near Carlin might be able to tell you more about it."/>
 		<attribute key="weight" value="200"/>
 	</item>
+	<item id="13940" name="elemental spikes">
+		<attribute key="weight" value="1200" />
+	</item>
 	<item id="13941" article="a" name="cup of molten gold">
 		<attribute key="description" value="Be careful, this vessel can hold the molten gold only for a short time."/>
 		<attribute key="decayTo" value="0" />
 		<attribute key="duration" value="14400" />
 		<attribute key="weight" value="500" />
+	</item>
+	<item id="13942" article="a" name="yielocks">
+		<attribute key="weight" value="295" />
+	</item>
+	<item id="13943" article="a" name="flintstone">
+		<attribute key="weight" value="375" />
 	</item>
 	<item id="13957" article="a" name="dead askarak lord">
 		<attribute key="weight" value="26000" />

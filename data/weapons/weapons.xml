@@ -25,6 +25,9 @@
 	<wand id="8910" level="42" mana="13" min="55" max="75" type="death" event="function" value="default"> <!-- Underworld Rod -->
 		<vocation id="2"/>
 	</wand>
+    <wand id="13872" level="40" mana="13" min="55" max="75" type="ice" event="function" value="default"> <!-- Shimmer Rod -->
+        <vocation id="2"/>
+    </wand>
 
 	<!-- Wands -->
 	<wand id="2190" level="7" mana="2" min="8" max="18" type="energy" event="function" value="default"> <!-- Wand of Vortex -->
@@ -51,6 +54,9 @@
 	<wand id="8922" level="42" mana="13" min="55" max="75" type="death" event="function" value="default"> <!-- Wand of Voodoo -->
 		<vocation id="1"/>
 	</wand>
+    <wand id="13880" level="40" mana="13" min="55" max="75" type="energy" event="function" value="default"> <!-- Shimmer Wand -->
+		<vocation id="1"/>
+    </wand>
 
 	<!-- Swords -->
 		<!-- Broadsword -->
@@ -217,6 +223,11 @@
 		<vocation id="4"/>
 		<vocation id="8" showInDescription="0"/>
 	</melee>
+		<!-- Shimmer Sword -->
+    <melee id="13871" level="40" unproperly="1" event="function" value="default">
+		<vocation id="4"/>
+		<vocation id="8" showInDescription="0"/>
+    </melee>
 	
 	<!-- Axes -->
 		<!-- Barbarian Axe -->
@@ -500,55 +511,60 @@
 
 	<!-- Bows and Crossbows -->
 		<!-- Modified Crossbow -->
-	<distance id="8849" level="45" unproperly="1" event="function" value="default"> <!-- Modified Crossbow -->
+	<distance id="8849" level="45" unproperly="1" event="function" value="default">
 		<vocation id="3"/>
 		<vocation id="7" showInDescription="0"/>
 	</distance>
 		<!-- Chain Bolter -->
-	<distance id="8850" level="60" unproperly="1" event="function" value="default"> <!-- Chain Bolter -->
+	<distance id="8850" level="60" unproperly="1" event="function" value="default">
 		<vocation id="3"/>
 		<vocation id="7" showInDescription="0"/>
 	</distance>
 		<!-- Ironworker -->
-	<distance id="8853" level="80" unproperly="1" event="function" value="default"> <!-- Ironworker -->
+	<distance id="8853" level="80" unproperly="1" event="function" value="default">
 		<vocation id="3"/>
 		<vocation id="7" showInDescription="0"/>
 	</distance>
 		<!-- Devileye -->
-	<distance id="8852" level="100" unproperly="1" event="function" value="default"> <!-- Devileye -->
+	<distance id="8852" level="100" unproperly="1" event="function" value="default">
 		<vocation id="3"/>
 		<vocation id="7" showInDescription="0"/>
 	</distance>
 		<!-- Royal Crossbow -->
-	<distance id="8851" level="130" unproperly="1" event="function" value="default"> <!-- Royal Crossbow -->
+	<distance id="8851" level="130" unproperly="1" event="function" value="default">
 		<vocation id="3"/>
 		<vocation id="7" showInDescription="0"/>
 	</distance>
 		<!-- Silkweaver Bow -->
-	<distance id="8857" level="40" unproperly="1" event="function" value="default"> <!-- Silkweaver Bow -->
+	<distance id="8857" level="40" unproperly="1" event="function" value="default"> 
 		<vocation id="3"/>
 		<vocation id="7" showInDescription="0"/>
 	</distance>
 		<!-- Composite Hornbow -->
-	<distance id="8855" level="50" unproperly="1" event="function" value="default"> <!-- Composite Hornbow -->
+	<distance id="8855" level="50" unproperly="1" event="function" value="default">
 		<vocation id="3"/>
 		<vocation id="7" showInDescription="0"/>
 	</distance>
 		<!-- Yol's Bow -->
-	<distance id="8856" level="60" unproperly="1" event="function" value="default"> <!-- Yol's Bow -->
+	<distance id="8856" level="60" unproperly="1" event="function" value="default">
 		<vocation id="3"/>
 		<vocation id="7" showInDescription="0"/>
 	</distance>
 		<!-- Elethriel's Elemental Bow -->
-	<distance id="8858" level="70" unproperly="1" event="function" value="default"> <!-- Elethriel's Elemental Bow -->
+	<distance id="8858" level="70" unproperly="1" event="function" value="default">
 		<vocation id="3"/>
 		<vocation id="7" showInDescription="0"/>
 	</distance>
 		<!-- Warsinger Bow -->
-	<distance id="8854" level="80" unproperly="1" event="function" value="default"> <!-- Warsinger Bow -->
+	<distance id="8854" level="80" unproperly="1" event="function" value="default">
 		<vocation id="3"/>
 		<vocation id="7" showInDescription="0"/>
 	</distance>
+		<!-- Shimmer Bow -->
+    <distance id="13873" level="40" unproperly="1" event="function" value="default">
+		<vocation id="3"/>
+		<vocation id="7" showInDescription="0"/>
+    </distance>
 
  	<!-- Ammunition -->
 	<distance id="2545" event="script" value="poison_arrow.lua"/> <!-- Poison Arrow -->
