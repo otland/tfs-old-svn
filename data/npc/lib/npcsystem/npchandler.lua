@@ -498,7 +498,7 @@ if(NpcHandler == nil) then
 						local talkStart = (NPCHANDLER_CONVBEHAVIOR ~= CONVERSATION_DEFAULT and self.talkStart[speech.cid] or self.talkStart)
 						if(speech.force or (self:isFocused(speech.cid) and talkStart == speech.start)) then
 							if(isCreature(speech.id) and NPCHANDLER_CONVBEHAVIOR ~= CONVERSATION_DEFAULT) then
-								doCreatureSay(speech.id, speech.message, TALKTYPE_PRIVATE_NP, false, speech.cid, getCreaturePosition(speech.id))
+								selfSay(speech.message, speech.cid)
 							else
 								selfSay(speech.message)
 							end
@@ -613,7 +613,7 @@ if(NpcHandler == nil) then
 	-- Makes the npc represented by this instance of NpcHandler say something.
 	--	This implements the currently set type of talkdelay.
 	function NpcHandler:say(message, focus, delay, force)
-		delay = tonumber(delay) or self.talkDelayTime
+		local delay = tonumber(delay) or self.talkDelayTime
 		if(NPCHANDLER_TALKDELAY == TALKDELAY_NONE or delay <= 0) then
 			if(NPCHANDLER_CONVBEHAVIOR ~= CONVERSATION_DEFAULT) then
 				selfSay(message, focus)

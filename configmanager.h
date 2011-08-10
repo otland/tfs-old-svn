@@ -304,6 +304,7 @@ class ConfigManager
 			DAEMONIZE,
 			TIBIA_SLOTS,
 			SKIP_ITEMS_VERSION,
+			HEAL_PLAYER_ON_LEVEL,
 			LAST_BOOL_CONFIG /* this must be the last one */
 		};
 

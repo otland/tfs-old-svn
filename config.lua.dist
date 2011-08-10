@@ -222,6 +222,7 @@
 	maxMessageBuffer = 4
 	tradeLimit = 100
 	useCapacity = true
+	healPlayersOnLevelAdvance = true
 
 	-- Depot
 	defaultDepotSizePremium = 2000

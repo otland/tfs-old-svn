@@ -8354,6 +8354,9 @@
 		<attribute key="armor" value="2" />
 		<attribute key="slotType" value="head" />
 		<attribute key="suppressDrown" value="1" />
+		<attribute key="transformEquipTo" value="12541" />
+		<attribute key="stopduration" value="1" />
+		<attribute key="showattributes" value="1" />
 	</item>
 	<item id="5462" name="pirate boots">
 		<attribute key="weight" value="800" />
@@ -19789,6 +19792,11 @@
 		<attribute key="slotType" value="head"/>
 		<attribute key="suppressDrown" value="1"/>
 		<attribute key="speed" value="600"/>
+		<attribute key="decayTo" value="5461" />
+		<attribute key="duration" value="21600" />
+		<attribute key="transformDeEquipTo" value="5461" />
+		<attribute key="showduration" value="1" />
+		<attribute key="showattributes" value="1" />
 	</item>
 	<item id="12542" article="a" name="pot of blackjack">
 		<attribute key="description" value="Nomads state that this meal fills you with energy several times before the pot is empty."/>

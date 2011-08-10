@@ -111,6 +111,9 @@ bool Vocations::parseVocationNode(xmlNodePtr p)
 	if(readXMLInteger(p, "lessloss", intValue))
 		voc->setLessLoss(intValue);
 
+	if(readXMLString(p, "droploot", strValue))
+		voc->setDropLoot(booleanString(strValue));
+
 	for(xmlNodePtr configNode = p->children; configNode; configNode = configNode->next)
 	{
 		if(!xmlStrcmp(configNode->name, (const xmlChar*)"skill"))

@@ -1,5 +1,6 @@
 local condition = createConditionObject(CONDITION_OTHER)
 setConditionParam(condition, CONDITION_PARAM_TICKS, 6 * 60 * 60 * 1000)
+setConditionParam(condition, CONDITION_PARAM_SUBID, 1)
 
 function onUse(cid, item, fromPosition, itemEx, toPosition)
 	local food = SPECIAL_FOODS[item.itemid]

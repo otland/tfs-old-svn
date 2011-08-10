@@ -336,6 +336,7 @@ bool ConfigManager::load()
 	m_confBool[DAEMONIZE]				= getGlobalBool("daemonize", false);
 	m_confBool[TIBIA_SLOTS]				= getGlobalBool("tibiaClassicSlots", true);
 	m_confBool[SKIP_ITEMS_VERSION]			= getGlobalBool("skipItemsVersionCheck", false);
+	m_confBool[HEAL_PLAYER_ON_LEVEL]		= getGlobalBool("healPlayersOnLevelAdvance", true);
 
 	m_loaded = true;
 	return true;
