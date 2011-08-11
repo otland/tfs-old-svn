@@ -11,15 +11,13 @@ function onStepIn(cid, item, position, fromPosition)
 		return false
 	end
 
-	doAddCondition(cid, conditionDrown)
 	local helmet = getPlayerSlotItem(cid, CONST_SLOT_HEAD)
-	if(helmet.itemid == HOTD) then
-		if(getCreatureCondition(cid, CONDITION_OTHER, 1) or getItemAttribute(helmet.uid, "duration") < 21600) then
-			doTransformItem(helmet.uid, HOTD_SPEED)
-			doDecayItem(helmet.uid)
-		end
+	if(helmet.itemid == HOTD and getCreatureCondition(cid, CONDITION_OTHER, 1)) then
+		doTransformItem(helmet.uid, HOTD_SPEED)
+		doDecayItem(helmet.uid)
 	end
 	
+	doAddCondition(cid, conditionDrown)
 	return true
 end
 
@@ -27,13 +25,13 @@ function onStepOut(cid, item, position, fromPosition)
 	if(not isPlayer(cid)) then
 		return false
 	end
-
-	doRemoveCondition(cid, CONDITION_DROWN)
+	
 	local helmet = getPlayerSlotItem(cid, CONST_SLOT_HEAD)
 	if(helmet.itemid == HOTD_SPEED) then
 		doTransformItem(helmet.uid, HOTD)
 		doDecayItem(helmet.uid)
 	end
-
+	
+	doRemoveCondition(cid, CONDITION_DROWN)
 	return true
 end

@@ -494,6 +494,8 @@
 		<!-- Helmet of the Deep -->
 	<movevent type="Equip" itemid="5461" slot="head" event="function" value="onEquipItem"/>
 	<movevent type="DeEquip" itemid="5461" slot="head" event="function" value="onDeEquipItem"/>
+	<movevent type="Equip" itemid="12541" slot="head" event="function" value="onEquipItem"/>
+	<movevent type="DeEquip" itemid="12541" slot="head" event="function" value="onDeEquipItem"/>
 		<!-- Earmuffs -->
 	<movevent type="Equip" itemid="7459" slot="head" event="function" value="onEquipItem"/>
 	<movevent type="DeEquip" itemid="7459" slot="head" event="function" value="onDeEquipItem"/>

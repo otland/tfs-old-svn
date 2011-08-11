@@ -8354,7 +8354,6 @@
 		<attribute key="armor" value="2" />
 		<attribute key="slotType" value="head" />
 		<attribute key="suppressDrown" value="1" />
-		<attribute key="transformEquipTo" value="12541" />
 		<attribute key="stopduration" value="1" />
 		<attribute key="showattributes" value="1" />
 	</item>
@@ -11075,6 +11074,7 @@
 	<item id="6530" article="a" name="pair of old worn soft boots">
 		<attribute key="description" value="Someone specialised in shoes might be able to repair them for you." />
 		<attribute key="weight" value="800" />
+		<attribute key="slotType" value="feet"/>
 	</item>
 	<item id="6531" article="a" name="santa hat">
 		<attribute key="weight" value="750" />
@@ -18573,10 +18573,10 @@
 	</item>
 	<item fromid="11201" toid="11202" article="a" name="stone wall" />
 	<item id="11203" article="a" name="dragon throne">
-		<attribute key="rotateTo" value="11198" />
+		<attribute key="rotateTo" value="11204" />
 	</item>
 	<item id="11204" article="a" name="dragon throne">
-		<attribute key="rotateTo" value="11197" />
+		<attribute key="rotateTo" value="11203" />
 	</item>
 	<item id="11205" article="a" name="dragon throne kit">
 		<attribute key="description" value="It is a kit for a dragon throne." />
@@ -21016,7 +21016,14 @@
          <attribute key="slotType" value="ring" />
      </item>
 	<item id="13880" article="a" name="shimmer wand">
-		<attribute key="weight" value="6500" />
+		<attribute key="weight" value="3100" />
+		<attribute key="description" value="It feels cold and smooth." />
+		<attribute key="weaponType" value="wand" />
+		<attribute key="shootType" value="energy" />
+		<attribute key="range" value="4" />
+		<attribute key="decayTo" value="0" />
+		<attribute key="duration" value="604800" />
+		<attribute key="showduration" value="0" />
 	</item>
 	<item id="13881" article="a" name="yielowax">
 		<attribute key="weight" value="300" />

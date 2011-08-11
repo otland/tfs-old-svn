@@ -32,8 +32,8 @@
 	</immunities>
 	<loot>
 		<item id="2148" countmax="80" chance="9750"/> <!-- gold coin -->
-		<item id="13303" countmax="80" chance="3150"/> <!-- cavebear skull -->
-		<item id="13302" countmax="80" chance="2350"/> <!-- maxilla -->
-		<item id="13291" countmax="80" chance="900"/> <!-- maxilla maximus -->
+		<item id="13303" chance="3150"/> <!-- cavebear skull -->
+		<item id="13302" chance="2350"/> <!-- maxilla -->
+		<item id="13291" chance="900"/> <!-- maxilla maximus -->
 	</loot>
 </monster>
