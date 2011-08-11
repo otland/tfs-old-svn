@@ -1986,7 +1986,7 @@ void LuaInterface::registerFunctions()
 	//createCombatArea({area}[, {extArea}])
 	lua_register(m_luaState, "createCombatArea", LuaInterface::luaCreateCombatArea);
 
-	//createConditionObject(type[, ticks[, buff[, subId]]])
+	//createConditionObject(type[, ticks[, buff[, subId[, conditionId]]]])
 	lua_register(m_luaState, "createConditionObject", LuaInterface::luaCreateConditionObject);
 
 	//setCombatArea(combat, area)
@@ -5899,8 +5899,11 @@ int32_t LuaInterface::luaCreateCombatArea(lua_State* L)
 
 int32_t LuaInterface::luaCreateConditionObject(lua_State* L)
 {
-	//createConditionObject(type[, ticks[, buff[, subId]]])
-	uint32_t params = lua_gettop(L), subId = 0;
+	//createConditionObject(type[, ticks[, buff[, subId[, conditionId]]]])
+	uint32_t params = lua_gettop(L), subId = 0, conditionId = CONDITIONID_COMBAT;
+	if(params > 4)
+		conditionId = popNumber(L);
+
 	if(params > 3)
 		subId = popNumber(L);
 
@@ -5913,7 +5916,7 @@ int32_t LuaInterface::luaCreateConditionObject(lua_State* L)
 		ticks = popNumber(L);
 
 	ScriptEnviroment* env = getEnv();
-	if(Condition* condition = Condition::createCondition(CONDITIONID_COMBAT, (ConditionType_t)popNumber(L), ticks, 0, buff, subId))
+	if(Condition* condition = Condition::createCondition((ConditionId_t)conditionId, (ConditionType_t)popNumber(L), ticks, 0, buff, subId))
 	{
 		if(env->getScriptId() != EVENT_ID_LOADING)
 			lua_pushnumber(L, env->addTempConditionObject(condition));
