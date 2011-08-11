@@ -936,6 +936,47 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 			s << "protection all " << std::showpos << show << std::noshowpos << "%";
 		}
 
+		show = it.abilities.fieldAbsorb[COMBAT_ALL];
+		if(!show)
+		{
+			bool tmp = true;
+			for(uint32_t i = (COMBAT_FIRST + 1); i <= COMBAT_LAST; i <<= 1)
+			{
+				if(!it.abilities.fieldAbsorb[i])
+					continue;
+
+				if(tmp)
+				{
+					tmp = false;
+					if(begin)
+					{
+						begin = false;
+						s << " (";
+					}
+					else
+						s << ", ";
+
+					s << "protection ";
+				}
+				else
+					s << ", ";
+
+				s << getCombatName((CombatType_t)i) << " field " << std::showpos << it.abilities.absorb[i] << std::noshowpos << "%";
+			}
+		}
+		else
+		{
+			if(begin)
+			{
+				begin = false;
+				s << " (";
+			}
+			else
+				s << ", ";
+
+			s << "protection all fields " << std::showpos << show << std::noshowpos << "%";
+		}
+
 		show = it.abilities.reflect[REFLECT_CHANCE][COMBAT_ALL];
 		if(!show)
 		{

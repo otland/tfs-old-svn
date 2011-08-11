@@ -309,8 +309,7 @@ bool Monster::isFriend(const Creature* creature)
 bool Monster::isOpponent(const Creature* creature)
 {
 	return (isSummon() && master->getPlayer() && creature != master) || ((creature->getPlayer()
-		&& !creature->getPlayer()->hasFlag(PlayerFlag_IgnoredByMonsters)) ||
-		(creature->getMaster() && creature->getPlayerMaster()));
+		&& !creature->getPlayer()->hasFlag(PlayerFlag_IgnoredByMonsters)) || creature->getPlayerMaster());
 }
 
 bool Monster::doTeleportToMaster()
@@ -504,11 +503,8 @@ bool Monster::selectTarget(Creature* creature)
 #ifdef __DEBUG__
 	std::clog << "Selecting target... " << std::endl;
 #endif
-	if(!isTarget(creature))
-		return false;
-
-	CreatureList::iterator it = std::find(targetList.begin(), targetList.end(), creature);
-	if(it == targetList.end())
+	if(!isTarget(creature) || std::find(targetList.begin(),
+		targetList.end(), creature) == targetList.end())
 	{
 		//Target not found in our target list.
 #ifdef __DEBUG__
@@ -855,6 +851,7 @@ bool Monster::pushItem(Item* item, int32_t radius)
 {
 	const Position& centerPos = item->getPosition();
 	PairVector pairVector;
+
 	pairVector.push_back(PositionPair(-1, -1));
 	pairVector.push_back(PositionPair(-1, 0));
 	pairVector.push_back(PositionPair(-1, 1));
@@ -942,20 +939,20 @@ void Monster::pushCreatures(Tile* tile)
 	if(!creatures)
 		return;
 
-	bool effect = false;
 	Monster* monster = NULL;
+	Creature* _master = NULL;
+
+	bool effect = false;
 	for(uint32_t i = 0; i < creatures->size(); ++i)
 	{
-		if((monster = creatures->at(i)->getMonster()) && monster->isPushable())
-		{
-			if(pushCreature(monster))
-				continue;
+		if(!(monster = creatures->at(i)->getMonster()) || (monster->isPushable() && pushCreature(monster))
+			|| !(_master = monster->getMaster()) || _master != this)
+			continue;
 
-			monster->setDropLoot(LOOT_DROP_NONE);
-			monster->changeHealth(-monster->getHealth());
-			if(!effect)
-				effect = true;
-		}
+		monster->setDropLoot(LOOT_DROP_NONE);
+		monster->changeHealth(-monster->getHealth());
+		if(!effect)
+			effect = true;
 	}
 
 	if(effect)

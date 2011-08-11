@@ -3617,7 +3617,7 @@ void Player::updateItemsLight(bool internal/* = false*/)
 			maxLight = curLight;
 	}
 
-	if(maxLight.level > itemsLight.level || (maxLight.level == itemsLight.level && maxLight.color != itemsLight.color))
+	if(maxLight.level != itemsLight.level || maxLight.color != itemsLight.color)
 	{
 		itemsLight = maxLight;
 		if(!internal)
