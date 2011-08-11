@@ -5900,7 +5900,8 @@ int32_t LuaInterface::luaCreateCombatArea(lua_State* L)
 int32_t LuaInterface::luaCreateConditionObject(lua_State* L)
 {
 	//createConditionObject(type[, ticks[, buff[, subId[, conditionId]]]])
-	uint32_t params = lua_gettop(L), subId = 0, conditionId = CONDITIONID_COMBAT;
+	int32_t conditionId = CONDITIONID_COMBAT;
+	uint32_t params = lua_gettop(L), subId = 0;
 	if(params > 4)
 		conditionId = popNumber(L);
 
