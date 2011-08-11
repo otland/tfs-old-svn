@@ -224,7 +224,6 @@ Condition* Condition::createCondition(ConditionId_t _id, ConditionType_t _type, 
 		case CONDITION_PACIFIED:
 		case CONDITION_GAMEMASTER:
 		case CONDITION_SPELLCOOLDOWN:
-		case CONDITION_OTHER:
 			return new ConditionGeneric(_id, _type, _ticks, _buff, _subId);
 
 		default:
