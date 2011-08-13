@@ -345,6 +345,10 @@ function isSummon(cid)
 	return getCreatureMaster(cid) and getCreatureMaster(cid) ~= cid
 end
 
+function isUnderWater(cid)
+	return isInArray(underWater, getTileInfo(getCreaturePosition(cid)).itemid)
+end
+
 function doPlayerSetExperienceRate(cid, value)
 	return doPlayerSetRate(cid, SKILL__LEVEL, value)
 end

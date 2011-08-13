@@ -8354,8 +8354,10 @@
 		<attribute key="armor" value="2" />
 		<attribute key="slotType" value="head" />
 		<attribute key="suppressDrown" value="1" />
-		<attribute key="stopduration" value="1" />
+		<attribute key="transformEquipTo" value="12541" />
 		<attribute key="showattributes" value="1" />
+		<attribute key="stopduration" value="1" />
+		<attribute key="showduration" value="1" />
 	</item>
 	<item id="5462" name="pirate boots">
 		<attribute key="weight" value="800" />
@@ -17866,21 +17868,21 @@
 		<attribute key="weight" value="40" />
 		<attribute key="slotType" value="ring" />
 	</item>
-	<item id="10511" article="a" name="squeezing gear of girlpower">
+	<item id="10511" article="a" name="sneaky stabber of eliteness">
 		<attribute key="description" value="This nifty gadget can be used for many vital and less vital purposes. If it's not jammed, that is." />
 		<attribute key="weight" value="300" />
 	</item>
-	<item id="10512" article="a" name="squeezing gear of girlpower">
+	<item id="10512" article="a" name="sneaky stabber of eliteness">
 		<attribute key="description" value="This nifty gadget can be used for many vital and less vital purposes. If it's not jammed, that is." />
 		<attribute key="weight" value="300" />
 		<attribute key="decayTo" value="10511" />
 		<attribute key="duration" value="60" />
 	</item>
-	<item id="10513" article="a" name="sneaky stabber of eliteness">
+	<item id="10513" article="a" name="squeezing gear of girlpower">
 		<attribute key="description" value="This nifty gadget can be used for many vital and less vital purposes. If it's not jammed, that is." />
 		<attribute key="weight" value="300" />
 	</item>
-	<item id="10514" article="a" name="sneaky stabber of eliteness">
+	<item id="10514" article="a" name="squeezing gear of girlpower">
 		<attribute key="description" value="This nifty gadget can be used for many vital and less vital purposes. If it's not jammed, that is." />
 		<attribute key="weight" value="300" />
 		<attribute key="decayTo" value="10513" />

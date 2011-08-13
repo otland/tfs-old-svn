@@ -494,7 +494,7 @@
 		<!-- Helmet of the Deep -->
 	<movevent type="Equip" itemid="5461" slot="head" event="script" value="hotd.lua"/>
 	<movevent type="Equip" itemid="12541" slot="head" event="script" value="hotd.lua"/>
-	<movevent type="DeEquip" itemid="12541" slot="head" event="script" value="hotd.lua"/>
+	<movevent type="DeEquip" itemid="12541" slot="head" event="function" value="onDeEquipItem"/>
 		<!-- Earmuffs -->
 	<movevent type="Equip" itemid="7459" slot="head" event="function" value="onEquipItem"/>
 	<movevent type="DeEquip" itemid="7459" slot="head" event="function" value="onDeEquipItem"/>

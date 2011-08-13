@@ -466,7 +466,7 @@ void Vocation::reset()
 	memset(reflect[REFLECT_CHANCE], 0, sizeof(reflect[REFLECT_CHANCE]));
 
 	needPremium = false;
-	attackable = true;
+	attackable = dropLoot = true;
 	lessLoss = fromVocation = 0;
 	gain[GAIN_SOUL] = 100;
 	gainTicks[GAIN_SOUL] = 120;

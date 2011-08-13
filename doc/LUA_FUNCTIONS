@@ -845,7 +845,7 @@
 	doPlayerAddSoul(cid, soul)
 	doPlayerAddItem(uid, itemid[, count/subtype = 1[, canDropOnMap = true[, slot = 0]]])
 	doPlayerAddItemEx(cid, uid[, canDropOnMap = false[, slot = 0]])
-	doPlayerSendTextMessage(cid, MessageClasses, message)
+	doPlayerSendTextMessage(cid, MessageClasses, message[, animatedText[, color[, pos]]])
 	doPlayerSendChannelMessage(cid, author, message, SpeakClasses, channel)
 	doPlayerSendToChannel(cid, targetId, SpeakClasses, message, channel[, time])
 	doPlayerOpenChannel(cid, channelId)
@@ -948,6 +948,8 @@
 	isPlayerNamelocked(name)
 	isAccountBanished(accountId[, playerId])
 	isInArray({array}, value[, lower = true])
+	isSummon(uid)
+	isUnderWater(uid)
 
 	//others
 	registerCreatureEvent(uid, eventName)
