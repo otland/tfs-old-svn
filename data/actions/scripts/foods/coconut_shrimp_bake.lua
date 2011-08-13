@@ -13,8 +13,8 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 	end
 
 	doRemoveItem(helmet.uid)
-	doPlayerAddItem(cid, HOTD[2], false, CONST_SLOT_HEAD)
-	doDecayItem(getPlayerSlotItem(cid, CONST_SLOT_HEAD).uid)
+	helmet = doPlayerAddItem(cid, HOTD[2], false, CONST_SLOT_HEAD)
+	doDecayItem(helmet.uid)
 	
 	doRemoveItem(item.uid, 1)
 	doCreatureSay(cid, food, TALKTYPE_MONSTER)
