@@ -338,6 +338,27 @@
 	<action itemid="7379-7392;7402-7437;7449;7451-7456;7744-7758;7763-7777;7854-7883;7958" event="script" value="other/destroy.lua"/>
 	<action itemid="8601-8602;8924-8932" event="script" value="other/destroy.lua"/>
 	<action itemid="10293" event="script" value="other/destroy.lua"/>
+	
+	<!-- Taming Items -->
+	<action itemid="13295" event="script" value="other/taming.lua"/> <!-- reins -->
+	<action itemid="13294" event="script" value="other/taming.lua"/> <!-- harness -->
+	<action itemid="13293" event="script" value="other/taming.lua"/> <!-- leather whip -->
+	<action itemid="13298" event="script" value="other/taming.lua"/> <!-- carrot on a stick -->
+	<action itemid="13247" event="script" value="other/taming.lua"/> <!-- hunting horn -->
+	<action itemid="13305" event="script" value="other/taming.lua"/> <!-- giant shrimp -->
+	<action itemid="13291" event="script" value="other/taming.lua"/> <!-- maxilla maximus -->
+	<action itemid="5907" event="script" value="other/taming.lua"/> <!-- slingshot -->
+	<action itemid="13307" event="script" value="other/taming.lua"/> <!-- sweet smelling bait -->
+	<action itemid="13292" event="script" value="other/taming.lua"/> <!-- tin key -->
+	<action itemid="13938" event="script" value="other/taming.lua"/> <!-- golden can of oil -->
+	<action itemid="13939" event="script" value="other/taming.lua"/> <!-- sugar oat -->
+	<action itemid="13508" event="script" value="other/taming.lua"/> <!-- slug drug -->
+	<action itemid="13535" event="script" value="other/taming.lua"/> <!-- fist on a stick -->
+	<action itemid="13536" event="script" value="other/taming.lua"/> <!-- diapason -->
+	<action itemid="13537" event="script" value="other/taming.lua"/> <!-- bag of apple slices -->
+	<action itemid="13538" event="script" value="other/taming.lua"/> <!-- bamboo leaves -->
+	<action itemid="13539" event="script" value="other/taming.lua"/> <!-- golden fir cone -->
+	<action itemid="13498" event="script" value="other/taming.lua"/> <!-- scorpion sceptre -->
 
 	<!-- Other -->
 	<action itemid="2566" event="script" value="other/pumpkinhead.lua"/>

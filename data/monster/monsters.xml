@@ -389,6 +389,10 @@
 	<monster name="Goblin Leader" file="Goblins/goblin leader.xml"/>
 	<monster name="Goblin Scavenger" file="Goblins/goblin scavenger.xml"/>
 	<monster name="Grynch Clan Goblin" file="Goblins/grynch clan goblin.xml"/>
+	
+	<!-- Grunts -->
+	<monster name="Pig" file="Grunts/pig.xml"/>
+	<monster name="Boar" file="Grunts/boar.xml"/>
 
 	<!-- Hydro-Elementals -->
 	<monster name="Ice Overlord" file="Hydro-Elementals/ice overlord.xml"/>
