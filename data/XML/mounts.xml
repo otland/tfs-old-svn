@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mounts>
         <mount id="1" clientId="368" name="Widow Queen" speed="20" premium="yes" />
-        <mount id="2" clientId="369" name="Racing Bird" speed="40" premium="yes" />
+        <mount id="2" clientId="369" name="Racing Bird" speed="20" premium="yes" />
         <mount id="3" clientId="370" name="War Bear" speed="20" premium="yes" />
         <mount id="4" clientId="371" name="Black Sheep" speed="20" premium="yes" />
-        <mount id="5" clientId="372" name="Midnight Panther" speed="30" premium="yes" />
-        <mount id="6" clientId="373" name="Draptor" speed="40" premium="yes" />
-        <mount id="7" clientId="374" name="Titanica" speed="30" premium="yes" />
-        <mount id="8" clientId="375" name="Tin Lizzard" speed="30" premium="yes" />
-        <mount id="9" clientId="376" name="Blazebringer" speed="40" premium="yes" />
-        <mount id="10" clientId="377" name="Rapid Boar" speed="40" premium="yes" />
-        <mount id="11" clientId="378" name="Stampor" speed="40" premium="yes" />
-        <mount id="12" clientId="379" name="Undead Cavebear" speed="40" premium="yes" />
+        <mount id="5" clientId="372" name="Midnight Panther" speed="20" premium="yes" />
+        <mount id="6" clientId="373" name="Draptor" speed="20" premium="yes" />
+        <mount id="7" clientId="374" name="Titanica" speed="20" premium="yes" />
+        <mount id="8" clientId="375" name="Tin Lizzard" speed="20" premium="yes" />
+        <mount id="9" clientId="376" name="Blazebringer" speed="20" premium="yes" />
+        <mount id="10" clientId="377" name="Rapid Boar" speed="20" premium="yes" />
+        <mount id="11" clientId="378" name="Stampor" speed="20" premium="yes" />
+        <mount id="12" clientId="379" name="Undead Cavebear" speed="20" premium="yes" />
 		<mount id="13" clientid="387" name="Mule" speed="20" premium="yes" />
 		<mount id="14" clientid="388" name="Tiger Slug" speed="20" premium="yes" />
 		<mount id="15" clientid="389" name="Uniwheel" speed="20" premium="yes" />
@@ -23,6 +23,7 @@
 		<mount id="21" clientid="406" name="Sandstone Scorpion" speed="20" premium="yes" />
 		<mount id="22" clientid="421" name="Rented Horse" speed="20" premium="yes" />
         <mount id="23" clientid="426" name="Fire War Horse" speed="20" premium="yes" />
-		<mount id="24" clientid="437" name="Rented Horse" speed="20" premium="yes" />
-		<mount id="25" clientid="438" name="Rented Horse" speed="20" premium="yes" />
+		<mount id="24" clientid="427" name="War Draptor" speed="20" premium="yes" />
+		<mount id="25" clientid="437" name="Rented Horse" speed="20" premium="yes" />
+		<mount id="26" clientid="438" name="Rented Horse" speed="20" premium="yes" />
 </mounts>

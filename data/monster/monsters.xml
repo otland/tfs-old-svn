@@ -156,6 +156,7 @@
 	<monster name="Slime Summon" file="Bio-Elementals/slime summon.xml"/>
 	<monster name="Son of Verminor" file="Bio-Elementals/son of verminor.xml"/>
 	<monster name="Spit Nettle" file="Bio-Elementals/spit nettle.xml"/>
+	<monster name="Slug" file="Bio-Elementals/slug.xml"/>
 
 	<!-- Birds -->
 	<monster name="Chicken" file="Birds/chicken.xml"/>
@@ -503,6 +504,7 @@
 	<monster name="Smuggler" file="Outlaws/smuggler.xml"/>
 	<monster name="Stalker" file="Outlaws/stalker.xml"/>
 	<monster name="Wild Warrior" file="Outlaws/wild warrior.xml"/>
+	<monster name="Feverish Citizen" file="Outlaws/feverish citizen.xml"/>
 
 	<!-- Pharaohs -->
 	<monster name="Ashmunrah" file="Pharaohs/ashmunrah.xml"/>
@@ -562,6 +564,7 @@
 	<monster name="Serpent Spawn" file="Serpents/serpent spawn.xml"/>
 	<monster name="Snake" file="Serpents/snake.xml"/>
 	<monster name="Young Sea Serpent" file="Serpents/young sea serpent.xml"/>
+	<monster name="Deepling Scout" file="Serpents/deepling scout.xml"/>
 
 	<!-- Sheeps -->
 	<monster name="Black Sheep" file="Sheeps/black sheep.xml"/>
