@@ -497,7 +497,7 @@ if(NpcHandler == nil) then
 					if(os.mtime() >= speech.time) then
 						local talkStart = (NPCHANDLER_CONVBEHAVIOR ~= CONVERSATION_DEFAULT and self.talkStart[speech.cid] or self.talkStart)
 						if(speech.force or (self:isFocused(speech.cid) and talkStart == speech.start)) then
-							if(isCreature(speech.id) and NPCHANDLER_CONVBEHAVIOR ~= CONVERSATION_DEFAULT) then
+							if(NPCHANDLER_CONVBEHAVIOR ~= CONVERSATION_DEFAULT) then
 								selfSay(speech.message, speech.cid)
 							else
 								selfSay(speech.message)
@@ -626,7 +626,6 @@ if(NpcHandler == nil) then
 
 		-- TODO: Add an event handling method for delayed messages
 		table.insert(self.talkDelay, {
-			id = getNpcId(),
 			cid = focus,
 			message = message,
 			time = os.mtime() + delay,

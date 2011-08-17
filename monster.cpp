@@ -946,7 +946,7 @@ void Monster::pushCreatures(Tile* tile)
 	for(uint32_t i = 0; i < creatures->size(); ++i)
 	{
 		if(!(monster = creatures->at(i)->getMonster()) || (monster->isPushable() && pushCreature(monster))
-			|| !(_master = monster->getMaster()) || _master != this)
+			|| !(_master = monster->getMaster()))
 			continue;
 
 		monster->setDropLoot(LOOT_DROP_NONE);
