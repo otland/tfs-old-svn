@@ -1781,9 +1781,14 @@ ReturnValue Game::internalPlayerAddItem(Creature* actor, Player* player, Item* i
 	bool dropOnMap/* = true*/, slots_t slot/* = SLOT_WHEREEVER*/)
 {
 	Item* toItem = NULL;
-	uint32_t remainderCount = 0, count = item->getItemCount();
+	return internalPlayerAddItem(actor, player, item, dropOnMap, slot, &toItem);
+}
 
-	ReturnValue ret = internalAddItem(actor, player, item, (int32_t)slot, 0, false, remainderCount, &toItem);
+ReturnValue Game::internalPlayerAddItem(Creature* actor, Player* player, Item* item,
+	bool dropOnMap, slots_t slot, Item** toItem)
+{
+	uint32_t remainderCount = 0, count = item->getItemCount();
+	ReturnValue ret = internalAddItem(actor, player, item, (int32_t)slot, 0, false, remainderCount, toItem);
 	if(ret == RET_NOERROR)
 		return RET_NOERROR;
 
@@ -1800,7 +1805,7 @@ ReturnValue Game::internalPlayerAddItem(Creature* actor, Player* player, Item* i
 	}
 
 	if(remainderCount && toItem)
-		transformItem(toItem, toItem->getID(), (toItem->getItemCount() - (count - remainderCount)));
+		transformItem(*toItem, (*toItem)->getID(), ((*toItem)->getItemCount() - (count - remainderCount)));
 
 	return ret;
 }

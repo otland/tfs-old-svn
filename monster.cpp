@@ -946,7 +946,8 @@ void Monster::pushCreatures(Tile* tile)
 	for(uint32_t i = 0; i < creatures->size(); ++i)
 	{
 		if(!(monster = creatures->at(i)->getMonster()) || (monster->isPushable() && pushCreature(monster))
-			|| !monster->isEliminable() || !(_master = monster->getMaster()) || _master != this)
+			|| !monster->isEliminable() || (getHealth() / 5) <= monster->getHealth() //this is completely abstract, as I didn't have other good solution
+			|| !(_master = monster->getMaster()) || _master != this)
 			continue;
 
 		monster->setDropLoot(LOOT_DROP_NONE);

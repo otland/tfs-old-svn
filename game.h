@@ -348,6 +348,8 @@ class Game
 
 		ReturnValue internalPlayerAddItem(Creature* actor, Player* player, Item* item,
 			bool dropOnMap = true, slots_t slot = SLOT_WHEREEVER);
+		ReturnValue internalPlayerAddItem(Creature* actor, Player* player, Item* item,
+			bool dropOnMap, slots_t slot, Item** toItem);
 
 		/**
 		  * Find an item of a certain type

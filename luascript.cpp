@@ -1866,7 +1866,7 @@ void LuaInterface::registerFunctions()
 	lua_register(m_luaState, "hasCreatureCondition", LuaInterface::luaHasCreatureCondition);
 
 	//getCreatureConditionInfo(cid, condition[, subId = -1[, conditionId = CONDITIONID_DEFAULT]])
-	lua_register(m_luaState, "getCreatureConditionDelay", LuaInterface::luaGetCreatureConditionDelay);
+	lua_register(m_luaState, "getCreatureConditionInfo", LuaInterface::luaGetCreatureConditionInfo);
 
 	//doCreatureSetDropLoot(cid, doDrop)
 	lua_register(m_luaState, "doCreatureSetDropLoot", LuaInterface::luaDoCreatureSetDropLoot);
@@ -3878,7 +3878,7 @@ int32_t LuaInterface::luaDoPlayerAddItem(lua_State* L)
 			subType -= stackCount;
 
 		Item* stackItem = NULL;
-		if(g_game.internalPlayerAddItem(NULL, player, newItem, canDropOnMap, (slots_t)slot, 0, false, &stackItem) != RET_NOERROR)
+		if(g_game.internalPlayerAddItem(NULL, player, newItem, canDropOnMap, (slots_t)slot, &stackItem) != RET_NOERROR)
 		{
 			delete newItem;
 			lua_pushboolean(L, false);
@@ -3892,14 +3892,14 @@ int32_t LuaInterface::luaDoPlayerAddItem(lua_State* L)
 		++ret;
 		if(!newItem->getParent())
 			lua_pushnumber(L, env->addThing(stackItem));
-		else //stackable item stacked with existing object, newItem will be released
+		else if(stackItem)
 			lua_pushnumber(L, env->addThing(newItem));
 	}
 
 	if(ret)
 		return ret;
 
-	lua_pushnil(L);
+	lua_pushboolean(L, false);
 	return 1;
 }
 
@@ -4775,41 +4775,45 @@ int32_t LuaInterface::luaDoCreateItem(lua_State* L)
 	else
 		itemCount = std::max((uint32_t)1, count);
 
+	uint32_t ret = 0;
+	Item* newItem = NULL;
 	while(itemCount > 0)
 	{
 		int32_t stackCount = std::min(100, subType);
-		Item* newItem = Item::CreateItem(itemId, stackCount);
-		if(!newItem)
+		if(!(newItem = Item::CreateItem(itemId, stackCount)))
 		{
 			errorEx(getError(LUA_ERROR_ITEM_NOT_FOUND));
 			lua_pushboolean(L, false);
-			return 1;
+			return ++ret;
 		}
 
 		if(it.stackable)
 			subType -= stackCount;
 
-		ReturnValue ret = g_game.internalAddItem(NULL, tile, newItem, INDEX_WHEREEVER, FLAG_NOLIMIT);
-		if(ret != RET_NOERROR)
+		uint32_t dummy = 0;
+		Item* stackItem = NULL;
+		if(g_game.internalAddItem(NULL, tile, newItem, INDEX_WHEREEVER, FLAG_NOLIMIT, false, dummy, &stackItem) != RET_NOERROR)
 		{
 			delete newItem;
 			lua_pushboolean(L, false);
-			return 1;
+			return ++ret;
 		}
 
 		--itemCount;
-		if(itemCount)
-			continue;
+		if(!itemCount)
+			break;
 
-		if(newItem->getParent())
+		++ret;
+		if(!newItem->getParent())
+			lua_pushnumber(L, env->addThing(stackItem));
+		else if(stackItem)
 			lua_pushnumber(L, env->addThing(newItem));
-		else //stackable item stacked with existing object, newItem will be released
-			lua_pushnil(L);
-
-		return 1;
 	}
 
-	lua_pushnil(L);
+	if(ret)
+		return ret;
+
+	lua_pushboolean(L, false);
 	return 1;
 }
 
@@ -8753,7 +8757,7 @@ int32_t LuaInterface::luaHasCreatureCondition(lua_State* L)
 	ScriptEnviroment* env = getEnv();
 	if(Creature* creature = env->getCreatureByUID(popNumber(L)))
 	{
-		if()
+		if(creature->getCondition((ConditionType_t)conditionType, (ConditionId_t)conditionId, subId))
 			lua_pushboolean(L, true);
 		else
 			lua_pushboolean(L, false);
@@ -8781,7 +8785,8 @@ int32_t LuaInterface::luaGetCreatureConditionInfo(lua_State* L)
 	ScriptEnviroment* env = getEnv();
 	if(Creature* creature = env->getCreatureByUID(popNumber(L)))
 	{
-		if(Condition* condition = creature->getCondition(conditionType, conditionId, subId))
+		if(Condition* condition = creature->getCondition(
+			(ConditionType_t)conditionType, (ConditionId_t)conditionId, subId))
 		{
 			lua_newtable(L);
 			setField(L, "icons", condition->getIcons());

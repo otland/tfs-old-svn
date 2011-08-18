@@ -594,14 +594,14 @@ bool Map::checkSightLine(const Position& fromPos, const Position& toPos) const
 		if(start.x != destination.x && (start.y == destination.y || moveV > moveH || moveV > moveX))
 			start.x += mx;
 
-		const Tile* tile = getTile(start);
+		const Tile* tile = const_cast<Map*>(this)->getTile(start);
 		if(tile && tile->hasProperty(BLOCKPROJECTILE))
 			return false;
 	}
 
 	while(start.z != destination.z) // now we need to perform a jump between floors to see if everything is clear (literally)
 	{
-		const Tile* tile = getTile(start);
+		const Tile* tile = const_cast<Map*>(this)->getTile(start);
 		if(tile && tile->getThingCount() > 0)
 			return false;
 
