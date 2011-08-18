@@ -2776,8 +2776,8 @@ ReturnValue Player::__queryAdd(int32_t index, const Thing* thing, uint32_t count
 
 	if(index == SLOT_LEFT || index == SLOT_RIGHT)
 	{
-		/*if(ret == RET_NOERROR && item->getWeaponType() != WEAPON_NONE)
-			setLastAttack(OTSYS_TIME());*/
+		if(ret == RET_NOERROR && item->getWeaponType() != WEAPON_NONE)
+			const_cast<Player*>(this)->setLastAttack(OTSYS_TIME());
 
 		if(ret == RET_BOTHHANDSNEEDTOBEFREE)
 			g_game.internalAddItem(NULL, const_cast<Player*>(this), inventory[(slots_t)index]);
