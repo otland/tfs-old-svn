@@ -1805,7 +1805,7 @@ void LuaInterface::registerFunctions()
 	//doAddCondition(cid, condition)
 	lua_register(m_luaState, "doAddCondition", LuaInterface::luaDoAddCondition);
 
-	//doRemoveCondition(cid, type[, subId])
+	//doRemoveCondition(cid, type[, subId = 0])
 	lua_register(m_luaState, "doRemoveCondition", LuaInterface::luaDoRemoveCondition);
 
 	//doRemoveConditions(cid[, onlyPersistent])
@@ -1862,8 +1862,11 @@ void LuaInterface::registerFunctions()
 	//canPlayerWearOutfitId(cid, outfitId[, addon = 0])
 	lua_register(m_luaState, "canPlayerWearOutfitId", LuaInterface::luaCanPlayerWearOutfitId);
 
-	//getCreatureCondition(cid, condition[, subId = 0])
-	lua_register(m_luaState, "getCreatureCondition", LuaInterface::luaGetCreatureCondition);
+	//hasCreatureCondition(cid, condition[, subId = -1[, conditionId = CONDITIONID_DEFAULT]])
+	lua_register(m_luaState, "hasCreatureCondition", LuaInterface::luaHasCreatureCondition);
+
+	//getCreatureConditionInfo(cid, condition[, subId = -1[, conditionId = CONDITIONID_DEFAULT]])
+	lua_register(m_luaState, "getCreatureConditionDelay", LuaInterface::luaGetCreatureConditionDelay);
 
 	//doCreatureSetDropLoot(cid, doDrop)
 	lua_register(m_luaState, "doCreatureSetDropLoot", LuaInterface::luaDoCreatureSetDropLoot);
@@ -3859,39 +3862,42 @@ int32_t LuaInterface::luaDoPlayerAddItem(lua_State* L)
 		subType = count;
 	}
 
+	uint32_t ret = 0;
+	Item* newItem = NULL;
 	while(itemCount > 0)
 	{
 		int32_t stackCount = std::min(100, subType);
-		Item* newItem = Item::CreateItem(itemId, stackCount);
-		if(!newItem)
+		if(!(newItem = Item::CreateItem(itemId, stackCount)))
 		{
 			errorEx(getError(LUA_ERROR_ITEM_NOT_FOUND));
 			lua_pushboolean(L, false);
-			return 1;
+			return ++ret;
 		}
 
 		if(it.stackable)
 			subType -= stackCount;
 
-		ReturnValue ret = g_game.internalPlayerAddItem(NULL, player, newItem, canDropOnMap, (slots_t)slot);
-		if(ret != RET_NOERROR)
+		Item* stackItem = NULL;
+		if(g_game.internalPlayerAddItem(NULL, player, newItem, canDropOnMap, (slots_t)slot, 0, false, &stackItem) != RET_NOERROR)
 		{
 			delete newItem;
 			lua_pushboolean(L, false);
-			return 1;
+			return ++ret;
 		}
 
 		--itemCount;
-		if(itemCount)
-			continue;
+		if(!itemCount)
+			break;
 
-		if(newItem->getParent())
-			lua_pushnumber(L, env->addThing(newItem));
+		++ret;
+		if(!newItem->getParent())
+			lua_pushnumber(L, env->addThing(stackItem));
 		else //stackable item stacked with existing object, newItem will be released
-			lua_pushnil(L);
-
-		return 1;
+			lua_pushnumber(L, env->addThing(newItem));
 	}
+
+	if(ret)
+		return ret;
 
 	lua_pushnil(L);
 	return 1;
@@ -7070,7 +7076,7 @@ int32_t LuaInterface::luaDoAddCondition(lua_State* L)
 
 int32_t LuaInterface::luaDoRemoveCondition(lua_State* L)
 {
-	//doRemoveCondition(cid, type[, subId])
+	//doRemoveCondition(cid, type[, subId = 0])
 	uint32_t subId = 0;
 	if(lua_gettop(L) > 2)
 		subId = popNumber(L);
@@ -7677,11 +7683,12 @@ int32_t LuaInterface::luaGetIpByName(lua_State* L)
 {
 	//getIpByName(name)
 	std::string name = popString(L);
-
 	if(Player* player = g_game.getPlayerByName(name))
 		lua_pushnumber(L, player->getIP());
-	else
+	else if(IOLoginData::getInstance()->playerExists(name))
 		lua_pushnumber(L, IOLoginData::getInstance()->getLastIPByName(name));
+	else
+		lua_pushnil(L);
 
 	return 1;
 }
@@ -8732,17 +8739,60 @@ int32_t LuaInterface::luaStopEvent(lua_State* L)
 	return 1;
 }
 
-int32_t LuaInterface::luaGetCreatureCondition(lua_State* L)
+int32_t LuaInterface::luaHasCreatureCondition(lua_State* L)
 {
-	//getCreatureCondition(cid, condition[, subId = 0])
-	uint32_t subId = 0, condition = 0;
-	if(lua_gettop(L) > 2)
+	//hasCreatureCondition(cid, conditionType[, subId = -1[, conditionId = CONDITIONID_DEFAULT]])
+	uint32_t params = lua_gettop(L), conditionId = CONDITIONID_DEFAULT, subId = -1, conditionType = 0;
+	if(params > 3)
+		conditionId = popNumber(L);
+
+	if(params > 2)
 		subId = popNumber(L);
 
-	condition = popNumber(L);
+	conditionType = popNumber(L);
 	ScriptEnviroment* env = getEnv();
 	if(Creature* creature = env->getCreatureByUID(popNumber(L)))
-		lua_pushboolean(L, creature->hasCondition((ConditionType_t)condition, subId));
+	{
+		if()
+			lua_pushboolean(L, true);
+		else
+			lua_pushboolean(L, false);
+	}
+	else
+	{
+		errorEx(getError(LUA_ERROR_CREATURE_NOT_FOUND));
+		lua_pushboolean(L, false);
+	}
+
+	return 1;
+}
+
+int32_t LuaInterface::luaGetCreatureConditionInfo(lua_State* L)
+{
+	//getCreatureConditionInfo(cid, conditionType[, subId = -1[, conditionId = CONDITIONID_DEFAULT]])
+	uint32_t params = lua_gettop(L), conditionId = CONDITIONID_DEFAULT, subId = -1, conditionType = 0;
+	if(params > 3)
+		conditionId = popNumber(L);
+
+	if(params > 2)
+		subId = popNumber(L);
+
+	conditionType = popNumber(L);
+	ScriptEnviroment* env = getEnv();
+	if(Creature* creature = env->getCreatureByUID(popNumber(L)))
+	{
+		if(Condition* condition = creature->getCondition(conditionType, conditionId, subId))
+		{
+			lua_newtable(L);
+			setField(L, "icons", condition->getIcons());
+			setField(L, "endTime", condition->getEndTime());
+			setField(L, "ticks", condition->getTicks());
+			setFieldBool(L, "persistent", condition->isPersistent());
+			setField(L, "subId", condition->getSubId());
+		}
+		else
+			lua_pushboolean(L, false);
+	}
 	else
 	{
 		errorEx(getError(LUA_ERROR_CREATURE_NOT_FOUND));

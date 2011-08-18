@@ -444,6 +444,7 @@ class Player : public Creature, public Cylinder
 		virtual void doAttacking(uint32_t interval);
 		int32_t getShootRange() const {return shootRange;}
 		virtual bool hasExtraSwing() {return lastAttack > 0 && ((OTSYS_TIME() - lastAttack) >= getAttackSpeed());}
+		void setLastAttack(uint64_t time) {lastAttack = time;}
 
 		int32_t getSkill(skills_t skilltype, skillsid_t skillinfo) const;
 		bool getAddAttackSkill() const {return addAttackSkillPoint;}

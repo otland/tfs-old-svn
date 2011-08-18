@@ -946,7 +946,7 @@ void Monster::pushCreatures(Tile* tile)
 	for(uint32_t i = 0; i < creatures->size(); ++i)
 	{
 		if(!(monster = creatures->at(i)->getMonster()) || (monster->isPushable() && pushCreature(monster))
-			|| !(_master = monster->getMaster()))
+			|| !monster->isEliminable() || !(_master = monster->getMaster()) || _master != this)
 			continue;
 
 		monster->setDropLoot(LOOT_DROP_NONE);
@@ -1335,6 +1335,12 @@ void Monster::changeHealth(int32_t healthChange)
 {
 	//In case a player with ignore flag set attacks the monster
 	setIdle(false);
+	if(!hasRecentBattle())
+	{
+		lastDamage = OTSYS_TIME();
+		updateMapCache();
+	}
+
 	Creature::changeHealth(healthChange);
 }
 

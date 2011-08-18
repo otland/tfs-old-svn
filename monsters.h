@@ -92,7 +92,7 @@ class MonsterType
 		bool createChildLoot(Container* parent, const LootBlock& lootBlock);
 
 		bool isSummonable, isIllusionable, isConvinceable, isAttackable, isHostile, isLureable,
-			isWalkable, canPushItems, canPushCreatures, pushable, hideName, hideHealth;
+			isWalkable, canPushItems, canPushCreatures, pushable, hideName, hideHealth, eliminable;
 
 		Outfit_t outfit;
 		RaceType_t race;

@@ -1006,24 +1006,24 @@ if(Modules == nil) then
 	--	names = A table containing one or more strings of alternative names to this item. Used only for old buy/sell system.
 	--	itemid = The itemid of the buyable item
 	--	cost = The price of one single item
-	--	subType - The subType of each rune or fluidcontainer item. Can be left out if it is not a rune/fluidcontainer. Default value is 0.
+	--	subType - The subType of each rune or fluidcontainer item. Can be left out if it is not a rune/fluidcontainer. Default value is 1.
 	--	realName - The real, full name for the item. Will be used as ITEMNAME in MESSAGE_ONBUY and MESSAGE_ONSELL if defined. Default value is nil (getItemNameById will be used)
 	function ShopModule:addBuyableItem(names, itemid, cost, subType, realName)
 		if(SHOPMODULE_MODE ~= SHOPMODULE_MODE_TALK) then
 			local item = {
 				id = itemid,
 				buy = cost,
-				sell = 0,
-				subType = subType or 0,
+				sell = -1,
+				subType = subType or 1,
 				name = realName or getItemNameById(itemid)
 			}
 
 			for i, shopItem in ipairs(self.npcHandler.shopItems) do
-				if(shopItem.id == item.id) then
+				if(shopItem.id == item.id and shopItem.subType == item.subType) then
 					if(item.sell ~= shopItem.sell) then
 						item.sell = shopItem.sell
 					end
-					
+
 					self.npcHandler.shopItems[i] = item
 					item = nil
 					break
@@ -1042,7 +1042,7 @@ if(Modules == nil) then
 				eventType = SHOPMODULE_BUY_ITEM,
 				module = self,
 				realName = realName or getItemNameById(itemid),
-				subType = subType or 0
+				subType = subType or 1
 			}
 
 			for i, name in pairs(names) do
@@ -1062,7 +1062,7 @@ if(Modules == nil) then
 	--	container = Backpack, bag or any other itemid of container where bought items will be stored
 	--	itemid = The itemid of the buyable item
 	--	cost = The price of one single item
-	--	subType - The subType of each rune or fluidcontainer item. Can be left out if it is not a rune/fluidcontainer. Default value is 0.
+	--	subType - The subType of each rune or fluidcontainer item. Can be left out if it is not a rune/fluidcontainer. Default value is 1.
 	--	realName - The real, full name for the item. Will be used as ITEMNAME in MESSAGE_ONBUY and MESSAGE_ONSELL if defined. Default value is nil (getItemNameById will be used)
 	function ShopModule:addBuyableItemContainer(names, container, itemid, cost, subType, realName)
 		if(names ~= nil) then
@@ -1073,7 +1073,7 @@ if(Modules == nil) then
 				eventType = SHOPMODULE_BUY_ITEM_CONTAINER,
 				module = self,
 				realName = realName or getItemNameById(itemid),
-				subType = subType or 0
+				subType = subType or 1
 			}
 
 			for i, name in pairs(names) do
@@ -1098,14 +1098,14 @@ if(Modules == nil) then
 		if(SHOPMODULE_MODE ~= SHOPMODULE_MODE_TALK) then
 			local item = {
 				id = itemid,
-				buy = 0,
+				buy = -1,
 				sell = cost,
-				subType = 0,
+				subType = v.charges > 0 and 0 or 1,
 				name = realName or v.name
 			}
 
 			for i, shopItem in ipairs(self.npcHandler.shopItems) do
-				if(shopItem.id == item.id) then
+				if(shopItem.id == item.id and shopItem.subType == item.subType) then
 					if(item.buy ~= shopItem.buy) then
 						item.buy = shopItem.buy
 					end
@@ -1163,7 +1163,7 @@ if(Modules == nil) then
 			return false
 		end
 
-		if(shopItem.buy == 0) then
+		if(shopItem.buy == -1) then
 			print('[Warning - ' .. getCreatureName(getNpcId()) .. '] NpcSystem:', 'ShopModule.onBuy - Attempt to purchase an item which only sellable')
 			return false
 		end
@@ -1245,7 +1245,7 @@ if(Modules == nil) then
 			return false
 		end
 
-		if(shopItem.sell == 0) then
+		if(shopItem.sell == -1) then
 			print('[Warning - ' .. getCreatureName(getNpcId()) .. '] NpcSystem:', 'ShopModule.onSell - Attempt to sell an item which is only buyable')
 			return false
 		end

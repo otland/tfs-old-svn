@@ -313,7 +313,7 @@ class Item : virtual public Thing, public ItemAttributes
 		void setLoadedFromMap(bool value) {loadedFromMap = value;}
 
 		uint16_t getItemCount() const {return count;}
-		void setItemCount(uint16_t n) {count = n;}
+		void setItemCount(uint16_t n) {count = std::max((uint16_t)1, n);}
 
 		uint16_t getSubType() const;
 		void setSubType(uint16_t n);

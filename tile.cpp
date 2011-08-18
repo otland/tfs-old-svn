@@ -578,7 +578,7 @@ ReturnValue Tile::__queryAdd(int32_t, const Thing* thing, uint32_t,
 				return RET_NOTPOSSIBLE;
 
 			return !monster->hasCondition(Combat::DamageToConditionType(combatType), -1, false)
-				&& !monster->canPushItems() ? RET_NOTPOSSIBLE : RET_NOERROR;
+				&& (!monster->canPushItems() || !monster->hasRecentBattle) ? RET_NOTPOSSIBLE : RET_NOERROR;
 		}
 
 		if(const Player* player = creature->getPlayer())

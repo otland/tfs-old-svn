@@ -527,7 +527,8 @@ class LuaInterface
 		static int32_t luaGetPlayerGUID(lua_State* L);
 		static int32_t luaGetPlayerFlagValue(lua_State* L);
 		static int32_t luaGetPlayerCustomFlagValue(lua_State* L);
-		static int32_t luaGetCreatureCondition(lua_State* L);
+		static int32_t luaHasCreatureCondition(lua_State* L);
+		static int32_t luaGetCreatureConditionInfo(lua_State* L);
 		static int32_t luaHasPlayerClient(lua_State* L);
 		static int32_t luaGetDepotId(lua_State* L);
 		static int32_t luaGetVocationInfo(lua_State* L);

@@ -2208,11 +2208,13 @@ Item* Game::transformItem(Item* item, uint16_t newId, int32_t newCount/* = -1*/)
 		return NULL;
 	}
 
+	newItem->copyAttributes(item);
 	cylinder->__replaceThing(itemIndex, newItem);
+
 	cylinder->postAddNotification(NULL, newItem, cylinder, itemIndex);
 	item->setParent(NULL);
-
 	cylinder->postRemoveNotification(NULL, item, cylinder, itemIndex, true);
+
 	freeThing(item);
 	return newItem;
 }
@@ -3653,8 +3655,9 @@ bool Game::playerSetFightModes(uint32_t playerId, fightMode_t fightMode, chaseMo
 
 	player->setFightMode(fightMode);
 	player->setChaseMode(chaseMode);
-
 	player->setSecureMode(secureMode);
+
+	player->setLastAttack(OTSYS_TIME());
 	return true;
 }
 

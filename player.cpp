@@ -2774,6 +2774,15 @@ ReturnValue Player::__queryAdd(int32_t index, const Thing* thing, uint32_t count
 	if((ret == RET_NOERROR || ret == RET_NOTENOUGHROOM) && !hasCapacity(item, count)) //check if enough capacity
 		return RET_NOTENOUGHCAPACITY;
 
+	if(index == SLOT_LEFT || index == SLOT_RIGHT)
+	{
+		if(ret == RET_NOERROR && item->getWeaponType() != WEAPON_NONE)
+			lastAttack = OTSYS_TIME();
+
+		if(ret == RET_BOTHHANDSNEEDTOBEFREE)
+			g_game.internalAddItem(NULL, this, inventory[(slots_t)index]);
+	}
+
 	return ret;
 }
 

@@ -181,7 +181,7 @@ bool Map::placeCreature(const Position& centerPos, Creature* creature, bool exte
 {
 	bool foundTile = false, placeInPz = false;
 	Tile* tile = getTile(centerPos);
-	if(tile)
+	if(tile && !extendedPos)
 	{
 		placeInPz = tile->hasFlag(TILESTATE_PROTECTIONZONE);
 		uint32_t flags = FLAG_IGNOREBLOCKITEM;
@@ -470,7 +470,7 @@ bool Map::canThrowObjectTo(const Position& fromPos, const Position& toPos, bool 
 
 bool Map::checkSightLine(const Position& fromPos, const Position& toPos) const
 {
-	Position start = fromPos;
+	/*Position start = fromPos;
 	Position end = toPos;
 
 	int32_t x, y, z, dx = std::abs(start.x - end.x), dy = std::abs(start.y - end.y),
@@ -571,16 +571,57 @@ bool Map::checkSightLine(const Position& fromPos, const Position& toPos) const
 		}
 	}
 
+	return true;*/
+	if(Position::areInRange<0,0,15>(fromPos, toPos))
+		return true;
+
+	Position start(fromPos.z > toPos.z ? toPos : fromPos);
+	Position destination(fromPos.z > toPos.z ? fromPos : toPos);
+
+	const int8_t mx = start.x < destination.x ? 1 : start.x == destination.x ? 0 : -1;
+	const int8_t my = start.y < destination.y ? 1 : start.y == destination.y ? 0 : -1;
+
+	int32_t A = destination.y - start.y, B = start.x - destination.x,
+		C = -(A * destination.x + B * destination.y);
+	while(!Position::areInRange<0,0,15>(start, destination))
+	{
+		int32_t moveH = std::abs(A * (start.x + mx) + B * (start.y) + C),
+			moveV = std::abs(A * (start.x) + B * (start.y + my) + C),
+			moveX = std::abs(A * (start.x + mx) + B * (start.y + my) + C);
+		if(start.y != destination.y && (start.x == destination.x || moveH > moveV || moveH > moveX))
+			start.y += my;
+
+		if(start.x != destination.x && (start.y == destination.y || moveV > moveH || moveV > moveX))
+			start.x += mx;
+
+		const Tile* tile = getTile(start);
+		if(tile && tile->hasProperty(BLOCKPROJECTILE))
+			return false;
+	}
+
+	while(start.z != destination.z) // now we need to perform a jump between floors to see if everything is clear (literally)
+	{
+		const Tile* tile = getTile(start);
+		if(tile && tile->getThingCount() > 0)
+			return false;
+
+		start.z++;
+	}
+
 	return true;
 }
 
 bool Map::isSightClear(const Position& fromPos, const Position& toPos, bool floorCheck) const
 {
-	if(floorCheck && fromPos.z != toPos.z)
+	/*if(floorCheck && fromPos.z != toPos.z)
 		return false;
 
 	// Cast two converging rays and see if either yields a result.
-	return checkSightLine(fromPos, toPos) || checkSightLine(toPos, fromPos);
+	return checkSightLine(fromPos, toPos) || checkSightLine(toPos, fromPos);*/
+	if(floorCheck && fromPos.z != toPos.z)
+		return false;
+
+	return checkSightLine(fromPos, toPos);
 }
 
 const Tile* Map::canWalkTo(const Creature* creature, const Position& pos)

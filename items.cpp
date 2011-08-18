@@ -124,7 +124,7 @@ bool Items::reload()
 	if(!items.size())
 		return false;
 
-	items.reload();
+	items.reload(); //?
 	loadFromOtb("data/items/items.otb");
 	if(!loadFromXml())
 		return false;
