@@ -462,7 +462,7 @@ class LuaInterface
 		static int32_t luaGetThingPosition(lua_State* L);
 		static int32_t luaDoItemRaidUnref(lua_State* L);
 		static int32_t luaHasItemProperty(lua_State* L);
-		static int32_t luaGetThingFromPos(lua_State* L);
+		static int32_t luaGetThingFromPosition(lua_State* L);
 		static int32_t luaGetTileItemById(lua_State* L);
 		static int32_t luaGetTileItemByType(lua_State* L);
 		static int32_t luaGetTileThingByPos(lua_State* L);
@@ -472,7 +472,7 @@ class LuaInterface
 		static int32_t luaGetHouseInfo(lua_State* L);
 		static int32_t luaGetHouseAccessList(lua_State* L);
 		static int32_t luaGetHouseByPlayerGUID(lua_State* L);
-		static int32_t luaGetHouseFromPos(lua_State* L);
+		static int32_t luaGetHouseFromPosition(lua_State* L);
 		static int32_t luaSetHouseOwner(lua_State* L);
 		static int32_t luaSetHouseAccessList(lua_State* L);
 		static int32_t luaDoPlayerSetNameDescription(lua_State* L);

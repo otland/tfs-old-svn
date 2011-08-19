@@ -367,6 +367,7 @@
 	displayGamemastersWithOnlineCommand = false
 
 	-- Logs
+	disableLuaErrors = false
 	displayPlayersLogging = true
 	prefixChannelLogs = ""
 	runFile = ""

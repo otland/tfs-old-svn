@@ -4,8 +4,7 @@ function onSay(cid, words, param, channel)
 		func = doCreateNpc
 	end
 
-	local pid = cid
-	local t = string.explode(param, ",")
+	local pid, t = cid, string.explode(param, ",")
 	if(t[2]) then
 		pid = getPlayerByNameWildcard(t[2])
 		if(not pid) then
@@ -16,12 +15,12 @@ function onSay(cid, words, param, channel)
 
 	local position, effect = getCreaturePosition(pid), CONST_ME_MAGIC_RED
 	errors(false)
-	local ret = func(t[1], position, false)
+	local ret = func(t[1], position)
 	errors(true)
 
 	if(tonumber(ret) == nil) then
 		effect = CONST_ME_POFF
-		doPlayerSendDefaultCancel(cid, (ret == false and RETURNVALUE_NOTPOSSIBLE or RETURNVALUE_NOTENOUGHROOM))
+		doPlayerSendDefaultCancel(cid, (not ret and RETURNVALUE_NOTPOSSIBLE or RETURNVALUE_NOTENOUGHROOM))
 	end
 
 	doSendMagicEffect(position, effect)

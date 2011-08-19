@@ -25,6 +25,6 @@ function onSay(cid, words, param, channel)
 		str = str .. line .. talk.words .. "\n"
 	end
 
-	doShowTextDialog(cid, 2160, str)
+	doShowTextDialog(cid, ITEM_ACTION_BOOK, str)
 	return true
 end

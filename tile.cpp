@@ -533,7 +533,7 @@ ReturnValue Tile::__queryAdd(int32_t, const Thing* thing, uint32_t,
 							continue;
 
 						if(!tmp->getMonster() || !tmp->isPushable() || tmp->isPlayerSummon())
-							return RET_NOTPOSSIBLE;
+							return RET_NOTENOUGHROOM; //NOTPOSSIBLE
 					}
 				}
 			}
@@ -1133,13 +1133,12 @@ void Tile::__replaceThing(uint32_t index, Thing* thing)
 		}
 	}
 
-	item->setParent(this);
-	if(oldItem)
-		updateTileFlags(oldItem, true);
-
-	updateTileFlags(item, false);
 	if(oldItem)
 	{
+		item->setParent(this);
+		updateTileFlags(oldItem, true);
+		updateTileFlags(item, false);
+
 		onUpdateTileItem(oldItem, Item::items[oldItem->getID()], item, Item::items[item->getID()]);
 #ifdef __GROUND_CACHE__
 		if(g_grounds.find(oldItem) == g_grounds.end())
