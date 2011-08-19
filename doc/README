@@ -83,6 +83,11 @@
 
 [ COMPILING
 	GNU\Linux
+		Automatically(Apt-get and Yum Based OS)
+			Launch terminal and type:
+				cd 0.3.7 && sudo ./compile.sh
+			It will ask you some simple questions along the compilation/intallation process, wait till it is done, then you may continue to CONFIGURING and EXECUTING.
+
 		Debian
 			http://otland.net/f137/linux-ultimate-compile-guide-debian-ubuntu-included-2868/
 
