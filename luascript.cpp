@@ -3890,16 +3890,18 @@ int32_t LuaInterface::luaDoPlayerAddItem(lua_State* L)
 			break;
 
 		++ret;
-		if(!newItem->getParent())
-			lua_pushnumber(L, env->addThing(stackItem));
-		else if(stackItem)
+		if(newItem->getParent())
 			lua_pushnumber(L, env->addThing(newItem));
+		else if(stackItem)
+			lua_pushnumber(L, env->addThing(stackItem));
+		else
+			lua_pushnil(L);
 	}
 
 	if(ret)
 		return ret;
 
-	lua_pushboolean(L, false);
+	lua_pushnil(L);
 	return 1;
 }
 
@@ -4804,16 +4806,18 @@ int32_t LuaInterface::luaDoCreateItem(lua_State* L)
 			break;
 
 		++ret;
-		if(!newItem->getParent())
-			lua_pushnumber(L, env->addThing(stackItem));
-		else if(stackItem)
+		if(newItem->getParent())
 			lua_pushnumber(L, env->addThing(newItem));
+		else if(stackItem)
+			lua_pushnumber(L, env->addThing(stackItem));
+		else
+			lua_pushnil(L);
 	}
 
 	if(ret)
 		return ret;
 
-	lua_pushboolean(L, false);
+	lua_pushnil(L);
 	return 1;
 }
 
