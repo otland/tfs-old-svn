@@ -170,6 +170,7 @@ uint32_t DatabaseManager::getDatabaseVersion()
 
 uint32_t DatabaseManager::updateDatabase()
 {
+	/*
 	Database* db = Database::getInstance();
 	DBQuery query;
 
@@ -186,7 +187,7 @@ uint32_t DatabaseManager::updateDatabase()
 			else
 			{
 				db->executeQuery("CREATE TABLE IF NOT EXISTS `server_config` (`config` VARCHAR(50) NOT NULL, `value` VARCHAR(256) NOT NULL DEFAULT '', UNIQUE(`config`));");
-				db->executeQuery("CREATE TABLE IF NOT EXISTS `bans2` (`id` INTEGER NOT NULL, `type` UNSIGNED INTEGER NOT NULL COMMENT 'this field defines if its ip, account, player, or any else ban', `value` UNSIGNED INTEGER NOT NULL COMMENT 'ip, player guid, account number', `param` UNSIGNED INTEGER NOT NULL DEFAULT 4294967295 COMMENT 'mask', `active` UNSIGNED INTEGER NOT NULL DEFAULT 1, `expires` UNSIGNED INTEGER NOT NULL DEFAULT 0, `added` UNSIGNED INTEGER NOT NULL, `admin_id` UNSIGNED INTEGER NOT NULL DEFAULT 0, `comment` VARCHAR(1024) NOT NULL DEFAULT '', `reason` UNSIGNED INTEGER NOT NULL DEFAULT 0, `action` UNSIGNED INTEGER NOT NULL DEFAULT 0, `statement` VARCHAR(256) NOT NULL DEFAULT '', PRIMARY KEY (`id`));");
+				db->executeQuery("CREATE TABLE IF NOT EXISTS `bans2` (`id` INTEGER NOT NULL, `type` UNSIGNED INTEGER NOT NULL, `value` UNSIGNED INTEGER NOT NULL, `param` UNSIGNED INTEGER NOT NULL DEFAULT 4294967295, `active` UNSIGNED INTEGER NOT NULL DEFAULT 1, `expires` UNSIGNED INTEGER NOT NULL DEFAULT 0, `added` UNSIGNED INTEGER NOT NULL, `admin_id` UNSIGNED INTEGER NOT NULL DEFAULT 0, `comment` VARCHAR(1024) NOT NULL DEFAULT '', `reason` UNSIGNED INTEGER NOT NULL DEFAULT 0, `action` UNSIGNED INTEGER NOT NULL DEFAULT 0, `statement` VARCHAR(256) NOT NULL DEFAULT '', PRIMARY KEY (`id`));");
 				db->executeQuery("CREATE INDEX bans_index_type ON bans2(type, value);");
 				db->executeQuery("CREATE INDEX bans_index_active ON bans2(active);");
 			}
@@ -232,6 +233,7 @@ uint32_t DatabaseManager::updateDatabase()
 
 		default: break;
 	}
+	*/
 	return 0;
 }
 
