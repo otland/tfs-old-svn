@@ -42,6 +42,7 @@
 #include "teleport.h"
 #include "ban.h"
 #include "mounts.h"
+#include "databasemanager.h"
 
 extern Game g_game;
 extern Monsters g_monsters;

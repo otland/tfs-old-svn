@@ -21,6 +21,8 @@
 #include "databasemanager.h"
 #include "tools.h"
 
+#include "ban.h"
+
 #include "configmanager.h"
 extern ConfigManager g_config;
 
