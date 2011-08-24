@@ -46,6 +46,7 @@ void CreatureEvents::clear()
 	//clear creature events
 	for(CreatureEventList::iterator it = m_creatureEvents.begin(); it != m_creatureEvents.end(); ++it)
 		it->second->clearEvent();
+
 	//clear lua state
 	m_scriptInterface.reInitState();
 }

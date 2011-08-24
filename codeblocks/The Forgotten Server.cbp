@@ -84,6 +84,8 @@
 		<Unit filename="..\cylinder.h" />
 		<Unit filename="..\database.cpp" />
 		<Unit filename="..\database.h" />
+		<Unit filename="..\databasemanager.cpp" />
+		<Unit filename="..\databasemanager.h" />
 		<Unit filename="..\databasemysql.cpp" />
 		<Unit filename="..\databasemysql.h" />
 		<Unit filename="..\databasesqlite.cpp" />

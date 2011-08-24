@@ -71,7 +71,7 @@ typedef std::vector<std::string> StringVec;
 typedef std::vector<int32_t> IntegerVec;
 
 OPENTIBIA_API StringVec explodeString(const std::string& inString, const std::string& separator, int32_t limit = -1);
-OPENTIBIA_API IntegerVec  vectorAtoi(std::vector<std::string> stringVector);
+OPENTIBIA_API IntegerVec vectorAtoi(std::vector<std::string> stringVector);
 OPENTIBIA_API bool hasBitSet(uint32_t flag, uint32_t flags);
 
 OPENTIBIA_API std::string generateRecoveryKey(int32_t fieldCount, int32_t fieldLength);

@@ -63,4 +63,5 @@
 	Fixed so that vials (fluids.lua) will use fluidSource from items.xml.
 	NPC's can now be pushed by players inside their spawn radius.
 	Added database manager for automatic database updates and table optimizations.
+	It is now possible to register multiple creature events with the same type for one creature.
 ]

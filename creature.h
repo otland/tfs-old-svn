@@ -35,6 +35,7 @@
 #include <list>
 
 typedef std::list<Condition*> ConditionList;
+typedef std::list<CreatureEvent*> CreatureEventList;
 
 enum slots_t
 {
@@ -428,10 +429,8 @@ class Creature : public AutoID, virtual public Thing
 		{
 			return (0 != (scriptEventsBitField & ((uint32_t)1 << event)));
 		}
-		typedef std::list<CreatureEvent*> CreatureEventList;
 		CreatureEventList eventsList;
-		CreatureEventList::iterator findEvent(CreatureEventType_t type);
-		CreatureEvent* getCreatureEvent(CreatureEventType_t type);
+		CreatureEventList getCreatureEvents(CreatureEventType_t type);
 
 		void updateMapCache();
 		#ifdef __DEBUG__

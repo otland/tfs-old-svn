@@ -4017,9 +4017,9 @@ bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creat
 				if(damage >= targetPlayer->getHealth())
 				{
 					//scripting event - onPrepareDeath
-					CreatureEvent* eventPrepareDeath = targetPlayer->getCreatureEvent(CREATURE_EVENT_PREPAREDEATH);
-					if(eventPrepareDeath)
-						eventPrepareDeath->executeOnPrepareDeath(targetPlayer, attacker);
+					CreatureEventList prepareDeathEvents = targetPlayer->getCreatureEvents(CREATURE_EVENT_PREPAREDEATH);
+					for(CreatureEventList::const_iterator it = prepareDeathEvents.begin(); it != prepareDeathEvents.end(); ++it)
+						(*it)->executeOnPrepareDeath(targetPlayer, attacker);
 				}
 			}
 
@@ -4823,8 +4823,8 @@ void Game::checkPlayersRecord()
 	{
 		uint32_t tmplPlayersRecord = lastPlayersRecord;
 		lastPlayersRecord = getPlayersOnline();
-		GlobalEventMap reocrdEvents = g_globalEvents->getEventMap(GLOBALEVENT_RECORD);
-		for(GlobalEventMap::iterator it = reocrdEvents.begin(); it != reocrdEvents.end(); ++it)
+		GlobalEventMap recordEvents = g_globalEvents->getEventMap(GLOBALEVENT_RECORD);
+		for(GlobalEventMap::iterator it = recordEvents.begin(); it != recordEvents.end(); ++it)
 			it->second->executeRecord(lastPlayersRecord, tmplPlayersRecord);
 
 		savePlayersRecord();
