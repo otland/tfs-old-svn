@@ -8010,8 +8010,7 @@ int32_t LuaScriptInterface::luaDatabaseConnected(lua_State* L)
 
 int32_t LuaScriptInterface::luaDatabaseTableExists(lua_State* L)
 {
-	//lua_pushboolean(L, DatabaseManager::getInstance()->tableExists(popString(L)));
-	lua_pushboolean(L, true);
+	lua_pushboolean(L, DatabaseManager::getInstance()->tableExists(popString(L)));
 	return 1;
 }
 

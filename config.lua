@@ -137,6 +137,7 @@
 
 	-- Startup
 	defaultPriority = "high"
+	startupDatabaseOptimization = "yes"
 
 	-- Shutdown
 	freeMemoryAtShutdown = "yes"

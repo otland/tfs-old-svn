@@ -18,31 +18,25 @@ LIBS = -lxml2 -lpthread -llua5.1 -lgmp
 #For Linux:
 #	make
 
-ifdef MYSQL
-	ifdef SQLITE
-		LIBS += -lmysqlclient -lsqlite3
-		FLAGS += -D__USE_MYSQL__ -D__USE_SQLITE__
+ifndef MYSQL
+MYSQL = 1
+endif
+ifndef SQLITE
+SQLITE = 1
+endif
+
+ifeq ($(MYSQL),1)
+	ifdef WIN32
+		LIBS += -lmysql
 	else
-		ifdef WIN32
-			LIBS += -lmysqlclient
-			FLAGS += -D__USE_SQLITE__
-		else
-			LIBS += -lmysql
-		endif
-		FLAGS += -D__USE_MYSQL__
+		LIBS += -lmysqlclient
 	endif
-else
-	ifdef SQLITE
-		LIBS += -lsqlite3
-		FLAGS += -D__USE_SQLITE__
-	else
-		ifdef WIN32
-			LIBS += -lmysql -lsqlite3
-		else
-			LIBS += -lsqlite3 -lmysqlclient
-		endif
-		FLAGS += -D__USE_MYSQL__ -D__USE_SQLITE__
-	endif
+	FLAGS += -D__USE_MYSQL__
+endif
+
+ifeq ($(SQLITE),1)
+	LIBS += -lsqlite3
+	FLAGS += -D__USE_SQLITE__
 endif
 
 #mingw32-make WIN32=1 LATEST_MINGW=1
@@ -78,9 +72,9 @@ endif
 
 CXXSOURCES = actions.cpp admin.cpp allocator.cpp ban.cpp baseevents.cpp beds.cpp \
 	creature.cpp creatureevent.cpp chat.cpp combat.cpp commands.cpp condition.cpp configmanager.cpp \
-	connection.cpp container.cpp cylinder.cpp database.cpp databasemysql.cpp databasesqlite.cpp \
-	depot.cpp exception.cpp fileloader.cpp game.cpp globalevent.cpp gui.cpp house.cpp housetile.cpp \
-	ioguild.cpp iologindata.cpp iomap.cpp iomapserialize.cpp inputbox.cpp item.cpp items.cpp \
+	connection.cpp container.cpp cylinder.cpp database.cpp databasemanager.cpp databasemysql.cpp \
+	databasesqlite.cpp depot.cpp exception.cpp fileloader.cpp game.cpp globalevent.cpp gui.cpp house.cpp \
+	housetile.cpp ioguild.cpp iologindata.cpp iomap.cpp iomapserialize.cpp inputbox.cpp item.cpp items.cpp \
 	logger.cpp luascript.cpp mailbox.cpp map.cpp md5.cpp monster.cpp monsters.cpp mounts.cpp \
 	movement.cpp networkmessage.cpp npc.cpp otserv.cpp outfit.cpp outputmessage.cpp party.cpp \
 	player.cpp playerbox.cpp position.cpp protocol.cpp protocolgame.cpp protocollogin.cpp \

@@ -55,6 +55,7 @@ bool ConfigManager::loadFile(const std::string& _filename)
 		m_confBoolean[SAVE_GLOBAL_STORAGE] = (getGlobalString(L, "saveGlobalStorage", "no") == "yes");
 		m_confBoolean[INGAME_GUILD_SYSTEM] = (getGlobalString(L, "ingameGuildSystem", "yes") == "yes");
 		m_confBoolean[BIND_ONLY_GLOBAL_ADDRESS] = (getGlobalString(L, "bindOnlyGlobalAddress", "no") == "yes");
+		m_confBoolean[OPTIMIZE_DATABASE] = (getGlobalString(L, "startupDatabaseOptimization", "yes") == "yes");
 
 		m_confString[CONFIG_FILE] = _filename;
 		m_confString[IP] = getGlobalString(L, "ip", "127.0.0.1");
@@ -67,6 +68,9 @@ bool ConfigManager::loadFile(const std::string& _filename)
 		m_confString[MYSQL_DB] = getGlobalString(L, "mysqlDatabase", "theforgottenserver");
 		m_confString[SQLITE_DB] = getGlobalString(L, "sqliteDatabase");
 		m_confString[PASSWORDTYPE] = getGlobalString(L, "passwordType", "plain");
+		#ifdef MULTI_SQL_DRIVERS
+		m_confString[SQL_TYPE] = getGlobalString(L, "sqlType", "sqlite");
+		#endif
 
 		m_confInteger[SQL_PORT] = getGlobalNumber(L, "mysqlPort", 3306);
 		m_confInteger[PASSWORD_TYPE] = PASSWORD_TYPE_PLAIN;
@@ -75,10 +79,6 @@ bool ConfigManager::loadFile(const std::string& _filename)
 		m_confInteger[GAME_PORT] = getGlobalNumber(L, "gameProtocolPort", 7172);
 		m_confInteger[LOGIN_PORT] = getGlobalNumber(L, "loginProtocolPort", 7171);
 		m_confInteger[STATUS_PORT] = getGlobalNumber(L, "statusProtocolPort", 7171);
-
-		#ifdef MULTI_SQL_DRIVERS
-		m_confString[SQL_TYPE] = getGlobalString(L, "sqlType", "sqlite");
-		#endif
 	}
 
 	m_confBoolean[FREE_MEMORY_AT_SHUTDOWN] = (getGlobalString(L, "freeMemoryAtShutdown", "yes") == "yes");

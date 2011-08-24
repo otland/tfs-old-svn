@@ -65,6 +65,7 @@ class ConfigManager
 			FREE_MEMORY_AT_SHUTDOWN,
 			ALLOW_CLONES,
 			BIND_ONLY_GLOBAL_ADDRESS,
+			OPTIMIZE_DATABASE,
 			LAST_BOOLEAN_CONFIG /* this must be the last one */
 		};
 

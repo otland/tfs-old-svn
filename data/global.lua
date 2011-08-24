@@ -1170,11 +1170,14 @@ function luasql_connection:close()
 	return true
 end
 function luasql_connection:execute(statement)
-	local cursor = luasql_cursor:new(self, statement)
-	if cursor.resultId ~= false then
-		table.insert(self.resultIds, cursor.resultId)
+	if statement.sub(1, 6) == "SELECT" then
+		local cursor = luasql_cursor:new(self, statement)
+		if cursor.resultId ~= false then
+			table.insert(self.resultIds, cursor.resultId)
+		end
+		return cursor
 	end
-	return cursor
+	return db.query(statement)
 end
 function luasql_connection:closedCursor(resultId)
 	for k, v in ipairs(self.resultIds) do

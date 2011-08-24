@@ -102,8 +102,7 @@ std::string DatabaseSQLite::_parse(const std::string &s)
 		ch = s[a];
 		if(ch == '\'')
 			inString = (!inString || s[a + 1] == '\'');
-
-		if(ch == '`' && !inString)
+		else if(ch == '`' && !inString)
 			ch = '"';
 
 		query += ch;

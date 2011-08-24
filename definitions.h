@@ -21,6 +21,8 @@
 #ifndef __OTSERV_DEFINITIONS_H__
 #define __OTSERV_DEFINITIONS_H__
 
+#define DATABASE_VERSION 0
+
 #ifdef _WIN32
 #ifndef WIN32
 #define WIN32

@@ -83,6 +83,8 @@
 #include "allocator.h"
 #endif
 
+#include "databasemanager.h"
+
 #ifdef BOOST_NO_EXCEPTIONS
 	#include <exception>
 	void boost::throw_exception(std::exception const & e)
@@ -305,7 +307,10 @@ void mainLoader(ServiceManager* service_manager)
 	#else
 	if(!g_config.loadFile("config.lua"))
 	#endif
+	{
 		startupErrorMessage("Unable to load config.lua!");
+		return;
+	}
 
 	#ifdef WIN32
 	std::string defaultPriority = asLowerCaseString(g_config.getString(ConfigManager::DEFAULT_PRIORITY));
@@ -323,26 +328,52 @@ void mainLoader(ServiceManager* service_manager)
 	const char* d("46730330223584118622160180015036832148732986808519344675210555262940258739805766860224610646919605860206328024326703361630109888417839241959507572247284807035235569619173792292786907845791904955103601652822519121908367187885509270025388641700821735345222087940578381210879116823013776808975766851829020659073");
 	g_RSA.setKey(p, q, d);
 
-	std::cout << ">> Connecting SQL driver..." << std::flush;
+	std::cout << ">> Loading database driver..." << std::flush;
 	Database* db = Database::getInstance();
 	if(!db->isConnected())
 	{
 		switch(db->getDatabaseEngine())
 		{
 			case DATABASE_ENGINE_MYSQL:
-				startupErrorMessage("Failed to connect to database, read doc/MYSQL_HELP for information or try SqLite which doesn't require any connection.");
-				break;
+				startupErrorMessage("Failed to connect to database, read doc/MYSQL_HELP for information or try SQLite which doesn't require any connection.");
+				return;
 
 			case DATABASE_ENGINE_SQLITE:
 				startupErrorMessage("Failed to connect to sqlite database file, make sure it exists and is readable.");
-				break;
+				return;
 
 			default:
 				startupErrorMessage("Unkwown sqlType in config.lua, valid sqlTypes are: \"mysql\" and \"sqlite\".");
-				break;
+				return;
 		}
 	}
 	std::cout << " " << db->getClientName() << " " << db->getClientVersion() << std::endl;
+
+	// run database manager
+	std::cout << ">> Running database manager" << std::endl;
+	DatabaseManager* dbManager = DatabaseManager::getInstance();
+	if(!dbManager->isDatabaseSetup())
+	{
+		startupErrorMessage("The database you have specified in config.lua is empty, please import the schema to the database.");
+		return;
+	}
+
+	uint32_t version = 0;
+	do
+	{
+		version = dbManager->updateDatabase();
+		if(!version)
+			break;
+
+		std::cout << "> Database has been updated to version " << version << "." << std::endl;
+	}
+	while(version < DATABASE_VERSION);
+
+	dbManager->checkTriggers();
+	dbManager->checkEncryption();
+
+	if(g_config.getBoolean(ConfigManager::OPTIMIZE_DATABASE) && !dbManager->optimizeTables())
+		std::cout << "> No tables were optimized." << std::endl;
 
 	//load bans
 	std::cout << ">> Loading bans" << std::endl;

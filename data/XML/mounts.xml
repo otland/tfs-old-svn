@@ -21,8 +21,8 @@
 	<mount id="19" clientid="402" name="Tamed Panda" speed="20" premium="yes" />
 	<mount id="20" clientid="405" name="Dromedary" speed="20" premium="yes" />
 	<mount id="21" clientid="406" name="Sandstone Scorpion" speed="20" premium="yes" />
-	<mount id="22" clientid="421" name="Rented Horse" speed="20" premium="yes" />
+	<mount id="22" clientid="421" name="Rented Horse" speed="20" premium="no" />
 	<mount id="23" clientid="426" name="Fire War Horse" speed="20" premium="yes" />
-	<mount id="24" clientid="437" name="Rented Horse" speed="20" premium="yes" />
-	<mount id="25" clientid="438" name="Rented Horse" speed="20" premium="yes" />
+	<mount id="24" clientid="437" name="Rented Horse" speed="20" premium="no" />
+	<mount id="25" clientid="438" name="Rented Horse" speed="20" premium="no" />
 </mounts>

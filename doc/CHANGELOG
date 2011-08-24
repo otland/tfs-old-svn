@@ -55,10 +55,12 @@
 	Healing message will now be precise on how much health the creature was healed up with.
 	Decay buckets are now 4, with 250ms intervals instead of 16 with 1000ms intervals for more accurate duration times (this may cause higher CPU usage).
 	Added premium attribute to mounts.
+	Added db and result functions to the Lua interface.
 	LuaSQL dependency removed (with backwards compatibility for most code).
 	Fixed a bug with vial, blue bottle, jug and waterskin.
 	Updated a lot of item attributes.
 	Corrected cheese and scarab cheese client id and stackable attribute.
 	Fixed so that vials (fluids.lua) will use fluidSource from items.xml.
 	NPC's can now be pushed by players inside their spawn radius.
+	Added database manager for automatic database updates and table optimizations.
 ]
