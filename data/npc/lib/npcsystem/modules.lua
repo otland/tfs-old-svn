@@ -1006,7 +1006,7 @@ if(Modules == nil) then
 	--	names = A table containing one or more strings of alternative names to this item. Used only for old buy/sell system.
 	--	itemid = The itemid of the buyable item
 	--	cost = The price of one single item
-	--	subType - The subType of each rune or fluidcontainer item. Can be left out if it is not a rune/fluidcontainer. Default value is 1.
+	--	subType - The subType of each rune or fluidcontainer item. Can be left out if it is not a rune/fluidcontainer. Default value is 0 and 1 (depending on shop mode)
 	--	realName - The real, full name for the item. Will be used as ITEMNAME in MESSAGE_ONBUY and MESSAGE_ONSELL if defined. Default value is nil (getItemNameById will be used)
 	function ShopModule:addBuyableItem(names, itemid, cost, subType, realName)
 		if(SHOPMODULE_MODE ~= SHOPMODULE_MODE_TALK) then
@@ -1014,7 +1014,7 @@ if(Modules == nil) then
 				id = itemid,
 				buy = cost,
 				sell = -1,
-				subType = subType or 1,
+				subType = tonumber(subType) or 0,
 				name = realName or getItemNameById(itemid)
 			}
 
@@ -1042,7 +1042,7 @@ if(Modules == nil) then
 				eventType = SHOPMODULE_BUY_ITEM,
 				module = self,
 				realName = realName or getItemNameById(itemid),
-				subType = subType or 1
+				subType = tonumber(subType) or 1
 			}
 
 			for i, name in pairs(names) do
@@ -1073,7 +1073,7 @@ if(Modules == nil) then
 				eventType = SHOPMODULE_BUY_ITEM_CONTAINER,
 				module = self,
 				realName = realName or getItemNameById(itemid),
-				subType = subType or 1
+				subType = tonumber(subType) or 1
 			}
 
 			for i, name in pairs(names) do
@@ -1100,7 +1100,7 @@ if(Modules == nil) then
 				id = itemid,
 				buy = -1,
 				sell = cost,
-				subType = v.charges > 0 and 0 or 1,
+				subType = v.charges > 0 and v.charges or 0,
 				name = realName or v.name
 			}
 
@@ -1173,9 +1173,9 @@ if(Modules == nil) then
 			return false
 		end
 
-		local backpack, totalCost = 1988, amount * shopItem.buy
+		local backpack, backpackPrice, totalCost = 1988, 20, amount * shopItem.buy
 		if(inBackpacks) then
-			totalCost = totalCost + (math.max(1, math.floor(amount / getContainerCapById(backpack))) * 20)
+			totalCost = totalCost + (math.max(1, math.floor(amount / getContainerCapById(backpack))) * backpackPrice)
 		end
 
 		local parseInfo = {
@@ -1210,7 +1210,7 @@ if(Modules == nil) then
 			end
 
 			if(a > 0) then
-				doPlayerRemoveMoney(cid, ((a * shopItem.buy) + (b * 20)))
+				doPlayerRemoveMoney(cid, ((a * shopItem.buy) + (b * backpackPrice)))
 				return true
 			end
 
