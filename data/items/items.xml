@@ -135,7 +135,7 @@
 	<item id="469" article="a" name="hole">
 		<attribute key="floorchange" value="down" />
 		<attribute key="decayTo" value="468" />
-		<attribute key="duration" value="60" />
+		<attribute key="duration" value="300" />
 	</item>
 	<item id="470" article="a" name="hole">
 		<attribute key="floorchange" value="down" />
