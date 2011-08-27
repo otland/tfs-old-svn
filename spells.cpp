@@ -1792,7 +1792,7 @@ bool RuneSpell::Convince(const RuneSpell* spell, Creature* creature, Item*, cons
 	if(!player)
 		return false;
 
-	if(!player->hasFlag(PlayerFlag_CanConvinc1eAll))
+	if(!player->hasFlag(PlayerFlag_CanConvinceAll))
 	{
 		if(player->getSkull() == SKULL_BLACK)
 		{
