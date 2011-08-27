@@ -146,7 +146,7 @@ if(Modules == nil) then
 				price = (price + ((math.min(parameters.endLevel, getPlayerLevel(cid)) - parameters.startLevel) * parameters.levelCost))
 			end
 
-			if(parameters.number < 6) then
+			if(parameters.number > 0) then
 				if(getPlayerBlessing(cid, parameters.number)) then
 					npcHandler:say("Gods have already blessed you with this blessing!", cid)
 				elseif(not doPlayerRemoveMoney(cid, price)) then
@@ -161,7 +161,7 @@ if(Modules == nil) then
 				elseif(not doPlayerRemoveMoney(cid, price)) then
 					npcHandler:say("You don't have enough money for blessing.", cid)
 				else
-					npcHandler:say("You have been blessed by one of the five gods!", cid)
+					npcHandler:say("You have been blessed by god of war!", cid)
 					doPlayerSetPVPBlessing(cid)
 				end
 			end
