@@ -3885,10 +3885,6 @@ int32_t LuaInterface::luaDoPlayerAddItem(lua_State* L)
 			return ++ret;
 		}
 
-		--itemCount;
-		if(!itemCount)
-			break;
-
 		++ret;
 		if(newItem->getParent())
 			lua_pushnumber(L, env->addThing(newItem));
@@ -3896,6 +3892,8 @@ int32_t LuaInterface::luaDoPlayerAddItem(lua_State* L)
 			lua_pushnumber(L, env->addThing(stackItem));
 		else
 			lua_pushnil(L);
+
+		--itemCount;
 	}
 
 	if(ret)
@@ -4802,8 +4800,7 @@ int32_t LuaInterface::luaDoCreateItem(lua_State* L)
 		else
 			lua_pushnil(L);
 
-		if(!(--itemCount))
-			break;
+		--itemCount;
 	}
 
 	if(ret)
