@@ -1361,16 +1361,12 @@ bool Monster::convinceCreature(Creature* creature)
 	if(player && !player->hasFlag(PlayerFlag_CanConvinceAll) && !mType->isConvinceable)
 		return false;
 
-	Creature* oldMaster = NULL;
-	if(isSummon())
-		oldMaster = master;
-
-	if(oldMaster)
+	if(master)
 	{
-		if(oldMaster->getPlayer() || oldMaster == creature)
+		if(master == creature)
 			return false;
 
-		oldMaster->removeSummon(this);
+		master->removeSummon(this);
 	}
 
 	setFollowCreature(NULL);
