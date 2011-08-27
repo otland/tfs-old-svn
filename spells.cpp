@@ -1792,7 +1792,7 @@ bool RuneSpell::Convince(const RuneSpell* spell, Creature* creature, Item*, cons
 	if(!player)
 		return false;
 
-	if(!player->hasFlag(PlayerFlag_CanConvinceAll))
+	if(!player->hasFlag(PlayerFlag_CanConvinc1eAll))
 	{
 		if(player->getSkull() == SKULL_BLACK)
 		{
@@ -1819,6 +1819,13 @@ bool RuneSpell::Convince(const RuneSpell* spell, Creature* creature, Item*, cons
 
 	Creature* convinceCreature = thing->getCreature();
 	if(!convinceCreature)
+	{
+		player->sendCancelMessage(RET_NOTPOSSIBLE);
+		g_game.addMagicEffect(player->getPosition(), MAGIC_EFFECT_POFF);
+		return false;
+	}
+
+	if(!player->hasFlag(PlayerFlag_CanConvinceAll) && convinceCreature->getPlayerMaster())
 	{
 		player->sendCancelMessage(RET_NOTPOSSIBLE);
 		g_game.addMagicEffect(player->getPosition(), MAGIC_EFFECT_POFF);
