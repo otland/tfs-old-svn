@@ -4763,12 +4763,12 @@ int32_t LuaInterface::luaDoCreateItem(lua_State* L)
 	if(it.hasSubType())
 	{
 		if(it.stackable)
-			itemCount = (int32_t)std::ceil((float)count / 100);
+			itemCount = (int32_t)std::ceil(count / 100.);
 
 		subType = count;
 	}
 	else
-		itemCount = std::max((uint32_t)1, count);
+		itemCount = std::max(1U, count);
 
 	uint32_t ret = 0;
 	Item* newItem = NULL;
@@ -4794,10 +4794,6 @@ int32_t LuaInterface::luaDoCreateItem(lua_State* L)
 			return ++ret;
 		}
 
-		--itemCount;
-		if(!itemCount)
-			break;
-
 		++ret;
 		if(newItem->getParent())
 			lua_pushnumber(L, env->addThing(newItem));
@@ -4805,6 +4801,9 @@ int32_t LuaInterface::luaDoCreateItem(lua_State* L)
 			lua_pushnumber(L, env->addThing(stackItem));
 		else
 			lua_pushnil(L);
+
+		if(!(--itemCount))
+			break;
 	}
 
 	if(ret)
