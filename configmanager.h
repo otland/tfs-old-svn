@@ -183,6 +183,9 @@ class ConfigManager
 			FAIRFIGHT_TIMERANGE,
 			DEFAULT_DEPOT_SIZE_PREMIUM,
 			DEFAULT_DEPOT_SIZE,
+			MAIL_ATTEMPTS_FADE,
+			MAIL_ATTEMPTS,
+			MAIL_BLOCK,
 			LAST_NUMBER_CONFIG /* this must be the last one */
 		};
 

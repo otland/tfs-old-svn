@@ -67,11 +67,11 @@ Player::Player(const std::string& _name, ProtocolGame* p):
 	guildLevel = GUILDLEVEL_NONE;
 
 	promotionLevel = walkTaskEvent = actionTaskEvent = nextStepEvent = bloodHitCount = shieldBlockCount = 0;
-	lastAttack = idleTime = marriage = blessings = balance = premiumDays = mana = manaMax = manaSpent = 0;
-	soul = guildId = levelPercent = magLevelPercent = magLevel = experience = damageImmunities = 0;
+	mailAttempts = idleTime = marriage = blessings = balance = premiumDays = mana = manaMax = manaSpent = 0;
+	soul = guildId = levelPercent = magLevelPercent = magLevel = experience = damageImmunities = rankId = 0;
 	conditionImmunities = conditionSuppressions = groupId = vocationId = managerNumber2 = town = skullEnd = 0;
-	lastLogin = lastLogout = lastIP = messageTicks = messageBuffer = nextAction = 0;
-	editListId = maxWriteLen = windowTextId = rankId = 0;
+	lastLogin = lastLogout = lastIP = messageTicks = messageBuffer = nextAction = editListId = maxWriteLen = 0;
+	windowTextId = 0;
 
 	purchaseCallback = saleCallback = -1;
 	level = shootRange = 1;
@@ -79,7 +79,7 @@ Player::Player(const std::string& _name, ProtocolGame* p):
 	soulMax = 100;
 	capacity = 400.00;
 	stamina = STAMINA_MAX;
-	lastLoad = lastPing = lastPong = lastMountAction = OTSYS_TIME();
+	lastLoad = lastPing = lastPong = lastMountAction = lastAttack = lastMail = OTSYS_TIME();
 
 	writeItem = NULL;
 	group = NULL;
@@ -1774,6 +1774,9 @@ void Player::onThink(uint32_t interval)
 		messageTicks = 0;
 		addMessageBuffer();
 	}
+
+	if(lastMail && lastMail < (OTSYS_TIME() + g_config.getNumber(ConfigManager::MAIL_ATTEMPTS_FADE)))
+		mailAttempts = lastMail = 0;
 }
 
 bool Player::isMuted(uint16_t channelId, MessageClasses type, uint32_t& time)

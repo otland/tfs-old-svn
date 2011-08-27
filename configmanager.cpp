@@ -126,14 +126,14 @@ bool ConfigManager::load()
 
 	m_confString[MAP_AUTHOR]			= getGlobalString("mapAuthor", "Unknown");
 	m_confNumber[LOGIN_TRIES]			= getGlobalNumber("loginTries", 3);
-	m_confNumber[RETRY_TIMEOUT]			= getGlobalNumber("retryTimeout", 30 * 1000);
-	m_confNumber[LOGIN_TIMEOUT]			= getGlobalNumber("loginTimeout", 5 * 1000);
+	m_confNumber[RETRY_TIMEOUT]			= getGlobalNumber("retryTimeout", 30000);
+	m_confNumber[LOGIN_TIMEOUT]			= getGlobalNumber("loginTimeout", 5000);
 	m_confNumber[MAX_MESSAGEBUFFER]			= getGlobalNumber("maxMessageBuffer", 4);
 	m_confNumber[MAX_PLAYERS]			= getGlobalNumber("maxPlayers", 1000);
 	m_confNumber[DEFAULT_DESPAWNRANGE]		= getGlobalNumber("deSpawnRange", 2);
 	m_confNumber[DEFAULT_DESPAWNRADIUS]		= getGlobalNumber("deSpawnRadius", 50);
-	m_confNumber[PZ_LOCKED]				= getGlobalNumber("pzLocked", 60 * 1000);
-	m_confNumber[HUNTING_DURATION]			= getGlobalNumber("huntingDuration", 60 * 1000);
+	m_confNumber[PZ_LOCKED]				= getGlobalNumber("pzLocked", 60000);
+	m_confNumber[HUNTING_DURATION]			= getGlobalNumber("huntingDuration", 60000);
 	m_confString[SERVER_NAME]			= getGlobalString("serverName");
 	m_confString[OWNER_NAME]			= getGlobalString("ownerName");
 	m_confString[OWNER_EMAIL]			= getGlobalString("ownerEmail");
@@ -162,7 +162,7 @@ bool ConfigManager::load()
 	m_confNumber[START_MAGICLEVEL]			= getGlobalNumber("newPlayerMagicLevel", 0);
 	m_confBool[START_CHOOSEVOC]			= getGlobalBool("newPlayerChooseVoc", false);
 	m_confNumber[HOUSE_PRICE]			= getGlobalNumber("housePriceEachSquare", 1000);
-	m_confNumber[WHITE_SKULL_TIME]			= getGlobalNumber("whiteSkullTime", 15 * 60 * 1000);
+	m_confNumber[WHITE_SKULL_TIME]			= getGlobalNumber("whiteSkullTime", 900000);
 	m_confNumber[HIGHSCORES_TOP]			= getGlobalNumber("highscoreDisplayPlayers", 10);
 	m_confNumber[HIGHSCORES_UPDATETIME]		= getGlobalNumber("updateHighscoresAfterMinutes", 60);
 	m_confBool[ON_OR_OFF_CHARLIST]			= getGlobalBool("displayOnOrOffAtCharlist", false);
@@ -183,7 +183,7 @@ bool ConfigManager::load()
 	m_confBool[CLEAN_MAP_AT_GLOBALSAVE]		= getGlobalBool("cleanMapAtGlobalSave", true);
 	m_confBool[FREE_PREMIUM]			= getGlobalBool("freePremium", false);
 	m_confNumber[PROTECTION_LEVEL]			= getGlobalNumber("protectionLevel", 1);
-	m_confNumber[STATUSQUERY_TIMEOUT]		= getGlobalNumber("statusTimeout", 5 * 60 * 1000);
+	m_confNumber[STATUSQUERY_TIMEOUT]		= getGlobalNumber("statusTimeout", 300000);
 	m_confBool[BROADCAST_BANISHMENTS]		= getGlobalBool("broadcastBanishments", true);
 	m_confBool[GENERATE_ACCOUNT_NUMBER]		= getGlobalBool("generateAccountNumber", false);
 	m_confBool[GENERATE_ACCOUNT_SALT]		= getGlobalBool("generateAccountSalt", false);
@@ -199,15 +199,15 @@ bool ConfigManager::load()
 	m_confBool[HOUSE_RENTASPRICE]			= getGlobalBool("houseRentAsPrice", false);
 	m_confBool[HOUSE_PRICEASRENT]			= getGlobalBool("housePriceAsRent", false);
 	m_confString[HOUSE_STORAGE]			= getGlobalString("houseDataStorage", "binary");
-	m_confNumber[RED_SKULL_LENGTH]			= getGlobalNumber("redSkullLength", 30 * 24 * 60 * 60);
-	m_confNumber[BLACK_SKULL_LENGTH]		= getGlobalNumber("blackSkullLength", 45 * 24 * 60 * 60);
+	m_confNumber[RED_SKULL_LENGTH]			= getGlobalNumber("redSkullLength", 2592000);
+	m_confNumber[BLACK_SKULL_LENGTH]		= getGlobalNumber("blackSkullLength", 3888000);
 	m_confNumber[NOTATIONS_TO_BAN]			= getGlobalNumber("notationsToBan", 3);
 	m_confNumber[WARNINGS_TO_FINALBAN]		= getGlobalNumber("warningsToFinalBan", 4);
 	m_confNumber[WARNINGS_TO_DELETION]		= getGlobalNumber("warningsToDeletion", 5);
-	m_confNumber[BAN_LENGTH]			= getGlobalNumber("banLength", 7 * 24 * 60 * 60);
-	m_confNumber[KILLS_BAN_LENGTH]			= getGlobalNumber("killsBanLength", 7 * 24 * 60 * 60);
-	m_confNumber[FINALBAN_LENGTH]			= getGlobalNumber("finalBanLength", 30 * 24 * 60 * 60);
-	m_confNumber[IPBANISHMENT_LENGTH]		= getGlobalNumber("ipBanishmentLength", 1 * 24 * 60 * 60);
+	m_confNumber[BAN_LENGTH]			= getGlobalNumber("banLength", 604800);
+	m_confNumber[KILLS_BAN_LENGTH]			= getGlobalNumber("killsBanLength", 604800);
+	m_confNumber[FINALBAN_LENGTH]			= getGlobalNumber("finalBanLength", 2592000);
+	m_confNumber[IPBANISHMENT_LENGTH]		= getGlobalNumber("ipBanishmentLength", 86400);
 	m_confBool[BANK_SYSTEM]				= getGlobalBool("bankSystem", true);
 	m_confBool[PREMIUM_FOR_PROMOTION]		= getGlobalBool("premiumForPromotion", true);
 	m_confBool[INIT_PREMIUM_UPDATE]			= getGlobalBool("updatePremiumStateAtStartup", true);
@@ -226,14 +226,14 @@ bool ConfigManager::load()
 	m_confBool[BLESSINGS]				= getGlobalBool("blessings", true);
 	m_confBool[BLESSING_ONLY_PREMIUM]		= getGlobalBool("blessingOnlyPremium", true);
 	m_confBool[BED_REQUIRE_PREMIUM]			= getGlobalBool("bedsRequirePremium", true);
-	m_confNumber[FIELD_OWNERSHIP]			= getGlobalNumber("fieldOwnershipDuration", 5 * 1000);
+	m_confNumber[FIELD_OWNERSHIP]			= getGlobalNumber("fieldOwnershipDuration", 5000);
 	m_confBool[ALLOW_CHANGECOLORS]			= getGlobalBool("allowChangeColors", true);
 	m_confBool[STOP_ATTACK_AT_EXIT]			= getGlobalBool("stopAttackingAtExit", false);
 	m_confNumber[EXTRA_PARTY_PERCENT]		= getGlobalNumber("extraPartyExperiencePercent", 5);
 	m_confNumber[EXTRA_PARTY_LIMIT]			= getGlobalNumber("extraPartyExperienceLimit", 20);
 	m_confBool[DISABLE_OUTFITS_PRIVILEGED]		= getGlobalBool("disableOutfitsForPrivilegedPlayers", false);
 	m_confBool[TRACER_BOX]				= getGlobalBool("promptExceptionTracerErrorBox", true);
-	m_confNumber[LOGIN_PROTECTION]			= getGlobalNumber("loginProtectionPeriod", 10 * 1000);
+	m_confNumber[LOGIN_PROTECTION]			= getGlobalNumber("loginProtectionPeriod", 10000);
 	m_confBool[STORE_DIRECTION]			= getGlobalBool("storePlayerDirection", false);
 	m_confNumber[PLAYER_DEEPNESS]			= getGlobalNumber("playerQueryDeepness", -1);
 	m_confDouble[CRITICAL_HIT_MUL]			= getGlobalDouble("criticalHitMultiplier", 1);
@@ -243,8 +243,8 @@ bool ConfigManager::load()
 	m_confDouble[RATE_STAMINA_THRESHOLD]		= getGlobalDouble("rateStaminaThresholdGain", 12);
 	m_confDouble[RATE_STAMINA_ABOVE]		= getGlobalDouble("rateStaminaAboveNormal", 1.5f);
 	m_confDouble[RATE_STAMINA_UNDER]		= getGlobalDouble("rateStaminaUnderNormal", 0.5f);
-	m_confNumber[STAMINA_LIMIT_TOP]			= getGlobalNumber("staminaRatingLimitTop", 41 * 60);
-	m_confNumber[STAMINA_LIMIT_BOTTOM]		= getGlobalNumber("staminaRatingLimitBottom", 14 * 60);
+	m_confNumber[STAMINA_LIMIT_TOP]			= getGlobalNumber("staminaRatingLimitTop", 2460);
+	m_confNumber[STAMINA_LIMIT_BOTTOM]		= getGlobalNumber("staminaRatingLimitBottom", 840);
 	m_confBool[DISPLAY_LOGGING]			= getGlobalBool("displayPlayersLogging", true);
 	m_confBool[STAMINA_BONUS_PREMIUM]		= getGlobalBool("staminaThresholdOnlyPremium", true);
 	m_confBool[BAN_UNKNOWN_BYTES]			= getGlobalBool("autoBanishUnknownBytes", false);
@@ -264,7 +264,7 @@ bool ConfigManager::load()
 	m_confBool[BUFFER_SPELL_FAILURE]		= getGlobalBool("bufferMutedOnSpellFailure", false);
 	m_confBool[CONFIRM_OUTDATED_VERSION]		= getGlobalBool("confirmOutdatedVersion", true);
 	m_confNumber[GUILD_PREMIUM_DAYS]		= getGlobalNumber("premiumDaysToFormGuild", 0);
-	m_confNumber[PUSH_CREATURE_DELAY]		= getGlobalNumber("pushCreatureDelay", 2 * 1000);
+	m_confNumber[PUSH_CREATURE_DELAY]		= getGlobalNumber("pushCreatureDelay", 2000);
 	m_confNumber[DEATH_CONTAINER]			= getGlobalNumber("deathContainerId", 1987);
 	m_confBool[PREMIUM_SKIP_WAIT]			= getGlobalBool("premiumPlayerSkipWaitList", false);
 	m_confNumber[MAXIMUM_DOOR_LEVEL]		= getGlobalNumber("maximumDoorLevel", 500);
@@ -281,8 +281,8 @@ bool ConfigManager::load()
 	m_confNumber[BAN_MONTHLY_LIMIT]			= getGlobalNumber("monthlyFragsToBanishment", m_confNumber[RED_MONTHLY_LIMIT]);
 	m_confNumber[BLACK_SKULL_DEATH_HEALTH]		= getGlobalNumber("blackSkulledDeathHealth", 40);
 	m_confNumber[BLACK_SKULL_DEATH_MANA]		= getGlobalNumber("blackSkulledDeathMana", 0);
-	m_confNumber[DEATHLIST_REQUIRED_TIME]		= getGlobalNumber("deathListRequiredTime", 1 * 60 * 1000);
-	m_confNumber[EXPERIENCE_SHARE_ACTIVITY]		= getGlobalNumber("experienceShareActivity", 2 * 60 * 1000);
+	m_confNumber[DEATHLIST_REQUIRED_TIME]		= getGlobalNumber("deathListRequiredTime", 60000);
+	m_confNumber[EXPERIENCE_SHARE_ACTIVITY]		= getGlobalNumber("experienceShareActivity", 120000);
 	m_confBool[GHOST_SPELL_EFFECTS]			= getGlobalBool("ghostModeSpellEffects", true);
 	m_confBool[PVPZONE_ADDMANASPENT]		= getGlobalBool("addManaSpentInPvPZone", true);
 	m_confNumber[TILE_LIMIT]			= getGlobalNumber("tileLimit", 0);
@@ -321,7 +321,7 @@ bool ConfigManager::load()
 #endif
 	m_confNumber[VIPLIST_DEFAULT_LIMIT]		= getGlobalNumber("vipListDefaultLimit", 20);
 	m_confNumber[VIPLIST_DEFAULT_PREMIUM_LIMIT]	= getGlobalNumber("vipListDefaultPremiumLimit", 100);
-	m_confNumber[STAMINA_DESTROY_LOOT]		= getGlobalNumber("staminaLootLimit", 14 * 60);
+	m_confNumber[STAMINA_DESTROY_LOOT]		= getGlobalNumber("staminaLootLimit", 840);
 	m_confNumber[FIST_BASE_ATTACK]			= getGlobalNumber("fistBaseAttack", 7);
 	m_confBool[ALLOW_MOUNTS]			= getGlobalBool("useMounts", true);
 	m_confBool[UNMOUNT_PLAYER_IN_PZ]		= getGlobalBool("unmountPlayerInPz", true);
@@ -338,6 +338,9 @@ bool ConfigManager::load()
 	m_confBool[SKIP_ITEMS_VERSION]			= getGlobalBool("skipItemsVersionCheck", false);
 	m_confBool[HEAL_PLAYER_ON_LEVEL]		= getGlobalBool("healPlayersOnLevelAdvance", true);
 	m_confBool[SILENT_LUA]				= getGlobalBool("disableLuaErrors", false);
+	m_confNumber[MAIL_ATTEMPTS]				= getGlobalNumber("mailMaxAttempts", 5);
+	m_confNumber[MAIL_BLOCK] 			= getGlobalNumber("mailBlockPeriod", 1800000);
+	m_confNumber[MAIL_ATTEMPTS_FADE]		= getGlobalNumber("mailAttemptsFadeTime", 300000);
 
 	m_loaded = true;
 	return true;

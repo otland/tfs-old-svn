@@ -713,6 +713,10 @@ class Player : public Creature, public Cylinder
 		virtual void onThink(uint32_t interval);
 		uint32_t getAttackSpeed() const;
 
+		void setLastMail(uint64_t v) {lastMail = v;}
+		uint16_t getMailAttempts() const {return mailAttempts;}
+		void addMailAttempt() {++mailAttempts;}
+
 		virtual void postAddNotification(Creature* actor, Thing* thing, const Cylinder* oldParent,
 			int32_t index, CylinderLink_t link = LINK_OWNER);
 		virtual void postRemoveNotification(Creature* actor, Thing* thing, const Cylinder* newParent,
@@ -849,6 +853,7 @@ class Player : public Creature, public Cylinder
 		int16_t blessings;
 		uint16_t maxWriteLen;
 		uint16_t sex;
+		uint16_t mailAttempts;
 
 		int32_t premiumDays;
 		int32_t soul;
@@ -902,6 +907,7 @@ class Player : public Creature, public Cylinder
 		uint64_t experience;
 		uint64_t manaSpent;
 		uint64_t lastAttack;
+		uint64_t lastMail;
 		uint64_t skills[SKILL_LAST + 1][3];
 
 		double inventoryWeight;

@@ -177,7 +177,12 @@
 	randomizeTiles = true
 	storeTrash = true
 	cleanProtectedZones = true
+
+	-- Mailbox
 	mailboxDisabledTowns = ""
+	mailMaxAttempts = 5
+	mailBlockPeriod = 30 * 60 * 1000
+	mailAttemptsFadeTime = 5 * 60 * 1000
 
 	-- Process
 	-- NOTE: daemonize works only on *nix, same as niceLevel, while

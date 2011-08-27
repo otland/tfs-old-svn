@@ -65,6 +65,27 @@ bool Mailbox::sendItem(Creature* actor, Item* item)
 	if(!getRecipient(item, name, depotId) || name.empty() || !depotId)
 		return false;
 
+	if(Player* player = actor->getPlayer())
+	{
+		if(player->hasCondition(CONDITION_MUTED, 2))
+			return false;
+
+		if(player->getMailAttempts() >= g_config.getNumber(ConfigManager::MAIL_ATTEMPTS))
+		{
+			if(Condition* condition = Condition::createCondition(CONDITIONID_DEFAULT,
+				CONDITION_MUTED, g_config.getNumber(ConfigManager::MAIL_BLOCK), 0, false, 2))
+			{
+				player->addCondition(condition);
+				player->setLastMail(1); // auto erase
+			}
+
+			return false;
+		}
+
+		player->setLastMail(OTSYS_TIME());
+		player->addMailAttempt();
+	}
+
 	return IOLoginData::getInstance()->playerMail(actor, name, depotId, item);
 }
 
