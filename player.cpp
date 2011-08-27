@@ -2783,7 +2783,10 @@ ReturnValue Player::__queryAdd(int32_t index, const Thing* thing, uint32_t count
 			const_cast<Player*>(this)->setLastAttack(OTSYS_TIME());
 
 		if(ret == RET_BOTHHANDSNEEDTOBEFREE)
-			g_game.internalAddItem(NULL, const_cast<Player*>(this), inventory[(slots_t)index]);
+		{
+			if(g_game.internalAddItem(NULL, const_cast<Player*>(this), inventory[(slots_t)index]) == RET_NOERROR)
+				g_game.internalRemoveItem(NULL, inventory[(slots_t)index]);
+		}
 	}
 
 	return ret;

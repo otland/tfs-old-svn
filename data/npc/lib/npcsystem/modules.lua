@@ -155,7 +155,7 @@ if(Modules == nil) then
 					npcHandler:say("You have been blessed by one of the five gods!", cid)
 					doPlayerAddBlessing(cid, parameters.number)
 				end
-			else -- PVP Blessing
+			else
 				if(getPlayerPVPBlessing(cid)) then
 					npcHandler:say("Gods have already blessed you with this blessing!", cid)
 				elseif(not doPlayerRemoveMoney(cid, price)) then
