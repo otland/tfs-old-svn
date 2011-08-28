@@ -1170,7 +1170,7 @@ function luasql_connection:close()
 	return true
 end
 function luasql_connection:execute(statement)
-	if statement.sub(1, 6).upper() == "SELECT" then
+	if statement:sub(1, 6):upper() == "SELECT" then
 		local cursor = luasql_cursor:new(self, statement)
 		if cursor.resultId ~= false then
 			table.insert(self.resultIds, cursor.resultId)
