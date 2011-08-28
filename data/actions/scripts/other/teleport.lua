@@ -12,7 +12,7 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 	if(isInArray(UP_FLOORS, item.itemid)) then
 		fromPosition.z = fromPosition.z - 1
 		fromPosition.y = fromPosition.y + 1
-		if(doTileQueryAdd(cid, fromPosition, 38, false) ~= RETURNVALUE_NOERROR) then
+		if(doTileQueryAdd(cid, fromPosition, 38) ~= RETURNVALUE_NOERROR) then
 			local field = getTileItemByType(fromPosition, ITEM_TYPE_MAGICFIELD)
 			if(field.uid == 0 or not isInArray(FIELDS, field.itemid)) then
 				fromPosition.y = fromPosition.y - 2
@@ -24,7 +24,7 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 		fromPosition.z = fromPosition.z + 1
 	end
 
-	if(not check and doTileQueryAdd(cid, fromPosition, 38, false) ~= RETURNVALUE_NOERROR) then
+	if(not check and doTileQueryAdd(cid, fromPosition, 38) ~= RETURNVALUE_NOERROR) then
 		local field = getTileItemByType(fromPosition, ITEM_TYPE_MAGICFIELD)
 		if(field.uid == 0 or not isInArray(FIELDS, field.itemid)) then
 			return false
