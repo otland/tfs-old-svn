@@ -34,10 +34,6 @@
 #include <boost/tokenizer.hpp>
 typedef boost::tokenizer<boost::char_separator<char> > tokenizer;
 
-#ifndef OPENTIBIA_API
-	#define OPENTIBIA_API extern
-#endif
-
 enum DistributionType_t
 {
 	DISTRO_UNIFORM,
@@ -45,94 +41,94 @@ enum DistributionType_t
 	DISTRO_NORMAL
 };
 
-OPENTIBIA_API std::string transformToMD5(std::string plainText, bool upperCase = false);
-OPENTIBIA_API std::string transformToSHA1(std::string plainText, bool upperCase = false);
-OPENTIBIA_API bool passwordTest(const std::string &plain, std::string &hash);
+extern std::string transformToMD5(std::string plainText, bool upperCase = false);
+extern std::string transformToSHA1(std::string plainText, bool upperCase = false);
+extern bool passwordTest(const std::string &plain, std::string &hash);
 
-OPENTIBIA_API void replaceString(std::string& str, const std::string sought, const std::string replacement);
-OPENTIBIA_API void trim_right(std::string& source, const std::string& t);
-OPENTIBIA_API void trim_left(std::string& source, const std::string& t);
-OPENTIBIA_API void toLowerCaseString(std::string& source);
-OPENTIBIA_API void toUpperCaseString(std::string& source);
-OPENTIBIA_API std::string asLowerCaseString(const std::string& source);
-OPENTIBIA_API std::string asUpperCaseString(const std::string& source);
+extern void replaceString(std::string& str, const std::string sought, const std::string replacement);
+extern void trim_right(std::string& source, const std::string& t);
+extern void trim_left(std::string& source, const std::string& t);
+extern void toLowerCaseString(std::string& source);
+extern void toUpperCaseString(std::string& source);
+extern std::string asLowerCaseString(const std::string& source);
+extern std::string asUpperCaseString(const std::string& source);
 
-OPENTIBIA_API bool utf8ToLatin1(char* intext, std::string& outtext);
-OPENTIBIA_API bool readXMLInteger(xmlNodePtr node, const char* tag, int& value);
+extern bool utf8ToLatin1(char* intext, std::string& outtext);
+extern bool readXMLInteger(xmlNodePtr node, const char* tag, int& value);
 #if (defined __WINDOWS__ || defined WIN32) && !defined __GNUC__
-OPENTIBIA_API bool readXMLInteger(xmlNodePtr node, const char* tag, int32_t& value);
+extern bool readXMLInteger(xmlNodePtr node, const char* tag, int32_t& value);
 #endif
-OPENTIBIA_API bool readXMLInteger64(xmlNodePtr node, const char* tag, uint64_t& value);
-OPENTIBIA_API bool readXMLFloat(xmlNodePtr node, const char* tag, float& value);
-OPENTIBIA_API bool readXMLString(xmlNodePtr node, const char* tag, std::string& value);
-OPENTIBIA_API bool readXMLContentString(xmlNodePtr node, std::string& value);
+extern bool readXMLInteger64(xmlNodePtr node, const char* tag, uint64_t& value);
+extern bool readXMLFloat(xmlNodePtr node, const char* tag, float& value);
+extern bool readXMLString(xmlNodePtr node, const char* tag, std::string& value);
+extern bool readXMLContentString(xmlNodePtr node, std::string& value);
 
 typedef std::vector<std::string> StringVec;
 typedef std::vector<int32_t> IntegerVec;
 
-OPENTIBIA_API StringVec explodeString(const std::string& inString, const std::string& separator, int32_t limit = -1);
-OPENTIBIA_API IntegerVec vectorAtoi(std::vector<std::string> stringVector);
-OPENTIBIA_API bool hasBitSet(uint32_t flag, uint32_t flags);
+extern StringVec explodeString(const std::string& inString, const std::string& separator, int32_t limit = -1);
+extern IntegerVec vectorAtoi(std::vector<std::string> stringVector);
+extern bool hasBitSet(uint32_t flag, uint32_t flags);
 
-OPENTIBIA_API std::string generateRecoveryKey(int32_t fieldCount, int32_t fieldLength);
+extern std::string generateRecoveryKey(int32_t fieldCount, int32_t fieldLength);
 
-OPENTIBIA_API bool isNumber(char character);
-OPENTIBIA_API bool isUppercaseLetter(char character);
-OPENTIBIA_API bool isLowercaseLetter(char character);
-OPENTIBIA_API bool isPasswordCharacter(char character);
+extern bool isNumber(char character);
+extern bool isUppercaseLetter(char character);
+extern bool isLowercaseLetter(char character);
+extern bool isPasswordCharacter(char character);
 
-OPENTIBIA_API bool isValidName(std::string text, bool forceUppercaseOnFirstLetter = true);
-OPENTIBIA_API bool isValidPassword(std::string text);
-OPENTIBIA_API bool isNumbers(std::string text);
+extern bool isValidName(std::string text, bool forceUppercaseOnFirstLetter = true);
+extern bool isValidPassword(std::string text);
+extern bool isNumbers(std::string text);
 
-OPENTIBIA_API bool checkText(std::string text, std::string str);
+extern bool checkText(std::string text, std::string str);
 
-OPENTIBIA_API int random_range(int lowest_number, int highest_number, DistributionType_t type = DISTRO_UNIFORM);
+extern int random_range(int lowest_number, int highest_number, DistributionType_t type = DISTRO_UNIFORM);
 
-OPENTIBIA_API Direction getDirection(std::string string);
-OPENTIBIA_API Direction getReverseDirection(Direction dir);
-OPENTIBIA_API Position getNextPosition(Direction direction, Position pos);
+extern Direction getDirection(std::string string);
+extern Direction getReverseDirection(Direction dir);
+extern Position getNextPosition(Direction direction, Position pos);
 
-OPENTIBIA_API char upchar(char c);
+extern char upchar(char c);
 
-OPENTIBIA_API std::string parseParams(tokenizer::iterator &it, tokenizer::iterator end);
+extern std::string parseParams(tokenizer::iterator &it, tokenizer::iterator end);
 
-OPENTIBIA_API std::string formatDate(time_t time);
-OPENTIBIA_API std::string formatDateShort(time_t time);
-OPENTIBIA_API std::string convertIPToString(uint32_t ip);
+extern std::string formatDate(time_t time);
+extern std::string formatDateShort(time_t time);
+extern std::string convertIPToString(uint32_t ip);
 
-OPENTIBIA_API std::string trimString(std::string& str);
+extern std::string trimString(std::string& str);
 
-OPENTIBIA_API MagicEffectClasses getMagicEffect(const std::string& strValue);
-OPENTIBIA_API ShootType_t getShootType(const std::string& strValue);
-OPENTIBIA_API Ammo_t getAmmoType(const std::string& strValue);
-OPENTIBIA_API AmmoAction_t getAmmoAction(const std::string& strValue);
-OPENTIBIA_API CombatType_t getCombatType(const std::string& strValue);
-OPENTIBIA_API std::string getCombatName(CombatType_t combatType);
+extern MagicEffectClasses getMagicEffect(const std::string& strValue);
+extern ShootType_t getShootType(const std::string& strValue);
+extern Ammo_t getAmmoType(const std::string& strValue);
+extern AmmoAction_t getAmmoAction(const std::string& strValue);
+extern CombatType_t getCombatType(const std::string& strValue);
+extern std::string getCombatName(CombatType_t combatType);
 
-OPENTIBIA_API std::string getSkillName(uint16_t skillid);
-OPENTIBIA_API skills_t getSkillId(std::string param);
+extern std::string getSkillName(uint16_t skillid);
+extern skills_t getSkillId(std::string param);
 
-OPENTIBIA_API int32_t actionStringToInt(std::string action);
-OPENTIBIA_API int32_t reasonStringToInt(std::string reason);
-OPENTIBIA_API std::string getReason(int32_t reasonId);
-OPENTIBIA_API std::string getAction(int32_t actionId, bool IPBanishment);
+extern int32_t actionStringToInt(std::string action);
+extern int32_t reasonStringToInt(std::string reason);
+extern std::string getReason(int32_t reasonId);
+extern std::string getAction(int32_t actionId, bool IPBanishment);
 
-OPENTIBIA_API bool fileExists(const char* filename);
-OPENTIBIA_API bool dirExists(const std::string&);
-OPENTIBIA_API bool createDir(const std::string&);
+extern bool fileExists(const char* filename);
+extern bool dirExists(const std::string&);
+extern bool createDir(const std::string&);
 
-OPENTIBIA_API uint32_t adlerChecksum(uint8_t* data, size_t len);
+extern uint32_t adlerChecksum(uint8_t* data, size_t len);
 
 #ifdef __USE_TEMPLATES__
 #undef toString
 template<typename _Tp>
-OPENTIBIA_API std::string toString(_Tp __p);
+extern std::string toString(_Tp __p);
 #endif
 
-OPENTIBIA_API std::string ucfirst(std::string);
-OPENTIBIA_API bool booleanString(std::string);
+extern std::string ucfirst(std::string);
+extern bool booleanString(std::string);
 
-#undef OPENTIBIA_API
+#undef extern
 
 #endif
