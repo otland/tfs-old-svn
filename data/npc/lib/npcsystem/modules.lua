@@ -161,7 +161,7 @@ if(Modules == nil) then
 				elseif(not doPlayerRemoveMoney(cid, price)) then
 					npcHandler:say("You don't have enough money for blessing.", cid)
 				else
-					npcHandler:say("You have been blessed by god of war!", cid)
+					npcHandler:say("You have been blessed by the god of war!", cid)
 					doPlayerSetPVPBlessing(cid)
 				end
 			end

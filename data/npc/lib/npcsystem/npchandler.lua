@@ -361,7 +361,9 @@ if(NpcHandler == nil) then
 
 					self:say(msg, cid, 0, true)
 					self:releaseFocus(cid)
-					self:say(msg)
+					if(not isPlayerGhost(cid)) then
+						self:say(msg)
+					end
 				end
 			end
 		end
@@ -376,7 +378,9 @@ if(NpcHandler == nil) then
 				local parseInfo = { [TAG_PLAYERNAME] = getCreatureName(cid) }
 				msg = self:parseMessage(msg, parseInfo)
 
-				self:say(msg)
+				if(not isPlayerGhost(cid)) then
+					self:say(msg)
+				end
 				self:addFocus(cid)
 				self:say(msg, cid)
 			end
@@ -613,22 +617,22 @@ if(NpcHandler == nil) then
 	-- Makes the npc represented by this instance of NpcHandler say something.
 	--	This implements the currently set type of talkdelay.
 	function NpcHandler:say(message, focus, delay, force)
-		local delay = tonumber(delay) or self.talkDelayTime
+		local delay = delay or 0
 		if(NPCHANDLER_TALKDELAY == TALKDELAY_NONE or delay <= 0) then
 			if(NPCHANDLER_CONVBEHAVIOR ~= CONVERSATION_DEFAULT) then
 				selfSay(message, focus)
 			else
 				selfSay(message)
 			end
-
 			return
 		end
 
 		-- TODO: Add an event handling method for delayed messages
 		table.insert(self.talkDelay, {
+			id = getNpcId(),
 			cid = focus,
 			message = message,
-			time = os.mtime() + delay,
+			time = os.mtime() + (delay and delay or self.talkDelayTime),
 			start = os.time(),
 			force = force or false
 		})
