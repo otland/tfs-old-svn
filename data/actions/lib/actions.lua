@@ -84,8 +84,9 @@ TOOLS.ROPE = function(cid, item, fromPosition, itemEx, toPosition)
 	end
 
 	toPosition.stackpos = STACKPOS_GROUND
-	local ground = getThingFromPos(toPosition)
 	errors(false)
+	local ground = getThingFromPos(toPosition)
+	errors(true)
 	if(isInArray(SPOTS, ground.itemid)) then
 		doTeleportThing(cid, {x = toPosition.x, y = toPosition.y + 1, z = toPosition.z - 1}, false)
 		return true
@@ -113,8 +114,9 @@ TOOLS.ROPE = function(cid, item, fromPosition, itemEx, toPosition)
 end
 
 TOOLS.PICK = function(cid, item, fromPosition, itemEx, toPosition)
-	local ground = getThingFromPos({x = toPosition.x, y = toPosition.y, z = toPosition.z + 1, stackpos = STACKPOS_GROUND})
 	errors(false)
+	local ground = getThingFromPos({x = toPosition.x, y = toPosition.y, z = toPosition.z + 1, stackpos = STACKPOS_GROUND})
+	errors(true)
 	if(isInArray(SPOTS, ground.itemid) and isInArray({354, 355}, itemEx.itemid)) then
 		doTransformItem(itemEx.uid, 392)
 		doDecayItem(itemEx.uid)
