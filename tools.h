@@ -129,6 +129,4 @@ extern std::string toString(_Tp __p);
 extern std::string ucfirst(std::string);
 extern bool booleanString(std::string);
 
-#undef extern
-
 #endif
