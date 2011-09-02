@@ -203,7 +203,7 @@ void Game::setGameState(GameState_t newState)
 
 			case GAME_STATE_CLOSED:
 			{
-				/* kick all players without CanAlwaysLogin flag */
+				/* kick all players without the CanAlwaysLogin flag */
 				AutoList<Player>::listiterator it = Player::listPlayer.list.begin();
 				while(it != Player::listPlayer.list.end())
 				{
