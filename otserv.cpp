@@ -588,7 +588,7 @@ void mainLoader(ServiceManager* service_manager)
 			while(addr[0] != NULL)
 			{
 				IpNetMask.first = *(uint32_t*)(*addr);
-				IpNetMask.second = 0x0000FFFF;
+				IpNetMask.second = 0xFFFFFFFF;
 				serverIPs.push_back(IpNetMask);
 				addr++;
 			}
