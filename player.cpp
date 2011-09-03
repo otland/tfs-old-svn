@@ -2763,6 +2763,7 @@ ReturnValue Player::__queryAdd(int32_t index, const Thing* thing, uint32_t count
 			break;
 	}
 
+	Player* self = const_cast<Player*>(this);
 	if(ret == RET_NOERROR)
 	{
 		//need an exchange with source?
@@ -2770,7 +2771,7 @@ ReturnValue Player::__queryAdd(int32_t index, const Thing* thing, uint32_t count
 		if((tmpItem = getInventoryItem((slots_t)index)) && (!tmpItem->isStackable() || tmpItem->getID() != item->getID()))
 			return RET_NEEDEXCHANGE;
 
-		if(!g_moveEvents->onPlayerEquip(const_cast<Player*>(this), const_cast<Item*>(item), (slots_t)index, true))
+		if(!g_moveEvents->onPlayerEquip(self, const_cast<Item*>(item), (slots_t)index, true))
 			return RET_CANNOTBEDRESSED;
 	}
 
@@ -2780,15 +2781,15 @@ ReturnValue Player::__queryAdd(int32_t index, const Thing* thing, uint32_t count
 	if(index == SLOT_LEFT || index == SLOT_RIGHT)
 	{
 		if(ret == RET_NOERROR && item->getWeaponType() != WEAPON_NONE)
-			const_cast<Player*>(this)->setLastAttack(OTSYS_TIME());
+			self->setLastAttack(OTSYS_TIME());
 
-		/*
-		if(ret == RET_BOTHHANDSNEEDTOBEFREE)
+		if(ret == RET_BOTHHANDSNEEDTOBEFREE && g_game.internalAddItem(NULL, self,
+			inventory[(slots_t)index], INDEX_WHEREVER) == RET_NOERROR)
 		{
-			if(g_game.internalAddItem(NULL, const_cast<Player*>(this), inventory[(slots_t)index]) == RET_NOERROR)
-				g_game.internalRemoveItem(NULL, inventory[(slots_t)index]);
+			self->sendRemoveInventoryItem((slots_t)index, inventory[(slots_t)index]);
+			self->onRemoveInventoryItem((slots_t)index, inventory[(slots_t)index]);
+			self->inventory[(slots_t)index] = NULL;
 		}
-		*/
 	}
 
 	return ret;

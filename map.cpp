@@ -613,15 +613,11 @@ bool Map::checkSightLine(const Position& fromPos, const Position& toPos) const
 
 bool Map::isSightClear(const Position& fromPos, const Position& toPos, bool floorCheck) const
 {
-	/*if(floorCheck && fromPos.z != toPos.z)
-		return false;
-
-	// Cast two converging rays and see if either yields a result.
-	return checkSightLine(fromPos, toPos) || checkSightLine(toPos, fromPos);*/
 	if(floorCheck && fromPos.z != toPos.z)
 		return false;
 
-	return checkSightLine(fromPos, toPos);
+	// Cast two converging rays and see if either yields a result.
+	return checkSightLine(fromPos, toPos) || checkSightLine(toPos, fromPos);
 }
 
 const Tile* Map::canWalkTo(const Creature* creature, const Position& pos)
