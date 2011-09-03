@@ -2203,7 +2203,7 @@ bool Player::onDeath()
 	else if(skull < SKULL_RED)
 	{
 		Item* item = NULL;
-		for(int32_t i = SLOT_FIRST; (!preventDrop || !preventLoss) && i < SLOT_LAST; ++i)
+		for(int32_t i = SLOT_FIRST; ((!preventDrop || !preventLoss) && i < SLOT_LAST); ++i)
 		{
 			if(!(item = getInventoryItem((slots_t)i)) || item->isRemoved() ||
 				(g_moveEvents->hasEquipEvent(item) && !isItemAbilityEnabled((slots_t)i)))
