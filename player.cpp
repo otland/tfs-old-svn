@@ -152,14 +152,14 @@ Player::~Player()
 void Player::setVocation(uint32_t id)
 {
 	vocationId = id;
-	if((vocation = Vocations::getInstance()->getVocation(id)))
-	{
-		if(!vocation->getDropLoot())
-			Creature::setDropLoot(LOOT_DROP_PREVENT);
+	if(!(vocation = Vocations::getInstance()->getVocation(id)))
+		return;
 
-		if(!vocation->getLossSkill())
-			Creature::setLossSkill(false);
-	}
+	if(!vocation->getDropLoot())
+		Creature::setDropLoot(LOOT_DROP_PREVENT);
+
+	if(!vocation->getLossSkill())
+		Creature::setLossSkill(false);
 
 	soulMax = vocation->getGain(GAIN_SOUL);
 	if(Condition* condition = getCondition(CONDITION_REGENERATION, CONDITIONID_DEFAULT))
