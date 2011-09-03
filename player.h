@@ -302,6 +302,9 @@ class Player : public Creature, public Cylinder
 		uint16_t getSex(bool full) const {return full ? sex : sex % 2;}
 		void setSex(uint16_t);
 
+		virtual void setDropLoot(lootDrop_t _lootDrop);
+		virtual void setLossSkill(bool _skillLoss);
+
 		uint64_t getStamina() const {return hasFlag(PlayerFlag_HasInfiniteStamina) ? STAMINA_MAX : stamina;}
 		void setStamina(uint64_t value) {stamina = std::min((uint64_t)STAMINA_MAX, (uint64_t)std::max((uint64_t)0, value));}
 		uint32_t getStaminaMinutes() const {return (uint32_t)(getStamina() / (uint64_t)STAMINA_MULTIPLIER);}

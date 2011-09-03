@@ -437,8 +437,9 @@ class Creature : public AutoId, virtual public Thing
 		virtual GuildEmblems_t getEmblem() const {return guildEmblem;}
 		virtual GuildEmblems_t getGuildEmblem(const Creature* creature) const {return creature->getEmblem();}
 
-		void setDropLoot(lootDrop_t _lootDrop) {lootDrop = _lootDrop;}
-		void setLossSkill(bool _skillLoss) {skillLoss = _skillLoss;}
+		virtual void setDropLoot(lootDrop_t _lootDrop) {lootDrop = _lootDrop;}
+		virtual void setLossSkill(bool _skillLoss) {skillLoss = _skillLoss;}
+
 		bool getLossSkill() const {return skillLoss;}
 		void setNoMove(bool _cannotMove)
 		{

@@ -152,7 +152,14 @@ Player::~Player()
 void Player::setVocation(uint32_t id)
 {
 	vocationId = id;
-	vocation = Vocations::getInstance()->getVocation(id);
+	if((vocation = Vocations::getInstance()->getVocation(id)))
+	{
+		if(!vocation->getDropLoot())
+			Creature::setDropLoot(LOOT_DROP_PREVENT);
+
+		if(!vocation->getLossSkill())
+			Creature::setLossSkill(false);
+	}
 
 	soulMax = vocation->getGain(GAIN_SOUL);
 	if(Condition* condition = getCondition(CONDITION_REGENERATION, CONDITIONID_DEFAULT))
@@ -162,6 +169,22 @@ void Player::setVocation(uint32_t id)
 		condition->setParam(CONDITIONPARAM_MANAGAIN, vocation->getGainAmount(GAIN_MANA));
 		condition->setParam(CONDITIONPARAM_MANATICKS, (vocation->getGainTicks(GAIN_MANA) * 1000));
 	}
+}
+
+void Player::setDropLoot(lootDrop_t _lootDrop)
+{
+	if(vocation && !vocation->getDropLoot())
+		_lootDrop = LOOT_DROP_PREVENT;
+
+	Creature::setDropLoot(_lootDrop);
+}
+
+void Player::setLossSkill(bool _skillLoss)
+{
+	if(vocation && !vocation->getLossSkill())
+		_skillLoss = false;
+
+	Creature::setLossSkill(_skillLoss);
 }
 
 bool Player::isPushable() const
@@ -764,7 +787,7 @@ uint16_t Player::getLookCorpse() const
 
 void Player::dropLoot(Container* corpse)
 {
-	if(!corpse || lootDrop != LOOT_DROP_FULL || (vocation && !vocation->getDropLoot()))
+	if(!corpse || lootDrop != LOOT_DROP_FULL)
 		return;
 
 	uint32_t loss = lossPercent[LOSS_CONTAINERS];
@@ -2180,7 +2203,7 @@ bool Player::onDeath()
 	else if(skull < SKULL_RED)
 	{
 		Item* item = NULL;
-		for(int32_t i = SLOT_FIRST; ((skillLoss || lootDrop == LOOT_DROP_FULL) && i < SLOT_LAST); ++i)
+		for(int32_t i = SLOT_FIRST; (!preventDrop || !preventLoss) && i < SLOT_LAST); ++i)
 		{
 			if(!(item = getInventoryItem((slots_t)i)) || item->isRemoved() ||
 				(g_moveEvents->hasEquipEvent(item) && !isItemAbilityEnabled((slots_t)i)))
