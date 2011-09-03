@@ -2203,7 +2203,7 @@ bool Player::onDeath()
 	else if(skull < SKULL_RED)
 	{
 		Item* item = NULL;
-		for(int32_t i = SLOT_FIRST; (!preventDrop || !preventLoss) && i < SLOT_LAST); ++i)
+		for(int32_t i = SLOT_FIRST; (!preventDrop || !preventLoss) && i < SLOT_LAST; ++i)
 		{
 			if(!(item = getInventoryItem((slots_t)i)) || item->isRemoved() ||
 				(g_moveEvents->hasEquipEvent(item) && !isItemAbilityEnabled((slots_t)i)))
@@ -2807,7 +2807,7 @@ ReturnValue Player::__queryAdd(int32_t index, const Thing* thing, uint32_t count
 			self->setLastAttack(OTSYS_TIME());
 
 		if(ret == RET_BOTHHANDSNEEDTOBEFREE && g_game.internalAddItem(NULL, self,
-			inventory[(slots_t)index], INDEX_WHEREVER) == RET_NOERROR)
+			inventory[(slots_t)index], INDEX_WHEREEVER) == RET_NOERROR)
 		{
 			self->sendRemoveInventoryItem((slots_t)index, inventory[(slots_t)index]);
 			self->onRemoveInventoryItem((slots_t)index, inventory[(slots_t)index]);
