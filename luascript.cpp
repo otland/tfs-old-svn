@@ -673,7 +673,7 @@ bool LuaInterface::loadBuffer(const std::string& text, Npc* npc/* = NULL*/)
 	if(ret)
 	{
 		m_lastError = popString(m_luaState);
-		error(NULL, m_lastError);
+		std::clog << "[Error - LuaInterface::loadBuffer] " << m_lastError << std::endl;
 		return false;
 	}
 
@@ -812,6 +812,9 @@ std::string LuaInterface::getScript(int32_t scriptId)
 
 void LuaInterface::error(const char* function, const std::string& desc)
 {
+	if(g_config.getBool(ConfigManager::SILENT_LUA))
+		return;
+
 	int32_t script, callback;
 	bool timer;
 	std::string event;
@@ -820,7 +823,7 @@ void LuaInterface::error(const char* function, const std::string& desc)
 	getEnv()->getInfo(script, event, interface, callback, timer);
 	if(interface)
 	{
-		if(g_config.getBool(ConfigManager::SILENT_LUA) || !interface->m_errors)
+		if(!interface->m_errors)
 			return;
 
 		std::clog << std::endl << "[Error - " << interface->getName() << "] " << std::endl;

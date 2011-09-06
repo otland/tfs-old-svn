@@ -96,7 +96,7 @@ function table.serialize(x, recur)
 	elseif(t == "number") then
 		return tostring(x)
 	elseif(t == "boolean") then
-		return t and "true" or "false"
+		return x and "true" or "false"
 	elseif(getmetatable(x)) then
 		error("Can not serialize a table that has a metatable associated with it.")
 	elseif(t == "table") then

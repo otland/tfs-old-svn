@@ -65,25 +65,28 @@ bool Mailbox::sendItem(Creature* actor, Item* item)
 	if(!getRecipient(item, name, depotId) || name.empty() || !depotId)
 		return false;
 
-	if(Player* player = actor->getPlayer())
+	if(actor)
 	{
-		if(player->hasCondition(CONDITION_MUTED, 2))
-			return false;
-
-		if(player->getMailAttempts() >= g_config.getNumber(ConfigManager::MAIL_ATTEMPTS))
+		if(Player* player = actor->getPlayer())
 		{
-			if(Condition* condition = Condition::createCondition(CONDITIONID_DEFAULT,
-				CONDITION_MUTED, g_config.getNumber(ConfigManager::MAIL_BLOCK), 0, false, 2))
+			if(player->hasCondition(CONDITION_MUTED, 2))
+				return false;
+
+			if(player->getMailAttempts() >= g_config.getNumber(ConfigManager::MAIL_ATTEMPTS))
 			{
-				player->addCondition(condition);
-				player->setLastMail(1); // auto erase
+				if(Condition* condition = Condition::createCondition(CONDITIONID_DEFAULT,
+					CONDITION_MUTED, g_config.getNumber(ConfigManager::MAIL_BLOCK), 0, false, 2))
+				{
+					player->addCondition(condition);
+					player->setLastMail(1); // auto erase
+				}
+
+				return false;
 			}
 
-			return false;
+			player->setLastMail(OTSYS_TIME());
+			player->addMailAttempt();
 		}
-
-		player->setLastMail(OTSYS_TIME());
-		player->addMailAttempt();
 	}
 
 	return IOLoginData::getInstance()->playerMail(actor, name, depotId, item);
@@ -132,13 +135,13 @@ bool Mailbox::getRecipient(Item* item, std::string& name, uint32_t& depotId)
 			}
 		}
 	}
-	else if(item->getID() != ITEM_LETTER) /**The item is somehow not a parcel or letter**/
+	else if(item->getID() != ITEM_LETTER) // The item is somehow not a parcel or letter
 	{
 		std::clog << "[Error - Mailbox::getReciver] Trying to get receiver from unkown item with id: " << item->getID() << "!" << std::endl;
 		return false;
 	}
 
-	if(!item || item->getText().empty()) /**No label/letter found or its empty.**/
+	if(!item || item->getText().empty()) // No label or letter found or its empty
 		return false;
 
 	std::istringstream iss(item->getText(), std::istringstream::in);
