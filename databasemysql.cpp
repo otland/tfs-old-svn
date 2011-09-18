@@ -41,7 +41,7 @@ DatabaseMySQL::DatabaseMySQL() :
 		return;
 	}
 
-	uint32_t timeout = g_config.getNumber(ConfigManager::MYSQL_READ_TIMEOUT);
+	int32_t timeout = g_config.getNumber(ConfigManager::MYSQL_READ_TIMEOUT);
 	if(timeout)
 		mysql_options(&m_handle, MYSQL_OPT_READ_TIMEOUT, (const char*)&timeout);
 

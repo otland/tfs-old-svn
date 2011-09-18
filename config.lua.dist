@@ -180,9 +180,9 @@
 
 	-- Mailbox
 	mailboxDisabledTowns = ""
-	mailMaxAttempts = 5
-	mailBlockPeriod = 30 * 60 * 1000
-	mailAttemptsFadeTime = 5 * 60 * 1000
+	mailMaxAttempts = 20
+	mailBlockPeriod = 60 * 60 * 1000
+	mailAttemptsFadeTime = 10 * 60 * 1000
 
 	-- Process
 	-- NOTE: daemonize works only on *nix, same as niceLevel, while

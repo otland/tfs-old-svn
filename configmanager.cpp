@@ -338,9 +338,9 @@ bool ConfigManager::load()
 	m_confBool[SKIP_ITEMS_VERSION]			= getGlobalBool("skipItemsVersionCheck", false);
 	m_confBool[HEAL_PLAYER_ON_LEVEL]		= getGlobalBool("healPlayersOnLevelAdvance", true);
 	m_confBool[SILENT_LUA]				= getGlobalBool("disableLuaErrors", false);
-	m_confNumber[MAIL_ATTEMPTS]				= getGlobalNumber("mailMaxAttempts", 5);
-	m_confNumber[MAIL_BLOCK] 			= getGlobalNumber("mailBlockPeriod", 1800000);
-	m_confNumber[MAIL_ATTEMPTS_FADE]		= getGlobalNumber("mailAttemptsFadeTime", 300000);
+	m_confNumber[MAIL_ATTEMPTS]				= getGlobalNumber("mailMaxAttempts", 20);
+	m_confNumber[MAIL_BLOCK] 			= getGlobalNumber("mailBlockPeriod", 3600000);
+	m_confNumber[MAIL_ATTEMPTS_FADE]		= getGlobalNumber("mailAttemptsFadeTime", 600000);
 
 	m_loaded = true;
 	return true;
