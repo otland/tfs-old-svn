@@ -8718,7 +8718,7 @@ int32_t LuaInterface::luaHasCreatureCondition(lua_State* L)
 	uint32_t conditionType = popNumber(L);
 	ScriptEnviroment* env = getEnv();
 	if(Creature* creature = env->getCreatureByUID(popNumber(L)))
-		lua_pushboolean(L, creature->getCondition((ConditionType_t)conditionType, (ConditionId_t)conditionId, subId));
+		lua_pushboolean(L, creature->getCondition((ConditionType_t)conditionType, (ConditionId_t)conditionId, subId) != NULL);
 	else
 	{
 		errorEx(getError(LUA_ERROR_CREATURE_NOT_FOUND));
