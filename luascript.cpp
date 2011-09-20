@@ -8708,22 +8708,17 @@ int32_t LuaInterface::luaStopEvent(lua_State* L)
 int32_t LuaInterface::luaHasCreatureCondition(lua_State* L)
 {
 	//hasCreatureCondition(cid, conditionType[, subId = -1[, conditionId = CONDITIONID_DEFAULT]])
-	uint32_t params = lua_gettop(L), conditionId = CONDITIONID_DEFAULT, subId = -1, conditionType = 0;
+	uint32_t params = lua_gettop(L), conditionId = CONDITIONID_DEFAULT, subId = 0;
 	if(params > 3)
 		conditionId = popNumber(L);
 
 	if(params > 2)
 		subId = popNumber(L);
 
-	conditionType = popNumber(L);
+	uint32_t conditionType = popNumber(L);
 	ScriptEnviroment* env = getEnv();
 	if(Creature* creature = env->getCreatureByUID(popNumber(L)))
-	{
-		if(creature->getCondition((ConditionType_t)conditionType, (ConditionId_t)conditionId, subId))
-			lua_pushboolean(L, true);
-		else
-			lua_pushboolean(L, false);
-	}
+		lua_pushboolean(L, creature->getCondition((ConditionType_t)conditionType, (ConditionId_t)conditionId, subId));
 	else
 	{
 		errorEx(getError(LUA_ERROR_CREATURE_NOT_FOUND));
