@@ -384,9 +384,9 @@ bool ProtocolGame::parseFirstPacket(NetworkMessage& msg)
 
 	msg.SkipBytes(3);
 
-	if(version < 910)
+	if(version < CLIENT_VERSION_MIN)
 	{
-		disconnectClient(0x14, "Only clients with protocol 9.1 allowed!");
+		disconnectClient(0x14, "Only clients with protocol " CLIENT_VERSION_MIN_STR " allowed!");
 		return false;
 	}
 

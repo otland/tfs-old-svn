@@ -23,6 +23,9 @@
 
 #define DATABASE_VERSION 0
 
+#define CLIENT_VERSION_MIN 920
+#define CLIENT_VERSION_MIN_STR "9.2"
+
 #ifdef _WIN32
 #ifndef WIN32
 #define WIN32

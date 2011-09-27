@@ -66,7 +66,7 @@ bool ProtocolOld::parseFirstPacket(NetworkMessage& msg)
 	msg.SkipBytes(12);
 
 	if(version <= 760)
-		disconnectClient(0x0A, "Only clients with protocol 9.1 allowed!");
+		disconnectClient(0x0A, "Only clients with protocol " CLIENT_VERSION_MIN_STR " allowed!");
 
 	if(!RSA_decrypt(msg))
 	{
@@ -85,7 +85,7 @@ bool ProtocolOld::parseFirstPacket(NetworkMessage& msg)
 	if(version <= 822)
 		disableChecksum();
 
-	disconnectClient(0x0A, "Only clients with protocol 9.1 allowed!");
+	disconnectClient(0x0A, "Only clients with protocol " CLIENT_VERSION_MIN_STR " allowed!");
 	return false;
 }
 

@@ -161,7 +161,16 @@ bool DatabaseManager::isDatabaseSetup()
 uint32_t DatabaseManager::getDatabaseVersion()
 {
 	if(!tableExists("server_config"))
+	{
+		Database* db = Database::getInstance();
+		if(db->getDatabaseEngine() == DATABASE_ENGINE_MYSQL)
+			db->executeQuery("CREATE TABLE `server_config` (`config` VARCHAR(50) NOT NULL, `value` VARCHAR(256) NOT NULL DEFAULT '', UNIQUE(`config`)) ENGINE = InnoDB;");
+		else
+			db->executeQuery("CREATE TABLE `server_config` (`config` VARCHAR(50) NOT NULL, `value` VARCHAR(256) NOT NULL DEFAULT '', UNIQUE(`config`));");
+
+		db->executeQuery("INSERT INTO `server_config` VALUES ('db_version', 0);");
 		return 0;
+	}
 
 	int32_t version = 0;
 	getDatabaseConfig("db_version", version);
@@ -170,23 +179,21 @@ uint32_t DatabaseManager::getDatabaseVersion()
 
 uint32_t DatabaseManager::updateDatabase()
 {
-	/*
-	Database* db = Database::getInstance();
+	// Database* db = Database::getInstance();
 	DBQuery query;
 
 	switch(getDatabaseVersion())
 	{
+		/*
 		case 0:
 		{
 			std::cout << "> Updating database to version 1" << std::endl;
 			if(db->getDatabaseEngine() == DATABASE_ENGINE_MYSQL)
 			{
-				db->executeQuery("CREATE TABLE IF NOT EXISTS `server_config` (`config` VARCHAR(50) NOT NULL, `value` VARCHAR(256) NOT NULL DEFAULT '', UNIQUE(`config`)) ENGINE = InnoDB;");
 				db->executeQuery("CREATE TABLE IF NOT EXISTS `bans2` (`id` INT UNSIGNED NOT NULL AUTO_INCREMENT, `type` TINYINT(1) NOT NULL COMMENT 'this field defines if its ip, account, player, or any else ban', `value` INT UNSIGNED NOT NULL COMMENT 'ip, player guid, account number', `param` INT UNSIGNED NOT NULL DEFAULT 4294967295 COMMENT 'mask', `active` TINYINT(1) NOT NULL DEFAULT 1, `expires` INT UNSIGNED NOT NULL DEFAULT 0, `added` INT UNSIGNED NOT NULL, `admin_id` INT UNSIGNED NOT NULL DEFAULT 0, `comment` VARCHAR(1024) NOT NULL DEFAULT '', `reason` INT UNSIGNED NOT NULL DEFAULT 0, `action` INT UNSIGNED NOT NULL DEFAULT 0, `statement` VARCHAR(256) NOT NULL DEFAULT '', PRIMARY KEY (`id`), INDEX `type` (`type`, `value`), INDEX `active` (`active`)) ENGINE = InnoDB;");
 			}
 			else
 			{
-				db->executeQuery("CREATE TABLE IF NOT EXISTS `server_config` (`config` VARCHAR(50) NOT NULL, `value` VARCHAR(256) NOT NULL DEFAULT '', UNIQUE(`config`));");
 				db->executeQuery("CREATE TABLE IF NOT EXISTS `bans2` (`id` INTEGER NOT NULL, `type` UNSIGNED INTEGER NOT NULL, `value` UNSIGNED INTEGER NOT NULL, `param` UNSIGNED INTEGER NOT NULL DEFAULT 4294967295, `active` UNSIGNED INTEGER NOT NULL DEFAULT 1, `expires` UNSIGNED INTEGER NOT NULL DEFAULT 0, `added` UNSIGNED INTEGER NOT NULL, `admin_id` UNSIGNED INTEGER NOT NULL DEFAULT 0, `comment` VARCHAR(1024) NOT NULL DEFAULT '', `reason` UNSIGNED INTEGER NOT NULL DEFAULT 0, `action` UNSIGNED INTEGER NOT NULL DEFAULT 0, `statement` VARCHAR(256) NOT NULL DEFAULT '', PRIMARY KEY (`id`));");
 				db->executeQuery("CREATE INDEX bans_index_type ON bans2(type, value);");
 				db->executeQuery("CREATE INDEX bans_index_active ON bans2(active);");
@@ -230,10 +237,10 @@ uint32_t DatabaseManager::updateDatabase()
 			db->executeQuery("INSERT INTO `server_config` VALUES ('db_version', 1);");
 			break;
 		}
+		*/
 
 		default: break;
 	}
-	*/
 	return 0;
 }
 

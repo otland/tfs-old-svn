@@ -40,6 +40,7 @@
 ]
 
 [ Milestone
+	Game protocol 9.2 support.
 	Revised database system.
 	Fixed element damages.
 	Fixed a bug with Lua function getPlayersByIP, it was ignoring mask even if set.
