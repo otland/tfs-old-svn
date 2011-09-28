@@ -1798,7 +1798,7 @@ void Player::onThink(uint32_t interval)
 		addMessageBuffer();
 	}
 
-	if(lastMail && lastMail < (OTSYS_TIME() + g_config.getNumber(ConfigManager::MAIL_ATTEMPTS_FADE)))
+	if(lastMail && lastMail < (uint64_t)(OTSYS_TIME() + g_config.getNumber(ConfigManager::MAIL_ATTEMPTS_FADE)))
 		mailAttempts = lastMail = 0;
 }
 
