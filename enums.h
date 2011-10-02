@@ -80,7 +80,7 @@ enum Channels_t
 {
 	CHANNEL_GUILD = 0x00,
 	CHANNEL_PARTY = 0x01,
-	CHANNEL_HELP = 0x06,
+	CHANNEL_HELP = 0x07,
 	CHANNEL_DEFAULT = 0xFFFE, //internal usage only, there is no such channel
 	CHANNEL_PRIVATE = 0xFFFF
 };

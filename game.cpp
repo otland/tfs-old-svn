@@ -3953,19 +3953,19 @@ bool Game::playerTalkToChannel(Player* player, MessageClasses type, const std::s
 
 		case MSG_CHANNEL:
 		{
-			if(channelId == CHANNEL_HELP && player->hasFlag(PlayerFlag_TalkOrangeHelpChannel))
-				type = MSG_GAMEMASTER_CHANNEL;
+			if(channelId == CHANNEL_HELP)
+			{
+				if(player->hasFlag(PlayerFlag_TalkOrangeHelpChannel))
+					type = MSG_CHANNEL_HIGHLIGHT;
+
+				if(!player->hasFlag(PlayerFlag_CanTalkRedChannel))
+					type = MSG_GAMEMASTER_CHANNEL;
+			}
+
 			break;
 		}
 
 		case MSG_GAMEMASTER_CHANNEL:
-		{
-			if(channelId != CHANNEL_HELP || !player->hasFlag(PlayerFlag_TalkOrangeHelpChannel))
-				type = MSG_CHANNEL;
-			break;
-		}
-
-		case MSG_GAMEMASTER_BROADCAST:
 		{
 			if(!player->hasFlag(PlayerFlag_CanTalkRedChannel))
 				type = MSG_CHANNEL;

@@ -74,7 +74,7 @@ ReturnValue Spells::onPlayerSay(Player* player, const std::string& words)
 	if(!instantSpell->castInstant(player, reParam))
 		return RET_NEEDEXCHANGE;
 
-	MessageClasses type = MSG_SPEAK_SAY;
+	MessageClasses type = MSG_SPEAK_SPELL;
 	if(g_config.getBool(ConfigManager::EMOTE_SPELLS))
 		type = MSG_SPEAK_MONSTER_SAY;
 

@@ -154,15 +154,15 @@ bool CreatureEvent::configureEvent(xmlNodePtr p)
 		m_type = CREATURE_EVENT_LOGIN;
 	else if(tmpStr == "logout")
 		m_type = CREATURE_EVENT_LOGOUT;
-	else if(tmpStr == "joinchannel")
+	else if(tmpStr == "channeljoin")
 		m_type = CREATURE_EVENT_CHANNEL_JOIN;
-	else if(tmpStr == "leavechannel")
+	else if(tmpStr == "channelleave")
 		m_type = CREATURE_EVENT_CHANNEL_LEAVE;
 	else if(tmpStr == "advance")
 		m_type = CREATURE_EVENT_ADVANCE;
-	else if(tmpStr == "sendmail")
+	else if(tmpStr == "mailsend")
 		m_type = CREATURE_EVENT_MAIL_SEND;
-	else if(tmpStr == "receivemail")
+	else if(tmpStr == "mailreceive")
 		m_type = CREATURE_EVENT_MAIL_RECEIVE;
 	else if(tmpStr == "traderequest")
 		m_type = CREATURE_EVENT_TRADE_REQUEST;
@@ -221,9 +221,9 @@ std::string CreatureEvent::getScriptEventName() const
 		case CREATURE_EVENT_LOGOUT:
 			return "onLogout";
 		case CREATURE_EVENT_CHANNEL_JOIN:
-			return "onJoinChannel";
+			return "onChannelJoin";
 		case CREATURE_EVENT_CHANNEL_LEAVE:
-			return "onLeaveChannel";
+			return "onChannelLeave";
 		case CREATURE_EVENT_THINK:
 			return "onThink";
 		case CREATURE_EVENT_ADVANCE:
@@ -235,9 +235,9 @@ std::string CreatureEvent::getScriptEventName() const
 		case CREATURE_EVENT_OUTFIT:
 			return "onOutfit";
 		case CREATURE_EVENT_MAIL_SEND:
-			return "onSendMail";
+			return "onMailSend";
 		case CREATURE_EVENT_MAIL_RECEIVE:
-			return "onReceiveMail";
+			return "onMailReceive";
 		case CREATURE_EVENT_TRADE_REQUEST:
 			return "onTradeRequest";
 		case CREATURE_EVENT_TRADE_ACCEPT:
@@ -462,7 +462,7 @@ uint32_t CreatureEvent::executeLogout(Player* player, bool forceLogout)
 
 uint32_t CreatureEvent::executeChannelJoin(Player* player, uint16_t channelId, UsersMap usersMap)
 {
-	//onJoinChannel(cid, channel, users)
+	//onChannelJoin(cid, channel, users)
 	if(m_interface->reserveEnv())
 	{
 		ScriptEnviroment* env = m_interface->getEnv();
@@ -530,7 +530,7 @@ uint32_t CreatureEvent::executeChannelJoin(Player* player, uint16_t channelId, U
 
 uint32_t CreatureEvent::executeChannelLeave(Player* player, uint16_t channelId, UsersMap usersMap)
 {
-	//onLeaveChannel(cid, channel, users)
+	//onChannelLeave(cid, channel, users)
 	if(m_interface->reserveEnv())
 	{
 		ScriptEnviroment* env = m_interface->getEnv();
@@ -659,7 +659,7 @@ uint32_t CreatureEvent::executeAdvance(Player* player, skills_t skill, uint32_t 
 
 uint32_t CreatureEvent::executeMailSend(Player* player, Player* receiver, Item* item, bool openBox)
 {
-	//onSendMail(cid, receiver, item, openBox)
+	//onMailSend(cid, receiver, item, openBox)
 	if(m_interface->reserveEnv())
 	{
 		ScriptEnviroment* env = m_interface->getEnv();
@@ -720,7 +720,7 @@ uint32_t CreatureEvent::executeMailSend(Player* player, Player* receiver, Item* 
 
 uint32_t CreatureEvent::executeMailReceive(Player* player, Player* sender, Item* item, bool openBox)
 {
-	//onReceiveMail(cid, sender, item, openBox)
+	//onMailReceive(cid, sender, item, openBox)
 	if(m_interface->reserveEnv())
 	{
 		ScriptEnviroment* env = m_interface->getEnv();

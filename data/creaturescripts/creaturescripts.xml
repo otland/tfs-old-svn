@@ -2,8 +2,8 @@
 <creaturescripts>
 	<event type="login" name="PlayerLogin" event="script" value="login.lua"/>
 
-	<event type="joinchannel" name="GuildMotd" event="script" value="guildmotd.lua"/>
-	<event type="receivemail" name="Mail" event="script" value="mail.lua"/>
+	<event type="channeljoin" name="GuildEvents" event="script" value="guild.lua"/>
+	<event type="mailreceive" name="Mail" event="script" value="mail.lua"/>
 	<event type="reportbug" name="SaveReportBug" script="reportbug.lua"/>
 	<event type="advance" name="AdvanceSave" event="script" value="advancesave.lua"/>
 	<event type="textedit" name="BanBook" event="script" value="banbook.lua"/>

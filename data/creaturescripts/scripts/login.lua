@@ -34,7 +34,7 @@ function onLogin(cid)
 	end
 
 	registerCreatureEvent(cid, "Mail")
-	registerCreatureEvent(cid, "GuildMotd")
+	registerCreatureEvent(cid, "GuildEvents")
 
 	registerCreatureEvent(cid, "Idle")
 	if(config.useFragHandler) then
