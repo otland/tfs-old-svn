@@ -69,7 +69,7 @@ class ChatChannel
 		bool removeUser(Player* player, bool exclude = false);
 
 		bool talk(Player* player, MessageClasses type, const std::string& text);
-		bool talk(std::string nick, MessageClasses type, std::string text);
+		bool talk(std::string nick, MessageClasses type, const std::string& text);
 
 	protected:
 		uint16_t m_id, m_flags;

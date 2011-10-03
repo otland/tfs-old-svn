@@ -1868,7 +1868,7 @@ void LuaInterface::registerFunctions()
 	//hasCreatureCondition(cid, condition[, subId = 0[, conditionId = CONDITIONID_DEFAULT]])
 	lua_register(m_luaState, "hasCreatureCondition", LuaInterface::luaHasCreatureCondition);
 
-	//getCreatureConditionInfo(cid, condition[, subId = -1[, conditionId = CONDITIONID_DEFAULT]])
+	//getCreatureConditionInfo(cid, condition[, subId = 0[, conditionId = CONDITIONID_DEFAULT]])
 	lua_register(m_luaState, "getCreatureConditionInfo", LuaInterface::luaGetCreatureConditionInfo);
 
 	//doCreatureSetDropLoot(cid, doDrop)
