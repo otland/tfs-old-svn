@@ -791,53 +791,50 @@ void ProtocolGame::parsePacket(NetworkMessage &msg)
 
 void ProtocolGame::GetTileDescription(const Tile* tile, NetworkMessage_ptr msg)
 {
-	if(tile)
-	{
-		msg->AddU16(0x00); //environmental effects
+	msg->AddU16(0x00); //environmental effects
 
-		int32_t count = 0;
-		if(tile->ground)
+	int32_t count = 0;
+	if(tile->ground)
+	{
+		msg->AddItem(tile->ground);
+		count++;
+	}
+
+	const TileItemVector* items = tile->getItemList();
+	const CreatureVector* creatures = tile->getCreatures();
+
+	ItemVector::const_iterator it;
+	if(items)
+	{
+		for(it = items->getBeginTopItem(); ((it != items->getEndTopItem()) && (count < 10)); ++it)
 		{
-			msg->AddItem(tile->ground);
+			msg->AddItem(*it);
 			count++;
 		}
+	}
 
-		const TileItemVector* items = tile->getItemList();
-		const CreatureVector* creatures = tile->getCreatures();
-
-		ItemVector::const_iterator it;
-		if(items)
+	if(creatures)
+	{
+		CreatureVector::const_reverse_iterator cit;
+		for(cit = creatures->rbegin(); ((cit != creatures->rend()) && (count < 10)); ++cit)
 		{
-			for(it = items->getBeginTopItem(); ((it != items->getEndTopItem()) && (count < 10)); ++it)
-			{
-				msg->AddItem(*it);
-				count++;
-			}
+			if((*cit)->isInGhostMode() && !player->isAccessPlayer())
+				continue;
+
+			bool known;
+			uint32_t removedKnown;
+			checkCreatureAsKnown((*cit)->getID(), known, removedKnown);
+			AddCreature(msg,*cit, known, removedKnown);
+			count++;
 		}
+	}
 
-		if(creatures)
+	if(items)
+	{
+		for(it = items->getBeginDownItem(); ((it != items->getEndDownItem()) && (count < 10)); ++it)
 		{
-			CreatureVector::const_reverse_iterator cit;
-			for(cit = creatures->rbegin(); ((cit != creatures->rend()) && (count < 10)); ++cit)
-			{
-				if((*cit)->isInGhostMode() && !player->isAccessPlayer())
-					continue;
-
-				bool known;
-				uint32_t removedKnown;
-				checkCreatureAsKnown((*cit)->getID(), known, removedKnown);
-				AddCreature(msg,*cit, known, removedKnown);
-				count++;
-			}
-		}
-
-		if(items)
-		{
-			for(it = items->getBeginDownItem(); ((it != items->getEndDownItem()) && (count < 10)); ++it)
-			{
-				msg->AddItem(*it);
-				count++;
-			}
+			msg->AddItem(*it);
+			count++;
 		}
 	}
 }
