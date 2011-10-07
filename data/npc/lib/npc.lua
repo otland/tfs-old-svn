@@ -62,11 +62,7 @@ end
 
 function doMessageCheck(message, keyword, exact)
 	if(type(keyword) == "table") then
-		if(exact) then
-			return table.isStrIn(keyword, message)
-		else
-			return table.isStrIn(keyword:lower(), message:lower())
-		end
+		return table.isStrIn(keyword, message)
 	end
 
 	if(exact) then
