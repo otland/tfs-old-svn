@@ -62,15 +62,19 @@ end
 
 function doMessageCheck(message, keyword, exact)
 	if(type(keyword) == "table") then
-		return table.isStrIn(keyword, message)
+		if(exact) then
+			return table.isStrIn(keyword, message)
+		else
+			return table.isStrIn(keyword:lower(), message:lower())
+		end
 	end
 
-	local a, b, exact = message, keyword, exact or false
-	if(not exact) then
-		a, b = a:lower(), b:lower()
+	if(exact) then
+		return message == keyword
 	end
 
-	return keyword == message or (message:find(keyword) and not message:find('(%w+)' .. keyword))
+	local a, b = message:lower(), keyword:lower()
+	return a == b or (a:find(b) and not a:find('(%w+)' .. b))
 end
 
 function doNpcSellItem(cid, itemid, amount, subType, ignoreCap, inBackpacks, backpack)

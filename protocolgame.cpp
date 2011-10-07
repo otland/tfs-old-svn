@@ -842,9 +842,6 @@ void ProtocolGame::parsePacket(NetworkMessage &msg)
 
 void ProtocolGame::GetTileDescription(const Tile* tile, NetworkMessage_ptr msg)
 {
-	if(!tile)
-		return;
-
 	msg->put<uint16_t>(0x00); // enviromental effects, flash only
 	int32_t count = 0;
 	if(tile->ground)
