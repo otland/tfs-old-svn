@@ -178,8 +178,8 @@ bool TalkActions::onPlayerSay(Creature* creature, uint16_t channelId, const std:
 	Player* player = creature->getPlayer();
 	StringVec exceptions = talkAction->getExceptions();
 	if(player && ((!ignoreAccess && std::find(exceptions.begin(), exceptions.end(), asLowerCaseString(
-		player->getName())) == exceptions.end() && talkAction->getAccess() > player->getAccess())
-		|| player->isAccountManager()))
+		player->getName())) == exceptions.end() && talkAction->getAccess() > player->getAccess()
+		&& talkAction->getGroup() > player->getGroupId()) || player->isAccountManager()))
 	{
 		if(player->hasCustomFlag(PlayerCustomFlag_GamemasterPrivileges))
 		{
@@ -213,6 +213,7 @@ Event(_interface)
 	m_function = NULL;
 	m_filter = TALKFILTER_WORD;
 	m_access = 0;
+	m_group = 1;
 	m_channel = -1;
 	m_logged = m_hidden = false;
 	m_sensitive = true;
@@ -225,6 +226,7 @@ Event(copy)
 	m_function = copy->m_function;
 	m_filter = copy->m_filter;
 	m_access = copy->m_access;
+	m_group = copy->m_group;
 	m_channel = copy->m_channel;
 	m_logged = copy->m_logged;
 	m_hidden = copy->m_hidden;
@@ -259,6 +261,9 @@ bool TalkAction::configureEvent(xmlNodePtr p)
 	int32_t intValue;
 	if(readXMLInteger(p, "access", intValue))
 		m_access = intValue;
+
+	if(readXMLInteger(p, "group", intValue))
+		m_group = intValue;
 
 	if(readXMLInteger(p, "channel", intValue))
 		m_channel = intValue;

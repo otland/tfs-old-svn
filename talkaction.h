@@ -81,6 +81,7 @@ class TalkAction : public Event
 
 		TalkActionFilter getFilter() const {return m_filter;}
 		uint32_t getAccess() const {return m_access;}
+		int32_t getGroup() const {return m_group;}
 		int32_t getChannel() const {return m_channel;}
 
 		StringVec getExceptions() {return m_exceptions;}
@@ -112,7 +113,7 @@ class TalkAction : public Event
 		TalkFunction* m_function;
 		TalkActionFilter m_filter;
 		uint32_t m_access;
-		int32_t m_channel;
+		int32_t m_group, m_channel;
 		bool m_logged, m_hidden, m_sensitive;
 		StringVec m_exceptions;
 };
