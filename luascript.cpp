@@ -8730,8 +8730,8 @@ int32_t LuaInterface::luaHasCreatureCondition(lua_State* L)
 
 int32_t LuaInterface::luaGetCreatureConditionInfo(lua_State* L)
 {
-	//getCreatureConditionInfo(cid, conditionType[, subId = -1[, conditionId = CONDITIONID_DEFAULT]])
-	uint32_t params = lua_gettop(L), conditionId = CONDITIONID_DEFAULT, subId = -1, conditionType = 0;
+	//getCreatureConditionInfo(cid, conditionType[, subId = 0[, conditionId = CONDITIONID_DEFAULT]])
+	uint32_t params = lua_gettop(L), conditionId = CONDITIONID_DEFAULT, subId = 0, conditionType = 0;
 	if(params > 3)
 		conditionId = popNumber(L);
 

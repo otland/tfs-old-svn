@@ -3972,6 +3972,13 @@ bool Game::playerTalkToChannel(Player* player, MessageClasses type, const std::s
 			break;
 		}
 
+		case MSG_GAMEMASTER_BROADCAST:
+		{
+			if(!player->hasFlag(PlayerFlag_CanBroadcast))
+				type = MSG_CHANNEL;
+			break;
+		}
+
 		default:
 			break;
 	}
@@ -5228,9 +5235,6 @@ void Game::kickPlayer(uint32_t playerId, bool displayEffect)
 
 bool Game::broadcastMessage(const std::string& text, MessageClasses type)
 {
-	//if(type < MSG_CLASS_FIRST || type > MSG_CLASS_LAST)
-	//	return false;
-
 	std::clog << "> Broadcasted message: \"" << text << "\"." << std::endl;
 	for(AutoList<Player>::iterator it = Player::autoList.begin(); it != Player::autoList.end(); ++it)
 		it->second->sendTextMessage(type, text);
