@@ -758,6 +758,21 @@ bool Item::hasProperty(enum ITEMPROPERTY prop) const
 				return true;
 
 			break;
+			
+		case FLOORCHANGEDOWN:
+			if(it.floorChange[CHANGE_DOWN])
+				return true;
+
+			break;
+
+		case FLOORCHANGEUP:
+			for(uint16_t i = CHANGE_FIRST; i <= CHANGE_PRE_LAST; i++)
+			{
+				if(it.floorChange[i])
+					return true;
+			}
+
+			break;
 
 		default:
 			break;
