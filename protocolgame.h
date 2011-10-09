@@ -46,7 +46,7 @@ class ProtocolGame : public Protocol
 			protocolGameCount++;
 #endif
 			player = NULL;
-			m_eventConnect = 0;
+			m_eventConnect = m_maxSizeCount = 0;
 			m_debugAssertSent = m_acceptPackets = false;
 		}
 
@@ -312,7 +312,7 @@ class ProtocolGame : public Protocol
 		friend class Player;
 		Player* player;
 
-		uint32_t m_eventConnect;
+		uint32_t m_eventConnect, m_maxSizeCount;
 		bool m_debugAssertSent, m_acceptPackets;
 };
 #endif

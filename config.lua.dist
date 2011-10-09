@@ -50,6 +50,7 @@
 	broadcastBanishments = true
 	violationNameReportActionType = 2
 	autoBanishUnknownBytes = false
+	allowedMaxSizedPackets = 20
 
 	-- Battle
 	-- NOTE: showHealingDamageForMonsters inheritates from showHealingDamage.

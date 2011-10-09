@@ -522,6 +522,17 @@ void ProtocolGame::parsePacket(NetworkMessage &msg)
 	if(!player || !m_acceptPackets || g_game.getGameState() == GAMESTATE_SHUTDOWN || msg.size() <= 0)
 		return;
 
+	if(msg.size() == NETWORK_MAX_SIZE)
+	{
+		if(++m_maxSizeCount >= g_config.getNumber(ConfigManager::ALLOWED_MAX_PACKETS))
+		{
+			IOBan::getInstance()->addIpBanishment(player->getIP(), -1, 0, "Massive packet sending", 0);
+			return;
+		}
+	}
+	else
+		m_maxSizeCount = 0;
+
 	uint8_t recvbyte = msg.get<char>();
 	if(player->isRemoved() && recvbyte != 0x14) //a dead player cannot performs actions
 		return;

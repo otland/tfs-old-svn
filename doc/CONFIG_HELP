@@ -163,6 +163,10 @@
 			Specify if player should be banned automatically in case his client send unknown byte to server.
 			It happens mostly when player use unofficial software to play.
 			Default: false
+			
+		allowedMaxSizedPackets
+			How many times a packet can be sent at full size before ip banishing the player because of exessive data flood.
+			Default: 20
 
 	*BATTLE
 		worldType
