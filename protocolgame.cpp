@@ -1082,12 +1082,11 @@ void ProtocolGame::parseAutoWalk(NetworkMessage& msg)
 {
 	// first we get all directions...
 	std::list<Direction> path;
-	size_t dirCount = msg.get<char>();
-	for(size_t i = 0; i < dirCount; ++i)
+	uint8_t dirCount = msg.get<char>();
+	for(uint8_t i = 0; i < dirCount; ++i)
 	{
-		uint8_t rawDir = msg.get<char>();
 		Direction dir = SOUTH;
-		switch(rawDir)
+		switch(msg.get<char>())
 		{
 			case 1:
 				dir = EAST;
