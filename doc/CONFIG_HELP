@@ -165,8 +165,8 @@
 			Default: false
 			
 		allowedMaxSizedPackets
-			How many times a packet can be sent at full size before ip banishing the player because of exessive data flood.
-			Default: 20
+			How many times a packet can be sent at full size before the connection is dropped
+			Default: 3
 
 	*BATTLE
 		worldType

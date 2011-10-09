@@ -526,7 +526,7 @@ void ProtocolGame::parsePacket(NetworkMessage &msg)
 	{
 		if(++m_maxSizeCount >= (uint32_t)g_config.getNumber(ConfigManager::ALLOWED_MAX_PACKETS))
 		{
-			IOBan::getInstance()->addIpBanishment(player->getIP(), -1, 0, "Massive packet sending", 0);
+			player->disconnect();
 			return;
 		}
 	}
