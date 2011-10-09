@@ -4959,7 +4959,7 @@ int32_t LuaInterface::luaDoCreatureSetStorage(lua_State* L)
 	ScriptEnviroment* env = getEnv();
 	if(Creature* creature = env->getCreatureByUID(popNumber(L)))
 	{
-		if(!nil)
+		if(!tmp)
 			tmp = creature->setStorage(key, value);
 		else
 			creature->eraseStorage(key);
