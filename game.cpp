@@ -1271,7 +1271,7 @@ ReturnValue Game::internalMoveCreature(Creature* creature, Direction direction, 
 		}
 		else if(currentPos.z != 7 && (!(tmpTile = map->getTile(destPos)) || (!tmpTile->ground &&
 			!tmpTile->hasProperty(BLOCKSOLID))) && (tmpTile = map->getTile(Position(
-			destPos.x, destPos.y, destPos.z + 1))) && tmpTile->hasHeight(3) && !tmpTile->hasProperty(FLOORCHANGEUP)) //try go down
+			destPos.x, destPos.y, destPos.z + 1))) && tmpTile->hasHeight(3)) //try go down
 		{
 			flags = flags | FLAG_IGNOREBLOCKITEM | FLAG_IGNOREBLOCKCREATURE;
 			destPos.z++;

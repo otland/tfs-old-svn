@@ -86,59 +86,6 @@ void MonsterType::reset()
 	elementMap.clear();
 }
 
-uint16_t Monsters::getLootRandom()
-{
-	return (uint16_t)std::ceil((double)random_range(0, MAX_LOOTCHANCE) / g_config.getDouble(ConfigManager::RATE_LOOT));
-}
-
-void MonsterType::dropLoot(Container* corpse)
-{
-	ItemList items;
-	for(LootItems::const_iterator it = lootItems.begin(); it != lootItems.end() && !corpse->full(); ++it)
-	{
-		items = createLoot(*it);
-		if(items.empty())
-			continue;
-
-		for(ItemList::iterator iit = items.begin(); iit != items.end(); ++iit)
-		{
-			Item* tmpItem = *iit;
-			if(Container* container = tmpItem->getContainer())
-			{
-				if(createChildLoot(container, *it))
-					corpse->__internalAddThing(tmpItem);
-				else
-					delete container;
-			}
-			else
-				corpse->__internalAddThing(tmpItem);
-		}
-	}
-
-	corpse->__startDecaying();
-	uint32_t ownerId = corpse->getCorpseOwner();
-	if(!ownerId)
-		return;
-
-	Player* owner = g_game.getPlayerByGuid(ownerId);
-	if(!owner)
-		return;
-
-	LootMessage_t message = lootMessage;
-	if(message == LOOTMSG_IGNORE)
-		message = (LootMessage_t)g_config.getNumber(ConfigManager::LOOT_MESSAGE);
-
-	if(message < LOOTMSG_PLAYER)
-		return;
-
-	std::stringstream ss;
-	ss << "Loot of " << nameDescription << ": " << corpse->getContentDescription() << ".";
-	if(owner->getParty() && message > LOOTMSG_PLAYER)
-		owner->getParty()->broadcastMessage((MessageClasses)g_config.getNumber(ConfigManager::LOOT_MESSAGE_TYPE), ss.str());
-	else if(message == LOOTMSG_PLAYER || message == LOOTMSG_BOTH)
-		owner->sendTextMessage((MessageClasses)g_config.getNumber(ConfigManager::LOOT_MESSAGE_TYPE), ss.str());
-}
-
 ItemList MonsterType::createLoot(const LootBlock& lootBlock)
 {
 	uint16_t item = lootBlock.ids[0], random = Monsters::getLootRandom(), count = 0;
@@ -207,6 +154,59 @@ bool MonsterType::createChildLoot(Container* parent, const LootBlock& lootBlock)
 	}
 
 	return !parent->empty();
+}
+
+uint16_t Monsters::getLootRandom()
+{
+	return (uint16_t)std::ceil((double)random_range(0, MAX_LOOTCHANCE) / g_config.getDouble(ConfigManager::RATE_LOOT));
+}
+
+void MonsterType::dropLoot(Container* corpse)
+{
+	ItemList items;
+	for(LootItems::const_iterator it = lootItems.begin(); it != lootItems.end() && !corpse->full(); ++it)
+	{
+		items = createLoot(*it);
+		if(items.empty())
+			continue;
+
+		for(ItemList::iterator iit = items.begin(); iit != items.end(); ++iit)
+		{
+			Item* tmpItem = *iit;
+			if(Container* container = tmpItem->getContainer())
+			{
+				if(createChildLoot(container, *it))
+					corpse->__internalAddThing(tmpItem);
+				else
+					delete container;
+			}
+			else
+				corpse->__internalAddThing(tmpItem);
+		}
+	}
+
+	corpse->__startDecaying();
+	uint32_t ownerId = corpse->getCorpseOwner();
+	if(!ownerId)
+		return;
+
+	Player* owner = g_game.getPlayerByGuid(ownerId);
+	if(!owner)
+		return;
+
+	LootMessage_t message = lootMessage;
+	if(message == LOOTMSG_IGNORE)
+		message = (LootMessage_t)g_config.getNumber(ConfigManager::LOOT_MESSAGE);
+
+	if(message < LOOTMSG_PLAYER)
+		return;
+
+	std::stringstream ss;
+	ss << "Loot of " << nameDescription << ": " << corpse->getContentDescription() << ".";
+	if(owner->getParty() && message > LOOTMSG_PLAYER)
+		owner->getParty()->broadcastMessage((MessageClasses)g_config.getNumber(ConfigManager::LOOT_MESSAGE_TYPE), ss.str());
+	else if(message == LOOTMSG_PLAYER || message == LOOTMSG_BOTH)
+		owner->sendTextMessage((MessageClasses)g_config.getNumber(ConfigManager::LOOT_MESSAGE_TYPE), ss.str());
 }
 
 bool Monsters::loadFromXml(bool reloading /*= false*/)

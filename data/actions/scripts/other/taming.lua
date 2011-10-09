@@ -29,7 +29,7 @@ local config = {
 	[13535] = 	{NAME = 'Dromedary', 			ID = 20, 	TYPE = "monster", 	CHANCE = 40, 	FAIL_MSG = {"Dromedary has run away."}, SUCCESS_MSG = "You have tamed Dromedary."},
 	[13498] = 	{NAME = 'Sandstone Scorpion', 	ID = 21, 	TYPE = "monster", 	CHANCE = 40, 	FAIL_MSG = {"The scorpion has vanished.", "Scorpion broken the sceptre."}, SUCCESS_MSG = "You tamed the Scorpion"},
 	[13537] = 	{NAME = 'Donkey', 				ID = 13, 	TYPE = "monster", 	CHANCE = 40, 	FAIL_MSG = {"The witch has esacped!"}, SUCCESS_MSG = "You tamed the Mule."},
-	[13938] = 	{NAME = 'Uniwheel', 			ID = 15, 	TYPE = "npc", 		CHANCE = 40, 	FAIL_MSG = {"This Uniwheel the oil is having no effect."}, SUCCESS_MSG = "You found a Uniwheel."},
+	[13938] = 	{NAME = 'Uniwheel', 			ID = 15, 	TYPE = "npc", 		CHANCE = 40, 	FAIL_MSG = {"The oil is having no effect."}, SUCCESS_MSG = "You found a Uniwheel."},
 	[13508] = 	{NAME = 'Slug', 				ID = 14, 	TYPE = "monster", 	CHANCE = 40, 	FAIL_MSG = {"The slug has run away.", "The drug had no effect."}, SUCCESS_MSG = "You tamed the slug."},
 	[13939] = 	{NAME = 'Fire Horse', 			ID = 23, 	TYPE = "monster", 	CHANCE = 15, 	FAIL_MSG = {"The horse runs away.", "The horse ate the oats."}, SUCCESS_MSG = "You tamed the War Horse."}
 }
