@@ -179,7 +179,7 @@ bool TalkActions::onPlayerSay(Creature* creature, uint16_t channelId, const std:
 	StringVec exceptions = talkAction->getExceptions();
 	if(player && ((!ignoreAccess && std::find(exceptions.begin(), exceptions.end(), asLowerCaseString(
 		player->getName())) == exceptions.end() && talkAction->getAccess() > player->getAccess()
-		&& talkAction->getGroup() > player->getGroupId()) || player->isAccountManager()))
+		&& (talkAction->getGroup() > 0 && talkAction->getGroup() > player->getGroupId())) || player->isAccountManager()))
 	{
 		if(player->hasCustomFlag(PlayerCustomFlag_GamemasterPrivileges))
 		{
@@ -212,8 +212,7 @@ Event(_interface)
 {
 	m_function = NULL;
 	m_filter = TALKFILTER_WORD;
-	m_access = 0;
-	m_group = 1;
+	m_access = m_group = 0;
 	m_channel = -1;
 	m_logged = m_hidden = false;
 	m_sensitive = true;
