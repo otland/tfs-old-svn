@@ -766,7 +766,7 @@ bool Item::hasProperty(enum ITEMPROPERTY prop) const
 			break;
 
 		case FLOORCHANGEUP:
-			for(uint16_t i = CHANGE_FIRST; i <= CHANGE_PRE_LAST; i++)
+			for(uint16_t i = CHANGE_FIRST; i <= CHANGE_PRE_LAST; ++i)
 			{
 				if(it.floorChange[i])
 					return true;
@@ -881,7 +881,7 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 			}
 		}
 
-		for(uint16_t i = SKILL_FIRST; i <= SKILL_LAST; i++)
+		for(uint16_t i = SKILL_FIRST; i <= SKILL_LAST; ++i)
 		{
 			if(!it.abilities.skills[i])
 				continue;
@@ -1160,7 +1160,7 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 			begin = false;
 		}
 
-		for(uint16_t i = SKILL_FIRST; i <= SKILL_LAST; i++)
+		for(uint16_t i = SKILL_FIRST; i <= SKILL_LAST; ++i)
 		{
 			if(!it.abilities.skills[i])
 				continue;

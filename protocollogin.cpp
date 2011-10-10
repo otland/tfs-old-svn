@@ -208,7 +208,7 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 		else
 			output->put<char>((uint8_t)account.charList.size());
 
-		for(Characters::iterator it = account.charList.begin(); it != account.charList.end(); it++)
+		for(Characters::iterator it = account.charList.begin(); it != account.charList.end(); ++it)
 		{
 			#ifndef __LOGIN_SERVER__
 			output->putString((*it));

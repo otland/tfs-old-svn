@@ -637,7 +637,7 @@ bool Spell::checkSpell(Player* player) const
 			useCooldowns ? spellId : isAggressive);
 		if(!exhausted && useCooldowns)
 		{
-			for(SpellGroup::const_iterator it = groupExhaustions.begin(); it != groupExhaustions.end(); it++)
+			for(SpellGroup::const_iterator it = groupExhaustions.begin(); it != groupExhaustions.end(); ++it)
 			{
 				if(!player->hasCondition(CONDITION_EXHAUST, (Exhaust_t)((int32_t)it->first + 1)))
 					continue;

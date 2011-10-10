@@ -106,10 +106,6 @@ void Protocol::deleteProtocolTask()
 
 void Protocol::XTEA_encrypt(OutputMessage& msg)
 {
-	uint32_t k[4];
-	for(uint8_t i = 0; i < 4; i++)
-		k[i] = m_key[i];
-
 	int32_t messageLength = msg.size();
 	//add bytes until reach 8 multiple
 	uint32_t n;
@@ -122,14 +118,14 @@ void Protocol::XTEA_encrypt(OutputMessage& msg)
 
 	int32_t readPos = 0;
 	uint32_t* buffer = (uint32_t*)msg.getOutputBuffer();
-	while(readPos < messageLength / 4)
+	while(readPos < messageLength >> 2)
 	{
 		uint32_t v0 = buffer[readPos], v1 = buffer[readPos + 1], delta = 0x61C88647, sum = 0;
-		for(int32_t i = 0; i < 32; i++)
+		for(int32_t i = 0; i < 32; ++i)
 		{
-			v0 += ((v1 << 4 ^ v1 >> 5) + v1) ^ (sum + k[sum & 3]);
+			v0 += ((v1 << 4 ^ v1 >> 5) + v1) ^ (sum + m_key[sum & 3]);
 			sum -= delta;
-			v1 += ((v0 << 4 ^ v0 >> 5) + v0) ^ (sum + k[sum>>11 & 3]);
+			v1 += ((v0 << 4 ^ v0 >> 5) + v0) ^ (sum + m_key[sum >> 11 & 3]);
 		}
 
 		buffer[readPos] = v0;
@@ -151,20 +147,16 @@ bool Protocol::XTEA_decrypt(NetworkMessage& msg)
 		return false;
 	}
 
-	uint32_t k[4];
-	for(uint8_t i = 0; i < 4; i++)
-		k[i] = m_key[i];
-
 	int32_t messageLength = msg.size() - 6, readPos = 0;
 	uint32_t* buffer = (uint32_t*)(msg.buffer() + msg.position());
-	while(readPos < messageLength / 4)
+	while(readPos < messageLength >> 2)
 	{
 		uint32_t v0 = buffer[readPos], v1 = buffer[readPos + 1], delta = 0x61C88647, sum = 0xC6EF3720;
-		for(int32_t i = 0; i < 32; i++)
+		for(int32_t i = 0; i < 32; ++i)
 		{
-			v1 -= ((v0 << 4 ^ v0 >> 5) + v0) ^ (sum + k[sum >> 11 & 3]);
+			v1 -= ((v0 << 4 ^ v0 >> 5) + v0) ^ (sum + m_key[sum >> 11 & 3]);
 			sum += delta;
-			v0 -= ((v1 << 4 ^ v1 >> 5) + v1) ^ (sum + k[sum & 3]);
+			v0 -= ((v1 << 4 ^ v1 >> 5) + v1) ^ (sum + m_key[sum & 3]);
 		}
 
 		buffer[readPos] = v0;

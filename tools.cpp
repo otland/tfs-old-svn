@@ -38,7 +38,7 @@ std::string transformToMD5(std::string plainText, bool upperCase)
 	MD5_Final(md, &c);
 
 	char output[MD5_DIGEST_LENGTH * 2 + 1] = "";
-	for(int32_t i = 0; i < (int32_t)sizeof(md); i++)
+	for(int32_t i = 0; i < (int32_t)sizeof(md); ++i)
 		sprintf(output + i*2, "%.2X", md[i]);
 
 	if(upperCase)
@@ -57,7 +57,7 @@ std::string transformToSHA1(std::string plainText, bool upperCase)
 	SHA1_Final(md, &c);
 
 	char output[SHA_DIGEST_LENGTH * 2 + 1] = "";
-	for(int32_t i = 0; i < (int32_t)sizeof(md); i++)
+	for(int32_t i = 0; i < (int32_t)sizeof(md); ++i)
 		sprintf(output + i*2, "%.2X", md[i]);
 
 	if(upperCase)
@@ -76,7 +76,7 @@ std::string transformToSHA256(std::string plainText, bool upperCase)
 	SHA256_Final(md, &c);
 
 	char output[SHA256_DIGEST_LENGTH * 2 + 1] = "";
-	for(int32_t i = 0; i < (int32_t)sizeof(md); i++)
+	for(int32_t i = 0; i < (int32_t)sizeof(md); ++i)
 		sprintf(output + i*2, "%.2X", md[i]);
 
 	if(upperCase)
@@ -95,7 +95,7 @@ std::string transformToSHA512(std::string plainText, bool upperCase)
 	SHA512_Final(md, &c);
 
 	char output[SHA512_DIGEST_LENGTH * 2 + 1] = "";
-	for(int32_t i = 0; i < (int32_t)sizeof(md); i++)
+	for(int32_t i = 0; i < (int32_t)sizeof(md); ++i)
 		sprintf(output + i*2, "%.2X", md[i]);
 
 	if(upperCase)

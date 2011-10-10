@@ -59,7 +59,7 @@ bool Mount::isTamed(Player* player) const
 
 void Mounts::clear()
 {
-	for(MountList::iterator it = mounts.begin(); it != mounts.end(); it++)
+	for(MountList::iterator it = mounts.begin(); it != mounts.end(); ++it)
 		delete *it;
 
 	mounts.clear();
@@ -169,7 +169,7 @@ Mount* Mounts::getMountById(uint16_t id) const
 	if(!id)
 		return NULL;
 
-	for(MountList::const_iterator it = mounts.begin(); it != mounts.end(); it++)
+	for(MountList::const_iterator it = mounts.begin(); it != mounts.end(); ++it)
 	{
 		if((*it)->getId() == id)
 			return (*it);
@@ -183,7 +183,7 @@ Mount* Mounts::getMountByCid(uint16_t id) const
 	if(!id)
 		return NULL;
 
-	for(MountList::const_iterator it = mounts.begin(); it != mounts.end(); it++)
+	for(MountList::const_iterator it = mounts.begin(); it != mounts.end(); ++it)
 	{
 		if((*it)->getClientId() == id)
 			return (*it);
@@ -194,7 +194,7 @@ Mount* Mounts::getMountByCid(uint16_t id) const
 
 bool Mounts::isPremium() const
 {
-	for(MountList::const_iterator it = mounts.begin(); it != mounts.end(); it++)
+	for(MountList::const_iterator it = mounts.begin(); it != mounts.end(); ++it)
 	{
 		if(!(*it)->isPremium())
 			return false;

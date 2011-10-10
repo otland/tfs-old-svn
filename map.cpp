@@ -962,7 +962,7 @@ AStarNode* AStarNodes::getBestNode()
 	uint32_t bestNode = 0;
 
 	bool found = false;
-	for(uint32_t i = 0; i < curNode; i++)
+	for(uint32_t i = 0; i < curNode; ++i)
 	{
 		if(nodes[i].f < bestNodeF && openNodes[i] == 1)
 		{
@@ -1009,7 +1009,7 @@ void AStarNodes::openNode(AStarNode* node)
 uint32_t AStarNodes::countClosedNodes()
 {
 	uint32_t counter = 0;
-	for(uint32_t i = 0; i < curNode; i++)
+	for(uint32_t i = 0; i < curNode; ++i)
 	{
 		if(!openNodes[i])
 			counter++;
@@ -1021,7 +1021,7 @@ uint32_t AStarNodes::countClosedNodes()
 uint32_t AStarNodes::countOpenNodes()
 {
 	uint32_t counter = 0;
-	for(uint32_t i = 0; i < curNode; i++)
+	for(uint32_t i = 0; i < curNode; ++i)
 	{
 		if(openNodes[i] == 1)
 			counter++;
@@ -1032,7 +1032,7 @@ uint32_t AStarNodes::countOpenNodes()
 
 bool AStarNodes::isInList(uint16_t x, uint16_t y)
 {
-	for(uint32_t i = 0; i < curNode; i++)
+	for(uint32_t i = 0; i < curNode; ++i)
 	{
 		if(nodes[i].x == x && nodes[i].y == y)
 			return true;
@@ -1043,7 +1043,7 @@ bool AStarNodes::isInList(uint16_t x, uint16_t y)
 
 AStarNode* AStarNodes::getNodeInList(uint16_t x, uint16_t y)
 {
-	for(uint32_t i = 0; i < curNode; i++)
+	for(uint32_t i = 0; i < curNode; ++i)
 	{
 		if(nodes[i].x == x && nodes[i].y == y)
 			return &nodes[i];

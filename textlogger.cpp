@@ -45,7 +45,7 @@ void Logger::open()
 void Logger::close()
 {
 	m_loaded = false;
-	for(uint8_t i = 0; i <= LOGFILE_LAST; i++)
+	for(uint8_t i = 0; i <= LOGFILE_LAST; ++i)
 	{
 		if(m_files[i])
 			fclose(m_files[i]);

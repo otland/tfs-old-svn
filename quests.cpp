@@ -78,7 +78,7 @@ std::string Mission::getDescription(Player* player)
 
 Quest::~Quest()
 {
-	for(MissionList::iterator it = missions.begin(); it != missions.end(); it++)
+	for(MissionList::iterator it = missions.begin(); it != missions.end(); ++it)
 		delete (*it);
 
 	missions.clear();
@@ -96,7 +96,7 @@ bool Quest::isStarted(Player* player)
 
 bool Quest::isCompleted(Player* player) const
 {
-	for(MissionList::const_iterator it = missions.begin(); it != missions.end(); it++)
+	for(MissionList::const_iterator it = missions.begin(); it != missions.end(); ++it)
 	{
 		if(!(*it)->isCompleted(player))
 			return false;
@@ -108,7 +108,7 @@ bool Quest::isCompleted(Player* player) const
 uint16_t Quest::getMissionCount(Player* player)
 {
 	uint16_t count = 0;
-	for(MissionList::iterator it = missions.begin(); it != missions.end(); it++)
+	for(MissionList::iterator it = missions.begin(); it != missions.end(); ++it)
 	{
 		if((*it)->isStarted(player))
 			count++;
@@ -119,7 +119,7 @@ uint16_t Quest::getMissionCount(Player* player)
 
 void Quests::clear()
 {
-	for(QuestList::iterator it = quests.begin(); it != quests.end(); it++)
+	for(QuestList::iterator it = quests.begin(); it != quests.end(); ++it)
 		delete (*it);
 
 	quests.clear();
@@ -261,7 +261,7 @@ bool Quests::parseQuestNode(xmlNodePtr p, bool checkDuplicate)
 uint16_t Quests::getQuestCount(Player* player)
 {
 	uint16_t count = 0;
-	for(QuestList::iterator it = quests.begin(); it != quests.end(); it++)
+	for(QuestList::iterator it = quests.begin(); it != quests.end(); ++it)
 	{
 		if((*it)->isStarted(player))
 			count++;
@@ -272,7 +272,7 @@ uint16_t Quests::getQuestCount(Player* player)
 
 Quest* Quests::getQuestById(uint16_t id) const
 {
-	for(QuestList::const_iterator it = quests.begin(); it != quests.end(); it++)
+	for(QuestList::const_iterator it = quests.begin(); it != quests.end(); ++it)
 	{
 		if((*it)->getId() == id)
 			return (*it);

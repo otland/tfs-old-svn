@@ -1916,10 +1916,8 @@ const ItemType& Items::getItemIdByClientId(int32_t spriteId) const
 	ItemType* iType;
 	do
 	{
-		if((iType = items.getElement(i)) && iType->clientId == spriteId)
+		if((iType = items.getElement(i++)) && iType->clientId == spriteId)
 			return *iType;
-
-		i++;
 	}
 	while(iType);
 	static ItemType dummyItemType; // use this for invalid ids
@@ -1937,7 +1935,7 @@ int32_t Items::getItemIdByName(const std::string& name)
 			if((iType = items.getElement(i)) && boost::algorithm::iequals(name, iType->name))
 				return i;
 
-			i++;
+			++i;
 		}
 		while(iType);
 	}

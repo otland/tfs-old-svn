@@ -94,7 +94,7 @@ Player::Player(const std::string& _name, ProtocolGame* p):
 	setParty(NULL);
 
 	transferContainer.setParent(this);
-	for(int32_t i = 0; i < 11; i++)
+	for(int32_t i = 0; i < 11; ++i)
 	{
 		inventory[i] = NULL;
 		inventoryAbilities[i] = false;
@@ -116,7 +116,7 @@ Player::Player(const std::string& _name, ProtocolGame* p):
 	for(int32_t i = LOSS_FIRST; i <= LOSS_LAST; ++i)
 		lossPercent[i] = 100;
 
-	for(int32_t i = 0; i <= 12; i++)
+	for(int32_t i = 0; i <= 12; ++i)
 		talkState[i] = false;
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
 
@@ -132,20 +132,20 @@ Player::~Player()
 	setWriteItem(NULL);
 
 	transferContainer.setParent(NULL);
-	for(int32_t i = 0; i < 11; i++)
+	for(int32_t i = 0; i < 11; ++i)
 	{
-		if(inventory[i])
-		{
-			inventory[i]->setParent(NULL);
-			inventory[i]->unRef();
+		if(!inventory[i])
+			continue;
+			
+		inventory[i]->setParent(NULL);
+		inventory[i]->unRef();
 
-			inventory[i] = NULL;
-			inventoryAbilities[i] = false;
-		}
+		inventory[i] = NULL;
+		inventoryAbilities[i] = false;
 	}
 
 	setNextWalkActionTask(NULL);
-	for(DepotMap::iterator it = depots.begin(); it != depots.end(); it++)
+	for(DepotMap::iterator it = depots.begin(); it != depots.end(); ++it)
 		it->second.first->unRef();
 }
 
@@ -4592,7 +4592,7 @@ void Player::manageAccount(const std::string &text)
 			if(checkText(text, "cancel") || (checkText(text, "account") && !talkState[1]))
 			{
 				talkState[1] = true;
-				for(int8_t i = 2; i <= 12; i++)
+				for(int8_t i = 2; i <= 12; ++i)
 					talkState[i] = false;
 
 				msg << "Do you want to change your 'password', request a 'recovery key', add a 'character', or 'delete' a character?";
@@ -4643,7 +4643,7 @@ void Player::manageAccount(const std::string &text)
 				}
 
 				talkState[1] = true;
-				for(int8_t i = 2; i <= 12; i++)
+				for(int8_t i = 2; i <= 12; ++i)
 					talkState[i] = false;
 			}
 			else if(checkText(text, "no") && talkState[3])
@@ -4677,7 +4677,7 @@ void Player::manageAccount(const std::string &text)
 			else if(checkText(text, "yes") && talkState[5])
 			{
 				talkState[1] = true;
-				for(int8_t i = 2; i <= 12; i++)
+				for(int8_t i = 2; i <= 12; ++i)
 					talkState[i] = false;
 
 				IOLoginData::getInstance()->setPassword(managerNumber, managerString);
@@ -4686,7 +4686,7 @@ void Player::manageAccount(const std::string &text)
 			else if(checkText(text, "no") && talkState[5])
 			{
 				talkState[1] = true;
-				for(int8_t i = 2; i <= 12; i++)
+				for(int8_t i = 2; i <= 12; ++i)
 					talkState[i] = false;
 
 				msg << "Then not.";
@@ -4702,7 +4702,7 @@ void Player::manageAccount(const std::string &text)
 				else
 				{
 					talkState[1] = true;
-					for(int8_t i = 2; i <= 12; i++)
+					for(int8_t i = 2; i <= 12; ++i)
 						talkState[i] = false;
 
 					msg << "Your account reach the limit of 15 players, you can 'delete' a character if you want to create a new one.";
@@ -4793,7 +4793,7 @@ void Player::manageAccount(const std::string &text)
 				else if(!IOLoginData::getInstance()->playerExists(managerString, true))
 				{
 					talkState[1] = true;
-					for(int8_t i = 2; i <= 12; i++)
+					for(int8_t i = 2; i <= 12; ++i)
 						talkState[i] = false;
 
 					if(IOLoginData::getInstance()->createCharacter(managerNumber, managerString, managerNumber2, (uint16_t)managerSex))
@@ -4830,7 +4830,7 @@ void Player::manageAccount(const std::string &text)
 				if(!IOLoginData::getInstance()->playerExists(managerString, true))
 				{
 					talkState[1] = true;
-					for(int8_t i = 2; i <= 12; i++)
+					for(int8_t i = 2; i <= 12; ++i)
 						talkState[i] = false;
 
 					if(IOLoginData::getInstance()->createCharacter(managerNumber, managerString, managerNumber2, (uint16_t)managerSex))
@@ -4869,14 +4869,14 @@ void Player::manageAccount(const std::string &text)
 				}
 
 				talkState[1] = true;
-				for(int8_t i = 2; i <= 12; i++)
+				for(int8_t i = 2; i <= 12; ++i)
 					talkState[i] = false;
 			}
 			else if(checkText(text, "no") && talkState[10])
 			{
 				msg << "Then not.";
 				talkState[1] = true;
-				for(int8_t i = 2; i <= 12; i++)
+				for(int8_t i = 2; i <= 12; ++i)
 					talkState[i] = false;
 			}
 			else
@@ -4930,7 +4930,7 @@ void Player::manageAccount(const std::string &text)
 					else
 						msg << "Your account could not be created, please try again.";
 
-					for(int8_t i = 2; i <= 5; i++)
+					for(int8_t i = 2; i <= 5; ++i)
 						talkState[i] = false;
 				}
 				else
@@ -4983,7 +4983,7 @@ void Player::manageAccount(const std::string &text)
 					else
 						msg << "Your account could not be created, please try again.";
 
-					for(int8_t i = 2; i <= 5; i++)
+					for(int8_t i = 2; i <= 5; ++i)
 						talkState[i] = false;
 				}
 				else

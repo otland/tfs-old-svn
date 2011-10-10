@@ -135,7 +135,7 @@ bool GameServers::loadFromXml(bool result)
 	if(result)
 	{
 		std::clog << "> Servers loaded:" << std::endl;
-		for(GameServersMap::iterator it = serverList.begin(); it != serverList.end(); it++)
+		for(GameServersMap::iterator it = serverList.begin(); it != serverList.end(); ++it)
 			std::clog << it->second->getName() << " (" << it->second->getAddress() << ":" << it->second->getPort() << ")" << std::endl;
 	}
 	xmlFreeDoc(doc);

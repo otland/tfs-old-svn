@@ -46,7 +46,7 @@ FileLoader::~FileLoader()
 
 	NodeStruct::clearNet(m_root);
 	delete[] m_buffer;
-	for(int32_t i = 0; i < CACHE_BLOCKS; i++)
+	for(int32_t i = 0; i < CACHE_BLOCKS; ++i)
 	{
 		if(m_cached_data[i].data)
 			delete[] m_cached_data[i].data;
@@ -521,7 +521,7 @@ inline uint32_t FileLoader::getCacheBlock(uint32_t pos)
 {
 	bool found = false;
 	uint32_t i, base_pos = pos & ~(m_cache_size - 1);
-	for(i = 0; i < CACHE_BLOCKS; i++)
+	for(i = 0; i < CACHE_BLOCKS; ++i)
 	{
 		if(!m_cached_data[i].loaded || m_cached_data[i].base != base_pos)
 			continue;
@@ -539,7 +539,7 @@ inline uint32_t FileLoader::getCacheBlock(uint32_t pos)
 int32_t FileLoader::loadCacheBlock(uint32_t pos)
 {
 	int32_t i, loading_cache = -1, base_pos = pos & ~(m_cache_size - 1);
-	for(i = 0; i < CACHE_BLOCKS; i++)
+	for(i = 0; i < CACHE_BLOCKS; ++i)
 	{
 		if(m_cached_data[i].loaded)
 			continue;
@@ -550,7 +550,7 @@ int32_t FileLoader::loadCacheBlock(uint32_t pos)
 
 	if(loading_cache == -1)
 	{
-		for(i = 0; i < CACHE_BLOCKS; i++)
+		for(i = 0; i < CACHE_BLOCKS; ++i)
 		{
 			if((long)(std::abs((long)m_cached_data[i].base - base_pos)) <= (long)(2 * m_cache_size))
 				continue;

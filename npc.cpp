@@ -1988,7 +1988,7 @@ const NpcResponse* Npc::getResponse(const ResponseList& list, const Player* play
 			if(hasBitSet(RESPOND_DRUID, params))
 			{
 				Vocation* tmpVoc = player->vocation;
-				for(uint32_t i = 0; i <= player->promotionLevel; i++)
+				for(uint32_t i = 0; i <= player->promotionLevel; ++i)
 					tmpVoc = Vocations::getInstance()->getVocation(tmpVoc->getFromVocation());
 
 				if(tmpVoc->getId() != 2)
@@ -2000,7 +2000,7 @@ const NpcResponse* Npc::getResponse(const ResponseList& list, const Player* play
 			if(hasBitSet(RESPOND_KNIGHT, params))
 			{
 				Vocation* tmpVoc = player->vocation;
-				for(uint32_t i = 0; i <= player->promotionLevel; i++)
+				for(uint32_t i = 0; i <= player->promotionLevel; ++i)
 					tmpVoc = Vocations::getInstance()->getVocation(tmpVoc->getFromVocation());
 
 				if(tmpVoc->getId() != 4)
@@ -2012,7 +2012,7 @@ const NpcResponse* Npc::getResponse(const ResponseList& list, const Player* play
 			if(hasBitSet(RESPOND_PALADIN, params))
 			{
 				Vocation* tmpVoc = player->vocation;
-				for(uint32_t i = 0; i <= player->promotionLevel; i++)
+				for(uint32_t i = 0; i <= player->promotionLevel; ++i)
 					tmpVoc = Vocations::getInstance()->getVocation(tmpVoc->getFromVocation());
 
 				if(tmpVoc->getId() != 3)
@@ -2024,7 +2024,7 @@ const NpcResponse* Npc::getResponse(const ResponseList& list, const Player* play
 			if(hasBitSet(RESPOND_SORCERER, params))
 			{
 				Vocation* tmpVoc = player->vocation;
-				for(uint32_t i = 0; i <= player->promotionLevel; i++)
+				for(uint32_t i = 0; i <= player->promotionLevel; ++i)
 					tmpVoc = Vocations::getInstance()->getVocation(tmpVoc->getFromVocation());
 
 				if(tmpVoc->getId() != 1)

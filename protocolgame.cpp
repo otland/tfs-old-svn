@@ -2228,7 +2228,7 @@ void ProtocolGame::sendAddCreature(const Creature* creature, const Position& pos
 	AddCreatureLight(msg, creature);
 
 	player->sendIcons();
-	for(VIPSet::iterator it = player->VIPList.begin(); it != player->VIPList.end(); it++)
+	for(VIPSet::iterator it = player->VIPList.begin(); it != player->VIPList.end(); ++it)
 	{
 		std::string vipName;
 		if(IOLoginData::getInstance()->getNameByGuid((*it), vipName))

@@ -1594,6 +1594,6 @@ uint32_t Monsters::getIdByName(const std::string& name)
 Monsters::~Monsters()
 {
 	loaded = false;
-	for(MonsterMap::iterator it = monsters.begin(); it != monsters.end(); it++)
+	for(MonsterMap::iterator it = monsters.begin(); it != monsters.end(); ++it)
 		delete it->second;
 }

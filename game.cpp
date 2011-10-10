@@ -2035,7 +2035,7 @@ bool Game::removeMoney(Cylinder* cylinder, int64_t money, uint32_t flags /*= 0*/
 	{
 		Container* container = listContainer.front();
 		listContainer.pop_front();
-		for(int32_t i = 0; i < (int32_t)container->size(); i++)
+		for(int32_t i = 0; i < (int32_t)container->size(); ++i)
 		{
 			Item* item = container->getItem(i);
 			if((tmpContainer = item->getContainer()))
@@ -2993,7 +2993,7 @@ bool Game::playerRequestTrade(uint32_t playerId, const Position& pos, int16_t st
 	}
 
 	const Container* container = NULL;
-	for(std::map<Item*, uint32_t>::const_iterator it = tradeItems.begin(); it != tradeItems.end(); it++)
+	for(std::map<Item*, uint32_t>::const_iterator it = tradeItems.begin(); it != tradeItems.end(); ++it)
 	{
 		if(tradeItem == it->first ||
 			((container = dynamic_cast<const Container*>(tradeItem)) && container->isHoldingItem(it->first)) ||
@@ -5597,7 +5597,7 @@ bool Game::loadExperienceStages()
 						stages[lastStageLevel] = mul;
 					else
 					{
-						for(int32_t i = low; i <= high; i++)
+						for(int32_t i = low; i <= high; ++i)
 							stages[i] = mul;
 					}
 				}
@@ -5627,7 +5627,7 @@ bool Game::loadExperienceStages()
 				stages[lastStageLevel] = mul;
 			else
 			{
-				for(int32_t i = low; i <= high; i++)
+				for(int32_t i = low; i <= high; ++i)
 					stages[i] = mul;
 			}
 		}
@@ -5663,7 +5663,7 @@ std::string Game::getHighscoreString(uint16_t skill)
 	Highscore hs = highscoreStorage[skill];
 	std::stringstream ss;
 	ss << "Highscore for " << getSkillName(skill) << "\n\nRank Level - Player Name";
-	for(uint32_t i = 0; i < hs.size(); i++)
+	for(uint32_t i = 0; i < hs.size(); ++i)
 		ss << "\n" << (i + 1) << ".  " << hs[i].second << "  -  " << hs[i].first;
 
 	ss << "\n\nLast updated on:\n" << std::ctime(&lastHighscoreCheck);
@@ -6012,7 +6012,7 @@ bool Game::reloadInfo(ReloadInfo_t reload, uint32_t playerId/* = 0*/)
 		case RELOAD_ALL:
 		{
 			done = true;
-			for(int32_t i = RELOAD_FIRST; i <= RELOAD_LAST; i++)
+			for(int32_t i = RELOAD_FIRST; i <= RELOAD_LAST; ++i)
 			{
 				if(!reloadInfo((ReloadInfo_t)i) && done)
 					done = false;

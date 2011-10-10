@@ -293,7 +293,7 @@ uint32_t DatabaseManager::updateDatabase()
 					"CREATE TRIGGER `ondelete_accounts` BEFORE DELETE ON `accounts` FOR EACH ROW BEGIN DELETE FROM `bans` WHERE `type` != 1 AND `type` != 2 AND `value` = OLD.`id`; END;",
 					"CREATE TRIGGER `ondelete_players` BEFORE DELETE ON `players` FOR EACH ROW BEGIN DELETE FROM `bans` WHERE `type` = 2 AND `value` = OLD.`id`; UPDATE `houses` SET `owner` = 0 WHERE `owner` = OLD.`id`; END;"
 				};
-				for(uint32_t i = 0; i < sizeof(queryList) / sizeof(std::string); i++)
+				for(uint32_t i = 0; i < sizeof(queryList) / sizeof(std::string); ++i)
 					db->query(queryList[i]);
 			}
 
@@ -376,7 +376,7 @@ uint32_t DatabaseManager::updateDatabase()
 					"ALTER TABLE `houses` ADD `price` INTEGER NOT NULL DEFAULT 0;",
 					"ALTER TABLE `houses` ADD `rent` INTEGER NOT NULL DEFAULT 0;"
 				};
-				for(uint32_t i = 0; i < sizeof(queryList) / sizeof(std::string); i++)
+				for(uint32_t i = 0; i < sizeof(queryList) / sizeof(std::string); ++i)
 					db->query(queryList[i]);
 			}
 			else
@@ -387,7 +387,7 @@ uint32_t DatabaseManager::updateDatabase()
 					"ALTER TABLE `houses` ADD `price` INT UNSIGNED NOT NULL DEFAULT 0;",
 					"ALTER TABLE `houses` ADD `rent` INT UNSIGNED NOT NULL DEFAULT 0;"
 				};
-				for(uint32_t i = 0; i < sizeof(queryList) / sizeof(std::string); i++)
+				for(uint32_t i = 0; i < sizeof(queryList) / sizeof(std::string); ++i)
 					db->query(queryList[i]);
 			}
 
@@ -417,7 +417,7 @@ uint32_t DatabaseManager::updateDatabase()
 						"ALTER TABLE `tiles` ADD INDEX (`x`, `y`, `z`);",
 						"ALTER TABLE `tile_items` ADD INDEX (`sid`);"
 					};
-					for(uint32_t i = 0; i < sizeof(queryList) / sizeof(std::string); i++)
+					for(uint32_t i = 0; i < sizeof(queryList) / sizeof(std::string); ++i)
 						db->query(queryList[i]);
 
 					break;
@@ -433,7 +433,7 @@ uint32_t DatabaseManager::updateDatabase()
 						"CREATE TABLE `player_storage` (`player_id` INTEGER NOT NULL, `key` INTEGER NOT NULL, `value` VARCHAR(255) NOT NULL DEFAULT '0', UNIQUE (`player_id`, `key`), FOREIGN KEY (`player_id`) REFERENCES `players` (`id`));",
 						"INSERT INTO `player_storage` SELECT * FROM `player_storage2`;"
 					};
-					for(uint32_t i = 0; i < sizeof(queryList) / sizeof(std::string); i++)
+					for(uint32_t i = 0; i < sizeof(queryList) / sizeof(std::string); ++i)
 						db->query(queryList[i]);
 
 					break;
@@ -504,7 +504,7 @@ uint32_t DatabaseManager::updateDatabase()
 						"ALTER TABLE `tile_items` ADD `world_id` TINYINT(2) UNSIGNED NOT NULL DEFAULT 0;",
 						"ALTER TABLE `tile_items` ADD UNIQUE (`tile_id`, `world_id`, `sid`);"
 					};
-					for(uint32_t i = 0; i < sizeof(queryList) / sizeof(std::string); i++)
+					for(uint32_t i = 0; i < sizeof(queryList) / sizeof(std::string); ++i)
 						db->query(queryList[i]);
 
 					break;
@@ -585,7 +585,7 @@ uint32_t DatabaseManager::updateDatabase()
 						"ALTER TABLE `players` CHANGE `loss_items` `loss_items` INT NOT NULL DEFAULT 100;",
 						"ALTER TABLE `players` ADD `loss_containers` INT NOT NULL DEFAULT 100 AFTER `loss_skills`;"
 					};
-					for(uint32_t i = 0; i < sizeof(queryList) / sizeof(std::string); i++)
+					for(uint32_t i = 0; i < sizeof(queryList) / sizeof(std::string); ++i)
 						db->query(queryList[i]);
 
 					break;
@@ -612,7 +612,7 @@ uint32_t DatabaseManager::updateDatabase()
 				"ALTER TABLE `players` DROP KEY `group_id`;",
 				"DROP TABLE `groups`;"
 			};
-			for(uint32_t i = 0; i < sizeof(queryList) / sizeof(std::string); i++)
+			for(uint32_t i = 0; i < sizeof(queryList) / sizeof(std::string); ++i)
 				db->query(queryList[i]);
 
 			registerDatabaseConfig("db_version", 13);
@@ -631,7 +631,7 @@ uint32_t DatabaseManager::updateDatabase()
 						"ALTER TABLE `houses` ADD `beds` INT UNSIGNED NOT NULL DEFAULT 0;",
 						"ALTER TABLE `houses` ADD `guild` TINYINT(1) UNSIGNED NOT NULL DEFAULT FALSE;"
 					};
-					for(uint32_t i = 0; i < sizeof(queryList) / sizeof(std::string); i++)
+					for(uint32_t i = 0; i < sizeof(queryList) / sizeof(std::string); ++i)
 						db->query(queryList[i]);
 
 					break;
@@ -644,7 +644,7 @@ uint32_t DatabaseManager::updateDatabase()
 						"ALTER TABLE `houses` ADD `beds` INTEGER NOT NULL DEFAULT 0;",
 						"ALTER TABLE `houses` ADD `guild` BOOLEAN NOT NULL DEFAULT FALSE;"
 					};
-					for(uint32_t i = 0; i < sizeof(queryList) / sizeof(std::string); i++)
+					for(uint32_t i = 0; i < sizeof(queryList) / sizeof(std::string); ++i)
 						db->query(queryList[i]);
 
 					break;
@@ -703,7 +703,7 @@ uint32_t DatabaseManager::updateDatabase()
 	FOREIGN KEY (`kill_id`) REFERENCES `killers` (`id`) ON DELETE CASCADE\
 ) ENGINE = InnoDB;"
 					};
-					for(uint32_t i = 0; i < sizeof(queryList) / sizeof(std::string); i++)
+					for(uint32_t i = 0; i < sizeof(queryList) / sizeof(std::string); ++i)
 						db->query(queryList[i]);
 
 					break;
@@ -737,7 +737,7 @@ uint32_t DatabaseManager::updateDatabase()
 	FOREIGN KEY (`kill_id`) REFERENCES `killers` (`id`)\
 );"
 					};
-					for(uint32_t i = 0; i < sizeof(queryList) / sizeof(std::string); i++)
+					for(uint32_t i = 0; i < sizeof(queryList) / sizeof(std::string); ++i)
 						db->query(queryList[i]);
 
 					break;
@@ -768,7 +768,7 @@ uint32_t DatabaseManager::updateDatabase()
 						"ALTER TABLE `killers` ADD `unjustified` TINYINT(1) UNSIGNED NOT NULL DEFAULT FALSE;",
 						"UPDATE `players` SET `redskulltime` = 0;"
 					};
-					for(uint32_t i = 0; i < sizeof(queryList) / sizeof(std::string); i++)
+					for(uint32_t i = 0; i < sizeof(queryList) / sizeof(std::string); ++i)
 						db->query(queryList[i]);
 
 					break;
@@ -781,7 +781,7 @@ uint32_t DatabaseManager::updateDatabase()
 						"ALTER TABLE `killers` ADD `unjustified` BOOLEAN NOT NULL DEFAULT FALSE;",
 						"UPDATE `players` SET `redskulltime` = 0;"
 					};
-					for(uint32_t i = 0; i < sizeof(queryList) / sizeof(std::string); i++)
+					for(uint32_t i = 0; i < sizeof(queryList) / sizeof(std::string); ++i)
 						db->query(queryList[i]);
 
 					break;
@@ -853,7 +853,7 @@ uint32_t DatabaseManager::updateDatabase()
 						"ALTER TABLE `tiles` ADD FOREIGN KEY (`house_id`, `world_id`) REFERENCES `houses`(`id`, `world_id`) ON DELETE CASCADE;",
 						"ALTER TABLE `houses` ADD `clear` TINYINT(1) UNSIGNED NOT NULL DEFAULT FALSE;"
 					};
-					for(uint32_t i = 0; i < sizeof(queryList) / sizeof(std::string); i++)
+					for(uint32_t i = 0; i < sizeof(queryList) / sizeof(std::string); ++i)
 						db->query(queryList[i]);
 
 					break;
@@ -870,7 +870,7 @@ uint32_t DatabaseManager::updateDatabase()
 						"ALTER TABLE `tiles` ADD FOREIGN KEY (`house_id`, `world_id`) REFERENCES `houses`(`id`, `world_id`);",
 						"ALTER TABLE `houses` ADD `clear` BOOLEAN NOT NULL DEFAULT FALSE;"
 					};
-					for(uint32_t i = 0; i < sizeof(queryList) / sizeof(std::string); i++)
+					for(uint32_t i = 0; i < sizeof(queryList) / sizeof(std::string); ++i)
 						db->query(queryList[i]);
 
 					break;
@@ -907,7 +907,7 @@ uint32_t DatabaseManager::updateDatabase()
 	FOREIGN KEY (`player_id`) REFERENCES `players` (`id`) ON DELETE CASCADE\
 ) ENGINE = InnoDB;"
 					};
-					for(uint32_t i = 0; i < sizeof(queryList) / sizeof(std::string); i++)
+					for(uint32_t i = 0; i < sizeof(queryList) / sizeof(std::string); ++i)
 						db->query(queryList[i]);
 
 					break;
@@ -929,7 +929,7 @@ uint32_t DatabaseManager::updateDatabase()
 	FOREIGN KEY (`player_id`) REFERENCES `players` (`id`)\
 );"
 					};
-					for(uint32_t i = 0; i < sizeof(queryList) / sizeof(std::string); i++)
+					for(uint32_t i = 0; i < sizeof(queryList) / sizeof(std::string); ++i)
 						db->query(queryList[i]);
 
 					break;
@@ -955,7 +955,7 @@ uint32_t DatabaseManager::updateDatabase()
 						"ALTER TABLE `players` CHANGE `redskulltime` `skulltime` INT NOT NULL DEFAULT 0;",
 						"ALTER TABLE `players` ADD `skull` TINYINT(1) UNSIGNED NOT NULL DEFAULT 0 AFTER `save`;"
 					};
-					for(uint32_t i = 0; i < sizeof(queryList) / sizeof(std::string); i++)
+					for(uint32_t i = 0; i < sizeof(queryList) / sizeof(std::string); ++i)
 						db->query(queryList[i]);
 
 					break;
@@ -968,7 +968,7 @@ uint32_t DatabaseManager::updateDatabase()
 						"ALTER TABLE `players` ADD `skull` INTEGER NOT NULL DEFAULT 0;",
 						"UPDATE `players` SET `skulltime` = `redskulltime`, `redskulltime` = 0;"
 					};
-					for(uint32_t i = 0; i < sizeof(queryList) / sizeof(std::string); i++)
+					for(uint32_t i = 0; i < sizeof(queryList) / sizeof(std::string); ++i)
 						db->query(queryList[i]);
 
 					break;
@@ -992,7 +992,7 @@ uint32_t DatabaseManager::updateDatabase()
 				"UPDATE `bans` SET `param` = 2 WHERE `type` = 2;",
 				"UPDATE `bans` SET `param` = 0 WHERE `type` IN (3,4);"
 			};
-			for(uint32_t i = 0; i < sizeof(queryList) / sizeof(std::string); i++)
+			for(uint32_t i = 0; i < sizeof(queryList) / sizeof(std::string); ++i)
 				db->query(queryList[i]);
 
 			registerDatabaseConfig("db_version", 21);
@@ -1541,7 +1541,7 @@ void DatabaseManager::checkTriggers()
 			};
 
 			DBQuery query;
-			for(uint32_t i = 0; i < sizeof(triggerName) / sizeof(std::string); i++)
+			for(uint32_t i = 0; i < sizeof(triggerName) / sizeof(std::string); ++i)
 			{
 				if(!triggerExists(triggerName[i]))
 				{
@@ -1706,7 +1706,7 @@ END;",
 			};
 
 			DBQuery query;
-			for(uint32_t i = 0; i < sizeof(triggerName) / sizeof(std::string); i++)
+			for(uint32_t i = 0; i < sizeof(triggerName) / sizeof(std::string); ++i)
 			{
 				if(!triggerExists(triggerName[i]))
 				{

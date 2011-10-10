@@ -1074,7 +1074,7 @@ bool IOLoginData::savePlayer(Player* player, bool preSave/* = true*/, bool shall
 	else
 		query_insert.setQuery("INSERT INTO `player_viplist` (`player_id`, `vip_id`) VALUES ");
 
-	for(VIPSet::iterator it = player->VIPList.begin(); it != player->VIPList.end(); it++)
+	for(VIPSet::iterator it = player->VIPList.begin(); it != player->VIPList.end(); ++it)
 	{
 		if(!playerExists(*it, false, false))
 			continue;

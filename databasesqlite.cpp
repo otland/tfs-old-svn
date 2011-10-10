@@ -73,7 +73,7 @@ std::string DatabaseSQLite::_parse(const std::string& s)
 	query.reserve(s.size());
 
 	bool inString = false;
-	for(uint32_t i = 0; i < s.length(); i++)
+	for(uint32_t i = 0; i < s.length(); ++i)
 	{
 		uint8_t ch = s[i];
 		if(ch == '\'')
@@ -177,7 +177,7 @@ std::string DatabaseSQLite::escapeBlob(const char* s, uint32_t length)
 {
 	std::string buf = "x'";
 	char* hex = new char[2 + 1]; //need one extra byte for null-character
-	for(uint32_t i = 0; i < length; i++)
+	for(uint32_t i = 0; i < length; ++i)
 	{
 		sprintf(hex, "%02x", ((uint8_t)s[i]));
 		buf += hex;
@@ -267,7 +267,7 @@ SQLiteResult::SQLiteResult(sqlite3_stmt* stmt)
 	m_listNames.clear();
 
 	int32_t fields = sqlite3_column_count(m_handle);
-	for(int32_t i = 0; i < fields; i++)
+	for(int32_t i = 0; i < fields; ++i)
 		m_listNames[sqlite3_column_name(m_handle, i)] = i;
 }
 #endif
