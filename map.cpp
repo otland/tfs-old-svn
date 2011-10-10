@@ -1115,7 +1115,7 @@ QTreeLeafNode* QTreeNode::getLeaf(uint16_t x, uint16_t y)
 
 	uint32_t index = ((x & 0x8000) >> 15) | ((y & 0x8000) >> 14);
 	if(m_child[index])
-		return m_child[index]->getLeaf(x * 2, y * 2);
+		return m_child[index]->getLeaf(x << 1, y << 1);
 
 	return NULL;
 }
@@ -1134,8 +1134,8 @@ QTreeLeafNode* QTreeNode::getLeafStatic(QTreeNode* root, uint16_t x, uint16_t y)
 			return NULL;
 
 		currentNode = currentNode->m_child[index];
-		currentX = currentX * 2;
-		currentY = currentY * 2;
+		currentX <<= 1;
+		currentY <<= 1;
 	}
 
 	return NULL;
@@ -1157,7 +1157,7 @@ QTreeLeafNode* QTreeNode::createLeaf(uint16_t x, uint16_t y, uint16_t level)
 			}
 		}
 
-		return m_child[index]->createLeaf(x * 2, y * 2, level - 1);
+		return m_child[index]->createLeaf(x << 1, y << 1, level - 1);
 	}
 
 	return static_cast<QTreeLeafNode*>(this);

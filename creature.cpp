@@ -1613,7 +1613,7 @@ std::string Creature::getDescription(int32_t) const
 int32_t Creature::getStepDuration(Direction dir) const
 {
 	if(dir == NORTHWEST || dir == NORTHEAST || dir == SOUTHWEST || dir == SOUTHEAST)
-		return getStepDuration() * 2;
+		return getStepDuration() << 1;
 
 	return getStepDuration();
 }

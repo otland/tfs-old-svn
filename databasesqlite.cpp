@@ -157,9 +157,9 @@ std::string DatabaseSQLite::escapeString(const std::string& s)
 		return std::string("''");
 
 	// the worst case is 2n + 3
-	char* output = new char[s.length() * 2 + 3];
+	char* output = new char[(s.length() << 1) + 3];
 	// quotes escaped string and frees temporary buffer
-	sqlite3_snprintf(s.length() * 2 + 1, output, "%Q", s.c_str());
+	sqlite3_snprintf((s.length() << 1) + 1, output, "%Q", s.c_str());
 
 	std::string r(output);
 	delete[] output;

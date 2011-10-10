@@ -219,7 +219,7 @@ std::string DatabaseMySQL::escapeBlob(const char* s, uint32_t length)
 	if(*s == '\0')
 		return "''";
 
-	char* output = new char[length * 2 + 1];
+	char* output = new char[(length << 1) + 1];
 	mysql_real_escape_string(&m_handle, output, s, length);
 
 	std::string res = "'";

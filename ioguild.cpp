@@ -471,7 +471,7 @@ void IOGuild::finishWar(War_t war, bool finished)
 	DBQuery query;
 	if(finished)
 	{
-		query << "UPDATE `guilds` SET `balance` = `balance` + " << (war.payment * 2) << " WHERE `id` = " << war.ids[war.type];
+		query << "UPDATE `guilds` SET `balance` = `balance` + " << (war.payment << 1) << " WHERE `id` = " << war.ids[war.type];
 		if(!db->query(query.str()))
 			return;
 
