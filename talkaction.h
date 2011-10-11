@@ -81,7 +81,6 @@ class TalkAction : public Event
 
 		TalkActionFilter getFilter() const {return m_filter;}
 		uint32_t getAccess() const {return m_access;}
-		int32_t getGroup() const {return m_group;}
 		int32_t getChannel() const {return m_channel;}
 
 		StringVec getExceptions() {return m_exceptions;}
@@ -90,6 +89,9 @@ class TalkAction : public Event
 		bool isLogged() const {return m_logged;}
 		bool isHidden() const {return m_hidden;}
 		bool isSensitive() const {return m_sensitive;}
+
+		bool hasGroups() const {return !m_groups.empty();}
+		bool hasGroup(int32_t value) const {return m_groups.find(value) != m_groups.end();}
 
 	protected:
 		virtual std::string getScriptEventName() const {return "onSay";}
@@ -113,8 +115,9 @@ class TalkAction : public Event
 		TalkFunction* m_function;
 		TalkActionFilter m_filter;
 		uint32_t m_access;
-		int32_t m_group, m_channel;
+		int32_t m_channel;
 		bool m_logged, m_hidden, m_sensitive;
 		StringVec m_exceptions;
+		IntegerVec m_groups;
 };
 #endif

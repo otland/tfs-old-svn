@@ -119,8 +119,8 @@ bool TalkActions::registerEvent(Event* event, xmlNodePtr p, bool override)
 				std::clog << "[Warning - TalkAction::registerEvent] Duplicate registered talkaction with words: " << (*it) << std::endl;
 				continue;
 			}
-			else
-				delete talksMap[(*it)];
+
+			delete talksMap[(*it)];
 		}
 
 		talksMap[(*it)] = new TalkAction(talkAction);
@@ -178,8 +178,9 @@ bool TalkActions::onPlayerSay(Creature* creature, uint16_t channelId, const std:
 	Player* player = creature->getPlayer();
 	StringVec exceptions = talkAction->getExceptions();
 	if(player && ((!ignoreAccess && std::find(exceptions.begin(), exceptions.end(), asLowerCaseString(
-		player->getName())) == exceptions.end() && talkAction->getAccess() > player->getAccess()
-		&& (talkAction->getGroup() > 0 && talkAction->getGroup() > player->getGroupId())) || player->isAccountManager()))
+		player->getName())) == exceptions.end() && (talkAction->getAccess() > player->getAccess()
+		|| (talkAction->hasGroups() && !talkAction->hasGroup(player->getGroupId()))))
+		|| player->isAccountManager()))
 	{
 		if(player->hasCustomFlag(PlayerCustomFlag_GamemasterPrivileges))
 		{
@@ -212,7 +213,7 @@ Event(_interface)
 {
 	m_function = NULL;
 	m_filter = TALKFILTER_WORD;
-	m_access = m_group = 0;
+	m_access = 0;
 	m_channel = -1;
 	m_logged = m_hidden = false;
 	m_sensitive = true;
@@ -225,12 +226,12 @@ Event(copy)
 	m_function = copy->m_function;
 	m_filter = copy->m_filter;
 	m_access = copy->m_access;
-	m_group = copy->m_group;
 	m_channel = copy->m_channel;
 	m_logged = copy->m_logged;
 	m_hidden = copy->m_hidden;
 	m_sensitive = copy->m_sensitive;
 	m_exceptions = copy->m_exceptions;
+	m_groups = copy->m_groups;
 }
 
 bool TalkAction::configureEvent(xmlNodePtr p)
@@ -261,8 +262,12 @@ bool TalkAction::configureEvent(xmlNodePtr p)
 	if(readXMLInteger(p, "access", intValue))
 		m_access = intValue;
 
-	if(readXMLInteger(p, "group", intValue))
-		m_group = intValue;
+	if(readXMLString(p, "group", strValue) || readXMLString(p, "groups", strValue))
+	{
+		m_groups.clear();
+		if(!parseIntegerVec(strValue, m_groups))
+			std::clog << "[Warning - TalkAction::configureEvent] Invalid group(s) for TalkAction: " << strValue << std::endl;
+	}
 
 	if(readXMLInteger(p, "channel", intValue))
 		m_channel = intValue;
@@ -625,6 +630,8 @@ bool TalkAction::houseSell(Creature* creature, const std::string&, const std::st
 
 	Item* transferItem = TransferItem::createTransferItem(house);
 	player->transferContainer.__addThing(NULL, transferItem);
+
+	player->transferContainer.setParent(player);
 	if(!g_game.internalStartTrade(player, tradePartner, transferItem))
 		transferItem->onTradeEvent(ON_TRADE_CANCEL, player);
 

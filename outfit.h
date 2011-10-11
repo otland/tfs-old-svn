@@ -21,6 +21,7 @@
 #include "otsystem.h"
 #include "enums.h"
 #include "const.h"
+#include "tools.h"
 
 enum AddonRequirement_t
 {
@@ -55,12 +56,13 @@ struct Outfit
 	AddonRequirement_t requirement;
 	int16_t absorb[COMBAT_LAST + 1], reflect[REFLECT_LAST + 1][COMBAT_LAST + 1];
 
-	uint16_t accessLevel, addons, lookMount, mountId;
+	uint16_t accessLevel, addons;
 	int32_t skills[SKILL_LAST + 1], skillsPercent[SKILL_LAST + 1], stats[STAT_LAST + 1], statsPercent[STAT_LAST + 1],
 		speed, healthGain, healthTicks, manaGain, manaTicks, conditionSuppressions;
 
 	uint32_t outfitId, lookType;
 	std::string name, storageId, storageValue;
+	IntegerVec groups;
 };
 
 typedef std::list<Outfit> OutfitList;

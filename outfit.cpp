@@ -62,6 +62,13 @@ bool Outfits::parseOutfitNode(xmlNodePtr p)
 	if(readXMLInteger(p, "access", intValue))
 		newOutfit.accessLevel = intValue;
 
+	if(readXMLString(p, "group", strValue) || readXMLString(p, "groups", strValue))
+	{
+		groups.clear();
+		if(!parseIntegerVec(strValue, groups))
+			std::clog << "[Warning - Outfits::parseOutfitNode] Invalid group(s) for an outfit with id " << outfit.outfitId << std::endl;
+	}
+
 	if(readXMLString(p, "quest", strValue))
 	{
 		newOutfit.storageId = strValue;

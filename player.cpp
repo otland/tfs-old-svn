@@ -93,7 +93,7 @@ Player::Player(const std::string& _name, ProtocolGame* p):
 	setVocation(0);
 	setParty(NULL);
 
-	transferContainer.setParent(this);
+	transferContainer.setParent(NULL);
 	for(int32_t i = 0; i < 11; ++i)
 	{
 		inventory[i] = NULL;
@@ -130,8 +130,6 @@ Player::~Player()
 	playerCount--;
 #endif
 	setWriteItem(NULL);
-
-	transferContainer.setParent(NULL);
 	for(int32_t i = 0; i < 11; ++i)
 	{
 		if(!inventory[i])
@@ -1848,9 +1846,7 @@ void Player::removeMessageBuffer()
 
 double Player::getFreeCapacity() const
 {
-	if(hasFlag(PlayerFlag_CannotPickupItem))
-		return 0.00;
-	else if(hasFlag(PlayerFlag_HasInfiniteCapacity)
+	if(hasFlag(PlayerFlag_HasInfiniteCapacity)
 		|| !g_config.getBool(ConfigManager::USE_CAPACITY))
 		return 10000.00;
 
@@ -2611,9 +2607,6 @@ void Player::autoCloseContainers(const Container* container)
 
 bool Player::hasCapacity(const Item* item, uint32_t count) const
 {
-	if(hasFlag(PlayerFlag_CannotPickupItem))
-		return false;
-
 	if(hasFlag(PlayerFlag_HasInfiniteCapacity) || item->getTopParent() == this)
 		return true;
 
@@ -2642,7 +2635,7 @@ ReturnValue Player::__queryAdd(int32_t index, const Thing* thing, uint32_t count
 		return RET_NOTENOUGHCAPACITY;
 	}
 
-	if(!item->isPickupable())
+	if(!item->isPickupable() || (hasFlag(PlayerFlag_CannotPickupItem) && item->getParent()))
 		return RET_CANNOTPICKUP;
 
 	ReturnValue ret = RET_NOERROR;
@@ -4149,7 +4142,8 @@ bool Player::canWearOutfit(uint32_t outfitId, uint32_t addons)
 {
 	OutfitMap::iterator it = outfits.find(outfitId);
 	if(it == outfits.end() || (it->second.isPremium && !isPremium()) || getAccess() < it->second.accessLevel
-		|| ((it->second.addons & addons) != addons && !hasCustomFlag(PlayerCustomFlag_CanWearAllAddons)))
+		|| (!it->second.groups.empty() && it->second.groups.find(groupId) == it->second.groups.end()) ||
+		((it->second.addons & addons) != addons && !hasCustomFlag(PlayerCustomFlag_CanWearAllAddons)))
 		return false;
 
 	if(it->second.storageId.empty())

@@ -411,6 +411,7 @@ TransferItem* TransferItem::createTransferItem(House* house)
 
 bool TransferItem::onTradeEvent(TradeEvents_t event, Player* owner)
 {
+	owner->transferContainer.setParent(NULL);
 	switch(event)
 	{
 		case ON_TRADE_TRANSFER:
@@ -418,7 +419,7 @@ bool TransferItem::onTradeEvent(TradeEvents_t event, Player* owner)
 			if(house)
 				house->setOwnerEx(owner->getGUID(), true);
 
-			g_game.internalRemoveItem(NULL, this, 1);
+			g_game.internalRemoveItem(NULL, this, getItemCount());
 			break;
 		}
 
