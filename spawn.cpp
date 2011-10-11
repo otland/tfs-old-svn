@@ -137,7 +137,7 @@ bool Spawns::parseSpawnNode(xmlNodePtr p, bool checkDuplicate)
 				if(intValue <= interval)
 				{
 					std::clog << "[Warning - Spawns::loadFromXml] " << name << " " << centerPos << " spawntime cannot"
-						<< " be less than " << interval << " seconds." << std::endl;
+						<< " be less or equal than " << interval << " seconds." << std::endl;
 					continue;
 				}
 
