@@ -64,9 +64,9 @@ bool Outfits::parseOutfitNode(xmlNodePtr p)
 
 	if(readXMLString(p, "group", strValue) || readXMLString(p, "groups", strValue))
 	{
-		groups.clear();
-		if(!parseIntegerVec(strValue, groups))
-			std::clog << "[Warning - Outfits::parseOutfitNode] Invalid group(s) for an outfit with id " << outfit.outfitId << std::endl;
+		newOutfit.groups.clear();
+		if(!parseIntegerVec(strValue, newOutfit.groups))
+			std::clog << "[Warning - Outfits::parseOutfitNode] Invalid group(s) for an outfit with id " << newOutfit.outfitId << std::endl;
 	}
 
 	if(readXMLString(p, "quest", strValue))

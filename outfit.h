@@ -48,7 +48,7 @@ struct Outfit
 		isDefault = true;
 		requirement = REQUIREMENT_BOTH;
 		isPremium = manaShield = invisible = regeneration = false;
-		outfitId = mountId = lookMount = lookType = addons = accessLevel = 0;
+		outfitId = lookType = addons = accessLevel = 0;
 		speed = healthGain = healthTicks = manaGain = manaTicks = conditionSuppressions = 0;
 	}
 
