@@ -91,7 +91,7 @@ class TalkAction : public Event
 		bool isSensitive() const {return m_sensitive;}
 
 		bool hasGroups() const {return !m_groups.empty();}
-		bool hasGroup(int32_t value) const {return m_groups.find(value) != m_groups.end();}
+		bool hasGroup(int32_t value) const {return std::find(m_groups.begin(), m_groups.end(), value) != m_groups.end();}
 
 	protected:
 		virtual std::string getScriptEventName() const {return "onSay";}
