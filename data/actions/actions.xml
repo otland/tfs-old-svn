@@ -233,7 +233,7 @@
 	<action itemid="7503" event="script" value="other/constructionkits.lua"/>
 	<action fromid="7960" toid="7962" event="script" value="other/constructionkits.lua"/>
 	<action fromid="8692" toid="8693" event="script" value="other/constructionkits.lua"/>
-	<!-- <action itemid="9974" event="script" value="other/constructionkits.lua"/> - Dupplicate, please check it -->
+	<!-- <action itemid="9974" event="script" value="other/constructionkits.lua"/> - Duplicate, please check it -->
 
 	<!-- Bed construction kits -->
 	<action fromid="7904" toid="7907" event="script" value="other/furniturebeds.lua"/>
@@ -330,7 +330,7 @@
 	<action itemid="8981" event="script" value="other/dolls.lua"/>
 	<action itemid="8982" event="script" value="other/dolls.lua"/>
 	
-	<!-- Destroy -->
+	<!-- Destroy - wtf? we have default action...! -->
 	<action itemid="2321;2376-2388;2390-2398;2400-2404;2406-2409;2411-2417;2419;2421-2441;2443-2454" event="script" value="other/destroy.lua"/>
 	<action itemid="3961-3964;3966" event="script" value="other/destroy.lua"/>
 	<action itemid="4846" event="script" value="other/destroy.lua"/>
