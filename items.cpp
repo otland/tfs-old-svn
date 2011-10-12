@@ -901,6 +901,16 @@ void Items::parseItemNode(xmlNodePtr itemNode, uint32_t id)
 					it.slotPosition |= SLOTP_TWO_HAND;
 					it.wieldPosition = SLOT_TWO_HAND;
 				}
+				else if(tmpStrValue == "right-hand")
+				{
+					it.slotPosition |= SLOTP_RIGHT;
+					it.wieldPosition = SLOT_RIGHT;
+				}
+				else if(tmpStrValue == "left-hand")
+				{
+					it.slotPosition |= SLOTP_LEFT;
+					it.wieldPosition = SLOT_RIGHT;
+				}
 				else if(tmpStrValue == "necklace")
 				{
 					it.slotPosition |= SLOTP_NECKLACE;
