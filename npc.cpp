@@ -46,7 +46,15 @@ uint32_t Npc::npcCount = 0;
 #endif
 NpcScript* Npc::m_interface = NULL;
 
-bool Npcs::loadFromXml()
+Npcs::~Npcs()
+{
+	for(DataMap::iterator it = data.begin(); it != data.end(); ++it)
+		delete it->second;
+
+	data.clear();
+}
+
+bool Npcs::loadFromXml(bool reloading/* = false*/)
 {
 	xmlDocPtr doc = xmlParseFile(getFilePath(FILE_TYPE_OTHER, "npc/npcs.xml").c_str());
 	if(!doc)
@@ -65,31 +73,90 @@ bool Npcs::loadFromXml()
 
 	for(xmlNodePtr p = root->children; p; p = p->next)
 	{
-    	if(xmlStrcmp(p->name, (const xmlChar*)"npc"))
-    	{
-			std::clog << "[Warning - Npcs::loadFromXml] Unknown node name (" << p->name << ")." << std::endl;
+		if(xmlStrcmp(p->name, (const xmlChar*)"npc"))
+		{
+			std::clog << "[Warning - Npcs::loadFromXml] Unknown node name: " << p->name << "." << std::endl;
     		continue;
-    	}
-
-		std::string name;
-		if(!readXMLString(p, "name", name))
-		{
-			std::clog << "[Warning - Npcs::loadFromXml] Missing npc name!" << std::endl;
-			continue;
 		}
-
-		std::string path;
-		if(!readXMLString(p, "file", path) && !readXMLString(p, "path", path))
-		{
-			std::clog << "[Warning - Npcs::loadFromXml] Missing file path for npc with name " << name << "." << std::endl;
-			continue;
-		}
-
-		if(paths.find(asLowerCaseString(name)) != paths.end())
-			std::clog << "[Warning - Npcs::loadFromXml] Duplicate registered npc with name: " << name << std::endl;
 		else
-			paths[asLowerCaseString(name)] = getFilePath(FILE_TYPE_OTHER, "npc/" + path);
+			parseNpcNode(p, FILE_TYPE_OTHER, reloading);
 	}
+
+	return true;
+}
+
+bool Npcs::parseNpcNode(xmlNodePtr node, FileType_t path, bool reloading/* = false*/)
+{
+	std::string name;
+	if(!readXMLString(node, "name", name))
+	{
+		std::clog << "[Warning - Npcs::parseNpcNode] Missing npc name!" << std::endl;
+		return false;
+	}
+
+	bool new_nType = false;
+	NpcType* nType = NULL;
+	if(!(nType = getType(name)))
+		new_nType = true;
+	else if(reloading)
+	{
+		std::clog << "[Warning - Npcs::parseNpcNode] Duplicate registered npc with name: " << name << "." << std::endl;
+		return false;
+	}
+
+	std::string strValue;
+	if(!readXMLString(node, "file", strValue) && !readXMLString(node, "path", strValue))
+	{
+		std::clog << "[Warning - Npcs::loadFromXml] Missing file path for npc with name " << name << "." << std::endl;
+		return false;
+	}
+
+	if(new_nType)
+		nType = new NpcType();
+
+	nType->name = name;
+	toLowerCaseString(name);
+
+	nType->file = getFilePath(path, "npc/" + strValue);
+	if(readXMLString(node, "nameDescription", strValue) || readXMLString(node, "namedescription", strValue))
+		nType->nameDescription = strValue;
+
+	if(readXMLString(node, "script", strValue))
+		nType->script = strValue;
+		
+	for(xmlNodePtr q = node->children; q; q = q->next)
+	{
+		if(!xmlStrcmp(q->name, (const xmlChar*)"look"))
+		{
+			int32_t intValue;
+			if(readXMLInteger(q, "type", intValue))
+			{
+				nType->outfit.lookType = intValue;
+				if(readXMLInteger(q, "head", intValue))
+					nType->outfit.lookHead = intValue;
+
+				if(readXMLInteger(q, "body", intValue))
+					nType->outfit.lookBody = intValue;
+
+				if(readXMLInteger(q, "legs", intValue))
+					nType->outfit.lookLegs = intValue;
+
+				if(readXMLInteger(q, "feet", intValue))
+					nType->outfit.lookFeet = intValue;
+
+				if(readXMLInteger(q, "addons", intValue))
+					nType->outfit.lookAddons = intValue;
+
+				if(readXMLInteger(q, "mount", intValue))
+					nType->outfit.lookMount = intValue;
+			}
+			else if(readXMLInteger(q, "typeex", intValue))
+				nType->outfit.lookTypeEx = intValue;
+		}
+	}
+
+	if(!new_nType)
+		data[name] = nType;
 
 	return true;
 }
@@ -102,28 +169,27 @@ void Npcs::reload()
 	delete Npc::m_interface;
 	Npc::m_interface = NULL;
 
-	PathMap tmp = paths;
-	paths.clear();
+	DataMap tmp = data;
 	if(!loadFromXml())
-		paths = tmp;
+		data = tmp;
 
 	tmp.clear();
 	for(AutoList<Npc>::iterator it = Npc::autoList.begin(); it != Npc::autoList.end(); ++it)
 		it->second->reload();
 }
 
-std::string Npcs::getPath(const std::string& name) const
+NpcType* Npcs::getType(const std::string& name) const
 {
-	PathMap::const_iterator it = paths.find(asLowerCaseString(name));
-	if(it != paths.end())
-		return it->second;
+	DataMap::const_iterator it = data.find(asLowerCaseString(name));
+	if(it == data.end())
+		return NULL;
 
-	return std::string();
+	return it->second;
 }
- 
-Npc* Npc::createNpc(const std::string& name)
+
+Npc* Npc::createNpc(NpcType* nType)
 {
-	Npc* npc = new Npc(name);
+	Npc* npc = new Npc(nType);
 	if(!npc)
 		return NULL;
 
@@ -134,26 +200,34 @@ Npc* Npc::createNpc(const std::string& name)
 	return NULL;
 }
 
-Npc::Npc(const std::string& _name):
+Npc* Npc::createNpc(const std::string& name)
+{
+	NpcType* nType = NULL;
+	if(!(nType = g_npcs.getType(name)))
+	{
+		nType = new NpcType();
+		nType->name = name;
+
+		nType->file = getFilePath(FILE_TYPE_OTHER, "npc/" + name + ".xml");
+		if(!fileExists(nType->file.c_str()))
+		{
+			nType->file = getFilePath(FILE_TYPE_MOD, "npc/" + name + ".xml");
+			if(!fileExists(nType->file.c_str()))
+				nType->file = std::string();
+		}
+	}
+
+	return createNpc(nType);
+}
+
+Npc::Npc(NpcType* _nType):
 	Creature()
 {
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
 	++npcCount;
 #endif
+	nType = _nType;
 	reset();
-	name = _name;
-
-	filename = g_npcs.getPath(name);
-	if(filename.empty())
-	{
-		filename = getFilePath(FILE_TYPE_OTHER, "npc/" + name + ".xml");
-		if(!fileExists(filename.c_str()))
-		{
-			filename = getFilePath(FILE_TYPE_MOD, "npc/" + name + ".xml");
-			if(!fileExists(filename.c_str()))
-				filename = std::string();
-		}
-	}
 }
 
 Npc::~Npc()
@@ -204,9 +278,9 @@ bool Npc::load()
 	if(isLoaded())
 		return true;
 
-	if(filename.empty())
+	if(nType->file.empty())
 	{
-		std::clog << "[Warning - Npc::load] Cannot load npc with name: " << name << "." << std::endl;
+		std::clog << "[Warning - Npc::load] Cannot load npc with name: " << nType->name << "." << std::endl;
 		return false;
 	}
 
@@ -217,7 +291,8 @@ bool Npc::load()
 		m_interface->loadFile(getFilePath(FILE_TYPE_OTHER, "npc/lib/npcsystem/main.lua"));
 	}
 
-	loaded = loadFromXml(filename);
+	loaded = loadFromXml();
+	defaultOutfit = currentOutfit = nType->outfit;
 	return isLoaded();
 }
 
@@ -233,12 +308,12 @@ void Npc::reload()
 		addEventWalk();
 }
 
-bool Npc::loadFromXml(const std::string& filename)
+bool Npc::loadFromXml()
 {
-	xmlDocPtr doc = xmlParseFile(filename.c_str());
+	xmlDocPtr doc = xmlParseFile(nType->file.c_str());
 	if(!doc)
 	{
-		std::clog << "[Warning - Npc::loadFromXml] Cannot load npc file (" << filename << ")." << std::endl;
+		std::clog << "[Warning - Npc::loadFromXml] Cannot load npc file: " << nType->file << "." << std::endl;
 		std::clog << getLastXMLError() << std::endl;
 		return false;
 	}
@@ -246,23 +321,23 @@ bool Npc::loadFromXml(const std::string& filename)
 	xmlNodePtr root = xmlDocGetRootElement(doc);
 	if(xmlStrcmp(root->name,(const xmlChar*)"npc"))
 	{
-		std::clog << "[Error - Npc::loadFromXml] Malformed npc file (" << filename << ")." << std::endl;
+		std::clog << "[Warning - Npc::loadFromXml] Malformed npc file: " << nType->file << "." << std::endl;
 		xmlFreeDoc(doc);
 		return false;
 	}
 
 	int32_t intValue;
-	std::string strValue, scriptfile;
-	if(readXMLString(root, "script", strValue))
-		scriptfile = strValue;
-
+	std::string strValue;
 	if(readXMLString(root, "name", strValue))
-		name = strValue;
+		nType->name = strValue;
 
-	nameDescription = name;
+	if(readXMLString(root, "script", strValue))
+		nType->script = strValue;
+
 	if(readXMLString(root, "namedescription", strValue) || readXMLString(root, "nameDescription", strValue))
-		nameDescription = strValue;
+		nType->nameDescription = strValue;
 
+	nType->nameDescription = replaceString(nType->nameDescription, "|NAME|", nType->name);
 	if(readXMLString(root, "hidename", strValue) || readXMLString(root, "hideName", strValue))
 		hideName = booleanString(strValue);
 
@@ -280,7 +355,7 @@ bool Npc::loadFromXml(const std::string& filename)
 		walkable = booleanString(strValue);
 
 	if(readXMLInteger(root, "autowalk", intValue))
-		std::clog << "[Notice - Npc::Npc] NPC: " << name << " - autowalk attribute has been deprecated, use walkinterval instead." << std::endl;
+		std::clog << "[Notice - Npc::Npc] NPC: " << nType->name << " - autowalk attribute has been deprecated, use walkinterval instead." << std::endl;
 
 	if(readXMLInteger(root, "walkinterval", intValue))
 		walkTicks = intValue;
@@ -321,29 +396,27 @@ bool Npc::loadFromXml(const std::string& filename)
 		{
 			if(readXMLInteger(p, "type", intValue))
 			{
-				defaultOutfit.lookType = intValue;
+				nType->outfit.lookType = intValue;
 				if(readXMLInteger(p, "head", intValue))
-					defaultOutfit.lookHead = intValue;
+					nType->outfit.lookHead = intValue;
 
 				if(readXMLInteger(p, "body", intValue))
-					defaultOutfit.lookBody = intValue;
+					nType->outfit.lookBody = intValue;
 
 				if(readXMLInteger(p, "legs", intValue))
-					defaultOutfit.lookLegs = intValue;
+					nType->outfit.lookLegs = intValue;
 
 				if(readXMLInteger(p, "feet", intValue))
-					defaultOutfit.lookFeet = intValue;
+					nType->outfit.lookFeet = intValue;
 
 				if(readXMLInteger(p, "addons", intValue))
-					defaultOutfit.lookAddons = intValue;
+					nType->outfit.lookAddons = intValue;
 
 				if(readXMLInteger(p, "mount", intValue))
-					defaultOutfit.lookMount = intValue;
+					nType->outfit.lookMount = intValue;
 			}
 			else if(readXMLInteger(p, "typeex", intValue))
-				defaultOutfit.lookTypeEx = intValue;
-
-			currentOutfit = defaultOutfit;
+				nType->outfit.lookTypeEx = intValue;
 		}
 		else if(!xmlStrcmp(p->name, (const xmlChar*)"voices"))
 		{
@@ -412,24 +485,24 @@ bool Npc::loadFromXml(const std::string& filename)
 			if(readXMLInteger(p, "defaultpublic", intValue))
 				defaultPublic = intValue != 0;
 
-			responseList = loadInteraction(p->children);
+			responseList = parseInteractionNode(p->children);
 		}
 	}
 
 	xmlFreeDoc(doc);
-	if(scriptfile.empty())
+	if(nType->script.empty())
 		return true;
 
-	replaceString(scriptfile, "|DATA|", getFilePath(FILE_TYPE_OTHER, "npc/scripts"));
-	replaceString(scriptfile, "|MODS|", getFilePath(FILE_TYPE_MOD, "scripts"));
-	if(scriptfile.find("/") == std::string::npos)
-		scriptfile = getFilePath(FILE_TYPE_OTHER, "npc/scripts/" + scriptfile);
+	replaceString(nType->script, "|DATA|", getFilePath(FILE_TYPE_OTHER, "npc/scripts"));
+	replaceString(nType->script, "|MODS|", getFilePath(FILE_TYPE_MOD, "scripts"));
+	if(nType->script.find("/") == std::string::npos)
+		nType->script = getFilePath(FILE_TYPE_OTHER, "npc/scripts/" + nType->script);
 
-	m_npcEventHandler = new NpcEvents(scriptfile, this);
+	m_npcEventHandler = new NpcEvents(nType->script, this);
 	return m_npcEventHandler->isLoaded();
 }
 
-uint32_t Npc::loadParams(xmlNodePtr node)
+uint32_t Npc::parseParamsNode(xmlNodePtr node)
 {
 	std::string strValue;
 	uint32_t params = RESPOND_DEFAULT;
@@ -464,20 +537,20 @@ uint32_t Npc::loadParams(xmlNodePtr node)
 			else if(tmpParam == "lowlevel")
 				params |= RESPOND_LOWLEVEL;
 			else
-				std::clog << "[Warning - Npc::loadParams] NPC Name: " << name << " - Unknown param " << (*it) << std::endl;
+				std::clog << "[Warning - Npc::parseParamsNode] NPC Name: " << nType->name << " - Unknown param " << (*it) << std::endl;
 		}
 	}
 
 	return params;
 }
 
-ResponseList Npc::loadInteraction(xmlNodePtr node)
+ResponseList Npc::parseInteractionNode(xmlNodePtr node)
 {
 	std::string strValue;
 	int32_t intValue;
 
 	ResponseList _responseList;
-	while(node)
+	for(; node; node = node->next)
 	{
 		if(!xmlStrcmp(node->name, (const xmlChar*)"include"))
 		{
@@ -488,17 +561,17 @@ ResponseList Npc::loadInteraction(xmlNodePtr node)
 					xmlNodePtr root = xmlDocGetRootElement(doc);
 					if(!xmlStrcmp(root->name,(const xmlChar*)"interaction"))
 					{
-						ResponseList includedResponses = loadInteraction(root->children);
+						ResponseList includedResponses = parseInteractionNode(root->children);
 						_responseList.insert(_responseList.end(), includedResponses.begin(), includedResponses.end());
 					}
 					else
-						std::clog << "[Error - Npc::loadInteraction] Malformed interaction file (" << strValue << ")." << std::endl;
+						std::clog << "[Error - Npc::parseInteractionNode] Malformed interaction file (" << strValue << ")." << std::endl;
 
 					xmlFreeDoc(doc);
 				}
 				else
 				{
-					std::clog << "[Warning - Npc::loadInteraction] Cannot load interaction file (" << strValue << ")." << std::endl;
+					std::clog << "[Warning - Npc::parseInteractionNode] Cannot load interaction file (" << strValue << ")." << std::endl;
 					std::clog << getLastXMLError() << std::endl;
 				}
 			}
@@ -521,7 +594,7 @@ ResponseList Npc::loadInteraction(xmlNodePtr node)
 							ListItem li;
 							if(!readXMLInteger(tmpNode, "id", intValue))
 							{
-								std::clog << "[Warning - Npc::loadInteraction] NPC Name: " << name << " - Missing list item itemId" << std::endl;
+								std::clog << "[Warning - Npc::parseInteractionNode] NPC Name: " << nType->name << " - Missing list item itemId" << std::endl;
 								tmpNode = tmpNode->next;
 								continue;
 							}
@@ -539,7 +612,7 @@ ResponseList Npc::loadInteraction(xmlNodePtr node)
 								li.keywords = strValue;
 							else
 							{
-								std::clog << "[Warning - Npc::loadInteraction] NPC Name: " << name << " - Missing list item keywords" << std::endl;
+								std::clog << "[Warning - Npc::parseInteractionNode] NPC Name: " << nType->name << " - Missing list item keywords" << std::endl;
 								tmpNode = tmpNode->next;
 								continue;
 							}
@@ -568,7 +641,7 @@ ResponseList Npc::loadInteraction(xmlNodePtr node)
 					}
 				}
 				else
-					std::clog << "[Warning - Npc::loadInteraction] NPC Name: " << name << " - Duplicate listId found: " << strValue << std::endl;
+					std::clog << "[Warning - Npc::parseInteractionNode] NPC Name: " << nType->name << " - Duplicate listId found: " << strValue << std::endl;
 			}
 		}
 		else if(!xmlStrcmp(node->name, (const xmlChar*)"interact"))
@@ -599,7 +672,7 @@ ResponseList Npc::loadInteraction(xmlNodePtr node)
 			if(readXMLString(node, "storageValue", strValue))
 				prop.storageValue = strValue;
 
-			uint32_t interactParams = loadParams(node);
+			uint32_t interactParams = parseParamsNode(node);
 			if(readXMLString(node, "storageComp", strValue))
 			{
 				std::string tmpStrValue = asLowerCaseString(strValue);
@@ -647,7 +720,7 @@ ResponseList Npc::loadInteraction(xmlNodePtr node)
 								if(it != itemListMap.end())
 									prop.itemList.insert(prop.itemList.end(), it->second.begin(), it->second.end());
 								else
-									std::clog << "[Warning - Npc::loadInteraction] NPC Name: " << name << " - Could not find a list id called: " << strValue << std::endl;
+									std::clog << "[Warning - Npc::parseInteractionNode] NPC Name: " << nType->name << " - Could not find a list id called: " << strValue << std::endl;
 							}
 						}
 
@@ -658,13 +731,12 @@ ResponseList Npc::loadInteraction(xmlNodePtr node)
 				tmpNode = tmpNode->next;
 			}
 
-			tmpNode = node->children;
-			while(tmpNode)
+			for(tmpNode = node->children; tmpNode; tmpNode = tmpNode->next)
 			{
 				if(!xmlStrcmp(tmpNode->name, (const xmlChar*)"response"))
 				{
 					prop.output = prop.knowSpell = "";
-					prop.params = interactParams | loadParams(tmpNode);
+					prop.params = interactParams | parseParamsNode(tmpNode);
 
 					ScriptVars scriptVars;
 					if(readXMLString(tmpNode, "knowspell", strValue))
@@ -694,8 +766,7 @@ ResponseList Npc::loadInteraction(xmlNodePtr node)
 						scriptVars.b3 = (intValue == 1);
 
 					ResponseList subResponseList;
-					xmlNodePtr subNode = tmpNode->children;
-					while(subNode)
+					for(xmlNodePtr subNode = tmpNode->children; subNode; subNode = subNode->next)
 					{
 						if(!xmlStrcmp(subNode->name, (const xmlChar*)"action"))
 						{
@@ -752,7 +823,7 @@ ResponseList Npc::loadInteraction(xmlNodePtr node)
 										action.actionType = ACTION_SETSPELL;
 										action.strValue = strValue;
 										if(strValue != "|SPELL|" && !g_spells->getInstantSpellByName(strValue))
-											std::clog << "[Warning - Npc::loadInteraction] NPC Name: " << name << " - Could not find an instant spell called: " << strValue << std::endl;
+											std::clog << "[Warning - Npc::parseInteractionNode] NPC Name: " << nType->name << " - Could not find an instant spell called: " << strValue << std::endl;
 									}
 								}
 								else if(tmpStrValue == "listname")
@@ -778,7 +849,7 @@ ResponseList Npc::loadInteraction(xmlNodePtr node)
 										action.actionType = ACTION_TEACHSPELL;
 										action.strValue = strValue;
 										if(strValue != "|SPELL|" && !g_spells->getInstantSpellByName(strValue))
-											std::clog << "[Warning - Npc::loadInteraction] NPC Name: " << name << " - Could not find an instant spell called: " << strValue << std::endl;
+											std::clog << "[Warning - Npc::parseInteractionNode] NPC Name: " << nType->name << " - Could not find an instant spell called: " << strValue << std::endl;
 									}
 								}
 								else if(tmpStrValue == "unteachspell")
@@ -788,7 +859,7 @@ ResponseList Npc::loadInteraction(xmlNodePtr node)
 										action.actionType = ACTION_UNTEACHSPELL;
 										action.strValue = strValue;
 										if(strValue != "|SPELL|" && !g_spells->getInstantSpellByName(strValue))
-											std::clog << "[Warning - Npc::loadInteraction] NPC Name: " << name << " - Could not find an instant spell called: " << strValue << std::endl;
+											std::clog << "[Warning - Npc::parseInteractionNode] NPC Name: " << nType->name << " - Could not find an instant spell called: " << strValue << std::endl;
 									}
 								}
 								else if(tmpStrValue == "sell")
@@ -927,7 +998,7 @@ ResponseList Npc::loadInteraction(xmlNodePtr node)
 									}
 								}
 								else
-									std::clog << "[Warning - Npc::loadInteraction] Unknown action " << strValue << std::endl;
+									std::clog << "[Warning - Npc::parseInteractionNode] Unknown action " << strValue << std::endl;
 							}
 
 							if(readXMLString(subNode, "key", strValue))
@@ -940,13 +1011,11 @@ ResponseList Npc::loadInteraction(xmlNodePtr node)
 						{
 							if(subResponseList.empty())
 							{
-								ResponseList nodeResponseList = loadInteraction(subNode);
+								ResponseList nodeResponseList = parseInteractionNode(subNode);
 								subResponseList.insert(subResponseList.end(),
 									nodeResponseList.begin(), nodeResponseList.end());
 							}
 						}
-
-						subNode = subNode->next;
 					}
 
 					//Check if this interaction has a |list| keyword
@@ -1039,12 +1108,8 @@ ResponseList Npc::loadInteraction(xmlNodePtr node)
 						_responseList.push_back(response);
 					}
 				}
-
-				tmpNode = tmpNode->next;
 			}
 		}
-
-		node = node->next;
 	}
 
 	return _responseList;
@@ -2471,7 +2536,7 @@ std::string Npc::formatResponse(Creature* creature, const NpcState* npcState, co
 	}
 
 	replaceString(responseString, "|NAME|", creature->getName());
-	replaceString(responseString, "|NPCNAME|", getName());
+	replaceString(responseString, "|NPCNAME|", nType->name);
 	return responseString;
 }
 

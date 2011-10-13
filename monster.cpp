@@ -52,10 +52,15 @@ Monster* Monster::createMonster(const std::string& name)
 Monster::Monster(MonsterType* _mType):
 	Creature()
 {
+#ifdef __ENABLE_SERVER_DIAGNOSTIC__
+	monsterCount++;
+#endif
+	mType = _mType;
+
 	isIdle = true;
 	isMasterInRange = false;
 	teleportToMaster = false;
-	mType = _mType;
+	
 	spawn = NULL;
 	raid = NULL;
 	defaultOutfit = mType->outfit;
@@ -94,10 +99,6 @@ Monster::Monster(MonsterType* _mType):
 		if(!registerCreatureEvent(*it))
 			std::clog << "[Warning - Monster::Monster] Unknown event name - " << *it << std::endl;
 	}
-
-#ifdef __ENABLE_SERVER_DIAGNOSTIC__
-	monsterCount++;
-#endif
 }
 
 Monster::~Monster()

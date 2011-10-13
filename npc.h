@@ -24,22 +24,27 @@
 #include "luascript.h"
 
 class Npc;
+struct NpcType
+{
+	std::string name, file, nameDescription, script;
+	Outfit_t outfit;
+};
 
 class Npcs
 {
 	public:
 		Npcs() {}
-		virtual ~Npcs() {}
-
-		bool loadFromXml();
+		virtual ~Npcs();
 		void reload();
-		
-		std::string getPath(const std::string& name) const;
-		void setPath(const std::string& path, const std::string& name) {paths[name] = path;}
+
+		bool loadFromXml(bool reloading = false);
+		bool parseNpcNode(xmlNodePtr node, FileType_t path, bool reloading = false);
+
+		NpcType* getType(const std::string& name) const;
 
 	private:
-		typedef std::map<std::string, std::string> PathMap;
-		PathMap paths;
+		typedef std::map<std::string, NpcType*> DataMap;
+		DataMap data;
 };
 
 struct NpcState;
@@ -353,6 +358,8 @@ class Npc : public Creature
 		static uint32_t npcCount;
 #endif
 		virtual ~Npc();
+
+		static Npc* createNpc(NpcType* nType);
 		static Npc* createNpc(const std::string& name);
 
 		virtual Npc* getNpc() {return this;}
@@ -378,8 +385,8 @@ class Npc : public Creature
 
 		void setNpcPath(const std::string& _name, bool fromXmlFile = false);
 
-		virtual const std::string& getName() const {return name;}
-		virtual const std::string& getNameDescription() const {return nameDescription;}
+		virtual const std::string& getName() const {return nType->name;}
+		virtual const std::string& getNameDescription() const {return nType->nameDescription;}
 
 		void doSay(const std::string& text, MessageClasses type, Player* player);
 
@@ -393,8 +400,12 @@ class Npc : public Creature
 		NpcScript* getInterface();
 
 	protected:
-		Npc(const std::string& _name);
+		Npc(NpcType* _nType);
+		NpcType* nType;
 		bool loaded;
+
+		void reset();
+		bool loadFromXml();
 
 		virtual void onCreatureAppear(const Creature* creature);
 		virtual void onCreatureDisappear(const Creature* creature, bool isLogout);
@@ -406,12 +417,9 @@ class Npc : public Creature
 		bool isImmune(CombatType_t) const {return true;}
 		bool isImmune(ConditionType_t) const {return true;}
 
-		virtual std::string getDescription(int32_t) const {return nameDescription + ".";}
+		virtual std::string getDescription(int32_t) const {return nType->nameDescription + ".";}
 		virtual bool getNextStep(Direction& dir, uint32_t& flags);
 		bool getRandomStep(Direction& dir);
-
-		void reset();
-		bool loadFromXml(const std::string& name);
 		bool canWalkTo(const Position& fromPos, Direction dir);
 
 		const NpcResponse* getResponse(const ResponseList& list, const Player* player,
@@ -429,8 +437,8 @@ class Npc : public Creature
 		std::string formatResponse(Creature* creature, const NpcState* npcState, const NpcResponse* response) const;
 		void executeResponse(Player* player, NpcState* npcState, const NpcResponse* response);
 
-		uint32_t loadParams(xmlNodePtr node);
-		ResponseList loadInteraction(xmlNodePtr node);
+		uint32_t parseParamsNode(xmlNodePtr node);
+		ResponseList parseInteractionNode(xmlNodePtr node);
 
 		void onPlayerEnter(Player* player, NpcState* state);
 		void onPlayerLeave(Player* player, NpcState* state);
@@ -445,8 +453,6 @@ class Npc : public Creature
 		int32_t talkRadius, idleTime, idleInterval, focusCreature;
 		uint32_t walkTicks;
 		int64_t lastVoice;
-
-		std::string name, nameDescription, filename;
 
 		typedef std::map<std::string, std::list<ListItem> > ItemListMap;
 		ItemListMap itemListMap;

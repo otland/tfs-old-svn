@@ -893,8 +893,8 @@ bool Monsters::deserializeSpell(xmlNodePtr node, spellBlock_t& sb, const std::st
 	return true;
 }
 
-#define SHOW_XML_WARNING(desc) std::clog << "[Warning - Monsters::loadMonster] " << desc << ". (" << file << ")" << std::endl;
-#define SHOW_XML_ERROR(desc) std::clog << "[Error - Monsters::loadMonster] " << desc << ". (" << file << ")" << std::endl;
+#define SHOW_XML_WARNING(desc) std::clog << "[Warning - Monsters::loadMonster] " << desc << " (" << file << ")." << std::endl;
+#define SHOW_XML_ERROR(desc) std::clog << "[Error - Monsters::loadMonster] " << desc << " (" << file << ")." << std::endl;
 
 bool Monsters::loadMonster(const std::string& file, const std::string& monsterName, bool reloading/* = false*/)
 {
@@ -1596,4 +1596,6 @@ Monsters::~Monsters()
 	loaded = false;
 	for(MonsterMap::iterator it = monsters.begin(); it != monsters.end(); ++it)
 		delete it->second;
+
+	monsters.clear();
 }
