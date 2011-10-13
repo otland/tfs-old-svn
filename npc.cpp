@@ -140,6 +140,7 @@ Npc::Npc(const std::string& _name):
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
 	++npcCount;
 #endif
+	reset();
 	name = _name;
 
 	filename = g_npcs.getPath(name);
