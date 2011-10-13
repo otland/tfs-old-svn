@@ -26,6 +26,30 @@ function destroyItem(cid, itemEx, toPosition)
 	if(itemEx.uid <= 65535 or itemEx.actionid > 0) then
 		return false
 	end
+	
+	if(isInArray(SPIDER_WEB, itemEx.itemid)) then
+		if math.random(3) == 1 then
+			doTransformItem(itemEx.uid, (itemEx.itemid + 6))
+			doDecayItem(itemEx.uid)
+		end
+
+		doSendMagicEffect(toPosition, CONST_ME_POFF)
+		return true
+	end
+	
+	if(isInArray(BAMBOO_FENCE, itemEx.itemid)) then
+		if math.random(3) == 1 then
+			if(itemEx.itemid == BAMBOO_FENCE[1]) then
+				doTransformItem(itemEx.uid, (itemEx.itemid + 161))
+			elseif(itemEx.itemid == BAMBOO_FENCE[2]) then
+				doTransformItem(itemEx.uid, (itemEx.itemid + 159))
+			end
+			doDecayItem(itemEx.uid)
+		end
+
+		doSendMagicEffect(toPosition, CONST_ME_POFF)
+		return true
+	end
 
 	if not(isInArray({1770, 2098, 1774, 2064, 2094, 2095, 1619, 2602, 3805, 3806}, itemEx.itemid) or
 		(itemEx.itemid >= 1724 and itemEx.itemid <= 1741) or
