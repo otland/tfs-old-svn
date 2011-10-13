@@ -699,7 +699,7 @@ void otserv(StringVec, ServiceManager* services)
 	if(fileExists(getFilePath(FILE_TYPE_OTHER, "npc/npcs.xml").c_str()))
 	{
 		std::clog << ">> Loading npcs" << std::endl;
-		if(!g_npcs.loadNpcPaths())
+		if(!g_npcs.loadFromXml())
 		{
 			std::clog << "Unable to load npcs! Continue? (y/N)" << std::endl;
 			char buffer = getch();

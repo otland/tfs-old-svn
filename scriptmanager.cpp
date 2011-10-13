@@ -297,6 +297,12 @@ bool ScriptManager::loadFromXml(const std::string& file, bool& enabled)
 				if((readXMLString(p, "file", path) || readXMLString(p, "path", path)) && readXMLString(p, "name", name))
 					g_monsters.loadMonster(getFilePath(FILE_TYPE_MOD, "monster/" + path), name, true);
 			}
+			else if(!xmlStrcmp(p->name, (const xmlChar*)"npc"))
+			{
+				std::string path, name;
+				if((readXMLString(p, "file", path) || readXMLString(p, "path", path)) && readXMLString(p, "name", name))
+					g_npcs.setPath(name, getFilePath(FILE_TYPE_MOD, "npc/" + path));
+			}
 			else if(!xmlStrcmp(p->name, (const xmlChar*)"item"))
 			{
 				if(readXMLInteger(p, "id", intValue))

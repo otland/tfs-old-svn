@@ -31,16 +31,15 @@ class Npcs
 		Npcs() {}
 		virtual ~Npcs() {}
 
+		bool loadFromXml();
 		void reload();
-		bool Npcs::loadNpcPaths();
-		std::string getPathByName(const std::string& name);
-		uint32_t getNpcCount() { return npcPaths.size(); }
-		void storeNpcPath(std::string name, std::string path) { npcPaths[asLowerCaseString(name)] = path; }
-		bool fromXmlFile;
+		
+		std::string getPath(const std::string& name) const;
+		void setPath(const std::string& path, const std::string& name) {paths[name] = path;}
 
 	private:
-		typedef std::map<std::string, std::string> NpcPathMap;
-		NpcPathMap npcPaths;
+		typedef std::map<std::string, std::string> PathMap;
+		PathMap paths;
 };
 
 struct NpcState;
@@ -447,7 +446,7 @@ class Npc : public Creature
 		uint32_t walkTicks;
 		int64_t lastVoice;
 
-		std::string name, nameDescription, m_filename;
+		std::string name, nameDescription, filename;
 
 		typedef std::map<std::string, std::list<ListItem> > ItemListMap;
 		ItemListMap itemListMap;

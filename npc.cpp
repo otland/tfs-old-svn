@@ -46,39 +46,12 @@ uint32_t Npc::npcCount = 0;
 #endif
 NpcScript* Npc::m_interface = NULL;
 
-void Npcs::reload()
-{
-	for(AutoList<Npc>::iterator it = Npc::autoList.begin(); it != Npc::autoList.end(); ++it)
-		it->second->closeAllShopWindows();
-
-	NpcPathMap tmp = npcPaths;
-	npcPaths.clear();
-	if(!loadNpcPaths())
-		npcPaths = tmp;
-
-	tmp.clear();
-
-	delete Npc::m_interface;
-	Npc::m_interface = NULL;
-	for(AutoList<Npc>::iterator it = Npc::autoList.begin(); it != Npc::autoList.end(); ++it)
-		it->second->reload();
-}
-
-std::string Npcs::getPathByName(const std::string& name)
-{
-	NpcPathMap::iterator it = npcPaths.find(asLowerCaseString(name));
-	if(it != npcPaths.end())
-		return it->second;
-
-	return "";
-}
-
-bool Npcs::loadNpcPaths()
+bool Npcs::loadFromXml()
 {
 	xmlDocPtr doc = xmlParseFile(getFilePath(FILE_TYPE_OTHER, "npc/npcs.xml").c_str());
 	if(!doc)
 	{
-		std::clog << "[Warning - Npcs::Npcs] Cannot load npcs file." << std::endl;
+		std::clog << "[Warning - Npcs::loadFromXml] Cannot load npcs file." << std::endl;
 		std::clog << getLastXMLError() << std::endl;
 		return false;
 	}
@@ -86,32 +59,66 @@ bool Npcs::loadNpcPaths()
 	xmlNodePtr root = xmlDocGetRootElement(doc);
 	if(xmlStrcmp(root->name,(const xmlChar*)"npcs"))
 	{
-		std::clog << "[Error - Npcs::Npcs] Malformed npcs file." << std::endl;
+		std::clog << "[Error - Npcs::loadFromXml] Malformed npcs file." << std::endl;
 		return false;
 	}
 
 	for(xmlNodePtr p = root->children; p; p = p->next)
 	{
-    	if(p->type != XML_ELEMENT_NODE)
-    		continue;
-    
     	if(xmlStrcmp(p->name, (const xmlChar*)"npc"))
     	{
-			std::clog << "[Warning - Npcs::Npcs] Unknown node name (" << p->name << ")." << std::endl;
+			std::clog << "[Warning - Npcs::loadFromXml] Unknown node name (" << p->name << ")." << std::endl;
     		continue;
     	}
-    		
-		std::string file, name;
-		if(!readXMLString(p, "file", file) || !readXMLString(p, "name", name))
-			continue;
 
-		if(!getPathByName(name).empty())
-			std::clog << "[Warning - Npcs::Npcs] Duplicate registered npc with name: " << name << std::endl;
+		std::string name;
+		if(!readXMLString(p, "name", name))
+		{
+			std::clog << "[Warning - Npcs::loadFromXml] Missing npc name!" << std::endl;
+			continue;
+		}
+
+		std::string path;
+		if(!readXMLString(p, "file", path) && !readXMLString(p, "path", path))
+		{
+			std::clog << "[Warning - Npcs::loadFromXml] Missing file path for npc with name " << name << "." << std::endl;
+			continue;
+		}
+
+		if(paths.find(asLowerCaseString(name)) != paths.end())
+			std::clog << "[Warning - Npcs::loadFromXml] Duplicate registered npc with name: " << name << std::endl;
 		else
-			storeNpcPath(name, file);
+			paths[asLowerCaseString(name)] = getFilePath(FILE_TYPE_OTHER, "npc/" + path);
 	}
 
 	return true;
+}
+
+void Npcs::reload()
+{
+	for(AutoList<Npc>::iterator it = Npc::autoList.begin(); it != Npc::autoList.end(); ++it)
+		it->second->closeAllShopWindows();
+
+	delete Npc::m_interface;
+	Npc::m_interface = NULL;
+
+	PathMap tmp = paths;
+	paths.clear();
+	if(!loadFromXml())
+		paths = tmp;
+
+	tmp.clear();
+	for(AutoList<Npc>::iterator it = Npc::autoList.begin(); it != Npc::autoList.end(); ++it)
+		it->second->reload();
+}
+
+std::string Npcs::getPath(const std::string& name) const
+{
+	PathMap::const_iterator it = paths.find(asLowerCaseString(name));
+	if(it != paths.end())
+		return it->second;
+
+	return std::string();
 }
  
 Npc* Npc::createNpc(const std::string& name)
@@ -131,45 +138,29 @@ Npc::Npc(const std::string& _name):
 	Creature()
 {
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
-	npcCount++;
+	++npcCount;
 #endif
-    
-	std::string path = getFilePath(FILE_TYPE_OTHER, "npc/npcs.xml");
-	if(!fileExists(path.c_str()))
-		setNpcPath(_name);
-	else
-		setNpcPath(_name, true);
-	
-	m_npcEventHandler = NULL;
-	loaded = false;
-	reset();
+	name = _name;
+
+	filename = g_npcs.getPath(name);
+	if(filename.empty())
+	{
+		filename = getFilePath(FILE_TYPE_OTHER, "npc/" + name + ".xml");
+		if(!fileExists(filename.c_str()))
+		{
+			filename = getFilePath(FILE_TYPE_MOD, "npc/" + name + ".xml");
+			if(!fileExists(filename.c_str()))
+				filename = std::string();
+		}
+	}
 }
 
 Npc::~Npc()
 {
 	reset();
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
-	npcCount--;
+	--npcCount;
 #endif
-}
- 
-bool Npc::load()
-{
-	if(isLoaded())
-		return true;
-
-	reset();
-	if(!m_interface)
-	{
-		m_interface = new NpcScript();
-		m_interface->loadFile(getFilePath(FILE_TYPE_OTHER, "npc/lib/npc.lua"));
-		m_interface->loadFile(getFilePath(FILE_TYPE_OTHER, "npc/lib/npcsystem/main.lua"));
-	}
-
-    if(!m_filename.empty())
-       loaded = loadFromXml(m_filename);
-
-	return isLoaded();
 }
 
 void Npc::reset()
@@ -206,6 +197,28 @@ void Npc::reset()
 	shopPlayerList.clear();
 	voiceList.clear();
 }
+ 
+bool Npc::load()
+{
+	if(isLoaded())
+		return true;
+
+	if(filename.empty())
+	{
+		std::clog << "[Warning - Npc::load] Cannot load npc with name: " << name << "." << std::endl;
+		return false;
+	}
+
+	if(!m_interface)
+	{
+		m_interface = new NpcScript();
+		m_interface->loadFile(getFilePath(FILE_TYPE_OTHER, "npc/lib/npc.lua"));
+		m_interface->loadFile(getFilePath(FILE_TYPE_OTHER, "npc/lib/npcsystem/main.lua"));
+	}
+
+	loaded = loadFromXml(filename);
+	return isLoaded();
+}
 
 void Npc::reload()
 {
@@ -219,39 +232,6 @@ void Npc::reload()
 		addEventWalk();
 }
 
-void Npc::setNpcPath(const std::string& _name, bool fromXmlFile/* = false*/)
-{
-	if(fromXmlFile)
-	{
-		std::string file, name;
-		file = g_npcs.getPathByName(_name);
-			
-		if(!file.empty())
-		{
-			name = _name;
-			m_filename = getFilePath(FILE_TYPE_OTHER, "npc/" + file);
-			if(!fileExists(m_filename.c_str()))
-			{
-				std::string tmp = getFilePath(FILE_TYPE_MOD, "npc/" + name + ".xml");
-				if(fileExists(tmp.c_str()))
-            		m_filename = tmp;
-				else
-					std::clog << "[Warning - Npc::Npc] Cannot load npc (" << name << ") file (" << file << ")." << std::endl;
-			}
-		}
-	}
-	else
-	{
-		m_filename = getFilePath(FILE_TYPE_OTHER, "npc/" + _name + ".xml");
-		if(!fileExists(m_filename.c_str()))
-		{
-			std::string tmp = getFilePath(FILE_TYPE_MOD, "npc/" + _name + ".xml");
-			if(fileExists(tmp.c_str()))
-				m_filename = tmp;
-		}
-	}
-}
-
 bool Npc::loadFromXml(const std::string& filename)
 {
 	xmlDocPtr doc = xmlParseFile(filename.c_str());
@@ -262,7 +242,7 @@ bool Npc::loadFromXml(const std::string& filename)
 		return false;
 	}
 
-	xmlNodePtr p, root = xmlDocGetRootElement(doc);
+	xmlNodePtr root = xmlDocGetRootElement(doc);
 	if(xmlStrcmp(root->name,(const xmlChar*)"npc"))
 	{
 		std::clog << "[Error - Npc::loadFromXml] Malformed npc file (" << filename << ")." << std::endl;
@@ -322,8 +302,7 @@ bool Npc::loadFromXml(const std::string& filename)
 	if(readXMLString(root, "emblem", strValue))
 		setEmblem(getEmblems(strValue));
 
-	p = root->children;
-	while(p)
+	for(xmlNodePtr p = root->children; p; p = p->next)
 	{
 		if(!xmlStrcmp(p->name, (const xmlChar*)"health"))
 		{
@@ -434,8 +413,6 @@ bool Npc::loadFromXml(const std::string& filename)
 
 			responseList = loadInteraction(p->children);
 		}
-
-		p = p->next;
 	}
 
 	xmlFreeDoc(doc);
@@ -443,7 +420,7 @@ bool Npc::loadFromXml(const std::string& filename)
 		return true;
 
 	replaceString(scriptfile, "|DATA|", getFilePath(FILE_TYPE_OTHER, "npc/scripts"));
-	replaceString(scriptfile, "|MODS|", getFilePath(FILE_TYPE_MOD, "npc"));
+	replaceString(scriptfile, "|MODS|", getFilePath(FILE_TYPE_MOD, "scripts"));
 	if(scriptfile.find("/") == std::string::npos)
 		scriptfile = getFilePath(FILE_TYPE_OTHER, "npc/scripts/" + scriptfile);
 

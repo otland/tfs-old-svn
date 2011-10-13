@@ -27,11 +27,10 @@ class Container;
 
 enum ActionType_t
 {
-	ACTION_ANY,
 	ACTION_UNIQUEID,
 	ACTION_ACTIONID,
 	ACTION_ITEMID,
-	ACTION_RUNEID,
+	ACTION_RUNEID
 };
 
 class Actions : public BaseEvents
@@ -78,7 +77,7 @@ class Actions : public BaseEvents
 		ReturnValue internalUseItemEx(Player* player, const PositionEx& fromPosEx, const PositionEx& toPosEx,
 			Item* item, bool isHotkey, uint32_t creatureId);
 
-		Action* getAction(const Item* item, ActionType_t type = ACTION_ANY) const;
+		Action* getAction(const Item* item, ActionType_t type) const;
 		void clearMap(ActionUseMap& map);
 };
 
