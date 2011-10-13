@@ -73,6 +73,9 @@ bool Npcs::loadFromXml(bool reloading/* = false*/)
 
 	for(xmlNodePtr p = root->children; p; p = p->next)
 	{
+	    if(p->type != XML_ELEMENT_NODE)
+    		continue;
+			
 		if(xmlStrcmp(p->name, (const xmlChar*)"npc"))
 		{
 			std::clog << "[Warning - Npcs::loadFromXml] Unknown node name: " << p->name << "." << std::endl;
