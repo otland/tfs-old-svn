@@ -389,32 +389,35 @@ ReturnValue Actions::canUseFar(const Creature* creature, const Position& toPos, 
 
 Action* Actions::getAction(const Item* item, ActionType_t type) const
 {
-	if(item->getUniqueId() && type == ACTION_UNIQUEID)
+	if(item->getUniqueId() && (type == ACTION_ANY || type == ACTION_UNIQUEID))
 	{
 		ActionUseMap::const_iterator it = uniqueItemMap.find(item->getUniqueId());
 		if(it != uniqueItemMap.end())
 			return it->second;
 	}
 
-	if(item->getActionId() && type == ACTION_ACTIONID)
+	if(item->getActionId() && (type == ACTION_ANY || type == ACTION_ACTIONID))
 	{
 		ActionUseMap::const_iterator it = actionItemMap.find(item->getActionId());
 		if(it != actionItemMap.end())
 			return it->second;
 	}
 
-	if(type == ACTION_ITEMID)
+	if(type == ACTION_ANY || type == ACTION_ITEMID)
 	{
 		ActionUseMap::const_iterator it = useItemMap.find(item->getID());
 		if(it != useItemMap.end())
 			return it->second;
 	}
 
-	if(type == ACTION_RUNEID)
+	if(type == ACTION_ANY || type == ACTION_RUNEID)
 	{
 		if(Action* runeSpell = g_spells->getRuneSpell(item->getID()))
 			return runeSpell;
 	}
+
+	if(type == ACTION_ANY)
+		return defaultAction;
 
 	return NULL;
 }

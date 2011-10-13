@@ -27,6 +27,7 @@ class Container;
 
 enum ActionType_t
 {
+	ACTION_ANY,
 	ACTION_UNIQUEID,
 	ACTION_ACTIONID,
 	ACTION_ITEMID,
@@ -46,7 +47,7 @@ class Actions : public BaseEvents
 		ReturnValue canUse(const Player* player, const Position& pos);
 		ReturnValue canUse(const Player* player, const Position& pos, const Item* item);
 		ReturnValue canUseFar(const Creature* creature, const Position& toPos, bool checkLineOfSight);
-		bool hasAction(const Item* item) const {return getAction(item);}
+		bool hasAction(const Item* item) const {return getAction(item, ACTION_ANY);}
 
 	protected:
 		Action* defaultAction;
