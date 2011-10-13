@@ -696,6 +696,18 @@ void otserv(StringVec, ServiceManager* services)
 			startupErrorMessage("Unable to load monsters!");
 	}
 
+	if(fileExists(getFilePath(FILE_TYPE_OTHER, "npc/npcs.xml").c_str()))
+	{
+		std::clog << ">> Loading npcs" << std::endl;
+		if(!g_npcs.loadNpcPaths())
+		{
+			std::clog << "Unable to load npcs! Continue? (y/N)" << std::endl;
+			char buffer = getch();
+			if(buffer != 121 && buffer != 89)
+				startupErrorMessage("Unable to load npcs!");
+		}
+	}
+
 	std::clog << ">> Loading map and spawns..." << std::endl;
 	if(!g_game.loadMap(g_config.getString(ConfigManager::MAP_NAME)))
 		startupErrorMessage();

@@ -32,6 +32,15 @@ class Npcs
 		virtual ~Npcs() {}
 
 		void reload();
+		bool Npcs::loadNpcPaths();
+		std::string getPathByName(const std::string& name);
+		uint32_t getNpcCount() { return npcPaths.size(); }
+		void storeNpcPath(std::string name, std::string path) { npcPaths[asLowerCaseString(name)] = path; }
+		bool fromXmlFile;
+
+	private:
+		typedef std::map<std::string, std::string> NpcPathMap;
+		NpcPathMap npcPaths;
 };
 
 struct NpcState;
@@ -367,6 +376,8 @@ class Npc : public Creature
 		bool isLoaded() {return loaded;}
 		bool load();
 		void reload();
+
+		void setNpcPath(const std::string& _name, bool fromXmlFile = false);
 
 		virtual const std::string& getName() const {return name;}
 		virtual const std::string& getNameDescription() const {return nameDescription;}

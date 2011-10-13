@@ -37,6 +37,8 @@
 extern ConfigManager g_config;
 extern Game g_game;
 extern Spells* g_spells;
+extern Npcs g_npcs;
+ 
 
 AutoList<Npc> Npc::autoList;
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
@@ -49,12 +51,69 @@ void Npcs::reload()
 	for(AutoList<Npc>::iterator it = Npc::autoList.begin(); it != Npc::autoList.end(); ++it)
 		it->second->closeAllShopWindows();
 
+	NpcPathMap tmp = npcPaths;
+	npcPaths.clear();
+	if(!loadNpcPaths())
+		npcPaths = tmp;
+
+	tmp.clear();
+
 	delete Npc::m_interface;
 	Npc::m_interface = NULL;
 	for(AutoList<Npc>::iterator it = Npc::autoList.begin(); it != Npc::autoList.end(); ++it)
 		it->second->reload();
 }
 
+std::string Npcs::getPathByName(const std::string& name)
+{
+	NpcPathMap::iterator it = npcPaths.find(asLowerCaseString(name));
+	if(it != npcPaths.end())
+		return it->second;
+
+	return "";
+}
+
+bool Npcs::loadNpcPaths()
+{
+	xmlDocPtr doc = xmlParseFile(getFilePath(FILE_TYPE_OTHER, "npc/npcs.xml").c_str());
+	if(!doc)
+	{
+		std::clog << "[Warning - Npcs::Npcs] Cannot load npcs file." << std::endl;
+		std::clog << getLastXMLError() << std::endl;
+		return false;
+	}
+
+	xmlNodePtr root = xmlDocGetRootElement(doc);
+	if(xmlStrcmp(root->name,(const xmlChar*)"npcs"))
+	{
+		std::clog << "[Error - Npcs::Npcs] Malformed npcs file." << std::endl;
+		return false;
+	}
+
+	for(xmlNodePtr p = root->children; p; p = p->next)
+	{
+    	if(p->type != XML_ELEMENT_NODE)
+    		continue;
+    
+    	if(xmlStrcmp(p->name, (const xmlChar*)"npc"))
+    	{
+			std::clog << "[Warning - Npcs::Npcs] Unknown node name (" << p->name << ")." << std::endl;
+    		continue;
+    	}
+    		
+		std::string file, name;
+		if(!readXMLString(p, "file", file) || !readXMLString(p, "name", name))
+			continue;
+
+		if(!getPathByName(name).empty())
+			std::clog << "[Warning - Npcs::Npcs] Duplicate registered npc with name: " << name << std::endl;
+		else
+			storeNpcPath(name, file);
+	}
+
+	return true;
+}
+ 
 Npc* Npc::createNpc(const std::string& name)
 {
 	Npc* npc = new Npc(name);
@@ -74,14 +133,13 @@ Npc::Npc(const std::string& _name):
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
 	npcCount++;
 #endif
-	m_filename = getFilePath(FILE_TYPE_OTHER, "npc/" + _name + ".xml");
-	if(!fileExists(m_filename.c_str()))
-	{
-		std::string tmp = getFilePath(FILE_TYPE_MOD, "npc/" + _name + ".xml");
-		if(fileExists(tmp.c_str()))
-			m_filename = tmp;
-	}
-
+    
+	std::string path = getFilePath(FILE_TYPE_OTHER, "npc/npcs.xml");
+	if(!fileExists(path.c_str()))
+		setNpcPath(_name);
+	else
+		setNpcPath(_name, true);
+	
 	m_npcEventHandler = NULL;
 	loaded = false;
 	reset();
@@ -94,7 +152,7 @@ Npc::~Npc()
 	npcCount--;
 #endif
 }
-
+ 
 bool Npc::load()
 {
 	if(isLoaded())
@@ -108,7 +166,9 @@ bool Npc::load()
 		m_interface->loadFile(getFilePath(FILE_TYPE_OTHER, "npc/lib/npcsystem/main.lua"));
 	}
 
-	loaded = loadFromXml(m_filename);
+    if(!m_filename.empty())
+       loaded = loadFromXml(m_filename);
+
 	return isLoaded();
 }
 
@@ -157,6 +217,39 @@ void Npc::reload()
 
 	if(walkTicks)
 		addEventWalk();
+}
+
+void Npc::setNpcPath(const std::string& _name, bool fromXmlFile/* = false*/)
+{
+	if(fromXmlFile)
+	{
+		std::string file, name;
+		file = g_npcs.getPathByName(_name);
+			
+		if(!file.empty())
+		{
+			name = _name;
+			m_filename = getFilePath(FILE_TYPE_OTHER, "npc/" + file);
+			if(!fileExists(m_filename.c_str()))
+			{
+				std::string tmp = getFilePath(FILE_TYPE_MOD, "npc/" + name + ".xml");
+				if(fileExists(tmp.c_str()))
+            		m_filename = tmp;
+				else
+					std::clog << "[Warning - Npc::Npc] Cannot load npc (" << name << ") file (" << file << ")." << std::endl;
+			}
+		}
+	}
+	else
+	{
+		m_filename = getFilePath(FILE_TYPE_OTHER, "npc/" + _name + ".xml");
+		if(!fileExists(m_filename.c_str()))
+		{
+			std::string tmp = getFilePath(FILE_TYPE_MOD, "npc/" + _name + ".xml");
+			if(fileExists(tmp.c_str()))
+				m_filename = tmp;
+		}
+	}
 }
 
 bool Npc::loadFromXml(const std::string& filename)
@@ -3011,4 +3104,3 @@ void NpcEvents::onThink()
 	else
 		std::clog << "[Error - NpcEvents::onThink] NPC Name: " << m_npc->getName() << " - Call stack overflow" << std::endl;
 }
-
