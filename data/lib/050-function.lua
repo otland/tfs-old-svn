@@ -302,10 +302,10 @@ function doShutdown()
 	return doSetGameState(GAMESTATE_SHUTDOWN)
 end
 
-function doSummonCreature(name, pos, displayError)
-	local displayError, cid = displayError or true, doCreateMonster(name, pos, false, false, displayError)
+function doSummonCreature(name, pos)
+	local cid = doCreateMonster(name, pos, false, false)
 	if(not cid) then
-		cid = doCreateNpc(name, pos, displayError)
+		cid = doCreateNpc(name, pos)
 	end
 
 	return cid
