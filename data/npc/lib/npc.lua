@@ -61,8 +61,9 @@ function getNpcDistanceTo(id)
 end
 
 function doMessageCheck(message, keyword, exact)
+	local exact = exact or false
 	if(type(keyword) == "table") then
-		return table.isStrIn(keyword, message)
+		return isInArray(keyword, message, exact)
 	end
 
 	if(exact) then
