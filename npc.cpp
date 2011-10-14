@@ -257,8 +257,9 @@ void Npc::reset()
 	lastVoice = OTSYS_TIME();
 	defaultPublic = true;
 	baseDirection = SOUTH;
+	if(m_npcEventHandler)
+		delete m_npcEventHandler;
 
-	delete m_npcEventHandler;
 	m_npcEventHandler = NULL;
 	for(ResponseList::iterator it = responseList.begin(); it != responseList.end(); ++it)
 		delete *it;
