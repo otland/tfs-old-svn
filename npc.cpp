@@ -223,8 +223,7 @@ Npc* Npc::createNpc(const std::string& name)
 	return createNpc(nType);
 }
 
-Npc::Npc(NpcType* _nType):
-	Creature()
+Npc::Npc(NpcType* _nType) : Creature(), m_npcEventHandler(NULL)
 {
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
 	++npcCount;
