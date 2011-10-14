@@ -73,8 +73,8 @@ bool Npcs::loadFromXml(bool reloading/* = false*/)
 
 	for(xmlNodePtr p = root->children; p; p = p->next)
 	{
-	    if(p->type != XML_ELEMENT_NODE)
-    		continue;
+		if(p->type != XML_ELEMENT_NODE)
+			continue;
 			
 		if(xmlStrcmp(p->name, (const xmlChar*)"npc"))
 		{
