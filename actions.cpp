@@ -416,9 +416,6 @@ Action* Actions::getAction(const Item* item, ActionType_t type) const
 			return runeSpell;
 	}
 
-	if(type == ACTION_ANY)
-		return defaultAction;
-
 	return NULL;
 }
 
