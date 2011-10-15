@@ -919,7 +919,9 @@ void LuaInterface::executeTimer(uint32_t eventIndex)
 		{
 			ScriptEnviroment* env = getEnv();
 			env->setTimerEvent();
+
 			env->setScriptId(it->second.scriptId, this);
+			env->setNpc(it->second.npc);
 
 			callFunction(it->second.parameters.size());
 			releaseEnv();
@@ -8672,6 +8674,7 @@ int32_t LuaInterface::luaAddEvent(lua_State* L)
 	event.parameters = params;
 	event.function = luaL_ref(L, LUA_REGISTRYINDEX);
 	event.scriptId = env->getScriptId();
+	event.npc = env->getNpc();
 
 	interface->m_timerEvents[interface->m_lastTimer] = event;
 	lua_pushnumber(L, interface->m_lastTimer);

@@ -802,6 +802,7 @@ class LuaInterface
 		{
 			int32_t scriptId, function;
 			uint32_t eventId;
+			Npc* npc;
 			std::list<int32_t> parameters;
 		};
 
