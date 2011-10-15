@@ -1,18 +1,14 @@
-local ignore = createConditionObject(CONDITION_GAMEMASTER, -1, false, GAMEMASTER_IGNORE)
-local teleport = createConditionObject(CONDITION_GAMEMASTER, -1, false, GAMEMASTER_TELEPORT)
+local ignore = createConditionObject(CONDITION_GAMEMASTER, -1, false, GAMEMASTER_IGNORE, CONDITIONID_DEFAULT)
+local teleport = createConditionObject(CONDITION_GAMEMASTER, -1, false, GAMEMASTER_TELEPORT, CONDITIONID_DEFAULT)
 
 function onSay(cid, words, param, channel)
-	local condition = ignore
-	local subId = GAMEMASTER_IGNORE
-	local name = "private messages ignoring"
+	local condition, subId, name = ignore, GAMEMASTER_IGNORE, "private messages ignoring"
 	if(words:sub(2, 2) == "c") then
-		condition = teleport
-		subId = GAMEMASTER_TELEPORT
-		name = "map click teleport"
+		condition, subId, name = teleport, GAMEMASTER_TELEPORT, "map click teleport"
 	end
 
 	local action = "off"
-	if(not getCreatureCondition(cid, CONDITION_GAMEMASTER, subId)) then
+	if(not getCreatureCondition(cid, CONDITION_GAMEMASTER, subId, CONDITIONID_DEFAULT)) then
 		doAddCondition(cid, condition)
 		action = "on"
 	else
