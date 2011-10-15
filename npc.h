@@ -41,6 +41,7 @@ class Npcs
 		bool parseNpcNode(xmlNodePtr node, FileType_t path, bool reloading = false);
 
 		NpcType* getType(const std::string& name) const;
+		bool setType(std::string name, NpcType* nType);
 
 	private:
 		typedef std::map<std::string, NpcType*> DataMap;

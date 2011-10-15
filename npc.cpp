@@ -190,6 +190,17 @@ NpcType* Npcs::getType(const std::string& name) const
 	return it->second;
 }
 
+bool Npcs::setType(std::string name, NpcType* nType)
+{
+	toLowerCaseString(name);
+	DataMap::const_iterator it = data.find(name);
+	if(it != data.end())
+		return false;
+
+	data[name] = nType;
+	return true;
+}
+
 Npc* Npc::createNpc(NpcType* nType)
 {
 	Npc* npc = new Npc(nType);
@@ -209,8 +220,6 @@ Npc* Npc::createNpc(const std::string& name)
 	if(!(nType = g_npcs.getType(name)))
 	{
 		nType = new NpcType();
-		nType->name = name;
-
 		nType->file = getFilePath(FILE_TYPE_OTHER, "npc/" + name + ".xml");
 		if(!fileExists(nType->file.c_str()))
 		{
@@ -218,6 +227,9 @@ Npc* Npc::createNpc(const std::string& name)
 			if(!fileExists(nType->file.c_str()))
 				nType->file = std::string();
 		}
+
+		nType->name = name;
+		g_npcs.setType(name, nType);
 	}
 
 	return createNpc(nType);
@@ -229,6 +241,8 @@ Npc::Npc(NpcType* _nType) : Creature(), m_npcEventHandler(NULL)
 	++npcCount;
 #endif
 	nType = _nType;
+
+	m_npcEventHandler = NULL;
 	reset();
 }
 
