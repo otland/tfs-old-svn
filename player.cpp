@@ -2636,7 +2636,7 @@ ReturnValue Player::__queryAdd(int32_t index, const Thing* thing, uint32_t count
 	}
 
 	if(!item->isPickupable() || (hasFlag(PlayerFlag_CannotPickupItem) &&
-		item->getParent() && item->gerParent() != VirtualCylinder::virtualCylinder))
+		item->getParent() && item->getParent() != VirtualCylinder::virtualCylinder))
 		return RET_CANNOTPICKUP;
 
 	ReturnValue ret = RET_NOERROR;
