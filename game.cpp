@@ -2255,7 +2255,7 @@ bool Game::playerMove(uint32_t playerId, Direction dir)
 	Player* player = getPlayerByID(playerId);
 	if(!player || player->isRemoved())
 		return false;
-
+		
 	player->setIdleTime(0);
 	if(player->getNoMove())
 	{
@@ -2601,10 +2601,6 @@ bool Game::playerUseItem(uint32_t playerId, const Position& pos, int16_t stackpo
 				Dispatcher::getInstance().addTask(createTask(boost::bind(&Game::playerAutoWalk,
 					this, player->getID(), listDir)));
 
-				SchedulerTask* task = createSchedulerTask(std::max((int32_t)SCHEDULER_MINTICKS, player->getStepDuration()),
-					boost::bind(&Game::playerUseItem, this, playerId, pos, stackpos, index, spriteId, isHotkey));
-
-				player->setNextWalkActionTask(task);
 				return true;
 			}
 
@@ -3639,6 +3635,7 @@ bool Game::playerFollowCreature(uint32_t playerId, uint32_t creatureId)
 	{
 		if(player->getNoMove())
 		{
+			playerCancelAttackAndFollow(playerId);
 			player->sendCancelMessage(RET_NOTPOSSIBLE);
 			return false;
 		}

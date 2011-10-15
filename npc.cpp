@@ -158,7 +158,7 @@ bool Npcs::parseNpcNode(xmlNodePtr node, FileType_t path, bool reloading/* = fal
 		}
 	}
 
-	if(!new_nType)
+	if(new_nType)
 		data[name] = nType;
 
 	return true;
