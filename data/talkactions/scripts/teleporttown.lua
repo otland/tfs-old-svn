@@ -21,7 +21,7 @@ function onSay(cid, words, param, channel)
 		end
 	end
 
-	local tmp = getPlayerTown(cid)
+	local tmp = getPlayerTown(tid)
 	if(not master) then
 		tmp = t[1]
 		if(not tonumber(tmp)) then
