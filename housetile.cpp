@@ -91,7 +91,8 @@ Cylinder* HouseTile::__queryDestination(int32_t& index, const Thing* thing, Item
 	{
 		if(const Player* player = creature->getPlayer())
 		{
-			if(!house->isInvited(player) && !player->hasFlag(PlayerFlag_CanEditHouses))
+			if(!house->isInvited(player) && !player->hasFlag(PlayerFlag_CanEditHouses)
+				&& !player->hasCustomFlag(PlayerCustomFlag_CanThrowAnywhere))
 			{
 				Tile* destTile = g_game.getTile(house->getEntry());
 				if(!destTile)
