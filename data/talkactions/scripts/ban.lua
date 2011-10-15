@@ -1,5 +1,5 @@
 local config = {
-	item = 1968,
+	item = ITEM_ACTION_BOOK,
 	maxLength = 1024
 }
 
