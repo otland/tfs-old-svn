@@ -197,7 +197,7 @@ bool ChatChannel::talk(Player* player, MessageClasses type, const std::string& t
 	}
 
 	for(it = m_users.begin(); it != m_users.end(); ++it)
-		it->second->sendToChannel(player, type, text, m_id);
+		it->second->sendCreatureChannelSay(player, type, text, m_id);
 
 	if(hasFlag(CHANNELFLAG_LOGGED) && m_file->is_open())
 		*m_file << "[" << formatDate() << "] " << player->getName() << ": " << text << std::endl;
@@ -1127,7 +1127,7 @@ bool Chat::talkToChannel(Player* player, MessageClasses type, const std::string&
 			player->sendCancel("Only the leader of your guild can clean the guild motd.");
 	}
 	else if(text.substr(1, 8) == "commands")
-		player->sendToChannel(player, MSG_CHANNEL, "Guild commands with parameters: disband, invite[name], leave, kick[name], revoke[name], demote[name], promote[name], passleadership[name], nick[name, nick], setrankname[oldName, newName], setmotd[text] and cleanmotd.", CHANNEL_GUILD);
+		player->sendChannelMessage("", "Guild commands with parameters: disband, invite[name], leave, kick[name], revoke[name], demote[name], promote[name], passleadership[name], nick[name, nick], setrankname[oldName, newName], setmotd[text] and cleanmotd.", MSG_CHANNEL_HIGHLIGHT, CHANNEL_GUILD);
 	else
 		return false;
 
