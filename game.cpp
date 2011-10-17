@@ -926,8 +926,8 @@ bool Game::placeCreature(Creature* creature, const Position& pos, bool extendedP
 	{
 		for(ConditionList::iterator it = tmpPlayer->storedConditionList.begin(); it != tmpPlayer->storedConditionList.end(); ++it)
 		{
-			 if((*it)->getType() == CONDITION_MUTED && ((*it)->getTicks() == -1 ||
-				((*it)->getTicks() - ((time(NULL) - tmpPlayer->getLastLogout()) * 1000)) <= 0))
+			 if((*it)->getType() == CONDITION_MUTED && (*it)->getTicks() != -1 &&
+				((*it)->getTicks() - ((time(NULL) - tmpPlayer->getLastLogout()) * 1000) <= 0))
 				continue;
 
 			tmpPlayer->addCondition(*it);
