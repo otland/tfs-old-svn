@@ -161,8 +161,20 @@ if(Modules == nil) then
 				elseif(not doPlayerRemoveMoney(cid, price)) then
 					npcHandler:say("You don't have enough money for blessing.", cid)
 				else
-					npcHandler:say("You have been blessed by the god of war!", cid)
-					doPlayerSetPVPBlessing(cid)
+					local any = false
+					for i = 1, 5 do
+						if(getPlayerBlessing(cid, i)) then
+							any = true
+							break
+						end
+					end
+
+					if(any) then
+						npcHandler:say("You have been blessed by the god of war!", cid)
+						doPlayerSetPVPBlessing(cid)
+					else
+						npcHandler:say("You need to be blessed by at least one god to get this blessing.", cid)
+					end
 				end
 			end
 		else
@@ -1020,17 +1032,23 @@ if(Modules == nil) then
 	--	subType - The subType of each rune or fluidcontainer item. Can be left out if it is not a rune/fluidcontainer. Default value is 0 and 1 (depending on shop mode)
 	--	realName - The real, full name for the item. Will be used as ITEMNAME in MESSAGE_ONBUY and MESSAGE_ONSELL if defined. Default value is nil (getItemNameById will be used)
 	function ShopModule:addBuyableItem(names, itemid, cost, subType, realName)
+		if(type(subType) == 'string' and realName == nil) then
+			realName = subType
+			subType = nil
+		end
+
+		local v = getItemInfo(itemid)
 		if(SHOPMODULE_MODE ~= SHOPMODULE_MODE_TALK) then
 			local item = {
 				id = itemid,
 				buy = cost,
 				sell = -1,
-				subType = tonumber(subType) or 0,
-				name = realName or getItemNameById(itemid)
+				subType = tonumber(subType) or (v.charges > 0 and v.charges or 0),
+				name = realName or v.name
 			}
 
 			for i, shopItem in ipairs(self.npcHandler.shopItems) do
-				if(shopItem.id == item.id and shopItem.subType == item.subType) then
+				if(shopItem.id == item.id and (shopItem.subType == item.subType or shopItem.subType == 0)) then
 					if(item.sell ~= shopItem.sell) then
 						item.sell = shopItem.sell
 					end
@@ -1052,8 +1070,8 @@ if(Modules == nil) then
 				cost = cost,
 				eventType = SHOPMODULE_BUY_ITEM,
 				module = self,
-				realName = realName or getItemNameById(itemid),
-				subType = tonumber(subType) or 1
+				realName = realName or v.name,
+				subType = tonumber(subType) or (v.charges > 0 and v.charges or 1)
 			}
 
 			for i, name in pairs(names) do
@@ -1077,14 +1095,15 @@ if(Modules == nil) then
 	--	realName - The real, full name for the item. Will be used as ITEMNAME in MESSAGE_ONBUY and MESSAGE_ONSELL if defined. Default value is nil (getItemNameById will be used)
 	function ShopModule:addBuyableItemContainer(names, container, itemid, cost, subType, realName)
 		if(names ~= nil) then
+			local v = getItemInfo(itemid)
 			local parameters = {
 				container = container,
 				itemid = itemid,
 				cost = cost,
 				eventType = SHOPMODULE_BUY_ITEM_CONTAINER,
 				module = self,
-				realName = realName or getItemNameById(itemid),
-				subType = tonumber(subType) or 1
+				realName = realName or v.name,
+				subType = tonumber(subType) or (v.charges > 0 and v.charges or 1)
 			}
 
 			for i, name in pairs(names) do
