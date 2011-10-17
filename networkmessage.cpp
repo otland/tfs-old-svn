@@ -231,12 +231,16 @@ void NetworkMessage::putItemId(const Item* item)
 {
 	const ItemType& it = Item::items[item->getID()];
 	put<uint16_t>(it.clientId);
+	if(it.isAnimation)
+		put<char>(0xFF);
 }
 
 void NetworkMessage::putItemId(uint16_t itemId)
 {
 	const ItemType& it = Item::items[itemId];
 	put<uint16_t>(it.clientId);
+	if(it.isAnimation)
+		put<char>(0xFF);
 }
 
 int32_t NetworkMessage::decodeHeader()

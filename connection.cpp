@@ -160,7 +160,7 @@ bool ConnectionManager::acceptConnection(uint32_t clientIp)
 
 		ipConnectMap[clientIp] = tmp;
 		return true;
-        }
+	}
 
 	it->second.count++;
 	if(it->second.blockTime > currentTime)
