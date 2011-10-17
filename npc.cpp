@@ -75,7 +75,7 @@ bool Npcs::loadFromXml(bool reloading/* = false*/)
 	{
 		if(p->type != XML_ELEMENT_NODE)
 			continue;
-			
+
 		if(xmlStrcmp(p->name, (const xmlChar*)"npc"))
 		{
 			std::clog << "[Warning - Npcs::loadFromXml] Unknown node name: " << p->name << "." << std::endl;
@@ -177,9 +177,10 @@ void Npcs::reload()
 		DataMap tmp = data;
 		if(!loadFromXml())
 			data = tmp;
+
+		tmp.clear();
 	}
 
-	tmp.clear();
 	for(AutoList<Npc>::iterator it = Npc::autoList.begin(); it != Npc::autoList.end(); ++it)
 		it->second->reload();
 }
