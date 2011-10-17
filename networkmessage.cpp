@@ -145,10 +145,14 @@ void NetworkMessage::AddItemId(const Item *item)
 {
 	const ItemType &it = Item::items[item->getID()];
 	AddU16(it.clientId);
+	if(it.isAnimation)
+		put<char>(0xFF);
 }
 
 void NetworkMessage::AddItemId(uint16_t itemId)
 {
 	const ItemType &it = Item::items[itemId];
 	AddU16(it.clientId);
+	if(it.isAnimation)
+		put<char>(0xFF);
 }
