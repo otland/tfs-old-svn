@@ -126,7 +126,7 @@ bool Npcs::parseNpcNode(xmlNodePtr node, FileType_t path, bool reloading/* = fal
 
 	if(readXMLString(node, "script", strValue))
 		nType->script = strValue;
-		
+
 	for(xmlNodePtr q = node->children; q; q = q->next)
 	{
 		if(!xmlStrcmp(q->name, (const xmlChar*)"look"))
@@ -354,7 +354,7 @@ bool Npc::loadFromXml()
 	if(readXMLString(root, "namedescription", strValue) || readXMLString(root, "nameDescription", strValue))
 		nType->nameDescription = strValue;
 
-	nType->nameDescription = replaceString(nType->nameDescription, "|NAME|", nType->name);
+	replaceString(nType->nameDescription, "|NAME|", nType->name);
 	if(readXMLString(root, "hidename", strValue) || readXMLString(root, "hideName", strValue))
 		hideName = booleanString(strValue);
 
@@ -510,9 +510,12 @@ bool Npc::loadFromXml()
 	if(nType->script.empty())
 		return true;
 
-	replaceString(nType->script, "|DATA|", getFilePath(FILE_TYPE_OTHER, "npc/scripts"));
-	replaceString(nType->script, "|MODS|", getFilePath(FILE_TYPE_MOD, "scripts"));
-	if(nType->script.find("/") == std::string::npos)
+	if(nType->script.find("/") != std::string::npos)
+	{
+		replaceString(nType->script, "|DATA|", getFilePath(FILE_TYPE_OTHER, "npc/scripts"));
+		replaceString(nType->script, "|MODS|", getFilePath(FILE_TYPE_MOD, "scripts"));
+	}
+	else
 		nType->script = getFilePath(FILE_TYPE_OTHER, "npc/scripts/" + nType->script);
 
 	m_npcEventHandler = new NpcEvents(nType->script, this);
