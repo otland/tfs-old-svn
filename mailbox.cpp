@@ -94,6 +94,7 @@ bool Mailbox::sendItem(Creature* actor, Item* item)
 
 bool Mailbox::getDepotId(const std::string& townString, uint32_t& depotId)
 {
+
 	Town* town = Towns::getInstance()->getTown(townString);
 	if(!town)
 		return false;
@@ -102,14 +103,8 @@ bool Mailbox::getDepotId(const std::string& townString, uint32_t& depotId)
 	if(disabledTowns.size())
 	{
 		IntegerVec tmpVec = vectorAtoi(explodeString(disabledTowns, ","));
-		if(tmpVec[0] != 0)
-		{
-			for(IntegerVec::iterator it = tmpVec.begin(); it != tmpVec.end(); ++it)
-			{
-				if(town->getID() == uint32_t(*it))
-					return false;
-			}
-		}
+		if(tmpVec[0] != 0 && std::find(tmpVec.begin(), tmpVec.end(), town->getID()) != tmpVec.end())
+			return false;
 	}
 
 	depotId = town->getID();
@@ -157,6 +152,7 @@ bool Mailbox::getRecipient(Item* item, std::string& name, uint32_t& depotId)
 
 		++curLine;
 	}
+	std::clog<<name<<","<<townString<<std::endl;
 
 	trimString(name);
 	if(townString.empty())
