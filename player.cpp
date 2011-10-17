@@ -2260,9 +2260,9 @@ bool Player::onDeath()
 	removeConditions(CONDITIONEND_DEATH);
 	if(skillLoss)
 	{
-		uint64_t lossExperience = getLostExperience();
+		uint64_t lossExperience = getLostExperience(), currExperience = experience;
 		removeExperience(lossExperience, false);
-		double percent = 1. - ((double)(experience - lossExperience) / std::max((uint64_t)1, experience));
+		double percent = 1. - ((double)(currExperience - lossExperience) / std::max((uint64_t)1, currExperience));
 
 		// magic level loss
 		uint64_t sumMana = 0, lostMana = 0;
