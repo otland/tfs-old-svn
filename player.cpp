@@ -1799,7 +1799,7 @@ void Player::onThink(uint32_t interval)
 		mailAttempts = lastMail = 0;
 }
 
-bool Player::isMuted(uint16_t channelId, MessageClasses type, uint32_t& time)
+bool Player::isMuted(uint16_t channelId, MessageClasses type, int32_t& time)
 {
 	time = 0;
 	if(hasFlag(PlayerFlag_CannotBeMuted))
@@ -1808,11 +1808,22 @@ bool Player::isMuted(uint16_t channelId, MessageClasses type, uint32_t& time)
 	int32_t muteTicks = 0;
 	for(ConditionList::iterator it = conditions.begin(); it != conditions.end(); ++it)
 	{
-		if((*it)->getType() == CONDITION_MUTED && (*it)->getSubId() == 0 && (*it)->getTicks() > muteTicks)
-			muteTicks = (*it)->getTicks();
+		if((*it)->getType() == CONDITION_MUTED && (*it)->getSubId() == 0)
+		{
+			if((*it)->getTicks() == -1)
+			{
+				time = -1;
+				break;
+			}
+
+			if((*it)->getTicks() > muteTicks)
+				muteTicks = (*it)->getTicks();
+		}
 	}
 
-	time = (uint32_t)muteTicks / 1000;
+	if(muteTicks)
+		time = (uint32_t)muteTicks / 1000;
+
 	return type != MSG_NPC_TO && (type != MSG_CHANNEL || (channelId != CHANNEL_GUILD && !g_chat.isPrivateChannel(channelId)));
 }
 
