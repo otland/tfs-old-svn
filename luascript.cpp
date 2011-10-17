@@ -1742,8 +1742,8 @@ void LuaInterface::registerFunctions()
 	//doPlayerSendChannelMessage(cid, author, message, MessageClasses, channel)
 	lua_register(m_luaState, "doPlayerSendChannelMessage", LuaInterface::luaDoPlayerSendChannelMessage);
 
-	//doPlayerSendToChannel(cid, targetId, MessageClasses, message, channel[, time])
-	lua_register(m_luaState, "doPlayerSendToChannel", LuaInterface::luaDoPlayerSendToChannel);
+	//doCreatureChannelSay(cid, targetId, MessageClasses, message, channel[, time])
+	lua_register(m_luaState, "doCreatureChannelSay", LuaInterface::luaDoCreatureChannelSay);
 
 	//doPlayerOpenChannel(cid, channelId)
 	lua_register(m_luaState, "doPlayerOpenChannel", LuaInterface::luaDoPlayerOpenChannel);
@@ -3572,6 +3572,35 @@ int32_t LuaInterface::luaDoCreatureSay(lua_State* L)
 	return 1;
 }
 
+int32_t LuaInterface::luaDoCreatureChannelSay(lua_State* L)
+{
+	//doCreatureChannelSay(target, uid, message, type, channel)
+	ScriptEnviroment* env = getEnv();
+	uint16_t channelId = popNumber(L);
+	std::string text = popString(L);
+	uint32_t speakClass = popNumber(L), targetId = popNumber(L);
+
+	Player* player = env->getPlayerByUID(popNumber(L));
+	if(!player)
+	{
+		errorEx(getError(LUA_ERROR_PLAYER_NOT_FOUND));
+		lua_pushboolean(L, false);
+		return 1;
+	}
+
+	Creature* creature = env->getCreatureByUID(targetId);
+	if(!creature)
+	{
+		errorEx(getError(LUA_ERROR_CREATURE_NOT_FOUND));
+		lua_pushboolean(L, false);
+		return 1;
+	}
+
+	player->sendCreatureChannelSay(creature, (MessageClasses)speakClass, text, channelId);
+	lua_pushboolean(L, true);
+	return 1;
+}
+
 int32_t LuaInterface::luaDoSendMagicEffect(lua_State* L)
 {
 	//doSendMagicEffect(pos, type[, player])
@@ -4206,38 +4235,6 @@ int32_t LuaInterface::luaDoPlayerSendChannelMessage(lua_State* L)
 	}
 
 	player->sendChannelMessage(name, text, (MessageClasses)speakClass, channelId);
-	lua_pushboolean(L, true);
-	return 1;
-}
-
-int32_t LuaInterface::luaDoPlayerSendToChannel(lua_State* L)
-{
-	//doPlayerSendToChannel(cid, targetId, MessageClasses, message, channel[, time])
-	ScriptEnviroment* env = getEnv();
-	if(lua_gettop(L) > 5) /* time isn't used, keep for compatibility */
-		popNumber(L);
-
-	uint16_t channelId = popNumber(L);
-	std::string text = popString(L);
-	uint32_t speakClass = popNumber(L), targetId = popNumber(L);
-
-	Player* player = env->getPlayerByUID(popNumber(L));
-	if(!player)
-	{
-		errorEx(getError(LUA_ERROR_PLAYER_NOT_FOUND));
-		lua_pushboolean(L, false);
-		return 1;
-	}
-
-	Creature* creature = env->getCreatureByUID(targetId);
-	if(!creature)
-	{
-		errorEx(getError(LUA_ERROR_CREATURE_NOT_FOUND));
-		lua_pushboolean(L, false);
-		return 1;
-	}
-
-	player->sendToChannel(creature, (MessageClasses)speakClass, text, channelId);
 	lua_pushboolean(L, true);
 	return 1;
 }

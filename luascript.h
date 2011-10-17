@@ -380,7 +380,7 @@ class LuaInterface
 		static int32_t luaDoCleanTile(lua_State* L);
 		static int32_t luaDoPlayerSendTextMessage(lua_State* L);
 		static int32_t luaDoPlayerSendChannelMessage(lua_State* L);
-		static int32_t luaDoPlayerSendToChannel(lua_State* L);
+		static int32_t luaDoCreatureChannelSay(lua_State* L);
 		static int32_t luaDoPlayerOpenChannel(lua_State* L);
 		static int32_t luaDoPlayerAddMoney(lua_State* L);
 		static int32_t luaDoPlayerRemoveMoney(lua_State* L);

@@ -3839,8 +3839,7 @@ bool Game::playerSay(uint32_t playerId, uint16_t channelId, MessageClasses type,
 		case MSG_GAMEMASTER_PRIVATE_TO:
 			return playerSpeakTo(player, type, receiver, text);
 		case MSG_CHANNEL:
-		case MSG_GAMEMASTER_CHANNEL: // SPEAK_CHANNEL_O, SPEAK_CHANNEL_Y, SPEAK_CHANNEL_RN
-		case MSG_CHANNEL_GUILD: // SPEAK_CHANNEL_W
+		case MSG_GAMEMASTER_CHANNEL:
 		{
 			if(playerTalkToChannel(player, type, text, channelId))
 				return true;
@@ -3951,12 +3950,6 @@ bool Game::playerTalkToChannel(Player* player, MessageClasses type, const std::s
 {
 	switch(type)
 	{
-		case MSG_CHANNEL_GUILD:
-		{
-			type = MSG_CHANNEL;
-			break;
-		}
-
 		case MSG_CHANNEL:
 		{
 			if(channelId == CHANNEL_HELP)
@@ -3973,10 +3966,15 @@ bool Game::playerTalkToChannel(Player* player, MessageClasses type, const std::s
 
 		case MSG_GAMEMASTER_CHANNEL:
 		{
-			if(!player->hasFlag(PlayerFlag_CanTalkRedChannel))
+			if(player->hasFlag(PlayerFlag_CanTalkRedChannelAnonymous))
+			{
+				if(text.length() < 251)
+					return g_chat.talkToChannel(player, type, text, channelId, true);
+			}
+			else
 				type = MSG_CHANNEL;
-			break;
 		}
+			
 
 		case MSG_GAMEMASTER_BROADCAST:
 		{

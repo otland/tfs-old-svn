@@ -171,7 +171,6 @@ class ProtocolGame : public Protocol
 		void sendChannelsDialog();
 		void sendChannel(uint16_t channelId, const std::string& channelName);
 		void sendOpenPrivateChannel(const std::string& receiver);
-		void sendToChannel(const Creature* creature, MessageClasses type, const std::string& text, uint16_t channelId);
 		void sendIcons(int32_t icons);
 		void sendFYIBox(const std::string& message);
 
@@ -182,6 +181,7 @@ class ProtocolGame : public Protocol
 		void sendPing();
 		void sendCreatureTurn(const Creature* creature, int16_t stackpos);
 		void sendCreatureSay(const Creature* creature, MessageClasses type, const std::string& text, Position* pos = NULL);
+		void sendCreatureChannelSay(const Creature* creature, MessageClasses type, const std::string& text, uint16_t channelId);
 
 		void sendCancel(const std::string& message);
 		void sendCancelWalk();

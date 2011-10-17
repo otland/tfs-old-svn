@@ -530,7 +530,7 @@ void Chat::removeUserFromAllChannels(Player* player)
 	}
 }
 
-bool Chat::talkToChannel(Player* player, MessageClasses type, const std::string& text, uint16_t channelId)
+bool Chat::talkToChannel(Player* player, MessageClasses type, const std::string& text, uint16_t channelId, bool anonymous/* = false*/)
 {
 	if(text.empty())
 		return false;
@@ -573,13 +573,16 @@ bool Chat::talkToChannel(Player* player, MessageClasses type, const std::string&
 			switch(player->getGuildLevel())
 			{
 				case GUILDLEVEL_VICE:
-					return channel->talk(player, MSG_CHANNEL_HIGHLIGHT, text); // SPEAK_CHANNEL_O
+					return channel->talk(player, MSG_CHANNEL_HIGHLIGHT, text);
 				case GUILDLEVEL_LEADER:
-					return channel->talk(player, MSG_GAMEMASTER_CHANNEL, text); // SPEAK_CHANNEL_RN
+					return channel->talk(player, MSG_GAMEMASTER_CHANNEL, text);
 				default:
 					break;
 			}
 		}
+
+		if(anonymous)
+			return channel->talk("", type, text);
 
 		return channel->talk(player, type, text);
 	}

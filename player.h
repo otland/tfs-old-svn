@@ -555,6 +555,8 @@ class Player : public Creature, public Cylinder
 			{if(client) client->sendCreatureTurn(creature, creature->getTile()->getClientIndexOfThing(this, creature));}
 		void sendCreatureSay(const Creature* creature, MessageClasses type, const std::string& text, Position* pos = NULL)
 			{if(client) client->sendCreatureSay(creature, type, text, pos);}
+		void sendCreatureChannelSay(Creature* creature, MessageClasses type, const std::string& text, uint16_t channelId) const
+			{if(client) client->sendCreatureChannelSay(creature, type, text, channelId);}
 		void sendCreatureSquare(const Creature* creature, uint8_t color)
 			{if(client) client->sendCreatureSquare(creature, color);}
 		void sendCreatureChangeOutfit(const Creature* creature, const Outfit_t& outfit)
@@ -681,8 +683,6 @@ class Player : public Creature, public Cylinder
 			{if(client) client->sendReLoginWindow(pvpPercent);}
 		void sendTextWindow(Item* item, uint16_t maxLen, bool canWrite) const
 			{if(client) client->sendTextWindow(windowTextId, item, maxLen, canWrite);}
-		void sendToChannel(Creature* creature, MessageClasses type, const std::string& text, uint16_t channelId) const
-			{if(client) client->sendToChannel(creature, type, text, channelId); }
 		void sendShop(Npc* npc) const
 			{if(client) client->sendShop(npc, shopOffer);}
 		void sendGoods() const

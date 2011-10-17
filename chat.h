@@ -130,7 +130,7 @@ class Chat
 		bool removeUserFromChannel(Player* player, uint16_t channelId);
 		void removeUserFromAllChannels(Player* player);
 
-		bool talkToChannel(Player* player, MessageClasses type, const std::string& text, uint16_t channelId);
+		bool talkToChannel(Player* player, MessageClasses type, const std::string& text, uint16_t channelId, bool anonymous = false);
 
 		ChatChannel* getChannel(Player* player, uint16_t channelId);
 		ChatChannel* getChannelById(uint16_t channelId);

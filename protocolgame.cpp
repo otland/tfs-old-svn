@@ -288,6 +288,7 @@ bool ProtocolGame::login(const std::string& name, uint32_t id, const std::string
 	}
 
 	addRef();
+	g_chat.removeUserFromAllChannels(_player);
 	return connect(_player->getID(), operatingSystem, version);
 }
 
@@ -1983,7 +1984,7 @@ void ProtocolGame::sendCreatureSay(const Creature* creature, MessageClasses type
 	}
 }
 
-void ProtocolGame::sendToChannel(const Creature* creature, MessageClasses type, const std::string& text, uint16_t channelId)
+void ProtocolGame::sendCreatureChannelSay(const Creature* creature, MessageClasses type, const std::string& text, uint16_t channelId)
 {
 	NetworkMessage_ptr msg = getOutputBuffer();
 	if(msg)

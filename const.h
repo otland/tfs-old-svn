@@ -186,8 +186,8 @@ enum MessageClasses
 	MSG_SPEAK_MONSTER_FIRST		= MSG_SPEAK_MONSTER_SAY,
 	MSG_SPEAK_MONSTER_LAST		= MSG_SPEAK_MONSTER_YELL,
 
-	MSG_STATUS_CONSOLE_BLUE		= 0x04, /*Teal message in the console*/
-	MSG_STATUS_CONSOLE_RED		= 0x0C, /*Red message in the console*/
+	MSG_STATUS_CONSOLE_BLUE		= 0x04, /*Teal message in local chat*/
+	MSG_STATUS_CONSOLE_RED		= 0x0C, /*Red message in console*/
 	MSG_STATUS_DEFAULT			= 0x10, /*White message at the bottom of the game window and in the console*/
 	MSG_STATUS_WARNING			= 0x11, /*Red message in game window and in the console*/
 	MSG_EVENT_ADVANCE			= 0x12, /*White message in game window and in the console*/
@@ -201,15 +201,15 @@ enum MessageClasses
 	MSG_HEALED_OTHERS			= 0x1A,
 	MSG_EXPERIENCE_OTHERS		= 0x1B,
 	MSG_EVENT_DEFAULT			= 0x1C, /*White message at the bottom of the game window and in the console*/
-	MSG_LOOT					= 0x1D,
-	MSG_TRADE_NPC				= 0x1E,
-	MSG_CHANNEL_GUILD			= 0x1F, /*SPEAK_CHANNEL_W(?) guild messages.*/
-	MSG_PARTY_MANAGEMENT		= 0x20,
-	MSG_PARTY					= 0x21,
-	MSG_EVENT_ORANGE			= 0x22, /*Orange message in the console*/
-	MSG_STATUS_CONSOLE_ORANGE	= 0x23, /*Orange message in the console*/
-	MSG_REPORT 					= 0x24,
-	MSG_HOTKEY_USE				= 0x25,
+	MSG_LOOT					= 0x1D, /*Green message in game window and in the console*/
+	MSG_TRADE_NPC				= 0x1E, /*Green message in game window and in the console*/
+	MSG_EVENT_GUILD				= 0x1F, /*Green message in game window and in the console*/
+	MSG_PARTY_MANAGEMENT		= 0x20, /*Green message in game window and in the console*/
+	MSG_PARTY					= 0x21, /*Green message in game window and in the console*/
+	MSG_EVENT_ORANGE			= 0x22, /*Orange message in local chat*/
+	MSG_STATUS_CONSOLE_ORANGE	= 0x23, /*Orange message in local chat*/
+	MSG_REPORT 					= 0x24, /*White message in game window and in the console*/
+	MSG_HOTKEY_USE				= 0x25, /*Green message in game window*/
 	MSG_TUTORIAL_HINT			= 0x26
 };
 
