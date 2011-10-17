@@ -122,7 +122,7 @@ class ScriptEnviroment
 
 		static uint32_t addConditionObject(Condition* condition);
 		static uint32_t addTempConditionObject(Condition* condition);
-		static Condition* getConditionObject(uint32_t conditionId);
+		static Condition* getConditionObject(uint32_t conditionId, bool loaded);
 
 		Thing* getThingByUID(uint32_t uid);
 		Item* getItemByUID(uint32_t uid);
