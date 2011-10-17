@@ -1278,7 +1278,6 @@ void ProtocolGame::parseSay(NetworkMessage& msg)
 
 		case MSG_CHANNEL:
 		case MSG_CHANNEL_HIGHLIGHT:
-		case MSG_CHANNEL_GUILD:
 		case MSG_GAMEMASTER_CHANNEL:
 			channelId = msg.get<uint16_t>();
 			break;
