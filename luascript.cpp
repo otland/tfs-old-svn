@@ -404,15 +404,21 @@ uint32_t ScriptEnviroment::addTempConditionObject(Condition* condition)
 	return m_lastTempConditionId;
 }
 
-Condition* ScriptEnviroment::getConditionObject(uint32_t conditionId)
+Condition* ScriptEnviroment::getConditionObject(uint32_t conditionId, bool loaded)
 {
-	ConditionMap::iterator it = m_conditionMap.find(conditionId);
-	if(it != m_conditionMap.end())
-		return it->second;
-
-	it = m_tempConditionMap.find(conditionId);
-	if(it != m_tempConditionMap.end())
-		return it->second;
+	ConditionMap::iterator it;
+	if(loaded)
+	{
+		it = m_conditionMap.find(conditionId);
+		if(it != m_conditionMap.end())
+			return it->second;
+	}
+	else
+	{
+		it = m_tempConditionMap.find(conditionId);
+		if(it != m_tempConditionMap.end())
+			return it->second;
+	}
 
 	return NULL;
 }
@@ -5887,7 +5893,7 @@ int32_t LuaInterface::luaCreateCombatArea(lua_State* L)
 int32_t LuaInterface::luaCreateConditionObject(lua_State* L)
 {
 	//createConditionObject(type[, ticks[, buff[, subId[, conditionId]]]])
-	int32_t conditionId = CONDITIONID_COMBAT;
+	int32_t conditionId = CONDITIONID_DEFAULT;
 	uint32_t params = lua_gettop(L), subId = 0;
 	if(params > 4)
 		conditionId = popNumber(L);
@@ -5955,7 +5961,11 @@ int32_t LuaInterface::luaSetCombatArea(lua_State* L)
 
 int32_t LuaInterface::luaSetCombatCondition(lua_State* L)
 {
-	//setCombatCondition(combat, condition)
+	//setCombatCondition(combat, condition[, loaded])
+	bool loaded = true;
+	if(lua_gettop(L) > 2)
+		loaded = popNumber(L);
+
 	uint32_t conditionId = popNumber(L);
 	ScriptEnviroment* env = getEnv();
 
@@ -5967,7 +5977,7 @@ int32_t LuaInterface::luaSetCombatCondition(lua_State* L)
 		return 1;
 	}
 
-	const Condition* condition = env->getConditionObject(conditionId);
+	const Condition* condition = env->getConditionObject(conditionId, loaded);
 	if(!condition)
 	{
 		errorEx(getError(LUA_ERROR_CONDITION_NOT_FOUND));
@@ -6011,12 +6021,16 @@ int32_t LuaInterface::luaSetCombatParam(lua_State* L)
 
 int32_t LuaInterface::luaSetConditionParam(lua_State* L)
 {
-	//setConditionParam(condition, key, value)
+	//setConditionParam(condition, key, value[, loaded])
+	bool loaded = true;
+	if(lua_gettop(L) > 3)
+		loaded = popNumber(L);
+
 	int32_t value = popNumber(L);
 	ScriptEnviroment* env = getEnv();
 
 	ConditionParam_t key = (ConditionParam_t)popNumber(L);
-	if(Condition* condition = env->getConditionObject(popNumber(L)))
+	if(Condition* condition = env->getConditionObject(popNumber(L), loaded))
 	{
 		condition->setParam(key, value);
 		lua_pushboolean(L, true);
@@ -6032,10 +6046,14 @@ int32_t LuaInterface::luaSetConditionParam(lua_State* L)
 
 int32_t LuaInterface::luaAddDamageCondition(lua_State* L)
 {
-	//addDamageCondition(condition, rounds, time, value)
+	//addDamageCondition(condition, rounds, time, value[, loaded])
+	bool loaded = true;
+	if(lua_gettop(L) > 4)
+		loaded = popNumber(L);
+
 	int32_t value = popNumber(L), time = popNumber(L), rounds = popNumber(L);
 	ScriptEnviroment* env = getEnv();
-	if(ConditionDamage* condition = dynamic_cast<ConditionDamage*>(env->getConditionObject(popNumber(L))))
+	if(ConditionDamage* condition = dynamic_cast<ConditionDamage*>(env->getConditionObject(popNumber(L), loaded)))
 	{
 		condition->addDamage(rounds, time, value);
 		lua_pushboolean(L, true);
@@ -6051,10 +6069,14 @@ int32_t LuaInterface::luaAddDamageCondition(lua_State* L)
 
 int32_t LuaInterface::luaAddOutfitCondition(lua_State* L)
 {
-	//addOutfitCondition(condition, outfit)
+	//addOutfitCondition(condition, outfit[, loaded])
+	bool loaded = true;
+	if(lua_gettop(L) > 2)
+		loaded = popNumber(L);
+
 	Outfit_t outfit = popOutfit(L);
 	ScriptEnviroment* env = getEnv();
-	if(ConditionOutfit* condition = dynamic_cast<ConditionOutfit*>(env->getConditionObject(popNumber(L))))
+	if(ConditionOutfit* condition = dynamic_cast<ConditionOutfit*>(env->getConditionObject(popNumber(L), loaded)))
 	{
 		condition->addOutfit(outfit);
 		lua_pushboolean(L, true);
@@ -6163,11 +6185,15 @@ int32_t LuaInterface::luaSetCombatFormula(lua_State* L)
 
 int32_t LuaInterface::luaSetConditionFormula(lua_State* L)
 {
-	//setConditionFormula(condition, mina, minb, maxa, maxb)
+	//setConditionFormula(condition, mina, minb, maxa, maxb[, loaded])
+	bool loaded = true;
+	if(lua_gettop(L) > 5)
+		loaded = popNumber(L);
+
 	double maxb = popFloatNumber(L), maxa = popFloatNumber(L),
 		minb = popFloatNumber(L), mina = popFloatNumber(L);
 	ScriptEnviroment* env = getEnv();
-	if(ConditionSpeed* condition = dynamic_cast<ConditionSpeed*>(env->getConditionObject(popNumber(L))))
+	if(ConditionSpeed* condition = dynamic_cast<ConditionSpeed*>(env->getConditionObject(popNumber(L), loaded)))
 	{
 		condition->setFormulaVars(mina, minb, maxa, maxb);
 		lua_pushboolean(L, true);
@@ -6442,7 +6468,11 @@ int32_t LuaInterface::luaDoTargetCombatMana(lua_State* L)
 
 int32_t LuaInterface::luaDoCombatAreaCondition(lua_State* L)
 {
-	//doCombatAreaCondition(cid, pos, area, condition, effect)
+	//doCombatAreaCondition(cid, pos, area, condition, effect[, loaded])
+	bool loaded = true;
+	if(lua_gettop(L) > 5)
+		loaded = popNumber(L);
+
 	MagicEffect_t effect = (MagicEffect_t)popNumber(L);
 	uint32_t conditionId = popNumber(L), areaId = popNumber(L);
 
@@ -6462,7 +6492,7 @@ int32_t LuaInterface::luaDoCombatAreaCondition(lua_State* L)
 		}
 	}
 
-	if(const Condition* condition = env->getConditionObject(conditionId))
+	if(const Condition* condition = env->getConditionObject(conditionId, loaded))
 	{
 		const CombatArea* area = env->getCombatArea(areaId);
 		if(area || !areaId)
@@ -6491,7 +6521,11 @@ int32_t LuaInterface::luaDoCombatAreaCondition(lua_State* L)
 
 int32_t LuaInterface::luaDoTargetCombatCondition(lua_State* L)
 {
-	//doTargetCombatCondition(cid, target, condition, effect)
+	//doTargetCombatCondition(cid, target, condition, effect[, loaded])
+	bool loaded = true;
+	if(lua_gettop(L) > 4)
+		loaded = popNumber(L);
+
 	MagicEffect_t effect = (MagicEffect_t)popNumber(L);
 	uint32_t conditionId = popNumber(L), targetCid = popNumber(L), cid = popNumber(L);
 
@@ -6509,7 +6543,7 @@ int32_t LuaInterface::luaDoTargetCombatCondition(lua_State* L)
 
 	if(Creature* target = env->getCreatureByUID(targetCid))
 	{
-		if(const Condition* condition = env->getConditionObject(conditionId))
+		if(const Condition* condition = env->getConditionObject(conditionId, loaded))
 		{
 			CombatParams params;
 			params.effects.impact = effect;
@@ -7030,10 +7064,14 @@ int32_t LuaInterface::luaGetExperienceStageList(lua_State* L)
 
 int32_t LuaInterface::luaDoAddCondition(lua_State* L)
 {
-	//doAddCondition(cid, condition)
-	uint32_t conditionId = popNumber(L);
+	//doAddCondition(cid, condition[, loaded])
+	bool loaded = true;
+	if(lua_gettop(L) > 2)
+		loaded = popNumber(L);
 
+	uint32_t conditionId = popNumber(L);
 	ScriptEnviroment* env = getEnv();
+
 	Creature* creature = env->getCreatureByUID(popNumber(L));
 	if(!creature)
 	{
@@ -7042,7 +7080,7 @@ int32_t LuaInterface::luaDoAddCondition(lua_State* L)
 		return 1;
 	}
 
-	Condition* condition = env->getConditionObject(conditionId);
+	Condition* condition = env->getConditionObject(conditionId, loaded);
 	if(!condition)
 	{
 		errorEx(getError(LUA_ERROR_CONDITION_NOT_FOUND));
