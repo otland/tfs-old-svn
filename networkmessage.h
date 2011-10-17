@@ -89,8 +89,8 @@ class NetworkMessage
 		void putPosition(const Position& pos);
 		void putItem(uint16_t id, uint8_t count);
 		void putItem(const Item* item);
-		void putItemId(const Item* item);
-		void putItemId(uint16_t itemId);
+		void putItemId(const Item* item, bool animation = false);
+		void putItemId(uint16_t itemId, bool animation = false);
 
 		int32_t decodeHeader();
 

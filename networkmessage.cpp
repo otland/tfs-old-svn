@@ -227,19 +227,19 @@ void NetworkMessage::putItem(const Item* item)
 		put<char>(0xFE);
 }
 
-void NetworkMessage::putItemId(const Item* item)
+void NetworkMessage::putItemId(const Item* item, bool animation/* = false*/)
 {
 	const ItemType& it = Item::items[item->getID()];
 	put<uint16_t>(it.clientId);
-	if(it.isAnimation)
+	if(animation && it.isAnimation)
 		put<char>(0xFF);
 }
 
-void NetworkMessage::putItemId(uint16_t itemId)
+void NetworkMessage::putItemId(uint16_t itemId, bool animation/* = false*/)
 {
 	const ItemType& it = Item::items[itemId];
 	put<uint16_t>(it.clientId);
-	if(it.isAnimation)
+	if(animation && it.isAnimation)
 		put<char>(0xFF);
 }
 
