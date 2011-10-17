@@ -3789,13 +3789,16 @@ bool Game::playerSay(uint32_t playerId, uint16_t channelId, MessageClasses type,
 	bool mute = player->isMuted(channelId, type, muted);
 	if(muted && mute)
 	{
-		char buffer[75];
-		if(muted < 0)
-			sprintf(buffer, "You are muted permanently.", muted);
-		else
+		
+		if(muted > 0)
+		{
+			char buffer[75];
 			sprintf(buffer, "You are still muted for %d seconds.", muted);
+			player->sendTextMessage(MSG_STATUS_SMALL, buffer);
+		}
+		else
+			player->sendTextMessage(MSG_STATUS_SMALL, "You are muted permanently.");
 
-		player->sendTextMessage(MSG_STATUS_SMALL, buffer);
 		return false;
 	}
 
