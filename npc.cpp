@@ -172,9 +172,12 @@ void Npcs::reload()
 	delete Npc::m_interface;
 	Npc::m_interface = NULL;
 
-	DataMap tmp = data;
-	if(!loadFromXml())
-		data = tmp;
+	if(fileExists(getFilePath(FILE_TYPE_OTHER, "npc/npcs.xml").c_str()))
+	{
+		DataMap tmp = data;
+		if(!loadFromXml())
+			data = tmp;
+	}
 
 	tmp.clear();
 	for(AutoList<Npc>::iterator it = Npc::autoList.begin(); it != Npc::autoList.end(); ++it)
