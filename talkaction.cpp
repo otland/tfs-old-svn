@@ -629,11 +629,11 @@ bool TalkAction::houseSell(Creature* creature, const std::string&, const std::st
 	}
 
 	Item* transferItem = TransferItem::createTransferItem(house);
-	player->transferContainer.setParent(player);
-
 	player->transferContainer.__addThing(NULL, transferItem);
+
+	player->transferContainer.setParent(player);
 	if(!g_game.internalStartTrade(player, tradePartner, transferItem))
-		transferItem->onTradeEvent(ON_TRADE_CANCEL, player);
+		transferItem->onTradeEvent(ON_TRADE_CANCEL, player, NULL);
 
 	g_game.addMagicEffect(player->getPosition(), MAGIC_EFFECT_WRAPS_BLUE);
 	return false;
