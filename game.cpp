@@ -3785,7 +3785,7 @@ bool Game::playerSay(uint32_t playerId, uint16_t channelId, MessageClasses type,
 	if(!player || player->isRemoved())
 		return false;
 
-	uint32_t muted = 0;
+	int32_t muted = 0;
 	bool mute = player->isMuted(channelId, type, muted);
 	if(muted && mute)
 	{
