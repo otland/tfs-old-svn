@@ -2289,7 +2289,7 @@ bool Player::onDeath()
 			magLevel--;
 		}
 
-		manaSpent -= std::max((int32_t)0, (int32_t)lostMana);
+		manaSpent -= lostMana;
 		uint64_t nextReqMana = vocation->getReqMana(magLevel + 1);
 		if(nextReqMana > vocation->getReqMana(magLevel))
 			magLevelPercent = Player::getPercentLevel(manaSpent, nextReqMana);
@@ -2306,21 +2306,14 @@ bool Player::onDeath()
 
 			sumSkillTries += skills[i][SKILL_TRIES];
 			lostSkillTries = (uint64_t)std::ceil(sumSkillTries * ((double)(percent * lossPercent[LOSS_SKILLS]) / 100.));
-			while(lostSkillTries > skills[i][SKILL_TRIES])
+			while(lostSkillTries > skills[i][SKILL_TRIES] && skills[i][SKILL_LEVEL] > 10)
 			{
 				lostSkillTries -= skills[i][SKILL_TRIES];
 				skills[i][SKILL_TRIES] = vocation->getReqSkillTries(i, skills[i][SKILL_LEVEL]);
-				if(skills[i][SKILL_LEVEL] < 11)
-				{
-					skills[i][SKILL_LEVEL] = 10;
-					skills[i][SKILL_TRIES] = lostSkillTries = 0;
-					break;
-				}
-				else
-					skills[i][SKILL_LEVEL]--;
+				skills[i][SKILL_LEVEL]--;
 			}
 
-			skills[i][SKILL_TRIES] = std::max((int32_t)0, (int32_t)(skills[i][SKILL_TRIES] - lostSkillTries));
+			skills[i][SKILL_TRIES] -= lostSkillTries;
 		}
 
 		if(!usePVPBlessing)
