@@ -409,9 +409,8 @@ TransferItem* TransferItem::createTransferItem(House* house)
 	return transferItem;
 }
 
-bool TransferItem::onTradeEvent(TradeEvents_t event, Player* owner)
+bool TransferItem::onTradeEvent(TradeEvents_t event, Player* owner, Player* seller)
 {
-	owner->transferContainer.setParent(NULL);
 	switch(event)
 	{
 		case ON_TRADE_TRANSFER:
@@ -420,11 +419,13 @@ bool TransferItem::onTradeEvent(TradeEvents_t event, Player* owner)
 				house->setOwnerEx(owner->getGUID(), true);
 
 			g_game.internalRemoveItem(NULL, this, getItemCount());
+			seller->transferContainer.setParent(NULL);
 			break;
 		}
 
 		case ON_TRADE_CANCEL:
 		{
+			owner->transferContainer.setParent(NULL);
 			owner->transferContainer.__removeThing(this, getItemCount());
 			g_game.freeThing(this);
 			break;

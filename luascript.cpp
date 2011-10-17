@@ -4457,6 +4457,7 @@ int32_t LuaInterface::luaDoShowTextDialog(lua_State* L)
 		if(length < 0)
 			length = item->getMaxWriteLength();
 
+		player->transferContainer.setParent(player);
 		player->transferContainer.__addThing(NULL, item);
 		if(text.size())
 		{

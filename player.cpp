@@ -129,7 +129,6 @@ Player::~Player()
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
 	playerCount--;
 #endif
-	setWriteItem(NULL);
 	for(int32_t i = 0; i < 11; ++i)
 	{
 		if(!inventory[i])
@@ -142,7 +141,10 @@ Player::~Player()
 		inventoryAbilities[i] = false;
 	}
 
+	setWriteItem(NULL);
 	setNextWalkActionTask(NULL);
+
+	transferContainer.setParent(NULL);
 	for(DepotMap::iterator it = depots.begin(); it != depots.end(); ++it)
 		it->second.first->unRef();
 }
