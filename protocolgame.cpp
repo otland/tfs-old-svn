@@ -1813,7 +1813,6 @@ void ProtocolGame::sendContainer(uint32_t cid, const Container* container, bool 
 		msg->AddByte(0x6E);
 		msg->AddByte(cid);
 
-		//msg->AddU16(cid);
 		msg->AddItem(container);
 		msg->AddString(container->getName());
 		msg->AddByte(container->capacity());
