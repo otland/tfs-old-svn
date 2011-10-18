@@ -311,30 +311,57 @@ std::string getLastXMLError()
 	return ss.str();
 }
 
-bool utf8ToLatin1(char* intext, std::string& outtext)
+bool utf8ToLatin1(char* inText, std::string& outText)
 {
-	outtext = "";
-	if(!intext)
+	outText = "";
+	if(!inText)
 		return false;
 
-	int32_t inlen = strlen(intext);
-	if(!inlen)
+	int32_t inLen = strlen(inText);
+	if(!inLen)
 		return false;
 
-	int32_t outlen = inlen << 1;
-	uint8_t* outbuf = new uint8_t[outlen];
+	int32_t outLen = inLen << 1;
+	uint8_t* outBuf = new uint8_t[outLen];
 
-	int32_t res = UTF8Toisolat1(outbuf, &outlen, (uint8_t*)intext, &inlen);
+	int32_t res = UTF8Toisolat1(outBuf, &outLen, (uint8_t*)inText, &inLen);
 	if(res < 0)
 	{
-		delete[] outbuf;
+		delete[] outBuf;
 		return false;
 	}
 
-	outbuf[outlen] = '\0';
-	outtext = (char*)outbuf;
+	outBuf[outLen] = '\0';
+	outText = (char*)outBuf;
 
-	delete[] outbuf;
+	delete[] outBuf;
+	return true;
+}
+
+bool latin1ToUtf8(char* inText, std::string& outText)
+{
+	outText = "";
+	if(!inText)
+		return false;
+
+	int32_t inLen = strlen(inText);
+	if(!inLen)
+		return false;
+
+	int32_t outLen = inLen << 1;
+	uint8_t* outBuf = new uint8_t[outLen];
+
+	int32_t res = isolat1ToUTF8(outBuf, &outLen, (uint8_t*)inText, &inLen);
+	if(res < 0)
+	{
+		delete[] outBuf;
+		return false;
+	}
+
+	outBuf[outLen] = '\0';
+	outText = (char*)outBuf;
+
+	delete[] outBuf;
 	return true;
 }
 

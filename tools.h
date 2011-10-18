@@ -98,7 +98,8 @@ bool readXMLString(xmlNodePtr node, const char* tag, std::string& value);
 bool readXMLContentString(xmlNodePtr node, std::string& value);
 bool parseXMLContentString(xmlNodePtr node, std::string& value);
 std::string getLastXMLError();
-bool utf8ToLatin1(char* intext, std::string& outtext);
+bool utf8ToLatin1(char* inText, std::string& outText);
+bool latin1ToUtf8(char* inText, std::string& outText);
 
 StringVec explodeString(const std::string& string, const std::string& separator, bool trim = true);
 IntegerVec vectorAtoi(StringVec stringVector);
