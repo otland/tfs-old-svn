@@ -393,7 +393,7 @@ void Tile::onUpdateTileItem(Item* oldItem, const ItemType& oldType, Item* newIte
 		(*it)->onUpdateTileItem(this, pos, oldItem, oldType, newItem, newType);
 }
 
-void Tile::onRemoveTileItem(const SpectatorVec& list, std::vector<uint32_t>& oldStackposVector, Item* item)
+void Tile::onRemoveTileItem(const SpectatorVec& list, std::vector<int32_t>& oldStackposVector, Item* item)
 {
 	updateTileFlags(item, true);
 	const ItemType& iType = Item::items[item->getID()];
@@ -445,7 +445,7 @@ void Tile::moveCreature(Creature* actor, Creature* creature, Cylinder* toCylinde
 	if(forceTeleport || !newTile->ground || !Position::areInRange<1,1,0>(pos, newPos))
 		teleport = true;
 
-	std::vector<uint32_t> oldStackposVector;
+	std::vector<int32_t> oldStackposVector;
 	Player* tmpPlayer = NULL;
 	for(it = list.begin(); it != list.end(); ++it)
 	{
@@ -482,7 +482,7 @@ void Tile::moveCreature(Creature* actor, Creature* creature, Cylinder* toCylinde
 	int32_t i = 0;
 	for(it = list.begin(); it != list.end(); ++it)
 	{
-		if((tmpPlayer = (*it)->getPlayer()) && tmpPlayer->canSeeCreature(creature))
+		if((tmpPlayer = (*it)->getPlayer()))
 			tmpPlayer->sendCreatureMove(creature, newTile, newPos, this, pos, oldStackposVector[i++], teleport);
 	}
 
@@ -1202,7 +1202,7 @@ void Tile::__removeThing(Thing* thing, uint32_t count)
 	if(item == ground)
 	{
 		const SpectatorVec& list = g_game.getSpectators(pos);
-		std::vector<uint32_t> oldStackposVector;
+		std::vector<int32_t> oldStackposVector;
 
 		Player* tmpPlayer = NULL;
 		for(SpectatorVec::const_iterator it = list.begin(); it != list.end(); ++it)
@@ -1233,7 +1233,7 @@ void Tile::__removeThing(Thing* thing, uint32_t count)
 		if(it != items->end())
 		{
 			const SpectatorVec& list = g_game.getSpectators(pos);
-			std::vector<uint32_t> oldStackposVector;
+			std::vector<int32_t> oldStackposVector;
 
 			Player* tmpPlayer = NULL;
 			for(SpectatorVec::const_iterator iit = list.begin(); iit != list.end(); ++iit)
@@ -1269,7 +1269,7 @@ void Tile::__removeThing(Thing* thing, uint32_t count)
 			else
 			{
 				const SpectatorVec& list = g_game.getSpectators(pos);
-				std::vector<uint32_t> oldStackposVector;
+				std::vector<int32_t> oldStackposVector;
 
 				Player* tmpPlayer = NULL;
 				for(SpectatorVec::const_iterator iit = list.begin(); iit != list.end(); ++iit)
