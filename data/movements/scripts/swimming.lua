@@ -16,8 +16,8 @@ function onStepOut(cid, item, position, lastPosition, fromPosition, toPosition, 
 		return true
 	end
 
-	local tmp = getTileItemByType(toPosition, ITEM_TYPE_TRASHHOLDER)
-	if(tmp.uid ~= 0) then
+	local tmp = getTileInfo(toPosition)
+	if(tmp.trashHolder) then
 		if(doTileQueryAdd(cid, toPosition, 4) ~= RETURNVALUE_NOERROR) then
 			return false
 		end
