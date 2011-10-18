@@ -1556,7 +1556,7 @@ bool Player::canShopItem(uint16_t itemId, uint8_t subType, ShopEvent_t event)
 
 		const ItemType& it = Item::items[id];
 		if(it.isFluidContainer() || it.isSplash())
-			return (it->subType % 8) == subType;
+			return (sit->subType % 8) == subType;
 
 		return true;
 	}
