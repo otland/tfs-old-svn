@@ -147,6 +147,7 @@ cleanHouse = doCleanHouse
 cleanMap = doCleanMap
 shutdown = doShutdown
 mayNotMove = doCreatureSetNoMove
+getTileItemByType = getTileItemsByType
 doPlayerSetNoMove = doCreatureSetNoMove
 getPlayerNoMove = getCreatureNoMove
 getConfigInfo = getConfigValue

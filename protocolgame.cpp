@@ -1439,9 +1439,12 @@ void ProtocolGame::parseDebugAssert(NetworkMessage& msg)
 
 	std::stringstream s;
 	s << "----- " << formatDate() << " - " << player->getName() << " (" << convertIPAddress(getIP())
-		<< ") -----" << std::endl << msg.getString() << std::endl << msg.getString()
-		<< std::endl << msg.getString() << std::endl << msg.getString()
-		<< std::endl << std::endl;
+		<< ") -----" << std::endl
+		<< msg.getString() << std::endl 
+		<< msg.getString() << std::endl 
+		<< msg.getString() << std::endl 
+		<< msg.getString() << std::endl 
+		<< std::endl;
 
 	m_debugAssertSent = true;
 	Logger::getInstance()->iFile(LOGFILE_ASSERTIONS, s.str(), false);

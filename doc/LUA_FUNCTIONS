@@ -711,7 +711,7 @@
 	getContainerCap(uid)
 	getContainerItem(uid, slot)
 	getTileItemById(pos, itemId[, subType = -1])
-	getTileItemByType(pos, type)
+	getTileItemsByType(pos, type)
 	getTileThingByPos(pos)
 	getTileInfo(pos)
 	getTopCreature(pos)

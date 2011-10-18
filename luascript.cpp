@@ -1659,8 +1659,8 @@ void LuaInterface::registerFunctions()
 	//getTileItemById(pos, itemId[, subType = -1])
 	lua_register(m_luaState, "getTileItemById", LuaInterface::luaGetTileItemById);
 
-	//getTileItemByType(pos, type)
-	lua_register(m_luaState, "getTileItemByType", LuaInterface::luaGetTileItemByType);
+	//getTileItemsByType(pos, type)
+	lua_register(m_luaState, "getTileItemsByType", LuaInterface::luaGetTileItemsByType);
 
 	//getTileThingByPos(pos)
 	lua_register(m_luaState, "getTileThingByPos", LuaInterface::luaGetTileThingByPos);
@@ -4575,9 +4575,9 @@ int32_t LuaInterface::luaGetTileItemById(lua_State* L)
 	return 1;
 }
 
-int32_t LuaInterface::luaGetTileItemByType(lua_State* L)
+int32_t LuaInterface::luaGetTileItemsByType(lua_State* L)
 {
-	//getTileItemByType(pos, type)
+	//getTileItemsByType(pos, type)
 	uint32_t rType = (uint32_t)popNumber(L);
 	if(rType >= ITEM_TYPE_LAST)
 	{
@@ -5001,6 +5001,7 @@ int32_t LuaInterface::luaGetTileInfo(lua_State* L)
 		setFieldBool(L, "house", tile->hasFlag(TILESTATE_HOUSE));
 		setFieldBool(L, "bed", tile->hasFlag(TILESTATE_BED));
 		setFieldBool(L, "depot", tile->hasFlag(TILESTATE_DEPOT));
+		setFieldBool(L, "trashHolder", tile->hasFlag(TILESTATE_TRASHHOLDER));
 
 		createTable(L, "floorChange");
 		for(int32_t i = CHANGE_FIRST; i <= CHANGE_LAST; ++i)
