@@ -3439,9 +3439,9 @@ bool Game::playerLookInShop(uint32_t playerId, uint16_t spriteId, uint8_t count)
 		return false;
 
 	int32_t subType = count;
-	if(it.isFluidContainer())
+	if(it.isSplash() || it.isFluidContainer())
 	{
-		if(subType == 3) // FIXME: hack
+		if(subType == 3) // FIXME: hack...
 			subType = 11;
 		else if(count < uint8_t(sizeof(reverseFluidMap) / sizeof(int8_t)))
 			subType = reverseFluidMap[count];
