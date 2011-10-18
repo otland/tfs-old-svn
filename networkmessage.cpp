@@ -222,25 +222,21 @@ void NetworkMessage::putItem(const Item* item)
 		put<char>(item->getSubType());
 	else if(it.isSplash() || it.isFluidContainer())
 		put<char>(fluidMap[item->getSubType() % 8]);
-	
+
 	if(it.isAnimation)
 		put<char>(0xFE);
 }
 
-void NetworkMessage::putItemId(const Item* item, bool animation/* = false*/)
+void NetworkMessage::putItemId(const Item* item)
 {
 	const ItemType& it = Item::items[item->getID()];
 	put<uint16_t>(it.clientId);
-	if(animation && it.isAnimation)
-		put<char>(0xFF);
 }
 
-void NetworkMessage::putItemId(uint16_t itemId, bool animation/* = false*/)
+void NetworkMessage::putItemId(uint16_t itemId)
 {
 	const ItemType& it = Item::items[itemId];
 	put<uint16_t>(it.clientId);
-	if(animation && it.isAnimation)
-		put<char>(0xFF);
 }
 
 int32_t NetworkMessage::decodeHeader()

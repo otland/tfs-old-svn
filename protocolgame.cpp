@@ -1771,7 +1771,7 @@ void ProtocolGame::sendChannel(uint16_t channelId, const std::string& channelNam
 				}
 				else
 					msg->put<uint16_t>(0x00);
-				
+
 				return;
 			}
 		}
@@ -1801,7 +1801,7 @@ void ProtocolGame::sendContainer(uint32_t cid, const Container* container, bool 
 		msg->put<char>(0x6E);
 		msg->put<char>(cid);
 
-		msg->putItemId(container, true);
+		msg->putItemId(container);
 		msg->putString(container->getName());
 		msg->put<char>(container->capacity());
 
@@ -2928,14 +2928,12 @@ void ProtocolGame::AddCreatureOutfit(NetworkMessage_ptr msg, const Creature* cre
 			msg->put<char>(outfit.lookLegs);
 			msg->put<char>(outfit.lookFeet);
 			msg->put<char>(outfit.lookAddons);
-			
 		}
 		else if(outfit.lookTypeEx)
 			msg->putItemId(outfit.lookTypeEx);
 		else
 			msg->put<uint16_t>(outfit.lookTypeEx);
 
-		
 		if(!player || player->isMounted())
 			msg->put<uint16_t>(outfit.lookMount);
 		else
