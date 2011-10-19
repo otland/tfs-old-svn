@@ -4015,18 +4015,24 @@ int32_t LuaInterface::luaDoTileAddItemEx(lua_State* L)
 	{
 		if(item->isGroundTile())
 		{
-			tile = IOMap::createTile(item, NULL, pos.x, pos.y, pos.z);
-			g_game.setTile(tile);
+			if(item->getParent() == VirtualCylinder::virtualCylinder)
+			{
+				tile = IOMap::createTile(item, NULL, pos.x, pos.y, pos.z);
+				g_game.setTile(tile);
 
-			lua_pushnumber(L, env->addThing(item));
-			return 1;
+				env->removeTempItem(env, item);
+				lua_pushnumber(L, RET_NOERROR);
+			}
+			else
+				lua_pushboolean(L, false);
 		}
 		else
 		{
 			errorEx(getError(LUA_ERROR_TILE_NOT_FOUND));
 			lua_pushboolean(L, false);
-			return 1;
 		}
+
+		return 1;
 	}
 
 	if(item->getParent() == VirtualCylinder::virtualCylinder)
@@ -4754,28 +4760,27 @@ int32_t LuaInterface::luaDoCreateItem(lua_State* L)
 	if(lua_gettop(L) > 1)
 		count = popNumber(L);
 
-	uint32_t itemId = popNumber(L);
+	const ItemType& it = Item::items[popNumber(L)];
 	ScriptEnviroment* env = getEnv();
-	const ItemType& it = Item::items[itemId];
 
 	Tile* tile = g_game.getTile(pos);
 	if(!tile)
 	{
 		if(it.group == ITEM_GROUP_GROUND)
 		{
-			Item* item = Item::CreateItem(itemId);
+			Item* item = Item::CreateItem(it.id);
 			tile = IOMap::createTile(item, NULL, pos.x, pos.y, pos.z);
-			g_game.setTile(tile);
 
+			g_game.setTile(tile);
 			lua_pushnumber(L, env->addThing(item));
-			return 1;
 		}
 		else
 		{
 			errorEx(getError(LUA_ERROR_TILE_NOT_FOUND));
 			lua_pushboolean(L, false);
-			return 1;
 		}
+
+		return 1;
 	}
 
 	int32_t itemCount = 1, subType = 1;
@@ -4794,7 +4799,7 @@ int32_t LuaInterface::luaDoCreateItem(lua_State* L)
 	while(itemCount > 0)
 	{
 		int32_t stackCount = std::min(100, subType);
-		if(!(newItem = Item::CreateItem(itemId, stackCount)))
+		if(!(newItem = Item::CreateItem(it.id, stackCount)))
 		{
 			errorEx(getError(LUA_ERROR_ITEM_NOT_FOUND));
 			lua_pushboolean(L, false);
