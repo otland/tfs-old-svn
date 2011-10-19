@@ -179,7 +179,7 @@ void ProtocolManager::parsePacket(NetworkMessage& msg)
 				}
 				else
 				{
-					output->put<char>(MP_MSG_FAILURE);
+					output->put<char>(MP_MSG_ERROR);
 					output->putString("Wrong password");
 
 					m_loginTries++;
@@ -216,17 +216,31 @@ void ProtocolManager::parsePacket(NetworkMessage& msg)
 
 		case MP_MSG_LUA:
 		{
-			std::string script = msg.getString();
-			if(!Manager::getInstance()->execute(script))
+			switch(Manager::getInstance()->execute(msg.getString()))
 			{
-				output->put<char>(MP_MSG_FAILURE);
-				output->putString("Unable to reserve enviroment for Lua script");
-				addLogLine(LOGTYPE_ERROR, "Unable to reserve enviroment for Lua script");
-			}
+				case LUA_TRUE:
+				{
+					output->put<char>(MP_MSG_SUCCESS);
+					addLogLine(LOGTYPE_EVENT, "Executed Lua script");
+					break;
+				}
+				case LUA_RESERVE:
+				{
+					output->put<char>(MP_MSG_FAILURE);
+					output->putString("Unable to reserve enviroment for Lua script");
+					addLogLine(LOGTYPE_ERROR, "Unable to reserve enviroment for Lua script");
+					break;
+				}
+				default:
+				{
+					output->put<char>(MP_MSG_FAILURE);
+					output->putString("An error occured while executing Lua script, please check Server Log");
+					addLogLine(LOGTYPE_ERROR, "An error occured while executing Lua script");
+					break;
+				}
 			else
 			{
-				output->put<char>(MP_MSG_SUCCESS);
-				addLogLine(LOGTYPE_EVENT, "Executed Lua script");
+
 			}
 
 			break;
@@ -240,7 +254,7 @@ void ProtocolManager::parsePacket(NetworkMessage& msg)
 				output->put<char>(MP_MSG_USER_DATA);
 				output->put<uint32_t>(playerId);
 
-				output->put<uint32_t>(player->getGroupId());
+				output->put<int32_t>(player->getGroupId());
 				output->put<uint32_t>(player->getVocationId());
 
 				output->put<uint32_t>(player->getLevel());
@@ -249,9 +263,11 @@ void ProtocolManager::parsePacket(NetworkMessage& msg)
 			}
 			else
 			{
-				output->put<char>(MP_MSG_FAILURE);
+				output->put<char>(MP_MSG_ERROR);
 				output->putString("Player not found");
 			}
+
+			break;
 		}
 
 		case MP_MSG_CHAT_REQUEST:
@@ -278,17 +294,18 @@ void ProtocolManager::parsePacket(NetworkMessage& msg)
 			uint16_t channelId = msg.get<uint16_t>();
 			if((channel = g_chat.getChannelById(channelId)) && g_chat.isPublicChannel(channelId))
 			{
-				m_channels |= (uint32_t)channelId;
+				m_channels |= (1 << (uint32_t)channelId);
 				output->put<char>(MP_MSG_CHAT_USERS);
-				UsersMap users = channel->getUsers();
+				output->put<uint16_t>(channelId);
 
+				UsersMap users = channel->getUsers();
 				output->put<uint16_t>(users.size());
 				for(UsersMap::const_iterator it = users.begin(); it != users.end(); ++it)
 					output->put<uint32_t>(it->first);
 			}
 			else
 			{
-				output->put<char>(MP_MSG_FAILURE);
+				output->put<char>(MP_MSG_ERROR);
 				output->putString("Invalid channel");
 			}
 
@@ -300,12 +317,12 @@ void ProtocolManager::parsePacket(NetworkMessage& msg)
 			uint16_t channelId = msg.get<uint16_t>();
 			if(g_chat.getChannelById(channelId) && g_chat.isPublicChannel(channelId))
 			{
-				m_channels &= ~(uint32_t)channelId;
+				m_channels &= ~(1 << (uint32_t)channelId);
 				output->put<char>(MP_MSG_SUCCESS);
 			}
 			else
 			{
-				output->put<char>(MP_MSG_FAILURE);
+				output->put<char>(MP_MSG_ERROR);
 				output->putString("Invalid channel");
 			}
 
@@ -332,7 +349,7 @@ void ProtocolManager::parsePacket(NetworkMessage& msg)
 			}
 			else
 			{
-				output->put<char>(MP_MSG_FAILURE);
+				output->put<char>(MP_MSG_ERROR);
 				output->putString("Invalid channel");
 			}
 
@@ -396,6 +413,9 @@ void ProtocolManager::talk(uint32_t playerId, uint16_t channelId, MessageClasses
 {
 	NetworkMessage_ptr msg = getOutputBuffer();
 	if(!msg)
+		return;
+
+	if(!(m_channels & (1 << (uint32_t)channelId)))
 		return;
 
 	TRACK_MESSAGE(msg);
@@ -474,7 +494,7 @@ bool Manager::allow(uint32_t ip) const
 	return false;
 }
 
-bool Manager::execute(const std::string& script)
+LuaReturn_t Manager::execute(const std::string& script)
 {
 	if(!m_interface)
 	{
@@ -485,11 +505,11 @@ bool Manager::execute(const std::string& script)
 	}
 
 	if(!m_interface->reserveEnv())
-		return false;
+		return LUA_RESERVE;
 
-	m_interface->loadBuffer(script);
+	LuaReturn_t tmp = m_interface->loadBuffer(script);
 	m_interface->releaseEnv();
-	return true;
+	return tmp;
 }
 
 // should we run all these above on dispatcher thread?

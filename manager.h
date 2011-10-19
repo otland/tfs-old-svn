@@ -54,6 +54,13 @@ enum
 	MP_MSG_CHAT_MESSAGE = 16
 };
 
+enum LuaReturn_t
+{
+	LUA_RESERVE = -1,
+	LUA_FALSE = 0,
+	LUA_TRUE = 1
+};
+
 class ProtocolManager; // TODO
 class NetworkMessage;
 class Player;
@@ -73,7 +80,7 @@ class Manager
 		void removeConnection(ProtocolManager* client);
 
 		bool allow(uint32_t ip) const;
-		bool execute(const std::string& script);
+		LuaReturn_t execute(const std::string& script);
 
 		void output(const std::string& message);
 		void addUser(Player* player);
