@@ -4002,20 +4002,31 @@ int32_t LuaInterface::luaDoTileAddItemEx(lua_State* L)
 	popPosition(L, pos);
 
 	ScriptEnviroment* env = getEnv();
-	Tile* tile = g_game.getTile(pos);
-	if(!tile)
-	{
-		errorEx(getError(LUA_ERROR_TILE_NOT_FOUND));
-		lua_pushboolean(L, false);
-		return 1;
-	}
-
 	Item* item = env->getItemByUID(uid);
 	if(!item)
 	{
 		errorEx(getError(LUA_ERROR_ITEM_NOT_FOUND));
 		lua_pushboolean(L, false);
 		return 1;
+	}
+
+	Tile* tile = g_game.getTile(pos);
+	if(!tile)
+	{
+		if(item->isGroundTile())
+		{
+			tile = IOMap::createTile(item, NULL, pos.x, pos.y, pos.z);
+			g_game.setTile(tile);
+
+			lua_pushnumber(L, env->addThing(item));
+			return 1;
+		}
+		else
+		{
+			errorEx(getError(LUA_ERROR_TILE_NOT_FOUND));
+			lua_pushboolean(L, false);
+			return 1;
+		}
 	}
 
 	if(item->getParent() == VirtualCylinder::virtualCylinder)
@@ -4754,8 +4765,8 @@ int32_t LuaInterface::luaDoCreateItem(lua_State* L)
 		{
 			Item* item = Item::CreateItem(itemId);
 			tile = IOMap::createTile(item, NULL, pos.x, pos.y, pos.z);
-
 			g_game.setTile(tile);
+
 			lua_pushnumber(L, env->addThing(item));
 			return 1;
 		}

@@ -238,9 +238,6 @@ void ProtocolManager::parsePacket(NetworkMessage& msg)
 					addLogLine(LOGTYPE_ERROR, "An error occured while executing Lua script");
 					break;
 				}
-			else
-			{
-
 			}
 
 			break;
