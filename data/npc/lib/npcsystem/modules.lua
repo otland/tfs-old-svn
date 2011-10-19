@@ -1204,7 +1204,7 @@ if(Modules == nil) then
 		end
 
 		local subType, count = shopItem.subType or 0, amount
-		if(isItemStackable(itemid)) then
+		if(inBackpacks and isItemStackable(itemid)) then
 			amount = amount * 100 / math.max(1, subType)
 		end
 
