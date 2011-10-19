@@ -75,28 +75,18 @@ function doMessageCheck(message, keyword, exact)
 end
 
 function doNpcSellItem(cid, itemid, amount, subType, ignoreCap, inBackpacks, backpack)
-	local amount, subType, ignoreCap, item = amount or 1, subType or 1, ignoreCap and true or false, 0
-	if(isItemStackable(itemid)) then
-		if(isItemRune(itemid)) then
-			amount = amount * subType
-		end
-
-		local count = amount
-		repeat
-			item = doCreateItemEx(itemid, math.min(100, count))
-			if(doPlayerAddItemEx(cid, item, ignoreCap) ~= RETURNVALUE_NOERROR) then
-				return 0, 0
-			end
-
-			count = count - math.min(100, count)
-		until count == 0
-		return amount, 0
-	end
+	local amount, subType, ignoreCap, item = amount or 1, subType or 0, ignoreCap and true or false, 0
 
 	local a = 0
 	if(inBackpacks) then
+		local custom = 1
+		if(isItemStackable(itemid)) then
+			custom = math.max(1, subType)
+			subType = 100
+		end
+
 		local container, b = doCreateItemEx(backpack, 1), 1
-		for i = 1, amount do
+		for i = 1, amount * custom do
 			item = doAddContainerItem(container, itemid, subType)
 			if(itemid == ITEM_PARCEL) then
 				doAddContainerItem(item, ITEM_LABEL)
@@ -116,7 +106,21 @@ function doNpcSellItem(cid, itemid, amount, subType, ignoreCap, inBackpacks, bac
 			end
 		end
 
-		return a, b
+		return (a * subType / custom), b
+	end
+
+	if(isItemStackable(itemid)) then
+		local count = amount * math.max(1, subType)
+		repeat
+			local tmp = math.min(100, count)
+			item = doCreateItemEx(itemid, tmp)
+			if(doPlayerAddItemEx(cid, item, ignoreCap) ~= RETURNVALUE_NOERROR) then
+				return 0, 0
+			end
+
+			count = count - tmp
+		until count == 0
+		return amount, 0
 	end
 
 	for i = 1, amount do

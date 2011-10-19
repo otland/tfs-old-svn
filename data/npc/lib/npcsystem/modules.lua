@@ -1203,9 +1203,14 @@ if(Modules == nil) then
 			return false
 		end
 
+		local subType, count = shopItem.subType or 0, amount
+		if(isItemStackable(itemid)) then
+			amount = amount * 100 / math.max(1, subType)
+		end
+
 		local backpack, backpackPrice, totalCost = 1988, 20, amount * shopItem.buy
 		if(inBackpacks) then
-			totalCost = totalCost + (math.max(1, math.floor(amount / getContainerCapById(backpack))) * backpackPrice)
+			totalCost = totalCost + (math.max(1, math.floor(count / getContainerCapById(backpack))) * backpackPrice)
 		end
 
 		local parseInfo = {
@@ -1214,15 +1219,13 @@ if(Modules == nil) then
 			[TAG_TOTALCOST] = totalCost,
 			[TAG_ITEMNAME] = shopItem.name
 		}
-
 		if(getPlayerMoney(cid) < totalCost) then
 			local msg = self.npcHandler:getMessage(MESSAGE_NEEDMONEY)
 			doPlayerSendCancel(cid, self.npcHandler:parseMessage(msg, parseInfo))
 			return false
 		end
 
-		local subType = shopItem.subType or 1
-		local a, b = doNpcSellItem(cid, itemid, amount, subType, ignoreCap, inBackpacks, backpack)
+		local a, b = doNpcSellItem(cid, itemid, count, subType, ignoreCap, inBackpacks, backpack)
 		if(a < amount) then
 			local msgId = MESSAGE_NEEDMORESPACE
 			if(a == 0) then
