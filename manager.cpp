@@ -504,7 +504,7 @@ LuaReturn_t Manager::execute(const std::string& script)
 	if(!m_interface->reserveEnv())
 		return LUA_RESERVE;
 
-	LuaReturn_t tmp = m_interface->loadBuffer(script);
+	LuaReturn_t tmp = (LuaReturn_t)m_interface->loadBuffer(script);
 	m_interface->releaseEnv();
 	return tmp;
 }
