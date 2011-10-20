@@ -240,8 +240,8 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <GenerateManifest>true</GenerateManifest>
-    <IncludePath>D:\The Forgotten Server Dev\linking\lua5.1.2\include;$(IncludePath)</IncludePath>
-    <LibraryPath>D:\The Forgotten Server Dev\linking\lua5.1.2\bin;$(VCInstallDir)lib;$(VCInstallDir)atlmfc\lib;$(WindowsSdkDir)lib;$(FrameworkSDKDir)\lib</LibraryPath>
+    <IncludePath>C:\dev\boost_1_47_0\;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\dev\boost_1_47_0\stage\lib;$(VCInstallDir)lib;$(VCInstallDir)atlmfc\lib;$(WindowsSdkDir)lib;$(FrameworkSDKDir)\lib</LibraryPath>
     <LinkIncremental>
     </LinkIncremental>
   </PropertyGroup>
@@ -302,7 +302,7 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>lua51.lib;mpir.lib;libxml2.lib;dbghelp.lib;libeay32MT.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>lua51.lib;mpir.lib;libxml2.lib;dbghelp.lib;libmysql.lib;sqlite.lib;libeay32MT.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <AdditionalLibraryDirectories>..\lib\win64;..\lib\win64\libxml2\lib;..\lib\win64\iconv\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <SubSystem>NotSet</SubSystem>
@@ -315,13 +315,13 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>false</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>__USE_SQLITE__;__USE_MYSQL__;__ENABLE_SERVER_DIAGNOSTIC__;__EXCEPTION_TRACER__;__DEBUG_NET__;__DEBUG_NET_DETAIL__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>__USE_MYSQL__;__ENABLE_SERVER_DIAGNOSTIC__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>otpch.h</PrecompiledHeaderFile>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <AdditionalIncludeDirectories>..\lib\sqlite3\include;..\lib\openssl\include;..\lib\mysql\include;..\lib\luajit\src;..\lib\win32\libxml2\include;..\lib\win32\iconv\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <MinimalRebuild>false</MinimalRebuild>
+      <MinimalRebuild>true</MinimalRebuild>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>false</GenerateDebugInformation>
@@ -346,7 +346,6 @@
       <PrecompiledHeaderFile>otpch.h</PrecompiledHeaderFile>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <AdditionalIncludeDirectories>..\lib\sqlite3\include;..\lib\openssl\include;..\lib\mysql\include;..\lib\luajit\src;..\lib\win64\libxml2\include;..\lib\win64\iconv\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <OmitFramePointers>false</OmitFramePointers>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>false</GenerateDebugInformation>
