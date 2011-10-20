@@ -198,8 +198,8 @@ void Game::start(ServiceManager* servicer)
 void Game::loadGameState()
 {
 	ScriptEnviroment::loadGameState();
-	loadMotd();
 	loadPlayersRecord();
+	loadMotd();
 	checkHighscores();
 }
 
@@ -246,7 +246,7 @@ void Game::setGameState(GameState_t newState)
 				}
 
 				Houses::getInstance()->payHouses();
-				saveGameState(false);
+				saveGameState(SAVE_PLAYERS | SAVE_MAP | SAVE_STATE);
 				Dispatcher::getInstance().addTask(createTask(boost::bind(&Game::shutdown, this)));
 
 				Scheduler::getInstance().stop();
@@ -268,7 +268,7 @@ void Game::setGameState(GameState_t newState)
 						++it;
 				}
 
-				saveGameState(false);
+				saveGameState(SAVE_PLAYERS | SAVE_MAP | SAVE_STATE);
 				break;
 			}
 
@@ -282,22 +282,29 @@ void Game::setGameState(GameState_t newState)
 	}
 }
 
-void Game::saveGameState(bool shallow)
+void Game::saveGameState(uint8_t flags)
 {
 	std::clog << "> Saving server..." << std::endl;
 	uint64_t start = OTSYS_TIME();
 	if(gameState == GAMESTATE_NORMAL)
 		setGameState(GAMESTATE_MAINTAIN);
 
-	IOLoginData* io = IOLoginData::getInstance();
-	for(AutoList<Player>::iterator it = Player::autoList.begin(); it != Player::autoList.end(); ++it)
+	if(hasBitSet(flags, (1 << 0)))
 	{
-		it->second->loginPosition = it->second->getPosition();
-		io->savePlayer(it->second, false, shallow);
+		IOLoginData* io = IOLoginData::getInstance();
+		for(AutoList<Player>::iterator it = Player::autoList.begin(); it != Player::autoList.end(); ++it)
+		{
+			it->second->loginPosition = it->second->getPosition();
+			io->savePlayer(it->second, false, hasBitSet(flags, (1 << 1)));
+		}
 	}
 
-	map->saveMap();
-	ScriptEnviroment::saveGameState();
+	if(hasBitSet(flags, (1 << 2)))
+		map->saveMap();
+
+	if(hasBitSet(flags, (1 << 3)))
+		ScriptEnviroment::saveGameState();
+
 	if(gameState == GAMESTATE_MAINTAIN)
 		setGameState(GAMESTATE_NORMAL);
 

@@ -327,9 +327,12 @@ void ProtocolAdmin::parsePacket(NetworkMessage& msg)
 				case CMD_SAVE_SERVER:
 				case CMD_SHALLOW_SAVE_SERVER:
 				{
+					uint8_t flags = SAVE_PLAYERS | SAVE_MAP | SAVE_STATE;
+					if(command == CMD_SHALLOW_SAVE_SERVER)
+						flags |= SAVE_PLAYERS_SHALLOW;
+
 					addLogLine(LOGTYPE_EVENT, "saving server");
-					Dispatcher::getInstance().addTask(createTask(boost::bind(
-						&Game::saveGameState, &g_game, (command == CMD_SHALLOW_SAVE_SERVER))));
+					Dispatcher::getInstance().addTask(createTask(boost::bind(&Game::saveGameState, &g_game, flags)));
 
 					output->put<char>(AP_MSG_COMMAND_OK);
 					break;

@@ -2471,7 +2471,7 @@ void LuaInterface::registerFunctions()
 	//doReloadInfo(id[, cid])
 	lua_register(m_luaState, "doReloadInfo", LuaInterface::luaDoReloadInfo);
 
-	//doSaveServer([shallow = false])
+	//doSaveServer(flags)
 	lua_register(m_luaState, "doSaveServer", LuaInterface::luaDoSaveServer);
 
 	//doCleanHouse(houseId)
@@ -10006,12 +10006,12 @@ int32_t LuaInterface::luaDoReloadInfo(lua_State* L)
 
 int32_t LuaInterface::luaDoSaveServer(lua_State* L)
 {
-	//doSaveServer([shallow = false])
-	bool shallow = false;
+	//doSaveServer([flags = 7])
+	uint8_t flags = 7;
 	if(lua_gettop(L) > 0)
-		shallow = popBoolean(L);
+		flags = popNumber(L);
 
-	Dispatcher::getInstance().addTask(createTask(boost::bind(&Game::saveGameState, &g_game, shallow)));
+	Dispatcher::getInstance().addTask(createTask(boost::bind(&Game::saveGameState, &g_game, flags)));
 	lua_pushnil(L);
 	return 1;
 }

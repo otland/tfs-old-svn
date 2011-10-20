@@ -200,7 +200,7 @@ void signalHandler(int32_t sig)
 	{
 		case SIGHUP:
 			Dispatcher::getInstance().addTask(createTask(
-				boost::bind(&Game::saveGameState, &g_game, false)));
+				boost::bind(&Game::saveGameState, &g_game, SAVE_PLAYERS | SAVE_MAP | SAVE_STATE)));
 			break;
 
 		case SIGTRAP:
