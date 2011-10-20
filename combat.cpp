@@ -388,7 +388,8 @@ bool Combat::isProtected(Player* attacker, Player* target)
 	if(target->getLevel() < protectionLevel || attacker->getLevel() < protectionLevel)
 		return true;
 
-	if(!attacker->getVocation()->isAttackable() || !target->getVocation()->isAttackable())
+	if(!attacker->getVocation()->isAttackable() || (!target->getVocation()->isAttackable()
+		&& !target->hasCustomFlag(PlayerCustomFlag_GamemasterPrivileges)))
 		return true;
 
 	return attacker->checkLoginDelay(target->getID());
