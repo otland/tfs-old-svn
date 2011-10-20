@@ -113,7 +113,7 @@ struct SaveFlag_t
 	SAVE_PLAYERS_SHALLOW = 1 << 1,
 	SAVE_MAP = 1 << 2,
 	SAVE_STATE = 1 << 3
-}
+};
 
 struct RefreshBlock_t
 {
