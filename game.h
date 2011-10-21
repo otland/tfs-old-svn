@@ -91,18 +91,18 @@ enum ReloadInfo_t
 	//RELOAD_UNUSED = 9,
 	RELOAD_ITEMS = 10,
 	RELOAD_MONSTERS = 11,
-	RELOAD_MOVEEVENTS = 12,
-	RELOAD_NPCS = 13,
-	RELOAD_OUTFITS = 14,
-	RELOAD_QUESTS = 15,
-	RELOAD_RAIDS = 16,
-	RELOAD_SPELLS = 17,
-	RELOAD_STAGES = 18,
-	RELOAD_TALKACTIONS = 19,
-	RELOAD_VOCATIONS = 20,
-	RELOAD_WEAPONS = 21,
-	RELOAD_MODS = 22,
-	RELOAD_MOUNTS = 23,
+	RELOAD_MOUNTS = 12,
+	RELOAD_MOVEEVENTS = 13,
+	RELOAD_NPCS = 14,
+	RELOAD_OUTFITS = 15,
+	RELOAD_QUESTS = 16,
+	RELOAD_RAIDS = 17,
+	RELOAD_SPELLS = 18,
+	RELOAD_STAGES = 19,
+	RELOAD_TALKACTIONS = 20,
+	RELOAD_VOCATIONS = 21,
+	RELOAD_WEAPONS = 22,
+	RELOAD_MODS = 23,
 	RELOAD_ALL = 24,
 	RELOAD_LAST = RELOAD_WEAPONS
 };
@@ -523,7 +523,7 @@ class Game
 		void loadPlayersRecord();
 		void checkPlayersRecord(Player* player);
 
-		bool reloadInfo(ReloadInfo_t reload, uint32_t playerId = 0);
+		bool reloadInfo(ReloadInfo_t reload, uint32_t playerId = 0, bool completeReload = false);
 		void cleanup();
 		void shutdown();
 		void freeThing(Thing* thing);
