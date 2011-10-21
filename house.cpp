@@ -888,7 +888,6 @@ bool Houses::payHouse(House* house, time_t _time, uint32_t bid)
 		return false;
 	}
 
-	bool result = ;
 	if(payRent(player, house, bid, _time) || _time < (house->getLastWarning() + 86400))
 	{
 		if(player->isVirtual())
@@ -917,57 +916,61 @@ bool Houses::payHouse(House* house, time_t _time, uint32_t bid)
 	}
 
 	uint32_t warnings = house->getRentWarnings();
-	if(warnings < warningsLimit)
+	if(warnings >= warningsLimit)
 	{
-		if(Depot* depot = player->getDepot(town->getID(), true))
-		{
-			if(Item* letter = Item::CreateItem(ITEM_LETTER_STAMPED);
-			{
-				if(g_game.internalAddItem(NULL, depot, letter, INDEX_WHEREEVER, FLAG_NOLIMIT) == RET_NOERROR)
-				{
-					letter->setWriter(g.config.getString(ConfigManager::SERVER_NAME));
-					letter->setDate(std::time(NULL));
-					std::stringstream s;
-
-					s << "Warning!\nThe ";
-					switch(rentPeriod)
-					{
-						case RENTPERIOD_DAILY:
-							s << "daily";
-							break;
-						case RENTPERIOD_WEEKLY:
-							s << "weekly";
-							break;
-						case RENTPERIOD_MONTHLY:
-							s << "monthly";
-							break;
-						case RENTPERIOD_YEARLY:
-							s << "annual";
-							break;
-						default:
-							break;
-					}
-
-					s << period << " rent of " << house->getRent() << " gold for your "
-						<< (house->isGuild() ? "guild hall" : "house") << " \"" << house->getName()
-						<< "\" has to be paid. Have it within " << (warningsLimit - warnings)
-						<< " days or you will lose your " << (house->isGuild() ? "guild hall" : "house") << ".";
-
-					letter->setText(s.str().c_str());
-					if(player->isVirtual())
-						IOLoginData::getInstance()->savePlayer(player);
-				}
-				else
-					g_game.freeThing(letter);
-			}
-		}
-
-		house->setLastWarning(_time);
-		house->setRentWarnings(++warnings);
-	}
-	else
 		house->setOwnerEx(0, true);
+		if(player->isVirtual())
+		{
+			IOLoginData::getInstance()->savePlayer(player);
+			delete player;
+		}
+	}
 
+	if(Depot* depot = player->getDepot(town->getID(), true))
+	{
+		if(Item* letter = Item::CreateItem(ITEM_LETTER_STAMPED);
+		{
+			if(g_game.internalAddItem(NULL, depot, letter, INDEX_WHEREEVER, FLAG_NOLIMIT) == RET_NOERROR)
+			{
+				letter->setWriter(g.config.getString(ConfigManager::SERVER_NAME));
+				letter->setDate(std::time(NULL));
+				std::stringstream s;
+
+				s << "Warning!\nThe ";
+				switch(rentPeriod)
+				{
+					case RENTPERIOD_DAILY:
+						s << "daily";
+						break;
+					case RENTPERIOD_WEEKLY:
+						s << "weekly";
+						break;
+					case RENTPERIOD_MONTHLY:
+						s << "monthly";
+						break;
+					case RENTPERIOD_YEARLY:
+						s << "annual";
+						break;
+					default:
+						break;
+				}
+
+				s << period << " rent of " << house->getRent() << " gold for your "
+					<< (house->isGuild() ? "guild hall" : "house") << " \"" << house->getName()
+					<< "\" has to be paid. Have it within " << (warningsLimit - warnings)
+					<< " days or you will lose your " << (house->isGuild() ? "guild hall" : "house") << ".";
+
+				letter->setText(s.str().c_str());
+				if(player->isVirtual())
+					IOLoginData::getInstance()->savePlayer(player);
+			}
+			else
+				g_game.freeThing(letter);
+		}
+	}
+
+	house->setLastWarning(_time);
+	house->setRentWarnings(++warnings);
 	if(player->isVirtual())
 		delete player;
 
