@@ -358,7 +358,11 @@ bool Npc::loadFromXml()
 	if(readXMLString(root, "namedescription", strValue) || readXMLString(root, "nameDescription", strValue))
 		nType->nameDescription = strValue;
 
-	replaceString(nType->nameDescription, "|NAME|", nType->name);
+	if(!nType->nameDescription.empty())
+		replaceString(nType->nameDescription, "|NAME|", nType->name);
+	else
+		nType->nameDescription = name;
+
 	if(readXMLString(root, "hidename", strValue) || readXMLString(root, "hideName", strValue))
 		hideName = booleanString(strValue);
 
