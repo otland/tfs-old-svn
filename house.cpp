@@ -924,6 +924,8 @@ bool Houses::payHouse(House* house, time_t _time, uint32_t bid)
 			IOLoginData::getInstance()->savePlayer(player);
 			delete player;
 		}
+
+		return false;
 	}
 
 	if(Depot* depot = player->getDepot(town->getID(), true))
