@@ -69,7 +69,7 @@ ReturnValue HouseTile::__queryAdd(int32_t index, const Thing* thing, uint32_t co
 	{
 		if(const Player* player = creature->getPlayer())
 		{
-			if(!house->isInvited(player))
+			if(!house->isInvited(player) && !player->hasCustomFlag(PlayerCustomFlag_CanMoveAnywhere))
 				return RET_PLAYERISNOTINVITED;
 		}
 		else
@@ -80,9 +80,32 @@ ReturnValue HouseTile::__queryAdd(int32_t index, const Thing* thing, uint32_t co
 		const uint32_t itemLimit = g_config.getNumber(ConfigManager::HOUSE_TILE_LIMIT);
 		if(itemLimit && getThingCount() > itemLimit)
 			return RET_TILEISFULL;
+
+		if(g_config.getBool(ConfigManager::HOUSE_PROTECTION))
+		{
+			if(const Player* player = dynamic_cast<Player*>(thing->getTopParanet()))
+			{
+				if(!house->isInvited(player) && !player->hasCustomFlag(PlayerCustomFlag_CanThrowAnywhere))
+					return RET_PLAYERISNOTINVITED;
+			}
+		}
 	}
 
 	return Tile::__queryAdd(index, thing, count, flags);
+}
+
+ReturnValue HouseTile::__queryRemove(const Thing* thing, uint32_t count, uint32_t flags) const
+{
+	if(thing->getItem() && g_config.getBool(ConfigManager::HOUSE_PROTECTION))
+	{
+		if(const Player* player = dynamic_cast<Player*>(thing->getTopParanet()))
+		{
+			if(!house->isInvited(player) && !player->hasCustomFlag(PlayerCustomFlag_CanThrowAnywhere))
+				return RET_PLAYERISNOTINVITED;
+		}
+	}
+
+	return Tile::__queryRemove(thing, count, flags);
 }
 
 Cylinder* HouseTile::__queryDestination(int32_t& index, const Thing* thing, Item** destItem, uint32_t& flags)

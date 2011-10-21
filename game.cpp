@@ -3733,8 +3733,7 @@ bool Game::playerTurn(uint32_t playerId, Direction dir)
 
 	player->setIdleTime(0);
 	ReturnValue ret = tile->__queryAdd(0, player, 1, FLAG_IGNOREBLOCKITEM);
-	if(ret != RET_NOTENOUGHROOM && (ret != RET_NOTPOSSIBLE || player->hasCustomFlag(PlayerCustomFlag_CanMoveAnywhere))
-		&& (ret != RET_PLAYERISNOTINVITED || player->hasFlag(PlayerFlag_CanEditHouses)))
+	if(ret != RET_NOTENOUGHROOM && (ret != RET_NOTPOSSIBLE || player->hasCustomFlag(PlayerCustomFlag_CanMoveAnywhere)))
 		return (internalTeleport(player, pos, false, FLAG_NOLIMIT, false) != RET_NOERROR);
 
 	player->sendCancelMessage(ret);
@@ -5284,8 +5283,8 @@ Position Game::getClosestFreeTile(Creature* creature, Position pos, bool extende
 				continue;
 
 			ReturnValue ret = tile->__queryAdd(0, player, 1, FLAG_IGNOREBLOCKITEM);
-			if(ret == RET_NOTENOUGHROOM || (ret == RET_NOTPOSSIBLE && !player->hasCustomFlag(PlayerCustomFlag_CanMoveAnywhere))
-				|| (ret == RET_PLAYERISNOTINVITED && !ignoreHouse && !player->hasFlag(PlayerFlag_CanEditHouses)))
+			if(ret == RET_NOTENOUGHROOM || (ret == RET_NOTPOSSIBLE && !player->hasCustomFlag(
+				PlayerCustomFlag_CanMoveAnywhere)) || (ret == RET_PLAYERISNOTINVITED && !ignoreHouse))
 				continue;
 
 			return tile->getPosition();

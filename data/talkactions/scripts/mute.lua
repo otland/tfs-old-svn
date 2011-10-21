@@ -4,6 +4,12 @@ function onSay(cid, words, param, channel)
 		return true
 	end
 
+	if(words:sub(2, 2) == "u") then
+		doRemoveCondition(pid, CONDITION_MUTED, 1)
+		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, getCreatureName(pid) .. " has been unmuted.")
+		return true
+	end
+
 	local t = string.explode(param, ",")
 	local pid = getPlayerByNameWildcard(t[1])
 	if(not pid or (isPlayerGhost(pid) and getPlayerGhostAccess(pid) > getPlayerGhostAccess(cid))) then

@@ -31,6 +31,7 @@ class HouseTile : public DynamicTile
 			uint32_t flags) const;
 		virtual Cylinder* __queryDestination(int32_t& index, const Thing* thing, Item** destItem,
 			uint32_t& flags);
+		virtual ReturnValue __queryRemove(const Thing* thing, uint32_t count, uint32_t flags) const;
 
 		virtual void __addThing(Creature* actor, int32_t index, Thing* thing);
 		virtual void __internalAddThing(uint32_t index, Thing* thing);
