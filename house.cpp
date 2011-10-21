@@ -755,7 +755,8 @@ bool Houses::loadFromXml(std::string filename)
 		if(readXMLInteger(houseNode, "rent", intValue))
 			rent = intValue;
 
-		uint32_t price = house->getSize() * g_config.getNumber(ConfigManager::HOUSE_PRICE); // we shouldn't force players to pay for walls, stairs, etc.
+		uint32_t price = (house->getSize() + house->getBedsCount()) * g_config.getNumber(ConfigManager::HOUSE_PRICE);
+		// we should let players to pay only for walkable tiles + beds as single units not two items.
 		if(g_config.getBool(ConfigManager::HOUSE_RENTASPRICE) && rent)
 			price = rent;
 

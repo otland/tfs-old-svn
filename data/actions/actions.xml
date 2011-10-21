@@ -301,7 +301,15 @@
 	<action fromid="10775" toid="10777" event="script" value="other/doors.lua"/>
 	<action fromid="10780" toid="10786" event="script" value="other/doors.lua"/>
 	<action fromid="10789" toid="10792" event="script" value="other/doors.lua"/>
-	<action fromid="12189" toid="12190" event="script" value="other/doors.lua"/>
+	<action fromid="12092" toid="12105" event="script" value="other/doors.lua"/>
+	<action fromid="12188" toid="12190" event="script" value="other/doors.lua"/>
+	<action fromid="12193" toid="12199" event="script" value="other/doors.lua"/>
+	<action fromid="12202" toid="12205" event="script" value="other/doors.lua"/>
+	<action itemid="12692" event="script" value="other/doors.lua"/>
+	<action itemid="12695" event="script" value="other/doors.lua"/>
+	<action itemid="12701" event="script" value="other/doors.lua"/>
+	<action itemid="12703" event="script" value="other/doors.lua"/>
+	<action fromid="13020" toid="13023" event="script" value="other/doors.lua"/>
 
 	<!-- Watches -->
 	<action fromid="1728" toid="1731" event="script" value="other/watch.lua"/>

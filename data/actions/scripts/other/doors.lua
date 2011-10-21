@@ -85,7 +85,7 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 	end
 
 	if(isInArray(specialDoors, item.itemid)) then
-		if(item.actionid == 100 or (item.actionid ~= 0 and getPlayerStorageValue(cid, item.actionid) > 0)) then
+		if(item.actionid == 100 or (item.actionid ~= 0 and getCreatureStorage(cid, item.actionid) > 0)) then
 			doorEnter(cid, item, toPosition)
 		else
 			doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, "The door seems to be sealed against unwanted intruders.")
@@ -111,9 +111,11 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 	if(isInArray(horizontalOpenDoors, item.itemid) and checkStackpos(item, fromPosition)) then
 		local newPosition = toPosition
 		newPosition.y = newPosition.y + 1
+
 		local doorPosition = fromPosition
 		doorPosition.stackpos = STACKPOS_TOP_MOVEABLE_ITEM_OR_CREATURE
-		local doorCreature = getThingfromPos(doorPosition)
+
+		local doorCreature = getThingFromPos(doorPosition)
 		if(doorCreature.itemid ~= 0) then
 			local pzDoorPosition = getTileInfo(doorPosition).protection
 			local pzNewPosition = getTileInfo(newPosition).protection
@@ -123,10 +125,20 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 			else
 				doTeleportThing(doorCreature.uid, newPosition)
 				if(not isInArray(closingDoors, item.itemid)) then
+					if(item.itemid == 12695) then
+						doTransformItem(item.uid, 12692)
+						return true
+					end
+
 					doTransformItem(item.uid, item.itemid - 1)
 				end
 			end
 
+			return true
+		end
+
+		if(item.itemid == 12695) then
+			doTransformItem(item.uid, 12692)
 			return true
 		end
 
@@ -137,19 +149,31 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 	if(isInArray(verticalOpenDoors, item.itemid) and checkStackpos(item, fromPosition)) then
 		local newPosition = toPosition
 		newPosition.x = newPosition.x + 1
+
 		local doorPosition = fromPosition
 		doorPosition.stackpos = STACKPOS_TOP_MOVEABLE_ITEM_OR_CREATURE
-		local doorCreature = getThingfromPos(doorPosition)
+
+		local doorCreature = getThingFromPos(doorPosition)
 		if(doorCreature.itemid ~= 0) then
 			if(getTileInfo(doorPosition).protection and not getTileInfo(newPosition).protection and doorCreature.uid ~= cid) then
 				doPlayerSendDefaultCancel(cid, RETURNVALUE_NOTPOSSIBLE)
 			else
 				doTeleportThing(doorCreature.uid, newPosition)
 				if(not isInArray(closingDoors, item.itemid)) then
+					if(item.itemid == 12703) then
+						doTransformItem(item.uid, 12701)
+						return true
+					end
+
 					doTransformItem(item.uid, item.itemid - 1)
 				end
 			end
 
+			return true
+		end
+
+		if(item.itemid == 12703) then
+			doTransformItem(item.uid, 12701)
 			return true
 		end
 
