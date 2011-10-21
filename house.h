@@ -282,6 +282,7 @@ class Houses
 		House* getHouseByGuildId(uint32_t guildId);
 
 		uint32_t getHousesCount(uint32_t accId);
+		RentPeriod_t getRentPeriod() const {return rentPeriod;}
 
 	private:
 		Houses();
