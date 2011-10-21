@@ -107,7 +107,7 @@ enum ReloadInfo_t
 	RELOAD_LAST = RELOAD_WEAPONS
 };
 
-struct SaveFlag_t
+enum SaveFlag_t
 {
 	SAVE_PLAYERS = 1 << 0,
 	SAVE_PLAYERS_SHALLOW = 1 << 1,
