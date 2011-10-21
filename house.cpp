@@ -755,7 +755,7 @@ bool Houses::loadFromXml(std::string filename)
 		if(readXMLInteger(houseNode, "rent", intValue))
 			rent = intValue;
 
-		uint32_t price = house->getTilesCount() * g_config.getNumber(ConfigManager::HOUSE_PRICE);
+		uint32_t price = house->getSize() * g_config.getNumber(ConfigManager::HOUSE_PRICE); // we shouldn't force players to pay for walls, stairs, etc.
 		if(g_config.getBool(ConfigManager::HOUSE_RENTASPRICE) && rent)
 			price = rent;
 
@@ -834,6 +834,9 @@ bool Houses::payRent(Player* player, House* house, uint32_t bid, time_t _time/* 
 			break;
 	}
 
+	house->setLastWarning(0);
+	house->setRentWarnings(0);
+
 	house->setPaidUntil(paidUntil);
 	return true;
 }
@@ -891,9 +894,6 @@ bool Houses::payHouse(House* house, time_t _time, uint32_t bid)
 			case RENTPERIOD_WEEKLY:
 				warningsLimit = 3;
 				break;
-			case RENTPERIOD_MONTHLY:
-				warningsLimit = 7;
-				break;
 			case RENTPERIOD_YEARLY:
 				warningsLimit = 14;
 				break;
@@ -940,8 +940,8 @@ bool Houses::payHouse(House* house, time_t _time, uint32_t bid)
 					savePlayer = true;
 			}
 
-			house->setRentWarnings(++warnings);
 			house->setLastWarning(_time);
+			house->setRentWarnings(++warnings);
 		}
 		else
 			house->setOwnerEx(0, true);

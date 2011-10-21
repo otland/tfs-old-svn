@@ -309,6 +309,7 @@ class ConfigManager
 			TIBIA_SLOTS,
 			SKIP_ITEMS_VERSION,
 			HEAL_PLAYER_ON_LEVEL,
+			HOUSE_SKIP_INIT_RENT,
 			SILENT_LUA,
 			LAST_BOOL_CONFIG /* this must be the last one */
 		};

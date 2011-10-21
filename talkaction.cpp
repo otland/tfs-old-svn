@@ -494,6 +494,31 @@ bool TalkAction::houseBuy(Creature* creature, const std::string&, const std::str
 	}
 
 	house->setOwnerEx(player->getGUID(), true);
+	if(g_config.getBool(ConfigManager::HOUSE_SKIP_INIT_RENT))
+	{
+		uint32_t paidUntil = time(NULL);
+		switch(rentPeriod)
+		{
+			case RENTPERIOD_DAILY:
+				paidUntil += 86400;
+				break;
+			case RENTPERIOD_WEEKLY:
+				paidUntil += 7 * 86400;
+				break;
+			case RENTPERIOD_MONTHLY:
+				paidUntil += 30 * 86400;
+				break;
+			case RENTPERIOD_YEARLY:
+				paidUntil += 365 * 86400;
+				break;
+			default:
+				break;
+		}
+
+		house->setPaidUntil(paidUntil);
+		house->setLastWarning(0);
+	}
+
 	std::string ret = "You have successfully bought this ";
 	if(house->isGuild())
 		ret += "hall";
