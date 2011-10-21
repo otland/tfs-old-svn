@@ -872,6 +872,9 @@ bool Houses::payHouse(House* house, time_t _time, uint32_t bid)
 	if(!player->isPremium() && g_config.getBool(ConfigManager::HOUSE_NEED_PREMIUM))
 	{
 		house->setOwnerEx(0, true);
+		if(player->isVirtual())
+			delete player;
+
 		return false;
 	}
 
@@ -879,83 +882,96 @@ bool Houses::payHouse(House* house, time_t _time, uint32_t bid)
 	if(loginClean && _time >= (player->getLastLogin() + loginClean))
 	{
 		house->setOwnerEx(0, true);
+		if(player->isVirtual())
+			delete player;
+
 		return false;
 	}
 
-	bool paid = payRent(player, house, bid, _time), savePlayer = false;
-	if(!paid && _time >= (house->getLastWarning() + 86400))
+	bool result = ;
+	if(payRent(player, house, bid, _time) || _time < (house->getLastWarning() + 86400))
 	{
-		uint32_t warningsLimit = 7;
-		switch(rentPeriod)
+		if(player->isVirtual())
 		{
-			case RENTPERIOD_DAILY:
-				warningsLimit = 1;
-				break;
-			case RENTPERIOD_WEEKLY:
-				warningsLimit = 3;
-				break;
-			case RENTPERIOD_YEARLY:
-				warningsLimit = 14;
-				break;
-			default:
-				break;
+			IOLoginData::getInstance()->savePlayer(player);
+			delete player;
 		}
 
-		uint32_t warnings = house->getRentWarnings();
-		if(warnings < warningsLimit)
-		{
-			Depot* depot = player->getDepot(town->getID(), true);
-			Item* letter = Item::CreateItem(ITEM_LETTER_STAMPED);
-			if(depot && letter)
-			{
-				std::string period;
-				switch(rentPeriod)
-				{
-					case RENTPERIOD_DAILY:
-						period = "daily";
-						break;
-					case RENTPERIOD_WEEKLY:
-						period = "weekly";
-						break;
-					case RENTPERIOD_MONTHLY:
-						period = "monthly";
-						break;
-					case RENTPERIOD_YEARLY:
-						period = "annual";
-						break;
-					default:
-						break;
-				}
-
-				std::stringstream s;
-				s << "Warning!\nThe " << period << " rent of " << house->getRent() << " gold for your "
-				<< (house->isGuild() ? "guild hall" : "house") << " \"" << house->getName()
-				<< "\" has to be paid. Have it within " << (warningsLimit - warnings)
-				<< " days or you will lose your " << (house->isGuild() ? "guild hall" : "house") << ".";
-
-				letter->setText(s.str().c_str());
-				if(g_game.internalAddItem(NULL, depot, letter, INDEX_WHEREEVER, FLAG_NOLIMIT) != RET_NOERROR)
-					g_game.freeThing(letter);
-				else
-					savePlayer = true;
-			}
-
-			house->setLastWarning(_time);
-			house->setRentWarnings(++warnings);
-		}
-		else
-			house->setOwnerEx(0, true);
+		return true;
 	}
+
+	uint32_t warningsLimit = 7;
+	switch(rentPeriod)
+	{
+		case RENTPERIOD_DAILY:
+			warningsLimit = 1;
+			break;
+		case RENTPERIOD_WEEKLY:
+			warningsLimit = 3;
+			break;
+		case RENTPERIOD_YEARLY:
+			warningsLimit = 14;
+			break;
+		default:
+			break;
+	}
+
+	uint32_t warnings = house->getRentWarnings();
+	if(warnings < warningsLimit)
+	{
+		if(Depot* depot = player->getDepot(town->getID(), true))
+		{
+			if(Item* letter = Item::CreateItem(ITEM_LETTER_STAMPED);
+			{
+				if(g_game.internalAddItem(NULL, depot, letter, INDEX_WHEREEVER, FLAG_NOLIMIT) == RET_NOERROR)
+				{
+					letter->setWriter(g.config.getString(ConfigManager::SERVER_NAME));
+					letter->setDate(std::time(NULL));
+					std::stringstream s;
+
+					s << "Warning!\nThe ";
+					switch(rentPeriod)
+					{
+						case RENTPERIOD_DAILY:
+							s << "daily";
+							break;
+						case RENTPERIOD_WEEKLY:
+							s << "weekly";
+							break;
+						case RENTPERIOD_MONTHLY:
+							s << "monthly";
+							break;
+						case RENTPERIOD_YEARLY:
+							s << "annual";
+							break;
+						default:
+							break;
+					}
+
+					s << period << " rent of " << house->getRent() << " gold for your "
+						<< (house->isGuild() ? "guild hall" : "house") << " \"" << house->getName()
+						<< "\" has to be paid. Have it within " << (warningsLimit - warnings)
+						<< " days or you will lose your " << (house->isGuild() ? "guild hall" : "house") << ".";
+
+					letter->setText(s.str().c_str());
+					if(player->isVirtual())
+						IOLoginData::getInstance()->savePlayer(player);
+				}
+				else
+					g_game.freeThing(letter);
+			}
+		}
+
+		house->setLastWarning(_time);
+		house->setRentWarnings(++warnings);
+	}
+	else
+		house->setOwnerEx(0, true);
 
 	if(player->isVirtual())
-	{
-		if(savePlayer)
-			IOLoginData::getInstance()->savePlayer(player);
-
 		delete player;
-	}
 
-	return paid;
+	return false;
 }
 
 House* Houses::getHouse(uint32_t houseId, bool add/*= false*/)
