@@ -301,6 +301,7 @@
 	<action fromid="10775" toid="10777" event="script" value="other/doors.lua"/>
 	<action fromid="10780" toid="10786" event="script" value="other/doors.lua"/>
 	<action fromid="10789" toid="10792" event="script" value="other/doors.lua"/>
+	<action fromid="12189" toid="12190" event="script" value="other/doors.lua"/>
 
 	<!-- Watches -->
 	<action fromid="1728" toid="1731" event="script" value="other/watch.lua"/>

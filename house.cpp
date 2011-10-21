@@ -884,7 +884,7 @@ bool Houses::payHouse(House* house, time_t _time, uint32_t bid)
 		house->setOwnerEx(0, true);
 		if(player->isVirtual())
 			delete player;
-
+ 
 		return false;
 	}
 
@@ -898,7 +898,7 @@ bool Houses::payHouse(House* house, time_t _time, uint32_t bid)
 
 		return true;
 	}
-
+		 
 	uint32_t warningsLimit = 7;
 	switch(rentPeriod)
 	{
@@ -914,7 +914,7 @@ bool Houses::payHouse(House* house, time_t _time, uint32_t bid)
 		default:
 			break;
 	}
-
+	 
 	uint32_t warnings = house->getRentWarnings();
 	if(warnings >= warningsLimit)
 	{
@@ -924,20 +924,20 @@ bool Houses::payHouse(House* house, time_t _time, uint32_t bid)
 			IOLoginData::getInstance()->savePlayer(player);
 			delete player;
 		}
-
+			 
 		return false;
 	}
-
+			 
 	if(Depot* depot = player->getDepot(town->getID(), true))
 	{
-		if(Item* letter = Item::CreateItem(ITEM_LETTER_STAMPED);
+		if(Item* letter = Item::CreateItem(ITEM_LETTER_STAMPED))
 		{
 			if(g_game.internalAddItem(NULL, depot, letter, INDEX_WHEREEVER, FLAG_NOLIMIT) == RET_NOERROR)
 			{
-				letter->setWriter(g.config.getString(ConfigManager::SERVER_NAME));
+				letter->setWriter(g_config.getString(ConfigManager::SERVER_NAME));
 				letter->setDate(std::time(NULL));
 				std::stringstream s;
-
+				 
 				s << "Warning!\nThe ";
 				switch(rentPeriod)
 				{
@@ -957,7 +957,7 @@ bool Houses::payHouse(House* house, time_t _time, uint32_t bid)
 						break;
 				}
 
-				s << period << " rent of " << house->getRent() << " gold for your "
+				s << " rent of " << house->getRent() << " gold for your "
 					<< (house->isGuild() ? "guild hall" : "house") << " \"" << house->getName()
 					<< "\" has to be paid. Have it within " << (warningsLimit - warnings)
 					<< " days or you will lose your " << (house->isGuild() ? "guild hall" : "house") << ".";
@@ -966,6 +966,7 @@ bool Houses::payHouse(House* house, time_t _time, uint32_t bid)
 				if(player->isVirtual())
 					IOLoginData::getInstance()->savePlayer(player);
 			}
+
 			else
 				g_game.freeThing(letter);
 		}
