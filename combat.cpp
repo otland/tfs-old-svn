@@ -375,21 +375,21 @@ bool Combat::isInPvpZone(const Creature* attacker, const Creature* target)
 
 bool Combat::isProtected(Player* attacker, Player* target)
 {
-	if(attacker->hasFlag(PlayerFlag_CannotAttackPlayer) || !target->isAttackable())
+	if(attacker->hasFlag(PlayerFlag_CannotAttackPlayer))
 		return true;
+
+	if(attacker->hasCustomFlag(PlayerCustomFlag_GamemasterPrivileges))
+		return false;
 
 	if(attacker->getZone() == ZONE_HARDCORE && target->getZone() == ZONE_HARDCORE && g_config.getBool(ConfigManager::PVP_TILE_IGNORE_PROTECTION))
 		return false;
 
-	if(attacker->hasCustomFlag(PlayerCustomFlag_IsProtected) || target->hasCustomFlag(PlayerCustomFlag_IsProtected))
+	if(attacker->hasCustomFlag(PlayerCustomFlag_IsProtected) || target->hasCustomFlag(PlayerCustomFlag_IsProtected)
+		|| !target->isAttackable() || !attacker->getVocation()->isAttackable() || !target->getVocation()->isAttackable())
 		return true;
 
 	uint32_t protectionLevel = g_config.getNumber(ConfigManager::PROTECTION_LEVEL);
 	if(target->getLevel() < protectionLevel || attacker->getLevel() < protectionLevel)
-		return true;
-
-	if(!attacker->getVocation()->isAttackable() || (!target->getVocation()->isAttackable()
-		&& !target->hasCustomFlag(PlayerCustomFlag_GamemasterPrivileges)))
 		return true;
 
 	return attacker->checkLoginDelay(target->getID());
