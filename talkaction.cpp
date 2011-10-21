@@ -497,7 +497,7 @@ bool TalkAction::houseBuy(Creature* creature, const std::string&, const std::str
 	if(g_config.getBool(ConfigManager::HOUSE_SKIP_INIT_RENT))
 	{
 		uint32_t paidUntil = time(NULL);
-		switch(rentPeriod)
+		switch(Houses::getInstance()->getRentPeriod())
 		{
 			case RENTPERIOD_DAILY:
 				paidUntil += 86400;
