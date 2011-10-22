@@ -332,7 +332,7 @@ void Spawn::checkSpawn()
 
 			spawnedMap.erase(it);
 			if(it->second)
-				monster->unRef();
+				it->second->unRef();
 		}
 	}
 
@@ -352,7 +352,7 @@ void Spawn::checkSpawn()
 			continue;
 		}
 
-		spawnMonster(spawnId, sb.mType, sb.pos, sb.direction);
+		spawnMonster(it->first, sb.mType, sb.pos, sb.direction);
 		if(++spawnCount >= (uint32_t)g_config.getNumber(ConfigManager::RATE_SPAWN))
 			break;
 	}
