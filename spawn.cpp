@@ -323,17 +323,20 @@ void Spawn::checkSpawn()
 	std::clog << "[Notice] Spawn::checkSpawn " << this << std::endl;
 #endif
 	checkSpawnEvent = 0;
-	for(SpawnedMap::iterator it = spawnedMap.begin(); it != spawnedMap.end(); ++it)
+	for(SpawnedMap::iterator it = spawnedMap.begin(); it != spawnedMap.end(); )
 	{
-		if(!it->second || it->second->isRemoved())
+		if(it->second->isRemoved())
 		{
 			if(it->first)
 				spawnMap[it->first].lastSpawn = OTSYS_TIME();
 
-			spawnedMap.erase(it);
 			if(it->second)
 				it->second->unRef();
+
+			spawnedMap.erase(it++);
 		}
+		else
+			++it;
 	}
 
 	uint32_t spawnCount = 0;
