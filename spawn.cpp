@@ -322,30 +322,25 @@ void Spawn::checkSpawn()
 #ifdef __DEBUG_SPAWN__
 	std::clog << "[Notice] Spawn::checkSpawn " << this << std::endl;
 #endif
-	Monster* monster;
-	uint32_t spawnId;
-
 	checkSpawnEvent = 0;
 	for(SpawnedMap::iterator it = spawnedMap.begin(); it != spawnedMap.end(); ++it)
 	{
-		spawnId = it->first;
-		monster = it->second;
-		if(monster->isRemoved())
+		if(!it->second || it->second->isRemoved())
 		{
-			if(spawnId)
-				spawnMap[spawnId].lastSpawn = OTSYS_TIME();
+			if(it->first)
+				spawnMap[it->firsts].lastSpawn = OTSYS_TIME();
 
-			monster->unRef();
 			spawnedMap.erase(it);
+			if(it->second)
+				monster->unRef();
 		}
 	}
 
 	uint32_t spawnCount = 0;
 	for(SpawnMap::iterator it = spawnMap.begin(); it != spawnMap.end(); ++it)
 	{
-		spawnId = it->first;
 		spawnBlock_t& sb = it->second;
-		if(spawnedMap.count(spawnId))
+		if(spawnedMap.count(it->first))
 			continue;
 
 		if(OTSYS_TIME() < sb.lastSpawn + sb.interval)
@@ -358,8 +353,7 @@ void Spawn::checkSpawn()
 		}
 
 		spawnMonster(spawnId, sb.mType, sb.pos, sb.direction);
-		++spawnCount;
-		if(spawnCount >= (uint32_t)g_config.getNumber(ConfigManager::RATE_SPAWN))
+		if(++spawnCount >= (uint32_t)g_config.getNumber(ConfigManager::RATE_SPAWN))
 			break;
 	}
 

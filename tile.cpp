@@ -148,7 +148,7 @@ uint32_t Tile::getTopItemCount() const
 
 uint32_t Tile::getDownItemCount() const
 {
-	if(const TileItemVector* items =getItemList())
+	if(const TileItemVector* items = getItemList())
 		return items->getDownItemCount();
 
 	return 0;
