@@ -20,7 +20,8 @@ if(KeywordHandler == nil) then
 		callback = nil,
 		parameters = nil,
 		children = nil,
-		parent = nil
+		parent = nil,
+		users = nil
 	}
 
 	-- Created a new keywordnode with the given keywords, callback function and parameters and without any childNodes.
@@ -30,6 +31,8 @@ if(KeywordHandler == nil) then
 		obj.callback = func
 		obj.parameters = param
 		obj.children = {}
+		obj.users = {}
+
 		setmetatable(obj, self)
 		self.__index = self
 		return obj
@@ -88,13 +91,14 @@ if(KeywordHandler == nil) then
 
 	KeywordHandler = {
 		root = nil,
-		lastNode = nil
+		lastNode = {}
 	}
 
 	-- Creates a new keywordhandler with an empty rootnode.
 	function KeywordHandler:new()
 		local obj = {}
 		obj.root = KeywordNode:new(nil, nil, nil)
+
 		setmetatable(obj, self)
 		self.__index = self
 		return obj
@@ -102,13 +106,13 @@ if(KeywordHandler == nil) then
 
 	-- Resets the lastNode field, and this resetting the current position in the node hierarchy to root.
 	function KeywordHandler:reset()
-		self.lastNode = nil
+		self.lastNode = {}
 	end
 
 	-- Makes sure the correct childNode of lastNode gets a chance to process the message.
 	--	The behavior of this function depends much on the KEYWORD_BEHAVIOR.
 	function KeywordHandler:processMessage(cid, message)
-		local node = self:getLastNode()
+		local node = self:getLastNode(cid)
 		if(node == nil) then
 			error('No root node found.')
 			return false
@@ -138,7 +142,7 @@ if(KeywordHandler == nil) then
 				end
 			end
 		elseif(KEYWORD_BEHAVIOR == BEHAVIOR_COMPLEX) then
-			while true do
+			repeat
 				local ret = self:processNodeMessage(node, cid, message)
 				if(ret) then
 					return true
@@ -146,10 +150,8 @@ if(KeywordHandler == nil) then
 
 				if(node:getParent() ~= nil) then
 					node = node:getParent() -- Move one step upwards in the hierarchy.
-				else
-					break
 				end
-			end
+			until node ~= nil
 		else
 			error('Unknown keyword behavior.')
 		end
@@ -162,13 +164,13 @@ if(KeywordHandler == nil) then
 		local messageLower = string.lower(message)
 		for i, childNode in pairs(node.children) do
 			if(childNode:checkMessage(messageLower)) then
-				local oldLast = self.lastNode
-				self.lastNode = childNode
+				local oldLast = self.lastNode[cid]
+				self.lastNode[cid] = childNode
 				childNode.parent = node -- Make sure node is the parent of childNode (as one node can be parent to several nodes).
 				if(childNode:processMessage(cid, message)) then
 					return true
 				else
-					self.lastNode = oldLast
+					self.lastNode[cid] = oldLast
 				end
 			end
 		end
@@ -181,11 +183,11 @@ if(KeywordHandler == nil) then
 	end
 
 	-- Returns the last processed keywordnode or root if no last node is found.
-	function KeywordHandler:getLastNode()
+	function KeywordHandler:getLastNode(cid)
 		if(KEYWORD_BEHAVIOR == BEHAVIOR_SIMPLE) then
 			return self:getRoot()
 		else
-			return self.lastNode or self:getRoot()
+			return self.lastNode[cid] or self:getRoot()
 		end
 	end
 
@@ -201,13 +203,15 @@ if(KeywordHandler == nil) then
 		if(steps == nil) then
 			steps = 1
 		end
+
 		for i = 1, steps,1 do
-			if(self.lastNode == nil) then
+			if(self.lastNode[cid] == nil) then
 				break
 			else
-				self.lastNode = self.lastNode:getParent() or self:getRoot()
+				self.lastNode[cid] = self.lastNode:getParent() or self:getRoot()
 			end
 		end
-		return self.lastNode
+
+		return self.lastNode[cid]
 	end
 end

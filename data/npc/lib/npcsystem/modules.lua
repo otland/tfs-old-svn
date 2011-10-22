@@ -419,11 +419,11 @@ if(Modules == nil) then
 			module = self
 		}
 
-		local keywords, bringwords = {}, {}
+		local keywords, bringWords = {}, {}
 		table.insert(keywords, name)
 
-		table.insert(bringwords, 'bring me to ' .. name)
-		self.npcHandler.keywordHandler:addKeyword(bringwords, TravelModule.bring, parameters)
+		table.insert(bringWords, 'bring me to ' .. name)
+		self.npcHandler.keywordHandler:addKeyword(bringWords, TravelModule.bring, parameters)
 
 		local node = self.npcHandler.keywordHandler:addKeyword(keywords, TravelModule.travel, parameters)
 		node:addChildKeywordNode(self.yesNode)
