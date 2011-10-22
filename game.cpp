@@ -289,20 +289,20 @@ void Game::saveGameState(uint8_t flags)
 	if(gameState == GAMESTATE_NORMAL)
 		setGameState(GAMESTATE_MAINTAIN);
 
-	if(hasBitSet(flags, (1 << 0)))
+	if(hasBitSet(SAVE_PLAYERS, flags))
 	{
 		IOLoginData* io = IOLoginData::getInstance();
 		for(AutoList<Player>::iterator it = Player::autoList.begin(); it != Player::autoList.end(); ++it)
 		{
 			it->second->loginPosition = it->second->getPosition();
-			io->savePlayer(it->second, false, hasBitSet(flags, (1 << 1)));
+			io->savePlayer(it->second, false, hasBitSet(SAVE_PLAYERS_SHALLOW, flags));
 		}
 	}
 
-	if(hasBitSet(flags, (1 << 2)))
+	if(hasBitSet(SAVE_MAP, flags))
 		map->saveMap();
 
-	if(hasBitSet(flags, (1 << 3)))
+	if(hasBitSet(SAVE_STATE, flags))
 		ScriptEnviroment::saveGameState();
 
 	if(gameState == GAMESTATE_MAINTAIN)

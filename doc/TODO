@@ -16,8 +16,8 @@
 ]
 
 [ TASKS
-	Fix revenges- orange skull)
-		Assigned to: Dalkon, Elf
+	Fix revenges- orange skull
+		Assigned to: Elf
 
 	Send weapon elemental damage together with physical
 		Assigned to: Elf
@@ -26,5 +26,5 @@
 		Assigned to: Elf
 
 	Finish documentation as its incomplete
-		Assigned to: Dalkon (CONFIG_HELP, MSVC Guide), Fallen (LUA_FUNCTIONS, C::B Guide), KaczooH
+		Assigned to: ?
 ]
