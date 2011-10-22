@@ -328,7 +328,7 @@ void Spawn::checkSpawn()
 		if(!it->second || it->second->isRemoved())
 		{
 			if(it->first)
-				spawnMap[it->firsts].lastSpawn = OTSYS_TIME();
+				spawnMap[it->first].lastSpawn = OTSYS_TIME();
 
 			spawnedMap.erase(it);
 			if(it->second)
