@@ -608,9 +608,9 @@ if(NpcHandler == nil) then
 
 	-- Resets the npc into it's initial state (in regard of the keyrodhandler).
 	--	All modules are also receiving a reset call through their callbackOnModuleReset function.
-	function NpcHandler:resetNpc()
+	function NpcHandler:resetNpc(cid)
 		if(self:processModuleCallback(CALLBACK_MODULE_RESET)) then
-			self.keywordHandler:reset()
+			self.keywordHandler:reset(cid)
 		end
 	end
 

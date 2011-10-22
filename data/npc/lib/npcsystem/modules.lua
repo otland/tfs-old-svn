@@ -49,9 +49,9 @@ if(Modules == nil) then
 
 		local parseInfo = {[TAG_PLAYERNAME] = getCreatureName(cid)}
 		npcHandler:say(npcHandler:parseMessage(parameters.text or parameters.message, parseInfo), cid, parameters.publicize and true)
-		if(parameters.reset == true) then
-			npcHandler:resetNpc()
-		elseif(parameters.moveup ~= nil and type(parameters.moveup) == 'number') then
+		if(parameters.reset) then
+			npcHandler:resetNpc(cid)
+		elseif(parameters.moveup and type(parameters.moveup) == 'number') then
 			npcHandler.keywordHandler:moveUp(parameters.moveup)
 		end
 
@@ -88,7 +88,7 @@ if(Modules == nil) then
 			npcHandler:say("You need a premium account in order to get promoted.", cid)
 		end
 
-		npcHandler:resetNpc()
+		npcHandler:resetNpc(cid)
 		return true
 	end
 
@@ -120,7 +120,7 @@ if(Modules == nil) then
 			npcHandler:say('You need a premium account in order to buy ' .. parameters.spellName .. '.', cid)
 		end
 
-		npcHandler:resetNpc()
+		npcHandler:resetNpc(cid)
 		return true
 	end
 
@@ -181,7 +181,7 @@ if(Modules == nil) then
 			npcHandler:say('You need a premium account in order to be blessed.', cid)
 		end
 
-		npcHandler:resetNpc()
+		npcHandler:resetNpc(cid)
 		return true
 	end
 
@@ -198,24 +198,24 @@ if(Modules == nil) then
 
 		local storage, pzLocked = parameters.storageValue or (EMPTY_STORAGE + 1), parameters.allowLocked or false
 		if(parameters.premium and not isPlayerPremiumCallback(cid)) then
-			npcHandler:say('I can only allow premium players to travel with me.', cid)
+			npcHandler:say('I\'m sorry, but you need a premium account in order to travel onboard our ships.', cid)
 		elseif(parameters.level ~= nil and getPlayerLevel(cid) < parameters.level) then
 			npcHandler:say('You must reach level ' .. parameters.level .. ' before I can let you go there.', cid)
 		elseif(parameters.storageId ~= nil and getPlayerStorageValue(cid, parameters.storageId) < storage) then
-			npcHandler:say(parameters.storageInfo or 'You may not travel there!', cid)
+			npcHandler:say(parameters.storageInfo or 'You may not travel there yet!', cid)
 		elseif(not pzLocked and isPlayerPzLocked(cid)) then
-			npcHandler:say('Get out of there with this blood!', cid)
+			npcHandler:say('First get rid of those blood stains! You are not going to ruin my vehicle!', cid)
 		elseif(not doPlayerRemoveMoney(cid, parameters.cost)) then
-			npcHandler:say('You do not have enough money.', cid)
+			npcHandler:say('You don\'t have enough money.', cid)
 		else
-			npcHandler:say('It was a pleasure doing business with you.', cid)
+			npcHandler:say('Set the sails!', cid)
 			npcHandler:releaseFocus(cid)
 
 			doTeleportThing(cid, parameters.destination, false)
 			doSendMagicEffect(parameters.destination, CONST_ME_TELEPORT)
 		end
 
-		npcHandler:resetNpc()
+		npcHandler:resetNpc(cid)
 		return true
 	end
 
@@ -237,6 +237,7 @@ if(Modules == nil) then
 		for i, word in pairs(FOCUS_GREETWORDS) do
 			local obj = {}
 			table.insert(obj, word)
+
 			obj.callback = FOCUS_GREETWORDS.callback or FocusModule.messageMatcher
 			handler.keywordHandler:addKeyword(obj, FocusModule.onGreet, {module = self})
 		end
@@ -244,6 +245,7 @@ if(Modules == nil) then
 		for i, word in pairs(FOCUS_FAREWELLWORDS) do
 			local obj = {}
 			table.insert(obj, word)
+
 			obj.callback = FOCUS_FAREWELLWORDS.callback or FocusModule.messageMatcher
 			handler.keywordHandler:addKeyword(obj, FocusModule.onFarewell, {module = self})
 		end
@@ -262,6 +264,7 @@ if(Modules == nil) then
 		end
 
 		parameters.module.npcHandler:onFarewell(cid)
+		parameters.module.npcHandler:resetNpc(cid)
 		return true
 	end
 
@@ -450,22 +453,22 @@ if(Modules == nil) then
 		if(isPlayerPremiumCallback(cid) or not parent.premium) then
 			if(not isPlayerPzLocked(cid)) then
 				if(doPlayerRemoveMoney(cid, parent.cost)) then
-					module.npcHandler:say('It was a pleasure doing business with you.', cid)
+					module.npcHandler:say('Set the sails!', cid)
 					module.npcHandler:releaseFocus(cid)
 
 					doTeleportThing(cid, parent.destination, true)
 					doSendMagicEffect(parent.destination, CONST_ME_TELEPORT)
 				else
-					module.npcHandler:say('You do not have enough money.', cid)
+					module.npcHandler:say('You don\'t have enough money.', cid)
 				end
 			else
-				module.npcHandler:say('Get out of there with this blood!', cid)
+				module.npcHandler:say('First get rid of those blood stains! You are not going to ruin my vehicle!', cid)
 			end
 		else
-			module.npcHandler:say('I can only allow premium players to travel there.', cid)
+			module.npcHandler:say('I\'m sorry, but you need a premium account in order to travel onboard our ships.', cid)
 		end
 
-		module.npcHandler:resetNpc()
+		module.npcHandler:resetNpc(cid)
 		return true
 	end
 
@@ -477,7 +480,7 @@ if(Modules == nil) then
 		end
 
 		module.npcHandler:say(module.npcHandler:parseMessage(module.npcHandler:getMessage(MESSAGE_DECLINE), {[TAG_PLAYERNAME] = getCreatureName(cid)}), cid)
-		module.npcHandler:resetNpc()
+		module.npcHandler:resetNpc(cid)
 		return true
 	end
 
@@ -488,7 +491,7 @@ if(Modules == nil) then
 		end
 
 		if((isPlayerPremiumCallback(cid) or not parameters.premium) and not isPlayerPzLocked(cid) and doPlayerRemoveMoney(cid, parameters.cost)) then
-			module.npcHandler:say('Sure!', cid)
+			module.npcHandler:say('Set the sails!', cid)
 			module.npcHandler:releaseFocus(cid)
 
 			doTeleportThing(cid, parameters.destination, false)
@@ -517,7 +520,7 @@ if(Modules == nil) then
 		end
 
 		module.npcHandler:say(msg .. ".", cid)
-		module.npcHandler:resetNpc()
+		module.npcHandler:resetNpc(cid)
 		return true
 	end
 
@@ -779,7 +782,7 @@ if(Modules == nil) then
 			module.npcHandler:say('Sorry, I dress only premium players.', cid)
 		end
 
-		module.npcHandler:resetNpc()
+		module.npcHandler:resetNpc(cid)
 		return true
 	end
 
@@ -791,7 +794,7 @@ if(Modules == nil) then
 		end
 
 		module.npcHandler:say(module.npcHandler:parseMessage(module.npcHandler:getMessage(MESSAGE_DECLINE), {[TAG_PLAYERNAME] = getCreatureName(cid)}), cid)
-		module.npcHandler:resetNpc()
+		module.npcHandler:resetNpc(cid)
 		return true
 	end
 
@@ -821,7 +824,7 @@ if(Modules == nil) then
 		end
 
 		module.npcHandler:say(msg .. ".", cid)
-		module.npcHandler:resetNpc()
+		module.npcHandler:resetNpc(cid)
 		return true
 	end
 
@@ -1402,7 +1405,7 @@ if(Modules == nil) then
 			end
 		end
 
-		module.npcHandler:resetNpc()
+		module.npcHandler:resetNpc(cid)
 		return true
 	end
 
@@ -1423,7 +1426,7 @@ if(Modules == nil) then
 
 		local msg = module.npcHandler:parseMessage(module.noText, parseInfo)
 		module.npcHandler:say(msg, cid)
-		module.npcHandler:resetNpc()
+		module.npcHandler:resetNpc(cid)
 		return true
 	end
 
