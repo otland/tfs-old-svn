@@ -20,8 +20,7 @@ if(KeywordHandler == nil) then
 		callback = nil,
 		parameters = nil,
 		children = nil,
-		parent = nil,
-		users = nil
+		parent = nil
 	}
 
 	-- Created a new keywordnode with the given keywords, callback function and parameters and without any childNodes.
@@ -31,7 +30,6 @@ if(KeywordHandler == nil) then
 		obj.callback = func
 		obj.parameters = param
 		obj.children = {}
-		obj.users = {}
 
 		setmetatable(obj, self)
 		self.__index = self
