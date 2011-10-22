@@ -2471,7 +2471,7 @@ void LuaInterface::registerFunctions()
 	//doReloadInfo(id[, cid])
 	lua_register(m_luaState, "doReloadInfo", LuaInterface::luaDoReloadInfo);
 
-	//doSaveServer(flags)
+	//doSaveServer([flags = 13])
 	lua_register(m_luaState, "doSaveServer", LuaInterface::luaDoSaveServer);
 
 	//doCleanHouse(houseId)
@@ -10006,8 +10006,8 @@ int32_t LuaInterface::luaDoReloadInfo(lua_State* L)
 
 int32_t LuaInterface::luaDoSaveServer(lua_State* L)
 {
-	//doSaveServer([flags = 7])
-	uint8_t flags = 7;
+	//doSaveServer([flags = 13])
+	uint8_t flags = 13;
 	if(lua_gettop(L) > 0)
 		flags = popNumber(L);
 
