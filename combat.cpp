@@ -333,7 +333,7 @@ ReturnValue Combat::canTargetCreature(const Player* player, const Creature* targ
 	}
 
 	if(deny)
-		return RET_NOERROR;
+		return RET_NEEDEXCHANGE;
 
 	if(!player->hasFlag(PlayerFlag_IgnoreProtectionZone))
 	{

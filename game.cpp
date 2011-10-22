@@ -3621,7 +3621,9 @@ bool Game::playerSetAttackedCreature(uint32_t playerId, uint32_t creatureId)
 	ReturnValue ret = Combat::canTargetCreature(player, attackCreature);
 	if(ret != RET_NOERROR)
 	{
-		player->sendCancelMessage(ret);
+		if(ret != RET_NEEDEXCHANGE)
+			player->sendCancelMessage(ret);
+
 		player->sendCancelTarget();
 		player->setAttackedCreature(NULL);
 		return false;
