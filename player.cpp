@@ -3600,12 +3600,10 @@ void Player::onFollowCreature(const Creature* creature)
 
 void Player::setChaseMode(chaseMode_t mode)
 {
-	chaseMode_t prevChaseMode = chaseMode;
-	chaseMode = mode;
-
-	if(prevChaseMode == chaseMode)
+	if(chaseMode == mode)
 		return;
 
+	chaseMode = mode;
 	if(chaseMode == CHASEMODE_FOLLOW)
 	{
 		if(!followCreature && attackedCreature && !getNoMove()) //chase opponent
@@ -5371,10 +5369,10 @@ bool Player::tameMount(uint8_t mountId)
 	if(!Mounts::getInstance()->getMountById(mountId))
 		return false;
 
-	int32_t key = PSTRG_MOUNTS_RANGE_START + (mountId / 31), value = 0;
-	std::string tmp;
-
 	mountId--;
+	int32_t key = PSTRG_MOUNTS_RANGE_START + (mountId / 31), value = 0;
+
+	std::string tmp;
 	if(getStorage(boost::lexical_cast<std::string>(key), tmp))
 	{
 		value = atoi(tmp.c_str());
@@ -5392,10 +5390,10 @@ bool Player::untameMount(uint8_t mountId)
 	if(!Mounts::getInstance()->getMountById(mountId))
 		return false;
 
-	int32_t key = PSTRG_MOUNTS_RANGE_START + (mountId / 31), value = 0;
-	std::string tmp;
-
 	mountId--;
+	int32_t key = PSTRG_MOUNTS_RANGE_START + (mountId / 31), value = 0;
+
+	std::string tmp;
 	if(!getStorage(boost::lexical_cast<std::string>(key), tmp))
 		return true;
 
