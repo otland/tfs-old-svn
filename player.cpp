@@ -2631,6 +2631,10 @@ ReturnValue Player::__queryAdd(int32_t index, const Thing* thing, uint32_t count
 	if(!item)
 		return RET_NOTPOSSIBLE;
 
+	if(!item->isPickupable() || (hasFlag(PlayerFlag_CannotPickupItem) &&
+		item->getParent() && item->getParent() != VirtualCylinder::virtualCylinder))
+		return RET_CANNOTPICKUP;
+
 	bool childOwner = ((flags & FLAG_CHILDISOWNER) == FLAG_CHILDISOWNER), skipLimit = ((flags & FLAG_NOLIMIT) == FLAG_NOLIMIT);
 	if(childOwner)
 	{
@@ -2640,10 +2644,6 @@ ReturnValue Player::__queryAdd(int32_t index, const Thing* thing, uint32_t count
 
 		return RET_NOTENOUGHCAPACITY;
 	}
-
-	if(!item->isPickupable() || (hasFlag(PlayerFlag_CannotPickupItem) &&
-		item->getParent() && item->getParent() != VirtualCylinder::virtualCylinder))
-		return RET_CANNOTPICKUP;
 
 	ReturnValue ret = RET_NOERROR;
 	if((item->getSlotPosition() & SLOTP_HEAD) || (item->getSlotPosition() & SLOTP_NECKLACE) ||
