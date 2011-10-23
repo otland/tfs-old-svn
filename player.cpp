@@ -5369,7 +5369,7 @@ bool Player::tameMount(uint8_t mountId)
 	if(!Mounts::getInstance()->getMountById(mountId))
 		return false;
 
-	mountId--;
+	--mountId;
 	int32_t key = PSTRG_MOUNTS_RANGE_START + (mountId / 31), value = 0;
 
 	std::string tmp;
@@ -5390,7 +5390,7 @@ bool Player::untameMount(uint8_t mountId)
 	if(!Mounts::getInstance()->getMountById(mountId))
 		return false;
 
-	mountId--;
+	--mountId;
 	int32_t key = PSTRG_MOUNTS_RANGE_START + (mountId / 31), value = 0;
 
 	std::string tmp;
@@ -5401,7 +5401,7 @@ bool Player::untameMount(uint8_t mountId)
 	value ^= (int32_t)std::pow(2., mountId % 31);
 
 	Mount* mount = Mounts::getInstance()->getMountByCid(defaultOutfit.lookMount);
-	if(mount->getId() == (mountId + 1))
+	if(mount && mount->getId() == (mountId + 1))
 	{
 		dismount(true);
 		defaultOutfit.lookMount = 0;
