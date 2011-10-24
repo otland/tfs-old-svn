@@ -1898,7 +1898,7 @@ void Player::addManaSpent(uint64_t amount, bool useMultiplier/* = true*/)
 
 		s.str("");
 		s << "You advanced to magic level " << ++magLevel << ".";
-		sendTextMessage(MSG_EVENT_ADVANCE, ss.str());
+		sendTextMessage(MSG_EVENT_ADVANCE, s.str());
 
 		CreatureEventList advanceEvents = getCreatureEvents(CREATURE_EVENT_ADVANCE);
 		for(CreatureEventList::iterator it = advanceEvents.begin(); it != advanceEvents.end(); ++it)
@@ -4189,7 +4189,9 @@ bool Player::removeOutfit(uint32_t outfitId, uint32_t addons)
 		if(it->second.lookType == defaultOutfit.lookType)
 		{
 			outfits.erase(it);
-			defaultOutfit.lookType = outfits.begin().lookType;
+			if((it = outfits.begin()) != outfits.end())
+				defaultOutfit.lookType = it->second.lookType;
+
 			update = true;
 		}
 		else
