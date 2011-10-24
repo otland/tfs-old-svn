@@ -2649,8 +2649,7 @@ ReturnValue Player::__queryAdd(int32_t index, const Thing* thing, uint32_t count
 	if((item->getSlotPosition() & SLOTP_HEAD) || (item->getSlotPosition() & SLOTP_NECKLACE) ||
 		(item->getSlotPosition() & SLOTP_BACKPACK) || (item->getSlotPosition() & SLOTP_ARMOR) ||
 		(item->getSlotPosition() & SLOTP_LEGS) || (item->getSlotPosition() & SLOTP_FEET) ||
-		(item->getSlotPosition() & SLOTP_RING) || (!g_config.getBool(ConfigManager::TIBIA_SLOTS) &&
-		(item->getSlotPosition() & SLOTP_AMMO)))
+		(item->getSlotPosition() & SLOTP_RING) || (item->getSlotPosition() & SLOTP_AMMO))
 		ret = RET_CANNOTBEDRESSED;
 	else if(item->getSlotPosition() & SLOTP_TWO_HAND)
 		ret = RET_PUTTHISOBJECTINBOTHHANDS;
@@ -2771,7 +2770,7 @@ ReturnValue Player::__queryAdd(int32_t index, const Thing* thing, uint32_t count
 				ret = RET_NOERROR;
 			break;
 		case SLOT_AMMO:
-			if(item->getSlotPosition() & SLOTP_AMMO)
+			if(item->getSlotPosition() & SLOTP_AMMO || !g_config.getBool(ConfigManager::TIBIA_SLOTS))
 				ret = RET_NOERROR;
 			break;
 		case SLOT_WHEREEVER:
