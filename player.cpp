@@ -3799,12 +3799,6 @@ void Player::onTarget(Creature* target)
 		return;
 
 	addAttacked(targetPlayer);
-	if(targetPlayer == this && targetPlayer->getZone() != ZONE_HARDCORE)
-	{
-		targetPlayer->sendCreatureSkull(this);
-		return;
-	}
-
 	if(Combat::isInPvpZone(this, targetPlayer) || isPartner(targetPlayer) ||
 #ifdef __WAR_SYSTEM__
 		isAlly(targetPlayer) ||
@@ -3826,10 +3820,11 @@ void Player::onTarget(Creature* target)
 #ifdef __WAR_SYSTEM__
 		|| targetPlayer->isEnemy(this, true)
 #endif
-		)
+		|| canRevenge(targetPlayer->getGUID())
+		|| targetPlayer->canRevenge(guid))
 		return;
 
-	if(targetPlayer->getSkull() != SKULL_NONE || canRevenge(targetPlayer->getGUID()))
+	if(targetPlayer->getSkull() != SKULL_NONE)
 		targetPlayer->sendCreatureSkull(this);
 	else if(!hasCustomFlag(PlayerCustomFlag_NotGainSkull))
 	{
@@ -4253,7 +4248,7 @@ Skulls_t Player::getSkullType(const Creature* creature) const
 		if(canRevenge(player->getGUID()))
 			return SKULL_ORANGE;
 
-		if((/*player == this || */(skull != SKULL_NONE || player->canRevenge(guid)))
+		if((skull != SKULL_NONE || player->canRevenge(guid))
 			&& player->hasAttacked(this)
 #ifdef __WAR_SYSTEM__
 			&& !player->isEnemy(this, false)

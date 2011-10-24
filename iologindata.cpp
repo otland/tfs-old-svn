@@ -742,7 +742,7 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool preLo
 	query << "SELECT `pk`.`player_id`, `pd`.`date` FROM `player_killers` pk LEFT JOIN `killers` k"
 		<< " ON `pk`.`kill_id` = `k`.`id` LEFT JOIN `player_deaths` pd ON `k`.`death_id` = `pd`.`id`"
 		<< " WHERE `pd`.`player_id` = " << player->getGUID() << " AND `k`.`unjustified` = 1 AND "
-		<< "`pd`.`date` >= " << (time(NULL) - (7 * 86400));
+		<< "`pd`.`date` >= " << (time(NULL) - (7 * 86400)); // TODO: configurable
 #ifdef __WAR_SYSTEM__
 	query << " AND `k`.`war` = 0";
 #endif
