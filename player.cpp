@@ -4183,10 +4183,26 @@ bool Player::removeOutfit(uint32_t outfitId, uint32_t addons)
 	if(it == outfits.end())
 		return false;
 
+	bool update = false;
 	if(addons == 0xFF) //remove outfit
-		outfits.erase(it);
+	{
+		if(it->second.lookType == defaultOutfit.lookType)
+		{
+			outfits.erase(it);
+			defaultOutfit.lookType = outfits.begin().lookType;
+			update = true;
+		}
+		else
+			outfits.erase(it);
+	}
 	else //remove addons
-		outfits[outfitId].addons = it->second.addons & (~addons);
+	{
+		update = it->second.lookType == defaultOutfit.lookType;
+		it->second.addons = it->second.addons & (~addons);
+	}
+
+	if(update)
+		g_game.internalCreatureChangeOutfit(this, defaultOutfit, true);
 
 	return true;
 }
