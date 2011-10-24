@@ -633,9 +633,9 @@ void Player::addSkillAdvance(skills_t skill, uint64_t count, bool useMultiplier/
 	 	skills[skill][SKILL_TRIES] = skills[skill][SKILL_PERCENT] = 0;
 		skills[skill][SKILL_LEVEL]++;
 
+		s.str("");
 		s << "You advanced to " << getSkillName(skill) << " level " << skills[skill][SKILL_LEVEL] << ".";
 		sendTextMessage(MSG_EVENT_ADVANCE, s.str().c_str());
-		s.str("");
 
 		CreatureEventList advanceEvents = getCreatureEvents(CREATURE_EVENT_ADVANCE);
 		for(CreatureEventList::iterator it = advanceEvents.begin(); it != advanceEvents.end(); ++it)
@@ -1890,18 +1890,16 @@ void Player::addManaSpent(uint64_t amount, bool useMultiplier/* = true*/)
 	if(useMultiplier)
 		amount = uint64_t((double)amount * rates[SKILL__MAGLEVEL] * g_config.getDouble(ConfigManager::RATE_MAGIC));
 
-	bool advance = false;
-	std::stringstream ss;
+	std::stringstream s;
 	while(manaSpent + amount >= nextReqMana)
 	{
 		amount -= nextReqMana - manaSpent;
 		manaSpent = 0;
 
-		ss << "You advanced to magic level " << ++magLevel << ".";
+		s.str("");
+		s << "You advanced to magic level " << ++magLevel << ".";
 		sendTextMessage(MSG_EVENT_ADVANCE, ss.str());
-		ss.str("");
 
-		advance = true;
 		CreatureEventList advanceEvents = getCreatureEvents(CREATURE_EVENT_ADVANCE);
 		for(CreatureEventList::iterator it = advanceEvents.begin(); it != advanceEvents.end(); ++it)
 			(*it)->executeAdvance(this, SKILL__MAGLEVEL, (magLevel - 1), magLevel);
@@ -1924,7 +1922,7 @@ void Player::addManaSpent(uint64_t amount, bool useMultiplier/* = true*/)
 		magLevelPercent = newPercent;
 		sendStats();
 	}
-	else if(advance)
+	else if(!s.str().empty())
 		sendStats();
 }
 
@@ -1969,9 +1967,9 @@ void Player::addExperience(uint64_t exp)
 		if(party)
 			party->updateSharedExperience();
 
-		std::stringstream ss;
-		ss << "You advanced from Level " << prevLevel << " to Level " << level << ".";
-		sendTextMessage(MSG_EVENT_ADVANCE, ss.str());
+		std::stringstream s;
+		s << "You advanced from Level " << prevLevel << " to Level " << level << ".";
+		sendTextMessage(MSG_EVENT_ADVANCE, s.str());
 
 		CreatureEventList advanceEvents = getCreatureEvents(CREATURE_EVENT_ADVANCE);
 		for(CreatureEventList::iterator it = advanceEvents.begin(); it != advanceEvents.end(); ++it)
@@ -2008,9 +2006,9 @@ void Player::removeExperience(uint64_t exp, bool updateStats/* = true*/)
 			g_game.addCreatureHealth(this);
 		}
 
-		std::stringstream ss;
-		ss << "You were downgraded from Level " << prevLevel << " to Level " << level << ".";
-		sendTextMessage(MSG_EVENT_ADVANCE, ss.str());
+		std::stringstream s;
+		s << "You were downgraded from Level " << prevLevel << " to Level " << level << ".";
+		sendTextMessage(MSG_EVENT_ADVANCE, s.str());
 	}
 
 	uint64_t currLevelExp = Player::getExpForLevel(level),
