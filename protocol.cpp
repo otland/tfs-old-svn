@@ -112,7 +112,7 @@ void Protocol::XTEA_encrypt(OutputMessage& msg)
 	{
 		uint16_t n = 8 - (messageLength % 8);
 		msg.putPadding(n);
-		messageLength = messageLength + n;
+		messageLength += n;
 	}
 
 	int32_t readPos = -1;

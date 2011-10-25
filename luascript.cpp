@@ -7629,7 +7629,7 @@ int32_t LuaInterface::luaGetPlayerByNameWildcard(lua_State* L)
 		lua_pushnil(L);
 
 	return 1;
-}++
+}
 
 int32_t LuaInterface::luaGetPlayerGUIDByName(lua_State* L)
 {
