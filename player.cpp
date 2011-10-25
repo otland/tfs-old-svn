@@ -2236,12 +2236,11 @@ bool Player::onDeath()
 	uint32_t totalDamage = 0, pvpDamage = 0;
 	for(CountMap::iterator it = damageMap.begin(); it != damageMap.end(); ++it)
 	{
-		totalDamage += it->second.total;
-		// its enough when we use IDs range comparison here instead of overheating autoList
 		if(((OTSYS_TIME() - it->second.ticks) / 1000) > g_config.getNumber(
 			ConfigManager::FAIRFIGHT_TIMERANGE))
 			continue;
 
+		totalDamage += it->second.total;
 		Creature* creature = g_game.getCreatureByID(it->first);
 		if(creature && (creature->getPlayer() || creature->isPlayerSummon()))
 			pvpDamage += it->second.total;
@@ -5387,7 +5386,7 @@ bool Player::tameMount(uint8_t mountId)
 	{
 		value = atoi(tmp.c_str());
 		value |= (int32_t)pow(2., mountId % 31);
-	} 
+	}
 	else
 		value = (int32_t)pow(2., mountId % 31);
 

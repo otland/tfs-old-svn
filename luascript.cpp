@@ -7615,21 +7615,21 @@ int32_t LuaInterface::luaGetPlayerByNameWildcard(lua_State* L)
 {
 	//getPlayerByNameWildcard(name~[, ret = false])
 	Player* player = NULL;
-	bool pushRet = false;
+	bool pushValue = false;
 	if(lua_gettop(L) > 1)
-		pushRet = popBoolean(L);
+		pushValue = popBoolean(L);
 
 	ScriptEnviroment* env = getEnv();
 	ReturnValue ret = g_game.getPlayerByNameWildcard(popString(L), player);
 	if(ret == RET_NOERROR)
 		lua_pushnumber(L, env->addThing(player));
-	else if(pushRet)
+	else if(pushValue)
 		lua_pushnumber(L, ret);
 	else
 		lua_pushnil(L);
 
 	return 1;
-}
+}++
 
 int32_t LuaInterface::luaGetPlayerGUIDByName(lua_State* L)
 {
