@@ -75,9 +75,9 @@ function doMessageCheck(message, keyword, exact)
 end
 
 function doNpcSellItem(cid, itemid, amount, subType, ignoreCap, inBackpacks, backpack)
-	local amount, subType, ignoreCap, item = amount or 1, subType or 0, ignoreCap and true or false, 0
+	local amount, subType, ignoreCap, inBackpacks, backpack  = amount or 1, subType or 0, ignoreCap or false, inBackpacks or false, backpack or 1988
 
-	local a = 0
+	local item, a = nil, 0
 	if(inBackpacks) then
 		local custom = 1
 		if(isItemStackable(itemid)) then
