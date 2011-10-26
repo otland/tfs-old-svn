@@ -72,7 +72,7 @@ class Mailbox : public Item, public Cylinder
 				getParent()->postRemoveNotification(actor, thing, newParent, index, isCompleteRemoval, LINK_PARENT);
 		}
 
-		ReturnValue canSend(const Item* item, Creature* actor);
+		ReturnValue canSend(const Item* item, Creature* actor) const;
 		bool sendItem(Creature* actor, Item* item);
 
 		bool getDepotId(const std::string& townString, uint32_t& depotId);
