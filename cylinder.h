@@ -242,11 +242,11 @@ class VirtualCylinder : public Cylinder
 		virtual const Creature* getCreature() const {return NULL;}
 
 		virtual ReturnValue __queryAdd(int32_t, const Thing*, uint32_t,
-			uint32_t, Creature* actor = NULL) const {return RET_NOTPOSSIBLE;}
+			uint32_t, Creature* = NULL) const {return RET_NOTPOSSIBLE;}
 		virtual ReturnValue __queryMaxCount(int32_t, const Thing*, uint32_t,
 			uint32_t&, uint32_t) const {return RET_NOTPOSSIBLE;}
 		virtual ReturnValue __queryRemove(const Thing* thing, uint32_t,
-			uint32_t, Creature* actor = NULL) const {return (thing->getParent() == this ? RET_NOERROR : RET_NOTPOSSIBLE);}
+			uint32_t, Creature* = NULL) const {return (thing->getParent() == this ? RET_NOERROR : RET_NOTPOSSIBLE);}
 		virtual Cylinder* __queryDestination(int32_t&, const Thing*, Item**,
 			uint32_t&) {return NULL;}
 
