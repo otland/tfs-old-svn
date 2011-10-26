@@ -532,14 +532,17 @@ void ScriptEnviroment::streamThing(std::stringstream& stream, const std::string&
 		if(!id)
 			id = addThing(thing);
 
+		stream << "uniqueid = " << id << "," << std::endl;
 		stream << "uid = " << id << "," << std::endl;
 		stream << "itemid = " << item->getID() << "," << std::endl;
+		stream << "id = " << item->getID() << "," << std::endl;
 		if(item->hasSubType())
 			stream << "type = " << item->getSubType() << "," << std::endl;
 		else
 			stream << "type = 0," << std::endl;
 
-		stream << "actionid = " << item->getActionId() << std::endl;
+		stream << "actionid = " << item->getActionId() << "," << std::endl;
+		stream << "aid = " << item->getActionId() << std::endl;
 	}
 	else if(thing && thing->getCreature())
 	{
@@ -547,8 +550,10 @@ void ScriptEnviroment::streamThing(std::stringstream& stream, const std::string&
 		if(!id)
 			id = creature->getID();
 
+		stream << "uniqueid = " << id << "," << std::endl;
 		stream << "uid = " << id << "," << std::endl;
 		stream << "itemid = 1," << std::endl;
+		stream << "id = 1," << std::endl;
 		if(creature->getPlayer())
 			stream << "type = 1," << std::endl;
 		else if(creature->getMonster())
@@ -557,15 +562,24 @@ void ScriptEnviroment::streamThing(std::stringstream& stream, const std::string&
 			stream << "type = 3," << std::endl;
 
 		if(const Player* player = creature->getPlayer())
+		{
 			stream << "actionid = " << player->getGUID() << "," << std::endl;
+			stream << "aid = " << player->getGUID() << std::endl;
+		}
 		else
-			stream << "actionid = 0" << std::endl;
+		{
+			stream << "actionid = 0," << std::endl;
+			stream << "aid = 0" << std::endl;
+		}
 	}
 	else
 	{
+		stream << "uniqueid = 0," << std::endl;
 		stream << "uid = 0," << std::endl;
 		stream << "itemid = 0," << std::endl;
+		stream << "id = 0," << std::endl;
 		stream << "type = 0," << std::endl;
+		stream << "aid = 0," << std::endl;
 		stream << "actionid = 0" << std::endl;
 	}
 
@@ -1035,14 +1049,17 @@ void LuaInterface::pushThing(lua_State* L, Thing* thing, uint32_t id/* = 0*/, Re
 		if(!id)
 			id = getEnv()->addThing(thing);
 
+		setField(L, "uniqueid", id);
 		setField(L, "uid", id);
 		setField(L, "itemid", item->getID());
+		setField(L, "id", item->getID());
 		if(item->hasSubType())
 			setField(L, "type", item->getSubType());
 		else
 			setField(L, "type", 0);
 
 		setField(L, "actionid", item->getActionId());
+		setField(L, "aid", item->getActionId());
 		if(recursive != RECURSE_NONE)
 		{
 			if(const Container* container = item->getContainer())
@@ -1069,8 +1086,10 @@ void LuaInterface::pushThing(lua_State* L, Thing* thing, uint32_t id/* = 0*/, Re
 		if(!id)
 			id = creature->getID();
 
+		setField(L, "uniqueid", id);
 		setField(L, "uid", id);
 		setField(L, "itemid", 1);
+		setField(L, "id", 1);
 		if(creature->getPlayer())
 			setField(L, "type", 1);
 		else if(creature->getMonster())
@@ -1079,16 +1098,25 @@ void LuaInterface::pushThing(lua_State* L, Thing* thing, uint32_t id/* = 0*/, Re
 			setField(L, "type", 3);
 
 		if(const Player* player = creature->getPlayer())
+		{
 			setField(L, "actionid", player->getGUID());
+			setField(L, "aid", player->getGUID());
+		}
 		else
+		{
 			setField(L, "actionid", 0);
+			setField(L, "aid", 0);
+		}
 	}
 	else
 	{
 		setField(L, "uid", 0);
+		setField(L, "uniqueid", 0);
 		setField(L, "itemid", 0);
+		setField(L, "id", 0);
 		setField(L, "type", 0);
 		setField(L, "actionid", 0);
+		setField(L, "aid", 0);
 	}
 }
 
