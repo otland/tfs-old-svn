@@ -194,7 +194,7 @@ bool TalkActions::onPlayerSay(Creature* creature, uint16_t channelId, const std:
 	if(talkAction->isLogged())
 	{
 		if(player)
-			player->sendTextMessage(MSG_STATUS_CONSOLE_RED, words.c_str());
+			player->sendTextMessage(MSG_EVENT_ORANGE, words.c_str());
 
 		Logger::getInstance()->eFile("talkactions/" + creature->getName() + ".log", words, true);
 	}

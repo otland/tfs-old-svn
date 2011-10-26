@@ -495,7 +495,7 @@ void Tile::moveCreature(Creature* actor, Creature* creature, Cylinder* toCylinde
 }
 
 ReturnValue Tile::__queryAdd(int32_t, const Thing* thing, uint32_t,
-	uint32_t flags) const
+	uint32_t flags, Creature*) const
 {
 	const CreatureVector* creatures = getCreatures();
 	const TileItemVector* items = getItemList();
@@ -725,7 +725,7 @@ ReturnValue Tile::__queryMaxCount(int32_t, const Thing*, uint32_t count, uint32_
 	return RET_NOERROR;
 }
 
-ReturnValue Tile::__queryRemove(const Thing* thing, uint32_t count, uint32_t flags) const
+ReturnValue Tile::__queryRemove(const Thing* thing, uint32_t count, uint32_t flags, Creature*) const
 {
 	int32_t index = __getIndexOfThing(thing);
 	if(index == -1)

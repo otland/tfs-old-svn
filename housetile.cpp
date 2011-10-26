@@ -63,7 +63,7 @@ void HouseTile::updateHouse(Item* item)
 		house->addBed(bed);
 }
 
-ReturnValue HouseTile::__queryAdd(int32_t index, Thing* thing, uint32_t count, uint32_t flags) const
+ReturnValue HouseTile::__queryAdd(int32_t index, Thing* thing, uint32_t count, uint32_t flags, Creature* actor/* = NULL*/) const
 {
 	if(const Creature* creature = thing->getCreature())
 	{
@@ -81,9 +81,9 @@ ReturnValue HouseTile::__queryAdd(int32_t index, Thing* thing, uint32_t count, u
 		if(itemLimit && getThingCount() > itemLimit)
 			return RET_TILEISFULL;
 
-		if(g_config.getBool(ConfigManager::HOUSE_PROTECTION))
+		if(actor && g_config.getBool(ConfigManager::HOUSE_PROTECTION))
 		{
-			if(const Player* player = dynamic_cast<Player*>(thing->getTopParent()))
+			if(const Player* player = actor->getPlayer())
 			{
 				if(!house->isInvited(player) && !player->hasCustomFlag(PlayerCustomFlag_CanThrowAnywhere))
 					return RET_PLAYERISNOTINVITED;
@@ -91,21 +91,21 @@ ReturnValue HouseTile::__queryAdd(int32_t index, Thing* thing, uint32_t count, u
 		}
 	}
 
-	return Tile::__queryAdd(index, thing, count, flags);
+	return Tile::__queryAdd(index, thing, count, flags, actor);
 }
 
-ReturnValue HouseTile::__queryRemove(Thing* thing, uint32_t count, uint32_t flags) const
+ReturnValue HouseTile::__queryRemove(Thing* thing, uint32_t count, uint32_t flags, Creature* actor/* = NULL*/) const
 {
-	if(thing->getItem() && g_config.getBool(ConfigManager::HOUSE_PROTECTION))
+	if(thing->getItem() && actor && g_config.getBool(ConfigManager::HOUSE_PROTECTION))
 	{
-		if(const Player* player = dynamic_cast<Player*>(thing->getTopParent()))
+		if(const Player* player = actor->getPlayer())
 		{
 			if(!house->isInvited(player) && !player->hasCustomFlag(PlayerCustomFlag_CanThrowAnywhere))
 				return RET_PLAYERISNOTINVITED;
 		}
 	}
 
-	return Tile::__queryRemove(thing, count, flags);
+	return Tile::__queryRemove(thing, count, flags, actor);
 }
 
 Cylinder* HouseTile::__queryDestination(int32_t& index, const Thing* thing, Item** destItem, uint32_t& flags)

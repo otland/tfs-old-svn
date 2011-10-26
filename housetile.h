@@ -28,10 +28,10 @@ class HouseTile : public DynamicTile
 
 		//cylinder implementations
 		virtual ReturnValue __queryAdd(int32_t index, Thing* thing, uint32_t count,
-			uint32_t flags) const;
+			uint32_t flags, Creature* actor = NULL) const;
 		virtual Cylinder* __queryDestination(int32_t& index, const Thing* thing, Item** destItem,
 			uint32_t& flags);
-		virtual ReturnValue __queryRemove(Thing* thing, uint32_t count, uint32_t flags) const;
+		virtual ReturnValue __queryRemove(Thing* thing, uint32_t count, uint32_t flags, Creature* actor = NULL) const;
 
 		virtual void __addThing(Creature* actor, int32_t index, Thing* thing);
 		virtual void __internalAddThing(uint32_t index, Thing* thing);

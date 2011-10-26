@@ -39,14 +39,14 @@ Attr_ReadValue Depot::readAttr(AttrTypes_t attr, PropStream& propStream)
 }
 
 ReturnValue Depot::__queryAdd(int32_t index, const Thing* thing, uint32_t count,
-	uint32_t flags) const
+	uint32_t flags, Creature* actor/* = NULL*/) const
 {
 	const Item* item = thing->getItem();
 	if(!item)
 		return RET_NOTPOSSIBLE;
 
 	if((flags & FLAG_NOLIMIT) == FLAG_NOLIMIT)
-		return Container::__queryAdd(index, thing, count, flags);
+		return Container::__queryAdd(index, thing, count, flags, actor);
 
 	int32_t addCount = 0;
 	if((item->isStackable() && item->getItemCount() != count))
@@ -63,7 +63,7 @@ ReturnValue Depot::__queryAdd(int32_t index, const Thing* thing, uint32_t count,
 	if(getItemHoldingCount() + addCount > depotLimit)
 		return RET_DEPOTISFULL;
 
-	return Container::__queryAdd(index, thing, count, flags);
+	return Container::__queryAdd(index, thing, count, flags, actor);
 }
 
 ReturnValue Depot::__queryMaxCount(int32_t index, const Thing* thing, uint32_t count,
