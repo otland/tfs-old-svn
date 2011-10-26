@@ -105,7 +105,9 @@ if(KeywordHandler == nil) then
 	-- Resets the lastNode field, and this resetting the current position in the node hierarchy to root.
 	function KeywordHandler:reset(cid)
 		--table.remove(self.lastNode, cid)
-		self.lastNode[cid] = nil
+		if(self.lastNode[cid]) then
+			self.lastNode[cid] = nil
+		end
 	end
 
 	-- Makes sure the correct childNode of lastNode gets a chance to process the message.
