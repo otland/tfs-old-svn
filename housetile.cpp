@@ -63,7 +63,7 @@ void HouseTile::updateHouse(Item* item)
 		house->addBed(bed);
 }
 
-ReturnValue HouseTile::__queryAdd(int32_t index, Thing* thing, uint32_t count, uint32_t flags, Creature* actor/* = NULL*/) const
+ReturnValue HouseTile::__queryAdd(int32_t index, const Thing* thing, uint32_t count, uint32_t flags, Creature* actor/* = NULL*/) const
 {
 	if(const Creature* creature = thing->getCreature())
 	{
@@ -78,7 +78,7 @@ ReturnValue HouseTile::__queryAdd(int32_t index, Thing* thing, uint32_t count, u
 	else if(thing->getItem())
 	{
 		const uint32_t itemLimit = g_config.getNumber(ConfigManager::HOUSE_TILE_LIMIT);
-		if(itemLimit && getThingCount() > itemLimit)
+		if(itemLimit && getItemCount() > itemLimit)
 			return RET_TILEISFULL;
 
 		if(actor && g_config.getBool(ConfigManager::HOUSE_PROTECTION))
@@ -94,7 +94,7 @@ ReturnValue HouseTile::__queryAdd(int32_t index, Thing* thing, uint32_t count, u
 	return Tile::__queryAdd(index, thing, count, flags, actor);
 }
 
-ReturnValue HouseTile::__queryRemove(Thing* thing, uint32_t count, uint32_t flags, Creature* actor/* = NULL*/) const
+ReturnValue HouseTile::__queryRemove(const Thing* thing, uint32_t count, uint32_t flags, Creature* actor/* = NULL*/) const
 {
 	if(thing->getItem() && actor && g_config.getBool(ConfigManager::HOUSE_PROTECTION))
 	{
@@ -114,8 +114,7 @@ Cylinder* HouseTile::__queryDestination(int32_t& index, const Thing* thing, Item
 	{
 		if(const Player* player = creature->getPlayer())
 		{
-			if(!house->isInvited(player) && !player->hasFlag(PlayerFlag_CanEditHouses)
-				&& !player->hasCustomFlag(PlayerCustomFlag_CanThrowAnywhere))
+			if(!house->isInvited(player) && !player->hasFlag(PlayerFlag_CanEditHouses))
 			{
 				Tile* destTile = g_game.getTile(house->getEntry());
 				if(!destTile)

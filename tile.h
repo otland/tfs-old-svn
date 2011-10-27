@@ -164,7 +164,6 @@ class Tile : public Cylinder
 		Mailbox* getMailbox() const;
 		BedItem* getBedItem() const;
 
-
 		Item* getTopTopItem();
 		Item* getTopDownItem();
 		Item* getItemByTopOrder(uint32_t topOrder);

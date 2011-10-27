@@ -6061,7 +6061,7 @@ bool Game::reloadInfo(ReloadInfo_t reload, uint32_t playerId/* = 0*/, bool compl
 		return true;
 	}
 
-	if(reload == RELOAD_ALL || reload == RELOAD_MODS)
+	if(reload == RELOAD_ALL)
 		player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, "Failed to reload some parts.");
 	else
 		player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, "Failed to reload.");
