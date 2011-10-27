@@ -75,12 +75,12 @@ function doMessageCheck(message, keyword, exact)
 end
 
 function doNpcSellItem(cid, itemid, amount, subType, ignoreCap, inBackpacks, backpack)
-	local amount, subType, ignoreCap, inBackpacks, backpack  = amount or 1, subType or 0, ignoreCap or false, inBackpacks or false, backpack or 1988
+	local amount, subType, ignoreCap, inBackpacks, backpack  = amount or 1, subType or 0, ignoreCap or false, inBackpacks or false, backpack or 592
 
 	local item, a = nil, 0
 	if(inBackpacks) then
-		local custom = 1
-		if(isItemStackable(itemid)) then
+		local custom, stackable = 1, isItemStackable(itemid)
+		if(stackable) then
 			custom = math.max(1, subType)
 			subType = 100
 		end
@@ -106,20 +106,24 @@ function doNpcSellItem(cid, itemid, amount, subType, ignoreCap, inBackpacks, bac
 			end
 		end
 
+		if(not stackable) then
+			return a, b
+		end
+
 		return (a * subType / custom), b
 	end
 
 	if(isItemStackable(itemid)) then
-		local count = amount * math.max(1, subType)
+		a = amount * math.max(1, subType)
 		repeat
-			local tmp = math.min(100, count)
+			local tmp = math.min(100, a)
 			item = doCreateItemEx(itemid, tmp)
 			if(doPlayerAddItemEx(cid, item, ignoreCap) ~= RETURNVALUE_NOERROR) then
 				return 0, 0
 			end
 
-			count = count - tmp
-		until count == 0
+			a = a - tmp
+		until a == 0
 		return amount, 0
 	end
 
