@@ -176,9 +176,9 @@ function getExperienceForLevel(lv)
 end
 
 function doMutePlayer(cid, time)
-	local condition = createConditionObject(CONDITION_MUTED)
-	setConditionParam(condition, CONDITION_PARAM_TICKS, time == -1 and time or time * 1000)
-	return doAddCondition(cid, condition)
+	local condition = createConditionObject(CONDITION_MUTED, (time == -1 and time or time * 1000))
+	return doAddCondition(cid, condition, false)
+
 end
 
 function getPlayerGroupName(cid)
