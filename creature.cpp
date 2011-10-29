@@ -276,11 +276,23 @@ void Creature::onWalk()
 
 void Creature::onWalk(Direction& dir)
 {
-	if(!hasCondition(CONDITION_DRUNK, -1))
+	int32_t drunk = -1;
+	Condition* condition = NULL;
+	for(ConditionList::const_iterator it = conditions.begin(); it != conditions.end(); ++it)
+	{
+		if(!(condition = *it) || condition->getType() != type)
+			continue;
+
+		int32_t subId = condition->getSubId()
+		if(!condition->getEndTime() || condition->getEndTime() >= OTSYS_TIME() && subId > drunk)
+			drunk = subId;
+	}
+
+	if(drunk < 0)
 		return;
 
-	uint32_t r = random_range(0, 16);
-	if(r > 4)
+	int32_t r = random_range(0, 100);
+	if(r > (25 + drunk))
 		return;
 
 	switch(r)

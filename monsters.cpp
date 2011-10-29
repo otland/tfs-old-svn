@@ -697,11 +697,14 @@ bool Monsters::deserializeSpell(xmlNodePtr node, spellBlock_t& sb, const std::st
 		}
 		else if(tmpName == "drunk")
 		{
-			int32_t duration = 10000;
+			int32_t duration = 10000, subId = 0;
 			if(readXMLInteger(node, "duration", intValue))
 				duration = intValue;
 
-			if(Condition* condition = Condition::createCondition(CONDITIONID_COMBAT, CONDITION_DRUNK, duration))
+			if(readXMLInteger(node, "subid", intValue))
+				subId = intValue;
+
+			if(Condition* condition = Condition::createCondition(CONDITIONID_COMBAT, CONDITION_DRUNK, duration, false, subId))
 				combat->setCondition(condition);
 		}
 		else if(tmpName == "skills" || tmpName == "attributes")
