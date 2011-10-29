@@ -12,11 +12,15 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 		return true
 	end
 
-	doRemoveItem(helmet.uid)
-	helmet = doPlayerAddItem(cid, HOTD[2], false, CONST_SLOT_HEAD)
-	doDecayItem(helmet)
-	
+	local itemInfo = getItemInfo(HOTD[2])
+	if(helmet.itemid ~= HOTD[2]) then
+		doTransformItem(helmet.uid, HOTD[2])
+		doChangeSpeed(cid, itemInfo.abilities.speed)
+	end
+
+	doItemSetAttribute(helmet.uid, "duration", itemInfo.decayTime * 1000)
 	doRemoveItem(item.uid, 1)
+
 	doCreatureSay(cid, food, TALKTYPE_MONSTER)
 	return true
 end

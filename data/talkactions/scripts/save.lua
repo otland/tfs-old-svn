@@ -6,7 +6,11 @@ function onSay(cid, words, param, channel)
 		stopEvent(savingEvent)
 		save(tmp * 60 * 1000)
 	elseif(param == '') then
+<<<<<<< .mine
+		doSaveServer(12)
+=======
 		doSaveServer(13)
+>>>>>>> .r4758
 	else
 		local tid = getPlayerByNameWildcard(param)
 		if(not tid or (isPlayerGhost(tid) and getPlayerGhostAccess(tid) > getPlayerGhostAccess(cid))) then
@@ -20,7 +24,11 @@ function onSay(cid, words, param, channel)
 end
 
 function save(delay)
+<<<<<<< .mine
+	doSaveServer(12)
+=======
 	doSaveServer(13)
+>>>>>>> .r4758
 	if(delay > 0) then
 		savingEvent = addEvent(save, delay, delay)
 	end
