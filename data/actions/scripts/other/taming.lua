@@ -32,7 +32,7 @@ local config = {
 	[13535] = 	{NAME = 'Dromedary', 			ID = 20, 	TYPE = TYPE_MONSTER, 	CHANCE = 40, 	FAIL_MSG = { {1, "Dromedary has run away."} }, SUCCESS_MSG = "You have tamed the dromedary."},
 	[13498] = 	{NAME = 'Sandstone Scorpion', 	ID = 21, 	TYPE = TYPE_MONSTER, 	CHANCE = 40, 	FAIL_MSG = { {1, "The scorpion has vanished."}, {2, "Scorpion broken the sceptre."} }, SUCCESS_MSG = "You have tamed the scorpion"},
 	[13537] = 	{NAME = 'Donkey', 				ID = 13, 	TYPE = TYPE_MONSTER, 	CHANCE = 40, 	FAIL_MSG = { {1, "The witch has escaped!"} }, SUCCESS_MSG = "You have tamed the mule."},
-	[13938] = 	{NAME = 'Uniwheel', 			ID = 15, 	TYPE = TYPE_NPC, 		CHANCE = 40, 	FAIL_MSG = { {2, "The oil is having no effect."} }, SUCCESS_MSG = "You found an Uniwheel."},
+	[13938] = 	{NAME = 'Uniwheel', 			ID = 15, 	TYPE = TYPE_NPC, 		CHANCE = 40, 	FAIL_MSG = { {2, "The oil is having no effect."} }, SUCCESS_MSG = "You have found an Uniwheel."},
 	[13508] = 	{NAME = 'Slug', 				ID = 14, 	TYPE = TYPE_MONSTER, 	CHANCE = 40, 	FAIL_MSG = { {1, "The slug has run away."}, {3, "The drug had no effect."} }, SUCCESS_MSG = "You have tamed the slug."},
 	[13939] = 	{NAME = 'War Horse', 			ID = 23, 	TYPE = TYPE_MONSTER, 	CHANCE = 15, 	FAIL_MSG = { {1, "The horse runs away."}, {2, "The horse ate the oats."} }, SUCCESS_MSG = "You have tamed the horse."}
 }
@@ -60,16 +60,11 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 		return false
 	end
 
-	local multiplier = 1
-	if(isRookie(cid)) then
-		multiplier = 0.5
-	end
-
 	local rand = math.random(1, 100)
 	--Monster Mount
 	if(isMonster(itemEx.uid) and not isSummon(itemEx.uid) and mount.TYPE == TYPE_MONSTER) then
 		if(mount.NAME == getCreatureName(itemEx.uid)) then
-			if(rand > (mount.CHANCE * multiplier)) then
+			if(rand > mount.CHANCE) then
 				doFailAction(cid, mount, toPosition, item, itemEx)
 				return true
 			end
@@ -87,7 +82,7 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 	--NPC Mount
 	elseif(isNpc(itemEx.uid) and mount.TYPE == TYPE_NPC) then
 		if(mount.NAME == getCreatureName(itemEx.uid)) then
-			if(rand > (mount.CHANCE * multiplier)) then
+			if(rand > mount.CHANCE) then
 				doFailAction(cid, mount, toPosition, item, itemEx)
 				return true
 			end
@@ -104,7 +99,7 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 	--Action Mount
 	elseif(itemEx.actionid > 0 and mount.TYPE == TYPE_ACTION) then
 		if(mount.NAME == itemEx.actionid) then
-			if(rand > (mount.CHANCE * multiplier)) then
+			if(rand > mount.CHANCE) then
 				doFailAction(cid, mount, toPosition, item, itemEx)
 				return true
 			end
@@ -121,7 +116,7 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 	--Unique Mount
 	elseif(itemEx.uid <= 65535 and mount.TYPE == TYPE_UNIQUE) then
 		if(mount.NAME == itemEx.uid) then
-			if(rand > (mount.CHANCE * multiplier)) then
+			if(rand > mount.CHANCE) then
 				doFailAction(cid, mount, toPosition, item, itemEx)
 				return true
 			end
