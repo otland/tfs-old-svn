@@ -163,9 +163,10 @@ ItemAttribute& ItemAttribute::operator=(const ItemAttribute& o)
 
 void ItemAttribute::clear()
 {
-	type = NONE;
 	if(type == STRING)
 		(reinterpret_cast<std::string*>(&data))->~basic_string();
+
+	type = NONE;
 }
 
 void ItemAttribute::set(const std::string& s)
