@@ -280,11 +280,11 @@ void Creature::onWalk(Direction& dir)
 	Condition* condition = NULL;
 	for(ConditionList::const_iterator it = conditions.begin(); it != conditions.end(); ++it)
 	{
-		if(!(condition = *it) || condition->getType() != type)
+		if(!(condition = *it) || condition->getType() != CONDITION_DRUNK)
 			continue;
 
 		int32_t subId = condition->getSubId()
-		if(!condition->getEndTime() || condition->getEndTime() >= OTSYS_TIME() && subId > drunk)
+		if((!condition->getEndTime() || condition->getEndTime() >= OTSYS_TIME()) && subId > drunk)
 			drunk = subId;
 	}
 
