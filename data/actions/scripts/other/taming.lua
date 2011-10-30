@@ -24,7 +24,7 @@ local config = {
 	[13305] = 	{NAME = 'Crustacea Gigantica', 	ID = 7, 	TYPE = TYPE_MONSTER, 	CHANCE = 40, 	FAIL_MSG = { {1, "The crustacea has run away."}, {2, "The crustacea ate the shrimp."} }, SUCCESS_MSG = "You have tamed the crustacea."},
 	[13291] = 	{NAME = 'Undead Cavebear', 		ID = 12, 	TYPE = TYPE_MONSTER, 	CHANCE = 40, 	FAIL_MSG = { {1, "The undead bear has run away."} }, SUCCESS_MSG = "You have tamed the skeleton."},
 	[13307] = 	{NAME = 'Wailing Widow', 		ID = 1, 	TYPE = TYPE_MONSTER, 	CHANCE = 40, 	FAIL_MSG = { {1, "The widow has run away."}, {2, "The widow has eaten the sweet bait."} }, SUCCESS_MSG = "You have tamed the widow."},
-	[13292] = 	{NAME = 'Tin Lizard', 					ID = 8, 	TYPE = TYPE_NPC, 	CHANCE = 40, 	FAIL_MSG = { {2, "The key broke inside."} }, SUCCESS_MSG = "You have started the Tin Lizzard!"},
+	[13292] = 	{NAME = 'Tin Lizard', 			ID = 8, 	TYPE = TYPE_NPC, 		CHANCE = 40, 	FAIL_MSG = { {2, "The key broke inside."} }, SUCCESS_MSG = "You have started the Tin Lizzard!"},
 	[13294] = 	{NAME = 'Draptor', 				ID = 6, 	TYPE = TYPE_MONSTER, 	CHANCE = 40, 	FAIL_MSG = { {1, "The draptor has run away."}, {3, "The draptor has fled."} }, SUCCESS_MSG = "You have tamed the draptor."},
 	[13536] = 	{NAME = 'Crystal Wolf', 		ID = 16, 	TYPE = TYPE_MONSTER, 	CHANCE = 40, 	FAIL_MSG = { {1, "The wolf has run away."} }, SUCCESS_MSG = "You have tamed the wolf."},
 	[13539] = 	{NAME = 'White Deer', 			ID = 18, 	TYPE = TYPE_MONSTER, 	CHANCE = 40, 	FAIL_MSG = { {2, "The cone broke."}, {3, "The deer has fled in fear."} }, SUCCESS_MSG = "You have tamed the deer."},

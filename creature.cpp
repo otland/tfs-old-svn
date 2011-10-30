@@ -283,7 +283,7 @@ void Creature::onWalk(Direction& dir)
 		if(!(condition = *it) || condition->getType() != CONDITION_DRUNK)
 			continue;
 
-		int32_t subId = condition->getSubId()
+		int32_t subId = condition->getSubId();
 		if((!condition->getEndTime() || condition->getEndTime() >= OTSYS_TIME()) && subId > drunk)
 			drunk = subId;
 	}
