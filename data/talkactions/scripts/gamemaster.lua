@@ -12,7 +12,7 @@ function onSay(cid, words, param, channel)
 		doAddCondition(cid, condition)
 		action = "on"
 	else
-		doRemoveCondition(cid, CONDITION_GAMEMASTER, subId)
+		doRemoveCondition(cid, CONDITION_GAMEMASTER, subId, CONDITIONID_DEFAULT)
 	end
 
 	doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "You have turned " .. action .. " " .. name .. ".")
