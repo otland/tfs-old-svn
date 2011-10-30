@@ -18788,23 +18788,23 @@
 	<item id="11269" article="a" name="dead lizard high guard">
 		<attribute key="containerSize" value="10" />
 		<attribute key="decayTo" value="11270" />
-		<attribute key="duration" value="300" />
+		<attribute key="duration" value="900" />
 		<attribute key="corpseType" value="blood" />
 		<attribute key="fluidSource" value="blood" />
 	</item>
 	<item id="11270" article="a" name="dead lizard high guard">
 		<attribute key="decayTo" value="11271" />
-		<attribute key="duration" value="300" />
+		<attribute key="duration" value="600" />
 		<attribute key="corpseType" value="blood" />
 	</item>
 	<item id="11271" article="a" name="dead lizard high guard">
 		<attribute key="decayTo" value="0" />
-		<attribute key="duration" value="60" />
+		<attribute key="duration" value="600" />
 		<attribute key="corpseType" value="blood" />
 	</item>
 	<item id="11272" article="a" name="dead lizard high guard">
 		<attribute key="containerSize" value="10" />
-		<attribute key="decayTo" value="0" />
+		<attribute key="decayTo" value="11269" />
 		<attribute key="duration" value="10" />
 		<attribute key="corpseType" value="blood" />
 		<attribute key="fluidSource" value="blood" />
@@ -18812,18 +18812,18 @@
 	<item id="11273" article="a" name="dead lizard legionnaire">
 		<attribute key="containerSize" value="10" />
 		<attribute key="decayTo" value="11274" />
-		<attribute key="duration" value="300" />
+		<attribute key="duration" value="900" />
 		<attribute key="corpseType" value="blood" />
 		<attribute key="fluidSource" value="blood" />
 	</item>
 	<item id="11274" article="a" name="dead lizard legionnaire">
 		<attribute key="decayTo" value="11275" />
-		<attribute key="duration" value="300" />
+		<attribute key="duration" value="600" />
 		<attribute key="corpseType" value="blood" />
 	</item>
 	<item id="11275" article="a" name="dead lizard legionnaire">
 		<attribute key="decayTo" value="0" />
-		<attribute key="duration" value="60" />
+		<attribute key="duration" value="600" />
 		<attribute key="corpseType" value="blood" />
 	</item>
 	<item id="11276" article="a" name="dead lizard legionnaire">
@@ -18836,18 +18836,18 @@
 	<item id="11277" article="a" name="dead lizard dragon priest">
 		<attribute key="containerSize" value="10" />
 		<attribute key="decayTo" value="11278" />
-		<attribute key="duration" value="300" />
+		<attribute key="duration" value="900" />
 		<attribute key="corpseType" value="blood" />
 		<attribute key="fluidSource" value="blood" />
 	</item>
 	<item id="11278" article="a" name="dead lizard dragon priest">
 		<attribute key="decayTo" value="11279" />
-		<attribute key="duration" value="300" />
+		<attribute key="duration" value="600" />
 		<attribute key="corpseType" value="blood" />
 	</item>
 	<item id="11279" article="a" name="dead lizard dragon priest">
 		<attribute key="decayTo" value="0" />
-		<attribute key="duration" value="60" />
+		<attribute key="duration" value="600" />
 		<attribute key="corpseType" value="blood" />
 	</item>
 	<item id="11280" article="a" name="dead lizard dragon priest">
@@ -18860,18 +18860,18 @@
 	<item id="11281" article="a" name="dead lizard zaogun">
 		<attribute key="containerSize" value="10" />
 		<attribute key="decayTo" value="11282" />
-		<attribute key="duration" value="300" />
+		<attribute key="duration" value="900" />
 		<attribute key="corpseType" value="blood" />
 		<attribute key="fluidSource" value="blood" />
 	</item>
 	<item id="11282" article="a" name="dead lizard zaogun">
 		<attribute key="decayTo" value="11283" />
-		<attribute key="duration" value="300" />
+		<attribute key="duration" value="600" />
 		<attribute key="corpseType" value="blood" />
 	</item>
 	<item id="11283" article="a" name="dead lizard zaogun">
 		<attribute key="decayTo" value="0" />
-		<attribute key="duration" value="60" />
+		<attribute key="duration" value="600" />
 		<attribute key="corpseType" value="blood" />
 	</item>
 	<item id="11284" article="a" name="dead lizard zaogun">
@@ -18884,18 +18884,18 @@
 	<item id="11285" article="a" name="dead lizard chosen">
 		<attribute key="containerSize" value="10" />
 		<attribute key="decayTo" value="11286" />
-		<attribute key="duration" value="300" />
+		<attribute key="duration" value="900" />
 		<attribute key="corpseType" value="blood" />
 		<attribute key="fluidSource" value="blood" />
 	</item>
 	<item id="11286" article="a" name="dead lizard chosen">
 		<attribute key="decayTo" value="11287" />
-		<attribute key="duration" value="300" />
+		<attribute key="duration" value="600" />
 		<attribute key="corpseType" value="blood" />
 	</item>
 	<item id="11287" article="a" name="dead lizard chosen">
 		<attribute key="decayTo" value="0" />
-		<attribute key="duration" value="60" />
+		<attribute key="duration" value="600" />
 		<attribute key="corpseType" value="blood" />
 	</item>
 	<item id="11288" article="a" name="dead lizard chosen">
