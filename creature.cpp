@@ -1476,7 +1476,7 @@ bool Creature::addCombatCondition(Condition* condition)
 
 void Creature::removeCondition(ConditionType_t type)
 {
-	for(ConditionList::iterator it = conditions.begin(); it != conditions.end();)
+	for(ConditionList::iterator it = conditions.begin(); it != conditions.end(); )
 	{
 		if((*it)->getType() != type)
 		{
@@ -1495,7 +1495,7 @@ void Creature::removeCondition(ConditionType_t type)
 
 void Creature::removeCondition(ConditionType_t type, ConditionId_t id)
 {
-	for(ConditionList::iterator it = conditions.begin(); it != conditions.end();)
+	for(ConditionList::iterator it = conditions.begin(); it != conditions.end(); )
 	{
 		if((*it)->getType() != type || (*it)->getId() != id)
 		{
@@ -1538,7 +1538,7 @@ void Creature::removeCondition(const Creature* attacker, ConditionType_t type)
 
 void Creature::removeConditions(ConditionEnd_t reason, bool onlyPersistent/* = true*/)
 {
-	for(ConditionList::iterator it = conditions.begin(); it != conditions.end();)
+	for(ConditionList::iterator it = conditions.begin(); it != conditions.end(); )
 	{
 		if(onlyPersistent && !(*it)->isPersistent())
 		{
@@ -1568,7 +1568,7 @@ Condition* Creature::getCondition(ConditionType_t type, ConditionId_t id, uint32
 
 void Creature::executeConditions(uint32_t interval)
 {
-	for(ConditionList::iterator it = conditions.begin(); it != conditions.end();)
+	for(ConditionList::iterator it = conditions.begin(); it != conditions.end(); )
 	{
 		if((*it)->executeCondition(this, interval))
 		{
