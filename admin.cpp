@@ -327,7 +327,7 @@ void ProtocolAdmin::parsePacket(NetworkMessage& msg)
 				case CMD_SAVE_SERVER:
 				case CMD_SHALLOW_SAVE_SERVER:
 				{
-					uint8_t flags = SAVE_PLAYERS | SAVE_MAP | SAVE_STATE;
+					uint8_t flags = (uint8_t)SAVE_PLAYERS | (uint8_t)SAVE_MAP | (uint8_t)SAVE_STATE;
 					if(command == CMD_SHALLOW_SAVE_SERVER)
 						flags |= SAVE_PLAYERS_SHALLOW;
 

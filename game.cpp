@@ -246,7 +246,7 @@ void Game::setGameState(GameState_t newState)
 				}
 
 				Houses::getInstance()->payHouses();
-				saveGameState(SAVE_PLAYERS | SAVE_MAP | SAVE_STATE);
+				saveGameState((uint8_t)SAVE_PLAYERS | (uint8_t)SAVE_MAP | (uint8_t)SAVE_STATE);
 				Dispatcher::getInstance().addTask(createTask(boost::bind(&Game::shutdown, this)));
 
 				Scheduler::getInstance().stop();
@@ -268,7 +268,7 @@ void Game::setGameState(GameState_t newState)
 						++it;
 				}
 
-				saveGameState(SAVE_PLAYERS | SAVE_MAP | SAVE_STATE);
+				saveGameState((uint8_t)SAVE_PLAYERS | (uint8_t)SAVE_MAP | (uint8_t)SAVE_STATE);
 				break;
 			}
 
@@ -937,7 +937,7 @@ bool Game::placeCreature(Creature* creature, const Position& pos, bool extendedP
 		for(ConditionList::iterator it = tmpPlayer->storedConditionList.begin(); it != tmpPlayer->storedConditionList.end(); ++it)
 		{
 			 if((*it)->getType() == CONDITION_MUTED && (*it)->getTicks() != -1 &&
-				((*it)->getTicks() - ((time(NULL) - tmpPlayer->getLastLogout()) * 1000) <= 0))
+				(*it)->getTicks() - ((time(NULL) - tmpPlayer->getLastLogout()) * 1000) <= 0)
 				continue;
 
 			tmpPlayer->addCondition(*it);
@@ -6106,8 +6106,8 @@ void Game::prepareGlobalSave(uint8_t minutes)
 void Game::globalSave()
 {
 	bool close = g_config.getBool(ConfigManager::SHUTDOWN_AT_GLOBALSAVE);
-	if(close) // check are we're going to close the server
-		setGameState(GAMESTATE_CLOSING);
+	if(!close) // check are we're going to close the server
+		Dispatcher::getInstance().addTask(createTask(boost::bind(&Game::setGameState, this, GAMESTATE_CLOSED)));
 
 	// call the global event
 	g_globalEvents->execute(GLOBALEVENT_GLOBALSAVE);
@@ -6118,14 +6118,12 @@ void Game::globalSave()
 		return;
 	}
 
-	//close server
-	Dispatcher::getInstance().addTask(createTask(boost::bind(&Game::setGameState, this, GAMESTATE_CLOSED)));
+	//pay houses
+	Houses::getInstance()->payHouses();
 	//clean map if configured to
 	if(g_config.getBool(ConfigManager::CLEAN_MAP_AT_GLOBALSAVE))
 		cleanMap();
 
-	//pay houses
-	Houses::getInstance()->payHouses();
 	//clear temporial and expired bans
 	IOBan::getInstance()->clearTemporials();
 	//remove premium days globally if configured to
@@ -6134,7 +6132,6 @@ void Game::globalSave()
 
 	//reload everything
 	reloadInfo(RELOAD_ALL);
-
 	//prepare for next global save after 24 hours
 	Scheduler::getInstance().addEvent(createSchedulerTask(((24 * 60 * 60) - (5 * 60)) * 1000, boost::bind(&Game::prepareGlobalSave, this, 5)));
 	//open server
