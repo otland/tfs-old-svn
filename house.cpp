@@ -146,6 +146,20 @@ bool House::isGuild() const
 	return g_config.getBool(ConfigManager::GUILD_HALLS) && guild;
 }
 
+bool House::isBidded() const
+{
+	Database* db = Database::getInstance();
+	DBResult* result;
+
+	DBQuery query;
+	query << "SELECT `house_id` FROM `house_auctions` WHERE `house_id` = " << id << " LIMIT 1";
+	if(!(result = db->storeQuery(query.str())))
+		return false;
+
+	result->free();
+	return true;
+}
+
 void House::updateDoorDescription(std::string _name/* = ""*/)
 {
 	std::string tmp = "house";

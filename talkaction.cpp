@@ -425,6 +425,13 @@ bool TalkAction::houseBuy(Creature* creature, const std::string&, const std::str
 		return false;
 	}
 
+	if(house->isBidded())
+	{
+		player->sendCancel("You cannot buy house which is currently bidded on an auction.");
+		g_game.addMagicEffect(player->getPosition(), MAGIC_EFFECT_POFF);
+		return false;
+	}
+
 	if(!house->isGuild())
 	{
 		if(Houses::getInstance()->getHouseByPlayerId(player->getGUID()))
