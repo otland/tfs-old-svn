@@ -1597,6 +1597,10 @@ void Player::onCreatureMove(const Creature* creature, const Tile* newTile, const
 				addCondition(condition);
 		}
 	}
+
+	if(player->getTile()->hasFlag(TILESTATE_PROTECTIONZONE) && player->newTile->ground && player->oldTile->ground &&
+		Item::items[player->newTile->ground->getID()].walkStack != Item::items[player->oldTile->ground->getID()].walkStack)
+		g_game.updateCreatureWalkthrough(this);
 }
 
 void Player::onAddContainerItem(const Container* container, const Item* item)
@@ -1974,6 +1978,10 @@ void Player::addExperience(uint64_t exp)
 		CreatureEventList advanceEvents = getCreatureEvents(CREATURE_EVENT_ADVANCE);
 		for(CreatureEventList::iterator it = advanceEvents.begin(); it != advanceEvents.end(); ++it)
 			(*it)->executeAdvance(this, SKILL__LEVEL, prevLevel, level);
+
+		uint32_t protLevel = g_config.getNumber(ConfigManager::PROTECTION_LEVEL);
+		if(player->getVocation()->isAttackable() && level >= protLevel && prevLevel < protLevel)
+			g_game.updateCreatureWalkthrough(this);
 	}
 
 	uint64_t currLevelExp = Player::getExpForLevel(level);
@@ -2009,6 +2017,10 @@ void Player::removeExperience(uint64_t exp, bool updateStats/* = true*/)
 		std::stringstream s;
 		s << "You were downgraded from Level " << prevLevel << " to Level " << level << ".";
 		sendTextMessage(MSG_EVENT_ADVANCE, s.str());
+
+		uint32_t protLevel = g_config.getNumber(ConfigManager::PROTECTION_LEVEL);
+		if(player->getVocation()->isAttackable() && level < protLevel && prevLevel >= protLevel)
+			g_game.updateCreatureWalkthrough(this);
 	}
 
 	uint64_t currLevelExp = Player::getExpForLevel(level),
