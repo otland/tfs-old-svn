@@ -294,25 +294,20 @@ void Creature::onWalk(Direction& dir)
 	if(drunk < 0)
 		return;
 
+	drunk += 25;
 	int32_t r = random_range(1, 100);
-	if(r > (25 + drunk))
+	if(r > drunk)
 		return;
 
-	switch(r)
-	{
-		case 0:
-			dir = NORTH;
-			break;
-		case 1:
-			dir = WEST;
-			break;
-		case 3:
-			dir = SOUTH;
-			break;
-		case 4:
-			dir = EAST;
-			break;
-	}
+	int32_t tmp = std::floor(drunk / 5);
+	if(r <= tmp)
+		dir = NORTH;
+	else if(r <= tmp * 2)
+		dir = WEST;
+	else if(r <= tmp * 3)
+		dir = SOUTH;
+	else if(r <= tmp * 4)
+		dir = EAST;
 
 	g_game.internalCreatureSay(this, MSG_SPEAK_MONSTER_SAY, "Hicks!", isGhost());
 }
