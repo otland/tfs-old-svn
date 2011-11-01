@@ -6180,7 +6180,8 @@ void Game::cleanup()
 
 void Game::freeThing(Thing* thing)
 {
-	releaseThings.push_back(thing);
+	if(releaseThings.find(thing) == releaseThings.end())
+		releaseThings.push_back(thing);
 }
 
 void Game::showHotkeyUseMessage(Player* player, Item* item)

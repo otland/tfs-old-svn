@@ -103,7 +103,7 @@ class Thing
 		void unRef()
 		{
 			--refCount;
-			if(refCount <= 0)
+			if(!refCount)
 				delete this;
 		}
 
