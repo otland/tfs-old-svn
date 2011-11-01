@@ -567,6 +567,9 @@ uint32_t MoveEvents::onCreatureMove(Creature* actor, Creature* creature, const T
 	if((moveEvent = getEvent(tile, eventType)))
 		ret &= moveEvent->fireStepEvent(actor, creature, NULL, Position(), fromPos, toPos);
 
+	if(!tile)
+		return ret;
+
 	Item* tileItem = NULL;
 	if(m_lastCacheTile == tile)
 	{
@@ -638,6 +641,9 @@ uint32_t MoveEvents::onItemMove(Creature* actor, Item* item, Tile* tile, bool is
 	moveEvent = getEvent(item, eventType);
 	if(moveEvent)
 		ret &= moveEvent->fireAddRemItem(actor, item, NULL, tile->getPosition());
+
+	if(!tile)
+		return ret;
 
 	Item* tileItem = NULL;
 	if(m_lastCacheTile == tile)
