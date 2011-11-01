@@ -1598,8 +1598,8 @@ void Player::onCreatureMove(const Creature* creature, const Tile* newTile, const
 		}
 	}
 
-	if(getZone() == ZONE_PROTECTION && player->newTile->ground && player->oldTile->ground &&
-		Item::items[player->newTile->ground->getID()].walkStack != Item::items[player->oldTile->ground->getID()].walkStack)
+	if(getZone() == ZONE_PROTECTION && newTile->ground && oldTile->ground &&
+		Item::items[newTile->ground->getID()].walkStack != Item::items[oldTile->ground->getID()].walkStack)
 		g_game.updateCreatureWalkthrough(this);
 }
 
