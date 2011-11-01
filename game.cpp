@@ -6180,7 +6180,7 @@ void Game::cleanup()
 
 void Game::freeThing(Thing* thing)
 {
-	if(std::find(releaseThing.begin(), releaseThing.end(), thing) == releaseThings.end())
+	if(std::find(releaseThings.begin(), releaseThings.end(), thing) == releaseThings.end())
 		releaseThings.push_back(thing);
 }
 
