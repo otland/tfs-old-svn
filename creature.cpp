@@ -299,14 +299,14 @@ void Creature::onWalk(Direction& dir)
 	if(r > drunk)
 		return;
 
-	int32_t tmp = std::floor((double)drunk / 5.);
+	int32_t tmp = (int32_t)std::floor((double)drunk / 5.);
 	if(r <= tmp)
 		dir = NORTH;
-	else if(r <= tmp * 2)
+	else if(r <= (tmp * 2))
 		dir = WEST;
-	else if(r <= tmp * 3)
+	else if(r <= (tmp * 3))
 		dir = SOUTH;
-	else if(r <= tmp * 4)
+	else if(r <= (tmp * 4))
 		dir = EAST;
 
 	g_game.internalCreatureSay(this, MSG_SPEAK_MONSTER_SAY, "Hicks!", isGhost());
