@@ -157,7 +157,6 @@ bool Mailbox::getRecipient(Item* item, std::string& name, uint32_t& depotId)
 
 		++curLine;
 	}
-	std::clog<<name<<","<<townString<<std::endl;
 
 	trimString(name);
 	if(townString.empty())
