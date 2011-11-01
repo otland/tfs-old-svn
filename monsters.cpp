@@ -704,7 +704,7 @@ bool Monsters::deserializeSpell(xmlNodePtr node, spellBlock_t& sb, const std::st
 			if(readXMLInteger(node, "subid", intValue))
 				subId = intValue;
 
-			if(Condition* condition = Condition::createCondition(CONDITIONID_COMBAT, CONDITION_DRUNK, duration, false, subId))
+			if(Condition* condition = Condition::createCondition(CONDITIONID_COMBAT, CONDITION_DRUNK, duration, 0, false, subId))
 				combat->setCondition(condition);
 		}
 		else if(tmpName == "skills" || tmpName == "attributes")
@@ -770,7 +770,7 @@ bool Monsters::deserializeSpell(xmlNodePtr node, spellBlock_t& sb, const std::st
 			if(param != CONDITIONPARAM_BUFF)
 			{
 				if(ConditionAttributes* condition = dynamic_cast<ConditionAttributes*>(Condition::createCondition(
-					CONDITIONID_COMBAT, CONDITION_ATTRIBUTES, duration, false, subId)))
+					CONDITIONID_COMBAT, CONDITION_ATTRIBUTES, duration, 0, false, subId)))
 				{
 					condition->setParam(param, intValue);
 					combat->setCondition(condition);
