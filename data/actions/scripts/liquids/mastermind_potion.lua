@@ -12,7 +12,7 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 
 	if(doAddCondition(cid, condition)) then
 		doSendMagicEffect(fromPosition, CONST_ME_MAGIC_RED)
-		doRemoveItem(item.uid)
+		doRemoveItem(item.uid, 1)
 		doCreatureSay(cid, "You feel smarter.", TALKTYPE_ORANGE_1, cid)
 	end
 
