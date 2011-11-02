@@ -22,6 +22,14 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 		return true
 	end
 
+	if(item.itemid == 7761 and isInArray({9949, 9954}, itemEx.itemid)) then
+		doTransformItem(itemEx.uid, itemEx.itemid - 1)
+		doRemoveItem(item.uid, 1)
+
+		doSendMagicEffect(toPosition, CONST_ME_MAGIC_GREEN)
+		return true
+	end
+
 	if(isInArray(enchantableGems, item.itemid)) then
 		local subtype = item.type
 		if(subtype == 0) then
