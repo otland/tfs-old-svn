@@ -156,19 +156,13 @@ bool Item::loadItem(xmlNodePtr node, Container* parent)
 
 bool Item::loadContainer(xmlNodePtr parentNode, Container* parent)
 {
-	xmlNodePtr node = parentNode->children;
-	while(node)
+	for(xmlNodePtr node = parentNode->children; node; node = node->next)
 	{
 		if(node->type != XML_ELEMENT_NODE)
-		{
-			node = node->next;
 			continue;
-		}
 
 		if(!xmlStrcmp(node->name, (const xmlChar*)"item") && !loadItem(node, parent))
 			return false;
-
-		node = node->next;
 	}
 
 	return true;

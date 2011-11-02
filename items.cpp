@@ -701,6 +701,16 @@ void Items::parseItemNode(xmlNodePtr itemNode, uint32_t id)
 			if(readXMLInteger(itemAttributesNode, "value", intValue))
 				it.movable = (intValue != 0);
 		}
+		else if(tmpStrValue == "vertical" || tmpStrValue == "isvertical")
+		{
+			if(readXMLInteger(itemAttributesNode, "value", intValue))
+				it.isVertical = (intValue != 0);
+		}
+		else if(tmpStrValue == "horizontal" || tmpStrValue == "ishorizontal")
+		{
+			if(readXMLInteger(itemAttributesNode, "value", intValue))
+				it.isHorizontal = (intValue != 0);
+		}
 		else if(tmpStrValue == "pickupable")
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue))
