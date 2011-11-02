@@ -827,7 +827,7 @@ bool IOLoginData::savePlayer(Player* player, bool preSave/* = true*/, bool shall
 	}
 	Database* db = Database::getInstance();
 	DBQuery query;
-	
+
 	DBTransaction trans(db);
 	if(!trans.begin())
 		return false;

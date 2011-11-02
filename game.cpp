@@ -3798,7 +3798,6 @@ bool Game::playerSay(uint32_t playerId, uint16_t channelId, MessageClasses type,
 	bool mute = player->isMuted(channelId, type, muted);
 	if(muted && mute)
 	{
-		
 		if(muted > 0)
 		{
 			char buffer[75];
