@@ -604,10 +604,8 @@ ReturnValue Tile::__queryAdd(int32_t, const Thing* thing, uint32_t,
 			if(hasFlag(TILESTATE_OPTIONALZONE) && player->isPzLocked())
 				return RET_PLAYERISPZLOCKED;
 
-			if(hasFlag(TILESTATE_PROTECTIONZONE)) {
-				if(player->isPzLocked())
-					return RET_PLAYERISPZLOCKED;
-			}
+			if(hasFlag(TILESTATE_PROTECTIONZONE) && player->isPzLocked())
+				return RET_PLAYERISPZLOCKED;
 		}
 		else if(creatures && !creatures->empty() && !hasBitSet(FLAG_IGNOREBLOCKCREATURE, flags))
 		{
@@ -707,7 +705,7 @@ ReturnValue Tile::__queryAdd(int32_t, const Thing* thing, uint32_t,
 					continue;
 
 				if(!iType.hasHeight || iType.pickupable || iType.isBed())
-					return RET_NOTPOSSIBLE;
+					return RET_NOTENOUGHROOM;
 			}
 		}
 
