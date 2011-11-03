@@ -29,7 +29,7 @@ function onSay(cid, words, param, channel)
 	end
 
 	t[1] = tonumber(t[1])
-	if(t[1] <= 1 or t[1] == 135 or (t[1] > 160 and t[1] < 192) or (t[1] > 351 and t[1] < 366) or t[1] == 411 or t[1] == 415 or t[1] == 424 or t[1] > 438) then
+	if(t[1] <= 1 or t[1] == 135 or (t[1] > 179 and t[1] < 192) or t[1] == 411 or t[1] == 415 or t[1] == 424 or t[1] > 438) then
 		local item = getItemInfo(t[1])
 		if(item) then
 			doSetItemOutfit(pid, t[1], period)
@@ -42,6 +42,11 @@ function onSay(cid, words, param, channel)
 
 	local tmp = getCreatureOutfit(pid)
 	tmp.lookType = t[1]
+
+	t[3] = tonumber(t[3])
+	if(not(t[3] <= 1 or t[3] == 135 or (t[3] > 179 and t[3] < 192) or t[3] == 411 or t[3] == 415 or t[3] == 424 or t[3] > 438)) then
+		tmp.lookMount = t[3]
+	end
 
 	doCreatureChangeOutfit(pid, tmp)
 	return true
