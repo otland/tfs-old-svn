@@ -2128,32 +2128,32 @@ BlockType_t Player::blockHit(Creature* attacker, CombatType_t combatType, int32_
 			(g_moveEvents->hasEquipEvent(item) && !isItemAbilityEnabled((slots_t)slot)))
 			continue;
 
+		bool transform = false;
 		const ItemType& it = Item::items[item->getID()];
-		if(!field)
+		if(it.abilities.absorb[combatType])
 		{
-			if(it.abilities.absorb[combatType])
-			{
-				blocked += (int32_t)std::ceil((double)(damage * it.abilities.absorb[combatType]) / 100.);
-				if(item->hasCharges())
-					g_game.transformItem(item, item->getID(), std::max((int32_t)0, (int32_t)item->getCharges() - 1));
-			}
+			blocked += (int32_t)std::ceil((double)(damage * it.abilities.absorb[combatType]) / 100.);
+			if(item->hasCharges())
+				transform = true;
+
 		}
-		else if(it.abilities.fieldAbsorb[combatType])
+
+		if(it.abilities.fieldAbsorb[combatType])
 		{
 			blocked += (int32_t)std::ceil((double)(damage * it.abilities.fieldAbsorb[combatType]) / 100.);
 			if(item->hasCharges())
-				g_game.transformItem(item, item->getID(), std::max((int32_t)0, (int32_t)item->getCharges() - 1));
+				transform = true;
 		}
 
-		if(!reflect)
-			continue;
-
-		if(it.abilities.reflect[REFLECT_PERCENT][combatType] && it.abilities.reflect[REFLECT_CHANCE][combatType] >= random_range(1, 100))
+		if(reflect && it.abilities.reflect[REFLECT_PERCENT][combatType] && it.abilities.reflect[REFLECT_CHANCE][combatType] >= random_range(1, 100))
 		{
 			reflected += (int32_t)std::ceil((double)(damage * it.abilities.reflect[REFLECT_PERCENT][combatType]) / 100.);
-			if(item->hasCharges() && !it.abilities.absorb[combatType])
-				g_game.transformItem(item, item->getID(), std::max((int32_t)0, (int32_t)item->getCharges() - 1));
+			if(item->hasCharges())
+				transform = true;
 		}
+
+		if(transform)
+			g_game.transformItem(item, item->getID(), std::max((int32_t)0, (int32_t)item->getCharges() - 1));
 	}
 
 	if(outfitAttributes)
