@@ -2262,16 +2262,15 @@ bool Player::onDeath()
 	uint8_t pvpPercent = (uint8_t)std::ceil((double)pvpDamage * 100. / std::max(1U, totalDamage));
 	if(pvpBlessing && pvpPercent >= (uint8_t)g_config.getNumber(
 		ConfigManager::PVP_BLESSING_THRESHOLD))
-	{
 		usePVPBlessing = true;
-		pvpBlessing = false;
-	}
 
 	if(preventLoss)
 	{
 		setLossSkill(false);
-		if(!usePVPBlessing) // TODO: need to reconsider this, because players will be immune to any loss
+		if(!usePVPBlessing)
 			g_game.transformItem(preventLoss, preventLoss->getID(), std::max(0, (int32_t)preventLoss->getCharges() - 1));
+		else
+			pvpBlessing = false;
 	}
 
 	if(preventDrop && preventDrop != preventLoss && !usePVPBlessing)
@@ -2325,7 +2324,9 @@ bool Player::onDeath()
 			skills[i][SKILL_TRIES] -= lostSkillTries;
 		}
 
-		if(!usePVPBlessing)
+		if(usePVPBlessing)
+			pvpBlessing = false;
+		else
 			blessings = 0;
 
 		loginPosition = masterPosition;
