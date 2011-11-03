@@ -2519,7 +2519,7 @@ bool Game::playerUseItemEx(uint32_t playerId, const Position& fromPos, int16_t f
 				}
 
 				//changing the position since its now in the inventory of the player
-				internalGetPosition(moveItem, fromPos, fromStackpos);
+				internalGetPosition(moveItem, itemPos, fromStackpos);
 			}
 
 			if(player->getNoMove())
