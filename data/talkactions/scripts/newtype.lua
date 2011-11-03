@@ -1,3 +1,7 @@
+local function checkType(value)
+	return not(value <= 1 or value == 135 or (value > 160 and value < 192) or value == 411 or value == 415 or value == 424 or value > 438)
+end
+
 function onSay(cid, words, param, channel)
 	if(param == '') then
 		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Command param required.")
@@ -29,7 +33,7 @@ function onSay(cid, words, param, channel)
 	end
 
 	t[1] = tonumber(t[1])
-	if(t[1] <= 1 or t[1] == 135 or (t[1] > 179 and t[1] < 192) or t[1] == 411 or t[1] == 415 or t[1] == 424 or t[1] > 438) then
+	if(not checkType(t[1]) then
 		local item = getItemInfo(t[1])
 		if(item) then
 			doSetItemOutfit(pid, t[1], period)
@@ -43,9 +47,11 @@ function onSay(cid, words, param, channel)
 	local tmp = getCreatureOutfit(pid)
 	tmp.lookType = t[1]
 
-	t[3] = tonumber(t[3])
-	if(not(t[3] <= 1 or t[3] == 135 or (t[3] > 179 and t[3] < 192) or t[3] == 411 or t[3] == 415 or t[3] == 424 or t[3] > 438)) then
-		tmp.lookMount = t[3]
+	if(t[3]) then
+		t[3] = tonumber(t[3])
+		if(checkType(t[3]) then
+			tmp.lookMount = t[3]
+		end
 	end
 
 	doCreatureChangeOutfit(pid, tmp)
