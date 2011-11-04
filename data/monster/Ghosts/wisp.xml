@@ -20,7 +20,7 @@
 	</flags>
 	<attacks>
 		<attack name="melee" interval="2000" skill="10" attack="10"/>
-		<attack name="lifedrain" interval="2000" change="10" min="-20" max="-40">
+		<attack name="lifedrain" interval="2000" chance="10" min="-20" max="-40">
 			<attribute key="areaEffect" value="redshimmer"/>
 		</attack>
 	</attacks>

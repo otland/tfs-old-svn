@@ -52,7 +52,7 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 
 	local random, effect, transform = math.random(1, 100000), CONST_ME_MAGIC_GREEN, true
 	if(type(skin[1]) == 'table') then
-		bool added = false
+		local added = false
 		for _, _skin in ipairs(skin) do
 			if(random <= _skin[1]) then
 				doPlayerAddItem(cid, _skin[2], _skin[3] or 1)

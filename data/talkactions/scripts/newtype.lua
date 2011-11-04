@@ -33,7 +33,7 @@ function onSay(cid, words, param, channel)
 	end
 
 	t[1] = tonumber(t[1])
-	if(not checkType(t[1]) then
+	if(not checkType(t[1])) then
 		local item = getItemInfo(t[1])
 		if(item) then
 			doSetItemOutfit(pid, t[1], period)
@@ -49,7 +49,7 @@ function onSay(cid, words, param, channel)
 
 	if(t[3]) then
 		t[3] = tonumber(t[3])
-		if(checkType(t[3]) then
+		if(checkType(t[3])) then
 			tmp.lookMount = t[3]
 		end
 	end

@@ -56,7 +56,7 @@ Player::Player(const std::string& _name, ProtocolGame* p):
 	if(client)
 		client->setPlayer(this);
 
-	pvpBlessing = pzLocked = isConnecting = addAttackSkillPoint = requestedOutfit = mounted = false;
+	pvpBlessing = pzLocked = isConnecting = addAttackSkillPoint = requestedOutfit = mounted = outfitAttributes = false;
 	saving = true;
 
 	lastAttackBlockType = BLOCK_NONE;
