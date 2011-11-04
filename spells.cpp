@@ -1889,6 +1889,7 @@ bool RuneSpell::Soulfire(const RuneSpell* spell, Creature* creature, Item*, cons
 		return false;
 	}
 
+	g_game.addDistanceEffect(player->getPosition(), posTo, SHOOT_EFFECT_FIRE);
 	spell->postSpell(player, true, false);
 	return true;
 }
