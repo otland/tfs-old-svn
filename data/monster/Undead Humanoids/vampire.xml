@@ -69,6 +69,6 @@
 		<item id="2383" chance="1222"/><!-- spike sword -->
 		<item id="2479" chance="140"/><!-- strange helmet -->
 		<item id="7588" chance="150"/><!-- strong health potion -->
-		<item id="2534" chance="300"/><!-- vampire shield -->		
+		<item id="2534" chance="300"/><!-- vampire shield -->
 	</loot>
 </monster>

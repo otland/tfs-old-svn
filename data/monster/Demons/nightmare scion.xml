@@ -62,7 +62,7 @@
 		<item id="2152" countmax="3" chance="800"/><!-- platinum coin -->
 		<item id="2671" countmax="2" chance="20000"/><!-- ham -->
 		<item id="2666" countmax="4" chance="27500"/><!-- meat -->
-		<item id="6574" chance="150"/><!-- bar of chocolate -->	
+		<item id="6574" chance="150"/><!-- bar of chocolate -->
 		<item id="7451" chance="170"/><!-- shadow sceptre -->
 	</loot>
 </monster>

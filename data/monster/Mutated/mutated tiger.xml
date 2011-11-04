@@ -53,7 +53,7 @@
 		<item id="2666" countmax="4" chance="15000"/><!-- meat -->
 		<item id="2509" chance="7000"/><!-- steel shield -->
 		<item id="2168" chance="2000"/><!-- life ring -->
-		<item id="7588" chance="900"/><!-- strong health potion -->	
+		<item id="7588" chance="900"/><!-- strong health potion -->
 		<item id="2515" chance="500"/><!-- guardian shield -->
 		<item id="7454" chance="300"/><!-- glorius axe -->
 		<item id="7436" chance="200"/><!-- angelic axe -->

@@ -35,16 +35,16 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 	if(food == nil) then
 		return false
 	end
-	
+
 	local random_condition = conditions[math.random(#conditions)]
 	if(random_condition == CONDITION_ATTRIBUTES) then
 		setConditionParam(condition[CONDITION_ATTRIBUTES], attributes[math.random(#attributes)], math.random(3,15))
 	end
-	
+
 	if(not doAddCondition(cid, condition[random_condition])) then
 		return true
 	end
-	
+
 	doRemoveItem(item.uid, 1)
 	doCreatureSay(cid, food, TALKTYPE_MONSTER)
 	return true

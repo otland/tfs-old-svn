@@ -36,7 +36,7 @@ function oracle(cid, message, keywords, parameters, node)
 
 				local tmp = getCreaturePosition(cid)
 				doTeleportThing(cid, destination)
-				
+
 				doSendMagicEffect(tmp, CONST_ME_POFF)
 				doSendMagicEffect(destination, CONST_ME_TELEPORT)
 				return true

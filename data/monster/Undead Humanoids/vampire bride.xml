@@ -61,6 +61,6 @@
 		<item id="2145" countmax="2" chance="1000"/><!-- small diamond -->
 		<item id="7589" chance="9750"/><!-- strong mana potion -->
 		<item id="7588" chance="4800"/><!-- strong health potion -->
-		<item id="9837" chance="925"/><!-- velvet tapestry -->		
+		<item id="9837" chance="925"/><!-- velvet tapestry -->
 	</loot>
 </monster>

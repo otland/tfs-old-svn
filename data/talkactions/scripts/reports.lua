@@ -23,7 +23,7 @@ function onSay(cid, words, param, channel)
 			result:free()
 			return true
 		end
-			
+
 
 		db.query("UPDATE `server_reports` SET `reads` = `reads` + 1 WHERE `id` = " .. reportId)
 		doPlayerPopupFYI(cid, "Report no. " .. reportId .. "\n\nName: " .. report:getDataString("player_name") .. "\nPosition: [X: " .. report:getDataInt("posx") .. " | Y: " .. report:getDataInt("posy") .. " | Z: " .. report:getDataInt("posz") .. "]\nDate: " .. os.date("%c", report:getDataInt("timestamp")) .. "\nReads: " .. report:getDataInt("reads") .. "\nReport:\n\n" .. report:getDataString("report"))

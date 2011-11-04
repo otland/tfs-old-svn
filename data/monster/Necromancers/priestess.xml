@@ -61,8 +61,8 @@
 		<item id="2183" chance="1100"/><!-- hailstorm rod -->
 		<item id="7620" chance="1300"/><!-- mana potion -->
 		<item id="2803" chance="6500"/><!-- powder herb -->
-		<item id="2674" countmax="2" chance="5000"/><!-- red apple -->	
-		<item id="2802" chance="12500"/><!-- sling herb -->	
+		<item id="2674" countmax="2" chance="5000"/><!-- red apple -->
+		<item id="2802" chance="12500"/><!-- sling herb -->
 		<item id="2151" chance="1000"/><!-- talon -->
 		<item id="2791" chance="2600"/><!-- wood mushroom -->
 		<item id="2070" chance="1800"/><!-- flute -->

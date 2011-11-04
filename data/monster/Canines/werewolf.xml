@@ -63,7 +63,7 @@
 		<item id="2169" chance="700"/><!-- time ring -->
 		<item id="2805" chance="5000"/><!-- troll green -->
 		<item id="5897" chance="5200"/><!-- wolf paw -->
-		<item id="8473" chance="2400"/><!-- ultimate health potion -->		
+		<item id="8473" chance="2400"/><!-- ultimate health potion -->
 		<item id="7419" chance="200"/><!-- dreaded cleaver -->
 	</loot>
 </monster>

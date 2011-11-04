@@ -51,7 +51,7 @@
 		<item id="5895" chance="2000"/><!-- fish fin -->
 		<item id="2475" chance="1333"/><!-- warrior helmet -->
 		<item id="7897" chance="1333"/><!-- glacier robe -->
-		<item id="7591" chance="1333"/><!-- great health potion -->		
+		<item id="7591" chance="1333"/><!-- great health potion -->
 		<item id="2487" chance="500"/><!-- crown armor -->
 	</loot>
 </monster>

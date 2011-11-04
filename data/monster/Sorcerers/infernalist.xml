@@ -24,7 +24,7 @@
 			<attribute key="shootEffect" value="fire"/>
 		</attack>
 		<attack name="manadrain" interval="1000" chance="20" target="1" range="7" radius="3" min="-50" max="-125">
-			<attribute key="areaEffect" value="teleport"/>		
+			<attribute key="areaEffect" value="teleport"/>
 			<attribute key="shootEffect" value="energyball"/>
 		</attack>
 		<attack name="firefield" interval="1000" chance="20" range="7" radius="3" target="1">

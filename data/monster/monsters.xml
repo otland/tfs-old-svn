@@ -55,13 +55,13 @@
 			Undead Humanoids
 				Undead Jester
 				Spectral Scum
-				
+
 			Rhinoceros 
 				Stampor
-				
+
 			Misc
 				Cake Golem
-				
+
 			Rat
 				Ghost Rat
 		]
@@ -252,7 +252,7 @@
 
 	<!-- Canines -->
 	<monster name="Dog" file="Canines/dog.xml"/>
-	<monster name="Husky" file="Canines/husky.xml"/>	
+	<monster name="Husky" file="Canines/husky.xml"/>
 	<monster name="War wolf" file="Canines/war wolf.xml"/>
 	<monster name="Werewolf" file="Canines/werewolf.xml"/>
 	<monster name="Winter wolf" file="Canines/winter wolf.xml"/>
@@ -390,7 +390,7 @@
 	<monster name="Goblin Leader" file="Goblins/goblin leader.xml"/>
 	<monster name="Goblin Scavenger" file="Goblins/goblin scavenger.xml"/>
 	<monster name="Grynch Clan Goblin" file="Goblins/grynch clan goblin.xml"/>
-	
+
 	<!-- Grunts -->
 	<monster name="Pig" file="Grunts/pig.xml"/>
 	<monster name="Boar" file="Grunts/boar.xml"/>
@@ -630,7 +630,7 @@
 	<monster name="Undead Prospector" file="Undead Humanoids/undead prospector.xml"/>
 	<monster name="Undead Mine Worker" file="Undead Humanoids/undead mine worker.xml"/>
 	<monster name="Tomb Servant" file="Undead Humanoids/tomb servant.xml"/>
-	
+
 	<!-- Isle of Evil -->
 	<monster name="Berserker Chicken" file="Isle of Evil/berserker chicken.xml"/>
 	<monster name="Boogey" file="Isle of Evil/boogey.xml"/>

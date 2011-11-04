@@ -56,7 +56,7 @@
 		<item id="6098" chance="600"/><!-- eye patch -->
 		<item id="7588" chance="500"/><!-- strong health potion -->
 		<item id="5813" chance="800"/><!-- skull candle -->
-		<item id="6096" chance="750"/><!-- pirate hat -->		
+		<item id="6096" chance="750"/><!-- pirate hat -->
 		<item id="5462" chance="250"/><!-- pirate boots -->
 		<item id="2114" chance="100"/><!-- piggy bank -->
 	</loot>

@@ -19352,7 +19352,7 @@
 		<attribute key="duration" value="60" />
 		<attribute key="corpseType" value="blood" />
 	</item>
-	
+
 	<item id="11434" article="a" name="lamp"/>
 	<item id="11435" article="a" name="lamp"/>
 	<item fromid="11445" toid="11449" article="a" name="lamp"/>
@@ -19369,7 +19369,7 @@
 	<item id="11700" article="a" name="stone wall"/>
 	<item id="11702" article="a" name="stone wall"/>
 	<item fromid="11729" toid="11752" name="ground" />
-	
+
 	<item id="11754" article="a" name="ferumbras doll">
 		<attribute key="weight" value="1700" />
 	</item>
@@ -19398,7 +19398,7 @@
 		<attribute key="decayTo" value="11773" />
 		<attribute key="duration" value="2" />
 	</item>
-	
+
 	<item fromid="11775" toid="11778" name="ground" />
 	<item fromid="11785" toid="11792" name="muddy floor" />
 	<item fromid="11793" toid="11795" article="a" name="skull pillar"/>
@@ -19468,7 +19468,7 @@
 	<item fromid="12228" toid="12233" article="a" name="corrupted wall"/> <!-- need to confirm name -->
 	<item fromid="12266" toid="12271" article="a" name="sign"/>
 	<item id="12274" article="a" name="sign"/>
-	
+
 	<item id="12284" article="a" name="marked crate">
 		<attribute key="description" value="This crate has been marked with lizard symbols. It is large enough for a grown person to fit in."/>
 		<attribute key="weight" value="8000"/>
@@ -20278,7 +20278,7 @@
 	<item fromid="13007" toid="13009" article="a" name="wooden table"/>
 	<item id="13010" article="a" name="ladder"/> <!-- change level? -->
 	<item fromid="13011" toid="13018" article="a" name="clock"/>
-	
+
 	<item id="13026" article="a" name="panther head">
 		<attribute key="weight" value="150" />
 	</item>
@@ -20289,7 +20289,7 @@
 		<attribute key="description" value="A hermit near Carlin might be able to tell you more about it."/>
 		<attribute key="weight" value="200"/>
 	</item>
-	
+
 	<item fromid="13072" toid="13076" article="a" name="giant cake"/>
 	<item id="13092" article="a" name="giant cake"/>
 	<item id="13094" article="a" name="giant cake"/>
@@ -20308,7 +20308,7 @@
 	<item id="13186" article="a" name="stone wall"/>
 	<item fromid="13199" toid="13200" article="a" name="stone"/>
 	<item fromid="13288" toid="13289" article="a" name="giant pot of slime"/>
-	
+
 	<item id="13291" article="a" name="maxilla maximus">
 		<attribute key="description" value="A hermit near Carlin might be able to tell you more about it."/>
 		<attribute key="weight" value="200"/>

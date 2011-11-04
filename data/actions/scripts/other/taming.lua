@@ -1,7 +1,7 @@
 --[[
 	The 'CHANCE' values that I'm not sure about have been defaulted to 40%
 	TODO: Get real FAIL_MSG and SUCCESS_MSG for some of the tammings
-	
+
 	Info:
 		[xxxxx] 	 = tamming itemid
 		NAME 		 = name of the creature tamming item is used on
@@ -131,7 +131,7 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 			return true
 		end
 	end
-	
+
 	return false
 end
 

@@ -76,8 +76,8 @@
 		<item id="7589" chance="2000"/><!-- strong mana potion -->
 		<item id="2124" chance="2125"/><!-- crystal ring -->
 		<item id="2200" chance="1975"/><!-- protection amulet -->
-		<item id="2171" chance="1000"/><!-- platinum amulet -->		
-		<item id="8870" chance="900"/><!-- spirit cloak -->		
+		<item id="2171" chance="1000"/><!-- platinum amulet -->
+		<item id="8870" chance="900"/><!-- spirit cloak -->
 		<item id="7407" chance="400"/><!-- haunted blade -->
 		<item id="7427" chance="300"/><!-- chaos mace -->
 		<item id="2195" chance="150"/><!-- boots of haste -->

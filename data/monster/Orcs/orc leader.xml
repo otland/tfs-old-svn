@@ -46,8 +46,8 @@
 		<item id="7378" chance="1000"/><!-- royal spear -->
 		<item id="2207" chance="750"/><!-- sword ring -->
 		<item id="2647" chance="800"/><!-- plate legs -->
-		<item id="2413" chance="750"/><!-- broadsword -->	
-		<item id="7618" chance="400"/><!-- health potion -->	
+		<item id="2413" chance="750"/><!-- broadsword -->
+		<item id="7618" chance="400"/><!-- health potion -->
 		<item id="2475" chance="200"/><!-- warrior helmet -->
 	</loot>
 </monster>

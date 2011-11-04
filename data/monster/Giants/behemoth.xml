@@ -66,9 +66,9 @@
 		<item id="7591" chance="925"/><!-- great health potion  -->
 		<item id="2174" chance="850"/><!-- strange symbol -->
 		<item id="5930" chance="350"/><!-- behemoth claw -->
-		<item id="2454" chance="550"/><!-- war axe -->		
+		<item id="2454" chance="550"/><!-- war axe -->
 		<item id="7396" chance="100"/><!-- behemoth trophy -->
-		<item id="2125" chance="450"/><!-- crystal necklace -->	
+		<item id="2125" chance="450"/><!-- crystal necklace -->
 		<item id="7413" chance="150"/><!-- titan axe-->
 	</loot>
 </monster>

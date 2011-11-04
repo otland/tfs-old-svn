@@ -30,7 +30,7 @@ function createClass(parent)
 
 		return false
 	end
-	
+
 	function newClass:setAttributes(attributes)
 		for k, v in pairs(attributes) do
 			newClass[k] = v

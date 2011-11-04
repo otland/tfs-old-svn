@@ -22,34 +22,34 @@
 		<attack name="death" interval="2000" chance="10" range="7" target="1" max="-170">
 			<attribute key="shootEffect" value="death"/>
 			<attribute key="areaEffect" value="mortarea"/>
-		</attack>	
+		</attack>
 		<attack name="death" interval="2000" chance="9" length="8" spread="0" min="-125" max="-255">
 			<attribute key="areaEffect" value="mortarea"/>
-		</attack>	
+		</attack>
 		<attack name="physical" interval="2000" chance="12" length="8" spread="3" max="-0">
 			<attribute key="areaEffect" value="rednote"/>
-		</attack>	
+		</attack>
 		<attack name="manadrain" interval="2000" chance="13" range="7" target="1" max="-100">
 			<attribute key="areaEffect" value="redshimmer"/>
-		</attack>	
+		</attack>
 	</attacks>
 	<defenses armor="25" defense="20">
 		<defense name="invisible" interval="2000" chance="8">
-			<attribute key="areaEffect" value="blueshimmer"/>											
-		</defense>	
+			<attribute key="areaEffect" value="blueshimmer"/>
+		</defense>
 	</defenses>
 	<elements>
 		<element holyPercent="-10"/>
 		<element icePercent="50"/>
 		<element firePercent="-10"/>
 		<element energyPercent="-10"/>
-		<element physicalPercent="70"/>		
+		<element physicalPercent="70"/>
 	</elements>
 	<immunities>
 		<immunity paralyze="1"/>
 		<immunity invisible="1"/>
 		<immunity death="1"/>
-		<immunity earth="1"/>		
+		<immunity earth="1"/>
 	</immunities>
 	<voices interval="5000" chance="10">
 		<voice sentence="Life is such a fickle thing!"/>

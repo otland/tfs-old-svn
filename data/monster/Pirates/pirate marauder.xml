@@ -54,7 +54,7 @@
 		<item id="6098" chance="600"/><!-- eye patch -->
 		<item id="5553" chance="100"/><!-- rum flask -->
 		<item id="5928" chance="200"/><!-- empty goldfish bowl -->
-		<item id="5792" chance="50"/><!-- dice -->		
+		<item id="5792" chance="50"/><!-- dice -->
 		<item id="5927" chance="500"/><!-- pirate bag -->
 	</loot>
 </monster>

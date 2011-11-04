@@ -42,11 +42,11 @@
 		<item id="2230" chance="27500"/> <!-- bone -->
 		<item id="13545" chance="9250"/><!-- luminous piece of cloth -->
 		<item id="13543" chance="9600"/><!-- obvious piece of cloth -->
-		<item id="13541" chance="8650"/><!-- dubious piece of cloth -->	
+		<item id="13541" chance="8650"/><!-- dubious piece of cloth -->
 		<item id="13542" chance="6550"/><!-- voluminous piece of cloth -->
-		<item id="13540" chance="7650"/><!-- ominous piece of cloth -->	
+		<item id="13540" chance="7650"/><!-- ominous piece of cloth -->
 		<item id="13544" chance="8400"/><!-- ludicrous piece of cloth -->
-		<item id="13926" chance="1450"/><!-- plague bell -->		
+		<item id="13926" chance="1450"/><!-- plague bell -->
 		<item id="13925" chance="1250"/><!-- plague mask -->
 	</loot>
 </monster>

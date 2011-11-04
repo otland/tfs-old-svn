@@ -206,7 +206,7 @@
 		<vocation id="8" showInDescription="0"/>
 	</melee>
 	<melee id="12649" level="82" unproperly="1" event="function" value="default"/>
-		<!-- Twin Hooks -->	
+		<!-- Twin Hooks -->
 	<melee id="11309" level="20" unproperly="1" event="function" value="default"> 
 		<vocation id="4"/>
 		<vocation id="8" showInDescription="0"/>
@@ -228,7 +228,7 @@
 		<vocation id="4"/>
 		<vocation id="8" showInDescription="0"/>
     </melee>
-	
+
 	<!-- Axes -->
 		<!-- Barbarian Axe -->
 	<melee id="2429" level="20" unproperly="1" event="function" value="default"/>

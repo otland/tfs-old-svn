@@ -47,7 +47,7 @@ for index, potion in pairs(POTIONS) do
 		if(potion.realAnimation) then
 			potion.realAnimation = getBooleanFromString(potion.realAnimation)
 		end
-		
+
 		POTIONS[index] = potion
 	end
 end

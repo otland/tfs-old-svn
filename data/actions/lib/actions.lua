@@ -26,7 +26,7 @@ function destroyItem(cid, itemEx, toPosition)
 	if(itemEx.uid <= 65535 or itemEx.actionid > 0) then
 		return false
 	end
-	
+
 	if(isInArray(SPIDER_WEB, itemEx.itemid)) then
 		if math.random(3) == 1 then
 			doTransformItem(itemEx.uid, (itemEx.itemid + 6))
@@ -36,7 +36,7 @@ function destroyItem(cid, itemEx, toPosition)
 		doSendMagicEffect(toPosition, CONST_ME_POFF)
 		return true
 	end
-	
+
 	if(isInArray(BAMBOO_FENCE, itemEx.itemid)) then
 		if math.random(3) == 1 then
 			if(itemEx.itemid == BAMBOO_FENCE[1]) then
@@ -173,7 +173,7 @@ TOOLS.MACHETE = function(cid, item, fromPosition, itemEx, toPosition, destroy)
 		doSendMagicEffect(toPosition, CONST_ME_POFF)
 		return true
 	end
-	
+
 	if(isInArray(BAMBOO_FENCE, itemEx.itemid)) then
 		if math.random(3) == 1 then
 			if(itemEx.itemid == BAMBOO_FENCE[1]) then

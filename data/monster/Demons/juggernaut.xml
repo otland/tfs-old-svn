@@ -58,7 +58,7 @@
 		<item id="6500" chance="45000"/><!-- demonic essence -->
 		<item id="9971" chance="3000"/><!-- gold ingot -->
 		<item id="7590" chance="9000"/><!-- great mana potion -->
-		<item id="7591" chance="7500"/><!-- great health potion -->	
+		<item id="7591" chance="7500"/><!-- great health potion -->
 		<item id="2671" countmax="8" chance="10750"/><!-- ham -->
 		<item id="2152" countmax="5" chance="2400"/><!-- platinum coin -->
 		<item id="9808" chance="7500"/><!-- rusty armor -->
@@ -70,7 +70,7 @@
 		<item id="2434" chance="7000"/><!-- dragon hammer -->
 		<item id="2136" chance="750"/><!-- demonbone amulet -->
 		<item id="2470" chance="500"/><!-- golden legs -->
-		<item id="2466" chance="650"/><!-- golden armor -->	
+		<item id="2466" chance="650"/><!-- golden armor -->
 		<item id="2514" chance="450"/><!-- mastermand shield -->
 		<item id="8889" chance="300"/><!-- skullcracker armor -->
 		<item id="2452" chance="250"/><!-- heavy mace -->

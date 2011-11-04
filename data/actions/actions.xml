@@ -93,7 +93,7 @@
 	<action itemid="11429" event="script" value="foods/food.lua"/>
 	<action fromid="12415" toid="12418" event="script" value="foods/food.lua"/>
 	<action fromid="12637" toid="12639" event="script" value="foods/food.lua"/>
-	
+
 	<!-- Special Food -->
 	<action itemid="9992" event="script" value="foods/rotworm_stew.lua"/>
 	<action itemid="9993" event="script" value="foods/hydra_tongue_salad.lua"/>
@@ -339,7 +339,7 @@
 	<action itemid="8977" event="script" value="other/dolls.lua"/>
 	<action itemid="8981" event="script" value="other/dolls.lua"/>
 	<action itemid="8982" event="script" value="other/dolls.lua"/>
-	
+
 	<!-- Taming Items -->
 	<action itemid="13295" event="script" value="other/taming.lua"/> <!-- reins -->
 	<action itemid="13294" event="script" value="other/taming.lua"/> <!-- harness -->

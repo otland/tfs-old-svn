@@ -72,6 +72,6 @@
 		<item id="2516" chance="500"/><!-- dragon shield -->
 		<item id="2409" chance="500"/><!-- serpent sword -->
 		<item id="7430" chance="650"/><!-- dragonbone staff -->
-		<item id="2177" chance="150"/><!-- life crystal -->	
+		<item id="2177" chance="150"/><!-- life crystal -->
 	</loot>
 </monster>

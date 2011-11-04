@@ -29,12 +29,12 @@
 		<attack name="drunk" interval="2000" chance="10" target="0" radius="5">
 			<attribute key="shootEffect" value="poison"/>
 			<attribute key="areaEffect" value="poison"/>
-		</attack>	
+		</attack>
 	</attacks>
 	<defenses armor="16" defense="19">
 		<defense name="healing" interval="2000" chance="15" min="650" max="700">
 			<attribute key="areaEffect" value="blueshimmer"/>
-		</defense>	
+		</defense>
 	</defenses>
 	<elements>
 		<element physicalPercent="20"/>
@@ -50,7 +50,7 @@
 	</immunities>
 	<summons maxSummons="2">
 		<summon name="Death Blob" interval="2000" chance="10" max="2"/>
-	</summons>	
+	</summons>
 	<voices interval="5000" chance="10">
 		<voice sentence="Ugggh!"/>
 	</voices>

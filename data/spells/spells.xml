@@ -317,7 +317,7 @@
 		<vocation id="3"/>
 		<vocation id="7"/>
 	</instant>
-	
+
 
 	<!-- Support Spells -->
 	<instant name="Light" words="utevo lux" lvl="8" mana="20" aggressive="0" selftarget="1" exhaustion="2000" groups="3,3000" icon="10" needlearn="0" event="script" value="support/light.lua">

@@ -39,6 +39,6 @@
 		<item id="2666" countmax="4" chance="16750"/> <!-- meat -->
 		<item id="13026" chance="7500"/> <!-- panther head -->
 		<item id="13027" chance="8500"/> <!-- panther paw -->
-		
+
 	</loot>
 </monster>

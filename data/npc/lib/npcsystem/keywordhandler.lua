@@ -46,7 +46,7 @@ if(KeywordHandler == nil) then
 		if(self.keywords.callback ~= nil) then
 			return self.keywords.callback(self.keywords, message)
 		end
-	
+
 		for i,v in ipairs(self.keywords) do
 			if(type(v) == 'string') then
 				local a, b = string.find(message, v)
@@ -118,7 +118,7 @@ if(KeywordHandler == nil) then
 			error('No root node found.')
 			return false
 		end
-	
+
 		if(KEYWORD_BEHAVIOR == BEHAVIOR_SIMPLE) then
 			local ret = self:processNodeMessage(node, cid, message)
 			if(ret) then
@@ -159,7 +159,7 @@ if(KeywordHandler == nil) then
 		else
 			error('Unknown keyword behavior.')
 		end
-	
+
 		return false
 	end
 
