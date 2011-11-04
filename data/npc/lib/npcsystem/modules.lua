@@ -1133,7 +1133,7 @@ if(Modules == nil) then
 				id = itemid,
 				buy = -1,
 				sell = cost,
-				subType = v.charges > 0 and v.charges or 0,
+				subType = ((v.charges > 0 and v.stackable) and v.charges or 0),
 				name = realName or v.name
 			}
 
