@@ -487,7 +487,7 @@ bool Connection::send(OutputMessage_ptr msg)
 		close();
 	}
 	else
-	{	
+	{
 		#ifdef __DEBUG_NET__
 		std::clog << "Connection::send Adding to queue " << msg->size() << std::endl;
 		#endif

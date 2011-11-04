@@ -145,7 +145,7 @@ std::stringstream& Container::getContentDescription(std::stringstream& s) const
 		Container* tmp = (*it)->getContainer();
 		if(tmp && !tmp->empty())
 			continue;
-		
+
 		if(!begin)
 			s << ", ";
 		else
@@ -346,7 +346,7 @@ ReturnValue Container::__queryMaxCount(int32_t index, const Thing* thing, uint32
 			const Item* destItem = NULL;
 			if(destThing)
 				destItem = destThing->getItem();
-			
+
 			if(destItem && destItem->getID() == item->getID() && destItem->getItemCount() < 100)
 			{
 				uint32_t remainder = 100 - destItem->getItemCount();

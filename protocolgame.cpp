@@ -2528,7 +2528,7 @@ void ProtocolGame::sendOutfitWindow()
 				msg->put<char>(0);
 		}
 		else
-			msg->put<char>(0);	
+			msg->put<char>(0);
 
 		player->hasRequestedOutfit(true);
 	}

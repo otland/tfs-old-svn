@@ -143,11 +143,11 @@ bool Creature::canWalkthrough(const Creature* creature) const
 		return true;
 
 	if(const Creature* _master = creature->getMaster())
-	{	
+	{
 		if(_master != this && canWalkthrough(_master))
 			return true;
 	}
-	
+
 	return creature->isGhost() || creature->isWalkable() || (master &&
 		master != creature && master->canWalkthrough(creature));
 }

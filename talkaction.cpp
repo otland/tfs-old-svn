@@ -1158,7 +1158,7 @@ bool TalkAction::banishmentInfo(Creature* creature, const std::string&, const st
 		   << " by: " << admin.c_str() << ",\nfor the following reason:\n" << getReason(ban.reason).c_str() << ".\nThe action taken was:\n"
 		   << getAction(ban.action, false).c_str() << ".\nThe comment given was:\n" << ban.comment.c_str() << ".\n" << end.c_str()
 		   << (deletion ? "." : formatDateEx(ban.expires).c_str()) << ".";
-	
+
 	player->sendFYIBox(stream.str().c_str());
 	return true;
 }

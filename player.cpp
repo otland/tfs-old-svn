@@ -133,7 +133,7 @@ Player::~Player()
 	{
 		if(!inventory[i])
 			continue;
-			
+
 		inventory[i]->setParent(NULL);
 		inventory[i]->unRef();
 
@@ -1206,7 +1206,7 @@ void Player::sendCancelMessage(ReturnValue message) const
 			sendCancel("You cannot add more items on this tile.");
 			break;
 
-		case RET_NOTPOSSIBLE:		
+		case RET_NOTPOSSIBLE:
 			sendCancel("Sorry, not possible.");
 			break;
 
@@ -3678,7 +3678,7 @@ void Player::onAddCondition(ConditionType_t type, bool hadCondition)
 
 	if(type == CONDITION_INVISIBLE && !hadCondition && mounted)
 		dismount(false);
-	
+
 	if(getLastPosition().x) // don't send if player have just logged in (its already done in protocolgame), or condition have no icons
 		sendIcons();
 }

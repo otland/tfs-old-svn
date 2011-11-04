@@ -628,7 +628,7 @@ bool Chat::talkToChannel(Player* player, MessageClasses type, const std::string&
 						{
 							sprintf(buffer, "%s has invited you to join the guild, %s. You may join this guild by writing: !joinguild %s", player->getName().c_str(), player->getGuildName().c_str(), player->getGuildName().c_str());
 							paramPlayer->sendTextMessage(MSG_INFO_DESCR, buffer);
-	
+
 							sprintf(buffer, "%s has invited %s to the guild.", player->getName().c_str(), paramPlayer->getName().c_str());
 							channel->talk("", MSG_CHANNEL_HIGHLIGHT, buffer);
 							paramPlayer->invitationsList.push_back(player->getGuildId());

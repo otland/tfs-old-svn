@@ -2261,7 +2261,7 @@ bool Game::playerMove(uint32_t playerId, Direction dir)
 	Player* player = getPlayerByID(playerId);
 	if(!player || player->isRemoved())
 		return false;
-		
+
 	player->setIdleTime(0);
 	if(player->getNoMove())
 	{
@@ -3985,7 +3985,7 @@ bool Game::playerTalkToChannel(Player* player, MessageClasses type, const std::s
 			else
 				type = MSG_CHANNEL;
 		}
-			
+
 
 		case MSG_GAMEMASTER_BROADCAST:
 		{
@@ -4638,7 +4638,7 @@ bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creat
 						if((*it) != attacker && (*it) != target && (*it)->getPosition().z == target->getPosition().z)
 							textList.push_back(*it);
 					}
-					
+
 					std::stringstream ss;
 					std::string plural = (damage != 1 ? "s" : "");
 
@@ -4817,7 +4817,7 @@ bool Game::combatChangeMana(Creature* attacker, Creature* target, int32_t manaCh
 					ss << ucfirst(target->getNameDescription()) << " loses " << manaLoss << " mana due to your attack.";
 				else
 					ss << "You lose " << manaLoss << " mana due to your attack.";
-							
+
 				player->sendStatsMessage(MSG_DAMAGE_DEALT, ss.str(), targetPos, details);
 				ss.str("");
 			}

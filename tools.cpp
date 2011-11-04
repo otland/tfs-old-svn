@@ -1635,7 +1635,7 @@ uint32_t adlerChecksum(uint8_t* data, size_t length)
 		a %= adler;
 		b %= adler;
 	}
-	
+
 	return (b << 16) | a;
 }
 

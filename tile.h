@@ -171,7 +171,7 @@ class Tile : public Cylinder
 		Creature* getTopCreature();
 		Thing* getTopVisibleThing(const Creature* creature);
 		Creature* getTopVisibleCreature(const Creature* creature);
-		const Creature* getTopVisibleCreature(const Creature* creature) const;		
+		const Creature* getTopVisibleCreature(const Creature* creature) const;
 
 		uint32_t getThingCount() const {return thingCount;}
 		void updateThingCount(int32_t amount) {thingCount += amount;}

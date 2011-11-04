@@ -161,7 +161,7 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 			   << name_.c_str() << ",\nfor the following reason:\n" << getReason(ban.reason).c_str() << ".\nThe action taken was:\n" << getAction(ban.action, false).c_str()
 			   << ".\nThe comment given was:\n" << ban.comment.c_str() << ".\nYour " << (deletion ? "account won't be undeleted" : "banishment will be lifted at:\n")
 			   << (deletion ? "" : formatDateEx(ban.expires).c_str()) << ".";
-		
+
 		disconnectClient(0x0A, stream.str().c_str());
 		return false;
 	}

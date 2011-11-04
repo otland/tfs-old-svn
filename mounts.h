@@ -45,8 +45,8 @@ class Mount
 		uint32_t getSpeed() const {return speed;}
 		uint16_t getClientId() const {return clientId;}
 		bool isPremium() const {return premium;}
-		
-		
+
+
 	private:
 		std::string name, storageId, storageValue;
 		int32_t speed;
@@ -80,7 +80,7 @@ class Mounts
 
 		uint8_t getMountCount() const {return (uint8_t)mounts.size();}
 		bool isPremium() const;
-		
+
 	private:
 		MountList mounts;
 };

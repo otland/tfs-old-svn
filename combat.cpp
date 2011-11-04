@@ -619,7 +619,7 @@ bool Combat::CombatDispelFunc(Creature* caster, Creature* target, const CombatPa
 			player->getTile()->hasFlag(TILESTATE_HARDCOREZONE))
 			&& random_range(1, 100) <= 10) // CHECKME: needs confirmation
 			g_game.internalRemoveItem(NULL, item);
-	}	
+	}
 
 	target->removeCondition(caster, params.dispelType);
 	return true;

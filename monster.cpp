@@ -60,7 +60,7 @@ Monster::Monster(MonsterType* _mType):
 	isIdle = true;
 	isMasterInRange = false;
 	teleportToMaster = false;
-	
+
 	spawn = NULL;
 	raid = NULL;
 	defaultOutfit = mType->outfit;

@@ -900,7 +900,7 @@ class Player : public Creature, public Cylinder
 		time_t skullEnd;
 		time_t lastLogin;
 		time_t lastLogout;
-		
+
 		int64_t lastLoad;
 		int64_t lastPong;
 		int64_t lastPing;
