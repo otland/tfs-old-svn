@@ -96,7 +96,15 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 		setPlayerStorageValue(cid, storage, 1)
 		if(questsExperience[storage] ~= nil) then
 			doPlayerAddExp(cid, questsExperience[storage])
-			doPlayerSendTextMessage(cid, MESSAGE_EXPERIENCE, "You gained " .. questsExperience[storage] .. " experience.", questsExperience[storage], COLOR_WHITE, getCreaturePosition(cid))
+			local position = getThingPosition(cid)
+			doPlayerSendTextMessage(cid, MESSAGE_EXPERIENCE, "You gained " .. questsExperience[storage] .. " experience.", questsExperience[storage], COLOR_WHITE, position)
+
+			local spectators, name = getSpectators(getThingPosition(cid), 7, 7), getCreatureName(cid) 
+			for _, pid in ipairs(spectators) do
+				if(isPlayer(pid)) then
+					doPlayerSendTextMessage(cid, MESSAGE_EXPERIENCE_OTHERS, name .. " gained " .. questsExperience[storage] .. " experience.", amount, COLOR_WHITE, position)
+				end
+			end
 		end
 	end
 
