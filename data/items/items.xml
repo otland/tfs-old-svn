@@ -16388,7 +16388,7 @@
 		<attribute key="weight" value="900" />
 	</item>
 	<item id="9745" article="a" name="box ramp">
-		<attribute key="floorchange" value="south" />
+		<attribute key="floorchange" value="north" />
 	</item>
 	<item id="9746" article="a" name="box ramp">
 		<attribute key="floorchange" value="west" />
