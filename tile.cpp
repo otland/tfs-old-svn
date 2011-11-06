@@ -705,7 +705,7 @@ ReturnValue Tile::__queryAdd(int32_t, const Thing* thing, uint32_t,
 					continue;
 
 				if(!iType.hasHeight || iType.pickupable || iType.isBed())
-					return RET_NOTENOUGHROOM;
+					return RET_NOTPOSSIBLE;
 			}
 		}
 

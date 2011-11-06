@@ -369,8 +369,8 @@ bool ProtocolGame::connect(uint32_t playerId, OperatingSystem_t operatingSystem,
 
 void ProtocolGame::disconnect()
 {
-	if(getConnection())
-		getConnection()->close();
+	if(Connection_ptr connection = getConnection())
+		connection->close();
 }
 
 void ProtocolGame::disconnectClient(uint8_t error, const char* message)
