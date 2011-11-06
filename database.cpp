@@ -45,6 +45,10 @@ Database* _Database::getInstance()
 		if(g_config.getString(ConfigManager::SQL_TYPE) == "mysql")
 			_instance = new DatabaseMySQL;
 #endif
+#ifdef __USE_MYSQLPP__
+		if(g_config.getString(ConfigManager::SQL_TYPE) == "mysql++")
+			_instance = new DatabaseMySQL;
+#endif
 #ifdef __USE_SQLITE__
 		if(g_config.getString(ConfigManager::SQL_TYPE) == "sqlite")
 			_instance = new DatabaseSQLite;

@@ -10,6 +10,9 @@ theforgottenserver_LDADD = $(LUA_LIBS)
 if USE_MYSQL
 MAYBE_MYSQL = databasemysql.cpp databasemysql.h
 endif
+if USE_MYSQLPP
+MAYBE_MYSQLPP = databasemysqlpp.cpp databasemysqlpp.h
+endif
 if USE_SQLITE
 MAYBE_SQLITE = databasesqlite.cpp databasesqlite.h
 endif
@@ -30,19 +33,19 @@ theforgottenserver_SOURCES = account.h actions.cpp actions.h $(MAYBE_OTADMIN) \
 	const.h container.cpp container.h creature.cpp creature.h \
 	creatureevent.cpp creatureevent.h cylinder.cpp cylinder.h database.cpp \
 	database.h databasemanager.cpp databasemanager.h $(MAYBE_MYSQL) \
-	$(MAYBE_SQLITE) $(MAYBE_PGSQL) depot.cpp depot.h dispatcher.cpp \
-	dispatcher.h exception.cpp exception.h fileloader.cpp fileloader.h \
-	game.cpp game.h $(MAYBE_LOGIN) globalevent.cpp globalevent.h group.cpp \
-	group.h house.cpp house.h housetile.cpp housetile.h ioban.cpp ioban.h \
-	ioguild.cpp ioguild.h iologindata.cpp iologindata.h iomap.cpp iomap.h \
-	iomapserialize.cpp iomapserialize.h item.cpp item.h itemattributes.cpp \
-	itemattributes.h items.cpp items.h luascript.cpp luascript.h \
-	mailbox.cpp mailbox.h manager.cpp manager.h map.cpp map.h monster.cpp \
-	monster.h monsters.cpp monsters.h mounts.cpp mounts.h movement.cpp movement.h \
-	networkmessage.cpp networkmessage.h npc.cpp npc.h otpch.h otserv.cpp \
-	otsystem.h outfit.cpp outfit.h outputmessage.cpp outputmessage.h \
-	party.cpp party.h player.cpp player.h position.cpp position.h \
-	protocol.cpp protocol.h protocolgame.cpp protocolgame.h \
+	$(MAYBE_MYSQLPP) $(MAYBE_SQLITE) $(MAYBE_PGSQL) depot.cpp depot.h \
+	dispatcher.cpp dispatcher.h exception.cpp exception.h fileloader.cpp \
+	fileloader.h game.cpp game.h $(MAYBE_LOGIN) globalevent.cpp globalevent.h \
+	group.cpp group.h house.cpp house.h housetile.cpp housetile.h ioban.cpp \
+	ioban.h ioguild.cpp ioguild.h iologindata.cpp iologindata.h iomap.cpp \
+	iomap.h iomapserialize.cpp iomapserialize.h item.cpp item.h \
+	itemattributes.cpp itemattributes.h items.cpp items.h luascript.cpp \
+	luascript.h mailbox.cpp mailbox.h manager.cpp manager.h map.cpp map.h \
+	monster.cpp monster.h monsters.cpp monsters.h mounts.cpp mounts.h \
+	movement.cpp movement.h networkmessage.cpp networkmessage.h npc.cpp npc.h \
+	otpch.h otserv.cpp otsystem.h outfit.cpp outfit.h outputmessage.cpp \
+	outputmessage.h party.cpp party.h player.cpp player.h position.cpp \
+	position.h protocol.cpp protocol.h protocolgame.cpp protocolgame.h \
 	protocolhttp.cpp protocolhttp.h protocollogin.cpp protocollogin.h \
 	protocolold.cpp protocolold.h quests.cpp quests.h raids.cpp raids.h \
 	scheduler.cpp scheduler.h scriptmanager.cpp \

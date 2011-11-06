@@ -81,6 +81,8 @@ AC_SUBST(DEBUG_FLAGS)
 
 AM_CONDITIONAL(USE_MYSQL, false)
 useMySQL=no
+AM_CONDITIONAL(USE_MYSQLPP, false)
+useMySQLpp=no
 AM_CONDITIONAL(USE_PGSQL, false)
 usePostgreSQL=no
 AM_CONDITIONAL(USE_SQLITE, false)
@@ -92,6 +94,14 @@ AC_ARG_ENABLE(mysql, [  --enable-mysql		enable MySQL support], [
 	MYSQL_FLAGS=-D__USE_MYSQL__
 	AC_SUBST(MYSQL_FLAGS)
 	useMySQL=yes
+])
+
+# check if we want mysql++ enabled
+AC_ARG_ENABLE(mysqlpp, [  --enable-mysqlpp		enable MySQL++Connector support], [
+	AM_CONDITIONAL(USE_MYSQLPP, true)
+	MYSQL_FLAGS=-D__USE_MYSQLPP__
+	AC_SUBST(MYSQLPP_FLAGS)
+	useMySQLpp=yes
 ])
 
 # check if we want postgresql enabled
@@ -222,15 +232,17 @@ AC_SUBST(LUA_CFLAGS)
 AC_SUBST(LUA_LIBS)
 
 if test "$useMySQL" = "no" ; then
-	if test "$useSQLite" = "no" ; then
-		if test "$usePostgreSQL" = "no" ; then
-			AM_CONDITIONAL(USE_SQLITE, true)
-			SQLITE_FLAGS=-D__USE_SQLITE__
-			AC_SUBST(SQLITE_FLAGS)
-			useSQLite=yes
+	if test "$useMySQLpp" = "no" ; then
+		if test "$useSQLite" = "no" ; then
+			if test "$usePostgreSQL" = "no" ; then
+				AM_CONDITIONAL(USE_SQLITE, true)
+				SQLITE_FLAGS=-D__USE_SQLITE__
+				AC_SUBST(SQLITE_FLAGS)
+				useSQLite=yes
 
-			echo WARNING: Any of available database drivers was enabled, using SQLite as default. To enable a database driver, configure with --enable-\<driver\> \(example: --enable-mysql\)
-			echo
+				echo WARNING: Any of available database drivers was enabled, using SQLite as default. To enable a database driver, configure with --enable-\<driver\> \(example: --enable-mysqlpp\)
+				echo
+			fi
 		fi
 	fi
 fi
@@ -255,6 +267,12 @@ if test -n "$MYSQL_FLAGS"; then
 	])
 
 	AC_SUBST(MYSQL_LIBS)
+fi
+
+if test -n "$MYSQLPP_FLAGS"; then
+	AC_CHECK_HEADERS([cppconn/config.h],[MYSQLPP_LIBS=-lmysqlcppconn],[AC_MSG_ERROR("MySQL++Connector headers missing.")])
+	AC_CHECK_LIB(mysqlcppconn, main,[],[AC_MSG_ERROR("Linking against libmysqlcppconn failed.")])
+	AC_SUBST(MYSQLPP_LIBS)
 fi
 
 # check for postgresql if it is enabled
@@ -289,6 +307,7 @@ echo OTServ custom allocator..... : $otservAllocator
 echo Debug build................. : $debugBuild
 echo
 echo Build with MySQL............ : $useMySQL
+echo Build with MySQL++Connector. : $useMySQLpp
 echo Build with SQLite........... : $useSQLite
 echo Build with PostgreSQL....... : $usePostgreSQL
 echo
