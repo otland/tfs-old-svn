@@ -229,7 +229,10 @@ Npc* Npc::createNpc(const std::string& name)
 		{
 			nType->file = getFilePath(FILE_TYPE_MOD, "npc/" + name + ".xml");
 			if(!fileExists(nType->file.c_str()))
+			{
+				std::clog << "[Warning - Npc::createNpc] Cannot find npc with name: " << nType->name << "." << std::endl;
 				return NULL;
+			}
 		}
 
 		nType->name = name;
