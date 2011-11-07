@@ -1178,9 +1178,9 @@ Item* Monster::createCorpse(DeathList deathList)
 	if(!corpse)
 		return NULL;
 
-	if(monster->isSummon())
+	if(master)
 	{
-		corse->setAttribute("summon", true)
+		corpse->setAttribute("summon", true);
 		return corpse;
 	}
 
