@@ -2220,12 +2220,12 @@ Item* Game::transformItem(Item* item, uint16_t newId, int32_t newCount/* = -1*/)
 	}
 
 	newItem->copyAttributes(item);
-	cylinder->postRemoveNotification(NULL, item, cylinder, itemIndex, true);
-
 	cylinder->__replaceThing(itemIndex, newItem);
-	cylinder->postAddNotification(NULL, newItem, cylinder, itemIndex);
 
 	item->setParent(NULL);
+	cylinder->postRemoveNotification(NULL, item, cylinder, itemIndex, true);
+	cylinder->postAddNotification(NULL, newItem, cylinder, itemIndex);
+
 	freeThing(item);
 	return newItem;
 }
