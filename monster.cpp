@@ -1178,6 +1178,12 @@ Item* Monster::createCorpse(DeathList deathList)
 	if(!corpse)
 		return NULL;
 
+	if(monster->isSummon())
+	{
+		corse->setAttribute("summon", true)
+		return corpse;
+	}
+
 	if(mType->corpseUnique)
 		corpse->setUniqueId(mType->corpseUnique);
 

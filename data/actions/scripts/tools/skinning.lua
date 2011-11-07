@@ -45,7 +45,7 @@ local SKINS = {
 
 function onUse(cid, item, fromPosition, itemEx, toPosition)
 	local skin = SKINS[item.itemid][itemEx.itemid]
-	if(skin == nil) then
+	if(skin == nil or getItemAttribute(itemEx.uid, "summon") ~= nil) then
 		doPlayerSendDefaultCancel(cid, RETURNVALUE_NOTPOSSIBLE)
 		return true
 	end
