@@ -3024,7 +3024,7 @@ int32_t LuaInterface::luaGetPlayerSex(lua_State* L)
 	return 1;
 }
 
-int32_t LuaInterface::luaDoPlayerSetNameDescription(lua_State* L)
+int32_t LuaInterface::luaDoPlayerSetription(lua_State* L)
 {
 	//doPlayerSetNameDescription(cid, description)
 	std::string description = popString(L);

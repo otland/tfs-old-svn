@@ -218,6 +218,10 @@
 	<action itemid="12209" event="script" value="decrease.lua"/>
 	<action itemid="12210" event="script" value="increase.lua"/>
 	<action itemid="12211" event="script" value="decrease.lua"/>
+	<action itemid="11446" event="script" value="increase.lua"/>
+	<action itemid="11447" event="script" value="decrease.lua"/>
+	<action itemid="11448" event="script" value="increase.lua"/>
+	<action itemid="11449" event="script" value="decrease.lua"/>
 
 	<!-- Spellbooks -->
 	<action itemid="2175" event="script" value="other/spellbook.lua"/>

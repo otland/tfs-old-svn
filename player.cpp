@@ -215,8 +215,6 @@ std::string Player::getDescription(int32_t lookDistance) const
 			s << " is " << vocation->getDescription();
 		else
 			s << " has no vocation";
-
-		s << getSpecialDescription();
 	}
 
 	std::string tmp;
@@ -236,7 +234,7 @@ std::string Player::getDescription(int32_t lookDistance) const
 		s << (sex % 2 ? "husband" : "wife") << " of " << tmp;
 	}
 
-	s << ".";
+	s << getSpecialDescription() << ".";
 	if(guildId)
 	{
 		if(lookDistance == -1)
@@ -2391,7 +2389,7 @@ Item* Player::createCorpse(DeathList deathList)
 		return NULL;
 
 	std::stringstream ss;
-	ss << "You recognize " << getNameDescription() << ". " << (sex % 2 ? "He" : "She") << " was killed by ";
+	ss << "You recognize " << nameDescription << ". " << (sex % 2 ? "He" : "She") << " was killed by ";
 	if(deathList[0].isCreatureKill())
 	{
 		ss << deathList[0].getKillerCreature()->getNameDescription();
