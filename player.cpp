@@ -234,7 +234,7 @@ std::string Player::getDescription(int32_t lookDistance) const
 		s << (sex % 2 ? "husband" : "wife") << " of " << tmp;
 	}
 
-	s << getSpecialDescription() << ".";
+	s << ".";
 	if(guildId)
 	{
 		if(lookDistance == -1)
@@ -249,6 +249,7 @@ std::string Player::getDescription(int32_t lookDistance) const
 		s << ".";
 	}
 
+	s << << getSpecialDescription();
 	return s.str();
 }
 
