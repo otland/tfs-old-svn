@@ -249,7 +249,7 @@ std::string Player::getDescription(int32_t lookDistance) const
 		s << ".";
 	}
 
-	s << << getSpecialDescription();
+	s << getSpecialDescription();
 	return s.str();
 }
 
