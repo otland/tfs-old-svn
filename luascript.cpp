@@ -1901,7 +1901,7 @@ void LuaInterface::registerFunctions()
 	//canPlayerWearOutfitId(cid, outfitId[, addon = 0])
 	lua_register(m_luaState, "canPlayerWearOutfitId", LuaInterface::luaCanPlayerWearOutfitId);
 
-	//hasCreatureCondition(cid, condition[, subId = 0[, conditionId = CONDITIONID_COMBAT]])
+	//hasCreatureCondition(cid, condition[, subId = 0[, conditionId = (both)]])
 	lua_register(m_luaState, "hasCreatureCondition", LuaInterface::luaHasCreatureCondition);
 
 	//getCreatureConditionInfo(cid, condition[, subId = 0[, conditionId = CONDITIONID_COMBAT]])
@@ -8799,11 +8799,16 @@ int32_t LuaInterface::luaStopEvent(lua_State* L)
 
 int32_t LuaInterface::luaHasCreatureCondition(lua_State* L)
 {
-	//hasCreatureCondition(cid, conditionType[, subId = 0[, conditionId = CONDITIONID_COMBAT]])
+	//hasCreatureCondition(cid, conditionType[, subId = 0[, conditionId = (both)]])
 	int32_t conditionId = CONDITIONID_COMBAT;
 	uint32_t params = lua_gettop(L), subId = 0;
+
+	bool both = true;
 	if(params > 3)
+	{
 		conditionId = popNumber(L);
+		both = false;
+	}
 
 	if(params > 2)
 		subId = popNumber(L);
@@ -8811,7 +8816,17 @@ int32_t LuaInterface::luaHasCreatureCondition(lua_State* L)
 	ConditionType_t conditionType = (ConditionType_t)popNumber(L);
 	ScriptEnviroment* env = getEnv();
 	if(Creature* creature = env->getCreatureByUID(popNumber(L)))
-		lua_pushboolean(L, creature->getCondition(conditionType, (ConditionId_t)conditionId, subId) != NULL);
+	{
+		if(!both)
+			lua_pushboolean(L, creature->getCondition(conditionType, (ConditionId_t)conditionId, subId) != NULL);
+		else if(creature->getCondition(conditionType, CONDITIONID_DEFAULT, subId) != NULL)
+		{
+			lua_pushboolean(L, true);
+			return 1;
+		}
+		else
+			lua_pushboolean(L, creature->getCondition(conditionType, CONDITIONID_COMBAT, subId) != NULL);
+	}
 	else
 	{
 		errorEx(getError(LUA_ERROR_CREATURE_NOT_FOUND));
