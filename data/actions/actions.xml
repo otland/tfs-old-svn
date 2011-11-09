@@ -268,52 +268,13 @@
 	<action itemid="2692" event="script" value="other/createbread.lua"/>
 	<action itemid="2694" event="script" value="other/createbread.lua"/>
 
-	<!-- Windows -->
-	<action fromid="5303" toid="5305" event="script" value="other/windows.lua"/>
-	<action fromid="6436" toid="6473" event="script" value="other/windows.lua"/>
-	<action fromid="6788" toid="6791" event="script" value="other/windows.lua"/>
-	<action fromid="7025" toid="7032" event="script" value="other/windows.lua"/>
-	<action fromid="10264" toid="10267" event="script" value="other/windows.lua"/>
-	<action fromid="10488" toid="10491" event="script" value="other/windows.lua"/>
-
 	<!-- Doors -->
-	<action fromid="1209" toid="1214" event="script" value="other/doors.lua"/>
-	<action fromid="1219" toid="1262" event="script" value="other/doors.lua"/>
-	<action fromid="1539" toid="1542" event="script" value="other/doors.lua"/>
-	<action fromid="2086" toid="2092" event="script" value="other/doors.lua"/>
-	<action fromid="3535" toid="3552" event="script" value="other/doors.lua"/>
-	<action fromid="4913" toid="4918" event="script" value="other/doors.lua"/>
-	<action fromid="5082" toid="5085" event="script" value="other/doors.lua"/>
-	<action fromid="5098" toid="5145" event="script" value="other/doors.lua"/>
-	<action fromid="5278" toid="5295" event="script" value="other/doors.lua"/>
-	<action fromid="5515" toid="5518" event="script" value="other/doors.lua"/>
-	<action fromid="5732" toid="5737" event="script" value="other/doors.lua"/>
-	<action fromid="5745" toid="5749" event="script" value="other/doors.lua"/>
-	<action fromid="6192" toid="6209" event="script" value="other/doors.lua"/>
-	<action fromid="6249" toid="6266" event="script" value="other/doors.lua"/>
-	<action fromid="6795" toid="6802" event="script" value="other/doors.lua"/>
-	<action fromid="6891" toid="6908" event="script" value="other/doors.lua"/>
-	<action fromid="7033" toid="7050" event="script" value="other/doors.lua"/>
-	<action fromid="7054" toid="7057" event="script" value="other/doors.lua"/>
-	<action fromid="8541" toid="8558" event="script" value="other/doors.lua"/>
-	<action fromid="9165" toid="9184" event="script" value="other/doors.lua"/>
-	<action fromid="9267" toid="9284" event="script" value="other/doors.lua"/>
-	<action itemid="10032" event="script" value="other/doors.lua"/>
-	<action itemid="10091" event="script" value="other/doors.lua"/>
-	<action fromid="10268" toid="10285" event="script" value="other/doors.lua"/>
-	<action fromid="10468" toid="10486" event="script" value="other/doors.lua"/>
-	<action fromid="10775" toid="10777" event="script" value="other/doors.lua"/>
-	<action fromid="10780" toid="10786" event="script" value="other/doors.lua"/>
-	<action fromid="10789" toid="10792" event="script" value="other/doors.lua"/>
-	<action fromid="12092" toid="12105" event="script" value="other/doors.lua"/>
-	<action fromid="12188" toid="12190" event="script" value="other/doors.lua"/>
-	<action fromid="12193" toid="12199" event="script" value="other/doors.lua"/>
-	<action fromid="12202" toid="12205" event="script" value="other/doors.lua"/>
-	<action itemid="12692" event="script" value="other/doors.lua"/>
-	<action itemid="12695" event="script" value="other/doors.lua"/>
-	<action itemid="12701" event="script" value="other/doors.lua"/>
-	<action itemid="12703" event="script" value="other/doors.lua"/>
-	<action fromid="13020" toid="13023" event="script" value="other/doors.lua"/>
+		<!-- Doors -->
+	<action id="1209-1214;1219-1262;1539-1542;2086-2092;3535-3552;4913-4918;5082-5085;5098-5145;5278-5295;5515-5518;5732-5737;5745-5749;6192-6209;6249-6266;6795-6802;6891-6908;7033-7050;7054-7057;8541-8558;9165-9184;9267-9284;10268-10285;10468-10486;10775-10777;10780-10786;10789-10792;12092-12105;12188-12190;12193-12199;12202-12205;12692;12695;12701;12703;13020-13023;13236-13237" event="script" value="other/doors.lua"/>
+		<!-- Keys -->
+	<action id="2086-2092;10032;10091" event="script" value="other/keys.lua"/>
+		<!-- Windows -->
+	<action id="5303-5305;6436-6473;6788-6791;7025-7032;10264-10267;10488-10491" event="script" value="other/windows.lua"/>
 
 	<!-- Watches -->
 	<action fromid="1728" toid="1731" event="script" value="other/watch.lua"/>

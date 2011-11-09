@@ -3045,7 +3045,7 @@
 		<attribute key="slotType" value="two-handed" />
 	</item>
 	<item id="2378" article="a" name="battle axe">
-		<attribute key="weight" value="1000" />
+		<attribute key="weight" value="5000" />
 		<attribute key="defense" value="10" />
 		<attribute key="attack" value="25" />
 		<attribute key="weaponType" value="axe" />
@@ -9393,7 +9393,7 @@
 		<attribute key="description" value="This strange object seems to be made of half spirit, half metal. It is unknown by most smiths." />
 		<attribute key="weight" value="20" />
 	</item>
-	<item id="5945" article="an" name="old mermaid comb">
+	<item id="5945" article="an" name="old coral comb">
 		<attribute key="description" value="It once belonged to a mermaid." />
 		<attribute key="weight" value="450" />
 	</item>
@@ -17529,7 +17529,7 @@
 		<attribute key="description" value="Eclesius made it for you to oil the door of the demon cage." />
 		<attribute key="weight" value="180" />
 	</item>
-	<item id="10032" article="a" name="purple key">
+	<item id="10032" article="a" name="pink key">
 		<attribute key="type" value="key" />
 		<attribute key="weight" value="100" />
 	</item>
@@ -17598,7 +17598,7 @@
 	<item id="10089" article="an" name="antidote potion">
 		<attribute key="weight" value="175" />
 	</item>
-	<item id="10091" article="a" name="crystal key">
+	<item id="10091" article="a" name="sky key">
 		<attribute key="type" value="key" />
 		<attribute key="weight" value="100" />
 	</item>
