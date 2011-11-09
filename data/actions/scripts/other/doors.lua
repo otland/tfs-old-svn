@@ -93,11 +93,11 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 
 	local doorCreature = getThingFromPosition(toPosition)
 	if(doorCreature.itemid ~= 0) then
-		toPosition.x = toPosition.x - 1
+		toPosition.x = toPosition.x + 1
 		local query = doTileQueryAdd(doorCreature, toPosition, 20) -- allow to stack outside doors, but not on teleports or floor changing tiles
 		if(query == RETURNVALUE_NOTPOSSIBLE) then
-			toPosition.x = toPosition.x + 1
-			toPosition.y = toPosition.y - 1
+			toPosition.x = toPosition.x - 1
+			toPosition.y = toPosition.y + 1
 			query = doTileQueryAdd(doorCreature, toPosition, 20) -- repeat until found
 		end
 

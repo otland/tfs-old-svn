@@ -1,13 +1,18 @@
-function onStepOut(cid, item, position, fromPosition)
+function onStepOut(cid, item, position, lastPosition)
 	if(getTileInfo(position).creatures > 0) then
 		return true
 	end
 
-	local newPosition = {x = position.x, y = position.y, z = position.z}
-	if(isInArray(verticalOpenDoors, item.itemid)) then
-		newPosition.x = newPosition.x + 1
-	else
+	local newPosition = {x = position.x + 1, y = position.y, z = position.z}
+	local query = doTileQueryAdd(cid, newPosition)
+	if(query ~= RETURNVALUE_NOERROR) then
+		newPosition.x = newPosition.x - 1
 		newPosition.y = newPosition.y + 1
+		query = doTileQueryAdd(cid, newPosition) -- repeat until found
+	end
+
+	if(query ~= RETURNVALUE_NOERROR) then
+		return true
 	end
 
 	doRelocate(position, newPosition)
