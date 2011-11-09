@@ -10,13 +10,13 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 		return true
 	end
 
-	local locked = DOORS[item.id]
+	local locked = DOORS[item.itemid]
 	if(locked) then
 		doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, "It is locked.")
 		return true
 	end
 
-	local door = getItemInfo(item.id)
+	local door = getItemInfo(item.itemid)
 	if(door.levelDoor > 0) then
 		if(item.aid == 189) then
 			if(not isPremium(cid)) then
@@ -68,7 +68,7 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 			return doorEnter(cid, item.uid, door.transformUseTo, toPosition)
 		end
 
-		if(item.aid == 190 or (item.aid ~= 0 and getPlayerLevel(cid) >= (item.aid - doors.levelDoor))) then
+		if(item.aid == 190 or (item.aid ~= 0 and getPlayerLevel(cid) >= (item.aid - door.levelDoor))) then
 			return doorEnter(cid, item.uid, door.transformUseTo, toPosition)
 		end
 
@@ -87,18 +87,18 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 
 	toPosition.stackpos = STACKPOS_TOP_MOVEABLE_ITEM_OR_CREATURE
 	local fields, thing = getTileItemsByType(fromPosition, ITEM_TYPE_MAGICFIELD), getThingFromPosition(toPosition)
-	if(item.uid == thing.uid or thing.id < 100 or table.maxn(fields) ~= 0) then
+	if(item.uid ~= thing.uid and thing.itemid >= 100 and table.maxn(fields) ~= 0) then
 		return true
 	end
 
 	local doorCreature = getThingFromPosition(toPosition)
-	if(doorCreature.id ~= 0) then
+	if(doorCreature.itemid ~= 0) then
 		toPosition.x = toPosition.x + 1
-		local query = doTileQueryAdd(doorCreature, toPosition, 20) -- allow to stack outside doors, but not on teleports or floor changing tiles
+		local query = doTileQueryAdd(doorCreature.uid, toPosition, 20) -- allow to stack outside doors, but not on teleports or floor changing tiles
 		if(query == RETURNVALUE_NOTPOSSIBLE) then
 			toPosition.x = toPosition.x - 1
 			toPosition.y = toPosition.y + 1
-			query = doTileQueryAdd(doorCreature, toPosition, 20) -- repeat until found
+			query = doTileQueryAdd(doorCreature.uid, toPosition, 20) -- repeat until found
 		end
 
 		if(query ~= RETURNVALUE_NOERROR) then
@@ -107,7 +107,7 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 		end
 
 		doTeleportThing(doorCreature.uid, toPosition)
-		if(door.closingDoor) then
+		if(not door.closingDoor) then
 			doTransformItem(item.uid, door.transformUseTo)
 		end
 
