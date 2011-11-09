@@ -10171,12 +10171,12 @@ int32_t LuaInterface::luaGetItemInfo(lua_State* L)
 	setField(L, "shootType", (int32_t)item->shootType);
 	setField(L, "ammoType", (int32_t)item->ammoType);
 
-	createTable(L, "transformUseTo");
-	setField(L, "female", item->transformUseTo[PLAYERSEX_FEMALE]);
-	setField(L, "male", item->transformUseTo[PLAYERSEX_MALE]);
+	createTable(L, "transformBed");
+	setField(L, "female", item->transformBed[PLAYERSEX_FEMALE]);
+	setField(L, "male", item->transformBed[PLAYERSEX_MALE]);
 
 	pushTable(L);
-	setField(L, "transformToFree", item->transformToFree);
+	setField(L, "transformUseTo", item->transformUseTo);
 	setField(L, "transformEquipTo", item->transformEquipTo);
 	setField(L, "transformDeEquipTo", item->transformDeEquipTo);
 	setField(L, "clientId", item->clientId);
@@ -10213,6 +10213,8 @@ int32_t LuaInterface::luaGetItemInfo(lua_State* L)
 	setField(L, "minRequiredMagicLevel", item->minReqMagicLevel);
 	setField(L, "worth", item->worth);
 	setField(L, "levelDoor", item->levelDoor);
+	setFieldBool(L, "specialDoor", item->specialDoor);
+	setFieldBool(L, "closingDoor", item->closingDoor);
 	setField(L, "name", item->name.c_str());
 	setField(L, "plural", item->pluralName.c_str());
 	setField(L, "article", item->article.c_str());

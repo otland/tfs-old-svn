@@ -130,7 +130,7 @@ void BedItem::sleep(Player* player)
 		g_game.addMagicEffect(player->getPosition(), MAGIC_EFFECT_SLEEP);
 		Scheduler::getInstance().addEvent(createSchedulerTask(SCHEDULER_MINTICKS, boost::bind(&Game::kickPlayer, &g_game, player->getID(), false)));
 	}
-	else if(Item::items[getID()].transformToFree)
+	else if(Item::items[getID()].transformUseTo)
 	{
 		wakeUp();
 		g_game.addMagicEffect(player->getPosition(), MAGIC_EFFECT_POFF);
@@ -201,17 +201,17 @@ void BedItem::updateAppearance(const Player* player)
 	if(it.type != ITEM_TYPE_BED)
 		return;
 
-	if(player && it.transformUseTo[player->getSex(false)])
+	if(player && it.transformBed[player->getSex(false)])
 	{
-		const ItemType& newType = Item::items[it.transformUseTo[player->getSex(false)]];
+		const ItemType& newType = Item::items[it.transformBed[player->getSex(false)]];
 		if(newType.type == ITEM_TYPE_BED)
-			g_game.transformItem(this, it.transformUseTo[player->getSex(false)]);
+			g_game.transformItem(this, it.transformBed[player->getSex(false)]);
 	}
-	else if(it.transformToFree)
+	else if(it.transformUseTo)
 	{
-		const ItemType& newType = Item::items[it.transformToFree];
+		const ItemType& newType = Item::items[it.transformUseTo];
 		if(newType.type == ITEM_TYPE_BED)
-			g_game.transformItem(this, it.transformToFree);
+			g_game.transformItem(this, it.transformUseTo);
 	}
 }
 
