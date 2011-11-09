@@ -8677,7 +8677,7 @@
 		<attribute key="fluidSource" value="blood" />
 	</item>
 	<item id="5527" article="a" name="demon dust">
-		<attribute key="containerSize" value="10" />
+		<attribute key="containerSize" value="20" />
 		<attribute key="decayTo" value="5528" />
 		<attribute key="duration" value="900" />
 		<attribute key="corpseType" value="blood" />
@@ -9331,13 +9331,13 @@
 		<attribute key="weight" value="1250" />
 	</item>
 	<item id="5931" name="ferumbras remains">
-		<attribute key="containerSize" value="10" />
+		<attribute key="containerSize" value="20" />
 		<attribute key="decayTo" value="5932" />
 		<attribute key="duration" value="900" />
 		<attribute key="corpseType" value="venom" />
 	</item>
 	<item id="5932" name="ferumbras remains">
-		<attribute key="containerSize" value="10" />
+		<attribute key="containerSize" value="20" />
 		<attribute key="decayTo" value="5933" />
 		<attribute key="duration" value="600" />
 		<attribute key="corpseType" value="venom" />
@@ -10186,7 +10186,7 @@
 		<attribute key="fluidSource" value="blood" />
 	</item>
 	<item id="6068" article="a" name="demon dust">
-		<attribute key="containerSize" value="10" />
+		<attribute key="containerSize" value="20" />
 		<attribute key="decayTo" value="5527" />
 		<attribute key="duration" value="10" />
 		<attribute key="corpseType" value="blood" />
@@ -10252,7 +10252,7 @@
 		<attribute key="fluidSource" value="blood" />
 	</item>
 	<item id="6078" name="ferumbras remains">
-		<attribute key="containerSize" value="10" />
+		<attribute key="containerSize" value="20" />
 		<attribute key="decayTo" value="5931" />
 		<attribute key="duration" value="10" />
 		<attribute key="corpseType" value="undead" />
@@ -14677,7 +14677,9 @@
 	</item>
 	<item id="7934" article="a" name="test-tube holder" />
 	<item id="7935" article="a" name="potion stand" />
-	<item id="7936" article="a" name="trophy stand" />
+	<item id="7936" article="a" name="trophy stand">
+		<attribute key="weight" value="970" />
+	</item>
 	<item id="7938" article="a" name="weaved hole">
 		<attribute key="floorchange" value="down" />
 	</item>
@@ -18469,7 +18471,7 @@
 	<item id="10558" article="a" name="piece of scarab shell" plural="pieces of scarab shell">
 		<attribute key="weight" value="142" />
 	</item>
-	<item id="10559" article="a" name="spookey blue eye">
+	<item id="10559" article="a" name="spooky blue eye">
 		<attribute key="weight" value="86" />
 	</item>
 	<item id="10560" article="a" name="thorn">
@@ -18937,6 +18939,9 @@
 		<attribute key="weight" value="500" />
 	</item>
 	<item id="11117" name="crystal boots">
+		<attribute key="armor" value="3" />
+		<attribute key="absorbPercentIce" value="3" />
+		<attribute key="absorbPercentEnergy" value="-3" />
 		<attribute key="slotType" value="feet" />
 		<attribute key="weight" value="2250" />
 	</item>
@@ -19478,7 +19483,7 @@
 	<item id="11314" article="a" name="weaver wandtip" plural="weaver's wandtips">
 		<attribute key="weight" value="170" />
 	</item>
-	<item id="11315" article="a" name="draken spellweaver doll decoration" />
+	<item id="11315" article="a" name="draken spellweaver doll" />
 	<item id="11316" article="a" name="dead draken spellweaver">
 		<attribute key="containerSize" value="10" />
 		<attribute key="decayTo" value="11317" />
@@ -19688,7 +19693,7 @@
 	<item id="11368" article="a" name="jade hat">
 		<attribute key="weight" value="900" />
 		<attribute key="armor" value="4" />
-		<attribute key="magiclevelpoints" value="3" />
+		<attribute key="magiclevelpoints" value="1" />
 		<attribute key="slotType" value="head" />
 	</item>
 	<item id="11369" article="a" name="terramite shell">
