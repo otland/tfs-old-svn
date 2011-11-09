@@ -60,8 +60,8 @@ class Group
 		uint64_t getCustomFlags() const {return m_customFlags;}
 		void setCustomFlags(uint64_t v) {m_customFlags = v;}
 
-		bool hasFlag(uint64_t value) const {return (m_flags & ((uint64_t)1 << value));}
-		bool hasCustomFlag(uint64_t value) const {return (m_customFlags & ((uint64_t)1 << value));}
+		bool hasFlag(uint64_t value) const {return (m_flags & ((uint64_t)1 << value)) != 0;}
+		bool hasCustomFlag(uint64_t value) const {return (m_customFlags & ((uint64_t)1 << value)) != 0;}
 
 	private:
 		std::string m_name, m_fullName;

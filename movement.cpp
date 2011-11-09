@@ -55,7 +55,7 @@ int32_t MoveEventScript::luaCallFunction(lua_State* L)
 	if(event->getEventType() == MOVE_EVENT_EQUIP || event->getEventType() == MOVE_EVENT_DE_EQUIP)
 	{
 		ScriptEnviroment* env = getEnv();
-		bool boolean = popNumber(L);
+		bool boolean = popBoolean(L);
 		slots_t slot = (slots_t)popNumber(L);
 
 		Item* item = env->getItemByUID(popNumber(L));
@@ -950,7 +950,7 @@ uint32_t MoveEvent::StepInField(Creature* creature, Item* item)
 {
 	if(MagicField* field = item->getMagicField())
 	{
-		field->onStepInField(creature, creature->getPlayer());
+		field->onStepInField(creature, creature->getPlayer() != NULL);
 		return 1;
 	}
 

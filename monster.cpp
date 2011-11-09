@@ -410,7 +410,7 @@ bool Monster::searchTarget(TargetSearchType_t searchType /*= TARGETSEARCH_DEFAUL
 			}
 
 			if(target && selectTarget(target))
-				return target;
+				return true;
 
 			break;
 		}
@@ -623,7 +623,7 @@ void Monster::doAttacking(uint32_t interval)
 		return;
 
 	bool updateLook = true;
-	resetTicks = interval;
+	resetTicks = (interval != 0);
 	attackTicks += interval;
 
 	const Position& myPos = getPosition();

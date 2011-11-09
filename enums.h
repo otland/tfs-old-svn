@@ -25,10 +25,6 @@
 #define MONSTER_ID_RANGE 0x40000000
 #define NPC_ID_RANGE 0x80000000
 
-#ifdef _MSC_VER
-	#pragma warning(disable:4244)
-#endif
-
 enum ChannelEvent_t
 {
 	CHANNELEVENT_JOIN = 0,
@@ -340,11 +336,16 @@ struct War_t
 
 struct Outfit_t
 {
-	Outfit_t() {lookHead = lookBody = lookLegs = lookFeet = lookType = lookTypeEx = lookAddons = lookMount = 0;}
+	Outfit_t()
+	{
+		lookType = lookTypeEx = lookMount = 0;
+		lookHead = lookBody = lookLegs = lookFeet = lookAddons = 0;
+	}
 	Outfit_t(uint16_t _lookType)
 	{
 		lookType = _lookType;
-		lookHead = lookBody = lookLegs = lookFeet = lookTypeEx = lookAddons = lookMount = 0;
+		lookTypeEx = lookMount = 0;
+		lookHead = lookBody = lookLegs = lookFeet = lookAddons = 0;
 	}
 
 	uint16_t lookType, lookMount, lookTypeEx;

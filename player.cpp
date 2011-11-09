@@ -775,10 +775,7 @@ bool Player::canOpenCorpse(uint32_t ownerId)
 
 uint16_t Player::getLookCorpse() const
 {
-	if(sex % 2)
-		return ITEM_MALE_CORPSE;
-
-	return ITEM_FEMALE_CORPSE;
+	return (sex % 2) ? ITEM_MALE_CORPSE : ITEM_FEMALE_CORPSE;
 }
 
 void Player::dropLoot(Container* corpse)
@@ -794,7 +791,7 @@ void Player::dropLoot(Container* corpse)
 		{
 			loss -= start;
 			start -= g_config.getNumber(ConfigManager::BLESS_REDUCTION_DECREMENT);
-			bless--;
+			--bless;
 		}
 	}
 

@@ -2093,7 +2093,7 @@ void Game::addMoney(Cylinder* cylinder, int64_t money, uint32_t flags /*= 0*/)
 		do
 		{
 			uint32_t remainderCount = 0;
-			Item* item = Item::CreateItem(it->second, std::min((int64_t)100, tmp));
+			Item* item = Item::CreateItem(it->second, std::min<uint16_t>(100, tmp));
 			if(internalAddItem(NULL, cylinder, item, INDEX_WHEREEVER, flags, false, remainderCount) != RET_NOERROR)
 			{
 				if(remainderCount)

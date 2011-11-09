@@ -291,7 +291,7 @@ class Tile : public Cylinder
 		void onRemoveTileItem(const SpectatorVec& list, std::vector<int32_t>& oldStackPosVector, Item* item);
 
 	protected:
-		bool isDynamic() const {return (m_flags & TILESTATE_DYNAMIC_TILE);}
+		bool isDynamic() const {return (m_flags & TILESTATE_DYNAMIC_TILE) != 0;}
 
 	public:
 		QTreeLeafNode* qt_node;

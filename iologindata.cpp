@@ -437,7 +437,7 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool preLo
 		|| !g_config.getBool(ConfigManager::BLESSING_ONLY_PREMIUM)))
 	{
 		player->blessings = result->getDataInt("blessings");
-		player->setPVPBlessing(result->getDataInt("pvp_blessing"));
+		player->setPVPBlessing(result->getDataInt("pvp_blessing") != 0);
 	}
 
 	uint64_t conditionsSize = 0;

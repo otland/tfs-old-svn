@@ -3344,7 +3344,7 @@ int32_t LuaInterface::luaDoPlayerRemoveItem(lua_State* L)
 	int32_t params = lua_gettop(L), subType = -1;
 	bool ignoreEquipped = false;
 	if(params > 4)
-		ignoreEquipped = popNumber(L);
+		ignoreEquipped = popBoolean(L);
 
 	if(params > 3)
 		subType = popNumber(L);
@@ -4483,7 +4483,7 @@ int32_t LuaInterface::luaDoShowTextDialog(lua_State* L)
 	if(params > 3)
 	{
 		if(lua_isboolean(L, -1))
-			canWrite = popNumber(L);
+			canWrite = popBoolean(L);
 		else
 			length = popNumber(L);
 	}
@@ -4492,7 +4492,7 @@ int32_t LuaInterface::luaDoShowTextDialog(lua_State* L)
 	if(params > 2)
 	{
 		if(lua_isboolean(L, -1))
-			canWrite = popNumber(L);
+			canWrite = popBoolean(L);
 		else
 			text = popString(L);
 	}
@@ -5896,7 +5896,7 @@ bool LuaInterface::getArea(lua_State* L, std::list<uint32_t>& list, uint32_t& ro
 	}
 
 	lua_pop(L, 1);
-	return rows;
+	return (rows != 0);
 }
 
 int32_t LuaInterface::luaCreateCombatArea(lua_State* L)
@@ -6006,7 +6006,7 @@ int32_t LuaInterface::luaSetCombatCondition(lua_State* L)
 	//setCombatCondition(combat, condition[, loaded])
 	bool loaded = true;
 	if(lua_gettop(L) > 2)
-		loaded = popNumber(L);
+		loaded = popBoolean(L);
 
 	uint32_t conditionId = popNumber(L);
 	ScriptEnviroment* env = getEnv();
@@ -6066,7 +6066,7 @@ int32_t LuaInterface::luaSetConditionParam(lua_State* L)
 	//setConditionParam(condition, key, value[, loaded])
 	bool loaded = true;
 	if(lua_gettop(L) > 3)
-		loaded = popNumber(L);
+		loaded = popBoolean(L);
 
 	int32_t value = popNumber(L);
 	ScriptEnviroment* env = getEnv();
@@ -6091,7 +6091,7 @@ int32_t LuaInterface::luaAddDamageCondition(lua_State* L)
 	//addDamageCondition(condition, rounds, time, value[, loaded])
 	bool loaded = true;
 	if(lua_gettop(L) > 4)
-		loaded = popNumber(L);
+		loaded = popBoolean(L);
 
 	int32_t value = popNumber(L), time = popNumber(L), rounds = popNumber(L);
 	ScriptEnviroment* env = getEnv();
@@ -6114,7 +6114,7 @@ int32_t LuaInterface::luaAddOutfitCondition(lua_State* L)
 	//addOutfitCondition(condition, outfit[, loaded])
 	bool loaded = true;
 	if(lua_gettop(L) > 2)
-		loaded = popNumber(L);
+		loaded = popBoolean(L);
 
 	Outfit_t outfit = popOutfit(L);
 	ScriptEnviroment* env = getEnv();
@@ -6230,7 +6230,7 @@ int32_t LuaInterface::luaSetConditionFormula(lua_State* L)
 	//setConditionFormula(condition, mina, minb, maxa, maxb[, loaded])
 	bool loaded = true;
 	if(lua_gettop(L) > 5)
-		loaded = popNumber(L);
+		loaded = popBoolean(L);
 
 	double maxb = popFloatNumber(L), maxa = popFloatNumber(L),
 		minb = popFloatNumber(L), mina = popFloatNumber(L);
@@ -6513,7 +6513,7 @@ int32_t LuaInterface::luaDoCombatAreaCondition(lua_State* L)
 	//doCombatAreaCondition(cid, pos, area, condition, effect[, loaded])
 	bool loaded = true;
 	if(lua_gettop(L) > 5)
-		loaded = popNumber(L);
+		loaded = popBoolean(L);
 
 	MagicEffect_t effect = (MagicEffect_t)popNumber(L);
 	uint32_t conditionId = popNumber(L), areaId = popNumber(L);
@@ -6566,7 +6566,7 @@ int32_t LuaInterface::luaDoTargetCombatCondition(lua_State* L)
 	//doTargetCombatCondition(cid, target, condition, effect[, loaded])
 	bool loaded = true;
 	if(lua_gettop(L) > 4)
-		loaded = popNumber(L);
+		loaded = popBoolean(L);
 
 	MagicEffect_t effect = (MagicEffect_t)popNumber(L);
 	uint32_t conditionId = popNumber(L), targetCid = popNumber(L), cid = popNumber(L);
@@ -7109,7 +7109,7 @@ int32_t LuaInterface::luaDoAddCondition(lua_State* L)
 	//doAddCondition(cid, condition[, loaded])
 	bool loaded = true;
 	if(lua_gettop(L) > 2)
-		loaded = popNumber(L);
+		loaded = popBoolean(L);
 
 	uint32_t conditionId = popNumber(L);
 	ScriptEnviroment* env = getEnv();
@@ -8933,7 +8933,7 @@ int32_t LuaInterface::luaDoPlayerSetPVPBlessing(lua_State* L)
 	//doPlayerSetPVPBlessing(cid[, value])
 	bool value = true;
 	if(lua_gettop(L) > 1)
-		value = popNumber(L);
+		value = popBoolean(L);
 
 	ScriptEnviroment* env = getEnv();
 	if(Player* player = env->getPlayerByUID(popNumber(L)))
@@ -9288,11 +9288,11 @@ int32_t LuaInterface::luaCanPlayerRideMount(lua_State* L)
 int32_t LuaInterface::luaDoPlayerSetMounted(lua_State* L)
 {
 	//doPlayerSetMounted(cid, mounting[, force])
-	bool force = true, mounting;
+	bool force = true;
 	if(lua_gettop(L) > 2)
-		force = popNumber(L);
+		force = popBoolean(L);
 
-	mounting = popNumber(L);
+	bool mounting = popBoolean(L);
 	ScriptEnviroment* env = getEnv();
 
 	Player* player = env->getPlayerByUID(popNumber(L));

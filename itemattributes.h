@@ -90,10 +90,10 @@ class ItemAttributes
 		const float* getFloatAttribute(const std::string& key) const;
 		const bool* getBooleanAttribute(const std::string& key) const;
 
-		bool hasStringAttribute(const std::string& key) const {return getStringAttribute(key);}
-		bool hasIntegerAttribute(const std::string& key) const {return getIntegerAttribute(key);}
-		bool hasFloatAttribute(const std::string& key) const {return getFloatAttribute(key);}
-		bool hasBooleanAttribute(const std::string& key) const {return getBooleanAttribute(key);}
+		bool hasStringAttribute(const std::string& key) const {return getStringAttribute(key) != NULL;}
+		bool hasIntegerAttribute(const std::string& key) const {return getIntegerAttribute(key) != NULL;}
+		bool hasFloatAttribute(const std::string& key) const {return getFloatAttribute(key) != NULL;}
+		bool hasBooleanAttribute(const std::string& key) const {return getBooleanAttribute(key) != NULL;}
 
 	protected:
 		void createAttributes();

@@ -621,7 +621,7 @@ std::string generateRecoveryKey(int32_t fieldCount, int32_t fieldLenght, bool mi
 		do
 		{
 			madeNumber = madeCharacter = false;
-			if((mixCase && !random_range(0, 2)) || (!mixCase && (bool)random_range(0, 1)))
+			if((mixCase && !random_range(0, 2)) || (!mixCase && !random_range(0, 1)))
 			{
 				number = random_range(2, 9);
 				if(number != lastNumber)
@@ -633,7 +633,7 @@ std::string generateRecoveryKey(int32_t fieldCount, int32_t fieldLenght, bool mi
 			}
 			else
 			{
-				if(mixCase && (bool)random_range(0,1) )
+				if(mixCase && !random_range(0, 1))
 					character = (char)random_range(97, 122);
 				else
 					character = (char)random_range(65, 90);

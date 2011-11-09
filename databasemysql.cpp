@@ -310,7 +310,7 @@ void MySQLResult::free()
 bool MySQLResult::next()
 {
 	m_row = mysql_fetch_row(m_handle);
-	return m_row;
+	return (m_row != NULL);
 }
 
 MySQLResult::~MySQLResult()

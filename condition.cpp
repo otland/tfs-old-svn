@@ -40,7 +40,7 @@ bool Condition::setParam(ConditionParam_t param, int32_t value)
 			return true;
 
 		case CONDITIONPARAM_BUFF:
-			buff = value;
+			buff = (value != 0);
 			return true;
 
 		case CONDITIONPARAM_SUBID:
@@ -106,7 +106,7 @@ bool Condition::unserializeProp(ConditionAttr_t attr, PropStream& propStream)
 			if(!propStream.getType(value))
 				return false;
 
-			buff = value;
+			buff = (value != 0);
 			return true;
 		}
 
@@ -271,7 +271,7 @@ Condition* Condition::createCondition(PropStream& propStream)
 	if(!propStream.getLong(_subId))
 		return NULL;
 
-	return createCondition((ConditionId_t)_id, (ConditionType_t)_type, _ticks, 0, _buff, _subId);
+	return createCondition((ConditionId_t)_id, (ConditionType_t)_type, _ticks, 0, (_buff != 0), _subId);
 }
 
 bool Condition::updateCondition(const Condition* addCondition)
@@ -895,11 +895,11 @@ bool ConditionDamage::setParam(ConditionParam_t param, int32_t value)
 			return true;
 
 		case CONDITIONPARAM_FORCEUPDATE:
-			forceUpdate = value;
+			forceUpdate = (value != 0);
 			return true;
 
 		case CONDITIONPARAM_DELAYED:
-			delayed = value;
+			delayed = (value != 0);
 			return true;
 
 		case CONDITIONPARAM_MAXVALUE:
@@ -923,7 +923,7 @@ bool ConditionDamage::setParam(ConditionParam_t param, int32_t value)
 			break;
 
 		case CONDITIONPARAM_FIELD:
-			field = value;
+			field = (value != 0);
 			break;
 
 		default:

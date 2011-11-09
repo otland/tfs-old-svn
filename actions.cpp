@@ -535,7 +535,7 @@ ReturnValue Actions::internalUseItem(Player* player, const Position& pos, uint8_
 	const ItemType& it = Item::items[item->getID()];
 	if(it.transformUseTo)
 	{
-		g_game.transformItem(this, it.transformUseTo);
+		g_game.transformItem(item, it.transformUseTo);
 		return RET_NOERROR;
 	}
 

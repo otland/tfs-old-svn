@@ -479,7 +479,7 @@ bool Monsters::deserializeSpell(xmlNodePtr node, spellBlock_t& sb, const std::st
 		{
 			bool aggressive = false;
 			if(readXMLInteger(node, "self", intValue))
-				aggressive = intValue;
+				aggressive = (intValue != 0);
 
 			combat->setParam(COMBATPARAM_COMBATTYPE, COMBAT_HEALING);
 			combat->setParam(COMBATPARAM_AGGRESSIVE, aggressive);
@@ -668,7 +668,7 @@ bool Monsters::deserializeSpell(xmlNodePtr node, spellBlock_t& sb, const std::st
 
 				bool aggressive = false;
 				if(readXMLInteger(node, "self", intValue))
-					aggressive = intValue;
+					aggressive = (intValue != 0);
 
 				if(ConditionOutfit* condition = dynamic_cast<ConditionOutfit*>(Condition::createCondition(
 					CONDITIONID_COMBAT, CONDITION_OUTFIT, duration)))
@@ -687,7 +687,7 @@ bool Monsters::deserializeSpell(xmlNodePtr node, spellBlock_t& sb, const std::st
 
 			bool aggressive = false;
 			if(readXMLInteger(node, "self", intValue))
-				aggressive = intValue;
+				aggressive = (intValue != 0);
 
 			if(Condition* condition = Condition::createCondition(CONDITIONID_COMBAT, CONDITION_INVISIBLE, duration))
 			{
