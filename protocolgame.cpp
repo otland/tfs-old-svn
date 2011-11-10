@@ -268,11 +268,11 @@ bool ProtocolGame::login(const std::string& name, uint32_t id, const std::string
 		return false;
 	}
 
-	if(_player->client)
+	if(_player->hasClient())
 	{
 		if(m_eventConnect || !g_config.getBool(ConfigManager::REPLACE_KICK_ON_LOGIN))
 		{
-			//A task has already been scheduled just bail out (should not be overriden)
+			// task has already been scheduled just bail out (should not be overriden)
 			disconnectClient(0x14, "You are already logged in.");
 			return false;
 		}
@@ -344,7 +344,7 @@ bool ProtocolGame::connect(uint32_t playerId, OperatingSystem_t operatingSystem,
 	m_eventConnect = 0;
 
 	Player* _player = g_game.getPlayerByID(playerId);
-	if(!_player || _player->isRemoved() || _player->client)
+	if(!_player || _player->isRemoved() || _player->hasClient())
 	{
 		disconnectClient(0x14, "You are already logged in.");
 		return false;
