@@ -303,11 +303,7 @@ void Map::getSpectatorsInternal(SpectatorVec& list, const Position& centerPos, b
 				{
 					do
 					{
-						Creature* creature = (*it);
-						if(!creature)
-							continue;
-
-						const Position& pos = creature->getPosition();
+						const Position& pos = (*it)->getPosition();
 						if(pos.z < minRangeZ || pos.z > maxRangeZ)
 							continue;
 
