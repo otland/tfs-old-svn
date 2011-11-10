@@ -1,3 +1,13 @@
+REVERSE_DOORS, CHILD_DOORS = {}, {}
+for k, v in pairs(DOORS) do
+	REVERSE_DOORS[v] = k
+
+	local tmp = getItemInfo(v)
+	if(tmp.transformUseTo ~= 0) then
+		CHILD_DOORS[tmp.transformUseTo] = k
+	end
+end
+
 function onUse(cid, item, fromPosition, itemEx, toPosition)
 	if(item.aid > 0 and itemEx.aid > 0) then
 		if(isPlayerPzLocked(cid) and getTileInfo(toPosition).protection) then
@@ -7,12 +17,11 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 
 		local doors = DOORS[itemEx.itemid]
 		if(not doors) then
-			for k, v in pairs(DOORS) do
-				if(v == itemEx.itemid) then
-					doors = k
-					break
-				end
-			end
+			doors = REVERSE_DOORS[itemEx.itemid]
+		end
+
+		if(not doors) then
+			doors = CHILD_DOORS[itemEx.itemid]
 		end
 
 		if(doors) then
