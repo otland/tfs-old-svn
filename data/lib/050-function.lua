@@ -717,3 +717,21 @@ end
 function doPlayerSendToChannel(cid, target, type, text, channel, time)
 	return doCreatureChannelSay(cid, target, text, type, channel)
 end
+
+function doPlayerAddExpEx(cid, amount)
+	if(not doPlayerAddExp(cid, amount)) then
+		return false
+	end
+
+	local position = getThingPosition(cid)
+	doPlayerSendTextMessage(cid, MESSAGE_EXPERIENCE, "You gained " .. amount .. " experience.", amount, COLOR_WHITE, position)
+
+	local spectators, name = getSpectators(getThingPosition(cid), 7, 7), getCreatureName(cid)
+	for _, pid in ipairs(spectators) do
+		if(isPlayer(pid)) then
+			doPlayerSendTextMessage(cid, MESSAGE_EXPERIENCE_OTHERS, name .. " gained " .. amount .. " experience.", amount, COLOR_WHITE, position)
+		end
+	end
+
+	return true
+end
