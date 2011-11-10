@@ -687,13 +687,13 @@ bool IOMapSerialize::loadItems(Database*, DBResult* result, Cylinder* parent, bo
 						break;
 					}
 
-					if(iType.isDoor() && (*it)->getDoor())
+					if(iType.isBed() && (*it)->getBed())
 					{
 						item = *it;
 						break;
 					}
 
-					if(iType.isBed() && (*it)->getBed())
+					if(iType.isDoor() && (*it)->getDoor() && (*it)->getID() == iType.transformUseTo)
 					{
 						item = *it;
 						break;
@@ -909,13 +909,13 @@ bool IOMapSerialize::loadItem(PropStream& propStream, Cylinder* parent, bool dep
 					break;
 				}
 
-				if(iType.isDoor() && (*it)->getDoor())
+				if(iType.isBed() && (*it)->getBed())
 				{
 					item = *it;
 					break;
 				}
 
-				if(iType.isBed() && (*it)->getBed())
+				if(iType.isDoor() && (*it)->getDoor() && (*it)->getID() == iType.transformUseTo)
 				{
 					item = *it;
 					break;
@@ -976,7 +976,7 @@ bool IOMapSerialize::saveTile(PropWriteStream& stream, const Tile* tile)
 	Item* item = NULL;
 	for(; tileCount > 0; --tileCount)
 	{
-		if((item = tile->__getThing(tileCount - 1)->getItem()) &&
+		if((item = tile->__getThing(tileCount - 1)->getItem()) && // CHECKME: wouldn't it be better to use TileItemVector in here?
 			(item->isMovable() || item->forceSerialize()))
 			items.push_back(item);
 	}
