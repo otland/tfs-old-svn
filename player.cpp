@@ -54,7 +54,7 @@ Player::Player(const std::string& _name, ProtocolGame* p):
 	Creature(), transferContainer(ITEM_LOCKER), name(_name), nameDescription(_name), client(p)
 {
 	if(client)
-		client->setPlayer(this);
+		p->setPlayer(this);
 
 	pvpBlessing = pzLocked = isConnecting = addAttackSkillPoint = requestedOutfit = mounted = outfitAttributes = false;
 	saving = true;
