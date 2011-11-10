@@ -2516,7 +2516,7 @@ void Player::addList()
 
 void Player::kick(bool displayEffect, bool forceLogout)
 {
-	if(!client)
+	if(!hasClient())
 	{
 		if(g_creatureEvents->playerLogout(this, forceLogout))
 			g_game.removeCreature(this);
