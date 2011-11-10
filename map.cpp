@@ -304,12 +304,14 @@ void Map::getSpectatorsInternal(SpectatorVec& list, const Position& centerPos, b
 					do
 					{
 						Creature* creature = (*it);
-						const Position& pos = creature->getPosition();
+						if(!creature)
+							continue;
 
-						int32_t offsetZ = centerPos.z - pos.z;
+						const Position& pos = creature->getPosition();
 						if(pos.z < minRangeZ || pos.z > maxRangeZ)
 							continue;
 
+						int32_t offsetZ = centerPos.z - pos.z;
 						if(pos.y < (centerPos.y + minRangeY + offsetZ) || pos.y > (centerPos.y + maxRangeY + offsetZ))
 							continue;
 
