@@ -55,7 +55,6 @@ class ProtocolGame : public Protocol
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
 			protocolGameCount--;
 #endif
-			player = NULL;
 		}
 
 		enum {protocolId = 0x0A};
