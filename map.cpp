@@ -315,7 +315,7 @@ void Map::getSpectatorsInternal(SpectatorVec& list, const Position& centerPos, b
 							continue;
 
 						if(!checkForDuplicate || std::find(list.begin(), list.end(), *it) == list.end())
-							list.push_back(creature);
+							list.push_back(*it);
 					}
 					while(++it != nodeList.end());
 				}
