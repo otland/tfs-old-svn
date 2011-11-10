@@ -314,7 +314,7 @@ void Map::getSpectatorsInternal(SpectatorVec& list, const Position& centerPos, b
 						if(pos.x < (centerPos.x + minRangeX + offsetZ) || pos.x > (centerPos.x + maxRangeX + offsetZ))
 							continue;
 
-						if(!checkForDuplicate || std::find(list.begin(), list.end(), creature) == list.end())
+						if(!checkForDuplicate || std::find(list.begin(), list.end(), *it) == list.end())
 							list.push_back(creature);
 					}
 					while(++it != nodeList.end());
