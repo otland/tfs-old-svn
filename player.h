@@ -36,9 +36,7 @@
 #include "npc.h"
 
 class House;
-class NetworkMessage;
 class Weapon;
-class ProtocolGame;
 class Npc;
 class Party;
 class SchedulerTask;
@@ -231,7 +229,7 @@ class Player : public Creature, public Cylinder
 		uint16_t getBlessings() const;
 
 		OperatingSystem_t getOperatingSystem() const {return operatingSystem;}
-		void setOperatingSystem(OperatingSystem_t clientOs) {operatingSystem = clientOs;}
+		void setOperatingSystem(OperatingSystem_t os) {operatingSystem = os;}
 		uint32_t getClientVersion() const {return clientVersion;}
 		void setClientVersion(uint32_t version) {clientVersion = version;}
 

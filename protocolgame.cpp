@@ -523,7 +523,7 @@ void ProtocolGame::parsePacket(NetworkMessage &msg)
 	if(!player || !m_acceptPackets || g_game.getGameState() == GAMESTATE_SHUTDOWN || !msg.size())
 		return;
 
-	if(msg.size() >= (NETWORK_MAX_SIZE - 16)) // NOTE(Dalkon), Connection::parseHeader discards messages over this size, how to make this work?
+	if(msg.size() >= (NETWORK_MAX_SIZE - 16)) // NOTE: Connection::parseHeader discards messages over this size, how to make this work?
 	{
 		if(++m_maxSizeCount >= (uint32_t)g_config.getNumber(ConfigManager::ALLOWED_MAX_PACKETS))
 		{
