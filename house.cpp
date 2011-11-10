@@ -60,7 +60,7 @@ void House::addDoor(Door* door)
 	doorList.push_back(door);
 
 	door->setHouse(this);
-	updateDoorDescription("", this);
+	updateDoorDescription("", door);
 }
 
 void House::removeDoor(Door* door)
