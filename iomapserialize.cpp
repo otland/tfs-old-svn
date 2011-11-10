@@ -693,7 +693,7 @@ bool IOMapSerialize::loadItems(Database*, DBResult* result, Cylinder* parent, bo
 						break;
 					}
 
-					if(iType.isDoor() && (*it)->getDoor() && (*it)->getID() == iType.transformUseTo)
+					if(iType.isDoor() && (*it)->getDoor())
 					{
 						item = *it;
 						break;
@@ -706,7 +706,10 @@ bool IOMapSerialize::loadItems(Database*, DBResult* result, Cylinder* parent, bo
 		{
 			if(item->unserializeAttr(propStream))
 			{
-				if((item = g_game.transformItem(item, id)))
+				if(!item->getDoor() || item->getID() == iType.transformUseTo)
+					item = g_game.transformItem(item, id);
+
+				if(item)
 					itemMap[sid] = std::make_pair(item, pid);
 			}
 			else
@@ -915,7 +918,7 @@ bool IOMapSerialize::loadItem(PropStream& propStream, Cylinder* parent, bool dep
 					break;
 				}
 
-				if(iType.isDoor() && (*it)->getDoor() && (*it)->getID() == iType.transformUseTo)
+				if(iType.isDoor() && (*it)->getDoor())
 				{
 					item = *it;
 					break;
@@ -932,7 +935,8 @@ bool IOMapSerialize::loadItem(PropStream& propStream, Cylinder* parent, bool dep
 			if(container && !loadContainer(propStream, container))
 				return false;
 
-			item = g_game.transformItem(item, id);
+			if(!item->getDoor() || item->getID() == iType.transformUseTo)
+				item = g_game.transformItem(item, id);
 		}
 		else
 			std::clog << "[Warning - IOMapSerialize::loadItem] Unserialization error [1] for item type " << id << std::endl;

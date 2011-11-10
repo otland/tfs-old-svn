@@ -60,7 +60,7 @@ void House::addDoor(Door* door)
 	doorList.push_back(door);
 
 	door->setHouse(this);
-	updateDoorDescription();
+	updateDoorDescription("", this);
 }
 
 void House::removeDoor(Door* door)
@@ -160,7 +160,7 @@ bool House::isBidded() const
 	return true;
 }
 
-void House::updateDoorDescription(std::string _name/* = ""*/)
+void House::updateDoorDescription(std::string _name/* = ""*/, Door* door/* = NULL*/)
 {
 	std::string tmp = "house";
 	if(isGuild())
@@ -179,8 +179,13 @@ void House::updateDoorDescription(std::string _name/* = ""*/)
 	else
 		sprintf(houseDescription, "It belongs to %s '%s'. Nobody owns this %s. It costs %d gold coins.", tmp.c_str(), name.c_str(), tmp.c_str(), price);
 
-	for(HouseDoorList::iterator it = doorList.begin(); it != doorList.end(); ++it)
-		(*it)->setSpecialDescription(houseDescription);
+	if(!door)
+	{
+		for(HouseDoorList::iterator it = doorList.begin(); it != doorList.end(); ++it)
+			(*it)->setSpecialDescription(houseDescription);
+	}
+	else
+		door->setSpecialDescription(houseDescription);
 }
 
 void House::removePlayer(Player* player, bool ignoreRights)
