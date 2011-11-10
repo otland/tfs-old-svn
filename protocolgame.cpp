@@ -329,9 +329,7 @@ bool ProtocolGame::logout(bool displayEffect, bool forceLogout)
 			g_game.addMagicEffect(player->getPosition(), MAGIC_EFFECT_POFF);
 	}
 
-	if(Connection_ptr connection = getConnection())
-		connection->close();
-
+	disconnect();
 	if(player->isRemoved())
 		return true;
 
