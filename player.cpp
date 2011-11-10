@@ -1782,7 +1782,7 @@ void Player::onThink(uint32_t interval)
 	if((timeNow - lastPong) >= 60000 && !getTile()->hasFlag(TILESTATE_NOLOGOUT)
 		&& !isConnecting && !pzLocked && !hasCondition(CONDITION_INFIGHT))
 	{
-		if(client)
+		if(hasClient())
 			client->logout(true, true);
 		else if(g_creatureEvents->playerLogout(this, false))
 			g_game.removeCreature(this, true);
