@@ -3567,7 +3567,7 @@ bool Game::playerLookAt(uint32_t playerId, const Position& pos, uint16_t spriteI
 		if(Tile* tile = getTile(thingPos))
 		{
 			if(House* house = tile->getHouse())
-				ss << " [House: " << house->getID() << "]";
+				ss << " [House: " << house->getId() << "]";
 		}
 
 		ss << ".";
