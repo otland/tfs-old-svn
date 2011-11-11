@@ -3529,7 +3529,11 @@ bool Game::playerLookAt(uint32_t playerId, const Position& pos, uint16_t spriteI
 				ss << std::endl << "TransformTo: [" << it.transformEquipTo << "] (onEquip).";
 			else if(it.transformDeEquipTo)
 				ss << std::endl << "TransformTo: [" << it.transformDeEquipTo << "] (onDeEquip).";
-			else if(it.decayTo != -1)
+
+			if(it.transformUseTo)
+				ss << std::endl << "TransformTo: [" << it.transformDeEquipTo << "] (onUse).";
+
+			if(it.decayTo != -1)
 				ss << std::endl << "DecayTo: [" << it.decayTo << "].";
 		}
 	}
@@ -3543,22 +3547,31 @@ bool Game::playerLookAt(uint32_t playerId, const Position& pos, uint16_t spriteI
 				ss << ", Mana: [" << creature->getMana() << " / " << creature->getMaxMana() << "]";
 
 			ss << ".";
-			if(const Player* destPlayer = creature->getPlayer())
+			if(const Player* target = creature->getPlayer())
 			{
-				ss << std::endl << "IP: " << convertIPAddress(destPlayer->getIP());
+				ss << std::endl << "IP: " << convertIPAddress(target->getIP());
 #if CLIENT_VERSION_MIN != CLIENT_VERSION_MAX
-				ss << ", Client: " << destPlayer->getClientVersion();
+				ss << ", Client: " << target->getClientVersion();
 #endif
 				ss << ".";
-
-				if(destPlayer->isGhost())
-					ss << std::endl << "* Ghost mode *";
 			}
+
+			if(creature->isGhost())
+				ss << std::endl << "* Ghost mode *";
 		}
 	}
 
 	if(player->hasCustomFlag(PlayerCustomFlag_CanSeePosition))
-		ss << std::endl << "Position: [X: " << thingPos.x << "] [Y: " << thingPos.y << "] [Z: " << thingPos.z << "].";
+	{
+		ss << std::endl << "Position: [X: " << thingPos.x << "] [Y: " << thingPos.y << "] [Z: " << thingPos.z << "]";
+		if(Tile* tile = getTile(thingPos))
+		{
+			if(House* house = tile->getHouse())
+				ss << " [House: " << house->getID() << "]";
+		}
+
+		ss << ".";
+	}
 
 	player->sendTextMessage(MSG_INFO_DESCR, ss.str());
 	return true;

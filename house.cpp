@@ -949,7 +949,7 @@ bool Houses::payHouse(House* house, time_t _time, uint32_t bid)
 			 
 		return false;
 	}
-			 
+
 	if(Depot* depot = player->getDepot(town->getID(), true))
 	{
 		if(Item* letter = Item::CreateItem(ITEM_LETTER_STAMPED))

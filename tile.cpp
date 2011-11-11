@@ -79,22 +79,6 @@ bool Tile::hasProperty(Item* exclude, enum ITEMPROPERTY prop) const
 	return false;
 }
 
-HouseTile* Tile::getHouseTile()
-{
-	if(isHouseTile())
-		return static_cast<HouseTile*>(this);
-
-	return NULL;
-}
-
-const HouseTile* Tile::getHouseTile() const
-{
-	if(isHouseTile())
-		return static_cast<const HouseTile*>(this);
-
-	return NULL;
-}
-
 bool Tile::hasHeight(uint32_t n) const
 {
 	uint32_t height = 0;
