@@ -30,6 +30,7 @@ class BedItem;
 
 class Player;
 class Creature;
+class House;
 class HouseTile;
 class QTreeLeafNode;
 
