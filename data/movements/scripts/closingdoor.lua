@@ -5,19 +5,17 @@ function onStepOut(cid, item, position, lastPosition)
 
 	local newPosition = {x = position.x + 1, y = position.y, z = position.z}
 	local query = doTileQueryAdd(cid, newPosition)
-	if(query ~= RETURNVALUE_NOERROR) then
+	if(query == RETURNVALUE_NOTENOUGHROOM) then
 		newPosition.x = newPosition.x - 1
 		newPosition.y = newPosition.y + 1
 		query = doTileQueryAdd(cid, newPosition) -- repeat until found
 	end
 
-	if(query ~= RETURNVALUE_NOERROR) then
-		return true
+	if(query == RETURNVALUE_NOERROR and query == RETURNVALUE_NOTENOUGHROOM) then
+		doRelocate(position, newPosition)
 	end
 
-	doRelocate(position, newPosition)
 	position.stackpos = -1
-
 	local i, tileItem, tileCount = 1, {uid = 1}, getTileThingByPos(position)
 	while(tileItem.uid ~= 0 and i < tileCount) do
 		position.stackpos = i
@@ -29,6 +27,7 @@ function onStepOut(cid, item, position, lastPosition)
 		end
 	end
 
-	doTransformItem(item.uid, item.itemid - 1)
+	local itemInfo = getItemInfo(item.itemid)
+	doTransformItem(item.uid, itemInfo.transformUseTo)
 	return true
 end
