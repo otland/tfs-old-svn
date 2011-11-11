@@ -2255,8 +2255,8 @@ bool Player::onDeath()
 	}
 
 	bool usePVPBlessing = false;
-	uint8_t pvpPercent = (uint8_t)std::ceil((double)pvpDamage * 100. / std::max(1U, totalDamage));
-	if(pvpBlessing && pvpPercent >= (uint8_t)g_config.getNumber(
+	uint16_t pvpPercent = (uint16_t)std::ceil((double)pvpDamage * 100. / std::max(1U, totalDamage));
+	if(pvpBlessing && pvpPercent >= (uint16_t)g_config.getNumber(
 		ConfigManager::PVP_BLESSING_THRESHOLD))
 		usePVPBlessing = true;
 
