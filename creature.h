@@ -175,7 +175,7 @@ class Creature : public AutoId, virtual public Thing
 		virtual ~Creature();
 
 		virtual Creature* getCreature() {return this;}
-		virtual const Creature* getCreature()const {return this;}
+		virtual const Creature* getCreature() const {return this;}
 		virtual Player* getPlayer() {return NULL;}
 		virtual const Player* getPlayer() const {return NULL;}
 		virtual Npc* getNpc() {return NULL;}

@@ -26,9 +26,9 @@ class HouseTile : public DynamicTile
 		HouseTile(int32_t x, int32_t y, int32_t z, House* _house);
 		virtual ~HouseTile() {}
 
-		virtual HouseTile* getHouseTile() const {return this;}
-		virtual const HouseTile* getHouseTile() {return this;}
-		virtual House* getHouse() const {return house;}
+		virtual HouseTile* getHouseTile() {return this;}
+		virtual const HouseTile* getHouseTile() const {return this;}
+		virtual House* getHouse() {return house;}
 		virtual const House* getHouse() const {return house;}
 
 		//cylinder implementations

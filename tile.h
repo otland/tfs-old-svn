@@ -155,9 +155,9 @@ class Tile : public Cylinder
 		const CreatureVector* getCreatures() const;
 		CreatureVector* makeCreatures();
 
-		HouseTile* getHouseTile() const {return NULL;}
-		const HouseTile* getHouseTile() {return NULL;}
-		House* getHouse() const {return NULL;}
+		HouseTile* getHouseTile() {return NULL;}
+		const HouseTile* getHouseTile() const {return NULL;}
+		House* getHouse() {return NULL;}
 		const House* getHouse() const {return NULL;}
 
 		MagicField* getFieldItem() const;
