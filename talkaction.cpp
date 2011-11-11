@@ -402,15 +402,7 @@ bool TalkAction::houseBuy(Creature* creature, const std::string&, const std::str
 		return false;
 	}
 
-	HouseTile* houseTile = tile->getHouseTile();
-	if(!houseTile)
-	{
-		player->sendCancel("You have to be looking at door of flat you would like to purchase.");
-		g_game.addMagicEffect(player->getPosition(), MAGIC_EFFECT_POFF);
-		return false;
-	}
-
-	House* house = houseTile->getHouse();
+	House* house = tile->getHouse();
 	if(!house)
 	{
 		player->sendCancel("You have to be looking at door of flat you would like to purchase.");
