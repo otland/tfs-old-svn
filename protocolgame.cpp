@@ -552,6 +552,14 @@ void ProtocolGame::parsePacket(NetworkMessage &msg)
 				parseReceivePing(msg);
 				break;
 
+			case 0xC9:
+				parseUpdateTile(msg);
+				break;
+
+			case 0xE8:
+				parseDebugAssert(msg);
+				break;
+
 			default:
 				sendCancelWalk();
 				break;
