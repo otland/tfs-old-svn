@@ -1210,7 +1210,7 @@ uint32_t DatabaseManager::updateDatabase()
 
 		case 29:
 		{
-			std::cout << "> Updating database to version 30..." << std::endl;
+			std::clog << "> Updating database to version 30..." << std::endl;
 			switch(db->getDatabaseEngine())
 			{
 				case DATABASE_ENGINE_SQLITE:
@@ -1238,7 +1238,7 @@ uint32_t DatabaseManager::updateDatabase()
 
 		case 30:
 		{
-			std::cout << "> Updating database to version 31..." << std::endl;
+			std::clog << "> Updating database to version 31..." << std::endl;
 			switch(db->getDatabaseEngine())
 			{
 				case DATABASE_ENGINE_SQLITE:
