@@ -3150,7 +3150,7 @@ void ProtocolGame::RemoveContainerItem(NetworkMessage_ptr msg, uint8_t cid, uint
 	msg->put<char>(slot);
 }
 
-void ProtocolGame::sendChannelMessage(std::string author, std::string text, MessageClasses type, uint8_t channel)
+void ProtocolGame::sendChannelMessage(std::string author, std::string text, MessageClasses type, uint16_t channel)
 {
 	NetworkMessage_ptr msg = getOutputBuffer();
 	if(msg)
