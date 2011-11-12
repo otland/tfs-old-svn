@@ -340,7 +340,7 @@ end
 function isNpc(cid)
 	-- Npc IDs are over int32_t range (which is default for lua_pushnumber),
 	-- therefore number is always a negative value.
-	return isCreature(cid) and cid < 0-->= AUTOID_NPCS
+	return isCreature(cid) and (cid < 0 or cid >= AUTOID_NPCS)
 end
 
 function isSummon(cid)
