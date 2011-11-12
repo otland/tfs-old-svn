@@ -5034,7 +5034,10 @@ int32_t LuaInterface::luaGetTileInfo(lua_State* L)
 	if(Tile* tile = g_game.getMap()->getTile(pos))
 	{
 		ScriptEnviroment* env = getEnv();
-		pushThing(L, tile->ground, env->addThing(tile->ground));
+		if(tile->ground && !tile->ground->isRemoved())
+			pushThing(L, tile->ground, env->addThing(tile->ground));
+		else
+			pushThing(L, NULL, 0);
 
 		setFieldBool(L, "protection", tile->hasFlag(TILESTATE_PROTECTIONZONE));
 		setFieldBool(L, "optional", tile->hasFlag(TILESTATE_OPTIONALZONE));
