@@ -734,22 +734,22 @@ enum PlayerCustomFlags
 	PlayerCustomFlag_AllowIdle = 0,				//2^0 = 1
 	PlayerCustomFlag_CanSeePosition,			//2^1 = 2
 	PlayerCustomFlag_CanSeeItemDetails,			//2^2 = 4
-	PlayerCustomFlag_CanSeeCreatureDetails,			//2^3 = 8
+	PlayerCustomFlag_CanSeeCreatureDetails,		//2^3 = 8
 	PlayerCustomFlag_NotSearchable,				//2^4 = 16
-	PlayerCustomFlag_GamemasterPrivileges,			//2^5 = 32
+	PlayerCustomFlag_GamemasterPrivileges,		//2^5 = 32
 	PlayerCustomFlag_CanThrowAnywhere,			//2^6 = 64
 	PlayerCustomFlag_CanPushAllItems,			//2^7 = 128
 	PlayerCustomFlag_CanMoveAnywhere,			//2^8 = 256
 	PlayerCustomFlag_CanMoveFromFar,			//2^9 = 512
-	PlayerCustomFlag_CanLoginMultipleCharacters,		//2^10 = 1024 (account flag)
-	PlayerCustomFlag_HasFullLight,				//2^11 = 2048
+	PlayerCustomFlag_CanUseFromFar,				//2^10 = 1024
+	PlayerCustomFlag_CanLoginMultipleCharacters,//2^11 = 2048 (account flag)
 	PlayerCustomFlag_CanLogoutAnytime,			//2^12 = 4096 (account flag)
-	PlayerCustomFlag_HideLevel,				//2^13 = 8192
+	PlayerCustomFlag_HideLevel,					//2^13 = 8192
 	PlayerCustomFlag_IsProtected,				//2^14 = 16384
-	PlayerCustomFlag_IsImmune,				//2^15 = 32768
+	PlayerCustomFlag_IsImmune,					//2^15 = 32768
 	PlayerCustomFlag_NotGainSkull,				//2^16 = 65536
-	PlayerCustomFlag_NotGainUnjustified,			//2^17 = 131072
-	PlayerCustomFlag_IgnorePacification,			//2^18 = 262144
+	PlayerCustomFlag_NotGainUnjustified,		//2^17 = 131072
+	PlayerCustomFlag_IgnorePacification,		//2^18 = 262144
 	PlayerCustomFlag_IgnoreLoginDelay,			//2^19 = 524288
 	PlayerCustomFlag_CanStairhop,				//2^20 = 1048576
 	PlayerCustomFlag_CanTurnhop,				//2^21 = 2097152
@@ -757,6 +757,7 @@ enum PlayerCustomFlags
 	PlayerCustomFlag_CanWearAllAddons,			//2^23 = 8388608
 	PlayerCustomFlag_IsWalkable,				//2^24 = 16777216
 	PlayerCustomFlag_CanUseAllMounts,			//2^25 = 33554432
+	PlayerCustomFlag_HasFullLight,				//2^26 = 67108864
 
 	PlayerCustomFlag_LastFlag
 };

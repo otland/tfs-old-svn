@@ -2498,7 +2498,12 @@ bool Game::playerUseItemEx(uint32_t playerId, const Position& fromPos, int16_t f
 	{
 		ret = g_actions->canUse(player, toPos, item);
 		if(ret == RET_TOOFARAWAY)
-			walkToPos = toPos;
+		{
+			if(!player->hasCustomFlag(PlayerCustomFlag_CanUseFromFar))
+				walkToPos = toPos;
+			else
+				ret = RET_NOERROR;
+		}
 	}
 
 	if(ret != RET_NOERROR)
@@ -2590,6 +2595,9 @@ bool Game::playerUseItem(uint32_t playerId, const Position& pos, int16_t stackpo
 	}
 
 	ReturnValue ret = g_actions->canUse(player, pos);
+	if(ret == RET_TOOFARAWAY && player->hasCustomFlag(PlayerCustomFlag_CanUseFromFar))
+		ret = RET_NOERROR;
+
 	if(ret != RET_NOERROR)
 	{
 		if(ret == RET_TOOFARAWAY)
