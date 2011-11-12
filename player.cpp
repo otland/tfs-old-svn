@@ -1426,7 +1426,7 @@ void Player::onChangeZone(ZoneType_t zone)
 			onTargetDisappear(false);
 		}
 
-		if(g_config.getBool(ConfigManager::UNMOUNT_PLAYER_IN_PZ))
+		if(g_config.getBool(ConfigManager::UNMOUNT_PLAYER_IN_PZ) && !hasCustomFlag(PlayerCustomFlag_GamemasterPrivileges))
 			dismount(true);
 	}
 
