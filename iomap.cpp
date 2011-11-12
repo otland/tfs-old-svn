@@ -688,7 +688,7 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 	for(CacheMap::iterator it = groundCache.begin(); it != groundCache.end(); ++it)
 	{
 		//it->second.first->setParent(NULL);
-		g_grounds[it->second.first] = it->second.second;
+		g_game.grounds[it->second.first] = it->second.second;
 	}
 
 	groundCache.clear();

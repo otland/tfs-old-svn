@@ -623,6 +623,10 @@ class Game
 
 		bool isInBlacklist(std::string ip) const { return std::find(blacklist.begin(), blacklist.end(), ip) != blacklist.end(); }
 		bool isInWhitelist(std::string ip) const { return std::find(whitelist.begin(), whitelist.end(), ip) != whitelist.end(); }
+#ifdef __GROUND_CACHE__
+
+		std::map<Item*, int32_t> grounds;
+#endif
 
 	protected:
 		bool playerWhisper(Player* player, const std::string& text);

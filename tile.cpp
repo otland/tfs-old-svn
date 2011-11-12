@@ -882,14 +882,14 @@ void Tile::__addThing(Creature* actor, int32_t, Thing* thing)
 			ground = item;
 
 #ifdef __GROUND_CACHE__
-			std::map<Item*, int32_t>::iterator it = g_grounds.find(ground);
-			bool erase = it == g_grounds.end();
+			std::map<Item*, int32_t>::iterator it = g_game.grounds.find(ground);
+			bool erase = it == g_game.grounds.end();
 			if(!erase)
 			{
 				it->second--;
 				erase = it->second < 1;
 				if(erase)
-					g_grounds.erase(it);
+					g_game.grounds.erase(it);
 			}
 
 			updateTileFlags(oldGround, true);
@@ -1125,14 +1125,14 @@ void Tile::__replaceThing(uint32_t index, Thing* thing)
 		onUpdateTileItem(oldItem, Item::items[oldItem->getID()], item, Item::items[item->getID()]);
 #ifdef __GROUND_CACHE__
 
-		std::map<Item*, int32_t>::iterator it = g_grounds.find(oldItem);
-		bool erase = it == g_grounds.end();
+		std::map<Item*, int32_t>::iterator it = g_game.grounds.find(oldItem);
+		bool erase = it == g_game.grounds.end();
 		if(!erase)
 		{
 			it->second--;
 			erase = it->second < 1;
 			if(erase)
-				g_grounds.erase(it);
+				g_game.grounds.erase(it);
 		}
 
 		if(erase)
@@ -1211,14 +1211,14 @@ void Tile::__removeThing(Thing* thing, uint32_t count)
 		}
 
 #ifdef __GROUND_CACHE__
-		std::map<Item*, int32_t>::iterator it = g_grounds.find(ground);
-		bool erase = it == g_grounds.end();
+		std::map<Item*, int32_t>::iterator it = g_game.grounds.find(ground);
+		bool erase = it == g_game.grounds.end();
 		if(!erase)
 		{
 			it->second--;
 			erase = it->second < 1;
 			if(erase)
-				g_grounds.erase(it);
+				g_game.grounds.erase(it);
 		}
 
 		if(erase)
