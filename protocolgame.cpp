@@ -561,11 +561,11 @@ void ProtocolGame::parsePacket(NetworkMessage &msg)
 				break;
 
 			case 0xA1:
-				sendCancelTarget();
+				parseCancelTarget(msg);
 				break;
 
 			default:
-				sendCancelWalk();
+				parseCancelWalk(msg);
 				break;
 		}
 	}
@@ -1038,6 +1038,16 @@ bool ProtocolGame::canSee(uint16_t x, uint16_t y, uint16_t z) const
 void ProtocolGame::parseLogout(NetworkMessage&)
 {
 	Dispatcher::getInstance().addTask(createTask(boost::bind(&ProtocolGame::logout, this, true, false)));
+}
+
+void ProtocolGame::parseCancelWalk(NetworkMessage&)
+{
+	Dispatcher::getInstance().addTask(createTask(boost::bind(&ProtocolGame::sendCancelWalk, this)));
+}
+
+void ProtocolGame::parseCancelTarget(NetworkMessage&)
+{
+	Dispatcher::getInstance().addTask(createTask(boost::bind(&ProtocolGame::sendCancelTarget, this)));
 }
 
 void ProtocolGame::parseCreatePrivateChannel(NetworkMessage&)

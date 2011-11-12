@@ -92,12 +92,14 @@ class ProtocolGame : public Protocol
 
 		//Parse methods
 		void parseLogout(NetworkMessage& msg);
-		void parseCancelMove(NetworkMessage& msg);
+		void parseCancelWalk(NetworkMessage& msg);
+		void parseCancelTarget(NetworkMessage& msg);
 
 		void parseReceivePing(NetworkMessage& msg);
 		void parseAutoWalk(NetworkMessage& msg);
 		void parseMove(NetworkMessage& msg, Direction dir);
 		void parseTurn(NetworkMessage& msg, Direction dir);
+		void parseCancelMove(NetworkMessage& msg);
 
 		void parseRequestOutfit(NetworkMessage& msg);
 		void parseSetOutfit(NetworkMessage& msg);
