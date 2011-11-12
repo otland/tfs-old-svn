@@ -80,6 +80,7 @@
 	<action itemid="6394" event="script" value="foods/food.lua"/>
 	<action itemid="6501" event="script" value="foods/food.lua"/>
 	<action fromid="6541" toid="6545" event="script" value="foods/food.lua"/>
+	<action itemid="6574" event="script" value="foods/food.lua"/>
 	<action itemid="7158" event="script" value="foods/food.lua"/>
 	<action itemid="7159" event="script" value="foods/food.lua"/>
 	<action fromid="7372" toid="7377" event="script" value="foods/food.lua"/>
