@@ -560,6 +560,10 @@ void ProtocolGame::parsePacket(NetworkMessage &msg)
 				parseDebugAssert(msg);
 				break;
 
+			case 0xA1:
+				sendCancelTarget();
+				break;
+
 			default:
 				sendCancelWalk();
 				break;
