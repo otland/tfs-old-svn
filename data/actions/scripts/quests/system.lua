@@ -20,7 +20,7 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 		end
 	end
 
-	if(getPlayerStorageValue(cid, storage) > 0) then
+	if(getCreatureStorage(cid, storage) > 0) then
 		doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, "It is empty.")
 		return true
 	end
@@ -93,7 +93,7 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 		result = "You have found a reward weighing " .. getItemWeight(reward.uid) .. " oz. It is too heavy or you have not enough space."
 	else
 		result = "You have found " .. result .. "."
-		setPlayerStorageValue(cid, storage, 1)
+		doCreatureSetStorage(cid, storage, 1)
 		if(questsExperience[storage] ~= nil) then
 			doPlayerAddExp(cid, questsExperience[storage])
 			local position = getThingPosition(cid)
