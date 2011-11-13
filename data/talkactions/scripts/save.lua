@@ -5,7 +5,7 @@ function onSay(cid, words, param, channel)
 	if(tmp ~= nil) then
 		stopEvent(savingEvent)
 		save(tmp * 60 * 1000)
-	elseif(param == '') then
+	elseif(param:trim() == '') then
 		doSaveServer(13)
 	else
 		local tid = getPlayerByNameWildcard(param)
