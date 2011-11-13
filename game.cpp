@@ -6185,12 +6185,8 @@ void Game::shutdown()
 void Game::cleanup()
 {
 	//free memory
-	Thing* thing = NULL;
 	for(std::vector<Thing*>::iterator it = releaseThings.begin(); it != releaseThings.end(); ++it)
-	{
-		if((thing = *it))
-			thing->unRef();
-	}
+		(*it)->unRef();
 
 	releaseThings.clear();
 	for(DecayList::iterator it = toDecayItems.begin(); it != toDecayItems.end(); ++it)
