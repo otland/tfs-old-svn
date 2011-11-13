@@ -525,7 +525,7 @@ void ProtocolGame::parsePacket(NetworkMessage &msg)
 	{
 		if(++m_maxSizeCount >= (uint32_t)g_config.getNumber(ConfigManager::ALLOWED_MAX_PACKETS))
 		{
-			player->disconnect();
+			disconnect();
 			return;
 		}
 	}
