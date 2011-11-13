@@ -12,7 +12,7 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 	end
 
 	if(isPlayer(itemEx.uid)) then
-		doSetMonsterOutfit(itemEx.uid, config.outfits[math.random(1, table.maxn(outfits))], config.duration * 1000)
+		doSetMonsterOutfit(itemEx.uid, config.outfits[math.random(1, table.maxn(config.outfits))], config.duration * 1000)
 		doSendMagicEffect(toPosition, CONST_ME_MAGIC_BLUE)
 	end
 
