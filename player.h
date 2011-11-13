@@ -952,7 +952,6 @@ class Player : public Creature, public Cylinder
 		friend class Game;
 		friend class LuaInterface;
 		friend class Npc;
-		friend class Map;
 		friend class Actions;
 		friend class IOLoginData;
 		friend class ProtocolGame;
