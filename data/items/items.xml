@@ -16247,8 +16247,14 @@
 	<item id="9005" article="a" name="yummy gummy worm">
 		<attribute key="weight" value="20" />
 	</item>
-	<item fromid="9006" toid="9007" article="a" name="toy spider">
+	<item id="9006" article="a" name="toy spider">
 		<attribute key="weight" value="20" />
+		<attribute key="transformUseTo" value="9007" />
+	</item>
+	<item id="9007" article="a" name="toy spider">
+		<attribute key="weight" value="20" />
+		<attribute key="decayTo" value="9006" />
+		<attribute key="duration" value="10" />
 	</item>
 	<item id="9009" article="the" name="Overlord's ashes">
 		<attribute key="containerSize" value="8" />
@@ -18805,7 +18811,18 @@
 	<item fromid="10963" toid="10964" article="a" name="dragon banner" />
 	<item fromid="10965" toid="10966" article="a" name="banner" />
 	<item fromid="10967" toid="10970" article="a" name="wagon" />
-	<item fromid="10971" toid="10974" name="wall lamp" />
+	<item id="10971" name="wall lamp">
+		<attribute key="transformUseTo" value="10972" />
+	</item>
+	<item id="10972" name="wall lamp">
+		<attribute key="transformUseTo" value="10971" />
+	</item>
+	<item id="10973" name="wall lamp">
+		<attribute key="transformUseTo" value="10974" />
+	</item>
+	<item id="10974" name="wall lamp">
+		<attribute key="transformUseTo" value="10973" />
+	</item>
 	<item fromid="10975" toid="10978" article="a" name="serpent decoration" />
 	<item fromid="10979" toid="10984" article="a" name="lizard weapon rack">
 		<attribute key="weight" value="5500" />
