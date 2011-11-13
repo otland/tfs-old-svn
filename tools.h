@@ -101,7 +101,7 @@ std::string getLastXMLError();
 bool utf8ToLatin1(char* inText, std::string& outText);
 bool latin1ToUtf8(char* inText, std::string& outText);
 
-StringVec explodeString(const std::string& string, const std::string& separator, bool trim = true);
+StringVec explodeString(const std::string& string, const std::string& separator, bool trim = true, uint16_t limit = 0);
 IntegerVec vectorAtoi(StringVec stringVector);
 bool hasBitSet(uint32_t flag, uint32_t flags);
 

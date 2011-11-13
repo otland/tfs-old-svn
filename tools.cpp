@@ -365,10 +365,12 @@ bool latin1ToUtf8(char* inText, std::string& outText)
 	return true;
 }
 
-StringVec explodeString(const std::string& string, const std::string& separator, bool trim/* = true*/)
+StringVec explodeString(const std::string& string, const std::string& separator, bool trim/* = true*/, uint16_t limit/* = 0*/)
 {
 	StringVec returnVector;
 	size_t start = 0, end = 0;
+
+	uint16_t i = 1;
 	while((end = string.find(separator, start)) != std::string::npos)
 	{
 		std::string t = string.substr(start, end - start);
@@ -377,6 +379,10 @@ StringVec explodeString(const std::string& string, const std::string& separator,
 
 		returnVector.push_back(t);
 		start = end + separator.size();
+
+		++i;
+		if(limit > 0 && i > limit)
+			break;
 	}
 
 	returnVector.push_back(string.substr(start));
