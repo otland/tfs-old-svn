@@ -536,6 +536,7 @@ ReturnValue Actions::internalUseItem(Player* player, const Position& pos, uint8_
 	if(it.transformUseTo)
 	{
 		g_game.transformItem(item, it.transformUseTo);
+		g_game.startDecay(item);
 		return RET_NOERROR;
 	}
 
