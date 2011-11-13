@@ -353,7 +353,7 @@ bool ProtocolGame::connect(uint32_t playerId, OperatingSystem_t operatingSystem,
 	player->client = this;
 	player->isConnecting = false;
 
-	Dispatcher::getInstance().addTask(createTask(boost::bind(&Player::sendCreatureAppear, player, player)));
+	player->sendCreatureAppear(player);
 	player->setOperatingSystem(operatingSystem);
 	player->setClientVersion(version);
 
