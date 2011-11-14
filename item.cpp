@@ -177,7 +177,7 @@ Item::Item(const uint16_t type, uint16_t amount/* = 0*/):
 	setItemCount(1);
 	setDefaultDuration();
 
-	const ItemType& it = items[id];
+	const ItemType& it = items[type];
 	if(it.isFluidContainer() || it.isSplash())
 		setFluidType(amount);
 	else if(it.stackable)
@@ -275,13 +275,10 @@ bool Item::floorChange(FloorChange_t change/* = CHANGE_NONE*/) const
 
 Player* Item::getHoldingPlayer()
 {
-	Cylinder* p = getParent();
-	while(p)
+	for(Cylinder* p = getParent(); p; p = p->getParent())
 	{
 		if(p->getCreature())
 			return p->getCreature()->getPlayer();
-
-		p = p->getParent();
 	}
 
 	return NULL;
