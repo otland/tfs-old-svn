@@ -140,13 +140,13 @@
 	<monster name="Polar Bear" file="Bears/polar bear.xml"/>
 	<monster name="Undead Cavebear" file="Bears/undead cavebear.xml"/>
 
-	<!-- Beholders -->
-	<monster name="Beholder" file="Bonelords/bonelord.xml"/>
+	<!-- Bonelords -->
 	<monster name="Bonelord" file="Bonelords/bonelord.xml"/>
 	<monster name="Braindeath" file="Bonelords/braindeath.xml"/>
 	<monster name="Elder Beholder" file="Bonelords/elder bonelord.xml"/>
-	<monster name="Elder Bonelord" file="Bonelords/elder bonelord.xml"/>
 	<monster name="Gazer" file="Bonelords/gazer.xml"/>
+	<monster name="Beholder" file="Bonelords/bonelord.xml"/>
+	<monster name="Elder Bonelord" file="Bonelords/elder bonelord.xml"/>
 
 	<!-- Bio-Elementals -->
 	<monster name="Bog Raider" file="Bio-Elementals/bog raider.xml"/>
