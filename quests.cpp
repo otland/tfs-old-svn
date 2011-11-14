@@ -86,8 +86,11 @@ Quest::~Quest()
 
 bool Quest::isStarted(Player* player)
 {
-	if(!player)
-		return false;
+	for(MissionList::const_iterator it = missions.begin(); it != missions.end(); ++it)
+	{
+		if((*it)->isStarted(player))
+			return true;
+	}
 
 	std::string value;
 	player->getStorage(storageId, value);
