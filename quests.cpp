@@ -60,14 +60,17 @@ std::string Mission::getDescription(Player* player)
 {
 	std::string value;
 	player->getStorage(storageId, value);
-	if(atoi(value.c_str()) >= endValue)
-		return parseStorages(states.rbegin()->second, value, player);
-
-	for(int32_t i = endValue; i >= startValue; --i)
+	if(!states.empty())
 	{
-		player->getStorage(storageId, value);
-		if(atoi(value.c_str()) == i)
-			return parseStorages(states[i - startValue], value, player);
+		if(atoi(value.c_str()) >= endValue)
+			return parseStorages(states.rbegin()->second, value, player);
+
+		for(int32_t i = endValue; i >= startValue; --i)
+		{
+			player->getStorage(storageId, value);
+			if(atoi(value.c_str()) == i)
+				return parseStorages(states[i - startValue], value, player);
+		}
 	}
 
 	if(state.size())
@@ -219,28 +222,25 @@ bool Quests::parseQuestNode(xmlNodePtr p, bool checkDuplicate)
 
 		if(Mission* mission = new Mission(missionName, missionState, storageId, startValue, endValue))
 		{
-			if(missionState.empty())
+			// parse sub-states only if main is not set
+			for(xmlNodePtr stateNode = missionNode->children; stateNode; stateNode = stateNode->next)
 			{
-				// parse sub-states only if main is not set
-				for(xmlNodePtr stateNode = missionNode->children; stateNode; stateNode = stateNode->next)
+				if(xmlStrcmp(stateNode->name, (const xmlChar*)"missionstate"))
+					continue;
+
+				uint32_t missionId;
+				if(!readXMLInteger(stateNode, "id", intValue))
 				{
-					if(xmlStrcmp(stateNode->name, (const xmlChar*)"missionstate"))
-						continue;
-
-					uint32_t missionId;
-					if(!readXMLInteger(stateNode, "id", intValue))
-					{
-						std::clog << "[Warning - Quests::parseQuestNode] Missing missionId for mission state" << std::endl;
-						continue;
-					}
-
-					missionId = intValue;
-					std::string description;
-					if(readXMLString(stateNode, "description", strValue))
-						description = strValue;
-
-					mission->newState(missionId, description);
+					std::clog << "[Warning - Quests::parseQuestNode] Missing missionId for mission state" << std::endl;
+					continue;
 				}
+
+				missionId = intValue;
+				std::string description;
+				if(readXMLString(stateNode, "description", strValue))
+					description = strValue;
+
+				mission->newState(missionId, description);
 			}
 
 			quest->newMission(mission);
