@@ -60,9 +60,6 @@ std::string Mission::getDescription(Player* player)
 {
 	std::string value;
 	player->getStorage(storageId, value);
-	if(state.size())
-		return parseStorages(state, value, player);
-
 	if(atoi(value.c_str()) >= endValue)
 		return parseStorages(states.rbegin()->second, value, player);
 
@@ -72,6 +69,9 @@ std::string Mission::getDescription(Player* player)
 		if(atoi(value.c_str()) == i)
 			return parseStorages(states[i - startValue], value, player);
 	}
+
+	if(state.size())
+		return parseStorages(state, value, player);
 
 	return "Couldn't retrieve any mission description, please report to a gamemaster.";
 }
