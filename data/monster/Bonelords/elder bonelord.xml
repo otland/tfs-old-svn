@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<monster name="Elder Beholder" nameDescription="a elder beholder" race="blood" experience="280" speed="270" manacost="0">
+<monster name="Elder Bonelord" nameDescription="a elder bonelord" race="blood" experience="280" speed="270" manacost="0">
 	<health now="1100" max="1100"/>
 	<look type="108" corpse="6037"/>
 	<targetchange interval="5000" chance="8"/>
