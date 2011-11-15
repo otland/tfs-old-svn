@@ -10526,8 +10526,6 @@ int32_t LuaInterface::luaGetItemParent(lua_State* L)
 		pushThing(L, container, env->addThing(container));
 	else if(Creature* creature = item->getParent()->getCreature())
 		pushThing(L, creature, env->addThing(creature));
-	else 
-		
 	else
 		pushThing(L, NULL, 0);
 
