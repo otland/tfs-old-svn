@@ -886,13 +886,12 @@ bool Player::canWalkthrough(const Creature* creature) const
 	if(!player)
 		return false;
 
-	if((((g_game.getWorldType() == WORLDTYPE_OPTIONAL &&
+	if(((g_game.getWorldType() == WORLDTYPE_OPTIONAL &&
 #ifdef __WAR_SYSTEM__
 		!player->isEnemy(this, true) &&
 #endif
-		player->getVocation()->isAttackable()) || player->getTile()->hasFlag(TILESTATE_PROTECTIONZONE) || (player->getVocation()->isAttackable()
-		&& player->getLevel() < (uint32_t)g_config.getNumber(ConfigManager::PROTECTION_LEVEL))) && player->getTile()->ground &&
-		Item::items[player->getTile()->ground->getID()].walkStack) && (!player->hasCustomFlag(PlayerCustomFlag_GamemasterPrivileges)
+		player->isAttackable()) || player->getTile()->hasFlag(TILESTATE_PROTECTIONZONE) || !player->isAttackable()) && player->getTile()->ground
+		&& Item::items[player->getTile()->ground->getID()].walkStack && (!player->hasCustomFlag(PlayerCustomFlag_GamemasterPrivileges)
 		|| player->getAccess() <= getAccess()))
 		return true;
 
@@ -4096,7 +4095,8 @@ bool Player::isImmune(ConditionType_t type) const
 
 bool Player::isAttackable() const
 {
-	return (!hasFlag(PlayerFlag_CannotBeAttacked) && !isAccountManager());
+	uint32_t protLevel = g_config.getNumber(ConfigManager::PROTECTION_LEVEL);
+	return !hasFlag(PlayerFlag_CannotBeAttacked) && !isAccountManager() && vocation->isAttackable() && level >= protLevel;
 }
 
 void Player::changeHealth(int32_t healthChange)

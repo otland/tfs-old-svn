@@ -745,7 +745,7 @@ enum PlayerCustomFlags
 	PlayerCustomFlag_CanLoginMultipleCharacters,//2^11 = 2048 (account flag)
 	PlayerCustomFlag_CanLogoutAnytime,			//2^12 = 4096 (account flag)
 	PlayerCustomFlag_HideLevel,					//2^13 = 8192
-	PlayerCustomFlag_IsProtected,				//2^14 = 16384
+	PlayerCustomFlag_HasFullLight,				//2^14 = 16384
 	PlayerCustomFlag_IsImmune,					//2^15 = 32768
 	PlayerCustomFlag_NotGainSkull,				//2^16 = 65536
 	PlayerCustomFlag_NotGainUnjustified,		//2^17 = 131072
@@ -757,7 +757,6 @@ enum PlayerCustomFlags
 	PlayerCustomFlag_CanWearAllAddons,			//2^23 = 8388608
 	PlayerCustomFlag_IsWalkable,				//2^24 = 16777216
 	PlayerCustomFlag_CanUseAllMounts,			//2^25 = 33554432
-	PlayerCustomFlag_HasFullLight,				//2^26 = 67108864
 
 	PlayerCustomFlag_LastFlag
 };

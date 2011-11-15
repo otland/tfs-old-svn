@@ -68,15 +68,15 @@ class Monster : public Creature
 		virtual int32_t getArmor() const {return mType->armor;}
 		virtual int32_t getDefense() const {return mType->defense;}
 		virtual MonsterType* getMonsterType() const {return mType;}
-		virtual bool isPushable() const {return mType->pushable && (baseSpeed > 0);}
-		virtual bool isAttackable() const {return mType->isAttackable;}
+		virtual bool isPushable() const;
+		virtual bool isAttackable() const;
 		virtual bool isImmune(CombatType_t type) const;
 		bool isEliminable() const {return mType->eliminable;}
 
 		bool canPushItems() const {return mType->canPushItems;}
 		bool canPushCreatures() const {return mType->canPushCreatures;}
-		bool isHostile() const {return mType->isHostile;}
-		virtual bool isWalkable() const {return mType->isWalkable;}
+		bool isHostile() const;
+		virtual bool isWalkable() const;
 		virtual bool canSeeInvisibility() const {return Creature::isImmune(CONDITION_INVISIBLE);}
 		uint32_t getManaCost() const {return mType->manaCost;}
 		bool hasRecentBattle() const {return lastDamage && (uint64_t)OTSYS_TIME() < (lastDamage + 30000);}
@@ -117,7 +117,7 @@ class Monster : public Creature
 
 		bool isTarget(Creature* creature);
 		bool getIdleStatus() const {return isIdle;}
-		bool isFleeing() const {return getHealth() <= mType->runAwayHealth;}
+		bool isFleeing() const;
 
 		virtual BlockType_t blockHit(Creature* attacker, CombatType_t combatType, int32_t& damage,
 			bool checkDefense = false, bool checkArmor = false, bool reflect = true, bool field = false);

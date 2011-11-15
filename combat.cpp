@@ -384,15 +384,7 @@ bool Combat::isProtected(Player* attacker, Player* target)
 	if(attacker->getZone() == ZONE_HARDCORE && target->getZone() == ZONE_HARDCORE && g_config.getBool(ConfigManager::PVP_TILE_IGNORE_PROTECTION))
 		return false;
 
-	if(attacker->hasCustomFlag(PlayerCustomFlag_IsProtected) || target->hasCustomFlag(PlayerCustomFlag_IsProtected)
-		|| !target->isAttackable() || !attacker->getVocation()->isAttackable() || !target->getVocation()->isAttackable())
-		return true;
-
-	uint32_t protectionLevel = g_config.getNumber(ConfigManager::PROTECTION_LEVEL);
-	if(target->getLevel() < protectionLevel || attacker->getLevel() < protectionLevel)
-		return true;
-
-	return attacker->checkLoginDelay(target->getID());
+	return ((!target->isAttackable() || !attacker->isAttackable()) && attacker->checkLoginDelay(target->getID()));
 }
 
 void Combat::setPlayerCombatValues(formulaType_t _type, double _mina, double _minb, double _maxa, double _maxb, double _minl, double _maxl, double _minm, double _maxm, int32_t _minc, int32_t _maxc)
