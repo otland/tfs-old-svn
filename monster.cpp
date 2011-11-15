@@ -1360,7 +1360,7 @@ bool Monster::isWalkable() const
 	return booleanString(value);
 }
 
-bool Monster::isWalkable() const
+bool Monster::isFleeing() const
 {
 	std::string value;
 	if(!getStorage("fleeing", value))
