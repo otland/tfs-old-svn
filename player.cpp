@@ -293,7 +293,7 @@ void Player::setConditionSuppressions(uint32_t conditions, bool remove)
 
 Item* Player::getWeapon(bool ignoreAmmo)
 {
-	if(weapon)
+	if(ignoreAmmo && weapon)
 		return weapon;
 
 	Item* item = NULL;
@@ -336,23 +336,24 @@ ItemVector Player::getWeapons() const
 		switch(item->getWeaponType())
 		{
 			case WEAPON_DIST:
+			{
 				if(item->getAmmoType() != AMMO_NONE)
-					break;
+				{
+					Item* ammoItem = getInventoryItem(SLOT_AMMO);
+					if(ammoItem && ammoItem->getAmmoType() == item->getAmmoType())
+						item = ammoItem;
+					else
+						break;
+				}
+			}
 
-			case WEAPON_SWORD:
-			case WEAPON_CLUB:
-			case WEAPON_AXE:
-			case WEAPON_FIST:
-			case WEAPON_WAND:
+			default:
 			{
 				if(g_weapons->getWeapon(item))
 					weapons.push_back(item);
 
 				break;
 			}
-
-			default:
-				break;
 		}
 	}
 
