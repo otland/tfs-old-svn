@@ -343,7 +343,7 @@ ItemVector Player::getWeapons() const
 				if(item->getAmmoType() != AMMO_NONE)
 				{
 					Item* ammoItem = getInventoryItem(SLOT_AMMO);
-					if(ammoItem && ammoItem->getAmmoType() == item->getAmmoType())
+					if(ammoItem && !ammoItem->isRemoved() && ammoItem->getAmmoType() == item->getAmmoType())
 						item = ammoItem;
 					else
 						break;
