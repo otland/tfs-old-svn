@@ -754,8 +754,11 @@ function getItemHolder(uid)
 	local parent = getItemParent(uid)
 	while(true)
 		local tmp = getItemParent(parent)
-		if(tmp.itemid > 1) then
+		if(tmp.uid ~= 0) then
 			parent = tmp
+			if(tmp.itemid == 1) then -- a creature
+				break
+			end
 		else
 			break
 		end
