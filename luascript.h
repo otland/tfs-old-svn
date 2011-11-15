@@ -656,6 +656,7 @@ class LuaInterface
 		static int32_t luaDoExecuteRaid(lua_State* L);
 		static int32_t luaDoReloadInfo(lua_State* L);
 		static int32_t luaDoSaveServer(lua_State* L);
+		static int32_t luaDoSaveHouse(lua_State* L);
 		static int32_t luaDoCleanHouse(lua_State* L);
 		static int32_t luaDoCleanMap(lua_State* L);
 		static int32_t luaDoRefreshMap(lua_State* L);

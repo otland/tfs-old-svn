@@ -39,9 +39,11 @@ enum CreatureEventType_t
 	CREATURE_EVENT_TRADE_ACCEPT,
 	CREATURE_EVENT_TEXTEDIT,
 	CREATURE_EVENT_REPORTBUG,
+	CREATURE_EVENT_SPAWN,
 	CREATURE_EVENT_THINK,
 	CREATURE_EVENT_STATSCHANGE,
 	CREATURE_EVENT_COMBAT_AREA,
+	CREATURE_EVENT_THROW,
 	CREATURE_EVENT_PUSH,
 	CREATURE_EVENT_TARGET,
 	CREATURE_EVENT_FOLLOW,
@@ -109,6 +111,7 @@ class CreatureEvent : public Event
 		void clearEvent();
 
 		//scripting
+		uint32_t executeSpawn(Creature* creature);
 		uint32_t executeLogin(Player* player);
 		uint32_t executeLogout(Player* player, bool forceLogout);
 		uint32_t executeChannelJoin(Player* player, uint16_t channelId, UsersMap usersMap);
@@ -126,7 +129,8 @@ class CreatureEvent : public Event
 		uint32_t executeOutfit(Creature* creature, const Outfit_t& old, const Outfit_t& current);
 		uint32_t executeStatsChange(Creature* creature, Creature* attacker, StatsChange_t type, CombatType_t combat, int32_t value);
 		uint32_t executeCombatArea(Creature* creature, Tile* tile, bool isAggressive);
-		uint32_t executePush(Player* player, Creature* target);
+		uint32_t executePush(Player* player, Creature* target, Tile* tile);
+		uint32_t executeThrow(Player* player, Item* item, const Position& fromPosition, const Position& toPosition);
 		uint32_t executeTarget(Creature* creature, Creature* target);
 		uint32_t executeFollow(Creature* creature, Creature* target);
 		uint32_t executeCombat(Creature* creature, Creature* target);
