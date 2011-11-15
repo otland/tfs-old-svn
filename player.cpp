@@ -890,7 +890,7 @@ bool Player::canWalkthrough(const Creature* creature) const
 #ifdef __WAR_SYSTEM__
 		!player->isEnemy(this, true) &&
 #endif
-		player->isAttackable()) || player->getTile()->hasFlag(TILESTATE_PROTECTIONZONE) || !player->isAttackable()) && player->getTile()->ground
+		!player->isProtected()) || player->getTile()->hasFlag(TILESTATE_PROTECTIONZONE) || player->isProtected()) && player->getTile()->ground
 		&& Item::items[player->getTile()->ground->getID()].walkStack && (!player->hasCustomFlag(PlayerCustomFlag_GamemasterPrivileges)
 		|| player->getAccess() <= getAccess()))
 		return true;
@@ -1931,7 +1931,7 @@ void Player::addManaSpent(uint64_t amount, bool useMultiplier/* = true*/)
 
 void Player::addExperience(uint64_t exp)
 {
-	bool attackable = isAttackable();
+	bool attackable = isProtected();
 	uint32_t prevLevel = level;
 
 	uint64_t nextLevelExp = Player::getExpForLevel(level + 1);
@@ -1980,7 +1980,7 @@ void Player::addExperience(uint64_t exp)
 		s << "You advanced from Level " << prevLevel << " to Level " << level << ".";
 
 		sendTextMessage(MSG_EVENT_ADVANCE, s.str());
-		if(isAttackable() && !attackable)
+		if(isProtected() && !attackable)
 			g_game.updateCreatureWalkthrough(this);
 	}
 
@@ -1996,7 +1996,7 @@ void Player::addExperience(uint64_t exp)
 void Player::removeExperience(uint64_t exp, bool updateStats/* = true*/)
 {
 	uint32_t prevLevel = level;
-	bool attackable = isAttackable();
+	bool attackable = isProtected();
 
 	experience -= std::min(exp, experience);
 	while(level > 1 && experience < Player::getExpForLevel(level))
@@ -2024,7 +2024,7 @@ void Player::removeExperience(uint64_t exp, bool updateStats/* = true*/)
 		s << "You were downgraded from Level " << prevLevel << " to Level " << level << ".";
 
 		sendTextMessage(MSG_EVENT_ADVANCE, s.str());
-		if(!isAttackable() && attackable)
+		if(!isProtected() && attackable)
 			g_game.updateCreatureWalkthrough(this);
 	}
 
@@ -4099,10 +4099,14 @@ bool Player::isImmune(ConditionType_t type) const
 	return hasCustomFlag(PlayerCustomFlag_IsImmune) || Creature::isImmune(type);
 }
 
+bool Player::isProtected() const
+{
+	return !vocation->isAttackable() || hasCustomFlag(PlayerFlag_IsProtected) || level < g_config.getNumber(ConfigManager::PROTECTION_LEVEL);
+}
+
 bool Player::isAttackable() const
 {
-	uint32_t protLevel = g_config.getNumber(ConfigManager::PROTECTION_LEVEL);
-	return !hasFlag(PlayerFlag_CannotBeAttacked) && !isAccountManager() && vocation->isAttackable() && level >= protLevel;
+	return !hasFlag(PlayerFlag_CannotBeAttacked) && !isAccountManager();
 }
 
 void Player::changeHealth(int32_t healthChange)

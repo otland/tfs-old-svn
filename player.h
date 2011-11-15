@@ -426,9 +426,11 @@ class Player : public Creature, public Cylinder
 
 		//combat functions
 		virtual bool setAttackedCreature(Creature* creature);
+		bool hasShield() const;
+
 		bool isImmune(CombatType_t type) const;
 		bool isImmune(ConditionType_t type) const;
-		bool hasShield() const;
+		bool isProtected() const;
 		virtual bool isAttackable() const;
 
 		virtual void changeHealth(int32_t healthChange);
