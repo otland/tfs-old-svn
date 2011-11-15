@@ -735,3 +735,17 @@ function doPlayerAddExpEx(cid, amount)
 
 	return true
 end
+
+function getItemTopParent(uid)
+	local parent = getItemParent(uid)
+	while(true)
+		local tmp = getItemParent(parent)
+		if(tmp.itemid > 1) then
+			parent = tmp
+		else
+			break
+		end
+	end
+
+	return parent
+end
