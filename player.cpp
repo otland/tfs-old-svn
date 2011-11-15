@@ -1931,7 +1931,9 @@ void Player::addManaSpent(uint64_t amount, bool useMultiplier/* = true*/)
 
 void Player::addExperience(uint64_t exp)
 {
+	bool attackable = isAttackable();
 	uint32_t prevLevel = level;
+
 	uint64_t nextLevelExp = Player::getExpForLevel(level + 1);
 	if(Player::getExpForLevel(level) > nextLevelExp)
 	{
@@ -1970,16 +1972,15 @@ void Player::addExperience(uint64_t exp)
 		if(party)
 			party->updateSharedExperience();
 
-		std::stringstream s;
-		s << "You advanced from Level " << prevLevel << " to Level " << level << ".";
-		sendTextMessage(MSG_EVENT_ADVANCE, s.str());
-
 		CreatureEventList advanceEvents = getCreatureEvents(CREATURE_EVENT_ADVANCE);
 		for(CreatureEventList::iterator it = advanceEvents.begin(); it != advanceEvents.end(); ++it)
 			(*it)->executeAdvance(this, SKILL__LEVEL, prevLevel, level);
 
-		uint32_t protLevel = g_config.getNumber(ConfigManager::PROTECTION_LEVEL);
-		if(vocation->isAttackable() && level >= protLevel && prevLevel < protLevel)
+		std::stringstream s;
+		s << "You advanced from Level " << prevLevel << " to Level " << level << ".";
+
+		sendTextMessage(MSG_EVENT_ADVANCE, s.str());
+		if(isAttackable() && !attackable)
 			g_game.updateCreatureWalkthrough(this);
 	}
 
@@ -1995,6 +1996,8 @@ void Player::addExperience(uint64_t exp)
 void Player::removeExperience(uint64_t exp, bool updateStats/* = true*/)
 {
 	uint32_t prevLevel = level;
+	bool attackable = isAttackable();
+
 	experience -= std::min(exp, experience);
 	while(level > 1 && experience < Player::getExpForLevel(level))
 	{
@@ -2013,12 +2016,15 @@ void Player::removeExperience(uint64_t exp, bool updateStats/* = true*/)
 			g_game.addCreatureHealth(this);
 		}
 
+		CreatureEventList advanceEvents = getCreatureEvents(CREATURE_EVENT_ADVANCE);
+		for(CreatureEventList::iterator it = advanceEvents.begin(); it != advanceEvents.end(); ++it)
+			(*it)->executeAdvance(this, SKILL__LEVEL, prevLevel, level);
+
 		std::stringstream s;
 		s << "You were downgraded from Level " << prevLevel << " to Level " << level << ".";
-		sendTextMessage(MSG_EVENT_ADVANCE, s.str());
 
-		uint32_t protLevel = g_config.getNumber(ConfigManager::PROTECTION_LEVEL);
-		if(vocation->isAttackable() && level < protLevel && prevLevel >= protLevel)
+		sendTextMessage(MSG_EVENT_ADVANCE, s.str());
+		if(!isAttackable() && attackable)
 			g_game.updateCreatureWalkthrough(this);
 	}
 
