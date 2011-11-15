@@ -293,7 +293,7 @@ void Player::setConditionSuppressions(uint32_t conditions, bool remove)
 
 Item* Player::getWeapon(bool ignoreAmmo)
 {
-	if(ignoreAmmo && weapon)
+	if(!ignoreAmmo && weapon)
 		return weapon;
 
 	Item* item = NULL;
