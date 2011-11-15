@@ -5041,14 +5041,15 @@ int32_t LuaInterface::luaGetTileInfo(lua_State* L)
 
 		setFieldBool(L, "protection", tile->hasFlag(TILESTATE_PROTECTIONZONE));
 		setFieldBool(L, "optional", tile->hasFlag(TILESTATE_OPTIONALZONE));
-		setFieldBool(L, "nologout", tile->hasFlag(TILESTATE_NOLOGOUT));
 		setFieldBool(L, "hardcore", tile->hasFlag(TILESTATE_HARDCOREZONE));
+		setFieldBool(L, "noLogout", tile->hasFlag(TILESTATE_NOLOGOUT));
 		setFieldBool(L, "refresh", tile->hasFlag(TILESTATE_REFRESH));
 		setFieldBool(L, "trashed", tile->hasFlag(TILESTATE_TRASHED));
-		setFieldBool(L, "house", tile->hasFlag(TILESTATE_HOUSE));
-		setFieldBool(L, "bed", tile->hasFlag(TILESTATE_BED));
-		setFieldBool(L, "depot", tile->hasFlag(TILESTATE_DEPOT));
+		setFieldBool(L, "magicField", tile->hasFlag(TILESTATE_MAGICFIELD));
 		setFieldBool(L, "trashHolder", tile->hasFlag(TILESTATE_TRASHHOLDER));
+		setFieldBool(L, "mailbox", tile->hasFlag(TILESTATE_MAILBOX));
+		setFieldBool(L, "depot", tile->hasFlag(TILESTATE_DEPOT));
+		setFieldBool(L, "bed", tile->hasFlag(TILESTATE_BED));
 
 		createTable(L, "floorChange");
 		for(int32_t i = CHANGE_FIRST; i <= CHANGE_LAST; ++i)
@@ -5066,6 +5067,8 @@ int32_t LuaInterface::luaGetTileInfo(lua_State* L)
 		setField(L, "items", tile->getItemCount());
 		setField(L, "topItems", tile->getTopItemCount());
 		setField(L, "downItems", tile->getDownItemCount());
+		if(House* house = tile->getHouse())
+			setField(L, "house", house->getId());
 	}
 	else
 	{
