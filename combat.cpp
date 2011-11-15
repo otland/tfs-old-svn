@@ -1002,7 +1002,14 @@ void ValueCallback::getMinMaxValues(Player* player, int32_t& min, int32_t& max, 
 				if(useCharges && weapon->hasCharges() && g_config.getBool(ConfigManager::REMOVE_WEAPON_CHARGES))
 					g_game.transformItem(weapon, weapon->getID(), std::max(0, weapon->getCharges() - 1));
 
-				lua_pushnumber(L, weapon->getAttack() + weapon->getExtraAttack());
+				uint32_t attack = weapon->getAttack() + weapon->getExtraAttack();
+				if(weapon->getWeaponType() == WEAPON_AMMO)
+				{
+					if(Item* bow = player->getWeapon(true))
+						attack += bow->getAttack() + bow->getExtraAttack();
+				}
+
+				lua_pushnumber(L, attack);
 			}
 			else
 			{
