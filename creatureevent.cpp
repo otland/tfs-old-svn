@@ -977,9 +977,9 @@ uint32_t CreatureEvent::executeSpawn(Creature* creature)
 		ScriptEnviroment* env = m_interface->getEnv();
 		if(m_scripted == EVENT_SCRIPT_BUFFER)
 		{
-			env->setRealPos(player->getPosition());
+			env->setRealPos(creature->getPosition());
 			std::stringstream scriptstream;
-			scriptstream << "local cid = " << env->addThing(player) << std::endl;
+			scriptstream << "local cid = " << env->addThing(creature) << std::endl;
 
 			if(m_scriptData)
 				scriptstream << *m_scriptData;
@@ -998,16 +998,16 @@ uint32_t CreatureEvent::executeSpawn(Creature* creature)
 		{
 			#ifdef __DEBUG_LUASCRIPTS__
 			char desc[35];
-			sprintf(desc, "%s", player->getName().c_str());
+			sprintf(desc, "%s", creature->getName().c_str());
 			env->setEvent(desc);
 			#endif
 
 			env->setScriptId(m_scriptId, m_interface);
-			env->setRealPos(player->getPosition());
+			env->setRealPos(creature->getPosition());
 
 			lua_State* L = m_interface->getState();
 			m_interface->pushFunction(m_scriptId);
-			lua_pushnumber(L, env->addThing(player));
+			lua_pushnumber(L, env->addThing(creature));
 
 			bool result = m_interface->callFunction(1);
 			m_interface->releaseEnv();
