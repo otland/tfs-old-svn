@@ -3581,7 +3581,7 @@ double Player::getGainedExperience(Creature* attacker) const
 
 	double attackerLevel = (double)attackerPlayer->getLevel(), min = g_config.getDouble(
 		ConfigManager::EFP_MIN_THRESHOLD), max = g_config.getDouble(ConfigManager::EFP_MAX_THRESHOLD);
-	if((min > 0 && level < (uint32_t)std::floor(attackerLevel * min)) || (max > 0 &&
+	if((min > 0.0 && level < (uint32_t)std::floor(attackerLevel * min)) || (max > 0.0 &&
 		level > (uint32_t)std::floor(attackerLevel * max)))
 		return 0;
 
