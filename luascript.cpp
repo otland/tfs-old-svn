@@ -10515,10 +10515,19 @@ int32_t LuaInterface::luaGetItemParent(lua_State* L)
 		return 1;
 	}
 
+	if(Tile* tile = item->getParent()->getTile())
+	{
+		if(tile->ground)
+			pushThing(L, tile->ground, env->addThing(tile->ground));
+		else
+			pushThing(L, NULL, 0);
+	}
 	if(Item* container = item->getParent()->getItem())
 		pushThing(L, container, env->addThing(container));
 	else if(Creature* creature = item->getParent()->getCreature())
 		pushThing(L, creature, env->addThing(creature));
+	else 
+		
 	else
 		pushThing(L, NULL, 0);
 

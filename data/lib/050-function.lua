@@ -740,6 +740,20 @@ function getItemTopParent(uid)
 	local parent = getItemParent(uid)
 	while(true)
 		local tmp = getItemParent(parent)
+		if(tmp.uid ~= 0) then
+			parent = tmp
+		else
+			break
+		end
+	end
+
+	return parent
+end
+
+function getItemHolder(uid)
+	local parent = getItemParent(uid)
+	while(true)
+		local tmp = getItemParent(parent)
 		if(tmp.itemid > 1) then
 			parent = tmp
 		else
