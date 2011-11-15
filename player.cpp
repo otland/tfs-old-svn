@@ -335,6 +335,9 @@ ItemVector Player::getWeapons() const
 
 		switch(item->getWeaponType())
 		{
+			case WEAPON_SHIELD:
+				break;
+
 			case WEAPON_DIST:
 			{
 				if(item->getAmmoType() != AMMO_NONE)
@@ -378,8 +381,8 @@ void Player::updateWeapon()
 
 WeaponType_t Player::getWeaponType()
 {
-	if(Item* item = getWeapon(false))
-		return item->getWeaponType();
+	if(weapon)
+		return weapon->getWeaponType();
 
 	return WEAPON_NONE;
 }
@@ -1774,7 +1777,7 @@ void Player::onThink(uint32_t interval)
 	if(timeNow - lastPing >= 5000)
 	{
 		lastPing = timeNow;
-		if(client)
+		if(hasClient())
 			client->sendPing();
 		else if(g_config.getBool(ConfigManager::STOP_ATTACK_AT_EXIT))
 			setAttackedCreature(NULL);
@@ -3543,8 +3546,7 @@ void Player::doAttacking(uint32_t)
 		return;
 	}
 
-	Item* item = getWeapon(false);
-	if(const Weapon* _weapon = g_weapons->getWeapon(item))
+	if(const Weapon* _weapon = g_weapons->getWeapon(weapon))
 	{
 		if(_weapon->interruptSwing() && !canDoAction())
 		{
@@ -3554,7 +3556,7 @@ void Player::doAttacking(uint32_t)
 		}
 		else
 		{
-			if((!_weapon->hasExhaustion() || !hasCondition(CONDITION_EXHAUST)) && _weapon->useWeapon(this, item, attackedCreature))
+			if((!_weapon->hasExhaustion() || !hasCondition(CONDITION_EXHAUST)) && _weapon->useWeapon(this, weapon, attackedCreature))
 				lastAttack = OTSYS_TIME();
 
 			updateWeapon();

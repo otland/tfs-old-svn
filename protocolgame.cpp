@@ -278,7 +278,7 @@ bool ProtocolGame::login(const std::string& name, uint32_t id, const std::string
 		}
 
 		g_chat.removeUserFromAllChannels(_player);
-		_player->disconnect();
+		_player->client->disconnect();
 		_player->isConnecting = true;
 
 		addRef();

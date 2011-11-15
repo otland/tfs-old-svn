@@ -235,7 +235,6 @@ class Player : public Creature, public Cylinder
 
 		bool hasClient() const {return (client != NULL);}
 		bool isVirtual() const {return (getID() == 0);}
-		void disconnect() {if(client) client->disconnect();}
 		uint32_t getIP() const;
 		bool canOpenCorpse(uint32_t ownerId);
 
