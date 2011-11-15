@@ -149,7 +149,7 @@ void Monster::onCreatureAppear(const Creature* creature)
 	{
 		CreatureEventList spawnEvents = getCreatureEvents(CREATURE_EVENT_SPAWN);
 		for(CreatureEventList::iterator it = spawnEvents.begin(); it != spawnEvents.end(); ++it)
-			(*it)->executeOnSpawn(this);
+			(*it)->executeSpawn(this);
 
 		//We just spawned lets look around to see who is there.
 		if(isSummon())

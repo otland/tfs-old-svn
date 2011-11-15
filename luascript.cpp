@@ -3442,7 +3442,7 @@ int32_t LuaInterface::luaGetSearchString(lua_State* L)
 	popPosition(L, fromPos);
 	if(!toPos.x || !toPos.y || !fromPos.x || !fromPos.y)
 	{
-		errorEx("wrong position(s) specified.");
+		errorEx("Wrong position(s) specified");
 		lua_pushboolean(L, false);
 	}
 	else
@@ -3567,7 +3567,7 @@ int32_t LuaInterface::luaDoCreatureSay(lua_State* L)
 	uid = popNumber(L);
 	if(params > 5 && (!pos.x || !pos.y))
 	{
-		errorEx("Invalid position specified.");
+		errorEx("Invalid position specified");
 		lua_pushboolean(L, false);
 		return 1;
 	}
@@ -3741,7 +3741,7 @@ int32_t LuaInterface::luaDoCreatureSetSpeakType(lua_State* L)
 		if(!((type >= MSG_SPEAK_FIRST && type <= MSG_SPEAK_LAST) ||
 			(type >= MSG_SPEAK_MONSTER_FIRST && type <= MSG_SPEAK_MONSTER_LAST)))
 		{
-			errorEx("Invalid speak type!");
+			errorEx("Invalid speak type");
 			lua_pushboolean(L, false);
 			return 1;
 		}
@@ -3907,7 +3907,7 @@ int32_t LuaInterface::luaDoPlayerAddItem(lua_State* L)
 	uint32_t itemId = popNumber(L);
 	if(slot > SLOT_AMMO)
 	{
-		errorEx("Invalid slot.");
+		errorEx("Invalid slot");
 		lua_pushboolean(L, false);
 		return 1;
 	}
@@ -3988,7 +3988,7 @@ int32_t LuaInterface::luaDoPlayerAddItemEx(lua_State* L)
 	uint32_t uid = (uint32_t)popNumber(L);
 	if(slot > SLOT_AMMO)
 	{
-		errorEx("Invalid slot.");
+		errorEx("Invalid slot");
 		lua_pushboolean(L, false);
 		return 1;
 	}
@@ -5858,7 +5858,7 @@ int32_t LuaInterface::luaCreateCombatObject(lua_State* L)
 	ScriptEnviroment* env = getEnv();
 	if(env->getScriptId() != EVENT_ID_LOADING)
 	{
-		errorEx("This function can only be used while loading the script.");
+		errorEx("This function can only be used while loading the script");
 		lua_pushboolean(L, false);
 		return 1;
 	}
@@ -5880,7 +5880,7 @@ bool LuaInterface::getArea(lua_State* L, std::list<uint32_t>& list, uint32_t& ro
 	rows = 0;
 	if(!lua_istable(L, -1))
 	{
-		errorEx("Object on the stack is not a table.");
+		errorEx("Object on the stack is not a table");
 		return false;
 	}
 
@@ -5908,7 +5908,7 @@ int32_t LuaInterface::luaCreateCombatArea(lua_State* L)
 	ScriptEnviroment* env = getEnv();
 	if(env->getScriptId() != EVENT_ID_LOADING)
 	{
-		errorEx("This function can only be used while loading the script.");
+		errorEx("This function can only be used while loading the script");
 		lua_pushboolean(L, false);
 		return 1;
 	}
@@ -5978,7 +5978,7 @@ int32_t LuaInterface::luaSetCombatArea(lua_State* L)
 	ScriptEnviroment* env = getEnv();
 	if(env->getScriptId() != EVENT_ID_LOADING)
 	{
-		errorEx("This function can only be used while loading the script.");
+		errorEx("This function can only be used while loading the script");
 		lua_pushboolean(L, false);
 		return 1;
 	}
@@ -6044,7 +6044,7 @@ int32_t LuaInterface::luaSetCombatParam(lua_State* L)
 	ScriptEnviroment* env = getEnv();
 	if(env->getScriptId() != EVENT_ID_LOADING)
 	{
-		errorEx("This function can only be used while loading the script.");
+		errorEx("This function can only be used while loading the script");
 		lua_pushboolean(L, false);
 		return 1;
 	}
@@ -6144,7 +6144,7 @@ int32_t LuaInterface::luaSetCombatCallBack(lua_State* L)
 	ScriptEnviroment* env = getEnv();
 	if(env->getScriptId() != EVENT_ID_LOADING)
 	{
-		errorEx("This function can only be used while loading the script.");
+		errorEx("This function can only be used while loading the script");
 		lua_pushboolean(L, false);
 		return 1;
 	}
@@ -6163,7 +6163,7 @@ int32_t LuaInterface::luaSetCombatCallBack(lua_State* L)
 	CallBack* callback = combat->getCallback(key);
 	if(!callback)
 	{
-		errorEx(asString<uint32_t>(key) + " is not a valid callback key.");
+		errorEx(asString<uint32_t>(key) + " is not a valid callback key");
 		lua_pushboolean(L, false);
 		return 1;
 	}
@@ -6185,7 +6185,7 @@ int32_t LuaInterface::luaSetCombatFormula(lua_State* L)
 	ScriptEnviroment* env = getEnv();
 	if(env->getScriptId() != EVENT_ID_LOADING)
 	{
-		errorEx("This function can only be used while loading the script.");
+		errorEx("This function can only be used while loading the script");
 		lua_pushboolean(L, false);
 		return 1;
 	}
@@ -8744,7 +8744,7 @@ int32_t LuaInterface::luaAddEvent(lua_State* L)
 	int32_t parameters = lua_gettop(L);
 	if(!lua_isfunction(L, -parameters)) //-parameters means the first parameter from left to right
 	{
-		errorEx("Callback parameter should be a function.");
+		errorEx("Callback parameter should be a function");
 		lua_pushboolean(L, false);
 		return 1;
 	}
@@ -10021,7 +10021,7 @@ int32_t LuaInterface::luaDoExecuteRaid(lua_State* L)
 	Raid* raid = Raids::getInstance()->getRaidByName(raidName);
 	if(!raid || !raid->isLoaded())
 	{
-		errorEx("Raid with name " + raidName + " does not exists.");
+		errorEx("Raid with name " + raidName + " does not exists");
 		lua_pushboolean(L, false);
 		return 1;
 	}
@@ -10064,7 +10064,7 @@ int32_t LuaInterface::luaDoSaveServer(lua_State* L)
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaDoSaveHouse(lua_State* L)
+int32_t LuaInterface::luaDoSaveHouse(lua_State* L)
 {
 	//doSaveHouse({list})
 	IntegerVec list;
@@ -10459,7 +10459,7 @@ int32_t LuaInterface::luaDoItemEraseAttribute(lua_State* L)
 	bool ret = true;
 	if(key == "uid")
 	{
-		errorEx("Attempt to erase protected key \"uid\".");
+		errorEx("Attempt to erase protected key \"uid\"");
 		ret = false;
 	}
 	else if(key != "aid")
@@ -11135,7 +11135,7 @@ int32_t LuaInterface::luaL_dodirectory(lua_State* L)
 	std::string dir = popString(L);
 	if(!getEnv()->getInterface()->loadDirectory(dir, NULL, recursively))
 	{
-		errorEx("Failed to load directory " + dir + ".");
+		errorEx("Failed to load directory " + dir);
 		lua_pushboolean(L, false);
 	}
 	else
