@@ -294,8 +294,8 @@ bool IOMapSerialize::saveHouseItems(Database* db, House* house)
 			return false;
 
 		DBInsert stmt(db);
-		saveHouseBinaryTileBased(stmt, house);
-		return stmt.execute();
+		stmt.setQuery("INSERT INTO `tile_store` (`house_id`, `world_id`, `data`) VALUES ");
+		return saveHouseBinaryTileBased(db, stmt, house) && stmt.execute();
 	}
 	else if(config == "binary")
 	{
@@ -306,8 +306,8 @@ bool IOMapSerialize::saveHouseItems(Database* db, House* house)
 			return false;
 
 		DBInsert stmt(db);
-		saveHouseBinary(stmt, house);
-		return stmt.execute();
+		stmt.setQuery("INSERT INTO `house_data` (`house_id`, `world_id`, `data`) VALUES ");
+		return saveHouseBinary(db, stmt, house) && stmt.execute();
 	}
 
 	DBQuery query;
@@ -540,7 +540,7 @@ bool IOMapSerialize::saveMapBinary(Map*)
 	DBInsert stmt(db);
 	stmt.setQuery("INSERT INTO `house_data` (`house_id`, `world_id`, `data`) VALUES ");
  	for(HouseMap::iterator it = Houses::getInstance()->getHouseBegin(); it != Houses::getInstance()->getHouseEnd(); ++it)
-		saveHouseBinary(stmt, it->second);
+		saveHouseBinary(db, stmt, it->second);
 
 	query.str("");
 	if(!stmt.execute())
@@ -633,7 +633,7 @@ bool IOMapSerialize::saveMapBinaryTileBased(Map*)
 	DBInsert stmt(db);
 	stmt.setQuery("INSERT INTO `tile_store` (`house_id`, `world_id`, `data`) VALUES ");
  	for(HouseMap::iterator it = Houses::getInstance()->getHouseBegin(); it != Houses::getInstance()->getHouseEnd(); ++it)
-		saveHouseBinaryTileBased(stmt, it->second);
+		saveHouseBinaryTileBased(db, stmt, it->second);
 
 	query.str("");
 	if(!stmt.execute())
@@ -651,7 +651,7 @@ bool IOMapSerialize::saveHouseRelational(Database* db, House* house, uint32_t& t
 	return true;
 }
 
-bool IOMapSerialize::saveHouseBinary(DBInsert& stmt, House* house)
+bool IOMapSerialize::saveHouseBinary(Database* db, DBInsert& stmt, House* house)
 {
 	PropWriteStream stream;
 	for(HouseTileList::iterator tit = house->getHouseTileBegin(); tit != house->getHouseTileEnd(); ++tit)
@@ -662,14 +662,16 @@ bool IOMapSerialize::saveHouseBinary(DBInsert& stmt, House* house)
 
 	uint32_t attributesSize = 0;
 	const char* attributes = stream.getStream(attributesSize);
-	query.str("");
+	if(!attributesSize)
+		return true;
 
-	query << it->second->getId() << ", " << g_config.getNumber(ConfigManager::WORLD_ID)
+	DBQuery query;
+	query << house->getId() << ", " << g_config.getNumber(ConfigManager::WORLD_ID)
 		<< ", " << db->escapeBlob(attributes, attributesSize);
 	return stmt.addRow(query);
 }
 
-bool IOMapSerialize::saveHouseBinaryTileBased(DBInsert& stmt, House* house)
+bool IOMapSerialize::saveHouseBinaryTileBased(Database* db, DBInsert& stmt, House* house)
 {
 	for(HouseTileList::iterator tit = house->getHouseTileBegin(); tit != house->getHouseTileEnd(); ++tit)
 	{
@@ -679,22 +681,20 @@ bool IOMapSerialize::saveHouseBinaryTileBased(DBInsert& stmt, House* house)
 
 		uint32_t attributesSize = 0;
 		const char* attributes = stream.getStream(attributesSize);
+		if(!attributesSize)
+			continue;
 
-		query.str("");
-		if(attributesSize > 0)
-		{
-			query << it->second->getId() << ", " << g_config.getNumber(ConfigManager::WORLD_ID)
-				<< ", " << db->escapeBlob(attributes, attributesSize);
-
-			if(!stmt.addRow(query))
-				return false;
-		}
+		DBQuery query;
+		query << house->getId() << ", " << g_config.getNumber(ConfigManager::WORLD_ID)
+			<< ", " << db->escapeBlob(attributes, attributesSize);
+		if(!stmt.addRow(query))
+			return false;
  	}
 
 	return true;
 }
 
-bool IOMapSerialize::loadItems(Database*, DBResult* result, Cylinder* parent, bool depotTransfer/* = false*/)
+bool IOMapSerialize::loadItems(DBResult* result, Cylinder* parent, bool depotTransfer/* = false*/)
 {
 	ItemMap itemMap;
 	Tile* tile = NULL;
