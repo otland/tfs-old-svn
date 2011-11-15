@@ -283,7 +283,7 @@ int32_t Weapon::playerWeaponCheck(Player* player, Creature* target) const
 	if(playerPos.z != targetPos.z)
 		return 0;
 
-	const ItemType& it = Item::items[getID()];
+	const ItemType& it = Item::items[id];
 	int32_t range = it.shootRange;
 	if(it.weaponType == WEAPON_AMMO)
 		range = player->getShootRange();
@@ -659,7 +659,7 @@ WeaponDistance::WeaponDistance(LuaInterface* _interface):
 	Weapon(_interface)
 {
 	hitChance = -1;
-	maxHitChance = breakChance = ammoAttackValue = 0;
+	maxHitChance = breakChance = attack = 0;
 	swing = params.blockedByShield = false;
 }
 
@@ -683,7 +683,7 @@ bool WeaponDistance::configureWeapon(const ItemType& it)
 		ammoAction = it.ammoAction;
 
 	params.effects.distance = it.shootType;
-	ammoAttackValue = it.attack;
+	attack = it.attack;
 	return Weapon::configureWeapon(it);
 }
 
@@ -843,12 +843,12 @@ bool WeaponDistance::useWeapon(Player* player, Item* item, Creature* target) con
 			Tile* tmpTile = NULL;
 			for(std::vector<std::pair<int32_t, int32_t> >::iterator it = destList.begin(); it != destList.end(); ++it)
 			{
-				if((tmpTile = g_game.getTile(destPos.x + it->first, destPos.y + it->second, destPos.z))
-					&& !tmpTile->hasProperty(IMMOVABLEBLOCKSOLID) && tmpTile->ground)
-				{
-					destTile = tmpTile;
-					break;
-				}
+				if(!(tmpTile = g_game.getTile(destPos.x + it->first, destPos.y + it->second, destPos.z))
+					|| tmpTile->hasProperty(IMMOVABLEBLOCKSOLID) || !tmpTile->ground)
+					continue;
+
+				destTile = tmpTile;
+				break;
 			}
 		}
 
@@ -873,7 +873,7 @@ void WeaponDistance::onUsedAmmo(Player* player, Item* item, Tile* destTile) cons
 
 int32_t WeaponDistance::getWeaponDamage(const Player* player, const Creature* target, const Item* item, bool maxDamage /*= false*/) const
 {
-	int32_t attackValue = ammoAttackValue;
+	int32_t attackValue = attack;
 	if(item->getWeaponType() == WEAPON_AMMO)
 	{
 		if(Item* bow = const_cast<Player*>(player)->getWeapon(true))

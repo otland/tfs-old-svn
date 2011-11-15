@@ -150,7 +150,7 @@ class WeaponDistance : public Weapon
 		virtual void onUsedAmmo(Player* player, Item* item, Tile* destTile) const;
 		virtual bool getSkillType(const Player* player, const Item* item, skills_t& skill, uint64_t& skillPoint) const;
 
-		int32_t hitChance, maxHitChance, breakChance, ammoAttackValue;
+		int32_t hitChance, maxHitChance, breakChance, attack;
 };
 
 class WeaponWand : public Weapon
