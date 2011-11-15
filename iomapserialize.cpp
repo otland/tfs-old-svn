@@ -363,7 +363,7 @@ bool IOMapSerialize::loadMapRelational(Map* map)
 						if(Player* player = g_game.getPlayerByGuidEx(house->getOwner()))
 						{
 							Depot* depot = player->getDepot(house->getTownId(), true);
-							loadItems(db, itemsResult, depot, true);
+							loadItems(itemsResult, depot, true);
 							if(player->isVirtual())
 							{
 								IOLoginData::getInstance()->savePlayer(player);
@@ -375,7 +375,7 @@ bool IOMapSerialize::loadMapRelational(Map* map)
 					{
 						Position pos(result->getDataInt("x"), result->getDataInt("y"), result->getDataInt("z"));
 						if(Tile* tile = map->getTile(pos))
-							loadItems(db, itemsResult, tile, false);
+							loadItems(itemsResult, tile, false);
 						else
 							std::clog << "[Error - IOMapSerialize::loadMapRelational] Unserialization"
 								<< " of invalid tile at position "<< pos << std::endl;
@@ -407,7 +407,7 @@ bool IOMapSerialize::loadMapRelational(Map* map)
 							if(Player* player = g_game.getPlayerByGuidEx(house->getOwner()))
 							{
 								Depot* depot = player->getDepot(house->getTownId(), true);
-								loadItems(db, itemsResult, depot, true);
+								loadItems(itemsResult, depot, true);
 								if(player->isVirtual())
 								{
 									IOLoginData::getInstance()->savePlayer(player);
@@ -416,7 +416,7 @@ bool IOMapSerialize::loadMapRelational(Map* map)
 							}
 						}
 						else
-							loadItems(db, itemsResult, (*it), false);
+							loadItems(itemsResult, (*it), false);
 
 						itemsResult->free();
 					}
