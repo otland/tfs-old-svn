@@ -6424,6 +6424,7 @@ int32_t LuaInterface::luaDoTargetCombatHealth(lua_State* L)
 		CombatParams params;
 		params.combatType = combatType;
 		params.effects.impact = effect;
+		params.isAggressive = combatType != COMBAT_HEALING;
 
 		Combat::doCombatHealth(creature, target, minChange, maxChange, params);
 		lua_pushboolean(L, true);
