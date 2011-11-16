@@ -1203,12 +1203,10 @@ bool Game::playerMoveCreature(uint32_t playerId, uint32_t movingCreatureId,
 				}
 			}
 
-			uint32_t protectionLevel = g_config.getNumber(ConfigManager::PROTECTION_LEVEL);
-			if(player->getLevel() < protectionLevel && player->getVocation()->isAttackable())
+			if(player->isProtected())
 			{
 				Player* movingPlayer = movingCreature->getPlayer();
-				if(movingPlayer && movingPlayer->getLevel() >= protectionLevel
-					&& movingPlayer->getVocation()->isAttackable())
+				if(!movingPlayer->isProtected())
 				{
 					player->sendCancelMessage(RET_NOTMOVABLE);
 					return false;
@@ -4366,7 +4364,7 @@ bool Game::combatBlockHit(CombatType_t combatType, Creature* attacker, Creature*
 
 	const Position& targetPos = target->getPosition();
 	const SpectatorVec& list = getSpectators(targetPos);
-	if(!target->isAttackable() || Combat::canDoCombat(attacker, target) != RET_NOERROR)
+	if(Combat::canDoCombat(attacker, target) != RET_NOERROR)
 	{
 		addMagicEffect(list, targetPos, MAGIC_EFFECT_POFF, target->isGhost());
 		return true;
@@ -4510,7 +4508,7 @@ bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creat
 	else
 	{
 		const SpectatorVec& list = getSpectators(targetPos);
-		if(!target->isAttackable() || Combat::canDoCombat(attacker, target) != RET_NOERROR)
+		if(Combat::canDoCombat(attacker, target) != RET_NOERROR)
 		{
 			addMagicEffect(list, targetPos, MAGIC_EFFECT_POFF);
 			return true;
@@ -4792,7 +4790,7 @@ bool Game::combatChangeMana(Creature* attacker, Creature* target, int32_t manaCh
 			delete details;
 		}
 	}
-	else if(!inherited && (!target->isAttackable() || Combat::canDoCombat(attacker, target) != RET_NOERROR))
+	else if(!inherited && Combat::canDoCombat(attacker, target) != RET_NOERROR)
 	{
 		const SpectatorVec& list = getSpectators(targetPos);
 		addMagicEffect(list, targetPos, MAGIC_EFFECT_POFF);

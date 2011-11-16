@@ -353,7 +353,7 @@ ReturnValue Combat::canTargetCreature(const Player* player, const Creature* targ
 		}
 	}
 
-	if(player->hasFlag(PlayerFlag_CannotUseCombat) || !target->isAttackable())
+	if(player->hasFlag(PlayerFlag_CannotUseCombat))
 		return target->getPlayer() ? RET_YOUMAYNOTATTACKTHISPLAYER : RET_YOUMAYNOTATTACKTHISCREATURE;
 
 	if(target->getPlayer() && !Combat::isInPvpZone(player, target) && player->getSkullType(target->getPlayer()) == SKULL_NONE)
@@ -1439,15 +1439,17 @@ void MagicField::onStepInField(Creature* creature, bool purposeful/* = true*/)
 		if(Creature* owner = g_game.getCreatureByID(ownerId))
 		{
 			bool harmful = true;
+			Player* ownerPlayer = owner->getPlayer();
 			if(ownerId == creature->getID() || ((g_game.getWorldType() == WORLDTYPE_OPTIONAL
-				|| tile->hasFlag(TILESTATE_OPTIONALZONE)) && (owner->getPlayer()
+				|| tile->hasFlag(TILESTATE_OPTIONALZONE)) && (ownerPlayer
 				|| owner->isPlayerSummon())) || (OTSYS_TIME() - createTime) <=
 				(uint32_t)g_config.getNumber(ConfigManager::FIELD_OWNERSHIP)
 				|| creature->hasBeenAttacked(ownerId))
 				harmful = false;
 			else if(Player* player = creature->getPlayer())
 			{
-				if(owner->getPlayer() && Combat::isProtected(owner->getPlayer(), player))
+				if(ownerPlayer && player->isAttackable() &&
+					Combat::isProtected(ownerPlayer, player))
 					harmful = false;
 			}
 
