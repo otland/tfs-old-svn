@@ -738,7 +738,7 @@ end
 
 function getItemTopParent(uid)
 	local parent = getItemParent(uid)
-	while(true)
+	while(true) do
 		local tmp = getItemParent(parent)
 		if(tmp.uid ~= 0) then
 			parent = tmp
@@ -752,7 +752,7 @@ end
 
 function getItemHolder(uid)
 	local parent, holder = getItemParent(uid), nil
-	while(true)
+	while(true) do
 		local tmp = getItemParent(parent)
 		if(tmp.uid ~= 0) then
 			if(tmp.itemid == 1) then -- a creature
