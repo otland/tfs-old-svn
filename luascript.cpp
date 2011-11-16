@@ -10509,10 +10509,10 @@ int32_t LuaInterface::luaGetItemParent(lua_State* L)
 	ScriptEnviroment* env = getEnv();
 
 	Thing* thing = env->getThingByUID(popNumber(L));
-	if(!item)
+	if(!thing)
 	{
 		errorEx(getError(LUA_ERROR_THING_NOT_FOUND));
-		lua_pushnil(L);
+		lua_pushboolean(L, false);
 		return 1;
 	}
 
