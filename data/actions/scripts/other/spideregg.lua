@@ -1,5 +1,5 @@
 function onUse(cid, item, fromPosition, itemEx, toPosition)
-	local rand = math.random(1, 100)
+	local rand, effect = math.random(1, 100), CONST_ME_TELEPORT
 	if((rand >= 50) and (rand < 83)) then
 		doSummonCreature("Spider", fromPosition)
 	elseif((rand >= 83) and (rand < 97)) then
@@ -8,8 +8,11 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 		doSummonCreature("Tarantula", fromPosition)
 	elseif(rand == 100) then
 		doSummonCreature("Giant Spider", fromPosition)
+	else
+		effect = CONST_ME_POFF
 	end
 
-	doTransformItem(item.uid,7536)
+	doSendMagicEffect(fromPosition, effect)
+	doTransformItem(item.uid, 7536)
 	return true
 end
