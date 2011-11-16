@@ -10508,24 +10508,30 @@ int32_t LuaInterface::luaGetItemParent(lua_State* L)
 	//getItemParent(uid)
 	ScriptEnviroment* env = getEnv();
 
-	Item* item = env->getItemByUID(popNumber(L));
+	Thing* thing = env->getThingByUID(popNumber(L));
 	if(!item)
 	{
-		errorEx(getError(LUA_ERROR_ITEM_NOT_FOUND));
+		errorEx(getError(LUA_ERROR_THING_NOT_FOUND));
 		lua_pushnil(L);
 		return 1;
 	}
 
-	if(Tile* tile = item->getParent()->getTile())
+	if(!thing->getParent())
+	{
+		pushThing(L, NULL, 0);
+		return 1;
+	}
+
+	if(Tile* tile = thing->getParent()->getTile())
 	{
 		if(tile->ground)
 			pushThing(L, tile->ground, env->addThing(tile->ground));
 		else
 			pushThing(L, NULL, 0);
 	}
-	if(Item* container = item->getParent()->getItem())
+	if(Item* container = thing->getParent()->getItem())
 		pushThing(L, container, env->addThing(container));
-	else if(Creature* creature = item->getParent()->getCreature())
+	else if(Creature* creature = thing->getParent()->getCreature())
 		pushThing(L, creature, env->addThing(creature));
 	else
 		pushThing(L, NULL, 0);
