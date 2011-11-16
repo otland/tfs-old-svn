@@ -3,7 +3,7 @@ local config = {
 	usableOnTarget = "yes", -- can be used on target? (fe. healing friend)
 	splashable = "yes",
 	range = -1,
-	realAnimation = "no", -- make text effect visible only for players in range 1x1
+	realAnimation = "yes", -- make text effect visible only for players in range 1x1
 	multiplier = {
 		health = 1.0,
 		mana = 1.0
@@ -25,26 +25,26 @@ local POTIONS = {
 }
 
 for index, potion in pairs(POTIONS) do
-	if(type(index) == "number")then
+	if(type(index) == 'number')then
 		for k, v in pairs(config) do
 			if(not potion[k]) then
 				potion[k] = v
 			end
 		end
 
-		if(potion.removeOnUse) then
+		if(not potion.removeOnUse) then
 			potion.removeOnUse = getBooleanFromString(potion.removeOnUse)
 		end
 
-		if(potion.usableOnTarget) then
+		if(not potion.usableOnTarget) then
 			potion.usableOnTarget = getBooleanFromString(potion.usableOnTarget)
 		end
 
-		if(potion.splashable) then
+		if(not potion.splashable) then
 			potion.splashable = getBooleanFromString(potion.splashable)
 		end
 
-		if(potion.realAnimation) then
+		if(not potion.realAnimation) then
 			potion.realAnimation = getBooleanFromString(potion.realAnimation)
 		end
 
@@ -94,16 +94,15 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 	end
 
 	local health = potion.health
-	if(health and not doCreatureAddHealth(itemEx.uid, math.ceil(math.random(health[1], health[2]) * potion.multiplier.health))) then
+	if(health and not doTargetCombatHealth(cid, itemEx.uid, COMBAT_HEALING, math.ceil(health[1] * potion.multiplier.health, math.ceil(health[2] * potion.multiplier.health), CONST_ME_MAGIC_BLUE))) then
 		return false
 	end
 
 	local mana = potion.mana
-	if(mana and not doPlayerAddMana(itemEx.uid, math.ceil(math.random(mana[1], mana[2]) * potion.multiplier.mana))) then
+	if(mana and not doTargetCombatHealth(cid, itemEx.uid, COMBAT_HEALING, math.ceil(mana[1] * potion.multiplier.mana, math.ceil(mana[2] * potion.multiplier.mana), CONST_ME_MAGIC_BLUE))) then
 		return false
 	end
 
-	doSendMagicEffect(getThingPosition(itemEx.uid), CONST_ME_MAGIC_BLUE)
 	if(not potion.realAnimation) then
 		doCreatureSay(itemEx.uid, "Aaaah...", TALKTYPE_ORANGE_1)
 	else
