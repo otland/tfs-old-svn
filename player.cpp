@@ -1980,7 +1980,7 @@ void Player::addExperience(uint64_t exp)
 		s << "You advanced from Level " << prevLevel << " to Level " << level << ".";
 
 		sendTextMessage(MSG_EVENT_ADVANCE, s.str());
-		if(isProtected() && !attackable)
+		if(isProtected() != attackable)
 			g_game.updateCreatureWalkthrough(this);
 	}
 
@@ -2024,7 +2024,7 @@ void Player::removeExperience(uint64_t exp, bool updateStats/* = true*/)
 		s << "You were downgraded from Level " << prevLevel << " to Level " << level << ".";
 
 		sendTextMessage(MSG_EVENT_ADVANCE, s.str());
-		if(!isProtected() && attackable)
+		if(!isProtected() != attackable)
 			g_game.updateCreatureWalkthrough(this);
 	}
 
@@ -4101,7 +4101,7 @@ bool Player::isImmune(ConditionType_t type) const
 
 bool Player::isProtected() const
 {
-	return !vocation->isAttackable() || hasCustomFlag(PlayerFlag_IsProtected) || level < g_config.getNumber(ConfigManager::PROTECTION_LEVEL);
+	return !vocation->isAttackable() || hasCustomFlag(PlayerCustomFlag_IsProtected) || level < g_config.getNumber(ConfigManager::PROTECTION_LEVEL);
 }
 
 bool Player::isAttackable() const
