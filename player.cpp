@@ -274,7 +274,8 @@ Item* Player::getEquippedItem(slots_t slot) const
 	{
 		case SLOT_LEFT:
 		case SLOT_RIGHT:
-			return item->getWieldPosition() == SLOT_HAND ? item : NULL;
+			if(item->getWieldPosition() == SLOT_HAND)
+				return item;
 
 		default:
 			break;
