@@ -2691,7 +2691,7 @@ ReturnValue Player::__queryAdd(int32_t index, const Thing* thing, uint32_t count
 				ret = RET_NOERROR;
 			break;
 		case SLOT_RIGHT:
-			if(item->getSlotPosition() & SLOTP_HAND)
+			if(item->getSlotPosition() & SLOTP_RIGHT)
 			{
 				if(!g_config.getBool(ConfigManager::TIBIA_SLOTS))
 				{
@@ -2732,7 +2732,7 @@ ReturnValue Player::__queryAdd(int32_t index, const Thing* thing, uint32_t count
 			}
 			break;
 		case SLOT_LEFT:
-			if(item->getSlotPosition() & SLOTP_HAND)
+			if(item->getSlotPosition() & SLOTP_LEFT)
 			{
 				if(!g_config.getBool(ConfigManager::TIBIA_SLOTS))
 				{
