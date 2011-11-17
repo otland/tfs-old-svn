@@ -116,7 +116,7 @@ bool IOMapSerialize::loadHouses()
 		house->setLastWarning(result->getDataInt("lastwarning"));
 
 		house->setPaidUntil(result->getDataInt("paid"));
-		if(result->getDataInt("clear"))
+		if(result->getDataInt("clear") == 1)
 			house->setPendingTransfer(true);
 
 		house->setOwner(result->getDataInt("owner"));
