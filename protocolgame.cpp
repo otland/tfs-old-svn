@@ -2613,7 +2613,7 @@ void ProtocolGame::sendVIPLogOut(uint32_t guid)
 	}
 }
 
-void ProtocolGame::sendVIP(uint32_t guid, const std::string& name, bool isOnline)
+void ProtocolGame::sendVIP(uint32_t guid, const std::string& name, bool online)
 {
 	NetworkMessage_ptr msg = getOutputBuffer();
 	if(msg)
@@ -2622,7 +2622,7 @@ void ProtocolGame::sendVIP(uint32_t guid, const std::string& name, bool isOnline
 		msg->put<char>(0xD2);
 		msg->put<uint32_t>(guid);
 		msg->putString(name);
-		msg->put<char>(isOnline ? 1 : 0);
+		msg->put<char>(online ? 1 : 0);
 	}
 }
 

@@ -2565,36 +2565,34 @@ bool Player::removeVIP(uint32_t _guid)
 	return true;
 }
 
-bool Player::addVIP(uint32_t _guid, std::string& name, bool isOnline, bool internal/* = false*/)
+bool Player::addVIP(uint32_t _guid, const std::string& name, bool online, bool loading/* = false*/)
 {
 	if(guid == _guid)
 	{
-		if(!internal)
+		if(!loading)
 			sendTextMessage(MSG_STATUS_SMALL, "You cannot add yourself.");
 
 		return false;
 	}
 
-	if(VIPList.size() > (size_t)(group ? group->getMaxVips(isPremium()) : g_config.getNumber(ConfigManager::VIPLIST_DEFAULT_LIMIT)))
+	if(!loading && VIPList.size() > (size_t)(group ? group->getMaxVips(isPremium()) : g_config.getNumber(ConfigManager::VIPLIST_DEFAULT_LIMIT)))
 	{
-		if(!internal)
-			sendTextMessage(MSG_STATUS_SMALL, "You cannot add more buddies.");
-
+		sendTextMessage(MSG_STATUS_SMALL, "You cannot add more buddies.");
 		return false;
 	}
 
 	VIPSet::iterator it = VIPList.find(_guid);
 	if(it != VIPList.end())
 	{
-		if(!internal)
+		if(!loading)
 			sendTextMessage(MSG_STATUS_SMALL, "This player is already in your list.");
 
 		return false;
 	}
 
 	VIPList.insert(_guid);
-	if(client && !internal)
-		client->sendVIP(_guid, name, isOnline);
+	if(!loading && client)
+		client->sendVIP(_guid, name, online);
 
 	return true;
 }

@@ -727,12 +727,11 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool preLo
 
 	if((result = db->storeQuery(query.str())))
 	{
-		std::string dummy;
 		do
 		{
 			uint32_t vid = result->getDataInt("vip");
 			if(storeNameByGuid(vid))
-				player->addVIP(vid, dummy, false, true);
+				player->addVIP(vid, "", false, true);
 		}
 		while(result->next());
 		result->free();
@@ -766,7 +765,7 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool preLo
 		query << "SELECT `pd`.`player_id`, `pd`.`date` FROM `player_killers` pk LEFT JOIN `killers` k"
 			<< " ON `pk`.`kill_id` = `k`.`id` LEFT JOIN `player_deaths` pd ON `k`.`death_id` = `pd`.`id`"
 			<< " WHERE `pk`.`player_id` = " << player->getGUID() << " AND `k`.`unjustified` = 0 AND "
-			<< "`pd`.`date` >= " << (time(NULL) - (7 * 86400));
+			<< "`pd`.`date` >= " << (time(NULL) - (7 * 86400)); // TODO: configurable, same as up
 #ifdef __WAR_SYSTEM__
 
 		query << " AND `k`.`war` = 0";

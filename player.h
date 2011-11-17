@@ -399,7 +399,7 @@ class Player : public Creature, public Cylinder
 		void notifyLogIn(Player* loginPlayer);
 		void notifyLogOut(Player* logoutPlayer);
 		bool removeVIP(uint32_t guid);
-		bool addVIP(uint32_t guid, std::string& name, bool isOnline, bool internal = false);
+		bool addVIP(uint32_t guid, const std::string& name, bool online, bool loading = false);
 
 		//follow functions
 		virtual bool setFollowCreature(Creature* creature, bool fullPathSearch = false);
