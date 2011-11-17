@@ -11327,7 +11327,7 @@
 	</item>
 	<item id="6500" name="demonic essence">
 		<attribute key="description" value="Someone might be interested in trading this."/>
-		<attribute key="weight" value="100"/>
+		<attribute key="weight" value="10"/>
 		<attribute key="showcount" value="0"/>
 	</item>
 	<item id="6501" article="a" name="gingerbreadman">
