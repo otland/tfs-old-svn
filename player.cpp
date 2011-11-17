@@ -4101,7 +4101,7 @@ bool Player::isImmune(ConditionType_t type) const
 
 bool Player::isProtected() const
 {
-	return !vocation->isAttackable() || hasCustomFlag(PlayerCustomFlag_IsProtected) || level < g_config.getNumber(ConfigManager::PROTECTION_LEVEL);
+	return (vocation && !vocation->isAttackable()) || hasCustomFlag(PlayerCustomFlag_IsProtected) || level < g_config.getNumber(ConfigManager::PROTECTION_LEVEL);
 }
 
 bool Player::isAttackable() const
