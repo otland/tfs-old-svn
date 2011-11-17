@@ -3,11 +3,12 @@ local config = {
 	usableOnTarget = "yes", -- can be used on target? (fe. healing friend)
 	splashable = "yes",
 	range = -1,
-	realAnimation = "yes", -- make text effect visible only for players in range 1x1
-	multiplier = {
-		health = 1.0,
-		mana = 1.0
-	}
+	area = {1, 1} -- if not set correctly, the message will be sent only to user of the item
+}
+
+local multiplier = {
+	health = 1.0,
+	mana = 1.0
 }
 
 local POTIONS = {
@@ -32,20 +33,31 @@ for index, potion in pairs(POTIONS) do
 			end
 		end
 
-		if(not potion.removeOnUse) then
+		if(potion.removeOnUse) then
 			potion.removeOnUse = getBooleanFromString(potion.removeOnUse)
 		end
 
-		if(not potion.usableOnTarget) then
+		if(potion.usableOnTarget) then
 			potion.usableOnTarget = getBooleanFromString(potion.usableOnTarget)
 		end
 
-		if(not potion.splashable) then
+		if(potion.splashable) then
 			potion.splashable = getBooleanFromString(potion.splashable)
 		end
 
-		if(not potion.realAnimation) then
-			potion.realAnimation = getBooleanFromString(potion.realAnimation)
+		if(type(potion.health) == 'table' and table.maxn(potion.health) > 1) then
+			potion.health[1] = math.ceil(potion.health[1] * multiplier.health)
+			potion.health[2] = math.ceil(potion.health[2] * multiplier.health)
+		else
+			potion.health = nil
+		end
+
+
+		if(type(potion.mana) == 'table' and table.maxn(potion.mana) > 1) then
+			potion.mana[1] = math.ceil(potion.mana[1] * multiplier.mana)
+			potion.mana[2] = math.ceil(potion.mana[2] * multiplier.mana)
+		else
+			potion.mana = nil
 		end
 
 		POTIONS[index] = potion
@@ -94,23 +106,23 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 	end
 
 	local health = potion.health
-	if(health and not doTargetCombatHealth(cid, itemEx.uid, COMBAT_HEALING, math.ceil(health[1] * potion.multiplier.health, math.ceil(health[2] * potion.multiplier.health), CONST_ME_MAGIC_BLUE))) then
+	if(health and not doTargetCombatHealth(cid, itemEx.uid, COMBAT_HEALING, health[1], health[2], CONST_ME_MAGIC_BLUE))) then
 		return false
 	end
 
 	local mana = potion.mana
-	if(mana and not doTargetCombatHealth(cid, itemEx.uid, COMBAT_HEALING, math.ceil(mana[1] * potion.multiplier.mana, math.ceil(mana[2] * potion.multiplier.mana), CONST_ME_MAGIC_BLUE))) then
+	if(mana and not doTargetCombatHealth(cid, itemEx.uid, COMBAT_HEALING, mana[1], mana[2], CONST_ME_MAGIC_BLUE))) then
 		return false
 	end
 
-	if(not potion.realAnimation) then
-		doCreatureSay(itemEx.uid, "Aaaah...", TALKTYPE_ORANGE_1)
-	else
-		for i, tid in ipairs(getSpectators(getThingPosition(itemEx.uid), 1, 1)) do
+	if(type(potion.area) == 'table' and table.maxn(potion.area) > 1) then
+		for i, tid in ipairs(getSpectators(getThingPosition(itemEx.uid), potion.area[1], potion.area[2])) do
 			if(isPlayer(tid)) then
 				doCreatureSay(itemEx.uid, "Aaaah...", TALKTYPE_ORANGE_1, false, tid)
 			end
 		end
+	else
+		doCreatureSay(itemEx.uid, "Aaaah...", TALKTYPE_ORANGE_1, false, itemEx.uid)
 	end
 
 	doRemoveItem(item.uid, 1)
