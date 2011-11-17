@@ -382,7 +382,6 @@ void ProtocolAdmin::parsePacket(NetworkMessage& msg)
 					break;
 				}
 
-				// why do we run these below on dispatcher thread anyway?
 				case CMD_KICK:
 				{
 					const std::string param = msg.getString();
@@ -454,7 +453,7 @@ void ProtocolAdmin::adminCommandPayHouses()
 	if(!output)
 		return;
 
-	Houses::getInstance()->payHouses();
+	Houses::getInstance()->check();
 	addLogLine(LOGTYPE_EVENT, "pay houses ok");
 
 	TRACK_MESSAGE(output);

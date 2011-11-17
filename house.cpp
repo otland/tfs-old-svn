@@ -795,19 +795,16 @@ bool Houses::loadFromXml(std::string filename)
 	return true;
 }
 
-void Houses::payHouses()
+void Houses::check()
 {
-	if(rentPeriod == RENTPERIOD_NEVER)
-		return;
-
 	uint64_t start = OTSYS_TIME();
-	std::clog << "> Paying houses..." << std::endl;
+	std::clog << "> Checking houses..." << std::endl;
 
 	time_t currentTime = time(NULL);
 	for(HouseMap::iterator it = houseMap.begin(); it != houseMap.end(); ++it)
 		payHouse(it->second, currentTime, 0);
 
-	std::clog << "Houses paid in " << (OTSYS_TIME() - start) / (1000.) << " seconds." << std::endl;
+	std::clog << "Houses checked in " << (OTSYS_TIME() - start) / (1000.) << " seconds." << std::endl;
 }
 
 bool Houses::payRent(Player* player, House* house, uint32_t bid, time_t _time/* = 0*/)

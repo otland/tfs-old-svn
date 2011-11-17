@@ -221,7 +221,6 @@ void Game::setGameState(GameState_t newState)
 				Quests::getInstance()->loadFromXml();
 
 				loadStatuslist();
-
 				loadGameState();
 				g_globalEvents->startup();
 
@@ -245,7 +244,7 @@ void Game::setGameState(GameState_t newState)
 					it = Player::autoList.begin();
 				}
 
-				Houses::getInstance()->payHouses();
+				Houses::getInstance()->check();
 				saveGameState((uint8_t)SAVE_PLAYERS | (uint8_t)SAVE_MAP | (uint8_t)SAVE_STATE);
 				Dispatcher::getInstance().addTask(createTask(boost::bind(&Game::shutdown, this)));
 
@@ -268,6 +267,7 @@ void Game::setGameState(GameState_t newState)
 						++it;
 				}
 
+				map->updateAuctions();
 				saveGameState((uint8_t)SAVE_PLAYERS | (uint8_t)SAVE_MAP | (uint8_t)SAVE_STATE);
 				break;
 			}
@@ -6151,7 +6151,7 @@ void Game::globalSave()
 	}
 
 	//pay houses
-	Houses::getInstance()->payHouses();
+	Houses::getInstance()->check();
 	//clean map if configured to
 	if(g_config.getBool(ConfigManager::CLEAN_MAP_AT_GLOBALSAVE))
 		cleanMap();

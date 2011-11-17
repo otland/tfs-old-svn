@@ -269,7 +269,7 @@ class Houses
 
 		bool loadFromXml(std::string filename);
 
-		void payHouses();
+		void check();
 		bool payHouse(House* house, time_t _time, uint32_t bid);
 		bool payRent(Player* player, House* house, uint32_t bid, time_t _time = 0);
 

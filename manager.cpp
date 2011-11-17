@@ -135,6 +135,7 @@ void ProtocolManager::parsePacket(NetworkMessage& msg)
 		}
 	}
 
+	// FATAL!!! ALL the events in here requiring extra work from the Manager NEED! dispatching, otherwise it will DESYNC!
 	m_lastCommand = time(NULL);
 	switch(recvbyte)
 	{

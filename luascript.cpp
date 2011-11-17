@@ -10222,7 +10222,7 @@ int32_t LuaInterface::luaDoRefreshMap(lua_State* L)
 int32_t LuaInterface::luaDoUpdateHouseAuctions(lua_State* L)
 {
 	//doUpdateHouseAuctions()
-	lua_pushboolean(L, IOMapSerialize::getInstance()->updateAuctions());
+	lua_pushboolean(L, g_game.getMap()->updateAuctions());
 	return 1;
 }
 

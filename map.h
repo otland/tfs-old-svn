@@ -176,6 +176,11 @@ class Map
 		bool saveMap();
 
 		/**
+		* \returns true if updating house auctions completed
+		*/
+		bool updateAuctions();
+
+		/**
 		* Get a single tile.
 		* \returns A pointer to that tile.
 		*/

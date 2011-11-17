@@ -1510,15 +1510,12 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 		s << " physical + " << it.abilities.elementDamage << " " << getCombatName(it.abilities.elementType) << " damage).";
 	}
 
-	std::string str;
 	if(item && !item->getSpecialDescription().empty())
-		str = item->getSpecialDescription();
+		s << std::endl << item->getSpecialDescription();
 	else if(!it.description.empty() && lookDistance <= 1)
-		str = it.description;
+		s << std::endl << it.description;
 
-	if(str.empty())
-		return s.str();
-
+	std::string str = s.str();
 	if(str.find("|PLAYERNAME|") != std::string::npos)
 	{
 		std::string tmp = "You";
