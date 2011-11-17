@@ -57,7 +57,7 @@ ItemType::ItemType()
 	weight = 0; //weight of the item, e.g. throwing distance depends on it
 	showCount = true;
 	weaponType = WEAPON_NONE;
-	slotPosition = SLOTP_HAND | SLOTP_AMMO;
+	slotPosition = SLOTP_HAND;
 	wieldPosition = SLOT_HAND;
 	ammoType = AMMO_NONE;
 	ammoAction = AMMOACTION_NONE;
@@ -923,13 +923,13 @@ void Items::parseItemNode(xmlNodePtr itemNode, uint32_t id)
 				}
 				else if(tmpStrValue == "right-hand")
 				{
-					it.slotPosition |= SLOTP_RIGHT;
+					it.slotPosition |= ~SLOTP_LEFT;
 					it.wieldPosition = SLOT_RIGHT;
 				}
 				else if(tmpStrValue == "left-hand")
 				{
-					it.slotPosition |= SLOTP_LEFT;
-					it.wieldPosition = SLOT_RIGHT;
+					it.slotPosition |= ~SLOTP_RIGHT;
+					it.wieldPosition = SLOT_LEFT;
 				}
 				else if(tmpStrValue == "necklace")
 				{
@@ -942,7 +942,10 @@ void Items::parseItemNode(xmlNodePtr itemNode, uint32_t id)
 					it.wieldPosition = SLOT_RING;
 				}
 				else if(tmpStrValue == "ammo")
+				{
+					it.slotPosition |= SLOTP_AMMO;
 					it.wieldPosition = SLOT_AMMO;
+				}
 				else if(tmpStrValue == "hand")
 					it.wieldPosition = SLOT_HAND;
 				else

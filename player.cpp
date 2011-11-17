@@ -2691,9 +2691,8 @@ ReturnValue Player::__queryAdd(int32_t index, const Thing* thing, uint32_t count
 				ret = RET_NOERROR;
 			break;
 		case SLOT_RIGHT:
-			if(item->getSlotPosition() & SLOTP_RIGHT)
+			if(item->getSlotPosition() & SLOTP_HAND)
 			{
-				//check if we already carry an item in the other hand
 				if(!g_config.getBool(ConfigManager::TIBIA_SLOTS))
 				{
 					if(!item->isWeapon() || (item->getWeaponType() != WEAPON_SHIELD && !item->isDualWield()))
@@ -2733,7 +2732,7 @@ ReturnValue Player::__queryAdd(int32_t index, const Thing* thing, uint32_t count
 			}
 			break;
 		case SLOT_LEFT:
-			if(item->getSlotPosition() & SLOTP_LEFT)
+			if(item->getSlotPosition() & SLOTP_HAND)
 			{
 				if(!g_config.getBool(ConfigManager::TIBIA_SLOTS))
 				{
