@@ -6,7 +6,6 @@
 
 	TODO:
 	* Multilang (szczególnie RET_* i możliwie wszystko pozostałe)
-	* Stabilność :D!
 	* Nowy podział plików:
 		* configs/
 			* database/main.lua
@@ -17,6 +16,13 @@
 		* data/
 			Po staremu prócz XML/
 ]
+[
+	Send weapon elemental damage together with physical
+		Assigned to: Elf, Dalkon
+
+	Optimize packets to only one-per-tile after cleaning map or house
+		Assigned to: Elf
 
 	Deprecate several hardcoded systems (guild management, etc) and rescript them in Lua
-		Assigned to: Holix
+		Assigned to: ?
+]

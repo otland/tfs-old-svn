@@ -15,16 +15,16 @@
 		http://otland.net/
 ]
 
-[ TASKS
-	Fix revenges- orange skull
+[ LIST
+	/ban window needs fix
 		Assigned to: Elf
 
-	Send weapon elemental damage together with physical
-		Assigned to: Elf
+	Tibia's 'Like' feature:
+		Assigned to: ?
 
-	Optimize packets to only one-per-tile after cleaning map or house
-		Assigned to: Elf
+	Tibia's report window:
+		Assigned to: ?
 
-	Finish documentation as its incomplete
+	Tibia's position swapping:
 		Assigned to: ?
 ]
