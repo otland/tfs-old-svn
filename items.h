@@ -31,19 +31,19 @@
 #define ITEMS_RANDOMIZATION 50
 
 #define SLOTP_WHEREEVER 0xFFFFFFFF
-#define SLOTP_HEAD 1 << 0
-#define	SLOTP_NECKLACE 1 << 1
-#define	SLOTP_BACKPACK 1 << 2
-#define	SLOTP_ARMOR 1 << 3
-#define	SLOTP_RIGHT 1 << 4
-#define	SLOTP_LEFT 1 << 5
-#define	SLOTP_LEGS 1 << 6
-#define	SLOTP_FEET 1 << 7
-#define	SLOTP_RING 1 << 8
-#define	SLOTP_AMMO 1 << 9
-#define	SLOTP_DEPOT 1 << 10
-#define	SLOTP_TWO_HAND 1 << 11
-#define SLOTP_HAND SLOTP_LEFT | SLOTP_RIGHT
+#define SLOTP_HEAD (1 << 0)
+#define	SLOTP_NECKLACE (1 << 1)
+#define	SLOTP_BACKPACK (1 << 2)
+#define	SLOTP_ARMOR (1 << 3)
+#define	SLOTP_RIGHT (1 << 4)
+#define	SLOTP_LEFT (1 << 5)
+#define	SLOTP_LEGS (1 << 6)
+#define	SLOTP_FEET (1 << 7)
+#define	SLOTP_RING (1 << 8)
+#define	SLOTP_AMMO (1 << 9)
+#define	SLOTP_DEPOT (1 << 10)
+#define	SLOTP_TWO_HAND (1 << 11)
+#define SLOTP_HAND (SLOTP_LEFT | SLOTP_RIGHT)
 
 enum ItemTypes_t
 {
