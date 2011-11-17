@@ -1577,8 +1577,7 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 		replaceString(str, "|DATE|", formatDateEx(now));
 	}
 
-	s << std::endl << str;
-	return s.str();
+	return str;
 }
 
 std::string Item::getNameDescription(const ItemType& it, const Item* item/* = NULL*/, int32_t subType/* = -1*/, bool addArticle/* = true*/)
