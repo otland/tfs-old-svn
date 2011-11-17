@@ -1206,7 +1206,7 @@ bool Game::playerMoveCreature(uint32_t playerId, uint32_t movingCreatureId,
 			if(player->isProtected())
 			{
 				Player* movingPlayer = movingCreature->getPlayer();
-				if(!movingPlayer->isProtected())
+				if(movingPlayer && !movingPlayer->isProtected())
 				{
 					player->sendCancelMessage(RET_NOTMOVABLE);
 					return false;
