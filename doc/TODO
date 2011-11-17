@@ -19,6 +19,12 @@
 	/ban window needs fix
 		Assigned to: Elf
 
+	Implement war system Lua & erase definition for compilation
+		Assigned to: Elf
+
+	Fix ground cache for professional hosters as currently it may cause crash in certain circumstances
+		Assigned to: Elf
+
 	Tibia's 'Like' feature:
 		Assigned to: ?
 
