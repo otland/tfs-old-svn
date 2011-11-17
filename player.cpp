@@ -2785,7 +2785,7 @@ ReturnValue Player::__queryAdd(int32_t index, const Thing* thing, uint32_t count
 				ret = RET_NOERROR;
 			break;
 		case SLOT_AMMO:
-			if(item->getSlotPosition() & SLOTP_AMMO || !g_config.getBool(ConfigManager::TIBIA_SLOTS))
+			if(item->getSlotPosition() & SLOTP_AMMO || g_config.getBool(ConfigManager::TIBIA_SLOTS))
 				ret = RET_NOERROR;
 			break;
 		case SLOT_WHEREEVER:
