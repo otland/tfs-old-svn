@@ -923,7 +923,7 @@ void Items::parseItemNode(xmlNodePtr itemNode, uint32_t id)
 				}
 				else if(tmpStrValue == "right-hand")
 				{
-					if(it.slotPosition & SLOTP_HAND)
+					if((it.slotPosition & SLOTP_HAND))
 						it.slotPosition = SLOTP_RIGHT;
 					else
 						it.slotPosition |= SLOTP_RIGHT;
@@ -932,7 +932,7 @@ void Items::parseItemNode(xmlNodePtr itemNode, uint32_t id)
 				}
 				else if(tmpStrValue == "left-hand")
 				{
-					if(it.slotPosition & SLOTP_HAND)
+					if((it.slotPosition & SLOTP_HAND))
 						it.slotPosition = SLOTP_LEFT;
 					else
 						it.slotPosition |= SLOTP_LEFT;
