@@ -356,8 +356,8 @@ if(NpcHandler == nil) then
 			if(self:processModuleCallback(CALLBACK_FAREWELL)) then
 				if(self.queue == nil or not self.queue:greetNext()) then
 					local msg = self:getMessage(MESSAGE_FAREWELL)
-					local parseInfo = { [TAG_PLAYERNAME] = getPlayerName(cid) }
-					msg = self:parseMessage(msg, parseInfo)
+					msg = self:parseMessage(msg, { [TAG_PLAYERNAME] = getPlayerName(cid) or -1 })
+					self:resetNpc(cid)
 
 					self:say(msg, cid, 0, true)
 					self:releaseFocus(cid)
@@ -589,7 +589,9 @@ if(NpcHandler == nil) then
 
 						self:say(msg, cid, 0, true)
 						self:releaseFocus(cid)
-						self:say(msg)
+						if(not isPlayerGhost(cid)) then
+							self:say(msg)
+						end
 					end
 				end
 			end
