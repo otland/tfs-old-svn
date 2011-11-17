@@ -4221,7 +4221,7 @@ bool Player::removeOutfit(uint32_t outfitId, uint32_t addons)
 	else //remove addons
 	{
 		update = it->second.lookType == defaultOutfit.lookType;
-		it->second.addons = it->second.addons & (~addons);
+		it->second.addons &= ~addons;
 	}
 
 	if(update)
