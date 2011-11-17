@@ -11188,8 +11188,9 @@ int32_t LuaInterface::luaL_dodirectory(lua_State* L)
 int32_t LuaInterface::luaL_errors(lua_State* L)
 {
 	//errors(var)
-	lua_pushboolean(L, getEnv()->getInterface()->m_errors);
+	bool status = getEnv()->getInterface()->m_errors;
 	getEnv()->getInterface()->m_errors = popBoolean(L);
+	lua_pushboolean(L, status);
 	return 1;
 }
 
