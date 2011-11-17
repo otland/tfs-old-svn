@@ -729,7 +729,7 @@ bool ConditionRegeneration::executeCondition(Creature* creature, int32_t interva
 	internalManaTicks += interval;
 	if(creature->getZone() != ZONE_PROTECTION)
 	{
-		if(internalHealthTicks >= healthTicks)
+		if(internalHealthTicks >= healthTicks && target->getHealth() != target->getMaxHealth())
 		{
 			internalHealthTicks = 0;
 			if(getSubId() != 0)
@@ -738,7 +738,7 @@ bool ConditionRegeneration::executeCondition(Creature* creature, int32_t interva
 				creature->changeHealth(healthGain);
 		}
 
-		if(internalManaTicks >= manaTicks)
+		if(internalManaTicks >= manaTicks && target->getMana() != target->getMaxMana())
 		{
 			internalManaTicks = 0;
 			if(getSubId() != 0)

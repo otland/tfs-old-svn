@@ -105,13 +105,11 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 		return false
 	end
 
-	local health = potion.health
-	if(health and not doTargetCombatHealth(cid, itemEx.uid, COMBAT_HEALING, health[1], health[2], CONST_ME_MAGIC_BLUE))) then
+	if(potion.health and not doTargetCombatHealth(cid, itemEx.uid, COMBAT_HEALING, potion.health[1], potion.health[2], CONST_ME_MAGIC_BLUE)) then
 		return false
 	end
 
-	local mana = potion.mana
-	if(mana and not doTargetCombatHealth(cid, itemEx.uid, COMBAT_HEALING, mana[1], mana[2], CONST_ME_MAGIC_BLUE))) then
+	if(potion.mana and not doTargetCombatHealth(cid, itemEx.uid, COMBAT_HEALING, potion.mana[1], potion.mana[2], CONST_ME_MAGIC_BLUE)) then
 		return false
 	end
 

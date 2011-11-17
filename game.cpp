@@ -4508,14 +4508,14 @@ bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creat
 	else
 	{
 		const SpectatorVec& list = getSpectators(targetPos);
-		if(Combat::canDoCombat(attacker, target) != RET_NOERROR)
+		if(target->getHealth() < 1 || Combat::canDoCombat(attacker, target) != RET_NOERROR)
 		{
 			addMagicEffect(list, targetPos, MAGIC_EFFECT_POFF);
 			return true;
 		}
 
 		int32_t damage = -healthChange;
-		if(damage != 0)
+		if(damage > 0)
 		{
 			if(target->hasCondition(CONDITION_MANASHIELD) && combatType != COMBAT_UNDEFINEDDAMAGE)
 			{
