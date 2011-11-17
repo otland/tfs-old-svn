@@ -6358,7 +6358,7 @@ int32_t LuaInterface::luaDoCombatAreaHealth(lua_State* L)
 	//doCombatAreaHealth(cid, type, pos, area, min, max, effect[, aggressive])
 	bool aggressive = true;
 	if(lua_gettop(L) > 7) // shouldn't it be enough if we check only is conditionType == CONDITION_HEALING?
-		aggressive = popNumber(L);
+		aggressive = popBoolean(L);
 
 	MagicEffect_t effect = (MagicEffect_t)popNumber(L);
 	int32_t maxChange = (int32_t)popNumber(L), minChange = (int32_t)popNumber(L);
@@ -6407,7 +6407,7 @@ int32_t LuaInterface::luaDoTargetCombatHealth(lua_State* L)
 	//doTargetCombatHealth(cid, target, type, min, max, effect[, aggressive])
 	bool aggressive = true;
 	if(lua_gettop(L) > 6) // shouldn't it be enough if we check only is conditionType == CONDITION_HEALING?
-		aggressive = popNumber(L);
+		aggressive = popBoolean(L);
 
 	MagicEffect_t effect = (MagicEffect_t)popNumber(L);
 	int32_t maxChange = (int32_t)popNumber(L), minChange = (int32_t)popNumber(L);
@@ -6452,7 +6452,7 @@ int32_t LuaInterface::luaDoCombatAreaMana(lua_State* L)
 	//doCombatAreaMana(cid, pos, area, min, max, effect[, aggressive])
 	bool aggressive = true;
 	if(lua_gettop(L) > 6)
-		aggressive = popNumber(L);
+		aggressive = popBoolean(L);
 
 	MagicEffect_t effect = (MagicEffect_t)popNumber(L);
 	int32_t maxChange = (int32_t)popNumber(L), minChange = (int32_t)popNumber(L);
@@ -6498,7 +6498,7 @@ int32_t LuaInterface::luaDoTargetCombatMana(lua_State* L)
 	//doTargetCombatMana(cid, target, min, max, effect[, aggressive])
 	bool aggressive = true;
 	if(lua_gettop(L) > 5)
-		aggressive = popNumber(L);
+		aggressive = popBoolean(L);
 
 	MagicEffect_t effect = (MagicEffect_t)popNumber(L);
 	int32_t maxChange = (int32_t)popNumber(L), minChange = (int32_t)popNumber(L);
