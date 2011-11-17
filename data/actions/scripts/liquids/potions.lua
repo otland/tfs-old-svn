@@ -105,11 +105,11 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 		return false
 	end
 
-	if(potion.health and not doTargetCombatHealth(cid, itemEx.uid, COMBAT_HEALING, potion.health[1], potion.health[2], CONST_ME_MAGIC_BLUE)) then
+	if(potion.health and not doTargetCombatHealth(cid, itemEx.uid, COMBAT_HEALING, potion.health[1], potion.health[2], CONST_ME_MAGIC_BLUE, false)) then
 		return false
 	end
 
-	if(potion.mana and not doTargetCombatMana(cid, itemEx.uid, potion.mana[1], potion.mana[2], CONST_ME_MAGIC_BLUE)) then
+	if(potion.mana and not doTargetCombatMana(cid, itemEx.uid, potion.mana[1], potion.mana[2], CONST_ME_MAGIC_BLUE, false)) then
 		return false
 	end
 
