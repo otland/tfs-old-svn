@@ -923,12 +923,20 @@ void Items::parseItemNode(xmlNodePtr itemNode, uint32_t id)
 				}
 				else if(tmpStrValue == "right-hand")
 				{
-					it.slotPosition &= ~SLOTP_LEFT;
+					if(it.slotPosition & SLOTP_HAND)
+						it.slotPosition = SLOTP_RIGHT;
+					else
+						it.slotPosition |= SLOTP_RIGHT;
+
 					it.wieldPosition = SLOT_RIGHT;
 				}
 				else if(tmpStrValue == "left-hand")
 				{
-					it.slotPosition &= ~SLOTP_RIGHT;
+					if(it.slotPosition & SLOTP_HAND)
+						it.slotPosition = SLOTP_LEFT;
+					else
+						it.slotPosition |= SLOTP_LEFT;
+
 					it.wieldPosition = SLOT_LEFT;
 				}
 				else if(tmpStrValue == "necklace")
