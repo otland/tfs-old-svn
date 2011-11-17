@@ -100,9 +100,9 @@ function onStepIn(cid, item, position, fromPosition)
 	end
 
 	if(getTileInfo(position).protection) then
-		local item = getTileItemsByType(getCreatureLookPosition(cid), ITEM_TYPE_DEPOT)
-		if(item.itemid ~= 0) then
-			local depotItems = getPlayerDepotItems(cid, getDepotId(item.uid))
+		local depotItem = getTileItemByType(getCreatureLookPosition(cid), ITEM_TYPE_DEPOT)
+		if(depotItem.itemid ~= 0) then
+			local depotItems = getPlayerDepotItems(cid, getDepotId(depotItem.uid))
 			doPlayerSendTextMessage(cid, MESSAGE_STATUS_DEFAULT, "Your depot contains " .. depotItems .. " item" .. (depotItems > 1 and "s" or "") .. ".")
 			return true
 		end
