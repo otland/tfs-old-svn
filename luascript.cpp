@@ -1687,8 +1687,8 @@ void LuaInterface::registerFunctions()
 	//getTileItemById(pos, itemId[, subType = -1])
 	lua_register(m_luaState, "getTileItemById", LuaInterface::luaGetTileItemById);
 
-	//getTileItemsByType(pos, type)
-	lua_register(m_luaState, "getTileItemsByType", LuaInterface::luaGetTileItemsByType);
+	//getTileItemByType(pos, type)
+	lua_register(m_luaState, "getTileItemByType", LuaInterface::luaGetTileItemByType);
 
 	//getTileThingByPos(pos)
 	lua_register(m_luaState, "getTileThingByPos", LuaInterface::luaGetTileThingByPos);
@@ -4623,9 +4623,9 @@ int32_t LuaInterface::luaGetTileItemById(lua_State* L)
 	return 1;
 }
 
-int32_t LuaInterface::luaGetTileItemsByType(lua_State* L)
+int32_t LuaInterface::luaGetTileItemByType(lua_State* L)
 {
-	//getTileItemsByType(pos, type)
+	//getTileItemByType(pos, type)
 	uint32_t rType = (uint32_t)popNumber(L);
 	if(rType >= ITEM_TYPE_LAST)
 	{
