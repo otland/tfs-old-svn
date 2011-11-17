@@ -116,9 +116,12 @@
 		<attribute key="floorchange" value="down" />
 	</item>
 	<item id="460" name="void" />
-	<item id="461" article="a" name="closed trapdoor" />
+	<item id="461" article="a" name="closed trapdoor">
+		<attribute key="transformUseTo" value="462" />
+	</item>
 	<item id="462" article="an" name="open trapdoor">
 		<attribute key="floorchange" value="down" />
+		<attribute key="transformUseTo" value="461" />
 		<attribute key="decayTo" value="461" />
 		<attribute key="duration" value="120" />
 	</item>
@@ -651,7 +654,12 @@
 	<item id="1478" article="a" name="knight statue">
 		<attribute key="rotateTo" value="1442" />
 	</item>
-	<item fromid="1479" toid="1480" article="a" name="street lamp" />
+	<item id="1479" article="a" name="street lamp">
+		<attribute key="transformUseTo" value="1480" />
+	</item>
+	<item id="1480" article="a" name="street lamp">
+		<attribute key="transformUseTo" value="1479" />
+	</item>
 	<item fromid="1481" toid="1485" article="a" name="coal basin" />
 	<item id="1486" article="a" name="stone coal basin" />
 	<item id="1487" article="a" name="fire field">
@@ -897,15 +905,38 @@
 	<item id="1619" article="a" name="small table" />
 	<item fromid="1620" toid="1621" article="a" name="counter" />
 	<item fromid="1622" toid="1633" article="a" name="table" />
-	<item fromid="1634" toid="1638" article="a" name="table">
+	<item id="1634" article="a" name="table">
 		<attribute key="type" value="door" />
+		<attribute key="transformUseTo" value="1635" />
+	</item>
+	<item id="1635" article="a" name="table">
+		<attribute key="type" value="door" />
+		<attribute key="transformUseTo" value="1634" />
+	</item>
+	<item id="1636" article="a" name="table">
+		<attribute key="type" value="door" />
+		<attribute key="transformUseTo" value="1637" />
+	</item>
+	<item id="1637" article="a" name="table">
+		<attribute key="type" value="door" />
+		<attribute key="transformUseTo" value="1636" />
+	</item>
+	<item id="1638" article="a" name="table">
+		<attribute key="type" value="door" />
+		<attribute key="transformUseTo" value="1639" />
 	</item>
 	<item id="1639" article="a" name="table">
 		<attribute key="type" value="door" />
 		<attribute key="blockprojectile" value="1" />
+		<attribute key="transformUseTo" value="1638" />
 	</item>
-	<item fromid="1640" toid="1641" article="a" name="table">
+	<item id="1640" article="a" name="table">
 		<attribute key="type" value="door" />
+		<attribute key="transformUseTo" value="1641" />
+	</item>
+	<item id="1641" article="a" name="table">
+		<attribute key="type" value="door" />
+		<attribute key="transformUseTo" value="1640" />
 	</item>
 	<item fromid="1642" toid="1645" article="an" name="altar stone" />
 	<item fromid="1646" toid="1649" article="a" name="throne" />
@@ -1259,7 +1290,30 @@
 	<item fromid="1778" toid="1785" article="a" name="big wine cask">
 		<attribute key="fluidSource" value="wine" />
 	</item>
-	<item fromid="1786" toid="1793" article="an" name="oven" />
+	<item id="1786" article="an" name="oven">
+		<attribute key="transformUseTo" value="1787" />
+	</item>
+	<item id="1787" article="an" name="oven">
+		<attribute key="transformUseTo" value="1786" />
+	</item>
+	<item id="1788" article="an" name="oven">
+		<attribute key="transformUseTo" value="1789" />
+	</item>
+	<item id="1789" article="an" name="oven">
+		<attribute key="transformUseTo" value="1788" />
+	</item>
+	<item id="1790" article="an" name="oven">
+		<attribute key="transformUseTo" value="1791" />
+	</item>
+	<item id="1791" article="an" name="oven">
+		<attribute key="transformUseTo" value="1790" />
+	</item>
+	<item id="1792" article="an" name="oven">
+		<attribute key="transformUseTo" value="1793" />
+	</item>
+	<item id="1793" article="an" name="oven">
+		<attribute key="transformUseTo" value="1792" />
+	</item>
 	<item fromid="1794" toid="1802" article="a" name="red carpet" />
 	<item fromid="1803" toid="1808" article="an" name="oriental carpet" />
 	<item id="1809" article="a" name="painting" />
@@ -1340,8 +1394,21 @@
 	<item id="1872" article="a" name="blue tapestry">
 		<attribute key="weight" value="1000" />
 	</item>
-	<item fromid="1873" toid="1876" article="a" name="cuckoo clock">
+	<item id="1873" article="a" name="cuckoo clock"> 
 		<attribute key="forceSerialize" value="1" />
+		<attribute key="transformUseTo" value="1874" />
+	</item>
+	<item id="1874" article="a" name="cuckoo clock"> 
+		<attribute key="forceSerialize" value="1" />
+		<attribute key="transformUseTo" value="1873" />
+	</item>
+	<item id="1875" article="a" name="cuckoo clock"> 
+		<attribute key="forceSerialize" value="1" />
+		<attribute key="transformUseTo" value="1876" />
+	</item>
+	<item id="1876" article="a" name="cuckoo clock"> 
+		<attribute key="forceSerialize" value="1" />
+		<attribute key="transformUseTo" value="1875" />
 	</item>
 	<item id="1877" article="a" name="cuckoo clock">
 		<attribute key="weight" value="1500" />
@@ -1370,7 +1437,12 @@
 	<item fromid="1921" toid="1933" article="a" name="mossy wall" />
 	<item fromid="1935" toid="1937" article="a" name="mossy wall" />
 	<item fromid="1939" toid="1944" article="a" name="mossy wall" />
-	<item fromid="1945" toid="1946" article="a" name="switch" />
+	<item id="1945" article="a" name="switch">
+		<attribute key="transformUseTo" value="1946" />
+	</item>
+	<item id="1946" article="a" name="switch">
+		<attribute key="transformUseTo" value="1945" />
+	</item>
 	<item id="1947" article="a" name="blank paper">
 		<attribute key="description" value="It is rewriteable." />
 		<attribute key="weight" value="50" />
@@ -1707,10 +1779,18 @@
 	<item id="2036" article="a" name="watch">
 		<attribute key="weight" value="50" />
 	</item>
-	<item id="2037" article="a" name="wall lamp" />
-	<item id="2038" article="a" name="lit wall lamp" />
-	<item id="2039" article="a" name="wall lamp" />
-	<item id="2040" article="a" name="lit wall lamp" />
+	<item id="2037" article="a" name="wall lamp">
+		<attribute key="transformUseTo" value="2038" />
+	</item>
+	<item id="2038" article="a" name="lit wall lamp">
+		<attribute key="transformUseTo" value="2037" />
+	</item>
+	<item id="2039" article="a" name="wall lamp">
+		<attribute key="transformUseTo" value="2040" />
+	</item>
+	<item id="2040" article="a" name="lit wall lamp">
+		<attribute key="transformUseTo" value="2039" />
+	</item>
 	<item id="2041" article="a" name="candelabrum">
 		<attribute key="weight" value="500" />
 		<attribute key="stopduration" value="1" />
@@ -1786,10 +1866,18 @@
 		<attribute key="decayTo" value="2041" />
 		<attribute key="duration" value="180" />
 	</item>
-	<item id="2058" article="a" name="torch bearer" />
-	<item id="2059" article="a" name="lit torch bearer" />
-	<item id="2060" article="a" name="torch bearer" />
-	<item id="2061" article="a" name="lit torch bearer" />
+	<item id="2058" article="a" name="torch bearer">
+		<attribute key="transformUseTo" value="2059" />
+	</item>
+	<item id="2059" article="a" name="lit torch bearer">
+		<attribute key="transformUseTo" value="2058" />
+	</item>
+	<item id="2060" article="a" name="torch bearer">
+		<attribute key="transformUseTo" value="2061" />
+	</item>
+	<item id="2061" article="a" name="lit torch bearer">
+		<attribute key="transformUseTo" value="2060" />
+	</item>
 	<item id="2062" article="a" name="small oil lamp">
 		<attribute key="weight" value="100" />
 		<attribute key="decayTo" value="0" />
@@ -1800,8 +1888,24 @@
 		<attribute key="weight" value="100" />
 		<attribute key="stopduration" value="1" />
 	</item>
-	<item fromid="2064" toid="2065" article="a" name="table lamp" />
-	<item fromid="2066" toid="2069" article="a" name="wall lamp" />
+	<item id="2064" article="a" name="table lamp">
+		<attribute key="transformUseTo" value="2065" />
+	</item>
+	<item id="2065" article="a" name="table lamp">
+		<attribute key="transformUseTo" value="2064" />
+	</item>
+	<item id="2066" article="a" name="wall lamp">
+		<attribute key="transformUseTo" value="2067" />
+	</item>
+	<item id="2067" article="a" name="wall lamp">
+		<attribute key="transformUseTo" value="2066" />
+	</item>
+	<item id="2068" article="a" name="wall lamp">
+		<attribute key="transformUseTo" value="2069" />
+	</item>
+	<item id="2069" article="a" name="wall lamp">
+		<attribute key="transformUseTo" value="2068" />
+	</item>
 	<item id="2070" article="a" name="wooden flute">
 		<attribute key="weight" value="200" />
 	</item>
@@ -2112,12 +2216,14 @@
 		<attribute key="weight" value="1500" />
 		<attribute key="stopduration" value="1" />
 		<attribute key="showduration" value="1" />
+		<attribute key="transformUseTo" value="2163" />
 	</item>
 	<item id="2163" article="a" name="magic lightwand">
 		<attribute key="weight" value="1500" />
 		<attribute key="decayTo" value="0" />
 		<attribute key="showduration" value="1" />
 		<attribute key="duration" value="3000" />
+		<attribute key="transformUseTo" value="2162" />
 	</item>
 	<item id="2164" article="a" name="might ring">
 		<attribute key="weight" value="100" />
@@ -4179,6 +4285,7 @@
 	</item>
 	<item id="2578" article="a" name="closed trap">
 		<attribute key="weight" value="2100" />
+		<attribute key="transformUseTo" value="2579" />
 	</item>
 	<item id="2579" article="a" name="trap">
 		<attribute key="weight" value="2100" />
@@ -6802,7 +6909,12 @@
 	</item>
 	<item fromid="3737" toid="3738" article="a" name="statue" />
 	<item fromid="3739" toid="3742" article="a" name="huntress statue" />
-	<item fromid="3743" toid="3744" article="a" name="lantern" />
+	<item id="3743" article="a" name="lantern">
+		<attribute key="transformUseTo" value="3744" />
+	</item>
+	<item id="3744" article="a" name="lantern">
+		<attribute key="transformUseTo" value="3743" />
+	</item>
 	<item fromid="3745" toid="3755" article="a" name="bamboo fence" />
 	<item fromid="3756" toid="3765" article="a" name="bridge" />
 	<item id="3766" article="a" name="pillar" />
@@ -7111,8 +7223,12 @@
 	<item id="3944" article="a" name="lit wall candle" />
 	<item id="3945" article="a" name="wall candle" />
 	<item id="3946" article="a" name="lit wall candle" />
-	<item id="3947" article="a" name="wall lamp" />
-	<item id="3948" article="a" name="lit wall lamp" />
+	<item id="3947" article="a" name="wall lamp">
+		<attribute key="transformUseTo" value="3948" />
+	</item>
+	<item id="3948" article="a" name="lit wall lamp" >
+		<attribute key="transformUseTo" value="3947" />
+	</item>
 	<item id="3949" article="a" name="wall lamp" />
 	<item id="3950" article="a" name="lit wall lamp" />
 	<item id="3951" article="a" name="drum">
@@ -11811,8 +11927,12 @@
 		<attribute key="type" value="door" />
 		<attribute key="transformUseTo" value="7056" />
 	</item>
-	<item id="7058" article="a" name="skull pillar" />
-	<item id="7059" article="a" name="glowing skull pillar" />
+	<item id="7058" article="a" name="skull pillar">
+		<attribute key="transformUseTo" value="7059" />
+	</item>
+	<item id="7059" article="a" name="glowing skull pillar">
+		<attribute key="transformUseTo" value="7058" />
+	</item>
 	<item fromid="7060" toid="7061" article="an" name="ice archway" />
 	<item fromid="7062" toid="7090" name="frozen mud" />
 	<item id="7091" article="a" name="dead frost dragon">
@@ -15268,18 +15388,33 @@
 	<item fromid="8672" toid="8673" name="steaming hot lava" />
 	<item fromid="8674" toid="8677" article="a" name="muzzle" />
 	<item fromid="8678" toid="8683" name="tool parts" />
-	<item fromid="8684" toid="8687" article="a" name="chimney" />
+	<item id="8684" article="a" name="chimney">
+		<attribute key="transformUseTo" value="8685" />
+	</item>
+	<item id="8685" article="a" name="chimney">
+		<attribute key="transformUseTo" value="8684" />
+	</item>
+	<item id="8686" article="a" name="chimney">
+		<attribute key="transformUseTo" value="8687" />
+	</item>
+	<item id="8687" article="a" name="chimney">
+		<attribute key="transformUseTo" value="8686" />
+	</item>
 	<item id="8688" article="a" name="chimney">
 		<attribute key="rotateTo" value="8690" />
+		<attribute key="transformUseTo" value="8689" />
 	</item>
 	<item id="8689" article="a" name="chimney">
 		<attribute key="rotateTo" value="8691" />
+		<attribute key="transformUseTo" value="8688" />
 	</item>
 	<item id="8690" article="a" name="chimney">
 		<attribute key="rotateTo" value="8688" />
+		<attribute key="transformUseTo" value="8691" />
 	</item>
 	<item id="8691" article="a" name="chimney">
 		<attribute key="rotateTo" value="8689" />
+		<attribute key="transformUseTo" value="8690" />
 	</item>
 	<item id="8692" article="a" name="furniture package">
 		<attribute key="description" value="It is a kit for a chimney." />
@@ -16612,7 +16747,30 @@
 	<item id="9574" name="corkscrew stairs">
 		<attribute key="floorchange" value="down" />
 	</item>
-	<item fromid="9575" toid="9582" article="a" name="street lamp" />
+	<item id="9575" article="a" name="street lamp">
+		<attribute key="transformUseTo" value="9576" />
+	</item>
+	<item id="9576" article="a" name="street lamp">
+		<attribute key="transformUseTo" value="9575" />
+	</item>
+	<item id="9577" article="a" name="street lamp">
+		<attribute key="transformUseTo" value="9578" />
+	</item>
+	<item id="9578" article="a" name="street lamp">
+		<attribute key="transformUseTo" value="9577" />
+	</item>
+	<item id="9579" article="a" name="street lamp">
+		<attribute key="transformUseTo" value="9580" />
+	</item>
+	<item id="9580" article="a" name="street lamp">
+		<attribute key="transformUseTo" value="9579" />
+	</item>
+	<item id="9581" article="a" name="street lamp">
+		<attribute key="transformUseTo" value="9582" />
+	</item>
+	<item id="9582" article="a" name="street lamp">
+		<attribute key="transformUseTo" value="9581" />
+	</item>
 	<item id="9583" article="a" name="wall mirror" />
 	<item fromid="9584" toid="9585" article="a" name="painting" />
 	<item fromid="9586" toid="9587" article="a" name="water" />
@@ -16627,9 +16785,12 @@
 	</item>
 	<item fromid="9607" toid="9610" article="a" name="small balcony" />
 	<item fromid="9611" toid="9623" article="an" name="old carpet" />
-	<item id="9624" article="a" name="closed trapdoor" />
+	<item id="9624" article="a" name="closed trapdoor">
+		<attribute key="transformUseTo" value="9625" />
+	</item>
 	<item id="9625" article="an" name="open trapdoor">
 		<attribute key="floorchange" value="down" />
+		<attribute key="transformUseTo" value="9624" />
 	</item>
 	<item fromid="9626" toid="9630" article="an" name="old carpet" />
 	<item id="9631" article="an" name="metal piece" />
@@ -16805,7 +16966,18 @@
 	<item id="9746" article="a" name="box ramp">
 		<attribute key="floorchange" value="west" />
 	</item>
-	<item fromid="9747" toid="9750" article="a" name="lit wall lamp" />
+	<item id="9747" article="a" name="lit wall lamp">
+		<attribute key="transformUseTo" value="9748" />
+	</item>
+	<item id="9748" article="a" name="lit wall lamp">
+		<attribute key="transformUseTo" value="9747" />
+	</item>
+	<item id="9749" article="a" name="lit wall lamp">
+		<attribute key="transformUseTo" value="9750" />
+	</item>
+	<item id="9750" article="a" name="lit wall lamp">
+		<attribute key="transformUseTo" value="9749" />
+	</item>
 	<item fromid="9751" toid="9752" article="a" name="statue" />
 	<item fromid="9753" toid="9758" article="a" name="tree" />
 	<item fromid="9759" toid="9766" article="a" name="roof" />
@@ -16913,7 +17085,18 @@
 		<attribute key="duration" value="900" />
 		<attribute key="corpseType" value="undead" />
 	</item>
-	<item fromid="9825" toid="9828" article="a" name="lever" />
+	<item id="9825" article="a" name="lever">
+		<attribute key="transformUseTo" value="9826" />
+	</item>
+	<item id="9826" article="a" name="lever">
+		<attribute key="transformUseTo" value="9825" />
+	</item>
+	<item id="9827" article="a" name="lever">
+		<attribute key="transformUseTo" value="9828" />
+	</item>
+	<item id="9828" article="a" name="lever">
+		<attribute key="transformUseTo" value="9827" />
+	</item>
 	<item id="9829" article="a" name="dead mutated bat">
 		<attribute key="containerSize" value="10" />
 		<attribute key="decayTo" value="9830" />
@@ -17328,6 +17511,12 @@
 	<item id="9971" article="a" name="gold ingot" plural="gold ingots">
 		<attribute key="weight" value="1800" />
 	</item>
+	<item id="9972" article="a" name="lamp">
+		<attribute key="transformUseTo" value="9973" />
+	</item>
+	<item id="9973" article="a" name="lamp">
+		<attribute key="transformUseTo" value="9972" />
+	</item>
 	<item id="9974" article="a" name="furniture package">
 		<attribute key="description" value="It is a kit for a crystal table." />
 		<attribute key="weight" value="2500" />
@@ -17568,6 +17757,12 @@
 	<item id="10038" article="a" name="crucible" />
 	<item fromid="10039" toid="10040" article="a" name="bellow" />
 	<item fromid="10041" toid="10043" article="a" name="crucible" />
+	<item id="10044" article="a" name="lever">
+		<attribute key="transformUseTo" value="10045" />
+	</item>
+	<item id="10045" article="a" name="lever">
+		<attribute key="transformUseTo" value="10044" />
+	</item>
 	<item fromid="10046" toid="10048" name="hat for Eclesius" article="a">
 		<attribute key="weight" value="110" />
 	</item>
@@ -18868,7 +19063,19 @@
 		</attribute>
 	</item>
 	<item fromid="10989" toid="10998" name="zaoan decoration" />
-	<item fromid="10999" toid="11006" article="a" name="dragon statue" />
+	<item id="10999" article="a" name="dragon statue">
+		<attribute key="transformUseTo" value="11000" />
+	</item>
+	<item id="11000" article="a" name="dragon statue">
+		<attribute key="transformUseTo" value="10999" />
+	</item>
+	<item id="11001" article="a" name="dragon statue">
+		<attribute key="transformUseTo" value="11002" />
+	</item>
+	<item id="11002" article="a" name="dragon statue">
+		<attribute key="transformUseTo" value="11001" />
+	</item>
+	<item fromid="11003" toid="11006" article="a" name="dragon statue" />
 	<item fromid="11007" toid="11012" article="a" name="banner" />
 	<item id="11013" article="a" name="stacke" />
 	<item id="11014" article="a" name="pepper grass" />
@@ -19872,7 +20079,19 @@
 	</item>
 	<item fromid="11434" toid="11435" article="a" name="lamp" />
 	<item id="11436" name="dirt floor" />
-	<item fromid="11445" toid="11449" article="a" name="lamp" />
+	<item id="11445" article="a" name="lamp" />
+	<item id="11446" article="a" name="lamp">
+		<attribute key="transformUseTo" value="11447" />
+	</item>
+	<item id="11447" article="a" name="lamp">
+		<attribute key="transformUseTo" value="11446" />
+	</item>
+	<item id="11448" article="a" name="lamp">
+		<attribute key="transformUseTo" value="11449" />
+	</item>
+	<item id="11449" article="a" name="lamp">
+		<attribute key="transformUseTo" value="11448" />
+	</item>
 	<item fromid="11451" toid="11462" name="tainted soil" /> <!-- need to confirm name -->
 	<item id="11463" article="a" name="lamp" />
 	<item fromid="11464" toid="11475" article="a" name="stone floor" />
@@ -19941,11 +20160,44 @@
 	<item fromid="11970" toid="11971" article="a" name="stone wall" />
 	<item fromid="11972" toid="11982" name="leaves" />
 	<item fromid="11983" toid="11993" name="floor" /> <!-- not sure about this name -->
-	<item fromid="11995" toid="11998" article="a" name="torch" />
-	<item fromid="11999" toid="12002" article="a" name="dragon statue" />
+	<item id="11995" article="a" name="torch">
+		<attribute key="transformUseTo" value="11996" />
+	</item>
+	<item id="11996" article="a" name="torch">
+		<attribute key="transformUseTo" value="11995" />
+	</item>
+	<item id="11997" article="a" name="torch">
+		<attribute key="transformUseTo" value="11998" />
+	</item>
+	<item id="11998" article="a" name="torch">
+		<attribute key="transformUseTo" value="11997" />
+	</item>
+	<item id="11999" article="a" name="dragon statue">
+		<attribute key="transformUseTo" value="12000" />
+	</item>
+	<item id="12000" article="a" name="dragon statue">
+		<attribute key="transformUseTo" value="11999" />
+	</item>
+	<item id="12001" article="a" name="dragon statue">
+		<attribute key="transformUseTo" value="12002" />
+	</item>
+	<item id="12002" article="a" name="dragon statue">
+		<attribute key="transformUseTo" value="12001" />
+	</item>
 	<item id="12003" article="a" name="pillar" />
-	<item fromid="12004" toid="12006" article="a" name="torch" />
-	<item fromid="12007" toid="12008" article="a" name="lamp" />
+	<item id="12004" article="a" name="lamp" />
+	<item id="12005" article="a" name="lamp">
+		<attribute key="transformUseTo" value="12006" />
+	</item>
+	<item id="12006" article="a" name="lamp">
+		<attribute key="transformUseTo" value="12005" />
+	</item>
+	<item id="12007" article="a" name="lamp">
+		<attribute key="transformUseTo" value="12008" />
+	</item>
+	<item id="12008" article="a" name="lamp">
+		<attribute key="transformUseTo" value="12007" />
+	</item>
 	<item id="12009" article="a" name="pillar" />
 	<item fromid="12010" toid="12011" article="a" name="torch" />
 	<item id="12012" article="a" name="table" />
@@ -20056,7 +20308,12 @@
 		<attribute key="type" value="door" />
 		<attribute key="transformUseTo" value="12189" />
 	</item>
-	<item fromid="12191" toid="12192" article="a" name="torch"/>
+	<item id="12191" article="a" name="wall torch">
+		<attribute key="transformUseTo" value="12192" />
+	</item>
+	<item id="12192" article="a" name="wall torch">
+		<attribute key="transformUseTo" value="12191" />
+	</item>
 	<item id="12193" article="a" name="gate of expertise">
 		<attribute key="type" value="door" />
 		<attribute key="levelDoor" value="1000" />
@@ -20093,7 +20350,12 @@
 		<attribute key="type" value="door" />
 		<attribute key="transformUseTo" value="12198" />
 	</item>
-	<item fromid="12200" toid="12201" article="a" name="torch" />
+	<item id="12200" article="a" name="wall torch">
+		<attribute key="transformUseTo" value="12201" />
+	</item>
+	<item id="12201" article="a" name="wall torch">
+		<attribute key="transformUseTo" value="12200" />
+	</item>
 	<item id="12202" article="a" name="gate of expertise">
 		<attribute key="type" value="door" />
 		<attribute key="levelDoor" value="1000" />
@@ -20117,7 +20379,18 @@
 		<attribute key="transformUseTo" value="12204" />
 	</item>
 	<item fromid="12206" toid="12207" article="a" name="mirror" />
-	<item fromid="12208" toid="12211" article="a" name="torch" />
+	<item id="12208" article="a" name="wall torch">
+		<attribute key="transformUseTo" value="12209" />
+	</item>
+	<item id="12209" article="a" name="wall torch">
+		<attribute key="transformUseTo" value="12208" />
+	</item>
+	<item id="12210" article="a" name="wall torch">
+		<attribute key="transformUseTo" value="12211" />
+	</item>
+	<item id="12211" article="a" name="wall torch">
+		<attribute key="transformUseTo" value="12210" />
+	</item>
 	<item fromid="12219" toid="12220" article="a" name="tapestry" />
 	<item fromid="12221" toid="12227" article="a" name="dragon statue" />
 	<item fromid="12228" toid="12233" article="a" name="corrupted wall" /> <!-- need to confirm name -->
