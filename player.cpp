@@ -3831,11 +3831,10 @@ void Player::onTarget(Creature* target)
 #ifdef __WAR_SYSTEM__
 		|| targetPlayer->isEnemy(this, true)
 #endif
-		|| canRevenge(targetPlayer->getGUID())
-		|| targetPlayer->canRevenge(guid))
+		|| canRevenge(targetPlayer->getGUID()))
 		return;
 
-	if(targetPlayer->getSkull() != SKULL_NONE)
+	if(target->getSkull() != SKULL_NONE || (targetPlayer->canRevenge(guid) && targetPlayer->hasAttacked(this))
 		targetPlayer->sendCreatureSkull(this);
 	else if(!hasCustomFlag(PlayerCustomFlag_NotGainSkull))
 	{
