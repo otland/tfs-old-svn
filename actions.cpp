@@ -683,6 +683,9 @@ bool Action::configureEvent(xmlNodePtr p)
 
 ReturnValue Action::canExecuteAction(const Player* player, const Position& toPos)
 {
+	if(player->hasCustomFlag(PlayerCustomFlag_CanUseFar))
+		return RET_NOERROR;
+
 	if(!getAllowFarUse())
 		return g_actions->canUse(player, toPos);
 

@@ -741,7 +741,7 @@ enum PlayerCustomFlags
 	PlayerCustomFlag_CanPushAllItems,			//2^7 = 128
 	PlayerCustomFlag_CanMoveAnywhere,			//2^8 = 256
 	PlayerCustomFlag_CanMoveFromFar,			//2^9 = 512
-	PlayerCustomFlag_CanUseFromFar,				//2^10 = 1024
+	PlayerCustomFlag_CanUseFar,					//2^10 = 1024
 	PlayerCustomFlag_CanLoginMultipleCharacters,//2^11 = 2048 (account flag)
 	PlayerCustomFlag_CanLogoutAnytime,			//2^12 = 4096 (account flag)
 	PlayerCustomFlag_HideLevel,					//2^13 = 8192
