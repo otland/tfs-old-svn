@@ -39,24 +39,15 @@ void ItemAttributes::eraseAttribute(const std::string& key)
 	AttributeMap::iterator it = attributes->find(key);
 	if(it != attributes->end())
 		attributes->erase(it);
+
+	if(attributes->empty())
+		delete attributes;
 }
 
 void ItemAttributes::setAttribute(const std::string& key, boost::any value)
 {
 	createAttributes();
 	(*attributes)[key].set(value);
-}
-
-boost::any ItemAttributes::getAttribute(const std::string& key) const
-{
-	if(!attributes)
-		return boost::any();
-
-	AttributeMap::iterator it = attributes->find(key);
-	if(it != attributes->end())
-		return it->second.get();
-
-	return boost::any();
 }
 
 void ItemAttributes::setAttribute(const std::string& key, const std::string& value)
@@ -81,6 +72,18 @@ void ItemAttributes::setAttribute(const std::string& key, bool value)
 {
 	createAttributes();
 	(*attributes)[key].set(value);
+}
+
+boost::any ItemAttributes::getAttribute(const std::string& key) const
+{
+	if(!attributes)
+		return boost::any();
+
+	AttributeMap::iterator it = attributes->find(key);
+	if(it != attributes->end())
+		return it->second.get();
+
+	return boost::any();
 }
 
 const std::string* ItemAttributes::getStringAttribute(const std::string& key) const
@@ -264,7 +267,7 @@ boost::any ItemAttribute::get() const
 		case STRING:
 			return *reinterpret_cast<const std::string*>(&data);
 		case INTEGER:
-			return *reinterpret_cast<const int*>(&data);
+			return *reinterpret_cast<const int32_t*>(&data);
 		case FLOAT:
 			return *reinterpret_cast<const float*>(&data);
 		case BOOLEAN:
