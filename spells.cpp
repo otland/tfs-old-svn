@@ -505,14 +505,14 @@ bool Spell::configureSpell(xmlNodePtr p)
 		{
 			if(boost::algorithm::iequals(reservedList[i], name.c_str()))
 			{
-				std::clog << "Error: [Spell::configureSpell] Spell is using a reserved name: " << reservedList[i] << std::endl;
+				std::clog << "[Error - Spell::configureSpell] Spell is using a reserved name: " << reservedList[i] << std::endl;
 				return false;
 			}
 		}
 	}
 	else
 	{
-		std::clog << "Error: [Spell::configureSpell] Spell without name." << std::endl;
+		std::clog << "[Error - Spell::configureSpell] Spell without name." << std::endl;
 		return false;
 	}
 
@@ -1588,6 +1588,7 @@ ReturnValue ConjureSpell::internalConjureItem(Player* player, uint32_t conjureId
 		if(ret != RET_NOERROR)
 			delete newItem;
 
+		g_game.startDecay(newItem);
 		return ret;
 	}
 
@@ -1636,11 +1637,11 @@ ReturnValue ConjureSpell::internalConjureItem(Player* player, uint32_t conjureId
 			return ret;
 
 		g_game.transformItem(fromItem, reagentId, (int32_t)(fromItem->getItemCount() - 1));
-		g_game.startDecay(item);
 	}
 	else
 		g_game.transformItem(fromItem, conjureId, conjureCount);
 
+	g_game.startDecay(item);
 	return RET_NOERROR;
 }
 
