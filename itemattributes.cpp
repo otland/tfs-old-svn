@@ -39,9 +39,6 @@ void ItemAttributes::eraseAttribute(const std::string& key)
 	AttributeMap::iterator it = attributes->find(key);
 	if(it != attributes->end())
 		attributes->erase(it);
-
-	if(attributes->empty())
-		delete attributes;
 }
 
 void ItemAttributes::setAttribute(const std::string& key, boost::any value)
