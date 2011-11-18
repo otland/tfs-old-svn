@@ -744,7 +744,7 @@ function getItemTopParent(uid)
 
 	while(true) do
 		local tmp = getItemParent(parent.uid)
-		if(tmp and .uid ~= 0) then
+		if(tmp and tmp.uid ~= 0) then
 			parent = tmp
 		else
 			break
