@@ -725,6 +725,8 @@ bool ConditionRegeneration::serialize(PropWriteStream& propWriteStream)
 
 bool ConditionRegeneration::executeCondition(Creature* creature, int32_t interval)
 {
+	internalManaTicks += interval;
+	internalHealthTicks += interval;
 	if(creature->getZone() != ZONE_PROTECTION)
 	{
 		if(internalHealthTicks >= healthTicks)
