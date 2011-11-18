@@ -215,11 +215,6 @@ Condition* Condition::createCondition(ConditionId_t _id, ConditionType_t _type, 
 		case CONDITION_ATTRIBUTES:
 			return new ConditionAttributes(_id, _type, _ticks, _buff, _subId);
 
-		/* Elf - begin */
-		case CONDITION_BRAVER:
-			return new ConditionBraver(_id, _type, _ticks, _buff, _subId);
-		/* Elf - end */
-
 		case CONDITION_INVISIBLE:
 		case CONDITION_HUNTING:
 		case CONDITION_INFIGHT:
@@ -730,30 +725,30 @@ bool ConditionRegeneration::serialize(PropWriteStream& propWriteStream)
 
 bool ConditionRegeneration::executeCondition(Creature* creature, int32_t interval)
 {
-	if(healthGain)
-		internalHealthTicks += interval;
-
-	if(manaGain)
-		internalManaTicks += interval;
-
 	if(creature->getZone() != ZONE_PROTECTION)
 	{
-		if(internalHealthTicks >= healthTicks && creature->getHealth() >= creature->getMaxHealth())
+		if(internalHealthTicks >= healthTicks)
 		{
 			internalHealthTicks = 0;
-			if(getSubId() != 0)
-				g_game.combatChangeHealth(COMBAT_HEALING, creature, creature, healthGain);
-			else
-				creature->changeHealth(healthGain);
+			if(healthGain && creature->getHealth() < creature->getMaxHealth())
+			{
+				if(getSubId() != 0)
+					g_game.combatChangeHealth(COMBAT_HEALING, creature, creature, healthGain);
+				else
+					creature->changeHealth(healthGain);
+			}
 		}
 
-		if(internalManaTicks >= manaTicks && creature->getMana() >= creature->getMaxMana())
+		if(internalManaTicks >= manaTicks)
 		{
 			internalManaTicks = 0;
-			if(getSubId() != 0)
-				g_game.combatChangeMana(creature, creature, manaGain);
-			else
-				creature->changeMana(manaGain);
+			if(manaGain && creature->getMana() < creature->getMaxMana())
+			{
+				if(getSubId() != 0)
+					g_game.combatChangeMana(creature, creature, manaGain);
+				else
+					creature->changeMana(manaGain);
+			}
 		}
 	}
 
@@ -1733,106 +1728,3 @@ bool ConditionLight::serialize(PropWriteStream& propWriteStream)
 
 	return true;
 }
-
-/* Elf - begin */
-ConditionBraver::ConditionBraver(ConditionId_t _id, ConditionType_t _type, int32_t _ticks, bool _buff, uint32_t _subId):
-ConditionGeneric(_id, _type, _ticks, _buff, _subId)
-{
-	attackSpeed = 0;
-	meleeMultiplier = distanceMultiplier = 1.0f;
-}
-
-bool ConditionBraver::setParam(ConditionParam_t param, int32_t value)
-{
-	bool ret = Condition::setParam(param, value);
-	switch(param)
-	{
-		case CONDITIONPARAM_ATTACKSPEED:
-			attackSpeed = value;
-			return true;
-
-		default:
-			break;
-	}
-
-	return ret;
-}
-
-bool ConditionBraver::setFloatParam(ConditionParam_t param, float value)
-{
-	bool ret = Condition::setFloatParam(param, value);
-	switch(param)
-	{
-		case CONDITIONPARAM_MULT_MELEE:
-			meleeMultiplier = value;
-			return true;
-
-		case CONDITIONPARAM_MULT_DISTANCE:
-			distanceMultiplier = value;
-			return true;
-
-		default:
-			break;
-	}
-
-	return ret;
-}
-
-bool ConditionBraver::unserializeProp(ConditionAttr_t attr, PropStream& propStream)
-{
-	switch(attr)
-	{
-		case CONDITIONATTR_ATTACKSPEED:
-		{
-			uint32_t value = 0;
-			if(!propStream.getLong(value))
-				return false;
-
-			attackSpeed = value;
-			return true;
-		}
-
-		case CONDITIONATTR_MULT_MELEE:
-		{
-			float value = 0;
-			if(!propStream.getType(value))
-				return false;
-
-			meleeMultiplier = value;
-			return true;
-		}
-
-		case CONDITIONATTR_MULT_DISTANCE:
-		{
-			float value = 0;
-			if(!propStream.getType(value))
-				return false;
-
-			distanceMultiplier = value;
-			return true;
-		}
-
-		default:
-			break;
-	}
-
-	return Condition::unserializeProp(attr, propStream);
-}
-
-bool ConditionBraver::serialize(PropWriteStream& propWriteStream)
-{
-	if(!Condition::serialize(propWriteStream))
-		return false;
-
-	propWriteStream.addByte(CONDITIONATTR_ATTACKSPEED);
-	propWriteStream.addLong(attackSpeed);
-
-	propWriteStream.addByte(CONDITIONATTR_MULT_MELEE);
-	propWriteStream.addType(meleeMultiplier);
-
-	propWriteStream.addByte(CONDITIONATTR_MULT_DISTANCE);
-	propWriteStream.addType(distanceMultiplier);
-
-	return true;
-}
-/* Elf - end */
