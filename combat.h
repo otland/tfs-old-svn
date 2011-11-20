@@ -84,6 +84,18 @@ struct CombatEffects
 	bool show;
 };
 
+struct CombatElement
+{
+	CombatElement()
+	{
+		type = COMBAT_NONE;
+		damage = 0;
+	}
+
+	CombatType_t type;
+	int32_t damage;
+};
+
 struct CombatParams
 {
 	CombatParams()
@@ -91,7 +103,7 @@ struct CombatParams
 		blockedByArmor = blockedByShield = targetCasterOrTopMost = targetPlayersOrSummons = differentAreaDamage = false;
 		isAggressive = useCharges = true;
 		dispelType = CONDITION_NONE;
-		combatType = COMBAT_NONE;
+		combatType =  COMBAT_NONE;
 		itemId = 0;
 
 		targetCallback = NULL;
@@ -101,13 +113,14 @@ struct CombatParams
 
 	bool blockedByArmor, blockedByShield, targetCasterOrTopMost, targetPlayersOrSummons, differentAreaDamage, useCharges, isAggressive;
 	ConditionType_t dispelType;
-	CombatType_t combatType;
-	uint32_t itemId;
+	CombatType_t combatType, elementType;
+	uint32_t itemId, elementDamage;
 
 	TargetCallback* targetCallback;
 	ValueCallback* valueCallback;
 	TileCallback* tileCallback;
 	CombatEffects effects;
+	CombatElement element;
 
 	std::list<const Condition*> conditionList;
 };
@@ -255,22 +268,22 @@ class Combat
 		virtual ~Combat();
 
 		static void doCombatHealth(Creature* caster, Creature* target,
-			int32_t minChange, int32_t maxChange, const CombatParams& params);
+			int32_t minChange, int32_t maxChange, const CombatParams& params, bool check = true);
 		static void doCombatHealth(Creature* caster, const Position& pos,
 			const CombatArea* area, int32_t minChange, int32_t maxChange, const CombatParams& params);
 
 		static void doCombatMana(Creature* caster, Creature* target,
-			int32_t minChange, int32_t maxChange, const CombatParams& params);
+			int32_t minChange, int32_t maxChange, const CombatParams& params, bool check = true);
 		static void doCombatMana(Creature* caster, const Position& pos,
 			const CombatArea* area, int32_t minChange, int32_t maxChange, const CombatParams& params);
 
 		static void doCombatCondition(Creature* caster, Creature* target,
-			const CombatParams& params);
+			const CombatParams& params, bool check = true);
 		static void doCombatCondition(Creature* caster, const Position& pos,
 			const CombatArea* area, const CombatParams& params);
 
 		static void doCombatDispel(Creature* caster, Creature* target,
-			const CombatParams& params);
+			const CombatParams& params, bool check = true);
 		static void doCombatDispel(Creature* caster, const Position& pos,
 			const CombatArea* area, const CombatParams& params);
 
@@ -326,7 +339,7 @@ class Combat
 		static bool CombatNullFunc(Creature* caster, Creature* target, const CombatParams& params, void* data);
 
 		static void combatTileEffects(const SpectatorVec& list, Creature* caster, Tile* tile, const CombatParams& params);
-		bool getMinMaxValues(Creature* creature, Creature* target, int32_t& min, int32_t& max) const;
+		bool getMinMaxValues(Creature* creature, Creature* target, CombatParams& params, int32_t& min, int32_t& max) const;
 
 		//configureable
 		CombatParams params;

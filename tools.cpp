@@ -1308,6 +1308,84 @@ skills_t getSkillId(const std::string& strValue)
 	return SKILL_FIST;
 }
 
+void getCombatDetails(CombatType_t combatType, MagicEffect_t& magicEffect, Color_t& textColor)
+{
+	switch(combatType)
+	{
+		case COMBAT_PHYSICALDAMAGE:
+		{
+			textColor = COLOR_RED;
+			magicEffect = MAGIC_EFFECT_DRAW_BLOOD;
+			break;
+		}
+
+		case COMBAT_ENERGYDAMAGE:
+		{
+			textColor = COLOR_PURPLE;
+			magicEffect = MAGIC_EFFECT_ENERGY_DAMAGE;
+			break;
+		}
+
+		case COMBAT_EARTHDAMAGE:
+		{
+			textColor = COLOR_LIGHTGREEN;
+			magicEffect = MAGIC_EFFECT_POISON_RINGS;
+			break;
+		}
+
+		case COMBAT_DROWNDAMAGE:
+		{
+			textColor = COLOR_LIGHTBLUE;
+			magicEffect = MAGIC_EFFECT_LOSE_ENERGY;
+			break;
+		}
+
+		case COMBAT_FIREDAMAGE:
+		{
+			textColor = COLOR_ORANGE;
+			magicEffect = MAGIC_EFFECT_HITBY_FIRE;
+			break;
+		}
+
+		case COMBAT_ICEDAMAGE:
+		{
+			textColor = COLOR_TEAL;
+			magicEffect = MAGIC_EFFECT_ICEATTACK;
+			break;
+		}
+
+		case COMBAT_HOLYDAMAGE:
+		{
+			textColor = COLOR_YELLOW;
+			magicEffect = MAGIC_EFFECT_HOLYDAMAGE;
+			break;
+		}
+
+		case COMBAT_DEATHDAMAGE:
+		{
+			textColor = COLOR_DARKRED;
+			magicEffect = MAGIC_EFFECT_SMALLCLOUDS;
+			break;
+		}
+
+		case COMBAT_LIFEDRAIN:
+		{
+			textColor = COLOR_RED;
+			magicEffect = MAGIC_EFFECT_WRAPS_RED;
+			break;
+		}
+
+		case COMBAT_MANADRAIN:
+		{
+			textColor = COLOR_BLUE;
+			magicEffect = MAGIC_EFFECT_LOSE_ENERGY;
+		}
+
+		default:
+			break;
+	}
+}
+
 std::string getCombatName(CombatType_t combatType)
 {
 	switch(combatType)

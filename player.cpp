@@ -2101,10 +2101,10 @@ bool Player::hasShield() const
 }
 
 BlockType_t Player::blockHit(Creature* attacker, CombatType_t combatType, int32_t& damage,
-	bool checkDefense/* = false*/, bool checkArmor/* = false*/, bool reflect/* = true*/, bool field/* = false*/)
+	bool checkDefense/* = false*/, bool checkArmor/* = false*/, bool reflect/* = true*/, bool field/* = false*/, bool element/* = false*/)
 {
 	BlockType_t blockType = Creature::blockHit(attacker, combatType, damage, checkDefense, checkArmor, reflect, field);
-	if(attacker)
+	if(attacker && !element)
 	{
 		int16_t color = g_config.getNumber(ConfigManager::SQUARE_COLOR);
 		if(color < 0)
@@ -2158,7 +2158,7 @@ BlockType_t Player::blockHit(Creature* attacker, CombatType_t combatType, int32_
 				transform = true;
 		}
 
-		if(transform)
+		if(!element && transform)
 			g_game.transformItem(item, item->getID(), std::max((int32_t)0, (int32_t)item->getCharges() - 1));
 	}
 
@@ -2194,7 +2194,7 @@ BlockType_t Player::blockHit(Creature* attacker, CombatType_t combatType, int32_
 		blockType = BLOCK_DEFENSE;
 	}
 
-	if(reflected)
+	if(reflected && !element)
 	{
 		if(combatType != COMBAT_HEALING)
 			reflected = -reflected;

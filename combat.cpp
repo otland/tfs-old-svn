@@ -55,7 +55,7 @@ Combat::~Combat()
 	delete params.targetCallback;
 }
 
-bool Combat::getMinMaxValues(Creature* creature, Creature* target, int32_t& min, int32_t& max) const
+bool Combat::getMinMaxValues(Creature* creature, Creature* target, CombatParams& _params, int32_t& min, int32_t& max) const
 {
 	if(creature)
 	{
@@ -92,6 +92,13 @@ bool Combat::getMinMaxValues(Creature* creature, Creature* target, int32_t& min,
 					Item* item = player->getWeapon(false);
 					if(const Weapon* weapon = g_weapons->getWeapon(item))
 					{
+						_params.element.type = item->getElementType();
+						if(_params.element.type != COMBAT_NONE)
+						{
+							_params.element.damage = weapon->getWeaponElementDamage(player, item, true);
+							_params.element.damage = random_range(0, (_params.element.damage * maxa + maxb), DISTRO_NORMAL);
+						}
+
 						max = (int32_t)(weapon->getWeaponDamage(player, target, item, true) * maxa + maxb);
 						if(params.useCharges && item->hasCharges() && g_config.getBool(ConfigManager::REMOVE_WEAPON_CHARGES))
 							g_game.transformItem(item, item->getID(), std::max((int32_t)0, ((int32_t)item->getCharges()) - 1));
@@ -455,6 +462,14 @@ bool Combat::setParam(CombatParam_t param, uint32_t value)
 			params.effects.color = (Color_t)value;
 			return true;
 
+		case COMBATPARAM_ELEMENTDAMAGE:
+			params.element.damage = value;
+			break;
+
+		case COMBATPARAM_ELEMENTTYPE:
+			params.element.type = (CombatType_t)value;
+			break;
+
 		default:
 			break;
 	}
@@ -536,13 +551,21 @@ bool Combat::CombatHealthFunc(Creature* caster, Creature* target, const CombatPa
 	if(g_game.combatBlockHit(params.combatType, caster, target, change, params.blockedByShield, params.blockedByArmor))
 		return false;
 
-	if(change < 0 && caster && caster->getPlayer() && target->getPlayer() && target->getPlayer()->getSkull() != SKULL_BLACK)
-		change = change / 2;
+	CombatParams _params = params;
+	if(_params.element.damage && _params.element.type != COMBAT_NONE)
+		g_game.combatBlockHit(_params.element.type, caster, target, _params.element.damage, false, false, true);
 
-	if(!g_game.combatChangeHealth(params.combatType, caster, target, change, params.effects.hit, params.effects.color))
+	if(caster && caster->getPlayer() && target->getPlayer() && target->getPlayer()->getSkull() != SKULL_BLACK)
+	{
+		_params.element.damage /= 2;
+		if(change < 0)
+			change /= 2;
+	}
+
+	if(!g_game.combatChangeHealth(_params, caster, target, change, false))
 		return false;
 
-	CombatConditionFunc(caster, target, params, NULL);
+	CombatConditionFunc(caster, target,params, NULL);
 	CombatDispelFunc(caster, target, params, NULL);
 	return true;
 }
@@ -608,10 +631,8 @@ bool Combat::CombatDispelFunc(Creature* caster, Creature* target, const CombatPa
 	if(Player* player = target->getPlayer())
 	{
 		Item* item = player->getEquippedItem(SLOT_RING);
-		if(item && item->getID() == ITEM_STEALTH_RING &&
-			(g_game.getWorldType() == WORLDTYPE_HARDCORE ||
-			player->getTile()->hasFlag(TILESTATE_HARDCOREZONE))
-			&& random_range(1, 100) <= 10) // CHECKME: needs confirmation
+		if(item && item->getID() == ITEM_STEALTH_RING && (g_game.getWorldType() == WORLDTYPE_HARDCORE
+			|| player->getTile()->hasFlag(TILESTATE_HARDCOREZONE)) && random_range(1, 100) <= 10)
 			g_game.internalRemoveItem(NULL, item);
 	}
 
@@ -809,12 +830,17 @@ void Combat::doCombat(Creature* caster, Creature* target) const
 	//target combat callback function
 	if(params.combatType != COMBAT_NONE)
 	{
+		if(params.isAggressive && (caster == target || Combat::canDoCombat(caster, target) != RET_NOERROR))
+			return;
+
 		int32_t minChange = 0, maxChange = 0;
-		getMinMaxValues(caster, target, minChange, maxChange);
+		CombatParams _params = params;
+
+		getMinMaxValues(caster, target, _params, minChange, maxChange);
 		if(params.combatType != COMBAT_MANADRAIN)
-			doCombatHealth(caster, target, minChange, maxChange, params);
+			doCombatHealth(caster, target, minChange, maxChange, _params, false);
 		else
-			doCombatMana(caster, target, minChange, maxChange, params);
+			doCombatMana(caster, target, minChange, maxChange, _params, false);
 	}
 	else
 		doCombatDefault(caster, target, params);
@@ -826,19 +852,21 @@ void Combat::doCombat(Creature* caster, const Position& pos) const
 	if(params.combatType != COMBAT_NONE)
 	{
 		int32_t minChange = 0, maxChange = 0;
-		getMinMaxValues(caster, NULL, minChange, maxChange);
+		CombatParams _params = params;
+
+		getMinMaxValues(caster, NULL, _params, minChange, maxChange);
 		if(params.combatType != COMBAT_MANADRAIN)
-			doCombatHealth(caster, pos, area, minChange, maxChange, params);
+			doCombatHealth(caster, pos, area, minChange, maxChange, _params);
 		else
-			doCombatMana(caster, pos, area, minChange, maxChange, params);
+			doCombatMana(caster, pos, area, minChange, maxChange, _params);
 	}
 	else
 		CombatFunc(caster, pos, area, params, CombatNullFunc, NULL);
 }
 
-void Combat::doCombatHealth(Creature* caster, Creature* target, int32_t minChange, int32_t maxChange, const CombatParams& params)
+void Combat::doCombatHealth(Creature* caster, Creature* target, int32_t minChange, int32_t maxChange, const CombatParams& params, bool check/* = true*/)
 {
-	if(params.isAggressive && (caster == target || Combat::canDoCombat(caster, target) != RET_NOERROR))
+	if(check && params.isAggressive && (caster == target || Combat::canDoCombat(caster, target) != RET_NOERROR))
 		return;
 
 	Combat2Var var;
@@ -866,9 +894,9 @@ void Combat::doCombatHealth(Creature* caster, const Position& pos, const CombatA
 	CombatFunc(caster, pos, area, params, CombatHealthFunc, (void*)&var);
 }
 
-void Combat::doCombatMana(Creature* caster, Creature* target, int32_t minChange, int32_t maxChange, const CombatParams& params)
+void Combat::doCombatMana(Creature* caster, Creature* target, int32_t minChange, int32_t maxChange, const CombatParams& params, bool check/* = true*/)
 {
-	if(params.isAggressive && (caster == target || Combat::canDoCombat(caster, target) != RET_NOERROR))
+	if(check && params.isAggressive && (caster == target || Combat::canDoCombat(caster, target) != RET_NOERROR))
 		return;
 
 	Combat2Var var;
@@ -902,9 +930,9 @@ void Combat::doCombatCondition(Creature* caster, const Position& pos, const Comb
 	CombatFunc(caster, pos, area, params, CombatConditionFunc, NULL);
 }
 
-void Combat::doCombatCondition(Creature* caster, Creature* target, const CombatParams& params)
+void Combat::doCombatCondition(Creature* caster, Creature* target, const CombatParams& params, bool check/* = true*/)
 {
-	if(params.isAggressive && (caster == target || Combat::canDoCombat(caster, target) != RET_NOERROR))
+	if(check && params.isAggressive && (caster == target || Combat::canDoCombat(caster, target) != RET_NOERROR))
 		return;
 
 	CombatConditionFunc(caster, target, params, NULL);
@@ -925,9 +953,9 @@ void Combat::doCombatDispel(Creature* caster, const Position& pos, const CombatA
 	CombatFunc(caster, pos, area, params, CombatDispelFunc, NULL);
 }
 
-void Combat::doCombatDispel(Creature* caster, Creature* target, const CombatParams& params)
+void Combat::doCombatDispel(Creature* caster, Creature* target, const CombatParams& params, bool check/* = true*/)
 {
-	if(params.isAggressive && (caster == target || Combat::canDoCombat(caster, target) != RET_NOERROR))
+	if(check && params.isAggressive && (caster == target || Combat::canDoCombat(caster, target) != RET_NOERROR))
 		return;
 
 	CombatDispelFunc(caster, target, params, NULL);
@@ -1012,6 +1040,8 @@ void ValueCallback::getMinMaxValues(Player* player, int32_t& min, int32_t& max, 
 				}
 
 				lua_pushnumber(L, attack);
+				lua_pushnumber(L, weapon->getElementType());
+				lua_pushnumber(L, weapon->getElementDamage());
 			}
 			else
 			{

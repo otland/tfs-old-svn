@@ -4357,7 +4357,7 @@ void Game::changeLight(const Creature* creature)
 }
 
 bool Game::combatBlockHit(CombatType_t combatType, Creature* attacker, Creature* target,
-	int32_t& healthChange, bool checkDefense, bool checkArmor, bool field/* = false*/)
+	int32_t& healthChange, bool checkDefense, bool checkArmor, bool field/* = false*/, bool element/* = false*/)
 {
 	if(healthChange > 0)
 		return false;
@@ -4372,20 +4372,25 @@ bool Game::combatBlockHit(CombatType_t combatType, Creature* attacker, Creature*
 
 	int32_t damage = -healthChange;
 	BlockType_t blockType = target->blockHit(attacker, combatType,
-		damage, checkDefense, checkArmor, !field, field);
+		damage, checkDefense, checkArmor, !field, field, element);
 
 	healthChange = -damage;
+	if(element)
+		return true;
+
 	if(blockType == BLOCK_DEFENSE)
 	{
 		addMagicEffect(list, targetPos, MAGIC_EFFECT_POFF);
 		return true;
 	}
-	else if(blockType == BLOCK_ARMOR)
+
+	if(blockType == BLOCK_ARMOR)
 	{
 		addMagicEffect(list, targetPos, MAGIC_EFFECT_BLOCKHIT);
 		return true;
 	}
-	else if(blockType != BLOCK_IMMUNITY)
+
+	if(blockType != BLOCK_IMMUNITY)
 		return false;
 
 	MagicEffect_t effect = MAGIC_EFFECT_NONE;
@@ -4420,6 +4425,16 @@ bool Game::combatBlockHit(CombatType_t combatType, Creature* attacker, Creature*
 bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creature* target, int32_t healthChange,
 	MagicEffect_t hitEffect/* = MAGIC_EFFECT_UNKNOWN*/, Color_t hitColor/* = COLOR_UNKNOWN*/, bool force/* = false*/)
 {
+	CombatParams params;
+	params.effects.hit =  hitEffect;
+	params.effects.color = hitColor;
+
+	params.combatType = combatType;
+	return combatChangeHealth(params, attacker, target, healthChange, force);
+}
+
+bool Game::combatChangeHealth(const CombatParams& params, Creature* attacker, Creature* target, int32_t healthChange, bool force)
+{
 	const Position& targetPos = target->getPosition();
 	if(healthChange > 0)
 	{
@@ -4430,7 +4445,7 @@ bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creat
 		CreatureEventList statsChangeEvents = target->getCreatureEvents(CREATURE_EVENT_STATSCHANGE);
 		for(CreatureEventList::iterator it = statsChangeEvents.begin(); it != statsChangeEvents.end(); ++it)
 		{
-			if(!(*it)->executeStatsChange(target, attacker, STATSCHANGE_HEALTHGAIN, combatType, healthChange))
+			if(!(*it)->executeStatsChange(target, attacker, STATSCHANGE_HEALTHGAIN, params.combatType, healthChange))
 				deny = true;
 		}
 
@@ -4443,7 +4458,7 @@ bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creat
 			(g_config.getBool(ConfigManager::SHOW_HEALING_DAMAGE_MONSTER) || !target->getMonster()))
 		{
 			const SpectatorVec& list = getSpectators(targetPos);
-			if(combatType != COMBAT_HEALING)
+			if(params.combatType != COMBAT_HEALING)
 				addMagicEffect(list, targetPos, MAGIC_EFFECT_WRAPS_BLUE);
 
 			SpectatorVec textList;
@@ -4502,6 +4517,9 @@ bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creat
 				player->sendStatsMessage(MSG_HEALED, ss.str(), targetPos, details);
 			}
 
+			if(details->sub)
+				delete details->sub;
+
 			delete details;
 		}
 	}
@@ -4514,14 +4532,20 @@ bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creat
 			return true;
 		}
 
+		int32_t elementDamage = 0;
+		if(params.element.damage && params.element.type != COMBAT_NONE)
+			elementDamage = -params.element.damage;
+
 		int32_t damage = -healthChange;
 		if(damage > 0)
 		{
-			if(target->hasCondition(CONDITION_MANASHIELD) && combatType != COMBAT_UNDEFINEDDAMAGE)
+			if(target->hasCondition(CONDITION_MANASHIELD) && params.combatType != COMBAT_UNDEFINEDDAMAGE)
 			{
-				int32_t manaDamage = std::min(target->getMana(), damage);
-				damage = std::max((int32_t)0, damage - manaDamage);
-				if(manaDamage != 0 && combatChangeMana(attacker, target, -manaDamage, combatType, true))
+				int32_t manaDamage = std::min(target->getMana(), damage + elementDamage);
+				damage = std::max((int32_t)0, damage + elementDamage - manaDamage);
+
+				elementDamage = 0; // TODO: I don't know how it works ;(
+				if(manaDamage && combatChangeMana(attacker, target, -manaDamage, params.combatType, true))
 					addMagicEffect(list, targetPos, MAGIC_EFFECT_LOSE_ENERGY);
 			}
 
@@ -4532,129 +4556,71 @@ bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creat
 				CreatureEventList statsChangeEvents = target->getCreatureEvents(CREATURE_EVENT_STATSCHANGE);
 				for(CreatureEventList::iterator it = statsChangeEvents.begin(); it != statsChangeEvents.end(); ++it)
 				{
-					if(!(*it)->executeStatsChange(target, attacker, STATSCHANGE_HEALTHLOSS, combatType, damage))
+					if(!(*it)->executeStatsChange(target, attacker, STATSCHANGE_HEALTHLOSS, params.combatType, damage))
 						deny = true;
 				}
 
 				if(deny)
 					return false;
 
-				target->drainHealth(attacker, combatType, damage);
-				addCreatureHealth(list, target);
+				target->drainHealth(attacker, params.combatType, damage);
+				if(params.element.type)
+					target->drainHealth(attacker, params.element.type, elementDamage);
 
 				Color_t textColor = COLOR_NONE;
 				MagicEffect_t magicEffect = MAGIC_EFFECT_NONE;
-				switch(combatType)
+
+				addCreatureHealth(list, target);
+				if(params.combatType == COMBAT_PHYSICALDAMAGE)
 				{
-					case COMBAT_PHYSICALDAMAGE:
+					Item* splash = NULL;
+					switch(target->getRace())
 					{
-						Item* splash = NULL;
-						switch(target->getRace())
-						{
-							case RACE_VENOM:
-								textColor = COLOR_LIGHTGREEN;
-								magicEffect = MAGIC_EFFECT_POISON;
-								splash = Item::CreateItem(ITEM_SMALLSPLASH, FLUID_GREEN);
-								break;
+						case RACE_VENOM:
+							textColor = COLOR_LIGHTGREEN;
+							magicEffect = MAGIC_EFFECT_POISON;
+							splash = Item::CreateItem(ITEM_SMALLSPLASH, FLUID_GREEN);
+							break;
 
-							case RACE_BLOOD:
-								textColor = COLOR_RED;
-								magicEffect = MAGIC_EFFECT_DRAW_BLOOD;
-								splash = Item::CreateItem(ITEM_SMALLSPLASH, FLUID_BLOOD);
-								break;
+						case RACE_BLOOD:
+							textColor = COLOR_RED;
+							magicEffect = MAGIC_EFFECT_DRAW_BLOOD;
+							splash = Item::CreateItem(ITEM_SMALLSPLASH, FLUID_BLOOD);
+							break;
 
-							case RACE_UNDEAD:
-								textColor = COLOR_GREY;
-								magicEffect = MAGIC_EFFECT_HIT_AREA;
-								break;
+						case RACE_UNDEAD:
+							textColor = COLOR_GREY;
+							magicEffect = MAGIC_EFFECT_HIT_AREA;
+							break;
 
-							case RACE_FIRE:
-								textColor = COLOR_ORANGE;
-								magicEffect = MAGIC_EFFECT_DRAW_BLOOD;
-								break;
+						case RACE_FIRE:
+							textColor = COLOR_ORANGE;
+							magicEffect = MAGIC_EFFECT_DRAW_BLOOD;
+							break;
 
-							case RACE_ENERGY:
-								textColor = COLOR_PURPLE;
-								magicEffect = MAGIC_EFFECT_PURPLEENERGY;
-								break;
+						case RACE_ENERGY:
+							textColor = COLOR_PURPLE;
+							magicEffect = MAGIC_EFFECT_PURPLEENERGY;
+							break;
 
-							default:
-								break;
-						}
-
-						if(splash)
-						{
-							internalAddItem(NULL, target->getTile(), splash, INDEX_WHEREEVER, FLAG_NOLIMIT);
-							startDecay(splash);
-						}
-						break;
+						default:
+							break;
 					}
 
-					case COMBAT_ENERGYDAMAGE:
+					if(splash)
 					{
-						textColor = COLOR_PURPLE;
-						magicEffect = MAGIC_EFFECT_ENERGY_DAMAGE;
-						break;
+						internalAddItem(NULL, target->getTile(), splash, INDEX_WHEREEVER, FLAG_NOLIMIT);
+						startDecay(splash);
 					}
-
-					case COMBAT_EARTHDAMAGE:
-					{
-						textColor = COLOR_LIGHTGREEN;
-						magicEffect = MAGIC_EFFECT_POISON_RINGS;
-						break;
-					}
-
-					case COMBAT_DROWNDAMAGE:
-					{
-						textColor = COLOR_LIGHTBLUE;
-						magicEffect = MAGIC_EFFECT_LOSE_ENERGY;
-						break;
-					}
-
-					case COMBAT_FIREDAMAGE:
-					{
-						textColor = COLOR_ORANGE;
-						magicEffect = MAGIC_EFFECT_HITBY_FIRE;
-						break;
-					}
-
-					case COMBAT_ICEDAMAGE:
-					{
-						textColor = COLOR_TEAL;
-						magicEffect = MAGIC_EFFECT_ICEATTACK;
-						break;
-					}
-
-					case COMBAT_HOLYDAMAGE:
-					{
-						textColor = COLOR_YELLOW;
-						magicEffect = MAGIC_EFFECT_HOLYDAMAGE;
-						break;
-					}
-
-					case COMBAT_DEATHDAMAGE:
-					{
-						textColor = COLOR_DARKRED;
-						magicEffect = MAGIC_EFFECT_SMALLCLOUDS;
-						break;
-					}
-
-					case COMBAT_LIFEDRAIN:
-					{
-						textColor = COLOR_RED;
-						magicEffect = MAGIC_EFFECT_WRAPS_RED;
-						break;
-					}
-
-					default:
-						break;
 				}
+				else
+					getCombatDetails(params.combatType, magicEffect, textColor);
 
-				if(hitEffect != MAGIC_EFFECT_UNKNOWN)
-					magicEffect = hitEffect;
+				if(params.effects.hit != MAGIC_EFFECT_UNKNOWN)
+					magicEffect = params.effects.hit;
 
-				if(hitColor != COLOR_UNKNOWN)
-					textColor = hitColor;
+				if(params.effects.color != COLOR_UNKNOWN)
+					textColor = params.effects.color;
 
 				if(textColor < COLOR_NONE && magicEffect < MAGIC_EFFECT_NONE)
 				{
@@ -4669,10 +4635,16 @@ bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creat
 							textList.push_back(*it);
 					}
 
+					MessageDetails* details = new MessageDetails(damage - elementDamage, textColor);
+					if(elementDamage)
+					{
+						getCombatDetails(params.element.type, magicEffect, textColor);
+						details->sub = new MessageDetails(elementDamage, textColor);
+						addMagicEffect(list, targetPos, magicEffect);
+					}
+
 					std::stringstream ss;
 					std::string plural = (damage != 1 ? "s" : "");
-
-					MessageDetails* details = new MessageDetails(damage, textColor);
 					if(!textList.empty())
 					{
 						if(!attacker)

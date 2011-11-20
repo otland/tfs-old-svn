@@ -946,7 +946,7 @@ void Creature::drainMana(Creature* attacker, CombatType_t combatType, int32_t da
 }
 
 BlockType_t Creature::blockHit(Creature* attacker, CombatType_t combatType, int32_t& damage,
-	bool checkDefense/* = false*/, bool checkArmor/* = false*/, bool/* reflect = true*/, bool/* field = false*/)
+	bool checkDefense/* = false*/, bool checkArmor/* = false*/, bool/* reflect = true*/, bool/* field = false*/, bool/* element = false*/)
 {
 	BlockType_t blockType = BLOCK_NONE;
 	if(isImmune(combatType))
