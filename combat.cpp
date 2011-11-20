@@ -1070,10 +1070,9 @@ void ValueCallback::getMinMaxValues(Player* player, CombatParams& params, int32_
 	int32_t args = lua_gettop(L);
 	if(!lua_pcall(L, parameters, 3, 0))
 	{
-		min = LuaInterface::popNumber(L);
-		max = LuaInterface::popNumber(L);
-
 		params.element.damage = LuaInterface::popNumber(L);
+		max = LuaInterface::popNumber(L);
+		min = LuaInterface::popNumber(L);
 		player->increaseCombatValues(min, max, params.useCharges, type != FORMULA_SKILL);
 	}
 	else
