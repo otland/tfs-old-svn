@@ -28,37 +28,6 @@ class Creature;
 class Position;
 class Item;
 
-//for luascript callback
-class ValueCallback : public CallBack
-{
-	public:
-		ValueCallback(formulaType_t _type) {type = _type;}
-		void getMinMaxValues(Player* player, CombatParams& params, int32_t& min, int32_t& max) const;
-
-	protected:
-		formulaType_t type;
-};
-
-class TileCallback : public CallBack
-{
-	public:
-		TileCallback() {}
-		void onTileCombat(Creature* creature, Tile* tile) const;
-
-	protected:
-		formulaType_t type;
-};
-
-class TargetCallback : public CallBack
-{
-	public:
-		TargetCallback() {}
-		void onTargetCombat(Creature* creature, Creature* target) const;
-
-	protected:
-		formulaType_t type;
-};
-
 struct CombatEffects
 {
 	CombatEffects(bool _show): show(_show)
@@ -129,6 +98,37 @@ struct Combat2Var
 {
 	int32_t minChange, maxChange, change;
 	Combat2Var() {minChange = maxChange = change = 0;}
+};
+
+//for luascript callback
+class ValueCallback : public CallBack
+{
+	public:
+		ValueCallback(formulaType_t _type) {type = _type;}
+		void getMinMaxValues(Player* player, CombatParams& params, int32_t& min, int32_t& max) const;
+
+	protected:
+		formulaType_t type;
+};
+
+class TileCallback : public CallBack
+{
+	public:
+		TileCallback() {}
+		void onTileCombat(Creature* creature, Tile* tile) const;
+
+	protected:
+		formulaType_t type;
+};
+
+class TargetCallback : public CallBack
+{
+	public:
+		TargetCallback() {}
+		void onTargetCombat(Creature* creature, Creature* target) const;
+
+	protected:
+		formulaType_t type;
 };
 
 typedef bool (*COMBATFUNC)(Creature*, Creature*, const CombatParams&, void*);
