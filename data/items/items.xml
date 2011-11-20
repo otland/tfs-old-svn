@@ -3277,7 +3277,7 @@
 	<item id="2396" article="an" name="ice rapier">
 		<attribute key="description" value="A deadly but fragile weapon."/>
 		<attribute key="weight" value="1500"/>
-		<attribute key="attack" value="42"/>
+		<attribute key="attack" value="60"/>
 		<attribute key="defense" value="1"/>
 		<attribute key="weaponType" value="sword"/>
 		<attribute key="elementIce" value="18"/>
