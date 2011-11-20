@@ -4561,7 +4561,7 @@ bool Game::combatChangeHealth(const CombatParams& params, Creature* attacker, Cr
 					return false;
 
 				target->drainHealth(attacker, params.combatType, damage);
-				if(params.element.type)
+				if(elementDamage)
 					target->drainHealth(attacker, params.element.type, elementDamage);
 
 				Color_t textColor = COLOR_NONE;
@@ -4632,7 +4632,7 @@ bool Game::combatChangeHealth(const CombatParams& params, Creature* attacker, Cr
 							textList.push_back(*it);
 					}
 
-					MessageDetails* details = new MessageDetails(damage - elementDamage, textColor);
+					MessageDetails* details = new MessageDetails(damage, textColor);
 					if(elementDamage)
 					{
 						getCombatDetails(params.element.type, magicEffect, textColor);
@@ -4640,16 +4640,18 @@ bool Game::combatChangeHealth(const CombatParams& params, Creature* attacker, Cr
 						addMagicEffect(list, targetPos, magicEffect);
 					}
 
-					std::stringstream ss;
-					std::string plural = (damage != 1 ? "s" : "");
+					std::stringstream ss;				
+					int32_ totalDamage = damage + elementDamage;
+
+					std::string plural = (totalDamage != 1 ? "s" : "");
 					if(!textList.empty())
 					{
 						if(!attacker)
-							ss << ucfirst(target->getNameDescription()) << " loses " << damage << " hitpoint" << plural << ".";
+							ss << ucfirst(target->getNameDescription()) << " loses " << totalDamage << " hitpoint" << plural << ".";
 						else if(attacker != target)
-							ss << ucfirst(target->getNameDescription()) << " loses " << damage << " hitpoint" << plural << " due to an attack by " << attacker->getNameDescription();
+							ss << ucfirst(target->getNameDescription()) << " loses " << totalDamage << " hitpoint" << plural << " due to an attack by " << attacker->getNameDescription();
 						else
-							ss << ucfirst(target->getNameDescription()) << " loses " << damage << " hitpoint" << plural << " due to a self attack.";
+							ss << ucfirst(target->getNameDescription()) << " loses " << totalDamage << " hitpoint" << plural << " due to a self attack.";
 
 						addStatsMessage(textList, MSG_DAMAGE_OTHERS, ss.str(), targetPos, details);
 						ss.str("");
@@ -4659,9 +4661,9 @@ bool Game::combatChangeHealth(const CombatParams& params, Creature* attacker, Cr
 					if(attacker && (player = attacker->getPlayer()))
 					{
 						if(attacker != target)
-							ss << ucfirst(target->getNameDescription()) << " loses " << damage << " hitpoint" << plural << " due to your attack.";
+							ss << ucfirst(target->getNameDescription()) << " loses " << totalDamage << " hitpoint" << plural << " due to your attack.";
 						else
-							ss << "You lose " << damage << " hitpoint" << plural << " due to your attack.";
+							ss << "You lose " << totalDamage << " hitpoint" << plural << " due to your attack.";
 
 						player->sendStatsMessage(MSG_DAMAGE_DEALT, ss.str(), targetPos, details);
 						ss.str("");
@@ -4670,9 +4672,9 @@ bool Game::combatChangeHealth(const CombatParams& params, Creature* attacker, Cr
 					if((player = target->getPlayer()) && attacker != target)
 					{
 						if(attacker)
-							ss << "You lose " << damage << " hitpoint" << plural << " due to an attack by " << attacker->getNameDescription();
+							ss << "You lose " << totalDamage << " hitpoint" << plural << " due to an attack by " << attacker->getNameDescription();
 						else
-							ss << "You lose " << damage << " hitpoint" << plural << ".";
+							ss << "You lose " << totalDamage << " hitpoint" << plural << ".";
 
 						player->sendStatsMessage(MSG_DAMAGE_RECEIVED, ss.str(), targetPos, details);
 					}

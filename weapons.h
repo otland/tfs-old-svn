@@ -79,7 +79,7 @@ class Weapon : public Event
 
 		virtual bool useWeapon(Player* player, Item* item, Creature* target) const;
 		virtual int32_t getWeaponDamage(const Player* player, const Creature* target, const Item* item, bool maxDamage = false) const = 0;
-		virtual int32_t getWeaponElementDamage(const Player* player, const Item* item, bool maxDamage = false) const {return 0;}
+		virtual int32_t getWeaponElementDamage(const Player*, const Item*, bool = false) const {return 0;}
 
 		uint32_t getReqLevel() const {return level;}
 		uint32_t getReqMagLv() const {return magLevel;}
