@@ -565,7 +565,7 @@ bool Combat::CombatHealthFunc(Creature* caster, Creature* target, const CombatPa
 	if(!g_game.combatChangeHealth(_params, caster, target, change, false))
 		return false;
 
-	CombatConditionFunc(caster, target,params, NULL);
+	CombatConditionFunc(caster, target, params, NULL);
 	CombatDispelFunc(caster, target, params, NULL);
 	return true;
 }

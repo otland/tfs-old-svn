@@ -4517,9 +4517,6 @@ bool Game::combatChangeHealth(const CombatParams& params, Creature* attacker, Cr
 				player->sendStatsMessage(MSG_HEALED, ss.str(), targetPos, details);
 			}
 
-			if(details->sub)
-				delete details->sub;
-
 			delete details;
 		}
 	}
@@ -4679,6 +4676,9 @@ bool Game::combatChangeHealth(const CombatParams& params, Creature* attacker, Cr
 
 						player->sendStatsMessage(MSG_DAMAGE_RECEIVED, ss.str(), targetPos, details);
 					}
+
+					if(details->sub)
+						delete details->sub;
 
 					delete details;
 				}
