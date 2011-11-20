@@ -234,7 +234,7 @@ bool IOLoginData::updateOnlineStatus(uint32_t guid, bool login)
 	DBQuery query;
 	DBResult* result;
 
-	uint16_t onlineValue = 1;
+	uint16_t onlineValue = login;
 	if(g_config.getBoolean(ConfigManager::ALLOW_CLONES))
 	{
 		query << "SELECT `online` FROM `players` WHERE `id` = " << guid << ";";
@@ -247,6 +247,8 @@ bool IOLoginData::updateOnlineStatus(uint32_t guid, bool login)
 			onlineValue++;
 		else if(onlineValue > 0)
 			onlineValue--;
+
+		query.str("");
 	}
 
 	query << "UPDATE `players` SET `online` = " << onlineValue << " WHERE `id` = " << guid << ";";
