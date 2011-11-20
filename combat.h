@@ -65,6 +65,10 @@ struct CombatElement
 	int32_t damage;
 };
 
+class TargetCallback;
+class ValueCallback;
+class TileCallback;
+
 struct CombatParams
 {
 	CombatParams()

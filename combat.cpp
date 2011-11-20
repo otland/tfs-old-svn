@@ -1024,7 +1024,7 @@ void ValueCallback::getMinMaxValues(Player* player, CombatParams& params, int32_
 
 		case FORMULA_SKILL:
 		{
-			//"onGetPlayerMinMaxValues"(cid, level, skill, attack, factor)
+			//"onGetPlayerMinMaxValues"(cid, level, skill, attack, element, factor)
 			lua_pushnumber(L, player->getLevel());
 			if(Item* weapon = player->getWeapon(false))
 			{
@@ -1040,10 +1040,10 @@ void ValueCallback::getMinMaxValues(Player* player, CombatParams& params, int32_
 				}
 
 				lua_pushnumber(L, attack);
-				if(item->getElementType() != COMBAT_NONE)
+				if(weapon->getElementType() != COMBAT_NONE)
 				{
 					lua_pushnumber(L, weapon->getElementDamage());
-					params.element.type = item->getElementType();
+					params.element.type = weapon->getElementType();
 				}
 				else
 					lua_pushnumber(L, 0);
@@ -1067,8 +1067,8 @@ void ValueCallback::getMinMaxValues(Player* player, CombatParams& params, int32_
 		}
 	}
 
-	int32_t params = lua_gettop(L);
-	if(!lua_pcall(L, parameters, 2, 0))
+	int32_t args = lua_gettop(L);
+	if(!lua_pcall(L, parameters, 3, 0))
 	{
 		min = LuaInterface::popNumber(L);
 		max = LuaInterface::popNumber(L);
@@ -1079,7 +1079,7 @@ void ValueCallback::getMinMaxValues(Player* player, CombatParams& params, int32_
 	else
 		LuaInterface::error(NULL, std::string(LuaInterface::popString(L)));
 
-	if((lua_gettop(L) + parameters + 1) != params)
+	if((lua_gettop(L) + parameters + 1) != args)
 		LuaInterface::error(__FUNCTION__, "Stack size changed!");
 
 	env->resetCallback();
