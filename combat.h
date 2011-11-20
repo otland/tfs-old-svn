@@ -33,7 +33,7 @@ class ValueCallback : public CallBack
 {
 	public:
 		ValueCallback(formulaType_t _type) {type = _type;}
-		void getMinMaxValues(Player* player, int32_t& min, int32_t& max, bool useCharges) const;
+		void getMinMaxValues(Player* player, CombatParams& params, int32_t& min, int32_t& max) const;
 
 	protected:
 		formulaType_t type;

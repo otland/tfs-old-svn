@@ -66,7 +66,7 @@ bool Combat::getMinMaxValues(Creature* creature, Creature* target, CombatParams&
 		{
 			if(params.valueCallback)
 			{
-				params.valueCallback->getMinMaxValues(player, min, max, params.useCharges);
+				params.valueCallback->getMinMaxValues(player, _params, min, max);
 				return true;
 			}
 
@@ -992,7 +992,7 @@ void Combat::doCombatDefault(Creature* caster, Creature* target, const CombatPar
 
 //**********************************************************
 
-void ValueCallback::getMinMaxValues(Player* player, int32_t& min, int32_t& max, bool useCharges) const
+void ValueCallback::getMinMaxValues(Player* player, CombatParams& params, int32_t& min, int32_t& max) const
 {
 	//"onGetPlayerMinMaxValues"(cid, ...)
 	if(!m_interface->reserveEnv())
@@ -1029,7 +1029,7 @@ void ValueCallback::getMinMaxValues(Player* player, int32_t& min, int32_t& max, 
 			if(Item* weapon = player->getWeapon(false))
 			{
 				lua_pushnumber(L, player->getWeaponSkill(weapon));
-				if(useCharges && weapon->hasCharges() && g_config.getBool(ConfigManager::REMOVE_WEAPON_CHARGES))
+				if(params.useCharges && weapon->hasCharges() && g_config.getBool(ConfigManager::REMOVE_WEAPON_CHARGES))
 					g_game.transformItem(weapon, weapon->getID(), std::max(0, weapon->getCharges() - 1));
 
 				uint32_t attack = weapon->getAttack() + weapon->getExtraAttack();
@@ -1040,19 +1040,23 @@ void ValueCallback::getMinMaxValues(Player* player, int32_t& min, int32_t& max, 
 				}
 
 				lua_pushnumber(L, attack);
-				lua_pushnumber(L, weapon->getElementType());
-				lua_pushnumber(L, weapon->getElementDamage());
+				if(item->getElementType() != COMBAT_NONE)
+				{
+					lua_pushnumber(L, weapon->getElementDamage());
+					params.element.type = item->getElementType();
+				}
+				else
+					lua_pushnumber(L, 0);
 			}
 			else
 			{
 				lua_pushnumber(L, player->getSkill(SKILL_FIST, SKILL_LEVEL));
 				lua_pushnumber(L, g_config.getNumber(ConfigManager::FIST_BASE_ATTACK));
 				lua_pushnumber(L, 0);
-				lua_pushnumber(L, 0);
 			}
 
 			lua_pushnumber(L, player->getAttackFactor());
-			parameters += 6;
+			parameters += 5;
 			break;
 		}
 
@@ -1068,7 +1072,9 @@ void ValueCallback::getMinMaxValues(Player* player, int32_t& min, int32_t& max, 
 	{
 		min = LuaInterface::popNumber(L);
 		max = LuaInterface::popNumber(L);
-		player->increaseCombatValues(min, max, useCharges, type != FORMULA_SKILL);
+
+		params.element.damage = LuaInterface::popNumber(L);
+		player->increaseCombatValues(min, max, params.useCharges, type != FORMULA_SKILL);
 	}
 	else
 		LuaInterface::error(NULL, std::string(LuaInterface::popString(L)));
