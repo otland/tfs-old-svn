@@ -34,28 +34,9 @@ extern ConfigManager g_config;
 DatabaseMySQL::DatabaseMySQL() :
 	m_timeoutTask(0)
 {
-	m_connected = false;
-	if(!mysql_init(&m_handle))
-	{
-		std::clog << std::endl << "Failed to initialize MySQL connection handler." << std::endl;
-		return;
-	}
-
-	int32_t timeout = g_config.getNumber(ConfigManager::MYSQL_READ_TIMEOUT);
-	if(timeout)
-		mysql_options(&m_handle, MYSQL_OPT_READ_TIMEOUT, (const char*)&timeout);
-
-	timeout = g_config.getNumber(ConfigManager::MYSQL_WRITE_TIMEOUT);
-	if(timeout)
-		mysql_options(&m_handle, MYSQL_OPT_WRITE_TIMEOUT, (const char*)&timeout);
-
-	my_bool reconnect = true;
-	mysql_options(&m_handle, MYSQL_OPT_RECONNECT, &reconnect);
-
 	if(!connect(false))
 		return;
 
-	m_connected = true;
 	if(mysql_get_client_version() <= 50019)
 		//MySQL servers <= 5.0.19 have a bug where MYSQL_OPT_RECONNECT option is reset by mysql_real_connect calls.
 		//Read this http://dev.mysql.com/doc/refman/5.0/en/mysql-options.html for more information.
@@ -90,27 +71,52 @@ DatabaseMySQL::~DatabaseMySQL()
 
 bool DatabaseMySQL::connect(bool _reconnect)
 {
+	m_connected = false;
 	if(_reconnect)
 	{
+		mysql_close(&m_handle);
 		std::clog << "WARNING: MYSQL Lost connection, attempting to reconnect..." << std::endl;
+
 		uint32_t maxAttempts = g_config.getNumber(ConfigManager::MYSQL_RECONNECTION_ATTEMPTS);
 		if(maxAttempts && ++m_attempts > maxAttempts)
 		{
-			std::clog << "Failed connection to database - maximum reconnect attempts passed." << std::endl;
+			std::clog << std::endl << "Failed connection to database - maximum reconnect attempts passed." << std::endl;
 			return false;
 		}
 	}
 
-	if(mysql_real_connect(&m_handle, g_config.getString(ConfigManager::SQL_HOST).c_str(), g_config.getString(
-		ConfigManager::SQL_USER).c_str(), g_config.getString(ConfigManager::SQL_PASS).c_str(), g_config.getString(
-		ConfigManager::SQL_DB).c_str(), g_config.getNumber(ConfigManager::SQL_PORT), NULL, 0))
+	if(!mysql_init(&m_handle))
 	{
-		m_attempts = 0;
-		return true;
+		std::clog << std::endl << "Failed to initialize MySQL connection handler." << std::endl;
+		return;
 	}
 
-	std::clog << "Failed connecting to database - MYSQL ERROR: " << mysql_error(&m_handle) << " (" << mysql_errno(&m_handle) << ")" << std::endl;
-	return false;
+	int32_t timeout = g_config.getNumber(ConfigManager::MYSQL_READ_TIMEOUT);
+	if(timeout)
+		mysql_options(&m_handle, MYSQL_OPT_READ_TIMEOUT, (const char*)&timeout);
+
+	timeout = g_config.getNumber(ConfigManager::MYSQL_WRITE_TIMEOUT);
+	if(timeout)
+		mysql_options(&m_handle, MYSQL_OPT_WRITE_TIMEOUT, (const char*)&timeout);
+
+	my_bool reconnect = true;
+	mysql_options(&m_handle, MYSQL_OPT_RECONNECT, &reconnect);
+
+	if(!mysql_real_connect(&m_handle,
+			g_config.getString(ConfigManager::SQL_HOST).c_str(),
+			g_config.getString(ConfigManager::SQL_USER).c_str(),
+			g_config.getString(ConfigManager::SQL_PASS).c_str(),
+			g_config.getString(ConfigManager::SQL_DB).c_str(),
+			g_config.getNumber(ConfigManager::SQL_PORT),
+		NULL, 0))
+	{
+		std::clog << std::endl << "Failed connecting to database - MYSQL ERROR: " << mysql_error(&m_handle) << " (" << mysql_errno(&m_handle) << ")" << std::endl;
+		return false;
+	}
+
+	m_connected = true;
+	m_attempts = 0;
+	return true;
 }
 
 bool DatabaseMySQL::getParam(DBParam_t param)
@@ -236,10 +242,10 @@ void DatabaseMySQL::keepAlive()
 	if(!timeout)
 		return;
 
-	if(OTSYS_TIME() > (m_use + timeout))
+	if(m_connected && OTSYS_TIME() > (m_use + timeout))
 	{
 		if(mysql_ping(&m_handle))
-			m_connected = false;
+			connect(true);
 	}
 
 	Scheduler::getInstance().addEvent(createSchedulerTask(timeout,
@@ -303,6 +309,7 @@ void MySQLResult::free()
 
 	mysql_free_result(m_handle);
 	m_handle = NULL;
+
 	m_listNames.clear();
 	delete this;
 }
