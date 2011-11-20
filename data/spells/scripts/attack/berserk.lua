@@ -6,9 +6,10 @@ setCombatParam(combat, COMBAT_PARAM_USECHARGES, true)
 local area = createCombatArea(AREA_SQUARE1X1)
 setCombatArea(combat, area)
 
-function onGetFormulaValues(cid, level, skill, attack, factor)
-	local skillTotal, levelTotal = skill + attack, level / 5
-	return -(skillTotal * 0.5 + levelTotal), -(skillTotal * 1.5 + levelTotal)
+function onGetFormulaValues(cid, level, skill, attack, element, factor)
+	local levelTotal, formula = level / 5, 0.0496
+	local normal, elemental = -(skill * attack * formula + levelTotal), math.ceil((skill * element * formula + levelTotal))
+	return normal/2, normal, -math.random(elemental/2, elemental)
 end
 
 setCombatCallback(combat, CALLBACK_PARAM_SKILLVALUE, "onGetFormulaValues")

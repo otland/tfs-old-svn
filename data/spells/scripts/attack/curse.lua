@@ -25,7 +25,6 @@ addDamageCondition(condition, 6, 3000, -10)
 addDamageCondition(condition, 10, 3000, -5)
 setCombatCondition(combat, condition)
 
-
 function onCastSpell(cid, var)
 	return doCombat(cid, combat, var)
 end
