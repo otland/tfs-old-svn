@@ -4641,7 +4641,7 @@ bool Game::combatChangeHealth(const CombatParams& params, Creature* attacker, Cr
 					}
 
 					std::stringstream ss;				
-					int32_ totalDamage = damage + elementDamage;
+					int32_t totalDamage = damage + elementDamage;
 
 					std::string plural = (totalDamage != 1 ? "s" : "");
 					if(!textList.empty())
