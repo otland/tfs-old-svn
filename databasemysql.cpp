@@ -42,7 +42,7 @@ DatabaseMySQL::DatabaseMySQL() :
 		//Read this http://dev.mysql.com/doc/refman/5.0/en/mysql-options.html for more information.
 		std::clog << std::endl << "> WARNING: Outdated MySQL server detected, consider upgrading to a newer version." << std::endl;
 
-	timeout = g_config.getNumber(ConfigManager::SQL_KEEPALIVE) * 1000;
+	int32_t timeout = g_config.getNumber(ConfigManager::SQL_KEEPALIVE) * 1000;
 	if(timeout)
 		m_timeoutTask = Scheduler::getInstance().addEvent(createSchedulerTask(timeout,
 			boost::bind(&DatabaseMySQL::keepAlive, this)));
