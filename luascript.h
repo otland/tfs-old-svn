@@ -731,7 +731,7 @@ class LuaInterface
 		static int32_t luaBitULeftShift(lua_State* L);
 		static int32_t luaBitURightShift(lua_State* L);
 
-		static const luaL_Reg luaStdTable[8];
+		static const luaL_Reg luaStdTable[9];
 		static int32_t luaStdCout(lua_State* L);
 		static int32_t luaStdClog(lua_State* L);
 		static int32_t luaStdCerr(lua_State* L);
