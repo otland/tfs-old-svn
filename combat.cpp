@@ -553,7 +553,7 @@ bool Combat::CombatHealthFunc(Creature* caster, Creature* target, const CombatPa
 
 	CombatParams _params = params;
 	if(_params.element.damage && _params.element.type != COMBAT_NONE)
-		g_game.combatBlockHit(_params.element.type, caster, target, _params.element.damage, false, false, true);
+		g_game.combatBlockHit(_params.element.type, caster, target, _params.element.damage, true, true, true);
 
 	if(caster && caster->getPlayer() && target->getPlayer() && target->getPlayer()->getSkull() != SKULL_BLACK)
 	{
@@ -1039,14 +1039,19 @@ void ValueCallback::getMinMaxValues(Player* player, CombatParams& params, int32_
 						attack += bow->getAttack() + bow->getExtraAttack();
 				}
 
-				lua_pushnumber(L, attack);
 				if(weapon->getElementType() != COMBAT_NONE)
 				{
+					attack -= weapon->getElementDamage();
+					lua_pushnumber(L, attack);
+
 					lua_pushnumber(L, weapon->getElementDamage());
 					params.element.type = weapon->getElementType();
 				}
 				else
+				{
+					lua_pushnumber(L, attack);
 					lua_pushnumber(L, 0);
+				}
 			}
 			else
 			{

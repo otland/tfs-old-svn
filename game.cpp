@@ -4366,7 +4366,9 @@ bool Game::combatBlockHit(CombatType_t combatType, Creature* attacker, Creature*
 	const SpectatorVec& list = getSpectators(targetPos);
 	if(Combat::canDoCombat(attacker, target) != RET_NOERROR)
 	{
-		addMagicEffect(list, targetPos, MAGIC_EFFECT_POFF, target->isGhost());
+		if(!element)
+			addMagicEffect(list, targetPos, MAGIC_EFFECT_POFF, target->isGhost());
+
 		return true;
 	}
 
@@ -4375,23 +4377,27 @@ bool Game::combatBlockHit(CombatType_t combatType, Creature* attacker, Creature*
 		damage, checkDefense, checkArmor, !field, field, element);
 
 	healthChange = -damage;
-	if(element)
-		return true;
-
 	if(blockType == BLOCK_DEFENSE)
 	{
-		addMagicEffect(list, targetPos, MAGIC_EFFECT_POFF);
+		if(!element)
+			addMagicEffect(list, targetPos, MAGIC_EFFECT_POFF);
+
 		return true;
 	}
 
 	if(blockType == BLOCK_ARMOR)
 	{
-		addMagicEffect(list, targetPos, MAGIC_EFFECT_BLOCKHIT);
+		if(!element)
+			addMagicEffect(list, targetPos, MAGIC_EFFECT_BLOCKHIT);
+
 		return true;
 	}
 
 	if(blockType != BLOCK_IMMUNITY)
 		return false;
+
+	if(element)
+		return true;
 
 	MagicEffect_t effect = MAGIC_EFFECT_NONE;
 	switch(combatType)
