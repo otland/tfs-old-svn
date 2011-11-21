@@ -553,7 +553,7 @@ bool Combat::CombatHealthFunc(Creature* caster, Creature* target, const CombatPa
 
 	CombatParams _params = params;
 	if(_params.element.damage && _params.element.type != COMBAT_NONE)
-		g_game.combatBlockHit(_params.element.type, caster, target, _params.element.damage, true, true, true);
+		g_game.combatBlockHit(_params.element.type, caster, target, _params.element.damage, params.blockedByShield, params.blockedByArmor, true);
 
 	if(caster && caster->getPlayer() && target->getPlayer() && target->getPlayer()->getSkull() != SKULL_BLACK)
 	{
