@@ -245,8 +245,8 @@
 		<vocation id="4"/>
 		<vocation id="8"/>
 	</instant>
-	<instant name="Intense Wound Cleansing" words="exura gran ico" lvl="80" mana="200" prem="1" selftarget="1" aggressive="0" exhaustion="180000" groups="2,1000" icon="158" needlearn="0" event="script" value="healing/intense wound cleansing.lua"> 
-		<vocation id="4"/> 
+	<instant name="Intense Wound Cleansing" words="exura gran ico" lvl="80" mana="200" prem="1" selftarget="1" aggressive="0" exhaustion="600000" groups="2,1000" icon="158" needlearn="0" event="script" value="healing/intense wound cleansing.lua"> 
+		<vocation id="4"/>
 		<vocation id="8"/> 
 	</instant> 
      <instant name="Cure Bleeding" words="exana kor" lvl="30" mana="30" prem="1" aggressive="0" selftarget="1" exhaustion="6000" groups="2,1000" icon="144" needlearn="0" event="script" value="healing/cure bleeding.lua">
@@ -439,16 +439,16 @@
 	</instant>
 
 	<!-- Party Spells -->
-	<instant name="Train Party" words="utito mas sio" lvl="32" mana="60" prem="1" aggressive="0" selftarget="1" exhaustion="2000" groups="3,3000" icon="126" needlearn="0" event="script" value="party/train.lua">
+	<instant name="Train Party" words="utito mas sio" lvl="32" mana="" prem="1" aggressive="0" selftarget="1" exhaustion="2000" groups="3,3000" icon="126" needlearn="0" event="script" value="party/train.lua">
 		<vocation id="8"/>
 	</instant>
-	<instant name="Protect Party" words="utamo mas sio" lvl="32" mana="90" prem="1" aggressive="0" selftarget="1" exhaustion="2000" groups="3,3000" icon="127" needlearn="0" event="script" value="party/protect.lua">
+	<instant name="Protect Party" words="utamo mas sio" lvl="32" mana="" prem="1" aggressive="0" selftarget="1" exhaustion="2000" groups="3,3000" icon="127" needlearn="0" event="script" value="party/protect.lua">
 		<vocation id="7"/>
 	</instant>
-	<instant name="Heal Party" words="utura mas sio" lvl="32" mana="120" prem="1" aggressive="0" selftarget="1" exhaustion="2000" groups="3,3000" icon="128" needlearn="0" event="script" value="party/heal.lua">
+	<instant name="Heal Party" words="utura mas sio" lvl="32" mana="" prem="1" aggressive="0" selftarget="1" exhaustion="2000" groups="3,3000" icon="128" needlearn="0" event="script" value="party/heal.lua">
 		<vocation id="6"/>
 	</instant>
-	<instant name="Enchant Party" words="utori mas sio" lvl="32" mana="120" prem="1" aggressive="0" selftarget="1" exhaustion="2000" groups="3,3000" icon="129" needlearn="0" event="script" value="party/enchant.lua">
+	<instant name="Enchant Party" words="utori mas sio" lvl="32" mana="" prem="1" aggressive="0" selftarget="1" exhaustion="2000" groups="3,3000" icon="129" needlearn="0" event="script" value="party/enchant.lua">
 		<vocation id="5"/>
 	</instant>
 

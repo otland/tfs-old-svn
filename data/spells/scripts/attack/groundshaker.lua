@@ -7,9 +7,10 @@ local area = createCombatArea(AREA_CIRCLE3X3)
 setCombatArea(combat, area)
 
 function onGetFormulaValues(cid, level, skill, attack, element, factor)
-	local attackTotal, elementTotal, levelTotal = skill + attack, skill + element, level / 5
-	return -(attackTotal * 0.5 + levelTotal), -(attackTotal * 1.1 + levelTotal),
-		-math.random(math.ceil(elementTotal * 0.5 + levelTotal), math.ceil(elementTotal * 1.1 + levelTotal))
+	
+	local attackTotal, elementTotal, levelTotal = skill + attack, skill + element, level / 9
+	return -(attackTotal * 0.53 + levelTotal), -(attackTotal * 1.0 + levelTotal),
+		-math.random(math.ceil(elementTotal * 0.5), math.ceil(elementTotal * 0.9))
 end
 
 setCombatCallback(combat, CALLBACK_PARAM_SKILLVALUE, "onGetFormulaValues")
