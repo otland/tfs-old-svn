@@ -1422,15 +1422,15 @@ void Player::onFollowCreatureDisappear(bool isLogout)
 
 void Player::onChangeZone(ZoneType_t zone)
 {
-	if(zone == ZONE_PROTECTION)
+	if(zone == ZONE_PROTECTION && !hasFlag(PlayerFlag_IgnoreProtectionZone))
 	{
-		if(attackedCreature && !hasFlag(PlayerFlag_IgnoreProtectionZone))
+		if(attackedCreature)
 		{
 			setAttackedCreature(NULL);
 			onTargetDisappear(false);
 		}
 
-		if(g_config.getBool(ConfigManager::UNMOUNT_PLAYER_IN_PZ) && !hasCustomFlag(PlayerCustomFlag_GamemasterPrivileges))
+		if(g_config.getBool(ConfigManager::UNMOUNT_PLAYER_IN_PZ))
 			dismount(true);
 	}
 
@@ -5351,7 +5351,7 @@ void Player::setMounted(bool mounting)
 		return;
 	}
 
-	if(_tile->hasFlag(TILESTATE_PROTECTIONZONE) && g_config.getBool(ConfigManager::UNMOUNT_PLAYER_IN_PZ))
+	if(_tile->hasFlag(TILESTATE_PROTECTIONZONE) && g_config.getBool(ConfigManager::UNMOUNT_PLAYER_IN_PZ) && !hasFlag(PlayerFlag_IgnoreProtectionZone))
 		sendCancelMessage(RET_ACTIONNOTPERMITTEDINPROTECTIONZONE);
 	else if(Mounts::getInstance()->isPremium() && !isPremium())
 		sendCancelMessage(RET_YOUNEEDPREMIUMACCOUNT);
