@@ -788,16 +788,13 @@ void Player::dropLoot(Container* corpse)
 	if(!corpse || lootDrop != LOOT_DROP_FULL)
 		return;
 
-	uint32_t loss = lossPercent[LOSS_CONTAINERS];
-	if(g_config.getBool(ConfigManager::BLESSINGS))
+	uint32_t loss = lossPercent[LOSS_CONTAINERS], start = g_config.getNumber(
+		ConfigManager::BLESS_REDUCTION_BASE), bless = getBlessings();
+	while(bless > 0 && loss > 0)
 	{
-		uint32_t start = g_config.getNumber(ConfigManager::BLESS_REDUCTION_BASE), bless = getBlessings();
-		while(bless > 0 && loss > 0)
-		{
-			loss -= start;
-			start -= g_config.getNumber(ConfigManager::BLESS_REDUCTION_DECREMENT);
-			--bless;
-		}
+		loss -= start;
+		start -= g_config.getNumber(ConfigManager::BLESS_REDUCTION_DECREMENT);
+		--bless;
 	}
 
 	uint32_t itemLoss = (uint32_t)std::floor((5. + loss) * lossPercent[LOSS_ITEMS] / 1000.);
@@ -810,8 +807,14 @@ void Player::dropLoot(Container* corpse)
 		uint32_t tmp = random_range(1, 100);
 		if(skull > SKULL_WHITE || (item->getContainer() && tmp < loss) || (!item->getContainer() && tmp < itemLoss))
 		{
-			g_game.internalMoveItem(NULL, this, corpse, INDEX_WHEREEVER, item, item->getItemCount(), 0);
-			sendRemoveInventoryItem((slots_t)i, inventory[(slots_t)i]);
+			const ItemType& it = Item::items[item->getID()];
+			if(!it.abilities.preventLoss && !it.abilities.preventDrop)
+			{
+				g_game.internalMoveItem(NULL, this, corpse, INDEX_WHEREEVER, item, item->getItemCount(), 0);
+				sendRemoveInventoryItem((slots_t)i, inventory[(slots_t)i]);
+			}
+			else
+				g_game.internalRemoveItem(NULL, item);
 		}
 	}
 }
