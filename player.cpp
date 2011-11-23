@@ -807,14 +807,8 @@ void Player::dropLoot(Container* corpse)
 		uint32_t tmp = random_range(1, 100);
 		if(skull > SKULL_WHITE || (item->getContainer() && tmp < loss) || (!item->getContainer() && tmp < itemLoss))
 		{
-			const ItemType& it = Item::items[item->getID()];
-			if(!it.abilities.preventLoss && !it.abilities.preventDrop)
-			{
-				g_game.internalMoveItem(NULL, this, corpse, INDEX_WHEREEVER, item, item->getItemCount(), 0);
-				sendRemoveInventoryItem((slots_t)i, inventory[(slots_t)i]);
-			}
-			else
-				g_game.internalRemoveItem(NULL, item);
+			g_game.internalMoveItem(NULL, this, corpse, INDEX_WHEREEVER, item, item->getItemCount(), 0);
+			sendRemoveInventoryItem((slots_t)i, inventory[(slots_t)i]);
 		}
 	}
 }
