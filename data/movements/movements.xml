@@ -44,6 +44,8 @@
 	<movevent type="StepIn" itemid="1738" event="script" value="walkback.lua"/>
 	<movevent type="StepIn" itemid="1740" event="script" value="walkback.lua"/>
 	<movevent type="StepIn" fromid="1746" toid="1749" event="script" value="walkback.lua"/>
+	<movevent type="StepIn" fromid="12664" toid="12665" event="script" value="walkback.lua"/>
+	<movevent type="StepIn" fromid="12796" toid="12797" event="script" value="walkback.lua"/>
 
 	<!-- (Level & quest) doors -->
 	<movevent type="StepOut" itemid="1228" event="script" value="closingdoor.lua"/>

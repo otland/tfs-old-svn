@@ -21184,7 +21184,9 @@
 		<attribute key="description" value="In memory of her - half plant, half demon, incredibly powerful and betrayed by her own creators."/>
 		<attribute key="weight" value="1800"/>
 	</item>
-	<item fromid="12664" toid="12665" name="treasure chest"/>
+	<item fromid="12664" toid="12665" name="treasure chest">
+		<attribute key="containerSize" value="20" />
+	</item>
 	<item id="12666" name="gamemaster doll">
 		<attribute key="description" value="It was awarded in memory of the dedicated service of Tibia's gamemaster team."/>
 		<attribute key="weight" value="1500"/>
@@ -21275,7 +21277,7 @@
 	</item>
 	<item id="12795" article="a" name="taboret"/>
 	<item fromid="12796" toid="12797" article="a" name="wooden trunk">
-		<attribute key="containerSize" value="20"/>
+		<attribute key="containerSize" value="20" />
 	</item>
 	<item fromid="12799" toid="12780" article="a" name="cabinet">
 		<attribute key="containerSize" value="8"/>
