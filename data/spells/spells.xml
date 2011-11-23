@@ -397,7 +397,7 @@
 	<instant name="Challenge" words="exeta res" lvl="20" mana="30" prem="1" aggressive="0" exhaustion="2000" groups="3,3000" icon="93" needlearn="0" event="script" value="support/challenge.lua">
 		<vocation id="8"/>
 	</instant>
-	<instant name="Strong Haste" words="utani gran hur" lvl="20" mana="100" prem="1" aggressive="0" selftarget="1" exhaustion="8000" groups="3,3000" icon="39" needlearn="0" event="script" value="support/strong haste.lua">
+	<instant name="Strong Haste" words="utani gran hur" lvl="20" mana="100" prem="1" aggressive="0" selftarget="1" exhaustion="2000" groups="3,2000" icon="39" needlearn="0" event="script" value="support/strong haste.lua">
 		<vocation id="1"/>
 		<vocation id="2"/>
 		<vocation id="5"/>

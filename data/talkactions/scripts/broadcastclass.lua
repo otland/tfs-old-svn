@@ -9,10 +9,10 @@ function onSay(cid, words, param, channel)
 		t = t[1] .. " " .. t[2]
 	end
 
-	if(t[2]) then
+	if(type(t) == 'table') then
 		doBroadcastMessage(t[2], MESSAGE_TYPES[t[1]])
 	else
-		doBroadcastMessage(t[1])
+		doBroadcastMessage(t)
 	end
 
 	return true
