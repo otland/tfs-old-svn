@@ -6,7 +6,7 @@ local config = {
 
 function onUse(cid, item, fromPosition, itemEx, toPosition)
 	if(math.random(1, 100) <= config.breakChance) then
-		doSummonCreature("Mad Sheep", toPosition)
+		doSummonCreature("Sheep", toPosition) -- There should be Mad Sheep, but we don't have Mad Sheep :(
 		doRemoveItem(item.uid, 1)
 		return true
 	end

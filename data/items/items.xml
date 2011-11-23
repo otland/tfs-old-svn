@@ -1794,11 +1794,13 @@
 	<item id="2041" article="a" name="candelabrum">
 		<attribute key="weight" value="500"/>
 		<attribute key="stopduration" value="1"/>
+		<attribute key="transformUseTo" value="2042"/>
 	</item>
 	<item id="2042" article="a" name="candelabrum">
 		<attribute key="weight" value="500"/>
 		<attribute key="decayTo" value="2043"/>
 		<attribute key="duration" value="180"/>
+		<attribute key="transformUseTo" value="2041"/>
 	</item>
 	<item id="2043" article="a" name="used candelabrum">
 		<attribute key="weight" value="300"/>
@@ -1806,11 +1808,13 @@
 	<item id="2044" article="a" name="lamp">
 		<attribute key="weight" value="3000"/>
 		<attribute key="stopduration" value="1"/>
+		<attribute key="transformUseTo" value="2045"/>
 	</item>
 	<item id="2045" article="a" name="lamp">
 		<attribute key="weight" value="3000"/>
 		<attribute key="decayTo" value="2046"/>
 		<attribute key="duration" value="180"/>
+		<attribute key="transformUseTo" value="2044"/>
 	</item>
 	<item id="2046" article="a" name="lamp">
 		<attribute key="weight" value="3000"/>
@@ -1818,48 +1822,52 @@
 	<item id="2047" article="a" name="candlestick">
 		<attribute key="weight" value="300"/>
 		<attribute key="stopduration" value="1"/>
+		<attribute key="transformUseTo" value="2048"/>
 	</item>
 	<item id="2048" article="a" name="candlestick">
 		<attribute key="weight" value="300"/>
 		<attribute key="decayTo" value="2049"/>
 		<attribute key="duration" value="240"/>
+		<attribute key="transformUseTo" value="2047"/>
 	</item>
 	<item id="2049" article="a" name="candlestick">
 		<attribute key="weight" value="200"/>
-		<attribute key="decayTo" value="0"/>
-		<attribute key="duration" value="60"/>
 	</item>
 	<item id="2050" article="a" name="torch">
 		<attribute key="weight" value="500"/>
 		<attribute key="stopduration" value="1"/>
+		<attribute key="transformUseTo" value="2051"/>
 	</item>
 	<item id="2051" article="a" name="torch">
 		<attribute key="weight" value="500"/>
 		<attribute key="decayTo" value="2053"/>
 		<attribute key="duration" value="180"/>
+		<attribute key="transformUseTo" value="2050"/>
 	</item>
 	<item id="2052" article="a" name="torch">
 		<attribute key="weight" value="500"/>
 		<attribute key="stopduration" value="1"/>
+		<attribute key="transformUseTo" value="2053"/>
 	</item>
 	<item id="2053" article="a" name="torch">
 		<attribute key="weight" value="500"/>
 		<attribute key="decayTo" value="2055"/>
 		<attribute key="duration" value="120"/>
+		<attribute key="transformUseTo" value="2052"/>
 	</item>
 	<item id="2054" article="a" name="torch">
 		<attribute key="weight" value="500"/>
 		<attribute key="stopduration" value="1"/>
+		<attribute key="transformUseTo" value="2055"/>
 	</item>
 	<item id="2055" article="a" name="torch">
 		<attribute key="weight" value="500"/>
 		<attribute key="decayTo" value="2056"/>
 		<attribute key="duration" value="120"/>
+		<attribute key="transformUseTo" value="2054"/>
 	</item>
 	<item id="2056" article="a" name="torch">
 		<attribute key="weight" value="500"/>
-		<attribute key="decayTo" value="0"/>
-		<attribute key="duration" value="60"/>
 	</item>
 	<item id="2057" article="a" name="candelabrum">
 		<attribute key="weight" value="500"/>
@@ -4731,7 +4739,9 @@
 	<item id="2782" name="jungle grass"/>
 	<item id="2783" article="a" name="swamp flower"/>
 	<item id="2784" article="a" name="dry bush"/>
-	<item id="2785" article="a" name="blueberry bush"/>
+	<item id="2785" article="a" name="blueberry bush">
+		<attribute key="transformUseTo" value="2786"/>
+	</item>
 	<item id="2786" article="a" name="blueberry bush">
 		<attribute key="decayTo" value="2785"/>
 		<attribute key="duration" value="300"/>
@@ -9238,10 +9248,12 @@
 		<attribute key="weight" value="2200"/>
 		<attribute key="decayTo" value="2229"/>
 		<attribute key="duration" value="3000"/>
+		<attribute key="transformUseTo" value="5813"/>
 	</item>
 	<item id="5813" article="a" name="skull candle">
 		<attribute key="weight" value="2200"/>
 		<attribute key="stopduration" value="1"/>
+		<attribute key="transformUseTo" value="5812"/>
 	</item>
 	<item fromid="5814" toid="5827" name="melting ground"/>
 	<item fromid="5828" toid="5839" name="gravel"/>
@@ -12000,8 +12012,14 @@
 	<item id="7176" article="a" name="standing mammoth"/>
 	<item id="7177" article="a" name="sleeping mammoth"/>
 	<item id="7178" article="a" name="baby seal"/>
-	<item fromid="7183" toid="7184" article="a" name="baby seal doll">
+	<item id="7183" article="a" name="baby seal doll">
 		<attribute key="weight" value="850"/>
+		<attribute key="transformUseTo" value="7184"/>
+	</item>
+	<item id="7183" article="a" name="baby seal doll">
+		<attribute key="weight" value="850"/>
+		<attribute key="decayTo" value="7183"/>
+		<attribute key="duration" value="5"/>
 	</item>
 	<item fromid="7185" toid="7186" name="some crack"/>
 	<item fromid="7187" toid="7188" article="a" name="raft"/>
@@ -13114,7 +13132,9 @@
 		<attribute key="decayTo" value="7537"/>
 		<attribute key="duration" value="600"/>
 	</item>
-	<item id="7537" article="a" name="spider egg"/>
+	<item id="7537" article="a" name="spider egg">
+		<attribute key="transformUseTo" value="7536"/>
+	</item>
 	<item fromid="7538" toid="7543" article="a" name="spider web"/>
 	<item id="7544" article="the" name="remains of a spider web">
 		<attribute key="decayTo" value="7538"/>
@@ -13150,7 +13170,9 @@
 		<attribute key="weight" value="940"/>
 	</item>
 	<item id="7584" article="a" name="ship wall"/>
-	<item id="7585" article="a" name="spider egg"/>
+	<item id="7585" article="a" name="spider egg">
+		<attribute key="transformUseTo" value="7586"/>
+	</item>
 	<item id="7586" article="the" name="remains of a spider egg">
 		<attribute key="decayTo" value="7585"/>
 		<attribute key="duration" value="600"/>
@@ -16397,7 +16419,7 @@
 	<item id="9007" article="a" name="toy spider">
 		<attribute key="weight" value="20"/>
 		<attribute key="decayTo" value="9006"/>
-		<attribute key="duration" value="10"/>
+		<attribute key="duration" value="2"/>
 	</item>
 	<item id="9009" article="the" name="Overlord's ashes">
 		<attribute key="containerSize" value="8"/>
@@ -17527,24 +17549,28 @@
 		<attribute key="decayTo" value="9977"/>
 		<attribute key="duration" value="15"/>
 		<attribute key="rotateTo" value="9977"/>
+		<attribute key="transformUseTo" value="9977"/>
 	</item>
 	<item id="9977" article="a" name="crystal pedestal">
 		<attribute key="weight" value="4000"/>
 		<attribute key="decayTo" value="9978"/>
 		<attribute key="duration" value="10"/>
 		<attribute key="rotateTo" value="9978"/>
+		<attribute key="transformUseTo" value="9978"/>
 	</item>
 	<item id="9978" article="a" name="crystal pedestal">
 		<attribute key="weight" value="4000"/>
 		<attribute key="decayTo" value="9979"/>
 		<attribute key="duration" value="11"/>
 		<attribute key="rotateTo" value="9979"/>
+		<attribute key="transformUseTo" value="9979"/>
 	</item>
 	<item id="9979" article="a" name="crystal pedestal">
 		<attribute key="weight" value="4000"/>
 		<attribute key="decayTo" value="9976"/>
 		<attribute key="duration" value="9"/>
 		<attribute key="rotateTo" value="9976"/>
+		<attribute key="transformUseTo" value="9976"/>
 	</item>
 	<item id="9980" article="a" name="crystal of power">
 		<attribute key="description" value="It is said to make you more resistant to weaknesses and to supply you with energy."/>

@@ -13,7 +13,5 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 	end
 
 	doSendMagicEffect(fromPosition, effect)
-	doTransformItem(item.uid, 7536)
-	doDecayItem(item.uid)
-	return true
+	return false
 end

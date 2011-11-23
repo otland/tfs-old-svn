@@ -172,16 +172,6 @@
 	<action fromid="6091" toid="6092" event="script" value="other/watch.lua"/>
 	<action itemid="8187" event="script" value="other/watch.lua"/>
 
-	<!-- Decaying -->
-	<action fromid="2041" toid="2042" event="script" value="other/decayto.lua"/>
-	<action fromid="2044" toid="2045" event="script" value="other/decayto.lua"/>
-	<action fromid="2047" toid="2048" event="script" value="other/decayto.lua"/>
-	<action fromid="2050" toid="2055" event="script" value="other/decayto.lua"/>
-	<action fromid="5812" toid="5813" event="script" value="other/decayto.lua"/>
-	<action itemid="7183" event="script" value="other/decayto.lua"/>
-	<action itemid="9006" event="script" value="other/decayto.lua"/>
-	<action fromid="9976" toid="9979" event="script" value="other/decayto.lua"/>
-
 	<!-- Dolls -->
 	<action itemid="5080" event="script" value="other/dolls.lua"/>
 	<action itemid="5669" event="script" value="other/dolls.lua"/>
@@ -223,9 +213,8 @@
 	<action itemid="6576" event="script" value="other/fireworksrocket.lua"/>
 	<action itemid="6578" event="script" value="other/partyhat.lua"/>
 	<action itemid="2785" event="script" value="other/blueberrybush.lua"/>
-	<action itemid="2579" event="script" value="other/trap.lua"/>
 	<action itemid="8110" event="script" value="other/present.lua"/>
 	<action itemid="7735" event="script" value="other/spellwand.lua"/>
-	<action itemid="7537" event="script" value="other/spideregg.lua" />
+	<action itemid="7537;7585" event="script" value="other/spideregg.lua" />
 	<action itemid="6561" event="script" value="other/ceremonialankh.lua"/>
 </actions>
