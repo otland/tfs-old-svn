@@ -837,22 +837,19 @@ Cylinder* Tile::__queryDestination(int32_t&, const Thing*, Item** destItem,
 
 		if(!destTile)
 		{
-			if(Tile* upTile = g_game.getTile(_pos))
-			{
-				if(upTile->floorChange(CHANGE_NORTH) || upTile->floorChange(CHANGE_NORTH_EX))
-					_pos.y--;
+			if(floorChange(CHANGE_NORTH) || floorChange(CHANGE_NORTH_EX))
+				_pos.y--;
 
-				if(upTile->floorChange(CHANGE_SOUTH) || upTile->floorChange(CHANGE_SOUTH_EX))
-					_pos.y++;
+			if(floorChange(CHANGE_SOUTH) || floorChange(CHANGE_SOUTH_EX))
+				_pos.y++;
 
-				if(upTile->floorChange(CHANGE_EAST) || upTile->floorChange(CHANGE_EAST_EX))
-					_pos.x++;
+			if(floorChange(CHANGE_EAST) || floorChange(CHANGE_EAST_EX))
+				_pos.x++;
 
-				if(upTile->floorChange(CHANGE_WEST) || upTile->floorChange(CHANGE_WEST_EX))
-					_pos.x--;
+			if(floorChange(CHANGE_WEST) || floorChange(CHANGE_WEST_EX))
+				_pos.x--;
 
-				destTile = g_game.getTile(_pos);
-			}
+			destTile = g_game.getTile(_pos);
 		}
 	}
 
