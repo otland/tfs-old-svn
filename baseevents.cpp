@@ -168,7 +168,12 @@ Event::Event(const Event* copy)
 	m_interface = copy->m_interface;
 	m_scripted = copy->m_scripted;
 	m_scriptId = copy->m_scriptId;
+
+	std::string* oldScript = m_scriptData;
 	m_scriptData = copy->m_scriptData;
+	if(oldScript)
+		delete oldScript;
+	
 }
 
 Event::~Event()

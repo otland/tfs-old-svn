@@ -136,10 +136,10 @@ Event(copy)
 {
 	m_type = copy->m_type;
 	m_loaded = copy->m_loaded;
-	m_scriptId = creatureEvent->m_scriptId;
-	m_interface = creatureEvent->m_interface;
-	m_scripted = creatureEvent->m_scripted;
-	m_loaded = creatureEvent->m_loaded;
+	m_scriptId = copy->m_scriptId;
+	m_interface = copy->m_interface;
+	m_scripted = copy->m_scripted;
+	m_loaded = copy->m_loaded;
 	m_scriptData = copy->m_scriptData;
 }
 
@@ -363,8 +363,13 @@ void CreatureEvent::copyEvent(CreatureEvent* creatureEvent)
 	m_scriptId = creatureEvent->m_scriptId;
 	m_interface = creatureEvent->m_interface;
 	m_scripted = creatureEvent->m_scripted;
+
+	std::string* oldScript = m_scriptData;
+	m_scriptData = creatureEvent->m_scriptData;
+
 	m_loaded = creatureEvent->m_loaded;
-	m_scriptData = copy->m_scriptData;
+	if(oldScript)
+		delete oldScript;
 }
 
 void CreatureEvent::clearEvent()
@@ -372,8 +377,10 @@ void CreatureEvent::clearEvent()
 	m_scriptId = 0;
 	m_interface = NULL;
 	m_scripted = EVENT_SCRIPT_FALSE;
+
 	m_loaded = false;
-	delete m_scriptData;
+	if(m_scriptData)
+		delete m_scriptData;
 }
 
 uint32_t CreatureEvent::executeLogin(Player* player)
