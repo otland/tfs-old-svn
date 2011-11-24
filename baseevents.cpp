@@ -169,17 +169,19 @@ Event::Event(const Event* copy)
 	m_scripted = copy->m_scripted;
 	m_scriptId = copy->m_scriptId;
 
-	std::string* oldScript = m_scriptData;
+	/*std::string* oldScript = m_scriptData;
+		This needs a reference system
+		to safely free the string
+		if its used in other events*/
 	m_scriptData = copy->m_scriptData;
-	if(oldScript)
-		delete oldScript;
-	
+	/*if(oldScript)
+		delete oldScript;*/
 }
 
 Event::~Event()
 {
-	if(m_scriptData)
-		delete m_scriptData;
+	/*if(m_scriptData)
+		delete m_scriptData;*/
 }
 
 bool Event::loadBuffer(const std::string& buffer)
