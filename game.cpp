@@ -5756,11 +5756,11 @@ int32_t Game::getMotdId()
 	Database* db = Database::getInstance();
 
 	DBQuery query;
-	query << "INSERT INTO `server_motd` (`id`, `world_id`, `text`) VALUES (" << ++lastMotdId << ", " << g_config.getNumber(ConfigManager::WORLD_ID) << ", " << db->escapeString(lastMotd) << ")";
+	query << "INSERT INTO `server_motd` (`id`, `world_id`, `text`) VALUES (" << lastMotdId + 1 << ", " << g_config.getNumber(ConfigManager::WORLD_ID) << ", " << db->escapeString(lastMotd) << ")";
 	if(db->query(query.str()))
-		return lastMotdId;
+		++lastMotdId;
 
-	return --lastMotdId;
+	return lastMotdId;
 }
 
 void Game::loadMotd()
