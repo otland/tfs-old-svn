@@ -18,9 +18,6 @@
 ]
 
 [
-	Send weapon elemental damage together with physical
-		Assigned to: Elf, Dalkon
-
 	Optimize packets to only one-per-tile after cleaning map or house
 		Assigned to: Elf
 

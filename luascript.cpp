@@ -7096,6 +7096,16 @@ int32_t LuaInterface::luaGetTalkActionList(lua_State* L)
 		setField(L, "words", it->first);
 		setField(L, "access", it->second->getAccess());
 
+		createTable(L, "groups");
+		IntegerVec::const_iterator git = it->getGroupsBegin();
+		for(uint32_t j = 1; git != it->getGroupsEnd(); ++git, ++j)
+		{
+			lua_pushnumber(L, j);
+			lua_pushnumber(*git);
+			pushTable(L);
+		}
+
+		pushTable(L);
 		setFieldBool(L, "log", it->second->isLogged());
 		setFieldBool(L, "logged", it->second->isLogged());
 		setFieldBool(L, "hide", it->second->isHidden());
