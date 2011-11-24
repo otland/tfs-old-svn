@@ -712,11 +712,12 @@ void MoveEvents::onRemoveTileItem(const Tile* tile, Item* item)
 MoveEvent::MoveEvent(LuaInterface* _interface):
 Event(_interface)
 {
-	m_eventType = MOVE_EVENT_NONE;
 	stepFunction = NULL;
 	moveFunction = NULL;
 	equipFunction = NULL;
 	slot = SLOTP_WHEREEVER;
+
+	m_eventType = MOVE_EVENT_NONE;
 	wieldInfo = 0;
 	reqLevel = 0;
 	reqMagLevel = 0;
@@ -726,11 +727,12 @@ Event(_interface)
 MoveEvent::MoveEvent(const MoveEvent* copy):
 Event(copy)
 {
-	m_eventType = copy->m_eventType;
 	stepFunction = copy->stepFunction;
 	moveFunction = copy->moveFunction;
 	equipFunction = copy->equipFunction;
 	slot = copy->slot;
+
+	m_eventType = copy->m_eventType;
 	if(copy->m_eventType == MOVE_EVENT_EQUIP)
 	{
 		wieldInfo = copy->wieldInfo;
@@ -740,11 +742,6 @@ Event(copy)
 		premium = copy->premium;
 		vocEquipMap = copy->vocEquipMap;
 	}
-}
-
-MoveEvent::~MoveEvent()
-{
-	//
 }
 
 std::string MoveEvent::getScriptEventName() const

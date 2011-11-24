@@ -99,11 +99,12 @@ class CreatureEvent : public Event
 {
 	public:
 		CreatureEvent(LuaInterface* _interface);
+		CreatureEvent(const CreatureEvent* copy);
 		virtual ~CreatureEvent() {}
 
 		virtual bool configureEvent(xmlNodePtr p);
 
-		bool isLoaded() const {return m_isLoaded;}
+		bool isLoaded() const {return m_loaded;}
 		const std::string& getName() const {return m_eventName;}
 		CreatureEventType_t getEventType() const {return m_type;}
 
@@ -145,7 +146,7 @@ class CreatureEvent : public Event
 		virtual std::string getScriptEventName() const;
 		virtual std::string getScriptEventParams() const;
 
-		bool m_isLoaded;
+		bool m_loaded;
 		std::string m_eventName;
 		CreatureEventType_t m_type;
 };

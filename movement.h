@@ -116,7 +116,7 @@ class MoveEvent : public Event
 	public:
 		MoveEvent(LuaInterface* _interface);
 		MoveEvent(const MoveEvent* copy);
-		virtual ~MoveEvent();
+		virtual ~MoveEvent() {}
 
 		MoveEvent_t getEventType() const;
 		void setEventType(MoveEvent_t type);

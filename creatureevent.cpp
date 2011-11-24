@@ -124,13 +124,23 @@ bool CreatureEvents::playerLogout(Player* player, bool forceLogout)
 	return result;
 }
 
-/////////////////////////////////////
-
 CreatureEvent::CreatureEvent(LuaInterface* _interface):
 Event(_interface)
 {
 	m_type = CREATURE_EVENT_NONE;
-	m_isLoaded = false;
+	m_loaded = false;
+}
+
+CreatureEvent::CreatureEvent(const CreatureEvent* copy):
+Event(copy)
+{
+	m_type = copy->m_type;
+	m_loaded = copy->m_loaded;
+	m_scriptId = creatureEvent->m_scriptId;
+	m_interface = creatureEvent->m_interface;
+	m_scripted = creatureEvent->m_scripted;
+	m_loaded = creatureEvent->m_loaded;
+	m_scriptData = copy->m_scriptData;
 }
 
 bool CreatureEvent::configureEvent(xmlNodePtr p)
@@ -212,7 +222,7 @@ bool CreatureEvent::configureEvent(xmlNodePtr p)
 		return false;
 	}
 
-	m_isLoaded = true;
+	m_loaded = true;
 	return true;
 }
 
@@ -353,7 +363,8 @@ void CreatureEvent::copyEvent(CreatureEvent* creatureEvent)
 	m_scriptId = creatureEvent->m_scriptId;
 	m_interface = creatureEvent->m_interface;
 	m_scripted = creatureEvent->m_scripted;
-	m_isLoaded = creatureEvent->m_isLoaded;
+	m_loaded = creatureEvent->m_loaded;
+	m_scriptData = copy->m_scriptData;
 }
 
 void CreatureEvent::clearEvent()
@@ -361,7 +372,8 @@ void CreatureEvent::clearEvent()
 	m_scriptId = 0;
 	m_interface = NULL;
 	m_scripted = EVENT_SCRIPT_FALSE;
-	m_isLoaded = false;
+	m_loaded = false;
+	delete m_scriptData;
 }
 
 uint32_t CreatureEvent::executeLogin(Player* player)

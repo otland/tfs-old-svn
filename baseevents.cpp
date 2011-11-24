@@ -171,6 +171,12 @@ Event::Event(const Event* copy)
 	m_scriptData = copy->m_scriptData;
 }
 
+Event::~Event()
+{
+	if(m_scriptData)
+		delete m_scriptData;
+}
+
 bool Event::loadBuffer(const std::string& buffer)
 {
 	if(!m_interface)
