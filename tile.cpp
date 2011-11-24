@@ -725,16 +725,16 @@ Cylinder* Tile::__queryDestination(int32_t&, const Thing*, Item** destItem,
 	uint32_t& flags)
 {
 	Tile* destTile = NULL;
+	Position _pos = pos;
 	*destItem = NULL;
 
-	Position _pos = pos;
+	Tile* tmpTile = NULL;
 	if(floorChange(CHANGE_DOWN))
 	{
 		_pos.z++;
 		for(int32_t i = CHANGE_FIRST_EX; i < CHANGE_LAST; ++i)
 		{
 			Position __pos = _pos;
-			Tile* tmpTile = NULL;
 			switch(i)
 			{
 				case CHANGE_NORTH_EX:
@@ -768,7 +768,7 @@ Cylinder* Tile::__queryDestination(int32_t&, const Thing*, Item** destItem,
 			if(!tmpTile || !tmpTile->floorChange((FloorChange_t)i))
 				continue;
 
-			destTile = g_game.getTile(__pos);
+			destTile = tmpTile;
 			break;
 		}
 
@@ -795,31 +795,65 @@ Cylinder* Tile::__queryDestination(int32_t&, const Thing*, Item** destItem,
 	else if(floorChange())
 	{
 		_pos.z--;
-		if(floorChange(CHANGE_NORTH))
-			_pos.y--;
+		for(int32_t i = CHANGE_FIRST_EX; i < CHANGE_LAST; ++i)
+		{
+			Position __pos = _pos;
+			switch(i)
+			{
+				case CHANGE_NORTH_EX:
+					__pos.y--;
+					if((tmpTile = g_game.getTile(__pos)))
+						__pos.y--;
 
-		if(floorChange(CHANGE_SOUTH))
-			_pos.y++;
+					break;
+				case CHANGE_SOUTH_EX:
+					__pos.y++;
+					if((tmpTile = g_game.getTile(__pos)))
+						__pos.y++;
 
-		if(floorChange(CHANGE_EAST))
-			_pos.x++;
+					break;
+				case CHANGE_EAST_EX:
+					__pos.x++;
+					if((tmpTile = g_game.getTile(__pos)))
+						__pos.x++;
 
-		if(floorChange(CHANGE_WEST))
-			_pos.x--;
+					break;
+				case CHANGE_WEST_EX:
+					__pos.x--;
+					if((tmpTile = g_game.getTile(__pos)))
+						__pos.x--;
 
-		if(floorChange(CHANGE_NORTH_EX))
-			_pos.y -= 2;
+					break;
+				default:
+					break;
+			}
 
-		if(floorChange(CHANGE_SOUTH_EX))
-			_pos.y += 2;
+			if(!tmpTile || !tmpTile->floorChange((FloorChange_t)i))
+				continue;
 
-		if(floorChange(CHANGE_EAST_EX))
-			_pos.x += 2;
+			destTile = tmpTile;
+			break;
+		}
 
-		if(floorChange(CHANGE_WEST_EX))
-			_pos.x -= 2;
+		if(!destTile)
+		{
+			if(Tile* downTile = g_game.getTile(_pos))
+			{
+				if(downTile->floorChange(CHANGE_NORTH) || downTile->floorChange(CHANGE_NORTH_EX))
+					_pos.y--;
 
-		destTile = g_game.getTile(_pos);
+				if(downTile->floorChange(CHANGE_SOUTH) || downTile->floorChange(CHANGE_SOUTH_EX))
+					_pos.y++;
+
+				if(downTile->floorChange(CHANGE_EAST) || downTile->floorChange(CHANGE_EAST_EX))
+					_pos.x++;
+
+				if(downTile->floorChange(CHANGE_WEST) || downTile->floorChange(CHANGE_WEST_EX))
+					_pos.x--;
+
+				destTile = g_game.getTile(_pos);
+			}
+		}
 	}
 
 	if(!destTile)
