@@ -1,3 +1,4 @@
+-- NOTE: This needs update acccording to potions.lua!
 local config = {
 	removeOnUse = "no",
 	usableOnTarget = "yes", -- can be used on target? (fe. healing friend)
