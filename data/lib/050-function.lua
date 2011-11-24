@@ -726,10 +726,10 @@ function doPlayerAddExpEx(cid, amount)
 	local position = getThingPosition(cid)
 	doPlayerSendTextMessage(cid, MESSAGE_EXPERIENCE, "You gained " .. amount .. " experience.", amount, COLOR_WHITE, position)
 
-	local spectators, name = getSpectators(getThingPosition(cid), 7, 7), getCreatureName(cid)
+	local spectators, name = getSpectators(position, 7, 7), getCreatureName(cid)
 	for _, pid in ipairs(spectators) do
-		if(isPlayer(pid)) then
-			doPlayerSendTextMessage(cid, MESSAGE_EXPERIENCE_OTHERS, name .. " gained " .. amount .. " experience.", amount, COLOR_WHITE, position)
+		if(isPlayer(pid) and cid ~= pid) then
+			doPlayerSendTextMessage(pid, MESSAGE_EXPERIENCE_OTHERS, name .. " gained " .. amount .. " experience.", amount, COLOR_WHITE, position)
 		end
 	end
 

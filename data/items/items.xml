@@ -3,11 +3,11 @@
 	<!-- README:
 		We really appreciate if someone could help us
 		with getting real names and attributes
-		of missing items in this file
+		of missing items in this file.
 
 		Most needed are the items (including floors, walls)
 		introduced in the most recent tibia updates
-		starting from 8.2 to 8.7x
+		starting from 8.7 to 9.31
 
 		If you found something wrong with existing item(s), we're also waiting for you :)
 
@@ -12016,7 +12016,7 @@
 		<attribute key="weight" value="850"/>
 		<attribute key="transformUseTo" value="7184"/>
 	</item>
-	<item id="7183" article="a" name="baby seal doll">
+	<item id="7184" article="a" name="baby seal doll">
 		<attribute key="weight" value="850"/>
 		<attribute key="decayTo" value="7183"/>
 		<attribute key="duration" value="5"/>
