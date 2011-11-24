@@ -377,10 +377,7 @@ void CreatureEvent::clearEvent()
 	m_scriptId = 0;
 	m_interface = NULL;
 	m_scripted = EVENT_SCRIPT_FALSE;
-
 	m_loaded = false;
-	if(m_scriptData)
-		delete m_scriptData;
 }
 
 uint32_t CreatureEvent::executeLogin(Player* player)
