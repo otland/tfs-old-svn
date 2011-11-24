@@ -768,7 +768,7 @@ Cylinder* Tile::__queryDestination(int32_t&, const Thing*, Item** destItem,
 			if(!tmpTile || !tmpTile->floorChange((FloorChange_t)i))
 				continue;
 
-			destTile = tmpTile;
+			destTile = g_game.getTile(__pos);
 			break;
 		}
 
@@ -828,27 +828,27 @@ Cylinder* Tile::__queryDestination(int32_t&, const Thing*, Item** destItem,
 					break;
 			}
 
-			if(!tmpTile || !tmpTile->floorChange((FloorChange_t)i))
+			if(!tmpTile || !tmpTile->floorChange(CHANGE_DOWN))
 				continue;
 
-			destTile = tmpTile;
+			destTile = g_game.getTile(__pos);
 			break;
 		}
 
 		if(!destTile)
 		{
-			if(Tile* downTile = g_game.getTile(_pos))
+			if(Tile* upTile = g_game.getTile(_pos))
 			{
-				if(downTile->floorChange(CHANGE_NORTH) || downTile->floorChange(CHANGE_NORTH_EX))
+				if(upTile->floorChange(CHANGE_NORTH) || upTile->floorChange(CHANGE_NORTH_EX))
 					_pos.y--;
 
-				if(downTile->floorChange(CHANGE_SOUTH) || downTile->floorChange(CHANGE_SOUTH_EX))
+				if(upTile->floorChange(CHANGE_SOUTH) || upTile->floorChange(CHANGE_SOUTH_EX))
 					_pos.y++;
 
-				if(downTile->floorChange(CHANGE_EAST) || downTile->floorChange(CHANGE_EAST_EX))
+				if(upTile->floorChange(CHANGE_EAST) || upTile->floorChange(CHANGE_EAST_EX))
 					_pos.x++;
 
-				if(downTile->floorChange(CHANGE_WEST) || downTile->floorChange(CHANGE_WEST_EX))
+				if(upTile->floorChange(CHANGE_WEST) || upTile->floorChange(CHANGE_WEST_EX))
 					_pos.x--;
 
 				destTile = g_game.getTile(_pos);
