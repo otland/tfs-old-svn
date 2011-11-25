@@ -1467,7 +1467,7 @@ void MagicField::onStepInField(Creature* creature, bool purposeful/* = true*/)
 		return;
 	}
 
-	if(!purposeful)
+	if(!purposeful || !creature->isAttackable())
 		return;
 
 	const ItemType& it = items[id];
@@ -1484,20 +1484,17 @@ void MagicField::onStepInField(Creature* creature, bool purposeful/* = true*/)
 		{
 			bool harmful = true;
 			Player* ownerPlayer = owner->getPlayer();
-			if(ownerId == creature->getID() || ((g_game.getWorldType() == WORLDTYPE_OPTIONAL
-				|| tile->hasFlag(TILESTATE_OPTIONALZONE)) && (ownerPlayer
-				|| owner->isPlayerSummon())) || (OTSYS_TIME() - createTime) <=
-				(uint32_t)g_config.getNumber(ConfigManager::FIELD_OWNERSHIP)
-				|| creature->hasBeenAttacked(ownerId))
+			if((g_game.getWorldType() == WORLDTYPE_OPTIONAL || tile->hasFlag(TILESTATE_OPTIONALZONE))
+				&& (ownerPlayer || owner->isPlayerSummon()))
 				harmful = false;
 			else if(Player* player = creature->getPlayer())
 			{
-				if(ownerPlayer && player->isAttackable() &&
-					Combat::isProtected(ownerPlayer, player))
+				if(ownerPlayer && Combat::isProtected(ownerPlayer, player))
 					harmful = false;
 			}
 
-			if(!harmful)
+			if(!harmful || (OTSYS_TIME() - createTime) <= (uint32_t)g_config.getNumber(
+				ConfigManager::FIELD_OWNERSHIP) || creature->hasBeenAttacked(ownerId))
 				condition->setParam(CONDITIONPARAM_OWNER, ownerId);
 		}
 	}
