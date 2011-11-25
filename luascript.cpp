@@ -7097,8 +7097,8 @@ int32_t LuaInterface::luaGetTalkActionList(lua_State* L)
 		setField(L, "access", it->second->getAccess());
 
 		createTable(L, "groups");
-		IntegerVec::const_iterator git = it->getGroupsBegin();
-		for(uint32_t j = 1; git != it->getGroupsEnd(); ++git, ++j)
+		IntegerVec::const_iterator git = it->second->getGroupsBegin();
+		for(uint32_t j = 1; git != it->second->getGroupsEnd(); ++git, ++j)
 		{
 			lua_pushnumber(L, j);
 			lua_pushnumber(*git);
