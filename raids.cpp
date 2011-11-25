@@ -990,7 +990,7 @@ bool ScriptEvent::executeEvent(const std::string& name) const
 			lua_State* L = m_interface.getState();
 
 			m_interface.pushFunction(m_scriptId);
-			lua_pushstring(m_interface, name.c_str());
+			lua_pushstring(L, name.c_str());
 
 			bool result = m_interface.callFunction(1);
 			m_interface.releaseEnv();
