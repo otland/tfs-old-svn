@@ -7101,7 +7101,7 @@ int32_t LuaInterface::luaGetTalkActionList(lua_State* L)
 		for(uint32_t j = 1; git != it->second->getGroupsEnd(); ++git, ++j)
 		{
 			lua_pushnumber(L, j);
-			lua_pushnumber(*git);
+			lua_pushnumber(L, *git);
 			pushTable(L);
 		}
 
