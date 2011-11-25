@@ -334,9 +334,10 @@ std::string CreatureEvent::getScriptEventParams() const
 			return "cid, item, fromPosition, toPosition";
 		case CREATURE_EVENT_PUSH:
 			return "cid, target, ground, position";
+		case CREATURE_EVENT_COMBAT:
+			return "cid, target, aggressive";
 		case CREATURE_EVENT_TARGET:
 		case CREATURE_EVENT_FOLLOW:
-		case CREATURE_EVENT_COMBAT:
 		case CREATURE_EVENT_ATTACK:
 		case CREATURE_EVENT_CAST:
 			return "cid, target";
@@ -1334,9 +1335,9 @@ uint32_t CreatureEvent::executeCombatArea(Creature* creature, Tile* tile, bool a
 	}
 }
 
-uint32_t CreatureEvent::executeCombat(Creature* creature, Creature* target)
+uint32_t CreatureEvent::executeCombat(Creature* creature, Creature* target, bool aggressive)
 {
-	//onCombat(cid, target)
+	//onCombat(cid, target, aggressive)
 	if(m_interface->reserveEnv())
 	{
 		ScriptEnviroment* env = m_interface->getEnv();
@@ -1347,6 +1348,7 @@ uint32_t CreatureEvent::executeCombat(Creature* creature, Creature* target)
 
 			scriptstream << "local cid = " << env->addThing(creature) << std::endl;
 			scriptstream << "local target = " << env->addThing(target) << std::endl;
+			scriptstream << "local aggressive = " << (aggressive ? "true" : "false") << std::endl;
 
 			if(m_scriptData)
 				scriptstream << *m_scriptData;
@@ -1377,8 +1379,9 @@ uint32_t CreatureEvent::executeCombat(Creature* creature, Creature* target)
 
 			lua_pushnumber(L, env->addThing(creature));
 			lua_pushnumber(L, env->addThing(target));
+			lua_pushboolean(L, aggressive);
 
-			bool result = m_interface->callFunction(2);
+			bool result = m_interface->callFunction(3);
 			m_interface->releaseEnv();
 			return result;
 		}

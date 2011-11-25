@@ -265,7 +265,7 @@ ReturnValue Combat::canDoCombat(const Creature* attacker, const Creature* target
 	CreatureEventList combatEvents = const_cast<Creature*>(attacker)->getCreatureEvents(CREATURE_EVENT_COMBAT);
 	for(CreatureEventList::iterator it = combatEvents.begin(); it != combatEvents.end(); ++it)
 	{
-		if(!(*it)->executeCombat(const_cast<Creature*>(attacker), const_cast<Creature*>(target)) && success)
+		if(!(*it)->executeCombat(const_cast<Creature*>(attacker), const_cast<Creature*>(target), params.isAggressive) && success)
 			success = false;
 	}
 
