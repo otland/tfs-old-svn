@@ -302,7 +302,7 @@ class Combat
 
 		static ReturnValue canTargetCreature(const Player* attacker, const Creature* target);
 		static ReturnValue canDoCombat(const Creature* caster, const Tile* tile, bool isAggressive);
-		static ReturnValue canDoCombat(const Creature* attacker, const Creature* target);
+		static ReturnValue canDoCombat(const Creature* attacker, const Creature* target, bool isAggressive);
 
 		static void postCombatEffects(Creature* caster, const Position& pos, const CombatParams& params);
 		static void addDistanceEffect(Creature* caster, const Position& fromPos, const Position& toPos, ShootEffect_t effect);

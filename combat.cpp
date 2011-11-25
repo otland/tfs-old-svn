@@ -256,7 +256,7 @@ ReturnValue Combat::canDoCombat(const Creature* caster, const Tile* tile, bool i
 		RET_ACTIONNOTPERMITTEDINPROTECTIONZONE : RET_NOERROR;
 }
 
-ReturnValue Combat::canDoCombat(const Creature* attacker, const Creature* target)
+ReturnValue Combat::canDoCombat(const Creature* attacker, const Creature* target, bool isAggressive)
 {
 	if(!attacker)
 		return RET_NOERROR;
@@ -265,7 +265,7 @@ ReturnValue Combat::canDoCombat(const Creature* attacker, const Creature* target
 	CreatureEventList combatEvents = const_cast<Creature*>(attacker)->getCreatureEvents(CREATURE_EVENT_COMBAT);
 	for(CreatureEventList::iterator it = combatEvents.begin(); it != combatEvents.end(); ++it)
 	{
-		if(!(*it)->executeCombat(const_cast<Creature*>(attacker), const_cast<Creature*>(target), params.isAggressive) && success)
+		if(!(*it)->executeCombat(const_cast<Creature*>(attacker), const_cast<Creature*>(target), isAggressive) && success)
 			success = false;
 	}
 
@@ -374,7 +374,7 @@ ReturnValue Combat::canTargetCreature(const Player* player, const Creature* targ
 			return RET_YOUMAYNOTATTACKTHISPLAYER;
 	}
 
-	return Combat::canDoCombat(player, target);
+	return Combat::canDoCombat(player, target, true);
 }
 
 bool Combat::isInPvpZone(const Creature* attacker, const Creature* target)
@@ -810,7 +810,7 @@ void Combat::CombatFunc(Creature* caster, const Position& pos, const CombatArea*
 						continue;
 				}
 
-				if(!params.isAggressive || (caster != (*cit) && Combat::canDoCombat(caster, (*cit)) == RET_NOERROR))
+				if(!params.isAggressive || (caster != (*cit) && Combat::canDoCombat(caster, (*cit), params.isAggressive) == RET_NOERROR))
 				{
 					func(caster, (*cit), params, (void*)var);
 					if(params.targetCallback)
@@ -830,7 +830,7 @@ void Combat::doCombat(Creature* caster, Creature* target) const
 	//target combat callback function
 	if(params.combatType != COMBAT_NONE)
 	{
-		if(params.isAggressive && (caster == target || Combat::canDoCombat(caster, target) != RET_NOERROR))
+		if(params.isAggressive && (caster == target || Combat::canDoCombat(caster, target, params.isAggressive) != RET_NOERROR))
 			return;
 
 		int32_t minChange = 0, maxChange = 0;
@@ -866,7 +866,7 @@ void Combat::doCombat(Creature* caster, const Position& pos) const
 
 void Combat::doCombatHealth(Creature* caster, Creature* target, int32_t minChange, int32_t maxChange, const CombatParams& params, bool check/* = true*/)
 {
-	if(check && params.isAggressive && (caster == target || Combat::canDoCombat(caster, target) != RET_NOERROR))
+	if(check && params.isAggressive && (caster == target || Combat::canDoCombat(caster, target, params.isAggressive) != RET_NOERROR))
 		return;
 
 	Combat2Var var;
@@ -896,7 +896,7 @@ void Combat::doCombatHealth(Creature* caster, const Position& pos, const CombatA
 
 void Combat::doCombatMana(Creature* caster, Creature* target, int32_t minChange, int32_t maxChange, const CombatParams& params, bool check/* = true*/)
 {
-	if(check && params.isAggressive && (caster == target || Combat::canDoCombat(caster, target) != RET_NOERROR))
+	if(check && params.isAggressive && (caster == target || Combat::canDoCombat(caster, target, params.isAggressive) != RET_NOERROR))
 		return;
 
 	Combat2Var var;
@@ -932,7 +932,7 @@ void Combat::doCombatCondition(Creature* caster, const Position& pos, const Comb
 
 void Combat::doCombatCondition(Creature* caster, Creature* target, const CombatParams& params, bool check/* = true*/)
 {
-	if(check && params.isAggressive && (caster == target || Combat::canDoCombat(caster, target) != RET_NOERROR))
+	if(check && params.isAggressive && (caster == target || Combat::canDoCombat(caster, target, params.isAggressive) != RET_NOERROR))
 		return;
 
 	CombatConditionFunc(caster, target, params, NULL);
@@ -955,7 +955,7 @@ void Combat::doCombatDispel(Creature* caster, const Position& pos, const CombatA
 
 void Combat::doCombatDispel(Creature* caster, Creature* target, const CombatParams& params, bool check/* = true*/)
 {
-	if(check && params.isAggressive && (caster == target || Combat::canDoCombat(caster, target) != RET_NOERROR))
+	if(check && params.isAggressive && (caster == target || Combat::canDoCombat(caster, target, params.isAggressive) != RET_NOERROR))
 		return;
 
 	CombatDispelFunc(caster, target, params, NULL);
@@ -972,7 +972,7 @@ void Combat::doCombatDispel(Creature* caster, Creature* target, const CombatPara
 
 void Combat::doCombatDefault(Creature* caster, Creature* target, const CombatParams& params)
 {
-	if(params.isAggressive && (caster == target || Combat::canDoCombat(caster, target) != RET_NOERROR))
+	if(params.isAggressive && (caster == target || Combat::canDoCombat(caster, target, params.isAggressive) != RET_NOERROR))
 		return;
 
 	const SpectatorVec& list = g_game.getSpectators(target->getTile()->getPosition());
