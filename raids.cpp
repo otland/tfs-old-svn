@@ -300,7 +300,7 @@ bool Raid::startRaid()
 
 bool Raid::executeRaidEvent(RaidEvent* raidEvent)
 {
-	if(!raidEvent->executeEvent())
+	if(!raidEvent->executeEvent(name))
 		return !resetRaid(false);
 
 	RaidEvent* newRaidEvent = getNextRaidEvent();
@@ -405,7 +405,7 @@ bool AnnounceEvent::configureRaidEvent(xmlNodePtr eventNode)
 	return true;
 }
 
-bool AnnounceEvent::executeEvent() const
+bool AnnounceEvent::executeEvent(const std::string&) const
 {
 	g_game.broadcastMessage(m_message, m_messageType);
 	return true;
@@ -470,7 +470,7 @@ bool EffectEvent::configureRaidEvent(xmlNodePtr eventNode)
 	return true;
 }
 
-bool EffectEvent::executeEvent() const
+bool EffectEvent::executeEvent(const std::string&) const
 {
 	g_game.addMagicEffect(m_position, m_effect);
 	return true;
@@ -541,7 +541,7 @@ bool ItemSpawnEvent::configureRaidEvent(xmlNodePtr eventNode)
 	return true;
 }
 
-bool ItemSpawnEvent::executeEvent() const
+bool ItemSpawnEvent::executeEvent(const std::string&) const
 {
 	if(m_chance < (uint32_t)random_range(0, (int32_t)MAX_ITEM_CHANCE))
 		return true;
@@ -662,7 +662,7 @@ bool SingleSpawnEvent::configureRaidEvent(xmlNodePtr eventNode)
 	return true;
 }
 
-bool SingleSpawnEvent::executeEvent() const
+bool SingleSpawnEvent::executeEvent(const std::string&) const
 {
 	Monster* monster = Monster::createMonster(m_monsterName);
 	if(!monster)
@@ -879,7 +879,7 @@ void AreaSpawnEvent::addMonster(const std::string& name, uint32_t min, uint32_t 
 	addMonster(monsterSpawn);
 }
 
-bool AreaSpawnEvent::executeEvent() const
+bool AreaSpawnEvent::executeEvent(const std::string&) const
 {
 	for(MonsterSpawnList::const_iterator it = m_spawnList.begin(); it != m_spawnList.end(); ++it)
 	{
@@ -960,14 +960,17 @@ bool ScriptEvent::configureRaidEvent(xmlNodePtr eventNode)
 	return false;
 }
 
-bool ScriptEvent::executeEvent() const
+bool ScriptEvent::executeEvent(const std::string& name) const
 {
-	//onRaid()
+	//onRaid(name)
 	if(m_interface.reserveEnv())
 	{
 		ScriptEnviroment* env = m_interface.getEnv();
 		if(m_scripted == EVENT_SCRIPT_BUFFER)
 		{
+			std::stringstream scriptstream;
+			scriptstream << "local words = \"" << name << "\"" << std::endl;
+
 			bool result = true;
 			if(m_scriptData && m_interface.loadBuffer(*m_scriptData))
 			{
@@ -985,8 +988,9 @@ bool ScriptEvent::executeEvent() const
 			#endif
 			env->setScriptId(m_scriptId, &m_interface);
 			m_interface.pushFunction(m_scriptId);
+			lua_pushstring(L, name.c_str());
 
-			bool result = m_interface.callFunction(0);
+			bool result = m_interface.callFunction(1);
 			m_interface.releaseEnv();
 			return result;
 		}
