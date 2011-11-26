@@ -62,14 +62,18 @@ std::string Mission::getDescription(Player* player)
 	player->getStorage(storageId, value);
 	if(!states.empty())
 	{
-		if(atoi(value.c_str()) >= endValue)
+		int32_t cmp = atoi(value.c_str());
+		if(cmp >= endValue)
 			return parseStorages(states.rbegin()->second, value, player);
 
-		for(int32_t i = endValue; i >= startValue; --i)
+		for(int32_t i = (endValue - 1); i >= startValue; --i)
 		{
-			player->getStorage(storageId, value);
-			if(atoi(value.c_str()) == i)
-				return parseStorages(states[i - startValue], value, player);
+			if(cmp != i)
+				continue;
+
+			std::string tmp = states[i - startValue];
+			if(!tmp.empty())
+				return parseStorages(tmp, value, player);
 		}
 	}
 
