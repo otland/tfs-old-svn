@@ -405,38 +405,9 @@
 		<!-- Amulet of Loss -->
 	<movevent type="Equip" itemid="2173" slot="necklace" event="function" value="onEquipItem"/>
 	<movevent type="DeEquip" itemid="2173" slot="necklace" event="function" value="onDeEquipItem"/>
-		<!-- Terra Amulet -->
-	<movevent type="Equip" itemid="7887" slot="necklace" event="function" value="onEquipItem">
-		<vocation id="1"/>
-		<vocation id="5" showInDescription="0"/>
-		<vocation id="2"/>
-		<vocation id="6" showInDescription="0"/>
-	</movevent>
-	<movevent type="DeEquip" itemid="7887" slot="necklace" event="function" value="onDeEquipItem"/>
-		<!-- Glacier Amulet -->
-	<movevent type="Equip" itemid="7888" slot="necklace" event="function" value="onEquipItem">
-		<vocation id="1"/>
-		<vocation id="5" showInDescription="0"/>
-		<vocation id="2"/>
-		<vocation id="6" showInDescription="0"/>
-	</movevent>
-	<movevent type="DeEquip" itemid="7888" slot="necklace" event="function" value="onDeEquipItem"/>
-		<!-- Lightning Pendant -->
-	<movevent type="Equip" itemid="7889" slot="necklace" event="function" value="onEquipItem">
-		<vocation id="1"/>
-		<vocation id="5" showInDescription="0"/>
-		<vocation id="2"/>
-		<vocation id="6" showInDescription="0"/>
-	</movevent>
-	<movevent type="DeEquip" itemid="7889" slot="necklace" event="function" value="onDeEquipItem"/>
-		<!-- Magma Amulet -->
-	<movevent type="Equip" itemid="7890" slot="necklace" event="function" value="onEquipItem">
-		<vocation id="1"/>
-		<vocation id="5" showInDescription="0"/>
-		<vocation id="2"/>
-		<vocation id="6" showInDescription="0"/>
-	</movevent>
-	<movevent type="DeEquip" itemid="7890" slot="necklace" event="function" value="onDeEquipItem"/>
+		<!-- Terra Amulet/Glacier Amulet/Lightning Pendat/Magma Amulet -->
+	<movevent type="Equip" fromid="7887" toid="7890" level="60" slot="necklace" event="function" value="onEquipItem"/>
+	<movevent type="DeEquip" fromid="7887" toid="7890" level="60" slot="necklace" event="function" value="onDeEquipItem"/>
 		<!-- Sacred Tree Amulet/Leviathan's Amulet/Shockwave Amulet -->
 	<movevent type="Equip" fromid="10218" toid="10221" slot="necklace" level="80" event="function" value="onEquipItem"/>
 	<movevent type="DeEquip" fromid="10218" toid="10221" slot="necklace" event="function" value="onDeEquipItem"/>

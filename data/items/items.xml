@@ -20580,6 +20580,7 @@
 	</item>
 	<item id="12424" article="a" name="ornamented brooch">
 		<attribute key="armor" value="2"/>
+		<attribute key="slotType" value="necklace"/>
 		<attribute key="weight" value="840"/>
 	</item>
 	<item id="12425" article="a" name="hunter's quiver" plural="hunter quivers">
