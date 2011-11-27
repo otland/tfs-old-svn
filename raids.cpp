@@ -929,7 +929,7 @@ bool ScriptEvent::configureRaidEvent(xmlNodePtr eventNode)
 	{
 		m_interface.initState();
 		std::string path = getFilePath(FILE_TYPE_OTHER, std::string(scriptsName + "/lib/"));
-		if(!m_interface.loadDirectory(path))
+		if(!m_interface.loadDirectory(path, false, true))
 			std::clog << "[Warning - ScriptEvent::configureRaidEvent] Cannot load " << path << std::endl;
 	}
 

@@ -756,15 +756,18 @@ bool LuaInterface::loadFile(const std::string& file, Npc* npc/* = NULL*/)
 	return true;
 }
 
-bool LuaInterface::loadDirectory(const std::string& dir, Npc* npc/* = NULL*/, bool recursively/* = false*/)
+bool LuaInterface::loadDirectory(const std::string& dir, bool recursively, bool loadSystems, Npc* npc/* = NULL*/)
 {
 	StringVec files;
 	for(boost::filesystem::directory_iterator it(dir), end; it != end; ++it)
 	{
 		std::string s = it->leaf();
+		if(!loadSystems && s[0] == '_')
+			continue;
+
 		if(boost::filesystem::is_directory(it->status()))
 		{
-			if(recursively && !loadDirectory(it->leaf() + "/" + s, npc, recursively))
+			if(recursively && !loadDirectory(s + "/" + s, recursively, loadSystems, npc))
 				return false;
 		}
 		else if((s.size() > 4 ? s.substr(s.size() - 4) : "") == ".lua")
@@ -817,17 +820,14 @@ int32_t LuaInterface::getEvent(const std::string& eventName)
 
 std::string LuaInterface::getScript(int32_t scriptId)
 {
-	const static std::string tmp = "(Unknown script file)";
-	if(scriptId != EVENT_ID_LOADING)
-	{
-		ScriptsCache::iterator it = m_cacheFiles.find(scriptId);
-		if(it != m_cacheFiles.end())
-			return it->second;
+	if(scriptId == EVENT_ID_LOADING)
+		return m_loadingFile;
 
-		return tmp;
-	}
+	ScriptsCache::iterator it = m_cacheFiles.find(scriptId);
+	if(it != m_cacheFiles.end())
+		return it->second;
 
-	return m_loadingFile;
+	return "(Unknown script file)";
 }
 
 void LuaInterface::error(const char* function, const std::string& desc)
@@ -868,17 +868,14 @@ void LuaInterface::error(const char* function, const std::string& desc)
 bool LuaInterface::pushFunction(int32_t function)
 {
 	lua_getfield(m_luaState, LUA_REGISTRYINDEX, "EVENTS");
-	if(lua_istable(m_luaState, -1))
-	{
-		lua_pushnumber(m_luaState, function);
-		lua_rawget(m_luaState, -2);
+	if(!lua_istable(m_luaState, -1))
+		return false;
 
-		lua_remove(m_luaState, -2);
-		if(lua_isfunction(m_luaState, -1))
-			return true;
-	}
+	lua_pushnumber(m_luaState, function);
+	lua_rawget(m_luaState, -2);
 
-	return false;
+	lua_remove(m_luaState, -2);
+	return lua_isfunction(m_luaState, -1);
 }
 
 bool LuaInterface::initState()
@@ -893,7 +890,7 @@ bool LuaInterface::initState()
 #endif
 
 	registerFunctions();
-	if(!loadDirectory(getFilePath(FILE_TYPE_OTHER, "lib/"), NULL))
+	if(!loadDirectory(getFilePath(FILE_TYPE_OTHER, "lib/"), false, true))
 		std::clog << "[Warning - LuaInterface::initState] Cannot load " << getFilePath(FILE_TYPE_OTHER, "lib/") << std::endl;
 
 	lua_newtable(m_luaState);
@@ -925,38 +922,37 @@ bool LuaInterface::closeState()
 void LuaInterface::executeTimer(uint32_t eventIndex)
 {
 	LuaTimerEvents::iterator it = m_timerEvents.find(eventIndex);
-	if(it != m_timerEvents.end())
+	if(it == m_timerEvents.end())
+		return;
+
+	//push function
+	lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, it->second.function);
+	//push parameters
+	for(std::list<int32_t>::reverse_iterator rt = it->second.parameters.rbegin(); rt != it->second.parameters.rend(); ++rt)
+		lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, *rt);
+
+	//call the function
+	if(reserveEnv())
 	{
-		//push function
-		lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, it->second.function);
+		ScriptEnviroment* env = getEnv();
+		env->setTimerEvent();
 
-		//push parameters
-		for(std::list<int32_t>::reverse_iterator rt = it->second.parameters.rbegin(); rt != it->second.parameters.rend(); ++rt)
-			lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, *rt);
+		env->setScriptId(it->second.scriptId, this);
+		env->setNpc(it->second.npc);
 
-		//call the function
-		if(reserveEnv())
-		{
-			ScriptEnviroment* env = getEnv();
-			env->setTimerEvent();
-
-			env->setScriptId(it->second.scriptId, this);
-			env->setNpc(it->second.npc);
-
-			callFunction(it->second.parameters.size());
-			releaseEnv();
-		}
-		else
-			std::clog << "[Error - LuaInterface::executeTimer] Call stack overflow." << std::endl;
-
-		//free resources
-		for(std::list<int32_t>::iterator lt = it->second.parameters.begin(); lt != it->second.parameters.end(); ++lt)
-			luaL_unref(m_luaState, LUA_REGISTRYINDEX, *lt);
-
-		it->second.parameters.clear();
-		luaL_unref(m_luaState, LUA_REGISTRYINDEX, it->second.function);
-		m_timerEvents.erase(it);
+		callFunction(it->second.parameters.size());
+		releaseEnv();
 	}
+	else
+		std::clog << "[Error - LuaInterface::executeTimer] Call stack overflow." << std::endl;
+
+	//free resources
+	for(std::list<int32_t>::iterator lt = it->second.parameters.begin(); lt != it->second.parameters.end(); ++lt)
+		luaL_unref(m_luaState, LUA_REGISTRYINDEX, *lt);
+
+	it->second.parameters.clear();
+	luaL_unref(m_luaState, LUA_REGISTRYINDEX, it->second.function);
+	m_timerEvents.erase(it);
 }
 
 int32_t LuaInterface::handleFunction(lua_State* L)
@@ -11179,13 +11175,17 @@ int32_t LuaInterface::luaL_domodlib(lua_State* L)
 
 int32_t LuaInterface::luaL_dodirectory(lua_State* L)
 {
-	//dodirectory(dir[, recursively = false])
-	bool recursively = false;
-	if(lua_gettop(L) > 1)
+	//dodirectory(dir[, recursively = false[, loadSystems = true]])
+	bool recursively = false, loadSystems = true;
+	int32_t params = lua_gettop(L);
+	if(params > 2)
+		loadSystems = popBoolean(L);
+
+	if(params > 1)
 		recursively = popBoolean(L);
 
 	std::string dir = popString(L);
-	if(!getEnv()->getInterface()->loadDirectory(dir, NULL, recursively))
+	if(!getEnv()->getInterface()->loadDirectory(dir, recursively, loadSystems, NULL))
 	{
 		errorEx("Failed to load directory " + dir);
 		lua_pushboolean(L, false);

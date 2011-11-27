@@ -311,8 +311,7 @@ bool Npc::load()
 	if(!m_interface)
 	{
 		m_interface = new NpcScript();
-		m_interface->loadFile(getFilePath(FILE_TYPE_OTHER, "npc/lib/npc.lua"));
-		m_interface->loadFile(getFilePath(FILE_TYPE_OTHER, "npc/lib/npcsystem/main.lua"));
+		m_interface->loadDirectory(getFilePath(FILE_TYPE_OTHER, "npc/lib"), false, true, this);
 	}
 
 	loaded = loadFromXml();
@@ -1774,7 +1773,7 @@ void Npc::executeResponse(Player* player, NpcState* npcState, const NpcResponse*
 				case ACTION_SCRIPT:
 				{
 					NpcScript interface;
-					interface.loadFile(getFilePath(FILE_TYPE_OTHER, "npc/lib/npc.lua"));
+					interface.loadDirectory(getFilePath(FILE_TYPE_OTHER, "npc/lib"), false, false, this);
 					if(interface.reserveEnv())
 					{
 						ScriptEnviroment* env = m_interface->getEnv();

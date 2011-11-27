@@ -30,7 +30,7 @@ bool BaseEvents::loadFromXml()
 	}
 
 	std::string path = getFilePath(FILE_TYPE_OTHER, std::string(scriptsName + "/lib/"));
-	if(!getInterface().loadDirectory(path))
+	if(!getInterface().loadDirectory(path, false, true))
 		std::clog << "[Warning - BaseEvents::loadFromXml] Cannot load " << path << std::endl;
 
 	path = getFilePath(FILE_TYPE_OTHER, std::string(scriptsName + "/" + scriptsName + ".xml"));
@@ -209,7 +209,7 @@ bool Event::checkBuffer(const std::string& base, const std::string& script) cons
 	testInterface.initState();
 
 	std::string path = getFilePath(FILE_TYPE_OTHER, std::string(base + "/lib/"));
-	if(!testInterface.loadDirectory(path))
+	if(!testInterface.loadDirectory(path, false, true))
 		std::clog << "[Warning - Event::checkBuffer] Cannot load " << path << std::endl;
 
 	if(m_scriptData)
@@ -290,7 +290,7 @@ bool Event::checkScript(const std::string& base, const std::string& script, bool
 	testInterface.initState();
 
 	std::string path = getFilePath(FILE_TYPE_OTHER, std::string(base + "/lib/"));
-	if(!testInterface.loadDirectory(path))
+	if(!testInterface.loadDirectory(path, false, true))
 		std::clog << "[Warning - Event::checkScript] Cannot load " << path << std::endl;
 
 	if(m_scriptId)
