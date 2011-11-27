@@ -1,7 +1,6 @@
 --[[
  * File containing deprecated functions and constants used by alot of scripts and other engines
 ]]--
---bit = require("bit")
 
 TRUE = true
 FALSE = false
@@ -190,6 +189,7 @@ db.stringComparison = db.stringComparer
 db.executeQuery = db.query
 isNumber = isNumeric
 doSetItemActionId = doItemSetActionId
+getOnlinePlayers = getPlayersOnlineEx
 db.quote = db.escapeString
 
 PlayerFlag_CannotUseCombat = 0

@@ -4,7 +4,12 @@ table.empty = function (t)
 end
 
 table.size = function (t)
-	return #t
+	local size = 0
+	for i, n in pairs(table) do
+		size = size + 1
+	end
+
+	return size
 end
 
 table.find = function (table, value, sensitive)
@@ -54,19 +59,19 @@ end
 table.countElements = table.count
 
 table.getCombinations = function (table, num)
-	local a, number, select, newlist = {}, #table, num, {}
+	local a, number, select, newList = {}, #table, num, {}
 	for i = 1, select do
 		a[#a + 1] = i
 	end
 
-	local newthing = {}
+	local newThing = {}
 	while(true) do
-		local newrow = {}
+		local newRow = {}
 		for i = 1, select do
-			newrow[#newrow + 1] = table[a[i]]
+			newRow[#newRow + 1] = table[a[i]]
 		end
 
-		newlist[#newlist + 1] = newrow
+		newList[#newList + 1] = newRow
 		i = select
 		while(a[i] == (number - select + i)) do
 			i = i - 1
@@ -82,7 +87,7 @@ table.getCombinations = function (table, num)
 		end
 	end
 
-	return newlist
+	return newList
 end
 
 function table.serialize(x, recur)
