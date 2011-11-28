@@ -141,7 +141,7 @@ if(Modules == nil) then
 		end
 
 		local premium = parameters.premium
-		if(getBooleanFromString(getConfigValue('blessingsOnlyPremium')) then
+		if(getBooleanFromString(getConfigValue('blessingsOnlyPremium'))) then
 			premium = true
 		end
 
