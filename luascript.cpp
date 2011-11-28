@@ -10153,12 +10153,6 @@ int32_t LuaInterface::luaDoSaveHouse(lua_State* L)
 			return 1;
 		}
 
-		if(!trans.commit())
-		{
-			lua_pushboolean(L, false);
-			return 1;
-		}
-
 		for(std::vector<House*>::iterator it = houses.begin(); it != houses.end(); ++it)
 		{
 			if(IOMapSerialize::getInstance()->saveHouseItems(db, *it))
@@ -10175,21 +10169,23 @@ int32_t LuaInterface::luaDoSaveHouse(lua_State* L)
 		lua_pushboolean(L, true);
 		return 1;
 	}
-
-	for(std::vector<House*>::iterator it = houses.begin(); it != houses.end(); ++it)
+	else
 	{
-		if(!IOMapSerialize::getInstance()->saveHouse(db, *it))
+		for(std::vector<House*>::iterator it = houses.begin(); it != houses.end(); ++it)
 		{
-			std::stringstream s;
-			s << "Unable to save house information, ID: " << (*it)->getId();
-			errorEx(s.str());
-		}
+			if(!IOMapSerialize::getInstance()->saveHouse(db, *it))
+			{
+				std::stringstream s;
+				s << "Unable to save house information, ID: " << (*it)->getId();
+				errorEx(s.str());
+			}
 
-		if(!IOMapSerialize::getInstance()->saveHouseItems(db, *it))
-		{
-			std::stringstream s;
-			s << "Unable to save house items, ID: " << (*it)->getId();
-			errorEx(s.str());
+			if(!IOMapSerialize::getInstance()->saveHouseItems(db, *it))
+			{
+				std::stringstream s;
+				s << "Unable to save house items, ID: " << (*it)->getId();
+				errorEx(s.str());
+			}
 		}
 	}
 
