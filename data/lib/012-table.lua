@@ -59,19 +59,19 @@ end
 table.countElements = table.count
 
 table.getCombinations = function (table, num)
-	local a, number, select, newList = {}, #table, num, {}
+	local a, number, select, newList = {}, table.size(table), num, {}
 	for i = 1, select do
-		a[#a + 1] = i
+		table.insert(a, i)
 	end
 
 	local newThing = {}
 	while(true) do
 		local newRow = {}
 		for i = 1, select do
-			newRow[#newRow + 1] = table[a[i]]
+			table.insert(newRow, table[a[i]])
 		end
 
-		newList[#newList + 1] = newRow
+		table.insert(newList, newRow)
 		i = select
 		while(a[i] == (number - select + i)) do
 			i = i - 1
