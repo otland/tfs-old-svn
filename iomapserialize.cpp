@@ -330,7 +330,7 @@ bool IOMapSerialize::saveHouseItems(Database* db, House* house)
 	if(!(result = db->storeQuery(query.str())))
 		return false;
 
-	uint32_t tileId = result->getDataInt("id");
+	uint32_t tileId = result->getDataInt("id") + 1;
 	result->free();
 	return saveHouseRelational(db, house, tileId);
 }
