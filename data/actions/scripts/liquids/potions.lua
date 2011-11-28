@@ -117,11 +117,14 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 	if(type(potion.area) == 'table' and table.maxn(potion.area) > 1) then
 		for i, tid in ipairs(getSpectators(getThingPosition(itemEx.uid), potion.area[1], potion.area[2])) do
 			if(isPlayer(tid)) then
-				doCreatureSay(itemEx.uid, "Aaaah...", TALKTYPE_ORANGE_1, false, tid)
+				doCreatureSay(itemEx.uid, "Aaaah...", TALKTYPE_MONSTER, false, tid)
 			end
 		end
 	else
-		doCreatureSay(itemEx.uid, "Aaaah...", TALKTYPE_ORANGE_1, false, itemEx.uid)
+		doCreatureSay(itemEx.uid, "Aaaah...", TALKTYPE_MONSTER, false, itemEx.uid)
+		if(itemEx.uid ~= cid) then
+			doCreatureSay(itemEx.uid, "Aaaah...", TALKTYPE_MONSTER, false, cid)
+		end
 	end
 
 	doRemoveItem(item.uid, 1)
