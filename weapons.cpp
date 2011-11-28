@@ -444,7 +444,7 @@ void Weapon::onUsedWeapon(Player* player, Item* item, Tile*) const
 	{
 		player->changeMana(-manaCost);
 		if(!player->hasFlag(PlayerFlag_NotGainMana) && (player->getZone() != ZONE_HARDCORE
-			|| !g_config.getBool(ConfigManager::PVPZONE_ADDMANASPENT)))
+			|| g_config.getBool(ConfigManager::PVPZONE_ADDMANASPENT)))
 			player->addManaSpent(manaCost);
 	}
 
