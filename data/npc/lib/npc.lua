@@ -144,8 +144,8 @@ function doNpcSellItem(cid, itemid, amount, subType, ignoreCap, inBackpacks, bac
 end
 
 function doRemoveItemIdFromPosition(id, n, position)
-	local thing = getThingFromPos({x = position.x, y = position.y, z = position.z, stackpos = 1})
-	if(thing.itemid ~= id) then
+	local thing = getTileItemById(position, id)
+	if(thing.itemid < 101) then
 		return false
 	end
 
@@ -157,7 +157,7 @@ function getNpcName()
 	return getCreatureName(getNpcId())
 end
 
-function getNpcPos()
+function getNpcPosition()
 	return getThingPosition(getNpcId())
 end
 
@@ -180,3 +180,4 @@ getNpcCid = getNpcId
 getDistanceTo = getNpcDistanceTo
 getDistanceToCreature = getNpcDistanceTo
 getNpcDistanceToCreature = getNpcDistanceTo
+getNpcPos = getNpcPosition
