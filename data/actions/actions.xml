@@ -151,6 +151,7 @@
 	<action itemid="8580" event="script" value="other/teleport.lua"/>
 	<action itemid="8599" event="script" value="other/teleport.lua"/>
 	<action itemid="10035" event="script" value="other/teleport.lua"/>
+	<action itemid="13010" event="script" value="other/teleport.lua"/>
 
 	<!-- Bread Creating -->
 	<action itemid="2692" event="script" value="other/createbread.lua"/>

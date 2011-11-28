@@ -6919,11 +6919,9 @@
 	<item fromid="3737" toid="3738" article="a" name="statue"/>
 	<item fromid="3739" toid="3742" article="a" name="huntress statue"/>
 	<item id="3743" article="a" name="lantern">
-		<attribute key="transformUseTo" value="3744"/>
+		<attribute key="transformUseTo" value="4404"/>
 	</item>
-	<item id="3744" article="a" name="lantern">
-		<attribute key="transformUseTo" value="3743"/>
-	</item>
+	<item id="3744" article="a" name="skull candle"/>
 	<item fromid="3745" toid="3755" article="a" name="bamboo fence"/>
 	<item fromid="3756" toid="3765" article="a" name="bridge"/>
 	<item id="3766" article="a" name="pillar"/>
@@ -7896,7 +7894,9 @@
 	</item>
 	<item fromid="4394" toid="4402" article="a" name="red carpet"/>
 	<item id="4403" article="a" name="mast"/>
-	<item id="4404" article="a" name="wooden lamp"/>
+	<item id="4404" article="a" name="lantern">
+		<attribute key="transformUseTo" value="3743"/>
+	</item>
 	<item fromid="4405" toid="4421" name="rocks"/>
 	<item fromid="4456" toid="4467" name="rocks"/>
 	<item fromid="4468" toid="4513" article="a" name="mountain"/>
