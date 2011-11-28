@@ -4,7 +4,7 @@ local config = {
 }
 
 function onThink(cid, interval)
-	if(getTileInfo(getCreaturePosition(cid)).nologout or getCreatureNoMove(cid) or
+	if(getTileInfo(getCreaturePosition(cid)).noLogout or getCreatureNoMove(cid) or
 		getPlayerCustomFlagValue(cid, PLAYERCUSTOMFLAG_ALLOWIDLE)) then
 		return true
 	end
