@@ -73,7 +73,7 @@ if(Modules == nil) then
 			return false
 		end
 
-		if(isPlayerPremiumCallback(cid) or not getBooleanFromString(getConfigValue('premiumForPromotion')) or not(parameters.premium)) then
+		if(isPremium(cid) or not getBooleanFromString(getConfigValue('premiumForPromotion')) or not(parameters.premium)) then
 			if(getPlayerPromotionLevel(cid) >= parameters.promotion) then
 				npcHandler:say('You are already promoted!', cid)
 			elseif(getPlayerLevel(cid) < parameters.level) then
@@ -103,7 +103,7 @@ if(Modules == nil) then
 			return false
 		end
 
-		if(isPlayerPremiumCallback(cid) or not(parameters.premium)) then
+		if(isPremium(cid) or not(parameters.premium)) then
 			if(getPlayerLearnedInstantSpell(cid, parameters.spellName)) then
 				npcHandler:say('You already know this spell.', cid)
 			elseif(getPlayerLevel(cid) < parameters.level) then
@@ -140,7 +140,12 @@ if(Modules == nil) then
 			return false
 		end
 
-		if(isPlayerPremiumCallback(cid) or not getBooleanFromString(getConfigValue('blessingsOnlyPremium')) or not parameters.premium) then
+		local premium = parameters.premium
+		if(getBooleanFromString(getConfigValue('blessingsOnlyPremium')) then
+			premium = true
+		end
+
+		if(isPremium(cid) or not premium) then
 			local price = parameters.baseCost
 			if(getPlayerLevel(cid) > parameters.startLevel) then
 				price = (price + ((math.min(parameters.endLevel, getPlayerLevel(cid)) - parameters.startLevel) * parameters.levelCost))
@@ -197,7 +202,7 @@ if(Modules == nil) then
 		end
 
 		local storage, pzLocked = parameters.storageValue or (EMPTY_STORAGE + 1), parameters.allowLocked or false
-		if(parameters.premium and not isPlayerPremiumCallback(cid)) then
+		if(parameters.premium and not isPremium(cid)) then
 			npcHandler:say('I\'m sorry, but you need a premium account in order to travel onboard our ships.', cid)
 		elseif(parameters.level ~= nil and getPlayerLevel(cid) < parameters.level) then
 			npcHandler:say('You must reach level ' .. parameters.level .. ' before I can let you go there.', cid)
@@ -450,7 +455,7 @@ if(Modules == nil) then
 		end
 
 		local parent = node:getParent():getParameters()
-		if(isPlayerPremiumCallback(cid) or not parent.premium) then
+		if(isPremium(cid) or not parent.premium) then
 			if(not isPlayerPzLocked(cid)) then
 				if(doPlayerRemoveMoney(cid, parent.cost)) then
 					module.npcHandler:say('Set the sails!', cid)
@@ -490,7 +495,7 @@ if(Modules == nil) then
 			return false
 		end
 
-		if((isPlayerPremiumCallback(cid) or not parameters.premium) and not isPlayerPzLocked(cid) and doPlayerRemoveMoney(cid, parameters.cost)) then
+		if((isPremium(cid) or not parameters.premium) and not isPlayerPzLocked(cid) and doPlayerRemoveMoney(cid, parameters.cost)) then
 			module.npcHandler:say('Set the sails!', cid)
 			module.npcHandler:releaseFocus(cid)
 
@@ -714,7 +719,7 @@ if(Modules == nil) then
 		end
 
 		local parent = node:getParent():getParameters()
-		if(isPlayerPremiumCallback(cid) or not parent.premium) then
+		if(isPremium(cid) or not parent.premium) then
 			if(not OUTFITMODULE_FUNCTION[2](cid, parent.outfit, parent.addon)) then
 				if(parent.addon == 0 or OUTFITMODULE_FUNCTION[2](cid, parent.outfit)) then
 					if(parent.gender == nil or parent.gender == getPlayerSex(cid)) then
