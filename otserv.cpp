@@ -233,6 +233,9 @@ void signalHandler(int32_t sig)
 		case SIGTERM:
 			Dispatcher::getInstance().addTask(createTask(
 				boost::bind(&Game::shutdown, &g_game)));
+
+			Dispatcher::getInstance().stop();
+			Scheduler::getInstance().stop();
 			break;
 
 		default:
@@ -255,18 +258,18 @@ int32_t getch()
 void allocationHandler()
 {
 	puts("Allocation failed, server out of memory!\nDecrease size of your map or compile in a 64-bit mode.");
-	char buffer[1024];
-	delete fgets(buffer, 1024, stdin);
-	exit(-1);
+	getch();
+	std::exit(-1);
 }
 
 void startupErrorMessage(std::string error = "")
 {
+	// we will get a crash here as the threads aren't going down smoothly
 	if(error.length() > 0)
 		std::clog << std::endl << "> ERROR: " << error << std::endl;
 
 	getch();
-	exit(-1);
+	std::exit(-1);
 }
 
 void otserv(StringVec args, ServiceManager* services);
@@ -282,7 +285,8 @@ int main(int argc, char* argv[])
 	g_config.startup();
 
 #ifdef __OTSERV_ALLOCATOR_STATS__
-	boost::thread(boost::bind(&allocatorStatsThread, (void*)NULL)); // TODO: shutdown this thread?
+	//boost::thread(boost::bind(&allocatorStatsThread, (void*)NULL));
+	// TODO: this thread needs a shutdown (timed_lock + interrupt? .interrupt + .unlock)
 #endif
 #ifdef __EXCEPTION_TRACER__
 	ExceptionHandler mainExceptionHandler;
@@ -323,10 +327,12 @@ int main(int argc, char* argv[])
 	else
 		std::clog << ">> " << g_config.getString(ConfigManager::SERVER_NAME) << " server Offline! No services available..." << std::endl << std::endl;
 
+	Dispatcher::getInstance().exit();
+	Scheduler::getInstance().exit();
+
 #ifdef __EXCEPTION_TRACER__
 	mainExceptionHandler.RemoveHandler();
 #endif
-	std::exit(0);
 	return 0;
 }
 

@@ -41,17 +41,17 @@ void Scheduler::schedulerThread(void* p)
 	while(Scheduler::m_threadState != Scheduler::STATE_TERMINATED)
 	{
 		SchedulerTask* task = NULL;
-		bool run = false, ret = false;
+		bool run = false, action = false;
 
 		// check if there are events waiting...
 		eventLockUnique.lock();
 		if(scheduler->m_eventList.empty()) // unlock mutex and wait for signal
 			scheduler->m_eventSignal.wait(eventLockUnique);
 		else // unlock mutex and wait for signal or timeout
-			ret = scheduler->m_eventSignal.timed_wait(eventLockUnique, scheduler->m_eventList.top()->getCycle());
+			action = scheduler->m_eventSignal.timed_wait(eventLockUnique, scheduler->m_eventList.top()->getCycle());
 
 		// the mutex is locked again now...
-		if(!ret && Scheduler::m_threadState != Scheduler::STATE_TERMINATED)
+		if(!action && Scheduler::m_threadState != Scheduler::STATE_TERMINATED)
 		{
 			// ok we had a timeout, so there has to be an event we have to execute...
 			task = scheduler->m_eventList.top();
@@ -69,17 +69,17 @@ void Scheduler::schedulerThread(void* p)
 
 		eventLockUnique.unlock();
 		// add task to dispatcher
-		if(task)
+		if(!task)
+			continue;
+
+		// if it was not stopped
+		if(run)
 		{
-			// if it was not stopped
-			if(run)
-			{
-				task->unsetExpiration();
-				Dispatcher::getInstance().addTask(task);
-			}
-			else
-				delete task; // was stopped, have to be deleted here
+			task->unsetExpiration();
+			Dispatcher::getInstance().addTask(task);
 		}
+		else
+			delete task; // was stopped, have to be deleted here
 	}
 
 	#if defined __EXCEPTION_TRACER__

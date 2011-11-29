@@ -70,6 +70,7 @@ class Dispatcher
 
 		void stop();
 		void shutdown();
+		void exit() {m_thread.join();}
 
 		static void dispatcherThread(void* p);
 
@@ -84,6 +85,7 @@ class Dispatcher
 			STATE_TERMINATED
 		};
 
+		boost::thread m_thread;
 		boost::mutex m_taskLock;
 		boost::condition_variable m_taskSignal;
 

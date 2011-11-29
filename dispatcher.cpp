@@ -32,7 +32,7 @@ Dispatcher::Dispatcher()
 {
 	m_taskList.clear();
 	Dispatcher::m_threadState = Dispatcher::STATE_RUNNING;
-	boost::thread(boost::bind(&Dispatcher::dispatcherThread, (void*)this));
+	m_thread = boost::thread(boost::bind(&Dispatcher::dispatcherThread, (void*)this));
 }
 
 void Dispatcher::dispatcherThread(void* p)
@@ -53,7 +53,7 @@ void Dispatcher::dispatcherThread(void* p)
 		if(dispatcher->m_taskList.empty()) //if the list is empty wait for signal
 			dispatcher->m_taskSignal.wait(taskLockUnique);
 
-		if(!dispatcher->m_taskList.empty() && Dispatcher::m_threadState != Dispatcher::STATE_TERMINATED)
+		if(Dispatcher::m_threadState != Dispatcher::STATE_TERMINATED)
 		{
 			// take the first task
 			task = dispatcher->m_taskList.front();
