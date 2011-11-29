@@ -53,6 +53,7 @@ string.diff = function (diff)
 
 	return t
 end
+string.timediff = string.diff
 
 string.boolean = function (input)
 	local tmp = type(input)
