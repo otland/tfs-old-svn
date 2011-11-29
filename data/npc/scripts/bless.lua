@@ -30,7 +30,7 @@ local node5 = keywordHandler:addKeyword({'fifth bless'}, StdModule.say, {npcHand
 	node5:addChildKeyword({'no'}, StdModule.say, {npcHandler = npcHandler, onlyFocus = true, reset = true, text = 'Too expensive, eh?'})
 
 local node6 = keywordHandler:addKeyword({'pvp bless'}, StdModule.say, {npcHandler = npcHandler, onlyFocus = true, text = 'Do you want to buy the pvp blessing for 2000 (plus level depending amount) gold?'})
-	node6:addChildKeyword({'yes'}, StdModule.bless, {npcHandler = npcHandler, number = 0, premium = true, baseCost = 2000, levelCost = 200, startLevel = 30, endLevel = 120})
+	node6:addChildKeyword({'yes'}, StdModule.bless, {npcHandler = npcHandler, number = 0, premium = true, baseCost = 2000, levelCost = 200, startLevel = 30, endLevel = 270})
 	node6:addChildKeyword({'no'}, StdModule.say, {npcHandler = npcHandler, onlyFocus = true, reset = true, text = 'Too expensive, eh?'})
 
 npcHandler:addModule(FocusModule:new())

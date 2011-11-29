@@ -28,8 +28,8 @@ if(NpcHandler == nil) then
 	MESSAGE_ONSELL 			= 7 -- When the player successfully sells something via talk.
 	MESSAGE_SOLD			= 8 -- When the player sold something through the shop window.
 	MESSAGE_MISSINGMONEY		= 9 -- When the player does not have enough money.
-	MESSAGE_NEEDMONEY		= 10 -- Same as above, used for shop window.
-	MESSAGE_MISSINGITEM		= 11 -- When the player is trying to sell an item he does not have.
+	MESSAGE_MISSINGITEM		= 10 -- When the player is trying to sell an item he does not have.
+	MESSAGE_NEEDMONEY		= 11 -- Same as above, used for shop window.
 	MESSAGE_NEEDITEM		= 12 -- Same as above, used for shop window.
 	MESSAGE_NEEDSPACE 		= 13 -- When the player don't have any space to buy an item
 	MESSAGE_NEEDMORESPACE		= 14 -- When the player has some space to buy an item, but not enough space
@@ -72,7 +72,7 @@ if(NpcHandler == nil) then
 		talkStart = nil,
 		idleTime = 300,
 		talkRadius = 3,
-		talkDelayTime = 400, -- Seconds to delay outgoing messages.
+		talkDelayTime = 350, -- Seconds to delay outgoing messages.
 		queue = nil,
 		talkDelay = nil,
 		callbackFunctions = nil,
@@ -86,11 +86,11 @@ if(NpcHandler == nil) then
 			[MESSAGE_ONBUY] 	= 'It was a pleasure doing business with you.',
 			[MESSAGE_BOUGHT] 	= 'Bought |ITEMCOUNT|x |ITEMNAME| for |TOTALCOST| gold.',
 			[MESSAGE_SELL] 		= 'Do you want to sell |ITEMCOUNT| |ITEMNAME| for |TOTALCOST| gold coins?',
-			[MESSAGE_ONSELL] 	= 'Thank you for this |ITEMNAME|, |PLAYERNAME| gold.',
+			[MESSAGE_ONSELL] 	= 'Thank you for this |ITEMNAME|, |PLAYERNAME|.',
 			[MESSAGE_SOLD]	 	= 'Sold |ITEMCOUNT|x |ITEMNAME| for |TOTALCOST| gold.',
 			[MESSAGE_MISSINGMONEY]	= 'Sorry, you don\'t have enough money.',
-			[MESSAGE_NEEDMONEY] 	= 'You do not have enough money.',
 			[MESSAGE_MISSINGITEM] 	= 'You don\'t even have that item, |PLAYERNAME|!',
+			[MESSAGE_NEEDMONEY] 	= 'You do not have enough money.',
 			[MESSAGE_NEEDITEM]	= 'You do not have this object.',
 			[MESSAGE_NEEDSPACE]	= 'You do not have enough capacity.',
 			[MESSAGE_NEEDMORESPACE]	= 'You do not have enough capacity for all items.',
@@ -108,8 +108,9 @@ if(NpcHandler == nil) then
 	-- Creates a new NpcHandler with an empty callbackFunction stack.
 	function NpcHandler:new(keywordHandler)
 		local obj = {}
-		obj.callbackFunctions = {}
-		obj.modules = {}
+		obj.messages = {}
+
+		obj.keywordHandler = keywordHandler
 		if(NPCHANDLER_CONVBEHAVIOR ~= CONVERSATION_DEFAULT) then
 			obj.focuses = {}
 			obj.talkStart = {}
@@ -119,9 +120,9 @@ if(NpcHandler == nil) then
 			obj.talkStart = 0
 		end
 
+		obj.callbackFunctions = {}
+		obj.modules = {}
 		obj.talkDelay = {}
-		obj.keywordHandler = keywordHandler
-		obj.messages = {}
 		obj.shopItems = {}
 
 		setmetatable(obj.messages, self.messages)
