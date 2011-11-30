@@ -53,7 +53,7 @@ void Dispatcher::dispatcherThread(void* p)
 		if(dispatcher->m_taskList.empty()) //if the list is empty wait for signal
 			dispatcher->m_taskSignal.wait(taskLockUnique);
 
-		if(Dispatcher::m_threadState != Dispatcher::STATE_TERMINATED)
+		if(!dispatcher->m_taskList.empty() && Dispatcher::m_threadState != Dispatcher::STATE_TERMINATED)
 		{
 			// take the first task
 			task = dispatcher->m_taskList.front();
