@@ -65,9 +65,21 @@ Bytes not yet added:
 	}
 
 	marketDetail { -- F8
-		uint16_t DETAIL_FIELD_WEIGHT { // what the heck is this? Its always 14, what 14 strings we should send?!
-			string String // put some junk right now...
-		}
+		uint16_t ItemClientId
+		string ItemArmor 0
+		string ItemAttack 1
+		string ItemWeight 2
+		string ItemDefense 3
+		string ItemDescription 4
+		string Expiration 5
+		string ItemProtection 6
+		string ItemLevelRequirement 7
+		string ItemMagicLevelRequirement 8
+		string ItemVocationRequirement 9
+		string ItemRuneSpell 10
+		string ItemSkillsBonus 11
+		string ItemCharges 12
+		string ItemWeaponType 13
 		char Buy {
 			uint32_t Transactions
 			uint32_t TotalPrice
