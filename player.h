@@ -119,9 +119,7 @@ typedef std::map<uint32_t, uint32_t> MuteCountMap;
 typedef std::list<std::string> LearnedInstantSpellList;
 typedef std::list<uint32_t> InvitationsList;
 typedef std::list<Party*> PartyList;
-#ifdef __WAR_SYSTEM__
 typedef std::map<uint32_t, War_t> WarMap;
-#endif
 
 #define SPEED_MAX 1500
 #define SPEED_MIN 10
@@ -281,7 +279,6 @@ class Player : public Creature, public Cylinder
 
 		bool isPremium() const;
 		int32_t getPremiumDays() const {return premiumDays;}
-#ifdef __WAR_SYSTEM__
 
 		bool hasEnemy() const {return !warMap.empty();}
 		bool getEnemy(const Player* player, War_t& data) const;
@@ -292,7 +289,6 @@ class Player : public Creature, public Cylinder
 		void addEnemy(uint32_t guild, War_t war)
 			{warMap[guild] = war;}
 		void removeEnemy(uint32_t guild) {warMap.erase(guild);}
-#endif
 
 		uint32_t getVocationId() const {return vocationId;}
 		void setVocation(uint32_t id);
@@ -511,9 +507,7 @@ class Player : public Creature, public Cylinder
 
 		Skulls_t getSkullType(const Creature* creature) const;
 		PartyShields_t getPartyShield(const Creature* creature) const;
-#ifdef __WAR_SYSTEM__
 		GuildEmblems_t getGuildEmblem(const Creature* creature) const;
-#endif
 
 		bool hasAttacked(const Player* attacked) const;
 		void addAttacked(const Player* attacked);
@@ -947,9 +941,8 @@ class Player : public Creature, public Cylinder
 		PartyList invitePartyList;
 		OutfitMap outfits;
 		LearnedInstantSpellList learnedInstantSpellList;
-#ifdef __WAR_SYSTEM__
 		WarMap warMap;
-#endif
+
 		friend class Game;
 		friend class LuaInterface;
 		friend class Npc;

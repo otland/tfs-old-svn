@@ -317,9 +317,7 @@ bool ConfigManager::load()
 	m_confString[ADMIN_ENCRYPTION_DATA]		= getGlobalString("adminEncryptionData", "");
 	m_confBool[ADDONS_PREMIUM]			= getGlobalBool("addonsOnlyPremium", true);
 	m_confBool[UNIFIED_SPELLS]			= getGlobalBool("unifiedSpells", true);
-#ifdef __WAR_SYSTEM__
 	m_confBool[OPTIONAL_WAR_ATTACK_ALLY]		= getGlobalBool("optionalWarAttackableAlly", false);
-#endif
 	m_confNumber[VIPLIST_DEFAULT_LIMIT]		= getGlobalNumber("vipListDefaultLimit", 20);
 	m_confNumber[VIPLIST_DEFAULT_PREMIUM_LIMIT]	= getGlobalNumber("vipListDefaultPremiumLimit", 100);
 	m_confNumber[STAMINA_DESTROY_LOOT]		= getGlobalNumber("staminaLootLimit", 840);
