@@ -4,7 +4,8 @@
 
 	<event type="channeljoin" name="GuildEvents" event="script" value="guild.lua"/>
 	<event type="mailreceive" name="Mail" event="script" value="mail.lua"/>
-	<event type="reportbug" name="SaveReportBug" script="reportbug.lua"/>
+	<event type="reportbug" name="ReportBug" script="reportbug.lua"/>
+	<event type="thankyou" name="ThankYou" script="thankyou.lua"/>
 	<event type="advance" name="AdvanceSave" event="script" value="advancesave.lua"/>
 	<event type="textedit" name="BanBook" event="script" value="banbook.lua"/>
 

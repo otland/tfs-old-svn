@@ -182,6 +182,10 @@ bool CreatureEvent::configureEvent(xmlNodePtr p)
 		m_type = CREATURE_EVENT_TEXTEDIT;
 	else if(tmpStr == "reportbug")
 		m_type = CREATURE_EVENT_REPORTBUG;
+	else if(tmpStr == "reportviolation")
+		m_type = CREATURE_EVENT_REPORTVIOLATION;
+	else if(tmpStr == "thankyou")
+		m_type = CREATURE_EVENT_THANKYOU;
 	else if(tmpStr == "look")
 		m_type = CREATURE_EVENT_LOOK;
 	else if(tmpStr == "spawn")
@@ -262,6 +266,10 @@ std::string CreatureEvent::getScriptEventName() const
 			return "onTextEdit";
 		case CREATURE_EVENT_REPORTBUG:
 			return "onReportBug";
+		case CREATURE_EVENT_REPORTVIOLATION:
+			return "onReportViolation";
+		case CREATURE_EVENT_THANKYOU:
+			return "onThankYou";
 		case CREATURE_EVENT_STATSCHANGE:
 			return "onStatsChange";
 		case CREATURE_EVENT_COMBAT_AREA:
@@ -321,6 +329,10 @@ std::string CreatureEvent::getScriptEventParams() const
 			return "cid, item, newText";
 		case CREATURE_EVENT_REPORTBUG:
 			return "cid, comment";
+		case CREATURE_EVENT_REPORTVIOLATION:
+			return "cid, type, reason, name, comment, translation, statementId";
+		case CREATURE_EVENT_THANKYOU:
+			return "cid, statementId";
 		case CREATURE_EVENT_THINK:
 			return "cid, interval";
 		case CREATURE_EVENT_DIRECTION:
@@ -342,11 +354,7 @@ std::string CreatureEvent::getScriptEventParams() const
 		case CREATURE_EVENT_CAST:
 			return "cid, target";
 		case CREATURE_EVENT_KILL:
-#ifndef __WAR_SYSTEM__
-			return "cid, target, damage, flags";
-#else
 			return "cid, target, damage, flags, war";
-#endif
 		case CREATURE_EVENT_DEATH:
 			return "cid, corpse, deathList";
 		case CREATURE_EVENT_PREPAREDEATH:
@@ -1534,9 +1542,7 @@ uint32_t CreatureEvent::executeKill(Creature* creature, Creature* target, const 
 			scriptstream << "local target = " << env->addThing(target) << std::endl;
 			scriptstream << "local damage = " << entry.getDamage() << std::endl;
 			scriptstream << "local flags = " << flags << std::endl;
-#ifdef __WAR_SYSTEM__
 			scriptstream << "local war = " << entry.getWar().war << std::endl;
-#endif
 
 			if(m_scriptData)
 				scriptstream << *m_scriptData;
@@ -1570,14 +1576,9 @@ uint32_t CreatureEvent::executeKill(Creature* creature, Creature* target, const 
 
 			lua_pushnumber(L, entry.getDamage());
 			lua_pushnumber(L, flags);
-#ifndef __WAR_SYSTEM__
-
-			bool result = m_interface->callFunction(4);
-#else
 			lua_pushnumber(L, entry.getWar().war);
 
 			bool result = m_interface->callFunction(5);
-#endif
 			m_interface->releaseEnv();
 			return result;
 		}
@@ -1761,7 +1762,7 @@ uint32_t CreatureEvent::executeTextEdit(Player* player, Item* item, std::string 
 			scriptstream << "local cid = " << env->addThing(player) << std::endl;
 
 			env->streamThing(scriptstream, "item", item, env->addThing(item));
-			scriptstream << "local newText = " << newText.c_str() << std::endl;
+			scriptstream << "local newText = " << newText << std::endl;
 
 			if(m_scriptData)
 				scriptstream << *m_scriptData;
@@ -1818,7 +1819,7 @@ uint32_t CreatureEvent::executeReportBug(Player* player, std::string comment)
 			std::stringstream scriptstream;
 
 			scriptstream << "local cid = " << env->addThing(player) << std::endl;
-			scriptstream << "local comment = " << comment.c_str() << std::endl;
+			scriptstream << "local comment = " << comment << std::endl;
 
 			if(m_scriptData)
 				scriptstream << *m_scriptData;
@@ -1858,6 +1859,131 @@ uint32_t CreatureEvent::executeReportBug(Player* player, std::string comment)
 	else
 	{
 		std::clog << "[Error - CreatureEvent::executeReportBug] Call stack overflow." << std::endl;
+		return 0;
+	}
+}
+
+uint32_t CreatureEvent::executeReportViolation(Player* player, ReportType_t type, uint8_t reason,
+	const std::string& name, const std::string& comment, const std::string& translation, uint32_t statementId)
+{
+	//onReportViolation(cid, type, reason, name, comment, translation, statementId)
+	if(m_interface->reserveEnv())
+	{
+		ScriptEnviroment* env = m_interface->getEnv();
+		if(m_scripted == EVENT_SCRIPT_BUFFER)
+		{
+			env->setRealPos(player->getPosition());
+			std::stringstream scriptstream;
+
+			scriptstream << "local cid = " << env->addThing(player) << std::endl;
+			scriptstream << "local type = " << type << std::endl;
+			scriptstream << "local reason = " << (uint16_t)type << std::endl;
+
+			scriptstream << "local name = " << type << std::endl;
+			scriptstream << "local comment = " << type << std::endl;
+			scriptstream << "local translation = " << type << std::endl;
+
+			scriptstream << "local statementId = " << type << std::endl;
+			if(m_scriptData)
+				scriptstream << *m_scriptData;
+
+			bool result = true;
+			if(m_interface->loadBuffer(scriptstream.str()))
+			{
+				lua_State* L = m_interface->getState();
+				result = m_interface->getGlobalBool(L, "_result", true);
+			}
+
+			m_interface->releaseEnv();
+			return result;
+		}
+		else
+		{
+			#ifdef __DEBUG_LUASCRIPTS__
+			char desc[35];
+			sprintf(desc, "%s", player->getName().c_str());
+			env->setEvent(desc);
+			#endif
+
+			env->setScriptId(m_scriptId, m_interface);
+			env->setRealPos(player->getPosition());
+
+			lua_State* L = m_interface->getState();
+			m_interface->pushFunction(m_scriptId);
+
+			lua_pushnumber(L, env->addThing(player));
+			lua_pushnumber(L, type);
+			lua_pushnumber(L, reason);
+
+			lua_pushstring(L, name.c_str());
+			lua_pushstring(L, comment.c_str());
+			lua_pushstring(L, translation.c_str());
+			lua_pushnumber(L, statementId);
+
+			bool result = m_interface->callFunction(7);
+			m_interface->releaseEnv();
+			return result;
+		}
+	}
+	else
+	{
+		std::clog << "[Error - CreatureEvent::executeReportViolation] Call stack overflow." << std::endl;
+		return 0;
+	}
+}
+
+uint32_t CreatureEvent::executeThankYou(Player* player, uint32_t statementId)
+{
+	//onThankYou(cid, statementId)
+	if(m_interface->reserveEnv())
+	{
+		ScriptEnviroment* env = m_interface->getEnv();
+		if(m_scripted == EVENT_SCRIPT_BUFFER)
+		{
+			env->setRealPos(player->getPosition());
+			std::stringstream scriptstream;
+
+			scriptstream << "local cid = " << env->addThing(player) << std::endl;
+			scriptstream << "local statementId = " << statementId << std::endl;
+
+			if(m_scriptData)
+				scriptstream << *m_scriptData;
+
+			bool result = true;
+			if(m_interface->loadBuffer(scriptstream.str()))
+			{
+				lua_State* L = m_interface->getState();
+				result = m_interface->getGlobalBool(L, "_result", true);
+			}
+
+			m_interface->releaseEnv();
+			return result;
+		}
+		else
+		{
+			#ifdef __DEBUG_LUASCRIPTS__
+			char desc[35];
+			sprintf(desc, "%s", player->getName().c_str());
+			env->setEvent(desc);
+			#endif
+
+			env->setScriptId(m_scriptId, m_interface);
+			env->setRealPos(player->getPosition());
+
+			lua_State* L = m_interface->getState();
+			m_interface->pushFunction(m_scriptId);
+
+			lua_pushnumber(L, env->addThing(player));
+			lua_pushnumber(L, statementId);
+
+			bool result = m_interface->callFunction(2);
+			m_interface->releaseEnv();
+			return result;
+		}
+	}
+	else
+	{
+		std::clog << "[Error - CreatureEvent::executeThankYou] Call stack overflow." << std::endl;
 		return 0;
 	}
 }

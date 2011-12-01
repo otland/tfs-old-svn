@@ -80,7 +80,7 @@ ItemType::ItemType()
 	maxTextLength = 0;
 	canReadText = canWriteText = false;
 	date = 0;
-	writeOnceItemId = 0;
+	writeOnceItemId = wareId = 0;
 
 	transformEquipTo = transformDeEquipTo = transformUseTo = 0;
 	showDuration = showCharges = showAttributes = dualWield = false;
@@ -125,7 +125,7 @@ bool Items::reload()
 		return false;
 
 	items.reload(); //?
-	loadFromOtb("data/items/items.otb");
+	loadFromOtb(getFilePath(FILE_TYPE_OTHER, "items/items.otb"));
 	if(!loadFromXml())
 		return false;
 
@@ -188,7 +188,7 @@ int32_t Items::loadFromOtb(std::string file)
 		std::clog << "[Error - Items::loadFromOtb] New version detected, an older version of items.otb is required." << std::endl;
 		return ERROR_INVALID_FORMAT;
 	}
-	else if(!g_config.getBool(ConfigManager::SKIP_ITEMS_VERSION) && Items::dwMinorVersion != CLIENT_VERSION_920)
+	else if(!g_config.getBool(ConfigManager::SKIP_ITEMS_VERSION) && Items::dwMinorVersion != CLIENT_VERSION_940)
 	{
 		std::clog << "[Error - Items::loadFromOtb] Another (client) version of items.otb is required." << std::endl;
 		return ERROR_INVALID_FORMAT;
@@ -255,6 +255,7 @@ int32_t Items::loadFromOtb(std::string file)
 		iType->canReadText = hasBitSet(FLAG_READABLE, flags);
 		iType->lookThrough = hasBitSet(FLAG_LOOKTHROUGH, flags);
 		iType->isAnimation = hasBitSet(FLAG_ANIMATION, flags);
+		iType->walkStack = hasBitSet(FLAG_WALKSTACK, flags);
 
 		attribute_t attr;
 		while(props.getType(attr))
@@ -341,6 +342,18 @@ int32_t Items::loadFromOtb(std::string file)
 						return ERROR_INVALID_FORMAT;
 
 					iType->alwaysOnTopOrder = topOrder;
+					break;
+				}
+				case ITEM_ATTR_WAREID:
+				{
+					if(length != sizeof(uint16_t))
+						return ERROR_INVALID_FORMAT;
+
+					uint16_t wareId;
+					if(!props.getShort(wareId))
+						return ERROR_INVALID_FORMAT;
+
+					iType->wareId = wareId;
 					break;
 				}
 				default:
@@ -615,6 +628,11 @@ void Items::parseItemNode(xmlNodePtr itemNode, uint32_t id)
 				if(it.group == ITEM_GROUP_DEPRECATED)
 					it.group = ITEM_GROUP_NONE;
 			}
+		}
+		else if(tmpStrValue == "wareid")
+		{
+			if(readXMLInteger(itemAttributesNode, "value", intValue))
+				it.wareId = intValue;
 		}
 		else if(tmpStrValue == "blocksolid" || tmpStrValue == "blocking")
 		{

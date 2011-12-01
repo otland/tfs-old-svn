@@ -59,6 +59,9 @@ class Vocation
 		uint32_t getId() const {return id;}
 		void setId(int32_t v) {id = v;}
 
+		uint16_t getClientId() const {return clientId;}
+		void setClientId(uint16_t v) {clientId = v;}
+
 		uint32_t getFromVocation() const {return fromVocation;}
 		void setFromVocation(int32_t v) {fromVocation = v;}
 
@@ -123,6 +126,7 @@ class Vocation
 		cacheMap cacheMana;
 
 		bool attackable, needPremium, dropLoot, skillLoss;
+		uint16_t clientId;
 		int32_t lessLoss, capGain;
 		uint32_t id, fromVocation, baseSpeed, attackSpeed;
 		std::string name, description;

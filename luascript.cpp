@@ -2515,14 +2515,12 @@ void LuaInterface::registerFunctions()
 
 	//doPlayerSetWalkthrough(cid, uid, walkthrough)
 	lua_register(m_luaState, "doPlayerSetWalkthrough", LuaInterface::luaDoPlayerSetWalkthrough);
-#ifdef __WAR_SYSTEM__
 
 	//doGuildAddEnemy(guild, enemy, war, type)
 	lua_register(m_luaState, "doGuildAddEnemy", LuaInterface::luaDoGuildAddEnemy);
 
 	//doGuildRemoveEnemy(guild, enemy)
 	lua_register(m_luaState, "doGuildRemoveEnemy", LuaInterface::luaDoGuildRemoveEnemy);
-#endif
 
 	//doUpdateHouseAuctions()
 	lua_register(m_luaState, "doUpdateHouseAuctions", LuaInterface::luaDoUpdateHouseAuctions);
@@ -11060,7 +11058,6 @@ int32_t LuaInterface::luaDoPlayerSetWalkthrough(lua_State* L)
 
 	return 1;
 }
-#ifdef __WAR_SYSTEM__
 
 int32_t LuaInterface::luaDoGuildAddEnemy(lua_State* L)
 {
@@ -11101,7 +11098,6 @@ int32_t LuaInterface::luaDoGuildRemoveEnemy(lua_State* L)
 	lua_pushnumber(L, count);
 	return 1;
 }
-#endif
 
 int32_t LuaInterface::luaGetConfigValue(lua_State* L)
 {

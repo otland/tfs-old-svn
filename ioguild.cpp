@@ -406,7 +406,6 @@ std::string IOGuild::getMotd(uint32_t guild)
 	result->free();
 	return motd;
 }
-#ifdef __WAR_SYSTEM__
 
 void IOGuild::checkWars()
 {
@@ -584,4 +583,3 @@ void IOGuild::frag(Player* player, uint64_t deathId, const DeathList& list, bool
 		<< war.ids[war.type] << ", " << war.war << ", " << deathId << ");";
 	db->query(query.str());
 }
-#endif

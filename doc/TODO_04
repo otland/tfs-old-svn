@@ -22,5 +22,5 @@
 		Assigned to: Elf
 
 	Deprecate several hardcoded systems (guild management, etc) and rescript them in Lua
-		Assigned to: ?
+		Assigned to: jeybi, Elf (?)
 ]

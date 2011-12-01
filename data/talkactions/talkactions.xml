@@ -82,4 +82,6 @@
 	<!-- Guilds -->
 	<talkaction words="!createguild;/createguild" event="function" value="guildCreate"/>
 	<talkaction words="!joinguild;/joinguild" event="function" value="guildJoin"/>
+	<talkaction words="/war" channel="0" event="script" value="war.lua"/>
+	<talkaction words="/balance" channel="0" event="script" value="balance.lua"/>
 </talkactions>

@@ -132,9 +132,7 @@ typedef std::vector<std::string> StatusList;
 #define EVENT_DECAYINTERVAL 250
 #define EVENT_DECAYBUCKETS 4
 #define STATE_DELAY 1000
-#ifdef __WAR_SYSTEM__
 #define EVENT_WARSINTERVAL 900000
-#endif
 
 /**
   * Main Game class.
@@ -443,14 +441,17 @@ class Game
 		  * \param pos Appear as sent from different position
 		  */
 		bool internalCreatureSay(Creature* creature, MessageClasses type, const std::string& text,
-			bool ghostMode, SpectatorVec* spectators = NULL, Position* pos = NULL);
+			bool ghostMode, SpectatorVec* spectators = NULL, Position* pos = NULL, uint32_t statementId = 0);
 
 		bool internalStartTrade(Player* player, Player* partner, Item* tradeItem);
 		bool internalCloseTrade(Player* player);
 
 		//Implementation of player invoked events
 		bool playerBroadcastMessage(Player* player, MessageClasses type, const std::string& text);
-		bool playerReportBug(uint32_t playerId, std::string bug);
+		bool playerReportBug(uint32_t playerId, std::string comment);
+		bool playerReportViolation(uint32_t playerId, ReportType_t type, uint8_t reason, const std::string& name,
+			const std::string& comment, const std::string& translation, uint32_t statementId);
+		bool playerThankYou(uint32_t playerId, uint32_t statementId);
 		bool playerMoveThing(uint32_t playerId, const Position& fromPos, uint16_t spriteId,
 			int16_t fromStackpos, const Position& toPos, uint8_t count);
 		bool playerMoveCreature(uint32_t playerId, uint32_t movingCreatureId,
@@ -513,7 +514,7 @@ class Game
 		bool playerRevokePartyInvitation(uint32_t playerId, uint32_t invitedId);
 		bool playerPassPartyLeadership(uint32_t playerId, uint32_t newLeaderId);
 		bool playerLeaveParty(uint32_t playerId, bool forced = false);
-		bool playerSharePartyExperience(uint32_t playerId, bool activate, uint8_t unknown);
+		bool playerSharePartyExperience(uint32_t playerId, bool activate);
 
 		void kickPlayer(uint32_t playerId, bool displayEffect);
 		bool broadcastMessage(const std::string& text, MessageClasses type);
@@ -580,9 +581,7 @@ class Game
 		void checkCreatureAttack(uint32_t creatureId);
 		void checkCreatures();
 		void checkLight();
-#ifdef __WAR_SYSTEM__
 		void checkWars();
-#endif
 
 		bool combatBlockHit(CombatType_t combatType, Creature* attacker, Creature* target,
 			int32_t& healthChange, bool checkDefense, bool checkArmor, bool field = false, bool element = false);
@@ -623,18 +622,18 @@ class Game
 
 		bool loadStatuslist();
 
-		bool isInBlacklist(std::string ip) const { return std::find(blacklist.begin(), blacklist.end(), ip) != blacklist.end(); }
-		bool isInWhitelist(std::string ip) const { return std::find(whitelist.begin(), whitelist.end(), ip) != whitelist.end(); }
+		bool isInBlacklist(std::string ip) const {return std::find(blacklist.begin(), blacklist.end(), ip) != blacklist.end();}
+		bool isInWhitelist(std::string ip) const {return std::find(whitelist.begin(), whitelist.end(), ip) != whitelist.end();}
 #ifdef __GROUND_CACHE__
 
 		std::map<Item*, int32_t> grounds;
 #endif
 
 	protected:
-		bool playerWhisper(Player* player, const std::string& text);
-		bool playerYell(Player* player, const std::string& text);
+		bool playerWhisper(Player* player, const std::string& text, uint32_t statementId);
+		bool playerYell(Player* player, const std::string& text, uint32_t statementId);
 		bool playerSpeakTo(Player* player, MessageClasses type, const std::string& receiver, const std::string& text);
-		bool playerTalkToChannel(Player* player, MessageClasses type, const std::string& text, uint16_t channelId);
+		bool playerSpeakToChannel(Player* player, MessageClasses type, const std::string& text, uint16_t channelId, uint32_t statementId);
 		bool playerSpeakToNpc(Player* player, const std::string& text);
 
 		struct GameEvent
@@ -677,9 +676,8 @@ class Game
 		int32_t lastMotdId;
 		uint32_t playersRecord;
 		uint32_t checkLightEvent, checkCreatureEvent, checkDecayEvent, saveEvent;
-#ifdef __WAR_SYSTEM__
 		uint32_t checkWarsEvent;
-#endif
+
 		RefreshTiles refreshTiles;
 		Trash trash;
 

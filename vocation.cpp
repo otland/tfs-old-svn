@@ -57,6 +57,9 @@ bool Vocations::parseVocationNode(xmlNodePtr p)
 	if(readXMLString(p, "name", strValue))
 		voc->setName(strValue);
 
+	if(readXMLInteger(p, "clientId", intValue))
+		voc->setClientId(intValue);
+
 	if(readXMLString(p, "description", strValue))
 		voc->setDescription(strValue);
 
@@ -471,6 +474,7 @@ void Vocation::reset()
 	needPremium = false;
 	attackable = dropLoot = skillLoss = true;
 	lessLoss = fromVocation = 0;
+	clientId = 1;
 	gain[GAIN_SOUL] = 100;
 	gainTicks[GAIN_SOUL] = 120;
 	baseSpeed = 220;

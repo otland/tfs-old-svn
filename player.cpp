@@ -884,10 +884,7 @@ bool Player::canWalkthrough(const Creature* creature) const
 	if(!player)
 		return false;
 
-	if(((g_game.getWorldType() == WORLDTYPE_OPTIONAL &&
-#ifdef __WAR_SYSTEM__
-		!player->isEnemy(this, true) &&
-#endif
+	if(((g_game.getWorldType() == WORLDTYPE_OPTIONAL && !player->isEnemy(this, true) &&
 		!player->isProtected()) || player->getTile()->hasFlag(TILESTATE_PROTECTIONZONE) || player->isProtected()) && player->getTile()->ground
 		&& Item::items[player->getTile()->ground->getID()].walkStack && (!player->hasCustomFlag(PlayerCustomFlag_GamemasterPrivileges)
 		|| player->getAccess() <= getAccess()))
@@ -1448,10 +1445,7 @@ void Player::onTargetChangeZone(ZoneType_t zone)
 		onTargetDisappear(false);
 	}
 	else if(zone == ZONE_OPEN && g_game.getWorldType() == WORLDTYPE_OPTIONAL && attackedCreature->getPlayer()
-#ifdef __WAR_SYSTEM__
-		&& !attackedCreature->getPlayer()->isEnemy(this, true)
-#endif
-		)
+		&& !attackedCreature->getPlayer()->isEnemy(this, true))
 	{
 		//attackedCreature can leave a pvp zone if not pzlocked
 		setAttackedCreature(NULL);
@@ -3807,15 +3801,9 @@ void Player::onTarget(Creature* target)
 		return;
 
 	addAttacked(targetPlayer);
-	if(Combat::isInPvpZone(this, targetPlayer) || isPartner(targetPlayer) ||
-#ifdef __WAR_SYSTEM__
-		isAlly(targetPlayer) ||
-#endif
+	if(Combat::isInPvpZone(this, targetPlayer) || isPartner(targetPlayer) || isAlly(targetPlayer) ||
 		(g_config.getBool(ConfigManager::ALLOW_FIGHTBACK) && targetPlayer->hasAttacked(this)
-#ifdef __WAR_SYSTEM__
-		&& !targetPlayer->isEnemy(this, false)
-#endif
-		))
+		&& !targetPlayer->isEnemy(this, false)))
 		return;
 
 	if(!pzLocked)
@@ -3824,11 +3812,8 @@ void Player::onTarget(Creature* target)
 		sendIcons();
 	}
 
-	if(getZone() != target->getZone() || skull != SKULL_NONE
-#ifdef __WAR_SYSTEM__
-		|| targetPlayer->isEnemy(this, true)
-#endif
-		|| canRevenge(targetPlayer->getGUID()))
+	if(getZone() != target->getZone() || skull != SKULL_NONE ||
+		targetPlayer->isEnemy(this, true) || canRevenge(targetPlayer->getGUID()))
 		return;
 
 	if(target->getSkull() != SKULL_NONE || (targetPlayer->canRevenge(guid) && targetPlayer->hasAttacked(this)))
@@ -3910,7 +3895,6 @@ void Player::onTargetGain(Creature* target, int32_t points)
 		party->addPlayerHealedMember(this, points);
 }
 
-#ifdef __WAR_SYSTEM__
 GuildEmblems_t Player::getGuildEmblem(const Creature* creature) const
 {
 	const Player* player = creature->getPlayer();
@@ -3958,7 +3942,6 @@ bool Player::isAlly(const Player* player) const
 {
 	return !warMap.empty() && player && player->getGuildId() == guildId;
 }
-#endif
 
 bool Player::onKilledCreature(Creature* target, DeathEntry& entry)
 {
@@ -3978,31 +3961,20 @@ bool Player::onKilledCreature(Creature* target, DeathEntry& entry)
 		return true;
 
 	Player* targetPlayer = target->getPlayer();
-	if(!targetPlayer || Combat::isInPvpZone(this, targetPlayer) || isPartner(targetPlayer)
-#ifdef __WAR_SYSTEM__
-		|| isAlly(targetPlayer)
-#endif
-		)
+	if(!targetPlayer || Combat::isInPvpZone(this, targetPlayer)
+		|| isPartner(targetPlayer) || isAlly(targetPlayer))
 		return true;
 
-#ifdef __WAR_SYSTEM__
 	War_t enemy;
 	if(targetPlayer->getEnemy(this, enemy) && (!entry.isLast() || IOGuild::getInstance()->updateWar(enemy)))
 		entry.setWar(enemy);
-#endif
 
 	if(!entry.isJustify() || !hasCondition(CONDITION_INFIGHT))
 		return true;
 
 	std::vector<uint32_t>::iterator it = std::find(revengeList.begin(), revengeList.end(), targetPlayer->getGUID());
 	if(!targetPlayer->hasAttacked(this) && target->getSkull() == SKULL_NONE && it == revengeList.end()
-		&& targetPlayer != this && (addUnjustifiedKill(targetPlayer,
-#ifndef __WAR_SYSTEM__
-		true
-#else
-		!enemy.war
-#endif
-		) || entry.isLast()))
+		&& targetPlayer != this && (addUnjustifiedKill(targetPlayer, !enemy.war) || entry.isLast()))
 		entry.setUnjustified();
 
 	if(it != revengeList.end())
@@ -4278,20 +4250,11 @@ Skulls_t Player::getSkullType(const Creature* creature) const
 		if(canRevenge(player->getGUID()))
 			return SKULL_ORANGE;
 
-		if((skull != SKULL_NONE || player->canRevenge(guid))
-			&& player->hasAttacked(this)
-#ifdef __WAR_SYSTEM__
-			&& !player->isEnemy(this, false)
-#endif
-			)
+		if((skull != SKULL_NONE || player->canRevenge(guid)) &&
+			player->hasAttacked(this) && !player->isEnemy(this, false))
 			return SKULL_YELLOW;
 
-		if(
-#ifndef __WAR_SYSTEM__
-			isPartner(player) &&
-#else
-			(isPartner(player) || isAlly(player)) &&
-#endif
+		if((isPartner(player) || isAlly(player)) &&
 			g_game.getWorldType() != WORLDTYPE_OPTIONAL)
 			return SKULL_GREEN;
 	}
@@ -5086,12 +5049,10 @@ bool Player::isGuildInvited(uint32_t guildId) const
 
 void Player::leaveGuild()
 {
-	sendClosePrivate(CHANNEL_GUILD);
-#ifdef __WAR_SYSTEM__
 	warMap.clear();
 	g_game.updateCreatureEmblem(this);
+	sendClosePrivate(CHANNEL_GUILD);
 
-#endif
 	guildLevel = GUILDLEVEL_NONE;
 	guildId = rankId = 0;
 	guildName = rankName = guildNick = std::string();

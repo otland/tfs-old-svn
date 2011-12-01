@@ -552,7 +552,6 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool preLo
 			player->rankName = result->getDataString("rank");
 			player->guildNick = nick;
 			result->free();
-#ifdef __WAR_SYSTEM__
 
 			query.str("");
 			query << "SELECT `id`, `guild_id`, `enemy_id` FROM `guild_wars` WHERE (`guild_id` = "
@@ -579,7 +578,6 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool preLo
 				while(result->next());
 				result->free();
 			}
-#endif
 		}
 	}
 	else if(g_config.getBool(ConfigManager::INGAME_GUILD_MANAGEMENT))
@@ -741,10 +739,7 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool preLo
 	query << "SELECT `pk`.`player_id`, `pd`.`date` FROM `player_killers` pk LEFT JOIN `killers` k"
 		<< " ON `pk`.`kill_id` = `k`.`id` LEFT JOIN `player_deaths` pd ON `k`.`death_id` = `pd`.`id`"
 		<< " WHERE `pd`.`player_id` = " << player->getGUID() << " AND `k`.`unjustified` = 1 AND "
-		<< "`pd`.`date` >= " << (time(NULL) - (7 * 86400)); // TODO: configurable
-#ifdef __WAR_SYSTEM__
-	query << " AND `k`.`war` = 0";
-#endif
+		<< "`pd`.`date` >= " << (time(NULL) - (7 * 86400)) << " AND `k`.`war` = 0"; // TODO: configurable
 
 	std::map<uint32_t, time_t> deaths;
 	if((result = db->storeQuery(query.str())))
@@ -765,11 +760,7 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool preLo
 		query << "SELECT `pd`.`player_id`, `pd`.`date` FROM `player_killers` pk LEFT JOIN `killers` k"
 			<< " ON `pk`.`kill_id` = `k`.`id` LEFT JOIN `player_deaths` pd ON `k`.`death_id` = `pd`.`id`"
 			<< " WHERE `pk`.`player_id` = " << player->getGUID() << " AND `k`.`unjustified` = 0 AND "
-			<< "`pd`.`date` >= " << (time(NULL) - (7 * 86400)); // TODO: configurable, same as up
-#ifdef __WAR_SYSTEM__
-
-		query << " AND `k`.`war` = 0";
-#endif
+			<< "`pd`.`date` >= " << (time(NULL) - (7 * 86400)) << " AND `k`.`war` = 0"; // TODO: configurable, same as up
 		if((result = db->storeQuery(query.str())))
 		{
 			do
@@ -1153,6 +1144,24 @@ bool IOLoginData::saveItems(const Player* player, const ItemBlockList& itemList,
 	return query_insert.execute();
 }
 
+bool IOLoginData::playerStatement(Player* _player, uint16_t channelId, const std::string& text, uint32_t& statementId)
+{
+	Database* db = Database::getInstance();
+	DBQuery query;
+
+	DBTransaction trans(db);
+	if(!trans.begin())
+		return false;
+
+	query << "INSERT INTO `player_statements` (`player_id`, `channel_id`, `text`, `date`) VALUES (" << _player->getGUID()
+		<< ", " << channelId << ", " << db->escapeString(text.c_str()) << ", " << time(NULL) << ")";
+	if(!db->query(query.str()))
+		return false;
+
+	statementId = db->getLastInsertId();
+	return true;
+}
+
 bool IOLoginData::playerDeath(Player* _player, const DeathList& dl)
 {
 	Database* db = Database::getInstance();
@@ -1171,21 +1180,15 @@ bool IOLoginData::playerDeath(Player* _player, const DeathList& dl)
 	if(size > tmp)
 		size = tmp;
 
-#ifdef __WAR_SYSTEM__
 	DeathList wl;
 	bool war = false;
 
-#endif
 	uint64_t deathId = db->getLastInsertId();
 	for(DeathList::const_iterator it = dl.begin(); i < size && it != dl.end(); ++it, ++i)
 	{
 		query.str("");
-		query << "INSERT INTO `killers` (`death_id`, `final_hit`, `unjustified`"
-#ifdef __WAR_SYSTEM__
-			<< ", `war`"
-#endif
-			<< ") VALUES (" << deathId << ", " << it->isLast() << ", " << it->isUnjustified();
-#ifdef __WAR_SYSTEM__
+		query << "INSERT INTO `killers` (`death_id`, `final_hit`, `unjustified`, `war`) VALUES ("
+			<< deathId << ", " << it->isLast() << ", " << it->isUnjustified();
 		if(it->isLast()) //last hit is always first and we got stored war data only there
 		{
 			War_t tmp = it->getWar();
@@ -1198,7 +1201,6 @@ bool IOLoginData::playerDeath(Player* _player, const DeathList& dl)
 			query << ", " << it->getWar().war;
 		else
 			query << ", 0";
-#endif
 
 		query << ")";
 		if(!db->query(query.str()))
@@ -1218,11 +1220,9 @@ bool IOLoginData::playerDeath(Player* _player, const DeathList& dl)
 
 			if(player)
 			{
-#ifdef __WAR_SYSTEM__
 				if(_player->isEnemy(player, false))
 					wl.push_back(*it);
 
-#endif
 				query.str("");
 				query << "INSERT INTO `player_killers` (`kill_id`, `player_id`) VALUES ("
 					<< killId << ", " << player->getGUID() << ")";
@@ -1244,11 +1244,9 @@ bool IOLoginData::playerDeath(Player* _player, const DeathList& dl)
 				return false;
 		}
 	}
-#ifdef __WAR_SYSTEM__
 
 	if(!wl.empty())
 		IOGuild::getInstance()->frag(_player, deathId, wl, war);
-#endif
 
 	return trans.commit();
 }
@@ -1739,11 +1737,8 @@ bool IOLoginData::getUnjustifiedDates(uint32_t guid, std::vector<time_t>& dateLi
 	DBQuery query;
 	query << "SELECT `pd`.`date` FROM `player_killers` pk LEFT JOIN `killers` k ON `pk`.`kill_id` = `k`.`id`"
 		<< "LEFT JOIN `player_deaths` pd ON `k`.`death_id` = `pd`.`id` WHERE `pk`.`player_id` = " << guid
-		<< " AND `k`.`unjustified` = 1 AND `pd`.`date` >= " << (_time - (30 * 86400));
-#ifdef __WAR_SYSTEM__
+		<< " AND `k`.`unjustified` = 1 AND `pd`.`date` >= " << (_time - (30 * 86400)) << " AND `k`.`war` = 0";
 
-	query << " AND `k`.`war` = 0";
-#endif
 	DBResult* result;
 	if(!(result = db->storeQuery(query.str())))
 		return false;

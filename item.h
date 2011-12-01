@@ -307,9 +307,10 @@ class Item : virtual public Thing, public ItemAttributes
 		bool isPickupable() const {return items[id].pickupable;}
 		bool isUsable() const {return items[id].usable;}
 		bool isHangable() const {return items[id].isHangable;}
-		bool isRoteable() const {const ItemType& it = items[id]; return it.rotable && it.rotateTo;}
+		bool isRoteable() const {const ItemType& it = items[id]; return it.rotable && it.rotateTo != 0;}
 		bool isWeapon() const {return (items[id].weaponType != WEAPON_NONE);}
 		bool isReadable() const {return items[id].canReadText;}
+		bool isWare() const {return items[id].wareId != 0;}
 
 		bool isLoadedFromMap() const {return loadedFromMap;}
 		void setLoadedFromMap(bool value) {loadedFromMap = value;}

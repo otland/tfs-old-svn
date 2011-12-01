@@ -85,9 +85,7 @@ Game::Game()
 	lightState = LIGHT_STATE_DAY;
 
 	lastBucket = checkCreatureLastIndex = checkLightEvent = checkCreatureEvent = checkDecayEvent = saveEvent = 0;
-#ifdef __WAR_SYSTEM__
 	checkWarsEvent = 0;
-#endif
 }
 
 Game::~Game()
@@ -105,10 +103,8 @@ void Game::start(ServiceManager* servicer)
 		boost::bind(&Game::checkCreatures, this)));
 	checkLightEvent = Scheduler::getInstance().addEvent(createSchedulerTask(EVENT_LIGHTINTERVAL,
 		boost::bind(&Game::checkLight, this)));
-#ifdef __WAR_SYSTEM__
 	checkWarsEvent = Scheduler::getInstance().addEvent(createSchedulerTask(EVENT_WARSINTERVAL,
 		boost::bind(&Game::checkWars, this)));
-#endif
 
 	services = servicer;
 	if(!g_config.getBool(ConfigManager::GLOBALSAVE_ENABLED))
@@ -222,15 +218,12 @@ void Game::setGameState(GameState_t newState)
 
 				loadStatuslist();
 				loadGameState();
-				g_globalEvents->startup();
 
-				IOBan::getInstance()->clearTemporials();
+				g_globalEvents->startup();
 				if(g_config.getBool(ConfigManager::INIT_PREMIUM_UPDATE))
 					IOLoginData::getInstance()->updatePremiumDays();
 
-#ifdef __WAR_SYSTEM__
 				IOGuild::getInstance()->checkWars();
-#endif
 				break;
 			}
 
@@ -3858,7 +3851,8 @@ bool Game::playerSay(uint32_t playerId, uint16_t channelId, MessageClasses type,
 	if(!muted)
 	{
 		ret = g_spells->onPlayerSay(player, text);
-		if(ret == RET_NOERROR || (ret == RET_NEEDEXCHANGE && !g_config.getBool(ConfigManager::BUFFER_SPELL_FAILURE)))
+		if(ret == RET_NOERROR || (ret == RET_NEEDEXCHANGE &&
+			!g_config.getBool(ConfigManager::BUFFER_SPELL_FAILURE)))
 			return true;
 	}
 
@@ -3868,24 +3862,30 @@ bool Game::playerSay(uint32_t playerId, uint16_t channelId, MessageClasses type,
 	if(ret == RET_NEEDEXCHANGE)
 		return true;
 
+	uint32_t statementId = 0;
+	if((type == MSG_SPEAK_SAY || type == MSG_SPEAK_WHISPER || type == MSG_SPEAK_YELL ||
+		(type == MSG_CHANNEL && !g_chat.isPublicChannel(channelId)))
+		&& !player->hasCustomFlag(PlayerCustomFlag_GamemasterPrivileges))
+		IOLoginData::getInstance()->playerStatement(player, channelId, text, statementId);
+
 	switch(type)
 	{
 		case MSG_SPEAK_SAY:
-			return internalCreatureSay(player, MSG_SPEAK_SAY, text, false);
+			return internalCreatureSay(player, MSG_SPEAK_SAY, text, false, NULL, NULL, statementId);
 		case MSG_SPEAK_WHISPER:
-			return playerWhisper(player, text);
+			return playerWhisper(player, text, statementId);
 		case MSG_SPEAK_YELL:
-			return playerYell(player, text);
+			return playerYell(player, text, statementId);
 		case MSG_PRIVATE_TO:
 		case MSG_GAMEMASTER_PRIVATE_TO:
 			return playerSpeakTo(player, type, receiver, text);
 		case MSG_CHANNEL:
 		case MSG_GAMEMASTER_CHANNEL:
 		{
-			if(playerTalkToChannel(player, type, text, channelId))
+			if(playerSpeakToChannel(player, type, text, channelId, statementId))
 				return true;
 
-			return playerSay(playerId, 0, MSG_SPEAK_SAY, receiver, text);
+			return internalCreatureSay(player, MSG_SPEAK_SAY, text, false, NULL, NULL, statementId);
 		}
 		case MSG_NPC_TO:
 			return playerSpeakToNpc(player, text);
@@ -3899,28 +3899,16 @@ bool Game::playerSay(uint32_t playerId, uint16_t channelId, MessageClasses type,
 	return false;
 }
 
-bool Game::playerWhisper(Player* player, const std::string& text)
+bool Game::playerWhisper(Player* player, const std::string& text, uint32_t statementId)
 {
 	SpectatorVec list;
-	SpectatorVec::const_iterator it;
 	getSpectators(list, player->getPosition(), false, false, 1, 1);
 
-	//send to client
-	Player* tmpPlayer = NULL;
-	for(it = list.begin(); it != list.end(); ++it)
-	{
-		if((tmpPlayer = (*it)->getPlayer()))
-			tmpPlayer->sendCreatureSay(player, MSG_SPEAK_WHISPER, text);
-	}
-
-	//event method
-	for(it = list.begin(); it != list.end(); ++it)
-		(*it)->onCreatureSay(player, MSG_SPEAK_WHISPER, text);
-
+	internalCreatureSay(player, MSG_SPEAK_YELL, asUpperCaseString(text), false, &list, NULL, statementId);
 	return true;
 }
 
-bool Game::playerYell(Player* player, const std::string& text)
+bool Game::playerYell(Player* player, const std::string& text, uint32_t statementId)
 {
 	if(player->getLevel() <= 1 && !player->hasFlag(PlayerFlag_CannotBeMuted))
 	{
@@ -3940,7 +3928,7 @@ bool Game::playerYell(Player* player, const std::string& text)
 			player->addCondition(condition);
 	}
 
-	internalCreatureSay(player, MSG_SPEAK_YELL, asUpperCaseString(text), false);
+	internalCreatureSay(player, MSG_SPEAK_YELL, asUpperCaseString(text), false, NULL, NULL, statementId);
 	return true;
 }
 
@@ -3987,7 +3975,7 @@ bool Game::playerSpeakTo(Player* player, MessageClasses type, const std::string&
 	return true;
 }
 
-bool Game::playerTalkToChannel(Player* player, MessageClasses type, const std::string& text, uint16_t channelId)
+bool Game::playerSpeakToChannel(Player* player, MessageClasses type, const std::string& text, uint16_t channelId, uint32_t statementId)
 {
 	switch(type)
 	{
@@ -4010,7 +3998,7 @@ bool Game::playerTalkToChannel(Player* player, MessageClasses type, const std::s
 			if(player->hasFlag(PlayerFlag_CanTalkRedChannelAnonymous))
 			{
 				if(text.length() < 251)
-					return g_chat.talkToChannel(player, type, text, channelId, true);
+					return g_chat.talk(player, type, text, channelId, statementId, true);
 			}
 			else
 				type = MSG_CHANNEL;
@@ -4029,7 +4017,7 @@ bool Game::playerTalkToChannel(Player* player, MessageClasses type, const std::s
 	}
 
 	if(text.length() < 251)
-		return g_chat.talkToChannel(player, type, text, channelId);
+		return g_chat.talk(player, type, text, channelId, statementId, false);
 
 	player->sendCancelMessage(RET_NOTPOSSIBLE);
 	return false;
@@ -4095,7 +4083,7 @@ bool Game::internalCreatureTurn(Creature* creature, Direction dir)
 }
 
 bool Game::internalCreatureSay(Creature* creature, MessageClasses type, const std::string& text,
-	bool ghostMode, SpectatorVec* spectators/* = NULL*/, Position* pos/* = NULL*/)
+	bool ghostMode, SpectatorVec* spectators/* = NULL*/, Position* pos/* = NULL*/, uint32_t statementId/* = 0*/)
 {
 	Player* player = creature->getPlayer();
 	if(player && player->isAccountManager())
@@ -4134,7 +4122,7 @@ bool Game::internalCreatureSay(Creature* creature, MessageClasses type, const st
 			continue;
 
 		if(!ghostMode || tmpPlayer->canSeeCreature(creature))
-			tmpPlayer->sendCreatureSay(creature, type, text, &destPos);
+			tmpPlayer->sendCreatureSay(creature, type, text, &destPos, statementId);
 	}
 
 	//event method
@@ -5072,7 +5060,6 @@ void Game::checkLight()
 		}
 	}
 }
-#ifdef __WAR_SYSTEM__
 
 void Game::checkWars()
 {
@@ -5080,7 +5067,6 @@ void Game::checkWars()
 	checkWarsEvent = Scheduler::getInstance().addEvent(createSchedulerTask(EVENT_WARSINTERVAL,
 		boost::bind(&Game::checkWars, this)));
 }
-#endif
 
 void Game::getWorldLightInfo(LightInfo& lightInfo)
 {
@@ -5220,7 +5206,7 @@ bool Game::playerLeaveParty(uint32_t playerId, bool forced/* = false*/)
 	return player->getParty()->leave(player);
 }
 
-bool Game::playerSharePartyExperience(uint32_t playerId, bool activate, uint8_t)
+bool Game::playerSharePartyExperience(uint32_t playerId, bool activate)
 {
 	Player* player = getPlayerByID(playerId);
 	if(!player || player->isRemoved())
@@ -5245,6 +5231,33 @@ bool Game::playerReportBug(uint32_t playerId, std::string comment)
 	CreatureEventList reportBugEvents = player->getCreatureEvents(CREATURE_EVENT_REPORTBUG);
 	for(CreatureEventList::iterator it = reportBugEvents.begin(); it != reportBugEvents.end(); ++it)
 		(*it)->executeReportBug(player, comment);
+
+	return true;
+}
+
+bool Game::playerReportViolation(uint32_t playerId, ReportType_t type, uint8_t reason, const std::string& name,
+	const std::string& comment, const std::string& translation, uint32_t statementId)
+{
+	Player* player = getPlayerByID(playerId);
+	if(!player || player->isRemoved())
+		return false;
+
+	CreatureEventList reportViolationEvents = player->getCreatureEvents(CREATURE_EVENT_REPORTVIOLATION);
+	for(CreatureEventList::iterator it = reportViolationEvents.begin(); it != reportViolationEvents.end(); ++it)
+		(*it)->executeReportViolation(player, type, reason, name, comment, translation, statementId);
+
+	return true;
+}
+
+bool Game::playerThankYou(uint32_t playerId, uint32_t statementId)
+{
+	Player* player = getPlayerByID(playerId);
+	if(!player || player->isRemoved())
+		return false;
+
+	CreatureEventList thankYouEvents = player->getCreatureEvents(CREATURE_EVENT_THANKYOU);
+	for(CreatureEventList::iterator it = thankYouEvents.begin(); it != thankYouEvents.end(); ++it)
+		(*it)->executeThankYou(player, statementId);
 
 	return true;
 }
@@ -6136,8 +6149,6 @@ void Game::globalSave()
 	if(g_config.getBool(ConfigManager::CLEAN_MAP_AT_GLOBALSAVE))
 		cleanMap();
 
-	//clear temporial and expired bans
-	IOBan::getInstance()->clearTemporials();
 	//remove premium days globally if configured to
 	if(g_config.getBool(ConfigManager::INIT_PREMIUM_UPDATE))
 		IOLoginData::getInstance()->updatePremiumDays();

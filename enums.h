@@ -25,21 +25,6 @@
 #define MONSTER_ID_RANGE 0x40000000
 #define NPC_ID_RANGE 0x80000000
 
-enum ChannelEvent_t
-{
-	CHANNELEVENT_JOIN = 0,
-	CHANNELEVENT_LEAVE = 1,
-	CHANNELEVENT_INVITE = 2,
-	CHANNELEVENT_EXCLUDE = 3
-};
-
-enum ReportType_t
-{
-	REPORTTYPE_NAME = 0,
-	REPORTTYPE_STATEMENT = 1,
-	REPORTTYPE_BOT = 2
-};
-
 enum CreatureType_t
 {
 	CREATURETYPE_PLAYER = 0,
@@ -302,7 +287,6 @@ enum PlayerSex_t
 	// own use- each female should be even and male odd.
 };
 
-#ifdef __WAR_SYSTEM__
 enum WarType_t
 {
 	WAR_FIRST = 0,
@@ -335,7 +319,6 @@ struct War_t
 	uint16_t limit;
 	uint64_t payment;
 };
-#endif
 
 struct Outfit_t
 {

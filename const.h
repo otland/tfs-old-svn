@@ -26,6 +26,21 @@ enum OperatingSystem_t
 	CLIENTOS_FLASH		= 0x03
 };
 
+enum ChannelEvent_t
+{
+	CHANNELEVENT_JOIN = 0,
+	CHANNELEVENT_LEAVE = 1,
+	CHANNELEVENT_INVITE = 2,
+	CHANNELEVENT_EXCLUDE = 3
+};
+
+enum ReportType_t
+{
+	REPORT_NAME = 0x00,
+	REPORT_STATEMENT = 0x01,
+	REPORT_BOT = 0x02
+};
+
 enum MagicEffect_t
 {
 	MAGIC_EFFECT_DRAW_BLOOD			= 0x00,

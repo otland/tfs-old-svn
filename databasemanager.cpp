@@ -1133,7 +1133,7 @@ uint32_t DatabaseManager::updateDatabase()
 		case 26:
 		{
 			std::clog << "> Updating database to version 27..." << std::endl;
-			if(db->getDatabaseEngine() != DATABASE_ENGINE_SQLITE)
+			if(db->getDatabaseEngine() == DATABASE_ENGINE_MYSQL)
 			{
 				query << "ALTER TABLE `player_storage` CHANGE `key` `key` VARCHAR(32) NOT NULL DEFAULT '0'";
 				db->query(query.str());
@@ -1143,10 +1143,6 @@ uint32_t DatabaseManager::updateDatabase()
 				db->query(query.str());
 				query.str("");
 			}
-			else
-			{
-				// TODO
-			}
 
 			registerDatabaseConfig("db_version", 27);
 			return 27;
@@ -1155,26 +1151,12 @@ uint32_t DatabaseManager::updateDatabase()
 		case 27:
 		{
 			std::clog << "> Updating database to version 28..." << std::endl;
-			switch(db->getDatabaseEngine())
+			if(db->getDatabaseEngine() == DATABASE_ENGINE_MYSQL)
 			{
-				case DATABASE_ENGINE_SQLITE:
-				{
-					//query << "ALTER TABLE `players` ADD `currmount` INT NOT NULL DEFAULT 0;";
-					break;
-				}
-
-				case DATABASE_ENGINE_MYSQL:
-				{
-					query << "ALTER TABLE `players` ADD `currmount` INT NOT NULL DEFAULT 0 AFTER `lookaddons`;";
-					break;
-				}
-
-				default:
-					break;
+				query << "ALTER TABLE `players` ADD `currmount` INT NOT NULL DEFAULT 0 AFTER `lookaddons`;";
+				db->query(query.str());
+				query.str("");
 			}
-
-			db->query(query.str());
-			query.str("");
 
 			registerDatabaseConfig("db_version", 28);
 			return 28;
@@ -1215,7 +1197,7 @@ uint32_t DatabaseManager::updateDatabase()
 			{
 				case DATABASE_ENGINE_SQLITE:
 				{
-					query << "CREATE TABLE \"tile_store\" ( \"house_id\" INTEGER NOT NULL, \"world_id\" INTEGER NOT NULL DEFAULT 0, \"data\" LONGBLOB NOT NULL, FOREIGN KEY (\"house_id\") REFERENCES \"houses\" (\"id\") );";
+					query << "CREATE TABLE `tile_store` ( `house_id` INTEGER NOT NULL, `world_id` INTEGER NOT NULL DEFAULT 0, `data` LONGBLOB NOT NULL, FOREIGN KEY (`house_id`) REFERENCES `houses` (`id`) );";
 					break;
 				}
 
@@ -1262,6 +1244,73 @@ uint32_t DatabaseManager::updateDatabase()
 
 			registerDatabaseConfig("db_version", 31);
 			return 31;
+		}
+
+		case 31:
+		{
+			std::clog << "> Updating database to version 32..." << std::endl;
+			if(db->getDatabaseEngine() == DATABASE_ENGINE_MYSQL)
+			{
+				query << "CREATE TABLE `player_statements`\
+(\
+	`id` INT NOT NULL AUTO_INCREMENT,\
+	`player_id` INT NOT NULL,\
+	`channel_id` INT NOT NULL DEFAULT 0,\
+	`text` VARCHAR (255) NOT NULL,\
+	`date` BIGINT NOT NULL DEFAULT 0,\
+	PRIMARY KEY (`id`), KEY (`player_id`), KEY (`channel_id`)\
+	FOREIGN KEY (`player_id`) REFERENCES `players`(`id`) ON DELETE CASCADE\
+) ENGINE = InnoDB;";
+
+				db->query(query.str());
+				query.str("");
+
+				query << "CREATE TABLE IF NOT EXISTS `guild_wars`\
+(\
+	`id` INT NOT NULL AUTO_INCREMENT,\
+	`guild_id` INT NOT NULL,\
+	`enemy_id` INT NOT NULL,\
+	`begin` BIGINT NOT NULL DEFAULT 0,\
+	`end` BIGINT NOT NULL DEFAULT 0,\
+	`frags` INT UNSIGNED NOT NULL DEFAULT 0,\
+	`payment` BIGINT UNSIGNED NOT NULL DEFAULT 0,\
+	`guild_kills` INT UNSIGNED NOT NULL DEFAULT 0,\
+	`enemy_kills` INT UNSIGNED NOT NULL DEFAULT 0,\
+	`status` TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,\
+	PRIMARY KEY (`id`), KEY `status` (`status`),\
+	KEY `guild_id` (`guild_id`), KEY `enemy_id` (`enemy_id`),\
+	FOREIGN KEY (`guild_id`) REFERENCES `guilds`(`id`) ON DELETE CASCADE,\
+	FOREIGN KEY (`enemy_id`) REFERENCES `guilds`(`id`) ON DELETE CASCADE\
+) ENGINE=InnoDB;";
+
+				db->query(query.str());
+				query.str("");
+
+				query << "CREATE TABLE `guild_kills`\
+(\
+	`id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,\
+	`guild_id` INT NOT NULL,\
+	`war_id` INT NOT NULL,\
+	`death_id` INT NOT NULL.\
+	FOREIGN KEY (`guild_id`) REFERENCES `guilds`(`id`) ON DELETE CASCADE,\
+	FOREIGN KEY (`war_id`) REFERENCES `guild_wars`(`id`) ON DELETE CASCADE,\
+	FOREIGN KEY (`death_id`) REFERENCES `player_deaths`(`id`) ON DELETE CASCADE\
+) ENGINE = InnoDB;";
+
+				db->query(query.str());
+				query.str("");
+
+				query << "ALTER TABLE `killers` ADD `war` INT NOT NULL DEFAULT 0;";
+				db->query(query.str());
+				query.str("");
+
+				query << "ALTER TABLE `guilds` ADD `balance` BIGINT UNSIGNED NOT NULL AFTER `motd`;";
+				db->query(query.str());
+				query.str("");
+			}
+
+			registerDatabaseConfig("db_version", 32);
+			return 32;
 		}
 
 		default:

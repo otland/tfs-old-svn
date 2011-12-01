@@ -104,7 +104,5 @@ class IOBan
 		uint32_t getNotationsCount(uint32_t account, uint32_t playerId = 0) const;
 		uint32_t getStatementsCount(uint32_t playerId, int16_t channelId = -1) const;
 		uint32_t getStatementsCount(std::string name, int16_t channelId = -1) const;
-
-		bool clearTemporials() const;
 };
 #endif

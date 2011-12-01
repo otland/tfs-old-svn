@@ -46,9 +46,80 @@
 
 /*
 Bytes not yet added:
-	0x87 -> Position swapping
-	0xF4 -> Flash client objects?
+	0x87 -> Position swapping (http://www.tibia.com/support/?subtopic=faq&question=swapping)
+	0xF4 -> Flash client objects cache?
 	0xF5 -> Flash client inventory?
+
+	// Market sent bytes structure:
+	marketEnter { -- F6
+		uint32_t Balance
+		char VocationClientId
+		char PlayerActiveOffers
+		uint16_t Depot {
+			uint16_t ItemClientId
+			uint16_t Amount
+		}
+	}
+
+	marketLeave { -- F7
+	}
+
+	marketDetail { -- F8
+		uint16_t DETAIL_FIELD_WEIGHT { // what the heck is this? Its always 14, what 14 strings we should send?!
+			string String // put some junk right now...
+		}
+		char Buy {
+			uint32_t Transactions
+			uint32_t TotalPrice
+			uint32_t MinPrice
+			uint32_t MaxPrice
+		}
+		char Sell {
+			uint32_t Transactions
+			uint32_t TotalPrice
+			uint32_t MinPrice
+			uint32_t MaxPrice
+		}
+	}
+
+	marketBrowse { -- F9
+		uint16_t ItemClientId
+		uint32_t BuyOffers {
+			uint32_t TimeStamp
+			uint16_t Counter
+		}
+		uint32_t SellOffers {
+			uint32_t TimeStamp
+			uint16_t Counter
+		}
+	}
+
+	// Market read bytes structure:
+	marketLeave { -- 244
+	}
+
+	marketBrowse { -- 245
+		uint16_t ItemClientId
+	}
+
+	marketCreate { -- 246
+		enum Type (BUY|SELL)
+		uint16_t ItemClientId
+		uint16_t Amount
+		uint32_t Price
+		bool Anonymous
+	}
+
+	marketCancel { -- 247
+		uint32_t TimeStamp
+		uint16_t Counter
+	}
+
+	marketAccept { -- 248
+		uint32_t TimeStamp
+		uint16_t Counter
+		uint16_t Amount
+	}
 */
 
 extern Game g_game;
@@ -805,6 +876,10 @@ void ProtocolGame::parsePacket(NetworkMessage &msg)
 				parseBugReport(msg);
 				break;
 
+			case 0xE7:
+				parseThankYou(msg);
+				break;
+
 			case 0xE8:
 				parseDebugAssert(msg);
 				break;
@@ -1471,6 +1546,12 @@ void ProtocolGame::parseBugReport(NetworkMessage& msg)
 	addGameTask(&Game::playerReportBug, player->getID(), comment);
 }
 
+void ProtocolGame::parseThankYou(NetworkMessage& msg)
+{
+	uint32_t statementId = msg.get<uint32_t>();
+	addGameTask(&Game::playerThankYou, player->getID(), statementId);
+}
+
 void ProtocolGame::parseInviteToParty(NetworkMessage& msg)
 {
 	uint32_t targetId = msg.get<uint32_t>();
@@ -1503,8 +1584,7 @@ void ProtocolGame::parseLeaveParty(NetworkMessage&)
 void ProtocolGame::parseSharePartyExperience(NetworkMessage& msg)
 {
 	bool activate = (msg.get<char>() != (char)0);
-	uint8_t unknown = msg.get<char>(); //TODO: find out what is this byte
-	addGameTask(&Game::playerSharePartyExperience, player->getID(), activate, unknown);
+	addGameTask(&Game::playerSharePartyExperience, player->getID(), activate);
 }
 
 void ProtocolGame::parseQuests(NetworkMessage&)
@@ -1520,8 +1600,18 @@ void ProtocolGame::parseQuestInfo(NetworkMessage& msg)
 
 void ProtocolGame::parseViolationReport(NetworkMessage& msg)
 {
-	msg.skip(msg.size() - msg.position());
-	// addGameTask(&Game::playerViolationReport, player->getID(), ...);
+	ReportType_t type = (ReportType_t)msg.get<char>();
+	uint8_t reason = msg.get<char>();
+
+	std::string name = msg.getString(), comment = msg.getString(), translation = "";
+	if(type != REPORT_BOT)
+		translation = msg.getString();
+
+	uint32_t statementId = 0;
+	if(type == REPORT_STATEMENT)
+		statementId = msg.get<uint32_t>();
+
+	addGameTask(&Game::playerReportViolation, player->getID(), type, reason, name, comment, translation, statementId);
 }
 
 //********************** Send methods *******************************//
@@ -1837,10 +1927,10 @@ void ProtocolGame::sendShop(Npc* npc, const ShopInfoList& shop)
 		TRACK_MESSAGE(msg);
 		msg->put<char>(0x7A);
 		msg->putString(npc->getName());
-		msg->put<char>(std::min((uint32_t)shop.size(), 255U));
+		msg->put<uint16_t>(std::min((uint16_t)shop.size(), 65535));
 
 		ShopInfoList::const_iterator it = shop.begin();
-		for(uint32_t i = 0; it != shop.end() && i < 255; ++it, ++i)
+		for(uint16_t i = 0; it != shop.end() && i < 65535; ++it, ++i)
 			AddShopItem(msg, (*it));
 	}
 }
@@ -1991,23 +2081,23 @@ void ProtocolGame::sendCreatureTurn(const Creature* creature, int16_t stackpos)
 	}
 }
 
-void ProtocolGame::sendCreatureSay(const Creature* creature, MessageClasses type, const std::string& text, Position* pos/* = NULL*/)
+void ProtocolGame::sendCreatureSay(const Creature* creature, MessageClasses type, const std::string& text, Position* pos, uint32_t statementId)
 {
 	NetworkMessage_ptr msg = getOutputBuffer();
 	if(msg)
 	{
 		TRACK_MESSAGE(msg);
-		AddCreatureSpeak(msg, creature, type, text, 0, pos);
+		AddCreatureSpeak(msg, creature, type, text, 0, pos, statementId);
 	}
 }
 
-void ProtocolGame::sendCreatureChannelSay(const Creature* creature, MessageClasses type, const std::string& text, uint16_t channelId)
+void ProtocolGame::sendCreatureChannelSay(const Creature* creature, MessageClasses type, const std::string& text, uint16_t channelId, uint32_t statementId)
 {
 	NetworkMessage_ptr msg = getOutputBuffer();
 	if(msg)
 	{
 		TRACK_MESSAGE(msg);
-		AddCreatureSpeak(msg, creature, type, text, channelId);
+		AddCreatureSpeak(msg, creature, type, text, channelId, NULL, statementId);
 	}
 }
 
@@ -2854,25 +2944,17 @@ void ProtocolGame::AddPlayerSkills(NetworkMessage_ptr msg)
 }
 
 void ProtocolGame::AddCreatureSpeak(NetworkMessage_ptr msg, const Creature* creature, MessageClasses type,
-	std::string text, uint16_t channelId, Position* pos/* = NULL*/)
+	std::string text, uint16_t channelId, Position* pos, uint32_t statementId)
 {
 	msg->put<char>(0xAA);
 	if(creature)
 	{
-		const Player* speaker = creature->getPlayer();
-		if(speaker)
-		{
-			msg->put<uint32_t>(++g_chat.statement);
-			//g_chat.statementMap[g_chat.statement] = text;
-		}
-		else
-			msg->put<uint32_t>(0x00);
-
+		msg->put<uint32_t>(statementId);
+		msg->putString(!creature->getHideName() ? creature->getName() : "");
 		if(creature->getSpeakType() != MSG_NONE)
 			type = creature->getSpeakType();
 
-		// Which message should hide the creature name?
-		msg->putString(!creature->getHideName() ? creature->getName() : "");
+		const Player* speaker = creature->getPlayer();
 		if(speaker && !speaker->isAccountManager() && !speaker->hasCustomFlag(PlayerCustomFlag_HideLevel))
 			msg->put<uint16_t>(speaker->getPlayerInfo(PLAYERINFO_LEVEL));
 		else

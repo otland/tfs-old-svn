@@ -184,7 +184,7 @@ bool ChatChannel::removeUser(Player* player, bool exclude/* = false*/)
 	return true;
 }
 
-bool ChatChannel::talk(Player* player, MessageClasses type, const std::string& text)
+bool ChatChannel::talk(Player* player, MessageClasses type, const std::string& text, uint32_t statementId)
 {
 	UsersMap::iterator it = m_users.find(player->getID());
 	if(it == m_users.end())
@@ -197,7 +197,7 @@ bool ChatChannel::talk(Player* player, MessageClasses type, const std::string& t
 	}
 
 	for(it = m_users.begin(); it != m_users.end(); ++it)
-		it->second->sendCreatureChannelSay(player, type, text, m_id);
+		it->second->sendCreatureChannelSay(player, type, text, m_id, statementId);
 
 	if(hasFlag(CHANNELFLAG_LOGGED) && m_file->is_open())
 		*m_file << "[" << formatDate() << "] " << player->getName() << ": " << text << std::endl;
@@ -530,7 +530,8 @@ void Chat::removeUserFromAllChannels(Player* player)
 	}
 }
 
-bool Chat::talkToChannel(Player* player, MessageClasses type, const std::string& text, uint16_t channelId, bool anonymous/* = false*/)
+bool Chat::talk(Player* player, MessageClasses type, const std::string& text, uint16_t channelId,
+	uint32_t statementId, bool anonymous/* = false*/)
 {
 	if(text.empty())
 		return false;
@@ -573,9 +574,9 @@ bool Chat::talkToChannel(Player* player, MessageClasses type, const std::string&
 			switch(player->getGuildLevel())
 			{
 				case GUILDLEVEL_VICE:
-					return channel->talk(player, MSG_CHANNEL_HIGHLIGHT, text);
+					return channel->talk(player, MSG_CHANNEL_HIGHLIGHT, text, statementId);
 				case GUILDLEVEL_LEADER:
-					return channel->talk(player, MSG_GAMEMASTER_CHANNEL, text);
+					return channel->talk(player, MSG_GAMEMASTER_CHANNEL, text, statementId);
 				default:
 					break;
 			}
@@ -584,9 +585,10 @@ bool Chat::talkToChannel(Player* player, MessageClasses type, const std::string&
 		if(anonymous)
 			return channel->talk("", type, text);
 
-		return channel->talk(player, type, text);
+		return channel->talk(player, type, text, statementId);
 	}
 
+	/* TODO: move me to talkactions, please! */
 	if(!player->getGuildId())
 	{
 		player->sendCancel("You are not in a guild.");
@@ -675,18 +677,14 @@ bool Chat::talkToChannel(Player* player, MessageClasses type, const std::string&
 	{
 		if(player->getGuildLevel() < GUILDLEVEL_LEADER)
 		{
-#ifdef __WAR_SYSTEM__
 			if(!player->hasEnemy())
 			{
-#endif
 				sprintf(buffer, "%s has left the guild.", player->getName().c_str());
 				channel->talk("", MSG_CHANNEL_HIGHLIGHT, buffer);
 				player->leaveGuild();
-#ifdef __WAR_SYSTEM__
 			}
 			else
 				player->sendCancel("Your guild is currently at war, you cannot leave it right now.");
-#endif
 		}
 		else
 			player->sendCancel("You cannot leave your guild because you are the leader of it, you have to pass the leadership to another member of your guild or disband the guild.");
@@ -837,18 +835,14 @@ bool Chat::talkToChannel(Player* player, MessageClasses type, const std::string&
 							{
 								if(player->getGuildLevel() > paramPlayer->getGuildLevel())
 								{
-#ifdef __WAR_SYSTEM__
 									if(!player->hasEnemy())
 									{
-#endif
 										sprintf(buffer, "%s has been kicked from the guild by %s.", paramPlayer->getName().c_str(), player->getName().c_str());
 										channel->talk("", MSG_CHANNEL_HIGHLIGHT, buffer);
 										paramPlayer->leaveGuild();
-#ifdef __WAR_SYSTEM__
 									}
 									else
 										player->sendCancel("Your guild is currently at war, you cannot kick right now.");
-#endif
 								}
 								else
 									player->sendCancel("You may only kick players with a guild rank below your.");

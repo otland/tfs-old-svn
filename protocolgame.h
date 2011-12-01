@@ -111,6 +111,7 @@ class ProtocolGame : public Protocol
 		void parseFollow(NetworkMessage& msg);
 
 		void parseBugReport(NetworkMessage& msg);
+		void parseThankYou(NetworkMessage& msg);
 		void parseDebugAssert(NetworkMessage& msg);
 
 		void parseThrow(NetworkMessage& msg);
@@ -181,8 +182,8 @@ class ProtocolGame : public Protocol
 		void sendSkills();
 		void sendPing();
 		void sendCreatureTurn(const Creature* creature, int16_t stackpos);
-		void sendCreatureSay(const Creature* creature, MessageClasses type, const std::string& text, Position* pos = NULL);
-		void sendCreatureChannelSay(const Creature* creature, MessageClasses type, const std::string& text, uint16_t channelId);
+		void sendCreatureSay(const Creature* creature, MessageClasses type, const std::string& text, Position* pos, uint32_t statementId);
+		void sendCreatureChannelSay(const Creature* creature, MessageClasses type, const std::string& text, uint16_t channelId, uint32_t statementId);
 
 		void sendCancel(const std::string& message);
 		void sendCancelWalk();
@@ -274,7 +275,7 @@ class ProtocolGame : public Protocol
 		void AddCreature(NetworkMessage_ptr msg, const Creature* creature, bool known, uint32_t remove);
 		void AddPlayerStats(NetworkMessage_ptr msg);
 		void AddCreatureSpeak(NetworkMessage_ptr msg, const Creature* creature, MessageClasses type,
-			std::string text, uint16_t channelId, Position* pos = NULL);
+			std::string text, uint16_t channelId, Position* pos, uint32_t statementId);
 		void AddCreatureHealth(NetworkMessage_ptr msg, const Creature* creature);
 		void AddCreatureOutfit(NetworkMessage_ptr msg, const Creature* creature, const Outfit_t& outfit, bool outfitWindow = false);
 		void AddPlayerSkills(NetworkMessage_ptr msg);

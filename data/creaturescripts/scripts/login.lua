@@ -42,6 +42,7 @@ function onLogin(cid)
 	end
 
 	registerCreatureEvent(cid, "ReportBug")
+	registerCreatureEvent(cid, "ThankYou")
 	registerCreatureEvent(cid, "AdvanceSave")
 	return true
 end

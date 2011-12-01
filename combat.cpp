@@ -283,11 +283,8 @@ ReturnValue Combat::canDoCombat(const Creature* attacker, const Creature* target
 		{
 			checkZones = true;
 			if((g_game.getWorldType() == WORLDTYPE_OPTIONAL && !Combat::isInPvpZone(attacker, target)
-#ifdef __WAR_SYSTEM__
-				&& !attackerPlayer->isEnemy(targetPlayer, true)
-#endif
-				) || isProtected(const_cast<Player*>(attackerPlayer), const_cast<Player*>(targetPlayer))
-				|| (g_config.getBool(ConfigManager::CANNOT_ATTACK_SAME_LOOKFEET)
+				&& !attackerPlayer->isEnemy(targetPlayer, true)) || isProtected(const_cast<Player*>(attackerPlayer),
+				const_cast<Player*>(targetPlayer)) || (g_config.getBool(ConfigManager::CANNOT_ATTACK_SAME_LOOKFEET)
 				&& attackerPlayer->getDefaultOutfit().lookFeet == targetPlayer->getDefaultOutfit().lookFeet)
 				|| !attackerPlayer->canSeeCreature(targetPlayer))
 				return RET_YOUMAYNOTATTACKTHISPLAYER;
@@ -308,10 +305,7 @@ ReturnValue Combat::canDoCombat(const Creature* attacker, const Creature* target
 			{
 				checkZones = true;
 				if(g_game.getWorldType() == WORLDTYPE_OPTIONAL && !Combat::isInPvpZone(attacker, target)
-#ifdef __WAR_SYSTEM__
-					&& !attackerPlayer->isEnemy(target->getPlayerMaster(), true)
-#endif
-				)
+					&& !attackerPlayer->isEnemy(target->getPlayerMaster(), true))
 					return RET_YOUMAYNOTATTACKTHISCREATURE;
 			}
 		}
@@ -1444,7 +1438,6 @@ bool MagicField::isBlocking(const Creature* creature) const
 
 	if(!creature || !creature->getPlayer())
 		return true;
-#ifdef __WAR_SYSTEM__
 
 	uint32_t ownerId = getOwner();
 	if(!ownerId)
@@ -1452,7 +1445,6 @@ bool MagicField::isBlocking(const Creature* creature) const
 
 	if(Creature* owner = g_game.getCreatureByID(ownerId))
 		return creature->getPlayer()->getGuildEmblem(owner) != EMBLEM_NONE;
-#endif
 
 	return false;
 }
