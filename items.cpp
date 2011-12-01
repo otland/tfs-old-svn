@@ -255,6 +255,7 @@ int32_t Items::loadFromOtb(std::string file)
 		iType->canReadText = hasBitSet(FLAG_READABLE, flags);
 		iType->lookThrough = hasBitSet(FLAG_LOOKTHROUGH, flags);
 		iType->isAnimation = hasBitSet(FLAG_ANIMATION, flags);
+		iType->walkStack = !hasBitSet(FLAG_WALKSTACK, flags);
 
 		attribute_t attr;
 		while(props.getType(attr))
@@ -353,6 +354,20 @@ int32_t Items::loadFromOtb(std::string file)
 						return ERROR_INVALID_FORMAT;
 
 					iType->wareId = wareId;
+					break;
+				}
+				case ITEM_ATTR_NAME2:
+				{
+					if(length != sizeof(uint16_t)) // not sure here...
+					{
+						return ERROR_INVALID_FORMAT;
+					}
+
+					std::string name;
+					if(!props.getString(name))
+						return ERROR_INVALID_FORMAT;
+
+					iType->name = name;
 					break;
 				}
 				default:
@@ -844,6 +859,11 @@ void Items::parseItemNode(xmlNodePtr itemNode, uint32_t id)
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue))
 				it.writeOnceItemId = intValue;
+		}
+		else if(tmpStrValue == "wareid")
+		{
+			if(readXMLInteger(itemAttributesNode, "value", intValue))
+				it.wareId = intValue;
 		}
 		else if(tmpStrValue == "worth")
 		{
