@@ -18,7 +18,7 @@
 #ifndef __DEFINITIONS__
 #define __DEFINITIONS__
 
-#define CLIENT_VERSION_MIN 94
+#define CLIENT_VERSION_MIN 940
 #define CLIENT_VERSION_MAX 940
 #define CLIENT_VERSION_STRING "Only clients with protocol 9.4 allowed!"
 
