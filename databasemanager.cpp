@@ -1258,7 +1258,7 @@ uint32_t DatabaseManager::updateDatabase()
 	`channel_id` INT NOT NULL DEFAULT 0,\
 	`text` VARCHAR (255) NOT NULL,\
 	`date` BIGINT NOT NULL DEFAULT 0,\
-	PRIMARY KEY (`id`), KEY (`player_id`), KEY (`channel_id`)\
+	PRIMARY KEY (`id`), KEY (`player_id`), KEY (`channel_id`),\
 	FOREIGN KEY (`player_id`) REFERENCES `players`(`id`) ON DELETE CASCADE\
 ) ENGINE = InnoDB;";
 
@@ -1286,7 +1286,7 @@ uint32_t DatabaseManager::updateDatabase()
 				db->query(query.str());
 				query.str("");
 
-				query << "CREATE TABLE `guild_kills`\
+				query << "CREATE TABLE IF NOT EXISTS `guild_kills`\
 (\
 	`id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,\
 	`guild_id` INT NOT NULL,\

@@ -176,7 +176,7 @@ CREATE TABLE `player_statements`
 	`channel_id` INT NOT NULL DEFAULT 0,
 	`text` VARCHAR (255) NOT NULL,
 	`date` BIGINT NOT NULL DEFAULT 0,
-	PRIMARY KEY (`id`), KEY (`player_id`), KEY (`channel_id`)
+	PRIMARY KEY (`id`), KEY (`player_id`), KEY (`channel_id`),
 	FOREIGN KEY (`player_id`) REFERENCES `players`(`id`) ON DELETE CASCADE
 ) ENGINE = InnoDB;
 
