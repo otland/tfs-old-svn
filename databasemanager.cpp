@@ -1251,7 +1251,7 @@ uint32_t DatabaseManager::updateDatabase()
 			std::clog << "> Updating database to version 32..." << std::endl;
 			if(db->getDatabaseEngine() == DATABASE_ENGINE_MYSQL)
 			{
-				query << "CREATE TABLE `player_statements`\
+				query << "CREATE TABLE IF NOT EXISTS `player_statements`\
 (\
 	`id` INT NOT NULL AUTO_INCREMENT,\
 	`player_id` INT NOT NULL,\
