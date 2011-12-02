@@ -1939,10 +1939,10 @@ void ProtocolGame::sendShop(Npc* npc, const ShopInfoList& shop)
 		TRACK_MESSAGE(msg);
 		msg->put<char>(0x7A);
 		msg->putString(npc->getName());
-		msg->put<uint16_t>((uint16_t)std::min((uint32_t)shop.size(), 65535U));
+		msg->put<uint16_t>(std::min(shop.size(), (size_t)65535));
 
 		ShopInfoList::const_iterator it = shop.begin();
-		for(uint16_t i = 0; it != shop.end() && i < 65535U; ++it, ++i)
+		for(uint16_t i = 0; it != shop.end() && i < 65535; ++it, ++i)
 			AddShopItem(msg, (*it));
 	}
 }
@@ -2893,7 +2893,7 @@ void ProtocolGame::AddCreature(NetworkMessage_ptr msg, const Creature* creature,
 	}
 
 	if(!creature->getHideHealth())
-		msg->put<char>((int32_t)std::ceil(((float)creature->getHealth()) * 100 / std::max(creature->getMaxHealth(), (int32_t)1)));
+		msg->put<char>(std::ceil(creature->getHealth() * 100. / std::max(creature->getMaxHealth(), 1)));
 	else
 		msg->put<char>(0x00);
 
@@ -3018,7 +3018,7 @@ void ProtocolGame::AddCreatureHealth(NetworkMessage_ptr msg,const Creature* crea
 	msg->put<char>(0x8C);
 	msg->put<uint32_t>(creature->getID());
 	if(!creature->getHideHealth())
-		msg->put<char>((int32_t)std::ceil(((float)creature->getHealth()) * 100 / std::max(creature->getMaxHealth(), (int32_t)1)));
+		msg->put<char>(std::ceil(creature->getHealth() * 100. / std::max(creature->getMaxHealth(), (int32_t)1)));
 	else
 		msg->put<char>(0x00);
 }
