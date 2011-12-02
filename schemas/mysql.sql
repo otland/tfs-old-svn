@@ -385,7 +385,7 @@ CREATE TABLE `guild_kills`
 	`id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
 	`guild_id` INT NOT NULL,
 	`war_id` INT NOT NULL,
-	`death_id` INT NOT NULL.
+	`death_id` INT NOT NULL,
 	FOREIGN KEY (`guild_id`) REFERENCES `guilds`(`id`) ON DELETE CASCADE,
 	FOREIGN KEY (`war_id`) REFERENCES `guild_wars`(`id`) ON DELETE CASCADE,
 	FOREIGN KEY (`death_id`) REFERENCES `player_deaths`(`id`) ON DELETE CASCADE

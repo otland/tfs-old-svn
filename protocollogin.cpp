@@ -73,7 +73,10 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 	/*uint16_t operatingSystem = msg.get<uint16_t>();*/msg.skip(2);
 	uint16_t version = msg.get<uint16_t>();
 
-	msg.skip(12);
+	/*uint32_t sprSignature = msg.get<uint32_t>();
+	uint32_t datSignature = msg.get<uint32_t>();
+
+	uint32_t picSignature = msg.get<uint32_t>();*/msg.skip(12);
 	if(!RSA_decrypt(msg))
 	{
 		getConnection()->close();
