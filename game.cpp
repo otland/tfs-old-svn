@@ -4643,7 +4643,7 @@ bool Game::combatChangeHealth(const CombatParams& params, Creature* attacker, Cr
 						if(!attacker)
 							ss << ucfirst(target->getNameDescription()) << " loses " << totalDamage << " hitpoint" << plural << ".";
 						else if(attacker != target)
-							ss << ucfirst(target->getNameDescription()) << " loses " << totalDamage << " hitpoint" << plural << " due to an attack by " << attacker->getNameDescription();
+							ss << ucfirst(target->getNameDescription()) << " loses " << totalDamage << " hitpoint" << plural << " due to an attack by " << attacker->getNameDescription() << ".";
 						else
 							ss << ucfirst(target->getNameDescription()) << " loses " << totalDamage << " hitpoint" << plural << " due to a self attack.";
 
@@ -4666,7 +4666,7 @@ bool Game::combatChangeHealth(const CombatParams& params, Creature* attacker, Cr
 					if((player = target->getPlayer()) && attacker != target)
 					{
 						if(attacker)
-							ss << "You lose " << totalDamage << " hitpoint" << plural << " due to an attack by " << attacker->getNameDescription();
+							ss << "You lose " << totalDamage << " hitpoint" << plural << " due to an attack by " << attacker->getNameDescription() << ".";
 						else
 							ss << "You lose " << totalDamage << " hitpoint" << plural << ".";
 
