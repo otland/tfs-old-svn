@@ -322,8 +322,8 @@ function getTileZoneInfo(pos)
 	return 0
 end
 
-function playerExists(name)
-	return getPlayerGUIDByName(name) ~= nil
+function playerExists(name, multiworld)
+	return getPlayerGUIDByName(name, multiworld or false) ~= nil
 end
 
 function doPlayerWithdrawAllMoney(cid)

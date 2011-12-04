@@ -1149,10 +1149,6 @@ bool IOLoginData::playerStatement(Player* _player, uint16_t channelId, const std
 	Database* db = Database::getInstance();
 	DBQuery query;
 
-	DBTransaction trans(db);
-	if(!trans.begin())
-		return false;
-
 	query << "INSERT INTO `player_statements` (`player_id`, `channel_id`, `text`, `date`) VALUES (" << _player->getGUID()
 		<< ", " << channelId << ", " << db->escapeString(text.c_str()) << ", " << time(NULL) << ")";
 	if(!db->query(query.str()))
@@ -1296,7 +1292,7 @@ bool IOLoginData::playerMail(Creature* actor, std::string name, uint32_t townId,
 
 	if(player->isVirtual())
 	{
-		IOLoginData::getInstance()->savePlayer(player);
+		savePlayer(player);
 		delete player;
 	}
 
