@@ -90,6 +90,7 @@ struct Abilities
 		memset(statsPercent, 0, sizeof(statsPercent));
 
 		memset(absorb, 0, sizeof(absorb));
+		memset(fieldAbsorb, 0, sizeof(fieldAbsorb));
 		memset(increment, 0, sizeof(increment));
 		memset(reflect[REFLECT_PERCENT], 0, sizeof(reflect[REFLECT_PERCENT]));
 		memset(reflect[REFLECT_CHANCE], 0, sizeof(reflect[REFLECT_CHANCE]));
