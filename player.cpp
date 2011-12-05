@@ -3529,16 +3529,16 @@ void Player::getPathSearchParams(const Creature* creature, FindPathParams& fpp) 
 
 void Player::doAttacking(uint32_t)
 {
-	if(!lastAttack)
-		lastAttack = OTSYS_TIME() - getAttackSpeed() - 1;
-	else if((OTSYS_TIME() - lastAttack) < getAttackSpeed())
-		return;
-
 	if(hasCondition(CONDITION_PACIFIED) && !hasCustomFlag(PlayerCustomFlag_IgnorePacification))
 	{
 		lastAttack = OTSYS_TIME();
 		return;
 	}
+
+	if(!lastAttack)
+		lastAttack = OTSYS_TIME() - getAttackSpeed() - 1;
+	else if((OTSYS_TIME() - lastAttack) < getAttackSpeed())
+		return;
 
 	if(const Weapon* _weapon = g_weapons->getWeapon(weapon))
 	{

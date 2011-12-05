@@ -23,11 +23,11 @@ bool Mount::isTamed(Player* player) const
 	if(!player)
 		return false;
 
-	if(premium && !player->isPremium())
-		return false;
-
 	if(player->hasCustomFlag(PlayerCustomFlag_CanUseAllMounts))
 		return true;
+
+	if(premium && !player->isPremium())
+		return false;
 
 	uint8_t tmpId = id - 1;
 	std::string value;

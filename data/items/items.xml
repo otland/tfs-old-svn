@@ -17525,7 +17525,7 @@
 	<item id="9969" article="a" name="black skull">
 		<attribute key="weight" value="2400"/>
 	</item>
-	<item id="9970" article="a" name="small topaz">
+	<item id="9970" article="a" name="small topaz" plural="small topazes">
 		<attribute key="weight" value="10"/>
 	</item>
 	<item id="9971" article="a" name="gold ingot" plural="gold ingots">

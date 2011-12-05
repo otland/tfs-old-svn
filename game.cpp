@@ -4228,8 +4228,7 @@ void Game::checkCreatures()
 {
 	checkCreatureEvent = Scheduler::getInstance().addEvent(createSchedulerTask(
 		EVENT_CHECK_CREATURE_INTERVAL, boost::bind(&Game::checkCreatures, this)));
-	checkCreatureLastIndex++;
-	if(checkCreatureLastIndex == EVENT_CREATURECOUNT)
+	if(++checkCreatureLastIndex == EVENT_CREATURECOUNT)
 		checkCreatureLastIndex = 0;
 
 	std::vector<Creature*>::iterator it;
@@ -4238,7 +4237,7 @@ void Game::checkCreatures()
 
 	toAddCheckCreatureVector.clear();
 	std::vector<Creature*>& checkCreatureVector = checkCreatureVectors[checkCreatureLastIndex];
-	for(it = checkCreatureVector.begin(); it != checkCreatureVector.end();)
+	for(it = checkCreatureVector.begin(); it != checkCreatureVector.end(); )
 	{
 		if((*it)->checked)
 		{
@@ -5147,10 +5146,8 @@ bool Game::playerInviteToParty(uint32_t playerId, uint32_t invitedId)
 	Party* party = player->getParty();
 	if(!party)
 		party = new Party(player);
-	else if(party->getLeader() != player)
-		return false;
 
-	return party->invitePlayer(invitedPlayer);
+	return party->getLeader() == player && party->invitePlayer(invitedPlayer);
 }
 
 bool Game::playerJoinParty(uint32_t playerId, uint32_t leaderId)
@@ -5344,18 +5341,18 @@ std::string Game::getSearchString(const Position& fromPos, const Position& toPos
 	 * When the position is on a lower or higher level and 0 to 4 squares away they are "below (or) above you."
 	 */
 
+	enum direction_t
+	{
+		DIR_N, DIR_S, DIR_E, DIR_W,
+		DIR_NE, DIR_NW, DIR_SE, DIR_SW
+	};
+
 	enum distance_t
 	{
 		DISTANCE_BESIDE,
 		DISTANCE_CLOSE,
 		DISTANCE_FAR,
 		DISTANCE_VERYFAR
-	};
-
-	enum direction_t
-	{
-		DIR_N, DIR_S, DIR_E, DIR_W,
-		DIR_NE, DIR_NW, DIR_SE, DIR_SW
 	};
 
 	enum level_t
@@ -5365,8 +5362,8 @@ std::string Game::getSearchString(const Position& fromPos, const Position& toPos
 		LEVEL_SAME
 	};
 
-	distance_t distance;
 	direction_t direction;
+	distance_t distance;
 	level_t level;
 
 	int32_t dx = fromPos.x - toPos.x, dy = fromPos.y - toPos.y, dz = fromPos.z - toPos.z;
@@ -5571,8 +5568,8 @@ bool Game::loadExperienceStages()
 	xmlDocPtr doc = xmlParseFile(getFilePath(FILE_TYPE_XML, "stages.xml").c_str());
 	if(!doc)
 	{
-		std::clog << "[Warning - Game::loadExperienceStages] Cannot load stages file." << std::endl;
-		std::clog << getLastXMLError() << std::endl;
+		std::clog << "[Warning - Game::loadExperienceStages] Cannot load stages file."
+			<< std::endl << getLastXMLError() << std::endl;
 		return false;
 	}
 
@@ -5710,12 +5707,11 @@ std::string Game::getHighscoreString(uint16_t skill)
 
 Highscore Game::getHighscore(uint16_t skill)
 {
-	Highscore hs;
-
 	Database* db = Database::getInstance();
 	DBResult* result;
-
 	DBQuery query;
+
+	Highscore hs;
 	if(skill >= SKILL__MAGLEVEL)
 	{
 		if(skill == SKILL__MAGLEVEL)
