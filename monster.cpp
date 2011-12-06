@@ -25,10 +25,12 @@
 
 #include "configmanager.h"
 #include "game.h"
+#include "creatureevent.h"
 
 extern Game g_game;
 extern ConfigManager g_config;
 extern Monsters g_monsters;
+extern CreatureEvents* g_creatureEvents;
 
 AutoList<Monster>Monster::autoList;
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
@@ -147,10 +149,11 @@ void Monster::onCreatureAppear(const Creature* creature)
 	Creature::onCreatureAppear(creature);
 	if(creature == this)
 	{
-		CreatureEventList spawnEvents = getCreatureEvents(CREATURE_EVENT_SPAWN);
+		CreatureEventList spawnEvents = getCreatureEvents(CREATURE_EVENT_SPAWN_SINGLE);
 		for(CreatureEventList::iterator it = spawnEvents.begin(); it != spawnEvents.end(); ++it)
 			(*it)->executeSpawn(this);
 
+		g_creatureEvents->monsterSpawn(this);
 		//We just spawned lets look around to see who is there.
 		if(isSummon())
 			isMasterInRange = canSee(master->getPosition());

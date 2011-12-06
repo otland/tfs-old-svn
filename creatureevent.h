@@ -27,6 +27,8 @@ enum CreatureEventType_t
 	CREATURE_EVENT_NONE,
 	CREATURE_EVENT_LOGIN,
 	CREATURE_EVENT_LOGOUT,
+	CREATURE_EVENT_SPAWN_SINGLE,
+	CREATURE_EVENT_SPAWN_GLOBAL,
 	CREATURE_EVENT_CHANNEL_JOIN,
 	CREATURE_EVENT_CHANNEL_LEAVE,
 	CREATURE_EVENT_ADVANCE,
@@ -41,7 +43,6 @@ enum CreatureEventType_t
 	CREATURE_EVENT_REPORTBUG,
 	CREATURE_EVENT_REPORTVIOLATION,
 	CREATURE_EVENT_THANKYOU,
-	CREATURE_EVENT_SPAWN,
 	CREATURE_EVENT_THINK,
 	CREATURE_EVENT_STATSCHANGE,
 	CREATURE_EVENT_COMBAT_AREA,
@@ -65,7 +66,9 @@ enum StatsChange_t
 	STATSCHANGE_MANALOSS
 };
 
+class Monster;
 class CreatureEvent;
+
 class CreatureEvents : public BaseEvents
 {
 	public:
@@ -75,6 +78,7 @@ class CreatureEvents : public BaseEvents
 		// global events
 		bool playerLogin(Player* player);
 		bool playerLogout(Player* player, bool forceLogout);
+		bool monsterSpawn(Monster* monster);
 
 		CreatureEvent* getEventByName(const std::string& name);
 
@@ -114,15 +118,13 @@ class CreatureEvent : public Event
 		void clearEvent();
 
 		//scripting
-		uint32_t executeSpawn(Creature* creature);
 		uint32_t executeLogin(Player* player);
 		uint32_t executeLogout(Player* player, bool forceLogout);
-		uint32_t executeChannelJoin(Player* player, uint16_t channelId, UsersMap usersMap);
-		uint32_t executeChannelLeave(Player* player, uint16_t channelId, UsersMap usersMap);
+		uint32_t executeSpawn(Monster* monster);
+		uint32_t executeChannel(Player* player, uint16_t channelId, UsersMap usersMap);
 		uint32_t executeAdvance(Player* player, skills_t skill, uint32_t oldLevel, uint32_t newLevel);
 		uint32_t executeLook(Player* player, Thing* thing, const Position& position, int16_t stackpos, int32_t lookDistance);
-		uint32_t executeMailSend(Player* player, Player* receiver, Item* item, bool openBox);
-		uint32_t executeMailReceive(Player* player, Player* sender, Item* item, bool openBox);
+		uint32_t executeMail(Player* player, Player* target, Item* item, bool openBox);
 		uint32_t executeTradeRequest(Player* player, Player* target, Item* item);
 		uint32_t executeTradeAccept(Player* player, Player* target, Item* item, Item* targetItem);
 		uint32_t executeTextEdit(Player* player, Item* item, std::string newText);
@@ -137,10 +139,8 @@ class CreatureEvent : public Event
 		uint32_t executeCombatArea(Creature* creature, Tile* tile, bool isAggressive);
 		uint32_t executePush(Player* player, Creature* target, Tile* tile);
 		uint32_t executeThrow(Player* player, Item* item, const Position& fromPosition, const Position& toPosition);
-		uint32_t executeTarget(Creature* creature, Creature* target);
-		uint32_t executeFollow(Creature* creature, Creature* target);
 		uint32_t executeCombat(Creature* creature, Creature* target, bool aggressive);
-		uint32_t executeAttack(Creature* creature, Creature* target);
+		uint32_t executeAction(Creature* creature, Creature* target);
 		uint32_t executeCast(Creature* creature, Creature* target = NULL);
 		uint32_t executeKill(Creature* creature, Creature* target, const DeathEntry& entry);
 		uint32_t executeDeath(Creature* creature, Item* corpse, DeathList deathList);

@@ -150,7 +150,7 @@ bool ChatChannel::addUser(Player* player)
 	m_users[player->getID()] = player;
 	CreatureEventList joinEvents = player->getCreatureEvents(CREATURE_EVENT_CHANNEL_JOIN);
 	for(CreatureEventList::iterator it = joinEvents.begin(); it != joinEvents.end(); ++it)
-		(*it)->executeChannelJoin(player, m_id, m_users);
+		(*it)->executeChannel(player, m_id, m_users);
 
 	Manager::getInstance()->addUser(player->getID(), m_id);
 	return true;
@@ -168,7 +168,7 @@ bool ChatChannel::removeUser(Player* player, bool exclude/* = false*/)
 	m_users.erase(it);
 	CreatureEventList leaveEvents = player->getCreatureEvents(CREATURE_EVENT_CHANNEL_LEAVE);
 	for(CreatureEventList::iterator it = leaveEvents.begin(); it != leaveEvents.end(); ++it)
-		(*it)->executeChannelLeave(player, m_id, m_users);
+		(*it)->executeChannel(player, m_id, m_users);
 
 	if((m_id == CHANNEL_PARTY || m_id == CHANNEL_GUILD || m_id == CHANNEL_PRIVATE) && !exclude)
 	{

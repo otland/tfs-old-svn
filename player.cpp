@@ -3476,11 +3476,11 @@ bool Player::setFollowCreature(Creature* creature, bool fullPathSearch /*= false
 	CreatureEventList followEvents = getCreatureEvents(CREATURE_EVENT_FOLLOW);
 	for(CreatureEventList::iterator it = followEvents.begin(); it != followEvents.end(); ++it)
 	{
-		if(creature && !(*it)->executeFollow(this, creature))
+		if(!(*it)->executeAction(this, creature) && !deny)
 			deny = true;
 	}
 
-	if(!deny && Creature::setFollowCreature(creature, fullPathSearch))
+	if(deny || Creature::setFollowCreature(creature, fullPathSearch))
 		return true;
 
 	setFollowCreature(NULL);
