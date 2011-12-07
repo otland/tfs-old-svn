@@ -969,7 +969,7 @@ bool ScriptEvent::executeEvent(const std::string& name) const
 		if(m_scripted == EVENT_SCRIPT_BUFFER)
 		{
 			std::stringstream scriptstream;
-			scriptstream << "local words = \"" << name << "\"" << std::endl;
+			scriptstream << "local name = \"" << name << "\"" << std::endl;
 
 			bool result = true;
 			if(m_scriptData && m_interface.loadBuffer(*m_scriptData))
