@@ -338,7 +338,7 @@ int main(int argc, char* argv[])
 
 void otserv(StringVec, ServiceManager* services)
 {
-	srand((uint32_t)OTSYS_TIME());
+	std::srand((uint32_t)OTSYS_TIME());
 #if defined(WINDOWS)
 	SetConsoleTitle(SOFTWARE_NAME);
 

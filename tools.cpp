@@ -146,7 +146,6 @@ bool replaceString(std::string& text, const std::string& key, const std::string&
 	while((start = text.find(key, pos)) != std::string::npos)
 	{
 		text.replace(start, key.size(), value);
-		//text = text.substr(0, start) + value + text.substr(start + key.size());
 		pos = start + value.size();
 	}
 
@@ -201,6 +200,23 @@ std::string ucfirst(std::string source)
 		{
 			source[i] = upchar(source[i]);
 			break;
+		}
+	}
+
+	return source;
+}
+
+std::string ucwords(std::string source)
+{
+	bool tmp = true;
+	for(uint16_t i = 0; i < (uint16_t)source.length(); ++i)
+	{
+		if(source[i] == ' ')
+			tmp = true;
+		else if(tmp)
+		{
+			source[i] = upchar(source[i]);
+			tmp = false;
 		}
 	}
 
@@ -418,7 +434,7 @@ int32_t round(float v)
 
 uint32_t rand24b()
 {
-	return ((rand() << 12) ^ (rand())) & (0xFFFFFF);
+	return ((rand() << 12) ^ rand()) & 0xFFFFFF;
 }
 
 float box_muller(float m, float s)
