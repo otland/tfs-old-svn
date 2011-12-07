@@ -69,6 +69,9 @@
 #include "vocation.h"
 #include "group.h"
 
+#include "quests.h"
+#include "raids.h"
+
 #include "monsters.h"
 #ifdef __OTSERV_ALLOCATOR__
 #include "allocator.h"
@@ -693,6 +696,9 @@ void otserv(StringVec, ServiceManager* services)
 	if(!g_game.loadExperienceStages())
 		startupErrorMessage("Unable to load experience stages!");
 
+	std::clog << ">> Loading quests" << std::endl;
+	Quests::getInstance()->loadFromXml();
+
 	std::clog << ">> Loading monsters" << std::endl;
 	if(!g_monsters.loadFromXml())
 	{
@@ -713,6 +719,9 @@ void otserv(StringVec, ServiceManager* services)
 				startupErrorMessage("Unable to load npcs!");
 		}
 	}
+
+	std::clog << ">> Loading raids" << std::endl;
+	Raids::getInstance()->loadFromXml();
 
 	std::clog << ">> Loading map and spawns..." << std::endl;
 	if(!g_game.loadMap(g_config.getString(ConfigManager::MAP_NAME)))
