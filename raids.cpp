@@ -817,40 +817,37 @@ bool AreaSpawnEvent::configureRaidEvent(xmlNodePtr eventNode)
 		}
 	}
 
-	xmlNodePtr monsterNode = eventNode->children;
-	while(monsterNode)
+	for(xmlNodePtr monsterNode = eventNode->children; monsterNode; monsterNode = monsterNode->next)
 	{
-		if(!xmlStrcmp(monsterNode->name, (const xmlChar*)"monster"))
+		if(xmlStrcmp(monsterNode->name, (const xmlChar*)"monster"))
+			continue;
+
+		if(!readXMLString(monsterNode, "name", strValue))
 		{
-			if(!readXMLString(monsterNode, "name", strValue))
+			std::clog << "[Error - AreaSpawnEvent::configureRaidEvent] name tag missing for monster node." << std::endl;
+			return false;
+		}
+
+		std::string name = strValue;
+		int32_t min = 0, max = 0;
+		if(readXMLInteger(monsterNode, "min", intValue) || readXMLInteger(monsterNode, "minamount", intValue))
+			min = intValue;
+
+		if(readXMLInteger(monsterNode, "max", intValue) || readXMLInteger(monsterNode, "maxamount", intValue))
+			max = intValue;
+
+		if(!min && !max)
+		{
+			if(!readXMLInteger(monsterNode, "amount", intValue))
 			{
-				std::clog << "[Error - AreaSpawnEvent::configureRaidEvent] name tag missing for monster node." << std::endl;
+				std::clog << "[Error - AreaSpawnEvent::configureRaidEvent] amount tag missing for monster node." << std::endl;
 				return false;
 			}
 
-			std::string name = strValue;
-			int32_t min = 0, max = 0;
-			if(readXMLInteger(monsterNode, "min", intValue) || readXMLInteger(monsterNode, "minamount", intValue))
-				min = intValue;
-
-			if(readXMLInteger(monsterNode, "max", intValue) || readXMLInteger(monsterNode, "maxamount", intValue))
-				max = intValue;
-
-			if(!min && !max)
-			{
-				if(!readXMLInteger(monsterNode, "amount", intValue))
-				{
-					std::clog << "[Error - AreaSpawnEvent::configureRaidEvent] amount tag missing for monster node." << std::endl;
-					return false;
-				}
-
-				min = max = intValue;
-			}
-
-			addMonster(name, min, max);
+			min = max = intValue;
 		}
 
-		monsterNode = monsterNode->next;
+		addMonster(name, min, max);
 	}
 
 	return true;
@@ -881,9 +878,12 @@ void AreaSpawnEvent::addMonster(const std::string& name, uint32_t min, uint32_t 
 
 bool AreaSpawnEvent::executeEvent(const std::string&) const
 {
+	MonsterSpawn* spawn = NULL;
 	for(MonsterSpawnList::const_iterator it = m_spawnList.begin(); it != m_spawnList.end(); ++it)
 	{
-		MonsterSpawn* spawn = *it;
+		if(!(spawn = *it))
+			continue;
+
 		uint32_t amount = (uint32_t)random_range(spawn->min, spawn->max);
 		for(uint32_t i = 0; i < amount; ++i)
 		{
