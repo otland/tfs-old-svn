@@ -946,11 +946,11 @@ bool ScriptEvent::configureRaidEvent(xmlNodePtr eventNode)
 			return false;
 		}
 
-		if(!checkScript(scriptsName, path, true) || !loadScript(path, true))
-		{
-			std::clog << "[Error - ScriptEvent::configureRaidEvent] Cannot load script file " << path << std::endl;
-			return false;
-		}
+		if(checkScript(scriptsName, path, true) && loadScript(path, true))
+			return true;
+
+		std::clog << "[Error - ScriptEvent::configureRaidEvent] Cannot load script file " << path << std::endl;
+		return false;
 	}
 	else if(parseXMLContentString(eventNode->children, strValue) &&
 		checkBuffer(scriptsName, strValue) && loadBuffer(strValue))
