@@ -2943,7 +2943,7 @@ bool Game::playerRequestTrade(uint32_t playerId, const Position& pos, int16_t st
 	Player* tradePartner = getPlayerByID(tradePlayerId);
 	if(!tradePartner || tradePartner == player)
 	{
-		player->sendTextMessage(MSG_INFO_DESCR, "Sorry, not possible.");
+		player->sendCancelMessage(RET_NOTPOSSIBLE);
 		return false;
 	}
 
@@ -2951,7 +2951,7 @@ bool Game::playerRequestTrade(uint32_t playerId, const Position& pos, int16_t st
 	{
 		std::stringstream ss;
 		ss << tradePartner->getName() << " tells you to move closer.";
-		player->sendTextMessage(MSG_INFO_DESCR, ss.str());
+		player->sendTextMessage(MSG_EVENT_DEFAULT, ss.str());
 		return false;
 	}
 
@@ -3014,7 +3014,7 @@ bool Game::playerRequestTrade(uint32_t playerId, const Position& pos, int16_t st
 			((container = dynamic_cast<const Container*>(tradeItem)) && container->isHoldingItem(it->first)) ||
 			((container = dynamic_cast<const Container*>(it->first)) && container->isHoldingItem(tradeItem)))
 		{
-			player->sendTextMessage(MSG_INFO_DESCR, "This item is already being traded.");
+			player->sendTextMessage(MSG_EVENT_DEFAULT, "This item is already being traded.");
 			return false;
 		}
 	}
@@ -3024,7 +3024,7 @@ bool Game::playerRequestTrade(uint32_t playerId, const Position& pos, int16_t st
 	{
 		std::stringstream s;
 		s << "You cannot trade more than " << g_config.getNumber(ConfigManager::TRADE_LIMIT) << " items.";
-		player->sendTextMessage(MSG_INFO_DESCR, s.str());
+		player->sendTextMessage(MSG_EVENT_DEFAULT, s.str());
 		return false;
 	}
 
@@ -3067,7 +3067,7 @@ bool Game::internalStartTrade(Player* player, Player* tradePartner, Item* tradeI
 	{
 		char buffer[100];
 		sprintf(buffer, "%s wants to trade with you", player->getName().c_str());
-		tradePartner->sendTextMessage(MSG_INFO_DESCR, buffer);
+		tradePartner->sendTextMessage(MSG_EVENT_DEFAULT, buffer);
 
 		tradePartner->tradeState = TRADE_ACKNOWLEDGE;
 		tradePartner->tradePartner = player;
@@ -3161,14 +3161,14 @@ bool Game::playerAcceptTrade(uint32_t playerId)
 		if(tradeItem2)
 		{
 			error = getTradeErrorDescription(ret1, tradeItem1);
-			tradePartner->sendTextMessage(MSG_INFO_DESCR, error);
+			tradePartner->sendTextMessage(MSG_EVENT_DEFAULT, error);
 			tradeItem2->onTradeEvent(ON_TRADE_CANCEL, tradePartner, player);
 		}
 
 		if(tradeItem1)
 		{
 			error = getTradeErrorDescription(ret2, tradeItem2);
-			player->sendTextMessage(MSG_INFO_DESCR, error);
+			player->sendTextMessage(MSG_EVENT_DEFAULT, error);
 			tradeItem1->onTradeEvent(ON_TRADE_CANCEL, player, tradePartner);
 		}
 	}
@@ -5137,7 +5137,7 @@ bool Game::playerInviteToParty(uint32_t playerId, uint32_t invitedId)
 	{
 		char buffer[90];
 		sprintf(buffer, "%s is already in a party.", invitedPlayer->getName().c_str());
-		player->sendTextMessage(MSG_INFO_DESCR, buffer);
+		player->sendTextMessage(MSG_EVENT_PARTY, buffer);
 		return false;
 	}
 
@@ -5161,7 +5161,7 @@ bool Game::playerJoinParty(uint32_t playerId, uint32_t leaderId)
 	if(!player->getParty())
 		return leader->getParty()->join(player);
 
-	player->sendTextMessage(MSG_INFO_DESCR, "You are already in a party.");
+	player->sendTextMessage(MSG_EVENT_PARTY, "You are already in a party.");
 	return false;
 }
 
@@ -6209,7 +6209,7 @@ void Game::showHotkeyUseMessage(Player* player, Item* item)
 	else
 		stream << "Using one of " << count << " " << it.pluralName.c_str() << "...";
 
-	player->sendTextMessage(MSG_INFO_DESCR, stream.str().c_str());
+	player->sendTextMessage(MSG_HOTKEY_USE, stream.str().c_str());
 }
 
 bool Game::loadStatuslist()

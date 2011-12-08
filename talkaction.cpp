@@ -532,7 +532,7 @@ bool TalkAction::houseBuy(Creature* creature, const std::string&, const std::str
 		ret += "bank or ";
 
 	ret += "depot of this town for rent.";
-	player->sendTextMessage(MSG_INFO_DESCR, ret.c_str());
+	player->sendTextMessage(MSG_EVENT_DEFAULT, ret.c_str());
 
 	g_game.addMagicEffect(player->getPosition(), MAGIC_EFFECT_WRAPS_BLUE);
 	return false;
@@ -775,7 +775,7 @@ bool TalkAction::guildJoin(Creature* creature, const std::string&, const std::st
 			if(player->isGuildInvited(guildId))
 			{
 				IOGuild::getInstance()->joinGuild(player, guildId);
-				player->sendTextMessage(MSG_INFO_DESCR, "You have joined the guild.");
+				player->sendTextMessage(MSG_EVENT_GUILD, "You have joined the guild.");
 
 				char buffer[80];
 				sprintf(buffer, "%s has joined the guild.", player->getName().c_str());
@@ -858,7 +858,7 @@ bool TalkAction::guildCreate(Creature* creature, const std::string&, const std::
 
 	std::stringstream stream;
 	stream << "You have formed guild \"" << param.c_str() << "\"!";
-	player->sendTextMessage(MSG_INFO_DESCR, stream.str().c_str());
+	player->sendTextMessage(MSG_EVENT_GUILD, stream.str().c_str());
 	return true;
 }
 
@@ -1220,7 +1220,7 @@ bool TalkAction::ghost(Creature* creature, const std::string&, const std::string
 
 	if(player->hasFlag(PlayerFlag_CannotBeSeen))
 	{
-		player->sendTextMessage(MSG_INFO_DESCR, "Command disabled for players with special, invisibility flag.");
+		player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, "Command disabled for players with special, invisibility flag.");
 		return true;
 	}
 
@@ -1231,7 +1231,7 @@ bool TalkAction::ghost(Creature* creature, const std::string&, const std::string
 	Condition* condition = NULL;
 	if((condition = player->getCondition(CONDITION_GAMEMASTER, CONDITIONID_DEFAULT, GAMEMASTER_INVISIBLE)))
 	{
-		player->sendTextMessage(MSG_INFO_DESCR, "You are visible again.");
+		player->sendTextMessage(MSG_EVENT_DEFAULT, "You are visible again.");
 		IOLoginData::getInstance()->updateOnlineStatus(player->getGUID(), true);
 		for(AutoList<Player>::iterator pit = Player::autoList.begin(); pit != Player::autoList.end(); ++pit)
 		{
@@ -1272,7 +1272,7 @@ bool TalkAction::ghost(Creature* creature, const std::string&, const std::string
 		if(player->getParty())
 			player->getParty()->leave(player);
 
-		player->sendTextMessage(MSG_INFO_DESCR, "You are now invisible.");
+		player->sendTextMessage(MSG_EVENT_DEFAULT, "You are now invisible.");
 	}
 
 	return true;
@@ -1286,11 +1286,11 @@ bool TalkAction::software(Creature* creature, const std::string&, const std::str
 
 	std::stringstream s;
 	s << SOFTWARE_NAME << ", version " << SOFTWARE_VERSION << " (" << SOFTWARE_CODENAME << ")" << std::endl;
-	player->sendTextMessage(MSG_INFO_DESCR, s.str());
+	player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, s.str());
 
 	s.str("");
 	s << "Compiled at: " << __DATE__ << ", " << __TIME__ << "." << std::endl;
-	player->sendTextMessage(MSG_INFO_DESCR, s.str());
+	player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, s.str());
 
 	s.str("");
 	s << "Libraries:" << std::endl

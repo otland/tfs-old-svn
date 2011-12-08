@@ -67,11 +67,11 @@ void PrivateChatChannel::invitePlayer(Player* player, Player* invitePlayer)
 
 	std::stringstream msg;
 	msg << player->getName() << " invites you to " << (player->getSex(false) ? "his" : "her") << " private chat channel.";
-	invitePlayer->sendTextMessage(MSG_INFO_DESCR, msg.str().c_str());
+	invitePlayer->sendTextMessage(MSG_EVENT_DEFAULT, msg.str().c_str());
 
 	msg.str("");
 	msg << invitePlayer->getName() << " has been invited.";
-	player->sendTextMessage(MSG_INFO_DESCR, msg.str().c_str());
+	player->sendTextMessage(MSG_EVENT_DEFAULT, msg.str().c_str());
 
 	Player* tmpPlayer = NULL;
 	for(UsersMap::iterator cit = m_users.begin(); cit != m_users.end(); ++cit)
@@ -88,7 +88,7 @@ void PrivateChatChannel::excludePlayer(Player* player, Player* excludePlayer)
 
 	std::string msg = excludePlayer->getName();
 	msg += " has been excluded.";
-	player->sendTextMessage(MSG_INFO_DESCR, msg.c_str());
+	player->sendTextMessage(MSG_EVENT_DEFAULT, msg.c_str());
 
 	removeUser(excludePlayer, true);
 	excludePlayer->sendClosePrivate(getId());
@@ -629,7 +629,7 @@ bool Chat::talk(Player* player, MessageClasses type, const std::string& text, ui
 						if(!paramPlayer->isGuildInvited(player->getGuildId()))
 						{
 							sprintf(buffer, "%s has invited you to join the guild, %s. You may join this guild by writing: !joinguild %s", player->getName().c_str(), player->getGuildName().c_str(), player->getGuildName().c_str());
-							paramPlayer->sendTextMessage(MSG_INFO_DESCR, buffer);
+							paramPlayer->sendTextMessage(MSG_EVENT_GUILD, buffer);
 
 							sprintf(buffer, "%s has invited %s to the guild.", player->getName().c_str(), paramPlayer->getName().c_str());
 							channel->talk("", MSG_CHANNEL_HIGHLIGHT, buffer);
@@ -707,7 +707,7 @@ bool Chat::talk(Player* player, MessageClasses type, const std::string& text, ui
 						if(it != paramPlayer->invitationsList.end())
 						{
 							sprintf(buffer, "%s has revoked your invite to %s guild.", player->getName().c_str(), (player->getSex(false) ? "his" : "her"));
-							paramPlayer->sendTextMessage(MSG_INFO_DESCR, buffer);
+							paramPlayer->sendTextMessage(MSG_EVENT_GUILD, buffer);
 
 							sprintf(buffer, "%s has revoked the guildinvite of %s.", player->getName().c_str(), paramPlayer->getName().c_str());
 							channel->talk("", MSG_CHANNEL_HIGHLIGHT, buffer);
