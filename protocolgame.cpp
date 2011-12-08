@@ -442,7 +442,6 @@ bool ProtocolGame::connect(uint32_t playerId, OperatingSystem_t operatingSystem,
 
 	player->lastIP = player->getIP();
 	player->lastLoad = OTSYS_TIME();
-	player->lastLogin = std::max(time(NULL), player->lastLogin + 1);
 
 	m_acceptPackets = true;
 	return true;
