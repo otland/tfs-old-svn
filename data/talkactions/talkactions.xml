@@ -31,6 +31,7 @@
 	<talkaction log="yes" words="/ghost" access="3" event="function" value="ghost"/>
 	<talkaction log="yes" words="/squelch" access="3" event="script" value="gamemaster.lua"/>
 	<talkaction log="yes" words="/cliport" access="3" event="script" value="gamemaster.lua"/>
+	<talkaction log="yes" words="/light" access="3" event="script" value="gamemaster.lua"/>
 	<talkaction log="yes" words="/t" access="3" event="script" value="teleporttown.lua"/>
 	<talkaction log="yes" words="/c" access="3" event="script" value="teleporthere.lua"/>
 	<talkaction log="yes" words="/goto" access="3" event="script" value="teleportto.lua"/>
