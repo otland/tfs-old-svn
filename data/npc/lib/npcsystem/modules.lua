@@ -81,7 +81,7 @@ if(Modules == nil) then
 			elseif(not doPlayerRemoveMoney(cid, parameters.cost)) then
 				npcHandler:say('You do not have enough money!', cid)
 			else
-				setPlayerPromotionLevel(cid, parameters.promotion)
+				doPlayerSetPromotionLevel(cid, parameters.promotion)
 				npcHandler:say(parameters.text, cid)
 			end
 		else
