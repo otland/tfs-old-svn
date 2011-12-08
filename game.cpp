@@ -5137,7 +5137,7 @@ bool Game::playerInviteToParty(uint32_t playerId, uint32_t invitedId)
 	{
 		char buffer[90];
 		sprintf(buffer, "%s is already in a party.", invitedPlayer->getName().c_str());
-		player->sendTextMessage(MSG_EVENT_PARTY, buffer);
+		player->sendTextMessage(MSG_PARTY, buffer);
 		return false;
 	}
 
@@ -5161,7 +5161,7 @@ bool Game::playerJoinParty(uint32_t playerId, uint32_t leaderId)
 	if(!player->getParty())
 		return leader->getParty()->join(player);
 
-	player->sendTextMessage(MSG_EVENT_PARTY, "You are already in a party.");
+	player->sendTextMessage(MSG_PARTY, "You are already in a party.");
 	return false;
 }
 
