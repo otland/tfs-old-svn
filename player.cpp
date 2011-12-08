@@ -4029,6 +4029,7 @@ bool Player::rateExperience(double& gainExp, Creature* target)
 
 void Player::onGainExperience(double& gainExp, Creature* target, bool multiplied)
 {
+	uint64_t tmp = experience;
 	if(party && party->isSharedExperienceEnabled() && party->isSharedExperienceActive())
 	{
 		party->shareExperience(gainExp, target, multiplied);
@@ -4038,6 +4039,10 @@ void Player::onGainExperience(double& gainExp, Creature* target, bool multiplied
 
 	if(gainExperience(gainExp, target))
 		Creature::onGainExperience(gainExp, target, true);
+
+	CreatureEventList advanceEvents = getCreatureEvents(CREATURE_EVENT_ADVANCE);
+	for(CreatureEventList::iterator it = advanceEvents.begin(); it != advanceEvents.end(); ++it)
+		(*it)->executeAdvance(this, SKILL__EXPERIENCE, tmp, experience);
 }
 
 void Player::onGainSharedExperience(double& gainExp, Creature* target, bool)

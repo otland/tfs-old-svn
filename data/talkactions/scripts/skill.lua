@@ -26,7 +26,7 @@ function onSay(cid, words, param, channel)
 			skill = SKILL__MAGLEVEL
 		else
 			skill = tonumber(t[2])
-			if(not skill or skill < SKILL_FIRST or SKILL > SKILL__LAST) then
+			if(not skill or skill < SKILL_FIRST or SKILL > SKILL__PRE_LAST) then
 				doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Such skill does not exists.")
 				return true
 			end
