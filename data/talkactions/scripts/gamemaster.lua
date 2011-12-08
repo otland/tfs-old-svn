@@ -7,7 +7,7 @@ local light = createConditionObject(CONDITION_LIGHT, -1, false, 0, CONDITIONID_D
 function onSay(cid, words, param, channel)
 	local condition, type, subId, name = ignore, CONDITION_GAMEMASTER, GAMEMASTER_IGNORE, "private messages ignoring"
 	if(words:sub(2, 2) == "c") then
-		condition, type, subId, name = teleport, GAMEMASTER_TELEPORT, "map click teleport"
+		condition, subId, name = teleport, GAMEMASTER_TELEPORT, "map click teleport"
 	elseif(words:sub(2, 2) == "l") then
 		condition, type, subId, name = light, CONDITION_LIGHT, 0, "full light"
 	end
