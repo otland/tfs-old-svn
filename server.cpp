@@ -82,7 +82,7 @@ void ServicePort::open(IPAddressList ips, uint16_t port)
 			tmp->set_option(boost::asio::ip::tcp::no_delay(true));
 
 			accept(tmp);
-			m_acceptors.push_back(tmp);
+			m_acceptors[tmp] = *it;
 		}
 		catch(std::exception& e)
 		{
@@ -112,11 +112,11 @@ void ServicePort::close()
 
 	for(AcceptorVec::iterator it = m_acceptors.begin(); it != m_acceptors.end(); ++it)
 	{
-		if(!(*it)->is_open())
+		if(it->first->is_open())
 			continue;
 
 		boost::system::error_code error;
-		(*it)->close(error);
+		it->first->close(error);
 		if(error)
 		{
 			PRINT_ASIO_ERROR("Closing listen socket");
@@ -196,7 +196,7 @@ void ServicePort::handle(Acceptor_ptr acceptor, boost::asio::ip::tcp::socket* so
 			m_pendingStart = true;
 			Scheduler::getInstance().addEvent(createSchedulerTask(5000, boost::bind(
 				&ServicePort::service, boost::weak_ptr<ServicePort>(shared_from_this()),
-				acceptor->local_endpoint().address().to_v4(), m_serverPort)));
+				m_acceptors[acceptor], m_serverPort)));
 		}
 	}
 #ifdef __DEBUG_NET__
@@ -237,8 +237,8 @@ void ServiceManager::run()
 	assert(!running);
 	try
 	{
-		m_io_service.run();
 		running = true;
+		m_io_service.run();
 	}
 	catch(std::exception& e)
 	{

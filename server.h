@@ -82,7 +82,7 @@ class ServicePort : boost::noncopyable, public boost::enable_shared_from_this<Se
 		typedef std::vector<Service_ptr> ServiceVec;
 		ServiceVec m_services;
 
-		typedef std::vector<Acceptor_ptr> AcceptorVec;
+		typedef std::map<Acceptor_ptr, IPAddress> AcceptorVec;
 		AcceptorVec m_acceptors;
 
 		boost::asio::io_service& m_io_service;
