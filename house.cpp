@@ -329,6 +329,7 @@ AccessHouseLevel_t House::getHouseAccessLevel(const Player* player)
 	if(!owner)
 		return HOUSE_NO_INVITED;
 
+	AccessHouseLevel_t tmp = HOUSE_NO_INVITED;
 	if(isGuild())
 	{
 		if(player->getGuildId() == owner)
@@ -340,7 +341,7 @@ AccessHouseLevel_t House::getHouseAccessLevel(const Player* player)
 				case GUILDLEVEL_VICE:
 					return HOUSE_SUBOWNER;
 				default:
-					return HOUSE_GUEST;
+					tmp = HOUSE_GUEST;
 			}
 		}
 	}
