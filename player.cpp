@@ -4351,7 +4351,7 @@ bool Player::addUnjustifiedKill(const Player* attacked, bool countNow)
 			ConfigManager::KILLS_BAN_LENGTH)), 20, ACTION_BANISHMENT, "Unjustified player killing.", 0, guid))
 			return true;
 
-		sendTextMessage(MSG_EVENT_DEFAULT, "You have been banished.");
+		sendTextMessage(MSG_INFO_DESCR, "You have been banished.");
 		g_game.addMagicEffect(getPosition(), MAGIC_EFFECT_WRAPS_GREEN);
 		Scheduler::getInstance().addEvent(createSchedulerTask(1000, boost::bind(
 			&Game::kickPlayer, &g_game, getID(), false)));

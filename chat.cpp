@@ -67,11 +67,11 @@ void PrivateChatChannel::invitePlayer(Player* player, Player* invitePlayer)
 
 	std::stringstream msg;
 	msg << player->getName() << " invites you to " << (player->getSex(false) ? "his" : "her") << " private chat channel.";
-	invitePlayer->sendTextMessage(MSG_EVENT_DEFAULT, msg.str().c_str());
+	invitePlayer->sendTextMessage(MSG_INFO_DESCR, msg.str().c_str());
 
 	msg.str("");
 	msg << invitePlayer->getName() << " has been invited.";
-	player->sendTextMessage(MSG_EVENT_DEFAULT, msg.str().c_str());
+	player->sendTextMessage(MSG_INFO_DESCR, msg.str().c_str());
 
 	Player* tmpPlayer = NULL;
 	for(UsersMap::iterator cit = m_users.begin(); cit != m_users.end(); ++cit)
@@ -88,7 +88,7 @@ void PrivateChatChannel::excludePlayer(Player* player, Player* excludePlayer)
 
 	std::string msg = excludePlayer->getName();
 	msg += " has been excluded.";
-	player->sendTextMessage(MSG_EVENT_DEFAULT, msg.c_str());
+	player->sendTextMessage(MSG_INFO_DESCR, msg.c_str());
 
 	removeUser(excludePlayer, true);
 	excludePlayer->sendClosePrivate(getId());
