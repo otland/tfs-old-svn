@@ -354,7 +354,7 @@ AccessHouseLevel_t House::getHouseAccessLevel(const Player* player)
 	if(guestList.isInList(player))
 		return HOUSE_GUEST;
 
-	return HOUSE_NO_INVITED;
+	return tmp;
 }
 
 bool House::canEditAccessList(uint32_t listId, const Player* player)
