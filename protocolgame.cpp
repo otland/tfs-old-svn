@@ -238,9 +238,9 @@ bool ProtocolGame::login(const std::string& name, uint32_t id, const std::string
 				return false;
 			}
 		}
-		else if(player->getName() == "Account Manager" && g_config.getBool(ConfigManager::ACCOUNT_MANAGER))
+		else if(player->getName() == "Account Manager")
 		{
-			if(g_config.getBool(ConfigManager::ACCOUNT_MANAGER))
+			if(!g_config.getBool(ConfigManager::ACCOUNT_MANAGER))
 			{
 				disconnectClient(0x14, "Account Manager is disabled.");
 				return false;
