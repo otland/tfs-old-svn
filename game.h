@@ -447,7 +447,7 @@ class Game
 		bool internalCloseTrade(Player* player);
 
 		//Implementation of player invoked events
-		bool playerBroadcastMessage(Player* player, MessageClasses type, const std::string& text);
+		bool playerBroadcastMessage(Player* player, MessageClasses type, const std::string& text, uint32_t statementId);
 		bool playerReportBug(uint32_t playerId, std::string comment);
 		bool playerReportViolation(uint32_t playerId, ReportType_t type, uint8_t reason, const std::string& name,
 			const std::string& comment, const std::string& translation, uint32_t statementId);
@@ -632,7 +632,7 @@ class Game
 	protected:
 		bool playerWhisper(Player* player, const std::string& text, uint32_t statementId);
 		bool playerYell(Player* player, const std::string& text, uint32_t statementId);
-		bool playerSpeakTo(Player* player, MessageClasses type, const std::string& receiver, const std::string& text);
+		bool playerSpeakTo(Player* player, MessageClasses type, const std::string& receiver, const std::string& text, uint32_t statementId);
 		bool playerSpeakToChannel(Player* player, MessageClasses type, const std::string& text, uint16_t channelId, uint32_t statementId);
 		bool playerSpeakToNpc(Player* player, const std::string& text);
 

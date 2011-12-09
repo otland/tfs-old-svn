@@ -2276,14 +2276,14 @@ bool Game::playerMove(uint32_t playerId, Direction dir)
 	return player->startAutoWalk(dirs);
 }
 
-bool Game::playerBroadcastMessage(Player* player, MessageClasses type, const std::string& text)
+bool Game::playerBroadcastMessage(Player* player, MessageClasses type, const std::string& text, uint32_t statementId)
 {
 	if(!player->hasFlag(PlayerFlag_CanBroadcast) || !((type >= MSG_SPEAK_FIRST && type <= MSG_SPEAK_LAST) ||
 			(type >= MSG_SPEAK_MONSTER_FIRST && type <= MSG_SPEAK_MONSTER_LAST)))
 		return false;
 
 	for(AutoList<Player>::iterator it = Player::autoList.begin(); it != Player::autoList.end(); ++it)
-		it->second->sendCreatureSay(player, type, text);
+		it->second->sendCreatureSay(player, type, text, NULL, statementId);
 
 	//TODO: event handling - onCreatureSay
 	std::clog << "> " << player->getName() << " broadcasted: \"" << text << "\"." << std::endl;
@@ -3872,7 +3872,7 @@ bool Game::playerSay(uint32_t playerId, uint16_t channelId, MessageClasses type,
 			return playerYell(player, text, statementId);
 		case MSG_PRIVATE_TO:
 		case MSG_GAMEMASTER_PRIVATE_TO:
-			return playerSpeakTo(player, type, receiver, text);
+			return playerSpeakTo(player, type, receiver, text, statementId);
 		case MSG_CHANNEL:
 		case MSG_GAMEMASTER_CHANNEL:
 		{
@@ -3884,7 +3884,7 @@ bool Game::playerSay(uint32_t playerId, uint16_t channelId, MessageClasses type,
 		case MSG_NPC_TO:
 			return playerSpeakToNpc(player, text);
 		case MSG_GAMEMASTER_BROADCAST:
-			return playerBroadcastMessage(player, MSG_GAMEMASTER_BROADCAST, text);
+			return playerBroadcastMessage(player, MSG_GAMEMASTER_BROADCAST, text, statementId);
 
 		default:
 			break;
@@ -3927,7 +3927,7 @@ bool Game::playerYell(Player* player, const std::string& text, uint32_t statemen
 }
 
 bool Game::playerSpeakTo(Player* player, MessageClasses type, const std::string& receiver,
-	const std::string& text)
+	const std::string& text, uint32_t statementId)
 {
 	Player* toPlayer = getPlayerByName(receiver);
 	if(!toPlayer || toPlayer->isRemoved())
@@ -3955,7 +3955,7 @@ bool Game::playerSpeakTo(Player* player, MessageClasses type, const std::string&
 	else
 		type = MSG_PRIVATE_FROM;
 
-	toPlayer->sendCreatureSay(player, type, text);
+	toPlayer->sendCreatureSay(player, type, text, NULL, statementId);
 	toPlayer->onCreatureSay(player, type, text);
 	if(!canSee)
 	{
