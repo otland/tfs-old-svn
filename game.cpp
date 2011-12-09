@@ -3861,11 +3861,7 @@ bool Game::playerSay(uint32_t playerId, uint16_t channelId, MessageClasses type,
 		return true;
 
 	uint32_t statementId = 0;
-	if((type == MSG_SPEAK_SAY || type == MSG_SPEAK_WHISPER || type == MSG_SPEAK_YELL ||
-		(type == MSG_CHANNEL && !g_chat.isPublicChannel(channelId)))
-		&& !player->hasCustomFlag(PlayerCustomFlag_GamemasterPrivileges))
-		IOLoginData::getInstance()->playerStatement(player, channelId, text, statementId);
-
+	IOLoginData::getInstance()->playerStatement(player, channelId, text, statementId);
 	switch(type)
 	{
 		case MSG_SPEAK_SAY:
