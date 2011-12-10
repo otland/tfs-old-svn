@@ -125,8 +125,11 @@ ChatChannel::ChatChannel(uint16_t id, const std::string& name, uint16_t flags, u
 
 bool ChatChannel::addUser(Player* player)
 {
-	if(m_users.find(player->getID()) != m_users.end())
+	if(!player)
 		return false;
+
+	if(m_users.find(player->getID()) != m_users.end())
+		return true;
 
 	ChatChannel* channel = g_chat.getChannel(player, m_id);
 	if(!channel)
@@ -158,12 +161,12 @@ bool ChatChannel::addUser(Player* player)
 
 bool ChatChannel::removeUser(Player* player, bool exclude/* = false*/)
 {
-	if(!player || player->isRemoved())
+	if(!player)
 		return false;
 
 	UsersMap::iterator it = m_users.find(player->getID());
 	if(it == m_users.end())
-		return false;
+		return true;
 
 	m_users.erase(it);
 	CreatureEventList leaveEvents = player->getCreatureEvents(CREATURE_EVENT_CHANNEL_LEAVE);
