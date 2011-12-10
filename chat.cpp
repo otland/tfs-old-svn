@@ -496,6 +496,24 @@ ChatChannel* Chat::addUserToChannel(Player* player, uint16_t channelId)
 	return NULL;
 }
 
+void Chat::reOpenChannels(Player* player)
+{
+	if(!player || player->isRemoved())
+		return;
+
+	for(NormalChannelMap::iterator it = m_normalChannels.begin(); it != m_normalChannels.end(); ++it)
+		player->sendChannel(it->second->getId(), it->second->getName());
+
+	for(PartyChannelMap::iterator it = m_partyChannels.begin(); it != m_partyChannels.end(); ++it)
+		player->sendChannel(it->second->getId(), it->second->getName());
+
+	for(GuildChannelMap::iterator it = m_guildChannels.begin(); it != m_guildChannels.end(); ++it)
+		player->sendChannel(it->second->getId(), it->second->getName());
+
+	for(PrivateChannelMap::iterator it = m_privateChannels.begin(); it != m_privateChannels.end(); ++it)
+		player->sendChannel(it->second->getId(), it->second->getName());
+}
+
 bool Chat::removeUserFromChannel(Player* player, uint16_t channelId)
 {
 	ChatChannel* channel = getChannel(player, channelId);
@@ -508,7 +526,7 @@ bool Chat::removeUserFromChannel(Player* player, uint16_t channelId)
 	return true;
 }
 
-void Chat::removeUserFromAllChannels(Player* player)
+void Chat::removeUserFromChannels(Player* player)
 {
 	if(!player || player->isRemoved())
 		return;

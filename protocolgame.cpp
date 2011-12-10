@@ -366,7 +366,6 @@ bool ProtocolGame::login(const std::string& name, uint32_t id, const std::string
 			return false;
 		}
 
-		g_chat.removeUserFromAllChannels(_player);
 		_player->client->disconnect();
 		_player->isConnecting = true;
 
@@ -377,7 +376,6 @@ bool ProtocolGame::login(const std::string& name, uint32_t id, const std::string
 	}
 
 	addRef();
-	g_chat.removeUserFromAllChannels(_player);
 	return connect(_player->getID(), operatingSystem, version);
 }
 
@@ -445,6 +443,7 @@ bool ProtocolGame::connect(uint32_t playerId, OperatingSystem_t operatingSystem,
 	player->sendCreatureAppear(player);
 	player->setOperatingSystem(operatingSystem);
 	player->setClientVersion(version);
+	g_chat.reOpenChannels(player);
 
 	player->lastIP = player->getIP();
 	player->lastLoad = OTSYS_TIME();

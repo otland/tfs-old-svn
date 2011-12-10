@@ -1485,7 +1485,7 @@ void Player::onCreatureDisappear(const Creature* creature, bool isLogout)
 	if(party)
 		party->leave(this);
 
-	g_chat.removeUserFromAllChannels(this);
+	g_chat.removeUserFromChannels(this);
 	if(!isGhost())
 		IOLoginData::getInstance()->updateOnlineStatus(guid, false);
 

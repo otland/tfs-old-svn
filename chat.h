@@ -126,8 +126,9 @@ class Chat
 		bool deleteChannel(Player* player, uint16_t channelId);
 
 		ChatChannel* addUserToChannel(Player* player, uint16_t channelId);
+		void reOpenChannels(Player* player);
 		bool removeUserFromChannel(Player* player, uint16_t channelId);
-		void removeUserFromAllChannels(Player* player);
+		void removeUserFromChannels(Player* player);
 
 		bool talk(Player* player, MessageClasses type, const std::string& text,
 			uint16_t channelId, uint32_t statementId, bool anonymous = false);
