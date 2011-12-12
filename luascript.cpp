@@ -8006,11 +8006,12 @@ int32_t LuaInterface::luaDoAddContainerItem(lua_State* L)
 	else
 		itemCount = std::max((uint32_t)1, count);
 
+	uint32_t ret = 0;
+	Item* newItem = NULL;
 	while(itemCount > 0)
 	{
 		int32_t stackCount = std::min(100, subType);
-		Item* newItem = Item::CreateItem(itemId, stackCount);
-		if(!newItem)
+		if(!(newItem = Item::CreateItem(itemId, stackCount)))
 		{
 			errorEx(getError(LUA_ERROR_ITEM_NOT_FOUND));
 			lua_pushboolean(L, false);
@@ -8020,25 +8021,28 @@ int32_t LuaInterface::luaDoAddContainerItem(lua_State* L)
 		if(it.stackable)
 			subType -= stackCount;
 
-		ReturnValue ret = g_game.internalAddItem(NULL, container, newItem);
-		if(ret != RET_NOERROR)
+		uint32_t dummy = 0;
+		Item* stackItem = NULL;
+		if(g_game.internalAddItem(NULL, tile, newItem, INDEX_WHEREEVER, FLAG_NOLIMIT, false, dummy, &stackItem) != RET_NOERROR)
 		{
 			delete newItem;
 			lua_pushboolean(L, false);
-			return 1;
+			return ++ret;
 		}
 
-		--itemCount;
-		if(itemCount)
-			continue;
-
+		++ret;
 		if(newItem->getParent())
 			lua_pushnumber(L, env->addThing(newItem));
+		else if(stackItem)
+			lua_pushnumber(L, env->addThing(stackItem));
 		else //stackable item stacked with existing object, newItem will be released
 			lua_pushnil(L);
 
-		return 1;
+		--itemCount;
 	}
+
+	if(ret)
+		return ret;
 
 	lua_pushnil(L);
 	return 1;

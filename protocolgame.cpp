@@ -795,7 +795,7 @@ void ProtocolGame::parsePacket(NetworkMessage &msg)
 				break;
 
 			case 0x9A: // open priv
-				parseOpenPriv(msg);
+				parseOpenPrivate(msg);
 				break;
 
 			case 0x9E: // close NPC
@@ -1175,7 +1175,7 @@ void ProtocolGame::parseCloseChannel(NetworkMessage& msg)
 	addGameTask(&Game::playerCloseChannel, player->getID(), channelId);
 }
 
-void ProtocolGame::parseOpenPriv(NetworkMessage& msg)
+void ProtocolGame::parseOpenPrivate(NetworkMessage& msg)
 {
 	const std::string receiver = msg.getString();
 	addGameTask(&Game::playerOpenPrivateChannel, player->getID(), receiver);
@@ -1838,7 +1838,7 @@ void ProtocolGame::sendCreatePrivateChannel(uint16_t channelId, const std::strin
 	}
 }
 
-void ProtocolGame::sendChannelsDialog()
+void ProtocolGame::sendChannelsDialog(const ChannelsList& channels)
 {
 	NetworkMessage_ptr msg = getOutputBuffer();
 	if(msg)
@@ -1846,17 +1846,11 @@ void ProtocolGame::sendChannelsDialog()
 		TRACK_MESSAGE(msg);
 		msg->put<char>(0xAB);
 
-		ChannelList list = g_chat.getChannelList(player);
-		msg->put<char>(list.size());
-
-		ChatChannel* channel = NULL;
-		for(ChannelList::iterator it = list.begin(); it != list.end(); ++it)
+		msg->put<char>(channels.size());
+		for(ChannelsList::const_iterator it = channels.begin(); it != channels.end(); ++it)
 		{
-			if(!(channel = (*it)))
-				continue;
-
-			msg->put<uint16_t>(channel->getId());
-			msg->putString(channel->getName());
+			msg->put<uint16_t>(it->first);
+			msg->putString(it->second);
 		}
 	}
 }

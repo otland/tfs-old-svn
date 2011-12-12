@@ -56,7 +56,7 @@ Player::Player(const std::string& _name, ProtocolGame* p):
 	if(client)
 		p->setPlayer(this);
 
-	pvpBlessing = pzLocked = isConnecting = addAttackSkillPoint = requestedOutfit = mounted = outfitAttributes = false;
+	pvpBlessing = pzLocked = isConnecting = addAttackSkillPoint = requestedOutfit = mounted = outfitAttributes = sentChat = false;
 	saving = true;
 
 	lastAttackBlockType = BLOCK_NONE;
@@ -2362,7 +2362,7 @@ void Player::dropCorpse(DeathList deathList)
 		if(health <= 0)
 		{
 			health = healthMax;
-			if(getZone() != ZONE_HARDCORE || g_config.getBool(ConfigManager::PVPZONE_ADDMANASPENT))
+			if(getZone() != ZONE_HARDCORE || g_config.getBool(ConfigManager::PVPZONE_RECOVERMANA))
 				mana = manaMax;
 		}
 
@@ -5356,7 +5356,7 @@ bool Player::tameMount(uint8_t mountId)
 	int32_t key = PSTRG_MOUNTS_RANGE_START + (mountId / 31), value = 0;
 
 	std::string tmp;
-	if(getStorage(boost::lexical_cast<std::string>(key), tmp))
+	if(getStorage(asString(key), tmp))
 	{
 		value = atoi(tmp.c_str());
 		value |= (int32_t)pow(2., mountId % 31);
@@ -5364,7 +5364,7 @@ bool Player::tameMount(uint8_t mountId)
 	else
 		value = (int32_t)pow(2., mountId % 31);
 
-	setStorage(boost::lexical_cast<std::string>(key), boost::lexical_cast<std::string>(value));
+	setStorage(asString(key), asString(value));
 	return true;
 }
 
@@ -5377,7 +5377,7 @@ bool Player::untameMount(uint8_t mountId)
 	int32_t key = PSTRG_MOUNTS_RANGE_START + (mountId / 31), value = 0;
 
 	std::string tmp;
-	if(!getStorage(boost::lexical_cast<std::string>(key), tmp))
+	if(!getStorage(asString(key), tmp))
 		return true;
 
 	value = atoi(tmp.c_str());
@@ -5390,6 +5390,6 @@ bool Player::untameMount(uint8_t mountId)
 		defaultOutfit.lookMount = 0;
 	}
 
-	setStorage(boost::lexical_cast<std::string>(key), boost::lexical_cast<std::string>(value));
+	setStorage(asString(key), asString(value));
 	return true;
 }

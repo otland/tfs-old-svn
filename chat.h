@@ -111,6 +111,7 @@ class PrivateChatChannel : public ChatChannel
 };
 
 typedef std::list<ChatChannel*> ChannelList;
+typedef std::list<std::pair<uint16_t, const std::string&> > ChannelsList;
 
 class Chat
 {
@@ -137,7 +138,7 @@ class Chat
 		ChatChannel* getChannelById(uint16_t channelId);
 
 		std::string getChannelName(Player* player, uint16_t channelId);
-		ChannelList getChannelList(Player* player);
+		ChannelsList getChannelList(Player* player);
 
 		PrivateChatChannel* getPrivateChannel(Player* player);
 		bool isPrivateChannel(uint16_t cid) const {return m_privateChannels.find(cid) != m_privateChannels.end();}

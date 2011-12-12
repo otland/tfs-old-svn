@@ -31,6 +31,7 @@ enum CreatureEventType_t
 	CREATURE_EVENT_SPAWN_GLOBAL,
 	CREATURE_EVENT_CHANNEL_JOIN,
 	CREATURE_EVENT_CHANNEL_LEAVE,
+	CREATURE_EVENT_CHANNEL_OPEN,
 	CREATURE_EVENT_ADVANCE,
 	CREATURE_EVENT_LOOK,
 	CREATURE_EVENT_DIRECTION,
@@ -118,17 +119,18 @@ class CreatureEvent : public Event
 		void clearEvent();
 
 		//scripting
-		uint32_t executeLogin(Player* player);
+		uint32_t executePlayer(Player* player);
 		uint32_t executeLogout(Player* player, bool forceLogout);
 		uint32_t executeSpawn(Monster* monster);
 		uint32_t executeChannel(Player* player, uint16_t channelId, UsersMap usersMap);
+		uint32_t executeChannelOpen(Player* player, const std::string& channel, bool isPrivate, bool custom);
 		uint32_t executeAdvance(Player* player, skills_t skill, uint32_t oldLevel, uint32_t newLevel);
 		uint32_t executeLook(Player* player, Thing* thing, const Position& position, int16_t stackpos, int32_t lookDistance);
 		uint32_t executeMail(Player* player, Player* target, Item* item, bool openBox);
 		uint32_t executeTradeRequest(Player* player, Player* target, Item* item);
 		uint32_t executeTradeAccept(Player* player, Player* target, Item* item, Item* targetItem);
 		uint32_t executeTextEdit(Player* player, Item* item, std::string newText);
-		uint32_t executeReportBug(Player* player, std::string comment);
+		uint32_t executeReportBug(Player* player, const std::string& comment);
 		uint32_t executeReportViolation(Player* player, ReportType_t type, uint8_t reason, const std::string& name,
 			const std::string& comment, const std::string& translation, uint32_t statementId);
 		uint32_t executeThankYou(Player* player, uint32_t statementId);

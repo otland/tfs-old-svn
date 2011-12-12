@@ -33,7 +33,7 @@ bool Mount::isTamed(Player* player) const
 	std::string value;
 
 	int32_t key = PSTRG_MOUNTS_RANGE_START + (tmpId / 31);
-	if(player->getStorage(boost::lexical_cast<std::string>(key), value))
+	if(player->getStorage(asString(key), value))
 	{
 		int32_t tmp = (int32_t)std::pow(2., tmpId % 31);
 		return (tmp & atoi(value.c_str())) == tmp;

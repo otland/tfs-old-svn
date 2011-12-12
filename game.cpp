@@ -2346,7 +2346,8 @@ bool Game::playerRequestChannels(uint32_t playerId)
 	if(!player || player->isRemoved())
 		return false;
 
-	player->sendChannelsDialog();
+	player->sendChannelsDialog(g_chat.getChannelList(player));
+	player->setSentChat(true);
 	return true;
 }
 
@@ -2354,6 +2355,18 @@ bool Game::playerOpenChannel(uint32_t playerId, uint16_t channelId)
 {
 	Player* player = getPlayerByID(playerId);
 	if(!player || player->isRemoved())
+		return false;
+
+	bool deny = false;
+	CreatureEventList openEvents = player->getCreatureEvents(CREATURE_EVENT_CHANNEL_OPEN);
+	for(CreatureEventList::iterator it = openEvents.begin(); it != openEvents.end(); ++it)
+	{
+		if(!(*it)->executeChannelOpen(player, asString(channelId), false, !player->hasSentChat()) && !deny)
+			deny = true;
+	}
+
+	player->setSentChat(false);
+	if(deny)
 		return false;
 
 	ChatChannel* channel = g_chat.addUserToChannel(player, channelId);
@@ -2383,6 +2396,18 @@ bool Game::playerOpenPrivateChannel(uint32_t playerId, std::string& receiver)
 {
 	Player* player = getPlayerByID(playerId);
 	if(!player || player->isRemoved())
+		return false;
+
+	bool deny = false;
+	CreatureEventList openEvents = player->getCreatureEvents(CREATURE_EVENT_CHANNEL_OPEN);
+	for(CreatureEventList::iterator it = openEvents.begin(); it != openEvents.end(); ++it)
+	{
+		if(!(*it)->executeChannelOpen(player, receiver, true, !player->hasSentChat()) && !deny)
+			deny = true;
+	}
+
+	player->setSentChat(false);
+	if(deny)
 		return false;
 
 	if(IOLoginData::getInstance()->playerExists(receiver))

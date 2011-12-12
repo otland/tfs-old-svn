@@ -1157,42 +1157,42 @@ std::string Chat::getChannelName(Player* player, uint16_t channelId)
 	return "";
 }
 
-ChannelList Chat::getChannelList(Player* player)
+ChannelsList Chat::getChannelList(Player* player)
 {
-	ChannelList list;
+	ChannelsList list;
 	if(!player || player->isRemoved())
 		return list;
 
 	ChatChannel* channel = NULL;
 	if(player->getParty() && ((channel = getChannel(player, CHANNEL_PARTY)) || (channel = createChannel(player, CHANNEL_PARTY))))
-		list.push_back(channel);
+		list.push_back(std::make_pair(channel->getId(), channel->getName()));
 
 	if(player->getGuildId() && player->getGuildName().length() && ((channel = getChannel(
 		player, CHANNEL_GUILD)) || (channel = createChannel(player, CHANNEL_GUILD))))
-		list.push_back(channel);
+		list.push_back(std::make_pair(channel->getId(), channel->getName()));
 
 	for(NormalChannelMap::iterator it = m_normalChannels.begin(); it != m_normalChannels.end(); ++it)
 	{
 		if((channel = getChannel(player, it->first)))
-			list.push_back(it->second);
+			list.push_back(std::make_pair(channel->getId(), channel->getName()));
 	}
 
 	bool hasPrivate = false;
-	PrivateChatChannel* privChannel = NULL;
+	PrivateChatChannel* privateChannel = NULL;
 	for(PrivateChannelMap::iterator pit = m_privateChannels.begin(); pit != m_privateChannels.end(); ++pit)
 	{
-		if(!(privChannel = pit->second))
+		if(!(privateChannel = pit->second))
 			continue;
 
-		if(privChannel->isInvited(player))
-			list.push_back(privChannel);
+		if(privateChannel->isInvited(player))
+			list.push_back(std::make_pair(privateChannel->getId(), privateChannel->getName()));
 
-		if(privChannel->getOwner() == player->getGUID())
+		if(privateChannel->getOwner() == player->getGUID())
 			hasPrivate = true;
 	}
 
 	if(!hasPrivate && player->isPremium())
-		list.push_front(dummyPrivate);
+		list.push_front(std::make_pair(dummyPrivate->getId(), dummyPrivate->getName()));
 
 	return list;
 }

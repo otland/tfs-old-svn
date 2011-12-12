@@ -113,6 +113,7 @@ enum GamemasterCondition_t
 };
 
 typedef std::set<uint32_t> VIPSet;
+typedef std::list<std::pair<uint16_t, const std::string&> > ChannelsList;
 typedef std::vector<std::pair<uint32_t, Container*> > ContainerVector;
 typedef std::map<uint32_t, std::pair<Depot*, bool> > DepotMap;
 typedef std::map<uint32_t, uint32_t> MuteCountMap;
@@ -360,6 +361,9 @@ class Player : public Creature, public Cylinder
 		void setWalkthrough(const Creature* creature, bool walkthrough);
 
 		virtual bool canSeeInvisibility() const {return hasFlag(PlayerFlag_CanSenseInvisibility);}
+
+		bool hasSentChat() const {return sentChat;}
+		void setSentChat(bool sending) {sentChat = sending;}
 
 		virtual RaceType_t getRace() const {return RACE_BLOOD;}
 
@@ -688,8 +692,8 @@ class Player : public Creature, public Cylinder
 			{if(client) client->sendCloseTrade();}
 		void sendWorldLight(LightInfo& lightInfo)
 			{if(client) client->sendWorldLight(lightInfo);}
-		void sendChannelsDialog()
-			{if(client) client->sendChannelsDialog();}
+		void sendChannelsDialog(const ChannelsList& channels)
+			{if(client) client->sendChannelsDialog(channels);}
 		void sendOpenPrivateChannel(const std::string& receiver)
 			{if(client) client->sendOpenPrivateChannel(receiver);}
 		void sendOutfitWindow()
@@ -835,6 +839,7 @@ class Player : public Creature, public Cylinder
 		bool addAttackSkillPoint;
 		bool mounted;
 		bool pvpBlessing;
+		bool sentChat;
 
 		OperatingSystem_t operatingSystem;
 		AccountManager_t accountManager;

@@ -286,6 +286,7 @@ bool ConfigManager::load()
 	m_confNumber[EXPERIENCE_SHARE_ACTIVITY]		= getGlobalNumber("experienceShareActivity", 120000);
 	m_confBool[GHOST_SPELL_EFFECTS]			= getGlobalBool("ghostModeSpellEffects", true);
 	m_confBool[PVPZONE_ADDMANASPENT]		= getGlobalBool("addManaSpentInPvPZone", true);
+	m_confBool[PVPZONE_RECOVERMANA]		= getGlobalBool("recoverManaAfterDeathInPvPZone", false);
 	m_confNumber[TILE_LIMIT]			= getGlobalNumber("tileLimit", 0);
 	m_confNumber[PROTECTION_TILE_LIMIT]		= getGlobalNumber("protectionTileLimit", 0);
 	m_confNumber[HOUSE_TILE_LIMIT]			= getGlobalNumber("houseTileLimit", 0);

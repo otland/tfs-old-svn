@@ -33,6 +33,7 @@ class Tile;
 class Connection;
 class Quest;
 
+typedef std::list<std::pair<uint16_t, const std::string&> > ChannelsList;
 typedef boost::shared_ptr<NetworkMessage> NetworkMessage_ptr;
 class ProtocolGame : public Protocol
 {
@@ -158,7 +159,7 @@ class ProtocolGame : public Protocol
 		void parseChannelExclude(NetworkMessage& msg);
 		void parseGetChannels(NetworkMessage& msg);
 		void parseOpenChannel(NetworkMessage& msg);
-		void parseOpenPriv(NetworkMessage& msg);
+		void parseOpenPrivate(NetworkMessage& msg);
 		void parseCloseChannel(NetworkMessage& msg);
 		void parseCloseNpc(NetworkMessage& msg);
 
@@ -170,7 +171,7 @@ class ProtocolGame : public Protocol
 		void sendChannelEvent(uint16_t channelId, const std::string& playerName, ChannelEvent_t channelEvent);
 		void sendClosePrivate(uint16_t channelId);
 		void sendCreatePrivateChannel(uint16_t channelId, const std::string& channelName);
-		void sendChannelsDialog();
+		void sendChannelsDialog(const ChannelsList& channels);
 		void sendChannel(uint16_t channelId, const std::string& channelName);
 		void sendOpenPrivateChannel(const std::string& receiver);
 		void sendIcons(int32_t icons);

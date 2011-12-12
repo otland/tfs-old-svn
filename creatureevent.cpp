@@ -105,7 +105,7 @@ bool CreatureEvents::playerLogin(Player* player)
 	for(CreatureEventList::iterator it = m_creatureEvents.begin(); it != m_creatureEvents.end(); ++it)
 	{
 		if((*it)->getEventType() == CREATURE_EVENT_LOGIN &&
-			(*it)->isLoaded() && !(*it)->executeLogin(player) && result)
+			(*it)->isLoaded() && !(*it)->executePlayer(player) && result)
 			result = false;
 	}
 
@@ -184,6 +184,8 @@ bool CreatureEvent::configureEvent(xmlNodePtr p)
 		m_type = CREATURE_EVENT_CHANNEL_JOIN;
 	else if(tmpStr == "channelleave")
 		m_type = CREATURE_EVENT_CHANNEL_LEAVE;
+	else if(tmpStr == "channelopen")
+		m_type = CREATURE_EVENT_CHANNEL_OPEN;
 	else if(tmpStr == "advance")
 		m_type = CREATURE_EVENT_ADVANCE;
 	else if(tmpStr == "mailsend")
@@ -263,6 +265,8 @@ std::string CreatureEvent::getScriptEventName() const
 			return "onChannelJoin";
 		case CREATURE_EVENT_CHANNEL_LEAVE:
 			return "onChannelLeave";
+		case CREATURE_EVENT_CHANNEL_OPEN:
+			return "onChannelOpen";
 		case CREATURE_EVENT_THINK:
 			return "onThink";
 		case CREATURE_EVENT_ADVANCE:
@@ -334,6 +338,8 @@ std::string CreatureEvent::getScriptEventParams() const
 		case CREATURE_EVENT_CHANNEL_JOIN:
 		case CREATURE_EVENT_CHANNEL_LEAVE:
 			return "cid, channel, users";
+		case CREATURE_EVENT_CHANNEL_OPEN:
+			return "cid, channel, custom";
 		case CREATURE_EVENT_ADVANCE:
 			return "cid, skill, oldLevel, newLevel";
 		case CREATURE_EVENT_LOOK:
@@ -410,7 +416,7 @@ void CreatureEvent::clearEvent()
 	m_loaded = false;
 }
 
-uint32_t CreatureEvent::executeLogin(Player* player)
+uint32_t CreatureEvent::executePlayer(Player* player)
 {
 	//onLogin(cid)
 	if(m_interface->reserveEnv())
@@ -457,7 +463,7 @@ uint32_t CreatureEvent::executeLogin(Player* player)
 	}
 	else
 	{
-		std::clog << "[Error - CreatureEvent::executeLogin] Call stack overflow." << std::endl;
+		std::clog << "[Error - CreatureEvent::executePlayer] Call stack overflow." << std::endl;
 		return 0;
 	}
 }
@@ -1643,7 +1649,7 @@ uint32_t CreatureEvent::executeTextEdit(Player* player, Item* item, std::string 
 	}
 }
 
-uint32_t CreatureEvent::executeReportBug(Player* player, std::string comment)
+uint32_t CreatureEvent::executeReportBug(Player* player, const std::string& comment)
 {
 	//onReportBug(cid, comment)
 	if(m_interface->reserveEnv())
@@ -1764,6 +1770,70 @@ uint32_t CreatureEvent::executeReportViolation(Player* player, ReportType_t type
 	else
 	{
 		std::clog << "[Error - CreatureEvent::executeReportViolation] Call stack overflow." << std::endl;
+		return 0;
+	}
+}
+
+uint32_t CreatureEvent::executeChannelOpen(Player* player, const std::string& channel, bool isPrivate, bool custom)
+{
+	//onChannelOpen(cid, channel, private)
+	if(m_interface->reserveEnv())
+	{
+		ScriptEnviroment* env = m_interface->getEnv();
+		if(m_scripted == EVENT_SCRIPT_BUFFER)
+		{
+			env->setRealPos(player->getPosition());
+			std::stringstream scriptstream;
+
+			scriptstream << "local cid = " << env->addThing(player) << std::endl;
+			if(isPrivate)
+				scriptstream << "local channel = " << atoi(channel.c_str()) << std::endl;
+			else
+				scriptstream << "local channel = " << channel << std::endl;
+
+			scriptstream << "local custom = " << (custom ? "true" : "false") << std::endl;
+			if(m_scriptData)
+				scriptstream << *m_scriptData;
+
+			bool result = true;
+			if(m_interface->loadBuffer(scriptstream.str()))
+			{
+				lua_State* L = m_interface->getState();
+				result = m_interface->getGlobalBool(L, "_result", true);
+			}
+
+			m_interface->releaseEnv();
+			return result;
+		}
+		else
+		{
+			#ifdef __DEBUG_LUASCRIPTS__
+			char desc[35];
+			sprintf(desc, "%s", player->getName().c_str());
+			env->setEvent(desc);
+			#endif
+
+			env->setScriptId(m_scriptId, m_interface);
+			env->setRealPos(player->getPosition());
+
+			lua_State* L = m_interface->getState();
+			m_interface->pushFunction(m_scriptId);
+
+			lua_pushnumber(L, env->addThing(player));
+			if(isPrivate)
+				lua_pushnumber(L, atoi(channel.c_str()));
+			else
+				lua_pushstring(L, channel.c_str());
+
+			lua_pushboolean(L, custom);
+			bool result = m_interface->callFunction(2);
+			m_interface->releaseEnv();
+			return result;
+		}
+	}
+	else
+	{
+		std::clog << "[Error - CreatureEvent::executeThankYou] Call stack overflow." << std::endl;
 		return 0;
 	}
 }
