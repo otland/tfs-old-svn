@@ -113,7 +113,7 @@ enum GamemasterCondition_t
 };
 
 typedef std::set<uint32_t> VIPSet;
-typedef std::list<std::pair<uint16_t, const std::string&> > ChannelsList;
+typedef std::list<std::pair<uint16_t, std::string> > ChannelsList;
 typedef std::vector<std::pair<uint32_t, Container*> > ContainerVector;
 typedef std::map<uint32_t, std::pair<Depot*, bool> > DepotMap;
 typedef std::map<uint32_t, uint32_t> MuteCountMap;

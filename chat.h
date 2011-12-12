@@ -111,7 +111,7 @@ class PrivateChatChannel : public ChatChannel
 };
 
 typedef std::list<ChatChannel*> ChannelList;
-typedef std::list<std::pair<uint16_t, const std::string&> > ChannelsList;
+typedef std::list<std::pair<uint16_t, std::string> > ChannelsList;
 
 class Chat
 {

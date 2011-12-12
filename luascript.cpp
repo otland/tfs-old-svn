@@ -1775,6 +1775,9 @@ void LuaInterface::registerFunctions()
 	//doPlayerOpenChannel(cid, channelId)
 	lua_register(m_luaState, "doPlayerOpenChannel", LuaInterface::luaDoPlayerOpenChannel);
 
+	//doPlayerSendChannels(cid[, list])
+	lua_register(m_luaState, "doPlayerSendChannels", LuaInterface::luaDoPlayerSendChannels);
+
 	//doPlayerAddMoney(cid, money)
 	lua_register(m_luaState, "doPlayerAddMoney", LuaInterface::luaDoPlayerAddMoney);
 
@@ -4295,6 +4298,44 @@ int32_t LuaInterface::luaDoPlayerOpenChannel(lua_State* L)
 	if(env->getPlayerByUID(cid))
 	{
 		lua_pushboolean(L, g_game.playerOpenChannel(cid, channelId));
+		return 1;
+	}
+
+	errorEx(getError(LUA_ERROR_PLAYER_NOT_FOUND));
+	lua_pushboolean(L, false);
+	return 1;
+}
+
+int32_t LuaInterface::luaDoPlayerSendChannels(lua_State* L)
+{
+	//doPlayerSendChannels(cid[, list])
+	ChannelsList channels;
+	if(lua_gettop(L) > 1)
+	{
+		if(!lua_istable(L, -1))
+		{
+			errorEx("Channel list is not a table");
+			lua_pushboolean(L, false);
+			return 1;
+		}
+		
+		lua_pushnil(L);
+		while(lua_next(L, -2))
+		{
+			std::string name = lua_tostring(L, -1);
+			channels.push_back(std::make_pair(lua_tonumber(L, -1), name));
+		}
+
+		lua_pop(L, 1);
+	}
+	else
+		channels = g_chat.getChannelList();
+
+	ScriptEnviroment* env = getEnv();
+	if(Player* player = env->getPlayerByUID(popNumber(L)))
+	{
+		player->sendChannelsDialog(channels);
+		lua_pushboolean(L, true);
 		return 1;
 	}
 

@@ -2840,7 +2840,7 @@ int32_t NpcScript::luaOpenShopWindow(lua_State* L)
 
 	if(!lua_istable(L, -1))
 	{
-		error(__FUNCTION__, "item list is not a table.");
+		error(__FUNCTION__, "Item list is not a table");
 		lua_pushboolean(L, false);
 		return 1;
 	}

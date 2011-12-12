@@ -33,7 +33,7 @@ class Tile;
 class Connection;
 class Quest;
 
-typedef std::list<std::pair<uint16_t, const std::string&> > ChannelsList;
+typedef std::list<std::pair<uint16_t, std::string> > ChannelsList;
 typedef boost::shared_ptr<NetworkMessage> NetworkMessage_ptr;
 class ProtocolGame : public Protocol
 {
