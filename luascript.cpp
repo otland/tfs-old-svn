@@ -4310,7 +4310,8 @@ int32_t LuaInterface::luaDoPlayerSendChannels(lua_State* L)
 {
 	//doPlayerSendChannels(cid[, list])
 	ChannelsList channels;
-	if(lua_gettop(L) > 1)
+	uint32_t params = lua_gettop(L);
+	if(params > 1)
 	{
 		if(!lua_istable(L, -1))
 		{
@@ -4323,17 +4324,18 @@ int32_t LuaInterface::luaDoPlayerSendChannels(lua_State* L)
 		while(lua_next(L, -2))
 		{
 			std::string name = lua_tostring(L, -1);
-			channels.push_back(std::make_pair(lua_tonumber(L, -1), name));
+			channels.push_back(std::make_pair((uint16_t)lua_tonumber(L, -1), name));
 		}
 
 		lua_pop(L, 1);
 	}
-	else
-		channels = g_chat.getChannelList();
 
 	ScriptEnviroment* env = getEnv();
 	if(Player* player = env->getPlayerByUID(popNumber(L)))
 	{
+		if(params < 2)
+			channels = g_chat.getChannelList(player);
+
 		player->sendChannelsDialog(channels);
 		lua_pushboolean(L, true);
 		return 1;
