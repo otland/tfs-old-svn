@@ -4337,6 +4337,7 @@ int32_t LuaInterface::luaDoPlayerSendChannels(lua_State* L)
 			channels = g_chat.getChannelList(player);
 
 		player->sendChannelsDialog(channels);
+		player->setSentChat(params < 2);
 		lua_pushboolean(L, true);
 		return 1;
 	}
