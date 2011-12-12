@@ -3793,8 +3793,8 @@ void Player::onTarget(Creature* target)
 		return;
 
 	addAttacked(targetPlayer);
-	if(Combat::isInPvpZone(this, targetPlayer) || isPartner(targetPlayer) || isAlly(targetPlayer) ||
-		(g_config.getBool(ConfigManager::ALLOW_FIGHTBACK) && targetPlayer->hasAttacked(this)
+	if(Combat::isInPvpZone(this, targetPlayer) || isPartner(targetPlayer) || isAlly(targetPlayer)
+		|| (g_config.getBool(ConfigManager::ALLOW_FIGHTBACK) && targetPlayer->hasAttacked(this)
 		&& !targetPlayer->isEnemy(this, false)))
 		return;
 
@@ -3804,13 +3804,13 @@ void Player::onTarget(Creature* target)
 		sendIcons();
 	}
 
-	if(getZone() != target->getZone() || skull != SKULL_NONE ||
-		targetPlayer->isEnemy(this, true) || canRevenge(targetPlayer->getGUID()))
+	if(getZone() != target->getZone() || skull != SKULL_NONE || targetPlayer->isEnemy(this, true)
+		|| canRevenge(targetPlayer->getGUID()) || g_game.getWorldType() != WORLDTYPE_OPEN)
 		return;
 
 	if(target->getSkull() != SKULL_NONE || (targetPlayer->canRevenge(guid) && targetPlayer->hasAttacked(this)))
 		targetPlayer->sendCreatureSkull(this);
-	else if(!hasCustomFlag(PlayerCustomFlag_NotGainSkull) && g_game.getWorldType() == WORLDTYPE_OPEN)
+	else if(!hasCustomFlag(PlayerCustomFlag_NotGainSkull))
 	{
 		setSkull(SKULL_WHITE);
 		g_game.updateCreatureSkull(this);
