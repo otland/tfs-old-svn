@@ -8023,7 +8023,7 @@ int32_t LuaInterface::luaDoAddContainerItem(lua_State* L)
 
 		uint32_t dummy = 0;
 		Item* stackItem = NULL;
-		if(g_game.internalAddItem(NULL, tile, newItem, INDEX_WHEREEVER, FLAG_NOLIMIT, false, dummy, &stackItem) != RET_NOERROR)
+		if(g_game.internalAddItem(NULL, container, newItem, INDEX_WHEREEVER, FLAG_NOLIMIT, false, dummy, &stackItem) != RET_NOERROR)
 		{
 			delete newItem;
 			lua_pushboolean(L, false);
