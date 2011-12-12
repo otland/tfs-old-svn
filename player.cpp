@@ -3810,7 +3810,7 @@ void Player::onTarget(Creature* target)
 
 	if(target->getSkull() != SKULL_NONE || (targetPlayer->canRevenge(guid) && targetPlayer->hasAttacked(this)))
 		targetPlayer->sendCreatureSkull(this);
-	else if(!hasCustomFlag(PlayerCustomFlag_NotGainSkull))
+	else if(!hasCustomFlag(PlayerCustomFlag_NotGainSkull) && g_game.getWorldType() == WORLDTYPE_OPEN)
 	{
 		setSkull(SKULL_WHITE);
 		g_game.updateCreatureSkull(this);
