@@ -67,7 +67,7 @@ class ChatChannel
 
 		bool addUser(Player* player);
 		bool removeUser(Player* player, bool exclude = false);
-		bool hasUser(Player* player) const {return m_users.find(player) != m_users.end();}
+		bool hasUser(Player* player) const {return player && m_users.find(player->getID()) != m_users.end();}
 
 		bool talk(Player* player, MessageClasses type, const std::string& text, uint32_t statementId);
 		bool talk(std::string nick, MessageClasses type, const std::string& text);
