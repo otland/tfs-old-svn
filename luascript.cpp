@@ -4323,8 +4323,8 @@ int32_t LuaInterface::luaDoPlayerSendChannels(lua_State* L)
 		lua_pushnil(L);
 		while(lua_next(L, -2))
 		{
-			std::string name = lua_tostring(L, -1);
-			channels.push_back(std::make_pair((uint16_t)lua_tonumber(L, -1), name));
+			channels.push_back(std::make_pair((uint16_t)lua_tonumber(L, -2), lua_tostring(L, -1)));
+			lua_pop(L, 1);
 		}
 
 		lua_pop(L, 1);
