@@ -345,7 +345,7 @@ AccessHouseLevel_t House::getHouseAccessLevel(const Player* player)
 			}
 		}
 	}
-	else if(player->getGUID() == owner)
+	else if(player->getGUID() == owner || player->marriage == owner)
 		return HOUSE_OWNER;
 
 	if(subOwnerList.isInList(player))
