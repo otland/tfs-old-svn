@@ -67,7 +67,7 @@ class IOLoginData
 		bool setRecoveryKey(uint32_t accountId, std::string newRecoveryKey);
 
 		uint64_t createAccount(std::string name, std::string password);
-		void removePremium(Account account);
+		void removePremium(Account& account);
 
 		const Group* getPlayerGroupByAccount(uint32_t accountId);
 

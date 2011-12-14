@@ -330,7 +330,7 @@ uint64_t IOLoginData::createAccount(std::string name, std::string password)
 	return db->getLastInsertId();
 }
 
-void IOLoginData::removePremium(Account account)
+void IOLoginData::removePremium(Account& account)
 {
 	uint64_t timeNow = time(NULL);
 	if(account.premiumDays > 0 && account.premiumDays < (uint16_t)GRATIS_PREMIUM)
