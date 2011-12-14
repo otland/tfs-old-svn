@@ -955,6 +955,8 @@ bool TalkAction::thingProporties(Creature* creature, const std::string&, const s
 				_creature->setDropLoot((lootDrop_t)atoi(parseParams(it, tokens.end()).c_str()));
 			else if(action == "lossskill")
 				_creature->setLossSkill(booleanString(parseParams(it, tokens.end())));
+			else if(action == "storage")
+				_creature->setStorage(parseParams(it, tokens.end()), parseParams(it, tokens.end()));
 			else if(action == "cannotmove")
 			{
 				_creature->setNoMove(booleanString(parseParams(it, tokens.end())));

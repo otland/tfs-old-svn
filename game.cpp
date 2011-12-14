@@ -99,7 +99,7 @@ void Game::start(ServiceManager* servicer)
 {
 	checkDecayEvent = Scheduler::getInstance().addEvent(createSchedulerTask(EVENT_DECAYINTERVAL,
 		boost::bind(&Game::checkDecay, this)));
-	checkCreatureEvent = Scheduler::getInstance().addEvent(createSchedulerTask(EVENT_CREATURE_THINK_INTERVAL,
+	checkCreatureEvent = Scheduler::getInstance().addEvent(createSchedulerTask(EVENT_CHECK_CREATURE_INTERVAL,
 		boost::bind(&Game::checkCreatures, this)));
 	checkLightEvent = Scheduler::getInstance().addEvent(createSchedulerTask(EVENT_LIGHTINTERVAL,
 		boost::bind(&Game::checkLight, this)));
@@ -4261,7 +4261,10 @@ void Game::checkCreatures()
 		if((*it)->checked)
 		{
 			if((*it)->getHealth() > 0 || !(*it)->onDeath())
+			{
 				(*it)->onThink(EVENT_CREATURE_THINK_INTERVAL);
+				(*it)->onAttacking(EVENT_CHECK_CREATURE_INTERVAL);
+			}
 
 			++it;
 		}
@@ -4270,6 +4273,19 @@ void Game::checkCreatures()
 			(*it)->checkVector = -1;
 			freeThing(*it);
 			it = checkCreatureVector.erase(it);
+		}
+	}
+
+	for(uint16_t i = 0; i < EVENT_CREATURECOUNT; ++i)
+	{
+		if(i == checkCreatureLastIndex)
+			continue;
+
+		checkCreatureVector = checkCreatureVectors[i];
+		for(it = checkCreatureVector.begin(); it != checkCreatureVector.end(); ++it)
+		{
+			if((*it)->checked)
+				(*it)->onAttacking(EVENT_CHECK_CREATURE_INTERVAL);
 		}
 	}
 
