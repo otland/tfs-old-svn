@@ -2899,13 +2899,7 @@ void ProtocolGame::AddCreature(NetworkMessage_ptr msg, const Creature* creature,
 	AddCreatureOutfit(msg, creature, creature->getCurrentOutfit());
 
 	LightInfo lightInfo;
-	if(creature == player && player->hasCustomFlag(PlayerCustomFlag_HasFullLight))
-	{
-		lightInfo.level = 0xFF;
-		lightInfo.color = 215;
-	}
-	else
-		creature->getCreatureLight(lightInfo);
+	creature->getCreatureLight(lightInfo);
 
 	msg->put<char>(lightInfo.level);
 	msg->put<char>(lightInfo.color);
@@ -3056,7 +3050,7 @@ void ProtocolGame::AddCreatureOutfit(NetworkMessage_ptr msg, const Creature* cre
 void ProtocolGame::AddWorldLight(NetworkMessage_ptr msg, const LightInfo& lightInfo)
 {
 	msg->put<char>(0x82);
-	msg->put<char>(player->hasCustomFlag(PlayerCustomFlag_HasFullLight) ? 0xFF : lightInfo.level);
+	msg->put<char>(lightInfo.level);
 	msg->put<char>(lightInfo.color);
 }
 
@@ -3066,13 +3060,7 @@ void ProtocolGame::AddCreatureLight(NetworkMessage_ptr msg, const Creature* crea
 	msg->put<uint32_t>(creature->getID());
 
 	LightInfo lightInfo;
-	if(creature == player && player->hasCustomFlag(PlayerCustomFlag_HasFullLight))
-	{
-		lightInfo.level = 0xFF;
-		lightInfo.color = 215;
-	}
-	else
-		creature->getCreatureLight(lightInfo);
+	creature->getCreatureLight(lightInfo);
 
 	msg->put<char>(lightInfo.level);
 	msg->put<char>(lightInfo.color);

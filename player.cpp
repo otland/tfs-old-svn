@@ -3636,7 +3636,12 @@ void Player::onWalkComplete()
 
 void Player::getCreatureLight(LightInfo& light) const
 {
-	if(internalLight.level > itemsLight.level)
+	if(player->hasCustomFlag(PlayerCustomFlag_HasFullLight))
+	{
+		light.level = 0xFF;
+		light.color = 215;
+	}
+	else if(internalLight.level > itemsLight.level)
 		light = internalLight;
 	else
 		light = itemsLight;
