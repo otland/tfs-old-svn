@@ -4319,7 +4319,7 @@ int32_t LuaInterface::luaDoPlayerSendChannels(lua_State* L)
 			lua_pushboolean(L, false);
 			return 1;
 		}
-		
+
 		lua_pushnil(L);
 		while(lua_next(L, -2))
 		{

@@ -74,7 +74,7 @@ Player::Player(const std::string& _name, ProtocolGame* p):
 	windowTextId = 0;
 
 	purchaseCallback = saleCallback = -1;
-	level = shootRange = 1;
+	level = 1;
 	rates[SKILL__MAGLEVEL] = rates[SKILL__LEVEL] = 1.0f;
 	soulMax = 100;
 	capacity = 400.00;
@@ -309,20 +309,11 @@ Item* Player::getWeapon(bool ignoreAmmo)
 			if(ammoItem && ammoItem->getAmmoType() == item->getAmmoType())
 			{
 				if(g_weapons->getWeapon(ammoItem))
-				{
-					shootRange = ammoItem->getShootRange();
-					if(g_weapons->getWeapon(item))
-						shootRange = item->getShootRange();
-
 					return ammoItem;
-				}
 			}
 		}
 		else if(g_weapons->getWeapon(item))
-		{
-			shootRange = item->getShootRange();
 			return item;
-		}
 	}
 
 	return NULL;
@@ -347,7 +338,7 @@ ItemVector Player::getWeapons() const
 				if(item->getAmmoType() != AMMO_NONE)
 				{
 					Item* ammoItem = getInventoryItem(SLOT_AMMO);
-					if(ammoItem && !ammoItem->isRemoved() && ammoItem->getAmmoType() == item->getAmmoType())
+					if(ammoItem && ammoItem->getAmmoType() == item->getAmmoType())
 						item = ammoItem;
 					else
 						break;
@@ -4467,7 +4458,10 @@ uint64_t Player::getLostExperience() const
 
 uint32_t Player::getAttackSpeed() const
 {
-	Item* _weapon = getWeapon(true);
+	Item* _weapon = weapon;
+	if(weapon->getWeaponType() == WEAPON_DIST && weapon->getAmmoType() != AMMO_NONE)
+		_weapon = const_cast<Player*>(this)->getWeapon(true);
+
 	return ((_weapon && _weapon->getAttackSpeed() != 0) ? _weapon->getAttackSpeed() : (vocation->getAttackSpeed() / std::max((size_t)1, getWeapons().size())));
 }
 

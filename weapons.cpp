@@ -286,7 +286,10 @@ int32_t Weapon::playerWeaponCheck(Player* player, Creature* target) const
 	const ItemType& it = Item::items[id];
 	int32_t range = it.shootRange;
 	if(it.weaponType == WEAPON_AMMO)
-		range = player->getShootRange();
+	{
+		if(Item* item = player->getWeapon(true))
+			range = item->getShootRange();
+	}
 
 	if(std::max(std::abs(playerPos.x - targetPos.x), std::abs(playerPos.y - targetPos.y)) > range)
 		return 0;

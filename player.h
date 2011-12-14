@@ -444,7 +444,6 @@ class Player : public Creature, public Cylinder
 			bool checkDefense = false, bool checkArmor = false, bool reflect = true, bool field = false, bool element = false);
 
 		virtual void doAttacking(uint32_t interval);
-		int32_t getShootRange() const {return shootRange;}
 		virtual bool hasExtraSwing() {return lastAttack > 0 && ((OTSYS_TIME() - lastAttack) >= getAttackSpeed());}
 		void setLastAttack(uint64_t time) {lastAttack = time;}
 
@@ -869,7 +868,6 @@ class Player : public Creature, public Cylinder
 		int32_t messageBuffer;
 		int32_t bloodHitCount;
 		int32_t shieldBlockCount;
-		int32_t shootRange;
 
 		uint32_t clientVersion;
 		uint32_t messageTicks;
