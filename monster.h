@@ -106,6 +106,7 @@ class Monster : public Creature
 		virtual void resetLight();
 		virtual bool getCombatValues(int32_t& min, int32_t& max);
 
+		virtual void onAttacking(uint32_t interval);
 		virtual void doAttacking(uint32_t interval);
 		virtual bool hasExtraSwing() {return extraMeleeAttack;}
 
@@ -187,7 +188,7 @@ class Monster : public Creature
 
 		void onThinkTarget(uint32_t interval);
 		void onThinkYell(uint32_t interval);
-		void onThinkDefense(uint32_t interval);
+		void doHealing(uint32_t interval);
 
 		bool isFriend(const Creature* creature);
 		bool isOpponent(const Creature* creature);

@@ -617,7 +617,12 @@ void Monster::onThink(uint32_t interval)
 
 	onThinkTarget(interval);
 	onThinkYell(interval);
-	onThinkDefense(interval);
+}
+
+void Monster::onAttacking(uint32_t interval)
+{
+	Creature::onAttacking(interval);
+	doHealing(interval);
 }
 
 void Monster::doAttacking(uint32_t interval)
@@ -756,7 +761,7 @@ void Monster::onThinkTarget(uint32_t interval)
 		searchTarget(TARGETSEARCH_NEAREST);
 }
 
-void Monster::onThinkDefense(uint32_t interval)
+void Monster::doHealing(uint32_t interval)
 {
 	resetTicks = true;
 	defenseTicks += interval;
