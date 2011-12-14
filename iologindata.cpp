@@ -1775,8 +1775,9 @@ bool IOLoginData::updatePremiumDays()
 	if(!(result = db->storeQuery(query.str())))
 		return false;
 
+	Account account;
 	do
-		removePremium(loadAccount(result->getDataInt("id"), true));
+		removePremium((account = loadAccount(result->getDataInt("id"), true)));
 	while(result->next());
 	result->free();
 
