@@ -833,6 +833,9 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 
 			if(it.hitChance != -1 || (item && item->getHitChance() != -1))
 				s << ", Hit% " << std::showpos << (item ? item->getHitChance() : it.hitChance) << std::noshowpos;
+
+			if(it.attackSpeed || (item && item->getAttackSpeed()))
+				s << ", AS: " << (item ? item->getAttackSpeed() : it.attackSpeed);
 		}
 		else if(it.weaponType != WEAPON_AMMO && it.weaponType != WEAPON_WAND)
 		{
@@ -870,6 +873,9 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 				if(it.extraDefense || (item && item->getExtraDefense()))
 					s << " " << std::showpos << int32_t(item ? item->getExtraDefense() : it.extraDefense) << std::noshowpos;
 			}
+
+			if(it.attackSpeed || (item && item->getAttackSpeed()))
+				s << ", AS: " << (item ? item->getAttackSpeed() : it.attackSpeed);
 		}
 
 		for(uint16_t i = SKILL_FIRST; i <= SKILL_LAST; ++i)

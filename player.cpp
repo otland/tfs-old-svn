@@ -310,7 +310,10 @@ Item* Player::getWeapon(bool ignoreAmmo)
 			{
 				if(g_weapons->getWeapon(ammoItem))
 				{
-					shootRange = item->getShootRange();
+					shootRange = ammoItem->getShootRange();
+					if(g_weapons->getWeapon(item))
+						shootRange = item->getShootRange();
+
 					return ammoItem;
 				}
 			}
@@ -375,9 +378,6 @@ void Player::updateWeapon()
 		weapon = weapons[1];
 	else
 		weapon = NULL;
-
-	if(weapon)
-		shootRange = weapon->getShootRange();
 }
 
 WeaponType_t Player::getWeaponType()
@@ -4467,7 +4467,8 @@ uint64_t Player::getLostExperience() const
 
 uint32_t Player::getAttackSpeed() const
 {
-	return ((weapon && weapon->getAttackSpeed() != 0) ? weapon->getAttackSpeed() : (vocation->getAttackSpeed() / std::max((size_t)1, getWeapons().size())));
+	Item* _weapon = getWeapon(true);
+	return ((_weapon && _weapon->getAttackSpeed() != 0) ? _weapon->getAttackSpeed() : (vocation->getAttackSpeed() / std::max((size_t)1, getWeapons().size())));
 }
 
 void Player::learnInstantSpell(const std::string& name)
