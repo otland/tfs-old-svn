@@ -4261,10 +4261,7 @@ void Game::checkCreatures()
 		if((*it)->checked)
 		{
 			if((*it)->getHealth() > 0 || !(*it)->onDeath())
-			{
 				(*it)->onThink(EVENT_CREATURE_THINK_INTERVAL);
-				(*it)->onAttacking(EVENT_CHECK_CREATURE_INTERVAL);
-			}
 
 			++it;
 		}
@@ -4285,7 +4282,10 @@ void Game::checkCreatures()
 		for(it = checkCreatureVector.begin(); it != checkCreatureVector.end(); ++it)
 		{
 			if((*it)->checked)
-				(*it)->onAttacking(EVENT_CHECK_CREATURE_INTERVAL);
+			{
+				if((*it)->getHealth() > 0)
+					(*it)->onAttacking(EVENT_CHECK_CREATURE_INTERVAL);
+			}
 		}
 	}
 

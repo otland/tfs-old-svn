@@ -214,7 +214,9 @@ void Creature::onThink(uint32_t interval)
 		goToFollowCreature();
 	}
 
+	onAttacking(interval / EVENT_CREATURECOUNT);
 	executeConditions(interval);
+
 	CreatureEventList thinkEvents = getCreatureEvents(CREATURE_EVENT_THINK);
 	for(CreatureEventList::iterator it = thinkEvents.begin(); it != thinkEvents.end(); ++it)
 		(*it)->executeThink(this, interval);
