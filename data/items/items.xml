@@ -9103,11 +9103,11 @@
 	</item>
 	<item id="5736" name="closed bars">
 		<attribute key="type" value="door"/>
-		<attribute key="transformUseTo" value="5537"/>
+		<attribute key="transformUseTo" value="5737"/>
 	</item>
 	<item id="5737" name="open bars">
 		<attribute key="type" value="door"/>
-		<attribute key="transformUseTo" value="5536"/>
+		<attribute key="transformUseTo" value="5736"/>
 	</item>
 	<item id="5738" article="a" name="shark"/>
 	<item fromid="5739" toid="5740" article="a" name="fountain"/>
