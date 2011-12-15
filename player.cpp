@@ -399,6 +399,7 @@ int32_t Player::getWeaponSkill(const Item* item) const
 			return getSkill(SKILL_FIST, SKILL_LEVEL);
 
 		case WEAPON_DIST:
+		case WEAPON_AMMO:
 			return getSkill(SKILL_DIST, SKILL_LEVEL);
 
 		default:
