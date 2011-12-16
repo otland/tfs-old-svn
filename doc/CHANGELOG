@@ -40,7 +40,7 @@
 ]
 
 [ Milestone
-	Game protocol 9.2 support.
+	Game protocol 9.4 support.
 	Revised database system.
 	Fixed element damages.
 	Fixed a bug with Lua function getPlayersByIP, it was ignoring mask even if set.
@@ -49,7 +49,7 @@
 	Corrected the color of the healing numbers.
 	Corrected the new outfit looktypes.
 	Updated item description for expiration times.
-	Added more mounts.
+	Added missing mounts.
 	Fixed element damage hit order.
 	The teleport effect will now show up when a creature is summoned.
 	Fixed hotkey message for items without showCount.
@@ -65,4 +65,5 @@
 	NPC's can now be pushed by players inside their spawn radius.
 	Added database manager for automatic database updates and table optimizations.
 	It is now possible to register multiple creature events with the same type for one creature.
+	Added Ladybug and Manta mounts.
 ]

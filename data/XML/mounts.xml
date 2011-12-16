@@ -25,4 +25,6 @@
 	<mount id="23" clientid="426" name="Fire War Horse" speed="20" premium="yes" />
 	<mount id="24" clientid="437" name="Rented Horse" speed="20" premium="no" />
 	<mount id="25" clientid="438" name="Rented Horse" speed="20" premium="no" />
+	<mount id="26" clientid="447" name="Ladybug" speed="20" premium="no" />
+	<mount id="27" clientid="450" name="Manta" speed="20" premium="no" />
 </mounts>

@@ -1837,10 +1837,10 @@ void ProtocolGame::sendShop(Npc* npc, const ShopInfoList& itemList)
 		TRACK_MESSAGE(msg);
 		msg->AddByte(0x7A);
 		msg->AddString(npc->getName());
-		msg->AddByte(std::min((size_t)255, itemList.size()));
+		msg->AddU16(std::min((size_t)65535, itemList.size()));
 
 		uint32_t i = 0;
-		for(ShopInfoList::const_iterator it = itemList.begin(); it != itemList.end() && i < 255; ++it, ++i)
+		for(ShopInfoList::const_iterator it = itemList.begin(); it != itemList.end() && i < 65535; ++it, ++i)
 			AddShopItem(msg, (*it));
 	}
 }
