@@ -12,7 +12,7 @@
 	<mount id="10" clientid="377" name="Rapid Boar" speed="20" premium="yes" />
 	<mount id="11" clientid="378" name="Stampor" speed="20" premium="yes" />
 	<mount id="12" clientid="379" name="Undead Cavebear" speed="20" premium="yes" />
-	<mount id="13" clientid="387" name="Mule" speed="20" premium="yes" />
+	<mount id="13" clientid="387" name="Donkey" speed="20" premium="yes" />
 	<mount id="14" clientid="388" name="Tiger Slug" speed="20" premium="yes" />
 	<mount id="15" clientid="389" name="Uniwheel" speed="20" premium="yes" />
 	<mount id="16" clientid="390" name="Crystal Wolf" speed="20" premium="yes" />
@@ -23,8 +23,9 @@
 	<mount id="21" clientid="406" name="Sandstone Scorpion" speed="20" premium="yes" />
 	<mount id="22" clientid="421" name="Rented Horse" speed="20" premium="no" />
 	<mount id="23" clientid="426" name="Fire War Horse" speed="20" premium="yes" />
-	<mount id="24" clientid="437" name="Rented Horse" speed="20" premium="no" />
-	<mount id="25" clientid="438" name="Rented Horse" speed="20" premium="no" />
-	<mount id="26" clientid="447" name="Ladybug" speed="20" premium="yes" />
-	<mount id="27" clientid="450" name="Manta" speed="20" premium="yes" />
+	<mount id="24" clientid="427" name="Shadow Draptor" speed="20" premium="yes" />
+	<mount id="25" clientid="437" name="Rented Horse" speed="20" premium="no" />
+	<mount id="26" clientid="438" name="Rented Horse" speed="20" premium="no" />
+	<mount id="27" clientid="447" name="Ladybug" speed="20" premium="yes" />
+	<mount id="28" clientid="450" name="Manta" speed="20" premium="yes" />
 </mounts>
