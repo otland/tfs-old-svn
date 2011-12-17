@@ -810,7 +810,13 @@ MagicEffectNames magicEffectNames[] =
 	{"bats",		NM_ME_BATS},
 	{"smoke",		NM_ME_SMOKE},
 	{"insects",		NM_ME_INSECTS},
-	{"dragonhead",		NM_ME_DRAGONHEAD}
+	{"dragonhead",		NM_ME_DRAGONHEAD},
+	{"orcshaman",		NM_ME_ORCSHAMAN},
+	{"orcshamanfire",	NM_ME_ORCSHAMAN_FIRE},
+	{"thunder",		NM_ME_THUNDER},
+	{"ferumbras",		NM_ME_FERUMBRAS},
+	{"confettihorizontal",	NM_ME_CONFETTI_HORIZONTAL},
+	{"confettivertical",	NM_ME_CONFETTI_VERTICAL}
 };
 
 ShootTypeNames shootTypeNames[] =
