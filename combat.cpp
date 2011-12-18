@@ -1474,10 +1474,12 @@ void MagicField::onStepInField(Creature* creature, bool purposeful/* = true*/)
 	{
 		if(Creature* owner = g_game.getCreatureByID(ownerId))
 		{
-			bool harmful = true;
 			Player* ownerPlayer = owner->getPlayer();
-			if((g_game.getWorldType() == WORLDTYPE_OPTIONAL || tile->hasFlag(TILESTATE_OPTIONALZONE))
-				&& (ownerPlayer || owner->isPlayerSummon()))
+			if(!ownerPlayer && owner->isPlayerSummon())
+				ownerPlayer = owner->getPlayerMaster();
+
+			bool harmful = true;
+			if((g_game.getWorldType() == WORLDTYPE_OPTIONAL || tile->hasFlag(TILESTATE_OPTIONALZONE) && ownerPlayer)
 				harmful = false;
 			else if(Player* player = creature->getPlayer())
 			{
