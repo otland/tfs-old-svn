@@ -36,7 +36,6 @@ class DatabaseMySQLpp : public _Database
 {
 	public:
 		DatabaseMySQLpp();
-
 		DATABASE_VIRTUAL ~DatabaseMySQLpp();
 
 		DATABASE_VIRTUAL bool connect(bool _reconnect);
@@ -57,7 +56,7 @@ class DatabaseMySQLpp : public _Database
 
 	protected:
 		sql::mysql::MySQL_Driver* m_driver;
-		sql::Connection* m_connection;
+		MySQL_Connection* m_connection;
 };
 
 class MySQLppResult : public _DBResult

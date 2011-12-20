@@ -29,7 +29,8 @@
 
 extern ConfigManager g_config;
 
-DatabaseMySQLpp::DatabaseMySQLpp()
+DatabaseMySQLpp::DatabaseMySQLpp() :
+	m_connection(NULL)
 {
 	m_driver = sql::mysql::get_mysql_driver_instance();
 	assert(m_driver);
@@ -71,7 +72,7 @@ bool DatabaseMySQLpp::connect(bool reconnect)
 		delete m_connection;
 	}
 
-	m_connection = driver->connect("tcp://" + g_config.getString(ConfigManager::SQL_HOST) + ":" + asString(
+	m_connection = m_driver->connect("tcp://" + g_config.getString(ConfigManager::SQL_HOST) + ":" + asString(
 		g_config.getNumber(ConfigManager::SQL_PORT)), g_config.getString(ConfigManager::SQL_USER),
 		g_config.getString(ConfigManager::SQL_PASS));
 	return m_connection != NULL;
@@ -103,7 +104,8 @@ bool DatabaseMySQLpp::rollback()
 	if(!m_connection)
 		return false;
 
-	return m_connection->rollback();
+	m_connection->rollback();
+	return true;
 }
 
 bool DatabaseMySQLpp::commit()
@@ -111,7 +113,8 @@ bool DatabaseMySQLpp::commit()
 	if(!m_connection)
 		return false;
 
-	return m_connection->commit();
+	m_connection->commit();
+	return true;
 }
 
 bool DatabaseMySQLpp::query(const std::string &query)
@@ -121,10 +124,7 @@ bool DatabaseMySQLpp::query(const std::string &query)
 
 	sql::Statement* statement = m_connection->createStatement();
 	if(sql::ResultSet* result = statement->executeQuery(query))
-	{
-		result->free();
 		delete result;
-	}
 
 	delete statement;
 	return true;
@@ -147,7 +147,7 @@ DBResult* DatabaseMySQLpp::storeQuery(const std::string &query)
 	return NULL;
 }
 
-std::string DatabaseMySQLpp::escapeBlob(const char* s, uint32_t length)
+std::string DatabaseMySQLpp::escapeBlob(const char* s, uint32_t)
 {
 	if(!m_connection || *s == '\0')
 		return "''";
@@ -223,6 +223,6 @@ MySQLppResult::~MySQLppResult()
 }
 
 MySQLppResult::MySQLppResult(sql::ResultSet* result) :
-	m_result(result);
+	m_result(result)
 { }
 #endif
