@@ -52,7 +52,7 @@ DatabaseMySQLpp::DatabaseMySQLpp() :
 	result->free();
 }
 
-void DatabaseMySQLpp::~DatabaseMySQLpp()
+DatabaseMySQLpp::~DatabaseMySQLpp()
 {
 	if(m_connection)
 		delete m_connection;
@@ -72,9 +72,18 @@ bool DatabaseMySQLpp::connect(bool reconnect)
 		delete m_connection;
 	}
 
-	m_connection = m_driver->connect("tcp://" + g_config.getString(ConfigManager::SQL_HOST) + ":" + asString(
-		g_config.getNumber(ConfigManager::SQL_PORT)), g_config.getString(ConfigManager::SQL_USER),
-		g_config.getString(ConfigManager::SQL_PASS));
+	m_connection = dynamic_cast<sql::mysql::MySQL_Connection*>(m_driver->connect(
+		"tcp://"
+			+
+		g_config.getString(ConfigManager::SQL_HOST)
+			+
+		":"
+			+
+		asString(
+			g_config.getNumber(ConfigManager::SQL_PORT)
+		),
+		g_config.getString(ConfigManager::SQL_USER),
+		g_config.getString(ConfigManager::SQL_PASS)));
 	return m_connection != NULL;
 }
 
