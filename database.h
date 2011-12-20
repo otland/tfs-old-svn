@@ -37,6 +37,12 @@ class _DBResult;
 class DatabaseMySQL;
 class MySQLResult;
 
+#elif defined(__USE_MYSQLPP__)
+#define DATABASE_CLASS DatabaseMySQLpp
+#define RESULT_CLASS MySQLppResult
+class DatabaseMySQLpp;
+class MySQLppResult;
+
 #elif defined(__USE_SQLITE__)
 #define DATABASE_CLASS DatabaseSQLite
 #define RESULT_CLASS SQLiteResult
