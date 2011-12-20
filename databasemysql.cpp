@@ -52,9 +52,7 @@ DatabaseMySQL::DatabaseMySQL() :
 
 	//we cannot lock mutex here :)
 	DBResult* result = storeQuery("SHOW variables LIKE 'max_allowed_packet';");
-	if(!result)
-		return;
-
+	assert(!result);
 	if(result->getDataLong("Value") < 16776192)
 		std::clog << std::endl << "> WARNING: max_allowed_packet might be set too low for binary map storage." << std::endl
 			<< "Use the following query to raise max_allow_packet: SET GLOBAL max_allowed_packet = 16776192;" << std::endl;
