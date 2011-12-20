@@ -324,20 +324,20 @@ class DBTransaction
 	public:
 		DBTransaction(Database* database)
 		{
-			m_database = database;
+			m_db = database;
 			m_state = STATE_NO_START;
 		}
 
 		virtual ~DBTransaction()
 		{
 			if(m_state == STATE_START)
-				m_database->rollback();
+				m_db->rollback();
 		}
 
 		bool begin()
 		{
 			m_state = STATE_START;
-			return m_database->beginTransaction();
+			return m_db->beginTransaction();
 		}
 
 		bool commit()
@@ -346,7 +346,7 @@ class DBTransaction
 				return false;
 
 			m_state = STEATE_COMMIT;
-			return m_database->commit();
+			return m_db->commit();
 		}
 
 	private:
