@@ -93,7 +93,7 @@ CREATE TABLE `players`
 	`lastlogout` BIGINT UNSIGNED NOT NULL DEFAULT 0,
 	`blessings` TINYINT(2) NOT NULL DEFAULT 0,
 	`pvp_blessing` TINYINT(1) NOT NULL DEFAULT 0,
-	`balance` BIGINT NOT NULL DEFAULT 0,
+	`balance` BIGINT UNSIGNED NOT NULL DEFAULT 0,
 	`stamina` BIGINT UNSIGNED NOT NULL DEFAULT 151200000 COMMENT 'stored in miliseconds',
 	`direction` INT NOT NULL DEFAULT 2,
 	`loss_experience` INT NOT NULL DEFAULT 100,
@@ -338,7 +338,7 @@ CREATE TABLE `guilds`
 	`creationdata` INT NOT NULL,
 	`checkdata` INT NOT NULL,
 	`motd` VARCHAR(255) NOT NULL,
-	`balance` INT UNSIGNED NOT NULL DEFAULT 0,
+	`balance` BIGINT UNSIGNED NOT NULL DEFAULT 0,
 	PRIMARY KEY (`id`),
 	UNIQUE (`name`, `world_id`)
 ) ENGINE = InnoDB;

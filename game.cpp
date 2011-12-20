@@ -4290,15 +4290,12 @@ void Game::checkCreatures()
 	cleanup();
 }
 
-void Game::changeSpeed(Creature* creature, int32_t varSpeedDelta)
+void Game::changeSpeed(Creature* creature, int32_t varSpeed)
 {
 	if(!creature)
 		return;
 
-	int32_t varSpeed = creature->getSpeed() - creature->getBaseSpeed();
-	varSpeed += varSpeedDelta;
-	creature->setSpeed(varSpeed);
-
+	creature->setSpeed(creature->getSpeed() - creature->getBaseSpeed() + varSpeed);
 	const SpectatorVec& list = getSpectators(creature->getPosition());
 	SpectatorVec::const_iterator it;
 

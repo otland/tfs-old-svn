@@ -622,12 +622,15 @@ bool Combat::CombatDispelFunc(Creature* caster, Creature* target, const CombatPa
 	if(!target->hasCondition(params.dispelType, -1, false))
 		return false;
 
-	if(Player* player = target->getPlayer())
+	if(params.dispelType == CONDITION_INVISIBLE)
 	{
-		Item* item = player->getEquippedItem(SLOT_RING);
-		if(item && item->getID() == ITEM_STEALTH_RING && (g_game.getWorldType() == WORLDTYPE_HARDCORE
-			|| player->getTile()->hasFlag(TILESTATE_HARDCOREZONE)) && random_range(1, 100) <= 10)
-			g_game.internalRemoveItem(NULL, item);
+		if(Player* player = target->getPlayer())
+		{
+			Item* item = player->getEquippedItem(SLOT_RING);
+			if(item && item->getID() == ITEM_STEALTH_RING && (g_game.getWorldType() == WORLDTYPE_HARDCORE
+				|| player->getTile()->hasFlag(TILESTATE_HARDCOREZONE)) && random_range(1, 100) <= 10)
+				g_game.internalRemoveItem(NULL, item);
+		}
 	}
 
 	target->removeCondition(caster, params.dispelType);

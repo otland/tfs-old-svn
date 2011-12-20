@@ -4019,7 +4019,7 @@ bool Player::rateExperience(double& gainExp, Creature* target)
 		else if(minutes <= 0)
 			gainExp = 0;
 	}
-	else if(isPremium() || !g_config.getNumber(ConfigManager::STAMINA_BONUS_PREMIUM))
+	else if(isPremium() || !g_config.getBool(ConfigManager::STAMINA_BONUS_PREMIUM))
 		gainExp *= g_config.getDouble(ConfigManager::RATE_STAMINA_ABOVE);
 
 	return true;

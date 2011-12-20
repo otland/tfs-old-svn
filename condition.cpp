@@ -1447,8 +1447,8 @@ bool ConditionSpeed::startCondition(Creature* creature)
 
 void ConditionSpeed::endCondition(Creature* creature, ConditionEnd_t reason)
 {
-	g_game.changeSpeed(creature, -speedDelta);
 	ConditionOutfit::endCondition(creature, reason);
+	g_game.changeSpeed(creature, -speedDelta);
 }
 
 void ConditionSpeed::addCondition(Creature* creature, const Condition* addCondition)
