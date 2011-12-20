@@ -37,6 +37,7 @@ class DatabaseMySQLpp : public _Database
 	public:
 		DatabaseMySQLpp();
 		DATABASE_VIRTUAL ~DatabaseMySQLpp();
+		DATABASE_VIRTUAL bool isConnected() const {return m_connection && !m_connection->isClosed();}
 
 		DATABASE_VIRTUAL bool connect(bool _reconnect);
 		DATABASE_VIRTUAL bool getParam(DBParam_t param);

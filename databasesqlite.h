@@ -33,6 +33,7 @@ class DatabaseSQLite : public _Database
 	public:
 		DatabaseSQLite();
 		DATABASE_VIRTUAL ~DatabaseSQLite() {sqlite3_close(m_handle);}
+		DATABASE_VIRTUAL bool isConnected() const {return m_handle != NULL;}
 
 		DATABASE_VIRTUAL bool getParam(DBParam_t param);
 

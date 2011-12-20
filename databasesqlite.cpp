@@ -36,9 +36,9 @@ extern ConfigManager g_config;
 #define OTSYS_SQLITE3_PREPARE sqlite3_prepare_v2
 #endif
 
-DatabaseSQLite::DatabaseSQLite()
+DatabaseSQLite::DatabaseSQLite() :
+	m_handle(NULL)
 {
-	m_connected = false;
 	// test for existence of database file;
 	// sqlite3_open will create a new one if it isn't there (what we don't want)
 	if(!fileExists(g_config.getString(ConfigManager::SQL_FILE).c_str()))
@@ -49,10 +49,8 @@ DatabaseSQLite::DatabaseSQLite()
 	{
 		std::clog << "Failed to initialize SQLite connection: " << sqlite3_errmsg(m_handle) << " (" << sqlite3_errcode(m_handle) << ")" << std::endl;
 		sqlite3_close(m_handle);
-		return;
+		delete m_handle;
 	}
-
-	m_connected = true;
 }
 
 bool DatabaseSQLite::getParam(DBParam_t param)
@@ -96,7 +94,7 @@ std::string DatabaseSQLite::_parse(const std::string& s)
 bool DatabaseSQLite::query(const std::string& query)
 {
 	boost::recursive_mutex::scoped_lock lockClass(sqliteLock);
-	if(!m_connected)
+	if(!m_handle)
 		return false;
 
 	std::string buf = _parse(query);
@@ -130,7 +128,7 @@ bool DatabaseSQLite::query(const std::string& query)
 DBResult* DatabaseSQLite::storeQuery(const std::string& query)
 {
 	boost::recursive_mutex::scoped_lock lockClass(sqliteLock);
-	if(!m_connected)
+	if(!m_handle)
 		return NULL;
 
 	std::string buf = _parse(query);

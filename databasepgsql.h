@@ -28,6 +28,7 @@ class DatabasePgSQL : public _Database
 	public:
 		DatabasePgSQL();
 		DATABASE_VIRTUAL ~DatabasePgSQL() {PQfinish(m_handle);}
+		DATABASE_VIRTUAL bool isConnected() const {return m_handle != NULL;}
 
 		DATABASE_VIRTUAL bool getParam(DBParam_t param);
 

@@ -71,7 +71,6 @@ DatabaseMySQL::~DatabaseMySQL()
 
 bool DatabaseMySQL::connect(bool _reconnect)
 {
-	m_connected = false;
 	if(_reconnect)
 	{
 		std::clog << "WARNING: MYSQL Lost connection, attempting to reconnect..." << std::endl;
@@ -108,7 +107,7 @@ bool DatabaseMySQL::connect(bool _reconnect)
 	my_bool reconnect = true;
 	mysql_options(m_handle, MYSQL_OPT_RECONNECT, &reconnect);
 
-	if(!mysql_real_connect(m_handle,
+	if(mysql_real_connect(m_handle,
 			g_config.getString(ConfigManager::SQL_HOST).c_str(),
 			g_config.getString(ConfigManager::SQL_USER).c_str(),
 			g_config.getString(ConfigManager::SQL_PASS).c_str(),
@@ -116,14 +115,14 @@ bool DatabaseMySQL::connect(bool _reconnect)
 			g_config.getNumber(ConfigManager::SQL_PORT),
 		NULL, 0))
 	{
-		std::clog << std::endl << "Failed connecting to database - MYSQL ERROR: " << mysql_error(m_handle) << " (" << mysql_errno(m_handle) << ")" << std::endl;
-		delete m_handle;
-		return false;
+		m_attempts = 0;
+		return true;
 	}
 
-	m_connected = true;
-	m_attempts = 0;
-	return true;
+	std::clog << std::endl << "Failed connecting to database - MYSQL ERROR: " << mysql_error(m_handle) << " (" << mysql_errno(m_handle) << ")" << std::endl;
+	mysql_close(m_handle);
+	delete m_handle;
+	return false;
 }
 
 bool DatabaseMySQL::getParam(DBParam_t param)
@@ -141,7 +140,7 @@ bool DatabaseMySQL::getParam(DBParam_t param)
 
 bool DatabaseMySQL::rollback()
 {
-	if(!m_connected)
+	if(!m_handle)
 		return false;
 
 	if(mysql_rollback(m_handle))
@@ -155,7 +154,7 @@ bool DatabaseMySQL::rollback()
 
 bool DatabaseMySQL::commit()
 {
-	if(!m_connected)
+	if(!m_handle)
 		return false;
 
 	if(mysql_commit(m_handle))
@@ -169,7 +168,7 @@ bool DatabaseMySQL::commit()
 
 bool DatabaseMySQL::query(const std::string &query)
 {
-	if(!m_connected && !connect(true))
+	if(!m_handle && !connect(true))
 		return false;
 
 #ifdef __SQL_QUERY_DEBUG__
@@ -179,9 +178,13 @@ bool DatabaseMySQL::query(const std::string &query)
 	{
 		int32_t error = mysql_errno(m_handle);
 		if(error == CR_SERVER_LOST || error == CR_SERVER_GONE_ERROR)
-			m_connected = false;
+		{
+			mysql_close(m_handle);
+			delete m_handle;
+		}
+		else
+			std::clog << "mysql_real_query(): " << query << " - MYSQL ERROR: " << mysql_error(m_handle) << " (" << error << ")" << std::endl;
 
-		std::clog << "mysql_real_query(): " << query << " - MYSQL ERROR: " << mysql_error(m_handle) << " (" << error << ")" << std::endl;
 		return false;
 	}
 
@@ -196,7 +199,7 @@ bool DatabaseMySQL::query(const std::string &query)
 
 DBResult* DatabaseMySQL::storeQuery(const std::string &query)
 {
-	if(!m_connected && !connect(true))
+	if(!m_handle && !connect(true))
 		return NULL;
 
 	int32_t error = 0;
@@ -207,9 +210,13 @@ DBResult* DatabaseMySQL::storeQuery(const std::string &query)
 	{
 		error = mysql_errno(m_handle);
 		if(error == CR_SERVER_LOST || error == CR_SERVER_GONE_ERROR)
-			m_connected = false;
+		{
+			mysql_close(m_handle);
+			delete m_handle;
+		}
+		else
+			std::clog << "mysql_real_query(): " << query << " - MYSQL ERROR: " << mysql_error(m_handle) << " (" << error << ")" << std::endl;
 
-		std::clog << "mysql_real_query(): " << query << " - MYSQL ERROR: " << mysql_error(m_handle) << " (" << error << ")" << std::endl;
 		return NULL;
 	}
 
@@ -249,7 +256,7 @@ void DatabaseMySQL::keepAlive()
 	if(!timeout)
 		return;
 
-	if(m_connected && OTSYS_TIME() > (m_use + timeout))
+	if(m_handle && OTSYS_TIME() > (m_use + timeout))
 	{
 		if(mysql_ping(m_handle))
 			connect(true);

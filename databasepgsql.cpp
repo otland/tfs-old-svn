@@ -23,15 +23,19 @@
 #include "configmanager.h"
 extern ConfigManager g_config;
 
-DatabasePgSQL::DatabasePgSQL()
+DatabasePgSQL::DatabasePgSQL() :
+	m_handle(NULL);
 {
 	std::stringstream dns;
 	dns << "host='" << g_config.getString(ConfigManager::SQL_HOST) << "' dbname='" << g_config.getString(ConfigManager::SQL_DB) << "' user='" << g_config.getString(ConfigManager::SQL_USER) << "' password='" << g_config.getString(ConfigManager::SQL_PASS) << "' port='" << g_config.getNumber(ConfigManager::SQL_PORT) << "'";
 
 	m_handle = PQconnectdb(dns.str().c_str());
-	m_connected = PQstatus(m_handle) == CONNECTION_OK;
-	if(!m_connected)
+	if(PQstatus(m_handle) != CONNECTION_OK)
+	{
 		std::clog << "Failed to estabilish PostgreSQL database connection: " << PQerrorMessage(m_handle) << std::endl;
+		PQfinish(m_handle);
+		delete m_handle;
+	}
 }
 
 bool DatabasePgSQL::getParam(DBParam_t param)
@@ -50,7 +54,7 @@ bool DatabasePgSQL::getParam(DBParam_t param)
 
 bool DatabasePgSQL::query(const std::string& query)
 {
-	if(!m_connected)
+	if(!m_handle)
 		return false;
 
 	// executes query
@@ -70,7 +74,7 @@ bool DatabasePgSQL::query(const std::string& query)
 
 DBResult* DatabasePgSQL::storeQuery(const std::string& query)
 {
-	if(!m_connected)
+	if(!m_handle)
 		return NULL;
 
 	// executes query
@@ -128,7 +132,7 @@ std::string DatabasePgSQL::escapeBlob(const char *s, uint32_t length)
 
 uint64_t DatabasePgSQL::getLastInsertId()
 {
-	if(!m_connected)
+	if(!m_handle)
 		return 0;
 
 	PGresult* res = PQexec(m_handle, "SELECT LASTVAL() as last;");

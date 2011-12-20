@@ -101,7 +101,7 @@ class _Database
 		*
 		* @return whether or not the database is connected.
 		*/
-		DATABASE_VIRTUAL bool isConnected() {return m_connected;}
+		DATABASE_VIRTUAL bool isConnected() const {return false;}
 
 		/**
 		* Database ...
@@ -189,12 +189,11 @@ class _Database
 		DATABASE_VIRTUAL DatabaseEngine_t getDatabaseEngine() {return DATABASE_ENGINE_NONE;}
 
 	protected:
-		_Database() {m_connected = false;}
+		_Database() {}
 		DATABASE_VIRTUAL ~_Database() {}
 
 		DBResult* verifyResult(DBResult* result);
 
-		bool m_connected;
 		int64_t m_use;
 
 	private:
@@ -351,7 +350,7 @@ class DBTransaction
 		}
 
 	private:
-		Database* m_database;
+		Database* m_db;
 		enum TransactionStates_t
 		{
 			STATE_NO_START,
