@@ -202,9 +202,9 @@ const char* MySQLppResult::getDataStream(const std::string& s, uint64_t& size)
 		return "";
 	}
 
-	const char* result =  m_result->getBlob(s);
-	size = strlen(result);
-	return result;
+	std::string result =  m_result->getBlob(s);
+	size = result.length();
+	return result.c_str();
 }
 
 void MySQLppResult::free()
