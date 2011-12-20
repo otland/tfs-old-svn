@@ -166,8 +166,13 @@ std::string DatabaseMySQLpp::escapeBlob(const char* s, uint32_t)
 
 uint64_t DatabaseMySQLpp::getLastInsertId()
 {
-	// TODO!
-	return 0;
+	DBResult* result = storeQuery("SELECT LAST_INSERT_ID() AS `t`;");
+	if(!result)
+		return 0;
+
+	uint64_t t = result->getDataLong("t");
+	result->free();
+	return t;
 }
 
 int32_t MySQLppResult::getDataInt(const std::string& s)
@@ -203,10 +208,10 @@ const char* MySQLppResult::getDataStream(const std::string& s, uint64_t& size)
 	}
 
 	std::istream* result = m_result->getBlob(s);
-	result->seekg(0, ios::end);
+	result->seekg(0, std::ios::end);
 	size = result->tellg();
 
-	char* tmp;
+	char* tmp = NULL;
 	result->get(tmp, size);
 	return (const char*)tmp;
 }
