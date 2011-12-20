@@ -1099,7 +1099,7 @@ MagicEffectNames magicEffectNames[] =
 	{"insects",		MAGIC_EFFECT_INSECTS},
 	{"dragonhead",	MAGIC_EFFECT_DRAGONHEAD},
 	{"orcshaman",	MAGIC_EFFECT_ORCSHAMAN},	
-	{"orcshaman fire",	MAGIC_EFFECT_ORCSHAMAN_FIRE},
+	{"orcshaman ire",	MAGIC_EFFECT_ORCSHAMAN_FIRE},
 	{"thunder",	MAGIC_EFFECT_THUNDER},
 	{"ferumbras",	MAGIC_EFFECT_FERUMBRAS},
 	{"confettihorizontal",	MAGIC_EFFECT_CONFETTIHORIZONTAL},
