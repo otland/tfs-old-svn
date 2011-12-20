@@ -100,7 +100,7 @@ AC_ARG_ENABLE(mysql, [  --enable-mysql		enable MySQL support], [
 # check if we want mysql++ enabled
 AC_ARG_ENABLE(mysqlpp, [  --enable-mysqlpp		enable MySQL++Connector support], [
 	AM_CONDITIONAL(USE_MYSQLPP, true)
-	MYSQL_FLAGS=-D__USE_MYSQLPP__
+	MYSQLPP_FLAGS=-D__USE_MYSQLPP__
 	AC_SUBST(MYSQLPP_FLAGS)
 	useMySQLpp=yes
 ])
@@ -158,6 +158,14 @@ LIBS="$LIBS $XML_LIBS"
 AC_CHECK_HEADERS([zlib.h], ,[AC_MSG_ERROR("zlib header not found.")])
 AC_CHECK_LIB(z, main, ,[AC_MSG_ERROR("Linking against zlib library failed.")])
 
+# check for pthread
+AC_CHECK_HEADERS([pthread.h], ,[AC_MSG_ERROR("pthread header not found.")])
+AC_CHECK_LIB(pthread, main, ,[AC_MSG_ERROR("Linking against pthread library failed)])
+
+# check for OpenSSL
+AC_CHECK_HEADERS([openssl/rsa.h openssl/bn.h openssl/err.h openssl/sha.h openssl/md5.h], , [AC_MSG_ERROR("Required OpenSSL headers not found.")])
+AC_CHECK_LIB(crypto, main, , [AC_MSG_ERROR("Linking against OpenSSL library failed")])
+
 # check for boost
 AC_CHECK_LIB(boost_thread-gcc-mt, main, , [
 	AC_CHECK_LIB(boost_thread-mt, main, , [
@@ -183,8 +191,6 @@ AC_CHECK_LIB(boost_system-gcc-mt, main, , [
 	])
 ])
 
-AC_CHECK_LIB(pthread,main, , [AC_MSG_ERROR("Linking against pthread library failed)])
-
 AC_CHECK_LIB(boost_date_time-gcc-mt, main, , [
 	AC_CHECK_LIB(boost_date_time-mt, main, , [
 		AC_CHECK_LIB(boost_date_time, main, , [
@@ -203,10 +209,6 @@ AC_CHECK_LIB(boost_filesystem-gcc-mt, main, , [
 
 # check for boost::unordered_set (should only check if gnu compiler version is below 4)
 # AC_CHECK_HEADERS([boost/tr1/unordered_set.hpp], , [AC_MSG_ERROR("boost::unordered_set header not found. Please update your boost to at least 1.40.")])
-
-# check for OpenSSL
-AC_CHECK_HEADERS([openssl/rsa.h openssl/bn.h openssl/err.h openssl/sha.h openssl/md5.h], , [AC_MSG_ERROR("Required OpenSSL headers not found.")])
-AC_CHECK_LIB(crypto, main, , [AC_MSG_ERROR("Linking against OpenSSL library failed")])
 
 # check for Lua
 if test "$luaJIT" = "yes" ; then
@@ -270,6 +272,7 @@ if test -n "$MYSQL_FLAGS"; then
 	AC_SUBST(MYSQL_LIBS)
 fi
 
+# check for mysqlcppconn if it is enabled
 if test -n "$MYSQLPP_FLAGS"; then
 	AC_CHECK_HEADERS([cppconn/config.h],[MYSQLPP_LIBS=-lmysqlcppconn],[AC_MSG_ERROR("MySQL++Connector headers missing.")])
 	AC_CHECK_LIB(mysqlcppconn, main,[],[AC_MSG_ERROR("Linking against libmysqlcppconn failed.")])
