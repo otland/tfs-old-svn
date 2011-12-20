@@ -56,7 +56,7 @@ class DatabaseMySQLpp : public _Database
 
 	protected:
 		sql::mysql::MySQL_Driver* m_driver;
-		MySQL_Connection* m_connection;
+		sql::mysql::MySQL_Connection* m_connection;
 };
 
 class MySQLppResult : public _DBResult
