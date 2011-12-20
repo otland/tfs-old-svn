@@ -311,6 +311,8 @@ class DBInsert
 #ifndef MULTI_SQL_DRIVERS
 #if defined(__USE_MYSQL__)
 #include "databasemysql.h"
+#elif defined(__USE_MYSQLPP__)
+#include "databasemysqlpp.h"
 #elif defined(__USE_SQLITE__)
 #include "databasesqlite.h"
 #elif defined(__USE_PGSQL__)
