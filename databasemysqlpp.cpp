@@ -32,16 +32,9 @@ extern ConfigManager g_config;
 DatabaseMySQLpp::DatabaseMySQLpp() :
 	m_connection(NULL)
 {
-	try
-	{
-		m_driver = sql::mysql::get_mysql_driver_instance();
-		m_driver->threadInit();
-	}
-	catch(sql::SQLException& e)
-	{
-		std::clog << "[Exception - DatabaseMySQLpp::DatabaseMySQLpp] " << e.what() << std::endl;
-		return;
-	}
+	m_driver = sql::mysql::get_mysql_driver_instance();
+	assert(m_driver);
+	m_driver->threadInit();
 
 	connect(false);
 	if(asLowerCaseString(g_config.getString(ConfigManager::HOUSE_STORAGE)) == "relational")
@@ -147,14 +140,13 @@ bool DatabaseMySQLpp::query(const std::string &query)
 	if(!m_connection && !connect(true))
 		return false;
 
-	bool result = false;
 	try
 	{
 		sql::Statement* statement = m_connection->createStatement();
 		statement->execute(query);
 
 		delete statement;
-		result = true;
+		return true;
 	}
 	catch(sql::SQLException& e)
 	{
