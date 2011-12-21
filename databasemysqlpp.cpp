@@ -39,7 +39,7 @@ DatabaseMySQLpp::DatabaseMySQLpp() :
 	}
 	catch(sql::SQLException& e)
 	{
-		std::clog << "[Excetion - DatabaseMySQLpp::DatabaseMySQLpp] " << e.what() << std::endl;
+		std::clog << "[Exception - DatabaseMySQLpp::DatabaseMySQLpp] " << e.what() << std::endl;
 		return;
 	}
 
@@ -95,7 +95,7 @@ bool DatabaseMySQLpp::connect(bool reconnect)
 	}
 	catch(sql::SQLException& e)
 	{
-		std::clog << "[Excetion - DatabaseMySQLpp::connect] " << e.what() << std::endl;
+		std::clog << "[Exception - DatabaseMySQLpp::connect] " << e.what() << std::endl;
 		return false;
 	}
 
@@ -157,7 +157,7 @@ bool DatabaseMySQLpp::query(const std::string &query)
 	}
 	catch(sql::SQLException& e)
 	{
-		std::clog << "[Excetion - DatabaseMySQLpp::query] " << e.what() << std::endl;
+		std::clog << "[Exception - DatabaseMySQLpp::query] " << e.what() << std::endl;
 	}
 
 	return false;
@@ -183,7 +183,7 @@ DBResult* DatabaseMySQLpp::storeQuery(const std::string &query)
 	}
 	catch(sql::SQLException& e)
 	{
-		std::clog << "[Excetion - DatabaseMySQLpp::storeQuery] " << e.what() << std::endl;
+		std::clog << "[Exception - DatabaseMySQLpp::storeQuery] " << e.what() << std::endl;
 	}
 
 	return NULL;
@@ -200,7 +200,7 @@ std::string DatabaseMySQLpp::escapeBlob(const char* s, uint32_t)
 	}
 	catch(sql::SQLException& e)
 	{
-		std::clog << "[Excetion - DatabaseMySQLpp::escapeBlob] " << e.what() << std::endl;
+		std::clog << "[Exception - DatabaseMySQLpp::escapeBlob] " << e.what() << std::endl;
 	}
 
 	return "''";
