@@ -32,12 +32,18 @@ extern ConfigManager g_config;
 DatabaseMySQLpp::DatabaseMySQLpp() :
 	m_connection(NULL)
 {
-	m_driver = sql::mysql::get_mysql_driver_instance();
-	assert(m_driver);
-	m_driver->threadInit();
+	try
+	{
+		m_driver = sql::mysql::get_mysql_driver_instance();
+		m_driver->threadInit();
+	}
+	catch(sql::SQLException& e)
+	{
+		std::clog << "[Excetion - DatabaseMySQLpp::DatabaseMySQLpp] " << e.what() << std::endl;
+		return;
+	}
 
-	assert(connect(false));
-	m_connection->setSchema(g_config.getString(ConfigManager::SQL_DB));
+	connect(false);
 	if(asLowerCaseString(g_config.getString(ConfigManager::HOUSE_STORAGE)) == "relational")
 		return;
 
@@ -72,19 +78,29 @@ bool DatabaseMySQLpp::connect(bool reconnect)
 		delete m_connection;
 	}
 
-	m_connection = dynamic_cast<sql::mysql::MySQL_Connection*>(m_driver->connect(
-		"tcp://"
-			+
-		g_config.getString(ConfigManager::SQL_HOST)
-			+
-		":"
-			+
-		asString(
-			g_config.getNumber(ConfigManager::SQL_PORT)
-		),
-		g_config.getString(ConfigManager::SQL_USER),
-		g_config.getString(ConfigManager::SQL_PASS)));
-	return m_connection != NULL;
+	try
+	{
+		m_connection = dynamic_cast<sql::mysql::MySQL_Connection*>(m_driver->connect(
+			"tcp://"
+				+
+			g_config.getString(ConfigManager::SQL_HOST)
+				+
+			":"
+				+
+			asString(
+				g_config.getNumber(ConfigManager::SQL_PORT)
+			),
+			g_config.getString(ConfigManager::SQL_USER),
+			g_config.getString(ConfigManager::SQL_PASS)));
+	}
+	catch(sql::SQLException& e)
+	{
+		std::clog << "[Excetion - DatabaseMySQLpp::connect] " << e.what() << std::endl;
+		return false;
+	}
+
+	m_connection->setSchema(g_config.getString(ConfigManager::SQL_DB));
+	return true;
 }
 
 bool DatabaseMySQLpp::getParam(DBParam_t param)
@@ -131,12 +147,20 @@ bool DatabaseMySQLpp::query(const std::string &query)
 	if(!m_connection && !connect(true))
 		return false;
 
-	sql::Statement* statement = m_connection->createStatement();
-	if(sql::ResultSet* result = statement->executeQuery(query))
-		delete result;
+	try
+	{
+		sql::Statement* statement = m_connection->createStatement();
+		bool t = statement->execute(query);
 
-	delete statement;
-	return true;
+		delete statement;
+		return t;
+	}
+	catch(sql::SQLException& e)
+	{
+		std::clog << "[Excetion - DatabaseMySQLpp::query] " << e.what() << std::endl;
+	}
+
+	return false;
 }
 
 DBResult* DatabaseMySQLpp::storeQuery(const std::string &query)
@@ -144,15 +168,24 @@ DBResult* DatabaseMySQLpp::storeQuery(const std::string &query)
 	if(!m_connection && !connect(true))
 		return false;
 
-	sql::Statement* statement = m_connection->createStatement();
-	if(sql::ResultSet* result = statement->executeQuery(query))
+	try
 	{
+		sql::Statement* statement = m_connection->createStatement();
+		if(sql::ResultSet* result = statement->executeQuery(query))
+		{
+			delete statement;
+			DBResult* _result = (DBResult*)new MySQLppResult(result);
+			return verifyResult(_result);
+		}
+
 		delete statement;
-		DBResult* _result = (DBResult*)new MySQLppResult(result);
-		return verifyResult(_result);
+		return NULL;
+	}
+	catch(sql::SQLException& e)
+	{
+		std::clog << "[Excetion - DatabaseMySQLpp::storeQuery] " << e.what() << std::endl;
 	}
 
-	delete statement;
 	return NULL;
 }
 
@@ -161,7 +194,16 @@ std::string DatabaseMySQLpp::escapeBlob(const char* s, uint32_t)
 	if(!m_connection || *s == '\0')
 		return "''";
 
-	return "'" + m_connection->escapeString(s) + "'";
+	try
+	{
+		return "'" + m_connection->escapeString(s) + "'";
+	}
+	catch(sql::SQLException& e)
+	{
+		std::clog << "[Excetion - DatabaseMySQLpp::escapeBlob] " << e.what() << std::endl;
+	}
+
+	return "''";
 }
 
 uint64_t DatabaseMySQLpp::getLastInsertId()
