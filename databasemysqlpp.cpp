@@ -147,20 +147,21 @@ bool DatabaseMySQLpp::query(const std::string &query)
 	if(!m_connection && !connect(true))
 		return false;
 
+	bool result = false;
 	try
 	{
 		sql::Statement* statement = m_connection->createStatement();
-		bool t = statement->execute(query);
+		statement->execute(query);
 
 		delete statement;
-		return t;
+		result = true;
 	}
 	catch(sql::SQLException& e)
 	{
 		std::clog << "[Exception - DatabaseMySQLpp::query] " << e.what() << std::endl;
 	}
 
-	return false;
+	return result;
 }
 
 DBResult* DatabaseMySQLpp::storeQuery(const std::string &query)
@@ -179,7 +180,6 @@ DBResult* DatabaseMySQLpp::storeQuery(const std::string &query)
 		}
 
 		delete statement;
-		return NULL;
 	}
 	catch(sql::SQLException& e)
 	{
@@ -194,16 +194,7 @@ std::string DatabaseMySQLpp::escapeBlob(const char* s, uint32_t)
 	if(!m_connection || *s == '\0')
 		return "''";
 
-	try
-	{
-		return "'" + m_connection->escapeString(s) + "'";
-	}
-	catch(sql::SQLException& e)
-	{
-		std::clog << "[Exception - DatabaseMySQLpp::escapeBlob] " << e.what() << std::endl;
-	}
-
-	return "''";
+	return "'" + m_connection->escapeString(s) + "'";
 }
 
 uint64_t DatabaseMySQLpp::getLastInsertId()
@@ -250,12 +241,13 @@ const char* MySQLppResult::getDataStream(const std::string& s, uint64_t& size)
 	}
 
 	std::istream* result = m_result->getBlob(s);
-	result->seekg(0, std::ios::end);
-	size = result->tellg();
+	std::string tmp;
+	for(char c = result->get(); c; c = result->get())
+		tmp += c;
 
-	char* tmp = NULL;
-	result->get(tmp, size);
-	return (const char*)tmp;
+	delete result;
+	size = tmp.size();
+	return tmp.c_str();
 }
 
 void MySQLppResult::free()
