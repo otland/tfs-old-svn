@@ -11356,7 +11356,8 @@ int32_t LuaInterface::luaDatabaseStoreQuery(lua_State* L)
 	ScriptEnviroment* env = getEnv();
 
 	DBQuery query; //lock mutex
-	if(DBResult* res = Database::getInstance()->storeQuery(popString(L)))
+	query << popString(L);
+	if(DBResult* res = Database::getInstance()->storeQuery(query.str()))
 		lua_pushnumber(L, env->addResult(res));
 	else
 		lua_pushboolean(L, false);

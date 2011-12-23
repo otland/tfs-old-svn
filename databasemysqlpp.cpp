@@ -191,7 +191,9 @@ std::string DatabaseMySQLpp::escapeBlob(const char* s, uint32_t)
 
 uint64_t DatabaseMySQLpp::getLastInsertId()
 {
-	DBResult* result = storeQuery("SELECT LAST_INSERT_ID() AS `t`;");
+	DBQuery query;
+	query << "SELECT LAST_INSERT_ID() AS `t`;";
+	DBResult* result = storeQuery(query.str());
 	if(!result)
 		return 0;
 
