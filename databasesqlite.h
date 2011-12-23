@@ -41,10 +41,10 @@ class DatabaseSQLite : public _Database
 		DATABASE_VIRTUAL bool rollback() {return query("ROLLBACK");}
 		DATABASE_VIRTUAL bool commit() {return query("COMMIT");}
 
-		DATABASE_VIRTUAL bool query(const std::string& query);
-		DATABASE_VIRTUAL DBResult* storeQuery(const std::string& query);
+		DATABASE_VIRTUAL bool query(std::string query);
+		DATABASE_VIRTUAL DBResult* storeQuery(std::string query);
 
-		DATABASE_VIRTUAL std::string escapeString(const std::string& s);
+		DATABASE_VIRTUAL std::string escapeString(std::string s);
 		DATABASE_VIRTUAL std::string escapeBlob(const char* s, uint32_t length);
 
 		DATABASE_VIRTUAL uint64_t getLastInsertId() {return (uint64_t)sqlite3_last_insert_rowid(m_handle);}

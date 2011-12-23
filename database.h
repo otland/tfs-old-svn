@@ -120,9 +120,9 @@ class _Database
 		*/
 		friend class DBTransaction;
 
-		DATABASE_VIRTUAL bool beginTransaction() {return 0;}
-		DATABASE_VIRTUAL bool rollback() {return 0;}
-		DATABASE_VIRTUAL bool commit() {return 0;}
+		DATABASE_VIRTUAL bool beginTransaction() {return false;}
+		DATABASE_VIRTUAL bool rollback() {return false;}
+		DATABASE_VIRTUAL bool commit() {return false;}
 
 	public:
 		/**
@@ -133,7 +133,7 @@ class _Database
 		* @param std::string query command
 		* @return true on success, false on error
 		*/
-		DATABASE_VIRTUAL bool query(const std::string&) {return 0;}
+		DATABASE_VIRTUAL bool query(std::string) {return false;}
 
 		/**
 		* Queries database.
@@ -143,7 +143,7 @@ class _Database
 		* @param std::string query
 		* @return results object (null on error)
 		*/
-		DATABASE_VIRTUAL DBResult* storeQuery(const std::string&) {return 0;}
+		DATABASE_VIRTUAL DBResult* storeQuery(std::string) {return NULL;}
 
 		/**
 		* Escapes string for query.
@@ -219,13 +219,13 @@ class _DBResult
 		*\returns The String of the selected field and row
 		*\param s The name of the field
 		*/
-		DATABASE_VIRTUAL std::string getDataString(const std::string&) {return "''";}
+		DATABASE_VIRTUAL std::string getDataString(const std::string&) {return "";}
 
 		/** Get the blob of a field in database
 		*\returns a PropStream that is initiated with the blob data field, if not exist it returns NULL.
 		*\param s The name of the field
 		*/
-		DATABASE_VIRTUAL const char* getDataStream(const std::string&, uint64_t&) {return 0;}
+		DATABASE_VIRTUAL const char* getDataStream(const std::string&, uint64_t&) {return "";}
 
 		/** Result freeing
 		*/
@@ -251,7 +251,7 @@ class DBQuery : public std::stringstream
 	friend class _Database;
 	public:
 		DBQuery() {databaseLock.lock();}
-		virtual ~DBQuery() {str(""); databaseLock.unlock();}
+		virtual ~DBQuery() {databaseLock.unlock();}
 
 	protected:
 		static boost::recursive_mutex databaseLock;

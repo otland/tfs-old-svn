@@ -166,7 +166,7 @@ bool DatabaseMySQL::commit()
 	return true;
 }
 
-bool DatabaseMySQL::query(const std::string &query)
+bool DatabaseMySQL::query(std::string query)
 {
 	if(!m_handle && !connect(true))
 		return false;
@@ -197,7 +197,7 @@ bool DatabaseMySQL::query(const std::string &query)
 	return true;
 }
 
-DBResult* DatabaseMySQL::storeQuery(const std::string &query)
+DBResult* DatabaseMySQL::storeQuery(std::string query)
 {
 	if(!m_handle && !connect(true))
 		return NULL;

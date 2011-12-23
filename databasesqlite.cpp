@@ -91,7 +91,7 @@ std::string DatabaseSQLite::_parse(const std::string& s)
 	return query;
 }
 
-bool DatabaseSQLite::query(const std::string& query)
+bool DatabaseSQLite::query(std::string query)
 {
 	boost::recursive_mutex::scoped_lock lockClass(sqliteLock);
 	if(!m_handle)
@@ -125,7 +125,7 @@ bool DatabaseSQLite::query(const std::string& query)
 	return true;
 }
 
-DBResult* DatabaseSQLite::storeQuery(const std::string& query)
+DBResult* DatabaseSQLite::storeQuery(std::string query)
 {
 	boost::recursive_mutex::scoped_lock lockClass(sqliteLock);
 	if(!m_handle)
@@ -148,7 +148,7 @@ DBResult* DatabaseSQLite::storeQuery(const std::string& query)
 	return verifyResult(result);
 }
 
-std::string DatabaseSQLite::escapeString(const std::string& s)
+std::string DatabaseSQLite::escapeString(std::string s)
 {
 	// remember about quoiting even an empty string!
 	if(!s.size())

@@ -135,7 +135,7 @@ bool DatabaseMySQLpp::commit()
 	return true;
 }
 
-bool DatabaseMySQLpp::query(const std::string &query)
+bool DatabaseMySQLpp::query(std::string query)
 {
 	if(!m_connection && !connect(true))
 		return false;
@@ -156,7 +156,7 @@ bool DatabaseMySQLpp::query(const std::string &query)
 	return result;
 }
 
-DBResult* DatabaseMySQLpp::storeQuery(const std::string &query)
+DBResult* DatabaseMySQLpp::storeQuery(std::string query)
 {
 	if(!m_connection && !connect(true))
 		return false;

@@ -52,7 +52,7 @@ bool DatabasePgSQL::getParam(DBParam_t param)
 	return false;
 }
 
-bool DatabasePgSQL::query(const std::string& query)
+bool DatabasePgSQL::query(std::string query)
 {
 	if(!m_handle)
 		return false;
@@ -72,7 +72,7 @@ bool DatabasePgSQL::query(const std::string& query)
 	return true;
 }
 
-DBResult* DatabasePgSQL::storeQuery(const std::string& query)
+DBResult* DatabasePgSQL::storeQuery(std::string query)
 {
 	if(!m_handle)
 		return NULL;
@@ -92,7 +92,7 @@ DBResult* DatabasePgSQL::storeQuery(const std::string& query)
 	return verifyResult(result);
 }
 
-std::string DatabasePgSQL::escapeString(const std::string& s)
+std::string DatabasePgSQL::escapeString(std::string s)
 {
 	// remember to quote even empty string!
 	if(!s.size())
