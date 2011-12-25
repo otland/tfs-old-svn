@@ -2358,10 +2358,10 @@ bool Game::playerOpenChannel(uint32_t playerId, uint16_t channelId)
 		return false;
 
 	bool deny = false;
-	CreatureEventList openEvents = player->getCreatureEvents(CREATURE_EVENT_CHANNEL_OPEN);
+	CreatureEventList openEvents = player->getCreatureEvents(CREATURE_EVENT_CHANNEL_REQUEST);
 	for(CreatureEventList::iterator it = openEvents.begin(); it != openEvents.end(); ++it)
 	{
-		if(!(*it)->executeChannelOpen(player, asString(channelId), false, !player->hasSentChat()) && !deny)
+		if(!(*it)->executeChannelRequest(player, asString(channelId), false, !player->hasSentChat()) && !deny)
 			deny = true;
 	}
 
@@ -2399,10 +2399,10 @@ bool Game::playerOpenPrivateChannel(uint32_t playerId, std::string& receiver)
 		return false;
 
 	bool deny = false;
-	CreatureEventList openEvents = player->getCreatureEvents(CREATURE_EVENT_CHANNEL_OPEN);
+	CreatureEventList openEvents = player->getCreatureEvents(CREATURE_EVENT_CHANNEL_REQUEST);
 	for(CreatureEventList::iterator it = openEvents.begin(); it != openEvents.end(); ++it)
 	{
-		if(!(*it)->executeChannelOpen(player, receiver, true, !player->hasSentChat()) && !deny)
+		if(!(*it)->executeChannelRequest(player, receiver, true, !player->hasSentChat()) && !deny)
 			deny = true;
 	}
 

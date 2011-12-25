@@ -184,8 +184,8 @@ bool CreatureEvent::configureEvent(xmlNodePtr p)
 		m_type = CREATURE_EVENT_CHANNEL_JOIN;
 	else if(tmpStr == "channelleave")
 		m_type = CREATURE_EVENT_CHANNEL_LEAVE;
-	else if(tmpStr == "channelopen")
-		m_type = CREATURE_EVENT_CHANNEL_OPEN;
+	else if(tmpStr == "channelrequest")
+		m_type = CREATURE_EVENT_CHANNEL_REQUEST;
 	else if(tmpStr == "advance")
 		m_type = CREATURE_EVENT_ADVANCE;
 	else if(tmpStr == "mailsend")
@@ -265,8 +265,8 @@ std::string CreatureEvent::getScriptEventName() const
 			return "onChannelJoin";
 		case CREATURE_EVENT_CHANNEL_LEAVE:
 			return "onChannelLeave";
-		case CREATURE_EVENT_CHANNEL_OPEN:
-			return "onChannelOpen";
+		case CREATURE_EVENT_CHANNEL_REQUEST:
+			return "onChannelRequest";
 		case CREATURE_EVENT_THINK:
 			return "onThink";
 		case CREATURE_EVENT_ADVANCE:
@@ -338,7 +338,7 @@ std::string CreatureEvent::getScriptEventParams() const
 		case CREATURE_EVENT_CHANNEL_JOIN:
 		case CREATURE_EVENT_CHANNEL_LEAVE:
 			return "cid, channel, users";
-		case CREATURE_EVENT_CHANNEL_OPEN:
+		case CREATURE_EVENT_CHANNEL_REQUEST:
 			return "cid, channel, custom";
 		case CREATURE_EVENT_ADVANCE:
 			return "cid, skill, oldLevel, newLevel";
@@ -1774,9 +1774,9 @@ uint32_t CreatureEvent::executeReportViolation(Player* player, ReportType_t type
 	}
 }
 
-uint32_t CreatureEvent::executeChannelOpen(Player* player, const std::string& channel, bool isPrivate, bool custom)
+uint32_t CreatureEvent::executeChannelRequest(Player* player, const std::string& channel, bool isPrivate, bool custom)
 {
-	//onChannelOpen(cid, channel, private)
+	//onChannelRequest(cid, channel, private)
 	if(m_interface->reserveEnv())
 	{
 		ScriptEnviroment* env = m_interface->getEnv();
