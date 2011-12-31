@@ -673,6 +673,9 @@ Thing* Game::internalGetThing(Player* player, const Position& pos, int32_t index
 
 void Game::internalGetPosition(Item* item, Position& pos, int16_t& stackpos)
 {
+	if(!item)
+		return;
+
 	pos.x = pos.y = pos.z = stackpos = 0;
 	if(Cylinder* topParent = item->getTopParent())
 	{

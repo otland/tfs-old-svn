@@ -224,7 +224,7 @@ void Creature::onThink(uint32_t interval)
 
 void Creature::onAttacking(uint32_t interval)
 {
-	if(!attackedCreature)
+	if(!attackedCreature || attackedCreature->getHealth() < 1)
 		return;
 
 	bool deny = false;
