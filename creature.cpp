@@ -214,7 +214,11 @@ void Creature::onThink(uint32_t interval)
 		goToFollowCreature();
 	}
 
+#ifndef __GROUPED_ATTACKS__
 	onAttacking(interval / EVENT_CREATURECOUNT);
+#else
+	onAttacking(interval);
+#endif
 	executeConditions(interval);
 
 	CreatureEventList thinkEvents = getCreatureEvents(CREATURE_EVENT_THINK);

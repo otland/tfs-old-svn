@@ -4254,6 +4254,7 @@ void Game::checkCreatures()
 		checkCreatureLastIndex = 0;
 
 	std::vector<Creature*>::iterator it;
+#ifndef __GROUPED_ATTACKS__
 	std::vector<Creature*> creatureVector;
 	for(uint16_t i = 0; i < EVENT_CREATURECOUNT; ++i)
 	{
@@ -4267,6 +4268,7 @@ void Game::checkCreatures()
 				(*it)->onAttacking(EVENT_CHECK_CREATURE_INTERVAL);
 		}
 	}
+#endif
 
 	for(it = toAddCheckCreatureVector.begin(); it != toAddCheckCreatureVector.end(); ++it)
 		checkCreatureVectors[(*it)->checkVector].push_back(*it);
