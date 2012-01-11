@@ -6983,6 +6983,7 @@ int32_t LuaInterface::luaGetMonsterInfo(lua_State* L)
 	lua_newtable(L);
 	setField(L, "name", mType->name.c_str());
 	setField(L, "description", mType->nameDescription.c_str());
+	setField(L, "file", mType->file.c_str());
 	setField(L, "experience", mType->experience);
 	setField(L, "health", mType->health);
 	setField(L, "healthMax", mType->healthMax);
@@ -6991,6 +6992,8 @@ int32_t LuaInterface::luaGetMonsterInfo(lua_State* L)
 	setField(L, "armor", mType->armor);
 	setField(L, "baseSpeed", mType->baseSpeed);
 	setField(L, "lookCorpse", mType->lookCorpse);
+	setFieldBool(L, "corpseUnique", mType->corpseUnique);
+	setFieldBool(L, "corpseAction", mType->corpseAction);
 	setField(L, "race", mType->race);
 	setField(L, "skull", mType->skull);
 	setField(L, "partyShield", mType->partyShield);

@@ -954,6 +954,7 @@ bool Monsters::loadMonster(const std::string& file, const std::string& monsterNa
 	else
 		monsterLoad = false;
 
+	mType->file = file;
 	if(readXMLString(root, "nameDescription", strValue))
 		mType->nameDescription = strValue;
 	else
