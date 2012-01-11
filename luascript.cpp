@@ -11462,7 +11462,7 @@ int32_t LuaInterface::luaDatabaseTableExists(lua_State* L)
 int32_t LuaInterface::luaDatabaseTransBegin(lua_State* L)
 {
 	//db.transBegin()
-	lua_pushstring(L, Database::getInstance()->beginTransaction());
+	lua_pushboolean(L, Database::getInstance()->beginTransaction());
 	return 1;
 }
 
