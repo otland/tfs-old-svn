@@ -2596,6 +2596,15 @@ const luaL_Reg LuaInterface::luaDatabaseTable[] =
 	//db.tableExists(name)
 	{"tableExists", LuaInterface::luaDatabaseTableExists},
 
+	//db.transBegin()
+	{"transBegin", LuaInterface::luaDatabaseTransBegin},
+
+	//db.transRollback()
+	{"transRollback", LuaInterface::luaDatabaseTransRollback},
+
+	//db.transCommit()
+	{"transCommit", LuaInterface::luaDatabaseTransCommit},
+
 	{NULL, NULL}
 };
 
@@ -11447,6 +11456,27 @@ int32_t LuaInterface::luaDatabaseTableExists(lua_State* L)
 {
 	//db.tableExists(table)
 	lua_pushboolean(L, DatabaseManager::getInstance()->tableExists(popString(L)));
+	return 1;
+}
+
+int32_t LuaInterface::luaDatabaseTransBegin(lua_State* L)
+{
+	//db.transBegin()
+	lua_pushstring(L, Database::getInstance()->beginTransaction());
+	return 1;
+}
+
+int32_t LuaInterface::luaDatabaseTransRollback(lua_State* L)
+{
+	//db.transRollback()
+	lua_pushboolean(L, Database::getInstance()->rollback());
+	return 1;
+}
+
+int32_t LuaInterface::luaDatabaseTransCommit(lua_State* L)
+{
+	//db.transCommit()
+	lua_pushboolean(L, Database::getInstance()->commit());
 	return 1;
 }
 
