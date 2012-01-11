@@ -463,6 +463,7 @@ class LuaInterface
 		static int32_t luaGetThingPosition(lua_State* L);
 		static int32_t luaDoItemRaidUnref(lua_State* L);
 		static int32_t luaHasItemProperty(lua_State* L);
+		static int32_t luaHasMonsterRaid(lua_State* L);
 		static int32_t luaGetThingFromPosition(lua_State* L);
 		static int32_t luaGetTileItemById(lua_State* L);
 		static int32_t luaGetTileItemByType(lua_State* L);

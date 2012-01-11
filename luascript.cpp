@@ -2393,6 +2393,9 @@ void LuaInterface::registerFunctions()
 	//hasPlayerClient(cid)
 	lua_register(m_luaState, "hasPlayerClient", LuaInterface::luaHasPlayerClient);
 
+	//hasMonsterRaid(cid)
+	lua_register(m_luaState, "hasMonsterRaid", LuaInterface::luaHasMonsterRaid);
+
 	//isIpBanished(ip[, mask])
 	lua_register(m_luaState, "isIpBanished", LuaInterface::luaIsIpBanished);
 
@@ -10633,6 +10636,31 @@ int32_t LuaInterface::luaHasItemProperty(lua_State* L)
 		tmp = item->getTile()->hasProperty((ITEMPROPERTY)prop);
 
 	lua_pushboolean(L, tmp);
+	return 1;
+}
+
+int32_t LuaInterface::luaHasMonsterRaid(lua_State* L)
+{
+	//hasMonsterRaid(cid)
+	ScriptEnviroment* env = getEnv();
+
+	Creature* creature = env->getCreatureByUID(popNumber(L));
+	if(!creature)
+	{
+		errorEx(getError(LUA_ERROR_CREATURE_NOT_FOUND));
+		lua_pushboolean(L, false);
+		return 1;
+	}
+
+	Monster* monster = creature->getMonster();
+	if(!monster)
+	{
+		errorEx(getError(LUA_ERROR_CREATURE_NOT_FOUND));
+		lua_pushboolean(L, false);
+		return 1;
+	}
+
+	lua_pushboolean(L, monster->hasRaid());
 	return 1;
 }
 
