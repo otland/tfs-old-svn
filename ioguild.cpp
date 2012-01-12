@@ -435,7 +435,7 @@ bool IOGuild::updateWar(War_t& war)
 	DBResult* result;
 
 	DBQuery query;
-	query << "SELECT `g`.`name` AS `guild_name`, `e`.`name` AS `enemy_name`, `w`.* FROM `guild_wars` w INNER JOIN `guilds` g ON `w`.`guild_id` = `g`.`id` INNER JOIN `guilds` e ON `w`.`enemy_id` = `e`.`id` WHERE `w`.`id` = " << war.war;
+	query << "SELECT `g`.`name` AS `guild_name`, `e`.`name` AS `enemy_name`, `w`.* FROM `guild_wars` w LEFT JOIN `guilds` g ON `w`.`guild_id` = `g`.`id` LEFT JOIN `guilds` e ON `w`.`enemy_id` = `e`.`id` WHERE `w`.`id` = " << war.war;
 	if(!(result = db->storeQuery(query.str())))
 		return false;
 

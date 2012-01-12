@@ -3955,8 +3955,13 @@ bool Player::onKilledCreature(Creature* target, DeathEntry& entry)
 		return true;
 
 	War_t enemy;
-	if(targetPlayer->getEnemy(this, enemy) && (!entry.isLast() || IOGuild::getInstance()->updateWar(enemy)))
+	if(targetPlayer->getEnemy(this, enemy))
+	{
+		if(entry.isLast())
+			IOGuild::getInstance()->updateWar(enemy);
+
 		entry.setWar(enemy);
+	}
 
 	if(!entry.isJustify() || !hasCondition(CONDITION_INFIGHT))
 		return true;
@@ -4305,7 +4310,7 @@ bool Player::addUnjustifiedKill(const Player* attacked, bool countNow)
 	if(!g_config.getBool(ConfigManager::USE_FRAG_HANDLER) || hasFlag(
 		PlayerFlag_NotGainInFight) || g_game.getWorldType() != WORLDTYPE_OPEN
 		|| hasCustomFlag(PlayerCustomFlag_NotGainUnjustified) || hasCustomFlag(
-		PlayerCustomFlag_NotGainSkull) || attacked == this)
+		PlayerCustomFlag_NotGainSkull))
 		return false;
 
 	if(countNow)

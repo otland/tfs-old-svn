@@ -1184,21 +1184,7 @@ bool IOLoginData::playerDeath(Player* _player, const DeathList& dl)
 	{
 		query.str("");
 		query << "INSERT INTO `killers` (`death_id`, `final_hit`, `unjustified`, `war`) VALUES ("
-			<< deathId << ", " << it->isLast() << ", " << it->isUnjustified();
-		if(it->isLast()) //last hit is always first and we got stored war data only there
-		{
-			War_t tmp = it->getWar();
-			if(tmp.war && tmp.frags[tmp.type == WAR_GUILD]
-				<= tmp.limit && tmp.frags[tmp.type] <= tmp.limit)
-				war = true;
-		}
-
-		if(war)
-			query << ", " << it->getWar().war;
-		else
-			query << ", 0";
-
-		query << ")";
+			<< deathId << ", " << it->isLast() << ", " << it->isUnjustified() << ", " << it->getWar().war << ")";
 		if(!db->query(query.str()))
 			return false;
 
