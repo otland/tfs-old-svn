@@ -10180,7 +10180,7 @@ int32_t LuaInterface::luaDoSaveHouse(lua_State* L)
 		if(!(house = Houses::getInstance()->getHouse(*it)))
 		{
 			std::stringstream s;
-			s << "House not found, ID: " << house->getId();
+			s << "House not found, ID: " << (*it);
 			errorEx(s.str());
 
 			lua_pushboolean(L, false);
