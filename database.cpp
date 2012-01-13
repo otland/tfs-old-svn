@@ -83,14 +83,14 @@ DBInsert::DBInsert(Database* db)
 	m_multiLine = m_db->getParam(DBPARAM_MULTIINSERT);
 }
 
-void DBInsert::setQuery(const std::string& query)
+void DBInsert::setQuery(std::string query)
 {
 	m_query = query;
 	m_buf = "";
 	m_rows = 0;
 }
 
-bool DBInsert::addRow(const std::string& row)
+bool DBInsert::addRow(std::string row)
 {
 	if(!m_multiLine) // executes INSERT for current row
 		return m_db->query(m_query + "(" + row + ")");
