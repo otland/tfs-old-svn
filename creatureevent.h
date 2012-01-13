@@ -41,6 +41,7 @@ enum CreatureEventType_t
 	CREATURE_EVENT_TRADE_REQUEST,
 	CREATURE_EVENT_TRADE_ACCEPT,
 	CREATURE_EVENT_TEXTEDIT,
+	CREATURE_EVENT_HOUSEEDIT,
 	CREATURE_EVENT_REPORTBUG,
 	CREATURE_EVENT_REPORTVIOLATION,
 	CREATURE_EVENT_THANKYOU,
@@ -129,7 +130,8 @@ class CreatureEvent : public Event
 		uint32_t executeMail(Player* player, Player* target, Item* item, bool openBox);
 		uint32_t executeTradeRequest(Player* player, Player* target, Item* item);
 		uint32_t executeTradeAccept(Player* player, Player* target, Item* item, Item* targetItem);
-		uint32_t executeTextEdit(Player* player, Item* item, std::string newText);
+		uint32_t executeTextEdit(Player* player, Item* item, const std::string& newText);
+		uint32_t executeHouseEdit(Player* player, uint32_t houseId, uint32_t listId, const std::string& text);
 		uint32_t executeReportBug(Player* player, const std::string& comment);
 		uint32_t executeReportViolation(Player* player, ReportType_t type, uint8_t reason, const std::string& name,
 			const std::string& comment, const std::string& translation, uint32_t statementId);

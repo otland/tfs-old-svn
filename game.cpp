@@ -2950,12 +2950,22 @@ bool Game::playerUpdateHouseWindow(uint32_t playerId, uint8_t listId, uint32_t w
 
 	uint32_t internalWindowTextId = 0, internalListId = 0;
 	House* house = player->getEditHouse(internalWindowTextId, internalListId);
-	if(house && internalWindowTextId == windowTextId && !listId)
+	if(!house || internalWindowTextId != windowTextId || listId)
+		return true;
+
+	bool deny = false;
+	CreatureEventList houseEditEvents = player->getCreatureEvents(CREATURE_EVENT_HOUSEEDIT);
+	for(CreatureEventList::iterator it = houseEditEvents.begin(); it != houseEditEvents.end(); ++it)
 	{
-		house->setAccessList(internalListId, text);
-		player->setEditHouse(NULL);
+		if(!(*it)->executeHouseEdit(player, house->getId(), internalListId, text))
+			deny = true;
 	}
 
+	player->setEditHouse(NULL);
+	if(deny)
+		return false;
+
+	house->setAccessList(internalListId, text);
 	return true;
 }
 

@@ -198,6 +198,8 @@ bool CreatureEvent::configureEvent(xmlNodePtr p)
 		m_type = CREATURE_EVENT_TRADE_ACCEPT;
 	else if(tmpStr == "textedit")
 		m_type = CREATURE_EVENT_TEXTEDIT;
+	else if(tmpStr == "houseedit")
+		m_type = CREATURE_EVENT_HOUSEEDIT;
 	else if(tmpStr == "reportbug")
 		m_type = CREATURE_EVENT_REPORTBUG;
 	else if(tmpStr == "reportviolation")
@@ -287,6 +289,8 @@ std::string CreatureEvent::getScriptEventName() const
 			return "onTradeAccept";
 		case CREATURE_EVENT_TEXTEDIT:
 			return "onTextEdit";
+		case CREATURE_EVENT_HOUSEEDIT:
+			return "onHouseEdit";
 		case CREATURE_EVENT_REPORTBUG:
 			return "onReportBug";
 		case CREATURE_EVENT_REPORTVIOLATION:
@@ -354,6 +358,8 @@ std::string CreatureEvent::getScriptEventParams() const
 			return "cid, target, item, targetItem";
 		case CREATURE_EVENT_TEXTEDIT:
 			return "cid, item, newText";
+		case CREATURE_EVENT_HOUSEEDIT:
+			return "cid, house, list, text";
 		case CREATURE_EVENT_REPORTBUG:
 			return "cid, comment";
 		case CREATURE_EVENT_REPORTVIOLATION:
@@ -1591,7 +1597,7 @@ uint32_t CreatureEvent::executePrepareDeath(Creature* creature, DeathList deathL
 	}
 }
 
-uint32_t CreatureEvent::executeTextEdit(Player* player, Item* item, std::string newText)
+uint32_t CreatureEvent::executeTextEdit(Player* player, Item* item, const std::string& newText)
 {
 	//onTextEdit(cid, item, newText)
 	if(m_interface->reserveEnv())
@@ -1645,6 +1651,65 @@ uint32_t CreatureEvent::executeTextEdit(Player* player, Item* item, std::string 
 	else
 	{
 		std::clog << "[Error - CreatureEvent::executeTextEdit] Call stack overflow." << std::endl;
+		return 0;
+	}
+}
+
+uint32_t CreatureEvent::executeHouseEdit(Player* player, uint32_t houseId, uint32_t listId, const std::string& text)
+{
+	//onHouseEdit(cid, houseId, listId, text)
+	if(m_interface->reserveEnv())
+	{
+		ScriptEnviroment* env = m_interface->getEnv();
+		if(m_scripted == EVENT_SCRIPT_BUFFER)
+		{
+			env->setRealPos(player->getPosition());
+			std::stringstream scriptstream;
+			scriptstream << "local cid = " << env->addThing(player) << std::endl;
+			scriptstream << "local house = " << houseId << std::endl;
+
+			scriptstream << "local list = " << listId << std::endl;
+			scriptstream << "local text = " << text << std::endl;
+			if(m_scriptData)
+				scriptstream << *m_scriptData;
+
+			bool result = true;
+			if(m_interface->loadBuffer(scriptstream.str()))
+			{
+				lua_State* L = m_interface->getState();
+				result = m_interface->getGlobalBool(L, "_result", true);
+			}
+
+			m_interface->releaseEnv();
+			return result;
+		}
+		else
+		{
+			#ifdef __DEBUG_LUASCRIPTS__
+			char desc[35];
+			sprintf(desc, "%s", player->getName().c_str());
+			env->setEvent(desc);
+			#endif
+
+			env->setScriptId(m_scriptId, m_interface);
+			env->setRealPos(player->getPosition());
+
+			lua_State* L = m_interface->getState();
+			m_interface->pushFunction(m_scriptId);
+
+			lua_pushnumber(L, env->addThing(player));
+			lua_pushnumber(L, houseId);
+			lua_pushnumber(L, listId);
+			lua_pushstring(L, text.c_str());
+
+			bool result = m_interface->callFunction(4);
+			m_interface->releaseEnv();
+			return result;
+		}
+	}
+	else
+	{
+		std::clog << "[Error - CreatureEvent::executeHouseEdit] Call stack overflow." << std::endl;
 		return 0;
 	}
 }
