@@ -2948,11 +2948,9 @@ bool Game::playerUpdateHouseWindow(uint32_t playerId, uint8_t listId, uint32_t w
 	if(!player || player->isRemoved())
 		return false;
 
-	uint32_t internalWindowTextId = 0;
-	uint32_t internalListId = 0;
-
+	uint32_t internalWindowTextId = 0, internalListId = 0;
 	House* house = player->getEditHouse(internalWindowTextId, internalListId);
-	if(house && internalWindowTextId == windowTextId && listId == 0)
+	if(house && internalWindowTextId == windowTextId && !listId)
 	{
 		house->setAccessList(internalListId, text);
 		player->setEditHouse(NULL);
