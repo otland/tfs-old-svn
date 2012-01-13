@@ -193,9 +193,10 @@ class _Database
 		_Database() {}
 		DATABASE_VIRTUAL ~_Database() {}
 
+		int64_t m_use;
+
 	private:
 		static Database* m_instance;
-		int64_t m_use;
 };
 
 class _DBResult
