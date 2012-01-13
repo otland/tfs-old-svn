@@ -75,6 +75,8 @@ enum DBParam_t
 class _Database
 {
 	public:
+		friend class DBTransaction;
+
 		/**
 		* Singleton implementation.
 		*
@@ -108,7 +110,6 @@ class _Database
 		*/
 		DATABASE_VIRTUAL void use() {m_use = OTSYS_TIME();}
 
-	protected:
 		/**
 		* Transaction related methods.
 		*
@@ -118,13 +119,11 @@ class _Database
 		* @note
 		*	If your database system doesn't support transactions you should return true - it's not feature test, code should work without transaction, just will lack integrity.
 		*/
-		friend class DBTransaction;
 
 		DATABASE_VIRTUAL bool beginTransaction() {return false;}
 		DATABASE_VIRTUAL bool rollback() {return false;}
 		DATABASE_VIRTUAL bool commit() {return false;}
 
-	public:
 		/**
 		* Executes command.
 		*
@@ -189,15 +188,14 @@ class _Database
 		DATABASE_VIRTUAL DatabaseEngine_t getDatabaseEngine() {return DATABASE_ENGINE_NONE;}
 
 	protected:
+		DBResult* verifyResult(DBResult* result);
+
 		_Database() {}
 		DATABASE_VIRTUAL ~_Database() {}
 
-		DBResult* verifyResult(DBResult* result);
-
-		int64_t m_use;
-
 	private:
-		static Database* _instance;
+		static Database* m_instance;
+		int64_t m_use;
 };
 
 class _DBResult
@@ -325,27 +323,27 @@ class DBTransaction
 		DBTransaction(Database* database)
 		{
 			m_db = database;
-			m_state = STATE_NO_START;
+			m_state = STATE_FRESH;
 		}
 
 		virtual ~DBTransaction()
 		{
-			if(m_state == STATE_START)
+			if(m_state == STATE_READY)
 				m_db->rollback();
 		}
 
 		bool begin()
 		{
-			m_state = STATE_START;
+			m_state = STATE_READY;
 			return m_db->beginTransaction();
 		}
 
 		bool commit()
 		{
-			if(m_state != STATE_START)
+			if(m_state != STATE_READY)
 				return false;
 
-			m_state = STEATE_COMMIT;
+			m_state = STATE_DONE;
 			return m_db->commit();
 		}
 
@@ -353,9 +351,9 @@ class DBTransaction
 		Database* m_db;
 		enum TransactionStates_t
 		{
-			STATE_NO_START,
-			STATE_START,
-			STEATE_COMMIT
+			STATE_FRESH,
+			STATE_READY,
+			STATE_DONE
 		} m_state;
 };
 #endif

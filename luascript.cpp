@@ -7004,8 +7004,8 @@ int32_t LuaInterface::luaGetMonsterInfo(lua_State* L)
 	setField(L, "armor", mType->armor);
 	setField(L, "baseSpeed", mType->baseSpeed);
 	setField(L, "lookCorpse", mType->lookCorpse);
-	setFieldBool(L, "corpseUnique", mType->corpseUnique);
-	setFieldBool(L, "corpseAction", mType->corpseAction);
+	setField(L, "corpseUnique", mType->corpseUnique);
+	setField(L, "corpseAction", mType->corpseAction);
 	setField(L, "race", mType->race);
 	setField(L, "skull", mType->skull);
 	setField(L, "partyShield", mType->partyShield);

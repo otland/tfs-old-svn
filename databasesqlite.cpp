@@ -51,18 +51,6 @@ DatabaseSQLite::DatabaseSQLite() :
 	}
 }
 
-bool DatabaseSQLite::getParam(DBParam_t param)
-{
-	switch(param)
-	{
-		case DBPARAM_MULTIINSERT:
-		default:
-			break;
-	}
-
-	return false;
-}
-
 std::string DatabaseSQLite::_parse(const std::string& s)
 {
 	std::string query = "";
