@@ -25,7 +25,7 @@
 class Mount
 {
 	public:
-		Mount(std::string _name, uint16_t _id, uint16_t _clientId, int32_t _speed,
+		Mount(std::string _name, uint16_t _id, uint16_t _clientId, int32_t _speed, int32_t _attackSpeed,
 			bool _premium, std::string _storageId, std::string _storageValue)
 		{
 			name = _name;
@@ -33,6 +33,8 @@ class Mount
 			storageValue = _storageValue;
 
 			speed = _speed;
+			attackSpeed = _attackSpeed;
+
 			clientId = _clientId;
 			id = _id;
 			premium = _premium;
@@ -43,13 +45,14 @@ class Mount
 		uint16_t getId() const {return id;}
 		const std::string& getName() const {return name;}
 		uint32_t getSpeed() const {return speed;}
+		int32_t getAttackSpeed() const {return attackSpeed;}
 		uint16_t getClientId() const {return clientId;}
 		bool isPremium() const {return premium;}
 
 
 	private:
 		std::string name, storageId, storageValue;
-		int32_t speed;
+		int32_t speed, attackSpeed;
 		uint16_t clientId;
 		uint8_t id;
 		bool premium;

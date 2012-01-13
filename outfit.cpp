@@ -171,6 +171,9 @@ bool Outfits::parseOutfitNode(xmlNodePtr p)
 		if(readXMLInteger(listNode, "speed", intValue))
 			outfit.speed = intValue;
 
+		if(readXMLInteger(listNode, "attackspeed", intValue) || readXMLInteger(listNode, "attackSpeed", intValue))
+			outfit.attackSpeed = intValue;
+
 		for(xmlNodePtr configNode = listNode->children; configNode != NULL; configNode = configNode->next)
 		{
 			if(!xmlStrcmp(configNode->name, (const xmlChar*)"reflect"))

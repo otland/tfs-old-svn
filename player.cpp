@@ -1946,13 +1946,6 @@ void Player::addExperience(uint64_t exp)
 	{
 		updateBaseSpeed();
 		g_game.changeSpeed(this, 0);
-		if(g_config.getBool(ConfigManager::HEAL_PLAYER_ON_LEVEL))
-		{
-			health = healthMax;
-			mana = manaMax;
-		}
-
-		g_game.addCreatureHealth(this);
 		if(party)
 			party->updateSharedExperience();
 
@@ -4464,11 +4457,35 @@ uint64_t Player::getLostExperience() const
 
 uint32_t Player::getAttackSpeed() const
 {
+	int32_t modifiers = 0;
+	if(mounted)
+	{
+		if(Mount* tmp = Mounts::getInstance()->getMountByCid(defaultOutfit.lookMount))
+		{
+			if(tmp->getAttackSpeed() == -1)
+				return 0;
+
+			modifiers += tmp->getAttackSpeed();
+		}
+	}
+
+	if(outfitAttributes)
+	{
+		Outfit outfit;
+		if(Outfits::getInstance()->getOutfit(defaultOutfit.lookType, outfit))
+		{
+			if(outfit.attackSpeed == -1)
+				return 0;
+
+			modifiers += outfit.attackSpeed;
+		}
+	}
+
 	Item* _weapon = weapon;
 	if(!weapon || weapon->getWeaponType() == WEAPON_AMMO)
 		_weapon = const_cast<Player*>(this)->getWeapon(true);
 
-	return ((_weapon && _weapon->getAttackSpeed() != 0) ? _weapon->getAttackSpeed() : (vocation->getAttackSpeed() / std::max((size_t)1, getWeapons().size())));
+	return (((_weapon && _weapon->getAttackSpeed() != 0) ? _weapon->getAttackSpeed() : (vocation->getAttackSpeed() / std::max((size_t)1, getWeapons().size()))) + modifiers);
 }
 
 void Player::learnInstantSpell(const std::string& name)

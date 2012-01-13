@@ -81,20 +81,16 @@ bool Mounts::loadFromXml()
 		return false;
 	}
 
-	xmlNodePtr p, root = xmlDocGetRootElement(doc);
-	if(xmlStrcmp(root->name,(const xmlChar*)"mounts"))
+	xmlNodePtr root = xmlDocGetRootElement(doc);
+	if(xmlStrcmp(root->name, (const xmlChar*)"mounts"))
 	{
 		std::clog << "[Error - Mounts::loadFromXml] Malformed mounts file." << std::endl;
 		xmlFreeDoc(doc);
 		return false;
 	}
 
-	p = root->children;
-	while(p)
-	{
+	for(xmlNodePtr p = root->children; p; p = p->next)
 		parseMountNode(p);
-		p = p->next;
-	}
 
 	xmlFreeDoc(doc);
 	return true;
@@ -123,6 +119,10 @@ bool Mounts::parseMountNode(xmlNodePtr p)
 	int32_t speed = 0;
 	if(readXMLInteger(p, "speed", intValue))
 		speed = intValue;
+
+	int32_t attackSpeed = 0;
+	if(readXMLInteger(p, "attackspeed", intValue) || readXMLInteger(p, "attackSpeed", intValue))
+		attackSpeed = intValue;
 
 	bool premium = true;
 	if(readXMLString(p, "premium", strValue))
@@ -156,7 +156,7 @@ bool Mounts::parseMountNode(xmlNodePtr p)
 	}
 
 	Mount* mount = new Mount(name, mountId, clientId,
-		speed, premium, storageId, storageValue);
+		speed, attackSpeed, premium, storageId, storageValue);
 	if(!mount)
 		return false;
 

@@ -146,7 +146,8 @@ bool ConfigManager::load()
 	m_confDouble[RATE_SKILL]			= getGlobalDouble("rateSkill", 1);
 	m_confDouble[RATE_MAGIC]			= getGlobalDouble("rateMagic", 1);
 	m_confDouble[RATE_LOOT]				= getGlobalDouble("rateLoot", 1);
-	m_confNumber[RATE_SPAWN]			= getGlobalNumber("rateSpawn", 1);
+	m_confNumber[RATE_SPAWN_MIN]			= getGlobalNumber("rateSpawnMin", 1);
+	m_confNumber[RATE_SPAWN_MAX]			= getGlobalNumber("rateSpawnMax", 1);
 	m_confNumber[PARTY_RADIUS_X]			= getGlobalNumber("experienceShareRadiusX", 30);
 	m_confNumber[PARTY_RADIUS_Y]			= getGlobalNumber("experienceShareRadiusY", 30);
 	m_confNumber[PARTY_RADIUS_Z]			= getGlobalNumber("experienceShareRadiusZ", 1);
@@ -336,7 +337,6 @@ bool ConfigManager::load()
 	m_confBool[DAEMONIZE]				= getGlobalBool("daemonize", false);
 	m_confBool[TIBIA_SLOTS]				= getGlobalBool("tibiaClassicSlots", true);
 	m_confBool[SKIP_ITEMS_VERSION]			= getGlobalBool("skipItemsVersionCheck", false);
-	m_confBool[HEAL_PLAYER_ON_LEVEL]		= getGlobalBool("healPlayersOnLevelAdvance", true);
 	m_confBool[SILENT_LUA]				= getGlobalBool("disableLuaErrors", false);
 	m_confNumber[MAIL_ATTEMPTS]				= getGlobalNumber("mailMaxAttempts", 20);
 	m_confNumber[MAIL_BLOCK] 			= getGlobalNumber("mailBlockPeriod", 3600000);

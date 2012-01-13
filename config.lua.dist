@@ -231,7 +231,6 @@
 	maxMessageBuffer = 4
 	tradeLimit = 100
 	useCapacity = true
-	healPlayersOnLevelAdvance = true
 
 	-- Depot
 	defaultDepotSizePremium = 2000
@@ -295,13 +294,15 @@
 	-- Rates
 	-- NOTE: experienceStages configuration is located in data/XML/stages.xml.
 	-- rateExperienceFromPlayers 0 to disable.
+	-- For constant spawn count increment, use exact values in rateSpawn* variables.
 	experienceStages = false
 	rateExperience = 5.0
 	rateExperienceFromPlayers = 0
 	rateSkill = 3.0
 	rateMagic = 3.0
 	rateLoot = 2.0
-	rateSpawn = 1
+	rateSpawnMin = 1
+	rateSpawnMax = 1
 
 	-- Monster rates
 	rateMonsterHealth = 1.0
