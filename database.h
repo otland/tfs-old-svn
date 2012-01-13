@@ -152,7 +152,7 @@ class _Database
 		* @param std::string string to be escaped
 		* @return quoted string
 		*/
-		DATABASE_VIRTUAL std::string escapeString(const std::string&) {return "''";}
+		DATABASE_VIRTUAL std::string escapeString(std::string) {return "''";}
 
 		/**
 		* Escapes binary stream for query.
@@ -277,7 +277,7 @@ class DBInsert
 		*
 		* @param std::string& INSERT query
 		*/
-		void setQuery(const std::string& query);
+		void setQuery(std::string query);
 
 		/**
 		* Adds new row to INSERT statement.
@@ -286,7 +286,7 @@ class DBInsert
 		*
 		* @param std::string& row data
 		*/
-		bool addRow(const std::string& row);
+		bool addRow(std::string row);
 		/**
 		* Allows to use addRow() with stringstream as parameter.
 		*/
