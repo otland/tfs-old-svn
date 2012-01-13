@@ -189,7 +189,6 @@ class ConfigManager
 			MAIL_ATTEMPTS,
 			MAIL_BLOCK,
 			ALLOWED_MAX_PACKETS,
-			MOUNT_COOLDOWN,
 			LAST_NUMBER_CONFIG /* this must be the last one */
 		};
 
