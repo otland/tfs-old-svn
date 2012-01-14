@@ -199,7 +199,7 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 
 		//Add char list
 		output->put<char>(0x64);
-		if(g_config.getBool(ConfigManager::ACCOUNT_MANAGER) && id != 1)
+		if(g_config.getBool(ConfigManager::ACCOUNT_MANAGER) && account.number != 1)
 		{
 			output->put<char>(account.charList.size() + 1);
 			output->putString("Account Manager");
