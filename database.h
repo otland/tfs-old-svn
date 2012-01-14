@@ -251,7 +251,7 @@ class DBQuery : public std::stringstream
 	friend class _Database;
 	public:
 		DBQuery() {databaseLock.lock();}
-		virtual ~DBQuery() {databaseLock.unlock();}
+		~DBQuery() {databaseLock.unlock();}
 
 	protected:
 		static boost::recursive_mutex databaseLock;
@@ -271,7 +271,7 @@ class DBInsert
 		* @param Database* database wrapper
 		*/
 		DBInsert(Database* db);
-		virtual ~DBInsert() {}
+		~DBInsert() {}
 
 		/**
 		* Sets query prototype.
@@ -328,7 +328,7 @@ class DBTransaction
 			m_state = STATE_FRESH;
 		}
 
-		virtual ~DBTransaction()
+		~DBTransaction()
 		{
 			if(m_state == STATE_READY)
 				m_db->rollback();
