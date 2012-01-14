@@ -52,6 +52,7 @@
 #include "weapons.h"
 #include "mounts.h"
 
+#include "textlogger.h"
 #include "vocation.h"
 #include "group.h"
 
