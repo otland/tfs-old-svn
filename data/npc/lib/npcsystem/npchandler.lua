@@ -358,13 +358,15 @@ if(NpcHandler == nil) then
 				if(self.queue == nil or not self.queue:greetNext()) then
 					local msg = self:getMessage(MESSAGE_FAREWELL)
 					msg = self:parseMessage(msg, { [TAG_PLAYERNAME] = getPlayerName(cid) or -1 })
-					self:resetNpc(cid)
 
-					self:say(msg, cid, 0, true)
-					self:releaseFocus(cid)
-					if(not isPlayerGhost(cid)) then
+					self:resetNpc(cid)
+					if(NPCHANDLER_CONVBEHAVIOR ~= CONVERSATION_DEFAULT) then
+						self:say(msg, cid, 0, true)
+					elseif(not isPlayerGhost(cid)) then
 						self:say(msg)
 					end
+
+					self:releaseFocus(cid)
 				end
 			end
 		end
@@ -376,14 +378,14 @@ if(NpcHandler == nil) then
 		if(callback == nil or callback(cid)) then
 			if(self:processModuleCallback(CALLBACK_GREET, cid)) then
 				local msg = self:getMessage(MESSAGE_GREET)
-				local parseInfo = { [TAG_PLAYERNAME] = getCreatureName(cid) }
-				msg = self:parseMessage(msg, parseInfo)
+				msg = self:parseMessage(msg, { [TAG_PLAYERNAME] = getCreatureName(cid) })
 
-				if(not isPlayerGhost(cid)) then
+				self:addFocus(cid)
+				if(NPCHANDLER_CONVBEHAVIOR ~= CONVERSATION_DEFAULT) then
+					self:say(msg, cid)
+				elseif(not isPlayerGhost(cid)) then
 					self:say(msg)
 				end
-				self:addFocus(cid)
-				self:say(msg, cid)
 			end
 		end
 	end
@@ -586,13 +588,15 @@ if(NpcHandler == nil) then
 					if(self.queue == nil or not self.queue:greetNext()) then
 						local msg = self:getMessage(MESSAGE_WALKAWAY)
 						msg = self:parseMessage(msg, { [TAG_PLAYERNAME] = getPlayerName(cid) or -1 })
-						self:resetNpc(cid)
 
-						self:say(msg, cid, 0, true)
-						self:releaseFocus(cid)
-						if(not isPlayerGhost(cid)) then
+						self:resetNpc(cid)
+						if(NPCHANDLER_CONVBEHAVIOR ~= CONVERSATION_DEFAULT) then
+							self:say(msg, cid, 0, true)
+						elseif(not isPlayerGhost(cid)) then
 							self:say(msg)
 						end
+
+						self:releaseFocus(cid)
 					end
 				end
 			end
@@ -627,6 +631,7 @@ if(NpcHandler == nil) then
 			else
 				selfSay(message)
 			end
+
 			return
 		end
 
