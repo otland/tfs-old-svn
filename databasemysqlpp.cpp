@@ -65,6 +65,7 @@ DatabaseMySQLpp::~DatabaseMySQLpp()
 
 bool DatabaseMySQLpp::connect(bool reconnect)
 {
+	m_connected = false;
 	if(reconnect && m_connection)
 	{
 		m_connection->close();
@@ -93,6 +94,7 @@ bool DatabaseMySQLpp::connect(bool reconnect)
 	}
 
 	m_connection->setSchema(g_config.getString(ConfigManager::SQL_DB));
+	m_connected = true;
 	return true;
 }
 
@@ -111,7 +113,7 @@ bool DatabaseMySQLpp::getParam(DBParam_t param)
 
 bool DatabaseMySQLpp::beginTransaction()
 {
-	if(!m_connection)
+	if(!m_connected)
 		return false;
 
 	return query("BEGIN");
@@ -119,7 +121,7 @@ bool DatabaseMySQLpp::beginTransaction()
 
 bool DatabaseMySQLpp::rollback()
 {
-	if(!m_connection)
+	if(!m_connected)
 		return false;
 
 	m_connection->rollback();
@@ -128,7 +130,7 @@ bool DatabaseMySQLpp::rollback()
 
 bool DatabaseMySQLpp::commit()
 {
-	if(!m_connection)
+	if(!m_connected)
 		return false;
 
 	m_connection->commit();
@@ -137,7 +139,7 @@ bool DatabaseMySQLpp::commit()
 
 bool DatabaseMySQLpp::query(std::string query)
 {
-	if(!m_connection && !connect(true))
+	if(!m_connected && !connect(true))
 		return false;
 
 	try
@@ -158,7 +160,7 @@ bool DatabaseMySQLpp::query(std::string query)
 
 DBResult* DatabaseMySQLpp::storeQuery(std::string query)
 {
-	if(!m_connection && !connect(true))
+	if(!m_connected && !connect(true))
 		return false;
 
 	try
@@ -183,7 +185,7 @@ DBResult* DatabaseMySQLpp::storeQuery(std::string query)
 
 std::string DatabaseMySQLpp::escapeBlob(const char* s, uint32_t)
 {
-	if(!m_connection || *s == '\0')
+	if(!m_connected || *s == '\0')
 		return "''";
 
 	return "'" + m_connection->escapeString(s) + "'";

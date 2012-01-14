@@ -36,6 +36,34 @@ DatabasePgSQL::DatabasePgSQL() :
 		PQfinish(m_handle);
 		delete m_handle;
 	}
+	else
+		m_connected = true;
+}
+
+std::string DatabasePgSQL::_parse(const std::string& s)
+{
+	std::string query = "";
+	query.reserve(s.size());
+
+	bool inString = false;
+	for(uint32_t i = 0; i < s.length(); ++i)
+	{
+		uint8_t ch = s[i];
+		if(ch == '\'')
+		{
+			if(inString && s[i + 1] != '\'')
+				inString = false;
+			else
+				inString = true;
+		}
+
+		if(ch == '`' && !inString)
+			ch = '"';
+
+		query += ch;
+	}
+
+	return query;
 }
 
 bool DatabasePgSQL::getParam(DBParam_t param)
@@ -54,7 +82,7 @@ bool DatabasePgSQL::getParam(DBParam_t param)
 
 bool DatabasePgSQL::query(std::string query)
 {
-	if(!m_handle)
+	if(!m_connected)
 		return false;
 
 	// executes query
@@ -74,7 +102,7 @@ bool DatabasePgSQL::query(std::string query)
 
 DBResult* DatabasePgSQL::storeQuery(std::string query)
 {
-	if(!m_handle)
+	if(!m_connected)
 		return NULL;
 
 	// executes query
@@ -95,7 +123,7 @@ DBResult* DatabasePgSQL::storeQuery(std::string query)
 std::string DatabasePgSQL::escapeString(std::string s)
 {
 	// remember to quote even empty string!
-	if(!s.size())
+	if(!m_connected || !s.size())
 		return std::string("''");
 
 	// the worst case is 2n + 1
@@ -115,7 +143,7 @@ std::string DatabasePgSQL::escapeString(std::string s)
 std::string DatabasePgSQL::escapeBlob(const char *s, uint32_t length)
 {
 	// remember to quote even empty stream!
-	if(!s)
+	if(!m_connected || !s)
 		return std::string("''");
 
 	// quotes escaped string and frees temporary buffer
@@ -132,7 +160,7 @@ std::string DatabasePgSQL::escapeBlob(const char *s, uint32_t length)
 
 uint64_t DatabasePgSQL::getLastInsertId()
 {
-	if(!m_handle)
+	if(!m_connected)
 		return 0;
 
 	PGresult* res = PQexec(m_handle, "SELECT LASTVAL() as last;");
@@ -147,30 +175,6 @@ uint64_t DatabasePgSQL::getLastInsertId()
 	const uint64_t id = atoll(PQgetvalue(res, 0, PQfnumber(res, "last")));
 	PQclear(res);
 	return id;
-}
-
-std::string DatabasePgSQL::_parse(const std::string& s)
-{
-	std::string query = "";
-	bool inString = false;
-	for(uint32_t a = 0; a < s.length(); a++)
-	{
-		uint8_t ch = s[a];
-		if(ch == '\'')
-		{
-			if(inString && s[a + 1] != '\'')
-				inString = false;
-			else
-				inString = true;
-		}
-
-		if(ch == '`' && !inString)
-			ch = '"';
-
-		query += ch;
-	}
-
-	return query;
 }
 
 const char* PgSQLResult::getDataStream(const std::string& s, uint64_t& size)
@@ -219,6 +223,6 @@ PgSQLResult::PgSQLResult(PGresult* result)
 		return;
 
 	m_handle = result;
-	m_cursor = -1;
 	m_rows = PQntuples(m_handle) - 1;
+	m_cursor = -1;
 }

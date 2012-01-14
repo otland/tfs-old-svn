@@ -47,8 +47,10 @@ DatabaseSQLite::DatabaseSQLite() :
 	{
 		std::clog << "Failed to initialize SQLite connection: " << sqlite3_errmsg(m_handle) << " (" << sqlite3_errcode(m_handle) << ")" << std::endl;
 		sqlite3_close(m_handle);
-		m_handle = NULL;
+		delete m_handle;
 	}
+	else
+		m_connected = true;
 }
 
 std::string DatabaseSQLite::_parse(const std::string& s)
@@ -80,7 +82,7 @@ std::string DatabaseSQLite::_parse(const std::string& s)
 bool DatabaseSQLite::query(std::string query)
 {
 	boost::recursive_mutex::scoped_lock lockClass(sqliteLock);
-	if(!m_handle)
+	if(!m_connected)
 		return false;
 
 	std::string buf = _parse(query);
@@ -114,7 +116,7 @@ bool DatabaseSQLite::query(std::string query)
 DBResult* DatabaseSQLite::storeQuery(std::string query)
 {
 	boost::recursive_mutex::scoped_lock lockClass(sqliteLock);
-	if(!m_handle)
+	if(!m_connected)
 		return NULL;
 
 	std::string buf = _parse(query);
@@ -229,6 +231,7 @@ void SQLiteResult::free()
 
 	sqlite3_finalize(m_handle);
 	m_handle = NULL;
+
 	m_listNames.clear();
 	delete this;
 }
@@ -248,8 +251,6 @@ SQLiteResult::SQLiteResult(sqlite3_stmt* stmt)
 		return;
 
 	m_handle = stmt;
-	m_listNames.clear();
-
 	int32_t fields = sqlite3_column_count(m_handle);
 	for(int32_t i = 0; i < fields; ++i)
 		m_listNames[sqlite3_column_name(m_handle, i)] = i;

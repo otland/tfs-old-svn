@@ -103,7 +103,7 @@ class _Database
 		*
 		* @return whether or not the database is connected.
 		*/
-		DATABASE_VIRTUAL bool isConnected() const {return false;}
+		DATABASE_VIRTUAL bool isConnected() const {return m_connected;}
 
 		/**
 		* Database ...
@@ -190,9 +190,10 @@ class _Database
 	protected:
 		DBResult* verifyResult(DBResult* result);
 
-		_Database() {}
-		DATABASE_VIRTUAL ~_Database() {}
+		_Database(): m_connected(false) {}
+		DATABASE_VIRTUAL ~_Database() {m_connected = false;}
 
+		bool m_connected;
 		int64_t m_use;
 
 	private:
