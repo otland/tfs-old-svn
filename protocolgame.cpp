@@ -1778,7 +1778,8 @@ void ProtocolGame::sendReLoginWindow(uint8_t pvpPercent)
 	{
 		TRACK_MESSAGE(msg);
 		msg->put<char>(0x28);
-		msg->put<char>((int16_t)pvpPercent);
+		if(pvpPercent > 0) // EXPERIMENTAL!
+			msg->put<char>(pvpPercent);
 	}
 }
 

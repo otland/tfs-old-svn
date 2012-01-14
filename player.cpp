@@ -2242,18 +2242,13 @@ bool Player::onDeath()
 
 	bool usePVPBlessing = false;
 	uint8_t pvpPercent = (uint16_t)std::ceil((double)pvpDamage * 100. / std::max(1U, totalDamage));
-	if(pvpBlessing && pvpPercent >= (uint8_t)g_config.getNumber(
-		ConfigManager::PVP_BLESSING_THRESHOLD))
-		usePVPBlessing = true;
-
 	if(preventLoss)
 	{
 		setLossSkill(false);
-		if(!usePVPBlessing)
-			g_game.transformItem(preventLoss, preventLoss->getID(), std::max(0, (int32_t)preventLoss->getCharges() - 1));
-		else
-			pvpBlessing = false;
+		g_game.transformItem(preventLoss, preventLoss->getID(), std::max(0, (int32_t)preventLoss->getCharges() - 1));
 	}
+	else if(pvpBlessing && pvpPercent >= (uint8_t)g_config.getNumber(ConfigManager::PVP_BLESSING_THRESHOLD))
+		usePVPBlessing = true;
 
 	if(preventDrop && preventDrop != preventLoss && !usePVPBlessing)
 		g_game.transformItem(preventDrop, preventDrop->getID(), std::max(0, (int32_t)preventDrop->getCharges() - 1));
