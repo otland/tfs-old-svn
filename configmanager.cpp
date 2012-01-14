@@ -185,7 +185,6 @@ bool ConfigManager::load()
 	m_confBool[FREE_PREMIUM]			= getGlobalBool("freePremium", false);
 	m_confNumber[PROTECTION_LEVEL]			= getGlobalNumber("protectionLevel", 1);
 	m_confNumber[STATUSQUERY_TIMEOUT]		= getGlobalNumber("statusTimeout", 300000);
-	m_confBool[BROADCAST_BANISHMENTS]		= getGlobalBool("broadcastBanishments", true);
 	m_confBool[GENERATE_ACCOUNT_NUMBER]		= getGlobalBool("generateAccountNumber", false);
 	m_confBool[GENERATE_ACCOUNT_SALT]		= getGlobalBool("generateAccountSalt", false);
 	m_confBool[INGAME_GUILD_MANAGEMENT]		= getGlobalBool("ingameGuildManagement", true);
@@ -208,7 +207,7 @@ bool ConfigManager::load()
 	m_confNumber[BAN_LENGTH]			= getGlobalNumber("banLength", 604800);
 	m_confNumber[KILLS_BAN_LENGTH]			= getGlobalNumber("killsBanLength", 604800);
 	m_confNumber[FINALBAN_LENGTH]			= getGlobalNumber("finalBanLength", 2592000);
-	m_confNumber[IPBANISHMENT_LENGTH]		= getGlobalNumber("ipBanishmentLength", 86400);
+	m_confNumber[IPBAN_LENGTH]		= getGlobalNumber("ipBanLength", 86400);
 	m_confBool[BANK_SYSTEM]				= getGlobalBool("bankSystem", true);
 	m_confBool[PREMIUM_FOR_PROMOTION]		= getGlobalBool("premiumForPromotion", true);
 	m_confBool[INIT_PREMIUM_UPDATE]			= getGlobalBool("updatePremiumStateAtStartup", true);
@@ -298,7 +297,6 @@ bool ConfigManager::load()
 	m_confBool[USE_FRAG_HANDLER]			= getGlobalBool("useFragHandler", true);
 	m_confNumber[LOOT_MESSAGE]			= getGlobalNumber("monsterLootMessage", 3);
 	m_confNumber[LOOT_MESSAGE_TYPE]			= getGlobalNumber("monsterLootMessageType", 19);
-	m_confNumber[NAME_REPORT_TYPE]			= getGlobalNumber("violationNameReportActionType", 2);
 	m_confBool[ALLOW_FIGHTBACK]			= getGlobalBool("allowFightback", true);
 	m_confNumber[HOUSE_CLEAN_OLD]			= getGlobalNumber("houseCleanOld", 0);
 	m_confBool[VIPLIST_PER_PLAYER]			= getGlobalBool("separateVipListPerCharacter", false);

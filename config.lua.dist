@@ -46,9 +46,7 @@
 	banLength = 7 * 24 * 60 * 60
 	killsBanLength = 7 * 24 * 60 * 60
 	finalBanLength = 30 * 24 * 60 * 60
-	ipBanishmentLength = 1 * 24 * 60 * 60
-	broadcastBanishments = true
-	violationNameReportActionType = 2
+	ipBanLength = 1 * 24 * 60 * 60
 	autoBanishUnknownBytes = false
 	allowedMaxSizedPackets = 20
 
