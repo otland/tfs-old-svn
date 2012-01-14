@@ -1841,7 +1841,7 @@ uint32_t CreatureEvent::executeReportViolation(Player* player, ReportType_t type
 
 uint32_t CreatureEvent::executeChannelRequest(Player* player, const std::string& channel, bool isPrivate, bool custom)
 {
-	//onChannelRequest(cid, channel, private)
+	//onChannelRequest(cid, channel, custom)
 	if(m_interface->reserveEnv())
 	{
 		ScriptEnviroment* env = m_interface->getEnv();

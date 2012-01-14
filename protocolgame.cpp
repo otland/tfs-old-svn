@@ -214,7 +214,6 @@ bool ProtocolGame::login(const std::string& name, uint32_t id, const std::string
 
 			std::stringstream stream;
 			stream << "Your character has been " << (deletion ? "deleted" : "banished") << " at:\n" << formatDateEx(ban.added, "%d %b %Y").c_str() << " by: " << name_.c_str()
-				   << ",\nfor the following reason:\n" << getReason(ban.reason).c_str() << ".\nThe action taken was:\n" << getAction(ban.action, false).c_str()
 				   << ".\nThe comment given was:\n" << ban.comment.c_str() << ".\nYour " << (deletion ? "character won't be undeleted" : "banishment will be lifted at:\n")
 				   << (deletion ? "" : formatDateEx(ban.expires).c_str()) << ".";
 
@@ -589,7 +588,6 @@ bool ProtocolGame::parseFirstPacket(NetworkMessage& msg)
 
 		std::stringstream stream;
 		stream << "Your account has been " << (deletion ? "deleted" : "banished") << " at:\n" << formatDateEx(ban.added, "%d %b %Y").c_str() << " by: " << name_.c_str()
-			   << ",\nfor the following reason:\n" << getReason(ban.reason).c_str() << ".\nThe action taken was:\n" << getAction(ban.action, false).c_str()
 			   << ".\nThe comment given was:\n" << ban.comment.c_str() << ".\nYour " << (deletion ? "account won't be undeleted" : "banishment will be lifted at:\n")
 			   << (deletion ? "" : formatDateEx(ban.expires).c_str()) << ".";
 
@@ -917,21 +915,17 @@ void ProtocolGame::parsePacket(NetworkMessage &msg)
 				if(g_config.getBool(ConfigManager::BAN_UNKNOWN_BYTES))
 				{
 					int64_t banTime = -1;
-					ViolationAction_t action = ACTION_BANISHMENT;
 					Account tmp = IOLoginData::getInstance()->loadAccount(player->getAccount(), true);
 
 					tmp.warnings++;
 					if(tmp.warnings >= g_config.getNumber(ConfigManager::WARNINGS_TO_DELETION))
-						action = ACTION_DELETION;
+						{}
 					else if(tmp.warnings >= g_config.getNumber(ConfigManager::WARNINGS_TO_FINALBAN))
-					{
 						banTime = time(NULL) + g_config.getNumber(ConfigManager::FINALBAN_LENGTH);
-						action = ACTION_BANFINAL;
-					}
 					else
 						banTime = time(NULL) + g_config.getNumber(ConfigManager::BAN_LENGTH);
 
-					if(IOBan::getInstance()->addAccountBanishment(tmp.number, banTime, 13, action,
+					if(IOBan::getInstance()->addAccountBanishment(tmp.number, banTime,
 						"Sending unknown packets to the server.", 0, player->getGUID()))
 					{
 						IOLoginData::getInstance()->saveAccount(tmp);

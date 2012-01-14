@@ -394,17 +394,14 @@ CREATE TABLE `guild_kills`
 CREATE TABLE `bans`
 (
 	`id` INT UNSIGNED NOT NULL auto_increment,
-	`type` TINYINT(1) NOT NULL COMMENT '1 - ip banishment, 2 - namelock, 3 - account banishment, 4 - notation, 5 - deletion',
-	`value` INT UNSIGNED NOT NULL COMMENT 'ip address (integer), player guid or account number',
-	`param` INT UNSIGNED NOT NULL DEFAULT 4294967295 COMMENT 'used only for ip banishment mask (integer)',
+	`type` TINYINT(1) NOT NULL COMMENT '1 - ip, 2 - player, 3 - account, 4 - notation',
+	`value` INT UNSIGNED NOT NULL COMMENT 'ip - ip address, player - player_id, account - account_id, notation - account_id',
+	`param` INT UNSIGNED NOT NULL COMMENT 'ip - mask, player - type (1 - report, 2 - lock, 3 - ban), account - player, notation - player',
 	`active` TINYINT(1) NOT NULL DEFAULT TRUE,
-	`expires` INT NOT NULL,
+	`expires` INT NOT NULL DEFAULT -1,
 	`added` INT UNSIGNED NOT NULL,
 	`admin_id` INT UNSIGNED NOT NULL DEFAULT 0,
 	`comment` TEXT NOT NULL,
-	`reason` INT UNSIGNED NOT NULL DEFAULT 0,
-	`action` INT UNSIGNED NOT NULL DEFAULT 0,
-	`statement` VARCHAR(255) NOT NULL DEFAULT '',
 	PRIMARY KEY (`id`),
 	KEY `type` (`type`, `value`),
 	KEY `active` (`active`)
