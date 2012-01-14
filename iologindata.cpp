@@ -43,15 +43,15 @@ extern Game g_game;
 
 Account IOLoginData::loadAccount(uint32_t accountId, bool preLoad/* = false*/)
 {
-	Account account;
 	Database* db = Database::getInstance();
 	DBQuery query;
 
 	query << "SELECT `name`, `password`, `salt`, `premdays`, `lastday`, `key`, `warnings` FROM `accounts` WHERE `id` = " << accountId << " LIMIT 1";
 	DBResult* result;
 	if(!(result = db->storeQuery(query.str())))
-		return account;
+		return Account();
 
+	Account account;
 	account.number = accountId;
 	account.name = result->getDataString("name");
 	account.password = result->getDataString("password");
@@ -61,18 +61,51 @@ Account IOLoginData::loadAccount(uint32_t accountId, bool preLoad/* = false*/)
 	account.recoveryKey = result->getDataString("key");
 	account.warnings = result->getDataInt("warnings");
 
-	query.str("");
 	result->free();
-	if(preLoad)
-		return account;
+	if(!preLoad)
+		loadCharacters(account);
+
+	return account;
+}
+
+bool IOLoginData::loadAccount(Account& account, const std::string& name)
+{
+	Database* db = Database::getInstance();
+	DBQuery query;
+
+	query << "SELECT `id`, `password`, `salt`, `premdays`, `lastday`, `key`, `warnings` FROM `accounts` WHERE `name` " << db->getStringComparer() << db->escapeString(name) << " LIMIT 1";
+	DBResult* result;
+	if(!(result = db->storeQuery(query.str())))
+		return false;
+
+	Account account;
+	account.number = result->getDataInt("id");
+	account.name = name;
+	account.password = result->getDataString("password");
+	account.salt = result->getDataString("salt");
+	account.premiumDays = std::max((int32_t)0, std::min((int32_t)GRATIS_PREMIUM, result->getDataInt("premdays")));
+	account.lastDay = result->getDataInt("lastday");
+	account.recoveryKey = result->getDataString("key");
+	account.warnings = result->getDataInt("warnings");
+
+	result->free();
+	loadCharacters(account);
+	return true;
+}
+
+void IOLoginData::loadCharacters(Account& account)
+{
+	Database* db = Database::getInstance();
+	DBQuery query;
 
 #ifndef __LOGIN_SERVER__
-	query << "SELECT `name` FROM `players` WHERE `account_id` = " << accountId << " AND `world_id` = " << g_config.getNumber(ConfigManager::WORLD_ID) << " AND `deleted` = 0";
+	query << "SELECT `name` FROM `players` WHERE `account_id` = " << account.number << " AND `world_id` = " << g_config.getNumber(ConfigManager::WORLD_ID) << " AND `deleted` = 0";
 #else
-	query << "SELECT `name`, `world_id` FROM `players` WHERE `account_id` = " << accountId << " AND `deleted` = 0";
+	query << "SELECT `name`, `world_id` FROM `players` WHERE `account_id` = " << account.number << " AND `deleted` = 0";
 #endif
+	DBResult* result;
 	if(!(result = db->storeQuery(query.str())))
-		return account;
+		return;
 
 	do
 	{
@@ -89,10 +122,8 @@ Account IOLoginData::loadAccount(uint32_t accountId, bool preLoad/* = false*/)
 	while(result->next());
 	result->free();
 #ifndef __LOGIN_SERVER__
-
 	account.charList.sort();
 #endif
-	return account;
 }
 
 bool IOLoginData::saveAccount(Account account)

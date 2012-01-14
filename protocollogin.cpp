@@ -130,15 +130,14 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 		return false;
 	}
 
-	uint32_t id = 1;
-	if(!IOLoginData::getInstance()->getAccountId(name, id))
+	Account account;
+	if(!IOLoginData::getInstance()->loadAccount(account, name))
 	{
 		ConnectionManager::getInstance()->addAttempt(clientIp, protocolId, false);
 		disconnectClient(0x0A, "Invalid account name.");
 		return false;
 	}
 
-	Account account = IOLoginData::getInstance()->loadAccount(id);
 	if(!encryptTest(account.salt + password, account.password))
 	{
 		ConnectionManager::getInstance()->addAttempt(clientIp, protocolId, false);

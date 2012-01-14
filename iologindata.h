@@ -48,6 +48,7 @@ class IOLoginData
 		}
 
 		Account loadAccount(uint32_t accountId, bool preLoad = false);
+		bool loadAccount(Account& account, const std::string& name);
 		bool saveAccount(Account account);
 
 		bool getAccountId(const std::string& name, uint32_t& number);
@@ -110,6 +111,7 @@ class IOLoginData
 
 	protected:
 		IOLoginData() {}
+
 		struct StringCompareCase
 		{
 			bool operator()(const std::string& l, const std::string& r) const
@@ -129,6 +131,7 @@ class IOLoginData
 		bool saveItems(const Player* player, const ItemBlockList& itemList, DBInsert& query_insert);
 		void loadItems(ItemMap& itemMap, DBResult* result);
 
+		void loadCharacters(Account& account);
 		bool storeNameByGuid(uint32_t guid);
 };
 #endif
