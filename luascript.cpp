@@ -11351,7 +11351,9 @@ int32_t LuaInterface::luaDatabaseExecute(lua_State* L)
 {
 	//db.query(query)
 	DBQuery query; //lock mutex
-	lua_pushboolean(L, Database::getInstance()->query(popString(L)));
+	query << popString(L);
+
+	lua_pushboolean(L, Database::getInstance()->query(query.str()));
 	return 1;
 }
 
@@ -11359,8 +11361,8 @@ int32_t LuaInterface::luaDatabaseStoreQuery(lua_State* L)
 {
 	//db.storeQuery(query)
 	ScriptEnviroment* env = getEnv();
-
 	DBQuery query; //lock mutex
+
 	query << popString(L);
 	if(DBResult* res = Database::getInstance()->storeQuery(query.str()))
 		lua_pushnumber(L, env->addResult(res));
@@ -11373,7 +11375,6 @@ int32_t LuaInterface::luaDatabaseStoreQuery(lua_State* L)
 int32_t LuaInterface::luaDatabaseEscapeString(lua_State* L)
 {
 	//db.escapeString(str)
-	DBQuery query; //lock mutex
 	lua_pushstring(L, Database::getInstance()->escapeString(popString(L)).c_str());
 	return 1;
 }
@@ -11382,8 +11383,6 @@ int32_t LuaInterface::luaDatabaseEscapeBlob(lua_State* L)
 {
 	//db.escapeBlob(s, length)
 	uint32_t length = popNumber(L);
-	DBQuery query; //lock mutex
-
 	lua_pushstring(L, Database::getInstance()->escapeBlob(popString(L).c_str(), length).c_str());
 	return 1;
 }
@@ -11391,7 +11390,6 @@ int32_t LuaInterface::luaDatabaseEscapeBlob(lua_State* L)
 int32_t LuaInterface::luaDatabaseLastInsertId(lua_State* L)
 {
 	//db.lastInsertId()
-	DBQuery query; //lock mutex
 	lua_pushnumber(L, Database::getInstance()->getLastInsertId());
 	return 1;
 }

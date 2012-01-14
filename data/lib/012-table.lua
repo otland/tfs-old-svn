@@ -122,5 +122,9 @@ function table.serialize(x, recur)
 end
 
 function table.unserialize(str)
+	if(type(str) ~= 'string' or str:len() == 0) then
+		return {}
+	end
+
 	return loadstring("return " .. str)()
 end
