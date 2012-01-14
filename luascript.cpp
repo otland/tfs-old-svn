@@ -10661,7 +10661,7 @@ int32_t LuaInterface::luaDoAddIpBanishment(lua_State* L)
 {
 	//doAddIpBanishment(ip[, mask[, length[, comment[, admin]]]]])
 	uint32_t admin = 0, mask = 0xFFFFFFFF, params = lua_gettop(L);
-	int64_t length = time(NULL) + g_config.getNumber(ConfigManager::IPBANISHMENT_LENGTH);
+	int64_t length = time(NULL) + g_config.getNumber(ConfigManager::IPBAN_LENGTH);
 	std::string comment;
 
 	if(params > 4)

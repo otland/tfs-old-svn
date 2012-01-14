@@ -2286,7 +2286,7 @@ bool Game::playerBroadcastMessage(Player* player, MessageClasses type, const std
 			(type >= MSG_SPEAK_MONSTER_FIRST && type <= MSG_SPEAK_MONSTER_LAST)))
 		return false;
 
-	Logger::getInstance()->eFile("talkactions/" + creature->getName() + ".log", "#b " + text, true);
+	Logger::getInstance()->eFile("talkactions/" + player->getName() + ".log", "#b " + text, true);
 	for(AutoList<Player>::iterator it = Player::autoList.begin(); it != Player::autoList.end(); ++it)
 		it->second->sendCreatureSay(player, type, text, NULL, statementId);
 
