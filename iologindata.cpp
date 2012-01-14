@@ -78,7 +78,6 @@ bool IOLoginData::loadAccount(Account& account, const std::string& name)
 	if(!(result = db->storeQuery(query.str())))
 		return false;
 
-	Account account;
 	account.number = result->getDataInt("id");
 	account.name = name;
 	account.password = result->getDataString("password");
