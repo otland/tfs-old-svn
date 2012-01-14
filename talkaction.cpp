@@ -1156,13 +1156,11 @@ bool TalkAction::banishmentInfo(Creature* creature, const std::string&, const st
 	if(deletion)
 		end = what + (std::string)" won't be undeleted";
 
-	std::stringstream stream;
-	stream << what.c_str() << " has been " << (deletion ? "deleted" : "banished") << " at:\n" << formatDateEx(ban.added, "%d %b %Y").c_str()
-		   << " by: " << admin.c_str() << ",\nfor the following reason:\n" << getReason(ban.reason).c_str() << ".\nThe action taken was:\n"
-		   << getAction(ban.action, false).c_str() << ".\nThe comment given was:\n" << ban.comment.c_str() << ".\n" << end.c_str()
-		   << (deletion ? "." : formatDateEx(ban.expires).c_str()) << ".";
+	std::stringstream ss;
+	ss << what.c_str() << " has been " << (deletion ? "deleted" : "banished") << " at:\n" << formatDateEx(ban.added, "%d %b %Y").c_str() << " by: " <<
+		admin.c_str() << ".\nThe comment given was:\n" << ban.comment.c_str() << ".\n" << end.c_str() << (deletion ? "." : formatDateEx(ban.expires).c_str()) << ".";
 
-	player->sendFYIBox(stream.str().c_str());
+	player->sendFYIBox(ss.str().c_str());
 	return true;
 }
 
