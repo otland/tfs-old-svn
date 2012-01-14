@@ -138,6 +138,8 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 		return false;
 	}
 
+	// Should we merge those to one error, Invalid account data?
+	// Makes it harder to bruteforce in potential attempt.
 	if(!encryptTest(account.salt + password, account.password))
 	{
 		ConnectionManager::getInstance()->addAttempt(clientIp, protocolId, false);
