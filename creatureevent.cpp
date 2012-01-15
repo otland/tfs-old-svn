@@ -1891,7 +1891,7 @@ uint32_t CreatureEvent::executeChannelRequest(Player* player, const std::string&
 				lua_pushstring(L, channel.c_str());
 
 			lua_pushboolean(L, custom);
-			bool result = m_interface->callFunction(4);
+			bool result = m_interface->callFunction(3);
 			m_interface->releaseEnv();
 			return result;
 		}
