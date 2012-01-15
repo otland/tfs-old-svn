@@ -4,7 +4,7 @@ function onSay(cid, words, param, channel)
 		return true
 	end
 
-	local account, tmp = getAccountIdByName(param), true
+	local account, tmp = getAccountIdByName(param), false
 	if(account == 0) then
 		account = getAccountIdByAccount(param)
 		if(account == 0) then
@@ -12,7 +12,7 @@ function onSay(cid, words, param, channel)
 			return true
 		end
 
-		tmp = false
+		tmp = true
 	end
 
 	local ban = getBanData(account, BAN_ACCOUNT)
@@ -25,7 +25,7 @@ function onSay(cid, words, param, channel)
 		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, name .. " has been " .. (ban.expires == -1 and "undeleted" or "unbanned") .. ".")
 	end
 
-	if(not tmp) then
+	if(tmp) then
 		return true
 	end
 
