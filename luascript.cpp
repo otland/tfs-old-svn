@@ -6381,7 +6381,7 @@ int32_t LuaInterface::luaDoCombat(lua_State* L)
 		}
 	}
 
-	lua_pushboolean(L, fals);
+	lua_pushboolean(L, false);
 	return 1;
 }
 
