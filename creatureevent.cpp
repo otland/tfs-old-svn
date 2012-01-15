@@ -1851,7 +1851,7 @@ uint32_t CreatureEvent::executeChannelRequest(Player* player, const std::string&
 			std::stringstream scriptstream;
 
 			scriptstream << "local cid = " << env->addThing(player) << std::endl;
-			if(isPrivate)
+			if(!isPrivate)
 				scriptstream << "local channel = " << atoi(channel.c_str()) << std::endl;
 			else
 				scriptstream << "local channel = " << channel << std::endl;
@@ -1885,7 +1885,7 @@ uint32_t CreatureEvent::executeChannelRequest(Player* player, const std::string&
 			m_interface->pushFunction(m_scriptId);
 
 			lua_pushnumber(L, env->addThing(player));
-			if(isPrivate)
+			if(!isPrivate)
 				lua_pushnumber(L, atoi(channel.c_str()));
 			else
 				lua_pushstring(L, channel.c_str());
