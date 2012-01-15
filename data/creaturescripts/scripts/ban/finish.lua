@@ -186,7 +186,7 @@ function onTextEdit(cid, item, text)
 		end
 
 		doAddIpBanishment(ip, 4294967295, data.length, data.comment, getPlayerGUID(cid))
-		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_RED, getPlayerNameByGUID(player) .. " has been banned on IP (" .. convertIpAddress(ip) .. ").")
+		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_RED, getPlayerNameByGUID(player) .. " has been banned on IP: " .. doConvertIntegerToIp(ip) .. ".")
 	end
 
 	return false
