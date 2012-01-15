@@ -2279,7 +2279,7 @@ bool Player::onDeath()
 			sumMana += vocation->getReqMana(i);
 
 		sumMana += manaSpent;
-		lostMana = (uint64_t)std::ceil((percent * lossPercent[LOSS_MANA]) / 100.) * sumMana);
+		lostMana = (uint64_t)std::ceil((percent * lossPercent[LOSS_MANA] / 100.) * sumMana);
 		while(lostMana > manaSpent && magLevel > 0)
 		{
 			lostMana -= manaSpent;
@@ -2340,7 +2340,7 @@ bool Player::onDeath()
 			g_creatureEvents->playerLogout(this, true);
 
 			g_game.removeCreature(this, false);
-			sendReLoginWindow(pvpPercent);
+			sendReLoginWindow(0);
 		}
 	}
 
