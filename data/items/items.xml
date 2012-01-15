@@ -2223,6 +2223,7 @@
 	<item id="2162" article="a" name="magic lightwand">
 		<attribute key="weight" value="1500"/>
 		<attribute key="showduration" value="1"/>
+		<attribute key="stopduration" value="1"/>
 		<attribute key="transformUseTo" value="2163"/>
 	</item>
 	<item id="2163" article="a" name="magic lightwand">
