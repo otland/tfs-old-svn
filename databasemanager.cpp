@@ -1324,7 +1324,15 @@ uint32_t DatabaseManager::updateDatabase()
 			std::clog << "> Updating database to version 33..." << std::endl;
 			if(db->getDatabaseEngine() == DATABASE_ENGINE_MYSQL)
 			{
-				query << "ALTER TABLE `bans` DROP `reason`, `action`, `statement`;";
+				query << "ALTER TABLE `bans` DROP `reason`;";
+				db->query(query.str());
+				query.str("");
+
+				query << "ALTER TABLE `bans` DROP `action`;";
+				db->query(query.str());
+				query.str("");
+
+				query << "ALTER TABLE `bans` DROP `statement`;";
 				db->query(query.str());
 				query.str("");
 			}

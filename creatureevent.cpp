@@ -1786,11 +1786,11 @@ uint32_t CreatureEvent::executeReportViolation(Player* player, ReportType_t type
 			scriptstream << "local type = " << type << std::endl;
 			scriptstream << "local reason = " << (uint16_t)type << std::endl;
 
-			scriptstream << "local name = " << type << std::endl;
-			scriptstream << "local comment = " << type << std::endl;
-			scriptstream << "local translation = " << type << std::endl;
+			scriptstream << "local name = " << name << std::endl;
+			scriptstream << "local comment = " << comment << std::endl;
+			scriptstream << "local translation = " << translation << std::endl;
 
-			scriptstream << "local statementId = " << type << std::endl;
+			scriptstream << "local statementId = " << statementId << std::endl;
 			if(m_scriptData)
 				scriptstream << *m_scriptData;
 
