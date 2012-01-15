@@ -2227,7 +2227,7 @@ bool Player::onDeath()
 		return false;
 	}
 
-	uint32_t totalDamage = 0, pvpDamage = 0;
+	uint32_t totalDamage = 0, pvpDamage = 0, opponents = 0;
 	for(CountMap::iterator it = damageMap.begin(); it != damageMap.end(); ++it)
 	{
 		if(((OTSYS_TIME() - it->second.ticks) / 1000) > g_config.getNumber(
@@ -2235,19 +2235,28 @@ bool Player::onDeath()
 			continue;
 
 		totalDamage += it->second.total;
-		Creature* creature = g_game.getCreatureByID(it->first);
-		if(creature && (creature->getPlayer() || creature->isPlayerSummon()))
+		if(Creature* creature = g_game.getCreatureByID(it->first))
+		{
+			Player* player = creature->getPlayer();
+			if(!player)
+				player = creature->getPlayerMaster();
+
+			if(!player)
+				continue;
+
+			opponents += player->getLevel();
 			pvpDamage += it->second.total;
+		}
 	}
 
 	bool usePVPBlessing = false;
-	uint8_t pvpPercent = (uint16_t)std::floor((double)pvpDamage * 100. / std::max(1U, totalDamage));
 	if(preventLoss)
 	{
 		setLossSkill(false);
 		g_game.transformItem(preventLoss, preventLoss->getID(), std::max(0, (int32_t)preventLoss->getCharges() - 1));
 	}
-	else if(pvpBlessing && pvpPercent >= (uint8_t)g_config.getNumber(ConfigManager::PVP_BLESSING_THRESHOLD))
+	else if(pvpBlessing && (int32_t)std::floor((100. * pvpDamage) / std::max(
+		1U, totalDamage)) >= g_config.getNumber(ConfigManager::PVP_BLESSING_THRESHOLD))
 		usePVPBlessing = true;
 
 	if(preventDrop && preventDrop != preventLoss && !usePVPBlessing)
@@ -2256,7 +2265,11 @@ bool Player::onDeath()
 	removeConditions(CONDITIONEND_DEATH);
 	if(skillLoss)
 	{
-		uint64_t lossExperience = getLostExperience(), currExperience = experience;
+		double reduction = 1.;
+		if(opponents > level)
+			reduction = (double)level / opponents;
+
+		uint64_t lossExperience = (uint64_t)std::floor(reduction * getLostExperience()), currExperience = experience;
 		removeExperience(lossExperience, false);
 		double percent = 1. - ((double)(currExperience - lossExperience) / std::max((uint64_t)1, currExperience));
 
@@ -2266,7 +2279,7 @@ bool Player::onDeath()
 			sumMana += vocation->getReqMana(i);
 
 		sumMana += manaSpent;
-		lostMana = (uint64_t)std::ceil(sumMana * ((double)(percent * lossPercent[LOSS_MANA]) / 100.));
+		lostMana = (uint64_t)std::ceil((percent * lossPercent[LOSS_MANA]) / 100.) * sumMana);
 		while(lostMana > manaSpent && magLevel > 0)
 		{
 			lostMana -= manaSpent;
@@ -2290,7 +2303,7 @@ bool Player::onDeath()
 				sumSkillTries += vocation->getReqSkillTries(i, c);
 
 			sumSkillTries += skills[i][SKILL_TRIES];
-			lostSkillTries = (uint64_t)std::ceil(sumSkillTries * ((double)(percent * lossPercent[LOSS_SKILLS]) / 100.));
+			lostSkillTries = (uint64_t)std::ceil((percent * lossPercent[LOSS_SKILLS] / 100.) * sumSkillTries);
 			while(lostSkillTries > skills[i][SKILL_TRIES] && skills[i][SKILL_LEVEL] > 10)
 			{
 				lostSkillTries -= skills[i][SKILL_TRIES];
@@ -2316,7 +2329,7 @@ bool Player::onDeath()
 
 		g_creatureEvents->playerLogout(this, true);
 		g_game.removeCreature(this, false);
-		sendReLoginWindow(pvpPercent);
+		sendReLoginWindow((uint8_t)std::floor(reduction * 100.));
 	}
 	else
 	{
@@ -4425,13 +4438,10 @@ uint16_t Player::getBlessings() const
 
 uint64_t Player::getLostExperience() const
 {
-	if(!skillLoss)
-		return 0;
-
 	double percent = (double)(lossPercent[LOSS_EXPERIENCE] - vocation->getLessLoss() - (getBlessings() * g_config.getNumber(
 		ConfigManager::BLESS_REDUCTION))) / 100.;
 	if(level <= 25)
-		return (uint64_t)std::floor((double)(experience * percent) / 10.);
+		return (uint64_t)std::floor(percent * experience / 10.);
 
 	int32_t base = level;
 	double levels = (double)(base + 50) / 100.;
@@ -4445,9 +4455,9 @@ uint64_t Player::getLostExperience() const
 	}
 
 	if(levels > 0.)
-		lost += (uint64_t)std::floor((double)(getExpForLevel(base) - getExpForLevel(base - 1)) * levels);
+		lost += (uint64_t)std::floor(levels * (getExpForLevel(base) - getExpForLevel(base - 1)));
 
-	return (uint64_t)std::floor((double)(lost * percent));
+	return (uint64_t)std::floor(percent * lost);
 }
 
 uint32_t Player::getAttackSpeed() const
