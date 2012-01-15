@@ -18,6 +18,10 @@ function onTextEdit(cid, item, text)
 		return true
 	end
 
+	if(text:len() == 0) then
+		return false
+	end
+
 	text = text:explode("\n")
 	if(not data.subType or not isInArray(data.subType, {1, 5})) then
 		if(text[1] ~= "Name:" or text[3] ~= "(Optional) Length:" or text[5] ~= "Comment:") then
@@ -57,7 +61,7 @@ function onTextEdit(cid, item, text)
 		end
 
 		local account = getAccountIdByName(data.name)
-		if(account == 0 or not getAccountFlagValue(cid, PLAYERFLAG_CANNOTBEBANNED)) then
+		if(account == 0 or getAccountFlagValue(cid, PLAYERFLAG_CANNOTBEBANNED)) then
 			doPlayerSendCancel(cid, "You cannot take action on this player.")
 			return false
 		end
@@ -65,15 +69,17 @@ function onTextEdit(cid, item, text)
 		local warnings, warning = getAccountWarnings(account), 1
 		if(data.subType == 1) then
 			if(not tonumber(data.length)) then
-				data.length = config.banLength
+				data.length = os.time() + config.banLength
 				if((warnings + 1) >= config.warningsToDeletion) then
 					data.length = -1
 				elseif((warnings + 1) >= config.warningsToFinalBan) then
-					data.length = config.finalBanLength
+					data.length = os.time() + config.finalBanLength
 				end
+			else
+				data.length = os.time() + data.length
 			end
 
-			doAddAccountBanishment(account, player, length, data.comment, getPlayerGUID(cid))
+			doAddAccountBanishment(account, player, data.length, data.comment, getPlayerGUID(cid))
 			doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_RED, getPlayerNameByGUID(player) .. " (warnings: " .. (warnings + 1) .. ") has been banned.")
 		elseif(data.subType == 2) then
 			doAddAccountBanishment(account, player, config.finalBanLength, data.comment, getPlayerGUID(cid))
@@ -92,11 +98,11 @@ function onTextEdit(cid, item, text)
 		elseif(data.subType == 4) then
 			local notations = getNotationsCount(account) + 1
 			if(notations >= config.notationsToBan) then
-				data.length = config.banLength
+				data.length = os.time() + config.banLength
 				if((warnings + 1) >= config.warningsToDeletion) then
-					length = -1
+					data.length = -1
 				elseif((warnings + 1) >= config.warningsToFinalBan) then
-					length = config.finalBanLength
+					data.length = os.time() + config.finalBanLength
 				end
 
 				doAddAccountBanishment(account, player, data.length, data.comment, getPlayerGUID(cid))
@@ -111,6 +117,13 @@ function onTextEdit(cid, item, text)
 		if(warning > 0) then
 			doAddAccountWarnings(account, warning)
 			doRemoveNotations(account)
+
+			local pid = getPlayerByGUID(player)
+			if(pid) then
+				doPlayerSendTextMessage(pid, MESSAGE_STATUS_WARNING, "You have been banned.")
+				doSendMagicEffect(getThingPosition(pid), CONST_ME_MAGIC_GREEN)
+				addEvent(valid(doRemoveCreature), 1000, pid, true)
+			end
 		end
 	elseif(data.type == 2) then
 		errors(false)
@@ -123,7 +136,7 @@ function onTextEdit(cid, item, text)
 		end
 
 		local account = getAccountIdByName(data.name)
-		if(account == 0 or not getAccountFlagValue(account, PLAYERFLAG_CANNOTBEBANNED)) then
+		if(account == 0 or getAccountFlagValue(account, PLAYERFLAG_CANNOTBEBANNED)) then
 			doPlayerSendCancel(cid, "You cannot take action on this player.")
 			return false
 		end
@@ -132,31 +145,47 @@ function onTextEdit(cid, item, text)
 		if(data.subType == 1) then
 			if(not tonumber(data.length)) then
 				local warnings = getAccountWarnings(account) + 1
-				data.length = config.banLength
+				data.length = os.time() + config.banLength
 				if(warnings >= config.warningsToDeletion) then
 					data.length = -1
 				elseif(warnings >= config.warningsToFinalBan) then
-					data.length = config.finalBanLength
+					data.length = os.time() + config.finalBanLength
 				end
+			else
+				data.length = os.time() + data.length
 			end
 
 			doAddPlayerBanishment(data.name, 3, data.length, data.comment, getPlayerGUID(cid))
 			doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_RED, getPlayerNameByGUID(player) .. " has been banned.")
+
+			local pid = getPlayerByGUID(player)
+			if(pid) then
+				doPlayerSendTextMessage(pid, MESSAGE_STATUS_WARNING, "You have been banned.")
+				doSendMagicEffect(getThingPosition(pid), CONST_ME_MAGIC_GREEN)
+				addEvent(valid(doRemoveCreature), 1000, pid, true)
+			end
 		elseif(data.subType == 2) then
 			doAddPlayerBanishment(data.name, 3, -1, data.comment, getPlayerGUID(cid))
 			doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_RED, getPlayerNameByGUID(player) .. " has been deleted.")
 		elseif(data.subType == 3) then
 			local warnings, notations = getAccountWarnings(account) + 1, getNotationsCount(account, player) + 1
 			if(notations >= config.notationsToBan) then
-				data.length = config.banLength
+				data.length = os.time() + config.banLength
 				if(warnings >= config.warningsToDeletion) then
-					length = -1
+					data.length = -1
 				elseif(warnings >= config.warningsToFinalBan) then
-					length = config.finalBanLength
+					data.length = os.time() + config.finalBanLength
 				end
 
 				doAddPlayerBanishment(account, 3, data.length, data.comment, getPlayerGUID(cid))
 				doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_RED, getPlayerNameByGUID(player) .. " has been banned reaching notations limit.")
+
+				local pid = getPlayerByGUID(player)
+				if(pid) then
+					doPlayerSendTextMessage(pid, MESSAGE_STATUS_WARNING, "You have been banned.")
+					doSendMagicEffect(getThingPosition(pid), CONST_ME_MAGIC_GREEN)
+					addEvent(valid(doRemoveCreature), 1000, pid, true)
+				end
 			else
 				doAddNotation(account, player, data.comment, getPlayerGUID(cid))
 				doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_RED, getPlayerNameByGUID(player) .. " (notations: " .. notations .. ") has been noted.")
@@ -167,6 +196,13 @@ function onTextEdit(cid, item, text)
 		elseif(data.subType == 5) then
 			doAddPlayerBanishment(data.name, 2, -1, data.comment, getPlayerGUID(cid))
 			doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_RED, getPlayerNameByGUID(player) .. " has been namelocked.")
+
+			local pid = getPlayerByGUID(player)
+			if(pid) then
+				doPlayerSendTextMessage(pid, MESSAGE_STATUS_WARNING, "You have been banned.")
+				doSendMagicEffect(getThingPosition(pid), CONST_ME_MAGIC_GREEN)
+				addEvent(valid(doRemoveCreature), 1000, pid, true)
+			end
 		end
 	elseif(data.type == 3) then
 		local ip = getIpByName(data.name)
@@ -176,7 +212,7 @@ function onTextEdit(cid, item, text)
 		end
 
 		local account = getAccountIdByName(data.name)
-		if(account == 0 or not getAccountFlagValue(account, PLAYERFLAG_CANNOTBEBANNED)) then
+		if(account == 0 or getAccountFlagValue(account, PLAYERFLAG_CANNOTBEBANNED)) then
 			doPlayerSendCancel(cid, "You cannot take action on this player.")
 			return false
 		end
@@ -185,8 +221,15 @@ function onTextEdit(cid, item, text)
 			data.length = config.ipBanLength
 		end
 
-		doAddIpBanishment(ip, 4294967295, data.length, data.comment, getPlayerGUID(cid))
+		doAddIpBanishment(ip, 4294967295, os.time() + data.length, data.comment, getPlayerGUID(cid))
 		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_RED, getPlayerNameByGUID(player) .. " has been banned on IP: " .. doConvertIntegerToIp(ip) .. ".")
+
+		local pid = getPlayerByGUID(player)
+		if(pid) then
+			doPlayerSendTextMessage(pid, MESSAGE_STATUS_WARNING, "You have been banned.")
+			doSendMagicEffect(getThingPosition(pid), CONST_ME_MAGIC_GREEN)
+			addEvent(valid(doRemoveCreature), 1000, pid, true)
+		end
 	end
 
 	return false
