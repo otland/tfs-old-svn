@@ -74,21 +74,21 @@ function onTextEdit(cid, item, text)
 			end
 
 			doAddAccountBanishment(account, player, length, data.comment, getPlayerGUID(cid))
-			doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_ORANGE, getPlayerNameByGUID(player) .. " (warnings: " .. (warnings + 1) .. ") has been banned.")
+			doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_RED, getPlayerNameByGUID(player) .. " (warnings: " .. (warnings + 1) .. ") has been banned.")
 		elseif(data.subType == 2) then
 			doAddAccountBanishment(account, player, config.finalBanLength, data.comment, getPlayerGUID(cid))
 			if(warnings < config.warningsToFinalBan) then
 				warning = config.warningsToFinalBan - warnings
 			end
 
-			doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_ORANGE, getPlayerNameByGUID(player) .. " (warnings: " .. warning .. ") has been banned.")
+			doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_RED, getPlayerNameByGUID(player) .. " (warnings: " .. warning .. ") has been banned.")
 		elseif(data.subType == 3) then
 			doAddAccountBanishment(account, player, -1, data.comment, getPlayerGUID(cid))
 			if(warnings < config.warningsToDeletion) then
 				warning = config.warningsToDeletion - warnings
 			end
 
-			doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_ORANGE, getPlayerNameByGUID(player) .. " (warnings: " .. warning .. ") has been deleted.")
+			doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_RED, getPlayerNameByGUID(player) .. " (warnings: " .. warning .. ") has been deleted.")
 		elseif(data.subType == 4) then
 			local notations = getNotationsCount(account) + 1
 			if(notations >= config.notationsToBan) then
@@ -100,10 +100,10 @@ function onTextEdit(cid, item, text)
 				end
 
 				doAddAccountBanishment(account, player, data.length, data.comment, getPlayerGUID(cid))
-				doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_ORANGE, getPlayerNameByGUID(player) .. " (warnings: " .. (warnings + 1) .. ") has been banned.")
+				doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_RED, getPlayerNameByGUID(player) .. " (warnings: " .. (warnings + 1) .. ") has been banned reaching notations limit.")
 			else
 				doAddNotation(account, player, data.comment, getPlayerGUID(cid))
-				doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_ORANGE, getPlayerNameByGUID(player) .. " (account notations: " .. notations .. ") has been noted.")
+				doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_RED, getPlayerNameByGUID(player) .. " (account notations: " .. notations .. ") has been noted.")
 				warning = 0
 			end
 		end
@@ -141,10 +141,10 @@ function onTextEdit(cid, item, text)
 			end
 
 			doAddPlayerBanishment(data.name, 3, data.length, data.comment, getPlayerGUID(cid))
-			doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_ORANGE, getPlayerNameByGUID(player) .. " has been banned.")
+			doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_RED, getPlayerNameByGUID(player) .. " has been banned.")
 		elseif(data.subType == 2) then
 			doAddPlayerBanishment(data.name, 3, -1, data.comment, getPlayerGUID(cid))
-			doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_ORANGE, getPlayerNameByGUID(player) .. " has been deleted.")
+			doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_RED, getPlayerNameByGUID(player) .. " has been deleted.")
 		elseif(data.subType == 3) then
 			local warnings, notations = getAccountWarnings(account) + 1, getNotationsCount(account, player) + 1
 			if(notations >= config.notationsToBan) then
@@ -156,17 +156,17 @@ function onTextEdit(cid, item, text)
 				end
 
 				doAddPlayerBanishment(account, 3, data.length, data.comment, getPlayerGUID(cid))
-				doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_ORANGE, getPlayerNameByGUID(player) .. " has been banned.")
+				doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_RED, getPlayerNameByGUID(player) .. " has been banned reaching notations limit.")
 			else
 				doAddNotation(account, player, data.comment, getPlayerGUID(cid))
-				doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_ORANGE, getPlayerNameByGUID(player) .. " (account notations: " .. notations .. ") has been noted.")
+				doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_RED, getPlayerNameByGUID(player) .. " (notations: " .. notations .. ") has been noted.")
 			end
 		elseif(data.subType == 4) then
 			doAddPlayerBanishment(data.name, 1, -1, data.comment, getPlayerGUID(cid))
-			doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_ORANGE, getPlayerNameByGUID(player) .. " has been reported.")
+			doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_RED, getPlayerNameByGUID(player) .. " has been reported.")
 		elseif(data.subType == 5) then
 			doAddPlayerBanishment(data.name, 2, -1, data.comment, getPlayerGUID(cid))
-			doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_ORANGE, getPlayerNameByGUID(player) .. " has been namelocked.")
+			doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_RED, getPlayerNameByGUID(player) .. " has been namelocked.")
 		end
 	elseif(data.type == 3) then
 		local ip = getIpByName(data.name)
@@ -186,7 +186,7 @@ function onTextEdit(cid, item, text)
 		end
 
 		doAddIpBanishment(ip, 4294967295, data.length, data.comment, getPlayerGUID(cid))
-		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_ORANGE, getPlayerNameByGUID(player) .. " has been banned on IP (" .. convertIpAddress(ip) .. ").")
+		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_RED, getPlayerNameByGUID(player) .. " has been banned on IP (" .. convertIpAddress(ip) .. ").")
 	end
 
 	return false
