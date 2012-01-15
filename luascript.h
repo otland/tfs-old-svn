@@ -427,6 +427,8 @@ class LuaInterface
 		static int32_t luaGetAccountByName(lua_State* L);
 		static int32_t luaGetAccountIdByAccount(lua_State* L);
 		static int32_t luaGetAccountByAccountId(lua_State* L);
+		static int32_t luaGetAccountFlagValue(lua_State* L);
+		static int32_t luaGetAccountCustomFlagValue(lua_State* L);
 		static int32_t luaGetIpByName(lua_State* L);
 		static int32_t luaGetPlayersByIp(lua_State* L);
 		static int32_t luaIsIpBanished(lua_State* L);

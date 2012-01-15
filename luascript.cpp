@@ -2174,6 +2174,12 @@ void LuaInterface::registerFunctions()
 	//getAccountByAccountId(accId)
 	lua_register(m_luaState, "getAccountByAccountId", LuaInterface::luaGetAccountByAccountId);
 
+	//getAccountFlagValue(name/id)
+	lua_register(m_luaState, "getAccountFlagValue", LuaInterface::luaGetAccountFlagValue);
+
+	//getAccountCustomFlagValue(name/id)
+	lua_register(m_luaState, "getAccountCustomFlagValue", LuaInterface::luaGetAccountCustomFlagValue);
+
 	//getIpByName(name)
 	lua_register(m_luaState, "getIpByName", LuaInterface::luaGetIpByName);
 
@@ -7896,6 +7902,30 @@ int32_t LuaInterface::luaGetAccountByAccountId(lua_State* L)
 	std::string value = 0;
 	IOLoginData::getInstance()->getAccountName(popNumber(L), value);
 	lua_pushstring(L, value.c_str());
+	return 1;
+}
+
+int32_t LuaInterface::luaGetAccountFlagValue(lua_State* L)
+{
+	//getAccountFlagValue(name/id)
+	PlayerFlags flag = (PlayerFlags)popNumber(L);
+	if(lua_isnumber(L, -1))
+		lua_pushboolean(L, IOLoginData::getInstance()->hasFlag((uint32_t)popNumber(L), flag));
+	else
+		lua_pushboolean(L, IOLoginData::getInstance()->hasFlag(flag, popString(L)));
+
+	return 1;
+}
+
+int32_t LuaInterface::luaGetAccountCustomFlagValue(lua_State* L)
+{
+	//getAccountCustomFlagValue(name/id)
+	PlayerCustomFlags flag = (PlayerCustomFlags)popNumber(L);
+	if(lua_isnumber(L, -1))
+		lua_pushboolean(L, IOLoginData::getInstance()->hasCustomFlag((uint32_t)popNumber(L), flag));
+	else
+		lua_pushboolean(L, IOLoginData::getInstance()->hasCustomFlag(flag, popString(L)));
+
 	return 1;
 }
 
