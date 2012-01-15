@@ -6335,10 +6335,7 @@ int32_t LuaInterface::luaDoCombat(lua_State* L)
 		{
 			Creature* target = g_game.getCreatureByID(var.number);
 			if(!target || !creature || !creature->canSeeCreature(target))
-			{
-				lua_pushboolean(L, false);
-				return 1;
-			}
+				break;
 
 			if(combat->hasArea())
 				combat->doCombat(creature, target->getPosition());
@@ -6371,10 +6368,7 @@ int32_t LuaInterface::luaDoCombat(lua_State* L)
 		{
 			Player* target = g_game.getPlayerByName(var.text);
 			if(!target || !creature || !creature->canSeeCreature(target))
-			{
-				lua_pushboolean(L, false);
-				return 1;
-			}
+				break;
 
 			combat->doCombat(creature, target);
 			break;
@@ -6383,12 +6377,11 @@ int32_t LuaInterface::luaDoCombat(lua_State* L)
 		default:
 		{
 			errorEx(getError(LUA_ERROR_VARIANT_UNKNOWN));
-			lua_pushboolean(L, false);
-			return 1;
+			break;
 		}
 	}
 
-	lua_pushboolean(L, true);
+	lua_pushboolean(L, fals);
 	return 1;
 }
 

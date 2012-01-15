@@ -220,7 +220,7 @@ ConditionType_t Combat::DamageToConditionType(CombatType_t type)
 	return CONDITION_NONE;
 }
 
-ReturnValue Combat::canDoCombat(const Creature* caster, const Tile* tile, bool isAggressive)
+ReturnValue Combat::canDoCombat(const Creature* caster, const Tile* tile, bool isAggressive, bool createItem)
 {
 	if(tile->hasProperty(BLOCKPROJECTILE) || tile->floorChange() || tile->getTeleportItem())
 		return RET_NOTENOUGHROOM;
@@ -243,6 +243,9 @@ ReturnValue Combat::canDoCombat(const Creature* caster, const Tile* tile, bool i
 
 		if(caster->getPosition().z > tile->getPosition().z)
 			return RET_FIRSTGOUPSTAIRS;
+
+		if(createItem && tile->isFull())
+			return RET_TILEISFULL;
 
 		if(!isAggressive)
 			return RET_NOERROR;
@@ -782,7 +785,7 @@ void Combat::CombatFunc(Creature* caster, const Position& pos, const CombatArea*
 	Tile* tile = NULL;
 	for(std::list<Tile*>::iterator it = tileList.begin(); it != tileList.end(); ++it)
 	{
-		if(!(tile = (*it)) || canDoCombat(caster, (*it), params.isAggressive) != RET_NOERROR)
+		if(!(tile = (*it)) || canDoCombat(caster, (*it), params.isAggressive, params.itemId != 0) != RET_NOERROR)
 			continue;
 
 		bool skip = true;
@@ -807,7 +810,7 @@ void Combat::CombatFunc(Creature* caster, const Position& pos, const CombatArea*
 						continue;
 				}
 
-				if(!params.isAggressive || (caster != (*cit) && Combat::canDoCombat(caster, (*cit), params.isAggressive) == RET_NOERROR))
+				if(!params.isAggressive || (caster != (*cit) && Combat::canDoCombat(caster, (*cit)) == RET_NOERROR))
 				{
 					func(caster, (*cit), params, (void*)var);
 					if(params.targetCallback)
@@ -827,7 +830,7 @@ void Combat::doCombat(Creature* caster, Creature* target) const
 	//target combat callback function
 	if(params.combatType != COMBAT_NONE)
 	{
-		if(params.isAggressive && (caster == target || Combat::canDoCombat(caster, target, params.isAggressive) != RET_NOERROR))
+		if(params.isAggressive && (caster == target || Combat::canDoCombat(caster, target) != RET_NOERROR))
 			return;
 
 		int32_t minChange = 0, maxChange = 0;

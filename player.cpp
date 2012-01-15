@@ -2241,7 +2241,7 @@ bool Player::onDeath()
 	}
 
 	bool usePVPBlessing = false;
-	uint8_t pvpPercent = (uint16_t)std::ceil((double)pvpDamage * 100. / std::max(1U, totalDamage));
+	uint8_t pvpPercent = (uint16_t)std::floor((double)pvpDamage * 100. / std::max(1U, totalDamage));
 	if(preventLoss)
 	{
 		setLossSkill(false);
