@@ -117,6 +117,7 @@ bool Tile::isFull() const
 	if(!limit)
 		limit = 0xFFFF;
 
+	const TileItemVector* items = getItemList();
 	return items && items->size() >= limit;
 }
 
