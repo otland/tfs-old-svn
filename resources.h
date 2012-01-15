@@ -44,5 +44,5 @@
 
 #define STATUS_SERVER_NAME "The Forgotten Server"
 #define STATUS_SERVER_CODENAME "Mystic Spirit"
-#define STATUS_SERVER_PROTOCOL "9.2"
+#define STATUS_SERVER_PROTOCOL "9.44"
 #define STATUS_SERVER_VERSION "0.2.12"

@@ -2110,7 +2110,7 @@ void ProtocolGame::sendPing()
 
 void ProtocolGame::sendDistanceShoot(const Position& from, const Position& to, uint8_t type)
 {
-	if(type <= NM_SHOOT_LAST && (canSee(from) || canSee(to)))
+	if(type <= NM_SHOOT_LAST && type != NM_SHOOT_UNK1 && type != NM_SHOOT_UNK2 && (canSee(from) || canSee(to)))
 	{
 		NetworkMessage_ptr msg = getOutputBuffer();
 		if(msg)
