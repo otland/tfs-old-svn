@@ -356,7 +356,7 @@ int32_t Items::loadFromOtb(std::string file)
 					iType->wareId = wareId;
 					break;
 				}
-				case ITEM_ATTR_NAME2:
+				case ITEM_ATTR_NAME:
 				{
 					if(length != sizeof(uint16_t)) // not sure here...
 					{
