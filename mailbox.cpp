@@ -127,7 +127,7 @@ bool Mailbox::sendItem(Item* item)
 		Depot* depot = player->getDepot(dp, true);
 		if(depot)
 		{
-			if(g_game.internalMoveItem(item->getParent(), depot, INDEX_WHEREEVER,
+			if(g_game.internalMoveItem(item->getParent(), depot->getInbox(), INDEX_WHEREEVER,
 				item, item->getItemCount(), NULL, FLAG_NOLIMIT) == RET_NOERROR)
 			{
 				g_game.transformItem(item, item->getID() + 1);
@@ -162,7 +162,7 @@ bool Mailbox::sendItem(Item* item)
 		Depot* depot = player->getDepot(dp, true);
 		if(depot)
 		{
-			if(g_game.internalMoveItem(item->getParent(), depot, INDEX_WHEREEVER,
+			if(g_game.internalMoveItem(item->getParent(), depot->getInbox(), INDEX_WHEREEVER,
 				item, item->getItemCount(), NULL, FLAG_NOLIMIT) == RET_NOERROR)
 			{
 				g_game.transformItem(item, item->getID() + 1);

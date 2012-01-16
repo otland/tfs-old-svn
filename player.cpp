@@ -950,6 +950,13 @@ Depot* Player::getDepot(uint32_t depotId, bool autoCreateDepot)
 		Item* tmpDepot = Item::CreateItem(ITEM_LOCKER1);
 		if(tmpDepot->getContainer() && (depot = tmpDepot->getContainer()->getDepot()))
 		{
+			Item* market = Item::CreateItem(ITEM_MARKET);
+			depot->__internalAddThing(market);
+
+			Item* inbox = Item::CreateItem(ITEM_INBOX);
+			depot->__internalAddThing(inbox);
+			depot->setInbox(inbox->getContainer());
+
 			Item* depotChest = Item::CreateItem(ITEM_DEPOT);
 			depot->__internalAddThing(depotChest);
 
@@ -972,6 +979,15 @@ bool Player::addDepot(Depot* depot, uint32_t depotId)
 	Depot* depot2 = getDepot(depotId, false);
 	if(depot2)
 		return false;
+
+	if(!depot->getInbox())
+	{
+		depot->__internalAddThing(Item::CreateItem(ITEM_MARKET));
+
+		Item* inbox = Item::CreateItem(ITEM_INBOX);
+		depot->__internalAddThing(inbox);
+		depot->setInbox(inbox->getContainer());
+	}
 
 	depots[depotId] = depot;
 	depot->setMaxDepotLimit(maxDepotLimit);

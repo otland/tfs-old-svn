@@ -50,6 +50,7 @@ Item* Container::clone() const
 	Container* _item = static_cast<Container*>(Item::clone());
 	for(ItemList::const_iterator it = itemlist.begin(); it != itemlist.end(); ++it)
 		_item->addItem((*it)->clone());
+
 	return _item;
 }
 
@@ -306,9 +307,9 @@ ReturnValue Container::__queryAdd(int32_t index, const Thing* thing, uint32_t co
 	}
 
 	bool skipLimit = ((flags & FLAG_NOLIMIT) == FLAG_NOLIMIT);
-	if(index == INDEX_WHEREEVER && !skipLimit)
+	if(!skipLimit)
 	{
-		if(size() >= capacity())
+		if(id == ITEM_INBOX || (index == INDEX_WHEREEVER && size() >= capacity()))
 			return RET_CONTAINERNOTENOUGHROOM;
 	}
 

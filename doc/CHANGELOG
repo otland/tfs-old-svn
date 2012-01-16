@@ -40,7 +40,7 @@
 ]
 
 [ Milestone
-	Game protocol 9.4 support.
+	Game protocol 9.44 support.
 	Revised database system.
 	Fixed element damages.
 	Fixed a bug with Lua function getPlayersByIP, it was ignoring mask even if set.
@@ -58,6 +58,7 @@
 	Added premium attribute to mounts.
 	Added db and result functions to the Lua interface.
 	LuaSQL dependency removed (with backwards compatibility for most code).
+	Lua result library from The Forgotten Server 0.3.
 	Fixed a bug with vial, blue bottle, jug and waterskin.
 	Updated a lot of item attributes.
 	Corrected cheese and scarab cheese client id and stackable attribute.
@@ -66,4 +67,7 @@
 	Added database manager for automatic database updates and table optimizations.
 	It is now possible to register multiple creature events with the same type for one creature.
 	Added Ladybug and Manta mounts.
+	Added Red Baron outfit.
+	New depot structure.
+	Updated items.
 ]

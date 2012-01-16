@@ -175,6 +175,8 @@ class Player : public Creature, public Cylinder
 		bool hasRequestedOutfit() const {return requestedOutfit;}
 		void hasRequestedOutfit(bool newValue) {requestedOutfit = newValue;}
 
+		const DepotMap& getDepots() const { return depots; }
+
 		Vocation* getVocation() const {return vocation;}
 
 		OperatingSystem_t getOperatingSystem() const {return operatingSystem;}
