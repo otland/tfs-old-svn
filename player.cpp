@@ -927,13 +927,13 @@ Depot* Player::getDepot(uint32_t depotId, bool autoCreateDepot)
 				if((item = Item::CreateItem(ITEM_INBOX)))
 				{
 					container->__internalAddThing(item);
-					depot->setInbox(inbox->getContainer());
+					depot->setInbox(item->getContainer());
 				}
 
 				if((item = Item::CreateItem(ITEM_DEPOT)))
 					container->__internalAddThing(item);
 
-				addDepot(depot, depotId);
+				internalAddDepot(depot, depotId);
 				return depot;
 			}
 		}
@@ -955,18 +955,23 @@ bool Player::addDepot(Depot* depot, uint32_t depotId)
 	{
 		Item* item = Item::CreateItem(ITEM_MARKET);
 		if(item)
-			container->__internalAddThing(item);
+			depot->__internalAddThing(item);
 
 		if((item = Item::CreateItem(ITEM_INBOX)))
 		{
-			container->__internalAddThing(item);
-			depot->setInbox(inbox->getContainer());
+			depot->__internalAddThing(item);
+			depot->setInbox(item->getContainer());
 		}
 	}
 
+	internalAddDepot(depot, depotId);
+	return true;
+}
+
+bool Player::internalAddDepot(Depot* depot, uint32_t depotId)
+{
 	depots[depotId] = std::make_pair(depot, false);
 	depot->setMaxDepotLimit((group != NULL ? group->getDepotLimit(isPremium()) : 1000));
-	return true;
 }
 
 void Player::updateDepots()
@@ -974,7 +979,7 @@ void Player::updateDepots()
 	Depot* depot = NULL;
 	for(DepotMap::iterator it = depots.begin(); it != depots.end(); ++it)
 	{
-		depot = it->second;
+		depot = it->second.first;
 		if(depot->getInbox() && depot->size() > 3)
 		{
 			ItemList::const_reverse_iterator rit = depot->getReversedItems();
@@ -984,7 +989,7 @@ void Player::updateDepots()
 				item = *rit;
 				if(item->getID() != ITEM_INBOX && item->getID() != ITEM_MARKET && item->getID() != ITEM_DEPOT)
 				{
-					g_game.internalMoveItem(item->getParent(), depot->getInbox(),
+					g_game.internalMoveItem(NULL, item->getParent(), depot->getInbox(),
 						INDEX_WHEREEVER, item, item->getItemCount(), NULL, FLAG_NOLIMIT);
 					rit = depot->getReversedItems();
 				}
