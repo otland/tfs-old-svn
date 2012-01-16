@@ -926,7 +926,6 @@ bool IOLoginData::getNameByGuid(uint32_t guid, std::string& name)
 		return true;
 	}
 
-
 	DBQuery query;
 	query << "SELECT `name` FROM `players` WHERE `id` = " << guid << ";";
 
@@ -935,8 +934,10 @@ bool IOLoginData::getNameByGuid(uint32_t guid, std::string& name)
 	if(!(result = db->storeQuery(query.str())))
 		return false;
 
-	nameCacheMap[guid] = result->getDataString("name");
+	name = result->getDataString("name");
 	db->freeResult(result);
+
+	nameCacheMap[guid] = name;
 	return true;
 }
 
