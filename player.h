@@ -750,7 +750,7 @@ class Player : public Creature, public Cylinder
 
 	protected:
 		void checkTradeState(const Item* item);
-		bool internalAddDepot(Depot* depot, uint32_t depotId);
+		void internalAddDepot(Depot* depot, uint32_t depotId);
 
 		bool gainExperience(double& gainExp, Creature* target);
 		bool rateExperience(double& gainExp, Creature* target);
