@@ -358,11 +358,7 @@ int32_t Items::loadFromOtb(std::string file)
 				}
 				case ITEM_ATTR_NAME:
 				{
-					if(length != sizeof(uint16_t)) // not sure here...
-					{
-						return ERROR_INVALID_FORMAT;
-					}
-
+					// TODO: verify size?!
 					std::string name;
 					if(!props.getString(name))
 						return ERROR_INVALID_FORMAT;
@@ -550,24 +546,28 @@ void Items::parseItemNode(xmlNodePtr itemNode, uint32_t id)
 	{
 		id -= 20000;
 		ItemType* iType = new ItemType();
+
 		iType->id = id;
 		items.addElement(iType, iType->id);
 	}
 
 	bool override = readXMLString(itemNode, "override", strValue) && booleanString(strValue);
-
 	ItemType& it = Item::items.getItemType(id);
-	if(!it.name.empty() && !override)
-		std::clog << "[Warning - Items::loadFromXml] Duplicate registered item with id " << id << std::endl;
-
-	if(override)
+	if(it.loaded)
 	{
-		// setup some defaults
-		memset(it.abilities.fieldAbsorb, 0, sizeof(it.abilities.fieldAbsorb));
-		memset(it.abilities.absorb, 0, sizeof(it.abilities.absorb));
-		for(uint32_t j = REFLECT_FIRST; j <= REFLECT_LAST; ++j)
-			memset(it.abilities.reflect[j], 0, sizeof(it.abilities.reflect[j]));
+		if(override)
+		{
+			// setup some defaults
+			memset(it.abilities.fieldAbsorb, 0, sizeof(it.abilities.fieldAbsorb));
+			memset(it.abilities.absorb, 0, sizeof(it.abilities.absorb));
+			for(uint32_t j = REFLECT_FIRST; j <= REFLECT_LAST; ++j)
+				memset(it.abilities.reflect[j], 0, sizeof(it.abilities.reflect[j]));
+		}
+		else
+			std::clog << "[Warning - Items::loadFromXml] Duplicate registered item with id " << id << std::endl;
 	}
+	else
+		it.loaded = true;
 
 	if(readXMLString(itemNode, "name", strValue))
 		it.name = strValue;

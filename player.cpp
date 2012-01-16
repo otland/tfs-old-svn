@@ -995,7 +995,7 @@ void Player::updateDepots()
 				}
 				else
 					++rit;
-			}	
+			}
 		}
 	}
 }
