@@ -40,7 +40,7 @@ ItemType::ItemType()
 	group = ITEM_GROUP_NONE;
 	type = ITEM_TYPE_NONE;
 	stackable = usable = alwaysOnTop = lookThrough = pickupable = rotable = hasHeight = forceSerialize = false;
-	blockSolid = blockProjectile = blockPathFind = allowPickupable = isAnimation = false;
+	loaded = blockSolid = blockProjectile = blockPathFind = allowPickupable = isAnimation = false;
 	movable = walkStack = true;
 	alwaysOnTopOrder = 0;
 	rotateTo = 0;
