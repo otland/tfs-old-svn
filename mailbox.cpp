@@ -19,8 +19,6 @@
 
 #include "player.h"
 #include "iologindata.h"
-
-#include "depot.h"
 #include "town.h"
 
 #include "configmanager.h"

@@ -72,7 +72,7 @@ class Container : public Item, public Cylinder
 		uint32_t getItemHoldingCount() const;
 		virtual double getWeight() const;
 
-		uint32_t capacity() const {return maxSize ? maxSize : std::min(255, (int32_t)itemlist.size() + 1);}
+		uint32_t capacity() const {return maxSize ? maxSize : std::min((uint32_t)255, itemlist.size() + 1);}
 		uint32_t size() const {return (uint32_t)itemlist.size();}
 		bool full() const
 		{

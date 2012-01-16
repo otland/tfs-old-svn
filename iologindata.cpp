@@ -694,8 +694,8 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool preLo
 			}
 		}
 
-		result->free();
 		itemMap.clear();
+		result->free();
 	}
 
 	//load depot items
@@ -720,19 +720,23 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool preLo
 				else
 					std::clog << "[Error - IOLoginData::loadPlayer] Cannot load depot " << pid << " for player " << name << std::endl;
 			}
-			else
+			else if((it = itemMap.find(pid)) != itemMap.end())
 			{
-				it = itemMap.find(pid);
-				if(it != itemMap.end())
+				if(Container* container = it->second.first->getContainer())
 				{
-					if(Container* container = it->second.first->getContainer())
-						container->__internalAddThing(item);
+					container->__internalAddThing(item);
+					if(item->getID() == ITEM_INBOX)
+					{
+						if(Depot* depot = container->getDepot())
+							depot->setInbox(item->getContainer());
+					}
 				}
 			}
 		}
 
-		result->free();
+		player->updateDepots();
 		itemMap.clear();
+		result->free();
 	}
 
 	//load storage map
@@ -1273,7 +1277,11 @@ bool IOLoginData::playerMail(Creature* actor, std::string name, uint32_t townId,
 		townId = player->getTown();
 
 	Depot* depot = player->getDepot(townId, true);
-	if(!depot || g_game.internalMoveItem(actor, item->getParent(), depot, INDEX_WHEREEVER,
+	Container* inbox = NULL;
+	if(!(inbox = depot->getInbox()))
+		inbox = depot;
+
+	if(!inbox || g_game.internalMoveItem(actor, item->getParent(), inbox, INDEX_WHEREEVER,
 		item, item->getItemCount(), NULL, FLAG_NOLIMIT) != RET_NOERROR)
 	{
 		if(player->isVirtual())

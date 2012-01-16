@@ -353,6 +353,7 @@ class Player : public Creature, public Cylinder
 
 		Depot* getDepot(uint32_t depotId, bool autoCreateDepot);
 		bool addDepot(Depot* depot, uint32_t depotId);
+		void updateDepots();
 		void useDepot(uint32_t depotId, bool value);
 
 		virtual bool canSee(const Position& pos) const;

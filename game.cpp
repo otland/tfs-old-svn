@@ -3184,8 +3184,10 @@ bool Game::playerAcceptTrade(uint32_t playerId)
 		if(ret1 == RET_NOERROR && ret2 == RET_NOERROR)
 		{
 			Cylinder *cylinder1 = tradeItem1->getParent(), *cylinder2 = tradeItem2->getParent();
-			internalMoveItem(player, cylinder1, tradePartner, INDEX_WHEREEVER, tradeItem1, tradeItem1->getItemCount(), NULL);
-			internalMoveItem(tradePartner, cylinder2, player, INDEX_WHEREEVER, tradeItem2, tradeItem2->getItemCount(), NULL);
+			uint32_t count1 = tradeItem1->getItemCount(), count2 = tradeItem2->getItemCount();
+
+			internalMoveItem(player, cylinder1, tradePartner, INDEX_WHEREEVER, tradeItem1, count1, NULL);
+			internalMoveItem(tradePartner, cylinder2, player, INDEX_WHEREEVER, tradeItem2, count2, NULL);
 
 			tradeItem1->onTradeEvent(ON_TRADE_TRANSFER, tradePartner, player);
 			tradeItem2->onTradeEvent(ON_TRADE_TRANSFER, player, tradePartner);

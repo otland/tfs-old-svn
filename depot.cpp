@@ -21,8 +21,9 @@
 Depot::Depot(uint16_t type):
 	Container(type)
 {
-	maxSize = 30;
+	maxSize = 3;
 	depotLimit = 1000;
+	inbox = NULL;
 }
 
 Attr_ReadValue Depot::readAttr(AttrTypes_t attr, PropStream& propStream)

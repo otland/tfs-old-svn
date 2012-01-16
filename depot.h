@@ -35,6 +35,9 @@ class Depot : public Container
 
 		void setMaxDepotLimit(uint32_t count) {depotLimit = count;}
 
+		void setInbox(Container* container) {inbox = container;}
+		Container* getInbox() const {return inbox;}
+
 		//cylinder implementations
 		virtual Cylinder* getParent() {return Item::getParent();}
 		virtual const Cylinder* getParent() const {return Item::getParent();}
@@ -62,6 +65,7 @@ class Depot : public Container
 		virtual bool canRemove() const {return false;}
 
 	private:
+		Container* inbox;
 		uint32_t depotLimit;
 };
 
