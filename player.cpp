@@ -1988,7 +1988,6 @@ void Player::addExperience(uint64_t exp)
 	while(experience >= nextLevelExp)
 	{
 		++level;
-		Vocation* voc = vocation;
 		if(voc->getId() > 0 && g_config.getBool(ConfigManager::ROOK_SYSTEM) &&
 			level <= (uint32_t)g_config.getNumber(ConfigManager::ROOK_TOLEVEL))
 		{
