@@ -263,6 +263,21 @@ class PropStream
 			return true;
 		}
 
+		inline bool getString(std::string& ret, uint16_t strLen)
+		{
+			if(size() < (int32_t)strLen)
+				return false;
+
+			char* str = new char[strLen + 1];
+			memcpy(str, p, strLen);
+			str[strLen] = 0;
+
+			ret.assign(str, strLen);
+			delete[] str;
+			p = p + strLen;
+			return true;
+		}
+
 		inline bool getLongString(std::string& ret)
 		{
 			uint32_t strLen;

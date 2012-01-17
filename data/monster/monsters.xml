@@ -460,9 +460,9 @@
 	<monster name="Yalahari" file="Misc/yalahari.xml"/>
 	<monster name="White Deer" file="Misc/white deer.xml"/>
 	<monster name="Dromedary" file="Misc/dromedary.xml"/>
-	<monster name="Brown Horse" file="Misc/Horse(brown).xml"/>
-	<monster name="Grey Horse" file="Misc/Horse(grey).xml"/>
-	<monster name="Fire Horse" file="Misc/Horse(fire).xml"/>
+	<monster name="Brown Horse" file="Misc/horse(brown).xml"/>
+	<monster name="Grey Horse" file="Misc/horse(grey).xml"/>
+	<monster name="Fire Horse" file="Misc/horse(fire).xml"/>
 
 	<!-- Monks -->
 	<monster name="Dark Monk" file="Monks/dark monk.xml"/>

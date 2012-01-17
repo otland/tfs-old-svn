@@ -47,7 +47,6 @@ DatabaseSQLite::DatabaseSQLite() :
 	{
 		std::clog << "Failed to initialize SQLite connection: " << sqlite3_errmsg(m_handle) << " (" << sqlite3_errcode(m_handle) << ")" << std::endl;
 		sqlite3_close(m_handle);
-		delete m_handle;
 	}
 	else
 		m_connected = true;
