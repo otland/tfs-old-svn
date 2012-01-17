@@ -339,10 +339,10 @@ bool ConfigManager::load()
 	m_confNumber[MAIL_ATTEMPTS]				= getGlobalNumber("mailMaxAttempts", 20);
 	m_confNumber[MAIL_BLOCK] 			= getGlobalNumber("mailBlockPeriod", 3600000);
 	m_confNumber[MAIL_ATTEMPTS_FADE]		= getGlobalNumber("mailAttemptsFadeTime", 600000);
-	m_confBool[ROOK_SYSTEM]			 = getGlobalBool("rookSystemEnabled", false);
-	m_confNumber[ROOK_TOWN]			 = getGlobalNumber("rookTownId", 1);
-	m_confNumber[ROOK_LEVELTO]		      = getGlobalNumber("rookLevelToGetRooked", 5);
-	m_confNumber[ROOK_TOLEVEL]		      = getGlobalNumber("rookLevelToLeaveRook", 8);
+	m_confBool[ROOK_SYSTEM]				= getGlobalBool("rookSystemEnabled", false);
+	m_confNumber[ROOK_TOWN]				= getGlobalNumber("rookTownId", 1);
+	m_confNumber[ROOK_LEVELTO]			= getGlobalNumber("rookLevelToGetRooked", 5);
+	m_confNumber[ROOK_TOLEVEL]			= getGlobalNumber("rookLevelToLeaveRook", 8);
 	m_confBool[HOUSE_SKIP_INIT_RENT]		= getGlobalBool("houseSkipInitialRent", true);
 	m_confBool[HOUSE_PROTECTION]			= getGlobalBool("houseProtection", true);
 
