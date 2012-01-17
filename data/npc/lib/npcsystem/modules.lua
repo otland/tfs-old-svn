@@ -1334,6 +1334,11 @@ if(Modules == nil) then
 			return false
 		end
 
+		local shop = getShopOwner(cid)
+		if(shop and shop == getNpcId()) then
+			return true
+		end
+
 		if(table.maxn(module.npcHandler.shopItems) == 0) then
 			local parseInfo = { [TAG_PLAYERNAME] = getPlayerName(cid) }
 			local msg = module.npcHandler:parseMessage(module.npcHandler:getMessage(MESSAGE_NOSHOP), parseInfo)

@@ -1319,7 +1319,9 @@ void Npc::onPlayerEnter(Player* player, NpcState* state)
 
 void Npc::onPlayerLeave(Player* player, NpcState* state)
 {
-	player->closeShopWindow();
+	if(player->getShopOwner() == this)
+		player->closeShopWindow();
+
 	const NpcResponse* response = getResponse(player, state, EVENT_PLAYER_LEAVE);
 	executeResponse(player, state, response);
 }
@@ -2617,6 +2619,7 @@ void NpcScript::registerFunctions()
 
 	lua_register(m_luaState, "openShopWindow", NpcScript::luaOpenShopWindow);
 	lua_register(m_luaState, "closeShopWindow", NpcScript::luaCloseShopWindow);
+	lua_register(m_luaState, "getShopOwner", NpcScript::luaGetShopOwner);
 }
 
 int32_t NpcScript::luaActionFocus(lua_State* L)
@@ -2869,6 +2872,12 @@ int32_t NpcScript::luaOpenShopWindow(lua_State* L)
 		return 1;
 	}
 
+	if(player->getShopOwner() == npc)
+	{
+		lua_pushboolean(L, true);
+		return 1;
+	}
+
 	player->closeShopWindow(false);
 	npc->addShopPlayer(player);
 
@@ -2893,6 +2902,26 @@ int32_t NpcScript::luaCloseShopWindow(lua_State* L)
 
 	player->closeShopWindow();
 	lua_pushboolean(L, true);
+	return 1;
+}
+
+int32_t NpcScript::luaGetShopOwner(lua_State* L)
+{
+	//getShopOwner(cid)
+	ScriptEnviroment* env = getEnv();
+	Player* player = env->getPlayerByUID(popNumber(L));
+	if(!player)
+	{
+		errorEx(getError(LUA_ERROR_PLAYER_NOT_FOUND));
+		lua_pushboolean(L, false);
+		return 1;
+	}
+
+	if(Npc* npc = player->getShopOwner())
+		lua_pushnumber(L, env->addThing(npc));
+	else
+		lua_pushnil(L);
+
 	return 1;
 }
 

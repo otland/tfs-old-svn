@@ -73,6 +73,7 @@ class NpcScript : public LuaInterface
 
 		static int32_t luaOpenShopWindow(lua_State* L);
 		static int32_t luaCloseShopWindow(lua_State* L);
+		static int32_t luaGetShopOwner(lua_State* L);
 };
 
 class Player;

@@ -382,6 +382,7 @@ class Player : public Creature, public Cylinder
 			shopOffer = offer;
 		}
 
+		Npc* getShopOwner() const {return shopOwner;}
 		Npc* getShopOwner(int32_t& onBuy, int32_t& onSell)
 		{
 			onBuy = purchaseCallback;
@@ -389,6 +390,7 @@ class Player : public Creature, public Cylinder
 			return shopOwner;
 		}
 
+		const Npc* getShopOwner() const {return shopOwner;}
 		const Npc* getShopOwner(int32_t& onBuy, int32_t& onSell) const
 		{
 			onBuy = purchaseCallback;
