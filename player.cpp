@@ -2339,7 +2339,7 @@ bool Player::onDeath()
 	{
 		double reduction = 1.;
 		if(opponents > level)
-			reduction = (double)level / opponents;
+			reduction -= (double)level / opponents;
 
 		uint64_t lossExperience = (uint64_t)std::floor(reduction * getLostExperience()), currExperience = experience;
 		removeExperience(lossExperience, false);
@@ -2411,8 +2411,6 @@ bool Player::onDeath()
 				leaveGuild();
 
 				storageMap.clear();
-				killsMap.clear();
-
 				for(uint32_t i = SKILL_FIRST; i <= SKILL_LAST; ++i)
 				{
 					skills[i][SKILL_LEVEL] = 10;
@@ -2435,7 +2433,7 @@ bool Player::onDeath()
 
 		g_creatureEvents->playerLogout(this, true);
 		g_game.removeCreature(this, false);
-		sendReLoginWindow((uint8_t)std::floor(reduction * 100.));
+		sendReLoginWindow((uint8_t)std::floor((1. - reduction) * 100.));
 	}
 	else
 	{
