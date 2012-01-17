@@ -358,14 +358,8 @@ int32_t Items::loadFromOtb(std::string file)
 				}
 				case ITEM_ATTR_NAME:
 				{
-					if(length < sizeof(uint16_t))
-						return ERROR_INVALID_FORMAT;
-
-					if(!props.skip(sizeof(uint16_t)))
-						return ERROR_INVALID_FORMAT;
-
 					std::string name;
-					if(!props.getString(name, length - 2))
+					if(!props.getString(name, length))
 						return ERROR_INVALID_FORMAT;
 
 					iType->name = name;
