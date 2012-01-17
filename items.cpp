@@ -188,7 +188,7 @@ int32_t Items::loadFromOtb(std::string file)
 		std::clog << "[Error - Items::loadFromOtb] New version detected, an older version of items.otb is required." << std::endl;
 		return ERROR_INVALID_FORMAT;
 	}
-	else if(!g_config.getBool(ConfigManager::SKIP_ITEMS_VERSION) && Items::dwMinorVersion != CLIENT_VERSION_944)
+	else if(!g_config.getBool(ConfigManager::SKIP_ITEMS_VERSION) && Items::dwMinorVersion != CLIENT_VERSION_944_NEW)
 	{
 		std::clog << "[Error - Items::loadFromOtb] Another (client) version of items.otb is required." << std::endl;
 		return ERROR_INVALID_FORMAT;
