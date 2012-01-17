@@ -213,7 +213,7 @@ int32_t Items::loadFromOtb(std::string file)
 		std::cout << "Old version detected, a newer version of items.otb is required." << std::endl;
 		return ERROR_INVALID_FORMAT;
 	}
-	else if(Items::dwMinorVersion < CLIENT_VERSION_944)
+	else if(Items::dwMinorVersion < CLIENT_VERSION_944_NEW)
 	{
 		std::cout << "A newer version of items.otb is required." << std::endl;
 		return ERROR_INVALID_FORMAT;
@@ -629,13 +629,13 @@ bool Items::parseItemNode(xmlNodePtr itemNode, uint32_t id)
 						it.floorChangeNorth = true;
 					else if(tmpStrValue == "south")
 						it.floorChangeSouth = true;
-					else if(tmpStrValue == "southalt")
+					else if(tmpStrValue == "southalt" || tmpStrValue == "southex")
 						it.floorChangeSouthAlt = true;
 					else if(tmpStrValue == "west")
 						it.floorChangeWest = true;
 					else if(tmpStrValue == "east")
 						it.floorChangeEast = true;
-					else if(tmpStrValue == "eastalt")
+					else if(tmpStrValue == "eastalt" || tmpStrValue == "eastex")
 						it.floorChangeEastAlt = true;
 				}
 			}
