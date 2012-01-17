@@ -3246,7 +3246,7 @@ void ProtocolGame::sendMarketEnter(Depot* depot)
 	msg->put<char>(0x00); // active offers, player->getOfferCount()
 	std::map<uint32_t, uint32_t> items;
 
-	depot->getAllItemTypeCount(items);
+	depot->__getAllItemTypeCount(items);
 	msg->put<uint16_t>(std::min((size_t)65535, items.size()));
 
 	uint32_t i = 0;
@@ -3274,7 +3274,7 @@ void ProtocolGame::sendMarketDetails(uint16_t itemId)
 	msg->putString(asString(it.defense) + " +" + asString(it.extraDefense));
 
 	msg->putString(it.description);
-	msg->putString(asString(it.duration));
+	msg->putString(asString(it.decayTime));
 	msg->putString(""); // it.getProtectionString() - absorb, reflect(optional)
 	msg->putString(asString(it.minReqLevel));
 	msg->putString(asString(it.minReqMagicLevel));
