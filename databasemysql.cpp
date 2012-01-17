@@ -62,10 +62,7 @@ DatabaseMySQL::DatabaseMySQL() :
 DatabaseMySQL::~DatabaseMySQL()
 {
 	if(m_handle)
-	{
 		mysql_close(m_handle);
-		delete m_handle;
-	}
 
 	if(m_timeoutTask != 0)
 		Scheduler::getInstance().stopEvent(m_timeoutTask);
@@ -78,10 +75,7 @@ bool DatabaseMySQL::connect(bool _reconnect)
 	{
 		std::clog << "WARNING: MYSQL Lost connection, attempting to reconnect..." << std::endl;
 		if(m_handle)
-		{
 			mysql_close(m_handle);
-			delete m_handle;
-		}
 
 		uint32_t maxAttempts = g_config.getNumber(ConfigManager::MYSQL_RECONNECTION_ATTEMPTS);
 		if(maxAttempts && ++m_attempts > maxAttempts)
@@ -91,11 +85,9 @@ bool DatabaseMySQL::connect(bool _reconnect)
 		}
 	}
 
-	m_handle = new MYSQL;
-	if(!mysql_init(m_handle))
+	if(!(m_handle = mysql_init(NULL)))
 	{
 		std::clog << std::endl << "Failed to initialize MySQL connection handler." << std::endl;
-		delete m_handle;
 		return false;
 	}
 
@@ -124,8 +116,6 @@ bool DatabaseMySQL::connect(bool _reconnect)
 
 	std::clog << std::endl << "Failed connecting to database - MYSQL ERROR: " << mysql_error(m_handle) << " (" << mysql_errno(m_handle) << ")" << std::endl;
 	mysql_close(m_handle);
-
-	delete m_handle;
 	return false;
 }
 
@@ -185,7 +175,6 @@ bool DatabaseMySQL::query(std::string query)
 		{
 			mysql_close(m_handle);
 			m_connected = false;
-			delete m_handle;
 		}
 		else
 			std::clog << "mysql_real_query(): " << query << " - MYSQL ERROR: " << mysql_error(m_handle) << " (" << error << ")" << std::endl;
@@ -218,7 +207,6 @@ DBResult* DatabaseMySQL::storeQuery(std::string query)
 		{
 			mysql_close(m_handle);
 			m_connected = false;
-			delete m_handle;
 		}
 		else
 			std::clog << "mysql_real_query(): " << query << " - MYSQL ERROR: " << mysql_error(m_handle) << " (" << error << ")" << std::endl;
