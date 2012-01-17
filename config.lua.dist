@@ -13,6 +13,12 @@
 	generateAccountNumber = false
 	generateAccountSalt = false
 
+	-- Rook system
+	rookSystemEnabled = false
+	rookTownId = 1
+	rookLevelToGetRooked = 5
+	rookLevelToLeaveRook = 8
+
 	-- Unjustified kills
 	-- NOTE: *Banishment and *BlackSkull variables are >summed up<
 	-- (dailyFragsToRedSkull + dailyFragsToBanishment) with their

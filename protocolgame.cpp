@@ -50,50 +50,7 @@ Bytes not yet added:
 	0xF4 -> Flash client objects cache?
 	0xF5 -> Flash client inventory?
 
-	// Market sent bytes structure:
-	marketEnter { -- F6
-		uint32_t Balance
-		char VocationClientId
-		char PlayerActiveOffers
-		uint16_t Depot {
-			uint16_t ItemClientId
-			uint16_t Amount
-		}
-	}
-
-	marketLeave { -- F7
-	}
-
-	marketDetail { -- F8
-		uint16_t ItemClientId
-		string ItemArmor 0
-		string ItemAttack 1
-		string ItemWeight 2
-		string ItemDefense 3
-		string ItemDescription 4
-		string Expiration 5
-		string ItemProtection 6
-		string ItemLevelRequirement 7
-		string ItemMagicLevelRequirement 8
-		string ItemVocationRequirement 9
-		string ItemRuneSpell 10
-		string ItemSkillsBonus 11
-		string ItemCharges 12
-		string ItemWeaponType 13
-		char Buy {
-			uint32_t Transactions
-			uint32_t TotalPrice
-			uint32_t MinPrice
-			uint32_t MaxPrice
-		}
-		char Sell {
-			uint32_t Transactions
-			uint32_t TotalPrice
-			uint32_t MinPrice
-			uint32_t MaxPrice
-		}
-	}
-
+	// Market send bytes structure:
 	marketBrowse { -- F9
 		uint16_t ItemClientId
 		uint32_t BuyOffers {
@@ -3269,4 +3226,92 @@ void ProtocolGame::AddShopItem(NetworkMessage_ptr msg, const ShopInfo& item)
 	msg->put<uint32_t>(uint32_t(it.weight * 100));
 	msg->put<uint32_t>(item.buyPrice);
 	msg->put<uint32_t>(item.sellPrice);
+}
+
+void ProtocolGame::sendMarketEnter(Depot* depot)
+{
+	NetworkMessage_ptr msg = getOutputBuffer();
+	if(!msg)
+		return;
+
+	TRACK_MESSAGE(msg);
+	msg->put<char>(0xF6);
+
+	msg->put<uint32_t>(player->balance);
+	if(Vocation* vocation = player->getVocation())
+		msg->put<char>(vocation->getClientId());
+	else
+		msg->put<char>(0x00);
+
+	msg->put<char>(0x00); // active offers, player->getOfferCount()
+	std::map<uint32_t, uint32_t> items;
+
+	depot->getAllItemTypeCount(items);
+	msg->put<uint16_t>(std::min((size_t)65535, items.size()));
+
+	uint32_t i = 0;
+	for(std::map<uint32_t, uint32_t>::const_iterator it = items.begin(); it != items.end() && i < 65535; ++it, ++i)
+	{
+		msg->putItemId(it->first);
+		msg->put<uint16_t>(std::min((uint32_t)65535, it->second));
+	}
+}
+
+void ProtocolGame::sendMarketDetails(uint16_t itemId)
+{
+	NetworkMessage_ptr msg = getOutputBuffer();
+	if(!msg)
+		return;
+
+	TRACK_MESSAGE(msg);
+	msg->put<char>(0xF8);
+	msg->putItemId(itemId);
+
+	const ItemType& it = Item::items[itemId];
+	msg->putString(asString(it.armor));
+	msg->putString(asString(it.attack) + " +" + asString(it.extraAttack));
+	msg->putString(asString(it.weight));
+	msg->putString(asString(it.defense) + " +" + asString(it.extraDefense));
+
+	msg->putString(it.description);
+	msg->putString(asString(it.duration));
+	msg->putString(""); // it.getProtectionString() - absorb, reflect(optional)
+	msg->putString(asString(it.minReqLevel));
+	msg->putString(asString(it.minReqMagicLevel));
+
+	msg->putString(it.runeSpellName); // it needs level or magic level?
+	msg->putString(""); // it.getBonusString() - skill, elemental(?), attackspeed(optional)
+	msg->putString(asString(it.charges));
+	msg->putString(getWeaponName(it.weaponType));
+
+	msg->put<char>(0x00); // buy offers
+	/*
+		for(Offers::iterator it = offers.begin(); it != offers.end(); ++it)
+		{
+			msg->put<uint32_t>(?); Transactions
+			msg->put<uint32_t>(?); TotalPrice
+			msg->put<uint32_t>(?); MinPrice
+			msg->put<uint32_t>(?); MaxPrice
+		}
+	*/
+	msg->put<char>(0x00); // sell offers
+	/*
+		for(Offers::iterator it = offers.begin(); it != offers.end(); ++it)
+		{
+			msg->put<uint32_t>(?); Transactions
+			msg->put<uint32_t>(?); TotalPrice
+			msg->put<uint32_t>(?); MinPrice
+			msg->put<uint32_t>(?); MaxPrice
+		}
+	*/
+}
+
+void ProtocolGame::sendMarketLeave()
+{
+	NetworkMessage_ptr msg = getOutputBuffer();
+	if(!msg)
+		return;
+
+	TRACK_MESSAGE(msg);
+	msg->put<char>(0xF8);
 }

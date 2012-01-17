@@ -33,16 +33,25 @@ function oracle(cid, message, keywords, parameters, node)
 			doPlayerSetVocation(cid, params['vocation'])
 			doPlayerSetTown(cid, params['town'])
 			if(params['items'] ~= nil) then
-				local parcel = doCreateItemEx(2595)
-				local label = doAddContainerItem(parcel, 2599)
-				local target = getCreatureName(cid)
+				local parcel, time = doCreateItemEx(2595), os.time()
+				local label, target = doAddContainerItem(parcel, 2599), getCreatureName(cid)
 
 				doItemSetAttribute(label, "text", target .. "\n" .. getTownName(params['town']))
-				doItemSetAttribute(label, "date", os.time())
-				doItemSetAttribute(label, "writer", "The Oracle")
+				doItemSetAttribute(label, "date", time)
+				doItemSetAttribute(label, "writer", getCreatureName(getNpcId()))
 
 				for _, item in ipairs(params['items']) do
-					doAddContainerItem(parcel, item[1], item[2])
+					if(type(item[2]) == 'string') then
+						local tmp = doCreateItemEx(item[1])
+
+						doItemSetAttribute(tmp, "text", item[2])
+						doItemSetAttribute(tmp, "date", time)
+						doItemSetAttribute(tmp, "writer", getCreatureName(getNpcId()))
+
+						doAddContainerItemEx(parcel, tmp)
+					else
+						doAddContainerItem(parcel, item[1], item[2] or 1)
+					end
 				end
 
 				doPlayerSendMailByName(target, parcel, params['town'])
@@ -66,7 +75,7 @@ function oracle(cid, message, keywords, parameters, node)
 end
 
 function greetCallback(cid)
-	if(getPlayerLevel(cid) < 8) then
+	if(getPlayerLevel(cid) < getConfigValue('rookLevelToLeaveRook')) then
 		npcHandler:say('COME BACK WHEN YOU GROW UP, CHILD!')
 		return false
 	else
@@ -77,7 +86,7 @@ end
 npcHandler:setCallback(CALLBACK_GREET, greetCallback)
 npcHandler:setMessage(MESSAGE_GREET, 'Hello |PLAYERNAME|. Are you prepared to face your destiny?')
 
-local yesNode = KeywordNode:new({'yes'}, oracle, {level = 8})
+local yesNode = KeywordNode:new({'yes'}, oracle, {level = getConfigValue('rookLevelToLeaveRook')})
 local noNode = KeywordNode:new({'no'}, StdModule.say, {npcHandler = npcHandler, onlyFocus = true, moveup = 1, text = 'Then what vocation do you want to become?'})
 
 local node1 = keywordHandler:addKeyword({'yes'}, StdModule.say, {npcHandler = npcHandler, onlyFocus = true, text = 'What city do you wish to live in? {Rhyves}, {Varak} or {Jorvik}?'})

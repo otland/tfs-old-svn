@@ -32,6 +32,7 @@ class Container;
 class Tile;
 class Connection;
 class Quest;
+class Depot;
 
 typedef std::list<std::pair<uint16_t, std::string> > ChannelsList;
 typedef boost::shared_ptr<NetworkMessage> NetworkMessage_ptr;
@@ -253,6 +254,11 @@ class ProtocolGame : public Protocol
 		void sendAddInventoryItem(slots_t slot, const Item* item);
 		void sendUpdateInventoryItem(slots_t slot, const Item* item);
 		void sendRemoveInventoryItem(slots_t slot);
+
+		//market
+		void sendMarketEnter(Depot* depot);
+		void sendMarketDetails(uint16_t itemId);
+		void sendMarketLeave();
 
 		// help functions
 		void reloadCreature(const Creature* creature);

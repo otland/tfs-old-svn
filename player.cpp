@@ -1984,15 +1984,24 @@ void Player::addExperience(uint64_t exp)
 	}
 
 	experience += exp;
+	Vocation* voc = vocation;
 	while(experience >= nextLevelExp)
 	{
-		healthMax += vocation->getGain(GAIN_HEALTH);
-		health += vocation->getGain(GAIN_HEALTH);
-		manaMax += vocation->getGain(GAIN_MANA);
-		mana += vocation->getGain(GAIN_MANA);
-		capacity += vocation->getGainCap();
-
 		++level;
+		Vocation* voc = vocation;
+		if(voc->getId() > 0 && g_config.getBool(ConfigManager::ROOK_SYSTEM) &&
+			level <= (uint32_t)g_config.getNumber(ConfigManager::ROOK_TOLEVEL))
+		{
+			if(Vocation* tmp = Vocations::getInstance()->getVocation(0))
+				voc = tmp;
+		}
+
+		healthMax += voc->getGain(GAIN_HEALTH);
+		health += voc->getGain(GAIN_HEALTH);
+		manaMax += voc->getGain(GAIN_MANA);
+		mana += voc->getGain(GAIN_MANA);
+		capacity += voc->getGainCap();
+
 		nextLevelExp = Player::getExpForLevel(level + 1);
 		if(Player::getExpForLevel(level) > nextLevelExp) //player has reached max level
 			break;
@@ -2032,12 +2041,20 @@ void Player::removeExperience(uint64_t exp, bool updateStats/* = true*/)
 	bool attackable = isProtected();
 
 	experience -= std::min(exp, experience);
+	Vocation* voc = vocation;
 	while(level > 1 && experience < Player::getExpForLevel(level))
 	{
-		level--;
-		healthMax = std::max((int32_t)0, (healthMax - (int32_t)vocation->getGain(GAIN_HEALTH)));
-		manaMax = std::max((int32_t)0, (manaMax - (int32_t)vocation->getGain(GAIN_MANA)));
-		capacity = std::max((double)0, (capacity - (double)vocation->getGainCap()));
+		--level;
+		if(voc->getId() > 0 && g_config.getBool(ConfigManager::ROOK_SYSTEM) &&
+			level < (uint32_t)g_config.getNumber(ConfigManager::ROOK_TOLEVEL))
+		{
+			if(Vocation* tmp = Vocations::getInstance()->getVocation(0))
+				voc = tmp;
+		}
+
+		healthMax = std::max((int32_t)0, (healthMax - (int32_t)voc->getGain(GAIN_HEALTH)));
+		manaMax = std::max((int32_t)0, (manaMax - (int32_t)voc->getGain(GAIN_MANA)));
+		capacity = std::max((double)0, (capacity - (double)voc->getGainCap()));
 	}
 
 	if(prevLevel != level)
@@ -2376,7 +2393,41 @@ bool Player::onDeath()
 			blessings = 0;
 
 		loginPosition = masterPosition;
-		if(!inventory[SLOT_BACKPACK]) // FIXME: you should receive the bag after you login back...
+		if(vocationId > 0 && g_config.getBool(ConfigManager::ROOK_SYSTEM) &&
+			level <= (uint32_t)g_config.getNumber(ConfigManager::ROOK_LEVELTO))
+		{
+			if(Town* rook = Towns::getInstance()->getTown(g_config.getNumber(ConfigManager::ROOK_TOWN)))
+			{
+				level = 1;
+				soulMax = soul = 100;
+				capacity = 400;
+				stamina = STAMINA_MAX;
+				health = healthMax = 150;
+				loginPosition = masterPosition = rook->getPosition();
+				experience = magLevel = manaSpent = mana = manaMax = balance = marriage = 0;
+				promotionLevel = defaultOutfit.lookAddons = defaultOutfit.lookMount = 0;
+
+				setTown(rook->getID());
+				setVocation(0);
+				leaveGuild();
+
+				storageMap.clear();
+				killsMap.clear();
+
+				for(uint32_t i = SKILL_FIRST; i <= SKILL_LAST; ++i)
+				{
+					skills[i][SKILL_LEVEL] = 10;
+					skills[i][SKILL_TRIES] = 0;
+				}
+
+				for(uint32_t i = SLOT_FIRST; i < SLOT_LAST; ++i)
+				{
+					if(inventory[i])
+						g_game.internalRemoveItem(NULL, inventory[i]);
+				}
+			}
+		}
+		else if(!inventory[SLOT_BACKPACK]) // FIXME: you should receive the bag after you login back...
 			__internalAddThing(SLOT_BACKPACK, Item::CreateItem(g_config.getNumber(ConfigManager::DEATH_CONTAINER)));
 
 		sendIcons();

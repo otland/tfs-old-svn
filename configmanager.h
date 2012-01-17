@@ -188,6 +188,9 @@ class ConfigManager
 			MAIL_ATTEMPTS,
 			MAIL_BLOCK,
 			ALLOWED_MAX_PACKETS,
+			ROOK_TOWN,
+			ROOK_LEVELTO,
+			ROOK_TOLEVEL,
 			LAST_NUMBER_CONFIG /* this must be the last one */
 		};
 
@@ -309,6 +312,7 @@ class ConfigManager
 			SILENT_LUA,
 			HOUSE_SKIP_INIT_RENT,
 			HOUSE_PROTECTION,
+			ROOK_SYSTEM,
 			LAST_BOOL_CONFIG /* this must be the last one */
 		};
 
