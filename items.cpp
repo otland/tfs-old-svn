@@ -40,7 +40,7 @@ ItemType::ItemType()
 	group = ITEM_GROUP_NONE;
 	type = ITEM_TYPE_NONE;
 	stackable = usable = alwaysOnTop = lookThrough = pickupable = rotable = hasHeight = forceSerialize = false;
-	loaded = blockSolid = blockProjectile = blockPathFind = allowPickupable = isAnimation = false;
+	loaded = blockSolid = blockProjectile = blockPathFind = allowPickupable = isAnimation = cache = false;
 	movable = walkStack = true;
 	alwaysOnTopOrder = 0;
 	rotateTo = 0;
@@ -641,6 +641,11 @@ void Items::parseItemNode(xmlNodePtr itemNode, uint32_t id)
 				if(it.group == ITEM_GROUP_DEPRECATED)
 					it.group = ITEM_GROUP_NONE;
 			}
+		}
+		else if(tmpStrValue == "cache")
+		{
+			if(readXMLInteger(itemAttributesNode, "value", intValue))
+				it.cache = (intValue != 0);
 		}
 		else if(tmpStrValue == "wareid")
 		{

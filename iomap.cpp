@@ -403,12 +403,8 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 
 #ifdef __GROUND_CACHE__
 									const ItemType& tit = Item::items[item->getID()];
-									if(!(item->floorChange() || tit.magicEffect != MAGIC_EFFECT_NONE || !tit.walkStack
-										|| item->canDecay() || item->getActionId() > 0 || item->getUniqueId() > 0
-										|| item->getID() == 293 || item->getID() == 294 || item->getID() == 461
-										|| item->getID() == 468 || item->getID() == 481 || item->getID() == 483
-										|| item->getID() == 670 || item->getID() == 7932 || item->getID() == 8579
-										|| item->getID() == 8714)) //TODO: export to items.xml
+									if(!(item->floorChange() || tit.magicEffect != MAGIC_EFFECT_NONE || !tit.walkStack ||
+										item->canDecay() || item->getActionId() > 0 || item->getUniqueId() > 0 || it.cache))
 									{
 										CacheMap::iterator it = groundCache.find(item->getID());
 										if(it != groundCache.end())
@@ -512,12 +508,8 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 
 #ifdef __GROUND_CACHE__
 									const ItemType& tit = Item::items[item->getID()];
-									if(!(item->floorChange() || tit.magicEffect != MAGIC_EFFECT_NONE || !tit.walkStack
-										|| item->canDecay() || item->getActionId() > 0 || item->getUniqueId() > 0
-										|| item->getID() == 293 || item->getID() == 294 || item->getID() == 461
-										|| item->getID() == 468 || item->getID() == 481 || item->getID() == 483
-										|| item->getID() == 670 || item->getID() == 7932 || item->getID() == 8579
-										|| item->getID() == 8714)) //TODO: export to items.xml
+									if(!(item->floorChange() || tit.magicEffect != MAGIC_EFFECT_NONE || !tit.walkStack ||
+										item->canDecay() || item->getActionId() > 0 || item->getUniqueId() > 0 || it.cache))
 									{
 										CacheMap::iterator it = groundCache.find(item->getID());
 										if(it != groundCache.end())

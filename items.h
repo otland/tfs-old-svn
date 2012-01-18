@@ -140,7 +140,7 @@ class ItemType
 			allowDistRead, canReadText, canWriteText, forceSerialize, isVertical, isHorizontal, isHangable,
 			usable, movable, pickupable, rotable, replacable, lookThrough, walkStack, hasHeight, blockSolid,
 			blockPickupable, blockProjectile, blockPathFind, allowPickupable, alwaysOnTop, floorChange[CHANGE_LAST],
-			isAnimation, specialDoor, closingDoor;
+			isAnimation, specialDoor, closingDoor, cache;
 
 		MagicEffect_t magicEffect;
 		FluidTypes_t fluidSource;

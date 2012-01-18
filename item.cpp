@@ -1582,7 +1582,7 @@ std::string Item::getNameDescription(const ItemType& it, const Item* item/* = NU
 		subType = item->getSubType();
 
 	std::stringstream s;
-	if(it.name.length() || (item && item->getName().length()))
+	if(it.loaded || (item && !item->getName().empty()))
 	{
 		if(subType > 1 && it.stackable && it.showCount)
 			s << subType << " " << (item ? item->getPluralName() : it.pluralName);
@@ -1599,8 +1599,10 @@ std::string Item::getNameDescription(const ItemType& it, const Item* item/* = NU
 			s << (item ? item->getName() : it.name);
 		}
 	}
-	else
+	else if(it.name.empty())
 		s << "an item of type " << it.id << ", please report it to gamemaster";
+	else
+		s << "an item '" << it.name << "', please report it to gamemaster";
 
 	return s.str();
 }
