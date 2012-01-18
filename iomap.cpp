@@ -403,8 +403,8 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 
 #ifdef __GROUND_CACHE__
 									const ItemType& tit = Item::items[item->getID()];
-									if(!(item->floorChange() || tit.magicEffect != MAGIC_EFFECT_NONE || !tit.walkStack ||
-										item->canDecay() || item->getActionId() > 0 || item->getUniqueId() > 0 || it.cache))
+									if(!(tit.magicEffect != MAGIC_EFFECT_NONE || !tit.walkStack || tit.transformUseTo != 0 || tit.cache ||
+										item->floorChange() || item->canDecay() || item->getActionId() > 0 || item->getUniqueId() > 0))
 									{
 										CacheMap::iterator it = groundCache.find(item->getID());
 										if(it != groundCache.end())
@@ -508,8 +508,8 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 
 #ifdef __GROUND_CACHE__
 									const ItemType& tit = Item::items[item->getID()];
-									if(!(item->floorChange() || tit.magicEffect != MAGIC_EFFECT_NONE || !tit.walkStack ||
-										item->canDecay() || item->getActionId() > 0 || item->getUniqueId() > 0 || it.cache))
+									if(!(tit.magicEffect != MAGIC_EFFECT_NONE || !tit.walkStack || tit.transformUseTo != 0 || tit.cache ||
+										item->floorChange() || item->canDecay() || item->getActionId() > 0 || item->getUniqueId() > 0))
 									{
 										CacheMap::iterator it = groundCache.find(item->getID());
 										if(it != groundCache.end())
