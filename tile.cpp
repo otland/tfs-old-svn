@@ -39,9 +39,6 @@ extern MoveEvents* g_moveEvents;
 
 StaticTile reallyNullTile(0xFFFF, 0xFFFF, 0xFFFF);
 Tile& Tile::nullTile = reallyNullTile;
-#ifdef __GROUND_CACHE__
-std::map<Item*, int32_t> g_grounds;
-#endif
 
 bool Tile::hasProperty(enum ITEMPROPERTY prop) const
 {
@@ -910,7 +907,7 @@ void Tile::__addThing(Creature* actor, int32_t, Thing* thing)
 			ground = item;
 
 #ifdef __GROUND_CACHE__
-			std::map<Item*, int32_t>::iterator it = g_game.grounds.find(ground);
+			std::map<Item*, int32_t>::iterator it = g_game.grounds.find(oldGround);
 			bool erase = it == g_game.grounds.end();
 			if(!erase)
 			{
@@ -920,7 +917,6 @@ void Tile::__addThing(Creature* actor, int32_t, Thing* thing)
 					g_game.grounds.erase(it);
 			}
 
-			updateTileFlags(oldGround, true);
 			if(erase)
 			{
 #endif
@@ -931,8 +927,7 @@ void Tile::__addThing(Creature* actor, int32_t, Thing* thing)
 #endif
 
 			postRemoveNotification(actor, oldGround, NULL, oldGroundIndex, true);
-			if(items && items->size() < 9)
-				onUpdateTile();
+			onUpdateTile();
 		}
 		else
 		{
@@ -1553,7 +1548,7 @@ void Tile::postRemoveNotification(Creature* actor, Thing* thing, const Cylinder*
 {
 	const SpectatorVec& list = g_game.getSpectators(pos);
 	SpectatorVec::const_iterator it;
-	if(/*isCompleteRemoval && */getThingCount() > 8)
+	if(/*isCompleteRemoval && */thingCount > 8)
 		onUpdateTile();
 
 	Player* tmpPlayer = NULL;
