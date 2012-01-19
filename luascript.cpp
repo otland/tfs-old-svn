@@ -9446,8 +9446,9 @@ int32_t LuaInterface::luaGetMountInfo(lua_State* L)
 
 		lua_newtable(L);
 		setField(L, "name", mount->getName().c_str());
-		setField(L, "speed", mount->getSpeed());
 		setField(L, "clientId", mount->getClientId());
+		setField(L, "speed", mount->getSpeed());
+		setField(L, "attackSpeed", mount->getAttackSpeed());
 		return 1;
 	}
 

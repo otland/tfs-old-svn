@@ -16,11 +16,8 @@
 ]
 
 [ LIST
-	Fix ground cache for professional hosters as currently it may cause crash in certain circumstances
-		Assigned to: Elf
-
 	Auction (Market) System from Tibia 9.4
-		Assigned to: Elf
+		Assigned to: Talaturen, Elf
 
 	Tibia's position swapping:
 		Assigned to: ?

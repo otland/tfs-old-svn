@@ -61,7 +61,10 @@
 		
 	speed
 		<list gender="1" lookType="128" name="Citizen" speed="20" />
-	
+
+	attackSpeed
+		<list gender="1" lookType="128" name="Citizen" speed="20" />
+
 ]
 
 [ "reflect" attributes

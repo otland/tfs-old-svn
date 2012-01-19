@@ -1,20 +1,19 @@
 [
 	0.4
 
-	Pozwolę sobie napisac po polsku, bo z angielskim u mnie słabo, a i tak prawie sami tu jesteśmy...
-	Piszcie swoje propozycje co do 0.4- narazie wypiszę wszystko co przyszło mi do glowy, albo ustaliliśmy z Elfem.
-
 	TODO:
-	* Multilang (szczególnie RET_* i możliwie wszystko pozostałe)
-	* Nowy podział plików:
-		* configs/
-			* database/main.lua
-			* config.lua/.xml
-			* Przeniesione data/XML/
-		* langs/
-			Tłumaczenia: polish.lua, english.lua, etc
+	* Multi-language (especially RET_* and most likely other stuff)
+	* New files structure:
+		* config/
+			* config.lua
+			* Stuff from data/XML/
+		* lang/
+			Translations: polish.lua, english.lua, and so on
 		* data/
-			Po staremu prócz XML/
+			As it was, but without XML/ and world/
+		* maps/
+			* Stuff from data/world
+		* mods/
 ]
 
 [

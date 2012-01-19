@@ -43,12 +43,13 @@ class Mount
 		bool isTamed(Player* player) const;
 
 		uint16_t getId() const {return id;}
-		const std::string& getName() const {return name;}
-		uint32_t getSpeed() const {return speed;}
-		int32_t getAttackSpeed() const {return attackSpeed;}
 		uint16_t getClientId() const {return clientId;}
+
+		const std::string& getName() const {return name;}
 		bool isPremium() const {return premium;}
 
+		uint32_t getSpeed() const {return speed;}
+		int32_t getAttackSpeed() const {return attackSpeed;}
 
 	private:
 		std::string name, storageId, storageValue;
