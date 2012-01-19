@@ -931,7 +931,10 @@ Depot* Player::getDepot(uint32_t depotId, bool autoCreateDepot)
 				}
 
 				if((item = Item::CreateItem(ITEM_DEPOT)))
+				{
 					container->__internalAddThing(item);
+					depot->setLocker(item->getContainer());
+				}
 
 				internalAddDepot(depot, depotId);
 				return depot;
@@ -951,19 +954,6 @@ bool Player::addDepot(Depot* depot, uint32_t depotId)
 	if(getDepot(depotId, false))
 		return false;
 
-	if(!depot->getInbox())
-	{
-		Item* item = Item::CreateItem(ITEM_MARKET);
-		if(item)
-			depot->__internalAddThing(item);
-
-		if((item = Item::CreateItem(ITEM_INBOX)))
-		{
-			depot->__internalAddThing(item);
-			depot->setInbox(item->getContainer());
-		}
-	}
-
 	internalAddDepot(depot, depotId);
 	return true;
 }
@@ -980,10 +970,26 @@ void Player::updateDepots()
 	for(DepotMap::iterator it = depots.begin(); it != depots.end(); ++it)
 	{
 		depot = it->second.first;
-		if(depot->getInbox() && depot->size() > 3)
+		if(depot->__getItemTypeCount(ITEM_INBOX) == 0) // This happens only during upgrade of depots...
 		{
 			ItemList::const_reverse_iterator rit = depot->getReversedItems();
-			Item* item = NULL;
+			depot->setDepot((*rit)->getContainer()); // Depot is ALWAYS! the last item in the locker
+
+			Item* item = Item::CreateItem(ITEM_MARKET);
+			if(item)
+				depot->__internalAddThing(item);
+
+			if((item = Item::CreateItem(ITEM_INBOX)))
+			{
+				depot->__internalAddThing(item);
+				depot->setInbox(item->getContainer());
+			}
+
+			// we need to place the depot to be first
+			depot->__removeThing(depot->getDepot());
+			depot->__addThing(NULL, depot->getDepot(), 1);
+
+			++rit;
 			while(rit != depot->getReversedEnd())
 			{
 				item = *rit;
@@ -997,6 +1003,14 @@ void Player::updateDepots()
 					++rit;
 			}
 		}
+		else
+		{
+			ItemList::const_iterator rit = depot->getItems();
+			depot->setDepot((*rit)->getContainer());
+			++rit;
+			depot->setInbox((*rit)->getContainer());
+		}
+
 	}
 }
 

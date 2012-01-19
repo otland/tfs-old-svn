@@ -723,14 +723,7 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool preLo
 			else if((it = itemMap.find(pid)) != itemMap.end())
 			{
 				if(Container* container = it->second.first->getContainer())
-				{
 					container->__internalAddThing(item);
-					if(item->getID() == ITEM_INBOX)
-					{
-						if(Depot* depot = container->getDepot())
-							depot->setInbox(item->getContainer());
-					}
-				}
 			}
 		}
 

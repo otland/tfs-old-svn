@@ -33,10 +33,13 @@ class Depot : public Container
 
 		uint32_t getDepotId() const;
 
-		void setMaxDepotLimit(uint32_t count) {depotLimit = count;}
-
 		void setInbox(Container* container) {inbox = container;}
 		Container* getInbox() const {return inbox;}
+
+		void setDepot(Container* container) {depot = depot;}
+		Container* getDepot() const {return depot;}
+
+		void setMaxDepotLimit(uint32_t count) {depotLimit = count;}
 
 		//cylinder implementations
 		virtual Cylinder* getParent() {return Item::getParent();}
@@ -56,6 +59,8 @@ class Depot : public Container
 		virtual ReturnValue __queryMaxCount(int32_t index, const Thing* thing, uint32_t count,
 			uint32_t& maxQueryCount, uint32_t flags) const;
 
+		virtual std::map<uint32_t, uint32_t>& __getAllItemTypeCount(std::map<uint32_t, uint32_t>& countMap) const;
+
 		virtual void postAddNotification(Creature* actor, Thing* thing, const Cylinder* oldParent,
 			int32_t index, CylinderLink_t link = LINK_OWNER);
 		virtual void postRemoveNotification(Creature* actor, Thing* thing, const Cylinder* newParent,
@@ -65,7 +70,7 @@ class Depot : public Container
 		virtual bool canRemove() const {return false;}
 
 	private:
-		Container* inbox;
+		Container* inbox, depot;
 		uint32_t depotLimit;
 };
 

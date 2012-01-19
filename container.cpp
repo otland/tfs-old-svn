@@ -760,7 +760,7 @@ void Container::__internalAddThing(uint32_t
 #ifdef __DEBUG_MOVESYS__
 	index
 #endif
-				, Thing* thing)
+	, Thing* thing)
 {
 #ifdef __DEBUG_MOVESYS__
 	std::clog << "[Container::__internalAddThing] index: " << index << std::endl;
