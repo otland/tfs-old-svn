@@ -717,7 +717,7 @@ bool Spell::checkSpell(Player* player) const
 	{
 		if((int32_t)player->getSkill((skills_t)i, SKILL_LEVEL) < skills[i])
 		{
-			player->sendCancelMessage(RET_NOTENOUGSKILL);
+			player->sendCancelMessage(RET_NOTENOUGHSKILL);
 			g_game.addMagicEffect(player->getPosition(), MAGIC_EFFECT_POFF);
 			return false;
 		}

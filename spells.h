@@ -154,6 +154,7 @@ class Spell : public BaseSpell
 	private:
 		uint16_t spellId;
 
+	protected:
 		int32_t level;
 		int32_t magLevel;
 		int32_t skills[SKILL_LAST + 1];
