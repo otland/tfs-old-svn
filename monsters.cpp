@@ -538,9 +538,6 @@ bool Monsters::deserializeSpell(xmlNodePtr node, spellBlock_t& sb, const std::st
 				{
 					Outfit_t outfit;
 					outfit.lookTypeEx = intValue;
-					if(readXMLInteger(tmpNode, "mount", intValue))
-						outfit.lookMount = intValue;
-
 					outfits.push_back(outfit);
 				}
 

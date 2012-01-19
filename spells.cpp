@@ -632,20 +632,25 @@ bool Spell::checkSpell(Player* player) const
 
 	if(!player->hasFlag(PlayerFlag_HasNoExhaustion))
 	{
-		bool useCooldowns = g_config.getBool(ConfigManager::ENABLE_COOLDOWNS),
-			exhausted = player->hasCondition(CONDITION_SPELLCOOLDOWN,
-			useCooldowns ? spellId : isAggressive);
-		if(!exhausted && useCooldowns)
+		bool exhausted = false;
+		if(g_config.getBool(ConfigManager::ENABLE_COOLDOWNS))
 		{
-			for(SpellGroup::const_iterator it = groupExhaustions.begin(); it != groupExhaustions.end(); ++it)
+			if(!player->hasCondition(CONDITION_SPELLCOOLDOWN, spellId))
 			{
-				if(!player->hasCondition(CONDITION_EXHAUST, (Exhaust_t)((int32_t)it->first + 1)))
-					continue;
+				for(SpellGroup::const_iterator it = groupExhaustions.begin(); it != groupExhaustions.end(); ++it)
+				{
+					if(!player->hasCondition(CONDITION_EXHAUST, (Exhaust_t)((int32_t)it->first + 1)))
+						continue;
 
-				exhausted = true;
-				break;
+					exhausted = true;
+					break;
+				}
 			}
+			else
+				exhausted = true;
 		}
+		else if(player->hasCondition(CONDITION_EXHAUST, isAggressive))
+			exhausted = true;
 
 		if(exhausted)
 		{
@@ -984,21 +989,25 @@ void Spell::postSpell(Player* player) const
 {
 	if(!player->hasFlag(PlayerFlag_HasNoExhaustion))
 	{
-		bool useCooldowns = g_config.getBool(ConfigManager::ENABLE_COOLDOWNS);
-		if(useCooldowns)
+		if(g_config.getBool(ConfigManager::ENABLE_COOLDOWNS))
 		{
 			for(SpellGroup::const_iterator it = groupExhaustions.begin(); it != groupExhaustions.end(); ++it)
 			{
-				player->addExhaust(it->second, (Exhaust_t)((int32_t)it->first + 1));
+				player->addExhaust(it->second, (Exhaust_t)(it->first + 1));
 				player->sendSpellGroupCooldown(it->first, it->second);
 			}
-		}
 
-		if(exhaustion > 0)
+			if(exhaustion > 0)
+			{
+				player->addCooldown(exhaustion, spellId);
+				if(icon != SPELL_NONE)
+					player->sendSpellCooldown(icon, exhaustion);
+			}
+		}
+		else if(exhaustion > 0)
 		{
-			player->addCooldown(exhaustion, (useCooldowns ? spellId : isAggressive));
-			if(useCooldowns && icon != SPELL_NONE)
-				player->sendSpellCooldown(icon, exhaustion);
+			player->addExhaust(exhaustion, (Exhaust_t)isAggressive);
+			player->sendSpellGroupCooldown(isAggressive ? SPELLGROUP_ATTACK : SPELLGROUP_HEALING, exhaustion);
 		}
 	}
 

@@ -1898,7 +1898,7 @@ uint32_t CreatureEvent::executeChannelRequest(Player* player, const std::string&
 	}
 	else
 	{
-		std::clog << "[Error - CreatureEvent::executeThankYou] Call stack overflow." << std::endl;
+		std::clog << "[Error - CreatureEvent::executeChannelRequest] Call stack overflow." << std::endl;
 		return 0;
 	}
 }
