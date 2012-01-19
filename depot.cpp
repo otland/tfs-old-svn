@@ -71,7 +71,7 @@ ReturnValue Depot::__queryMaxCount(int32_t index, const Thing* thing, uint32_t c
 	return Container::__queryMaxCount(index, thing, count, maxQueryCount, flags);
 }
 
-std::map<uint32_t, uint32_t>& Container::__getAllItemTypeCount(std::map<uint32_t,
+std::map<uint32_t, uint32_t>& Depot::__getAllItemTypeCount(std::map<uint32_t,
 	uint32_t>& countMap) const
 {
 	for(ContainerIterator it = locker->begin(); it != locker->end(); ++it)
