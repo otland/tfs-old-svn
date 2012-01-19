@@ -70,7 +70,7 @@ class Depot : public Container
 		virtual bool canRemove() const {return false;}
 
 	private:
-		Container* inbox, locker;
+		Container *inbox, *locker;
 		uint32_t depotLimit;
 };
 
