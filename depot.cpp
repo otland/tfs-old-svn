@@ -20,9 +20,7 @@
 
 Depot::Depot(uint16_t type):
 	Container(type), inbox(NULL), locker(NULL), depotLimit(1000)
-{
-	maxSize = 3;
-}
+{}
 
 Attr_ReadValue Depot::readAttr(AttrTypes_t attr, PropStream& propStream)
 {
