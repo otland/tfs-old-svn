@@ -1261,6 +1261,10 @@ void Player::sendCancelMessage(ReturnValue message) const
 			sendCancel("You cannot add more items on this tile.");
 			break;
 
+		case RET_NOTENOUGHSKILL:
+			sendCancel("You do not have enough skill.");
+			break;
+
 		case RET_NOTPOSSIBLE:
 			sendCancel("Sorry, not possible.");
 			break;

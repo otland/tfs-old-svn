@@ -146,17 +146,18 @@ class Spell : public BaseSpell
 		static ReturnValue CreateIllusion(Creature* creature, uint32_t itemId, int32_t time);
 
 	protected:
-		uint16_t spellId;
 		bool checkSpell(Player* player) const;
 		bool checkInstantSpell(Player* player, Creature* creature);
 		bool checkInstantSpell(Player* player, const Position& toPos);
 		bool checkRuneSpell(Player* player, const Position& toPos);
 
+	private:
+		uint16_t spellId;
+
 		int32_t level;
 		int32_t magLevel;
+		int32_t skills[SKILL_LAST + 1];
 
-
-		uint8_t speedId;
 		bool premium;
 		bool learnable;
 		bool enabled;
@@ -174,13 +175,12 @@ class Spell : public BaseSpell
 		bool selfTarget;
 		bool isAggressive;
 
-		VocationMap vocSpellMap;
-		StringVec vocStringVec;
 		Spells_t icon;
 		SpellGroup groupExhaustions;
-
-	private:
 		std::string name;
+
+		VocationMap vocSpellMap;
+		StringVec vocStringVec;
 };
 
 class InstantSpell : public TalkAction, public Spell

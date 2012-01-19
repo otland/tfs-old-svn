@@ -469,6 +469,7 @@ Spell::Spell()
 	spellId = 0;
 	level = 0;
 	magLevel = 0;
+	memset(skills, 10, sizeof(skills));
 	mana = 0;
 	manaPercent = 0;
 	soul = 0;
@@ -522,6 +523,23 @@ bool Spell::configureSpell(xmlNodePtr p)
 	if(readXMLInteger(p, "maglv", intValue) || readXMLInteger(p, "magiclevel", intValue))
 	 	magLevel = intValue;
 
+	if(readXMLString(p, "skill", strValue) || readXMLString(p, "skills", strValue))
+	{
+		std::vector<std::string> strVector = explodeString(strValue, ";"), tmpVector;
+		for(std::vector<std::string>::iterator = strVector.begin(); it != strVector.end(); ++it)
+		{
+			strVector = explodeString(*it, ",");
+			if(tmp.size() > 1)
+			{
+				intValue = atoi(tmp[0]);
+				if(!intValue)
+					skills[getSkillId(tmp[0])] = tmpVec[1];
+				else
+					skills[tmp[0]] = tmpVec[1];
+			}
+		}
+	}
+
 	if(readXMLInteger(p, "mana", intValue))
 	 	mana = intValue;
 
@@ -555,9 +573,6 @@ bool Spell::configureSpell(xmlNodePtr p)
 	if(readXMLInteger(p, "range", intValue))
 		range = intValue;
 
-	if(readXMLString(p, "blocking", strValue))
-		blockingCreature = blockingSolid = booleanString(strValue);
-
 	if(readXMLString(p, "blocktype", strValue))
 	{
 		std::string tmpStrValue = asLowerCaseString(strValue);
@@ -570,6 +585,8 @@ bool Spell::configureSpell(xmlNodePtr p)
 		else
 			std::clog << "[Warning - Spell::configureSpell] Blocktype \"" <<strValue << "\" does not exist." << std::endl;
 	}
+	else if(readXMLString(p, "blocking", strValue))
+		blockingCreature = blockingSolid = booleanString(strValue);
 
 	if(readXMLString(p, "aggressive", strValue))
 		isAggressive = booleanString(strValue);
@@ -577,7 +594,7 @@ bool Spell::configureSpell(xmlNodePtr p)
 	if(readXMLInteger(p, "icon", intValue)) // TODO: needs a string values parser, like skulls etc.
 		icon = (Spells_t)intValue;
 
-	if(readXMLString(p, "groups", strValue)) // TODO: same as up
+	if(readXMLString(p, "groups", strValue))
 	{
 		std::vector<std::string> strVector = explodeString(strValue, ";"), tmpVector;
 		for(std::vector<std::string>::iterator it = strVector.begin(); it != strVector.end(); ++it)
@@ -586,6 +603,19 @@ bool Spell::configureSpell(xmlNodePtr p)
 			uint32_t id = atoi(tmpVector[0].c_str()), exhaust = isAggressive ? 2000 : 1000;
 			if(tmpVector.size() > 1)
 				exhaust = atoi(tmpVector[1].c_str());
+
+			if(!id)
+			{
+				strValue = asLowerCaseString(tmpVector[0]);
+				if(strValue == "attack" || strValue == "attacking")
+					id = SPELLGROUP_ATTACK;
+				else if(strValue == "heal" || strValue == "healing")
+					id = SPELLGROUP_HEALING;
+				else if(strValue == "support" || strValue == "supporting")
+					id = SPELLGROUP_SUPPORT;
+				else if(strValue == "special" || strValue == "ultimate")
+					id = SPELLGROUP_SPECIAL;
+			}
 
 			if(id && exhaust)
 				groupExhaustions[(SpellGroup_t)id] = exhaust;
@@ -681,6 +711,16 @@ bool Spell::checkSpell(Player* player) const
 		player->sendCancelMessage(RET_NOTENOUGHMAGICLEVEL);
 		g_game.addMagicEffect(player->getPosition(), MAGIC_EFFECT_POFF);
 		return false;
+	}
+
+	for(int16_t i = SKILL_FIRST; i <= SKILL_LAST; ++i)
+	{
+		if((int32_t)player->getSkill((skills_t)i, SKILL_LEVEL) < skills[i])
+		{
+			player->sendCancelMessage(RET_NOTENOUGSKILL);
+			g_game.addMagicEffect(player->getPosition(), MAGIC_EFFECT_POFF);
+			return false;
+		}
 	}
 
 	if(player->getMana() < getManaCost(player) && !player->hasFlag(PlayerFlag_HasInfiniteMana))
