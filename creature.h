@@ -143,7 +143,7 @@ class Item;
 class Container;
 
 #define EVENT_CREATURECOUNT 10
-#ifdef __GROUPED_ATTACKS__
+#ifndef __GROUPED_ATTACKS__
 #define EVENT_CREATURE_THINK_INTERVAL 1000
 #else
 #define EVENT_CREATURE_THINK_INTERVAL 500
