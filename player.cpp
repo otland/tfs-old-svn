@@ -2351,7 +2351,7 @@ bool Player::onDeath()
 	if(skillLoss)
 	{
 		double reduction = 1.;
-		if(opponents > level)
+		if(g_config.getBool(ConfigManager::FAIRFIGHT_REDUCTION) && opponents > level)
 			reduction -= (double)level / opponents;
 
 		uint64_t lossExperience = (uint64_t)std::floor(reduction * getLostExperience()), currExperience = experience;

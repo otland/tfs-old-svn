@@ -313,6 +313,7 @@ class ConfigManager
 			HOUSE_SKIP_INIT_RENT,
 			HOUSE_PROTECTION,
 			ROOK_SYSTEM,
+			FAIRFIGHT_REDUCTION,
 			LAST_BOOL_CONFIG /* this must be the last one */
 		};
 

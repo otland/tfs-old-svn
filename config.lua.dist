@@ -14,7 +14,7 @@
 	generateAccountSalt = false
 
 	-- Rook system
-	rookSystemEnabled = false
+	useRookSystem = false
 	rookTownId = 1
 	rookLevelToGetRooked = 5
 	rookLevelToLeaveRook = 8
@@ -88,6 +88,7 @@
 	squareColor = 0
 	allowFightback = true
 	fistBaseAttack = 7
+	useFairfightReduction = true
 
 	-- Connection config
 	worldId = 0
