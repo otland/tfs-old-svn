@@ -526,16 +526,16 @@ bool Spell::configureSpell(xmlNodePtr p)
 	if(readXMLString(p, "skill", strValue) || readXMLString(p, "skills", strValue))
 	{
 		std::vector<std::string> strVector = explodeString(strValue, ";"), tmpVector;
-		for(std::vector<std::string>::iterator = strVector.begin(); it != strVector.end(); ++it)
+		for(std::vector<std::string>::iterator it = strVector.begin(); it != strVector.end(); ++it)
 		{
-			strVector = explodeString(*it, ",");
-			if(tmp.size() > 1)
+			tmpVector = explodeString(*it, ",");
+			if(tmpVector.size() > 1)
 			{
-				intValue = atoi(tmp[0]);
+				intValue = atoi(tmpVector[0]);
 				if(!intValue)
-					skills[getSkillId(tmp[0])] = tmpVec[1];
+					skills[getSkillId(tmpVector[0])] = tmpVector[1];
 				else
-					skills[tmp[0]] = tmpVec[1];
+					skills[tmpVector[0]] = tmpVector[1];
 			}
 		}
 	}
