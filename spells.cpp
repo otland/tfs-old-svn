@@ -531,11 +531,11 @@ bool Spell::configureSpell(xmlNodePtr p)
 			tmpVector = explodeString(*it, ",");
 			if(tmpVector.size() > 1)
 			{
-				intValue = atoi(tmpVector[0]);
+				intValue = atoi(tmpVector[0].c_str());
 				if(!intValue)
-					skills[getSkillId(tmpVector[0])] = tmpVector[1];
+					skills[getSkillId(tmpVector[0])] = atoi(tmpVector[1].c_str());
 				else
-					skills[tmpVector[0]] = tmpVector[1];
+					skills[intValue]] = atoi(tmpVector[1].c_str());
 			}
 		}
 	}
