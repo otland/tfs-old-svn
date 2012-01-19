@@ -36,7 +36,7 @@ class Depot : public Container
 		void setInbox(Container* container) {inbox = container;}
 		Container* getInbox() const {return inbox;}
 
-		void setLocker(Container* container) {locker = locker;}
+		void setLocker(Container* container) {locker = container;}
 		Container* getLocker() const {return locker;}
 
 		void setMaxDepotLimit(uint32_t count) {depotLimit = count;}
