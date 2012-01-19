@@ -535,7 +535,7 @@ bool Spell::configureSpell(xmlNodePtr p)
 				if(!intValue)
 					skills[getSkillId(tmpVector[0])] = atoi(tmpVector[1].c_str());
 				else
-					skills[intValue]] = atoi(tmpVector[1].c_str());
+					skills[intValue] = atoi(tmpVector[1].c_str());
 			}
 		}
 	}
