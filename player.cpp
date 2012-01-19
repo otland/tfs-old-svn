@@ -986,8 +986,8 @@ void Player::updateDepots()
 			}
 
 			// we need to place the depot to be first
-			depot->__removeThing(*it, 1);
-			depot->__addThing(NULL, *it);
+			depot->__removeThing(*rit, 1);
+			depot->__addThing(NULL, *rit);
 
 			++rit;
 			while(rit != depot->getReversedEnd())
