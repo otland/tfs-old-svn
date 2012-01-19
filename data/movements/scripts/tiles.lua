@@ -78,8 +78,8 @@ function onStepIn(cid, item, position, fromPosition)
 
 	local vocation = item.actionid - 100
 	if(vocation >= 0 and vocation < 50) then
-		local playerVocationInfo = getVocationInfo(getPlayerVocation(cid))
-		if(playerVocationInfo.id ~= vocation and playerVocationInfo.fromVocation ~= vocation) then
+		local playerVocation = getVocationInfo(getPlayerVocation(cid))
+		if(playerVocation.id ~= vocation and playerVocation.fromVocation ~= vocation) then
 			pushBack(cid, position, fromPosition, true)
 		end
 
@@ -94,7 +94,7 @@ function onStepIn(cid, item, position, fromPosition)
 		return true
 	end
 
-	if(item.actionid ~= 0 and getPlayerStorageValue(cid, item.actionid) <= 0) then
+	if(item.actionid ~= 0 and getCreatureStorage(cid, item.actionid) <= 0) then
 		pushBack(cid, position, fromPosition, true)
 		return true
 	end

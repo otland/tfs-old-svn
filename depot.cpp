@@ -19,7 +19,7 @@
 #include "tools.h"
 
 Depot::Depot(uint16_t type):
-	Container(type), inbox(NULL), depot(NULL), depotLimit(1000)
+	Container(type), inbox(NULL), locker(NULL), depotLimit(1000)
 {
 	maxSize = 3;
 }
@@ -74,7 +74,7 @@ ReturnValue Depot::__queryMaxCount(int32_t index, const Thing* thing, uint32_t c
 std::map<uint32_t, uint32_t>& Container::__getAllItemTypeCount(std::map<uint32_t,
 	uint32_t>& countMap) const
 {
-	for(ContainerIterator it = depot->begin(); it != depot->end(); ++it)
+	for(ContainerIterator it = locker->begin(); it != locker->end(); ++it)
 		countMap[(*it)->getID()] += (*it)->getItemCount();
 
 	return countMap;

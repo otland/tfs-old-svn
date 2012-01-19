@@ -973,7 +973,7 @@ void Player::updateDepots()
 		if(depot->__getItemTypeCount(ITEM_INBOX) == 0) // This happens only during upgrade of depots...
 		{
 			ItemList::const_reverse_iterator rit = depot->getReversedItems();
-			depot->setDepot((*rit)->getContainer()); // Depot is ALWAYS! the last item in the locker
+			depot->setLocker((*rit)->getContainer()); // Depot is ALWAYS! the last item in the locker
 
 			Item* item = Item::CreateItem(ITEM_MARKET);
 			if(item)
@@ -986,8 +986,8 @@ void Player::updateDepots()
 			}
 
 			// we need to place the depot to be first
-			depot->__removeThing(depot->getDepot());
-			depot->__addThing(NULL, depot->getDepot(), 1);
+			depot->__removeThing(depot->getLocker());
+			depot->__addThing(NULL, depot->getLocker(), 1);
 
 			++rit;
 			while(rit != depot->getReversedEnd())
@@ -1006,9 +1006,8 @@ void Player::updateDepots()
 		else
 		{
 			ItemList::const_iterator rit = depot->getItems();
-			depot->setDepot((*rit)->getContainer());
-			++rit;
-			depot->setInbox((*rit)->getContainer());
+			depot->setLocker((*rit)->getContainer());
+			depot->setInbox((*(++rit))->getContainer());
 		}
 
 	}
