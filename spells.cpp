@@ -469,7 +469,6 @@ Spell::Spell()
 	spellId = 0;
 	level = 0;
 	magLevel = 0;
-	memset(skills, 10, sizeof(skills));
 	mana = 0;
 	manaPercent = 0;
 	soul = 0;
@@ -485,6 +484,9 @@ Spell::Spell()
 	isAggressive = true;
 	learnable = false;
 	icon = SPELL_NONE;
+
+	for(int32_t i = SKILL_FIRST; i <= SKILL_LAST; ++i)
+		skills[i] = 10;
 }
 
 bool Spell::configureSpell(xmlNodePtr p)
