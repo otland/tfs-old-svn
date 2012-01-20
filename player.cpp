@@ -4912,11 +4912,11 @@ void Player::manageAccount(const std::string &text)
 					}
 
 					msg << "What would you like to be... ";
-					for(std::vector<std::string>::const_iterator = vocations.begin(); it != vocations.end(); ++it)
+					for(std::vector<std::string>::const_iterator it = vocations.begin(); it != vocations.end(); ++it)
 					{
 						if(it == vocations.begin())
 							msg << "{" << *it << "}";
-						else if(it == vocations.rbegin())
+						else if(*it == *(vocations.rbegin()))
 							msg << " or {" << *it << "}.";
 						else
 							msg << ", {" << *it << "}";
