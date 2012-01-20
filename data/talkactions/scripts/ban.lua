@@ -7,6 +7,10 @@ local TYPE_ACCESS = {
 }
 
 function onSay(cid, words, param, channel)
+	unregisterCreatureEvent(cid, "Ban_Type")
+	unregisterCreatureEvent(cid, "Ban_Action")
+	unregisterCreatureEvent(cid, "Ban_Finish")
+
 	doPlayerSendChannels(cid, TYPE_ACCESS[getPlayerAccess(cid)])
 	registerCreatureEvent(cid, "Ban_Type")
 	return true
