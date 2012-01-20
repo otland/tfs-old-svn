@@ -30,7 +30,6 @@ Dispatcher::DispatcherState Dispatcher::m_threadState = Dispatcher::STATE_TERMIN
 
 Dispatcher::Dispatcher()
 {
-	m_taskList.clear();
 	Dispatcher::m_threadState = Dispatcher::STATE_RUNNING;
 	m_thread = boost::thread(boost::bind(&Dispatcher::dispatcherThread, (void*)this));
 }
