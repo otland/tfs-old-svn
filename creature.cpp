@@ -1710,16 +1710,25 @@ bool Creature::unregisterCreatureEvent(const std::string& name)
 	return false;
 }
 
+void Creature::unregisterCreatureEvent(CreatureEvent_t type)
+{
+	for(CreatureEventList::iterator it = eventsList.begin(); it != eventsList.end(); ++it)
+	{
+		if((*it)->getEventType() == type)
+			it = eventsList.erase(it);
+	}
+}
+
 CreatureEventList Creature::getCreatureEvents(CreatureEventType_t type)
 {
-	CreatureEventList retList;
+	CreatureEventList list;
 	for(CreatureEventList::iterator it = eventsList.begin(); it != eventsList.end(); ++it)
 	{
 		if((*it)->getEventType() == type && (*it)->isLoaded())
-			retList.push_back(*it);
+			list.push_back(*it);
 	}
 
-	return retList;
+	return list;
 }
 
 FrozenPathingConditionCall::FrozenPathingConditionCall(const Position& _targetPos)

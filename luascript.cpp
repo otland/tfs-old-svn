@@ -43,6 +43,7 @@
 #include "movement.h"
 #include "spells.h"
 #include "talkaction.h"
+#include "creatureevent.h"
 
 #include "combat.h"
 #include "condition.h"
@@ -65,6 +66,7 @@ extern Monsters g_monsters;
 extern MoveEvents* g_moveEvents;
 extern Spells* g_spells;
 extern TalkActions* g_talkActions;
+extern CreatureEvents* g_creatureEvents;
 
 enum
 {
@@ -1960,11 +1962,14 @@ void LuaInterface::registerFunctions()
 	//doPlayerChangeName(guid, oldName, newName)
 	lua_register(m_luaState, "doPlayerChangeName", LuaInterface::luaDoPlayerChangeName);
 
-	//registerCreatureEvent(uid, eventName)
+	//registerCreatureEvent(uid, name)
 	lua_register(m_luaState, "registerCreatureEvent", LuaInterface::luaRegisterCreatureEvent);
 
-	//unregisterCreatureEvent(uid, eventName)
+	//unregisterCreatureEvent(uid, name)
 	lua_register(m_luaState, "unregisterCreatureEvent", LuaInterface::luaUnregisterCreatureEvent);
+
+	//unregisterCreatureEventType(uid, type)
+	lua_register(m_luaState, "unregisterCreatureEventType", LuaInterface::luaUnregisterCreatureEventType);
 
 	//getContainerSize(uid)
 	lua_register(m_luaState, "getContainerSize", LuaInterface::luaGetContainerSize);
@@ -7954,6 +7959,35 @@ int32_t LuaInterface::luaUnregisterCreatureEvent(lua_State* L)
 	ScriptEnviroment* env = getEnv();
 	if(Creature* creature = env->getCreatureByUID(popNumber(L)))
 		lua_pushboolean(L, creature->unregisterCreatureEvent(name));
+	else
+	{
+		errorEx(getError(LUA_ERROR_CREATURE_NOT_FOUND));
+		lua_pushboolean(L, false);
+	}
+
+	return 1;
+}
+
+int32_t LuaInterface::luaUnregisterCreatureEventType(lua_State* L)
+{
+	//unregisterCreatureEventType(cid, type)
+	std::string type = popString(L);
+
+	ScriptEnviroment* env = getEnv();
+	if(Creature* creature = env->getCreatureByUID(popNumber(L)))
+	{
+		CreatureEvent_t _type = g_creatureEvents->getType(type);
+		if(_type != CREATURE_EVENT_NONE)
+		{
+			creature->unregisterCreatureEvent(_type);
+			lua_pushboolean(L, true);
+		}
+		else
+		{
+			errorEx("Invalid event type");
+			lua_pushboolean(L, false);
+		}
+	}
 	else
 	{
 		errorEx(getError(LUA_ERROR_CREATURE_NOT_FOUND));

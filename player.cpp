@@ -2209,7 +2209,7 @@ BlockType_t Player::blockHit(Creature* attacker, CombatType_t combatType, int32_
 
 		}
 
-		if(it.abilities.fieldAbsorb[combatType])
+		if(field && it.abilities.fieldAbsorb[combatType])
 		{
 			blocked += (int32_t)std::ceil((double)(damage * it.abilities.fieldAbsorb[combatType]) / 100.);
 			if(item->hasCharges())

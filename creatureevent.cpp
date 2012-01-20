@@ -25,8 +25,10 @@
 #include "monster.h"
 #include "player.h"
 
+extern CreatureEvents* g_creatureEvents;
+
 CreatureEvents::CreatureEvents():
-m_interface("CreatureScript Interface")
+	m_interface("CreatureScript Interface")
 {
 	m_interface.initState();
 }
@@ -140,6 +142,79 @@ bool CreatureEvents::monsterSpawn(Monster* monster)
 	return result;
 }
 
+CreatureEvent_t CreatureEvents::getType(const std::string& type)
+{
+	CreatureEvent_t _type = CREATURE_EVENT_NONE;
+	if(type == "login")
+		_type = CREATURE_EVENT_LOGIN;
+	else if(type == "logout")
+		_type = CREATURE_EVENT_LOGOUT;
+	else if(type == "channeljoin")
+		_type = CREATURE_EVENT_CHANNEL_JOIN;
+	else if(type == "channelleave")
+		_type = CREATURE_EVENT_CHANNEL_LEAVE;
+	else if(type == "channelrequest")
+		_type = CREATURE_EVENT_CHANNEL_REQUEST;
+	else if(type == "advance")
+		_type = CREATURE_EVENT_ADVANCE;
+	else if(type == "mailsend")
+		_type = CREATURE_EVENT_MAIL_SEND;
+	else if(type == "mailreceive")
+		_type = CREATURE_EVENT_MAIL_RECEIVE;
+	else if(type == "traderequest")
+		_type = CREATURE_EVENT_TRADE_REQUEST;
+	else if(type == "tradeaccept")
+		_type = CREATURE_EVENT_TRADE_ACCEPT;
+	else if(type == "textedit")
+		_type = CREATURE_EVENT_TEXTEDIT;
+	else if(type == "houseedit")
+		_type = CREATURE_EVENT_HOUSEEDIT;
+	else if(type == "reportbug")
+		_type = CREATURE_EVENT_REPORTBUG;
+	else if(type == "reportviolation")
+		_type = CREATURE_EVENT_REPORTVIOLATION;
+	else if(type == "thankyou")
+		_type = CREATURE_EVENT_THANKYOU;
+	else if(type == "look")
+		_type = CREATURE_EVENT_LOOK;
+	else if(type == "spawn" || type == "spawn-single")
+		_type = CREATURE_EVENT_SPAWN_SINGLE;
+	else if(type == "spawnall" || type == "spawn-global")
+		_type = CREATURE_EVENT_SPAWN_GLOBAL;
+	else if(type == "think")
+		_type = CREATURE_EVENT_THINK;
+	else if(type == "direction")
+		_type = CREATURE_EVENT_DIRECTION;
+	else if(type == "outfit")
+		_type = CREATURE_EVENT_OUTFIT;
+	else if(type == "statschange")
+		_type = CREATURE_EVENT_STATSCHANGE;
+	else if(type == "areacombat")
+		_type = CREATURE_EVENT_COMBAT_AREA;
+	else if(type == "throw")
+		_type = CREATURE_EVENT_THROW;
+	else if(type == "push")
+		_type = CREATURE_EVENT_PUSH;
+	else if(type == "target")
+		_type = CREATURE_EVENT_TARGET;
+	else if(type == "follow")
+		_type = CREATURE_EVENT_FOLLOW;
+	else if(type == "combat")
+		_type = CREATURE_EVENT_COMBAT;
+	else if(type == "attack")
+		_type = CREATURE_EVENT_ATTACK;
+	else if(type == "cast")
+		_type = CREATURE_EVENT_CAST;
+	else if(type == "kill")
+		_type = CREATURE_EVENT_KILL;
+	else if(type == "death")
+		_type = CREATURE_EVENT_DEATH;
+	else if(type == "preparedeath")
+		_type = CREATURE_EVENT_PREPAREDEATH;
+
+	return _type;
+}
+
 CreatureEvent::CreatureEvent(LuaInterface* _interface):
 Event(_interface)
 {
@@ -161,90 +236,24 @@ Event(copy)
 
 bool CreatureEvent::configureEvent(xmlNodePtr p)
 {
-	std::string str;
-	if(!readXMLString(p, "name", str))
+	std::string strValue;
+	if(!readXMLString(p, "name", strValue))
 	{
 		std::clog << "[Error - CreatureEvent::configureEvent] No name for creature event." << std::endl;
 		return false;
 	}
 
-	m_eventName = str;
-	if(!readXMLString(p, "type", str))
+	m_eventName = strValue;
+	if(!readXMLString(p, "type", strValue))
 	{
 		std::clog << "[Error - CreatureEvent::configureEvent] No type for creature event." << std::endl;
 		return false;
 	}
 
-	std::string tmpStr = asLowerCaseString(str);
-	if(tmpStr == "login")
-		m_type = CREATURE_EVENT_LOGIN;
-	else if(tmpStr == "logout")
-		m_type = CREATURE_EVENT_LOGOUT;
-	else if(tmpStr == "channeljoin")
-		m_type = CREATURE_EVENT_CHANNEL_JOIN;
-	else if(tmpStr == "channelleave")
-		m_type = CREATURE_EVENT_CHANNEL_LEAVE;
-	else if(tmpStr == "channelrequest")
-		m_type = CREATURE_EVENT_CHANNEL_REQUEST;
-	else if(tmpStr == "advance")
-		m_type = CREATURE_EVENT_ADVANCE;
-	else if(tmpStr == "mailsend")
-		m_type = CREATURE_EVENT_MAIL_SEND;
-	else if(tmpStr == "mailreceive")
-		m_type = CREATURE_EVENT_MAIL_RECEIVE;
-	else if(tmpStr == "traderequest")
-		m_type = CREATURE_EVENT_TRADE_REQUEST;
-	else if(tmpStr == "tradeaccept")
-		m_type = CREATURE_EVENT_TRADE_ACCEPT;
-	else if(tmpStr == "textedit")
-		m_type = CREATURE_EVENT_TEXTEDIT;
-	else if(tmpStr == "houseedit")
-		m_type = CREATURE_EVENT_HOUSEEDIT;
-	else if(tmpStr == "reportbug")
-		m_type = CREATURE_EVENT_REPORTBUG;
-	else if(tmpStr == "reportviolation")
-		m_type = CREATURE_EVENT_REPORTVIOLATION;
-	else if(tmpStr == "thankyou")
-		m_type = CREATURE_EVENT_THANKYOU;
-	else if(tmpStr == "look")
-		m_type = CREATURE_EVENT_LOOK;
-	else if(tmpStr == "spawn" || tmpStr == "spawn-single")
-		m_type = CREATURE_EVENT_SPAWN_SINGLE;
-	else if(tmpStr == "spawnall" || tmpStr == "spawn-global")
-		m_type = CREATURE_EVENT_SPAWN_GLOBAL;
-	else if(tmpStr == "think")
-		m_type = CREATURE_EVENT_THINK;
-	else if(tmpStr == "direction")
-		m_type = CREATURE_EVENT_DIRECTION;
-	else if(tmpStr == "outfit")
-		m_type = CREATURE_EVENT_OUTFIT;
-	else if(tmpStr == "statschange")
-		m_type = CREATURE_EVENT_STATSCHANGE;
-	else if(tmpStr == "areacombat")
-		m_type = CREATURE_EVENT_COMBAT_AREA;
-	else if(tmpStr == "throw")
-		m_type = CREATURE_EVENT_THROW;
-	else if(tmpStr == "push")
-		m_type = CREATURE_EVENT_PUSH;
-	else if(tmpStr == "target")
-		m_type = CREATURE_EVENT_TARGET;
-	else if(tmpStr == "follow")
-		m_type = CREATURE_EVENT_FOLLOW;
-	else if(tmpStr == "combat")
-		m_type = CREATURE_EVENT_COMBAT;
-	else if(tmpStr == "attack")
-		m_type = CREATURE_EVENT_ATTACK;
-	else if(tmpStr == "cast")
-		m_type = CREATURE_EVENT_CAST;
-	else if(tmpStr == "kill")
-		m_type = CREATURE_EVENT_KILL;
-	else if(tmpStr == "death")
-		m_type = CREATURE_EVENT_DEATH;
-	else if(tmpStr == "preparedeath")
-		m_type = CREATURE_EVENT_PREPAREDEATH;
-	else
+	m_type = g_creatureEvents->getType(asLowerCaseString(strValue));
+	if(m_type == CREATURE_EVENT_NONE)
 	{
-		std::clog << "[Error - CreatureEvent::configureEvent] No valid type for creature event." << str << std::endl;
+		std::clog << "[Error - CreatureEvent::configureEvent] No valid type for creature event: " << strValue << "." << std::endl;
 		return false;
 	}
 
