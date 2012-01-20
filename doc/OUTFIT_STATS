@@ -63,7 +63,7 @@
 		<list gender="1" lookType="128" name="Citizen" speed="20" />
 
 	attackSpeed
-		<list gender="1" lookType="128" name="Citizen" speed="20" />
+		<list gender="1" lookType="128" name="Citizen" attackSpeed="20" />
 
 ]
 

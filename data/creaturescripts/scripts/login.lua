@@ -23,7 +23,6 @@ function onLogin(cid)
 		doPlayerSendTextMessage(cid, MESSAGE_STATUS_DEFAULT, str)
 	elseif(accountManager == MANAGER_NAMELOCK) then
 		doCreatureSay(cid, "Hello, it appears that your character has been locked for name violating rules, what new name would you like to have?", TALKTYPE_PRIVATE_NP, false, cid)
-		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_ORANGE, )
 	elseif(accountManager == MANAGER_ACCOUNT) then
 		doCreatureSay(cid, "Hello, type {account} to manage your account. If you would like to start over, type {cancel} anywhere.", TALKTYPE_PRIVATE_NP, false, cid)
 	else
