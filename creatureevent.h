@@ -83,7 +83,7 @@ class CreatureEvents : public BaseEvents
 		bool monsterSpawn(Monster* monster);
 
 		CreatureEvent* getEventByName(const std::string& name);
-		CreatureTypeEvent_t getType(const std::string& type);
+		CreatureEventType_t getType(const std::string& type);
 
 	protected:
 		virtual std::string getScriptBaseName() const {return "creaturescripts";}

@@ -636,6 +636,7 @@ class LuaInterface
 		static int32_t luaStopEvent(lua_State* L);
 		static int32_t luaRegisterCreatureEvent(lua_State* L);
 		static int32_t luaUnregisterCreatureEvent(lua_State* L);
+		static int32_t luaUnregisterCreatureEventType(lua_State* L);
 		static int32_t luaGetPlayerBalance(lua_State* L);
 		static int32_t luaDoPlayerSetBalance(lua_State* L);
 		static int32_t luaDoPlayerPopupFYI(lua_State* L);

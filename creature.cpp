@@ -1710,7 +1710,7 @@ bool Creature::unregisterCreatureEvent(const std::string& name)
 	return false;
 }
 
-void Creature::unregisterCreatureEvent(CreatureEvent_t type)
+void Creature::unregisterCreatureEvent(CreatureEventType_t type)
 {
 	for(CreatureEventList::iterator it = eventsList.begin(); it != eventsList.end(); ++it)
 	{

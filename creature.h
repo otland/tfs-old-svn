@@ -451,7 +451,7 @@ class Creature : public AutoId, virtual public Thing
 		//creature script events
 		bool registerCreatureEvent(const std::string& name);
 		bool unregisterCreatureEvent(const std::string& name);
-		bool unregisterCreatureEvent(CreatureEventType_t type);
+		void unregisterCreatureEvent(CreatureEventType_t type);
 		CreatureEventList getCreatureEvents(CreatureEventType_t type);
 
 		virtual void setParent(Cylinder* cylinder)
