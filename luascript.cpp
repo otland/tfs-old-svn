@@ -7976,7 +7976,7 @@ int32_t LuaInterface::luaUnregisterCreatureEventType(lua_State* L)
 	ScriptEnviroment* env = getEnv();
 	if(Creature* creature = env->getCreatureByUID(popNumber(L)))
 	{
-		CreatureEvent_t _type = g_creatureEvents->getType(type);
+		CreatureEventType_t _type = g_creatureEvents->getType(type);
 		if(_type != CREATURE_EVENT_NONE)
 		{
 			creature->unregisterCreatureEvent(_type);

@@ -142,9 +142,9 @@ bool CreatureEvents::monsterSpawn(Monster* monster)
 	return result;
 }
 
-CreatureEvent_t CreatureEvents::getType(const std::string& type)
+CreatureEventType_t CreatureEvents::getType(const std::string& type)
 {
-	CreatureEvent_t _type = CREATURE_EVENT_NONE;
+	CreatureEventType_t _type = CREATURE_EVENT_NONE;
 	if(type == "login")
 		_type = CREATURE_EVENT_LOGIN;
 	else if(type == "logout")
