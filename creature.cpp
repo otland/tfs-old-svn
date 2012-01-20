@@ -1349,7 +1349,7 @@ void Creature::onGainExperience(double& gainExp, Creature* target, bool multipli
 			textList.push_back(*it);
 	}
 
-	MessageDetails* details = new MessageDetails(gainExp, (Color_t)color);
+	MessageDetails* details = new MessageDetails((int32_t)gainExp, (Color_t)color);
 	g_game.addStatsMessage(textList, MSG_EXPERIENCE_OTHERS, ss.str(), targetPos, details);
 	if(Player* player = getPlayer())
 	{
@@ -1397,7 +1397,7 @@ void Creature::onGainSharedExperience(double& gainExp, Creature* target, bool mu
 			textList.push_back(*it);
 	}
 
-	MessageDetails* details = new MessageDetails(gainExp, (Color_t)color);
+	MessageDetails* details = new MessageDetails((int32_t)gainExp, (Color_t)color);
 	g_game.addStatsMessage(textList, MSG_EXPERIENCE_OTHERS, ss.str(), targetPos, details);
 	if(Player* player = getPlayer())
 	{

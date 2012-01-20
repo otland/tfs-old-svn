@@ -96,7 +96,7 @@ bool Combat::getMinMaxValues(Creature* creature, Creature* target, CombatParams&
 						if(_params.element.type != COMBAT_NONE)
 						{
 							_params.element.damage = weapon->getWeaponElementDamage(player, item, true);
-							_params.element.damage = random_range(0, (_params.element.damage * maxa + maxb), DISTRO_NORMAL);
+							_params.element.damage = random_range((int32_t)0, (int32_t)(_params.element.damage * maxa + maxb), DISTRO_NORMAL);
 						}
 
 						max = (int32_t)(weapon->getWeaponDamage(player, target, item, true) * maxa + maxb);
@@ -1272,18 +1272,16 @@ void CombatArea::copyArea(const MatrixArea* input, MatrixArea* output, MatrixOpe
 				break;
 		}
 
-		double angleRad = 3.1416 * angle / 180.0;
-		float a = std::cos(angleRad), b = -std::sin(angleRad);
-		float c = std::sin(angleRad), d = std::cos(angleRad);
-
-		for(int32_t x = 0; x < (long)input->getCols(); ++x)
+		double _angle = 3.1416 * angle / 180.0;
+		float a = std::cos(_angle), b = std::sin(_angle);
+		for(int32_t x = 0; x < (int32_t)input->getCols(); ++x)
 		{
-			for(int32_t y = 0; y < (long)input->getRows(); ++y)
+			for(int32_t y = 0; y < (int32_t)input->getRows(); ++y)
 			{
 				//calculate new coordinates using rotation center
 				int32_t newX = x - centerX, newY = y - centerY,
-					rotatedX = round(newX * a + newY * b),
-					rotatedY = round(newX * c + newY * d);
+					rotatedX = round(newX * a + newY * -b),
+					rotatedY = round(newX * b + newY * a);
 				//write in the output matrix using rotated coordinates
 				(*output)[rotatedY + rotateCenterY][rotatedX + rotateCenterX] = (*input)[y][x];
 			}
