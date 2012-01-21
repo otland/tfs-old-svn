@@ -402,3 +402,11 @@ function getItemHolder(uid)
 
 	return holder
 end
+
+function valid(f)
+	return function(p, ...)
+		if(isCreature(p)) then
+			return f(p, ...)
+		end
+	end
+end
