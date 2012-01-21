@@ -4120,11 +4120,9 @@ bool Game::internalCreatureSay(Creature* creature, MessageClasses type, const st
 	bool ghostMode, SpectatorVec* spectators/* = NULL*/, Position* pos/* = NULL*/, uint32_t statementId/* = 0*/)
 {
 	Player* player = creature->getPlayer();
-	if(player && player->isAccountManager())
+	if(player && player->isAccountManager() && !ghostMode)
 	{
-		if(!ghostMode)
-			player->manageAccount(text);
-
+		player->manageAccount(text);
 		return true;
 	}
 
