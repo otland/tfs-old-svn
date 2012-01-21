@@ -1793,7 +1793,7 @@ uint32_t CreatureEvent::executeReportViolation(Player* player, ReportType_t type
 
 			scriptstream << "local cid = " << env->addThing(player) << std::endl;
 			scriptstream << "local type = " << type << std::endl;
-			scriptstream << "local reason = " << (uint16_t)type << std::endl;
+			scriptstream << "local reason = " << (uint16_t)reason << std::endl;
 
 			scriptstream << "local name = " << name << std::endl;
 			scriptstream << "local comment = " << comment << std::endl;
