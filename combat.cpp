@@ -545,12 +545,12 @@ bool Combat::CombatHealthFunc(Creature* caster, Creature* target, const CombatPa
 			change = random_range(var->minChange, var->maxChange, DISTRO_NORMAL);
 	}
 
-	if(g_game.combatBlockHit(params.combatType, caster, target, change, params.blockedByShield, params.blockedByArmor))
+	if(g_game.combatBlockHit(params.combatType, caster, target, change, params.blockedByShield, params.blockedByArmor, params.itemId != 0))
 		return false;
 
 	CombatParams _params = params;
 	if(_params.element.damage && _params.element.type != COMBAT_NONE)
-		g_game.combatBlockHit(_params.element.type, caster, target, _params.element.damage, params.blockedByShield, params.blockedByArmor, true);
+		g_game.combatBlockHit(_params.element.type, caster, target, _params.element.damage, params.blockedByShield, params.blockedByArmor, params.itemId != 0, true);
 
 	if(caster && caster->getPlayer() && target->getPlayer() && target->getPlayer()->getSkull() != SKULL_BLACK)
 	{
@@ -577,7 +577,7 @@ bool Combat::CombatManaFunc(Creature* caster, Creature* target, const CombatPara
 			change = random_range(var->minChange, var->maxChange, DISTRO_NORMAL);
 	}
 
-	if(g_game.combatBlockHit(COMBAT_MANADRAIN, caster, target, change, false, false))
+	if(g_game.combatBlockHit(COMBAT_MANADRAIN, caster, target, change, false, false, params.itemId != 0))
 		return false;
 
 	if(change < 0 && caster && caster->getPlayer() && target->getPlayer() && target->getPlayer()->getSkull() != SKULL_BLACK)
