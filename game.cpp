@@ -4122,7 +4122,9 @@ bool Game::internalCreatureSay(Creature* creature, MessageClasses type, const st
 	Player* player = creature->getPlayer();
 	if(player && player->isAccountManager())
 	{
-		player->manageAccount(text);
+		if(!ghostMode)
+			player->manageAccount(text);
+
 		return true;
 	}
 
