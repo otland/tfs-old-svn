@@ -65,11 +65,10 @@ function oracle(cid, message, keywords, parameters, node)
 			doSendMagicEffect(temple, CONST_ME_TELEPORT)
 			return true
 		end
-	else
-		error('Player: ' .. getCreatureName(cid) .. ', Params: ' .. table.serialize(params))
 	end
 
-	npcHandler:resetNpc()
+	error('Player: ' .. getCreatureName(cid) .. ', Params: ' .. table.serialize(params))
+	npcHandler:resetNpc(cid)
 	return true
 
 end
