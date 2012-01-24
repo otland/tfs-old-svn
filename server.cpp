@@ -267,7 +267,7 @@ void ServiceManager::stop()
 	m_acceptors.clear();
 	OutputMessagePool::getInstance()->stop();
 
-	deathTimer.expires_from_now(boost::posix_time::seconds(3)); 
+	deathTimer.expires_from_now(boost::posix_time::seconds(3));
 	deathTimer.async_wait(boost::bind(&ServiceManager::die, this));
 }
 
