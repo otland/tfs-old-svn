@@ -873,9 +873,19 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 				if(it.extraDefense || (item && item->getExtraDefense()))
 					s << " " << std::showpos << int32_t(item ? item->getExtraDefense() : it.extraDefense) << std::noshowpos;
 			}
+		}
 
-			if(it.attackSpeed || (item && item->getAttackSpeed()))
-				s << ", AS: " << (item ? item->getAttackSpeed() : it.attackSpeed);
+		if(it.attackSpeed || (item && item->getAttackSpeed()))
+		{
+			if(begin)
+			{
+				begin = false;
+				s << " (";
+			}
+			else
+				s << ", ";
+
+			s << "AS: " << (item ? item->getAttackSpeed() : it.attackSpeed);
 		}
 
 		for(uint16_t i = SKILL_FIRST; i <= SKILL_LAST; ++i)
