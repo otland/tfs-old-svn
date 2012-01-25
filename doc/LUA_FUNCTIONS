@@ -933,6 +933,7 @@
 	isPlayer(cid)
 	isPlayerPzLocked(cid)
 	isPlayerSaving(cid)
+	isPlayerProtected(cid)
 	isItemStackable(itemid)
 	isItemRune(itemid)
 	isItemMovable(itemid)

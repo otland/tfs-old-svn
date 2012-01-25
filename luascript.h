@@ -583,6 +583,7 @@ class LuaInterface
 		static int32_t luaGetGuildMotd(lua_State* L);
 		static int32_t luaIsPlayerPzLocked(lua_State* L);
 		static int32_t luaIsPlayerSaving(lua_State* L);
+		static int32_t luaIsPlayerProtected(lua_State* L);
 		static int32_t luaIsCreature(lua_State* L);
 		static int32_t luaIsMovable(lua_State* L);
 		static int32_t luaGetContainerSize(lua_State* L);
@@ -783,6 +784,7 @@ class LuaInterface
 			PlayerInfoMarriage,
 			PlayerInfoPzLock,
 			PlayerInfoSaving,
+			PlayerInfoProtected,
 			PlayerInfoIp,
 			PlayerInfoSkullEnd,
 			PlayerInfoOutfitWindow,

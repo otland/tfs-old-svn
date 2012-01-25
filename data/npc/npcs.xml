@@ -14,7 +14,6 @@
 	
 	<npc name="Aldo" file="Aldo.xml"/>
 	<npc name="Alice" file="Alice.xml"/>
-	<npc name="Bankman Billy" file="bankman billy.xml"/>
 	<npc name="Deruno" file="Deruno.xml"/>
 	<npc name="Dimral" file="Dimral.xml"/>
 	<npc name="Donald" file="Donald.xml"/>

@@ -1937,6 +1937,9 @@ void LuaInterface::registerFunctions()
 
 	//isPlayerSaving(cid)
 	lua_register(m_luaState, "isPlayerSaving", LuaInterface::luaIsPlayerSaving);
+	
+	//isPlayerProtected(cid)
+	lua_register(m_luaState, "isPlayerProtected", LuaInterface::luaIsPlayerProtected);
 
 	//isCreature(cid)
 	lua_register(m_luaState, "isCreature", LuaInterface::luaIsCreature);
@@ -2781,6 +2784,9 @@ int32_t LuaInterface::internalGetPlayerInfo(lua_State* L, PlayerInfo_t info)
 		case PlayerInfoSaving:
 			lua_pushboolean(L, player->isSaving());
 			return 1;
+		case PlayerInfoProtected:
+			lua_pushboolean(L, player->isProtected());
+			return 1;
 		case PlayerInfoIp:
 			value = player->getIP();
 			break;
@@ -2968,6 +2974,11 @@ int32_t LuaInterface::luaIsPlayerPzLocked(lua_State* L)
 int32_t LuaInterface::luaIsPlayerSaving(lua_State* L)
 {
 	return internalGetPlayerInfo(L, PlayerInfoSaving);
+}
+
+int32_t LuaInterface::luaIsPlayerProtected(lua_State* L)
+{
+	return internalGetPlayerInfo(L, PlayerInfoProtected);
 }
 
 int32_t LuaInterface::luaGetPlayerIp(lua_State* L)
