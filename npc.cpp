@@ -38,7 +38,6 @@ extern ConfigManager g_config;
 extern Game g_game;
 extern Spells* g_spells;
 extern Npcs g_npcs;
- 
 
 AutoList<Npc> Npc::autoList;
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
@@ -267,6 +266,7 @@ void Npc::reset()
 	walkTicks = 1500;
 	floorChange = false;
 	attackable = false;
+	walkable = false;
 	hasBusyReply = false;
 	hasScriptedFocus = false;
 	focusCreature = 0;
