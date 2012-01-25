@@ -510,6 +510,14 @@
 	</melee>
 
 	<!-- Bows and Crossbows -->
+		<!-- Crossbow -->
+	<distance id="2455" event="function" value="default"/>
+		<!-- Bow -->
+	<distance id="2456" event="function" value="default"/>
+		<!-- Elvish Bow -->
+	<distance id="7438" event="function" value="default"/>
+		<!-- Arbalest -->
+	<distance id="5803" event="function" value="default"/>
 		<!-- Modified Crossbow -->
 	<distance id="8849" level="45" unproperly="1" event="function" value="default">
 		<vocation id="3"/>
