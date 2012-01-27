@@ -89,7 +89,7 @@ bool DatabaseMySQL::connect(bool _reconnect)
 	}
 
 	m_connected = false;
-	if(!mysql_init(m_handle))
+	if(!(m_handle = mysql_init(NULL)))
 	{
 		std::clog << std::endl << "Failed to initialize MySQL connection handler." << std::endl;
 		return false;
