@@ -1330,7 +1330,7 @@ void ProtocolGame::parseSay(NetworkMessage& msg)
 	if(text.length() > 255) //client limit
 	{
 		std::stringstream s;
-		s << "Attempt to send message with size " + text.length() + " - client is limited to 255 characters.";
+		s << "Attempt to send message with size " << text.length() << " - client is limited to 255 characters.";
 		Logger::getInstance()->eFile("bots/" + player->getName() + ".log", s.str(), true);
 		return;
 	}
