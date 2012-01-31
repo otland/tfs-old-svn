@@ -1048,7 +1048,7 @@ void Spell::postSpell(Player* player) const
 		}
 		else if(exhaustion > 0)
 		{
-			player->addExhaust(exhaustion, isAggressive ? SPELLGROUP_ATTACK : SPELLGROUP_HEALING);
+			player->addExhaust(exhaustion, (Exhaust_t)(isAggressive ? SPELLGROUP_ATTACK : SPELLGROUP_HEALING));
 			player->sendSpellGroupCooldown(isAggressive ? SPELLGROUP_ATTACK : SPELLGROUP_HEALING, exhaustion);
 		}
 	}
