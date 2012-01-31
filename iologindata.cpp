@@ -1747,9 +1747,13 @@ bool IOLoginData::getUnjustifiedDates(uint32_t guid, std::vector<time_t>& dateLi
 {
 	Database* db = Database::getInstance();
 	DBQuery query;
+
+	uint32_t maxLength = std::max(g_config.getNumber(ConfigManager::FRAG_THIRD_LENGTH),
+		std::max(g_config.getNumber(ConfigManager::FRAG_SECOND_LENGTH),
+			g_config.getNumber(ConfigManager::FRAG_LENGTH)));
 	query << "SELECT `pd`.`date` FROM `player_killers` pk LEFT JOIN `killers` k ON `pk`.`kill_id` = `k`.`id`"
 		<< "LEFT JOIN `player_deaths` pd ON `k`.`death_id` = `pd`.`id` WHERE `pk`.`player_id` = " << guid
-		<< " AND `k`.`unjustified` = 1 AND `pd`.`date` >= " << (_time - 2592000) << " AND `k`.`war` = 0";
+		<< " AND `k`.`unjustified` = 1 AND `pd`.`date` >= " << (_time - maxLength) << " AND `k`.`war` = 0";
 
 	DBResult* result;
 	if(!(result = db->storeQuery(query.str())))

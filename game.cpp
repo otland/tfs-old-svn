@@ -1590,7 +1590,7 @@ ReturnValue Game::internalMoveItem(Creature* actor, Cylinder* fromCylinder, Cyli
 	uint32_t maxQueryCount = 0;
 	ReturnValue retMaxCount = toCylinder->__queryMaxCount(index, item, count, maxQueryCount, flags);
 	if(retMaxCount != RET_NOERROR && !maxQueryCount)
-		return retMaxCount;
+		return ret;
 
 	uint32_t m = maxQueryCount;
 	if(item->isStackable())
@@ -1598,7 +1598,7 @@ ReturnValue Game::internalMoveItem(Creature* actor, Cylinder* fromCylinder, Cyli
 
 	Item* moveItem = item;
 	//check if we can remove this item
-	if((fromCylinder->__queryRemove(item, m, flags, actor)) != RET_NOERROR)
+	if((ret = fromCylinder->__queryRemove(item, m, flags, actor)) != RET_NOERROR)
 		return ret;
 
 	//remove the item
@@ -3173,11 +3173,10 @@ bool Game::playerAcceptTrade(uint32_t playerId)
 		ret2 = internalRemoveItem(player, tradeItem2, tradeItem2->getItemCount(), true);
 		if(ret1 == RET_NOERROR && ret2 == RET_NOERROR)
 		{
-			Cylinder *cylinder1 = tradeItem1->getParent(), *cylinder2 = tradeItem2->getParent();
-			uint32_t count1 = tradeItem1->getItemCount(), count2 = tradeItem2->getItemCount();
-
-			internalMoveItem(player, cylinder1, tradePartner, INDEX_WHEREEVER, tradeItem1, count1, NULL, FLAG_IGNOREAUTOSTACK);
-			internalMoveItem(tradePartner, cylinder2, player, INDEX_WHEREEVER, tradeItem2, count2, NULL, FLAG_IGNOREAUTOSTACK);
+			internalMoveItem(player, tradeItem1->getParent(), tradePartner, INDEX_WHEREEVER,
+				tradeItem1, tradeItem1->getItemCount(), NULL, FLAG_IGNOREAUTOSTACK);
+			internalMoveItem(tradePartner, tradeItem2->getParent(), player, INDEX_WHEREEVER,
+				tradeItem2, tradeItem2->getItemCount(), NULL, FLAG_IGNOREAUTOSTACK);
 
 			tradeItem1->onTradeEvent(ON_TRADE_TRANSFER, tradePartner, player);
 			tradeItem2->onTradeEvent(ON_TRADE_TRANSFER, player, tradePartner);

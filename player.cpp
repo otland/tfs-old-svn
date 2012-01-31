@@ -4445,34 +4445,35 @@ bool Player::addUnjustifiedKill(const Player* attacked, bool countNow)
 		sendTextMessage(MSG_STATUS_WARNING, buffer);
 	}
 
-	time_t now = time(NULL), today = (now - 84600), week = (now - 604800);
+	time_t now = time(NULL), first = (now - g_config.g_config.getNumber(ConfigManager::FRAG_LENGTH)),
+		second = (now - g_config.getNumber(ConfigManager::FRAG_SECOND_LENGTH));
 	std::vector<time_t> dateList;
 
 	IOLoginData::getInstance()->getUnjustifiedDates(guid, dateList, now);
 	if(countNow)
 		dateList.push_back(now);
 
-	uint32_t tc = 0, wc = 0, mc = dateList.size();
+	uint32_t fc = 0, sc = 0, tc = dateList.size();
 	for(std::vector<time_t>::iterator it = dateList.begin(); it != dateList.end(); ++it)
 	{
-		if((*it) > week)
-			wc++;
+		if(second > 0 && (*it) > second)
+			sc++;
 
-		if((*it) > today)
-			tc++;
+		if(first > 0 && (*it) > first)
+			fc++;
 	}
 
-	uint32_t d = g_config.getNumber(ConfigManager::RED_DAILY_LIMIT), w = g_config.getNumber(
-		ConfigManager::RED_WEEKLY_LIMIT), m = g_config.getNumber(ConfigManager::RED_MONTHLY_LIMIT);
-	if(skull < SKULL_RED && ((d > 0 && tc >= d) || (w > 0 && wc >= w) || (m > 0 && mc >= m)))
+	uint32_t f = g_config.getNumber(ConfigManager::RED_LIMIT), s = g_config.getNumber(
+		ConfigManager::RED_SECOND_LIMIT), t = g_config.getNumber(ConfigManager::RED_THIRD_LIMIT);
+	if(skull < SKULL_RED && ((f > 0 && fc >= f) || (s > 0 && sc >= s) || (t > 0 && tc >= t)))
 		setSkullEnd(now + g_config.getNumber(ConfigManager::RED_SKULL_LENGTH), false, SKULL_RED);
 
 	if(!g_config.getBool(ConfigManager::USE_BLACK_SKULL))
 	{
-		d += g_config.getNumber(ConfigManager::BAN_DAILY_LIMIT);
-		w += g_config.getNumber(ConfigManager::BAN_WEEKLY_LIMIT);
-		m += g_config.getNumber(ConfigManager::BAN_MONTHLY_LIMIT);
-		if((d <= 0 || tc < d) && (w <= 0 || wc < w) && (m <= 0 || mc < m))
+		f += g_config.getNumber(ConfigManager::BAN_LIMIT);
+		s += g_config.getNumber(ConfigManager::BAN_SECOND_LIMIT);
+		t += g_config.getNumber(ConfigManager::BAN_THIRD_LIMIT);
+		if((f <= 0 || fc < f) && (s <= 0 || sc < s) && (t <= 0 || tc < t))
 			return true;
 
 		if(!IOBan::getInstance()->addAccountBanishment(accountId, (now + g_config.getNumber(
@@ -4486,10 +4487,10 @@ bool Player::addUnjustifiedKill(const Player* attacked, bool countNow)
 	}
 	else
 	{
-		d += g_config.getNumber(ConfigManager::BLACK_DAILY_LIMIT);
-		w += g_config.getNumber(ConfigManager::BLACK_WEEKLY_LIMIT);
-		m += g_config.getNumber(ConfigManager::BLACK_MONTHLY_LIMIT);
-		if(skull < SKULL_BLACK && ((d > 0 && tc >= d) || (w > 0 && wc >= w) || (m > 0 && mc >= m)))
+		f += g_config.getNumber(ConfigManager::BLACK_LIMIT);
+		s += g_config.getNumber(ConfigManager::BLACK_SECOND_LIMIT);
+		t += g_config.getNumber(ConfigManager::BLACK_THIRD_LIMIT);
+		if(skull < SKULL_BLACK && ((f > 0 && fc >= f) || (s > 0 && sc >= s) || (t > 0 && tc >= t)))
 		{
 			setSkullEnd(now + g_config.getNumber(ConfigManager::BLACK_SKULL_LENGTH), false, SKULL_BLACK);
 			setAttackedCreature(NULL);

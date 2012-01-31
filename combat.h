@@ -76,7 +76,7 @@ struct CombatParams
 		blockedByArmor = blockedByShield = targetCasterOrTopMost = targetPlayersOrSummons = differentAreaDamage = false;
 		isAggressive = useCharges = true;
 		dispelType = CONDITION_NONE;
-		combatType =  COMBAT_NONE;
+		combatType = COMBAT_NONE;
 		itemId = 0;
 
 		targetCallback = NULL;
