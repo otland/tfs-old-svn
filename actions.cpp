@@ -550,7 +550,7 @@ bool Actions::useItem(Player* player, const Position& pos, uint8_t index, Item* 
 
 	player->setNextActionTask(NULL);
 	player->stopWalk();
-	player->setNextAction(OTSYS_TIME() + g_config.getNumber(ConfigManager::ACTIONS_DELAY_INTERVAL) - 10);
+	player->setNextAction(OTSYS_TIME() + g_config.getNumber(ConfigManager::ACTIONS_DELAY_INTERVAL) - 1);
 
 	ReturnValue ret = internalUseItem(player, pos, index, item, 0);
 	if(ret == RET_NOERROR)
@@ -638,7 +638,7 @@ bool Actions::useItemEx(Player* player, const Position& fromPos, const Position&
 
 	player->setNextActionTask(NULL);
 	player->stopWalk();
-	player->setNextAction(OTSYS_TIME() + g_config.getNumber(ConfigManager::EX_ACTIONS_DELAY_INTERVAL) - 10);
+	player->setNextAction(OTSYS_TIME() + g_config.getNumber(ConfigManager::EX_ACTIONS_DELAY_INTERVAL) - 1);
 
 	int32_t fromStackPos = 0;
 	if(item->getParent())

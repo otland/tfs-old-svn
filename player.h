@@ -596,9 +596,6 @@ class Player : public Creature, public Cylinder
 		bool tameMount(uint8_t mountId);
 		bool untameMount(uint8_t mountId);
 
-		void setLastMountAction(int64_t _time) {lastMountAction = _time;}
-		int64_t getLastMountAction() const {return lastMountAction; }
-
 		//event methods
 		virtual void onUpdateTileItem(const Tile* tile, const Position& pos, const Item* oldItem,
 			const ItemType& oldType, const Item* newItem, const ItemType& newType);
@@ -723,9 +720,12 @@ class Player : public Creature, public Cylinder
 		virtual void postRemoveNotification(Creature* actor, Thing* thing, const Cylinder* newParent,
 			int32_t index, bool isCompleteRemoval, CylinderLink_t link = LINK_OWNER);
 
-		void setNextAction(int64_t time) {if(time > nextAction) {nextAction = time;}}
+		void setNextAction(int64_t time) {if(time > nextAction) nextAction = time;}
 		bool canDoAction() const {return nextAction <= OTSYS_TIME();}
-		uint32_t getNextActionTime() const;
+		uint32_t getNextActionTime(bool scheduler = true) const;
+
+		void setNextExAction(int64_t time) {if(time > nextExAction) nextExAction = time;}
+		bool canDoExAction() const {return nextExAction <= OTSYS_TIME();}
 
 		Item* getWriteItem(uint32_t& _windowTextId, uint16_t& _maxWriteLen);
 		void setWriteItem(Item* item, uint16_t _maxLen = 0);
@@ -904,7 +904,7 @@ class Player : public Creature, public Cylinder
 		int64_t lastPong;
 		int64_t lastPing;
 		int64_t nextAction;
-		int64_t lastMountAction;
+		int64_t nextExAction;
 		uint64_t stamina;
 		uint64_t experience;
 		uint64_t manaSpent;

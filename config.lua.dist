@@ -175,6 +175,7 @@
 	-- Item usage
 	timeBetweenActions = 200
 	timeBetweenExActions = 1000
+	timeBetweenCustomActions = 500
 	hotkeyAimbotEnabled = true
 	tibiaClassicSlots = true
 	canOnlyRopePlayers = true
@@ -243,7 +244,6 @@
 
 	-- Mounts
 	useMounts = true
-	mountCooldown = 2000
 	unmountPlayerInPz = true
 
 	-- VIP list

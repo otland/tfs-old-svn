@@ -173,6 +173,7 @@ bool ConfigManager::load()
 	m_confBool[AIMBOT_HOTKEY_ENABLED]		= getGlobalBool("hotkeyAimbotEnabled", true);
 	m_confNumber[ACTIONS_DELAY_INTERVAL]		= getGlobalNumber("timeBetweenActions", 200);
 	m_confNumber[EX_ACTIONS_DELAY_INTERVAL]		= getGlobalNumber("timeBetweenExActions", 1000);
+	m_confNumber[CUSTOM_ACTIONS_DELAY_INTERVAL]	= getGlobalNumber("timeBetweenCustomActions", 500);
 	m_confNumber[CRITICAL_HIT_CHANCE]		= getGlobalNumber("criticalHitChance", 5);
 	m_confBool[REMOVE_WEAPON_AMMO]			= getGlobalBool("removeWeaponAmmunition", true);
 	m_confBool[REMOVE_WEAPON_CHARGES]		= getGlobalBool("removeWeaponCharges", true);
@@ -324,7 +325,6 @@ bool ConfigManager::load()
 	m_confNumber[FIST_BASE_ATTACK]			= getGlobalNumber("fistBaseAttack", 7);
 	m_confBool[ALLOW_MOUNTS]			= getGlobalBool("useMounts", true);
 	m_confBool[UNMOUNT_PLAYER_IN_PZ]		= getGlobalBool("unmountPlayerInPz", true);
-	m_confNumber[MOUNT_COOLDOWN]			= getGlobalNumber("mountCooldown", 2000);
 	m_confBool[ENABLE_COOLDOWNS] 			= getGlobalBool("enableCooldowns", true);
 	m_confBool[MONSTER_SPAWN_WALKBACK] 		= getGlobalBool("monsterSpawnWalkback", true);
 	m_confNumber[PVP_BLESSING_THRESHOLD]		= getGlobalNumber("pvpBlessingThreshold", 40);

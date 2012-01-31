@@ -176,19 +176,28 @@ bool TalkActions::onPlayerSay(Creature* creature, uint16_t channelId, const std:
 		return false;
 
 	Player* player = creature->getPlayer();
-	StringVec exceptions = talkAction->getExceptions();
-	if(player && ((!ignoreAccess && std::find(exceptions.begin(), exceptions.end(), asLowerCaseString(
-		player->getName())) == exceptions.end() && (talkAction->getAccess() > player->getAccess()
-		|| (talkAction->hasGroups() && !talkAction->hasGroup(player->getGroupId()))))
-		|| player->isAccountManager()))
+	if(player)
 	{
-		if(player->hasCustomFlag(PlayerCustomFlag_GamemasterPrivileges))
+		if(!player->canDoExAction())
+			return false;
+
+		StringVec exceptions = talkAction->getExceptions();
+		if((!ignoreAccess && std::find(exceptions.begin(), exceptions.end(), asLowerCaseString(
+			player->getName())) == exceptions.end() && (talkAction->getAccess() > player->getAccess()
+			|| (talkAction->hasGroups() && !talkAction->hasGroup(player->getGroupId()))))
+			|| player->isAccountManager())
 		{
-			player->sendTextMessage(MSG_STATUS_SMALL, "You cannot execute this talkaction.");
-			return true;
+			if(player->hasCustomFlag(PlayerCustomFlag_GamemasterPrivileges))
+			{
+				player->sendTextMessage(MSG_STATUS_SMALL, "You cannot execute this talkaction.");
+				return true;
+			}
+
+			return false;
 		}
 
-		return false;
+		if(!player->hasCustomFlag(PlayerCustomFlag_GamemasterPrivileges))
+			player->setNextExAction(OTSYS_TIME() + g_config.getNumber(ConfigManager::CUSTOM_ACTIONS_DELAY_INTERVAL) - 1);
 	}
 
 	if(talkAction->isLogged())

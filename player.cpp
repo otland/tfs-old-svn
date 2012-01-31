@@ -79,7 +79,7 @@ Player::Player(const std::string& _name, ProtocolGame* p):
 	soulMax = 100;
 	capacity = 400.00;
 	stamina = STAMINA_MAX;
-	lastLoad = lastPing = lastPong = lastMountAction = lastAttack = lastMail = OTSYS_TIME();
+	lastLoad = lastPing = lastPong = lastAttack = lastMail = OTSYS_TIME();
 
 	writeItem = NULL;
 	group = NULL;
@@ -1821,8 +1821,11 @@ void Player::setNextActionTask(SchedulerTask* task)
 	}
 }
 
-uint32_t Player::getNextActionTime() const
+uint32_t Player::getNextActionTime(bool scheduler/* = true*/) const
 {
+	if(!scheduler)
+		return (uint32_t)std::max((int64_t)0, ((int64_t)nextAction - OTSYS_TIME()));
+
 	return (uint32_t)std::max((int64_t)SCHEDULER_MINTICKS, ((int64_t)nextAction - OTSYS_TIME()));
 }
 
@@ -3881,7 +3884,7 @@ void Player::onCombatRemoveCondition(const Creature*, Condition* condition)
 	{
 		if(!canDoAction())
 		{
-			int32_t delay = getNextActionTime();
+			int32_t delay = getNextActionTime(false);
 			delay -= (delay % EVENT_CREATURE_THINK_INTERVAL);
 			if(delay < 0)
 				removeCondition(condition);

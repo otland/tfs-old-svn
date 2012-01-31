@@ -1089,10 +1089,8 @@ bool Game::playerMoveCreature(uint32_t playerId, uint32_t movingCreatureId,
 
 	if(!player->canDoAction())
 	{
-		uint32_t delay = player->getNextActionTime();
-		SchedulerTask* task = createSchedulerTask(delay,
+		SchedulerTask* task = createSchedulerTask(player->getNextActionTime(),
 			boost::bind(&Game::playerMoveCreature, this, playerId, movingCreatureId, movingCreaturePos, toPos, true));
-
 		player->setNextActionTask(task);
 		return false;
 	}
@@ -1241,7 +1239,7 @@ bool Game::playerMoveCreature(uint32_t playerId, uint32_t movingCreatureId,
 	else if(Player* movingPlayer = movingCreature->getPlayer())
 	{
 		uint64_t delay = OTSYS_TIME() + movingPlayer->getStepDuration();
-		if(delay > movingPlayer->getNextActionTime())
+		if(delay > movingPlayer->getNextActionTime(false))
 			movingPlayer->setNextAction(delay);
 	}
 
@@ -1334,10 +1332,8 @@ bool Game::playerMoveItem(uint32_t playerId, const Position& fromPos,
 
 	if(!player->canDoAction())
 	{
-		uint32_t delay = player->getNextActionTime();
-		SchedulerTask* task = createSchedulerTask(delay,
+		SchedulerTask* task = createSchedulerTask(player->getNextActionTime(),
 			boost::bind(&Game::playerMoveItem, this, playerId, fromPos, spriteId, fromStackpos, toPos, count));
-
 		player->setNextActionTask(task);
 		return false;
 	}
@@ -2588,10 +2584,8 @@ bool Game::playerUseItemEx(uint32_t playerId, const Position& fromPos, int16_t f
 
 	if(!player->canDoAction())
 	{
-		uint32_t delay = player->getNextActionTime();
-		SchedulerTask* task = createSchedulerTask(delay,
+		SchedulerTask* task = createSchedulerTask(player->getNextActionTime(),
 			boost::bind(&Game::playerUseItemEx, this, playerId, fromPos, fromStackpos, fromSpriteId, toPos, toStackpos, toSpriteId, isHotkey));
-
 		player->setNextActionTask(task);
 		return false;
 	}
@@ -2663,10 +2657,8 @@ bool Game::playerUseItem(uint32_t playerId, const Position& pos, int16_t stackpo
 
 	if(!player->canDoAction())
 	{
-		uint32_t delay = player->getNextActionTime();
-		SchedulerTask* task = createSchedulerTask(delay,
+		SchedulerTask* task = createSchedulerTask(player->getNextActionTime(),
 			boost::bind(&Game::playerUseItem, this, playerId, pos, stackpos, index, spriteId, isHotkey));
-
 		player->setNextActionTask(task);
 		return false;
 	}
@@ -2745,10 +2737,8 @@ bool Game::playerUseBattleWindow(uint32_t playerId, const Position& fromPos, int
 
 	if(!player->canDoAction())
 	{
-		uint32_t delay = player->getNextActionTime();
-		SchedulerTask* task = createSchedulerTask(delay,
+		SchedulerTask* task = createSchedulerTask(player->getNextActionTime(),
 			boost::bind(&Game::playerUseBattleWindow, this, playerId, fromPos, fromStackpos, creatureId, spriteId, isHotkey));
-
 		player->setNextActionTask(task);
 		return false;
 	}
@@ -3742,13 +3732,14 @@ bool Game::playerSetFightModes(uint32_t playerId, fightMode_t fightMode, chaseMo
 bool Game::playerRequestAddVip(uint32_t playerId, const std::string& vipName)
 {
 	Player* player = getPlayerByID(playerId);
-	if(!player || player->isRemoved())
+	if(!player || player->isRemoved() || !player->canDoExAction())
 		return false;
 
 	uint32_t guid;
 	bool specialVip;
-
 	std::string name = vipName;
+
+	player->setNextExAction(OTSYS_TIME() + g_config.getNumber(ConfigManager::CUSTOM_ACTIONS_DELAY_INTERVAL) - 1);
 	if(!IOLoginData::getInstance()->getGuidByNameEx(guid, specialVip, name))
 	{
 		player->sendTextMessage(MSG_STATUS_SMALL, "A player with that name does not exist.");
@@ -3839,16 +3830,14 @@ bool Game::playerChangeMountStatus(uint32_t playerId, bool status)
 	if(!player || player->isRemoved())
 		return false;
 
-	if((OTSYS_TIME() - player->getLastMountAction()) <
-		g_config.getNumber(ConfigManager::MOUNT_COOLDOWN)
-		|| player->hasCondition(CONDITION_INVISIBLE))
+	if(!player->canDoAction() || player->hasCondition(CONDITION_INVISIBLE))
 	{
 		player->sendCancelMessage(RET_NOTPOSSIBLE);
 		return false;
 	}
 
 	player->setMounted(status);
-	player->setLastMountAction(OTSYS_TIME());
+	player->setNextAction(OTSYS_TIME() + g_config.getNumber(ConfigManager::EX_ACTIONS_DELAY_INTERVAL) - 1);
 	return true;
 }
 
