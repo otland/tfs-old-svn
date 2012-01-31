@@ -681,7 +681,7 @@ bool Spell::checkSpell(Player* player) const
 			else
 				exhausted = true;
 		}
-		else if(player->hasCondition(CONDITION_EXHAUST, isAggressive))
+		else if(player->hasCondition(CONDITION_EXHAUST, isAggressive ? SPELLGROUP_ATTACK : SPELLGROUP_HEALING))
 			exhausted = true;
 
 		if(exhausted)
@@ -1048,7 +1048,7 @@ void Spell::postSpell(Player* player) const
 		}
 		else if(exhaustion > 0)
 		{
-			player->addExhaust(exhaustion, (Exhaust_t)isAggressive);
+			player->addExhaust(exhaustion, isAggressive ? SPELLGROUP_ATTACK : SPELLGROUP_HEALING);
 			player->sendSpellGroupCooldown(isAggressive ? SPELLGROUP_ATTACK : SPELLGROUP_HEALING, exhaustion);
 		}
 	}

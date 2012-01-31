@@ -78,8 +78,8 @@ DATABASE_ENGINE_SQLITE = DATABASE_SQLITE
 DATABASE_ENGINE_POSTGRESQL = DATABASE_POSTGRESQL
 DATABASE_ENGINE_ODBC = DATABASE_ODBC
 
-CHANNEL_STAFF = 2
-CHANNEL_COUNSELOR = 4
+CHANNEL_STAFF = 4
+CHANNEL_COUNSELOR = 2
 CHANNEL_GAMECHAT = 5
 CHANNEL_TRADE = 6
 CHANNEL_TRADEROOK = 7
@@ -102,7 +102,6 @@ RETURNVALUE_NOTMOVEABLE = RETURNVALUE_NOTMOVABLE
 
 SKILLS = SKILL_NAMES
 
-table.getPos = table.find
 doSetCreatureDropLoot = doCreatureSetDropLoot
 doPlayerSay = doCreatureSay
 doPlayerAddMana = doCreatureAddMana
@@ -183,14 +182,9 @@ hasProperty = hasItemProperty
 hasClient = hasPlayerClient
 print = std.cout
 getPosByDir = getPositionByDirection
-db.updateQueryLimitOperator = db.updateLimiter
-db.stringComparisonOperator = db.stringComparer
-db.stringComparison = db.stringComparer
-db.executeQuery = db.query
 isNumber = isNumeric
 doSetItemActionId = doItemSetActionId
 getOnlinePlayers = getPlayersOnlineEx
-db.quote = db.escapeString
 
 PlayerFlag_CannotUseCombat = 0
 PlayerFlag_CannotAttackPlayer = 1

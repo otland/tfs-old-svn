@@ -34,6 +34,7 @@ table.find = function (table, value, sensitive)
 
 	return nil
 end
+table.getPos = table.find
 
 table.contains = function (txt, str)
 	for i, v in pairs(str) do
