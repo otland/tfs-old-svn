@@ -4445,8 +4445,8 @@ bool Player::addUnjustifiedKill(const Player* attacked, bool countNow)
 		sendTextMessage(MSG_STATUS_WARNING, buffer);
 	}
 
-	time_t now = time(NULL), first = (now - g_config.g_config.getNumber(ConfigManager::FRAG_LENGTH)),
-		second = (now - g_config.getNumber(ConfigManager::FRAG_SECOND_LENGTH));
+	time_t now = time(NULL), first = (now - g_config.getNumber(ConfigManager::FRAG_LIMIT)),
+		second = (now - g_config.getNumber(ConfigManager::FRAG_SECOND_LIMIT));
 	std::vector<time_t> dateList;
 
 	IOLoginData::getInstance()->getUnjustifiedDates(guid, dateList, now);
