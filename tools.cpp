@@ -1156,7 +1156,10 @@ ShootTypeNames shootTypeNames[] =
 	{"smallearth",		SHOOT_EFFECT_SMALLEARTH},
 	{"eartharrow",		SHOOT_EFFECT_EARTHARROW},
 	{"explosion",		SHOOT_EFFECT_EXPLOSION},
-	{"cake",			SHOOT_EFFECT_CAKE}
+	{"cake",			SHOOT_EFFECT_CAKE},
+	{"tarsalarrow",		SHOOT_EFFECT_TARSALARROW},
+	{"vortexbolt",		SHOOT_EFFECT_VORTEXBOLT},
+	{"football",		SHOOT_EFFECT_FOOTBALL}
 };
 
 CombatTypeNames combatTypeNames[] =

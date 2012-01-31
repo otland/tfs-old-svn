@@ -71,7 +71,7 @@ Player::Player(const std::string& _name, ProtocolGame* p):
 	soul = guildId = levelPercent = magLevelPercent = magLevel = experience = damageImmunities = rankId = 0;
 	conditionImmunities = conditionSuppressions = groupId = vocationId = managerNumber2 = town = skullEnd = 0;
 	lastLogin = lastLogout = lastIP = messageTicks = messageBuffer = nextAction = editListId = maxWriteLen = 0;
-	windowTextId = 0;
+	windowTextId = nextExAction = 0;
 
 	purchaseCallback = saleCallback = -1;
 	level = 1;
