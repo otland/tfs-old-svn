@@ -4504,7 +4504,7 @@ void Player::manageAccount(const std::string &text)
 					newAccount = atoi(newAccountNumber);
 				}
 				while(IOLoginData::getInstance()->accountExists(newAccount));
-				msg << "Your account has been created, you login with account number '" << newAccount << "' and password '" << newPassword << "', if the account number is hard to remember please write it down!";
+				msg << "Your account has been created, you login with account name '" << newAccount << "' and password '" << newPassword << "', if the account name is hard to remember please write it down!";
 
 				IOLoginData::getInstance()->createAccount(newAccount, newPassword);
 				for(int8_t i = 2; i <= 8; i++)

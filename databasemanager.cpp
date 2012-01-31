@@ -179,15 +179,35 @@ uint32_t DatabaseManager::getDatabaseVersion()
 
 uint32_t DatabaseManager::updateDatabase()
 {
-	// Database* db = Database::getInstance();
+	Database* db = Database::getInstance();
 	DBQuery query;
 
 	switch(getDatabaseVersion())
 	{
-		/*
 		case 0:
 		{
 			std::cout << "> Updating database to version 1" << std::endl;
+
+			if (db->getDatabaseEngine() == DATABASE_ENGINE_MYSQL)
+				db->executeQuery("ALTER TABLE `accounts` ADD `name` VARCHAR(32) NOT NULL AFTER `id`;");
+			else
+				db->executeQuery("ALTER TABLE `accounts` ADD `name` VARCHAR(32) NOT NULL DEFAULT '';");
+
+			db->executeQuery("UPDATE `accounts` SET `name` = `id`;");
+
+			if (db->getDatabaseEngine() == DATABASE_ENGINE_MYSQL)
+				db->executeQuery("ALTER TABLE `accounts` ADD UNIQUE (`name`);");
+			else
+				db->executeQuery("CREATE UNIQUE INDEX IF NOT EXISTS account_name ON accounts(name);");
+
+			registerDatabaseConfig("db_version", 1);
+			break;
+		}
+
+		/*
+		case ?-1:
+		{
+			std::cout << "> Updating database to version ?" << std::endl;
 			if(db->getDatabaseEngine() == DATABASE_ENGINE_MYSQL)
 			{
 				db->executeQuery("CREATE TABLE IF NOT EXISTS `bans2` (`id` INT UNSIGNED NOT NULL AUTO_INCREMENT, `type` TINYINT(1) NOT NULL COMMENT 'this field defines if its ip, account, player, or any else ban', `value` INT UNSIGNED NOT NULL COMMENT 'ip, player guid, account number', `param` INT UNSIGNED NOT NULL DEFAULT 4294967295 COMMENT 'mask', `active` TINYINT(1) NOT NULL DEFAULT 1, `expires` INT UNSIGNED NOT NULL DEFAULT 0, `added` INT UNSIGNED NOT NULL, `admin_id` INT UNSIGNED NOT NULL DEFAULT 0, `comment` VARCHAR(1024) NOT NULL DEFAULT '', `reason` INT UNSIGNED NOT NULL DEFAULT 0, `action` INT UNSIGNED NOT NULL DEFAULT 0, `statement` VARCHAR(256) NOT NULL DEFAULT '', PRIMARY KEY (`id`), INDEX `type` (`type`, `value`), INDEX `active` (`active`)) ENGINE = InnoDB;");
@@ -234,7 +254,7 @@ uint32_t DatabaseManager::updateDatabase()
 			else
 				db->executeQuery("ALTER TABLE `bans2` RENAME TO `bans`;");
 
-			db->executeQuery("INSERT INTO `server_config` VALUES ('db_version', 1);");
+			db->executeQuery("INSERT INTO `server_config` VALUES ('db_version', ?);");
 			break;
 		}
 		*/

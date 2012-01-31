@@ -54,6 +54,7 @@ class IOLoginData
 		}
 
 		Account loadAccount(uint32_t accno);
+		Account loadAccount(std::string name);
 		bool saveAccount(Account acc);
 		bool createAccount(uint32_t accountNumber, std::string newPassword);
 		bool getPassword(uint32_t accno, const std::string& name, std::string& password);

@@ -107,6 +107,7 @@ class Action : public Event
 		static ActionFunction highscoreBook;
 		static ActionFunction increaseItemId;
 		static ActionFunction decreaseItemId;
+		static ActionFunction enterMarket;
 
 		bool allowFarUse;
 		bool checkLineOfSight;

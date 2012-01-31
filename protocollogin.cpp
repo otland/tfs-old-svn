@@ -105,19 +105,19 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 	enableXTEAEncryption();
 	setXTEAKey(key);
 
-	uint32_t accnumber = atoi(msg.GetString().c_str());
+	std::string accountName = msg.GetString();
 	std::string password = msg.GetString();
 
-	if(!accnumber)
+	if(accountName.empty())
 	{
 		if(g_config.getBoolean(ConfigManager::ACCOUNT_MANAGER))
 		{
-			accnumber = 1;
+			accountName = "1";
 			password = "1";
 		}
 		else
 		{
-			disconnectClient(0x0A, "You must enter your account number.");
+			disconnectClient(0x0A, "Invalid Account Name.");
 			return false;
 		}
 	}
@@ -162,12 +162,11 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 		}
 	}
 
-	Account account = IOLoginData::getInstance()->loadAccount(accnumber);
-	if(!(accnumber != 0 && account.accnumber == accnumber &&
-			passwordTest(password, account.password)))
+	Account account = IOLoginData::getInstance()->loadAccount(accountName);
+	if(account.id == 0 || !passwordTest(password, account.password))
 	{
 		g_bans.addLoginAttempt(clientip, false);
-		disconnectClient(0x0A, "Account number or password is not correct.");
+		disconnectClient(0x0A, "Account name or password is not correct.");
 		return false;
 	}
 
@@ -189,7 +188,7 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 
 		//Add char list
 		output->AddByte(0x64);
-		if(g_config.getBoolean(ConfigManager::ACCOUNT_MANAGER) && accnumber != 1)
+		if(g_config.getBoolean(ConfigManager::ACCOUNT_MANAGER) && account.id != 1)
 		{
 			output->AddByte((uint8_t)account.charList.size() + 1);
 			output->AddString("Account Manager");

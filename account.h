@@ -26,17 +26,14 @@
 #include "definitions.h"
 #include "enums.h"
 
-class Account
+struct Account
 {
-	public:
-		Account() {accnumber = 0;}
-		~Account() {charList.clear();}
+	uint32_t id, lastDay, premiumDays, warnings;
+	AccountType_t accountType;
+	std::string name, recoveryKey, password;
+	std::list<std::string> charList;
 
-		uint32_t accnumber, lastDay, premiumDays;
-		AccountType_t accountType;
-		int32_t warnings;
-		std::string recoveryKey, password;
-		std::list<std::string> charList;
+	Account() { id = 0; }
 };
 
 #endif

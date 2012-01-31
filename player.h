@@ -616,6 +616,8 @@ class Player : public Creature, public Cylinder
 			{if(client) client->sendSaleItemList(shopItemList);}
 		void sendCloseShop() const
 			{if(client) client->sendCloseShop();}
+		void sendMarketEnter(Item* item) const
+			{if(client) client->sendMarketEnter(item);}
 		void sendTradeItemRequest(const Player* player, const Item* item, bool ack) const
 			{if(client) client->sendTradeItemRequest(player, item, ack);}
 		void sendTradeClose() const

@@ -51,10 +51,11 @@ Account IOLoginData::loadAccount(uint32_t accno)
 	DBQuery query;
 	DBResult* result;
 
-	query << "SELECT `id`, `password`, `type`, `premdays`, `lastday`, `key`, `warnings` FROM `accounts` WHERE `id` = " << accno << " LIMIT 1;";
+	query << "SELECT `id`, `name`, `password`, `type`, `premdays`, `lastday`, `key`, `warnings` FROM `accounts` WHERE `id` = " << accno << " LIMIT 1;";
 	if((result = db->storeQuery(query.str())))
 	{
-		acc.accnumber = result->getDataInt("id");
+		acc.id = result->getDataInt("id");
+		acc.name = result->getDataString("name");
 		acc.password = result->getDataString("password");
 		acc.accountType = (AccountType_t)result->getDataInt("type");
 		acc.premiumDays = result->getDataInt("premdays");
@@ -64,16 +65,57 @@ Account IOLoginData::loadAccount(uint32_t accno)
 		db->freeResult(result);
 
 		query.str("");
-		query << "SELECT `name` FROM `players` WHERE `account_id` = " << accno << ";";
+		query << "SELECT `name` FROM `players` WHERE `account_id` = " << acc.id << ";";
 		if((result = db->storeQuery(query.str())))
 		{
 			do
 			{
-				std::string ss = result->getDataString("name");
-				acc.charList.push_back(ss.c_str());
+				std::string characterName = result->getDataString("name");
+				acc.charList.push_back(characterName.c_str());
 			}
 			while(result->next());
 			db->freeResult(result);
+
+			acc.charList.sort();
+		}
+	}
+	return acc;
+}
+
+Account IOLoginData::loadAccount(std::string name)
+{
+	Account acc;
+
+	Database* db = Database::getInstance();
+
+	DBQuery query;
+	DBResult* result;
+
+	query << "SELECT `id`, `name`, `password`, `type`, `premdays`, `lastday`, `key`, `warnings` FROM `accounts` WHERE `name` = " << db->escapeString(name) << " LIMIT 1;";
+	if((result = db->storeQuery(query.str())))
+	{
+		acc.id = result->getDataInt("id");
+		acc.name = result->getDataString("name");
+		acc.password = result->getDataString("password");
+		acc.accountType = (AccountType_t)result->getDataInt("type");
+		acc.premiumDays = result->getDataInt("premdays");
+		acc.lastDay = result->getDataInt("lastday");
+		acc.recoveryKey = result->getDataString("key");
+		acc.warnings = result->getDataInt("warnings");
+		db->freeResult(result);
+
+		query.str("");
+		query << "SELECT `name` FROM `players` WHERE `account_id` = " << acc.id << ";";
+		if((result = db->storeQuery(query.str())))
+		{
+			do
+			{
+				std::string characterName = result->getDataString("name");
+				acc.charList.push_back(characterName.c_str());
+			}
+			while(result->next());
+			db->freeResult(result);
+
 			acc.charList.sort();
 		}
 	}
@@ -83,7 +125,7 @@ Account IOLoginData::loadAccount(uint32_t accno)
 bool IOLoginData::saveAccount(Account acc)
 {
 	DBQuery query;
-	query << "UPDATE `accounts` SET `premdays` = " << acc.premiumDays << ", `warnings` = " << acc.warnings << ", `lastday` = " << acc.lastDay << " WHERE `id` = " << acc.accnumber << ";";
+	query << "UPDATE `accounts` SET `premdays` = " << acc.premiumDays << ", `warnings` = " << acc.warnings << ", `lastday` = " << acc.lastDay << " WHERE `id` = " << acc.id << ";";
 	return Database::getInstance()->executeQuery(query.str());
 }
 
@@ -97,7 +139,7 @@ bool IOLoginData::createAccount(uint32_t accountNumber, std::string newPassword)
 		newPassword = transformToSHA1(newPassword);
 
 	DBQuery query;
-	query << "INSERT INTO `accounts` (`id`, `password`, `type`, `premdays`, `lastday`, `key`, `warnings`, `group_id`) VALUES (" << accountNumber << ", " << db->escapeString(newPassword) << ", 1, 0, 0, 0, 0, 1);";
+	query << "INSERT INTO `accounts` (`id`, `name`, `password`, `type`, `premdays`, `lastday`, `key`, `warnings`, `group_id`) VALUES (NULL,, '" << accountNumber << "', " << db->escapeString(newPassword) << ", 1, 0, 0, 0, 0, 1);";
 	return db->executeQuery(query.str());
 }
 

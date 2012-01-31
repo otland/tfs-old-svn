@@ -37,11 +37,6 @@
 
 		Dalkon
 			C++ Programmer
-
-		Fallen
-			C++ Programmer
-			Data Directory Manager
-			Lua Scripter
 ]
 
 [ LICENSE
@@ -104,38 +99,6 @@
 				ln /usr/lib/libboost_regex-mt.so /usr/lib/libboost_regex.so && ln /usr/lib/libboost_regex-mt.a /usr/lib/libboost_regex.a && ln /usr/lib/libboost_thread-mt.so /usr/lib/libboost_thread.so && ln /usr/lib/libboost_thread-mt.a /usr/lib/libboost_thread.a
 
 	Windows
-		MinGW
-			Download latest MinGW and follow the compiling tutorial \
-			that will be soon made by Talaturen or Fallen \
-			then open up a new command line and type this:
-			cd /path/to/sources
-			NOTE: replace "/path/to/sources" with the actuall path.
-			for example if you are building with latest mingw do:
-			mingw32-make WIN32=1 LATEST_MINGW=1
-			If you want sqlite instead of mysql do this:
-			mingw32-make WIN32=1 LATEST_MINGW=1 SQLITE=1
-			If you are compiling with an older version of mingw then \
-			just remove LATEST_MINGW=1.
-			NOTE: WIN32 is used for windows so don't remove it while \
-			compiling.
-			NOTE: that this will compile the GUI one, if you don't \
-			want GUI just remove -mwindows and add -D__CONSOLE__ in CXXFLAGS
-
-		Dev-Cpp
-			Download The Forgotten Dev-Cpp and the sources from:
-				http://otland.net/showthread.php?t=1024
-
-			Extract them anywhere and then run devcpp.exe, press on the
-			menuitem "File -> Open Project or File" and choose:
-				C:\path\to\source_code\dev-cpp\TheForgottenServer.dev.
-
-			At this point Dev-Cpp should be running with the project,
-			now you can hit:
-				"Execute -> Rebuild All".
-
-			After it get compiled, copy TheForgottenServer.exe from:
-				C:\path\to\sources\dev-cpp to directory above (C:\path\to\source_code)
-
 		Code::Blocks
 			Follow this tutorial:
 				http://otland.net/content/compiling-forgotten-server-0-2-code-blocks-windows-41/
@@ -152,11 +115,11 @@
 		MySQL
 			Read MYSQL_HELP, and then launch a terminal, and paste in
 			this command:
-				cd ~/forgottenserver/forgottenserver/ && ./TheForgottenServer
+				./forgottenserver
 
 		SqLite
 			Launch a terminal, and paste in this command:
-				cd ~/forgottenserver/forgottenserver/ && ./TheForgottenServer
+				./forgottenserver
 
 	Windows
 		MySQL

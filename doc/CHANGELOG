@@ -24,9 +24,11 @@
 	M config.lua
 	  data/
 	M	global.lua
-		actions/scripts/other/
-	M		changegold.lua
-	M		fluids.lua
+		actions/
+	M		actions.xml
+			scripts/other/
+	M			changegold.lua
+	M			fluids.lua
 		items/
 	M		items.otb
 	M		items.xml
@@ -71,4 +73,5 @@
 	New depot structure.
 	Updated items.
 	Fixed a trade bug (thanks to manuel220).
+	Now using account names.
 ]

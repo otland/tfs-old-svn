@@ -4675,7 +4675,7 @@ void Game::removePremium(Account account)
 		account.lastDay = timeNow;
 
 	if(!IOLoginData::getInstance()->saveAccount(account))
-		std::cout << "> ERROR: Failed to save account: " << account.accnumber << "!" << std::endl;
+		std::cout << "> ERROR: Failed to save account: " << account.name << "!" << std::endl;
 }
 
 void Game::autoSave()
@@ -5173,19 +5173,19 @@ bool Game::violationWindow(Player* player, std::string targetPlayerName, int32_t
 	{
 		case 0:
 		{
-			IOBan::getInstance()->addAccountNotation(account.accnumber, time(NULL), reason, action, banComment, player->getGUID());
-			if(IOBan::getInstance()->getNotationsCount(account.accnumber) > 2)
+			IOBan::getInstance()->addAccountNotation(account.id, time(NULL), reason, action, banComment, player->getGUID());
+			if(IOBan::getInstance()->getNotationsCount(account.id) > 2)
 			{
 				account.warnings++;
 				if(account.warnings > 3)
 				{
 					action = 7;
-					IOBan::getInstance()->addAccountDeletion(account.accnumber, time(NULL), reason, action, banComment, player->getGUID());
+					IOBan::getInstance()->addAccountDeletion(account.id, time(NULL), reason, action, banComment, player->getGUID());
 				}
 				else if(account.warnings == 3)
-					IOBan::getInstance()->addAccountBan(account.accnumber, (time(NULL) + (g_config.getNumber(ConfigManager::FINAL_BAN_DAYS) * 86400)), reason, action, banComment, player->getGUID());
+					IOBan::getInstance()->addAccountBan(account.id, (time(NULL) + (g_config.getNumber(ConfigManager::FINAL_BAN_DAYS) * 86400)), reason, action, banComment, player->getGUID());
 				else
-					IOBan::getInstance()->addAccountBan(account.accnumber, (time(NULL) + (g_config.getNumber(ConfigManager::BAN_DAYS) * 86400)), reason, action, "4 notations received, auto banishment.", player->getGUID());
+					IOBan::getInstance()->addAccountBan(account.id, (time(NULL) + (g_config.getNumber(ConfigManager::BAN_DAYS) * 86400)), reason, action, "4 notations received, auto banishment.", player->getGUID());
 			}
 			else
 				isNotation = true;
@@ -5205,14 +5205,14 @@ bool Game::violationWindow(Player* player, std::string targetPlayerName, int32_t
 			if(account.warnings > 3)
 			{
 				action = 7;
-				IOBan::getInstance()->addAccountDeletion(account.accnumber, time(NULL), reason, action, banComment, player->getGUID());
+				IOBan::getInstance()->addAccountDeletion(account.id, time(NULL), reason, action, banComment, player->getGUID());
 			}
 			else
 			{
 				if(account.warnings == 3)
-					IOBan::getInstance()->addAccountBan(account.accnumber, (time(NULL) + (g_config.getNumber(ConfigManager::FINAL_BAN_DAYS) * 86400)), reason, action, banComment, player->getGUID());
+					IOBan::getInstance()->addAccountBan(account.id, (time(NULL) + (g_config.getNumber(ConfigManager::FINAL_BAN_DAYS) * 86400)), reason, action, banComment, player->getGUID());
 				else
-					IOBan::getInstance()->addAccountBan(account.accnumber, (time(NULL) + (g_config.getNumber(ConfigManager::BAN_DAYS) * 86400)), reason, action, banComment, player->getGUID());
+					IOBan::getInstance()->addAccountBan(account.id, (time(NULL) + (g_config.getNumber(ConfigManager::BAN_DAYS) * 86400)), reason, action, banComment, player->getGUID());
 
 				IOBan::getInstance()->addPlayerNamelock(guid, time(NULL), reason, action, banComment, player->getGUID());
 			}
@@ -5224,13 +5224,13 @@ bool Game::violationWindow(Player* player, std::string targetPlayerName, int32_t
 			if(account.warnings < 3)
 			{
 				account.warnings = 3;
-				IOBan::getInstance()->addAccountBan(account.accnumber, (time(NULL) + (g_config.getNumber(ConfigManager::FINAL_BAN_DAYS) * 86400)), reason, action, banComment, player->getGUID());
+				IOBan::getInstance()->addAccountBan(account.id, (time(NULL) + (g_config.getNumber(ConfigManager::FINAL_BAN_DAYS) * 86400)), reason, action, banComment, player->getGUID());
 			}
 			else
 			{
 				action = 7;
 				account.warnings++;
-				IOBan::getInstance()->addAccountDeletion(account.accnumber, time(NULL), reason, action, banComment, player->getGUID());
+				IOBan::getInstance()->addAccountDeletion(account.id, time(NULL), reason, action, banComment, player->getGUID());
 			}
 			break;
 		}
@@ -5240,14 +5240,14 @@ bool Game::violationWindow(Player* player, std::string targetPlayerName, int32_t
 			if(account.warnings < 3)
 			{
 				account.warnings = 3;
-				IOBan::getInstance()->addAccountBan(account.accnumber, (time(NULL) + (g_config.getNumber(ConfigManager::FINAL_BAN_DAYS) * 86400)), reason, action, banComment, player->getGUID());
+				IOBan::getInstance()->addAccountBan(account.id, (time(NULL) + (g_config.getNumber(ConfigManager::FINAL_BAN_DAYS) * 86400)), reason, action, banComment, player->getGUID());
 				IOBan::getInstance()->addPlayerNamelock(guid, time(NULL), reason, action, banComment, player->getGUID());
 			}
 			else
 			{
 				action = 7;
 				account.warnings++;
-				IOBan::getInstance()->addAccountDeletion(account.accnumber, time(NULL), reason, action, banComment, player->getGUID());
+				IOBan::getInstance()->addAccountDeletion(account.id, time(NULL), reason, action, banComment, player->getGUID());
 			}
 			break;
 		}
@@ -5258,14 +5258,14 @@ bool Game::violationWindow(Player* player, std::string targetPlayerName, int32_t
 			if(account.warnings > 3)
 			{
 				action = 7;
-				IOBan::getInstance()->addAccountDeletion(account.accnumber, time(NULL), reason, action, banComment, player->getGUID());
+				IOBan::getInstance()->addAccountDeletion(account.id, time(NULL), reason, action, banComment, player->getGUID());
 			}
 			else
 			{
 				if(account.warnings == 3)
-					IOBan::getInstance()->addAccountBan(account.accnumber, (time(NULL) + (g_config.getNumber(ConfigManager::FINAL_BAN_DAYS) * 86400)), reason, action, banComment, player->getGUID());
+					IOBan::getInstance()->addAccountBan(account.id, (time(NULL) + (g_config.getNumber(ConfigManager::FINAL_BAN_DAYS) * 86400)), reason, action, banComment, player->getGUID());
 				else
-					IOBan::getInstance()->addAccountBan(account.accnumber, (time(NULL) + (g_config.getNumber(ConfigManager::BAN_DAYS) * 86400)), reason, action, banComment, player->getGUID());
+					IOBan::getInstance()->addAccountBan(account.id, (time(NULL) + (g_config.getNumber(ConfigManager::BAN_DAYS) * 86400)), reason, action, banComment, player->getGUID());
 			}
 			break;
 		}
@@ -5275,7 +5275,7 @@ bool Game::violationWindow(Player* player, std::string targetPlayerName, int32_t
 	if(g_config.getBoolean(ConfigManager::BROADCAST_BANISHMENTS))
 	{
 		if(isNotation)
-			sprintf(buffer, "%s has received a notation by %s (%d more to ban).", targetPlayerName.c_str(), player->getName().c_str(), (3 - IOBan::getInstance()->getNotationsCount(account.accnumber)));
+			sprintf(buffer, "%s has received a notation by %s (%d more to ban).", targetPlayerName.c_str(), player->getName().c_str(), (3 - IOBan::getInstance()->getNotationsCount(account.id)));
 		else
 			sprintf(buffer, "%s has taken the action \"%s\" against: %s (Warnings: %d), with reason: \"%s\", and comment: \"%s\".", player->getName().c_str(), getAction(action, IPBanishment).c_str(), targetPlayerName.c_str(), account.warnings, getReason(reason).c_str(), banComment.c_str());
 
@@ -5284,7 +5284,7 @@ bool Game::violationWindow(Player* player, std::string targetPlayerName, int32_t
 	else
 	{
 		if(isNotation)
-			sprintf(buffer, "You have taken the action notation against %s (%d more to ban).", targetPlayerName.c_str(), (3 - IOBan::getInstance()->getNotationsCount(account.accnumber)));
+			sprintf(buffer, "You have taken the action notation against %s (%d more to ban).", targetPlayerName.c_str(), (3 - IOBan::getInstance()->getNotationsCount(account.id)));
 		else
 			sprintf(buffer, "You have taken the action \"%s\" against: %s (Warnings: %d), with reason: \"%s\", and comment: \"%s\".", getAction(action, IPBanishment).c_str(), targetPlayerName.c_str(), account.warnings, getReason(reason).c_str(), banComment.c_str());
 
@@ -5316,7 +5316,7 @@ bool Game::violationWindow(Player* player, std::string targetPlayerName, int32_t
 	}
 
 	if(!isNotation)
-		IOBan::getInstance()->removeAccountNotations(account.accnumber);
+		IOBan::getInstance()->removeAccountNotations(account.id);
 
 	IOLoginData::getInstance()->saveAccount(account);
 	return true;

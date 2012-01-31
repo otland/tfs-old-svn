@@ -291,13 +291,10 @@ ReturnValue Actions::internalUseItem(Player* player, const Position& pos,
 			if(action->executeUse(player, item, posEx, posEx, false, creatureId))
 				return RET_NOERROR;
 		}
-		else
+		else if(action->function)
 		{
-			if(action->function)
-			{
-				if(action->function(player, item, posEx, posEx, false, creatureId))
-					return RET_NOERROR;
-			}
+			if(action->function(player, item, posEx, posEx, false, creatureId))
+				return RET_NOERROR;
 		}
 	}
 
@@ -510,6 +507,8 @@ bool Action::loadFunction(const std::string& functionName)
 		function = decreaseItemId;
 	else if(tmpFunctionName == "highscorebook")
 		function = highscoreBook;
+	else if(tmpFunctionName == "market")
+		function = enterMarket;
 	else
 	{
 		std::cout << "[Warning - Action::loadFunction] Function \"" << functionName << "\" does not exist." << std::endl;
@@ -522,48 +521,33 @@ bool Action::loadFunction(const std::string& functionName)
 
 bool Action::highscoreBook(Player* player, Item* item, const PositionEx& posFrom, const PositionEx& posTo, bool extendedUse, uint32_t creatureId)
 {
-	if(player)
-	{
-		if(item)
-		{
-			if(item->getActionId() >= 150 && item->getActionId() <= 158)
-			{
-				std::string highscoreString = g_game.getHighscoreString(item->getActionId() - 150);
-				item->setText(highscoreString);
-				player->sendTextWindow(item, highscoreString.size(), false);
-				return true;
-			}
-		}
-	}
-	return false;
+	if(item->getActionId() < 150 || item->getActionId() > 158)
+		return false;
+
+	std::string highscoreString = g_game.getHighscoreString(item->getActionId() - 150);
+	item->setText(highscoreString);
+	player->sendTextWindow(item, highscoreString.size(), false);
+	return true;
 }
 
 bool Action::increaseItemId(Player* player, Item* item, const PositionEx& posFrom, const PositionEx& posTo, bool extendedUse, uint32_t creatureId)
 {
-	if(player)
-	{
-		if(item)
-		{
-			g_game.transformItem(item, item->getID() + 1);
-			g_game.startDecay(item);
-			return true;
-		}
-	}
-	return false;
+	g_game.transformItem(item, item->getID() + 1);
+	g_game.startDecay(item);
+	return true;
 }
 
 bool Action::decreaseItemId(Player* player, Item* item, const PositionEx& posFrom, const PositionEx& posTo, bool extendedUse, uint32_t creatureId)
 {
-	if(player)
-	{
-		if(item)
-		{
-			g_game.transformItem(item, item->getID() - 1);
-			g_game.startDecay(item);
-			return true;
-		}
-	}
-	return false;
+	g_game.transformItem(item, item->getID() - 1);
+	g_game.startDecay(item);
+	return true;
+}
+
+bool Action::enterMarket(Player* player, Item* item, const PositionEx& posFrom, const PositionEx& posTo, bool extendedUse, uint32_t creatureId)
+{
+	player->sendMarketEnter(item);
+	return true;
 }
 
 std::string Action::getScriptEventName()
