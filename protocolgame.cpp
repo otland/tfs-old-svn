@@ -869,35 +869,9 @@ void ProtocolGame::parsePacket(NetworkMessage &msg)
 
 			default:
 			{
-				if(g_config.getBool(ConfigManager::BAN_UNKNOWN_BYTES))
-				{
-					int64_t banTime = -1;
-					Account tmp = IOLoginData::getInstance()->loadAccount(player->getAccount(), true);
-
-					tmp.warnings++;
-					if(tmp.warnings >= g_config.getNumber(ConfigManager::WARNINGS_TO_DELETION))
-						{}
-					else if(tmp.warnings >= g_config.getNumber(ConfigManager::WARNINGS_TO_FINALBAN))
-						banTime = time(NULL) + g_config.getNumber(ConfigManager::FINALBAN_LENGTH);
-					else
-						banTime = time(NULL) + g_config.getNumber(ConfigManager::BAN_LENGTH);
-
-					if(IOBan::getInstance()->addAccountBanishment(tmp.number, banTime,
-						"Sending unknown packets to the server.", 0, player->getGUID()))
-					{
-						IOLoginData::getInstance()->saveAccount(tmp);
-						player->sendTextMessage(MSG_INFO_DESCR, "You have been banished.");
-
-						g_game.addMagicEffect(player->getPosition(), MAGIC_EFFECT_WRAPS_GREEN);
-						Scheduler::getInstance().addEvent(createSchedulerTask(1000, boost::bind(
-							&Game::kickPlayer, &g_game, player->getID(), false)));
-					}
-				}
-
-				std::stringstream hex;
-				hex << "0x" << std::hex << (int16_t)recvbyte << std::dec;
-				Logger::getInstance()->eFile(getFilePath(FILE_TYPE_LOG, "bots/" + player->getName() + ".log").c_str(),
-					"[" + formatDate() + "] Received byte " + hex.str(), false);
+				std::stringstream s;
+				s << "Sent unknown byte: 0x" << std::hex << (int16_t)recvbyte << std::dec;
+				Logger::getInstance()->eFile("bots/" + player->getName() + ".log", s.str(), true);
 				break;
 			}
 		}
@@ -1149,9 +1123,19 @@ void ProtocolGame::parseReceivePing(NetworkMessage&)
 
 void ProtocolGame::parseAutoWalk(NetworkMessage& msg)
 {
-	// first we get all directions...
-	std::list<Direction> path;
 	uint8_t dirCount = msg.get<char>();
+	if(dirCount > 128) //client limit
+	{
+		for(uint8_t i = 0; i < dirCount; ++i)
+			msg.get<char>();
+
+		std::stringstream s;
+		s << "Attempt to auto walk for " << (uint16_t)dirCount << " steps - client is limited to 128 steps.";
+		Logger::getInstance()->eFile("bots/" + player->getName() + ".log", s.str(), true);
+		return;
+	}
+
+	std::list<Direction> path;
 	for(uint8_t i = 0; i < dirCount; ++i)
 	{
 		Direction dir = SOUTH;
@@ -1176,7 +1160,6 @@ void ProtocolGame::parseAutoWalk(NetworkMessage& msg)
 				dir = SOUTHWEST;
 				break;
 			case 7:
-				dir = SOUTH;
 				break;
 			case 8:
 				dir = SOUTHEAST;
@@ -1347,9 +1330,8 @@ void ProtocolGame::parseSay(NetworkMessage& msg)
 	if(text.length() > 255) //client limit
 	{
 		std::stringstream s;
-		s << text.length();
-
-		Logger::getInstance()->eFile("bots/" + player->getName() + ".log", "Attempt to send message with size " + s.str() + " - client is limited to 255 characters.", true);
+		s << "Attempt to send message with size " + text.length() + " - client is limited to 255 characters.";
+		Logger::getInstance()->eFile("bots/" + player->getName() + ".log", s.str(), true);
 		return;
 	}
 
