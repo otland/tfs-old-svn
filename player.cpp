@@ -4445,7 +4445,7 @@ bool Player::addUnjustifiedKill(const Player* attacked, bool countNow)
 		sendTextMessage(MSG_STATUS_WARNING, buffer);
 	}
 
-	time_t now = time(NULL), today = (now - 84600), week = (now - (7 * 84600));
+	time_t now = time(NULL), today = (now - 84600), week = (now - 604800);
 	std::vector<time_t> dateList;
 
 	IOLoginData::getInstance()->getUnjustifiedDates(guid, dateList, now);
