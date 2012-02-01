@@ -3925,8 +3925,7 @@ bool Game::playerWhisper(Player* player, const std::string& text, uint32_t state
 {
 	SpectatorVec list;
 	getSpectators(list, player->getPosition(), false, false, 1, 1);
-
-	internalCreatureSay(player, MSG_SPEAK_YELL, asUpperCaseString(text), false, &list, NULL, statementId);
+	internalCreatureSay(player, MSG_SPEAK_WHISPER, text, false, &list, NULL, statementId);
 	return true;
 }
 
