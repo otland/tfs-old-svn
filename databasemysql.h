@@ -30,11 +30,12 @@
 #include "definitions.h"
 #include "otsystem.h"
 
-#ifdef WIN32
+#if defined(WIN32) && !defined(_MSC_VER)
 #include <mysql/mysql.h>
 #else
 #include <mysql.h>
 #endif
+
 #include <sstream>
 #include <map>
 

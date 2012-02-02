@@ -37,7 +37,11 @@ typedef std::vector< std::pair<uint32_t, uint32_t> > IPList;
 #include <stdlib.h>
 #include <sys/timeb.h>
 #include <process.h>
+
+#define WIN32_LEAN_AND_MEAN
 #include <windows.h>
+
+#include <WinSock2.h>
 
 #define OTSYS_CREATE_THREAD(a, b) _beginthread(a, 0, b)
 

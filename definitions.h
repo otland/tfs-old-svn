@@ -142,8 +142,6 @@ enum passwordType_t
 #else
 	typedef unsigned long long uint64_t;
 
-	#define _WIN32_WINNT 0x0500
-
 	#ifndef NOMINMAX
 		#define NOMINMAX
 	#endif

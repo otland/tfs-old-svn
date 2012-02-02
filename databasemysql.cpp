@@ -24,7 +24,7 @@
 
 #include "database.h"
 #include "databasemysql.h"
-#ifdef WIN32
+#if defined(WIN32) && !defined(_MSC_VER)
 #include <mysql/errmsg.h>
 #else
 #include <errmsg.h>

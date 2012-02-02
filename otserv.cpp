@@ -257,8 +257,21 @@ void mainLoader(ServiceManager* service_manager)
 	#endif
 	#endif
 	std::cout << STATUS_SERVER_NAME << " - Version " << STATUS_SERVER_VERSION << " (" << STATUS_SERVER_CODENAME << ")." << std::endl;
-	std::cout << "A server developed by Talaturen, Kornholijo, Elf and Dalkon." << std::endl;
-	std::cout << "Visit our forum for updates, support and resources: http://otland.net/." << std::endl;
+
+	std::cout << "Compilied on " << __DATE__ << " " << __TIME__ << " for arch ";
+
+	#if defined(__amd64__) || defined(_M_X64)
+	std::cout << "x64" << std::endl;
+	#elif defined(__i386__) || defined(_M_IX86) || defined(_X86_)
+	std::cout << "x86" << std::endl;
+	#else
+	std::cout << "unk" << std::endl;
+	#endif
+
+	std::cout << std::endl;
+
+	std::cout << "A server developed by Talaturen, Kornholijo, Elf, and Dalkon." << std::endl;
+	std::cout << "Visit our forum for updates, support, and resources: http://otland.net/." << std::endl;
 
 	#if defined __DEBUG__MOVESYS__ || defined __DEBUG_HOUSES__ || defined __DEBUG_MAILBOX__ || defined __DEBUG_LUASCRIPTS__ || defined __DEBUG_RAID__ || defined __DEBUG_NET__
 	std::cout << ">> Debugging:";

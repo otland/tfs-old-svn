@@ -255,7 +255,7 @@ uint64_t Vocation::getReqMana(uint32_t magLevel)
 	if(it != cacheMana.end())
 		return it->second;
 
-	uint64_t reqMana = (uint64_t)(400 * pow(manaMultiplier, magLevel - 1));
+	uint64_t reqMana = (uint64_t)(400 * pow(manaMultiplier, (int) magLevel - 1));
 	if(reqMana % 20 < 10)
 		reqMana = reqMana - (reqMana % 20);
 	else

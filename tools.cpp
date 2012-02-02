@@ -154,20 +154,6 @@ bool readXMLInteger(xmlNodePtr node, const char* tag, int32_t& value)
 	return false;
 }
 
-#if (defined __WINDOWS__ || defined WIN32) && !defined __GNUC__
-bool readXMLInteger(xmlNodePtr node, const char* tag, int32_t& value)
-{
-	char* nodeValue = (char*)xmlGetProp(node, (xmlChar*)tag);
-	if(nodeValue)
-	{
-		value = atoi(nodeValue);
-		xmlFreeOTSERV(nodeValue);
-		return true;
-	}
-	return false;
-}
-#endif
-
 bool readXMLInteger64(xmlNodePtr node, const char* tag, uint64_t& value)
 {
 	char* nodeValue = (char*)xmlGetProp(node, (xmlChar*)tag);

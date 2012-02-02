@@ -4660,7 +4660,7 @@ void Game::removePremium(Account account)
 	uint32_t timeNow = time(NULL);
 	if(account.premiumDays > 0 && account.premiumDays < 65535)
 	{
-		uint32_t days = (uint32_t)std::ceil((timeNow - account.lastDay) / 86400);
+		uint32_t days = (uint32_t)std::ceil((timeNow - account.lastDay) / 86400.0f);
 		if(days > 0)
 		{
 			if(account.premiumDays < days)

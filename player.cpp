@@ -4855,9 +4855,9 @@ bool Player::tameMount(uint8_t mountId)
 	int key = PSTRG_MOUNTS_RANGE_START + (mountId / 31);
 	int32_t value = 0;
 	if(getStorageValue(key, value))
-		value |= (int32_t)pow(2, mountId % 31);
+		value |= (int32_t)pow(2.0f, mountId % 31);
 	else
-		value = (int32_t)pow(2, mountId % 31);
+		value = (int32_t)pow(2.0f, mountId % 31);
 
 	addStorageValue(key, value);
 	return true;
@@ -4874,7 +4874,7 @@ bool Player::untameMount(uint8_t mountId)
 	if(!getStorageValue(key, value))
 		return true;
 
-	value ^= (int32_t)pow(2, mountId % 31);
+	value ^= (int32_t)pow(2.0f, mountId % 31);
 	addStorageValue(key, value);
 
 	if(isMounted() && getCurrentMount() == (mountId + 1))
