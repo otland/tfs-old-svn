@@ -3738,7 +3738,7 @@ bool Game::playerRequestAddVip(uint32_t playerId, const std::string& vipName)
 	bool specialVip;
 	std::string name = vipName;
 
-	player->setNextExAction(OTSYS_TIME() + g_config.getNumber(ConfigManager::CUSTOM_ACTIONS_DELAY_INTERVAL) - 1);
+	player->setNextExAction(OTSYS_TIME() + g_config.getNumber(ConfigManager::CUSTOM_ACTIONS_DELAY_INTERVAL) - 10);
 	if(!IOLoginData::getInstance()->getGuidByNameEx(guid, specialVip, name))
 	{
 		player->sendTextMessage(MSG_STATUS_SMALL, "A player with that name does not exist.");
@@ -3836,7 +3836,7 @@ bool Game::playerChangeMountStatus(uint32_t playerId, bool status)
 	}
 
 	player->setMounted(status);
-	player->setNextAction(OTSYS_TIME() + g_config.getNumber(ConfigManager::EX_ACTIONS_DELAY_INTERVAL) - 1);
+	player->setNextAction(OTSYS_TIME() + g_config.getNumber(ConfigManager::EX_ACTIONS_DELAY_INTERVAL) - 10);
 	return true;
 }
 
