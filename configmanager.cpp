@@ -43,7 +43,7 @@ bool ConfigManager::loadFile(const std::string& _filename)
 
 	if(luaL_dofile(L, _filename.c_str()))
 	{
-		std::clog << "[Error - ConfigManager::loadFile] With file = " << _filename << ", " << lua_tostring(L, -1) << std::endl;
+		std::cout << "[Error - ConfigManager::loadFile] With file = " << _filename << ", " << lua_tostring(L, -1) << std::endl;
 		lua_close(L);
 		return false;
 	}
@@ -81,7 +81,7 @@ bool ConfigManager::loadFile(const std::string& _filename)
 		m_confInteger[STATUS_PORT] = getGlobalNumber(L, "statusProtocolPort", 7171);
 	}
 
-	m_confBoolean[FREE_MEMORY_AT_SHUTDOWN] = (getGlobalString(L, "freeMemoryAtShutdown", "yes") == "yes");
+	m_confBoolean[FREE_MEMORY_AT_SHUTDOWN] = (getGlobalString(L, "freeMemoryAtShutdown", "no") == "yes");
 	m_confBoolean[ACCOUNT_MANAGER] = (getGlobalString(L, "accountManager", "yes") == "yes");
 	m_confBoolean[ON_OR_OFF_CHARLIST] = (getGlobalString(L, "displayOnOrOffAtCharlist", "no") == "yes");
 	m_confBoolean[ALLOW_CHANGEOUTFIT] = (getGlobalString(L, "allowChangeOutfit", "yes") == "yes");

@@ -69,7 +69,7 @@
 	Added database manager for automatic database updates and table optimizations.
 	It is now possible to register multiple creature events with the same type for one creature.
 	Added Ladybug and Manta mounts.
-	Added Red Baron outfit.
+	Added Entrepreneur outfit.
 	New depot structure.
 	Updated items.
 	Fixed a trade bug (thanks to manuel220).

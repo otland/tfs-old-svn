@@ -148,7 +148,7 @@ bool Commands::loadFromXml()
 
 		if(xmlStrcmp(root->name,(const xmlChar*)"commands"))
 		{
-			std::clog << "[Error - Commands::loadFromXml] Malformed commands file." << std::endl;
+			std::cout << "[Error - Commands::loadFromXml] Malformed commands file." << std::endl;
 			xmlFreeDoc(doc);
 			return false;
 		}
@@ -279,7 +279,7 @@ bool Commands::exeCommand(Creature* creature, const std::string& cmd)
 		if(dirExists("data/logs") || createDir("data/logs"))
 			sprintf(buffer, "data/logs/%s commands.log", player->name.c_str());
 		else
-			std::clog << "[Warning - Commands::exeCommand] Cannot access \"data/logs\" for writing: " << strerror(errno) << "." << std::endl;
+			std::cout << "[Warning - Commands::exeCommand] Cannot access \"data/logs\" for writing: " << strerror(errno) << "." << std::endl;
 
 		//avoid seg fault from std::ofstream just incase the directory does not exist
 		if (*buffer == '\0')
