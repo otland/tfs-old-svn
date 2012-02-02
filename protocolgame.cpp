@@ -378,7 +378,7 @@ bool ProtocolGame::parseFirstPacket(NetworkMessage& msg)
 	setXTEAKey(key);
 
 	uint8_t isSetGM = msg.GetByte();
-	uint32_t accnumber = atoi(msg.GetString().c_str());
+	std::string accountName = msg.GetString();
 	std::string name = msg.GetString();
 	std::string password = msg.GetString();
 
@@ -390,16 +390,16 @@ bool ProtocolGame::parseFirstPacket(NetworkMessage& msg)
 		return false;
 	}
 
-	if(!accnumber)
+	if(accountName.empty())
 	{
 		if(g_config.getBoolean(ConfigManager::ACCOUNT_MANAGER))
 		{
-			accnumber = 1;
+			accountName = "1";
 			password = "1";
 		}
 		else
 		{
-			disconnectClient(0x14, "You must enter your account number.");
+			disconnectClient(0x14, "You must enter your account name.");
 			return false;
 		}
 	}
@@ -435,8 +435,9 @@ bool ProtocolGame::parseFirstPacket(NetworkMessage& msg)
 	}
 
 	std::string acc_pass;
+	uint32_t accnumber;
 	bool isAccountManager = g_config.getBoolean(ConfigManager::ACCOUNT_MANAGER) && name == "Account Manager";
-	if(!(IOLoginData::getInstance()->getPassword(accnumber, name, acc_pass) && passwordTest(password, acc_pass)) && !isAccountManager)
+	if(!isAccountManager && !(IOLoginData::getInstance()->getPassword(accountName, name, acc_pass, accnumber) && passwordTest(password, acc_pass)))
 	{
 		g_bans.addLoginAttempt(getIP(), false);
 		disconnectClient(0x14, "Account number or password is not correct.");
@@ -2926,7 +2927,7 @@ void ProtocolGame::AddPlayerStats(NetworkMessage_ptr msg)
 
 	msg->AddByte(player->getPlayerInfo(PLAYERINFO_SOUL));
 
-	msg->AddU16(0xD20); // stamina minutes
+	msg->AddU16(0x9D8); // stamina minutes
 
 	msg->AddU16(player->getBaseSpeed());
 

@@ -91,7 +91,7 @@ Account IOLoginData::loadAccount(std::string name)
 	DBQuery query;
 	DBResult* result;
 
-	query << "SELECT `id`, `name`, `password`, `type`, `premdays`, `lastday`, `key`, `warnings` FROM `accounts` WHERE `name` = " << db->escapeString(name) << " LIMIT 1;";
+	query << "SELECT `id`, `name`, `password`, `type`, `premdays`, `lastday`, `key`, `warnings` FROM `accounts` WHERE `name` " << db->getStringComparer() << db->escapeString(name) << " LIMIT 1;";
 	if((result = db->storeQuery(query.str())))
 	{
 		acc.id = result->getDataInt("id");
@@ -143,21 +143,22 @@ bool IOLoginData::createAccount(uint32_t accountNumber, std::string newPassword)
 	return db->executeQuery(query.str());
 }
 
-bool IOLoginData::getPassword(uint32_t accno, const std::string& name, std::string& password)
+bool IOLoginData::getPassword(const std::string& accname, const std::string& name, std::string& password, uint32_t& accNumber)
 {
 	Database* db = Database::getInstance();
 
 	DBQuery query;
 	DBResult* result;
 
-	query << "SELECT `password` FROM `accounts` WHERE `id` = " << accno << ";";
+	query << "SELECT `id`, `password` FROM `accounts` WHERE `name` " << db->getStringComparer() << db->escapeString(accname) << " LIMIT 1;";
 	if(!(result = db->storeQuery(query.str())))
 		return false;
 
 	std::string accountPassword = result->getDataString("password");
+	accNumber = result->getDataInt("id");
 	db->freeResult(result);
 	query.str("");
-	query << "SELECT `name` FROM `players` WHERE `account_id` = " << accno << ";";
+	query << "SELECT `name` FROM `players` WHERE `account_id` = " << accNumber << ";";
 	if(!(result = db->storeQuery(query.str())))
 		return false;
 

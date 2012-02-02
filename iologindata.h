@@ -57,7 +57,7 @@ class IOLoginData
 		Account loadAccount(std::string name);
 		bool saveAccount(Account acc);
 		bool createAccount(uint32_t accountNumber, std::string newPassword);
-		bool getPassword(uint32_t accno, const std::string& name, std::string& password);
+		bool getPassword(const std::string& accname, const std::string& name, std::string& password, uint32_t& accNumber);
 		bool accountExists(uint32_t accno);
 		bool setRecoveryKey(uint32_t accountNumber, std::string recoveryKey);
 		bool validRecoveryKey(uint32_t accountNumber, const std::string recoveryKey);
