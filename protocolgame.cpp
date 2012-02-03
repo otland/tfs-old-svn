@@ -392,6 +392,7 @@ bool ProtocolGame::connect(uint32_t playerId, OperatingSystem_t operatingSystem,
 	}
 
 	player = _player;
+	player->addRef();
 	player->client = this;
 	player->isConnecting = false;
 
