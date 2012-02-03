@@ -392,18 +392,17 @@ bool ProtocolGame::connect(uint32_t playerId, OperatingSystem_t operatingSystem,
 	}
 
 	player = _player;
-	player->addRef();
 	player->client = this;
 	player->isConnecting = false;
 
 	player->sendCreatureAppear(player);
 	player->setOperatingSystem(operatingSystem);
 	player->setClientVersion(version);
-	g_chat.reOpenChannels(player);
 
 	player->lastIP = player->getIP();
 	player->lastLoad = OTSYS_TIME();
 
+	g_chat.reOpenChannels(player);
 	m_acceptPackets = true;
 	return true;
 }
