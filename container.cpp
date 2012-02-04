@@ -296,8 +296,11 @@ ReturnValue Container::__queryAdd(int32_t index, const Thing* thing, uint32_t co
 		}
 	}
 
-	if(index == INDEX_WHEREEVER && !((flags & FLAG_NOLIMIT) == FLAG_NOLIMIT) && full())
-		return RET_CONTAINERNOTENOUGHROOM;
+	if((flags & FLAG_NOLIMIT) != FLAG_NOLIMIT)
+	{
+		if(id == ITEM_INBOX || (index == INDEX_WHEREEVER && full()))
+			return RET_CONTAINERNOTENOUGHROOM;
+	}
 
 	const Cylinder* topParent = getTopParent();
 	if(topParent != this)
