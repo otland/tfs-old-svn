@@ -70,6 +70,8 @@ DatabaseMySQL::~DatabaseMySQL()
 
 bool DatabaseMySQL::connect(bool _reconnect)
 {
+	bool clear = m_connected;
+	m_connected = false;
 	if(_reconnect)
 	{
 		uint32_t attempts = g_config.getNumber(ConfigManager::MYSQL_RECONNECTION_ATTEMPTS);
@@ -77,7 +79,7 @@ bool DatabaseMySQL::connect(bool _reconnect)
 			return false;
 
 		std::clog << "WARNING: MYSQL Lost connection, attempting to reconnect..." << std::endl;
-		if(m_connected)
+		if(clear)
 			mysql_close(m_handle);
 
 		++m_attempts;
@@ -88,7 +90,6 @@ bool DatabaseMySQL::connect(bool _reconnect)
 		}
 	}
 
-	m_connected = false;
 	if(!(m_handle = mysql_init(NULL)))
 	{
 		std::clog << std::endl << "Failed to initialize MySQL connection handler." << std::endl;
