@@ -10,6 +10,12 @@ function onPlayerEndTrade(cid)				npcHandler:onPlayerEndTrade(cid)			end
 function onPlayerCloseChannel(cid)			npcHandler:onPlayerCloseChannel(cid)		end
 
 function oracle(cid, message, keywords, parameters, node)
+	local npcHandler = parameters.npcHandler
+	if(npcHandler == nil) then
+		print('[Warning - ' .. getCreatureName(getNpcId()) .. '] NpcSystem:', 'oracle - Call without any npcHandler instance.')
+		return false
+	end
+
 	if(not npcHandler:isFocused(cid)) then
 		return false
 	end

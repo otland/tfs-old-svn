@@ -73,7 +73,7 @@ if(Modules == nil) then
 			return false
 		end
 
-		if(isPremium(cid) or not getBooleanFromString(getConfigValue('premiumForPromotion')) or not(parameters.premium)) then
+		if(isPremium(cid) or not getBooleanFromString(getConfigValue('premiumForPromotion'))) then
 			if(getPlayerPromotionLevel(cid) >= parameters.promotion) then
 				npcHandler:say('You are already promoted!', cid)
 			elseif(getPlayerLevel(cid) < parameters.level) then
