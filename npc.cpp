@@ -296,7 +296,7 @@ void Npc::reset()
 	shopPlayerList.clear();
 	voiceList.clear();
 }
- 
+
 bool Npc::load()
 {
 	if(isLoaded())

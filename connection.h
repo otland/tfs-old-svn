@@ -71,7 +71,7 @@ class ConnectionManager
 		bool isDisabled(uint32_t clientIp, int32_t protocolId);
 		void addAttempt(uint32_t clientIp, int32_t protocolId, bool success);
 
-		bool acceptConnection(uint32_t clientIp); 
+		bool acceptConnection(uint32_t clientIp);
 		void shutdown();
 
 	protected:
@@ -81,7 +81,7 @@ class ConnectionManager
 		IpLoginMap ipLoginMap;
 
 		typedef std::map<uint32_t, ConnectBlock> IpConnectMap;
-		IpConnectMap ipConnectMap; 
+		IpConnectMap ipConnectMap;
 
 		std::list<Connection_ptr> m_connections;
 		boost::recursive_mutex m_connectionManagerLock;

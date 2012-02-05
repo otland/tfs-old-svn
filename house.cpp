@@ -904,7 +904,7 @@ bool Houses::payHouse(House* house, time_t _time, uint32_t bid)
 		house->setOwnerEx(0, true);
 		if(player->isVirtual())
 			delete player;
- 
+
 		return false;
 	}
 
@@ -918,7 +918,7 @@ bool Houses::payHouse(House* house, time_t _time, uint32_t bid)
 
 		return true;
 	}
-		 
+
 	uint32_t warningsLimit = 7;
 	switch(rentPeriod)
 	{
@@ -934,14 +934,14 @@ bool Houses::payHouse(House* house, time_t _time, uint32_t bid)
 		default:
 			break;
 	}
-	 
+
 	uint32_t warnings = house->getRentWarnings();
 	if(warnings >= warningsLimit)
 	{
 		house->setOwnerEx(0, true);
 		if(player->isVirtual())
 			delete player;
-			 
+
 		return false;
 	}
 
@@ -954,7 +954,7 @@ bool Houses::payHouse(House* house, time_t _time, uint32_t bid)
 				letter->setWriter(g_config.getString(ConfigManager::SERVER_NAME));
 				letter->setDate(std::time(NULL));
 				std::stringstream s;
-				 
+
 				s << "Warning!\nThe ";
 				switch(rentPeriod)
 				{

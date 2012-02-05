@@ -23,7 +23,7 @@ function onTextEdit(cid, item, text)
 	end
 
 	text = text:explode("\n")
-	if(not data.subType or not isInArray(data.subType, {1, 5})) then
+	if(not data.subType or isInArray(data.subType, {1, 5})) then
 		if(text[1] ~= "Name:" or text[3] ~= "(Optional) Length:" or text[5] ~= "Comment:") then
 			doPlayerSendCancel(cid, "Invalid format.")
 			return false

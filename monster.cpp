@@ -87,7 +87,7 @@ Monster::Monster(MonsterType* _mType):
 	minCombatValue = 0;
 	maxCombatValue = 0;
 
-	lastDamage = 0;  
+	lastDamage = 0;
 	targetTicks = 0;
 	targetChangeTicks = 0;
 	targetChangeCooldown = 0;
