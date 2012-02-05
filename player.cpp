@@ -2932,7 +2932,7 @@ ReturnValue Player::__queryAdd(int32_t index, const Thing* thing, uint32_t count
 			self->onRemoveInventoryItem((slots_t)index, tmpItem);
 
 			self->inventory[(slots_t)index] = NULL;
-			inventoryWeight -= item->getWeight();
+			inventoryWeight -= tmpItem->getWeight();
 			sendStats();
 		}
 	}
