@@ -30,6 +30,7 @@ class Depot : public Container
 
 		//serialization
 		virtual Attr_ReadValue readAttr(AttrTypes_t attr, PropStream& propStream);
+		virtual uint32_t getItemHoldingCount() const {return Container::getItemHoldingCount() - 3;}
 
 		uint32_t getDepotId() const;
 
