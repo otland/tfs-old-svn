@@ -2924,12 +2924,16 @@ ReturnValue Player::__queryAdd(int32_t index, const Thing* thing, uint32_t count
 		if(ret == RET_NOERROR && item->getWeaponType() != WEAPON_NONE)
 			self->setLastAttack(OTSYS_TIME());
 
-		if(ret == RET_BOTHHANDSNEEDTOBEFREE && g_game.internalAddItem(NULL, self,
-			inventory[(slots_t)index], INDEX_WHEREEVER) == RET_NOERROR)
+		Item* tmpItem = inventory[(slots_t)index];
+		if(ret == RET_BOTHHANDSNEEDTOBEFREE && g_game.internalAddItem(
+			NULL, self, tmpItem, INDEX_WHEREEVER) == RET_NOERROR)
 		{
-			self->sendRemoveInventoryItem((slots_t)index, inventory[(slots_t)index]);
-			self->onRemoveInventoryItem((slots_t)index, inventory[(slots_t)index]);
+			self->sendRemoveInventoryItem((slots_t)index, tmpItem);
+			self->onRemoveInventoryItem((slots_t)index, tmpItem);
+
 			self->inventory[(slots_t)index] = NULL;
+			inventoryWeight -= item->getWeight();
+			sendStats();
 		}
 	}
 
