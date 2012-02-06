@@ -62,10 +62,7 @@ bool ConfigManager::load()
 			m_confString[LOGS_DIRECTORY] = getGlobalString("logsDirectory", "logs/");
 
 		if(m_confString[IP] == "")
-		{
 			m_confString[IP] = getGlobalString("ip", "127.0.0.1");
-			m_confBool[BIND_ONLY_GLOBAL_ADDRESS] = getGlobalBool("bindOnlyGlobalAddress", false);
-		}
 
 		if(m_confNumber[LOGIN_PORT] == 0)
 			m_confNumber[LOGIN_PORT] = getGlobalNumber("loginPort", 7171);
@@ -112,6 +109,7 @@ bool ConfigManager::load()
 		m_confBool[RANDOMIZE_TILES] = getGlobalBool("randomizeTiles", true);
 		m_confBool[STORE_TRASH] = getGlobalBool("storeTrash", true);
 		m_confString[DEFAULT_PRIORITY] = getGlobalString("defaultPriority", "high");
+		m_confBool[BIND_ONLY_GLOBAL_ADDRESS] = getGlobalBool("bindOnlyGlobalAddress", false);
 		m_confBool[GUILD_HALLS] = getGlobalBool("guildHalls", false);
 		#ifndef __LOGIN_SERVER__
 		m_confBool[LOGIN_ONLY_LOGINSERVER] = getGlobalBool("loginOnlyWithLoginServer", false);

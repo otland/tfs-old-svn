@@ -128,7 +128,8 @@ bool argumentsHandler(StringVec args)
 #endif
 			std::clog << "\t--log=$1\t\tWhole standard output will be logged to\n"
 			"\t\t\t\tthis file.\n"
-			"\t--closed\t\t\tStarts the server as closed.\n";
+			"\t--closed\t\t\tStarts the server as closed.\n"
+			"\t--no-script\t\t\tStarts the server without script system.\n";
 			return false;
 		}
 
@@ -149,10 +150,7 @@ bool argumentsHandler(StringVec args)
 		else if(tmp[0] == "--logs-directory")
 			g_config.setString(ConfigManager::LOGS_DIRECTORY, tmp[1]);
 		else if(tmp[0] == "--ip")
-		{
 			g_config.setString(ConfigManager::IP, tmp[1]);
-			g_config.setBool(ConfigManager::BIND_ONLY_GLOBAL_ADDRESS, true);
-		}
 		else if(tmp[0] == "--login-port")
 			g_config.setNumber(ConfigManager::LOGIN_PORT, atoi(tmp[1].c_str()));
 		else if(tmp[0] == "--game-port")
@@ -175,7 +173,7 @@ bool argumentsHandler(StringVec args)
 #endif
 		else if(tmp[0] == "--closed")
 			g_config.setBool(ConfigManager::START_CLOSED, true);
-		else if(tmp[0] == "--no-script")
+		else if(tmp[0] == "--no-script" || tmp[0] == "--noscript")
 			g_config.setBool(ConfigManager::SCRIPT_SYSTEM, false);
 	}
 

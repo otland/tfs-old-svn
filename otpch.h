@@ -34,7 +34,6 @@
 #include <boost/function.hpp>
 #include <boost/bind.hpp>
 #include <boost/regex.hpp>
-#include <boost/tokenizer.hpp>
 
 //otserv
 #include "thing.h"

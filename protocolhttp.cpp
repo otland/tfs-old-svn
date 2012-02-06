@@ -24,20 +24,16 @@
 uint32_t ProtocolHTTP::protocolHTTPCount = 0;
 #endif
 
+#ifdef __DEBUG_NET_DETAIL__
 void ProtocolHTTP::deleteProtocolTask()
 {
-#ifdef __DEBUG_NET_DETAIL__
 	std::clog << "Deleting ProtocolHTTP" << std::endl;
-#endif
 	Protocol::deleteProtocolTask();
 }
 
-void ProtocolHTTP::disconnectClient()
-{
-	getConnection()->close();
-}
+#endif
 
-bool ProtocolHTTP::parseFirstPacket(NetworkMessage&)
+void ProtocolHTTP::onRecvFirstMessage(NetworkMessage&)
 {
 	if(OutputMessage_ptr output = OutputMessagePool::getInstance()->getOutputMessage(this, false))
 	{
@@ -62,5 +58,4 @@ bool ProtocolHTTP::parseFirstPacket(NetworkMessage&)
 	}
 
 	getConnection()->close();
-	return true;
 }

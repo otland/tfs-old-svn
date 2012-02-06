@@ -39,25 +39,27 @@ IpConnectMap ProtocolStatus::ipConnectMap;
 
 void ProtocolStatus::onRecvFirstMessage(NetworkMessage& msg)
 {
-	if(getIP() != LOCALHOST)
+	uint32_t ip = getIP();
+	if(ip != LOCALHOST)
 	{
-		std::string ip = convertIPAddress(getIP());
-		if(!g_game.isInWhitelist(ip))
+		std::string _ip = convertIPAddress(ip);
+		if(!g_game.isInWhitelist(_ip))
 		{
-			if(g_game.isInBlacklist(ip))
+			if(g_game.isInBlacklist(_ip))
 			{
 				getConnection()->close();
 				return;
 			}
 
-			IpConnectMap::const_iterator it = ipConnectMap.find(getIP());
+			IpConnectMap::const_iterator it = ipConnectMap.find(ip);
 			if(it != ipConnectMap.end() && OTSYS_TIME() < it->second + g_config.getNumber(ConfigManager::STATUSQUERY_TIMEOUT))
 			{
 				getConnection()->close();
 				return;
 			}
 		}
-		ipConnectMap[getIP()] = OTSYS_TIME();
+
+		ipConnectMap[ip] = OTSYS_TIME();
 	}
 
 	uint8_t type = msg.get<char>();
@@ -109,27 +111,24 @@ void ProtocolStatus::onRecvFirstMessage(NetworkMessage& msg)
 	getConnection()->close();
 }
 
+#ifdef __DEBUG_NET_DETAIL__
 void ProtocolStatus::deleteProtocolTask()
 {
-#ifdef __DEBUG_NET_DETAIL__
 	std::clog << "Deleting ProtocolStatus" << std::endl;
-#endif
 	Protocol::deleteProtocolTask();
 }
 
+#endif
 std::string Status::getStatusString(bool sendPlayers) const
 {
-	char buffer[90];
-	xmlDocPtr doc;
-	xmlNodePtr p, root;
-
-	doc = xmlNewDoc((const xmlChar*)"1.0");
+	xmlDocPtr doc = xmlNewDoc((const xmlChar*)"1.0");
 	doc->children = xmlNewDocNode(doc, NULL, (const xmlChar*)"tsqp", NULL);
-	root = doc->children;
+	xmlNodePtr root = doc->children;
 
+	char buffer[90];
 	xmlSetProp(root, (const xmlChar*)"version", (const xmlChar*)"1.0");
 
-	p = xmlNewNode(NULL,(const xmlChar*)"serverinfo");
+	xmlNodePtr p = xmlNewNode(NULL,(const xmlChar*)"serverinfo");
 	sprintf(buffer, "%u", (uint32_t)getUptime());
 	xmlSetProp(p, (const xmlChar*)"uptime", (const xmlChar*)buffer);
 	xmlSetProp(p, (const xmlChar*)"ip", (const xmlChar*)g_config.getString(ConfigManager::IP).c_str());

@@ -26,7 +26,7 @@ class ProtocolLogin : public Protocol
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
 		static uint32_t protocolLoginCount;
 #endif
-		virtual void onRecvFirstMessage(NetworkMessage& msg) {parseFirstPacket(msg);}
+		virtual void onRecvFirstMessage(NetworkMessage& msg);
 
 		ProtocolLogin(Connection_ptr connection) : Protocol(connection)
 		{
@@ -45,12 +45,13 @@ class ProtocolLogin : public Protocol
 		enum {protocolId = 0x01};
 		enum {isSingleSocket = false};
 		enum {hasChecksum = true};
+
 		static const char* protocolName() {return "login protocol";}
 
 	protected:
+		#ifdef __DEBUG_NET_DETAIL__
 		virtual void deleteProtocolTask();
-
+		#endif
 		void disconnectClient(uint8_t error, const char* message);
-		bool parseFirstPacket(NetworkMessage& msg);
 };
 #endif

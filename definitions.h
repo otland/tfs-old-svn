@@ -22,6 +22,11 @@
 #define CLIENT_VERSION_MAX 944
 #define CLIENT_VERSION_STRING "Only clients with protocol 9.44 allowed!"
 
+#define CLIENT_VERSION_DAT 0
+#define CLIENT_VERSION_SPR 0
+#define CLIENT_VERSION_PIC 0
+//#define CLIENT_VERSION_DATA
+
 #define SOFTWARE_NAME "The Forgotten Server"
 #define SOFTWARE_VERSION "0.4_SVN"
 #define SOFTWARE_CODENAME ""

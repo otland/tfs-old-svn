@@ -445,15 +445,10 @@ void ProtocolGame::onConnect()
 
 void ProtocolGame::onRecvFirstMessage(NetworkMessage& msg)
 {
-	parseFirstPacket(msg);
-}
-
-bool ProtocolGame::parseFirstPacket(NetworkMessage& msg)
-{
 	if(g_game.getGameState() == GAMESTATE_SHUTDOWN)
 	{
 		getConnection()->close();
-		return false;
+		return;
 	}
 
 	OperatingSystem_t operatingSystem = (OperatingSystem_t)msg.get<uint16_t>();
@@ -461,7 +456,7 @@ bool ProtocolGame::parseFirstPacket(NetworkMessage& msg)
 	if(!RSA_decrypt(msg))
 	{
 		getConnection()->close();
-		return false;
+		return;
 	}
 
 	uint32_t key[4] = {msg.get<uint32_t>(), msg.get<uint32_t>(), msg.get<uint32_t>(), msg.get<uint32_t>()};
@@ -475,7 +470,7 @@ bool ProtocolGame::parseFirstPacket(NetworkMessage& msg)
 	if(version < CLIENT_VERSION_MIN || version > CLIENT_VERSION_MAX)
 	{
 		disconnectClient(0x14, CLIENT_VERSION_STRING);
-		return false;
+		return;
 	}
 
 	if(name.empty())
@@ -483,7 +478,7 @@ bool ProtocolGame::parseFirstPacket(NetworkMessage& msg)
 		if(!g_config.getBool(ConfigManager::ACCOUNT_MANAGER))
 		{
 			disconnectClient(0x14, "Invalid account name.");
-			return false;
+			return;
 		}
 
 		name = "1";
@@ -493,25 +488,25 @@ bool ProtocolGame::parseFirstPacket(NetworkMessage& msg)
 	if(g_game.getGameState() < GAMESTATE_NORMAL)
 	{
 		disconnectClient(0x14, "Gameworld is just starting up, please wait.");
-		return false;
+		return;
 	}
 
 	if(g_game.getGameState() == GAMESTATE_MAINTAIN)
 	{
 		disconnectClient(0x14, "Gameworld is under maintenance, please re-connect in a while.");
-		return false;
+		return;
 	}
 
 	if(ConnectionManager::getInstance()->isDisabled(getIP(), protocolId))
 	{
 		disconnectClient(0x14, "Too many connections attempts from your IP address, please try again later.");
-		return false;
+		return;
 	}
 
 	if(IOBan::getInstance()->isIpBanished(getIP()))
 	{
 		disconnectClient(0x14, "Your IP is banished!");
-		return false;
+		return;
 	}
 
 	uint32_t id = 1;
@@ -519,7 +514,7 @@ bool ProtocolGame::parseFirstPacket(NetworkMessage& msg)
 	{
 		ConnectionManager::getInstance()->addAttempt(getIP(), protocolId, false);
 		disconnectClient(0x14, "Invalid account name.");
-		return false;
+		return;
 	}
 
 	std::string hash, salt;
@@ -527,7 +522,7 @@ bool ProtocolGame::parseFirstPacket(NetworkMessage& msg)
 	{
 		ConnectionManager::getInstance()->addAttempt(getIP(), protocolId, false);
 		disconnectClient(0x14, "Invalid password.");
-		return false;
+		return;
 	}
 
 	Ban ban;
@@ -549,13 +544,12 @@ bool ProtocolGame::parseFirstPacket(NetworkMessage& msg)
 			   << (deletion ? "" : formatDateEx(ban.expires).c_str()) << ".";
 
 		disconnectClient(0x14, stream.str().c_str());
-		return false;
+		return;
 	}
 
 	ConnectionManager::getInstance()->addAttempt(getIP(), protocolId, true);
 	Dispatcher::getInstance().addTask(createTask(boost::bind(
 		&ProtocolGame::login, this, character, id, password, operatingSystem, version, gamemaster)));
-	return true;
 }
 
 void ProtocolGame::parsePacket(NetworkMessage &msg)

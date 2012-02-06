@@ -42,6 +42,7 @@ class ProtocolGame : public Protocol
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
 		static uint32_t protocolGameCount;
 #endif
+
 		ProtocolGame(Connection_ptr connection): Protocol(connection)
 		{
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
@@ -51,7 +52,6 @@ class ProtocolGame : public Protocol
 			m_eventConnect = m_maxSizeCount = 0;
 			m_debugAssertSent = m_acceptPackets = false;
 		}
-
 		virtual ~ProtocolGame()
 		{
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
@@ -89,7 +89,6 @@ class ProtocolGame : public Protocol
 		virtual void onConnect();
 		virtual void onRecvFirstMessage(NetworkMessage& msg);
 
-		bool parseFirstPacket(NetworkMessage& msg);
 		virtual void parsePacket(NetworkMessage& msg);
 
 		//Parse methods

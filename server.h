@@ -18,6 +18,7 @@
 #ifndef __SERVER__
 #define __SERVER__
 #include "otsystem.h"
+
 #include "connection.h"
 #include <boost/enable_shared_from_this.hpp>
 

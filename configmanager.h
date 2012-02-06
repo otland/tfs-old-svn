@@ -33,7 +33,6 @@ class ConfigManager
 			HOUSE_RENT_PERIOD,
 			HOUSE_STORAGE,
 			LOGIN_MSG,
-			FIRST_MSG,
 			SERVER_NAME,
 			OWNER_NAME,
 			OWNER_EMAIL,

@@ -21,11 +21,9 @@
 #include "outputmessage.h"
 #include "textlogger.h"
 
-#include "game.h"
 #include "configmanager.h"
 #include "tools.h"
 
-extern Game g_game;
 extern ConfigManager g_config;
 
 bool ServicePort::m_logError = true;

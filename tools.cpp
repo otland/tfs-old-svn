@@ -1707,8 +1707,9 @@ std::string getFilePath(FileType_t type, std::string name/* = ""*/)
 {
 	#ifdef __FILESYSTEM_HIERARCHY_STANDARD__
 	std::string path = "/var/lib/tfs/";
-	#endif
+	#else
 	std::string path = g_config.getString(ConfigManager::DATA_DIRECTORY);
+	#endif
 	switch(type)
 	{
 		case FILE_TYPE_OTHER:

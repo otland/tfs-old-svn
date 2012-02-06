@@ -100,7 +100,7 @@ void IOLoginData::loadCharacters(Account& account)
 #ifndef __LOGIN_SERVER__
 	query << "SELECT `name` FROM `players` WHERE `account_id` = " << account.number << " AND `world_id` = " << g_config.getNumber(ConfigManager::WORLD_ID) << " AND `deleted` = 0";
 #else
-	query << "SELECT `name`, `world_id` FROM `players` WHERE `account_id` = " << account.number << " AND `deleted` = 0";
+	query << "SELECT `name`, `world_id`, `online` FROM `players` WHERE `account_id` = " << account.number << " AND `deleted` = 0";
 #endif
 	DBResult* result;
 	if(!(result = db->storeQuery(query.str())))
@@ -113,7 +113,7 @@ void IOLoginData::loadCharacters(Account& account)
 		account.charList.push_back(ss.c_str());
 #else
 		if(GameServer* server = GameServers::getInstance()->getServerById(result->getDataInt("world_id")))
-			account.charList[ss] = server;
+			account.charList[ss] = std::make_pair(result->getDataInt("online") != 0, server);
 		else
 			std::clog << "[Warning - IOLoginData::loadAccount] Invalid server for player '" << ss << "'." << std::endl;
 #endif

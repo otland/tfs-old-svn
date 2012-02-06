@@ -22,10 +22,10 @@
 
 typedef std::list<std::string> Characters;
 #else
-#include "gameservers.h"
-typedef std::map<std::string, GameServer*> Characters;
-
+class GameServer;
+typedef std::map<std::string, std::pair<bool, GameServer*> > Characters;
 #endif
+
 class Account
 {
 	public:
