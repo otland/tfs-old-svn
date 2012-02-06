@@ -70,7 +70,7 @@ DatabaseMySQL::~DatabaseMySQL()
 
 bool DatabaseMySQL::connect(bool _reconnect)
 {
-	bool clear = m_connected;
+	bool clear = false;//m_connected;
 	m_connected = false;
 	if(_reconnect)
 	{
@@ -124,7 +124,7 @@ bool DatabaseMySQL::connect(bool _reconnect)
 	}
 
 	std::clog << std::endl << "Failed connecting to database - MYSQL ERROR: " << mysql_error(m_handle) << " (" << mysql_errno(m_handle) << ")" << std::endl;
-	mysql_close(m_handle);
+	//mysql_close(m_handle);
 	return false;
 }
 
