@@ -549,7 +549,7 @@ ReturnValue Tile::__queryAdd(int32_t, const Thing* thing, uint32_t,
 				return RET_NOTPOSSIBLE;
 
 			if((hasFlag(TILESTATE_BLOCKSOLID) || (hasBitSet(FLAG_PATHFINDING, flags) && hasFlag(TILESTATE_NOFIELDBLOCKPATH)))
-				&& (!(monster->canPushItems() || hasBitSet(FLAG_IGNOREBLOCKITEM, flags))))
+				&& !(monster->canPushItems() || hasBitSet(FLAG_IGNOREBLOCKITEM, flags)))
 				return RET_NOTPOSSIBLE;
 
 			if(!items) // Do not seek for fields if there are no items
@@ -573,8 +573,8 @@ ReturnValue Tile::__queryAdd(int32_t, const Thing* thing, uint32_t,
 			if(!hasBitSet(FLAG_IGNOREFIELDDAMAGE, flags))
 				return RET_NOTPOSSIBLE;
 
-			return !monster->hasCondition(Combat::DamageToConditionType(combatType), -1, false)
-				&& (!monster->canPushItems() || !monster->hasRecentBattle()) ? RET_NOTPOSSIBLE : RET_NOERROR;
+			return !monster->hasCondition(Combat::DamageToConditionType(combatType), -1, false) &&
+				(!monster->canPushItems() || !monster->hasRecentBattle()) ? RET_NOTPOSSIBLE : RET_NOERROR;
 		}
 
 		if(const Player* player = creature->getPlayer())

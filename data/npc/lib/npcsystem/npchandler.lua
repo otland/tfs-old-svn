@@ -362,7 +362,20 @@ if(NpcHandler == nil) then
 					self:resetNpc(cid)
 					if(NPCHANDLER_CONVBEHAVIOR ~= CONVERSATION_DEFAULT) then
 						self:say(msg, cid, 0, true)
-					elseif(not isPlayerGhost(cid)) then
+						msg = msg:gsub('{', ''):gsub('}', '')
+						local ghost, position = isPlayerGhost(cid), getThingPosition(getNpcId())
+
+						local spectators = getSpectators(position, 7, 7)
+						for _, pid in ipairs(spectators) do
+							if(isPlayer(pid) and pid ~= cid)
+								if(NPCHANDLER_TALKDELAY ~= TALKDELAY_NONE) then
+									addEvent(doCreatureSay, self.talkDelayTime, cid, msg, TALKTYPE_SAY, ghost, pid, position)
+								else
+									doCreatureSay(cid, msg, TALKTYPE_SAY, ghost, pid, position)
+								end
+							end
+						end
+					else
 						self:say(msg)
 					end
 
@@ -382,8 +395,21 @@ if(NpcHandler == nil) then
 
 				self:addFocus(cid)
 				if(NPCHANDLER_CONVBEHAVIOR ~= CONVERSATION_DEFAULT) then
-					self:say(msg, cid)
-				elseif(not isPlayerGhost(cid)) then
+					self:say(msg, cid, 0, true)
+					msg = msg:gsub('{', ''):gsub('}', '')
+					local ghost, position = isPlayerGhost(cid), getThingPosition(getNpcId())
+
+					local spectators = getSpectators(position, 7, 7)
+					for _, pid in ipairs(spectators) do
+						if(isPlayer(pid) and pid ~= cid)
+							if(NPCHANDLER_TALKDELAY ~= TALKDELAY_NONE) then
+								addEvent(doCreatureSay, self.talkDelayTime, cid, msg, TALKTYPE_SAY, ghost, pid, position)
+							else
+								doCreatureSay(cid, msg, TALKTYPE_SAY, ghost, pid, position)
+							end
+						end
+					end
+				else
 					self:say(msg)
 				end
 			end
@@ -590,12 +616,7 @@ if(NpcHandler == nil) then
 						msg = self:parseMessage(msg, { [TAG_PLAYERNAME] = getPlayerName(cid) or -1 })
 
 						self:resetNpc(cid)
-						if(NPCHANDLER_CONVBEHAVIOR ~= CONVERSATION_DEFAULT) then
-							self:say(msg, cid, 0, true)
-						elseif(not isPlayerGhost(cid)) then
-							self:say(msg)
-						end
-
+						self:say(msg)
 						self:releaseFocus(cid)
 					end
 				end
