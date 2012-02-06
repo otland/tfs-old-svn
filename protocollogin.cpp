@@ -155,19 +155,10 @@ void ProtocolLogin::onRecvFirstMessage(NetworkMessage& msg)
 	}
 
 	Account account;
-	if(!IOLoginData::getInstance()->loadAccount(account, name))
+	if(!IOLoginData::getInstance()->loadAccount(account, name) || !encryptTest(account.salt + password, account.password))
 	{
 		ConnectionManager::getInstance()->addAttempt(clientIp, protocolId, false);
-		disconnectClient(0x0A, "Invalid account name.");
-		return;
-	}
-
-	// Should we merge those to one error, Invalid account data?
-	// Makes it harder to bruteforce in potential attempt.
-	if(!encryptTest(account.salt + password, account.password))
-	{
-		ConnectionManager::getInstance()->addAttempt(clientIp, protocolId, false);
-		disconnectClient(0x0A, "Invalid password.");
+		disconnectClient(0x0A, "Invalid account name or password.");
 		return;
 	}
 
