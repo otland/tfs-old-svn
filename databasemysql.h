@@ -19,12 +19,15 @@
 #define __DATABASEMYSQL__
 
 #ifdef __USE_MYSQL__
-
 #ifndef __DATABASE__
 #error "database.h should be included first."
 #endif
 
+#ifdef _MSC_VER
 #include <mysql.h>
+#else
+#include <mysql/mysql.h>
+#endif
 
 #if defined WINDOWS
 #include <winsock2.h>

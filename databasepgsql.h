@@ -19,7 +19,6 @@
 #define __DATABASE_PGSQL__
 
 #ifdef __USE_PGSQL__
-
 #ifndef __DATABASE__
 #error "database.h should be included first."
 #endif

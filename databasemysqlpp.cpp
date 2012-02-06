@@ -15,9 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////
 #include "otpch.h"
-
 #ifdef __USE_MYSQLPP__
-
 #include <iostream>
 
 #include "database.h"

@@ -14,13 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////
-
 #include "otpch.h"
-
 #ifdef __USE_SQLITE__
 #include <iostream>
 #include <boost/regex.hpp>
-
 
 #include "database.h"
 #include "databasesqlite.h"

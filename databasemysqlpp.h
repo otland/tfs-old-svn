@@ -19,7 +19,6 @@
 #define __DATABASEMYSQLPP__
 
 #ifdef __USE_MYSQLPP__
-
 #ifndef __DATABASE__
 #error "database.h should be included first."
 #endif

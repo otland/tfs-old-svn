@@ -19,7 +19,6 @@
 #define __DATABASE_SQLITE__
 
 #ifdef __USE_SQLITE__
-
 #ifndef __DATABASE__
 #error "database.h should be included first."
 #endif
