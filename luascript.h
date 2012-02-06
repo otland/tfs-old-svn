@@ -18,9 +18,8 @@
 #ifndef __LUASCRIPT__
 #define __LUASCRIPT__
 #include "otsystem.h"
-#ifdef __LUAJIT__
-#include <luajit-2.0/lua.hpp>
-#elif defined(__ALT_LUA_PATH__)
+
+#if defined(__ALT_LUA_PATH__)
 extern "C"
 {
 	#include <lua5.1/lua.h>
@@ -33,6 +32,10 @@ extern "C"
 	#include <lua.h>
 	#include <lauxlib.h>
 	#include <lualib.h>
+
+	#ifdef __LUAJIT__
+	#include <luajit.h>
+	#endif
 }
 #endif
 

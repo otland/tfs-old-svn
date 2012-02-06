@@ -15,6 +15,9 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////
 #include "otpch.h"
+
+#ifdef __USE_PGSQL__
+
 #include <iostream>
 
 #include "database.h"
@@ -24,7 +27,7 @@
 extern ConfigManager g_config;
 
 DatabasePgSQL::DatabasePgSQL() :
-	m_handle(NULL);
+	m_handle(NULL)
 {
 	std::stringstream dns;
 	dns << "host='" << g_config.getString(ConfigManager::SQL_HOST) << "' dbname='" << g_config.getString(ConfigManager::SQL_DB) << "' user='" << g_config.getString(ConfigManager::SQL_USER) << "' password='" << g_config.getString(ConfigManager::SQL_PASS) << "' port='" << g_config.getNumber(ConfigManager::SQL_PORT) << "'";
@@ -34,7 +37,6 @@ DatabasePgSQL::DatabasePgSQL() :
 	{
 		std::clog << "Failed to estabilish PostgreSQL database connection: " << PQerrorMessage(m_handle) << std::endl;
 		PQfinish(m_handle);
-		delete m_handle;
 	}
 	else
 		m_connected = true;
@@ -226,3 +228,4 @@ PgSQLResult::PgSQLResult(PGresult* result)
 	m_rows = PQntuples(m_handle) - 1;
 	m_cursor = -1;
 }
+#endif

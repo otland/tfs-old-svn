@@ -181,7 +181,7 @@ bool argumentsHandler(StringVec args)
 }
 
 #ifndef WINDOWS
-int32_t getch()
+int32_t OTSYS_getch()
 {
 	struct termios oldt;
 	tcgetattr(STDIN_FILENO, &oldt);
@@ -250,7 +250,7 @@ void runfileHandler(void)
 	runfile.close();
 }
 #else
-int32_t getch()
+int32_t OTSYS_getch()
 {
 	return (int32_t)getchar();
 }
@@ -259,7 +259,7 @@ int32_t getch()
 void allocationHandler()
 {
 	puts("Allocation failed, server out of memory!\nDecrease size of your map or compile in a 64-bit mode.");
-	getch();
+	OTSYS_getch();
 	std::exit(-1);
 }
 
@@ -269,7 +269,7 @@ void startupErrorMessage(std::string error = "")
 	if(error.length() > 0)
 		std::clog << std::endl << "> ERROR: " << error << std::endl;
 
-	getch();
+	OTSYS_getch();
 	std::exit(-1);
 }
 
@@ -350,7 +350,7 @@ void otserv(StringVec, ServiceManager* services)
 	{
 		std::clog << "> WARNING: " << SOFTWARE_NAME << " has been executed as super user! It is "
 			<< "recommended to run as a normal user." << std::endl << "Continue? (y/N)" << std::endl;
-		char buffer = getch();
+		char buffer = OTSYS_getch();
 		if(buffer != 121 && buffer != 89)
 			startupErrorMessage("Aborted.");
 	}
@@ -553,7 +553,7 @@ void otserv(StringVec, ServiceManager* services)
 							asLowerCaseString(version).find("_svn") == std::string::npos)
 						{
 							std::clog << "Continue? (y/N)" << std::endl;
-							char buffer = getch();
+							char buffer = OTSYS_getch();
 							if(buffer != 121 && buffer != 89)
 								startupErrorMessage("Aborted.");
 						}
@@ -646,7 +646,7 @@ void otserv(StringVec, ServiceManager* services)
 	if(!Item::items.loadFromXml())
 	{
 		std::clog << "Unable to load items (XML)! Continue? (y/N)" << std::endl;
-		char buffer = getch();
+		char buffer = OTSYS_getch();
 		if(buffer != 121 && buffer != 89)
 			startupErrorMessage("Unable to load items (XML)!");
 	}
@@ -701,7 +701,7 @@ void otserv(StringVec, ServiceManager* services)
 	if(!g_monsters.loadFromXml())
 	{
 		std::clog << "Unable to load monsters! Continue? (y/N)" << std::endl;
-		char buffer = getch();
+		char buffer = OTSYS_getch();
 		if(buffer != 121 && buffer != 89)
 			startupErrorMessage("Unable to load monsters!");
 	}
@@ -712,7 +712,7 @@ void otserv(StringVec, ServiceManager* services)
 		if(!g_npcs.loadFromXml())
 		{
 			std::clog << "Unable to load npcs! Continue? (y/N)" << std::endl;
-			char buffer = getch();
+			char buffer = OTSYS_getch();
 			if(buffer != 121 && buffer != 89)
 				startupErrorMessage("Unable to load npcs!");
 		}

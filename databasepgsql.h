@@ -18,6 +18,8 @@
 #ifndef __DATABASE_PGSQL__
 #define __DATABASE_PGSQL__
 
+#ifdef __USE_PGSQL__
+
 #ifndef __DATABASE__
 #error "database.h should be included first."
 #endif
@@ -72,4 +74,5 @@ class PgSQLResult : public _DBResult
 		PGresult* m_handle;
 		int32_t m_rows, m_cursor;
 };
-#endif
+#endif // __USE_PGSQL__
+#endif 
