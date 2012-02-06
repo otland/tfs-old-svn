@@ -26,18 +26,14 @@
 #include <list>
 #include <vector>
 
-#ifdef __LUAJIT__
-#include <lua.hpp>
-#endif
-
 extern "C"
 {
-	#ifndef __LUAJIT__
 	#include <lua.h>
-	#endif
-
 	#include <lauxlib.h>
 	#include <lualib.h>
+	#ifdef __LUAJIT__
+	#include <luajit.h>
+	#endif
 }
 
 #include "position.h"

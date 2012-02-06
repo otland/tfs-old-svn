@@ -1,8 +1,8 @@
+ID_ICON ICON "TheForgottenServer.ico"
+
 #ifndef __CONSOLE__
 #include "resources.h"
 #include <windows.h>
-
-ID_ICON ICON "TheForgottenServer.ico"
 
 ID_MENU MENU
 BEGIN

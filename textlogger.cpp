@@ -18,9 +18,11 @@
 // Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 //////////////////////////////////////////////////////////////////////
 
-#include "definitions.h"
+#include "otpch.h"
 
 #ifndef __CONSOLE__
+
+#include "definitions.h"
 #include "textlogger.h"
 #include "gui.h"
 #include "tools.h"

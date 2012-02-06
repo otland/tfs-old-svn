@@ -18,8 +18,10 @@
 // Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 //////////////////////////////////////////////////////////////////////
 
-#include "definitions.h"
+#include "otpch.h"
+
 #ifndef __CONSOLE__
+#include "definitions.h"
 #include "game.h"
 #include <iostream>
 #include "gui.h"
