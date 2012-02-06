@@ -367,7 +367,7 @@ if(NpcHandler == nil) then
 
 						local spectators = getSpectators(position, 7, 7)
 						for _, pid in ipairs(spectators) do
-							if(isPlayer(pid) and pid ~= cid)
+							if(isPlayer(pid) and pid ~= cid) then
 								if(NPCHANDLER_TALKDELAY ~= TALKDELAY_NONE) then
 									addEvent(doCreatureSay, self.talkDelayTime, cid, msg, TALKTYPE_SAY, ghost, pid, position)
 								else
@@ -401,7 +401,7 @@ if(NpcHandler == nil) then
 
 					local spectators = getSpectators(position, 7, 7)
 					for _, pid in ipairs(spectators) do
-						if(isPlayer(pid) and pid ~= cid)
+						if(isPlayer(pid) and pid ~= cid) then
 							if(NPCHANDLER_TALKDELAY ~= TALKDELAY_NONE) then
 								addEvent(doCreatureSay, self.talkDelayTime, cid, msg, TALKTYPE_SAY, ghost, pid, position)
 							else
