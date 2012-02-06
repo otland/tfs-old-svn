@@ -37,4 +37,5 @@
 #include <boost/regex.hpp>
 
 //otserv
+#include "configmanager.h"
 #include "thing.h"
