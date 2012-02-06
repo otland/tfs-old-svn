@@ -20,6 +20,7 @@
 #include "connection.h"
 #include "outputmessage.h"
 #include "textlogger.h"
+#include "scheduler.h"
 
 #include "configmanager.h"
 #include "tools.h"
