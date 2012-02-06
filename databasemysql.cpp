@@ -27,7 +27,11 @@
 #include "configmanager.h"
 #include "tools.h"
 
+#ifdef _MSC_VER
 #include <errmsg.h>
+#else
+#include <mysql/errmsg.h>
+#endif
 
 extern ConfigManager g_config;
 
