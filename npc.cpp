@@ -1940,7 +1940,7 @@ void Npc::doSay(const std::string& text, MessageClasses type, Player* player)
 		std::string tmp = text;
 		replaceString(tmp, "{", "");
 		replaceString(tmp, "}", "");
-		g_game.internalCreatureSay(this, type, tmp, player->isGhost());
+		g_game.internalCreatureSay(this, type, tmp, player && player->isGhost());
 	}
 	else
 	{
