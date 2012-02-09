@@ -279,7 +279,8 @@ void ProtocolLogin::onRecvFirstMessage(NetworkMessage& msg)
 				output->putString(it->second.second->getName());
 
 			output->put<uint32_t>(it->second->getAddress());
-			output->put<uint16_t>(it->second->getPort());
+			IntegerVec games = it->second.second->getPorts();
+			output->put<uint16_t>(games[random_range(0, games.size())]);
 		}
 		#endif
 
