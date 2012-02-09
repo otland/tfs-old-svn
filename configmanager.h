@@ -68,6 +68,7 @@ class ConfigManager
 			ADMIN_PASSWORD,
 			ADMIN_ENCRYPTION,
 			ADMIN_ENCRYPTION_DATA,
+			GAME_PORT,
 			LAST_STRING_CONFIG /* this must be the last one */
 		};
 
@@ -77,7 +78,6 @@ class ConfigManager
 			RETRY_TIMEOUT,
 			LOGIN_TIMEOUT,
 			LOGIN_PORT,
-			GAME_PORT,
 			ADMIN_PORT,
 			STATUS_PORT,
 			MANAGER_PORT,

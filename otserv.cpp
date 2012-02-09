@@ -836,10 +836,12 @@ void otserv(StringVec, ServiceManager* services)
 		services->add<ProtocolOldLogin>(g_config.getNumber(ConfigManager::LOGIN_PORT), ipList);
 	}
 
-	services->add<ProtocolGame>(g_config.getNumber(ConfigManager::GAME_PORT), ipList);
 	services->add<ProtocolOldGame>(g_config.getNumber(ConfigManager::LOGIN_PORT), ipList);
-	std::clog << "> Bound ports: ";
+	IntegerVec games = vectorAtoi(explodeString(g_config.getNumber(ConfigManager::GAME_PORT), ","));
+	for(IntegerVec::const_iterator it = games.begin(); it != games.end(); ++it)
+		services->add<ProtocolGame>(*it, ipList);
 
+	std::clog << "> Bound ports: ";
 	std::list<uint16_t> ports = services->getPorts();
 	for(std::list<uint16_t>::iterator it = ports.begin(); it != ports.end(); ++it)
 		std::clog << (*it) << "\t";

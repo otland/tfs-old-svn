@@ -30,7 +30,7 @@ ConfigManager::ConfigManager()
 	m_confNumber[ENCRYPTION] = ENCRYPTION_SHA256;
 	m_confString[CONFIG_FILE] = getFilePath(FILE_TYPE_CONFIG, "config.lua");
 
-	m_confNumber[LOGIN_PORT] = m_confNumber[GAME_PORT] = m_confNumber[ADMIN_PORT] = m_confNumber[MANAGER_PORT] = m_confNumber[STATUS_PORT] = 0;
+	m_confNumber[LOGIN_PORT] = m_confNumber[ADMIN_PORT] = m_confNumber[MANAGER_PORT] = m_confNumber[STATUS_PORT] = 0;
 	m_confString[DATA_DIRECTORY] = m_confString[LOGS_DIRECTORY] = m_confString[IP] = m_confString[RUNFILE] = m_confString[OUTPUT_LOG] = "";
 	m_confBool[LOGIN_ONLY_LOGINSERVER] = m_confBool[START_CLOSED] = m_confBool[DAEMONIZE] = false;
 	m_confBool[SCRIPT_SYSTEM] = true;
@@ -67,8 +67,8 @@ bool ConfigManager::load()
 		if(m_confNumber[LOGIN_PORT] == 0)
 			m_confNumber[LOGIN_PORT] = getGlobalNumber("loginPort", 7171);
 
-		if(m_confNumber[GAME_PORT] == 0)
-			m_confNumber[GAME_PORT] = getGlobalNumber("gamePort", 7172);
+		if(m_confString[GAME_PORT] == "")
+			m_confString[GAME_PORT] = getGlobalString("gamePort", "7172");
 
 		if(m_confNumber[ADMIN_PORT] == 0)
 			m_confNumber[ADMIN_PORT] = getGlobalNumber("adminPort", 7171);

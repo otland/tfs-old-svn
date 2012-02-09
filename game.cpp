@@ -5792,8 +5792,11 @@ Highscore Game::getHighscore(uint16_t skill)
 
 int32_t Game::getMotdId()
 {
-	if(lastMotd == g_config.getString(ConfigManager::MOTD))
-		return lastMotdId;
+	if(lastMotd.length() == g_config.getString(ConfigManager::MOTD).length())
+	{
+		if(lastMotd == g_config.getString(ConfigManager::MOTD))
+			return lastMotdId;
+	}
 
 	lastMotd = g_config.getString(ConfigManager::MOTD);
 	Database* db = Database::getInstance();

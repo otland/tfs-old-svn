@@ -237,9 +237,12 @@ void ProtocolLogin::onRecvFirstMessage(NetworkMessage& msg)
 		{
 			output->put<char>(account.charList.size() + 1);
 			output->putString("Account Manager");
+
 			output->putString(g_config.getString(ConfigManager::SERVER_NAME));
 			output->put<uint32_t>(serverIp);
-			output->put<uint16_t>(g_config.getNumber(ConfigManager::GAME_PORT));
+
+			IntegerVec games = vectorAtoi(explodeString(g_config.getNumber(ConfigManager::GAME_PORT), ","));
+			output->put<uint16_t>(games[random_range(0, games.size())]);
 		}
 		else
 			output->put<char>((uint8_t)account.charList.size());
