@@ -29,7 +29,7 @@ class GameServer
 			ports.push_back(7181);
 		}
 		GameServer(std::string _name, uint32_t _versionMin, uint32_t _versionMax, uint32_t _address, std::vector<int32_t> _ports):
-			name(_name), address(_address), ports(_ports), versionMin(_versionMin), versionMax(_versionMax) {}
+			name(_name), address(_address), versionMin(_versionMin), versionMax(_versionMax), ports(_ports) {}
 		virtual ~GameServer() {}
 
 		std::string getName() const {return name;}

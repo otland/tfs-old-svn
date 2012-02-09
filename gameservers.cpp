@@ -113,14 +113,14 @@ bool GameServers::loadFromXml(bool result)
 		}
 
 		if(readXMLString(p, "port", strValue))
-			ports = vectorAtoi(explodeString(g_config.getNumber(ConfigManager::GAME_PORT), ","));
+			ports = vectorAtoi(explodeString(strValue, ","));
 		else
 		{
 			ports.push_back(7181);
 			std::clog << "[Warning - GameServers::loadFromXml] Missing port for server " << id << ", using default" << std::endl;
 		}
 
-		if(GameServer* server = new GameServer(name, versionMin, versionMax, inet_addr(address.c_str()), port))
+		if(GameServer* server = new GameServer(name, versionMin, versionMax, inet_addr(address.c_str()), ports))
 			serverList[id] = server;
 		else
 			std::clog << "[Error - GameServers::loadFromXml] Couldn't add server " << name << std::endl;
@@ -130,7 +130,11 @@ bool GameServers::loadFromXml(bool result)
 	{
 		std::clog << "> Servers loaded:" << std::endl;
 		for(GameServersMap::iterator it = serverList.begin(); it != serverList.end(); ++it)
-			std::clog << it->second->getName() << " (" << it->second->getAddress() << ":" << it->second->getPort() << ")" << std::endl;
+		{
+			IntegerVec games = it->second->getPorts();
+			for(IntegerVec::const_iterator tit = games.begin(); tit != games.end(); ++tit)
+				std::clog << it->second->getName() << " (" << it->second->getAddress() << ":" << *tit << ")" << std::endl;
+		}
 	}
 
 	xmlFreeDoc(doc);
