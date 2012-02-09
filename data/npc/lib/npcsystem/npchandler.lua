@@ -365,13 +365,13 @@ if(NpcHandler == nil) then
 						msg = msg:gsub('{', ''):gsub('}', '')
 						local ghost, position = isPlayerGhost(cid), getThingPosition(getNpcId())
 
-						local spectators = getSpectators(position, 7, 7)
+						local spectators, nid = getSpectators(position, 7, 7), getNpcId()
 						for _, pid in ipairs(spectators) do
 							if(isPlayer(pid) and pid ~= cid) then
 								if(NPCHANDLER_TALKDELAY ~= TALKDELAY_NONE) then
-									addEvent(doCreatureSay, self.talkDelayTime, cid, msg, TALKTYPE_SAY, ghost, pid, position)
+									addEvent(doCreatureSay, self.talkDelayTime, nid, msg, TALKTYPE_SAY, ghost, pid, position)
 								else
-									doCreatureSay(cid, msg, TALKTYPE_SAY, ghost, pid, position)
+									doCreatureSay(nid, msg, TALKTYPE_SAY, ghost, pid, position)
 								end
 							end
 						end
@@ -399,13 +399,13 @@ if(NpcHandler == nil) then
 					msg = msg:gsub('{', ''):gsub('}', '')
 					local ghost, position = isPlayerGhost(cid), getThingPosition(getNpcId())
 
-					local spectators = getSpectators(position, 7, 7)
+					local spectators, nid = getSpectators(position, 7, 7), getNpcId()
 					for _, pid in ipairs(spectators) do
 						if(isPlayer(pid) and pid ~= cid) then
 							if(NPCHANDLER_TALKDELAY ~= TALKDELAY_NONE) then
-								addEvent(doCreatureSay, self.talkDelayTime, cid, msg, TALKTYPE_SAY, ghost, pid, position)
+								addEvent(doCreatureSay, self.talkDelayTime, nid, msg, TALKTYPE_SAY, ghost, pid, position)
 							else
-								doCreatureSay(cid, msg, TALKTYPE_SAY, ghost, pid, position)
+								doCreatureSay(nid, msg, TALKTYPE_SAY, ghost, pid, position)
 							end
 						end
 					end
@@ -613,10 +613,8 @@ if(NpcHandler == nil) then
 				if(self:processModuleCallback(CALLBACK_CREATURE_DISAPPEAR, cid)) then
 					if(self.queue == nil or not self.queue:greetNext()) then
 						local msg = self:getMessage(MESSAGE_WALKAWAY)
-						msg = self:parseMessage(msg, { [TAG_PLAYERNAME] = getPlayerName(cid) or -1 })
-
 						self:resetNpc(cid)
-						self:say(msg)
+						self:say(self:parseMessage(msg, { [TAG_PLAYERNAME] = getPlayerName(cid) or -1 }))
 						self:releaseFocus(cid)
 					end
 				end
