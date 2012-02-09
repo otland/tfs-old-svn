@@ -837,7 +837,7 @@ void otserv(StringVec, ServiceManager* services)
 	}
 
 	services->add<ProtocolOldGame>(g_config.getNumber(ConfigManager::LOGIN_PORT), ipList);
-	IntegerVec games = vectorAtoi(explodeString(g_config.getNumber(ConfigManager::GAME_PORT), ","));
+	IntegerVec games = vectorAtoi(explodeString(g_config.getString(ConfigManager::GAME_PORT), ","));
 	for(IntegerVec::const_iterator it = games.begin(); it != games.end(); ++it)
 		services->add<ProtocolGame>(*it, ipList);
 
