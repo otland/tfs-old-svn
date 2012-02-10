@@ -193,6 +193,7 @@ class ConfigManager
 			ROOK_TOWN,
 			ROOK_LEVELTO,
 			ROOK_TOLEVEL,
+			SERVICE_THREADS,
 			LAST_NUMBER_CONFIG /* this must be the last one */
 		};
 

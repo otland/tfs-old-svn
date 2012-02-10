@@ -204,6 +204,7 @@
 	daemonize = false
 	defaultPriority = "high"
 	niceLevel = 5
+	serviceThreads = 1
 	coresUsed = "-1"
 
 	-- Startup
