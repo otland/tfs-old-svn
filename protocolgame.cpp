@@ -2944,8 +2944,7 @@ void ProtocolGame::AddCreatureHealth(NetworkMessage_ptr msg,const Creature* crea
 
 void ProtocolGame::AddCreatureOutfit(NetworkMessage_ptr msg, const Creature* creature, const Outfit_t& outfit, bool outfitWindow/* = false*/)
 {
-	const Player* _player = creature->getPlayer();
-	if(outfitWindow || !player || (!creature->isInvisible() && (!creature->isGhost()
+	if(outfitWindow || (!creature->isInvisible() && (!creature->isGhost()
 		|| !g_config.getBool(ConfigManager::GHOST_INVISIBLE_EFFECT))))
 	{
 		msg->put<uint16_t>(outfit.lookType);
@@ -2962,7 +2961,8 @@ void ProtocolGame::AddCreatureOutfit(NetworkMessage_ptr msg, const Creature* cre
 		else
 			msg->put<uint16_t>(outfit.lookTypeEx);
 
-		if(!player || player->isMounted())
+		const Player* _player = creature->getPlayer();
+		if(!_player || _player->isMounted())
 			msg->put<uint16_t>(outfit.lookMount);
 		else
 			msg->put<uint16_t>(0x00);
