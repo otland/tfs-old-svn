@@ -261,7 +261,7 @@ bool Quests::parseQuestNode(xmlNodePtr p, bool checkDuplicate)
 	return true;
 }
 
-bool Quests::isQuestStorage(const std::string& key, const std::string& value) const
+bool Quests::isQuestStorage(const std::string& storageId, const std::string& storageValue) const
 {
 	int32_t value = atoi(storageValue.c_str());
 	for(QuestList::const_iterator it = quests.begin(); it != quests.end(); ++it)
