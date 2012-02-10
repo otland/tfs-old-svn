@@ -317,3 +317,19 @@ void Quests::getQuestsList(Player* player, NetworkMessage_ptr msg)
 		}
 	}
 }
+
+bool Quests::isQuestStorage(const uint32_t key, const int32_t value)
+{
+	for(QuestsList::const_iterator it = quests.begin(), end = quests.end(); it != end; ++it)
+	{
+		if((*it)->getStartStorageId() == key && (*it)->getStartStorageValue() == value)
+			return true;
+
+		for(MissionsList::const_iterator m_it = (*it)->missions.begin(), m_end = (*it)->missions.end(); m_it != m_end; ++m_it)
+		{
+			if((*m_it)->getStorageId() == key && value >= (*m_it)->getStartStorageValue() && value <= (*m_it)->getEndStorageValue())
+				return true;
+		}
+	}
+	return false;
+}

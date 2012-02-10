@@ -41,6 +41,7 @@
 #include "status.h"
 #include "beds.h"
 #include "mounts.h"
+#include "quests.h"
 #ifndef __CONSOLE__
 #include "gui.h"
 #endif
@@ -853,7 +854,11 @@ void Player::addStorageValue(const uint32_t key, const int32_t value)
 	if(value == -1)
 		storageMap.erase(key);
 	else
+	{
 		storageMap[key] = value;
+		if(Quests::getInstance()->isQuestStorage(key, value))
+			sendTextMessage(MSG_EVENT_ADVANCE, "Your questlog has been updated.");
+	}
 }
 
 bool Player::getStorageValue(const uint32_t key, int32_t& value) const
