@@ -1018,7 +1018,6 @@ void Player::updateDepots()
 			depot->setLocker((*rit)->getContainer());
 			depot->setInbox((*(++rit))->getContainer());
 		}
-
 	}
 }
 
