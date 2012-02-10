@@ -811,19 +811,13 @@ bool Player::setStorage(const std::string& key, const std::string& value)
 	uint32_t numericKey = atol(key.c_str());
 	if(!IS_IN_KEYRANGE(numericKey, RESERVED_RANGE) || IS_IN_KEYRANGE(numericKey, MOUNTS_RANGE))
 	{
-		bool storageSet = Creature::setStorage(key, value);
-		if(storageSet && Quests::getInstance()->isQuestStorage(key, value))
-		{
-			Mission* mission = NULL;
-			Quest* quest = Quests::getInstance()->getQuestByStorageId(key, value);
-			if(!quest)
-				mission = Quests::getInstance()->getMissionByStorageId(key, value);
-			
-			if(quest || mission)
-				onUpdateQuest();
-		}
+		if(!Creature::setStorage(key, value))
+			return false;
+
+		if(Quests::getInstance()->isQuestStorage(key, value))
+			onUpdateQuest();
 		
-		return storageSet;
+		return true;
 	}
 
 	if(IS_IN_KEYRANGE(numericKey, OUTFITS_RANGE))

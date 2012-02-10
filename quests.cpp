@@ -83,7 +83,6 @@ std::string Mission::getDescription(Player* player)
 	return "Couldn't retrieve any mission description, please report to a gamemaster.";
 }
 
-
 Quest::~Quest()
 {
 	for(MissionList::iterator it = missions.begin(); it != missions.end(); ++it)
@@ -152,7 +151,7 @@ bool Quests::loadFromXml()
 		return false;
 	}
 
-	xmlNodePtr p, root = xmlDocGetRootElement(doc);
+	xmlNodePtr root = xmlDocGetRootElement(doc);
 	if(xmlStrcmp(root->name,(const xmlChar*)"quests"))
 	{
 		std::clog << "[Error - Quests::loadFromXml] Malformed quests file." << std::endl;
@@ -160,12 +159,8 @@ bool Quests::loadFromXml()
 		return false;
 	}
 
-	p = root->children;
-	while(p)
-	{
+	for(xmlNodePtr p = root->children; p; p = p->next)
 		parseQuestNode(p, false);
-		p = p->next;
-	}
 
 	xmlFreeDoc(doc);
 	return true;
@@ -266,16 +261,29 @@ bool Quests::parseQuestNode(xmlNodePtr p, bool checkDuplicate)
 	return true;
 }
 
-bool Quests::isQuestStorage(const std::string& key, const std::string& value, bool checkMissions/* = true*/) const
+bool Quests::isQuestStorage(const std::string& key, const std::string& value) const
 {
-	Quest* quest = Quests::getInstance()->getQuestByStorageId(key, value);
-	if(quest)
-		return true;
-	else if(checkMissions)
+	int32_t value = atoi(storageValue.c_str());
+	for(QuestList::const_iterator it = quests.begin(); it != quests.end(); ++it)
 	{
-		Mission* mission = Quests::getInstance()->getMissionByStorageId(key, value);
-		if(mission)
+		if(storageValue == "")
+		{
+			if((*it)->getStorageId() == storageId)
+				return true;
+		}
+		else if((*it)->getStorageId() == storageId && (value && value == (*it)->getStorageValue()))
 			return true;
+
+		for(MissionList::const_iterator mit = (*it)->getFirstMission(); mit != (*it)->getLastMission(); ++mit)
+		{
+			if(storageValue == "")
+			{
+				if((*mit)->getStorageId() == storageId)
+					return true;
+			}
+			else if((*mit)->getStorageId() == storageId && (value && value >= (*mit)->getStartValue() && value <= (*mit)->getEndValue()))
+				return true;
+		}
 	}
 
 	return false;
@@ -299,49 +307,6 @@ Quest* Quests::getQuestById(uint16_t id) const
 	{
 		if((*it)->getId() == id)
 			return (*it);
-	}
-
-	return NULL;
-}
-
-Quest* Quests::getQuestByStorageId(std::string storageId, std::string storageValue/* = ""*/) const
-{
-	int32_t value = atoi(storageValue.c_str());
-	for(QuestList::const_iterator it = quests.begin(); it != quests.end(); ++it)
-	{
-		if(storageValue == "")
-		{
-			if((*it)->getStorageId() == storageId)
-				return (*it);
-		}
-		else
-		{
-			if((*it)->getStorageId() == storageId && (value && value == (*it)->getStorageValue()))
-				return (*it);
-		}
-	}
-
-	return NULL;
-}
-
-Mission* Quests::getMissionByStorageId(std::string storageId, std::string storageValue/* = ""*/) const
-{
-	int32_t value = atoi(storageValue.c_str());
-	for(QuestList::const_iterator it = quests.begin(); it != quests.end(); ++it)
-	{
-		for(MissionList::const_iterator iit = (*it)->getFirstMission(); iit != (*it)->getLastMission(); ++iit)
-		{
-			if(storageValue == "")
-			{
-				if((*iit)->getStorageId() == storageId)
-					return (*iit);
-			}
-			else
-			{
-				if((*iit)->getStorageId() == storageId && (value && value >= (*iit)->getStartValue() && value <= (*iit)->getEndValue()))
-					return (*iit);
-			}
-		}
 	}
 
 	return NULL;
