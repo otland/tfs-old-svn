@@ -1807,8 +1807,8 @@ void ProtocolGame::sendChannel(uint16_t channelId, const std::string& channelNam
 					msg->put<uint16_t>(invitedUsers.size());
 					for(InviteList::const_iterator it = invitedUsers.begin(); it != invitedUsers.end(); ++it)
 					{
-						if(Player* player = g_game.getPlayerByID(*it))
-							msg->putString(player->getName());
+						if(Player* _player = g_game.getPlayerByID(*it))
+							msg->putString(_player->getName());
 					}
 				}
 				else
@@ -1952,7 +1952,7 @@ void ProtocolGame::sendGoods(const ShopInfoList& shop)
 	}
 }
 
-void ProtocolGame::sendTradeItemRequest(const Player* player, const Item* item, bool ack)
+void ProtocolGame::sendTradeItemRequest(const Player* _player, const Item* item, bool ack)
 {
 	NetworkMessage_ptr msg = getOutputBuffer();
 	if(msg)
@@ -1963,7 +1963,7 @@ void ProtocolGame::sendTradeItemRequest(const Player* player, const Item* item, 
 		else
 			msg->put<char>(0x7E);
 
-		msg->putString(player->getName());
+		msg->putString(_player->getName());
 		if(const Container* container = item->getContainer())
 		{
 			msg->put<char>(container->getItemHoldingCount() + 1);
@@ -2944,7 +2944,7 @@ void ProtocolGame::AddCreatureHealth(NetworkMessage_ptr msg,const Creature* crea
 
 void ProtocolGame::AddCreatureOutfit(NetworkMessage_ptr msg, const Creature* creature, const Outfit_t& outfit, bool outfitWindow/* = false*/)
 {
-	const Player* player = creature->getPlayer();
+	const Player* _player = creature->getPlayer();
 	if(outfitWindow || !player || (!creature->isInvisible() && (!creature->isGhost()
 		|| !g_config.getBool(ConfigManager::GHOST_INVISIBLE_EFFECT))))
 	{

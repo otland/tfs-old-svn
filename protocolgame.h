@@ -208,7 +208,7 @@ class ProtocolGame : public Protocol
 		void sendShop(Npc* npc, const ShopInfoList& shop);
 		void sendCloseShop();
 		void sendGoods(const ShopInfoList& shop);
-		void sendTradeItemRequest(const Player* player, const Item* item, bool ack);
+		void sendTradeItemRequest(const Player* _player, const Item* item, bool ack);
 		void sendCloseTrade();
 
 		void sendTextWindow(uint32_t windowTextId, Item* item, uint16_t maxLen, bool canWrite);
