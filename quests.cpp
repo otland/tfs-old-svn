@@ -83,6 +83,7 @@ std::string Mission::getDescription(Player* player)
 	return "Couldn't retrieve any mission description, please report to a gamemaster.";
 }
 
+
 Quest::~Quest()
 {
 	for(MissionList::iterator it = missions.begin(); it != missions.end(); ++it)
@@ -265,6 +266,21 @@ bool Quests::parseQuestNode(xmlNodePtr p, bool checkDuplicate)
 	return true;
 }
 
+bool Quests::isQuestStorage(const std::string& key, const std::string& value, bool checkMissions/* = true*/) const
+{
+	Quest* quest = Quests::getInstance()->getQuestByStorageId(key, value);
+	if(quest)
+		return true;
+	else if(checkMissions)
+	{
+		Mission* mission = Quests::getInstance()->getMissionByStorageId(key, value);
+		if(mission)
+			return true;
+	}
+
+	return false;
+}
+
 uint16_t Quests::getQuestCount(Player* player)
 {
 	uint16_t count = 0;
@@ -283,6 +299,49 @@ Quest* Quests::getQuestById(uint16_t id) const
 	{
 		if((*it)->getId() == id)
 			return (*it);
+	}
+
+	return NULL;
+}
+
+Quest* Quests::getQuestByStorageId(std::string storageId, std::string storageValue/* = ""*/) const
+{
+	int32_t value = atoi(storageValue.c_str());
+	for(QuestList::const_iterator it = quests.begin(); it != quests.end(); ++it)
+	{
+		if(storageValue == "")
+		{
+			if((*it)->getStorageId() == storageId)
+				return (*it);
+		}
+		else
+		{
+			if((*it)->getStorageId() == storageId && (value && value == (*it)->getStorageValue()))
+				return (*it);
+		}
+	}
+
+	return NULL;
+}
+
+Mission* Quests::getMissionByStorageId(std::string storageId, std::string storageValue/* = ""*/) const
+{
+	int32_t value = atoi(storageValue.c_str());
+	for(QuestList::const_iterator it = quests.begin(); it != quests.end(); ++it)
+	{
+		for(MissionList::const_iterator iit = (*it)->getFirstMission(); iit != (*it)->getLastMission(); ++iit)
+		{
+			if(storageValue == "")
+			{
+				if((*iit)->getStorageId() == storageId)
+					return (*iit);
+			}
+			else
+			{
+				if((*iit)->getStorageId() == storageId && (value && value >= (*iit)->getStartValue() && value <= (*iit)->getEndValue()))
+					return (*iit);
+			}
+		}
 	}
 
 	return NULL;

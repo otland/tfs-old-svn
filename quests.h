@@ -34,15 +34,20 @@ class Mission
 			endValue = _endValue;
 			storageId = _storageId;
 		}
-		virtual ~Mission() {states.clear();}
+		virtual ~Mission() { states.clear(); }
 
-		void newState(uint32_t id, const std::string& description) {states[id] = description;}
+		void newState(uint32_t id, const std::string& description) { states[id] = description; }
 
 		bool isStarted(Player* player);
 		bool isCompleted(Player* player);
 
-		std::string getName(Player* player) {return (isCompleted(player) ? (name + " (completed)") : name);}
+		std::string getName(Player* player) { return (isCompleted(player) ? (name + " (completed)") : name); }
 		std::string getDescription(Player* player);
+
+		int32_t getStartValue() { return startValue; }
+		int32_t getEndValue() { return endValue; }
+
+		const std::string& getStorageId() const { return storageId; }
 
 	private:
 		std::string parseStorages(std::string state, std::string value, Player* player);
@@ -67,17 +72,19 @@ class Quest
 		}
 		virtual ~Quest();
 
-		void newMission(Mission* mission) {missions.push_back(mission);}
+		void newMission(Mission* mission) { missions.push_back(mission); }
 
 		bool isStarted(Player* player);
 		bool isCompleted(Player* player) const;
 
-		uint16_t getId() const {return id;}
-		const std::string& getName() const {return name;}
+		uint16_t getId() const { return id; }
+		const std::string& getName() const { return name; }
+		const std::string& getStorageId() const { return storageId; }
+		int32_t getStorageValue() const { return storageValue; }
 		uint16_t getMissionCount(Player* player);
 
-		inline MissionList::const_iterator getFirstMission() const {return missions.begin();}
-		inline MissionList::const_iterator getLastMission() const {return missions.end();}
+		inline MissionList::const_iterator getFirstMission() const { return missions.begin(); }
+		inline MissionList::const_iterator getLastMission() const { return missions.end(); }
 
 	private:
 		std::string name;
@@ -105,12 +112,15 @@ class Quests
 		bool loadFromXml();
 		bool parseQuestNode(xmlNodePtr p, bool checkDuplicate);
 
+		bool Quests::isQuestStorage(const std::string& key, const std::string& value, bool checkMissions = true) const;
 		uint16_t getQuestCount(Player* player);
 
-		inline QuestList::const_iterator getFirstQuest() const {return quests.begin();}
-		inline QuestList::const_iterator getLastQuest() const {return quests.end();}
+		inline QuestList::const_iterator getFirstQuest() const { return quests.begin(); }
+		inline QuestList::const_iterator getLastQuest() const { return quests.end(); }
 
 		Quest* getQuestById(uint16_t id) const;
+		Quest* getQuestByStorageId(std::string storageId, std::string storageValue = "") const;
+		Mission* Quests::getMissionByStorageId(std::string storageId, std::string storageValue = "") const;
 
 	private:
 		Quests() {m_lastId = 1;}

@@ -27,6 +27,7 @@
 #include "house.h"
 #include "beds.h"
 #include "mounts.h"
+#include "quests.h"
 
 #include "combat.h"
 #include "movement.h"
@@ -809,7 +810,21 @@ bool Player::setStorage(const std::string& key, const std::string& value)
 {
 	uint32_t numericKey = atol(key.c_str());
 	if(!IS_IN_KEYRANGE(numericKey, RESERVED_RANGE) || IS_IN_KEYRANGE(numericKey, MOUNTS_RANGE))
-		return Creature::setStorage(key, value);
+	{
+		bool storageSet = Creature::setStorage(key, value);
+		if(storageSet && Quests::getInstance()->isQuestStorage(key, value))
+		{
+			Mission* mission = NULL;
+			Quest* quest = Quests::getInstance()->getQuestByStorageId(key, value);
+			if(!quest)
+				mission = Quests::getInstance()->getMissionByStorageId(key, value);
+			
+			if(quest || mission)
+				onUpdateQuest();
+		}
+		
+		return storageSet;
+	}
 
 	if(IS_IN_KEYRANGE(numericKey, OUTFITS_RANGE))
 	{
@@ -4009,6 +4024,11 @@ void Player::onTargetGain(Creature* target, int32_t points)
 
 	if(isPartner(tmpPlayer))
 		party->addPlayerHealedMember(this, points);
+}
+
+void Player::onUpdateQuest()
+{
+	sendTextMessage(MSG_EVENT_ADVANCE, "Your quest log has been updated.");
 }
 
 GuildEmblems_t Player::getGuildEmblem(const Creature* creature) const

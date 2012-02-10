@@ -396,6 +396,9 @@ class Player : public Creature, public Cylinder
 			onSell = saleCallback;
 			return shopOwner;
 		}
+		
+		//Quest functions
+		void onUpdateQuest();
 
 		//V.I.P. functions
 		void notifyLogIn(Player* loginPlayer);
