@@ -262,7 +262,7 @@ class PropStream
 			if(!GET_ULONG(str_len))
 				return false;
 
-			if(size() < (int32_t)str_len)
+			if(size() < str_len)
 				return false;
 
 			str = new char[str_len + 1];
@@ -288,7 +288,7 @@ class PropStream
 			return true;
 		}
 
-		inline bool SKIP_N(int32_t n)
+		inline bool SKIP_N(uint32_t n)
 		{
 			if(size() < n)
 				return false;
