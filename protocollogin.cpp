@@ -184,18 +184,9 @@ void ProtocolLogin::onRecvFirstMessage(NetworkMessage& msg)
 		return;
 	}
 
-	#ifdef __LOGIN_SERVER__
-	Characters charList;
-	for(Characters::iterator it = account.charList.begin(); it != account.charList.end(); ++it)
-	{
-		if(version >= it->second.second->getVersionMin() && version <= it->second.second->getVersionMax())
-			charList[it->first] = it->second;
-	}
-
-	#endif
 	// remove premium days
-	IOLoginData::getInstance()->removePremium(account);
 	#ifndef __LOGIN_SERVER__
+	IOLoginData::getInstance()->removePremium(account);
 	if(!g_config.getBool(ConfigManager::ACCOUNT_MANAGER) && !account.charList.size())
 	{
 		disconnectClient(0x0A, std::string("This account does not contain any character yet.\nCreate a new character on the "
@@ -203,6 +194,14 @@ void ProtocolLogin::onRecvFirstMessage(NetworkMessage& msg)
 		return;
 	}
 	#else
+	Characters charList;
+	for(Characters::iterator it = account.charList.begin(); it != account.charList.end(); ++it)
+	{
+		if(version >= it->second.server->getVersionMin() && version <= it->second.server->getVersionMax())
+			charList[it->first] = it->second;
+	}
+
+	IOLoginData::getInstance()->removePremium(account);
 	if(!g_config.getBool(ConfigManager::ACCOUNT_MANAGER) && !charList.size())
 	{
 		disconnectClient(0x0A, std::string("This account does not contain any character on this client yet.\nCreate a new character on the "
@@ -268,16 +267,16 @@ void ProtocolLogin::onRecvFirstMessage(NetworkMessage& msg)
 		#else
 		for(Characters::iterator it = charList.begin(); it != charList.end(); ++it)
 		{
-			output->putString(it->first);
-			if(!g_config.getBool(ConfigManager::ON_OR_OFF_CHARLIST) || it->second.first < 0)
-				output->putString(it->second.second->getName());
-			else if(it->second.first)
+			output->putString(it->second.name);
+			if(!g_config.getBool(ConfigManager::ON_OR_OFF_CHARLIST) || it->second.status < 0)
+				output->putString(it->second.server->getName());
+			else if(it->second.status)
 				output->putString("Online");
 			else
 				output->putString("Offline");
 
-			output->put<uint32_t>(it->second->getAddress());
-			IntegerVec games = it->second.second->getPorts();
+			output->put<uint32_t>(it->second.server->getAddress());
+			IntegerVec games = it->second.server->getPorts();
 			output->put<uint16_t>(games[random_range(0, games.size())]);
 		}
 		#endif
