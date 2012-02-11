@@ -414,8 +414,7 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool preLo
 	<< "`posz`, `cap`, `lastlogin`, `lastlogout`, `lastip`, `conditions`, `skull`, `skulltime`, `guildnick`, "
 	<< "`rank_id`, `town_id`, `balance`, `stamina`, `direction`, `loss_experience`, `loss_mana`, `loss_skills`, "
 	<< "`loss_containers`, `loss_items`, `marriage`, `promotion`, `description`, `save` FROM `players` WHERE "
-	<< "`name` " << db->getStringComparer() << db->escapeString(name) << " AND `world_id` = "
-	<< g_config.getNumber(ConfigManager::WORLD_ID) << " AND `deleted` = 0 LIMIT 1";
+	<< "`name` " << db->getStringComparer() << db->escapeString(name) << " AND `deleted` = 0 LIMIT 1";
 
 	DBResult* result;
 	if(!(result = db->storeQuery(query.str())))
@@ -428,13 +427,19 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool preLo
 		return false;
 	}
 
+	Group* group = Groups::getInstance()->getGroup(result->getDataInt("group_id"));
+	if(!group->getCustomFlags(PlayerCustomFlag_GamemasterPrivileges) &&
+		result->getDataInt("world_id") != g_config.getNumber(ConfigManager::WORLD_ID))
+	{
+		result->free();
+		return false;
+	}
+
 	Account account = loadAccount(accountId, true);
 	player->account = account.name;
 	player->accountId = accountId;
 
-	Group* group = Groups::getInstance()->getGroup(result->getDataInt("group_id"));
 	player->setGroup(group);
-
 	player->setGUID(result->getDataInt("id"));
 	player->premiumDays = account.premiumDays;
 
