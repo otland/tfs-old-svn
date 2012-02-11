@@ -169,7 +169,7 @@ Creature()
 
  	accountManager = false;
 	removeChar = "";
-	for(int8_t i = 0; i <= 13; i++)
+	for(int8_t i = 0; i < 13; i++)
 		talkState[i] = false;
 	newVocation = 0;
 	namelockedPlayer = "";
@@ -1872,7 +1872,7 @@ void Player::removeMessageBuffer()
 			addCondition(condition);
 
 			char buffer[50];
-			sprintf(buffer, "You are muted for %d seconds.", muteTime);
+			sprintf(buffer, "You are muted for %u seconds.", muteTime);
 			sendTextMessage(MSG_STATUS_SMALL, buffer);
 		}
 	}
@@ -2204,19 +2204,15 @@ void Player::death()
 			magLevelPercent = 0;
 
 		//Skill loss
-		uint32_t lostSkillTries;
-		uint32_t sumSkillTries;
 		for(int16_t i = 0; i <= 6; ++i) //for each skill
 		{
-			lostSkillTries = 0;
-			sumSkillTries = 0;
-
+			uint32_t sumSkillTries = 0;
 			for(uint32_t c = 11; c <= skills[i][SKILL_LEVEL]; ++c) //sum up all required tries for all skill levels
 				sumSkillTries += vocation->getReqSkillTries(i, c);
 
 			sumSkillTries += skills[i][SKILL_TRIES];
-			lostSkillTries = (uint32_t)(sumSkillTries * getLostPercent());
 
+			uint32_t lostSkillTries = (uint32_t)(sumSkillTries * getLostPercent());
 			while(lostSkillTries > skills[i][SKILL_TRIES])
 			{
 				lostSkillTries -= skills[i][SKILL_TRIES];
@@ -2248,7 +2244,7 @@ void Player::death()
 		if(newLevel != level)
 		{
 			char lvMsg[90];
-			sprintf(lvMsg, "You were downgraded from Level %d to Level %d.", level, newLevel);
+			sprintf(lvMsg, "You were downgraded from Level %u to Level %u.", level, newLevel);
 			sendTextMessage(MSG_EVENT_ADVANCE, lvMsg);
 		}
 

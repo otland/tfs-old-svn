@@ -61,7 +61,7 @@ class IOLoginData
 		bool getPasswordEx(const std::string& accname, std::string& password, uint32_t& accNumber);
 		bool accountExists(uint32_t accno);
 		bool setRecoveryKey(uint32_t accountNumber, std::string recoveryKey);
-		bool validRecoveryKey(uint32_t accountNumber, const std::string recoveryKey);
+		bool validRecoveryKey(uint32_t accountNumber, const std::string& recoveryKey);
 		bool setNewPassword(uint32_t accountId, std::string newPassword);
 		AccountType_t getAccountType(std::string name);
 
@@ -81,7 +81,7 @@ class IOLoginData
 		bool changeName(uint32_t guid, std::string newName);
 		uint32_t getAccountNumberByName(std::string name);
 		bool createCharacter(uint32_t accountNumber, std::string characterName, int32_t vocationId, PlayerSex_t sex);
-		int16_t deleteCharacter(uint32_t accountNumber, const std::string characterName);
+		int16_t deleteCharacter(uint32_t accountNumber, const std::string& characterName);
 		bool addStorageValue(uint32_t guid, uint32_t storageKey, uint32_t storageValue);
 		const PlayerGroup* getPlayerGroup(uint32_t groupid);
 		uint32_t getLastIPByName(std::string name);

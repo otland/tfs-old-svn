@@ -55,7 +55,7 @@ bool Mount::isTamed(Player* player) const
 
 Mounts::~Mounts()
 {
-	for(MountsList::iterator it = mounts.begin(); it != mounts.end(); it++)
+	for(MountsList::iterator it = mounts.begin(), end = mounts.end(); it != end; ++it)
 		delete (*it);
 
 	mounts.clear();
@@ -63,7 +63,7 @@ Mounts::~Mounts()
 
 bool Mounts::reload()
 {
-	for(MountsList::iterator it = mounts.begin(); it != mounts.end(); it++)
+	for(MountsList::iterator it = mounts.begin(), end = mounts.end(); it != end; ++it)
 		delete (*it);
 
 	mounts.clear();
@@ -121,7 +121,7 @@ bool Mounts::loadFromXml()
 
 Mount* Mounts::getMountByID(uint8_t id)
 {
-	for(MountsList::iterator it = mounts.begin(); it != mounts.end(); it++)
+	for(MountsList::iterator it = mounts.begin(), end = mounts.end(); it != end; ++it)
 	{
 		if((*it)->getID() == id)
 			return (*it);
@@ -131,7 +131,7 @@ Mount* Mounts::getMountByID(uint8_t id)
 
 Mount* Mounts::getMountByClientID(uint16_t clientId)
 {
-	for(MountsList::iterator it = mounts.begin(); it != mounts.end(); it++)
+	for(MountsList::iterator it = mounts.begin(), end = mounts.end(); it != end; ++it)
 	{
 		if((*it)->getClientID() == clientId)
 			return (*it);
@@ -142,14 +142,14 @@ Mount* Mounts::getMountByClientID(uint16_t clientId)
 void Mounts::sendMountsList(Player* player, NetworkMessage_ptr msg)
 {
 	MountsList tmp_list;
-	for(MountsList::const_iterator it = mounts.begin(); it != mounts.end(); it++)
+	for(MountsList::const_iterator it = mounts.begin(), end = mounts.end(); it != end; ++it)
 	{
 		if((*it)->isTamed(player))
 			tmp_list.push_back(*it);
 	}
 
 	msg->AddByte(tmp_list.size());
-	for(MountsList::const_iterator it = tmp_list.begin(); it != tmp_list.end(); it++)
+	for(MountsList::const_iterator it = tmp_list.begin(), end = tmp_list.end(); it != end; ++it)
 	{
 		msg->AddU16((*it)->getClientID());
 		msg->AddString((*it)->getName());

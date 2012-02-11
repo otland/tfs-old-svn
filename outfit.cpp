@@ -34,16 +34,16 @@ OutfitList::OutfitList()
 
 OutfitList::~OutfitList()
 {
-	OutfitListType::iterator it;
-	for(it = m_list.begin(); it != m_list.end(); it++)
+	for(OutfitListType::iterator it = m_list.begin(), end = m_list.end(); it != end; ++it)
 		delete *it;
+
 	m_list.clear();
 }
 
 void OutfitList::addOutfit(const Outfit& outfit)
 {
 	OutfitListType::iterator it;
-	for(it = m_list.begin(); it != m_list.end(); ++it)
+	for(OutfitListType::iterator it = m_list.begin(), end = m_list.end(); it != end; ++it)
 	{
 		if((*it)->looktype == outfit.looktype)
 		{
@@ -130,9 +130,9 @@ Outfits::Outfits()
 
 Outfits::~Outfits()
 {
-	OutfitsListVector::iterator it;
-	for(it = m_list.begin(); it != m_list.end(); it++)
+	for(OutfitsListVector::iterator it = m_list.begin(), end = m_list.end(); it != end; ++it)
 		delete *it;
+
 	m_list.clear();
 }
 

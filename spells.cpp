@@ -192,7 +192,7 @@ RuneSpell* Spells::getRuneSpellByName(const std::string& name)
 	return NULL;
 }
 
-InstantSpell* Spells::getInstantSpell(const std::string words)
+InstantSpell* Spells::getInstantSpell(const std::string& words)
 {
 	InstantSpell* result = NULL;
 	for(InstantsMap::iterator it = instants.begin(); it != instants.end(); ++it)
@@ -966,7 +966,7 @@ int32_t Spell::getSoulCost() const
 	return soul;
 }
 
-ReturnValue Spell::CreateIllusion(Creature* creature, const Outfit_t outfit, int32_t time)
+ReturnValue Spell::CreateIllusion(Creature* creature, const Outfit_t& outfit, int32_t time)
 {
 	ConditionOutfit* outfitCondition = new ConditionOutfit(CONDITIONID_COMBAT, CONDITION_OUTFIT, time);
 

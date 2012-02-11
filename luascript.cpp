@@ -3079,8 +3079,7 @@ int32_t LuaScriptInterface::luaDoAddContainerItemEx(lua_State* L)
 			return 1;
 		}
 
-		ReturnValue ret = RET_NOERROR;
-		ret = g_game.internalAddItem(container, item);
+		ReturnValue ret = g_game.internalAddItem(container, item);
 		if(ret == RET_NOERROR)
 			env->removeTempItem(item);
 

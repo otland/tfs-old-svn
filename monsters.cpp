@@ -132,12 +132,12 @@ uint32_t Monsters::getLootRandom()
 
 void MonsterType::createLoot(Container* corpse)
 {
-	for(LootItems::const_iterator it = lootItems.begin(); it != lootItems.end() && (corpse->capacity() - corpse->size()) > 0; it++)
+	for(LootItems::const_iterator it = lootItems.begin(), end = lootItems.end(); it != end && corpse->capacity() != corpse->size(); ++it)
 	{
 		std::list<Item*> itemList = createLootItem(*it);
 		if(!itemList.empty())
 		{
-			for(std::list<Item*>::iterator iit = itemList.begin(); iit != itemList.end(); ++iit)
+			for(std::list<Item*>::iterator iit = itemList.begin(), iend = itemList.end(); iit != iend; ++iit)
 			{
 				Item* tmpItem = *iit;
 
@@ -211,16 +211,17 @@ std::list<Item*> MonsterType::createLootItem(const LootBlock& lootBlock)
 
 bool MonsterType::createLootContainer(Container* parent, const LootBlock& lootblock)
 {
-	LootItems::const_iterator it = lootblock.childLoot.begin();
-	if(it == lootblock.childLoot.end())
+	LootItems::const_iterator it = lootblock.childLoot.begin(),
+		end = lootblock.childLoot.end();
+	if(it == end)
 		return true;
 
-	for(; it != lootblock.childLoot.end() && parent->size() < parent->capacity(); it++)
+	for(; it != end && parent->size() < parent->capacity(); ++it)
 	{
 		std::list<Item*> itemList = createLootItem(*it);
 		if(!itemList.empty())
 		{
-			for(std::list<Item*>::iterator iit = itemList.begin(); iit != itemList.end(); ++iit)
+			for(std::list<Item*>::iterator iit = itemList.begin(), iend = itemList.end(); iit != iend; ++iit)
 			{
 				Item* tmpItem = *iit;
 				if(Container* container = tmpItem->getContainer())

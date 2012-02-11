@@ -371,16 +371,8 @@ void mainLoader(ServiceManager* service_manager)
 		return;
 	}
 
-	uint32_t version = 0;
-	do
-	{
-		version = dbManager->updateDatabase();
-		if(!version)
-			break;
-
+	for(uint32_t version = dbManager->updateDatabase(); version != 0; version = dbManager->updateDatabase())
 		std::cout << "> Database has been updated to version " << version << "." << std::endl;
-	}
-	while(version < DATABASE_VERSION);
 
 	dbManager->checkTriggers();
 	dbManager->checkEncryption();

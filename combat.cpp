@@ -296,10 +296,10 @@ ReturnValue Combat::canDoCombat(const Creature* caster, const Tile* tile, bool i
 
 	if(caster)
 	{
-		if(caster->getPosition().z < tile->getPosition().z)
+		const Position& casterPosition = caster->getPosition();
+		if(casterPosition.z < tile->getPosition().z)
 			return RET_FIRSTGODOWNSTAIRS;
-
-		if(caster->getPosition().z > tile->getPosition().z)
+		else if(casterPosition.z > tile->getPosition().z)
 			return RET_FIRSTGOUPSTAIRS;
 
 		if(const Player* player = caster->getPlayer())
@@ -360,9 +360,10 @@ ReturnValue Combat::canDoCombat(const Creature* attacker, const Creature* target
 					return RET_YOUMAYNOTATTACKTHISPLAYER;
 
 				//nopvp-zone
-				if(targetPlayer->getTile()->hasFlag(TILESTATE_NOPVPZONE))
+				const Tile* targetPlayerTile = targetPlayer->getTile();
+				if(targetPlayerTile->hasFlag(TILESTATE_NOPVPZONE))
 					return RET_ACTIONNOTPERMITTEDINANOPVPZONE;
-				else if(attackerPlayer->getTile()->hasFlag(TILESTATE_NOPVPZONE) && !targetPlayer->getTile()->hasFlag(TILESTATE_NOPVPZONE) && !targetPlayer->getTile()->hasFlag(TILESTATE_PROTECTIONZONE))
+				else if(attackerPlayer->getTile()->hasFlag(TILESTATE_NOPVPZONE) && !targetPlayerTile->hasFlag(TILESTATE_NOPVPZONE) && !targetPlayerTile->hasFlag(TILESTATE_PROTECTIONZONE))
 					return RET_ACTIONNOTPERMITTEDINANOPVPZONE;
 			}
 
@@ -704,7 +705,7 @@ void Combat::addDistanceEffect(Creature* caster, const Position& fromPos, const 
 	uint8_t effect)
 {
 	uint8_t distanceEffect = effect;
-	if(distanceEffect == NM_SHOOT_WEAPONTYPE)
+	if(caster && distanceEffect == NM_SHOOT_WEAPONTYPE)
 	{
 		switch(caster->getWeaponType())
 		{
@@ -715,7 +716,7 @@ void Combat::addDistanceEffect(Creature* caster, const Position& fromPos, const 
 		}
 	}
 
-	if(caster && distanceEffect != NM_ME_NONE)
+	if(distanceEffect != NM_ME_NONE)
 		g_game.addDistanceEffect(fromPos, toPos, distanceEffect);
 }
 

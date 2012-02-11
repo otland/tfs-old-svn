@@ -95,7 +95,7 @@ bool passwordTest(const std::string &plain, std::string &hash)
 	return false;
 }
 
-void replaceString(std::string& str, const std::string sought, const std::string replacement)
+void replaceString(std::string& str, const std::string& sought, const std::string& replacement)
 {
 	size_t pos = 0;
 	size_t start = 0;
@@ -562,7 +562,7 @@ std::string parseParams(tokenizer::iterator &it, tokenizer::iterator end)
 std::string convertIPToString(uint32_t ip)
 {
 	char buffer[17];
-	sprintf(buffer, "%d.%d.%d.%d", ip & 0xFF, (ip >> 8) & 0xFF, (ip >> 16) & 0xFF, (ip >> 24));
+	sprintf(buffer, "%u.%u.%u.%u", ip & 0xFF, (ip >> 8) & 0xFF, (ip >> 16) & 0xFF, (ip >> 24));
 	return buffer;
 }
 

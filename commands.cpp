@@ -912,7 +912,7 @@ void Commands::buyHouse(Player* player, const std::string& cmd, const std::strin
 	}
 
 	uint32_t price = 0;
-	for(HouseTileList::iterator it = house->getHouseTileBegin(); it != house->getHouseTileEnd(); it++)
+	for(HouseTileList::iterator it = house->getHouseTileBegin(), end = house->getHouseTileEnd(); it != end; ++it)
 		price += g_config.getNumber(ConfigManager::HOUSE_PRICE);
 
 	if(g_game.getMoney(player) >= price && g_game.removeMoney(player, price))
@@ -1465,7 +1465,7 @@ void Commands::multiClientCheck(Player* player, const std::string& cmd, const st
 			text << convertIPToString(it->second->getIP()) << ":\n"
 			<< it->second->getName() << " [" << it->second->getLevel() << "], ";
 			uint32_t tmp = 0;
-			for(std::list< std::pair<std::string, uint32_t> >::const_iterator p = playerList.begin(); p != playerList.end(); p++)
+			for(std::list< std::pair<std::string, uint32_t> >::const_iterator p = playerList.begin(), end = playerList.end(); p != end; ++p)
 			{
 				tmp++;
 				if(tmp != playerList.size())

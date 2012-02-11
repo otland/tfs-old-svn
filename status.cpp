@@ -184,16 +184,16 @@ std::string Status::getStatusString() const
 	xmlAddChild(root, p);
 
 	p = xmlNewNode(NULL,(const xmlChar*)"players");
-	sprintf(buffer, "%d", m_playersOnline);
+	sprintf(buffer, "%u", m_playersOnline);
 	xmlSetProp(p, (const xmlChar*)"online", (const xmlChar*)buffer);
-	sprintf(buffer, "%d", m_playersMax);
+	sprintf(buffer, "%u", m_playersMax);
 	xmlSetProp(p, (const xmlChar*)"max", (const xmlChar*)buffer);
-	sprintf(buffer, "%d", g_game.getLastPlayersRecord());
+	sprintf(buffer, "%u", g_game.getLastPlayersRecord());
 	xmlSetProp(p, (const xmlChar*)"peak", (const xmlChar*)buffer);
 	xmlAddChild(root, p);
 
 	p = xmlNewNode(NULL,(const xmlChar*)"monsters");
-	sprintf(buffer, "%d", g_game.getMonstersOnline());
+	sprintf(buffer, "%u", g_game.getMonstersOnline());
 	xmlSetProp(p, (const xmlChar*)"total", (const xmlChar*)buffer);
 	xmlAddChild(root, p);
 

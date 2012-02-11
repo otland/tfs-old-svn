@@ -398,10 +398,11 @@ bool Monster::searchTarget(TargetSearchType_t searchType /*= TARGETSEARCH_DEFAUL
 			int32_t minRange = -1;
 			for(std::list<Creature*>::iterator it = resultList.begin(); it != resultList.end(); ++it)
 			{
-				if(minRange == -1 || std::max(std::abs(myPos.x - (*it)->getPosition().x), std::abs(myPos.y - (*it)->getPosition().y)) < minRange)
+				const Position& pos = (*it)->getPosition();
+				if(minRange == -1 || std::max(std::abs(myPos.x - pos.x), std::abs(myPos.y - pos.y)) < minRange)
 				{
 					target = *it;
-					minRange = std::max(std::abs(myPos.x - (*it)->getPosition().x), std::abs(myPos.y - (*it)->getPosition().y));
+					minRange = std::max(std::abs(myPos.x - pos.x), std::abs(myPos.y - pos.y));
 				}
 			}
 

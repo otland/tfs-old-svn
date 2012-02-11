@@ -128,7 +128,7 @@ void House::updateDoorDescription()
 	else
 	{
 		int32_t housePrice = 0;
-		for(HouseTileList::iterator it = getHouseTileBegin(); it != getHouseTileEnd(); it++)
+		for(HouseTileList::iterator it = getHouseTileBegin(), end = getHouseTileEnd(); it != end; ++it)
 			housePrice += g_config.getNumber(ConfigManager::HOUSE_PRICE);
 
 		sprintf(houseDescription, "It belongs to house '%s'. Nobody owns this house. It costs %d gold coins.", houseName.c_str(), housePrice);
@@ -872,7 +872,7 @@ bool Houses::payHouses()
 			}
 
 			int32_t housePrice = 0;
-			for(HouseTileList::iterator it = house->getHouseTileBegin(); it != house->getHouseTileEnd(); it++)
+			for(HouseTileList::iterator it = house->getHouseTileBegin(), end = house->getHouseTileEnd(); it != end; ++it)
 				housePrice += g_config.getNumber(ConfigManager::HOUSE_PRICE);
 
 			Depot* depot = player->getDepot(town->getTownID(), true);

@@ -479,13 +479,8 @@ bool IOMapSerialize::loadItem(PropStream& propStream, Cylinder* parent)
 					return false;
 				}
 
-				if(parent)
-				{
-					parent->__internalAddThing(item);
-					item->__startDecaying();
-				}
-				else
-					delete item;
+				parent->__internalAddThing(item);
+				item->__startDecaying();
 			}
 			else
 			{
@@ -664,7 +659,8 @@ void IOMapSerialize::saveItem(PropWriteStream& stream, const Item* item)
 
 void IOMapSerialize::saveTile(PropWriteStream& stream, const Tile* tile)
 {
-	if(tile->getPosition().x == 0 || tile->getPosition().y == 0)
+	const Position& tilePosition = tile->getPosition();
+	if(tilePosition.x == 0 || tilePosition.y == 0)
 		return;
 
 	std::vector<Item*> items;
@@ -686,17 +682,13 @@ void IOMapSerialize::saveTile(PropWriteStream& stream, const Tile* tile)
 
 	if(!items.empty())
 	{
-		stream.ADD_USHORT(tile->getPosition().x);
-		stream.ADD_USHORT(tile->getPosition().y);
-		stream.ADD_UCHAR(tile->getPosition().z);
-		stream.ADD_ULONG(items.size());
+		stream.ADD_USHORT(tilePosition.x);
+		stream.ADD_USHORT(tilePosition.y);
+		stream.ADD_UCHAR(tilePosition.z);
 
-		for(std::vector<Item*>::iterator iter = items.begin();
-			iter != items.end();
-			++iter)
-		{
+		stream.ADD_ULONG(items.size());
+		for(std::vector<Item*>::iterator iter = items.begin(), end = items.end(); iter != end; ++iter)
 			saveItem(stream, *iter);
-		}
 	}
 }
 

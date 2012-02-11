@@ -666,8 +666,9 @@ bool Game::placeCreature(Creature* creature, const Position& pos, bool extendedP
 	for(it = list.begin(); it != list.end(); ++it)
 		(*it)->onCreatureAppear(creature, true);
 
-	int32_t newIndex = creature->getParent()->__getIndexOfThing(creature);
-	creature->getParent()->postAddNotification(creature, NULL, newIndex);
+	Cylinder* creatureParent = creature->getParent();
+	int32_t newIndex = creatureParent->__getIndexOfThing(creature);
+	creatureParent->postAddNotification(creature, NULL, newIndex);
 
 	Player* player = creature->getPlayer();
 	if(player)
@@ -1101,7 +1102,9 @@ bool Game::playerMoveItem(uint32_t playerId, const Position& fromPos,
 
 	const Position& playerPos = player->getPosition();
 	const Position& mapFromPos = fromCylinder->getTile()->getPosition();
-	const Position& mapToPos = toCylinder->getTile()->getPosition();
+
+	const Tile* toCylinderTile = toCylinder->getTile();
+	const Position& mapToPos = toCylinderTile->getPosition();
 
 	if(playerPos.z > mapFromPos.z)
 	{
@@ -1137,10 +1140,10 @@ bool Game::playerMoveItem(uint32_t playerId, const Position& fromPos,
 	}
 
 	//hangable item specific code
-	if(item->isHangable() && toCylinder->getTile()->hasProperty(SUPPORTHANGABLE))
+	if(item->isHangable() && toCylinderTile->hasProperty(SUPPORTHANGABLE))
 	{
 		//destination supports hangable objects so need to move there first
-		if(toCylinder->getTile()->hasProperty(ISVERTICAL))
+		if(toCylinderTile->hasProperty(ISVERTICAL))
 		{
 			if(player->getPosition().x + 1 == mapToPos.x)
 			{
@@ -1148,7 +1151,7 @@ bool Game::playerMoveItem(uint32_t playerId, const Position& fromPos,
 				return false;
 			}
 		}
-		else if(toCylinder->getTile()->hasProperty(ISHORIZONTAL))
+		else if(toCylinderTile->hasProperty(ISHORIZONTAL))
 		{
 			if(player->getPosition().y + 1 == mapToPos.y)
 			{
@@ -1160,10 +1163,10 @@ bool Game::playerMoveItem(uint32_t playerId, const Position& fromPos,
 		if(!Position::areInRange<1,1,0>(playerPos, mapToPos))
 		{
 			Position walkPos = mapToPos;
-			if(toCylinder->getTile()->hasProperty(ISVERTICAL))
+			if(toCylinderTile->hasProperty(ISVERTICAL))
 				walkPos.x -= -1;
 
-			if(toCylinder->getTile()->hasProperty(ISHORIZONTAL))
+			if(toCylinderTile->hasProperty(ISHORIZONTAL))
 				walkPos.y -= -1;
 
 			Position itemPos = fromPos;
@@ -1328,8 +1331,9 @@ ReturnValue Game::internalMoveItem(Cylinder* fromCylinder, Cylinder* toCylinder,
 			updateItem = toItem;
 		}
 
-		if(m - n > 0)
-			moveItem = Item::CreateItem(item->getID(), m - n);
+		int32_t count = m - n;
+		if(count > 0)
+			moveItem = Item::CreateItem(item->getID(), count);
 		else
 			moveItem = NULL;
 
@@ -1515,7 +1519,7 @@ Item* Game::findItemOfType(Cylinder* cylinder, uint16_t itemId,
 	bool depthSearch /*= true*/, int32_t subType /*= -1*/)
 {
 	if(cylinder == NULL)
-		return false;
+		return NULL;
 
 	std::list<Container*> listContainer;
 	Container* tmpContainer = NULL;
@@ -1556,7 +1560,6 @@ Item* Game::findItemOfType(Cylinder* cylinder, uint16_t itemId,
 			}
 		}
 	}
-
 	return NULL;
 }
 
@@ -2590,17 +2593,20 @@ bool Game::playerRequestTrade(uint32_t playerId, const Position& pos, uint8_t st
 		player->sendCancelMessage(RET_NOTPOSSIBLE);
 		return false;
 	}
-	else if(player->getPosition().z > tradeItem->getPosition().z)
+
+	const Position& playerPosition = player->getPosition();
+	const Position& tradeItemPosition = tradeItem->getPosition();
+	if(playerPosition.z > tradeItemPosition.z)
 	{
 		player->sendCancelMessage(RET_FIRSTGOUPSTAIRS);
 		return false;
 	}
-	else if(player->getPosition().z < tradeItem->getPosition().z)
+	else if(playerPosition.z < tradeItemPosition.z)
 	{
 		player->sendCancelMessage(RET_FIRSTGODOWNSTAIRS);
 		return false;
 	}
-	else if(!Position::areInRange<1,1,0>(tradeItem->getPosition(), player->getPosition()))
+	else if(!Position::areInRange<1,1,0>(tradeItemPosition, playerPosition))
 	{
 		std::list<Direction> listDir;
 		if(getPathToEx(player, pos, listDir, 0, 1, true, true))
@@ -2620,9 +2626,9 @@ bool Game::playerRequestTrade(uint32_t playerId, const Position& pos, uint8_t st
 		}
 	}
 
-	std::map<Item*, uint32_t>::const_iterator it;
 	const Container* container = NULL;
-	for(it = tradeItems.begin(); it != tradeItems.end(); it++)
+	std::map<Item*, uint32_t>::const_iterator it;
+	for(it = tradeItems.begin(); it != tradeItems.end(); ++it)
 	{
 		if(tradeItem == it->first ||
 			((container = dynamic_cast<const Container*>(tradeItem)) && container->isHoldingItem(it->first)) ||
@@ -2833,8 +2839,10 @@ bool Game::playerLookInTrade(uint32_t playerId, bool lookAtCounterOffer, int ind
 	if(!tradeItem)
 		return false;
 
-	int32_t lookDistance = std::max(std::abs(player->getPosition().x - tradeItem->getPosition().x),
-		std::abs(player->getPosition().y - tradeItem->getPosition().y));
+	const Position& playerPosition = player->getPosition();
+	const Position& tradeItemPosition = tradeItem->getPosition();
+	int32_t lookDistance = std::max(std::abs(playerPosition.x - tradeItemPosition.x),
+		std::abs(playerPosition.y - tradeItemPosition.y));
 
 	char buffer[800];
 	if(index == 0)
@@ -3279,7 +3287,7 @@ bool Game::playerSay(uint32_t playerId, uint16_t channelId, SpeakClasses type,
 	if(muteTime > 0)
 	{
 		char buffer[75];
-		sprintf(buffer, "You are still muted for %d seconds.", muteTime);
+		sprintf(buffer, "You are still muted for %u seconds.", muteTime);
 		player->sendTextMessage(MSG_STATUS_SMALL, buffer);
 		return false;
 	}
@@ -4844,7 +4852,7 @@ void Game::savePlayersRecord()
 		return;
 	}
 
-	int32_t tmp = fprintf(file, "%d", lastPlayersRecord);
+	int32_t tmp = fprintf(file, "%u", lastPlayersRecord);
 	if(tmp == EOF)
 	{
 		std::cout << "> ERROR: Failed to save playersRecord.txt" << std::endl;
@@ -4864,28 +4872,24 @@ void Game::loadPlayersRecord()
 		return;
 	}
 
-	int32_t tmp = fscanf(file, "%d", &lastPlayersRecord);
+	int32_t tmp = fscanf(file, "%u", &lastPlayersRecord);
 	if(tmp == EOF)
 	{
-		std::cout << "> ERROR: Failed to load playersRecord.txt" << std::endl;
+		std::cout << "> ERROR: Failed to read playersRecord.txt" << std::endl;
 		lastPlayersRecord = 0;
-		return;
 	}
-
 	fclose(file);
 }
 
 uint64_t Game::getExperienceStage(uint32_t level)
 {
-	if(stagesEnabled)
-	{
-		if(useLastStageLevel && level >= lastStageLevel)
-			return stages[lastStageLevel];
-		else
-			return stages[level];
-	}
-	else
+	if(!stagesEnabled)
 		return g_config.getNumber(ConfigManager::RATE_EXPERIENCE);
+
+	if(useLastStageLevel && level >= lastStageLevel)
+		return stages[lastStageLevel];
+	else
+		return stages[level];
 }
 
 bool Game::loadExperienceStages()
@@ -4998,28 +5002,36 @@ bool Game::playerJoinParty(uint32_t playerId, uint32_t leaderId)
 bool Game::playerRevokePartyInvitation(uint32_t playerId, uint32_t invitedId)
 {
 	Player* player = getPlayerByID(playerId);
-	if(!player || player->isRemoved() || !player->getParty() || player->getParty()->getLeader() != player)
+	if(!player || player->isRemoved())
+		return false;
+
+	Party* party = player->getParty();
+	if(!party || party->getLeader() != player)
 		return false;
 
 	Player* invitedPlayer = getPlayerByID(invitedId);
 	if(!invitedPlayer || invitedPlayer->isRemoved() || !player->isInviting(invitedPlayer))
 		return false;
 
-	player->getParty()->revokeInvitation(invitedPlayer);
+	party->revokeInvitation(invitedPlayer);
 	return true;
 }
 
 bool Game::playerPassPartyLeadership(uint32_t playerId, uint32_t newLeaderId)
 {
 	Player* player = getPlayerByID(playerId);
-	if(!player || player->isRemoved() || !player->getParty() || player->getParty()->getLeader() != player)
+	if(!player || player->isRemoved())
+		return false;
+
+	Party* party = player->getParty();
+	if(!party || party->getLeader() != player)
 		return false;
 
 	Player* newLeader = getPlayerByID(newLeaderId);
 	if(!newLeader || newLeader->isRemoved() || !player->isPartner(newLeader))
 		return false;
 
-	return player->getParty()->passPartyLeadership(newLeader);
+	return party->passPartyLeadership(newLeader);
 }
 
 bool Game::playerLeaveParty(uint32_t playerId)
@@ -5028,10 +5040,11 @@ bool Game::playerLeaveParty(uint32_t playerId)
 	if(!player || player->isRemoved())
 		return false;
 
-	if(!player->getParty() || player->hasCondition(CONDITION_INFIGHT))
+	Party* party = player->getParty();
+	if(!party || player->hasCondition(CONDITION_INFIGHT))
 		return false;
 
-	return player->getParty()->leaveParty(player);
+	return party->leaveParty(player);
 }
 
 bool Game::playerEnableSharedPartyExperience(uint32_t playerId, bool sharedExpActive)
@@ -5040,10 +5053,11 @@ bool Game::playerEnableSharedPartyExperience(uint32_t playerId, bool sharedExpAc
 	if(!player || player->isRemoved())
 		return false;
 
-	if(!player->getParty() || player->hasCondition(CONDITION_INFIGHT))
+	Party* party = player->getParty();
+	if(!party || player->hasCondition(CONDITION_INFIGHT))
 		return false;
 
-	return player->getParty()->setSharedExperience(player, sharedExpActive);
+	return party->setSharedExperience(player, sharedExpActive);
 }
 
 void Game::sendGuildMotd(uint32_t playerId, uint32_t guildId)
@@ -5074,7 +5088,8 @@ bool Game::playerReportBug(uint32_t playerId, std::string bug)
 	FILE* file = fopen(fileName.c_str(), "a");
 	if(file)
 	{
-		fprintf(file, "------------------------------\nName: %s [Position X: %d Y: %d Z: %d]\nBug Report: %s\n", player->getName().c_str(), player->getPosition().x, player->getPosition().y, player->getPosition().z, bug.c_str());
+		const Position& position = player->getPosition();
+		fprintf(file, "------------------------------\nName: %s [Position X: %d Y: %d Z: %d]\nBug Report: %s\n", player->getName().c_str(), position.x, position.y, position.z, bug.c_str());
 		fclose(file);
 	}
 
@@ -5278,7 +5293,7 @@ bool Game::violationWindow(Player* player, std::string targetPlayerName, int32_t
 		if(isNotation)
 			sprintf(buffer, "%s has received a notation by %s (%d more to ban).", targetPlayerName.c_str(), player->getName().c_str(), (3 - IOBan::getInstance()->getNotationsCount(account.id)));
 		else
-			sprintf(buffer, "%s has taken the action \"%s\" against: %s (Warnings: %d), with reason: \"%s\", and comment: \"%s\".", player->getName().c_str(), getAction(action, IPBanishment).c_str(), targetPlayerName.c_str(), account.warnings, getReason(reason).c_str(), banComment.c_str());
+			sprintf(buffer, "%s has taken the action \"%s\" against: %s (Warnings: %u), with reason: \"%s\", and comment: \"%s\".", player->getName().c_str(), getAction(action, IPBanishment).c_str(), targetPlayerName.c_str(), account.warnings, getReason(reason).c_str(), banComment.c_str());
 
 		broadcastMessage(buffer, MSG_STATUS_WARNING);
 	}
@@ -5287,7 +5302,7 @@ bool Game::violationWindow(Player* player, std::string targetPlayerName, int32_t
 		if(isNotation)
 			sprintf(buffer, "You have taken the action notation against %s (%d more to ban).", targetPlayerName.c_str(), (3 - IOBan::getInstance()->getNotationsCount(account.id)));
 		else
-			sprintf(buffer, "You have taken the action \"%s\" against: %s (Warnings: %d), with reason: \"%s\", and comment: \"%s\".", getAction(action, IPBanishment).c_str(), targetPlayerName.c_str(), account.warnings, getReason(reason).c_str(), banComment.c_str());
+			sprintf(buffer, "You have taken the action \"%s\" against: %s (Warnings: %u), with reason: \"%s\", and comment: \"%s\".", getAction(action, IPBanishment).c_str(), targetPlayerName.c_str(), account.warnings, getReason(reason).c_str(), banComment.c_str());
 
 		player->sendTextMessage(MSG_STATUS_CONSOLE_RED, buffer);
 	}

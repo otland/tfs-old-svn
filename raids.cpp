@@ -208,13 +208,11 @@ bool Raids::reload()
 
 Raid* Raids::getRaidByName(const std::string& name)
 {
-	RaidList::iterator it;
-	for(it = raidList.begin(); it != raidList.end(); it++)
+	for(RaidList::iterator it = raidList.begin(), end = raidList.end(); it != end; ++it)
 	{
 		if(strcasecmp((*it)->getName().c_str(), name.c_str()) == 0)
 			return (*it);
 	}
-
 	return NULL;
 }
 
@@ -233,9 +231,9 @@ Raid::~Raid()
 {
 	stopEvents();
 
-	RaidEventVector::iterator it;
-	for(it = raidEvents.begin(); it != raidEvents.end(); it++)
+	for(RaidEventVector::iterator it = raidEvents.begin(), end = raidEvents.end(); it != end; ++it)
 		delete (*it);
+
 	raidEvents.clear();
 }
 
@@ -638,11 +636,8 @@ bool AreaSpawnEvent::configureRaidEvent(xmlNodePtr eventNode)
 
 AreaSpawnEvent::~AreaSpawnEvent()
 {
-	MonsterSpawnList::iterator it;
-	for(it = m_spawnList.begin(); it != m_spawnList.end(); it++)
-	{
+	for(MonsterSpawnList::iterator it = m_spawnList.begin(), end = m_spawnList.end(); it != end; ++it)
 		delete (*it);
-	}
 
 	m_spawnList.clear();
 }
@@ -663,12 +658,12 @@ void AreaSpawnEvent::addMonster(const std::string& monsterName, uint32_t minAmou
 
 bool AreaSpawnEvent::executeEvent()
 {
-	for(MonsterSpawnList::iterator it = m_spawnList.begin(); it != m_spawnList.end(); it++)
+	for(MonsterSpawnList::iterator it = m_spawnList.begin(), end = m_spawnList.end(); it != end; ++it)
 	{
 		MonsterSpawn* spawn = (*it);
 
 		uint32_t amount = random_range(spawn->minAmount, spawn->maxAmount);
-		for(uint32_t i = 0; i < amount; i++)
+		for(uint32_t i = 0; i < amount; ++i)
 		{
 			Monster* monster = Monster::createMonster(spawn->name);
 			if(!monster)

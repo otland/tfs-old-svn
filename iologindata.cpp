@@ -217,7 +217,7 @@ bool IOLoginData::setRecoveryKey(uint32_t accountNumber, std::string recoveryKey
 	return db->executeQuery(query.str());
 }
 
-bool IOLoginData::validRecoveryKey(uint32_t accountNumber, const std::string recoveryKey)
+bool IOLoginData::validRecoveryKey(uint32_t accountNumber, const std::string& recoveryKey)
 {
 	Database* db = Database::getInstance();
 
@@ -900,7 +900,7 @@ bool IOLoginData::savePlayer(Player* player, bool preSave)
 
 	stmt.setQuery("INSERT INTO `player_storage` (`player_id`, `key`, `value`) VALUES ");
 	player->genReservedStorageRange();
-	for(StorageMap::const_iterator cit = player->getStorageIteratorBegin(); cit != player->getStorageIteratorEnd(); cit++)
+	for(StorageMap::const_iterator cit = player->getStorageIteratorBegin(), end = player->getStorageIteratorEnd(); cit != end; ++cit)
 	{
 		query << player->getGUID() << "," << cit->first << "," << cit->second;
 		if(!stmt.addRow(query))
@@ -1268,7 +1268,7 @@ bool IOLoginData::createCharacter(uint32_t accountNumber, std::string characterN
 	return db->executeQuery(query.str());
 }
 
-int16_t IOLoginData::deleteCharacter(uint32_t accountNumber, const std::string characterName)
+int16_t IOLoginData::deleteCharacter(uint32_t accountNumber, const std::string& characterName)
 {
 	Player* _player = g_game.getPlayerByName(characterName);
 	if(_player)

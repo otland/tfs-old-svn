@@ -116,7 +116,7 @@ Quest::Quest(std::string _name, uint16_t _id, int32_t _startStorageID, int32_t _
 
 Quest::~Quest()
 {
-	for(MissionsList::iterator it = missions.begin(); it != missions.end(); it++)
+	for(MissionsList::iterator it = missions.begin(), end = missions.end(); it != end; ++it)
 		delete (*it);
 
 	missions.clear();
@@ -125,7 +125,7 @@ Quest::~Quest()
 uint16_t Quest::getMissionsCount(Player* player)
 {
 	uint16_t count = 0;
-	for(MissionsList::const_iterator it = missions.begin(); it != missions.end(); it++)
+	for(MissionsList::const_iterator it = missions.begin(), end = missions.end(); it != end; ++it)
 	{
 		if((*it)->isStarted(player))
 			count++;
@@ -135,7 +135,7 @@ uint16_t Quest::getMissionsCount(Player* player)
 
 bool Quest::isCompleted(Player* player)
 {
-	for(MissionsList::const_iterator it = missions.begin(); it != missions.end(); it++)
+	for(MissionsList::const_iterator it = missions.begin(), end = missions.end(); it != end; ++it)
 	{
 		if(!(*it)->isCompleted(player))
 			return false;
@@ -159,7 +159,7 @@ void Quest::getMissionList(Player* player, NetworkMessage_ptr msg)
 	msg->AddByte(0xF1);
 	msg->AddU16(id);
 	msg->AddByte(getMissionsCount(player));
-	for(MissionsList::const_iterator it = missions.begin(); it != missions.end(); it++)
+	for(MissionsList::const_iterator it = missions.begin(), end = missions.end(); it != end; ++it)
 	{
 		if((*it)->isStarted(player))
 		{
@@ -176,7 +176,7 @@ Quests::Quests()
 
 Quests::~Quests()
 {
-	for(QuestsList::iterator it = quests.begin(); it != quests.end(); it++)
+	for(QuestsList::iterator it = quests.begin(), end = quests.end(); it != end; ++it)
 		delete (*it);
 
 	quests.clear();
@@ -184,7 +184,7 @@ Quests::~Quests()
 
 bool Quests::reload()
 {
-	for(QuestsList::iterator it = quests.begin(); it != quests.end(); it++)
+	for(QuestsList::iterator it = quests.begin(), end = quests.end(); it != end; ++it)
 		delete (*it);
 
 	quests.clear();
@@ -284,7 +284,7 @@ bool Quests::loadFromXml()
 
 Quest *Quests::getQuestByID(uint16_t id)
 {
-	for(QuestsList::iterator it = quests.begin(); it != quests.end(); it++)
+	for(QuestsList::iterator it = quests.begin(), end = quests.end(); it != end; ++it)
 	{
 		if((*it)->getID() == id)
 			return (*it);
@@ -295,7 +295,7 @@ Quest *Quests::getQuestByID(uint16_t id)
 uint16_t Quests::getQuestsCount(Player* player)
 {
 	uint16_t count = 0;
-	for(QuestsList::const_iterator it = quests.begin(); it != quests.end(); it++)
+	for(QuestsList::const_iterator it = quests.begin(), end = quests.end(); it != end; ++it)
 	{
 		if((*it)->isStarted(player))
 			count++;
@@ -307,7 +307,7 @@ void Quests::getQuestsList(Player* player, NetworkMessage_ptr msg)
 {
 	msg->AddByte(0xF0);
 	msg->AddU16(getQuestsCount(player));
-	for(QuestsList::const_iterator it = quests.begin(); it != quests.end(); it++)
+	for(QuestsList::const_iterator it = quests.begin(), end = quests.end(); it != end; ++it)
 	{
 		if((*it)->isStarted(player))
 		{

@@ -520,7 +520,7 @@ bool Map::canThrowObjectTo(const Position& fromPos, const Position& toPos, bool 
 	if((fromPos.z >= 8 && toPos.z < 8) || (toPos.z >= 8 && fromPos.z < 8))
 		return false;
 
-	if(fromPos.z - fromPos.z > 2)
+	if(std::abs(fromPos.z - toPos.z) > 2)
 		return false;
 
 	int deltax, deltay, deltaz;
@@ -1294,7 +1294,7 @@ uint32_t Map::clean()
 		g_game.setGameState(GAME_STATE_MAINTAIN);
 
 	Tile* tile = NULL;
-	ItemVector::iterator tit;
+	ItemVector::iterator it;
 	for(int32_t z = 0; z < (int32_t)MAP_MAX_LAYERS; z++)
 	{
 		for(uint32_t y = 1; y <= mapHeight; y++)
@@ -1305,19 +1305,17 @@ uint32_t Map::clean()
 					continue;
 
 				++tiles;
-				tit = tile->getItemList()->begin();
-				while(tile->getItemList() && tit != tile->getItemList()->end())
+				it = tile->getItemList()->begin();
+				while(it != tile->getItemList()->end())
 				{
-					if((*tit)->isPushable() && !(*tit)->isLoadedFromMap())
+					if((*it)->isPushable() && !(*it)->isLoadedFromMap())
 					{
-						g_game.internalRemoveItem(*tit, -1);
-						if(tile->getItemList())
-							tit = tile->getItemList()->begin();
-
+						g_game.internalRemoveItem(*it, -1);
+						it = tile->getItemList()->begin();
 						++count;
 					}
 					else
-						++tit;
+						++it;
 				}
 			}
 		}

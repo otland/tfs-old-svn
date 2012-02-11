@@ -187,7 +187,7 @@ bool Mailbox::getReceiver(Item* item, std::string& name, uint32_t& dp)
 		Container* parcel = item->getContainer();
 		if(parcel)
 		{
-			for(ItemList::const_iterator cit = parcel->getItems(); cit != parcel->getEnd(); cit++)
+			for(ItemList::const_iterator cit = parcel->getItems(), end = parcel->getEnd(); cit != end; ++cit)
 			{
 				if((*cit)->getID() == ITEM_LABEL)
 				{

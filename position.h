@@ -95,23 +95,19 @@ class Position
 			return ! (*this < p);
 		}
 
-		bool operator==(const Position p) const
+		bool operator==(const Position& p) const
 		{
-			if(p.x == x && p.y == y && p.z == z)
-				return true;
-			return false;
+			return p.x == x && p.y == y && p.z == z;
 		}
 
-		bool operator!=(const Position p) const
+		bool operator!=(const Position& p) const
 		{
-			if(p.x==x && p.y==y && p.z ==z)
-				return false;
-			return true;
+			return p.x != x || p.y != y || p.z != z;
 		}
 
-		Position operator-(const Position p1)
+		Position operator-(const Position& p1)
 		{
-			return Position(x-p1.x, y-p1.y,z-p1.z);
+			return Position(x - p1.x, y - p1.y, z - p1.z);
 		}
 };
 
@@ -141,18 +137,14 @@ class PositionEx : public Position
 
 		int32_t stackpos;
 
-		bool operator==(const PositionEx p)  const
+		bool operator==(const PositionEx& p)  const
 		{
-			if(p.x == x && p.y == y && p.z == z && p.stackpos == stackpos)
-				return true;
-			return false;
+			return p.x == x && p.y == y && p.z == z && p.stackpos == stackpos;
 		}
 
-		bool operator!=(const PositionEx p)  const
+		bool operator!=(const PositionEx& p)  const
 		{
-			if(p.x == x && p.y == y && p.z == z && p.stackpos != stackpos)
-				return false;
-			return true;
+			return p.x != x || p.y != y || p.z != z || p.stackpos != stackpos;
 		}
 };
 
