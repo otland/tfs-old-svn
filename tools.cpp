@@ -495,7 +495,7 @@ std::string generateRecoveryKey(int32_t fieldCount, int32_t fieldLenght)
 		{
 			madeNumber = false;
 			madeCharacter = false;
-			doNumber = (bool)random_range(0, 1);
+			doNumber = random_range(0, 1) == 0;
 			if(doNumber)
 			{
 				number = random_range(2, 9);
@@ -1126,7 +1126,11 @@ bool fileExists(const char* filename)
 
 bool dirExists(const std::string& dirName)
 {
+#ifdef _MSC_VER
+	return _access(dirName.c_str(), 0) == 0;
+#else
 	return access(dirName.c_str(), 0) == 0;
+#endif
 }
 
 bool createDir(const std::string& dirName)

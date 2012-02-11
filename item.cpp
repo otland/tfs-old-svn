@@ -129,7 +129,7 @@ Item* Item::CreateItem(PropStream& propStream)
 		else if(_id >= 7063 && _id <= 7066)
 			_id = 7062;
 
-		if((bool)random_range(0, 1))
+		if(random_range(0, 1) == 0)
 		{
 			switch(_id)
 			{
@@ -893,7 +893,7 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance,
 		s << " (invisibility)";
 	else if(it.abilities.regeneration)
 		s << " (faster regeneration)";
-	else if(it.abilities.manaShield > 0)
+	else if(it.abilities.manaShield)
 		s << " (mana shield)";
 	else if(it.isKey())
 		s << " (Key:" << (item ? (int32_t)item->getActionId() : 0) << ")";

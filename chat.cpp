@@ -771,7 +771,7 @@ bool Chat::talkToChannel(Player* player, SpeakClasses type, const std::string& t
 					}
 					else if(text[2] == 'e')
 					{
-						if(!IOGuild::getInstance()->getGuildLevel(guid) != GUILDLEVEL_VICE)
+						if(IOGuild::getInstance()->getGuildLevel(guid) != GUILDLEVEL_VICE)
 						{
 							player->sendCancel("You can only demote Vice-Leaders to Members.");
 							return true;

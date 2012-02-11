@@ -459,7 +459,7 @@ void Actions::showUseHotkeyMessage(Player* player, int32_t id, uint32_t count)
 
 bool Actions::hasAction(const Item* item)
 {
-	return getAction(item);
+	return getAction(item) != NULL;
 }
 
 Action::Action(LuaScriptInterface* _interface) :

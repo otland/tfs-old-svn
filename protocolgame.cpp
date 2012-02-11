@@ -436,8 +436,13 @@ bool ProtocolGame::parseFirstPacket(NetworkMessage& msg)
 
 	std::string acc_pass;
 	uint32_t accnumber;
-	bool isAccountManager = g_config.getBoolean(ConfigManager::ACCOUNT_MANAGER) && name == "Account Manager";
-	if(!isAccountManager && !(IOLoginData::getInstance()->getPassword(accountName, name, acc_pass, accnumber) && passwordTest(password, acc_pass)))
+	bool gotPassword;
+	if(g_config.getBoolean(ConfigManager::ACCOUNT_MANAGER) && name == "Account Manager")
+		gotPassword = IOLoginData::getInstance()->getPasswordEx(accountName, acc_pass, accnumber);
+	else
+		gotPassword = IOLoginData::getInstance()->getPassword(accountName, name, acc_pass, accnumber);
+
+	if (!gotPassword || !passwordTest(password, acc_pass))
 	{
 		g_bans.addLoginAttempt(getIP(), false);
 		disconnectClient(0x14, "Account number or password is not correct.");
@@ -2370,7 +2375,7 @@ void ProtocolGame::sendAddCreature(const Creature* creature, const Position& pos
 					std::string tempstring = g_config.getString(ConfigManager::LOGIN_MSG);
 					if(!player->isAccountManagerEx())
 					{
-						if(!player->getLastLoginSaved() > 0)
+						if(player->getLastLoginSaved() <= 0)
 						{
 							tempstring += " Please choose your outfit.";
 							sendOutfitWindow();

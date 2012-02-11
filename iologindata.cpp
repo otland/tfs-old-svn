@@ -139,7 +139,7 @@ bool IOLoginData::createAccount(uint32_t accountNumber, std::string newPassword)
 		newPassword = transformToSHA1(newPassword);
 
 	DBQuery query;
-	query << "INSERT INTO `accounts` (`id`, `name`, `password`, `type`, `premdays`, `lastday`, `key`, `warnings`, `group_id`) VALUES (NULL,, '" << accountNumber << "', " << db->escapeString(newPassword) << ", 1, 0, 0, 0, 0, 1);";
+	query << "INSERT INTO `accounts` (`id`, `name`, `password`, `type`, `premdays`, `lastday`, `key`, `warnings`, `group_id`) VALUES (NULL, '" << accountNumber << "', " << db->escapeString(newPassword) << ", 1, 0, 0, 0, 0, 1);";
 	return db->executeQuery(query.str());
 }
 
@@ -174,6 +174,23 @@ bool IOLoginData::getPassword(const std::string& accname, const std::string& nam
 	while(result->next());
 	db->freeResult(result);
 	return false;
+}
+
+bool IOLoginData::getPasswordEx(const std::string& accname, std::string& password, uint32_t& accNumber)
+{
+	Database* db = Database::getInstance();
+
+	DBQuery query;
+	DBResult* result;
+
+	query << "SELECT `id`, `password` FROM `accounts` WHERE `name` " << db->getStringComparer() << db->escapeString(accname) << " LIMIT 1;";
+	if(!(result = db->storeQuery(query.str())))
+		return false;
+
+	accNumber = result->getDataInt("id");
+	password = result->getDataString("password");
+	db->freeResult(result);
+	return true;
 }
 
 bool IOLoginData::accountExists(uint32_t accno)
@@ -383,7 +400,7 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool prelo
 	player->health = result->getDataInt("health");
 	player->healthMax = result->getDataInt("healthmax");
 
-	if(player->accessLevel > 0)
+	if(player->accessLevel)
 	{
 		if(acc.accountType > 4)
 			player->defaultOutfit.lookType = 266;

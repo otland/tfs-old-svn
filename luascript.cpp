@@ -1045,7 +1045,7 @@ int32_t LuaScriptInterface::popCallback(lua_State* L)
 bool LuaScriptInterface::popBoolean(lua_State* L)
 {
 	lua_pop(L, 1);
-	return lua_toboolean(L, 0);
+	return lua_toboolean(L, 0) != 0;
 }
 
 void LuaScriptInterface::setField(lua_State* L, const char* index, double val)
@@ -2608,7 +2608,7 @@ int32_t LuaScriptInterface::luaDoCreatureSay(lua_State* L)
 
 	bool ghost = false;
 	if(params > 3)
-		ghost = popNumber(L);
+		ghost = popBoolean(L);
 
 	SpeakClasses type = (SpeakClasses)popNumber(L);
 	std::string text = popString(L);
@@ -7198,7 +7198,7 @@ int32_t LuaScriptInterface::luaGetItemWeight(lua_State* L)
 
 	bool precise = true;
 	if(parameters > 2)
-		precise = popNumber(L) == true;
+		precise = popBoolean(L);
 
 	int32_t count = 1;
 	if(parameters > 1)
@@ -7224,7 +7224,7 @@ int32_t LuaScriptInterface::luaGetItemWeightByUID(lua_State* L)
 	//getItemWeight(itemid[, precise = true])
 	bool precise = true;
 	if(lua_gettop(L) > 2)
-		precise = popNumber(L);
+		precise = popBoolean(L);
 
 	ScriptEnvironment* env = getScriptEnv();
 	Item* item = env->getItemByUID(popNumber(L));
