@@ -7,7 +7,7 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 	local str = ""
 	if(config.tibianTime) then
 		local var = getTibiaTime()
-		str = (var.hours < 10 and '0' or '') .. var.hours .. ':' .. (var.minutes < 10 and '0' or '') .. var.minutes
+		str = var.hours .. ':' .. var.minutes
 	elseif(config.twentyFour) then
 		str = os.date('%H:%M')
 	else

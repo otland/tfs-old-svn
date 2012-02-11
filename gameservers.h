@@ -18,6 +18,7 @@
 #ifndef __GAMESERVER__
 #define __GAMESERVER__
 #include "otsystem.h"
+#include "const.h"
 
 class GameServer
 {

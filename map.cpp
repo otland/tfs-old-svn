@@ -457,7 +457,7 @@ bool Map::canThrowObjectTo(const Position& fromPos, const Position& toPos, bool 
 	//underground 8->15
 	//ground level and above 7->0
 	if((fromPos.z >= 8 && toPos.z < 8) || (toPos.z >= 8 &&
-		fromPos.z < 8) || fromPos.z - fromPos.z > 2)
+		fromPos.z < 8) || fromPos.z - toPos.z > 2)
 		return false;
 
 	int32_t deltax = std::abs(fromPos.x - toPos.x), deltay = std::abs(
