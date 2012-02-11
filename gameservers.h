@@ -18,16 +18,12 @@
 #ifndef __GAMESERVER__
 #define __GAMESERVER__
 #include "otsystem.h"
-#include "const.h"
 
 class GameServer
 {
 	public:
 		GameServer(): name("TheForgottenServer"), address(LOCALHOST),
-			versionMin(CLIENT_VERSION_MIN), versionMax(CLIENT_VERSION_MAX)
-		{
-			ports.push_back(7181);
-		}
+			versionMin(CLIENT_VERSION_MIN), versionMax(CLIENT_VERSION_MAX) {}
 		GameServer(std::string _name, uint32_t _versionMin, uint32_t _versionMax, uint32_t _address, std::vector<int32_t> _ports):
 			name(_name), address(_address), versionMin(_versionMin), versionMax(_versionMax), ports(_ports) {}
 		virtual ~GameServer() {}
@@ -62,6 +58,9 @@ class GameServers
 		bool reload();
 
 		GameServer* getServerById(uint32_t id) const;
+
+		GameServersMap::const_iterator getFirstServer() const {return serverList.begin();}
+		GameServersMap::const_iterator getLastServer() const {return serverList.end();}
 
 	protected:
 		void clear();

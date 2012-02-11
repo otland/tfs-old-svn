@@ -5042,7 +5042,7 @@ void Game::checkLight()
 
 	lightHour = lightHour + lightHourDelta;
 	if(lightHour > 1440)
-		lightHour = lightHour - 1440;
+		lightHour -= 1440;
 
 	if(std::abs(lightHour - SUNRISE) < 2 * lightHourDelta)
 		lightState = LIGHT_STATE_SUNRISE;

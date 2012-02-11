@@ -6,19 +6,8 @@ local config = {
 function onUse(cid, item, fromPosition, itemEx, toPosition)
 	local str = ""
 	if(config.tibianTime) then
-		local var = (os.date('%M') * 60 + os.date('%S')) / 150
-		local hour = math.floor(var)
-
-		local minute = math.floor(60 * (var - hour))
-		if(hour < 10) then
-			hour = '0' .. hour
-		end
-
-		if(minute < 10) then
-			minute = '0' .. minute
-		end
-
-		str = hour .. ':' .. minute
+		local var = getTibiaTime()
+		str = (var.hours < 10 and '0' or '') .. var.hours .. ':' .. (var.minutes < 10 and '0' or '') .. var.minutes
 	elseif(config.twentyFour) then
 		str = os.date('%H:%M')
 	else

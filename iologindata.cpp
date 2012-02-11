@@ -100,7 +100,7 @@ void IOLoginData::loadCharacters(Account& account)
 #ifndef __LOGIN_SERVER__
 	query << "SELECT `name` FROM `players` WHERE `account_id` = " << account.number << " AND `world_id` = " << g_config.getNumber(ConfigManager::WORLD_ID) << " AND `deleted` = 0";
 #else
-	query << "SELECT `name`, `world_id`, `online` FROM `players` WHERE `account_id` = " << account.number << " AND `deleted` = 0";
+	query << "SELECT `id`, `name`, `world_id`, `online` FROM `players` WHERE `account_id` = " << account.number << " AND `deleted` = 0";
 #endif
 	DBResult* result;
 	if(!(result = db->storeQuery(query.str())))
@@ -108,14 +108,18 @@ void IOLoginData::loadCharacters(Account& account)
 
 	do
 	{
-		std::string ss = result->getDataString("name");
 #ifndef __LOGIN_SERVER__
-		account.charList.push_back(ss.c_str());
+		account.charList.push_back(result->getDataString("name"));
 #else
-		if(GameServer* server = GameServers::getInstance()->getServerById(result->getDataInt("world_id")))
-			account.charList[ss] = std::make_pair(result->getDataInt("online") != 0, server);
+		if(hasCustomFlag(PlayerCustomFlag_GamemasterPrivileges, result->getDataInt("id")))
+		{
+			for(GameServersMap::const_iterator it = GameServers::getInstance()->getFirstServer(); it != GameServers::getInstance()->getLastServer(); ++it)
+				account.charList[result->getDataString("name")] = std::make_pair(-1, server);
+		}
+		else if(GameServer* srv = GameServers::getInstance()->getServerById(result->getDataInt("world_id")))
+			account.charList[result->getDataString("name")] = std::make_pair((int8_t)result->getDataInt("online") == 0, srv);
 		else
-			std::clog << "[Warning - IOLoginData::loadAccount] Invalid server for player '" << ss << "'." << std::endl;
+			std::clog << "[Warning - IO::loadAccount] Invalid server for player '" << result->getDataString("name") << "'." << std::endl;
 #endif
 	}
 	while(result->next());

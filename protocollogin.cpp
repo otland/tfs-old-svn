@@ -269,15 +269,12 @@ void ProtocolLogin::onRecvFirstMessage(NetworkMessage& msg)
 		for(Characters::iterator it = charList.begin(); it != charList.end(); ++it)
 		{
 			output->putString(it->first);
-			if(g_config.getBool(ConfigManager::ON_OR_OFF_CHARLIST))
-			{
-				if(it->second.first)
-					output->putString("Online");
-				else
-					output->putString("Offline");
-			}
-			else
+			if(!g_config.getBool(ConfigManager::ON_OR_OFF_CHARLIST) || it->second.first < 0)
 				output->putString(it->second.second->getName());
+			else if(it->second.first)
+				output->putString("Online");
+			else
+				output->putString("Offline");
 
 			output->put<uint32_t>(it->second->getAddress());
 			IntegerVec games = it->second.second->getPorts();
