@@ -44,10 +44,10 @@ std::string Mission::parseStorages(std::string state, std::string value, Player*
 	std::string::size_type start = 0, end = 0;
 	while((start = state.find("|STORAGE:", end)) != std::string::npos)
 	{
-		if((end = state.find("|", start)) == std::string::npos)
+		if((end = state.find("|", start) - 1) == std::string::npos)
 			break;
 
-		std::string value, storage = state.substr(start, end - start);
+		std::string value, storage = state.substr(start + 9, end - 10);
 		player->getStorage(storage, value);
 		state.replace(start, end, value);
 	}
