@@ -143,7 +143,7 @@ class ItemAttributes
 		void resetText() {removeAttribute(ATTR_ITEM_TEXT);}
 		const std::string& getText() const {return getStrAttr(ATTR_ITEM_TEXT);}
 
-		void setDate(uint64_t n) {setIntAttr(ATTR_ITEM_WRITTENDATE, n);}
+		void setDate(int32_t n) {setIntAttr(ATTR_ITEM_WRITTENDATE, n);}
 		void resetDate() {removeAttribute(ATTR_ITEM_WRITTENDATE);}
 		time_t getDate() const {return (time_t)getIntAttr(ATTR_ITEM_WRITTENDATE);}
 

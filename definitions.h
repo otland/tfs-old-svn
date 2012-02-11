@@ -35,7 +35,7 @@
 #if __GNUC__ > 3
 #define FUNCTION_INFO __PRETTY_FUNCTION__
 #elif _MSC_VER
-#define FUNCTION_INFO __FUNCTION__ /// \note I don't know the macro for MSVC
+#define FUNCTION_INFO __FUNCTION__
 #else
 #define FUNCTION_INFO
 #endif
@@ -183,7 +183,6 @@ enum passwordType_t
 	#pragma warning(disable:4250) // 'class1' : inherits 'class2::member' via dominance
 	#pragma warning(disable:4244) //'argument' : conversion from 'type1' to 'type2', possible loss of data
 	#pragma warning(disable:4267) //'var' : conversion from 'size_t' to 'type', possible loss of data
-
 #endif
 
 //*nix systems

@@ -2179,7 +2179,7 @@ void Player::death()
 	if(skillLoss)
 	{
 		//Magic level loss
-		uint32_t sumMana = 0;
+		uint64_t sumMana = 0;
 		uint64_t lostMana = 0;
 
 		//sum up all the mana
@@ -2188,9 +2188,8 @@ void Player::death()
 
 		sumMana += manaSpent;
 
-		lostMana = (int32_t)(sumMana * getLostPercent());
-
-		while((uint64_t)lostMana > manaSpent && magLevel > 0)
+		lostMana = (uint64_t)(sumMana * getLostPercent());
+		while(lostMana > manaSpent && magLevel > 0)
 		{
 			lostMana -= manaSpent;
 			manaSpent = vocation->getReqMana(magLevel);

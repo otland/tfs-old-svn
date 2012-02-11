@@ -79,9 +79,11 @@ class Vocation
 		float skillMultipliers[SKILL_LAST + 1];
 		float manaMultiplier;
 
-		typedef std::map<uint32_t, uint32_t> cacheMap;
-		cacheMap cacheMana;
-		cacheMap cacheSkill[SKILL_LAST + 1];
+		typedef std::map<uint32_t, uint64_t> manaCacheMap;
+		manaCacheMap cacheMana;
+
+		typedef std::map<uint32_t, uint32_t> skillCacheMap;
+		skillCacheMap cacheSkill[SKILL_LAST + 1];
 };
 
 typedef std::map<uint32_t, Vocation*> VocationsMap;

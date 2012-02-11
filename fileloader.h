@@ -199,7 +199,7 @@ class PropStream
 			end = a + size;
 		}
 
-		int16_t size(){return end-p;}
+		uint64_t size(){return end-p;}
 
 		template <typename T>
 		inline bool GET_STRUCT(T* &ret)

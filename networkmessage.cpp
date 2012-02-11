@@ -130,7 +130,7 @@ void NetworkMessage::AddItem(const Item* item)
 	AddU16(it.clientId);
 
 	if(it.stackable)
-		AddByte(item->getSubType());
+		AddByte(std::min(255, item->getSubType()));
 	else if(it.isSplash() || it.isFluidContainer())
 	{
 		uint32_t fluidIndex = item->getSubType() % 8;
