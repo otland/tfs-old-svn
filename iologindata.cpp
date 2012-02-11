@@ -428,7 +428,7 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool preLo
 	}
 
 	Group* group = Groups::getInstance()->getGroup(result->getDataInt("group_id"));
-	if(!group->getCustomFlags(PlayerCustomFlag_GamemasterPrivileges) &&
+	if(!group->hasCustomFlags(PlayerCustomFlag_GamemasterPrivileges) &&
 		result->getDataInt("world_id") != g_config.getNumber(ConfigManager::WORLD_ID))
 	{
 		result->free();
