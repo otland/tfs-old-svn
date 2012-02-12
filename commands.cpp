@@ -1443,7 +1443,7 @@ void Commands::multiClientCheck(Player* player, const std::string& cmd, const st
 	std::list<uint32_t> ipList;
 
 	player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, "Multiclient Check List:");
-	std::map<uint32_t, std::vector<Player*>> ipMap;
+	std::map< uint32_t, std::vector<Player*> > ipMap;
 	for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
 	{
 		if (it->second->isRemoved() || it->second->getIP() == 0)
@@ -1453,14 +1453,14 @@ void Commands::multiClientCheck(Player* player, const std::string& cmd, const st
 	}
 
 	std::stringstream ss;
-	for (std::map<uint32_t, std::vector<Player*>>::const_iterator it = ipMap.begin(), end = ipMap.end(); it != end; ++it)
+	for(std::map< uint32_t, std::vector<Player*> >::const_iterator it = ipMap.begin(), end = ipMap.end(); it != end; ++it)
 	{
-		if (it->second.size() < 2)
+		if(it->second.size() < 2)
 			continue;
 
 		Player* tmpPlayer = it->second[0];
 		ss << convertIPToString(it->first) << ": " << tmpPlayer->getName() << " [" << tmpPlayer->getLevel() << "]";
-		for (std::vector<Player*>::size_type i = 1, size = it->second.size(); i < size; ++i)
+		for(std::vector<Player*>::size_type i = 1, size = it->second.size(); i < size; ++i)
 		{
 			tmpPlayer = it->second[i];
 			ss << ", " << tmpPlayer->getName() << " [" << tmpPlayer->getLevel() << "]";
