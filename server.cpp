@@ -154,8 +154,9 @@ void ServicePort::onAccept(boost::asio::ip::tcp::socket* socket, const boost::sy
 		if(remote_ip != 0 && g_bans.acceptConnection(remote_ip))
 		{
 			Connection_ptr connection = ConnectionManager::getInstance()->createConnection(socket, m_io_service, shared_from_this());
-			if(m_services.front()->is_single_socket())
-				connection->acceptConnection(m_services.front()->make_protocol(connection));
+			Service_ptr service = m_services.front();
+			if(service->is_single_socket())
+				connection->acceptConnection(service->make_protocol(connection));
 			else
 				connection->acceptConnection();
 		}

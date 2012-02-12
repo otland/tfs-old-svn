@@ -1305,13 +1305,15 @@ uint32_t Map::clean()
 					continue;
 
 				++tiles;
-				it = tile->getItemList()->begin();
-				while(it != tile->getItemList()->end())
+				TileItemVector* itemList = tile->getItemList();
+				ItemVector::iterator it = itemList->begin(), end = itemList->end();
+				while(it != end)
 				{
 					if((*it)->isPushable() && !(*it)->isLoadedFromMap())
 					{
 						g_game.internalRemoveItem(*it, -1);
-						it = tile->getItemList()->begin();
+						it = itemList->begin();
+						end = itemList->end();
 						++count;
 					}
 					else

@@ -1001,9 +1001,11 @@ void Commands::changeFloor(Player* player, const std::string& cmd, const std::st
 
 void Commands::showPosition(Player* player, const std::string& cmd, const std::string& param)
 {
-	char buffer[100];
-	sprintf(buffer, "Your current position is [X: %d | Y: %d | Z: %d].", player->getPosition().x, player->getPosition().y, player->getPosition().z);
-	player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, buffer);
+	const Position& pos = player->getPosition();
+
+	std::stringstream ss;
+	ss << "Your current position is [X: " << pos.x << " | Y: " << pos.y << " | Z: " << pos.z << "].";
+	player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, ss.str());
 }
 
 void Commands::removeThing(Player* player, const std::string& cmd, const std::string& param)
@@ -1440,47 +1442,35 @@ void Commands::multiClientCheck(Player* player, const std::string& cmd, const st
 {
 	std::list<uint32_t> ipList;
 
-	std::stringstream text;
-	text << "Multiclient Check List:";
-	player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, text.str().c_str());
-	text.str("");
-
+	player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, "Multiclient Check List:");
+	std::map<uint32_t, std::vector<Player*>> ipMap;
 	for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
 	{
-		if(it->second->isRemoved() || it->second->getIP() == 0 || std::find(ipList.begin(), ipList.end(), it->second->getIP()) != ipList.end())
+		if (it->second->isRemoved() || it->second->getIP() == 0)
 			continue;
 
-		std::list< std::pair<std::string, uint32_t> > playerList;
-		for(AutoList<Player>::listiterator it2 = Player::listPlayer.list.begin(); it2 != Player::listPlayer.list.end(); ++it2)
+		ipMap[it->second->getIP()].push_back(it->second);
+	}
+
+	std::stringstream ss;
+	for (std::map<uint32_t, std::vector<Player*>>::const_iterator it = ipMap.begin(), end = ipMap.end(); it != end; ++it)
+	{
+		if (it->second.size() < 2)
+			continue;
+
+		Player* tmpPlayer = it->second[0];
+		ss << convertIPToString(it->first) << ": " << tmpPlayer->getName() << " [" << tmpPlayer->getLevel() << "]";
+		for (std::vector<Player*>::size_type i = 1, size = it->second.size(); i < size; ++i)
 		{
-			if(it->second == it2->second || it2->second->isRemoved())
-				continue;
-
-			if(it->second->getIP() == it2->second->getIP())
-				playerList.push_back(make_pair(it2->second->getName(), it2->second->getLevel()));
+			tmpPlayer = it->second[i];
+			ss << ", " << tmpPlayer->getName() << " [" << tmpPlayer->getLevel() << "]";
 		}
+		ss << ".\n";
+	}
 
-		if(!playerList.empty())
-		{
-			text << convertIPToString(it->second->getIP()) << ":\n"
-			<< it->second->getName() << " [" << it->second->getLevel() << "], ";
-			uint32_t tmp = 0;
-			for(std::list< std::pair<std::string, uint32_t> >::const_iterator p = playerList.begin(), end = playerList.end(); p != end; ++p)
-			{
-				tmp++;
-				if(tmp != playerList.size())
-					text << p->first << " [" << p->second << "], ";
-				else
-					text << p->first << " [" << p->second << "].";
-			}
-
-			ipList.push_back(it->second->getIP());
-		}
-
-		if(text.str() != "")
-		{
-			player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, text.str().c_str());
-			text.str("");
-		}
+	if(ss.str() != "")
+	{
+		player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, ss.str());
+		ss.str("");
 	}
 }

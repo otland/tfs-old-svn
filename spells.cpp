@@ -198,8 +198,10 @@ InstantSpell* Spells::getInstantSpell(const std::string& words)
 	for(InstantsMap::iterator it = instants.begin(); it != instants.end(); ++it)
 	{
 		InstantSpell* instantSpell = it->second;
-		size_t spellLen = instantSpell->getWords().length();
-		if(strncasecmp(instantSpell->getWords().c_str(), words.c_str(), spellLen) == 0)
+
+		const std::string& instantSpellWords = instantSpell->getWords();
+		size_t spellLen = instantSpellWords.length();
+		if(strncasecmp(instantSpellWords.c_str(), words.c_str(), spellLen) == 0)
 		{
 			if(!result || spellLen > result->getWords().length())
 				result = instantSpell;
@@ -208,9 +210,10 @@ InstantSpell* Spells::getInstantSpell(const std::string& words)
 
 	if(result)
 	{
-		if(words.length() > result->getWords().length())
+		const std::string& resultWords = result->getWords();
+		if(words.length() > resultWords.length())
 		{
-			size_t spellLen = result->getWords().length();
+			size_t spellLen = resultWords.length();
 			size_t paramLen = words.length() - spellLen;
 			std::string paramText = words.substr(spellLen, paramLen);
 			if(paramText.substr(0, 1) != " " || (paramText.length() >= 2 && paramText.substr(0, 2) != " \""))
@@ -1397,22 +1400,23 @@ bool InstantSpell::HouseDoorList(const InstantSpell* spell, Creature* creature, 
 
 bool InstantSpell::HouseKick(const InstantSpell* spell, Creature* creature, const std::string& param)
 {
+	Player* player = creature->getPlayer();
 	Player* targetPlayer = g_game.getPlayerByName(param);
 	if(!targetPlayer)
-		targetPlayer = creature->getPlayer();
+		targetPlayer = player;
 
 	House* house = getHouseFromPos(targetPlayer);
 	if(!house)
 	{
-		g_game.addMagicEffect(creature->getPosition(), NM_ME_POFF);
-		creature->getPlayer()->sendCancelMessage(RET_NOTPOSSIBLE);
+		g_game.addMagicEffect(player->getPosition(), NM_ME_POFF);
+		player->sendCancelMessage(RET_NOTPOSSIBLE);
 		return false;
 	}
 
-	if(!house->kickPlayer(creature->getPlayer(), targetPlayer->getName()))
+	if(!house->kickPlayer(player, targetPlayer->getName()))
 	{
-		g_game.addMagicEffect(creature->getPosition(), NM_ME_POFF);
-		creature->getPlayer()->sendCancelMessage(RET_NOTPOSSIBLE);
+		g_game.addMagicEffect(player->getPosition(), NM_ME_POFF);
+		player->sendCancelMessage(RET_NOTPOSSIBLE);
 		return false;
 	}
 	return true;

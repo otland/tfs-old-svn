@@ -2844,11 +2844,11 @@ bool Game::playerLookInTrade(uint32_t playerId, bool lookAtCounterOffer, int ind
 	int32_t lookDistance = std::max(std::abs(playerPosition.x - tradeItemPosition.x),
 		std::abs(playerPosition.y - tradeItemPosition.y));
 
-	char buffer[800];
+	std::stringstream ss;
 	if(index == 0)
 	{
-		sprintf(buffer, "You see %s", tradeItem->getDescription(lookDistance).c_str());
-		player->sendTextMessage(MSG_INFO_DESCR, buffer);
+		ss << "You see " << tradeItem->getDescription(lookDistance);
+		player->sendTextMessage(MSG_INFO_DESCR, ss.str());
 		return false;
 	}
 
@@ -2882,8 +2882,8 @@ bool Game::playerLookInTrade(uint32_t playerId, bool lookAtCounterOffer, int ind
 
 	if(foundItem)
 	{
-		sprintf(buffer, "You see %s", tradeItem->getDescription(lookDistance).c_str());
-		player->sendTextMessage(MSG_INFO_DESCR, buffer);
+		ss << "You see " << tradeItem->getDescription(lookDistance);
+		player->sendTextMessage(MSG_INFO_DESCR, ss.str());
 	}
 	return foundItem;
 }
@@ -4988,7 +4988,8 @@ bool Game::playerJoinParty(uint32_t playerId, uint32_t leaderId)
 	if(!leader || leader->isRemoved() || !leader->isInviting(player))
 		return false;
 
-	if(!leader->getParty() || leader->getParty()->getLeader() != leader)
+	Party* party = leader->getParty();
+	if(!party || party->getLeader() != leader)
 		return false;
 
 	if(player->getParty())
@@ -4996,7 +4997,7 @@ bool Game::playerJoinParty(uint32_t playerId, uint32_t leaderId)
 		player->sendTextMessage(MSG_INFO_DESCR, "You are already in a party.");
 		return false;
 	}
-	return leader->getParty()->joinParty(player);
+	return party->joinParty(player);
 }
 
 bool Game::playerRevokePartyInvitation(uint32_t playerId, uint32_t invitedId)

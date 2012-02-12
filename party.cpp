@@ -159,9 +159,10 @@ bool Party::joinParty(Player* player)
 	if(!player || player->isRemoved())
 		return false;
 
-	char buffer[200];
-	sprintf(buffer, "%s has joined the party.", player->getName().c_str());
-	broadcastPartyMessage(MSG_INFO_DESCR, buffer);
+	std::stringstream ss;
+	ss << player->getName() << " has joined the party.";
+	broadcastPartyMessage(MSG_INFO_DESCR, ss.str());
+	ss.str("");
 
 	memberList.push_back(player);
 	player->setParty(this);
@@ -174,8 +175,10 @@ bool Party::joinParty(Player* player)
 	updateSharedExperience();
 	updatePartyIcons(player);
 
-	sprintf(buffer, "You have joined %s'%s party. Open the party channel to communicate with your companions.", leader->getName().c_str(), (leader->getName()[leader->getName().length() - 1] == 's' ? "" : "s"));
-	player->sendTextMessage(MSG_INFO_DESCR, buffer);
+	const std::string& leaderName = leader->getName();
+	ss << "You have joined " << leaderName << "'" << (leaderName[leaderName.length() - 1] == 's' ? "" : "s") <<
+		" party. Open the party channel to communicate with your companions.";
+	player->sendTextMessage(MSG_INFO_DESCR, ss.str());
 	return true;
 }
 

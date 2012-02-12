@@ -941,7 +941,7 @@ bool Houses::payHouses()
 						}
 
 						char warningText[300];
-						sprintf(warningText, "Warning! \nThe %s rent of %d gold for your house \"%s\" is payable. Have it within %d days or you will lose this house.", period.c_str(), house->getRent(), house->getName().c_str(), daysLeft);
+						sprintf(warningText, "Warning! \nThe %s rent of %u gold for your house \"%s\" is payable. Have it within %d days or you will lose this house.", period.c_str(), house->getRent(), house->getName().c_str(), daysLeft);
 						letter->setText(warningText);
 						g_game.internalAddItem(depot, letter, INDEX_WHEREEVER, FLAG_NOLIMIT);
 						house->setPayRentWarnings(house->getPayRentWarnings() + 1);

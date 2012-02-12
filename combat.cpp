@@ -297,9 +297,10 @@ ReturnValue Combat::canDoCombat(const Creature* caster, const Tile* tile, bool i
 	if(caster)
 	{
 		const Position& casterPosition = caster->getPosition();
-		if(casterPosition.z < tile->getPosition().z)
+		const Position& tilePosition = tile->getPosition();
+		if(casterPosition.z < tilePosition.z)
 			return RET_FIRSTGODOWNSTAIRS;
-		else if(casterPosition.z > tile->getPosition().z)
+		else if(casterPosition.z > tilePosition.z)
 			return RET_FIRSTGOUPSTAIRS;
 
 		if(const Player* player = caster->getPlayer())
@@ -738,11 +739,12 @@ void Combat::CombatFunc(Creature* caster, const Position& pos,
 	//calculate the max viewable range
 	for(std::list<Tile*>::iterator it = tileList.begin(); it != tileList.end(); ++it)
 	{
-		diff = std::abs((*it)->getPosition().x - pos.x);
+		const Position& tilePos = (*it)->getPosition();
+		diff = std::abs(tilePos.x - pos.x);
 		if(diff > maxX)
 			maxX = diff;
 
-		diff = std::abs((*it)->getPosition().y - pos.y);
+		diff = std::abs(tilePos.y - pos.y);
 		if(diff > maxY)
 			maxY = diff;
 	}
@@ -756,11 +758,9 @@ void Combat::CombatFunc(Creature* caster, const Position& pos,
 		bool bContinue = true;
 		if(canDoCombat(caster, iter_tile, params.isAggressive) == RET_NOERROR)
 		{
-			if(iter_tile->getCreatures())
+			if(CreatureVector* creatures = iter_tile->getCreatures())
 			{
-				for(CreatureVector::iterator cit = iter_tile->getCreatures()->begin(),
-					cend = iter_tile->getCreatures()->end();
-					bContinue && cit != cend; ++cit)
+				for(CreatureVector::iterator cit = creatures->begin(), cend = creatures->end(); bContinue && cit != cend; ++cit)
 				{
 					if(params.targetCasterOrTopMost)
 					{

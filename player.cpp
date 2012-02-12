@@ -3748,8 +3748,11 @@ void Player::onTargetCreatureGainHealth(Creature* target, int32_t points)
 		Player* tmpPlayer = NULL;
 		if(target->getPlayer())
 			tmpPlayer = target->getPlayer();
-		else if(target->getMaster() && target->getMaster()->getPlayer())
-			tmpPlayer = target->getMaster()->getPlayer();
+		else if(Creature* targetMaster = target->getMaster())
+		{
+			if(Player* targetMasterPlayer = targetMaster->getPlayer())
+				tmpPlayer = targetMasterPlayer;
+		}
 
 		if(isPartner(tmpPlayer))
 			getParty()->addPlayerHealedMember(this, points);

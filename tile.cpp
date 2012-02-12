@@ -561,8 +561,9 @@ ReturnValue Tile::__queryAdd(int32_t index, const Thing* thing, uint32_t count,
 						if(creature->getPlayer() && creature->getPlayer()->isInGhostMode())
 							continue;
 
-						if(!creature->getMonster() || !creature->isPushable() ||
-							(creature->getMonster()->isSummon() && creature->getMonster()->getMaster()->getPlayer()))
+						const Monster* creatureMonster = creature->getMonster();
+						if(!creatureMonster || !creature->isPushable() ||
+							(creatureMonster->isSummon() && creatureMonster->getMaster()->getPlayer()))
 						{
 							return RET_NOTPOSSIBLE;
 						}

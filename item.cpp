@@ -900,7 +900,10 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance,
 	else if(it.isFluidContainer())
 	{
 		if(subType > 0)
-			s << " of " << (items[subType].name.length() ? items[subType].name : "unknown");
+		{
+			const std::string& itemName = items[subType].name;
+			s << " of " << (itemName.length() ? itemName : "unknown");
+		}
 		else
 			s << ". It is empty";
 	}

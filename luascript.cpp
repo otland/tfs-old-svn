@@ -3110,7 +3110,7 @@ int32_t LuaScriptInterface::luaDoRelocate(lua_State* L)
 	{
 		std::stringstream ss;
 		ss << fromPos << " " << getErrorDesc(LUA_ERROR_TILE_NOT_FOUND);
-		reportErrorFunc(ss.str().c_str());
+		reportErrorFunc(ss.str());
 		lua_pushboolean(L, false);
 		return 1;
 	}
@@ -3120,7 +3120,7 @@ int32_t LuaScriptInterface::luaDoRelocate(lua_State* L)
 	{
 		std::stringstream ss;
 		ss << toPos << " " << getErrorDesc(LUA_ERROR_TILE_NOT_FOUND);
-		reportErrorFunc(ss.str().c_str());
+		reportErrorFunc(ss.str());
 		lua_pushboolean(L, false);
 		return 1;
 	}
@@ -3910,9 +3910,9 @@ int32_t LuaScriptInterface::luaSetPlayerStorageValue(lua_State* L)
 	uint32_t cid = popNumber(L);
 	if(IS_IN_KEYRANGE(key, RESERVED_RANGE))
 	{
-		char error_str[75];
-		sprintf(error_str, "Accessing reserved range: %d", key);
-		reportErrorFunc(error_str);
+		std::stringstream ss;
+		ss << "Accessing reserved range: " << key;
+		reportErrorFunc(ss.str());
 		lua_pushboolean(L, false);
 		return 1;
 	}
@@ -7264,8 +7264,9 @@ int32_t LuaScriptInterface::luaHasProperty(lua_State* L)
 
 	//Check if the item is a tile, so we can get more accurate properties
 	bool hasProp = item->hasProperty((ITEMPROPERTY)prop);
-	if(item->getTile() && item->getTile()->ground == item)
-		hasProp = item->getTile()->hasProperty((ITEMPROPERTY)prop);
+	const Tile* itemTile = item->getTile();
+	if(itemTile && itemTile->ground == item)
+		hasProp = itemTile->hasProperty((ITEMPROPERTY)prop);
 
 	lua_pushboolean(L, hasProp);
 	return 1;

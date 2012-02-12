@@ -25,6 +25,7 @@
 #include "database.h"
 #include "databasesqlite.h"
 #include "configmanager.h"
+#include "tools.h"
 #include <iostream>
 #include <fstream>
 #include <boost/regex.hpp>
@@ -45,14 +46,12 @@ DatabaseSQLite::DatabaseSQLite()
 
 	// test for existence of database file;
 	// sqlite3_open will create a new one if it isn't there (which we don't want)
-	std::fstream fin(g_config.getString(ConfigManager::SQLITE_DB).c_str(), std::ios::in | std::ios::binary);
-	if(fin.fail())
+	if(!fileExists(g_config.getString(ConfigManager::SQLITE_DB).c_str()))
 	{
 		std::cout << "Failed to initialize SQLite connection. File " << g_config.getString(ConfigManager::SQLITE_DB) <<
 				" does not exist." << std::endl;
 		return;
 	}
-	fin.close();
 
 	// Initialize sqlite
 	if(sqlite3_open(g_config.getString(ConfigManager::SQLITE_DB).c_str(), &m_handle) != SQLITE_OK)

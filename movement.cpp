@@ -743,7 +743,8 @@ uint32_t MoveEvent::EquipItem(MoveEvent* moveEvent, Player* player, Item* item, 
 		if(moveEvent->isPremium() && !player->isPremium())
 			return 0;
 
-		if(!moveEvent->getVocEquipMap().empty() && moveEvent->getVocEquipMap().find(player->getVocationId()) == moveEvent->getVocEquipMap().end())
+		const VocEquipMap& vocEquipMap = moveEvent->getVocEquipMap();
+		if(!vocEquipMap.empty() && vocEquipMap.find(player->getVocationId()) == vocEquipMap.end())
 			return 0;
 	}
 

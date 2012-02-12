@@ -507,8 +507,9 @@ ResponseList Npc::loadInteraction(xmlNodePtr node)
 
 						if(m_scriptInterface->reserveScriptEnv())
 						{
-							m_scriptInterface->getScriptEnv()->setRealPos(getPosition());
-							m_scriptInterface->getScriptEnv()->setNpc(this);
+							ScriptEnvironment* scriptEnvironment = m_scriptInterface->getScriptEnv();
+							scriptEnvironment->setRealPos(getPosition());
+							scriptEnvironment->setNpc(this);
 							m_scriptInterface->loadBuffer(strValue, NULL);
 							m_scriptInterface->releaseScriptEnv();
 						}
