@@ -34,10 +34,10 @@
 extern ConfigManager g_config;
 
 DatabaseMySQL::DatabaseMySQL() :
-	m_handle(NULL), m_timeoutTask(0)
+	m_handle(new MYSQL), m_timeoutTask(0)
 {
 	m_connected = false;
-	if(mysql_init(m_handle))
+	if(!mysql_init(m_handle))
 	{
 		std::clog << std::endl << "Failed to initialize MySQL connection handler." << std::endl;
 		return;
@@ -91,6 +91,7 @@ DatabaseMySQL::DatabaseMySQL() :
 DatabaseMySQL::~DatabaseMySQL()
 {
 	mysql_close(m_handle);
+	delete m_handle;
 	if(m_timeoutTask != 0)
 		Scheduler::getInstance().stopEvent(m_timeoutTask);
 }
