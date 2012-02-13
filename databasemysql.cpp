@@ -206,10 +206,10 @@ std::string DatabaseMySQL::escapeBlob(const char* s, uint32_t length)
 void DatabaseMySQL::keepAlive()
 {
 	int32_t timeout = g_config.getNumber(ConfigManager::SQL_KEEPALIVE) * 1000;
-	if(!timeout)
+	if(!timeout || OTSYS_TIME() < m_use + timeout)
 		return;
 
-	if(OTSYS_TIME() > m_use + timeout && !mysql_ping(m_handle))
+	if(!mysql_ping(m_handle))
 		Scheduler::getInstance().addEvent(createSchedulerTask(timeout,
 			boost::bind(&DatabaseMySQL::keepAlive, this)));
 	else
