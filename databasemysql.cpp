@@ -40,7 +40,7 @@ DatabaseMySQL::DatabaseMySQL() :
 	if(mysql_init(m_handle))
 	{
 		std::clog << std::endl << "Failed to initialize MySQL connection handler." << std::endl;
-		return false;
+		return;
 	}
 
 	int32_t timeout = g_config.getNumber(ConfigManager::MYSQL_READ_TIMEOUT);
@@ -67,9 +67,9 @@ DatabaseMySQL::DatabaseMySQL() :
 
 	m_connected = true;
 	if(mysql_get_client_version() <= 50019)
-		mysql_options(&m_handle, MYSQL_OPT_RECONNECT, &reconnect);
+		mysql_options(m_handle, MYSQL_OPT_RECONNECT, &reconnect);
 
-	int32_t timeout = g_config.getNumber(ConfigManager::SQL_KEEPALIVE) * 1000;
+	timeout = g_config.getNumber(ConfigManager::SQL_KEEPALIVE) * 1000;
 	if(timeout)
 		m_timeoutTask = Scheduler::getInstance().addEvent(createSchedulerTask(timeout,
 			boost::bind(&DatabaseMySQL::keepAlive, this)));
