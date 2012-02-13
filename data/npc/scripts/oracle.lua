@@ -69,23 +69,23 @@ function oracle(cid, message, keywords, parameters, node)
 
 			doSendMagicEffect(tmp, CONST_ME_POFF)
 			doSendMagicEffect(temple, CONST_ME_TELEPORT)
-			return true
 		end
+	else
+		npcHandler:resetNpc(cid)
+		error('Player: ' .. getCreatureName(cid) .. ', Params: ' .. table.serialize(params))
 	end
 
-	error('Player: ' .. getCreatureName(cid) .. ', Params: ' .. table.serialize(params))
-	npcHandler:resetNpc(cid)
 	return true
 
 end
 
 function greetCallback(cid)
-	if(getPlayerLevel(cid) < getConfigValue('rookLevelToLeaveRook')) then
-		npcHandler:say('COME BACK WHEN YOU GROW UP, CHILD!')
-		return false
-	else
+	if(getPlayerLevel(cid) >= getConfigValue('rookLevelToLeaveRook')) then
 		return true
 	end
+
+	npcHandler:say('COME BACK WHEN YOU GROW UP, CHILD!')
+	return false
 end
 
 npcHandler:setCallback(CALLBACK_GREET, greetCallback)
