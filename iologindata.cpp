@@ -981,10 +981,10 @@ bool IOLoginData::savePlayer(Player* player, bool preSave/* = true*/, bool shall
 	DBInsert stmt(db);
 	if(player->learnedInstantSpellList.size())
 	{
+		query.str("");
 		stmt.setQuery("INSERT INTO `player_spells` (`player_id`, `name`) VALUES ");
 		for(LearnedInstantSpellList::const_iterator it = player->learnedInstantSpellList.begin(); it != player->learnedInstantSpellList.end(); ++it)
 		{
-			query.str("");
 			query << player->getGUID() << "," << db->escapeString(*it);
 			if(!stmt.addRow(query))
 				return false;
@@ -1050,10 +1050,11 @@ bool IOLoginData::savePlayer(Player* player, bool preSave/* = true*/, bool shall
 		return false;
 
 	player->generateReservedStorage();
+	query.str("");
+
 	stmt.setQuery("INSERT INTO `player_storage` (`player_id`, `key`, `value`) VALUES ");
 	for(StorageMap::const_iterator cit = player->getStorageBegin(); cit != player->getStorageEnd(); ++cit)
 	{
-		query.str("");
 		query << player->getGUID() << "," << db->escapeString(cit->first) << "," << db->escapeString(cit->second);
 		if(!stmt.addRow(query))
 			return false;
@@ -1070,6 +1071,7 @@ bool IOLoginData::savePlayer(Player* player, bool preSave/* = true*/, bool shall
 		if(!db->query(query.str()))
 			return false;
 
+		query.str("");
 		stmt.setQuery("INSERT INTO `guild_invites` (`player_id`, `guild_id`) VALUES ");
 		for(InvitationsList::iterator it = player->invitationsList.begin(); it != player->invitationsList.end(); ++it)
 		{
@@ -1079,7 +1081,6 @@ bool IOLoginData::savePlayer(Player* player, bool preSave/* = true*/, bool shall
 				continue;
 			}
 
-			query.str("");
 			query << player->getGUID() << "," << (*it);
 			if(!stmt.addRow(query))
 				return false;
@@ -1104,12 +1105,12 @@ bool IOLoginData::savePlayer(Player* player, bool preSave/* = true*/, bool shall
 	else
 		stmt.setQuery("INSERT INTO `player_viplist` (`player_id`, `vip_id`) VALUES ");
 
+	query.str("");
 	for(VIPSet::iterator it = player->VIPList.begin(); it != player->VIPList.end(); ++it)
 	{
 		if(!playerExists(*it, false, false))
 			continue;
 
-		query.str("");
 		if(!g_config.getBool(ConfigManager::VIPLIST_PER_PLAYER))
 			query << player->getAccount() << "," << g_config.getNumber(ConfigManager::WORLD_ID) << "," << (*it);
 		else
