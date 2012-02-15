@@ -41,7 +41,7 @@ class DatabaseMySQL : public _Database
 		DatabaseMySQL();
 		DATABASE_VIRTUAL ~DatabaseMySQL();
 
-		DATABASE_VIRTUAL bool getParam(DBParam_t param);
+		DATABASE_VIRTUAL bool multiLine() const {return true;}
 
 		DATABASE_VIRTUAL bool beginTransaction() {return query("BEGIN");}
 		DATABASE_VIRTUAL bool rollback();

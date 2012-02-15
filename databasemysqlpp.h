@@ -39,7 +39,7 @@ class DatabaseMySQLpp : public _Database
 		DATABASE_VIRTUAL ~DatabaseMySQLpp();
 
 		DATABASE_VIRTUAL bool connect(bool _reconnect);
-		DATABASE_VIRTUAL bool getParam(DBParam_t param);
+		DATABASE_VIRTUAL bool multiLine() const {return true;}
 
 		DATABASE_VIRTUAL bool beginTransaction();
 		DATABASE_VIRTUAL bool rollback();

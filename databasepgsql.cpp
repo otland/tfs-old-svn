@@ -66,20 +66,6 @@ std::string DatabasePgSQL::_parse(const std::string& s)
 	return query;
 }
 
-bool DatabasePgSQL::getParam(DBParam_t param)
-{
-	switch(param)
-	{
-		case DBPARAM_MULTIINSERT:
-			return true;
-
-		default:
-			break;
-	}
-
-	return false;
-}
-
 bool DatabasePgSQL::query(std::string query)
 {
 	if(!m_connected)

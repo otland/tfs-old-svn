@@ -96,19 +96,6 @@ bool DatabaseMySQLpp::connect(bool reconnect)
 	return true;
 }
 
-bool DatabaseMySQLpp::getParam(DBParam_t param)
-{
-	switch(param)
-	{
-		case DBPARAM_MULTIINSERT:
-			return true;
-		default:
-			break;
-	}
-
-	return false;
-}
-
 bool DatabaseMySQLpp::beginTransaction()
 {
 	if(!m_connected)

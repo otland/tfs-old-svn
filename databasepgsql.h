@@ -30,7 +30,7 @@ class DatabasePgSQL : public _Database
 		DatabasePgSQL();
 		DATABASE_VIRTUAL ~DatabasePgSQL() {PQfinish(m_handle);}
 
-		DATABASE_VIRTUAL bool getParam(DBParam_t param);
+		DATABASE_VIRTUAL bool multiLine() const {return true;}
 
 		DATABASE_VIRTUAL bool beginTransaction() {return query("BEGIN");}
 		DATABASE_VIRTUAL bool rollback() {return query("ROLLBACK");}
@@ -73,5 +73,5 @@ class PgSQLResult : public _DBResult
 		PGresult* m_handle;
 		int32_t m_rows, m_cursor;
 };
-#endif // __USE_PGSQL__
+#endif
 #endif 

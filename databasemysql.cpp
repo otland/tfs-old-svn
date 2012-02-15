@@ -96,11 +96,6 @@ DatabaseMySQL::~DatabaseMySQL()
 		Scheduler::getInstance().stopEvent(m_timeoutTask);
 }
 
-bool DatabaseMySQL::getParam(DBParam_t param)
-{
-	return param == DBPARAM_MULTIINSERT;
-}
-
 bool DatabaseMySQL::rollback()
 {
 	if(!m_connected)

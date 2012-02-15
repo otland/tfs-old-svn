@@ -94,7 +94,7 @@ class _Database
 		* @param DBParam_t parameter to get
 		* @return suitable for given parameter
 		*/
-		DATABASE_VIRTUAL bool getParam(DBParam_t) {return false;}
+		DATABASE_VIRTUAL bool multiLine() const {return false;}
 
 		/**
 		* Database connected.
@@ -270,7 +270,7 @@ class DBInsert
 		*
 		* @param Database* database wrapper
 		*/
-		DBInsert(Database* db);
+		DBInsert(Database* db): m_db(db), m_rows(0) {}
 		~DBInsert() {}
 
 		/**
@@ -300,7 +300,6 @@ class DBInsert
 
 	protected:
 		Database* m_db;
-		bool m_multiLine;
 
 		uint32_t m_rows;
 		std::string m_query, m_buf;

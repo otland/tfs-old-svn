@@ -33,7 +33,7 @@ class DatabaseSQLite : public _Database
 		DatabaseSQLite();
 		DATABASE_VIRTUAL ~DatabaseSQLite() {sqlite3_close(m_handle);}
 
-		DATABASE_VIRTUAL bool getParam(DBParam_t) {return false;}
+		DATABASE_VIRTUAL bool multiLine() const {return false;}
 
 		DATABASE_VIRTUAL bool beginTransaction() {return query("BEGIN");}
 		DATABASE_VIRTUAL bool rollback() {return query("ROLLBACK");}
