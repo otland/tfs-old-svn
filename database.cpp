@@ -88,7 +88,7 @@ bool DBInsert::addRow(std::string row)
 		return m_db->query(m_query + "(" + row + ")");
 
 	++m_rows;
-	if(!size)
+	if(m_buf.empty())
 		m_buf = "(" + row + ")";
 	else if(m_buf.length() > 8192)
 	{
