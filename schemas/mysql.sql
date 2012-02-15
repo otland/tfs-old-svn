@@ -202,7 +202,7 @@ CREATE TABLE `player_storage`
 (
 	`player_id` INT NOT NULL,
 	`key` VARCHAR(32) NOT NULL DEFAULT '0',
-	`value` VARCHAR(255) NOT NULL DEFAULT '0',
+	`value` TEXT NOT NULL DEFAULT,
 	KEY (`player_id`), UNIQUE (`player_id`, `key`),
 	FOREIGN KEY (`player_id`) REFERENCES `players`(`id`) ON DELETE CASCADE
 ) ENGINE = InnoDB;
@@ -411,7 +411,7 @@ CREATE TABLE `global_storage`
 (
 	`key` VARCHAR(32) NOT NULL,
 	`world_id` TINYINT(4) UNSIGNED NOT NULL DEFAULT 0,
-	`value` VARCHAR(255) NOT NULL DEFAULT '0',
+	`value` TEXT NOT NULL,
 	UNIQUE  (`key`, `world_id`)
 ) ENGINE = InnoDB;
 
