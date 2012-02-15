@@ -823,8 +823,8 @@ bool IOMapSerialize::saveItems(Database* db, uint32_t& tileId, uint32_t houseId,
 	ContainerStackList containerStackList;
 
 	bool stored = false;
-	DBInsert query_insert(db);
-	query_insert.setQuery("INSERT INTO `tile_items` (`tile_id`, `world_id`, `sid`, `pid`, `itemtype`, `count`, `attributes`) VALUES ");
+	DBInsert stmt(db);
+	stmt.setQuery("INSERT INTO `tile_items` (`tile_id`, `world_id`, `sid`, `pid`, `itemtype`, `count`, `attributes`) VALUES ");
 
 	DBQuery query;
 	for(int32_t i = 0; i < thingCount; ++i)
@@ -836,8 +836,8 @@ bool IOMapSerialize::saveItems(Database* db, uint32_t& tileId, uint32_t houseId,
 		{
 			Position tilePosition = tile->getPosition();
 			query << "INSERT INTO `tiles` (`id`, `world_id`, `house_id`, `x`, `y`, `z`) VALUES ("
-			<< tileId << ", " << g_config.getNumber(ConfigManager::WORLD_ID) << ", " << houseId << ", "
-			<< tilePosition.x << ", " << tilePosition.y << ", " << tilePosition.z << ")";
+				<< tileId << ", " << g_config.getNumber(ConfigManager::WORLD_ID) << ", " << houseId << ", "
+				<< tilePosition.x << ", " << tilePosition.y << ", " << tilePosition.z << ")";
 			if(!db->query(query.str()))
 				return false;
 
@@ -853,7 +853,7 @@ bool IOMapSerialize::saveItems(Database* db, uint32_t& tileId, uint32_t houseId,
 
 		query << tileId << ", " << g_config.getNumber(ConfigManager::WORLD_ID) << ", " << ++runningId << ", " << parentId << ", "
 			<< item->getID() << ", " << (int32_t)item->getSubType() << ", " << db->escapeBlob(attributes, attributesSize);
-		if(!query_insert.addRow(query.str()))
+		if(!stmt.addRow(query.str()))
 			return false;
 
 		query.str("");
@@ -879,7 +879,7 @@ bool IOMapSerialize::saveItems(Database* db, uint32_t& tileId, uint32_t houseId,
 
 			query << tileId << ", " << g_config.getNumber(ConfigManager::WORLD_ID) << ", " << ++runningId << ", " << parentId << ", "
 				<< item->getID() << ", " << (int32_t)item->getSubType() << ", " << db->escapeBlob(attributes, attributesSize);
-			if(!query_insert.addRow(query.str()))
+			if(!stmt.addRow(query.str()))
 				return false;
 
 			query.str("");
@@ -891,7 +891,7 @@ bool IOMapSerialize::saveItems(Database* db, uint32_t& tileId, uint32_t houseId,
 	if(stored)
 		++tileId;
 
-	return query_insert.execute();
+	return stmt.execute();
 }
 
 bool IOMapSerialize::loadContainer(PropStream& propStream, Container* container)

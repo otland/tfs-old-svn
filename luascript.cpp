@@ -154,17 +154,17 @@ bool ScriptEnviroment::saveGameState()
 	if(!db->query(query.str()))
 		return false;
 
-	DBInsert query_insert(db);
-	query_insert.setQuery("INSERT INTO `global_storage` (`key`, `world_id`, `value`) VALUES ");
+	DBInsert stmt(db);
+	stmt.setQuery("INSERT INTO `global_storage` (`key`, `world_id`, `value`) VALUES ");
 	for(StorageMap::const_iterator it = m_storageMap.begin(); it != m_storageMap.end(); ++it)
 	{
-		std::stringstream buffer;
-		buffer << db->escapeString(it->first).c_str() << ", " << g_config.getNumber(ConfigManager::WORLD_ID) << ", " << db->escapeString(it->second).c_str();
-		if(!query_insert.addRow(buffer))
+		query.str("");
+		query << db->escapeString(it->first) << "," << g_config.getNumber(ConfigManager::WORLD_ID) << "," << db->escapeString(it->second);
+		if(!stmt.addRow(query))
 			return false;
 	}
 
-	return query_insert.execute();
+	return stmt.execute();
 }
 
 bool ScriptEnviroment::loadGameState()
