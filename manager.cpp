@@ -209,7 +209,6 @@ void ProtocolManager::parsePacket(NetworkMessage& msg)
 		case MP_MSG_LUA:
 			Dispatcher::getInstance().addTask(createTask(boost::bind(&ProtocolManager::execute, this, msg.getString())));
 			break;
-		}
 
 		case MP_MSG_USER_INFO:
 			Dispatcher::getInstance().addTask(createTask(boost::bind(&ProtocolManager::user, this, msg.get<uint32_t>())));
@@ -220,22 +219,16 @@ void ProtocolManager::parsePacket(NetworkMessage& msg)
 			break;
 
 		case MP_MSG_CHAT_OPEN:
-		{
 			Dispatcher::getInstance().addTask(createTask(boost::bind(&ProtocolManager::channel, this, msg.get<uint16_t>(), true)));
 			break;
-		}
 
 		case MP_MSG_CHAT_CLOSE:
-		{
 			Dispatcher::getInstance().addTask(createTask(boost::bind(&ProtocolManager::channel, this, msg.get<uint16_t>(), false)));
 			break;
-		}
 
 		case MP_MSG_CHAT_TALK:
-		{
 			Dispatcher::getInstance().addTask(createTask(boost::bind(&ProtocolManager::chat, this, msg.getString(), msg.get<uint16_t>(), (MessageClasses)msg.get<char>(), msg.getString())));
 			break;
-		}
 
 		default:
 			break;
