@@ -22,8 +22,8 @@
 
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
 uint32_t ProtocolHTTP::protocolHTTPCount = 0;
-#endif
 
+#endif
 #ifdef __DEBUG_NET_DETAIL__
 void ProtocolHTTP::deleteProtocolTask()
 {
@@ -32,7 +32,6 @@ void ProtocolHTTP::deleteProtocolTask()
 }
 
 #endif
-
 void ProtocolHTTP::onRecvFirstMessage(NetworkMessage&)
 {
 	if(OutputMessage_ptr output = OutputMessagePool::getInstance()->getOutputMessage(this, false))

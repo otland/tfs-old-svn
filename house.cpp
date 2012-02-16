@@ -296,7 +296,7 @@ bool House::transferToDepot()
 	{
 		Depot* depot = player->getDepot(townId, true);
 		for(ItemList::iterator it = moveList.begin(); it != moveList.end(); ++it)
-			g_game.internalMoveItem(NULL, (*it)->getParent(), depot, INDEX_WHEREEVER, (*it), (*it)->getItemCount(), NULL, FLAG_NOLIMIT);
+			g_game.internalMoveItem(NULL, (*it)->getParent(), depot->getInbox(), INDEX_WHEREEVER, (*it), (*it)->getItemCount(), NULL, FLAG_NOLIMIT);
 
 		if(player->isVirtual())
 		{

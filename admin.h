@@ -206,7 +206,10 @@ class ProtocolAdmin : public Protocol
 		};
 
 		virtual void parsePacket(NetworkMessage& msg);
+		virtual void releaseProtocolTask();
+#ifdef __DEBUG_NET_DETAIL__
 		virtual void deleteProtocolTask();
+#endif
 
 		// commands
 		void adminCommandPayHouses();

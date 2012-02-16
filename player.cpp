@@ -3058,7 +3058,7 @@ Cylinder* Player::__queryDestination(int32_t& index, const Thing* thing, Item** 
 		if(!item)
 			return this;
 
-		bool autoStack = !((flags & FLAG_IGNOREAUTOSTACK) == FLAG_IGNOREAUTOSTACK);
+		bool autoStack = (flags & FLAG_IGNOREAUTOSTACK) != FLAG_IGNOREAUTOSTACK;
 		if((!autoStack || !item->isStackable()) && backpack.first &&
 			backpack.first->__queryAdd(backpack.second, item, item->getItemCount(), flags))
 		{

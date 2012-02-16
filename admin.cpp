@@ -440,13 +440,21 @@ void ProtocolAdmin::parsePacket(NetworkMessage& msg)
 		OutputMessagePool::getInstance()->send(output);
 }
 
-void ProtocolAdmin::deleteProtocolTask()
+void ProtocolAdmin::releaseProtocolTask()
 {
 	addLogLine(LOGTYPE_EVENT, "end connection");
 	Admin::getInstance()->removeConnection();
+	Protocol::releaseProtocolTask();
+}
+
+#ifdef __DEBUG_NET_DETAIL__
+void ProtocolAdmin::deleteProtocolTask()
+{
+	std::clog << "Deleting ProtocolAdmin" << std::endl;
 	Protocol::deleteProtocolTask();
 }
 
+#endif
 void ProtocolAdmin::adminCommandPayHouses()
 {
 	OutputMessage_ptr output = OutputMessagePool::getInstance()->getOutputMessage(this, false);

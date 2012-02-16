@@ -158,6 +158,7 @@ class Player : public Creature, public Cylinder
 
 		static AutoList<Player> autoList;
 		virtual uint32_t rangeId() {return PLAYER_ID_RANGE;}
+		static bool sort(Player* lhs, Player* rhs) {return lhs->getName() < rhs->getName();}
 
 		void addList();
 		void removeList();

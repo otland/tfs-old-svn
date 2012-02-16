@@ -18,6 +18,7 @@
 #include "textlogger.h"
 
 #include "manager.h"
+#include "dispatcher.h"
 
 #include "configmanager.h"
 #include "game.h"
@@ -150,7 +151,7 @@ std::streambuf::int_type OutputHandler::overflow(std::streambuf::int_type c/* = 
 		s.write(m_cache.c_str(), m_cache.size());
 		Logger::getInstance()->iFile(LOGFILE_OUTPUT, s.str(), false);
 		if(g_game.isRunning())
-			Manager::getInstance()->output(m_cache);
+			Dispatcher::getInstance().addTask(createTask(&Manager::output, Manager::getInstance(), m_cache));
 	}
 
 	m_cache.clear();

@@ -48,9 +48,9 @@ class ProtocolHTTP : public Protocol
 
 		static const char* protocolName() {return "http protocol";}
 
-	#ifdef __DEBUG_NET_DETAIL__
+#ifdef __DEBUG_NET_DETAIL__
 	protected:
 		virtual void deleteProtocolTask();
-	#endif
+#endif
 };
 #endif

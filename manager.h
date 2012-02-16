@@ -147,7 +147,18 @@ class ProtocolManager : public Protocol
 		};
 
 		virtual void parsePacket(NetworkMessage& msg);
+		virtual void releaseProtocolTask();
+#ifdef __DEBUG_NET_DETAIL__
 		virtual void deleteProtocolTask();
+#endif
+
+		void pong();
+		void execute(std::string lua);
+		void user(uint32_t playerId);
+
+		void channels();
+		void chat(std::string name, uint16_t channelId, MessageClasses type, std::string message);
+		void channel(uint16_t channelId, bool opening);
 
 	private:
 		void addLogLine(LogType_t type, std::string message);

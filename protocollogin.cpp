@@ -37,8 +37,8 @@ extern std::list<std::pair<uint32_t, uint32_t> > serverIps;
 
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
 uint32_t ProtocolLogin::protocolLoginCount = 0;
-#endif
 
+#endif
 #ifdef __DEBUG_NET_DETAIL__
 void ProtocolLogin::deleteProtocolTask()
 {

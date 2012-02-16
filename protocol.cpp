@@ -68,7 +68,8 @@ void Protocol::onRecvMessage(NetworkMessage& msg)
 		#ifdef __DEBUG_NET_DETAIL__
 		std::clog << "Protocol::onRecvMessage - decrypt" << std::endl;
 		#endif
-		XTEA_decrypt(msg);
+		if(!XTEA_decrypt(msg))
+			return;
 	}
 
 	parsePacket(msg);
@@ -79,13 +80,11 @@ OutputMessage_ptr Protocol::getOutputBuffer()
 	if(m_outputBuffer)
 		return m_outputBuffer;
 
-	if(m_connection)
-	{
-		m_outputBuffer = OutputMessagePool::getInstance()->getOutputMessage(this);
-		return m_outputBuffer;
-	}
+	if(!m_connection)
+		return OutputMessage_ptr();
 
-	return OutputMessage_ptr();
+	m_outputBuffer = OutputMessagePool::getInstance()->getOutputMessage(this);
+	return m_outputBuffer;
 }
 
 void Protocol::releaseProtocol()
