@@ -235,11 +235,11 @@ void ProtocolManager::parsePacket(NetworkMessage& msg)
 	}
 }
 
-void ProtocolManager::releaseProtocolTask()
+void ProtocolManager::releaseProtocol()
 {
 	addLogLine(LOGTYPE_EVENT, "Closing protocol");
 	Manager::getInstance()->removeConnection(this);
-	Protocol::releaseProtocolTask();
+	Protocol::releaseProtocol();
 }
 
 #ifdef __DEBUG_NET_DETAIL__

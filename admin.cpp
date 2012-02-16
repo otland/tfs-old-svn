@@ -440,11 +440,11 @@ void ProtocolAdmin::parsePacket(NetworkMessage& msg)
 		OutputMessagePool::getInstance()->send(output);
 }
 
-void ProtocolAdmin::releaseProtocolTask()
+void ProtocolAdmin::releaseProtocol()
 {
 	addLogLine(LOGTYPE_EVENT, "end connection");
 	Admin::getInstance()->removeConnection();
-	Protocol::releaseProtocolTask();
+	Protocol::releaseProtocol();
 }
 
 #ifdef __DEBUG_NET_DETAIL__
