@@ -203,7 +203,7 @@ void ProtocolManager::parsePacket(NetworkMessage& msg)
 			break;
 
 		case MP_MSG_PING:
-			Dispatcher::getInstance().addTask(createTask(boost::bind(&ProtocolManager::pong, this))));
+			Dispatcher::getInstance().addTask(createTask(boost::bind(&ProtocolManager::pong, this)));
 			break;
 
 		case MP_MSG_LUA:
