@@ -49,7 +49,7 @@ class ProtocolGame : public Protocol
 			protocolGameCount++;
 #endif
 			player = NULL;
-			m_eventConnect = m_maxSizeCount = 0;
+			m_eventConnect = 0;
 			m_debugAssertSent = m_acceptPackets = false;
 		}
 		virtual ~ProtocolGame()
