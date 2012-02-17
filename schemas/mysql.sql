@@ -202,7 +202,7 @@ CREATE TABLE `player_storage`
 (
 	`player_id` INT NOT NULL,
 	`key` VARCHAR(32) NOT NULL DEFAULT '0',
-	`value` TEXT NOT NULL DEFAULT,
+	`value` TEXT NOT NULL,
 	KEY (`player_id`), UNIQUE (`player_id`, `key`),
 	FOREIGN KEY (`player_id`) REFERENCES `players`(`id`) ON DELETE CASCADE
 ) ENGINE = InnoDB;
