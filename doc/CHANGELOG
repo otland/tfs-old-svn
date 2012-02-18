@@ -74,4 +74,6 @@
 	Updated items.
 	Fixed a trade bug (thanks to manuel220).
 	Now using account names.
+	onCreatureDisappear will now properly be called for NPC's.
+	A lot of miscellaneous cleanups, fixes and optimizations.
 ]

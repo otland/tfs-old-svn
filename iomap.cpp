@@ -341,31 +341,25 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 									delete item;
 									item = NULL;
 								}
+								else if(tile)
+								{
+									tile->__internalAddThing(item);
+									item->__startDecaying();
+									item->setLoadedFromMap(true);
+								}
+								else if(item->isGroundTile())
+								{
+									if(ground_item)
+										delete ground_item;
+
+									ground_item = item;
+								}
 								else
 								{
-									if(item->getItemCount() <= 0)
-										item->setItemCount(1);
-
-									if(tile)
-									{
-										tile->__internalAddThing(item);
-										item->__startDecaying();
-										item->setLoadedFromMap(true);
-									}
-									else if(item->isGroundTile())
-									{
-										if(ground_item)
-											delete ground_item;
-
-										ground_item = item;
-									}
-									else
-									{
-										tile = createTile(ground_item, item, px, py, pz);
-										tile->__internalAddThing(item);
-										item->__startDecaying();
-										item->setLoadedFromMap(true);
-									}
+									tile = createTile(ground_item, item, px, py, pz);
+									tile->__internalAddThing(item);
+									item->__startDecaying();
+									item->setLoadedFromMap(true);
 								}
 								break;
 							}
@@ -402,31 +396,25 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 									std::cout << "Warning: [OTBM loader] Moveable item with ID: " << item->getID() << ", in house: " << house->getHouseId() << ", at position [x: " << px << ", y: " << py << ", z: " << pz << "]." << std::endl;
 									delete item;
 								}
+								else if(tile)
+								{
+									tile->__internalAddThing(item);
+									item->__startDecaying();
+									item->setLoadedFromMap(true);
+								}
+								else if(item->isGroundTile())
+								{
+									if(ground_item)
+										delete ground_item;
+
+									ground_item = item;
+								}
 								else
 								{
-									if(item->getItemCount() <= 0)
-										item->setItemCount(1);
-
-									if(tile)
-									{
-										tile->__internalAddThing(item);
-										item->__startDecaying();
-										item->setLoadedFromMap(true);
-									}
-									else if(item->isGroundTile())
-									{
-										if(ground_item)
-											delete ground_item;
-
-										ground_item = item;
-									}
-									else
-									{
-										tile = createTile(ground_item, item, px, py, pz);
-										tile->__internalAddThing(item);
-										item->__startDecaying();
-										item->setLoadedFromMap(true);
-									}
+									tile = createTile(ground_item, item, px, py, pz);
+									tile->__internalAddThing(item);
+									item->__startDecaying();
+									item->setLoadedFromMap(true);
 								}
 							}
 							else

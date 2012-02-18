@@ -532,7 +532,7 @@ class Npc : public Creature
 		virtual void onUpdateTile(const Tile* tile, const Position& pos);
 
 		virtual void onCreatureAppear(const Creature* creature, bool isLogin);
-		virtual void onCreatureDisappear(const Creature* creature, bool isLogout);
+		virtual void onCreatureDisappear(const Creature* creature, uint32_t stackpos, bool isLogout);
 		virtual void onCreatureMove(const Creature* creature, const Tile* newTile, const Position& newPos,
 			const Tile* oldTile, const Position& oldPos, bool teleport);
 

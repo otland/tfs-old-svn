@@ -227,8 +227,10 @@ const uint8_t* FileLoader::getProps(const NODE node, uint32_t &size)
 		if(node->propsSize >= m_buffer_size)
 		{
 			delete[] m_buffer;
-			m_buffer = new uint8_t[m_buffer_size + 1024];
-			m_buffer_size = m_buffer_size + 1024;
+			while(node->propsSize >= m_buffer_size)
+				m_buffer_size <<= 1;
+
+			m_buffer = new uint8_t[m_buffer_size];
 		}
 
 		//get buffer

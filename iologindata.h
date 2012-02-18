@@ -26,16 +26,13 @@
 #include "player.h"
 #include "database.h"
 
-class PlayerGroup
+struct PlayerGroup
 {
-	public:
-		PlayerGroup() {}
-		virtual ~PlayerGroup() {}
-		std::string m_name;
-		uint64_t m_flags;
-		uint32_t m_access;
-		uint32_t m_maxdepotitems;
-		uint32_t m_maxviplist;
+	std::string m_name;
+	uint64_t m_flags;
+	uint32_t m_access;
+	uint32_t m_maxdepotitems;
+	uint32_t m_maxviplist;
 };
 
 typedef std::pair<int32_t, Item*> itemBlock;
@@ -45,7 +42,7 @@ class IOLoginData
 {
 	public:
 		IOLoginData() {}
-		virtual ~IOLoginData() {}
+		~IOLoginData() {}
 
 		static IOLoginData* getInstance()
 		{

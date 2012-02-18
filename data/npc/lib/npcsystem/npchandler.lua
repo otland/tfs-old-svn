@@ -593,6 +593,6 @@ if(NpcHandler == nil) then
 		end
 
 		stopEvent(self.eventSay[focus])
-		self.eventSay[focus] = addEvent(function(x) doCreatureSay(x[1], x[2], TALKTYPE_PRIVATE_NP, false, x[3], getCreaturePosition(x[1])) end, self.talkDelayTime * 1000, {getNpcCid(), message, focus})
+		self.eventSay[focus] = addEvent(function(x) if isPlayer(x[3]) then doCreatureSay(x[1], x[2], TALKTYPE_PRIVATE_NP, false, x[3], getCreaturePosition(x[1])) end end, self.talkDelayTime * 1000, {getNpcCid(), message, focus})
 	end
 end

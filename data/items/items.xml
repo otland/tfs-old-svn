@@ -15458,6 +15458,10 @@
 		<attribute key="range" value="4" />
 		<attribute key="attack" value="7" />
 	</item>
+	<item id="8859" name="spider fangs">
+		<attribute key="showcount" value="0"/>
+		<attribute key="weight" value="50"/>
+	</item>
 	<item id="8860" name="spiderwebs">
 		<attribute key="weight" value="5" />
 		<attribute key="description" value="You can hang these on your walls." />
@@ -18813,7 +18817,8 @@
 		<attribute key="weight" value="1500" />
 	</item>
 	<item id="11135" article="a" name="corned fish">
-		<attribute key="weight" value="440" />
+		<attribute key="description" value="This fish has been salted and already prepared as provision for soldiers." />
+		<attribute key="weight" value="510" />
 	</item>
 	<item id="11136" article="a" name="crocodile steak">
 		<attribute key="weight" value="440" />
@@ -19379,10 +19384,10 @@
 	<item id="11332" article="a" name="high guard flag">
 		<attribute key="weight" value="112" />
 	</item>
-	<item id="11333" article="a" name="high guard shoulderplates" plural="high guard shoulderplates">
+	<item id="11333" name="high guard shoulderplates" plural="high guard shoulderplates">
 		<attribute key="weight" value="103" />
 	</item>
-	<item id="11334" article="a" name="legionnaire flags" plural="legionnaire flags">
+	<item id="11334" name="legionnaire flags" plural="legionnaire flags">
 		<attribute key="weight" value="110" />
 	</item>
 	<item id="11335" article="a" name="broken halberd">

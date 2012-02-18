@@ -757,7 +757,8 @@ class Player : public Creature, public Cylinder
 		bool ghostMode;
 		bool depotChange;
 
-		bool talkState[13], accountManager, accountManagerEx;
+		bool accountManager, accountManagerEx;
+		int8_t talkState;
 		int32_t newVocation;
 		PlayerSex_t _newSex;
 		uint32_t realAccount, newAccount;

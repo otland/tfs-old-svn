@@ -201,7 +201,7 @@ uint32_t DatabaseManager::updateDatabase()
 				db->executeQuery("CREATE UNIQUE INDEX IF NOT EXISTS account_name ON accounts(name);");
 
 			registerDatabaseConfig("db_version", 1);
-			break;
+			return 1;
 		}
 
 		/*
@@ -254,8 +254,8 @@ uint32_t DatabaseManager::updateDatabase()
 			else
 				db->executeQuery("ALTER TABLE `bans2` RENAME TO `bans`;");
 
-			db->executeQuery("INSERT INTO `server_config` VALUES ('db_version', ?);");
-			break;
+			registerDatabaseConfig("db_version", ?);
+			return ?;
 		}
 		*/
 
