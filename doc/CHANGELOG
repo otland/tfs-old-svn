@@ -35,6 +35,7 @@
 		monster/
 	M		slime.xml
 	M		slime2.xml
+	M	npc/lib/npcsystem/npchandler.lua
 	M	talkactions/scripts/deathlist.lua
 		XML/
 	M		outfits.xml
