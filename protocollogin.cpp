@@ -262,7 +262,7 @@ void ProtocolLogin::onRecvFirstMessage(NetworkMessage& msg)
 
 			output->put<uint32_t>(serverIp);
 			IntegerVec games = vectorAtoi(explodeString(g_config.getString(ConfigManager::GAME_PORT), ","));
-			output->put<uint16_t>(games[random_range(0, games.size())]);
+			output->put<uint16_t>(games[random_range(0, games.size() - 1)]);
 		}
 		#else
 		for(Characters::iterator it = charList.begin(); it != charList.end(); ++it)
@@ -277,7 +277,7 @@ void ProtocolLogin::onRecvFirstMessage(NetworkMessage& msg)
 
 			output->put<uint32_t>(it->second.server->getAddress());
 			IntegerVec games = it->second.server->getPorts();
-			output->put<uint16_t>(games[random_range(0, games.size())]);
+			output->put<uint16_t>(games[random_range(0, games.size() - 1)]);
 		}
 		#endif
 
