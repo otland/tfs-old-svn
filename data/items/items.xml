@@ -13317,8 +13317,8 @@
 	<item id="7737" article="a" name="costume bag">
 		<attribute key="weight" value="800" />
 	</item>
-	<item id="7738" article="a" name="scum bag">
-		<attribute key="weight" value="900" />
+	<item id="7738" article="a" name="grey bag">
+		<attribute key="weight" value="800" />
 	</item>
 	<item id="7739" article="a" name="costume bag">
 		<attribute key="weight" value="800" />
@@ -16295,10 +16295,13 @@
 		<attribute key="weight" value="600" />
 		<attribute key="containerSize" value="5" />
 	</item>
-	<item fromid="9075" toid="9076" name="purple bag" article="a">
+	<item id="9075" name="purple bag" article="a">
 		<attribute key="weight" value="800" />
 		<attribute key="containerSize" value="8" />
 		<attribute key="slotType" value="backpack" />
+	</item>
+	<item id="9076" article="a" name="costume bag">
+		<attribute key="weight" value="800" />
 	</item>
 	<item id="9077" name="golden bag" article="a">
 		<attribute key="weight" value="800" />
@@ -17615,7 +17618,7 @@
 	<item id="10068" article="a" name="flask with paint">
 		<attribute key="weight" value="180" />
 	</item>
-	<item id="10070" article="a" name="scum bag">
+	<item id="10070" article="a" name="grey bag">
 		<attribute key="weight" value="800" />
 		<attribute key="containerSize" value="8" />
 		<attribute key="slotType" value="backpack" />
@@ -20945,7 +20948,7 @@
 		<attribute key="description" value="This blossom was gathered from a Witherstem." />
 		<attribute key="weight" value="50" />
 	</item>
-	<item id="13223" name="scum bag">
+	<item id="13224" name="scum bag">
 		<attribute key="weight" value="900" />
 	</item>
 	<item id="13236" article="a" name="closed door">
