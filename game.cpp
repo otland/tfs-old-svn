@@ -2133,9 +2133,7 @@ Item* Game::transformItem(Item* item, uint16_t newId, int32_t newCount/* = -1*/)
 	if(!item->canTransform())
 		return item;
 
-	const ItemType& curType = Item::items[item->getID()];
-	const ItemType& newType = Item::items[newId];
-
+	const ItemType &curType = Item::items[item->getID()], &newType = Item::items[newId];
 	if(curType.alwaysOnTop != newType.alwaysOnTop)
 	{
 		// This only occurs when you transform items on tiles from a downItem to a topItem (or vice versa)
@@ -2168,12 +2166,12 @@ Item* Game::transformItem(Item* item, uint16_t newId, int32_t newCount/* = -1*/)
 		{
 			if(!item->isStackable() && (!item->getDefaultDuration() || item->getDuration() <= 0))
 			{
-				int32_t tmpId = newId;
+				uint16_t tmp = newId;
 				if(curType.id == newId)
-					tmpId = curType.decayTo;
+					tmp = curType.decayTo;
 
-				if(tmpId != -1)
-					return transformItem(item, tmpId);
+				if(tmp != -1)
+					return transformItem(item, tmp);
 			}
 
 			internalRemoveItem(NULL, item);
@@ -2181,10 +2179,10 @@ Item* Game::transformItem(Item* item, uint16_t newId, int32_t newCount/* = -1*/)
 		}
 
 		cylinder->postRemoveNotification(NULL, item, cylinder, itemIndex, false);
-		uint16_t itemId = item->getID();
+		uint16_t tmp = item->getID();
 		if(curType.id != newId)
 		{
-			itemId = newId;
+			tmp = newId;
 			if(newType.group != curType.group)
 				item->setDefaultSubtype();
 
@@ -2199,7 +2197,7 @@ Item* Game::transformItem(Item* item, uint16_t newId, int32_t newCount/* = -1*/)
 		if(newCount != -1 && newType.hasSubType())
 			count = newCount;
 
-		cylinder->__updateThing(item, itemId, count);
+		cylinder->__updateThing(item, tmp, count);
 		cylinder->postAddNotification(NULL, item, cylinder, itemIndex);
 		return item;
 	}
@@ -2212,12 +2210,7 @@ Item* Game::transformItem(Item* item, uint16_t newId, int32_t newCount/* = -1*/)
 		newItem = Item::CreateItem(newId, newCount);
 
 	if(!newItem)
-	{
-		#ifdef __DEBUG__
-		std::clog << "Error: [Game::transformItem] Item of type " << item->getID() << " transforming into invalid type " << newId << std::endl;
-		#endif
 		return NULL;
-	}
 
 	newItem->copyAttributes(item);
 	cylinder->__replaceThing(itemIndex, newItem);

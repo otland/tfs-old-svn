@@ -222,7 +222,11 @@ bool Quests::parseQuestNode(xmlNodePtr p, bool checkDuplicate)
 		if(readXMLInteger(missionNode, "endvalue", intValue) || readXMLInteger(missionNode, "endValue", intValue))
 			endValue = intValue;
 
-		if(Mission* mission = new Mission(missionName, missionState, storageId, startValue, endValue))
+		bool notify = true;
+		if(readXMLString(missionNode, "notify", strValue))
+			notify = booleanString(strValue);
+
+		if(Mission* mission = new Mission(missionName, missionState, storageId, startValue, endValue, notify))
 		{
 			// parse sub-states only if main is not set
 			for(xmlNodePtr stateNode = missionNode->children; stateNode; stateNode = stateNode->next)
@@ -263,27 +267,30 @@ bool Quests::parseQuestNode(xmlNodePtr p, bool checkDuplicate)
 	return true;
 }
 
-bool Quests::isQuestStorage(const std::string& storageId, const std::string& storageValue) const
+bool Quests::isQuestStorage(const std::string& key, const std::string& value, bool notification) const
 {
-	int32_t value = atoi(storageValue.c_str());
+	int32_t value = atoi(value.c_str());
 	for(QuestList::const_iterator it = quests.begin(); it != quests.end(); ++it)
 	{
-		if(storageValue == "")
+		if(value.empty())
 		{
-			if((*it)->getStorageId() == storageId)
+			if((*it)->getStorageId() == key)
 				return true;
 		}
-		else if((*it)->getStorageId() == storageId && (value && value == (*it)->getStorageValue()))
+		else if((*it)->getStorageId() == key && (value && value == (*it)->getStorageValue()))
 			return true;
 
 		for(MissionList::const_iterator mit = (*it)->getFirstMission(); mit != (*it)->getLastMission(); ++mit)
 		{
-			if(storageValue == "")
+			if(notification && !(*mit)->isNotifying())
+				continue;
+
+			if(value.empty())
 			{
-				if((*mit)->getStorageId() == storageId)
+				if((*mit)->getStorageId() == key)
 					return true;
 			}
-			else if((*mit)->getStorageId() == storageId && (value && value >= (*mit)->getStartValue() && value <= (*mit)->getEndValue()))
+			else if((*mit)->getStorageId() == key && (value && value >= (*mit)->getStartValue() && value <= (*mit)->getEndValue()))
 				return true;
 		}
 	}

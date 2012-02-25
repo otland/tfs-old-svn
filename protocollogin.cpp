@@ -28,7 +28,7 @@
 #include "connection.h"
 #ifdef __LOGIN_SERVER__
 #include "gameservers.h"
-#endif  
+#endif
 
 #include "configmanager.h"
 #include "game.h"

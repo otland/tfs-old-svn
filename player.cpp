@@ -814,7 +814,7 @@ bool Player::setStorage(const std::string& key, const std::string& value)
 		if(!Creature::setStorage(key, value))
 			return false;
 
-		if(Quests::getInstance()->isQuestStorage(key, value))
+		if(Quests::getInstance()->isQuestStorage(key, value, true))
 			onUpdateQuest();
 		
 		return true;
