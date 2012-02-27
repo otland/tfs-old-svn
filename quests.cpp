@@ -269,7 +269,7 @@ bool Quests::parseQuestNode(xmlNodePtr p, bool checkDuplicate)
 
 bool Quests::isQuestStorage(const std::string& key, const std::string& value, bool notification) const
 {
-	int32_t value = atoi(value.c_str());
+	int32_t _value = atoi(value.c_str());
 	for(QuestList::const_iterator it = quests.begin(); it != quests.end(); ++it)
 	{
 		if(value.empty())
@@ -277,7 +277,7 @@ bool Quests::isQuestStorage(const std::string& key, const std::string& value, bo
 			if((*it)->getStorageId() == key)
 				return true;
 		}
-		else if((*it)->getStorageId() == key && (value && value == (*it)->getStorageValue()))
+		else if((*it)->getStorageId() == key && (_value && _value == (*it)->getStorageValue()))
 			return true;
 
 		for(MissionList::const_iterator mit = (*it)->getFirstMission(); mit != (*it)->getLastMission(); ++mit)
@@ -290,7 +290,7 @@ bool Quests::isQuestStorage(const std::string& key, const std::string& value, bo
 				if((*mit)->getStorageId() == key)
 					return true;
 			}
-			else if((*mit)->getStorageId() == key && (value && value >= (*mit)->getStartValue() && value <= (*mit)->getEndValue()))
+			else if((*mit)->getStorageId() == key && (_value && _value >= (*mit)->getStartValue() && _value <= (*mit)->getEndValue()))
 				return true;
 		}
 	}
