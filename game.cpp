@@ -2166,7 +2166,7 @@ Item* Game::transformItem(Item* item, uint16_t newId, int32_t newCount/* = -1*/)
 		{
 			if(!item->isStackable() && (!item->getDefaultDuration() || item->getDuration() <= 0))
 			{
-				uint16_t tmp = newId;
+				int16_t tmp = newId;
 				if(curType.id == newId)
 					tmp = curType.decayTo;
 
