@@ -59,7 +59,7 @@
 	allowedMaxSizePackets = 20
 
 	-- Battle
-	-- NOTE: showHealingDamageForMonsters inheritates from showHealingDamage.
+	-- NOTE: showHealth/ManaChangeForMonsters inherites from showHealth/ManaChange.
 	-- loginProtectionPeriod is the famous Tibia anti-magebomb system.
 	-- deathLostPercent set to nil enables manual mode.
 	worldType = "open"
@@ -75,8 +75,10 @@
 	removeRuneCharges = true
 	whiteSkullTime = 15 * 60 * 1000
 	noDamageToSameLookfeet = false
-	showHealingDamage = false
-	showHealingDamageForMonsters = false
+	showHealthChange = false
+	showManaChange = false
+	showHealthChangeForMonsters = false
+	showManaChangeForMonsters = false
 	fieldOwnershipDuration = 5 * 1000
 	stopAttackingAtExit = false
 	loginProtectionPeriod = 10 * 1000

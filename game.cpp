@@ -4474,8 +4474,8 @@ bool Game::combatChangeHealth(const CombatParams& params, Creature* attacker, Cr
 
 		int32_t oldHealth = target->getHealth();
 		target->gainHealth(attacker, healthChange);
-		if(oldHealth != target->getHealth() && g_config.getBool(ConfigManager::SHOW_HEALING_DAMAGE) && !target->isGhost() &&
-			(g_config.getBool(ConfigManager::SHOW_HEALING_DAMAGE_MONSTER) || !target->getMonster()))
+		if(oldHealth != target->getHealth() && g_config.getBool(ConfigManager::SHOW_HEALTH_CHANGE) && !target->isGhost() &&
+			(g_config.getBool(ConfigManager::SHOW_HEALTH_CHANGE_MONSTER) || !target->getMonster()))
 		{
 			const SpectatorVec& list = getSpectators(targetPos);
 			if(params.combatType != COMBAT_HEALING)
@@ -4729,8 +4729,8 @@ bool Game::combatChangeMana(Creature* attacker, Creature* target, int32_t manaCh
 			return false;
 
 		target->changeMana(manaChange);
-		if(g_config.getBool(ConfigManager::SHOW_HEALING_DAMAGE) && !target->isGhost() &&
-			(g_config.getBool(ConfigManager::SHOW_HEALING_DAMAGE_MONSTER) || !target->getMonster()))
+		if(g_config.getBool(ConfigManager::SHOW_MANA_CHANGE) && !target->isGhost() &&
+			(g_config.getBool(ConfigManager::SHOW_MANA_CHANGE_MONSTER) || !target->getMonster()))
 		{
 			const SpectatorVec& list = getSpectators(targetPos);
 

@@ -211,7 +211,8 @@ bool ConfigManager::load()
 	m_confBool[BANK_SYSTEM]				= getGlobalBool("bankSystem", true);
 	m_confBool[PREMIUM_FOR_PROMOTION]		= getGlobalBool("premiumForPromotion", true);
 	m_confBool[INIT_PREMIUM_UPDATE]			= getGlobalBool("updatePremiumStateAtStartup", true);
-	m_confBool[SHOW_HEALING_DAMAGE]			= getGlobalBool("showHealingDamage", false);
+	m_confBool[SHOW_HEALTH_CHANGE_MONSTER]		= getGlobalBool("showHealthChangeForMonsters", false);
+	m_confBool[SHOW_MANA_CHANGE_MONSTER]		= getGlobalBool("showManaChangeForMonsters", false);
 	m_confBool[TELEPORT_SUMMONS]			= getGlobalBool("teleportAllSummons", false);
 	m_confBool[TELEPORT_PLAYER_SUMMONS]		= getGlobalBool("teleportPlayerSummons", false);
 	m_confBool[PVP_TILE_IGNORE_PROTECTION]		= getGlobalBool("pvpTileIgnoreLevelAndVocationProtection", true);
@@ -259,7 +260,8 @@ bool ConfigManager::load()
 	m_confString[CORES_USED]			= getGlobalString("coresUsed", "-1");
 	m_confNumber[NICE_LEVEL]			= getGlobalNumber("niceLevel", 5);
 	m_confNumber[EXPERIENCE_COLOR]			= getGlobalNumber("gainExperienceColor", COLOR_WHITE);
-	m_confBool[SHOW_HEALING_DAMAGE_MONSTER]		= getGlobalBool("showHealingDamageForMonsters", false);
+	m_confBool[SHOW_HEALTH_CHANGE_MONSTER]		= getGlobalBool("showHealthChangeForMonsters", false);
+	m_confBool[SHOW_MANA_CHANGE_MONSTER]		= getGlobalBool("showManaChangeForMonsters", false);
 	m_confBool[CHECK_CORPSE_OWNER]			= getGlobalBool("checkCorpseOwner", true);
 	m_confBool[BUFFER_SPELL_FAILURE]		= getGlobalBool("bufferMutedOnSpellFailure", false);
 	m_confBool[CONFIRM_OUTDATED_VERSION]		= getGlobalBool("confirmOutdatedVersion", true);
