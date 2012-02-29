@@ -2024,10 +2024,10 @@ void Player::addExperience(uint64_t exp)
 	}
 
 	experience += exp;
-	Vocation* voc = vocation;
 	while(experience >= nextLevelExp)
 	{
 		++level;
+		Vocation* voc = vocation;
 		if(voc->getId() > 0 && g_config.getBool(ConfigManager::ROOK_SYSTEM) &&
 			level <= (uint32_t)g_config.getNumber(ConfigManager::ROOK_TOLEVEL))
 		{
@@ -2080,10 +2080,10 @@ void Player::removeExperience(uint64_t exp, bool updateStats/* = true*/)
 	bool attackable = isProtected();
 
 	experience -= std::min(exp, experience);
-	Vocation* voc = vocation;
 	while(level > 1 && experience < Player::getExpForLevel(level))
 	{
 		--level;
+		Vocation* voc = vocation;
 		if(voc->getId() > 0 && g_config.getBool(ConfigManager::ROOK_SYSTEM) &&
 			level < (uint32_t)g_config.getNumber(ConfigManager::ROOK_TOLEVEL))
 		{

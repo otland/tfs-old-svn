@@ -202,6 +202,7 @@ Item* Item::clone() const
 
 	tmp->createAttributes();
 	*tmp->attributes = *attributes;
+	eraseAttribute("uid");
 	return tmp;
 }
 
@@ -211,10 +212,21 @@ void Item::copyAttributes(Item* item)
 	{
 		createAttributes();
 		*attributes = *item->attributes;
+		eraseAttribute("uid");
 	}
 
 	eraseAttribute("decaying");
 	eraseAttribute("duration");
+}
+
+void Item::makeUnique(Item* parent)
+{
+	if(!parent || !parent->getUniqueId())
+		return;
+
+	ScriptEnviroment::removeUniqueThing(parent);
+	setUniqueId(parent->getUniqueId());
+	parent->eraseAttribute("uid");
 }
 
 void Item::onRemoved()

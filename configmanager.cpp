@@ -98,7 +98,6 @@ bool ConfigManager::load()
 		m_confNumber[SQL_KEEPALIVE] = getGlobalNumber("sqlKeepAlive", 0);
 		m_confNumber[MYSQL_READ_TIMEOUT] = getGlobalNumber("mysqlReadTimeout", 10);
 		m_confNumber[MYSQL_WRITE_TIMEOUT] = getGlobalNumber("mysqlWriteTimeout", 10);
-		m_confNumber[MYSQL_RECONNECTION_ATTEMPTS] = getGlobalNumber("mysqlReconnectionAttempts", 3);
 		m_confBool[OPTIMIZE_DATABASE] = getGlobalBool("startupDatabaseOptimization", true);
 		m_confString[MAP_NAME] = getGlobalString("mapName", "forgotten.otbm");
 		m_confBool[GLOBALSAVE_ENABLED] = getGlobalBool("globalSaveEnabled", true);

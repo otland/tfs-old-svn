@@ -154,6 +154,7 @@ class Item : virtual public Thing, public ItemAttributes
 
 		virtual Item* clone() const;
 		virtual void copyAttributes(Item* item);
+		void makeUnique(Item* parent);
 
 		virtual Item* getItem() {return this;}
 		virtual const Item* getItem() const {return this;}
