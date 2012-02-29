@@ -202,7 +202,7 @@ Item* Item::clone() const
 
 	tmp->createAttributes();
 	*tmp->attributes = *attributes;
-	eraseAttribute("uid");
+	tmp->eraseAttribute("uid");
 	return tmp;
 }
 
