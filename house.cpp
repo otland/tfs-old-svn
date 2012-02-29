@@ -746,17 +746,17 @@ bool Houses::loadFromXml(std::string filename)
 		if(readXMLInteger(houseNode, "entryz", intValue))
 			entry.z = intValue;
 
-		house->setEntry(entry);
-		if(!entry.x || !entry.y)
-		{
-			std::clog << "[Warning - Houses::loadFromXml] House entry not set for: ";
-			std::clog << house->getName() << " (" << houseId << ")" << std::endl;
-		}
-
 		if(readXMLString(houseNode, "name", strValue))
 			house->setName(strValue);
 		else
 			house->resetSyncFlag(House::HOUSE_SYNC_NAME);
+
+		house->setEntry(entry);
+		if(!entry.x || !entry.y)
+		{
+			std::clog << "[Warning - Houses::loadFromXml] House entry not set for: "
+				<< house->getName() << " (" << houseId << ")" << std::endl;
+		}
 
 		if(readXMLInteger(houseNode, "townid", intValue))
 			house->setTownId(intValue);
