@@ -356,7 +356,7 @@ class Creature : public AutoId, virtual public Thing
 		virtual bool convinceCreature(Creature*) {return false;}
 
 		virtual bool onDeath();
-		virtual double getGainedExperience(Creature* attacker) const {return getDamageRatio(attacker) * (double)getLostExperience();}
+		virtual double getGainedExperience(Creature* attacker) const;
 		void addDamagePoints(Creature* attacker, int32_t damagePoints);
 		void addHealPoints(Creature* caster, int32_t healthPoints);
 		bool hasBeenAttacked(uint32_t attackerId) const;
@@ -528,15 +528,15 @@ class Creature : public AutoId, virtual public Thing
 		struct CountBlock_t
 		{
 			uint32_t total;
-			int64_t ticks, start;
+			int64_t start, ticks;
 
 			CountBlock_t(uint32_t points)
 			{
-				start = ticks = OTSYS_TIME();
 				total = points;
+				start = ticks = OTSYS_TIME();
 			}
 
-			CountBlock_t() {start = ticks = total = 0;}
+			CountBlock_t() {total = start = ticks = 0;}
 		};
 
 		typedef std::map<uint32_t, CountBlock_t> CountMap;

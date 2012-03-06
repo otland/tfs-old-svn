@@ -1120,8 +1120,16 @@ double Creature::getDamageRatio(Creature* attacker) const
 	return attackerDamage / totalDamage;
 }
 
+double Creature::getGainedExperience(Creature* attacker) const
+{
+	return getDamageRatio(attacker) * (double)getLostExperience();
+}
+
 void Creature::addDamagePoints(Creature* attacker, int32_t damagePoints)
 {
+	if(damagePoints < 0)
+		return;
+
 	uint32_t attackerId = 0;
 	if(attacker)
 		attackerId = attacker->getID();
@@ -1276,7 +1284,7 @@ void Creature::onTargetGainMana(Creature* target, int32_t points)
 
 void Creature::onTargetGain(Creature* target, int32_t points)
 {
-	if(points >= 0)
+	if(points > 0)
 		target->addHealPoints(this, points);
 }
 
