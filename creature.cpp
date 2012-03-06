@@ -1117,7 +1117,7 @@ double Creature::getDamageRatio(Creature* attacker) const
 			attackerDamage += it->second.total;
 	}
 
-	return attackerDamage / totalDamage;
+	return (totalDamage ? attackerDamage / totalDamage : 0);
 }
 
 double Creature::getGainedExperience(Creature* attacker) const
