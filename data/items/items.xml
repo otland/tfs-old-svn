@@ -7,7 +7,7 @@
 
 		Most needed are the items (including floors, walls)
 		introduced in the most recent tibia updates
-		starting from 8.7 to 9.31
+		starting from 8.7 to 9.44
 
 		If you found something wrong with existing item(s), we're also waiting for you :)
 
@@ -22678,6 +22678,190 @@
 	<item id="14405" name="the market"/>
 	<item id="14404" name="your inbox">
 		<attribute key="containerSize" value="30"/>
+	</item>
+	<item id="15390" article="a"  name="blob bomb">
+		<attribute key="weight" value="110"/>
+	</item>
+	<item id="15400" article="a"  name="deepling staff">
+		<attribute key="weight" value="8800"/>
+		<attribute key="defense" value="23"/>
+		<attribute key="attack" value="43"/>
+		<attribute key="weaponType" value="club"/>
+		<attribute key="slotType" value="two-handed"/>
+	</item>
+	<item id="15403" article="a" name="necklace of the deep">
+		<attribute key="weight" value="509"/>
+		<attribute key="slotType" value="necklace"/>
+		<attribute key="absorbPercentLifeDrain" value="50"/>
+		<attribute key="showattributes" value="1"/>
+	</item>
+	<item id="15404" article="a"  name="deepling axe">
+		<attribute key="weight" value="9100"/>
+		<attribute key="defense" value="29"/>
+		<attribute key="attack" value="49"/>
+		<attribute key="weaponType" value="axe"/>
+	</item>
+	<item id="15406" article="an" name="ornate chestplate">
+		<attribute key="weight" value="15600"/>
+		<attribute key="armor" value="16"/>
+		<attribute key="skillShield" value="3"/>
+		<attribute key="absorbPercentPhysical" value="8"/>
+		<attribute key="showattributes" value="1"/>
+		<attribute key="slotType" value="body"/>
+	</item>
+	<item id="15407" article="a" name="depth lorica">
+		<attribute key="weight" value="14500"/>
+		<attribute key="armor" value="16"/>
+		<attribute key="skillDist" value="3"/>
+		<attribute key="absorbPercentDeath" value="5"/>
+		<attribute key="slotType" value="body"/>
+	</item>
+	<item id="15408" article="a" name="depth galea">
+		<attribute key="weight" value="4600"/>
+		<attribute key="armor" value="8"/>
+		<attribute key="slotType" value="head"/>
+	</item>
+	<item id="15409" article="a" name="depth ocrea">
+		<attribute key="weight" value="4800"/>
+		<attribute key="armor" value="8"/>
+		<attribute key="slotType" value="legs"/>
+		<attribute key="absorbPercentManaDrain" value="15"/>
+		<attribute key="showattributes" value="1"/>
+	</item>
+	<item id="15410" article="a" name="depth calcei">
+		<attribute key="weight" value="3700"/>
+		<attribute key="armor" value="3"/>
+		<attribute key="slotType" value="feet"/>
+		<attribute key="speed" value="-10"/>
+		<attribute key="absorbPercentPhysical" value="5"/>
+		<attribute key="showattributes" value="1"/>
+	</item>
+	<item id="15411" article="a" name="depth scutum">
+		<attribute key="weight" value="3000"/>
+		<attribute key="defense" value="25"/>
+		<attribute key="weaponType" value="shield"/>
+		<attribute key="magicpoints" value="2"/>
+		<attribute key="showattributes" value="1"/>
+	</item>
+	<item id="15412" article="an" name="ornate legs">
+		<attribute key="weight" value="7700"/>
+		<attribute key="armor" value="8"/>
+		<attribute key="slotType" value="legs"/>
+		<attribute key="absorbPercentPhysical" value="5"/>
+		<attribute key="showattributes" value="1"/>
+	</item>
+	<item id="15413" article="an" name="ornate shield">
+		<attribute key="weight" value="7100"/>
+		<attribute key="defense" value="36"/>
+		<attribute key="weaponType" value="shield"/>
+		<attribute key="absorbPercentPhysical" value="5"/>
+	</item>
+	<item id="15414" article="an" name="ornate mace">
+		<attribute key="weight" value="14900"/>
+		<attribute key="defense" value="24"/>
+		<attribute key="weaponType" value="club"/>
+		<attribute key="attack" value="49"/>
+	</item>
+	<item id="15421" article="a" name="spellsinger's seal">
+		<attribute key="weight" value="190"/>
+		<attribute key="description" value="The seal used by the spellsingers of the deep."/>
+	</item>
+	<item id="15422" article="a" name="key to the drowned library">
+		<attribute key="weight" value="120"/>
+		<attribute key="description" value="The strange shape of this key glistens softly in the light."/>
+	</item>	
+	<item id="15423" article="a" name="deepling guard belt buckle">
+		<attribute key="weight" value="260"/>
+		<attribute key="description" value="A belt buckle snatched from a deepling guard."/>
+	</item>
+	<item id="15424" article="a" name="deepling breaktime snack">
+		<attribute key="weight" value="240"/>
+	</item>
+	<item id="15425" article="a" name="deepling warts">
+		<attribute key="weight" value="240"/>
+		<attribute key="description" value="A belt buckle snatched from a deepling guard."/>
+	</item>	
+	<item id="15426" article="a" name="deeptags">
+		<attribute key="weight" value="240"/>
+		<attribute key="description" value="The identity of some deepling is written there."/>
+	</item>
+	<item id="15430" article="a" name="deepling scale">
+		<attribute key="weight" value="480"/>
+	</item>
+	<item id="15431" article="a" name="hearth of the sea">
+		<attribute key="weight" value="390"/>
+		<attribute key="description" value="This formidable gem was hand-cut by |PLAYERNAME|."/>
+	</item>
+	<item id="15432" article="a" name="small golden anchor">
+		<attribute key="weight" value="134"/>
+	</item>
+	<item id="15433" article="a" name="soul net">
+		<attribute key="weight" value="1250"/>
+	</item>
+	<item id="15434" article="a" name="jaul's pearl">
+		<attribute key="weight" value="310"/>
+		<attribute key="description" value="The identity of some deepling is written there."/>
+	</item>
+	<item id="15435" article="a" name="tanjis' sight">
+		<attribute key="weight" value="220"/>
+		<attribute key="description" value="The identity of some deepling is written there."/>
+	</item>
+	<item id="15436" article="an" name="obujos' shell">
+		<attribute key="weight" value="280"/>
+		<attribute key="description" value="The identity of some deepling is written there."/>
+	</item>
+	<item fromid="15437" toid="15438" article="a" name="party lampions">
+		<attribute key="weight" value="280"/>
+	</item>
+	<item id="16000" article="an" name="anniversary remains" />
+	<item id="16007" article="an" name="anniversary backpack">
+		<attribute key="weight" value="1500" />
+		<attribute key="containerSize" value="15" />
+		<attribute key="slotType" value="backpack" />
+	</item>
+	<item id="16014" article="an" name="anniversary cake">
+		<attribute key="weight" value="500" />
+		<attribute key="description" value="It was created by Tibia's finest bakers for the celebration of 15 years of Tibia."/>
+	</item>
+	<item id="16015" article="a" name="chayenne's magical key">
+		<attribute key="weight" value="100" />
+		<attribute key="description" value="No one really knows where it leads to, but the dragon graveyard might reveal the secret - or not."/>
+	</item>
+	<item id="16016" article="an" name="artist's brush">
+		<attribute key="weight" value="100" />
+	</item>
+	<item id="16017" article="an" name="artist's palette">
+		<attribute key="weight" value="550" />
+	</item>
+	<item id="16018" article="an" name="artist's canvas">
+		<attribute key="weight" value="1000" />
+	</item>
+	<item id="16019" article="an" name="artist's brush">
+		<attribute key="weight" value="100" />
+		<attribute key="description" value="Paint is dripping from its tip."/>
+	</item>
+	<item fromid="16020" toid="16021" article="an" name="artist's easel">
+		<attribute key="weight" value="1600" />
+	</item>
+	<item fromid="16022" toid="16023" article="an" name="artist's easel">
+		<attribute key="weight" value="1600" />
+		<attribute key="description" value="An empty canvas has been placed on it."/>
+	</item>
+	<item fromid="16024" toid="16025" article="a" name="masterpiece of a muse">
+		<attribute key="weight" value="1600" />
+		<attribute key="description" value="It was painted in the style of Penciljack."/>
+	</item>
+	<item fromid="16026" toid="16027" article="a" name="painting of a muse">
+		<attribute key="weight" value="1600" />
+		<attribute key="description" value="It was painted in the style of Penciljack. Unfortunately, there are some blue pixels in this piece."/>
+	</item>
+	<item fromid="16028" toid="16029" article="a" name="masterpiece of a gozzler">
+		<attribute key="weight" value="1600" />
+		<attribute key="description" value="It was painted in the style of Lyxoph."/>
+	</item>
+	<item fromid="16030" toid="16031" article="a" name="painting of a gozzler">
+		<attribute key="weight" value="1600" />
+		<attribute key="description" value="It was painted in the style of Lyxoph. Unfortunately, there are some blue pixels in this piece."/>
 	</item>
 	<item id="20001" name="water"/>
 	<item id="20002" name="blood"/>
