@@ -22753,14 +22753,15 @@
 	<item id="15413" article="an" name="ornate shield">
 		<attribute key="weight" value="7100"/>
 		<attribute key="defense" value="36"/>
-		<attribute key="weaponType" value="shield"/>
 		<attribute key="absorbPercentPhysical" value="5"/>
+		<attribute key="showattributes" value="1"/>
+		<attribute key="weaponType" value="shield"/>
 	</item>
 	<item id="15414" article="an" name="ornate mace">
 		<attribute key="weight" value="14900"/>
-		<attribute key="defense" value="24"/>
-		<attribute key="weaponType" value="club"/>
 		<attribute key="attack" value="49"/>
+		<attribute key="defense" value="24"/>
+		<attribute key="weaponType" value="club"/>>
 	</item>
 	<item id="15421" article="a" name="spellsinger's seal">
 		<attribute key="weight" value="190"/>
@@ -22812,6 +22813,39 @@
 	</item>
 	<item fromid="15437" toid="15438" article="a" name="party lampions">
 		<attribute key="weight" value="280"/>
+	</item>
+	<item id="15439" article="a" name="party wall tinsel">
+		<attribute key="weight" value="1000"/>
+	</item>
+	<item id="15440" article="a" name="party wall snake">
+		<attribute key="weight" value="1000"/>
+	</item>
+	<item fromid="15441" toid="15443" article="a" name="flower pot">
+		<attribute key="weight" value="150"/>
+	</item>
+	<item id="15451" article="a" name="warrior's axe">
+		<attribute key="weight" value="8800"/>
+		<attribute key="attack" value="42"/>
+		<attribute key="defense" value="21"/>
+		<attribute key="weaponType" value="axe"/>
+	</item>
+	<item id="15452" article="a" name="deepling ridge">
+		<attribute key="weight" value="180"/>
+	</item>
+	<item id="15453" article="a" name="warrior's shield">
+		<attribute key="weight" value="7900"/>
+		<attribute key="defense" value="33"/>
+		<attribute key="weaponType" value="shield"/>
+	</item>
+	<item id="15454" article="a" name="guardian axe">
+		<attribute key="weight" value="11000"/>
+		<attribute key="attack" value="46"/>
+		<attribute key="defense" value="11"/>
+		<attribute key="weaponType" value="axe"/>
+		<attribute key="slotType" value="two-handed"/>
+	</item>
+	<item id="15455" article="a" name="deepling claw">
+		<attribute key="weight" value="180"/>
 	</item>
 	<item id="16000" article="an" name="anniversary remains" />
 	<item id="16007" article="an" name="anniversary backpack">

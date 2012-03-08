@@ -326,6 +326,12 @@
 	<melee id="8926" level="120" unproperly="1" event="function" value="default"/>
 		<!-- Solar Axe -->
 	<melee id="8925" level="130" unproperly="1" event="function" value="default"/>
+		<!-- Deepling Axe -->
+	<melee id="15404" level="80" unproperly="1" event="function" value="default"/>
+		<!-- Warrior's Axe -->
+	<melee id="15451" level="40" unproperly="1" event="function" value="default"/>
+		<!-- Guardian Axe -->
+	<melee id="15454" level="50" unproperly="1" event="function" value="default"/>
 		<!-- Fire -->
 	<melee id="7749" level="20" event="function" value="default"/>
 	<melee id="7750" level="25" unproperly="1" event="function" value="default"/>
@@ -338,8 +344,6 @@
 		<vocation id="4"/>
 		<vocation id="8" showInDescription="0"/>
 	</melee>
-		<!-- Deepling Axe -->
-	<melee id="15404" level="80" unproperly="1" event="function" value="default"/>
 		<!-- Ice -->
 	<melee id="7768" level="20" event="function" value="default"/>
 	<melee id="7769" level="25" unproperly="1" event="function" value="default"/>
