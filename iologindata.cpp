@@ -441,7 +441,10 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool preLo
 
 	player->setGroup(group);
 	player->setGUID(result->getDataInt("id"));
-	player->premiumDays = account.premiumDays;
+	if(!g_config.getBool(ConfigManager::FREE_PREMIUM))
+		player->premiumDays = account.premiumDays;
+	else		
+		player->premiumDays = (int32_t)GRATIS_PREMIUM;
 
 	nameCacheMap[player->getGUID()] = name;
 	guidCacheMap[name] = player->getGUID();
@@ -1405,7 +1408,7 @@ bool IOLoginData::isPremium(uint32_t guid)
 	const uint32_t account = result->getDataInt("account_id");
 
 	result->free();
-	if(group && group->hasCustomFlag(PlayerFlag_IsAlwaysPremium))
+	if(group && group->hasFlag(PlayerFlag_IsAlwaysPremium))
 		return true;
 
 	query.str("");
