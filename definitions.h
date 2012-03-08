@@ -30,6 +30,7 @@
 #define SOFTWARE_NAME "The Forgotten Server"
 #define SOFTWARE_VERSION "0.4_SVN"
 #define SOFTWARE_CODENAME ""
+#define SOFTWARE_DEVELOPERS "Elf, Talaturen, Dalkon, BeniS and Kornholijo"
 #define SOFTWARE_PROTOCOL "9.44"
 
 #define VERSION_CHECK "http://forgottenserver.otland.net/version.xml"
