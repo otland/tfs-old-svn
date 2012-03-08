@@ -338,6 +338,8 @@
 		<vocation id="4"/>
 		<vocation id="8" showInDescription="0"/>
 	</melee>
+		<!-- Deepling Axe -->
+	<melee id="15404" level="80" unproperly="1" event="function" value="default"/>
 		<!-- Ice -->
 	<melee id="7768" level="20" event="function" value="default"/>
 	<melee id="7769" level="25" unproperly="1" event="function" value="default"/>
@@ -467,6 +469,10 @@
 		<vocation id="8" showInDescription="0"/>
 	</melee>
 	<melee id="8927" level="120" unproperly="1" event="function" value="default"/>
+		<!-- Deepling Staff -->
+	<melee id="15400" level="38" unproperly="1" event="function" value="default"/>
+		<!-- Ornate Mace -->
+	<melee id="15414" level="90" unproperly="1" event="function" value="default"/>
 		<!-- Fire -->
 	<melee id="7754" level="20" unproperly="1" event="function" value="default"/>
 	<melee id="7755" level="35" unproperly="1" event="function" value="default"/>
