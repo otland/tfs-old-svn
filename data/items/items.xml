@@ -511,7 +511,7 @@
 	<item id="1293" article="a" name="stone">
 		<attribute key="weight" value="1500"/>
 	</item>
-	<item id="1294" article="a" name="small stone" plural="small stones">
+	<item id="1294" article="a" name="small stone">
 		<attribute key="weight" value="360"/>
 		<attribute key="attack" value="5"/>
 		<attribute key="weaponType" value="distance"/>
@@ -2046,7 +2046,7 @@
 	<item id="2110" article="a" name="doll">
 		<attribute key="weight" value="650"/>
 	</item>
-	<item id="2111" article="a" name="snowball" plural="snowballs">
+	<item id="2111" article="a" name="snowball">
 		<attribute key="weight" value="80"/>
 		<attribute key="weaponType" value="distance"/>
 		<attribute key="shootType" value="snowball"/>
@@ -2164,29 +2164,29 @@
 		<attribute key="weight" value="840"/>
 		<attribute key="slotType" value="necklace"/>
 	</item>
-	<item id="2143" article="a" name="white pearl" plural="white pearls">
+	<item id="2143" article="a" name="white pearl">
 		<attribute key="weight" value="20"/>
 	</item>
-	<item id="2144" article="a" name="black pearl" plural="black pearls">
+	<item id="2144" article="a" name="black pearl">
 		<attribute key="weight" value="20"/>
 	</item>
-	<item id="2145" article="a" name="small diamond" plural="small diamonds">
+	<item id="2145" article="a" name="small diamond">
 		<attribute key="weight" value="10"/>
 	</item>
-	<item id="2146" article="a" name="small sapphire" plural="small sapphires">
+	<item id="2146" article="a" name="small sapphire">
 		<attribute key="weight" value="10"/>
 	</item>
-	<item id="2147" article="a" name="small ruby" plural="small rubies">
+	<item id="2147" article="a" name="small ruby">
 		<attribute key="weight" value="10"/>
 	</item>
-	<item id="2148" article="a" name="gold coin" plural="gold coins">
+	<item id="2148" article="a" name="gold coin">
 		<attribute key="weight" value="10"/>
 		<attribute key="worth" value="1"/>
 	</item>
-	<item id="2149" article="a" name="small emerald" plural="small emeralds">
+	<item id="2149" article="a" name="small emerald">
 		<attribute key="weight" value="10"/>
 	</item>
-	<item id="2150" article="a" name="small amethyst" plural="small amethysts">
+	<item id="2150" article="a" name="small amethyst">
 		<attribute key="weight" value="10"/>
 	</item>
 	<item id="2151" article="a" name="talon" plural="talons">
@@ -22844,8 +22844,29 @@
 		<attribute key="weaponType" value="axe"/>
 		<attribute key="slotType" value="two-handed"/>
 	</item>
-	<item id="15455" article="a" name="deepling claw">
-		<attribute key="weight" value="180"/>
+	<item id="15479" article="a" name="swarmer antenna">
+		<attribute key="weight" value="100"/>
+	</item>
+	<item id="15480" article="a" name="kollos shell">
+		<attribute key="weight" value="460"/>
+	</item>
+	<item id="15481" article="a" name="spitter nose">
+		<attribute key="weight" value="460"/>
+	</item>
+	<item id="15482" article="a" name="crawler head plating">
+		<attribute key="weight" value="265"/>
+	</item>
+	<item id="15483" article="a" name="waspoid claw">
+		<attribute key="weight" value="215"/>
+	</item>
+	<item id="15484" article="a" name="waspoid wing">
+		<attribute key="weight" value="99"/>
+	</item>
+	<item id="15485" article="a" name="spidris sandible">
+		<attribute key="weight" value="238"/>
+	</item>
+	<item id="15486" article="a" name="compound eye">
+		<attribute key="weight" value="165"/>
 	</item>
 	<item id="16000" article="an" name="anniversary remains" />
 	<item id="16007" article="an" name="anniversary backpack">
