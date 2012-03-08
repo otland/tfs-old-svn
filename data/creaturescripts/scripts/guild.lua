@@ -20,8 +20,6 @@ function onChannelJoin(cid, channelId, users)
 			addEvent(doPlayerSendChannelMessage, 150, cid, "", "Message of the Day: " .. guildMotd, TALKTYPE_GAMEMASTER_CHANNEL, CHANNEL_GUILD)
 		end
 	end
- 
- 
 	return true
 end
 
