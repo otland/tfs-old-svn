@@ -238,8 +238,11 @@ void ServiceManager::run()
 	{
 		std::vector<boost::shared_ptr<boost::thread> > threads;
 		for(uint32_t i = 0; i < g_config.getNumber(ConfigManager::SERVICE_THREADS); ++i)
+		{
 			boost::shared_ptr<boost::thread> thread(new boost::thread(
 				boost::bind(&boost::asio::io_service::run, &m_io_service)));
+			threads.push_back(thread);
+		}
 
 		running = true;
 		for(std::vector<boost::shared_ptr<boost::thread> >::const_iterator it = threads.begin(); it != threads.end(); ++it)

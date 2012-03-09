@@ -441,10 +441,7 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool preLo
 
 	player->setGroup(group);
 	player->setGUID(result->getDataInt("id"));
-	if(!g_config.getBool(ConfigManager::FREE_PREMIUM))
-		player->premiumDays = account.premiumDays;
-	else		
-		player->premiumDays = (int32_t)GRATIS_PREMIUM;
+	player->premiumDays = account.premiumDays;
 
 	nameCacheMap[player->getGUID()] = name;
 	guidCacheMap[name] = player->getGUID();
