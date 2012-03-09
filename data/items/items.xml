@@ -22704,17 +22704,18 @@
 	<item id="15406" article="an" name="ornate chestplate">
 		<attribute key="weight" value="15600"/>
 		<attribute key="armor" value="16"/>
+		<attribute key="slotType" value="body"/>
 		<attribute key="skillShield" value="3"/>
 		<attribute key="absorbPercentPhysical" value="8"/>
 		<attribute key="showattributes" value="1"/>
-		<attribute key="slotType" value="body"/>
 	</item>
 	<item id="15407" article="a" name="depth lorica">
 		<attribute key="weight" value="14500"/>
 		<attribute key="armor" value="16"/>
+		<attribute key="slotType" value="body"/>
 		<attribute key="skillDist" value="3"/>
 		<attribute key="absorbPercentDeath" value="5"/>
-		<attribute key="slotType" value="body"/>
+		<attribute key="showattributes" value="1"/>
 	</item>
 	<item id="15408" article="a" name="depth galea">
 		<attribute key="weight" value="4600"/>
@@ -22867,6 +22868,129 @@
 	</item>
 	<item id="15486" article="a" name="compound eye">
 		<attribute key="weight" value="165"/>
+	</item>
+	<item id="15487" article="a" name="larvae">
+		<attribute key="weight" value="350"/>
+		<attribute key="showcount" value="0"/>
+	</item>
+	<item id="15488" article="a" name="deepling filet">
+		<attribute key="weight" value="640"/>
+		<attribute key="showcount" value="0"/>
+	</item>
+	<item id="15489" article="a" name="calopteryx cape">
+		<attribute key="weight" value="2000"/>
+		<attribute key="armor" value="12"/>
+		<attribute key="slotType" value="body"/>
+		<attribute key="magicpoints" value="1"/>
+		<attribute key="absorbPercentIce" value="5"/>
+		<attribute key="showattributes" value="1"/>
+	</item>
+	<item id="15490" article="a" name="grasshopper legs">
+		<attribute key="weight" value="3200"/>
+		<attribute key="armor" value="7"/>
+		<attribute key="slotType" value="legs"/>
+		<attribute key="speed" value="20"/>
+		<attribute key="showattributes" value="1"/>
+	</item>
+	<item id="15491" article="a" name="carapace shield">
+		<attribute key="weight" value="5500"/>
+		<attribute key="defense" value="36"/>
+		<attribute key="weaponType" value="shield"/>
+	</item>
+	<item id="15492" article="a" name="hive scythe">
+		<attribute key="weight" value="7500"/>
+		<attribute key="attack" value="46"/>
+		<attribute key="defense" value="24"/>
+		<attribute key="weaponType" value="axe"/>
+	</item>
+	<item id="15515" article="a" name="bar of gold">
+		<attribute key="weight" value="2100"/>
+	</item>
+	<item id="15545" article="a" name="fox tail">
+		<attribute key="weight" value="200"/>
+		<attribute key="description" value="A hermit near Carlin might be able to tell you more about it."/>
+	</item>
+	<item id="15546" article="a" name="four leaf clover">
+		<attribute key="weight" value="200"/>
+		<attribute key="description" value="A hermit near Carlin might be able to tell you more about it."/>
+	</item>
+	<item id="15556" article="a" name="basket">
+		<attribute key="weight" value="5000"/>
+		<attribute key="description" value="There are little puppies inside."/>
+	</item>
+	<item id="15559" article="a" name="dog collar">
+		<attribute key="weight" value="5000"/>
+		<attribute key="description" value="It belongs to Noodles, the King's dog."/>
+	</item>
+	<item fromid="15561" toid="15564" article="a" name="crystal wall"/>
+	<item id="15565" article="a" name="rough red gem">
+		<attribute key="description" value="This blood red gem is still rough."/>
+	</item>
+	<item id="15572" article="a" name="gooey mass">
+		<attribute key="weight" value="5500"/>
+		<attribute key="description" value="Perhaps it contains something useful."/>
+	</item>
+	<item id="15573" article="a" name="seashell book">
+		<attribute key="weight" value="1300"/>
+		<attribute key="description" value="I write this trilogy of blackness and death to warn the world of the evil in the depths."/>
+	</item>
+	<item id="15574" article="a" name="seashell book">
+		<attribute key="weight" value="1300"/>
+		<attribute key="description" value="Darkness clutches the creatures of the sea to end all living things. Be watchful of this black void."/>
+	</item>
+	<item id="15575" article="a" name="seashell book">
+		<attribute key="weight" value="1300"/>
+		<attribute key="description" value="And they drove them mad and to the edge of extinction. Extinction of the world that surrounded them."/>
+	</item>
+	<item id="15576" article="a" name="notes and coordinates">
+		<attribute key="weight" value="200"/>
+		<attribute key="description" value="These scribblings are almost unreadable."/>
+	</item>
+	<item id="15619" article="a" name="trophy of Obujos">
+		<attribute key="weight" value="500"/>
+	</item>
+	<item id="15620" article="a" name="trophy of Tanjis">
+		<attribute key="weight" value="500"/>
+	</item>
+	<item id="15621" article="a" name="trophy of Jaul">
+		<attribute key="weight" value="500"/>
+	</item>
+	<item id="15622" article="a" name="dung ball">
+		<attribute key="weight" value="190"/>
+	</item>
+	<item id="15643" article="a" name="hive bow">
+		<attribute key="weight" value="4600"/>
+		<attribute key="slotType" value="two-handed"/>
+		<attribute key="weaponType" value="distance"/>
+		<attribute key="ammoType" value="arrow"/>
+		<attribute key="range" value="6"/>
+		<attribute key="hitChance" value="5"/>
+		<attribute key="attack" value="2"/>
+	</item>
+	<item id="15644" article="an" name="ornate crossbow">
+		<attribute key="weight" value="9100"/>
+		<attribute key="slotType" value="two-handed"/>
+		<attribute key="weaponType" value="distance"/>
+		<attribute key="ammoType" value="bolt"/>
+		<attribute key="range" value="6"/>
+		<attribute key="hitChance" value="2"/>
+		<attribute key="attack" value="1"/>
+	</item>
+	<item id="15645" article="a" name="deepling backpack">
+		<attribute key="weight" value="1800"/>
+		<attribute key="containerSize" value="20"/>
+		<attribute key="slotType" value="backpack"/>
+	</item>
+	<item id="15646" article="a" name="buggy backpack">
+		<attribute key="weight" value="1800"/>
+		<attribute key="containerSize" value="20"/>
+		<attribute key="slotType" value="backpack"/>
+	</item>
+	<item id="15647" article="a" name="deepling squelcher">
+		<attribute key="weight" value="8900"/>
+		<attribute key="attack" value="44"/>
+		<attribute key="defense" value="28"/>
+		<attribute key="weaponType" value="club"/>
 	</item>
 	<item id="16000" article="an" name="anniversary remains" />
 	<item id="16007" article="an" name="anniversary backpack">

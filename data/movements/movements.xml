@@ -414,9 +414,6 @@
 		<!-- Beetle Necklace -->
 	<movevent type="Equip" itemid="11374" slot="necklace" event="function" value="onEquipItem"/>
 	<movevent type="DeEquip" itemid="11374" slot="necklace" event="function" value="onDeEquipItem"/>
-		<!-- Necklace of the Deep -->
-	<movevent type="Equip" itemid="15403" slot="necklace" level="120" event="function" value="onEquipItem"/>
-	<movevent type="DeEquip" itemid="15403" slot="necklace" event="function" value="onDeEquipItem"/>
 
 	<!-- Rings -->
 		<!-- Might Ring -->
@@ -578,9 +575,6 @@
 		<vocation id="7" showInDescription="0"/>
 	</movevent>
 	<movevent type="DeEquip" itemid="12645" slot="head" event="function" value="onDeEquipItem"/>
-		<!-- Depth Galea -->
-	<movevent type="Equip" itemid="15408" slot="head" level="150" event="function" value="onEquipItem"/>
-	<movevent type="DeEquip" itemid="15408" slot="head" event="function" value="onDeEquipItem"/>
 
 
 	<!-- Armors -->
@@ -884,18 +878,13 @@
 		<vocation id="8" showInDescription="0"/>
 	</movevent>
 	<movevent type="DeEquip" itemid="12642" slot="armor" event="function" value="onDeEquipItem"/>
-		<!-- Depth Lorica -->
-	<movevent type="Equip" itemid="15407" slot="armor" level="150" event="function" value="onEquipItem">
-		<vocation id="3"/>
-		<vocation id="7" showInDescription="0"/>
+		<!-- Calopteryx Cape -->
+	<movevent type="Equip" itemid="15489" slot="armor" level="80" event="function" value="onEquipItem">
+		<vocation id="1"/>
+		<vocation id="2"/>
+		<vocation id="5" showInDescription="0"/>
+		<vocation id="6" showInDescription="0"/>
 	</movevent>
-	<movevent type="DeEquip" itemid="15407" slot="armor" event="function" value="onDeEquipItem"/>
-		<!-- Ornate Chestplate -->
-	<movevent type="Equip" itemid="15406" slot="armor" level="200" event="function" value="onEquipItem">
-		<vocation id="4"/>
-		<vocation id="8" showInDescription="0"/>
-	</movevent>
-	<movevent type="DeEquip" itemid="15406" slot="armor" event="function" value="onDeEquipItem"/>
 
 	<!-- Legs -->
 		<!-- Knight Legs -->
@@ -966,18 +955,9 @@
 		<!-- Zaoan Legs -->
 	<movevent type="Equip" itemid="11304" slot="legs" event="function" value="onEquipItem"/>
 	<movevent type="DeEquip" itemid="11304" slot="legs" event="function" value="onDeEquipItem"/>
-		<!-- Depth Ocrea -->
-	<movevent type="Equip" itemid="15409" slot="legs" level="130" event="function" value="onEquipItem">
-		<vocation id="1;2"/>
-		<vocation id="5;6" showInDescription="0"/>
-	</movevent>
-	<movevent type="DeEquip" itemid="15409" slot="legs" event="function" value="onDeEquipItem"/>
-		<!-- Ornate Legs -->
-	<movevent type="Equip" itemid="15412" slot="legs" level="185" event="function" value="onEquipItem">
-		<vocation id="4"/>
-		<vocation id="8" showInDescription="0"/>
-	</movevent>
-	<movevent type="DeEquip" itemid="15412" slot="legs" event="function" value="onDeEquipItem"/>
+		<!-- Grasshopper Legs -->
+	<movevent type="Equip" itemid="15490" slot="legs" level="75" event="function" value="onEquipItem"/>
+	<movevent type="DeEquip" itemid="15490" slot="legs" event="function" value="onDeEquipItem"/>
 
 	<!-- Shields -->
 		<!-- Rainbow Shield -->
@@ -1048,18 +1028,7 @@
 		<vocation id="8" showInDescription="0"/>
 	</movevent>
 	<movevent type="DeEquip" itemid="12644" slot="shield" event="function" value="onDeEquipItem"/>
-		<!-- Depth Scutum -->
-	<movevent type="Equip" itemid="15411" slot="shield" level="120" event="function" value="onEquipItem">
-		<vocation id="1;2"/>
-		<vocation id="5;6" showInDescription="0"/>
-	</movevent>
-	<movevent type="DeEquip" itemid="15411" slot="shield" event="function" value="onDeEquipItem"/>
-		<!-- Ornate Shield -->
-	<movevent type="Equip" itemid="15413" slot="shield" level="130" event="function" value="onEquipItem">
-		<vocation id="4"/>
-		<vocation id="8" showInDescription="0"/>
-	</movevent>
-	<movevent type="DeEquip" itemid="15413" slot="shield" event="function" value="onDeEquipItem"/>
+
 
 	<!-- Other -->
 		<!-- Magical Torch -->

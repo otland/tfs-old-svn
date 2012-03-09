@@ -332,6 +332,8 @@
 	<melee id="15451" level="40" unproperly="1" event="function" value="default"/>
 		<!-- Guardian Axe -->
 	<melee id="15454" level="50" unproperly="1" event="function" value="default"/>
+		<!-- Hive Scythe -->
+	<melee id="15492" level="70" unproperly="1" event="function" value="default"/>
 		<!-- Fire -->
 	<melee id="7749" level="20" event="function" value="default"/>
 	<melee id="7750" level="25" unproperly="1" event="function" value="default"/>
@@ -477,6 +479,8 @@
 	<melee id="15400" level="38" unproperly="1" event="function" value="default"/>
 		<!-- Ornate Mace -->
 	<melee id="15414" level="90" unproperly="1" event="function" value="default"/>
+		<!-- Deepling Squelcher -->
+	<melee id="15414" level="48" unproperly="1" event="function" value="default"/>
 		<!-- Fire -->
 	<melee id="7754" level="20" unproperly="1" event="function" value="default"/>
 	<melee id="7755" level="35" unproperly="1" event="function" value="default"/>
@@ -580,6 +584,16 @@
 	</distance>
 		<!-- Shimmer Bow -->
     <distance id="13873" level="40" unproperly="1" event="function" value="default">
+		<vocation id="3"/>
+		<vocation id="7" showInDescription="0"/>
+    </distance>
+		<!-- Hive Bow -->
+    <distance id="15643" level="85" unproperly="1" event="function" value="default">
+		<vocation id="3"/>
+		<vocation id="7" showInDescription="0"/>
+    </distance>
+		<!-- Ornate Bow -->
+    <distance id="15643" level="50" unproperly="1" event="function" value="default">
 		<vocation id="3"/>
 		<vocation id="7" showInDescription="0"/>
     </distance>
