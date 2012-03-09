@@ -480,7 +480,7 @@
 		<!-- Ornate Mace -->
 	<melee id="15414" level="90" unproperly="1" event="function" value="default"/>
 		<!-- Deepling Squelcher -->
-	<melee id="15414" level="48" unproperly="1" event="function" value="default"/>
+	<melee id="15647" level="48" unproperly="1" event="function" value="default"/>
 		<!-- Fire -->
 	<melee id="7754" level="20" unproperly="1" event="function" value="default"/>
 	<melee id="7755" level="35" unproperly="1" event="function" value="default"/>
@@ -592,8 +592,8 @@
 		<vocation id="3"/>
 		<vocation id="7" showInDescription="0"/>
     </distance>
-		<!-- Ornate Bow -->
-    <distance id="15643" level="50" unproperly="1" event="function" value="default">
+		<!-- Ornate Crossbow -->
+    <distance id="15644" level="50" unproperly="1" event="function" value="default">
 		<vocation id="3"/>
 		<vocation id="7" showInDescription="0"/>
     </distance>
