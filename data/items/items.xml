@@ -22761,7 +22761,7 @@
 		<attribute key="weight" value="14900"/>
 		<attribute key="attack" value="49"/>
 		<attribute key="defense" value="24"/>
-		<attribute key="weaponType" value="club"/>>
+		<attribute key="weaponType" value="club"/>
 	</item>
 	<item id="15421" article="a" name="spellsinger's seal">
 		<attribute key="weight" value="190"/>
