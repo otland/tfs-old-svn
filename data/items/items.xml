@@ -22955,6 +22955,9 @@
 		<attribute key="weaponType" value="axe"/>
 		<attribute key="slotType" value="two-handed"/>
 	</item>
+	<item id="15455" article="a" name="deepling claw">
+		<attribute key="weight" value="180"/>	
+	</item>
 	<item id="15479" article="a" name="swarmer antenna">
 		<attribute key="weight" value="100"/>
 	</item>
@@ -23130,7 +23133,7 @@
 		<attribute key="maxHitChance" value="90"/>
 		<attribute key="weaponType" value="ammunition"/>
 		<attribute key="ammoType" value="bolt"/>
-		<attribute key="shootType" value="bolt"/>
+		<attribute key="shootType" value="vortexbolt"/>
 		<attribute key="ammoAction" value="removecount"/>
 	</item>
 	<item id="15996" article="a" name="dead hamster">
