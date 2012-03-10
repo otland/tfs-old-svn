@@ -878,6 +878,12 @@
 		<vocation id="8" showInDescription="0"/>
 	</movevent>
 	<movevent type="DeEquip" itemid="12642" slot="armor" event="function" value="onDeEquipItem"/>
+		<!-- Ornate Chestplate -->
+	<movevent type="Equip" itemid="15406" slot="armor" level="200" event="function" value="onEquipItem">
+		<vocation id="4"/>
+		<vocation id="8" showInDescription="0"/>
+	</movevent>
+	<movevent type="DeEquip" itemid="15406" slot="armor" event="function" value="onDeEquipItem"/>
 		<!-- Calopteryx Cape -->
 	<movevent type="Equip" itemid="15489" slot="armor" level="80" event="function" value="onEquipItem">
 		<vocation id="1"/>
