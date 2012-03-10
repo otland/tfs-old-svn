@@ -49,12 +49,12 @@ function prepareShutdown(minutes, reason)
 
 	local change, r = 5, (reason and " Reason: "..reason or "")
 	if(minutes == 1) then
-		doBroadcastMessage("Server is going down in " .. minutes .. " minute, please log out now! Will be back online soon! " .. r)
+		doBroadcastMessage("Server is going down in " .. minutes .. " minute, please log out now!" .. r)
 	elseif(minutes <= 5) then
-		doBroadcastMessage("Server is going down in " .. minutes .. " minutes, please log out. Will be back online soon!" .. r)
+		doBroadcastMessage("Server is going down in " .. minutes .. " minutes, please log out." .. r)
 		change = 1
 	else
-		doBroadcastMessage("Server is going down in " .. minutes .. " minutes. Will be back online soon!" .. r)
+		doBroadcastMessage("Server is going down in " .. minutes .. " minutes." .. r)
 	end
 
 	shutdownEvent = addEvent(prepareShutdown, (change * 60 * 1000), minutes - change, reason)
