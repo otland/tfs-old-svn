@@ -114,6 +114,9 @@
     <ClCompile Include="..\iomapserialize.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\iomarket.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="..\item.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -363,6 +366,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\iomapserialize.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\iomarket.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\item.h">

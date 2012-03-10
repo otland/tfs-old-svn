@@ -1,7 +1,7 @@
 [Project]
 FileName=TheForgottenServer.dev
 Name=The Forgotten Server
-UnitCount=165
+UnitCount=167
 Type=0
 Ver=1
 ObjFiles=
@@ -1632,19 +1632,19 @@ BuildCmd=
 [VersionInfo]
 Major=0
 Minor=2
-Release=7
+Release=12
 Build=0
 LanguageID=1033
 CharsetID=1252
 CompanyName=http://otland.net
-FileVersion=0.2.7
+FileVersion=0.2.12
 FileDescription=The Forgotten Server
 InternalName=Mystic Spirit
 LegalCopyright=
 LegalTrademarks=
 OriginalFilename=The Forgotten Server.exe
 ProductName=The Forgotten Server
-ProductVersion=0.2.7
+ProductVersion=0.2.12
 AutoIncBuildNr=0
 
 [Unit162]
@@ -1687,3 +1687,22 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
+[Unit166]
+FileName=..\iomarket.cpp
+CompileCpp=1
+Folder=TheForgottenServer
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit167]
+FileName=..\iomarket.h
+CompileCpp=1
+Folder=TheForgottenServer
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=

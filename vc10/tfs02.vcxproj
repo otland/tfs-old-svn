@@ -158,6 +158,7 @@
     <ClCompile Include="..\iologindata.cpp" />
     <ClCompile Include="..\iomap.cpp" />
     <ClCompile Include="..\iomapserialize.cpp" />
+    <ClCompile Include="..\iomarket.cpp" />
     <ClCompile Include="..\item.cpp" />
     <ClCompile Include="..\items.cpp" />
     <ClCompile Include="..\logger.cpp" />
@@ -249,6 +250,7 @@
     <ClInclude Include="..\iologindata.h" />
     <ClInclude Include="..\iomap.h" />
     <ClInclude Include="..\iomapserialize.h" />
+    <ClInclude Include="..\iomarket.h" />
     <ClInclude Include="..\item.h" />
     <ClInclude Include="..\itemloader.h" />
     <ClInclude Include="..\items.h" />
