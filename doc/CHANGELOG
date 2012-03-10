@@ -45,6 +45,7 @@
 [ Milestone
 	Game protocol 9.44 support.
 	Revised database system.
+	Market system.
 	Fixed element damages.
 	Fixed a bug with Lua function getPlayersByIP, it was ignoring mask even if set.
 	Healing messages will no longer show if health change is 0.

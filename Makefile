@@ -74,9 +74,9 @@ CXXSOURCES = actions.cpp admin.cpp allocator.cpp ban.cpp baseevents.cpp beds.cpp
 	creature.cpp creatureevent.cpp chat.cpp combat.cpp commands.cpp condition.cpp configmanager.cpp \
 	connection.cpp container.cpp cylinder.cpp database.cpp databasemanager.cpp databasemysql.cpp \
 	databasesqlite.cpp depot.cpp exception.cpp fileloader.cpp game.cpp globalevent.cpp gui.cpp house.cpp \
-	housetile.cpp ioguild.cpp iologindata.cpp iomap.cpp iomapserialize.cpp inputbox.cpp item.cpp items.cpp \
-	logger.cpp luascript.cpp mailbox.cpp map.cpp md5.cpp monster.cpp monsters.cpp mounts.cpp \
-	movement.cpp networkmessage.cpp npc.cpp otserv.cpp outfit.cpp outputmessage.cpp party.cpp \
+	housetile.cpp ioguild.cpp iologindata.cpp iomap.cpp iomapserialize.cpp iomarket.cpp inputbox.cpp \
+	item.cpp items.cpp logger.cpp luascript.cpp mailbox.cpp map.cpp md5.cpp monster.cpp monsters.cpp \
+	mounts.cpp movement.cpp networkmessage.cpp npc.cpp otserv.cpp outfit.cpp outputmessage.cpp party.cpp \
 	player.cpp playerbox.cpp position.cpp protocol.cpp protocolgame.cpp protocollogin.cpp \
 	protocolold.cpp quests.cpp raids.cpp rsa.cpp scheduler.cpp scriptmanager.cpp server.cpp \
 	sha1.cpp spawn.cpp spells.cpp status.cpp talkaction.cpp tasks.cpp teleport.cpp textlogger.cpp \

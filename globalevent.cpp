@@ -127,14 +127,15 @@ void GlobalEvents::startup()
 void GlobalEvents::timer()
 {
 	time_t now = time(NULL);
-	for(GlobalEventMap::iterator it = timerMap.begin(); it != timerMap.end(); ++it)
+	for(GlobalEventMap::iterator it = timerMap.begin(), end = timerMap.end(); it != end; ++it)
 	{
-		if(it->second->getNextExecution() > now)
+		GlobalEvent* globalEvent = it->second;
+		if(globalEvent->getNextExecution() > now)
 			continue;
 
-		it->second->setNextExecution(it->second->getNextExecution() + 86400);
-		if(!it->second->executeEvent())
-			std::cout << "[Error - GlobalEvents::timer] Failed to execute event: " << it->second->getName() << std::endl;
+		globalEvent->setNextExecution(globalEvent->getNextExecution() + 86400);
+		if(!globalEvent->executeEvent())
+			std::cout << "[Error - GlobalEvents::timer] Failed to execute event: " << globalEvent->getName() << std::endl;
 	}
 
 	g_scheduler.addEvent(createSchedulerTask(TIMER_INTERVAL,
@@ -146,12 +147,13 @@ void GlobalEvents::think()
 	int64_t now = OTSYS_TIME();
 	for(GlobalEventMap::iterator it = thinkMap.begin(); it != thinkMap.end(); ++it)
 	{
-		if((it->second->getLastExecution() + it->second->getInterval()) > now)
+		GlobalEvent* globalEvent = it->second;
+		if((globalEvent->getLastExecution() + globalEvent->getInterval()) > now)
 			continue;
 
-		it->second->setLastExecution(now);
-		if(!it->second->executeEvent())
-			std::cout << "[Error - GlobalEvents::think] Failed to execute event: " << it->second->getName() << std::endl;
+		globalEvent->setLastExecution(now);
+		if(!globalEvent->executeEvent())
+			std::cout << "[Error - GlobalEvents::think] Failed to execute event: " << globalEvent->getName() << std::endl;
 	}
 
 	g_scheduler.addEvent(createSchedulerTask(SCHEDULER_MINTICKS,
@@ -162,8 +164,9 @@ void GlobalEvents::execute(GlobalEvent_t type)
 {
 	for(GlobalEventMap::iterator it = serverMap.begin(); it != serverMap.end(); ++it)
 	{
-		if(it->second->getEventType() == type)
-			it->second->executeEvent();
+		GlobalEvent* globalEvent = it->second;
+		if(globalEvent->getEventType() == type)
+			globalEvent->executeEvent();
 	}
 }
 

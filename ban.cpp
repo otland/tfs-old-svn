@@ -62,22 +62,23 @@ bool Ban::acceptConnection(uint32_t clientip)
 		return true;
 	}
 
-	it->second.count++;
-	if(it->second.blockTime > currentTime)
+	ConnectBlock& connectBlock = it->second;
+	connectBlock.count++;
+	if(connectBlock.blockTime > currentTime)
 	{
 		OTSYS_THREAD_UNLOCK(banLock, "");
 		return false;
 	}
 
-	if(currentTime - it->second.startTime > 1000)
+	if(currentTime - connectBlock.startTime > 1000)
 	{
-		uint32_t connectionPerSec = it->second.count;
-		it->second.startTime = currentTime;
-		it->second.count = 0;
-		it->second.blockTime = 0;
+		uint32_t connectionPerSec = connectBlock.count;
+		connectBlock.startTime = currentTime;
+		connectBlock.count = 0;
+		connectBlock.blockTime = 0;
 		if(connectionPerSec > 10)
 		{
-			it->second.blockTime = currentTime + 10000;
+			connectBlock.blockTime = currentTime + 10000;
 			OTSYS_THREAD_UNLOCK(banLock, "");
 			return false;
 		}
@@ -106,15 +107,16 @@ void Ban::addLoginAttempt(uint32_t clientip, bool isSuccess)
 		it = ipLoginMap.find(clientip);
 	}
 
-	if(it->second.numberOfLogins >= maxLoginTries)
-		it->second.numberOfLogins = 0;
+	LoginBlock& loginBlock = it->second;
+	if(loginBlock.numberOfLogins >= maxLoginTries)
+		loginBlock.numberOfLogins = 0;
 
-	if(!isSuccess || ((uint32_t)currentTime < (uint32_t)it->second.lastLoginTime + retryTimeout))
-		++it->second.numberOfLogins;
+	if(!isSuccess || ((uint32_t)currentTime < (uint32_t)loginBlock.lastLoginTime + retryTimeout))
+		++loginBlock.numberOfLogins;
 	else
-		it->second.numberOfLogins = 0;
+		loginBlock.numberOfLogins = 0;
 
-	it->second.lastLoginTime = currentTime;
+	loginBlock.lastLoginTime = currentTime;
 	OTSYS_THREAD_UNLOCK(banLock, "");
 }
 

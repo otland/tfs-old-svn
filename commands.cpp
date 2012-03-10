@@ -166,12 +166,13 @@ bool Commands::loadFromXml()
 					int32_t aTypeLevel;
 					if(it != commandMap.end())
 					{
-						if(readXMLInteger(p,"group",gId))
+						Command* command = it->second;
+						if(readXMLInteger(p, "group", gId))
 						{
-							if(!it->second->loadedGroupId)
+							if(!command->loadedGroupId)
 							{
-								it->second->groupId = gId;
-								it->second->loadedGroupId = true;
+								command->groupId = gId;
+								command->loadedGroupId = true;
 							}
 							else
 								std::cout << "Duplicated command " << strCmd << std::endl;
@@ -181,10 +182,10 @@ bool Commands::loadFromXml()
 
 						if(readXMLInteger(p, "acctype", aTypeLevel))
 						{
-							if(!it->second->loadedAccountType)
+							if(!command->loadedAccountType)
 							{
-								it->second->accountType = (AccountType_t)aTypeLevel;
-								it->second->loadedAccountType = true;
+								command->accountType = (AccountType_t)aTypeLevel;
+								command->loadedAccountType = true;
 							}
 							else
 								std::cout << "Duplicated command " << strCmd << std::endl;
@@ -207,12 +208,14 @@ bool Commands::loadFromXml()
 		xmlFreeDoc(doc);
 	}
 
-	for(CommandMap::iterator it = commandMap.begin(); it != commandMap.end(); ++it)
+	for(CommandMap::iterator it = commandMap.begin(), end = commandMap.end(); it != end; ++it)
 	{
 		if(!it->second->loadedGroupId)
 			std::cout << "Warning: Missing group id for command " << it->first << std::endl;
+
 		if(!it->second->loadedAccountType)
 			std::cout << "Warning: Missing acctype level for command " << it->first << std::endl;
+
 		g_game.addCommandTag(it->first.substr(0, 1));
 	}
 	return loaded;
@@ -223,10 +226,11 @@ bool Commands::reload()
 	loaded = false;
 	for(CommandMap::iterator it = commandMap.begin(); it != commandMap.end(); ++it)
 	{
-		it->second->groupId = 1;
-		it->second->accountType = ACCOUNT_TYPE_GOD;
-		it->second->loadedGroupId = false;
-		it->second->loadedAccountType = false;
+		Command* command = it->second;
+		command->groupId = 1;
+		command->accountType = ACCOUNT_TYPE_GOD;
+		command->loadedGroupId = false;
+		command->loadedAccountType = false;
 	}
 	g_game.resetCommandTag();
 	return loadFromXml();
@@ -258,7 +262,8 @@ bool Commands::exeCommand(Creature* creature, const std::string& cmd)
 	if(it == commandMap.end())
 		return false;
 
-	if(it->second->groupId > player->groupId || it->second->accountType > player->accountType || player->isAccountManagerEx())
+	Command* command = it->second;
+	if(command->groupId > player->groupId || command->accountType > player->accountType || player->isAccountManagerEx())
 	{
 		if(player->accessLevel)
 			player->sendTextMessage(MSG_STATUS_SMALL, "You can not execute this command.");
@@ -267,7 +272,7 @@ bool Commands::exeCommand(Creature* creature, const std::string& cmd)
 	}
 
 	//execute command
-	CommandFunc cfunc = it->second->f;
+	CommandFunc cfunc = command->f;
 	(this->*cfunc)(player, str_command, str_param);
 	if(player->accessLevel)
 	{
@@ -902,7 +907,7 @@ void Commands::buyHouse(Player* player, const std::string& cmd, const std::strin
 		return;
 	}
 
-	for(HouseMap::iterator it = Houses::getInstance().getHouseBegin(); it != Houses::getInstance().getHouseEnd(); it++)
+	for(HouseMap::iterator it = Houses::getInstance().getHouseBegin(), end = Houses::getInstance().getHouseEnd(); it != end; ++it)
 	{
 		if(it->second->getHouseOwner() == player->guid)
 		{

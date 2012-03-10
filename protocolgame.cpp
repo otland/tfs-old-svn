@@ -34,6 +34,7 @@
 #include "actions.h"
 #include "game.h"
 #include "iologindata.h"
+#include "iomarket.h"
 #include "house.h"
 #include "waitlist.h"
 #include "quests.h"
@@ -813,6 +814,9 @@ void ProtocolGame::parsePacket(NetworkMessage &msg)
 				break;
 		}
 	}
+
+	if(msg.isOverrun())
+		player->kickPlayer(true);
 }
 
 void ProtocolGame::GetTileDescription(const Tile* tile, NetworkMessage_ptr msg)
@@ -1537,38 +1541,71 @@ void ProtocolGame::parseRuleViolationReport(NetworkMessage& msg)
 
 void ProtocolGame::parseMarketLeave()
 {
+	player->setMarketDepotId(-1);
 }
 
 void ProtocolGame::parseMarketBrowse(NetworkMessage& msg)
 {
-	//uint16_t clientId = msg.GetU16();
-	// send offers
+	uint16_t spriteId = msg.GetU16();
+	const ItemType& itemType = Item::items.getItemIdByClientId(spriteId);
+	if(itemType.id == 0)
+		return;
+
+	NetworkMessage_ptr _msg = getOutputBuffer();
+	if(_msg)
+	{
+		TRACK_MESSAGE(_msg);
+		_msg->AddByte(0xF9);
+
+		_msg->AddU16(spriteId);
+
+		const MarketItemList& buyOffers = IOMarket::getInstance()->getActiveOffers(MARKETACTION_BUY, itemType.id);
+		_msg->AddU32(buyOffers.size());
+		for(MarketItemList::const_iterator it = buyOffers.begin(), end = buyOffers.end(); it != end; ++it)
+		{
+			_msg->AddU32(it->timestamp);
+			_msg->AddU16(it->counter);
+			_msg->AddU16(it->amount);
+			_msg->AddU32(it->price);
+			_msg->AddString(it->playerName);
+		}
+
+		const MarketItemList& sellOffers = IOMarket::getInstance()->getActiveOffers(MARKETACTION_SELL, itemType.id);
+		_msg->AddU32(sellOffers.size());
+		for(MarketItemList::const_iterator it = sellOffers.begin(), end = sellOffers.end(); it != end; ++it)
+		{
+			_msg->AddU32(it->timestamp);
+			_msg->AddU16(it->counter);
+			_msg->AddU16(it->amount);
+			_msg->AddU32(it->price);
+			_msg->AddString(it->playerName);
+		}
+	}
 }
 
 void ProtocolGame::parseMarketCreateOffer(NetworkMessage& msg)
 {
-	/*
-	char kind = msg.GetByte(); // buy or sell
-	uint16_t clientId = msg.GetU16();
+	uint8_t type = msg.GetByte();
+	uint16_t spriteId = msg.GetU16();
 	uint16_t amount = msg.GetU16();
 	uint32_t price = msg.GetU32();
 	bool anonymous = (msg.GetByte() != 0);
-	*/
+	addGameTask(&Game::playerCreateMarketOffer, player->getID(), type, spriteId, amount, price, anonymous);
 }
 
 void ProtocolGame::parseMarketCancelOffer(NetworkMessage& msg)
 {
-	//uint32_t timestamp = msg.GetU32();
-	//uint16_t counter = msg.GetU16();
+	uint32_t timestamp = msg.GetU32();
+	uint16_t counter = msg.GetU16();
+	addGameTask(&Game::playerCancelMarketOffer, player->getID(), timestamp, counter);
 }
 
 void ProtocolGame::parseMarketAcceptOffer(NetworkMessage& msg)
 {
-	/*
 	uint32_t timestamp = msg.GetU32();
 	uint16_t counter = msg.GetU16();
 	uint16_t amount = msg.GetU16();
-	*/
+	addGameTask(&Game::playerAcceptMarketOffer, player->getID(), timestamp, counter, amount);
 }
 
 //********************** Send methods *******************************//
@@ -1598,20 +1635,20 @@ void ProtocolGame::sendChannelEvent(uint16_t channelId, const std::string& playe
 
 void ProtocolGame::sendCreatureOutfit(const Creature* creature, const Outfit_t& outfit)
 {
-	if(canSee(creature))
-	{
-		NetworkMessage_ptr msg = getOutputBuffer();
-		if(msg)
-		{
-			TRACK_MESSAGE(msg);
-			msg->AddByte(0x8E);
-			msg->AddU32(creature->getID());
-			if(creature->isInGhostMode())
-				AddCreatureInvisible(msg, creature);
-			else
-				AddCreatureOutfit(msg, creature, outfit);
-		}
-	}
+	if(!canSee(creature))
+		return;
+
+	NetworkMessage_ptr msg = getOutputBuffer();
+	if(!msg)
+		return;
+
+	TRACK_MESSAGE(msg);
+	msg->AddByte(0x8E);
+	msg->AddU32(creature->getID());
+	if(creature->isInGhostMode())
+		AddCreatureInvisible(msg, creature);
+	else
+		AddCreatureOutfit(msg, creature, outfit);
 }
 
 void ProtocolGame::sendCreatureInvisible(const Creature* creature)
@@ -1631,25 +1668,25 @@ void ProtocolGame::sendCreatureInvisible(const Creature* creature)
 
 void ProtocolGame::sendCreatureLight(const Creature* creature)
 {
-	if(canSee(creature))
-	{
-		NetworkMessage_ptr msg = getOutputBuffer();
-		if(msg)
-		{
-			TRACK_MESSAGE(msg);
-			AddCreatureLight(msg, creature);
-		}
-	}
+	if(!canSee(creature))
+		return;
+
+	NetworkMessage_ptr msg = getOutputBuffer();
+	if(!msg)
+		return;
+
+	TRACK_MESSAGE(msg);
+	AddCreatureLight(msg, creature);
 }
 
 void ProtocolGame::sendWorldLight(const LightInfo& lightInfo)
 {
 	NetworkMessage_ptr msg = getOutputBuffer();
-	if(msg)
-	{
-		TRACK_MESSAGE(msg);
-		AddWorldLight(msg, lightInfo);
-	}
+	if(!msg)
+		return;
+
+	TRACK_MESSAGE(msg);
+	AddWorldLight(msg, lightInfo);
 }
 
 void ProtocolGame::sendCreatureShield(const Creature* creature)
@@ -1996,7 +2033,7 @@ void ProtocolGame::sendSaleItemList(const std::list<ShopInfo>& shop)
 	}
 }
 
-void ProtocolGame::sendMarketEnter(Item* item)
+void ProtocolGame::sendMarketEnter(uint32_t depotId)
 {
 	NetworkMessage_ptr msg = getOutputBuffer();
 	if(!msg)
@@ -2008,33 +2045,39 @@ void ProtocolGame::sendMarketEnter(Item* item)
 	msg->AddByte(player->getVocationId());
 	msg->AddByte(0x00); // active offers
 
-	Depot* depot = NULL;
-	if(Thing* thing = item->getParent())
+	Depot* depot = player->getDepot(depotId, false);
+	if(!depot)
 	{
-		if(Item* parentItem = thing->getItem())
-		{
-			if(Container* parentContainer = parentItem->getContainer())
-				depot = parentContainer->getDepot();
-		}
-	}
-
-	if(depot)
-	{
-		std::map<uint16_t, uint32_t> depotItems;
-		for(ContainerIterator it = depot->begin(), end = depot->end(); it != end; ++it)
-			depotItems[(*it)->getID()] += Item::countByType(*it, -1);
-
-		msg->AddU16(std::min((size_t)65535, depotItems.size()));
-
-		uint16_t i = 0;
-		for(std::map<uint16_t, uint32_t>::const_iterator it = depotItems.begin(), end = depotItems.end(); it != end && i < 65535; ++it, ++i)
-		{
-			msg->AddItemId(it->first);
-			msg->AddU16(std::min((uint32_t)65535, it->second));
-		}
-	}
-	else
 		msg->AddU16(0x00);
+		return;
+	}
+	player->setMarketDepotId(depotId);
+
+	std::map<uint16_t, uint32_t> depotItems;
+	for(ContainerIterator it = depot->begin(), end = depot->end(); it != end; ++it)
+	{
+		Container* container = (*it)->getContainer();
+		if(container && !container->empty())
+			continue;
+
+		const ItemType& itemType = Item::items[(*it)->getID()];
+		if((*it)->hasCharges())
+		{
+			if(itemType.charges != (*it)->getCharges())
+				continue;
+		}
+
+		depotItems[(*it)->getID()] += Item::countByType(*it, -1);
+	}
+
+	msg->AddU16(std::min((size_t)65535, depotItems.size()));
+
+	uint16_t i = 0;
+	for(std::map<uint16_t, uint32_t>::const_iterator it = depotItems.begin(), end = depotItems.end(); it != end && i < 65535; ++it, ++i)
+	{
+		msg->AddItemId(it->first);
+		msg->AddU16(std::min((uint32_t)65535, it->second));
+	}
 }
 
 void ProtocolGame::sendTradeItemRequest(const Player* player, const Item* item, bool ack)
@@ -2403,7 +2446,7 @@ void ProtocolGame::sendAddCreature(const Creature* creature, const Position& pos
 					}
 				}
 
-				for(VIPListSet::iterator it = player->VIPList.begin(); it != player->VIPList.end(); it++)
+				for(VIPListSet::iterator it = player->VIPList.begin(), end = player->VIPList.end(); it != end; ++it)
 				{
 					std::string vip_name;
 					if(IOLoginData::getInstance()->getNameByGuid((*it), vip_name))

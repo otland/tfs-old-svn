@@ -206,7 +206,7 @@ class ProtocolGame : public Protocol
 		void sendShop(Npc* npc, const ShopInfoList& itemList);
 		void sendCloseShop();
 		void sendSaleItemList(const std::list<ShopInfo>& shop);
-		void sendMarketEnter(Item* item);
+		void sendMarketEnter(uint32_t depotId);
 		void sendTradeItemRequest(const Player* player, const Item* item, bool ack);
 		void sendCloseTrade();
 

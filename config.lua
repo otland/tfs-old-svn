@@ -85,6 +85,10 @@
 	randomizeTiles = "yes"
 	mapStorageType = "relational"
 
+	-- Market
+	marketEnabled = "no"
+	marketOfferDuration = 30 * 24 * 60 * 60
+
 	-- Messaging
 	maxMessageBuffer = 4
 

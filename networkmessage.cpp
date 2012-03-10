@@ -49,7 +49,7 @@ std::string NetworkMessage::GetString(uint16_t stringlen/* = 0*/)
 	if(stringlen == 0)
 		stringlen = GetU16();
 
-	if(stringlen >= (NETWORKMESSAGE_MAXSIZE - m_ReadPos))
+	if(!canRead(stringlen))
 		return std::string();
 
 	char* v = (char*)(m_MsgBuf + m_ReadPos);

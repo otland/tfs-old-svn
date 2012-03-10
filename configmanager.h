@@ -66,6 +66,7 @@ class ConfigManager
 			ALLOW_CLONES,
 			BIND_ONLY_GLOBAL_ADDRESS,
 			OPTIMIZE_DATABASE,
+			MARKET_ENABLED,
 			LAST_BOOLEAN_CONFIG /* this must be the last one */
 		};
 
@@ -147,6 +148,7 @@ class ConfigManager
 			STATUS_PORT,
 			STAIRHOP_DELAY,
 			LEVEL_TO_CREATE_GUILD,
+			MARKET_OFFER_DURATION,
 			LAST_INTEGER_CONFIG /* this must be the last one */
 		};
 

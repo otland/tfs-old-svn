@@ -546,7 +546,23 @@ bool Action::decreaseItemId(Player* player, Item* item, const PositionEx& posFro
 
 bool Action::enterMarket(Player* player, Item* item, const PositionEx& posFrom, const PositionEx& posTo, bool extendedUse, uint32_t creatureId)
 {
-	player->sendMarketEnter(item);
+	if(!g_config.getBoolean(ConfigManager::MARKET_ENABLED))
+		return false;
+
+	Depot* depot = NULL;
+	if(Thing* thing = item->getParent())
+	{
+		if(Item* parentItem = thing->getItem())
+		{
+			if(Container* parentContainer = parentItem->getContainer())
+				depot = parentContainer->getDepot();
+		}
+	}
+
+	if(depot == NULL)
+		return false;
+
+	player->sendMarketEnter(depot->getDepotId());
 	return true;
 }
 

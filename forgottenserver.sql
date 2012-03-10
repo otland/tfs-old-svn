@@ -44,7 +44,6 @@ INSERT INTO `groups` VALUES (1, 'player', 0, 0, 0, 0);
 CREATE TABLE `accounts`
 (
 	`id` INT NOT NULL AUTO_INCREMENT,
-	`name` VARCHAR(32) NOT NULL DEFAULT '',
 	`password` VARCHAR(255) /* VARCHAR(32) for MD5*/ NOT NULL DEFAULT '',
 	`type` INT NOT NULL DEFAULT 1,
 	`premdays` INT NOT NULL DEFAULT 0,
@@ -54,11 +53,11 @@ CREATE TABLE `accounts`
 	`blocked` TINYINT(1) NOT NULL DEFAULT FALSE,
 	`warnings` INT NOT NULL DEFAULT 0,
 	`group_id` INT NOT NULL DEFAULT 1,
-	PRIMARY KEY (`id`), UNIQUE (`name`),
+	PRIMARY KEY (`id`),
 	FOREIGN KEY (`group_id`) REFERENCES `groups` (`id`)
 ) ENGINE = InnoDB;
 
-INSERT INTO `accounts` VALUES (1, '1', '1', 1, 65535, 0, '0', '', 0, 0, 1);
+INSERT INTO `accounts` VALUES (1, '1', 1, 65535, 0, '0', '', 0, 0, 1);
 
 CREATE TABLE `players`
 (

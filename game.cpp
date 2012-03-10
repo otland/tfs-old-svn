@@ -41,6 +41,7 @@
 #include "actions.h"
 #include "combat.h"
 #include "iologindata.h"
+#include "iomarket.h"
 #include "chat.h"
 #include "luascript.h"
 #include "talkaction.h"
@@ -1738,7 +1739,7 @@ bool Game::removeMoney(Cylinder* cylinder, int32_t money, uint32_t flags /*= 0*/
 		Container* container = listContainer.front();
 		listContainer.pop_front();
 
-		for(int32_t i = 0; i < (int32_t)container->size() && money > 0; i++)
+		for(uint32_t i = 0, size = container->size(); i < size && money > 0; ++i)
 		{
 			Item* item = container->getItem(i);
 			if(((tmpContainer = item->getContainer())))
@@ -1755,26 +1756,25 @@ bool Game::removeMoney(Cylinder* cylinder, int32_t money, uint32_t flags /*= 0*/
 	if(moneyCount < money)
 		return false;
 
-	MoneyMap::iterator mit;
-	for(mit = moneyMap.begin(); mit != moneyMap.end() && money > 0; mit++)
+	MoneyMap::iterator mit, mend;
+	for(mit = moneyMap.begin(), mend = moneyMap.end(); mit != mend && money > 0; ++mit)
 	{
 		Item* item = mit->second;
 		internalRemoveItem(item);
-		if(mit->first <= money)
-			money = money - mit->first;
-		else
+		if(mit->first > money)
 		{
 			/* Remove a monetary value from an item*/
 			int32_t remaind = item->getWorth() - money;
 			addMoney(cylinder, remaind, flags);
 			money = 0;
 		}
+		else
+			money -= mit->first;
 
 		mit->second = NULL;
 	}
 
 	moneyMap.clear();
-
 	return (money == 0);
 }
 
@@ -5124,6 +5124,119 @@ bool Game::playerDebugAssert(uint32_t playerId, std::string assertLine, std::str
 		fprintf(file, "%s\n%s\n%s\n%s\n", assertLine.c_str(), date.c_str(), description.c_str(), comment.c_str());
 		fclose(file);
 	}
+	return true;
+}
+
+bool Game::playerCreateMarketOffer(uint32_t playerId, uint8_t type, uint16_t spriteId, uint16_t amount, uint32_t price, bool anonymous)
+{
+	if(amount == 0 || amount > 64000)
+		return false;
+
+	if(type != MARKETACTION_BUY && type != MARKETACTION_SELL)
+		return false;
+
+	Player* player = getPlayerByID(playerId);
+	if(!player || player->isRemoved())
+		return false;
+
+	if(player->getMarketDepotId() == -1)
+		return false;
+
+	const ItemType& it = Item::items.getItemIdByClientId(spriteId);
+	if(it.id == 0)
+		return false;
+
+	if(type == MARKETACTION_BUY)
+	{
+		uint16_t fee = amount / 100;
+		if(fee < 20)
+			fee = 20;
+		else if(fee > 1000)
+			fee = 1000;
+
+		if(!removeMoney(player, fee))
+			return false;
+	}
+	else //if(type == MARKETACTION_SELL)
+	{
+		uint16_t fee = price / 100;
+		if(fee < 20)
+			fee = 20;
+		else if(fee > 1000)
+			fee = 1000;
+
+		if(getMoney(player) < fee)
+			return false;
+
+		// remove items
+		removeMoney(player, fee);
+	}
+
+	IOMarket::getInstance()->createOffer(playerId, (MarketAction_t)type, it.id, amount, price, anonymous);
+	return true;
+}
+
+bool Game::playerCancelMarketOffer(uint32_t playerId, uint32_t timestamp, uint16_t counter)
+{
+	Player* player = getPlayerByID(playerId);
+	if(!player || player->isRemoved())
+		return false;
+
+	if(player->getMarketDepotId() == -1)
+		return false;
+
+	uint32_t offerId = IOMarket::getInstance()->getOfferIdByCounter(timestamp, counter);
+	if(offerId == 0)
+		return false;
+
+	MarketItemEx item = IOMarket::getInstance()->getOfferById(offerId);
+	if(item.playerId != playerId)
+		return false;
+
+	if(item.type == MARKETACTION_BUY)
+	{
+		addMoney(player, item.price * item.amount);
+	}
+	else
+	{
+		// add items, item.id, item.count
+	}
+
+	IOMarket::getInstance()->cancelOffer(offerId);
+	return true;
+}
+
+bool Game::playerAcceptMarketOffer(uint32_t playerId, uint32_t timestamp, uint16_t counter, uint16_t amount)
+{
+	if(amount == 0 || amount > 64000)
+		return false;
+
+	Player* player = getPlayerByID(playerId);
+	if(!player || player->isRemoved())
+		return false;
+
+	if(player->getMarketDepotId() == -1)
+		return false;
+
+	uint32_t offerId = IOMarket::getInstance()->getOfferIdByCounter(timestamp, counter);
+	if(offerId == 0)
+		return false;
+
+	MarketItemEx item = IOMarket::getInstance()->getOfferById(offerId);
+	if(amount > item.amount)
+		return false;
+
+	if(item.type == MARKETACTION_BUY)
+	{
+		// remove items, item.id, item.count
+	}
+	else
+	{
+		if(!removeMoney(player, item.price * amount))
+			return false;
+	}
+
+	//IOMarket::getInstance()->acceptOffer(offerId, amount)
 	return true;
 }
 

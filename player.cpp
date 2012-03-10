@@ -132,6 +132,8 @@ Creature()
 
 	mayNotMove = false;
 
+	marketDepotId = -1;
+
 	chaseMode = CHASEMODE_STANDSTILL;
 	fightMode = FIGHTMODE_ATTACK;
 
@@ -198,7 +200,7 @@ Creature()
 
 Player::~Player()
 {
-	for(int i = 0; i < 11; i++)
+	for(int i = 0; i < 11; ++i)
 	{
 		if(inventory[i])
 		{
@@ -209,8 +211,7 @@ Player::~Player()
 		}
 	}
 
-	DepotMap::iterator it;
-	for(it = depots.begin();it != depots.end(); it++)
+	for(DepotMap::iterator it = depots.begin(), end = depots.end(); it != end; ++it)
 		it->second->releaseThing2();
 
 	//std::cout << "Player destructor " << this << std::endl;

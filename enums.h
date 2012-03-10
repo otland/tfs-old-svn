@@ -23,6 +23,12 @@
 #include <string>
 #include <list>
 
+enum MarketAction_t
+{
+	MARKETACTION_BUY = 0,
+	MARKETACTION_SELL = 1
+};
+
 enum ChannelEvent_t
 {
 	CHANNELEVENT_JOIN = 0,
@@ -353,6 +359,26 @@ struct ShopInfo
 	};
 };
 
+struct MarketItem
+{
+	uint32_t price;
+	uint32_t timestamp;
+	uint16_t amount;
+	uint16_t counter;
+	std::string playerName;
+};
+
+struct MarketItemEx
+{
+	uint32_t playerId;
+	uint32_t timestamp;
+	uint32_t price;
+	uint16_t amount;
+	uint16_t counter;
+	MarketAction_t type;
+};
+
+typedef std::list<MarketItem> MarketItemList;
 typedef std::list<ShopInfo> ShopInfoList;
 
 #endif

@@ -543,8 +543,9 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool prelo
 
 		for(it = itemMap.rbegin(); it != itemMap.rend(); ++it)
 		{
-			Item* item = it->second.first;
-			int32_t pid = it->second.second;
+			std::pair<Item*, int32_t>& pair = it->second;
+			Item* item = pair.first;
+			int32_t pid = pair.second;
 			if(pid >= 1 && pid <= 10)
 				player->__internalAddThing(pid, item);
 			else
@@ -945,7 +946,7 @@ bool IOLoginData::savePlayer(Player* player, bool preSave)
 	query.str("");
 
 	stmt.setQuery("INSERT INTO `player_viplist` (`player_id`, `vip_id`) VALUES ");
-	for(VIPListSet::iterator it = player->VIPList.begin(); it != player->VIPList.end(); it++)
+	for(VIPListSet::iterator it = player->VIPList.begin(), end = player->VIPList.end(); it != end; ++it)
 	{
 		if(playerExists(*it))
 		{

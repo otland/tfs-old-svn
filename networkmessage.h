@@ -53,15 +53,25 @@ class NetworkMessage
 	protected:
 		void Reset()
 		{
+			m_overrun = false;
 			m_MsgSize = 0;
 			m_ReadPos = 8;
 		}
 
 	public:
 		// simply read functions for incoming message
-		uint8_t  GetByte() {return m_MsgBuf[m_ReadPos++];}
+		uint8_t  GetByte()
+		{
+			if(!canRead(1))
+				return 0;
+
+			return m_MsgBuf[m_ReadPos++];
+		}
 		uint16_t GetU16()
 		{
+			if(!canRead(2))
+				return 0;
+
 			uint16_t v = *(uint16_t*)(m_MsgBuf + m_ReadPos);
 			m_ReadPos += 2;
 			return v;
@@ -69,17 +79,26 @@ class NetworkMessage
 		uint16_t GetSpriteId() {return GetU16();}
 		uint32_t GetU32()
 		{
+			if(!canRead(4))
+				return 0;
+
 			uint32_t v = *(uint32_t*)(m_MsgBuf + m_ReadPos);
 			m_ReadPos += 4;
 			return v;
 		}
 		uint32_t PeekU32()
 		{
+			if(!canRead(4))
+				return 0;
+
 			uint32_t v = *(uint32_t*)(m_MsgBuf + m_ReadPos);
 			return v;
 		}
 		uint64_t GetU64()
 		{
+			if(!canRead(8))
+				return 0;
+
 			uint64_t v = *(uint64_t*)(m_MsgBuf + m_ReadPos);
 			m_ReadPos += 8;
 			return v;
@@ -145,6 +164,8 @@ class NetworkMessage
 
 		int32_t decodeHeader();
 
+		bool isOverrun() { return m_overrun; }
+
 		char* getBuffer() { return (char*)&m_MsgBuf[0]; }
 		char* getBodyBuffer() { m_ReadPos = 2; return (char*)&m_MsgBuf[header_length]; }
 
@@ -159,8 +180,20 @@ class NetworkMessage
 			return (size + m_ReadPos < max_body_length);
 		}
 
+		inline bool canRead(int32_t size)
+		{
+			if(size >= (NETWORKMESSAGE_MAXSIZE - m_ReadPos))
+			{
+				m_overrun = true;
+				return false;
+			}
+			return true;
+		}
+
 		int32_t m_MsgSize;
 		int32_t m_ReadPos;
+
+		bool m_overrun;
 
 		uint8_t m_MsgBuf[NETWORKMESSAGE_MAXSIZE];
 };

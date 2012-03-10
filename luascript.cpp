@@ -794,14 +794,16 @@ bool LuaScriptInterface::closeState()
 	{
 		m_cacheFiles.clear();
 
-		LuaTimerEvents::iterator it;
-		for(it = m_timerEvents.begin(); it != m_timerEvents.end(); ++it)
+		LuaTimerEvents::iterator it, end;
+		for(it = m_timerEvents.begin(), end = m_timerEvents.end(); it != end; ++it)
 		{
-			for(std::list<int32_t>::iterator lt = it->second.parameters.begin(); lt != it->second.parameters.end(); ++lt)
+			LuaTimerEventDesc& timerEventDesc = it->second;
+			for(std::list<int32_t>::iterator lt = timerEventDesc.parameters.begin(), lend = timerEventDesc.parameters.end(); lt != lend; ++lt)
 				luaL_unref(m_luaState, LUA_REGISTRYINDEX, *lt);
-			it->second.parameters.clear();
 
-			luaL_unref(m_luaState, LUA_REGISTRYINDEX, it->second.function);
+			timerEventDesc.parameters.clear();
+
+			luaL_unref(m_luaState, LUA_REGISTRYINDEX, timerEventDesc.function);
 		}
 		m_timerEvents.clear();
 
@@ -815,11 +817,13 @@ void LuaScriptInterface::executeTimerEvent(uint32_t eventIndex)
 	LuaTimerEvents::iterator it = m_timerEvents.find(eventIndex);
 	if(it != m_timerEvents.end())
 	{
+		LuaTimerEventDesc& timerEventDesc = it->second;
+
 		//push function
-		lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, it->second.function);
+		lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, timerEventDesc.function);
 
 		//push parameters
-		for(std::list<int32_t>::reverse_iterator rt = it->second.parameters.rbegin(); rt != it->second.parameters.rend(); ++rt)
+		for(std::list<int32_t>::reverse_iterator rt = timerEventDesc.parameters.rbegin(), rend = timerEventDesc.parameters.rend(); rt != rend; ++rt)
 			lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, *rt);
 
 		//call the function
@@ -827,20 +831,20 @@ void LuaScriptInterface::executeTimerEvent(uint32_t eventIndex)
 		{
 			ScriptEnvironment* env = getScriptEnv();
 			env->setTimerEvent();
-			env->setScriptId(it->second.scriptId, this);
-			callFunction(it->second.parameters.size());
+			env->setScriptId(timerEventDesc.scriptId, this);
+			callFunction(timerEventDesc.parameters.size());
 			releaseScriptEnv();
 		}
 		else
 			std::cout << "[Error] Call stack overflow. LuaScriptInterface::executeTimerEvent" << std::endl;
 
 		//free resources
-		for(std::list<int32_t>::iterator lt = it->second.parameters.begin(); lt != it->second.parameters.end(); ++lt)
+		for(std::list<int32_t>::iterator lt = timerEventDesc.parameters.begin(), end = timerEventDesc.parameters.end(); lt != end; ++lt)
 			luaL_unref(m_luaState, LUA_REGISTRYINDEX, *lt);
 
-		it->second.parameters.clear();
+		timerEventDesc.parameters.clear();
 
-		luaL_unref(m_luaState, LUA_REGISTRYINDEX, it->second.function);
+		luaL_unref(m_luaState, LUA_REGISTRYINDEX, timerEventDesc.function);
 		m_timerEvents.erase(it);
 	}
 }
@@ -7645,13 +7649,14 @@ int32_t LuaScriptInterface::luaStopEvent(lua_State* L)
 	LuaTimerEvents::iterator it = script_interface->m_timerEvents.find(eventId);
 	if(it != script_interface->m_timerEvents.end())
 	{
-		g_scheduler.stopEvent(it->second.eventId);
-		for(std::list<int32_t>::iterator lt = it->second.parameters.begin(); lt != it->second.parameters.end(); ++lt)
+		LuaTimerEventDesc& timerEventDesc = it->second;
+		g_scheduler.stopEvent(timerEventDesc.eventId);
+		for(std::list<int32_t>::iterator lt = timerEventDesc.parameters.begin(), end = timerEventDesc.parameters.end(); lt != end; ++lt)
 			luaL_unref(script_interface->m_luaState, LUA_REGISTRYINDEX, *lt);
 
-		it->second.parameters.clear();
+		timerEventDesc.parameters.clear();
 
-		luaL_unref(script_interface->m_luaState, LUA_REGISTRYINDEX, it->second.function);
+		luaL_unref(script_interface->m_luaState, LUA_REGISTRYINDEX, timerEventDesc.function);
 		script_interface->m_timerEvents.erase(it);
 		lua_pushboolean(L, true);
 	}

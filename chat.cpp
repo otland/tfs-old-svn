@@ -378,20 +378,21 @@ bool Chat::removeUserFromChannel(Player* player, uint16_t channelId)
 
 void Chat::removeUserFromAllChannels(Player* player)
 {
-	for(NormalChannelMap::iterator it = m_normalChannels.begin(); it != m_normalChannels.end(); ++it)
+	for(NormalChannelMap::iterator it = m_normalChannels.begin(), end = m_normalChannels.end(); it != end; ++it)
 		it->second->removeUser(player);
 
-	for(PartyChannelMap::iterator it = m_partyChannels.begin(); it != m_partyChannels.end(); ++it)
+	for(PartyChannelMap::iterator it = m_partyChannels.begin(), end = m_partyChannels.end(); it != end; ++it)
 		it->second->removeUser(player);
 
-	for(GuildChannelMap::iterator it = m_guildChannels.begin(); it != m_guildChannels.end(); ++it)
+	for(GuildChannelMap::iterator it = m_guildChannels.begin(), end = m_guildChannels.end(); it != end; ++it)
 		it->second->removeUser(player);
 
-	for(PrivateChannelMap::iterator it = m_privateChannels.begin(); it != m_privateChannels.end(); ++it)
+	for(PrivateChannelMap::iterator it = m_privateChannels.begin(), end = m_privateChannels.end(); it != end; ++it)
 	{
-		it->second->removeUser(player);
-		if(it->second->getOwner() == player->getGUID())
-			deleteChannel(player, it->second->getId());
+		PrivateChatChannel* channel = it->second;
+		channel->removeUser(player);
+		if(channel->getOwner() == player->getGUID())
+			deleteChannel(player, channel->getId());
 	}
 }
 

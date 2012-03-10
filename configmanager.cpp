@@ -79,6 +79,8 @@ bool ConfigManager::loadFile(const std::string& _filename)
 		m_confInteger[GAME_PORT] = getGlobalNumber(L, "gameProtocolPort", 7172);
 		m_confInteger[LOGIN_PORT] = getGlobalNumber(L, "loginProtocolPort", 7171);
 		m_confInteger[STATUS_PORT] = getGlobalNumber(L, "statusProtocolPort", 7171);
+
+		m_confInteger[MARKET_OFFER_DURATION] = getGlobalNumber(L, "marketOfferDuration",  30 * 24 * 60 * 60);
 	}
 
 	m_confBoolean[FREE_MEMORY_AT_SHUTDOWN] = (getGlobalString(L, "freeMemoryAtShutdown", "no") == "yes");
@@ -104,6 +106,7 @@ bool ConfigManager::loadFile(const std::string& _filename)
 	m_confBoolean[REPLACE_KICK_ON_LOGIN] = (getGlobalString(L, "replaceKickOnLogin", "yes") == "yes");
 	m_confBoolean[OLD_CONDITION_ACCURACY] = (getGlobalString(L, "oldConditionAccuracy", "no") == "yes");
 	m_confBoolean[ALLOW_CLONES] = getGlobalNumber(L, "allowClones", 0) != 0;
+	m_confBoolean[MARKET_ENABLED] = (getGlobalString(L, "marketEnabled", "no") == "yes");
 
 	m_confString[DEFAULT_PRIORITY] = getGlobalString(L, "defaultPriority", "high");
 	m_confString[MAP_STORAGE_TYPE] = getGlobalString(L, "mapStorageType", "relational");

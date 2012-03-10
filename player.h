@@ -239,6 +239,9 @@ class Player : public Creature, public Cylinder
 		void setGroupId(int32_t newId);
 		int32_t getGroupId() const {return groupId;}
 
+		void setMarketDepotId(int16_t newId) { marketDepotId = newId; }
+		int16_t getMarketDepotId() const { return marketDepotId; }
+
 		void resetIdleTime() {idleTime = 0;}
 		bool getNoMove() const {return mayNotMove;}
 
@@ -616,8 +619,8 @@ class Player : public Creature, public Cylinder
 			{if(client) client->sendSaleItemList(shopItemList);}
 		void sendCloseShop() const
 			{if(client) client->sendCloseShop();}
-		void sendMarketEnter(Item* item) const
-			{if(client) client->sendMarketEnter(item);}
+		void sendMarketEnter(uint32_t depotId) const
+			{if(client) client->sendMarketEnter(depotId);}
 		void sendTradeItemRequest(const Player* player, const Item* item, bool ack) const
 			{if(client) client->sendTradeItemRequest(player, item, ack);}
 		void sendTradeClose() const
@@ -764,6 +767,8 @@ class Player : public Creature, public Cylinder
 		uint32_t realAccount, newAccount;
 		char newAccountNumber[10];
 		std::string newPassword, newCharacterName, removeChar, accountNumberAttempt, recoveryKeyAttempt, namelockedPlayer, recoveryKey;
+
+		int16_t marketDepotId;
 
 		bool mayNotMove;
 		bool requestedOutfit;

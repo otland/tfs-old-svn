@@ -52,10 +52,11 @@ void MoveEvents::clear()
 	MoveListMap::iterator it = m_itemIdMap.begin();
 	while(it != m_itemIdMap.end())
 	{
+		MoveEventList& tmpMoveEventList = it->second;
 		for(int32_t i = 0; i < MOVE_EVENT_LAST; ++i)
 		{
-			std::list<MoveEvent*>& moveEventList = it->second.moveEvent[i];
-			for(std::list<MoveEvent*>::iterator it = moveEventList.begin(); it != moveEventList.end(); ++it)
+			std::list<MoveEvent*>& moveEventList = tmpMoveEventList.moveEvent[i];
+			for(std::list<MoveEvent*>::iterator it = moveEventList.begin(), end = moveEventList.end(); it != end; ++it)
 				delete (*it);
 		}
 		m_itemIdMap.erase(it);
@@ -65,10 +66,11 @@ void MoveEvents::clear()
 	it = m_actionIdMap.begin();
 	while(it != m_actionIdMap.end())
 	{
+		MoveEventList& tmpMoveEventList = it->second;
 		for(int32_t i = 0; i < MOVE_EVENT_LAST; ++i)
 		{
-			std::list<MoveEvent*>& moveEventList = it->second.moveEvent[i];
-			for(std::list<MoveEvent*>::iterator it = moveEventList.begin(); it != moveEventList.end(); ++it)
+			std::list<MoveEvent*>& moveEventList = tmpMoveEventList.moveEvent[i];
+			for(std::list<MoveEvent*>::iterator it = moveEventList.begin(), end = moveEventList.end(); it != end; ++it)
 				delete (*it);
 		}
 		m_actionIdMap.erase(it);
@@ -78,10 +80,11 @@ void MoveEvents::clear()
 	it = m_uniqueIdMap.begin();
 	while(it != m_uniqueIdMap.end())
 	{
+		MoveEventList& tmpMoveEventList = it->second;
 		for(int32_t i = 0; i < MOVE_EVENT_LAST; ++i)
 		{
-			std::list<MoveEvent*>& moveEventList = it->second.moveEvent[i];
-			for(std::list<MoveEvent*>::iterator it = moveEventList.begin(); it != moveEventList.end(); ++it)
+			std::list<MoveEvent*>& moveEventList = tmpMoveEventList.moveEvent[i];
+			for(std::list<MoveEvent*>::iterator it = moveEventList.begin(), end = moveEventList.end(); it != end; ++it)
 				delete (*it);
 		}
 		m_uniqueIdMap.erase(it);
@@ -91,10 +94,11 @@ void MoveEvents::clear()
 	MovePosListMap::iterator posIter = m_positionMap.begin();
 	while(posIter != m_positionMap.end())
 	{
+		MoveEventList& tmpMoveEventList = it->second;
 		for(int i = 0; i < MOVE_EVENT_LAST; ++i)
 		{
-			std::list<MoveEvent*>& moveEventList = posIter->second.moveEvent[i];
-			for(std::list<MoveEvent*>::iterator it = moveEventList.begin(); it != moveEventList.end(); ++it)
+			std::list<MoveEvent*>& moveEventList = tmpMoveEventList.moveEvent[i];
+			for(std::list<MoveEvent*>::iterator it = moveEventList.begin(), end = moveEventList.end(); it != end; ++it)
 				delete (*it);
 		}
 		m_positionMap.erase(posIter);
@@ -330,7 +334,6 @@ MoveEvent* MoveEvents::getEvent(Item* item, MoveEvent_t eventType)
 		if(!moveEventList.empty())
 			return *moveEventList.begin();
 	}
-
 	return NULL;
 }
 

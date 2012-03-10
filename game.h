@@ -444,6 +444,9 @@ class Game
 		bool playerLeaveParty(uint32_t playerId);
 		bool playerEnableSharedPartyExperience(uint32_t playerId, bool sharedExpActive);
 		bool playerToggleMount(uint32_t playerId, bool mount);
+		bool playerCreateMarketOffer(uint32_t playerId, uint8_t type, uint16_t spriteId, uint16_t amount, uint32_t price, bool anonymous);
+		bool playerCancelMarketOffer(uint32_t playerId, uint32_t timestamp, uint16_t counter);
+		bool playerAcceptMarketOffer(uint32_t playerId, uint32_t timestamp, uint16_t counter, uint16_t amount);
 
 		void removePremium(Account account);
 
