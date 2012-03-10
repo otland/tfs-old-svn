@@ -73,7 +73,7 @@ std::string Mission::getDescription(Player* player)
 			if(cmp != i)
 				continue;
 
-			std::string tmp = states[i - startValue];
+			std::string tmp = states[i];
 			if(!tmp.empty())
 				return parseStorages(tmp, value, player);
 		}
@@ -234,21 +234,34 @@ bool Quests::parseQuestNode(xmlNodePtr p, bool checkDuplicate)
 				if(xmlStrcmp(stateNode->name, (const xmlChar*)"missionstate"))
 					continue;
 
-				uint32_t missionId;
-				if(!readXMLInteger(stateNode, "id", intValue))
+				if(!readXMLString(stateNode, "id", strValue))
 				{
 					std::clog << "[Warning - Quests::parseQuestNode] Missing missionId for mission state" << std::endl;
 					continue;
 				}
 
-				missionId = intValue;
-				std::string description;
-				if(readXMLString(stateNode, "description", strValue))
-					description = strValue;
+				std::string description, strDesc;
+				if(readXMLString(stateNode, "description", strDesc))
+					description = strDesc;
 
-				mission->newState(missionId, description);
+				StringVec strVector = explodeString(strValue, "-");
+				if(strVector.size() > 1)
+				{
+					IntegerVec intVector = vectorAtoi(strVector);
+					if(intVector[0] && intVector[1])
+					{
+						for(int32_t i = intVector[0]; i <= intVector[1]; i++)
+							mission->newState(i, description);
+					}
+					else
+						std::clog << "Invalid mission state id '" << strValue << "' for mission '" << mission->getName(NULL) << "'" << std::endl;
+
+					continue;
+				}
+				else
+					mission->newState(atoi(strValue.c_str()), description);
 			}
-
+			
 			quest->newMission(mission);
 		}
 	}
