@@ -22469,11 +22469,11 @@
 		<attribute key="description" value="A hermit near Carlin might be able to tell you more about it."/>
 		<attribute key="weight" value="200"/>
 	</item>
-	<item id="13939" name="sugar oat">
+	<item id="13939" article="a"  name="sugar oat">
 		<attribute key="description" value="A hermit near Carlin might be able to tell you more about it."/>
 		<attribute key="weight" value="200"/>
 	</item>
-	<item id="13940" name="elemental spikes">
+	<item id="13940" article="an"  name="elemental spikes">
 		<attribute key="weight" value="1200"/>
 	</item>
 	<item id="13941" article="a" name="cup of molten gold">
@@ -22679,6 +22679,116 @@
 	<item id="14404" name="your inbox">
 		<attribute key="containerSize" value="30"/>
 	</item>
+	<item id="15175" article="a" name="dead deepling guard">
+		<attribute key="weight" value="6300"/>
+		<attribute key="containerSize" value="5"/>
+		<attribute key="decayTo" value="15176"/>
+		<attribute key="duration" value="600"/>
+		<attribute key="corpseType" value="blood"/>
+		<attribute key="fluidSource" value="blood"/>
+	</item>
+	<item id="15176" article="a" name="dead deepling guard">
+		<attribute key="weight" value="4400"/>
+		<attribute key="containerSize" value="5"/>
+		<attribute key="decayTo" value="15177"/>
+		<attribute key="duration" value="600"/>
+		<attribute key="corpseType" value="blood"/>
+	</item>
+	<item id="15177" article="a" name="dead deepling guard">
+		<attribute key="weight" value="3000"/>
+		<attribute key="decayTo" value="15178"/>
+		<attribute key="duration" value="600"/>
+		<attribute key="corpseType" value="blood"/>
+	</item>
+	<item id="15178" article="a" name="dead deepling guard">
+		<attribute key="weight" value="2000"/>
+		<attribute key="decayTo" value="0"/>
+		<attribute key="duration" value="600"/>
+		<attribute key="corpseType" value="blood"/>
+	</item>
+	<item id="15188" article="a" name="dead deepling guard">
+		<attribute key="weight" value="4400"/>
+		<attribute key="containerSize" value="5"/>
+		<attribute key="decayTo" value="15189"/>
+		<attribute key="duration" value="600"/>
+		<attribute key="corpseType" value="blood"/>
+	</item>
+	<item id="15189" article="a" name="dead deepling guard">
+		<attribute key="weight" value="3000"/>
+		<attribute key="decayTo" value="15190"/>
+		<attribute key="duration" value="600"/>
+		<attribute key="corpseType" value="blood"/>
+	</item>
+	<item id="15190" article="a" name="dead deepling guard">
+		<attribute key="weight" value="2000"/>
+		<attribute key="decayTo" value="0"/>
+		<attribute key="duration" value="600"/>
+		<attribute key="corpseType" value="blood"/>
+	</item>
+	<item fromid="15191" toid="15206" name="leaves" />
+	<item id="15208" article="a" name="dead deepling guard">
+		<attribute key="weight" value="4400"/>
+		<attribute key="containerSize" value="5"/>
+		<attribute key="decayTo" value="15209"/>
+		<attribute key="duration" value="600"/>
+		<attribute key="corpseType" value="blood"/>
+	</item>
+	<item id="15209" article="a" name="dead deepling spellsinger">
+		<attribute key="weight" value="3000"/>
+		<attribute key="decayTo" value="15210"/>
+		<attribute key="duration" value="600"/>
+		<attribute key="corpseType" value="blood"/>
+	</item>
+	<item id="15210" article="a" name="dead deepling spellsinger">
+		<attribute key="weight" value="2000"/>
+		<attribute key="decayTo" value="0"/>
+		<attribute key="duration" value="600"/>
+		<attribute key="corpseType" value="blood"/>
+	</item>
+	<item id="15280" article="a" name="dead calamary">
+		<attribute key="weight" value="6300"/>
+		<attribute key="containerSize" value="5"/>
+		<attribute key="decayTo" value="15281"/>
+		<attribute key="duration" value="600"/>
+		<attribute key="corpseType" value="blood"/>
+		<attribute key="fluidSource" value="blood"/>
+	</item>
+	<item id="15281" article="a" name="dead calamary">
+		<attribute key="weight" value="4400"/>
+		<attribute key="containerSize" value="5"/>
+		<attribute key="decayTo" value="15282"/>
+		<attribute key="duration" value="600"/>
+		<attribute key="corpseType" value="blood"/>
+	</item>
+	<item id="15282" article="a" name="dead calamary">
+		<attribute key="weight" value="3000"/>
+		<attribute key="decayTo" value="15283"/>
+		<attribute key="duration" value="600"/>
+		<attribute key="corpseType" value="blood"/>
+	</item>
+	<item id="15283" article="a" name="dead calamary">
+		<attribute key="weight" value="2000"/>
+		<attribute key="decayTo" value="0"/>
+		<attribute key="duration" value="600"/>
+		<attribute key="corpseType" value="blood"/>
+	</item>
+	<item fromid="15323" toid="15326" article="a" name="lampions" />
+	<item id="15327" name="flitter" />
+	<item id="15328" article="a" name="party snake" />
+	<item id="15330" name="flitter" />
+	<item id="15331" article="a" name="party snake" />
+	<item id="15332" article="a" name="royal emblems" />
+	<item id="15333" article="a" name="lampions" />
+	<item fromid="15334" toid="15335" article="a" name="drinks" />
+	<item fromid="15336" toid="15338" article="a" name="lampions" />
+	<item id="15339" article="a" name="flitter" />
+	<item id="15340" article="a" name="party snake" />
+	<item id="15341" article="a" name="emblems" />
+	<item id="15342" article="an" name="emblem" />
+	<item id="15343" article="a" name="flitter" />
+	<item id="15344" article="a" name="party snake" />
+	<item id="15345" article="a" name="emblems" />
+	<item id="15346" article="an" name="emblem" />
 	<item id="15390" article="a"  name="blob bomb">
 		<attribute key="weight" value="110"/>
 	</item>
@@ -22903,6 +23013,27 @@
 		<attribute key="defense" value="24"/>
 		<attribute key="weaponType" value="axe"/>
 	</item>
+	<item id="15497" article="a" name="dead deepling worker">
+		<attribute key="weight" value="6300"/>
+		<attribute key="containerSize" value="5"/>
+		<attribute key="decayTo" value="15550"/>
+		<attribute key="duration" value="600"/>
+		<attribute key="corpseType" value="blood"/>
+		<attribute key="fluidSource" value="blood"/>
+	</item>
+	<item id="15498" article="a" name="dead deepling worker">
+		<attribute key="weight" value="4400"/>
+		<attribute key="containerSize" value="5"/>
+		<attribute key="decayTo" value="15499"/>
+		<attribute key="duration" value="600"/>
+		<attribute key="corpseType" value="blood"/>
+	</item>
+	<item id="15499" article="a" name="dead deepling worker">
+		<attribute key="weight" value="3000"/>
+		<attribute key="decayTo" value="15498"/>
+		<attribute key="duration" value="600"/>
+		<attribute key="corpseType" value="blood"/>
+	</item>
 	<item id="15515" article="a" name="bar of gold">
 		<attribute key="weight" value="2100"/>
 	</item>
@@ -22991,6 +23122,43 @@
 		<attribute key="attack" value="44"/>
 		<attribute key="defense" value="28"/>
 		<attribute key="weaponType" value="club"/>
+	</item>
+	<item id="15649" article="a" name="vortex bolt">
+		<attribute key="weight" value="80"/>
+		<attribute key="slotType" value="ammo"/>
+		<attribute key="attack" value="36"/>
+		<attribute key="maxHitChance" value="90"/>
+		<attribute key="weaponType" value="ammunition"/>
+		<attribute key="ammoType" value="bolt"/>
+		<attribute key="shootType" value="bolt"/>
+		<attribute key="ammoAction" value="removecount"/>
+	</item>
+	<item id="15996" article="a" name="dead hamster">
+		<attribute key="weight" value="6300"/>
+		<attribute key="containerSize" value="5"/>
+		<attribute key="decayTo" value="2814"/>
+		<attribute key="duration" value="600"/>
+		<attribute key="corpseType" value="blood"/>
+		<attribute key="fluidSource" value="blood"/>
+	</item>
+	<item id="15997" article="a" name="dead hamster">
+		<attribute key="weight" value="4400"/>
+		<attribute key="containerSize" value="5"/>
+		<attribute key="decayTo" value="15998"/>
+		<attribute key="duration" value="600"/>
+		<attribute key="corpseType" value="blood"/>
+	</item>
+	<item id="15998" article="a" name="dead hamster">
+		<attribute key="weight" value="3000"/>
+		<attribute key="decayTo" value="15997"/>
+		<attribute key="duration" value="600"/>
+		<attribute key="corpseType" value="blood"/>
+	</item>
+	<item id="15999" article="a" name="dead hamster">
+		<attribute key="weight" value="2000"/>
+		<attribute key="decayTo" value="0"/>
+		<attribute key="duration" value="600"/>
+		<attribute key="corpseType" value="blood"/>
 	</item>
 	<item id="16000" article="an" name="anniversary remains" />
 	<item id="16007" article="an" name="anniversary backpack">
