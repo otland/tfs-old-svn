@@ -1503,8 +1503,7 @@ ReturnValue Game::internalPlayerAddItem(Player* player, Item* item, bool dropOnM
 	ReturnValue ret = internalAddItem(player, item, (int32_t)slot, 0, false, remainderCount);
 	if(remainderCount > 0)
 	{
-		Item* remainderItem = Item
-::CreateItem(item->getID(), remainderCount);
+		Item* remainderItem = Item::CreateItem(item->getID(), remainderCount);
 		ReturnValue remaindRet = internalAddItem(player->getTile(), remainderItem, INDEX_WHEREEVER, FLAG_NOLIMIT);
 		if(remaindRet != RET_NOERROR)
 			FreeThing(remainderItem);
