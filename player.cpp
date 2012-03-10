@@ -820,7 +820,7 @@ void Player::dropLoot(Container* corpse)
 	}
 
 	if(!inventory[SLOT_BACKPACK])
-		__internalAddThing(SLOT_BACKPACK, Item::CreateItem(1987));
+		__internalAddThing(SLOT_BACKPACK, Item::CreateItem(ITEM_BAG));
 }
 
 void Player::addStorageValue(const uint32_t key, const int32_t value)
@@ -950,7 +950,7 @@ Depot* Player::getDepot(uint32_t depotId, bool autoCreateDepot)
 	//create a new depot?
 	if(autoCreateDepot)
 	{
-		Depot* depot = NULL;
+		Depot* depot;
 		Item* tmpDepot = Item::CreateItem(ITEM_LOCKER1);
 		if(tmpDepot->getContainer() && (depot = tmpDepot->getContainer()->getDepot()))
 		{
@@ -974,7 +974,6 @@ Depot* Player::getDepot(uint32_t depotId, bool autoCreateDepot)
 				", for player: " << getName() << std::endl;
 		}
 	}
-
 	return NULL;
 }
 
@@ -1963,9 +1962,10 @@ void Player::addExperience(uint64_t exp, bool useMult/* = false*/, bool sendText
 		ssExp << getNameDescription() << " gained " << gainExp << " experience points.";
 		std::string strExp = ssExp.str();
 
-		const SpectatorVec& list = g_game.getSpectators(targetPos);
+		SpectatorVec list;
+		g_game.getSpectators(list, targetPos);
 		Player* tmpPlayer = NULL;
-		for(SpectatorVec::const_iterator it = list.begin(); it != list.end(); ++it)
+		for(SpectatorVec::const_iterator it = list.begin(), end = list.end(); it != end; ++it)
 		{
 			if((tmpPlayer = (*it)->getPlayer()))
 			{

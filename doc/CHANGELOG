@@ -76,5 +76,6 @@
 	Fixed a trade bug (thanks to manuel220).
 	Now using account names.
 	onCreatureDisappear will now properly be called for NPC's.
+	Experience, healing and damage messages will now only show for spectators on the same floor.
 	A lot of miscellaneous cleanups, fixes and optimizations.
 ]

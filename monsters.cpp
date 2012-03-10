@@ -192,6 +192,9 @@ std::list<Item*> MonsterType::createLootItem(const LootBlock& lootBlock)
 	{
 		uint16_t n = (uint16_t)std::min(itemCount, (int32_t)100);
 		tmpItem = Item::CreateItem(lootBlock.id, n);
+		if(!tmpItem)
+			break;
+
 		itemCount -= n;
 
 		if(lootBlock.subType != -1)
@@ -205,7 +208,6 @@ std::list<Item*> MonsterType::createLootItem(const LootBlock& lootBlock)
 
 		itemList.push_back(tmpItem);
 	}
-
 	return itemList;
 }
 

@@ -1257,9 +1257,10 @@ void Creature::onGainExperience(uint64_t gainExp, Creature* target)
 		ssExp << getNameDescription() << " gained " << gainExp << " experience points.";
 		std::string strExp = ssExp.str();
 
-		const SpectatorVec& list = g_game.getSpectators(targetPos);
 		Player* tmpPlayer = NULL;
-		for(SpectatorVec::const_iterator it = list.begin(); it != list.end(); ++it)
+		SpectatorVec list;
+		g_game.getSpectators(list, targetPos);
+		for(SpectatorVec::const_iterator it = list.begin(), end = list.end(); it != end; ++it)
 		{
 			if((tmpPlayer = (*it)->getPlayer()))
 			{
@@ -1287,9 +1288,10 @@ void Creature::onGainSharedExperience(uint64_t gainExp)
 		ssExp << getNameDescription() << " gained " << gainExp << " experience points.";
 		std::string strExp = ssExp.str();
 
-		const SpectatorVec& list = g_game.getSpectators(targetPos);
 		Player* tmpPlayer = NULL;
-		for(SpectatorVec::const_iterator it = list.begin(); it != list.end(); ++it)
+		SpectatorVec list;
+		g_game.getSpectators(list, targetPos);
+		for(SpectatorVec::const_iterator it = list.begin(), end = list.end(); it != end; ++it)
 		{
 			if((tmpPlayer = (*it)->getPlayer()))
 			{

@@ -1503,7 +1503,8 @@ ReturnValue Game::internalPlayerAddItem(Player* player, Item* item, bool dropOnM
 	ReturnValue ret = internalAddItem(player, item, (int32_t)slot, 0, false, remainderCount);
 	if(remainderCount > 0)
 	{
-		Item* remainderItem = Item::CreateItem(item->getID(), remainderCount);
+		Item* remainderItem = Item
+::CreateItem(item->getID(), remainderCount);
 		ReturnValue remaindRet = internalAddItem(player->getTile(), remainderItem, INDEX_WHEREEVER, FLAG_NOLIMIT);
 		if(remaindRet != RET_NOERROR)
 			FreeThing(remainderItem);
@@ -1857,6 +1858,14 @@ Item* Game::transformItem(Item* item, uint16_t newId, int32_t newCount /*= -1*/)
 			newItem = Item::CreateItem(newId);
 		else
 			newItem = Item::CreateItem(newId, newCount);
+
+		if(newItem == NULL)
+		{
+			#ifdef __DEBUG__
+			std::cout << "Error: [Game::transformItem] Item of type " << item->getID() << " transforming into invalid type " << newId << std::endl;
+			#endif
+			return NULL;
+		}
 
 		newItem->copyAttributes(item);
 
@@ -3925,8 +3934,9 @@ bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creat
 			std::string message = ss.str();
 
 			Player* tmpPlayer = NULL;
-			const SpectatorVec& list = getSpectators(targetPos);
-			for(SpectatorVec::const_iterator it = list.begin(); it != list.end(); ++it)
+			SpectatorVec list;
+			getSpectators(list, targetPos);
+			for(SpectatorVec::const_iterator it = list.begin(), end = list.end(); it != end; ++it)
 			{
 				if((tmpPlayer = (*it)->getPlayer()))
 				{
@@ -3994,7 +4004,9 @@ bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creat
 					std::string message = ss.str();
 
 					Player* tmpPlayer = NULL;
-					for(SpectatorVec::const_iterator it = list.begin(); it != list.end(); ++it)
+					SpectatorVec listEx;
+					getSpectators(listEx, targetPos);
+					for(SpectatorVec::const_iterator it = listEx.begin(), end = listEx.end(); it != end; ++it)
 					{
 						if((tmpPlayer = (*it)->getPlayer()))
 						{
@@ -4164,7 +4176,9 @@ bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creat
 					std::string message = ss.str();
 
 					Player* tmpPlayer = NULL;
-					for(SpectatorVec::const_iterator it = list.begin(); it != list.end(); ++it)
+					SpectatorVec listEx;
+					getSpectators(listEx, targetPos);
+					for(SpectatorVec::const_iterator it = listEx.begin(), end = listEx.end(); it != end; ++it)
 					{
 						if((tmpPlayer = (*it)->getPlayer()))
 						{
@@ -4199,9 +4213,6 @@ bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creat
 
 bool Game::combatChangeMana(Creature* attacker, Creature* target, int32_t manaChange)
 {
-	const Position& targetPos = target->getPosition();
-	const SpectatorVec& list = getSpectators(targetPos);
-
 	if(manaChange > 0)
 	{
 		if(g_config.getBoolean(ConfigManager::CANNOT_ATTACK_SAME_LOOKFEET) && attacker && attacker->getPlayer() && target->getPlayer() && attacker->defaultOutfit.lookFeet == target->defaultOutfit.lookFeet)
@@ -4211,9 +4222,10 @@ bool Game::combatChangeMana(Creature* attacker, Creature* target, int32_t manaCh
 	}
 	else
 	{
+		const Position& targetPos = target->getPosition();
 		if(!target->isAttackable() || Combat::canDoCombat(attacker, target) != RET_NOERROR)
 		{
-			addMagicEffect(list, targetPos, NM_ME_POFF);
+			addMagicEffect(getSpectators(targetPos), targetPos, NM_ME_POFF);
 			return false;
 		}
 
@@ -4230,7 +4242,7 @@ bool Game::combatChangeMana(Creature* attacker, Creature* target, int32_t manaCh
 
 		if(blockType != BLOCK_NONE)
 		{
-			addMagicEffect(list, targetPos, NM_ME_POFF);
+			addMagicEffect(getSpectators(targetPos), targetPos, NM_ME_POFF);
 			return false;
 		}
 
@@ -4249,7 +4261,9 @@ bool Game::combatChangeMana(Creature* attacker, Creature* target, int32_t manaCh
 			std::string message = ss.str();
 
 			Player* tmpPlayer = NULL;
-			for(SpectatorVec::const_iterator it = list.begin(); it != list.end(); ++it)
+			SpectatorVec list;
+			getSpectators(list, targetPos);
+			for(SpectatorVec::const_iterator it = list.begin(), end = list.end(); it != end; ++it)
 			{
 				if((tmpPlayer = (*it)->getPlayer()))
 				{
