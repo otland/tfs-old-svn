@@ -100,6 +100,25 @@ enum tradestate_t
 	TRADE_TRANSFER
 };
 
+struct AccountManager
+{
+	uint32_t realAccount, newVocation;
+	int8_t talkState;
+	bool managingAccount;
+	PlayerSex_t newSex;
+	std::string newAccountName, accountManagerInput, namelockedPlayerName;
+
+	AccountManager()
+	{
+		managingAccount = false;
+		accountManagerInput = "";
+		namelockedPlayerName = "";
+		newAccountName = "";
+		talkState = 0;
+		newVocation = 0;
+	}
+};
+
 typedef std::pair<uint32_t, Container*> containervector_pair;
 typedef std::vector<containervector_pair> ContainerVector;
 typedef std::map<uint32_t, Depot*> DepotMap;
@@ -204,8 +223,6 @@ class Player : public Creature, public Cylinder
 		const std::string& getGuildNick() const {return guildNick;}
 		void setGuildNick(const std::string& nick) {guildNick = nick;}
 
-		const std::string& getNamelockedPlayer() const {return namelockedPlayer;}
-
 		bool isInvitedToGuild(uint32_t guild_id) const;
 		void leaveGuild();
 
@@ -245,8 +262,9 @@ class Player : public Creature, public Cylinder
 		void resetIdleTime() {idleTime = 0;}
 		bool getNoMove() const {return mayNotMove;}
 
-		bool isAccountManagerEx() const {return accountManagerEx;}
-		bool isAccountManager() const {return accountManager;}
+		bool isAccountManager() const {return accountManager != NULL;}
+		void setAccountManager() {accountManager = new AccountManager();}
+		AccountManager* getAccountManager() const {return accountManager;}
 
 		bool isInGhostMode() const {return ghostMode;}
 		void switchGhostMode() {ghostMode = !ghostMode;}
@@ -760,13 +778,7 @@ class Player : public Creature, public Cylinder
 		bool ghostMode;
 		bool depotChange;
 
-		bool accountManager, accountManagerEx;
-		int8_t talkState;
-		int32_t newVocation;
-		PlayerSex_t _newSex;
-		uint32_t realAccount, newAccount;
-		char newAccountNumber[10];
-		std::string newPassword, newCharacterName, removeChar, accountNumberAttempt, recoveryKeyAttempt, namelockedPlayer, recoveryKey;
+		AccountManager* accountManager;
 
 		int16_t marketDepotId;
 

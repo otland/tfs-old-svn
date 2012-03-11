@@ -471,7 +471,7 @@ bool isValidName(std::string text, bool forceUppercaseOnFirstLetter/* = true*/)
 	return true;
 }
 
-bool checkText(std::string text, std::string str)
+bool checkText(std::string text, const std::string& str)
 {
 	trimString(text);
 	return asLowerCaseString(text) == str;

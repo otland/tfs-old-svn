@@ -75,7 +75,7 @@ int32_t WaitingList::getTimeOut(int32_t slot)
 
 bool WaitingList::clientLogin(const Player* player)
 {
-	if(player->hasFlag(PlayerFlag_CanAlwaysLogin) || player->getAccountType() >= ACCOUNT_TYPE_GAMEMASTER || player->isAccountManagerEx())
+	if(player->hasFlag(PlayerFlag_CanAlwaysLogin) || player->getAccountType() >= ACCOUNT_TYPE_GAMEMASTER || player->isAccountManager())
 		return true;
 
 	if(waitList.empty() && Status::getInstance()->getPlayersOnline() < Status::getInstance()->getMaxPlayersOnline())

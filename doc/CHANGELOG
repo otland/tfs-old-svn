@@ -78,5 +78,6 @@
 	Now using account names.
 	onCreatureDisappear will now properly be called for NPC's.
 	Experience, healing and damage messages will now only show for spectators on the same floor.
+	Major optimizations to Account Manager code.
 	A lot of miscellaneous cleanups, fixes and optimizations.
 ]

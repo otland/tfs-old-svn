@@ -337,7 +337,7 @@ bool Combat::isProtected(const Player* attacker, const Player* target)
 	if(attacker->getVocationId() == 0 || target->getVocationId() == 0)
 		return true;
 
-	if(attacker->isAccountManagerEx() || target->isAccountManagerEx())
+	if(attacker->isAccountManager() || target->isAccountManager())
 		return true;
 
 	return false;

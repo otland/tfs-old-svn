@@ -263,7 +263,7 @@ bool Commands::exeCommand(Creature* creature, const std::string& cmd)
 		return false;
 
 	Command* command = it->second;
-	if(command->groupId > player->groupId || command->accountType > player->accountType || player->isAccountManagerEx())
+	if(command->groupId > player->groupId || command->accountType > player->accountType || player->isAccountManager())
 	{
 		if(player->accessLevel)
 			player->sendTextMessage(MSG_STATUS_SMALL, "You can not execute this command.");

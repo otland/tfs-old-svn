@@ -81,7 +81,7 @@ extern bool isValidName(std::string text, bool forceUppercaseOnFirstLetter = tru
 extern bool isValidPassword(std::string text);
 extern bool isNumbers(std::string text);
 
-extern bool checkText(std::string text, std::string str);
+extern bool checkText(std::string text, const std::string& str);
 
 extern int random_range(int lowest_number, int highest_number, DistributionType_t type = DISTRO_UNIFORM);
 

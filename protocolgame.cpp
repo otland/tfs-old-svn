@@ -131,12 +131,22 @@ bool ProtocolGame::login(const std::string& name, uint32_t accnumber, const std:
 		player->useThing2();
 		player->setID();
 
+		if(isAccountManager)
+			player->setAccountManager();
+
 		if(IOBan::getInstance()->isPlayerNamelocked(name) && accnumber > 1)
 		{
 			if(g_config.getBoolean(ConfigManager::ACCOUNT_MANAGER))
 			{
 				player->name = "Account Manager";
-				player->namelockedPlayer = name;
+				AccountManager* accountManager = player->getAccountManager();
+				if(!accountManager)
+				{
+					player->setAccountManager();
+					accountManager = player->getAccountManager();
+				}
+
+				accountManager->namelockedPlayerName = name;
 			}
 			else
 			{
@@ -145,10 +155,17 @@ bool ProtocolGame::login(const std::string& name, uint32_t accnumber, const std:
 			}
 		}
 
-		if(isAccountManager && accnumber > 1 && !player->accountManager)
+		if(isAccountManager && accnumber != 1)
 		{
-			player->accountManager = true;
-			player->realAccount = accnumber;
+			AccountManager* accountManager = player->getAccountManager();
+			if(!accountManager)
+			{
+				player->setAccountManager();
+				accountManager = player->getAccountManager();
+			}
+
+			accountManager->managingAccount = true;
+			accountManager->realAccount = accnumber;
 		}
 
 		if(!IOLoginData::getInstance()->loadPlayer(player, name, true))
@@ -522,7 +539,7 @@ void ProtocolGame::parsePacket(NetworkMessage &msg)
 	if((player->isRemoved() || player->getHealth() <= 0) && recvbyte != 0x14)
 		return;
 
-	if(player->isAccountManagerEx())
+	if(player->isAccountManager())
 	{
 		switch(recvbyte)
 		{
@@ -542,277 +559,280 @@ void ProtocolGame::parsePacket(NetworkMessage &msg)
 				sendCancelWalk();
 				break;
 		}
+
+		if(msg.isOverrun())
+			player->kickPlayer(true);
+
+		return;
 	}
-	else
+
+	switch(recvbyte)
 	{
-		switch(recvbyte)
-		{
-			case 0x14: // logout
-				parseLogout(msg);
-				break;
-
-			case 0x1E: // keep alive / ping response
-				parseReceivePing(msg);
-				break;
-
-			case 0x64: // move with steps
-				parseAutoWalk(msg);
-				break;
-
-			case 0x65: // move north
-			case 0x66: // move east
-			case 0x67: // move south
-			case 0x68: // move west
-				parseMove(msg, (Direction)(recvbyte - 0x65));
-				break;
-
-			case 0x69: // stop-autowalk
-				addGameTask(&Game::playerStopAutoWalk, player->getID());
-				break;
-
-			case 0x6A:
-				parseMove(msg, NORTHEAST);
-				break;
-
-			case 0x6B:
-				parseMove(msg, SOUTHEAST);
-				break;
-
-			case 0x6C:
-				parseMove(msg, SOUTHWEST);
-				break;
-
-			case 0x6D:
-				parseMove(msg, NORTHWEST);
-				break;
-
-			case 0x6F: // turn north
-			case 0x70: // turn east
-			case 0x71: // turn south
-			case 0x72: // turn west
-				parseTurn(msg, (Direction)(recvbyte - 0x6F));
-				break;
-
-			case 0x78: // throw item
-				parseThrow(msg);
-				break;
-
-			case 0x79: // description in shop window
-				parseLookInShop(msg);
-				break;
-
-			case 0x7A: // player bought from shop
-				parsePlayerPurchase(msg);
-				break;
-
-			case 0x7B: // player sold to shop
-				parsePlayerSale(msg);
-				break;
-
-			case 0x7C: // player closed shop window
-				parseCloseShop(msg);
-				break;
-
-			case 0x7D: // Request trade
-				parseRequestTrade(msg);
-				break;
-
-			case 0x7E: // Look at an item in trade
-				parseLookInTrade(msg);
-				break;
-
-			case 0x7F: // Accept trade
-				parseAcceptTrade(msg);
-				break;
-
-			case 0x80: // close/cancel trade
-				parseCloseTrade();
-				break;
-
-			case 0x82: // use item
-				parseUseItem(msg);
-				break;
-
-			case 0x83: // use item
-				parseUseItemEx(msg);
-				break;
-
-			case 0x84: // battle window
-				parseBattleWindow(msg);
-				break;
-
-			case 0x85: //rotate item
-				parseRotateItem(msg);
-				break;
-
-			case 0x87: // close container
-				parseCloseContainer(msg);
-				break;
-
-			case 0x88: //"up-arrow" - container
-				parseUpArrowContainer(msg);
-				break;
-
-			case 0x89:
-				parseTextWindow(msg);
-				break;
-
-			case 0x8A:
-				parseHouseWindow(msg);
-				break;
-
-			case 0x8C: // throw item
-				parseLookAt(msg);
-				break;
-
-			case 0x96: // say something
-				parseSay(msg);
-				break;
-
-			case 0x97: // request channels
-				parseGetChannels(msg);
-				break;
-
-			case 0x98: // open channel
-				parseOpenChannel(msg);
-				break;
-
-			case 0x99: // close channel
-				parseCloseChannel(msg);
-				break;
-
-			case 0x9A: // open priv
-				parseOpenPriv(msg);
-				break;
-
-			case 0x9E: // close NPC
-				parseCloseNpc(msg);
-				break;
-
-			case 0xA0: // set attack and follow mode
-				parseFightModes(msg);
-				break;
-
-			case 0xA1: // attack
-				parseAttack(msg);
-				break;
-
-			case 0xA2: //follow
-				parseFollow(msg);
-				break;
-
-			case 0xA3: // invite party
-				parseInviteToParty(msg);
-				break;
-
-			case 0xA4: // join party
-				parseJoinParty(msg);
-				break;
-
-			case 0xA5: // revoke party
-				parseRevokePartyInvite(msg);
-				break;
-
-			case 0xA6: // pass leadership
-				parsePassPartyLeadership(msg);
-				break;
-
-			case 0xA7: // leave party
-				parseLeaveParty(msg);
-				break;
-
-			case 0xA8: // share exp
-				parseEnableSharedPartyExperience(msg);
-				break;
-
-			case 0xAA:
-				parseCreatePrivateChannel(msg);
-				break;
-
-			case 0xAB:
-				parseChannelInvite(msg);
-				break;
-
-			case 0xAC:
-				parseChannelExclude(msg);
-				break;
-
-			case 0xBE: // cancel move
-				parseCancelMove(msg);
-				break;
-
-			case 0xC9: //client request to resend the tile
-				parseUpdateTile(msg);
-				break;
-
-			case 0xCA: //client request to resend the container (happens when you store more than container maxsize)
-				parseUpdateContainer(msg);
-				break;
-
-			case 0xD2: // request outfit
-				parseRequestOutfit(msg);
-				break;
-
-			case 0xD3: // set outfit
-				parseSetOutfit(msg);
-				break;
-
-			case 0xD4:
-				parseToggleMount(msg);
-				break;
-
-			case 0xDC:
-				parseAddVip(msg);
-				break;
-
-			case 0xDD:
-				parseRemoveVip(msg);
-				break;
-
-			case 0xE6:
-				parseBugReport(msg);
-				break;
-
-			case 0xE8:
-				parseDebugAssert(msg);
-				break;
-
-			case 0xF0:
-				parseQuestLog(msg);
-				break;
-
-			case 0xF1:
-				parseQuestLine(msg);
-				break;
-
-			case 0xF2:
-				parseRuleViolationReport(msg);
-				break;
-
-			case 0xF4:
-				parseMarketLeave();
-				break;
-
-			case 0xF5:
-				parseMarketBrowse(msg);
-				break;
-
-			case 0xF6:
-				parseMarketCreateOffer(msg);
-				break;
-
-			case 0xF7:
-				parseMarketCancelOffer(msg);
-				break;
-
-			case 0xF8:
-				parseMarketAcceptOffer(msg);
-				break;
-
-			default:
-				std::cout << "Player: " << player->getName() << " sent an unknown packet header: 0x" << std::hex << (int16_t)recvbyte << std::dec << "!" << std::endl;
-				break;
-		}
+		case 0x14: // logout
+			parseLogout(msg);
+			break;
+
+		case 0x1E: // keep alive / ping response
+			parseReceivePing(msg);
+			break;
+
+		case 0x64: // move with steps
+			parseAutoWalk(msg);
+			break;
+
+		case 0x65: // move north
+		case 0x66: // move east
+		case 0x67: // move south
+		case 0x68: // move west
+			parseMove(msg, (Direction)(recvbyte - 0x65));
+			break;
+
+		case 0x69: // stop-autowalk
+			addGameTask(&Game::playerStopAutoWalk, player->getID());
+			break;
+
+		case 0x6A:
+			parseMove(msg, NORTHEAST);
+			break;
+
+		case 0x6B:
+			parseMove(msg, SOUTHEAST);
+			break;
+
+		case 0x6C:
+			parseMove(msg, SOUTHWEST);
+			break;
+
+		case 0x6D:
+			parseMove(msg, NORTHWEST);
+			break;
+
+		case 0x6F: // turn north
+		case 0x70: // turn east
+		case 0x71: // turn south
+		case 0x72: // turn west
+			parseTurn(msg, (Direction)(recvbyte - 0x6F));
+			break;
+
+		case 0x78: // throw item
+			parseThrow(msg);
+			break;
+
+		case 0x79: // description in shop window
+			parseLookInShop(msg);
+			break;
+
+		case 0x7A: // player bought from shop
+			parsePlayerPurchase(msg);
+			break;
+
+		case 0x7B: // player sold to shop
+			parsePlayerSale(msg);
+			break;
+
+		case 0x7C: // player closed shop window
+			parseCloseShop(msg);
+			break;
+
+		case 0x7D: // Request trade
+			parseRequestTrade(msg);
+			break;
+
+		case 0x7E: // Look at an item in trade
+			parseLookInTrade(msg);
+			break;
+
+		case 0x7F: // Accept trade
+			parseAcceptTrade(msg);
+			break;
+
+		case 0x80: // close/cancel trade
+			parseCloseTrade();
+			break;
+
+		case 0x82: // use item
+			parseUseItem(msg);
+			break;
+
+		case 0x83: // use item
+			parseUseItemEx(msg);
+			break;
+
+		case 0x84: // battle window
+			parseBattleWindow(msg);
+			break;
+
+		case 0x85: //rotate item
+			parseRotateItem(msg);
+			break;
+
+		case 0x87: // close container
+			parseCloseContainer(msg);
+			break;
+
+		case 0x88: //"up-arrow" - container
+			parseUpArrowContainer(msg);
+			break;
+
+		case 0x89:
+			parseTextWindow(msg);
+			break;
+
+		case 0x8A:
+			parseHouseWindow(msg);
+			break;
+
+		case 0x8C: // throw item
+			parseLookAt(msg);
+			break;
+
+		case 0x96: // say something
+			parseSay(msg);
+			break;
+
+		case 0x97: // request channels
+			parseGetChannels(msg);
+			break;
+
+		case 0x98: // open channel
+			parseOpenChannel(msg);
+			break;
+
+		case 0x99: // close channel
+			parseCloseChannel(msg);
+			break;
+
+		case 0x9A: // open priv
+			parseOpenPriv(msg);
+			break;
+
+		case 0x9E: // close NPC
+			parseCloseNpc(msg);
+			break;
+
+		case 0xA0: // set attack and follow mode
+			parseFightModes(msg);
+			break;
+
+		case 0xA1: // attack
+			parseAttack(msg);
+			break;
+
+		case 0xA2: //follow
+			parseFollow(msg);
+			break;
+
+		case 0xA3: // invite party
+			parseInviteToParty(msg);
+			break;
+
+		case 0xA4: // join party
+			parseJoinParty(msg);
+			break;
+
+		case 0xA5: // revoke party
+			parseRevokePartyInvite(msg);
+			break;
+
+		case 0xA6: // pass leadership
+			parsePassPartyLeadership(msg);
+			break;
+
+		case 0xA7: // leave party
+			parseLeaveParty(msg);
+			break;
+
+		case 0xA8: // share exp
+			parseEnableSharedPartyExperience(msg);
+			break;
+
+		case 0xAA:
+			parseCreatePrivateChannel(msg);
+			break;
+
+		case 0xAB:
+			parseChannelInvite(msg);
+			break;
+
+		case 0xAC:
+			parseChannelExclude(msg);
+			break;
+
+		case 0xBE: // cancel move
+			parseCancelMove(msg);
+			break;
+
+		case 0xC9: //client request to resend the tile
+			parseUpdateTile(msg);
+			break;
+
+		case 0xCA: //client request to resend the container (happens when you store more than container maxsize)
+			parseUpdateContainer(msg);
+			break;
+
+		case 0xD2: // request outfit
+			parseRequestOutfit(msg);
+			break;
+
+		case 0xD3: // set outfit
+			parseSetOutfit(msg);
+			break;
+
+		case 0xD4:
+			parseToggleMount(msg);
+			break;
+
+		case 0xDC:
+			parseAddVip(msg);
+			break;
+
+		case 0xDD:
+			parseRemoveVip(msg);
+			break;
+
+		case 0xE6:
+			parseBugReport(msg);
+			break;
+
+		case 0xE8:
+			parseDebugAssert(msg);
+			break;
+
+		case 0xF0:
+			parseQuestLog(msg);
+			break;
+
+		case 0xF1:
+			parseQuestLine(msg);
+			break;
+
+		case 0xF2:
+			parseRuleViolationReport(msg);
+			break;
+
+		case 0xF4:
+			parseMarketLeave();
+			break;
+
+		case 0xF5:
+			parseMarketBrowse(msg);
+			break;
+
+		case 0xF6:
+			parseMarketCreateOffer(msg);
+			break;
+
+		case 0xF7:
+			parseMarketCancelOffer(msg);
+			break;
+
+		case 0xF8:
+			parseMarketAcceptOffer(msg);
+			break;
+
+		default:
+			std::cout << "Player: " << player->getName() << " sent an unknown packet header: 0x" << std::hex << (int16_t)recvbyte << std::dec << "!" << std::endl;
+			break;
 	}
 
 	if(msg.isOverrun())
@@ -2416,7 +2436,17 @@ void ProtocolGame::sendAddCreature(const Creature* creature, const Position& pos
 				if(isLogin)
 				{
 					std::string tempstring = g_config.getString(ConfigManager::LOGIN_MSG);
-					if(!player->isAccountManagerEx())
+					AccountManager* accountManager = player->getAccountManager();
+					if(accountManager)
+					{
+						if(accountManager->namelockedPlayerName != "")
+							AddTextMessage(msg, MSG_STATUS_CONSOLE_ORANGE, "Hello, it appears that your character has been namelocked, what would you like as your new name?");
+						else if(accountManager->managingAccount)
+							AddTextMessage(msg, MSG_STATUS_CONSOLE_ORANGE, "Hello, type 'account' to manage your account and if you want to start over then type 'cancel'.");
+						else
+							AddTextMessage(msg, MSG_STATUS_CONSOLE_ORANGE, "Hello, type 'account' to create an account or type 'recover' to recover an account.");
+					}
+					else
 					{
 						if(player->getLastLoginSaved() <= 0)
 						{
@@ -2434,15 +2464,6 @@ void ProtocolGame::sendAddCreature(const Creature* creature, const Position& pos
 							tempstring += ".";
 						}
 						AddTextMessage(msg, MSG_STATUS_DEFAULT, tempstring);
-					}
-					else
-					{
-						if(player->getNamelockedPlayer() != "")
-							AddTextMessage(msg, MSG_STATUS_CONSOLE_ORANGE, "Hello, it appears that your character has been namelocked, what would you like as your new name?");
-						else if(!player->isAccountManager())
-							AddTextMessage(msg, MSG_STATUS_CONSOLE_ORANGE, "Hello, type 'account' to create an account or type 'recover' to recover an account.");
-						else
-							AddTextMessage(msg, MSG_STATUS_CONSOLE_ORANGE, "Hello, type 'account' to manage your account and if you want to start over then type 'cancel'.");
 					}
 				}
 
@@ -3036,7 +3057,7 @@ void ProtocolGame::AddCreatureSpeak(NetworkMessage_ptr msg, const Creature* crea
 	//Add level only for players
 	if(const Player* speaker = creature->getPlayer())
 	{
-		if(speaker->isAccountManagerEx())
+		if(speaker->isAccountManager())
 			msg->AddU16(0x00);
 		else
 			msg->AddU16(speaker->getPlayerInfo(PLAYERINFO_LEVEL));

@@ -129,7 +129,7 @@ bool IOLoginData::saveAccount(Account acc)
 	return Database::getInstance()->executeQuery(query.str());
 }
 
-bool IOLoginData::createAccount(uint32_t accountNumber, std::string newPassword)
+bool IOLoginData::createAccount(const std::string& accountName, std::string newPassword)
 {
 	Database* db = Database::getInstance();
 
@@ -139,7 +139,7 @@ bool IOLoginData::createAccount(uint32_t accountNumber, std::string newPassword)
 		newPassword = transformToSHA1(newPassword);
 
 	DBQuery query;
-	query << "INSERT INTO `accounts` (`id`, `name`, `password`, `type`, `premdays`, `lastday`, `key`, `warnings`, `group_id`) VALUES (NULL, '" << accountNumber << "', " << db->escapeString(newPassword) << ", 1, 0, 0, 0, 0, 1);";
+	query << "INSERT INTO `accounts` (`id`, `name`, `password`, `type`, `premdays`, `lastday`, `key`, `warnings`, `group_id`) VALUES (NULL, " << db->escapeString(accountName) << ", " << db->escapeString(newPassword) << ", 1, 0, 0, 0, 0, 1);";
 	return db->executeQuery(query.str());
 }
 
@@ -193,14 +193,14 @@ bool IOLoginData::getPasswordEx(const std::string& accname, std::string& passwor
 	return true;
 }
 
-bool IOLoginData::accountExists(uint32_t accno)
+bool IOLoginData::accountNameExists(const std::string& name)
 {
 	Database* db = Database::getInstance();
 
 	DBQuery query;
 	DBResult* result;
 
-	query << "SELECT `id` FROM `accounts` WHERE `id` = " << accno << ";";
+	query << "SELECT `id` FROM `accounts` WHERE `name` " << db->getStringComparer() << db->escapeString(name) << " LIMIT 1;";
 	if(!(result = db->storeQuery(query.str())))
 		return false;
 
@@ -217,19 +217,20 @@ bool IOLoginData::setRecoveryKey(uint32_t accountNumber, std::string recoveryKey
 	return db->executeQuery(query.str());
 }
 
-bool IOLoginData::validRecoveryKey(uint32_t accountNumber, const std::string& recoveryKey)
+bool IOLoginData::validRecoveryKey(const std::string& accountName, const std::string& recoveryKey)
 {
 	Database* db = Database::getInstance();
 
 	DBQuery query;
 	DBResult* result;
 
-	query << "SELECT `id` FROM `accounts` WHERE `key` " << db->getStringComparer() << db->escapePatternString(recoveryKey) << " AND `id` = " << accountNumber << " LIMIT 1;";
+	query << "SELECT `id`, `key` FROM `accounts` WHERE `name` " << db->getStringComparer() << db->escapePatternString(accountName) << " LIMIT 1;";
 	if(!(result = db->storeQuery(query.str())))
 		return false;
 
+	std::string realRecoveryKey = result->getDataString("key");
 	db->freeResult(result);
-	return true;
+	return realRecoveryKey == recoveryKey;
 }
 
 bool IOLoginData::setNewPassword(uint32_t accountId, std::string newPassword)
@@ -243,6 +244,20 @@ bool IOLoginData::setNewPassword(uint32_t accountId, std::string newPassword)
 
 	DBQuery query;
 	query << "UPDATE `accounts` SET `password` = " << db->escapeString(newPassword) << " WHERE `id` = " << accountId << ";";
+	return db->executeQuery(query.str());
+}
+
+bool IOLoginData::setNewPassword(const std::string& accountName, std::string newPassword)
+{
+	Database* db = Database::getInstance();
+
+	if(g_config.getNumber(ConfigManager::PASSWORD_TYPE) == PASSWORD_TYPE_MD5)
+		newPassword = transformToMD5(newPassword);
+	else if(g_config.getNumber(ConfigManager::PASSWORD_TYPE) == PASSWORD_TYPE_SHA1)
+		newPassword = transformToSHA1(newPassword);
+
+	DBQuery query;
+	query << "UPDATE `accounts` SET `password` = " << db->escapeString(newPassword) << " WHERE `name` " << db->getStringComparer() << db->escapePatternString(accountName) << db->getUpdateLimiter();
 	return db->executeQuery(query.str());
 }
 

@@ -53,13 +53,14 @@ class IOLoginData
 		Account loadAccount(uint32_t accno);
 		Account loadAccount(std::string name);
 		bool saveAccount(Account acc);
-		bool createAccount(uint32_t accountNumber, std::string newPassword);
+		bool createAccount(const std::string& accountNumber, std::string newPassword);
 		bool getPassword(const std::string& accname, const std::string& name, std::string& password, uint32_t& accNumber);
 		bool getPasswordEx(const std::string& accname, std::string& password, uint32_t& accNumber);
-		bool accountExists(uint32_t accno);
+		bool accountNameExists(const std::string& name);
 		bool setRecoveryKey(uint32_t accountNumber, std::string recoveryKey);
-		bool validRecoveryKey(uint32_t accountNumber, const std::string& recoveryKey);
+		bool validRecoveryKey(const std::string& accountName, const std::string& recoveryKey);
 		bool setNewPassword(uint32_t accountId, std::string newPassword);
+		bool setNewPassword(const std::string& accountName, std::string newPassword);
 		AccountType_t getAccountType(std::string name);
 
 		bool updateOnlineStatus(uint32_t guid, bool login);

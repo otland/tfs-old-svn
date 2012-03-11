@@ -77,7 +77,6 @@ Creature()
 	depotChange = false;
 	accountNumber = 0;
 	name = _name;
-	accountManagerEx = g_config.getBoolean(ConfigManager::ACCOUNT_MANAGER) && name == "Account Manager";
 	setVocation(0);
 	capacity = 400.00;
 	mana = 0;
@@ -169,11 +168,7 @@ Creature()
 	maxVipLimit = 20;
 	groupFlags = 0;
 
- 	accountManager = false;
-	removeChar = "";
-	talkState = 0;
-	newVocation = 0;
-	namelockedPlayer = "";
+	accountManager = NULL;
 
 	sex = PLAYERSEX_FEMALE;
  	vocation_id = 0;
@@ -1808,7 +1803,7 @@ void Player::onThink(uint32_t interval)
 		addMessageBuffer();
 	}
 
-	if(accountManagerEx)
+	if(accountManager)
 	{
 		idleTime += interval;
 		if(idleTime > 150000)
@@ -1823,9 +1818,9 @@ void Player::onThink(uint32_t interval)
 			kickPlayer(true);
 		else if(client && idleTime == 60000 * g_config.getNumber(ConfigManager::KICK_AFTER_MINUTES))
 		{
-			char buffer[130];
-			sprintf(buffer, "You have been idle for %d minutes. You will be disconnected in one minute if you are still idle then.", g_config.getNumber(ConfigManager::KICK_AFTER_MINUTES));
-			client->sendTextMessage(MSG_STATUS_WARNING, buffer);
+			std::stringstream ss;
+			ss << "You have been idle for " << g_config.getNumber(ConfigManager::KICK_AFTER_MINUTES) << " minutes. You will be disconnected in one minute if you are still idle then.";
+			client->sendTextMessage(MSG_STATUS_WARNING, ss.str());
 		}
 	}
 
@@ -4117,90 +4112,90 @@ void Player::manageAccount(const std::string &text)
 {
 	std::stringstream msg;
 	msg << "Account Manager: ";
-	if(namelockedPlayer != "")
+	if(accountManager->namelockedPlayerName != "")
 	{
-		if(talkState == 0)
+		if(accountManager->talkState == 0)
 		{
-			newCharacterName = text;
-			trimString(newCharacterName);
-			if(newCharacterName.length() < 4)
+			accountManager->accountManagerInput = text;
+			trimString(accountManager->accountManagerInput);
+			if(accountManager->accountManagerInput.length() < 4)
 				msg << "The name you want is too short, please select a longer name.";
-			else if(newCharacterName.length() > 20)
+			else if(accountManager->accountManagerInput.length() > 20)
 				msg << "The name you want is too long, please select a shorter name.";
-			else if(asLowerCaseString(newCharacterName).substr(0, 4) == "god "
-				|| asLowerCaseString(newCharacterName).substr(0, 3) == "gm "
-				|| asLowerCaseString(newCharacterName).substr(0, 3) == "cm ")
+			else if(asLowerCaseString(accountManager->accountManagerInput).substr(0, 4) == "god "
+				|| asLowerCaseString(accountManager->accountManagerInput).substr(0, 3) == "gm "
+				|| asLowerCaseString(accountManager->accountManagerInput).substr(0, 3) == "cm ")
 			{
 				msg << "You are not a gamemaster, please pick another name.";
 			}
-			else if(IOLoginData::getInstance()->playerExists(newCharacterName))
+			else if(IOLoginData::getInstance()->playerExists(accountManager->accountManagerInput))
 				msg << "A player with this name currently exists, please choose another name.";
-			else if(!isValidName(newCharacterName))
+			else if(!isValidName(accountManager->accountManagerInput))
 				msg << "That name seems to contain invalid symbols tell me another name.";
 			else
 			{
-				talkState++;
-				msg << newCharacterName << ", are you sure?";
+				accountManager->talkState++;
+				msg << accountManager->accountManagerInput << ", are you sure?";
 			}
 		}
-		else if(talkState == 1 && checkText(text, "no"))
+		else if(accountManager->talkState == 1 && checkText(text, "no"))
 		{
-			talkState--;
+			accountManager->talkState--;
 			msg << "What else would you like to name your character?";
 		}
-		else if(talkState == 1 && checkText(text, "yes"))
+		else if(accountManager->talkState == 1 && checkText(text, "yes"))
 		{
-			if(!IOLoginData::getInstance()->playerExists(newCharacterName))
+			if(!IOLoginData::getInstance()->playerExists(accountManager->accountManagerInput))
 			{
 				uint32_t _guid;
-				IOLoginData::getInstance()->getGuidByName(_guid, namelockedPlayer);
-				if(IOLoginData::getInstance()->changeName(_guid, newCharacterName))
+				IOLoginData::getInstance()->getGuidByName(_guid, accountManager->namelockedPlayerName);
+				if(IOLoginData::getInstance()->changeName(_guid, accountManager->accountManagerInput))
 				{
 					IOBan::getInstance()->removePlayerNamelock(_guid);
 
-					talkState++;
+					accountManager->talkState++;
 					msg << "Your character has successfully been renamed, you should now be able to login at it without any problems.";
 				}
 				else
 				{
-					talkState--;
+					accountManager->talkState--;
 					msg << "Failed to change your name, please try another name.";
 				}
 			}
 			else
 			{
-				talkState--;
+				accountManager->talkState--;
 				msg << "A player with that name already exists, please pick another name.";
 			}
 		}
 		else
 			msg << "Sorry, but I can't understand you, please try to repeat that!";
 	}
-	else if(accountManager)
+	else if(accountManager->managingAccount)
 	{
-		Account account = IOLoginData::getInstance()->loadAccount(realAccount);
-		if(checkText(text, "cancel") || (talkState == 0 && checkText(text, "account")))
+		if(checkText(text, "cancel") || (accountManager->talkState == 0 && checkText(text, "account")))
 		{
-			talkState = 1;
+			accountManager->talkState = 1;
 			msg << "Do you want to change your 'password', request a 'recovery key', add a 'character', or 'delete' a character?";
 		}
-		else if(talkState == 1)
+		else if(accountManager->talkState == 1)
 		{
 			if(checkText(text, "delete"))
 			{
-				talkState = 2;
+				accountManager->talkState = 2;
 				msg << "Which character would you like to delete?";
 			}
 			else if(checkText(text, "password"))
 			{
-				talkState = 4;
+				accountManager->talkState = 4;
 				msg << "What would you like to change your password to?";
 			}
 			else if(checkText(text, "character"))
 			{
+				Account account = IOLoginData::getInstance()->loadAccount(accountManager->realAccount);
 				if(account.charList.size() <= 15)
 				{
-					talkState = 6;
+					accountManager->talkState = 6;
 					msg << "What would you like as your character name?";
 				}
 				else
@@ -4208,22 +4203,22 @@ void Player::manageAccount(const std::string &text)
 			}
 			else if(checkText(text, "recovery key"))
 			{
-				talkState = 12;
+				accountManager->talkState = 12;
 				msg << "Would you like a recovery key?";
 			}
 			else
 				msg << "Do you want to change your 'password', request a 'recovery key', add a 'character', or 'delete' a character?";
 		}
-		else if(talkState == 2)
+		else if(accountManager->talkState == 2)
 		{
-			removeChar = text;
-			trimString(removeChar);
-			talkState++;
-			msg << "Do you really want to delete the character named " << removeChar << "?";
+			accountManager->accountManagerInput = text;
+			trimString(accountManager->accountManagerInput);
+			accountManager->talkState++;
+			msg << "Do you really want to delete the character named " << accountManager->accountManagerInput << "?";
 		}
-		else if(talkState == 3 && checkText(text, "yes"))
+		else if(accountManager->talkState == 3 && checkText(text, "yes"))
 		{
-			int32_t result = IOLoginData::getInstance()->deleteCharacter(realAccount, removeChar);
+			int32_t result = IOLoginData::getInstance()->deleteCharacter(accountManager->realAccount, accountManager->accountManagerInput);
 			switch(result)
 			{
 				case 0:
@@ -4246,14 +4241,14 @@ void Player::manageAccount(const std::string &text)
 					msg << "A character with that name is currently online, to delete a character it has to be offline.";
 					break;
 			}
-			talkState = 1;
+			accountManager->talkState = 1;
 		}
-		else if(talkState == 3 && checkText(text, "no"))
+		else if(accountManager->talkState == 3 && checkText(text, "no"))
 		{
-			talkState--;
+			accountManager->talkState--;
 			msg << "Tell me what character you want to delete.";
 		}
-		else if(talkState == 4)
+		else if(accountManager->talkState == 4)
 		{
 			std::string tmpStr = text;
 			trimString(tmpStr);
@@ -4261,9 +4256,9 @@ void Player::manageAccount(const std::string &text)
 			{
 				if(tmpStr.length() > 5)
 				{
-					talkState++;
-					newPassword = tmpStr;
-					msg << "Should '" << newPassword << "' be your new password?";
+					accountManager->talkState++;
+					msg << "Should '" << tmpStr << "' be your new password?";
+					accountManager->accountManagerInput = tmpStr;
 				}
 				else
 					msg << "That password is too short, please select a longer password.";
@@ -4271,182 +4266,192 @@ void Player::manageAccount(const std::string &text)
 			else
 				msg << "That password contains invalid characters... tell me another one.";
 		}
-		else if(talkState == 5)
+		else if(accountManager->talkState == 5)
 		{
-			if (checkText(text, "yes"))
+			if(checkText(text, "yes"))
 			{
-				talkState = 1;
-				IOLoginData::getInstance()->setNewPassword(realAccount, newPassword);
+				accountManager->talkState = 1;
+				IOLoginData::getInstance()->setNewPassword(accountManager->realAccount, accountManager->accountManagerInput);
 				msg << "Your password has been changed.";
 			}
 			else if(checkText(text, "no"))
 			{
-				talkState = 1;
+				accountManager->talkState = 1;
 				msg << "Then not.";
 			}
 			else
 				msg << "I don't understand, should it be your new password, yes or no?";
 		}
-		else if(talkState == 6)
+		else if(accountManager->talkState == 6)
 		{
-			newCharacterName = text;
-			trimString(newCharacterName);
-			if(newCharacterName.length() < 4)
+			accountManager->accountManagerInput = text;
+			trimString(accountManager->accountManagerInput);
+			if(accountManager->accountManagerInput.length() < 4)
 				msg << "The name you want is too short, please select a longer name.";
-			else if(newCharacterName.length() > 20)
+			else if(accountManager->accountManagerInput.length() > 20)
 				msg << "The name you want is too long, please select a shorter name.";
-			else if(asLowerCaseString(newCharacterName).substr(0, 4) == "god "
-				|| asLowerCaseString(newCharacterName).substr(0, 3) == "gm "
-				|| asLowerCaseString(newCharacterName).substr(0, 3) == "cm ")
-			{
-				msg << "You are not a gamemaster, please pick another name.";
-			}
-			else if(IOLoginData::getInstance()->playerExists(newCharacterName))
-				msg << "A player with this name currently exists, please choose another name.";
-			else if(!isValidName(newCharacterName))
-				msg << "That name seems to contain invalid symbols tell me another name.";
 			else
 			{
-				talkState++;
-				msg << newCharacterName << ", are you sure?";
+				std::string lowerCaseInput = asLowerCaseString(accountManager->accountManagerInput);
+				if(lowerCaseInput.substr(0, 4) == "god " || lowerCaseInput.substr(0, 3) == "gm " || lowerCaseInput.substr(0, 3) == "cm ")
+					msg << "You are not a gamemaster, please pick another name.";
+				else if(!isValidName(accountManager->accountManagerInput))
+					msg << "That name seems to contain invalid symbols tell me another name.";
+				else if(IOLoginData::getInstance()->playerExists(accountManager->accountManagerInput))
+					msg << "A player with this name currently exists, please choose another name.";
+				else
+				{
+					accountManager->talkState++;
+					msg << accountManager->accountManagerInput << ", are you sure?";
+				}
 			}
 		}
-		else if(talkState == 7 && checkText(text, "no"))
+		else if(accountManager->talkState == 7 && checkText(text, "no"))
 		{
-			talkState--;
+			accountManager->talkState--;
 			msg << "What else would you like to name your character?";
 		}
-		else if(talkState == 7 && checkText(text, "yes"))
+		else if(accountManager->talkState == 7 && checkText(text, "yes"))
 		{
-			talkState++;
+			accountManager->talkState++;
 			msg << "Should your character be a 'male' or a 'female'?";
 		}
-		else if(talkState == 8)
+		else if(accountManager->talkState == 8)
 		{
 			if(checkText(text, "female"))
 			{
 				msg << "A female, are you sure?";
-				talkState++;
-				_newSex = PLAYERSEX_FEMALE;
+				accountManager->talkState++;
+				accountManager->newSex = PLAYERSEX_FEMALE;
 			}
 			else if(checkText(text, "male"))
 			{
 				msg << "A male, are you sure?";
-				talkState++;
-				_newSex = PLAYERSEX_MALE;
+				accountManager->talkState++;
+				accountManager->newSex = PLAYERSEX_MALE;
 			}
 			else
 				msg << "I don't understand, should your character be a 'male' or a 'female'?";
 		}
-		else if(talkState == 9 && checkText(text, "no"))
+		else if(accountManager->talkState == 9 && checkText(text, "no"))
 		{
-			talkState--;
+			accountManager->talkState--;
 			msg << "Tell me.. would you like to be a 'male' or a 'female'?";
 		}
-		else if(talkState == 9 && checkText(text, "yes"))
+		else if(accountManager->talkState == 9 && checkText(text, "yes"))
 		{
 			if(g_config.getBoolean(ConfigManager::START_CHOOSEVOC))
 			{
-				talkState++;
+				accountManager->talkState++;
 				bool firstPart = true;
+				std::vector<std::string> vocations;
 				for(VocationsMap::iterator it = g_vocations.getFirstVocation(), end = g_vocations.getLastVocation(); it != end; ++it)
 				{
-					if(it->first == (it->second)->getFromVocation() && it->first != 0)
-					{
-						if(firstPart)
-						{
-							msg << "What do you want to be... " << (it->second)->getVocDescription();
-							firstPart = false;
-						}
-						else if(it->first - 1 != 0)
-							msg << ", " << (it->second)->getVocDescription();
-						else
-							msg << " or " << (it->second)->getVocDescription() << ".";
-					}
+					if(it->first == VOCATION_NONE || it->first != it->second->getFromVocation())
+						continue;
+
+					vocations.push_back(it->second->getVocDescription());
 				}
+
+				if(!vocations.empty())
+				{
+					msg << "What do you want to be... " << vocations[0];
+					std::vector<std::string>::size_type size = vocations.size() - 1;
+					for (std::vector<std::string>::size_type i = 1; i < size; ++i) {
+						msg << ", " << vocations[i];
+					}
+					msg << " or " << vocations[size] << "?";
+				}
+				else
+					msg << "Something is wrong with vocations, please contact a gamemaster.";
 			}
 			else
 			{
-				if(!IOLoginData::getInstance()->playerExists(newCharacterName))
+				if(!IOLoginData::getInstance()->playerExists(accountManager->accountManagerInput))
 				{
-					talkState = 1;
-					if(IOLoginData::getInstance()->createCharacter(realAccount, newCharacterName, newVocation, _newSex))
+					accountManager->talkState = 1;
+					if(IOLoginData::getInstance()->createCharacter(accountManager->realAccount, accountManager->accountManagerInput, accountManager->newVocation, accountManager->newSex))
 						msg << "Your character has been created.";
 					else
 						msg << "Something went wrong, your character was not created.";
 				}
 				else
 				{
-					talkState = 6;
+					accountManager->talkState = 6;
 					msg << "A player with this name already exists, please choose another name.";
 				}
 			}
 		}
-		else if(talkState == 10)
+		else if(accountManager->talkState == 10)
 		{
 			for(VocationsMap::iterator it = g_vocations.getFirstVocation(), end = g_vocations.getLastVocation(); it != end; ++it)
 			{
-				std::string vocationName = (it->second)->getVocName();
+				Vocation* voc = it->second;
+				std::string vocationName = voc->getVocName();
 				std::transform(vocationName.begin(), vocationName.end(), vocationName.begin(), tolower);
-				if(it->first != VOCATION_NONE && it->first == (it->second)->getFromVocation() && checkText(text, vocationName))
+				trimString(vocationName);
+				if(it->first != VOCATION_NONE && it->first == voc->getFromVocation() && checkText(text, vocationName))
 				{
-					msg << "So you would like to be " << (it->second)->getVocDescription() << "... are you sure?";
-					newVocation = it->first;
-					talkState++;
+					msg << "So you would like to be " << voc->getVocDescription() << "... are you sure?";
+					accountManager->newVocation = it->first;
+					accountManager->talkState++;
+					break;
 				}
 			}
+
 			if(msg.str().length() == 17)
 				msg << "I don't understand what vocation you would like to be... could you please repeat it?";
 		}
-		else if(talkState == 11 && checkText(text, "yes"))
+		else if(accountManager->talkState == 11 && checkText(text, "yes"))
 		{
-			if(!IOLoginData::getInstance()->playerExists(newCharacterName))
+			if(!IOLoginData::getInstance()->playerExists(accountManager->accountManagerInput))
 			{
-				talkState = 1;
-				if(IOLoginData::getInstance()->createCharacter(realAccount, newCharacterName, newVocation, _newSex))
+				accountManager->talkState = 1;
+				if(IOLoginData::getInstance()->createCharacter(accountManager->realAccount, accountManager->accountManagerInput, accountManager->newVocation, accountManager->newSex))
 					msg << "Your character has been created.";
 				else
 					msg << "Something went wrong, your character was not created.";
 			}
 			else
 			{
-				talkState = 6;
+				accountManager->talkState = 6;
 				msg << "A player with this name already exists, please choose another name.";
 			}
 		}
-		else if(talkState == 11 && checkText(text, "no"))
+		else if(accountManager->talkState == 11 && checkText(text, "no"))
 		{
-			talkState = 10;
+			accountManager->talkState = 10;
 			msg << "No? Then what would you like to be?";
 		}
-		else if(talkState == 12 && checkText(text, "yes"))
+		else if(accountManager->talkState == 12 && checkText(text, "yes"))
 		{
+			Account account = IOLoginData::getInstance()->loadAccount(accountManager->realAccount);
 			if(account.recoveryKey != "0")
 				msg << "Sorry, you already have a recovery key, for security reasons I may not give you a new one.";
 			else
 			{
-				recoveryKey = generateRecoveryKey(4, 4);
-				IOLoginData::getInstance()->setRecoveryKey(realAccount, recoveryKey);
+				const std::string& recoveryKey = generateRecoveryKey(4, 4);
+				IOLoginData::getInstance()->setRecoveryKey(accountManager->realAccount, recoveryKey);
 				msg << "Your recovery key is: " << recoveryKey << ".";
 			}
-			talkState = 1;
+			accountManager->talkState = 1;
 		}
-		else if(talkState == 12 && checkText(text, "no"))
+		else if(accountManager->talkState == 12 && checkText(text, "no"))
 		{
 			msg << "Then not.";
-			talkState = 1;
+			accountManager->talkState = 1;
 		}
 		else
 			msg << "Please read the latest message that I have specified, I dont understand the current requested action.";
 	}
 	else
 	{
-		if(talkState == 0 && checkText(text, "account"))
+		if(accountManager->talkState == 0 && checkText(text, "account"))
 		{
 			msg << "What would you like your password to be?";
-			talkState++;
+			accountManager->talkState++;
 		}
-		else if(talkState == 1)
+		else if(accountManager->talkState == 1)
 		{
 			std::string tmpStr = text;
 			trimString(tmpStr);
@@ -4454,9 +4459,9 @@ void Player::manageAccount(const std::string &text)
 			{
 				if(tmpStr.length() > 5)
 				{
-					newPassword = tmpStr;
-					msg << newPassword << " is it? 'yes' or 'no'?";
-					talkState++;
+					msg << tmpStr << " is it? 'yes' or 'no'?";
+					accountManager->accountManagerInput = tmpStr;
+					accountManager->talkState++;
 				}
 				else
 					msg << "That password is too short, please select a longer password.";
@@ -4464,33 +4469,34 @@ void Player::manageAccount(const std::string &text)
 			else
 				msg << "That password contains invalid characters, try again.";
 		}
-		else if(talkState == 2 && checkText(text, "yes"))
+		else if(accountManager->talkState == 2 && checkText(text, "yes"))
 		{
 			if(g_config.getBoolean(ConfigManager::GENERATE_ACCOUNT_NUMBER))
 			{
 				do
 				{
-					sprintf(newAccountNumber, "%d%d%d%d%d%d%d", random_range(2, 9), random_range(2, 9), random_range(2, 9), random_range(2, 9), random_range(2, 9), random_range(2, 9), random_range(2, 9));
-					newAccount = atoi(newAccountNumber);
+					std::stringstream ss;
+					ss << random_range(2, 9) << random_range(2, 9) << random_range(2, 9) << random_range(2, 9) << random_range(2, 9) << random_range(2, 9) << random_range(2, 9);
+					accountManager->newAccountName = ss.str();
 				}
-				while(IOLoginData::getInstance()->accountExists(newAccount));
-				msg << "Your account has been created, you login with account name '" << newAccount << "' and password '" << newPassword << "', if the account name is hard to remember please write it down!";
+				while(IOLoginData::getInstance()->accountNameExists(accountManager->newAccountName));
+				msg << "Your account has been created, you login with account name '" << accountManager->newAccountName << "' and password '" << accountManager->accountManagerInput << "', if the account name is hard to remember please write it down!";
 
-				IOLoginData::getInstance()->createAccount(newAccount, newPassword);
-				talkState = -1;
+				IOLoginData::getInstance()->createAccount(accountManager->newAccountName, accountManager->accountManagerInput);
+				accountManager->talkState = -1;
 			}
 			else
 			{
 				msg << "What would you like your account number to be?";
-				talkState++;
+				accountManager->talkState++;
 			}
 		}
-		else if(talkState == 2 && checkText(text, "no"))
+		else if(accountManager->talkState == 2 && checkText(text, "no"))
 		{
-			talkState--;
+			accountManager->talkState--;
 			msg << "What would you like your password to be then?";
 		}
-		else if(talkState == 3)
+		else if(accountManager->talkState == 3)
 		{
 			std::string tmpStr = text;
 			trimString(tmpStr);
@@ -4500,9 +4506,9 @@ void Player::manageAccount(const std::string &text)
 				{
 					if(tmpStr.length() <= 8)
 					{
-						newAccount = atoi(tmpStr.c_str());
-						msg << newAccount << ", are you sure?";
-						talkState++;
+						msg << tmpStr << ", are you sure?";
+						accountManager->newAccountName = tmpStr;
+						accountManager->talkState++;
 					}
 					else
 						msg << "That account number is too long.. an account number has to be atleast 6 numbers and not more than 8 numbers, please pick another account number.";
@@ -4513,50 +4519,48 @@ void Player::manageAccount(const std::string &text)
 			else
 				msg << "Your account number may only contain numbers, please pick another account number.";
 		}
-		else if(talkState == 4 && checkText(text, "yes"))
+		else if(accountManager->talkState == 4 && checkText(text, "yes"))
 		{
-			if(!IOLoginData::getInstance()->accountExists(newAccount))
+			if(!IOLoginData::getInstance()->accountNameExists(accountManager->newAccountName))
 			{
-				IOLoginData::getInstance()->createAccount(newAccount, newPassword);
-				msg << "Your account has been created, you can login with account number: '" << newAccount << "' and password: '" << newPassword << "'!";
+				IOLoginData::getInstance()->createAccount(accountManager->newAccountName, accountManager->accountManagerInput);
+				msg << "Your account has been created, you can login with account number: '" << accountManager->newAccountName << "' and password: '" << accountManager->accountManagerInput << "'.";
 			}
 			else
 			{
 				msg << "An account with that number combination already exists, please try another account number.";
-				talkState--;
+				accountManager->talkState--;
 			}
 		}
-		else if(talkState == 4 && checkText(text, "no"))
+		else if(accountManager->talkState == 4 && checkText(text, "no"))
 		{
-			talkState--;
+			accountManager->talkState--;
 			msg << "What else would you like as your account number?";
 		}
-		else if(talkState == 0 && checkText(text, "recover"))
+		else if(accountManager->talkState == 0 && checkText(text, "recover"))
 		{
-			talkState = 5;
+			accountManager->talkState = 5;
 			msg << "What was your account number?";
 		}
-		else if(talkState == 5)
+		else if(accountManager->talkState == 5)
 		{
-			accountNumberAttempt = text;
-			talkState++;
+			accountManager->accountManagerInput = text;
+			accountManager->talkState++;
 			msg << "What was your recovery key?";
 		}
-		else if(talkState == 6)
+		else if(accountManager->talkState == 6)
 		{
-			recoveryKeyAttempt = text;
-			uint32_t accountId = atoi(accountNumberAttempt.c_str());
-			if(IOLoginData::getInstance()->validRecoveryKey(accountId, recoveryKeyAttempt) && recoveryKeyAttempt != "0")
+			if(text != "0" && IOLoginData::getInstance()->validRecoveryKey(accountManager->accountManagerInput, text))
 			{
-				char buffer[100];
-				sprintf(buffer, "%s%d", g_config.getString(ConfigManager::SERVER_NAME).c_str(), random_range(100, 999));
-				IOLoginData::getInstance()->setNewPassword(accountId, buffer);
-				msg << "Correct! Your new password is: " << buffer << ".";
+				std::stringstream ss;
+				ss << g_config.getString(ConfigManager::SERVER_NAME) << random_range(100, 999);
+				IOLoginData::getInstance()->setNewPassword(accountManager->accountManagerInput, ss.str());
+				msg << "Correct! Your new password is: " << ss.str() << ".";
 			}
 			else
 				msg << "Sorry, but that information you gave me did not match to any account :(.";
 
-			talkState = -1;
+			accountManager->talkState = 0;
 		}
 		else
 			msg << "Sorry, but I can't understand you, please try to repeat that.";

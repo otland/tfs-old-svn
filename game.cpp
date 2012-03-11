@@ -3342,7 +3342,7 @@ bool Game::playerSay(uint32_t playerId, uint16_t channelId, SpeakClasses type,
 
 bool Game::playerSayCommand(Player* player, SpeakClasses type, const std::string& text)
 {
-	if(player->isAccountManagerEx())
+	if(player->isAccountManager())
 		return internalCreatureSay(player, SPEAK_SAY, text, false);
 
 	//First, check if this was a command
@@ -3359,7 +3359,7 @@ bool Game::playerSayCommand(Player* player, SpeakClasses type, const std::string
 
 bool Game::playerSaySpell(Player* player, SpeakClasses type, const std::string& text)
 {
-	if(player->isAccountManagerEx())
+	if(player->isAccountManager())
 		return internalCreatureSay(player, SPEAK_SAY, text, false);
 
 	std::string words = text;
@@ -3588,7 +3588,7 @@ bool Game::internalCreatureSay(Creature* creature, SpeakClasses type, const std:
 	if(g_config.getBoolean(ConfigManager::ACCOUNT_MANAGER))
 	{
 		Player* player = creature->getPlayer();
-		if(player && player->isAccountManagerEx())
+		if(player && player->isAccountManager())
 		{
 			player->manageAccount(text);
 			return true;
