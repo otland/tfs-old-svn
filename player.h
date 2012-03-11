@@ -111,11 +111,9 @@ struct AccountManager
 	AccountManager()
 	{
 		managingAccount = false;
-		accountManagerInput = "";
 		namelockedPlayerName = "";
-		newAccountName = "";
 		talkState = 0;
-		newVocation = 0;
+		newVocation = VOCATION_NONE;
 	}
 };
 

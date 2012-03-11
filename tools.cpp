@@ -375,11 +375,20 @@ bool isPasswordCharacter(char character)
 bool isValidPassword(std::string text)
 {
 	toLowerCaseString(text);
-
-	uint32_t textLength = text.length();
-	for(uint32_t size = 0; size < textLength; size++)
+	for(uint32_t i = 0, size = text.length(); i < size; ++i)
 	{
-		if(!isLowercaseLetter(text[size]) && !isNumber(text[size]) && !isPasswordCharacter(text[size]))
+		if(!isLowercaseLetter(text[i]) && !isNumber(text[i]) && !isPasswordCharacter(text[i]))
+			return false;
+	}
+	return true;
+}
+
+bool isValidAccountName(std::string text)
+{
+	toLowerCaseString(text);
+	for(uint32_t i = 0, size = text.length(); i < size; ++i)
+	{
+		if(!isLowercaseLetter(text[i]) && !isNumber(text[i]))
 			return false;
 	}
 	return true;
@@ -387,10 +396,9 @@ bool isValidPassword(std::string text)
 
 bool isNumbers(std::string text)
 {
-	uint32_t textLength = text.length();
-	for(uint32_t size = 0; size < textLength; size++)
+	for(uint32_t i = 0, size = text.length(); i < size; ++i)
 	{
-		if(!isNumber(text[size]))
+		if(!isNumber(text[i]))
 			return false;
 	}
 	return true;
@@ -398,7 +406,6 @@ bool isNumbers(std::string text)
 
 bool isValidName(std::string text, bool forceUppercaseOnFirstLetter/* = true*/)
 {
-	uint32_t textLength = text.length();
 	uint32_t lenBeforeSpace = 1;
 	uint32_t lenBeforeSingleQuote = 1;
 	uint32_t lenBeforeDash = 1;
@@ -413,33 +420,33 @@ bool isValidName(std::string text, bool forceUppercaseOnFirstLetter/* = true*/)
 	else if(!isLowercaseLetter(text[0]) && !isUppercaseLetter(text[0]))
 		return false;
 
-	for(uint32_t size = 1; size < textLength; size++)
+	for(uint32_t i = 1, size = text.length(); i < size; ++i)
 	{
-		if(text[size] != 32)
+		if(text[i] != 32)
 		{
 			lenBeforeSpace++;
 
-			if(text[size] != 39)
+			if(text[i] != 39)
 				lenBeforeSingleQuote++;
 			else
 			{
-				if(lenBeforeSingleQuote <= 1 || size == textLength - 1 || text[size + 1] == 32)
+				if(lenBeforeSingleQuote <= 1 || i == size - 1 || text[i + 1] == 32)
 					return false;
 
 				lenBeforeSingleQuote = 0;
 			}
 
-			if(text[size] != 45)
+			if(text[i] != 45)
 				lenBeforeDash++;
 			else
 			{
-				if(lenBeforeDash <= 1 || size == textLength - 1 || text[size + 1] == 32)
+				if(lenBeforeDash <= 1 || i == size - 1 || text[i + 1] == 32)
 					return false;
 
 				lenBeforeDash = 0;
 			}
 
-			if(text[size] == lastChar)
+			if(text[i] == lastChar)
 			{
 				repeatedCharacter++;
 				if(repeatedCharacter > 2)
@@ -448,11 +455,11 @@ bool isValidName(std::string text, bool forceUppercaseOnFirstLetter/* = true*/)
 			else
 				repeatedCharacter = 0;
 
-			lastChar = text[size];
+			lastChar = text[i];
 		}
 		else
 		{
-			if(lenBeforeSpace <= 1 || size == textLength - 1 || text[size + 1] == 32)
+			if(lenBeforeSpace <= 1 || i == size - 1 || text[i + 1] == 32)
 				return false;
 
 			lenBeforeSpace = 0;
@@ -460,8 +467,8 @@ bool isValidName(std::string text, bool forceUppercaseOnFirstLetter/* = true*/)
 			lenBeforeDash = 0;
 		}
 
-		if(isLowercaseLetter(text[size]) || text[size] == 32 || text[size] == 39 || text[size] == 45
-			|| (isUppercaseLetter(text[size]) && text[size - 1] == 32))
+		if(isLowercaseLetter(text[i]) || text[i] == 32 || text[i] == 39 || text[i] == 45
+			|| (isUppercaseLetter(text[i]) && text[i - 1] == 32))
 		{
 			continue;
 		}

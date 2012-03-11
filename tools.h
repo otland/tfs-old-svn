@@ -79,6 +79,7 @@ extern bool isPasswordCharacter(char character);
 
 extern bool isValidName(std::string text, bool forceUppercaseOnFirstLetter = true);
 extern bool isValidPassword(std::string text);
+extern bool isValidAccountName(std::string text);
 extern bool isNumbers(std::string text);
 
 extern bool checkText(std::string text, const std::string& str);

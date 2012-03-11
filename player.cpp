@@ -4122,20 +4122,20 @@ void Player::manageAccount(const std::string &text)
 				msg << "The name you want is too short, please select a longer name.";
 			else if(accountManager->accountManagerInput.length() > 20)
 				msg << "The name you want is too long, please select a shorter name.";
-			else if(asLowerCaseString(accountManager->accountManagerInput).substr(0, 4) == "god "
-				|| asLowerCaseString(accountManager->accountManagerInput).substr(0, 3) == "gm "
-				|| asLowerCaseString(accountManager->accountManagerInput).substr(0, 3) == "cm ")
-			{
-				msg << "You are not a gamemaster, please pick another name.";
-			}
-			else if(IOLoginData::getInstance()->playerExists(accountManager->accountManagerInput))
-				msg << "A player with this name currently exists, please choose another name.";
-			else if(!isValidName(accountManager->accountManagerInput))
-				msg << "That name seems to contain invalid symbols tell me another name.";
 			else
 			{
-				accountManager->talkState++;
-				msg << accountManager->accountManagerInput << ", are you sure?";
+				std::string lowerCaseInput = asLowerCaseString(accountManager->accountManagerInput);
+				if(lowerCaseInput.substr(0, 4) == "god " || lowerCaseInput.substr(0, 3) == "gm " || lowerCaseInput.substr(0, 3) == "cm ")
+					msg << "You are not a gamemaster, please pick another name.";
+				else if(IOLoginData::getInstance()->playerExists(accountManager->accountManagerInput))
+					msg << "A player with this name currently exists, please choose another name.";
+				else if(!isValidName(accountManager->accountManagerInput))
+					msg << "That name seems to contain invalid symbols tell me another name.";
+				else
+				{
+					accountManager->talkState++;
+					msg << accountManager->accountManagerInput << ", are you sure?";
+				}
 			}
 		}
 		else if(accountManager->talkState == 1 && checkText(text, "no"))
@@ -4487,7 +4487,7 @@ void Player::manageAccount(const std::string &text)
 			}
 			else
 			{
-				msg << "What would you like your account number to be?";
+				msg << "What would you like your account name to be?";
 				accountManager->talkState++;
 			}
 		}
@@ -4500,24 +4500,24 @@ void Player::manageAccount(const std::string &text)
 		{
 			std::string tmpStr = text;
 			trimString(tmpStr);
-			if(isNumbers(tmpStr))
+			if(isValidAccountName(tmpStr))
 			{
 				if(tmpStr.length() >= 6)
 				{
-					if(tmpStr.length() <= 8)
+					if(tmpStr.length() <= 30)
 					{
 						msg << tmpStr << ", are you sure?";
 						accountManager->newAccountName = tmpStr;
 						accountManager->talkState++;
 					}
 					else
-						msg << "That account number is too long.. an account number has to be atleast 6 numbers and not more than 8 numbers, please pick another account number.";
+						msg << "That account name is too long.. an account name has to be atleast 6 characters but no more than 30, please pick another account name.";
 				}
 				else
-					msg << "That account number is too short.. an account number has to be atleast 6 numbers and not more than 8 numbers, please pick another account number.";
+					msg << "That account name is too short.. an account name has to be atleast 6 characters but no more than 30, please pick another account name.";
 			}
 			else
-				msg << "Your account number may only contain numbers, please pick another account number.";
+				msg << "Your account name may only contain characters from a to z and numbers, please pick another account name.";
 		}
 		else if(accountManager->talkState == 4 && checkText(text, "yes"))
 		{
