@@ -411,7 +411,7 @@ bool Vocations::loadFromXml()
 		return false;
 	}
 
-	xmlNodePtr p, root = xmlDocGetRootElement(doc);
+	xmlNodePtr root = xmlDocGetRootElement(doc);
 	if(xmlStrcmp(root->name,(const xmlChar*)"vocations"))
 	{
 		std::clog << "[Error - Vocations::loadFromXml] Malformed vocations file." << std::endl;
@@ -419,7 +419,7 @@ bool Vocations::loadFromXml()
 		return false;
 	}
 
-	for(p = root->children; p; p = p->next)
+	for(xmlNodePtr p = root->children; p; p = p->next)
 		parseVocationNode(p);
 
 	xmlFreeDoc(doc);

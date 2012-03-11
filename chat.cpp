@@ -261,7 +261,7 @@ bool Chat::loadFromXml()
 		return false;
 	}
 
-	xmlNodePtr p, root = xmlDocGetRootElement(doc);
+	xmlNodePtr root = xmlDocGetRootElement(doc);
 	if(xmlStrcmp(root->name,(const xmlChar*)"channels"))
 	{
 		std::clog << "[Error - Chat::loadFromXml] Malformed channels file" << std::endl;
@@ -269,7 +269,7 @@ bool Chat::loadFromXml()
 		return false;
 	}
 
-	for(p = root->children; p; p = p->next)
+	for(xmlNodePtr p = root->children; p; p = p->next)
 		parseChannelNode(p);
 
 	xmlFreeDoc(doc);

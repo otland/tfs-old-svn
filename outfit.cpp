@@ -584,7 +584,7 @@ bool Outfits::loadFromXml()
 		return false;
 	}
 
-	xmlNodePtr p, root = xmlDocGetRootElement(doc);
+	xmlNodePtr root = xmlDocGetRootElement(doc);
 	if(xmlStrcmp(root->name,(const xmlChar*)"outfits"))
 	{
 		std::clog << "[Error - Outfits::loadFromXml] Malformed outfits file." << std::endl;
@@ -592,12 +592,8 @@ bool Outfits::loadFromXml()
 		return false;
 	}
 
-	p = root->children;
-	while(p)
-	{
+	for(xmlNodePtr p = root->children; p; p = p->next)
 		parseOutfitNode(p);
-		p = p->next;
-	}
 
 	xmlFreeDoc(doc);
 	return true;

@@ -59,7 +59,7 @@ bool Spawns::loadFromXml(const std::string& _filename)
 		return false;
 	}
 
-	xmlNodePtr spawnNode, root = xmlDocGetRootElement(doc);
+	xmlNodePtr root = xmlDocGetRootElement(doc);
 	if(xmlStrcmp(root->name,(const xmlChar*)"spawns"))
 	{
 		std::clog << "[Error - Spawns::loadFromXml] Malformed spawns file." << std::endl;
@@ -67,8 +67,8 @@ bool Spawns::loadFromXml(const std::string& _filename)
 		return false;
 	}
 
-	for(spawnNode = root->children; spawnNode; spawnNode = spawnNode->next)
-		parseSpawnNode(spawnNode, false);
+	for(xmlNodePtr p = root->children; p; p = p->next)
+		parseSpawnNode(p, false);
 
 	xmlFreeDoc(doc);
 	loaded = true;
