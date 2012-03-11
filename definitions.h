@@ -30,14 +30,6 @@
 #endif
 #endif
 
-#if __GNUC__ > 3
-#define FUNCTION_INFO __PRETTY_FUNCTION__
-#elif _MSC_VER
-#define FUNCTION_INFO __FUNCTION__
-#else
-#define FUNCTION_INFO
-#endif
-
 #undef MULTI_SQL_DRIVERS
 #define SQL_DRIVERS __USE_SQLITE__+__USE_MYSQL__
 
