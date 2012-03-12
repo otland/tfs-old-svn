@@ -375,6 +375,7 @@ struct MarketItemEx
 	uint32_t price;
 	uint16_t amount;
 	uint16_t counter;
+	uint16_t itemId;
 	MarketAction_t type;
 };
 

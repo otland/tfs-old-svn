@@ -2071,10 +2071,18 @@ void ProtocolGame::sendMarketEnter(uint32_t depotId)
 		msg->AddU16(0x00);
 		return;
 	}
+
+	Container* depotChest = depot->getChest();
+	if(!depotChest)
+	{
+		msg->AddU16(0x00);
+		return;
+	}
+
 	player->setMarketDepotId(depotId);
 
 	std::map<uint16_t, uint32_t> depotItems;
-	for(ContainerIterator it = depot->begin(), end = depot->end(); it != end; ++it)
+	for(ContainerIterator it = depotChest->begin(), end = depotChest->end(); it != end; ++it)
 	{
 		Container* container = (*it)->getContainer();
 		if(container && !container->empty())

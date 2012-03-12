@@ -959,6 +959,7 @@ Depot* Player::getDepot(uint32_t depotId, bool autoCreateDepot)
 
 			Item* depotChest = Item::CreateItem(ITEM_DEPOT);
 			depot->__internalAddThing(depotChest);
+			depot->setChest(depotChest->getContainer());
 
 			addDepot(depot, depotId);
 			return depot;
@@ -975,9 +976,21 @@ Depot* Player::getDepot(uint32_t depotId, bool autoCreateDepot)
 
 bool Player::addDepot(Depot* depot, uint32_t depotId)
 {
-	Depot* depot2 = getDepot(depotId, false);
-	if(depot2)
+	if(getDepot(depotId, false))
 		return false;
+
+	if(!depot->getChest())
+	{
+		for(uint32_t n = 0, size = depot->capacity(); n < size; ++n)
+		{
+			Item* tmpItem = depot->getItem(n);
+			if(tmpItem && tmpItem->getID() == ITEM_DEPOT)
+			{
+				depot->setChest(tmpItem->getContainer());
+				break;
+			}
+		}
+	}
 
 	if(!depot->getInbox())
 	{
@@ -986,6 +999,8 @@ bool Player::addDepot(Depot* depot, uint32_t depotId)
 		Item* inbox = Item::CreateItem(ITEM_INBOX);
 		depot->__internalAddThing(inbox);
 		depot->setInbox(inbox->getContainer());
+
+		depot->moveChestToFront();
 	}
 
 	depots[depotId] = depot;

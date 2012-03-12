@@ -596,7 +596,24 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool prelo
 				if(Container* c = item->getContainer())
 				{
 					if(Depot* depot = c->getDepot())
+					{
+						for(uint32_t n = 0, size = depot->capacity(); n < size; ++n)
+						{
+							if(depot->getChest() && depot->getInbox())
+								break;
+
+							Item* tmpItem = depot->getItem(n);
+							if(tmpItem)
+							{
+								if(tmpItem->getID() == ITEM_DEPOT)
+									depot->setChest(tmpItem->getContainer());
+								else if(tmpItem->getID() == ITEM_INBOX)
+									depot->setInbox(tmpItem->getContainer());
+							}
+						}
+
 						player->addDepot(depot, pid);
+					}
 					else
 						std::cout << "Error loading depot " << pid << " for player " << player->getGUID() << std::endl;
 				}
@@ -609,14 +626,7 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool prelo
 				if(it2 != itemMap.end())
 				{
 					if(Container* container = it2->second.first->getContainer())
-					{
 						container->__internalAddThing(item);
-
-						Depot* depot;
-						if (item->getID() == ITEM_INBOX && (depot = container->getDepot())) {
-							depot->setInbox(item->getContainer());
-						}
-					}
 				}
 			}
 		}
@@ -624,20 +634,24 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool prelo
 
 	// Move all items from locker to inbox
 	DepotMap depots = player->getDepots();
-	for (DepotMap::const_iterator it = depots.begin(), end = depots.end(); it != end; ++it) {
+	for(DepotMap::const_iterator it = depots.begin(), end = depots.end(); it != end; ++it)
+	{
 		Depot* depot = it->second;
-		if (depot->size() > 3 && depot->getInbox()) {
+		if(depot->size() > 3 && depot->getInbox())
+		{
 			ItemList::const_reverse_iterator _it = depot->getReversedItems(), end = depot->getReversedEnd();
-			while (_it != end) {
+			while(_it != end)
+			{
 				Item* item = (*_it);
-				if (item->getID() != ITEM_INBOX && item->getID() != ITEM_MARKET && item->getID() != ITEM_DEPOT) {
+				if(item->getID() != ITEM_INBOX && item->getID() != ITEM_MARKET && item->getID() != ITEM_DEPOT)
+				{
 					g_game.internalMoveItem(item->getParent(), depot->getInbox(), INDEX_WHEREEVER, item, item->getItemCount(), NULL, FLAG_NOLIMIT);
 
 					_it = depot->getReversedItems();
 					end = depot->getReversedEnd();
-				} else {
-					++_it;
 				}
+				else
+					++_it;
 			}
 		}
 	}

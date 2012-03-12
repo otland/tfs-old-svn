@@ -1330,8 +1330,8 @@ void Npc::onCreatureSay(const Creature* creature, SpeakClasses type, const std::
 		return;
 
 	//only players for script events
-	if(Player* player = const_cast<Player*>(creature->getPlayer())){
-
+	if(Player* player = const_cast<Player*>(creature->getPlayer()))
+	{
 		if(m_npcEventHandler)
 			m_npcEventHandler->onCreatureSay(player, type, text);
 

@@ -66,7 +66,7 @@ MarketItemEx IOMarket::getOfferById(uint32_t id)
 {
 	MarketItemEx marketItem;
 	DBQuery query;
-	query << "SELECT `id`, `sale`, `amount`, `created`,  FROM `market_offers` WHERE `id` = " << id << ";";
+	query << "SELECT `id`, `sale`, `itemtype`, `amount`, `created`,  FROM `market_offers` WHERE `id` = " << id << ";";
 	Database* db = Database::getInstance();
 	DBResult* result;
 	if((result = db->storeQuery(query.str())))
@@ -77,6 +77,7 @@ MarketItemEx IOMarket::getOfferById(uint32_t id)
 		marketItem.timestamp = result->getDataInt("created");
 		marketItem.price = result->getDataInt("price");
 		marketItem.playerId = result->getDataInt("player_id");
+		marketItem.itemId = result->getDataInt("itemtype");
 		db->freeResult(result);
 	}
 	return marketItem;
