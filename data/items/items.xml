@@ -22735,7 +22735,7 @@
 	</item>
 	<item id="15209" article="a" name="dead deepling spellsinger">
 		<attribute key="weight" value="3000"/>
-		<attribute key="decayTo" value="15210"/>
+		<attribute key="decayTo" value="15211"/>
 		<attribute key="duration" value="600"/>
 		<attribute key="corpseType" value="blood"/>
 	</item>
@@ -22745,6 +22745,87 @@
 		<attribute key="duration" value="600"/>
 		<attribute key="corpseType" value="blood"/>
 	</item>
+	<item id="15211" article="a" name="dead deepling spellsinger">
+		<attribute key="weight" value="2000"/>
+		<attribute key="decayTo" value="15210"/>
+		<attribute key="duration" value="600"/>
+		<attribute key="corpseType" value="blood"/>
+	</item>
+	<item id="15213" article="a" name="moist pillar"/>
+	<item id="15220" article="a" name="dead jaul">
+		<attribute key="weight" value="3000"/>
+		<attribute key="decayTo" value="15221"/>
+		<attribute key="duration" value="600"/>
+		<attribute key="corpseType" value="blood"/>
+	</item>
+	<item id="15221" article="a" name="dead jaul">
+		<attribute key="weight" value="2000"/>
+		<attribute key="decayTo" value="15222"/>
+		<attribute key="duration" value="600"/>
+		<attribute key="corpseType" value="blood"/>
+	</item>
+	<item id="15222" article="a" name="dead jaul">
+		<attribute key="weight" value="4400"/>
+		<attribute key="containerSize" value="5"/>
+		<attribute key="decayTo" value="15223"/>
+		<attribute key="duration" value="600"/>
+		<attribute key="corpseType" value="blood"/>
+	</item>
+	<item id="15223" article="a" name="dead jaul">
+		<attribute key="weight" value="3000"/>
+		<attribute key="decayTo" value="0"/>
+		<attribute key="duration" value="600"/>
+		<attribute key="corpseType" value="blood"/>
+	</item>
+	<item id="15224" article="a" name="dead obujos">
+		<attribute key="weight" value="2000"/>
+		<attribute key="decayTo" value="15225"/>
+		<attribute key="duration" value="600"/>
+		<attribute key="corpseType" value="blood"/>
+	</item>
+	<item id="15225" article="a" name="dead obujos">
+		<attribute key="weight" value="2000"/>
+		<attribute key="decayTo" value="15227"/>
+		<attribute key="duration" value="600"/>
+		<attribute key="corpseType" value="blood"/>
+	</item>
+	<item id="15226" article="a" name="dead obujos">
+		<attribute key="weight" value="2000"/>
+		<attribute key="decayTo" value="0"/>
+		<attribute key="duration" value="600"/>
+		<attribute key="corpseType" value="blood"/>
+	</item>
+	<item id="15227" article="a" name="dead obujos">
+		<attribute key="weight" value="2000"/>
+		<attribute key="decayTo" value="15226"/>
+		<attribute key="duration" value="600"/>
+		<attribute key="corpseType" value="blood"/>
+	</item>
+	<item id="15228" article="a" name="dead obujos">
+		<attribute key="weight" value="2000"/>
+		<attribute key="decayTo" value="15229"/>
+		<attribute key="duration" value="600"/>
+		<attribute key="corpseType" value="blood"/>
+	</item>
+	<item id="15229" article="a" name="dead obujos">
+		<attribute key="weight" value="2000"/>
+		<attribute key="decayTo" value="15230"/>
+		<attribute key="duration" value="600"/>
+		<attribute key="corpseType" value="blood"/>
+	</item>
+	<item id="15230" article="a" name="dead obujos">
+		<attribute key="weight" value="2000"/>
+		<attribute key="decayTo" value="15231"/>
+		<attribute key="duration" value="600"/>
+		<attribute key="corpseType" value="blood"/>
+	</item>
+	<item id="15231" article="a" name="dead obujos">
+		<attribute key="weight" value="2000"/>
+		<attribute key="decayTo" value="0"/>
+		<attribute key="duration" value="600"/>
+		<attribute key="corpseType" value="blood"/>
+	</item>
+	<item fromid="15250" toid="15267" article="an" name="enormous statue" />
 	<item id="15280" article="a" name="dead calamary">
 		<attribute key="weight" value="6300"/>
 		<attribute key="containerSize" value="5"/>
