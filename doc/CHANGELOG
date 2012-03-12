@@ -79,5 +79,6 @@
 	onCreatureDisappear will now properly be called for NPC's.
 	Experience, healing and damage messages will now only show for spectators on the same floor.
 	Major optimizations to Account Manager code.
+	Removed a SQLite trigger that truncated some tables when players were updated (the server already does this, and it caused a bug).
 	A lot of miscellaneous cleanups, fixes and optimizations.
 ]

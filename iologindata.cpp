@@ -580,6 +580,7 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool prelo
 
 	query.str("");
 	query << "SELECT `pid`, `sid`, `itemtype`, `count`, `attributes` FROM `player_depotitems` WHERE `player_id` = " << player->getGUID() << " ORDER BY `sid` DESC;";
+	DepotMap depotsMap;
 	if((result = db->storeQuery(query.str())))
 	{
 		loadItems(itemMap, result);
@@ -596,24 +597,7 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool prelo
 				if(Container* c = item->getContainer())
 				{
 					if(Depot* depot = c->getDepot())
-					{
-						for(uint32_t n = 0, size = depot->capacity(); n < size; ++n)
-						{
-							if(depot->getChest() && depot->getInbox())
-								break;
-
-							Item* tmpItem = depot->getItem(n);
-							if(tmpItem)
-							{
-								if(tmpItem->getID() == ITEM_DEPOT)
-									depot->setChest(tmpItem->getContainer());
-								else if(tmpItem->getID() == ITEM_INBOX)
-									depot->setInbox(tmpItem->getContainer());
-							}
-						}
-
-						player->addDepot(depot, pid);
-					}
+						depotsMap[pid] = depot;
 					else
 						std::cout << "Error loading depot " << pid << " for player " << player->getGUID() << std::endl;
 				}
@@ -632,13 +616,14 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool prelo
 		}
 	}
 
-	// Move all items from locker to inbox
-	DepotMap depots = player->getDepots();
-	for(DepotMap::const_iterator it = depots.begin(), end = depots.end(); it != end; ++it)
+	// Add depots and move items from locker to inbox
+	for(DepotMap::const_iterator it = depotsMap.begin(), end = depotsMap.end(); it != end; ++it)
 	{
 		Depot* depot = it->second;
+		player->addDepot(depot, it->first);
 		if(depot->size() > 3 && depot->getInbox())
 		{
+			player->depotChange = true;
 			ItemList::const_reverse_iterator _it = depot->getReversedItems(), end = depot->getReversedEnd();
 			while(_it != end)
 			{
@@ -1183,6 +1168,7 @@ void IOLoginData::loadItems(ItemMap& itemMap, DBResult* result)
 		{
 			if(!item->unserializeAttr(propStream))
 				std::cout << "WARNING: Serialize error in IOLoginData::loadItems" << std::endl;
+
 			std::pair<Item*, int32_t> pair(item, pid);
 			itemMap[sid] = pair;
 		}

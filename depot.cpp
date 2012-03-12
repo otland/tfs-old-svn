@@ -29,6 +29,7 @@ Container(_type)
 	maxSize = 3;
 	maxDepotLimit = 1500;
 	inbox = NULL;
+	chest = NULL;
 }
 
 Depot::~Depot()
@@ -95,4 +96,13 @@ void Depot::postRemoveNotification(Thing* thing, const Cylinder* newParent, int3
 {
 	if(getParent() != NULL)
 		getParent()->postRemoveNotification(thing, newParent, index, isCompleteRemoval, LINK_PARENT);
+}
+
+void Depot::moveChestToFront()
+{
+	if(!chest)
+		return;
+
+	itemlist.remove(chest);
+	itemlist.push_front(chest);
 }

@@ -207,7 +207,7 @@ uint32_t DatabaseManager::updateDatabase()
 		case 1:
 		{
 			std::cout << "> Updating database to version 2" << std::endl;
-			if (db->getDatabaseEngine() == DATABASE_ENGINE_MYSQL)
+			if(db->getDatabaseEngine() == DATABASE_ENGINE_MYSQL)
 			{
 				db->executeQuery("CREATE TABLE `market_offers` (`id` INT UNSIGNED NOT NULL AUTO_INCREMENT, `player_id` INT NOT NULL, `sale` TINYINT(1) NOT NULL DEFAULT 0, `itemtype` INT UNSIGNED NOT NULL, `amount` SMALLINT UNSIGNED NOT NULL, `created` BIGINT UNSIGNED NOT NULL, `anonymous` TINYINT(1) NOT NULL DEFAULT 0, `price` INT UNSIGNED NOT NULL DEFAULT 0, PRIMARY KEY (`id`), KEY(`sale`, `itemtype`), KEY(`created`), FOREIGN KEY (`player_id`) REFERENCES `players`(`id`) ON DELETE CASCADE) ENGINE = InnoDB;");
 			}
@@ -220,6 +220,16 @@ uint32_t DatabaseManager::updateDatabase()
 
 			registerDatabaseConfig("db_version", 2);
 			return 2;
+		}
+		
+		case 2:
+		{
+			std::cout << "> Updating database to version 3" << std::endl;
+			if(db->getDatabaseEngine() == DATABASE_ENGINE_SQLITE)
+				db->executeQuery("DROP TRIGGER `onupdate_players_after`;");
+
+			registerDatabaseConfig("db_version", 3);
+			return 3;
 		}
 
 		/*

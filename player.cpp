@@ -979,17 +979,24 @@ bool Player::addDepot(Depot* depot, uint32_t depotId)
 	if(getDepot(depotId, false))
 		return false;
 
+	for(ItemList::const_iterator it = depot->getItems(), end = depot->getEnd(); it != end; ++it)
+	{
+		if(depot->getInbox() && depot->getChest())
+			break;
+
+		Item* item = *it;
+		if(item->getID() == ITEM_DEPOT)
+			depot->setChest(item->getContainer());
+		else if(item->getID() == ITEM_INBOX)
+			depot->setInbox(item->getContainer());
+	}
+
 	if(!depot->getChest())
 	{
-		for(uint32_t n = 0, size = depot->capacity(); n < size; ++n)
-		{
-			Item* tmpItem = depot->getItem(n);
-			if(tmpItem && tmpItem->getID() == ITEM_DEPOT)
-			{
-				depot->setChest(tmpItem->getContainer());
-				break;
-			}
-		}
+		Item* chest = Item::CreateItem(ITEM_DEPOT);
+		depot->__internalAddThing(chest);
+		depot->setChest(chest->getContainer());
+		depotChange = true;
 	}
 
 	if(!depot->getInbox())
@@ -1001,6 +1008,7 @@ bool Player::addDepot(Depot* depot, uint32_t depotId)
 		depot->setInbox(inbox->getContainer());
 
 		depot->moveChestToFront();
+		depotChange = true;
 	}
 
 	depots[depotId] = depot;
