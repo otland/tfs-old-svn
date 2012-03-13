@@ -41,8 +41,8 @@ end
 function getDepotItems(cid, item)
 	if item.actionid > 100 then
 		if isPlayer(cid) == TRUE then
-			depotItems = getPlayerDepotItems(cid, item.actionid - 100)
-			if depotItems < 2 then
+			depotItems = getPlayerDepotItems(cid, item.actionid - 100) - 3
+			if depotItems == 1 then
 				doPlayerSendTextMessage(cid, MESSAGE_EVENT_DEFAULT, "Your depot contains 1 item.")
 			else
 				doPlayerSendTextMessage(cid, MESSAGE_EVENT_DEFAULT, "Your depot contains " ..depotItems.. " items.")
