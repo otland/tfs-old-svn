@@ -221,16 +221,6 @@ uint32_t DatabaseManager::updateDatabase()
 			registerDatabaseConfig("db_version", 2);
 			return 2;
 		}
-		
-		case 2:
-		{
-			std::cout << "> Updating database to version 3" << std::endl;
-			if(db->getDatabaseEngine() == DATABASE_ENGINE_SQLITE)
-				db->executeQuery("DROP TRIGGER `onupdate_players_after`;");
-
-			registerDatabaseConfig("db_version", 3);
-			return 3;
-		}
 
 		/*
 		case ?-1:

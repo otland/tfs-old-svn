@@ -38,7 +38,7 @@
 
 			Now type this command, and remember to replace rpd with
 			your repository package downloader.
-				rpd install mysql-server-5.0
+				rpd install mysql-server
 
 		#3
 			You should now have a MySQL Server installed, it is time
