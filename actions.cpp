@@ -547,7 +547,10 @@ bool Action::decreaseItemId(Player* player, Item* item, const PositionEx& posFro
 bool Action::enterMarket(Player* player, Item* item, const PositionEx& posFrom, const PositionEx& posTo, bool extendedUse, uint32_t creatureId)
 {
 	if(!g_config.getBoolean(ConfigManager::MARKET_ENABLED))
+	{
+		player->sendTextMessage(MSG_INFO_DESCR, "The market is disabled.");
 		return false;
+	}
 
 	Depot* depot = NULL;
 	if(Thing* thing = item->getParent())
