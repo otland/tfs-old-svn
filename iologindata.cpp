@@ -272,8 +272,8 @@ AccountType_t IOLoginData::getAccountType(std::string name)
 		return ACCOUNT_TYPE_NORMAL;
 
 	query.str("");
-	db->freeResult(result);
 	query << "SELECT `type` FROM `accounts` WHERE `id` = " << result->getDataInt("account_id") << " LIMIT 1;";
+	db->freeResult(result);
 	if(!(result = db->storeQuery(query.str())))
 		return ACCOUNT_TYPE_NORMAL;
 
