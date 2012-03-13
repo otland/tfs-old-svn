@@ -1163,8 +1163,6 @@ bool Monster::getDanceStep(const Position& creaturePos, Direction& dir,
 	return false;
 }
 
-
-
 bool Monster::isInSpawnRange(const Position& toPos)
 {
 	if(masterRadius == -1)

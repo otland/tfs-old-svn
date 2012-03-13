@@ -463,7 +463,7 @@ bool ProtocolGame::parseFirstPacket(NetworkMessage& msg)
 	if (!gotPassword || !passwordTest(password, acc_pass))
 	{
 		g_bans.addLoginAttempt(getIP(), false);
-		disconnectClient(0x14, "Account number or password is not correct.");
+		disconnectClient(0x14, "Account name or password is not correct.");
 		getConnection()->closeConnection();
 		return false;
 	}

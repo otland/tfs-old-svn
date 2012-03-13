@@ -1022,7 +1022,7 @@ bool Items::parseItemNode(xmlNodePtr itemNode, uint32_t id)
 				if(readXMLInteger(itemAttributesNode, "value", intValue))
 					it.abilities.statsPercent[STAT_SOULPOINTS] = intValue;
 			}
-			else if(tmpStrValue == "magicpoints")
+			else if(tmpStrValue == "magicpoints" || tmpStrValue == "magiclevelpoints")
 			{
 				if(readXMLInteger(itemAttributesNode, "value", intValue))
 					it.abilities.stats[STAT_MAGICPOINTS] = intValue;

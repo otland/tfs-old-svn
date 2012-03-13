@@ -4547,23 +4547,23 @@ void Player::manageAccount(const std::string &text)
 			if(!IOLoginData::getInstance()->accountNameExists(accountManager->newAccountName))
 			{
 				IOLoginData::getInstance()->createAccount(accountManager->newAccountName, accountManager->accountManagerInput);
-				msg << "Your account has been created, you can login with account number: '" << accountManager->newAccountName << "' and password: '" << accountManager->accountManagerInput << "'.";
+				msg << "Your account has been created, you can login with account name: '" << accountManager->newAccountName << "' and password: '" << accountManager->accountManagerInput << "'.";
 			}
 			else
 			{
-				msg << "An account with that number combination already exists, please try another account number.";
+				msg << "An account with that number combination already exists, please try another account name.";
 				accountManager->talkState--;
 			}
 		}
 		else if(accountManager->talkState == 4 && checkText(text, "no"))
 		{
 			accountManager->talkState--;
-			msg << "What else would you like as your account number?";
+			msg << "What else would you like as your account name?";
 		}
 		else if(accountManager->talkState == 0 && checkText(text, "recover"))
 		{
 			accountManager->talkState = 5;
-			msg << "What was your account number?";
+			msg << "What was your account name?";
 		}
 		else if(accountManager->talkState == 5)
 		{
