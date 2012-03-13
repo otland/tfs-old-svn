@@ -4366,7 +4366,6 @@ void Player::manageAccount(const std::string &text)
 			if(g_config.getBoolean(ConfigManager::START_CHOOSEVOC))
 			{
 				accountManager->talkState++;
-				bool firstPart = true;
 				std::vector<std::string> vocations;
 				for(VocationsMap::iterator it = g_vocations.getFirstVocation(), end = g_vocations.getLastVocation(); it != end; ++it)
 				{
