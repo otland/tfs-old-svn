@@ -1099,7 +1099,7 @@ bool Monsters::loadMonster(const std::string& file, const std::string& monster_n
 								mType->conditionImmunities |= CONDITION_OUTFIT;
 							else if(tmpStrValue == "drunk")
 								mType->conditionImmunities |= CONDITION_DRUNK;
-							else if(tmpStrValue == "invisible")
+							else if(tmpStrValue == "invisible" || tmpStrValue == "invisibility")
 								mType->conditionImmunities |= CONDITION_INVISIBLE;
 							else
 								SHOW_XML_WARNING("Unknown immunity name " << strValue);
@@ -1193,13 +1193,14 @@ bool Monsters::loadMonster(const std::string& file, const std::string& monster_n
 							if(intValue != 0)
 								mType->conditionImmunities |= CONDITION_DRUNK;
 						}
-						else if(readXMLInteger(tmpNode, "invisible", intValue))
+						else if(readXMLInteger(tmpNode, "invisible", intValue) ||
+							readXMLInteger(tmpNode, "invisibility", intValue))
 						{
 							if(intValue != 0)
 								mType->conditionImmunities |= CONDITION_INVISIBLE;
 						}
 						else
-							SHOW_XML_WARNING("Unknown immunity " << strValue);
+							SHOW_XML_WARNING("Unknown immunity");
 					}
 					tmpNode = tmpNode->next;
 				}
