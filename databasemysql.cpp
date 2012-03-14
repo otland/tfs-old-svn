@@ -83,7 +83,7 @@ bool DatabaseMySQL::connect(bool _reconnect)
 	if(!mysql_init(m_handle))
 	{
 		std::clog << std::endl << "Failed to initialize MySQL connection handler." << std::endl;
-		return;
+		return false;
 	}
 
 	int32_t timeout = g_config.getNumber(ConfigManager::MYSQL_READ_TIMEOUT);
