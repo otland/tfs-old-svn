@@ -565,7 +565,6 @@ bool Action::enterMarket(Player* player, Item* item, const PositionEx& posFrom, 
 	if(depot == NULL)
 		return false;
 
-	// FIXME: for some reason depot->getDepotId() always returns 0 here...
 	player->sendMarketEnter(depot->getDepotId());
 	return true;
 }

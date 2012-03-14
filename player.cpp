@@ -1017,6 +1017,7 @@ bool Player::addDepot(Depot* depot, uint32_t depotId)
 	}
 
 	depots[depotId] = depot;
+	depot->setDepotId(depotId);
 	depot->setMaxDepotLimit(maxDepotLimit);
 	return true;
 }
