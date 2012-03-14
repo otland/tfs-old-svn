@@ -141,4 +141,4 @@ class Thing
 		int32_t useCount;
 };
 
-#endif //__THING_H__
+#endif
