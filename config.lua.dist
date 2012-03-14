@@ -140,6 +140,7 @@
 	sqlKeepAlive = 0
 	mysqlReadTimeout = 10
 	mysqlWriteTimeout = 10
+	mysqlReconnectionAttempts = 3
 	encryptionType = "sha1"
 
 	-- Deathlist

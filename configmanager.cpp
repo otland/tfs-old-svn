@@ -348,6 +348,7 @@ bool ConfigManager::load()
 	m_confBool[HOUSE_SKIP_INIT_RENT]		= getGlobalBool("houseSkipInitialRent", true);
 	m_confBool[HOUSE_PROTECTION]			= getGlobalBool("houseProtection", true);
 	m_confBool[FAIRFIGHT_REDUCTION]			= getGlobalBool("useFairfightReduction", true);
+	m_confNumber[MYSQL_RECONNECTION_ATTEMPTS] = getGlobalNumber("mysqlReconnectionAttempts", 3);
 
 	m_loaded = true;
 	return true;

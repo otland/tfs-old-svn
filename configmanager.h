@@ -75,6 +75,7 @@ class ConfigManager
 		enum number_config_t
 		{
 			LOGIN_TRIES = 0,
+			MYSQL_RECONNECTION_ATTEMPTS,
 			RETRY_TIMEOUT,
 			LOGIN_TIMEOUT,
 			LOGIN_PORT,
