@@ -36,8 +36,6 @@
 extern ConfigManager g_config;
 extern Game g_game;
 
-extern std::list<std::pair<uint32_t, uint32_t> > serverIps;
-
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
 uint32_t ProtocolLogin::protocolLoginCount = 0;
 
@@ -218,20 +216,11 @@ void ProtocolLogin::onRecvFirstMessage(NetworkMessage& msg)
 	{
 		TRACK_MESSAGE(output);
 		output->put<char>(0x14);
+		uint32_t serverIp = getConnection()->getEndpoint();
 
 		char motd[1300];
 		sprintf(motd, "%d\n%s", g_game.getMotdId(), g_config.getString(ConfigManager::MOTD).c_str());
 		output->putString(motd);
-
-		uint32_t serverIp = serverIps.front().first;
-		for(std::list<std::pair<uint32_t, uint32_t> >::iterator it = serverIps.begin(); it != serverIps.end(); ++it)
-		{
-			if((it->first & it->second) != (clientIp & it->second))
-				continue;
-
-			serverIp = it->first;
-			break;
-		}
 
 		//Add char list
 		output->put<char>(0x64);

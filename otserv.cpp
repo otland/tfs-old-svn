@@ -102,7 +102,6 @@ Npcs g_npcs;
 boost::mutex g_loaderLock;
 boost::condition_variable g_loaderSignal;
 boost::unique_lock<boost::mutex> g_loaderUniqueLock(g_loaderLock);
-std::list<std::pair<uint32_t, uint32_t> > serverIps;
 
 bool argumentsHandler(StringVec args)
 {
@@ -753,32 +752,30 @@ void otserv(StringVec, ServiceManager* services)
 	g_game.setGameState(GAMESTATE_INIT);
 	IPAddressList ipList;
 
-	std::string ip = g_config.getString(ConfigManager::IP);
-	if(asLowerCaseString(ip) == "auto")
+	StringVec ip = explodeString(g_config.getString(ConfigManager::IP), ",");
+	if(asLowerCaseString(ip[0]) == "auto")
 	{
 		// TODO: automatic shit
 	}
 
 	IPAddress m_ip;
-	if(ip.size())
+	std::clog << "> Global IP address: ";
+	for(StringVec::iterator it = ip.begin(); it != ip.end(); ++it)
 	{
-		std::clog << "> Global IP address: ";
-		uint32_t resolvedIp = inet_addr(ip.c_str());
+		uint32_t resolvedIp = inet_addr(it->c_str());
 		if(resolvedIp == INADDR_NONE)
 		{
-			struct hostent* host = gethostbyname(ip.c_str());
+			struct hostent* host = gethostbyname(it->c_str());
 			if(!host)
 			{
 				std::clog << "..." << std::endl;
-				startupErrorMessage("Cannot resolve " + ip + "!");
+				startupErrorMessage("Cannot resolve " + (*it) + "!");
 			}
 
 			resolvedIp = *(uint32_t*)host->h_addr;
 		}
 
-		serverIps.push_front(std::make_pair(resolvedIp, 0));
 		m_ip = boost::asio::ip::address_v4(swap_uint32(resolvedIp));
-
 		ipList.push_back(m_ip);
 		std::clog << m_ip.to_string() << std::endl;
 	}
@@ -799,8 +796,6 @@ void otserv(StringVec, ServiceManager* services)
 						continue;
 
 					ipList.push_back(boost::asio::ip::address_v4(resolved));
-					serverIps.push_front(std::make_pair(*(uint32_t*)(*addr), 0x0000FFFF));
-
 					s << (int32_t)(addr[0][0]) << "." << (int32_t)(addr[0][1]) << "."
 						<< (int32_t)(addr[0][2]) << "." << (int32_t)(addr[0][3]) << "\t";
 				}
@@ -810,7 +805,6 @@ void otserv(StringVec, ServiceManager* services)
 			}
 		}
 
-		serverIps.push_front(std::make_pair(LOCALHOST, 0xFFFFFFFF));
 		if(m_ip.to_v4().to_ulong() != LOCALHOST)
 			ipList.push_back(boost::asio::ip::address_v4(LOCALHOST));
 	}

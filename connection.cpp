@@ -534,6 +534,18 @@ uint32_t Connection::getIP() const
 	return 0;
 }
 
+uint32_t Connection::getEndpoint() const
+{
+	//ip is expressed in network byte order
+	boost::system::error_code error;
+	const boost::asio::ip::tcp::endpoint ip = m_socket->local_endpoint(error);
+	if(!error)
+		return htonl(ip.address().to_v4().to_ulong());
+
+	PRINT_ASIO_ERROR("Getting local ip");
+	return 0;
+}
+
 void Connection::onWrite(OutputMessage_ptr msg, const boost::system::error_code& error)
 {
 	#ifdef __DEBUG_NET_DETAIL__
