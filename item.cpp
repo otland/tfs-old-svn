@@ -1141,16 +1141,15 @@ int32_t Item::getWorth() const
 	{
 		case ITEM_COINS_GOLD:
 			return getItemCount();
-			break;
+
 		case ITEM_COINS_PLATINUM:
 			return getItemCount() * 100;
-			break;
+
 		case ITEM_COINS_CRYSTAL:
 			return getItemCount() * 10000;
-			break;
+
 		default:
 			return 0;
-			break;
 	}
 }
 
@@ -1288,10 +1287,8 @@ bool ItemAttributes::validateIntAttrType(itemAttrTypes type)
 		case ATTR_ITEM_FLUIDTYPE:
 		case ATTR_ITEM_DOORID:
 			return true;
-			break;
 
 		default:
-			return false;
 			break;
 	}
 	return false;
@@ -1305,10 +1302,8 @@ bool ItemAttributes::validateStrAttrType(itemAttrTypes type)
 		case ATTR_ITEM_TEXT:
 		case ATTR_ITEM_WRITTENBY:
 			return true;
-			break;
 
 		default:
-			return false;
 			break;
 	}
 	return false;

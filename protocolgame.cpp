@@ -1561,46 +1561,13 @@ void ProtocolGame::parseRuleViolationReport(NetworkMessage& msg)
 
 void ProtocolGame::parseMarketLeave()
 {
-	player->setMarketDepotId(-1);
+	addGameTask(&Game::playerLeaveMarket, player->getID());
 }
 
 void ProtocolGame::parseMarketBrowse(NetworkMessage& msg)
 {
 	uint16_t spriteId = msg.GetU16();
-	const ItemType& itemType = Item::items.getItemIdByClientId(spriteId);
-	if(itemType.id == 0)
-		return;
-
-	NetworkMessage_ptr _msg = getOutputBuffer();
-	if(_msg)
-	{
-		TRACK_MESSAGE(_msg);
-		_msg->AddByte(0xF9);
-
-		_msg->AddU16(spriteId);
-
-		const MarketItemList& buyOffers = IOMarket::getInstance()->getActiveOffers(MARKETACTION_BUY, itemType.id);
-		_msg->AddU32(buyOffers.size());
-		for(MarketItemList::const_iterator it = buyOffers.begin(), end = buyOffers.end(); it != end; ++it)
-		{
-			_msg->AddU32(it->timestamp);
-			_msg->AddU16(it->counter);
-			_msg->AddU16(it->amount);
-			_msg->AddU32(it->price);
-			_msg->AddString(it->playerName);
-		}
-
-		const MarketItemList& sellOffers = IOMarket::getInstance()->getActiveOffers(MARKETACTION_SELL, itemType.id);
-		_msg->AddU32(sellOffers.size());
-		for(MarketItemList::const_iterator it = sellOffers.begin(), end = sellOffers.end(); it != end; ++it)
-		{
-			_msg->AddU32(it->timestamp);
-			_msg->AddU16(it->counter);
-			_msg->AddU16(it->amount);
-			_msg->AddU32(it->price);
-			_msg->AddString(it->playerName);
-		}
-	}
+	addGameTask(&Game::playerBrowseMarket, player->getID(), spriteId);
 }
 
 void ProtocolGame::parseMarketCreateOffer(NetworkMessage& msg)
@@ -2072,28 +2039,23 @@ void ProtocolGame::sendMarketEnter(uint32_t depotId)
 		return;
 	}
 
-	Container* depotChest = depot->getChest();
-	if(!depotChest)
-	{
-		msg->AddU16(0x00);
-		return;
-	}
-
 	player->setMarketDepotId(depotId);
 
 	std::map<uint16_t, uint32_t> depotItems;
+	Container* depotChest = depot->getChest();
 	for(ContainerIterator it = depotChest->begin(), end = depotChest->end(); it != end; ++it)
 	{
-		Container* container = (*it)->getContainer();
-		if(container && !container->empty())
+		const ItemType& itemType = Item::items[(*it)->getID()];
+		if(!itemType.ware)
 			continue;
 
-		const ItemType& itemType = Item::items[(*it)->getID()];
-		if((*it)->hasCharges())
-		{
-			if(itemType.charges != (*it)->getCharges())
-				continue;
-		}
+		if((*it)->getCharges() != itemType.charges)
+			continue;
+
+		if((*it)->getDuration() != itemType.decayTime)
+			continue;
+
+		// TODO: containers
 
 		depotItems[(*it)->getID()] += Item::countByType(*it, -1);
 	}
@@ -2105,6 +2067,37 @@ void ProtocolGame::sendMarketEnter(uint32_t depotId)
 	{
 		msg->AddItemId(it->first);
 		msg->AddU16(std::min((uint32_t)65535, it->second));
+	}
+}
+
+void ProtocolGame::sendMarketBrowse(uint16_t itemId, const MarketItemList& buyOffers, const MarketItemList& sellOffers)
+{
+	NetworkMessage_ptr msg = getOutputBuffer();
+	if(!msg)
+		return;
+
+	TRACK_MESSAGE(msg);
+	msg->AddByte(0xF9);
+	msg->AddItemId(itemId);
+
+	msg->AddU32(buyOffers.size());
+	for(MarketItemList::const_iterator it = buyOffers.begin(), end = buyOffers.end(); it != end; ++it)
+	{
+		msg->AddU32(it->timestamp);
+		msg->AddU16(it->counter);
+		msg->AddU16(it->amount);
+		msg->AddU32(it->price);
+		msg->AddString(it->playerName);
+	}
+
+	msg->AddU32(sellOffers.size());
+	for(MarketItemList::const_iterator it = sellOffers.begin(), end = sellOffers.end(); it != end; ++it)
+	{
+		msg->AddU32(it->timestamp);
+		msg->AddU16(it->counter);
+		msg->AddU16(it->amount);
+		msg->AddU32(it->price);
+		msg->AddString(it->playerName);
 	}
 }
 

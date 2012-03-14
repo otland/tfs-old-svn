@@ -39,7 +39,7 @@ Depot::~Depot()
 
 Attr_ReadValue Depot::readAttr(AttrTypes_t attr, PropStream& propStream)
 {
-	if(ATTR_DEPOT_ID == attr)
+	if(attr == ATTR_DEPOT_ID)
 	{
 		uint16_t _depotId;
 		if(!propStream.GET_USHORT(_depotId))

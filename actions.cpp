@@ -565,6 +565,7 @@ bool Action::enterMarket(Player* player, Item* item, const PositionEx& posFrom, 
 	if(depot == NULL)
 		return false;
 
+	// FIXME: for some reason depot->getDepotId() always returns 0 here...
 	player->sendMarketEnter(depot->getDepotId());
 	return true;
 }
@@ -576,12 +577,10 @@ std::string Action::getScriptEventName()
 
 ReturnValue Action::canExecuteAction(const Player* player, const Position& toPos)
 {
-	ReturnValue ret = RET_NOERROR;
 	if(!getAllowFarUse())
-		ret = g_actions->canUse(player, toPos);
-	else
-		ret = g_actions->canUseFar(player, toPos, getCheckLineOfSight());
-	return ret;
+		return g_actions->canUse(player, toPos);
+
+	return g_actions->canUseFar(player, toPos, getCheckLineOfSight());
 }
 
 bool Action::executeUse(Player* player, Item* item, const PositionEx& fromPos, const PositionEx& toPos, bool extendedUse, uint32_t creatureId)

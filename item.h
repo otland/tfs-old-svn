@@ -197,7 +197,6 @@ class ItemAttributes
 		bool hasAttribute(itemAttrTypes type) const;
 		void removeAttribute(itemAttrTypes type);
 
-	protected:
 		static std::string emptyString;
 
 		class Attribute

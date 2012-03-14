@@ -66,7 +66,7 @@ MarketItemEx IOMarket::getOfferById(uint32_t id)
 {
 	MarketItemEx marketItem;
 	DBQuery query;
-	query << "SELECT `id`, `sale`, `itemtype`, `amount`, `created`,  FROM `market_offers` WHERE `id` = " << id << ";";
+	query << "SELECT `id`, `sale`, `itemtype`, `amount`, `created`, `price`, `player_id` FROM `market_offers` WHERE `id` = " << id << ";";
 	Database* db = Database::getInstance();
 	DBResult* result;
 	if((result = db->storeQuery(query.str())))
@@ -88,7 +88,7 @@ uint32_t IOMarket::getOfferIdByCounter(uint32_t timestamp, uint16_t counter)
 	const int32_t created = timestamp - g_config.getNumber(ConfigManager::MARKET_OFFER_DURATION);
 
 	DBQuery query;
-	query << "SELECT `id` FROM `market_offers` WHERE `created` = " << created << " AND (`id` & 0xFFFF) = " << counter << " LIMIT 1;";
+	query << "SELECT `id` FROM `market_offers` WHERE `created` = " << created << " AND (`id` & 65535) = " << counter << " LIMIT 1;";
 	Database* db = Database::getInstance();
 	DBResult* result;
 	if((result = db->storeQuery(query.str())))

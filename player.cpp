@@ -981,14 +981,19 @@ bool Player::addDepot(Depot* depot, uint32_t depotId)
 
 	for(ItemList::const_iterator it = depot->getItems(), end = depot->getEnd(); it != end; ++it)
 	{
-		if(depot->getInbox() && depot->getChest())
-			break;
-
 		Item* item = *it;
 		if(item->getID() == ITEM_DEPOT)
+		{
 			depot->setChest(item->getContainer());
+			if(depot->getInbox())
+				break;
+		}
 		else if(item->getID() == ITEM_INBOX)
+		{
 			depot->setInbox(item->getContainer());
+			if(depot->getChest())
+				break;
+		}
 	}
 
 	if(!depot->getChest())

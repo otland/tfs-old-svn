@@ -130,6 +130,8 @@ ItemType::ItemType()
 	transformToOnUse[PLAYERSEX_MALE] = 0;
 	transformToOnUse[PLAYERSEX_FEMALE] = 0;
 	transformToFree = 0;
+
+	ware = false;
 }
 
 ItemType::~ItemType()
@@ -353,6 +355,14 @@ int32_t Items::loadFromOtb(std::string file)
 						return ERROR_INVALID_FORMAT;
 
 					iType->alwaysOnTopOrder = v;
+					break;
+				}
+				case ITEM_ATTR_WAREID:
+				{
+					if(!props.SKIP_N(datalen))
+						return ERROR_INVALID_FORMAT;
+
+					iType->ware = true;
 					break;
 				}
 				default:
