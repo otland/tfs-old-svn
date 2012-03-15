@@ -4568,8 +4568,8 @@ bool Game::reloadHighscores()
 
 void Game::timedHighscoreUpdate()
 {
-	uint32_t highscoreUpdateTime = g_config.getNumber(ConfigManager::HIGHSCORES_UPDATETIME) * 60 * 1000;
-	if(highscoreUpdateTime == 0)
+	int32_t highscoreUpdateTime = g_config.getNumber(ConfigManager::HIGHSCORES_UPDATETIME) * 60 * 1000;
+	if(highscoreUpdateTime <= 0)
 		return;
 
 	reloadHighscores();
