@@ -640,6 +640,8 @@ std::string LuaInterface::getError(ErrorCode_t code)
 			return "Thing not found";
 		case LUA_ERROR_TILE_NOT_FOUND:
 			return "Tile not found";
+		case LUA_ERROR_TELEPORT_NOT_FOUND:
+			return "Teleport not found";
 		case LUA_ERROR_HOUSE_NOT_FOUND:
 			return "House not found";
 		case LUA_ERROR_COMBAT_NOT_FOUND:
@@ -1718,6 +1720,9 @@ void LuaInterface::registerFunctions()
 	//doTeleportThing(cid, newpos[, pushmove = true[, fullTeleport = true]])
 	lua_register(m_luaState, "doTeleportThing", LuaInterface::luaDoTeleportThing);
 
+    //doTeleportChangeDestination(old, new)
+    lua_register(m_luaState, "doTeleportChangeDestination", LuaInterface::luaDoTeleportChangeDestination);
+    
 	//doTransformItem(uid, newId[, count/subType])
 	lua_register(m_luaState, "doTransformItem", LuaInterface::luaDoTransformItem);
 
@@ -3526,6 +3531,39 @@ int32_t LuaInterface::luaDoTeleportThing(lua_State* L)
 		lua_pushboolean(L, false);
 	}
 
+	return 1;
+}
+
+int32_t LuaInterface::luaDoTeleportChangeDestination(lua_State *L)
+{
+	//doTeleportChangeDestination(old, new)
+	Position teleportPosition, destPosition;
+	uint32_t teleportStackPos, destStackPos;
+	
+	popPosition(L, destPosition, destStackPos);
+	popPosition(L, teleportPosition, teleportStackPos);
+
+	Tile* tile = g_game.getMap()->getTile(teleportPosition);
+	Teleport* teleport = tile->getTeleportItem();
+	if(tile)
+	{
+		if(teleport)
+		{
+			teleport->setDestination(destPosition);
+			lua_pushboolean(L, true);
+		}
+		else
+		{
+			errorEx(getError(LUA_ERROR_TELEPORT_NOT_FOUND));
+			lua_pushboolean(L, false);
+		}
+	}
+	else
+	{
+	 	errorEx(getError(LUA_ERROR_TILE_NOT_FOUND));
+		lua_pushboolean(L, false);
+	}
+	
 	return 1;
 }
 
