@@ -4438,9 +4438,9 @@ void Game::checkLight()
 	g_scheduler.addEvent(createSchedulerTask(EVENT_LIGHTINTERVAL,
 		boost::bind(&Game::checkLight, this)));
 
-	lightHour = lightHour + lightHourDelta;
+	lightHour += lightHourDelta;
 	if(lightHour > 1440)
-		lightHour = lightHour - 1440;
+		lightHour -= 1440;
 
 	if(std::abs(lightHour - SUNRISE) < 2 * lightHourDelta)
 		lightState = LIGHT_STATE_SUNRISE;
@@ -4603,12 +4603,14 @@ Highscore Game::getHighscore(uint16_t skill)
 
 	DBQuery query;
 	uint32_t highscoresTop = g_config.getNumber(ConfigManager::HIGHSCORES_TOP);
-	if(skill >= SKILL__MAGLEVEL)
+	if(skill > SKILL_LAST)
 	{
 		if(skill == SKILL__MAGLEVEL)
 			query << "SELECT `name`, `maglevel` FROM `players` ORDER BY `maglevel` DESC, `manaspent` DESC LIMIT " << highscoresTop;
-		else
+		else if(skill == SKILL__LEVEL)
 			query << "SELECT `name`, `level` FROM `players` ORDER BY `level` DESC, `experience` DESC LIMIT " << highscoresTop;
+		else
+			return hs;
 
 		DBResult* result;
 		if((result = db->storeQuery(query.str())))
