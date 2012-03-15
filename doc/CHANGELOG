@@ -36,7 +36,10 @@
 	M		slime.xml
 	M		slime2.xml
 	M	npc/lib/npcsystem/npchandler.lua
-	M	talkactions/scripts/deathlist.lua
+		talkactions/scripts/
+	M		buyprem.lua
+	M		changesex.lua
+	M		deathlist.lua
 		XML/
 	M		outfits.xml
 	M		mounts.xml
