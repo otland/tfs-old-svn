@@ -130,6 +130,8 @@ ItemType::ItemType()
 	transformToOnUse[PLAYERSEX_MALE] = 0;
 	transformToOnUse[PLAYERSEX_FEMALE] = 0;
 	transformToFree = 0;
+	
+	levelDoor = 0;
 
 	ware = false;
 }
@@ -1287,6 +1289,11 @@ bool Items::parseItemNode(xmlNodePtr itemNode, uint32_t id)
 			{
 				if(readXMLString(itemAttributesNode, "value", strValue))
 					it.bedPartnerDir = getDirection(strValue);
+			}
+			else if(tmpStrValue == "leveldoor")
+			{
+				if(readXMLString(itemAttributesNode, "value", strValue))
+					it.levelDoor = intValue;
 			}
 			else if(tmpStrValue == "maletransformto" || tmpStrValue == "malesleeper")
 			{

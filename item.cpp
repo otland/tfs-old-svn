@@ -1,8 +1,6 @@
 //////////////////////////////////////////////////////////////////////
 // OpenTibia - an opensource roleplaying game
 //////////////////////////////////////////////////////////////////////
-// Represents an item
-//////////////////////////////////////////////////////////////////////
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
 // as published by the Free Software Foundation; either version 2
@@ -945,8 +943,8 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance,
 		else
 			s << "Nothing is written on it";
 	}
-	else if(it.isLevelDoor() && item && item->getActionId() >= 1000)
-		s << " for level " << item->getActionId() - 1000;
+	else if(it.levelDoor && item && item->getActionId() >= (int32_t)it.levelDoor)
+		s << " for level " << item->getActionId() - it.levelDoor;
 
 	if(it.showCharges)
 		s << " that has " << subType << " charge" << (subType != 1 ? "s" : "") << " left";

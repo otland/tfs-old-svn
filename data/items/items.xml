@@ -268,6 +268,7 @@
 	</item>
 	<item id="1227" name="gate of expertise" article="a">
 		<attribute key="type" value="door" />
+		<attribute key="levelDoor" value="1000"/>
 		<attribute key="blockprojectile" value="1" />
 	</item>
 	<item id="1228" name="gate of expertise" article="a">
@@ -275,6 +276,7 @@
 	</item>
 	<item id="1229" name="gate of expertise" article="a">
 		<attribute key="type" value="door" />
+		<attribute key="levelDoor" value="1000"/>
 		<attribute key="blockprojectile" value="1" />
 	</item>
 	<item id="1230" name="gate of expertise" article="a">
@@ -334,6 +336,7 @@
 	</item>
 	<item id="1245" name="gate of expertise" article="a">
 		<attribute key="type" value="door" />
+		<attribute key="levelDoor" value="1000"/>
 		<attribute key="blockprojectile" value="1" />
 	</item>
 	<item id="1246" name="gate of expertise" article="a">
@@ -341,6 +344,7 @@
 	</item>
 	<item id="1247" name="gate of expertise" article="a">
 		<attribute key="type" value="door" />
+		<attribute key="levelDoor" value="1000"/>
 		<attribute key="blockprojectile" value="1" />
 	</item>
 	<item id="1248" name="gate of expertise" article="a">
@@ -386,6 +390,7 @@
 	</item>
 	<item id="1259" name="gate of expertise" article="a">
 		<attribute key="type" value="door" />
+		<attribute key="levelDoor" value="1000"/>
 		<attribute key="blockprojectile" value="1" />
 	</item>
 	<item id="1260" name="gate of expertise" article="a">
@@ -393,6 +398,7 @@
 	</item>
 	<item id="1261" name="gate of expertise" article="a">
 		<attribute key="type" value="door" />
+		<attribute key="levelDoor" value="1000"/>
 		<attribute key="blockprojectile" value="1" />
 	</item>
 	<item id="1262" name="gate of expertise" article="a">
@@ -6717,6 +6723,7 @@
 	</item>
 	<item id="3540" name="gate of expertise" article="a">
 		<attribute key="type" value="door" />
+		<attribute key="levelDoor" value="1000"/>
 		<attribute key="blockprojectile" value="1" />
 	</item>
 	<item id="3541" name="gate of expertise" article="a">
@@ -6750,6 +6757,7 @@
 	</item>
 	<item id="3549" name="gate of expertise" article="a">
 		<attribute key="type" value="door" />
+		<attribute key="levelDoor" value="1000"/>
 		<attribute key="blockprojectile" value="1" />
 	</item>
 	<item id="3550" name="gate of expertise" article="a">
@@ -8223,6 +8231,7 @@
 	</item>
 	<item id="5103" name="gate of expertise" article="a">
 		<attribute key="type" value="door" />
+		<attribute key="levelDoor" value="1000"/>
 		<attribute key="blockprojectile" value="1" />
 	</item>
 	<item id="5104" name="gate of expertise" article="a">
@@ -8256,6 +8265,7 @@
 	</item>
 	<item id="5112" name="gate of expertise" article="a">
 		<attribute key="type" value="door" />
+		<attribute key="levelDoor" value="1000"/>
 		<attribute key="blockprojectile" value="1" />
 	</item>
 	<item id="5113" name="gate of expertise" article="a">
@@ -8289,6 +8299,7 @@
 	</item>
 	<item id="5121" name="gate of expertise" article="a">
 		<attribute key="type" value="door" />
+		<attribute key="levelDoor" value="1000"/>
 		<attribute key="blockprojectile" value="1" />
 	</item>
 	<item id="5122" name="gate of expertise" article="a">
@@ -8322,6 +8333,7 @@
 	</item>
 	<item id="5130" name="gate of expertise" article="a">
 		<attribute key="type" value="door" />
+		<attribute key="levelDoor" value="1000"/>
 		<attribute key="blockprojectile" value="1" />
 	</item>
 	<item id="5131" name="gate of expertise" article="a">
@@ -8453,6 +8465,7 @@
 	</item>
 	<item id="5292" name="gate of expertise" article="a">
 		<attribute key="type" value="door" />
+		<attribute key="levelDoor" value="1000"/>
 		<attribute key="blockprojectile" value="1" />
 	</item>
 	<item id="5293" name="gate of expertise" article="a">
@@ -8460,6 +8473,7 @@
 	</item>
 	<item id="5294" name="gate of expertise" article="a">
 		<attribute key="type" value="door" />
+		<attribute key="levelDoor" value="1000"/>
 		<attribute key="blockprojectile" value="1" />
 	</item>
 	<item id="5295" name="gate of expertise" article="a">
@@ -10473,6 +10487,7 @@
 	</item>
 	<item id="6206" name="gate of expertise" article="a">
 		<attribute key="type" value="door" />
+		<attribute key="levelDoor" value="1000"/>
 		<attribute key="blockprojectile" value="1" />
 	</item>
 	<item id="6207" name="gate of expertise" article="a">
@@ -10480,6 +10495,7 @@
 	</item>
 	<item id="6208" name="gate of expertise" article="a">
 		<attribute key="type" value="door" />
+		<attribute key="levelDoor" value="1000"/>
 		<attribute key="blockprojectile" value="1" />
 	</item>
 	<item id="6209" name="gate of expertise" article="a">
@@ -10546,6 +10562,7 @@
 	</item>
 	<item id="6263" name="gate of expertise" article="a">
 		<attribute key="type" value="door" />
+		<attribute key="levelDoor" value="1000"/>
 		<attribute key="blockprojectile" value="1" />
 	</item>
 	<item id="6264" name="gate of expertise" article="a">
@@ -10553,6 +10570,7 @@
 	</item>
 	<item id="6265" name="gate of expertise" article="a">
 		<attribute key="type" value="door" />
+		<attribute key="levelDoor" value="1000"/>
 		<attribute key="blockprojectile" value="1" />
 	</item>
 	<item id="6266" name="gate of expertise" article="a">
@@ -11554,6 +11572,7 @@
 	</item>
 	<item id="6896" name="gate of expertise" article="a">
 		<attribute key="type" value="door" />
+		<attribute key="levelDoor" value="1000"/>
 		<attribute key="blockprojectile" value="1" />
 	</item>
 	<item id="6897" name="gate of expertise" article="a">
@@ -11587,6 +11606,7 @@
 	</item>
 	<item id="6905" name="gate of expertise" article="a">
 		<attribute key="type" value="door" />
+		<attribute key="levelDoor" value="1000"/>
 		<attribute key="blockprojectile" value="1" />
 	</item>
 	<item id="6906" name="gate of expertise" article="a">
@@ -11676,6 +11696,7 @@
 	</item>
 	<item id="7038" name="gate of expertise" article="a">
 		<attribute key="type" value="door" />
+		<attribute key="levelDoor" value="1000"/>
 		<attribute key="blockprojectile" value="1" />
 	</item>
 	<item id="7039" name="gate of expertise" article="a">
@@ -11709,6 +11730,7 @@
 	</item>
 	<item id="7047" name="gate of expertise" article="a">
 		<attribute key="type" value="door" />
+		<attribute key="levelDoor" value="1000"/>
 		<attribute key="blockprojectile" value="1" />
 	</item>
 	<item id="7048" name="gate of expertise" article="a">
@@ -15094,6 +15116,7 @@
 	</item>
 	<item id="8555" name="gate of expertise" article="a">
 		<attribute key="type" value="door" />
+		<attribute key="levelDoor" value="1000"/>
 		<attribute key="blockprojectile" value="1" />
 	</item>
 	<item id="8556" name="gate of expertise" article="a">
@@ -15101,6 +15124,7 @@
 	</item>
 	<item id="8557" name="gate of expertise" article="a">
 		<attribute key="type" value="door" />
+		<attribute key="levelDoor" value="1000"/>
 		<attribute key="blockprojectile" value="1" />
 	</item>
 	<item id="8558" name="gate of expertise" article="a">
@@ -16448,6 +16472,7 @@
 	</item>
 	<item id="9179" name="gate of expertise" article="a">
 		<attribute key="type" value="door" />
+		<attribute key="levelDoor" value="1000"/>
 		<attribute key="blockprojectile" value="1" />
 	</item>
 	<item id="9180" name="gate of expertise" article="a">
@@ -16455,6 +16480,7 @@
 	</item>
 	<item id="9181" name="gate of expertise" article="a">
 		<attribute key="type" value="door" />
+		<attribute key="levelDoor" value="1000"/>
 		<attribute key="blockprojectile" value="1" />
 	</item>
 	<item id="9182" name="gate of expertise" article="a">
@@ -16522,6 +16548,7 @@
 	</item>
 	<item id="9281" name="gate of expertise" article="a">
 		<attribute key="type" value="door" />
+		<attribute key="levelDoor" value="1000"/>
 		<attribute key="blockprojectile" value="1" />
 	</item>
 	<item id="9282" name="gate of expertise" article="a">
@@ -16529,6 +16556,7 @@
 	</item>
 	<item id="9283" name="gate of expertise" article="a">
 		<attribute key="type" value="door" />
+		<attribute key="levelDoor" value="1000"/>
 		<attribute key="blockprojectile" value="1" />
 	</item>
 	<item id="9284" name="gate of expertise" article="a">
@@ -17891,6 +17919,7 @@
 	</item>
 	<item id="10282" article="a" name="gate of expertise">
 		<attribute key="type" value="door" />
+		<attribute key="levelDoor" value="1000"/>
 		<attribute key="blockprojectile" value="1" />
 	</item>
 	<item id="10283" article="a" name="gate of expertise">
@@ -17898,6 +17927,7 @@
 	</item>
 	<item id="10284" article="a" name="gate of expertise">
 		<attribute key="type" value="door" />
+		<attribute key="levelDoor" value="1000"/>
 		<attribute key="blockprojectile" value="1" />
 	</item>
 	<item id="10285" article="a" name="gate of expertise">
@@ -18198,6 +18228,7 @@
 	</item>
 	<item id="10473" article="a" name="gate of expertise">
 		<attribute key="type" value="door" />
+		<attribute key="levelDoor" value="1000"/>
 		<attribute key="blockprojectile" value="1" />
 	</item>
 	<item id="10474" article="a" name="gate of expertise">
@@ -18231,6 +18262,7 @@
 	</item>
 	<item id="10482" article="a" name="gate of expertise">
 		<attribute key="type" value="door" />
+		<attribute key="levelDoor" value="1000"/>
 		<attribute key="blockprojectile" value="1" />
 	</item>
 	<item id="10483" article="a" name="gate of expertise">
@@ -18638,6 +18670,7 @@
 	<item fromid="10778" toid="10779" article="a" name="big mushroom" />
 	<item id="10780" article="a" name="gate of expertise">
 		<attribute key="type" value="door" />
+		<attribute key="levelDoor" value="1000"/>
 		<attribute key="blockprojectile" value="1" />
 	</item>
 	<item id="10781" article="a" name="gate of expertise">
@@ -18666,6 +18699,7 @@
 	<item id="10788" name="tainted pland" />
 	<item id="10789" article="a" name="gate of expertise">
 		<attribute key="type" value="door" />
+		<attribute key="levelDoor" value="1000"/>
 		<attribute key="blockprojectile" value="1" />
 	</item>
 	<item id="10790" article="a" name="gate of expertise">
