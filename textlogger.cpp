@@ -27,8 +27,6 @@
 #include "gui.h"
 #include "tools.h"
 
-extern GUI gui;
-
 TextLogger::TextLogger()
 {
 	out = std::cerr.rdbuf();
@@ -46,22 +44,22 @@ int32_t TextLogger::overflow(int32_t c)
 {
 	if(c == '\n')
 	{
-		gui.m_logText += "\r\n";
-		SendMessage(GetDlgItem(gui.m_mainWindow, ID_LOG), WM_SETTEXT, 0, (LPARAM)gui.m_logText.c_str());
-		gui.m_lineCount++;
-		SendMessage(gui.m_logWindow, EM_LINESCROLL, 0, gui.m_lineCount);
+		GUI::getInstance()->m_logText += "\r\n";
+		SendMessage(GetDlgItem(GUI::getInstance()->m_mainWindow, ID_LOG), WM_SETTEXT, 0, (LPARAM)GUI::getInstance()->m_logText.c_str());
+		GUI::getInstance()->m_lineCount++;
+		SendMessage(GUI::getInstance()->m_logWindow, EM_LINESCROLL, 0, GUI::getInstance()->m_lineCount);
 		displayDate = true;
 	}
 	else
 	{
 		if(displayDate)
 		{
-			gui.m_logText += "[";
-			gui.m_logText += formatDate(time(NULL));
-			gui.m_logText += "] ";
+			GUI::getInstance()->m_logText += "[";
+			GUI::getInstance()->m_logText += formatDate(time(NULL));
+			GUI::getInstance()->m_logText += "] ";
 			displayDate = false;
 		}
-		gui.m_logText += (char)c;
+		GUI::getInstance()->m_logText += (char)c;
 	}
 
 	#ifdef __GUI_LOGS__

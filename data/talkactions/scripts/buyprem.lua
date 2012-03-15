@@ -1,14 +1,20 @@
+local config = {
+	days = 90,
+	year = 365,
+	price = 10000
+}
+
 function onSay(cid, words, param)
-	if getPlayerPremiumDays(cid) <= 350 then
-		if doPlayerRemoveMoney(cid, 10000) == TRUE then
-			doPlayerAddPremiumDays(cid, 90)
-			doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, "You have bought 90 days of premium account.")
+	if (getPlayerPremiumDays(cid) <= config.year) then
+		if doPlayerRemoveMoney(cid, config.price) == TRUE then
+			doPlayerAddPremiumDays(cid, config.days)
+			doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, "You have bought ".. config.days .." days of premium account.")
 		else
-			doPlayerSendCancel(cid, "You don't have enough money, 90 days premium account costs 10000 gold coins.")
+			doPlayerSendCancel(cid, "You don't have enough money, ".. config.days .." days premium account costs ".. config.price .." gold coins.")
 			doSendMagicEffect(getPlayerPosition(cid), CONST_ME_POFF)
 		end
 	else
-		doPlayerSendCancel(cid, "You can not buy more than one year of Premium Account.")
+		doPlayerSendCancel(cid, "You can not buy more than ".. config.year .." days of Premium Account.")
 		doSendMagicEffect(getPlayerPosition(cid), CONST_ME_POFF)
 	end
 end

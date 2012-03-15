@@ -42,10 +42,6 @@ extern Game g_game;
 uint32_t ProtocolLogin::protocolLoginCount = 0;
 #endif
 
-#ifndef __CONSOLE__
-extern GUI gui;
-#endif
-
 #ifdef __DEBUG_NET_DETAIL__
 void ProtocolLogin::deleteProtocolTask()
 {
@@ -71,7 +67,7 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 {
 	if(
 #ifndef __CONSOLE__
-		!gui.m_connections ||
+		!GUI::getInstance()->m_connections ||
 #endif
 		g_game.getGameState() == GAME_STATE_SHUTDOWN)
 	{

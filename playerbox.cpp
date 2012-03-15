@@ -28,7 +28,6 @@
 #include "ban.h"
 
 extern Game g_game;
-extern GUI gui;
 
 HWND PlayerBox::parent = NULL;
 HWND PlayerBox::playerBox = NULL;
@@ -99,14 +98,17 @@ LRESULT CALLBACK PlayerBox::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPAR
 			char playersOnlineBuffer[50];
 			sprintf(playersOnlineBuffer, "%d player%s online", playersOnline, (playersOnline != 1 ? "s" : ""));
 			m_hInst = GetModuleHandle(NULL);
+			
 			permBan = CreateWindowEx(0, "button", "Permanently Ban", WS_VISIBLE | WS_CHILD | WS_TABSTOP, 5, 35, 115, 25, hWnd, NULL, m_hInst, NULL);
 			kick = CreateWindowEx(0, "button", "Kick", WS_VISIBLE | WS_CHILD | WS_TABSTOP, 125, 35, 90, 25, hWnd, NULL, m_hInst, NULL);
 			list = CreateWindowEx(0, "combobox", "", WS_CHILD | WS_VISIBLE | WS_VSCROLL/* | CBS_DROPDOWNLIST*/ | CBS_SORT, 5, 5, 210, 25, hWnd, NULL, m_hInst, NULL);
 			online = CreateWindowEx(WS_EX_STATICEDGE, "static", playersOnlineBuffer, WS_VISIBLE | WS_CHILD | WS_TABSTOP, 5, 65, 210, 20, hWnd, NULL, m_hInst, NULL);
-			SendMessage(permBan, WM_SETFONT, (WPARAM)gui.m_font, 0);
-			SendMessage(kick, WM_SETFONT, (WPARAM)gui.m_font, 0);
-			SendMessage(list, WM_SETFONT, (WPARAM)gui.m_font, 0);
-			SendMessage(online, WM_SETFONT, (WPARAM)gui.m_font, 0);
+			
+			SendMessage(permBan, WM_SETFONT, (WPARAM)GUI::getInstance()->m_font, 0);
+			SendMessage(kick, WM_SETFONT, (WPARAM)GUI::getInstance()->m_font, 0);
+			SendMessage(list, WM_SETFONT, (WPARAM)GUI::getInstance()->m_font, 0);
+			SendMessage(online, WM_SETFONT, (WPARAM)GUI::getInstance()->m_font, 0);
+			
 			AutoList<Player>::listiterator it;
 			for(it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
 				SendMessage(list, CB_ADDSTRING, 0, (LPARAM)(*it).second->getName().c_str());

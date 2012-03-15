@@ -35,7 +35,6 @@
 
 #ifndef __CONSOLE__
 #include "gui.h"
-extern GUI gui;
 #endif
 
 Actions* g_actions = NULL;

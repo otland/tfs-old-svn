@@ -31,6 +31,12 @@ class GUI
 		void initTrayMenu();
 		void initFont();
 
+		static GUI* getInstance()
+		{
+			static GUI instance;
+			return &instance;
+		}
+
 		bool m_connections, m_minimized;
 		HWND m_mainWindow, m_statusBar, m_logWindow;
 		uint64_t m_lineCount;

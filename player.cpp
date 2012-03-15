@@ -53,9 +53,6 @@ extern Vocations g_vocations;
 extern MoveEvents* g_moveEvents;
 extern Weapons* g_weapons;
 extern CreatureEvents* g_creatureEvents;
-#ifndef __CONSOLE__
-extern GUI gui;
-#endif
 
 AutoList<Player> Player::listPlayer;
 MuteCountMap Player::muteCountMap;
@@ -1461,7 +1458,7 @@ void Player::onCreatureAppear(const Creature* creature, bool isLogin)
 		}
 
 		#ifndef __CONSOLE__
-		gui.m_pBox.addPlayer(this);
+		GUI::getInstance()->m_pBox.addPlayer(this);
 		#endif
 		std::cout << name << " has logged in." << std::endl;
 		g_game.checkPlayersRecord();
@@ -1561,7 +1558,7 @@ void Player::onCreatureDisappear(const Creature* creature, uint32_t stackpos, bo
 		g_chat.removeUserFromAllChannels(this);
 
 		#ifndef __CONSOLE__
-		gui.m_pBox.removePlayer(this);
+		GUI::getInstance()->m_pBox.removePlayer(this);
 		#endif
 		std::cout << getName() << " has logged out." << std::endl;
 		IOLoginData::getInstance()->updateOnlineStatus(guid, false);
