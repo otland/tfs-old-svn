@@ -164,17 +164,17 @@ class ItemAttributes
 		uint16_t getFluidType() const {return (uint16_t)getIntAttr(ATTR_ITEM_FLUIDTYPE);}
 
 		void setOwner(uint32_t _owner) {setIntAttr(ATTR_ITEM_OWNER, _owner);}
-		uint32_t getOwner() const {return (uint32_t)getIntAttr(ATTR_ITEM_OWNER);}
+		uint32_t getOwner() const {return getIntAttr(ATTR_ITEM_OWNER);}
 
 		void setCorpseOwner(uint32_t _corpseOwner) {setIntAttr(ATTR_ITEM_CORPSEOWNER, _corpseOwner);}
-		uint32_t getCorpseOwner() {return (uint32_t)getIntAttr(ATTR_ITEM_CORPSEOWNER);}
+		uint32_t getCorpseOwner() {return getIntAttr(ATTR_ITEM_CORPSEOWNER);}
 
 		void setDuration(int32_t time) {setIntAttr(ATTR_ITEM_DURATION, time);}
 		void decreaseDuration(int32_t time) {increaseIntAttr(ATTR_ITEM_DURATION, -time);}
-		int32_t getDuration() const {return (int32_t)getIntAttr(ATTR_ITEM_DURATION);}
+		uint32_t getDuration() const {return getIntAttr(ATTR_ITEM_DURATION);}
 
 		void setDecaying(ItemDecayState_t decayState) {setIntAttr(ATTR_ITEM_DECAYING, decayState);}
-		uint32_t getDecaying() const {return (uint32_t)getIntAttr(ATTR_ITEM_DECAYING);}
+		uint32_t getDecaying() const {return getIntAttr(ATTR_ITEM_DECAYING);}
 
 	protected:
 		enum itemAttrTypes
