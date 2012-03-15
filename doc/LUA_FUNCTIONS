@@ -684,7 +684,7 @@
 		stopEvent(eventid)
 		mayNotLogout(cid, value)
 		mayNotMove(cid, value)
-		saveData()
+		saveServer()
 		escapeString(str)
 		registerCreatureEvent(uid, eventName)
 		queryTileAddThing(uid, pos, <optional> flags)

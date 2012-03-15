@@ -40,6 +40,7 @@
 	M		buyprem.lua
 	M		changesex.lua
 	M		deathlist.lua
+	M		save.lua
 		XML/
 	M		outfits.xml
 	M		mounts.xml

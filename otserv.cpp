@@ -241,9 +241,9 @@ int main(int argc, char *argv[])
 }
 
 #ifdef __CONSOLE__
-void mainLoader(int argc, char *argv[], ServiceManager* service_manager)
+void mainLoader(int argc, char *argv[], ServiceManager* services)
 #else
-void mainLoader(ServiceManager* service_manager)
+void mainLoader(ServiceManager* services)
 #endif
 {
 	//dispatcher thread
@@ -509,16 +509,16 @@ void mainLoader(ServiceManager* service_manager)
 	g_game.setGameState(GAME_STATE_INIT);
 
 	// Tibia protocols
-	service_manager->add<ProtocolGame>(g_config.getNumber(ConfigManager::GAME_PORT));
-	service_manager->add<ProtocolLogin>(g_config.getNumber(ConfigManager::LOGIN_PORT));
+	services->add<ProtocolGame>(g_config.getNumber(ConfigManager::GAME_PORT));
+	services->add<ProtocolLogin>(g_config.getNumber(ConfigManager::LOGIN_PORT));
 
 	// OT protocols
-	service_manager->add<ProtocolAdmin>(g_config.getNumber(ConfigManager::ADMIN_PORT));
-	service_manager->add<ProtocolStatus>(g_config.getNumber(ConfigManager::STATUS_PORT));
+	services->add<ProtocolAdmin>(g_config.getNumber(ConfigManager::ADMIN_PORT));
+	services->add<ProtocolStatus>(g_config.getNumber(ConfigManager::STATUS_PORT));
 
 	// Legacy protocols
-	service_manager->add<ProtocolOldLogin>(g_config.getNumber(ConfigManager::LOGIN_PORT));
-	service_manager->add<ProtocolOldGame>(g_config.getNumber(ConfigManager::LOGIN_PORT));
+	services->add<ProtocolOldLogin>(g_config.getNumber(ConfigManager::LOGIN_PORT));
+	services->add<ProtocolOldGame>(g_config.getNumber(ConfigManager::LOGIN_PORT));
 
 	g_game.timedHighscoreUpdate();
 
@@ -624,7 +624,7 @@ void mainLoader(ServiceManager* service_manager)
 	#endif
 
 	IOLoginData::getInstance()->resetOnlineStatus();
-	g_game.start(service_manager);
+	g_game.start(services);
 	g_game.setGameState(GAME_STATE_NORMAL);
 	OTSYS_THREAD_SIGNAL_SEND(g_loaderSignal);
 }

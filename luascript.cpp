@@ -1836,8 +1836,8 @@ void LuaScriptInterface::registerFunctions()
 	//doPlayerAddBlessing(cid, blessing)
 	lua_register(m_luaState, "doPlayerAddBlessing", LuaScriptInterface::luaDoPlayerAddBlessing);
 
-	//saveData()
-	lua_register(m_luaState, "saveData", LuaScriptInterface::luaSaveData);
+	//saveServer()
+	lua_register(m_luaState, "saveServer", LuaScriptInterface::luaSaveServer);
 
 	//refreshMap()
 	lua_register(m_luaState, "refreshMap", LuaScriptInterface::luaRefreshMap);
@@ -3300,7 +3300,7 @@ int32_t LuaScriptInterface::luaDoShowTextDialog(lua_State* L)
 	return 1;
 }
 
-int LuaScriptInterface::luaDoSendTutorial(lua_State *L)
+int32_t LuaScriptInterface::luaDoSendTutorial(lua_State *L)
 {
 	//doSendTutorial(cid, tutorialid)
 	uint32_t tutorial = popNumber(L);
@@ -3320,7 +3320,7 @@ int LuaScriptInterface::luaDoSendTutorial(lua_State *L)
 	return 1;
 }
 
-int LuaScriptInterface::luaDoAddMark(lua_State *L)
+int32_t LuaScriptInterface::luaDoAddMark(lua_State *L)
 {
 	//doAddMapMark(cid, pos, type, <optional> description)
 	int32_t parameters = lua_gettop(L);
@@ -4463,11 +4463,14 @@ int32_t LuaScriptInterface::luaGetHighscoreString(lua_State* L)
 {
 	//getHighscoreString(skillId)
 	uint16_t skillId = popNumber(L);
-	if(skillId <= SKILL_LAST)
-		lua_pushstring(L, g_game.getHighscoreString(skillId).c_str());
-	else
+	if(skillId > SKILL_LAST)
+	{
+		reportErrorFunc("Invalid skillId");
 		lua_pushboolean(L, false);
+		return 1;
+	}
 
+	lua_pushstring(L, g_game.getHighscoreString(skillId).c_str());
 	return 1;
 }
 
@@ -7789,7 +7792,7 @@ int32_t LuaScriptInterface::luaGetCreatureMaxHealth(lua_State* L)
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaSaveData(lua_State* L)
+int32_t LuaScriptInterface::luaSaveServer(lua_State* L)
 {
 	g_dispatcher.addTask(
 		createTask(boost::bind(&Game::saveGameState, &g_game)));

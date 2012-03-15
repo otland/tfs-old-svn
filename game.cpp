@@ -89,15 +89,12 @@ Game::Game()
 	#endif
 
 	lastBucket = 0;
-	int32_t daycycle = 3600;
+
 	//(1440 minutes/day)/(3600 seconds/day)*10 seconds event interval
-	light_hour_delta = 1440 * 10 / daycycle;
-	/*light_hour = 0;
-	lightlevel = LIGHT_LEVEL_NIGHT;
-	light_state = LIGHT_STATE_NIGHT;*/
-	light_hour = SUNRISE + (SUNSET - SUNRISE) / 2;
-	lightlevel = LIGHT_LEVEL_DAY;
-	light_state = LIGHT_STATE_DAY;
+	int32_t dayCycle = 3600;
+	lightHour = SUNRISE + (SUNSET - SUNRISE) / 2;
+	lightLevel = LIGHT_LEVEL_DAY;
+	lightState = LIGHT_STATE_DAY;
 }
 
 Game::~Game()
@@ -114,7 +111,7 @@ Game::~Game()
 
 void Game::start(ServiceManager* servicer)
 {
-	service_manager = servicer;
+	services = servicer;
 
 	checkLightEvent = g_scheduler.addEvent(createSchedulerTask(EVENT_LIGHTINTERVAL,
 		boost::bind(&Game::checkLight, this)));
@@ -182,8 +179,8 @@ void Game::setGameState(GameState_t newState)
 				Houses::getInstance().payHouses();
 				saveGameState();
 
-				if(service_manager)
-					service_manager->stop();
+				if(services)
+					services->stop();
 
 				if(g_config.getBoolean(ConfigManager::FREE_MEMORY_AT_SHUTDOWN))
 				{
@@ -4440,28 +4437,28 @@ void Game::checkLight()
 	g_scheduler.addEvent(createSchedulerTask(EVENT_LIGHTINTERVAL,
 		boost::bind(&Game::checkLight, this)));
 
-	light_hour = light_hour + light_hour_delta;
-	if(light_hour > 1440)
-		light_hour = light_hour - 1440;
+	lightHour = lightHour + lightHourDelta;
+	if(lightHour > 1440)
+		lightHour = lightHour - 1440;
 
-	if(std::abs(light_hour - SUNRISE) < 2*light_hour_delta)
-		light_state = LIGHT_STATE_SUNRISE;
-	else if(std::abs(light_hour - SUNSET) < 2*light_hour_delta)
-		light_state = LIGHT_STATE_SUNSET;
+	if(std::abs(lightHour - SUNRISE) < 2 * lightHourDelta)
+		lightState = LIGHT_STATE_SUNRISE;
+	else if(std::abs(lightHour - SUNSET) < 2 * lightHourDelta)
+		lightState = LIGHT_STATE_SUNSET;
 
-	int32_t newlightlevel = lightlevel;
+	int32_t newLightLevel = lightLevel;
 	bool lightChange = false;
-	switch(light_state)
+	switch(lightState)
 	{
 		case LIGHT_STATE_SUNRISE:
 		{
-			newlightlevel += (LIGHT_LEVEL_DAY - LIGHT_LEVEL_NIGHT) / 30;
+			newLightLevel += (LIGHT_LEVEL_DAY - LIGHT_LEVEL_NIGHT) / 30;
 			lightChange = true;
 			break;
 		}
 		case LIGHT_STATE_SUNSET:
 		{
-			newlightlevel -= (LIGHT_LEVEL_DAY - LIGHT_LEVEL_NIGHT) / 30;
+			newLightLevel -= (LIGHT_LEVEL_DAY - LIGHT_LEVEL_NIGHT) / 30;
 			lightChange = true;
 			break;
 		}
@@ -4469,18 +4466,18 @@ void Game::checkLight()
 			break;
 	}
 
-	if(newlightlevel <= LIGHT_LEVEL_NIGHT)
+	if(newLightLevel <= LIGHT_LEVEL_NIGHT)
 	{
-		lightlevel = LIGHT_LEVEL_NIGHT;
-		light_state = LIGHT_STATE_NIGHT;
+		lightLevel = LIGHT_LEVEL_NIGHT;
+		lightState = LIGHT_STATE_NIGHT;
 	}
-	else if(newlightlevel >= LIGHT_LEVEL_DAY)
+	else if(newLightLevel >= LIGHT_LEVEL_DAY)
 	{
-		lightlevel = LIGHT_LEVEL_DAY;
-		light_state = LIGHT_STATE_DAY;
+		lightLevel = LIGHT_LEVEL_DAY;
+		lightState = LIGHT_STATE_DAY;
 	}
 	else
-		lightlevel = newlightlevel;
+		lightLevel = newLightLevel;
 
 	if(lightChange)
 	{
@@ -4493,7 +4490,7 @@ void Game::checkLight()
 
 void Game::getWorldLightInfo(LightInfo& lightInfo)
 {
-	lightInfo.level = lightlevel;
+	lightInfo.level = lightLevel;
 	lightInfo.color = 0xD7;
 }
 
@@ -4570,7 +4567,7 @@ bool Game::reloadHighscores()
 
 void Game::timedHighscoreUpdate()
 {
-	int highscoreUpdateTime = g_config.getNumber(ConfigManager::HIGHSCORES_UPDATETIME) * 1000 * 60;
+	uint32_t highscoreUpdateTime = g_config.getNumber(ConfigManager::HIGHSCORES_UPDATETIME) * 60 * 1000;
 	if(highscoreUpdateTime <= 0)
 		return;
 
@@ -4578,17 +4575,16 @@ void Game::timedHighscoreUpdate()
 	g_scheduler.addEvent(createSchedulerTask(highscoreUpdateTime, boost::bind(&Game::timedHighscoreUpdate, this)));
 }
 
-std::string Game::getHighscoreString(unsigned short skill)
+std::string Game::getHighscoreString(uint16_t skill)
 {
 	Highscore hs = highscoreStorage[skill];
 	std::stringstream ss;
-	ss << "Highscore for " << getSkillName(skill) << "\n\nRank. Level - Player Name";
-	for(uint32_t i = 0; i < hs.size(); i++)
-		ss << "\n" << i+1 << ".  " << hs[i].second << "  -  " << hs[i].first;
+	ss << "Highscore for " << getSkillName(skill) << "\n\nRank Level - Player Name";
+	for(uint32_t i = 0; i < hs.size(); ++i)
+		ss << "\n" << (i + 1) << ".  " << hs[i].second << "  -  " << hs[i].first;
+
 	ss << "\n\nLast updated on:\n" << std::ctime(&lastHSUpdate);
-	std::string highscores = ss.str();
-	highscores.erase(highscores.length() - 1);
-	return highscores;
+	return ss.str();
 }
 
 bool Game::broadcastMessage(const std::string& text, MessageClasses type)
@@ -4599,16 +4595,16 @@ bool Game::broadcastMessage(const std::string& text, MessageClasses type)
 	return true;
 }
 
-Highscore Game::getHighscore(unsigned short skill)
+Highscore Game::getHighscore(uint16_t skill)
 {
 	Highscore hs;
 	Database* db = Database::getInstance();
 
 	DBQuery query;
 	uint32_t highscoresTop = g_config.getNumber(ConfigManager::HIGHSCORES_TOP);
-	if(skill >= 7)
+	if(skill >= SKILL__MAGLEVEL)
 	{
-		if(skill == MAGLEVEL)
+		if(skill == SKILL__MAGLEVEL)
 			query << "SELECT `name`, `maglevel` FROM `players` ORDER BY `maglevel` DESC, `manaspent` DESC LIMIT " << highscoresTop;
 		else
 			query << "SELECT `name`, `level` FROM `players` ORDER BY `level` DESC, `experience` DESC LIMIT " << highscoresTop;
@@ -4619,7 +4615,7 @@ Highscore Game::getHighscore(unsigned short skill)
 			do
 			{
 				uint32_t level;
-				if(skill == 7)
+				if(skill == SKILL__MAGLEVEL)
 					level = result->getDataInt("maglevel");
 				else
 					level = result->getDataInt("level");

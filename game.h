@@ -103,10 +103,10 @@ class Game
 		void forceAddCondition(uint32_t creatureId, Condition* condition);
 		void forceRemoveCondition(uint32_t creatureId, ConditionType_t type);
 
-		Highscore getHighscore(unsigned short skill);
+		Highscore getHighscore(uint16_t skill);
 		void timedHighscoreUpdate();
 		bool reloadHighscores();
-		std::string getHighscoreString(unsigned short skill);
+		std::string getHighscoreString(uint16_t skill);
 
 		void autoSave();
 		void prepareServerSave();
@@ -516,7 +516,7 @@ class Game
 		void resetCommandTag();
 
 		void startDecay(Item* item);
-		int getLightHour() {return light_hour;}
+		int32_t getLightHour() {return lightHour;}
 		bool npcSpeakToPlayer(Npc* npc, Player* player, const std::string& text, bool publicize);
 
 		bool loadExperienceStages();
@@ -579,10 +579,10 @@ class Game
 		static const int32_t LIGHT_LEVEL_NIGHT = 40;
 		static const int32_t SUNSET = 1305;
 		static const int32_t SUNRISE = 430;
-		int32_t lightlevel;
-		LightState_t light_state;
-		int32_t light_hour;
-		int32_t light_hour_delta;
+		int32_t lightLevel;
+		LightState_t lightState;
+		int32_t lightHour;
+		int32_t lightHourDelta;
 
 		uint32_t maxPlayers;
 		uint32_t inFightTicks;
@@ -590,7 +590,7 @@ class Game
 		GameState_t gameState;
 		WorldType_t worldType;
 
-		ServiceManager* service_manager;
+		ServiceManager* services;
 		Map* map;
 
 		void savePlayersRecord();

@@ -1936,7 +1936,7 @@ void Player::addManaSpent(uint64_t amount, bool withMultiplier /*= true*/)
 			ss << "You advanced to magic level " << magLevel << ".";
 			sendTextMessage(MSG_EVENT_ADVANCE, ss.str());
 
-			g_creatureEvents->playerAdvance(this, MAGLEVEL, magLevel-1, magLevel);
+			g_creatureEvents->playerAdvance(this, SKILL__MAGLEVEL, magLevel - 1, magLevel);
 
 			currReqMana = nextReqMana;
 			nextReqMana = vocation->getReqMana(magLevel + 1);
@@ -2034,7 +2034,7 @@ void Player::addExperience(uint64_t exp, bool useMult/* = false*/, bool sendText
 
 		char levelMsg[60];
 		sprintf(levelMsg, "You advanced from Level %d to Level %d.", prevLevel, newLevel);
-		g_creatureEvents->playerAdvance(this, LEVEL, prevLevel, newLevel);
+		g_creatureEvents->playerAdvance(this, SKILL__LEVEL, prevLevel, newLevel);
 		sendTextMessage(MSG_EVENT_ADVANCE, levelMsg);
 	}
 
