@@ -1837,7 +1837,9 @@ void LuaScriptInterface::registerFunctions()
 	lua_register(m_luaState, "doPlayerAddBlessing", LuaScriptInterface::luaDoPlayerAddBlessing);
 
 	//saveServer()
+	//saveData()
 	lua_register(m_luaState, "saveServer", LuaScriptInterface::luaSaveServer);
+	lua_register(m_luaState, "saveData", LuaScriptInterface::luaSaveServer);
 
 	//refreshMap()
 	lua_register(m_luaState, "refreshMap", LuaScriptInterface::luaRefreshMap);

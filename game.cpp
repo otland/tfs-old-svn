@@ -92,6 +92,7 @@ Game::Game()
 
 	//(1440 minutes/day)/(3600 seconds/day)*10 seconds event interval
 	int32_t dayCycle = 3600;
+	lightHourDelta = 1440 * 10 / dayCycle;
 	lightHour = SUNRISE + (SUNSET - SUNRISE) / 2;
 	lightLevel = LIGHT_LEVEL_DAY;
 	lightState = LIGHT_STATE_DAY;
@@ -4568,7 +4569,7 @@ bool Game::reloadHighscores()
 void Game::timedHighscoreUpdate()
 {
 	uint32_t highscoreUpdateTime = g_config.getNumber(ConfigManager::HIGHSCORES_UPDATETIME) * 60 * 1000;
-	if(highscoreUpdateTime <= 0)
+	if(highscoreUpdateTime == 0)
 		return;
 
 	reloadHighscores();
