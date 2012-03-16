@@ -640,8 +640,6 @@ std::string LuaInterface::getError(ErrorCode_t code)
 			return "Thing not found";
 		case LUA_ERROR_TILE_NOT_FOUND:
 			return "Tile not found";
-		case LUA_ERROR_TELEPORT_NOT_FOUND:
-			return "Teleport not found";
 		case LUA_ERROR_HOUSE_NOT_FOUND:
 			return "House not found";
 		case LUA_ERROR_COMBAT_NOT_FOUND:
@@ -1717,11 +1715,11 @@ void LuaInterface::registerFunctions()
 	//getClosestFreeTile(cid, targetpos[, extended = false[, ignoreHouse = true]])
 	lua_register(m_luaState, "getClosestFreeTile", LuaInterface::luaGetClosestFreeTile);
 
-	//doTeleportThing(cid, newpos[, pushmove = true[, fullTeleport = true]])
+	//doTeleportThing(cid, destination[, pushmove = true[, fullTeleport = true]])
 	lua_register(m_luaState, "doTeleportThing", LuaInterface::luaDoTeleportThing);
 
-	//doTeleportChangeDestination(old, new)
-	lua_register(m_luaState, "doTeleportChangeDestination", LuaInterface::luaDoTeleportChangeDestination);
+	//doItemSetDestination(uid, destination)
+	lua_register(m_luaState, "doItemSetDestination", LuaInterface::luaDoItemSetDestination);
 
 	//doTransformItem(uid, newId[, count/subType])
 	lua_register(m_luaState, "doTransformItem", LuaInterface::luaDoTransformItem);
@@ -1820,7 +1818,7 @@ void LuaInterface::registerFunctions()
 	//doCleanTile(pos[, forceMapLoaded = false])
 	lua_register(m_luaState, "doCleanTile", LuaInterface::luaDoCleanTile);
 
-	//doCreateTeleport(itemid, topos, createpos)
+	//doCreateTeleport(itemId, destination, position)
 	lua_register(m_luaState, "doCreateTeleport", LuaInterface::luaDoCreateTeleport);
 
 	//doCreateMonster(name, pos[, extend = false[, force = false]])
@@ -3510,7 +3508,7 @@ int32_t LuaInterface::luaGetClosestFreeTile(lua_State* L)
 
 int32_t LuaInterface::luaDoTeleportThing(lua_State* L)
 {
-	//doTeleportThing(cid, newpos[, pushMove = true[, fullTeleport = true]])
+	//doTeleportThing(cid, destination[, pushMove = true[, fullTeleport = true]])
 	bool fullTeleport = true, pushMove = true;
 	int32_t params = lua_gettop(L);
 	if(params > 3)
@@ -3534,36 +3532,29 @@ int32_t LuaInterface::luaDoTeleportThing(lua_State* L)
 	return 1;
 }
 
-int32_t LuaInterface::luaDoTeleportChangeDestination(lua_State *L)
+int32_t LuaInterface::luaDoItemSetDestination(lua_State* L)
 {
-	//doTeleportChangeDestination(old, new)
-	Position teleportPosition, destPosition;
-	uint32_t teleportStackPos, destStackPos;
+	//doItemSetDestination(uid, destination)
+	PositionEx destination;
+	popPosition(L, destination);
 
-	popPosition(L, destPosition, destStackPos);
-	popPosition(L, teleportPosition, teleportStackPos);
-
-	Tile* tile = g_game.getMap()->getTile(teleportPosition);
-	if(tile)
+	Item* item = env->getItemByUID(popNumber(L));
+	if(!item)
 	{
-		Teleport* teleport = tile->getTeleportItem();
-		if(teleport)
-		{
-			teleport->setDestination(destPosition);
-			lua_pushboolean(L, true);
-		}
-		else
-		{
-			errorEx(getError(LUA_ERROR_TELEPORT_NOT_FOUND));
-			lua_pushboolean(L, false);
-		}
-	}
-	else
-	{
-	 	errorEx(getError(LUA_ERROR_TILE_NOT_FOUND));
+		errorEx(getError(LUA_ERROR_ITEM_NOT_FOUND));
 		lua_pushboolean(L, false);
+		return 1;
 	}
 
+	if(Teleport* teleport = item->getTeleport())
+	{
+		teleport->setDestination(destination);
+		lua_pushboolean(L, true);
+		return 1;
+	}
+
+	errorEx("Target item is not a teleport.");
+	lua_pushboolean(L, false);
 	return 1;
 }
 
@@ -3575,10 +3566,8 @@ int32_t LuaInterface::luaDoTransformItem(lua_State* L)
 		count = popNumber(L);
 
 	uint16_t newId = popNumber(L);
-	uint32_t uid = popNumber(L);
 	ScriptEnviroment* env = getEnv();
-
-	Item* item = env->getItemByUID(uid);
+	Item* item = env->getItemByUID(popNumber(L));
 	if(!item)
 	{
 		errorEx(getError(LUA_ERROR_ITEM_NOT_FOUND));
@@ -4995,16 +4984,16 @@ int32_t LuaInterface::luaDoCreateItemEx(lua_State* L)
 
 int32_t LuaInterface::luaDoCreateTeleport(lua_State* L)
 {
-	//doCreateTeleport(itemid, toPosition, fromPosition)
-	PositionEx createPos;
-	popPosition(L, createPos);
-	PositionEx toPos;
-	popPosition(L, toPos);
+	//doCreateTeleport(itemid, destination, position)
+	PositionEx position;
+	popPosition(L, position);
+	PositionEx destination;
+	popPosition(L, destination);
 
 	uint32_t itemId = (uint32_t)popNumber(L);
 	ScriptEnviroment* env = getEnv();
 
-	Tile* tile = g_game.getMap()->getTile(createPos);
+	Tile* tile = g_game.getMap()->getTile(position);
 	if(!tile)
 	{
 		errorEx(getError(LUA_ERROR_TILE_NOT_FOUND));
@@ -5017,21 +5006,26 @@ int32_t LuaInterface::luaDoCreateTeleport(lua_State* L)
 	if(!newTeleport)
 	{
 		delete newItem;
+		errorEx("Item " + asString(itemId) + " is not a teleport.");
 		lua_pushboolean(L, false);
 		return 1;
 	}
 
-	newTeleport->setDestination(toPos);
-	if(g_game.internalAddItem(NULL, tile, newTeleport, INDEX_WHEREEVER, FLAG_NOLIMIT) != RET_NOERROR)
+	uint32_t dummy = 0;
+	Item* stackItem = NULL;
+	if(g_game.internalAddItem(NULL, tile, newItem, INDEX_WHEREEVER, FLAG_NOLIMIT, false, dummy, &stackItem) != RET_NOERROR)
 	{
 		delete newItem;
 		lua_pushboolean(L, false);
 		return 1;
 	}
 
+	newTeleport->setDestination(destination);
 	if(newItem->getParent())
 		lua_pushnumber(L, env->addThing(newItem));
-	else //stackable item stacked with existing object, newItem will be released
+	else if(stackItem)
+		lua_pushnumber(L, env->addThing(stackItem));
+	else
 		lua_pushnil(L);
 
 	return 1;

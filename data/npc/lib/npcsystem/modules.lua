@@ -140,12 +140,7 @@ if(Modules == nil) then
 			return false
 		end
 
-		local premium = parameters.premium
-		if(getBooleanFromString(getConfigValue('blessingsOnlyPremium'))) then
-			premium = true
-		end
-
-		if(isPremium(cid) or not premium) then
+		if(isPremium(cid) or not getBooleanFromString(getConfigValue('blessingsOnlyPremium')) or not parameters.premium) then
 			local price = parameters.baseCost
 			if(getPlayerLevel(cid) > parameters.startLevel) then
 				price = (price + ((math.min(parameters.endLevel, getPlayerLevel(cid)) - parameters.startLevel) * parameters.levelCost))

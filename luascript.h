@@ -215,7 +215,6 @@ enum ErrorCode_t
 	LUA_ERROR_ITEM_NOT_FOUND,
 	LUA_ERROR_THING_NOT_FOUND,
 	LUA_ERROR_TILE_NOT_FOUND,
-	LUA_ERROR_TELEPORT_NOT_FOUND,
 	LUA_ERROR_HOUSE_NOT_FOUND,
 	LUA_ERROR_COMBAT_NOT_FOUND,
 	LUA_ERROR_CONDITION_NOT_FOUND,
@@ -344,7 +343,7 @@ class LuaInterface
 		static int32_t luaGetSearchString(lua_State* L);
 		static int32_t luaGetClosestFreeTile(lua_State* L);
 		static int32_t luaDoTeleportThing(lua_State* L);
-		static int32_t luaDoTeleportChangeDestination(lua_State* L);
+		static int32_t luaDoItemSetDestination(lua_State* L);
 		static int32_t luaDoTransformItem(lua_State* L);
 		static int32_t luaDoSendCreatureSquare(lua_State* L);
 		static int32_t luaDoSendMagicEffect(lua_State* L);
