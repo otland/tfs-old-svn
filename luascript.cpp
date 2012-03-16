@@ -1720,9 +1720,9 @@ void LuaInterface::registerFunctions()
 	//doTeleportThing(cid, newpos[, pushmove = true[, fullTeleport = true]])
 	lua_register(m_luaState, "doTeleportThing", LuaInterface::luaDoTeleportThing);
 
-    //doTeleportChangeDestination(old, new)
-    lua_register(m_luaState, "doTeleportChangeDestination", LuaInterface::luaDoTeleportChangeDestination);
-    
+	//doTeleportChangeDestination(old, new)
+	lua_register(m_luaState, "doTeleportChangeDestination", LuaInterface::luaDoTeleportChangeDestination);
+
 	//doTransformItem(uid, newId[, count/subType])
 	lua_register(m_luaState, "doTransformItem", LuaInterface::luaDoTransformItem);
 
@@ -3539,14 +3539,14 @@ int32_t LuaInterface::luaDoTeleportChangeDestination(lua_State *L)
 	//doTeleportChangeDestination(old, new)
 	Position teleportPosition, destPosition;
 	uint32_t teleportStackPos, destStackPos;
-	
+
 	popPosition(L, destPosition, destStackPos);
 	popPosition(L, teleportPosition, teleportStackPos);
 
 	Tile* tile = g_game.getMap()->getTile(teleportPosition);
-	Teleport* teleport = tile->getTeleportItem();
 	if(tile)
 	{
+		Teleport* teleport = tile->getTeleportItem();
 		if(teleport)
 		{
 			teleport->setDestination(destPosition);
@@ -3563,7 +3563,7 @@ int32_t LuaInterface::luaDoTeleportChangeDestination(lua_State *L)
 	 	errorEx(getError(LUA_ERROR_TILE_NOT_FOUND));
 		lua_pushboolean(L, false);
 	}
-	
+
 	return 1;
 }
 
