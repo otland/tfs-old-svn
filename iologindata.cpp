@@ -823,7 +823,7 @@ bool IOLoginData::savePlayer(Player* player, bool preSave)
 	{
 		int32_t redSkullTime = 0;
 		if(player->redSkullTicks > 0)
-			redSkullTime = time(NULL) + player->redSkullTicks/1000;
+			redSkullTime = time(NULL) + player->redSkullTicks / 1000;
 
 		query << "`redskulltime` = " << redSkullTime << ", ";
 		int32_t redSkull = 0;

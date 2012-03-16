@@ -213,22 +213,22 @@ EXCEPTION_DISPOSITION
 		systemtime.wSecond << std::endl;
 	// kernel time
 	uint32_t miliseconds;
-	miliseconds = FTkernel.dwHighDateTime * 429497 + FTkernel.dwLowDateTime/10000;
-	*outdriver << "Kernel time: " << miliseconds/3600000;
-	miliseconds = miliseconds - (miliseconds/3600000)*3600000;
-	*outdriver << ":" << miliseconds/60000;
-	miliseconds = miliseconds - (miliseconds/60000)*60000;
-	*outdriver << ":" << miliseconds/1000;
-	miliseconds = miliseconds - (miliseconds/1000)*1000;
+	miliseconds = FTkernel.dwHighDateTime * 429497 + FTkernel.dwLowDateTime / 10000;
+	*outdriver << "Kernel time: " << miliseconds / 3600000;
+	miliseconds = miliseconds - (miliseconds / 3600000)* 3600000;
+	*outdriver << ":" << miliseconds / 60000;
+	miliseconds = miliseconds - (miliseconds / 60000)* 60000;
+	*outdriver << ":" << miliseconds / 1000;
+	miliseconds = miliseconds - (miliseconds / 1000) * 1000;
 	*outdriver << "." << miliseconds << std::endl;
 	// user time
-	miliseconds = FTuser.dwHighDateTime * 429497 + FTuser.dwLowDateTime/10000;
-	*outdriver << "User time: " << miliseconds/3600000;
-	miliseconds = miliseconds - (miliseconds/3600000)*3600000;
-	*outdriver << ":" << miliseconds/60000;
-	miliseconds = miliseconds - (miliseconds/60000)*60000;
-	*outdriver << ":" << miliseconds/1000;
-	miliseconds = miliseconds - (miliseconds/1000)*1000;
+	miliseconds = FTuser.dwHighDateTime * 429497 + FTuser.dwLowDateTime / 10000;
+	*outdriver << "User time: " << miliseconds / 3600000;
+	miliseconds = miliseconds - (miliseconds / 3600000) * 3600000;
+	*outdriver << ":" << miliseconds / 60000;
+	miliseconds = miliseconds - (miliseconds / 60000) * 60000;
+	*outdriver << ":" << miliseconds / 1000;
+	miliseconds = miliseconds - (miliseconds / 1000) * 1000;
 	*outdriver << "." << miliseconds << std::endl;
 
 	// n threads

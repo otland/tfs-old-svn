@@ -256,7 +256,6 @@ void mainLoader(ServiceManager* services)
 	#endif
 	#endif
 	std::cout << STATUS_SERVER_NAME << " - Version " << STATUS_SERVER_VERSION << " (" << STATUS_SERVER_CODENAME << ")." << std::endl;
-
 	std::cout << "Compilied on " << __DATE__ << " " << __TIME__ << " for arch ";
 
 	#if defined(__amd64__) || defined(_M_X64)
@@ -269,7 +268,7 @@ void mainLoader(ServiceManager* services)
 
 	std::cout << std::endl;
 
-	std::cout << "A server developed by Talaturen, Kornholijo, Elf, and Dalkon." << std::endl;
+	std::cout << "A server developed by " << STATUS_SERVER_DEVELOPERS << "." << std::endl;
 	std::cout << "Visit our forum for updates, support, and resources: http://otland.net/." << std::endl;
 
 	#if defined __DEBUG__MOVESYS__ || defined __DEBUG_HOUSES__ || defined __DEBUG_MAILBOX__ || defined __DEBUG_LUASCRIPTS__ || defined __DEBUG_RAID__ || defined __DEBUG_NET__
@@ -966,7 +965,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 						GUI::getInstance()->m_logText = "";
 						GUI::getInstance()->m_lineCount = 0;
 						std::cout << STATUS_SERVER_NAME << " - Version " << STATUS_SERVER_VERSION << " (" << STATUS_SERVER_CODENAME << ")." << std::endl;
-						std::cout << "A server developed by Talaturen, Kornholijo, Elf, and Dalkon." << std::endl;
+						std::cout << "A server developed by " << STATUS_SERVER_DEVELOPERS << "." << std::endl;
 						std::cout << "Visit our forum for updates, support and resources: http://otland.net/." << std::endl << std::endl;
 					}
 					break;
