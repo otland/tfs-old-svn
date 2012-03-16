@@ -296,7 +296,7 @@ const uint8_t fluidMap[] =
 enum SquareColor_t
 {
 	SQ_COLOR_NONE = 256,
-	SQ_COLOR_BLACK = 0,
+	SQ_COLOR_BLACK = 0
 };
 
 enum TextColor_t
@@ -388,7 +388,8 @@ enum Skulls_t
 	SKULL_WHITE = 3,
 	SKULL_RED = 4,
 	SKULL_BLACK = 5,
-	SKULL_LAST = SKULL_BLACK
+	SKULL_ORANGE = 6,
+	SKULL_LAST = SKULL_ORANGE
 };
 
 enum PartyShields_t

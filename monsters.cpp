@@ -57,9 +57,9 @@ void MonsterType::reset()
 	targetDistance = 1;
 	runAwayHealth = 0;
 	pushable = true;
-	base_speed = 200;
+	baseSpeed = 200;
 	health = 100;
-	health_max = 100;
+	healthMax = 100;
 
 	outfit.lookHead = 0;
 	outfit.lookBody = 0;
@@ -641,18 +641,17 @@ bool Monsters::deserializeSpell(xmlNodePtr node, spellBlock_t& sb, const std::st
 			combat->setCondition(condition);
 		}
 		else if(tmpName == "firefield")
-			combat->setParam(COMBATPARAM_CREATEITEM, 1487);
+			combat->setParam(COMBATPARAM_CREATEITEM, ITEM_FIREFIELD_PVP);
 		else if(tmpName == "poisonfield")
-			combat->setParam(COMBATPARAM_CREATEITEM, 1490);
+			combat->setParam(COMBATPARAM_CREATEITEM, ITEM_POISONFIELD_PVP);
 		else if(tmpName == "energyfield")
-			combat->setParam(COMBATPARAM_CREATEITEM, 1491);
-		else if(tmpName == "firecondition" ||
-				tmpName == "poisoncondition" ||
-				tmpName == "energycondition" ||
-				tmpName == "drowncondition" ||
-				tmpName == "freezecondition" ||
-				tmpName == "cursecondition" ||
-				tmpName == "dazzlecondition")
+			combat->setParam(COMBATPARAM_CREATEITEM, ITEM_ENERGYFIELD_PVP);
+		else if(tmpName == "firecondition" || tmpName == "energycondition" ||
+			tmpName == "earthcondition" || tmpName == "poisoncondition" ||
+			tmpName == "icecondition" || tmpName == "freezecondition" ||
+			tmpName == "deathcondition" || tmpName == "cursecondition" ||
+			tmpName == "holycondition" || tmpName == "dazzlecondition" ||
+			tmpName == "drowncondition")
 		{
 			ConditionType_t conditionType = CONDITION_NONE;
 			uint32_t tickInterval = 2000;
@@ -713,6 +712,10 @@ bool Monsters::deserializeSpell(xmlNodePtr node, spellBlock_t& sb, const std::st
 		else if(tmpName == "strength")
 		{
 			//
+		}
+		else if(tmpName == "effect")
+		{
+		 	//
 		}
 		else
 		{
@@ -842,7 +845,7 @@ bool Monsters::loadMonster(const std::string& file, const std::string& monster_n
 			mType->experience = intValue;
 
 		if(readXMLInteger(root, "speed", intValue))
-			mType->base_speed = intValue;
+			mType->baseSpeed = intValue;
 
 		if(readXMLInteger(root, "manacost", intValue))
 			mType->manaCost = intValue;
@@ -866,7 +869,7 @@ bool Monsters::loadMonster(const std::string& file, const std::string& monster_n
 				}
 
 				if(readXMLInteger(p, "max", intValue))
-					mType->health_max = intValue;
+					mType->healthMax = intValue;
 				else
 				{
 					SHOW_XML_ERROR("Missing health.max");

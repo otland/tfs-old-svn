@@ -108,9 +108,9 @@ class MonsterType
 		int32_t targetDistance;
 		int32_t runAwayHealth;
 		bool pushable;
-		int32_t base_speed;
+		int32_t baseSpeed;
 		int32_t health;
-		int32_t health_max;
+		int32_t healthMax;
 
 		Outfit_t outfit;
 		uint16_t lookcorpse;

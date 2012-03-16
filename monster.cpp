@@ -69,8 +69,8 @@ Creature()
 	currentOutfit = mType->outfit;
 
 	health = mType->health;
-	healthMax = mType->health_max;
-	baseSpeed = mType->base_speed;
+	healthMax = mType->healthMax;
+	baseSpeed = mType->baseSpeed;
 	internalLight.level = mType->lightLevel;
 	internalLight.color = mType->lightColor;
 
