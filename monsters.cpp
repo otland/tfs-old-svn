@@ -775,11 +775,11 @@ bool Monsters::deserializeSpell(xmlNodePtr node, spellBlock_t& sb, const std::st
 			}
 		}
 		else if(tmpName == "firefield")
-			combat->setParam(COMBATPARAM_CREATEITEM, 1492);
+			combat->setParam(COMBATPARAM_CREATEITEM, ITEM_FIREFIELD);
 		else if(tmpName == "poisonfield")
-			combat->setParam(COMBATPARAM_CREATEITEM, 1496);
+			combat->setParam(COMBATPARAM_CREATEITEM, ITEM_POISONFIELD);
 		else if(tmpName == "energyfield")
-			combat->setParam(COMBATPARAM_CREATEITEM, 1495);
+			combat->setParam(COMBATPARAM_CREATEITEM, ITEM_ENERGYFIELD);
 		else if(tmpName == "physicalcondition" || tmpName == "bleedcondition" ||
 			tmpName == "firecondition" || tmpName == "energycondition" ||
 			tmpName == "earthcondition" || tmpName == "poisoncondition" ||
