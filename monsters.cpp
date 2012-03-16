@@ -661,7 +661,7 @@ bool Monsters::deserializeSpell(xmlNodePtr node, spellBlock_t& sb, const std::st
 				conditionType = CONDITION_FIRE;
 				tickInterval = 10000;
 			}
-			else if(tmpName == "poisoncondition")
+			else if(tmpName == "poisoncondition" || tmpName == "earthcondition")
 			{
 				conditionType = CONDITION_POISON;
 				tickInterval = 5000;
@@ -676,17 +676,17 @@ bool Monsters::deserializeSpell(xmlNodePtr node, spellBlock_t& sb, const std::st
 				conditionType = CONDITION_DROWN;
 				tickInterval = 5000;
 			}
-			else if(tmpName == "freezecondition")
+			else if(tmpName == "freezecondition" || tmpName == "icecondition")
 			{
 				conditionType = CONDITION_FREEZING;
 				tickInterval = 10000;
 			}
-			else if(tmpName == "cursecondition")
+			else if(tmpName == "cursecondition" || tmpName == "deathcondition")
 			{
 				conditionType = CONDITION_CURSED;
 				tickInterval = 4000;
 			}
-			else if(tmpName == "dazzlecondition")
+			else if(tmpName == "dazzlecondition" || tmpName == "holycondition")
 			{
 				conditionType = CONDITION_DAZZLED;
 				tickInterval = 10000;
