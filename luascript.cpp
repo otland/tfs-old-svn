@@ -3538,6 +3538,7 @@ int32_t LuaInterface::luaDoItemSetDestination(lua_State* L)
 	PositionEx destination;
 	popPosition(L, destination);
 
+	ScriptEnviroment* env = getEnv();
 	Item* item = env->getItemByUID(popNumber(L));
 	if(!item)
 	{
@@ -3565,9 +3566,10 @@ int32_t LuaInterface::luaDoTransformItem(lua_State* L)
 	if(lua_gettop(L) > 2)
 		count = popNumber(L);
 
-	uint16_t newId = popNumber(L);
+	uint32_t newId = popNumber(L), uid = popNumber(L);
 	ScriptEnviroment* env = getEnv();
-	Item* item = env->getItemByUID(popNumber(L));
+
+	Item* item = env->getItemByUID(uid);
 	if(!item)
 	{
 		errorEx(getError(LUA_ERROR_ITEM_NOT_FOUND));
@@ -3580,11 +3582,11 @@ int32_t LuaInterface::luaDoTransformItem(lua_State* L)
 		count = 100;
 
 	Item* newItem = g_game.transformItem(item, newId, count);
-	if(item->isRemoved())
-		env->removeThing(uid);
-
 	if(newItem && newItem != item)
+	{
+		env->removeThing(uid);
 		env->insertThing(uid, newItem);
+	}
 
 	lua_pushboolean(L, true);
 	return 1;
