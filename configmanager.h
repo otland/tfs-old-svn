@@ -148,6 +148,8 @@ class ConfigManager
 			STATUS_PORT,
 			STAIRHOP_DELAY,
 			LEVEL_TO_CREATE_GUILD,
+			MIN_GUILD_NAME,
+			MAX_GUILD_NAME,
 			MARKET_OFFER_DURATION,
 			LAST_INTEGER_CONFIG /* this must be the last one */
 		};

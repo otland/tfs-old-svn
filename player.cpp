@@ -168,7 +168,7 @@ Creature()
 	accountManager = NULL;
 
 	sex = PLAYERSEX_FEMALE;
- 	vocation_id = 0;
+ 	vocationId = 0;
 
  	town = 0;
 
@@ -217,8 +217,8 @@ Player::~Player()
 
 void Player::setVocation(uint32_t vocId)
 {
-	vocation_id = vocId;
-	vocation = g_vocations.getVocation(vocId);
+	vocationId = id;
+	vocation = g_vocations.getVocation(id);
 
 	Condition* condition = getCondition(CONDITION_REGENERATION, CONDITIONID_DEFAULT);
 	if(condition)
@@ -251,7 +251,7 @@ std::string Player::getDescription(int32_t lookDistance) const
 		s << "yourself.";
 		if(accessLevel != 0)
 			s << " You are " << groupName << ".";
-		else if(vocation_id != VOCATION_NONE)
+		else if(vocationId != VOCATION_NONE)
 			s << " You are " << vocation->getVocDescription() << ".";
 		else
 			s << " You have no vocation.";
@@ -270,7 +270,7 @@ std::string Player::getDescription(int32_t lookDistance) const
 
 		if(accessLevel != 0)
 			s << " is " << groupName << ".";
-		else if(vocation_id != VOCATION_NONE)
+		else if(vocationId != VOCATION_NONE)
 			s << " is " << vocation->getVocDescription() << ".";
 		else
 			s << " has no vocation.";
@@ -788,7 +788,7 @@ uint16_t Player::getLookCorpse() const
 
 void Player::dropLoot(Container* corpse)
 {
-	if(corpse && lootDrop && vocation_id != VOCATION_NONE)
+	if(corpse && lootDrop && vocationId != VOCATION_NONE)
 	{
 		if(inventory[SLOT_NECKLACE] && inventory[SLOT_NECKLACE]->getID() == ITEM_AMULETOFLOSS &&
 			getSkull() != SKULL_RED && g_game.getWorldType() != WORLD_TYPE_PVP_ENFORCED)
@@ -4082,8 +4082,8 @@ void Player::checkRedSkullTicks(int32_t ticks)
 
 bool Player::isPromoted()
 {
-	int32_t promotedVocation = g_vocations.getPromotedVocation(vocation_id);
-	return promotedVocation == 0 && vocation_id != promotedVocation;
+	int32_t promotedVocation = g_vocations.getPromotedVocation(vocationId);
+	return promotedVocation == 0 && vocationId != promotedVocation;
 }
 
 double Player::getLostPercent()

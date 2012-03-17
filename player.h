@@ -275,8 +275,8 @@ class Player : public Creature, public Cylinder
 		bool isAccessPlayer() const {return accessLevel;}
 		bool isPremium() const;
 
-		void setVocation(uint32_t vocId);
-		uint32_t getVocationId() const {return vocation_id;}
+		void setVocation(uint32_t id);
+		uint32_t getVocationId() const {return vocationId;}
 
 		PlayerSex_t getSex() const {return sex;}
 		void setSex(PlayerSex_t);
@@ -758,7 +758,7 @@ class Player : public Creature, public Cylinder
 		uint32_t conditionSuppressions;
 		uint32_t condition;
 		uint64_t manaSpent;
-		int32_t vocation_id;
+		int32_t vocationId;
 		Vocation* vocation;
 		PlayerSex_t sex;
 		int32_t soul, soulMax;

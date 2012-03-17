@@ -95,7 +95,7 @@ class Vocations
 		~Vocations();
 
 		bool loadFromXml();
-		Vocation* getVocation(uint32_t vocId);
+		Vocation* getVocation(uint32_t id);
 		int32_t getVocationId(const std::string& name);
 		int32_t getPromotedVocation(uint32_t vocationId);
 

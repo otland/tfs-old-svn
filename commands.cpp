@@ -1161,7 +1161,7 @@ void Commands::joinGuild(Player* player, const std::string& cmd, const std::stri
 	char buffer[80];
 	sprintf(buffer, "%s has joined the guild.", player->name.c_str());
 
-	ChatChannel* guildChannel = g_chat.getChannel(player, 0x00);
+	ChatChannel* guildChannel = g_chat.getChannel(player, CHANNEL_GUILD);
 	if(guildChannel)
 		guildChannel->sendToAll(buffer, SPEAK_CHANNEL_R1);
 }
@@ -1175,13 +1175,13 @@ void Commands::createGuild(Player* player, const std::string& cmd, const std::st
 	}
 
 	trimString((std::string&)param);
-	if(param.length() < 4)
+	if(param.length() < (int32_t)g_config.getNumber(ConfigManager::MIN_GUILD_NAME))
 	{
 		player->sendCancel("That guild name is too short, please select a longer name.");
 		return;
 	}
 
-	if(param.length() > 20)
+	if(param.length() > (int32_t)g_config.getNumber(ConfigManager::MAX_GUILD_NAME))
 	{
 		player->sendCancel("That guild name is too long, please select a shorter name.");
 		return;

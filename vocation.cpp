@@ -162,14 +162,14 @@ bool Vocations::loadFromXml()
 	return true;
 }
 
-Vocation* Vocations::getVocation(uint32_t vocId)
+Vocation* Vocations::getVocation(uint32_t id)
 {
-	VocationsMap::iterator it = vocationsMap.find(vocId);
+	VocationsMap::iterator it = vocationsMap.find(id);
 	if(it != vocationsMap.end())
 		return it->second;
 	else
 	{
-		std::cout << "Warning: [Vocations::getVocation] Vocation " << vocId << " not found." << std::endl;
+		std::cout << "Warning: [Vocations::getVocation] Vocation " << id << " not found." << std::endl;
 		return &def_voc;
 	}
 }

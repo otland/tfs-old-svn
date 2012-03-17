@@ -63,6 +63,8 @@
 	-- Guilds
 	ingameGuildSystem = "yes"
 	levelToCreateGuild = 8
+	minGuildNameLength = 4
+	maxGuildNameLength = 20
 
 	-- Highscores
 	highscoreDisplayPlayers = 15

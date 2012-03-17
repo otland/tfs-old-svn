@@ -157,8 +157,10 @@ bool ConfigManager::loadFile(const std::string& _filename)
 	m_confInteger[AUTO_SAVE_EACH_MINUTES] = getGlobalNumber(L, "autoSaveEachMinutes", 0);
 	m_confInteger[STAIRHOP_DELAY] = getGlobalNumber(L, "stairJumpExhaustion", 2000);
 	m_confInteger[LEVEL_TO_CREATE_GUILD] = getGlobalNumber(L, "levelToCreateGuild", 8);
+	m_confInteger[MIN_GUILD_NAME] = getGlobalNumber(L, "minGuildNameLength", 4);
+	m_confInteger[MAX_GUILD_NAME] = getGlobalNumber(L, "maxGuildNameLength", 20);
+	
 	m_isLoaded = true;
-
 	lua_close(L);
 	return true;
 }
