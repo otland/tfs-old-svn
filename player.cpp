@@ -215,10 +215,10 @@ Player::~Player()
 #endif
 }
 
-void Player::setVocation(uint32_t id)
+void Player::setVocation(uint32_t vocId)
 {
-	vocationId = id;
-	vocation = g_vocations.getVocation(id);
+	vocationId = vocId;
+	vocation = g_vocations.getVocation(vocId);
 
 	Condition* condition = getCondition(CONDITION_REGENERATION, CONDITIONID_DEFAULT);
 	if(condition)

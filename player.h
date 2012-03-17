@@ -275,7 +275,7 @@ class Player : public Creature, public Cylinder
 		bool isAccessPlayer() const {return accessLevel;}
 		bool isPremium() const;
 
-		void setVocation(uint32_t id);
+		void setVocation(uint32_t vocId);
 		uint32_t getVocationId() const {return vocationId;}
 
 		PlayerSex_t getSex() const {return sex;}
