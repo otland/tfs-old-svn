@@ -2870,47 +2870,43 @@ Cylinder* Player::__queryDestination(int32_t& index, const Thing* thing, Item** 
 					n--;
 				}
 
-				for(n = 0; n < tmpContainer->capacity(); ++n)
+				for(ItemList::const_iterator it = tmpContainer->getItems(), end = tmpContainer->getEnd(); it != end; ++it)
 				{
-					Item* tmpItem = tmpContainer->getItem(n);
-					if(tmpItem)
-					{
-						if(Container* subContainer = tmpItem->getContainer())
-							containerList.push_back(subContainer);
-					}
+					if(Container* subContainer = (*it)->getContainer())
+						containerList.push_back(subContainer);
 				}
 				continue;
 			}
 
-			for(uint32_t n = 0; n < tmpContainer->capacity(); ++n)
+			uint32_t n = 0;
+			for(ItemList::const_iterator it = tmpContainer->getItems(), end = tmpContainer->getEnd(); it != end; ++it)
 			{
-				Item* tmpItem = tmpContainer->getItem(n);
+				Item* tmpItem = *it;
+				if(tmpItem == tradeItem)
+					continue;
 
-				if(tmpItem)
-				{
-					if(tmpItem == tradeItem)
-						continue;
+				if(tmpItem == item)
+					continue;
 
-					if(tmpItem == item)
-						continue;
-
-					//try find an already existing item to stack with
-					if(tmpItem != item && tmpItem->getID() == item->getID() && tmpItem->getItemCount() < 100)
-					{
-						index = n;
-						*destItem = tmpItem;
-						return tmpContainer;
-					}
-
-					if(Container* subContainer = tmpItem->getContainer())
-						containerList.push_back(subContainer);
-				}
-				else if(tmpContainer->__queryAdd(n, item, item->getItemCount(), flags) == RET_NOERROR) //empty slot
+				//try find an already existing item to stack with
+				if(tmpItem != item && tmpItem->getID() == item->getID() && tmpItem->getItemCount() < 100)
 				{
 					index = n;
-					*destItem = NULL;
+					*destItem = tmpItem;
 					return tmpContainer;
 				}
+
+				if(Container* subContainer = tmpItem->getContainer())
+					containerList.push_back(subContainer);
+
+				n++;
+			}
+			
+			if(n < tmpContainer->capacity() && tmpContainer->__queryAdd(n, item, item->getItemCount(), flags) == RET_NOERROR)
+			{
+				index = n;
+				*destItem = NULL;
+				return tmpContainer;
 			}
 		}
 

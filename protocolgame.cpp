@@ -2042,23 +2042,32 @@ void ProtocolGame::sendMarketEnter(uint32_t depotId)
 	player->setMarketDepotId(depotId);
 
 	std::map<uint16_t, uint32_t> depotItems;
-	Container* depotChest = depot->getChest();
-	for(ContainerIterator it = depotChest->begin(), end = depotChest->end(); it != end; ++it)
+	std::list<Container*> containerList;
+	containerList.push_back(depot->getChest());
+	do
 	{
-		const ItemType& itemType = Item::items[(*it)->getID()];
-		if(!itemType.ware)
-			continue;
+		Container* container = containerList.front();
+		containerList.pop_front();
+		for(ItemList::const_iterator it = container->getItems(), end = container->getEnd(); it != end; ++it)
+		{
+			Container* c = (*it)->getContainer();
+			if(c && !c->empty())
+			{
+				containerList.push_back(c);
+				continue;
+			}
 
-		if((*it)->getCharges() != itemType.charges)
-			continue;
+			const ItemType& itemType = Item::items[(*it)->getID()];
+			if((*it)->getCharges() != itemType.charges)
+				continue;
 
-		if((*it)->getDuration() != itemType.decayTime)
-			continue;
+			if((*it)->getDuration() != itemType.decayTime)
+				continue;
 
-		// TODO: containers
-
-		depotItems[(*it)->getID()] += Item::countByType(*it, -1);
+			depotItems[(*it)->getID()] += Item::countByType(*it, -1);
+		}
 	}
+	while (!containerList.empty());
 
 	msg->AddU16(std::min((size_t)65535, depotItems.size()));
 

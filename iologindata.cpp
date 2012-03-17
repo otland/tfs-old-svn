@@ -717,10 +717,10 @@ bool IOLoginData::saveItems(const Player* player, const ItemBlockList& itemList,
 		Container* container = cb.first;
 		parentId = cb.second;
 		stack.pop_front();
-		for(uint32_t i = 0; i < container->size(); ++i)
+		for(ItemList::const_iterator it = container->getItems(), end = container->getEnd(); it != end; ++it)
 		{
 			++runningId;
-			item = container->getItem(i);
+			item = *it;
 			Container* container = item->getContainer();
 			if(container)
 				stack.push_back(containerBlock(container, runningId));

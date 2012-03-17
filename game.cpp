@@ -1546,17 +1546,14 @@ Item* Game::findItemOfType(Cylinder* cylinder, uint16_t itemId,
 	{
 		Container* container = listContainer.front();
 		listContainer.pop_front();
-		for(int32_t i = 0; i < (int32_t)container->size();)
+		for(ItemList::const_iterator it = container->getItems(), end = container->getEnd(); it != end; ++it)
 		{
-			Item* item = container->getItem(i);
+			Item* item = *it;
 			if(item->getID() == itemId && (subType == -1 || subType == item->getSubType()))
 				return item;
-			else
-			{
-				++i;
-				if((tmpContainer = item->getContainer()))
-					listContainer.push_back(tmpContainer);
-			}
+
+			if((tmpContainer = item->getContainer()))
+				listContainer.push_back(tmpContainer);
 		}
 	}
 	return NULL;
@@ -1661,10 +1658,10 @@ uint32_t Game::getMoney(const Cylinder* cylinder)
 
 	std::list<Container*> listContainer;
 	ItemList::const_iterator it;
-	Container* tmpContainer = NULL;
+	Container* tmpContainer;
 
-	Thing* thing = NULL;
-	Item* item = NULL;
+	Thing* thing;
+	Item* item;
 
 	uint32_t moneyCount = 0;
 	for(int32_t i = cylinder->__getFirstIndex(); i < cylinder->__getLastIndex(); ++i)
@@ -1702,6 +1699,7 @@ bool Game::removeMoney(Cylinder* cylinder, int32_t money, uint32_t flags /*= 0*/
 {
 	if(cylinder == NULL)
 		return false;
+
 	if(money <= 0)
 		return true;
 
@@ -1711,11 +1709,11 @@ bool Game::removeMoney(Cylinder* cylinder, int32_t money, uint32_t flags /*= 0*/
 	typedef std::multimap<int, Item*, std::less<int> > MoneyMap;
 	typedef MoneyMap::value_type moneymap_pair;
 	MoneyMap moneyMap;
-	Thing* thing = NULL;
-	Item* item = NULL;
+	Thing* thing;
+	Item* item;
 	int32_t moneyCount = 0;
 
-	for(int32_t i = cylinder->__getFirstIndex(); i < cylinder->__getLastIndex() && money > 0; ++i)
+	for(int32_t i = cylinder->__getFirstIndex(); i < cylinder->__getLastIndex(); ++i)
 	{
 		if(!(thing = cylinder->__getThing(i)))
 			continue;
@@ -1732,15 +1730,15 @@ bool Game::removeMoney(Cylinder* cylinder, int32_t money, uint32_t flags /*= 0*/
 		}
 	}
 
-	while(!listContainer.empty() && money > 0)
+	while(!listContainer.empty())
 	{
 		Container* container = listContainer.front();
 		listContainer.pop_front();
 
-		for(uint32_t i = 0, size = container->size(); i < size && money > 0; ++i)
+		for(ItemList::const_iterator it = container->getItems(), end = container->getEnd(); it != end; ++it)
 		{
-			Item* item = container->getItem(i);
-			if(((tmpContainer = item->getContainer())))
+			Item* item = *it;
+			if((tmpContainer = item->getContainer()))
 				listContainer.push_back(tmpContainer);
 			else if(item->getWorth() != 0)
 			{
@@ -1768,11 +1766,7 @@ bool Game::removeMoney(Cylinder* cylinder, int32_t money, uint32_t flags /*= 0*/
 		}
 		else
 			money -= mit->first;
-
-		mit->second = NULL;
 	}
-
-	moneyMap.clear();
 	return (money == 0);
 }
 
@@ -5333,7 +5327,7 @@ bool Game::playerAcceptMarketOffer(uint32_t playerId, uint32_t timestamp, uint16
 
 		// TODO: add to bank
 		addMoney(depot->getInbox(), item.price * amount, FLAG_NOLIMIT);
-			
+
 		// TODO: add the item to buyer
 	}
 	else

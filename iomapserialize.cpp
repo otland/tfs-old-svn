@@ -664,9 +664,9 @@ void IOMapSerialize::saveTile(PropWriteStream& stream, const Tile* tile)
 		return;
 
 	std::vector<Item*> items;
-	for(int32_t i = tile->getThingCount(); i > 0; --i)
+	for(int32_t i = tile->getThingCount() - 1; i >= 0; --i)
 	{
-		Item* item = tile->__getThing(i - 1)->getItem();
+		Item* item = tile->__getThing(i)->getItem();
 		if(!item)
 			continue;
 
