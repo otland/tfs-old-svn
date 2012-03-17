@@ -215,7 +215,7 @@ Player::~Player()
 #endif
 }
 
-void Player::setVocation(uint32_t vocId)
+void Player::setVocation(uint32_t id)
 {
 	vocationId = id;
 	vocation = g_vocations.getVocation(id);
