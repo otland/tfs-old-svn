@@ -337,7 +337,7 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool prelo
 	DBQuery query;
 	DBResult* result;
 
-	query << "SELECT `id`, `account_id`, `group_id`, `sex`, `vocation`, `experience`, `level`, `maglevel`, `health`, `healthmax`, `blessings`, `mana`, `manamax`, `manaspent`, `soul`, `lookbody`, `lookfeet`, `lookhead`, `looklegs`, `looktype`, `lookaddons`, `posx`, `posy`, `posz`, `cap`, `lastlogin`, `lastlogout`, `lastip`, `conditions`, `redskulltime`, `redskull`, `guildnick`, `rank_id`, `town_id` FROM `players` WHERE `name` " << db->getStringComparer() << db->escapePatternString(name) << " LIMIT 1;";
+	query << "SELECT `id`, `account_id`, `group_id`, `sex`, `vocation`, `experience`, `level`, `maglevel`, `health`, `healthmax`, `blessings`, `mana`, `manamax`, `manaspent`, `soul`, `lookbody`, `lookfeet`, `lookhead`, `looklegs`, `looktype`, `lookaddons`, `posx`, `posy`, `posz`, `cap`, `lastlogin`, `lastlogout`, `lastip`, `conditions`, `redskulltime`, `redskull`, `guildnick`, `rank_id`, `town_id`, `balance` FROM `players` WHERE `name` " << db->getStringComparer() << db->escapePatternString(name) << " LIMIT 1;";
 	if(!(result = db->storeQuery(query.str())))
 		return false;
 
@@ -364,6 +364,8 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool prelo
 		//only loading basic info
 		return true;
 	}
+
+	player->bankBalance = (uint64_t)result->getDataLong("balance");
 
 	player->setSex((PlayerSex_t)result->getDataInt("sex"));
 	player->level = std::max((uint32_t)1, (uint32_t)result->getDataInt("level"));
@@ -1372,4 +1374,11 @@ bool IOLoginData::hasGuild(uint32_t guid)
 	bool hasGuild = result->getDataInt("rank_id") != 0;
 	db->freeResult(result);
 	return hasGuild;
+}
+
+void IOLoginData::increaseBankBalance(uint32_t guid, uint64_t bankBalance)
+{
+	DBQuery query;
+	query << "UPDATE `players` SET `balance` = `balance` + " << bankBalance << " WHERE `id` = " << guid << ";";
+	Database::getInstance()->executeQuery(query.str());
 }

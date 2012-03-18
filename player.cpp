@@ -183,6 +183,8 @@ Creature()
 
 	groupId = 0;
 
+	bankBalance = 0;
+
 	ghostMode = false;
 	requestedOutfit = false;
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__

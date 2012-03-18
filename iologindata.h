@@ -84,6 +84,7 @@ class IOLoginData
 		const PlayerGroup* getPlayerGroup(uint32_t groupid);
 		uint32_t getLastIPByName(std::string name);
 		bool hasGuild(uint32_t guid);
+		void increaseBankBalance(uint32_t guid, uint64_t bankBalance);
 
 	protected:
 		bool storeNameByGuid(Database &mysql, uint32_t guid);

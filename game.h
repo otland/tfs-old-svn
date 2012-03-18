@@ -191,6 +191,13 @@ class Game
 		Player* getPlayerByName(const std::string& s);
 
 		/**
+		  * Returns a player based on guid
+		  * \param guid
+		  * \returns A Pointer to the player
+		  */
+		Player* getPlayerByGUID(const uint32_t& guid);
+
+		/**
 		  * Returns a player based on a string name identifier, with support for the "~" wildcard.
 		  * \param s is the name identifier, with or without wildcard
 		  * \param player will point to the found player (if any)

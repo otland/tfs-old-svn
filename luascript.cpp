@@ -485,11 +485,9 @@ bool ScriptEnvironment::getGlobalStorageValue(const uint32_t key, int32_t& value
 		value = it->second;
 		return true;
 	}
-	else
-	{
-		value = 0;
-		return false;
-	}
+
+	value = 0;
+	return false;
 }
 
 std::string LuaScriptInterface::getErrorDesc(ErrorCode_t code)
@@ -1117,9 +1115,6 @@ std::string LuaScriptInterface::getFieldString(lua_State* L, const char* key)
 
 void LuaScriptInterface::registerFunctions()
 {
-	//TODO: Change all player lua functions that a creature has use of too, to support creatures aswell,
-	//also remove things like getPlayerPosition as there already is getCreaturePosition ...
-
 	//lua_register(L, "name", C_function);
 
 	//getPlayerFood(cid)
@@ -1836,6 +1831,14 @@ void LuaScriptInterface::registerFunctions()
 	//doPlayerAddBlessing(cid, blessing)
 	lua_register(m_luaState, "doPlayerAddBlessing", LuaScriptInterface::luaDoPlayerAddBlessing);
 
+	//getPlayerAccountBalance(cid), added for compatibility with otserv
+	lua_register(m_luaState, "getPlayerAccountBalance", LuaScriptInterface::luaGetPlayerBankBalance);
+	//getPlayerBalance(cid)
+	lua_register(m_luaState, "getPlayerBalance", LuaScriptInterface::luaGetPlayerBankBalance);
+
+	//doPlayerSetBalance(cid, balance)
+	lua_register(m_luaState, "doPlayerSetBalance", LuaScriptInterface::luaDoPlayerSetBankBalance);
+
 	//saveServer()
 	//saveData()
 	lua_register(m_luaState, "saveServer", LuaScriptInterface::luaSaveServer);
@@ -2014,6 +2017,10 @@ int32_t LuaScriptInterface::internalGetPlayerInfo(lua_State* L, PlayerInfo_t inf
 				value = (int32_t)player->getIP();
 				break;
 
+			case PlayerInfoBankBalance:
+				lua_pushnumber(L, player->getBankBalance());
+				break;
+
 			default:
 				std::string error_str = "Unknown player info. info = " + info;
 				reportErrorFunc(error_str);
@@ -2140,6 +2147,10 @@ int32_t LuaScriptInterface::luaIsPlayerGhost(lua_State* L)
 int32_t LuaScriptInterface::luaGetPlayerIp(lua_State* L)
 {
 	return internalGetPlayerInfo(L, PlayerInfoIp);
+}
+int32_t LuaScriptInterface::luaGetPlayerBankBalance(lua_State* L)
+{
+	return internalGetPlayerInfo(L, PlayerInfoBankBalance);
 }
 
 int32_t LuaScriptInterface::luaGetPlayerFlagValue(lua_State* L)
@@ -4257,6 +4268,27 @@ int32_t LuaScriptInterface::luaDoPlayerSetSex(lua_State* L)
 	if(player)
 	{
 		player->setSex((PlayerSex_t)newSex);
+		lua_pushboolean(L, true);
+	}
+	else
+	{
+		reportErrorFunc(getErrorDesc(LUA_ERROR_PLAYER_NOT_FOUND));
+		lua_pushboolean(L, false);
+	}
+	return 1;
+}
+
+int32_t LuaScriptInterface::luaDoPlayerSetBankBalance(lua_State* L)
+{
+	//doPlayerSetBankBalance(cid, balance)
+	uint64_t balance = popNumber(L);
+	uint32_t cid = popNumber(L);
+
+	ScriptEnvironment* env = getScriptEnv();
+	Player* player = env->getPlayerByUID(cid);
+	if(player)
+	{
+		player->setBankBalance(balance);
 		lua_pushboolean(L, true);
 	}
 	else

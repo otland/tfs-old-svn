@@ -181,6 +181,9 @@ class Player : public Creature, public Cylinder
 			return ((50ULL * level * level * level) - (150ULL * level * level) + (400ULL * level))/3ULL;
 		}
 
+		uint64_t getBankBalance() const {return bankBalance;}
+		void setBankBalance(uint64_t balance) {bankBalance = balance;}
+
 		uint32_t getGuildId() const {return guildId;}
 		void setGuildId(uint32_t newGuildId) {guildId = newGuildId;}
 
@@ -739,7 +742,6 @@ class Player : public Creature, public Cylinder
 		virtual void __internalAddThing(Thing* thing);
 		virtual void __internalAddThing(uint32_t index, Thing* thing);
 
-	protected:
 		ProtocolGame* client;
 
 		Party* party;
@@ -848,6 +850,8 @@ class Player : public Creature, public Cylinder
 		uint32_t guid;
 
 		uint32_t town;
+
+		uint64_t bankBalance;
 
 		//guild variables
 		uint32_t guildId;

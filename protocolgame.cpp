@@ -2028,9 +2028,9 @@ void ProtocolGame::sendMarketEnter(uint32_t depotId)
 
 	TRACK_MESSAGE(msg);
 	msg->AddByte(0xF6);
-	msg->AddU32(g_game.getMoney(player)); // should be bank balance
+	msg->AddU32(std::min((uint64_t)0xFFFFFFFF, player->getBankBalance()));
 	msg->AddByte(player->getVocationId());
-	msg->AddByte(0x00); // active offers
+	msg->AddByte(0x00); // active offers (?)
 
 	Depot* depot = player->getDepot(depotId, false);
 	if(!depot)
@@ -2050,21 +2050,26 @@ void ProtocolGame::sendMarketEnter(uint32_t depotId)
 		containerList.pop_front();
 		for(ItemList::const_iterator it = container->getItems(), end = container->getEnd(); it != end; ++it)
 		{
-			Container* c = (*it)->getContainer();
+			Item* item = *it;
+
+			Container* c = item->getContainer();
 			if(c && !c->empty())
 			{
 				containerList.push_back(c);
 				continue;
 			}
 
-			const ItemType& itemType = Item::items[(*it)->getID()];
-			if((*it)->getCharges() != itemType.charges)
+			const ItemType& itemType = Item::items[item->getID()];
+			if(!itemType.ware)
 				continue;
 
-			if((*it)->getDuration() != itemType.decayTime)
+			if(item->getCharges() != itemType.charges)
 				continue;
 
-			depotItems[(*it)->getID()] += Item::countByType(*it, -1);
+			if(item->getDuration() != itemType.decayTime)
+				continue;
+
+			depotItems[item->getID()] += Item::countByType(item, -1);
 		}
 	}
 	while (!containerList.empty());

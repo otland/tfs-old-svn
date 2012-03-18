@@ -549,6 +549,20 @@ Player* Game::getPlayerByName(const std::string& s)
 	return NULL; //just in case the player doesnt exist
 }
 
+Player* Game::getPlayerByGUID(const uint32_t& guid)
+{
+	for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
+	{
+		Player* player = (*it).second;
+		if(!player->isRemoved())
+		{
+			if(guid == player->getGUID())
+				return player;
+		}
+	}
+	return NULL;
+}
+
 ReturnValue Game::getPlayerByNameWildcard(const std::string& s, Player*& player)
 {
 	player = NULL;
@@ -5176,8 +5190,10 @@ bool Game::playerCreateMarketOffer(uint32_t playerId, uint8_t type, uint16_t spr
 		else if(fee > 1000)
 			fee = 1000;
 
-		if(!removeMoney(player, fee))
+		if(fee > player->bankBalance)
 			return false;
+
+		player->bankBalance -= fee;
 	}
 	else //if(type == MARKETACTION_SELL)
 	{
@@ -5187,24 +5203,52 @@ bool Game::playerCreateMarketOffer(uint32_t playerId, uint8_t type, uint16_t spr
 		else if(fee > 1000)
 			fee = 1000;
 
-		if(getMoney(player) < fee)
+		if(fee > player->bankBalance)
 			return false;
-
-		int32_t subType = -1;
-		if(it.charges != 0)
-			subType = it.charges;
 
 		Depot* depot = player->getDepot(player->getMarketDepotId(), false);
 		if(!depot)
 			return false;
 
-		Container* depotChest = depot->getChest();
-		int32_t itemCount = depotChest->__getItemTypeCount(it.id, subType);
-		if(itemCount < amount)
+		ItemList itemList;
+		std::list<Container*> containerList;
+		containerList.push_back(depot->getChest());
+		do
+		{
+			Container* container = containerList.front();
+			containerList.pop_front();
+			for(ItemList::const_iterator iter = container->getItems(), end = container->getEnd(); iter != end; ++iter)
+			{
+				Item* item = (*iter);
+				Container* c = item->getContainer();
+				if(c && !c->empty())
+				{
+					containerList.push_back(c);
+					continue;
+				}
+
+				if(item->getID() != it.id)
+					continue;
+
+				const ItemType& itemType = Item::items[item->getID()];
+				if(item->getCharges() != itemType.charges)
+					continue;
+
+				if(item->getDuration() != itemType.decayTime)
+					continue;
+
+				itemList.push_back(item);
+			}
+		}
+		while(!containerList.empty());
+
+		if(itemList.size() < amount)
 			return false;
 
-		removeItemOfType(depotChest, it.id, amount, subType);
-		removeMoney(player, fee);
+		for(ItemList::const_iterator iter = itemList.begin(), end = itemList.end(); iter != end; ++iter)
+			internalRemoveItem(*iter);
+
+		player->bankBalance -= fee;
 	}
 
 	IOMarket::getInstance()->createOffer(player->getGUID(), (MarketAction_t)type, it.id, amount, price, anonymous);
@@ -5235,17 +5279,13 @@ bool Game::playerCancelMarketOffer(uint32_t playerId, uint32_t timestamp, uint16
 
 	if(item.type == MARKETACTION_BUY)
 	{
-		addMoney(player, item.price * item.amount);
+		player->bankBalance += item.price * item.amount;
 	}
 	else
 	{
 		const ItemType& it = Item::items[item.itemId];
 		if(it.id == 0)
 			return false;
-
-		int32_t subType = -1;
-		if(it.charges != 0)
-			subType = it.charges;
 
 		Depot* depot = player->getDepot(player->getMarketDepotId(), true);
 		if(it.stackable)
@@ -5266,6 +5306,10 @@ bool Game::playerCancelMarketOffer(uint32_t playerId, uint32_t timestamp, uint16
 		}
 		else
 		{
+			int32_t subType = -1;
+			if(it.charges != 0)
+				subType = it.charges;
+
 			for(uint16_t i = 0; i < item.amount; ++i)
 			{
 				Item* item = Item::CreateItem(it.id, subType);
@@ -5308,37 +5352,115 @@ bool Game::playerAcceptMarketOffer(uint32_t playerId, uint32_t timestamp, uint16
 
 	if(item.type == MARKETACTION_BUY)
 	{
-		int32_t subType = -1;
-		if(it.charges != 0)
-			subType = it.charges;
-
-		// TODO: items with duration
-
 		Depot* depot = player->getDepot(player->getMarketDepotId(), false);
 		if(!depot)
 			return false;
 
-		Container* depotChest = depot->getChest();
-		int32_t itemCount = depotChest->__getItemTypeCount(it.id, subType);
-		if(itemCount < amount)
+		ItemList itemList;
+		std::list<Container*> containerList;
+		containerList.push_back(depot->getChest());
+		do
+		{
+			Container* container = containerList.front();
+			containerList.pop_front();
+			for(ItemList::const_iterator iter = container->getItems(), end = container->getEnd(); iter != end; ++iter)
+			{
+				Item* item = (*iter);
+				Container* c = item->getContainer();
+				if(c && !c->empty())
+				{
+					containerList.push_back(c);
+					continue;
+				}
+
+				if(item->getID() != it.id)
+					continue;
+
+				const ItemType& itemType = Item::items[item->getID()];
+				if(item->getCharges() != itemType.charges)
+					continue;
+
+				if(item->getDuration() != itemType.decayTime)
+					continue;
+
+				itemList.push_back(item);
+			}
+		}
+		while(!containerList.empty());
+
+		if(itemList.size() < amount)
 			return false;
 
-		removeItemOfType(depotChest, it.id, amount, subType);
+		for(ItemList::const_iterator iter = itemList.begin(), end = itemList.end(); iter != end; ++iter)
+			internalRemoveItem(*iter);
 
-		// TODO: add to bank
-		addMoney(depot->getInbox(), item.price * amount, FLAG_NOLIMIT);
+		player->bankBalance += item.price * amount;
 
-		// TODO: add the item to buyer
+		bool tmpLoaded = false;
+		Player* buyerPlayer = getPlayerByGUID(item.playerId);
+		if(!buyerPlayer)
+		{
+			std::string buyerName;
+			if(!IOLoginData::getInstance()->getNameByGuid(item.playerId, buyerName))
+				return false;
+
+			buyerPlayer = new Player(buyerName, NULL);
+			if(!IOLoginData::getInstance()->loadPlayer(buyerPlayer, buyerName))
+			{
+				delete buyerPlayer;
+				return false;
+			}
+			tmpLoaded = true;
+		}
+		buyerPlayer->setDepotChange(true);
+
+		Depot* buyerDepot = buyerPlayer->getDepot(buyerPlayer->getTown(), true);
+		if(it.stackable)
+		{
+			uint16_t tmpAmount = amount;
+			while(tmpAmount > 0)
+			{
+				uint16_t stackCount = std::min((uint16_t)100, tmpAmount);
+				Item* item = Item::CreateItem(it.id, stackCount);
+				if(internalAddItem(buyerDepot->getInbox(), item, INDEX_WHEREEVER, FLAG_NOLIMIT) != RET_NOERROR)
+				{
+					delete item;
+					break;
+				}
+
+				tmpAmount -= stackCount;
+			}
+		}
+		else
+		{
+			int32_t subType = -1;
+			if(it.charges != 0)
+				subType = it.charges;
+
+			for(uint16_t i = 0; i < amount; ++i)
+			{
+				Item* item = Item::CreateItem(it.id, subType);
+				if(internalAddItem(buyerDepot->getInbox(), item, INDEX_WHEREEVER, FLAG_NOLIMIT) != RET_NOERROR)
+				{
+					delete item;
+					break;
+				}
+			}
+		}
+
+		if(tmpLoaded)
+		{
+			IOLoginData::getInstance()->savePlayer(buyerPlayer, true);
+			delete buyerPlayer;
+		}
 	}
 	else
 	{
-		// TODO: remove from bank
-		if(!removeMoney(player, item.price * amount))
+		uint64_t totalPrice = item.price * amount;
+		if(totalPrice > player->bankBalance)
 			return false;
 
-		int32_t subType = -1;
-		if(it.charges != 0)
-			subType = it.charges;
+		player->bankBalance -= totalPrice;
 
 		Depot* depot = player->getDepot(player->getMarketDepotId(), true);
 		if(it.stackable)
@@ -5359,6 +5481,10 @@ bool Game::playerAcceptMarketOffer(uint32_t playerId, uint32_t timestamp, uint16
 		}
 		else
 		{
+			int32_t subType = -1;
+			if(it.charges != 0)
+				subType = it.charges;
+
 			for(uint16_t i = 0; i < amount; ++i)
 			{
 				Item* item = Item::CreateItem(it.id, subType);
@@ -5370,7 +5496,11 @@ bool Game::playerAcceptMarketOffer(uint32_t playerId, uint32_t timestamp, uint16
 			}
 		}
 
-		// TODO: add money to seller
+		Player* sellerPlayer = getPlayerByGUID(item.playerId);
+		if(sellerPlayer)
+			sellerPlayer->bankBalance += totalPrice;
+		else
+			IOLoginData::getInstance()->increaseBankBalance(item.playerId, totalPrice);
 	}
 
 	IOMarket::getInstance()->acceptOffer(offerId, amount);

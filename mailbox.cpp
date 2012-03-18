@@ -122,7 +122,8 @@ bool Mailbox::sendItem(Item* item)
 	if(!IOLoginData::getInstance()->getGuidByName(guid, receiver))
 		return false;
 
-	if(Player* player = g_game.getPlayerByName(receiver))
+	Player* player = g_game.getPlayerByName(receiver);
+	if(player)
 	{
 		Depot* depot = player->getDepot(dp, true);
 		if(depot)
@@ -137,9 +138,9 @@ bool Mailbox::sendItem(Item* item)
 			}
 		}
 	}
-	else if(IOLoginData::getInstance()->playerExists(receiver))
+	else
 	{
-		Player* player = new Player(receiver, NULL);
+		player = new Player(receiver, NULL);
 		if(!IOLoginData::getInstance()->loadPlayer(player, receiver))
 		{
 			#ifdef __DEBUG_MAILBOX__

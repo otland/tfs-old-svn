@@ -230,7 +230,8 @@ enum PlayerInfo_t
 	PlayerInfoSkullType,
 	PlayerInfoPzLock,
 	PlayerInfoGhostStatus,
-	PlayerInfoIp
+	PlayerInfoIp,
+	PlayerInfoBankBalance
 };
 
 #define reportErrorFunc(a)  reportError(__FUNCTION__, a, true)
@@ -397,7 +398,7 @@ class LuaScriptInterface
 		static int32_t luaDoPlayerChangeName(lua_State* L);
 		static int32_t luaDoSetCreatureLight(lua_State* L);
 		static int32_t luaDoSetCreatureDropLoot(lua_State* L);
-		static int32_t luaGetPlayerSkullType(lua_State* L);
+		static int32_t luaDoPlayerSetBankBalance(lua_State* L);
 
 		//queries
 		static int32_t luaGetPlayerByName(lua_State* L);
@@ -471,6 +472,8 @@ class LuaScriptInterface
 		static int32_t luaGetPlayerSlotItem(lua_State* L);
 		static int32_t luaGetPlayerItemById(lua_State* L);
 		static int32_t luaGetPlayerLossPercent(lua_State* L);
+		static int32_t luaGetPlayerSkullType(lua_State* L);
+		static int32_t luaGetPlayerBankBalance(lua_State* L);
 
 		static int32_t luaGetPlayerDepotItems(lua_State* L);
 		static int32_t luaGetPlayerGuildId(lua_State* L);

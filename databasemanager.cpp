@@ -222,6 +222,16 @@ uint32_t DatabaseManager::updateDatabase()
 			return 2;
 		}
 
+		case 2:
+		{
+			if(db->getDatabaseEngine() == DATABASE_ENGINE_SQLITE)
+				db->executeQuery("DROP TRIGGER IF EXISTS `onupdate_players_after`;");
+
+			db->executeQuery("ALTER TABLE `players` ADD `balance` BIGINT UNSIGNED NOT NULL DEFAULT 0;");
+			registerDatabaseConfig("db_version", 3);
+			return 3;
+		}
+		
 		/*
 		case ?-1:
 		{
