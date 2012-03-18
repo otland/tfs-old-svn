@@ -1880,14 +1880,14 @@ int32_t LuaScriptInterface::internalGetPlayerInfo(lua_State* L, PlayerInfo_t inf
 {
 	uint32_t cid = popNumber(L);
 	ScriptEnvironment* env = getScriptEnv();
-	int32_t value;
-
 	const Player* player = env->getPlayerByUID(cid);
 	if(player)
 	{
 		const Tile *tile;
 		Position pos;
 		uint32_t stackpos;
+		int32_t value;
+
 		switch(info)
 		{
 			case PlayerInfoAccess:
@@ -2019,7 +2019,7 @@ int32_t LuaScriptInterface::internalGetPlayerInfo(lua_State* L, PlayerInfo_t inf
 
 			case PlayerInfoBankBalance:
 				lua_pushnumber(L, player->getBankBalance());
-				break;
+				return 1;
 
 			default:
 				std::string error_str = "Unknown player info. info = " + info;
