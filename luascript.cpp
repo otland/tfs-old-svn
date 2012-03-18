@@ -4280,7 +4280,7 @@ int32_t LuaScriptInterface::luaDoPlayerSetSex(lua_State* L)
 
 int32_t LuaScriptInterface::luaDoPlayerSetBankBalance(lua_State* L)
 {
-	//doPlayerSetBankBalance(cid, balance)
+	//doPlayerSetBalance(cid, balance)
 	uint64_t balance = popNumber(L);
 	uint32_t cid = popNumber(L);
 
