@@ -22160,6 +22160,453 @@
 	<item id="15345" article="" name="emblems" />
 	<item id="15346" article="an" name="emblem" />
 	<item fromid="15191" toid="15206" article="" name="leaves" />
+	<item id="15208" article="a" name="dead deepling guard">
+		<attribute key="weight" value="4400"/>
+		<attribute key="containerSize" value="5"/>
+		<attribute key="decayTo" value="15209"/>
+		<attribute key="duration" value="600"/>
+		<attribute key="corpseType" value="blood"/>
+	</item>
+	<item id="15209" article="a" name="dead deepling spellsinger">
+		<attribute key="weight" value="3000"/>
+		<attribute key="decayTo" value="15211"/>
+		<attribute key="duration" value="600"/>
+		<attribute key="corpseType" value="blood"/>
+	</item>
+	<item id="15210" article="a" name="dead deepling spellsinger">
+		<attribute key="weight" value="2000"/>
+		<attribute key="decayTo" value="0"/>
+		<attribute key="duration" value="600"/>
+		<attribute key="corpseType" value="blood"/>
+	</item>
+	<item id="15211" article="a" name="dead deepling spellsinger">
+		<attribute key="weight" value="2000"/>
+		<attribute key="decayTo" value="15210"/>
+		<attribute key="duration" value="600"/>
+		<attribute key="corpseType" value="blood"/>
+	</item>
+	<item id="15213" article="a" name="moist pillar"/>
+	<item id="15220" article="a" name="dead jaul">
+		<attribute key="weight" value="3000"/>
+		<attribute key="decayTo" value="15221"/>
+		<attribute key="duration" value="600"/>
+		<attribute key="corpseType" value="blood"/>
+	</item>
+	<item id="15221" article="a" name="dead jaul">
+		<attribute key="weight" value="2000"/>
+		<attribute key="decayTo" value="15222"/>
+		<attribute key="duration" value="600"/>
+		<attribute key="corpseType" value="blood"/>
+	</item>
+	<item id="15222" article="a" name="dead jaul">
+		<attribute key="weight" value="4400"/>
+		<attribute key="containerSize" value="5"/>
+		<attribute key="decayTo" value="15223"/>
+		<attribute key="duration" value="600"/>
+		<attribute key="corpseType" value="blood"/>
+	</item>
+	<item id="15223" article="a" name="dead jaul">
+		<attribute key="weight" value="3000"/>
+		<attribute key="decayTo" value="0"/>
+		<attribute key="duration" value="600"/>
+		<attribute key="corpseType" value="blood"/>
+	</item>
+	<item id="15224" article="a" name="dead obujos">
+		<attribute key="weight" value="2000"/>
+		<attribute key="decayTo" value="15225"/>
+		<attribute key="duration" value="600"/>
+		<attribute key="corpseType" value="blood"/>
+	</item>
+	<item id="15225" article="a" name="dead obujos">
+		<attribute key="weight" value="2000"/>
+		<attribute key="decayTo" value="15227"/>
+		<attribute key="duration" value="600"/>
+		<attribute key="corpseType" value="blood"/>
+	</item>
+	<item id="15226" article="a" name="dead obujos">
+		<attribute key="weight" value="2000"/>
+		<attribute key="decayTo" value="0"/>
+		<attribute key="duration" value="600"/>
+		<attribute key="corpseType" value="blood"/>
+	</item>
+	<item id="15227" article="a" name="dead obujos">
+		<attribute key="weight" value="2000"/>
+		<attribute key="decayTo" value="15226"/>
+		<attribute key="duration" value="600"/>
+		<attribute key="corpseType" value="blood"/>
+	</item>
+	<item id="15228" article="a" name="dead obujos">
+		<attribute key="weight" value="2000"/>
+		<attribute key="decayTo" value="15229"/>
+		<attribute key="duration" value="600"/>
+		<attribute key="corpseType" value="blood"/>
+	</item>
+	<item id="15229" article="a" name="dead obujos">
+		<attribute key="weight" value="2000"/>
+		<attribute key="decayTo" value="15230"/>
+		<attribute key="duration" value="600"/>
+		<attribute key="corpseType" value="blood"/>
+	</item>
+	<item id="15230" article="a" name="dead obujos">
+		<attribute key="weight" value="2000"/>
+		<attribute key="decayTo" value="15231"/>
+		<attribute key="duration" value="600"/>
+		<attribute key="corpseType" value="blood"/>
+	</item>
+	<item id="15231" article="a" name="dead obujos">
+		<attribute key="weight" value="2000"/>
+		<attribute key="decayTo" value="0"/>
+		<attribute key="duration" value="600"/>
+		<attribute key="corpseType" value="blood"/>
+	</item>
+	<item fromid="15250" toid="15267" article="an" name="enormous statue" />
+	<item id="15280" article="a" name="dead calamary">
+		<attribute key="weight" value="6300"/>
+		<attribute key="containerSize" value="5"/>
+		<attribute key="decayTo" value="15281"/>
+		<attribute key="duration" value="600"/>
+		<attribute key="corpseType" value="blood"/>
+		<attribute key="fluidSource" value="blood"/>
+	</item>
+	<item id="15281" article="a" name="dead calamary">
+		<attribute key="weight" value="4400"/>
+		<attribute key="containerSize" value="5"/>
+		<attribute key="decayTo" value="15282"/>
+		<attribute key="duration" value="600"/>
+		<attribute key="corpseType" value="blood"/>
+	</item>
+	<item id="15282" article="a" name="dead calamary">
+		<attribute key="weight" value="3000"/>
+		<attribute key="decayTo" value="15283"/>
+		<attribute key="duration" value="600"/>
+		<attribute key="corpseType" value="blood"/>
+	</item>
+	<item id="15283" article="a" name="dead calamary">
+		<attribute key="weight" value="2000"/>
+		<attribute key="decayTo" value="0"/>
+		<attribute key="duration" value="600"/>
+		<attribute key="corpseType" value="blood"/>
+	</item>
+	<item fromid="15323" toid="15326" article="a" name="lampions" />
+	<item id="15327" name="flitter" />
+	<item id="15328" article="a" name="party snake" />
+	<item id="15330" name="flitter" />
+	<item id="15331" article="a" name="party snake" />
+	<item id="15332" article="a" name="royal emblems" />
+	<item id="15333" article="a" name="lampions" />
+	<item fromid="15334" toid="15335" article="a" name="drinks" />
+	<item fromid="15336" toid="15338" article="a" name="lampions" />
+	<item id="15339" article="a" name="flitter" />
+	<item id="15340" article="a" name="party snake" />
+	<item id="15341" article="a" name="emblems" />
+	<item id="15342" article="an" name="emblem" />
+	<item id="15343" article="a" name="flitter" />
+	<item id="15344" article="a" name="party snake" />
+	<item id="15345" article="a" name="emblems" />
+	<item id="15346" article="an" name="emblem" />
+	<item id="15390" article="a"  name="blob bomb">
+		<attribute key="weight" value="110"/>
+	</item>
+	<item id="15400" article="a"  name="deepling staff">
+		<attribute key="weight" value="8800"/>
+		<attribute key="defense" value="23"/>
+		<attribute key="attack" value="43"/>
+		<attribute key="weaponType" value="club"/>
+		<attribute key="slotType" value="two-handed"/>
+	</item>
+	<item id="15403" article="a" name="necklace of the deep">
+		<attribute key="weight" value="509"/>
+		<attribute key="slotType" value="necklace"/>
+		<attribute key="absorbPercentLifeDrain" value="50"/>
+		<attribute key="showattributes" value="1"/>
+	</item>
+	<item id="15404" article="a"  name="deepling axe">
+		<attribute key="weight" value="9100"/>
+		<attribute key="defense" value="29"/>
+		<attribute key="attack" value="49"/>
+		<attribute key="weaponType" value="axe"/>
+	</item>
+	<item id="15406" article="an" name="ornate chestplate">
+		<attribute key="weight" value="15600"/>
+		<attribute key="armor" value="16"/>
+		<attribute key="slotType" value="body"/>
+		<attribute key="skillShield" value="3"/>
+		<attribute key="absorbPercentPhysical" value="8"/>
+		<attribute key="showattributes" value="1"/>
+	</item>
+	<item id="15407" article="a" name="depth lorica">
+		<attribute key="weight" value="14500"/>
+		<attribute key="armor" value="16"/>
+		<attribute key="slotType" value="body"/>
+		<attribute key="skillDist" value="3"/>
+		<attribute key="absorbPercentDeath" value="5"/>
+		<attribute key="showattributes" value="1"/>
+	</item>
+	<item id="15408" article="a" name="depth galea">
+		<attribute key="weight" value="4600"/>
+		<attribute key="armor" value="8"/>
+		<attribute key="slotType" value="head"/>
+	</item>
+	<item id="15409" article="a" name="depth ocrea">
+		<attribute key="weight" value="4800"/>
+		<attribute key="armor" value="8"/>
+		<attribute key="slotType" value="legs"/>
+		<attribute key="absorbPercentManaDrain" value="15"/>
+		<attribute key="showattributes" value="1"/>
+	</item>
+	<item id="15410" article="a" name="depth calcei">
+		<attribute key="weight" value="3700"/>
+		<attribute key="armor" value="3"/>
+		<attribute key="slotType" value="feet"/>
+		<attribute key="speed" value="-10"/>
+		<attribute key="absorbPercentPhysical" value="5"/>
+		<attribute key="showattributes" value="1"/>
+	</item>
+	<item id="15411" article="a" name="depth scutum">
+		<attribute key="weight" value="3000"/>
+		<attribute key="defense" value="25"/>
+		<attribute key="weaponType" value="shield"/>
+		<attribute key="magicpoints" value="2"/>
+		<attribute key="showattributes" value="1"/>
+	</item>
+	<item id="15412" article="an" name="ornate legs">
+		<attribute key="weight" value="7700"/>
+		<attribute key="armor" value="8"/>
+		<attribute key="slotType" value="legs"/>
+		<attribute key="absorbPercentPhysical" value="5"/>
+		<attribute key="showattributes" value="1"/>
+	</item>
+	<item id="15413" article="an" name="ornate shield">
+		<attribute key="weight" value="7100"/>
+		<attribute key="defense" value="36"/>
+		<attribute key="absorbPercentPhysical" value="5"/>
+		<attribute key="showattributes" value="1"/>
+		<attribute key="weaponType" value="shield"/>
+	</item>
+	<item id="15414" article="an" name="ornate mace">
+		<attribute key="weight" value="14900"/>
+		<attribute key="attack" value="49"/>
+		<attribute key="defense" value="24"/>
+		<attribute key="weaponType" value="club"/>
+	</item>
+	<item id="15421" article="a" name="spellsinger's seal">
+		<attribute key="weight" value="190"/>
+		<attribute key="description" value="The seal used by the spellsingers of the deep."/>
+	</item>
+	<item id="15422" article="a" name="key to the drowned library">
+		<attribute key="weight" value="120"/>
+		<attribute key="description" value="The strange shape of this key glistens softly in the light."/>
+	</item>	
+	<item id="15423" article="a" name="deepling guard belt buckle">
+		<attribute key="weight" value="260"/>
+		<attribute key="description" value="A belt buckle snatched from a deepling guard."/>
+	</item>
+	<item id="15424" article="a" name="deepling breaktime snack">
+		<attribute key="weight" value="240"/>
+	</item>
+	<item id="15425" article="a" name="deepling warts">
+		<attribute key="weight" value="240"/>
+		<attribute key="description" value="A belt buckle snatched from a deepling guard."/>
+	</item>	
+	<item id="15426" article="a" name="deeptags">
+		<attribute key="weight" value="240"/>
+		<attribute key="description" value="The identity of some deepling is written there."/>
+	</item>
+	<item id="15430" article="a" name="deepling scale">
+		<attribute key="weight" value="480"/>
+	</item>
+	<item id="15431" article="a" name="hearth of the sea">
+		<attribute key="weight" value="390"/>
+		<attribute key="description" value="This formidable gem was hand-cut by |PLAYERNAME|."/>
+	</item>
+	<item id="15432" article="a" name="small golden anchor">
+		<attribute key="weight" value="134"/>
+	</item>
+	<item id="15433" article="a" name="soul net">
+		<attribute key="weight" value="1250"/>
+	</item>
+	<item id="15434" article="a" name="jaul's pearl">
+		<attribute key="weight" value="310"/>
+		<attribute key="description" value="The identity of some deepling is written there."/>
+	</item>
+	<item id="15435" article="a" name="tanjis' sight">
+		<attribute key="weight" value="220"/>
+		<attribute key="description" value="The identity of some deepling is written there."/>
+	</item>
+	<item id="15436" article="an" name="obujos' shell">
+		<attribute key="weight" value="280"/>
+		<attribute key="description" value="The identity of some deepling is written there."/>
+	</item>
+	<item fromid="15437" toid="15438" article="a" name="party lampions">
+		<attribute key="weight" value="280"/>
+	</item>
+	<item id="15439" article="a" name="party wall tinsel">
+		<attribute key="weight" value="1000"/>
+	</item>
+	<item id="15440" article="a" name="party wall snake">
+		<attribute key="weight" value="1000"/>
+	</item>
+	<item fromid="15441" toid="15443" article="a" name="flower pot">
+		<attribute key="weight" value="150"/>
+	</item>
+	<item id="15451" article="a" name="warrior's axe">
+		<attribute key="weight" value="8800"/>
+		<attribute key="attack" value="42"/>
+		<attribute key="defense" value="21"/>
+		<attribute key="weaponType" value="axe"/>
+	</item>
+	<item id="15452" article="a" name="deepling ridge">
+		<attribute key="weight" value="180"/>
+	</item>
+	<item id="15453" article="a" name="warrior's shield">
+		<attribute key="weight" value="7900"/>
+		<attribute key="defense" value="33"/>
+		<attribute key="weaponType" value="shield"/>
+	</item>
+	<item id="15454" article="a" name="guardian axe">
+		<attribute key="weight" value="11000"/>
+		<attribute key="attack" value="46"/>
+		<attribute key="defense" value="11"/>
+		<attribute key="weaponType" value="axe"/>
+		<attribute key="slotType" value="two-handed"/>
+	</item>
+	<item id="15455" article="a" name="deepling claw">
+		<attribute key="weight" value="180"/>	
+	</item>
+	<item id="15479" article="a" name="swarmer antenna">
+		<attribute key="weight" value="100"/>
+	</item>
+	<item id="15480" article="a" name="kollos shell">
+		<attribute key="weight" value="460"/>
+	</item>
+	<item id="15481" article="a" name="spitter nose">
+		<attribute key="weight" value="460"/>
+	</item>
+	<item id="15482" article="a" name="crawler head plating">
+		<attribute key="weight" value="265"/>
+	</item>
+	<item id="15483" article="a" name="waspoid claw">
+		<attribute key="weight" value="215"/>
+	</item>
+	<item id="15484" article="a" name="waspoid wing">
+		<attribute key="weight" value="99"/>
+	</item>
+	<item id="15485" article="a" name="spidris sandible">
+		<attribute key="weight" value="238"/>
+	</item>
+	<item id="15486" article="a" name="compound eye">
+		<attribute key="weight" value="165"/>
+	</item>
+	<item id="15487" article="a" name="larvae">
+		<attribute key="weight" value="350"/>
+		<attribute key="showcount" value="0"/>
+	</item>
+	<item id="15488" article="a" name="deepling filet">
+		<attribute key="weight" value="640"/>
+		<attribute key="showcount" value="0"/>
+	</item>
+	<item id="15489" article="a" name="calopteryx cape">
+		<attribute key="weight" value="2000"/>
+		<attribute key="armor" value="12"/>
+		<attribute key="slotType" value="body"/>
+		<attribute key="magicpoints" value="1"/>
+		<attribute key="absorbPercentIce" value="5"/>
+		<attribute key="showattributes" value="1"/>
+	</item>
+	<item id="15490" article="a" name="grasshopper legs">
+		<attribute key="weight" value="3200"/>
+		<attribute key="armor" value="7"/>
+		<attribute key="slotType" value="legs"/>
+		<attribute key="speed" value="20"/>
+		<attribute key="showattributes" value="1"/>
+	</item>
+	<item id="15491" article="a" name="carapace shield">
+		<attribute key="weight" value="5500"/>
+		<attribute key="defense" value="36"/>
+		<attribute key="weaponType" value="shield"/>
+	</item>
+	<item id="15492" article="a" name="hive scythe">
+		<attribute key="weight" value="7500"/>
+		<attribute key="attack" value="46"/>
+		<attribute key="defense" value="24"/>
+		<attribute key="weaponType" value="axe"/>
+	</item>
+	<item id="15497" article="a" name="dead deepling worker">
+		<attribute key="weight" value="6300"/>
+		<attribute key="containerSize" value="5"/>
+		<attribute key="decayTo" value="15550"/>
+		<attribute key="duration" value="600"/>
+		<attribute key="corpseType" value="blood"/>
+		<attribute key="fluidSource" value="blood"/>
+	</item>
+	<item id="15498" article="a" name="dead deepling worker">
+		<attribute key="weight" value="4400"/>
+		<attribute key="containerSize" value="5"/>
+		<attribute key="decayTo" value="15499"/>
+		<attribute key="duration" value="600"/>
+		<attribute key="corpseType" value="blood"/>
+	</item>
+	<item id="15499" article="a" name="dead deepling worker">
+		<attribute key="weight" value="3000"/>
+		<attribute key="decayTo" value="15498"/>
+		<attribute key="duration" value="600"/>
+		<attribute key="corpseType" value="blood"/>
+	</item>
+	<item id="15515" article="a" name="bar of gold">
+		<attribute key="weight" value="2100"/>
+	</item>
+	<item id="15545" article="a" name="fox tail">
+		<attribute key="weight" value="200"/>
+		<attribute key="description" value="A hermit near Carlin might be able to tell you more about it."/>
+	</item>
+	<item id="15546" article="a" name="four leaf clover">
+		<attribute key="weight" value="200"/>
+		<attribute key="description" value="A hermit near Carlin might be able to tell you more about it."/>
+	</item>
+	<item id="15556" article="a" name="basket">
+		<attribute key="weight" value="5000"/>
+		<attribute key="description" value="There are little puppies inside."/>
+	</item>
+	<item id="15559" article="a" name="dog collar">
+		<attribute key="weight" value="5000"/>
+		<attribute key="description" value="It belongs to Noodles, the King's dog."/>
+	</item>
+	<item fromid="15561" toid="15564" article="a" name="crystal wall"/>
+	<item id="15565" article="a" name="rough red gem">
+		<attribute key="description" value="This blood red gem is still rough."/>
+	</item>
+	<item id="15572" article="a" name="gooey mass">
+		<attribute key="weight" value="5500"/>
+		<attribute key="description" value="Perhaps it contains something useful."/>
+	</item>
+	<item id="15573" article="a" name="seashell book">
+		<attribute key="weight" value="1300"/>
+		<attribute key="description" value="I write this trilogy of blackness and death to warn the world of the evil in the depths."/>
+	</item>
+	<item id="15574" article="a" name="seashell book">
+		<attribute key="weight" value="1300"/>
+		<attribute key="description" value="Darkness clutches the creatures of the sea to end all living things. Be watchful of this black void."/>
+	</item>
+	<item id="15575" article="a" name="seashell book">
+		<attribute key="weight" value="1300"/>
+		<attribute key="description" value="And they drove them mad and to the edge of extinction. Extinction of the world that surrounded them."/>
+	</item>
+	<item id="15576" article="a" name="notes and coordinates">
+		<attribute key="weight" value="200"/>
+		<attribute key="description" value="These scribblings are almost unreadable."/>
+	</item>
+	<item id="15619" article="a" name="trophy of Obujos">
+		<attribute key="weight" value="500"/>
+	</item>
+	<item id="15620" article="a" name="trophy of Tanjis">
+		<attribute key="weight" value="500"/>
+	</item>
+	<item id="15621" article="a" name="trophy of Jaul">
+		<attribute key="weight" value="500"/>
+	</item>
+	<item id="15622" article="a" name="dung ball">
+		<attribute key="weight" value="190"/>
+	</item>
 	<item id="15643" article="a" name="hive bow">
 		<attribute key="weight" value="4600"/>
 		<attribute key="slotType" value="two-handed"/>
@@ -22203,6 +22650,34 @@
 		<attribute key="maxHitChance" value="90" />
 		<attribute key="ammoAction" value="removecount" />
 	</item>
+	<item id="15996" article="a" name="dead hamster">
+		<attribute key="weight" value="6300"/>
+		<attribute key="containerSize" value="5"/>
+		<attribute key="decayTo" value="2814"/>
+		<attribute key="duration" value="600"/>
+		<attribute key="corpseType" value="blood"/>
+		<attribute key="fluidSource" value="blood"/>
+	</item>
+	<item id="15997" article="a" name="dead hamster">
+		<attribute key="weight" value="4400"/>
+		<attribute key="containerSize" value="5"/>
+		<attribute key="decayTo" value="15998"/>
+		<attribute key="duration" value="600"/>
+		<attribute key="corpseType" value="blood"/>
+	</item>
+	<item id="15998" article="a" name="dead hamster">
+		<attribute key="weight" value="3000"/>
+		<attribute key="decayTo" value="15997"/>
+		<attribute key="duration" value="600"/>
+		<attribute key="corpseType" value="blood"/>
+	</item>
+	<item id="15999" article="a" name="dead hamster">
+		<attribute key="weight" value="2000"/>
+		<attribute key="decayTo" value="0"/>
+		<attribute key="duration" value="600"/>
+		<attribute key="corpseType" value="blood"/>
+	</item>
+	<item id="16000" article="an" name="anniversary remains" />
 	<item id="15649" article="a" name="vortex bolt">
 		<attribute key="weight" value="80"/>
 		<attribute key="attack" value="36"/>
@@ -22216,6 +22691,50 @@
 		<attribute key="weight" value="1500" />
 		<attribute key="containerSize" value="15" />
 		<attribute key="slotType" value="backpack" />
+	</item>
+	<item id="16014" article="an" name="anniversary cake">
+		<attribute key="weight" value="500" />
+		<attribute key="description" value="It was created by Tibia's finest bakers for the celebration of 15 years of Tibia."/>
+	</item>
+	<item id="16015" article="a" name="chayenne's magical key">
+		<attribute key="weight" value="100" />
+		<attribute key="description" value="No one really knows where it leads to, but the dragon graveyard might reveal the secret - or not."/>
+	</item>
+	<item id="16016" article="an" name="artist's brush">
+		<attribute key="weight" value="100" />
+	</item>
+	<item id="16017" article="an" name="artist's palette">
+		<attribute key="weight" value="550" />
+	</item>
+	<item id="16018" article="an" name="artist's canvas">
+		<attribute key="weight" value="1000" />
+	</item>
+	<item id="16019" article="an" name="artist's brush">
+		<attribute key="weight" value="100" />
+		<attribute key="description" value="Paint is dripping from its tip."/>
+	</item>
+	<item fromid="16020" toid="16021" article="an" name="artist's easel">
+		<attribute key="weight" value="1600" />
+	</item>
+	<item fromid="16022" toid="16023" article="an" name="artist's easel">
+		<attribute key="weight" value="1600" />
+		<attribute key="description" value="An empty canvas has been placed on it."/>
+	</item>
+	<item fromid="16024" toid="16025" article="a" name="masterpiece of a muse">
+		<attribute key="weight" value="1600" />
+		<attribute key="description" value="It was painted in the style of Penciljack."/>
+	</item>
+	<item fromid="16026" toid="16027" article="a" name="painting of a muse">
+		<attribute key="weight" value="1600" />
+		<attribute key="description" value="It was painted in the style of Penciljack. Unfortunately, there are some blue pixels in this piece."/>
+	</item>
+	<item fromid="16028" toid="16029" article="a" name="masterpiece of a gozzler">
+		<attribute key="weight" value="1600" />
+		<attribute key="description" value="It was painted in the style of Lyxoph."/>
+	</item>
+	<item fromid="16030" toid="16031" article="a" name="painting of a gozzler">
+		<attribute key="weight" value="1600" />
+		<attribute key="description" value="It was painted in the style of Lyxoph. Unfortunately, there are some blue pixels in this piece."/>
 	</item>
 	<item id="20001" name="water" />
 	<item id="20002" name="blood" />

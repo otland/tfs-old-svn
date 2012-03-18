@@ -25,6 +25,9 @@
 	<wand id="8910" level="42" mana="13" min="55" max="75" type="death" function="default"> <!-- Underworld Rod -->
 		<vocation name="Druid"/>
 	</wand>
+    <wand id="13872" level="40" mana="13" min="55" max="75" type="ice" function="default"> <!-- Shimmer Rod -->
+        <vocation name="Druid"/>
+    </wand>
 
 	<!-- Wands -->
 	<wand id="2190" level="7" mana="2" min="8" max="18" type="energy" function="default"> <!-- Wand of Vortex -->
@@ -51,7 +54,10 @@
 	<wand id="8922" level="42" mana="13" min="55" max="75" type="death" function="default"> <!-- Wand of Voodoo -->
 		<vocation name="Sorcerer"/>
 	</wand>
-
+    <wand id="13880" level="40" mana="13" min="55" max="75" type="energy" function="default"> <!-- Shimmer Wand -->
+		<vocation name="Sorcerer"/>
+    </wand>
+    
 	<!-- Swords -->
 	<melee id="2396" function="default"/>
 	<melee id="2413" unproperly="1" function="default">
@@ -153,6 +159,24 @@
 	<melee id="7873" level="45" unproperly="1" function="default">
 		<vocation name="Knight"/>
 	</melee>
+	<melee id="12649" level="82" unproperly="1" function="default"/>
+	<melee id="11309" level="20" unproperly="1" function="default">
+		<vocation name="Knight"/>
+		<vocation name="Elite Knight" showInDescription="0"/>
+	</melee>
+	<melee id="11307" level="55" unproperly="1" function="default"/> 
+	<melee id="11306" level="50" unproperly="1" function="default">
+		<vocation name="Knight"/>
+		<vocation name="Elite Knight" showInDescription="0"/>
+	</melee>
+	<melee id="12613" level="58" unproperly="1" function="default">
+		<vocation name="Knight"/>
+		<vocation name="Elite Knight" showInDescription="0"/>
+	</melee>
+    <melee id="13871" level="40" unproperly="1" function="default">
+		<vocation name="Knight"/>
+		<vocation name="Elite Knight" showInDescription="0"/>
+    </melee>
 
 	<!-- Axes -->
 	<melee id="2429" level="20" unproperly="1" function="default"/>
@@ -240,6 +264,11 @@
 	<melee id="7878" level="65" unproperly="1" function="default">
 		<vocation name="Knight"/>
 	</melee>
+	<melee id="11305" level="60" unproperly="1" function="default"/>
+	<melee id="15404" level="80" unproperly="1" function="default"/>
+	<melee id="15451" level="40" unproperly="1" function="default"/>
+	<melee id="15454" level="50" unproperly="1" function="default"/>
+	<melee id="15492" level="70" unproperly="1" function="default"/>
 
 	<!--Clubs -->
 	<melee id="2423" level="20" unproperly="1" function="default"/>
@@ -323,6 +352,13 @@
 	<melee id="7881" level="60" unproperly="1" function="default"/>
 	<melee id="7882" level="35" unproperly="1" function="default"/>
 	<melee id="7883" level="50" unproperly="1" function="default">
+		<vocation name="Knight"/>
+		<vocation name="Elite Knight" showInDescription="0"/>
+	</melee>
+	<melee id="15400" level="38" unproperly="1" function="default"/>
+	<melee id="15414" level="90" unproperly="1" function="default"/>
+	<melee id="15647" level="48" unproperly="1" function="default"/>
+	<melee id="11308" level="55" unproperly="1" function="default">
 		<vocation name="Knight"/>
 		<vocation name="Elite Knight" showInDescription="0"/>
 	</melee>
