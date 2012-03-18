@@ -1178,14 +1178,14 @@ void Commands::createGuild(Player* player, const std::string& cmd, const std::st
 	if(param.length() < (uint32_t)g_config.getNumber(ConfigManager::MIN_GUILD_NAME))
 	{
 		std::stringstream ss;
-		ss << "That guild name is too short, please use more than " << g_config.getNumber(ConfigManager::MIN_GUILD_NAME) << " caracterres.";
+		ss << "That guild name is too short, please use more than " << g_config.getNumber(ConfigManager::MIN_GUILD_NAME) << ".";
 		player->sendCancel(ss.str());
 		return;
 	}
 	else if(param.length() > (uint32_t)g_config.getNumber(ConfigManager::MAX_GUILD_NAME))
 	{
 		std::stringstream ss;
-		ss << "That guild name is too long, please use less than " << g_config.getNumber(ConfigManager::MAX_GUILD_NAME) << " caracterres.";
+		ss << "That guild name is too long, please use less than " << g_config.getNumber(ConfigManager::MAX_GUILD_NAME) << ".";
 		player->sendCancel(ss.str());
 		return;
 	}
