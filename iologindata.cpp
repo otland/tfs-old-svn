@@ -835,6 +835,7 @@ bool IOLoginData::savePlayer(Player* player, bool preSave)
 		query << "`redskull` = " << redSkull << ", ";
 	}
 	query << "`lastlogout` = " << player->getLastLogout() << ", ";
+	query << "`balance` = " << player->bankBalance << ", ";
 	query << "`blessings` = " << player->blessings;
 	if(g_config.getBoolean(ConfigManager::INGAME_GUILD_SYSTEM))
 	{
