@@ -35,6 +35,8 @@
 		monster/
 	M		slime.xml
 	M		slime2.xml
+		movements/
+	M		movements.xml
 	M	npc/lib/npcsystem/npchandler.lua
 		talkactions/scripts/
 	M		buyprem.lua
@@ -43,6 +45,8 @@
 		XML/
 	M		outfits.xml
 	M		mounts.xml
+		weapons/
+	M		weapons.xml
 ]
 
 [ Milestone
@@ -84,4 +88,6 @@
 	Major optimizations to Account Manager code.
 	Removed a SQLite trigger that truncated some tables when players were updated (the server already does this, and it caused a bug).
 	A lot of miscellaneous cleanups, fixes and optimizations.
+	Update wepons with new and forgotten items.
+	Updated movements with a lot of forgotten items and new item from 9.44.
 ]
