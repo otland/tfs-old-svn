@@ -178,14 +178,9 @@ int32_t Items::loadFromOtb(std::string file)
 
 	if(Items::dwMajorVersion == 0xFFFFFFFF)
 		std::clog << "[Warning - Items::loadFromOtb] items.otb using generic client version." << std::endl;
-	else if(Items::dwMajorVersion < 3)
+	else if(Items::dwMajorVersion != 3)
 	{
 		std::clog << "[Error - Items::loadFromOtb] Old version detected, a newer version of items.otb is required." << std::endl;
-		return ERROR_INVALID_FORMAT;
-	}
-	else if(Items::dwMajorVersion > 3)
-	{
-		std::clog << "[Error - Items::loadFromOtb] New version detected, an older version of items.otb is required." << std::endl;
 		return ERROR_INVALID_FORMAT;
 	}
 	else if(!g_config.getBool(ConfigManager::SKIP_ITEMS_VERSION) && Items::dwMinorVersion != CLIENT_VERSION_944_V4)
