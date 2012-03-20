@@ -60,7 +60,8 @@ typedef uint32_t UINT4;
 #endif
 
 /* Data structure for MD5 (Message Digest) computation */
-typedef struct {
+typedef struct
+{
 	UINT4 i[2];                   /* Number of _bits_ handled mod 2^64 */
 	UINT4 buf[4];                                    /* Scratch buffer */
 	unsigned char in[64];                              /* Input buffer */

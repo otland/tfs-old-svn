@@ -25,23 +25,27 @@
 
 class ExceptionHandler
 {
-public:
-	ExceptionHandler();
-	~ExceptionHandler();
-	bool InstallHandler();
-	bool RemoveHandler();
-	static void dumpStack();
-private:
-	struct SEHChain{
-		SEHChain *prev;
-		void *SEHfunction;
-	};
-	bool LoadMap();
-	bool installed;
-	SEHChain chain;
+	public:
+		ExceptionHandler();
+		~ExceptionHandler();
+	
+		bool InstallHandler();
+		bool RemoveHandler();
+		static void dumpStack();
+
+	private:
+		struct SEHChain
+		{
+			SEHChain *prev;
+			void *SEHfunction;
+		};
+	
+		bool LoadMap();
+		bool installed;
+		SEHChain chain;
 
 };
 
-#endif  // #ifndef __EXCEPTION_H__
+#endif
 
 #endif

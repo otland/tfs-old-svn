@@ -35,6 +35,7 @@ class PlayerBox
 	static HWND online;
 	static HINSTANCE m_hInst;
 	static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+	
 	public:
 		bool popUp(LPCTSTR szCaption);
 		PlayerBox();

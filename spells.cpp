@@ -1215,7 +1215,7 @@ bool InstantSpell::canThrowSpell(const Creature* creature, const Creature* targe
 
 	if(fromPos.z != toPos.z ||
 	(range == -1 && !g_game.canThrowObjectTo(fromPos, toPos, checkLineOfSight)) ||
-	(range != -1 && !g_game.canThrowObjectTo(fromPos, toPos, checkLineOfSight, range, range)) ){
+	(range != -1 && !g_game.canThrowObjectTo(fromPos, toPos, checkLineOfSight, range, range))){
 		return false;
 	}
 
@@ -1799,18 +1799,7 @@ bool ConjureSpell::configureEvent(xmlNodePtr p)
 	if(!InstantSpell::configureEvent(p))
 		return false;
 
-	/*
-	if(!Spell::configureSpell(p)){
-		return false;
-	}
-
-	if(!TalkAction::configureEvent(p)){
-		return false;
-	}
-	*/
-
 	int32_t intValue;
-
 	if(readXMLInteger(p, "conjureId", intValue))
 		conjureId = intValue;
 

@@ -62,12 +62,10 @@ void ConnectionManager::releaseConnection(Connection_ptr connection)
 	std::list<Connection_ptr>::iterator it =
 		std::find(m_connections.begin(), m_connections.end(), connection);
 
-	if(it != m_connections.end()){
+	if(it != m_connections.end())
 		m_connections.erase(it);
-	}
-	else{
+	else
 		std::cout << "Error: [ConnectionManager::releaseConnection] Connection not found" << std::endl;
-	}
 }
 
 void ConnectionManager::closeAll()

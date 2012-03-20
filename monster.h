@@ -43,7 +43,6 @@ class Monster : public Creature
 {
 	private:
 		Monster(MonsterType* mtype);
-		//const Monster& operator=(const Monster& rhs);
 
 	public:
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__

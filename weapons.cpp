@@ -501,7 +501,8 @@ void Weapon::onUsedAmmo(Player* player, Item* item, Tile* destTile) const
 		}
 		else if(ammoAction == AMMOACTION_MOVE)
 			g_game.internalMoveItem(item->getParent(), destTile, INDEX_WHEREEVER, item, 1, NULL, FLAG_NOLIMIT);
-		else if(ammoAction == AMMOACTION_MOVEBACK){ /* do nothing */ }
+		else if(ammoAction == AMMOACTION_MOVEBACK)
+			{ /* do nothing */ }
 		else if(item->hasCharges())
 		{
 			int32_t newCharge = std::max((int32_t)0, ((int32_t)item->getCharges()) - 1);

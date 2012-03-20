@@ -367,9 +367,8 @@ bool ExceptionHandler::LoadMap()
 			break;
 	}
 
-	if(feof(input)){
+	if(feof(input))
 		return false;
-	}
 
 	char tofind[] = "0x";
 	char lib[] = ".a(";
@@ -466,28 +465,31 @@ void ExceptionHandler::dumpStack()
 	#endif
 	uint32_t frame_param_counter;
 	frame_param_counter = 0;
-	while(esp < stacklimit){
+	while(esp < stacklimit)
+	{
 		stack_val = *esp;
 		if(foundRetAddress)
 			nparameters++;
 
-		if(esp - stackstart < 20 || nparameters < 10 || std::abs(esp - next_ret) < 10 || frame_param_counter < 8){
+		if(esp - stackstart < 20 || nparameters < 10 || std::abs(esp - next_ret) < 10 || frame_param_counter < 8)
+		{
 			output  << (uint32_t)esp << " | ";
 			printPointer(&output, stack_val);
-			if(esp == next_ret){
+			if(esp == next_ret)
 				output << " \\\\\\\\\\\\ stack frame //////";
-			}
-			else if(esp - next_ret == 1){
+			else if(esp - next_ret == 1)
 				output << " <-- ret" ;
-			}
-			else if(esp - next_ret == 2){
+			else if(esp - next_ret == 2)
+			{
 				next_ret = (uint32_t*)*(esp - 2);
 				frame_param_counter = 0;
 			}
+			
 			frame_param_counter++;
 			output << std::endl;
 		}
-		if(stack_val >= min_off && stack_val <= max_off){
+		if(stack_val >= min_off && stack_val <= max_off)
+		{
 			foundRetAddress++;
 			//
 			unsigned long functionAddr;
@@ -495,8 +497,10 @@ void ExceptionHandler::dumpStack()
 			output << (unsigned long)esp << "  " << functionName << "(" <<
 				functionAddr << ")" << std::endl;
 		}
+		
 		esp++;
 	}
+	
 	output << "*****************************************************" << std::endl;
 	output.close();
 }

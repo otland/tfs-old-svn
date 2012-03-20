@@ -30,12 +30,14 @@ class Task
 	public:
 		~Task() {}
 
-		void operator()(){
+		void operator()()
+		{
 			m_f();
 		}
 
 	protected:
-		Task(boost::function<void (void)> f){
+		Task(boost::function<void (void)> f)
+		{
 			m_f = f;
 		}
 

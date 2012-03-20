@@ -1257,13 +1257,6 @@ void Npc::onCreatureDisappear(const Creature* creature, uint32_t stackpos, bool 
 	{
 		//Close all open shop window's
 		closeAllShopWindows();
-
-		/*
-		Can't use this yet because Jiddo's scriptsystem isn't able to handle it.
-		if(m_npcEventHandler){
-			m_npcEventHandler->onCreatureDisappear(creature);
-		}
-		*/
 	}
 	else if(Player* player = const_cast<Player*>(creature->getPlayer()))
 	{
@@ -2496,7 +2489,8 @@ const NpcResponse* Npc::getResponse(const ResponseList& list, const Player* play
 					continue;
 			}
 
-			if(hasBitSet(RESPOND_ENOUGHMONEY, params)){
+			if(hasBitSet(RESPOND_ENOUGHMONEY, params))
+			{
 				if(money == -1)
 					money = g_game.getMoney(player);
 

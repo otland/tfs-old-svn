@@ -46,4 +46,4 @@
 #define STATUS_SERVER_CODENAME "Mystic Spirit"
 #define STATUS_SERVER_PROTOCOL "9.44"
 #define STATUS_SERVER_VERSION "0.2.12"
-#define STATUS_SERVER_DEVELOPERS "Talaturen, Kornholijo, Elf, and Dalkon"
+#define STATUS_SERVER_DEVELOPERS "Talaturen, Kornholijo, Elf, Tryller, and Dalkon"

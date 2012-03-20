@@ -894,9 +894,8 @@ bool Player::canSeeCreature(const Creature* creature) const
 
 void Player::onReceiveMail(uint32_t depotId)
 {
-	if(isNearDepotBox(depotId)){
+	if(isNearDepotBox(depotId))
 		sendTextMessage(MSG_INFO_DESCR, "New mail has arrived.");
-	}
 }
 
 bool Player::isNearDepotBox(uint32_t depotId)
