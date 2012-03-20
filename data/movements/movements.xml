@@ -891,6 +891,7 @@
 		<vocation id="5" showInDescription="0"/>
 		<vocation id="6" showInDescription="0"/>
 	</movevent>
+	<movevent type="DeEquip" itemid="15489" slot="armor" event="function" value="onDeEquipItem"/>
 
 	<!-- Legs -->
 		<!-- Knight Legs -->
