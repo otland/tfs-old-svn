@@ -94,7 +94,7 @@ struct Abilities
 	int32_t skills[SKILL_LAST + 1];
 
 	//damage abilities modifiers
-	int16_t absorbPercent[COMBAT_LAST + 1];
+	int16_t absorbPercent[COMBAT_COUNT + 1];
 
 	//stats modifiers
 	int32_t stats[STAT_LAST + 1];
@@ -144,6 +144,8 @@ class ItemType
 
 		bool isRune() const {return type == ITEM_TYPE_RUNE;}
 		bool hasSubType() const {return (isFluidContainer() || isSplash() || stackable || charges != 0);}
+
+		Abilities* getAbilities() { if(abilities == NULL) { abilities = new Abilities(); } return abilities; }
 
 		Direction bedPartnerDir;
 		uint16_t transformToOnUse[2];
@@ -236,7 +238,7 @@ class ItemType
 		AmmoAction_t ammoAction;
 		FluidTypes_t fluidSource;
 
-		Abilities abilities;
+		Abilities* abilities;
 
 		Condition* condition;
 		CombatType_t combatType;

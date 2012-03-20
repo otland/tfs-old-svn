@@ -744,10 +744,10 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance,
 			{
 				begin = false;
 				s << "Atk:";
-				if(it.abilities.elementType != COMBAT_NONE && it.decayTo < 1)
+				if(it.abilities && it.abilities->elementType != COMBAT_NONE && it.decayTo < 1)
 				{
-					s << std::max(0, it.attack - it.abilities.elementDamage) << " physical + ";
-					s << it.abilities.elementDamage << " " << getCombatName(it.abilities.elementType);
+					s << std::max(0, it.attack - it.abilities->elementDamage) << " physical + ";
+					s << it.abilities->elementDamage << " " << getCombatName(it.abilities->elementType);
 				}
 				else
 					s << it.attack;
@@ -764,13 +764,13 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance,
 					s << " " << std::showpos << it.extraDefense << std::noshowpos;
 			}
 
-			if(it.abilities.stats[STAT_MAGICPOINTS] != 0)
+			if(it.abilities && it.abilities->stats[STAT_MAGICPOINTS] != 0)
 			{
 				if(!begin)
 					s << ", ";
 
 				begin = false;
-				s << "magic level " << std::showpos << (int32_t)it.abilities.stats[STAT_MAGICPOINTS] << std::noshowpos;
+				s << "magic level " << std::showpos << it.abilities->stats[STAT_MAGICPOINTS] << std::noshowpos;
 			}
 
 			s << ")";
@@ -789,96 +789,99 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance,
 			begin = false;
 		}
 
-		for(uint16_t i = SKILL_FIRST; i <= SKILL_LAST; i++)
+		if(it.abilities)
 		{
-			if(!it.abilities.skills[i])
-				continue;
-
-			if(begin)
+			for(uint16_t i = SKILL_FIRST; i <= SKILL_LAST; i++)
 			{
-				begin = false;
-				s << " (";
-			}
-			else
-				s << ", ";
-
-			s << getSkillName(i) << " " << std::showpos << (int32_t)it.abilities.skills[i] << std::noshowpos;
-		}
-
-		if(it.abilities.stats[STAT_MAGICPOINTS])
-		{
-			if(begin)
-			{
-				begin = false;
-				s << " (";
-			}
-			else
-				s << ", ";
-
-			s << "magic level " << std::showpos << (int32_t)it.abilities.stats[STAT_MAGICPOINTS] << std::noshowpos;
-		}
-
-		int32_t show = it.abilities.absorbPercent[COMBAT_FIRST];
-		for(uint32_t i = (COMBAT_FIRST + 1); i <= COMBAT_LAST; i++)
-		{
-			if(it.abilities.absorbPercent[i] == show)
-				continue;
-
-			show = 0;
-			break;
-		}
-
-		if(!show)
-		{
-			bool tmp = true;
-			for(uint32_t i = COMBAT_FIRST; i <= COMBAT_LAST; i++)
-			{
-				if(!it.abilities.absorbPercent[i])
+				if(!it.abilities->skills[i])
 					continue;
 
-				if(tmp)
+				if(begin)
 				{
-					tmp = false;
-					if(begin)
-					{
-						begin = false;
-						s << " (";
-					}
-					else
-						s << ", ";
-
-					s << "protection ";
+					begin = false;
+					s << " (";
 				}
 				else
 					s << ", ";
 
-				s << getCombatName((CombatType_t)i) << " " << std::showpos << it.abilities.absorbPercent[i] << std::noshowpos << "%";
+				s << getSkillName(i) << " " << std::showpos << it.abilities->skills[i] << std::noshowpos;
 			}
-		}
-		else
-		{
-			if(begin)
+
+			if(it.abilities->stats[STAT_MAGICPOINTS])
 			{
-				begin = false;
-				s << " (";
+				if(begin)
+				{
+					begin = false;
+					s << " (";
+				}
+				else
+					s << ", ";
+
+				s << "magic level " << std::showpos << it.abilities->stats[STAT_MAGICPOINTS] << std::noshowpos;
+			}
+
+			int32_t show = it.abilities->absorbPercent[COMBAT_FIRST];
+			for(uint32_t i = (COMBAT_FIRST + 1); i <= COMBAT_COUNT; ++i)
+			{
+				if(it.abilities->absorbPercent[i] == show)
+					continue;
+
+				show = 0;
+				break;
+			}
+
+			if(!show)
+			{
+				bool tmp = true;
+				for(uint32_t i = COMBAT_FIRST; i <= COMBAT_COUNT; i++)
+				{
+					if(!it.abilities->absorbPercent[i])
+						continue;
+
+					if(tmp)
+					{
+						tmp = false;
+						if(begin)
+						{
+							begin = false;
+							s << " (";
+						}
+						else
+							s << ", ";
+
+						s << "protection ";
+					}
+					else
+						s << ", ";
+
+					s << getCombatName(indexToCombatType(i)) << " " << std::showpos << it.abilities->absorbPercent[i] << std::noshowpos << "%";
+				}
 			}
 			else
-				s << ", ";
-
-			s << "protection all " << std::showpos << show << std::noshowpos << "%";
-		}
-
-		if(it.abilities.speed)
-		{
-			if(begin)
 			{
-				begin = false;
-				s << " (";
-			}
-			else
-				s << ", ";
+				if(begin)
+				{
+					begin = false;
+					s << " (";
+				}
+				else
+					s << ", ";
 
-			s << "speed " << std::showpos << (int32_t)(it.abilities.speed / 2) << std::noshowpos;
+				s << "protection all " << std::showpos << show << std::noshowpos << "%";
+			}
+
+			if(it.abilities->speed)
+			{
+				if(begin)
+				{
+					begin = false;
+					s << " (";
+				}
+				else
+					s << ", ";
+
+				s << "speed " << std::showpos << (int32_t)(it.abilities->speed / 2) << std::noshowpos;
+			}
 		}
 
 		if(!begin)
@@ -886,65 +889,80 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance,
 	}
 	else if(it.isContainer())
 		s << " (Vol:" << (int32_t)it.maxItems << ")";
-	else if(it.abilities.speed > 0)
-		s << " (speed " << std::showpos << (it.abilities.speed / 2) << std::noshowpos << ")";
-	else if(hasBitSet(CONDITION_DRUNK, it.abilities.conditionSuppressions))
-		s << " (hard drinking)";
-	else if(it.abilities.invisible)
-		s << " (invisibility)";
-	else if(it.abilities.regeneration)
-		s << " (faster regeneration)";
-	else if(it.abilities.manaShield)
-		s << " (mana shield)";
-	else if(it.isKey())
-		s << " (Key:" << (item ? (int32_t)item->getActionId() : 0) << ")";
-	else if(it.isFluidContainer())
+	else
 	{
-		if(subType > 0)
+		bool found = true;
+		if(it.abilities)
 		{
-			const std::string& itemName = items[subType].name;
-			s << " of " << (itemName.length() ? itemName : "unknown");
+			if(it.abilities->speed > 0)
+				s << " (speed " << std::showpos << (it.abilities->speed / 2) << std::noshowpos << ")";
+			else if(it.abilities && hasBitSet(CONDITION_DRUNK, it.abilities->conditionSuppressions))
+				s << " (hard drinking)";
+			else if(it.abilities->invisible)
+				s << " (invisibility)";
+			else if(it.abilities->regeneration)
+				s << " (faster regeneration)";
+			else if(it.abilities->manaShield)
+				s << " (mana shield)";
+			else
+				found = false;
 		}
 		else
-			s << ". It is empty";
-	}
-	else if(it.isSplash())
-	{
-		s << " of ";
-		if(subType > 0 && items[subType].name.length())
-			s << items[subType].name;
-		else
-			s << "unknown";
-	}
-	else if(it.allowDistRead && it.id != 7369 && it.id != 7370 && it.id != 7371)
-	{
-		s << "." << std::endl;
-		if(item && item->getText() != "")
-		{
-			if(lookDistance <= 4)
-			{
-				if(item->getWriter().length())
-				{
-					s << item->getWriter() << " wrote";
-					time_t date = item->getDate();
-					if(date > 0)
-						s << " on " << formatDateShort(date);
+			found = false;
 
-					s << ": ";
+		if(!found)
+		{
+			if(it.isKey())
+				s << " (Key:" << (item ? (int32_t)item->getActionId() : 0) << ")";
+			else if(it.isFluidContainer())
+			{
+				if(subType > 0)
+				{
+					const std::string& itemName = items[subType].name;
+					s << " of " << (itemName.length() ? itemName : "unknown");
 				}
 				else
-					s << "You read: ";
-
-				s << item->getText();
+					s << ". It is empty";
 			}
-			else
-				s << "You are too far away to read it";
+			else if(it.isSplash())
+			{
+				s << " of ";
+				if(subType > 0 && items[subType].name.length())
+					s << items[subType].name;
+				else
+					s << "unknown";
+			}
+			else if(it.allowDistRead && it.id != 7369 && it.id != 7370 && it.id != 7371)
+			{
+				s << "." << std::endl;
+				if(item && item->getText() != "")
+				{
+					if(lookDistance <= 4)
+					{
+						if(item->getWriter().length())
+						{
+							s << item->getWriter() << " wrote";
+							time_t date = item->getDate();
+							if(date > 0)
+								s << " on " << formatDateShort(date);
+
+							s << ": ";
+						}
+						else
+							s << "You read: ";
+
+						s << item->getText();
+					}
+					else
+						s << "You are too far away to read it";
+				}
+				else
+					s << "Nothing is written on it";
+			}
+			else if(it.levelDoor && item && item->getActionId() >= (int32_t)it.levelDoor)
+				s << " for level " << item->getActionId() - it.levelDoor;
 		}
-		else
-			s << "Nothing is written on it";
 	}
-	else if(it.levelDoor && item && item->getActionId() >= (int32_t)it.levelDoor)
-		s << " for level " << item->getActionId() - it.levelDoor;
 
 	if(it.showCharges)
 		s << " that has " << subType << " charge" << (subType != 1 ? "s" : "") << " left";
@@ -1027,11 +1045,11 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance,
 		}
 	}
 
-	if(it.abilities.elementType != COMBAT_NONE && it.decayTo > 0)
+	if(it.abilities && it.abilities->elementType != COMBAT_NONE && it.decayTo > 0)
 	{
-		s << std::endl << "It is temporarily enchanted with " << getCombatName(it.abilities.elementType) << " (";
-		s << std::max(0, it.attack - it.abilities.elementDamage) << " physical + " << it.abilities.elementDamage;
-		s << " " << getCombatName(it.abilities.elementType) << " damage).";
+		s << std::endl << "It is temporarily enchanted with " << getCombatName(it.abilities->elementType) << " (";
+		s << std::max(0, it.attack - it.abilities->elementDamage) << " physical + " << it.abilities->elementDamage;
+		s << " " << getCombatName(it.abilities->elementType) << " damage).";
 	}
 
 	if(item && item->getSpecialDescription() != "")

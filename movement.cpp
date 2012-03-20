@@ -763,43 +763,46 @@ uint32_t MoveEvent::EquipItem(MoveEvent* moveEvent, Player* player, Item* item, 
 	else
 		player->setItemAbility(slot, true);
 
-	if(it.abilities.invisible)
+	if(!it.abilities)
+		return 1;
+
+	if(it.abilities->invisible)
 	{
 		Condition* condition = Condition::createCondition((ConditionId_t)slot, CONDITION_INVISIBLE, -1, 0);
 		player->addCondition(condition);
 	}
 
-	if(it.abilities.manaShield)
+	if(it.abilities->manaShield)
 	{
 		Condition* condition = Condition::createCondition((ConditionId_t)slot, CONDITION_MANASHIELD, -1, 0);
 		player->addCondition(condition);
 	}
 
-	if(it.abilities.speed != 0)
+	if(it.abilities->speed != 0)
 	{
-		g_game.changeSpeed(player, it.abilities.speed);
+		g_game.changeSpeed(player, it.abilities->speed);
 	}
 
-	if(it.abilities.conditionSuppressions != 0)
+	if(it.abilities->conditionSuppressions != 0)
 	{
-		player->setConditionSuppressions(it.abilities.conditionSuppressions, false);
+		player->setConditionSuppressions(it.abilities->conditionSuppressions, false);
 		player->sendIcons();
 	}
 
-	if(it.abilities.regeneration)
+	if(it.abilities->regeneration)
 	{
 		Condition* condition = Condition::createCondition((ConditionId_t)slot, CONDITION_REGENERATION, -1, 0);
-		if(it.abilities.healthGain != 0)
-			condition->setParam(CONDITIONPARAM_HEALTHGAIN, it.abilities.healthGain);
+		if(it.abilities->healthGain != 0)
+			condition->setParam(CONDITIONPARAM_HEALTHGAIN, it.abilities->healthGain);
 
-		if(it.abilities.healthTicks != 0)
-			condition->setParam(CONDITIONPARAM_HEALTHTICKS, it.abilities.healthTicks);
+		if(it.abilities->healthTicks != 0)
+			condition->setParam(CONDITIONPARAM_HEALTHTICKS, it.abilities->healthTicks);
 
-		if(it.abilities.manaGain != 0)
-			condition->setParam(CONDITIONPARAM_MANAGAIN, it.abilities.manaGain);
+		if(it.abilities->manaGain != 0)
+			condition->setParam(CONDITIONPARAM_MANAGAIN, it.abilities->manaGain);
 
-		if(it.abilities.manaTicks != 0)
-			condition->setParam(CONDITIONPARAM_MANATICKS, it.abilities.manaTicks);
+		if(it.abilities->manaTicks != 0)
+			condition->setParam(CONDITIONPARAM_MANATICKS, it.abilities->manaTicks);
 
 		player->addCondition(condition);
 	}
@@ -808,10 +811,10 @@ uint32_t MoveEvent::EquipItem(MoveEvent* moveEvent, Player* player, Item* item, 
 	bool needUpdateSkills = false;
 	for(int32_t i = SKILL_FIRST; i <= SKILL_LAST; ++i)
 	{
-		if(it.abilities.skills[i])
+		if(it.abilities->skills[i])
 		{
 			needUpdateSkills = true;
-			player->setVarSkill((skills_t)i, it.abilities.skills[i]);
+			player->setVarSkill((skills_t)i, it.abilities->skills[i]);
 		}
 	}
 
@@ -822,16 +825,16 @@ uint32_t MoveEvent::EquipItem(MoveEvent* moveEvent, Player* player, Item* item, 
 	bool needUpdateStats = false;
 	for(int32_t s = STAT_FIRST; s <= STAT_LAST; ++s)
 	{
-		if(it.abilities.stats[s])
+		if(it.abilities->stats[s])
 		{
 			needUpdateStats = true;
-			player->setVarStats((stats_t)s, it.abilities.stats[s]);
+			player->setVarStats((stats_t)s, it.abilities->stats[s]);
 		}
 
-		if(it.abilities.statsPercent[s])
+		if(it.abilities->statsPercent[s])
 		{
 			needUpdateStats = true;
-			player->setVarStats((stats_t)s, (int32_t)(player->getDefaultStats((stats_t)s) * ((it.abilities.statsPercent[s] - 100) / 100.f)));
+			player->setVarStats((stats_t)s, (int32_t)(player->getDefaultStats((stats_t)s) * ((it.abilities->statsPercent[s] - 100) / 100.f)));
 		}
 	}
 
@@ -855,32 +858,35 @@ uint32_t MoveEvent::DeEquipItem(MoveEvent* moveEvent, Player* player, Item* item
 		g_game.startDecay(item);
 	}
 
-	if(it.abilities.invisible)
+	if(!it.abilities)
+		return 1;
+
+	if(it.abilities->invisible)
 		player->removeCondition(CONDITION_INVISIBLE, (ConditionId_t)slot);
 
-	if(it.abilities.manaShield)
+	if(it.abilities->manaShield)
 		player->removeCondition(CONDITION_MANASHIELD, (ConditionId_t)slot);
 
-	if(it.abilities.speed != 0)
-		g_game.changeSpeed(player, -it.abilities.speed);
+	if(it.abilities->speed != 0)
+		g_game.changeSpeed(player, -it.abilities->speed);
 
-	if(it.abilities.conditionSuppressions != 0)
+	if(it.abilities->conditionSuppressions != 0)
 	{
-		player->setConditionSuppressions(it.abilities.conditionSuppressions, true);
+		player->setConditionSuppressions(it.abilities->conditionSuppressions, true);
 		player->sendIcons();
 	}
 
-	if(it.abilities.regeneration)
+	if(it.abilities->regeneration)
 		player->removeCondition(CONDITION_REGENERATION, (ConditionId_t)slot);
 
 	//skill modifiers
 	bool needUpdateSkills = false;
 	for(int32_t i = SKILL_FIRST; i <= SKILL_LAST; ++i)
 	{
-		if(it.abilities.skills[i] != 0)
+		if(it.abilities->skills[i] != 0)
 		{
 			needUpdateSkills = true;
-			player->setVarSkill((skills_t)i, -it.abilities.skills[i]);
+			player->setVarSkill((skills_t)i, -it.abilities->skills[i]);
 		}
 	}
 
@@ -891,16 +897,16 @@ uint32_t MoveEvent::DeEquipItem(MoveEvent* moveEvent, Player* player, Item* item
 	bool needUpdateStats = false;
 	for(int32_t s = STAT_FIRST; s <= STAT_LAST; ++s)
 	{
-		if(it.abilities.stats[s])
+		if(it.abilities->stats[s])
 		{
 			needUpdateStats = true;
-			player->setVarStats((stats_t)s, -it.abilities.stats[s]);
+			player->setVarStats((stats_t)s, -it.abilities->stats[s]);
 		}
 
-		if(it.abilities.statsPercent[s])
+		if(it.abilities->statsPercent[s])
 		{
 			needUpdateStats = true;
-			player->setVarStats((stats_t)s, -(int32_t)(player->getDefaultStats((stats_t)s) * ((it.abilities.statsPercent[s] - 100) / 100.f)));
+			player->setVarStats((stats_t)s, -(int32_t)(player->getDefaultStats((stats_t)s) * ((it.abilities->statsPercent[s] - 100) / 100.f)));
 		}
 	}
 

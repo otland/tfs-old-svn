@@ -26,7 +26,7 @@
 
 extern ConfigManager g_config;
 
-MarketItemList IOMarket::getActiveOffers(MarketAction_t action, uint32_t itemId)
+MarketItemList IOMarket::getActiveOffers(MarketAction_t action, uint16_t itemId)
 {
 	MarketItemList itemList;
 
@@ -54,6 +54,66 @@ MarketItemList IOMarket::getActiveOffers(MarketAction_t action, uint32_t itemId)
 		}
 		else
 			item.playerName = "Anonymous";
+
+		itemList.push_back(item);
+	}
+	while(result->next());
+	db->freeResult(result);
+	return itemList;
+}
+
+MarketItemList IOMarket::getOwnOffers(MarketAction_t action, uint32_t playerId)
+{
+	MarketItemList itemList;
+
+	const int32_t marketOfferDuration = g_config.getNumber(ConfigManager::MARKET_OFFER_DURATION);
+
+	DBQuery query;
+	query << "SELECT `id`, `amount`, `price`, `created`, `anonymous`, `itemtype` FROM `market_offers` WHERE `player_id` = " << playerId << " AND `sale` = " << action << " AND `created` > " << (time(NULL) - marketOfferDuration) << ";";
+
+	Database* db = Database::getInstance();
+	DBResult* result;
+	if(!(result = db->storeQuery(query.str())))
+		return itemList;
+	
+	do
+	{
+		MarketItem item;
+		item.amount = result->getDataInt("amount");
+		item.price = result->getDataInt("price");
+		item.timestamp = result->getDataInt("created") + marketOfferDuration;
+		item.counter = result->getDataInt("id") & 0xFFFF;
+		item.itemId = result->getDataInt("itemtype");
+
+		itemList.push_back(item);
+	}
+	while(result->next());
+	db->freeResult(result);
+	return itemList;
+}
+
+MarketItemList IOMarket::getOwnHistory(MarketAction_t action, uint32_t playerId)
+{
+	MarketItemList itemList;
+
+	const int32_t marketOfferDuration = g_config.getNumber(ConfigManager::MARKET_OFFER_DURATION);
+
+	DBQuery query;
+	query << "SELECT `id`, `amount`, `price`, `created`, `anonymous`, `itemtype` FROM `market_offers` WHERE `player_id` = " << playerId << " AND `sale` = " << action << " AND `created` <= " << (time(NULL) - marketOfferDuration) << ";";
+
+	Database* db = Database::getInstance();
+	DBResult* result;
+	if(!(result = db->storeQuery(query.str())))
+		return itemList;
+	
+	do
+	{
+		MarketItem item;
+		item.amount = result->getDataInt("amount");
+		item.price = result->getDataInt("price");
+		item.timestamp = result->getDataInt("created") + marketOfferDuration;
+		item.counter = result->getDataInt("id") & 0xFFFF;
+		item.itemId = result->getDataInt("itemtype");
 
 		itemList.push_back(item);
 	}

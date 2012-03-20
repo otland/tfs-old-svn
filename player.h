@@ -640,8 +640,14 @@ class Player : public Creature, public Cylinder
 			{if(client) client->sendCloseShop();}
 		void sendMarketEnter(uint32_t depotId) const
 			{if(client) client->sendMarketEnter(depotId);}
-		void sendMarketBrowse(uint16_t itemId, const MarketItemList& buyOffers, const MarketItemList& sellOffers) const
-			{if(client) client->sendMarketBrowse(itemId, buyOffers, sellOffers);}
+		void sendMarketBrowseItem(uint16_t itemId, const MarketItemList& buyOffers, const MarketItemList& sellOffers) const
+			{if(client) client->sendMarketBrowseItem(itemId, buyOffers, sellOffers);}
+		void sendMarketBrowseOwnOffers(const MarketItemList& buyOffers, const MarketItemList& sellOffers) const
+			{if(client) client->sendMarketBrowseOwnOffers(buyOffers, sellOffers);}
+		void sendMarketBrowseOwnHistory(const MarketItemList& buyOffers, const MarketItemList& sellOffers) const
+			{if(client) client->sendMarketBrowseOwnHistory(buyOffers, sellOffers);}
+		void sendMarketDetail(uint16_t itemId) const
+			{if(client) client->sendMarketDetail(itemId);}
 		void sendTradeItemRequest(const Player* player, const Item* item, bool ack) const
 			{if(client) client->sendTradeItemRequest(player, item, ack);}
 		void sendTradeClose() const

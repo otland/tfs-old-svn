@@ -80,14 +80,13 @@
 	Added Ladybug and Manta mounts.
 	Added Entrepreneur outfit.
 	New depot structure.
-	Updated items.
-	Fixed a trade bug (thanks to manuel220).
+	Updated items, movements and weapons.
+	Fixed a trade bug.
 	Now using account names.
 	onCreatureDisappear will now properly be called for NPC's.
 	Experience, healing and damage messages will now only show for spectators on the same floor.
 	Major optimizations to Account Manager code.
 	Removed a SQLite trigger that truncated some tables when players were updated (the server already does this, and it caused a bug).
+	Optimized ItemType code to save up to 75MB memory.
 	A lot of miscellaneous cleanups, fixes and optimizations.
-	Update wepons with new and forgotten items.
-	Updated movements with a lot of forgotten items and new item from 9.44.
 ]

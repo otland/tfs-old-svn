@@ -30,6 +30,7 @@
 
 #include <sstream>
 #include <iomanip>
+#include <cmath>
 
 #if defined __GNUC__ && __GNUC__ > 3
 #include <ctype.h>
@@ -1208,4 +1209,44 @@ bool booleanString(std::string str)
 {
 	toLowerCaseString(str);
 	return (str == "yes" || str == "true" || str == "y" || atoi(str.c_str()) > 0);
+}
+
+std::string getWeaponName(WeaponType_t weaponType)
+{
+	switch(weaponType)
+	{
+		case WEAPON_SWORD:
+			return "sword";
+		case WEAPON_CLUB:
+			return "club";
+		case WEAPON_AXE:
+			return "axe";
+		case WEAPON_DIST:
+			return "distance";
+		case WEAPON_SHIELD:
+			return "shield";
+		case WEAPON_WAND:
+			return "wand";
+		case WEAPON_AMMO:
+			return "ammunition";
+		default:
+			break;
+	}
+	return "";
+}
+
+uint32_t combatTypeToIndex(CombatType_t v)
+{
+	if(v == COMBAT_FIRST)
+		return 0;
+
+	return (uint32_t)(log((double)v) / log((double)2)) + 1;
+}
+
+CombatType_t indexToCombatType(uint32_t v)
+{
+	if(v == 0)
+		return COMBAT_FIRST;
+
+	return (CombatType_t)(1 << (v - 1));
 }

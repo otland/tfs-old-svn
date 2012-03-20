@@ -2153,11 +2153,15 @@ BlockType_t Player::blockHit(Creature* attacker, CombatType_t combatType, int32_
 				continue;
 
 			const ItemType& it = Item::items[item->getID()];
-			if(it.abilities.absorbPercent[combatType] != 0)
+			if(it.abilities)
 			{
-				blocked += (int32_t)std::ceil((float)damage * it.abilities.absorbPercent[combatType] / 100);
-				if(item->hasCharges())
-					g_game.transformItem(item, item->getID(), std::max((int32_t)0, (int32_t)item->getCharges() - 1));
+				const int16_t& absorbPercent = it.abilities->absorbPercent[combatTypeToIndex(combatType)];
+				if(absorbPercent != 0)
+				{
+					blocked += (int32_t)std::ceil((float)damage * absorbPercent / 100);
+					if(item->hasCharges())
+						g_game.transformItem(item, item->getID(), std::max((int32_t)0, (int32_t)item->getCharges() - 1));
+				}
 			}
 		}
 

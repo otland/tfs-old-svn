@@ -39,7 +39,9 @@ class IOMarket
 		}
 
 		void loadMarket();
-		MarketItemList getActiveOffers(MarketAction_t action, uint32_t itemId);
+		MarketItemList getActiveOffers(MarketAction_t action, uint16_t itemId);
+		MarketItemList getOwnHistory(MarketAction_t action, uint32_t playerId);
+		MarketItemList getOwnOffers(MarketAction_t action, uint32_t playerId);
 		uint32_t getOfferIdByCounter(uint32_t timestamp, uint16_t counter);
 		MarketItemEx getOfferById(uint32_t id);
 		void createOffer(uint32_t playerId, MarketAction_t action, uint32_t itemId, uint16_t amount, uint32_t price, bool anonymous);

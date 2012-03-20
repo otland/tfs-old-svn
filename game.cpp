@@ -5153,13 +5153,47 @@ bool Game::playerBrowseMarket(uint32_t playerId, uint16_t spriteId)
 	if(!player || player->isRemoved())
 		return false;
 
+	if(player->getMarketDepotId() == -1)
+		return false;
+
 	const ItemType& it = Item::items.getItemIdByClientId(spriteId);
 	if(it.id == 0)
 		return false;
 
 	const MarketItemList& buyOffers = IOMarket::getInstance()->getActiveOffers(MARKETACTION_BUY, it.id);
 	const MarketItemList& sellOffers = IOMarket::getInstance()->getActiveOffers(MARKETACTION_SELL, it.id);
-	player->sendMarketBrowse(it.id, buyOffers, sellOffers);
+	player->sendMarketBrowseItem(it.id, buyOffers, sellOffers);
+	player->sendMarketDetail(it.id);
+	return true;
+}
+
+bool Game::playerBrowseMarketOwnOffers(uint32_t playerId)
+{
+	Player* player = getPlayerByID(playerId);
+	if(!player || player->isRemoved())
+		return false;
+
+	if(player->getMarketDepotId() == -1)
+		return false;
+
+	const MarketItemList& buyOffers = IOMarket::getInstance()->getOwnOffers(MARKETACTION_BUY, player->getGUID());
+	const MarketItemList& sellOffers = IOMarket::getInstance()->getOwnOffers(MARKETACTION_SELL, player->getGUID());
+	player->sendMarketBrowseOwnOffers(buyOffers, sellOffers);
+	return true;
+}
+
+bool Game::playerBrowseMarketOwnHistory(uint32_t playerId)
+{
+	Player* player = getPlayerByID(playerId);
+	if(!player || player->isRemoved())
+		return false;
+
+	if(player->getMarketDepotId() == -1)
+		return false;
+
+	const MarketItemList& buyOffers = IOMarket::getInstance()->getOwnHistory(MARKETACTION_BUY, player->getGUID());
+	const MarketItemList& sellOffers = IOMarket::getInstance()->getOwnHistory(MARKETACTION_SELL, player->getGUID());
+	player->sendMarketBrowseOwnHistory(buyOffers, sellOffers);
 	return true;
 }
 
@@ -5256,7 +5290,7 @@ bool Game::playerCreateMarketOffer(uint32_t playerId, uint8_t type, uint16_t spr
 	player->sendMarketEnter(player->getMarketDepotId());
 	const MarketItemList& buyOffers = IOMarket::getInstance()->getActiveOffers(MARKETACTION_BUY, it.id);
 	const MarketItemList& sellOffers = IOMarket::getInstance()->getActiveOffers(MARKETACTION_SELL, it.id);
-	player->sendMarketBrowse(it.id, buyOffers, sellOffers);
+	player->sendMarketBrowseItem(it.id, buyOffers, sellOffers);
 	return true;
 }
 
@@ -5280,6 +5314,7 @@ bool Game::playerCancelMarketOffer(uint32_t playerId, uint32_t timestamp, uint16
 	if(item.type == MARKETACTION_BUY)
 	{
 		player->bankBalance += item.price * item.amount;
+		player->sendMarketEnter(player->getMarketDepotId());
 	}
 	else
 	{
@@ -5323,6 +5358,9 @@ bool Game::playerCancelMarketOffer(uint32_t playerId, uint32_t timestamp, uint16
 	}
 
 	IOMarket::getInstance()->cancelOffer(offerId);
+	const MarketItemList& buyOffers = IOMarket::getInstance()->getOwnOffers(MARKETACTION_BUY, player->getGUID());
+	const MarketItemList& sellOffers = IOMarket::getInstance()->getOwnOffers(MARKETACTION_SELL, player->getGUID());
+	player->sendMarketBrowseOwnOffers(buyOffers, sellOffers);
 	return true;
 }
 
@@ -5508,7 +5546,7 @@ bool Game::playerAcceptMarketOffer(uint32_t playerId, uint32_t timestamp, uint16
 	player->sendMarketEnter(player->getMarketDepotId());
 	const MarketItemList& buyOffers = IOMarket::getInstance()->getActiveOffers(MARKETACTION_BUY, it.id);
 	const MarketItemList& sellOffers = IOMarket::getInstance()->getActiveOffers(MARKETACTION_SELL, it.id);
-	player->sendMarketBrowse(it.id, buyOffers, sellOffers);
+	player->sendMarketBrowseItem(it.id, buyOffers, sellOffers);
 	return true;
 }
 

@@ -581,8 +581,11 @@ bool WeaponMelee::configureEvent(xmlNodePtr p)
 
 bool WeaponMelee::configureWeapon(const ItemType& it)
 {
-	elementType = it.abilities.elementType;
-	elementDamage = it.abilities.elementDamage;
+	if(it.abilities)
+	{
+		elementType = it.abilities->elementType;
+		elementDamage = it.abilities->elementDamage;
+	}
 	return Weapon::configureWeapon(it);
 }
 
