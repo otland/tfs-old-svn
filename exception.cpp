@@ -55,18 +55,17 @@ ExceptionHandler::ExceptionHandler()
 
 ExceptionHandler::~ExceptionHandler()
 {
-	if(isInstalled){
+	if(isInstalled)
 		RemoveHandler();
-	}
 }
 
 bool ExceptionHandler::InstallHandler()
 {
 #ifdef WINDOWS
 	++ref_counter;
-	if(ref_counter == 1){
+	if(ref_counter == 1)
 		SetUnhandledExceptionFilter(ExceptionHandler::MiniDumpExceptionHandler);
-	}
+
  //Unix/Linux
 #else
 	struct sigaction sa;
@@ -85,15 +84,14 @@ bool ExceptionHandler::InstallHandler()
 
 bool ExceptionHandler::RemoveHandler()
 {
-	if(!isInstalled){
+	if(!isInstalled)
 		return false;
-	}
 
 #ifdef WINDOWS
 	--ref_counter;
-	if(ref_counter == 0){
+	if(ref_counter == 0)
 		SetUnhandledExceptionFilter(NULL);
-	}
+
 //Unix/Linux
 #else
 	signal(SIGILL, SIG_DFL);	// illegal instruction
@@ -109,7 +107,7 @@ bool ExceptionHandler::RemoveHandler()
 long ExceptionHandler::MiniDumpExceptionHandler(EXCEPTION_POINTERS* exceptionPointers /*= NULL*/)
 {
 	// Alerts the user about what is happening
-	std::cout << "Unhandled exception, generating minidump..." << std::endl;
+	std::clog << "Unhandled exception, generating minidump..." << std::endl;
 
 	// Get system time
 	SYSTEMTIME systemTime;
@@ -128,8 +126,9 @@ long ExceptionHandler::MiniDumpExceptionHandler(EXCEPTION_POINTERS* exceptionPoi
 		NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
 
 	// If we cannot create the file, then we cannot dump the memory
-	if(!hFile || hFile == INVALID_HANDLE_VALUE){
-		std::cout << "Cannot create dump file, error: " << GetLastError() << std::endl;
+	if(!hFile || hFile == INVALID_HANDLE_VALUE)
+	{
+		std::clog << "Cannot create dump file, error: " << GetLastError() << std::endl;
 		return EXCEPTION_CONTINUE_SEARCH;
 	}
 
@@ -151,8 +150,9 @@ long ExceptionHandler::MiniDumpExceptionHandler(EXCEPTION_POINTERS* exceptionPoi
 		&exceptionInformation, NULL, NULL);
 
 	// Delete the dump file if we cannot generate the crash trace
-	if(!dumpResult){
-		std::cout << "Cannot generate minidump, error: " << GetLastError() << std::endl;
+	if(!dumpResult)
+	{
+		std::clog << "Cannot generate minidump, error: " << GetLastError() << std::endl;
 
 		//Close file and delete it
 		CloseHandle(hFile);
@@ -184,13 +184,15 @@ void _SigHandler(int signum, siginfo_t *info, void* secret)
 	char date_buff[80];
 
 	std::ostream *outdriver;
-	std::cout << "Error: generating report file..." <<std::endl;
+	std::clog << "Error: generating report file..." <<std::endl;
 	std::ofstream output("report.txt",std::ios_base::app);
-	if(output.fail()){
-		outdriver = &std::cout;
+	if(output.fail())
+	{
+		outdriver = &std::clog;
 		file = false;
 	}
-	else{
+	else
+	{
 		file = true;
 		outdriver = &output;
 	}
