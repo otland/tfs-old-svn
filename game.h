@@ -441,6 +441,8 @@ class Game
 		bool playerRequestRemoveVip(uint32_t playerId, uint32_t guid);
 		bool playerTurn(uint32_t playerId, Direction dir);
 		bool playerRequestOutfit(uint32_t playerId);
+		bool playerShowQuestLog(uint32_t playerId);
+		bool playerShowQuestLine(uint32_t playerId, uint16_t questId);
 		bool playerSay(uint32_t playerId, uint16_t channelId, SpeakClasses type,
 			const std::string& receiver, const std::string& text);
 		bool playerChangeOutfit(uint32_t playerId, Outfit_t outfit);
@@ -459,7 +461,7 @@ class Game
 		bool playerCancelMarketOffer(uint32_t playerId, uint32_t timestamp, uint16_t counter);
 		bool playerAcceptMarketOffer(uint32_t playerId, uint32_t timestamp, uint16_t counter, uint16_t amount);
 
-		void removePremium(Account account);
+		void updatePremium(Account account);
 
 		void cleanup();
 		void shutdown();

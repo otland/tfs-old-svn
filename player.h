@@ -488,6 +488,7 @@ class Player : public Creature, public Cylinder
 		bool canWear(uint32_t _looktype, uint32_t _addons);
 		void addOutfit(uint32_t _looktype, uint32_t _addons);
 		bool remOutfit(uint32_t _looktype, uint32_t _addons);
+		uint32_t getOutfitAddons(uint32_t looktype);
 		bool canLogout();
 
 		//tile
@@ -618,7 +619,7 @@ class Player : public Creature, public Cylinder
 		void sendIcons() const;
 		void sendMagicEffect(const Position& pos, uint8_t type) const
 			{if(client) client->sendMagicEffect(pos, type);}
-		void sendPing(uint32_t interval);
+		void sendPing();
 		void sendStats();
 		void sendSkills() const
 			{if(client) client->sendSkills();}
@@ -668,8 +669,12 @@ class Player : public Creature, public Cylinder
 			{if(client) client->sendTutorial(tutorialId);}
 		void sendAddMarker(const Position& pos, uint8_t markType, const std::string& desc)
 			{if (client) client->sendAddMarker(pos, markType, desc);}
+		void sendQuestLog()
+			{if (client) client->sendQuestLog(); }
+		void sendQuestLine(const Quest* quest)
+			{if (client) client->sendQuestLine(quest); }
 
-		void receivePing() {if(npings > 0) npings--;}
+		void receivePing() {lastPong = OTSYS_TIME();}
 
 		virtual void onThink(uint32_t interval);
 		virtual void onAttacking(uint32_t interval);
@@ -796,8 +801,9 @@ class Player : public Creature, public Cylinder
 		double inventoryWeight;
 		double capacity;
 
-		uint32_t internalPing;
-		uint32_t npings;
+		int64_t lastPing;
+		int64_t lastPong;
+
 		int64_t nextAction;
 
 		bool pzLocked;

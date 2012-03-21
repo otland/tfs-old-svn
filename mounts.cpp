@@ -138,20 +138,3 @@ Mount* Mounts::getMountByClientID(uint16_t clientId)
 	}
 	return NULL;
 }
-
-void Mounts::sendMountsList(Player* player, NetworkMessage_ptr msg)
-{
-	MountsList tmp_list;
-	for(MountsList::const_iterator it = mounts.begin(), end = mounts.end(); it != end; ++it)
-	{
-		if((*it)->isTamed(player))
-			tmp_list.push_back(*it);
-	}
-
-	msg->AddByte(tmp_list.size());
-	for(MountsList::const_iterator it = tmp_list.begin(), end = tmp_list.end(); it != end; ++it)
-	{
-		msg->AddU16((*it)->getClientID());
-		msg->AddString((*it)->getName());
-	}
-}

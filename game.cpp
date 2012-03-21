@@ -3186,6 +3186,9 @@ bool Game::playerSetFightModes(uint32_t playerId, fightMode_t fightMode, chaseMo
 
 bool Game::playerRequestAddVip(uint32_t playerId, const std::string& vip_name)
 {
+	if(vip_name.size() > 32)
+		return false;
+
 	Player* player = getPlayerByID(playerId);
 	if(!player || player->isRemoved())
 		return false;
@@ -3233,6 +3236,9 @@ bool Game::playerTurn(uint32_t playerId, Direction dir)
 
 bool Game::playerRequestOutfit(uint32_t playerId)
 {
+	if(!g_config.getBoolean(ConfigManager::ALLOW_CHANGEOUTFIT))
+		return false;
+
 	Player* player = getPlayerByID(playerId);
 	if(!player || player->isRemoved())
 		return false;
@@ -3252,6 +3258,9 @@ bool Game::playerToggleMount(uint32_t playerId, bool mount)
 
 bool Game::playerChangeOutfit(uint32_t playerId, Outfit_t outfit)
 {
+	if(!g_config.getBoolean(ConfigManager::ALLOW_CHANGEOUTFIT))
+		return false;
+
 	Player* player = getPlayerByID(playerId);
 	if(!player || player->isRemoved())
 		return false;
@@ -3288,6 +3297,30 @@ bool Game::playerChangeOutfit(uint32_t playerId, Outfit_t outfit)
 
 		internalCreatureChangeOutfit(player, outfit);
 	}
+	return true;
+}
+
+bool Game::playerShowQuestLog(uint32_t playerId)
+{
+	Player* player = getPlayerByID(playerId);
+	if(!player || player->isRemoved())
+		return false;
+
+	player->sendQuestLog();
+	return true;
+}
+
+bool Game::playerShowQuestLine(uint32_t playerId, uint16_t questId)
+{
+	Player* player = getPlayerByID(playerId);
+	if(!player || player->isRemoved())
+		return false;
+
+	Quest* quest = Quests::getInstance()->getQuestByID(questId);
+	if(!quest)
+		return false;
+
+	player->sendQuestLine(quest);
 	return true;
 }
 
@@ -4593,7 +4626,9 @@ std::string Game::getHighscoreString(uint16_t skill)
 		ss << "\n" << (i + 1) << ".  " << hs[i].second << "  -  " << hs[i].first;
 
 	ss << "\n\nLast updated on:\n" << std::ctime(&lastHSUpdate);
-	return ss.str();
+	std::string highscoresStr = ss.str();
+	highscoresStr.erase(highscoresStr.length() - 1);
+	return highscoresStr;
 }
 
 bool Game::broadcastMessage(const std::string& text, MessageClasses type)
@@ -4687,20 +4722,21 @@ void Game::updateCreatureSkull(Player* player)
 	}
 }
 
-void Game::removePremium(Account account)
+void Game::updatePremium(Account account)
 {
-	uint32_t timeNow = time(NULL);
-	if(account.premiumDays > 0 && account.premiumDays < 65535)
+	time_t timeNow = time(NULL);
+	if(account.premiumDays != 0 && account.premiumDays != 0xFFFF)
 	{
-		uint32_t days = (uint32_t)std::ceil((timeNow - account.lastDay) / 86400.0f);
+		uint32_t days = (timeNow - account.lastDay) / 86400;
 		if(days > 0)
 		{
-			if(account.premiumDays < days)
+			if(days > account.premiumDays)
 				account.premiumDays = 0;
 			else
 				account.premiumDays -= days;
 
-			account.lastDay = timeNow;
+			uint32_t remainder = (timeNow - account.lastDay) % 86400;
+			account.lastDay = timeNow - remainder;
 		}
 	}
 	else

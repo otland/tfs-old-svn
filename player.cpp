@@ -99,8 +99,8 @@ Creature()
 	lastLoginSaved = 0;
 	lastLogout = 0;
  	lastIP = 0;
-	npings = 0;
-	internalPing = 0;
+	lastPing = OTSYS_TIME();
+	lastPong = OTSYS_TIME();
 	MessageBufferTicks = 0;
 	MessageBufferCount = 0;
 	nextAction = 0;
@@ -1274,18 +1274,17 @@ void Player::sendStats()
 		client->sendStats();
 }
 
-void Player::sendPing(uint32_t interval)
+void Player::sendPing()
 {
-	internalPing += interval;
-	if(internalPing >= 5000) //1 ping each 5 seconds
+	int64_t timeNow = OTSYS_TIME();
+	if(timeNow - lastPing >= 5000)
 	{
-		internalPing = 0;
-		npings++;
+		lastPing = timeNow;
 		if(client)
 			client->sendPing();
 	}
 
-	if(canLogout() && npings > 12)
+	if((timeNow - lastPong) >= 60000 && canLogout())
 	{
 		if(!client)
 		{
@@ -1821,7 +1820,8 @@ uint32_t Player::getNextActionTime() const
 void Player::onThink(uint32_t interval)
 {
 	Creature::onThink(interval);
-	sendPing(interval);
+
+	sendPing();
 
 	MessageBufferTicks += interval;
 	if(MessageBufferTicks >= 1500)
@@ -3970,6 +3970,17 @@ bool Player::remOutfit(uint32_t _looktype, uint32_t _addons)
 	outfit.looktype = _looktype;
 	outfit.addons = _addons;
 	return m_playerOutfits.remOutfit(outfit);
+}
+
+uint32_t Player::getOutfitAddons(uint32_t looktype)
+{
+	const OutfitListType& outfits = m_playerOutfits.getOutfits();
+	for(OutfitListType::const_iterator it = outfits.begin(); it != outfits.end(); ++it)
+	{
+		if((*it)->looktype == looktype)
+			return (*it)->addons;
+	}
+	return 0;
 }
 
 void Player::setSex(PlayerSex_t newSex)

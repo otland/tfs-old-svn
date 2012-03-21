@@ -48,7 +48,6 @@ typedef std::vector< std::pair<uint32_t, uint32_t> > IPList;
 #define OTSYS_THREAD_LOCKVAR		CRITICAL_SECTION
 
 #define OTSYS_THREAD_LOCKVARINIT(a)	InitializeCriticalSection(&a);
-#define OTSYS_THREAD_LOCKVARRELEASE(a)	DeleteCriticalSection(&a);
 #define OTSYS_THREAD_LOCK(a, b)		EnterCriticalSection(&a);
 #define OTSYS_THREAD_UNLOCK(a, b)	LeaveCriticalSection(&a);
 #define OTSYS_THREAD_UNLOCK_PTR(a, b)	LeaveCriticalSection(a);
@@ -131,8 +130,6 @@ inline void OTSYS_THREAD_LOCKVARINIT(OTSYS_THREAD_LOCKVAR& l)
 	pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE_NP);
 	pthread_mutex_init(&l, &attr);
 }
-
-#define OTSYS_THREAD_LOCKVARRELEASE(a)  //todo: working macro
 
 #define OTSYS_THREAD_LOCK(a, b)          pthread_mutex_lock(&a);
 #define OTSYS_THREAD_UNLOCK(a, b)        pthread_mutex_unlock(&a);

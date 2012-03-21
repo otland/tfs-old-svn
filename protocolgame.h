@@ -42,6 +42,7 @@ class House;
 class Container;
 class Tile;
 class Connection;
+class Quest;
 
 class ProtocolGame : public Protocol
 {
@@ -186,6 +187,9 @@ class ProtocolGame : public Protocol
 		void sendCreatureTurn(const Creature* creature, uint32_t stackpos);
 		void sendCreatureSay(const Creature* creature, SpeakClasses type, const std::string& text, Position* pos = NULL);
 
+		void sendQuestLog();
+		void sendQuestLine(const Quest* quest);
+
 		void sendCancel(const std::string& message);
 		void sendCancelWalk();
 		void sendChangeSpeed(const Creature* creature, uint32_t speed);
@@ -324,8 +328,6 @@ class ProtocolGame : public Protocol
 		void addGameTaskInternal(const FunctionType&);
 
 		Player* player;
-
-		int64_t m_nextPing;
 
 		uint32_t eventConnect;
 

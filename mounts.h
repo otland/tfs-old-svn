@@ -67,7 +67,9 @@ class Mounts
 		bool loadFromXml();
 		Mount* getMountByID(uint8_t id);
 		Mount* getMountByClientID(uint16_t clientId);
-		void sendMountsList(Player* player, NetworkMessage_ptr msg);
+
+		MountsList::const_iterator getFirstMount() const {return mounts.begin();}
+		MountsList::const_iterator getLastMount() const {return mounts.end();}
 
 	private:
 		MountsList mounts;

@@ -173,8 +173,8 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 	{
 		TRACK_MESSAGE(output);
 
-		//Remove premium days
-		g_game.removePremium(account);
+		//Update premium days
+		g_game.updatePremium(account);
 
 		//Add MOTD
 		output->AddByte(0x14);

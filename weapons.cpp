@@ -627,26 +627,8 @@ bool WeaponMelee::getSkillType(const Player* player, const Item* item,
 	skills_t& skill, uint32_t& skillpoint) const
 {
 	skillpoint = 0;
-
-	if(player->getAddAttackSkill())
-	{
-		switch(player->getLastAttackBlockType())
-		{
-			case BLOCK_DEFENSE:
-			case BLOCK_ARMOR:
-			case BLOCK_NONE:
-			{
-				skillpoint = 1;
-				break;
-			}
-
-			default:
-			{
-				skillpoint = 0;
-				break;
-			}
-		}
-	}
+	if(player->getAddAttackSkill() && player->getLastAttackBlockType() != BLOCK_IMMUNITY)
+		skillpoint = 1;
 
 	WeaponType_t weaponType = item->getWeaponType();
 	switch(weaponType)
@@ -669,8 +651,10 @@ bool WeaponMelee::getSkillType(const Player* player, const Item* item,
 			return true;
 		}
 
-		default: return false;
+		default:
+			break;
 	}
+	return false;
 }
 
 int32_t WeaponMelee::getWeaponDamage(const Player* player, const Creature* target, const Item* item, bool maxDamage /*= false*/) const

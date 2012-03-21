@@ -78,24 +78,26 @@ std::string Mission::getDescription(Player* player)
 
 bool Mission::isStarted(Player* player) const
 {
-	if(player)
-	{
-		int32_t value;
-		if(player->getStorageValue(storageID, value) && value >= startValue && value <= endValue)
-			return true;
-	}
-	return false;
+	if(!player)
+		return false;
+
+	int32_t value;
+	if(!player->getStorageValue(storageID, value) || value < startValue || value > endValue)
+		return false;
+	
+	return true;
 }
 
 bool Mission::isCompleted(Player* player) const
 {
-	if(player)
-	{
-		int32_t value;
-		if(player->getStorageValue(storageID, value) && value == endValue)
-			return true;
-	}
-	return false;
+	if(!player)
+		return false;
+
+	int32_t value;
+	if(!player->getStorageValue(storageID, value) || value != endValue)
+		return false;
+
+	return true;
 }
 
 std::string Mission::getName(Player* player)
@@ -122,7 +124,7 @@ Quest::~Quest()
 	missions.clear();
 }
 
-uint16_t Quest::getMissionsCount(Player* player)
+uint16_t Quest::getMissionsCount(Player* player) const
 {
 	uint16_t count = 0;
 	for(MissionsList::const_iterator it = missions.begin(), end = missions.end(); it != end; ++it)
@@ -145,28 +147,14 @@ bool Quest::isCompleted(Player* player)
 
 bool Quest::isStarted(Player* player) const
 {
-	if(player)
-	{
-		int32_t value;
-		if(player->getStorageValue(startStorageID, value) && value >= startStorageValue)
-			return true;
-	}
-	return false;
-}
+	if(!player)
+		return false;
 
-void Quest::getMissionList(Player* player, NetworkMessage_ptr msg)
-{
-	msg->AddByte(0xF1);
-	msg->AddU16(id);
-	msg->AddByte(getMissionsCount(player));
-	for(MissionsList::const_iterator it = missions.begin(), end = missions.end(); it != end; ++it)
-	{
-		if((*it)->isStarted(player))
-		{
-			msg->AddString((*it)->getName(player));
-			msg->AddString((*it)->getDescription(player));
-		}
-	}
+	int32_t value;
+	if(!player->getStorageValue(startStorageID, value) || value < startStorageValue)
+		return false;
+
+	return true;
 }
 
 Quests::Quests()
@@ -266,7 +254,7 @@ bool Quests::loadFromXml()
 							else
 								mission->mainState = new MissionState(missionState, 0);
 
-							quest->missions.push_back(mission);
+							quest->addMission(mission);
 						}
 						tmpNode = tmpNode->next;
 					}
@@ -303,21 +291,6 @@ uint16_t Quests::getQuestsCount(Player* player)
 	return count;
 }
 
-void Quests::getQuestsList(Player* player, NetworkMessage_ptr msg)
-{
-	msg->AddByte(0xF0);
-	msg->AddU16(getQuestsCount(player));
-	for(QuestsList::const_iterator it = quests.begin(), end = quests.end(); it != end; ++it)
-	{
-		if((*it)->isStarted(player))
-		{
-			msg->AddU16((*it)->getID());
-			msg->AddString((*it)->getName());
-			msg->AddByte((*it)->isCompleted(player));
-		}
-	}
-}
-
 bool Quests::isQuestStorage(const uint32_t key, const int32_t value)
 {
 	for(QuestsList::const_iterator it = quests.begin(), end = quests.end(); it != end; ++it)
@@ -325,7 +298,7 @@ bool Quests::isQuestStorage(const uint32_t key, const int32_t value)
 		if((*it)->getStartStorageId() == key && (*it)->getStartStorageValue() == value)
 			return true;
 
-		for(MissionsList::const_iterator m_it = (*it)->missions.begin(), m_end = (*it)->missions.end(); m_it != m_end; ++m_it)
+		for(MissionsList::const_iterator m_it = (*it)->getFirstMission(), m_end = (*it)->getLastMission(); m_it != m_end; ++m_it)
 		{
 			if((*m_it)->getStorageId() == key && value >= (*m_it)->getStartStorageValue() && value <= (*m_it)->getEndStorageValue())
 				return true;
