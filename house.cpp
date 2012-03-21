@@ -73,7 +73,7 @@ void House::removeDoor(Door* door)
 	}
 }
 
-Door* House::getDoorByNumber(uint32_t doorId) const
+Door* House::getDoorByNumber(uint8_t doorId) const
 {
 	for(HouseDoorList::const_iterator it = doorList.begin(); it != doorList.end(); ++it)
 	{
@@ -615,11 +615,11 @@ Attr_ReadValue Door::readAttr(AttrTypes_t attr, PropStream& propStream)
 	if(attr != ATTR_HOUSEDOORID)
 		return Item::readAttr(attr, propStream);
 
-	uint8_t doorId = 0;
-	if(!propStream.getByte(doorId))
+	uint8_t _doorId = 0;
+	if(!propStream.getByte(_doorId))
 		return ATTR_READ_ERROR;
 
-	setDoorId(doorId);
+	doorId = _doorId;
 	return ATTR_READ_CONTINUE;
 }
 
@@ -628,6 +628,7 @@ void Door::copyAttributes(Item* item)
 	Item::copyAttributes(item);
 	if(Door* door = item->getDoor())
 	{
+		door->setDoorId(doorId);
 		std::string list;
 		if(door->getAccessList(list))
 			setAccessList(list);
