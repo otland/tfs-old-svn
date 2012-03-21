@@ -35,8 +35,7 @@
 		monster/
 	M		slime.xml
 	M		slime2.xml
-		movements/
-	M		movements.xml
+	M	movements/movements.xml
 	M	npc/lib/npcsystem/npchandler.lua
 		talkactions/scripts/
 	M		buyprem.lua
@@ -45,8 +44,7 @@
 		XML/
 	M		outfits.xml
 	M		mounts.xml
-		weapons/
-	M		weapons.xml
+	M	weapons/weapons.xml
 ]
 
 [ Milestone
@@ -88,5 +86,6 @@
 	Major optimizations to Account Manager code.
 	Removed a SQLite trigger that truncated some tables when players were updated (the server already does this, and it caused a bug).
 	Optimized ItemType code to save up to 75MB memory.
+	Fixed a bug with premium account code causing it to remove 1 day everytime you would login.
 	A lot of miscellaneous cleanups, fixes and optimizations.
 ]

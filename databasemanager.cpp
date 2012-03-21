@@ -187,7 +187,6 @@ uint32_t DatabaseManager::updateDatabase()
 		case 0:
 		{
 			std::cout << "> Updating database to version 1" << std::endl;
-
 			if (db->getDatabaseEngine() == DATABASE_ENGINE_MYSQL)
 				db->executeQuery("ALTER TABLE `accounts` ADD `name` VARCHAR(32) NOT NULL AFTER `id`;");
 			else
@@ -224,6 +223,7 @@ uint32_t DatabaseManager::updateDatabase()
 
 		case 2:
 		{
+			std::cout << "> Updating database to version 3" << std::endl;
 			if(db->getDatabaseEngine() == DATABASE_ENGINE_SQLITE)
 				db->executeQuery("DROP TRIGGER IF EXISTS `onupdate_players_after`;");
 
