@@ -2678,7 +2678,10 @@ int32_t LuaScriptInterface::luaDoCreateNpc(lua_State* L)
 	std::string name = popString(L);
 	Npc* npc = Npc::createNpc(name.c_str());
 	if(!npc)
-		return false;
+	{
+		lua_pushboolean(L, false);
+		return 1;
+	}
 
 	// Place the npc
 	if(g_game.placeCreature(npc, pos))

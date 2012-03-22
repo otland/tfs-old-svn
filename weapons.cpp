@@ -668,7 +668,7 @@ int32_t WeaponMelee::getWeaponDamage(const Player* player, const Creature* targe
 		maxValue <<= 1;
 
 	Vocation* vocation = player->getVocation();
-	if(vocation && vocation->meleeDamageMultipler != 1.0)
+	if(vocation)
 		maxValue = int32_t(maxValue * vocation->meleeDamageMultipler);
 
 	if(maxDamage)
@@ -922,7 +922,7 @@ int32_t WeaponDistance::getWeaponDamage(const Player* player, const Creature* ta
 		maxValue <<= 1;
 
 	Vocation* vocation = player->getVocation();
-	if(vocation && vocation->distDamageMultipler != 1.0)
+	if(vocation)
 		maxValue = int32_t(maxValue * vocation->distDamageMultipler);
 
 	if(maxDamage)

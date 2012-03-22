@@ -2294,7 +2294,7 @@ void ProtocolGame::sendMarketDetail(uint16_t itemId)
 
 	msg->AddString(getWeaponName(it.weaponType));
 
-	if(it.weight != 0.00)
+	if(it.weight > 0)
 	{
 		ss.str("");
 		ss << std::fixed << std::setprecision(2) << it.weight << " oz";
@@ -3323,7 +3323,7 @@ void ProtocolGame::AddCreatureSpeak(NetworkMessage_ptr msg, const Creature* crea
 
 	if(type == SPEAK_CHANNEL_R2)
 	{
-		msg->AddString("");
+		msg->AddU16(0x00);
 		type = SPEAK_CHANNEL_R1;
 	}
 	else

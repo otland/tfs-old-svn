@@ -77,7 +77,7 @@ Creature::Creature() :
 	forceUpdateFollowPath = false;
 	isMapLoaded = false;
 	isUpdatingPath = false;
-	memset(localMapCache, false, sizeof(localMapCache));
+	memset(localMapCache, 0, sizeof(localMapCache));
 
 	attackedCreature = NULL;
 	_lastHitCreature = NULL;
