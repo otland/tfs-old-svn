@@ -37,13 +37,22 @@
 #include <libxml/xmlmemory.h>
 #include <libxml/parser.h>
 #include <libxml/threads.h>
-
 //boost
 #include <boost/config.hpp>
-#include <boost/function.hpp>
+#include <boost/shared_ptr.hpp>
 #include <boost/bind.hpp>
+#include <boost/function.hpp>
+#include <boost/tokenizer.hpp>
 #include <boost/regex.hpp>
+#include <boost/asio.hpp>
+
+//std
+//#include <list>
+//#include <vector>
+//#include <map>
+//#include <string>
 
 //otserv
 #include "configmanager.h"
 #include "thing.h"
+
