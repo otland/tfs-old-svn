@@ -2226,10 +2226,7 @@ void ProtocolGame::sendMarketDetail(uint16_t itemId)
 			ss << getCombatName(indexToCombatType(i)) << " " << std::showpos << it.abilities->absorbPercent[i] << std::noshowpos << "%";
 		}
 	}
-	if(!ss.str().empty())
-		msg->AddString(ss.str());
-	else
-		msg->AddU16(0x00);
+	msg->AddString(ss.str());
 
 	if(it.minReqLevel != 0)
 	{
@@ -2278,10 +2275,7 @@ void ProtocolGame::sendMarketDetail(uint16_t itemId)
 			ss << "speed" << " " << std::showpos << (int32_t)(it.abilities->speed / 2) << std::noshowpos;
 		}
 	}
-	if(!ss.str().empty())
-		msg->AddString(ss.str());
-	else
-		msg->AddU16(0x00);
+	msg->AddString(ss.str());
 
 	if(it.charges != 0)
 	{
@@ -2303,8 +2297,8 @@ void ProtocolGame::sendMarketDetail(uint16_t itemId)
 	else
 		msg->AddU16(0x00);
 
-	msg->AddByte(0x00); // buy offers ?
-	msg->AddByte(0x00); // sell offers ?
+	msg->AddByte(0x00); // buy offers?
+	msg->AddByte(0x00); // sell offers?
 }
 
 void ProtocolGame::sendQuestLog()

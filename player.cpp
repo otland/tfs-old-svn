@@ -502,8 +502,7 @@ int32_t Player::getDefense() const
 		defenseSkill = getSkill(SKILL_SHIELD, SKILL_LEVEL);
 	}
 
-	if(vocation)
-		defenseValue = int32_t(defenseValue * vocation->defenseMultipler);
+	defenseValue = int32_t(defenseValue * vocation->defenseMultipler);
 
 	if(defenseSkill == 0)
 		return 0;
@@ -4399,21 +4398,15 @@ void Player::manageAccount(const std::string &text)
 				else
 					msg << "Something is wrong with vocations, please contact a gamemaster.";
 			}
+			else if(IOLoginData::getInstance()->createCharacter(accountManager->realAccount, accountManager->accountManagerInput, accountManager->newVocation, accountManager->newSex))
+			{
+				accountManager->talkState = 1;
+				msg << "Your character has been created.";
+			}
 			else
 			{
-				if(!IOLoginData::getInstance()->playerExists(accountManager->accountManagerInput))
-				{
-					accountManager->talkState = 1;
-					if(IOLoginData::getInstance()->createCharacter(accountManager->realAccount, accountManager->accountManagerInput, accountManager->newVocation, accountManager->newSex))
-						msg << "Your character has been created.";
-					else
-						msg << "Something went wrong, your character was not created.";
-				}
-				else
-				{
-					accountManager->talkState = 6;
-					msg << "A player with this name already exists, please choose another name.";
-				}
+				accountManager->talkState = 6;
+				msg << "A player with this name already exists, please choose another name.";
 			}
 		}
 		else if(accountManager->talkState == 10)
@@ -4438,13 +4431,10 @@ void Player::manageAccount(const std::string &text)
 		}
 		else if(accountManager->talkState == 11 && checkText(text, "yes"))
 		{
-			if(!IOLoginData::getInstance()->playerExists(accountManager->accountManagerInput))
+			if(IOLoginData::getInstance()->createCharacter(accountManager->realAccount, accountManager->accountManagerInput, accountManager->newVocation, accountManager->newSex))
 			{
 				accountManager->talkState = 1;
-				if(IOLoginData::getInstance()->createCharacter(accountManager->realAccount, accountManager->accountManagerInput, accountManager->newVocation, accountManager->newSex))
-					msg << "Your character has been created.";
-				else
-					msg << "Something went wrong, your character was not created.";
+				msg << "Your character has been created.";
 			}
 			else
 			{

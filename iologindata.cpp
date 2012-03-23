@@ -1230,12 +1230,11 @@ bool IOLoginData::changeName(uint32_t guid, std::string newName)
 	Database* db = Database::getInstance();
 	DBQuery query;
 	query << "UPDATE `players` SET `name` = " << db->escapeString(newName) << " WHERE `id` = " << guid << ";";
-	if(db->executeQuery(query.str()))
-	{
-		nameCacheMap[guid] = newName;
-		return true;
-	}
-	return false;
+	if(!db->executeQuery(query.str()))
+		return false;
+
+	nameCacheMap[guid] = newName;
+	return true;
 }
 
 uint32_t IOLoginData::getAccountNumberByName(std::string name)
