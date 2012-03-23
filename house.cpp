@@ -876,13 +876,16 @@ bool Houses::payHouses()
 				housePrice += g_config.getNumber(ConfigManager::HOUSE_PRICE);
 
 			Depot* depot = player->getDepot(town->getTownID(), true);
-			bool savePlayerHere = true;
 			if(depot)
 			{
-				player->setDepotChange(true);
+				bool paid = false;
+				if(player->getBankBalance() >= house->getRent())
+				{
+					player->setBankBalance(player->getBankBalance() - house->getRent());
+					paid = true;
+				}
 
-				//get money from depot
-				if(g_game.removeMoney(depot, house->getRent(), FLAG_NOLIMIT))
+				if(paid)
 				{
 					time_t paidUntil = currentTime;
 					switch(rentPeriod)
@@ -906,12 +909,8 @@ bool Houses::payHouses()
 				}
 				else
 				{
-					if(house->getPayRentWarnings() >= 7)
-					{
-						house->setHouseOwner(0);
-						savePlayerHere = false;
-					}
-					else
+					player->setDepotChange(true);
+					if(house->getPayRentWarnings() < 7)
 					{
 						int32_t daysLeft = 7 - house->getPayRentWarnings();
 
@@ -940,19 +939,20 @@ bool Houses::payHouses()
 								break;
 						}
 
-						char warningText[300];
-						sprintf(warningText, "Warning! \nThe %s rent of %u gold for your house \"%s\" is payable. Have it within %d days or you will lose this house.", period.c_str(), house->getRent(), house->getName().c_str(), daysLeft);
-						letter->setText(warningText);
-						g_game.internalAddItem(depot, letter, INDEX_WHEREEVER, FLAG_NOLIMIT);
+						std::stringstream ss;
+						ss << "Warning! \nThe " << period << " rent of " << house->getRent() << " gold for your house \"" << house->getName() << "\" is payable. Have it within " << daysLeft << " days or you will lose this house.";
+						letter->setText(ss.str());
+						g_game.internalAddItem(depot->getInbox(), letter, INDEX_WHEREEVER, FLAG_NOLIMIT);
 						house->setPayRentWarnings(house->getPayRentWarnings() + 1);
 					}
+					else
+						house->setHouseOwner(0);
 				}
 			}
 
 			if(player->isOffline())
 			{
-				if(savePlayerHere)
-					IOLoginData::getInstance()->savePlayer(player, true);
+				IOLoginData::getInstance()->savePlayer(player, true);
 				delete player;
 			}
 		}

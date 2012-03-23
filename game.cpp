@@ -5470,7 +5470,6 @@ bool Game::playerAcceptMarketOffer(uint32_t playerId, uint32_t timestamp, uint16
 
 		player->bankBalance += item.price * amount;
 
-		bool tmpLoaded = false;
 		Player* buyerPlayer = getPlayerByGUID(item.playerId);
 		if(!buyerPlayer)
 		{
@@ -5484,7 +5483,6 @@ bool Game::playerAcceptMarketOffer(uint32_t playerId, uint32_t timestamp, uint16
 				delete buyerPlayer;
 				return false;
 			}
-			tmpLoaded = true;
 		}
 		buyerPlayer->setDepotChange(true);
 
@@ -5522,7 +5520,7 @@ bool Game::playerAcceptMarketOffer(uint32_t playerId, uint32_t timestamp, uint16
 			}
 		}
 
-		if(tmpLoaded)
+		if(buyerPlayer->isOffline())
 		{
 			IOLoginData::getInstance()->savePlayer(buyerPlayer, true);
 			delete buyerPlayer;
