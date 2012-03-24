@@ -700,14 +700,14 @@ void Combat::combatTileEffects(const SpectatorVec& list, Creature* caster, Tile*
 		{
 			if(g_game.getWorldType() == WORLD_TYPE_NO_PVP || tile->hasFlag(TILESTATE_NOPVPZONE))
 			{
-				if(itemId == ITEM_FIREFIELD_PVP)
+				if(itemId == ITEM_FIREFIELD_PVP_FULL)
 					itemId = ITEM_FIREFIELD_NOPVP;
 				else if(itemId == ITEM_POISONFIELD_PVP)
 					itemId = ITEM_POISONFIELD_NOPVP;
 				else if(itemId == ITEM_ENERGYFIELD_PVP)
 					itemId = ITEM_ENERGYFIELD_NOPVP;
 			}
-			else if(itemId == ITEM_FIREFIELD_PVP || itemId == ITEM_POISONFIELD_PVP || itemId == ITEM_ENERGYFIELD_PVP)
+			else if(itemId == ITEM_FIREFIELD_PVP_FULL || itemId == ITEM_POISONFIELD_PVP || itemId == ITEM_ENERGYFIELD_PVP)
 				_caster->addInFightTicks(true);
 		}
 

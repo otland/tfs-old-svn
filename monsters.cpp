@@ -641,7 +641,7 @@ bool Monsters::deserializeSpell(xmlNodePtr node, spellBlock_t& sb, const std::st
 			combat->setCondition(condition);
 		}
 		else if(tmpName == "firefield")
-			combat->setParam(COMBATPARAM_CREATEITEM, ITEM_FIREFIELD_PVP);
+			combat->setParam(COMBATPARAM_CREATEITEM, ITEM_FIREFIELD_PVP_FULL);
 		else if(tmpName == "poisonfield")
 			combat->setParam(COMBATPARAM_CREATEITEM, ITEM_POISONFIELD_PVP);
 		else if(tmpName == "energyfield")
