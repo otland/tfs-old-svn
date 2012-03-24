@@ -5264,11 +5264,11 @@ bool Game::playerCreateMarketOffer(uint32_t playerId, uint8_t type, uint16_t spr
 	else if(fee > 1000)
 		fee = 1000;
 
-	if(fee > player->bankBalance)
-		return false;
-
 	if(type == MARKETACTION_SELL)
 	{
+		if(fee > player->bankBalance)
+			return false;
+
 		Depot* depot = player->getDepot(player->getMarketDepotId(), false);
 		if(!depot)
 			return false;
@@ -5296,7 +5296,7 @@ bool Game::playerCreateMarketOffer(uint32_t playerId, uint8_t type, uint16_t spr
 					continue;
 
 				const ItemType& itemType = Item::items[item->getID()];
-				if(item->getCharges() != itemType.charges)
+				if(!itemType.isRune() && item->getCharges() != itemType.charges)
 					continue;
 
 				if(item->getDuration() != itemType.decayTime)
@@ -5336,8 +5336,17 @@ bool Game::playerCreateMarketOffer(uint32_t playerId, uint8_t type, uint16_t spr
 			for(ItemList::const_iterator iter = itemList.begin(), end = itemList.end(); iter != end; ++iter)
 				internalRemoveItem(*iter);
 		}
+		player->bankBalance -= fee;
 	}
-	player->bankBalance -= fee;
+	else
+	{
+		uint64_t totalPrice = (uint64_t)price * amount;
+		totalPrice += fee;
+		if(totalPrice > player->bankBalance)
+			return false;
+
+		player->bankBalance -= totalPrice;
+	}
 
 	IOMarket::getInstance()->createOffer(player->getGUID(), (MarketAction_t)type, it.id, amount, price, anonymous);
 
@@ -5445,7 +5454,7 @@ bool Game::playerAcceptMarketOffer(uint32_t playerId, uint32_t timestamp, uint16
 	if(it.id == 0)
 		return false;
 
-	uint64_t totalPrice = (uint64_t)item.price * item.amount;
+	uint64_t totalPrice = (uint64_t)item.price * amount;
 	if(item.type == MARKETACTION_BUY)
 	{
 		Depot* depot = player->getDepot(player->getMarketDepotId(), false);
@@ -5475,7 +5484,7 @@ bool Game::playerAcceptMarketOffer(uint32_t playerId, uint32_t timestamp, uint16
 					continue;
 
 				const ItemType& itemType = Item::items[item->getID()];
-				if(item->getCharges() != itemType.charges)
+				if(!itemType.isRune() && item->getCharges() != itemType.charges)
 					continue;
 
 				if(item->getDuration() != itemType.decayTime)

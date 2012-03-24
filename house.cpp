@@ -271,9 +271,6 @@ bool House::transferToDepot(Player* player)
 	if(townid == 0 || houseOwner == 0)
 		return false;
 
-	if(!player)
-		return false;
-
 	Depot* depot = player->getDepot(townid, true);
 
 	std::list<Item*> moveItemList;

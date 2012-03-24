@@ -2023,7 +2023,7 @@ void ProtocolGame::sendMarketEnter(uint32_t depotId)
 			if(!itemType.ware)
 				continue;
 
-			if(item->getCharges() != itemType.charges)
+			if(!itemType.isRune() && item->getCharges() != itemType.charges)
 				continue;
 
 			if(item->getDuration() != itemType.decayTime)
