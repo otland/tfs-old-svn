@@ -5196,6 +5196,9 @@ bool Game::playerBrowseMarket(uint32_t playerId, uint16_t spriteId)
 	if(it.id == 0)
 		return false;
 
+	if(!it.ware)
+		return false;
+
 	const MarketItemList& buyOffers = IOMarket::getInstance()->getActiveOffers(MARKETACTION_BUY, it.id);
 	const MarketItemList& sellOffers = IOMarket::getInstance()->getActiveOffers(MARKETACTION_SELL, it.id);
 	player->sendMarketBrowseItem(it.id, buyOffers, sellOffers);
@@ -5250,6 +5253,9 @@ bool Game::playerCreateMarketOffer(uint32_t playerId, uint8_t type, uint16_t spr
 
 	const ItemType& it = Item::items.getItemIdByClientId(spriteId);
 	if(it.id == 0)
+		return false;
+
+	if(!it.ware)
 		return false;
 
 	uint64_t fee = (price / 100.) * amount;

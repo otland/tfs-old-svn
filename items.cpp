@@ -1271,7 +1271,7 @@ bool Items::parseItemNode(xmlNodePtr itemNode, uint32_t id)
 			}
 			else if(tmpStrValue == "leveldoor")
 			{
-				if(readXMLString(itemAttributesNode, "value", strValue))
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
 					it.levelDoor = intValue;
 			}
 			else if(tmpStrValue == "maletransformto" || tmpStrValue == "malesleeper")

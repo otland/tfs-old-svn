@@ -2286,7 +2286,16 @@ void ProtocolGame::sendMarketDetail(uint16_t itemId)
 	else
 		msg->AddU16(0x00);
 
-	msg->AddString(getWeaponName(it.weaponType));
+	ss.str("");
+	ss << getWeaponName(it.weaponType);
+	if(it.slot_position & SLOTP_TWO_HAND)
+	{
+		if(!ss.str().empty())
+			ss << ", ";
+
+		ss << "two-handed";
+	}
+	msg->AddString(ss.str());
 
 	if(it.weight > 0)
 	{
