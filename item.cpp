@@ -1,6 +1,8 @@
 //////////////////////////////////////////////////////////////////////
 // OpenTibia - an opensource roleplaying game
 //////////////////////////////////////////////////////////////////////
+// Represents an item
+//////////////////////////////////////////////////////////////////////
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
 // as published by the Free Software Foundation; either version 2
@@ -99,9 +101,42 @@ Item* Item::CreateItem(const uint16_t _type, uint16_t _count /*= 0*/)
 Item* Item::CreateItem(PropStream& propStream)
 {
 	uint16_t _id;
-
 	if(!propStream.GET_USHORT(_id))
 		return NULL;
+
+	switch(_id)
+	{
+		case ITEM_FIREFIELD_PVP_FULL:
+			_id = ITEM_FIREFIELD_PERSISTENT_FULL;
+			break;
+
+		case ITEM_FIREFIELD_PVP_MEDIUM:
+			_id = ITEM_FIREFIELD_PERSISTENT_MEDIUM;
+			break;
+
+		case ITEM_FIREFIELD_PVP_SMALL:
+			_id = ITEM_FIREFIELD_PERSISTENT_SMALL;
+			break;
+
+		case ITEM_ENERGYFIELD_PVP:
+			_id = ITEM_ENERGYFIELD_PERSISTENT;
+			break;
+
+		case ITEM_POISONFIELD_PVP:
+			_id = ITEM_POISONFIELD_PERSISTENT;
+			break;
+
+		case ITEM_MAGICWALL:
+			_id = ITEM_MAGICWALL_PERSISTENT;
+			break;
+
+		case ITEM_WILDGROWTH:
+			_id = ITEM_WILDGROWTH_PERSISTENT;
+			break;
+
+		default:
+			break;
+	}
 
 	if(g_config.getBoolean(ConfigManager::RANDOMIZE_TILES))
 	{

@@ -662,6 +662,40 @@ void Combat::combatTileEffects(const SpectatorVec& list, Creature* caster, Tile*
 				_caster = caster->getMaster()->getPlayer();
 		}
 
+		switch(itemId)
+		{
+			case ITEM_FIREFIELD_PERSISTENT_FULL:
+				itemId = ITEM_FIREFIELD_PVP_FULL;
+				break;
+
+			case ITEM_FIREFIELD_PERSISTENT_MEDIUM:
+				itemId = ITEM_FIREFIELD_PVP_MEDIUM;
+				break;
+
+			case ITEM_FIREFIELD_PERSISTENT_SMALL:
+				itemId = ITEM_FIREFIELD_PVP_SMALL;
+				break;
+
+			case ITEM_ENERGYFIELD_PERSISTENT:
+				itemId = ITEM_ENERGYFIELD_PVP;
+				break;
+
+			case ITEM_POISONFIELD_PERSISTENT:
+				itemId = ITEM_POISONFIELD_PVP;
+				break;
+
+			case ITEM_MAGICWALL_PERSISTENT:
+				itemId = ITEM_MAGICWALL;
+				break;
+
+			case ITEM_WILDGROWTH_PERSISTENT:
+				itemId = ITEM_WILDGROWTH;
+				break;
+
+			default:
+				break;
+		}
+
 		if(_caster)
 		{
 			if(g_game.getWorldType() == WORLD_TYPE_NO_PVP || tile->hasFlag(TILESTATE_NOPVPZONE))

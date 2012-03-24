@@ -161,7 +161,7 @@ class House
 		void setName(const std::string& _houseName) {houseName = _houseName;}
 		const std::string& getName() const {return houseName;}
 
-		void setHouseOwner(uint32_t guid);
+		void setHouseOwner(uint32_t guid, Player* player = NULL);
 		uint32_t getHouseOwner() const {return houseOwner;}
 
 		void setPaidUntil(uint32_t paid){paidUntil = paid;}
@@ -203,6 +203,7 @@ class House
 
 	private:
 		bool transferToDepot();
+		bool transferToDepot(Player* player);
 
 		bool isLoaded;
 		uint32_t houseid;

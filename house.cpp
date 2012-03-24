@@ -60,7 +60,7 @@ void House::addTile(HouseTile* tile)
 	houseTiles.push_back(tile);
 }
 
-void House::setHouseOwner(uint32_t guid)
+void House::setHouseOwner(uint32_t guid, Player* player/* = NULL*/)
 {
 	if(isLoaded && houseOwner == guid)
 		return;
@@ -70,7 +70,10 @@ void House::setHouseOwner(uint32_t guid)
 	if(houseOwner)
 	{
 		//send items to depot
-		transferToDepot();
+		if(player)
+			transferToDepot(player);
+		else
+			transferToDepot();
 
 		PlayerVector toKick;
 		for(HouseTileList::iterator it = houseTiles.begin(); it != houseTiles.end(); ++it)
@@ -253,6 +256,24 @@ bool House::transferToDepot()
 		}
 	}
 
+	transferToDepot(player);
+
+	if(player->isOffline())
+	{
+		IOLoginData::getInstance()->savePlayer(player, true);
+		delete player;
+	}
+	return true;
+}
+
+bool House::transferToDepot(Player* player)
+{
+	if(townid == 0 || houseOwner == 0)
+		return false;
+
+	if(!player)
+		return false;
+
 	Depot* depot = player->getDepot(townid, true);
 
 	std::list<Item*> moveItemList;
@@ -264,7 +285,6 @@ bool House::transferToDepot()
 		for(uint32_t i = 0; i < (*it)->getThingCount(); ++i)
 		{
 			item = (*it)->__getThing(i)->getItem();
-
 			if(!item)
 				continue;
 
@@ -278,17 +298,13 @@ bool House::transferToDepot()
 		}
 	}
 
+	if(!moveItemList.empty())
+		player->setDepotChange(true);
+
 	for(std::list<Item*>::iterator it = moveItemList.begin(); it != moveItemList.end(); ++it)
 	{
-		player->setDepotChange(true);
 		g_game.internalMoveItem((*it)->getParent(), depot, INDEX_WHEREEVER,
 			(*it), (*it)->getItemCount(), NULL, FLAG_NOLIMIT);
-	}
-
-	if(player->isOffline())
-	{
-		IOLoginData::getInstance()->savePlayer(player, true);
-		delete player;
 	}
 	return true;
 }

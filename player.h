@@ -921,14 +921,14 @@ class Player : public Creature, public Cylinder
 		virtual uint16_t getLookCorpse() const;
 		virtual void getPathSearchParams(const Creature* creature, FindPathParams& fpp) const;
 
-		friend class Game;
-		friend class Npc;
-		friend class LuaScriptInterface;
-		friend class Commands;
-		friend class Map;
-		friend class Actions;
-		friend class IOLoginData;
-		friend class ProtocolGame;
+	friend class Game;
+	friend class Npc;
+	friend class LuaScriptInterface;
+	friend class Commands;
+	friend class Map;
+	friend class Actions;
+	friend class IOLoginData;
+	friend class ProtocolGame;
 };
 
 #endif

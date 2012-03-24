@@ -37,6 +37,22 @@
 	M		slime2.xml
 	M	movements/movements.xml
 	M	npc/lib/npcsystem/npchandler.lua
+		spells/scripts/
+			attack/
+	M			energy bomb.lua
+	M			energy field.lua
+	M			energy wall.lua
+	M			fire bomb.lua
+	M			fire field.lua
+	M			fire wall.lua
+	M			poison bomb.lua
+	M			poison field.lua
+	M			poison wall.lua
+			custom/
+	M			magic prison.lua
+			support/
+	M			magic wall rune.lua
+	M			wild growth rune.lua
 		talkactions/scripts/
 	M		buyprem.lua
 	M		changesex.lua
@@ -87,5 +103,6 @@
 	Removed a SQLite trigger that truncated some tables when players were updated (the server already does this, and it caused a bug).
 	Optimized ItemType code to save up to 75MB memory.
 	Fixed a bug with premium account code causing it to remove 1 day everytime you would login.
+	Fixed magicfields item ids, fields spawned from map will always use the persistent id, fields used in combat will always use the expiring id.
 	A lot of miscellaneous cleanups, fixes and optimizations.
 ]

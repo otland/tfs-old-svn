@@ -667,9 +667,7 @@ int32_t WeaponMelee::getWeaponDamage(const Player* player, const Creature* targe
 	if(random_range(1, 100) <= g_config.getNumber(ConfigManager::CRITICAL_HIT_CHANCE))
 		maxValue <<= 1;
 
-	Vocation* vocation = player->getVocation();
-	if(vocation)
-		maxValue = int32_t(maxValue * vocation->meleeDamageMultipler);
+	maxValue = int32_t(maxValue * player->getVocation()->meleeDamageMultipler);
 
 	if(maxDamage)
 		return -maxValue;
@@ -921,9 +919,7 @@ int32_t WeaponDistance::getWeaponDamage(const Player* player, const Creature* ta
 	if(random_range(1, 100) <= g_config.getNumber(ConfigManager::CRITICAL_HIT_CHANCE))
 		maxValue <<= 1;
 
-	Vocation* vocation = player->getVocation();
-	if(vocation)
-		maxValue = int32_t(maxValue * vocation->distDamageMultipler);
+	maxValue = int32_t(maxValue * player->getVocation()->distDamageMultipler);
 
 	if(maxDamage)
 		return -maxValue;
@@ -936,7 +932,6 @@ int32_t WeaponDistance::getWeaponDamage(const Player* player, const Creature* ta
 		else
 			minValue = (int32_t)std::ceil(player->getLevel() * 0.2);
 	}
-
 	return -random_range(minValue, maxValue, DISTRO_NORMAL);
 }
 
