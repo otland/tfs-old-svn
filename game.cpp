@@ -4722,7 +4722,7 @@ void Game::updateCreatureSkull(Player* player)
 	}
 }
 
-void Game::updatePremium(Account account)
+void Game::updatePremium(Account& account)
 {
 	time_t timeNow = time(NULL);
 	if(account.premiumDays != 0 && account.premiumDays != 0xFFFF)
@@ -5252,37 +5252,26 @@ bool Game::playerCreateMarketOffer(uint32_t playerId, uint8_t type, uint16_t spr
 	if(it.id == 0)
 		return false;
 
-	if(type == MARKETACTION_BUY)
+	uint64_t fee = (price / 100.) * amount;
+	if(fee < 20)
+		fee = 20;
+	else if(fee > 1000)
+		fee = 1000;
+
+	if(fee > player->bankBalance)
+		return false;
+
+	if(type == MARKETACTION_SELL)
 	{
-		uint16_t fee = amount / 100;
-		if(fee < 20)
-			fee = 20;
-		else if(fee > 1000)
-			fee = 1000;
-
-		if(fee > player->bankBalance)
-			return false;
-
-		player->bankBalance -= fee;
-	}
-	else //if(type == MARKETACTION_SELL)
-	{
-		uint16_t fee = price / 100;
-		if(fee < 20)
-			fee = 20;
-		else if(fee > 1000)
-			fee = 1000;
-
-		if(fee > player->bankBalance)
-			return false;
-
 		Depot* depot = player->getDepot(player->getMarketDepotId(), false);
 		if(!depot)
 			return false;
 
 		ItemList itemList;
+		uint32_t count = 0;
 		std::list<Container*> containerList;
 		containerList.push_back(depot->getChest());
+		bool enough = false;
 		do
 		{
 			Container* container = containerList.front();
@@ -5308,18 +5297,41 @@ bool Game::playerCreateMarketOffer(uint32_t playerId, uint8_t type, uint16_t spr
 					continue;
 
 				itemList.push_back(item);
+				count += Item::countByType(item, -1);
+				if(count >= amount)
+				{
+					enough = true;
+					break;
+				}
 			}
+
+			if(enough)
+				break;
 		}
 		while(!containerList.empty());
 
-		if(itemList.size() < amount)
+		if(!enough)
 			return false;
 
-		for(ItemList::const_iterator iter = itemList.begin(), end = itemList.end(); iter != end; ++iter)
-			internalRemoveItem(*iter);
-
-		player->bankBalance -= fee;
+		if(it.stackable)
+		{
+			uint16_t tmpAmount = amount;
+			for(ItemList::const_iterator iter = itemList.begin(), end = itemList.end(); iter != end; ++iter)
+			{
+				uint16_t removeCount = std::min(tmpAmount, (*iter)->getItemCount());
+				tmpAmount -= removeCount;
+				internalRemoveItem(*iter, removeCount);
+				if(tmpAmount == 0)
+					break;
+			}
+		}
+		else
+		{
+			for(ItemList::const_iterator iter = itemList.begin(), end = itemList.end(); iter != end; ++iter)
+				internalRemoveItem(*iter);
+		}
 	}
+	player->bankBalance -= fee;
 
 	IOMarket::getInstance()->createOffer(player->getGUID(), (MarketAction_t)type, it.id, amount, price, anonymous);
 
@@ -5349,7 +5361,7 @@ bool Game::playerCancelMarketOffer(uint32_t playerId, uint32_t timestamp, uint16
 
 	if(item.type == MARKETACTION_BUY)
 	{
-		player->bankBalance += item.price * item.amount;
+		player->bankBalance += (uint64_t)item.price * item.amount;
 		player->sendMarketEnter(player->getMarketDepotId());
 	}
 	else
@@ -5393,10 +5405,13 @@ bool Game::playerCancelMarketOffer(uint32_t playerId, uint32_t timestamp, uint16
 		}
 	}
 
-	IOMarket::getInstance()->cancelOffer(offerId);
+	IOMarket::getInstance()->deleteOfferById(offerId);
+	/*
+	TODO: Update the list if it's possible, sending browse own offers again doesn't update it
 	const MarketItemList& buyOffers = IOMarket::getInstance()->getOwnOffers(MARKETACTION_BUY, player->getGUID());
 	const MarketItemList& sellOffers = IOMarket::getInstance()->getOwnOffers(MARKETACTION_SELL, player->getGUID());
 	player->sendMarketBrowseOwnOffers(buyOffers, sellOffers);
+	*/
 	return true;
 }
 
@@ -5424,6 +5439,7 @@ bool Game::playerAcceptMarketOffer(uint32_t playerId, uint32_t timestamp, uint16
 	if(it.id == 0)
 		return false;
 
+	uint64_t totalPrice = (uint64_t)item.price * item.amount;
 	if(item.type == MARKETACTION_BUY)
 	{
 		Depot* depot = player->getDepot(player->getMarketDepotId(), false);
@@ -5431,8 +5447,10 @@ bool Game::playerAcceptMarketOffer(uint32_t playerId, uint32_t timestamp, uint16
 			return false;
 
 		ItemList itemList;
+		uint32_t count = 0;
 		std::list<Container*> containerList;
 		containerList.push_back(depot->getChest());
+		bool enough = false;
 		do
 		{
 			Container* container = containerList.front();
@@ -5458,17 +5476,41 @@ bool Game::playerAcceptMarketOffer(uint32_t playerId, uint32_t timestamp, uint16
 					continue;
 
 				itemList.push_back(item);
+				count += Item::countByType(item, -1);
+				if(count >= amount)
+				{
+					enough = true;
+					break;
+				}
 			}
+
+			if(enough)
+				break;
 		}
 		while(!containerList.empty());
 
-		if(itemList.size() < amount)
+		if(!enough)
 			return false;
 
-		for(ItemList::const_iterator iter = itemList.begin(), end = itemList.end(); iter != end; ++iter)
-			internalRemoveItem(*iter);
+		if(it.stackable)
+		{
+			uint16_t tmpAmount = amount;
+			for(ItemList::const_iterator iter = itemList.begin(), end = itemList.end(); iter != end; ++iter)
+			{
+				uint16_t removeCount = std::min(tmpAmount, (*iter)->getItemCount());
+				tmpAmount -= removeCount;
+				internalRemoveItem(*iter, removeCount);
+				if(tmpAmount == 0)
+					break;
+			}
+		}
+		else
+		{
+			for(ItemList::const_iterator iter = itemList.begin(), end = itemList.end(); iter != end; ++iter)
+				internalRemoveItem(*iter);
+		}
 
-		player->bankBalance += item.price * amount;
+		player->bankBalance += totalPrice;
 
 		Player* buyerPlayer = getPlayerByGUID(item.playerId);
 		if(!buyerPlayer)
@@ -5528,7 +5570,6 @@ bool Game::playerAcceptMarketOffer(uint32_t playerId, uint32_t timestamp, uint16
 	}
 	else
 	{
-		uint64_t totalPrice = item.price * amount;
 		if(totalPrice > player->bankBalance)
 			return false;
 
@@ -5582,6 +5623,97 @@ bool Game::playerAcceptMarketOffer(uint32_t playerId, uint32_t timestamp, uint16
 	const MarketItemList& sellOffers = IOMarket::getInstance()->getActiveOffers(MARKETACTION_SELL, it.id);
 	player->sendMarketBrowseItem(it.id, buyOffers, sellOffers);
 	return true;
+}
+
+void Game::checkExpiredMarketOffers()
+{
+	if(!g_config.getBoolean(ConfigManager::MARKET_ENABLED))
+		return;
+
+	const ExpiredMarketItemList& expiredBuyOffers = IOMarket::getInstance()->getExpiredOffers(MARKETACTION_BUY);
+	for(ExpiredMarketItemList::const_iterator it = expiredBuyOffers.begin(), end = expiredBuyOffers.end(); it != end; ++it)
+	{
+		ExpiredMarketItem marketItem = *it;
+
+		Player* player = getPlayerByGUID(marketItem.playerId);
+		uint64_t totalPrice = (uint64_t)marketItem.price * marketItem.amount;
+		if(player)
+			player->bankBalance += totalPrice;
+		else
+			IOLoginData::getInstance()->increaseBankBalance(marketItem.playerId, totalPrice);
+
+		IOMarket::getInstance()->deleteOfferById(marketItem.id);
+	}
+
+	const ExpiredMarketItemList& expiredSellOffers = IOMarket::getInstance()->getExpiredOffers(MARKETACTION_SELL);
+	for(ExpiredMarketItemList::const_iterator it = expiredSellOffers.begin(), end = expiredSellOffers.end(); it != end; ++it)
+	{
+		ExpiredMarketItem marketItem = *it;
+
+		Player* player = getPlayerByGUID(marketItem.playerId);
+		if(!player)
+		{
+			std::string name;
+			if(!IOLoginData::getInstance()->getNameByGuid(marketItem.playerId, name))
+				continue;
+
+			player = new Player(name, NULL);
+			if(!IOLoginData::getInstance()->loadPlayer(player, name))
+			{
+				delete player;
+				continue;
+			}
+		}
+		player->setDepotChange(true);
+
+		const ItemType& itemType = Item::items[marketItem.itemId];
+		if(itemType.id == 0)
+			continue;
+
+		Depot* depot = player->getDepot(player->getTown(), true);
+		if(itemType.stackable)
+		{
+			uint16_t tmpAmount = marketItem.amount;
+			while(tmpAmount > 0)
+			{
+				uint16_t stackCount = std::min((uint16_t)100, tmpAmount);
+				Item* item = Item::CreateItem(itemType.id, stackCount);
+				if(internalAddItem(depot->getInbox(), item, INDEX_WHEREEVER, FLAG_NOLIMIT) != RET_NOERROR)
+				{
+					delete item;
+					break;
+				}
+
+				tmpAmount -= stackCount;
+			}
+		}
+		else
+		{
+			int32_t subType = -1;
+			if(itemType.charges != 0)
+				subType = itemType.charges;
+
+			for(uint16_t i = 0; i < marketItem.amount; ++i)
+			{
+				Item* item = Item::CreateItem(itemType.id, subType);
+				if(internalAddItem(depot->getInbox(), item, INDEX_WHEREEVER, FLAG_NOLIMIT) != RET_NOERROR)
+				{
+					delete item;
+					break;
+				}
+			}
+		}
+
+		if(player->isOffline())
+		{
+			IOLoginData::getInstance()->savePlayer(player, true);
+			delete player;
+		}
+
+		IOMarket::getInstance()->deleteOfferById(marketItem.id);
+	}
+
+	g_scheduler.addEvent(createSchedulerTask(1000 * 60 * 60, boost::bind(&Game::checkExpiredMarketOffers, this)));
 }
 
 void Game::forceAddCondition(uint32_t creatureId, Condition* condition)

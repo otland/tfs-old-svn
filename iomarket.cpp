@@ -95,11 +95,13 @@ MarketItemList IOMarket::getOwnOffers(MarketAction_t action, uint32_t playerId)
 MarketItemList IOMarket::getOwnHistory(MarketAction_t action, uint32_t playerId)
 {
 	MarketItemList itemList;
+	/*
+	TODO: expired field or history table?
 
 	const int32_t marketOfferDuration = g_config.getNumber(ConfigManager::MARKET_OFFER_DURATION);
 
 	DBQuery query;
-	query << "SELECT `id`, `amount`, `price`, `created`, `anonymous`, `itemtype` FROM `market_offers` WHERE `player_id` = " << playerId << " AND `sale` = " << action << " AND `created` <= " << (time(NULL) - marketOfferDuration) << ";";
+	query << "SELECT `id`, `amount`, `price`, `created`, `anonymous`, `itemtype` FROM `market_offers` WHERE `player_id` = " << playerId << " AND `sale` = " << action << " AND `expired` = 1;";
 
 	Database* db = Database::getInstance();
 	DBResult* result;
@@ -119,7 +121,45 @@ MarketItemList IOMarket::getOwnHistory(MarketAction_t action, uint32_t playerId)
 	}
 	while(result->next());
 	db->freeResult(result);
+	*/
 	return itemList;
+}
+
+ExpiredMarketItemList IOMarket::getExpiredOffers(MarketAction_t action)
+{
+	ExpiredMarketItemList itemList;
+
+	const int32_t marketOfferDuration = g_config.getNumber(ConfigManager::MARKET_OFFER_DURATION);
+
+	DBQuery query;
+	query << "SELECT `id`, `amount`, `price`, `itemtype`, `player_id` FROM `market_offers` WHERE `sale` = " << action << " AND `created` <= " << (time(NULL) - marketOfferDuration) << ";";
+
+	Database* db = Database::getInstance();
+	DBResult* result;
+	if(!(result = db->storeQuery(query.str())))
+		return itemList;
+	
+	do
+	{
+		ExpiredMarketItem item;
+		item.id = result->getDataInt("id");
+		item.amount = result->getDataInt("amount");
+		item.price = result->getDataInt("price");
+		item.itemId = result->getDataInt("itemtype");
+		item.playerId = result->getDataInt("player_id");
+
+		itemList.push_back(item);
+	}
+	while(result->next());
+	db->freeResult(result);
+	return itemList;
+}
+
+bool IOMarket::deleteOfferById(uint32_t id)
+{
+	DBQuery query;
+	query << "DELETE FROM `market_offers` WHERE `id` = " << id << ";";
+	return Database::getInstance()->executeQuery(query.str());
 }
 
 MarketItemEx IOMarket::getOfferById(uint32_t id)
@@ -164,13 +204,6 @@ void IOMarket::createOffer(uint32_t playerId, MarketAction_t action, uint32_t it
 {
 	DBQuery query;
 	query << "INSERT INTO `market_offers` (`player_id`, `sale`, `itemtype`, `amount`, `price`, `created`, `anonymous`) VALUES (" << playerId << ", " << action << ", " << itemId << ", " << amount << ", " << price << ", " << time(NULL) << ", " << anonymous << ");";
-	Database::getInstance()->executeQuery(query.str());
-}
-
-void IOMarket::cancelOffer(uint32_t offerId)
-{
-	DBQuery query;
-	query << "DELETE FROM `market_offers` WHERE `id` = " << offerId << ";";
 	Database::getInstance()->executeQuery(query.str());
 }
 

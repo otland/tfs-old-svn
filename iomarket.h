@@ -38,14 +38,14 @@ class IOMarket
 			return &instance;
 		}
 
-		void loadMarket();
 		MarketItemList getActiveOffers(MarketAction_t action, uint16_t itemId);
 		MarketItemList getOwnHistory(MarketAction_t action, uint32_t playerId);
+		ExpiredMarketItemList getExpiredOffers(MarketAction_t action);
+		bool deleteOfferById(uint32_t id);
 		MarketItemList getOwnOffers(MarketAction_t action, uint32_t playerId);
 		uint32_t getOfferIdByCounter(uint32_t timestamp, uint16_t counter);
 		MarketItemEx getOfferById(uint32_t id);
 		void createOffer(uint32_t playerId, MarketAction_t action, uint32_t itemId, uint16_t amount, uint32_t price, bool anonymous);
-		void cancelOffer(uint32_t offerId);
 		void acceptOffer(uint32_t offerId, uint16_t amount);
 };
 

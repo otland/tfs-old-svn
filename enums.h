@@ -387,7 +387,17 @@ struct MarketItemEx
 	MarketAction_t type;
 };
 
+struct ExpiredMarketItem
+{
+	uint32_t id;
+	uint32_t price;
+	uint16_t amount;
+	uint16_t itemId;
+	uint32_t playerId;
+};
+
 typedef std::list<MarketItem> MarketItemList;
+typedef std::list<ExpiredMarketItem> ExpiredMarketItemList;
 typedef std::list<ShopInfo> ShopInfoList;
 
 #endif
