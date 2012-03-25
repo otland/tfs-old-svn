@@ -56,9 +56,11 @@ void HouseTile::updateHouse(Item* item)
 	if(item->getTile() != this)
 		return;
 
-	Door* door = item->getDoor();
-	if(door && door->getDoorId())
-		house->addDoor(door);
+	if(Door* door = item->getDoor())
+	{
+		if(door->getDoorId() != 0)
+			house->addDoor(door);
+	}
 	else if(BedItem* bed = item->getBed())
 		house->addBed(bed);
 }
