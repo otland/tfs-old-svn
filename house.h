@@ -92,7 +92,7 @@ class AccessList
 class Door : public Item
 {
 	public:
-		Door(uint16_t type): Item(type), house(NULL), accessList(NULL) {}
+		Door(uint16_t type): Item(type), doorId(0), house(NULL), accessList(NULL) {}
 		virtual ~Door();
 
 		virtual Door* getDoor() {return this;}

@@ -273,8 +273,8 @@ bool IOMapSerialize::saveHouse(Database* db, House* house)
 
 		query.str("");
 		doorIds.insert(door->getDoorId());
-		query << house->getId() << ", " << g_config.getNumber(ConfigManager::WORLD_ID) << ", "
-			<< door->getDoorId() << ", " << db->escapeString(listText);
+		query << house->getId() << ", " << g_config.getNumber(ConfigManager::WORLD_ID)
+			<< ", " << (int32_t)door->getDoorId() << ", " << db->escapeString(listText);
 		if(!queryInsert.addRow(query.str()))
 			return false;
 	}
