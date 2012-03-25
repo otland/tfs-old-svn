@@ -2516,10 +2516,10 @@ bool Game::playerUseItemEx(uint32_t playerId, const Position& fromPos, int16_t f
 	}
 
 	Position walkToPos = fromPos;
-	ReturnValue ret = g_actions->canUse(player, fromPos);
+	ReturnValue ret = g_actions->canUse(player, fromPos, item);
 	if(ret == RET_NOERROR)
 	{
-		ret = g_actions->canUse(player, toPos, item);
+		ret = g_actions->canUseEx(player, toPos, item);
 		if(ret == RET_TOOFARAWAY)
 		{
 			if(!player->hasCustomFlag(PlayerCustomFlag_CanUseFar))
@@ -2615,7 +2615,7 @@ bool Game::playerUseItem(uint32_t playerId, const Position& pos, int16_t stackpo
 		return false;
 	}
 
-	ReturnValue ret = g_actions->canUse(player, pos);
+	ReturnValue ret = g_actions->canUse(player, pos, item);
 	if(ret == RET_TOOFARAWAY && player->hasCustomFlag(PlayerCustomFlag_CanUseFar))
 		ret = RET_NOERROR;
 
@@ -2664,7 +2664,7 @@ bool Game::playerUseItem(uint32_t playerId, const Position& pos, int16_t stackpo
 	return g_actions->useItem(player, pos, index, item);
 }
 
-bool Game::playerUseBattleWindow(uint32_t playerId, const Position& fromPos, int16_t fromStackpos,
+bool Game::playerUseBattleWindow(uint32_t playerId, const Position& pos, int16_t stackpos,
 	uint32_t creatureId, uint16_t spriteId, bool isHotkey)
 {
 	Player* player = getPlayerByID(playerId);
@@ -2684,7 +2684,7 @@ bool Game::playerUseBattleWindow(uint32_t playerId, const Position& fromPos, int
 		return false;
 	}
 
-	Thing* thing = internalGetThing(player, fromPos, fromStackpos, spriteId, STACKPOS_USE);
+	Thing* thing = internalGetThing(player, pos, stackpos, spriteId, STACKPOS_USE);
 	if(!thing)
 	{
 		player->sendCancelMessage(RET_NOTPOSSIBLE);
@@ -2698,7 +2698,7 @@ bool Game::playerUseBattleWindow(uint32_t playerId, const Position& fromPos, int
 		return false;
 	}
 
-	ReturnValue ret = g_actions->canUse(player, fromPos);
+	ReturnValue ret = g_actions->canUse(player, pos, item);
 	if(ret != RET_NOERROR)
 	{
 		if(ret == RET_TOOFARAWAY)
@@ -2716,7 +2716,7 @@ bool Game::playerUseBattleWindow(uint32_t playerId, const Position& fromPos, int
 					this, player->getID(), listDir)));
 
 				SchedulerTask* task = createSchedulerTask(std::max((int32_t)SCHEDULER_MINTICKS, player->getStepDuration()),
-					boost::bind(&Game::playerUseBattleWindow, this, playerId, fromPos, fromStackpos, creatureId, spriteId, isHotkey));
+					boost::bind(&Game::playerUseBattleWindow, this, playerId, pos, stackpos, creatureId, spriteId, isHotkey));
 
 				player->setNextWalkActionTask(task);
 				return true;
@@ -2735,13 +2735,13 @@ bool Game::playerUseBattleWindow(uint32_t playerId, const Position& fromPos, int
 	if(!player->canDoAction())
 	{
 		SchedulerTask* task = createSchedulerTask(player->getNextActionTime(),
-			boost::bind(&Game::playerUseBattleWindow, this, playerId, fromPos, fromStackpos, creatureId, spriteId, isHotkey));
+			boost::bind(&Game::playerUseBattleWindow, this, playerId, pos, stackpos, creatureId, spriteId, isHotkey));
 		player->setNextActionTask(task);
 		return false;
 	}
 
 	player->setNextActionTask(NULL);
-	return g_actions->useItemEx(player, fromPos, creature->getPosition(),
+	return g_actions->useItemEx(player, pos, creature->getPosition(),
 		creature->getParent()->__getIndexOfThing(creature), item, isHotkey, creatureId);
 }
 
@@ -2988,8 +2988,8 @@ bool Game::playerRequestTrade(uint32_t playerId, const Position& pos, int16_t st
 	}
 
 	Item* tradeItem = dynamic_cast<Item*>(internalGetThing(player, pos, stackpos, spriteId, STACKPOS_USE));
-	if(!tradeItem || tradeItem->getClientID() != spriteId || !tradeItem->isPickupable() || (tradeItem->isLoadedFromMap() &&
-		(tradeItem->getUniqueId() != 0 || (tradeItem->getActionId() != 0 && tradeItem->getContainer()))))
+	if(!tradeItem || tradeItem->getClientID() != spriteId || !tradeItem->isPickupable() || (tradeItem->isLoadedFromMap()
+		&& (tradeItem->getUniqueId() != 0 || (tradeItem->getActionId() != 0 && tradeItem->getContainer()))))
 	{
 		player->sendCancelMessage(RET_NOTPOSSIBLE);
 		return false;
@@ -3004,6 +3004,13 @@ bool Game::playerRequestTrade(uint32_t playerId, const Position& pos, int16_t st
 	if(player->getPosition().z < tradeItem->getPosition().z)
 	{
 		player->sendCancelMessage(RET_FIRSTGODOWNSTAIRS);
+		return false;
+	}
+
+	HouseTile* houseTile = dynamic_cast<HouseTile*>(tradeItem->getParent());
+	if(!houseTile || !houseTile->getHouse() || !houseTile->getHouse()->isInvited(player))
+	{
+		player->sendCancelMessage(RET_PLAYERISNOTINVITED);
 		return false;
 	}
 
