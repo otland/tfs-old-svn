@@ -2044,6 +2044,16 @@ void ProtocolGame::sendMarketEnter(uint32_t depotId)
 	}
 }
 
+void ProtocolGame::sendMarketLeave()
+{
+	NetworkMessage_ptr msg = getOutputBuffer();
+	if(!msg)
+		return;
+
+	TRACK_MESSAGE(msg);
+	msg->AddByte(0xF7);
+}
+
 void ProtocolGame::sendMarketBrowseItem(uint16_t itemId, const MarketItemList& buyOffers, const MarketItemList& sellOffers)
 {
 	NetworkMessage_ptr msg = getOutputBuffer();

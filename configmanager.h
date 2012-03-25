@@ -67,6 +67,7 @@ class ConfigManager
 			BIND_ONLY_GLOBAL_ADDRESS,
 			OPTIMIZE_DATABASE,
 			MARKET_ENABLED,
+			MARKET_PREMIUM,
 			LAST_BOOLEAN_CONFIG /* this must be the last one */
 		};
 

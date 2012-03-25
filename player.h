@@ -641,6 +641,8 @@ class Player : public Creature, public Cylinder
 			{if(client) client->sendCloseShop();}
 		void sendMarketEnter(uint32_t depotId) const
 			{if(client) client->sendMarketEnter(depotId);}
+		void sendMarketLeave()
+			{marketDepotId = -1; if(client) client->sendMarketLeave();}
 		void sendMarketBrowseItem(uint16_t itemId, const MarketItemList& buyOffers, const MarketItemList& sellOffers) const
 			{if(client) client->sendMarketBrowseItem(itemId, buyOffers, sellOffers);}
 		void sendMarketBrowseOwnOffers(const MarketItemList& buyOffers, const MarketItemList& sellOffers) const

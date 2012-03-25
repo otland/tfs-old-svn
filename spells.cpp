@@ -572,7 +572,7 @@ bool Spell::configureSpell(xmlNodePtr p)
 	}
 
 	if(readXMLString(p, "aggressive", strValue))
-		isAggressive = (strValue == "1" || asLowerCaseString(strValue) == "yes");
+		isAggressive = booleanString(strValue);
 
 	if(readXMLString(p, "groups", strValue))
 	{

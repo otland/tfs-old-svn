@@ -84,12 +84,13 @@
 	-- Map
 	mapName = "forgotten"
 	mapAuthor = "Komic"
-	randomizeTiles = "yes"
+	randomizeTiles = "no"
 	mapStorageType = "relational"
 
 	-- Market
-	marketEnabled = "no"
+	marketEnabled = "yes"
 	marketOfferDuration = 30 * 24 * 60 * 60
+	premiumToCreateMarketOffer = "yes"
 
 	-- Messaging
 	maxMessageBuffer = 4
