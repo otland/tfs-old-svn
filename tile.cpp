@@ -651,11 +651,11 @@ ReturnValue Tile::__queryAdd(int32_t, const Thing* thing, uint32_t,
 			std::clog << "[Notice - Tile::__queryAdd] thing->getParent() == NULL" << std::endl;
 
 #endif
-		if(isFull())
-			return RET_TILEISFULL;
-
 		if(hasBitSet(FLAG_NOLIMIT, flags))
 			return RET_NOERROR;
+
+		if(isFull())
+			return RET_TILEISFULL;
 
 		bool isHangable = item->isHangable();
 		if(!ground && !isHangable)
