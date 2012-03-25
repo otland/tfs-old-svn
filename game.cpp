@@ -2151,13 +2151,13 @@ Item* Game::transformItem(Item* item, uint16_t newId, int32_t newCount/* = -1*/)
 		if(!newItem)
 			return NULL;
 
+		newItem->copyAttributes(item);
 		if(internalAddItem(NULL, cylinder, newItem, INDEX_WHEREEVER, FLAG_NOLIMIT) != RET_NOERROR)
 		{
 			delete newItem;
 			return NULL;
 		}
 
-		newItem->copyAttributes(item);
 		newItem->makeUnique(item);
 		return newItem;
 	}
