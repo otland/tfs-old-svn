@@ -4092,13 +4092,13 @@ void Player::checkRedSkullTicks(int32_t ticks)
 	}
 }
 
-bool Player::isPromoted()
+bool Player::isPromoted() const
 {
 	int32_t promotedVocation = g_vocations.getPromotedVocation(vocationId);
 	return promotedVocation == 0 && vocationId != promotedVocation;
 }
 
-double Player::getLostPercent()
+double Player::getLostPercent() const
 {
 	uint32_t lostPercent = g_config.getNumber(ConfigManager::DEATH_LOSE_PERCENT);
 	if(isPromoted())

@@ -909,13 +909,13 @@ class Player : public Creature, public Cylinder
 				baseSpeed = PLAYER_MAX_SPEED;
 		}
 
-		bool isPromoted();
+		bool isPromoted() const;
 
 		uint32_t getAttackSpeed() const {return vocation->getAttackSpeed();}
 
 		static uint32_t getPercentLevel(uint64_t count, uint64_t nextLevelCount);
-		double getLostPercent();
-		virtual uint64_t getLostExperience() {return skillLoss ? uint64_t(experience * getLostPercent()) : 0;}
+		double getLostPercent() const;
+		virtual uint64_t getLostExperience() const {return skillLoss ? uint64_t(experience * getLostPercent()) : 0;}
 		virtual void dropLoot(Container* corpse);
 		virtual uint32_t getDamageImmunities() const { return damageImmunities; }
 		virtual uint32_t getConditionImmunities() const { return conditionImmunities; }
