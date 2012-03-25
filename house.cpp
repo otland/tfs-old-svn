@@ -628,7 +628,7 @@ void Door::copyAttributes(Item* item)
 	Item::copyAttributes(item);
 	if(Door* door = item->getDoor())
 	{
-		door->setDoorId(doorId);
+		doorId = door->getDoorId();
 		std::string list;
 		if(door->getAccessList(list))
 			setAccessList(list);
