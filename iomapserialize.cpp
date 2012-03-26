@@ -264,15 +264,12 @@ bool IOMapSerialize::saveHouse(Database* db, House* house)
 	}
 
 	const Door* door;
-	std::set<uint32_t> doorIds;
 	for(HouseDoorList::iterator it = house->getHouseDoorBegin(); it != house->getHouseDoorEnd(); ++it)
 	{
-		if(!(door = *it) || doorIds.find(door->getDoorId()) != doorIds.end()
-			|| listText.empty() || !door->getAccessList(listText))
+		if(!(door = *it) || !door->getAccessList(listText) || listText.empty())
 			continue;
 
 		query.str("");
-		doorIds.insert(door->getDoorId());
 		query << house->getId() << ", " << g_config.getNumber(ConfigManager::WORLD_ID)
 			<< ", " << (int32_t)door->getDoorId() << ", " << db->escapeString(listText);
 		if(!queryInsert.addRow(query.str()))
