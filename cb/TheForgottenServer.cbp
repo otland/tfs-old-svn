@@ -154,6 +154,8 @@
 		<Unit filename="..\iomap.h" />
 		<Unit filename="..\iomapserialize.cpp" />
 		<Unit filename="..\iomapserialize.h" />
+		<Unit filename="..\iomarket.cpp" />
+		<Unit filename="..\iomarket.h" />
 		<Unit filename="..\item.cpp" />
 		<Unit filename="..\item.h" />
 		<Unit filename="..\itemattributes.cpp" />

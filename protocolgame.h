@@ -147,6 +147,13 @@ class ProtocolGame : public Protocol
 		void parseAcceptTrade(NetworkMessage& msg);
 		void parseCloseTrade();
 
+		//market methods
+		void parseMarketLeave();
+		void parseMarketBrowse(NetworkMessage& msg);
+		void parseMarketCreateOffer(NetworkMessage& msg);
+		void parseMarketCancelOffer(NetworkMessage& msg);
+		void parseMarketAcceptOffer(NetworkMessage& msg);
+
 		//VIP methods
 		void parseAddVip(NetworkMessage& msg);
 		void parseRemoveVip(NetworkMessage& msg);
@@ -208,6 +215,14 @@ class ProtocolGame : public Protocol
 		void sendShop(Npc* npc, const ShopInfoList& shop);
 		void sendCloseShop();
 		void sendGoods(const ShopInfoList& shop);
+		void sendMarketEnter(uint32_t depotId);
+		void sendMarketLeave();
+		void sendMarketBrowseItem(uint16_t itemId, const MarketOfferList& buyOffers, const MarketOfferList& sellOffers);
+		void sendMarketAcceptOffer(MarketOfferEx offer);
+		void sendMarketBrowseOwnOffers(const MarketOfferList& buyOffers, const MarketOfferList& sellOffers);
+		void sendMarketCancelOffer(MarketOfferEx offer);
+		void sendMarketBrowseOwnHistory(const HistoryMarketOfferList& buyOffers, const HistoryMarketOfferList& sellOffers);
+		void sendMarketDetail(uint16_t itemId);
 		void sendTradeItemRequest(const Player* _player, const Item* item, bool ack);
 		void sendCloseTrade();
 
@@ -253,11 +268,6 @@ class ProtocolGame : public Protocol
 		void sendAddInventoryItem(slots_t slot, const Item* item);
 		void sendUpdateInventoryItem(slots_t slot, const Item* item);
 		void sendRemoveInventoryItem(slots_t slot);
-
-		//market
-		void sendMarketEnter(Depot* depot);
-		void sendMarketDetails(uint16_t itemId);
-		void sendMarketLeave();
 
 		// help functions
 		void reloadCreature(const Creature* creature);

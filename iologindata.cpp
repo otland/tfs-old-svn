@@ -368,24 +368,42 @@ uint64_t IOLoginData::createAccount(std::string name, std::string password)
 
 void IOLoginData::removePremium(Account& account)
 {
+	bool save = false;
 	uint64_t timeNow = time(NULL);
-	if(account.premiumDays > 0 && account.premiumDays < (uint16_t)GRATIS_PREMIUM)
+	if(account.premiumDays != 0 && account.premiumDays != (uint16_t)GRATIS_PREMIUM)
 	{
-		uint32_t days = (timeNow - account.lastDay) / 86400;
-		if(days > 0)
+		if(account.lastDay == 0)
 		{
-			if(account.premiumDays >= days)
-				account.premiumDays -= days;
-			else
-				account.premiumDays = 0;
-
 			account.lastDay = timeNow;
+			save = true;
+		}
+		else
+		{
+			uint32_t days = (timeNow - account.lastDay) / 86400;
+			if(days > 0)
+			{
+				if(account.premiumDays >= days)
+				{
+					account.premiumDays -= days;
+					uint32_t remainder = (timeNow - account.lastDay) % 86400;
+					account.lastDay = timeNow - remainder;
+				}
+				else
+				{
+					account.premiumDays = 0;
+					account.lastDay = 0;
+				}
+				save = true;
+			}
 		}
 	}
-	else
-		account.lastDay = timeNow;
+	else if(account.lastDay != 0)
+	{
+		account.lastDay = 0;
+		save = true;
+	}
 
-	if(!saveAccount(account))
+	if(save && !saveAccount(account))
 		std::clog << "> ERROR: Failed to save account: " << account.name << "!" << std::endl;
 }
 
@@ -1851,4 +1869,11 @@ bool IOLoginData::resetGuildInformation(uint32_t guid)
 	DBQuery query;
 	query << "UPDATE `players` SET `rank_id` = 0, `guildnick` = '' WHERE `id` = " << guid << " AND `deleted` = 0" << db->getUpdateLimiter();
 	return db->query(query.str());
+}
+
+void IOLoginData::increaseBankBalance(uint32_t guid, uint64_t bankBalance)
+{
+	DBQuery query;
+	query << "UPDATE `players` SET `balance` = `balance` + " << bankBalance << " WHERE `id` = " << guid << ";";
+	Database::getInstance()->query(query.str());
 }

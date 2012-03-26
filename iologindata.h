@@ -109,6 +109,8 @@ class IOLoginData
 		bool updateOnlineStatus(uint32_t guid, bool login);
 		bool resetGuildInformation(uint32_t guid);
 
+		void increaseBankBalance(uint32_t guid, uint64_t bankBalance);
+
 	protected:
 		IOLoginData() {}
 

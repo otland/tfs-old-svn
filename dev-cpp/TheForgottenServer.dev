@@ -1,7 +1,7 @@
 [Project]
 FileName=TheForgottenServer.dev
 Name=TheForgottenServer
-UnitCount=159
+UnitCount=161
 Type=1
 Ver=1
 ObjFiles=
@@ -1637,3 +1637,22 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
+[Unit160]
+FileName=..\iomarket.cpp
+CompileCpp=1
+Folder=TheForgottenServer
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit161]
+FileName=..\iomarket.h
+CompileCpp=1
+Folder=TheForgottenServer
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=

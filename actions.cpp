@@ -540,6 +540,31 @@ ReturnValue Actions::internalUseItem(Player* player, const Position& pos, uint8_
 		return RET_NOERROR;
 	}
 
+	if(item->getID() == ITEM_MARKET)
+	{
+		if(!g_config.getBool(ConfigManager::MARKET_ENABLED))
+		{
+			player->sendTextMessage(MSG_INFO_DESCR, "The market is disabled.");
+			return RET_NOERROR;
+		}
+
+		Depot* depot = NULL;
+		if(Cylinder* cylinder = item->getParent())
+		{
+			if(Item* parentItem = cylinder->getItem())
+			{
+				if(Container* parentContainer = parentItem->getContainer())
+					depot = parentContainer->getDepot();
+			}
+		}
+
+		if(depot == NULL)
+			return RET_CANNOTUSETHISOBJECT;
+
+		player->sendMarketEnter(depot->getDepotId());
+		return RET_NOERROR;
+	}
+
 	const ItemType& it = Item::items[item->getID()];
 	if(it.transformUseTo)
 	{

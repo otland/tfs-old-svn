@@ -256,6 +256,9 @@ class Player : public Creature, public Cylinder
 		void setGroup(Group* newGroup);
 		Group* getGroup() const {return group;}
 
+		void setMarketDepotId(int16_t newId) { marketDepotId = newId; }
+		int16_t getMarketDepotId() const { return marketDepotId; }
+
 		virtual bool isGhost() const {return hasCondition(CONDITION_GAMEMASTER, GAMEMASTER_INVISIBLE) || hasFlag(PlayerFlag_CannotBeSeen);}
 		virtual bool isWalkable() const {return hasCustomFlag(PlayerCustomFlag_IsWalkable);}
 
@@ -688,6 +691,22 @@ class Player : public Creature, public Cylinder
 			{if(client) client->sendGoods(shopOffer);}
 		void sendCloseShop() const
 			{if(client) client->sendCloseShop();}
+		void sendMarketEnter(uint32_t depotId) const
+			{if(client) client->sendMarketEnter(depotId);}
+		void sendMarketLeave()
+			{marketDepotId = -1; if(client) client->sendMarketLeave();}
+		void sendMarketBrowseItem(uint16_t itemId, const MarketOfferList& buyOffers, const MarketOfferList& sellOffers) const
+			{if(client) client->sendMarketBrowseItem(itemId, buyOffers, sellOffers);}
+		void sendMarketBrowseOwnOffers(const MarketOfferList& buyOffers, const MarketOfferList& sellOffers) const
+			{if(client) client->sendMarketBrowseOwnOffers(buyOffers, sellOffers);}
+		void sendMarketBrowseOwnHistory(const HistoryMarketOfferList& buyOffers, const HistoryMarketOfferList& sellOffers) const
+			{if(client) client->sendMarketBrowseOwnHistory(buyOffers, sellOffers);}
+		void sendMarketDetail(uint16_t itemId) const
+			{if(client) client->sendMarketDetail(itemId);}
+		void sendMarketAcceptOffer(MarketOfferEx offer) const
+			{if(client) client->sendMarketAcceptOffer(offer);}
+		void sendMarketCancelOffer(MarketOfferEx offer) const
+			{if(client) client->sendMarketCancelOffer(offer);}
 		void sendTradeItemRequest(const Player* player, const Item* item, bool ack) const
 			{if(client) client->sendTradeItemRequest(player, item, ack);}
 		void sendTradeClose() const
@@ -858,6 +877,7 @@ class Player : public Creature, public Cylinder
 		GuildLevel_t guildLevel;
 
 		int16_t blessings;
+		int16_t marketDepotId;
 		uint16_t maxWriteLen;
 		uint16_t sex;
 		uint16_t mailAttempts;

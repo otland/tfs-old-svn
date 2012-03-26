@@ -34,13 +34,12 @@ SRC = weapons.cpp waitlist.cpp vocation.cpp trashholder.cpp tools.cpp \
 	party.cpp outputmessage.cpp outfit.cpp otserv.cpp npc.cpp \
 	networkmessage.cpp movement.cpp mounts.cpp monsters.cpp monster.cpp \
 	map.cpp manager.cpp mailbox.cpp luascript.cpp items.cpp \
-	itemattributes.cpp item.cpp iomapserialize.cpp iomap.cpp iologindata.cpp \
-	ioguild.cpp ioban.cpp housetile.cpp house.cpp group.cpp \
+	itemattributes.cpp item.cpp iomarket.cpp iomapserialize.cpp iomap.cpp \
+	iologindata.cpp ioguild.cpp ioban.cpp housetile.cpp house.cpp group.cpp \
 	globalevent.cpp gameservers.cpp game.cpp fileloader.cpp exception.cpp \
-	dispatcher.cpp depot.cpp \
-	databasemanager.cpp database.cpp cylinder.cpp creatureevent.cpp creature.cpp \
-	container.cpp connection.cpp configmanager.cpp condition.cpp combat.cpp \
-	chat.cpp beds.cpp baseevents.cpp allocator.cpp admin.cpp \
+	dispatcher.cpp depot.cpp databasemanager.cpp database.cpp cylinder.cpp \
+	creatureevent.cpp creature.cpp container.cpp connection.cpp configmanager.cpp \
+	condition.cpp combat.cpp chat.cpp beds.cpp baseevents.cpp allocator.cpp admin.cpp \
 	actions.cpp $(MAYBE_MYSQL) $(MAYBE_SQLITE) $(MAYBE_PGSQL)  \
 	$(MAYBE_LOGIN) $(MAYBE_OTADMIN)
 

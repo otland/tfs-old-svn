@@ -19,7 +19,7 @@
 #define __DEFINITIONS__
 
 #define CLIENT_VERSION_MIN 944
-#define CLIENT_VERSION_MAX 944
+#define CLIENT_VERSION_MAX 946
 #define CLIENT_VERSION_STRING "Only clients with protocol 9.44 allowed!"
 
 #define CLIENT_VERSION_DAT 0
@@ -31,13 +31,13 @@
 #define SOFTWARE_VERSION "0.4_SVN"
 #define SOFTWARE_CODENAME ""
 #define SOFTWARE_DEVELOPERS "Elf, Talaturen, Dalkon, BeniS, Tryller and Kornholijo"
-#define SOFTWARE_PROTOCOL "9.44"
+#define SOFTWARE_PROTOCOL "9.46"
 
 #define VERSION_CHECK "http://forgottenserver.otland.net/version.xml"
 #define VERSION_PATCH 0
 #define VERSION_TIMESTAMP 0
 #define VERSION_BUILD 0
-#define VERSION_DATABASE 33
+#define VERSION_DATABASE 34
 
 #undef MULTI_SQL_DRIVERS
 #define SQL_DRIVERS __USE_SQLITE__+__USE_MYSQL__+__USE_PGSQL__

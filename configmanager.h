@@ -194,6 +194,9 @@ class ConfigManager
 			ROOK_LEVELTO,
 			ROOK_TOLEVEL,
 			SERVICE_THREADS,
+			MARKET_OFFER_DURATION,
+			CHECK_EXPIRED_MARKET_OFFERS_EACH_MINUTES,
+			MAX_MARKET_OFFERS_AT_A_TIME_PER_PLAYER,
 			LAST_NUMBER_CONFIG /* this must be the last one */
 		};
 
@@ -318,6 +321,8 @@ class ConfigManager
 			HOUSE_PROTECTION,
 			ROOK_SYSTEM,
 			FAIRFIGHT_REDUCTION,
+			MARKET_ENABLED,
+			MARKET_PREMIUM,
 			LAST_BOOL_CONFIG /* this must be the last one */
 		};
 
