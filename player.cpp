@@ -2227,7 +2227,7 @@ void Player::death()
 			magLevelPercent = 0;
 
 		//Skill loss
-		for(int16_t i = 0; i <= 6; ++i) //for each skill
+		for(int16_t i = SKILL_FIRST; i <= SKILL_LAST; ++i) //for each skill
 		{
 			uint32_t sumSkillTries = 0;
 			for(uint32_t c = 11; c <= skills[i][SKILL_LEVEL]; ++c) //sum up all required tries for all skill levels

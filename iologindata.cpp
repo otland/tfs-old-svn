@@ -847,7 +847,7 @@ bool IOLoginData::savePlayer(Player* player, bool preSave)
 		return false;
 
 	// skills
-	for(int32_t i = 0; i <= 6; i++)
+	for(int32_t i = SKILL_FIRST; i <= SKILL_LAST; i++)
 	{
 		query.str("");
 		query << "UPDATE `player_skills` SET `value` = " << player->skills[i][SKILL_LEVEL] << ", `count` = " << player->skills[i][SKILL_TRIES] << " WHERE `player_id` = " << player->getGUID() << " AND `skillid` = " << i << db->getUpdateLimiter();

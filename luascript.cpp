@@ -3230,7 +3230,7 @@ int32_t LuaScriptInterface::luaGetPlayerSkill(lua_State* L)
 	const Player* player = env->getPlayerByUID(cid);
 	if(player)
 	{
-		if(skillid <= 6)
+		if(skillid <= SKILL_LAST)
 		{
 			uint32_t value = player->skills[skillid][SKILL_LEVEL];
 			lua_pushnumber(L, value);
