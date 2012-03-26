@@ -2297,7 +2297,7 @@ void ProtocolGame::sendMarketDetail(uint16_t itemId)
 		msg->AddU16(0x00);
 
 	std::string weaponName = getWeaponName(it.weaponType);
-	if(it.slot_position & SLOTP_TWO_HAND)
+	if(it.slotPosition & SLOTP_TWO_HAND)
 	{
 		if(!weaponName.empty())
 			weaponName += ", two-handed";

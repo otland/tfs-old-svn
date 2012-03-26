@@ -304,8 +304,9 @@ std::string Player::getDescription(int32_t lookDistance) const
 
 Item* Player::getInventoryItem(slots_t slot) const
 {
-	if(slot > 0 && slot < 11)
+	if(slot > SLOT_PRE_FIRST && slot < SLOT_LAST)
 		return inventory[slot];
+
 	return NULL;
 }
 
@@ -3179,7 +3180,7 @@ std::map<uint32_t, uint32_t>& Player::__getAllItemTypeCount(std::map<uint32_t, u
 
 Thing* Player::__getThing(uint32_t index) const
 {
-	if(index >= SLOT_FIRST && index < SLOT_LAST)
+	if(index > SLOT_PRE_FIRST && index < SLOT_LAST)
 		return inventory[index];
 
 	return NULL;

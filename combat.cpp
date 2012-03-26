@@ -633,12 +633,11 @@ bool Combat::CombatConditionFunc(Creature* caster, Creature* target, const Comba
 
 bool Combat::CombatDispelFunc(Creature* caster, Creature* target, const CombatParams& params, void* data)
 {
-	if(target->hasCondition(params.dispelType))
-	{
-		target->removeCondition(caster, params.dispelType);
-		return true;
-	}
-	return false;
+	if(!target->hasCondition(params.dispelType))
+		return false;
+
+	target->removeCondition(caster, params.dispelType);
+	return true;
 }
 
 bool Combat::CombatNullFunc(Creature* caster, Creature* target, const CombatParams& params, void* data)

@@ -169,7 +169,7 @@ class ItemType
 		int32_t defense;
 		int32_t extraDefense;
 		int32_t armor;
-		uint16_t slot_position;
+		uint16_t slotPosition;
 		uint32_t levelDoor;
 		bool isVertical;
 		bool isHorizontal;

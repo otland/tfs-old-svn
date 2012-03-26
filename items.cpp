@@ -83,7 +83,7 @@ ItemType::ItemType()
 	weight = 0;  // weight of the item, e.g. throwing distance depends on it
 	showCount = true;
 	weaponType = WEAPON_NONE;
-	slot_position = SLOTP_RIGHT | SLOTP_LEFT | SLOTP_AMMO;
+	slotPosition = SLOTP_RIGHT | SLOTP_LEFT | SLOTP_AMMO;
 	ammoType = AMMO_NONE;
 	ammoAction = AMMOACTION_NONE;
 	shootType = (ShootType_t)0;
@@ -776,21 +776,21 @@ bool Items::parseItemNode(xmlNodePtr itemNode, uint32_t id)
 				{
 					tmpStrValue = asLowerCaseString(strValue);
 					if(tmpStrValue == "head")
-						it.slot_position |= SLOTP_HEAD;
+						it.slotPosition |= SLOTP_HEAD;
 					else if(tmpStrValue == "body")
-						it.slot_position |= SLOTP_ARMOR;
+						it.slotPosition |= SLOTP_ARMOR;
 					else if(tmpStrValue == "legs")
-						it.slot_position |= SLOTP_LEGS;
+						it.slotPosition |= SLOTP_LEGS;
 					else if(tmpStrValue == "feet")
-						it.slot_position |= SLOTP_FEET;
+						it.slotPosition |= SLOTP_FEET;
 					else if(tmpStrValue == "backpack")
-						it.slot_position |= SLOTP_BACKPACK;
+						it.slotPosition |= SLOTP_BACKPACK;
 					else if(tmpStrValue == "two-handed")
-						it.slot_position |= SLOTP_TWO_HAND;
+						it.slotPosition |= SLOTP_TWO_HAND;
 					else if(tmpStrValue == "necklace")
-						it.slot_position |= SLOTP_NECKLACE;
+						it.slotPosition |= SLOTP_NECKLACE;
 					else if(tmpStrValue == "ring")
-						it.slot_position |= SLOTP_RING;
+						it.slotPosition |= SLOTP_RING;
 					else
 						std::cout << "Warning: [Items::loadFromXml] " << "Unknown slotType " << strValue << std::endl;
 				}
