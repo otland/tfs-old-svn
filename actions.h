@@ -44,7 +44,7 @@ class Actions : public BaseEvents
 		bool useItemEx(Player* player, const Position& fromPos, const Position& toPos,
 			uint8_t toStackPos, Item* item, bool isHotkey, uint32_t creatureId = 0);
 
-		ReturnValue canUse(const Player* player, const Position& pos, const Item* item);
+		ReturnValue canUse(const Player* player, const Position& pos);
 		ReturnValue canUseEx(const Player* player, const Position& pos, const Item* item);
 		ReturnValue canUseFar(const Creature* creature, const Position& toPos, bool checkLineOfSight);
 		bool hasAction(const Item* item) const {return getAction(item, ACTION_ANY) != NULL;}
@@ -101,7 +101,7 @@ class Action : public Event
 		bool getCheckLineOfSight() const {return checkLineOfSight;}
 		void setCheckLineOfSight(bool v) {checkLineOfSight = v;}
 
-		virtual ReturnValue canExecuteAction(const Player* player, const Position& pos, const Item* item);
+		virtual ReturnValue canExecuteAction(const Player* player, const Position& pos);
 		virtual bool hasOwnErrorHandler() {return false;}
 
 	protected:

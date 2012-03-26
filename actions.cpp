@@ -328,7 +328,7 @@ bool Actions::registerEvent(Event* event, xmlNodePtr p, bool override)
 	return success;
 }
 
-ReturnValue Actions::canUse(const Player* player, const Position& pos, const Item* item)
+ReturnValue Actions::canUse(const Player* player, const Position& pos)
 {
 	const Position& playerPos = player->getPosition();
 	if(pos.x == 0xFFFF)
@@ -343,13 +343,13 @@ ReturnValue Actions::canUse(const Player* player, const Position& pos, const Ite
 	if(!Position::areInRange<1,1,0>(playerPos, pos))
 		return RET_TOOFARAWAY;
 
-	HouseTile* houseTile = dynamic_cast<HouseTile*>(item->getParent());
-	if(!houseTile || !houseTile->getHouse() || !houseTile->getHouse()->isInvited(player))
+	Tile* tile = g_game.getTile(pos);
+	if(tile)
 	{
-		player->sendCancelMessage(RET_PLAYERISNOTINVITED);
-		return false;
+		HouseTile* houseTile = tile->getHouseTile();
+		if(houseTile && houseTile->getHouse() && !houseTile->getHouse()->isInvited(player))
+			return RET_PLAYERISNOTINVITED;
 	}
-
 	return RET_NOERROR;
 }
 
@@ -357,19 +357,19 @@ ReturnValue Actions::canUseEx(const Player* player, const Position& pos, const I
 {
 	Action* action = NULL;
 	if((action = getAction(item, ACTION_UNIQUEID)))
-		return action->canExecuteAction(player, pos, item);
+		return action->canExecuteAction(player, pos);
 
 	if((action = getAction(item, ACTION_ACTIONID)))
-		return action->canExecuteAction(player, pos, item);
+		return action->canExecuteAction(player, pos);
 
 	if((action = getAction(item, ACTION_ITEMID)))
-		return action->canExecuteAction(player, pos, item);
+		return action->canExecuteAction(player, pos);
 
 	if((action = getAction(item, ACTION_RUNEID)))
-		return action->canExecuteAction(player, pos, item);
+		return action->canExecuteAction(player, pos);
 
 	if(defaultAction)
-		return defaultAction->canExecuteAction(player, pos, item);
+		return defaultAction->canExecuteAction(player, pos);
 
 	return RET_NOERROR;
 }
@@ -581,7 +581,7 @@ ReturnValue Actions::internalUseItemEx(Player* player, const PositionEx& fromPos
 	Action* action = NULL;
 	if((action = getAction(item, ACTION_UNIQUEID)))
 	{
-		ReturnValue ret = action->canExecuteAction(player, toPosEx, item);
+		ReturnValue ret = action->canExecuteAction(player, toPosEx);
 		if(ret != RET_NOERROR)
 			return ret;
 
@@ -592,7 +592,7 @@ ReturnValue Actions::internalUseItemEx(Player* player, const PositionEx& fromPos
 
 	if((action = getAction(item, ACTION_ACTIONID)))
 	{
-		ReturnValue ret = action->canExecuteAction(player, toPosEx, item);
+		ReturnValue ret = action->canExecuteAction(player, toPosEx);
 		if(ret != RET_NOERROR)
 			return ret;
 
@@ -604,7 +604,7 @@ ReturnValue Actions::internalUseItemEx(Player* player, const PositionEx& fromPos
 
 	if((action = getAction(item, ACTION_ITEMID)))
 	{
-		ReturnValue ret = action->canExecuteAction(player, toPosEx, item);
+		ReturnValue ret = action->canExecuteAction(player, toPosEx);
 		if(ret != RET_NOERROR)
 			return ret;
 
@@ -615,7 +615,7 @@ ReturnValue Actions::internalUseItemEx(Player* player, const PositionEx& fromPos
 
 	if((action = getAction(item, ACTION_RUNEID)))
 	{
-		ReturnValue ret = action->canExecuteAction(player, toPosEx, item);
+		ReturnValue ret = action->canExecuteAction(player, toPosEx);
 		if(ret != RET_NOERROR)
 			return ret;
 
@@ -626,7 +626,7 @@ ReturnValue Actions::internalUseItemEx(Player* player, const PositionEx& fromPos
 
 	if(defaultAction)
 	{
-		ReturnValue ret = defaultAction->canExecuteAction(player, toPosEx, item);
+		ReturnValue ret = defaultAction->canExecuteAction(player, toPosEx);
 		if(ret != RET_NOERROR)
 			return ret;
 
@@ -689,13 +689,13 @@ bool Action::configureEvent(xmlNodePtr p)
 	return true;
 }
 
-ReturnValue Action::canExecuteAction(const Player* player, const Position& pos, const Item* item)
+ReturnValue Action::canExecuteAction(const Player* player, const Position& pos)
 {
 	if(player->hasCustomFlag(PlayerCustomFlag_CanUseFar))
 		return RET_NOERROR;
 
 	if(!getAllowFarUse())
-		return g_actions->canUse(player, pos, item);
+		return g_actions->canUse(player, pos);
 
 	return g_actions->canUseFar(player, pos, getCheckLineOfSight());
 }

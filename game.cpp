@@ -2516,7 +2516,7 @@ bool Game::playerUseItemEx(uint32_t playerId, const Position& fromPos, int16_t f
 	}
 
 	Position walkToPos = fromPos;
-	ReturnValue ret = g_actions->canUse(player, fromPos, item);
+	ReturnValue ret = g_actions->canUse(player, fromPos);
 	if(ret == RET_NOERROR)
 	{
 		ret = g_actions->canUseEx(player, toPos, item);
@@ -2615,7 +2615,7 @@ bool Game::playerUseItem(uint32_t playerId, const Position& pos, int16_t stackpo
 		return false;
 	}
 
-	ReturnValue ret = g_actions->canUse(player, pos, item);
+	ReturnValue ret = g_actions->canUse(player, pos);
 	if(ret == RET_TOOFARAWAY && player->hasCustomFlag(PlayerCustomFlag_CanUseFar))
 		ret = RET_NOERROR;
 
@@ -2698,7 +2698,7 @@ bool Game::playerUseBattleWindow(uint32_t playerId, const Position& pos, int16_t
 		return false;
 	}
 
-	ReturnValue ret = g_actions->canUse(player, pos, item);
+	ReturnValue ret = g_actions->canUse(player, pos);
 	if(ret != RET_NOERROR)
 	{
 		if(ret == RET_TOOFARAWAY)
@@ -3008,7 +3008,7 @@ bool Game::playerRequestTrade(uint32_t playerId, const Position& pos, int16_t st
 	}
 
 	HouseTile* houseTile = dynamic_cast<HouseTile*>(tradeItem->getParent());
-	if(!houseTile || !houseTile->getHouse() || !houseTile->getHouse()->isInvited(player))
+	if(houseTile && houseTile->getHouse() && !houseTile->getHouse()->isInvited(player))
 	{
 		player->sendCancelMessage(RET_PLAYERISNOTINVITED);
 		return false;
