@@ -643,14 +643,18 @@ class Player : public Creature, public Cylinder
 			{if(client) client->sendMarketEnter(depotId);}
 		void sendMarketLeave()
 			{marketDepotId = -1; if(client) client->sendMarketLeave();}
-		void sendMarketBrowseItem(uint16_t itemId, const MarketItemList& buyOffers, const MarketItemList& sellOffers) const
+		void sendMarketBrowseItem(uint16_t itemId, const MarketOfferList& buyOffers, const MarketOfferList& sellOffers) const
 			{if(client) client->sendMarketBrowseItem(itemId, buyOffers, sellOffers);}
-		void sendMarketBrowseOwnOffers(const MarketItemList& buyOffers, const MarketItemList& sellOffers) const
+		void sendMarketBrowseOwnOffers(const MarketOfferList& buyOffers, const MarketOfferList& sellOffers) const
 			{if(client) client->sendMarketBrowseOwnOffers(buyOffers, sellOffers);}
-		void sendMarketBrowseOwnHistory(const MarketItemList& buyOffers, const MarketItemList& sellOffers) const
+		void sendMarketBrowseOwnHistory(const HistoryMarketOfferList& buyOffers, const HistoryMarketOfferList& sellOffers) const
 			{if(client) client->sendMarketBrowseOwnHistory(buyOffers, sellOffers);}
 		void sendMarketDetail(uint16_t itemId) const
 			{if(client) client->sendMarketDetail(itemId);}
+		void sendMarketAcceptOffer(MarketOfferEx offer) const
+			{if(client) client->sendMarketAcceptOffer(offer);}
+		void sendMarketCancelOffer(MarketOfferEx offer) const
+			{if(client) client->sendMarketCancelOffer(offer);}
 		void sendTradeItemRequest(const Player* player, const Item* item, bool ack) const
 			{if(client) client->sendTradeItemRequest(player, item, ack);}
 		void sendTradeClose() const

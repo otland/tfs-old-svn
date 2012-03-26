@@ -1990,7 +1990,7 @@ void ProtocolGame::sendMarketEnter(uint32_t depotId)
 	msg->AddByte(0xF6);
 	msg->AddU32(std::min((uint64_t)0xFFFFFFFF, player->getBankBalance()));
 	msg->AddByte(player->getVocationId());
-	msg->AddByte(0x00); // active offers (?)
+	msg->AddByte(std::min((int32_t)0xFF, IOMarket::getInstance()->getPlayerOfferCount(player->getGUID())));
 
 	Depot* depot = player->getDepot(depotId, false);
 	if(!depot)
@@ -2054,7 +2054,7 @@ void ProtocolGame::sendMarketLeave()
 	msg->AddByte(0xF7);
 }
 
-void ProtocolGame::sendMarketBrowseItem(uint16_t itemId, const MarketItemList& buyOffers, const MarketItemList& sellOffers)
+void ProtocolGame::sendMarketBrowseItem(uint16_t itemId, const MarketOfferList& buyOffers, const MarketOfferList& sellOffers)
 {
 	NetworkMessage_ptr msg = getOutputBuffer();
 	if(!msg)
@@ -2065,7 +2065,7 @@ void ProtocolGame::sendMarketBrowseItem(uint16_t itemId, const MarketItemList& b
 	msg->AddItemId(itemId);
 
 	msg->AddU32(buyOffers.size());
-	for(MarketItemList::const_iterator it = buyOffers.begin(), end = buyOffers.end(); it != end; ++it)
+	for(MarketOfferList::const_iterator it = buyOffers.begin(), end = buyOffers.end(); it != end; ++it)
 	{
 		msg->AddU32(it->timestamp);
 		msg->AddU16(it->counter);
@@ -2075,7 +2075,7 @@ void ProtocolGame::sendMarketBrowseItem(uint16_t itemId, const MarketItemList& b
 	}
 
 	msg->AddU32(sellOffers.size());
-	for(MarketItemList::const_iterator it = sellOffers.begin(), end = sellOffers.end(); it != end; ++it)
+	for(MarketOfferList::const_iterator it = sellOffers.begin(), end = sellOffers.end(); it != end; ++it)
 	{
 		msg->AddU32(it->timestamp);
 		msg->AddU16(it->counter);
@@ -2085,7 +2085,39 @@ void ProtocolGame::sendMarketBrowseItem(uint16_t itemId, const MarketItemList& b
 	}
 }
 
-void ProtocolGame::sendMarketBrowseOwnOffers(const MarketItemList& buyOffers, const MarketItemList& sellOffers)
+void ProtocolGame::sendMarketAcceptOffer(MarketOfferEx offer)
+{
+	NetworkMessage_ptr msg = getOutputBuffer();
+	if(!msg)
+		return;
+
+	TRACK_MESSAGE(msg);
+	msg->AddByte(0xF9);
+	msg->AddItemId(offer.itemId);
+
+	if(offer.type == MARKETACTION_BUY)
+	{
+		msg->AddU32(0x01);
+		msg->AddU32(offer.timestamp);
+		msg->AddU16(offer.counter);
+		msg->AddU16(offer.amount);
+		msg->AddU32(offer.price);
+		msg->AddString(offer.playerName);
+		msg->AddU32(0x00);
+	}
+	else
+	{
+		msg->AddU32(0x00);
+		msg->AddU32(0x01);
+		msg->AddU32(offer.timestamp);
+		msg->AddU16(offer.counter);
+		msg->AddU16(offer.amount);
+		msg->AddU32(offer.price);
+		msg->AddString(offer.playerName);
+	}
+}
+
+void ProtocolGame::sendMarketBrowseOwnOffers(const MarketOfferList& buyOffers, const MarketOfferList& sellOffers)
 {
 	NetworkMessage_ptr msg = getOutputBuffer();
 	if(!msg)
@@ -2096,7 +2128,7 @@ void ProtocolGame::sendMarketBrowseOwnOffers(const MarketItemList& buyOffers, co
 	msg->AddU16(MARKETREQUEST_OWN_OFFERS);
 
 	msg->AddU32(buyOffers.size());
-	for(MarketItemList::const_iterator it = buyOffers.begin(), end = buyOffers.end(); it != end; ++it)
+	for(MarketOfferList::const_iterator it = buyOffers.begin(), end = buyOffers.end(); it != end; ++it)
 	{
 		msg->AddU32(it->timestamp);
 		msg->AddU16(it->counter);
@@ -2106,7 +2138,7 @@ void ProtocolGame::sendMarketBrowseOwnOffers(const MarketItemList& buyOffers, co
 	}
 
 	msg->AddU32(sellOffers.size());
-	for(MarketItemList::const_iterator it = sellOffers.begin(), end = sellOffers.end(); it != end; ++it)
+	for(MarketOfferList::const_iterator it = sellOffers.begin(), end = sellOffers.end(); it != end; ++it)
 	{
 		msg->AddU32(it->timestamp);
 		msg->AddU16(it->counter);
@@ -2116,7 +2148,39 @@ void ProtocolGame::sendMarketBrowseOwnOffers(const MarketItemList& buyOffers, co
 	}
 }
 
-void ProtocolGame::sendMarketBrowseOwnHistory(const MarketItemList& buyOffers, const MarketItemList& sellOffers)
+void ProtocolGame::sendMarketCancelOffer(MarketOfferEx offer)
+{
+	NetworkMessage_ptr msg = getOutputBuffer();
+	if(!msg)
+		return;
+
+	TRACK_MESSAGE(msg);
+	msg->AddByte(0xF9);
+	msg->AddU16(MARKETREQUEST_OWN_OFFERS);
+
+	if(offer.type == MARKETACTION_BUY)
+	{
+		msg->AddU32(0x01);
+		msg->AddU32(offer.timestamp);
+		msg->AddU16(offer.counter);
+		msg->AddItemId(offer.itemId);
+		msg->AddU16(offer.amount);
+		msg->AddU32(offer.price);
+		msg->AddU32(0x00);
+	}
+	else
+	{
+		msg->AddU32(0x00);
+		msg->AddU32(0x01);
+		msg->AddU32(offer.timestamp);
+		msg->AddU16(offer.counter);
+		msg->AddItemId(offer.itemId);
+		msg->AddU16(offer.amount);
+		msg->AddU32(offer.price);
+	}
+}
+
+void ProtocolGame::sendMarketBrowseOwnHistory(const HistoryMarketOfferList& buyOffers, const HistoryMarketOfferList& sellOffers)
 {
 	NetworkMessage_ptr msg = getOutputBuffer();
 	if(!msg)
@@ -2126,26 +2190,30 @@ void ProtocolGame::sendMarketBrowseOwnHistory(const MarketItemList& buyOffers, c
 	msg->AddByte(0xF9);
 	msg->AddU16(MARKETREQUEST_OWN_HISTORY);
 
+	std::map<uint32_t, uint16_t> counterMap;
+
 	msg->AddU32(buyOffers.size());
-	for(MarketItemList::const_iterator it = buyOffers.begin(), end = buyOffers.end(); it != end; ++it)
+	for(HistoryMarketOfferList::const_iterator it = buyOffers.begin(), end = buyOffers.end(); it != end; ++it)
 	{
 		msg->AddU32(it->timestamp);
-		msg->AddU16(it->counter);
+		msg->AddU16(counterMap[it->timestamp]++);
 		msg->AddItemId(it->itemId);
 		msg->AddU16(it->amount);
 		msg->AddU32(it->price);
-		msg->AddByte(0x00); //?
+		msg->AddByte(it->state);
 	}
 
+	counterMap.clear();
+
 	msg->AddU32(sellOffers.size());
-	for(MarketItemList::const_iterator it = sellOffers.begin(), end = sellOffers.end(); it != end; ++it)
+	for(HistoryMarketOfferList::const_iterator it = sellOffers.begin(), end = sellOffers.end(); it != end; ++it)
 	{
 		msg->AddU32(it->timestamp);
-		msg->AddU16(it->counter);
+		msg->AddU16(counterMap[it->timestamp]++);
 		msg->AddItemId(it->itemId);
 		msg->AddU16(it->amount);
 		msg->AddU32(it->price);
-		msg->AddByte(0x00); //?
+		msg->AddByte(it->state);
 	}
 }
 
@@ -2315,8 +2383,29 @@ void ProtocolGame::sendMarketDetail(uint16_t itemId)
 	else
 		msg->AddU16(0x00);
 
-	msg->AddByte(0x00); // buy offers?
-	msg->AddByte(0x00); // sell offers?
+	MarketStatistics* statistics = IOMarket::getInstance()->getPurchaseStatistics(itemId);
+	if(statistics)
+	{
+		msg->AddByte(0x01);
+		msg->AddU32(statistics->numTransactions);
+		msg->AddU32(std::min((uint64_t)0xFFFFFFFF, statistics->totalPrice));
+		msg->AddU32(statistics->highestPrice);
+		msg->AddU32(statistics->lowestPrice);
+	}
+	else
+		msg->AddByte(0x00);
+	
+	statistics = IOMarket::getInstance()->getSaleStatistics(itemId);
+	if(statistics)
+	{
+		msg->AddByte(0x01);
+		msg->AddU32(statistics->numTransactions);
+		msg->AddU32(std::min((uint64_t)0xFFFFFFFF, statistics->totalPrice));
+		msg->AddU32(statistics->highestPrice);
+		msg->AddU32(statistics->lowestPrice);
+	}
+	else
+		msg->AddByte(0x00);
 }
 
 void ProtocolGame::sendQuestLog()

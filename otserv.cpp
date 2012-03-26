@@ -38,6 +38,7 @@
 #include "game.h"
 
 #include "iologindata.h"
+#include "iomarket.h"
 
 #if !defined(__WINDOWS__)
 #include <signal.h> // for sigemptyset()
@@ -573,6 +574,12 @@ void mainLoader(ServiceManager* services)
 	}
 
 	g_npcs.reload();
+
+	if(g_config.getBoolean(ConfigManager::MARKET_ENABLED))
+	{
+		g_game.checkExpiredMarketOffers();
+		IOMarket::getInstance()->updateStatistics();
+	}
 
 	std::cout << ">> Loaded all modules, server starting up..." << std::endl;
 

@@ -304,7 +304,7 @@ std::string Player::getDescription(int32_t lookDistance) const
 
 Item* Player::getInventoryItem(slots_t slot) const
 {
-	if(slot > SLOT_PRE_FIRST && slot < SLOT_LAST)
+	if(slot >= SLOT_FIRST && slot < SLOT_LAST)
 		return inventory[slot];
 
 	return NULL;
@@ -3180,7 +3180,7 @@ std::map<uint32_t, uint32_t>& Player::__getAllItemTypeCount(std::map<uint32_t, u
 
 Thing* Player::__getThing(uint32_t index) const
 {
-	if(index > SLOT_PRE_FIRST && index < SLOT_LAST)
+	if(index >= SLOT_FIRST && index < SLOT_LAST)
 		return inventory[index];
 
 	return NULL;
@@ -4112,7 +4112,7 @@ double Player::getLostPercent() const
 
 	for(int16_t i = 0; i < 5; i++)
 	{
-		if(!lostPercent)
+		if(lostPercent == 0)
 			return 0;
 
 		if(hasBlessing(i))

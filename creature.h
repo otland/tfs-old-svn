@@ -39,8 +39,7 @@ typedef std::list<CreatureEvent*> CreatureEventList;
 
 enum slots_t
 {
-	SLOT_PRE_FIRST = 0,
-	SLOT_WHEREEVER = SLOT_PRE_FIRST,
+	SLOT_WHEREEVER = 0,
 	SLOT_FIRST = 1,
 	SLOT_HEAD = SLOT_FIRST,
 	SLOT_NECKLACE = 2,
