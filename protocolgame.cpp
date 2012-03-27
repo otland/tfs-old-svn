@@ -17,6 +17,7 @@
 #include "otpch.h"
 #include <boost/function.hpp>
 #include <iostream>
+#include <iomanip>
 
 #include "protocolgame.h"
 #include "textlogger.h"
