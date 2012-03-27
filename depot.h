@@ -33,6 +33,7 @@ class Depot : public Container
 		virtual uint32_t getItemHoldingCount() const {return Container::getItemHoldingCount() - 3;}
 
 		uint32_t getDepotId() const;
+		void setDepotId(int32_t depotId) {setAttribute("depotid", depotId);}
 
 		void setInbox(Container* container) {inbox = container;}
 		Container* getInbox() const {return inbox;}
