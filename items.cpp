@@ -37,6 +37,7 @@ uint32_t Items::dwBuildNumber = 0;
 
 ItemType::ItemType()
 {
+	abilities = NULL;
 	group = ITEM_GROUP_NONE;
 	type = ITEM_TYPE_NONE;
 	stackable = usable = alwaysOnTop = lookThrough = pickupable = rotable = hasHeight = forceSerialize = false;
@@ -552,10 +553,13 @@ void Items::parseItemNode(xmlNodePtr itemNode, uint32_t id)
 		if(override)
 		{
 			// setup some defaults
-			memset(it.abilities.fieldAbsorb, 0, sizeof(it.abilities.fieldAbsorb));
-			memset(it.abilities.absorb, 0, sizeof(it.abilities.absorb));
-			for(uint32_t j = REFLECT_FIRST; j <= REFLECT_LAST; ++j)
-				memset(it.abilities.reflect[j], 0, sizeof(it.abilities.reflect[j]));
+			if(it.hasAbilities())
+			{
+				memset(it.getAbilities()->fieldAbsorb, 0, sizeof(it.getAbilities()->fieldAbsorb));
+				memset(it.getAbilities()->absorb, 0, sizeof(it.getAbilities()->absorb));
+				for(uint32_t j = REFLECT_FIRST; j <= REFLECT_LAST; ++j)
+					memset(it.getAbilities()->reflect[j], 0, sizeof(it.getAbilities()->reflect[j]));
+			}
 		}
 		else
 			std::clog << "[Warning - Items::loadFromXml] Duplicate registered item with id " << id << std::endl;
@@ -1103,259 +1107,259 @@ void Items::parseItemNode(xmlNodePtr itemNode, uint32_t id)
 		else if(tmpStrValue == "preventloss")
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.abilities.preventLoss = (intValue != 0);
+				it.getAbilities()->preventLoss = (intValue != 0);
 		}
 		else if(tmpStrValue == "preventdrop")
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.abilities.preventDrop = (intValue != 0);
+				it.getAbilities()->preventDrop = (intValue != 0);
 		}
 		else if(tmpStrValue == "invisible")
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.abilities.invisible = (intValue != 0);
+				it.getAbilities()->invisible = (intValue != 0);
 		}
 		else if(tmpStrValue == "speed")
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.abilities.speed = intValue;
+				it.getAbilities()->speed = intValue;
 		}
 		else if(tmpStrValue == "healthgain")
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue))
 			{
-				it.abilities.regeneration = true;
-				it.abilities.healthGain = intValue;
+				it.getAbilities()->regeneration = true;
+				it.getAbilities()->healthGain = intValue;
 			}
 		}
 		else if(tmpStrValue == "healthticks")
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue))
 			{
-				it.abilities.regeneration = true;
-				it.abilities.healthTicks = intValue;
+				it.getAbilities()->regeneration = true;
+				it.getAbilities()->healthTicks = intValue;
 			}
 		}
 		else if(tmpStrValue == "managain")
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue))
 			{
-				it.abilities.regeneration = true;
-				it.abilities.manaGain = intValue;
+				it.getAbilities()->regeneration = true;
+				it.getAbilities()->manaGain = intValue;
 			}
 		}
 		else if(tmpStrValue == "manaticks")
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue))
 			{
-				it.abilities.regeneration = true;
-				it.abilities.manaTicks = intValue;
+				it.getAbilities()->regeneration = true;
+				it.getAbilities()->manaTicks = intValue;
 			}
 		}
 		else if(tmpStrValue == "manashield")
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.abilities.manaShield = (intValue != 0);
+				it.getAbilities()->manaShield = (intValue != 0);
 		}
 		else if(tmpStrValue == "skillsword")
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.abilities.skills[SKILL_SWORD] = intValue;
+				it.getAbilities()->skills[SKILL_SWORD] = intValue;
 		}
 		else if(tmpStrValue == "skillaxe")
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.abilities.skills[SKILL_AXE] = intValue;
+				it.getAbilities()->skills[SKILL_AXE] = intValue;
 		}
 		else if(tmpStrValue == "skillclub")
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.abilities.skills[SKILL_CLUB] = intValue;
+				it.getAbilities()->skills[SKILL_CLUB] = intValue;
 		}
 		else if(tmpStrValue == "skilldist")
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.abilities.skills[SKILL_DIST] = intValue;
+				it.getAbilities()->skills[SKILL_DIST] = intValue;
 		}
 		else if(tmpStrValue == "skillfish")
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.abilities.skills[SKILL_FISH] = intValue;
+				it.getAbilities()->skills[SKILL_FISH] = intValue;
 		}
 		else if(tmpStrValue == "skillshield")
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.abilities.skills[SKILL_SHIELD] = intValue;
+				it.getAbilities()->skills[SKILL_SHIELD] = intValue;
 		}
 		else if(tmpStrValue == "skillfist")
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.abilities.skills[SKILL_FIST] = intValue;
+				it.getAbilities()->skills[SKILL_FIST] = intValue;
 		}
 		else if(tmpStrValue == "maxhealthpoints" || tmpStrValue == "maxhitpoints")
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.abilities.stats[STAT_MAXHEALTH] = intValue;
+				it.getAbilities()->stats[STAT_MAXHEALTH] = intValue;
 		}
 		else if(tmpStrValue == "maxhealthpercent" || tmpStrValue == "maxhitpointspercent")
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.abilities.statsPercent[STAT_MAXHEALTH] = intValue;
+				it.getAbilities()->statsPercent[STAT_MAXHEALTH] = intValue;
 		}
 		else if(tmpStrValue == "maxmanapoints")
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.abilities.stats[STAT_MAXMANA] = intValue;
+				it.getAbilities()->stats[STAT_MAXMANA] = intValue;
 		}
 		else if(tmpStrValue == "maxmanapercent" || tmpStrValue == "maxmanapointspercent")
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.abilities.statsPercent[STAT_MAXMANA] = intValue;
+				it.getAbilities()->statsPercent[STAT_MAXMANA] = intValue;
 		}
 		else if(tmpStrValue == "soulpoints")
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.abilities.stats[STAT_SOUL] = intValue;
+				it.getAbilities()->stats[STAT_SOUL] = intValue;
 		}
 		else if(tmpStrValue == "soulpercent" || tmpStrValue == "soulpointspercent")
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.abilities.statsPercent[STAT_SOUL] = intValue;
+				it.getAbilities()->statsPercent[STAT_SOUL] = intValue;
 		}
 		else if(tmpStrValue == "magiclevelpoints" || tmpStrValue == "magicpoints")
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.abilities.stats[STAT_MAGICLEVEL] = intValue;
+				it.getAbilities()->stats[STAT_MAGICLEVEL] = intValue;
 		}
 		else if(tmpStrValue == "magiclevelpercent" || tmpStrValue == "magicpointspercent")
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.abilities.statsPercent[STAT_MAGICLEVEL] = intValue;
+				it.getAbilities()->statsPercent[STAT_MAGICLEVEL] = intValue;
 		}
 		else if(tmpStrValue == "increasemagicvalue")
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.abilities.increment[MAGIC_VALUE] = intValue;
+				it.getAbilities()->increment[MAGIC_VALUE] = intValue;
 		}
 		else if(tmpStrValue == "increasemagicpercent")
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.abilities.increment[MAGIC_PERCENT] = intValue;
+				it.getAbilities()->increment[MAGIC_PERCENT] = intValue;
 		}
 		else if(tmpStrValue == "increasehealingvalue")
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.abilities.increment[HEALING_VALUE] = intValue;
+				it.getAbilities()->increment[HEALING_VALUE] = intValue;
 		}
 		else if(tmpStrValue == "increasehealingpercent")
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.abilities.increment[HEALING_PERCENT] = intValue;
+				it.getAbilities()->increment[HEALING_PERCENT] = intValue;
 		}
 		else if(tmpStrValue == "fieldabsorbpercentenergy")
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.abilities.fieldAbsorb[COMBAT_ENERGYDAMAGE] += intValue;
+				it.getAbilities()->fieldAbsorb[COMBAT_ENERGYDAMAGE] += intValue;
 		}
 		else if(tmpStrValue == "fieldabsorbpercentfire")
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.abilities.fieldAbsorb[COMBAT_FIREDAMAGE] += intValue;
+				it.getAbilities()->fieldAbsorb[COMBAT_FIREDAMAGE] += intValue;
 		}
 		else if(tmpStrValue == "fieldabsorbpercentpoison" || tmpStrValue == "fieldabsorbpercentearth")
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.abilities.fieldAbsorb[COMBAT_EARTHDAMAGE] += intValue;
+				it.getAbilities()->fieldAbsorb[COMBAT_EARTHDAMAGE] += intValue;
 		}
 		else if(tmpStrValue == "absorbpercentall")
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue))
 			{
 				for(uint32_t i = (COMBAT_FIRST + 1); i <= COMBAT_LAST; i <<= 1)
-					it.abilities.absorb[i] += intValue;
+					it.getAbilities()->absorb[i] += intValue;
 			}
 		}
 		else if(tmpStrValue == "absorbpercentelements")
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue))
 			{
-				it.abilities.absorb[COMBAT_ENERGYDAMAGE] += intValue;
-				it.abilities.absorb[COMBAT_FIREDAMAGE] += intValue;
-				it.abilities.absorb[COMBAT_EARTHDAMAGE] += intValue;
-				it.abilities.absorb[COMBAT_ICEDAMAGE] += intValue;
+				it.getAbilities()->absorb[COMBAT_ENERGYDAMAGE] += intValue;
+				it.getAbilities()->absorb[COMBAT_FIREDAMAGE] += intValue;
+				it.getAbilities()->absorb[COMBAT_EARTHDAMAGE] += intValue;
+				it.getAbilities()->absorb[COMBAT_ICEDAMAGE] += intValue;
 			}
 		}
 		else if(tmpStrValue == "absorbpercentmagic")
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue))
 			{
-				it.abilities.absorb[COMBAT_ENERGYDAMAGE] += intValue;
-				it.abilities.absorb[COMBAT_FIREDAMAGE] += intValue;
-				it.abilities.absorb[COMBAT_EARTHDAMAGE] += intValue;
-				it.abilities.absorb[COMBAT_ICEDAMAGE] += intValue;
-				it.abilities.absorb[COMBAT_HOLYDAMAGE] += intValue;
-				it.abilities.absorb[COMBAT_DEATHDAMAGE] += intValue;
+				it.getAbilities()->absorb[COMBAT_ENERGYDAMAGE] += intValue;
+				it.getAbilities()->absorb[COMBAT_FIREDAMAGE] += intValue;
+				it.getAbilities()->absorb[COMBAT_EARTHDAMAGE] += intValue;
+				it.getAbilities()->absorb[COMBAT_ICEDAMAGE] += intValue;
+				it.getAbilities()->absorb[COMBAT_HOLYDAMAGE] += intValue;
+				it.getAbilities()->absorb[COMBAT_DEATHDAMAGE] += intValue;
 			}
 		}
 		else if(tmpStrValue == "absorbpercentenergy")
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.abilities.absorb[COMBAT_ENERGYDAMAGE] += intValue;
+				it.getAbilities()->absorb[COMBAT_ENERGYDAMAGE] += intValue;
 		}
 		else if(tmpStrValue == "absorbpercentfire")
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.abilities.absorb[COMBAT_FIREDAMAGE] += intValue;
+				it.getAbilities()->absorb[COMBAT_FIREDAMAGE] += intValue;
 		}
 		else if(tmpStrValue == "absorbpercentpoison" || tmpStrValue == "absorbpercentearth")
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.abilities.absorb[COMBAT_EARTHDAMAGE] += intValue;
+				it.getAbilities()->absorb[COMBAT_EARTHDAMAGE] += intValue;
 		}
 		else if(tmpStrValue == "absorbpercentice")
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.abilities.absorb[COMBAT_ICEDAMAGE] += intValue;
+				it.getAbilities()->absorb[COMBAT_ICEDAMAGE] += intValue;
 		}
 		else if(tmpStrValue == "absorbpercentholy")
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.abilities.absorb[COMBAT_HOLYDAMAGE] += intValue;
+				it.getAbilities()->absorb[COMBAT_HOLYDAMAGE] += intValue;
 		}
 		else if(tmpStrValue == "absorbpercentdeath")
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.abilities.absorb[COMBAT_DEATHDAMAGE] += intValue;
+				it.getAbilities()->absorb[COMBAT_DEATHDAMAGE] += intValue;
 		}
 		else if(tmpStrValue == "absorbpercentlifedrain")
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.abilities.absorb[COMBAT_LIFEDRAIN] += intValue;
+				it.getAbilities()->absorb[COMBAT_LIFEDRAIN] += intValue;
 		}
 		else if(tmpStrValue == "absorbpercentmanadrain")
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.abilities.absorb[COMBAT_MANADRAIN] += intValue;
+				it.getAbilities()->absorb[COMBAT_MANADRAIN] += intValue;
 		}
 		else if(tmpStrValue == "absorbpercentdrown")
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.abilities.absorb[COMBAT_DROWNDAMAGE] += intValue;
+				it.getAbilities()->absorb[COMBAT_DROWNDAMAGE] += intValue;
 		}
 		else if(tmpStrValue == "absorbpercentphysical")
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.abilities.absorb[COMBAT_PHYSICALDAMAGE] += intValue;
+				it.getAbilities()->absorb[COMBAT_PHYSICALDAMAGE] += intValue;
 		}
 		else if(tmpStrValue == "absorbpercenthealing")
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.abilities.absorb[COMBAT_HEALING] += intValue;
+				it.getAbilities()->absorb[COMBAT_HEALING] += intValue;
 		}
 		else if(tmpStrValue == "absorbpercentundefined")
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.abilities.absorb[COMBAT_UNDEFINEDDAMAGE] += intValue;
+				it.getAbilities()->absorb[COMBAT_UNDEFINEDDAMAGE] += intValue;
 		}
 #ifndef _MSC_VER
 		else if(tmpStrValue == "reflectpercentall")
@@ -1372,290 +1376,290 @@ void Items::parseItemNode(xmlNodePtr itemNode, uint32_t id)
 			if(readXMLInteger(itemAttributesNode, "value", intValue))
 			{
 				for(uint32_t i = (COMBAT_FIRST + 1); i <= COMBAT_LAST; i <<= 1)
-					it.abilities.reflect[REFLECT_PERCENT][i] += intValue;
+					it.getAbilities()->reflect[REFLECT_PERCENT][i] += intValue;
 			}
 		}
 		else if(tmpStrValue == "reflectpercentelements")
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue))
 			{
-				it.abilities.reflect[REFLECT_PERCENT][COMBAT_ENERGYDAMAGE] += intValue;
-				it.abilities.reflect[REFLECT_PERCENT][COMBAT_FIREDAMAGE] += intValue;
-				it.abilities.reflect[REFLECT_PERCENT][COMBAT_EARTHDAMAGE] += intValue;
-				it.abilities.reflect[REFLECT_PERCENT][COMBAT_ICEDAMAGE] += intValue;
+				it.getAbilities()->reflect[REFLECT_PERCENT][COMBAT_ENERGYDAMAGE] += intValue;
+				it.getAbilities()->reflect[REFLECT_PERCENT][COMBAT_FIREDAMAGE] += intValue;
+				it.getAbilities()->reflect[REFLECT_PERCENT][COMBAT_EARTHDAMAGE] += intValue;
+				it.getAbilities()->reflect[REFLECT_PERCENT][COMBAT_ICEDAMAGE] += intValue;
 			}
 		}
 		else if(tmpStrValue == "reflectpercentmagic")
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue))
 			{
-				it.abilities.reflect[REFLECT_PERCENT][COMBAT_ENERGYDAMAGE] += intValue;
-				it.abilities.reflect[REFLECT_PERCENT][COMBAT_FIREDAMAGE] += intValue;
-				it.abilities.reflect[REFLECT_PERCENT][COMBAT_EARTHDAMAGE] += intValue;
-				it.abilities.reflect[REFLECT_PERCENT][COMBAT_ICEDAMAGE] += intValue;
-				it.abilities.reflect[REFLECT_PERCENT][COMBAT_HOLYDAMAGE] += intValue;
-				it.abilities.reflect[REFLECT_PERCENT][COMBAT_DEATHDAMAGE] += intValue;
+				it.getAbilities()->reflect[REFLECT_PERCENT][COMBAT_ENERGYDAMAGE] += intValue;
+				it.getAbilities()->reflect[REFLECT_PERCENT][COMBAT_FIREDAMAGE] += intValue;
+				it.getAbilities()->reflect[REFLECT_PERCENT][COMBAT_EARTHDAMAGE] += intValue;
+				it.getAbilities()->reflect[REFLECT_PERCENT][COMBAT_ICEDAMAGE] += intValue;
+				it.getAbilities()->reflect[REFLECT_PERCENT][COMBAT_HOLYDAMAGE] += intValue;
+				it.getAbilities()->reflect[REFLECT_PERCENT][COMBAT_DEATHDAMAGE] += intValue;
 			}
 		}
 		else if(tmpStrValue == "reflectpercentenergy")
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.abilities.reflect[REFLECT_PERCENT][COMBAT_ENERGYDAMAGE] += intValue;
+				it.getAbilities()->reflect[REFLECT_PERCENT][COMBAT_ENERGYDAMAGE] += intValue;
 		}
 		else if(tmpStrValue == "reflectpercentfire")
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.abilities.reflect[REFLECT_PERCENT][COMBAT_FIREDAMAGE] += intValue;
+				it.getAbilities()->reflect[REFLECT_PERCENT][COMBAT_FIREDAMAGE] += intValue;
 		}
 		else if(tmpStrValue == "reflectpercentpoison" ||	tmpStrValue == "reflectpercentearth")
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.abilities.reflect[REFLECT_PERCENT][COMBAT_EARTHDAMAGE] += intValue;
+				it.getAbilities()->reflect[REFLECT_PERCENT][COMBAT_EARTHDAMAGE] += intValue;
 		}
 		else if(tmpStrValue == "reflectpercentice")
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.abilities.reflect[REFLECT_PERCENT][COMBAT_ICEDAMAGE] += intValue;
+				it.getAbilities()->reflect[REFLECT_PERCENT][COMBAT_ICEDAMAGE] += intValue;
 		}
 		else if(tmpStrValue == "reflectpercentholy")
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.abilities.reflect[REFLECT_PERCENT][COMBAT_HOLYDAMAGE] += intValue;
+				it.getAbilities()->reflect[REFLECT_PERCENT][COMBAT_HOLYDAMAGE] += intValue;
 		}
 		else if(tmpStrValue == "reflectpercentdeath")
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.abilities.reflect[REFLECT_PERCENT][COMBAT_DEATHDAMAGE] += intValue;
+				it.getAbilities()->reflect[REFLECT_PERCENT][COMBAT_DEATHDAMAGE] += intValue;
 		}
 		else if(tmpStrValue == "reflectpercentlifedrain")
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.abilities.reflect[REFLECT_PERCENT][COMBAT_LIFEDRAIN] += intValue;
+				it.getAbilities()->reflect[REFLECT_PERCENT][COMBAT_LIFEDRAIN] += intValue;
 		}
 		else if(tmpStrValue == "reflectpercentmanadrain")
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.abilities.reflect[REFLECT_PERCENT][COMBAT_MANADRAIN] += intValue;
+				it.getAbilities()->reflect[REFLECT_PERCENT][COMBAT_MANADRAIN] += intValue;
 		}
 		else if(tmpStrValue == "reflectpercentdrown")
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.abilities.reflect[REFLECT_PERCENT][COMBAT_DROWNDAMAGE] += intValue;
+				it.getAbilities()->reflect[REFLECT_PERCENT][COMBAT_DROWNDAMAGE] += intValue;
 		}
 		else if(tmpStrValue == "reflectpercentphysical")
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.abilities.reflect[REFLECT_PERCENT][COMBAT_PHYSICALDAMAGE] += intValue;
+				it.getAbilities()->reflect[REFLECT_PERCENT][COMBAT_PHYSICALDAMAGE] += intValue;
 		}
 		else if(tmpStrValue == "reflectpercenthealing")
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.abilities.reflect[REFLECT_PERCENT][COMBAT_HEALING] += intValue;
+				it.getAbilities()->reflect[REFLECT_PERCENT][COMBAT_HEALING] += intValue;
 		}
 		else if(tmpStrValue == "reflectpercentundefined")
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.abilities.reflect[REFLECT_PERCENT][COMBAT_UNDEFINEDDAMAGE] += intValue;
+				it.getAbilities()->reflect[REFLECT_PERCENT][COMBAT_UNDEFINEDDAMAGE] += intValue;
 		}
 		else if(tmpStrValue == "reflectchanceall")
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue))
 			{
 				for(uint32_t i = (COMBAT_FIRST + 1); i <= COMBAT_LAST; i <<= 1)
-					it.abilities.reflect[REFLECT_CHANCE][i] += intValue;
+					it.getAbilities()->reflect[REFLECT_CHANCE][i] += intValue;
 			}
 		}
 		else if(tmpStrValue == "reflectchanceelements")
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue))
 			{
-				it.abilities.reflect[REFLECT_CHANCE][COMBAT_ENERGYDAMAGE] += intValue;
-				it.abilities.reflect[REFLECT_CHANCE][COMBAT_FIREDAMAGE] += intValue;
-				it.abilities.reflect[REFLECT_CHANCE][COMBAT_EARTHDAMAGE] += intValue;
-				it.abilities.reflect[REFLECT_CHANCE][COMBAT_ICEDAMAGE] += intValue;
+				it.getAbilities()->reflect[REFLECT_CHANCE][COMBAT_ENERGYDAMAGE] += intValue;
+				it.getAbilities()->reflect[REFLECT_CHANCE][COMBAT_FIREDAMAGE] += intValue;
+				it.getAbilities()->reflect[REFLECT_CHANCE][COMBAT_EARTHDAMAGE] += intValue;
+				it.getAbilities()->reflect[REFLECT_CHANCE][COMBAT_ICEDAMAGE] += intValue;
 			}
 		}
 		else if(tmpStrValue == "reflectchancemagic")
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue))
 			{
-				it.abilities.reflect[REFLECT_CHANCE][COMBAT_ENERGYDAMAGE] += intValue;
-				it.abilities.reflect[REFLECT_CHANCE][COMBAT_FIREDAMAGE] += intValue;
-				it.abilities.reflect[REFLECT_CHANCE][COMBAT_EARTHDAMAGE] += intValue;
-				it.abilities.reflect[REFLECT_CHANCE][COMBAT_ICEDAMAGE] += intValue;
-				it.abilities.reflect[REFLECT_CHANCE][COMBAT_HOLYDAMAGE] += intValue;
-				it.abilities.reflect[REFLECT_CHANCE][COMBAT_DEATHDAMAGE] += intValue;
+				it.getAbilities()->reflect[REFLECT_CHANCE][COMBAT_ENERGYDAMAGE] += intValue;
+				it.getAbilities()->reflect[REFLECT_CHANCE][COMBAT_FIREDAMAGE] += intValue;
+				it.getAbilities()->reflect[REFLECT_CHANCE][COMBAT_EARTHDAMAGE] += intValue;
+				it.getAbilities()->reflect[REFLECT_CHANCE][COMBAT_ICEDAMAGE] += intValue;
+				it.getAbilities()->reflect[REFLECT_CHANCE][COMBAT_HOLYDAMAGE] += intValue;
+				it.getAbilities()->reflect[REFLECT_CHANCE][COMBAT_DEATHDAMAGE] += intValue;
 			}
 		}
 		else if(tmpStrValue == "reflectchanceenergy")
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.abilities.reflect[REFLECT_CHANCE][COMBAT_ENERGYDAMAGE] += intValue;
+				it.getAbilities()->reflect[REFLECT_CHANCE][COMBAT_ENERGYDAMAGE] += intValue;
 		}
 		else if(tmpStrValue == "reflectchancefire")
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.abilities.reflect[REFLECT_CHANCE][COMBAT_FIREDAMAGE] += intValue;
+				it.getAbilities()->reflect[REFLECT_CHANCE][COMBAT_FIREDAMAGE] += intValue;
 		}
 		else if(tmpStrValue == "reflectchancepoison" ||	tmpStrValue == "reflectchanceearth")
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.abilities.reflect[REFLECT_CHANCE][COMBAT_EARTHDAMAGE] += intValue;
+				it.getAbilities()->reflect[REFLECT_CHANCE][COMBAT_EARTHDAMAGE] += intValue;
 		}
 		else if(tmpStrValue == "reflectchanceice")
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.abilities.reflect[REFLECT_CHANCE][COMBAT_ICEDAMAGE] += intValue;
+				it.getAbilities()->reflect[REFLECT_CHANCE][COMBAT_ICEDAMAGE] += intValue;
 		}
 		else if(tmpStrValue == "reflectchanceholy")
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.abilities.reflect[REFLECT_CHANCE][COMBAT_HOLYDAMAGE] += intValue;
+				it.getAbilities()->reflect[REFLECT_CHANCE][COMBAT_HOLYDAMAGE] += intValue;
 		}
 		else if(tmpStrValue == "reflectchancedeath")
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.abilities.reflect[REFLECT_CHANCE][COMBAT_DEATHDAMAGE] += intValue;
+				it.getAbilities()->reflect[REFLECT_CHANCE][COMBAT_DEATHDAMAGE] += intValue;
 		}
 		else if(tmpStrValue == "reflectchancelifedrain")
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.abilities.reflect[REFLECT_CHANCE][COMBAT_LIFEDRAIN] += intValue;
+				it.getAbilities()->reflect[REFLECT_CHANCE][COMBAT_LIFEDRAIN] += intValue;
 		}
 		else if(tmpStrValue == "reflectchancemanadrain")
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.abilities.reflect[REFLECT_CHANCE][COMBAT_MANADRAIN] += intValue;
+				it.getAbilities()->reflect[REFLECT_CHANCE][COMBAT_MANADRAIN] += intValue;
 		}
 		else if(tmpStrValue == "reflectchancedrown")
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.abilities.reflect[REFLECT_CHANCE][COMBAT_DROWNDAMAGE] += intValue;
+				it.getAbilities()->reflect[REFLECT_CHANCE][COMBAT_DROWNDAMAGE] += intValue;
 		}
 		else if(tmpStrValue == "reflectchancephysical")
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.abilities.reflect[REFLECT_CHANCE][COMBAT_PHYSICALDAMAGE] += intValue;
+				it.getAbilities()->reflect[REFLECT_CHANCE][COMBAT_PHYSICALDAMAGE] += intValue;
 		}
 		else if(tmpStrValue == "reflectchancehealing")
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.abilities.reflect[REFLECT_CHANCE][COMBAT_HEALING] += intValue;
+				it.getAbilities()->reflect[REFLECT_CHANCE][COMBAT_HEALING] += intValue;
 		}
 		else if(tmpStrValue == "reflectchanceundefined")
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.abilities.reflect[REFLECT_CHANCE][COMBAT_UNDEFINEDDAMAGE] += intValue;
+				it.getAbilities()->reflect[REFLECT_CHANCE][COMBAT_UNDEFINEDDAMAGE] += intValue;
 		}
 		else if(tmpStrValue == "suppressshock" || tmpStrValue == "suppressenergy")
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue) && intValue != 0)
-				it.abilities.conditionSuppressions |= CONDITION_ENERGY;
+				it.getAbilities()->conditionSuppressions |= CONDITION_ENERGY;
 		}
 		else if(tmpStrValue == "suppressburn" || tmpStrValue == "suppressfire")
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue) && intValue != 0)
-				it.abilities.conditionSuppressions |= CONDITION_FIRE;
+				it.getAbilities()->conditionSuppressions |= CONDITION_FIRE;
 		}
 		else if(tmpStrValue == "suppresspoison" || tmpStrValue == "suppressearth")
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue) && intValue != 0)
-				it.abilities.conditionSuppressions |= CONDITION_POISON;
+				it.getAbilities()->conditionSuppressions |= CONDITION_POISON;
 		}
 		else if(tmpStrValue == "suppressfreeze" || tmpStrValue == "suppressice")
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue) && intValue != 0)
-				it.abilities.conditionSuppressions |= CONDITION_FREEZING;
+				it.getAbilities()->conditionSuppressions |= CONDITION_FREEZING;
 		}
 		else if(tmpStrValue == "suppressdazzle" || tmpStrValue == "suppressholy")
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue) && intValue != 0)
-				it.abilities.conditionSuppressions |= CONDITION_DAZZLED;
+				it.getAbilities()->conditionSuppressions |= CONDITION_DAZZLED;
 		}
 		else if(tmpStrValue == "suppresscurse" || tmpStrValue == "suppressdeath")
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue) && intValue != 0)
-				it.abilities.conditionSuppressions |= CONDITION_CURSED;
+				it.getAbilities()->conditionSuppressions |= CONDITION_CURSED;
 		}
 		else if(tmpStrValue == "suppressdrown")
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue) && intValue != 0)
-				it.abilities.conditionSuppressions |= CONDITION_DROWN;
+				it.getAbilities()->conditionSuppressions |= CONDITION_DROWN;
 		}
 		else if(tmpStrValue == "suppressphysical")
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue) && intValue != 0)
-				it.abilities.conditionSuppressions |= CONDITION_BLEEDING;
+				it.getAbilities()->conditionSuppressions |= CONDITION_BLEEDING;
 		}
 		else if(tmpStrValue == "suppresshaste")
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue) && intValue != 0)
-				it.abilities.conditionSuppressions |= CONDITION_HASTE;
+				it.getAbilities()->conditionSuppressions |= CONDITION_HASTE;
 		}
 		else if(tmpStrValue == "suppressparalyze")
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue) && intValue != 0)
-				it.abilities.conditionSuppressions |= CONDITION_PARALYZE;
+				it.getAbilities()->conditionSuppressions |= CONDITION_PARALYZE;
 		}
 		else if(tmpStrValue == "suppressdrunk")
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue) && intValue != 0)
-				it.abilities.conditionSuppressions |= CONDITION_DRUNK;
+				it.getAbilities()->conditionSuppressions |= CONDITION_DRUNK;
 		}
 		else if(tmpStrValue == "suppressregeneration")
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue) && intValue != 0)
-				it.abilities.conditionSuppressions |= CONDITION_REGENERATION;
+				it.getAbilities()->conditionSuppressions |= CONDITION_REGENERATION;
 		}
 		else if(tmpStrValue == "suppresssoul")
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue) && intValue != 0)
-				it.abilities.conditionSuppressions |= CONDITION_SOUL;
+				it.getAbilities()->conditionSuppressions |= CONDITION_SOUL;
 		}
 		else if(tmpStrValue == "suppressoutfit")
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue) && intValue != 0)
-				it.abilities.conditionSuppressions |= CONDITION_OUTFIT;
+				it.getAbilities()->conditionSuppressions |= CONDITION_OUTFIT;
 		}
 		else if(tmpStrValue == "suppressinvisible")
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue) && intValue != 0)
-				it.abilities.conditionSuppressions |= CONDITION_INVISIBLE;
+				it.getAbilities()->conditionSuppressions |= CONDITION_INVISIBLE;
 		}
 		else if(tmpStrValue == "suppressinfight")
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue) && intValue != 0)
-				it.abilities.conditionSuppressions |= CONDITION_INFIGHT;
+				it.getAbilities()->conditionSuppressions |= CONDITION_INFIGHT;
 		}
 		else if(tmpStrValue == "suppressexhaust")
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue) && intValue != 0)
-				it.abilities.conditionSuppressions |= CONDITION_EXHAUST;
+				it.getAbilities()->conditionSuppressions |= CONDITION_EXHAUST;
 		}
 		else if(tmpStrValue == "suppressmuted")
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue) && intValue != 0)
-				it.abilities.conditionSuppressions |= CONDITION_MUTED;
+				it.getAbilities()->conditionSuppressions |= CONDITION_MUTED;
 		}
 		else if(tmpStrValue == "suppresspacified")
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue) && intValue != 0)
-				it.abilities.conditionSuppressions |= CONDITION_PACIFIED;
+				it.getAbilities()->conditionSuppressions |= CONDITION_PACIFIED;
 		}
 		else if(tmpStrValue == "suppresslight")
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue) && intValue != 0)
-				it.abilities.conditionSuppressions |= CONDITION_LIGHT;
+				it.getAbilities()->conditionSuppressions |= CONDITION_LIGHT;
 		}
 		else if(tmpStrValue == "suppressattributes")
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue) && intValue != 0)
-				it.abilities.conditionSuppressions |= CONDITION_ATTRIBUTES;
+				it.getAbilities()->conditionSuppressions |= CONDITION_ATTRIBUTES;
 		}
 		else if(tmpStrValue == "suppressmanashield")
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue) && intValue != 0)
-				it.abilities.conditionSuppressions |= CONDITION_MANASHIELD;
+				it.getAbilities()->conditionSuppressions |= CONDITION_MANASHIELD;
 		}
 		else if(tmpStrValue == "field")
 		{
@@ -1771,88 +1775,88 @@ void Items::parseItemNode(xmlNodePtr itemNode, uint32_t id)
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue))
 			{
-				it.abilities.elementDamage = intValue;
-				it.abilities.elementType = COMBAT_PHYSICALDAMAGE;
+				it.getAbilities()->elementDamage = intValue;
+				it.getAbilities()->elementType = COMBAT_PHYSICALDAMAGE;
 			}
 		}
 		else if(tmpStrValue == "elementfire")
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue))
 			{
-				it.abilities.elementDamage = intValue;
-				it.abilities.elementType = COMBAT_FIREDAMAGE;
+				it.getAbilities()->elementDamage = intValue;
+				it.getAbilities()->elementType = COMBAT_FIREDAMAGE;
 			}
 		}
 		else if(tmpStrValue == "elementenergy")
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue))
 			{
-				it.abilities.elementDamage = intValue;
-				it.abilities.elementType = COMBAT_ENERGYDAMAGE;
+				it.getAbilities()->elementDamage = intValue;
+				it.getAbilities()->elementType = COMBAT_ENERGYDAMAGE;
 			}
 		}
 		else if(tmpStrValue == "elementearth")
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue))
 			{
-				it.abilities.elementDamage = intValue;
-				it.abilities.elementType = COMBAT_EARTHDAMAGE;
+				it.getAbilities()->elementDamage = intValue;
+				it.getAbilities()->elementType = COMBAT_EARTHDAMAGE;
 			}
 		}
 		else if(tmpStrValue == "elementice")
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue))
 			{
-				it.abilities.elementDamage = intValue;
-				it.abilities.elementType = COMBAT_ICEDAMAGE;
+				it.getAbilities()->elementDamage = intValue;
+				it.getAbilities()->elementType = COMBAT_ICEDAMAGE;
 			}
 		}
 		else if(tmpStrValue == "elementholy")
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue))
 			{
-				it.abilities.elementDamage = intValue;
-				it.abilities.elementType = COMBAT_HOLYDAMAGE;
+				it.getAbilities()->elementDamage = intValue;
+				it.getAbilities()->elementType = COMBAT_HOLYDAMAGE;
 			}
 		}
 		else if(tmpStrValue == "elementdeath")
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue))
 			{
-				it.abilities.elementDamage = intValue;
-				it.abilities.elementType = COMBAT_DEATHDAMAGE;
+				it.getAbilities()->elementDamage = intValue;
+				it.getAbilities()->elementType = COMBAT_DEATHDAMAGE;
 			}
 		}
 		else if(tmpStrValue == "elementlifedrain")
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue))
 			{
-				it.abilities.elementDamage = intValue;
-				it.abilities.elementType = COMBAT_LIFEDRAIN;
+				it.getAbilities()->elementDamage = intValue;
+				it.getAbilities()->elementType = COMBAT_LIFEDRAIN;
 			}
 		}
 		else if(tmpStrValue == "elementmanadrain")
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue))
 			{
-				it.abilities.elementDamage = intValue;
-				it.abilities.elementType = COMBAT_MANADRAIN;
+				it.getAbilities()->elementDamage = intValue;
+				it.getAbilities()->elementType = COMBAT_MANADRAIN;
 			}
 		}
 		else if(tmpStrValue == "elementhealing")
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue))
 			{
-				it.abilities.elementDamage = intValue;
-				it.abilities.elementType = COMBAT_HEALING;
+				it.getAbilities()->elementDamage = intValue;
+				it.getAbilities()->elementType = COMBAT_HEALING;
 			}
 		}
 		else if(tmpStrValue == "elementundefined")
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue))
 			{
-				it.abilities.elementDamage = intValue;
-				it.abilities.elementType = COMBAT_UNDEFINEDDAMAGE;
+				it.getAbilities()->elementDamage = intValue;
+				it.getAbilities()->elementType = COMBAT_UNDEFINEDDAMAGE;
 			}
 		}
 		else if(tmpStrValue == "replacable" || tmpStrValue == "replaceable")
@@ -1912,19 +1916,19 @@ void Items::parseItemNode(xmlNodePtr itemNode, uint32_t id)
 			it.pluralName += "s";
 	}
 
-	it.abilities.absorb[COMBAT_ALL] = it.abilities.absorb[COMBAT_FIRST + 1];
-	it.abilities.reflect[REFLECT_PERCENT][COMBAT_ALL] = it.abilities.reflect[REFLECT_PERCENT][COMBAT_FIRST + 1];
-	it.abilities.reflect[REFLECT_CHANCE][COMBAT_ALL] = it.abilities.reflect[REFLECT_CHANCE][COMBAT_FIRST + 1];
+	it.getAbilities()->absorb[COMBAT_ALL] = it.getAbilities()->absorb[COMBAT_FIRST + 1];
+	it.getAbilities()->reflect[REFLECT_PERCENT][COMBAT_ALL] = it.getAbilities()->reflect[REFLECT_PERCENT][COMBAT_FIRST + 1];
+	it.getAbilities()->reflect[REFLECT_CHANCE][COMBAT_ALL] = it.getAbilities()->reflect[REFLECT_CHANCE][COMBAT_FIRST + 1];
 	for(uint32_t i = (COMBAT_FIRST + 1) << 1; i <= COMBAT_LAST; i <<= 1)
 	{
-		if(it.abilities.absorb[COMBAT_ALL] != it.abilities.absorb[i])
-			it.abilities.absorb[COMBAT_ALL] = 0;
+		if(it.getAbilities()->absorb[COMBAT_ALL] != it.getAbilities()->absorb[i])
+			it.getAbilities()->absorb[COMBAT_ALL] = 0;
 
-		if(it.abilities.reflect[REFLECT_PERCENT][COMBAT_ALL] != it.abilities.reflect[REFLECT_PERCENT][i])
-			it.abilities.reflect[REFLECT_PERCENT][COMBAT_ALL] = 0;
+		if(it.getAbilities()->reflect[REFLECT_PERCENT][COMBAT_ALL] != it.getAbilities()->reflect[REFLECT_PERCENT][i])
+			it.getAbilities()->reflect[REFLECT_PERCENT][COMBAT_ALL] = 0;
 
-		if(it.abilities.reflect[REFLECT_CHANCE][COMBAT_ALL] != it.abilities.reflect[REFLECT_CHANCE][i])
-			it.abilities.reflect[REFLECT_CHANCE][COMBAT_ALL] = 0;
+		if(it.getAbilities()->reflect[REFLECT_CHANCE][COMBAT_ALL] != it.getAbilities()->reflect[REFLECT_CHANCE][i])
+			it.getAbilities()->reflect[REFLECT_CHANCE][COMBAT_ALL] = 0;
 	}
 }
 

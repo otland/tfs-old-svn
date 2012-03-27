@@ -26,7 +26,7 @@
 #include "position.h"
 #include <libxml/parser.h>
 
-#define ITEMS_SIZE 13000
+#define ITEMS_SIZE 15000
 #define ITEMS_INCREMENT 500
 #define ITEMS_RANDOMIZATION 50
 
@@ -118,6 +118,7 @@ class ItemType
 	public:
 		ItemType();
 		virtual ~ItemType();
+		Abilities* getAbilities() const {if(!abilities) abilities = new Abilities; return abilities;}
 
 		bool isGroundTile() const {return (group == ITEM_GROUP_GROUND);}
 		bool isContainer() const {return (group == ITEM_GROUP_CONTAINER);}
@@ -135,6 +136,7 @@ class ItemType
 		bool isBed() const {return (type == ITEM_TYPE_BED);}
 
 		bool hasSubType() const {return (isFluidContainer() || isSplash() || stackable || charges);}
+		bool hasAbilities() const {return abilities;}
 
 		bool loaded, stopTime, showCount, stackable, showDuration, showCharges, showAttributes, dualWield,
 			allowDistRead, canReadText, canWriteText, forceSerialize, isVertical, isHorizontal, isHangable,
@@ -163,7 +165,7 @@ class ItemType
 		std::string name, pluralName, article, description, text, writer, runeSpellName, vocationString;
 
 		Condition* condition;
-		Abilities abilities;
+		Abilities* abilities;
 		itemgroup_t group;
 		ItemTypes_t type;
 		float weight;

@@ -316,8 +316,8 @@ class Item : virtual public Thing, public ItemAttributes
 		bool isLoadedFromMap() const {return loadedFromMap;}
 		void setLoadedFromMap(bool value) {loadedFromMap = value;}
 
-		CombatType_t getElementType() const {return items[id].abilities.elementType;}
-		int32_t getElementDamage() const {return items[id].abilities.elementDamage;}
+		CombatType_t getElementType() const {return items[id].getAbilities()->elementType;}
+		int32_t getElementDamage() const {return items[id].getAbilities()->elementDamage;}
 
 		uint16_t getItemCount() const {return count;}
 		void setItemCount(uint16_t n) {count = std::max((uint16_t)1, n);}

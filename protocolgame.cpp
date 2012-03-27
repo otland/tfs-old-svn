@@ -2280,7 +2280,7 @@ void ProtocolGame::sendMarketDetail(uint16_t itemId)
 	bool separator = false;
 	for(uint32_t i = (COMBAT_FIRST + 1); i <= COMBAT_LAST; i <<= 1)
 	{
-		if(!it.abilities.absorb[i])
+		if(!it.getAbilities()->absorb[i])
 			continue;
 
 		if(separator)
@@ -2288,7 +2288,7 @@ void ProtocolGame::sendMarketDetail(uint16_t itemId)
 		else
 			separator = true;
 
-		ss << getCombatName((CombatType_t)i) << " " << std::showpos << it.abilities.absorb[i] << std::noshowpos << "%";
+		ss << getCombatName((CombatType_t)i) << " " << std::showpos << it.getAbilities()->absorb[i] << std::noshowpos << "%";
 	}
 	msg->putString(ss.str());
 
@@ -2318,7 +2318,7 @@ void ProtocolGame::sendMarketDetail(uint16_t itemId)
 	separator = false;
 	for(uint16_t i = SKILL_FIRST; i <= SKILL_LAST; i++)
 	{
-		if(!it.abilities.skills[i])
+		if(!it.getAbilities()->skills[i])
 			continue;
 
 		if(separator)
@@ -2326,15 +2326,15 @@ void ProtocolGame::sendMarketDetail(uint16_t itemId)
 		else
 			separator = true;
 
-		ss << getSkillName(i) << " " << std::showpos << it.abilities.skills[i] << std::noshowpos;
+		ss << getSkillName(i) << " " << std::showpos << it.getAbilities()->skills[i] << std::noshowpos;
 	}
 
-	if(it.abilities.speed != 0)
+	if(it.getAbilities()->speed != 0)
 	{
 		if(separator)
 			ss << ", ";
 
-		ss << "speed" << " " << std::showpos << (int32_t)(it.abilities.speed / 2) << std::noshowpos;
+		ss << "speed" << " " << std::showpos << (int32_t)(it.getAbilities()->speed / 2) << std::noshowpos;
 	}
 	msg->putString(ss.str());
 
