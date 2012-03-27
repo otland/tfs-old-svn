@@ -144,7 +144,7 @@ ItemType::~ItemType()
 
 Items::Items() // : items(35000)
 {
-	this->items = new Array<ItemType*>(16000);
+	this->items = new Array<ItemType*>(20100);
 }
 
 Items::~Items()

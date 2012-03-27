@@ -521,6 +521,9 @@ Player* Game::getPlayerByID(uint32_t id)
 
 Creature* Game::getCreatureByName(const std::string& s)
 {
+	if(s.empty())
+		return NULL;
+
 	std::string txt1 = asUpperCaseString(s);
 	for(AutoList<Creature>::listiterator it = listCreature.list.begin(); it != listCreature.list.end(); ++it)
 	{
@@ -536,6 +539,9 @@ Creature* Game::getCreatureByName(const std::string& s)
 
 Player* Game::getPlayerByName(const std::string& s)
 {
+	if(s.empty())
+		return NULL;
+
 	std::string txt1 = asUpperCaseString(s);
 	for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
 	{
@@ -551,6 +557,9 @@ Player* Game::getPlayerByName(const std::string& s)
 
 Player* Game::getPlayerByGUID(const uint32_t& guid)
 {
+	if(guid == 0)
+		return NULL;
+
 	for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
 	{
 		Player* player = (*it).second;
