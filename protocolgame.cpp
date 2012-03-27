@@ -48,6 +48,7 @@
 #include <sstream>
 #include <time.h>
 #include <list>
+#include <iomanip>
 
 #include <boost/function.hpp>
 
