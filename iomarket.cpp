@@ -26,9 +26,9 @@
 
 extern ConfigManager g_config;
 
-MarketOfferList IOMarket::getActiveOffers(MarketAction_t action, uint16_t itemId)
+MarketItemList IOMarket::getActiveOffers(MarketAction_t action, uint16_t itemId)
 {
-	MarketOfferList offerList;
+	MarketItemList itemList;
 
 	DBQuery query;
 	query << "SELECT `id`, `player_id`, `amount`, `price`, `created`, `anonymous` FROM `market_offers` WHERE `sale` = " << action << " AND `itemtype` = " << itemId << ";";
@@ -36,171 +36,151 @@ MarketOfferList IOMarket::getActiveOffers(MarketAction_t action, uint16_t itemId
 	Database* db = Database::getInstance();
 	DBResult* result;
 	if(!(result = db->storeQuery(query.str())))
-		return offerList;
+		return itemList;
 	
 	const int32_t marketOfferDuration = g_config.getNumber(ConfigManager::MARKET_OFFER_DURATION);
 	do
 	{
-		MarketOffer offer;
-		offer.amount = result->getDataInt("amount");
-		offer.price = result->getDataInt("price");
-		offer.timestamp = result->getDataInt("created") + marketOfferDuration;
-		offer.counter = result->getDataInt("id") & 0xFFFF;
+		MarketItem item;
+		item.amount = result->getDataInt("amount");
+		item.price = result->getDataInt("price");
+		item.timestamp = result->getDataInt("created") + marketOfferDuration;
+		item.counter = result->getDataInt("id") & 0xFFFF;
 		if(result->getDataInt("anonymous") == 0)
 		{
-			IOLoginData::getInstance()->getNameByGuid(result->getDataInt("player_id"), offer.playerName);
-			if(offer.playerName.empty())
-				offer.playerName = "Anonymous";
+			IOLoginData::getInstance()->getNameByGuid(result->getDataInt("player_id"), item.playerName);
+			if(item.playerName.empty())
+				item.playerName = "Anonymous";
 		}
 		else
-			offer.playerName = "Anonymous";
+			item.playerName = "Anonymous";
 
-		offerList.push_back(offer);
+		itemList.push_back(item);
 	}
 	while(result->next());
 	db->freeResult(result);
-	return offerList;
+	return itemList;
 }
 
-MarketOfferList IOMarket::getOwnOffers(MarketAction_t action, uint32_t playerId)
+MarketItemList IOMarket::getOwnOffers(MarketAction_t action, uint32_t playerId)
 {
-	MarketOfferList offerList;
+	MarketItemList itemList;
 
 	const int32_t marketOfferDuration = g_config.getNumber(ConfigManager::MARKET_OFFER_DURATION);
 
 	DBQuery query;
-	query << "SELECT `id`, `amount`, `price`, `created`, `anonymous`, `itemtype` FROM `market_offers` WHERE `player_id` = " << playerId << " AND `sale` = " << action << ";";
+	query << "SELECT `id`, `amount`, `price`, `created`, `anonymous`, `itemtype` FROM `market_offers` WHERE `player_id` = " << playerId << " AND `sale` = " << action << " AND `created` > " << (time(NULL) - marketOfferDuration) << ";";
 
 	Database* db = Database::getInstance();
 	DBResult* result;
 	if(!(result = db->storeQuery(query.str())))
-		return offerList;
+		return itemList;
 	
 	do
 	{
-		MarketOffer offer;
-		offer.amount = result->getDataInt("amount");
-		offer.price = result->getDataInt("price");
-		offer.timestamp = result->getDataInt("created") + marketOfferDuration;
-		offer.counter = result->getDataInt("id") & 0xFFFF;
-		offer.itemId = result->getDataInt("itemtype");
+		MarketItem item;
+		item.amount = result->getDataInt("amount");
+		item.price = result->getDataInt("price");
+		item.timestamp = result->getDataInt("created") + marketOfferDuration;
+		item.counter = result->getDataInt("id") & 0xFFFF;
+		item.itemId = result->getDataInt("itemtype");
 
-		offerList.push_back(offer);
+		itemList.push_back(item);
 	}
 	while(result->next());
 	db->freeResult(result);
-	return offerList;
+	return itemList;
 }
 
-HistoryMarketOfferList IOMarket::getOwnHistory(MarketAction_t action, uint32_t playerId)
+MarketItemList IOMarket::getOwnHistory(MarketAction_t action, uint32_t playerId)
 {
-	HistoryMarketOfferList offerList;
+	MarketItemList itemList;
+	/*
+	TODO: expired field or history table?
+
+	const int32_t marketOfferDuration = g_config.getNumber(ConfigManager::MARKET_OFFER_DURATION);
 
 	DBQuery query;
-	query << "SELECT `id`, `itemtype`, `amount`, `price`, `expires_at`, `state` FROM `market_history` WHERE `player_id` = " << playerId << " AND `sale` = " << action << ";";
+	query << "SELECT `id`, `amount`, `price`, `created`, `anonymous`, `itemtype` FROM `market_offers` WHERE `player_id` = " << playerId << " AND `sale` = " << action << " AND `expired` = 1;";
 
 	Database* db = Database::getInstance();
 	DBResult* result;
 	if(!(result = db->storeQuery(query.str())))
-		return offerList;
+		return itemList;
 	
 	do
 	{
-		HistoryMarketOffer offer;
-		offer.itemId = result->getDataInt("itemtype");
-		offer.amount = result->getDataInt("amount");
-		offer.price = result->getDataInt("price");
-		offer.timestamp = result->getDataInt("expires_at");
+		MarketItem item;
+		item.amount = result->getDataInt("amount");
+		item.price = result->getDataInt("price");
+		item.timestamp = result->getDataInt("created") + marketOfferDuration;
+		item.counter = result->getDataInt("id") & 0xFFFF;
+		item.itemId = result->getDataInt("itemtype");
 
-		MarketOfferState_t offerState = (MarketOfferState_t)result->getDataInt("state");
-		if(offerState == OFFERSTATE_ACCEPTEDEX)
-			offerState = OFFERSTATE_ACCEPTED;
-
-		offer.state = offerState;
-
-		offerList.push_back(offer);
+		itemList.push_back(item);
 	}
 	while(result->next());
 	db->freeResult(result);
-	return offerList;
+	*/
+	return itemList;
 }
 
-ExpiredMarketOfferList IOMarket::getExpiredOffers(MarketAction_t action)
+ExpiredMarketItemList IOMarket::getExpiredOffers(MarketAction_t action)
 {
-	ExpiredMarketOfferList offerList;
+	ExpiredMarketItemList itemList;
 
-	const time_t lastExpireDate = time(NULL) - g_config.getNumber(ConfigManager::MARKET_OFFER_DURATION);
+	const int32_t marketOfferDuration = g_config.getNumber(ConfigManager::MARKET_OFFER_DURATION);
 
 	DBQuery query;
-	query << "SELECT `id`, `amount`, `price`, `itemtype`, `player_id` FROM `market_offers` WHERE `sale` = " << action << " AND `created` <= " << lastExpireDate << ";";
+	query << "SELECT `id`, `amount`, `price`, `itemtype`, `player_id` FROM `market_offers` WHERE `sale` = " << action << " AND `created` <= " << (time(NULL) - marketOfferDuration) << ";";
 
 	Database* db = Database::getInstance();
 	DBResult* result;
 	if(!(result = db->storeQuery(query.str())))
-		return offerList;
+		return itemList;
 	
 	do
 	{
-		ExpiredMarketOffer offer;
-		offer.id = result->getDataInt("id");
-		offer.amount = result->getDataInt("amount");
-		offer.price = result->getDataInt("price");
-		offer.itemId = result->getDataInt("itemtype");
-		offer.playerId = result->getDataInt("player_id");
+		ExpiredMarketItem item;
+		item.id = result->getDataInt("id");
+		item.amount = result->getDataInt("amount");
+		item.price = result->getDataInt("price");
+		item.itemId = result->getDataInt("itemtype");
+		item.playerId = result->getDataInt("player_id");
 
-		offerList.push_back(offer);
+		itemList.push_back(item);
 	}
 	while(result->next());
 	db->freeResult(result);
-	return offerList;
+	return itemList;
 }
 
-int32_t IOMarket::getPlayerOfferCount(uint32_t playerId)
+bool IOMarket::deleteOfferById(uint32_t id)
 {
-	int32_t count = -1;
-	Database* db = Database::getInstance();
-	DBResult* result;
-
 	DBQuery query;
-	query << "SELECT COUNT(*) AS `count` FROM `market_offers` WHERE `player_id` = " << playerId << ";";
-	if(!(result = db->storeQuery(query.str())))
-		return count;
-
-	count = result->getDataInt("count");
-	db->freeResult(result);
-	return count;
+	query << "DELETE FROM `market_offers` WHERE `id` = " << id << ";";
+	return Database::getInstance()->executeQuery(query.str());
 }
 
-MarketOfferEx IOMarket::getOfferById(uint32_t id)
+MarketItemEx IOMarket::getOfferById(uint32_t id)
 {
-	MarketOfferEx offer;
+	MarketItemEx marketItem;
 	DBQuery query;
-	query << "SELECT `id`, `sale`, `itemtype`, `amount`, `created`, `price`, `player_id`, `anonymous` FROM `market_offers` WHERE `id` = " << id << ";";
+	query << "SELECT `id`, `sale`, `itemtype`, `amount`, `created`, `price`, `player_id` FROM `market_offers` WHERE `id` = " << id << ";";
 	Database* db = Database::getInstance();
 	DBResult* result;
 	if((result = db->storeQuery(query.str())))
 	{
-		offer.type = (MarketAction_t)result->getDataInt("sale");
-		offer.amount = result->getDataInt("amount");
-		offer.counter = result->getDataInt("id") & 0xFFFF;
-		offer.timestamp = result->getDataInt("created");
-		offer.price = result->getDataInt("price");
-		offer.itemId = result->getDataInt("itemtype");
-
-		int32_t playerId = result->getDataInt("player_id");
-		offer.playerId = playerId;
-		if(result->getDataInt("anonymous") == 0)
-		{
-			IOLoginData::getInstance()->getNameByGuid(playerId, offer.playerName);
-			if(offer.playerName.empty())
-				offer.playerName = "Anonymous";
-		}
-		else
-			offer.playerName = "Anonymous";
-
+		marketItem.type = (MarketAction_t)result->getDataInt("sale");
+		marketItem.amount = result->getDataInt("amount");
+		marketItem.counter = result->getDataInt("id") & 0xFFFF;
+		marketItem.timestamp = result->getDataInt("created");
+		marketItem.price = result->getDataInt("price");
+		marketItem.playerId = result->getDataInt("player_id");
+		marketItem.itemId = result->getDataInt("itemtype");
 		db->freeResult(result);
 	}
-	return offer;
+	return marketItem;
 }
 
 uint32_t IOMarket::getOfferIdByCounter(uint32_t timestamp, uint16_t counter)
@@ -232,91 +212,4 @@ void IOMarket::acceptOffer(uint32_t offerId, uint16_t amount)
 	DBQuery query;
 	query << "UPDATE `market_offers` SET `amount` = `amount` - " << amount << " WHERE `id` = " << offerId << ";";
 	Database::getInstance()->executeQuery(query.str());
-}
-
-void IOMarket::appendHistory(uint32_t playerId, MarketAction_t type, uint16_t itemId, uint16_t amount, uint32_t price, time_t timestamp, MarketOfferState_t state)
-{
-	DBQuery query;
-	query << "INSERT INTO `market_history` (`player_id`, `sale`, `itemtype`, `amount`, `price`, `expires_at`, `inserted`, `state`) VALUES "
-		<< "(" << playerId << ", " << type << ", " << itemId << ", " << amount << ", " << price << ", "
-		<< timestamp << ", " << time(NULL) << ", " << state << ");";
-	Database::getInstance()->executeQuery(query.str());
-}
-
-void IOMarket::moveOfferToHistory(uint32_t offerId, MarketOfferState_t state)
-{
-	const int32_t marketOfferDuration = g_config.getNumber(ConfigManager::MARKET_OFFER_DURATION);
-
-	Database* db = Database::getInstance();
-
-	DBQuery query;
-	DBResult* result;
-	query << "SELECT `player_id`, `sale`, `itemtype`, `amount`, `price`, `created` FROM `market_offers` WHERE `id` = " << offerId << ";";
-	if(!(result = db->storeQuery(query.str())))
-		return;
-
-	query.str("");
-	query << "DELETE FROM `market_offers` WHERE `id` = " << offerId << ";";
-	if(!db->executeQuery(query.str()))
-	{
-		db->freeResult(result);
-		return;
-	}
-
-	appendHistory(result->getDataInt("player_id"), (MarketAction_t)result->getDataInt("sale"), result->getDataInt("itemtype"), result->getDataInt("amount"), result->getDataInt("price"), result->getDataInt("created") + marketOfferDuration, state);
-	db->freeResult(result);
-}
-
-void IOMarket::clearOldHistory()
-{
-	const time_t lastExpireDate = time(NULL) - g_config.getNumber(ConfigManager::MARKET_OFFER_DURATION);
-	DBQuery query;
-	query << "DELETE FROM `market_history` WHERE `inserted` <= " << lastExpireDate << ";";
-	Database::getInstance()->executeQuery(query.str());
-}
-
-void IOMarket::updateStatistics()
-{
-	Database* db = Database::getInstance();
-
-	DBQuery query;
-	query << "SELECT `sale`, `itemtype`, COUNT(`price`) AS `num`, MIN(`price`) AS `min`, MAX(`price`) AS `max`, SUM(`price`) AS `sum` FROM `market_history` WHERE `state` = " << OFFERSTATE_ACCEPTED << " GROUP BY `itemtype`, `sale`;";
-
-	DBResult* result;
-	if(!(result = db->storeQuery(query.str())))
-		return;
-
-	do
-	{
-		MarketStatistics* statistics;
-		if(result->getDataInt("sale") == MARKETACTION_BUY)
-			statistics = &purchaseStatistics[result->getDataInt("itemtype")];
-		else
-			statistics = &saleStatistics[result->getDataInt("itemtype")];
-
-		statistics->numTransactions = result->getDataInt("num");
-		statistics->lowestPrice = result->getDataInt("min");
-		statistics->totalPrice = result->getDataLong("sum");
-		statistics->highestPrice = result->getDataInt("max");
-	}
-	while(result->next());
-	db->freeResult(result);
-}
-
-MarketStatistics* IOMarket::getPurchaseStatistics(uint16_t itemId)
-{
-	std::map<uint16_t, MarketStatistics>::iterator it = purchaseStatistics.find(itemId);
-	if(it == purchaseStatistics.end())
-		return NULL;
-
-	return &it->second;
-}
-
-MarketStatistics* IOMarket::getSaleStatistics(uint16_t itemId)
-{
-	std::map<uint16_t, MarketStatistics>::iterator it = saleStatistics.find(itemId);
-	if(it == saleStatistics.end())
-		return NULL;
-
-	return &it->second;
 }

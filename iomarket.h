@@ -38,31 +38,15 @@ class IOMarket
 			return &instance;
 		}
 
-		MarketOfferList getActiveOffers(MarketAction_t action, uint16_t itemId);
-		MarketOfferList getOwnOffers(MarketAction_t action, uint32_t playerId);
-		HistoryMarketOfferList getOwnHistory(MarketAction_t action, uint32_t playerId);
-
-		ExpiredMarketOfferList getExpiredOffers(MarketAction_t action);
-
-		int32_t getPlayerOfferCount(uint32_t playerId);
+		MarketItemList getActiveOffers(MarketAction_t action, uint16_t itemId);
+		MarketItemList getOwnHistory(MarketAction_t action, uint32_t playerId);
+		ExpiredMarketItemList getExpiredOffers(MarketAction_t action);
+		bool deleteOfferById(uint32_t id);
+		MarketItemList getOwnOffers(MarketAction_t action, uint32_t playerId);
 		uint32_t getOfferIdByCounter(uint32_t timestamp, uint16_t counter);
-		MarketOfferEx getOfferById(uint32_t id);
-
+		MarketItemEx getOfferById(uint32_t id);
 		void createOffer(uint32_t playerId, MarketAction_t action, uint32_t itemId, uint16_t amount, uint32_t price, bool anonymous);
 		void acceptOffer(uint32_t offerId, uint16_t amount);
-
-		void appendHistory(uint32_t playerId, MarketAction_t type, uint16_t itemId, uint16_t amount, uint32_t price, time_t timestamp, MarketOfferState_t state);
-		void moveOfferToHistory(uint32_t offerId, MarketOfferState_t state);
-		void clearOldHistory();
-
-		void updateStatistics();
-
-		MarketStatistics* getPurchaseStatistics(uint16_t itemId);
-		MarketStatistics* getSaleStatistics(uint16_t itemId);
-
-	private:
-		std::map<uint16_t, MarketStatistics> purchaseStatistics;
-		std::map<uint16_t, MarketStatistics> saleStatistics;
 };
 
 #endif
