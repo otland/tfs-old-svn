@@ -1,8 +1,6 @@
 //////////////////////////////////////////////////////////////////////
 // OpenTibia - an opensource roleplaying game
 //////////////////////////////////////////////////////////////////////
-// IOMarket
-//////////////////////////////////////////////////////////////////////
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
 // as published by the Free Software Foundation; either version 2
@@ -18,8 +16,8 @@
 // Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 //////////////////////////////////////////////////////////////////////
 
-#ifndef __OTSERV_IOMARKET_H__
-#define __OTSERV_IOMARKET_H__
+#ifndef __IOMARKET__
+#define __IOMARKET__
 
 #include <string>
 #include "account.h"

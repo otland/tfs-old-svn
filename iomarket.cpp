@@ -1,8 +1,6 @@
 //////////////////////////////////////////////////////////////////////
 // OpenTibia - an opensource roleplaying game
 //////////////////////////////////////////////////////////////////////
-// IOMarket
-//////////////////////////////////////////////////////////////////////
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
 // as published by the Free Software Foundation; either version 2
@@ -229,18 +227,20 @@ void IOMarket::createOffer(uint32_t playerId, MarketAction_t action, uint32_t it
 
 void IOMarket::acceptOffer(uint32_t offerId, uint16_t amount)
 {
+	Database* db = Database::getInstance();
 	DBQuery query;
 	query << "UPDATE `market_offers` SET `amount` = `amount` - " << amount << " WHERE `id` = " << offerId << ";";
-	Database::getInstance()->query(query.str());
+	db->query(query.str());
 }
 
 void IOMarket::appendHistory(uint32_t playerId, MarketAction_t type, uint16_t itemId, uint16_t amount, uint32_t price, time_t timestamp, MarketOfferState_t state)
 {
+	Database* db = Database::getInstance();
 	DBQuery query;
 	query << "INSERT INTO `market_history` (`player_id`, `sale`, `itemtype`, `amount`, `price`, `expires_at`, `inserted`, `state`) VALUES "
 		<< "(" << playerId << ", " << type << ", " << itemId << ", " << amount << ", " << price << ", "
 		<< timestamp << ", " << time(NULL) << ", " << state << ");";
-	Database::getInstance()->query(query.str());
+	db->query(query.str());
 }
 
 void IOMarket::moveOfferToHistory(uint32_t offerId, MarketOfferState_t state)
@@ -270,9 +270,10 @@ void IOMarket::moveOfferToHistory(uint32_t offerId, MarketOfferState_t state)
 void IOMarket::clearOldHistory()
 {
 	const time_t lastExpireDate = time(NULL) - g_config.getNumber(ConfigManager::MARKET_OFFER_DURATION);
+	Database* db = Database::getInstance();
 	DBQuery query;
 	query << "DELETE FROM `market_history` WHERE `inserted` <= " << lastExpireDate << ";";
-	Database::getInstance()->query(query.str());
+	db->query(query.str());
 }
 
 void IOMarket::updateStatistics()
