@@ -970,6 +970,7 @@ bool Player::addDepot(Depot* depot, uint32_t depotId)
 void Player::internalAddDepot(Depot* depot, uint32_t depotId)
 {
 	depots[depotId] = std::make_pair(depot, false);
+	depot->setDepotId(depotId);
 	depot->setMaxDepotLimit((group != NULL ? group->getDepotLimit(isPremium()) : 1000));
 }
 
