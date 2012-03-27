@@ -34,9 +34,6 @@ class Depot : public Container
 
 		uint32_t getDepotId() const;
 
-		uint16_t getDepotIdEx() const { return depotIdEx; }
-		void setDepotIdEx(uint16_t _id) { depotIdEx = _id; }
-
 		void setInbox(Container* container) {inbox = container;}
 		Container* getInbox() const {return inbox;}
 
@@ -76,7 +73,6 @@ class Depot : public Container
 	private:
 		Container *inbox, *locker;
 		uint32_t depotLimit;
-		uint16_t depotIdEx;
 };
 
 inline uint32_t Depot::getDepotId() const

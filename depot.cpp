@@ -19,7 +19,7 @@
 #include "tools.h"
 
 Depot::Depot(uint16_t type):
-	Container(type), inbox(NULL), locker(NULL), depotLimit(1000), depotIdEx(0)
+	Container(type), inbox(NULL), locker(NULL), depotLimit(1000)
 {}
 
 Attr_ReadValue Depot::readAttr(AttrTypes_t attr, PropStream& propStream)
