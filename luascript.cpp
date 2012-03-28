@@ -10476,19 +10476,19 @@ int32_t LuaInterface::luaGetItemInfo(lua_State* L)
 	setField(L, "vocationString", item->vocationString.c_str());
 
 	createTable(L, "abilities");
-	setFieldBool(L, "manaShield", item->abilities.manaShield);
-	setFieldBool(L, "invisible", item->abilities.invisible);
-	setFieldBool(L, "regeneration", item->abilities.regeneration);
-	setFieldBool(L, "preventLoss", item->abilities.preventLoss);
-	setFieldBool(L, "preventDrop", item->abilities.preventDrop);
-	setField(L, "elementType", (int32_t)item->abilities.elementType);
-	setField(L, "elementDamage", item->abilities.elementDamage);
-	setField(L, "speed", item->abilities.speed);
-	setField(L, "healthGain", item->abilities.healthGain);
-	setField(L, "healthTicks", item->abilities.healthTicks);
-	setField(L, "manaGain", item->abilities.manaGain);
-	setField(L, "manaTicks", item->abilities.manaTicks);
-	setField(L, "conditionSuppressions", item->abilities.conditionSuppressions);
+	setFieldBool(L, "manaShield", item->getAbilities()->manaShield);
+	setFieldBool(L, "invisible", item->getAbilities()->invisible);
+	setFieldBool(L, "regeneration", item->getAbilities()->regeneration);
+	setFieldBool(L, "preventLoss", item->getAbilities()->preventLoss);
+	setFieldBool(L, "preventDrop", item->getAbilities()->preventDrop);
+	setField(L, "elementType", (int32_t)item->getAbilities()->elementType);
+	setField(L, "elementDamage", item->getAbilities()->elementDamage);
+	setField(L, "speed", item->getAbilities()->speed);
+	setField(L, "healthGain", item->getAbilities()->healthGain);
+	setField(L, "healthTicks", item->getAbilities()->healthTicks);
+	setField(L, "manaGain", item->getAbilities()->manaGain);
+	setField(L, "manaTicks", item->getAbilities()->manaTicks);
+	setField(L, "conditionSuppressions", item->getAbilities()->conditionSuppressions);
 
 	//TODO: absorb, increment, reflect, skills, skillsPercent, stats, statsPercent
 
