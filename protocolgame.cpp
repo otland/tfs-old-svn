@@ -402,7 +402,7 @@ bool ProtocolGame::parseFirstPacket(NetworkMessage& msg)
 
 	msg.SkipBytes(3);
 
-	if(version < CLIENT_VERSION_MIN)
+	if(version < CLIENT_VERSION_MIN || version > CLIENT_VERSION_MAX)
 	{
 		disconnectClient(0x14, "Only clients with protocol " CLIENT_VERSION_MIN_STR " allowed!");
 		return false;

@@ -118,7 +118,7 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 		}
 	}
 
-	if(version < CLIENT_VERSION_MIN)
+	if(version < CLIENT_VERSION_MIN || version > CLIENT_VERSION_MAX)
 	{
 		disconnectClient(0x0A, "Only clients with protocol " CLIENT_VERSION_MIN_STR " allowed!");
 		return false;

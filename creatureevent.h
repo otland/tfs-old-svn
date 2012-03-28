@@ -99,4 +99,4 @@ class CreatureEvent : public Event
 		bool m_isLoaded;
 };
 
-#endif // __OTSERV_CREATUREEVENT_H__
+#endif

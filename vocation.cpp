@@ -104,6 +104,9 @@ bool Vocations::loadFromXml()
 
 					if(readXMLInteger(p, "attackspeed", intVal))
 						voc->attackSpeed = intVal;
+						
+					if(readXMLInteger(p, "basespeed", intVal))
+						voc->baseSpeed = intVal;
 
 					if(readXMLInteger(p, "soulmax", intVal))
 						voc->soulMax = intVal;
@@ -213,6 +216,7 @@ Vocation::Vocation()
 	gainMana = 5;
 	gainHP = 5;
 	attackSpeed = 1500;
+	baseSpeed = 220;
 	manaMultiplier = 4.0;
 	meleeDamageMultipler = 1.0;
 	distDamageMultipler = 1.0;

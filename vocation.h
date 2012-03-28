@@ -48,6 +48,7 @@ class Vocation
 		uint16_t getSoulGainTicks() const {return gainSoulTicks;}
 
 		uint32_t getAttackSpeed() const {return attackSpeed;}
+		uint32_t getBaseSpeed() const {return baseSpeed;}
 
 		uint32_t getFromVocation() const {return fromVocation;}
 
@@ -74,6 +75,7 @@ class Vocation
 		uint32_t fromVocation;
 
 		uint32_t attackSpeed;
+		uint32_t baseSpeed;
 
 		static uint32_t skillBase[SKILL_LAST + 1];
 		float skillMultipliers[SKILL_LAST + 1];

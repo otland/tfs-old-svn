@@ -176,4 +176,4 @@ class ConfigManager
 		bool m_confBoolean[LAST_BOOLEAN_CONFIG];
 };
 
-#endif /* _CONFIG_MANAGER_H */
+#endif
