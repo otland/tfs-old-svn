@@ -327,7 +327,7 @@ int32_t Weapon::playerWeaponCheck(Player* player, Creature* target) const
 
 	if(player->getMagicLevel() < getReqMagLv())
 	{
-		if(isWieldedUnproperly())
+		if(!isWieldedUnproperly())
 			return 0;
 
 		double penalty = (getReqMagLv() - player->getMagicLevel()) * 0.02;
