@@ -44,6 +44,7 @@
 #define	SLOTP_AMMO 512
 #define	SLOTP_DEPOT 1024
 #define	SLOTP_TWO_HAND 2048
+#define SLOTP_HAND (SLOTP_LEFT | SLOTP_RIGHT)
 
 enum ItemTypes_t
 {
@@ -170,6 +171,7 @@ class ItemType
 		int32_t extraDefense;
 		int32_t armor;
 		uint16_t slotPosition;
+		uint16_t wieldPosition;
 		uint32_t levelDoor;
 		bool isVertical;
 		bool isHorizontal;

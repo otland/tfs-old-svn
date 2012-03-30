@@ -317,6 +317,7 @@ class Item : virtual public Thing, public ItemAttributes
 		int32_t getDefense() const {return items[id].defense;}
 		int32_t getExtraDefense() const {return items[id].extraDefense;}
 		int32_t getSlotPosition() const {return items[id].slotPosition;}
+		int32_t getWieldPosition() const {return items[id].wieldPosition;}
 		int32_t getHitChance() const {return items[id].hitChance;}
 
 		bool isReadable() const {return items[id].canReadText;}

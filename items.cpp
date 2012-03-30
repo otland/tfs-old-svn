@@ -83,7 +83,8 @@ ItemType::ItemType()
 	weight = 0;  // weight of the item, e.g. throwing distance depends on it
 	showCount = true;
 	weaponType = WEAPON_NONE;
-	slotPosition = SLOTP_RIGHT | SLOTP_LEFT | SLOTP_AMMO;
+	slotPosition = SLOTP_HAND;
+	wieldPosition = SLOT_HAND;
 	ammoType = AMMO_NONE;
 	ammoAction = AMMOACTION_NONE;
 	shootType = (ShootType_t)0;
@@ -776,21 +777,62 @@ bool Items::parseItemNode(xmlNodePtr itemNode, uint32_t id)
 				{
 					tmpStrValue = asLowerCaseString(strValue);
 					if(tmpStrValue == "head")
+					{
 						it.slotPosition |= SLOTP_HEAD;
+						it.wieldPosition = SLOT_HEAD;
+					}
 					else if(tmpStrValue == "body")
+					{
 						it.slotPosition |= SLOTP_ARMOR;
+						it.wieldPosition = SLOT_ARMOR;
+					}
 					else if(tmpStrValue == "legs")
+					{
 						it.slotPosition |= SLOTP_LEGS;
+						it.wieldPosition = SLOT_LEGS;
+					}
 					else if(tmpStrValue == "feet")
+					{
 						it.slotPosition |= SLOTP_FEET;
+						it.wieldPosition = SLOT_FEET;
+					}
 					else if(tmpStrValue == "backpack")
+					{
 						it.slotPosition |= SLOTP_BACKPACK;
+						it.wieldPosition = SLOT_BACKPACK;
+					}
 					else if(tmpStrValue == "two-handed")
+					{
 						it.slotPosition |= SLOTP_TWO_HAND;
+						it.wieldPosition = SLOT_TWO_HAND;
+					}
+					else if(tmpStrValue == "right-hand")
+					{
+						it.slotPosition &= ~SLOTP_LEFT;
+						it.wieldPosition = SLOT_RIGHT;
+					}
+					else if(tmpStrValue == "left-hand")
+					{
+						it.slotPosition &= ~SLOTP_RIGHT;
+						it.wieldPosition = SLOT_LEFT;
+					}
 					else if(tmpStrValue == "necklace")
+					{
 						it.slotPosition |= SLOTP_NECKLACE;
+						it.wieldPosition = SLOT_NECKLACE;
+					}
 					else if(tmpStrValue == "ring")
+					{
 						it.slotPosition |= SLOTP_RING;
+						it.wieldPosition = SLOT_RING;
+					}
+					else if(tmpStrValue == "ammo")
+					{
+						it.slotPosition |= SLOTP_AMMO;
+						it.wieldPosition = SLOT_AMMO;
+					}
+					else if(tmpStrValue == "hand")
+						it.wieldPosition = SLOT_HAND;
 					else
 						std::cout << "Warning: [Items::loadFromXml] " << "Unknown slotType " << strValue << std::endl;
 				}
