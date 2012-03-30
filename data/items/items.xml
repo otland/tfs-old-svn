@@ -22752,80 +22752,136 @@
 		<attribute key="corpseType" value="blood"/>
 	</item>
 	<item id="15213" article="a" name="moist pillar"/>
-	<item id="15220" article="a" name="dead jaul">
-		<attribute key="weight" value="3000"/>
+ <item id="15220" article="a" name="dead Jaul">
+		<attribute key="weight" value="26000"/>
+		<attribute key="containerSize" value="8"/>
 		<attribute key="decayTo" value="15221"/>
-		<attribute key="duration" value="600"/>
+		<attribute key="duration" value="10"/>
 		<attribute key="corpseType" value="blood"/>
 	</item>
-	<item id="15221" article="a" name="dead jaul">
-		<attribute key="weight" value="2000"/>
+	<item id="15221" article="a" name="dead Jaul">
+		<attribute key="weight" value="20000"/>
+		<attribute key="containerSize" value="8"/>
 		<attribute key="decayTo" value="15222"/>
-		<attribute key="duration" value="600"/>
+		<attribute key="duration" value="900"/>
 		<attribute key="corpseType" value="blood"/>
 	</item>
-	<item id="15222" article="a" name="dead jaul">
-		<attribute key="weight" value="4400"/>
-		<attribute key="containerSize" value="5"/>
+	<item id="15222" article="a" name="dead Jaul">
+		<attribute key="weight" value="8000"/>
+		<attribute key="containerSize" value="8"/>
 		<attribute key="decayTo" value="15223"/>
 		<attribute key="duration" value="600"/>
 		<attribute key="corpseType" value="blood"/>
 	</item>
-	<item id="15223" article="a" name="dead jaul">
-		<attribute key="weight" value="3000"/>
+	<item id="15223" article="a" name="dead Jaul">
+		<attribute key="weight" value="4000"/>
 		<attribute key="decayTo" value="0"/>
 		<attribute key="duration" value="600"/>
 		<attribute key="corpseType" value="blood"/>
 	</item>
-	<item id="15224" article="a" name="dead obujos">
-		<attribute key="weight" value="2000"/>
+	<item id="15224" article="a" name="dead Obujos">
+		<attribute key="weight" value="26000"/>
+		<attribute key="containerSize" value="8"/>
 		<attribute key="decayTo" value="15225"/>
-		<attribute key="duration" value="600"/>
+		<attribute key="duration" value="10"/>
 		<attribute key="corpseType" value="blood"/>
 	</item>
-	<item id="15225" article="a" name="dead obujos">
-		<attribute key="weight" value="2000"/>
+	<item id="15225" article="a" name="dead Obujos">
+		<attribute key="weight" value="20000"/>
+		<attribute key="containerSize" value="8"/>
+		<attribute key="decayTo" value="15226"/>
+		<attribute key="duration" value="900"/>
+		<attribute key="corpseType" value="blood"/>
+	</item>
+	<item id="15226" article="a" name="dead Obujos">
+		<attribute key="weight" value="8000"/>
+		<attribute key="containerSize" value="8"/>
 		<attribute key="decayTo" value="15227"/>
 		<attribute key="duration" value="600"/>
 		<attribute key="corpseType" value="blood"/>
 	</item>
-	<item id="15226" article="a" name="dead obujos">
-		<attribute key="weight" value="2000"/>
+	<item id="15227" article="a" name="dead Obujos">
+		<attribute key="weight" value="4000"/>
 		<attribute key="decayTo" value="0"/>
 		<attribute key="duration" value="600"/>
 		<attribute key="corpseType" value="blood"/>
 	</item>
-	<item id="15227" article="a" name="dead obujos">
-		<attribute key="weight" value="2000"/>
-		<attribute key="decayTo" value="15226"/>
-		<attribute key="duration" value="600"/>
-		<attribute key="corpseType" value="blood"/>
-	</item>
-	<item id="15228" article="a" name="dead obujos">
-		<attribute key="weight" value="2000"/>
+	<item id="15228" article="a" name="dead Tanjis">
+		<attribute key="weight" value="26000"/>
+		<attribute key="containerSize" value="8"/>
 		<attribute key="decayTo" value="15229"/>
-		<attribute key="duration" value="600"/>
+		<attribute key="duration" value="10"/>
 		<attribute key="corpseType" value="blood"/>
 	</item>
-	<item id="15229" article="a" name="dead obujos">
-		<attribute key="weight" value="2000"/>
+	<item id="15229" article="a" name="dead Tanjis">
+		<attribute key="weight" value="20000"/>
+		<attribute key="containerSize" value="8"/>
 		<attribute key="decayTo" value="15230"/>
-		<attribute key="duration" value="600"/>
+		<attribute key="duration" value="900"/>
 		<attribute key="corpseType" value="blood"/>
 	</item>
-	<item id="15230" article="a" name="dead obujos">
-		<attribute key="weight" value="2000"/>
+	<item id="15230" article="a" name="dead Tanjis">
+		<attribute key="weight" value="8000"/>
+		<attribute key="containerSize" value="8"/>
 		<attribute key="decayTo" value="15231"/>
 		<attribute key="duration" value="600"/>
 		<attribute key="corpseType" value="blood"/>
 	</item>
-	<item id="15231" article="a" name="dead obujos">
-		<attribute key="weight" value="2000"/>
+	<item id="15232" article="a" name="dead Tanjis">
+		<attribute key="weight" value="4000"/>
 		<attribute key="decayTo" value="0"/>
 		<attribute key="duration" value="600"/>
 		<attribute key="corpseType" value="blood"/>
 	</item>
 	<item fromid="15250" toid="15267" article="an" name="enormous statue" />
+	<item id="15272" article="a" name="dead ladybug">
+		<attribute key="weight" value="26000"/>
+		<attribute key="containerSize" value="8"/>
+		<attribute key="decayTo" value="15273"/>
+		<attribute key="duration" value="10"/>
+		<attribute key="corpseType" value="blood"/>
+	</item>
+	<item id="15273" article="a" name="dead ladybug">
+		<attribute key="weight" value="20000"/>
+		<attribute key="containerSize" value="8"/>
+		<attribute key="decayTo" value="15274"/>
+		<attribute key="duration" value="900"/>
+		<attribute key="corpseType" value="blood"/>
+	</item>
+	<item id="15274" article="a" name="dead ladybug">
+		<attribute key="weight" value="8000"/>
+		<attribute key="containerSize" value="8"/>
+		<attribute key="decayTo" value="15275"/>
+		<attribute key="duration" value="600"/>
+		<attribute key="corpseType" value="blood"/>
+	</item>
+	<item id="15275" article="a" name="dead ladybug">
+		<attribute key="weight" value="4000"/>
+		<attribute key="decayTo" value="0"/>
+		<attribute key="duration" value="600"/>
+		<attribute key="corpseType" value="blood"/>
+	</item>
+	<item id="15276" article="a" name="dead manta">
+		<attribute key="weight" value="26000"/>
+		<attribute key="containerSize" value="8"/>
+		<attribute key="decayTo" value="15277"/>
+		<attribute key="duration" value="10"/>
+		<attribute key="corpseType" value="blood"/>
+	</item>
+	<item id="15277" article="a" name="dead manta">
+		<attribute key="weight" value="20000"/>
+		<attribute key="containerSize" value="8"/>
+		<attribute key="decayTo" value="15278"/>
+		<attribute key="duration" value="900"/>
+		<attribute key="corpseType" value="blood"/>
+	</item>
+	<item id="15278" article="a" name="dead manta">
+		<attribute key="weight" value="8000"/>
+		<attribute key="containerSize" value="8"/>
+		<attribute key="decayTo" value="0"/>
+		<attribute key="duration" value="600"/>
+		<attribute key="corpseType" value="blood"/>
+	</item>
 	<item id="15280" article="a" name="dead calamary">
 		<attribute key="weight" value="6300"/>
 		<attribute key="containerSize" value="5"/>
@@ -22853,6 +22909,60 @@
 		<attribute key="duration" value="600"/>
 		<attribute key="corpseType" value="blood"/>
 	</item>
+	<item id="15292" article="a" name="dead crawler">
+		<attribute key="weight" value="26000"/>
+		<attribute key="containerSize" value="8"/>
+		<attribute key="decayTo" value="15293"/>
+		<attribute key="duration" value="10"/>
+		<attribute key="corpseType" value="venom"/>
+	</item>
+	<item id="15293" article="a" name="dead crawler">
+		<attribute key="weight" value="20000"/>
+		<attribute key="containerSize" value="8"/>
+		<attribute key="decayTo" value="15294"/>
+		<attribute key="duration" value="900"/>
+		<attribute key="corpseType" value="venom"/>
+	</item>
+	<item id="15294" article="a" name="dead crawler">
+		<attribute key="weight" value="8000"/>
+		<attribute key="containerSize" value="8"/>
+		<attribute key="decayTo" value="15295"/>
+		<attribute key="duration" value="600"/>
+		<attribute key="corpseType" value="venom"/>
+	</item>
+	<item id="15295" article="a" name="dead crawler">
+		<attribute key="weight" value="4000"/>
+		<attribute key="decayTo" value="0"/>
+		<attribute key="duration" value="600"/>
+		<attribute key="corpseType" value="venom"/>
+	</item>
+	<item id="15296" article="a" name="dead spidris">
+		<attribute key="weight" value="26000"/>
+		<attribute key="containerSize" value="8"/>
+		<attribute key="decayTo" value="15297"/>
+		<attribute key="duration" value="10"/>
+		<attribute key="corpseType" value="venom"/>
+	</item>
+	<item id="15297" article="a" name="dead spidris">
+		<attribute key="weight" value="20000"/>
+		<attribute key="containerSize" value="8"/>
+		<attribute key="decayTo" value="15298"/>
+		<attribute key="duration" value="900"/>
+		<attribute key="corpseType" value="venom"/>
+	</item>
+	<item id="15298" article="a" name="dead spidris">
+		<attribute key="weight" value="8000"/>
+		<attribute key="containerSize" value="8"/>
+		<attribute key="decayTo" value="15299"/>
+		<attribute key="duration" value="600"/>
+		<attribute key="corpseType" value="venom"/>
+	</item>
+	<item id="15299" article="a" name="dead spidris">
+		<attribute key="weight" value="4000"/>
+		<attribute key="decayTo" value="0"/>
+		<attribute key="duration" value="600"/>
+		<attribute key="corpseType" value="venom"/>
+	</item>
 	<item fromid="15323" toid="15326" article="a" name="lampions" />
 	<item id="15327" name="flitter" />
 	<item id="15328" article="a" name="party snake" />
@@ -22870,8 +22980,89 @@
 	<item id="15344" article="a" name="party snake" />
 	<item id="15345" article="a" name="emblems" />
 	<item id="15346" article="an" name="emblem" />
+	<item id="15354" article="a" name="dead kollos">
+		<attribute key="weight" value="26000"/>
+		<attribute key="containerSize" value="8"/>
+		<attribute key="decayTo" value="15355"/>
+		<attribute key="duration" value="10"/>
+		<attribute key="corpseType" value="venom"/>
+	</item>
+	<item id="15355" article="a" name="dead kollos">
+		<attribute key="weight" value="20000"/>
+		<attribute key="containerSize" value="8"/>
+		<attribute key="decayTo" value="15356"/>
+		<attribute key="duration" value="900"/>
+		<attribute key="corpseType" value="venom"/>
+	</item>
+	<item id="15356" article="a" name="dead kollos">
+		<attribute key="weight" value="8000"/>
+		<attribute key="containerSize" value="8"/>
+		<attribute key="decayTo" value="15357"/>
+		<attribute key="duration" value="600"/>
+		<attribute key="corpseType" value="venom"/>
+	</item>
+	<item id="15357" article="a" name="dead kollos">
+		<attribute key="weight" value="4000"/>
+		<attribute key="decayTo" value="0"/>
+		<attribute key="duration" value="600"/>
+		<attribute key="corpseType" value="venom"/>
+	</item>	
 	<item id="15390" article="a"  name="blob bomb">
 		<attribute key="weight" value="110"/>
+	</item>
+	<item id="15392" article="a" name="dead spitter">
+		<attribute key="weight" value="26000"/>
+		<attribute key="containerSize" value="8"/>
+		<attribute key="decayTo" value="15393"/>
+		<attribute key="duration" value="10"/>
+		<attribute key="corpseType" value="venom"/>
+	</item>
+	<item id="15393" article="a" name="dead spitter">
+		<attribute key="weight" value="20000"/>
+		<attribute key="containerSize" value="8"/>
+		<attribute key="decayTo" value="15394"/>
+		<attribute key="duration" value="900"/>
+		<attribute key="corpseType" value="venom"/>
+	</item>
+	<item id="15394" article="a" name="dead spitter">
+		<attribute key="weight" value="8000"/>
+		<attribute key="containerSize" value="8"/>
+		<attribute key="decayTo" value="15395"/>
+		<attribute key="duration" value="600"/>
+		<attribute key="corpseType" value="venom"/>
+	</item>
+	<item id="15395" article="a" name="dead spitter">
+		<attribute key="weight" value="4000"/>
+		<attribute key="decayTo" value="0"/>
+		<attribute key="duration" value="600"/>
+		<attribute key="corpseType" value="venom"/>
+	</item>
+	<item id="15396" article="a" name="dead waspoid">
+		<attribute key="weight" value="26000"/>
+		<attribute key="containerSize" value="8"/>
+		<attribute key="decayTo" value="15397"/>
+		<attribute key="duration" value="10"/>
+		<attribute key="corpseType" value="venom"/>
+	</item>
+	<item id="15397" article="a" name="dead waspoid">
+		<attribute key="weight" value="20000"/>
+		<attribute key="containerSize" value="8"/>
+		<attribute key="decayTo" value="15398"/>
+		<attribute key="duration" value="900"/>
+		<attribute key="corpseType" value="venom"/>
+	</item>
+	<item id="15398" article="a" name="dead waspoid">
+		<attribute key="weight" value="8000"/>
+		<attribute key="containerSize" value="8"/>
+		<attribute key="decayTo" value="15399"/>
+		<attribute key="duration" value="600"/>
+		<attribute key="corpseType" value="venom"/>
+	</item>
+	<item id="15399" article="a" name="dead waspoid">
+		<attribute key="weight" value="4000"/>
+		<attribute key="decayTo" value="0"/>
+		<attribute key="duration" value="600"/>
+		<attribute key="corpseType" value="venom"/>
 	</item>
 	<item id="15400" article="a"  name="deepling staff">
 		<attribute key="weight" value="8800"/>
