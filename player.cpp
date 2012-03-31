@@ -2223,26 +2223,29 @@ BlockType_t Player::blockHit(Creature* attacker, CombatType_t combatType, int32_
 			(g_moveEvents->hasEquipEvent(item) && !isItemAbilityEnabled((slots_t)slot)))
 			continue;
 
-		bool transform = false;
 		const ItemType& it = Item::items[item->getID()];
-		if(it.getAbilities()->absorb[combatType])
+		if(!it.hasAbilities())
+			continue;
+
+		bool transform = false;
+		if(it.abilities->absorb[combatType])
 		{
-			blocked += (int32_t)std::ceil((double)(damage * it.getAbilities()->absorb[combatType]) / 100.);
+			blocked += (int32_t)std::ceil((double)(damage * it.abilities->absorb[combatType]) / 100.);
 			if(item->hasCharges())
 				transform = true;
 
 		}
 
-		if(field && it.getAbilities()->fieldAbsorb[combatType])
+		if(field && it.abilities->fieldAbsorb[combatType])
 		{
-			blocked += (int32_t)std::ceil((double)(damage * it.getAbilities()->fieldAbsorb[combatType]) / 100.);
+			blocked += (int32_t)std::ceil((double)(damage * it.abilities->fieldAbsorb[combatType]) / 100.);
 			if(item->hasCharges())
 				transform = true;
 		}
 
-		if(reflect && it.getAbilities()->reflect[REFLECT_PERCENT][combatType] && it.getAbilities()->reflect[REFLECT_CHANCE][combatType] >= random_range(1, 100))
+		if(reflect && it.abilities->reflect[REFLECT_PERCENT][combatType] && it.abilities->reflect[REFLECT_CHANCE][combatType] >= random_range(1, 100))
 		{
-			reflected += (int32_t)std::ceil((double)(damage * it.getAbilities()->reflect[REFLECT_PERCENT][combatType]) / 100.);
+			reflected += (int32_t)std::ceil((double)(damage * it.abilities->reflect[REFLECT_PERCENT][combatType]) / 100.);
 			if(item->hasCharges())
 				transform = true;
 		}
@@ -2321,13 +2324,16 @@ bool Player::onDeath()
 				continue;
 
 			const ItemType& it = Item::items[item->getID()];
-			if(lootDrop == LOOT_DROP_FULL && it.getAbilities()->preventDrop)
+			if(!it.hasAbilities())
+				continue;
+
+			if(lootDrop == LOOT_DROP_FULL && it.abilities->preventDrop)
 			{
 				setDropLoot(LOOT_DROP_PREVENT);
 				preventDrop = item;
 			}
 
-			if(skillLoss && !preventLoss && it.getAbilities()->preventLoss)
+			if(skillLoss && !preventLoss && it.abilities->preventLoss)
 				preventLoss = item;
 		}
 	}
@@ -5392,36 +5398,39 @@ void Player::increaseCombatValues(int32_t& min, int32_t& max, bool useCharges, b
 			continue;
 
 		const ItemType& it = Item::items[item->getID()];
+		if(!it.hasAbilities())
+			continue;
+
 		if(min > 0)
 		{
-			minValue += it.getAbilities()->increment[HEALING_VALUE];
-			if(it.getAbilities()->increment[HEALING_PERCENT])
-				min = (int32_t)std::ceil((double)(min * it.getAbilities()->increment[HEALING_PERCENT]) / 100.);
+			minValue += it.abilities->increment[HEALING_VALUE];
+			if(it.abilities->increment[HEALING_PERCENT])
+				min = (int32_t)std::ceil((double)(min * it.abilities->increment[HEALING_PERCENT]) / 100.);
 		}
 		else
 		{
-			minValue -= it.getAbilities()->increment[MAGIC_VALUE];
-			if(it.getAbilities()->increment[MAGIC_PERCENT])
-				min = (int32_t)std::ceil((double)(min * it.getAbilities()->increment[MAGIC_PERCENT]) / 100.);
+			minValue -= it.abilities->increment[MAGIC_VALUE];
+			if(it.abilities->increment[MAGIC_PERCENT])
+				min = (int32_t)std::ceil((double)(min * it.abilities->increment[MAGIC_PERCENT]) / 100.);
 		}
 
 		if(max > 0)
 		{
-			maxValue += it.getAbilities()->increment[HEALING_VALUE];
-			if(it.getAbilities()->increment[HEALING_PERCENT])
-				max = (int32_t)std::ceil((double)(max * it.getAbilities()->increment[HEALING_PERCENT]) / 100.);
+			maxValue += it.abilities->increment[HEALING_VALUE];
+			if(it.abilities->increment[HEALING_PERCENT])
+				max = (int32_t)std::ceil((double)(max * it.abilities->increment[HEALING_PERCENT]) / 100.);
 		}
 		else
 		{
-			maxValue -= it.getAbilities()->increment[MAGIC_VALUE];
-			if(it.getAbilities()->increment[MAGIC_PERCENT])
-				max = (int32_t)std::ceil((double)(max * it.getAbilities()->increment[MAGIC_PERCENT]) / 100.);
+			maxValue -= it.abilities->increment[MAGIC_VALUE];
+			if(it.abilities->increment[MAGIC_PERCENT])
+				max = (int32_t)std::ceil((double)(max * it.abilities->increment[MAGIC_PERCENT]) / 100.);
 		}
 
 		bool removeCharges = false;
 		for(int32_t j = INCREMENT_FIRST; j <= INCREMENT_LAST; ++j)
 		{
-			if(!it.getAbilities()->increment[(Increment_t)j])
+			if(!it.abilities->increment[(Increment_t)j])
 				continue;
 
 			removeCharges = true;

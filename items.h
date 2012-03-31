@@ -118,7 +118,7 @@ class ItemType
 	public:
 		ItemType();
 		virtual ~ItemType();
-		Abilities* getAbilities() const {if(!abilities) abilities = new Abilities; return abilities;}
+		Abilities* getAbilities() {if(!abilities) abilities = new Abilities; return abilities;}
 
 		bool isGroundTile() const {return (group == ITEM_GROUP_GROUND);}
 		bool isContainer() const {return (group == ITEM_GROUP_CONTAINER);}

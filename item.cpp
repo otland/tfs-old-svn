@@ -855,13 +855,13 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 			{
 				begin = false;
 				s << " (Atk:";
-				if(it.getAbilities()->elementType != COMBAT_NONE)
+				if(it.hasAbilities() && it.abilities->elementType != COMBAT_NONE)
 				{
-					s << std::max((int32_t)0, int32_t((item ? item->getAttack() : it.attack) - it.getAbilities()->elementDamage));
+					s << std::max((int32_t)0, int32_t((item ? item->getAttack() : it.attack) - it.abilities->elementDamage));
 					if(it.extraAttack || (item && item->getExtraAttack()))
 						s << " " << std::showpos << int32_t(item ? item->getExtraAttack() : it.extraAttack) << std::noshowpos;
 
-					s << " physical + " << it.getAbilities()->elementDamage << " " << getCombatName(it.getAbilities()->elementType);
+					s << " physical + " << it.abilities->elementDamage << " " << getCombatName(it.abilities->elementType);
 				}
 				else
 				{
@@ -900,254 +900,257 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 			s << "AS: " << (item ? item->getAttackSpeed() : it.attackSpeed);
 		}
 
-		for(uint16_t i = SKILL_FIRST; i <= SKILL_LAST; ++i)
+		if(it.hasAbilities())
 		{
-			if(!it.getAbilities()->skills[i])
-				continue;
-
-			if(begin)
+			for(uint16_t i = SKILL_FIRST; i <= SKILL_LAST; ++i)
 			{
-				begin = false;
-				s << " (";
-			}
-			else
-				s << ", ";
-
-			s << getSkillName(i) << " " << std::showpos << (int32_t)it.getAbilities()->skills[i] << std::noshowpos;
-		}
-
-		if(it.getAbilities()->stats[STAT_MAGICLEVEL])
-		{
-			if(begin)
-			{
-				begin = false;
-				s << " (";
-			}
-			else
-				s << ", ";
-
-			s << "magic level " << std::showpos << (int32_t)it.getAbilities()->stats[STAT_MAGICLEVEL] << std::noshowpos;
-		}
-
-		int32_t show = it.getAbilities()->absorb[COMBAT_ALL];
-		if(!show)
-		{
-			bool tmp = true;
-			for(uint32_t i = (COMBAT_FIRST + 1); i <= COMBAT_LAST; i <<= 1)
-			{
-				if(!it.getAbilities()->absorb[i])
+				if(!it.abilities->skills[i])
 					continue;
 
-				if(tmp)
+				if(begin)
 				{
-					tmp = false;
-					if(begin)
-					{
-						begin = false;
-						s << " (";
-					}
-					else
-						s << ", ";
-
-					s << "protection ";
+					begin = false;
+					s << " (";
 				}
 				else
 					s << ", ";
 
-				s << getCombatName((CombatType_t)i) << " " << std::showpos << it.getAbilities()->absorb[i] << std::noshowpos << "%";
+				s << getSkillName(i) << " " << std::showpos << (int32_t)it.abilities->skills[i] << std::noshowpos;
 			}
-		}
-		else
-		{
-			if(begin)
+
+			if(it.abilities->stats[STAT_MAGICLEVEL])
 			{
-				begin = false;
-				s << " (";
-			}
-			else
-				s << ", ";
-
-			s << "protection all " << std::showpos << show << std::noshowpos << "%";
-		}
-
-		show = it.getAbilities()->fieldAbsorb[COMBAT_ALL];
-		if(!show)
-		{
-			bool tmp = true;
-			for(uint32_t i = (COMBAT_FIRST + 1); i <= COMBAT_LAST; i <<= 1)
-			{
-				if(!it.getAbilities()->fieldAbsorb[i])
-					continue;
-
-				if(tmp)
+				if(begin)
 				{
-					tmp = false;
-					if(begin)
-					{
-						begin = false;
-						s << " (";
-					}
-					else
-						s << ", ";
-
-					s << "protection ";
+					begin = false;
+					s << " (";
 				}
 				else
 					s << ", ";
 
-				s << getCombatName((CombatType_t)i) << " field " << std::showpos << it.getAbilities()->absorb[i] << std::noshowpos << "%";
+				s << "magic level " << std::showpos << (int32_t)it.abilities->stats[STAT_MAGICLEVEL] << std::noshowpos;
 			}
-		}
-		else
-		{
-			if(begin)
+
+			int32_t show = it.abilities->absorb[COMBAT_ALL];
+			if(!show)
 			{
-				begin = false;
-				s << " (";
-			}
-			else
-				s << ", ";
-
-			s << "protection all fields " << std::showpos << show << std::noshowpos << "%";
-		}
-
-		show = it.getAbilities()->reflect[REFLECT_CHANCE][COMBAT_ALL];
-		if(!show)
-		{
-			bool tmp = true;
-			for(uint32_t i = (COMBAT_FIRST + 1); i <= COMBAT_LAST; i <<= 1)
-			{
-				if(!it.getAbilities()->reflect[REFLECT_CHANCE][i] || !it.getAbilities()->reflect[REFLECT_PERCENT][i])
-					continue;
-
-				if(tmp)
+				bool tmp = true;
+				for(uint32_t i = (COMBAT_FIRST + 1); i <= COMBAT_LAST; i <<= 1)
 				{
-					tmp = false;
-					if(begin)
+					if(!it.abilities->absorb[i])
+						continue;
+
+					if(tmp)
 					{
-						begin = false;
-						s << " (";
+						tmp = false;
+						if(begin)
+						{
+							begin = false;
+							s << " (";
+						}
+						else
+							s << ", ";
+
+						s << "protection ";
 					}
 					else
 						s << ", ";
 
-					s << "reflect: ";
+					s << getCombatName((CombatType_t)i) << " " << std::showpos << it.abilities->absorb[i] << std::noshowpos << "%";
+				}
+			}
+			else
+			{
+				if(begin)
+				{
+					begin = false;
+					s << " (";
 				}
 				else
 					s << ", ";
 
-				s << it.getAbilities()->reflect[REFLECT_CHANCE][i] << "% for ";
-				if(it.getAbilities()->reflect[REFLECT_PERCENT][i] > 99)
-					s << "whole";
-				else if(it.getAbilities()->reflect[REFLECT_PERCENT][i] >= 75)
-					s << "huge";
-				else if(it.getAbilities()->reflect[REFLECT_PERCENT][i] >= 50)
-					s << "medium";
-				else if(it.getAbilities()->reflect[REFLECT_PERCENT][i] >= 25)
-					s << "small";
-				else
-					s << "tiny";
-
-				s << getCombatName((CombatType_t)i);
+				s << "protection all " << std::showpos << show << std::noshowpos << "%";
 			}
 
-			if(!tmp)
+			show = it.abilities->fieldAbsorb[COMBAT_ALL];
+			if(!show)
+			{
+				bool tmp = true;
+				for(uint32_t i = (COMBAT_FIRST + 1); i <= COMBAT_LAST; i <<= 1)
+				{
+					if(!it.abilities->fieldAbsorb[i])
+						continue;
+
+					if(tmp)
+					{
+						tmp = false;
+						if(begin)
+						{
+							begin = false;
+							s << " (";
+						}
+						else
+							s << ", ";
+
+						s << "protection ";
+					}
+					else
+						s << ", ";
+
+					s << getCombatName((CombatType_t)i) << " field " << std::showpos << it.abilities->absorb[i] << std::noshowpos << "%";
+				}
+			}
+			else
+			{
+				if(begin)
+				{
+					begin = false;
+					s << " (";
+				}
+				else
+					s << ", ";
+
+				s << "protection all fields " << std::showpos << show << std::noshowpos << "%";
+			}
+
+			show = it.abilities->reflect[REFLECT_CHANCE][COMBAT_ALL];
+			if(!show)
+			{
+				bool tmp = true;
+				for(uint32_t i = (COMBAT_FIRST + 1); i <= COMBAT_LAST; i <<= 1)
+				{
+					if(!it.abilities->reflect[REFLECT_CHANCE][i] || !it.abilities->reflect[REFLECT_PERCENT][i])
+						continue;
+
+					if(tmp)
+					{
+						tmp = false;
+						if(begin)
+						{
+							begin = false;
+							s << " (";
+						}
+						else
+							s << ", ";
+
+						s << "reflect: ";
+					}
+					else
+						s << ", ";
+
+					s << it.abilities->reflect[REFLECT_CHANCE][i] << "% for ";
+					if(it.abilities->reflect[REFLECT_PERCENT][i] > 99)
+						s << "whole";
+					else if(it.abilities->reflect[REFLECT_PERCENT][i] >= 75)
+						s << "huge";
+					else if(it.abilities->reflect[REFLECT_PERCENT][i] >= 50)
+						s << "medium";
+					else if(it.abilities->reflect[REFLECT_PERCENT][i] >= 25)
+						s << "small";
+					else
+						s << "tiny";
+
+					s << getCombatName((CombatType_t)i);
+				}
+
+				if(!tmp)
+					s << " damage";
+			}
+			else
+			{
+				if(begin)
+				{
+					begin = false;
+					s << " (";
+				}
+				else
+					s << ", ";
+
+				int32_t tmp = it.abilities->reflect[REFLECT_PERCENT][COMBAT_ALL];
+				s << "reflect: " << show << "% for ";
+				if(tmp)
+				{
+					if(tmp > 99)
+						s << "whole";
+					else if(tmp >= 75)
+						s << "huge";
+					else if(tmp >= 50)
+						s << "medium";
+					else if(tmp >= 25)
+						s << "small";
+					else
+						s << "tiny";
+				}
+				else
+					s << "mixed";
+
 				s << " damage";
-		}
-		else
-		{
-			if(begin)
-			{
-				begin = false;
-				s << " (";
 			}
-			else
-				s << ", ";
 
-			int32_t tmp = it.getAbilities()->reflect[REFLECT_PERCENT][COMBAT_ALL];
-			s << "reflect: " << show << "% for ";
-			if(tmp)
+			if(it.abilities->speed)
 			{
-				if(tmp > 99)
-					s << "whole";
-				else if(tmp >= 75)
-					s << "huge";
-				else if(tmp >= 50)
-					s << "medium";
-				else if(tmp >= 25)
-					s << "small";
+				if(begin)
+				{
+					begin = false;
+					s << " (";
+				}
 				else
-					s << "tiny";
+					s << ", ";
+
+				s << "speed " << std::showpos << (int32_t)(it.abilities->speed / 2) << std::noshowpos;
 			}
-			else
-				s << "mixed";
 
-			s << " damage";
-		}
-
-		if(it.getAbilities()->speed)
-		{
-			if(begin)
+			if(it.abilities->invisible)
 			{
-				begin = false;
-				s << " (";
+				if(begin)
+				{
+					begin = false;
+					s << " (";
+				}
+				else
+					s << ", ";
+
+				s << "invisibility";
 			}
-			else
-				s << ", ";
 
-			s << "speed " << std::showpos << (int32_t)(it.getAbilities()->speed / 2) << std::noshowpos;
-		}
-
-		if(it.getAbilities()->invisible)
-		{
-			if(begin)
+			if(it.abilities->regeneration)
 			{
-				begin = false;
-				s << " (";
+				if(begin)
+				{
+					begin = false;
+					s << " (";
+				}
+				else
+					s << ", ";
+
+				s << "faster regeneration";
 			}
-			else
-				s << ", ";
 
-			s << "invisibility";
-		}
-
-		if(it.getAbilities()->regeneration)
-		{
-			if(begin)
+			if(it.abilities->manaShield)
 			{
-				begin = false;
-				s << " (";
+				if(begin)
+				{
+					begin = false;
+					s << " (";
+				}
+				else
+					s << ", ";
+
+				s << "mana shield";
 			}
-			else
-				s << ", ";
 
-			s << "faster regeneration";
-		}
-
-		if(it.getAbilities()->manaShield)
-		{
-			if(begin)
+			if(hasBitSet(CONDITION_DRUNK, it.abilities->conditionSuppressions))
 			{
-				begin = false;
-				s << " (";
+				if(begin)
+				{
+					begin = false;
+					s << " (";
+				}
+				else
+					s << ", ";
+
+				s << "hard drinking";
 			}
-			else
-				s << ", ";
-
-			s << "mana shield";
-		}
-
-		if(hasBitSet(CONDITION_DRUNK, it.getAbilities()->conditionSuppressions))
-		{
-			if(begin)
-			{
-				begin = false;
-				s << " (";
-			}
-			else
-				s << ", ";
-
-			s << "hard drinking";
 		}
 
 		if(it.dualWield || (item && item->isDualWield()))
@@ -1179,217 +1182,220 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 			begin = false;
 		}
 
-		for(uint16_t i = SKILL_FIRST; i <= SKILL_LAST; ++i)
+		if(it.hasAbilities())
 		{
-			if(!it.getAbilities()->skills[i])
-				continue;
-
-			if(begin)
+			for(uint16_t i = SKILL_FIRST; i <= SKILL_LAST; ++i)
 			{
-				begin = false;
-				s << " (";
-			}
-			else
-				s << ", ";
-
-			s << getSkillName(i) << " " << std::showpos << (int32_t)it.getAbilities()->skills[i] << std::noshowpos;
-		}
-
-		if(it.getAbilities()->stats[STAT_MAGICLEVEL])
-		{
-			if(begin)
-			{
-				begin = false;
-				s << " (";
-			}
-			else
-				s << ", ";
-
-			s << "magic level " << std::showpos << (int32_t)it.getAbilities()->stats[STAT_MAGICLEVEL] << std::noshowpos;
-		}
-
-		int32_t show = it.getAbilities()->absorb[COMBAT_ALL];
-		if(!show)
-		{
-			bool tmp = true;
-			for(uint32_t i = (COMBAT_FIRST + 1); i <= COMBAT_LAST; i <<= 1)
-			{
-				if(!it.getAbilities()->absorb[i])
+				if(!it.abilities->skills[i])
 					continue;
 
-				if(tmp)
+				if(begin)
 				{
-					tmp = false;
-					if(begin)
-					{
-						begin = false;
-						s << " (";
-					}
-					else
-						s << ", ";
-
-					s << "protection ";
+					begin = false;
+					s << " (";
 				}
 				else
 					s << ", ";
 
-				s << getCombatName((CombatType_t)i) << " " << std::showpos << it.getAbilities()->absorb[i] << std::noshowpos << "%";
+				s << getSkillName(i) << " " << std::showpos << (int32_t)it.abilities->skills[i] << std::noshowpos;
 			}
-		}
-		else
-		{
-			if(begin)
+
+			if(it.abilities->stats[STAT_MAGICLEVEL])
 			{
-				begin = false;
-				s << " (";
-			}
-			else
-				s << ", ";
-
-			s << "protection all " << std::showpos << show << std::noshowpos << "%";
-		}
-
-		show = it.getAbilities()->reflect[REFLECT_CHANCE][COMBAT_ALL];
-		if(!show)
-		{
-			bool tmp = true;
-			for(uint32_t i = (COMBAT_FIRST + 1); i <= COMBAT_LAST; i <<= 1)
-			{
-				if(!it.getAbilities()->reflect[REFLECT_CHANCE][i] || !it.getAbilities()->reflect[REFLECT_PERCENT][i])
-					continue;
-
-				if(tmp)
+				if(begin)
 				{
-					tmp = false;
-					if(begin)
-					{
-						begin = false;
-						s << " (";
-					}
-					else
-						s << ", ";
-
-					s << "reflect: ";
+					begin = false;
+					s << " (";
 				}
 				else
 					s << ", ";
 
-				s << it.getAbilities()->reflect[REFLECT_CHANCE][i] << "% for ";
-				if(it.getAbilities()->reflect[REFLECT_PERCENT][i] > 99)
-					s << "whole";
-				else if(it.getAbilities()->reflect[REFLECT_PERCENT][i] >= 75)
-					s << "huge";
-				else if(it.getAbilities()->reflect[REFLECT_PERCENT][i] >= 50)
-					s << "medium";
-				else if(it.getAbilities()->reflect[REFLECT_PERCENT][i] >= 25)
-					s << "small";
-				else
-					s << "tiny";
-
-				s << getCombatName((CombatType_t)i);
+				s << "magic level " << std::showpos << (int32_t)it.abilities->stats[STAT_MAGICLEVEL] << std::noshowpos;
 			}
 
-			if(!tmp)
+			int32_t show = it.abilities->absorb[COMBAT_ALL];
+			if(!show)
+			{
+				bool tmp = true;
+				for(uint32_t i = (COMBAT_FIRST + 1); i <= COMBAT_LAST; i <<= 1)
+				{
+					if(!it.abilities->absorb[i])
+						continue;
+
+					if(tmp)
+					{
+						tmp = false;
+						if(begin)
+						{
+							begin = false;
+							s << " (";
+						}
+						else
+							s << ", ";
+
+						s << "protection ";
+					}
+					else
+						s << ", ";
+
+					s << getCombatName((CombatType_t)i) << " " << std::showpos << it.abilities->absorb[i] << std::noshowpos << "%";
+				}
+			}
+			else
+			{
+				if(begin)
+				{
+					begin = false;
+					s << " (";
+				}
+				else
+					s << ", ";
+
+				s << "protection all " << std::showpos << show << std::noshowpos << "%";
+			}
+
+			show = it.abilities->reflect[REFLECT_CHANCE][COMBAT_ALL];
+			if(!show)
+			{
+				bool tmp = true;
+				for(uint32_t i = (COMBAT_FIRST + 1); i <= COMBAT_LAST; i <<= 1)
+				{
+					if(!it.abilities->reflect[REFLECT_CHANCE][i] || !it.abilities->reflect[REFLECT_PERCENT][i])
+						continue;
+
+					if(tmp)
+					{
+						tmp = false;
+						if(begin)
+						{
+							begin = false;
+							s << " (";
+						}
+						else
+							s << ", ";
+
+						s << "reflect: ";
+					}
+					else
+						s << ", ";
+
+					s << it.abilities->reflect[REFLECT_CHANCE][i] << "% for ";
+					if(it.abilities->reflect[REFLECT_PERCENT][i] > 99)
+						s << "whole";
+					else if(it.abilities->reflect[REFLECT_PERCENT][i] >= 75)
+						s << "huge";
+					else if(it.abilities->reflect[REFLECT_PERCENT][i] >= 50)
+						s << "medium";
+					else if(it.abilities->reflect[REFLECT_PERCENT][i] >= 25)
+						s << "small";
+					else
+						s << "tiny";
+
+					s << getCombatName((CombatType_t)i);
+				}
+
+				if(!tmp)
+					s << " damage";
+			}
+			else
+			{
+				if(begin)
+				{
+					begin = false;
+					s << " (";
+				}
+				else
+					s << ", ";
+
+				int32_t tmp = it.abilities->reflect[REFLECT_PERCENT][COMBAT_ALL];
+				s << "reflect: " << show << "% for ";
+				if(tmp)
+				{
+					if(tmp > 99)
+						s << "whole";
+					else if(tmp >= 75)
+						s << "huge";
+					else if(tmp >= 50)
+						s << "medium";
+					else if(tmp >= 25)
+						s << "small";
+					else
+						s << "tiny";
+				}
+				else
+					s << "mixed";
+
 				s << " damage";
-		}
-		else
-		{
-			if(begin)
-			{
-				begin = false;
-				s << " (";
 			}
-			else
-				s << ", ";
 
-			int32_t tmp = it.getAbilities()->reflect[REFLECT_PERCENT][COMBAT_ALL];
-			s << "reflect: " << show << "% for ";
-			if(tmp)
+			if(it.abilities->speed)
 			{
-				if(tmp > 99)
-					s << "whole";
-				else if(tmp >= 75)
-					s << "huge";
-				else if(tmp >= 50)
-					s << "medium";
-				else if(tmp >= 25)
-					s << "small";
+				if(begin)
+				{
+					begin = false;
+					s << " (";
+				}
 				else
-					s << "tiny";
+					s << ", ";
+
+				s << "speed " << std::showpos << (int32_t)(it.abilities->speed / 2) << std::noshowpos;
 			}
-			else
-				s << "mixed";
 
-			s << " damage";
-		}
-
-		if(it.getAbilities()->speed)
-		{
-			if(begin)
+			if(it.abilities->invisible)
 			{
-				begin = false;
-				s << " (";
+				if(begin)
+				{
+					begin = false;
+					s << " (";
+				}
+				else
+					s << ", ";
+
+				s << "invisibility";
 			}
-			else
-				s << ", ";
 
-			s << "speed " << std::showpos << (int32_t)(it.getAbilities()->speed / 2) << std::noshowpos;
-		}
-
-		if(it.getAbilities()->invisible)
-		{
-			if(begin)
+			if(it.abilities->regeneration)
 			{
-				begin = false;
-				s << " (";
+				if(begin)
+				{
+					begin = false;
+					s << " (";
+				}
+				else
+					s << ", ";
+
+				s << "faster regeneration";
 			}
-			else
-				s << ", ";
 
-			s << "invisibility";
-		}
-
-		if(it.getAbilities()->regeneration)
-		{
-			if(begin)
+			if(it.abilities->manaShield)
 			{
-				begin = false;
-				s << " (";
+				if(begin)
+				{
+					begin = false;
+					s << " (";
+				}
+				else
+					s << ", ";
+
+				s << "mana shield";
 			}
-			else
-				s << ", ";
 
-			s << "faster regeneration";
-		}
-
-		if(it.getAbilities()->manaShield)
-		{
-			if(begin)
+			if(hasBitSet(CONDITION_DRUNK, it.abilities->conditionSuppressions))
 			{
-				begin = false;
-				s << " (";
+				if(begin)
+				{
+					begin = false;
+					s << " (";
+				}
+				else
+					s << ", ";
+
+				s << "hard drinking";
 			}
-			else
-				s << ", ";
 
-			s << "mana shield";
+			if(!begin)
+				s << ")";
 		}
-
-		if(hasBitSet(CONDITION_DRUNK, it.getAbilities()->conditionSuppressions))
-		{
-			if(begin)
-			{
-				begin = false;
-				s << " (";
-			}
-			else
-				s << ", ";
-
-			s << "hard drinking";
-		}
-
-		if(!begin)
-			s << ")";
 	}
 	else if(it.isContainer())
 		s << " (Vol:" << (int32_t)it.maxItems << ")";

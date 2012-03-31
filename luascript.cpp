@@ -10476,19 +10476,19 @@ int32_t LuaInterface::luaGetItemInfo(lua_State* L)
 	setField(L, "vocationString", item->vocationString.c_str());
 
 	createTable(L, "abilities");
-	setFieldBool(L, "manaShield", item->getAbilities()->manaShield);
-	setFieldBool(L, "invisible", item->getAbilities()->invisible);
-	setFieldBool(L, "regeneration", item->getAbilities()->regeneration);
-	setFieldBool(L, "preventLoss", item->getAbilities()->preventLoss);
-	setFieldBool(L, "preventDrop", item->getAbilities()->preventDrop);
-	setField(L, "elementType", (int32_t)item->getAbilities()->elementType);
-	setField(L, "elementDamage", item->getAbilities()->elementDamage);
-	setField(L, "speed", item->getAbilities()->speed);
-	setField(L, "healthGain", item->getAbilities()->healthGain);
-	setField(L, "healthTicks", item->getAbilities()->healthTicks);
-	setField(L, "manaGain", item->getAbilities()->manaGain);
-	setField(L, "manaTicks", item->getAbilities()->manaTicks);
-	setField(L, "conditionSuppressions", item->getAbilities()->conditionSuppressions);
+	setFieldBool(L, "manaShield", item->hasAbilities() ? item->abilities->manaShield : false);
+	setFieldBool(L, "invisible", item->hasAbilities() ? item->abilities->invisible : false);
+	setFieldBool(L, "regeneration", item->hasAbilities() ? item->abilities->regeneration : false);
+	setFieldBool(L, "preventLoss", item->hasAbilities() ? item->abilities->preventLoss : false);
+	setFieldBool(L, "preventDrop", item->hasAbilities() ? item->abilities->preventDrop : false);
+	setField(L, "elementType", (int32_t)item->hasAbilities() ? item->abilities->elementType : 0);
+	setField(L, "elementDamage", item->hasAbilities() ? item->abilities->elementDamage : 0);
+	setField(L, "speed", item->hasAbilities() ? item->abilities->speed : 0);
+	setField(L, "healthGain", item->hasAbilities() ? item->abilities->healthGain : 0);
+	setField(L, "healthTicks", item->hasAbilities() ? item->abilities->healthTicks : 0);
+	setField(L, "manaGain", item->hasAbilities() ? item->abilities->manaGain : 0);
+	setField(L, "manaTicks", item->hasAbilities() ? item->abilities->manaTicks : 0);
+	setField(L, "conditionSuppressions", item->hasAbilities() ? item->abilities->conditionSuppressions : 0);
 
 	//TODO: absorb, increment, reflect, skills, skillsPercent, stats, statsPercent
 

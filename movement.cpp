@@ -1001,41 +1001,44 @@ bool MoveEvent::EquipItem(MoveEvent* moveEvent, Player* player, Item* item, slot
 	}
 
 	player->setItemAbility(slot, true);
-	if(it.getAbilities()->invisible)
+	if(!it.hasAbilities())
+		return true;
+
+	if(it.abilities->invisible)
 	{
 		Condition* condition = Condition::createCondition((ConditionId_t)slot, CONDITION_INVISIBLE, -1, 0);
 		player->addCondition(condition);
 	}
 
-	if(it.getAbilities()->manaShield)
+	if(it.abilities->manaShield)
 	{
 		Condition* condition = Condition::createCondition((ConditionId_t)slot, CONDITION_MANASHIELD, -1, 0);
 		player->addCondition(condition);
 	}
 
-	if(it.getAbilities()->speed)
-		g_game.changeSpeed(player, it.getAbilities()->speed);
+	if(it.abilities->speed)
+		g_game.changeSpeed(player, it.abilities->speed);
 
-	if(it.getAbilities()->conditionSuppressions)
+	if(it.abilities->conditionSuppressions)
 	{
-		player->setConditionSuppressions(it.getAbilities()->conditionSuppressions, false);
+		player->setConditionSuppressions(it.abilities->conditionSuppressions, false);
 		player->sendIcons();
 	}
 
-	if(it.getAbilities()->regeneration)
+	if(it.abilities->regeneration)
 	{
 		Condition* condition = Condition::createCondition((ConditionId_t)slot, CONDITION_REGENERATION, -1, 0);
-		if(it.getAbilities()->healthGain)
-			condition->setParam(CONDITIONPARAM_HEALTHGAIN, it.getAbilities()->healthGain);
+		if(it.abilities->healthGain)
+			condition->setParam(CONDITIONPARAM_HEALTHGAIN, it.abilities->healthGain);
 
-		if(it.getAbilities()->healthTicks)
-			condition->setParam(CONDITIONPARAM_HEALTHTICKS, it.getAbilities()->healthTicks);
+		if(it.abilities->healthTicks)
+			condition->setParam(CONDITIONPARAM_HEALTHTICKS, it.abilities->healthTicks);
 
-		if(it.getAbilities()->manaGain)
-			condition->setParam(CONDITIONPARAM_MANAGAIN, it.getAbilities()->manaGain);
+		if(it.abilities->manaGain)
+			condition->setParam(CONDITIONPARAM_MANAGAIN, it.abilities->manaGain);
 
-		if(it.getAbilities()->manaTicks)
-			condition->setParam(CONDITIONPARAM_MANATICKS, it.getAbilities()->manaTicks);
+		if(it.abilities->manaTicks)
+			condition->setParam(CONDITIONPARAM_MANATICKS, it.abilities->manaTicks);
 
 		player->addCondition(condition);
 	}
@@ -1043,16 +1046,16 @@ bool MoveEvent::EquipItem(MoveEvent* moveEvent, Player* player, Item* item, slot
 	bool needUpdateSkills = false;
 	for(uint32_t i = SKILL_FIRST; i <= SKILL_LAST; ++i)
 	{
-		if(it.getAbilities()->skills[i])
+		if(it.abilities->skills[i])
 		{
-			player->setVarSkill((skills_t)i, it.getAbilities()->skills[i]);
+			player->setVarSkill((skills_t)i, it.abilities->skills[i]);
 			if(!needUpdateSkills)
 				needUpdateSkills = true;
 		}
 
-		if(it.getAbilities()->skillsPercent[i])
+		if(it.abilities->skillsPercent[i])
 		{
-			player->setVarSkill((skills_t)i, (int32_t)(player->getSkill((skills_t)i, SKILL_LEVEL) * ((it.getAbilities()->skillsPercent[i] - 100) / 100.f)));
+			player->setVarSkill((skills_t)i, (int32_t)(player->getSkill((skills_t)i, SKILL_LEVEL) * ((it.abilities->skillsPercent[i] - 100) / 100.f)));
 			if(!needUpdateSkills)
 				needUpdateSkills = true;
 		}
@@ -1064,16 +1067,16 @@ bool MoveEvent::EquipItem(MoveEvent* moveEvent, Player* player, Item* item, slot
 	bool needUpdateStats = false;
 	for(uint32_t s = STAT_FIRST; s <= STAT_LAST; ++s)
 	{
-		if(it.getAbilities()->stats[s])
+		if(it.abilities->stats[s])
 		{
-			player->setVarStats((stats_t)s, it.getAbilities()->stats[s]);
+			player->setVarStats((stats_t)s, it.abilities->stats[s]);
 			if(!needUpdateStats)
 				needUpdateStats = true;
 		}
 
-		if(it.getAbilities()->statsPercent[s])
+		if(it.abilities->statsPercent[s])
 		{
-			player->setVarStats((stats_t)s, (int32_t)(player->getDefaultStats((stats_t)s) * ((it.getAbilities()->statsPercent[s] - 100) / 100.f)));
+			player->setVarStats((stats_t)s, (int32_t)(player->getDefaultStats((stats_t)s) * ((it.abilities->statsPercent[s] - 100) / 100.f)));
 			if(!needUpdateStats)
 				needUpdateStats = true;
 		}
@@ -1098,37 +1101,40 @@ bool MoveEvent::DeEquipItem(MoveEvent*, Player* player, Item* item, slots_t slot
 	}
 
 	player->setItemAbility(slot, false);
-	if(it.getAbilities()->invisible)
+	if(!it.hasAbilities())
+		return true;
+
+	if(it.abilities->invisible)
 		player->removeCondition(CONDITION_INVISIBLE, (ConditionId_t)slot);
 
-	if(it.getAbilities()->manaShield)
+	if(it.abilities->manaShield)
 		player->removeCondition(CONDITION_MANASHIELD, (ConditionId_t)slot);
 
-	if(it.getAbilities()->speed)
-		g_game.changeSpeed(player, -it.getAbilities()->speed);
+	if(it.abilities->speed)
+		g_game.changeSpeed(player, -it.abilities->speed);
 
-	if(it.getAbilities()->conditionSuppressions)
+	if(it.abilities->conditionSuppressions)
 	{
-		player->setConditionSuppressions(it.getAbilities()->conditionSuppressions, true);
+		player->setConditionSuppressions(it.abilities->conditionSuppressions, true);
 		player->sendIcons();
 	}
 
-	if(it.getAbilities()->regeneration)
+	if(it.abilities->regeneration)
 		player->removeCondition(CONDITION_REGENERATION, (ConditionId_t)slot);
 
 	bool needUpdateSkills = false;
 	for(uint32_t i = SKILL_FIRST; i <= SKILL_LAST; ++i)
 	{
-		if(it.getAbilities()->skills[i])
+		if(it.abilities->skills[i])
 		{
 			needUpdateSkills = true;
-			player->setVarSkill((skills_t)i, -it.getAbilities()->skills[i]);
+			player->setVarSkill((skills_t)i, -it.abilities->skills[i]);
 		}
 
-		if(it.getAbilities()->skillsPercent[i])
+		if(it.abilities->skillsPercent[i])
 		{
 			needUpdateSkills = true;
-			player->setVarSkill((skills_t)i, -(int32_t)(player->getSkill((skills_t)i, SKILL_LEVEL) * ((it.getAbilities()->skillsPercent[i] - 100) / 100.f)));
+			player->setVarSkill((skills_t)i, -(int32_t)(player->getSkill((skills_t)i, SKILL_LEVEL) * ((it.abilities->skillsPercent[i] - 100) / 100.f)));
 		}
 	}
 
@@ -1138,16 +1144,16 @@ bool MoveEvent::DeEquipItem(MoveEvent*, Player* player, Item* item, slots_t slot
 	bool needUpdateStats = false;
 	for(uint32_t s = STAT_FIRST; s <= STAT_LAST; ++s)
 	{
-		if(it.getAbilities()->stats[s])
+		if(it.abilities->stats[s])
 		{
 			needUpdateStats = true;
-			player->setVarStats((stats_t)s, -it.getAbilities()->stats[s]);
+			player->setVarStats((stats_t)s, -it.abilities->stats[s]);
 		}
 
-		if(it.getAbilities()->statsPercent[s])
+		if(it.abilities->statsPercent[s])
 		{
 			needUpdateStats = true;
-			player->setVarStats((stats_t)s, -(int32_t)(player->getDefaultStats((stats_t)s) * ((it.getAbilities()->statsPercent[s] - 100) / 100.f)));
+			player->setVarStats((stats_t)s, -(int32_t)(player->getDefaultStats((stats_t)s) * ((it.abilities->statsPercent[s] - 100) / 100.f)));
 		}
 	}
 
