@@ -61,6 +61,10 @@
 	<action itemid="1639" function="decreaseItemId"/>
 	<action itemid="1640" function="increaseItemId"/>
 	<action itemid="1641" function="decreaseItemId"/>
+	<action itemid="5812" function="increaseItemId"/>
+	<action itemid="5813" function="decreaseItemId"/>
+	<action itemid="6489" function="increaseItemId"/>
+	<action itemid="6490" function="decreaseItemId"/>
 	<action itemid="7058" function="increaseItemId"/>
 	<action itemid="7059" function="decreaseItemId"/>
 	<action itemid="8684" function="increaseItemId"/>

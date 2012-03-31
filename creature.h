@@ -52,9 +52,7 @@ enum slots_t
 	SLOT_RING = 9,
 	SLOT_AMMO = 10,
 	SLOT_DEPOT = 11,
-	SLOT_LAST = SLOT_DEPOT,
-	SLOT_HAND = 12,
-	SLOT_TWO_HAND = SLOT_HAND
+	SLOT_LAST = SLOT_DEPOT
 };
 
 struct FindPathParams

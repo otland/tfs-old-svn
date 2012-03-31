@@ -60,6 +60,7 @@
 		XML/
 	M		outfits.xml
 	M		mounts.xml
+	M		vocations.xml
 	M	weapons/weapons.xml
 ]
 
@@ -104,5 +105,7 @@
 	Optimized ItemType code to save up to 75MB memory.
 	Fixed a bug with premium account code causing it to remove 1 day everytime you would login.
 	Fixed magicfields item ids, fields spawned from map will always use the persistent id, fields used in combat will always use the expiring id.
+	The arrow slot can now only be used for ammunition.
+	Vocation base speed configurable in vocations.xml.
 	A lot of miscellaneous cleanups, fixes and optimizations.
 ]

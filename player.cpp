@@ -307,9 +307,6 @@ Item* Player::getInventoryItem(slots_t slot) const
 	if(slot >= SLOT_FIRST && slot < SLOT_LAST)
 		return inventory[slot];
 
-	if(slot == SLOT_HAND)
-		return inventory[SLOT_LEFT] ? inventory[SLOT_LEFT] : inventory[SLOT_RIGHT];
-
 	return NULL;
 }
 

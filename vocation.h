@@ -35,6 +35,8 @@ class Vocation
 		uint32_t getReqSkillTries(int32_t skill, int32_t level);
 		uint64_t getReqMana(uint32_t magLevel);
 
+		uint8_t getClientId() const {return clientId;}
+
 		uint32_t getHPGain() const {return gainHP;}
 		uint32_t getManaGain() const {return gainMana;}
 		uint32_t getCapGain() const {return gainCap;}
@@ -57,6 +59,8 @@ class Vocation
 	protected:
 		friend class Vocations;
 		Vocation();
+
+		uint8_t clientId;
 
 		std::string name;
 		std::string description;

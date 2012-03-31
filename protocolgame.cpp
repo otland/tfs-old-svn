@@ -1990,7 +1990,7 @@ void ProtocolGame::sendMarketEnter(uint32_t depotId)
 	TRACK_MESSAGE(msg);
 	msg->AddByte(0xF6);
 	msg->AddU32(std::min((uint64_t)0xFFFFFFFF, player->getBankBalance()));
-	msg->AddByte(player->getVocationId());
+	msg->AddByte(player->getVocation()->getClientId());
 	msg->AddByte(std::min((int32_t)0xFF, IOMarket::getInstance()->getPlayerOfferCount(player->getGUID())));
 
 	Depot* depot = player->getDepot(depotId, false);

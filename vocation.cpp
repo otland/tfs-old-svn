@@ -75,6 +75,9 @@ bool Vocations::loadFromXml()
 					if(readXMLString(p, "name", str))
 						voc->name = str;
 
+					if(readXMLInteger(p, "clientid", intVal))
+						voc->clientId = intVal;
+
 					if(readXMLString(p, "description", str))
 						voc->description = str;
 
@@ -168,13 +171,12 @@ bool Vocations::loadFromXml()
 Vocation* Vocations::getVocation(uint32_t id)
 {
 	VocationsMap::iterator it = vocationsMap.find(id);
-	if(it != vocationsMap.end())
-		return it->second;
-	else
+	if(it == vocationsMap.end())
 	{
 		std::cout << "Warning: [Vocations::getVocation] Vocation " << id << " not found." << std::endl;
 		return &def_voc;
 	}
+	return it->second;
 }
 
 int32_t Vocations::getVocationId(const std::string& name)
@@ -210,6 +212,7 @@ Vocation::Vocation()
 	gainSoulTicks = 120;
 	soulMax = 100;
 
+	clientId = 0;
 	fromVocation = 0;
 
 	gainCap = 5;
