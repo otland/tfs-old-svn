@@ -474,7 +474,7 @@ void Vocation::reset()
 	needPremium = false;
 	attackable = dropLoot = skillLoss = true;
 	lessLoss = fromVocation = 0;
-	clientId = 1;
+	clientId = 0;
 	gain[GAIN_SOUL] = 100;
 	gainTicks[GAIN_SOUL] = 120;
 	baseSpeed = 220;
