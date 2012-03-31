@@ -37,7 +37,7 @@ MarketOfferList IOMarket::getActiveOffers(MarketAction_t action, uint16_t itemId
 	DBResult* result;
 	if(!(result = db->storeQuery(query.str())))
 		return offerList;
-	
+
 	const int32_t marketOfferDuration = g_config.getNumber(ConfigManager::MARKET_OFFER_DURATION);
 	do
 	{
@@ -75,7 +75,7 @@ MarketOfferList IOMarket::getOwnOffers(MarketAction_t action, uint32_t playerId)
 	DBResult* result;
 	if(!(result = db->storeQuery(query.str())))
 		return offerList;
-	
+
 	do
 	{
 		MarketOffer offer;
@@ -103,7 +103,7 @@ HistoryMarketOfferList IOMarket::getOwnHistory(MarketAction_t action, uint32_t p
 	DBResult* result;
 	if(!(result = db->storeQuery(query.str())))
 		return offerList;
-	
+
 	do
 	{
 		HistoryMarketOffer offer;
@@ -138,7 +138,7 @@ ExpiredMarketOfferList IOMarket::getExpiredOffers(MarketAction_t action)
 	DBResult* result;
 	if(!(result = db->storeQuery(query.str())))
 		return offerList;
-	
+
 	do
 	{
 		ExpiredMarketOffer offer;
@@ -280,7 +280,7 @@ void IOMarket::updateStatistics()
 	Database* db = Database::getInstance();
 
 	DBQuery query;
-	query << "SELECT `sale`, `itemtype`, COUNT(`price`) AS `num`, MIN(`price`) AS `min`, MAX(`price`) AS `max`, SUM(`price`) AS `sum` FROM `market_history` WHERE `state` = " << OFFERSTATE_ACCEPTED << " GROUP BY `itemtype`, `sale`;";
+	query << "SELECT `sale` AS `sale`, `itemtype` AS `itemtype`, COUNT(`price`) AS `num`, MIN(`price`) AS `min`, MAX(`price`) AS `max`, SUM(`price`) AS `sum` FROM `market_history` WHERE `state` = " << OFFERSTATE_ACCEPTED << " GROUP BY `itemtype`, `sale`;";
 
 	DBResult* result;
 	if(!(result = db->storeQuery(query.str())))

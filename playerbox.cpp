@@ -167,7 +167,7 @@ bool PlayerBox::popUp(LPCTSTR szCaption)
 
 	playerBox = CreateWindowEx(WS_EX_TOOLWINDOW, "PlayerBox", szCaption, WS_POPUPWINDOW|WS_CAPTION|WS_TABSTOP, (r.right-200)/2, (r.bottom-115)/2, 225, 115, parent, NULL, m_hInst, NULL);
 	if(playerBox == NULL)
-		return FALSE;
+		return false;
 
 	SetForegroundWindow(playerBox);
 	EnableWindow(parent, FALSE);
@@ -190,6 +190,6 @@ bool PlayerBox::popUp(LPCTSTR szCaption)
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);
 	}
-	return ret;
+	return ret == TRUE;
 }
 #endif

@@ -1029,7 +1029,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 					{
 						g_dispatcher.addTask(
 							createTask(boost::bind(&Game::saveGameState, &g_game)));
-						MessageBoxA(NULL, "The players online has been saved.", "Save players", MB_OK);
+						MessageBoxA(NULL, "The players online have been saved.", "Save players", MB_OK);
 					}
 				}
 				break;
