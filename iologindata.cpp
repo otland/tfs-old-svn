@@ -763,10 +763,6 @@ bool IOLoginData::savePlayer(Player* player, bool preSave)
 	}
 	db->freeResult(result);
 
-	DBTransaction transaction(db);
-	if(!transaction.begin())
-		return false;
-
 	//serialize conditions
 	PropWriteStream propWriteStream;
 	for(ConditionList::const_iterator it = player->conditions.begin(); it != player->conditions.end(); ++it)
@@ -843,6 +839,11 @@ bool IOLoginData::savePlayer(Player* player, bool preSave)
 		query << "`rank_id` = " << IOGuild::getInstance()->getRankIdByGuildIdAndLevel(player->getGuildId(), player->getGuildLevel()) << " ";
 	}
 	query << " WHERE `id` = " << player->getGUID() << ";";
+
+	DBTransaction transaction(db);
+	if(!transaction.begin())
+		return false;
+
 	if(!db->executeQuery(query.str()))
 		return false;
 
