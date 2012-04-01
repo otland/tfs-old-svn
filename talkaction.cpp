@@ -940,34 +940,6 @@ bool TalkAction::thingProporties(Creature* creature, const std::string&, const s
 					teleport->setDestination(Position(atoi(parseParams(it, tokens.end()).c_str()), atoi(
 						parseParams(it, tokens.end()).c_str()), atoi(parseParams(it, tokens.end()).c_str())));
 			}
-			else if(action == "duration")
-				item->setAttribute("duration", (atoi(parseParams(it, tokens.end()).c_str())));
-			else if(action == "writer")
-				item->setAttribute("writer", (parseParams(it, tokens.end()).c_str()));
-			else if(action == "text")
-				item->setAttribute("text", (parseParams(it, tokens.end()).c_str()));
-			else if(action == "name")
-				item->setAttribute("name", (parseParams(it, tokens.end()).c_str()));
-			else if(action == "pluralname")
-				item->setAttribute("pluralname", (parseParams(it, tokens.end()).c_str()));
-			else if(action == "article")
-				item->setAttribute("article", (parseParams(it, tokens.end()).c_str()));
-			else if(action == "attack")
-				item->setAttribute("attack", (atoi(parseParams(it, tokens.end()).c_str())));
-			else if(action == "extraattack")
-				item->setAttribute("extraattack", (atoi(parseParams(it, tokens.end()).c_str())));
-			else if(action == "defense")
-				item->setAttribute("defense", (atoi(parseParams(it, tokens.end()).c_str())));
-			else if(action == "extradefense")
-				item->setAttribute("extradefense", (atoi(parseParams(it, tokens.end()).c_str())));
-			else if(action == "armor")
-				item->setAttribute("armor", (atoi(parseParams(it, tokens.end()).c_str())));
-			else if(action == "attackspeed")
-				item->setAttribute("attackspeed", (atoi(parseParams(it, tokens.end()).c_str())));
-			else if(action == "hitchance")
-				item->setAttribute("hitchance", (atoi(parseParams(it, tokens.end()).c_str())));
-			else if(action == "shootrange")
-				item->setAttribute("shootrange", (atoi(parseParams(it, tokens.end()).c_str())));
 			else
 			{
 				std::stringstream s;
