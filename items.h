@@ -136,7 +136,7 @@ class ItemType
 		bool isBed() const {return (type == ITEM_TYPE_BED);}
 
 		bool hasSubType() const {return (isFluidContainer() || isSplash() || stackable || charges);}
-		bool hasAbilities() const {return abilities;}
+		bool hasAbilities() const {return abilities != NULL;}
 
 		bool loaded, stopTime, showCount, stackable, showDuration, showCharges, showAttributes, dualWield,
 			allowDistRead, canReadText, canWriteText, forceSerialize, isVertical, isHorizontal, isHangable,
