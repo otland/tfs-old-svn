@@ -61,8 +61,8 @@
 #endif
 
 #ifndef WIN32
-#ifndef __CONSOLE__
-#define __CONSOLE__
+#ifndef _CONSOLE
+#define _CONSOLE
 #endif
 #endif
 

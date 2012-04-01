@@ -20,7 +20,7 @@
 
 #include "otpch.h"
 
-#ifndef __CONSOLE__
+#ifndef _CONSOLE
 
 #include "definitions.h"
 #include "textlogger.h"

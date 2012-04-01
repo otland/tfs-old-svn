@@ -1,4 +1,4 @@
-#ifndef __CONSOLE__
+#ifndef _CONSOLE
 #include "resources.h"
 #include <windows.h>
 

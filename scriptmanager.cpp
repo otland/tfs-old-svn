@@ -33,7 +33,7 @@
 #include "creatureevent.h"
 #include "globalevent.h"
 
-#ifndef __CONSOLE__
+#ifndef _CONSOLE
 #include "gui.h"
 #endif
 

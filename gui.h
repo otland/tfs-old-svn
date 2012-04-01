@@ -21,7 +21,7 @@
 #ifndef __FORGOTTENSERVER_GUI_H__
 #define __FORGOTTENSERVER_GUI_H__
 
-#ifndef __CONSOLE__
+#ifndef _CONSOLE
 #include "playerbox.h"
 #include "resources.h"
 

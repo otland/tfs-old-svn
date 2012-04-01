@@ -20,7 +20,7 @@
 
 #ifndef __INPUTBOX_H__
 #define __INPUTBOX_H__
-#ifndef __CONSOLE__
+#ifndef _CONSOLE
 #include <tchar.h>
 #include <windows.h>
 #include <stdlib.h>

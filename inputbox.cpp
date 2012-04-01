@@ -22,7 +22,7 @@
 
 #include "definitions.h"
 
-#ifndef __CONSOLE__
+#ifndef _CONSOLE
 #include "inputbox.h"
 
 HFONT CInputBox::m_hFont = NULL;

@@ -42,7 +42,7 @@
 #include "beds.h"
 #include "mounts.h"
 #include "quests.h"
-#ifndef __CONSOLE__
+#ifndef _CONSOLE
 #include "gui.h"
 #endif
 
@@ -1454,7 +1454,7 @@ void Player::onCreatureAppear(const Creature* creature, bool isLogin)
 			#endif
 		}
 
-		#ifndef __CONSOLE__
+		#ifndef _CONSOLE
 		GUI::getInstance()->m_pBox.addPlayer(this);
 		#endif
 		std::cout << name << " has logged in." << std::endl;
@@ -1554,7 +1554,7 @@ void Player::onCreatureDisappear(const Creature* creature, uint32_t stackpos, bo
 
 		g_chat.removeUserFromAllChannels(this);
 
-		#ifndef __CONSOLE__
+		#ifndef _CONSOLE
 		GUI::getInstance()->m_pBox.removePlayer(this);
 		#endif
 		std::cout << getName() << " has logged out." << std::endl;

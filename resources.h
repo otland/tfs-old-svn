@@ -1,4 +1,4 @@
-#ifndef __CONSOLE__
+#ifndef _CONSOLE
 	#define ID_KICK 101
 	#define ID_BAN 102
 	#define ID_ABOUT 104

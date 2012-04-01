@@ -66,7 +66,7 @@ void ProtocolLogin::disconnectClient(uint8_t error, const char* message)
 bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 {
 	if(
-#ifndef __CONSOLE__
+#ifndef _CONSOLE
 		!GUI::getInstance()->m_connections ||
 #endif
 		g_game.getGameState() == GAME_STATE_SHUTDOWN)

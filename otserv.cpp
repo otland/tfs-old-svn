@@ -55,7 +55,7 @@
 #include "ban.h"
 #include "rsa.h"
 
-#ifndef __CONSOLE__
+#ifndef _CONSOLE
 #ifdef WIN32
 #include "shellapi.h"
 #include "gui.h"
@@ -109,7 +109,7 @@ Monsters g_monsters;
 Vocations g_vocations;
 RSA g_RSA;
 
-#ifndef __CONSOLE__
+#ifndef _CONSOLE
 #ifdef _WIN32
 NOTIFYICONDATA NID;
 TextLogger logger;
@@ -136,7 +136,7 @@ void startupErrorMessage(std::string errorStr)
 		std::cout << "> ERROR: " << errorStr << std::endl;
 
 	#ifdef WIN32
-	#ifndef __CONSOLE__
+	#ifndef _CONSOLE
 	system("pause");
 	#endif
 	#else
@@ -146,7 +146,7 @@ void startupErrorMessage(std::string errorStr)
 }
 
 void mainLoader(
-#ifdef __CONSOLE__
+#ifdef _CONSOLE
 	int argc, char *argv[],
 #endif
 	ServiceManager* servicer
@@ -161,7 +161,7 @@ void badAllocationHandler()
 	exit(-1);
 }
 
-#ifndef __CONSOLE__
+#ifndef _CONSOLE
 void serverMain(void* param)
 #else
 int main(int argc, char *argv[])
@@ -171,7 +171,7 @@ int main(int argc, char *argv[])
 	std::set_new_handler(badAllocationHandler);
 
 	#ifdef _WIN32
-	#ifndef __CONSOLE__
+	#ifndef _CONSOLE
 	std::cout.rdbuf(&logger);
 	#endif
 	#endif
@@ -205,7 +205,7 @@ int main(int argc, char *argv[])
 	g_scheduler.start();
 
 	g_dispatcher.addTask(createTask(boost::bind(mainLoader,
-#ifdef __CONSOLE__
+#ifdef _CONSOLE
 		argc, argv,
 #endif
 		&servicer)));
@@ -217,7 +217,7 @@ int main(int argc, char *argv[])
 	if(servicer.is_running())
 	{
 		std::cout << ">> " << g_config.getString(ConfigManager::SERVER_NAME) << " Server Online!" << std::endl << std::endl;
-		#ifndef __CONSOLE__
+		#ifndef _CONSOLE
 		SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Status: Online!");
 		GUI::getInstance()->m_connections = true;
 		#endif
@@ -226,7 +226,7 @@ int main(int argc, char *argv[])
 	else
 	{
 		std::cout << ">> No services running. The server is NOT online." << std::endl;
-		#ifndef __CONSOLE__
+		#ifndef _CONSOLE
 		SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Status: Offline (no services running)!");
 		#endif
 	}
@@ -234,14 +234,14 @@ int main(int argc, char *argv[])
 #ifdef __EXCEPTION_TRACER__
 	mainExceptionHandler.RemoveHandler();
 #endif
-#ifndef __CONSOLE__
+#ifndef _CONSOLE
 	exit(0);
 #else
 	return 0;
 #endif
 }
 
-#ifdef __CONSOLE__
+#ifdef _CONSOLE
 void mainLoader(int argc, char *argv[], ServiceManager* services)
 #else
 void mainLoader(ServiceManager* services)
@@ -252,7 +252,7 @@ void mainLoader(ServiceManager* services)
 
 	srand((unsigned int)OTSYS_TIME());
 	#ifdef WIN32
-	#ifdef __CONSOLE__
+	#ifdef _CONSOLE
 	SetConsoleTitle(STATUS_SERVER_NAME);
 	#endif
 	#endif
@@ -295,7 +295,7 @@ void mainLoader(ServiceManager* services)
 	std::cout << std::endl;
 	#endif
 
-	#ifndef __CONSOLE__
+	#ifndef _CONSOLE
 	GUI::getInstance()->m_connections = false;
 	#endif
 
@@ -308,7 +308,7 @@ void mainLoader(ServiceManager* services)
 
 	// read global config
 	std::cout << ">> Loading config" << std::endl;
-	#ifndef __CONSOLE__
+	#ifndef _CONSOLE
 	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Loading config");
 	#endif
 	#if !defined(WIN32) && !defined(__NO_HOMEDIR_CONF__)
@@ -381,7 +381,7 @@ void mainLoader(ServiceManager* services)
 
 	//load bans
 	std::cout << ">> Loading bans" << std::endl;
-	#ifndef __CONSOLE__
+	#ifndef _CONSOLE
 	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Loading bans");
 	#endif
 
@@ -389,7 +389,7 @@ void mainLoader(ServiceManager* services)
 
 	//load vocations
 	std::cout << ">> Loading vocations" << std::endl;
-	#ifndef __CONSOLE__
+	#ifndef _CONSOLE
 	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Loading vocations");
 	#endif
 	if(!g_vocations.loadFromXml())
@@ -397,7 +397,7 @@ void mainLoader(ServiceManager* services)
 
 	//load commands
 	std::cout << ">> Loading commands" << std::endl;
-	#ifndef __CONSOLE__
+	#ifndef _CONSOLE
 	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Loading commands");
 	#endif
 	if(!commands.loadFromXml())
@@ -405,7 +405,7 @@ void mainLoader(ServiceManager* services)
 
 	// load item data
 	std::cout << ">> Loading items" << std::endl;
-	#ifndef __CONSOLE__
+	#ifndef _CONSOLE
 	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Loading items");
 	#endif
 	if(Item::items.loadFromOtb("data/items/items.otb"))
@@ -413,33 +413,33 @@ void mainLoader(ServiceManager* services)
 
 	if(!Item::items.loadFromXml())
 	{
-		#if defined(_WIN32) && !defined(__CONSOLE__)
+		#if defined(_WIN32) && !defined(_CONSOLE)
 		if(MessageBoxA(GUI::getInstance()->m_mainWindow, "Unable to load items (XML)! Continue?", "Items (XML)", MB_YESNO) == IDNO)
 		#endif
 			startupErrorMessage("Unable to load items (XML)!");
 	}
 
 	std::cout << ">> Loading script systems" << std::endl;
-	#ifndef __CONSOLE__
+	#ifndef _CONSOLE
 	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Loading script systems");
 	#endif
 	if(!ScriptingManager::getInstance()->loadScriptSystems())
 		startupErrorMessage("");
 
 	std::cout << ">> Loading monsters" << std::endl;
-	#ifndef __CONSOLE__
+	#ifndef _CONSOLE
 	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Loading monsters");
 	#endif
 	if(!g_monsters.loadFromXml())
 	{
-		#ifndef __CONSOLE__
+		#ifndef _CONSOLE
 		if(MessageBoxA(GUI::getInstance()->m_mainWindow, "Unable to load monsters! Continue?", "Monsters", MB_YESNO) == IDNO)
 		#endif
 			startupErrorMessage("Unable to load monsters!");
 	}
 
 	std::cout << ">> Loading outfits" << std::endl;
-	#ifndef __CONSOLE__
+	#ifndef _CONSOLE
 	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Loading outfits");
 	#endif
 	Outfits* outfits = Outfits::getInstance();
@@ -448,14 +448,14 @@ void mainLoader(ServiceManager* services)
 
 	g_adminConfig = new AdminProtocolConfig();
 	std::cout << ">> Loading admin protocol config" << std::endl;
-	#ifndef __CONSOLE__
+	#ifndef _CONSOLE
 	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Loading admin protocol config");
 	#endif
 	if(!g_adminConfig->loadXMLConfig())
 		startupErrorMessage("Unable to load admin protocol config!");
 
 	std::cout << ">> Loading experience stages" << std::endl;
-	#ifndef __CONSOLE__
+	#ifndef _CONSOLE
 	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Loading experience stages");
 	#endif
 	if(!g_game.loadExperienceStages())
@@ -499,7 +499,7 @@ void mainLoader(ServiceManager* services)
 	status->setMapName(g_config.getString(ConfigManager::MAP_NAME));
 
 	std::cout << ">> Loading map" << std::endl;
-	#ifndef __CONSOLE__
+	#ifndef _CONSOLE
 	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Loading map");
 	#endif
 	if(!g_game.loadMap(g_config.getString(ConfigManager::MAP_NAME)))
@@ -635,7 +635,7 @@ void mainLoader(ServiceManager* services)
 	OTSYS_THREAD_SIGNAL_SEND(g_loaderSignal);
 }
 
-#ifndef __CONSOLE__
+#ifndef _CONSOLE
 LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	CInputBox iBox(hwnd);

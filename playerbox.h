@@ -20,7 +20,7 @@
 
 #ifndef __FORGOTTENSERVER_PLAYERBOX__
 #define __FORGOTTENSERVER_PLAYERBOX__
-#ifndef __CONSOLE__
+#ifndef _CONSOLE
 #include <tchar.h>
 #include <windows.h>
 #include <stdlib.h>
