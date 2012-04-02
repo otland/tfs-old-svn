@@ -1346,11 +1346,11 @@ void Commands::clean(Player* player, const std::string& cmd, const std::string& 
 	uint32_t count = g_game.getMap()->clean();
 	std::stringstream ss;
 	if(count == 1)
-		ss << "Deleted 1 item.";
+		ss << "Cleaned 1 item from the map.";
 	else
-		ss << "Deleted " << count << " items.";
+		ss << "Cleaned " << count << " items from the map.";
 
-	player->sendCancel(ss.str());
+	g_game.broadcastMessage(ss.str(), MSG_STATUS_WARNING);
 }
 
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__

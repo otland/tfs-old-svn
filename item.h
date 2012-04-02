@@ -388,6 +388,7 @@ class Item : virtual public Thing, public ItemAttributes
 
 		bool isLoadedFromMap() {return loadedFromMap;}
 		void setLoadedFromMap(bool value) {loadedFromMap = value;}
+		bool isCleanable() const {return(!loadedFromMap && (getUniqueId() == 0 && getActionId() == 0) && isPickupable() && canRemove()); }
 
 	protected:
 		std::string getWeightDescription(double weight) const;
