@@ -3,7 +3,7 @@
 		The Forgotten Server
 
 	Version
-		0.2.12
+		0.2.13
 
 	Codenamed
 		"Mystic Spirit"
@@ -20,92 +20,9 @@
 	M = Modified.
 	A = Added.
 
-	M The Forgotten Server.exe
-	M config.lua
-	  data/
-	M	global.lua
-		actions/
-	M		actions.xml
-			scripts/other/
-	M			changegold.lua
-	M			fluids.lua
-		items/
-	M		items.otb
-	M		items.xml
-		monster/
-	M		slime.xml
-	M		slime2.xml
-	M	movements/movements.xml
-	M	npc/lib/npcsystem/npchandler.lua
-		spells/scripts/
-			attack/
-	M			energy bomb.lua
-	M			energy field.lua
-	M			energy wall.lua
-	M			fire bomb.lua
-	M			fire field.lua
-	M			fire wall.lua
-	M			poison bomb.lua
-	M			poison field.lua
-	M			poison wall.lua
-			custom/
-	M			magic prison.lua
-			support/
-	M			magic wall rune.lua
-	M			wild growth rune.lua
-		talkactions/scripts/
-	M		buyprem.lua
-	M		changesex.lua
-	M		deathlist.lua
-		XML/
-	M		outfits.xml
-	M		mounts.xml
-	M		vocations.xml
-	M	weapons/weapons.xml
+	M	data/npc/lib/npcsystem/modules.lua
 ]
 
 [ Milestone
-	Game protocol 9.44 support.
-	Revised database system.
-	Market system.
-	Fixed element damages.
-	Fixed a bug with Lua function getPlayersByIP, it was ignoring mask even if set.
-	Healing messages will no longer show if health change is 0.
-	Removed the config option for animation text on heal.
-	Corrected the color of the healing numbers.
-	Corrected the new outfit looktypes.
-	Updated item description for expiration times.
-	Added missing mounts.
-	Fixed element damage hit order.
-	The teleport effect will now show up when a creature is summoned.
-	Fixed hotkey message for items without showCount.
-	Healing message will now be precise on how much health the creature was healed up with.
-	Decay buckets are now 4, with 250ms intervals instead of 16 with 1000ms intervals for more accurate duration times (this may cause higher CPU usage).
-	Added premium attribute to mounts.
-	Added db and result functions to the Lua interface.
-	LuaSQL dependency removed (with backwards compatibility for most code).
-	Lua result library from The Forgotten Server 0.3.
-	Fixed a bug with vial, blue bottle, jug and waterskin.
-	Updated a lot of item attributes.
-	Corrected cheese and scarab cheese client id and stackable attribute.
-	Fixed so that vials (fluids.lua) will use fluidSource from items.xml.
-	NPC's can now be pushed by players inside their spawn radius.
-	Added database manager for automatic database updates and table optimizations.
-	It is now possible to register multiple creature events with the same type for one creature.
-	Added Ladybug and Manta mounts.
-	Added Entrepreneur outfit.
-	New depot structure.
-	Updated items, movements and weapons.
-	Fixed a trade bug.
-	Now using account names.
-	onCreatureDisappear will now properly be called for NPC's.
-	Experience, healing and damage messages will now only show for spectators on the same floor.
-	Major optimizations to Account Manager code.
-	Removed a SQLite trigger that truncated some tables when players were updated (the server already does this, and it caused a bug).
-	Optimized ItemType code to save up to 75MB memory.
-	Fixed a bug with premium account code causing it to remove 1 day everytime you would login.
-	Fixed magicfields item ids, fields spawned from map will always use the persistent id, fields used in combat will always use the expiring id.
-	The arrow slot can now only be used for ammunition.
-	Vocation base speed configurable in vocations.xml.
-	A lot of miscellaneous cleanups, fixes and optimizations.
+	Corrected Lua error function arguments in NPC system modules.
 ]

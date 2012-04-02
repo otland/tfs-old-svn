@@ -1637,14 +1637,14 @@ Build=0
 LanguageID=1033
 CharsetID=1252
 CompanyName=http://otland.net
-FileVersion=0.2.12
+FileVersion=0.2.13
 FileDescription=The Forgotten Server
 InternalName=Mystic Spirit
 LegalCopyright=
 LegalTrademarks=
 OriginalFilename=The Forgotten Server.exe
 ProductName=The Forgotten Server
-ProductVersion=0.2.12
+ProductVersion=0.2.13
 AutoIncBuildNr=0
 
 [Unit162]

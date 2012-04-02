@@ -5,19 +5,19 @@
 #define THEFORGOTTENSERVER-DEBUG_PRIVATE_H
 
 /* VERSION DEFINITIONS */
-#define VER_STRING	"0.2.12.0"
+#define VER_STRING	"0.2.13.0"
 #define VER_MAJOR	0
 #define VER_MINOR	2
 #define VER_RELEASE	12
 #define VER_BUILD	0
 #define COMPANY_NAME	"http://otland.net"
-#define FILE_VERSION	"0.2.12-debug"
+#define FILE_VERSION	"0.2.13-debug"
 #define FILE_DESCRIPTION	"The Forgotten Server"
 #define INTERNAL_NAME	"Mystic Spirit"
 #define LEGAL_COPYRIGHT	""
 #define LEGAL_TRADEMARKS	""
 #define ORIGINAL_FILENAME	"TheForgottenServer.exe"
 #define PRODUCT_NAME	"The Forgotten Server"
-#define PRODUCT_VERSION	"0.2.12-debug"
+#define PRODUCT_VERSION	"0.2.13-debug"
 
 #endif /*THEFORGOTTENSERVER-DEBUG_PRIVATE_H*/

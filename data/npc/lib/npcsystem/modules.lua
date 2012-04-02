@@ -871,12 +871,12 @@ if(Modules == nil) then
 	-- Callback onBuy() function. If you wish, you can change certain Npc to use your onBuy().
 	function ShopModule:callbackOnBuy(cid, itemid, subType, amount, ignoreCap, inBackpacks)
 		if(self.npcHandler.shopItems[itemid] == nil) then
-			error("[ShopModule.onBuy]", "items[itemid] == nil")
+			error("[ShopModule.onBuy] items[itemid] == nil")
 			return false
 		end
 
 		if(self.npcHandler.shopItems[itemid].buyPrice == -1) then
-			error("[ShopModule.onSell]", "Attempt to buy a non-buyable item")
+			error("[ShopModule.onSell] attempt to buy a non-buyable item")
 			return false
 		end
 
@@ -933,12 +933,12 @@ if(Modules == nil) then
 	-- Callback onSell() function. If you wish, you can change certain Npc to use your onSell().
 	function ShopModule:callbackOnSell(cid, itemid, subType, amount, ignoreCap, inBackpacks)
 		if(self.npcHandler.shopItems[itemid] == nil) then
-			error("[ShopModule.onSell]", "items[itemid] == nil")
+			error("[ShopModule.onSell] items[itemid] == nil")
 			return false
 		end
 
 		if(self.npcHandler.shopItems[itemid].sellPrice == -1) then
-			error("[ShopModule.onSell]", "Attempt to sell a non-sellable item")
+			error("[ShopModule.onSell] attempt to sell a non-sellable item")
 			return false
 		end
 
