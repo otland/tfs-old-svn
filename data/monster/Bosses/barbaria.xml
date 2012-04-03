@@ -36,7 +36,7 @@
 	<elements>
 		<element physicalPercent="-20"/>
 		<element icePercent="50"/>
-		<element holyPerent="10"/>
+		<element holyPercent="10"/>
 		<element energyPercent="20"/>
 		<element deathPercent="-5"/>
 	</elements>

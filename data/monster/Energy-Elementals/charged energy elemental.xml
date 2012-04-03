@@ -35,7 +35,7 @@
 	</defenses>
 	<elements>
 		<element physicalPercent="25"/>
-		<element earth="-15"/>
+		<element earthPercent="-15"/>
 	</elements>
 	<immunities>
 		<immunity energy="1"/>

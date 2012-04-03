@@ -42,7 +42,7 @@
 	<elements>
 		<element firePercent="100"/>
 		<element physicalPercent="25"/>
-		<element earthpercent="20"/>
+		<element earthPercent="20"/>
 		<element energyPercent="20"/>
 		<element deathPercent="20"/>
 		<element icePercent="-25"/>
