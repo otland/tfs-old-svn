@@ -1096,6 +1096,11 @@ bool Monsters::loadMonster(const std::string& file, const std::string& monster_n
 								mType->damageImmunities |= COMBAT_LIFEDRAIN;
 								mType->conditionImmunities |= CONDITION_LIFEDRAIN;
 							}
+							else if(tmpStrValue == "manadrain")
+							{
+								mType->damageImmunities |= COMBAT_MANADRAIN;
+								//mType->conditionImmunities |= CONDITION_MANADRAIN;
+							}
 							else if(tmpStrValue == "paralyze")
 								mType->conditionImmunities |= CONDITION_PARALYZE;
 							else if(tmpStrValue == "outfit")
@@ -1179,6 +1184,14 @@ bool Monsters::loadMonster(const std::string& file, const std::string& monster_n
 							{
 								mType->damageImmunities |= COMBAT_LIFEDRAIN;
 								mType->conditionImmunities |= CONDITION_LIFEDRAIN;
+							}
+						}
+						else if(readXMLInteger(tmpNode, "manadrain", intValue))
+						{
+							if(intValue != 0)
+							{
+								mType->damageImmunities |= COMBAT_MANADRAIN;
+								//mType->conditionImmunities |= CONDITION_MANADRAIN;
 							}
 						}
 						else if(readXMLInteger(tmpNode, "paralyze", intValue))
@@ -1287,6 +1300,8 @@ bool Monsters::loadMonster(const std::string& file, const std::string& monster_n
 							mType->elementMap[COMBAT_DROWNDAMAGE] = intValue;
 						else if(readXMLInteger(tmpNode, "lifedrainPercent", intValue))
 							mType->elementMap[COMBAT_LIFEDRAIN] = intValue;
+						else if(readXMLInteger(tmpNode, "manadrainPercent", intValue))
+							mType->elementMap[COMBAT_MANADRAIN] = intValue;
 						else
 							SHOW_XML_WARNING("Unknown element percent");
 					}
