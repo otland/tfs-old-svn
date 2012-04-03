@@ -16857,8 +16857,9 @@
 	<item id="9734" article="an" name="animal cure">
 		<attribute key="weight" value="180" />
 	</item>
-	<item id="9735" article="a" name="helmet">
-		<attribute key="weight" value="1800" />
+	<item id="9735" name="Morik's helmet">
+		<attribute key="description" value="It belonged to a famous gladiator." />
+		<attribute key="weight" value="4600" />
 	</item>
 	<item id="9736" article="an" name="armor">
 		<attribute key="weight" value="900" />

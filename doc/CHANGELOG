@@ -21,10 +21,13 @@
 	A = Added.
 
 	M	The Forgotten Server.exe
-	M	data/npc/lib/npcsystem/modules.lua
+		data/
+	M		items/items.xml
+	M		npc/lib/npcsystem/modules.lua
 ]
 
 [ Milestone
 	Corrected Lua error function arguments in NPC system modules.
 	Increased NETWORKMESSAGE_MAXSIZE to prevent debugs if packets exceeded the old size.
+	Updated items.
 ]
