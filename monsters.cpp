@@ -1271,14 +1271,10 @@ bool Monsters::loadMonster(const std::string& file, const std::string& monster_n
 					{
 						if(readXMLInteger(tmpNode, "physicalPercent", intValue))
 							mType->elementMap[COMBAT_PHYSICALDAMAGE] = intValue;
-
-						if(readXMLInteger(tmpNode, "icePercent", intValue))
+						else if(readXMLInteger(tmpNode, "icePercent", intValue))
 							mType->elementMap[COMBAT_ICEDAMAGE] = intValue;
-						else if(readXMLInteger(tmpNode, "poisonPercent", intValue) ||
-							readXMLInteger(tmpNode, "earthPercent", intValue))
-						{
+						else if(readXMLInteger(tmpNode, "poisonPercent", intValue) || readXMLInteger(tmpNode, "earthPercent", intValue))
 							mType->elementMap[COMBAT_EARTHDAMAGE] = intValue;
-						}
 						else if(readXMLInteger(tmpNode, "firePercent", intValue))
 							mType->elementMap[COMBAT_FIREDAMAGE] = intValue;
 						else if(readXMLInteger(tmpNode, "energyPercent", intValue))
@@ -1291,7 +1287,7 @@ bool Monsters::loadMonster(const std::string& file, const std::string& monster_n
 							mType->elementMap[COMBAT_DROWNDAMAGE] = intValue;
 						else if(readXMLInteger(tmpNode, "lifedrainPercent", intValue))
 							mType->elementMap[COMBAT_LIFEDRAIN] = intValue;
-						else if(!readXMLInteger(tmpNode, "physicalPercent", intValue))
+						else
 							SHOW_XML_WARNING("Unknown element percent");
 					}
 					tmpNode = tmpNode->next;
