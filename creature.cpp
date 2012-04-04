@@ -761,6 +761,9 @@ bool Creature::onDeath()
 
 void Creature::dropCorpse(DeathList deathList)
 {
+	if(master)
+		return;
+
 	Item* corpse = createCorpse(deathList);
 	if(corpse)
 		corpse->setParent(VirtualCylinder::virtualCylinder);
