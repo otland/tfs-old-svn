@@ -547,6 +547,10 @@ void ProtocolGame::parsePacket(NetworkMessage &msg)
 				parseLogout(msg);
 				break;
 
+			case 0x1D:
+				parseReceivePingBack(msg);
+				break;
+
 			case 0x1E:
 				parseReceivePing(msg);
 				break;
@@ -572,7 +576,11 @@ void ProtocolGame::parsePacket(NetworkMessage &msg)
 			parseLogout(msg);
 			break;
 
-		case 0x1E: // keep alive / ping response
+		case 0x1D: // keep alive / ping response
+			parseReceivePingBack(msg);
+			break;
+
+		case 0x1E:
 			parseReceivePing(msg);
 			break;
 
@@ -1116,6 +1124,11 @@ void ProtocolGame::parseCancelMove(NetworkMessage& msg)
 void ProtocolGame::parseReceivePing(NetworkMessage& msg)
 {
 	addGameTask(&Game::playerReceivePing, player->getID());
+}
+
+void ProtocolGame::parseReceivePingBack(NetworkMessage& msg)
+{
+	addGameTask(&Game::playerReceivePingBack, player->getID());
 }
 
 void ProtocolGame::parseAutoWalk(NetworkMessage& msg)
@@ -1737,6 +1750,23 @@ void ProtocolGame::sendStats()
 	AddPlayerStats(msg);
 }
 
+void ProtocolGame::sendBasicData()
+{
+	NetworkMessage_ptr msg = getOutputBuffer();
+	if(!msg)
+		return;
+
+	TRACK_MESSAGE(msg);
+	msg->AddByte(0x9F);
+
+	msg->AddByte(player->isPremium() ? 0x01 : 0x00);
+	msg->AddByte(player->getVocation()->getClientId());
+
+	// known spells
+	msg->AddU16(0x00); // size
+	//foreach spell: msg->AddByte(spellId);
+}
+
 void ProtocolGame::sendTextMessage(MessageClasses mclass, const std::string& message, Position* pos/* = NULL*/, uint32_t value/* = 0*/, TextColor_t color/* = TEXTCOLOR_NONE*/)
 {
 	NetworkMessage_ptr msg = getOutputBuffer();
@@ -1990,7 +2020,6 @@ void ProtocolGame::sendMarketEnter(uint32_t depotId)
 	TRACK_MESSAGE(msg);
 	msg->AddByte(0xF6);
 	msg->AddU32(std::min((uint64_t)0xFFFFFFFF, player->getBankBalance()));
-	msg->AddByte(player->getVocation()->getClientId());
 	msg->AddByte(std::min((int32_t)0xFF, IOMarket::getInstance()->getPlayerOfferCount(player->getGUID())));
 
 	Depot* depot = player->getDepot(depotId, false);
@@ -2324,7 +2353,7 @@ void ProtocolGame::sendMarketDetail(uint16_t itemId)
 	}
 	else
 		msg->AddU16(0x00);
-	
+
 	msg->AddString(it.vocationString);
 
 	msg->AddString(it.runeSpellName);
@@ -2541,6 +2570,7 @@ void ProtocolGame::sendCreatureTurn(const Creature* creature, uint32_t stackPos)
 	msg->AddU16(0x63); /*99*/
 	msg->AddU32(creature->getID());
 	msg->AddByte(creature->getDirection());
+	msg->AddByte(player->isAccessPlayer() ? 0x00 : 0x01);
 }
 
 void ProtocolGame::sendCreatureSay(const Creature* creature, SpeakClasses type, const std::string& text, Position* pos/* = NULL*/)
@@ -2618,6 +2648,16 @@ void ProtocolGame::sendSkills()
 }
 
 void ProtocolGame::sendPing()
+{
+	NetworkMessage_ptr msg = getOutputBuffer();
+	if(!msg)
+		return;
+
+	TRACK_MESSAGE(msg);
+	msg->AddByte(0x1D);
+}
+
+void ProtocolGame::sendPingBack()
 {
 	NetworkMessage_ptr msg = getOutputBuffer();
 	if(!msg)
@@ -3018,7 +3058,7 @@ void ProtocolGame::sendTextWindow(uint32_t windowTextId, Item* item, uint16_t ma
 	TRACK_MESSAGE(msg);
 	msg->AddByte(0x96);
 	msg->AddU32(windowTextId);
-	msg->AddItemId(item);
+	msg->AddItem(item);
 	if(canWrite)
 	{
 		msg->AddU16(maxlen);
@@ -3052,7 +3092,7 @@ void ProtocolGame::sendTextWindow(uint32_t windowTextId, uint32_t itemId, const 
 	TRACK_MESSAGE(msg);
 	msg->AddByte(0x96);
 	msg->AddU32(windowTextId);
-	msg->AddItemId(itemId);
+	msg->AddItem(itemId, 1);
 
 	msg->AddU16(text.size());
 	msg->AddString(text);

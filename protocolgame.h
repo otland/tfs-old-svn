@@ -93,6 +93,7 @@ class ProtocolGame : public Protocol
 		void parseCancelMove(NetworkMessage& msg);
 
 		void parseReceivePing(NetworkMessage& msg);
+		void parseReceivePingBack(NetworkMessage& msg);
 		void parseAutoWalk(NetworkMessage& msg);
 		void parseMove(NetworkMessage& msg, Direction dir);
 		void parseTurn(NetworkMessage& msg, Direction dir);
@@ -184,6 +185,7 @@ class ProtocolGame : public Protocol
 		void sendCreatureHealth(const Creature* creature);
 		void sendSkills();
 		void sendPing();
+		void sendPingBack();
 		void sendCreatureTurn(const Creature* creature, uint32_t stackpos);
 		void sendCreatureSay(const Creature* creature, SpeakClasses type, const std::string& text, Position* pos = NULL);
 
@@ -198,6 +200,7 @@ class ProtocolGame : public Protocol
 		void sendCreatureOutfit(const Creature* creature, const Outfit_t& outfit);
 		void sendCreatureInvisible(const Creature* creature);
 		void sendStats();
+		void sendBasicData();
 		void sendTextMessage(MessageClasses mclass, const std::string& message, Position* pos = NULL, uint32_t exp = 0, TextColor_t color = TEXTCOLOR_NONE);
 		void sendReLoginWindow();
 

@@ -277,6 +277,7 @@ class Player : public Creature, public Cylinder
 		uint32_t getBaseMagicLevel() const {return magLevel;}
 		bool isAccessPlayer() const {return accessLevel;}
 		bool isPremium() const;
+		void setPremiumDays(int32_t v);
 
 		void setVocation(uint32_t vocId);
 		uint32_t getVocationId() const {return vocationId;}
@@ -620,7 +621,11 @@ class Player : public Creature, public Cylinder
 		void sendMagicEffect(const Position& pos, uint8_t type) const
 			{if(client) client->sendMagicEffect(pos, type);}
 		void sendPing();
+		void sendPingBack() const
+			{if(client) client->sendPingBack();}
 		void sendStats();
+		void sendBasicData() const
+			{if(client) client->sendBasicData();}
 		void sendSkills() const
 			{if(client) client->sendSkills();}
 		void sendTextMessage(MessageClasses mclass, const std::string& message, Position* pos = NULL, uint32_t value = 0, TextColor_t color = TEXTCOLOR_NONE) const

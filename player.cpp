@@ -232,6 +232,8 @@ void Player::setVocation(uint32_t vocId)
 	}
 
 	soulMax = vocation->getSoulMax();
+
+	sendBasicData();
 }
 
 bool Player::isPushable() const
@@ -4620,6 +4622,12 @@ bool Player::isPremium() const
 		return true;
 
 	return premiumDays > 0;
+}
+
+void Player::setPremiumDays(int32_t v)
+{
+	premiumDays = v;
+	sendBasicData();
 }
 
 void Player::setGuildLevel(GuildLevel_t newGuildLevel)

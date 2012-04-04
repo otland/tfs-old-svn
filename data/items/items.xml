@@ -125,7 +125,7 @@
 	<item id="470" article="a" name="hole">
 		<attribute key="floorchange" value="down" />
 	</item>
-	<item fromid="471" toid="474" article="a" name="time tile" />
+	<item fromid="471" toid="474" article="a" name="strange carving" />
 	<item fromid="475" toid="476" article="a" name="hole">
 		<attribute key="floorchange" value="down" />
 	</item>

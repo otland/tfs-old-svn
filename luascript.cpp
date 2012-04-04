@@ -7174,7 +7174,8 @@ int32_t LuaScriptInterface::luaDoPlayerAddPremiumDays(lua_State* L)
 		if(player->premiumDays != 65535)
 		{
 			Account account = IOLoginData::getInstance()->loadAccount(player->getAccount());
-			account.premiumDays = player->premiumDays = std::min(65534, (int32_t)(account.premiumDays + days));
+			account.premiumDays = std::min(0xFFFE, (int32_t)(account.premiumDays + days));
+			player->setPremiumDays(account.premiumDays);
 			IOLoginData::getInstance()->saveAccount(account);
 		}
 		lua_pushboolean(L, true);
@@ -7198,7 +7199,8 @@ int32_t LuaScriptInterface::luaDoPlayerRemovePremiumDays(lua_State* L)
 		if(player->premiumDays != 65535)
 		{
 			Account account = IOLoginData::getInstance()->loadAccount(player->getAccount());
-			account.premiumDays = player->premiumDays = std::max(0, (int32_t)(account.premiumDays - days));
+			account.premiumDays = std::max(0, (int32_t)(account.premiumDays - days));
+			player->setPremiumDays(account.premiumDays);
 			IOLoginData::getInstance()->saveAccount(account);
 		}
 		lua_pushboolean(L, true);

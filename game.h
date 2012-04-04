@@ -406,6 +406,7 @@ class Game
 		bool playerOpenPrivateChannel(uint32_t playerId, std::string& receiver);
 		bool playerCloseNpcChannel(uint32_t playerId);
 		bool playerReceivePing(uint32_t playerId);
+		bool playerReceivePingBack(uint32_t playerId);
 		bool playerAutoWalk(uint32_t playerId, std::list<Direction>& listDir);
 		bool playerStopAutoWalk(uint32_t playerId);
 		bool playerUseItemEx(uint32_t playerId, const Position& fromPos, uint8_t fromStackPos,

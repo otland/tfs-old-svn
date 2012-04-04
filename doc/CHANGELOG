@@ -22,11 +22,15 @@
 
 	M	The Forgotten Server.exe
 		data/
-	M		items/items.xml
+	M		global.lua
+			items/
+	M			items.otb
+	M			items.xml
 	M		npc/lib/npcsystem/modules.lua
 ]
 
 [ Milestone
+	Game protocol 9.50 support.
 	Corrected Lua error function arguments in NPC system modules.
 	Increased NETWORKMESSAGE_MAXSIZE to prevent debugs if packets exceeded the old size.
 	Updated items.

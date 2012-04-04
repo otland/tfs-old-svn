@@ -2152,6 +2152,16 @@ bool Game::playerReceivePing(uint32_t playerId)
 	return true;
 }
 
+bool Game::playerReceivePingBack(uint32_t playerId)
+{
+	Player* player = getPlayerByID(playerId);
+	if(!player || player->isRemoved())
+		return false;
+
+	player->sendPingBack();
+	return true;
+}
+
 bool Game::playerAutoWalk(uint32_t playerId, std::list<Direction>& listDir)
 {
 	Player* player = getPlayerByID(playerId);
