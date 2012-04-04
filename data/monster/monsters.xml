@@ -296,6 +296,8 @@
 	<monster name="Nightmare Scion" file="Demons/nightmare scion.xml"/>
 	<monster name="Nightstalker" file="Demons/nightstalker.xml"/>
 	<monster name="Plaguesmith" file="Demons/plaguesmith.xml"/>
+	<monster name="Shaburak Prince" file="Demons/shaburak prince.xml"/>
+	<monster name="Shaburak Demon" file="Demons/shaburak demon.xml"/>
 
 	<!-- Djinns -->
 	<monster name="Blue Djinn" file="Djinns/blue djinn.xml"/>
