@@ -1987,11 +1987,6 @@ void ProtocolGame::sendMarketEnter(uint32_t depotId)
 	TRACK_MESSAGE(msg);
 	msg->put<char>(0xF6);
 	msg->put<uint32_t>(std::min((uint64_t)0xFFFFFFFF, player->balance));
-	if(Vocation* vocation = player->getVocation())
-		msg->put<char>(vocation->getClientId());
-	else
-		msg->put<char>(0x00);
-
 	msg->put<char>(std::min((int32_t)0xFF, IOMarket::getInstance()->getPlayerOfferCount(player->getGUID())));
 
 	Depot* depot = player->getDepot(depotId, false);
