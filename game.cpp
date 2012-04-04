@@ -2460,6 +2460,16 @@ bool Game::playerCloseNpcChannel(uint32_t playerId)
 	return true;
 }
 
+bool Game::playerReceivePingBack(uint32_t playerId)
+{
+	Player* player = getPlayerByID(playerId);
+	if(!player || player->isRemoved())
+		return false;
+
+	player->sendPingBack();
+	return true;
+}
+
 bool Game::playerReceivePing(uint32_t playerId)
 {
 	Player* player = getPlayerByID(playerId);

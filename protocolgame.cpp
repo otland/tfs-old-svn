@@ -536,6 +536,10 @@ void ProtocolGame::parsePacket(NetworkMessage &msg)
 				parseSay(msg);
 				break;
 
+			case 0x1D:
+				parseReceivePingBack(msg);
+				break;
+
 			case 0x1E:
 				parseReceivePing(msg);
 				break;
@@ -563,6 +567,10 @@ void ProtocolGame::parsePacket(NetworkMessage &msg)
 		{
 			case 0x14: // logout
 				parseLogout(msg);
+				break;
+
+			case 0x1D: // keep alive / ping response
+				parseReceivePingBack(msg);
 				break;
 
 			case 0x1E: // keep alive / ping response
@@ -1085,6 +1093,11 @@ void ProtocolGame::parseCancelMove(NetworkMessage&)
 void ProtocolGame::parseReceivePing(NetworkMessage&)
 {
 	addGameTask(&Game::playerReceivePing, player->getID());
+}
+
+void ProtocolGame::parseReceivePingBack(NetworkMessage& msg)
+{
+	addGameTask(&Game::playerReceivePingBack, player->getID());
 }
 
 void ProtocolGame::parseAutoWalk(NetworkMessage& msg)
@@ -2460,6 +2473,7 @@ void ProtocolGame::sendCreatureTurn(const Creature* creature, int16_t stackpos)
 		msg->put<uint16_t>(0x63);
 		msg->put<uint32_t>(creature->getID());
 		msg->put<char>(creature->getDirection());
+		msg->put<char>(player->hasCustomFlag(PlayerCustomFlag_GamemasterPrivileges) ? 0x00 : 0x01);
 	}
 }
 
@@ -2552,6 +2566,16 @@ void ProtocolGame::sendSkills()
 }
 
 void ProtocolGame::sendPing()
+{
+	NetworkMessage_ptr msg = getOutputBuffer();
+	if(msg)
+	{
+		TRACK_MESSAGE(msg);
+		msg->put<char>(0x1D);
+	}
+}
+
+void ProtocolGame::sendPingBack()
 {
 	NetworkMessage_ptr msg = getOutputBuffer();
 	if(msg)

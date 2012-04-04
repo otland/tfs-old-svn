@@ -673,6 +673,8 @@ class Player : public Creature, public Cylinder
 		void sendIcons() const;
 		void sendMagicEffect(const Position& pos, uint8_t type) const
 			{if(client) client->sendMagicEffect(pos, type);}
+		void sendPingBack() const
+			{if(client) client->sendPingBack();}
 		void sendStats() const
 			{if(client) client->sendStats();}
 		void sendSkills() const
