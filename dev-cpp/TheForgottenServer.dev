@@ -1,7 +1,7 @@
 [Project]
 FileName=TheForgottenServer.dev
 Name=TheForgottenServer
-UnitCount=161
+UnitCount=166
 Type=1
 Ver=1
 ObjFiles=
@@ -12,7 +12,7 @@ ResourceIncludes=
 MakeIncludes=
 Compiler=
 CppCompiler=-D__USE_MYSQL___@@_-D__USE_SQLITE___@@_-D__ENABLE_SERVER_DIAGNOSTIC___@@_-O2_@@_
-Linker=-lboost_system_@@_-llua5.1_@@_-lmysql_@@_-lboost_regex_@@_-lsqlite3_@@_-lwsock32_@@_-lxml2_@@_-lmysql_@@_-lws2_32_@@_-s_@@_-lboost_filesystem_@@_-lboost_thread_@@_-lz_@@_-lcryptopp_@@_-leay32_@@_
+Linker=-lboost_system_@@_-llua5.1_@@_-lmysql_@@_-lboost_regex_@@_-lsqlite3_@@_-lwsock32_@@_-lxml2_@@_-lmysql_@@_-lws2_32_@@_-s_@@_-lboost_filesystem_@@_-lboost_thread_@@_-lz_@@_-leay32_@@_
 IsCpp=1
 Icon=TheForgottenServer.ico
 ExeOutput=
