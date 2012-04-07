@@ -1369,6 +1369,57 @@ uint32_t DatabaseManager::updateDatabase()
 			registerDatabaseConfig("db_version", 34);
 			return 34;
 		}
+		
+		case 34:
+		{
+			std::clog << "> Updating database to version 35..." << std::endl;
+			switch(db->getDatabaseEngine())
+			{
+				case DATABASE_ENGINE_SQLITE:
+				{
+					db->query("CREATE TABLE IF NOT EXISTS `guild_wars` (\
+						`id` INTEGER NOT NULL,\
+						`guild_id` INT NOT NULL,\
+						`enemy_id` INT NOT NULL,\
+						`begin` BIGINT NOT NULL DEFAULT '0',\
+						`end` BIGINT NOT NULL DEFAULT '0',\
+						`frags` INT NOT NULL DEFAULT '0',\
+						`payment` BIGINT NOT NULL DEFAULT '0',\
+						`guild_kills` INT NOT NULL DEFAULT '0',\
+						`enemy_kills` INT NOT NULL DEFAULT '0',\
+						`status` TINYINT(1) NOT NULL DEFAULT '0',\
+						PRIMARY KEY (`id`),\
+						FOREIGN KEY (`guild_id`) REFERENCES `guilds`(`id`),\
+						FOREIGN KEY (`enemy_id`) REFERENCES `guilds`(`id`)\
+						);");
+
+					db->query("CREATE TABLE IF NOT EXISTS `guild_kills` (\
+						`id` INT NOT NULL PRIMARY KEY,\
+						`guild_id` INT NOT NULL,\
+						`war_id` INT NOT NULL,\
+						`death_id` INT NOT NULL\
+					);");
+					
+					db->query("CREATE TABLE IF NOT EXISTS `player_statements` (\
+						`id` INTEGER PRIMARY KEY,\
+						`player_id` INTEGER NOT NULL,\
+						`channel_id` INTEGER NOT NULL DEFAULT `0`,\
+						`text` VARCHAR (255) NOT NULL,\
+						`date` INTEGER NOT NULL DEFAULT `0`,\
+						FOREIGN KEY (`player_id`) REFERENCES `players` (`id`)\
+						);");
+
+					db->query("ALTER TABLE `guilds` ADD `balance` BIGINT NOT NULL DEFAULT '0';");
+					db->query("ALTER TABLE `killers` ADD `war` BIGINT NOT NULL DEFAULT 0;");
+					break;
+				}
+
+				default: break;
+			}
+
+			registerDatabaseConfig("db_version", 35);
+			return 35;
+		}
 
 		default:
 			break;
