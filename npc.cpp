@@ -18,7 +18,7 @@
 // Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 //////////////////////////////////////////////////////////////////////
 #include "otpch.h"
- 
+
 #include "definitions.h"
 #include "npc.h"
 #include "game.h"
@@ -36,9 +36,9 @@
 
 #include <libxml/xmlmemory.h>
 #include <libxml/parser.h>
- 
+
 #include "luascript.h"
- 
+
 extern ConfigManager g_config;
 extern Game g_game;
 extern Spells* g_spells;
@@ -62,7 +62,7 @@ void Npcs::reload()
 	for(AutoList<Npc>::listiterator it = Npc::listNpc.list.begin(); it != Npc::listNpc.list.end(); ++it)
 		it->second->reload();
 }
- 
+
 Npc* Npc::createNpc(const std::string& name)
 {
 	Npc* npc = new Npc(name);
@@ -76,13 +76,13 @@ Npc* Npc::createNpc(const std::string& name)
 	}
 	return npc;
 }
- 
+
 Npc::Npc(const std::string& _name) :
 	Creature()
 {
 	m_filename = "data/npc/" + _name + ".xml";
 	loaded = false;
- 
+
 	m_npcEventHandler = NULL;
 	reset();
 
@@ -90,7 +90,7 @@ Npc::Npc(const std::string& _name) :
 	npcCount++;
 #endif
 }
- 
+
 Npc::~Npc()
 {
 	reset();
@@ -99,7 +99,7 @@ Npc::~Npc()
 	npcCount--;
 #endif
 }
- 
+
 bool Npc::load()
 {
 	if(isLoaded())
@@ -112,11 +112,11 @@ bool Npc::load()
 		m_scriptInterface = new NpcScriptInterface();
 		m_scriptInterface->loadNpcLib("data/npc/lib/npc.lua");
 	}
- 
+
 	loaded = loadFromXml(m_filename);
 	return isLoaded();
 }
- 
+
 void Npc::reset()
 {
 	loaded = false;
@@ -132,7 +132,7 @@ void Npc::reset()
 	idleTimeout = 0;
 	lastResponseTime = OTSYS_TIME();
 	defaultPublic = true;
- 
+
 	delete m_npcEventHandler;
 	m_npcEventHandler = NULL;
 
@@ -141,7 +141,7 @@ void Npc::reset()
 
 	for(StateList::iterator it = stateList.begin(); it != stateList.end(); ++it)
 		delete *it;
- 
+
 	responseList.clear();
 	stateList.clear();
 	queueList.clear();
@@ -150,7 +150,7 @@ void Npc::reset()
 	responseScriptMap.clear();
 	shopPlayerList.clear();
 }
- 
+
 void Npc::reload()
 {
 	reset();
@@ -163,7 +163,7 @@ void Npc::reload()
 	if(walkTicks > 0)
 		addEventWalk();
 }
- 
+
 bool Npc::loadFromXml(const std::string& filename)
 {
 	xmlDocPtr doc = xmlParseFile(filename.c_str());

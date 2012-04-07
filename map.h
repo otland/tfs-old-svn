@@ -17,7 +17,7 @@
 // along with this program; if not, write to the Free Software Foundation,
 // Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 //////////////////////////////////////////////////////////////////////
- 
+
 #ifndef __OTSERV_MAP_H__
 #define __OTSERV_MAP_H__
 
@@ -27,12 +27,12 @@
 
 #include <boost/shared_ptr.hpp>
 using boost::shared_ptr;
- 
+
 #include "position.h"
 #include "item.h"
 //#include "creature.h"
 #include "fileloader.h"
- 
+
 #include "tools.h"
 #include "tile.h"
 
@@ -58,7 +58,7 @@ struct AStarNode
 
 #define MAP_NORMALWALKCOST 10
 #define MAP_DIAGONALWALKCOST 25
- 
+
 class AStarNodes
 {
 	public:
@@ -73,12 +73,12 @@ class AStarNodes
 		uint32_t countOpenNodes();
 		bool isInList(int32_t x, int32_t y);
 		AStarNode* getNodeInList(int32_t x, int32_t y);
- 
+
 		int32_t getMapWalkCost(const Creature* creature, AStarNode* node,
 			const Tile* neighbourTile, const Position& neighbourPos);
 		static int32_t getTileWalkCost(const Creature* creature, const Tile* tile);
 		int32_t getEstimatedDistance(int32_t x, int32_t y, int32_t xGoal, int32_t yGoal);
- 
+
 	private:
 		AStarNode nodes[MAX_NODES];
 		std::bitset<MAX_NODES> openNodes;
@@ -90,7 +90,7 @@ template<class T> class lessPointer : public std::binary_function<T*, T*, bool>
 	public:
 		bool operator()(T*& t1, T*& t2) { return *t1 < *t2; }
 };
- 
+
 typedef std::list<Creature*> SpectatorVec;
 typedef std::list<Player*> PlayerList;
 typedef std::map<Position, boost::shared_ptr<SpectatorVec> > SpectatorCache;
@@ -98,7 +98,7 @@ typedef std::map<Position, boost::shared_ptr<SpectatorVec> > SpectatorCache;
 #define FLOOR_BITS 3
 #define FLOOR_SIZE (1 << FLOOR_BITS)
 #define FLOOR_MASK (FLOOR_SIZE - 1)
- 
+
 struct Floor
 {
 	Floor();
@@ -113,16 +113,16 @@ class QTreeNode
 	public:
 		QTreeNode();
 		virtual ~QTreeNode();
- 
+
 		bool isLeaf(){return m_isLeaf;}
 		QTreeLeafNode* getLeaf(uint32_t x, uint32_t y);
 		static QTreeLeafNode* getLeafStatic(QTreeNode* root, uint32_t x, uint32_t y);
 		QTreeLeafNode* createLeaf(uint32_t x, uint32_t y, uint32_t level);
- 
+
 	protected:
 		bool m_isLeaf;
 		QTreeNode* m_child[4];
- 
+
 		friend class Map;
 };
 
@@ -132,10 +132,10 @@ class QTreeLeafNode : public QTreeNode
 	public:
 		QTreeLeafNode();
 		virtual ~QTreeLeafNode();
- 
+
 		Floor* createFloor(uint32_t z);
 		Floor* getFloor(uint16_t z){return m_array[z];}
- 
+
 		QTreeLeafNode* stepSouth(){return m_leafS;}
 		QTreeLeafNode* stepEast(){return m_leafE;}
 
@@ -148,7 +148,7 @@ class QTreeLeafNode : public QTreeNode
 		QTreeLeafNode* m_leafE;
 		Floor* m_array[MAP_MAX_LAYERS];
 		CreatureVector creature_list;
- 
+
 		friend class Map;
 		friend class QTreeNode;
 };

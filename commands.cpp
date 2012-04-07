@@ -1344,13 +1344,14 @@ void Commands::playerKills(Player* player, const std::string& cmd, const std::st
 void Commands::clean(Player* player, const std::string& cmd, const std::string& param)
 {
 	uint32_t count = g_game.getMap()->clean();
-	std::stringstream ss;
-	if(count == 1)
-		ss << "Cleaned 1 item from the map.";
-	else
+	if(count != 1)
+	{
+		std::stringstream ss;
 		ss << "Cleaned " << count << " items from the map.";
-
-	g_game.broadcastMessage(ss.str(), MSG_STATUS_WARNING);
+		g_game.broadcastMessage(ss.str(), MSG_STATUS_WARNING);
+	}
+	else
+		g_game.broadcastMessage("Cleaned 1 item from the map.", MSG_STATUS_WARNING);
 }
 
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__

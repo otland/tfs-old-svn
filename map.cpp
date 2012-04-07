@@ -1331,4 +1331,3 @@ uint32_t Map::clean()
 		<< (OTSYS_TIME() - start) / (1000.) << " seconds." << std::endl;
 	return count;
 }
-
