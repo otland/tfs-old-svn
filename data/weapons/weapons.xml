@@ -54,9 +54,9 @@
 	<wand id="8922" level="42" mana="13" min="55" max="75" type="death" function="default"> <!-- Wand of Voodoo -->
 		<vocation name="Sorcerer"/>
 	</wand>
-    <wand id="13880" level="40" mana="13" min="55" max="75" type="energy" function="default"> <!-- Shimmer Wand -->
+	<wand id="13880" level="40" mana="13" min="55" max="75" type="energy" function="default"> <!-- Shimmer Wand -->
 		<vocation name="Sorcerer"/>
-    </wand>
+	</wand>
     
 	<!-- Swords -->
 	<melee id="2396" function="default"/>
@@ -164,7 +164,7 @@
 		<vocation name="Knight"/>
 		<vocation name="Elite Knight" showInDescription="0"/>
 	</melee>
-	<melee id="11307" level="55" unproperly="1" function="default"/> 
+	<melee id="11307" level="55" unproperly="1" function="default"/>
 	<melee id="11306" level="50" unproperly="1" function="default">
 		<vocation name="Knight"/>
 		<vocation name="Elite Knight" showInDescription="0"/>
@@ -404,18 +404,22 @@
 		<vocation name="Paladin"/>
 		<vocation name="Royal Paladin" showInDescription="0"/>
 	</distance>
-    <distance id="13873" level="40" unproperly="1" function="default"> <!-- Shimmer Bow -->
+	<distance id="13873" level="40" unproperly="1" function="default"> <!-- Shimmer Bow -->
 		<vocation name="Paladin"/>
 		<vocation name="Royal Paladin" showInDescription="0"/>
-    </distance>
-    <distance id="15643" level="85" unproperly="1" function="default"> <!-- Hive Bow -->
+	</distance>
+	<distance id="15643" level="85" unproperly="1" function="default"> <!-- Hive Bow -->
 		<vocation name="Paladin"/>
 		<vocation name="Royal Paladin" showInDescription="0"/>
-    </distance>
-    <distance id="15644" level="50" unproperly="1" function="default"> <!-- Ornate Crossbow -->
+	</distance>
+	<distance id="15644" level="50" unproperly="1" function="default"> <!-- Ornate Crossbow -->
 		<vocation name="Paladin"/>
 		<vocation name="Royal Paladin" showInDescription="0"/>
-    </distance>
+	</distance>
+	<distance id="16111" level="150" unproperly="1" function="default"> <!-- Thorn Spitter -->
+		<vocation name="Paladin"/>
+		<vocation name="Royal Paladin" showInDescription="0"/>
+	</distance>
 
  	<!-- Ammunition -->
 	<distance id="2545" script="poison_arrow.lua"/>

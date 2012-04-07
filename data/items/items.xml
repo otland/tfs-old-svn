@@ -22932,6 +22932,43 @@
 		<attribute key="weight" value="1600" />
 		<attribute key="description" value="It was painted in the style of Lyxoph. Unfortunately, there are some blue pixels in this piece." />
 	</item>
+	<item id="16102" article="a" name="surprise nest">
+		<attribute key="weight" value="1000" />
+		<attribute key="description" value="Use it to get a little surprise." />
+	</item>
+	<item fromid="16103" toid="16104" article="a" name="mathmaster shield">
+		<attribute key="weight" value="314" />
+		<attribute key="description" value="It's an Emblem of Wisdom. Awarded by TibiaStat." />
+	</item>
+	<item fromid="16105" toid="16106" article="a" name="medusa skull">
+		<attribute key="weight" value="1000" />
+	</item>
+	<item fromid="16107" toid="16108" name="Durin the almighty doll">
+		<attribute key="weight" value="4000" />
+		<attribute key="description" value="The mightiest. The only. God of all dwarfs. Awarded by Tibia Bariloche!" />
+	</item>
+	<item fromid="16109" toid="16110" article="a" name="majestic shield">
+		<attribute key="weight" value="15000" />
+		<attribute key="description" value="This wonderful shield is designed for GuildStats.eu to honour all guilds in Tibia." />
+	</item>
+	<item id="16111" article="a" name="thorn spitter">
+		<attribute key="weight" value="12600" />
+		<attribute key="slotType" value="two-handed" />
+		<attribute key="weaponType" value="distance" />
+		<attribute key="ammoType" value="bolt" />
+		<attribute key="range" value="6" />
+		<attribute key="attack" value="9" />
+		<attribute key="hitChance" value="1" />
+	</item>
+	<item id="16112" article="a" name="spellbook of ancient arcana">
+		<attribute key="weight" value="2500" />
+		<attribute key="description" value="It shows your spells and can also shield against attacks when worn." />
+		<attribute key="defense" value="19" />
+		<attribute key="weaponType" value="shield" />
+		<attribute key="absorbPercentDeath" value="5" />
+		<attribute key="magicpoints" value="4" />
+		<attribute key="showattributes" value="1" />
+	</item>
 	<item id="20001" name="water" />
 	<item id="20002" name="blood" />
 	<item id="20003" name="beer" />
