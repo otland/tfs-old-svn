@@ -597,6 +597,11 @@
 		<vocation id="3"/>
 		<vocation id="7" showInDescription="0"/>
     </distance>
+		<!-- Thorn Spitter -->
+    <distance id="16111" level="150" unproperly="1" event="function" value="default">
+		<vocation id="3"/>
+		<vocation id="7" showInDescription="0"/>
+    </distance>
 
  	<!-- Ammunition -->
 	<distance id="2545" event="script" value="poison_arrow.lua"/> <!-- Poison Arrow -->

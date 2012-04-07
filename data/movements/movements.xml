@@ -1035,7 +1035,14 @@
 		<vocation id="8" showInDescription="0"/>
 	</movevent>
 	<movevent type="DeEquip" itemid="12644" slot="shield" event="function" value="onDeEquipItem"/>
-
+		<!-- Spellbook of Ancient Arcana -->
+	<movevent type="Equip" itemid="16112" slot="shield" level="150" event="function" value="onEquipItem">
+		<vocation id="1"/>
+		<vocation id="5" showInDescription="0"/>
+		<vocation id="2"/>
+		<vocation id="6" showInDescription="0"/>
+	</movevent>
+	<movevent type="DeEquip" itemid="16112" slot="shield" event="function" value="onDeEquipItem"/>
 
 	<!-- Other -->
 		<!-- Magical Torch -->
