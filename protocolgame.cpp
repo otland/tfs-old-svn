@@ -2505,13 +2505,13 @@ void ProtocolGame::sendBasicData()
 		return;
 
 	TRACK_MESSAGE(msg);
-	msg->add<char>(0x9F);
+	msg->put<char>(0x9F);
 
-	msg->add<char>(player->isPremium());
-	msg->add<char>(player->getVocation()->getClientId());
+	msg->put<char>(player->isPremium());
+	msg->put<char>(player->getVocation()->getClientId());
 
-	msg->add<char>(0x00); // known spells
-	//each spell: msg->add<char>(spellId);
+	msg->put<char>(0x00); // known spells
+	//each spell: msg->put<char>(spellId);
 }
 
 void ProtocolGame::sendCancel(const std::string& message)
