@@ -677,6 +677,8 @@ class Player : public Creature, public Cylinder
 			{if(client) client->sendPingBack();}
 		void sendStats() const
 			{if(client) client->sendStats();}
+		void sendBasicData() const
+			{if(client) client->sendBasicData();}
 		void sendSkills() const
 			{if(client) client->sendSkills();}
 		void sendTextMessage(MessageClasses type, const std::string& message) const

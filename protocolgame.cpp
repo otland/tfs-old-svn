@@ -1996,10 +1996,9 @@ void ProtocolGame::sendMarketEnter(uint32_t depotId)
 		return;
 	}
 
-	player->setMarketDepotId(depotId);
-
 	std::map<uint16_t, uint32_t> depotItems;
 	std::list<Container*> containerList;
+
 	containerList.push_back(depot->getLocker());
 	do
 	{
@@ -2030,7 +2029,7 @@ void ProtocolGame::sendMarketEnter(uint32_t depotId)
 		}
 	}
 	while(!containerList.empty());
-
+	player->setMarketDepotId(depotId);
 	msg->put<uint16_t>(std::min((size_t)0xFFFF, depotItems.size()));
 
 	uint16_t i = 0;
@@ -2188,7 +2187,6 @@ void ProtocolGame::sendMarketBrowseOwnHistory(const HistoryMarketOfferList& buyO
 	msg->put<uint16_t>(MARKETREQUEST_OWN_HISTORY);
 
 	std::map<uint32_t, uint16_t> counterMap;
-
 	msg->put<uint32_t>(buyOffers.size());
 	for(HistoryMarketOfferList::const_iterator it = buyOffers.begin(), end = buyOffers.end(); it != end; ++it)
 	{
@@ -2201,7 +2199,6 @@ void ProtocolGame::sendMarketBrowseOwnHistory(const HistoryMarketOfferList& buyO
 	}
 
 	counterMap.clear();
-
 	msg->put<uint32_t>(sellOffers.size());
 	for(HistoryMarketOfferList::const_iterator it = sellOffers.begin(), end = sellOffers.end(); it != end; ++it)
 	{
@@ -2301,8 +2298,8 @@ void ProtocolGame::sendMarketDetail(uint16_t itemId)
 			ss << getCombatName((CombatType_t)i) << " " << std::showpos << it.abilities->absorb[i] << std::noshowpos << "%";
 		}
 	}
-	msg->putString(ss.str());
 
+	msg->putString(ss.str());
 	if(it.minReqLevel != 0)
 	{
 		ss.str("");
@@ -2322,7 +2319,6 @@ void ProtocolGame::sendMarketDetail(uint16_t itemId)
 		msg->put<uint16_t>(0x00);
 
 	msg->putString(it.vocationString);
-
 	msg->putString(it.runeSpellName);
 
 	ss.str("");
@@ -2350,8 +2346,8 @@ void ProtocolGame::sendMarketDetail(uint16_t itemId)
 			ss << "speed" << " " << std::showpos << (int32_t)(it.abilities->speed / 2) << std::noshowpos;
 		}
 	}
-	msg->putString(ss.str());
 
+	msg->putString(ss.str());
 	if(it.charges != 0)
 	{
 		ss.str("");
@@ -2369,8 +2365,8 @@ void ProtocolGame::sendMarketDetail(uint16_t itemId)
 		else
 			weaponName = "two-handed";
 	}
-	msg->putString(weaponName);
 
+	msg->putString(weaponName);
 	if(it.weight > 0)
 	{
 		ss.str("");
@@ -2392,8 +2388,7 @@ void ProtocolGame::sendMarketDetail(uint16_t itemId)
 	else
 		msg->put<char>(0x00);
 	
-	statistics = IOMarket::getInstance()->getSaleStatistics(itemId);
-	if(statistics)
+	if((statistics = IOMarket::getInstance()->getSaleStatistics(itemId)))
 	{
 		msg->put<char>(0x01);
 		msg->put<uint32_t>(statistics->numTransactions);
@@ -2501,6 +2496,22 @@ void ProtocolGame::sendStatsMessage(MessageClasses type, const std::string& mess
 		TRACK_MESSAGE(msg);
 		AddTextMessage(msg, type, message, &pos, details);
 	}
+}
+
+void ProtocolGame::sendBasicData()
+{
+	NetworkMessage_ptr msg = getOutputBuffer();
+	if(!msg)
+		return;
+
+	TRACK_MESSAGE(msg);
+	msg->add<char>(0x9F);
+
+	msg->add<char>(player->isPremium());
+	msg->add<char>(player->getVocation()->getClientId());
+
+	msg->add<char>(0x00); // known spells
+	//each spell: msg->add<char>(spellId);
 }
 
 void ProtocolGame::sendCancel(const std::string& message)

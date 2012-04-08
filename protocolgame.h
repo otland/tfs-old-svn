@@ -201,6 +201,7 @@ class ProtocolGame : public Protocol
 		void sendCancelTarget();
 		void sendCreatureOutfit(const Creature* creature, const Outfit_t& outfit);
 		void sendStats();
+		void sendBasicData();
 		void sendTextMessage(MessageClasses mclass, const std::string& message);
 		void sendStatsMessage(MessageClasses mclass, const std::string& message,
 			Position pos, MessageDetails* details = NULL);
