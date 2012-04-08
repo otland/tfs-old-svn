@@ -8495,8 +8495,11 @@ int32_t LuaInterface::luaDoPlayerAddPremiumDays(lua_State* L)
 				account.premiumDays = std::min((uint32_t)65534, uint32_t(account.premiumDays + (uint32_t)days));
 				player->premiumDays = std::min((uint32_t)65534, uint32_t(player->premiumDays + (uint32_t)days));
 			}
+
 			IOLoginData::getInstance()->saveAccount(account);
+			player->sendBasicData();
 		}
+
 		lua_pushboolean(L, true);
 	}
 	else
