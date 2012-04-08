@@ -353,7 +353,7 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool prelo
 	player->accountType = acc.accountType;
 
 	if(g_config.getBoolean(ConfigManager::FREE_PREMIUM))
-		player->premiumDays = 65535;
+		player->premiumDays = 0xFFFF;
 	else
 		player->premiumDays = acc.premiumDays;
 
