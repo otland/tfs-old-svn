@@ -256,8 +256,8 @@ class Player : public Creature, public Cylinder
 		void setGroup(Group* newGroup);
 		Group* getGroup() const {return group;}
 
-		void setMarketDepotId(int16_t newId) { marketDepotId = newId; }
-		int16_t getMarketDepotId() const { return marketDepotId; }
+		void setMarketDepotId(int16_t newId) {marketDepotId = newId;}
+		int16_t getMarketDepotId() const {return marketDepotId;}
 
 		virtual bool isGhost() const {return hasCondition(CONDITION_GAMEMASTER, GAMEMASTER_INVISIBLE) || hasFlag(PlayerFlag_CannotBeSeen);}
 		virtual bool isWalkable() const {return hasCustomFlag(PlayerCustomFlag_IsWalkable);}

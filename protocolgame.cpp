@@ -1095,7 +1095,7 @@ void ProtocolGame::parseReceivePing(NetworkMessage&)
 	addGameTask(&Game::playerReceivePing, player->getID());
 }
 
-void ProtocolGame::parseReceivePingBack(NetworkMessage& msg)
+void ProtocolGame::parseReceivePingBack(NetworkMessage&)
 {
 	addGameTask(&Game::playerReceivePingBack, player->getID());
 }

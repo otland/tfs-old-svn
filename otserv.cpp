@@ -759,7 +759,7 @@ void otserv(StringVec, ServiceManager* services)
 	}
 
 	IPAddress m_ip;
-	std::clog << "> Global IP address: ";
+	std::clog << "> Global IP address(es): ";
 	for(StringVec::iterator it = ip.begin(); it != ip.end(); ++it)
 	{
 		uint32_t resolvedIp = inet_addr(it->c_str());
