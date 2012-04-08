@@ -135,4 +135,7 @@ extern std::string getWeaponName(WeaponType_t weaponType);
 extern uint32_t combatTypeToIndex(CombatType_t v);
 extern CombatType_t indexToCombatType(uint32_t v);
 
+extern uint8_t serverFluidToClient(uint8_t serverFluid);
+extern uint8_t clientFluidToServer(uint8_t clientFluid);
+
 #endif

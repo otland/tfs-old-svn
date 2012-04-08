@@ -755,15 +755,18 @@ if(Modules == nil) then
 	--	cost = The price of one single item
 	--	subType - The subType of each rune or fluidcontainer item. Can be left out if it is not a rune/fluidcontainer. Default value is 1.
 	--	realName - The real, full name for the item. Will be used as ITEMNAME in MESSAGE_ONBUY and MESSAGE_ONSELL if defined. Default value is nil (getItemName will be used)
-	function ShopModule:addBuyableItem(names, itemid, cost, subType, realName)
+	function ShopModule:addBuyableItem(names, itemid, cost, itemSubType, realName)
 		if(SHOPMODULE_MODE ~= SHOPMODULE_MODE_TALK) then
-			if(self.npcHandler.shopItems[itemid] == nil) then
-				self.npcHandler.shopItems[itemid] = {buyPrice = -1, sellPrice = -1, subType = 1, realName = ""}
+			if itemSubType == nil then
+				itemSubType = 1
 			end
 
-			self.npcHandler.shopItems[itemid].buyPrice = cost
-			self.npcHandler.shopItems[itemid].realName = realName or getItemName(itemid)
-			self.npcHandler.shopItems[itemid].subType = subType or 1
+			local shopItem = self:getShopItem(itemid, itemSubType)
+			if shopItem == nil then
+				table.insert(self.npcHandler.shopItems, {id = itemid, buy = cost, sell = -1, subType = itemSubType, name = realName or getItemName(itemid)})
+			else
+				shopItem.buy = cost
+			end
 		end
 
 		if(names ~= nil and SHOPMODULE_MODE ~= SHOPMODULE_MODE_TRADE) then
@@ -774,7 +777,7 @@ if(Modules == nil) then
 						eventType = SHOPMODULE_BUY_ITEM,
 						module = self,
 						realName = realName or getItemName(itemid),
-						subType = subType or 1
+						subType = itemSubType or 1
 					}
 
 				keywords = {}
@@ -791,6 +794,25 @@ if(Modules == nil) then
 			self.npcHandler.keywordHandler:addKeyword({'yes'}, ShopModule.onConfirm, {module = self})
 			self.npcHandler.keywordHandler:addKeyword({'no'}, ShopModule.onDecline, {module = self})
 		end
+	end
+
+	function ShopModule:getShopItem(itemId, itemSubType)
+		if isItemFluidContainer(itemId) then
+			for i = 1, #self.npcHandler.shopItems do
+				local shopItem = self.npcHandler.shopItems[i]
+				if shopItem.id == itemId and shopItem.subType == itemSubType then
+					return shopItem
+				end
+			end
+		else
+			for i = 1, #self.npcHandler.shopItems do
+				local shopItem = self.npcHandler.shopItems[i]
+				if shopItem.id == itemId then
+					return shopItem
+				end
+			end
+		end
+		return nil
 	end
 
 	-- Adds a new buyable container of items.
@@ -828,18 +850,20 @@ if(Modules == nil) then
 	--	itemid = The itemid of the sellable item
 	--	cost = The price of one single item
 	--	realName - The real, full name for the item. Will be used as ITEMNAME in MESSAGE_ONBUY and MESSAGE_ONSELL if defined. Default value is nil (getItemName will be used)
-	function ShopModule:addSellableItem(names, itemid, cost, realName, subType)
+	function ShopModule:addSellableItem(names, itemid, cost, realName, itemSubType)
 		if(SHOPMODULE_MODE ~= SHOPMODULE_MODE_TALK) then
-			if(self.npcHandler.shopItems[itemid] == nil) then
-				self.npcHandler.shopItems[itemid] = {buyPrice = 0, sellPrice = 0, subType = 0, realName = ""}
+			if isItemFluidContainer(itemid) == FALSE then
+				itemSubType = -1
+			elseif itemSubType == nil then
+				itemSubType = 0
 			end
 
-			self.npcHandler.shopItems[itemid].sellPrice = cost
-			self.npcHandler.shopItems[itemid].realName = realName or getItemName(itemid)
-		end
-
-		if subType ~= nil then
-			self.npcHandler.shopItems[itemid].subType = subType
+			local shopItem = self:getShopItem(itemid, itemSubType)
+			if shopItem == nil then
+				table.insert(self.npcHandler.shopItems, {id = itemid, buy = -1, sell = cost, subType = itemSubType, name = realName or getItemName(itemid)})
+			else
+				shopItem.sell = cost
+			end
 		end
 
 		if(names ~= nil and SHOPMODULE_MODE ~= SHOPMODULE_MODE_TRADE) then
@@ -870,18 +894,19 @@ if(Modules == nil) then
 
 	-- Callback onBuy() function. If you wish, you can change certain Npc to use your onBuy().
 	function ShopModule:callbackOnBuy(cid, itemid, subType, amount, ignoreCap, inBackpacks)
-		if(self.npcHandler.shopItems[itemid] == nil) then
-			error("[ShopModule.onBuy] items[itemid] == nil")
+		local shopItem = self:getShopItem(itemid, subType)
+		if shopItem == nil then
+			error("[ShopModule.onBuy] shopItem == nil")
 			return false
 		end
 
-		if(self.npcHandler.shopItems[itemid].buyPrice == -1) then
+		if shopItem.buy == -1 then
 			error("[ShopModule.onSell] attempt to buy a non-buyable item")
 			return false
 		end
 
 		local backpack = 1988
-		local totalCost = amount * self.npcHandler.shopItems[itemid].buyPrice
+		local totalCost = amount * shopItem.buy
 		if(inBackpacks) then
 			totalCost = isItemStackable(itemid) == TRUE and totalCost + 20 or totalCost + (math.max(1, math.floor(amount / getContainerCapById(backpack))) * 20)
 		end
@@ -890,7 +915,7 @@ if(Modules == nil) then
 			[TAG_PLAYERNAME] = getPlayerName(cid),
 			[TAG_ITEMCOUNT] = amount,
 			[TAG_TOTALCOST] = totalCost,
-			[TAG_ITEMNAME] = self.npcHandler.shopItems[itemid].realName
+			[TAG_ITEMNAME] = shopItem.name
 		}
 
 		if(getPlayerMoney(cid) < totalCost) then
@@ -900,7 +925,7 @@ if(Modules == nil) then
 			return false
 		end
 
-		local subType = self.npcHandler.shopItems[itemid].subType or 1
+		local subType = shopItem.subType or 1
 		local a, b = doNpcSellItem(cid, itemid, amount, subType, ignoreCap, inBackpacks, backpack)
 		if(a < amount) then
 			local msgId = MESSAGE_NEEDMORESPACE
@@ -915,7 +940,7 @@ if(Modules == nil) then
 			self.npcHandler.talkStart[cid] = os.time()
 
 			if(a > 0) then
-				doPlayerRemoveMoney(cid, ((a * self.npcHandler.shopItems[itemid].buyPrice) + (b * 20)))
+				doPlayerRemoveMoney(cid, ((a * shopItem.buy) + (b * 20)))
 				return true
 			end
 
@@ -932,12 +957,13 @@ if(Modules == nil) then
 
 	-- Callback onSell() function. If you wish, you can change certain Npc to use your onSell().
 	function ShopModule:callbackOnSell(cid, itemid, subType, amount, ignoreCap, inBackpacks)
-		if(self.npcHandler.shopItems[itemid] == nil) then
+		local shopItem = self:getShopItem(itemid, subType)
+		if shopItem == nil then
 			error("[ShopModule.onSell] items[itemid] == nil")
 			return false
 		end
 
-		if(self.npcHandler.shopItems[itemid].sellPrice == -1) then
+		if shopItem.sell == -1 then
 			error("[ShopModule.onSell] attempt to sell a non-sellable item")
 			return false
 		end
@@ -945,19 +971,15 @@ if(Modules == nil) then
 		local parseInfo = {
 			[TAG_PLAYERNAME] = getPlayerName(cid),
 			[TAG_ITEMCOUNT] = amount,
-			[TAG_TOTALCOST] = amount * self.npcHandler.shopItems[itemid].sellPrice,
-			[TAG_ITEMNAME] = self.npcHandler.shopItems[itemid].realName
+			[TAG_TOTALCOST] = amount * shopItem.sell,
+			[TAG_ITEMNAME] = shopItem.name
 		}
-
-		if isItemFluidContainer(itemid) == FALSE then
-			subType = -1
-		end
 
 		if(doPlayerRemoveItem(cid, itemid, amount, subType) == TRUE) then
 			local msg = self.npcHandler:getMessage(MESSAGE_SOLD)
 			msg = self.npcHandler:parseMessage(msg, parseInfo)
 			doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, msg)
-			doPlayerAddMoney(cid, amount * self.npcHandler.shopItems[itemid].sellPrice)
+			doPlayerAddMoney(cid, amount * shopItem.sell)
 			self.npcHandler.talkStart[cid] = os.time()
 			return true
 		else
@@ -981,9 +1003,8 @@ if(Modules == nil) then
 		end
 
 		local itemWindow = {}
-		for itemid, attr in pairs(module.npcHandler.shopItems) do
-			local item = {id = itemid, buy = attr.buyPrice, sell = attr.sellPrice, subType = attr.subType, name = attr.realName}
-			table.insert(itemWindow, item)
+		for i = 1, #module.npcHandler.shopItems do
+			table.insert(itemWindow, module.npcHandler.shopItems[i])
 		end
 
 		if(itemWindow[1] == nil) then
