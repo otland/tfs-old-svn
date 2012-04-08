@@ -7,7 +7,7 @@
 
 		Most needed are the items (including floors, walls)
 		introduced in the most recent tibia updates
-		starting from 8.7 to 9.5
+		starting from 8.7 to 9.51
 
 		If you found something wrong with existing item(s), we're also waiting for you :)
 
@@ -147,7 +147,7 @@
 	<item id="470" article="a" name="hole">
 		<attribute key="floorchange" value="down"/>
 	</item>
-	<item fromid="471" toid="474" article="a" name="time tile"/>
+	<item fromid="471" toid="474" article="a" name="strange carving"/>
 	<item fromid="475" toid="476" article="a" name="hole">
 		<attribute key="floorchange" value="down"/>
 	</item>
@@ -8672,18 +8672,20 @@
 		<attribute key="slotType" value="feet"/>
 	</item>
 	<item id="5463" article="a" name="sugar cane">
-		<attribute key="decayTo" value="5464"/>
+		<attribute key="decayTo" value="5471"/>
 		<attribute key="duration" value="240"/>
 	</item>
 	<item id="5464" article="a" name="sugar cane">
-		<attribute key="decayTo" value="5466"/>
-		<attribute key="duration" value="240"/>
+		<attribute key="description" value="It can be harvested." />
 	</item>
 	<item id="5465" article="a" name="burning sugar cane">
-		<attribute key="decayTo" value="5471"/>
+		<attribute key="decayTo" value="5464"/>
 		<attribute key="duration" value="10"/>
 	</item>
-	<item id="5466" article="a" name="sugar cane"/>
+	<item id="5466" article="a" name="sugar cane">
+		<attribute key="decayTo" value="5466" />
+		<attribute key="duration" value="240" />
+	</item>
 	<item id="5467" article="a" name="bunch of sugar cane" plural="bunches of sugar cane">
 		<attribute key="weight" value="2250"/>
 	</item>
@@ -8752,10 +8754,12 @@
 	<item id="5513" article="a" name="distilling machine">
 		<attribute key="decayTo" value="5469"/>
 		<attribute key="duration" value="15"/>
+		<attribute key="fluidSource" value="rum" />
 	</item>
 	<item id="5514" article="a" name="distilling machine">
 		<attribute key="decayTo" value="5470"/>
 		<attribute key="duration" value="15"/>
+		<attribute key="fluidSource" value="rum" />
 	</item>
 	<item id="5515" article="a" name="closed door">
 		<attribute key="type" value="door"/>
@@ -21236,11 +21240,7 @@
 		<attribute key="description" value="It was awarded in memory of the dedicated service of Tibia's gamemaster team."/>
 		<attribute key="weight" value="1500"/>
 	</item>
-	<item id="12667" name="phoenix statue">
-		<attribute key="description" value="This mighty statue contains a true Phoenix feather inside. Awarded to winner of Tibiafans competition."/>
-		<attribute key="weight" value="2000"/>
-	</item>
-	<item id="12668" name="phoenix statue">
+	<item fromid="12667" toid="12668" name="phoenix statue">
 		<attribute key="description" value="This mighty statue contains a true Phoenix feather inside. Awarded to winner of Tibiafans competition."/>
 		<attribute key="weight" value="2000"/>
 	</item>
