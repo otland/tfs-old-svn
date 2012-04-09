@@ -2500,7 +2500,7 @@ void ProtocolGame::sendStatsMessage(MessageClasses type, const std::string& mess
 
 void ProtocolGame::sendBasicData()
 {
-/*	NetworkMessage_ptr msg = getOutputBuffer();
+	NetworkMessage_ptr msg = getOutputBuffer();
 	if(!msg)
 		return;
 
@@ -2510,8 +2510,8 @@ void ProtocolGame::sendBasicData()
 	msg->put<char>(player->isPremium());
 	msg->put<char>(player->getVocation()->getClientId());
 
-	msg->put<char>(0x00); // known spells
-	//each spell: msg->put<char>(spellId);*/
+	msg->put<uint16_t>(0x00); // known spells
+	//each spell: msg->put<char>(spellId);
 }
 
 void ProtocolGame::sendCancel(const std::string& message)
