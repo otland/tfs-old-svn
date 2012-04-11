@@ -35,6 +35,7 @@
 	Game protocol 9.50/9.51 support.
 	Corrected Lua error function arguments in NPC system modules.
 	Increased NETWORKMESSAGE_MAXSIZE to prevent debugs if packets exceeded the old size.
+	Magic level skill boost will now show up in market details.
 	Replaced the old reverseFluidMap which wasn't working as intended with a new server-to-client map.
 	Rewrote how shopItems table worked in NPC ShopModule to work with items of same id but subtype that differs (i.e. different liquids in same fluid container).
 	Updated items.
