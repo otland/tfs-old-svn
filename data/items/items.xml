@@ -8557,6 +8557,7 @@
 	<item id="5460" article="a" name="wrecked ventilation grill" />
 	<item id="5461" article="a" name="helmet of the deep">
 		<attribute key="weight" value="21000" />
+		<attribute key="description" value="Enables underwater exploration."/>
 		<attribute key="armor" value="2" />
 		<attribute key="slotType" value="head" />
 		<attribute key="absorbPercentDrown" value="100" />
@@ -22626,7 +22627,7 @@
 		<attribute key="description" value="The identity of some deepling is written there." />
 	</item>
 	<item fromid="15437" toid="15438" article="a" name="party lampions">
-		<attribute key="weight" value="280" />
+		<attribute key="weight" value="1000" />
 	</item>
 	<item id="15439" article="a" name="party wall tinsel">
 		<attribute key="weight" value="1000" />
@@ -22634,11 +22635,36 @@
 	<item id="15440" article="a" name="party wall snake">
 		<attribute key="weight" value="1000" />
 	</item>
-	<item fromid="15441" toid="15443" article="a" name="flower pot">
-		<attribute key="weight" value="150" />
+	<item id="15441" article="a" name="flower pot">
+		<attribute key="description" value="There is a fully grown winterblossom in it. This plant can't wither anymore."/>
+		<attribute key="weight" value="150"/>
 	</item>
-	<item id="15445" article="a" name="deepling claw">
-		<attribute key="weight" value="180" />
+	<item fromid="15442" toid="15443" article="a" name="flower pot">
+		<attribute key="weight" value="150"/>
+	</item>
+	<item id="15445" article="a" name="flower pot">
+		<attribute key="description" value="There is a fully grown lizard tongue plant in it. This plant can't wither anymore."/>
+		<attribute key="weight" value="150"/>
+	</item>
+	<item id="15446" article="a" name="flower pot">
+		<attribute key="description" value="There is a fully grown dryad's heart flower in it. This plant can't wither anymore."/>
+		<attribute key="weight" value="150"/>
+	</item>
+	<item id="15447" article="a" name="flower pot">
+		<attribute key="description" value="There is a fully grown ember queen flower in it. This plant can't wither anymore."/>
+		<attribute key="weight" value="150"/>
+	</item>
+	<item id="15448" article="a" name="flower pot">
+		<attribute key="description" value="There is a fully grown midnight bloom flower in it.  This plant can't wither anymore."/>
+		<attribute key="weight" value="150"/>
+	</item>
+	<item id="15449" article="a" name="flower pot">
+		<attribute key="description" value="There is a fully grown fairy dancer flower in it. This plant can't wither anymore."/>
+		<attribute key="weight" value="150"/>
+	</item>
+	<item id="15450" article="a" name="flower pot">
+		<attribute key="description" value="There is a fully grown finger snapper plant in it. This plant can't wither anymore."/>
+		<attribute key="weight" value="150"/>
 	</item>
 	<item id="15451" article="a" name="warrior's axe">
 		<attribute key="weight" value="8800" />
@@ -22650,7 +22676,7 @@
 		<attribute key="weight" value="180" />
 	</item>
 	<item id="15453" article="a" name="warrior's shield">
-		<attribute key="weight" value="7900" />
+		<attribute key="weight" value="7500" />
 		<attribute key="defense" value="33" />
 		<attribute key="weaponType" value="shield" />
 	</item>
@@ -22664,6 +22690,15 @@
 	<item id="15455" article="a" name="deepling claw">
 		<attribute key="weight" value="180" />
 	</item>
+	<item id="15463" article="a" name="flask of chitin dissolver">
+		<attribute key="weight" value="155"/>
+	</item>
+	<item id="15464" article="a" name="flask of dissolved chitin">
+		<attribute key="weight" value="155"/>
+	</item>
+	<item id="15465" article="a" name="reagent flask">
+		<attribute key="weight" value="150"/>
+	</item>
 	<item id="15479" article="a" name="swarmer antenna">
 		<attribute key="weight" value="100" />
 	</item>
@@ -22671,7 +22706,7 @@
 		<attribute key="weight" value="460" />
 	</item>
 	<item id="15481" article="a" name="spitter nose">
-		<attribute key="weight" value="460" />
+		<attribute key="weight" value="190" />
 	</item>
 	<item id="15482" article="a" name="crawler head plating">
 		<attribute key="weight" value="265" />
@@ -22765,7 +22800,7 @@
 		<attribute key="description" value="There are little puppies inside." />
 	</item>
 	<item id="15559" article="a" name="dog collar">
-		<attribute key="weight" value="5000" />
+		<attribute key="weight" value="110" />
 		<attribute key="description" value="It belongs to Noodles, the King's dog." />
 	</item>
 	<item fromid="15561" toid="15564" article="a" name="crystal wall" />
@@ -22803,6 +22838,12 @@
 	</item>
 	<item id="15622" article="a" name="dung ball">
 		<attribute key="weight" value="190" />
+	</item>
+	<item id="15638" article="a" name="true heart of the sea">
+		<attribute key="weight" value="970"/>
+		<attribute key="description" value="A true Hearth of the Sea, cut by Deeplings in depths of deepest black."/>
+		<attribute key="duration" value="2"/>
+		<attribute key="decayTo" value="0"/>
 	</item>
 	<item id="15643" article="a" name="hive bow">
 		<attribute key="weight" value="4600" />
@@ -22886,6 +22927,18 @@
 		<attribute key="corpseType" value="blood" />
 	</item>
 	<item id="16000" article="an" name="anniversary remains" />
+	<item id="16004" article="a" name="Delany's golden bug trophy">
+		<attribute key="weight" value="1250" />
+		<attribute key="description" value="It was awarded during the festives of Tibia's 15th anniversary."/>
+	</item>
+	<item id="16005" article="a" name="Bolfrim's golden bug trophy">
+		<attribute key="weight" value="1250" />
+		<attribute key="description" value="It was awarded during the festives of Tibia's 15th anniversary."/>
+	</item>
+	<item id="16006" article="a" name="Siramal's golden bug trophy">
+		<attribute key="weight" value="1250" />
+		<attribute key="description" value="It was awarded during the festives of Tibia's 15th anniversary." />
+	</item>
 	<item id="16007" article="an" name="anniversary backpack">
 		<attribute key="weight" value="1500" />
 		<attribute key="containerSize" value="15" />
@@ -22935,11 +22988,19 @@
 		<attribute key="weight" value="1600" />
 		<attribute key="description" value="It was painted in the style of Lyxoph. Unfortunately, there are some blue pixels in this piece." />
 	</item>
+	<item id="16075" article="a" name="easel kit">
+		<attribute key="description" value="Use it in your house to construct a easel."/>
+		<attribute key="weight" value="7500"/>
+	</item>
 	<item id="16093" article="a" name="surprise nest">
 		<attribute key="description" value="Use it to get a little surprise." />
 	</item>
 	<item id="16096" article="a" name="dung ball">
 		<attribute key="weight" value="190" />
+	</item>
+	<item id="16099" article="a" name="cake cabinet kit">
+		<attribute key="description" value="Use it in your house to construct a cake cabinet."/>
+		<attribute key="weight" value="7500"/>
 	</item>
 	<item id="16102" article="a" name="surprise nest">
 		<attribute key="weight" value="1000" />
