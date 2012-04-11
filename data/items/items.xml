@@ -3871,7 +3871,7 @@
 		<attribute key="slotType" value="head" />
 	</item>
 	<item id="2500" article="an" name="amazon armor">
-		<attribute key="weight" value="9900" />
+		<attribute key="weight" value="4500" />
 		<attribute key="armor" value="13" />
 		<attribute key="skillDist" value="3" />
 		<attribute key="slotType" value="body" />
@@ -4433,7 +4433,7 @@
 		<attribute key="slotType" value="body" />
 	</item>
 	<item id="2653" article="a" name="red tunic">
-		<attribute key="weight" value="3000" />
+		<attribute key="weight" value="1400" />
 		<attribute key="armor" value="2" />
 		<attribute key="slotType" value="body" />
 	</item>
@@ -4444,6 +4444,7 @@
 	</item>
 	<item id="2655" article="a" name="red robe">
 		<attribute key="weight" value="2600" />
+		<attribute key="description" value="The robe is artfull embroideredy." />
 		<attribute key="armor" value="1" />
 		<attribute key="slotType" value="body" />
 	</item>
@@ -4454,7 +4455,7 @@
 		<attribute key="slotType" value="body" />
 	</item>
 	<item id="2657" article="a" name="simple dress">
-		<attribute key="weight" value="2400" />
+		<attribute key="weight" value="1000" />
 		<attribute key="slotType" value="body" />
 	</item>
 	<item id="2658" article="a" name="white dress">
@@ -7982,8 +7983,8 @@
 		<attribute key="attack" value="18" />
 		<attribute key="weaponType" value="club" />
 	</item>
-	<item id="4847" article="a" name="simple dress">
-		<attribute key="weight" value="2400" />
+	<item id="4847" article="a" name="spectral  dress">
+		<attribute key="weight" value="1000" />
 		<attribute key="slotType" value="body" />
 	</item>
 	<item id="4848" article="an" name="icicle">
@@ -15644,10 +15645,10 @@
 	<item id="8867" article="a" name="dragon robe">
 		<attribute key="description" value="It is covered with runic symbols." />
 		<attribute key="weight" value="2850" />
+		<attribute key="slotType" value="body" />
 		<attribute key="armor" value="12" />
 		<attribute key="absorbPercentFire" value="12" />
 		<attribute key="absorbPercentIce" value="-12" />
-		<attribute key="slotType" value="body" />
 	</item>
 	<item id="8868" article="a" name="velvet mantle">
 		<attribute key="description" value="The smooth tissue seems to sparkle." />
@@ -15739,11 +15740,11 @@
 	</item>
 	<item id="8882" article="an" name="earthborn titan armor">
 		<attribute key="weight" value="12000" />
+		<attribute key="slotType" value="body" />
 		<attribute key="armor" value="15" />
 		<attribute key="skillAxe" value="2" />
 		<attribute key="absorbPercentEarth" value="5" />
 		<attribute key="absorbPercentFire" value="-5" />
-		<attribute key="slotType" value="body" />
 	</item>
 	<item id="8883" article="a" name="windborn colossus armor">
 		<attribute key="weight" value="12000" />
@@ -19642,7 +19643,7 @@
 	</item>
 	<item id="11355" article="a" name="spellweaver's robe">
 		<attribute key="armor" value="11" />
-		<attribute key="weight" value="2450" />
+		<attribute key="weight" value="2350" />
 		<attribute key="slotType" value="body" />
 		<attribute key="absorbPercentEnergy" value="10" />
 		<attribute key="absorbPercentEarth" value="-10" />
@@ -22509,7 +22510,7 @@
 		<attribute key="absorbPercentLifeDrain" value="50" />
 		<attribute key="showattributes" value="1" />
 	</item>
-	<item id="15404" article="a" name="deepling axe">
+	<item id="15404" article="a"  name="deepling axe">
 		<attribute key="weight" value="9100" />
 		<attribute key="defense" value="29" />
 		<attribute key="attack" value="49" />
@@ -22735,9 +22736,8 @@
 		<attribute key="weight" value="2000" />
 		<attribute key="armor" value="12" />
 		<attribute key="slotType" value="body" />
-		<attribute key="magicpoints" value="1" />
+		<attribute key="magiclevelpoints" value="1" />
 		<attribute key="absorbPercentIce" value="5" />
-		<attribute key="showattributes" value="1" />
 	</item>
 	<item id="15490" article="a" name="grasshopper legs">
 		<attribute key="weight" value="3200" />
@@ -22927,15 +22927,15 @@
 		<attribute key="corpseType" value="blood" />
 	</item>
 	<item id="16000" article="an" name="anniversary remains" />
-	<item id="16004" name="Delany's golden bug trophy">
+	<item id="16004" article="a" name="Delany's golden bug trophy">
 		<attribute key="weight" value="1250" />
 		<attribute key="description" value="It was awarded during the festives of Tibia's 15th anniversary." />
 	</item>
-	<item id="16005" name="Bolfrim's golden bug trophy">
+	<item id="16005" article="a" name="Bolfrim's golden bug trophy">
 		<attribute key="weight" value="1250" />
 		<attribute key="description" value="It was awarded during the festives of Tibia's 15th anniversary." />
 	</item>
-	<item id="16006" name="Siramal's golden bug trophy">
+	<item id="16006" article="a" name="Siramal's golden bug trophy">
 		<attribute key="weight" value="1250" />
 		<attribute key="description" value="It was awarded during the festives of Tibia's 15th anniversary." />
 	</item>
