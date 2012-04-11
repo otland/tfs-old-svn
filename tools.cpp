@@ -30,7 +30,6 @@
 
 #include <sstream>
 #include <iomanip>
-#include <cmath>
 
 #if defined __GNUC__ && __GNUC__ > 3
 #include <ctype.h>
@@ -1234,12 +1233,25 @@ std::string getWeaponName(WeaponType_t weaponType)
 	return "";
 }
 
-uint32_t combatTypeToIndex(CombatType_t v)
+uint32_t combatTypeToIndex(CombatType_t combatType)
 {
-	if(v == COMBAT_FIRST)
-		return 0;
-
-	return (uint32_t)(log((double)v) / log((double)2)) + 1;
+	switch(combatType)
+	{
+		case COMBAT_NONE: return 0;
+		case COMBAT_PHYSICALDAMAGE: return 1;
+		case COMBAT_ENERGYDAMAGE: return 2;
+		case COMBAT_EARTHDAMAGE: return 3;
+		case COMBAT_FIREDAMAGE: return 4;
+		case COMBAT_UNDEFINEDDAMAGE: return 5;
+		case COMBAT_LIFEDRAIN: return 6;
+		case COMBAT_MANADRAIN: return 7;
+		case COMBAT_HEALING: return 8;
+		case COMBAT_DROWNDAMAGE: return 9;
+		case COMBAT_ICEDAMAGE: return 10;
+		case COMBAT_HOLYDAMAGE: return 11;
+		case COMBAT_DEATHDAMAGE: return 12;
+		default: return 0;
+	}
 }
 
 CombatType_t indexToCombatType(uint32_t v)
