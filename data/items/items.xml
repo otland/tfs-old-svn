@@ -2963,7 +2963,7 @@
 		<attribute key="weight" value="150" />
 		<attribute key="description" value="The report is written in some coded language." />
 	</item>
-	<item id="2346" article="a" name="tear of Daraman">
+	<item id="2346" article="a" name="tear of daraman">
 		<attribute key="weight" value="30" />
 	</item>
 	<item id="2347" article="a" name="cookbook">
@@ -3012,8 +3012,8 @@
 		<attribute key="decayTo" value="0" />
 		<attribute key="duration" value="86400" />
 	</item>
-	<item id="2355" article="a" name="stuffed rabbit">
-		<attribute key="weight" value="200" />
+	<item id="2355" article="a" name="stuffed bunny">
+		<attribute key="weight" value="350" />
 	</item>
 	<item id="2356" article="a" name="gemmed lamp">
 		<attribute key="weight" value="1300" />
@@ -3176,7 +3176,7 @@
 		<attribute key="ammoAction" value="moveback" />
 	</item>
 	<item id="2390" article="a" name="magic longsword">
-		<attribute key="description" value="It is the magic Cyclopmania Sword." />
+		<attribute key="description" value="It's the magic Cyclopmania Sword." />
 		<attribute key="weight" value="4300" />
 		<attribute key="defense" value="40" />
 		<attribute key="attack" value="55" />
@@ -3416,6 +3416,7 @@
 		<attribute key="defense" value="15" />
 		<attribute key="attack" value="28" />
 		<attribute key="weaponType" value="club" />
+		<attribute key="extradef" value="1" />
 	</item>
 	<item id="2424" article="a" name="silver mace">
 		<attribute key="description" value="You feel an aura of protection." />
@@ -3433,7 +3434,7 @@
 		<attribute key="slotType" value="two-handed" />
 	</item>
 	<item id="2426" article="a" name="naginata">
-		<attribute key="weight" value="8000" />
+		<attribute key="weight" value="7800" />
 		<attribute key="defense" value="25" />
 		<attribute key="attack" value="39" />
 		<attribute key="weaponType" value="axe" />

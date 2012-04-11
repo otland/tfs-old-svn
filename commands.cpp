@@ -1380,7 +1380,7 @@ void Commands::serverDiag(Player* player, const std::string& cmd, const std::str
 
 	player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, text.str().c_str());
 #else
-	player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, "You need to conpile with __ENABLE_SERVER_DIAGNOSTIC__ flag to make it work.");
+	player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, "This command requires the server to be compiled with the __ENABLE_SERVER_DIAGNOSTIC__ flag.");
 #endif
 }
 

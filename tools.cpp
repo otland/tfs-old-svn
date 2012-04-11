@@ -1221,8 +1221,6 @@ std::string getWeaponName(WeaponType_t weaponType)
 			return "axe";
 		case WEAPON_DIST:
 			return "distance";
-		case WEAPON_SHIELD:
-			return "shield";
 		case WEAPON_WAND:
 			return "wand";
 		case WEAPON_AMMO:
