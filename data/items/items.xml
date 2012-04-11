@@ -21891,7 +21891,7 @@
 	</item>
 	<item id="13759" name="small whistle">
 		<attribute key="description" value="This small whistle seems used. It seems to make absolutely no sound at all when it is blown." />
-		<attribute key="weight" value="50000" />
+		<attribute key="weight" value="5000" />
 	</item>
 	<item id="13760" article="a" name="death priest rod">
 		<attribute key="description" value="It grants you the power of the cursed priest." />
@@ -22968,7 +22968,7 @@
 	<item id="15430" article="a" name="deepling scale">
 		<attribute key="weight" value="480" />
 	</item>
-	<item id="15431" article="the" name="heart of the sea">
+	<item id="15431" article="the" name="Heart of the Sea">
 		<attribute key="weight" value="390" />
 		<attribute key="description" value="This formidable gem was hand-cut by |PLAYERNAME|." />
 	</item>
