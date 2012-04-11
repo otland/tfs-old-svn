@@ -3111,21 +3111,43 @@ bool Game::playerLookAt(uint32_t playerId, const Position& pos, uint16_t spriteI
 	}
 
 	std::stringstream ss;
-	ss << "You see " << thing->getDescription(lookDistance) << std::endl;
+	ss << "You see " << thing->getDescription(lookDistance);
 	if(player->isAccessPlayer())
 	{
 		Item* item = thing->getItem();
 		if(item)
 		{
-			ss << "ItemID: [" << item->getID() << "].";
+			ss << std::endl << "ItemID: [" << item->getID() << "]";
 			if(item->getActionId() > 0)
-				ss << std::endl << "ActionID: [" << item->getActionId() << "].";
+				ss << ", ActionID: [" << item->getActionId() << "]";
+
 			if(item->getUniqueId() > 0)
-				ss << std::endl << "UniqueID: [" << item->getUniqueId() << "].";
-			ss << std::endl;
+				ss << ", UniqueID: [" << item->getUniqueId() << "]";
+
+			ss << ".";
+			const ItemType& it = Item::items[item->getID()];
+			if(it.transformEquipTo)
+				ss << std::endl << "TransformTo: [" << it.transformEquipTo << "] (onEquip).";
+			else if(it.transformDeEquipTo)
+				ss << std::endl << "TransformTo: [" << it.transformDeEquipTo << "] (onDeEquip).";
+
+			if(it.decayTo != -1)
+				ss << std::endl << "DecayTo: [" << it.decayTo << "].";
 		}
-		ss << "Position: [X: " << thingPos.x << "] [Y: " << thingPos.y << "] [Z: " << thingPos.z << "].";
+		
+		if(const Creature* creature = thing->getCreature())
+		{
+			ss << std::endl << "Health: [" << creature->getHealth() << " / " << creature->getMaxHealth() << "]";
+			if(creature->getMaxMana() > 0)
+				ss << ", Mana: [" << creature->getMana() << " / " << creature->getMaxMana() << "]";
+
+			ss << ".";
+		}
+
+		ss << std::endl << "Position: [X: " << thingPos.x << "] [Y: " << thingPos.y << "] [Z: " << thingPos.z << "]";
+		ss << ".";
 	}
+
 	player->sendTextMessage(MSG_INFO_DESCR, ss.str());
 	return true;
 }
