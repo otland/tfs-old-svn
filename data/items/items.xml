@@ -1670,93 +1670,93 @@
 	<item id="2039" article="a" name="wall lamp" />
 	<item id="2040" article="a" name="lit wall lamp" />
 	<item id="2041" article="a" name="candelabrum">
-		<attribute key="slotType" value="ammo"/>
+		<attribute key="slotType" value="ammo" />
 		<attribute key="weight" value="5000" />
 		<attribute key="stopduration" value="1" />
 	</item>
 	<item id="2042" article="a" name="lit candelabrum">
-		<attribute key="slotType" value="ammo"/>
+		<attribute key="slotType" value="ammo" />
 		<attribute key="weight" value="5000" />
 		<attribute key="decayTo" value="2043" />
 		<attribute key="duration" value="180" />
 	</item>
 	<item id="2043" article="a" name="used candelabrum">
-		<attribute key="slotType" value="ammo"/>
+		<attribute key="slotType" value="ammo" />
 		<attribute key="weight" value="4500" />
 	</item>
 	<item id="2044" article="a" name="lamp">
-		<attribute key="slotType" value="ammo"/>
+		<attribute key="slotType" value="ammo" />
 		<attribute key="weight" value="3000" />
 		<attribute key="stopduration" value="1" />
 	</item>
 	<item id="2045" article="a" name="lit lamp">
-		<attribute key="slotType" value="ammo"/>
+		<attribute key="slotType" value="ammo" />
 		<attribute key="weight" value="3000" />
 		<attribute key="decayTo" value="2046" />
 		<attribute key="duration" value="180" />
 	</item>
 	<item id="2046" article="a" name="used lamp">
-		<attribute key="slotType" value="ammo"/>
+		<attribute key="slotType" value="ammo" />
 		<attribute key="weight" value="3000" />
 	</item>
 	<item id="2047" article="a" name="candlestick">
-		<attribute key="slotType" value="ammo"/>
+		<attribute key="slotType" value="ammo" />
 		<attribute key="weight" value="300" />
 		<attribute key="stopduration" value="1" />
 	</item>
 	<item id="2048" article="a" name="lit candlestick">
-		<attribute key="slotType" value="ammo"/>
+		<attribute key="slotType" value="ammo" />
 		<attribute key="weight" value="300" />
 		<attribute key="decayTo" value="2049" />
 		<attribute key="duration" value="240" />
 	</item>
 	<item id="2049" article="a" name="used candlestick">
-		<attribute key="slotType" value="ammo"/>
+		<attribute key="slotType" value="ammo" />
 		<attribute key="weight" value="200" />
 		<attribute key="decayTo" value="0" />
 		<attribute key="duration" value="60" />
 	</item>
 	<item id="2050" article="a" name="torch">
-		<attribute key="slotType" value="ammo"/>
+		<attribute key="slotType" value="ammo" />
 		<attribute key="weight" value="500" />
 		<attribute key="stopduration" value="1" />
 	</item>
 	<item id="2051" article="a" name="lit torch">
-		<attribute key="slotType" value="ammo"/>
+		<attribute key="slotType" value="ammo" />
 		<attribute key="weight" value="500" />
 		<attribute key="decayTo" value="2053" />
 		<attribute key="duration" value="600" />
 	</item>
 	<item id="2052" article="a" name="torch">
-		<attribute key="slotType" value="ammo"/>
+		<attribute key="slotType" value="ammo" />
 		<attribute key="weight" value="450" />
 		<attribute key="stopduration" value="1" />
 	</item>
 	<item id="2053" article="a" name="lit torch">
-		<attribute key="slotType" value="ammo"/>
+		<attribute key="slotType" value="ammo" />
 		<attribute key="weight" value="450" />
 		<attribute key="decayTo" value="2055" />
 		<attribute key="duration" value="300" />
 	</item>
 	<item id="2054" article="a" name="torch">
-		<attribute key="slotType" value="ammo"/>
+		<attribute key="slotType" value="ammo" />
 		<attribute key="weight" value="400" />
 		<attribute key="stopduration" value="1" />
 	</item>
 	<item id="2055" article="a" name="lit torch">
-		<attribute key="slotType" value="ammo"/>
+		<attribute key="slotType" value="ammo" />
 		<attribute key="weight" value="400" />
 		<attribute key="decayTo" value="2056" />
 		<attribute key="duration" value="300" />
 	</item>
 	<item id="2056" article="a" name="burnt down torch">
-		<attribute key="slotType" value="ammo"/>
+		<attribute key="slotType" value="ammo" />
 		<attribute key="weight" value="350" />
 		<attribute key="decayTo" value="0" />
 		<attribute key="duration" value="300" />
 	</item>
 	<item id="2057" article="a" name="candelabrum">
-		<attribute key="slotType" value="ammo"/>
+		<attribute key="slotType" value="ammo" />
 		<attribute key="weight" value="5000" />
 	</item>
 	<item id="2058" article="a" name="torch bearer" />
@@ -1869,11 +1869,11 @@
 		<attribute key="weight" value="9200" />
 	</item>
 	<item id="2096" article="a" name="pumpkinhead">
-		<attribute key="slotType" value="ammo"/>
+		<attribute key="slotType" value="ammo" />
 		<attribute key="weight" value="950" />
 	</item>
 	<item id="2097" article="a" name="lit pumpkinhead">
-		<attribute key="slotType" value="ammo"/>
+		<attribute key="slotType" value="ammo" />
 		<attribute key="weight" value="1250" />
 	</item>
 	<item id="2098" article="a" name="globe" />
@@ -2088,13 +2088,13 @@
 		<attribute key="showattributes" value="1" />
 	</item>
 	<item id="2162" article="a" name="magic light wand">
-		<attribute key="slotType" value="ammo"/>
+		<attribute key="slotType" value="ammo" />
 		<attribute key="weight" value="1500" />
 		<attribute key="stopduration" value="1" />
 		<attribute key="showduration" value="1" />
 	</item>
 	<item id="2163" article="a" name="magic light wand">
-		<attribute key="slotType" value="ammo"/>
+		<attribute key="slotType" value="ammo" />
 		<attribute key="weight" value="1500" />
 		<attribute key="decayTo" value="0" />
 		<attribute key="showduration" value="1" />
@@ -2177,7 +2177,7 @@
 		<attribute key="charges" value="1" />
 	</item>
 	<item id="2174" article="a" name="strange symbol">
-		<attribute key="slotType" value="ammo"/>
+		<attribute key="slotType" value="ammo" />
 		<attribute key="weight" value="200" />
 	</item>
 	<item id="2175" article="a" name="spellbook">
@@ -3032,7 +3032,7 @@
 	</item>
 	<item id="2360" article="a" name="portable hole" />
 	<item id="2361" article="a" name="frozen starlight">
-		<attribute key="slotType" value="ammo"/>
+		<attribute key="slotType" value="ammo" />
 		<attribute key="weight" value="20" />
 	</item>
 	<item id="2362" article="a" name="carrot of doom" plural="carrots of doom">
@@ -4101,7 +4101,7 @@
 	</item>
 	<item id="2543" article="a" name="bolt">
 		<attribute key="weight" value="80" />
-		<attribute key="slotType" value="ammo"/>
+		<attribute key="slotType" value="ammo" />
 		<attribute key="attack" value="30" />
 		<attribute key="weaponType" value="ammunition" />
 		<attribute key="ammoType" value="bolt" />
@@ -4111,7 +4111,7 @@
 	</item>
 	<item id="2544" article="an" name="arrow">
 		<attribute key="weight" value="70" />
-		<attribute key="slotType" value="ammo"/>
+		<attribute key="slotType" value="ammo" />
 		<attribute key="attack" value="25" />
 		<attribute key="weaponType" value="ammunition" />
 		<attribute key="ammoType" value="arrow" />
@@ -4121,7 +4121,7 @@
 	</item>
 	<item id="2545" article="a" name="poison arrow">
 		<attribute key="weight" value="80" />
-		<attribute key="slotType" value="ammo"/>
+		<attribute key="slotType" value="ammo" />
 		<attribute key="attack" value="22" />
 		<attribute key="weaponType" value="ammunition" />
 		<attribute key="ammoType" value="arrow" />
@@ -4131,7 +4131,7 @@
 	</item>
 	<item id="2546" article="a" name="burst arrow">
 		<attribute key="weight" value="90" />
-		<attribute key="slotType" value="ammo"/>
+		<attribute key="slotType" value="ammo" />
 		<attribute key="attack" value="28" />
 		<attribute key="weaponType" value="ammunition" />
 		<attribute key="ammoType" value="arrow" />
@@ -4141,7 +4141,7 @@
 	</item>
 	<item id="2547" article="a" name="power bolt">
 		<attribute key="weight" value="80" />
-		<attribute key="slotType" value="ammo"/>
+		<attribute key="slotType" value="ammo" />
 		<attribute key="attack" value="40" />
 		<attribute key="weaponType" value="ammunition" />
 		<attribute key="ammoType" value="bolt" />
@@ -8557,7 +8557,7 @@
 	<item id="5460" article="a" name="wrecked ventilation grill" />
 	<item id="5461" article="a" name="helmet of the deep">
 		<attribute key="weight" value="21000" />
-		<attribute key="description" value="Enables underwater exploration."/>
+		<attribute key="description" value="Enables underwater exploration." />
 		<attribute key="armor" value="2" />
 		<attribute key="slotType" value="head" />
 		<attribute key="absorbPercentDrown" value="100" />
@@ -9139,7 +9139,7 @@
 	</item>
 	<item id="5811" article="a" name="mermaid" />
 	<item fromid="5812" toid="5813" article="a" name="skull candle">
-		<attribute key="slotType" value="ammo"/>
+		<attribute key="slotType" value="ammo" />
 		<attribute key="weight" value="2200" />
 	</item>
 	<item fromid="5814" toid="5827" name="small lava cracks">
@@ -11165,7 +11165,7 @@
 	<item fromid="6474" toid="6475" name="planks" />
 	<item fromid="6476" toid="6488" name="debris" />
 	<item fromid="6489" toid="6490" article="a" name="christmas branch">
-		<attribute key="slotType" value="ammo"/>
+		<attribute key="slotType" value="ammo" />
 		<attribute key="weight" value="1800" />
 	</item>
 	<item id="6491" article="a" name="firefly">
@@ -11288,7 +11288,7 @@
 	</item>
 	<item id="6529" article="an" name="infernal bolt">
 		<attribute key="weight" value="90" />
-		<attribute key="slotType" value="ammo"/>
+		<attribute key="slotType" value="ammo" />
 		<attribute key="attack" value="43" />
 		<attribute key="weaponType" value="ammunition" />
 		<attribute key="ammoType" value="bolt" />
@@ -12282,7 +12282,7 @@
 	<item fromid="7361" toid="7362" article="a" name="sarcophagus" />
 	<item id="7363" article="a" name="piercing bolt">
 		<attribute key="weight" value="80" />
-		<attribute key="slotType" value="ammo"/>
+		<attribute key="slotType" value="ammo" />
 		<attribute key="attack" value="33" />
 		<attribute key="weaponType" value="ammunition" />
 		<attribute key="ammoType" value="bolt" />
@@ -12292,7 +12292,7 @@
 	</item>
 	<item id="7364" article="a" name="sniper arrow">
 		<attribute key="weight" value="70" />
-		<attribute key="slotType" value="ammo"/>
+		<attribute key="slotType" value="ammo" />
 		<attribute key="attack" value="28" />
 		<attribute key="weaponType" value="ammunition" />
 		<attribute key="ammoType" value="arrow" />
@@ -12302,7 +12302,7 @@
 	</item>
 	<item id="7365" article="an" name="onyx arrow">
 		<attribute key="weight" value="70" />
-		<attribute key="slotType" value="ammo"/>
+		<attribute key="slotType" value="ammo" />
 		<attribute key="attack" value="38" />
 		<attribute key="weaponType" value="ammunition" />
 		<attribute key="ammoType" value="arrow" />
@@ -14009,7 +14009,7 @@
 	<item fromid="7833" toid="7837" name="dirt" />
 	<item id="7838" article="a" name="flash arrow">
 		<attribute key="weight" value="70" />
-		<attribute key="slotType" value="ammo"/>
+		<attribute key="slotType" value="ammo" />
 		<attribute key="attack" value="14" />
 		<attribute key="elementEnergy" value="14" />
 		<attribute key="weaponType" value="ammunition" />
@@ -14020,7 +14020,7 @@
 	</item>
 	<item id="7839" article="a" name="shiver arrow">
 		<attribute key="weight" value="70" />
-		<attribute key="slotType" value="ammo"/>
+		<attribute key="slotType" value="ammo" />
 		<attribute key="attack" value="14" />
 		<attribute key="elementIce" value="14" />
 		<attribute key="weaponType" value="ammunition" />
@@ -14031,7 +14031,7 @@
 	</item>
 	<item id="7840" article="a" name="flaming arrow">
 		<attribute key="weight" value="70" />
-		<attribute key="slotType" value="ammo"/>
+		<attribute key="slotType" value="ammo" />
 		<attribute key="attack" value="14" />
 		<attribute key="elementFire" value="14" />
 		<attribute key="weaponType" value="ammunition" />
@@ -14081,7 +14081,7 @@
 	</item>
 	<item id="7850" article="an" name="earth arrow">
 		<attribute key="weight" value="70" />
-		<attribute key="slotType" value="ammo"/>
+		<attribute key="slotType" value="ammo" />
 		<attribute key="attack" value="28" />
 		<attribute key="weaponType" value="ammunition" />
 		<attribute key="shootType" value="eartharrow" />
@@ -16875,7 +16875,7 @@
 		<attribute key="weight" value="2200" />
 	</item>
 	<item id="9742" article="a" name="charged ghost charm">
-		<attribute key="slotType" value="ammo"/>
+		<attribute key="slotType" value="ammo" />
 		<attribute key="weight" value="900" />
 	</item>
 	<item id="9745" article="a" name="box ramp">
@@ -17335,7 +17335,7 @@
 		<attribute key="weight" value="500" />
 	</item>
 	<item id="9956" article="a" name="magical torch">
-		<attribute key="slotType" value="ammo"/>
+		<attribute key="slotType" value="ammo" />
 		<attribute key="description" value="You have a day to light all important locations before the torch stops burning." />
 		<attribute key="weight" value="1500" />
 		<attribute key="defense" value="25" />
@@ -20812,7 +20812,7 @@
 		<attribute key="extradef" value="3" />
 	</item>
 	<item id="12651" article="a" name="black jade cobra">
-		<attribute key="slotType" value="ammo"/>
+		<attribute key="slotType" value="ammo" />
 		<attribute key="weight" value="650" />
 	</item>
 	<item fromid="12652" toid="12653" article="a" name="statue" />
@@ -22034,7 +22034,7 @@
 		<attribute key="showduration" value="0" />
 	</item>
 	<item id="13875" article="a" name="shimmer glower">
-		<attribute key="slotType" value="ammo"/>
+		<attribute key="slotType" value="ammo" />
 		<attribute key="weight" value="1000" />
 		<attribute key="decayTo" value="0" />
 		<attribute key="duration" value="604800" />
@@ -22493,10 +22493,10 @@
 	<item id="15344" article="a" name="party snake" />
 	<item id="15345" name="emblems" />
 	<item id="15346" article="an" name="emblem" />
-	<item id="15390" article="a"  name="blob bomb">
+	<item id="15390" article="a" name="blob bomb">
 		<attribute key="weight" value="110" />
 	</item>
-	<item id="15400" article="a"  name="deepling staff">
+	<item id="15400" article="a" name="deepling staff">
 		<attribute key="weight" value="8800" />
 		<attribute key="defense" value="23" />
 		<attribute key="attack" value="43" />
@@ -22509,7 +22509,7 @@
 		<attribute key="absorbPercentLifeDrain" value="50" />
 		<attribute key="showattributes" value="1" />
 	</item>
-	<item id="15404" article="a"  name="deepling axe">
+	<item id="15404" article="a" name="deepling axe">
 		<attribute key="weight" value="9100" />
 		<attribute key="defense" value="29" />
 		<attribute key="attack" value="49" />
@@ -22636,35 +22636,35 @@
 		<attribute key="weight" value="1000" />
 	</item>
 	<item id="15441" article="a" name="flower pot">
-		<attribute key="description" value="There is a fully grown winterblossom in it. This plant can't wither anymore."/>
-		<attribute key="weight" value="150"/>
+		<attribute key="description" value="There is a fully grown winterblossom in it. This plant can't wither anymore." />
+		<attribute key="weight" value="150" />
 	</item>
 	<item fromid="15442" toid="15443" article="a" name="flower pot">
-		<attribute key="weight" value="150"/>
+		<attribute key="weight" value="150" />
 	</item>
 	<item id="15445" article="a" name="flower pot">
-		<attribute key="description" value="There is a fully grown lizard tongue plant in it. This plant can't wither anymore."/>
-		<attribute key="weight" value="150"/>
+		<attribute key="description" value="There is a fully grown lizard tongue plant in it. This plant can't wither anymore." />
+		<attribute key="weight" value="150" />
 	</item>
 	<item id="15446" article="a" name="flower pot">
-		<attribute key="description" value="There is a fully grown dryad's heart flower in it. This plant can't wither anymore."/>
-		<attribute key="weight" value="150"/>
+		<attribute key="description" value="There is a fully grown dryad's heart flower in it. This plant can't wither anymore." />
+		<attribute key="weight" value="150" />
 	</item>
 	<item id="15447" article="a" name="flower pot">
-		<attribute key="description" value="There is a fully grown ember queen flower in it. This plant can't wither anymore."/>
-		<attribute key="weight" value="150"/>
+		<attribute key="description" value="There is a fully grown ember queen flower in it. This plant can't wither anymore." />
+		<attribute key="weight" value="150" />
 	</item>
 	<item id="15448" article="a" name="flower pot">
-		<attribute key="description" value="There is a fully grown midnight bloom flower in it.  This plant can't wither anymore."/>
-		<attribute key="weight" value="150"/>
+		<attribute key="description" value="There is a fully grown midnight bloom flower in it. This plant can't wither anymore." />
+		<attribute key="weight" value="150" />
 	</item>
 	<item id="15449" article="a" name="flower pot">
-		<attribute key="description" value="There is a fully grown fairy dancer flower in it. This plant can't wither anymore."/>
-		<attribute key="weight" value="150"/>
+		<attribute key="description" value="There is a fully grown fairy dancer flower in it. This plant can't wither anymore." />
+		<attribute key="weight" value="150" />
 	</item>
 	<item id="15450" article="a" name="flower pot">
-		<attribute key="description" value="There is a fully grown finger snapper plant in it. This plant can't wither anymore."/>
-		<attribute key="weight" value="150"/>
+		<attribute key="description" value="There is a fully grown finger snapper plant in it. This plant can't wither anymore." />
+		<attribute key="weight" value="150" />
 	</item>
 	<item id="15451" article="a" name="warrior's axe">
 		<attribute key="weight" value="8800" />
@@ -22691,13 +22691,13 @@
 		<attribute key="weight" value="180" />
 	</item>
 	<item id="15463" article="a" name="flask of chitin dissolver">
-		<attribute key="weight" value="155"/>
+		<attribute key="weight" value="155" />
 	</item>
 	<item id="15464" article="a" name="flask of dissolved chitin">
-		<attribute key="weight" value="155"/>
+		<attribute key="weight" value="155" />
 	</item>
 	<item id="15465" article="a" name="reagent flask">
-		<attribute key="weight" value="150"/>
+		<attribute key="weight" value="150" />
 	</item>
 	<item id="15479" article="a" name="swarmer antenna">
 		<attribute key="weight" value="100" />
@@ -22840,10 +22840,10 @@
 		<attribute key="weight" value="190" />
 	</item>
 	<item id="15638" article="a" name="true heart of the sea">
-		<attribute key="weight" value="970"/>
-		<attribute key="description" value="A true Hearth of the Sea, cut by Deeplings in depths of deepest black."/>
-		<attribute key="duration" value="2"/>
-		<attribute key="decayTo" value="0"/>
+		<attribute key="weight" value="970" />
+		<attribute key="description" value="A true Hearth of the Sea, cut by Deeplings in depths of deepest black." />
+		<attribute key="duration" value="2" />
+		<attribute key="decayTo" value="0" />
 	</item>
 	<item id="15643" article="a" name="hive bow">
 		<attribute key="weight" value="4600" />
@@ -22881,7 +22881,7 @@
 	</item>
 	<item id="15648" article="a" name="tarsal arrow">
 		<attribute key="weight" value="70" />
-		<attribute key="slotType" value="ammo"/>
+		<attribute key="slotType" value="ammo" />
 		<attribute key="attack" value="33" />
 		<attribute key="weaponType" value="ammunition" />
 		<attribute key="ammoType" value="arrow" />
@@ -22891,7 +22891,7 @@
 	</item>
 	<item id="15649" article="a" name="vortex bolt">
 		<attribute key="weight" value="80" />
-		<attribute key="slotType" value="ammo"/>
+		<attribute key="slotType" value="ammo" />
 		<attribute key="attack" value="36" />
 		<attribute key="weaponType" value="ammunition" />
 		<attribute key="ammoType" value="bolt" />
@@ -22927,15 +22927,15 @@
 		<attribute key="corpseType" value="blood" />
 	</item>
 	<item id="16000" article="an" name="anniversary remains" />
-	<item id="16004" article="a" name="Delany's golden bug trophy">
+	<item id="16004" name="Delany's golden bug trophy">
 		<attribute key="weight" value="1250" />
-		<attribute key="description" value="It was awarded during the festives of Tibia's 15th anniversary."/>
+		<attribute key="description" value="It was awarded during the festives of Tibia's 15th anniversary." />
 	</item>
-	<item id="16005" article="a" name="Bolfrim's golden bug trophy">
+	<item id="16005" name="Bolfrim's golden bug trophy">
 		<attribute key="weight" value="1250" />
-		<attribute key="description" value="It was awarded during the festives of Tibia's 15th anniversary."/>
+		<attribute key="description" value="It was awarded during the festives of Tibia's 15th anniversary." />
 	</item>
-	<item id="16006" article="a" name="Siramal's golden bug trophy">
+	<item id="16006" name="Siramal's golden bug trophy">
 		<attribute key="weight" value="1250" />
 		<attribute key="description" value="It was awarded during the festives of Tibia's 15th anniversary." />
 	</item>
@@ -22989,8 +22989,8 @@
 		<attribute key="description" value="It was painted in the style of Lyxoph. Unfortunately, there are some blue pixels in this piece." />
 	</item>
 	<item id="16075" article="a" name="easel kit">
-		<attribute key="description" value="Use it in your house to construct a easel."/>
-		<attribute key="weight" value="7500"/>
+		<attribute key="description" value="Use it in your house to construct a easel." />
+		<attribute key="weight" value="7500" />
 	</item>
 	<item id="16093" article="a" name="surprise nest">
 		<attribute key="description" value="Use it to get a little surprise." />
@@ -22999,8 +22999,8 @@
 		<attribute key="weight" value="190" />
 	</item>
 	<item id="16099" article="a" name="cake cabinet kit">
-		<attribute key="description" value="Use it in your house to construct a cake cabinet."/>
-		<attribute key="weight" value="7500"/>
+		<attribute key="description" value="Use it in your house to construct a cake cabinet." />
+		<attribute key="weight" value="7500" />
 	</item>
 	<item id="16102" article="a" name="surprise nest">
 		<attribute key="weight" value="1000" />
