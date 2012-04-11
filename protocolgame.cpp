@@ -2338,6 +2338,16 @@ void ProtocolGame::sendMarketDetail(uint16_t itemId)
 			ss << getSkillName(i) << " " << std::showpos << it.abilities->skills[i] << std::noshowpos;
 		}
 
+		if(it.abilities->stats[STAT_MAGICLEVEL] != 0)
+		{
+			if(separator)
+				ss << ", ";
+			else
+				separator = true;
+
+			ss << "magic level " << std::showpos << it.abilities->stats[STAT_MAGICLEVEL] << std::noshowpos;
+		}
+
 		if(it.abilities->speed != 0)
 		{
 			if(separator)
