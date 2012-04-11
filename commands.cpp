@@ -105,9 +105,7 @@ s_defcommands Commands::defined_commands[] =
 	{"/ghost", &Commands::ghost},
 	{"/clean", &Commands::clean},
 	{"/mccheck", &Commands::multiClientCheck},
-#ifdef __ENABLE_SERVER_DIAGNOSTIC__
 	{"/serverdiag", &Commands::serverDiag},
-#endif
 
 	// player commands - TODO: make them talkactions
 	{"!online", &Commands::whoIsOnline},
@@ -193,11 +191,7 @@ bool Commands::loadFromXml()
 						else
 							std::cout << "missing acctype tag for " << strCmd << std::endl;
 					}
-					#ifdef __ENABLE_SERVER_DIAGNOSTIC__
 					else
-					#else
-					else if(strCmd != "/serverdiag")
-					#endif
 						std::cout << "Unknown command " << strCmd << std::endl;
 				}
 				else
@@ -1354,9 +1348,9 @@ void Commands::clean(Player* player, const std::string& cmd, const std::string& 
 		g_game.broadcastMessage("Cleaned 1 item from the map.", MSG_STATUS_WARNING);
 }
 
-#ifdef __ENABLE_SERVER_DIAGNOSTIC__
 void Commands::serverDiag(Player* player, const std::string& cmd, const std::string& param)
 {
+#ifdef __ENABLE_SERVER_DIAGNOSTIC__
 	std::stringstream text;
 	text << "Server diagonostic:\n";
 	text << "World:" << "\n";
@@ -1384,11 +1378,11 @@ void Commands::serverDiag(Player* player, const std::string& cmd, const std::str
 	text << "libxml: " << XML_DEFAULT_VERSION << "\n";
 	text << "lua: " << LUA_VERSION << "\n";
 
-	//TODO: more information that could be useful
-
 	player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, text.str().c_str());
-}
+#else
+	player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, "You need to conpile with __ENABLE_SERVER_DIAGNOSTIC__ flag to make it work.");
 #endif
+}
 
 void Commands::ghost(Player* player, const std::string& cmd, const std::string& param)
 {
