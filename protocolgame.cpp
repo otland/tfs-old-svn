@@ -2268,6 +2268,9 @@ void ProtocolGame::sendMarketDetail(uint16_t itemId)
 	{
 		ss.str("");
 		ss << it.attack;
+		if(it.abilities && it.abilities->elementType != COMBAT_NONE && it.decayTo > 0)
+			ss << " physical +" << it.abilities->elementDamage << " " << getCombatName(it.abilities->elementType);
+
 		msg->AddString(ss.str());
 	}
 	else

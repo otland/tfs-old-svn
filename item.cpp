@@ -778,14 +778,9 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance,
 			if(it.attack != 0)
 			{
 				begin = false;
-				s << "Atk:";
-				if(it.abilities && it.abilities->elementType != COMBAT_NONE && it.decayTo < 1)
-				{
-					s << std::max(0, it.attack - it.abilities->elementDamage) << " physical + ";
-					s << it.abilities->elementDamage << " " << getCombatName(it.abilities->elementType);
-				}
-				else
-					s << it.attack;
+				s << "Atk:" << it.attack;
+				if(it.abilities && it.abilities->elementType != COMBAT_NONE && it.decayTo > 0)
+					s << " physical + " << it.abilities->elementDamage << " " << getCombatName(it.abilities->elementType);
 			}
 
 			if(it.defense != 0 || it.extraDefense != 0)
@@ -1078,13 +1073,6 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance,
 			int32_t count = weight / it.weight;
 			s << std::endl << getWeightDescription(it, weight, count);
 		}
-	}
-
-	if(it.abilities && it.abilities->elementType != COMBAT_NONE && it.decayTo > 0)
-	{
-		s << std::endl << "It is temporarily enchanted with " << getCombatName(it.abilities->elementType) << " (";
-		s << std::max(0, it.attack - it.abilities->elementDamage) << " physical + " << it.abilities->elementDamage;
-		s << " " << getCombatName(it.abilities->elementType) << " damage).";
 	}
 
 	if(item && item->getSpecialDescription() != "")
