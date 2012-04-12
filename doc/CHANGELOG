@@ -29,6 +29,7 @@
 	M		movements/movements.xml
 	M		npc/lib/npcsystem/modules.lua
 	M		weapons/weapons.xml
+	M		XML/commands.xml
 ]
 
 [ Milestone
@@ -38,6 +39,7 @@
 	Magic level skill boost will now show up in market details.
 	Element damage and type will now show up in market details (also corrected the message in item description).
 	Corrected a lot of items attributes.
+	Added tag "log" to commands.
 	Replaced the old reverseFluidMap which wasn't working as intended with a new server-to-client map.
 	Rewrote how shopItems table worked in NPC ShopModule to work with items of same id but subtype that differs (i.e. different liquids in same fluid container).
 	Updated items.

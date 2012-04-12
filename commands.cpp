@@ -127,6 +127,8 @@ Commands::Commands()
 		Command* cmd = new Command;
 		cmd->loadedGroupId = false;
 		cmd->loadedAccountType = false;
+		cmd->loadedLogging = false;
+		cmd->logged = true;
 		cmd->groupId = 1;
 		cmd->f = defined_commands[i].f;
 		std::string key = defined_commands[i].name;
@@ -162,6 +164,7 @@ bool Commands::loadFromXml()
 					CommandMap::iterator it = commandMap.find(strCmd);
 					int32_t gId;
 					int32_t aTypeLevel;
+					std::string strValue;
 					if(it != commandMap.end())
 					{
 						Command* command = it->second;
@@ -190,6 +193,19 @@ bool Commands::loadFromXml()
 						}
 						else
 							std::cout << "missing acctype tag for " << strCmd << std::endl;
+							
+						if(readXMLString(p, "log", strValue))
+						{
+							if(!it->second->loadedLogging)
+							{
+								it->second->logged = booleanString(strValue);
+								it->second->loadedLogging = true;
+							}
+							else
+								std::cout << "Duplicated log tag for " << strCmd << std::endl;
+						}
+						else
+							std::cout << "Missing log tag for " << strCmd << std::endl;
 					}
 					else
 						std::cout << "Unknown command " << strCmd << std::endl;
@@ -210,6 +226,9 @@ bool Commands::loadFromXml()
 		if(!it->second->loadedAccountType)
 			std::cout << "Warning: Missing acctype level for command " << it->first << std::endl;
 
+		if(!it->second->loadedLogging)
+			std::cout << "Warning: Missing log command " << it->first << std::endl;
+
 		g_game.addCommandTag(it->first.substr(0, 1));
 	}
 	return loaded;
@@ -225,6 +244,8 @@ bool Commands::reload()
 		command->accountType = ACCOUNT_TYPE_GOD;
 		command->loadedGroupId = false;
 		command->loadedAccountType = false;
+		it->second->logged = true;
+		it->second->loadedLogging = false;
 	}
 	g_game.resetCommandTag();
 	return loadFromXml();
@@ -268,7 +289,7 @@ bool Commands::exeCommand(Creature* creature, const std::string& cmd)
 	//execute command
 	CommandFunc cfunc = command->f;
 	(this->*cfunc)(player, str_command, str_param);
-	if(player->accessLevel)
+	if(player && it->second->logged)
 	{
 		player->sendTextMessage(MSG_STATUS_CONSOLE_RED, cmd.c_str());
 		time_t ticks = time(NULL);

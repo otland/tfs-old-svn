@@ -101,6 +101,8 @@ struct Command
 	AccountType_t accountType;
 	bool loadedGroupId;
 	bool loadedAccountType;
+	bool logged;
+	bool loadedLogging;
 };
 
 struct s_defcommands
