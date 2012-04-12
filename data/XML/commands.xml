@@ -2,7 +2,7 @@
 <commands>
 	<command cmd="/b" group="2" acctype="5" log="yes"/>
 	<command cmd="/i" group="2" acctype="5" log="yes"/>
-	<command cmd="/n" group="2" acctype="5"/>
+	<command cmd="/n" group="2" acctype="5" log="yes"/>
 	<command cmd="/reload" group="1" acctype="5" log="yes"/>
 	<command cmd="/s" group="2" acctype="5" log="yes"/>
 	<command cmd="/openserver" group="1" acctype="5" log="yes"/>
