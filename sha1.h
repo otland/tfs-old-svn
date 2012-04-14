@@ -21,8 +21,8 @@
  *
  */
 
-#ifndef _SHA1_H_
-#define _SHA1_H_
+#ifndef __SHA1__
+#define __SHA1__
 
 class SHA1
 {

@@ -133,23 +133,19 @@ void SHA1::Reset()
  */
 bool SHA1::Result(unsigned *message_digest_array)
 {
-	int i;									// Counter
+	int32_t i;
 
-	if (Corrupted)
-	{
+	if(Corrupted)
 		return false;
-	}
 
-	if (!Computed)
+	if(!Computed)
 	{
 		PadMessage();
 		Computed = true;
 	}
 
 	for(i = 0; i < 5; i++)
-	{
 		message_digest_array[i] = H[i];
-	}
 
 	return true;
 }
@@ -172,15 +168,12 @@ bool SHA1::Result(unsigned *message_digest_array)
  *	Comments:
  *
  */
-void SHA1::Input(	const unsigned char	*message_array,
-					unsigned 			length)
+void SHA1::Input(const unsigned char *message_array, unsigned length)
 {
-	if (!length)
-	{
+	if(!length)
 		return;
-	}
 
-	if (Computed || Corrupted)
+	if(Computed || Corrupted)
 	{
 		Corrupted = true;
 		return;
@@ -192,20 +185,16 @@ void SHA1::Input(	const unsigned char	*message_array,
 
 		Length_Low += 8;
 		Length_Low &= 0xFFFFFFFF;				// Force it to 32 bits
-		if (Length_Low == 0)
+		if(Length_Low == 0)
 		{
 			Length_High++;
 			Length_High &= 0xFFFFFFFF;			// Force it to 32 bits
 			if (Length_High == 0)
-			{
 				Corrupted = true;				// Message is too long
-			}
 		}
 
-		if (Message_Block_Index == 64)
-		{
+		if(Message_Block_Index == 64)
 			ProcessMessageBlock();
-		}
 
 		message_array++;
 	}
@@ -231,8 +220,7 @@ void SHA1::Input(	const unsigned char	*message_array,
  *	Comments:
  *
  */
-void SHA1::Input(	const char	*message_array,
-					unsigned 	length)
+void SHA1::Input(const char	*message_array, unsigned length)
 {
 	Input((unsigned char *) message_array, length);
 }
@@ -410,12 +398,13 @@ SHA1& SHA1::operator<<(const unsigned char message_element)
  */
 void SHA1::ProcessMessageBlock()
 {
-	const unsigned K[] = 	{ 				// Constants defined for SHA-1
-								0x5A827999,
-								0x6ED9EBA1,
-								0x8F1BBCDC,
-								0xCA62C1D6
-							};
+	const unsigned K[] = { 				// Constants defined for SHA-1
+		0x5A827999,
+		0x6ED9EBA1,
+		0x8F1BBCDC,
+		0xCA62C1D6
+	};
+
 	int 		t;							// Loop counter
 	unsigned 	temp;						// Temporary word value
 	unsigned	W[80];						// Word sequence
@@ -527,25 +516,18 @@ void SHA1::PadMessage()
 	{
 		Message_Block[Message_Block_Index++] = 0x80;
 		while(Message_Block_Index < 64)
-		{
 			Message_Block[Message_Block_Index++] = 0;
-		}
 
 		ProcessMessageBlock();
 
 		while(Message_Block_Index < 56)
-		{
 			Message_Block[Message_Block_Index++] = 0;
-		}
 	}
 	else
 	{
 		Message_Block[Message_Block_Index++] = 0x80;
 		while(Message_Block_Index < 56)
-		{
 			Message_Block[Message_Block_Index++] = 0;
-		}
-
 	}
 
 	/*

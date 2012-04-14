@@ -164,7 +164,7 @@ class ProtocolGame : public Protocol
 		void parseChannelExclude(NetworkMessage& msg);
 		void parseGetChannels(NetworkMessage& msg);
 		void parseOpenChannel(NetworkMessage& msg);
-		void parseOpenPriv(NetworkMessage& msg);
+		void parseOpenPrivateChannel(NetworkMessage& msg);
 		void parseCloseChannel(NetworkMessage& msg);
 		void parseCloseNpc(NetworkMessage& msg);
 

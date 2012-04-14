@@ -460,7 +460,7 @@ bool ProtocolGame::parseFirstPacket(NetworkMessage& msg)
 	else
 		gotPassword = IOLoginData::getInstance()->getPassword(accountName, name, acc_pass, accnumber);
 
-	if (!gotPassword || !passwordTest(password, acc_pass))
+	if(!gotPassword || !passwordTest(password, acc_pass))
 	{
 		g_bans.addLoginAttempt(getIP(), false);
 		disconnectClient(0x14, "Account name or password is not correct.");
@@ -711,7 +711,7 @@ void ProtocolGame::parsePacket(NetworkMessage &msg)
 			break;
 
 		case 0x9A: // open priv
-			parseOpenPriv(msg);
+			parseOpenPrivateChannel(msg);
 			break;
 
 		case 0x9E: // close NPC
@@ -1058,7 +1058,7 @@ bool ProtocolGame::canSee(int32_t x, int32_t y, int32_t z) const
 	//negative offset means that the action taken place is on a lower floor than ourself
 	int32_t offsetz = myPos.z - z;
 
-	if ((x >= myPos.x - 8 + offsetz) && (x <= myPos.x + 9 + offsetz) &&
+	if((x >= myPos.x - 8 + offsetz) && (x <= myPos.x + 9 + offsetz) &&
 		(y >= myPos.y - 6 + offsetz) && (y <= myPos.y + 7 + offsetz))
 		return true;
 
@@ -1095,17 +1095,17 @@ void ProtocolGame::parseGetChannels(NetworkMessage& msg)
 
 void ProtocolGame::parseOpenChannel(NetworkMessage& msg)
 {
-	unsigned short channelId = msg.GetU16();
+	uint16_t channelId = msg.GetU16();
 	addGameTask(&Game::playerOpenChannel, player->getID(), channelId);
 }
 
 void ProtocolGame::parseCloseChannel(NetworkMessage& msg)
 {
-	unsigned short channelId = msg.GetU16();
+	uint16_t channelId = msg.GetU16();
 	addGameTask(&Game::playerCloseChannel, player->getID(), channelId);
 }
 
-void ProtocolGame::parseOpenPriv(NetworkMessage& msg)
+void ProtocolGame::parseOpenPrivateChannel(NetworkMessage& msg)
 {
 	const std::string receiver = msg.GetString();
 	addGameTask(&Game::playerOpenPrivateChannel, player->getID(), receiver);

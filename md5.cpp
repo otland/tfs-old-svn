@@ -206,7 +206,7 @@ void MD5Update (MD5_CTX *mdContext, const unsigned char *inBuf, unsigned int inL
 	mdi = (int)((mdContext->i[0] >> 3) & 0x3F);
 
 	/* Update number of bits */
-	if ((mdContext->i[0] + ((UINT4)inLen << 3)) < mdContext->i[0])
+	if((mdContext->i[0] + ((UINT4)inLen << 3)) < mdContext->i[0])
 		mdContext->i[1]++;
 	mdContext->i[0] += ((UINT4)inLen << 3);
 	mdContext->i[1] += ((UINT4)inLen >> 29);
@@ -217,7 +217,7 @@ void MD5Update (MD5_CTX *mdContext, const unsigned char *inBuf, unsigned int inL
 		mdContext->in[mdi++] = *inBuf++;
 
 		/* Transform if necessary */
-		if (mdi == 0x40)
+		if(mdi == 0x40)
 		{
 			for (i = 0, ii = 0; i < 16; i++, ii += 4)
 				in[i] = (((UINT4)mdContext->in[ii+3]) << 24) | (((UINT4)mdContext->in[ii+2]) << 16) | (((UINT4)mdContext->in[ii+1]) << 8) | ((UINT4)mdContext->in[ii]);

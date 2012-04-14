@@ -98,7 +98,7 @@ class Chat
 		bool removeUserFromChannel(Player* player, uint16_t channelId);
 		void removeUserFromAllChannels(Player* player);
 
-		bool talkToChannel(Player* player, SpeakClasses type, const std::string& text, unsigned short channelId);
+		bool talkToChannel(Player* player, SpeakClasses type, const std::string& text, uint16_t channelId);
 
 		std::string getChannelName(Player* player, uint16_t channelId);
 		ChannelList getChannelList(Player* player);

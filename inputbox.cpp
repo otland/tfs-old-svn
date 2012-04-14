@@ -39,7 +39,7 @@ CInputBox::CInputBox(HWND hWndParent)
 {
 	HINSTANCE hInst = GetModuleHandle(NULL);
 	WNDCLASSEX wcex;
-	if (!GetClassInfoEx(hInst, "InputBox", &wcex))
+	if(!GetClassInfoEx(hInst, "InputBox", &wcex))
 	{
 		wcex.cbSize 		= sizeof(WNDCLASSEX);
 		wcex.style		= CS_HREDRAW | CS_VREDRAW;
@@ -72,6 +72,7 @@ LRESULT CALLBACK CInputBox::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPAR
 	switch(message)
 	{
 		case WM_CREATE:
+		{
 			memset(&lfont, 0, sizeof(lfont));
 			lstrcpy(lfont.lfFaceName, _T("Arial"));
 			lfont.lfHeight = 16;
@@ -94,14 +95,20 @@ LRESULT CALLBACK CInputBox::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPAR
 			SendMessage(m_hWndPrompt, WM_SETFONT, (WPARAM)m_hFont, 0);
 			SetFocus(m_hWndEdit);
 			break;
+		}
+
 		case WM_DESTROY:
+		{ 
 			DeleteObject(m_hFont);
 			EnableWindow(m_hWndParent, TRUE);
 			SetForegroundWindow(m_hWndParent);
 			DestroyWindow(hWnd);
 			PostQuitMessage(0);
 			break;
+		}
+
 		case WM_COMMAND:
+		{
 			switch(HIWORD(wParam))
 			{
 				case BN_CLICKED:
@@ -112,6 +119,8 @@ LRESULT CALLBACK CInputBox::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPAR
 					break;
 			}
 			break;
+		}
+
 		default:
 			return DefWindowProc(hWnd, message, wParam, lParam);
 	}
@@ -144,7 +153,7 @@ BOOL CInputBox::DoModal(LPCTSTR szCaption, LPCTSTR szPrompt)
 			}
 			if(msg.wParam == VK_RETURN)
 			{
-				int nCount = GetWindowTextLength(m_hWndEdit);
+				int32_t nCount = GetWindowTextLength(m_hWndEdit);
 				nCount++;
 				if(Text)
 				{

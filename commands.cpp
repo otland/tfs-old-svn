@@ -1471,7 +1471,7 @@ void Commands::multiClientCheck(Player* player, const std::string& cmd, const st
 	std::map< uint32_t, std::vector<Player*> > ipMap;
 	for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
 	{
-		if (it->second->isRemoved() || it->second->getIP() == 0)
+		if(it->second->isRemoved() || it->second->getIP() == 0)
 			continue;
 
 		ipMap[it->second->getIP()].push_back(it->second);
