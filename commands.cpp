@@ -193,13 +193,13 @@ bool Commands::loadFromXml()
 						}
 						else
 							std::cout << "missing acctype tag for " << strCmd << std::endl;
-							
+
 						if(readXMLString(p, "log", strValue))
 						{
-							if(!it->second->loadedLogging)
+							if(!command->loadedLogging)
 							{
-								it->second->logged = booleanString(strValue);
-								it->second->loadedLogging = true;
+								command->logged = booleanString(strValue);
+								command->loadedLogging = true;
 							}
 							else
 								std::cout << "Duplicated log tag for " << strCmd << std::endl;
@@ -220,13 +220,14 @@ bool Commands::loadFromXml()
 
 	for(CommandMap::iterator it = commandMap.begin(), end = commandMap.end(); it != end; ++it)
 	{
-		if(!it->second->loadedGroupId)
+		Command* command = it->second;
+		if(!command->loadedGroupId)
 			std::cout << "Warning: Missing group id for command " << it->first << std::endl;
 
-		if(!it->second->loadedAccountType)
+		if(!command->loadedAccountType)
 			std::cout << "Warning: Missing acctype level for command " << it->first << std::endl;
 
-		if(!it->second->loadedLogging)
+		if(!command->loadedLogging)
 			std::cout << "Warning: Missing log command " << it->first << std::endl;
 
 		g_game.addCommandTag(it->first.substr(0, 1));
@@ -237,15 +238,15 @@ bool Commands::loadFromXml()
 bool Commands::reload()
 {
 	loaded = false;
-	for(CommandMap::iterator it = commandMap.begin(); it != commandMap.end(); ++it)
+	for(CommandMap::iterator it = commandMap.begin(), end = commandMap.end(); it != end; ++it)
 	{
 		Command* command = it->second;
 		command->groupId = 1;
 		command->accountType = ACCOUNT_TYPE_GOD;
 		command->loadedGroupId = false;
 		command->loadedAccountType = false;
-		it->second->logged = true;
-		it->second->loadedLogging = false;
+		command->logged = true;
+		command->loadedLogging = false;
 	}
 	g_game.resetCommandTag();
 	return loadFromXml();
@@ -289,7 +290,7 @@ bool Commands::exeCommand(Creature* creature, const std::string& cmd)
 	//execute command
 	CommandFunc cfunc = command->f;
 	(this->*cfunc)(player, str_command, str_param);
-	if(player && it->second->logged)
+	if(command->logged)
 	{
 		player->sendTextMessage(MSG_STATUS_CONSOLE_RED, cmd.c_str());
 		time_t ticks = time(NULL);
@@ -302,7 +303,7 @@ bool Commands::exeCommand(Creature* creature, const std::string& cmd)
 			std::cout << "[Warning - Commands::exeCommand] Cannot access \"data/logs\" for writing: " << strerror(errno) << "." << std::endl;
 
 		//avoid seg fault from std::ofstream just incase the directory does not exist
-		if (*buffer == '\0')
+		if(*buffer == '\0')
 			return true;
 
 		std::ofstream out(buffer, std::ios::app);
