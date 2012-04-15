@@ -852,9 +852,7 @@ if(Modules == nil) then
 	--	realName - The real, full name for the item. Will be used as ITEMNAME in MESSAGE_ONBUY and MESSAGE_ONSELL if defined. Default value is nil (getItemName will be used)
 	function ShopModule:addSellableItem(names, itemid, cost, realName, itemSubType)
 		if(SHOPMODULE_MODE ~= SHOPMODULE_MODE_TALK) then
-			if isItemFluidContainer(itemid) == FALSE then
-				itemSubType = -1
-			elseif itemSubType == nil then
+			if itemSubType == nil then
 				itemSubType = 0
 			end
 
@@ -974,6 +972,10 @@ if(Modules == nil) then
 			[TAG_TOTALCOST] = amount * shopItem.sell,
 			[TAG_ITEMNAME] = shopItem.name
 		}
+
+		if not isItemFluidContainer(itemid) then
+			subType = -1
+		end
 
 		if(doPlayerRemoveItem(cid, itemid, amount, subType) == TRUE) then
 			local msg = self.npcHandler:getMessage(MESSAGE_SOLD)
