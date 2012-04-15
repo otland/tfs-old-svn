@@ -682,14 +682,14 @@
 		<vocation id="5" showInDescription="0"/>
 	</movevent>
 	<movevent type="DeEquip" itemid="8865" slot="armor" event="function" value="onDeEquipItem"/>
-		<!-- Serpent Coat -->
-	<movevent type="Equip" itemid="8866" slot="armor" event="function" value="onEquipItem">
+		<!-- Robe of the Ice Queen -->
+	<movevent type="Equip" itemid="8866" slot="armor" level="75" event="function" value="onEquipItem">
 		<vocation id="2"/>
 		<vocation id="6" showInDescription="0"/>
 	</movevent>
 	<movevent type="DeEquip" itemid="8866" slot="armor" event="function" value="onDeEquipItem"/>
 		<!-- Dragon Robe -->
-	<movevent type="Equip" itemid="8867" slot="armor" event="function" value="onEquipItem">
+	<movevent type="Equip" itemid="8867" level="75" slot="armor" event="function" value="onEquipItem">
 		<vocation id="1"/>
 		<vocation id="5" showInDescription="0"/>
 	</movevent>
@@ -761,13 +761,13 @@
 	</movevent>
 	<movevent type="DeEquip" itemid="8880" slot="armor" event="function" value="onDeEquipItem"/>
 		<!-- Fireborn Giant Armor -->
-	<movevent type="Equip" itemid="8881" slot="armor" level="90" event="function" value="onEquipItem">
+	<movevent type="Equip" itemid="8881" slot="armor" level="100" event="function" value="onEquipItem">
 		<vocation id="4"/>
 		<vocation id="8" showInDescription="0"/>
 	</movevent>
 	<movevent type="DeEquip" itemid="8881" slot="armor" event="function" value="onDeEquipItem"/>
 		<!-- Earthborn Titan Armor -->
-	<movevent type="Equip" itemid="8882" slot="armor" level="90" event="function" value="onEquipItem">
+	<movevent type="Equip" itemid="8882" slot="armor" level="100" event="function" value="onEquipItem">
 		<vocation id="4"/>
 		<vocation id="8" showInDescription="0"/>
 	</movevent>
@@ -779,7 +779,7 @@
 	</movevent>
 	<movevent type="DeEquip" itemid="8883" slot="armor" event="function" value="onDeEquipItem"/>
 		<!-- Oceanborn Leviathan Armor -->
-	<movevent type="Equip" itemid="8884" slot="armor" level="90" event="function" value="onEquipItem">
+	<movevent type="Equip" itemid="8884" slot="armor" level="100" event="function" value="onEquipItem">
 		<vocation id="4"/>
 		<vocation id="8" showInDescription="0"/>
 	</movevent>
@@ -864,6 +864,14 @@
 		<vocation id="6" showInDescription="0"/>
 	</movevent>
 	<movevent type="DeEquip" itemid="11356" slot="armor" event="function" value="onDeEquipItem"/>
+		<!-- Elite Draken Mail-->
+	<movevent type="Equip" itemid="12607" slot="armor" level="100" event="function" value="onEquipItem">
+		<vocation id="3"/>
+		<vocation id="4"/>
+		<vocation id="7" showInDescription="0"/>
+		<vocation id="8" showInDescription="0"/>
+	</movevent>
+	<movevent type="DeEquip" itemid="12607" slot="armor" event="function" value="onDeEquipItem"/>
 		<!-- Royal Scale Robe -->
 	<movevent type="Equip" itemid="12643" slot="armor" level="100" event="function" value="onEquipItem">
 		<vocation id="1"/>
@@ -884,6 +892,12 @@
 		<vocation id="8" showInDescription="0"/>
 	</movevent>
 	<movevent type="DeEquip" itemid="15406" slot="armor" event="function" value="onDeEquipItem"/>
+		<!-- Depth Lorica -->
+	<movevent type="Equip" itemid="15407" slot="armor" level="150" event="function" value="onEquipItem">
+		<vocation id="3"/>
+		<vocation id="7" showInDescription="0"/>
+	</movevent>
+	<movevent type="DeEquip" itemid="15407" slot="armor" event="function" value="onDeEquipItem"/>
 		<!-- Calopteryx Cape -->
 	<movevent type="Equip" itemid="15489" slot="armor" level="80" event="function" value="onEquipItem">
 		<vocation id="1"/>

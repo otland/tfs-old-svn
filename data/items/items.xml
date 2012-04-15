@@ -7,7 +7,7 @@
 
 		Most needed are the items (including floors, walls)
 		introduced in the most recent tibia updates
-		starting from 8.7 to 9.51
+		starting from 8.7 to 9.52
 
 		If you found something wrong with existing item(s), we're also waiting for you :)
 
@@ -3761,7 +3761,6 @@
 		<attribute key="slotType" value="body"/>
 	</item>
 	<item id="2466" article="a" name="golden armor">
-		<attribute key="description" value="It is an enchanted armor."/>
 		<attribute key="weight" value="8000"/>
 		<attribute key="armor" value="14"/>
 		<attribute key="slotType" value="body"/>
@@ -3793,7 +3792,6 @@
 		<attribute key="slotType" value="head"/>
 	</item>
 	<item id="2472" article="a" name="magic plate armor">
-		<attribute key="description" value="An enchanted gem glows on the plate armor."/>
 		<attribute key="weight" value="8500"/>
 		<attribute key="armor" value="17"/>
 		<attribute key="slotType" value="body"/>
@@ -3937,7 +3935,7 @@
 		<attribute key="slotType" value="head"/>
 	</item>
 	<item id="2500" article="an" name="amazon armor">
-		<attribute key="weight" value="9900"/>
+		<attribute key="weight" value="4500"/>
 		<attribute key="armor" value="13"/>
 		<attribute key="skillDist" value="3"/>
 		<attribute key="slotType" value="body"/>
@@ -3965,8 +3963,8 @@
 		<attribute key="slotType" value="legs"/>
 		<attribute key="absorbPercentPhysical" value="3"/>
 	</item>
-	<item id="2505" article="an" name="elven armor">
-		<attribute key="weight" value="11400"/>
+	<item id="2505" article="an" name="elven mail">
+		<attribute key="weight" value="9000"/>
 		<attribute key="armor" value="15"/>
 		<attribute key="slotType" value="body"/>
 	</item>
@@ -3982,7 +3980,7 @@
 		<attribute key="slotType" value="legs"/>
 	</item>
 	<item id="2508" article="a" name="native armor">
-		<attribute key="weight" value="5000"/>
+		<attribute key="weight" value="8000"/>
 		<attribute key="armor" value="7"/>
 		<attribute key="slotType" value="body"/>
 	</item>
@@ -4494,7 +4492,7 @@
 		<attribute key="slotType" value="body"/>
 	</item>
 	<item id="2653" article="a" name="red tunic">
-		<attribute key="weight" value="3000"/>
+		<attribute key="weight" value="1400"/>
 		<attribute key="armor" value="2"/>
 		<attribute key="slotType" value="body"/>
 	</item>
@@ -4504,6 +4502,7 @@
 		<attribute key="slotType" value="body"/>
 	</item>
 	<item id="2655" article="a" name="red robe">
+		<attribute key="description" value="The robe is artfully embroidered."/>
 		<attribute key="weight" value="2600"/>
 		<attribute key="armor" value="1"/>
 		<attribute key="slotType" value="body"/>
@@ -15773,13 +15772,15 @@
 	<item id="8864" article="a" name="dead tree"/>
 	<item id="8865" article="a" name="dark lord's cape">
 		<attribute key="weight" value="2900"/>
+		<attribute key="description" value="There is a dark aura surrounding it."/>
 		<attribute key="armor" value="11"/>
 		<attribute key="absorbPercentDeath" value="8"/>
 		<attribute key="absorbPercentHoly" value="-8"/>
 		<attribute key="slotType" value="body"/>
 	</item>
-	<item id="8866" article="a" name="serpent coat">
-		<attribute key="weight" value="2850"/>
+	<item id="8866" article="the" name="robe of the ice queen">
+		<attribute key="weight" value="2950"/>
+		<attribute key="description" value="The soft tissue shimmers"/>
 		<attribute key="armor" value="12"/>
 		<attribute key="absorbPercentIce" value="12"/>
 		<attribute key="absorbPercentEnergy" value="-12"/>
@@ -15787,6 +15788,7 @@
 	</item>
 	<item id="8867" article="a" name="dragon robe">
 		<attribute key="weight" value="2850"/>
+		<attribute key="description" value="It is covered with runic symbols."/>
 		<attribute key="armor" value="12"/>
 		<attribute key="absorbPercentFire" value="12"/>
 		<attribute key="absorbPercentIce" value="-12"/>
@@ -15803,7 +15805,7 @@
 		<attribute key="weight" value="2850"/>
 		<attribute key="armor" value="12"/>
 		<attribute key="absorbPercentEarth" value="12"/>
-		<attribute key="absorbPercentEnergy" value="-12"/>
+		<attribute key="absorbPercentFire" value="-12"/>
 		<attribute key="slotType" value="body"/>
 	</item>
 	<item id="8870" article="a" name="spirit cloak">
