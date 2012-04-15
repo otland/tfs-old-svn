@@ -98,7 +98,7 @@ LRESULT CALLBACK CInputBox::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPAR
 		}
 
 		case WM_DESTROY:
-		{ 
+		{
 			DeleteObject(m_hFont);
 			EnableWindow(m_hWndParent, TRUE);
 			SetForegroundWindow(m_hWndParent);
@@ -151,7 +151,7 @@ BOOL CInputBox::DoModal(LPCTSTR szCaption, LPCTSTR szPrompt)
 				SendMessage(m_hWndInputBox, WM_DESTROY, 0, 0);
 				ret = 0;
 			}
-			if(msg.wParam == VK_RETURN)
+			else if(msg.wParam == VK_RETURN)
 			{
 				int32_t nCount = GetWindowTextLength(m_hWndEdit);
 				nCount++;
@@ -165,14 +165,14 @@ BOOL CInputBox::DoModal(LPCTSTR szCaption, LPCTSTR szPrompt)
 				SendMessage(m_hWndInputBox, WM_DESTROY, 0, 0);
 				ret = 1;
 			}
-			if(msg.wParam == VK_TAB)
+			else if(msg.wParam == VK_TAB)
 			{
 				hWndFocused = GetFocus();
 				if(hWndFocused == m_hWndEdit)
 					SetFocus(m_hWndOK);
-				if(hWndFocused == m_hWndOK)
+				else if(hWndFocused == m_hWndOK)
 					SetFocus(m_hWndCancel);
-				if(hWndFocused == m_hWndCancel)
+				else if(hWndFocused == m_hWndCancel)
 					SetFocus(m_hWndEdit);
 			}
 		}

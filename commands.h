@@ -79,9 +79,7 @@ class Commands
 		void joinGuild(Player* player, const std::string& cmd, const std::string& param);
 		void createGuild(Player* player, const std::string& cmd, const std::string& param);
 		void clean(Player* player, const std::string& cmd, const std::string& param);
-#ifdef __ENABLE_SERVER_DIAGNOSTIC__
 		void serverDiag(Player* player, const std::string& cmd, const std::string& param);
-#endif
 		void ghost(Player* player, const std::string& cmd, const std::string& param);
 		void multiClientCheck(Player* player, const std::string& cmd, const std::string& param);
 
