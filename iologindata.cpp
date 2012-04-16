@@ -1852,11 +1852,12 @@ bool IOLoginData::updateOnlineStatus(uint32_t guid, bool login)
 		value = result->getDataInt("online");
 		result->free();
 
-		query.str("");
 		if(login)
 			value++;
 		else if(value > 0)
 			value--;
+			
+		query.str("");
 	}
 
 	query << "UPDATE `players` SET `online` = " << value << " WHERE `id` = " << guid << db->getUpdateLimiter();
