@@ -4014,7 +4014,7 @@
 		<attribute key="weaponType" value="shield"/>
 	</item>
 	<item id="2514" article="a" name="mastermind shield">
-		<attribute key="description" value="It is an enchanted shield."/>
+		<attribute key="description" value="It's an enchanted shield."/>
 		<attribute key="weight" value="5700"/>
 		<attribute key="defense" value="37"/>
 		<attribute key="weaponType" value="shield"/>
@@ -4080,7 +4080,7 @@
 		<attribute key="weaponType" value="shield"/>
 	</item>
 	<item id="2526" article="a" name="studded shield">
-		<attribute key="weight" value="5900"/>
+		<attribute key="weight" value="5800"/>
 		<attribute key="defense" value="15"/>
 		<attribute key="weaponType" value="shield"/>
 	</item>
@@ -4142,8 +4142,8 @@
 		<attribute key="weaponType" value="shield"/>
 	</item>
 	<item id="2538" article="an" name="eagle shield">
-		<attribute key="weight" value="5000"/>
-		<attribute key="defense" value="39"/>
+		<attribute key="weight" value="6200"/>
+		<attribute key="defense" value="32"/>
 		<attribute key="weaponType" value="shield"/>
 	</item>
 	<item id="2539" article="a" name="phoenix shield">
@@ -7370,7 +7370,7 @@
 		<attribute key="weaponType" value="shield"/>
 	</item>
 	<item id="3975" article="a" name="salamander shield">
-		<attribute key="weight" value="7200"/>
+		<attribute key="weight" value="5900"/>
 		<attribute key="defense" value="26"/>
 		<attribute key="weaponType" value="shield"/>
 	</item>
@@ -10569,9 +10569,11 @@
 		<attribute key="description" value="It contains a love poem, written by an unknown elven poet."/>
 		<attribute key="weight" value="120"/>
 	</item>
-	<item id="6120" article="a" name="spellbook of Dragha">
-		<attribute key="description" value="It apparently belonged to someone called Dragha, the apprentice of a voodoomaster."/>
-		<attribute key="weight" value="5800"/>
+	<item id="6120" article="a" name="spellbook">
+		<attribute key="weight" value="1800"/>
+		<attribute key="description" value="It shows your spells and can also shield against attacks when worn."/>
+		<attribute key="defense" value="14"/>
+		<attribute key="weaponType" value="shield"/>
 	</item>
 	<item fromid="6121" toid="6122" article="a" name="sign"/>
 	<item id="6123" article="a" name="piano"/>
@@ -15964,36 +15966,36 @@
 	</item>
 	<item fromid="8893" toid="8899"/>
 	<item id="8900" article="a" name="spellbook of enlightenment">
-		<attribute key="description" value="It shows your spells and can also shield against attack when worn."/>
-		<attribute key="weight" value="4500"/>
+		<attribute key="description" value="It shows your spells and can also shield against attacks when worn."/>
+		<attribute key="weight" value="1950"/>
 		<attribute key="magiclevelpoints" value="1"/>
 		<attribute key="defense" value="18"/>
 		<attribute key="weaponType" value="shield"/>
 	</item>
 	<item id="8901" article="a" name="spellbook of warding">
-		<attribute key="description" value="It shows your spells and can also shield against attack when worn."/>
-		<attribute key="weight" value="4500"/>
+		<attribute key="description" value="It shows your spells and can also shield against attacks when worn."/>
+		<attribute key="weight" value="2100"/>
 		<attribute key="magiclevelpoints" value="1"/>
 		<attribute key="defense" value="22"/>
 		<attribute key="weaponType" value="shield"/>
 	</item>
 	<item id="8902" article="a" name="spellbook of mind control">
-		<attribute key="description" value="It shows your spells and can also shield against attack when worn."/>
-		<attribute key="weight" value="4500"/>
+		<attribute key="description" value="It shows your spells and can also shield against attacks when worn."/>
+		<attribute key="weight" value="2450"/>
 		<attribute key="magiclevelpoints" value="2"/>
 		<attribute key="defense" value="16"/>
 		<attribute key="weaponType" value="shield"/>
 	</item>
 	<item id="8903" article="a" name="spellbook of lost souls">
-		<attribute key="description" value="It shows your spells and can also shield against attack when worn."/>
-		<attribute key="weight" value="4650"/>
+		<attribute key="description" value="It shows your spells and can also shield against attacks when worn."/>
+		<attribute key="weight" value="2560"/>
 		<attribute key="magiclevelpoints" value="2"/>
 		<attribute key="defense" value="20"/>
 		<attribute key="weaponType" value="shield"/>
 	</item>
 	<item id="8904" article="a" name="spellscroll of prophecies">
-		<attribute key="description" value="It shows your spells and can also shield against attack when worn."/>
-		<attribute key="weight" value="2850"/>
+		<attribute key="description" value="It shows your spells and can also shield against attacks when worn."/>
+		<attribute key="weight" value="2650"/>
 		<attribute key="magiclevelpoints" value="3"/>
 		<attribute key="defense" value="12"/>
 		<attribute key="weaponType" value="shield"/>
@@ -16062,7 +16064,7 @@
 	</item>
 	<item fromid="8913" toid="8917"/>
 	<item id="8918" article="a" name="spellbook of dark mysteries">
-		<attribute key="description" value="It shows your spells and can also shield against attack when worn."/>
+		<attribute key="description" value="It shows your spells and can also shield against attacks when worn."/>
 		<attribute key="weight" value="2850"/>
 		<attribute key="magiclevelpoints" value="3"/>
 		<attribute key="defense" value="16"/>
@@ -20155,7 +20157,7 @@
 	<item id="11449" article="a" name="lamp">
 		<attribute key="transformUseTo" value="11448"/>
 	</item>
-	<item fromid="11451" toid="11462" name="tainted soil"/> <!-- need to confirm name -->
+	<item fromid="11451" toid="11462" name="tainted soil"/>
 	<item id="11463" article="a" name="lamp"/>
 	<item fromid="11464" toid="11475" article="a" name="stone floor"/>
 	<item fromid="11476" toid="11477" article="a" name="closed door"/>
@@ -21191,7 +21193,7 @@
 		<attribute key="slotType" value="feet"/>
 	</item>
 	<item id="12647" article="a" name="snake god's wristguard">
-		<attribute key="description" value="It shows your spells and can also shield against attack when worn."/>
+		<attribute key="description" value="It shows your spells and can also shield against attacks when worn."/>
 		<attribute key="weight" value="2800"/>
 		<attribute key="magiclevelpoints" value="3"/>
 		<attribute key="defense" value="14"/>
@@ -22698,6 +22700,23 @@
 	<item id="13983" name="queen eloise fandolls">
 		<attribute key="weight" value="1560"/>
 	</item>
+	<item id="14350" article="a" name="prison cell key">
+		<attribute key="weight" value="100"/>
+	</item>
+	<item id="14351" article="a" name="formula for a memory potion">
+		<attribute key="description" value="Eclesius invented it."/>
+		<attribute key="weight" value="110"/>
+	</item>
+	<item id="14353" article="a" name="shield of the white knight">
+		<attribute key="description" value="It seems a bit chunky, but what was good enough for a white knight should be good for everyone."/>
+		<attribute key="weight" value="500"/>
+		<attribute key="defense" value="8"/>
+		<attribute key="weaponType" value="shield"/>
+	</item>
+	<item id="14354" article="a" name="tactical map">
+		<attribute key="description" value="A map showing recent troop movements and tatical instructions of parts of the Emperor's army."/>
+		<attribute key="weight" value="200"/>
+	</item>
 	<item id="14405" name="the market"/>
 	<item id="14404" name="your inbox">
 		<attribute key="containerSize" value="30"/>
@@ -22775,7 +22794,7 @@
 		<attribute key="corpseType" value="blood"/>
 	</item>
 	<item id="15213" article="a" name="moist pillar"/>
- <item id="15220" article="a" name="dead Jaul">
+ 	<item id="15220" article="a" name="dead Jaul">
 		<attribute key="weight" value="26000"/>
 		<attribute key="containerSize" value="8"/>
 		<attribute key="decayTo" value="15221"/>
@@ -23244,7 +23263,7 @@
 		<attribute key="weight" value="180"/>
 	</item>
 	<item id="15453" article="a" name="warrior's shield">
-		<attribute key="weight" value="7900"/>
+		<attribute key="weight" value="7500"/>
 		<attribute key="defense" value="33"/>
 		<attribute key="weaponType" value="shield"/>
 	</item>

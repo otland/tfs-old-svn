@@ -1031,6 +1031,14 @@
 	<movevent type="DeEquip" itemid="15412" slot="legs" event="function" value="onDeEquipItem"/>
 
 	<!-- Shields -->
+		<!-- Spellbook -->
+	<movevent type="Equip" itemid="6120" slot="shield" event="function" value="onEquipItem">
+		<vocation id="1"/>
+		<vocation id="5" showInDescription="0"/>
+		<vocation id="2"/>
+		<vocation id="6" showInDescription="0"/>
+	</movevent>
+	<movevent type="DeEquip" itemid="6120" slot="shield" event="function" value="onDeEquipItem"/>
 		<!-- Rainbow Shield -->
 	<movevent type="Equip" fromid="8905" toid="8909" slot="shield" level="100" event="function" value="onEquipItem">
 		<vocation id="4"/>
@@ -1094,11 +1102,25 @@
 	</movevent>
 	<movevent type="DeEquip" itemid="12647" slot="shield" event="function" value="onDeEquipItem"/>
 		<!-- Shield of Corruption -->
-	<movevent type="Equip" itemid="12644" slot="shield" level="100" event="function" value="onEquipItem">
+	<movevent type="Equip" itemid="12644" slot="shield" level="80" event="function" value="onEquipItem">
 		<vocation id="4"/>
 		<vocation id="8" showInDescription="0"/>
 	</movevent>
 	<movevent type="DeEquip" itemid="12644" slot="shield" event="function" value="onDeEquipItem"/>
+		<!-- Depth Scutum -->
+	<movevent type="Equip" itemid="15411" slot="shield" level="120" event="function" value="onEquipItem">
+		<vocation id="1"/>
+		<vocation id="5" showInDescription="0"/>
+		<vocation id="2"/>
+		<vocation id="6" showInDescription="0"/>
+	</movevent>
+	<movevent type="DeEquip" itemid="15411" slot="shield" event="function" value="onDeEquipItem"/>
+		<!-- Ornate Shield -->
+	<movevent type="Equip" itemid="15413" slot="shield" level="130" event="function" value="onEquipItem">
+		<vocation id="4"/>
+		<vocation id="8" showInDescription="0"/>
+	</movevent>
+	<movevent type="DeEquip" itemid="15413" slot="shield" event="function" value="onDeEquipItem"/>
 		<!-- Spellbook of Ancient Arcana -->
 	<movevent type="Equip" itemid="16112" slot="shield" level="150" event="function" value="onEquipItem">
 		<vocation id="1"/>
