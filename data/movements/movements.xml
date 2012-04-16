@@ -303,7 +303,7 @@
 	<movevent type="Equip" itemid="7457" slot="feet" event="function" value="onEquipItem"/>
 	<movevent type="DeEquip" itemid="7457" slot="feet" event="function" value="onDeEquipItem"/>
 		<!-- Terra Boots -->
-	<movevent type="Equip" itemid="7886" slot="feet" event="function" value="onEquipItem">
+	<movevent type="Equip" itemid="7886" slot="feet" level="35" event="function" value="onEquipItem">
 		<vocation id="1"/>
 		<vocation id="5" showInDescription="0"/>
 		<vocation id="2"/>
@@ -311,7 +311,7 @@
 	</movevent>
 	<movevent type="DeEquip" itemid="7886" slot="feet" event="function" value="onDeEquipItem"/>
 		<!-- Glacier Shoes -->
-	<movevent type="Equip" itemid="7892" slot="feet" event="function" value="onEquipItem">
+	<movevent type="Equip" itemid="7892" slot="feet" level="35" event="function" value="onEquipItem">
 		<vocation id="1"/>
 		<vocation id="5" showInDescription="0"/>
 		<vocation id="2"/>
@@ -319,7 +319,7 @@
 	</movevent>
 	<movevent type="DeEquip" itemid="7892" slot="feet" event="function" value="onDeEquipItem"/>
 		<!-- Magma Boots -->
-	<movevent type="Equip" itemid="7891" slot="feet" event="function" value="onEquipItem">
+	<movevent type="Equip" itemid="7891" slot="feet" level="35" event="function" value="onEquipItem">
 		<vocation id="1"/>
 		<vocation id="5" showInDescription="0"/>
 		<vocation id="2"/>
@@ -327,7 +327,7 @@
 	</movevent>
 	<movevent type="DeEquip" itemid="7891" slot="feet" event="function" value="onDeEquipItem"/>
 		<!-- Lightning Boots -->
-	<movevent type="Equip" itemid="7893" slot="feet" event="function" value="onEquipItem">
+	<movevent type="Equip" itemid="7893" slot="feet" level="35" event="function" value="onEquipItem">
 		<vocation id="1"/>
 		<vocation id="5" showInDescription="0"/>
 		<vocation id="2"/>
@@ -340,6 +340,9 @@
 		<!-- Firewalker Boots (unequipped) -->
 	<movevent type="Equip" itemid="9933" slot="feet" level="130" event="function" value="onEquipItem"/>
 	<movevent type="DeEquip" itemid="9933" slot="feet" event="function" value="onDeEquipItem"/>
+		<!-- Firewalker Boots (worn) -->
+	<movevent type="Equip" itemid="10022" slot="feet" level="130" event="function" value="onEquipItem"/>
+	<movevent type="DeEquip" itemid="10022" slot="feet" event="function" value="onDeEquipItem"/>
 		<!-- Dragon Scale Boots -->
 	<movevent type="Equip" itemid="11118" slot="feet" level="70" event="function" value="onEquipItem">
 		<vocation id="3"/>
@@ -375,6 +378,12 @@
 		<vocation id="8" showInDescription="0"/>
 	</movevent>
 	<movevent type="DeEquip" itemid="11117" slot="feet" event="function" value="onDeEquipItem"/>
+		<!-- Depth Calcei-->
+	<movevent type="Equip" itemid="15410" slot="feet" level="150" event="function" value="onEquipItem">
+		<vocation id="4"/>
+		<vocation id="8" showInDescription="0"/>
+	</movevent>
+	<movevent type="DeEquip" itemid="15410" slot="feet" event="function" value="onDeEquipItem"/>
 
 
 	<!-- Amulets -->
@@ -414,6 +423,9 @@
 		<!-- Beetle Necklace -->
 	<movevent type="Equip" itemid="11374" slot="necklace" event="function" value="onEquipItem"/>
 	<movevent type="DeEquip" itemid="11374" slot="necklace" event="function" value="onDeEquipItem"/>
+		<!-- Necklace of the Deep -->
+	<movevent type="Equip" itemid="15403" slot="necklace" level="120" event="function" value="onEquipItem"/>
+	<movevent type="DeEquip" itemid="15403" slot="necklace" event="function" value="onDeEquipItem"/>
 
 	<!-- Rings -->
 		<!-- Might Ring -->
@@ -773,7 +785,7 @@
 	</movevent>
 	<movevent type="DeEquip" itemid="8882" slot="armor" event="function" value="onDeEquipItem"/>
 		<!-- Windborn Colossus Armor -->
-	<movevent type="Equip" itemid="8883" slot="armor" level="90" event="function" value="onEquipItem">
+	<movevent type="Equip" itemid="8883" slot="armor" level="100" event="function" value="onEquipItem">
 		<vocation id="4"/>
 		<vocation id="8" showInDescription="0"/>
 	</movevent>
@@ -809,7 +821,7 @@
 	</movevent>
 	<movevent type="DeEquip" itemid="8888" slot="armor" event="function" value="onDeEquipItem"/>
 		<!-- Skullcracker Armor -->
-	<movevent type="Equip" itemid="8889" slot="armor" level="100" event="function" value="onEquipItem">
+	<movevent type="Equip" itemid="8889" slot="armor" level="85" event="function" value="onEquipItem">
 		<vocation id="4"/>
 		<vocation id="8" showInDescription="0"/>
 	</movevent>

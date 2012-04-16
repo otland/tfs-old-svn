@@ -2099,7 +2099,7 @@
 		<attribute key="weight" value="490"/>
 		<attribute key="slotType" value="necklace"/>
 	</item>
-	<item id="2126" article="a" name="bronzen necklace">
+	<item id="2126" article="a" name="bronze necklace">
 		<attribute key="weight" value="700"/>
 		<attribute key="slotType" value="necklace"/>
 	</item>
@@ -2120,11 +2120,11 @@
 		<attribute key="slotType" value="necklace"/>
 	</item>
 	<item id="2131" article="a" name="star amulet">
-		<attribute key="weight" value="660"/>
+		<attribute key="weight" value="610"/>
 		<attribute key="slotType" value="necklace"/>
 	</item>
 	<item id="2132" article="a" name="silver necklace">
-		<attribute key="weight" value="550"/>
+		<attribute key="weight" value="480"/>
 		<attribute key="slotType" value="necklace"/>
 	</item>
 	<item id="2133" article="a" name="ruby necklace">
@@ -2135,19 +2135,18 @@
 		<attribute key="weight" value="110"/>
 	</item>
 	<item id="2135" article="a" name="scarab amulet">
-		<attribute key="weight" value="120"/>
+		<attribute key="weight" value="770"/>
 		<attribute key="slotType" value="necklace"/>
 	</item>
 	<item id="2136" article="a" name="demonbone amulet">
-		<attribute key="weight" value="700"/>
+		<attribute key="weight" value="690"/>
 		<attribute key="slotType" value="necklace"/>
 	</item>
 	<item id="2137" name="some golden fruits">
 		<attribute key="weight" value="300"/>
 	</item>
-	<item id="2138" article="a" name="starlight amulet">
-		<attribute key="weight" value="5200"/>
-		<attribute key="armor" value="3"/>
+	<item id="2138" article="a" name="sapphire amulet">
+		<attribute key="weight" value="680"/>
 		<attribute key="slotType" value="necklace"/>
 	</item>
 	<item id="2139" article="an" name="ancient tiara">
@@ -2443,7 +2442,13 @@
 		<attribute key="slotType" value="necklace"/>
 		<attribute key="charges" value="50"/>
 		<attribute key="showcharges" value="1"/>
-		<attribute key="absorbPercentAll" value="5"/>
+		<attribute key="absorbPercentPhysical" value="5"/>
+		<attribute key="absorbPercentFire" value="5"/>
+		<attribute key="absorbPercentEarth" value="5"/>
+		<attribute key="absorbPercentEnergy" value="5"/>
+		<attribute key="absorbPercentIce" value="5"/>
+		<attribute key="absorbPercentHoly" value="5"/>
+		<attribute key="absorbPercentDeath" value="5"/>
 		<attribute key="showattributes" value="1"/>
 	</item>
 	<item id="2199" article="a" name="garlic necklace">
@@ -2610,7 +2615,7 @@
 		<attribute key="weight" value="5800"/>
 	</item>
 	<item id="2218" article="a" name="paw amulet">
-		<attribute key="weight" value="1000"/>
+		<attribute key="weight" value="420"/>
 	</item>
 	<item id="2219" article="a" name="banana skin">
 		<attribute key="weight" value="30"/>
@@ -3098,7 +3103,7 @@
 		<attribute key="slotType" value="ring"/>
 	</item>
 	<item id="2358" name="boots of waterwalking">
-		<attribute key="weight" value="800"/>
+		<attribute key="weight" value="770"/>
 		<attribute key="slotType" value="feet"/>
 	</item>
 	<item id="2359" article="a" name="small oil lamp">
@@ -4433,9 +4438,9 @@
 		<attribute key="showduration" value="1"/>
 		<attribute key="showattributes" value="1"/>
 	</item>
-	<item id="2641" name="traper boots">
-		<attribute key="weight" value="900"/>
-		<attribute key="armor" value="3"/>
+	<item id="2641" name="patched boots">
+		<attribute key="weight" value="1000"/>
+		<attribute key="armor" value="2"/>
 		<attribute key="slotType" value="feet"/>
 	</item>
 	<item id="2642" name="sandals">
@@ -4448,7 +4453,7 @@
 		<attribute key="slotType" value="feet"/>
 	</item>
 	<item id="2644" name="bunny slippers">
-		<attribute key="weight" value="1200"/>
+		<attribute key="weight" value="600"/>
 		<attribute key="slotType" value="feet"/>
 	</item>
 	<item id="2645" name="steel boots">
@@ -4457,7 +4462,7 @@
 		<attribute key="slotType" value="feet"/>
 	</item>
 	<item id="2646" name="golden boots">
-		<attribute key="weight" value="3200"/>
+		<attribute key="weight" value="3100"/>
 		<attribute key="armor" value="4"/>
 		<attribute key="slotType" value="feet"/>
 	</item>
@@ -4514,7 +4519,7 @@
 		<attribute key="slotType" value="body"/>
 	</item>
 	<item id="2657" article="a" name="simple dress">
-		<attribute key="weight" value="2400"/>
+		<attribute key="weight" value="1000"/>
 		<attribute key="slotType" value="body"/>
 	</item>
 	<item id="2658" article="a" name="white dress">
@@ -9518,6 +9523,7 @@
 		<attribute key="weight" value="800"/>
 	</item>
 	<item id="5940" name="ceiron's wolf tooth chain">
+		<attribute key="description" value="It is has the letter 'C' carved into one of the teeth."/>
 		<attribute key="weight" value="330"/>
 		<attribute key="slotType" value="necklace"/>
 	</item>
@@ -12966,7 +12972,7 @@
 		<attribute key="weaponType" value="axe"/>
 	</item>
 	<item id="7457" article="a" name="fur boots">
-		<attribute key="description" value="These boots keep your toes warm in even the iciest regions but they feel kind of heavy."/>
+		<attribute key="description" value="These boots keep your toes warm in even the iciest regions, but they feel kind of heavy."/>
 		<attribute key="weight" value="1200"/>
 		<attribute key="armor" value="2"/>
 		<attribute key="slotType" value="feet"/>
@@ -15026,7 +15032,6 @@
 		<attribute key="weight" value="100"/>
 	</item>
 	<item id="8266" name="koshei's ancient amulet">
-		<attribute key="description" value="The effects of this amulet are unknown."/>
 		<attribute key="weight" value="500"/>
 		<attribute key="slotType" value="necklace"/>
 		<attribute key="absorbPercentDeath" value="8"/>
@@ -15354,7 +15359,7 @@
 	<item id="8583" article="a" name="dead tree">
 		<attribute key="description" value="It is one of those Zirella mentioned. Rightclick it and select 'Use' to break a branch from it."/>
 	</item>
-	<item id="8584" name="jerom's family necklace">
+	<item id="8584" name="Jerom's family necklace">
 		<attribute key="weight" value="630"/>
 	</item>
 	<item id="8585" article="a" name="hole">
@@ -15796,6 +15801,7 @@
 	</item>
 	<item id="8868" article="a" name="velvet mantle">
 		<attribute key="weight" value="2850"/>
+		<attribute key="description" value="The smooth tissue seems to sparkle."/>
 		<attribute key="armor" value="12"/>
 		<attribute key="absorbPercentEnergy" value="12"/>
 		<attribute key="absorbPercentEarth" value="-12"/>
@@ -15936,9 +15942,9 @@
 		<attribute key="slotType" value="body"/>
 	</item>
 	<item id="8890" article="a" name="robe of the underworld">
+		<attribute key="weight" value="3100"/>
 		<attribute key="armor" value="12"/>
 		<attribute key="slotType" value="body"/>
-		<attribute key="weight" value="1900"/>
 		<attribute key="absorbPercentDeath" value="12"/>
 		<attribute key="absorbPercentHoly" value="-12"/>
 	</item>
@@ -17766,7 +17772,7 @@
 		<attribute key="weight" value="800"/>
 		<attribute key="slotType" value="feet"/>
 	</item>
-	<item id="10022" article="a" name="pair of worn firewalker boots">
+	<item id="10022" article="a" name="worn firewalker boots">
 		<attribute key="description" value="They can be recharged with an enchanted ruby."/>
 		<attribute key="weight" value="950"/>
 		<attribute key="slotType" value="feet"/>
@@ -18036,11 +18042,13 @@
 	<item id="10209" article="a" name="Carlin banner"/>
 	<item fromid="10210" toid="10212" article="a" name="limestone wall"/>
 	<item fromid="10213" toid="10217" article="a" name="limestone pedestal"/>
-	<item id="10218" article="an" name="amulet">
+	<item id="10218" article="a" name="bonfire amulet">
 		<attribute key="weight" value="700"/>
 		<attribute key="slotType" value="necklace"/>
 		<attribute key="charges" value="5"/>
 		<attribute key="showcharges" value="1"/>
+		<attribute key="absorbPercentPhysical" value="60"/>
+		<attribute key="absorbPercentFire" value="40"/>
 	</item>
 	<item id="10219" article="a" name="sacred tree amulet">
 		<attribute key="description" value="Its leaves stretch out to cover your whole body if you receive earth damage."/>
@@ -18053,6 +18061,7 @@
 	</item>
 	<item id="10220" article="a" name="leviathan's amulet">
 		<attribute key="weight" value="700"/>
+		<attribute key="description" value="It hold the last breath of Leviathan."/>
 		<attribute key="slotType" value="necklace"/>
 		<attribute key="charges" value="5"/>
 		<attribute key="showcharges" value="1"/>
@@ -19235,11 +19244,11 @@
 		<attribute key="weight" value="500"/>
 	</item>
 	<item id="11117" name="crystal boots">
+		<attribute key="weight" value="1850"/>
 		<attribute key="armor" value="3"/>
 		<attribute key="absorbPercentIce" value="3"/>
 		<attribute key="absorbPercentEnergy" value="-3"/>
 		<attribute key="slotType" value="feet"/>
-		<attribute key="weight" value="2250"/>
 	</item>
 	<item id="11118" name="dragon scale boots">
 		<attribute key="armor" value="3"/>
@@ -19917,7 +19926,7 @@
 	</item>
 	<item id="11355" article="a" name="spellweaver's robe">
 		<attribute key="armor" value="11"/>
-		<attribute key="weight" value="2450"/>
+		<attribute key="weight" value="2350"/>
 		<attribute key="slotType" value="body"/>
 		<attribute key="absorbPercentEnergy" value="10"/>
 		<attribute key="absorbPercentEarth" value="-10"/>
@@ -21999,6 +22008,12 @@
 	<item id="13530" article="a" name="demonic finger">
 		<attribute key="weight" value="300"/>
 	</item>
+	<item id="13531" article="a" name="golden scorpion pendant">
+		<attribute key="weight" value="300"/>
+	</item>
+	<item id="13532" article="a" name="golden hyena pendant">
+		<attribute key="weight" value="350"/>
+	</item>
 	<item id="13533" article="a" name="white deer antlers">
 		<attribute key="weight" value="300"/>
 	</item>
@@ -23074,8 +23089,10 @@
 		<attribute key="slotType" value="two-handed"/>
 	</item>
 	<item id="15403" article="a" name="necklace of the deep">
-		<attribute key="weight" value="509"/>
+		<attribute key="weight" value="500"/>
 		<attribute key="slotType" value="necklace"/>
+		<attribute key="charges" value="50"/>
+		<attribute key="showcharges" value="1"/>
 		<attribute key="absorbPercentLifeDrain" value="50"/>
 		<attribute key="showattributes" value="1"/>
 	</item>
