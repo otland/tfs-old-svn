@@ -581,13 +581,31 @@
 		<vocation id="6" showInDescription="0"/>
 	</movevent>
 	<movevent type="DeEquip" itemid="11368" slot="head" event="function" value="onDeEquipItem"/>
+		<!-- Cobra Crown -->
+	<movevent type="Equip" itemid="12630" slot="head" event="function" value="onEquipItem">
+		<vocation id="1"/>
+		<vocation id="2"/>
+		<vocation id="5" showInDescription="0"/>
+		<vocation id="6" showInDescription="0"/>
+	</movevent>
+	<movevent type="DeEquip" itemid="12630" slot="head" event="function" value="onDeEquipItem"/>
 		<!-- Elite Draken Helmet -->
 	<movevent type="Equip" itemid="12645" slot="head" level="100" event="function" value="onEquipItem">
 		<vocation id="3"/>
 		<vocation id="7" showInDescription="0"/>
 	</movevent>
 	<movevent type="DeEquip" itemid="12645" slot="head" event="function" value="onDeEquipItem"/>
-
+		<!-- Mage's Cap -->
+	<movevent type="Equip" itemid="13756" slot="head" event="function" value="onEquipItem">
+		<vocation id="1"/>
+		<vocation id="2"/>
+		<vocation id="5" showInDescription="0"/>
+		<vocation id="6" showInDescription="0"/>
+	</movevent>
+	<movevent type="DeEquip" itemid="13756" slot="head" event="function" value="onDeEquipItem"/>
+		<!-- Depth Galea -->
+	<movevent type="Equip" itemid="15408" slot="head" level="150" event="function" value="onEquipItem"/>
+	<movevent type="DeEquip" itemid="15408" slot="head" event="function" value="onDeEquipItem"/>
 
 	<!-- Armors -->
 		<!-- Magic Plate Armor -->
@@ -979,6 +997,12 @@
 		<vocation id="6" showInDescription="0"/>
 	</movevent>
 	<movevent type="DeEquip" itemid="7896" slot="legs" event="function" value="onDeEquipItem"/>
+		<!-- Ranger Legs -->
+	<movevent type="Equip" itemid="8923" slot="legs" event="function" value="onEquipItem">
+		<vocation id="3"/>
+		<vocation id="7" showInDescription="0"/>
+	</movevent>
+	<movevent type="DeEquip" itemid="8923" slot="legs" event="function" value="onDeEquipItem"/>
 		<!-- Yalahari Leg Piece -->
 	<movevent type="Equip" itemid="9777" slot="legs" level="80" event="function" value="onEquipItem">
 		<vocation id="3"/>
@@ -991,6 +1015,20 @@
 		<!-- Grasshopper Legs -->
 	<movevent type="Equip" itemid="15490" slot="legs" level="75" event="function" value="onEquipItem"/>
 	<movevent type="DeEquip" itemid="15490" slot="legs" event="function" value="onDeEquipItem"/>
+		<!-- Depth Ocrea -->
+	<movevent type="Equip" itemid="15409" slot="legs" level="130" event="function" value="onEquipItem">
+		<vocation id="1"/>
+		<vocation id="5" showInDescription="0"/>
+		<vocation id="2"/>
+		<vocation id="6" showInDescription="0"/>
+	</movevent>
+	<movevent type="DeEquip" itemid="15409" slot="legs" event="function" value="onDeEquipItem"/>
+		<!-- Ornate Legs -->
+	<movevent type="Equip" itemid="15412" slot="legs" level="185" event="function" value="onEquipItem">
+		<vocation id="4"/>
+		<vocation id="8" showInDescription="0"/>
+	</movevent>
+	<movevent type="DeEquip" itemid="15412" slot="legs" event="function" value="onDeEquipItem"/>
 
 	<!-- Shields -->
 		<!-- Rainbow Shield -->
