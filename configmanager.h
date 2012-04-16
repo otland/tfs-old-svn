@@ -323,6 +323,7 @@ class ConfigManager
 			FAIRFIGHT_REDUCTION,
 			MARKET_ENABLED,
 			MARKET_PREMIUM,
+			FREE_MEMORY_AT_SHUTDOWN,
 			LAST_BOOL_CONFIG /* this must be the last one */
 		};
 
