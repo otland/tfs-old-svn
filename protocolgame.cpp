@@ -2258,7 +2258,7 @@ void ProtocolGame::sendMarketDetail(uint16_t itemId)
 		ss.str("");
 		ss << it.defense;
 		if(it.extraDefense != 0)
-			ss << " " << it.extraDefense;
+			ss << " " << std::showpos << it.extraDefense << std::noshowpos;
 
 		msg->putString(ss.str());
 	}
@@ -2289,7 +2289,7 @@ void ProtocolGame::sendMarketDetail(uint16_t itemId)
 	if(it.hasAbilities())
 	{
 		bool separator = false;
-		for(uint32_t i = (COMBAT_FIRST + 1); i <= COMBAT_LAST; i <<= 1)
+		for(uint32_t i = (COMBAT_FIRST + 1); i <= COMBAT_LAST; ++i)
 		{
 			if(!it.abilities->absorb[i])
 				continue;
@@ -2402,7 +2402,8 @@ void ProtocolGame::sendMarketDetail(uint16_t itemId)
 	else
 		msg->put<char>(0x00);
 	
-	if((statistics = IOMarket::getInstance()->getSaleStatistics(itemId)))
+	statistics = IOMarket::getInstance()->getSaleStatistics(itemId);
+	if(statistics)
 	{
 		msg->put<char>(0x01);
 		msg->put<uint32_t>(statistics->numTransactions);
