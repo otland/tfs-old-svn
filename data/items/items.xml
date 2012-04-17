@@ -17755,10 +17755,34 @@
 	<item id="10111" article="a" name="book">
 		<attribute key="weight" value="100" />
 	</item>
-	<item fromid="10112" toid="10113" article="a" name="stone pile" />
-	<item id="10114" article="a" name="rotworm" />
-	<item id="10115" article="a" name="carrion worm" />
-	<item fromid="10116" toid="10118" article="a" name="stone pile" />
+	<item id="10112" article="a" name="stone pile">
+		<attribute key="decayTo" value="10115" />
+		<attribute key="duration" value="7" />
+	</item>
+	<item id="10113" article="a" name="stone pile">
+		<attribute key="decayTo" value="10114" />
+		<attribute key="duration" value="4" />
+	</item>
+	<item id="10114" article="a" name="drilling worm">
+		<attribute key="decayTo" value="10112" />
+		<attribute key="duration" value="2" />
+	</item>
+	<item id="10115" article="a" name="carrion worm">
+		<attribute key="decayTo" value="10113" />
+		<attribute key="duration" value="2" />
+	</item>
+	<item id="10116" article="a" name="stone pile">
+		<attribute key="decayTo" value="10112" />
+		<attribute key="duration" value="9" />
+	</item>
+	<item id="10117" article="a" name="stone pile">
+		<attribute key="decayTo" value="10113" />
+		<attribute key="duration" value="13" />
+	</item>
+	<item id="10118" article="a" name="stone pile">
+		<attribute key="decayTo" value="10114" />
+		<attribute key="duration" value="17" />
+	</item>
 	<item id="10119" article="a" name="heated worm punisher">
 		<attribute key="weight" value="6450" />
 		<attribute key="duration" value="10" />
@@ -17830,6 +17854,10 @@
 	<item id="10151" article="a" name="golem part">
 		<attribute key="weight" value="35" />
 	</item>
+	<item id="10152" article="a" name="worm punisher">
+		<attribute key="description" value="The hammer would be more effective when heated."/>
+		<attribute key="weight" value="6450"/>
+	</item>
 	<item id="10153" article="a" name="golem disassembler">
 		<attribute key="description" value="It looks suspiciously similar to a crowbar." />
 		<attribute key="weight" value="1500" />
@@ -17843,7 +17871,18 @@
 	<item id="10156" article="a" name="dark essence" plural="dark essences">
 		<attribute key="weight" value="260" />
 	</item>
-	<item fromid="10160" toid="10162" article="a" name="crucible" />
+	<item id="10160" article="a" name="crucible">
+		<attribute key="decayTo" value="10161" />
+		<attribute key="duration" value="60" />
+	</item>
+	<item id="10161" article="a" name="crucible">
+		<attribute key="decayTo" value="10160" />
+		<attribute key="duration" value="60" />
+	</item>
+	<item id="10162" article="a" name="crucible">
+		<attribute key="decayTo" value="10160" />
+		<attribute key="duration" value="30" />
+	</item>
 	<item id="10165" article="a" name="golem blueprint">
 		<attribute key="weight" value="120" />
 	</item>
@@ -18651,9 +18690,6 @@
 		<attribute key="weight" value="98" />
 	</item>
 	<item id="10611" article="a" name="snake skin">
-		<attribute key="weight" value="100" />
-	</item>
-	<item id="10612" name="paper">
 		<attribute key="weight" value="100" />
 	</item>
 	<item id="10613" name="plans for a strange device">
