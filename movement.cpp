@@ -204,7 +204,7 @@ bool MoveEvents::registerEvent(Event* event, xmlNodePtr p)
 		while(id < endId)
 			addEvent(new MoveEvent(moveEvent), ++id, m_uniqueIdMap);
 	}
-	else if(readXMLInteger(p, "actionid", id))
+	else if(readXMLInteger(p, "actionid", id) || readXMLInteger(p, "aid", id))
 		addEvent(moveEvent, id, m_actionIdMap);
 	else if(readXMLInteger(p, "fromaid", id) && readXMLInteger(p, "toaid", endId))
 	{

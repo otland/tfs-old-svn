@@ -161,7 +161,7 @@ bool Actions::registerEvent(Event* event, xmlNodePtr p)
 			uniqueItemMap[id] = new Action(action);
 		}
 	}
-	else if(readXMLInteger(p, "actionid", id))
+	else if(readXMLInteger(p, "actionid", id) || readXMLInteger(p, "aid", id))
 	{
 		if(actionItemMap.find(id) != actionItemMap.end())
 		{
