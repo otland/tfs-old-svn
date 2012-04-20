@@ -2258,7 +2258,7 @@ void ProtocolGame::sendMarketDetail(uint16_t itemId)
 		ss.str("");
 		ss << it.defense;
 		if(it.extraDefense != 0)
-			ss << " " << it.extraDefense;
+			ss << " " << std::showpos << it.extraDefense << std::noshowpos;
 
 		msg->putString(ss.str());
 	}
