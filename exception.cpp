@@ -14,178 +14,126 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////
-#include "otpch.h"
 #ifdef __EXCEPTION_TRACER__
-#include <boost/thread.hpp>
-#include <iostream>
-#include <fstream>
-#include <iomanip>
-#include <ctime>
-#include <cstdlib>
-#include <map>
+#include "otpch.h"
 #include "exception.h"
 
-#ifdef DEBUG_REPORT
-	#undef DEBUG_REPORT
-#endif
-#define DEBUG_REPORT ExceptionHandler::dumpStack();
+#include <iostream>
+#include <iomanip>
+#include <fstream>
 
 #ifdef WINDOWS
-	int ExceptionHandler::ref_counter = 0;
-#else //Unix/Linux
-	#include <execinfo.h>
-	#include <signal.h>
-	#include <ucontext.h>
-	#include <sys/time.h>
-	#include <sys/resource.h> /* POSIX.1-2001 */
+#include <excpt.h>
+#include <tlhelp32.h>
+#endif
 
-	extern time_t start_time;
-	void _SigHandler(int signum, siginfo_t *info, void* secret);
-	#ifndef COMPILER_STRING
-		#define COMPILER_STRING ""
-	#endif
+#include <boost/config.hpp>
+#include "tools.h"
 
-	#define COMPILATION_DATE  __DATE__ " " __TIME__
+#include "configmanager.h"
+extern ConfigManager g_config;
+
+typedef std::map<uint32_t, char*> FunctionMap;
+FunctionMap functionMap;
+
+uint32_t offMax, offMin;
+bool mapLoaded = false;
+boost::recursive_mutex mapLock;
+
+#ifdef WINDOWS
+void printPointer(std::ostream* output, uint32_t p);
+EXCEPTION_DISPOSITION __cdecl _SEHHandler(struct _EXCEPTION_RECORD *ExceptionRecord, void* EstablisherFrame,
+	struct _CONTEXT *ContextRecord, void* DispatcherContext);
 #endif
 
 ExceptionHandler::ExceptionHandler()
 {
-	isInstalled = false;
+	installed = false;
 }
 
 ExceptionHandler::~ExceptionHandler()
 {
-	if(isInstalled)
+	if(installed)
 		RemoveHandler();
 }
 
 bool ExceptionHandler::InstallHandler()
 {
-#ifdef WINDOWS
-	++ref_counter;
-	if(ref_counter == 1)
-		SetUnhandledExceptionFilter(ExceptionHandler::MiniDumpExceptionHandler);
+	#ifdef WINDOWS
+	boost::recursive_mutex::scoped_lock lockObj(mapLock);
+	if(!mapLoaded)
+		LoadMap();
 
- //Unix/Linux
-#else
-	struct sigaction sa;
-	sa.sa_sigaction = &_SigHandler;
-	sigemptyset (&sa.sa_mask);
-	sa.sa_flags = SA_RESTART | SA_SIGINFO;
+	if(installed)
+		return false;
 
-	sigaction(SIGILL, &sa, NULL);		// illegal instruction
-	sigaction(SIGSEGV, &sa, NULL);	// segmentation fault
-	sigaction(SIGFPE, &sa, NULL);		// floating-point exception
-#endif
+	/*
+		mov eax,fs:[0]
+		mov [prevSEH],eax
+		mov [chain].prev,eax
+		mov [chain].SEHfunction,_SEHHandler
+		lea eax,[chain]
+		mov fs:[0],eax
+	*/
 
-	isInstalled = true;
+	#ifdef __GNUC__
+	SEHChain *prevSEH;
+	__asm__ ("movl %%fs:0,%%eax;movl %%eax,%0;":"=r"(prevSEH)::"%eax");
+	chain.prev = prevSEH;
+	chain.SEHfunction = (void*)&_SEHHandler;
+	__asm__("movl %0,%%eax;movl %%eax,%%fs:0;": : "g" (&chain):"%eax");
+	#endif
+	#endif
+
+	installed = true;
 	return true;
 }
+
 
 bool ExceptionHandler::RemoveHandler()
 {
-	if(!isInstalled)
+	if(!installed)
 		return false;
 
-#ifdef WINDOWS
-	--ref_counter;
-	if(ref_counter == 0)
-		SetUnhandledExceptionFilter(NULL);
+	#ifdef WINDOWS
+	#ifdef __GNUC__
+	__asm__ ("movl %0,%%eax;movl %%eax,%%fs:0;"::"r"(chain.prev):"%eax" );
+	#endif
+	#endif
 
-//Unix/Linux
-#else
-	signal(SIGILL, SIG_DFL);	// illegal instruction
-	signal(SIGSEGV, SIG_DFL);	// segmentation fault
-	signal(SIGFPE, SIG_DFL);	// floating-point exception
-#endif
-
-	isInstalled = false;
+	installed = false;
 	return true;
 }
 
-#ifdef WINDOWS
-long ExceptionHandler::MiniDumpExceptionHandler(EXCEPTION_POINTERS* exceptionPointers /*= NULL*/)
+char* getFunctionName(unsigned long addr, unsigned long& start)
 {
-	// Alerts the user about what is happening
-	std::clog << "Unhandled exception, generating minidump..." << std::endl;
+	FunctionMap::iterator functions;
+	if(addr < offMin || addr > offMax)
+		return NULL;
 
-	// Get system time
-	SYSTEMTIME systemTime;
-	GetSystemTime(&systemTime);
-
-	// Format file name
-	// "theforgottenserver_DD-MM-YYYY_HH-MM-SS.mdmp"
-	char fileName[64] = {"\0"};
-	sprintf(fileName, "theforgottenserver_%02u-%02u-%04u_%02u-%02u-%02u.mdmp",
-		systemTime.wDay, systemTime.wMonth, systemTime.wYear,
-		systemTime.wHour, systemTime.wMinute, systemTime.wSecond);
-
-	// Create the dump file
-	HANDLE hFile = CreateFileA(fileName, GENERIC_READ|GENERIC_WRITE,
-		FILE_SHARE_DELETE|FILE_SHARE_READ|FILE_SHARE_WRITE,
-		NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
-
-	// If we cannot create the file, then we cannot dump the memory
-	if(!hFile || hFile == INVALID_HANDLE_VALUE)
+	for(FunctionMap::iterator functions = functionMap.begin(); functions != functionMap.end(); ++functions)
 	{
-		std::clog << "Cannot create dump file, error: " << GetLastError() << std::endl;
-		return EXCEPTION_CONTINUE_SEARCH;
+		if(functions->first <= addr || functions == functionMap.begin())
+			continue;
+
+		functions--;
+		start = functions->first;
+		return functions->second;
 	}
 
-	// Collect the exception information
-	MINIDUMP_EXCEPTION_INFORMATION exceptionInformation;
-	exceptionInformation.ClientPointers = FALSE;
-	exceptionInformation.ExceptionPointers = exceptionPointers;
-	exceptionInformation.ThreadId = GetCurrentThreadId();
-
-	// Get the process and it's Id
-	HANDLE hProcess = GetCurrentProcess();
-	DWORD ProcessId = GetProcessId(hProcess);
-
-	// Dump flags
-	MINIDUMP_TYPE flags = (MINIDUMP_TYPE)(MiniDumpNormal);
-
-	// Write dump to file
-	BOOL dumpResult = MiniDumpWriteDump(hProcess, ProcessId, hFile, flags,
-		&exceptionInformation, NULL, NULL);
-
-	// Delete the dump file if we cannot generate the crash trace
-	if(!dumpResult)
-	{
-		std::clog << "Cannot generate minidump, error: " << GetLastError() << std::endl;
-
-		//Close file and delete it
-		CloseHandle(hFile);
-		DeleteFileA(fileName);
-
-		return EXCEPTION_CONTINUE_SEARCH;
-	}
-
-	// Close dump file
-	CloseHandle(hFile);
-
-	return EXCEPTION_EXECUTE_HANDLER;
+	return NULL;
 }
-#else //Unix/Linux
-#define BACKTRACE_DEPTH 128
-void _SigHandler(int signum, siginfo_t *info, void* secret)
+
+#ifdef WINDOWS
+EXCEPTION_DISPOSITION __cdecl _SEHHandler(struct _EXCEPTION_RECORD *ExceptionRecord, void* EstablisherFrame,
+	 struct _CONTEXT *ContextRecord, void* DispatcherContext)
 {
-	bool file;
-
-	int addrs;
-	void* buffer[BACKTRACE_DEPTH];
-	char** symbols;
-
-	ucontext_t context = *(ucontext_t*)secret;
-	rusage resources;
-	rlimit resourcelimit;
-	greg_t esp = 0;
-	tm *ts;
-	char date_buff[80];
+	uint32_t *esp, *next_ret, stack_val, *stacklimit, *stackstart, nparameters = 0, file, foundRetAddress = 0;
+	_MEMORY_BASIC_INFORMATION mbi;
 
 	std::ostream *outdriver;
-	std::clog << "Error: generating report file..." <<std::endl;
-	std::ofstream output("report.txt",std::ios_base::app);
+	std::clog << ">> CRASH: Writing report file..." << std::endl;
+	std::ofstream output(getFilePath(FILE_TYPE_LOG, "server/exceptions.log").c_str(), std::ios_base::app);
 	if(output.fail())
 	{
 		outdriver = &std::clog;
@@ -199,100 +147,348 @@ void _SigHandler(int signum, siginfo_t *info, void* secret)
 
 	time_t rawtime;
 	time(&rawtime);
+
 	*outdriver << "*****************************************************" << std::endl;
 	*outdriver << "Error report - " << std::ctime(&rawtime) << std::endl;
-	*outdriver << "Compiler info - " << COMPILER_STRING << std::endl;
-	*outdriver << "Compilation Date - " << COMPILATION_DATE << std::endl << std::endl;
+	*outdriver << "Compiler Info - " << BOOST_COMPILER << std::endl;
+	*outdriver << "Compilation Date - " << __DATE__ << " " << __TIME__ << std::endl << std::endl;
 
-	if(getrusage(RUSAGE_SELF, &resources) != -1)
+	//system and process info
+	//- global memory information
+	MEMORYSTATUSEX mstate;
+	mstate.dwLength = sizeof(mstate);
+	if(GlobalMemoryStatusEx(&mstate))
 	{
-		//- global memory information
-		if(getrlimit(RLIMIT_AS, &resourcelimit) != -1)
-		{
-			// note: This is not POSIX standard, but it is available in Unix System V release 4, Linux, and 4.3 BSD
-			long memusage = resources.ru_ixrss + resources.ru_idrss + resources.ru_isrss;
-			long memtotal = resourcelimit.rlim_max;
-			long memavail = memtotal - memusage;
-			long memload = long(float(memusage / memtotal) * 100.f);
-			*outdriver << "Memory load: " << memload << "K " << std::endl
-				<< "Total memory: " << memtotal << "K "
-				<< "available: " << memavail << "K" << std::endl;
-		}
-		//-process info
-		// creation time
-		ts = localtime(&start_time);
-		strftime(date_buff, 80, "%d-%m-%Y %H:%M:%S", ts);
-		// kernel time
-		*outdriver << "Kernel time: " << (resources.ru_stime.tv_sec / 3600)
-			<< ":" << ((resources.ru_stime.tv_sec % 3600) / 60)
-			<< ":" << ((resources.ru_stime.tv_sec % 3600) % 60)
-			<< "." << (resources.ru_stime.tv_usec / 1000)
-			<< std::endl;
-		// user time
-		*outdriver << "User time: " << (resources.ru_utime.tv_sec / 3600)
-			<< ":" << ((resources.ru_utime.tv_sec % 3600) / 60)
-			<< ":" << ((resources.ru_utime.tv_sec % 3600) % 60)
-			<< "." << (resources.ru_utime.tv_usec / 1000)
-			<< std::endl;
+		*outdriver << "Memory load: " << mstate.dwMemoryLoad << std::endl <<
+			"Total phys: " << mstate.ullTotalPhys/1024 << " K available phys: " <<
+			mstate.ullAvailPhys/1024 << " K" << std::endl;
 	}
-	// TODO: Process thread count (is it really needed anymore?)
+	else
+		*outdriver << "Memory load: Error" << std::endl;
+
+	//- process info
+	FILETIME FTcreation, FTexit, FTkernel, FTuser;
+	SYSTEMTIME systemtime;
+	GetProcessTimes(GetCurrentProcess(), &FTcreation, &FTexit, &FTkernel, &FTuser);
+
+	// creation time
+	FileTimeToSystemTime(&FTcreation, &systemtime);
+	*outdriver << "Start time: " << systemtime.wDay << "-" << systemtime.wMonth << "-" << systemtime.wYear << "  " <<
+		systemtime.wHour << ":" << systemtime.wMinute << ":" << systemtime.wSecond << std::endl;
+
+	// kernel time
+	uint32_t miliseconds;
+	miliseconds = FTkernel.dwHighDateTime * 429497 + FTkernel.dwLowDateTime/10000;
+	*outdriver << "Kernel time: " << miliseconds/3600000;
+	miliseconds = miliseconds - (miliseconds/3600000)*3600000;
+	*outdriver << ":" << miliseconds/60000;
+	miliseconds = miliseconds - (miliseconds/60000)*60000;
+	*outdriver << ":" << miliseconds/1000;
+	miliseconds = miliseconds - (miliseconds/1000)*1000;
+	*outdriver << "." << miliseconds << std::endl;
+
+	// user time
+	miliseconds = FTuser.dwHighDateTime * 429497 + FTuser.dwLowDateTime/10000;
+	*outdriver << "User time: " << miliseconds/3600000;
+	miliseconds = miliseconds - (miliseconds/3600000)*3600000;
+	*outdriver << ":" << miliseconds/60000;
+	miliseconds = miliseconds - (miliseconds/60000)*60000;
+	*outdriver << ":" << miliseconds/1000;
+	miliseconds = miliseconds - (miliseconds/1000)*1000;
+	*outdriver << "." << miliseconds << std::endl;
+
+	// n threads
+	PROCESSENTRY32 uProcess;
+	HANDLE lSnapShot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+
+	BOOL r;
+	if(lSnapShot != 0)
+	{
+		uProcess.dwSize = sizeof(uProcess);
+		r = Process32First(lSnapShot, &uProcess);
+		while(r)
+		{
+			if(uProcess.th32ProcessID == GetCurrentProcessId())
+			{
+				*outdriver << "Threads: " << uProcess.cntThreads << std::endl;
+				break;
+			}
+
+			r = Process32Next(lSnapShot, &uProcess);
+		}
+
+		CloseHandle(lSnapShot);
+	}
+
 	*outdriver << std::endl;
-
-
+	//exception header type and eip
 	outdriver->flags(std::ios::hex | std::ios::showbase);
-	*outdriver << "Signal: " << signum;
+	*outdriver << "Exception: " << (uint32_t)ExceptionRecord->ExceptionCode << " at eip = " << (uint32_t)ExceptionRecord->ExceptionAddress;
 
-	{
-	#if __WORDSIZE == 32
-		*outdriver << " at eip = " << context.uc_mcontext.gregs[REG_EIP] << std::endl;
-		*outdriver << "eax = " << context.uc_mcontext.gregs[REG_EAX] << std::endl;
-		*outdriver << "ebx = " << context.uc_mcontext.gregs[REG_EBX] << std::endl;
-		*outdriver << "ecx = " << context.uc_mcontext.gregs[REG_ECX] << std::endl;
-		*outdriver << "edx = " << context.uc_mcontext.gregs[REG_EDX] << std::endl;
-		*outdriver << "esi = " << context.uc_mcontext.gregs[REG_ESI] << std::endl;
-		*outdriver << "edi = " << context.uc_mcontext.gregs[REG_EDI] << std::endl;
-		*outdriver << "ebp = " << context.uc_mcontext.gregs[REG_EBP] << std::endl;
-		*outdriver << "esp = " << context.uc_mcontext.gregs[REG_ESP] << std::endl;
-		*outdriver << "efl = " << context.uc_mcontext.gregs[REG_EFL] << std::endl;
-		esp = context.uc_mcontext.gregs[REG_ESP];
-	#else // 64-bit
-		*outdriver << " at rip = " << context.uc_mcontext.gregs[REG_RIP] << std::endl;
-		*outdriver << "rax = " << context.uc_mcontext.gregs[REG_RAX] << std::endl;
-		*outdriver << "rbx = " << context.uc_mcontext.gregs[REG_RBX] << std::endl;
-		*outdriver << "rcx = " << context.uc_mcontext.gregs[REG_RCX] << std::endl;
-		*outdriver << "rdx = " << context.uc_mcontext.gregs[REG_RDX] << std::endl;
-		*outdriver << "rsi = " << context.uc_mcontext.gregs[REG_RSI] << std::endl;
-		*outdriver << "rdi = " << context.uc_mcontext.gregs[REG_RDI] << std::endl;
-		*outdriver << "rbp = " << context.uc_mcontext.gregs[REG_RBP] << std::endl;
-		*outdriver << "rsp = " << context.uc_mcontext.gregs[REG_RSP] << std::endl;
-		*outdriver << "efl = " << context.uc_mcontext.gregs[REG_EFL] << std::endl;
-		esp = context.uc_mcontext.gregs[REG_RSP];
-	#endif
-	}
-	outdriver->flush();
+	FunctionMap::iterator functions;
+	unsigned long functionAddr;
+
+	char* functionName = getFunctionName((unsigned long)ExceptionRecord->ExceptionAddress, functionAddr);
+	if(functionName)
+		*outdriver << "(" << functionName << " - " << functionAddr << ")";
+
+	//registers
 	*outdriver << std::endl;
+	*outdriver << "eax = ";printPointer(outdriver,ContextRecord->Eax);*outdriver << std::endl;
+	*outdriver << "ebx = ";printPointer(outdriver,ContextRecord->Ebx);*outdriver << std::endl;
+	*outdriver << "ecx = ";printPointer(outdriver,ContextRecord->Ecx);*outdriver << std::endl;
+	*outdriver << "edx = ";printPointer(outdriver,ContextRecord->Edx);*outdriver << std::endl;
+	*outdriver << "esi = ";printPointer(outdriver,ContextRecord->Esi);*outdriver << std::endl;
+	*outdriver << "edi = ";printPointer(outdriver,ContextRecord->Edi);*outdriver << std::endl;
+	*outdriver << "ebp = ";printPointer(outdriver,ContextRecord->Ebp);*outdriver << std::endl;
+	*outdriver << "esp = ";printPointer(outdriver,ContextRecord->Esp);*outdriver << std::endl;
+	*outdriver << "efl = " << ContextRecord->EFlags << std::endl;
 
-	// stack backtrace
-	addrs = backtrace(buffer, BACKTRACE_DEPTH);
-	symbols = backtrace_symbols(buffer, addrs);
-	if(symbols != NULL && addrs != 0) {
-		*outdriver << "---Stack Trace---" << std::endl;
-		if(esp != 0) {
-			*outdriver << "From: " << (unsigned long)esp <<
-				" to: " << (unsigned long)(esp+addrs) << std::endl;
-		}
-		for(int i = 0; i != addrs; ++i)
+	//stack dump
+	esp = (uint32_t *)(ContextRecord->Esp);
+	VirtualQuery(esp, &mbi, sizeof(mbi));
+	stacklimit = (uint32_t*)((uint32_t)(mbi.BaseAddress) + mbi.RegionSize);
+
+	*outdriver << std::endl;
+	*outdriver << "---Stack Trace---" << std::endl;
+	*outdriver << "From: " << (uint32_t)esp <<
+		" to: " << (uint32_t)stacklimit << std::endl;
+
+	stackstart = esp;
+	next_ret = (uint32_t*)(ContextRecord->Ebp);
+
+	uint32_t frame_param_counter = 0;
+	while(esp < stacklimit)
+	{
+		stack_val = *esp;
+		if(foundRetAddress)
+			nparameters++;
+
+		if(esp - stackstart < 20 || nparameters < 10 || std::abs(esp - next_ret) < 10 || frame_param_counter < 8)
 		{
-			*outdriver << symbols[i] << std::endl;
+			*outdriver << (uint32_t)esp << " | ";
+			printPointer(outdriver,stack_val);
+			if(esp == next_ret)
+				*outdriver << " \\\\\\\\\\\\ stack frame //////";
+			else if(esp - next_ret == 1)
+				*outdriver << " <-- ret" ;
+			else if(esp - next_ret == 2)
+			{
+				next_ret = (uint32_t*)*(esp - 2);
+				frame_param_counter = 0;
+			}
+
+			frame_param_counter++;
+			*outdriver<< std::endl;
 		}
-	}
-	outdriver->flush();
 
-	if(file) {
+		if(stack_val >= offMin && stack_val <= offMax)
+		{
+			foundRetAddress++;
+			unsigned long functionAddr;
+
+			char* functionName = getFunctionName(stack_val, functionAddr);
+			output << (unsigned long)esp << "  " << functionName << "(" <<
+				functionAddr << ")" << std::endl;
+		}
+
+		esp++;
+	}
+
+	*outdriver << "*****************************************************" << std::endl;
+	if(file)
 		((std::ofstream*)outdriver)->close();
+
+	if(g_config.getBool(ConfigManager::TRACER_BOX))
+	{
+		std::stringstream ss;
+		ss << "If you want developers review this crash log, please open a tracker ticket for the software at OtLand.net and attach the " << getFilePath(FILE_TYPE_LOG, "server/exceptions.log") << " file.";
+		MessageBoxA(NULL, ss.str().c_str(), "Error", MB_OK | MB_ICONERROR);
 	}
 
-	_exit(1);
+	std::clog << ">> Crash report generated, killing server." << std::endl;
+	exit(1);
+	return ExceptionContinueSearch;
+}
+
+void printPointer(std::ostream* output, uint32_t p)
+{
+	*output << p;
+	if(!IsBadReadPtr((void*)p, 4))
+		*output << " -> " << *(uint32_t*)p;
 }
 #endif
+
+bool ExceptionHandler::LoadMap()
+{
+	#ifdef __GNUC__
+	if(mapLoaded)
+		return false;
+
+	functionMap.clear();
+	installed = false;
+
+	//load map file if exists
+	offMin = 0xFFFFFF;
+	offMax = 0;
+
+	FILE* input = fopen("forgottenserver.map", "r");
+	if(!input)
+	{
+		MessageBoxA(NULL, "Failed loading symbols, forgottenserver.map file not found.", "Error", MB_OK | MB_ICONERROR);
+		std::clog << "Failed loading symbols, forgottenserver.map file not found. " << std::endl;
+		exit(1);
+		return false;
+	}
+
+	//read until found .text 0x00401000
+	char line[1024];
+	while(fgets(line, 1024, input))
+	{
+		if(!memcmp(line, ".text", 5))
+			break;
+	}
+
+	if(feof(input))
+		return false;
+
+	char tofind[] = "0x", lib[] = ".a(";
+	while(fgets(line, 1024, input))
+	{
+		char* pos = strstr(line, lib);
+		if(pos)
+			break; //not load libs
+
+		pos = strstr(line, tofind);
+		if(pos)
+		{
+			//read hex offset
+			char hexnumber[12];
+			strncpy(hexnumber, pos, 10);
+			hexnumber[10] = 0;
+
+			char* pEnd;
+			uint32_t offset = strtol(hexnumber, &pEnd, 0);
+			if(offset)
+			{
+				//read function name
+				char* pos2 = pos + 12;
+				while(*pos2 != 0)
+				{
+					if(*pos2 != ' ')
+						break;
+
+					pos2++;
+				}
+
+				if(*pos2 == 0 || (*pos2 == '0' && *(pos2+1) == 'x'))
+					continue;
+
+				char* name = new char[strlen(pos2)+1];
+				strcpy(name, pos2);
+				name[strlen(pos2) - 1] = 0;
+
+				functionMap[offset] = name;
+				if(offset > offMax)
+					offMax = offset;
+				if(offset < offMin)
+					offMin = offset;
+			}
+		}
+	}
+
+	//close file
+	fclose(input);
+	mapLoaded = true;
+	#endif
+	return true;
+}
+
+void ExceptionHandler::dumpStack()
+{
+#ifndef __GNUC__
+	return;
+#endif
+
+	uint32_t *esp;
+	uint32_t *next_ret;
+	uint32_t stack_val;
+	uint32_t *stacklimit;
+	uint32_t *stackstart;
+	uint32_t nparameters = 0;
+	uint32_t foundRetAddress = 0;
+	_MEMORY_BASIC_INFORMATION mbi;
+
+	std::clog << ">> CRASH: Writing report file..." << std::endl;
+	std::ofstream output(getFilePath(FILE_TYPE_LOG, "server/exceptions.log").c_str(), std::ios_base::app);
+	output.flags(std::ios::hex | std::ios::showbase);
+	time_t rawtime;
+	time(&rawtime);
+	output << "*****************************************************" << std::endl;
+	output << "Stack dump - " << std::ctime(&rawtime) << std::endl;
+	output << "Compiler Info - " << BOOST_COMPILER << std::endl;
+	output << "Compilation Date - " << __DATE__ << " " << __TIME__ << std::endl << std::endl;
+
+	#ifdef __GNUC__
+	__asm__ ("movl %%esp, %0;":"=r"(esp)::);
+	#else
+	//
+	#endif
+
+	VirtualQuery(esp, &mbi, sizeof(mbi));
+	stacklimit = (uint32_t*)((uint32_t)(mbi.BaseAddress) + mbi.RegionSize);
+
+	output << "---Stack Trace---" << std::endl;
+	output << "From: " << (uint32_t)esp <<
+		" to: " << (uint32_t)stacklimit << std::endl;
+
+	stackstart = esp;
+	#ifdef __GNUC__
+	__asm__ ("movl %%ebp, %0;":"=r"(next_ret)::);
+	#else
+	//
+	#endif
+	uint32_t frame_param_counter;
+	frame_param_counter = 0;
+	while(esp < stacklimit)
+	{
+		stack_val = *esp;
+		if(foundRetAddress)
+			nparameters++;
+
+		if(esp - stackstart < 20 || nparameters < 10 || std::abs(esp - next_ret) < 10 || frame_param_counter < 8)
+		{
+			output << (uint32_t)esp << " | ";
+			printPointer(&output, stack_val);
+			if(esp == next_ret)
+				output << " \\\\\\\\\\\\ stack frame //////";
+			else if(esp - next_ret == 1)
+				output << " <-- ret" ;
+			else if(esp - next_ret == 2)
+			{
+				next_ret = (uint32_t*)*(esp - 2);
+				frame_param_counter = 0;
+			}
+
+			frame_param_counter++;
+			output << std::endl;
+		}
+
+		if(stack_val >= offMin && stack_val <= offMax)
+		{
+			foundRetAddress++;
+			//
+			unsigned long functionAddr;
+			char* functionName = getFunctionName(stack_val, functionAddr);
+			output << (unsigned long)esp << "  " << functionName << "(" <<
+				functionAddr << ")" << std::endl;
+		}
+
+		esp++;
+	}
+
+	output << "*****************************************************" << std::endl;
+	output.close();
+	std::clog << ">> Crash report generated, killing server." << std::endl;
+}
 #endif
