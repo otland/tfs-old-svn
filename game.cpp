@@ -245,24 +245,9 @@ void Game::setGameState(GameState_t newState)
 
 				Houses::getInstance()->check();
 				saveGameState((uint8_t)SAVE_PLAYERS | (uint8_t)SAVE_MAP | (uint8_t)SAVE_STATE);
-				
-				if(services)
-					services->stop();
 
-				if(g_config.getBool(ConfigManager::FREE_MEMORY_AT_SHUTDOWN))
-				{
-					Dispatcher::getInstance().addTask(createTask(
-						boost::bind(&Game::shutdown, this)));
-
-					Scheduler::getInstance().stop();
-					Dispatcher::getInstance().stop();
-				}
-				else
-				{
-					Scheduler::getInstance().shutdown();
-					Dispatcher::getInstance().shutdown();
-					exit(1);
-				}
+				Scheduler::getInstance().stop();
+				Dispatcher::getInstance().stop();
 				break;
 			}
 
@@ -6258,9 +6243,9 @@ void Game::shutdown()
 	Raids::getInstance()->clear();
 	std::clog << " server... ";
 	cleanup();
-
 	std::clog << "done." << std::endl;
-	exit(1);
+	if(services)
+		services->stop();
 }
 
 void Game::cleanup()

@@ -374,9 +374,6 @@
 	shutdownAtGlobalSave = true
 	cleanMapAtGlobalSave = false
 
-	-- Shutdown
-	freeMemoryAtShutdown = true
-
 	-- Spawns
 	deSpawnRange = 2
 	deSpawnRadius = 50
