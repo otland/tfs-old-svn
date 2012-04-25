@@ -106,8 +106,8 @@ bool ProtocolGame::login(const std::string& name, uint32_t id, const std::string
 	if(!players.empty())
 		_player = players[random_range(0, (players.size() - 1))];
 
-	bool accountManager = g_config.getBool(ConfigManager::ACCOUNT_MANAGER) && name == "Account Manager";
-	if(!_player || g_config.getNumber(ConfigManager::ALLOW_CLONES) || accountManager)
+	if(!_player || g_config.getNumber(ConfigManager::ALLOW_CLONES) ||
+		(accountManager = g_config.getBool(ConfigManager::ACCOUNT_MANAGER) && name == "Account Manager"))
 	{
 		player = new Player(name, this);
 		player->addRef();
