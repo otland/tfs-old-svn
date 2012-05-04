@@ -2832,7 +2832,7 @@ int32_t LuaScriptInterface::luaDoPlayerAddMana(lua_State* L)
 
 	bool animationOnLoss = true;
 	if(parameters > 2)
-		animationOnLoss = popNumber(L) != 0;
+		animationOnLoss = popBoolean(L);
 
 	int32_t manaChange = (int32_t)popNumber(L);
 	uint32_t cid = popNumber(L);
@@ -2910,7 +2910,7 @@ int32_t LuaScriptInterface::luaDoPlayerAddItem(lua_State* L)
 
 	bool canDropOnMap = true;
 	if(parameters > 3)
-		canDropOnMap = (popNumber(L) == 1);
+		canDropOnMap = popBoolean(L);
 
 	uint32_t count = 1;
 	if(parameters > 2)
@@ -2997,7 +2997,7 @@ int32_t LuaScriptInterface::luaDoPlayerAddItemEx(lua_State* L)
 
 	bool canDropOnMap = false;
 	if(parameters > 2)
-		canDropOnMap = popNumber(L) == 1;
+		canDropOnMap = popBoolean(L);
 
 	uint32_t uid = (uint32_t)popNumber(L);
 	uint32_t cid = popNumber(L);
@@ -3273,7 +3273,7 @@ int32_t LuaScriptInterface::luaGetPlayerLossPercent(lua_State* L)
 int32_t LuaScriptInterface::luaDoSetCreatureDropLoot(lua_State* L)
 {
 	//doSetCreatureDropLoot(cid, doDrop)
-	bool doDrop = popNumber(L) == 1;
+	bool doDrop = popBoolean(L);
 	uint32_t cid = popNumber(L);
 
 	ScriptEnvironment* env = getScriptEnv();
@@ -4686,11 +4686,11 @@ int32_t LuaScriptInterface::luaDoPlayerAddExp(lua_State* L)
 
 	bool sendText = false;
 	if(parameters > 3)
-		sendText = popNumber(L) == 1;
+		sendText = popBoolean(L);
 
 	bool useMult = false;
 	if(parameters > 2)
-		useMult = popNumber(L) == 1;
+		useMult = popBoolean(L);
 
 	uint64_t exp = popNumber(L);
 	uint32_t cid = popNumber(L);
@@ -4754,7 +4754,7 @@ int32_t LuaScriptInterface::luaGetPlayerItemById(lua_State* L)
 		subType = (int32_t)popNumber(L);
 
 	int32_t itemId = (int32_t)popNumber(L);
-	bool deepSearch = popNumber(L) == 1;
+	bool deepSearch = popBoolean(L);
 	uint32_t cid = popNumber(L);
 
 	Player* player = env->getPlayerByUID(cid);
@@ -7143,7 +7143,7 @@ int32_t LuaScriptInterface::luaDoPlayerPopupFYI(lua_State* L)
 int32_t LuaScriptInterface::luaMayNotMove(lua_State* L)
 {
 	//mayNotMove(cid, value)
-	bool boolValue = popNumber(L) == 1;
+	bool boolValue = popBoolean(L);
 	uint32_t cid = (uint32_t)popNumber(L);
 	ScriptEnvironment* env = getScriptEnv();
 	Player* player = env->getPlayerByUID(cid);
@@ -7379,7 +7379,7 @@ int32_t LuaScriptInterface::luaGetCreatureSummons(lua_State* L)
 int32_t LuaScriptInterface::luaGetSpectators(lua_State* L)
 {
 	//getSpectators(centerPos, rangex, rangey, multifloor)
-	bool multifloor = popNumber(L) == 1;
+	bool multifloor = popBoolean(L);
 	uint32_t rangey = popNumber(L);
 	uint32_t rangex = popNumber(L);
 
@@ -7449,7 +7449,7 @@ int32_t LuaScriptInterface::luaIsSightClear(lua_State* L)
 {
 	//isSightClear(fromPos, toPos, floorCheck)
 	PositionEx fromPos, toPos;
-	bool floorCheck = (popNumber(L) == 1);
+	bool floorCheck = popBoolean(L);
 	popPosition(L, toPos);
 	popPosition(L, fromPos);
 

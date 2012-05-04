@@ -218,7 +218,7 @@ int32_t Items::loadFromOtb(std::string file)
 		std::cout << "Old version detected, a newer version of items.otb is required." << std::endl;
 		return ERROR_INVALID_FORMAT;
 	}
-	else if(Items::dwMinorVersion < CLIENT_VERSION_952)
+	else if(Items::dwMinorVersion < CLIENT_VERSION_953)
 	{
 		std::cout << "A newer version of items.otb is required." << std::endl;
 		return ERROR_INVALID_FORMAT;
