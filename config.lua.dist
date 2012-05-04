@@ -93,6 +93,7 @@
 	allowFightback = true
 	fistBaseAttack = 7
 	useFairfightReduction = true
+	optionalWarAttackableAlly = false
 
 	-- Connection config
 	worldId = 0
@@ -180,7 +181,7 @@
 	timeBetweenExActions = 1000
 	timeBetweenCustomActions = 500
 	hotkeyAimbotEnabled = true
-	tibiaClassicSlots = true
+	tibiaClassicSlots = false
 	canOnlyRopePlayers = true
 
 	-- Map
