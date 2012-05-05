@@ -833,7 +833,10 @@ void otserv(StringVec, ServiceManager* services)
 	services->add<ProtocolOldGame>(g_config.getNumber(ConfigManager::LOGIN_PORT), ipList);
 	IntegerVec games = vectorAtoi(explodeString(g_config.getString(ConfigManager::GAME_PORT), ","));
 	for(IntegerVec::const_iterator it = games.begin(); it != games.end(); ++it)
+	{
 		services->add<ProtocolGame>(*it, ipList);
+		break; // CRITICAL: more ports are causing crashes- either find the issue or drop the "feature"
+	}
 
 	std::clog << "> Bound ports: ";
 	std::list<uint16_t> ports = services->getPorts();
