@@ -12880,7 +12880,8 @@
 		<attribute key="weaponType" value="club"/>
 	</item>
 	<item id="7438" article="an" name="elvish bow">
-		<attribute key="weight" value="3100"/>
+		<attribute key="weight" value="3900"/>
+		<attribute key="description" value="This bealtifully ornamented bow was made by a skilled elvish bowmaker."/>
 		<attribute key="slotType" value="two-handed"/>
 		<attribute key="weaponType" value="distance"/>
 		<attribute key="ammoType" value="arrow"/>
@@ -15697,7 +15698,7 @@
 		<attribute key="weaponType" value="distance"/>
 		<attribute key="ammoType" value="bolt"/>
 		<attribute key="range" value="3"/>
-		<attribute key="attack" value="8"/>
+		<attribute key="attack" value="4"/>
 	</item>
 	<item id="8851" article="a" name="royal crossbow">
 		<attribute key="weight" value="12000"/>

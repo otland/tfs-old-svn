@@ -534,7 +534,10 @@
 		<!-- Elvish Bow -->
 	<distance id="7438" event="function" value="default"/>
 		<!-- Arbalest -->
-	<distance id="5803" event="function" value="default"/>
+	<distance id="5803" level="75" event="function" value="default">
+		<vocation id="3"/>
+		<vocation id="7" showInDescription="0"/>
+	</distance>
 		<!-- Modified Crossbow -->
 	<distance id="8849" level="45" unproperly="1" event="function" value="default">
 		<vocation id="3"/>
