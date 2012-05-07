@@ -7,7 +7,7 @@
 
 		Most needed are the items (including floors, walls)
 		introduced in the most recent tibia updates
-		starting from 8.7 to 9.52
+		starting from 8.7 to 9.53
 
 		If you found something wrong with existing item(s), we're also waiting for you :)
 
@@ -2345,7 +2345,7 @@
 	</item>
 	<item id="2182" article="a" name="snakebite rod">
 		<attribute key="description" value="It seems to twitch and quiver as if trying to escape your grip."/>
-		<attribute key="weight" value="4300"/>
+		<attribute key="weight" value="1900"/>
 		<attribute key="weaponType" value="wand"/>
 		<attribute key="shootType" value="smallearth"/>
 		<attribute key="range" value="3"/>
@@ -2404,7 +2404,7 @@
 	</item>
 	<item id="2191" article="a" name="wand of dragonbreath">
 		<attribute key="description" value="Legends say that this wand holds the soul of a young dragon."/>
-		<attribute key="weight" value="2300"/>
+		<attribute key="weight" value="2100"/>
 		<attribute key="weaponType" value="wand"/>
 		<attribute key="shootType" value="fire"/>
 		<attribute key="range" value="3"/>
@@ -16046,18 +16046,21 @@
 	</item>
 	<item id="8910" article="an" name="underworld rod">
 		<attribute key="weight" value="2900"/>
+		<attribute key="description" value="No one knows which hell this unholy rod comes from."/>
 		<attribute key="weaponType" value="wand"/>
 		<attribute key="shootType" value="death"/>
 		<attribute key="range" value="3"/>
 	</item>
 	<item id="8911" article="a" name="northwind rod">
 		<attribute key="weight" value="2900"/>
+		<attribute key="description" value="It was made by one of the shamans in Svargrond and symbolises an icy mammoth."/>
 		<attribute key="weaponType" value="wand"/>
 		<attribute key="shootType" value="ice"/>
 		<attribute key="range" value="3"/>
 	</item>
 	<item id="8912" article="a" name="springsprout rod">
 		<attribute key="weight" value="2700"/>
+		<attribute key="description" value="It is filled with the energy of growing plants."/>
 		<attribute key="weaponType" value="wand"/>
 		<attribute key="shootType" value="earth"/>
 		<attribute key="range" value="3"/>
@@ -22215,9 +22218,9 @@
 	<item id="13758" name="slime mould">
 		<attribute key="weight" value="300"/>
 	</item>
-	<item id="13760" article="a" name="death priest rod">
-		<attribute key="description" value="It grants you the power of the cursed priest."/>
-		<attribute key="weight" value="3100"/>
+	<item id="13760" article="a" name="wand of dimensions">
+		<attribute key="description" value="This wand controls the rift betweenn time and space."/>
+		<attribute key="weight" value="2800"/>
 		<attribute key="weaponType" value="wand"/>
 		<attribute key="shootType" value="death"/>
 		<attribute key="range" value="4"/>
@@ -23216,6 +23219,18 @@
 		<attribute key="weight" value="240"/>
 		<attribute key="description" value="The identity of some deepling is written there."/>
 	</item>
+	<item id="15427" article="a" name="seashell book">
+		<attribute key="weight" value="1300"/>
+		<attribute key="description" value="I write this trilogy of blackness and death to warn the world of the evil in the depths."/>
+	</item>
+	<item id="15428" article="a" name="seashell book">
+		<attribute key="weight" value="1300"/>
+		<attribute key="description" value="Darkness clutches the creatures of the sea to end all living things. Be watchful of this black void."/>
+	</item>
+	<item id="15429" article="a" name="seashell book">
+		<attribute key="weight" value="1300"/>
+		<attribute key="description" value="And they drove them mad and to the edge of extinction. Extinction of the world that surrounded them."/>
+	</item>
 	<item id="15430" article="a" name="deepling scale">
 		<attribute key="weight" value="480"/>
 	</item>
@@ -23250,8 +23265,53 @@
 	<item id="15440" article="a" name="party wall snake">
 		<attribute key="weight" value="1000"/>
 	</item>
-	<item fromid="15441" toid="15443" article="a" name="flower pot">
+	<item id="15441" article="a" name="flower pot">
 		<attribute key="weight" value="150"/>
+		<attribute key="description" value="There is a fully grown winterblossom in it. This plant can't wither anymore."/>
+		<attribute key="decayTo" value="15444"/>
+		<attribute key="duration" value="432000"/>
+	</item>
+	<item id="15442" article="a" name="flower pot">
+		<attribute key="weight" value="150"/>
+		<attribute key="description" value="There is a fully grown winterblossom in it. This plant can't wither anymore."/>
+		<attribute key="decayTo" value="15441"/>
+		<attribute key="duration" value="86400"/>
+	</item>
+	<item id="15443" article="a" name="flower pot">
+		<attribute key="weight" value="150"/>
+		<attribute key="description" value="There is a fully grown winterblossom in it. This plant can't wither anymore."/>
+		<attribute key="decayTo" value="15442"/>
+		<attribute key="duration" value="86400"/>
+	</item>
+	<item id="15444" article="a" name="withered plant">
+		<attribute key="weight" value="150"/>
+		<attribute key="description" value="This plant urgently needs some water, else it will wither away and disappear completely."/>
+		<attribute key="decayTo" value="7679"/>
+		<attribute key="duration" value="172800"/>
+	</item>
+	<item id="15445" article="a" name="flower pot">
+		<attribute key="weight" value="150"/>
+		<attribute key="description" value="There is a fully grown lizard tongue plant in it. This plant can't wither anymore."/>
+	</item>
+	<item id="15446" article="a" name="flower pot">
+		<attribute key="weight" value="150"/>
+		<attribute key="description" value="There is a fully grown dryad's heart flower in it. This plant can't wither anymore."/>
+	</item>
+	<item id="15447" article="a" name="flower pot">
+		<attribute key="weight" value="150"/>
+		<attribute key="description" value="There is a fully grown ember queen flower in it. This plant can't wither anymore."/>
+	</item>
+	<item id="15448" article="a" name="flower pot">
+		<attribute key="weight" value="150"/>
+		<attribute key="description" value="There is a fully grown midnight bloom flower in it.  This plant can't wither anymore."/>
+	</item>
+	<item id="15449" article="a" name="flower pot">
+		<attribute key="weight" value="150"/>
+		<attribute key="description" value="There is a fully grown fairy dancer flower in it. This plant can't wither anymore."/>
+	</item>
+	<item id="15450" article="a" name="flower pot">
+		<attribute key="weight" value="150"/>
+		<attribute key="description" value="There is a fully grown finger snapper plant in it. This plant can't wither anymore."/>
 	</item>
 	<item id="15451" article="a" name="warrior's axe">
 		<attribute key="weight" value="8800"/>
