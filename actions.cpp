@@ -558,7 +558,7 @@ ReturnValue Actions::internalUseItem(Player* player, const Position& pos, uint8_
 			}
 		}
 
-		if(depot == NULL)
+		if(!depot)
 			return RET_CANNOTUSETHISOBJECT;
 
 		player->sendMarketEnter(depot->getDepotId());
