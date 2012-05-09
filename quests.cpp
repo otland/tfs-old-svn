@@ -60,6 +60,9 @@ std::string Mission::parseStorages(std::string state, std::string value, Player*
 
 std::string Mission::getDescription(Player* player)
 {
+	if(!player)
+		return false;
+
 	std::string value;
 	player->getStorage(storageId, value);
 	if(!states.empty())
@@ -95,6 +98,9 @@ Quest::~Quest()
 
 bool Quest::isStarted(Player* player)
 {
+	if(!player)
+		return false;
+
 	for(MissionList::const_iterator it = missions.begin(); it != missions.end(); ++it)
 	{
 		if((*it)->isStarted(player))
@@ -108,6 +114,9 @@ bool Quest::isStarted(Player* player)
 
 bool Quest::isCompleted(Player* player) const
 {
+	if(!player)
+		return false;
+
 	for(MissionList::const_iterator it = missions.begin(); it != missions.end(); ++it)
 	{
 		if(!(*it)->isCompleted(player))
@@ -119,6 +128,9 @@ bool Quest::isCompleted(Player* player) const
 
 uint16_t Quest::getMissionCount(Player* player)
 {
+	if(!player)
+		return false;
+
 	uint16_t count = 0;
 	for(MissionList::iterator it = missions.begin(); it != missions.end(); ++it)
 	{
@@ -313,6 +325,9 @@ bool Quests::isQuestStorage(const std::string& key, const std::string& value, bo
 
 uint16_t Quests::getQuestCount(Player* player)
 {
+	if(!player)
+		return false;
+
 	uint16_t count = 0;
 	for(QuestList::iterator it = quests.begin(); it != quests.end(); ++it)
 	{
