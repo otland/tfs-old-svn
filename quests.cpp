@@ -61,7 +61,7 @@ std::string Mission::parseStorages(std::string state, std::string value, Player*
 std::string Mission::getDescription(Player* player)
 {
 	if(!player)
-		return "";
+		return "Couldn't retrieve any mission description, please report to a gamemaster.";
 
 	std::string value;
 	player->getStorage(storageId, value);
