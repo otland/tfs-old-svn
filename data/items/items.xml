@@ -1134,8 +1134,8 @@
 		<attribute key="rotateTo" value="1736"/>
 	</item>
 	<item id="1738" article="a" name="box">
-		<attribute key="weight" value="8000"/>
-		<attribute key="containerSize" value="15"/>
+		<attribute key="weight" value="3500"/>
+		<attribute key="containerSize" value="10"/>
 	</item>
 	<item id="1739" article="a" name="crate">
 		<attribute key="weight" value="8000"/>
@@ -1147,13 +1147,13 @@
 		<attribute key="containerSize" value="15"/>
 	</item>
 	<item id="1741" article="a" name="box">
-		<attribute key="weight" value="12000"/>
+		<attribute key="weight" value="3500"/>
 		<attribute key="containerSize" value="10"/>
 	</item>
 	<item fromid="1742" toid="1745" article="a" name="wooden coffin"/>
 	<item id="1746" article="a" name="treasure chest">
-		<attribute key="weight" value="12000"/>
-		<attribute key="containerSize" value="15"/>
+		<attribute key="weight" value="9500"/>
+		<attribute key="containerSize" value="10"/>
 	</item>
 	<item id="1747" article="a" name="chest">
 		<attribute key="weight" value="12000"/>
@@ -1714,7 +1714,7 @@
 		<attribute key="weight" value="750"/>
 	</item>
 	<item id="2015" article="a" name="brown flask">
-		<attribute key="weight" value="250"/>
+		<attribute key="weight" value="300"/>
 	</item>
 	<item id="2016" article="a" name="pool">
 		<attribute key="decayTo" value="2017"/>
@@ -1774,7 +1774,7 @@
 		<attribute key="duration" value="60"/>
 	</item>
 	<item id="2031" article="a" name="waterskin">
-		<attribute key="weight" value="800"/>
+		<attribute key="weight" value="700"/>
 	</item>
 	<item id="2032" article="a" name="bowl">
 		<attribute key="weight" value="380"/>
@@ -4291,17 +4291,8 @@
 	<item fromid="2571" toid="2573" article="a" name="bowl">
 		<attribute key="weight" value="1000"/>
 	</item>
-	<item id="2574" article="a" name="white vase">
-		<attribute key="weight" value="1500"/>
-	</item>
-	<item id="2575" article="a" name="yellow vase">
-		<attribute key="weight" value="1500"/>
-	</item>
-	<item id="2576" article="a" name="blue vase">
-		<attribute key="weight" value="1500"/>
-	</item>
-	<item id="2577" article="a" name="green vase">
-		<attribute key="weight" value="1500"/>
+	<item fromid="2574" toid="2577" name="ewer">
+		<attribute key="weight" value="1750"/>
 	</item>
 	<item id="2578" article="a" name="closed trap">
 		<attribute key="weight" value="2100"/>
@@ -4350,8 +4341,7 @@
 	</item>
 	<item id="2595" article="a" name="parcel">
 		<attribute key="weight" value="1800"/>
-		<attribute key="type" value="container"/>
-		<attribute key="containerSize" value="10"/>
+		<attribute key="description" value="It is the parcel for the watchtower on the Femor Hills."/>
 	</item>
 	<item id="2596" article="a" name="stamped parcel">
 		<attribute key="weight" value="1800"/>
@@ -11378,8 +11368,8 @@
 	<item id="6505" article="a" name="blue christmas garland">
 		<attribute key="weight" value="500"/>
 	</item>
-	<item id="6506" article="a" name="red christmas bundle">
-		<attribute key="weight" value="2500"/>
+	<item id="6506" article="a" name="christmas present">
+		<attribute key="weight" value="600"/>
 		<attribute key="containerSize" value="4"/>
 	</item>
 	<item id="6507" article="a" name="red christmas bundle">
@@ -11391,12 +11381,12 @@
 	<item id="6509" article="a" name="green christmas bundle">
 		<attribute key="weight" value="2500"/>
 	</item>
-	<item id="6510" article="a" name="green christmas bundle">
-		<attribute key="weight" value="2500"/>
+	<item id="6510" article="a" name="christmas present">
+		<attribute key="weight" value="600"/>
 		<attribute key="containerSize" value="4"/>
 	</item>
-	<item id="6511" article="a" name="blue christmas bundle">
-		<attribute key="weight" value="2500"/>
+	<item id="6511" article="a" name="christmas present">
+		<attribute key="weight" value="600"/>
 		<attribute key="containerSize" value="4"/>
 	</item>
 	<item id="6512" article="a" name="santa doll">
@@ -13087,9 +13077,9 @@
 		<attribute key="weight" value="700"/>
 		<attribute key="slotType" value="head"/>
 	</item>
-	<item id="7498" article="a" name="package of potions">
-		<attribute key="description" value="It contains 5 health and 5 mana potions."/>
+	<item id="7498" article="a" name="parcel">
 		<attribute key="weight" value="1800"/>
+		<attribute key="type" value="container"/>
 		<attribute key="containerSize" value="10"/>
 	</item>
 	<item id="7499" article="a" name="cigarette">
@@ -14865,7 +14855,10 @@
 	<item fromid="7943" toid="7954" name="shallow water">
 		<attribute key="fluidSource" value="water"/>
 	</item>
-	<item id="7955" article="a" name="parcel"/>
+	<item id="7955" article="a" name="package of potions">
+		<attribute key="description" value="It contains 5 health and 5 mana potions."/>
+		<attribute key="weight" value="3600"/>
+	</item>
 	<item id="7956" article="a" name="waterball"/>
 	<item id="7957" article="a" name="jester hat">
 		<attribute key="weight" value="1000"/>
@@ -16508,6 +16501,10 @@
 	<item id="9077" article="a" name="costume bag (deluxe)">
 		<attribute key="weight" value="800"/>
 	</item>
+	<item id="9081" article="a" name="parcel">
+		<attribute key="weight" value="1800"/>
+		<attribute key="containerSize" value="10"/>
+	</item>
 	<item id="9084" article="an" name="iron pillar"/>
 	<item id="9085" article="an" name="iron construction"/>
 	<item id="9107" article="a" name="dead mutated human">
@@ -18006,7 +18003,7 @@
 	</item>
 	<item id="10143" article="a" name="cherry blossom tree"/>
 	<item id="10150" article="a" name="cocktail glass">
-		<attribute key="weight" value="2000"/>
+		<attribute key="weight" value="200"/>
 		<attribute key="allowpickupable" value="1"/>
 	</item>
 	<item id="10151" article="a" name="golem part">
@@ -23556,6 +23553,7 @@
 	<item id="16000" article="an" name="anniversary remains" />
 	<item id="16007" article="an" name="anniversary backpack">
 		<attribute key="weight" value="1500" />
+		<attribute key="description" value="It was awarded during the festivities of Tibia's 15th anniversary."/>
 		<attribute key="containerSize" value="15" />
 		<attribute key="slotType" value="backpack" />
 	</item>
