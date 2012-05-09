@@ -61,7 +61,7 @@ std::string Mission::parseStorages(std::string state, std::string value, Player*
 std::string Mission::getDescription(Player* player)
 {
 	if(!player)
-		return false;
+		return "";
 
 	std::string value;
 	player->getStorage(storageId, value);
@@ -129,7 +129,7 @@ bool Quest::isCompleted(Player* player) const
 uint16_t Quest::getMissionCount(Player* player)
 {
 	if(!player)
-		return false;
+		return 0;
 
 	uint16_t count = 0;
 	for(MissionList::iterator it = missions.begin(); it != missions.end(); ++it)
@@ -326,7 +326,7 @@ bool Quests::isQuestStorage(const std::string& key, const std::string& value, bo
 uint16_t Quests::getQuestCount(Player* player)
 {
 	if(!player)
-		return false;
+		return 0;
 
 	uint16_t count = 0;
 	for(QuestList::iterator it = quests.begin(); it != quests.end(); ++it)
