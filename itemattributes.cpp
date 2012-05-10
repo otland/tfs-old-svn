@@ -31,7 +31,7 @@ void ItemAttributes::createAttributes()
 		attributes = new AttributeMap;
 }
 
-void ItemAttributes::eraseAttribute(const std::string& key)
+void ItemAttributes::eraseAttribute(const char* key)
 {
 	if(!attributes)
 		return;
@@ -41,37 +41,37 @@ void ItemAttributes::eraseAttribute(const std::string& key)
 		attributes->erase(it);
 }
 
-void ItemAttributes::setAttribute(const std::string& key, boost::any value)
+void ItemAttributes::setAttribute(const char* key, boost::any value)
 {
 	createAttributes();
 	(*attributes)[key].set(value);
 }
 
-void ItemAttributes::setAttribute(const std::string& key, const std::string& value)
+void ItemAttributes::setAttribute(const char* key, const std::string& value)
 {
 	createAttributes();
 	(*attributes)[key].set(value);
 }
 
-void ItemAttributes::setAttribute(const std::string& key, int32_t value)
+void ItemAttributes::setAttribute(const char* key, int32_t value)
 {
 	createAttributes();
 	(*attributes)[key].set(value);
 }
 
-void ItemAttributes::setAttribute(const std::string& key, float value)
+void ItemAttributes::setAttribute(const char* key, float value)
 {
 	createAttributes();
 	(*attributes)[key].set(value);
 }
 
-void ItemAttributes::setAttribute(const std::string& key, bool value)
+void ItemAttributes::setAttribute(const char* key, bool value)
 {
 	createAttributes();
 	(*attributes)[key].set(value);
 }
 
-boost::any ItemAttributes::getAttribute(const std::string& key) const
+boost::any ItemAttributes::getAttribute(const char* key) const
 {
 	if(!attributes)
 		return boost::any();
@@ -83,7 +83,7 @@ boost::any ItemAttributes::getAttribute(const std::string& key) const
 	return boost::any();
 }
 
-const std::string* ItemAttributes::getStringAttribute(const std::string& key) const
+const std::string* ItemAttributes::getStringAttribute(const char* key) const
 {
 	if(!attributes)
 		return NULL;
@@ -95,7 +95,7 @@ const std::string* ItemAttributes::getStringAttribute(const std::string& key) co
 	return NULL;
 }
 
-const int32_t* ItemAttributes::getIntegerAttribute(const std::string& key) const
+const int32_t* ItemAttributes::getIntegerAttribute(const char* key) const
 {
 	if(!attributes)
 		return NULL;
@@ -107,7 +107,7 @@ const int32_t* ItemAttributes::getIntegerAttribute(const std::string& key) const
 	return NULL;
 }
 
-const float* ItemAttributes::getFloatAttribute(const std::string& key) const
+const float* ItemAttributes::getFloatAttribute(const char* key) const
 {
 	if(!attributes)
 		return NULL;
@@ -119,7 +119,7 @@ const float* ItemAttributes::getFloatAttribute(const std::string& key) const
 	return NULL;
 }
 
-const bool* ItemAttributes::getBooleanAttribute(const std::string& key) const
+const bool* ItemAttributes::getBooleanAttribute(const char* key) const
 {
 	if(!attributes)
 		return NULL;

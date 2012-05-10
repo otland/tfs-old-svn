@@ -76,24 +76,24 @@ class ItemAttributes
 		void serializeMap(PropWriteStream& stream) const;
 		bool unserializeMap(PropStream& stream);
 
-		void eraseAttribute(const std::string& key);
-		void setAttribute(const std::string& key, boost::any value);
-		boost::any getAttribute(const std::string& key) const;
+		void eraseAttribute(const char* key);
+		void setAttribute(const char* key, boost::any value);
+		boost::any getAttribute(const char* key) const;
 
-		void setAttribute(const std::string& key, const std::string& value);
-		void setAttribute(const std::string& key, int32_t value);
-		void setAttribute(const std::string& key, float value);
-		void setAttribute(const std::string& key, bool value);
+		void setAttribute(const char* key, const std::string& value);
+		void setAttribute(const char* key, int32_t value);
+		void setAttribute(const char* key, float value);
+		void setAttribute(const char* key, bool value);
 
-		const std::string* getStringAttribute(const std::string& key) const;
-		const int32_t* getIntegerAttribute(const std::string& key) const;
-		const float* getFloatAttribute(const std::string& key) const;
-		const bool* getBooleanAttribute(const std::string& key) const;
+		const std::string* getStringAttribute(const char* key) const;
+		const int32_t* getIntegerAttribute(const char* key) const;
+		const float* getFloatAttribute(const char* key) const;
+		const bool* getBooleanAttribute(const char* key) const;
 
-		bool hasStringAttribute(const std::string& key) const {return getStringAttribute(key) != NULL;}
-		bool hasIntegerAttribute(const std::string& key) const {return getIntegerAttribute(key) != NULL;}
-		bool hasFloatAttribute(const std::string& key) const {return getFloatAttribute(key) != NULL;}
-		bool hasBooleanAttribute(const std::string& key) const {return getBooleanAttribute(key) != NULL;}
+		bool hasStringAttribute(const char* key) const {return getStringAttribute(key) != NULL;}
+		bool hasIntegerAttribute(const char* key) const {return getIntegerAttribute(key) != NULL;}
+		bool hasFloatAttribute(const char* key) const {return getFloatAttribute(key) != NULL;}
+		bool hasBooleanAttribute(const char* key) const {return getBooleanAttribute(key) != NULL;}
 
 	protected:
 		void createAttributes();
