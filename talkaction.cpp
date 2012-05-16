@@ -909,16 +909,16 @@ bool TalkAction::thingProporties(Creature* creature, const std::string&, const s
 				std::string type = parseParams(it, tokens.end()), key = parseParams(it,
 					tokens.end()), value = parseParams(it, tokens.end());
 				if(type == "integer" || type == "number" || type == "int" || type == "num")
-					item->setAttribute(key, atoi(value.c_str()));
+					item->setAttribute(key.c_str(), atoi(value.c_str()));
 				else if(type == "float" || type == "double")
-					item->setAttribute(key, (float)atof(value.c_str()));
+					item->setAttribute(key.c_str(), (float)atof(value.c_str()));
 				else if(type == "bool" || type == "boolean")
-					item->setAttribute(key, booleanString(value));
+					item->setAttribute(key.c_str(), booleanString(value));
 				else
-					item->setAttribute(key, value);
+					item->setAttribute(key.c_str(), value);
 			}
 			else if(action == "erase" || action == "remove" || action == "delete")
-				item->eraseAttribute(parseParams(it, tokens.end()));
+				item->eraseAttribute(parseParams(it, tokens.end()).c_str());
 			else if(action == "action" || action == "actionid" || action == "aid")
 			{
 				int32_t tmp = atoi(parseParams(it, tokens.end()).c_str());

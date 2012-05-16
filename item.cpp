@@ -124,9 +124,9 @@ bool Item::loadItem(xmlNodePtr node, Container* parent)
 				continue;
 
 			if(atoi(v[1].c_str()) || v[1] == "0")
-				item->setAttribute(v[0], atoi(v[1].c_str()));
+				item->setAttribute(v[0].c_str(), atoi(v[1].c_str()));
 			else
-				item->setAttribute(v[0], v[1]);
+				item->setAttribute(v[0].c_str(), v[1]);
 		}
 	}
 

@@ -10516,7 +10516,7 @@ int32_t LuaInterface::luaGetItemAttribute(lua_State* L)
 		return 1;
 	}
 
-	boost::any value = item->getAttribute(key);
+	boost::any value = item->getAttribute(key.c_str());
 	if(value.empty())
 		lua_pushnil(L);
 	else if(value.type() == typeid(std::string))
@@ -10586,10 +10586,10 @@ int32_t LuaInterface::luaDoItemSetAttribute(lua_State* L)
 		else if(key == "aid")
 			item->setActionId(boost::any_cast<int32_t>(value));
 		else
-			item->setAttribute(key, boost::any_cast<int32_t>(value));
+			item->setAttribute(key.c_str(), boost::any_cast<int32_t>(value));
 	}
 	else
-		item->setAttribute(key, value);
+		item->setAttribute(key.c_str(), value);
 
 	lua_pushboolean(L, true);
 	return 1;
@@ -10616,7 +10616,7 @@ int32_t LuaInterface::luaDoItemEraseAttribute(lua_State* L)
 		ret = false;
 	}
 	else if(key != "aid")
-		item->eraseAttribute(key);
+		item->eraseAttribute(key.c_str());
 	else
 		item->resetActionId();
 
