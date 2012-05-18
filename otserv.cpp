@@ -102,6 +102,7 @@ Npcs g_npcs;
 boost::mutex g_loaderLock;
 boost::condition_variable g_loaderSignal;
 boost::unique_lock<boost::mutex> g_loaderUniqueLock(g_loaderLock);
+std::list<std::pair<uint32_t, uint32_t> > serverIps;
 
 bool argumentsHandler(StringVec args)
 {
@@ -775,7 +776,9 @@ void otserv(StringVec, ServiceManager* services)
 			resolvedIp = *(uint32_t*)host->h_addr;
 		}
 
+		serverIps.push_front(std::make_pair(resolvedIp, 0));
 		m_ip = boost::asio::ip::address_v4(swap_uint32(resolvedIp));
+
 		ipList.push_back(m_ip);
 		std::clog << m_ip.to_string() << std::endl;
 	}
@@ -796,6 +799,8 @@ void otserv(StringVec, ServiceManager* services)
 						continue;
 
 					ipList.push_back(boost::asio::ip::address_v4(resolved));
+					serverIps.push_front(std::make_pair(*(uint32_t*)(*addr), 0x0000FFFF));
+
 					s << (int32_t)(addr[0][0]) << "." << (int32_t)(addr[0][1]) << "."
 						<< (int32_t)(addr[0][2]) << "." << (int32_t)(addr[0][3]) << "\t";
 				}
