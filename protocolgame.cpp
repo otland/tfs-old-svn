@@ -31,6 +31,7 @@
 
 #include "iologindata.h"
 #include "ioban.h"
+#include "iomarket.h"
 
 #include "items.h"
 #include "tile.h"
@@ -44,8 +45,6 @@
 #include "chat.h"
 #include "configmanager.h"
 #include "game.h"
-
-#include "iomarket.h"
 
 /*
 Bytes not yet added:
@@ -318,7 +317,7 @@ bool ProtocolGame::logout(bool displayEffect, bool forceLogout)
 					return false;
 				}
 
-				if((!player->getZone() == ZONE_PROTECTION) && player->hasCondition(CONDITION_INFIGHT))
+				if(player->getZone() != ZONE_PROTECTION && player->hasCondition(CONDITION_INFIGHT))
 				{
 					player->sendCancelMessage(RET_YOUMAYNOTLOGOUTDURINGAFIGHT);
 					return false;
@@ -3308,7 +3307,7 @@ void ProtocolGame::AddCreature(NetworkMessage_ptr msg, const Creature* creature,
 	}
 
 	if(!creature->getHideHealth())
-		msg->put<char>(std::ceil(creature->getHealth() * 100. / std::max(creature->getMaxHealth(), 1)));
+		msg->put<char>((uint8_t)std::ceil(creature->getHealth() * 100. / std::max(creature->getMaxHealth(), 1)));
 	else
 		msg->put<char>(0x00);
 
@@ -3427,7 +3426,7 @@ void ProtocolGame::AddCreatureHealth(NetworkMessage_ptr msg,const Creature* crea
 	msg->put<char>(0x8C);
 	msg->put<uint32_t>(creature->getID());
 	if(!creature->getHideHealth())
-		msg->put<char>(std::ceil(creature->getHealth() * 100. / std::max(creature->getMaxHealth(), (int32_t)1)));
+		msg->put<char>((uint8_t)std::ceil(creature->getHealth() * 100. / std::max(creature->getMaxHealth(), (int32_t)1)));
 	else
 		msg->put<char>(0x00);
 }

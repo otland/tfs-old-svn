@@ -6386,21 +6386,13 @@ bool Game::playerBrowseMarketOwnHistory(uint32_t playerId)
 
 bool Game::playerCreateMarketOffer(uint32_t playerId, uint8_t type, uint16_t spriteId, uint16_t amount, uint32_t price, bool anonymous)
 {
-	if(amount == 0 || amount > 64000)
-		return false;
-
-	if(price == 0 || price > 999999999)
-		return false;
-
-	if(type != MARKETACTION_BUY && type != MARKETACTION_SELL)
+	if(amount == 0 || amount > 64000 || price == 0 || price > 999999999 || (type != MARKETACTION_BUY && type != MARKETACTION_SELL))
 		return false;
 
 	Player* player = getPlayerByID(playerId);
-	if(!player || player->isRemoved())
+	if(!player || player->isRemoved() || player->getMarketDepotId() == -1)
 		return false;
 
-	if(player->getMarketDepotId() == -1)
-		return false;
 
 	if(g_config.getBool(ConfigManager::MARKET_PREMIUM) && !player->isPremium())
 	{
@@ -6409,10 +6401,7 @@ bool Game::playerCreateMarketOffer(uint32_t playerId, uint8_t type, uint16_t spr
 	}
 
 	const ItemType& it = Item::items.getItemIdByClientId(spriteId);
-	if(it.id == 0)
-		return false;
-
-	if(it.wareId == 0)
+	if(it.id == 0 || it.wareId == 0)
 		return false;
 
 	const int32_t maxOfferCount = g_config.getNumber(ConfigManager::MAX_MARKET_OFFERS_AT_A_TIME_PER_PLAYER);
@@ -6423,7 +6412,7 @@ bool Game::playerCreateMarketOffer(uint32_t playerId, uint8_t type, uint16_t spr
 			return false;
 	}
 
-	uint64_t fee = (price / 100.) * amount;
+	uint64_t fee = (uint64_t)std::ceil(price / 100. * amount);
 	if(fee < 20)
 		fee = 20;
 	else if(fee > 1000)
@@ -6441,6 +6430,7 @@ bool Game::playerCreateMarketOffer(uint32_t playerId, uint8_t type, uint16_t spr
 		ItemList itemList;
 		uint32_t count = 0;
 		std::list<Container*> containerList;
+
 		containerList.push_back(depot->getLocker());
 		bool enough = false;
 		do
@@ -6491,6 +6481,7 @@ bool Game::playerCreateMarketOffer(uint32_t playerId, uint8_t type, uint16_t spr
 			{
 				uint16_t removeCount = std::min(tmpAmount, (*iter)->getItemCount());
 				tmpAmount -= removeCount;
+
 				internalRemoveItem(NULL, *iter, removeCount);
 				if(tmpAmount == 0)
 					break;
@@ -6501,6 +6492,7 @@ bool Game::playerCreateMarketOffer(uint32_t playerId, uint8_t type, uint16_t spr
 			for(ItemList::const_iterator iter = itemList.begin(), end = itemList.end(); iter != end; ++iter)
 				internalRemoveItem(NULL, *iter);
 		}
+
 		player->balance -= fee;
 	}
 	else
@@ -6514,8 +6506,8 @@ bool Game::playerCreateMarketOffer(uint32_t playerId, uint8_t type, uint16_t spr
 	}
 
 	IOMarket::getInstance()->createOffer(player->getGUID(), (MarketAction_t)type, it.id, amount, price, anonymous);
-
 	player->sendMarketEnter(player->getMarketDepotId());
+
 	const MarketOfferList& buyOffers = IOMarket::getInstance()->getActiveOffers(MARKETACTION_BUY, it.id);
 	const MarketOfferList& sellOffers = IOMarket::getInstance()->getActiveOffers(MARKETACTION_SELL, it.id);
 	player->sendMarketBrowseItem(it.id, buyOffers, sellOffers);
