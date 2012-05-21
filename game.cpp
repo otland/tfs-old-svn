@@ -1843,7 +1843,7 @@ Item* Game::findItemOfType(Cylinder* cylinder, uint16_t itemId,
 	bool depthSearch /*= true*/, int32_t subType /*= -1*/)
 {
 	if(!cylinder)
-		return false;
+		return NULL;
 
 	std::list<Container*> listContainer;
 	Container* tmpContainer = NULL;
