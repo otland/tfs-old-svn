@@ -3,7 +3,7 @@ function onChannelJoin(cid, channelId, users)
 		return true
 	end
  
- 	for _, pid in users do
+ 	for _, pid in pairs(users) do
 		doPlayerSendChannelMessage(pid, "", "Player " .. getCreatureName(cid) .. " has entered the channel.", TALKTYPE_CHANNEL_HIGHLIGHT, CHANNEL_GUILD)
 	end
 
