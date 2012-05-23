@@ -39,7 +39,7 @@ bool GameServers::reload()
 
 bool GameServers::loadFromXml(bool result)
 {
-	xmlDocPtr doc = xmlParseFile(getFilePath(FILE_TYPE_CONFIG, "servers.xml").c_str());
+	xmlDocPtr doc = xmlParseFile(getFilePath(FILE_TYPE_XML,"servers.xml").c_str());
 	if(!doc)
 	{
 		std::clog << "[Warning - GameServers::loadFromXml] Cannot load servers file." << std::endl;
