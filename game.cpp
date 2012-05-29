@@ -245,6 +245,7 @@ void Game::setGameState(GameState_t newState)
 
 				Houses::getInstance()->check();
 				saveGameState((uint8_t)SAVE_PLAYERS | (uint8_t)SAVE_MAP | (uint8_t)SAVE_STATE);
+				Dispatcher::getInstance().addTask(createTask(boost::bind(&Game::shutdown, this)));
 
 				Scheduler::getInstance().stop();
 				Dispatcher::getInstance().stop();
