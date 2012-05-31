@@ -22,7 +22,6 @@ function onSay(cid, words, param, channel)
 			if(shutdownEvent ~= 0) then
 				stopEvent(shutdownEvent)
 				shutdownEvent = 0
-				doSetGameState(GAMESTATE_NORMAL)
 				doPlayerSendTextMessage(cid, MESSAGE_EVENT_ADVANCE, "Shutdown cancelled.")
 			else
 				doPlayerSendTextMessage(cid, MESSAGE_STATUS_WARNING, "Server is not in the shutdown phase.")
