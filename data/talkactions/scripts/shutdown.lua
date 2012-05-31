@@ -1,4 +1,4 @@
-local shutdownEvent = 0
+shutdownEvent = 0
 
 function onSay(cid, words, param, channel)
 	if(param == '') then
@@ -11,7 +11,7 @@ function onSay(cid, words, param, channel)
 	if(not tonumber(params[1])) then
 		action = string.trim(params[1]:lower())
 	else
-		mins = tonumber(string.trim(params[1]))
+		mins = string.trim(params[1])
 		if(table.maxn(params) > 1) then
 			reason = params[2]
 		end
@@ -19,25 +19,32 @@ function onSay(cid, words, param, channel)
 	
 	if(action) then
 		if(action == "cancel" or action == "stop") then
-			stopEvent(shutdownEvent)
-			shutdownEvent = 0
-			doPlayerSendCancel(cid, "Shutdown cancelled.")
+			if(shutdownEvent ~= 0) then
+				stopEvent(shutdownEvent)
+				shutdownEvent = 0
+				doSetGameState(GAMESTATE_NORMAL)
+				doPlayerSendTextMessage(cid, MESSAGE_EVENT_ADVANCE, "Shutdown cancelled.")
+			else
+				doPlayerSendTextMessage(cid, MESSAGE_STATUS_WARNING, "Server is not in the shutdown phase.")
+			end
 			return true
 		elseif(action == "kill") then
 			os.exit()
 			return true
 		end
 	end
-
+	
+	mins = tonumber(mins)
 	if(not mins or mins < 0) then
 		doPlayerSendCancel(cid, "Numeric param may not be lower than 0.")
 		return true
 	end
-
+	
 	if(shutdownEvent ~= 0) then
-		stopEvent(shutdownEvent)
+		doPlayerSendTextMessage(cid, MESSAGE_STATUS_WARNING, "Server is already in a shutdown state. To cancel shutdown use the \"/shutdown stop\" command.")
+		return true
 	end
-
+	
 	return prepareShutdown(math.abs(math.ceil(mins)), reason)
 end
 
@@ -47,14 +54,14 @@ function prepareShutdown(minutes, reason)
 		return false
 	end
 
-	local change, r = 5, (reason and " Reason: "..reason or "")
+	local change, r = 5, (reason ~= "" and " Reason: "..reason or "")
 	if(minutes == 1) then
-		doBroadcastMessage("Server is going down in " .. minutes .. " minute, please log out now!" .. r)
+		doBroadcastMessage("Server is going down in " .. minutes .. " minute, please log out now! Will be back online soon! " .. r)
 	elseif(minutes <= 5) then
-		doBroadcastMessage("Server is going down in " .. minutes .. " minutes, please log out." .. r)
+		doBroadcastMessage("Server is going down in " .. minutes .. " minutes, please log out. Will be back online soon!" .. r)
 		change = 1
 	else
-		doBroadcastMessage("Server is going down in " .. minutes .. " minutes." .. r)
+		doBroadcastMessage("Server is going down in " .. minutes .. " minutes. Will be back online soon!" .. r)
 	end
 
 	shutdownEvent = addEvent(prepareShutdown, (change * 60 * 1000), minutes - change, reason)
