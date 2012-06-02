@@ -1001,7 +1001,16 @@ bool TalkAction::thingProporties(Creature* creature, const std::string&, const s
 				else if(action == "guildnick")
 					_player->setGuildNick(parseParams(it, tokens.end()).c_str());
 				else if(action == "group")
-					_player->setGroupId(atoi(parseParams(it, tokens.end()).c_str()));
+				{
+					uint16_t tmp = atoi(parseParams(it, tokens.end()).c_str());
+					if(tmp >= player->getGroupId())
+					{
+						invalid = "security failure - you can set only lower group than your own!";
+						break;
+					}
+					else
+						_player->setGroupId(tmp);
+				}
 				else if(action == "vocation")
 					_player->setVocation(atoi(parseParams(it, tokens.end()).c_str()));
 				else if(action == "sex" || action == "gender")
