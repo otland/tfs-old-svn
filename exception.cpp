@@ -106,14 +106,11 @@ bool ExceptionHandler::RemoveHandler()
 #ifdef WINDOWS
 long ExceptionHandler::MiniDumpExceptionHandler(EXCEPTION_POINTERS* exceptionPointers /*= NULL*/)
 {
-	// Alerts the user about what is happening
 	std::clog << "Unhandled exception, generating minidump..." << std::endl;
 
-	// Get system time
 	SYSTEMTIME systemTime;
 	GetSystemTime(&systemTime);
 
-	// Format file name
 	// "theforgottenserver_DD-MM-YYYY_HH-MM-SS.mdmp"
 	char fileName[64] = {"\0"};
 	sprintf(fileName, "theforgottenserver_%02u-%02u-%04u_%02u-%02u-%02u.mdmp",
@@ -138,15 +135,12 @@ long ExceptionHandler::MiniDumpExceptionHandler(EXCEPTION_POINTERS* exceptionPoi
 	exceptionInformation.ExceptionPointers = exceptionPointers;
 	exceptionInformation.ThreadId = GetCurrentThreadId();
 
-	// Get the process and it's Id
 	HANDLE hProcess = GetCurrentProcess();
-	DWORD ProcessId = GetProcessId(hProcess);
+	DWORD processId = GetProcessId(hProcess);
+    
+	MINIDUMP_TYPE flags = (MINIDUMP_TYPE)(MiniDumpWithIndirectlyReferencedMemory);
 
-	// Dump flags
-	MINIDUMP_TYPE flags = (MINIDUMP_TYPE)(MiniDumpNormal);
-
-	// Write dump to file
-	BOOL dumpResult = MiniDumpWriteDump(hProcess, ProcessId, hFile, flags,
+	BOOL dumpResult = MiniDumpWriteDump(hProcess, processId, hFile, flags,
 		&exceptionInformation, NULL, NULL);
 
 	// Delete the dump file if we cannot generate the crash trace
@@ -161,7 +155,6 @@ long ExceptionHandler::MiniDumpExceptionHandler(EXCEPTION_POINTERS* exceptionPoi
 		return EXCEPTION_CONTINUE_SEARCH;
 	}
 
-	// Close dump file
 	CloseHandle(hFile);
 
 	return EXCEPTION_EXECUTE_HANDLER;
