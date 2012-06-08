@@ -4,6 +4,10 @@ setConditionParam(conditionDrown, CONDITION_PARAM_TICKS, -1)
 setConditionParam(conditionDrown, CONDITION_PARAM_TICKINTERVAL, 2000)
 
 function onStepIn(cid, item, position, fromPosition)
+	if isPlayerGhost(cid) then
+		return true
+	end
+
 	if(math.random(1, 10) == 1) then
 		doSendMagicEffect(position, CONST_ME_BUBBLES)
 	end
