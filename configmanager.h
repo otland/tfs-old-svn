@@ -324,6 +324,7 @@ class ConfigManager
 			FAIRFIGHT_REDUCTION,
 			MARKET_ENABLED,
 			MARKET_PREMIUM,
+			ALLOW_BLOCK_SPAWN,
 			LAST_BOOL_CONFIG /* this must be the last one */
 		};
 

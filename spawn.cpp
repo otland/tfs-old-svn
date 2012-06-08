@@ -349,7 +349,7 @@ void Spawn::checkSpawn()
 		if(OTSYS_TIME() < sb.lastSpawn + sb.interval)
 			continue;
 
-		if(findPlayer(sb.pos))
+		if(g_config.getBool(ConfigManager::ALLOW_BLOCK_SPAWN) && findPlayer(sb.pos))
 		{
 			sb.lastSpawn = OTSYS_TIME();
 			continue;

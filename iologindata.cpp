@@ -1313,7 +1313,7 @@ bool IOLoginData::playerMail(Creature* actor, std::string name, uint32_t townId,
 		return false;
 	}
 
-	g_game.transformItem(item, item->getID() + 1);
+	g_game.transformItem(item, ITEM_PARCEL_STAMPED);
 	bool result = true, opened = player->getContainerID(depot) != -1;
 
 	Player* tmp = NULL;

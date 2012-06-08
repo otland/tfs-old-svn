@@ -355,6 +355,7 @@ bool ConfigManager::load()
 	m_confBool[MARKET_PREMIUM] 			= getGlobalBool("premiumToCreateMarketOffer", true);
 	m_confNumber[CHECK_EXPIRED_MARKET_OFFERS_EACH_MINUTES] = getGlobalNumber("checkExpiredMarketOffersEachMinutes", 60);
 	m_confNumber[MAX_MARKET_OFFERS_AT_A_TIME_PER_PLAYER] = getGlobalNumber("maxMarketOffersAtATimePerPlayer", 100);
+	m_confBool[ALLOW_BLOCK_SPAWN] = getGlobalBool("allowBlockSpawn", true);
 
 	m_loaded = true;
 	return true;
