@@ -755,6 +755,12 @@
 			If disabled players can carry all they want.
 			Default: true
 
+		playerFollowExhaust
+			Speicifies the amount of exhaust in miliseconds applied to follow actions.
+			Delays all follows, but saves your server if someone causes lags and kicks by
+			constantly following unreachable targets.
+			Default: 0
+
 	*DEPOT
 		defaultDepotSizePremium
 			How many items should a premium player be able to store in their depot?

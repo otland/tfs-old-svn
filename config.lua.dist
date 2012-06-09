@@ -249,6 +249,9 @@
 	maxMessageBuffer = 4
 	tradeLimit = 100
 	useCapacity = true
+	-- set playerFollowExhaust to 1500 if someone causes lags and kicks
+	-- by following unreachable creatures too often
+	playerFollowExhaust = 0
 
 	-- Depot
 	defaultDepotSizePremium = 2000

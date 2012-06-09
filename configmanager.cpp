@@ -340,7 +340,7 @@ bool ConfigManager::load()
 	m_confBool[TIBIA_SLOTS]				= getGlobalBool("tibiaClassicSlots", true);
 	m_confBool[SKIP_ITEMS_VERSION]			= getGlobalBool("skipItemsVersionCheck", false);
 	m_confBool[SILENT_LUA]				= getGlobalBool("disableLuaErrors", false);
-	m_confNumber[MAIL_ATTEMPTS]				= getGlobalNumber("mailMaxAttempts", 20);
+	m_confNumber[MAIL_ATTEMPTS]			= getGlobalNumber("mailMaxAttempts", 20);
 	m_confNumber[MAIL_BLOCK] 			= getGlobalNumber("mailBlockPeriod", 3600000);
 	m_confNumber[MAIL_ATTEMPTS_FADE]		= getGlobalNumber("mailAttemptsFadeTime", 600000);
 	m_confBool[ROOK_SYSTEM]				= getGlobalBool("useRookSystem", false);
@@ -355,7 +355,8 @@ bool ConfigManager::load()
 	m_confBool[MARKET_PREMIUM] 			= getGlobalBool("premiumToCreateMarketOffer", true);
 	m_confNumber[CHECK_EXPIRED_MARKET_OFFERS_EACH_MINUTES] = getGlobalNumber("checkExpiredMarketOffersEachMinutes", 60);
 	m_confNumber[MAX_MARKET_OFFERS_AT_A_TIME_PER_PLAYER] = getGlobalNumber("maxMarketOffersAtATimePerPlayer", 100);
-	m_confBool[ALLOW_BLOCK_SPAWN] = getGlobalBool("allowBlockSpawn", true);
+	m_confBool[ALLOW_BLOCK_SPAWN]			= getGlobalBool("allowBlockSpawn", true);
+	m_confNumber[FOLLOW_EXHAUST]			= getGlobalNumber("playerFollowExhaust", 0);
 
 	m_loaded = true;
 	return true;

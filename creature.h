@@ -487,6 +487,7 @@ class Creature : public AutoId, virtual public Thing
 		int32_t checkVector;
 		int32_t health, healthMax;
 		int32_t mana, manaMax;
+		int64_t lastFollow;
 
 		bool hideName, hideHealth, cannotMove;
 		MessageClasses speakType;
