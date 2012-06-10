@@ -1060,9 +1060,9 @@ void Creature::getPathSearchParams(const Creature*, FindPathParams& fpp) const
 
 void Creature::goToFollowCreature()
 {
-	if( getPlayer() && (OTSYS_TIME() - lastFollow <= g_config.getNumber(ConfigManager::FOLLOW_EXHAUST)) ) {
+	if(getPlayer() && (OTSYS_TIME() - lastFollow <= g_config.getNumber(ConfigManager::FOLLOW_EXHAUST)))
 		return;
-	}
+
 	lastFollow = OTSYS_TIME();
 	
 	if(followCreature)

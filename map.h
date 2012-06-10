@@ -125,10 +125,10 @@ class QTreeLeafNode : public QTreeNode
 		virtual ~QTreeLeafNode();
 
 		Floor* createFloor(uint16_t z);
-		Floor* getFloor(uint16_t z){return m_array[z];}
+		Floor* getFloor(uint16_t z) {return m_array[z];}
 
-		QTreeLeafNode* stepSouth(){return m_leafS;}
-		QTreeLeafNode* stepEast(){return m_leafE;}
+		QTreeLeafNode* stepSouth() {return m_leafS;}
+		QTreeLeafNode* stepEast() {return m_leafE;}
 
 		void addCreature(Creature* c);
 		void removeCreature(Creature* c);

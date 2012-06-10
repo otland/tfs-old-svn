@@ -15,8 +15,8 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////
 
-#ifndef __OTSERV_VOCATION__
-#define __OTSERV_VOCATION__
+#ifndef __VOCATION__
+#define __VOCATION__
 
 #include "otsystem.h"
 #include "enums.h"

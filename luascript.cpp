@@ -8482,7 +8482,7 @@ int32_t LuaInterface::luaDoPlayerAddPremiumDays(lua_State* L)
 	ScriptEnviroment* env = getEnv();
 	if(Player* player = env->getPlayerByUID(popNumber(L)))
 	{
-		if(player->premiumDays < 65535)
+		if(player->premiumDays < GRATIS_PREMIUM)
 		{
 			Account account = IOLoginData::getInstance()->loadAccount(player->getAccount());
 			if(days < 0)
