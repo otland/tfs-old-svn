@@ -4187,7 +4187,7 @@ double Player::getLostPercent() const
 		lossPercent *= 0.7;
 
 	std::bitset<5> bitset(blessings);
-	return lossPercent * pow(0.92, bitset.count()) / 100;
+	return lossPercent * pow(0.92, (int)bitset.count()) / 100;
 }
 
 void Player::learnInstantSpell(const std::string& name)
