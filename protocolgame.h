@@ -61,7 +61,7 @@ class ProtocolGame : public Protocol
 
 		virtual int32_t getProtocolId() {return 0x0A;}
 
-		bool login(const std::string& name, uint32_t accnumber, const std::string& password, uint16_t operatingSystem, uint8_t gamemasterLogin);
+		bool login(const std::string& name, uint32_t accnumber, const std::string& password, uint16_t operatingSystem, uint8_t gamemasterLogin, std::list<uint8_t> openChannels);
 		bool logout(bool displayEffect, bool forced);
 
 		void setPlayer(Player* p);
@@ -69,7 +69,7 @@ class ProtocolGame : public Protocol
 	private:
 		std::list<uint32_t> knownCreatureList;
 
-		bool connect(uint32_t playerId);
+		bool connect(uint32_t playerId, std::list<uint8_t> openChannels);
 		void disconnect();
 		void disconnectClient(uint8_t error, const char* message);
 

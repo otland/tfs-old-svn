@@ -93,7 +93,7 @@ Creature()
 	damageImmunities = 0;
 	conditionImmunities = 0;
 	conditionSuppressions = 0;
-	accessLevel = 0;
+	accessLevel = false;
 	groupName = "";
 	groupId = 0;
 	lastLoginSaved = 0;
@@ -177,7 +177,7 @@ Creature()
 
 	idleTime = 0;
 
-	redSkullTicks = 0;
+	skullTicks = 0;
 	skull = SKULL_NONE;
 	setParty(NULL);
 
@@ -253,7 +253,7 @@ std::string Player::getDescription(int32_t lookDistance) const
 	if(lookDistance == -1)
 	{
 		s << "yourself.";
-		if(accessLevel != 0)
+		if(accessLevel)
 			s << " You are " << groupName << ".";
 		else if(vocationId != VOCATION_NONE)
 			s << " You are " << vocation->getVocDescription() << ".";
@@ -263,7 +263,7 @@ std::string Player::getDescription(int32_t lookDistance) const
 	else
 	{
 		s << name;
-		if(accessLevel == 0)
+		if(!accessLevel)
 			s << " (Level " << level << ")";
 		s << ".";
 
@@ -272,7 +272,7 @@ std::string Player::getDescription(int32_t lookDistance) const
 		else
 			s << " He";
 
-		if(accessLevel != 0)
+		if(accessLevel)
 			s << " is " << groupName << ".";
 		else if(vocationId != VOCATION_NONE)
 			s << " is " << vocation->getVocDescription() << ".";
@@ -787,12 +787,45 @@ uint16_t Player::getLookCorpse() const
 		return ITEM_FEMALE_CORPSE;
 }
 
+uint16_t Player::getDropPercent() const
+{
+	uint16_t dropPercent;
+	std::bitset<5> bitset(blessings);
+	switch(bitset.count())
+	{
+		case 1:
+			dropPercent = 70;
+			break;
+
+		case 2:
+			dropPercent = 45;
+			break;
+
+		case 3:
+			dropPercent = 25;
+			break;
+
+		case 4:
+			dropPercent = 10;
+			break;
+
+		case 5:
+			dropPercent = 0;
+			break;
+
+		default:
+			dropPercent = 100;
+			break;
+	}
+	return dropPercent;
+}
+
 void Player::dropLoot(Container* corpse)
 {
 	if(corpse && lootDrop && vocationId != VOCATION_NONE)
 	{
 		if(inventory[SLOT_NECKLACE] && inventory[SLOT_NECKLACE]->getID() == ITEM_AMULETOFLOSS &&
-			getSkull() != SKULL_RED && g_game.getWorldType() != WORLD_TYPE_PVP_ENFORCED)
+			getSkull() != SKULL_RED && getSkull() != SKULL_BLACK && g_game.getWorldType() != WORLD_TYPE_PVP_ENFORCED)
 		{
 			g_game.internalRemoveItem(inventory[SLOT_NECKLACE], 1);
 		}
@@ -803,7 +836,7 @@ void Player::dropLoot(Container* corpse)
 				Item* item = inventory[i];
 				if(item)
 				{
-					if(((item->getContainer()) || random_range(1, 100) <= 10 || getSkull() == SKULL_RED))
+					if(getSkull() == SKULL_RED || getSkull() == SKULL_BLACK || random_range(1, (item->getContainer() ? 100 : 1000)) <= getDropPercent())
 					{
 						g_game.internalMoveItem(this, corpse, INDEX_WHEREEVER, item, item->getItemCount(), 0);
 						sendRemoveInventoryItem((slots_t)i, inventory[(slots_t)i]);
@@ -1444,6 +1477,7 @@ void Player::onCreatureAppear(const Creature* creature, bool isLogin)
 		{
 			for(ConditionList::const_iterator it = storedConditionList.begin(); it != storedConditionList.end(); ++it)
 				addCondition(*it);
+
 			storedConditionList.clear();
 		}
 
@@ -1489,7 +1523,7 @@ void Player::onChangeZone(ZoneType_t zone)
 			onAttackedCreatureDisappear(false);
 		}
 
-		if(isMounted())
+		if(!accessLevel && isMounted())
 			dismount();
 	}
 	sendIcons();
@@ -1537,10 +1571,9 @@ void Player::onCreatureDisappear(const Creature* creature, uint32_t stackpos, bo
 	if(creature == this)
 	{
 		if(isLogout)
-		{
 			loginPosition = getPosition();
-			lastLogout = time(NULL);
-		}
+
+		lastLogout = time(NULL);
 
 		if(eventWalk != 0)
 			setFollowCreature(NULL);
@@ -1851,7 +1884,7 @@ void Player::onThink(uint32_t interval)
 	}
 
 	if(g_game.getWorldType() != WORLD_TYPE_PVP_ENFORCED)
-		checkRedSkullTicks(interval);
+		checkSkullTicks(interval);
 }
 
 uint32_t Player::isMuted()
@@ -2213,7 +2246,9 @@ void Player::death()
 
 		sumMana += manaSpent;
 
-		lostMana = (uint64_t)(sumMana * getLostPercent());
+		double lossPercent = getLostPercent();
+
+		lostMana = (uint64_t)(sumMana * lossPercent);
 		while(lostMana > manaSpent && magLevel > 0)
 		{
 			lostMana -= manaSpent;
@@ -2237,7 +2272,7 @@ void Player::death()
 
 			sumSkillTries += skills[i][SKILL_TRIES];
 
-			uint32_t lostSkillTries = (uint32_t)(sumSkillTries * getLostPercent());
+			uint32_t lostSkillTries = (uint32_t)(sumSkillTries * lossPercent);
 			while(lostSkillTries > skills[i][SKILL_TRIES])
 			{
 				lostSkillTries -= skills[i][SKILL_TRIES];
@@ -2258,7 +2293,11 @@ void Player::death()
 
 		//Level loss
 		uint32_t newLevel = level;
-		while((uint64_t)(experience - getLostExperience()) < Player::getExpForLevel(newLevel))
+		uint64_t newExperience = experience;
+		if(vocationId == VOCATION_NONE || level > 7)
+			newExperience -= getLostExperience();
+
+		while(newExperience < Player::getExpForLevel(newLevel))
 		{
 			if(newLevel > 1)
 				newLevel--;
@@ -2276,7 +2315,7 @@ void Player::death()
 		uint64_t currLevelExp = Player::getExpForLevel(newLevel);
 		uint64_t nextLevelExp = Player::getExpForLevel(newLevel + 1);
 		if(nextLevelExp > currLevelExp)
-			levelPercent = Player::getPercentLevel(experience - currLevelExp - getLostExperience(), nextLevelExp - currLevelExp);
+			levelPercent = Player::getPercentLevel(experience - currLevelExp - uint64_t(experience * lossPercent), nextLevelExp - currLevelExp);
 		else
 			levelPercent = 0;
 
@@ -2327,7 +2366,9 @@ void Player::preSave()
 	{
 		if(skillLoss)
 		{
-			experience -= getLostExperience();
+			if(vocationId == VOCATION_NONE || level > 7)
+				experience -= getLostExperience();
+
 			while(level > 1 && experience < Player::getExpForLevel(level))
 			{
 				--level;
@@ -2336,10 +2377,17 @@ void Player::preSave()
 				capacity = std::max((double)0, (capacity - (double)vocation->getCapGain()));
 			}
 			blessings = 0;
+
 			mana = manaMax;
 		}
 
 		health = healthMax;
+
+		if(getSkull() == SKULL_BLACK)
+		{
+			health = 40;
+			mana = 0;
+		}
 	}
 }
 
@@ -2463,7 +2511,7 @@ bool Player::addVIP(uint32_t _guid, std::string& name, bool isOnline, bool inter
 		return false;
 	}
 
-	if(VIPList.size() > maxVipLimit)
+	if(VIPList.size() > maxVipLimit || VIPList.size() == 200) // max number of buddies is 200 in 9.53
 	{
 		if(!internal)
 			sendTextMessage(MSG_STATUS_SMALL, "You cannot add more buddies.");
@@ -3628,6 +3676,10 @@ void Player::onAddCombatCondition(ConditionType_t type)
 			sendTextMessage(MSG_STATUS_DEFAULT, "You are dazzled.");
 			break;
 
+		case CONDITION_BLEEDING:
+			sendTextMessage(MSG_STATUS_DEFAULT, "You are bleeding.");
+			break;
+
 		default:
 			break;
 	}
@@ -3641,7 +3693,7 @@ void Player::onEndCondition(ConditionType_t type)
 		onIdleStatus();
 		pzLocked = false;
 
-		if(getSkull() != SKULL_RED)
+		if(getSkull() != SKULL_RED && getSkull() != SKULL_BLACK)
 		{
 			clearAttacked();
 			setSkull(SKULL_NONE);
@@ -3696,23 +3748,26 @@ void Player::onAttackedCreature(Creature* target)
 		{
 			if(Player* targetPlayer = target->getPlayer())
 			{
-				if(!pzLocked)
+				if(!isPartner(targetPlayer) && !targetPlayer->hasAttacked(this))
 				{
-					pzLocked = true;
-					sendIcons();
-				}
-
-				if(!isPartner(targetPlayer) && !Combat::isInPvpZone(this, targetPlayer) && !targetPlayer->hasAttacked(this) && !isGuildMate(targetPlayer))
-				{
-					addAttacked(targetPlayer);
-					if(targetPlayer->getSkull() == SKULL_NONE && getSkull() == SKULL_NONE)
+					if(!pzLocked)
 					{
-						setSkull(SKULL_WHITE);
-						g_game.updateCreatureSkull(this);
+						pzLocked = true;
+						sendIcons();
 					}
 
-					if(getSkull() == SKULL_NONE)
-						targetPlayer->sendCreatureSkull(this);
+					if(!Combat::isInPvpZone(this, targetPlayer) && !isInWar(targetPlayer) && !isGuildMate(targetPlayer))
+					{
+						addAttacked(targetPlayer);
+						if(targetPlayer->getSkull() == SKULL_NONE && getSkull() == SKULL_NONE)
+						{
+							setSkull(SKULL_WHITE);
+							g_game.updateCreatureSkull(this);
+						}
+
+						if(getSkull() == SKULL_NONE)
+							targetPlayer->sendCreatureSkull(this);
+					}
 				}
 			}
 		}
@@ -3798,12 +3853,12 @@ bool Player::onKilledCreature(Creature* target, bool lastHit/* = true*/)
 			targetPlayer->setDropLoot(false);
 			targetPlayer->setLossSkill(false);
 		}
-		else if(!hasFlag(PlayerFlag_NotGainInFight))
+		else if(!hasFlag(PlayerFlag_NotGainInFight) && !isPartner(targetPlayer))
 		{
-			if(!isPartner(targetPlayer) &&
-				!Combat::isInPvpZone(this, targetPlayer) &&
+			if(!Combat::isInPvpZone(this, targetPlayer) &&
 				!targetPlayer->hasAttacked(this) &&
 				targetPlayer->getSkull() == SKULL_NONE &&
+				!isInWar(targetPlayer) &&
 				!isGuildMate(targetPlayer) &&
 				targetPlayer != this)
 			{
@@ -3921,13 +3976,13 @@ bool Player::canLogout()
 	if(isConnecting)
 		return false;
 
-	if(isPzLocked() || hasCondition(CONDITION_INFIGHT))
-		return false;
-
 	if(getTile()->hasFlag(TILESTATE_NOLOGOUT))
 		return false;
 
-	return true;
+	if(getTile()->hasFlag(TILESTATE_PROTECTIONZONE))
+		return true;
+
+	return !isPzLocked() && !hasCondition(CONDITION_INFIGHT);
 }
 
 void Player::genReservedStorageRange()
@@ -3951,7 +4006,7 @@ void Player::genReservedStorageRange()
 			base_key++;
 			if(base_key > PSTRG_OUTFITS_RANGE_START + PSTRG_OUTFITS_RANGE_SIZE)
 			{
-				std::cout << "Warning: [Player::genReservedStorageRange()] Player " << getName() << " with more than 500 outfits!." << std::endl;
+				std::cout << "Warning: [Player::genReservedStorageRange()] Player " << getName() << " with more than 500 outfits!" << std::endl;
 				break;
 			}
 		}
@@ -4014,10 +4069,16 @@ Skulls_t Player::getSkullClient(const Player* player) const
 	if(!player || g_game.getWorldType() != WORLD_TYPE_PVP)
 		return SKULL_NONE;
 
-	if(getSkull() != SKULL_NONE && player->getSkull() != SKULL_RED)
+	if(player->getSkull() != SKULL_RED && player->getSkull() != SKULL_BLACK)
 	{
-		if(player->hasAttacked(this))
+		if(isInWar(player))
 			return SKULL_YELLOW;
+
+		if(getSkull() != SKULL_NONE)
+		{
+			if(player->hasAttacked(this))
+				return SKULL_YELLOW;
+		}
 	}
 
 	if(player->getSkull() == SKULL_NONE)
@@ -4068,14 +4129,8 @@ void Player::addUnjustifiedDead(const Player* attacked)
 		client->sendTextMessage(MSG_STATUS_WARNING, buffer);
 	}
 
-	redSkullTicks += g_config.getNumber(ConfigManager::FRAG_TIME);
-	if(g_config.getNumber(ConfigManager::KILLS_TO_RED) != 0 && redSkullTicks >= (g_config.getNumber(ConfigManager::KILLS_TO_RED) - 1) * g_config.getNumber(ConfigManager::FRAG_TIME) && getSkull() != SKULL_RED)
-	{
-		setSkull(SKULL_RED);
-		g_game.updateCreatureSkull(this);
-	}
-	else if(g_config.getNumber(ConfigManager::KILLS_TO_BAN) != 0 && redSkullTicks >= (g_config.getNumber(ConfigManager::KILLS_TO_BAN) - 1) * g_config.getNumber(ConfigManager::FRAG_TIME)
-		&& !IOBan::getInstance()->isAccountBanned(accountNumber))
+	skullTicks += g_config.getNumber(ConfigManager::FRAG_TIME);
+	if(g_config.getNumber(ConfigManager::KILLS_TO_BAN) != 0 && skullTicks >= (g_config.getNumber(ConfigManager::KILLS_TO_BAN) - 1) * g_config.getNumber(ConfigManager::FRAG_TIME) && !IOBan::getInstance()->isAccountBanned(accountNumber))
 	{
 		IOBan::getInstance()->addAccountBan(accountNumber, time(NULL) + (g_config.getNumber(ConfigManager::BAN_DAYS) * 86400), 20, 2, "No comment.", 0);
 
@@ -4084,14 +4139,27 @@ void Player::addUnjustifiedDead(const Player* attacked)
 		g_scheduler.addEvent(createSchedulerTask(500,
 			boost::bind(&Game::kickPlayer, &g_game, playerId, false)));
 	}
+	else if(getSkull() != SKULL_BLACK && g_config.getNumber(ConfigManager::KILLS_TO_BLACK) != 0 && skullTicks >= (g_config.getNumber(ConfigManager::KILLS_TO_BLACK) - 1) * g_config.getNumber(ConfigManager::FRAG_TIME))
+	{
+		setSkull(SKULL_BLACK);
+		g_game.updateCreatureSkull(this);
+	}
+	else if(getSkull() != SKULL_RED && g_config.getNumber(ConfigManager::KILLS_TO_RED) != 0 && skullTicks >= (g_config.getNumber(ConfigManager::KILLS_TO_RED) - 1) * g_config.getNumber(ConfigManager::FRAG_TIME))
+	{
+		setSkull(SKULL_RED);
+		g_game.updateCreatureSkull(this);
+	}
 }
 
-void Player::checkRedSkullTicks(int32_t ticks)
+void Player::checkSkullTicks(int32_t ticks)
 {
-	if(redSkullTicks - ticks > 0)
-		redSkullTicks -= ticks;
+	int32_t newTicks = skullTicks - ticks;
+	if(newTicks < 0)
+		skullTicks = 0;
+	else
+		skullTicks = newTicks;
 
-	if(redSkullTicks < 1000 && !hasCondition(CONDITION_INFIGHT) && skull == SKULL_RED)
+	if((skull == SKULL_RED || skull == SKULL_BLACK) && skullTicks < 1000 && !hasCondition(CONDITION_INFIGHT))
 	{
 		setSkull(SKULL_NONE);
 		g_game.updateCreatureSkull(this);
@@ -4106,24 +4174,20 @@ bool Player::isPromoted() const
 
 double Player::getLostPercent() const
 {
-	uint32_t lostPercent = g_config.getNumber(ConfigManager::DEATH_LOSE_PERCENT);
+	double lossPercent;
+	if(level < 25)
+		lossPercent = 10;
+	else
+	{
+		double tmpLevel = level + (levelPercent / 100.);
+		lossPercent = (double)((tmpLevel + 50) * 50 * ((tmpLevel * tmpLevel) - (5 * tmpLevel) + 8)) / experience;
+	}
+
 	if(isPromoted())
-	{
-		if(lostPercent <= 3)
-			return 0;
+		lossPercent *= 0.7;
 
-		lostPercent -= 3;
-	}
-
-	for(int16_t i = 0; i < 5; i++)
-	{
-		if(lostPercent == 0)
-			return 0;
-
-		if(hasBlessing(i))
-			lostPercent--;
-	}
-	return (double)lostPercent / 100;
+	std::bitset<5> bitset(blessings);
+	return lossPercent * pow(0.92, bitset.count()) / 100;
 }
 
 void Player::learnInstantSpell(const std::string& name)
@@ -4609,6 +4673,29 @@ bool Player::isInvitedToGuild(uint32_t guild_id) const
 	return false;
 }
 
+bool Player::isInWar(const Player* player) const
+{
+	if(!player)
+		return false;
+
+	if(guildId != 0 && player->guildId != 0)
+	{
+		if(isInWarList(player->guildId) && player->isInWarList(guildId))
+			return true;
+	}
+	return false;
+}
+
+bool Player::isInWarList(uint32_t guild_id) const
+{
+	for(GuildWarList::const_iterator it = guildWarList.begin(); it != guildWarList.end(); ++it)
+	{
+		if((*it) == guild_id)
+			return true;
+	}
+	return false;
+}
+
 void Player::leaveGuild()
 {
 	sendClosePrivate(CHANNEL_GUILD);
@@ -4617,6 +4704,7 @@ void Player::leaveGuild()
 	guildRank = "";
 	guildNick = "";
 	guildLevel = 0;
+	guildWarList.clear();
 }
 
 bool Player::isPremium() const
@@ -4784,7 +4872,16 @@ void Player::clearPartyInvitations()
 
 GuildEmblems_t Player::getGuildEmblem(const Player* player) const
 {
-	return EMBLEM_NONE;
+	if(!player || player->getGuildWarList().empty())
+		return EMBLEM_NONE;
+
+	if(isInWar(player))
+		return EMBLEM_RED;
+
+	if(player->getGuildId() == guildId)
+		return EMBLEM_GREEN;
+
+	return EMBLEM_BLUE;
 }
 
 uint8_t Player::getCurrentMount() const
@@ -4825,6 +4922,13 @@ bool Player::toggleMount(bool mount)
 		if(!currentMount)
 			return false;
 
+		if(!currentMount->isTamed(this))
+		{
+			setCurrentMount(0);
+			sendOutfitWindow();
+			return false;
+		}
+
 		if(currentMount->isPremium() && !isPremium())
 		{
 			sendCancelMessage(RET_YOUNEEDPREMIUMACCOUNT);
@@ -4856,9 +4960,9 @@ bool Player::tameMount(uint8_t mountId)
 	int key = PSTRG_MOUNTS_RANGE_START + (mountId / 31);
 	int32_t value = 0;
 	if(getStorageValue(key, value))
-		value |= (int32_t)pow(2.0f, mountId % 31);
+		value |= (1 << (mountId % 31));
 	else
-		value = (int32_t)pow(2.0f, mountId % 31);
+		value = (1 << (mountId % 31));
 
 	addStorageValue(key, value);
 	return true;
@@ -4875,12 +4979,14 @@ bool Player::untameMount(uint8_t mountId)
 	if(!getStorageValue(key, value))
 		return true;
 
-	value ^= (int32_t)pow(2.0f, mountId % 31);
+	value &= ~(1 << (mountId % 31));
 	addStorageValue(key, value);
 
-	if(isMounted() && getCurrentMount() == (mountId + 1))
+	if(getCurrentMount() == (mountId + 1))
 	{
-		dismount();
+		if(isMounted())
+			dismount();
+
 		setCurrentMount(0);
 	}
 	return true;

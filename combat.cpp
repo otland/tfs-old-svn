@@ -155,31 +155,27 @@ CombatType_t Combat::ConditionToDamageType(ConditionType_t type)
 	{
 		case CONDITION_FIRE:
 			return COMBAT_FIREDAMAGE;
-			break;
 
 		case CONDITION_ENERGY:
 			return COMBAT_ENERGYDAMAGE;
-			break;
+
+		case CONDITION_BLEEDING:
+			return COMBAT_PHYSICALDAMAGE;
 
 		case CONDITION_DROWN:
 			return COMBAT_DROWNDAMAGE;
-			break;
 
 		case CONDITION_POISON:
 			return COMBAT_EARTHDAMAGE;
-			break;
 
 		case CONDITION_FREEZING:
 			return COMBAT_ICEDAMAGE;
-			break;
 
 		case CONDITION_DAZZLED:
 			return COMBAT_HOLYDAMAGE;
-			break;
 
 		case CONDITION_CURSED:
 			return COMBAT_DEATHDAMAGE;
-			break;
 
 		default:
 			break;
@@ -193,31 +189,27 @@ ConditionType_t Combat::DamageToConditionType(CombatType_t type)
 	{
 		case COMBAT_FIREDAMAGE:
 			return CONDITION_FIRE;
-			break;
 
 		case COMBAT_ENERGYDAMAGE:
 			return CONDITION_ENERGY;
-			break;
 
 		case COMBAT_DROWNDAMAGE:
 			return CONDITION_DROWN;
-			break;
 
 		case COMBAT_EARTHDAMAGE:
 			return CONDITION_POISON;
-			break;
 
 		case COMBAT_ICEDAMAGE:
 			return CONDITION_FREEZING;
-			break;
 
 		case COMBAT_HOLYDAMAGE:
 			return CONDITION_DAZZLED;
-			break;
 
 		case COMBAT_DEATHDAMAGE:
 			return CONDITION_CURSED;
-			break;
+
+		case COMBAT_PHYSICALDAMAGE:
+			return CONDITION_BLEEDING;
 
 		default:
 			break;
@@ -334,10 +326,13 @@ bool Combat::isProtected(const Player* attacker, const Player* target)
 	if(target->getLevel() < protectionLevel || attacker->getLevel() < protectionLevel)
 		return true;
 
-	if(attacker->getVocationId() == 0 || target->getVocationId() == 0)
+	if(attacker->getVocationId() == VOCATION_NONE || target->getVocationId() == VOCATION_NONE)
 		return true;
 
 	if(attacker->isAccountManager() || target->isAccountManager())
+		return true;
+
+	if(attacker->getSkull() == SKULL_BLACK && attacker->getSkullClient(target) == SKULL_NONE)
 		return true;
 
 	return false;
@@ -577,8 +572,12 @@ bool Combat::CombatHealthFunc(Creature* caster, Creature* target, const CombatPa
 
 	if(healthChange < 0)
 	{
-		if(caster && caster->getPlayer() && target->getPlayer())
-			healthChange = healthChange / 2;
+		if(caster)
+		{
+			Player* targetPlayer = target->getPlayer();
+			if(targetPlayer && caster->getPlayer() && targetPlayer->getSkull() != SKULL_BLACK)
+				healthChange = healthChange / 2;
+		}
 	}
 
 	bool result = g_game.combatChangeHealth(params.combatType, caster, target, healthChange);

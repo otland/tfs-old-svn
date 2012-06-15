@@ -1865,6 +1865,9 @@ void LuaScriptInterface::registerFunctions()
 	//debugPrint(text)
 	lua_register(m_luaState, "debugPrint", LuaScriptInterface::luaDebugPrint);
 
+	//isInWar(cid, target)
+	lua_register(m_luaState, "isInWar", LuaScriptInterface::luaIsInWar);
+
 	//bit operations for Lua, based on bitlib project release 24
 	//bit.bnot, bit.band, bit.bor, bit.bxor, bit.lshift, bit.rshift
 	luaL_register(m_luaState, "bit", LuaScriptInterface::luaBitReg);
@@ -1955,8 +1958,6 @@ int32_t LuaScriptInterface::internalGetPlayerInfo(lua_State* L, PlayerInfo_t inf
 
 			case PlayerInfoFood:
 			{
-				value = 0;
-
 				Condition* condition = player->getCondition(CONDITION_REGENERATION, CONDITIONID_DEFAULT);
 				if(condition)
 					value = condition->getTicks() / 1000;
@@ -2465,7 +2466,7 @@ int32_t LuaScriptInterface::luaDoFeedPlayer(lua_State* L)
 	Player* player = env->getPlayerByUID(cid);
 	if(player)
 	{
-		player->addDefaultRegeneration((food * 1000) * 3);
+		player->addDefaultRegeneration(food * 1000);
 		lua_pushboolean(L, true);
 	}
 	else
@@ -4099,8 +4100,6 @@ int32_t LuaScriptInterface::luaDoSummonCreature(lua_State* L)
 	if(!g_game.placeCreature(monster, pos))
 	{
 		delete monster;
-		std::string error_str = (std::string)"Can not summon monster: " + name;
-		reportErrorFunc(error_str);
 		lua_pushboolean(L, false);
 		return 1;
 	}
@@ -7232,7 +7231,7 @@ int32_t LuaScriptInterface::luaGetItemDescriptions(lua_State* L)
 	lua_newtable(L);
 	setField(L, "name", it.name.c_str());
 	setField(L, "article", it.article.c_str());
-	setField(L, "plural", it.pluralName.c_str());
+	setField(L, "plural", it.getPluralName().c_str());
 	setField(L, "description", it.description.c_str());
 	return 1;
 }
@@ -7894,6 +7893,30 @@ int32_t LuaScriptInterface::luaGetPartyMembers(lua_State* L)
 				lua_pushnumber(L, (*it)->getID());
 				lua_settable(L, -3);
 			}
+			return 1;
+		}
+	}
+	else
+		reportErrorFunc(getErrorDesc(LUA_ERROR_PLAYER_NOT_FOUND));
+
+	lua_pushboolean(L, false);
+	return 1;
+}
+
+int32_t LuaScriptInterface::luaIsInWar(lua_State* L)
+{
+	//isInWar(cid, target)
+	uint32_t target = popNumber(L);
+	uint32_t cid = popNumber(L);
+
+	ScriptEnvironment* env = getScriptEnv();
+	Player* player = env->getPlayerByUID(cid);
+	Player* targetPlayer = env->getPlayerByUID(target);
+	if(player && targetPlayer)
+	{
+		if(player->isInWar(targetPlayer))
+		{
+			lua_pushboolean(L, true);
 			return 1;
 		}
 	}

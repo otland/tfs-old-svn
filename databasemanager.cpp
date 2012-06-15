@@ -231,7 +231,7 @@ uint32_t DatabaseManager::updateDatabase()
 			registerDatabaseConfig("db_version", 3);
 			return 3;
 		}
-		
+
 		case 3:
 		{
 			std::cout << "> Updating database to version 4" << std::endl;
@@ -245,6 +245,29 @@ uint32_t DatabaseManager::updateDatabase()
 
 			registerDatabaseConfig("db_version", 4);
 			return 4;
+		}
+
+		case 4:
+		{
+			std::cout << "> Updating database to version 5" << std::endl;
+			if(db->getDatabaseEngine() == DATABASE_ENGINE_MYSQL)
+			{
+				db->executeQuery("ALTER TABLE `players` CHANGE `redskull` `skull` TINYINT(1) NOT NULL DEFAULT '0', CHANGE `redskulltime` `skulltime` INT(11) NOT NULL DEFAULT '0';");
+				db->executeQuery("CREATE TABLE IF NOT EXISTS `guild_wars` ( `id` int(11) NOT NULL AUTO_INCREMENT, `guild1` int(11) NOT NULL DEFAULT '0', `guild2` int(11) NOT NULL DEFAULT '0', `name1` varchar(255) NOT NULL, `name2` varchar(255) NOT NULL, `status` tinyint(2) NOT NULL DEFAULT '0', `started` bigint(15) NOT NULL DEFAULT '0', `ended` bigint(15) NOT NULL DEFAULT '0', PRIMARY KEY (`id`), KEY `guild1` (`guild1`), KEY `guild2` (`guild2`)) ENGINE=InnoDB;");
+				db->executeQuery("CREATE TABLE IF NOT EXISTS `guildwar_kills` (`id` int(11) NOT NULL AUTO_INCREMENT, `killer` varchar(50) NOT NULL, `target` varchar(50) NOT NULL, `killerguild` int(11) NOT NULL DEFAULT '0', `targetguild` int(11) NOT NULL DEFAULT '0', `warid` int(11) NOT NULL DEFAULT '0', `time` bigint(15) NOT NULL, PRIMARY KEY (`id`), KEY `warid` (`warid`), FOREIGN KEY (`warid`) REFERENCES `guild_wars`(`id`) ON DELETE CASCADE) ENGINE=InnoDB;");
+			}
+			else
+			{
+				db->executeQuery("ALTER TABLE `players` ADD `skull` INTEGER NOT NULL DEFAULT 0;");
+				db->executeQuery("ALTER TABLE `players` ADD `skulltime` INTEGER NOT NULL DEFAULT 0;");
+				db->executeQuery("CREATE TABLE IF NOT EXISTS `guild_wars` ( `id` INTEGER PRIMARY KEY NOT NULL, `guild1` INTEGER NOT NULL DEFAULT '0', `guild2` INTEGER NOT NULL DEFAULT '0', `name1` VARCHAR(255) NOT NULL, `name2` VARCHAR(255) NOT NULL, `status` INTEGER NOT NULL DEFAULT '0', `started` INTEGER NOT NULL DEFAULT '0', `ended` INTEGER NOT NULL DEFAULT '0');");
+				db->executeQuery("CREATE TABLE IF NOT EXISTS `guildwar_kills` (`id` INTEGER PRIMARY KEY NOT NULL, `killer` varchar(50) NOT NULL, `target` varchar(50) NOT NULL, `killerguild` INTEGER NOT NULL DEFAULT '0', `targetguild` INTEGER NOT NULL DEFAULT '0', `warid` INTEGER NOT NULL DEFAULT '0', `time` INTEGER NOT NULL, FOREIGN KEY (`warid`) REFERENCES `guild_wars` (`id`));");
+				db->executeQuery("CREATE INDEX guild_wars_idx ON guild_wars(guild1);");
+				db->executeQuery("CREATE INDEX guild_wars_idx2 ON guild_wars(guild2);");
+			}
+
+			registerDatabaseConfig("db_version", 5);
+			return 5;
 		}
 
 		/*

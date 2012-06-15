@@ -37,7 +37,7 @@ enum ConditionType_t
 	CONDITION_POISON		= 1,
 	CONDITION_FIRE			= 2,
 	CONDITION_ENERGY		= 4,
-	CONDITION_LIFEDRAIN		= 8,
+	CONDITION_BLEEDING		= 8,
 	CONDITION_HASTE			= 16,
 	CONDITION_PARALYZE		= 32,
 	CONDITION_OUTFIT		= 64,
@@ -406,6 +406,30 @@ class ConditionLight: public Condition
 		LightInfo lightInfo;
 		uint32_t internalLightTicks;
 		uint32_t lightChangeInterval;
+};
+
+class ConditionSpellCooldown: public ConditionGeneric
+{
+	public:
+		ConditionSpellCooldown(ConditionId_t _id, ConditionType_t _type, int32_t _ticks, bool _buff = false, uint32_t _subId = 0);
+		virtual ~ConditionSpellCooldown(){}
+
+		virtual bool startCondition(Creature* creature);
+		virtual void addCondition(Creature* creature, const Condition* condition);
+
+		virtual ConditionSpellCooldown* clone() const { return new ConditionSpellCooldown(*this); }
+};
+
+class ConditionSpellGroupCooldown: public ConditionGeneric
+{
+	public:
+		ConditionSpellGroupCooldown(ConditionId_t _id, ConditionType_t _type, int32_t _ticks, bool _buff = false, uint32_t _subId = 0);
+		virtual ~ConditionSpellGroupCooldown(){}
+
+		virtual bool startCondition(Creature* creature);
+		virtual void addCondition(Creature* creature, const Condition* condition);
+
+		virtual ConditionSpellGroupCooldown* clone() const { return new ConditionSpellGroupCooldown(*this); }
 };
 
 #endif

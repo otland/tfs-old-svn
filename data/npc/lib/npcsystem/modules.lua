@@ -614,6 +614,7 @@ if(Modules == nil) then
 			local itemid = nil
 			local cost = nil
 			local realName = nil
+			local subType = nil
 
 			for temp in string.gmatch(item, "[^,]+") do
 				if(i == 1) then

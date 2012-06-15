@@ -302,7 +302,7 @@ void Game::refreshMap()
 		for(ItemVector::reverse_iterator it = list.rbegin(); it != list.rend(); ++it)
 		{
 			Item* item = (*it)->clone();
-			ReturnValue ret = internalAddItem(tile, item , INDEX_WHEREEVER, FLAG_NOLIMIT);
+			ReturnValue ret = internalAddItem(tile, item, INDEX_WHEREEVER, FLAG_NOLIMIT);
 			if(ret == RET_NOERROR)
 			{
 				if(item->getUniqueId() != 0)
@@ -1908,15 +1908,35 @@ Item* Game::transformItem(Item* item, uint16_t newId, int32_t newCount /*= -1*/)
 				if(curType.id == newType.id)
 					newItemId = curType.decayTo;
 
-				if(newItemId != -1)
-				{
-					item = transformItem(item, newItemId);
-					return item;
-				}
-				else
+				if(newItemId == -1)
 				{
 					internalRemoveItem(item);
 					return NULL;
+				}
+				else if(newItemId != newId)
+				{
+					//Replacing the the old item with the new while maintaining the old position
+					Item* newItem = Item::CreateItem(newItemId, 1);
+					if(newItem == NULL)
+					{
+						#ifdef __DEBUG__
+						std::cout << "Error: [Game::transformItem] Item of type " << item->getID() << " transforming into invalid type " << newItemId << std::endl;
+						#endif
+						return NULL;
+					}
+
+					cylinder->__replaceThing(itemIndex, newItem);
+					cylinder->postAddNotification(newItem, cylinder, itemIndex);
+
+					item->setParent(NULL);
+					cylinder->postRemoveNotification(item, cylinder, itemIndex, true);
+					FreeThing(item);
+					return newItem;
+				}
+				else
+				{
+					item = transformItem(item, newItemId);
+					return item;
 				}
 			}
 		}
@@ -3997,8 +4017,14 @@ bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creat
 			attackerPlayer = attacker->getPlayer();
 
 		Player* targetPlayer = target->getPlayer();
-		if(g_config.getBoolean(ConfigManager::CANNOT_ATTACK_SAME_LOOKFEET) && attackerPlayer && targetPlayer && attacker->defaultOutfit.lookFeet == target->defaultOutfit.lookFeet && combatType != COMBAT_HEALING)
-			return false;
+		if(attackerPlayer && targetPlayer)
+		{
+			if(g_config.getBoolean(ConfigManager::CANNOT_ATTACK_SAME_LOOKFEET) && attacker->defaultOutfit.lookFeet == target->defaultOutfit.lookFeet && combatType != COMBAT_HEALING)
+				return false;
+
+			if(attackerPlayer->getSkull() == SKULL_BLACK && attackerPlayer->getSkullClient(targetPlayer) == SKULL_NONE)
+				return false;
+		}
 
 		int32_t realHealthChange = target->getHealth();
 		target->changeHealth(healthChange);
@@ -4060,8 +4086,14 @@ bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creat
 			attackerPlayer = attacker->getPlayer();
 
 		Player* targetPlayer = target->getPlayer();
-		if(g_config.getBoolean(ConfigManager::CANNOT_ATTACK_SAME_LOOKFEET) && attackerPlayer && targetPlayer && attacker->defaultOutfit.lookFeet == target->defaultOutfit.lookFeet && combatType != COMBAT_HEALING)
-			return false;
+		if(attackerPlayer && targetPlayer)
+		{
+			if(g_config.getBoolean(ConfigManager::CANNOT_ATTACK_SAME_LOOKFEET) && attacker->defaultOutfit.lookFeet == target->defaultOutfit.lookFeet && combatType != COMBAT_HEALING)
+				return false;
+
+			if(attackerPlayer->getSkull() == SKULL_BLACK && attackerPlayer->getSkullClient(targetPlayer) == SKULL_NONE)
+				return false;
+		}
 
 		int32_t damage = -healthChange;
 		if(damage != 0)
@@ -4297,9 +4329,19 @@ bool Game::combatChangeMana(Creature* attacker, Creature* target, int32_t manaCh
 {
 	if(manaChange > 0)
 	{
-		if(g_config.getBoolean(ConfigManager::CANNOT_ATTACK_SAME_LOOKFEET) && attacker && attacker->getPlayer() && target->getPlayer() && attacker->defaultOutfit.lookFeet == target->defaultOutfit.lookFeet)
-			return false;
+		if(attacker)
+		{
+			Player* attackerPlayer = attacker->getPlayer();
+			Player* targetPlayer = target->getPlayer();
+			if(attackerPlayer && targetPlayer)
+			{
+				if(g_config.getBoolean(ConfigManager::CANNOT_ATTACK_SAME_LOOKFEET) && attacker->defaultOutfit.lookFeet == target->defaultOutfit.lookFeet)
+					return false;
 
+				if(attackerPlayer->getSkull() == SKULL_BLACK && attackerPlayer->getSkullClient(targetPlayer) == SKULL_NONE)
+					return false;
+			}
+		}
 		target->changeMana(manaChange);
 	}
 	else
@@ -4316,8 +4358,14 @@ bool Game::combatChangeMana(Creature* attacker, Creature* target, int32_t manaCh
 			attackerPlayer = attacker->getPlayer();
 
 		Player* targetPlayer = target->getPlayer();
-		if(g_config.getBoolean(ConfigManager::CANNOT_ATTACK_SAME_LOOKFEET) && attackerPlayer && targetPlayer && attacker->defaultOutfit.lookFeet == target->defaultOutfit.lookFeet)
-			return false;
+		if(attackerPlayer && targetPlayer)
+		{
+			if(g_config.getBoolean(ConfigManager::CANNOT_ATTACK_SAME_LOOKFEET) && attacker->defaultOutfit.lookFeet == target->defaultOutfit.lookFeet)
+				return false;
+
+			if(attackerPlayer->getSkull() == SKULL_BLACK && attackerPlayer->getSkullClient(targetPlayer) == SKULL_NONE)
+				return false;
+		}
 
 		int32_t manaLoss = std::min(target->getMana(), -manaChange);
 		BlockType_t blockType = target->blockHit(attacker, COMBAT_MANADRAIN, manaLoss);

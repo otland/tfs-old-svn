@@ -171,10 +171,10 @@ std::ostringstream& Container::getContentDescription(std::ostringstream& os) con
 	return os;
 }
 
-Item* Container::getItem(uint32_t index)
+Item* Container::getItem(uint32_t index) const
 {
 	size_t n = 0;
-	for(ItemList::const_iterator cit = getItems(); cit != getEnd(); ++cit)
+	for(ItemList::const_iterator cit = getItems(), end = getEnd(); cit != end; ++cit)
 	{
 		if(n == index)
 			return *cit;
@@ -309,8 +309,21 @@ ReturnValue Container::__queryAdd(int32_t index, const Thing* thing, uint32_t co
 	bool skipLimit = ((flags & FLAG_NOLIMIT) == FLAG_NOLIMIT);
 	if(!skipLimit)
 	{
-		if(id == ITEM_INBOX || (index == INDEX_WHEREEVER && size() >= capacity()))
+		if(id == ITEM_INBOX)
 			return RET_CONTAINERNOTENOUGHROOM;
+
+		if(size() >= capacity())
+		{
+			if(index == INDEX_WHEREEVER)
+				return RET_CONTAINERNOTENOUGHROOM;
+
+			if(item->isStackable())
+			{
+				Item* destItem = getItem(index);
+				if(!destItem || destItem->getID() != item->getID() || (destItem->getItemCount() + count) > 100)
+					return RET_CONTAINERNOTENOUGHROOM;
+			}
+		}
 	}
 
 	const Cylinder* topParent = getTopParent();

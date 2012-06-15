@@ -1124,7 +1124,7 @@ ResponseList Npc::loadInteraction(xmlNodePtr node)
 								{
 									const ItemType& itemType = Item::items[(*it).itemId];
 									if(itemType.id != 0)
-										action.strValue = itemType.pluralName;
+										action.strValue = itemType.getPluralName();
 								}
 								listItemProp.actionList.push_front(action);
 
@@ -2807,7 +2807,7 @@ std::string Npc::formatResponse(Creature* creature, const NpcState* npcState, co
 		}
 		else
 		{
-			ss << it.pluralName;
+			ss << it.getPluralName();
 			replaceString(responseString, "|ITEMNAME|", ss.str());
 		}
 	}

@@ -353,6 +353,8 @@ class Creature : public AutoID, virtual public Thing
 
 		static bool canSee(const Position& myPos, const Position& pos, uint32_t viewRangeX, uint32_t viewRangeY);
 
+		virtual double getDamageRatio(Creature* attacker) const;
+
 	protected:
 		static const int32_t mapWalkWidth = Map::maxViewportX * 2 + 1;
 		static const int32_t mapWalkHeight = Map::maxViewportY * 2 + 1;
@@ -443,7 +445,6 @@ class Creature : public AutoID, virtual public Thing
 		virtual bool hasExtraSwing() {return false;}
 
 		virtual uint64_t getLostExperience() const { return 0; }
-		virtual double getDamageRatio(Creature* attacker) const;
 		bool getKillers(Creature** lastHitCreature, Creature** mostDamageCreature);
 		virtual void dropLoot(Container* corpse) {}
 		virtual uint16_t getLookCorpse() const { return 0; }

@@ -743,7 +743,11 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance,
 
 		if(it.runeLevel > 0 || it.runeMagLevel > 0)
 		{
-			s << "." << std::endl << "It can only be used with";
+			int32_t tmpSubType = subType;
+			if(item)
+				tmpSubType = item->getSubType();
+
+			s << ". " << (it.stackable && tmpSubType > 1 ? "They" : "It") << " can only be used with";
 			if(it.runeLevel > 0)
 				s << " level " << it.runeLevel;
 
@@ -779,7 +783,7 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance,
 			{
 				begin = false;
 				s << "Atk:" << it.attack;
-				if(it.abilities && it.abilities->elementType != COMBAT_NONE && it.decayTo > 0)
+				if(it.abilities && it.abilities->elementType != COMBAT_NONE && it.abilities->elementDamage != 0)
 					s << " physical + " << it.abilities->elementDamage << " " << getCombatName(it.abilities->elementType);
 			}
 
@@ -794,13 +798,99 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance,
 					s << " " << std::showpos << it.extraDefense << std::noshowpos;
 			}
 
-			if(it.abilities && it.abilities->stats[STAT_MAGICPOINTS] != 0)
+			if(it.abilities)
 			{
-				if(!begin)
-					s << ", ";
+				for(uint16_t i = SKILL_FIRST; i <= SKILL_LAST; i++)
+				{
+					if(!it.abilities->skills[i])
+						continue;
 
-				begin = false;
-				s << "magic level " << std::showpos << it.abilities->stats[STAT_MAGICPOINTS] << std::noshowpos;
+					if(begin)
+					{
+						begin = false;
+						s << " (";
+					}
+					else
+						s << ", ";
+
+					s << getSkillName(i) << " " << std::showpos << it.abilities->skills[i] << std::noshowpos;
+				}
+
+				if(it.abilities->stats[STAT_MAGICPOINTS])
+				{
+					if(begin)
+					{
+						begin = false;
+						s << " (";
+					}
+					else
+						s << ", ";
+
+					s << "magic level " << std::showpos << it.abilities->stats[STAT_MAGICPOINTS] << std::noshowpos;
+				}
+
+				int32_t show = it.abilities->absorbPercent[COMBAT_FIRST];
+				for(uint32_t i = (COMBAT_FIRST + 1); i <= COMBAT_COUNT; ++i)
+				{
+					if(it.abilities->absorbPercent[i] == show)
+						continue;
+
+					show = 0;
+					break;
+				}
+
+				if(!show)
+				{
+					bool tmp = true;
+					for(uint32_t i = COMBAT_FIRST; i <= COMBAT_COUNT; i++)
+					{
+						if(!it.abilities->absorbPercent[i])
+							continue;
+
+						if(tmp)
+						{
+							tmp = false;
+							if(begin)
+							{
+								begin = false;
+								s << " (";
+							}
+							else
+								s << ", ";
+
+							s << "protection ";
+						}
+						else
+							s << ", ";
+
+						s << getCombatName(indexToCombatType(i)) << " " << std::showpos << it.abilities->absorbPercent[i] << std::noshowpos << "%";
+					}
+				}
+				else
+				{
+					if(begin)
+					{
+						begin = false;
+						s << " (";
+					}
+					else
+						s << ", ";
+
+					s << "protection all " << std::showpos << show << std::noshowpos << "%";
+				}
+
+				if(it.abilities->speed)
+				{
+					if(begin)
+					{
+						begin = false;
+						s << " (";
+					}
+					else
+						s << ", ";
+
+					s << "speed " << std::showpos << (int32_t)(it.abilities->speed / 2) << std::noshowpos;
+				}
 			}
 
 			s << ")";
@@ -965,9 +1055,9 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance,
 			else if(it.allowDistRead && it.id != 7369 && it.id != 7370 && it.id != 7371)
 			{
 				s << "." << std::endl;
-				if(item && item->getText() != "")
+				if(lookDistance <= 4)
 				{
-					if(lookDistance <= 4)
+					if(item && item->getText() != "")
 					{
 						if(item->getWriter().length())
 						{
@@ -984,10 +1074,10 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance,
 						s << item->getText();
 					}
 					else
-						s << "You are too far away to read it";
+						s << "Nothing is written on it";
 				}
 				else
-					s << "Nothing is written on it";
+					s << "You are too far away to read it";
 			}
 			else if(it.levelDoor && item && item->getActionId() >= (int32_t)it.levelDoor)
 				s << " for level " << item->getActionId() - it.levelDoor;
@@ -1105,7 +1195,7 @@ std::string Item::getNameDescription(const ItemType& it, const Item* item /*= NU
 			if(it.showCount)
 				s << subType << " ";
 
-			s << it.pluralName;
+			s << it.getPluralName();
 		}
 		else
 		{

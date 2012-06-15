@@ -598,7 +598,7 @@ void Monster::onThink(uint32_t interval)
 
 	if(despawn())
 	{
-		g_game.removeCreature(this, true);
+		g_game.internalTeleport(this, masterPos);
 		setIdle(true);
 	}
 	else

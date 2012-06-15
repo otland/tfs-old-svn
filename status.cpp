@@ -60,7 +60,7 @@ std::map<uint32_t, int64_t> ProtocolStatus::ipConnectMap;
 void ProtocolStatus::onRecvFirstMessage(NetworkMessage& msg)
 {
 	std::string ip = convertIPToString(getIP());
-	if(ip != "127.0.0.1")
+	if(ip != "127.0.0.1" && ip != g_config.getString(ConfigManager::IP))
 	{
 		if(!g_game.isInWhitelist(ip))
 		{

@@ -23,6 +23,8 @@
 
 #include "player.h"
 
+typedef std::list<uint32_t> GuildWarList;
+
 class IOGuild
 {
 	public:
@@ -55,6 +57,15 @@ class IOGuild
 		bool setMotd(uint32_t guildId, std::string newMotd);
 		bool updateOwnerId(uint32_t guildId, uint32_t guid);
 		std::string getMotd(uint32_t guildId);
+		GuildWarList getWarList(uint32_t guildId);
+		bool isInWar(uint32_t guildId);
+		bool isInWar(uint32_t g1, uint32_t g2);
+		bool canLeaveWar(uint32_t guildId);
+		void declareWar(uint32_t g1, uint32_t g2);
+		void endWar(uint32_t g1, uint32_t g2);
+		bool getWarDeclaration(uint32_t g1, uint32_t g2);
+		void startWar(uint32_t g1, uint32_t g2);
+		void removePending();
 };
 
 #endif

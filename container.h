@@ -86,7 +86,7 @@ class Container : public Item, public Cylinder
 		ItemList::const_reverse_iterator getReversedEnd() const {return itemlist.rend();}
 
 		void addItem(Item* item);
-		Item* getItem(uint32_t index);
+		Item* getItem(uint32_t index) const;
 		bool isHoldingItem(const Item* item) const;
 
 		uint32_t getItemHoldingCount() const;

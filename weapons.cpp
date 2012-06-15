@@ -603,12 +603,6 @@ bool WeaponMelee::useWeapon(Player* player, Item* item, Creature* target) const
 		eParams.isAggressive = true;
 		eParams.useCharges = true;
 		Combat::doCombatHealth(player, target, damage, damage, eParams);
-
-		if(g_config.getBoolean(ConfigManager::REMOVE_WEAPON_CHARGES))
-		{
-			int32_t newCount = std::max(0, item->getItemCount() - 1);
-			g_game.transformItem(item, item->getID(), newCount);
-		}
 	}
 	return internalUseWeapon(player, item, target, damageModifier);
 }

@@ -948,7 +948,10 @@ void Commands::buyHouse(Player* player, const std::string& cmd, const std::strin
 void Commands::whoIsOnline(Player* player, const std::string& cmd, const std::string& param)
 {
 	std::stringstream ss;
-	ss << "Players online:" << std::endl;
+	ss << Player::listPlayer.list.size() << " players online:" << std::endl;
+	player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, ss.str());
+
+	ss.str("");
 
 	uint32_t i = 0;
 	AutoList<Player>::listiterator it = Player::listPlayer.list.begin();
@@ -1022,6 +1025,28 @@ void Commands::changeFloor(Player* player, const std::string& cmd, const std::st
 
 void Commands::showPosition(Player* player, const std::string& cmd, const std::string& param)
 {
+	if(param != "" && player->isAccessPlayer())
+	{
+		StringVec exploded = explodeString(param, ", ", 2);
+		if(!exploded.size() || exploded.size() < 3)
+		{
+			player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, "Not enough params.");
+			return;
+		}
+
+		uint16_t x = atoi(exploded[0].c_str());
+		uint16_t y = atoi(exploded[1].c_str());
+		uint8_t z = atoi(exploded[2].c_str());
+
+		Position oldPosition = player->getPosition();
+		if(g_game.internalTeleport(player, Position(x, y, z)) == RET_NOERROR)
+		{
+			g_game.addMagicEffect(oldPosition, NM_ME_POFF, player->isInGhostMode());
+			g_game.addMagicEffect(player->getPosition(), NM_ME_TELEPORT, player->isInGhostMode());
+			return;
+		}
+	}
+
 	const Position& pos = player->getPosition();
 
 	std::stringstream ss;
@@ -1064,7 +1089,7 @@ void Commands::removeThing(Player* player, const std::string& cmd, const std::st
 				return;
 			}
 
-			g_game.internalRemoveItem(item, std::max(1, std::min(atoi(param.c_str()), 100)));
+			g_game.internalRemoveItem(item, std::max(1, std::min(atoi(param.c_str()), (int32_t)item->getItemCount())));
 			g_game.addMagicEffect(pos, NM_ME_MAGIC_BLOOD);
 		}
 	}
@@ -1180,6 +1205,8 @@ void Commands::joinGuild(Player* player, const std::string& cmd, const std::stri
 	ChatChannel* guildChannel = g_chat.getChannel(player, CHANNEL_GUILD);
 	if(guildChannel)
 		guildChannel->sendToAll(buffer, SPEAK_CHANNEL_R1);
+
+	player->setGuildWarList(IOGuild::getInstance()->getWarList(player->getGuildId()));
 }
 
 void Commands::createGuild(Player* player, const std::string& cmd, const std::string& param)
@@ -1342,10 +1369,10 @@ void Commands::unban(Player* player, const std::string& cmd, const std::string& 
 void Commands::playerKills(Player* player, const std::string& cmd, const std::string& param)
 {
 	int32_t fragTime = g_config.getNumber(ConfigManager::FRAG_TIME);
-	if(player->redSkullTicks && fragTime > 0)
+	if(player->skullTicks && fragTime > 0)
 	{
-		int32_t frags = (int32_t)ceil(player->redSkullTicks / (double)fragTime);
-		int32_t remainingTime = (player->redSkullTicks % fragTime) / 1000;
+		int32_t frags = (int32_t)ceil(player->skullTicks / (double)fragTime);
+		int32_t remainingTime = (player->skullTicks % fragTime) / 1000;
 		int32_t hours = remainingTime / 3600;
 		int32_t minutes = (remainingTime % 3600) / 60;
 

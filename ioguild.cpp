@@ -362,3 +362,145 @@ std::string IOGuild::getMotd(uint32_t guildId)
 	db->freeResult(result);
 	return motd;
 }
+
+GuildWarList IOGuild::getWarList(uint32_t guildId)
+{
+	GuildWarList guildWarList;
+
+	Database* db = Database::getInstance();
+
+	DBQuery query;
+	DBResult* result;
+	query << "SELECT `guild1` FROM `guild_wars` WHERE `guild2` = " << guildId << " AND `ended` = 0 AND `status` = 1;";
+	if((result = db->storeQuery(query.str())))
+	{
+		do {
+			guildWarList.push_back(result->getDataInt("guild1"));
+		} while (result->next());
+		db->freeResult(result);
+	}
+
+	query.str("");
+	query << "SELECT `guild2` FROM `guild_wars` WHERE `guild1` = " << guildId << " AND `ended` = 0 AND `status` = 1;";
+	if((result = db->storeQuery(query.str())))
+	{
+		do {
+			guildWarList.push_back(result->getDataInt("guild2"));
+		} while (result->next());
+		db->freeResult(result);
+	}
+	return guildWarList;
+}
+
+bool IOGuild::isInWar(uint32_t guildId)
+{
+	return !getWarList(guildId).empty();
+}
+
+bool IOGuild::isInWar(uint32_t g1, uint32_t g2)
+{
+	GuildWarList gwList = getWarList(g1);
+
+	for(GuildWarList::const_iterator it = gwList.begin(); it != gwList.end(); ++it)
+	{
+		if((*it) == g2)
+			return true;
+	}
+	return false;
+}
+
+bool IOGuild::canLeaveWar(uint32_t guildId)
+{
+	if(!isInWar(guildId))
+		return true;
+
+	Database* db = Database::getInstance();
+
+	DBQuery query;
+	DBResult* result;
+	bool returnVal = true;
+
+	query << "SELECT `started` FROM `guild_wars` WHERE `guild1` = " << guildId << " AND `ended` = 0 AND `status` = 1;";
+	if((result = db->storeQuery(query.str())))
+	{
+		do {
+			if((result->getDataLong("started") + (86400 * 4)) >= time(NULL))
+				returnVal = false;
+		} while (result->next());
+		db->freeResult(result);
+	}
+
+	query.str("");
+	query << "SELECT `started` FROM `guild_wars` WHERE `guild2` = " << guildId << " AND `ended` = 0 AND `status` = 1;";
+	if((result = db->storeQuery(query.str())))
+	{
+		do {
+			if((result->getDataLong("started") + (86400 * 4)) >= time(NULL))
+				returnVal = false;
+		} while (result->next());
+		db->freeResult(result);
+	}
+	return returnVal;
+}
+
+void IOGuild::declareWar(uint32_t g1, uint32_t g2)
+{
+	Database* db = Database::getInstance();
+
+	DBQuery query;
+	query << "INSERT INTO `guild_wars` (`guild1`, `guild2`, `name1`, `name2`, `status`, `started`, `ended`) VALUES (" << g1 << ", " << g2 << ", " << db->escapeString(getGuildNameById(g1)) << ", " << db->escapeString(getGuildNameById(g2)) << ", 0, 0, 0);";
+	db->executeQuery(query.str());
+}
+
+void IOGuild::endWar(uint32_t g1, uint32_t g2)
+{
+	Database* db = Database::getInstance();
+
+	DBQuery query;
+	query << "UPDATE `guild_wars` SET `status` = 2, `ended` = " << time(NULL) << " WHERE `guild1` = " << g1 << " AND `guild2` = " << g2 << " AND `status` = 1" << db->getUpdateLimiter();
+	db->executeQuery(query.str());
+	query.str("");
+	query << "UPDATE `guild_wars` SET `status` = 2, `ended` = " << time(NULL) << " WHERE `guild2` = " << g1 << " AND `guild1` = " << g2 << " AND `status` = 1" << db->getUpdateLimiter();
+	db->executeQuery(query.str());
+}
+
+bool IOGuild::getWarDeclaration(uint32_t g1, uint32_t g2)
+{
+	Database* db = Database::getInstance();
+
+	DBQuery query;
+	DBResult* result;
+	query << "SELECT `id` FROM `guild_wars` WHERE `guild1` = " << g1 << " AND `guild2` = " << g2 << " AND `status` = 0 LIMIT 1;";
+	if((result = db->storeQuery(query.str())))
+	{
+		db->freeResult(result);
+		return true;
+	}
+
+	query.str("");
+	query << "SELECT `id` FROM `guild_wars` WHERE `guild2` = " << g1 << " AND `guild1` = " << g2 << " AND `status` = 0 LIMIT 1;";
+	if((result = db->storeQuery(query.str())))
+	{
+		db->freeResult(result);
+		return true;
+	}
+	return false;
+}
+
+void IOGuild::startWar(uint32_t g1, uint32_t g2)
+{
+	Database* db = Database::getInstance();
+
+	DBQuery query;
+	query << "UPDATE `guild_wars` SET `status` = 1, `started` = " << time(NULL) << " WHERE `guild1` = " << g1 << " AND `guild2` = " << g2 << " AND `status` = 0" << db->getUpdateLimiter();
+	db->executeQuery(query.str());
+}
+
+void IOGuild::removePending()
+{
+	Database* db = Database::getInstance();
+
+	DBQuery query;
+	query << "DELETE FROM `guild_wars` WHERE `status` = 0;";
+	db->executeQuery(query.str());
+}

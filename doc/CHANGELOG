@@ -23,6 +23,7 @@
 	M	The Forgotten Server.exe
 		data/
 	M		global.lua
+	M		creaturescripts/scripts/playerdeath.lua
 			items/
 	M			items.otb
 	M			items.xml
@@ -33,7 +34,7 @@
 ]
 
 [ Milestone
-	Game protocol 9.53 support.
+	Game protocol 9.54 (9.53 works too) support.
 	Corrected Lua error function arguments in NPC system modules.
 	Increased NETWORKMESSAGE_MAXSIZE to prevent debugs if packets exceeded the old size.
 	Magic level skill boost will now show up in market details.
@@ -43,5 +44,46 @@
 	Replaced the old reverseFluidMap which wasn't working as intended with a new server-to-client map.
 	Rewrote how shopItems table worked in NPC ShopModule to work with items of same id but subtype that differs (i.e. different liquids in same fluid container).
 	Fixed an issue with numerous Lua functions would make the boolean parameters false.
+	War system (Commands in guild channel: !startwar guildname, !stopwar guildname and !acceptwar guildname). New Lua function: isInWar(cid, targetcid).
+	Hotkey message will now always show, even if item use wasn't successful.
+	Lazy plural name for items with default plural name to save some memory.
+	Added CONDITION_BLEEDING.
+	Added black skull with new configurable: killsToBlackSkull.
+	!online will now show the amount of players online.
+	/pos can now take three arguments; x, y, z and teleports a player to that destination if specified. Without the arguments it will show the current position as it used to.
+	Fixed a bug with /r, if argument passed was higher than the amount of items in a stack it wouldn't remove the stack.
+	Fixed a bug with conditions not loading properly on login, this fixes a lot of bugs.
+	Regeneration condition will now show how much a player is healed like other healing messages if it's a buff.
+	Added condition classes for spell cooldown and spell group cooldowns.
+	Optimized container iteration.
+	Fixed a bug with containers that would allow players to fill a container with more items than the capacity.
+	Monster summons will now poff on death instead of leaving a corpse.
+	Fixed a bug where player capacity wasn't being updated.
+	Fixed a bug with enchanted weapons.
+	Fixed a bug with stackable items with 0 count on map.
+	Corrected the look description for runes.
+	Corrected the look description for items with element damage that don't decay.
+	Speed, skill change and damage absorption can now be seen on shields.
+	Players can no longer read signs if they are too far away, even if the sign doesn't say anything.
+	Optimized server id lookups.
+	Food will no longer be multiplied by 3, it is now in seconds, so update your food scripts and use seconds.
+	doSummonCreature will no longer show an error if there is no space to summon the creature.
+	Lured monsters will now be teleported back to their spawn position instead of being removed.
+	Stackable items in monster loot will now be stacked (like gold coins).
+	Optimized isTamed function.
+	Changed drop percents to how it works in Tibia now, and also the death penalty.
+	Players with accessLevel can now be mounted in protection zone areas.
+	Fixed a bug with lastLogout not being updated on death.
+	Players without vocation below Level 8 will no longer lose experience on death.
+	Players will no longer receive protection zone lock for attacking someone in party.
+	It is now always possible to logout in protection zone, even with battle sign (unless it's a no logout zone).
+	Fixed a bug players getting to keep untamed mounts if it was their current mount.
+	Last opened chat channels will now open on login.
+	Gamemasters can now select the gamemaster outfit and choose color in change outfit dialog.
+	Fixed exiva not showing if player is on higher/lower level when player is not far.
+	Corrected Illusion spell duration.
+	Conjuring spells no longer requires reagent item to be in hand (can be anywhere in inventory).
+	Status protocol now also ignores the timeout for connections from the IP specified in config.lua (previously only 127.0.0.1 and whitelisted).
+	Fixed a bug in the NPC system.
 	Updated items.
 ]

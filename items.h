@@ -148,6 +148,18 @@ class ItemType
 
 		Abilities* getAbilities() { if(abilities == NULL) { abilities = new Abilities(); } return abilities; }
 
+		std::string getPluralName() const
+		{
+			std::string str = pluralName;
+			if(str.size() == 0 && name.size() != 0)
+			{
+				str = name;
+				if(showCount != 0)
+					str += "s";
+			}
+			return str;
+		}
+
 		Direction bedPartnerDir;
 		uint16_t transformToOnUse[2];
 		uint16_t transformToFree;

@@ -814,6 +814,19 @@ void Creature::onDeath()
 
 void Creature::dropCorpse()
 {
+	if(master && master->getMonster())
+	{
+		//scripting event - onDeath
+		CreatureEventList deathEvents = getCreatureEvents(CREATURE_EVENT_DEATH);
+		for(CreatureEventList::const_iterator it = deathEvents.begin(); it != deathEvents.end(); ++it)
+			(*it)->executeOnDeath(this, NULL, _lastHitCreature, _mostDamageCreature, lastHitUnjustified, mostDamageUnjustified);
+
+		g_game.addMagicEffect(getPosition(), NM_ME_POFF);
+
+		g_game.removeCreature(this, false);
+		return;
+	}
+
 	Item* splash = NULL;
 	switch(getRace())
 	{
@@ -1175,7 +1188,11 @@ void Creature::onTickCondition(ConditionType_t type, bool& bRemove)
 			case CONDITION_FIRE: bRemove = (field->getCombatType() != COMBAT_FIREDAMAGE); break;
 			case CONDITION_ENERGY: bRemove = (field->getCombatType() != COMBAT_ENERGYDAMAGE); break;
 			case CONDITION_POISON: bRemove = (field->getCombatType() != COMBAT_EARTHDAMAGE); break;
+			case CONDITION_FREEZING: bRemove = (field->getCombatType() != COMBAT_ICEDAMAGE); break;
+			case CONDITION_DAZZLED: bRemove = (field->getCombatType() != COMBAT_HOLYDAMAGE); break;
+			case CONDITION_CURSED: bRemove = (field->getCombatType() != COMBAT_DEATHDAMAGE); break;
 			case CONDITION_DROWN: bRemove = (field->getCombatType() != COMBAT_DROWNDAMAGE); break;
+			case CONDITION_BLEEDING: bRemove = (field->getCombatType() != COMBAT_PHYSICALDAMAGE); break;
 			default: break;
 		}
 	}

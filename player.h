@@ -125,6 +125,7 @@ typedef std::set<uint32_t> VIPListSet;
 typedef std::map<uint32_t, uint32_t> MuteCountMap;
 typedef std::list<std::string> LearnedInstantSpellList;
 typedef std::list<uint32_t> InvitedToGuildsList;
+typedef std::list<uint32_t> GuildWarList;
 typedef std::list<Party*> PartyList;
 
 #define PLAYER_MAX_SPEED 1500
@@ -196,6 +197,9 @@ class Player : public Creature, public Cylinder
 		void hasRequestedOutfit(bool newValue) {requestedOutfit = newValue;}
 
 		const DepotMap& getDepots() const { return depots; }
+		
+		GuildWarList getGuildWarList() const {return guildWarList;}
+		void setGuildWarList(GuildWarList _guildWarList) {guildWarList = _guildWarList;}
 
 		Vocation* getVocation() const {return vocation;}
 
@@ -224,6 +228,8 @@ class Player : public Creature, public Cylinder
 		const std::string& getGuildNick() const {return guildNick;}
 		void setGuildNick(const std::string& nick) {guildNick = nick;}
 
+		bool isInWar(const Player* player) const;
+		bool isInWarList(uint32_t guild_id) const;
 		bool isInvitedToGuild(uint32_t guild_id) const;
 		void leaveGuild();
 
@@ -483,7 +489,7 @@ class Player : public Creature, public Cylinder
 		void setSkull(Skulls_t newSkull) {skull = newSkull;}
 		void sendCreatureSkull(const Creature* creature) const
 			{if(client) client->sendCreatureSkull(creature);}
-		void checkRedSkullTicks(int32_t ticks);
+		void checkSkullTicks(int32_t ticks);
 
 		const OutfitListType& getPlayerOutfits();
 		bool canWear(uint32_t _looktype, uint32_t _addons);
@@ -710,6 +716,7 @@ class Player : public Creature, public Cylinder
 		uint32_t maxVipLimit;
 
 		InvitedToGuildsList invitedToGuildsList;
+		GuildWarList guildWarList;
 
 		//items
 		ContainerVector containerVec;
@@ -895,7 +902,7 @@ class Player : public Creature, public Cylinder
 		House* editHouse;
 		uint32_t editListId;
 
-		int64_t redSkullTicks;
+		int64_t skullTicks;
 		Skulls_t skull;
 		typedef std::set<uint32_t> AttackedSet;
 		AttackedSet attackedSet;
@@ -921,6 +928,8 @@ class Player : public Creature, public Cylinder
 		bool isPromoted() const;
 
 		uint32_t getAttackSpeed() const {return vocation->getAttackSpeed();}
+
+		uint16_t getDropPercent() const;
 
 		static uint32_t getPercentLevel(uint64_t count, uint64_t nextLevelCount);
 		double getLostPercent() const;

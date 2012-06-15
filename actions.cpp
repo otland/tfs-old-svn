@@ -368,14 +368,8 @@ bool Actions::useItem(Player* player, const Position& pos, uint8_t index, Item* 
 	player->setNextActionTask(NULL);
 	player->stopWalk();
 
-	int32_t itemId = 0;
-	uint32_t itemCount = 0;
-
 	if(isHotkey)
-	{
-		itemId = item->getID();
-		itemCount = player->__getItemTypeCount(itemId, -1);
-	}
+		showUseHotkeyMessage(player, item->getID(), player->__getItemTypeCount(item->getID(), -1));
 
 	ReturnValue ret = internalUseItem(player, pos, index, item, 0);
 	if(ret != RET_NOERROR)
@@ -383,9 +377,6 @@ bool Actions::useItem(Player* player, const Position& pos, uint8_t index, Item* 
 		player->sendCancelMessage(ret);
 		return false;
 	}
-
-	if(isHotkey)
-		showUseHotkeyMessage(player, itemId, itemCount);
 
 	player->setNextAction(OTSYS_TIME() + g_config.getNumber(ConfigManager::ACTIONS_DELAY_INTERVAL));
 	return true;
@@ -414,14 +405,8 @@ bool Actions::useItemEx(Player* player, const Position& fromPos, const Position&
 		return false;
 	}
 
-	int32_t itemId = 0;
-	uint32_t itemCount = 0;
-
 	if(isHotkey)
-	{
-		itemId = item->getID();
-		itemCount = player->__getItemTypeCount(itemId, -1);
-	}
+		showUseHotkeyMessage(player, item->getID(), player->__getItemTypeCount(item->getID(), -1));
 
 	int32_t fromStackPos = item->getParent()->__getIndexOfThing(item);
 	PositionEx fromPosEx(fromPos, fromStackPos);
@@ -431,11 +416,9 @@ bool Actions::useItemEx(Player* player, const Position& fromPos, const Position&
 	{
 		if(!action->hasOwnErrorHandler())
 			player->sendCancelMessage(RET_CANNOTUSETHISOBJECT);
+
 		return false;
 	}
-
-	if(isHotkey)
-		showUseHotkeyMessage(player, itemId, itemCount);
 
 	player->setNextAction(OTSYS_TIME() + g_config.getNumber(ConfigManager::EX_ACTIONS_DELAY_INTERVAL));
 	return true;
@@ -450,7 +433,7 @@ void Actions::showUseHotkeyMessage(Player* player, int32_t id, uint32_t count)
 	else if(count == 1)
 		ss << "Using the last " << it.name << "...";
 	else
-		ss << "Using one of " << count << " " << it.pluralName << "...";
+		ss << "Using one of " << count << " " << it.getPluralName() << "...";
 
 	player->sendTextMessage(MSG_INFO_DESCR, ss.str());
 }

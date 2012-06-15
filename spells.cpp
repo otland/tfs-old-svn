@@ -900,23 +900,18 @@ void Spell::postCastSpell(Player* player, bool finishedCast /*= true*/, bool pay
 			{
 				Condition* condition = Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_SPELLCOOLDOWN, cooldown, 0, false, spellId);
 				player->addCondition(condition);
-				player->sendSpellCooldown(spellId, cooldown);
 			}
 
 			if(groupCooldown > 0)
 			{
 				Condition* condition = Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_SPELLGROUPCOOLDOWN, groupCooldown, 0, false, group);
 				player->addCondition(condition);
-				if(group != 0)
-					player->sendSpellGroupCooldown(group, groupCooldown);
 			}
 
 			if(secondaryGroupCooldown > 0)
 			{
 				Condition* condition = Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_SPELLGROUPCOOLDOWN, secondaryGroupCooldown, 0, false, secondaryGroup);
 				player->addCondition(condition);
-				if(secondaryGroup != 0)
-					player->sendSpellGroupCooldown(secondaryGroup, secondaryGroupCooldown);
 			}
 		}
 
@@ -1439,8 +1434,7 @@ bool InstantSpell::SearchPlayer(const InstantSpell* spell, Creature* creature, c
 	enum distance_t
 	{
 		DISTANCE_BESIDE,
-		DISTANCE_CLOSE_1,
-		DISTANCE_CLOSE_2,
+		DISTANCE_CLOSE,
 		DISTANCE_FAR,
 		DISTANCE_VERYFAR
 	};
@@ -1486,16 +1480,15 @@ bool InstantSpell::SearchPlayer(const InstantSpell* spell, Creature* creature, c
 			level = LEVEL_LOWER;
 		else
 			level = LEVEL_SAME;
+
 		//getting distance
 		if(std::abs(dx) < 4 && std::abs(dy) < 4)
 			distance = DISTANCE_BESIDE;
 		else
 		{
 			int32_t distance2 = dx*dx + dy*dy;
-			if(distance2 < 625)
-				distance = DISTANCE_CLOSE_1;
-			else if(distance2 < 10000)
-				distance = DISTANCE_CLOSE_2;
+			if(distance2 < 10000)
+				distance = DISTANCE_CLOSE;
 			else if(distance2 < 75076)
 				distance = DISTANCE_FAR;
 			else
@@ -1554,16 +1547,13 @@ bool InstantSpell::SearchPlayer(const InstantSpell* spell, Creature* creature, c
 		{
 			switch(distance)
 			{
-				case DISTANCE_CLOSE_1:
+				case DISTANCE_CLOSE:
 					if(level == LEVEL_SAME)
 						ss << "is to the";
 					else if(level == LEVEL_HIGHER)
 						ss << "is on a higher level to the";
 					else if(level == LEVEL_LOWER)
 						ss << "is on a lower level to the";
-					break;
-				case DISTANCE_CLOSE_2:
-					ss << "is to the";
 					break;
 				case DISTANCE_FAR:
 					ss << "is far to the";
@@ -1739,7 +1729,7 @@ bool InstantSpell::Illusion(const InstantSpell* spell, Creature* creature, const
 	if(!player)
 		return false;
 
-	ReturnValue ret = CreateIllusion(creature, param, 60000);
+	ReturnValue ret = CreateIllusion(creature, param, 180000);
 
 	if(ret == RET_NOERROR)
 		g_game.addMagicEffect(player->getPosition(), NM_ME_MAGIC_BLOOD);
@@ -1882,50 +1872,27 @@ bool ConjureSpell::ConjureItem(const ConjureSpell* spell, Creature* creature, co
 	ReturnValue result = RET_NOERROR;
 	if(spell->getReagentId() != 0)
 	{
-		//Test if we can cast the conjure spell on left hand
-		ReturnValue result1 = internalConjureItem(player, spell->getConjureId(), spell->getConjureCount(),
-			spell->getReagentId(), SLOT_LEFT, true);
-
-		if(result1 == RET_NOERROR)
+		if(!g_game.removeItemOfType(player, spell->getReagentId(), 1, -1))
 		{
-			result1 = internalConjureItem(player, spell->getConjureId(), spell->getConjureCount(),
-				spell->getReagentId(), SLOT_LEFT);
-
-			if(result1 == RET_NOERROR)
-				spell->postCastSpell(player, false);
+			player->sendCancelMessage(RET_YOUNEEDAMAGICITEMTOCASTSPELL);
+			g_game.addMagicEffect(player->getPosition(), NM_ME_POFF);
+			return false;
 		}
 
-		ReturnValue result2 = internalConjureItem(player, spell->getConjureId(), spell->getConjureCount(),
-			spell->getReagentId(), SLOT_RIGHT, true);
+		Item* newItem = Item::CreateItem(spell->getConjureId(), spell->getConjureCount());
+		if(!newItem)
+			return false;
 
-		if(result2 == RET_NOERROR)
+		ReturnValue ret = g_game.internalPlayerAddItem(player, newItem);
+		if(ret != RET_NOERROR)
 		{
-			if(!spell->playerSpellCheck(player, true))
-			{
-				spell->postCastSpell(player, true, false);
-				return false;
-			}
-
-			result2 = internalConjureItem(player, spell->getConjureId(), spell->getConjureCount(),
-				spell->getReagentId(), SLOT_RIGHT);
-
-			if(result2 == RET_NOERROR)
-				spell->postCastSpell(player, false);
+			delete newItem;
+			return false;
 		}
 
-		if(result1 == RET_NOERROR || result2 == RET_NOERROR)
-		{
-			spell->postCastSpell(player, true, false);
-			g_game.addMagicEffect(player->getPosition(), NM_ME_MAGIC_BLOOD);
-			return true;
-		}
-
-		result = result1;
-		if((result == RET_NOERROR && result2 != RET_NOERROR) ||
-			(result == RET_YOUNEEDAMAGICITEMTOCASTSPELL && result2 == RET_YOUNEEDTOSPLITYOURSPEARS))
-		{
-			result = result2;
-		}
+		spell->postCastSpell(player);
+		g_game.addMagicEffect(player->getPosition(), NM_ME_MAGIC_BLOOD);
+		return true;
 	}
 	else
 	{
@@ -2085,17 +2052,16 @@ bool RuneSpell::Illusion(const RuneSpell* spell, Creature* creature, Item* item,
 		return false;
 	}
 
-	ReturnValue ret = CreateIllusion(creature, illusionItem->getID(), 60000);
-
-	if(ret == RET_NOERROR)
-		g_game.addMagicEffect(player->getPosition(), NM_ME_MAGIC_BLOOD);
-	else
+	ReturnValue ret = CreateIllusion(creature, illusionItem->getID(), 180000);
+	if(ret != RET_NOERROR)
 	{
 		player->sendCancelMessage(ret);
 		g_game.addMagicEffect(player->getPosition(), NM_ME_POFF);
+		return false;
 	}
 
-	return (ret == RET_NOERROR);
+	g_game.addMagicEffect(player->getPosition(), NM_ME_MAGIC_BLOOD);
+	return true;
 }
 
 bool RuneSpell::Convince(const RuneSpell* spell, Creature* creature, Item* item, const Position& posFrom, const Position& posTo)

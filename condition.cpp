@@ -190,6 +190,7 @@ Condition* Condition::createCondition(ConditionId_t _id, ConditionType_t _type, 
 		case CONDITION_FREEZING:
 		case CONDITION_DAZZLED:
 		case CONDITION_CURSED:
+		case CONDITION_BLEEDING:
 			return new ConditionDamage(_id, _type, _buff, _subId);
 
 		case CONDITION_HASTE:
@@ -217,6 +218,12 @@ Condition* Condition::createCondition(ConditionId_t _id, ConditionType_t _type, 
 		case CONDITION_ATTRIBUTES:
 			return new ConditionAttributes(_id, _type, _ticks, _buff, _subId);
 
+		case CONDITION_SPELLCOOLDOWN:
+			return new ConditionSpellCooldown(_id, _type, _ticks, _buff, _subId);
+
+		case CONDITION_SPELLGROUPCOOLDOWN:
+			return new ConditionSpellGroupCooldown(_id, _type, _ticks, _buff, _subId);
+
 		case CONDITION_INFIGHT:
 		case CONDITION_DRUNK:
 		case CONDITION_EXHAUST_WEAPON:
@@ -226,8 +233,6 @@ Condition* Condition::createCondition(ConditionId_t _id, ConditionType_t _type, 
 		case CONDITION_ADVERTISINGTICKS:
 		case CONDITION_YELLTICKS:
 		case CONDITION_PACIFIED:
-		case CONDITION_SPELLCOOLDOWN:
-		case CONDITION_SPELLGROUPCOOLDOWN:
 			return new ConditionGeneric(_id, _type, _ticks, _buff, _subId);
 
 		default:
@@ -264,8 +269,8 @@ Condition* Condition::createCondition(PropStream& propStream)
 	if(!propStream.GET_UCHAR(attr) || attr != CONDITIONATTR_ISBUFF)
 		return NULL;
 
-	uint32_t _buff = 0;
-	if(!propStream.GET_ULONG(_buff))
+	uint8_t _buff = 0;
+	if(!propStream.GET_UCHAR(_buff))
 		return NULL;
 
 	if(!propStream.GET_UCHAR(attr) || attr != CONDITIONATTR_SUBID)
@@ -847,7 +852,39 @@ bool ConditionRegeneration::executeCondition(Creature* creature, int32_t interva
 		if(internalHealthTicks >= healthTicks)
 		{
 			internalHealthTicks = 0;
+
+			int32_t realHealthGain = creature->getHealth();
 			creature->changeHealth(healthGain);
+			realHealthGain = creature->getHealth() - realHealthGain;
+
+			if(isBuff && realHealthGain > 0)
+			{
+				Player* player = creature->getPlayer();
+				if(player)
+				{
+					std::stringstream ss;
+					ss << ucfirst(player->getNameDescription()) << " was healed for " << realHealthGain << " hitpoint" << (realHealthGain != 1 ? "s." : ".");
+					std::string message = ss.str();
+
+					Player* tmpPlayer = NULL;
+					SpectatorVec list;
+					g_game.getSpectators(list, player->getPosition());
+					for(SpectatorVec::const_iterator it = list.begin(), end = list.end(); it != end; ++it)
+					{
+						if((tmpPlayer = (*it)->getPlayer()))
+						{
+							if(tmpPlayer == player)
+							{
+								std::stringstream tmpSs;
+								tmpSs << "You were healed for " << realHealthGain << " hitpoint" << (realHealthGain != 1 ? "s." : ".");
+								tmpPlayer->sendHealMessage(MSG_HEALED, tmpSs.str(), player->getPosition(), realHealthGain, TEXTCOLOR_MAYABLUE);
+							}
+							else
+								tmpPlayer->sendHealMessage(MSG_HEALED_OTHERS, message, player->getPosition(), realHealthGain, TEXTCOLOR_MAYABLUE);
+						}
+					}
+				}
+			}
 		}
 
 		if(internalManaTicks >= manaTicks)
@@ -1165,7 +1202,6 @@ bool ConditionDamage::init()
 		setTicks(0);
 
 		int32_t amount = random_range(minDamage, maxDamage);
-
 		if(amount != 0)
 		{
 			if(startDamage > maxDamage)
@@ -1375,6 +1411,10 @@ uint32_t ConditionDamage::getIcons() const
 
 		case CONDITION_CURSED:
 			icons |= ICON_CURSED;
+			break;
+
+		case CONDITION_BLEEDING:
+			icons |= ICON_BLEEDING;
 			break;
 
 		default:
@@ -1597,7 +1637,7 @@ uint32_t ConditionSpeed::getIcons() const
 }
 
 ConditionInvisible::ConditionInvisible(ConditionId_t _id, ConditionType_t _type, int32_t _ticks, bool _buff, uint32_t _subId) :
-ConditionGeneric(_id, _type, _ticks, _buff, _subId)
+	ConditionGeneric(_id, _type, _ticks, _buff, _subId)
 {
 	//
 }
@@ -1841,5 +1881,75 @@ bool ConditionLight::serialize(PropWriteStream& propWriteStream)
 	propWriteStream.ADD_UCHAR(CONDITIONATTR_LIGHTINTERVAL);
 	propWriteStream.ADD_VALUE(lightChangeInterval);
 
+	return true;
+}
+
+ConditionSpellCooldown::ConditionSpellCooldown(ConditionId_t _id, ConditionType_t _type, int32_t _ticks, bool _buff, uint32_t _subId) :
+	ConditionGeneric(_id, _type, _ticks, _buff, _subId)
+{
+	//
+}
+
+void ConditionSpellCooldown::addCondition(Creature* creature, const Condition* addCondition)
+{
+	if(updateCondition(addCondition))
+	{
+		setTicks(addCondition->getTicks());
+
+		if(subId != 0)
+		{
+			Player* player = creature->getPlayer();
+			if(player)
+				player->sendSpellCooldown(subId, ticks);
+		}
+	}
+}
+
+bool ConditionSpellCooldown::startCondition(Creature* creature)
+{
+	if(!Condition::startCondition(creature))
+		return false;
+
+	if(subId != 0)
+	{
+		Player* player = creature->getPlayer();
+		if(player)
+			player->sendSpellCooldown(subId, ticks);
+	}
+	return true;
+}
+
+ConditionSpellGroupCooldown::ConditionSpellGroupCooldown(ConditionId_t _id, ConditionType_t _type, int32_t _ticks, bool _buff, uint32_t _subId) :
+	ConditionGeneric(_id, _type, _ticks, _buff, _subId)
+{
+	//
+}
+
+void ConditionSpellGroupCooldown::addCondition(Creature* creature, const Condition* addCondition)
+{
+	if(updateCondition(addCondition))
+	{
+		setTicks(addCondition->getTicks());
+
+		if(subId != 0)
+		{
+			Player* player = creature->getPlayer();
+			if(player)
+				player->sendSpellGroupCooldown((SpellGroup_t)subId, ticks);
+		}
+	}
+}
+
+bool ConditionSpellGroupCooldown::startCondition(Creature* creature)
+{
+	if(!Condition::startCondition(creature))
+		return false;
+
+	if(subId != 0)
+	{
+		Player* player = creature->getPlayer();
+		if(player)
+			player->sendSpellGroupCooldown((SpellGroup_t)subId, ticks);
+	}
 	return true;
 }

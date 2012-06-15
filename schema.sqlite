@@ -58,8 +58,6 @@ CREATE TABLE "players" (
     "lastlogin" INTEGER NOT NULL DEFAULT 0,
     "lastip" INTEGER NOT NULL DEFAULT 0,
     "save" BOOLEAN NOT NULL DEFAULT 1,
-    "redskull" BOOLEAN NOT NULL DEFAULT 0,
-    "redskulltime" INTEGER NOT NULL DEFAULT 0,
     "rank_id" INTEGER NOT NULL,
     "guildnick" VARCHAR(255) NOT NULL DEFAULT '',
     "lastlogout" INTEGER NOT NULL DEFAULT 0,

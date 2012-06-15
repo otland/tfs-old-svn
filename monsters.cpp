@@ -127,31 +127,31 @@ MonsterType::~MonsterType()
 
 uint32_t Monsters::getLootRandom()
 {
-	return random_range(0, MAX_LOOTCHANCE)/g_config.getNumber(ConfigManager::RATE_LOOT);
+	return random_range(0, MAX_LOOTCHANCE) / g_config.getNumber(ConfigManager::RATE_LOOT);
 }
 
 void MonsterType::createLoot(Container* corpse)
 {
-	for(LootItems::const_iterator it = lootItems.begin(), end = lootItems.end(); it != end && corpse->capacity() != corpse->size(); ++it)
+	for(LootItems::const_reverse_iterator it = lootItems.rbegin(), end = lootItems.rend(); it != end; ++it)
 	{
 		std::list<Item*> itemList = createLootItem(*it);
-		if(!itemList.empty())
-		{
-			for(std::list<Item*>::iterator iit = itemList.begin(), iend = itemList.end(); iit != iend; ++iit)
-			{
-				Item* tmpItem = *iit;
+		if(itemList.empty())
+			continue;
 
-				//check containers
-				if(Container* container = tmpItem->getContainer())
-				{
-					if(!createLootContainer(container, *it))
-						delete container;
-					else
-						corpse->__internalAddThing(tmpItem);
-				}
-				else
+		for(std::list<Item*>::iterator iit = itemList.begin(), iend = itemList.end(); iit != iend; ++iit)
+		{
+			Item* tmpItem = *iit;
+
+			//check containers
+			if(Container* container = tmpItem->getContainer())
+			{
+				if(!createLootContainer(container, *it))
+					delete container;
+				else if(g_game.internalAddItem(corpse, tmpItem) != RET_NOERROR)
 					corpse->__internalAddThing(tmpItem);
 			}
+			else if(g_game.internalAddItem(corpse, tmpItem) != RET_NOERROR)
+				corpse->__internalAddThing(tmpItem);
 		}
 	}
 
@@ -516,6 +516,11 @@ bool Monsters::deserializeSpell(xmlNodePtr node, spellBlock_t& sb, const std::st
 				maxDamage = intValue;
 				tickInterval = 4000;
 			}
+			else if(readXMLInteger(node, "bleed", intValue) || readXMLInteger(node, "physical", intValue))
+			{
+				conditionType = CONDITION_BLEEDING;
+				tickInterval = 5000;
+			}
 
 			if(readXMLInteger(node, "tick", intValue) && intValue > 0)
 				tickInterval = intValue;
@@ -536,6 +541,8 @@ bool Monsters::deserializeSpell(xmlNodePtr node, spellBlock_t& sb, const std::st
 			combat->setParam(COMBATPARAM_COMBATTYPE, COMBAT_PHYSICALDAMAGE);
 			combat->setParam(COMBATPARAM_BLOCKEDBYARMOR, 1);
 		}
+		else if(tmpName == "bleed")
+			combat->setParam(COMBATPARAM_COMBATTYPE, COMBAT_PHYSICALDAMAGE);
 		else if(tmpName == "poison" || tmpName == "earth")
 			combat->setParam(COMBATPARAM_COMBATTYPE, COMBAT_EARTHDAMAGE);
 		else if(tmpName == "fire")
@@ -651,7 +658,8 @@ bool Monsters::deserializeSpell(xmlNodePtr node, spellBlock_t& sb, const std::st
 			tmpName == "icecondition" || tmpName == "freezecondition" ||
 			tmpName == "deathcondition" || tmpName == "cursecondition" ||
 			tmpName == "holycondition" || tmpName == "dazzlecondition" ||
-			tmpName == "drowncondition")
+			tmpName == "drowncondition" || tmpName == "bleedcondition" ||
+			tmpName == "physicalcondition")
 		{
 			ConditionType_t conditionType = CONDITION_NONE;
 			uint32_t tickInterval = 2000;
@@ -690,6 +698,11 @@ bool Monsters::deserializeSpell(xmlNodePtr node, spellBlock_t& sb, const std::st
 			{
 				conditionType = CONDITION_DAZZLED;
 				tickInterval = 10000;
+			}
+			else if(tmpName == "physicalcondition" || tmpName == "bleedcondition")
+			{
+				conditionType = CONDITION_BLEEDING;
+				tickInterval = 5000;
 			}
 
 			if(readXMLInteger(node, "tick", intValue) && intValue > 0)
@@ -1053,7 +1066,7 @@ bool Monsters::loadMonster(const std::string& file, const std::string& monster_n
 							if(tmpStrValue == "physical")
 							{
 								mType->damageImmunities |= COMBAT_PHYSICALDAMAGE;
-								//mType->conditionImmunities |= CONDITION_PHYSICAL;
+								mType->conditionImmunities |= CONDITION_BLEEDING;
 							}
 							else if(tmpStrValue == "energy")
 							{
@@ -1092,15 +1105,9 @@ bool Monsters::loadMonster(const std::string& file, const std::string& monster_n
 								mType->conditionImmunities |= CONDITION_CURSED;
 							}
 							else if(tmpStrValue == "lifedrain")
-							{
 								mType->damageImmunities |= COMBAT_LIFEDRAIN;
-								mType->conditionImmunities |= CONDITION_LIFEDRAIN;
-							}
 							else if(tmpStrValue == "manadrain")
-							{
 								mType->damageImmunities |= COMBAT_MANADRAIN;
-								//mType->conditionImmunities |= CONDITION_MANADRAIN;
-							}
 							else if(tmpStrValue == "paralyze")
 								mType->conditionImmunities |= CONDITION_PARALYZE;
 							else if(tmpStrValue == "outfit")
@@ -1109,6 +1116,8 @@ bool Monsters::loadMonster(const std::string& file, const std::string& monster_n
 								mType->conditionImmunities |= CONDITION_DRUNK;
 							else if(tmpStrValue == "invisible" || tmpStrValue == "invisibility")
 								mType->conditionImmunities |= CONDITION_INVISIBLE;
+							else if(tmpStrValue == "bleed")
+								mType->conditionImmunities |= CONDITION_BLEEDING;
 							else
 								SHOW_XML_WARNING("Unknown immunity name " << strValue);
 						}
@@ -1118,7 +1127,7 @@ bool Monsters::loadMonster(const std::string& file, const std::string& monster_n
 							if(intValue != 0)
 							{
 								mType->damageImmunities |= COMBAT_PHYSICALDAMAGE;
-								//mType->conditionImmunities |= CONDITION_PHYSICAL;
+								mType->conditionImmunities |= CONDITION_BLEEDING;
 							}
 						}
 						else if(readXMLInteger(tmpNode, "energy", intValue))
@@ -1181,18 +1190,12 @@ bool Monsters::loadMonster(const std::string& file, const std::string& monster_n
 						else if(readXMLInteger(tmpNode, "lifedrain", intValue))
 						{
 							if(intValue != 0)
-							{
 								mType->damageImmunities |= COMBAT_LIFEDRAIN;
-								mType->conditionImmunities |= CONDITION_LIFEDRAIN;
-							}
 						}
 						else if(readXMLInteger(tmpNode, "manadrain", intValue))
 						{
 							if(intValue != 0)
-							{
 								mType->damageImmunities |= COMBAT_MANADRAIN;
-								//mType->conditionImmunities |= CONDITION_MANADRAIN;
-							}
 						}
 						else if(readXMLInteger(tmpNode, "paralyze", intValue))
 						{
@@ -1203,6 +1206,11 @@ bool Monsters::loadMonster(const std::string& file, const std::string& monster_n
 						{
 							if(intValue != 0)
 								mType->conditionImmunities |= CONDITION_OUTFIT;
+						}
+						else if(readXMLInteger(tmpNode, "bleed", intValue))
+						{
+							if(intValue != 0)
+								mType->conditionImmunities |= CONDITION_BLEEDING;
 						}
 						else if(readXMLInteger(tmpNode, "drunk", intValue))
 						{

@@ -354,7 +354,7 @@ class Item : virtual public Thing, public ItemAttributes
 		bool floorChangeWest() const {return items[id].floorChangeWest;}
 
 		const std::string& getName() const {return items[id].name;}
-		const std::string& getPluralName() const {return items[id].pluralName;}
+		const std::string getPluralName() const {return items[id].getPluralName();}
 		const std::string& getArticle() const {return items[id].article;}
 
 		// get the number of items

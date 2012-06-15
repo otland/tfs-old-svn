@@ -15,13 +15,14 @@
 	broadcastBanishments = "yes"
 	banDays = 7
 	finalBanDays = 30
-	killsToBan = 5
+	killsToBan = 0
 
 	-- Battle
 	worldType = "pvp"
 	hotkeyAimbotEnabled = "yes"
 	protectionLevel = 1
 	killsToRedSkull = 3
+	killsToBlackSkull = 6
 	pzLocked = 60000
 	deathLosePercent = 10
 	criticalHitChance = 7

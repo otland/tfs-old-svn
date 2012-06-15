@@ -119,7 +119,7 @@ void ProtocolGame::deleteProtocolTask()
 	Protocol::deleteProtocolTask();
 }
 
-bool ProtocolGame::login(const std::string& name, uint32_t accnumber, const std::string& password, uint16_t operatingSystem, uint8_t gamemasterLogin)
+bool ProtocolGame::login(const std::string& name, uint32_t accnumber, const std::string& password, uint16_t operatingSystem, uint8_t gamemasterLogin, std::list<uint8_t> openChannels)
 {
 	//dispatcher thread
 	Player* _player = g_game.getPlayerByName(name);
@@ -272,6 +272,10 @@ bool ProtocolGame::login(const std::string& name, uint32_t accnumber, const std:
 		player->lastLoginSaved = std::max(time(NULL), player->lastLoginSaved + 1);
 		player->setOperatingSystem((OperatingSystem_t)operatingSystem);
 		m_acceptPackets = true;
+
+		for(std::list<uint8_t>::const_iterator it = openChannels.begin(), end = openChannels.end(); it != end; ++it)
+			addGameTask(&Game::playerOpenChannel, player->getID(), *it);
+
 		return true;
 	}
 	else
@@ -283,25 +287,25 @@ bool ProtocolGame::login(const std::string& name, uint32_t accnumber, const std:
 			return false;
 		}
 
+		g_chat.removeUserFromAllChannels(_player);
 		if(_player->client)
 		{
-			g_chat.removeUserFromAllChannels(_player);
 			_player->disconnect();
 			_player->isConnecting = true;
 			addRef();
 			eventConnect = g_scheduler.addEvent(
-				createSchedulerTask(1000, boost::bind(&ProtocolGame::connect, this, _player->getID())));
+				createSchedulerTask(1000, boost::bind(&ProtocolGame::connect, this, _player->getID(), openChannels)));
 
 			return true;
 		}
 
 		addRef();
-		return connect(_player->getID());
+		return connect(_player->getID(), openChannels);
 	}
 	return false;
 }
 
-bool ProtocolGame::connect(uint32_t playerId)
+bool ProtocolGame::connect(uint32_t playerId, std::list<uint8_t> openChannels)
 {
 	unRef();
 	eventConnect = 0;
@@ -321,6 +325,9 @@ bool ProtocolGame::connect(uint32_t playerId)
 	player->lastIP = player->getIP();
 	player->lastLoginSaved = std::max(time(NULL), player->lastLoginSaved + 1);
 	m_acceptPackets = true;
+	for(std::list<uint8_t>::const_iterator it = openChannels.begin(), end = openChannels.end(); it != end; ++it)
+		addGameTask(&Game::playerOpenChannel, player->getID(), *it);
+
 	return true;
 }
 
@@ -343,7 +350,7 @@ bool ProtocolGame::logout(bool displayEffect, bool forced)
 				return false;
 			}
 
-			if(player->hasCondition(CONDITION_INFIGHT) && !flag)
+			if(!player->getTile()->hasFlag(TILESTATE_PROTECTIONZONE) && player->hasCondition(CONDITION_INFIGHT) && !flag)
 			{
 				player->sendCancelMessage(RET_YOUMAYNOTLOGOUTDURINGAFIGHT);
 				return false;
@@ -400,11 +407,16 @@ bool ProtocolGame::parseFirstPacket(NetworkMessage& msg)
 	std::string name = msg.GetString();
 	std::string password = msg.GetString();
 
-	msg.SkipBytes(3);
+	msg.SkipBytes(4); // challenge timestamp
+	msg.SkipBytes(1); // challenge random
+
+	std::list<uint8_t> openChannels;
+	for(uint8_t i = 0, channels = msg.GetByte(); i < channels; ++i)
+		openChannels.push_back(msg.GetByte());
 
 	if(version < CLIENT_VERSION_MIN || version > CLIENT_VERSION_MAX)
 	{
-		disconnectClient(0x14, "Only clients with protocol " CLIENT_VERSION_MIN_STR " allowed!");
+		disconnectClient(0x14, "Only clients with protocol " CLIENT_VERSION_STR " allowed!");
 		return false;
 	}
 
@@ -471,7 +483,7 @@ bool ProtocolGame::parseFirstPacket(NetworkMessage& msg)
 	g_bans.addLoginAttempt(getIP(), true);
 
 	g_dispatcher.addTask(
-		createTask(boost::bind(&ProtocolGame::login, this, name, accnumber, password, clientos, isSetGM)));
+		createTask(boost::bind(&ProtocolGame::login, this, name, accnumber, password, clientos, isSetGM, openChannels)));
 
 	return true;
 }
@@ -3141,6 +3153,11 @@ void ProtocolGame::sendOutfitWindow()
 	std::list<Outfit> outfits;
 	if(player->isAccessPlayer())
 	{
+		Outfit _outfit;
+		_outfit.looktype = 75;
+		_outfit.addons = 3;
+		outfits.push_back(_outfit);
+
 		for(OutfitListType::const_iterator it = globalOutfits.begin(), end = globalOutfits.end(); it != end; ++it)
 		{
 			Outfit outfit;

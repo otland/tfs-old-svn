@@ -628,6 +628,8 @@ class LuaScriptInterface
 		static int32_t luaDoSendTutorial(lua_State* L);
 		static int32_t luaDoAddMark(lua_State* L);
 
+		static int32_t luaIsInWar(lua_State* L);
+
 		static int32_t luaGetPartyMembers(lua_State* L);
 
 		//

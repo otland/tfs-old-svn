@@ -141,6 +141,7 @@ bool ConfigManager::loadFile(const std::string& _filename)
 	m_confInteger[START_MAGICLEVEL] = getGlobalNumber(L, "newPlayerMagicLevel", 0);
 	m_confInteger[HOUSE_PRICE] = getGlobalNumber(L, "housePriceEachSQM", 1000);
 	m_confInteger[KILLS_TO_RED] = getGlobalNumber(L, "killsToRedSkull", 3);
+	m_confInteger[KILLS_TO_BLACK] = getGlobalNumber(L, "killsToBlackSkull", 6);
 	m_confInteger[KILLS_TO_BAN] = getGlobalNumber(L, "killsToBan", 5);
 	m_confInteger[BAN_DAYS] = getGlobalNumber(L, "banDays", 7);
 	m_confInteger[FINAL_BAN_DAYS] = getGlobalNumber(L, "finalBanDays", 30);

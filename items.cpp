@@ -131,7 +131,7 @@ ItemType::ItemType()
 	transformToOnUse[PLAYERSEX_MALE] = 0;
 	transformToOnUse[PLAYERSEX_FEMALE] = 0;
 	transformToFree = 0;
-	
+
 	levelDoor = 0;
 
 	ware = false;
@@ -1141,15 +1141,15 @@ bool Items::parseItemNode(xmlNodePtr itemNode, uint32_t id)
 				if(readXMLInteger(itemAttributesNode, "value", intValue))
 					it.getAbilities()->conditionSuppressions |= CONDITION_POISON;
 			}
-			else if(tmpStrValue == "suppresslifedrain")
-			{
-				if(readXMLInteger(itemAttributesNode, "value", intValue))
-					it.getAbilities()->conditionSuppressions |= CONDITION_LIFEDRAIN;
-			}
 			else if(tmpStrValue == "suppressdrown")
 			{
 				if(readXMLInteger(itemAttributesNode, "value", intValue))
 					it.getAbilities()->conditionSuppressions |= CONDITION_DROWN;
+			}
+			else if(tmpStrValue == "suppressphysical")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+					it.getAbilities()->conditionSuppressions |= CONDITION_BLEEDING;
 			}
 			else if(tmpStrValue == "suppressfreeze")
 			{
@@ -1196,13 +1196,11 @@ bool Items::parseItemNode(xmlNodePtr itemNode, uint32_t id)
 						conditionDamage = new ConditionDamage(CONDITIONID_COMBAT, CONDITION_DROWN);
 						combatType = COMBAT_DROWNDAMAGE;
 					}
-					/*
 					else if(tmpStrValue == "physical")
 					{
-						damageCondition = new ConditionDamage(CONDITIONID_COMBAT, CONDITION_PHYSICAL);
+						conditionDamage = new ConditionDamage(CONDITIONID_COMBAT, CONDITION_BLEEDING);
 						combatType = COMBAT_PHYSICALDAMAGE;
 					}
-					*/
 					else
 						std::cout << "Warning: [Items::loadFromXml] " << "Unknown field value " << strValue << std::endl;
 
@@ -1349,13 +1347,6 @@ bool Items::parseItemNode(xmlNodePtr itemNode, uint32_t id)
 		}
 		itemAttributesNode = itemAttributesNode->next;
 	}
-
-	if(it.pluralName.size() == 0 && it.name.size() != 0)
-	{
-		it.pluralName = it.name;
-		if(it.showCount != 0)
-			it.pluralName += "s";
-	}
 	return true;
 }
 
@@ -1385,15 +1376,14 @@ const ItemType& Items::getItemType(int32_t id) const
 const ItemType& Items::getItemIdByClientId(int32_t spriteId) const
 {
 	uint32_t i = 100;
-	ItemType* iType;
-	do
+	ItemType* iType = items->getElement(i);
+	while(iType)
 	{
-		iType = items->getElement(i);
-		if(iType && iType->clientId == spriteId)
+		if(iType->clientId == spriteId)
 			return *iType;
-		i++;
+
+		iType = items->getElement(++i);
 	}
-	while(iType);
 
 	static ItemType dummyItemType; // use this for invalid ids
 	return dummyItemType;
@@ -1401,21 +1391,19 @@ const ItemType& Items::getItemIdByClientId(int32_t spriteId) const
 
 int32_t Items::getItemIdByName(const std::string& name)
 {
-	if(!name.empty())
+	if(name.empty())
+		return -1;
+
+	const char* tmpName = name.c_str();
+
+	uint32_t i = 100;
+	ItemType* iType = items->getElement(i);
+	while(iType)
 	{
-		uint32_t i = 100;
-		ItemType* iType;
-		do
-		{
-			iType = items->getElement(i);
-			if(iType)
-			{
-				if(strcasecmp(name.c_str(), iType->name.c_str()) == 0)
-					return i;
-			}
-			i++;
-		}
-		while(iType);
+		if(strcasecmp(tmpName, iType->name.c_str()) == 0)
+			return i;
+
+		iType = items->getElement(++i);
 	}
 	return -1;
 }

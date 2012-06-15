@@ -573,6 +573,7 @@ void mainLoader(ServiceManager* services)
 			g_scheduler.addEvent(createSchedulerTask(hoursLeftInMS + minutesLeftInMS, boost::bind(&Game::prepareServerSave, &g_game)));
 	}
 
+	IOGuild::getInstance()->removePending();
 	g_npcs.reload();
 
 	if(g_config.getBoolean(ConfigManager::MARKET_ENABLED))
