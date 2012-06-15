@@ -191,25 +191,25 @@
 	
 ]
 
-[ "supress" attributes
+[ "suppress" attributes
 
-	supress poison
+	suppress poison
 		-e.g.
 			<list ... >
-				<supress poison="true"/> - suppress all poison damage
+				<suppress poison="true"/> - suppress all poison damage
 			</list>
 	
 	More:
-		supress fire
-		supress energy
-		supress physical
-		supress haste
-		supress paralyze
-		supress invisible
-		supress light
-		supress manaShield
-		supress drunk
-		supress drown
-		supress muted
+		suppress fire
+		suppress energy
+		suppress physical
+		suppress haste
+		suppress paralyze
+		suppress invisible
+		suppress light
+		suppress manaShield
+		suppress drunk
+		suppress drown
+		suppress muted
 
 ]

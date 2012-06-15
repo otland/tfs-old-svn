@@ -399,7 +399,7 @@ function SocialNpc:Greet(cid)
 	end
 end
 
-function SocialNpc:Ungreet(cid, reason, supressUnfocus)	
+function SocialNpc:Ungreet(cid, reason, suppressUnfocus)	
 	if not self:Dispatch({
 		eventType = SocialNpc.Events.OnUngreet,
 		cid = cid,
@@ -420,7 +420,7 @@ function SocialNpc:Ungreet(cid, reason, supressUnfocus)
 		end			
 	end
 	
-	if not supressUnfocus then
+	if not suppressUnfocus then
 		self:DelayedRemoveFocus(cid)
 	end
 end
