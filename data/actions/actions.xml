@@ -204,6 +204,8 @@
 	<action itemid="13538" event="script" value="other/taming.lua"/> <!-- bamboo leaves -->
 	<action itemid="13539" event="script" value="other/taming.lua"/> <!-- golden fir cone -->
 	<action itemid="13498" event="script" value="other/taming.lua"/> <!-- scorpion sceptre -->
+	<action itemid="15545" event="script" value="other/taming.lua"/> <!-- foxtail -->
+	<action itemid="15546" event="script" value="other/taming.lua"/> <!-- four-leaf clover -->
 
 	<!-- Other -->
 	<action itemid="2566" event="script" value="other/pumpkinhead.lua"/>

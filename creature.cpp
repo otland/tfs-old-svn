@@ -763,7 +763,12 @@ bool Creature::onDeath()
 void Creature::dropCorpse(DeathList deathList)
 {
 	if(master)
+	{
+		g_game.addMagicEffect(getPosition(), MAGIC_EFFECT_POFF);
+
+		g_game.removeCreature(this, false);
 		return;
+	}
 
 	Item* corpse = createCorpse(deathList);
 	if(corpse)

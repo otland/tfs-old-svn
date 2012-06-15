@@ -34,7 +34,9 @@ local config = {
 	[13537] = 	{NAME = 'Donkey', 				ID = 13, 	TYPE = TYPE_MONSTER, 	CHANCE = 40, 	FAIL_MSG = { {1, "The witch has escaped!"} }, SUCCESS_MSG = "You have tamed the mule."},
 	[13938] = 	{NAME = 'Uniwheel', 			ID = 15, 	TYPE = TYPE_NPC, 		CHANCE = 40, 	FAIL_MSG = { {2, "The oil is having no effect."} }, SUCCESS_MSG = "You have found an Uniwheel."},
 	[13508] = 	{NAME = 'Slug', 				ID = 14, 	TYPE = TYPE_MONSTER, 	CHANCE = 40, 	FAIL_MSG = { {1, "The slug has run away."}, {3, "The drug had no effect."} }, SUCCESS_MSG = "You have tamed the slug."},
-	[13939] = 	{NAME = 'War Horse', 			ID = 23, 	TYPE = TYPE_MONSTER, 	CHANCE = 15, 	FAIL_MSG = { {1, "The horse runs away."}, {2, "The horse ate the oats."} }, SUCCESS_MSG = "You have tamed the horse."}
+	[13939] = 	{NAME = 'War Horse', 			ID = 23, 	TYPE = TYPE_MONSTER, 	CHANCE = 15, 	FAIL_MSG = { {1, "The horse runs away."}, {2, "The horse ate the oats."} }, SUCCESS_MSG = "You have tamed the horse."},
+	[15545] = {NAME = 'Manta Ray', 			ID = 28, 	TYPE = TYPE_MONSTER, 	CHANCE = 30, 	FAIL_MSG = { {1, "The manta ray fled."}, {3, "The manta ray is trying to escape."} }, SUCCESS_MSG = "You have tamed the manta ray."},
+	[15546] = {NAME = 'Ladybug', 				ID = 27, 	TYPE = TYPE_MONSTER, 	CHANCE = 30, 	FAIL_MSG = { {1, "The ladybug got scared and ran away."}, {3, "The ladybug is trying to nibble."} }, SUCCESS_MSG = "You tame a ladybug."}
 }
 
 local function doFailAction(cid, mount, pos, item, itemEx)

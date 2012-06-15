@@ -126,6 +126,7 @@
 					servers.xml
 						* GameServers class usage example
 		]
+
 		[ M...
 			data/
 				actions/
@@ -315,6 +316,7 @@
 					servers.xml
 						* Changed 'ip' tag to 'address'
 		]
+
 		[ D...
 			data/
 				global.lua
@@ -342,6 +344,7 @@
 							* Renamed
 		]
 	]
+
 	[ 0.3.2
 		[ A...
 			data/
@@ -361,6 +364,7 @@
 						gamemaster.lua
 							* Added two deprecated hardcoded commands
 		]
+
 		[ M...
 			data/
 				actions/
@@ -467,6 +471,7 @@
 					vocations.xml
 						* Pre-configured per-vocation loss
 		]
+
 		[ D...
 			data/
 				actions/
@@ -476,6 +481,7 @@
 								* Moved to actions.xml
 		]
 	]
+
 	[ 0.3.3
 		[ A...
 			//
@@ -538,10 +544,12 @@
 					vocations.xml
 						* Multiplied lessLoss values due to players loss_* fields changes
 		]
+
 		[ D...
 			//
 		]
 	]
+
 	[ 0.3.4
 		[ A...
 			data/
@@ -566,6 +574,7 @@
 					groups.xml
 						* Moved groups configuration here
 		]
+
 		[ M...
 			data/
 				actions/
@@ -684,10 +693,12 @@
 						* default multiplier attribute, NOTE: only in 'world' node
 						* Possiblity to use e.g. id="0;1;2" & id="0-5' to use same stages on more servers
 		]
+
 		[ D...
 			//
 		]
 	]
+
 	[ 0.3.5 && 0.3.6
 		[ Note
 			We just had no time to finish this, as there are just too many of these files...
@@ -698,13 +709,16 @@
 		[ A...
 			//
 		]
+
 		[ M...
 			//
 		]
+
 		[ D...
 			//
 		]
 	]
+
 	[ 0.3.7
 		[ Note
 			Almost all files were changed, so there is
@@ -828,6 +842,7 @@
 		Optimized, fixed crash-bug and added two-params support for guild commands (Elf, Kornholijo)
 		Reworked reloading- more detailed errors, new 'types' and signal support (Elf)
 	]
+
 	[ 0.3.2
 		Version checking by reading remotely hosted versioning file (Elf)
 		Per-vocation less loss configuration- the "3% promotion loss" (Elf)
@@ -847,6 +862,7 @@
 		New preventLoss Items attribute- avoids player skill loss [read Deprecated section below to know more about old preventLoss] (Elf)
 		Player::__queryDestination deepness is now configurable [configured enough well to avoid lags on slow machines] (Elf)
 	]
+
 	[ 0.3.3
 		Protocol 8.41 support (Kiper)
 		Service Manager (OpenTibia SVN, Elf)
@@ -856,6 +872,7 @@
 		Clean/Refresh "scriptProtection" for items (Elf)
 		Added three new creature events: onCast, onCombat and onAreaCombat (Elf)
 	]
+
 	[ 0.3.4
 		Chat channels configuration in .xml file (Elf, slawkens)
 		Groups moved to groups.xml file + changed way, how they works (Elf)
@@ -876,6 +893,7 @@
 			getGroupInfo(id), doPlayerAddFrags(cid, amount) (slawkens)
 		Possibility to update from 0.2.1 (Elf)
 	]
+
 	[ 0.3.5
 		Full protocol 8.5 support (Elf, OpenTibia SVN, Talaturen)
 		Modifications system 'aka mods & moved custom things there (Elf, slawkens)
@@ -932,6 +950,7 @@
 		New doc: SQL_QUERIES (slawkens)
 		Updated license on all CPP/H files headers (Elf)
 	]
+
 	[ 0.3.6
 		New spells formulas!
 		NPCs OutfitModule (Elf)
@@ -962,23 +981,28 @@
 
 		... and many, many more.
 	]
+
 	[ 0.3.2
 		Player and Global storages do not use -1 as eraser anymore, use 'nil' value
 		onDeath corpse passed parameter is now Thing (table with entries: uid, itemid, etc) instead lonely uid
 		house_storage database table, house_data is now used
 		Items attribute: preventLoss, use: preventDrop
 	]
+
 	[ 0.3.3
 		LuaFunction: doPlayerSetExperienceRate, doPlayerSetMagicRate, use: doPlayerSetRate(... __LEVEL/__MAGLEVEL ...)
 	]
+
 	[ 0.3.4
 		LuaFunction: getPlayerLookDir(cid), use getCreatureLookDirection(cid)
 		Integer return values of Lua functions, use booleans instead
 	]
+
 	[ 0.3.5
 		LuaFunctions: getHouse*(houseId) (getHouseName, getHouseRent etc) - use getHouseInfo(houseId).name/owner/entry/rent/price/town, etc
 		LuaConstants: All are listed in compat.lua, though
 	]
+
 	[ 0.3.6
 		LuaFunctions: All item stats modifier, use now getItemAttribute, doItemSetAttribute and doItemEraseAttribute
 	]
@@ -1038,6 +1062,7 @@
 		Player::__queryDestination- adding/giving items to player issues (Elf)
 		Saving players with CanAlwaysLogin flag at /close (Elf)
 	]
+
 	[ 0.3.2
 		IPBanishment authorization error (Elf)
 		Instant open after closing server (Elf)
@@ -1056,7 +1081,9 @@
 		Waiting list unknown place issue (Elf)
 		houseRentAsPrice, housePriceAsRent (Elf)
 	]
+
 	[ 0.3.3
+
 		IPBanishment checking MySQL server hang (Elf)
 		OutputMessage crash (Elf, OpenTibia SVN)
 		Fixed Amuet of Loss being not always dropped (Elf)
@@ -1066,6 +1093,7 @@
 		Possibility to change the ip/port using NG script and login to different world than character in fact "comes from" (Elf)
 		"Decaying items transforming when used" (Elf)
 	]
+
 	[ 0.3.4
 		High memory usage (partially from OpenTibia SVN, Elf)
 		OutputMessage (fe. spells) crash (OpenTibia SVN, Elf)
@@ -1095,6 +1123,7 @@
 
 		... and few more.
 	]
+
 	[ 0.3.5
 		NPC voices (Elf)
 		Some vocation attributes not working or working unproperly (Elf)
@@ -1122,6 +1151,7 @@
 		Promotion downgrading (Elf)
 		Some console errors... (slawkens)
 	]
+
 	[ 0.3.6
 		Spell spamming issue (Elf)
 		Premium stamina recovering (Elf)
@@ -1134,8 +1164,9 @@
 
 			and much more ... (IT IS really stable & bug free!)
 	]
+
 	[ 0.3.7
-		Protocol 9.2 support (Talaturen, Dalkon, Elf)
+		Protocol 9.54 support (Talaturen, Dalkon, Elf, Tryller)
 		Mounts system with mounts.xml (Talaturen, Elf)
 		New spell cooldown system (Elf, Dalkon, Talaturen)
 		Orange skull (Elf)
@@ -1213,5 +1244,8 @@
 		Fixed compiling in MSVC and added project files (Dalkon)
 		PVP Blessings (Elf)
 		A lot of miscellaneous cleanups, fixes and optimizations (Dalkon, Elf, slawkens, Talaturen)
+		Fixed a bug with Walkthrough (Tryller)
+		Fixed a bug parcel system (Tryller)
+		Fixed a bug with global save won't shutdown (Benis)
 	}
 ]
