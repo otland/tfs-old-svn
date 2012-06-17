@@ -1523,13 +1523,12 @@ bool InstantSpell::Levitate(const InstantSpell*, Creature* creature, const std::
 				tmpTile = g_game.getTile(destination);
 				destination.z++;
 			}
-
 			if(!tmpTile || (!tmpTile->ground && !tmpTile->hasProperty(IMMOVABLEBLOCKSOLID)))
 			{
 				Tile* tile = player->getTile();
 				tmpTile = g_game.getTile(destination);
 				if(tile && tmpTile && tmpTile->ground && !tmpTile->hasProperty(IMMOVABLEBLOCKSOLID) &&
-					!tmpTile->floorChange() && tile->hasFlag(TILESTATE_HOUSE) == tmpTile->hasFlag(TILESTATE_HOUSE)
+					/*!tmpTile->floorChange() &&*/ tile->hasFlag(TILESTATE_HOUSE) == tmpTile->hasFlag(TILESTATE_HOUSE)
 					&& tile->hasFlag(TILESTATE_PROTECTIONZONE) == tmpTile->hasFlag(TILESTATE_PROTECTIONZONE))
 					ret = g_game.internalMoveCreature(NULL, player, tile, tmpTile, FLAG_IGNOREBLOCKITEM | FLAG_IGNOREBLOCKCREATURE);
 			}
