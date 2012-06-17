@@ -182,6 +182,11 @@ bool ConnectionManager::acceptConnection(uint32_t clientIp)
 	return true;
 }
 
+uint32_t ConnectionManager::getConnectionsSize() const
+{
+	return m_connections.size();
+}
+
 void Connection::closeConnection()
 {
 	//dispatcher thread
@@ -667,3 +672,4 @@ void Connection::handleWriteTimeout(boost::weak_ptr<Connection> weak, const boos
 		connection->onWriteTimeout();
 	}
 }
+

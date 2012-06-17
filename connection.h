@@ -73,6 +73,8 @@ class ConnectionManager
 
 		bool acceptConnection(uint32_t clientIp); 
 		void shutdown();
+		
+		uint32_t getConnectionsSize() const;
 
 	protected:
 		ConnectionManager() {}

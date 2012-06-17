@@ -148,7 +148,7 @@ std::string Status::getStatusString(bool sendPlayers) const
 	xmlAddChild(root, p);
 
 	p = xmlNewNode(NULL,(const xmlChar*)"players");
-	sprintf(buffer, "%d", g_game.getPlayersOnline());
+	sprintf(buffer, "%d", ConnectionManager::getInstance()->getConnectionsSize());
 	xmlSetProp(p, (const xmlChar*)"online", (const xmlChar*)buffer);
 	sprintf(buffer, "%d", (int32_t)g_config.getNumber(ConfigManager::MAX_PLAYERS));
 	xmlSetProp(p, (const xmlChar*)"max", (const xmlChar*)buffer);
@@ -246,7 +246,7 @@ void Status::getInfo(uint32_t requestedInfo, OutputMessage_ptr output, NetworkMe
 	if(requestedInfo & REQUEST_PLAYERS_INFO)
 	{
 		output->put<char>(0x20);
-		output->put<uint32_t>(g_game.getPlayersOnline());
+		output->put<uint32_t>(ConnectionManager::getInstance()->getConnectionsSize());
 		output->put<uint32_t>((uint32_t)g_config.getNumber(ConfigManager::MAX_PLAYERS));
 		output->put<uint32_t>(g_game.getPlayersRecord());
 	}

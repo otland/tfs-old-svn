@@ -756,10 +756,10 @@
 			Default: true
 
 		playerFollowExhaust
-			Speicifies the amount of exhaust in miliseconds applied to follow actions.
-			Delays all follows, but saves your server if someone causes lags and kicks by
+			Speicifies the amount of exhaust in miliseconds applied after failed follow action.
+			Delays consecutive follows and saves your server if someone causes lags and kicks by
 			constantly following unreachable targets.
-			Default: 0
+			Default: 2000
 
 	*DEPOT
 		defaultDepotSizePremium
