@@ -7,7 +7,7 @@
 
 		Most needed are the items (including floors, walls)
 		introduced in the most recent tibia updates
-		starting from 8.7 to 9.53
+		starting from 8.7 to 9.54
 
 		If you found something wrong with existing item(s), we're also waiting for you :)
 
@@ -23601,6 +23601,10 @@
 		<attribute key="weight" value="1600" />
 		<attribute key="description" value="It was painted in the style of Lyxoph. Unfortunately, there are some blue pixels in this piece."/>
 	</item>
+	<item id="16101" article="a" name="premium scroll">
+		<attribute key="weight" value="0" />
+		<attribute key="description" value="Using this scroll will add 30 days of premium time to your account once."/>
+	</item>
 	<item id="16102" article="a" name="surprise nest">
 		<attribute key="weight" value="1000" />
 		<attribute key="description" value="Use it to get a little surprise."/>
@@ -23637,6 +23641,9 @@
 		<attribute key="absorbPercentDeath" value="5"/>
 		<attribute key="magicpoints" value="4"/>
 		<attribute key="showattributes" value="1"/>
+	</item>
+	<item id="17432" article="a" name="purse">
+		<attribute key="containerSize" value="30"/>
 	</item>
 	<item id="20001" name="water"/>
 	<item id="20002" name="blood"/>
