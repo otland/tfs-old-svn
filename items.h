@@ -86,7 +86,7 @@ struct Abilities
 	{
 		memset(skills, 0, sizeof(skills));
 		memset(skillsPercent, 0, sizeof(skillsPercent));
-		memset(stats, 0 , sizeof(stats));
+		memset(stats, 0, sizeof(stats));
 		memset(statsPercent, 0, sizeof(statsPercent));
 
 		memset(absorb, 0, sizeof(absorb));

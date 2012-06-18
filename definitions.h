@@ -29,7 +29,7 @@
 
 #define SOFTWARE_NAME "The Forgotten Server"
 #define SOFTWARE_VERSION "0.3.7_SVN"
-#define SOFTWARE_CODENAME ""
+#define SOFTWARE_CODENAME "Crying Damson"
 #define SOFTWARE_DEVELOPERS "Elf, Talaturen, Dalkon, BeniS, Tryller and Kornholijo"
 #define SOFTWARE_PROTOCOL "9.54"
 

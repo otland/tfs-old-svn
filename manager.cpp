@@ -256,8 +256,10 @@ void ProtocolManager::pong()
 		return;
 
 	NetworkMessage_ptr msg = getOutputBuffer();
-	if(msg)
-		msg->put<char>(MP_MSG_PONG);
+	if(!msg)
+		return;
+
+	msg->put<char>(MP_MSG_PONG);
 }
 
 void ProtocolManager::execute(std::string lua)

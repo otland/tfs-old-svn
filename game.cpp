@@ -545,7 +545,7 @@ void Game::refreshMap(RefreshTiles::iterator* it/* = NULL*/, uint32_t limit/* = 
 		for(ItemVector::reverse_iterator it = list.rbegin(); it != list.rend(); ++it)
 		{
 			Item* item = (*it)->clone();
-			if(internalAddItem(NULL, tile, item , INDEX_WHEREEVER, FLAG_NOLIMIT) == RET_NOERROR)
+			if(internalAddItem(NULL, tile, item, INDEX_WHEREEVER, FLAG_NOLIMIT) == RET_NOERROR)
 			{
 				if(item->getUniqueId() != 0)
 					ScriptEnviroment::addUniqueThing(item);
