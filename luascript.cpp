@@ -9880,7 +9880,7 @@ int32_t LuaInterface::luaGetPlayerRates(lua_State* L)
 int32_t LuaInterface::luaDoPlayerSetRate(lua_State* L)
 {
 	//doPlayerSetRate(cid, type, value)
-	float value = popFloatNumber(L);
+	double value = popFloatNumber(L);
 	uint32_t type = popNumber(L);
 
 	ScriptEnviroment* env = getEnv();
@@ -10542,7 +10542,7 @@ int32_t LuaInterface::luaDoItemSetAttribute(lua_State* L)
 	boost::any value;
 	if(lua_isnumber(L, -1))
 	{
-		float tmp = popFloatNumber(L);
+		double tmp = popFloatNumber(L);
 		if(std::floor(tmp) < tmp)
 			value = tmp;
 		else
