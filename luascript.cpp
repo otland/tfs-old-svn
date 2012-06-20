@@ -3586,6 +3586,9 @@ int32_t LuaInterface::luaDoTransformItem(lua_State* L)
 	{
 		env->removeThing(uid);
 		env->insertThing(uid, newItem);
+		
+		if(newItem->getUniqueId() != 0)
+			env->addUniqueThing(newItem);
 	}
 
 	lua_pushboolean(L, true);
