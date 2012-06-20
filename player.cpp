@@ -3667,7 +3667,7 @@ void Player::getPathSearchParams(const Creature* creature, FindPathParams& fpp) 
 void Player::doAttacking(uint32_t)
 {
 	uint32_t attackSpeed = getAttackSpeed();
-	if(!attackSpeed <= 0 || (hasCondition(CONDITION_PACIFIED) && !hasCustomFlag(PlayerCustomFlag_IgnorePacification)))
+	if(attackSpeed <= 0 || (hasCondition(CONDITION_PACIFIED) && !hasCustomFlag(PlayerCustomFlag_IgnorePacification)))
 	{
 		lastAttack = OTSYS_TIME();
 		return;
