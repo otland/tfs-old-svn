@@ -83,52 +83,67 @@ boost::any ItemAttributes::getAttribute(const char* key) const
 	return boost::any();
 }
 
-const std::string* ItemAttributes::getStringAttribute(const char* key) const
+std::string ItemAttributes::getStringAttribute(const std::string& key, bool &ok) const
 {
 	if(!attributes)
-		return NULL;
+	{
+		ok = false;
+		return std::string();
+	}
 
 	AttributeMap::iterator it = attributes->find(key);
 	if(it != attributes->end())
-		return it->second.getString();
+		return it->second.getString(ok);
 
 	return NULL;
 }
 
-const int32_t* ItemAttributes::getIntegerAttribute(const char* key) const
+int32_t ItemAttributes::getIntegerAttribute(const std::string& key, bool &ok) const
 {
 	if(!attributes)
-		return NULL;
+	{
+		ok = false;
+		return 0;
+	}
 
 	AttributeMap::iterator it = attributes->find(key);
 	if(it != attributes->end())
-		return it->second.getInteger();
+		return it->second.getInteger(ok);
 
-	return NULL;
+	ok = false;
+	return 0;
 }
 
-const float* ItemAttributes::getFloatAttribute(const char* key) const
+float ItemAttributes::getFloatAttribute(const std::string& key, bool &ok) const
 {
 	if(!attributes)
-		return NULL;
+	{
+		ok = false;
+		return 0.0;
+	}
 
 	AttributeMap::iterator it = attributes->find(key);
 	if(it != attributes->end())
-		return it->second.getFloat();
+		return it->second.getFloat(ok);
 
-	return NULL;
+	ok = false;
+	return 0.0;
 }
 
-const bool* ItemAttributes::getBooleanAttribute(const char* key) const
+bool ItemAttributes::getBooleanAttribute(const std::string& key, bool &ok) const
 {
 	if(!attributes)
-		return NULL;
+	{
+		ok = false;
+		return false;
+	}
 
 	AttributeMap::iterator it = attributes->find(key);
 	if(it != attributes->end())
-		return it->second.getBoolean();
+		return it->second.getBoolean(ok);
 
-	return NULL;
+	ok = false;
+	return false;
 }
 
 ItemAttribute& ItemAttribute::operator=(const ItemAttribute& o)
@@ -136,144 +151,55 @@ ItemAttribute& ItemAttribute::operator=(const ItemAttribute& o)
 	if(&o == this)
 		return *this;
 
-	clear();
-	type = o.type;
-	switch(type)
-	{
-		case STRING:
-			new(data) std::string(*reinterpret_cast<const std::string*>(&o.data));
-			break;
-		case INTEGER:
-			*reinterpret_cast<int32_t*>(data) = *reinterpret_cast<const int32_t*>(&o.data);
-			break;
-		case FLOAT:
-			*reinterpret_cast<float*>(data) = *reinterpret_cast<const float*>(&o.data);
-			break;
-		case BOOLEAN:
-			*reinterpret_cast<bool*>(data) = *reinterpret_cast<const bool*>(&o.data);
-			break;
-		default:
-			type = NONE;
-			break;
-	}
-
+	m_data = o.m_data;
 	return *this;
-
 }
 
-void ItemAttribute::clear()
+std::string ItemAttribute::getString(bool &ok) const
 {
-	if(type == STRING)
-		(reinterpret_cast<std::string*>(&data))->~basic_string();
-
-	type = NONE;
-}
-
-void ItemAttribute::set(const std::string& s)
-{
-	clear();
-	type = STRING;
-	new(data) std::string(s);
-}
-
-void ItemAttribute::set(int32_t i)
-{
-	clear();
-	type = INTEGER;
-	*reinterpret_cast<int32_t*>(&data) = i;
-}
-
-void ItemAttribute::set(float f)
-{
-	clear();
-	type = FLOAT;
-	*reinterpret_cast<float*>(&data) = f;
-}
-
-void ItemAttribute::set(bool b)
-{
-	clear();
-	type = BOOLEAN;
-	*reinterpret_cast<bool*>(&data) = b;
-}
-
-void ItemAttribute::set(boost::any a)
-{
-	clear();
-	if(a.empty())
-		return;
-
-	if(a.type() == typeid(std::string))
+	if(m_data.type() != typeid(std::string))
 	{
-		type = STRING;
-		new(data) std::string(boost::any_cast<std::string>(a));
+		ok = false;
+		return std::string();
 	}
-	else if(a.type() == typeid(int32_t))
-	{
-		type = INTEGER;
-		*reinterpret_cast<int32_t*>(&data) = boost::any_cast<int32_t>(a);
-	}
-	else if(a.type() == typeid(float))
-	{
-		type = FLOAT;
-		*reinterpret_cast<float*>(&data) = boost::any_cast<float>(a);
-	}
-	else if(a.type() == typeid(bool))
-	{
-		type = BOOLEAN;
-		*reinterpret_cast<bool*>(&data) = boost::any_cast<bool>(a);
-	}
+	
+	ok = true;
+		return boost::any_cast<std::string>(m_data);
 }
 
-const std::string* ItemAttribute::getString() const
+int32_t ItemAttribute::getInteger(bool &ok) const
 {
-	if(type != STRING)
-		return NULL;
-
-	return reinterpret_cast<const std::string*>(&data);
-}
-
-const int32_t* ItemAttribute::getInteger() const
-{
-	if(type != INTEGER)
-		return NULL;
-
-	return reinterpret_cast<const int32_t*>(&data);
-}
-
-const float* ItemAttribute::getFloat() const
-{
-	if(type != FLOAT)
-		return NULL;
-
-	return reinterpret_cast<const float*>(&data);
-}
-
-const bool* ItemAttribute::getBoolean() const
-{
-	if(type != BOOLEAN)
-		return NULL;
-
-	return reinterpret_cast<const bool*>(&data);
-}
-
-boost::any ItemAttribute::get() const
-{
-	switch(type)
-	{
-		case STRING:
-			return *reinterpret_cast<const std::string*>(&data);
-		case INTEGER:
-			return *reinterpret_cast<const int32_t*>(&data);
-		case FLOAT:
-			return *reinterpret_cast<const float*>(&data);
-		case BOOLEAN:
-			return *reinterpret_cast<const bool*>(&data);
-		default:
-			break;
+	if(m_data.type() != typeid(int32_t)) {
+		ok = false;
+		return 0;
 	}
 
-	return boost::any();
+	ok = true;
+	return boost::any_cast<int32_t>(m_data);
+}
+
+float ItemAttribute::getFloat(bool &ok) const
+{
+	if(m_data.type() != typeid(float))
+	{
+		ok = false;
+		return 0.0;
+	}
+
+	ok = true;
+	return boost::any_cast<float>(m_data);
+}
+
+bool ItemAttribute::getBoolean(bool &ok) const
+{
+	if(m_data.type() != typeid(bool))
+	{
+		ok = false;
+		return false;
+	}
+
+	ok = true;
+	return boost::any_cast<bool>(m_data);
 }
 
 bool ItemAttributes::unserializeMap(PropStream& stream)
@@ -336,7 +262,7 @@ bool ItemAttribute::unserialize(PropStream& stream)
 			if(!stream.getLong(v))
 				return false;
 
-			set(*reinterpret_cast<int32_t*>(&v));
+			set((int32_t)v);
 			break;
 		}
 		case FLOAT:
@@ -345,7 +271,7 @@ bool ItemAttribute::unserialize(PropStream& stream)
 			if(!stream.getFloat(v))
 				return false;
 
-			set(*reinterpret_cast<float*>(&v));
+			set(v);
 			break;
 		}
 		case BOOLEAN:
@@ -356,8 +282,6 @@ bool ItemAttribute::unserialize(PropStream& stream)
 
 			set(v != 0);
 		}
-		default:
-			break;
 	}
 
 	return true;
@@ -365,21 +289,28 @@ bool ItemAttribute::unserialize(PropStream& stream)
 
 void ItemAttribute::serialize(PropWriteStream& stream) const
 {
-	stream.addByte((uint8_t)type);
-	switch(type)
+	bool ok;
+	if(m_data.type() == typeid(std::string))
 	{
-		case STRING:
-			stream.addLongString(*getString());
-			break;
-		case INTEGER:
-			stream.addLong(*(uint32_t*)getInteger());
-			break;
-		case FLOAT:
-			stream.addLong(*(uint32_t*)getFloat());
-			break;
-		case BOOLEAN:
-			stream.addByte(*(uint8_t*)getBoolean());
-		default:
-			break;
+		stream.addByte((uint8_t)STRING);
+		stream.addLongString(getString(ok));
+	}
+	else if(m_data.type() == typeid(int32_t))
+	{
+		stream.addByte((uint8_t)INTEGER);
+		stream.addLong(getInteger(ok));
+	}
+	else if(m_data.type() == typeid(float))
+	{
+		stream.addByte((uint8_t)FLOAT);
+		stream.addLong(getFloat(ok));
+	}
+	else if(m_data.type() == typeid(bool))
+	{
+		stream.addByte((uint8_t)BOOLEAN);
+		stream.addByte(getBoolean(ok));
+	}
+	else {
+		std::cout << "[ItemAttribute::serialize]: Invalid data type." << std::endl;
 	}
 }

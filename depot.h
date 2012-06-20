@@ -78,9 +78,10 @@ class Depot : public Container
 
 inline uint32_t Depot::getDepotId() const
 {
-	const int32_t* v = getIntegerAttribute("depotid");
-	if(v)
-		return (uint32_t)*v;
+	bool ok;
+	int32_t v = getIntegerAttribute("depotid", ok);
+	if(ok)
+		return (uint32_t)v;
 
 	return 0;
 }

@@ -26,36 +26,33 @@ class PropStream;
 class ItemAttribute
 {
 	public:
-		ItemAttribute(): type(ItemAttribute::NONE) {}
-		ItemAttribute(const ItemAttribute& o): type(ItemAttribute::NONE) {*this = o;}
-		virtual ~ItemAttribute() {clear();}
+		ItemAttribute() {}
+		ItemAttribute(const ItemAttribute& o) {*this = o;}
+		virtual ~ItemAttribute() {}
 
-		ItemAttribute(const std::string& s): type(ItemAttribute::STRING) {new(data) std::string(s);}
-		ItemAttribute(int32_t i): type(ItemAttribute::INTEGER) {*reinterpret_cast<int32_t*>(data) = i;}
-		ItemAttribute(float f): type(ItemAttribute::FLOAT) {*reinterpret_cast<float*>(data) = f;}
-		ItemAttribute(bool b): type(ItemAttribute::BOOLEAN) {*reinterpret_cast<bool*>(data) = b;}
+		ItemAttribute(const std::string& s) {m_data = s;}
+		ItemAttribute(int32_t i) {m_data = i;}
+		ItemAttribute(float f) {m_data = f;}
+		ItemAttribute(bool b) {m_data = b;}
 
 		ItemAttribute& operator=(const ItemAttribute& o);
 
 		void serialize(PropWriteStream& stream) const;
 		bool unserialize(PropStream& stream);
 
-		void clear();
+		void set(const std::string& s) { m_data = s; }
+		void set(int32_t i) { m_data = i; }
+		void set(float f) { m_data = f; }
+		void set(bool b) { m_data = b; }
+		void set(boost::any a) { m_data = a; }
 
-		void set(const std::string& s);
-		void set(int32_t i);
-		void set(float f);
-		void set(bool b);
-		void set(boost::any a);
-
-		const std::string* getString() const;
-		const int32_t* getInteger() const;
-		const float* getFloat() const;
-		const bool* getBoolean() const;
-		boost::any get() const;
+		std::string getString(bool &ok) const;
+		int32_t getInteger(bool &ok) const;
+		float getFloat(bool &ok) const;
+		bool getBoolean(bool &ok) const;
+		boost::any get() const { return m_data; }
 
 	private:
-		char data[sizeof(std::string)];
 		enum Type
 		{
 			NONE = 0,
@@ -63,7 +60,9 @@ class ItemAttribute
 			INTEGER = 2,
 			FLOAT = 3,
 			BOOLEAN = 4
-		} type;
+		};
+
+		boost::any m_data;
 };
 
 class ItemAttributes
@@ -85,15 +84,15 @@ class ItemAttributes
 		void setAttribute(const char* key, float value);
 		void setAttribute(const char* key, bool value);
 
-		const std::string* getStringAttribute(const char* key) const;
-		const int32_t* getIntegerAttribute(const char* key) const;
-		const float* getFloatAttribute(const char* key) const;
-		const bool* getBooleanAttribute(const char* key) const;
+		std::string getStringAttribute(const std::string& key, bool &ok) const;
+		int32_t getIntegerAttribute(const std::string& key, bool &ok) const;
+		float getFloatAttribute(const std::string& key, bool &ok) const;
+		bool getBooleanAttribute(const std::string& key, bool &ok) const;
 
-		bool hasStringAttribute(const char* key) const {return getStringAttribute(key) != NULL;}
-		bool hasIntegerAttribute(const char* key) const {return getIntegerAttribute(key) != NULL;}
-		bool hasFloatAttribute(const char* key) const {return getFloatAttribute(key) != NULL;}
-		bool hasBooleanAttribute(const char* key) const {return getBooleanAttribute(key) != NULL;}
+		bool hasStringAttribute(const std::string& key)  const { bool ok; getStringAttribute(key, ok); return ok; }
+		bool hasIntegerAttribute(const std::string& key) const { bool ok; getIntegerAttribute(key, ok); return ok; }
+		bool hasFloatAttribute(const std::string& key)   const { bool ok; getFloatAttribute(key, ok); return ok; }
+		bool hasBooleanAttribute(const std::string& key) const { bool ok; getBooleanAttribute(key, ok); return ok; }
 
 	protected:
 		void createAttributes();
