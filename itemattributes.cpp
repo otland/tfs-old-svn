@@ -310,7 +310,6 @@ void ItemAttribute::serialize(PropWriteStream& stream) const
 		stream.addByte((uint8_t)BOOLEAN);
 		stream.addByte(getBoolean(ok));
 	}
-	else {
-		std::cout << "[ItemAttribute::serialize]: Invalid data type." << std::endl;
-	}
+	else
+		std::clog << "[ItemAttribute::serialize]: Invalid data type." << std::endl;
 }
