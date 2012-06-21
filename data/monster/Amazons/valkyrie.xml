@@ -27,9 +27,9 @@
 	<elements>
 		<element icePercent="10"/>
 		<element firePercent="10"/>
-		<element holyPercent="7"/>
-		<element deathPercent="-7"/>
-		<element physicalPercent="-6"/>
+		<element holyPercent="5"/>
+		<element deathPercent="-1"/>
+		<element physicalPercent="-1"/>
 	</elements>
 	<voices interval="5000" chance="10">
 		<voice sentence="Another head for me!"/>

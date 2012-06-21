@@ -32,18 +32,22 @@
 		</defense>
 	</defenses>
 	<elements>
-		<element earthPercent="100"/>
-		<element energyPercent="20"/>
-		<element icePercent="-20"/>
-		<element firePercent="-10"/>
+		<element energyPercent="-15"/>
+		<element icePercent="-5"/>
+		<element firePercent="50"/>
+		<element holyPercent="-5"/>
 	</elements>
 	<immunities>
-		<immunity lifedrain="0"/>
-		<immunity paralyze="0"/>
+		<immunity earth="1"/>
 		<immunity outfit="1"/>
 		<immunity drunk="1"/>
 		<immunity invisible="1"/>
 	</immunities>
+	<voices interval="2000" chance="5">
+		<voice sentence="rattle!"/>
+		<voice sentence="tak tak!"/>
+		<voice sentence="tak tak tak!"/>
+	</voices>
 	<loot>
 		<item id="2478" chance="9000"/><!-- brass legs -->
 		<item id="2152" countmax="2" chance="23000"/><!-- plat coin -->
