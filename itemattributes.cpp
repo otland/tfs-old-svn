@@ -95,7 +95,7 @@ std::string ItemAttributes::getStringAttribute(const std::string& key, bool &ok)
 	if(it != attributes->end())
 		return it->second.getString(ok);
 
-	return NULL;
+	return std::string();
 }
 
 int32_t ItemAttributes::getIntegerAttribute(const std::string& key, bool &ok) const
