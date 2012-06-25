@@ -859,7 +859,7 @@ class Player : public Creature, public Cylinder
 
 	private:
 		bool talkState[13];
-		bool inventoryAbilities[11];
+		bool inventoryAbilities[SLOT_LAST];
 		bool pzLocked;
 		bool saving;
 		bool isConnecting;
