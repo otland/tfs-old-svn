@@ -847,8 +847,8 @@ class Player : public Creature, public Cylinder
 		std::string password;
 
 		//inventory variables
-		Item* inventory[11];
-		bool inventoryAbilities[11];
+		Item* inventory[SLOT_LAST];
+		bool inventoryAbilities[SLOT_LAST];
 
 		//player advances variables
 		uint32_t skills[SKILL_LAST + 1][3];
