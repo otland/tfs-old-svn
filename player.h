@@ -958,7 +958,7 @@ class Player : public Creature, public Cylinder
 		SchedulerTask* walkTask;
 		Party* party;
 		Group* group;
-		Item* inventory[11];
+		Item* inventory[SLOT_LAST];
 		Player* tradePartner;
 		Item* tradeItem;
 		Item* writeItem;
