@@ -95,6 +95,7 @@ std::string ItemAttributes::getStringAttribute(const std::string& key, bool &ok)
 	if(it != attributes->end())
 		return it->second.getString(ok);
 
+	ok = false;
 	return std::string();
 }
 
@@ -162,14 +163,15 @@ std::string ItemAttribute::getString(bool &ok) const
 		ok = false;
 		return std::string();
 	}
-	
+
 	ok = true;
-		return boost::any_cast<std::string>(m_data);
+	return boost::any_cast<std::string>(m_data);
 }
 
 int32_t ItemAttribute::getInteger(bool &ok) const
 {
-	if(m_data.type() != typeid(int32_t)) {
+	if(m_data.type() != typeid(int32_t))
+	{
 		ok = false;
 		return 0;
 	}
