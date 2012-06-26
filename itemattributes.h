@@ -28,7 +28,7 @@ class ItemAttribute
 	public:
 		ItemAttribute() {}
 		ItemAttribute(const ItemAttribute& o) {*this = o;}
-		virtual ~ItemAttribute() {}
+		~ItemAttribute() {}
 
 		ItemAttribute(const std::string& s) {m_data = s;}
 		ItemAttribute(int32_t i) {m_data = i;}
@@ -69,8 +69,8 @@ class ItemAttributes
 {
 	public:
 		ItemAttributes(): attributes(NULL) {}
-		ItemAttributes(const ItemAttributes &i);
-		virtual ~ItemAttributes() {delete attributes;}
+		virtual ItemAttributes(const ItemAttributes &i);
+		~ItemAttributes() {delete attributes;}
 
 		void serializeMap(PropWriteStream& stream) const;
 		bool unserializeMap(PropStream& stream);
