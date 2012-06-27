@@ -69,8 +69,8 @@ class ItemAttributes
 {
 	public:
 		ItemAttributes(): attributes(NULL) {}
-		virtual ItemAttributes(const ItemAttributes &i);
-		~ItemAttributes() {delete attributes;}
+		ItemAttributes(const ItemAttributes &i);
+		virtual ~ItemAttributes() {delete attributes;}
 
 		void serializeMap(PropWriteStream& stream) const;
 		bool unserializeMap(PropStream& stream);
