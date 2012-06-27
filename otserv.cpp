@@ -620,7 +620,7 @@ void otserv(StringVec, ServiceManager* services)
 			do
 			{
 				version = DatabaseManager::getInstance()->updateDatabase();
-				if(!version)
+				if(version == 0)
 					break;
 
 				std::clog << "> Database has been updated to version: " << version << "." << std::endl;
