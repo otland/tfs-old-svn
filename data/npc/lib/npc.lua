@@ -82,7 +82,8 @@ function doNpcSellItem(cid, itemid, amount, subType, ignoreCap, inBackpacks, bac
 		local custom, stackable = 1, isItemStackable(itemid)
 		if(stackable) then
 			custom = math.max(1, subType)
-			subType = 100
+			subType = amount
+			amount = math.max(1, math.floor(amount / 100))
 		end
 
 		local container, b = doCreateItemEx(backpack, 1), 1
