@@ -84,7 +84,7 @@ bool Mission::isStarted(Player* player) const
 	int32_t value;
 	if(!player->getStorageValue(storageID, value) || value < startValue || value > endValue)
 		return false;
-	
+
 	return true;
 }
 

@@ -353,10 +353,8 @@ ReturnValue Actions::internalUseItem(Player* player, const Position& pos,
 			player->setWriteItem(NULL);
 			player->sendTextWindow(item, 0, false);
 		}
-
 		return RET_NOERROR;
 	}
-
 	return RET_CANNOTUSETHISOBJECT;
 }
 

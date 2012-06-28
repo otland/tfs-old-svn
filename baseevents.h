@@ -35,7 +35,6 @@ class BaseEvents
 
 		bool loadFromXml();
 		bool reload();
-
 		bool isLoaded() const {return m_loaded;}
 
 	protected:

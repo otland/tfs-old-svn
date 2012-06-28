@@ -112,7 +112,7 @@ OTSYS_THREAD_RETURN Scheduler::schedulerThread(void* p)
 
 uint32_t Scheduler::addEvent(SchedulerTask* task)
 {
-	bool do_signal = false;
+	bool do_signal = false, must_delete = false;
 
 	OTSYS_THREAD_LOCK(m_eventLock, "");
 
@@ -138,17 +138,24 @@ uint32_t Scheduler::addEvent(SchedulerTask* task)
 		// we have to signal it
 		do_signal = (task == m_eventList.top());
 	}
-#ifdef __DEBUG_SCHEDULER__
 	else
+	{
+		#ifdef __DEBUG_SCHEDULER__
 		std::cout << "Error: [Scheduler::addTask] Scheduler thread is terminated." << std::endl;
-#endif
+		#endif
+		must_delete = true;
+	}
 
 	OTSYS_THREAD_UNLOCK(m_eventLock, "");
 
 	if(do_signal)
 		OTSYS_THREAD_SIGNAL_SEND(m_eventSignal);
 
-	return task->getEventId();
+	uint32_t id = task->getEventId();
+	if(must_delete)
+		delete task;
+
+	return id;
 }
 
 bool Scheduler::stopEvent(uint32_t eventid)

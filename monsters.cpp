@@ -50,6 +50,8 @@ void MonsterType::reset()
 	defense = 0;
 	armor = 0;
 
+	hiddenHealth = false;
+
 	canPushItems = false;
 	canPushCreatures = false;
 	staticAttackChance = 95;
@@ -894,29 +896,21 @@ bool Monsters::loadMonster(const std::string& file, const std::string& monster_n
 					{
 						if(readXMLInteger(tmpNode, "summonable", intValue))
 							mType->isSummonable = (intValue != 0);
-
-						if(readXMLInteger(tmpNode, "attackable", intValue))
+						else if(readXMLInteger(tmpNode, "attackable", intValue))
 							mType->isAttackable = (intValue != 0);
-
-						if(readXMLInteger(tmpNode, "hostile", intValue))
+						else if(readXMLInteger(tmpNode, "hostile", intValue))
 							mType->isHostile = (intValue != 0);
-
-						if(readXMLInteger(tmpNode, "illusionable", intValue))
+						else if(readXMLInteger(tmpNode, "illusionable", intValue))
 							mType->isIllusionable = (intValue != 0);
-
-						if(readXMLInteger(tmpNode, "convinceable", intValue))
+						else if(readXMLInteger(tmpNode, "convinceable", intValue))
 							mType->isConvinceable = (intValue != 0);
-
-						if(readXMLInteger(tmpNode, "pushable", intValue))
+						else if(readXMLInteger(tmpNode, "pushable", intValue))
 							mType->pushable = (intValue != 0);
-
-						if(readXMLInteger(tmpNode, "canpushitems", intValue))
+						else if(readXMLInteger(tmpNode, "canpushitems", intValue))
 							mType->canPushItems = (intValue != 0);
-
-						if(readXMLInteger(tmpNode, "canpushcreatures", intValue))
+						else if(readXMLInteger(tmpNode, "canpushcreatures", intValue))
 							mType->canPushCreatures = (intValue != 0);
-
-						if(readXMLInteger(tmpNode, "staticattack", intValue))
+						else if(readXMLInteger(tmpNode, "staticattack", intValue))
 						{
 							if(intValue < 0)
 							{
@@ -931,23 +925,21 @@ bool Monsters::loadMonster(const std::string& file, const std::string& monster_n
 							}
 							mType->staticAttackChance = intValue;
 						}
-
-						if(readXMLInteger(tmpNode, "lightlevel", intValue))
+						else if(readXMLInteger(tmpNode, "lightlevel", intValue))
 							mType->lightLevel = intValue;
-
-						if(readXMLInteger(tmpNode, "lightcolor", intValue))
+						else if(readXMLInteger(tmpNode, "lightcolor", intValue))
 							mType->lightColor = intValue;
-
-						if(readXMLInteger(tmpNode, "targetdistance", intValue))
+						else if(readXMLInteger(tmpNode, "targetdistance", intValue))
 						{
 							/*if(intValue > 6){
 								SHOW_XML_WARNING("targetdistance greater than 6");
 							}*/
 							mType->targetDistance = std::max(1, intValue);
 						}
-
-						if(readXMLInteger(tmpNode, "runonhealth", intValue))
+						else if(readXMLInteger(tmpNode, "runonhealth", intValue))
 							mType->runAwayHealth = intValue;
+						else if(readXMLInteger(tmpNode, "hidehealth", intValue))
+							mType->hiddenHealth = (intValue != 0);
 					}
 					tmpNode = tmpNode->next;
 				}

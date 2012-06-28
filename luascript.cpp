@@ -1020,23 +1020,36 @@ void LuaScriptInterface::popPosition(lua_State* L, Position& position, uint32_t&
 
 uint32_t LuaScriptInterface::popNumber(lua_State* L)
 {
-	lua_pop(L,1);
-	return (uint32_t)lua_tonumber(L, 0);
+	if(lua_gettop(L) == 0)
+		return 0;
+
+	uint32_t number = lua_tonumber(L, -1);
+	lua_pop(L, 1);
+	return number;
 }
 
 double LuaScriptInterface::popFloatNumber(lua_State* L)
 {
-	lua_pop(L,1);
-	return (double)lua_tonumber(L, 0);
+	if(lua_gettop(L) == 0)
+		return 0.0;
+
+	double number = lua_tonumber(L, -1);
+	lua_pop(L, 1);
+	return number;
 }
 
 std::string LuaScriptInterface::popString(lua_State* L)
 {
-	lua_pop(L,1);
-	const char* str = lua_tostring(L, 0);
-	if(!str || *str == '\0')
-		return std::string();
+	if(lua_gettop(L) == 0)
+		return "";
 
+	std::string str;
+	size_t len;
+	const char* c_str = lua_tolstring(L, -1, &len);
+	if(c_str && len > 0)
+		str.assign(c_str, len);
+
+	lua_pop(L, 1);
 	return str;
 }
 
@@ -1047,8 +1060,12 @@ int32_t LuaScriptInterface::popCallback(lua_State* L)
 
 bool LuaScriptInterface::popBoolean(lua_State* L)
 {
+	if(lua_gettop(L) == 0)
+		return false;
+
+	bool value = lua_toboolean(L, -1) != 0;
 	lua_pop(L, 1);
-	return lua_toboolean(L, 0) != 0;
+	return value;
 }
 
 void LuaScriptInterface::setField(lua_State* L, const char* index, double val)
@@ -2546,8 +2563,13 @@ int32_t LuaScriptInterface::luaDoTeleportThing(lua_State* L)
 			Creature* creature = tmp->getCreature();
 			if(!pushMovement && creature)
 			{
-				if(oldPos.x == pos.x && oldPos.y < pos.y)
-					g_game.internalCreatureTurn(creature, SOUTH);
+				if(oldPos.x == pos.x)
+				{
+					if(oldPos.y < pos.y)
+						g_game.internalCreatureTurn(creature, SOUTH);
+					else
+						g_game.internalCreatureTurn(creature, NORTH);
+				}
 				else if(oldPos.x > pos.x)
 					g_game.internalCreatureTurn(creature, WEST);
 				else if(oldPos.x < pos.x)

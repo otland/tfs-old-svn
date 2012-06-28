@@ -92,6 +92,9 @@ Creature::Creature() :
 	checkCreatureVectorIndex = -1;
 	creatureCheck = false;
 	scriptEventsBitField = 0;
+
+	hiddenHealth = false;
+
 	onIdleStatus();
 }
 

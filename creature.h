@@ -159,6 +159,9 @@ class Creature : public AutoID, virtual public Thing
 		const Position& getMasterPos() const { return masterPos;}
 		void setMasterPos(const Position& pos, uint32_t radius = 1) { masterPos = pos; masterRadius = radius;}
 
+		bool isHealthHidden() const { return hiddenHealth; }
+		void setHiddenHealth(bool b) { hiddenHealth = b; }
+
 		virtual int32_t getThrowRange() const {return 1;}
 		virtual bool isPushable() const {return (getWalkDelay() <= 0);}
 		virtual bool isRemoved() const {return isInternalRemoved;}
@@ -404,6 +407,7 @@ class Creature : public AutoID, virtual public Thing
 		uint32_t walkUpdateTicks;
 		bool hasFollowPath;
 		bool forceUpdateFollowPath;
+		bool hiddenHealth;
 
 		//combat variables
 		Creature* attackedCreature;

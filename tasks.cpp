@@ -107,10 +107,13 @@ void Dispatcher::addTask(Task* task)
 		do_signal = m_taskList.empty();
 		m_taskList.push_back(task);
 	}
-	#ifdef __DEBUG_SCHEDULER__
 	else
+	{
+		#ifdef __DEBUG_SCHEDULER__
 		std::cout << "Error: [Dispatcher::addTask] Dispatcher thread is terminated." << std::endl;
-	#endif
+		#endif
+		delete task;
+	}
 	OTSYS_THREAD_UNLOCK(m_taskLock, "");
 
 	// send a signal if the list was empty

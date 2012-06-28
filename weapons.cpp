@@ -597,7 +597,7 @@ bool WeaponMelee::useWeapon(Player* player, Item* item, Creature* target) const
 
 	if(elementDamage != 0)
 	{
-		int32_t damage = -random_range(0, elementDamage, DISTRO_NORMAL);
+		int32_t damage = getElementDamage(player, item);
 		CombatParams eParams;
 		eParams.combatType = elementType;
 		eParams.isAggressive = true;
@@ -651,10 +651,24 @@ bool WeaponMelee::getSkillType(const Player* player, const Item* item,
 	return false;
 }
 
+int32_t WeaponMelee::getElementDamage(const Player* player, const Item* item) const
+{
+	int32_t attackSkill = player->getWeaponSkill(item);
+	int32_t attackValue = std::max((int32_t)0, (int32_t)elementDamage);
+	float attackFactor = player->getAttackFactor();
+
+	int32_t maxValue = Weapons::getMaxWeaponDamage(player->getLevel(), attackSkill, attackValue, attackFactor);
+	if(random_range(1, 100) <= g_config.getNumber(ConfigManager::CRITICAL_HIT_CHANCE))
+		maxValue <<= 1;
+
+	maxValue = int32_t(maxValue * player->getVocation()->meleeDamageMultipler);
+	return -random_range(0, maxValue, DISTRO_NORMAL);
+}
+
 int32_t WeaponMelee::getWeaponDamage(const Player* player, const Creature* target, const Item* item, bool maxDamage /*= false*/) const
 {
 	int32_t attackSkill = player->getWeaponSkill(item);
-	int32_t attackValue = std::max((int32_t)0, ((int32_t)item->getAttack() - elementDamage));
+	int32_t attackValue = std::max((int32_t)0, item->getAttack());
 	float attackFactor = player->getAttackFactor();
 
 	int32_t maxValue = Weapons::getMaxWeaponDamage(player->getLevel(), attackSkill, attackValue, attackFactor);

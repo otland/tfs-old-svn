@@ -189,8 +189,8 @@ bool utf8ToLatin1(char* intext, std::string& outtext)
 	if(inlen == 0)
 		return false;
 
-	int32_t outlen = inlen * 2;
-	unsigned char* outbuf = new uint8_t[outlen + 1];
+	int32_t outlen = (inlen << 1) + 1;
+	unsigned char* outbuf = new uint8_t[outlen];
 	int32_t res = UTF8Toisolat1(outbuf, &outlen, (unsigned char*)intext, &inlen);
 	if(res < 0)
 	{
@@ -198,8 +198,7 @@ bool utf8ToLatin1(char* intext, std::string& outtext)
 		return false;
 	}
 
-	outbuf[outlen] = '\0';
-	outtext = (char*)outbuf;
+	outtext = std::string((char*)outbuf, outlen);
 	delete[] outbuf;
 	return true;
 }
@@ -207,30 +206,27 @@ bool utf8ToLatin1(char* intext, std::string& outtext)
 bool readXMLString(xmlNodePtr node, const char* tag, std::string& value)
 {
 	char* nodeValue = (char*)xmlGetProp(node, (xmlChar*)tag);
-	if(nodeValue)
-	{
-		if(!utf8ToLatin1(nodeValue, value))
-			value = nodeValue;
+	if(!nodeValue)
+		return false;
 
-		xmlFreeOTSERV(nodeValue);
-		return true;
-	}
-	return false;
+	if(!utf8ToLatin1(nodeValue, value))
+		value = nodeValue;
+
+	xmlFreeOTSERV(nodeValue);
+	return true;
 }
 
 bool readXMLContentString(xmlNodePtr node, std::string& value)
 {
 	char* nodeValue = (char*)xmlNodeGetContent(node);
-	if(nodeValue)
-	{
-		if(!utf8ToLatin1(nodeValue, value))
-			value = nodeValue;
+	if(!nodeValue)
+		return false;
 
-		xmlFreeOTSERV(nodeValue);
-		return true;
-	}
+	if(!utf8ToLatin1(nodeValue, value))
+		value = nodeValue;
 
-	return false;
+	xmlFreeOTSERV(nodeValue);
+	return true;
 }
 
 StringVec explodeString(const std::string& inString, const std::string& separator, int32_t limit/* = -1*/)

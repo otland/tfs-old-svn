@@ -74,6 +74,8 @@ Creature()
 	internalLight.level = mType->lightLevel;
 	internalLight.color = mType->lightColor;
 
+	hiddenHealth = mType->hiddenHealth;
+
 	minCombatValue = 0;
 	maxCombatValue = 0;
 

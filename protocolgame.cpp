@@ -3385,7 +3385,11 @@ void ProtocolGame::AddCreature(NetworkMessage_ptr msg, const Creature* creature,
 		msg->AddString(creature->getName());
 	}
 
-	msg->AddByte((int32_t)std::ceil(((float)creature->getHealth()) * 100 / std::max(creature->getMaxHealth(), (int32_t)1)));
+	if(creature->isHealthHidden())
+		msg->AddByte(0x00);
+	else
+		msg->AddByte((int32_t)std::ceil(((float)creature->getHealth()) * 100 / std::max(creature->getMaxHealth(), (int32_t)1)));
+
 	msg->AddByte((uint8_t)creature->getDirection());
 
 	if(!creature->isInvisible() && !creature->isInGhostMode())
@@ -3538,7 +3542,10 @@ void ProtocolGame::AddCreatureHealth(NetworkMessage_ptr msg,const Creature* crea
 {
 	msg->AddByte(0x8C);
 	msg->AddU32(creature->getID());
-	msg->AddByte((int32_t)std::ceil(((float)creature->getHealth()) * 100 / std::max(creature->getMaxHealth(), (int32_t)1)));
+	if(creature->isHealthHidden())
+		msg->AddByte(0x00);
+	else
+		msg->AddByte((int32_t)std::ceil(((float)creature->getHealth()) * 100 / std::max(creature->getMaxHealth(), (int32_t)1)));
 }
 
 void ProtocolGame::AddCreatureInvisible(NetworkMessage_ptr msg, const Creature* creature)

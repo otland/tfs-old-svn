@@ -131,6 +131,8 @@ class WeaponMelee : public Weapon
 		virtual bool useWeapon(Player* player, Item* item, Creature* target) const;
 		virtual int32_t getWeaponDamage(const Player* player, const Creature* target, const Item* item, bool maxDamage = false) const;
 
+		int32_t getElementDamage(const Player* player, const Item* item) const;
+
 	protected:
 		virtual void onUsedWeapon(Player* player, Item* item, Tile* destTile) const;
 		virtual void onUsedAmmo(Player* player, Item* item, Tile* destTile) const;

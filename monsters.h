@@ -122,6 +122,7 @@ class MonsterType
 		bool isConvinceable;
 		bool isAttackable;
 		bool isHostile;
+		bool hiddenHealth;
 
 		int32_t lightLevel;
 		int32_t lightColor;

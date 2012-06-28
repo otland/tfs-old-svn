@@ -1896,7 +1896,7 @@ void ConditionSpellCooldown::addCondition(Creature* creature, const Condition* a
 	{
 		setTicks(addCondition->getTicks());
 
-		if(subId != 0)
+		if(subId != 0 && ticks > 0)
 		{
 			Player* player = creature->getPlayer();
 			if(player)
@@ -1910,7 +1910,7 @@ bool ConditionSpellCooldown::startCondition(Creature* creature)
 	if(!Condition::startCondition(creature))
 		return false;
 
-	if(subId != 0)
+	if(subId != 0 && ticks > 0)
 	{
 		Player* player = creature->getPlayer();
 		if(player)
@@ -1931,7 +1931,7 @@ void ConditionSpellGroupCooldown::addCondition(Creature* creature, const Conditi
 	{
 		setTicks(addCondition->getTicks());
 
-		if(subId != 0)
+		if(subId != 0 && ticks > 0)
 		{
 			Player* player = creature->getPlayer();
 			if(player)
@@ -1945,7 +1945,7 @@ bool ConditionSpellGroupCooldown::startCondition(Creature* creature)
 	if(!Condition::startCondition(creature))
 		return false;
 
-	if(subId != 0)
+	if(subId != 0 && ticks > 0)
 	{
 		Player* player = creature->getPlayer();
 		if(player)

@@ -1474,6 +1474,10 @@ ReturnValue Game::internalAddItem(Cylinder* toCylinder, Item* item, int32_t inde
 			//fully merged with toItem, item will be destroyed
 			item->onRemoved();
 			FreeThing(item);
+
+			int32_t itemIndex = toCylinder->__getIndexOfThing(toItem);
+			if(itemIndex != -1)
+				toCylinder->postAddNotification(toItem, NULL, itemIndex);
 		}
 	}
 	else

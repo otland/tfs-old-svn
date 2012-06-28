@@ -158,7 +158,6 @@ bool Raids::startup()
 	return started;
 }
 
-
 void Raids::checkRaids()
 {
 	if(!getRunning())
@@ -371,6 +370,7 @@ bool RaidEvent::configureRaidEvent(xmlNodePtr eventNode)
 		m_delay = intValue;
 		if(m_delay < RAID_MINTICKS)
 			m_delay = RAID_MINTICKS;
+
 		return true;
 	}
 	else
@@ -487,7 +487,6 @@ bool SingleSpawnEvent::executeEvent()
 		std::cout << "[Error] Raids: Cant place monster " << m_monsterName << std::endl;
 		return false;
 	}
-
 	return true;
 }
 
