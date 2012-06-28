@@ -22,14 +22,13 @@
 	</attacks>
 	<defenses armor="6" defense="6"/>
 	<elements>
-		<element earthPercent="20"/>
-		<element holyPercent="7"/>
+		<element holyPercent="10"/>
 		<element icePercent="-10"/>
-		<element deathPercent="-4"/>
+		<element deathPercent="-5"/>
 	</elements>
 	<voices interval="5000" chance="10">
-		<voice sentence="grrrr"/>
-		<voice sentence="groar"/>
+		<voice sentence="Grrrr"/>
+		<voice sentence="Groar"/>
 	</voices>
 	<loot>
 		<item id="5896" chance="2000"/><!-- bear paw -->

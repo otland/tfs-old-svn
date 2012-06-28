@@ -33,12 +33,17 @@
 	<elements>
 		<element firePercent="-15"/>
 		<element deathPercent="10"/>
-		<element icePercent="10"/>
+		<element icePercent="15"/>
 		<element holyPercent="20"/>
 	</elements>
 	<immunities>
 		<immunity earth="1"/>
 	</immunities>
+	<voices interval="5000" chance="10">
+		<voice sentence="Knarrrz"/>
+		<voice sentence="Huuhuuhuuuhuuaarrr"/>
+		<voice sentence="Knorrrrrr"/>
+	</voices>
 	<loot>
 		<item id="2213" chance="1000"/><!-- dwarven ring -->
 		<item id="2148" countmax="96" chance="35000"/><!-- gold coin -->
