@@ -158,7 +158,11 @@ void addXMLProperty(xmlNodePtr p, const std::string& tag, T val)
 	xmlSetProp(p, (const xmlChar*)tag.c_str(), (const xmlChar*)os.str().c_str());
 }
 
-template <>
+void addXMLProperty(xmlNodePtr p, const std::string& tag, const char* val)
+{
+	xmlSetProp(p, (const xmlChar*)tag.c_str(), (const xmlChar*)val);
+}
+
 void addXMLProperty(xmlNodePtr p, const std::string& tag, const std::string& val)
 {
 	xmlSetProp(p, (const xmlChar*)tag.c_str(), (const xmlChar*)val.c_str());
