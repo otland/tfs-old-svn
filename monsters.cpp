@@ -442,22 +442,18 @@ bool Monsters::deserializeSpell(xmlNodePtr node, spellBlock_t& sb, const std::st
 		std::string tmpName = asLowerCaseString(name);
 		if(tmpName == "melee")
 		{
-			int attack = 0;
-			int skill = 0;
 			sb.isMelee = true;
-			if(readXMLInteger(node, "attack", attack))
+
+			int attack, skill;
+			if(readXMLInteger(node, "attack", attack) && readXMLInteger(node, "skill", skill))
 			{
-				if(readXMLInteger(node, "skill", skill))
-				{
-					sb.minCombatValue = 0;
-					sb.maxCombatValue = -Weapons::getMaxMeleeDamage(skill, attack);
-				}
+				sb.minCombatValue = 0;
+				sb.maxCombatValue = -Weapons::getMaxMeleeDamage(skill, attack);
 			}
 
 			ConditionType_t conditionType = CONDITION_NONE;
 			int32_t minDamage = 0;
 			int32_t maxDamage = 0;
-			int32_t startDamage = 0;
 			uint32_t tickInterval = 2000;
 
 			if(readXMLInteger(node, "fire", intValue))
@@ -527,7 +523,7 @@ bool Monsters::deserializeSpell(xmlNodePtr node, spellBlock_t& sb, const std::st
 
 			if(conditionType != CONDITION_NONE)
 			{
-				Condition* condition = getDamageCondition(conditionType, maxDamage, minDamage, startDamage, tickInterval);
+				Condition* condition = getDamageCondition(conditionType, maxDamage, minDamage, 0, tickInterval);
 				combat->setCondition(condition);
 			}
 

@@ -212,6 +212,9 @@ Player::~Player()
 
 	setWriteItem(NULL);
 	setEditHouse(NULL);
+
+	delete accountManager;
+
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
 	playerCount--;
 #endif

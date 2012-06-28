@@ -97,7 +97,7 @@ class NpcEventsHandler
 		virtual void onPlayerEndTrade(const Player* player) {}
 		virtual void onThink() {}
 
-		bool isLoaded();
+		bool isLoaded() const;
 
 	protected:
 		Npc* m_npc;
@@ -503,7 +503,7 @@ class Npc : public Creature
 		void doMove(Direction dir);
 		void doTurn(Direction dir);
 		void doMoveTo(Position pos);
-		bool isLoaded(){return loaded;}
+		bool isLoaded() const {return loaded;}
 		virtual void setMasterPos(const Position& pos, uint32_t radius = 1)
 		{
 			masterPos = pos;

@@ -644,8 +644,7 @@ Item(_type)
 
 Door::~Door()
 {
-	if(accessList)
-		delete accessList;
+	delete accessList;
 }
 
 Attr_ReadValue Door::readAttr(AttrTypes_t attr, PropStream& propStream)

@@ -114,7 +114,7 @@ class QTreeNode
 		QTreeNode();
 		virtual ~QTreeNode();
 
-		bool isLeaf(){return m_isLeaf;}
+		bool isLeaf() const {return m_isLeaf;}
 		QTreeLeafNode* getLeaf(uint32_t x, uint32_t y);
 		static QTreeLeafNode* getLeafStatic(QTreeNode* root, uint32_t x, uint32_t y);
 		QTreeLeafNode* createLeaf(uint32_t x, uint32_t y, uint32_t level);

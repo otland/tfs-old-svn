@@ -298,9 +298,7 @@ class Combat
 		bool setParam(CombatParam_t param, uint32_t value);
 		void setArea(AreaCombat* _area)
 		{
-			if(area)
-				delete area;
-
+			delete area;
 			area = _area;
 		}
 		bool hasArea() const {return area != NULL;}

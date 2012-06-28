@@ -46,9 +46,9 @@ class ChatChannel
 		bool talk(Player* fromPlayer, SpeakClasses type, const std::string& text);
 		void sendToAll(std::string message, SpeakClasses type);
 
-		const std::string& getName() {return m_name;}
-		uint16_t getId() {return m_id;}
-		const UsersMap& getUsers() {return m_users;}
+		const std::string& getName() const {return m_name;}
+		uint16_t getId() const {return m_id;}
+		const UsersMap& getUsers() const {return m_users;}
 
 		virtual uint32_t getOwner() {return 0;}
 

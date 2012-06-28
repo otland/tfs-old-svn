@@ -164,7 +164,7 @@ class NetworkMessage
 
 		int32_t decodeHeader();
 
-		bool isOverrun() { return m_overrun; }
+		bool isOverrun() const { return m_overrun; }
 
 		char* getBuffer() { return (char*)&m_MsgBuf[0]; }
 		char* getBodyBuffer() { m_ReadPos = 2; return (char*)&m_MsgBuf[header_length]; }
@@ -175,7 +175,7 @@ class NetworkMessage
 #endif
 
 	protected:
-		inline bool canAdd(uint32_t size)
+		inline bool canAdd(uint32_t size) const
 		{
 			return (size + m_ReadPos < max_body_length);
 		}

@@ -273,7 +273,7 @@ float box_muller(float m, float s)
 	// normal random variate generator
 	// mean m, standard deviation s
 
-	float x1, x2, w, y1;
+	float y1;
 	static float y2;
 	static int use_last = 0;
 
@@ -284,6 +284,7 @@ float box_muller(float m, float s)
 	}
 	else
 	{
+		float x1, x2, w;
 		do
 		{
 			double r1 = (((float)(rand()) / RAND_MAX));

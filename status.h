@@ -74,7 +74,6 @@ class Status
 
 		void addPlayer();
 		void removePlayer();
-		bool hasSlot() const;
 
 		std::string getStatusString() const;
 		void getInfo(uint32_t requestedInfo, OutputMessage_ptr output, NetworkMessage& msg) const;

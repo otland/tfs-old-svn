@@ -63,7 +63,6 @@ bool Vocations::loadFromXml()
 		{
 			std::string str;
 			int32_t intVal;
-			float floatVal;
 			if(xmlStrcmp(p->name, (const xmlChar*)"vocation") == 0)
 			{
 				Vocation* voc = new Vocation();
@@ -71,6 +70,8 @@ bool Vocations::loadFromXml()
 				xmlNodePtr configNode;
 				if(readXMLInteger(p, "id", intVal))
 				{
+					float floatVal;
+
 					voc_id = intVal;
 					if(readXMLString(p, "name", str))
 						voc->name = str;

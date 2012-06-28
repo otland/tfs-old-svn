@@ -72,7 +72,7 @@ class Raids
 		void clear();
 		bool reload();
 
-		bool isLoaded() {return loaded;}
+		bool isLoaded() const {return loaded;}
 		bool isStarted() {return started;}
 
 		Raid* getRunning() {return running;}
@@ -113,7 +113,7 @@ class Raid
 
 		void addEvent(RaidEvent* event);
 
-		bool isLoaded() {return loaded;}
+		bool isLoaded() const {return loaded;}
 		uint64_t getMargin() {return margin;}
 		uint32_t getInterval() {return interval;}
 

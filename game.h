@@ -124,16 +124,15 @@ class Game
 		  * \param width width of the map
 		  * \param height height of the map
 		  */
-		void getMapDimensions(uint32_t& width, uint32_t& height)
+		void getMapDimensions(uint32_t& width, uint32_t& height) const
 		{
 			width = map->mapWidth;
 			height = map->mapHeight;
-			return;
 		}
 
 		void setWorldType(WorldType_t type);
 		WorldType_t getWorldType() const {return worldType;}
-		int32_t getInFightTicks() {return inFightTicks;}
+		int32_t getInFightTicks() const {return inFightTicks;}
 
 		Cylinder* internalGetCylinder(Player* player, const Position& pos);
 		Thing* internalGetThing(Player* player, const Position& pos, int32_t index,
@@ -258,7 +257,7 @@ class Game
 		uint32_t getMonstersOnline() {return (uint32_t)Monster::listMonster.list.size();}
 		uint32_t getNpcsOnline() {return (uint32_t)Npc::listNpc.list.size();}
 		uint32_t getCreaturesOnline() {return (uint32_t)listCreature.list.size();}
-		uint32_t getLastPlayersRecord() {return lastPlayersRecord;}
+		uint32_t getLastPlayersRecord() const {return lastPlayersRecord;}
 
 		void getWorldLightInfo(LightInfo& lightInfo);
 
@@ -529,7 +528,7 @@ class Game
 		void resetCommandTag();
 
 		void startDecay(Item* item);
-		int32_t getLightHour() {return lightHour;}
+		int32_t getLightHour() const {return lightHour;}
 		bool npcSpeakToPlayer(Npc* npc, Player* player, const std::string& text, bool publicize);
 
 		bool loadExperienceStages();

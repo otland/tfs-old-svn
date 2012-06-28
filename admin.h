@@ -143,14 +143,14 @@ class AdminProtocolConfig
 
 		bool loadXMLConfig();
 
-		bool isEnabled();
+		bool isEnabled() const;
 
-		bool onlyLocalHost();
+		bool onlyLocalHost() const;
 		bool addConnection();
 		void removeConnection();
 
-		bool requireLogin();
-		bool requireEncryption();
+		bool requireLogin() const;
+		bool requireEncryption() const;
 
 		uint16_t getProtocolPolicy();
 		uint32_t getProtocolOptions();

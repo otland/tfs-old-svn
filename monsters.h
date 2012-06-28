@@ -154,7 +154,7 @@ class Monsters
 		~Monsters();
 
 		bool loadFromXml(bool reloading = false);
-		bool isLoaded(){return loaded;}
+		bool isLoaded() const {return loaded;}
 		bool reload();
 
 		MonsterType* getMonsterType(const std::string& name);

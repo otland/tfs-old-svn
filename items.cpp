@@ -140,6 +140,7 @@ ItemType::ItemType()
 ItemType::~ItemType()
 {
 	delete condition;
+	delete abilities;
 }
 
 Items::Items() // : items(35000)
@@ -1170,11 +1171,11 @@ bool Items::parseItemNode(xmlNodePtr itemNode, uint32_t id)
 			{
 				it.group = ITEM_GROUP_MAGICFIELD;
 				it.type = ITEM_TYPE_MAGICFIELD;
-				CombatType_t combatType = COMBAT_NONE;
-				ConditionDamage* conditionDamage = NULL;
-
 				if(readXMLString(itemAttributesNode, "value", strValue))
 				{
+					CombatType_t combatType = COMBAT_NONE;
+					ConditionDamage* conditionDamage = NULL;
+
 					tmpStrValue = asLowerCaseString(strValue);
 					if(tmpStrValue == "fire")
 					{

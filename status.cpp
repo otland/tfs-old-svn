@@ -305,11 +305,6 @@ void Status::getInfo(uint32_t requestedInfo, OutputMessage_ptr output, NetworkMe
 	return;
 }
 
-bool Status::hasSlot() const
-{
-	return m_playersOnline < m_playersMax;
-}
-
 uint64_t Status::getUptime() const
 {
 	return (OTSYS_TIME() - m_start) / 1000;

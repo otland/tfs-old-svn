@@ -1323,7 +1323,6 @@ ReturnValue Game::internalMoveItem(Cylinder* fromCylinder, Cylinder* toCylinder,
 		return retMaxCount;
 
 	uint32_t m = 0;
-	uint32_t n = 0;
 
 	if(item->isStackable())
 		m = std::min((uint32_t)count, maxQueryCount);
@@ -1346,12 +1345,15 @@ ReturnValue Game::internalMoveItem(Cylinder* fromCylinder, Cylinder* toCylinder,
 	//update item(s)
 	if(item->isStackable())
 	{
+		uint32_t n;
 		if(toItem && toItem->getID() == item->getID())
 		{
 			n = std::min((uint32_t)100 - toItem->getItemCount(), m);
 			toCylinder->__updateThing(toItem, toItem->getID(), toItem->getItemCount() + n);
 			updateItem = toItem;
 		}
+		else
+			n = 0;
 
 		int32_t count = m - n;
 		if(count > 0)
@@ -3607,7 +3609,7 @@ bool Game::playerSpeakToNpc(Player* player, const std::string& text)
 	for(it = list.begin(); it != list.end(); ++it)
 	{
 		if((tmpNpc = (*it)->getNpc()))
-			(*it)->onCreatureSay(player, SPEAK_PRIVATE_PN, text);
+			tmpNpc->onCreatureSay(player, SPEAK_PRIVATE_PN, text);
 	}
 	return true;
 }

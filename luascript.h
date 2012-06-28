@@ -99,15 +99,15 @@ class ScriptEnvironment
 		bool setCallbackId(int32_t callbackId, LuaScriptInterface* scriptInterface);
 		void setEventDesc(const std::string& desc) {m_eventdesc = desc;}
 
-		std::string getEventDesc() {return m_eventdesc;}
-		int32_t getScriptId() {return m_scriptId;}
-		int32_t getCallbackId() {return m_callbackId;}
+		std::string getEventDesc() const {return m_eventdesc;}
+		int32_t getScriptId() const {return m_scriptId;}
+		int32_t getCallbackId() const {return m_callbackId;}
 		LuaScriptInterface* getScriptInterface() {return m_interface;}
 
 		void setTimerEvent() {m_timerEvent = true;}
 		void resetTimerEvent() {m_timerEvent = false;}
 
-		void getEventInfo(int32_t& scriptId, std::string& desc, LuaScriptInterface*& scriptInterface, int32_t& callbackId, bool& timerEvent);
+		void getEventInfo(int32_t& scriptId, std::string& desc, LuaScriptInterface*& scriptInterface, int32_t& callbackId, bool& timerEvent) const;
 
 		static void addTempItem(ScriptEnvironment* env, Item* item);
 		static void removeTempItem(ScriptEnvironment* env, Item* item);
@@ -125,7 +125,7 @@ class ScriptEnvironment
 		bool getGlobalStorageValue(const uint32_t key, int32_t& value) const;
 
 		void setRealPos(const Position& realPos) {m_realPos = realPos;}
-		Position getRealPos() {return m_realPos;}
+		Position getRealPos() const {return m_realPos;}
 
 		void setNpc(Npc* npc) {m_curNpc = npc;}
 		Npc* getNpc() const {return m_curNpc;}
@@ -298,7 +298,7 @@ class LuaScriptInterface
 
 		static void reportError(const char* function, const std::string& error_desc, bool stack_trace = false);
 
-		std::string getInterfaceName() {return m_interfaceName;}
+		std::string getInterfaceName() const {return m_interfaceName;}
 		const std::string& getLastLuaError() const {return m_lastLuaError;}
 
 		lua_State* getLuaState() {return m_luaState;}

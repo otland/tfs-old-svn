@@ -270,7 +270,7 @@ class Player : public Creature, public Cylinder
 		bool getNoMove() const {return mayNotMove;}
 
 		bool isAccountManager() const {return accountManager != NULL;}
-		void setAccountManager() {accountManager = new AccountManager();}
+		void setAccountManager() { if(accountManager == NULL) accountManager = new AccountManager();}
 		AccountManager* getAccountManager() const {return accountManager;}
 
 		bool isInGhostMode() const {return ghostMode;}

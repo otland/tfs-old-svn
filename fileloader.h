@@ -115,7 +115,7 @@ class FileLoader
 		void endNode();
 		int32_t setProps(void* data, uint16_t size);
 
-		int32_t getError() {return m_lastError;}
+		int32_t getError() const {return m_lastError;}
 		void clearError() {m_lastError = ERROR_NONE;}
 
 	protected:
@@ -199,7 +199,7 @@ class PropStream
 			end = a + size;
 		}
 
-		uint64_t size(){return end-p;}
+		uint64_t size() const {return end - p;}
 
 		template <typename T>
 		inline bool GET_STRUCT(T* &ret)
