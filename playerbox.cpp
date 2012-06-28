@@ -69,9 +69,10 @@ PlayerBox::~PlayerBox()
 void PlayerBox::updatePlayersOnline()
 {
 	int32_t playersOnline = SendMessage(list, CB_GETCOUNT, 0, 0);
-	char playersOnlineBuffer[50];
-	sprintf(playersOnlineBuffer, "%d player%s online", playersOnline, (playersOnline != 1 ? "s" : ""));
-	SendMessage(online, WM_SETTEXT, 0, (LPARAM)playersOnlineBuffer);
+
+	std::stringstream ss;
+	ss << playersOnline << " player" << (playersOnline != 1 ? "s" : "") << " online";
+	SendMessage(online, WM_SETTEXT, 0, (LPARAM)ss.str());
 }
 
 void PlayerBox::addPlayer(Player* player)
@@ -95,14 +96,15 @@ LRESULT CALLBACK PlayerBox::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPAR
 		case WM_CREATE:
 		{
 			int32_t playersOnline = g_game.getPlayersOnline();
-			char playersOnlineBuffer[50];
-			sprintf(playersOnlineBuffer, "%d player%s online", playersOnline, (playersOnline != 1 ? "s" : ""));
+
+			std::stringstream ss;
+			ss << playersOnline << " player" << (playersOnline != 1 ? "s" : "") << " online";
 			m_hInst = GetModuleHandle(NULL);
 			
 			permBan = CreateWindowEx(0, "button", "Permanently Ban", WS_VISIBLE | WS_CHILD | WS_TABSTOP, 5, 35, 115, 25, hWnd, NULL, m_hInst, NULL);
 			kick = CreateWindowEx(0, "button", "Kick", WS_VISIBLE | WS_CHILD | WS_TABSTOP, 125, 35, 90, 25, hWnd, NULL, m_hInst, NULL);
 			list = CreateWindowEx(0, "combobox", "", WS_CHILD | WS_VISIBLE | WS_VSCROLL/* | CBS_DROPDOWNLIST*/ | CBS_SORT, 5, 5, 210, 25, hWnd, NULL, m_hInst, NULL);
-			online = CreateWindowEx(WS_EX_STATICEDGE, "static", playersOnlineBuffer, WS_VISIBLE | WS_CHILD | WS_TABSTOP, 5, 65, 210, 20, hWnd, NULL, m_hInst, NULL);
+			online = CreateWindowEx(WS_EX_STATICEDGE, "static", ss.str(), WS_VISIBLE | WS_CHILD | WS_TABSTOP, 5, 65, 210, 20, hWnd, NULL, m_hInst, NULL);
 			
 			SendMessage(permBan, WM_SETFONT, (WPARAM)GUI::getInstance()->m_font, 0);
 			SendMessage(kick, WM_SETFONT, (WPARAM)GUI::getInstance()->m_font, 0);
@@ -125,9 +127,9 @@ LRESULT CALLBACK PlayerBox::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPAR
 					Player* player = g_game.getPlayerByName(name);
 					if(player)
 					{
-						char buffer[150];
-						sprintf(buffer, "Are you sure you want to %s %s?", ((HWND)lParam == kick ? "kick" : "permanently ban"), player->getName().c_str());
-						if(MessageBoxA(hWnd, buffer, "Player List", MB_YESNO) == IDYES)
+						std::stringstream ss;
+						ss << "Are you sure you want to " << ((HWND)lParam == kick ? "kick" : "permanently ban") << " " << player->getName() << "?";
+						if(MessageBoxA(hWnd, ss.str(), "Player List", MB_YESNO) == IDYES)
 						{
 							player = g_game.getPlayerByName(name);
 							if(player)

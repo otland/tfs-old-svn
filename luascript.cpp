@@ -5224,9 +5224,9 @@ int32_t LuaScriptInterface::luaSetCombatCallBack(lua_State* L)
 	CallBack* callback = combat->getCallback(key);
 	if(!callback)
 	{
-		char buffer[80];
-		sprintf(buffer, "%d is not a valid callback key.", key);
-		reportErrorFunc(buffer);
+		std::stringstream ss;
+		ss << key << " is not a valid callback key.";
+		reportErrorFunc(ss.str());
 		lua_pushboolean(L, false);
 		return 1;
 	}

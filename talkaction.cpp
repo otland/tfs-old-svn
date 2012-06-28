@@ -158,9 +158,9 @@ int32_t TalkAction::executeSay(Creature* creature, const std::string& words, con
 		ScriptEnvironment* env = m_scriptInterface->getScriptEnv();
 
 		#ifdef __DEBUG_LUASCRIPTS__
-		char desc[125];
-		sprintf(desc, "%s - %s- %s", creature->getName().c_str(), words.c_str(), param.c_str());
-		env->setEventDesc(desc);
+		std::stringstream;
+		ss << creature->getName() << " - " << words << "- " << param;
+		env->setEventDesc(ss.str());
 		#endif
 
 		env->setScriptId(m_scriptId, m_scriptInterface);

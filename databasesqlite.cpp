@@ -199,20 +199,23 @@ std::string DatabaseSQLite::escapePatternString(const std::string &s)
 
 std::string DatabaseSQLite::escapeBlob(const char* s, uint32_t length)
 {
-	std::string buf = "x'";
+	static const char* const hexLookup = "0123456789abcdef";
 
-	char* hex = new char[2 + 1]; //need one extra byte for null-character
-
+	const uint32_t size = (length * 2) + 3;
+	char* blob = new char[size];
+	strcpy(blob, "x'");
+	uint32_t cursor = 1;
 	for(uint32_t i = 0; i < length; ++i)
 	{
-		sprintf(hex, "%02x", ((unsigned char)s[i]));
-		buf += hex;
+		const char c = s[i];
+		blob[++cursor] = hexLookup[c >> 4];
+		blob[++cursor] = hexLookup[c & 15];
 	}
+	blob[size - 1] = '\'';
 
-	delete[] hex;
-
-	buf += "'";
-	return buf;
+	std::string str(blob, size);
+	delete[] blob;
+	return str;
 }
 
 void DatabaseSQLite::freeResult(DBResult* res)

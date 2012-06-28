@@ -190,7 +190,7 @@ bool utf8ToLatin1(char* intext, std::string& outtext)
 		return false;
 
 	int32_t outlen = inlen * 2;
-	unsigned char* outbuf = new uint8_t[outlen];
+	unsigned char* outbuf = new uint8_t[outlen + 1];
 	int32_t res = UTF8Toisolat1(outbuf, &outlen, (unsigned char*)intext, &inlen);
 	if(res < 0)
 	{
@@ -570,31 +570,46 @@ std::string parseParams(tokenizer::iterator &it, tokenizer::iterator end)
 std::string convertIPToString(uint32_t ip)
 {
 	char buffer[17];
-	sprintf(buffer, "%u.%u.%u.%u", ip & 0xFF, (ip >> 8) & 0xFF, (ip >> 16) & 0xFF, (ip >> 24));
+	int res = sprintf(buffer, "%u.%u.%u.%u", ip & 0xFF, (ip >> 8) & 0xFF, (ip >> 16) & 0xFF, (ip >> 24));
+	if(res < 0)
+		return "";
+
 	return buffer;
 }
 
 std::string formatDate(time_t time)
 {
-	char buffer[21];
+	char buffer[24];
 	const tm* tms = localtime(&time);
+	int res;
 	if(tms)
-		sprintf(buffer, "%02d/%02d/%04d %02d:%02d:%02d", tms->tm_mday, tms->tm_mon + 1, tms->tm_year + 1900, tms->tm_hour, tms->tm_min, tms->tm_sec);
+		res = sprintf(buffer, "%02d/%02d/%04d %02d:%02d:%02d", tms->tm_mday, tms->tm_mon + 1, tms->tm_year + 1900, tms->tm_hour, tms->tm_min, tms->tm_sec);
 	else
-		sprintf(buffer, "UNIX Time : %d", (int32_t)time);
+		res = sprintf(buffer, "UNIX Time : %d", (int32_t)time);
+
+	if(res < 0)
+		return "";
 
 	return buffer;
 }
 
 std::string formatDateShort(time_t time)
 {
-	char buffer[21];
+	char buffer[24];
 	const tm* tms = localtime(&time);
+	int res;
 	if(tms)
-		strftime(buffer, 12, "%d %b %Y", tms);
+	{
+		res = strftime(buffer, 12, "%d %b %Y", tms);
+		if(res == 0)
+			return "";
+	}
 	else
-		sprintf(buffer, "UNIX Time : %d", (int32_t)time);
-
+	{
+		res = sprintf(buffer, "UNIX Time : %d", (int32_t)time);
+		if(res < 0)
+			return "";
+	}
 	return buffer;
 }
 

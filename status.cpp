@@ -150,10 +150,23 @@ void Status::removePlayer()
 	m_playersOnline--;
 }
 
+template <typename T>
+void addXMLProperty(xmlNodePtr p, const std::string& tag, T val)
+{
+	std::ostringstream os;
+	os << val;
+	xmlSetProp(p, (const xmlChar*)tag.c_str(), (const xmlChar*)os.str().c_str());
+}
+
+template <>
+void addXMLProperty(xmlNodePtr p, const std::string& tag, const std::string& val)
+{
+	xmlSetProp(p, (const xmlChar*)tag.c_str(), (const xmlChar*)val.c_str());
+}
+
 std::string Status::getStatusString() const
 {
 	std::string xml;
-	char buffer[90];
 
 	xmlDocPtr doc;
 	xmlNodePtr p, root;
@@ -164,48 +177,41 @@ std::string Status::getStatusString() const
 
 	xmlSetProp(root, (const xmlChar*)"version", (const xmlChar*)"1.0");
 
-	p = xmlNewNode(NULL,(const xmlChar*)"serverinfo");
-	sprintf(buffer, "%u", (uint32_t)getUptime());
-	xmlSetProp(p, (const xmlChar*)"uptime", (const xmlChar*)buffer);
-	xmlSetProp(p, (const xmlChar*)"ip", (const xmlChar*)g_config.getString(ConfigManager::IP).c_str());
-	xmlSetProp(p, (const xmlChar*)"servername", (const xmlChar*)g_config.getString(ConfigManager::SERVER_NAME).c_str()); char send_[30]; sprintf(send_, "%c%c%c %c%c%c%c%c%c%c%c%c %c%c%c%c%c%c", 84, 104, 101, 70, 111, 114, 103, 111, 116, 116, 101, 110, 83, 101, 114, 118, 101, 114);
-	sprintf(buffer, "%d", g_config.getNumber(ConfigManager::LOGIN_PORT));
-	xmlSetProp(p, (const xmlChar*)"port", (const xmlChar*)buffer);
-	xmlSetProp(p, (const xmlChar*)"location", (const xmlChar*)g_config.getString(ConfigManager::LOCATION).c_str());
-	xmlSetProp(p, (const xmlChar*)"url", (const xmlChar*)g_config.getString(ConfigManager::URL).c_str());
-	xmlSetProp(p, (const xmlChar*)"server", (const xmlChar*)send_);
-	xmlSetProp(p, (const xmlChar*)"version", (const xmlChar*)STATUS_SERVER_VERSION);
-	xmlSetProp(p, (const xmlChar*)"client", (const xmlChar*)STATUS_SERVER_PROTOCOL);
+	p = xmlNewNode(NULL, (const xmlChar*)"serverinfo");
+	addXMLProperty(p, "uptime", getUptime());
+	addXMLProperty(p, "ip", g_config.getString(ConfigManager::IP));
+	addXMLProperty(p, "servername", g_config.getString(ConfigManager::SERVER_NAME));
+	addXMLProperty(p, "port", g_config.getNumber(ConfigManager::LOGIN_PORT));
+	addXMLProperty(p, "location", g_config.getString(ConfigManager::LOCATION).c_str());
+	addXMLProperty(p, "url", g_config.getString(ConfigManager::URL).c_str());
+	addXMLProperty(p, "server", STATUS_SERVER_NAME);
+	addXMLProperty(p, "version", STATUS_SERVER_VERSION);
+	addXMLProperty(p, "client", STATUS_SERVER_PROTOCOL);
 	xmlAddChild(root, p);
 
-	p = xmlNewNode(NULL,(const xmlChar*)"owner");
-	xmlSetProp(p, (const xmlChar*)"name", (const xmlChar*)g_config.getString(ConfigManager::OWNER_NAME).c_str());
-	xmlSetProp(p, (const xmlChar*)"email", (const xmlChar*)g_config.getString(ConfigManager::OWNER_EMAIL).c_str());
+	p = xmlNewNode(NULL, (const xmlChar*)"owner");
+	addXMLProperty(p, "name", g_config.getString(ConfigManager::OWNER_NAME));
+	addXMLProperty(p, "email", g_config.getString(ConfigManager::OWNER_EMAIL));
 	xmlAddChild(root, p);
 
 	p = xmlNewNode(NULL,(const xmlChar*)"players");
-	sprintf(buffer, "%u", m_playersOnline);
-	xmlSetProp(p, (const xmlChar*)"online", (const xmlChar*)buffer);
-	sprintf(buffer, "%u", m_playersMax);
-	xmlSetProp(p, (const xmlChar*)"max", (const xmlChar*)buffer);
-	sprintf(buffer, "%u", g_game.getLastPlayersRecord());
-	xmlSetProp(p, (const xmlChar*)"peak", (const xmlChar*)buffer);
+	addXMLProperty(p, "online", m_playersOnline);
+	addXMLProperty(p, "max", m_playersMax);
+	addXMLProperty(p, "peak", g_game.getLastPlayersRecord());
 	xmlAddChild(root, p);
 
 	p = xmlNewNode(NULL,(const xmlChar*)"monsters");
-	sprintf(buffer, "%u", g_game.getMonstersOnline());
-	xmlSetProp(p, (const xmlChar*)"total", (const xmlChar*)buffer);
+	addXMLProperty(p, "total", g_game.getMonstersOnline());
 	xmlAddChild(root, p);
 
-	p = xmlNewNode(NULL,(const xmlChar*)"map");
-	xmlSetProp(p, (const xmlChar*)"name", (const xmlChar*)m_mapName.c_str());
-	xmlSetProp(p, (const xmlChar*)"author", (const xmlChar*)m_mapAuthor.c_str());
 	uint32_t mapWidth, mapHeight;
 	g_game.getMapDimensions(mapWidth, mapHeight);
-	sprintf(buffer, "%u", mapWidth);
-	xmlSetProp(p, (const xmlChar*)"width", (const xmlChar*)buffer);
-	sprintf(buffer, "%u", mapHeight);
-	xmlSetProp(p, (const xmlChar*)"height", (const xmlChar*)buffer);
+
+	p = xmlNewNode(NULL,(const xmlChar*)"map");
+	addXMLProperty(p, "name", m_mapName);
+	addXMLProperty(p, "author", m_mapAuthor);
+	addXMLProperty(p, "width", mapWidth);
+	addXMLProperty(p, "height", mapHeight);
 	xmlAddChild(root, p);
 
 	xmlNewTextChild(root, NULL, (const xmlChar*)"motd", (const xmlChar*)g_config.getString(ConfigManager::MOTD).c_str());
@@ -231,9 +237,10 @@ void Status::getInfo(uint32_t requestedInfo, OutputMessage_ptr output, NetworkMe
 		output->AddByte(0x10);
 		output->AddString(g_config.getString(ConfigManager::SERVER_NAME).c_str());
 		output->AddString(g_config.getString(ConfigManager::IP).c_str());
-		char buffer[10];
-		sprintf(buffer, "%d", g_config.getNumber(ConfigManager::LOGIN_PORT));
-		output->AddString(buffer);
+
+		std::stringstream ss;
+		ss << g_config.getNumber(ConfigManager::LOGIN_PORT);
+		output->AddString(ss.str());
 	}
 
 	if(requestedInfo & REQUEST_OWNER_SERVER_INFO)

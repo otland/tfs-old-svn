@@ -116,9 +116,9 @@ bool Party::leaveParty(Player* player)
 	updatePartyIcons(player);
 	clearPlayerPoints(player);
 
-	char buffer[105];
-	sprintf(buffer, "%s has left the party.", player->getName().c_str());
-	broadcastPartyMessage(MSG_INFO_DESCR, buffer);
+	std::stringstream ss;
+	ss << player->getName() << " has left the party.";
+	broadcastPartyMessage(MSG_INFO_DESCR, ss.str());
 
 	if(missingLeader || disbandParty())
 		disband();
@@ -136,9 +136,9 @@ bool Party::passPartyLeadership(Player* player)
 	if(it != memberList.end())
 		memberList.erase(it);
 
-	char buffer[125];
-	sprintf(buffer, "%s is now the leader of the party.", player->getName().c_str());
-	broadcastPartyMessage(MSG_INFO_DESCR, buffer, true);
+	std::stringstream ss;
+	ss << player->getName() << " is now the leader of the party.";
+	broadcastPartyMessage(MSG_INFO_DESCR, ss.str(), true);
 
 	Player* oldLeader = getLeader();
 	setLeader(player);
@@ -203,12 +203,13 @@ bool Party::removeInvite(Player* player)
 
 void Party::revokeInvitation(Player* player)
 {
-	char buffer[100];
-	sprintf(buffer, "%s has revoked %s invitation.", leader->getName().c_str(), (leader->getSex() == PLAYERSEX_FEMALE ? "her" : "his"));
-	player->sendTextMessage(MSG_INFO_DESCR, buffer);
+	std::stringstream ss;
+	ss << leader->getName() << " has revoked " << (leader->getSex() == PLAYERSEX_FEMALE ? "her" : "his") << " invitation.";
+	player->sendTextMessage(MSG_INFO_DESCR, ss.str());
 
-	sprintf(buffer, "Invitation for %s has been revoked.", player->getName().c_str());
-	getLeader()->sendTextMessage(MSG_INFO_DESCR, buffer);
+	ss.str("");
+	ss << "Invitation for " << player->getName() << " has been revoked.";
+	getLeader()->sendTextMessage(MSG_INFO_DESCR, ss.str());
 
 	removeInvite(player);
 }
@@ -227,12 +228,16 @@ bool Party::invitePlayer(Player* player)
 	player->sendPlayerPartyIcons(getLeader());
 	player->addPartyInvitation(this);
 
-	char buffer[120];
-	sprintf(buffer, "%s has been invited.%s", player->getName().c_str(), (!memberList.size() ? " Open the party channel to communicate with your members." : ""));
-	leader->sendTextMessage(MSG_INFO_DESCR, buffer);
+	std::stringstream ss;
+	ss << player->getName() << " has been invited.";
+	if(!memberList.size())
+		ss << " Open the party channel to communicate with your members.";
 
-	sprintf(buffer, "%s has invited you to %s party.", leader->getName().c_str(), (leader->getSex() == PLAYERSEX_FEMALE ? "her" : "his"));
-	player->sendTextMessage(MSG_INFO_DESCR, buffer);
+	leader->sendTextMessage(MSG_INFO_DESCR, ss.str());
+
+	ss.str("");
+	ss << leader->getName() << " has invited you to " << (leader->getSex() == PLAYERSEX_FEMALE ? "her" : "his") << " party.";
+	player->sendTextMessage(MSG_INFO_DESCR, ss.str());
 	return true;
 }
 

@@ -364,9 +364,9 @@ bool CombatSpell::executeCastSpell(Creature* creature, const LuaVariant& var)
 		ScriptEnvironment* env = m_scriptInterface->getScriptEnv();
 
 		#ifdef __DEBUG_LUASCRIPTS__
-		char desc[60];
-		sprintf(desc, "onCastSpell - %s", creature->getName().c_str());
-		env->setEventDesc(desc);
+		std::stringstream ss;
+		ss << "onCastSpell - " << creature->getName();
+		env->setEventDesc(ss.str());
 		#endif
 
 		env->setScriptId(m_scriptId, m_scriptInterface);
@@ -1282,9 +1282,9 @@ bool InstantSpell::executeCastSpell(Creature* creature, const LuaVariant& var)
 		ScriptEnvironment* env = m_scriptInterface->getScriptEnv();
 
 		#ifdef __DEBUG_LUASCRIPTS__
-		char desc[60];
-		sprintf(desc, "onCastSpell - %s", creature->getName().c_str());
-		env->setEventDesc(desc);
+		std::stringstream ss;
+		ss << "onCastSpell - " << creature->getName();
+		env->setEventDesc(ss.str());
 		#endif
 
 		env->setScriptId(m_scriptId, m_scriptInterface);
@@ -2220,9 +2220,9 @@ bool RuneSpell::executeCastSpell(Creature* creature, const LuaVariant& var)
 		ScriptEnvironment* env = m_scriptInterface->getScriptEnv();
 
 		#ifdef __DEBUG_LUASCRIPTS__
-		char desc[60];
-		sprintf(desc, "onCastSpell - %s", creature->getName().c_str());
-		env->setEventDesc(desc);
+		std::stringstream ss;
+		ss << "onCastSpell - " << creature->getName();
+		env->setEventDesc(ss.str());
 		#endif
 
 		env->setScriptId(m_scriptId, m_scriptInterface);

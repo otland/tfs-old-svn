@@ -293,22 +293,24 @@ bool Commands::exeCommand(Creature* creature, const std::string& cmd)
 	if(command->logged)
 	{
 		player->sendTextMessage(MSG_STATUS_CONSOLE_RED, cmd.c_str());
-		time_t ticks = time(NULL);
-		const tm* now = localtime(&ticks);
-		char buf[32], buffer[100];
-		strftime(buf, sizeof(buf), "%d/%m/%Y %H:%M", now);
 		if(dirExists("data/logs") || createDir("data/logs"))
-			sprintf(buffer, "data/logs/%s commands.log", player->name.c_str());
+		{
+			std::stringstream ss;
+			ss << "data/logs/" << player->getName() << " commands.log";
+
+			std::ofstream out(ss.str(), std::ios::app);
+
+			time_t ticks = time(NULL);
+			const tm* now = localtime(&ticks);
+			char buf[32];
+			strftime(buf, sizeof(buf), "%d/%m/%Y %H:%M", now);
+
+			out << "[" << buf << "] " << cmd << std::endl;
+
+			out.close();
+		}
 		else
 			std::cout << "[Warning - Commands::exeCommand] Cannot access \"data/logs\" for writing: " << strerror(errno) << "." << std::endl;
-
-		//avoid seg fault from std::ofstream just incase the directory does not exist
-		if(*buffer == '\0')
-			return true;
-
-		std::ofstream out(buffer, std::ios::app);
-		out << "[" << buf << "] " << cmd << std::endl;
-		out.close();
 	}
 	return true;
 }
@@ -431,9 +433,9 @@ void Commands::teleportHere(Player* player, const std::string& cmd, const std::s
 		Position newPosition = g_game.getClosestFreeTile(player, paramCreature, player->getPosition(), false);
 		if(newPosition.x == 0)
 		{
-			char buffer[100];
-			sprintf(buffer, "You can not teleport %s to you.", paramCreature->getName().c_str());
-			player->sendCancel(buffer);
+			std::stringstream ss;
+			ss << "You can not teleport " << paramCreature->getName() << std::endl;
+			player->sendCancel(ss.str());
 		}
 		else if(g_game.internalTeleport(paramCreature, newPosition) == RET_NOERROR)
 		{
@@ -532,17 +534,17 @@ void Commands::subtractMoney(Player* player, const std::string& cmd, const std::
 {
 	int32_t count = atoi(param.c_str());
 	uint32_t money = g_game.getMoney(player);
-	if(!count)
+	if(count <= 0)
 	{
-		char info[50];
-		sprintf(info, "You have %u gold.", money);
-		player->sendCancel(info);
+		std::stringstream ss;
+		ss << "You have " << money << " gold.";
+		player->sendCancel(ss.str());
 	}
 	else if(count > (int32_t)money)
 	{
-		char info[80];
-		sprintf(info, "You have %u gold and is not sufficient.", money);
-		player->sendCancel(info);
+		std::stringstream ss;
+		ss << "You have " << money << " gold which is not sufficient.";
+		player->sendCancel(ss.str());
 	}
 	else if(!g_game.removeMoney(player, count))
 		player->sendCancel("Can not subtract money!");
@@ -682,9 +684,9 @@ void Commands::teleportTo(Player* player, const std::string& cmd, const std::str
 		}
 		else
 		{
-			char buffer[100];
-			sprintf(buffer, "You can not teleport to %s.", paramCreature->getName().c_str());
-			player->sendCancel(buffer);
+			std::stringstream ss;
+			ss << "You can not teleport to " << paramCreature->getName() << ".";
+			player->sendCancel(ss.str());
 		}
 	}
 }
@@ -1199,13 +1201,14 @@ void Commands::joinGuild(Player* player, const std::string& cmd, const std::stri
 
 	player->sendTextMessage(MSG_INFO_DESCR, "You have joined the guild.");
 	IOGuild::getInstance()->joinGuild(player, guildId);
-	char buffer[80];
-	sprintf(buffer, "%s has joined the guild.", player->name.c_str());
 
 	ChatChannel* guildChannel = g_chat.getChannel(player, CHANNEL_GUILD);
 	if(guildChannel)
-		guildChannel->sendToAll(buffer, SPEAK_CHANNEL_R1);
-
+	{
+		std::stringstream ss;
+		ss << player->getName() << " has joined the guild.";
+		guildChannel->sendToAll(ss.str(), SPEAK_CHANNEL_R1);
+	}
 	player->setGuildWarList(IOGuild::getInstance()->getWarList(player->getGuildId()));
 }
 
@@ -1260,9 +1263,9 @@ void Commands::createGuild(Player* player, const std::string& cmd, const std::st
 		return;
 	}
 
-	char buffer[80];
-	sprintf(buffer, "You have formed the guild: %s!", param.c_str());
-	player->sendTextMessage(MSG_INFO_DESCR, buffer);
+	std::stringstream ss;
+	ss << "You have formed the guild: " << param << "!";
+	player->sendTextMessage(MSG_INFO_DESCR, ss.str());
 	player->setGuildName(param);
 
 	IOGuild::getInstance()->createGuild(player);
@@ -1324,25 +1327,25 @@ void Commands::unban(Player* player, const std::string& cmd, const std::string& 
 	{
 		if(IOBan::getInstance()->removeAccountBan(accountNumber))
 		{
-			char buffer[70];
-			sprintf(buffer, "%s has been unbanned.", name.c_str());
-			player->sendTextMessage(MSG_INFO_DESCR, buffer);
+			std::stringstream ss;
+			ss << name << " has been unbanned.";
+			player->sendTextMessage(MSG_INFO_DESCR, ss.str());
 		}
 	}
 	else if(deleted)
 	{
 		if(IOBan::getInstance()->removeAccountDeletion(accountNumber))
 		{
-			char buffer[70];
-			sprintf(buffer, "%s has been undeleted.", name.c_str());
-			player->sendTextMessage(MSG_INFO_DESCR, buffer);
+			std::stringstream ss;
+			ss << name << " has been undeleted.";
+			player->sendTextMessage(MSG_INFO_DESCR, ss.str());
 		}
 	}
 	else if(removedIPBan)
 	{
-		char buffer[80];
-		sprintf(buffer, "IPBan on %s has been lifted.", name.c_str());
-		player->sendTextMessage(MSG_INFO_DESCR, buffer);
+		std::stringstream ss;
+		ss << "The IP banishment on " << name << " has been lifted.";
+		player->sendTextMessage(MSG_INFO_DESCR, ss.str());
 	}
 	else
 	{
@@ -1354,9 +1357,9 @@ void Commands::unban(Player* player, const std::string& cmd, const std::string& 
 				IOBan::getInstance()->isPlayerNamelocked(name) &&
 				IOBan::getInstance()->removePlayerNamelock(guid))
 			{
-				char buffer[85];
-				sprintf(buffer, "Namelock on %s has been lifted.", name.c_str());
-				player->sendTextMessage(MSG_INFO_DESCR, buffer);
+				std::stringstream ss;
+				ss << "Namelock on " << name << " has been lifted.";
+				player->sendTextMessage(MSG_INFO_DESCR, ss.str());
 				removedNamelock = true;
 			}
 		}

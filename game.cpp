@@ -78,6 +78,7 @@ Game::Game()
 	lastStageLevel = 0;
 	lastPlayersRecord = 0;
 	useLastStageLevel = false;
+	stagesEnabled = false;
 	stateTime = OTSYS_TIME();
 	for(int16_t i = 0; i < 3; i++)
 		serverSaveMessage[i] = false;
@@ -102,8 +103,8 @@ Game::~Game()
 {
 	blacklist.clear();
 	whitelist.clear();
-	if(map)
-		delete map;
+
+	delete map;
 
 	g_scheduler.stopEvent(checkLightEvent);
 	g_scheduler.stopEvent(checkCreatureEvent);
@@ -125,7 +126,7 @@ void Game::start(ServiceManager* servicer)
 		boost::bind(&Game::checkDecay, this)));
 }
 
-GameState_t Game::getGameState()
+GameState_t Game::getGameState() const
 {
 	return gameState;
 }
@@ -2726,9 +2727,9 @@ bool Game::internalStartTrade(Player* player, Player* tradePartner, Item* tradeI
 
 	if(tradePartner->tradeState == TRADE_NONE)
 	{
-		char buffer[100];
-		sprintf(buffer, "%s wants to trade with you", player->getName().c_str());
-		tradePartner->sendTextMessage(MSG_INFO_DESCR, buffer);
+		std::stringstream ss;
+		ss << player->getName() << " wants to trade with you";
+		tradePartner->sendTextMessage(MSG_INFO_DESCR, ss.str());
 		tradePartner->tradeState = TRADE_ACKNOWLEDGE;
 		tradePartner->tradePartner = player;
 	}
@@ -3399,9 +3400,9 @@ bool Game::playerSay(uint32_t playerId, uint16_t channelId, SpeakClasses type,
 	uint32_t muteTime = player->isMuted();
 	if(muteTime > 0)
 	{
-		char buffer[75];
-		sprintf(buffer, "You are still muted for %u seconds.", muteTime);
-		player->sendTextMessage(MSG_STATUS_SMALL, buffer);
+		std::stringstream ss;
+		ss << "You are still muted for " << muteTime << " seconds.";
+		player->sendTextMessage(MSG_STATUS_SMALL, ss.str());
 		return false;
 	}
 
@@ -3553,9 +3554,9 @@ bool Game::playerSpeakTo(Player* player, SpeakClasses type, const std::string& r
 		player->sendTextMessage(MSG_STATUS_SMALL, "A player with this name is not online.");
 	else
 	{
-		char buffer[80];
-		sprintf(buffer, "Message sent to %s.", toPlayer->getName().c_str());
-		player->sendTextMessage(MSG_STATUS_SMALL, buffer);
+		std::stringstream ss;
+		ss << "Message sent to " << toPlayer->getName() << ".";
+		player->sendTextMessage(MSG_STATUS_SMALL, ss.str());
 	}
 	return true;
 }
@@ -4620,7 +4621,7 @@ void Game::checkLight()
 	}
 }
 
-void Game::getWorldLightInfo(LightInfo& lightInfo)
+void Game::getWorldLightInfo(LightInfo& lightInfo) const
 {
 	lightInfo.level = lightLevel;
 	lightInfo.color = 0xD7;
@@ -5132,9 +5133,9 @@ bool Game::playerInviteToParty(uint32_t playerId, uint32_t invitedId)
 
 	if(invitedPlayer->getParty())
 	{
-		char buffer[90];
-		sprintf(buffer, "%s is already in a party.", invitedPlayer->getName().c_str());
-		player->sendTextMessage(MSG_INFO_DESCR, buffer);
+		std::stringstream ss;
+		ss << invitedPlayer->getName() << " is already in a party.";
+		player->sendTextMessage(MSG_INFO_DESCR, ss.str());
 		return false;
 	}
 
@@ -6035,24 +6036,25 @@ bool Game::violationWindow(Player* player, std::string targetPlayerName, int32_t
 		}
 	}
 
-	char buffer[800];
 	if(g_config.getBoolean(ConfigManager::BROADCAST_BANISHMENTS))
 	{
+		std::stringstream ss;
 		if(isNotation)
-			sprintf(buffer, "%s has received a notation by %s (%d more to ban).", targetPlayerName.c_str(), player->getName().c_str(), (3 - IOBan::getInstance()->getNotationsCount(account.id)));
+			ss << targetPlayerName << " has received a notation by " << player->getName() << " (" << (3 - IOBan::getInstance()->getNotationsCount(account.id)) << " more to ban).";
 		else
-			sprintf(buffer, "%s has taken the action \"%s\" against: %s (Warnings: %u), with reason: \"%s\", and comment: \"%s\".", player->getName().c_str(), getAction(action, IPBanishment).c_str(), targetPlayerName.c_str(), account.warnings, getReason(reason).c_str(), banComment.c_str());
+			ss << player->getName() << " has taken the action \"" << getAction(action, IPBanishment) << "\" against: " << targetPlayerName << " (Warnings: " << account.warnings << "), with reason: \"" << getReason(reason) << "\", and comment: \"" << banComment << "\".";
 
-		broadcastMessage(buffer, MSG_STATUS_WARNING);
+		broadcastMessage(ss.str(), MSG_STATUS_WARNING);
 	}
 	else
 	{
+		std::stringstream ss;
 		if(isNotation)
-			sprintf(buffer, "You have taken the action notation against %s (%d more to ban).", targetPlayerName.c_str(), (3 - IOBan::getInstance()->getNotationsCount(account.id)));
+			ss << "You have taken the action notation against " << targetPlayerName << " (" << (3 - IOBan::getInstance()->getNotationsCount(account.id)) << " more to ban).";
 		else
-			sprintf(buffer, "You have taken the action \"%s\" against: %s (Warnings: %u), with reason: \"%s\", and comment: \"%s\".", getAction(action, IPBanishment).c_str(), targetPlayerName.c_str(), account.warnings, getReason(reason).c_str(), banComment.c_str());
+			ss << "You have taken the action \"" << getAction(action, IPBanishment) << "\" against: " << targetPlayerName << " (Warnings: " << account.warnings << "), with reason: \"" << getReason(reason) << "\", and comment: \"" << banComment << "\".";
 
-		player->sendTextMessage(MSG_STATUS_CONSOLE_RED, buffer);
+		player->sendTextMessage(MSG_STATUS_CONSOLE_RED, ss.str());
 	}
 
 	if(targetPlayer)

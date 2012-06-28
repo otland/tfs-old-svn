@@ -125,21 +125,21 @@ void House::setHouseOwner(uint32_t guid, Player* player/* = NULL*/)
 
 void House::updateDoorDescription()
 {
-	char houseDescription[200];
+	std::stringstream ss;
 	if(houseOwner != 0)
-		sprintf(houseDescription, "It belongs to house '%s'. %s owns this house.", houseName.c_str(), houseOwnerName.c_str());
+		ss << "It belongs to house '" << houseName << "'. " << houseOwnerName << " owns this house.";
 	else
 	{
 		int32_t housePrice = 0;
 		for(HouseTileList::iterator it = getHouseTileBegin(), end = getHouseTileEnd(); it != end; ++it)
 			housePrice += g_config.getNumber(ConfigManager::HOUSE_PRICE);
 
-		sprintf(houseDescription, "It belongs to house '%s'. Nobody owns this house. It costs %d gold coins.", houseName.c_str(), housePrice);
+		ss << "It belongs to house '" << houseName << "'. Nobody owns this house. It costs " << housePrice << " gold coins.";
 	}
 
 	HouseDoorList::iterator it;
 	for(it = doorList.begin(); it != doorList.end(); ++it)
-		(*it)->setSpecialDescription(houseDescription);
+		(*it)->setSpecialDescription(ss.str());
 }
 
 AccessHouseLevel_t House::getHouseAccessLevel(const Player* player)
@@ -440,9 +440,9 @@ HouseTransferItem* HouseTransferItem::createHouseTransferItem(House* house)
 	transferItem->useThing2();
 	transferItem->setID(ITEM_DOCUMENT_RO);
 	transferItem->setSubType(1);
-	char buffer[150];
-	sprintf(buffer, "It is a house transfer document for '%s'.", house->getName().c_str());
-	transferItem->setSpecialDescription(buffer);
+	std::stringstream ss;
+	ss << "It is a house transfer document for '" << house->getName() << "'.";
+	transferItem->setSpecialDescription(ss.str());
 	return transferItem;
 }
 

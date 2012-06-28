@@ -323,9 +323,9 @@ uint32_t GlobalEvent::executeRecord(uint32_t current, uint32_t old)
 		ScriptEnvironment* env = m_scriptInterface->getScriptEnv();
 
 		#ifdef __DEBUG_LUASCRIPTS__
-		char desc[125];
-		sprintf(desc, "%s - %i to %i", getName().c_str(), old, current);
-		env->setEventDesc(desc);
+		std::stringstream ss;
+		ss << getName() << " - " << old << " to " << current;
+		env->setEventDesc(ss.str());
 		#endif
 
 		env->setScriptId(m_scriptId, m_scriptInterface);

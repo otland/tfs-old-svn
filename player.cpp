@@ -1927,9 +1927,9 @@ void Player::removeMessageBuffer()
 			Condition* condition = Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_MUTED, muteTime * 1000, 0);
 			addCondition(condition);
 
-			char buffer[50];
-			sprintf(buffer, "You are muted for %u seconds.", muteTime);
-			sendTextMessage(MSG_STATUS_SMALL, buffer);
+			std::stringstream ss;
+			ss << "You are muted for " << muteTime << " seconds.";
+			sendTextMessage(MSG_STATUS_SMALL, ss.str());
 		}
 	}
 }
@@ -2068,10 +2068,11 @@ void Player::addExperience(uint64_t exp, bool useMult/* = false*/, bool sendText
 		if(getParty())
 			getParty()->updateSharedExperience();
 
-		char levelMsg[60];
-		sprintf(levelMsg, "You advanced from Level %d to Level %d.", prevLevel, newLevel);
 		g_creatureEvents->playerAdvance(this, SKILL__LEVEL, prevLevel, newLevel);
-		sendTextMessage(MSG_EVENT_ADVANCE, levelMsg);
+
+		std::stringstream ss;
+		ss << "You advanced from Level " << prevLevel << " to Level " << newLevel << ".";
+		sendTextMessage(MSG_EVENT_ADVANCE, ss.str());
 	}
 
 	uint64_t currLevelExp = Player::getExpForLevel(level);
@@ -2310,9 +2311,9 @@ void Player::death()
 
 		if(newLevel != level)
 		{
-			char lvMsg[90];
-			sprintf(lvMsg, "You were downgraded from Level %u to Level %u.", level, newLevel);
-			sendTextMessage(MSG_EVENT_ADVANCE, lvMsg);
+			std::stringstream ss;
+			ss << "You were downgraded from Level " << level << " to Level " << newLevel << ".";
+			sendTextMessage(MSG_EVENT_ADVANCE, ss.str());
 		}
 
 		uint64_t currLevelExp = Player::getExpForLevel(newLevel);
@@ -2353,12 +2354,13 @@ Item* Player::getCorpse()
 	{
 		Creature* lastHitCreature_ = NULL;
 		Creature* mostDamageCreature = NULL;
-		char buffer[190];
+		std::stringstream ss;
 		if(getKillers(&lastHitCreature_, &mostDamageCreature) && lastHitCreature_)
-			sprintf(buffer, "You recognize %s. %s was killed by %s.", getNameDescription().c_str(), (getSex() == PLAYERSEX_FEMALE ? "She" : "He"), lastHitCreature_->getNameDescription().c_str());
+			ss << "You recognize " << getNameDescription() << ". " << (getSex() == PLAYERSEX_FEMALE ? "She" : "He") << " was killed by " << lastHitCreature_->getNameDescription() << ".";
 		else
-			sprintf(buffer, "You recognize %s.", getNameDescription().c_str());
-		corpse->setSpecialDescription(buffer);
+			ss << "You recognize " << getNameDescription() << ".";
+
+		corpse->setSpecialDescription(ss.str());
 	}
 	return corpse;
 }
@@ -4127,9 +4129,9 @@ void Player::addUnjustifiedDead(const Player* attacked)
 
 	if(client)
 	{
-		char buffer[90];
-		sprintf(buffer, "Warning! The murder of %s was not justified.", attacked->getName().c_str());
-		client->sendTextMessage(MSG_STATUS_WARNING, buffer);
+		std::stringstream ss;
+		ss << "Warning! The murder of " << attacked->getName() << " was not justified.";
+		client->sendTextMessage(MSG_STATUS_WARNING, ss.str());
 	}
 
 	skullTicks += g_config.getNumber(ConfigManager::FRAG_TIME);

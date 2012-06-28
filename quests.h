@@ -38,8 +38,9 @@ class MissionState
 {
 	public:
 		MissionState(std::string _description, int32_t _missionID);
-		int32_t getMissionID() { return missionID; }
-		std::string getMissionDescription() { return description; }
+
+		int32_t getMissionID() const { return missionID; }
+		std::string getMissionDescription() const { return description; }
 
 	private:
 		std::string description;

@@ -154,7 +154,7 @@ class RaidEvent
 class AnnounceEvent : public RaidEvent
 {
 	public:
-		AnnounceEvent() {}
+		AnnounceEvent() { m_messageType = MSG_EVENT_ADVANCE; }
 		virtual ~AnnounceEvent() {}
 
 		virtual bool configureRaidEvent(xmlNodePtr eventNode);

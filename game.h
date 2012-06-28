@@ -259,7 +259,7 @@ class Game
 		uint32_t getCreaturesOnline() {return (uint32_t)listCreature.list.size();}
 		uint32_t getLastPlayersRecord() const {return lastPlayersRecord;}
 
-		void getWorldLightInfo(LightInfo& lightInfo);
+		void getWorldLightInfo(LightInfo& lightInfo) const;
 
 		void getSpectators(SpectatorVec& list, const Position& centerPos, bool checkforduplicate = false, bool multifloor = false,
 			int32_t minRangeX = 0, int32_t maxRangeX = 0,
@@ -490,7 +490,7 @@ class Game
 
 		void sendPublicSquare(Player* sender, SquareColor_t color);
 
-		GameState_t getGameState();
+		GameState_t getGameState() const;
 		void setGameState(GameState_t newState);
 		void saveGameState();
 		void loadGameState();

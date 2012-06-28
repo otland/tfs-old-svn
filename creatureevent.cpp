@@ -262,9 +262,7 @@ uint32_t CreatureEvent::executeOnLogin(Player* player)
 		ScriptEnvironment* env = m_scriptInterface->getScriptEnv();
 
 		#ifdef __DEBUG_LUASCRIPTS__
-		char desc[35];
-		sprintf(desc, "%s", player->getName().c_str());
-		env->setEventDesc(desc);
+		env->setEventDesc(player->getName());
 		#endif
 
 		env->setScriptId(m_scriptId, m_scriptInterface);
@@ -297,9 +295,7 @@ uint32_t CreatureEvent::executeOnLogout(Player* player)
 		ScriptEnvironment* env = m_scriptInterface->getScriptEnv();
 
 		#ifdef __DEBUG_LUASCRIPTS__
-		char desc[35];
-		sprintf(desc, "%s", player->getName().c_str());
-		env->setEventDesc(desc);
+		env->setEventDesc(player->getName());
 		#endif
 
 		env->setScriptId(m_scriptId, m_scriptInterface);
@@ -332,9 +328,7 @@ uint32_t CreatureEvent::executeOnThink(Creature* creature, uint32_t interval)
 		ScriptEnvironment* env = m_scriptInterface->getScriptEnv();
 
 		#ifdef __DEBUG_LUASCRIPTS__
-		char desc[35];
-		sprintf(desc, "%s", creature->getName().c_str());
-		env->setEventDesc(desc);
+		env->setEventDesc(creature->getName());
 		#endif
 
 		env->setScriptId(m_scriptId, m_scriptInterface);
@@ -368,9 +362,7 @@ uint32_t CreatureEvent::executeOnPrepareDeath(Player* player, Creature* killer)
 		ScriptEnvironment* env = m_scriptInterface->getScriptEnv();
 
 		#ifdef __DEBUG_LUASCRIPTS__
-		char desc[35];
-		sprintf(desc, "%s", player->getName().c_str());
-		env->setEventDesc(desc);
+		env->setEventDesc(player->getName());
 		#endif
 
 		env->setScriptId(m_scriptId, m_scriptInterface);
@@ -405,9 +397,7 @@ uint32_t CreatureEvent::executeOnDeath(Creature* creature, Item* corpse, Creatur
 		ScriptEnvironment* env = m_scriptInterface->getScriptEnv();
 
 		#ifdef __DEBUG_LUASCRIPTS__
-		char desc[35];
-		sprintf(desc, "%s", creature->getName().c_str());
-		env->setEventDesc(desc);
+		env->setEventDesc(creature->getName());
 		#endif
 
 		env->setScriptId(m_scriptId, m_scriptInterface);

@@ -533,9 +533,9 @@ bool Weapon::executeUseWeapon(Player* player, const LuaVariant& var) const
 		ScriptEnvironment* env = m_scriptInterface->getScriptEnv();
 
 		#ifdef __DEBUG_LUASCRIPTS__
-		char desc[60];
-		sprintf(desc, "onUseWeapon - %s", player->getName().c_str());
-		env->setEventDesc(desc);
+		std::stringstream ss;
+		ss << "onUseWeapon - " << player->getName();
+		env->setEventDesc(ss.str());
 		#endif
 
 		env->setScriptId(m_scriptId, m_scriptInterface);

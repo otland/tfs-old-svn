@@ -178,9 +178,10 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 
 		//Add MOTD
 		output->AddByte(0x14);
-		char motd[1300];
-		sprintf(motd, "%d\n%s", g_game.getMotdNum(), g_config.getString(ConfigManager::MOTD).c_str());
-		output->AddString(motd);
+
+		std::stringstream ss;
+		ss << g_game.getMotdNum() << "\n" << g_config.getString(ConfigManager::MOTD);
+		output->AddString(ss.str());
 
 		//Add char list
 		output->AddByte(0x64);
