@@ -251,7 +251,7 @@ bool Player::isPushable() const
 
 std::string Player::getDescription(int32_t lookDistance) const
 {
-	std::stringstream s;
+	std::ostringstream s;
 	std::string str;
 	if(lookDistance == -1)
 	{
@@ -644,7 +644,7 @@ void Player::addSkillAdvance(skills_t skill, uint32_t count)
 		skills[skill][SKILL_TRIES] = 0;
 		skills[skill][SKILL_PERCENT] = 0;
 
-		std::stringstream ss;
+		std::ostringstream ss;
 		ss << "You advanced to " << getSkillName(skill) << " level " << skills[skill][SKILL_LEVEL] << ".";
 		sendTextMessage(MSG_EVENT_ADVANCE, ss.str());
 
@@ -1880,7 +1880,7 @@ void Player::onThink(uint32_t interval)
 			kickPlayer(true);
 		else if(client && idleTime == 60000 * g_config.getNumber(ConfigManager::KICK_AFTER_MINUTES))
 		{
-			std::stringstream ss;
+			std::ostringstream ss;
 			ss << "You have been idle for " << g_config.getNumber(ConfigManager::KICK_AFTER_MINUTES) << " minutes. You will be disconnected in one minute if you are still idle then.";
 			client->sendTextMessage(MSG_STATUS_WARNING, ss.str());
 		}
@@ -1927,7 +1927,7 @@ void Player::removeMessageBuffer()
 			Condition* condition = Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_MUTED, muteTime * 1000, 0);
 			addCondition(condition);
 
-			std::stringstream ss;
+			std::ostringstream ss;
 			ss << "You are muted for " << muteTime << " seconds.";
 			sendTextMessage(MSG_STATUS_SMALL, ss.str());
 		}
@@ -1968,7 +1968,7 @@ void Player::addManaSpent(uint64_t amount, bool withMultiplier /*= true*/)
 			magLevel++;
 			manaSpent = 0;
 
-			std::stringstream ss;
+			std::ostringstream ss;
 			ss << "You advanced to magic level " << magLevel << ".";
 			sendTextMessage(MSG_EVENT_ADVANCE, ss.str());
 
@@ -2012,11 +2012,11 @@ void Player::addExperience(uint64_t exp, bool useMult/* = false*/, bool sendText
 	{
 		const Position& targetPos = getPosition();
 
-		std::stringstream ss;
+		std::ostringstream ss;
 		ss << "You gained " << gainExp << " experience points.";
 		sendExperienceMessage(MSG_EXPERIENCE, ss.str(), targetPos, gainExp, TEXTCOLOR_WHITE_EXP);
 
-		std::stringstream ssExp;
+		std::ostringstream ssExp;
 		ssExp << getNameDescription() << " gained " << gainExp << " experience points.";
 		std::string strExp = ssExp.str();
 
@@ -2070,7 +2070,7 @@ void Player::addExperience(uint64_t exp, bool useMult/* = false*/, bool sendText
 
 		g_creatureEvents->playerAdvance(this, SKILL__LEVEL, prevLevel, newLevel);
 
-		std::stringstream ss;
+		std::ostringstream ss;
 		ss << "You advanced from Level " << prevLevel << " to Level " << newLevel << ".";
 		sendTextMessage(MSG_EVENT_ADVANCE, ss.str());
 	}
@@ -2311,7 +2311,7 @@ void Player::death()
 
 		if(newLevel != level)
 		{
-			std::stringstream ss;
+			std::ostringstream ss;
 			ss << "You were downgraded from Level " << level << " to Level " << newLevel << ".";
 			sendTextMessage(MSG_EVENT_ADVANCE, ss.str());
 		}
@@ -2354,7 +2354,7 @@ Item* Player::getCorpse()
 	{
 		Creature* lastHitCreature_ = NULL;
 		Creature* mostDamageCreature = NULL;
-		std::stringstream ss;
+		std::ostringstream ss;
 		if(getKillers(&lastHitCreature_, &mostDamageCreature) && lastHitCreature_)
 			ss << "You recognize " << getNameDescription() << ". " << (getSex() == PLAYERSEX_FEMALE ? "She" : "He") << " was killed by " << lastHitCreature_->getNameDescription() << ".";
 		else
@@ -4129,7 +4129,7 @@ void Player::addUnjustifiedDead(const Player* attacked)
 
 	if(client)
 	{
-		std::stringstream ss;
+		std::ostringstream ss;
 		ss << "Warning! The murder of " << attacked->getName() << " was not justified.";
 		client->sendTextMessage(MSG_STATUS_WARNING, ss.str());
 	}
@@ -4219,7 +4219,7 @@ bool Player::hasLearnedInstantSpell(const std::string& name) const
 
 void Player::manageAccount(const std::string &text)
 {
-	std::stringstream msg;
+	std::ostringstream msg;
 	msg << "Account Manager: ";
 	if(accountManager->namelockedPlayerName != "")
 	{
@@ -4574,7 +4574,7 @@ void Player::manageAccount(const std::string &text)
 			{
 				do
 				{
-					std::stringstream ss;
+					std::ostringstream ss;
 					ss << random_range(2, 9) << random_range(2, 9) << random_range(2, 9) << random_range(2, 9) << random_range(2, 9) << random_range(2, 9) << random_range(2, 9);
 					accountManager->newAccountName = ss.str();
 				}
@@ -4651,7 +4651,7 @@ void Player::manageAccount(const std::string &text)
 		{
 			if(text != "0" && IOLoginData::getInstance()->validRecoveryKey(accountManager->accountManagerInput, text))
 			{
-				std::stringstream ss;
+				std::ostringstream ss;
 				ss << g_config.getString(ConfigManager::SERVER_NAME) << random_range(100, 999);
 				IOLoginData::getInstance()->setNewPassword(accountManager->accountManagerInput, ss.str());
 				msg << "Correct! Your new password is: " << ss.str() << ".";

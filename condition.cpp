@@ -862,7 +862,7 @@ bool ConditionRegeneration::executeCondition(Creature* creature, int32_t interva
 				Player* player = creature->getPlayer();
 				if(player)
 				{
-					std::stringstream ss;
+					std::ostringstream ss;
 					ss << ucfirst(player->getNameDescription()) << " was healed for " << realHealthGain << " hitpoint" << (realHealthGain != 1 ? "s." : ".");
 					std::string message = ss.str();
 
@@ -875,7 +875,7 @@ bool ConditionRegeneration::executeCondition(Creature* creature, int32_t interva
 						{
 							if(tmpPlayer == player)
 							{
-								std::stringstream tmpSs;
+								std::ostringstream tmpSs;
 								tmpSs << "You were healed for " << realHealthGain << " hitpoint" << (realHealthGain != 1 ? "s." : ".");
 								tmpPlayer->sendHealMessage(MSG_HEALED, tmpSs.str(), player->getPosition(), realHealthGain, TEXTCOLOR_MAYABLUE);
 							}

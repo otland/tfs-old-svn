@@ -2631,7 +2631,7 @@ bool Game::playerRequestTrade(uint32_t playerId, const Position& pos, uint8_t st
 
 	if(!Position::areInRange<2,2,0>(tradePartner->getPosition(), player->getPosition()))
 	{
-		std::stringstream ss;
+		std::ostringstream ss;
 		ss << tradePartner->getName() << " tells you to move closer.";
 		player->sendTextMessage(MSG_INFO_DESCR, ss.str());
 		return false;
@@ -2727,7 +2727,7 @@ bool Game::internalStartTrade(Player* player, Player* tradePartner, Item* tradeI
 
 	if(tradePartner->tradeState == TRADE_NONE)
 	{
-		std::stringstream ss;
+		std::ostringstream ss;
 		ss << player->getName() << " wants to trade with you";
 		tradePartner->sendTextMessage(MSG_INFO_DESCR, ss.str());
 		tradePartner->tradeState = TRADE_ACKNOWLEDGE;
@@ -2847,7 +2847,7 @@ bool Game::playerAcceptTrade(uint32_t playerId)
 
 std::string Game::getTradeErrorDescription(ReturnValue ret, Item* item)
 {
-	std::stringstream ss;
+	std::ostringstream ss;
 	if(item)
 	{
 		if(ret == RET_NOTENOUGHCAPACITY)
@@ -2900,7 +2900,7 @@ bool Game::playerLookInTrade(uint32_t playerId, bool lookAtCounterOffer, int ind
 	int32_t lookDistance = std::max(std::abs(playerPosition.x - tradeItemPosition.x),
 		std::abs(playerPosition.y - tradeItemPosition.y));
 
-	std::stringstream ss;
+	std::ostringstream ss;
 	if(index == 0)
 	{
 		ss << "You see " << tradeItem->getDescription(lookDistance);
@@ -3095,7 +3095,7 @@ bool Game::playerLookInShop(uint32_t playerId, uint16_t spriteId, uint8_t count)
 	else
 		subType = count;
 
-	std::stringstream ss;
+	std::ostringstream ss;
 	ss << "You see " << Item::getDescription(it, 1, NULL, subType);
 	player->sendTextMessage(MSG_INFO_DESCR, ss.str());
 	return true;
@@ -3133,7 +3133,7 @@ bool Game::playerLookAt(uint32_t playerId, const Position& pos, uint16_t spriteI
 			lookDistance = lookDistance + 9 + 6;
 	}
 
-	std::stringstream ss;
+	std::ostringstream ss;
 	ss << "You see " << thing->getDescription(lookDistance);
 	if(player->isAccessPlayer())
 	{
@@ -3400,7 +3400,7 @@ bool Game::playerSay(uint32_t playerId, uint16_t channelId, SpeakClasses type,
 	uint32_t muteTime = player->isMuted();
 	if(muteTime > 0)
 	{
-		std::stringstream ss;
+		std::ostringstream ss;
 		ss << "You are still muted for " << muteTime << " seconds.";
 		player->sendTextMessage(MSG_STATUS_SMALL, ss.str());
 		return false;
@@ -3554,7 +3554,7 @@ bool Game::playerSpeakTo(Player* player, SpeakClasses type, const std::string& r
 		player->sendTextMessage(MSG_STATUS_SMALL, "A player with this name is not online.");
 	else
 	{
-		std::stringstream ss;
+		std::ostringstream ss;
 		ss << "Message sent to " << toPlayer->getName() << ".";
 		player->sendTextMessage(MSG_STATUS_SMALL, ss.str());
 	}
@@ -4033,7 +4033,7 @@ bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creat
 		realHealthChange = target->getHealth() - realHealthChange;
 		if(realHealthChange > 0 && !target->isInGhostMode())
 		{
-			std::stringstream ss;
+			std::ostringstream ss;
 			if(!attacker)
 				ss << ucfirst(target->getNameDescription()) << " was healed for " << realHealthChange << " hitpoint" << (realHealthChange != 1 ? "s." : ".");
 			else if(attacker == target)
@@ -4052,13 +4052,13 @@ bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creat
 				{
 					if(tmpPlayer == attackerPlayer && attackerPlayer != targetPlayer)
 					{
-						std::stringstream tmpSs;
+						std::ostringstream tmpSs;
 						tmpSs << "You heal " << target->getNameDescription() << " for " << realHealthChange << " hitpoint" << (realHealthChange != 1 ? "s." : ".");
 						tmpPlayer->sendHealMessage(MSG_HEALED, tmpSs.str(), targetPos, realHealthChange, TEXTCOLOR_MAYABLUE);
 					}
 					else if(tmpPlayer == targetPlayer)
 					{
-						std::stringstream tmpSs;
+						std::ostringstream tmpSs;
 						if(!attacker)
 							tmpSs << "You were healed for " << realHealthChange << " hitpoint" << (realHealthChange != 1 ? "s." : ".");
 						else if(targetPlayer == attackerPlayer)
@@ -4109,7 +4109,7 @@ bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creat
 					target->drainMana(attacker, manaDamage);
 					addMagicEffect(list, targetPos, NM_ME_LOSE_ENERGY);
 
-					std::stringstream ss;
+					std::ostringstream ss;
 					if(!attacker)
 						ss << ucfirst(target->getNameDescription()) << " loses " << manaDamage << " mana.";
 					else if(attacker == target)
@@ -4128,13 +4128,13 @@ bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creat
 						{
 							if(tmpPlayer == attackerPlayer && attackerPlayer != targetPlayer)
 							{
-								std::stringstream tmpSs;
+								std::ostringstream tmpSs;
 								tmpSs << ucfirst(target->getNameDescription()) << " loses " << manaDamage << " mana blocking your attack.";
 								tmpPlayer->sendDamageMessage(MSG_DAMAGE_DEALT, tmpSs.str(), targetPos, manaDamage, TEXTCOLOR_BLUE);
 							}
 							else if(tmpPlayer == targetPlayer)
 							{
-								std::stringstream tmpSs;
+								std::ostringstream tmpSs;
 								if(!attacker)
 									tmpSs << "You lose " << manaDamage << " mana.";
 								else if(targetPlayer == attackerPlayer)
@@ -4281,7 +4281,7 @@ bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creat
 				{
 					addMagicEffect(list, targetPos, hitEffect);
 
-					std::stringstream ss;
+					std::ostringstream ss;
 					if(!attacker)
 						ss << ucfirst(target->getNameDescription()) << " loses " << damage << " hitpoint" << (damage != 1 ? "s." : ".");
 					else if(attacker == target)
@@ -4300,13 +4300,13 @@ bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creat
 						{
 							if(tmpPlayer == attackerPlayer && attackerPlayer != targetPlayer)
 							{
-								std::stringstream tmpSs;
+								std::ostringstream tmpSs;
 								tmpSs << ucfirst(target->getNameDescription()) << " loses " << damage << " hitpoint" << (damage != 1 ? "s" : "") << " due to your attack.";
 								tmpPlayer->sendDamageMessage(MSG_DAMAGE_DEALT, tmpSs.str(), targetPos, damage, textColor);
 							}
 							else if(tmpPlayer == targetPlayer)
 							{
-								std::stringstream tmpSs;
+								std::ostringstream tmpSs;
 								if(!attacker)
 									tmpSs << "You lose " << damage << " hitpoint" << (damage != 1 ? "s." : ".");
 								else if(targetPlayer == attackerPlayer)
@@ -4382,7 +4382,7 @@ bool Game::combatChangeMana(Creature* attacker, Creature* target, int32_t manaCh
 		{
 			target->drainMana(attacker, manaLoss);
 
-			std::stringstream ss;
+			std::ostringstream ss;
 			if(!attacker)
 				ss << ucfirst(target->getNameDescription()) << " loses " << manaLoss << " mana.";
 			else if(attacker == target)
@@ -4401,13 +4401,13 @@ bool Game::combatChangeMana(Creature* attacker, Creature* target, int32_t manaCh
 				{
 					if(tmpPlayer == attackerPlayer && attackerPlayer != targetPlayer)
 					{
-						std::stringstream tmpSs;
+						std::ostringstream tmpSs;
 						tmpSs << ucfirst(target->getNameDescription()) << " loses " << manaLoss << " mana blocking your attack.";
 						tmpPlayer->sendDamageMessage(MSG_DAMAGE_DEALT, tmpSs.str(), targetPos, manaLoss, TEXTCOLOR_BLUE);
 					}
 					else if(tmpPlayer == targetPlayer)
 					{
-						std::stringstream tmpSs;
+						std::ostringstream tmpSs;
 						if(!attacker)
 							tmpSs << "You lose " << manaLoss << " mana.";
 						else if(targetPlayer == attackerPlayer)
@@ -4711,7 +4711,7 @@ void Game::timedHighscoreUpdate()
 std::string Game::getHighscoreString(uint16_t skill)
 {
 	Highscore hs = highscoreStorage[skill];
-	std::stringstream ss;
+	std::ostringstream ss;
 	ss << "Highscore for " << getSkillName(skill) << "\n\nRank Level - Player Name";
 	for(uint32_t i = 0; i < hs.size(); ++i)
 		ss << "\n" << (i + 1) << ".  " << hs[i].second << "  -  " << hs[i].first;
@@ -5133,7 +5133,7 @@ bool Game::playerInviteToParty(uint32_t playerId, uint32_t invitedId)
 
 	if(invitedPlayer->getParty())
 	{
-		std::stringstream ss;
+		std::ostringstream ss;
 		ss << invitedPlayer->getName() << " is already in a party.";
 		player->sendTextMessage(MSG_INFO_DESCR, ss.str());
 		return false;
@@ -6038,7 +6038,7 @@ bool Game::violationWindow(Player* player, std::string targetPlayerName, int32_t
 
 	if(g_config.getBoolean(ConfigManager::BROADCAST_BANISHMENTS))
 	{
-		std::stringstream ss;
+		std::ostringstream ss;
 		if(isNotation)
 			ss << targetPlayerName << " has received a notation by " << player->getName() << " (" << (3 - IOBan::getInstance()->getNotationsCount(account.id)) << " more to ban).";
 		else
@@ -6048,7 +6048,7 @@ bool Game::violationWindow(Player* player, std::string targetPlayerName, int32_t
 	}
 	else
 	{
-		std::stringstream ss;
+		std::ostringstream ss;
 		if(isNotation)
 			ss << "You have taken the action notation against " << targetPlayerName << " (" << (3 - IOBan::getInstance()->getNotationsCount(account.id)) << " more to ban).";
 		else

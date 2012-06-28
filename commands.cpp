@@ -295,10 +295,10 @@ bool Commands::exeCommand(Creature* creature, const std::string& cmd)
 		player->sendTextMessage(MSG_STATUS_CONSOLE_RED, cmd.c_str());
 		if(dirExists("data/logs") || createDir("data/logs"))
 		{
-			std::stringstream ss;
+			std::ostringstream ss;
 			ss << "data/logs/" << player->getName() << " commands.log";
 
-			std::ofstream out(ss.str(), std::ios::app);
+			std::ofstream out(ss.str().c_str(), std::ios::app);
 
 			time_t ticks = time(NULL);
 			const tm* now = localtime(&ticks);
@@ -433,7 +433,7 @@ void Commands::teleportHere(Player* player, const std::string& cmd, const std::s
 		Position newPosition = g_game.getClosestFreeTile(player, paramCreature, player->getPosition(), false);
 		if(newPosition.x == 0)
 		{
-			std::stringstream ss;
+			std::ostringstream ss;
 			ss << "You can not teleport " << paramCreature->getName() << std::endl;
 			player->sendCancel(ss.str());
 		}
@@ -536,13 +536,13 @@ void Commands::subtractMoney(Player* player, const std::string& cmd, const std::
 	uint32_t money = g_game.getMoney(player);
 	if(count <= 0)
 	{
-		std::stringstream ss;
+		std::ostringstream ss;
 		ss << "You have " << money << " gold.";
 		player->sendCancel(ss.str());
 	}
 	else if(count > (int32_t)money)
 	{
-		std::stringstream ss;
+		std::ostringstream ss;
 		ss << "You have " << money << " gold which is not sufficient.";
 		player->sendCancel(ss.str());
 	}
@@ -684,7 +684,7 @@ void Commands::teleportTo(Player* player, const std::string& cmd, const std::str
 		}
 		else
 		{
-			std::stringstream ss;
+			std::ostringstream ss;
 			ss << "You can not teleport to " << paramCreature->getName() << ".";
 			player->sendCancel(ss.str());
 		}
@@ -703,7 +703,7 @@ void Commands::getInfo(Player* player, const std::string& cmd, const std::string
 		}
 
 		Account account = IOLoginData::getInstance()->loadAccount(paramPlayer->getAccount());
-		std::stringstream info;
+		std::ostringstream info;
 		info << "name: " << paramPlayer->name << std::endl <<
 			"access: " << paramPlayer->accessLevel << std::endl <<
 			"level: " << paramPlayer->level << std::endl <<
@@ -864,7 +864,7 @@ void Commands::getHouse(Player* player, const std::string& cmd, const std::strin
 	if(!IOLoginData::getInstance()->getGuidByName(guid, name))
 		return;
 
-	std::stringstream str;
+	std::ostringstream str;
 	str << name;
 
 	House* house = Houses::getInstance().getHouseByPlayerId(guid);
@@ -878,7 +878,7 @@ void Commands::getHouse(Player* player, const std::string& cmd, const std::strin
 
 void Commands::serverInfo(Player* player, const std::string& cmd, const std::string& param)
 {
-	std::stringstream text;
+	std::ostringstream text;
 	text << "Server Info:";
 	text << "\nExp Rate: " << g_game.getExperienceStage(player->level);
 	text << "\nSkill Rate: " << g_config.getNumber(ConfigManager::RATE_SKILL);
@@ -949,7 +949,7 @@ void Commands::buyHouse(Player* player, const std::string& cmd, const std::strin
 
 void Commands::whoIsOnline(Player* player, const std::string& cmd, const std::string& param)
 {
-	std::stringstream ss;
+	std::ostringstream ss;
 	ss << Player::listPlayer.list.size() << " players online:" << std::endl;
 	player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, ss.str());
 
@@ -1051,7 +1051,7 @@ void Commands::showPosition(Player* player, const std::string& cmd, const std::s
 
 	const Position& pos = player->getPosition();
 
-	std::stringstream ss;
+	std::ostringstream ss;
 	ss << "Your current position is [X: " << pos.x << " | Y: " << pos.y << " | Z: " << pos.z << "].";
 	player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, ss.str());
 }
@@ -1205,7 +1205,7 @@ void Commands::joinGuild(Player* player, const std::string& cmd, const std::stri
 	ChatChannel* guildChannel = g_chat.getChannel(player, CHANNEL_GUILD);
 	if(guildChannel)
 	{
-		std::stringstream ss;
+		std::ostringstream ss;
 		ss << player->getName() << " has joined the guild.";
 		guildChannel->sendToAll(ss.str(), SPEAK_CHANNEL_R1);
 	}
@@ -1223,14 +1223,14 @@ void Commands::createGuild(Player* player, const std::string& cmd, const std::st
 	trimString((std::string&)param);
 	if(param.length() < (uint32_t)g_config.getNumber(ConfigManager::MIN_GUILD_NAME))
 	{
-		std::stringstream ss;
+		std::ostringstream ss;
 		ss << "That guild name is too short, it has to be at least " << g_config.getNumber(ConfigManager::MIN_GUILD_NAME) << " characters.";
 		player->sendCancel(ss.str());
 		return;
 	}
 	else if(param.length() > (uint32_t)g_config.getNumber(ConfigManager::MAX_GUILD_NAME))
 	{
-		std::stringstream ss;
+		std::ostringstream ss;
 		ss << "That guild name is too long, it can not be longer than " << g_config.getNumber(ConfigManager::MAX_GUILD_NAME) << " characters.";
 		player->sendCancel(ss.str());
 		return;
@@ -1251,7 +1251,7 @@ void Commands::createGuild(Player* player, const std::string& cmd, const std::st
 
 	if(player->level < (uint32_t)g_config.getNumber(ConfigManager::LEVEL_TO_CREATE_GUILD))
 	{
-		std::stringstream ss;
+		std::ostringstream ss;
 		ss << "You have to be atleast Level " << g_config.getNumber(ConfigManager::LEVEL_TO_CREATE_GUILD) << " to form a guild.";
 		player->sendCancel(ss.str());
 		return;
@@ -1263,7 +1263,7 @@ void Commands::createGuild(Player* player, const std::string& cmd, const std::st
 		return;
 	}
 
-	std::stringstream ss;
+	std::ostringstream ss;
 	ss << "You have formed the guild: " << param << "!";
 	player->sendTextMessage(MSG_INFO_DESCR, ss.str());
 	player->setGuildName(param);
@@ -1327,7 +1327,7 @@ void Commands::unban(Player* player, const std::string& cmd, const std::string& 
 	{
 		if(IOBan::getInstance()->removeAccountBan(accountNumber))
 		{
-			std::stringstream ss;
+			std::ostringstream ss;
 			ss << name << " has been unbanned.";
 			player->sendTextMessage(MSG_INFO_DESCR, ss.str());
 		}
@@ -1336,14 +1336,14 @@ void Commands::unban(Player* player, const std::string& cmd, const std::string& 
 	{
 		if(IOBan::getInstance()->removeAccountDeletion(accountNumber))
 		{
-			std::stringstream ss;
+			std::ostringstream ss;
 			ss << name << " has been undeleted.";
 			player->sendTextMessage(MSG_INFO_DESCR, ss.str());
 		}
 	}
 	else if(removedIPBan)
 	{
-		std::stringstream ss;
+		std::ostringstream ss;
 		ss << "The IP banishment on " << name << " has been lifted.";
 		player->sendTextMessage(MSG_INFO_DESCR, ss.str());
 	}
@@ -1357,7 +1357,7 @@ void Commands::unban(Player* player, const std::string& cmd, const std::string& 
 				IOBan::getInstance()->isPlayerNamelocked(name) &&
 				IOBan::getInstance()->removePlayerNamelock(guid))
 			{
-				std::stringstream ss;
+				std::ostringstream ss;
 				ss << "Namelock on " << name << " has been lifted.";
 				player->sendTextMessage(MSG_INFO_DESCR, ss.str());
 				removedNamelock = true;
@@ -1379,7 +1379,7 @@ void Commands::playerKills(Player* player, const std::string& cmd, const std::st
 		int32_t hours = remainingTime / 3600;
 		int32_t minutes = (remainingTime % 3600) / 60;
 
-		std::stringstream ss;
+		std::ostringstream ss;
 		ss << "You have " << frags << " unjustified kill" << (frags > 1 ? "s" : "") << ". The amount of unjustified kills will decrease after: " << hours << " hour" << (hours != 1 ? "s" : "") << " and " << minutes << " minute" << (minutes != 1 ? "s" : "") << ".";
 		player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, ss.str());
 	}
@@ -1392,7 +1392,7 @@ void Commands::clean(Player* player, const std::string& cmd, const std::string& 
 	uint32_t count = g_game.getMap()->clean();
 	if(count != 1)
 	{
-		std::stringstream ss;
+		std::ostringstream ss;
 		ss << "Cleaned " << count << " items from the map.";
 		g_game.broadcastMessage(ss.str(), MSG_STATUS_WARNING);
 	}
@@ -1403,7 +1403,7 @@ void Commands::clean(Player* player, const std::string& cmd, const std::string& 
 void Commands::serverDiag(Player* player, const std::string& cmd, const std::string& param)
 {
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
-	std::stringstream text;
+	std::ostringstream text;
 	text << "Server diagonostic:\n";
 	text << "World:" << "\n";
 	text << "Player: " << g_game.getPlayersOnline() << " (" << Player::playerCount << ")\n";
@@ -1507,7 +1507,7 @@ void Commands::multiClientCheck(Player* player, const std::string& cmd, const st
 		ipMap[it->second->getIP()].push_back(it->second);
 	}
 
-	std::stringstream ss;
+	std::ostringstream ss;
 	for(std::map< uint32_t, std::vector<Player*> >::const_iterator it = ipMap.begin(), end = ipMap.end(); it != end; ++it)
 	{
 		if(it->second.size() < 2)

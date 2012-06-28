@@ -125,7 +125,7 @@ void House::setHouseOwner(uint32_t guid, Player* player/* = NULL*/)
 
 void House::updateDoorDescription()
 {
-	std::stringstream ss;
+	std::ostringstream ss;
 	if(houseOwner != 0)
 		ss << "It belongs to house '" << houseName << "'. " << houseOwnerName << " owns this house.";
 	else
@@ -440,7 +440,7 @@ HouseTransferItem* HouseTransferItem::createHouseTransferItem(House* house)
 	transferItem->useThing2();
 	transferItem->setID(ITEM_DOCUMENT_RO);
 	transferItem->setSubType(1);
-	std::stringstream ss;
+	std::ostringstream ss;
 	ss << "It is a house transfer document for '" << house->getName() << "'.";
 	transferItem->setSpecialDescription(ss.str());
 	return transferItem;
@@ -507,7 +507,7 @@ bool AccessList::parseList(const std::string& _list)
 	if(_list == "")
 		return true;
 
-	std::stringstream listStream(_list);
+	std::istringstream listStream(_list);
 	std::string line;
 	while(getline(listStream, line))
 	{
@@ -951,7 +951,7 @@ bool Houses::payHouses()
 								break;
 						}
 
-						std::stringstream ss;
+						std::ostringstream ss;
 						ss << "Warning! \nThe " << period << " rent of " << house->getRent() << " gold for your house \"" << house->getName() << "\" is payable. Have it within " << daysLeft << " days or you will lose this house.";
 						letter->setText(ss.str());
 						g_game.internalAddItem(depot->getInbox(), letter, INDEX_WHEREEVER, FLAG_NOLIMIT);

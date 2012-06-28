@@ -1218,7 +1218,7 @@ void Creature::onAttackedCreatureDrainHealth(Creature* target, int32_t points)
 	target->addDamagePoints(this, points);
 	if(getMaster() && getMaster()->getPlayer())
 	{
-		std::stringstream ss;
+		std::ostringstream ss;
 		ss << "Your " << asLowerCaseString(getName()) << " deals " << points << " to " << target->getNameDescription() << ".";
 		getMaster()->getPlayer()->sendTextMessage(MSG_EVENT_DEFAULT, ss.str());
 	}
@@ -1265,12 +1265,12 @@ void Creature::onGainExperience(uint64_t gainExp, Creature* target)
 		Player* thisPlayer = getPlayer();
 		if(thisPlayer)
 		{
-			std::stringstream ss;
+			std::ostringstream ss;
 			ss << "You gained " << gainExp << " experience points.";
 			thisPlayer->sendExperienceMessage(MSG_EXPERIENCE, ss.str(), targetPos, gainExp, TEXTCOLOR_WHITE_EXP);
 		}
 
-		std::stringstream ssExp;
+		std::ostringstream ssExp;
 		ssExp << getNameDescription() << " gained " << gainExp << " experience points.";
 		std::string strExp = ssExp.str();
 
@@ -1296,12 +1296,12 @@ void Creature::onGainSharedExperience(uint64_t gainExp)
 		Player* thisPlayer = getPlayer();
 		if(thisPlayer)
 		{
-			std::stringstream ss;
+			std::ostringstream ss;
 			ss << "You gained " << gainExp << " experience points.";
 			thisPlayer->sendExperienceMessage(MSG_EXPERIENCE, ss.str(), targetPos, gainExp, TEXTCOLOR_WHITE_EXP);
 		}
 
-		std::stringstream ssExp;
+		std::ostringstream ssExp;
 		ssExp << getNameDescription() << " gained " << gainExp << " experience points.";
 		std::string strExp = ssExp.str();
 

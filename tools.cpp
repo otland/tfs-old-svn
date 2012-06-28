@@ -41,7 +41,7 @@ std::string transformToSHA1(std::string plainText, bool upperCase /*= false*/)
 {
 	SHA1 sha1;
 	unsigned sha1Hash[5];
-	std::stringstream hexStream;
+	std::ostringstream hexStream;
 
 	sha1.Input((const unsigned char*)plainText.c_str(), plainText.length());
 	sha1.Result(sha1Hash);
@@ -60,7 +60,7 @@ std::string transformToSHA1(std::string plainText, bool upperCase /*= false*/)
 std::string transformToMD5(std::string plainText, bool upperCase /*= false*/)
 {
 	MD5_CTX m_md5;
-	std::stringstream hexStream;
+	std::ostringstream hexStream;
 
 	MD5Init(&m_md5, 0);
 	MD5Update(&m_md5, (const unsigned char*)plainText.c_str(), plainText.length());
@@ -487,7 +487,7 @@ bool checkText(std::string text, const std::string& str)
 
 std::string generateRecoveryKey(int32_t fieldCount, int32_t fieldLength)
 {
-	std::stringstream key;
+	std::ostringstream key;
 	int32_t i(0);
 	int32_t j(0);
 	int32_t lastNumber = 99;
@@ -1200,7 +1200,7 @@ uint32_t adlerChecksum(uint8_t *data, size_t length)
 template<typename _Tp>
 inline std::string toString(_Tp __p)
 {
-	std::stringstream ss;
+	std::ostringstream ss;
 	ss << __p;
 	return ss.str();
 }

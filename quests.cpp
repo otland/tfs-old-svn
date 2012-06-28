@@ -54,7 +54,7 @@ std::string Mission::getDescription(Player* player)
 	player->getStorageValue(storageID, value);
 	if(mainState != NULL)
 	{
-		std::stringstream s;
+		std::ostringstream s;
 		s << value;
 
 		std::string desc = mainState->getMissionDescription();

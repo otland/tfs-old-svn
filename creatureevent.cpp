@@ -438,7 +438,7 @@ uint32_t CreatureEvent::executeAdvance(Creature* creature, skills_t skill, uint3
 		ScriptEnvironment* env = m_scriptInterface->getScriptEnv();
 
 		#ifdef __DEBUG_LUASCRIPTS__
-		std::stringstream desc;
+		std::ostringstream desc;
 		desc << creature->getName();
 		env->setEventDesc(desc.str());
 		#endif
@@ -475,7 +475,7 @@ uint32_t CreatureEvent::executeOnKill(Creature* creature, Creature* target)
 		ScriptEnvironment* env = m_scriptInterface->getScriptEnv();
 
 		#ifdef __DEBUG_LUASCRIPTS__
-		std::stringstream desc;
+		std::ostringstream desc;
 		desc << creature->getName();
 		env->setEventDesc(desc.str());
 		#endif

@@ -427,7 +427,7 @@ bool Actions::useItemEx(Player* player, const Position& fromPos, const Position&
 void Actions::showUseHotkeyMessage(Player* player, int32_t id, uint32_t count)
 {
 	const ItemType& it = Item::items[id];
-	std::stringstream ss;
+	std::ostringstream ss;
 	if(!it.showCount)
 		ss << "Using one of " << it.name << "...";
 	else if(count == 1)
@@ -571,7 +571,7 @@ bool Action::executeUse(Player* player, Item* item, const PositionEx& fromPos, c
 		ScriptEnvironment* env = m_scriptInterface->getScriptEnv();
 
 		#ifdef __DEBUG_LUASCRIPTS__
-		std::stringstream desc;
+		std::ostringstream desc;
 		desc << player->getName() << " - " << item->getID() << " " << fromPos << "|" << toPos;
 		env->setEventDesc(desc.str());
 		#endif

@@ -218,7 +218,7 @@ bool ProtocolGame::login(const std::string& name, uint32_t accnumber, const std:
 					else
 						IOLoginData::getInstance()->getNameByGuid(bannedBy, name_);
 
-					std::stringstream ss;
+					std::ostringstream ss;
 					ss << "Your account has been " << (deletion ? "deleted" : "banished") << " by:\n" << name << ", for the following reason:\n" << getReason(reason) << ".\nThe action taken was:\n" << getAction(action, false) << ".\nThe comment given was:\n" << comment << "\nYour " << (deletion ? "account was deleted on" : "banishment will be lifted at") << ":\n" << formatDateShort(banTime) << ".";
 					disconnectClient(0x14, ss.str().c_str());
 					return false;
@@ -230,7 +230,7 @@ bool ProtocolGame::login(const std::string& name, uint32_t accnumber, const std:
 		{
 			int32_t currentSlot = WaitingList::getInstance()->getClientSlot(player);
 			int32_t retryTime = WaitingList::getTime(currentSlot);
-			std::stringstream ss;
+			std::ostringstream ss;
 
 			ss << "Too many players online.\n" << "You are at place "
 				<< currentSlot << " on the waiting list.";
@@ -2262,7 +2262,7 @@ void ProtocolGame::sendMarketDetail(uint16_t itemId)
 	msg->AddItemId(itemId);
 
 	const ItemType& it = Item::items[itemId];
-	std::stringstream ss;
+	std::ostringstream ss;
 	if(it.armor != 0)
 	{
 		ss << it.armor;
@@ -2885,7 +2885,7 @@ void ProtocolGame::sendAddCreature(const Creature* creature, const Position& pos
 					AddTextMessage(msg, MSG_STATUS_DEFAULT, tmpStr.c_str());
 
 				time_t lastLogin = player->getLastLoginSaved();
-				std::stringstream ss;
+				std::ostringstream ss;
 				ss << "Your last visit was on " << ctime(&lastLogin);
 				tmpStr = ss.str();
 				tmpStr.erase(tmpStr.length() - 1);

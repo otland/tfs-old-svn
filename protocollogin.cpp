@@ -179,7 +179,7 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 		//Add MOTD
 		output->AddByte(0x14);
 
-		std::stringstream ss;
+		std::ostringstream ss;
 		ss << g_game.getMotdNum() << "\n" << g_config.getString(ConfigManager::MOTD);
 		output->AddString(ss.str());
 

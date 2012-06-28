@@ -70,7 +70,7 @@ void PlayerBox::updatePlayersOnline()
 {
 	int32_t playersOnline = SendMessage(list, CB_GETCOUNT, 0, 0);
 
-	std::stringstream ss;
+	std::ostringstream ss;
 	ss << playersOnline << " player" << (playersOnline != 1 ? "s" : "") << " online";
 	SendMessage(online, WM_SETTEXT, 0, (LPARAM)ss.str());
 }
@@ -97,7 +97,7 @@ LRESULT CALLBACK PlayerBox::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPAR
 		{
 			int32_t playersOnline = g_game.getPlayersOnline();
 
-			std::stringstream ss;
+			std::ostringstream ss;
 			ss << playersOnline << " player" << (playersOnline != 1 ? "s" : "") << " online";
 			m_hInst = GetModuleHandle(NULL);
 			
@@ -127,7 +127,7 @@ LRESULT CALLBACK PlayerBox::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPAR
 					Player* player = g_game.getPlayerByName(name);
 					if(player)
 					{
-						std::stringstream ss;
+						std::ostringstream ss;
 						ss << "Are you sure you want to " << ((HWND)lParam == kick ? "kick" : "permanently ban") << " " << player->getName() << "?";
 						if(MessageBoxA(hWnd, ss.str(), "Player List", MB_YESNO) == IDYES)
 						{

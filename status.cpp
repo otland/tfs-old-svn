@@ -238,7 +238,7 @@ void Status::getInfo(uint32_t requestedInfo, OutputMessage_ptr output, NetworkMe
 		output->AddString(g_config.getString(ConfigManager::SERVER_NAME).c_str());
 		output->AddString(g_config.getString(ConfigManager::IP).c_str());
 
-		std::stringstream ss;
+		std::ostringstream ss;
 		ss << g_config.getNumber(ConfigManager::LOGIN_PORT);
 		output->AddString(ss.str());
 	}

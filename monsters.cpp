@@ -163,7 +163,7 @@ void MonsterType::createLoot(Container* corpse)
 		Player* owner = g_game.getPlayerByID(ownerId);
 		if(owner)
 		{
-			std::stringstream ss;
+			std::ostringstream ss;
 			ss << "Loot of " << nameDescription << ": " << corpse->getContentDescription();
 			if(owner->getParty())
 				owner->getParty()->broadcastPartyLoot(ss.str());

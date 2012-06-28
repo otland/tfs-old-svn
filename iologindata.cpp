@@ -685,7 +685,7 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool prelo
 bool IOLoginData::saveItems(const Player* player, const ItemBlockList& itemList, DBInsert& query_insert)
 {
 	std::list<Container*> listContainer;
-	std::stringstream stream;
+	std::ostringstream stream;
 
 	typedef std::pair<Container*, int32_t> containerBlock;
 	std::list<containerBlock> stack;

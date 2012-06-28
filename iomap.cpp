@@ -86,7 +86,7 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 	FileLoader f;
 	if(!f.openFile(identifier.c_str(), false, true))
 	{
-		std::stringstream ss;
+		std::ostringstream ss;
 		ss << "Could not open the file " << identifier << ".";
 		setLastErrorString(ss.str());
 		return false;
@@ -274,7 +274,7 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 						uint32_t _houseid;
 						if(!propStream.GET_ULONG(_houseid))
 						{
-							std::stringstream ss;
+							std::ostringstream ss;
 							ss << "[x:" << px << ", y:" << py << ", z:" << pz << "] " << "Could not read house id.";
 							setLastErrorString(ss.str());
 							return false;
@@ -283,7 +283,7 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 						house = Houses::getInstance().getHouse(_houseid, true);
 						if(!house)
 						{
-							std::stringstream ss;
+							std::ostringstream ss;
 							ss << "[x:" << px << ", y:" << py << ", z:" << pz << "] " << "Could not create house id: " << _houseid;
 							setLastErrorString(ss.str());
 							return false;
@@ -305,7 +305,7 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 								uint32_t flags;
 								if(!propStream.GET_ULONG(flags))
 								{
-									std::stringstream ss;
+									std::ostringstream ss;
 									ss << "[x:" << px << ", y:" << py << ", z:" << pz << "] " << "Failed to read tile flags.";
 									setLastErrorString(ss.str());
 									return false;
@@ -329,7 +329,7 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 								Item* item = Item::CreateItem(propStream);
 								if(!item)
 								{
-									std::stringstream ss;
+									std::ostringstream ss;
 									ss << "[x:" << px << ", y:" << py << ", z:" << pz << "] " << "Failed to create item.";
 									setLastErrorString(ss.str());
 									return false;
@@ -369,7 +369,7 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 							}
 
 							default:
-								std::stringstream ss;
+								std::ostringstream ss;
 								ss << "[x:" << px << ", y:" << py << ", z:" << pz << "] " << "Unknown tile attribute.";
 								setLastErrorString(ss.str());
 								return false;
@@ -387,7 +387,7 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 							Item* item = Item::CreateItem(propStream);
 							if(!item)
 							{
-								std::stringstream ss;
+								std::ostringstream ss;
 								ss << "[x:" << px << ", y:" << py << ", z:" << pz << "] " << "Failed to create item.";
 								setLastErrorString(ss.str());
 								return false;
@@ -427,7 +427,7 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 							}
 							else
 							{
-								std::stringstream ss;
+								std::ostringstream ss;
 								ss << "[x:" << px << ", y:" << py << ", z:" << pz << "] " << "Failed to load item " << item->getID() << ".";
 								setLastErrorString(ss.str());
 								delete item;
@@ -436,7 +436,7 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 						}
 						else
 						{
-							std::stringstream ss;
+							std::ostringstream ss;
 							ss << "[x:" << px << ", y:" << py << ", z:" << pz << "] " << "Unknown node type.";
 							setLastErrorString(ss.str());
 						}

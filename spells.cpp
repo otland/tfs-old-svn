@@ -364,7 +364,7 @@ bool CombatSpell::executeCastSpell(Creature* creature, const LuaVariant& var)
 		ScriptEnvironment* env = m_scriptInterface->getScriptEnv();
 
 		#ifdef __DEBUG_LUASCRIPTS__
-		std::stringstream ss;
+		std::ostringstream ss;
 		ss << "onCastSpell - " << creature->getName();
 		env->setEventDesc(ss.str());
 		#endif
@@ -1282,7 +1282,7 @@ bool InstantSpell::executeCastSpell(Creature* creature, const LuaVariant& var)
 		ScriptEnvironment* env = m_scriptInterface->getScriptEnv();
 
 		#ifdef __DEBUG_LUASCRIPTS__
-		std::stringstream ss;
+		std::ostringstream ss;
 		ss << "onCastSpell - " << creature->getName();
 		env->setEventDesc(ss.str());
 		#endif
@@ -1531,7 +1531,7 @@ bool InstantSpell::SearchPlayer(const InstantSpell* spell, Creature* creature, c
 				direction = DIR_S;
 		}
 
-		std::stringstream ss;
+		std::ostringstream ss;
 		ss << playerExiva->getName() << " ";
 		if(distance == DISTANCE_BESIDE)
 		{
@@ -2220,7 +2220,7 @@ bool RuneSpell::executeCastSpell(Creature* creature, const LuaVariant& var)
 		ScriptEnvironment* env = m_scriptInterface->getScriptEnv();
 
 		#ifdef __DEBUG_LUASCRIPTS__
-		std::stringstream ss;
+		std::ostringstream ss;
 		ss << "onCastSpell - " << creature->getName();
 		env->setEventDesc(ss.str());
 		#endif

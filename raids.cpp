@@ -85,7 +85,7 @@ bool Raids::loadFromXml()
 					file = strValue;
 				else
 				{
-					std::stringstream ss;
+					std::ostringstream ss;
 					ss << "raids/" << name << ".xml";
 					file = ss.str();
 					std::cout << "[Warning] Raids: file tag missing for raid " << name << ". Using default: " << file << std::endl;

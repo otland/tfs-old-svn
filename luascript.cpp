@@ -3049,7 +3049,7 @@ int32_t LuaScriptInterface::luaDoTileAddItemEx(lua_State* L)
 	Tile* tile = g_game.getTile(pos.x, pos.y, pos.z);
 	if(!tile)
 	{
-		std::stringstream ss;
+		std::ostringstream ss;
 		ss << pos << " " << getErrorDesc(LUA_ERROR_TILE_NOT_FOUND);
 		reportErrorFunc(ss.str().c_str());
 		lua_pushboolean(L, false);
@@ -3130,7 +3130,7 @@ int32_t LuaScriptInterface::luaDoRelocate(lua_State* L)
 	Tile* fromTile = g_game.getTile(fromPos.x, fromPos.y, fromPos.z);
 	if(!fromTile)
 	{
-		std::stringstream ss;
+		std::ostringstream ss;
 		ss << fromPos << " " << getErrorDesc(LUA_ERROR_TILE_NOT_FOUND);
 		reportErrorFunc(ss.str());
 		lua_pushboolean(L, false);
@@ -3140,7 +3140,7 @@ int32_t LuaScriptInterface::luaDoRelocate(lua_State* L)
 	Tile* toTile = g_game.getTile(toPos.x, toPos.y, toPos.z);
 	if(!toTile)
 	{
-		std::stringstream ss;
+		std::ostringstream ss;
 		ss << toPos << " " << getErrorDesc(LUA_ERROR_TILE_NOT_FOUND);
 		reportErrorFunc(ss.str());
 		lua_pushboolean(L, false);
@@ -3494,7 +3494,7 @@ int32_t LuaScriptInterface::luaGetThingfromPos(lua_State* L)
 	}
 	else
 	{
-		std::stringstream ss;
+		std::ostringstream ss;
 		ss << pos << " " << getErrorDesc(LUA_ERROR_TILE_NOT_FOUND);
 		reportErrorFunc(ss.str().c_str());
 		pushThing(L, NULL, 0);
@@ -3737,7 +3737,7 @@ int32_t LuaScriptInterface::luaDoCreateItem(lua_State* L)
 	Tile* tile = g_game.getTile(pos.x, pos.y, pos.z);
 	if(!tile)
 	{
-		std::stringstream ss;
+		std::ostringstream ss;
 		ss << pos << " " << getErrorDesc(LUA_ERROR_TILE_NOT_FOUND);
 		reportErrorFunc(ss.str().c_str());
 		lua_pushboolean(L, false);
@@ -3853,7 +3853,7 @@ int32_t LuaScriptInterface::luaDoCreateTeleport(lua_State* L)
 	Tile* tile = g_game.getMap()->getTile(createPos);
 	if(!tile)
 	{
-		std::stringstream ss;
+		std::ostringstream ss;
 		ss << createPos << " " << getErrorDesc(LUA_ERROR_TILE_NOT_FOUND);
 		reportErrorFunc(ss.str().c_str());
 		lua_pushboolean(L, false);
@@ -3932,7 +3932,7 @@ int32_t LuaScriptInterface::luaSetPlayerStorageValue(lua_State* L)
 	uint32_t cid = popNumber(L);
 	if(IS_IN_KEYRANGE(key, RESERVED_RANGE))
 	{
-		std::stringstream ss;
+		std::ostringstream ss;
 		ss << "Accessing reserved range: " << key;
 		reportErrorFunc(ss.str());
 		lua_pushboolean(L, false);
@@ -4042,7 +4042,7 @@ int32_t LuaScriptInterface::luaGetTilePzInfo(lua_State* L)
 	}
 	else
 	{
-		std::stringstream ss;
+		std::ostringstream ss;
 		ss << pos << " " << getErrorDesc(LUA_ERROR_TILE_NOT_FOUND);
 		reportErrorFunc(ss.str().c_str());
 		lua_pushboolean(L, false);
@@ -4072,7 +4072,7 @@ int32_t LuaScriptInterface::luaGetTileHouseInfo(lua_State* L)
 	}
 	else
 	{
-		std::stringstream ss;
+		std::ostringstream ss;
 		ss << pos << " " << getErrorDesc(LUA_ERROR_TILE_NOT_FOUND);
 		reportErrorFunc(ss.str().c_str());
 		lua_pushboolean(L, false);
@@ -4813,7 +4813,7 @@ int32_t LuaScriptInterface::luaQueryTileAddThing(lua_State* L)
 	Tile* tile = g_game.getTile(pos.x, pos.y, pos.z);
 	if(!tile)
 	{
-		std::stringstream ss;
+		std::ostringstream ss;
 		ss << pos << " " << getErrorDesc(LUA_ERROR_TILE_NOT_FOUND);
 		reportErrorFunc(ss.str().c_str());
 		lua_pushnumber(L, (uint32_t)RET_NOTPOSSIBLE);
@@ -5224,7 +5224,7 @@ int32_t LuaScriptInterface::luaSetCombatCallBack(lua_State* L)
 	CallBack* callback = combat->getCallback(key);
 	if(!callback)
 	{
-		std::stringstream ss;
+		std::ostringstream ss;
 		ss << key << " is not a valid callback key.";
 		reportErrorFunc(ss.str());
 		lua_pushboolean(L, false);
@@ -7256,7 +7256,7 @@ int32_t LuaScriptInterface::luaGetItemWeight(lua_State* L)
 	double weight = it.weight * std::max(1, count);
 	if(precise)
 	{
-		std::stringstream ws;
+		std::ostringstream ws;
 		ws << std::fixed << std::setprecision(2) << weight;
 		weight = atof(ws.str().c_str());
 	}
@@ -7284,7 +7284,7 @@ int32_t LuaScriptInterface::luaGetItemWeightByUID(lua_State* L)
 	double weight = item->getWeight();
 	if(precise)
 	{
-		std::stringstream ws;
+		std::ostringstream ws;
 		ws << std::fixed << std::setprecision(2) << weight;
 		weight = atof(ws.str().c_str());
 	}

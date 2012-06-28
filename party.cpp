@@ -116,7 +116,7 @@ bool Party::leaveParty(Player* player)
 	updatePartyIcons(player);
 	clearPlayerPoints(player);
 
-	std::stringstream ss;
+	std::ostringstream ss;
 	ss << player->getName() << " has left the party.";
 	broadcastPartyMessage(MSG_INFO_DESCR, ss.str());
 
@@ -136,7 +136,7 @@ bool Party::passPartyLeadership(Player* player)
 	if(it != memberList.end())
 		memberList.erase(it);
 
-	std::stringstream ss;
+	std::ostringstream ss;
 	ss << player->getName() << " is now the leader of the party.";
 	broadcastPartyMessage(MSG_INFO_DESCR, ss.str(), true);
 
@@ -159,7 +159,7 @@ bool Party::joinParty(Player* player)
 	if(!player || player->isRemoved())
 		return false;
 
-	std::stringstream ss;
+	std::ostringstream ss;
 	ss << player->getName() << " has joined the party.";
 	broadcastPartyMessage(MSG_INFO_DESCR, ss.str());
 	ss.str("");
@@ -203,7 +203,7 @@ bool Party::removeInvite(Player* player)
 
 void Party::revokeInvitation(Player* player)
 {
-	std::stringstream ss;
+	std::ostringstream ss;
 	ss << leader->getName() << " has revoked " << (leader->getSex() == PLAYERSEX_FEMALE ? "her" : "his") << " invitation.";
 	player->sendTextMessage(MSG_INFO_DESCR, ss.str());
 
@@ -228,7 +228,7 @@ bool Party::invitePlayer(Player* player)
 	player->sendPlayerPartyIcons(getLeader());
 	player->addPartyInvitation(this);
 
-	std::stringstream ss;
+	std::ostringstream ss;
 	ss << player->getName() << " has been invited.";
 	if(!memberList.size())
 		ss << " Open the party channel to communicate with your members.";
