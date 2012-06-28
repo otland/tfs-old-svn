@@ -34,7 +34,7 @@ class DatabaseManager
 		bool tableExists(std::string table);
 		bool triggerExists(std::string trigger);
 
-		uint32_t getDatabaseVersion();
+		int32_t getDatabaseVersion();
 		bool isDatabaseSetup();
 
 		bool optimizeTables();

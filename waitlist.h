@@ -40,7 +40,7 @@ class WaitingList
 {
 	public:
 		WaitingList();
-		virtual ~WaitingList();
+		~WaitingList();
 
 		static WaitingList* getInstance()
 		{

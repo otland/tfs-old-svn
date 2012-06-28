@@ -158,7 +158,7 @@ bool DatabaseManager::isDatabaseSetup()
 	return true;
 }
 
-uint32_t DatabaseManager::getDatabaseVersion()
+int32_t DatabaseManager::getDatabaseVersion()
 {
 	if(!tableExists("server_config"))
 	{
@@ -173,8 +173,10 @@ uint32_t DatabaseManager::getDatabaseVersion()
 	}
 
 	int32_t version = 0;
-	getDatabaseConfig("db_version", version);
-	return version;
+	if(getDatabaseConfig("db_version", version))
+		return version;
+
+	return -1;
 }
 
 uint32_t DatabaseManager::updateDatabase()
@@ -182,7 +184,11 @@ uint32_t DatabaseManager::updateDatabase()
 	Database* db = Database::getInstance();
 	DBQuery query;
 
-	switch(getDatabaseVersion())
+	int32_t databaseVersion = getDatabaseVersion();
+	if(databaseVersion < 0)
+		return 0;
+
+	switch(databaseVersion)
 	{
 		case 0:
 		{
