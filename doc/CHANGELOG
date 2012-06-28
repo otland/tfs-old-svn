@@ -85,5 +85,11 @@
 	Conjuring spells no longer requires reagent item to be in hand (can be anywhere in inventory).
 	Status protocol now also ignores the timeout for connections from the IP specified in config.lua (previously only 127.0.0.1 and whitelisted).
 	Fixed a bug in the NPC system.
+	Fixed element damage.
+	New flag for monsters: "hidehealth". If it's set to anything other than 0, the monsters health bar and name will be hidden.
+	Fixed possible client debug errors when casting spells.
+	Fixed so that lua_pop calls don't pass 0 as n (thanks to edubart and baxnie).
+	Fixed some memory leaks (thanks to baxnie for patches).
+	A lot of cleanups and optimizations.
 	Updated items.
 ]
