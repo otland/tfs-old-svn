@@ -3512,7 +3512,7 @@ NpcEventsHandler::~NpcEventsHandler()
 	//
 }
 
-bool NpcEventsHandler::isLoaded()
+bool NpcEventsHandler::isLoaded() const
 {
 	return m_loaded;
 }

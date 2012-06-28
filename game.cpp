@@ -3605,11 +3605,10 @@ bool Game::playerSpeakToNpc(Player* player, const std::string& text)
 	getSpectators(list, player->getPosition());
 
 	//send to npcs only
-	Npc* tmpNpc = NULL;
 	for(it = list.begin(); it != list.end(); ++it)
 	{
-		if((tmpNpc = (*it)->getNpc()))
-			tmpNpc->onCreatureSay(player, SPEAK_PRIVATE_PN, text);
+		if((*it)->getNpc())
+			(*it)->onCreatureSay(player, SPEAK_PRIVATE_PN, text);
 	}
 	return true;
 }
