@@ -31,7 +31,7 @@ struct Account
 	std::string name, recoveryKey, password;
 	std::list<std::string> charList;
 
-	Account() { id = 0; }
+	Account() { id = 0; accountType = ACCOUNT_TYPE_NORMAL; }
 };
 
 #endif

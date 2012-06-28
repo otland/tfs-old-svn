@@ -114,6 +114,7 @@ struct AccountManager
 		namelockedPlayerName = "";
 		talkState = 0;
 		newVocation = VOCATION_NONE;
+		newSex = PLAYERSEX_FEMALE;
 	}
 };
 

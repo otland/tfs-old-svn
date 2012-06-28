@@ -686,11 +686,6 @@ bool AdminProtocolConfig::isEnabled() const
 	return m_enabled;
 }
 
-bool AdminProtocolConfig::onlyLocalHost() const
-{
-	return m_onlyLocalHost;
-}
-
 bool AdminProtocolConfig::addConnection()
 {
 	if(m_currrentConnections < m_maxConnections)

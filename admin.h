@@ -145,7 +145,6 @@ class AdminProtocolConfig
 
 		bool isEnabled() const;
 
-		bool onlyLocalHost() const;
 		bool addConnection();
 		void removeConnection();
 

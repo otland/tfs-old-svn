@@ -245,6 +245,7 @@ Item::Item(const Item &i) :
 	//std::cout << "Item copy constructor " << this << std::endl;
 	id = i.id;
 	count = i.count;
+	loadedFromMap = i.loadedFromMap;
 
 	m_attributes = i.m_attributes;
 	if(i.m_firstAttr)

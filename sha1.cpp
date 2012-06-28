@@ -564,7 +564,7 @@ void SHA1::PadMessage()
  *	Comments:
  *
  */
-unsigned SHA1::CircularShift(int bits, unsigned word)
+unsigned SHA1::CircularShift(int bits, unsigned word) const
 {
 	return ((word << bits) & 0xFFFFFFFF) | ((word & 0xFFFFFFFF) >> (32-bits));
 }

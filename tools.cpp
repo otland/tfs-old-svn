@@ -485,7 +485,7 @@ bool checkText(std::string text, const std::string& str)
 	return asLowerCaseString(text) == str;
 }
 
-std::string generateRecoveryKey(int32_t fieldCount, int32_t fieldLenght)
+std::string generateRecoveryKey(int32_t fieldCount, int32_t fieldLength)
 {
 	std::stringstream key;
 	int32_t i(0);
@@ -525,7 +525,7 @@ std::string generateRecoveryKey(int32_t fieldCount, int32_t fieldLenght)
 				}
 			}
 		}
-		while((!madeCharacter && !madeNumber) ? true : ++j && j < fieldLenght);
+		while((!madeCharacter && !madeNumber) ? true : ++j && j < fieldLength);
 		if(i < fieldCount - 1)
 			key << "-";
 		character = 0;

@@ -59,21 +59,22 @@ std::map<uint32_t, int64_t> ProtocolStatus::ipConnectMap;
 
 void ProtocolStatus::onRecvFirstMessage(NetworkMessage& msg)
 {
-	std::string ip = convertIPToString(getIP());
-	if(ip != "127.0.0.1" && ip != g_config.getString(ConfigManager::IP))
+	uint32_t ip = getIP();
+	if(ip != 0x0100007F)
 	{
-		if(!g_game.isInWhitelist(ip))
+		std::string ipStr = convertIPToString(ip);
+		if(ipStr != g_config.getString(ConfigManager::IP) && !g_game.isInWhitelist(ipStr))
 		{
-			if(g_game.isInBlacklist(ip))
+			if(g_game.isInBlacklist(ipStr))
 			{
 				getConnection()->closeConnection();
 				return;
 			}
 
-			std::map<uint32_t, int64_t>::const_iterator it = ipConnectMap.find(getIP());
+			std::map<uint32_t, int64_t>::const_iterator it = ipConnectMap.find(ip);
 			if(it != ipConnectMap.end())
 			{
-				if(OTSYS_TIME() < it->second + g_config.getNumber(ConfigManager::STATUSQUERY_TIMEOUT))
+				if(OTSYS_TIME() < (it->second + g_config.getNumber(ConfigManager::STATUSQUERY_TIMEOUT)))
 				{
 					getConnection()->closeConnection();
 					return;
@@ -81,8 +82,7 @@ void ProtocolStatus::onRecvFirstMessage(NetworkMessage& msg)
 			}
 		}
 	}
-
-	ipConnectMap[getIP()] = OTSYS_TIME();
+	ipConnectMap[ip] = OTSYS_TIME();
 
 	switch(msg.GetByte())
 	{

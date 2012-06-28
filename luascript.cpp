@@ -75,6 +75,7 @@ ScriptEnvironment::TempItemListMap ScriptEnvironment::m_tempItems;
 
 ScriptEnvironment::ScriptEnvironment()
 {
+	m_curNpc = NULL;
 	resetEnv();
 	m_lastUID = 70000;
 }

@@ -457,7 +457,7 @@ void Commands::createItemById(Player* player, const std::string& cmd, const std:
 	int32_t count = 1;
 	if(pos < tmp.size())
 	{
-		tmp.erase(0, pos+1);
+		tmp.erase(0, pos + 1);
 		count = std::max(1, std::min(atoi(tmp.c_str()), 100));
 	}
 

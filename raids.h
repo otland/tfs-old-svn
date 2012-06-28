@@ -73,14 +73,14 @@ class Raids
 		bool reload();
 
 		bool isLoaded() const {return loaded;}
-		bool isStarted() {return started;}
+		bool isStarted() const {return started;}
 
 		Raid* getRunning() {return running;}
 		void setRunning(Raid* newRunning) {running = newRunning;}
 
 		Raid* getRaidByName(const std::string& name);
 
-		uint64_t getLastRaidEnd() {return lastRaidEnd;}
+		uint64_t getLastRaidEnd() const {return lastRaidEnd;}
 		void setLastRaidEnd(uint64_t newLastRaidEnd) {lastRaidEnd = newLastRaidEnd;}
 
 		void checkRaids();
@@ -114,8 +114,8 @@ class Raid
 		void addEvent(RaidEvent* event);
 
 		bool isLoaded() const {return loaded;}
-		uint64_t getMargin() {return margin;}
-		uint32_t getInterval() {return interval;}
+		uint64_t getMargin() const {return margin;}
+		uint32_t getInterval() const {return interval;}
 
 		void stopEvents();
 
