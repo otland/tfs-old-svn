@@ -3014,7 +3014,7 @@ bool Game::internalCloseTrade(Player* player)
 bool Game::playerPurchaseItem(uint32_t playerId, uint16_t spriteId, uint8_t count, uint8_t amount,
 	bool ignoreCap/* = false*/, bool inBackpacks/* = false*/)
 {
-	if(amount == 0)
+	if(amount == 0 || amount > 100)
 		return false;
 
 	Player* player = getPlayerByID(playerId);
@@ -3048,6 +3048,9 @@ bool Game::playerPurchaseItem(uint32_t playerId, uint16_t spriteId, uint8_t coun
 bool Game::playerSellItem(uint32_t playerId, uint16_t spriteId, uint8_t count,
 	uint8_t amount)
 {
+	if(amount == 0 || amount > 100)
+		return false;
+
 	Player* player = getPlayerByID(playerId);
 	if(player == NULL || player->isRemoved())
 		return false;

@@ -581,7 +581,7 @@ if(Modules == nil) then
 
 			if(SHOPMODULE_MODE == SHOPMODULE_MODE_TRADE) then
 				if(itemid ~= nil and cost ~= nil) then
-					if((isItemRune(itemid) == TRUE or isItemFluidContainer(itemid) == TRUE) and subType == nil) then
+					if subType == nil and isItemFluidContainer(itemid) then
 						print("[Warning : " .. getCreatureName(getNpcCid()) .. "] NpcSystem:", "SubType missing for parameter item:", item)
 					else
 						self:addBuyableItem(nil, itemid, cost, subType, realName)
@@ -591,7 +591,7 @@ if(Modules == nil) then
 				end
 			else
 				if(name ~= nil and itemid ~= nil and cost ~= nil) then
-					if((isItemRune(itemid) == TRUE or isItemFluidContainer(itemid) == TRUE) and subType == nil) then
+					if subType == nil and isItemFluidContainer(itemid) then
 						print("[Warning : " .. getCreatureName(getNpcCid()) .. "] NpcSystem:", "SubType missing for parameter item:", item)
 					else
 						local names = {}
@@ -683,7 +683,7 @@ if(Modules == nil) then
 			end
 
 			if(name ~= nil and container ~= nil and itemid ~= nil and cost ~= nil) then
-				if((isItemRune(itemid) == TRUE or isItemFluidContainer(itemid) == TRUE) and subType == nil) then
+				if subType == nil and isItemFluidContainer(itemid) then
 					print("[Warning : " .. getCreatureName(getNpcCid()) .. "] NpcSystem:", "SubType missing for parameter item:", item)
 				else
 					local names = {}

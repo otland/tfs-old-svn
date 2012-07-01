@@ -28,7 +28,9 @@
 	M			items.otb
 	M			items.xml
 	M		movements/movements.xml
-	M		npc/lib/npcsystem/modules.lua
+			npc/lib/
+	M			npc.lua
+	M			npcsystem/modules.lua
 	M		weapons/weapons.xml
 	M		XML/commands.xml
 ]
@@ -90,6 +92,7 @@
 	Fixed possible client debug errors when casting spells.
 	Fixed so that lua_pop calls don't pass 0 as n (thanks to edubart and baxnie).
 	Fixed some memory leaks (thanks to baxnie for patches).
+	Fixed bugs with buying runes from NPCs, subType is also no longer necessary for runes in the NPC system.
 	A lot of cleanups and optimizations.
 	Updated items.
 ]
