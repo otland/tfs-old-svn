@@ -18,13 +18,18 @@ DROP TABLE IF EXISTS `player_storage`;
 DROP TABLE IF EXISTS `player_viplist`;
 DROP TABLE IF EXISTS `player_spells`;
 DROP TABLE IF EXISTS `player_deaths`;
+DROP TABLE IF EXISTS `guildwar_kills`;
+DROP TABLE IF EXISTS `guild_wars`;
 DROP TABLE IF EXISTS `guild_ranks`;
 DROP TABLE IF EXISTS `guilds`;
 DROP TABLE IF EXISTS `guild_invites`;
 DROP TABLE IF EXISTS `global_storage`;
+DROP TABLE IF EXISTS `market_history`;
+DROP TABLE IF EXISTS `market_offers`;
 DROP TABLE IF EXISTS `players`;
 DROP TABLE IF EXISTS `accounts`;
 DROP TABLE IF EXISTS `groups`;
+DROP TABLE IF EXISTS `server_config`;
 
 CREATE TABLE `groups`
 (
@@ -61,55 +66,56 @@ INSERT INTO `accounts` VALUES (1, '1', 1, 65535, 0, '0', '', 0, 0, 1);
 
 CREATE TABLE `players`
 (
-	`id` INT NOT NULL AUTO_INCREMENT,
-	`name` VARCHAR(255) NOT NULL,
-	`group_id` INT NOT NULL DEFAULT 1,
-	`account_id` INT NOT NULL DEFAULT 0,
-	`level` INT NOT NULL DEFAULT 1,
-	`vocation` INT NOT NULL DEFAULT 0,
-	`health` INT NOT NULL DEFAULT 150,
-	`healthmax` INT NOT NULL DEFAULT 150,
-	`experience` BIGINT NOT NULL DEFAULT 0,
-	`lookbody` INT NOT NULL DEFAULT 0,
-	`lookfeet` INT NOT NULL DEFAULT 0,
-	`lookhead` INT NOT NULL DEFAULT 0,
-	`looklegs` INT NOT NULL DEFAULT 0,
-	`looktype` INT NOT NULL DEFAULT 136,
-	`lookaddons` INT NOT NULL DEFAULT 0,
-	`maglevel` INT NOT NULL DEFAULT 0,
-	`mana` INT NOT NULL DEFAULT 0,
-	`manamax` INT NOT NULL DEFAULT 0,
-	`manaspent` INT NOT NULL DEFAULT 0,
-	`soul` INT UNSIGNED NOT NULL DEFAULT 0,
-	`town_id` INT NOT NULL DEFAULT 0,
-	`posx` INT NOT NULL DEFAULT 0,
-	`posy` INT NOT NULL DEFAULT 0,
-	`posz` INT NOT NULL DEFAULT 0,
-	`conditions` BLOB NOT NULL,
-	`cap` INT NOT NULL DEFAULT 0,
-	`sex` INT NOT NULL DEFAULT 0,
-	`lastlogin` BIGINT UNSIGNED NOT NULL DEFAULT 0,
-	`lastip` INT UNSIGNED NOT NULL DEFAULT 0,
-	`save` TINYINT(1) NOT NULL DEFAULT 1,
-	`redskull` TINYINT(1) NOT NULL DEFAULT 0,
-	`redskulltime` INT NOT NULL DEFAULT 0,
-	`rank_id` INT NOT NULL DEFAULT 0,
-	`guildnick` VARCHAR(255) NOT NULL DEFAULT '',
-	`lastlogout` BIGINT UNSIGNED NOT NULL DEFAULT 0,
-	`blessings` TINYINT(2) NOT NULL DEFAULT 0,
-	`direction` INT NOT NULL DEFAULT 0 COMMENT 'NOT IN USE BY THE SERVER',
-	`loss_experience` INT NOT NULL DEFAULT '10' COMMENT 'NOT IN USE BY THE SERVER',
-	`loss_mana` INT NOT NULL DEFAULT '10' COMMENT 'NOT IN USE BY THE SERVER',
-	`loss_skills` INT NOT NULL DEFAULT '10' COMMENT 'NOT IN USE BY THE SERVER',
-	`premend` INT NOT NULL DEFAULT 0 COMMENT 'NOT IN USE BY THE SERVER',
-	`online` TINYINT NOT NULL DEFAULT 0,
+	`id` int(11) NOT NULL AUTO_INCREMENT,
+	`name` varchar(255) NOT NULL,
+	`group_id` int(11) NOT NULL DEFAULT '1',
+	`account_id` int(11) NOT NULL DEFAULT '0',
+	`level` int(11) NOT NULL DEFAULT '1',
+	`vocation` int(11) NOT NULL DEFAULT '0',
+	`health` int(11) NOT NULL DEFAULT '150',
+	`healthmax` int(11) NOT NULL DEFAULT '150',
+	`experience` bigint(20) NOT NULL DEFAULT '0',
+	`lookbody` int(11) NOT NULL DEFAULT '0',
+	`lookfeet` int(11) NOT NULL DEFAULT '0',
+	`lookhead` int(11) NOT NULL DEFAULT '0',
+	`looklegs` int(11) NOT NULL DEFAULT '0',
+	`looktype` int(11) NOT NULL DEFAULT '136',
+	`lookaddons` int(11) NOT NULL DEFAULT '0',
+	`maglevel` int(11) NOT NULL DEFAULT '0',
+	`mana` int(11) NOT NULL DEFAULT '0',
+	`manamax` int(11) NOT NULL DEFAULT '0',
+	`manaspent` int(11) NOT NULL DEFAULT '0',
+	`soul` int(10) unsigned NOT NULL DEFAULT '0',
+	`town_id` int(11) NOT NULL DEFAULT '0',
+	`posx` int(11) NOT NULL DEFAULT '0',
+	`posy` int(11) NOT NULL DEFAULT '0',
+	`posz` int(11) NOT NULL DEFAULT '0',
+	`conditions` blob NOT NULL,
+	`cap` int(11) NOT NULL DEFAULT '0',
+	`sex` int(11) NOT NULL DEFAULT '0',
+	`lastlogin` bigint(20) unsigned NOT NULL DEFAULT '0',
+	`lastip` int(10) unsigned NOT NULL DEFAULT '0',
+	`save` tinyint(1) NOT NULL DEFAULT '1',
+	`skull` tinyint(1) NOT NULL DEFAULT '0',
+	`skulltime` int(11) NOT NULL DEFAULT '0',
+	`rank_id` int(11) NOT NULL DEFAULT '0',
+	`guildnick` varchar(255) NOT NULL DEFAULT '',
+	`lastlogout` bigint(20) unsigned NOT NULL DEFAULT '0',
+	`blessings` tinyint(2) NOT NULL DEFAULT '0',
+	`direction` int(11) NOT NULL DEFAULT '0' COMMENT 'NOT IN USE BY THE SERVER',
+	`loss_experience` int(11) NOT NULL DEFAULT '10' COMMENT 'NOT IN USE BY THE SERVER',
+	`loss_mana` int(11) NOT NULL DEFAULT '10' COMMENT 'NOT IN USE BY THE SERVER',
+	`loss_skills` int(11) NOT NULL DEFAULT '10' COMMENT 'NOT IN USE BY THE SERVER',
+	`premend` int(11) NOT NULL DEFAULT '0' COMMENT 'NOT IN USE BY THE SERVER',
+	`online` tinyint(4) NOT NULL DEFAULT '0',
+	`balance` bigint(20) unsigned NOT NULL DEFAULT '0',
 	PRIMARY KEY (`id`),
-	KEY (`name`),
-	FOREIGN KEY (`account_id`) REFERENCES `accounts`(`id`) ON DELETE CASCADE,
-	FOREIGN KEY (`group_id`) REFERENCES `groups`(`id`)
-) ENGINE = InnoDB;
+	KEY `name` (`name`),
+	FOREIGN KEY (`account_id`) REFERENCES `accounts` (`id`) ON DELETE CASCADE,
+	FOREIGN KEY (`group_id`) REFERENCES `groups` (`id`)
+) ENGINE=InnoDB;
 
-INSERT INTO `players` VALUES (1, 'Account Manager', 1, 1, 1, 0, 150, 150, 0, 0, 0, 0, 0, 110, 0, 0, 0, 0, 0, 0, 0, 50, 50, 7, '', 400, 0, 0, 0, 0, 0, 0, 0, '', 0, 0, 0, 10, 10, 10, 0, 0);
+INSERT INTO `players` VALUES (1,'Account Manager',1,1,1,0,150,150,0,0,0,0,0,110,0,0,0,0,0,0,0,50,50,7,'',400,0,0,0,0,0,0,0,'',0,0,0,10,10,10,0,0,0);
 
 CREATE TABLE `bans`
 (
@@ -275,6 +281,75 @@ CREATE TABLE `tile_store`
 	`data` LONGBLOB NOT NULL,
 	FOREIGN KEY (`house_id`) REFERENCES `houses` (`id`) ON DELETE CASCADE
 ) ENGINE = InnoDB;
+
+CREATE TABLE `guild_wars`
+(
+	`id` int(11) NOT NULL AUTO_INCREMENT,
+	`guild1` int(11) NOT NULL DEFAULT '0',
+	`guild2` int(11) NOT NULL DEFAULT '0',
+	`name1` varchar(255) NOT NULL,
+	`name2` varchar(255) NOT NULL,
+	`status` tinyint(2) NOT NULL DEFAULT '0',
+	`started` bigint(15) NOT NULL DEFAULT '0',
+	`ended` bigint(15) NOT NULL DEFAULT '0',
+	PRIMARY KEY (`id`),
+	KEY `guild1` (`guild1`),
+	KEY `guild2` (`guild2`)
+) ENGINE=InnoDB;
+
+CREATE TABLE `guildwar_kills`
+(
+	`id` int(11) NOT NULL AUTO_INCREMENT,
+	`killer` varchar(50) NOT NULL,
+	`target` varchar(50) NOT NULL,
+	`killerguild` int(11) NOT NULL DEFAULT '0',
+	`targetguild` int(11) NOT NULL DEFAULT '0',
+	`warid` int(11) NOT NULL DEFAULT '0',
+	`time` bigint(15) NOT NULL,
+	PRIMARY KEY (`id`),
+	FOREIGN KEY (`warid`) REFERENCES `guild_wars` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE `server_config`
+(
+	`config` varchar(50) NOT NULL,
+	`value` varchar(256) NOT NULL DEFAULT '',
+	UNIQUE KEY `config` (`config`)
+) ENGINE=InnoDB;
+
+INSERT INTO `server_config` VALUES ('db_version','5'),('encryption','0');
+
+CREATE TABLE `market_history`
+(
+	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+	`player_id` int(11) NOT NULL,
+	`sale` tinyint(1) NOT NULL DEFAULT '0',
+	`itemtype` int(10) unsigned NOT NULL,
+	`amount` smallint(5) unsigned NOT NULL,
+	`price` int(10) unsigned NOT NULL DEFAULT '0',
+	`expires_at` bigint(20) unsigned NOT NULL,
+	`inserted` bigint(20) unsigned NOT NULL,
+	`state` tinyint(1) unsigned NOT NULL,
+	PRIMARY KEY (`id`),
+	KEY `player_id` (`player_id`,`sale`),
+	FOREIGN KEY (`player_id`) REFERENCES `players` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE `market_offers`
+(
+	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+	`player_id` int(11) NOT NULL,
+	`sale` tinyint(1) NOT NULL DEFAULT '0',
+	`itemtype` int(10) unsigned NOT NULL,
+	`amount` smallint(5) unsigned NOT NULL,
+	`created` bigint(20) unsigned NOT NULL,
+	`anonymous` tinyint(1) NOT NULL DEFAULT '0',
+	`price` int(10) unsigned NOT NULL DEFAULT '0',
+	PRIMARY KEY (`id`),
+	KEY `sale` (`sale`,`itemtype`),
+	KEY `created` (`created`),
+	FOREIGN KEY (`player_id`) REFERENCES `players` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB;
 
 DELIMITER |
 
