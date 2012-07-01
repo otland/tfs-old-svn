@@ -72,7 +72,7 @@ void PlayerBox::updatePlayersOnline()
 
 	std::ostringstream ss;
 	ss << playersOnline << " player" << (playersOnline != 1 ? "s" : "") << " online";
-	SendMessage(online, WM_SETTEXT, 0, (LPARAM)ss.str());
+	SendMessage(online, WM_SETTEXT, 0, (LPARAM)ss.str().c_str());
 }
 
 void PlayerBox::addPlayer(Player* player)
@@ -104,7 +104,7 @@ LRESULT CALLBACK PlayerBox::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPAR
 			permBan = CreateWindowEx(0, "button", "Permanently Ban", WS_VISIBLE | WS_CHILD | WS_TABSTOP, 5, 35, 115, 25, hWnd, NULL, m_hInst, NULL);
 			kick = CreateWindowEx(0, "button", "Kick", WS_VISIBLE | WS_CHILD | WS_TABSTOP, 125, 35, 90, 25, hWnd, NULL, m_hInst, NULL);
 			list = CreateWindowEx(0, "combobox", "", WS_CHILD | WS_VISIBLE | WS_VSCROLL/* | CBS_DROPDOWNLIST*/ | CBS_SORT, 5, 5, 210, 25, hWnd, NULL, m_hInst, NULL);
-			online = CreateWindowEx(WS_EX_STATICEDGE, "static", ss.str(), WS_VISIBLE | WS_CHILD | WS_TABSTOP, 5, 65, 210, 20, hWnd, NULL, m_hInst, NULL);
+			online = CreateWindowEx(WS_EX_STATICEDGE, "static", ss.str().c_str(), WS_VISIBLE | WS_CHILD | WS_TABSTOP, 5, 65, 210, 20, hWnd, NULL, m_hInst, NULL);
 			
 			SendMessage(permBan, WM_SETFONT, (WPARAM)GUI::getInstance()->m_font, 0);
 			SendMessage(kick, WM_SETFONT, (WPARAM)GUI::getInstance()->m_font, 0);
@@ -129,7 +129,7 @@ LRESULT CALLBACK PlayerBox::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPAR
 					{
 						std::ostringstream ss;
 						ss << "Are you sure you want to " << ((HWND)lParam == kick ? "kick" : "permanently ban") << " " << player->getName() << "?";
-						if(MessageBoxA(hWnd, ss.str(), "Player List", MB_YESNO) == IDYES)
+						if(MessageBoxA(hWnd, ss.str().c_str(), "Player List", MB_YESNO) == IDYES)
 						{
 							player = g_game.getPlayerByName(name);
 							if(player)
