@@ -1657,13 +1657,13 @@ Build=0
 LanguageID=1033
 CharsetID=1252
 CompanyName=
-FileVersion=0.2.13-debug
+FileVersion=0.2.14-debug
 FileDescription=The Forgotten Server
 InternalName=
 LegalCopyright=
 LegalTrademarks=
 OriginalFilename=TheForgottenServer.exe
 ProductName=The Forgotten Server
-ProductVersion=0.2.13-debug
+ProductVersion=0.2.14-debug
 AutoIncBuildNr=0
 

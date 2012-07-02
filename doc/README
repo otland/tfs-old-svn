@@ -3,7 +3,7 @@
 		The Forgotten Server
 
 	Version
-		0.2.13
+		0.2.14
 
 	Codenamed
 		"Mystic Spirit"
@@ -75,11 +75,11 @@
 
 		Downloading the source code
 			Launch a terminal, and paste in this command:
-				svn co svn://svn.otland.net/public/forgottenserver/tags/0.2.13
+				svn co svn://svn.otland.net/public/forgottenserver/tags/0.2.14
 
 		Compiling
 			Launch a terminal, and type this command:
-				cd 0.2.13/ && make
+				cd 0.2.14/ && make
 
 	Windows
 		Code::Blocks
