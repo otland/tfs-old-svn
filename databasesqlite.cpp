@@ -207,7 +207,7 @@ std::string DatabaseSQLite::escapeBlob(const char* s, uint32_t length)
 	uint32_t cursor = 1;
 	for(uint32_t i = 0; i < length; ++i)
 	{
-		const char c = s[i];
+		const unsigned char c = s[i];
 		blob[++cursor] = hexLookup[c >> 4];
 		blob[++cursor] = hexLookup[c & 15];
 	}

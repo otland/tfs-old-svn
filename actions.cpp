@@ -446,6 +446,7 @@ Action::Action(LuaScriptInterface* _interface) :
 {
 	allowFarUse = false;
 	checkLineOfSight = true;
+	function = NULL;
 }
 
 Action::Action(const Action *copy) :
@@ -453,6 +454,7 @@ Action::Action(const Action *copy) :
 {
 	allowFarUse = copy->allowFarUse;
 	checkLineOfSight = copy->checkLineOfSight;
+	function = copy->function;
 }
 
 Action::~Action()
