@@ -22,6 +22,7 @@
 ]
 
 [ Milestone
+	Support for .otbm and .otbi files saved with "OTBM" or "OTBI" as the first four bytes.
 	Updated the MySQL schema, for an unknown reason it was missing the changes from database schema version 1.
 	Fixed a bug with the optimized escape blob function for DatabaseSQLite, output should be identical to the old function but over 10 times faster.
 	Fixed a possible bug with copied actions.

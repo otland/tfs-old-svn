@@ -55,63 +55,68 @@ FileLoader::~FileLoader()
 	}
 }
 
-bool FileLoader::openFile(const char* filename, bool write, bool caching /*= false*/)
+bool FileLoader::openFile(const char* filename, const char* accept_identifier, bool write, bool caching /*= false*/)
 {
-	uint32_t version = 0;
 	if(write)
 	{
 		m_file = fopen(filename, "wb");
-		if(m_file)
-		{
-			writeData(&version, sizeof(version), false);
-			return true;
-		}
-		else
+		if(!m_file)
 		{
 			m_lastError = ERROR_CAN_NOT_CREATE;
 			return false;
 		}
+
+		uint32_t version = 0;
+		writeData(&version, sizeof(version), false);
+		return true;
 	}
 
 	m_file = fopen(filename, "rb");
-	if(m_file)
+	if(!m_file)
 	{
-		if(fread(&version, sizeof(version), 1, m_file))
-		{
-			if(version > 0)
-			{
-				fclose(m_file);
-				m_file = NULL;
-				m_lastError = ERROR_INVALID_FILE_VERSION;
-				return false;
-			}
-
-			if(caching)
-			{
-				m_use_cache = true;
-				fseek(m_file, 0, SEEK_END);
-				int32_t file_size = ftell(m_file);
-				m_cache_size = std::min(32768, std::max(file_size/20, 8192)) & ~0x1FFF;
-			}
-
-			if(safeSeek(4))
-			{
-				delete m_root;
-				m_root = new NodeStruct();
-				m_root->start = 4;
-
-				int32_t byte;
-				if(safeSeek(4) && readByte(byte) && byte == NODE_START)
-					return parseNode(m_root);
-			}
-			else
-				m_lastError = ERROR_INVALID_FORMAT;
-		}
-		else
-			m_lastError = ERROR_EOF;
-	}
-	else
 		m_lastError = ERROR_CAN_NOT_OPEN;
+		return false;
+	}
+
+	char identifier[4];
+	if(fread(identifier, 1, 4, m_file) < 4)
+	{
+		fclose(m_file);
+		m_file = NULL;
+		m_lastError = ERROR_EOF;
+		return false;
+	}
+
+	// The first four bytes must either match the accept identifier or be 0x00000000 (wildcard)
+	if(memcmp(identifier, accept_identifier, 4) != 0 && memcmp(identifier, "\0\0\0\0", 4) != 0)
+	{
+		fclose(m_file);
+		m_file = NULL;
+		m_lastError = ERROR_INVALID_FILE_VERSION;
+		return false;
+	}
+
+	if(caching)
+	{
+		m_use_cache = true;
+		fseek(m_file, 0, SEEK_END);
+		int32_t file_size = ftell(m_file);
+		m_cache_size = std::min(32768, std::max(file_size/20, 8192)) & ~0x1FFF;
+	}
+
+	if(!safeSeek(4))
+	{
+		m_lastError = ERROR_INVALID_FORMAT;
+		return false;
+	}
+
+	delete m_root;
+	m_root = new NodeStruct();
+	m_root->start = 4;
+
+	int32_t byte;
+	if(safeSeek(4) && readByte(byte) && byte == NODE_START)
+		return parseNode(m_root);
 
 	return false;
 }
