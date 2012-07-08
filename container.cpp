@@ -279,7 +279,7 @@ void Container::onRemoveContainerItem(uint32_t index, Item* item)
 ReturnValue Container::__queryAdd(int32_t index, const Thing* thing, uint32_t count,
 	uint32_t flags) const
 {
-	bool childIsOwner = ((flags & FLAG_CHILDISOWNER) == FLAG_CHILDISOWNER);
+	bool childIsOwner = hasBitSet(FLAG_CHILDISOWNER, flags);
 	if(childIsOwner)
 	{
 		//a child container is querying, since we are the top container (not carried by a player)
