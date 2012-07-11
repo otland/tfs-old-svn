@@ -38,9 +38,23 @@ class Mount
 			clientId = _clientId;
 			id = _id;
 			premium = _premium;
+      
+      manaShield = invisible = regeneration = false;
+			healthGain = healthTicks = manaGain = manaTicks = conditionSuppressions = 0;
+			
+			memset(skills, 0, sizeof(skills));
+			memset(skillsPercent, 0, sizeof(skillsPercent));
+			memset(stats, 0 , sizeof(stats));
+			memset(statsPercent, 0, sizeof(statsPercent));
+
+			memset(absorb, 0, sizeof(absorb));
+			memset(reflect[REFLECT_PERCENT], 0, sizeof(reflect[REFLECT_PERCENT]));
+			memset(reflect[REFLECT_CHANCE], 0, sizeof(reflect[REFLECT_CHANCE]));
 		}
 
 		bool isTamed(Player* player) const;
+		void addAttributes(Player* player);
+		void removeAttributes(Player* player);
 
 		uint16_t getId() const {return id;}
 		uint16_t getClientId() const {return clientId;}
@@ -56,7 +70,14 @@ class Mount
 		int32_t speed, attackSpeed;
 		uint16_t clientId;
 		uint8_t id;
-		bool premium;
+    	bool premium, manaShield, invisible, regeneration;
+		
+		int16_t absorb[COMBAT_LAST + 1], reflect[REFLECT_LAST + 1][COMBAT_LAST + 1];
+		int32_t skills[SKILL_LAST + 1], skillsPercent[SKILL_LAST + 1], stats[STAT_LAST + 1], statsPercent[STAT_LAST + 1],
+			healthGain, healthTicks, manaGain, manaTicks, conditionSuppressions;
+      
+  friend class Mounts;
+  friend class Player;
 };
 
 typedef std::list<Mount*> MountList;
