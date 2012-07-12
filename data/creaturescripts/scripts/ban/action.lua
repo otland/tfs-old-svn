@@ -11,7 +11,7 @@ function onChannelRequest(cid, channel, custom)
 		return false
 	end
 
-	if(not isInArray(ACCESS[getPlayerAccess(cid)], channel)) then
+	if(isInArray(ACCESS[getPlayerAccess(cid)], channel)) then
 		doPlayerSendCancel(cid, "You cannot do this action.")
 		return false
 	end
