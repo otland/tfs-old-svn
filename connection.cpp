@@ -182,11 +182,6 @@ bool ConnectionManager::acceptConnection(uint32_t clientIp)
 	return true;
 }
 
-uint32_t ConnectionManager::getConnectionsSize() const
-{
-	return m_connections.size();
-}
-
 void Connection::closeConnection()
 {
 	//dispatcher thread
