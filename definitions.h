@@ -18,9 +18,9 @@
 #ifndef __DEFINITIONS__
 #define __DEFINITIONS__
 
-#define CLIENT_VERSION_MIN 954
-#define CLIENT_VERSION_MAX 954
-#define CLIENT_VERSION_STRING "Only clients with protocol 9.54 allowed!"
+#define CLIENT_VERSION_MIN 960
+#define CLIENT_VERSION_MAX 960
+#define CLIENT_VERSION_STRING "Only clients with protocol 9.6 allowed!"
 
 #define CLIENT_VERSION_DAT 0
 #define CLIENT_VERSION_SPR 0
@@ -31,7 +31,7 @@
 #define SOFTWARE_VERSION "0.3.7_SVN"
 #define SOFTWARE_CODENAME "Crying Damson"
 #define SOFTWARE_DEVELOPERS "Elf, Talaturen, Dalkon, BeniS, Tryller and Kornholijo"
-#define SOFTWARE_PROTOCOL "9.54"
+#define SOFTWARE_PROTOCOL "9.6"
 
 #define VERSION_CHECK "http://forgottenserver.otland.net/version.xml"
 #define VERSION_PATCH 0

@@ -1166,7 +1166,7 @@
 	]
 
 	[ 0.3.7
-		Protocol 9.54 support (Talaturen, Dalkon, Elf, Tryller)
+		Protocol 9.6 support (Talaturen, Dalkon, Elf, Tryller)
 		Mounts system with mounts.xml (Talaturen, Elf)
 		New spell cooldown system (Elf, Dalkon, Talaturen)
 		Orange skull (Elf)
