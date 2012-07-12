@@ -8233,16 +8233,20 @@
 	<item id="5082" article="a" name="closed door">
 		<attribute key="type" value="door"/>
 		<attribute key="blockprojectile" value="1"/>
+		<attribute key="transformUseTo" value="5083"/>
 	</item>
 	<item id="5083" article="an" name="open door">
 		<attribute key="type" value="door"/>
+		<attribute key="transformUseTo" value="5082"/>
 	</item>
 	<item id="5084" article="a" name="closed door">
 		<attribute key="type" value="door"/>
 		<attribute key="blockprojectile" value="1"/>
+		<attribute key="transformUseTo" value="5085"/>
 	</item>
 	<item id="5085" article="an" name="open door">
 		<attribute key="type" value="door"/>
+		<attribute key="transformUseTo" value="5084"/>
 	</item>
 	<item id="5086" article="a" name="furniture package">
 		<attribute key="description" value="It is a kit for a monkey statue."/>
@@ -9131,10 +9135,12 @@
 		<attribute key="description" value="The door seems to be sealed against unwanted intruders."/>
 		<attribute key="type" value="door"/>
 		<attribute key="blockprojectile" value="1"/>
+		<attribute key="transformUseTo" value="5746"/>
 	</item>
 	<item id="5746" article="an" name="open door">
 		<attribute key="description" value="The door seems to be sealed against unwanted intruders."/>
 		<attribute key="type" value="door"/>
+		<attribute key="transformUseTo" value="5745"/>
 	</item>
 	<item id="5747" name="rocks"/>
 	<item id="5748" article="a" name="closed door">
