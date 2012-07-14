@@ -1,6 +1,15 @@
-function isInArray(array, value)
-	for _, _value in ipairs(array) do 
-		if (value == _value) then return true end
+function isInArray(array, value, caseSensitive)
+	if (caseSensitive == nil or caseSensitive == false) and type(value) == "string" then
+		local lowerValue = value:lower()
+		for _, _value in ipairs(array) do
+			if type(value) == "string" and lowerValue == _value:lower() then
+				return true
+			end
+		end
+	else
+		for _, _value in ipairs(array) do
+			if (value == _value) then return true end
+		end
 	end
 	return false
 end
