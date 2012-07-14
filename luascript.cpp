@@ -2161,9 +2161,6 @@ void LuaInterface::registerFunctions()
 	//isSightClear(fromPos, toPos, floorCheck)
 	lua_register(m_luaState, "isSightClear", LuaInterface::luaIsSightClear);
 
-	//isInArray(array, value[, caseSensitive = false])
-	lua_register(m_luaState, "isInArray", LuaInterface::luaIsInArray);
-
 	//addEvent(callback, delay, ...)
 	lua_register(m_luaState, "addEvent", LuaInterface::luaAddEvent);
 
@@ -8810,116 +8807,6 @@ int32_t LuaInterface::luaIsSightClear(lua_State* L)
 	popPosition(L, fromPos);
 
 	lua_pushboolean(L, g_game.isSightClear(fromPos, toPos, floorCheck));
-	return 1;
-}
-
-int32_t LuaInterface::luaIsInArray(lua_State* L)
-{
-	//isInArray(array, value[, caseSensitive = false])
-	bool caseSensitive = false;
-	if(lua_gettop(L) > 2)
-		caseSensitive = popBoolean(L);
-
-	boost::any value;
-	if(lua_isnumber(L, -1))
-		value = popFloatNumber(L);
-	else if(lua_isboolean(L, -1))
-		value = popBoolean(L);
-	else if(lua_isstring(L, -1))
-		value = popString(L);
-	else
-	{
-		lua_pop(L, 1);
-		lua_pushboolean(L, false);
-		return 1;
-	}
-
-	const std::type_info& type = value.type();
-	if(!caseSensitive && type == typeid(std::string))
-		value = asLowerCaseString(boost::any_cast<std::string>(value));
-
-	if(!lua_istable(L, -1))
-	{
-		boost::any data;
-		if(lua_isnumber(L, -1))
-			data = popFloatNumber(L);
-		else if(lua_isboolean(L, -1))
-			data = popBoolean(L);
-		else if(lua_isstring(L, -1))
-			data = popString(L);
-		else
-		{
-			lua_pop(L, 1);
-			lua_pushboolean(L, false);
-			return 1;
-		}
-
-		if(type != data.type()) // check is it even same data type before searching deeper
-			lua_pushboolean(L, false);
-		else if(type == typeid(bool))
-			lua_pushboolean(L, boost::any_cast<bool>(value) == boost::any_cast<bool>(data));
-		else if(type == typeid(double))
-			lua_pushboolean(L, boost::any_cast<double>(value) == boost::any_cast<double>(data));
-		else if(caseSensitive)
-			lua_pushboolean(L, boost::any_cast<std::string>(value) == boost::any_cast<std::string>(data));
-		else
-			lua_pushboolean(L, boost::any_cast<std::string>(value) == asLowerCaseString(boost::any_cast<std::string>(data)));
-
-		return 1;
-	}
-
-	lua_pushnil(L);
-	while(lua_next(L, -2))
-	{
-		boost::any data;
-		if(lua_isnumber(L, -1))
-			data = popFloatNumber(L);
-		else if(lua_isboolean(L, -1))
-			data = popBoolean(L);
-		else if(lua_isstring(L, -1))
-			data = popString(L);
-		else
-		{
-			lua_pop(L, 1);
-			break;
-		}
-
-		if(type != data.type()) // check is it same data type before searching deeper
-			continue;
-
-		if(type == typeid(bool))
-		{
-			if(boost::any_cast<bool>(value) != boost::any_cast<bool>(data))
-				continue;
-
-			lua_pushboolean(L, true);
-			return 1;
-		}
-		else if(type == typeid(double))
-		{
-			if(boost::any_cast<double>(value) != boost::any_cast<double>(data))
-				continue;
-
-			lua_pushboolean(L, true);
-			return 1;
-		}
-		else if(caseSensitive)
-		{
-			if(boost::any_cast<std::string>(value) != boost::any_cast<std::string>(data))
-				continue;
-
-			lua_pushboolean(L, true);
-			return 1;
-		}
-		else if(boost::any_cast<std::string>(value) == asLowerCaseString(boost::any_cast<std::string>(data)))
-		{
-			lua_pushboolean(L, true);
-			return 1;
-		}
-	}
-
-	lua_pop(L, 2);
-	lua_pushboolean(L, false);
 	return 1;
 }
 

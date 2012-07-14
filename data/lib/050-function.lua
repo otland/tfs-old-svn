@@ -1,3 +1,10 @@
+function isInArray(array, value)
+	for _, _value in ipairs(array) do 
+		if (value == _value) then return true end
+	end
+	return false
+end
+
 function doPlayerGiveItem(cid, itemid, amount, subType)
 	local item = 0
 	if(isItemStackable(itemid)) then
