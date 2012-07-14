@@ -3350,6 +3350,8 @@ void ProtocolGame::AddPlayerStats(NetworkMessage_ptr msg)
 
 	Condition* condition = player->getCondition(CONDITION_REGENERATION, CONDITIONID_DEFAULT);
 	msg->put<uint16_t>(condition ? condition->getTicks() / 1000 : 0x00);
+
+	msg->put<uint16_t>(720); // offline training minutes
 }
 
 void ProtocolGame::AddPlayerSkills(NetworkMessage_ptr msg)
