@@ -433,7 +433,7 @@
 	<distance id="7365" level="40" function="default"/>	<!-- Onyx Arrow -->
 	<distance id="7363" level="30" function="default"/>	<!-- Piercing Bolt -->
 	<distance id="2547" level="55" function="default"/>	<!-- Power Bolt -->
-	<distance id="6529" level="70" function="default"/>	<!-- Infernal Bolt -->
+	<distance id="6529" level="110" function="default"/>	<!-- Infernal Bolt -->
 	<distance id="15648" level="30" function="default"/> <!-- Tarsal Arrow -->
 	<distance id="15649" level="40" function="default"/> <!-- Vortex Bolt -->
 </weapons>
