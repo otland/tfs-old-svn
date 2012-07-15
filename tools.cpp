@@ -869,7 +869,11 @@ ShootTypeNames shootTypeNames[] =
 	{"explosion",		NM_SHOOT_EXPLOSION},
 	{"cake",		NM_SHOOT_CAKE},
 	{"tarsalarrow",		NM_SHOOT_TARSALARROW},
-	{"vortexbolt",		NM_SHOOT_VORTEXBOLT}
+	{"vortexbolt",		NM_SHOOT_VORTEXBOLT},
+	{"prinspaticbolt",		NM_PRISMATICBOLT},
+	{"crystallinearrow",		NM_CRYSTALLINEARROW},
+	{"drillbolt",		NM_DRILLBOLT},
+	{"envenomedarrow",		NM_ENVENOMEDARROW}
 };
 
 CombatTypeNames combatTypeNames[] =
