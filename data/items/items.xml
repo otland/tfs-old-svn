@@ -23651,6 +23651,128 @@
 	<item id="17432" article="a" name="purse">
 		<attribute key="containerSize" value="30"/>
 	</item>
+	<item id="18388" article="a" name="crystal lamp">
+		<attribute key="weight" value="1000"/>
+		<attribute key="transformUseTo" value="18389"/>
+	</item>
+	<item id="18389" article="a" name="lit crystal lamp">
+		<attribute key="weight" value="1000"/>
+		<attribute key="transformUseTo" value="18388"/>
+	</item>
+	<item id="18390" article="a" name="wand of defiance">
+		<attribute key="description" value="It reveals devastating energy arcs."/>
+		<attribute key="weight" value="3700"/>
+		<attribute key="weaponType" value="wand"/>
+		<attribute key="shootType" value="energy"/>
+		<attribute key="skillMagic" value="1"/>
+		<attribute key="range" value="4"/>
+	</item>
+	<item id="18391" article="a" name="glowing mushroom">
+		<attribute key="weight" value="1000"/>
+		<attribute key="transformUseTo" value="18392"/>
+	</item>
+	<item id="18392" article="a" name="lit glowing mushroom">
+		<attribute key="weight" value="1000"/>
+		<attribute key="transformUseTo" value="18391"/>
+	</item>
+	<item id="18393" article="a" name="mushroom backpack">
+		<attribute key="weight" value="1800"/>
+		<attribute key="containerSize" value="20"/>
+		<attribute key="slotType" value="backpack"/>
+	</item>
+	<item id="18394" article="a" name="crystal backpack">
+		<attribute key="weight" value="1800"/>
+		<attribute key="containerSize" value="20"/>
+		<attribute key="slotType" value="backpack"/>
+	</item>
+	<item id="18398" article="a" name="gill gugel">
+		<attribute key="weight" value="900"/>
+		<attribute key="armor" value="5"/>
+		<attribute key="slotType" value="head"/>
+		<attribute key="skillMagic" value="2"/>
+		<attribute key="absorbPercentEarth" value="6"/>
+		<attribute key="absorbPercentFire" value="-6"/>
+		<attribute key="showattributes" value="1"/>
+	</item>
+	<item id="18399" article="a" name="gill coat">
+		<attribute key="weight" value="1900"/>
+		<attribute key="armor" value="12"/>
+		<attribute key="slotType" value="body"/>
+		<attribute key="skillMagic" value="1"/>
+		<attribute key="absorbPercentEarth" value="10"/>
+		<attribute key="absorbPercentFire" value="-10"/>
+		<attribute key="showattributes" value="1"/>
+	</item>
+	<item id="18400" name="gill legs">
+		<attribute key="weight" value="2800"/>
+		<attribute key="armor" value="7"/>
+		<attribute key="slotType" value="legs"/>
+		<attribute key="skillMagic" value="1"/>
+		<attribute key="absorbPercentEarth" value="8"/>
+		<attribute key="absorbPercentFire" value="-8"/>
+		<attribute key="showattributes" value="1"/>
+	</item>
+	<item id="18403" article="a" name="prismatic helmet">
+		<attribute key="weight" value="5600"/>
+		<attribute key="armor" value="9"/>
+		<attribute key="slotType" value="head"/>
+		<attribute key="skillShield" value="1"/>
+		<attribute key="absorbPercentPhysical" value="5"/>
+	</item>
+	<item id="18404" article="a" name="prismatic armor">
+		<attribute key="weight" value="7900"/>
+		<attribute key="armor" value="15"/>
+		<attribute key="slotType" value="body"/>
+		<attribute key="speed" value="30"/>
+		<attribute key="absorbPercentPhysical" value="5"/>
+		<attribute key="showattributes" value="1"/>
+	</item>
+	<item id="18405" name="prismatic legs">
+		<attribute key="weight" value="7100"/>
+		<attribute key="armor" value="8"/>
+		<attribute key="slotType" value="legs"/>
+		<attribute key="skillDist" value="2"/>
+		<attribute key="absorbPercentPhysical" value="3"/>
+		<attribute key="showattributes" value="1"/>
+	</item>
+	<item id="18406" name="prismatic boots">
+		<attribute key="weight" value="1800"/>
+		<attribute key="armor" value="3"/>
+		<attribute key="slotType" value="feet"/>
+		<attribute key="speed" value="30"/>
+		<attribute key="absorbPercentDeath" value="3"/>
+	</item>
+	<item id="18409" article="a" name="wand of everblazing">
+		<attribute key="description" value="It contains the everblazing fire."/>
+		<attribute key="weight" value="3700"/>
+		<attribute key="weaponType" value="wand"/>
+		<attribute key="shootType" value="fire"/>
+		<attribute key="skillMagic" value="1"/>
+		<attribute key="range" value="4"/>
+	</item>
+	<item id="18410" article="a" name="prismatic shield">
+		<attribute key="weight" value="7200"/>
+		<attribute key="defense" value="37"/>
+		<attribute key="skillShield" value="2"/>
+		<attribute key="absorbPercentPhysical" value="4"/>
+		<attribute key="weaponType" value="shield"/>
+	</item>
+	<item id="18411" article="a" name="muck rod">
+		<attribute key="description" value="A true staff of old, spitting slimy orbs."/>
+		<attribute key="weight" value="3700"/>
+		<attribute key="weaponType" value="rod"/>
+		<attribute key="shootType" value="earth"/>
+		<attribute key="skillMagic" value="1"/>
+		<attribute key="range" value="4"/>
+	</item>
+	<item id="18412" article="a" name="glacial rod">
+		<attribute key="description" value="Hurls the icy essence of the Svargrond glaciers."/>
+		<attribute key="weight" value="3700"/>
+		<attribute key="weaponType" value="rod"/>
+		<attribute key="shootType" value="ice"/>
+		<attribute key="skillMagic" value="1"/>
+		<attribute key="range" value="4"/>
+	</item>
 	<item id="20001" name="water"/>
 	<item id="20002" name="blood"/>
 	<item id="20003" name="beer"/>
