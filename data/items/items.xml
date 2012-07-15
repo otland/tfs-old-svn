@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <items>
 	<!-- README:
 		We really appreciate if someone could help us
@@ -23664,7 +23664,7 @@
 		<attribute key="weight" value="3700"/>
 		<attribute key="weaponType" value="wand"/>
 		<attribute key="shootType" value="energy"/>
-		<attribute key="skillMagic" value="1"/>
+		<attribute key="magiclevelpoints" value="1"/>
 		<attribute key="range" value="4"/>
 	</item>
 	<item id="18391" article="a" name="glowing mushroom">
@@ -23689,7 +23689,7 @@
 		<attribute key="weight" value="900"/>
 		<attribute key="armor" value="5"/>
 		<attribute key="slotType" value="head"/>
-		<attribute key="skillMagic" value="2"/>
+		<attribute key="magiclevelpoints" value="2"/>
 		<attribute key="absorbPercentEarth" value="6"/>
 		<attribute key="absorbPercentFire" value="-6"/>
 		<attribute key="showattributes" value="1"/>
@@ -23698,7 +23698,7 @@
 		<attribute key="weight" value="1900"/>
 		<attribute key="armor" value="12"/>
 		<attribute key="slotType" value="body"/>
-		<attribute key="skillMagic" value="1"/>
+		<attribute key="magiclevelpoints" value="1"/>
 		<attribute key="absorbPercentEarth" value="10"/>
 		<attribute key="absorbPercentFire" value="-10"/>
 		<attribute key="showattributes" value="1"/>
@@ -23707,7 +23707,7 @@
 		<attribute key="weight" value="2800"/>
 		<attribute key="armor" value="7"/>
 		<attribute key="slotType" value="legs"/>
-		<attribute key="skillMagic" value="1"/>
+		<attribute key="magiclevelpoints" value="1"/>
 		<attribute key="absorbPercentEarth" value="8"/>
 		<attribute key="absorbPercentFire" value="-8"/>
 		<attribute key="showattributes" value="1"/>
@@ -23747,7 +23747,7 @@
 		<attribute key="weight" value="3700"/>
 		<attribute key="weaponType" value="wand"/>
 		<attribute key="shootType" value="fire"/>
-		<attribute key="skillMagic" value="1"/>
+		<attribute key="magiclevelpoints" value="1"/>
 		<attribute key="range" value="4"/>
 	</item>
 	<item id="18410" article="a" name="prismatic shield">
@@ -23762,7 +23762,7 @@
 		<attribute key="weight" value="3700"/>
 		<attribute key="weaponType" value="rod"/>
 		<attribute key="shootType" value="earth"/>
-		<attribute key="skillMagic" value="1"/>
+		<attribute key="magiclevelpoints" value="1"/>
 		<attribute key="range" value="4"/>
 	</item>
 	<item id="18412" article="a" name="glacial rod">
@@ -23770,7 +23770,7 @@
 		<attribute key="weight" value="3700"/>
 		<attribute key="weaponType" value="rod"/>
 		<attribute key="shootType" value="ice"/>
-		<attribute key="skillMagic" value="1"/>
+		<attribute key="magiclevelpoints" value="1"/>
 		<attribute key="range" value="4"/>
 	</item>
 	<item id="20001" name="water"/>
