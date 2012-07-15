@@ -15,8 +15,8 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////
 
-#ifndef __ENUMS__
-#define __ENUMS__
+#ifndef __ENUMS__1
+#define __ENUMS__1
 
 #include <string>
 #include <list>
