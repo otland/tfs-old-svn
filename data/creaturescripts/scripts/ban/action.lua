@@ -1,7 +1,9 @@
-local ACCESS = {
-	[1] = { 8 },
-	[2] = { 1, 2, 4, 5, 7, 9 },
-	[3] = { 1, 2, 3, 4, 5, 6, 7, 9 }
+local ACCESS = { -- remove this double dependency
+	[1] = { 1 },
+  [2] = { 1 },
+  [3] = { 1, 2 },
+  [4] = { 1, 2 },
+  [5] = { 1, 2, 3 }
 }
 
 function onChannelRequest(cid, channel, custom)
@@ -11,7 +13,7 @@ function onChannelRequest(cid, channel, custom)
 		return false
 	end
 
-	if(isInArray(ACCESS[getPlayerAccess(cid)], channel)) then
+	if(not isInArray(ACCESS[getPlayerAccess(cid)], channel)) then
 		doPlayerSendCancel(cid, "You cannot do this action.")
 		return false
 	end
