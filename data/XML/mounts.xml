@@ -27,5 +27,9 @@
 	<mount id="25" clientId="437" name="Rented Horse" speed="20" premium="yes" />
 	<mount id="26" clientId="438" name="Rented Horse" speed="20" premium="yes" />
 	<mount id="27" clientId="447" name="Ladybug" speed="20" premium="yes" />
-	<mount id="28" clientId="450" name="Manta" speed="20" attackspeed="-1" premium="yes" />
+	<mount id="28" clientId="450" name="Manta" speed="20" premium="yes" />
+	<mount id="29" clientId="502" name="Ironblight" speed="20" premium="yes" />
+	<mount id="30" clientId="503" name="Magma Crawler" speed="20" premium="yes" />
+	<mount id="31" clientId="506" name="Dragonling" speed="20" premium="yes" />
+	<mount id="32" clientId="515" name="Gnarlhound" speed="20" premium="yes" />
 </mounts>
