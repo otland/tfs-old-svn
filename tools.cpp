@@ -1159,7 +1159,7 @@ ShootTypeNames shootTypeNames[] =
 	{"cake",			SHOOT_EFFECT_CAKE},
 	{"tarsalarrow",		SHOOT_EFFECT_TARSALARROW},
 	{"vortexbolt",		SHOOT_EFFECT_VORTEXBOLT},
-	{"prinspaticbolt",	SHOOT_EFFECT_PRISMATICBOLT},
+	{"prismaticbolt",	SHOOT_EFFECT_PRISMATICBOLT},
 	{"crystallinearrow",SHOOT_EFFECT_CRYSTALLINEARROW},
 	{"drillbolt",		SHOOT_EFFECT_DRILLBOLT},
 	{"envenomedarrow",	SHOOT_EFFECT_ENVENOMEDARROW}

@@ -640,4 +640,8 @@
 	<distance id="6529" level="110" event="function" value="default"/> <!-- Infernal Bolt -->
 	<distance id="15648" level="30" event="function" value="default"/> <!-- Tarsal Arrow -->
 	<distance id="15649" level="40" event="function" value="default"/> <!-- Vortex Bolt -->
+	<distance id="18435" level="90" event="function" value="default"/> <!-- Prismatic Bolt -->
+	<distance id="18436" level="70" event="function" value="default"/> <!-- Drill Bolt -->
+	<distance id="18437" level="70" event="function" value="default"/> <!-- Envenomed Arrow -->
+	<distance id="18304" level="90" event="function" value="default"/> <!-- Crystalline Arrow -->
 </weapons>
