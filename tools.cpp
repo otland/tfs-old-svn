@@ -870,7 +870,7 @@ ShootTypeNames shootTypeNames[] =
 	{"cake",		NM_SHOOT_CAKE},
 	{"tarsalarrow",		NM_SHOOT_TARSALARROW},
 	{"vortexbolt",		NM_SHOOT_VORTEXBOLT},
-	{"prinspaticbolt",		NM_PRISMATICBOLT},
+	{"prismaticbolt",		NM_PRISMATICBOLT},
 	{"crystallinearrow",		NM_CRYSTALLINEARROW},
 	{"drillbolt",		NM_DRILLBOLT},
 	{"envenomedarrow",		NM_ENVENOMEDARROW}
