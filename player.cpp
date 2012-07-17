@@ -2272,12 +2272,15 @@ BlockType_t Player::blockHit(Creature* attacker, CombatType_t combatType, int32_
 
 	if(mounted)
 	{
-    Mount* mount = Mounts::getInstance()->getMountByCid(defaultOutfit.lookMount);
-    if (mount->absorb[combatType])
-      blocked += (int32_t)std::ceil((double)(damage * mount->absorb[combatType]) / 100.);
-      
-    if(reflect && mount->reflect[REFLECT_PERCENT][combatType] && mount->reflect[REFLECT_CHANCE][combatType] >= random_range(1, 100))
-      reflected += (int32_t)std::ceil((double)(damage * mount->reflect[REFLECT_PERCENT][combatType]) / 100.);  
+		Mount* mount = Mounts::getInstance()->getMountByCid(defaultOutfit.lookMount);
+		if(mount)
+		{
+			if(mount->absorb[combatType])
+				blocked += (int32_t)std::ceil((double)(damage * mount->absorb[combatType]) / 100.);
+
+			if(reflect && mount->reflect[REFLECT_PERCENT][combatType] && mount->reflect[REFLECT_CHANCE][combatType] >= random_range(1, 100))
+				reflected += (int32_t)std::ceil((double)(damage * mount->reflect[REFLECT_PERCENT][combatType]) / 100.);
+		}
 	}
 
 	if(vocation->getAbsorb(combatType))
