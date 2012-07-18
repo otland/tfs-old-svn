@@ -620,6 +620,16 @@
 		<vocation id="3"/>
 		<vocation id="7" showInDescription="0"/>
     </distance>
+		<!-- Crystal Crossbow -->
+	<distance id="18453" level="90" unproperly="1" event="function" value="default">
+		<vocation id="3"/>
+		<vocation id="7" showInDescription="0"/>
+    </distance>
+		<!-- Mycological Bow -->
+	<distance id="18454" level="105" unproperly="1" event="function" value="default">
+		<vocation id="3"/>
+		<vocation id="7" showInDescription="0"/>
+    </distance>
 
  	<!-- Ammunition -->
 	<distance id="2545" event="script" value="poison_arrow.lua"/> <!-- Poison Arrow -->

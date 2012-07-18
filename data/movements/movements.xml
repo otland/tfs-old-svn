@@ -480,6 +480,10 @@
 	<movevent type="Equip" itemid="6300" slot="ring" event="function" value="onEquipItem"/>
 	<movevent type="Equip" itemid="6301" slot="ring" event="function" value="onEquipItem"/>
 	<movevent type="DeEquip" itemid="6301" slot="ring" event="function" value="onDeEquipItem"/>
+	<!-- Prismatic Ring -->
+	<movevent type="Equip" itemid="18408" slot="ring" level="120" event="function" value="onEquipItem"/>
+	<movevent type="Equip" itemid="18528" slot="ring" level="120" event="function" value="onEquipItem"/>
+	<movevent type="DeEquip" itemid="18528" slot="ring" event="function" value="onDeEquipItem"/>
 
 	<!-- Helmets -->
 		<!-- Hat of the Mad -->

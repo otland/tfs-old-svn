@@ -23752,6 +23752,13 @@
 		<attribute key="speed" value="30"/>
 		<attribute key="absorbPercentDeath" value="3"/>
 	</item>
+	<item id="18408" article="a" name="prismatic ring">
+		<attribute key="weight" value="105"/>
+		<attribute key="slotType" value="ring"/>
+		<attribute key="transformEquipTo" value="18528"/>
+		<attribute key="stopduration" value="1"/>
+		<attribute key="showduration" value="1"/>
+	</item>
 	<item id="18409" article="a" name="wand of everblazing">
 		<attribute key="description" value="It contains the everblazing fire."/>
 		<attribute key="weight" value="3700"/>
@@ -23782,6 +23789,12 @@
 		<attribute key="shootType" value="ice"/>
 		<attribute key="magiclevelpoints" value="1"/>
 		<attribute key="range" value="4"/>
+	</item>
+	<item id="18422" article="a" name="minor crystalline token">
+		<attribute key="weight" value="250"/>
+	</item>
+	<item id="18423" article="a" name="major crystalline token">
+		<attribute key="weight" value="350"/>
 	</item>
 	<item id="18435" article="an" name="prismatic bolt" plural="prismatic bolts">
 		<attribute key="weight" value="85"/>
@@ -23815,6 +23828,89 @@
 		<attribute key="ammoAction" value="removecount"/>
 		<attribute key="showattributes" value="1"/>
 	</item>
+	<item id="18447" article="a" name="iron loadstone">
+		<attribute key="description" value="A hermit near Carlin might be able to tell you more about it."/>
+		<attribute key="weight" value="200"/>
+	</item>
+	<item id="18448" article="a" name="glow wine">
+		<attribute key="description" value="A hermit near Carlin might be able to tell you more about it."/>
+		<attribute key="weight" value="200"/>
+	</item>
+	<item id="18449" article="a" name="decorative ribbon">
+		<attribute key="description" value="A hermit near Carlin might be able to tell you more about it."/>
+		<attribute key="weight" value="200"/>
+	</item>
+	<item id="18453" article="a" name="crystal crossbow">
+		<attribute key="weight" value="8400"/>
+		<attribute key="slotType" value="two-handed"/>
+		<attribute key="weaponType" value="distance"/>
+		<attribute key="ammoType" value="bolt"/>
+		<attribute key="range" value="6"/>
+		<attribute key="attack" value="4"/>
+		<attribute key="hitChance" value="3"/>
+	</item>
+	<item id="18454" article="a" name="mycological bow">
+		<attribute key="weight" value="4900"/>
+		<attribute key="slotType" value="two-handed"/>
+		<attribute key="weaponType" value="distance"/>
+		<attribute key="ammoType" value="arrow"/>
+		<attribute key="range" value="6"/>
+		<attribute key="hitChance" value="4"/>
+		<attribute key="attack" value="4"/>
+	</item>
+	<item id="18455" article="a" name="pet pig">
+		<attribute key="weight" value="2000"/>
+		<attribute key="transformUseTo" value="18456"/>
+	</item>
+	<item id="18456" article="a" name="pet pig">
+		<attribute key="weight" value="2000"/>
+		<attribute key="decayTo" value="18455"/>
+		<attribute key="duration" value="10"/>
+	</item>
+	<item id="18488" article="a" name="skill trainer">
+		<attribute key="description" value="Use this statue to train your sword fighting and shielding skill offline."/>
+	</item>
+	<item id="18489" article="a" name="skill trainer">
+		<attribute key="description" value="Use this statue to train your axe fighting and shielding skill offline."/>
+	</item>
+	<item id="18490" article="a" name="skill trainer">
+		<attribute key="description" value="Use this statue to train your club fighting and shielding skill offline."/>
+	</item>
+	<item id="18491" article="a" name="skill trainer">
+		<attribute key="description" value="Use this statue to train your distance fighting and shielding skill offline."/>
+	</item>
+	<item id="18492" article="a" name="skill trainer">
+		<attribute key="description" value="Use this statue to train your magic level and shielding skill offline."/>
+	</item>
+	<item id="18397" name="mushroom pie">
+		<attribute key="weight" value="900"/>
+		<attribute key="showcount" value="0"/>
+	</item>
+	<item id="18500" article="a" name="statue of abyssador">
+		<attribute key="weight" value="500"/> <!-- weight not accurate -->
+	</item>
+	<item id="18504" article="a" name="statue of deathstrike">
+		<attribute key="weight" value="500"/> <!-- weight not accurate -->
+	</item>
+	<item id="18508" article="a" name="statue of gnomevil">
+		<attribute key="weight" value="500"/> <!-- weight not accurate -->
+	</item>
+	<item id="18516" article="a" name="golem wrench">
+		<attribute key="description" value="A hermit near Carlin might be able to tell you more about it."/>
+		<attribute key="weight" value="200"/>
+	</item>
+	<item id="18528" article="a" name="prismatic ring">
+		<attribute key="weight" value="105"/>
+		<attribute key="slotType" value="ring"/>
+		<attribute key="decayTo" value="0"/>
+		<attribute key="transformDeEquipTo" value="18408"/>
+		<attribute key="duration" value="3600"/>
+		<attribute key="absorbPercentPhysical" value="10"/>
+		<attribute key="absorbPercentEnergy" value="8"/>
+		<attribute key="showduration" value="1"/>
+		<attribute key="showattributes" value="1"/>
+	</item>
+	<item id="17868" article="a" name="crystal teleporter"/>
 	<item id="20001" name="water"/>
 	<item id="20002" name="blood"/>
 	<item id="20003" name="beer"/>

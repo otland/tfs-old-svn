@@ -94,6 +94,7 @@
 	<action itemid="11429" event="script" value="foods/food.lua"/>
 	<action fromid="12415" toid="12418" event="script" value="foods/food.lua"/>
 	<action fromid="12637" toid="12639" event="script" value="foods/food.lua"/>
+	<action itemid="18397" event="script" value="foods/food.lua"/>
 
 	<!-- Special Food -->
 	<action itemid="9992" event="script" value="foods/rotworm_stew.lua"/>
