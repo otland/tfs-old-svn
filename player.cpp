@@ -66,11 +66,12 @@ Player::Player(const std::string& _name, ProtocolGame* p):
 	tradeState = TRADE_NONE;
 	accountManager = MANAGER_NONE;
 	guildLevel = GUILDLEVEL_NONE;
+	vocationId = VOCATION_NONE;
 
 	promotionLevel = walkTaskEvent = actionTaskEvent = nextStepEvent = bloodHitCount = shieldBlockCount = 0;
 	mailAttempts = idleTime = marriage = blessings = balance = premiumDays = mana = manaMax = manaSpent = 0;
 	soul = guildId = levelPercent = magLevelPercent = magLevel = experience = damageImmunities = rankId = 0;
-	conditionImmunities = conditionSuppressions = groupId = vocationId = managerNumber2 = town = skullEnd = 0;
+	conditionImmunities = conditionSuppressions = groupId = managerNumber2 = town = skullEnd = 0;
 	lastLogin = lastLogout = lastIP = messageTicks = messageBuffer = nextAction = editListId = maxWriteLen = 0;
 	windowTextId = nextExAction = 0;
 
@@ -200,7 +201,7 @@ std::string Player::getDescription(int32_t lookDistance) const
 		s << "yourself.";
 		if(hasFlag(PlayerFlag_ShowGroupNameInsteadOfVocation))
 			s << " You are " << group->getName();
-		else if(vocationId != 0)
+		else if(vocationId != VOCATION_NONE)
 			s << " You are " << vocation->getDescription();
 		else
 			s << " You have no vocation";
@@ -214,7 +215,7 @@ std::string Player::getDescription(int32_t lookDistance) const
 		s << ". " << (sex % 2 ? "He" : "She");
 		if(hasFlag(PlayerFlag_ShowGroupNameInsteadOfVocation))
 			s << " is " << group->getName();
-		else if(vocationId != 0)
+		else if(vocationId != VOCATION_NONE)
 			s << " is " << vocation->getDescription();
 		else
 			s << " has no vocation";
@@ -224,7 +225,7 @@ std::string Player::getDescription(int32_t lookDistance) const
 	if(marriage && IOLoginData::getInstance()->getNameByGuid(marriage, tmp))
 	{
 		s << ", ";
-		if(vocationId == 0)
+		if(vocationId == VOCATION_NONE)
 		{
 			if(lookDistance == -1)
 				s << "and you are";
@@ -2449,7 +2450,7 @@ bool Player::onDeath()
 			blessings = 0;
 
 		loginPosition = masterPosition;
-		if(vocationId > 0 && g_config.getBool(ConfigManager::ROOK_SYSTEM) &&
+		if(vocationId > VOCATION_NONE && g_config.getBool(ConfigManager::ROOK_SYSTEM) &&
 			level <= (uint32_t)g_config.getNumber(ConfigManager::ROOK_LEVELTO))
 		{
 			if(Town* rook = Towns::getInstance()->getTown(g_config.getNumber(ConfigManager::ROOK_TOWN)))

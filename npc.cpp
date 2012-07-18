@@ -2159,7 +2159,7 @@ const NpcResponse* Npc::getResponse(const ResponseList& list, const Player* play
 				for(uint32_t i = 0; i <= player->promotionLevel; ++i)
 					tmpVoc = Vocations::getInstance()->getVocation(tmpVoc->getFromVocation());
 
-				if(tmpVoc->getId() != 2)
+				if(tmpVoc->getId() != VOCATION_DRUID)
 					continue;
 
 				++matchCount;
@@ -2171,7 +2171,7 @@ const NpcResponse* Npc::getResponse(const ResponseList& list, const Player* play
 				for(uint32_t i = 0; i <= player->promotionLevel; ++i)
 					tmpVoc = Vocations::getInstance()->getVocation(tmpVoc->getFromVocation());
 
-				if(tmpVoc->getId() != 4)
+				if(tmpVoc->getId() != VOCATION_KNIGHT)
 					continue;
 
 				++matchCount;
@@ -2183,7 +2183,7 @@ const NpcResponse* Npc::getResponse(const ResponseList& list, const Player* play
 				for(uint32_t i = 0; i <= player->promotionLevel; ++i)
 					tmpVoc = Vocations::getInstance()->getVocation(tmpVoc->getFromVocation());
 
-				if(tmpVoc->getId() != 3)
+				if(tmpVoc->getId() != VOCATION_PALADIN)
 					continue;
 
 				++matchCount;
@@ -2195,7 +2195,7 @@ const NpcResponse* Npc::getResponse(const ResponseList& list, const Player* play
 				for(uint32_t i = 0; i <= player->promotionLevel; ++i)
 					tmpVoc = Vocations::getInstance()->getVocation(tmpVoc->getFromVocation());
 
-				if(tmpVoc->getId() != 1)
+				if(tmpVoc->getId() != VOCATION_SORCERER)
 					continue;
 
 				++matchCount;
