@@ -39,7 +39,7 @@ class Mount
 			id = _id;
 			premium = _premium;
       
-      manaShield = invisible = regeneration = false;
+			manaShield = invisible = regeneration = false;
 			healthGain = healthTicks = manaGain = manaTicks = conditionSuppressions = 0;
 			
 			memset(skills, 0, sizeof(skills));

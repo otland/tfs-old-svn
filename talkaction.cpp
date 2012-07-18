@@ -1154,7 +1154,7 @@ bool TalkAction::banishmentInfo(Creature* creature, const std::string&, const st
 		return true;
 	}
 
-	bool deletion = ban.expires < 0;
+	bool deletion = ban.expires <= 0;
 	std::string admin = "Automatic ";
 	if(!ban.adminId)
 		admin += (deletion ? "deletion" : "banishment");
