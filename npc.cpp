@@ -556,6 +556,8 @@ uint32_t Npc::parseParamsNode(xmlNodePtr node)
 				params |= RESPOND_LOWAMOUNT;
 			else if(tmpParam == "premium")
 				params |= RESPOND_PREMIUM;
+			else if(tmpParam == "promoted")
+				params |= RESPOND_PROMOTED;
 			else if(tmpParam == "druid")
 				params |= RESPOND_DRUID;
 			else if(tmpParam == "knight")
@@ -2148,6 +2150,20 @@ const NpcResponse* Npc::getResponse(const ResponseList& list, const Player* play
 			if(hasBitSet(RESPOND_PREMIUM, params))
 			{
 				if(!player->isPremium())
+					continue;
+
+				++matchCount;
+			}
+
+			if(hasBitSet(RESPOND_PROMOTED, params))
+			{
+				Vocation* tmpVoc = player->vocation;
+
+				if(tmpVoc->getId() == VOCATION_NONE ||
+				tmpVoc->getId() == VOCATION_SORCERER ||
+				tmpVoc->getId() == VOCATION_DRUID ||
+				tmpVoc->getId() == VOCATION_KNIGHT ||
+				tmpVoc->getId() == VOCATION_PALADIN)
 					continue;
 
 				++matchCount;
