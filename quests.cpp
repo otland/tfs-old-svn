@@ -55,6 +55,7 @@ std::string Mission::parseStorages(std::string state, std::string value, Player*
 	}
 
 	replaceString(state, "|STATE|", value);
+	replaceString(state, "\\n", "\n");
 	return state;
 }
 
