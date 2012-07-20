@@ -219,7 +219,7 @@ bool ProtocolGame::login(const std::string& name, uint32_t accnumber, const std:
 						IOLoginData::getInstance()->getNameByGuid(bannedBy, name_);
 
 					std::ostringstream ss;
-					ss << "Your account has been " << (deletion ? "deleted" : "banished") << " by:\n" << name << ", for the following reason:\n" << getReason(reason) << ".\nThe action taken was:\n" << getAction(action, false) << ".\nThe comment given was:\n" << comment << "\nYour " << (deletion ? "account was deleted on" : "banishment will be lifted at") << ":\n" << formatDateShort(banTime) << ".";
+					ss << "Your account has been " << (deletion ? "deleted" : "banished") << " by:\n" << name_ << ", for the following reason:\n" << getReason(reason) << ".\nThe action taken was:\n" << getAction(action, false) << ".\nThe comment given was:\n" << comment << "\nYour " << (deletion ? "account was deleted on" : "banishment will be lifted at") << ":\n" << formatDateShort(banTime) << ".";
 					disconnectClient(0x14, ss.str().c_str());
 					return false;
 				}
