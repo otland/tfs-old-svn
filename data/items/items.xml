@@ -15026,7 +15026,11 @@
 	<item fromid="8233" toid="8236" name="dragon head"/>
 	<item fromid="8237" toid="8239" name="jagged stones"/>
 	<item fromid="8242" toid="8248" article="an" name="archway"/>
-	<item fromid="8249" toid="8256" article="a" name="hole">
+	<item fromid="8249" toid="8252" article="a" name="hole">
+		<attribute key="floorchange" value="down"/>
+	</item>
+	<item id="8253" name="something crawling"/>
+	<item fromid="8254" toid="8256" article="a" name="hole">
 		<attribute key="floorchange" value="down"/>
 	</item>
 	<item id="8257" name="grass"/>
