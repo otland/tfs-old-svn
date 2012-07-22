@@ -117,6 +117,7 @@
 	<action itemid="6120" event="script" value="other/spellbook.lua"/>
 	<action fromid="8900" toid="8904" event="script" value="other/spellbook.lua"/>
 	<action itemid="8918" event="script" value="other/spellbook.lua"/>
+	<action itemid="18401" event="script" value="other/spellbook.lua"/>
 
 	<!-- Construction kits -->
 	<action fromid="3901" toid="3938" event="script" value="other/constructionkits.lua"/>

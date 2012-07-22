@@ -23840,6 +23840,30 @@
 		<attribute key="description" value="A hermit near Carlin might be able to tell you more about it."/>
 		<attribute key="weight" value="200"/>
 	</item>
+ 	<item id="18450" article="the" name="crystalline sword">
+		<attribute key="weight" value="4800"/>
+		<attribute key="defense" value="34"/>
+		<attribute key="attack" value="47"/>
+		<attribute key="weaponType" value="sword"/>
+		<attribute key="extradef" value="1"/>
+	</item>
+	<item id="18451" article="the" name="crystalline axe">
+		<attribute key="weight" value="7600"/>
+		<attribute key="description" value="Even in the light of day, the stars seem to reflect in each facet of this crystalline axe."/>
+		<attribute key="defense" value="29"/>
+		<attribute key="attack" value="51"/>
+		<attribute key="weaponType" value="axe"/>
+		<attribute key="extradef" value="3"/>
+		<attribute key="skillAxe" value="1"/>		
+	</item>
+	<item id="18452" article="the" name="mycological mace">
+		<attribute key="weight" value="4800"/>
+		<attribute key="defense" value="31"/>
+		<attribute key="attack" value="50"/>
+		<attribute key="weaponType" value="club"/>
+		<attribute key="extradef" value="3"/>
+		<attribute key="skillClub" value="1"/>		
+	</item>	
 	<item id="18453" article="a" name="crystal crossbow">
 		<attribute key="weight" value="8400"/>
 		<attribute key="slotType" value="two-handed"/>
@@ -23866,6 +23890,40 @@
 		<attribute key="weight" value="2000"/>
 		<attribute key="decayTo" value="18455"/>
 		<attribute key="duration" value="10"/>
+	</item>
+	<item id="18465" article="a" name="shiny blade">
+		<attribute key="weight" value="4500"/>
+		<attribute key="defense" value="35"/>
+		<attribute key="attack" value="50"/>
+		<attribute key="weaponType" value="sword"/>
+		<attribute key="extradef" value="3"/>
+		<attribute key="skillSword" value="1"/>		
+	</item>
+	<item id="18401" article="a" name="spellbook of vigilance">
+		<attribute key="weight" value="2500"/>
+		<attribute key="description" value="It shows your spells and can also shield against attacks when worn."/>
+		<attribute key="defense" value="20"/>
+		<attribute key="weaponType" value="shield"/>
+		<attribute key="absorbPercentEarth" value="3"/>
+		<attribute key="absorbPercentFire" value="-3"/>
+		<attribute key="magicpoints" value="3"/>
+		<attribute key="showattributes" value="1"/>
+	</item>
+	<item id="18402" article="a" name="gill necklace">
+		<attribute key="weight" value="410"/>
+		<attribute key="slotType" value="necklace"/>
+		<attribute key="charges" value="750"/>
+		<attribute key="showcharges" value="1"/>
+		<attribute key="absorbPercentPhysical" value="15"/>
+		<attribute key="absorbPercentEarth" value="10"/>
+	</item>
+	<item id="18407" article="a" name="prismatic necklace">
+		<attribute key="weight" value="650"/>
+		<attribute key="slotType" value="necklace"/>
+		<attribute key="charges" value="750"/>
+		<attribute key="showcharges" value="1"/>
+		<attribute key="absorbPercentPhysical" value="10"/>
+		<attribute key="absorbPercentEnergy" value="15"/>
 	</item>
 	<item id="18488" article="a" name="skill trainer">
 		<attribute key="description" value="Use this statue to train your sword fighting and shielding skill offline."/>

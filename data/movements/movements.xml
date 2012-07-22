@@ -431,6 +431,12 @@
 		<!-- Necklace of the Deep -->
 	<movevent type="Equip" itemid="15403" slot="necklace" level="120" event="function" value="onEquipItem"/>
 	<movevent type="DeEquip" itemid="15403" slot="necklace" event="function" value="onDeEquipItem"/>
+	 <!-- Gill Necklace -->
+	<movevent type="Equip" itemid="18402" slot="necklace" level="150" event="function" value="onEquipItem"/>
+	<movevent type="DeEquip" itemid="18402" slot="necklace" event="function" value="onDeEquipItem"/>
+		<!-- Prismatic Necklace -->
+	<movevent type="Equip" itemid="18407" slot="necklace" level="150" event="function" value="onEquipItem"/>
+	<movevent type="DeEquip" itemid="18407" slot="necklace" event="function" value="onDeEquipItem"/>
 
 	<!-- Rings -->
 		<!-- Might Ring -->
@@ -1190,7 +1196,14 @@
 		<vocation id="8" showInDescription="0"/>
 	</movevent>
 	<movevent type="DeEquip" itemid="18410" slot="shield" event="function" value="onDeEquipItem"/>
-
+		<!-- Spellbook of Vigilance -->
+	<movevent type="Equip" itemid="18401" slot="shield" level="130" event="function" value="onEquipItem">
+		<vocation id="1"/>
+		<vocation id="5" showInDescription="0"/>
+		<vocation id="2"/>
+		<vocation id="6" showInDescription="0"/>	
+	</movevent>	
+	<movevent type="DeEquip" itemid="18401" slot="shield" event="function" value="onDeEquipItem"/>
 
 	<!-- Other -->
 		<!-- Magical Torch -->

@@ -243,6 +243,10 @@
 		<vocation id="4"/>
 		<vocation id="8" showInDescription="0"/>
     </melee>
+ 	<!-- Crystalline Sword -->
+    <melee id="18450" level="62" unproperly="1" event="function" value="default"/>
+		<!-- Shiny Blade -->
+    <melee id="18465" level="120" unproperly="1" event="function" value="default"/>
 
 	<!-- Axes -->
 		<!-- Barbarian Axe -->
@@ -397,6 +401,8 @@
 		<vocation id="4"/>
 		<vocation id="8" showInDescription="0"/>
 	</melee>
+		<!-- Crystalline Axe -->
+	<melee id="18451" level="120" unproperly="1" event="function" value="default"/>
 
 	<!-- Clubs -->
 		<!-- Clerical Mace -->
@@ -537,6 +543,8 @@
 		<vocation id="4"/>
 		<vocation id="8" showInDescription="0"/>
 	</melee>
+		<!-- Mycological Mace -->
+	<melee id="18452" level="120" unproperly="1" event="function" value="default"/>
 
 	<!-- Bows and Crossbows -->
 		<!-- Crossbow -->
