@@ -1643,7 +1643,7 @@ void LuaInterface::registerFunctions()
 	//getInstantSpellInfo(cid, name)
 	lua_register(m_luaState, "getInstantSpellInfo", LuaInterface::luaGetInstantSpellInfo);
 
-	//doCreatureCastSpell (uid, spell)
+	//doCreatureCastSpell(uid, spell)
 	lua_register(m_luaState, "doCreatureCastSpell", LuaInterface::luaDoCreatureCastSpell);
 
 	//getCreatureStorageList(cid)
