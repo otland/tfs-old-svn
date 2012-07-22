@@ -1643,6 +1643,9 @@ void LuaInterface::registerFunctions()
 	//getInstantSpellInfo(cid, name)
 	lua_register(m_luaState, "getInstantSpellInfo", LuaInterface::luaGetInstantSpellInfo);
 
+	//doCreatureCastSpell (uid, spell)
+	lua_register(m_luaState, "doCreatureCastSpell", LuaInterface::luaDoCreatureCastSpell);
+
 	//getCreatureStorageList(cid)
 	lua_register(m_luaState, "getCreatureStorageList", LuaInterface::luaGetCreatureStorageList);
 
@@ -3332,6 +3335,35 @@ int32_t LuaInterface::luaGetInstantSpellInfo(lua_State* L)
 	setField(L, "mlevel", spell->getMagicLevel());
 	setField(L, "mana", spell->getManaCost(NULL));
 	setField(L, "manapercent", spell->getManaPercent());
+	return 1;
+}
+
+int32_t LuaInterface::luaDoCreatureCastSpell(lua_State* L)
+{
+	//doCreatureCastSpell (uid, spell)
+	std::string spellname = popString(L);
+
+	ScriptEnviroment *env = getEnv();
+	Creature *creature = env->getCreatureByUID(popNumber(L));
+	if(!creature)
+	{
+	 	errorEx(getError(LUA_ERROR_CREATURE_NOT_FOUND));
+	 	lua_pushboolean (L, false);
+	 	return 1;
+	}
+	
+	Spell *spell = g_spells->getInstantSpellByName(spellname);
+	if(spell)
+	{
+	 	if(spell->castSpell(creature))
+	 	{
+		   	lua_pushboolean(L, true);
+		   	return 1;
+		}
+	}
+	
+	errorEx(getError(LUA_ERROR_SPELL_NOT_FOUND));
+	lua_pushboolean(L, false); 
 	return 1;
 }
 

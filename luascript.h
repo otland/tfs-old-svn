@@ -552,6 +552,7 @@ class LuaInterface
 		static int32_t luaGetPlayerInstantSpellCount(lua_State* L);
 		static int32_t luaGetPlayerInstantSpellInfo(lua_State* L);
 		static int32_t luaGetInstantSpellInfo(lua_State* L);
+		static int32_t luaDoCreatureCastSpell(lua_State* L);
 		static int32_t luaGetPlayerPartner(lua_State* L);
 		static int32_t luaDoPlayerSetPartner(lua_State* L);
 		static int32_t luaDoPlayerFollowCreature(lua_State* L);
