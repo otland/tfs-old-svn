@@ -212,14 +212,14 @@ bool ProtocolGame::login(const std::string& name, uint32_t accnumber, const std:
 				uint64_t timeNow = time(NULL);
 				if((deletion && banTime != 0) || banTime > timeNow)
 				{
-					std::string name_;
+					std::string bannedByName;
 					if(bannedBy == 0)
-						name_ = (deletion ? "Automatic deletion" : "Automatic banishment");
+						bannedByName = (deletion ? "Automatic deletion" : "Automatic banishment");
 					else
-						IOLoginData::getInstance()->getNameByGuid(bannedBy, name_);
+						IOLoginData::getInstance()->getNameByGuid(bannedBy, bannedByName);
 
 					std::ostringstream ss;
-					ss << "Your account has been " << (deletion ? "deleted" : "banished") << " by:\n" << name_ << ", for the following reason:\n" << getReason(reason) << ".\nThe action taken was:\n" << getAction(action, false) << ".\nThe comment given was:\n" << comment << "\nYour " << (deletion ? "account was deleted on" : "banishment will be lifted at") << ":\n" << formatDateShort(banTime) << ".";
+					ss << "Your account has been " << (deletion ? "deleted" : "banished") << " by:\n" << bannedByName << ", for the following reason:\n" << getReason(reason) << ".\nThe action taken was:\n" << getAction(action, false) << ".\nThe comment given was:\n" << comment << "\nYour " << (deletion ? "account was deleted on" : "banishment will be lifted at") << ":\n" << formatDateShort(banTime) << ".";
 					disconnectClient(0x14, ss.str().c_str());
 					return false;
 				}
@@ -2686,7 +2686,7 @@ void ProtocolGame::sendPingBack()
 
 void ProtocolGame::sendDistanceShoot(const Position& from, const Position& to, uint8_t type)
 {
-	if(type > NM_SHOOT_LAST || type == NM_SHOOT_UNK1 || type == NM_SHOOT_UNK2)
+	if(type > NM_SHOOT_LAST || type == NM_SHOOT_UNK1 || type == NM_SHOOT_UNK2 || type == NM_SHOOT_UNK3)
 		return;
 
 	if(!canSee(from) && !canSee(to))

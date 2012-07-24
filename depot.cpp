@@ -53,13 +53,13 @@ Attr_ReadValue Depot::readAttr(AttrTypes_t attr, PropStream& propStream)
 }
 
 ReturnValue Depot::__queryAdd(int32_t index, const Thing* thing, uint32_t count,
-	uint32_t flags) const
+	uint32_t flags, Creature* actor/* = NULL*/) const
 {
 	const Item* item = thing->getItem();
 	if(item == NULL)
 		return RET_NOTPOSSIBLE;
 
-	bool skipLimit = ((flags & FLAG_NOLIMIT) == FLAG_NOLIMIT);
+	bool skipLimit = hasBitSet(FLAG_NOLIMIT, flags);
 	if(!skipLimit)
 	{
 		int32_t addCount = 0;
@@ -77,7 +77,7 @@ ReturnValue Depot::__queryAdd(int32_t index, const Thing* thing, uint32_t count,
 		if(getItemHoldingCount() + addCount > maxDepotLimit)
 			return RET_DEPOTISFULL;
 	}
-	return Container::__queryAdd(index, thing, count, flags);
+	return Container::__queryAdd(index, thing, count, flags, actor);
 }
 
 ReturnValue Depot::__queryMaxCount(int32_t index, const Thing* thing, uint32_t count,

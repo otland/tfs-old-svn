@@ -78,11 +78,14 @@ void House::setHouseOwner(uint32_t guid, Player* player/* = NULL*/)
 		PlayerVector toKick;
 		for(HouseTileList::iterator it = houseTiles.begin(); it != houseTiles.end(); ++it)
 		{
-			for(uint32_t i = 0; i < (*it)->getThingCount(); ++i)
+			if(const CreatureVector* creatures = (*it)->getCreatures())
 			{
-				Creature* creature = (*it)->__getThing(i)->getCreature();
-				if(creature && creature->getPlayer())
-					toKick.push_back(creature->getPlayer());
+				for(CreatureVector::const_iterator cit = creatures->begin(), cend = creatures->end(); cit != cend; ++cit)
+				{
+					Player* player = (*cit)->getPlayer();
+					if(player)
+						toKick.push_back(player);
+				}
 			}
 		}
 
@@ -279,18 +282,18 @@ bool House::transferToDepot(Player* player)
 
 	for(HouseTileList::iterator it = houseTiles.begin(); it != houseTiles.end(); ++it)
 	{
-		for(uint32_t i = 0; i < (*it)->getThingCount(); ++i)
+		if(const TileItemVector* items = (*it)->getItemList())
 		{
-			item = (*it)->__getThing(i)->getItem();
-			if(!item)
-				continue;
-
-			if(item->isPickupable())
-				moveItemList.push_back(item);
-			else if((tmpContainer = item->getContainer()))
+			for(ItemVector::const_iterator iit = items->begin(), iend = items->end(); iit != iend; ++iit)
 			{
-				for(ItemList::const_iterator it = tmpContainer->getItems(); it != tmpContainer->getEnd(); ++it)
-					moveItemList.push_back(*it);
+				item = (*iit);
+				if(item->isPickupable())
+					moveItemList.push_back(item);
+				else if((tmpContainer = item->getContainer()))
+				{
+					for(ItemList::const_iterator cit = tmpContainer->getItems(); cit != tmpContainer->getEnd(); ++cit)
+						moveItemList.push_back(*cit);
+				}
 			}
 		}
 	}

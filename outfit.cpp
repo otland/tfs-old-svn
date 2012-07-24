@@ -182,27 +182,30 @@ bool Outfits::loadFromXml()
 
 						readXMLString(p, "name", outfitName);
 						if(readXMLInteger(p, "looktype", intVal))
+						{
 							outfit.looktype = intVal;
+							if(readXMLInteger(p, "addons", intVal))
+								outfit.addons = intVal;
+							else
+								outfit.addons = 0;
+
+							if(readXMLInteger(p, "premium", intVal))
+								outfit.premium = (intVal == 1);
+							else
+								outfit.premium = false;
+
+							if(readXMLInteger(p, "enabled", intVal))
+								outfitEnabled = (intVal == 1);
+
+							outfitNamesMap[outfit.looktype] = outfitName;
+							if(outfitEnabled)
+							{
+								//This way you can add names for outfits without adding them to default list
+								list->addOutfit(outfit);
+							}
+						}
 						else
 							std::cout << "[Warning] Missing looktype on outfit: " << outfitName << std::endl;
-
-						if(readXMLInteger(p, "addons", intVal))
-							outfit.addons = intVal;
-						else
-							outfit.addons = 0;
-
-						if(readXMLInteger(p, "premium", intVal))
-							outfit.premium = (intVal == 1);
-
-						if(readXMLInteger(p, "enabled", intVal))
-							outfitEnabled = (intVal == 1);
-
-						outfitNamesMap[outfit.looktype] = outfitName;
-						if(outfitEnabled)
-						{
-							//This way you can add names for outfits without adding them to default list
-							list->addOutfit(outfit);
-						}
 					}
 				}
 				else

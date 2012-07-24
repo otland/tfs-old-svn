@@ -574,7 +574,13 @@ void Player::sendIcons() const
 			icons |= ICON_REDSWORDS;
 
 		if(_tile->hasFlag(TILESTATE_PROTECTIONZONE))
+		{
 			icons |= ICON_PIGEON;
+
+			// Don't show ICON_SWORDS if player is in protection zone.
+			if(hasBitSet(ICON_SWORDS, icons))
+				icons &= ~ICON_SWORDS;
+		}
 
 		if(!getCondition(CONDITION_REGENERATION))
 			icons |= ICON_HUNGRY;
@@ -2587,13 +2593,14 @@ bool Player::hasCapacity(const Item* item, uint32_t count) const
 	return true;
 }
 
-ReturnValue Player::__queryAdd(int32_t index, const Thing* thing, uint32_t count, uint32_t flags) const
+ReturnValue Player::__queryAdd(int32_t index, const Thing* thing, uint32_t count, uint32_t flags, Creature* actor/* = NULL*/) const
 {
 	const Item* item = thing->getItem();
 	if(item == NULL)
 		return RET_NOTPOSSIBLE;
 
-	bool childIsOwner = ((flags & FLAG_CHILDISOWNER) == FLAG_CHILDISOWNER), skipLimit = ((flags & FLAG_NOLIMIT) == FLAG_NOLIMIT);
+	bool childIsOwner = hasBitSet(FLAG_CHILDISOWNER, flags);
+	bool skipLimit = hasBitSet(FLAG_NOLIMIT, flags);
 	if(childIsOwner)
 	{
 		//a child container is querying the player, just check if enough capacity
@@ -2607,39 +2614,57 @@ ReturnValue Player::__queryAdd(int32_t index, const Thing* thing, uint32_t count
 		return RET_CANNOTPICKUP;
 
 	ReturnValue ret = RET_NOERROR;
-	if((item->getSlotPosition() & SLOTP_HEAD) || (item->getSlotPosition() & SLOTP_NECKLACE) ||
-		(item->getSlotPosition() & SLOTP_BACKPACK) || (item->getSlotPosition() & SLOTP_ARMOR) ||
-		(item->getSlotPosition() & SLOTP_LEGS) || (item->getSlotPosition() & SLOTP_FEET) ||
-		(item->getSlotPosition() & SLOTP_RING))
+	const int32_t& slotPosition = item->getSlotPosition();
+	if((slotPosition & SLOTP_HEAD) || (slotPosition & SLOTP_NECKLACE) ||
+		(slotPosition & SLOTP_BACKPACK) || (slotPosition & SLOTP_ARMOR) ||
+		(slotPosition & SLOTP_LEGS) || (slotPosition & SLOTP_FEET) ||
+		(slotPosition & SLOTP_RING))
 		ret = RET_CANNOTBEDRESSED;
-	else if(item->getSlotPosition() & SLOTP_TWO_HAND)
+	else if(slotPosition & SLOTP_TWO_HAND)
 		ret = RET_PUTTHISOBJECTINBOTHHANDS;
-	else if((item->getSlotPosition() & SLOTP_RIGHT) || (item->getSlotPosition() & SLOTP_LEFT))
+	else if((slotPosition & SLOTP_RIGHT) || (slotPosition & SLOTP_LEFT))
 		ret = RET_PUTTHISOBJECTINYOURHAND;
 
 	switch(index)
 	{
 		case SLOT_HEAD:
-			if(item->getSlotPosition() & SLOTP_HEAD)
+		{
+			if(slotPosition & SLOTP_HEAD)
 				ret = RET_NOERROR;
+
 			break;
+		}
+
 		case SLOT_NECKLACE:
-			if(item->getSlotPosition() & SLOTP_NECKLACE)
+		{
+			if(slotPosition & SLOTP_NECKLACE)
 				ret = RET_NOERROR;
+
 			break;
+		}
+
 		case SLOT_BACKPACK:
-			if(item->getSlotPosition() & SLOTP_BACKPACK)
+		{
+			if(slotPosition & SLOTP_BACKPACK)
 				ret = RET_NOERROR;
+
 			break;
+		}
+
 		case SLOT_ARMOR:
-			if(item->getSlotPosition() & SLOTP_ARMOR)
+		{
+			if(slotPosition & SLOTP_ARMOR)
 				ret = RET_NOERROR;
+
 			break;
+		}
+
 		case SLOT_RIGHT:
-			if(item->getSlotPosition() & SLOTP_RIGHT)
+		{
+			if(slotPosition & SLOTP_RIGHT)
 			{
 				//check if we already carry an item in the other hand
-				if(item->getSlotPosition() & SLOTP_TWO_HAND)
+				if(slotPosition & SLOTP_TWO_HAND)
 				{
 					if(inventory[SLOT_LEFT] && inventory[SLOT_LEFT] != item)
 						ret = RET_BOTHHANDSNEEDTOBEFREE;
@@ -2667,11 +2692,14 @@ ReturnValue Player::__queryAdd(int32_t index, const Thing* thing, uint32_t count
 					ret = RET_NOERROR;
 			}
 			break;
+		}
+
 		case SLOT_LEFT:
-			if(item->getSlotPosition() & SLOTP_LEFT)
+		{
+			if(slotPosition & SLOTP_LEFT)
 			{
 				//check if we already carry an item in the other hand
-				if(item->getSlotPosition() & SLOTP_TWO_HAND)
+				if(slotPosition & SLOTP_TWO_HAND)
 				{
 					if(inventory[SLOT_RIGHT] && inventory[SLOT_RIGHT] != item)
 						ret = RET_BOTHHANDSNEEDTOBEFREE;
@@ -2699,26 +2727,45 @@ ReturnValue Player::__queryAdd(int32_t index, const Thing* thing, uint32_t count
 					ret = RET_NOERROR;
 			}
 			break;
+		}
+
 		case SLOT_LEGS:
-			if(item->getSlotPosition() & SLOTP_LEGS)
+		{
+			if(slotPosition & SLOTP_LEGS)
 				ret = RET_NOERROR;
+
 			break;
+		}
+
 		case SLOT_FEET:
-			if(item->getSlotPosition() & SLOTP_FEET)
+		{
+			if(slotPosition & SLOTP_FEET)
 				ret = RET_NOERROR;
+
 			break;
+		}
+
 		case SLOT_RING:
-			if(item->getSlotPosition() & SLOTP_RING)
+		{
+			if(slotPosition & SLOTP_RING)
 				ret = RET_NOERROR;
+
 			break;
+		}
+
 		case SLOT_AMMO:
-			if(item->getSlotPosition() & SLOTP_AMMO)
+		{
+			if(slotPosition & SLOTP_AMMO)
 				ret = RET_NOERROR;
+
 			break;
+		}
+
 		case SLOT_WHEREEVER:
 		case -1:
 			ret = RET_NOTENOUGHROOM;
 			break;
+
 		default:
 			ret = RET_NOTPOSSIBLE;
 			break;

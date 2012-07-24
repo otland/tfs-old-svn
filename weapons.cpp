@@ -692,6 +692,8 @@ WeaponDistance::WeaponDistance(LuaScriptInterface* _interface) :
 	ammuAttackValue = 0;
 	params.blockedByArmor = true;
 	params.combatType = COMBAT_PHYSICALDAMAGE;
+	elementType = COMBAT_NONE;
+	elementDamage = 0;
 }
 
 bool WeaponDistance::configureEvent(xmlNodePtr p)
@@ -765,6 +767,11 @@ bool WeaponDistance::configureWeapon(const ItemType& it)
 	if(it.ammoAction != AMMOACTION_NONE)
 		ammoAction = it.ammoAction;
 
+	if(it.abilities)
+	{
+		elementType = it.abilities->elementType;
+		elementDamage = it.abilities->elementDamage;
+	}
 	return Weapon::configureWeapon(it);
 }
 
@@ -853,7 +860,18 @@ bool WeaponDistance::useWeapon(Player* player, Item* item, Creature* target) con
 	}
 
 	if(chance >= random_range(1, 100))
+	{
+		if(elementDamage != 0)
+		{
+			int32_t damage = getElementDamage(player, target, item);
+			CombatParams eParams;
+			eParams.combatType = elementType;
+			eParams.isAggressive = true;
+			eParams.useCharges = true;
+			Combat::doCombatHealth(player, target, damage, damage, eParams);
+		}
 		Weapon::internalUseWeapon(player, item, target, damageModifier);
+	}
 	else
 	{
 		//miss target
@@ -890,7 +908,6 @@ bool WeaponDistance::useWeapon(Player* player, Item* item, Creature* target) con
 		}
 		Weapon::internalUseWeapon(player, item, destTile);
 	}
-
 	return true;
 }
 
@@ -908,6 +925,36 @@ void WeaponDistance::onUsedAmmo(Player* player, Item* item, Tile* destTile) cons
 	}
 	else
 		Weapon::onUsedAmmo(player, item, destTile);
+}
+
+int32_t WeaponDistance::getElementDamage(const Player* player, const Creature* target, const Item* item) const
+{
+	int32_t attackValue = elementDamage;
+	if(item->getWeaponType() == WEAPON_AMMO)
+	{
+		Item* bow = const_cast<Player*>(player)->getWeapon(true);
+		if(bow)
+			attackValue += bow->getAttack();
+	}
+
+	int32_t attackSkill = player->getSkill(SKILL_DIST, SKILL_LEVEL);
+	float attackFactor = player->getAttackFactor();
+
+	int32_t maxValue = Weapons::getMaxWeaponDamage(player->getLevel(), attackSkill, attackValue, attackFactor);
+	if(random_range(1, 100) <= g_config.getNumber(ConfigManager::CRITICAL_HIT_CHANCE))
+		maxValue <<= 1;
+
+	maxValue = int32_t(maxValue * player->getVocation()->distDamageMultipler);
+
+	int32_t minValue = 0;
+	if(target)
+	{
+		if(target->getPlayer())
+			minValue = (int32_t)std::ceil(player->getLevel() * 0.1);
+		else
+			minValue = (int32_t)std::ceil(player->getLevel() * 0.2);
+	}
+	return -random_range(minValue, maxValue, DISTRO_NORMAL);
 }
 
 int32_t WeaponDistance::getWeaponDamage(const Player* player, const Creature* target, const Item* item, bool maxDamage /*= false*/) const

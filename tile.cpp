@@ -523,7 +523,7 @@ void Tile::moveCreature(Creature* creature, Cylinder* toCylinder, bool forceTele
 }
 
 ReturnValue Tile::__queryAdd(int32_t index, const Thing* thing, uint32_t count,
-	uint32_t flags) const
+	uint32_t flags, Creature* actor/* = NULL*/) const
 {
 	const CreatureVector* creatures = getCreatures();
 	const TileItemVector* items = getItemList();
@@ -700,7 +700,6 @@ ReturnValue Tile::__queryAdd(int32_t index, const Thing* thing, uint32_t count,
 			return RET_NOERROR;
 
 		bool itemIsHangable = item->isHangable();
-
 		if(ground == NULL && !itemIsHangable)
 			return RET_NOTPOSSIBLE;
 
@@ -713,26 +712,37 @@ ReturnValue Tile::__queryAdd(int32_t index, const Thing* thing, uint32_t count,
 			}
 		}
 
-		bool hasHangable = false;
-		bool supportHangable = false;
+		if(ground)
+		{
+			const ItemType& iiType = Item::items[ground->getID()];
+			if(iiType.blockSolid)
+			{
+				if(!iiType.allowPickupable || item->isMagicField() || item->isBlocking())
+				{
+					if(!item->isPickupable())
+						return RET_NOTENOUGHROOM;
+
+					if(!iiType.hasHeight || iiType.pickupable || iiType.isBed())
+						return RET_NOTENOUGHROOM;
+				}
+			}
+		}
+
 		if(items)
 		{
-			Thing* iithing = NULL;
-			for(uint32_t i = 0; i < getThingCount(); ++i)
+			if(itemIsHangable)
 			{
-				iithing = __getThing(i);
-				if(const Item* iitem = iithing->getItem())
+				bool hasHangable = false;
+				bool supportHangable = false;
+				for(ItemVector::const_iterator it = items->begin(), end = items->end(); it != end; ++it)
 				{
-					const ItemType& iiType = Item::items[iitem->getID()];
+					const ItemType& iiType = Item::items[(*it)->getID()];
 					if(iiType.isHangable)
 						hasHangable = true;
 
 					if(iiType.isHorizontal || iiType.isVertical)
-						supportHangable = true;
-
-					if(itemIsHangable && (iiType.isHorizontal || iiType.isVertical))
 					{
-						//
+						supportHangable = true;
 					}
 					else if(iiType.blockSolid)
 					{
@@ -746,11 +756,29 @@ ReturnValue Tile::__queryAdd(int32_t index, const Thing* thing, uint32_t count,
 							return RET_NOTENOUGHROOM;
 					}
 				}
+
+				if(hasHangable && supportHangable)
+					return RET_NEEDEXCHANGE;
+			}
+			else
+			{
+				for(ItemVector::const_iterator it = items->begin(), end = items->end(); it != end; ++it)
+				{
+					const ItemType& iiType = Item::items[(*it)->getID()];
+					if(!iiType.blockSolid)
+						continue;
+
+					if(iiType.allowPickupable && !item->isMagicField() && !item->isBlocking())
+						continue;
+
+					if(!item->isPickupable())
+						return RET_NOTENOUGHROOM;
+
+					if(!iiType.hasHeight || iiType.pickupable || iiType.isBed())
+						return RET_NOTENOUGHROOM;
+				}
 			}
 		}
-
-		if(itemIsHangable && hasHangable && supportHangable)
-			return RET_NEEDEXCHANGE;
 	}
 	return RET_NOERROR;
 }
@@ -1435,12 +1463,15 @@ int32_t Tile::__getLastIndex() const
 uint32_t Tile::__getItemTypeCount(uint16_t itemId, int32_t subType /*= -1*/) const
 {
 	uint32_t count = 0;
-	Thing* thing = NULL;
-	for(uint32_t i = 0; i < getThingCount(); ++i)
+	if(ground && ground->getID() == itemId)
+		count += Item::countByType(ground, subType);
+
+	const TileItemVector* items = getItemList();
+	if(items)
 	{
-		thing = __getThing(i);
-		if(const Item* item = thing->getItem())
+		for(ItemVector::const_iterator it = items->begin(), end = items->end(); it != end; ++it)
 		{
+			Item* item = (*it);
 			if(item->getID() == itemId)
 				count += Item::countByType(item, subType);
 		}

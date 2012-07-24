@@ -35,7 +35,7 @@ TrashHolder::~TrashHolder()
 }
 
 ReturnValue TrashHolder::__queryAdd(int32_t index, const Thing* thing, uint32_t count,
-	uint32_t flags) const
+	uint32_t flags, Creature* actor/* = NULL*/) const
 {
 	return RET_NOERROR;
 }
@@ -65,15 +65,37 @@ void TrashHolder::__addThing(Thing* thing)
 
 void TrashHolder::__addThing(int32_t index, Thing* thing)
 {
-	if(Item* item = thing->getItem())
+	Item* item = thing->getItem();
+	if(!item)
+		return;
+
+	if(item == this || !item->hasProperty(MOVEABLE))
+		return;
+
+	if(item->isHangable() && isGroundTile())
 	{
-		if(item != this && item->hasProperty(MOVEABLE))
+		Cylinder* parent = getParent();
+		if(parent)
 		{
-			g_game.internalRemoveItem(item);
-			if(effect != NM_ME_NONE)
-				g_game.addMagicEffect(getPosition(), effect);
+			Tile* tile = dynamic_cast<Tile*>(parent);
+			if(tile)
+			{
+				if(const TileItemVector* items = tile->getItemList())
+				{
+					for(ItemVector::const_iterator it = items->begin(); it != items->end(); ++it)
+					{
+						const ItemType& iiType = Item::items[(*it)->getID()];
+						if(iiType.isHorizontal || iiType.isVertical)
+							return;
+					}
+				}
+			}
 		}
 	}
+
+	g_game.internalRemoveItem(item);
+	if(effect != NM_ME_NONE)
+		g_game.addMagicEffect(getPosition(), effect);
 }
 
 void TrashHolder::__updateThing(Thing* thing, uint16_t itemId, uint32_t count)

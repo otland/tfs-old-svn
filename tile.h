@@ -27,6 +27,7 @@
 
 #include "cylinder.h"
 #include "item.h"
+#include "tools.h"
 
 class Creature;
 class Teleport;
@@ -179,7 +180,7 @@ class Tile : public Cylinder
 		bool hasProperty(enum ITEMPROPERTY prop) const;
 		bool hasProperty(Item* exclude, enum ITEMPROPERTY prop) const;
 
-		bool hasFlag(tileflags_t flag) const {return ((m_flags & (uint32_t)flag) == (uint32_t)flag);}
+		bool hasFlag(tileflags_t flag) const {return hasBitSet(flag, m_flags);}
 		void setFlag(tileflags_t flag) {m_flags |= (uint32_t)flag;}
 		void resetFlag(tileflags_t flag) {m_flags &= ~(uint32_t)flag;}
 
@@ -234,7 +235,7 @@ class Tile : public Cylinder
 
 		//cylinder implementations
 		virtual ReturnValue __queryAdd(int32_t index, const Thing* thing, uint32_t count,
-			uint32_t flags) const;
+			uint32_t flags, Creature* actor = NULL) const;
 		virtual ReturnValue __queryMaxCount(int32_t index, const Thing* thing, uint32_t count,
 			uint32_t& maxQueryCount, uint32_t flags) const;
 		virtual ReturnValue __queryRemove(const Thing* thing, uint32_t count, uint32_t flags) const;

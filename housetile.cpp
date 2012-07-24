@@ -74,19 +74,25 @@ void HouseTile::updateHouse(Item* item)
 	}
 }
 
-ReturnValue HouseTile::__queryAdd(int32_t index, const Thing* thing, uint32_t count, uint32_t flags) const
+ReturnValue HouseTile::__queryAdd(int32_t index, const Thing* thing, uint32_t count, uint32_t flags, Creature* actor/* = NULL*/) const
 {
 	if(const Creature* creature = thing->getCreature())
 	{
 		if(const Player* player = creature->getPlayer())
 		{
-			if(!house->isInvited(player) && !player->hasFlag(PlayerFlag_CanEditHouses))
+			if(!house->isInvited(player))
 				return RET_PLAYERISNOTINVITED;
 		}
 		else
 			return RET_NOTPOSSIBLE;
 	}
-	return Tile::__queryAdd(index, thing, count, flags);
+	else if(thing->getItem() && actor)
+	{
+		Player* actorPlayer = actor->getPlayer();
+		if(!house->isInvited(actorPlayer))
+			return RET_CANNOTTHROW;
+	}
+	return Tile::__queryAdd(index, thing, count, flags, actor);
 }
 
 Cylinder* HouseTile::__queryDestination(int32_t& index, const Thing* thing, Item** destItem, uint32_t& flags)

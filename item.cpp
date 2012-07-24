@@ -90,6 +90,8 @@ Item* Item::CreateItem(const uint16_t _type, uint16_t _count /*= 0*/)
 			newItem = new Item(6132, _count);
 		else if(it.id == 6301)
 			newItem = new Item(6300, _count);
+		else if(it.id == 18528)
+			newItem = new Item(18408, _count);
 		else
 			newItem = new Item(_type, _count);
 

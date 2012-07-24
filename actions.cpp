@@ -513,15 +513,15 @@ bool Action::highscoreBook(Player* player, Item* item, const PositionEx& posFrom
 
 bool Action::increaseItemId(Player* player, Item* item, const PositionEx& posFrom, const PositionEx& posTo, bool extendedUse, uint32_t creatureId)
 {
-	g_game.transformItem(item, item->getID() + 1);
-	g_game.startDecay(item);
+	Item* newItem = g_game.transformItem(item, item->getID() + 1);
+	g_game.startDecay(newItem);
 	return true;
 }
 
 bool Action::decreaseItemId(Player* player, Item* item, const PositionEx& posFrom, const PositionEx& posTo, bool extendedUse, uint32_t creatureId)
 {
-	g_game.transformItem(item, item->getID() - 1);
-	g_game.startDecay(item);
+	Item* newItem = g_game.transformItem(item, item->getID() - 1);
+	g_game.startDecay(newItem);
 	return true;
 }
 

@@ -19,11 +19,29 @@
 	D = Deleted.
 	M = Modified.
 	A = Added.
+
+	M The Forgotten Server.exe
 ]
 
 [ Milestone
+	Anti House Trashing.
+	Fixed so summons that aren't summoned by players will poff instead of drop corpse.
+	Added English Chat and improved some chat code.
+	It is now possible to sleep in bed, even with battle sign (hidden one because player is in PZ).
+	Fixed a possible issue with decaying items that use decrease/increaseItemId function in actions.
+	Fixed so the list doesn't get cut off if there are too many entries listed with /mccheck.
+	Corrected the new shoot effect constants.
+	Corrected the exit code from server save/shutdown.
+	Bug reports can now only be submitted by tutors.
+	Optimized creature and item iterations on tiles.
+	Optimized Mission::getDescription in questlog.
+	Battle sign is no longer visible in protection zone.
+	No longer showing "Questlog has been updated." for missions with main state (like killing tasks).
+	Improved code for hangables, they should no longer fall in water if the wall is on a water tile.
 	Support for .otbm and .otbi files saved with "OTBM" or "OTBI" as the first four bytes.
 	Updated the MySQL schema, for an unknown reason it was missing the changes from database schema version 1.
+	Fixed element damage for distance weapons.
 	Fixed a bug with the optimized escape blob function for DatabaseSQLite, output should be identical to the old function but over 10 times faster.
 	Fixed a possible bug with copied actions.
+	Fixed so it's possible to compile with -O3 (although not recommended).
 ]

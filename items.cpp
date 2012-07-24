@@ -479,13 +479,11 @@ bool Items::loadFromXml()
 	for(uint32_t i = 0; i < items->size(); ++i)
 	{
 		const ItemType* it = items->getElement(i);
-
 		if(!it)
 			continue;
 
 		//check bed items
-		if((it->transformToFree != 0 || it->transformToOnUse[PLAYERSEX_FEMALE] != 0 
-				|| it->transformToOnUse[PLAYERSEX_MALE] != 0) && it->type != ITEM_TYPE_BED)
+		if((it->transformToFree != 0 || it->transformToOnUse[PLAYERSEX_FEMALE] != 0 || it->transformToOnUse[PLAYERSEX_MALE] != 0) && it->type != ITEM_TYPE_BED)
 		{
 			std::cout << "Warning: [Items::loadFromXml] Item " << it->id << " is not set as a bed-type." << std::endl;
 		}

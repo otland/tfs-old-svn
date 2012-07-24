@@ -146,29 +146,27 @@ bool IOMapSerialize::loadTile(Database& db, Tile* tile)
 			else
 			{
 				//find this type in the tile
-				for(uint32_t i = 0; i < tile->getThingCount(); ++i)
+				if(const TileItemVector* items = tile->getItemList())
 				{
-					Item* findItem = tile->__getThing(i)->getItem();
-					if(!findItem)
-						continue;
-
-					if(findItem->getID() == type)
+					for(ItemVector::const_reverse_iterator it = items->rbegin(), rend = items->rend(); it != rend; ++it)
 					{
-						item = findItem;
-						break;
+						Item* findItem = (*it);
+						if(findItem->getID() == type)
+						{
+							item = findItem;
+							break;
+						}
+						else if(iType.isDoor() && findItem->getDoor())
+						{
+							item = findItem;
+							break;
+						}
+						else if(iType.isBed() && findItem->getBed())
+						{
+							item = findItem;
+							break;
+						}
 					}
-					else if(iType.isDoor() && findItem->getDoor())
-					{
-						item = findItem;
-						break;
-					}
-					//[ added for beds system
-					else if(iType.isBed() && findItem->getBed())
-					{
-						item = findItem;
-						break;
-					}
-					//]
 				}
 			}
 
@@ -266,63 +264,33 @@ bool IOMapSerialize::saveTile(Database* db, uint32_t tileId, const Tile* tile)
 
 	DBInsert stmt(db);
 	stmt.setQuery("INSERT INTO `tile_items` (`tile_id`, `sid` , `pid` , `itemtype` , `count`, `attributes` ) VALUES ");
-	for(uint32_t i = 0; i < tile->getThingCount(); ++i)
+	if(const TileItemVector* items = tile->getItemList())
 	{
-		item = tile->__getThing(i)->getItem();
-		if(!item)
-			continue;
-
-		if(!(!item->isNotMoveable() ||
+		for(ItemVector::const_reverse_iterator it = items->rbegin(), rend = items->rend(); it != rend; ++it)
+		{
+			item = (*it);
+			if(!(!item->isNotMoveable() ||
 			item->getDoor() ||
 			(item->getContainer() && item->getContainer()->size() != 0) ||
 			item->canWriteText() ||
 			item->getBed()))
-			continue;
+				continue;
 
-		//only save beds in houses
-		if(item->getBed() && !tile->hasFlag(TILESTATE_HOUSE))
-			continue;
+			//only save beds in houses
+			if(item->getBed() && !tile->hasFlag(TILESTATE_HOUSE))
+				continue;
 
-		if(!storedTile)
-		{
-			const Position& tilePos = tile->getPosition();
-			tileListQuery << "INSERT INTO `tiles` (`id`, `x` , `y` , `z` ) VALUES (" << tileId << "," << tilePos.x << "," << tilePos.y << "," << tilePos.z << ")";
-			if(!db->executeQuery(tileListQuery.str()))
-				return false;
+			if(!storedTile)
+			{
+				const Position& tilePos = tile->getPosition();
+				tileListQuery << "INSERT INTO `tiles` (`id`, `x` , `y` , `z` ) VALUES (" << tileId << "," << tilePos.x << "," << tilePos.y << "," << tilePos.z << ")";
+				if(!db->executeQuery(tileListQuery.str()))
+					return false;
 
-			tileListQuery.str("");
-			storedTile = true;
-		}
-		++runningID;
-
-		uint32_t attributesSize;
-
-		PropWriteStream propWriteStream;
-		item->serializeAttr(propWriteStream);
-		const char* attributes = propWriteStream.getStream(attributesSize);
-
-		streamitems << tileId << "," << runningID << "," << parentid << "," << item->getID() << ","
-			<< (int32_t)item->getSubType() << "," << db->escapeBlob(attributes, attributesSize);
-		if(!stmt.addRow(streamitems))
-			return false;
-
-		if(item->getContainer())
-			containerStackList.push_back(ContainerStackList_Pair(item->getContainer(), runningID));
-	}
-
-	while(!containerStackList.empty())
-	{
-		ContainerStackList_Pair csPair = containerStackList.front();
-		container = csPair.first;
-		parentid = csPair.second;
-		containerStackList.pop_front();
-
-		for(ItemList::const_iterator it = container->getItems(); it != container->getEnd(); ++it)
-		{
-			item = (*it);
+				tileListQuery.str("");
+				storedTile = true;
+			}
 			++runningID;
-			if(item->getContainer())
-				containerStackList.push_back(ContainerStackList_Pair(item->getContainer(), runningID));
 
 			uint32_t attributesSize;
 
@@ -334,6 +302,36 @@ bool IOMapSerialize::saveTile(Database* db, uint32_t tileId, const Tile* tile)
 				<< (int32_t)item->getSubType() << "," << db->escapeBlob(attributes, attributesSize);
 			if(!stmt.addRow(streamitems))
 				return false;
+
+			if(item->getContainer())
+				containerStackList.push_back(ContainerStackList_Pair(item->getContainer(), runningID));
+		}
+
+		while(!containerStackList.empty())
+		{
+			ContainerStackList_Pair csPair = containerStackList.front();
+			container = csPair.first;
+			parentid = csPair.second;
+			containerStackList.pop_front();
+
+			for(ItemList::const_iterator it = container->getItems(); it != container->getEnd(); ++it)
+			{
+				item = (*it);
+				++runningID;
+				if(item->getContainer())
+					containerStackList.push_back(ContainerStackList_Pair(item->getContainer(), runningID));
+
+				uint32_t attributesSize;
+
+				PropWriteStream propWriteStream;
+				item->serializeAttr(propWriteStream);
+				const char* attributes = propWriteStream.getStream(attributesSize);
+
+				streamitems << tileId << "," << runningID << "," << parentid << "," << item->getID() << ","
+					<< (int32_t)item->getSubType() << "," << db->escapeBlob(attributes, attributesSize);
+				if(!stmt.addRow(streamitems))
+					return false;
+			}
 		}
 	}
 	return stmt.execute();
@@ -493,26 +491,26 @@ bool IOMapSerialize::loadItem(PropStream& propStream, Cylinder* parent)
 	else
 	{
 		// Stationary items like doors/beds/blackboards/bookcases
-		for(uint32_t i = 0; i < tile->getThingCount(); ++i)
+		if(const TileItemVector* items = tile->getItemList())
 		{
-			Item* findItem = tile->__getThing(i)->getItem();
-			if(!findItem)
-				continue;
-
-			if(findItem->getID() == id)
+			for(ItemVector::const_reverse_iterator it = items->rbegin(), rend = items->rend(); it != rend; ++it)
 			{
-				item = findItem;
-				break;
-			}
-			else if(iType.isDoor() && findItem->getDoor())
-			{
-				item = findItem;
-				break;
-			}
-			else if(iType.isBed() && findItem->getBed())
-			{
-				item = findItem;
-				break;
+				Item* findItem = (*it);
+				if(findItem->getID() == id)
+				{
+					item = findItem;
+					break;
+				}
+				else if(iType.isDoor() && findItem->getDoor())
+				{
+					item = findItem;
+					break;
+				}
+				else if(iType.isBed() && findItem->getBed())
+				{
+					item = findItem;
+					break;
+				}
 			}
 		}
 
@@ -664,20 +662,20 @@ void IOMapSerialize::saveTile(PropWriteStream& stream, const Tile* tile)
 		return;
 
 	std::vector<Item*> items;
-	for(int32_t i = tile->getThingCount() - 1; i >= 0; --i)
+	if(const TileItemVector* tileItems = tile->getItemList())
 	{
-		Item* item = tile->__getThing(i)->getItem();
-		if(!item)
-			continue;
-
-		// Note that these are NEGATED, ie. these are the items that will be saved.
-		if(!(!item->isNotMoveable() || item->getDoor() || (item->getContainer() &&
-			item->getContainer()->size() != 0) || item->canWriteText() || item->getBed()))
+		for(ItemVector::const_reverse_iterator it = tileItems->rbegin(), rend = tileItems->rend(); it != rend; ++it)
 		{
-			continue;
-		}
+			Item* item = (*it);
+			// Note that these are NEGATED, ie. these are the items that will be saved.
+			if(!(!item->isNotMoveable() || item->getDoor() || (item->getContainer() &&
+				item->getContainer()->size() != 0) || item->canWriteText() || item->getBed()))
+			{
+				continue;
+			}
 
-		items.push_back(item);
+			items.push_back(item);
+		}
 	}
 
 	if(!items.empty())

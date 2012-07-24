@@ -277,7 +277,7 @@ void Container::onRemoveContainerItem(uint32_t index, Item* item)
 }
 
 ReturnValue Container::__queryAdd(int32_t index, const Thing* thing, uint32_t count,
-	uint32_t flags) const
+	uint32_t flags, Creature* actor/* = NULL*/) const
 {
 	bool childIsOwner = hasBitSet(FLAG_CHILDISOWNER, flags);
 	if(childIsOwner)
@@ -306,7 +306,7 @@ ReturnValue Container::__queryAdd(int32_t index, const Thing* thing, uint32_t co
 		cylinder = cylinder->getParent();
 	}
 
-	bool skipLimit = ((flags & FLAG_NOLIMIT) == FLAG_NOLIMIT);
+	bool skipLimit = hasBitSet(FLAG_NOLIMIT, flags);
 	if(!skipLimit)
 	{
 		if(id == ITEM_INBOX)
@@ -328,7 +328,7 @@ ReturnValue Container::__queryAdd(int32_t index, const Thing* thing, uint32_t co
 
 	const Cylinder* topParent = getTopParent();
 	if(topParent != this)
-		return topParent->__queryAdd(INDEX_WHEREEVER, item, count, flags | FLAG_CHILDISOWNER);
+		return topParent->__queryAdd(INDEX_WHEREEVER, item, count, flags | FLAG_CHILDISOWNER, actor);
 	else
 		return RET_NOERROR;
 }
@@ -343,7 +343,7 @@ ReturnValue Container::__queryMaxCount(int32_t index, const Thing* thing, uint32
 		return RET_NOTPOSSIBLE;
 	}
 
-	if(((flags & FLAG_NOLIMIT) == FLAG_NOLIMIT))
+	if(hasBitSet(FLAG_NOLIMIT, flags))
 	{
 		maxQueryCount = std::max((uint32_t)1, count);
 		return RET_NOERROR;
@@ -394,7 +394,6 @@ ReturnValue Container::__queryMaxCount(int32_t index, const Thing* thing, uint32
 		if(maxQueryCount == 0)
 			return RET_CONTAINERNOTENOUGHROOM;
 	}
-
 	return RET_NOERROR;
 }
 
@@ -455,7 +454,7 @@ Cylinder* Container::__queryDestination(int32_t& index, const Thing* thing, Item
 	if(item == NULL)
 		return this;
 
-	bool autoStack = !((flags & FLAG_IGNOREAUTOSTACK) == FLAG_IGNOREAUTOSTACK);
+	bool autoStack = !hasBitSet(FLAG_IGNOREAUTOSTACK, flags);
 	if(autoStack && item->isStackable() && item->getParent() != this)
 	{
 		//try find a suitable item to stack with

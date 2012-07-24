@@ -196,7 +196,7 @@ void Game::setGameState(GameState_t newState)
 				{
 					g_scheduler.shutdown();
 					g_dispatcher.shutdown();
-					exit(1);
+					exit(0);
 				}
 				break;
 			}
@@ -1245,7 +1245,7 @@ bool Game::playerMoveItem(uint32_t playerId, const Position& fromPos,
 		return false;
 	}
 
-	ReturnValue ret = internalMoveItem(fromCylinder, toCylinder, toIndex, item, count, NULL);
+	ReturnValue ret = internalMoveItem(fromCylinder, toCylinder, toIndex, item, count, NULL, 0, player);
 	if(ret != RET_NOERROR)
 	{
 		player->sendCancelMessage(ret);
@@ -1254,8 +1254,8 @@ bool Game::playerMoveItem(uint32_t playerId, const Position& fromPos,
 	return true;
 }
 
-ReturnValue Game::internalMoveItem(Cylinder* fromCylinder, Cylinder* toCylinder,
-	int32_t index, Item* item, uint32_t count, Item** _moveItem, uint32_t flags /*= 0*/)
+ReturnValue Game::internalMoveItem(Cylinder* fromCylinder, Cylinder* toCylinder, int32_t index,
+	Item* item, uint32_t count, Item** _moveItem, uint32_t flags /*= 0*/, Creature* actor/* = NULL*/)
 {
 	if(!toCylinder)
 		return RET_NOTPOSSIBLE;
@@ -1279,7 +1279,7 @@ ReturnValue Game::internalMoveItem(Cylinder* fromCylinder, Cylinder* toCylinder,
 		return RET_NOERROR; //silently ignore move
 
 	//check if we can add this item
-	ReturnValue ret = toCylinder->__queryAdd(index, item, count, flags);
+	ReturnValue ret = toCylinder->__queryAdd(index, item, count, flags, actor);
 	if(ret == RET_NEEDEXCHANGE)
 	{
 		//check if we can add it to source cylinder
@@ -4531,12 +4531,6 @@ void Game::checkDecay()
 	for(DecayList::iterator it = decayItems[bucket].begin(); it != decayItems[bucket].end();)
 	{
 		Item* item = *it;
-
-		int32_t decreaseTime = EVENT_DECAYINTERVAL * EVENT_DECAY_BUCKETS;
-		if((int32_t)item->getDuration() - decreaseTime < 0)
-			decreaseTime = item->getDuration();
-
-		item->decreaseDuration(decreaseTime);
 		if(!item->canDecay())
 		{
 			item->setDecaying(DECAYING_FALSE);
@@ -4544,6 +4538,12 @@ void Game::checkDecay()
 			it = decayItems[bucket].erase(it);
 			continue;
 		}
+
+		int32_t decreaseTime = EVENT_DECAYINTERVAL * EVENT_DECAY_BUCKETS;
+		if((int32_t)item->getDuration() - decreaseTime < 0)
+			decreaseTime = item->getDuration();
+
+		item->decreaseDuration(decreaseTime);
 
 		int32_t dur = item->getDuration();
 		if(dur <= 0)
@@ -4670,7 +4670,7 @@ void Game::shutdown()
 	std::cout << ".";
 
 	std::cout << " done." << std::endl;
-	exit(1);
+	exit(0);
 }
 
 void Game::cleanup()
@@ -5260,6 +5260,9 @@ bool Game::playerReportBug(uint32_t playerId, std::string bug)
 {
 	Player* player = getPlayerByID(playerId);
 	if(!player || player->isRemoved())
+		return false;
+
+	if(player->getAccountType() == ACCOUNT_TYPE_NORMAL)
 		return false;
 
 	std::string fileName = "data/reports/" + player->getName() + " report.txt";

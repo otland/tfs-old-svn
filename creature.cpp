@@ -817,7 +817,7 @@ void Creature::onDeath()
 
 void Creature::dropCorpse()
 {
-	if(master && master->getMonster())
+	if(!lootDrop && getMonster() && !(master && master->getPlayer()))
 	{
 		//scripting event - onDeath
 		CreatureEventList deathEvents = getCreatureEvents(CREATURE_EVENT_DEATH);
@@ -1568,17 +1568,17 @@ bool Creature::hasCondition(ConditionType_t type, uint32_t subId/* = 0*/) const
 
 bool Creature::isImmune(CombatType_t type) const
 {
-	return ((getDamageImmunities() & (uint32_t)type) == (uint32_t)type);
+	return hasBitSet((uint32_t)type, getDamageImmunities());
 }
 
 bool Creature::isImmune(ConditionType_t type) const
 {
-	return ((getConditionImmunities() & (uint32_t)type) == (uint32_t)type);
+	return hasBitSet((uint32_t)type, getConditionImmunities());
 }
 
 bool Creature::isSuppress(ConditionType_t type) const
 {
-	return ((getConditionSuppressions() & (uint32_t)type) == (uint32_t)type);
+	return hasBitSet((uint32_t)type, getConditionSuppressions());
 }
 
 std::string Creature::getDescription(int32_t lookDistance) const

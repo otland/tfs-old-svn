@@ -219,6 +219,10 @@ Chat::Chat()
 	if(newChannel)
 		m_normalChannels[CHANNEL_WORLDCHAT] = newChannel;
 
+	newChannel = new ChatChannel(CHANNEL_ENGLISHCHAT, "English Chat");
+	if(newChannel)
+		m_normalChannels[CHANNEL_ENGLISHCHAT] = newChannel;
+
 	newChannel = new ChatChannel(CHANNEL_ADVERTISING, "Advertising");
 	if(newChannel)
 		m_normalChannels[CHANNEL_ADVERTISING] = newChannel;
@@ -1250,12 +1254,6 @@ ChannelList Chat::getChannelList(Player* player)
 
 	for(NormalChannelMap::iterator it = m_normalChannels.begin(); it != m_normalChannels.end(); ++it)
 	{
-		if(it->first == CHANNEL_WORLDCHAT || it->first == CHANNEL_HELP)
-		{
-			list.push_back(it->second);
-			continue;
-		}
-
 		ChatChannel* channel = getChannel(player, it->first);
 		if(channel)
 			list.push_back(it->second);
@@ -1309,24 +1307,36 @@ ChatChannel* Chat::getChannel(Player* player, uint16_t channelId)
 		switch(channelId)
 		{
 			case CHANNEL_GAMEMASTER:
+			{
 				if(player->getAccountType() < ACCOUNT_TYPE_GAMEMASTER)
 					return NULL;
+
 				break;
+			}
 
 			case CHANNEL_TUTOR:
+			{
 				if(player->getAccountType() < ACCOUNT_TYPE_TUTOR)
 					return NULL;
+
 				break;
+			}
 
 			case CHANNEL_ADVERTISING:
-				if(player->getAccountType() < ACCOUNT_TYPE_SENIORTUTOR && player->getVocationId() == 0)
+			{
+				if(player->getAccountType() < ACCOUNT_TYPE_SENIORTUTOR && player->getVocationId() == VOCATION_NONE)
 					return NULL;
+
 				break;
+			}
 
 			case CHANNEL_ADVERTISINGROOKGAARD:
-				if(player->getAccountType() < ACCOUNT_TYPE_SENIORTUTOR && player->getVocationId() != 0)
+			{
+				if(player->getAccountType() < ACCOUNT_TYPE_SENIORTUTOR && player->getVocationId() != VOCATION_NONE)
 					return NULL;
+
 				break;
+			}
 
 			default:
 				break;

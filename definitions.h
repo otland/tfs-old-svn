@@ -23,7 +23,7 @@
 
 #define CLIENT_VERSION_MIN 960
 #define CLIENT_VERSION_MAX 960
-#define CLIENT_VERSION_STR "9.6"
+#define CLIENT_VERSION_STR "9.60"
 
 #ifdef _WIN32
 #ifndef WIN32

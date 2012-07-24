@@ -3623,12 +3623,24 @@ int32_t LuaScriptInterface::luaGetTileItemByType(lua_State* L)
 
 	if(!notFound)
 	{
-		for(uint32_t i = 0; i < tile->getThingCount(); ++i)
+		if(tile->ground)
 		{
-			if(Item* item = tile->__getThing(i)->getItem())
+			const ItemType& it = Item::items[tile->ground->getID()];
+			if(it.type == (ItemTypes_t) rType)
 			{
-				const ItemType& it = Item::items[item->getID()];
-				if(it.type == (ItemTypes_t) rType)
+				uint32_t uid = env->addThing(tile->ground);
+				pushThing(L, tile->ground, uid);
+				return 1;
+			}
+		}
+
+		if(const TileItemVector* items = tile->getItemList())
+		{
+			for(ItemVector::const_iterator it = items->begin(), end = items->end(); it != end; ++it)
+			{
+				Item* item = (*it);
+				const ItemType& itemType = Item::items[item->getID()];
+				if(itemType.type == (ItemTypes_t) rType)
 				{
 					uint32_t uid = env->addThing(item);
 					pushThing(L, item, uid);

@@ -39,7 +39,7 @@ Mailbox::~Mailbox()
 }
 
 ReturnValue Mailbox::__queryAdd(int32_t index, const Thing* thing, uint32_t count,
-	uint32_t flags) const
+	uint32_t flags, Creature* actor/* = NULL*/) const
 {
 	if(const Item* item = thing->getItem())
 	{

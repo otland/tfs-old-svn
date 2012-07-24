@@ -85,7 +85,6 @@ class Outfits
 		{
 			std::map<uint32_t, std::string>::const_iterator it;
 			it = outfitNamesMap.find(looktype);
-			
 			if(it != outfitNamesMap.end())
 				return it->second;
 			else

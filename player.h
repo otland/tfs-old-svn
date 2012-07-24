@@ -747,7 +747,7 @@ class Player : public Creature, public Cylinder
 
 		//cylinder implementations
 		virtual ReturnValue __queryAdd(int32_t index, const Thing* thing, uint32_t count,
-			uint32_t flags) const;
+			uint32_t flags, Creature* actor = NULL) const;
 		virtual ReturnValue __queryMaxCount(int32_t index, const Thing* thing, uint32_t count, uint32_t& maxQueryCount,
 			uint32_t flags) const;
 		virtual ReturnValue __queryRemove(const Thing* thing, uint32_t count, uint32_t flags) const;

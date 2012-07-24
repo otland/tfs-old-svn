@@ -62,10 +62,12 @@ std::string Mission::getDescription(Player* player)
 		return desc;
 	}
 
+	player->getStorageValue(storageID, value);
+
 	int32_t current = endValue;
 	while(current >= startValue)
 	{
-		if(player->getStorageValue(storageID, value) && value == current)
+		if(value == current)
 		{
 			StateList::const_iterator sit = state.find(current);
 			if(sit != state.end())
@@ -300,6 +302,7 @@ bool Quests::isQuestStorage(const uint32_t key, const int32_t value)
 
 		for(MissionsList::const_iterator m_it = (*it)->getFirstMission(), m_end = (*it)->getLastMission(); m_it != m_end; ++m_it)
 		{
+			if((*m_it)->mainState != NULL) continue;
 			if((*m_it)->getStorageId() == key && value >= (*m_it)->getStartStorageValue() && value <= (*m_it)->getEndStorageValue())
 				return true;
 		}

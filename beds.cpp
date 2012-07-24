@@ -106,43 +106,38 @@ bool BedItem::canUse(Player* player)
 {
 	if(!player || !house || !player->isPremium())
 		return false;
-	else if(player->hasCondition(CONDITION_INFIGHT))
-		return false;
-	else if(sleeperGUID != 0)
-	{
-		if(house->getHouseAccessLevel(player) != HOUSE_OWNER)
-		{
-			std::string name;
-			if(IOLoginData::getInstance()->getNameByGuid(sleeperGUID, name))
-			{
-				Player* sleeper = new Player(name, NULL);
-				if(IOLoginData::getInstance()->loadPlayer(sleeper, name))
-				{
-					if(house->getHouseAccessLevel(sleeper) <= house->getHouseAccessLevel(player))
-					{
-						delete sleeper;
-						sleeper = NULL;
 
-						return isBed();
-					}
-				}
-
-				delete sleeper;
-				sleeper = NULL;
-			}
-			return false;
-		}
-	}
-	else
+	if(sleeperGUID == 0)
 		return isBed();
 
+	if(house->getHouseAccessLevel(player) != HOUSE_OWNER)
+	{
+		std::string name;
+		if(IOLoginData::getInstance()->getNameByGuid(sleeperGUID, name))
+		{
+			Player* sleeper = new Player(name, NULL);
+			if(IOLoginData::getInstance()->loadPlayer(sleeper, name))
+			{
+				if(house->getHouseAccessLevel(sleeper) <= house->getHouseAccessLevel(player))
+				{
+					delete sleeper;
+					sleeper = NULL;
+
+					return isBed();
+				}
+			}
+
+			delete sleeper;
+			sleeper = NULL;
+		}
+		return false;
+	}
 	return true;
 }
 
 void BedItem::sleep(Player* player)
 {
-	// avoid crashes
-	if((!house) || (!player) || player->isRemoved())
+	if(!house || !player || player->isRemoved())
 		return;
 
 	if(sleeperGUID != 0)
