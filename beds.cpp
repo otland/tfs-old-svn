@@ -91,7 +91,7 @@ BedItem* BedItem::getNextBedItem()
 bool BedItem::canUse(Player* player)
 {
 	if(!house || !player || player->isRemoved() || (!player->isPremium() && g_config.getBool(
-		ConfigManager::BED_REQUIRE_PREMIUM)) || player->hasCondition(CONDITION_INFIGHT))
+		ConfigManager::BED_REQUIRE_PREMIUM)))
 		return false;
 
 	if(!sleeper || house->getHouseAccessLevel(player) == HOUSE_OWNER)

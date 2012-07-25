@@ -317,7 +317,7 @@ bool ProtocolGame::logout(bool displayEffect, bool forceLogout)
 					return false;
 				}
 
-				if(player->getZone() != ZONE_PROTECTION && player->hasCondition(CONDITION_INFIGHT))
+				if(player->hasCondition(CONDITION_INFIGHT))
 				{
 					player->sendCancelMessage(RET_YOUMAYNOTLOGOUTDURINGAFIGHT);
 					return false;
@@ -2607,7 +2607,8 @@ void ProtocolGame::sendPingBack()
 
 void ProtocolGame::sendDistanceShoot(const Position& from, const Position& to, uint8_t type)
 {
-	if(type > SHOOT_EFFECT_LAST || (!canSee(from) && !canSee(to)))
+	if(type > SHOOT_EFFECT_LAST || type == SHOOT_EFFECT_UNK1 || type == SHOOT_EFFECT_UNK2 ||
+		type == SHOOT_EFFECT_UNK3 || (!canSee(from) && !canSee(to)))
 		return;
 
 	NetworkMessage_ptr msg = getOutputBuffer();
