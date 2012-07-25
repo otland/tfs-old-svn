@@ -23655,6 +23655,39 @@
 	<item id="17432" article="a" name="purse">
 		<attribute key="containerSize" value="30"/>
 	</item>
+ 	<item id="17557" article="a" name="ramp">
+		<attribute key="floorchange" value="east" />
+	</item>
+	<item id="17558" article="a" name="ramp"/>
+	<item id="17559" article="a" name="ramp">
+		<attribute key="floorchange" value="west" />
+	</item>
+	<item id="17560" article="a" name="ramp"/>
+	<item id="17561" article="a" name="ramp">
+		<attribute key="floorchange" value="south" />
+	</item>
+	<item id="17562" article="a" name="ramp"/>
+	<item id="17563" article="a" name="ramp">
+		<attribute key="floorchange" value="north" />
+	</item>
+	<item id="17564" article="a" name="ramp"/>
+ 	<item id="17731" article="a" name="ramp">
+		<attribute key="floorchange" value="east" />
+	</item>
+	<item id="17732" article="a" name="ramp"/>
+	<item id="17733" article="a" name="ramp">
+		<attribute key="floorchange" value="west" />
+	</item>
+	<item id="17734" article="a" name="ramp"/>
+	<item id="17735" article="a" name="ramp">
+		<attribute key="floorchange" value="south" />
+	</item>
+	<item id="17736" article="a" name="ramp"/>
+	<item id="17737" article="a" name="ramp">
+		<attribute key="floorchange" value="north" />
+	</item>
+	<item id="17738" article="a" name="ramp"/>
+	<item id="17868" article="a" name="crystal teleporter"/>
 	<item id="18304" article="a" name="crystalline arrow" plural="crystalline arrows">
 		<attribute key="weight" value="75"/>
 		<attribute key="slotType" value="ammo"/>
@@ -23972,7 +24005,6 @@
 		<attribute key="showduration" value="1"/>
 		<attribute key="showattributes" value="1"/>
 	</item>
-	<item id="17868" article="a" name="crystal teleporter"/>
 	<item id="20001" name="water"/>
 	<item id="20002" name="blood"/>
 	<item id="20003" name="beer"/>
