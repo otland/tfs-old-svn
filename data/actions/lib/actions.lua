@@ -3,7 +3,6 @@ ROPABLE = { 294, 369, 370, 383, 392, 408, 409, 427, 428, 430, 462, 469, 470, 482
 	8284, 8281, 8280, 8279, 8277, 8276, 8323, 8380, 8567, 8585, 8596, 8595, 8249, 8250, 8251, 8252, 8253, 8254, 8255, 8256, 8972, 9606, 9625 }
 
 HOLES = { 468, 481, 483, 7932, 8579 }
-SAND_HOLES = { [9059] = 489, [8568] = 8567 }
 SAND = { 231, 9059 }
 
 JUNGLE_GRASS = { 2782, 3985 }
@@ -206,34 +205,35 @@ end
 
 TOOLS.SHOVEL = function(cid, item, fromPosition, itemEx, toPosition)
 	if(isInArray(HOLES, itemEx.itemid)) then
-		if(itemEx.itemid ~= 8579) then
-			itemEx.itemid = itemEx.itemid + 1
-		else
-			itemEx.itemid = 8585
+ 
+		local newId = itemEx.itemid + 1
+ 
+		if(itemEx.itemid == 8579) then
+			newId = 8585
 		end
-
-		doTransformItem(itemEx.uid, itemEx.itemid)
+ 
+		doTransformItem(itemEx.uid, newId)
 		doDecayItem(itemEx.uid)
-		return true
-	elseif(SAND_HOLES[itemEx.itemid] ~= nil) then
-		doSendMagicEffect(toPosition, CONST_ME_POFF)
-		doTransformItem(itemEx.uid, SAND_HOLES[itemEx.itemid])
-
-		doDecayItem(itemEx.uid)
-		return true
-	elseif(isInArray(SAND,itemEx.itemid) and not isRookie(cid)) then
+	elseif(isInArray(SAND, itemEx.itemid)) then
+ 
 		local rand = math.random(1, 100)
-		if(rand >= 1 and rand <= 5) then
-			doCreateItem(ITEM_SCARAB_COIN, 1, toPosition)
+		local ground = getThingFromPos({x = toPosition.x, y = toPosition.y, z = toPosition.z + 1, stackpos = STACKPOS_GROUND})	
+		if(isInArray(SPOTS, ground.itemid) and rand <= 20) then
+			doTransformItem(itemEx.uid, 489)
+			doDecayItem(itemEx.uid)
+		elseif(rand >= 1 and rand <= 5) then
+			doCreateItem(2159, 1, toPosition)
 		elseif(rand > 85) then
 			doCreateMonster("Scarab", toPosition, false)
 		end
-
+ 
+ 
 		doSendMagicEffect(toPosition, CONST_ME_POFF)
-		return true
+ 
 	end
-
-	return false
+ 
+ 
+	return true
 end
 
 TOOLS.SCYTHE = function(cid, item, fromPosition, itemEx, toPosition, destroy)
