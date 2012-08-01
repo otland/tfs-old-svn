@@ -4340,8 +4340,9 @@
 		<attribute key="containerSize" value="30"/>
 	</item>
 	<item id="2595" article="a" name="parcel">
+		<attribute key="type" value="container"/>
 		<attribute key="weight" value="1800"/>
-		<attribute key="description" value="It is the parcel for the watchtower on the Femor Hills."/>
+		<attribute key="containerSize" value="10" />
 	</item>
 	<item id="2596" article="a" name="stamped parcel">
 		<attribute key="weight" value="1800"/>
