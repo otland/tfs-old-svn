@@ -254,7 +254,7 @@ class Player : public Creature, public Cylinder
 
 		bool canOpenCorpse(uint32_t ownerId);
 
-		void addStorageValue(const uint32_t key, const int32_t value);
+		void addStorageValue(const uint32_t key, const int32_t value, const bool isLogin = false);
 		bool getStorageValue(const uint32_t key, int32_t& value) const;
 		void genReservedStorageRange();
 
