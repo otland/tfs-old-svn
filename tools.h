@@ -128,6 +128,7 @@ extern std::string toString(_Tp __p);
 #endif
 
 extern std::string ucfirst(std::string);
+extern std::string ucwords(std::string);
 extern bool booleanString(std::string);
 
 extern std::string getWeaponName(WeaponType_t weaponType);

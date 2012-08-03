@@ -73,7 +73,11 @@ void ServiceManager::stop()
 	for(std::map<uint16_t, ServicePort_ptr>::iterator it = m_acceptors.begin();
 		it != m_acceptors.end(); ++it)
 	{
-		m_io_service.post(boost::bind(&ServicePort::onStopServer, it->second));
+		try {
+			m_io_service.post(boost::bind(&ServicePort::onStopServer, it->second));
+		} catch (boost::system::system_error& e) {
+			std::cout << "[ServiceManager::stop] Network Error: " << e.what() << std::endl;
+		}
 	}
 	m_acceptors.clear();
 
@@ -235,6 +239,9 @@ void ServicePort::open(uint16_t port)
 			m_acceptor = new boost::asio::ip::tcp::acceptor(m_io_service, boost::asio::ip::tcp::endpoint(
 				boost::asio::ip::address(boost::asio::ip::address_v4(INADDR_ANY)), m_serverPort));
 		}
+
+		m_acceptor->set_option(boost::asio::ip::tcp::no_delay(true));
+
 		accept();
 	}
 	catch(boost::system::system_error& e)

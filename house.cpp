@@ -303,7 +303,7 @@ bool House::transferToDepot(Player* player)
 
 	for(std::list<Item*>::iterator it = moveItemList.begin(); it != moveItemList.end(); ++it)
 	{
-		g_game.internalMoveItem((*it)->getParent(), depot, INDEX_WHEREEVER,
+		g_game.internalMoveItem((*it)->getParent(), depot->getInbox(), INDEX_WHEREEVER,
 			(*it), (*it)->getItemCount(), NULL, FLAG_NOLIMIT);
 	}
 	return true;

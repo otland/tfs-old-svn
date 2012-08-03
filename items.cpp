@@ -117,7 +117,7 @@ ItemType::ItemType()
 	showCharges = false;
 	showAttributes = false;
 	charges	= 0;
-	hitChance = -1;
+	hitChance = 0;
 	maxHitChance = -1;
 	breakChance = -1;
 	shootRange = 1;
@@ -901,7 +901,7 @@ bool Items::parseItemNode(xmlNodePtr itemNode, uint32_t id)
 			else if(tmpStrValue == "hitchance")
 			{
 				if(readXMLInteger(itemAttributesNode, "value", intValue))
-					it.hitChance = std::min(100, std::max(0, intValue));
+					it.hitChance = std::min(100, std::max(-100, intValue));
 			}
 			else if(tmpStrValue == "maxhitchance")
 			{

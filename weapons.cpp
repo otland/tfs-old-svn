@@ -686,7 +686,7 @@ int32_t WeaponMelee::getWeaponDamage(const Player* player, const Creature* targe
 WeaponDistance::WeaponDistance(LuaScriptInterface* _interface) :
 	Weapon(_interface)
 {
-	hitChance = -1;
+	hitChance = 0;
 	maxHitChance = 0;
 	breakChance = 0;
 	ammuAttackValue = 0;
@@ -715,7 +715,7 @@ bool WeaponDistance::configureEvent(xmlNodePtr p)
 		maxHitChance = 75;
 	}
 
-	if(it.hitChance != -1)
+	if(it.hitChance != 0)
 		hitChance = it.hitChance;
 
 	if(it.maxHitChance != -1)
@@ -755,7 +755,7 @@ bool WeaponDistance::configureWeapon(const ItemType& it)
 	range = it.shootRange;
 	ammuAttackValue = it.attack;
 
-	if(it.hitChance > 0)
+	if(it.hitChance != 0)
 		hitChance = it.hitChance;
 
 	if(it.maxHitChance > 0)
@@ -794,7 +794,7 @@ bool WeaponDistance::useWeapon(Player* player, Item* item, Creature* target) con
 		return false;
 
 	int32_t chance;
-	if(hitChance == -1)
+	if(hitChance == 0)
 	{
 		//hit chance is based on distance to target and distance skill
 		uint32_t skill = player->getSkill(SKILL_DIST, SKILL_LEVEL);
@@ -855,7 +855,7 @@ bool WeaponDistance::useWeapon(Player* player, Item* item, Creature* target) con
 	if(item->getWeaponType() == WEAPON_AMMO)
 	{
 		Item* bow = player->getWeapon(true);
-		if(bow && bow->getHitChance() > 0)
+		if(bow && bow->getHitChance() != 0)
 			chance += bow->getHitChance();
 	}
 

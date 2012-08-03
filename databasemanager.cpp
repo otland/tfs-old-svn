@@ -192,7 +192,7 @@ uint32_t DatabaseManager::updateDatabase()
 	{
 		case 0:
 		{
-			std::cout << "> Updating database to version 1" << std::endl;
+			std::cout << "> Updating database to version 1 (account names)" << std::endl;
 			if (db->getDatabaseEngine() == DATABASE_ENGINE_MYSQL)
 				db->executeQuery("ALTER TABLE `accounts` ADD `name` VARCHAR(32) NOT NULL AFTER `id`;");
 			else
@@ -211,7 +211,7 @@ uint32_t DatabaseManager::updateDatabase()
 
 		case 1:
 		{
-			std::cout << "> Updating database to version 2" << std::endl;
+			std::cout << "> Updating database to version 2 (market offers)" << std::endl;
 			if(db->getDatabaseEngine() == DATABASE_ENGINE_MYSQL)
 			{
 				db->executeQuery("CREATE TABLE `market_offers` (`id` INT UNSIGNED NOT NULL AUTO_INCREMENT, `player_id` INT NOT NULL, `sale` TINYINT(1) NOT NULL DEFAULT 0, `itemtype` INT UNSIGNED NOT NULL, `amount` SMALLINT UNSIGNED NOT NULL, `created` BIGINT UNSIGNED NOT NULL, `anonymous` TINYINT(1) NOT NULL DEFAULT 0, `price` INT UNSIGNED NOT NULL DEFAULT 0, PRIMARY KEY (`id`), KEY(`sale`, `itemtype`), KEY(`created`), FOREIGN KEY (`player_id`) REFERENCES `players`(`id`) ON DELETE CASCADE) ENGINE = InnoDB;");
@@ -229,7 +229,7 @@ uint32_t DatabaseManager::updateDatabase()
 
 		case 2:
 		{
-			std::cout << "> Updating database to version 3" << std::endl;
+			std::cout << "> Updating database to version 3 (bank balance)" << std::endl;
 			if(db->getDatabaseEngine() == DATABASE_ENGINE_SQLITE)
 				db->executeQuery("DROP TRIGGER IF EXISTS `onupdate_players_after`;");
 
@@ -240,7 +240,7 @@ uint32_t DatabaseManager::updateDatabase()
 
 		case 3:
 		{
-			std::cout << "> Updating database to version 4" << std::endl;
+			std::cout << "> Updating database to version 4 (market history)" << std::endl;
 			if(db->getDatabaseEngine() == DATABASE_ENGINE_MYSQL)
 				db->executeQuery("CREATE TABLE `market_history` (`id` INT UNSIGNED NOT NULL AUTO_INCREMENT, `player_id` INT NOT NULL, `sale` TINYINT(1) NOT NULL DEFAULT 0, `itemtype` INT UNSIGNED NOT NULL, `amount` SMALLINT UNSIGNED NOT NULL, `price` INT UNSIGNED NOT NULL DEFAULT 0, `expires_at` BIGINT UNSIGNED NOT NULL, `inserted` BIGINT UNSIGNED NOT NULL, `state` TINYINT(1) UNSIGNED NOT NULL, PRIMARY KEY(`id`), KEY(`player_id`, `sale`), FOREIGN KEY (`player_id`) REFERENCES `players`(`id`) ON DELETE CASCADE) ENGINE = InnoDB;");
 			else
@@ -255,7 +255,7 @@ uint32_t DatabaseManager::updateDatabase()
 
 		case 4:
 		{
-			std::cout << "> Updating database to version 5" << std::endl;
+			std::cout << "> Updating database to version 5 (black skull & guild wars)" << std::endl;
 			if(db->getDatabaseEngine() == DATABASE_ENGINE_MYSQL)
 			{
 				db->executeQuery("ALTER TABLE `players` CHANGE `redskull` `skull` TINYINT(1) NOT NULL DEFAULT '0', CHANGE `redskulltime` `skulltime` INT(11) NOT NULL DEFAULT '0';");
@@ -274,6 +274,23 @@ uint32_t DatabaseManager::updateDatabase()
 
 			registerDatabaseConfig("db_version", 5);
 			return 5;
+		}
+
+		case 5:
+		{
+			std::cout << "> Updating database to version 6 (market bug fix)" << std::endl;
+			db->executeQuery("DELETE FROM `market_offers` WHERE `amount` = 0;");
+			registerDatabaseConfig("db_version", 6);
+			return 6;
+		}
+
+		case 6:
+		{
+			std::cout << "> Updating database to version 7 (offline training)" << std::endl;
+			db->executeQuery("ALTER TABLE `players` ADD `offlinetraining_time` SMALLINT UNSIGNED NOT NULL DEFAULT 43200;");
+			db->executeQuery("ALTER TABLE `players` ADD `offlinetraining_skill` INT NOT NULL DEFAULT -1;");
+			registerDatabaseConfig("db_version", 7);
+			return 7;
 		}
 
 		/*

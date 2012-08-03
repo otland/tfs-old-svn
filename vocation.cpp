@@ -108,7 +108,7 @@ bool Vocations::loadFromXml()
 
 					if(readXMLInteger(p, "attackspeed", intVal))
 						voc->attackSpeed = intVal;
-						
+
 					if(readXMLInteger(p, "basespeed", intVal))
 						voc->baseSpeed = intVal;
 

@@ -21,14 +21,12 @@
 #ifndef __OTSERV_SCHEDULER_H__
 #define __OTSERV_SCHEDULER_H__
 
-#include <boost/function.hpp>
+#include "otsystem.h"
+#include "tasks.h"
 #include <boost/bind.hpp>
 #include <vector>
 #include <queue>
 #include <set>
-
-#include "otsystem.h"
-#include "tasks.h"
 
 #define SCHEDULER_MINTICKS 50
 
@@ -40,7 +38,7 @@ class SchedulerTask : public Task
 		void setEventId(uint32_t eventid) {m_eventid = eventid;}
 		uint32_t getEventId() const {return m_eventid;}
 
-		uint64_t getCycle() const {return m_cycle;}
+		boost::system_time getCycle() const {return m_expiration;}
 
 		bool operator<(const SchedulerTask& other) const
 		{
@@ -48,23 +46,21 @@ class SchedulerTask : public Task
 		}
 
 	protected:
-		SchedulerTask(uint32_t delay, boost::function<void (void)> f) : Task(f)
+		SchedulerTask(uint32_t delay, const boost::function<void (void)>& f) : Task(delay, f)
 		{
-			m_cycle = OTSYS_TIME() + delay;
 			m_eventid = 0;
 		}
 
-		uint64_t m_cycle;
 		uint32_t m_eventid;
 
-		friend SchedulerTask* createSchedulerTask(uint32_t, boost::function<void (void)>);
+		friend SchedulerTask* createSchedulerTask(uint32_t, const boost::function<void (void)>&);
 };
 
-inline SchedulerTask* createSchedulerTask(uint32_t delay, boost::function<void (void)> f)
+inline SchedulerTask* createSchedulerTask(uint32_t delay, const boost::function<void (void)>& f)
 {
-	assert(delay != 0);
 	if(delay < SCHEDULER_MINTICKS)
 		delay = SCHEDULER_MINTICKS;
+
 	return new SchedulerTask(delay, f);
 }
 
@@ -89,6 +85,7 @@ class Scheduler
 		void start();
 		void stop();
 		void shutdown();
+		void join();
 
 		enum SchedulerState
 		{
@@ -98,10 +95,11 @@ class Scheduler
 		};
 
 	protected:
-		static OTSYS_THREAD_RETURN schedulerThread(void* p);
+		static void schedulerThread(void* p);
 
-		OTSYS_THREAD_LOCKVAR m_eventLock;
-		OTSYS_THREAD_SIGNALVAR m_eventSignal;
+		boost::thread m_thread;
+		boost::mutex m_eventLock;
+		boost::condition_variable m_eventSignal;
 
 		uint32_t m_lastEventId;
 		std::priority_queue<SchedulerTask*, std::vector<SchedulerTask*>, lessSchedTask > m_eventList;

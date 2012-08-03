@@ -3640,7 +3640,7 @@ int32_t LuaScriptInterface::luaGetTileItemByType(lua_State* L)
 			{
 				Item* item = (*it);
 				const ItemType& itemType = Item::items[item->getID()];
-				if(itemType.type == (ItemTypes_t) rType)
+				if(itemType.type == (ItemTypes_t)rType)
 				{
 					uint32_t uid = env->addThing(item);
 					pushThing(L, item, uid);

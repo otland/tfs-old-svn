@@ -328,10 +328,11 @@ class ProtocolGame : public Protocol
 		friend class Player;
 
 		// Helper so we don't need to bind every time
-		#define addGameTask(f, ...) addGameTaskInternal(boost::bind(f, &g_game, __VA_ARGS__))
+		#define addGameTask(f, ...) addGameTaskInternal(false, 0, boost::bind(f, &g_game, __VA_ARGS__))
+		#define addGameTaskTimed(delay, f, ...) addGameTaskInternal(true, delay, boost::bind(f, &g_game, __VA_ARGS__))
 
 		template<class FunctionType>
-		void addGameTaskInternal(const FunctionType&);
+		void addGameTaskInternal(bool droppable, uint32_t delay, const FunctionType&);
 
 		Player* player;
 

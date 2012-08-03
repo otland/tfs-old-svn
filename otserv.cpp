@@ -222,6 +222,8 @@ int main(int argc, char *argv[])
 		GUI::getInstance()->m_connections = true;
 		#endif
 		servicer.run();
+		g_scheduler.join();
+		g_dispatcher.join();
 	}
 	else
 	{
@@ -235,7 +237,7 @@ int main(int argc, char *argv[])
 	mainExceptionHandler.RemoveHandler();
 #endif
 #ifndef _CONSOLE
-	exit(0);
+	exit(EXIT_SUCCESS);
 #else
 	return 0;
 #endif
@@ -526,51 +528,28 @@ void mainLoader(ServiceManager* services)
 	if(autoSaveEachMinutes > 0)
 		g_scheduler.addEvent(createSchedulerTask(autoSaveEachMinutes * 1000 * 60, boost::bind(&Game::autoSave, &g_game)));
 
-	if(g_config.getBoolean(ConfigManager::SERVERSAVE_ENABLED) && g_config.getNumber(ConfigManager::SERVERSAVE_H) >= 0 &&
-		g_config.getNumber(ConfigManager::SERVERSAVE_H) <= 24)
+	if(g_config.getBoolean(ConfigManager::SERVERSAVE_ENABLED))
 	{
-		int32_t prepareServerSaveHour = g_config.getNumber(ConfigManager::SERVERSAVE_H) - 1;
-		int32_t hoursLeft = 0, minutesLeft = 0, minutesToRemove = 0;
-		bool ignoreEvent = false;
-		time_t timeNow = time(NULL);
-		const tm* theTime = localtime(&timeNow);
-		if(theTime->tm_hour > prepareServerSaveHour)
+		int32_t serverSaveHour = g_config.getNumber(ConfigManager::SERVERSAVE_H);
+		if(serverSaveHour >= 0 && serverSaveHour <= 24)
 		{
-			hoursLeft = 24 - (theTime->tm_hour - prepareServerSaveHour);
-			if(theTime->tm_min > 55 && theTime->tm_min <= 59)
-				minutesToRemove = theTime->tm_min - 55;
-			else
-				minutesLeft = 55 - theTime->tm_min;
-		}
-		else if(theTime->tm_hour == prepareServerSaveHour)
-		{
-			if(theTime->tm_min >= 55 && theTime->tm_min <= 59)
-			{
-				if(theTime->tm_min >= 57)
-					g_game.setServerSaveMessage(0, true);
+			time_t timeNow = time(NULL);
+			tm* timeinfo = localtime(&timeNow);
 
-				if(theTime->tm_min == 59)
-					g_game.setServerSaveMessage(1, true);
-
-				g_game.prepareServerSave();
-				ignoreEvent = true;
-			}
+			if(serverSaveHour == 0)
+				serverSaveHour = 23;
 			else
-				minutesLeft = 55 - theTime->tm_min;
-		}
-		else
-		{
-			hoursLeft = prepareServerSaveHour - theTime->tm_hour;
-			if(theTime->tm_min > 55 && theTime->tm_min <= 59)
-				minutesToRemove = theTime->tm_min - 55;
-			else
-				minutesLeft = 55 - theTime->tm_min;
-		}
+				serverSaveHour--;
 
-		int32_t hoursLeftInMS = 60000 * 60 * hoursLeft;
-		uint32_t minutesLeftInMS = 60000 * (minutesLeft - minutesToRemove);
-		if(!ignoreEvent && (hoursLeftInMS + minutesLeftInMS) > 0)
-			g_scheduler.addEvent(createSchedulerTask(hoursLeftInMS + minutesLeftInMS, boost::bind(&Game::prepareServerSave, &g_game)));
+			timeinfo->tm_hour = serverSaveHour;
+			timeinfo->tm_min = 55;
+			timeinfo->tm_sec = 0;
+			time_t difference = (time_t)difftime(mktime(timeinfo), timeNow);
+			if(difference < 0)
+				difference += 86400;
+
+			g_scheduler.addEvent(createSchedulerTask(difference * 1000, boost::bind(&Game::prepareServerSave, &g_game)));
+		}
 	}
 
 	IOGuild::getInstance()->removePending();

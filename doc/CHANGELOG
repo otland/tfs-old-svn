@@ -40,6 +40,23 @@
 	Improved code for hangables, they should no longer fall in water if the wall is on a water tile.
 	Support for .otbm and .otbi files saved with "OTBM" or "OTBI" as the first four bytes.
 	Updated the MySQL schema, for an unknown reason it was missing the changes from database schema version 1.
+	Making use of boost::thread for Scheduler and Dispatcher for more portable code.
+	TCP no_delay is now enabled, should fix tileskipping when mapclicking with high speed or dashing.
+	Added offline training code to the database manager. The full code will be commited once it has been tested enough.
+	Changed how shutdown works, the server should now properly exit instead of a forced exit.
+	House items are now properly transferred to depot inbox instead of the locker.
+	Rewrote the code to calculate time to next global server save, it's looks a lot better now and is probably faster too.
+	Optimized Player::addSkillAdvance and fixed so sendSkills won't be called twice.
+	Player storage loading will no longer check quest log and send quest log has been updated.
+	Some packets will now be dropped if they aren't processed fast enough.
+	Fixed so that spells with parameters don't require " for one word parameters (works like in Tibia now).
+	Fixed so the current mount will show up in the change outfit dialog even if not mounted.
+	Fixed possible crashes if players sent bad packets.
+	Fixed a bug where player could get red skull, or black skull or ban with one kill less than required for that if the player killed at least two players at once.
+	Fixed so sendStats won't be called if it isn't necessary in Player::addManaSpent.
+	Fixed a bug with items that had negative hit chance.
+	Fixed look description for snowballs.
+	Fixed a bug with the market, offers were still there with count 0 which caused problems with the offers limit.
 	Fixed element damage for distance weapons.
 	Fixed a bug with the optimized escape blob function for DatabaseSQLite, output should be identical to the old function but over 10 times faster.
 	Fixed a possible bug with copied actions.

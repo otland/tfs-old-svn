@@ -178,26 +178,13 @@ void Game::setGameState(GameState_t newState)
 					it = Player::listPlayer.list.begin();
 				}
 
-				Houses::getInstance().payHouses();
 				saveGameState();
 
-				if(services)
-					services->stop();
+				g_dispatcher.addTask(
+					createTask(boost::bind(&Game::shutdown, this)));
 
-				if(g_config.getBoolean(ConfigManager::FREE_MEMORY_AT_SHUTDOWN))
-				{
-					g_dispatcher.addTask(
-						createTask(boost::bind(&Game::shutdown, this)));
-
-					g_scheduler.stop();
-					g_dispatcher.stop();
-				}
-				else
-				{
-					g_scheduler.shutdown();
-					g_dispatcher.shutdown();
-					exit(0);
-				}
+				g_scheduler.stop();
+				g_dispatcher.stop();
 				break;
 			}
 
@@ -696,10 +683,12 @@ bool Game::placeCreature(Creature* creature, const Position& pos, bool extendedP
 	Player* player = creature->getPlayer();
 	if(player)
 	{
+		int32_t offlineTime = time(NULL) - player->getLastLogout();
+
 		Condition* conditionMuted = player->getCondition(CONDITION_MUTED, CONDITIONID_DEFAULT);
 		if(conditionMuted && conditionMuted->getTicks() > 0)
 		{
-			conditionMuted->setTicks(conditionMuted->getTicks() - (time(NULL) - player->getLastLogout()) * 1000);
+			conditionMuted->setTicks(conditionMuted->getTicks() - (offlineTime * 1000));
 			if(conditionMuted->getTicks() <= 0)
 				player->removeCondition(conditionMuted);
 			else
@@ -709,7 +698,7 @@ bool Game::placeCreature(Creature* creature, const Position& pos, bool extendedP
 		Condition* conditionTrade = player->getCondition(CONDITION_ADVERTISINGTICKS, CONDITIONID_DEFAULT);
 		if(conditionTrade && conditionTrade->getTicks() > 0)
 		{
-			conditionTrade->setTicks(conditionTrade->getTicks() - (time(NULL) - player->getLastLogout()) * 1000);
+			conditionTrade->setTicks(conditionTrade->getTicks() - (offlineTime * 1000));
 			if(conditionTrade->getTicks() <= 0)
 				player->removeCondition(conditionTrade);
 			else
@@ -719,7 +708,7 @@ bool Game::placeCreature(Creature* creature, const Position& pos, bool extendedP
 		Condition* conditionYell = player->getCondition(CONDITION_YELLTICKS, CONDITIONID_DEFAULT);
 		if(conditionYell && conditionYell->getTicks() > 0)
 		{
-			conditionYell->setTicks(conditionYell->getTicks() - (time(NULL) - player->getLastLogout()) * 1000);
+			conditionYell->setTicks(conditionYell->getTicks() - (offlineTime * 1000));
 			if(conditionYell->getTicks() <= 0)
 				player->removeCondition(conditionYell);
 			else
@@ -4657,20 +4646,19 @@ void Game::resetCommandTag()
 
 void Game::shutdown()
 {
-	std::cout << "Shutting down server";
-	g_scheduler.shutdown();
-	std::cout << ".";
-	g_dispatcher.shutdown();
-	std::cout << ".";
-	Spawns::getInstance()->clear();
-	std::cout << ".";
-	Raids::getInstance()->clear();
-	std::cout << ".";
-	cleanup();
-	std::cout << ".";
+	std::cout << "Shutting down server..." << std::flush;
 
-	std::cout << " done." << std::endl;
-	exit(0);
+	g_scheduler.shutdown();
+	g_dispatcher.shutdown();
+	Spawns::getInstance()->clear();
+	Raids::getInstance()->clear();
+
+	cleanup();
+
+	if(services)
+		services->stop();
+
+	std::cout << " done!";
 }
 
 void Game::cleanup()
@@ -4900,12 +4888,12 @@ void Game::serverSave()
 	if(g_config.getBoolean(ConfigManager::SHUTDOWN_AT_SERVERSAVE))
 	{
 		//shutdown server
-		g_dispatcher.addTask(createTask(boost::bind(&Game::setGameState, this, GAME_STATE_SHUTDOWN)));
+		setGameState(GAME_STATE_SHUTDOWN);
 	}
 	else
 	{
 		//close server
-		g_dispatcher.addTask(createTask(boost::bind(&Game::setGameState, this, GAME_STATE_CLOSED)));
+		setGameState(GAME_STATE_CLOSED);
 
 		//clean map if configured to
 		if(g_config.getBoolean(ConfigManager::CLEAN_MAP_AT_SERVERSAVE))
@@ -4922,7 +4910,7 @@ void Game::serverSave()
 		g_scheduler.addEvent(createSchedulerTask(86100000, boost::bind(&Game::prepareServerSave, this)));
 
 		//open server
-		g_dispatcher.addTask(createTask(boost::bind(&Game::setGameState, this, GAME_STATE_NORMAL)));
+		setGameState(GAME_STATE_NORMAL);
 	}
 }
 
@@ -5769,10 +5757,14 @@ bool Game::playerAcceptMarketOffer(uint32_t playerId, uint32_t timestamp, uint16
 	const int32_t marketOfferDuration = g_config.getNumber(ConfigManager::MARKET_OFFER_DURATION);
 	IOMarket::getInstance()->appendHistory(player->getGUID(), (offer.type == MARKETACTION_BUY ? MARKETACTION_SELL : MARKETACTION_BUY), offer.itemId, amount, offer.price, offer.timestamp + marketOfferDuration, OFFERSTATE_ACCEPTEDEX);
 	IOMarket::getInstance()->appendHistory(offer.playerId, offer.type, offer.itemId, amount, offer.price, offer.timestamp + marketOfferDuration, OFFERSTATE_ACCEPTED);
-	IOMarket::getInstance()->acceptOffer(offerId, amount);
+
+	offer.amount -= amount;
+	if(offer.amount == 0)
+		IOMarket::getInstance()->deleteOffer(offerId);
+	else
+		IOMarket::getInstance()->acceptOffer(offerId, amount);
 
 	player->sendMarketEnter(player->getMarketDepotId());
-	offer.amount -= amount;
 	offer.timestamp += marketOfferDuration;
 	player->sendMarketAcceptOffer(offer);
 	return true;

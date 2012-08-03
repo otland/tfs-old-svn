@@ -635,17 +635,19 @@ void Player::addSkillAdvance(skills_t skill, uint32_t count)
 	if(count == 0)
 		return;
 
-	if(vocation->getReqSkillTries(skill, skills[skill][SKILL_LEVEL]) > vocation->getReqSkillTries(skill, skills[skill][SKILL_LEVEL] + 1))
+	uint64_t currReqTries = vocation->getReqSkillTries(skill, skills[skill][SKILL_LEVEL]);
+	uint64_t nextReqTries = vocation->getReqSkillTries(skill, skills[skill][SKILL_LEVEL] + 1);
+	if(currReqTries > nextReqTries)
 	{
 		//player has reached max skill
 		return;
 	}
 
-	bool advance = false;
-	count = count * g_config.getNumber(ConfigManager::RATE_SKILL);
-	while(skills[skill][SKILL_TRIES] + count >= vocation->getReqSkillTries(skill, skills[skill][SKILL_LEVEL] + 1))
+	bool sendUpdateSkills = false;
+	count *= g_config.getNumber(ConfigManager::RATE_SKILL);
+	while((skills[skill][SKILL_TRIES] + count) >= nextReqTries)
 	{
-		count -= vocation->getReqSkillTries(skill, skills[skill][SKILL_LEVEL] + 1) - skills[skill][SKILL_TRIES];
+		count -= nextReqTries - skills[skill][SKILL_TRIES];
 		skills[skill][SKILL_LEVEL]++;
 		skills[skill][SKILL_TRIES] = 0;
 		skills[skill][SKILL_PERCENT] = 0;
@@ -655,9 +657,11 @@ void Player::addSkillAdvance(skills_t skill, uint32_t count)
 		sendTextMessage(MSG_EVENT_ADVANCE, ss.str());
 
 		g_creatureEvents->playerAdvance(this, skill, (skills[skill][SKILL_LEVEL] - 1), skills[skill][SKILL_LEVEL]);
-		advance = true;
 
-		if(vocation->getReqSkillTries(skill, skills[skill][SKILL_LEVEL]) > vocation->getReqSkillTries(skill, skills[skill][SKILL_LEVEL] + 1))
+		sendUpdateSkills = true;
+		currReqTries = nextReqTries,
+		nextReqTries = vocation->getReqSkillTries(skill, skills[skill][SKILL_LEVEL] + 1);
+		if(currReqTries > nextReqTries)
 		{
 			count = 0;
 			break;
@@ -665,16 +669,20 @@ void Player::addSkillAdvance(skills_t skill, uint32_t count)
 	}
 	skills[skill][SKILL_TRIES] += count;
 
-	if(advance)
-		sendSkills();
+	uint32_t newPercent;
+	if(nextReqTries > currReqTries)
+		newPercent = Player::getPercentLevel(skills[skill][SKILL_TRIES], nextReqTries);
+	else
+		newPercent = 0;
 
-	//update percent
-	uint32_t newPercent = Player::getPercentLevel(skills[skill][SKILL_TRIES], vocation->getReqSkillTries(skill, skills[skill][SKILL_LEVEL] + 1));
 	if(skills[skill][SKILL_PERCENT] != newPercent)
 	{
 		skills[skill][SKILL_PERCENT] = newPercent;
-		sendSkills();
+		sendUpdateSkills = true;
 	}
+
+	if(sendUpdateSkills)
+		sendSkills();
 }
 
 void Player::setVarStats(stats_t stat, int32_t modifier)
@@ -859,7 +867,7 @@ void Player::dropLoot(Container* corpse)
 		__internalAddThing(SLOT_BACKPACK, Item::CreateItem(ITEM_BAG));
 }
 
-void Player::addStorageValue(const uint32_t key, const int32_t value)
+void Player::addStorageValue(const uint32_t key, const int32_t value, const bool isLogin/* = false*/)
 {
 	if(IS_IN_KEYRANGE(key, RESERVED_RANGE))
 	{
@@ -891,7 +899,7 @@ void Player::addStorageValue(const uint32_t key, const int32_t value)
 	else
 	{
 		storageMap[key] = value;
-		if(Quests::getInstance()->isQuestStorage(key, value))
+		if(!isLogin && Quests::getInstance()->isQuestStorage(key, value))
 			sendTextMessage(MSG_EVENT_ADVANCE, "Your questlog has been updated.");
 	}
 }
@@ -1954,49 +1962,59 @@ void Player::drainMana(Creature* attacker, int32_t manaLoss)
 
 void Player::addManaSpent(uint64_t amount, bool withMultiplier /*= true*/)
 {
-	if(amount > 0 && !hasFlag(PlayerFlag_NotGainMana))
+	if(amount == 0 || hasFlag(PlayerFlag_NotGainMana))
+		return;
+
+	uint64_t currReqMana = vocation->getReqMana(magLevel);
+	uint64_t nextReqMana = vocation->getReqMana(magLevel + 1);
+	if(currReqMana > nextReqMana)
 	{
-		uint64_t currReqMana = vocation->getReqMana(magLevel);
-		uint64_t nextReqMana = vocation->getReqMana(magLevel + 1);
+		//player has reached max magic level
+		return;
+	}
+
+	if(withMultiplier)
+		amount *= g_config.getNumber(ConfigManager::RATE_MAGIC);
+
+	bool sendUpdateStats = false;
+	while((manaSpent + amount) >= nextReqMana)
+	{
+		amount -= nextReqMana - manaSpent;
+
+		magLevel++;
+		manaSpent = 0;
+
+		std::ostringstream ss;
+		ss << "You advanced to magic level " << magLevel << ".";
+		sendTextMessage(MSG_EVENT_ADVANCE, ss.str());
+
+		g_creatureEvents->playerAdvance(this, SKILL__MAGLEVEL, magLevel - 1, magLevel);
+
+		sendUpdateStats = true;
+		currReqMana = nextReqMana;
+		nextReqMana = vocation->getReqMana(magLevel + 1);
 		if(currReqMana > nextReqMana)
 		{
-			//player has reached max magic level
+			amount = 0;
 			return;
 		}
-
-		if(withMultiplier)
-			amount = amount * g_config.getNumber(ConfigManager::RATE_MAGIC);
-
-		while(manaSpent + amount >= nextReqMana)
-		{
-			amount -= nextReqMana - manaSpent;
-
-			magLevel++;
-			manaSpent = 0;
-
-			std::ostringstream ss;
-			ss << "You advanced to magic level " << magLevel << ".";
-			sendTextMessage(MSG_EVENT_ADVANCE, ss.str());
-
-			g_creatureEvents->playerAdvance(this, SKILL__MAGLEVEL, magLevel - 1, magLevel);
-
-			currReqMana = nextReqMana;
-			nextReqMana = vocation->getReqMana(magLevel + 1);
-			if(currReqMana > nextReqMana)
-			{
-				amount = 0;
-				return;
-			}
-		}
-		manaSpent += amount;
-
-		if(nextReqMana > currReqMana)
-			magLevelPercent = Player::getPercentLevel(manaSpent, nextReqMana);
-		else
-			magLevelPercent = 0;
-
-		sendStats();
 	}
+	manaSpent += amount;
+
+	uint32_t newPercent;
+	if(nextReqMana > currReqMana)
+		newPercent = Player::getPercentLevel(manaSpent, nextReqMana);
+	else
+		newPercent = 0;
+
+	if(newPercent != magLevelPercent)
+	{
+		magLevelPercent = newPercent;
+		sendUpdateStats = true;
+	}
+
+	if(sendUpdateStats)
+		sendStats();
 }
 
 void Player::addExperience(uint64_t exp, bool useMult/* = false*/, bool sendText/* = false*/)
@@ -4182,7 +4200,7 @@ void Player::addUnjustifiedDead(const Player* attacked)
 	}
 
 	skullTicks += g_config.getNumber(ConfigManager::FRAG_TIME);
-	if(g_config.getNumber(ConfigManager::KILLS_TO_BAN) != 0 && skullTicks >= (g_config.getNumber(ConfigManager::KILLS_TO_BAN) - 1) * g_config.getNumber(ConfigManager::FRAG_TIME) && !IOBan::getInstance()->isAccountBanned(accountNumber))
+	if(g_config.getNumber(ConfigManager::KILLS_TO_BAN) != 0 && skullTicks > (g_config.getNumber(ConfigManager::KILLS_TO_BAN) - 1) * g_config.getNumber(ConfigManager::FRAG_TIME) && !IOBan::getInstance()->isAccountBanned(accountNumber))
 	{
 		IOBan::getInstance()->addAccountBan(accountNumber, time(NULL) + (g_config.getNumber(ConfigManager::BAN_DAYS) * 86400), 20, 2, "No comment.", 0);
 
@@ -4191,12 +4209,12 @@ void Player::addUnjustifiedDead(const Player* attacked)
 		g_scheduler.addEvent(createSchedulerTask(500,
 			boost::bind(&Game::kickPlayer, &g_game, playerId, false)));
 	}
-	else if(getSkull() != SKULL_BLACK && g_config.getNumber(ConfigManager::KILLS_TO_BLACK) != 0 && skullTicks >= (g_config.getNumber(ConfigManager::KILLS_TO_BLACK) - 1) * g_config.getNumber(ConfigManager::FRAG_TIME))
+	else if(getSkull() != SKULL_BLACK && g_config.getNumber(ConfigManager::KILLS_TO_BLACK) != 0 && skullTicks > (g_config.getNumber(ConfigManager::KILLS_TO_BLACK) - 1) * g_config.getNumber(ConfigManager::FRAG_TIME))
 	{
 		setSkull(SKULL_BLACK);
 		g_game.updateCreatureSkull(this);
 	}
-	else if(getSkull() != SKULL_RED && g_config.getNumber(ConfigManager::KILLS_TO_RED) != 0 && skullTicks >= (g_config.getNumber(ConfigManager::KILLS_TO_RED) - 1) * g_config.getNumber(ConfigManager::FRAG_TIME))
+	else if(getSkull() != SKULL_RED && g_config.getNumber(ConfigManager::KILLS_TO_RED) != 0 && skullTicks > (g_config.getNumber(ConfigManager::KILLS_TO_RED) - 1) * g_config.getNumber(ConfigManager::FRAG_TIME))
 	{
 		setSkull(SKULL_RED);
 		g_game.updateCreatureSkull(this);

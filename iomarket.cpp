@@ -234,6 +234,13 @@ void IOMarket::acceptOffer(uint32_t offerId, uint16_t amount)
 	Database::getInstance()->executeQuery(query.str());
 }
 
+void IOMarket::deleteOffer(uint32_t offerId)
+{
+	DBQuery query;
+	query << "DELETE FROM `market_offers` WHERE `id` = " << offerId << ";";
+	Database::getInstance()->executeQuery(query.str());
+}
+
 void IOMarket::appendHistory(uint32_t playerId, MarketAction_t type, uint16_t itemId, uint16_t amount, uint32_t price, time_t timestamp, MarketOfferState_t state)
 {
 	DBQuery query;

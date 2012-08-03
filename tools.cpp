@@ -1219,6 +1219,21 @@ std::string ucfirst(std::string str)
 	return str;
 }
 
+std::string ucwords(std::string str)
+{
+	uint32_t strLength = str.length();
+	if(strLength == 0)
+		return str;
+
+	str[0] = upchar(str[0]);
+	for(uint32_t i = 1; i < strLength; ++i)
+	{
+		if(str[i - 1] == ' ')
+			str[i] = upchar(str[i]);
+	}
+	return str;
+}
+
 bool booleanString(std::string str)
 {
 	toLowerCaseString(str);

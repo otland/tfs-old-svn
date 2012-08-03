@@ -183,11 +183,8 @@ void Monster::onCreatureMove(const Creature* creature, const Tile* newTile, cons
 		else if(!canSeeNewPos && canSeeOldPos)
 			onCreatureLeave(const_cast<Creature*>(creature));
 
-		if(isSummon() && getMaster() == creature)
-		{
-			if(canSeeNewPos)
-				isMasterInRange = true;	//Turn the summon on again
-		}
+		if(canSeeNewPos && isSummon() && getMaster() == creature)
+			isMasterInRange = true;	//Turn the summon on again
 
 		updateIdleStatus();
 
@@ -202,8 +199,8 @@ void Monster::onCreatureMove(const Creature* creature, const Tile* newTile, cons
 
 void Monster::updateTargetList()
 {
-	CreatureList::iterator it;
-	for(it = friendList.begin(); it != friendList.end();)
+	CreatureList::iterator it = friendList.begin();
+	while(it != friendList.end())
 	{
 		if((*it)->getHealth() <= 0 || !canSee((*it)->getPosition()))
 		{
@@ -214,7 +211,8 @@ void Monster::updateTargetList()
 			++it;
 	}
 
-	for(it = targetList.begin(); it != targetList.end();)
+	it = targetList.begin();
+	while(it != targetList.end())
 	{
 		if((*it)->getHealth() <= 0 || !canSee((*it)->getPosition()))
 		{
@@ -226,10 +224,10 @@ void Monster::updateTargetList()
 	}
 
 	const SpectatorVec& list = g_game.getSpectators(getPosition());
-	for(SpectatorVec::const_iterator it = list.begin(); it != list.end(); ++it)
+	for(SpectatorVec::const_iterator list_it = list.begin(), list_end = list.end(); list_it != list_end; ++list_it)
 	{
-		if((*it) != this && canSee((*it)->getPosition()))
-			onCreatureFound(*it);
+		if((*list_it) != this && canSee((*list_it)->getPosition()))
+			onCreatureFound(*list_it);
 	}
 }
 

@@ -233,7 +233,7 @@ void Creature::onThink(uint32_t interval)
 
 	//scripting event - onThink
 	CreatureEventList thinkEvents = getCreatureEvents(CREATURE_EVENT_THINK);
-	for(CreatureEventList::const_iterator it = thinkEvents.begin(); it != thinkEvents.end(); ++it)
+	for(CreatureEventList::const_iterator it = thinkEvents.begin(), end = thinkEvents.end(); it != end; ++it)
 		(*it)->executeOnThink(this, interval);
 }
 
