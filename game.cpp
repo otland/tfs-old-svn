@@ -5028,18 +5028,13 @@ void Game::internalDecayItem(Item* item)
 
 void Game::checkDecay()
 {
-	checkDecayEvent = Scheduler::getInstance().addEvent(createSchedulerTask(EVENT_DECAYINTERVAL,
+	Scheduler::getInstance().addEvent(createSchedulerTask(EVENT_DECAYINTERVAL,
 		boost::bind(&Game::checkDecay, this)));
 
 	size_t bucket = (lastBucket + 1) % EVENT_DECAYBUCKETS;
 	for(DecayList::iterator it = decayItems[bucket].begin(); it != decayItems[bucket].end();)
 	{
 		Item* item = *it;
-		int32_t decreaseTime = EVENT_DECAYINTERVAL * EVENT_DECAYBUCKETS;
-		if(item->getDuration() - decreaseTime < 0)
-			decreaseTime = item->getDuration();
-
-		item->decreaseDuration(decreaseTime);
 		if(!item->canDecay())
 		{
 			item->setDecaying(DECAYING_FALSE);
@@ -5047,6 +5042,12 @@ void Game::checkDecay()
 			it = decayItems[bucket].erase(it);
 			continue;
 		}
+
+		int32_t decreaseTime = EVENT_DECAYINTERVAL * EVENT_DECAYBUCKETS;
+		if((int32_t)item->getDuration() - decreaseTime < 0)
+			decreaseTime = item->getDuration();
+
+		item->decreaseDuration(decreaseTime);
 
 		int32_t dur = item->getDuration();
 		if(dur <= 0)
