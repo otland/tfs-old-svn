@@ -34,42 +34,10 @@
 extern ConfigManager g_config;
 
 DatabaseMySQL::DatabaseMySQL() :
-	m_handle(new MYSQL), m_timeoutTask(0)
+	m_handle(new MYSQL), m_attempts(0), m_timeoutTask(0)
 {
-	m_connected = false;
-	if(!mysql_init(m_handle))
-	{
-		std::clog << std::endl << "Failed to initialize MySQL connection handler." << std::endl;
-		return;
-	}
-
-	int32_t timeout = g_config.getNumber(ConfigManager::MYSQL_READ_TIMEOUT);
-	if(timeout)
-		mysql_options(m_handle, MYSQL_OPT_READ_TIMEOUT, (const char*)&timeout);
-
-	timeout = g_config.getNumber(ConfigManager::MYSQL_WRITE_TIMEOUT);
-	if(timeout)
-		mysql_options(m_handle, MYSQL_OPT_WRITE_TIMEOUT, (const char*)&timeout);
-
-	my_bool reconnect = true;
-	mysql_options(m_handle, MYSQL_OPT_RECONNECT, &reconnect);
-	if(!mysql_real_connect(m_handle,
-			g_config.getString(ConfigManager::SQL_HOST).c_str(),
-			g_config.getString(ConfigManager::SQL_USER).c_str(),
-			g_config.getString(ConfigManager::SQL_PASS).c_str(),
-			g_config.getString(ConfigManager::SQL_DB).c_str(),
-			g_config.getNumber(ConfigManager::SQL_PORT),
-		NULL, 0))
-	{
-		std::clog << std::endl << "Failed connecting to database - MYSQL ERROR: " << mysql_error(m_handle) << " (" << mysql_errno(m_handle) << ")" << std::endl;
-		return;
-	}
-
-	m_connected = true;
-	if(mysql_get_client_version() <= 50019)
-		mysql_options(m_handle, MYSQL_OPT_RECONNECT, &reconnect);
-
-	timeout = g_config.getNumber(ConfigManager::SQL_KEEPALIVE) * 1000;
+	assert(connect(false));
+	int32_t timeout = g_config.getNumber(ConfigManager::SQL_KEEPALIVE) * 1000;
 	if(timeout)
 		m_timeoutTask = Scheduler::getInstance().addEvent(createSchedulerTask(timeout,
 			boost::bind(&DatabaseMySQL::keepAlive, this)));
@@ -80,7 +48,6 @@ DatabaseMySQL::DatabaseMySQL() :
 	//we cannot lock mutex here :)
 	DBResult* result = storeQuery("SHOW variables LIKE 'max_allowed_packet';");
 	assert(result);
-
 	if(result->getDataLong("Value") < 16776192)
 		std::clog << std::endl << "> WARNING: max_allowed_packet might be set too low for binary map storage." << std::endl
 			<< "Use the following query to raise max_allow_packet: SET GLOBAL max_allowed_packet = 16776192;" << std::endl;
@@ -94,6 +61,54 @@ DatabaseMySQL::~DatabaseMySQL()
 	delete m_handle;
 	if(m_timeoutTask != 0)
 		Scheduler::getInstance().stopEvent(m_timeoutTask);
+}
+
+bool DatabaseMySQL::connect(bool _reconnect)
+{
+	m_connected = false;
+	if(_reconnect)
+	{
+		uint32_t attempts = g_config.getNumber(ConfigManager::MYSQL_RECONNECTION_ATTEMPTS);
+		if(attempts != 0 && m_attempts > attempts)
+			return false;
+
+		std::clog << "> WARNING: MYSQL Lost connection, attempting to reconnect..." << std::endl;
+		if(attempts != 0 && ++m_attempts > attempts)
+		{
+			std::clog << std::endl << "Failed connection to database - maximum reconnect attempts passed." << std::endl;
+			return false;
+		}
+	}
+
+	if(!mysql_init(m_handle))
+	{
+		std::clog << std::endl << "Failed to initialize MySQL connection handler." << std::endl;
+		return false;
+	}
+
+	int32_t timeout = g_config.getNumber(ConfigManager::MYSQL_READ_TIMEOUT);
+	if(timeout)
+		mysql_options(m_handle, MYSQL_OPT_READ_TIMEOUT, (const char*)&timeout);
+
+	timeout = g_config.getNumber(ConfigManager::MYSQL_WRITE_TIMEOUT);
+	if(timeout)
+		mysql_options(m_handle, MYSQL_OPT_WRITE_TIMEOUT, (const char*)&timeout);
+
+	if(!mysql_real_connect(m_handle,
+			g_config.getString(ConfigManager::SQL_HOST).c_str(),
+			g_config.getString(ConfigManager::SQL_USER).c_str(),
+			g_config.getString(ConfigManager::SQL_PASS).c_str(),
+			g_config.getString(ConfigManager::SQL_DB).c_str(),
+			g_config.getNumber(ConfigManager::SQL_PORT),
+		NULL, 0))
+	{
+		std::clog << std::endl << "Failed connecting to database - MYSQL ERROR: " << mysql_error(m_handle) << " (" << mysql_errno(m_handle) << ")" << std::endl;
+		return false;
+	}
+
+	m_connected = true;
+	m_attempts = 0;
+	return true;
 }
 
 bool DatabaseMySQL::rollback()
@@ -126,7 +141,7 @@ bool DatabaseMySQL::commit()
 
 bool DatabaseMySQL::query(std::string query)
 {
-	if(!m_connected)
+	if(!m_connected && !connect(true))
 		return false;
 
 	bool result = true;
@@ -151,7 +166,7 @@ bool DatabaseMySQL::query(std::string query)
 
 DBResult* DatabaseMySQL::storeQuery(std::string query)
 {
-	if(!m_connected)
+	if(!m_connected && !connect(true))
 		return NULL;
 
 	int32_t error = 0;
@@ -201,14 +216,11 @@ std::string DatabaseMySQL::escapeBlob(const char* s, uint32_t length)
 void DatabaseMySQL::keepAlive()
 {
 	int32_t timeout = g_config.getNumber(ConfigManager::SQL_KEEPALIVE) * 1000;
-	if(!timeout || OTSYS_TIME() < m_use + timeout)
-		return;
+	if(timeout != 0 && OTSYS_TIME() > m_use + timeout && mysql_ping(m_handle))
+		connect(true);
 
-	if(!mysql_ping(m_handle))
-		Scheduler::getInstance().addEvent(createSchedulerTask(timeout,
-			boost::bind(&DatabaseMySQL::keepAlive, this)));
-	else
-		m_connected = false;
+	Scheduler::getInstance().addEvent(createSchedulerTask(timeout,
+		boost::bind(&DatabaseMySQL::keepAlive, this)));
 }
 
 int32_t MySQLResult::getDataInt(const std::string& s)
