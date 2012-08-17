@@ -61,13 +61,13 @@ void Mount::addAttributes(Player* player)
 {
 	if(invisible)
 	{
-		Condition* condition = Condition::createCondition(CONDITIONID_OUTFIT, CONDITION_INVISIBLE, -1, 0);
+		Condition* condition = Condition::createCondition(CONDITIONID_MOUNT, CONDITION_INVISIBLE, -1, 0);
 		player->addCondition(condition);
 	}
 
 	if(manaShield)
 	{
-		Condition* condition = Condition::createCondition(CONDITIONID_OUTFIT, CONDITION_MANASHIELD, -1, 0);
+		Condition* condition = Condition::createCondition(CONDITIONID_MOUNT, CONDITION_MANASHIELD, -1, 0);
 		player->addCondition(condition);
 	}
 
@@ -79,7 +79,7 @@ void Mount::addAttributes(Player* player)
 
 	if(regeneration)
 	{
-		Condition* condition = Condition::createCondition(CONDITIONID_OUTFIT, CONDITION_REGENERATION, -1, 0);
+		Condition* condition = Condition::createCondition(CONDITIONID_MOUNT, CONDITION_REGENERATION, -1, 0);
 		if(healthGain)
 			condition->setParam(CONDITIONPARAM_HEALTHGAIN, healthGain);
 
@@ -137,10 +137,10 @@ void Mount::addAttributes(Player* player)
 void Mount::removeAttributes(Player* player)
 {
 	if(invisible)
-		player->removeCondition(CONDITION_INVISIBLE, CONDITIONID_OUTFIT);
+		player->removeCondition(CONDITION_INVISIBLE, CONDITIONID_MOUNT);
 
 	if(manaShield)
-		player->removeCondition(CONDITION_MANASHIELD, CONDITIONID_OUTFIT);
+		player->removeCondition(CONDITION_MANASHIELD, CONDITIONID_MOUNT);
 
 	if(conditionSuppressions)
 	{
@@ -149,7 +149,7 @@ void Mount::removeAttributes(Player* player)
 	}
 
 	if(regeneration)
-		player->removeCondition(CONDITION_REGENERATION, CONDITIONID_OUTFIT);
+		player->removeCondition(CONDITION_REGENERATION, CONDITIONID_MOUNT);
 
 	bool needUpdateSkills = false;
 	for(uint32_t i = SKILL_FIRST; i <= SKILL_LAST; ++i)
