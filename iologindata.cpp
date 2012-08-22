@@ -51,7 +51,7 @@ Account IOLoginData::loadAccount(uint32_t accno)
 	DBQuery query;
 	DBResult* result;
 
-	query << "SELECT `id`, `name`, `password`, `type`, `premdays`, `lastday`, `key`, `warnings` FROM `accounts` WHERE `id` = " << accno << " LIMIT 1;";
+	query << "SELECT `id`, `name`, `password`, `type`, `premdays`, `lastday`, `key`, `warnings` FROM `accounts` WHERE `id` = " << accno << ";";
 	if((result = db->storeQuery(query.str())))
 	{
 		acc.id = result->getDataInt("id");
@@ -272,7 +272,7 @@ AccountType_t IOLoginData::getAccountType(std::string name)
 		return ACCOUNT_TYPE_NORMAL;
 
 	query.str("");
-	query << "SELECT `type` FROM `accounts` WHERE `id` = " << result->getDataInt("account_id") << " LIMIT 1;";
+	query << "SELECT `type` FROM `accounts` WHERE `id` = " << result->getDataInt("account_id") << ";";
 	db->freeResult(result);
 	if(!(result = db->storeQuery(query.str())))
 		return ACCOUNT_TYPE_NORMAL;
@@ -337,7 +337,7 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool prelo
 	DBQuery query;
 	DBResult* result;
 
-	query << "SELECT `id`, `account_id`, `group_id`, `sex`, `vocation`, `experience`, `level`, `maglevel`, `health`, `healthmax`, `blessings`, `mana`, `manamax`, `manaspent`, `soul`, `lookbody`, `lookfeet`, `lookhead`, `looklegs`, `looktype`, `lookaddons`, `posx`, `posy`, `posz`, `cap`, `lastlogin`, `lastlogout`, `lastip`, `conditions`, `skulltime`, `skull`, `guildnick`, `rank_id`, `town_id`, `balance` FROM `players` WHERE `name` " << db->getStringComparer() << db->escapePatternString(name) << " LIMIT 1;";
+	query << "SELECT `id`, `account_id`, `group_id`, `sex`, `vocation`, `experience`, `level`, `maglevel`, `health`, `healthmax`, `blessings`, `mana`, `manamax`, `manaspent`, `soul`, `lookbody`, `lookfeet`, `lookhead`, `looklegs`, `looktype`, `lookaddons`, `posx`, `posy`, `posz`, `cap`, `lastlogin`, `lastlogout`, `lastip`, `conditions`, `skulltime`, `skull`, `guildnick`, `rank_id`, `town_id`, `balance`, `offlinetraining_time`, `offlinetraining_skill` FROM `players` WHERE `name` " << db->getStringComparer() << db->escapePatternString(name) << " LIMIT 1;";
 	if(!(result = db->storeQuery(query.str())))
 		return false;
 
@@ -455,6 +455,9 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool prelo
 
 	player->lastLoginSaved = result->getDataLong("lastlogin");
 	player->lastLogout = result->getDataLong("lastlogout");
+
+	player->offlineTrainingTime = result->getDataInt("offlinetraining_time") * 1000;
+	player->offlineTrainingSkill = result->getDataInt("offlinetraining_skill");
 
 	player->town = result->getDataInt("town_id");
 	Town* town = Towns::getInstance().getTown(player->town);
@@ -654,7 +657,7 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool prelo
 	{
 		do
 		{
-			player->addStorageValue(result->getDataInt("key"), result->getDataLong("value"));
+			player->addStorageValue(result->getDataInt("key"), result->getDataLong("value"), true);
 		}
 		while(result->next());
 		db->freeResult(result);
@@ -838,6 +841,8 @@ bool IOLoginData::savePlayer(Player* player, bool preSave)
 	}
 	query << "`lastlogout` = " << player->getLastLogout() << ", ";
 	query << "`balance` = " << player->bankBalance << ", ";
+	query << "`offlinetraining_time` = " << player->getOfflineTrainingTime() / 1000 << ", ";
+	query << "`offlinetraining_skill` = " << player->getOfflineTrainingSkill() << ", ";
 	query << "`blessings` = " << player->blessings;
 	if(g_config.getBoolean(ConfigManager::INGAME_GUILD_SYSTEM))
 	{
@@ -1127,7 +1132,7 @@ const PlayerGroup* IOLoginData::getPlayerGroup(uint32_t groupid)
 	DBQuery query;
 	DBResult* result;
 
-	query << "SELECT `name`, `flags`, `access`, `maxdepotitems`, `maxviplist` FROM `groups` WHERE `id` = " << groupid << " LIMIT 1;";
+	query << "SELECT `name`, `flags`, `access`, `maxdepotitems`, `maxviplist` FROM `groups` WHERE `id` = " << groupid << ";";
 	if(!(result = db->storeQuery(query.str())))
 		return NULL;
 
@@ -1210,12 +1215,12 @@ bool IOLoginData::isPremium(uint32_t guid)
 	DBQuery query;
 	DBResult* result;
 
-	query << "SELECT `account_id` FROM `players` WHERE `id` = " << guid << " LIMIT 1;";
+	query << "SELECT `account_id` FROM `players` WHERE `id` = " << guid << ";";
 	if(!(result = db->storeQuery(query.str())))
 		return false;
 
 	query.str("");
-	query << "SELECT `premdays` FROM `accounts` WHERE `id` = " << result->getDataInt("account_id") << " LIMIT 1;";
+	query << "SELECT `premdays` FROM `accounts` WHERE `id` = " << result->getDataInt("account_id") << ";";
 	db->freeResult(result);
 	if(!(result = db->storeQuery(query.str())))
 		return false;

@@ -630,6 +630,7 @@ class LuaScriptInterface
 		static int32_t luaDoAddMark(lua_State* L);
 
 		static int32_t luaIsInWar(lua_State* L);
+		static int32_t luaDoPlayerSetOfflineTrainingSkill(lua_State* L);
 
 		static int32_t luaGetPlayerParty(lua_State* L);
 		static int32_t luaDoPlayerJoinParty(lua_State* L);

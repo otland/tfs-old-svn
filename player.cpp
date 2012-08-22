@@ -185,6 +185,10 @@ Creature()
 
 	bankBalance = 0;
 
+	offlineTrainingSkill = -1;
+	offlineTrainingTime = 0;
+	lastStatsTrainingTime = 0;
+
 	ghostMode = false;
 	requestedOutfit = false;
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
@@ -1320,7 +1324,10 @@ void Player::sendCancelMessage(ReturnValue message) const
 void Player::sendStats()
 {
 	if(client)
+	{
 		client->sendStats();
+		lastStatsTrainingTime = getOfflineTrainingTime() / 60 / 1000;
+	}
 }
 
 void Player::sendPing()
@@ -3023,7 +3030,7 @@ Cylinder* Player::__queryDestination(int32_t& index, const Thing* thing, Item** 
 
 				n++;
 			}
-			
+
 			if(n < tmpContainer->capacity() && tmpContainer->__queryAdd(n, item, item->getItemCount(), flags) == RET_NOERROR)
 			{
 				index = n;
@@ -4196,7 +4203,7 @@ void Player::addUnjustifiedDead(const Player* attacked)
 	{
 		std::ostringstream ss;
 		ss << "Warning! The murder of " << attacked->getName() << " was not justified.";
-		client->sendTextMessage(MSG_STATUS_WARNING, ss.str());
+		client->sendTextMessage(MSG_EVENT_ADVANCE, ss.str());
 	}
 
 	skullTicks += g_config.getNumber(ConfigManager::FRAG_TIME);

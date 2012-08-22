@@ -106,8 +106,7 @@ typedef bool (*COMBATFUNC)(Creature*, Creature*, const CombatParams&, void*);
 
 struct Combat2Var
 {
-	int32_t minChange;
-	int32_t maxChange;
+	int32_t change;
 };
 
 class MatrixArea

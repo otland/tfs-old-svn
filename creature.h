@@ -208,7 +208,7 @@ class Creature : public AutoID, virtual public Thing
 		bool startAutoWalk(std::list<Direction>& listDir);
 		void addEventWalk(bool firstStep = false);
 		void stopEventWalk();
-		void goToFollowCreature();
+		virtual void goToFollowCreature();
 
 		//walk events
 		virtual void onWalk(Direction& dir);

@@ -792,12 +792,14 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance,
 			if(it.defense != 0 || it.extraDefense != 0)
 			{
 				if(begin)
+				{
+					begin = false;
 					s << " (";
+				}
 				else
 					s << ", ";
 
-				begin = false;
-				s << " Def:" << it.defense;
+				s << "Def:" << it.defense;
 				if(it.extraDefense != 0 || (item && item->getExtraDefense() != 0))
 					s << " " << std::showpos << it.extraDefense << std::noshowpos;
 			}

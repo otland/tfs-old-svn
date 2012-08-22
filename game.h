@@ -437,6 +437,7 @@ class Game
 		bool playerCancelAttackAndFollow(uint32_t playerId);
 		bool playerSetFightModes(uint32_t playerId, fightMode_t fightMode, chaseMode_t chaseMode, secureMode_t secureMode);
 		bool playerLookAt(uint32_t playerId, const Position& pos, uint16_t spriteId, uint8_t stackPos);
+		bool playerLookInBattleList(uint32_t playerId, uint32_t creatureId);
 		bool playerRequestAddVip(uint32_t playerId, const std::string& name);
 		bool playerRequestRemoveVip(uint32_t playerId, uint32_t guid);
 		bool playerTurn(uint32_t playerId, Direction dir);

@@ -565,7 +565,7 @@ CallBack* Combat::getCallback(CallBackParam_t key)
 bool Combat::CombatHealthFunc(Creature* caster, Creature* target, const CombatParams& params, void* data)
 {
 	Combat2Var* var = (Combat2Var*)data;
-	int32_t healthChange = random_range(var->minChange, var->maxChange, DISTRO_NORMAL);
+	int32_t healthChange = var->change;
 
 	if(g_game.combatBlockHit(params.combatType, caster, target, healthChange, params.blockedByShield, params.blockedByArmor))
 		return false;
@@ -592,7 +592,7 @@ bool Combat::CombatHealthFunc(Creature* caster, Creature* target, const CombatPa
 bool Combat::CombatManaFunc(Creature* caster, Creature* target, const CombatParams& params, void* data)
 {
 	Combat2Var* var = (Combat2Var*)data;
-	int32_t manaChange = random_range(var->minChange, var->maxChange, DISTRO_NORMAL);
+	int32_t manaChange = var->change;
 	if(manaChange < 0)
 	{
 		if(caster && caster->getPlayer() && target->getPlayer())
@@ -862,8 +862,7 @@ void Combat::doCombatHealth(Creature* caster, Creature* target,
 	if(!params.isAggressive || (caster != target && Combat::canDoCombat(caster, target) == RET_NOERROR))
 	{
 		Combat2Var var;
-		var.minChange = minChange;
-		var.maxChange = maxChange;
+		var.change = random_range(minChange, maxChange, DISTRO_NORMAL);
 		CombatHealthFunc(caster, target, params, (void*)&var);
 		if(params.impactEffect != NM_ME_NONE)
 			g_game.addMagicEffect(target->getPosition(), params.impactEffect);
@@ -877,9 +876,7 @@ void Combat::doCombatHealth(Creature* caster, const Position& pos,
 	const AreaCombat* area, int32_t minChange, int32_t maxChange, const CombatParams& params)
 {
 	Combat2Var var;
-	var.minChange = minChange;
-	var.maxChange = maxChange;
-
+	var.change = random_range(minChange, maxChange, DISTRO_NORMAL);
 	CombatFunc(caster, pos, area, params, CombatHealthFunc, (void*)&var);
 }
 
@@ -889,8 +886,7 @@ void Combat::doCombatMana(Creature* caster, Creature* target,
 	if(!params.isAggressive || (caster != target && Combat::canDoCombat(caster, target) == RET_NOERROR))
 	{
 		Combat2Var var;
-		var.minChange = minChange;
-		var.maxChange = maxChange;
+		var.change = random_range(minChange, maxChange, DISTRO_NORMAL);
 		CombatManaFunc(caster, target, params, (void*)&var);
 
 		if(params.targetCallback)
@@ -908,9 +904,7 @@ void Combat::doCombatMana(Creature* caster, const Position& pos,
 	const AreaCombat* area, int32_t minChange, int32_t maxChange, const CombatParams& params)
 {
 	Combat2Var var;
-	var.minChange = minChange;
-	var.maxChange = maxChange;
-
+	var.change = random_range(minChange, maxChange, DISTRO_NORMAL);
 	CombatFunc(caster, pos, area, params, CombatManaFunc, (void*)&var);
 }
 

@@ -1897,6 +1897,9 @@ void LuaScriptInterface::registerFunctions()
 	//isInWar(cid, target)
 	lua_register(m_luaState, "isInWar", LuaScriptInterface::luaIsInWar);
 
+	//doPlayerSetOfflineTrainingSkill(cid, skill)
+	lua_register(m_luaState, "doPlayerSetOfflineTrainingSkill", LuaScriptInterface::luaDoPlayerSetOfflineTrainingSkill);
+
 	//bit operations for Lua, based on bitlib project release 24
 	//bit.bnot, bit.band, bit.bor, bit.bxor, bit.lshift, bit.rshift
 	luaL_register(m_luaState, "bit", LuaScriptInterface::luaBitReg);
@@ -8029,6 +8032,28 @@ int32_t LuaScriptInterface::luaIsInWar(lua_State* L)
 		reportErrorFunc(getErrorDesc(LUA_ERROR_PLAYER_NOT_FOUND));
 
 	lua_pushboolean(L, false);
+	return 1;
+}
+
+int32_t LuaScriptInterface::luaDoPlayerSetOfflineTrainingSkill(lua_State* L)
+{
+	//doPlayerSetOfflineTrainingSkill(cid, skillid)
+	uint32_t skillid = (uint32_t)popNumber(L);
+	uint32_t cid = popNumber(L);
+
+	ScriptEnvironment* env = getScriptEnv();
+
+	Player* player = env->getPlayerByUID(cid);
+	if(player)
+	{
+		player->setOfflineTrainingSkill(skillid);
+		lua_pushboolean(L, true);
+	}
+	else
+	{
+		reportErrorFunc(getErrorDesc(LUA_ERROR_PLAYER_NOT_FOUND));
+		lua_pushboolean(L, false);
+	}
 	return 1;
 }
 

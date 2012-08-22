@@ -21,9 +21,11 @@
 	A = Added.
 
 	M The Forgotten Server.exe
+	M data/items/items.otb
 ]
 
 [ Milestone
+	Game protocol 9.61 support (9.6 clients can still login).
 	Anti House Trashing.
 	Fixed so summons that aren't summoned by players will poff instead of drop corpse.
 	Added English Chat and improved some chat code.

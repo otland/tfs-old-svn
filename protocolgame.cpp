@@ -700,8 +700,12 @@ void ProtocolGame::parsePacket(NetworkMessage &msg)
 			parseHouseWindow(msg);
 			break;
 
-		case 0x8C: // throw item
+		case 0x8C:
 			parseLookAt(msg);
+			break;
+
+		case 0x8D:
+			parseLookInBattleList(msg);
 			break;
 
 		case 0x96: // say something
@@ -1291,6 +1295,12 @@ void ProtocolGame::parseLookAt(NetworkMessage& msg)
 	addGameTaskTimed(DISPATCHER_TASK_EXPIRATION, &Game::playerLookAt, player->getID(), pos, spriteId, stackpos);
 }
 
+void ProtocolGame::parseLookInBattleList(NetworkMessage& msg)
+{
+	uint32_t creatureId = msg.GetU32();
+	addGameTaskTimed(DISPATCHER_TASK_EXPIRATION, &Game::playerLookInBattleList, player->getID(), creatureId);
+}
+
 void ProtocolGame::parseSay(NetworkMessage& msg)
 {
 	SpeakClasses type = (SpeakClasses)msg.GetByte();
@@ -1346,14 +1356,14 @@ void ProtocolGame::parseFightModes(NetworkMessage& msg)
 void ProtocolGame::parseAttack(NetworkMessage& msg)
 {
 	uint32_t creatureId = msg.GetU32();
-	msg.GetU32();
-	msg.GetU32();
+	// msg.GetU32(); seq
 	addGameTask(&Game::playerSetAttackedCreature, player->getID(), creatureId);
 }
 
 void ProtocolGame::parseFollow(NetworkMessage& msg)
 {
 	uint32_t creatureId = msg.GetU32();
+	// msg.GetU32(); seq
 	addGameTask(&Game::playerFollowCreature, player->getID(), creatureId);
 }
 
@@ -3453,7 +3463,7 @@ void ProtocolGame::AddPlayerStats(NetworkMessage_ptr msg)
 	Condition* condition = player->getCondition(CONDITION_REGENERATION);
 	msg->AddU16(condition ? condition->getTicks() / 1000 : 0x00);
 
-	msg->AddU16(720); // Offline training minutes
+	msg->AddU16(player->getOfflineTrainingTime() / 60 / 1000);
 }
 
 void ProtocolGame::AddPlayerSkills(NetworkMessage_ptr msg)

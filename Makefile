@@ -7,7 +7,7 @@ LIBDIRS =
 
 FLAGS = -D_THREAD_SAFE -D_REENTRANT -D__NO_HOMEDIR_CONF__ -D__ENABLE_SERVER_DIAGNOSTIC__
 
-CXXFLAGS = $(INCLUDEDIRS) $(FLAGS) -Werror -Wall -O2
+CXXFLAGS = $(INCLUDEDIRS) $(FLAGS) -Werror -Wall -O3
 CXX = g++
 
 #Those are common libraries

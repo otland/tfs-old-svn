@@ -183,6 +183,11 @@ class Player : public Creature, public Cylinder
 			return ((50ULL * level * level * level) - (150ULL * level * level) + (400ULL * level))/3ULL;
 		}
 
+		void addOfflineTrainingTime(int32_t addTime) { offlineTrainingTime = std::min(12 * 3600 * 1000, offlineTrainingTime + addTime); }
+		void setOfflineTrainingSkill(int32_t skill) { offlineTrainingSkill = skill; }
+		int32_t getOfflineTrainingSkill() { return offlineTrainingSkill; }
+		int32_t getOfflineTrainingTime() { return offlineTrainingTime; }
+
 		uint64_t getBankBalance() const {return bankBalance;}
 		void setBankBalance(uint64_t balance) {bankBalance = balance;}
 
@@ -198,7 +203,7 @@ class Player : public Creature, public Cylinder
 		void hasRequestedOutfit(bool newValue) {requestedOutfit = newValue;}
 
 		const DepotMap& getDepots() const { return depots; }
-		
+
 		GuildWarList getGuildWarList() const {return guildWarList;}
 		void setGuildWarList(GuildWarList _guildWarList) {guildWarList = _guildWarList;}
 
@@ -810,6 +815,9 @@ class Player : public Creature, public Cylinder
 		bool ghostMode;
 		bool depotChange;
 
+		int32_t offlineTrainingSkill;
+		int32_t offlineTrainingTime;
+
 		AccountManager* accountManager;
 
 		int16_t marketDepotId;
@@ -883,6 +891,8 @@ class Player : public Creature, public Cylinder
 		uint32_t town;
 
 		uint64_t bankBalance;
+
+		uint16_t lastStatsTrainingTime;
 
 		//guild variables
 		uint32_t guildId;

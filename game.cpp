@@ -577,7 +577,7 @@ ReturnValue Game::getPlayerByNameWildcard(const std::string& s, Player*& player)
 	}
 
 	Player* lastFound = NULL;
-	std::string txt1 = asUpperCaseString(s.substr(0, s.length()-1));
+	std::string txt1 = asUpperCaseString(s.substr(0, s.length() - 1));
 	for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
 	{
 		if(!(*it).second->isRemoved())
@@ -683,7 +683,11 @@ bool Game::placeCreature(Creature* creature, const Position& pos, bool extendedP
 	Player* player = creature->getPlayer();
 	if(player)
 	{
-		int32_t offlineTime = time(NULL) - player->getLastLogout();
+		int32_t offlineTime;
+		if(player->getLastLogout() != 0)
+			offlineTime = time(NULL) - player->getLastLogout();
+		else
+			offlineTime = 0;
 
 		Condition* conditionMuted = player->getCondition(CONDITION_MUTED, CONDITIONID_DEFAULT);
 		if(conditionMuted && conditionMuted->getTicks() > 0)
@@ -713,6 +717,17 @@ bool Game::placeCreature(Creature* creature, const Position& pos, bool extendedP
 				player->removeCondition(conditionYell);
 			else
 				player->addCondition(conditionYell->clone());
+		}
+
+		int32_t offlineTrainingSkill = player->getOfflineTrainingSkill();
+		if(offlineTrainingSkill == -1)
+		{
+			uint16_t oldMinutes = player->getOfflineTrainingTime() / 60 / 1000;
+			player->addOfflineTrainingTime(offlineTime * 1000);
+
+			uint16_t newMinutes = player->getOfflineTrainingTime() / 60 / 1000;
+			if(oldMinutes != newMinutes)
+				player->sendStats();
 		}
 
 		if(player->isPremium())
@@ -3119,14 +3134,12 @@ bool Game::playerLookAt(uint32_t playerId, const Position& pos, uint16_t spriteI
 
 	Position playerPos = player->getPosition();
 
-	int32_t lookDistance = 0;
-	if(thing == player)
-		lookDistance = -1;
-	else
+	int32_t lookDistance = -1;
+	if(thing != player)
 	{
 		lookDistance = std::max(std::abs(playerPos.x - thingPos.x), std::abs(playerPos.y - thingPos.y));
 		if(playerPos.z != thingPos.z)
-			lookDistance = lookDistance + 9 + 6;
+			lookDistance += 15;
 	}
 
 	std::ostringstream ss;
@@ -3164,6 +3177,50 @@ bool Game::playerLookAt(uint32_t playerId, const Position& pos, uint16_t spriteI
 		}
 
 		ss << std::endl << "Position: [X: " << thingPos.x << "] [Y: " << thingPos.y << "] [Z: " << thingPos.z << "].";
+	}
+
+	player->sendTextMessage(MSG_INFO_DESCR, ss.str());
+	return true;
+}
+
+bool Game::playerLookInBattleList(uint32_t playerId, uint32_t creatureId)
+{
+	Player* player = getPlayerByID(playerId);
+	if(!player || player->isRemoved())
+		return false;
+
+	Creature* creature = getCreatureByID(creatureId);
+	if(!creature || creature->isRemoved())
+		return false;
+
+	if(!player->canSeeCreature(creature))
+		return false;
+
+	const Position& creaturePos = creature->getPosition();
+	if(!player->canSee(creaturePos))
+		return false;
+
+	int32_t lookDistance;
+	if(creature != player)
+	{
+		const Position& playerPos = player->getPosition();
+		lookDistance = std::max(std::abs(playerPos.x - creaturePos.x), std::abs(playerPos.y - creaturePos.y));
+		if(playerPos.z != creaturePos.z)
+			lookDistance += 15;
+	}
+	else
+		lookDistance = -1;
+
+	std::ostringstream ss;
+	ss << "You see " << creature->getDescription(lookDistance);
+	if(player->isAccessPlayer())
+	{
+		ss << std::endl << "Health: [" << creature->getHealth() << " / " << creature->getMaxHealth() << "]";
+		if(creature->getMaxMana() > 0)
+			ss << ", Mana: [" << creature->getMana() << " / " << creature->getMaxMana() << "]";
+
+		ss << "." << std::endl;
+		ss << "Position: [X: " << creaturePos.x << "] [Y: " << creaturePos.y << "] [Z: " << creaturePos.z << "].";
 	}
 
 	player->sendTextMessage(MSG_INFO_DESCR, ss.str());
@@ -3811,7 +3868,7 @@ void Game::removeCreatureCheck(Creature* creature)
 
 void Game::checkCreatures()
 {
-	g_scheduler.addEvent(createSchedulerTask(EVENT_CHECK_CREATURE_INTERVAL, boost::bind(&Game::checkCreatures, this)));
+	checkCreatureEvent = g_scheduler.addEvent(createSchedulerTask(EVENT_CHECK_CREATURE_INTERVAL, boost::bind(&Game::checkCreatures, this)));
 
 	Creature* creature;
 	std::vector<Creature*>::iterator it;
@@ -4513,7 +4570,7 @@ void Game::internalDecayItem(Item* item)
 
 void Game::checkDecay()
 {
-	g_scheduler.addEvent(createSchedulerTask(EVENT_DECAYINTERVAL,
+	checkDecayEvent = g_scheduler.addEvent(createSchedulerTask(EVENT_DECAYINTERVAL,
 		boost::bind(&Game::checkDecay, this)));
 
 	size_t bucket = (lastBucket + 1) % EVENT_DECAY_BUCKETS;
@@ -4563,7 +4620,7 @@ void Game::checkDecay()
 
 void Game::checkLight()
 {
-	g_scheduler.addEvent(createSchedulerTask(EVENT_LIGHTINTERVAL,
+	checkLightEvent = g_scheduler.addEvent(createSchedulerTask(EVENT_LIGHTINTERVAL,
 		boost::bind(&Game::checkLight, this)));
 
 	lightHour += lightHourDelta;
