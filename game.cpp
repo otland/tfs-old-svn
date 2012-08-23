@@ -3573,7 +3573,7 @@ bool Game::playerLookAt(uint32_t playerId, const Position& pos, uint16_t spriteI
 	{
 		lookDistance = std::max(std::abs(playerPos.x - thingPos.x), std::abs(playerPos.y - thingPos.y));
 		if(playerPos.z != thingPos.z)
-			lookDistance = lookDistance + 9 + 6;
+			lookDistance += 15;
 	}
 
 	bool deny = false;
@@ -3648,6 +3648,60 @@ bool Game::playerLookAt(uint32_t playerId, const Position& pos, uint16_t spriteI
 		}
 
 		ss << ".";
+	}
+
+	player->sendTextMessage(MSG_INFO_DESCR, ss.str());
+	return true;
+}
+
+bool Game::playerLookInBattleList(uint32_t playerId, uint32_t creatureId)
+{
+	Player* player = getPlayerByID(playerId);
+	if(!player || player->isRemoved())
+		return false;
+
+	Creature* creature = getCreatureByID(creatureId);
+	if(!creature || creature->isRemoved())
+		return false;
+
+	if(!player->canSeeCreature(creature))
+		return false;
+
+	const Position& creaturePos = creature->getPosition();
+	if(!player->canSee(creaturePos))
+		return false;
+
+	int32_t lookDistance;
+	if(creature != player)
+	{
+		const Position& playerPos = player->getPosition();
+		lookDistance = std::max(std::abs(playerPos.x - creaturePos.x), std::abs(playerPos.y - creaturePos.y));
+		if(playerPos.z != creaturePos.z)
+			lookDistance += 15;
+	}
+	else
+		lookDistance = -1;
+
+	std::ostringstream ss;
+	ss << "You see " << creature->getDescription(lookDistance);
+	if(player->hasCustomFlag(PlayerCustomFlag_CanSeeCreatureDetails))
+	{
+		ss << std::endl << "Health: [" << creature->getHealth() << " / " << creature->getMaxHealth() << "]";
+		if(creature->getMaxMana() > 0)
+			ss << ", Mana: [" << creature->getMana() << " / " << creature->getMaxMana() << "]";
+
+		ss << ".";
+		if(const Player* target = creature->getPlayer())
+		{
+			ss << std::endl << "IP: " << convertIPAddress(target->getIP());
+#if CLIENT_VERSION_MIN != CLIENT_VERSION_MAX
+			ss << ", Client: " << target->getClientVersion();
+#endif
+			ss << ".";
+		}
+
+		if(creature->isGhost())
+			ss << std::endl << "* Ghost mode *";
 	}
 
 	player->sendTextMessage(MSG_INFO_DESCR, ss.str());
@@ -5028,7 +5082,7 @@ void Game::internalDecayItem(Item* item)
 
 void Game::checkDecay()
 {
-	Scheduler::getInstance().addEvent(createSchedulerTask(EVENT_DECAYINTERVAL,
+	checkDecayEvent = Scheduler::getInstance().addEvent(createSchedulerTask(EVENT_DECAYINTERVAL,
 		boost::bind(&Game::checkDecay, this)));
 
 	size_t bucket = (lastBucket + 1) % EVENT_DECAYBUCKETS;

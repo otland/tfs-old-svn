@@ -684,8 +684,12 @@ void ProtocolGame::parsePacket(NetworkMessage &msg)
 				parseHouseWindow(msg);
 				break;
 
-			case 0x8C: // throw item
+			case 0x8C:
 				parseLookAt(msg);
+				break;
+
+			case 0x8D:
+				parseLookInBattleList(msg);
 				break;
 
 			case 0x96: // say something
@@ -1281,6 +1285,12 @@ void ProtocolGame::parseLookAt(NetworkMessage& msg)
 	uint16_t spriteId = msg.get<uint16_t>();
 	int16_t stackpos = msg.get<char>();
 	addGameTaskTimed(DISPATCHER_TASK_EXPIRATION, &Game::playerLookAt, player->getID(), pos, spriteId, stackpos);
+}
+
+void ProtocolGame::parseLookInBattleList(NetworkMessage& msg)
+{
+	uint32_t creatureId = msg.get<uint32_t>();
+	addGameTaskTimed(DISPATCHER_TASK_EXPIRATION, &Game::playerLookInBattleList, player->getID(), creatureId);
 }
 
 void ProtocolGame::parseSay(NetworkMessage& msg)

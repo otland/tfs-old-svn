@@ -5572,7 +5572,7 @@ bool Player::untameMount(uint8_t mountId)
 		return true;
 
 	value = atoi(tmp.c_str());
-	value ^= (int32_t)std::pow(2., mountId % 31);
+	value &= ~((int32_t)std::pow(2., mountId % 31));
 
 	Mount* mount = Mounts::getInstance()->getMountByCid(defaultOutfit.lookMount);
 	if(mount && mount->getId() == (mountId + 1))
