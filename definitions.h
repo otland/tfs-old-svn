@@ -51,7 +51,6 @@
 	#define	__FUNCTION__ __func__
 #endif
 
-#define BOOST_FILESYSTEM_VERSION 2
 #define BOOST_ASIO_ENABLE_CANCELIO 1
 #ifdef _MSC_VER
 	#define __PRETTY_FUNCTION__ __FUNCDNAME__
