@@ -24,7 +24,6 @@
 	killsToRedSkull = 3
 	killsToBlackSkull = 6
 	pzLocked = 60000
-	deathLosePercent = 10
 	criticalHitChance = 7
 	removeAmmoWhenUsingDistanceWeapon = "yes"
 	removeChargesFromRunes = "yes"
@@ -57,7 +56,11 @@
 	statusTimeout = 5 * 60 * 1000
 	replaceKickOnLogin = "yes"
 
-	-- Deathlist
+	-- Death
+	-- note: Leave deathLosePercent as -1 if you want to use Tibia's
+	-- death penalty formula. For the old formula, set it to 10. For
+	-- no skill/experience loss, set it to 0.
+	deathLosePercent = -1
 	deathListEnabled = "yes"
 	maxDeathRecords = 5
 

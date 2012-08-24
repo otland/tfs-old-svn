@@ -4251,20 +4251,34 @@ bool Player::isPromoted() const
 
 double Player::getLostPercent() const
 {
-	double lossPercent;
-	if(level < 25)
-		lossPercent = 10;
+	std::bitset<5> bitset(blessings);
+
+	const int32_t deathLosePercent = g_config.getNumber(ConfigManager::DEATH_LOSE_PERCENT);
+	if(deathLosePercent != -1)
+	{
+		int32_t lossPercent = deathLosePercent;
+		if(isPromoted())
+			lossPercent -= 3;
+
+		lossPercent -= (int32_t)bitset.count();
+		return (double)std::max(0, lossPercent) / 100;
+	}
 	else
 	{
-		double tmpLevel = level + (levelPercent / 100.);
-		lossPercent = (double)((tmpLevel + 50) * 50 * ((tmpLevel * tmpLevel) - (5 * tmpLevel) + 8)) / experience;
+		double lossPercent;
+		if(level >= 25)
+		{
+			double tmpLevel = level + (levelPercent / 100.);
+			lossPercent = (double)((tmpLevel + 50) * 50 * ((tmpLevel * tmpLevel) - (5 * tmpLevel) + 8)) / experience;
+		}
+		else
+			lossPercent = 10;
+
+		if(isPromoted())
+			lossPercent *= 0.7;
+
+		return lossPercent * pow(0.92, (int32_t)bitset.count()) / 100;
 	}
-
-	if(isPromoted())
-		lossPercent *= 0.7;
-
-	std::bitset<5> bitset(blessings);
-	return lossPercent * pow(0.92, (int)bitset.count()) / 100;
 }
 
 void Player::learnInstantSpell(const std::string& name)
