@@ -48,9 +48,9 @@
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Compiler>
-					<Add option="-D__USE_MYSQL___" />
-					<Add option="-D__USE_SQLITE___" />
-					<Add option="-D__ENABLE_SERVER_DIAGNOSTIC___" />
+					<Add option="-D__USE_MYSQL__" />
+					<Add option="-D__USE_SQLITE__" />
+					<Add option="-D__ENABLE_SERVER_DIAGNOSTIC__" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
