@@ -23,14 +23,22 @@
 	M config.lua
 	M The Forgotten Server.exe
 	  data/
-	M	items/items.otb
-	M	XML/vocations.xml
+		items/
+	M		items.otb
+	M		items.xml
+	M	movements/movements.xml
+	M	weapons/weapons.xml
+		XML/
+	M		mounts.xml
+	M		outfits.xml
+	M		vocations.xml
 ]
 
 [ Milestone
 	Game protocol 9.61 support (9.6 clients can still login).
 	Anti House Trashing.
 	Initial offline training code.
+	Added Deepling and Insectoid outfits.
 	Added English Chat and improved some chat code.
 	It is now possible to sleep in bed, even with battle sign (hidden one because player is in PZ).
 	Corrected the new shoot effect constants.
@@ -43,6 +51,9 @@
 	Improved code for hangables, they should no longer fall in water if the wall is on a water tile.
 	Support for .otbm and .otbi files saved with "OTBM" or "OTBI" as the first four bytes.
 	Updated the MySQL schema, for an unknown reason it was missing the changes from database schema version 1.
+	Updated items.xml with a lot of fixes.
+	Updated a lot of Equip events, and registered some new doors to closingdoors script in movements.xml.
+	Updated a lot of weapon requirements in weapons.xml.
 	Making use of boost::thread for Scheduler and Dispatcher for more portable code.
 	TCP no_delay is now enabled, should fix tileskipping when mapclicking with high speed or dashing.
 	New Lua functions: doPlayerSetOfflineTrainingSkill(cid, skill), getPlayerParty(cid), doPlayerJoinParty(cid, leaderId), getCreatureConditionInfo(cid, conditionType, <optional: default: 0> subId, <optional: default: CONDITIONID_DEFAULT> conditionId) and getTownId(townName).
@@ -57,6 +68,7 @@
 	Compiling is now -O3 by default instead of -O2.
 	Player follow should now use less CPU power.
 	Corrected gaincap for no vocation.
+	Corrected the name of Scorpion mount.
 	Fixed deathLosePercent in config.lua so that it works like it used to, to use Tibia formula set it to -1.
 	Fixed a few events in Game class not being stopped on shutdown.
 	Fixed a look description bug for shields.
