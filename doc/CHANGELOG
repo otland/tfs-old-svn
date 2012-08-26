@@ -22,7 +22,9 @@
 
 	M config.lua
 	M The Forgotten Server.exe
-	M data/items/items.otb
+	  data/
+	M	items/items.otb
+	M	XML/vocations.xml
 ]
 
 [ Milestone
@@ -54,6 +56,7 @@
 	Updated the unjustified kill message so that it appears in white instead of red.
 	Compiling is now -O3 by default instead of -O2.
 	Player follow should now use less CPU power.
+	Corrected gaincap for no vocation.
 	Fixed deathLosePercent in config.lua so that it works like it used to, to use Tibia formula set it to -1.
 	Fixed a few events in Game class not being stopped on shutdown.
 	Fixed a look description bug for shields.
