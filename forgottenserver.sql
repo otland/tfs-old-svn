@@ -111,6 +111,8 @@ CREATE TABLE `players`
 	`premend` int(11) NOT NULL DEFAULT '0' COMMENT 'NOT IN USE BY THE SERVER',
 	`online` tinyint(4) NOT NULL DEFAULT '0',
 	`balance` bigint(20) unsigned NOT NULL DEFAULT '0',
+	`offlinetraining_time` smallint(5) unsigned NOT NULL DEFAULT 43200,
+	`offlinetraining_skill` int(11) NOT NULL DEFAULT -1,
 	PRIMARY KEY (`id`),
 	KEY `name` (`name`),
 	FOREIGN KEY (`account_id`) REFERENCES `accounts` (`id`) ON DELETE CASCADE,
@@ -319,7 +321,7 @@ CREATE TABLE `server_config`
 	UNIQUE KEY `config` (`config`)
 ) ENGINE=InnoDB;
 
-INSERT INTO `server_config` VALUES ('db_version','5'),('encryption','0');
+INSERT INTO `server_config` VALUES ('db_version','7'),('encryption','0');
 
 CREATE TABLE `market_history`
 (
