@@ -3,7 +3,7 @@
 		The Forgotten Server
 
 	Version
-		0.2.14
+		0.2.15
 
 	Codenamed
 		"Mystic Spirit"
@@ -35,8 +35,8 @@
 		Elf
 			C++ Programmer
 
-		Dalkon
-			C++ Programmer
+		Tryller
+			Data Directory Manager
 ]
 
 [ LICENSE
@@ -75,11 +75,11 @@
 
 		Downloading the source code
 			Launch a terminal, and paste in this command:
-				svn co svn://svn.otland.net/public/forgottenserver/tags/0.2.14
+				svn co svn://svn.otland.net/public/forgottenserver/tags/0.2.15
 
 		Compiling
 			Launch a terminal, and type this command:
-				cd 0.2.14/ && make
+				cd 0.2.15/ && make
 
 	Windows
 		Code::Blocks

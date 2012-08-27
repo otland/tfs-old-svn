@@ -4074,7 +4074,7 @@ bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creat
 		Player* targetPlayer = target->getPlayer();
 		if(attackerPlayer && targetPlayer)
 		{
-			if(g_config.getBoolean(ConfigManager::CANNOT_ATTACK_SAME_LOOKFEET) && attacker->defaultOutfit.lookFeet == target->defaultOutfit.lookFeet && combatType != COMBAT_HEALING)
+			if(g_config.getBoolean(ConfigManager::CANNOT_ATTACK_SAME_LOOKFEET) && attackerPlayer->defaultOutfit.lookFeet == target->defaultOutfit.lookFeet && combatType != COMBAT_HEALING)
 				return false;
 
 			if(attackerPlayer->getSkull() == SKULL_BLACK && attackerPlayer->getSkullClient(targetPlayer) == SKULL_NONE)

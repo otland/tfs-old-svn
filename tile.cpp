@@ -1107,7 +1107,7 @@ void Tile::__replaceThing(uint32_t index, Thing* thing)
 	Item* oldItem = NULL;
 	bool isInserted = false;
 
-	if(!isInserted && ground)
+	if(ground)
 	{
 		if(pos == 0)
 		{

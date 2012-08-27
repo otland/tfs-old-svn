@@ -672,17 +672,13 @@ bool Spell::playerSpellCheck(Player* player, bool ignoreExhaust/* = false*/) con
 	if(!enabled)
 		return false;
 
-	bool exhaust = false;
 	if(isAggressive && !player->hasFlag(PlayerFlag_IgnoreProtectionZone) && player->getZone() == ZONE_PROTECTION)
 	{
 		player->sendCancelMessage(RET_ACTIONNOTPERMITTEDINPROTECTIONZONE);
 		return false;
 	}
 
-	if(!exhaust && (player->hasCondition(CONDITION_SPELLGROUPCOOLDOWN, group) || player->hasCondition(CONDITION_SPELLCOOLDOWN, spellId)))
-		exhaust = true;
-
-	if(exhaust)
+	if(player->hasCondition(CONDITION_SPELLGROUPCOOLDOWN, group) || player->hasCondition(CONDITION_SPELLCOOLDOWN, spellId))
 	{
 		player->sendCancelMessage(RET_YOUAREEXHAUSTED);
 

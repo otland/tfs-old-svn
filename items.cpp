@@ -1260,7 +1260,7 @@ bool Items::parseItemNode(xmlNodePtr itemNode, uint32_t id)
 						}
 
 						if(conditionDamage->getTotalDamage() > 0)
-							conditionDamage->setParam(CONDITIONPARAM_FORCEUPDATE, true);
+							conditionDamage->setParam(CONDITIONPARAM_FORCEUPDATE, 1);
 					}
 				}
 			}
