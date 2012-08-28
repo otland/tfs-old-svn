@@ -3993,7 +3993,7 @@ void Player::onAttacked()
 bool Player::checkLoginDelay(uint32_t playerId) const
 {
 	return (!hasCustomFlag(PlayerCustomFlag_IgnoreLoginDelay) && OTSYS_TIME() <= (lastLoad + g_config.getNumber(
-		ConfigManager::LOGIN_PROTECTION)) && !hasBeenAttacked(playerId));
+		ConfigManager::LOGIN_PROTECTION)));
 }
 
 void Player::onIdleStatus()

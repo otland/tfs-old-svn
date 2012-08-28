@@ -775,6 +775,13 @@ bool Spell::checkSpell(Player* player) const
 		}
 	}
 
+	if(player->checkLoginDelay())
+	{
+		player->sendCancelMessage(RET_YOUMAYNOTATTACKIMMEDIATELYAFTERLOGGINGIN);
+		g_game.addMagicEffect(player->getPosition(), MAGIC_EFFECT_POFF);
+		return false;
+	}
+	
 	return true;
 }
 
