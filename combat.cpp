@@ -371,6 +371,9 @@ ReturnValue Combat::canTargetCreature(const Player* player, const Creature* targ
 			return RET_YOUMAYNOTATTACKTHISPLAYER;
 	}
 
+	if (target->getPlayer() && target->getPlayer()->checkLoginDelay(player->getID()))
+		return RET_YOUMAYNOTATTACKIMMEDIATELYAFTERLOGGINGIN;
+	
 	return Combat::canDoCombat(player, target, true);
 }
 

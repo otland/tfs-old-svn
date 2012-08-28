@@ -1286,6 +1286,10 @@ void Player::sendCancelMessage(ReturnValue message) const
 		case RET_NOTPOSSIBLE:
 			sendCancel("Sorry, not possible.");
 			break;
+			
+		case RET_YOUMAYNOTATTACKIMMEDIATELYAFTERLOGGINGIN:
+			sendCancel("You may not attack immediately after logging in.");
+			break;
 
 		default:
 			break;
