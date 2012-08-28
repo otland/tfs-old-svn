@@ -137,6 +137,10 @@ enum passwordType_t
 		#define NOMINMAX
 	#endif
 
+	#ifndef _USE_MATH_DEFINES
+		#define _USE_MATH_DEFINES
+	#endif
+
 	#include <hash_map>
 	#include <hash_set>
 	#include <limits>
