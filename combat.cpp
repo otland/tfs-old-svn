@@ -370,9 +370,6 @@ ReturnValue Combat::canTargetCreature(const Player* player, const Creature* targ
 		if(player->getSkull() == SKULL_BLACK)
 			return RET_YOUMAYNOTATTACKTHISPLAYER;
 	}
-
-	if (target->getPlayer() && target->getPlayer()->checkLoginDelay(player->getID()))
-		return RET_YOUMAYNOTATTACKIMMEDIATELYAFTERLOGGINGIN;
 	
 	return Combat::canDoCombat(player, target, true);
 }
