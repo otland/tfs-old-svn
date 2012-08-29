@@ -14,9 +14,9 @@ function onThink(cid, interval)
 	if(config.idleKick > 0 and idleTime > config.idleKick) then
 		doRemoveCreature(cid)
 	elseif(config.idleWarning > 0 and idleTime == config.idleWarning) then
-		local message = "You have been idle for " .. math.ceil(config.idleWarning / 60000) .. " minutes"
+		local message = "There was no variation in your behaviour for " .. math.ceil(config.idleWarning / 60000) .. " minutes"
 		if(config.idleKick > 0) then
-			message = message .. ", you will be disconnected in "
+			message = message .. ". You will be disconnected in "
 			local diff = math.ceil((config.idleWarning - config.idleKick) / 60000)
 			if(diff > 1) then
 				message = message .. diff .. " minutes"
@@ -24,7 +24,7 @@ function onThink(cid, interval)
 				message = message .. "one minute"
 			end
 
-			message = message .. " if you are still idle"
+			message = message .. " if there is no change in your actions until then."
 		end
 
 		doPlayerSendTextMessage(cid, MESSAGE_STATUS_WARNING, message .. ".")
