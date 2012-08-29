@@ -211,6 +211,8 @@ CreatureEventType_t CreatureEvents::getType(const std::string& type)
 		_type = CREATURE_EVENT_DEATH;
 	else if(type == "preparedeath")
 		_type = CREATURE_EVENT_PREPAREDEATH;
+	else if(type == "extendedopcode")
+		_type = CREATURE_EVENT_EXTENDED_OPCODE;
 
 	return _type;
 }
@@ -330,6 +332,8 @@ std::string CreatureEvent::getScriptEventName() const
 			return "onDeath";
 		case CREATURE_EVENT_PREPAREDEATH:
 			return "onPrepareDeath";
+		case CREATURE_EVENT_EXTENDED_OPCODE:
+			return "onExtendedOpcode";
 		case CREATURE_EVENT_NONE:
 		default:
 			break;
@@ -401,6 +405,8 @@ std::string CreatureEvent::getScriptEventParams() const
 			return "cid, corpse, deathList";
 		case CREATURE_EVENT_PREPAREDEATH:
 			return "cid, deathList";
+		case CREATURE_EVENT_EXTENDED_OPCODE:
+			return "cid, opcode, buffer";
 		case CREATURE_EVENT_NONE:
 		default:
 			break;
@@ -2148,7 +2154,7 @@ uint32_t CreatureEvent::executeAction(Creature* creature, Creature* target)
 
 uint32_t CreatureEvent::executeExtendedOpcode(Creature* creature, uint8_t opcode, const std::string& buffer)
 {
-	//onExtendedOpcode(cid)
+	//onExtendedOpcode(cid, opcode, buffer)
 	if(m_interface->reserveEnv())
 	{
 		ScriptEnviroment* env = m_interface->getEnv();
