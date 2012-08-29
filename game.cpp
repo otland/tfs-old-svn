@@ -2623,6 +2623,7 @@ bool Game::playerUseItemEx(uint32_t playerId, const Position& fromPos, int16_t f
 		return false;
 	}
 
+	player->setIdleTime(0);
 	player->setNextActionTask(NULL);
 	return g_actions->useItemEx(player, fromPos, toPos, toStackpos, item, isHotkey);
 }
@@ -2696,6 +2697,7 @@ bool Game::playerUseItem(uint32_t playerId, const Position& pos, int16_t stackpo
 		return false;
 	}
 
+	player->setIdleTime(0);
 	player->setNextActionTask(NULL);
 	return g_actions->useItem(player, pos, index, item);
 }
@@ -2776,6 +2778,7 @@ bool Game::playerUseBattleWindow(uint32_t playerId, const Position& pos, int16_t
 		return false;
 	}
 
+	player->setIdleTime(0);
 	player->setNextActionTask(NULL);
 	return g_actions->useItemEx(player, pos, creature->getPosition(),
 		creature->getParent()->__getIndexOfThing(creature), item, isHotkey, creatureId);
@@ -3939,6 +3942,8 @@ bool Game::playerSay(uint32_t playerId, uint16_t channelId, MessageClasses type,
 	Player* player = getPlayerByID(playerId);
 	if(!player || player->isRemoved())
 		return false;
+
+	player->setIdleTime(0);
 
 	int32_t muted = 0;
 	bool mute = player->isMuted(channelId, type, muted);
