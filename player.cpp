@@ -3990,7 +3990,7 @@ void Player::onAttacked()
 	addInFightTicks(false);
 }
 
-bool Player::checkLoginDelay(uint32_t playerId) const
+bool Player::checkLoginDelay() const
 {
 	return (!hasCustomFlag(PlayerCustomFlag_IgnoreLoginDelay) && OTSYS_TIME() <= (lastLoad + g_config.getNumber(
 		ConfigManager::LOGIN_PROTECTION)));
