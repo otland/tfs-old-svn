@@ -646,6 +646,8 @@ class Game
 		std::map<Item*, int32_t> grounds;
 #endif
 
+		void parsePlayerExtendedOpcode(Player *player, uint8_t opcode, const std::string& buffer);
+
 	protected:
 		bool playerWhisper(Player* player, const std::string& text, uint32_t statementId);
 		bool playerYell(Player* player, const std::string& text, uint32_t statementId);

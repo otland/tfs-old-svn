@@ -171,16 +171,16 @@ Position NetworkMessage::getPosition()
 	return pos;
 }
 
-void NetworkMessage::putString(const char* value, bool addSize/* = true*/)
+void NetworkMessage::putString(const char* value, int length, bool addSize/* = true*/)
 {
-	uint32_t size = (uint32_t)strlen(value);
+	uint32_t size = (uint32_t)length;
 	if(!hasSpace(size + (addSize ? 2 : 0)) || size > 8192)
 		return;
 
 	if(addSize)
 		put<uint16_t>(size);
 
-	strcpy((char*)(m_buffer + m_position), value);
+	memcpy((char*)(m_buffer + m_position), value, length);
 	m_position += size;
 	m_size += size;
 }

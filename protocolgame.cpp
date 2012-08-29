@@ -263,6 +263,11 @@ bool ProtocolGame::login(const std::string& name, uint32_t id, const std::string
 			return false;
 		}
 
+		if(player->isUsingOtclient())
+		{
+			player->registerCreatureEvent("ExtendedOpcode");
+		}
+
 		player->lastIP = player->getIP();
 		player->lastLoad = OTSYS_TIME();
 		player->lastLogin = std::max(time(NULL), player->lastLogin + 1);
@@ -427,6 +432,10 @@ void ProtocolGame::onRecvFirstMessage(NetworkMessage& msg)
 	enableXTEAEncryption();
 	setXTEAKey(key);
 
+	// notifies to otclient that this server can receive extended game protocol opcodes
+	if(operatingSystem >= CLIENTOS_OTCLIENT_LINUX)
+		sendExtendedOpcode(0x00, std::string());
+
 	bool gamemaster = (msg.get<char>() != (char)0);
 	std::string name = msg.getString(), character = msg.getString(), password = msg.getString();
 
@@ -576,6 +585,10 @@ void ProtocolGame::parsePacket(NetworkMessage &msg)
 
 			case 0x1E: // keep alive / ping response
 				parseReceivePing(msg);
+				break;
+
+			case 0x32: // otclient extended opcode
+				parseExtendedOpcode(msg);
 				break;
 
 			case 0x64: // move with steps
@@ -2411,7 +2424,7 @@ void ProtocolGame::sendMarketDetail(uint16_t itemId)
 	}
 	else
 		msg->put<char>(0x00);
-	
+
 	if((statistics = IOMarket::getInstance()->getSaleStatistics(itemId)))
 	{
 		msg->put<char>(0x01);
@@ -3704,4 +3717,29 @@ void ProtocolGame::AddShopItem(NetworkMessage_ptr msg, const ShopInfo& item)
 	msg->put<uint32_t>(uint32_t(it.weight * 100));
 	msg->put<uint32_t>(item.buyPrice);
 	msg->put<uint32_t>(item.sellPrice);
+}
+
+void ProtocolGame::parseExtendedOpcode(NetworkMessage& msg)
+{
+	uint8_t opcode = msg.get<char>();
+	std::string buffer = msg.getString();
+
+	// process additional opcodes via lua script event
+	addGameTask(&Game::parsePlayerExtendedOpcode, player, opcode, buffer);
+}
+
+void ProtocolGame::sendExtendedOpcode(uint8_t opcode, const std::string& buffer)
+{
+	// extended opcodes can only be send to players using otclient, cipsoft's tibia can't understand them
+	if(player && !player->isUsingOtclient())
+		return;
+
+	NetworkMessage_ptr msg = getOutputBuffer();
+	if(msg)
+	{
+		TRACK_MESSAGE(msg);
+		msg->put<char>(0x32);
+		msg->put<char>(opcode);
+		msg->putString(buffer);
+	}
 }

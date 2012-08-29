@@ -1943,7 +1943,7 @@ void LuaInterface::registerFunctions()
 
 	//isPlayerSaving(cid)
 	lua_register(m_luaState, "isPlayerSaving", LuaInterface::luaIsPlayerSaving);
-	
+
 	//isPlayerProtected(cid)
 	lua_register(m_luaState, "isPlayerProtected", LuaInterface::luaIsPlayerProtected);
 
@@ -2475,6 +2475,12 @@ void LuaInterface::registerFunctions()
 
 	//getConfigFile()
 	lua_register(m_luaState, "getConfigFile", LuaInterface::luaGetConfigFile);
+
+	//isPlayerUsingOtclient(cid)
+	lua_register(m_luaState, "isPlayerUsingOtclient", LuaInterface::luaIsPlayerUsingOtclient);
+
+	//doSendPlayerExtendedOpcode(cid, opcode, buffer)
+	lua_register(m_luaState, "doSendPlayerExtendedOpcode", LuaInterface::luaDoSendPlayerExtendedOpcode);
 
 	//getConfigValue(key)
 	lua_register(m_luaState, "getConfigValue", LuaInterface::luaGetConfigValue);
@@ -3351,7 +3357,7 @@ int32_t LuaInterface::luaDoCreatureCastSpell(lua_State* L)
 	 	lua_pushboolean (L, false);
 	 	return 1;
 	}
-	
+
 	Spell *spell = g_spells->getInstantSpellByName(spellname);
 	if(spell)
 	{
@@ -3361,9 +3367,9 @@ int32_t LuaInterface::luaDoCreatureCastSpell(lua_State* L)
 		   	return 1;
 		}
 	}
-	
+
 	errorEx(getError(LUA_ERROR_SPELL_NOT_FOUND));
-	lua_pushboolean(L, false); 
+	lua_pushboolean(L, false);
 	return 1;
 }
 
@@ -3615,7 +3621,7 @@ int32_t LuaInterface::luaDoTransformItem(lua_State* L)
 	{
 		env->removeThing(uid);
 		env->insertThing(uid, newItem);
-		
+
 		if(newItem->getUniqueId() != 0)
 			env->addUniqueThing(newItem);
 	}
@@ -9468,6 +9474,32 @@ int32_t LuaInterface::luaGetMountInfo(lua_State* L)
 		pushTable(L);
 	}
 
+	return 1;
+}
+
+int32_t LuaInterface::luaIsPlayerUsingOtclient(lua_State* L)
+{
+	//isPlayerUsingOtclient(cid)
+	ScriptEnviroment* env = getEnv();
+	if(Player* player = env->getPlayerByUID(popNumber(L))) {
+		lua_pushboolean(L, player->isUsingOtclient());
+	}
+	lua_pushboolean(L, false);
+	return 1;
+}
+
+int32_t LuaInterface::luaDoSendPlayerExtendedOpcode(lua_State* L)
+{
+	//doSendPlayerExtendedOpcode(cid, opcode, buffer)
+	std::string buffer = popString(L);
+	int opcode = popNumber(L);
+
+	ScriptEnviroment* env = getEnv();
+	if(Player* player = env->getPlayerByUID(popNumber(L))) {
+		player->sendExtendedOpcode(opcode, buffer);
+		lua_pushboolean(L, true);
+	}
+	lua_pushboolean(L, false);
 	return 1;
 }
 

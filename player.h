@@ -228,6 +228,7 @@ class Player : public Creature, public Cylinder
 		bool hasPVPBlessing() const {return pvpBlessing;}
 		uint16_t getBlessings() const;
 
+		bool isUsingOtclient() const { return operatingSystem >= CLIENTOS_OTCLIENT_LINUX; }
 		OperatingSystem_t getOperatingSystem() const {return operatingSystem;}
 		void setOperatingSystem(OperatingSystem_t os) {operatingSystem = os;}
 		uint32_t getClientVersion() const {return clientVersion;}
@@ -400,7 +401,7 @@ class Player : public Creature, public Cylinder
 			onSell = saleCallback;
 			return shopOwner;
 		}
-		
+
 		//Quest functions
 		void onUpdateQuest();
 
@@ -579,6 +580,9 @@ class Player : public Creature, public Cylinder
 			{if(client) client->sendSpellCooldown(icon, cooldown);}
 		void sendSpellGroupCooldown(SpellGroup_t groupId, uint32_t cooldown)
 			{if(client) client->sendSpellGroupCooldown(groupId, cooldown);}
+
+		void sendExtendedOpcode(uint8_t opcode, const std::string& buffer)
+			{if(client) client->sendExtendedOpcode(opcode, buffer);}
 
 		//container
 		void sendAddContainerItem(const Container* container, const Item* item);

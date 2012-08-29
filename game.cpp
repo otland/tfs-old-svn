@@ -245,7 +245,7 @@ void Game::setGameState(GameState_t newState)
 
 				Houses::getInstance()->check();
 				saveGameState((uint8_t)SAVE_PLAYERS | (uint8_t)SAVE_MAP | (uint8_t)SAVE_STATE);
-				
+
 				if(g_config.getBool(ConfigManager::CLOSE_INSTANCE_ON_SHUTDOWN))
 					Dispatcher::getInstance().addTask(createTask(boost::bind(&Game::shutdown, this)));
 
@@ -4766,7 +4766,7 @@ bool Game::combatChangeHealth(const CombatParams& params, Creature* attacker, Cr
 						addMagicEffect(list, targetPos, magicEffect);
 					}
 
-					std::stringstream ss;				
+					std::stringstream ss;
 					int32_t totalDamage = damage + elementDamage;
 
 					std::string plural = (totalDamage != 1 ? "s" : "");
@@ -6950,4 +6950,13 @@ void Game::checkExpiredMarketOffers()
 		return;
 
 	Scheduler::getInstance().addEvent(createSchedulerTask(checkExpiredMarketOffersEachMinutes * 60 * 1000, boost::bind(&Game::checkExpiredMarketOffers, this)));
+}
+
+void Game::parsePlayerExtendedOpcode(Player *player, uint8_t opcode, const std::string& buffer)
+{
+	if(player) {
+		CreatureEventList extendedOpcodeEvents = player->getCreatureEvents(CREATURE_EVENT_EXTENDED_OPCODE);
+		for(CreatureEventList::iterator it = extendedOpcodeEvents.begin(); it != extendedOpcodeEvents.end(); ++it)
+			(*it)->executeExtendedOpcode(player, opcode, buffer);
+	}
 }
