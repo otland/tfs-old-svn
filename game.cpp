@@ -3622,11 +3622,15 @@ bool Game::playerLookAt(uint32_t playerId, const Position& pos, uint16_t spriteI
 	{
 		if(const Creature* creature = thing->getCreature())
 		{
-			ss << std::endl << "Health: [" << creature->getHealth() << " / " << creature->getMaxHealth() << "]";
-			if(creature->getMaxMana() > 0)
-				ss << ", Mana: [" << creature->getMana() << " / " << creature->getMaxMana() << "]";
+			if(!player->hasFlag(PlayerFlag_HideHealth))
+			{
+				ss << std::endl << "Health: [" << creature->getHealth() << " / " << creature->getMaxHealth() << "]";
+				if(creature->getMaxMana() > 0)
+					ss << ", Mana: [" << creature->getMana() << " / " << creature->getMaxMana() << "]";
 
-			ss << ".";
+				ss << ".";
+			}
+
 			if(const Player* target = creature->getPlayer())
 			{
 				ss << std::endl << "IP: " << convertIPAddress(target->getIP());
@@ -3689,11 +3693,15 @@ bool Game::playerLookInBattleList(uint32_t playerId, uint32_t creatureId)
 	ss << "You see " << creature->getDescription(lookDistance);
 	if(player->hasCustomFlag(PlayerCustomFlag_CanSeeCreatureDetails))
 	{
-		ss << std::endl << "Health: [" << creature->getHealth() << " / " << creature->getMaxHealth() << "]";
-		if(creature->getMaxMana() > 0)
-			ss << ", Mana: [" << creature->getMana() << " / " << creature->getMaxMana() << "]";
+		if(!player->hasFlag(PlayerFlag_HideHealth))
+		{														 
+			ss << std::endl << "Health: [" << creature->getHealth() << " / " << creature->getMaxHealth() << "]";
+			if(creature->getMaxMana() > 0)
+				ss << ", Mana: [" << creature->getMana() << " / " << creature->getMaxMana() << "]";
 
-		ss << ".";
+			ss << ".";
+		}
+
 		if(const Player* target = creature->getPlayer())
 		{
 			ss << std::endl << "IP: " << convertIPAddress(target->getIP());
@@ -3705,6 +3713,12 @@ bool Game::playerLookInBattleList(uint32_t playerId, uint32_t creatureId)
 
 		if(creature->isGhost())
 			ss << std::endl << "* Ghost mode *";
+	}
+
+	if(player->hasCustomFlag(PlayerCustomFlag_CanSeePosition))
+	{
+		ss << std::endl << "Position: [X: " << creaturePos.x << "] [Y: " << creaturePos.y << "] [Z: " << creaturePos.z << "]";
+		ss << ".";
 	}
 
 	player->sendTextMessage(MSG_INFO_DESCR, ss.str());
