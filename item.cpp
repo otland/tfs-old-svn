@@ -83,6 +83,8 @@ Item* Item::CreateItem(const uint16_t type, uint16_t amount/* = 0*/)
 		newItem = new Item(6132, amount);
 	else if(it.id == 6301)
 		newItem = new Item(6300, amount);
+	else if(it.id == 18528)
+		newItem = new Item(18408, amount);
 	else
 		newItem = new Item(type, amount);
 
@@ -101,7 +103,7 @@ Item* Item::CreateItem(PropStream& propStream)
 
 bool Item::loadItem(xmlNodePtr node, Container* parent)
 {
-	if(xmlStrcmp(node->name, (const xmlChar*)"item"))
+	if(!xmlStrcmp(node->name, (const xmlChar*)"item"))
 		return false;
 
 	int32_t intValue;

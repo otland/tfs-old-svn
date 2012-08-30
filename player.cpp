@@ -73,9 +73,9 @@ Player::Player(const std::string& _name, ProtocolGame* p):
 	soul = guildId = levelPercent = magLevelPercent = magLevel = experience = damageImmunities = rankId = 0;
 	conditionImmunities = conditionSuppressions = groupId = managerNumber2 = town = skullEnd = 0;
 	lastLogin = lastLogout = lastIP = messageTicks = messageBuffer = nextAction = editListId = maxWriteLen = 0;
-	windowTextId = nextExAction = 0;
+	windowTextId = nextExAction = offlineTrainingTime = lastStatsTrainingTime = 0;
 
-	purchaseCallback = saleCallback = -1;
+	purchaseCallback = saleCallback = offlineTrainingSkill = -1;
 	level = 1;
 	rates[SKILL__MAGLEVEL] = rates[SKILL__LEVEL] = 1.0f;
 	soulMax = 100;
@@ -1296,6 +1296,15 @@ void Player::sendCancelMessage(ReturnValue message) const
 	}
 }
 
+void Player::sendStats()
+{
+	if(client)
+	{
+		client->sendStats();
+		lastStatsTrainingTime = getOfflineTrainingTime() / 60 / 1000;
+	}
+}
+
 Item* Player::getWriteItem(uint32_t& _windowTextId, uint16_t& _maxWriteLen)
 {
 	_windowTextId = windowTextId;
@@ -1477,6 +1486,18 @@ void Player::onCreatureAppear(const Creature* creature)
 
 			sendStats();
 		}
+	}
+
+	int32_t offlineTrainingSkill = getOfflineTrainingSkill();
+	int32_t offlineTime = 0;
+	if(offlineTrainingSkill == -1 && offlineTime > 0)
+	{
+		uint16_t oldMinutes = getOfflineTrainingTime() / 60 / 1000;
+		addOfflineTrainingTime(offlineTime * 1000);
+
+		uint16_t newMinutes = getOfflineTrainingTime() / 60 / 1000;
+		if(oldMinutes != newMinutes)
+			sendStats();
 	}
 
 	g_game.checkPlayersRecord(this);
@@ -2967,7 +2988,7 @@ ReturnValue Player::__queryAdd(int32_t index, const Thing* thing, uint32_t count
 
 			self->inventory[(slots_t)index] = NULL;
 			self->inventoryWeight -= tmpItem->getWeight();
-			sendStats();
+			self->sendStats();
 		}
 	}
 

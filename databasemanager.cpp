@@ -1424,6 +1424,16 @@ uint32_t DatabaseManager::updateDatabase()
 			return 35;
 		}
 
+		case 35:
+		{
+			std::clog << "> Updating database to version 36..." << std::endl;
+
+			db->query("ALTER TABLE `players` ADD `offlinetraining_time` SMALLINT UNSIGNED NOT NULL DEFAULT 43200;");
+			db->query("ALTER TABLE `players` ADD `offlinetraining_skill` INT NOT NULL DEFAULT -1;");
+			registerDatabaseConfig("db_version", 36);
+			return 36;
+		}
+
 		default:
 			break;
 	}

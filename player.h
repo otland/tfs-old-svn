@@ -177,6 +177,11 @@ class Player : public Creature, public Cylinder
 			return exp;
 		}
 
+		void addOfflineTrainingTime(int32_t addTime) {offlineTrainingTime = std::min(12 * 3600 * 1000, offlineTrainingTime + addTime);}
+		void setOfflineTrainingSkill(int32_t skill) {offlineTrainingSkill = skill;}
+		int32_t getOfflineTrainingSkill() {return offlineTrainingSkill;}
+		int32_t getOfflineTrainingTime() {return offlineTrainingTime;}
+
 		uint32_t getPromotionLevel() const {return promotionLevel;}
 		void setPromotionLevel(uint32_t pLevel);
 
@@ -679,8 +684,6 @@ class Player : public Creature, public Cylinder
 			{if(client) client->sendMagicEffect(pos, type);}
 		void sendPingBack() const
 			{if(client) client->sendPingBack();}
-		void sendStats() const
-			{if(client) client->sendStats();}
 		void sendBasicData() const
 			{if(client) client->sendBasicData();}
 		void sendSkills() const
@@ -735,8 +738,10 @@ class Player : public Creature, public Cylinder
 			{if(client) client->sendTutorial(tutorialId);}
 		void sendAddMarker(const Position& pos, MapMarks_t markType, const std::string& desc)
 			{if(client) client->sendAddMarker(pos, markType, desc);}
+
 		void sendCritical() const;
 		void sendPlayerIcons(Player* player);
+		void sendStats();
 
 		void receivePing() {lastPong = OTSYS_TIME();}
 		virtual void onThink(uint32_t interval);
@@ -889,6 +894,7 @@ class Player : public Creature, public Cylinder
 		uint16_t maxWriteLen;
 		uint16_t sex;
 		uint16_t mailAttempts;
+		uint16_t lastStatsTrainingTime;
 
 		int32_t premiumDays;
 		int32_t soul;
@@ -903,6 +909,8 @@ class Player : public Creature, public Cylinder
 		int32_t messageBuffer;
 		int32_t bloodHitCount;
 		int32_t shieldBlockCount;
+		int32_t offlineTrainingSkill;
+		int32_t offlineTrainingTime;
 
 		uint32_t clientVersion;
 		uint32_t messageTicks;
