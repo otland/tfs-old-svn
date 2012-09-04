@@ -495,6 +495,10 @@
 			Player deathlist limit.
 			Ignored if deathList is disabled.
 			Default: 5
+			
+		multipleNames
+			Whill show more than one killer on a player's corpse when set to true.
+			Default: false
 
 	*GUILDS
 		ingameGuildManagement

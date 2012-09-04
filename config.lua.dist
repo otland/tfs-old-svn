@@ -149,6 +149,7 @@
 	deathListRequiredTime = 1 * 60 * 1000
 	deathAssistCount = 19
 	maxDeathRecords = 5
+	multipleNames = false
 
 	-- Guilds
 	ingameGuildManagement = true

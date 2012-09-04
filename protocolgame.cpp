@@ -322,7 +322,7 @@ bool ProtocolGame::logout(bool displayEffect, bool forceLogout)
 					return false;
 				}
 
-				if(player->hasCondition(CONDITION_INFIGHT))
+				if(player->getZone() != ZONE_PROTECTION && player->hasCondition(CONDITION_INFIGHT))
 				{
 					player->sendCancelMessage(RET_YOUMAYNOTLOGOUTDURINGAFIGHT);
 					return false;

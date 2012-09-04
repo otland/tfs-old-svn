@@ -660,6 +660,13 @@ bool Spell::checkSpell(Player* player) const
 			player->sendCancelMessage(RET_ACTIONNOTPERMITTEDINPROTECTIONZONE);
 			return false;
 		}
+		
+		if(player->checkLoginDelay())
+		{
+			player->sendCancelMessage(RET_YOUMAYNOTATTACKIMMEDIATELYAFTERLOGGINGIN);
+			g_game.addMagicEffect(player->getPosition(), MAGIC_EFFECT_POFF);
+			return false;
+		}					
 	}
 
 	if(!player->hasFlag(PlayerFlag_HasNoExhaustion))
@@ -773,13 +780,6 @@ bool Spell::checkSpell(Player* player) const
 				return false;
 			}
 		}
-	}
-
-	if(player->checkLoginDelay())
-	{
-		player->sendCancelMessage(RET_YOUMAYNOTATTACKIMMEDIATELYAFTERLOGGINGIN);
-		g_game.addMagicEffect(player->getPosition(), MAGIC_EFFECT_POFF);
-		return false;
 	}
 	
 	return true;

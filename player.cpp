@@ -2585,7 +2585,7 @@ Item* Player::createCorpse(DeathList deathList)
 	else
 		ss << deathList[0].getKillerName();
 
-	if(deathList.size() > 1)
+	if(deathList.size() > 1 && g_config.getBool(ConfigManager::MULTIPLE_NAME))
 	{
 		if(deathList[0].getKillerType() != deathList[1].getKillerType())
 		{
@@ -4164,7 +4164,8 @@ bool Player::onKilledCreature(Creature* target, DeathEntry& entry)
 	if(it != revengeList.end())
 		revengeList.erase(it);
 
-	addInFightTicks(true, g_config.getNumber(ConfigManager::WHITE_SKULL_TIME));
+	if(entry.isLast())
+		addInFightTicks(false, g_config.getNumber(ConfigManager::WHITE_SKULL_TIME));
 	return true;
 }
 
