@@ -35,36 +35,36 @@ local TYPES, ACCESS = {
 		[2] = { 8 },
 		[3] = { 1, 4, 5, 7, 9 },
 		[4] = { 1, 2, 4, 5, 7, 9 },
-		[5] = { 1, 2, 3, 4, 5, 6, 7, 9 }
+		[5] = { 1, 2, 3, 4, 5, 6, 7, 9 },
 	}
 }
-
+ 
 function onChannelRequest(cid, channel, custom)
 	unregisterCreatureEvent(cid, "Ban_Type")
 	if(not custom or type(channel) ~= 'number') then
 		doPlayerSendCancel(cid, "Invalid action.")
 		return false
 	end
-
+ 
 	local type = TYPES[channel]
 	if(not type) then
 		doPlayerSendCancel(cid, "Invalid action.")
 		return false
 	end
-
+ 
 	local access = getPlayerAccess(cid)
 	if(not isInArray(ACCESS.type[access], channel)) then
 		doPlayerSendCancel(cid, "You cannot do this action.")
 		return false
 	end
-
+ 
 	registerCreatureEvent(cid, type.event)
 	if(type.actions) then
 		access = ACCESS.action[access]
 		if(not access or table.maxn(access) == 0) then
 			return false
 		end
-
+ 
 		local actions = {}
 		for _, action in ipairs(access) do
 			local tmp = type.actions[action]
@@ -72,7 +72,7 @@ function onChannelRequest(cid, channel, custom)
 				actions[action] = tmp
 			end
 		end
-
+ 
 		doPlayerSendChannels(cid, actions)
 	else
 		doShowTextDialog(cid, 2599, "Name:\n\n(Optional) Length:\n\nComment:\n", true, 1024)
@@ -80,6 +80,6 @@ function onChannelRequest(cid, channel, custom)
 			type = channel
 		}))
 	end
-
+ 
 	return false
 end
