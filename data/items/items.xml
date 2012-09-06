@@ -1,5 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <items>
+	<!-- README:
+		We really appreciate if someone could help us
+		with getting real names and attributes
+		of missing items in this file.
+
+		Most needed are the items (including floors, walls)
+		introduced in the most recent tibia updates
+		starting from 8.7 to 9.6
+
+		If you found something wrong with existing item(s), we're also waiting for you :)
+
+		You can send your work here: http://otland.net/project.php?projectid=2
+	-->
+
   <item id="100" name="void" />
   <item id="101" name="earth" />
   <item id="103" name="dirt" />
