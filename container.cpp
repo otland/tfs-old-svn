@@ -312,18 +312,8 @@ ReturnValue Container::__queryAdd(int32_t index, const Thing* thing, uint32_t co
 		if(id == ITEM_INBOX)
 			return RET_CONTAINERNOTENOUGHROOM;
 
-		if(size() >= capacity())
-		{
-			if(index == INDEX_WHEREEVER)
-				return RET_CONTAINERNOTENOUGHROOM;
-
-			if(item->isStackable())
-			{
-				Item* destItem = getItem(index);
-				if(!destItem || destItem->getID() != item->getID() || (destItem->getItemCount() + count) > 100)
-					return RET_CONTAINERNOTENOUGHROOM;
-			}
-		}
+		if(index == INDEX_WHEREEVER && size() >= capacity())
+			return RET_CONTAINERNOTENOUGHROOM;
 	}
 
 	const Cylinder* topParent = getTopParent();
@@ -355,7 +345,7 @@ ReturnValue Container::__queryMaxCount(int32_t index, const Thing* thing, uint32
 	{
 		uint32_t n = 0;
 
-		if(index != INDEX_WHEREEVER)
+		if(index == INDEX_WHEREEVER)
 		{
 			//Iterate through every item and check how much free stackable slots there is.
 			uint32_t slotIndex = 0;
@@ -371,7 +361,7 @@ ReturnValue Container::__queryMaxCount(int32_t index, const Thing* thing, uint32
 		}
 		else
 		{
-			const Thing* destThing = __getThing(index - 1);
+			const Thing* destThing = __getThing(index);
 			const Item* destItem = NULL;
 			if(destThing)
 				destItem = destThing->getItem();

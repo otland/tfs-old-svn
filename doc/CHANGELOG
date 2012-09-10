@@ -20,73 +20,9 @@
 	M = Modified.
 	A = Added.
 
-	M config.lua
 	M The Forgotten Server.exe
-	  data/
-		items/
-	M		items.otb
-	M		items.xml
-	M	movements/movements.xml
-	M	weapons/weapons.xml
-		XML/
-	M		mounts.xml
-	M		outfits.xml
-	M		vocations.xml
 ]
 
 [ Milestone
-	Game protocol 9.61 support (9.6 clients can still login).
-	Anti House Trashing.
-	Initial offline training code.
-	Added Deepling and Insectoid outfits.
-	Added English Chat and improved some chat code.
-	It is now possible to sleep in bed, even with battle sign (hidden one because player is in PZ).
-	Corrected the new shoot effect constants.
-	Corrected the exit code from server save/shutdown.
-	Bug reports can now only be submitted by tutors.
-	Optimized creature and item iterations on tiles.
-	Optimized Mission::getDescription in questlog.
-	Battle sign is no longer visible in protection zone.
-	No longer showing "Questlog has been updated." for missions with main state (like killing tasks).
-	Improved code for hangables, they should no longer fall in water if the wall is on a water tile.
-	Support for .otbm and .otbi files saved with "OTBM" or "OTBI" as the first four bytes.
-	Updated the MySQL schema, for an unknown reason it was missing the changes from database schema version 1.
-	Updated items.xml with a lot of fixes.
-	Updated a lot of Equip events, and registered some new doors to closingdoors script in movements.xml.
-	Updated a lot of weapon requirements in weapons.xml.
-	Making use of boost::thread for Scheduler and Dispatcher for more portable code.
-	TCP no_delay is now enabled, should fix tileskipping when mapclicking with high speed or dashing.
-	New Lua functions: doPlayerSetOfflineTrainingSkill(cid, skill), getPlayerParty(cid), doPlayerJoinParty(cid, leaderId), getCreatureConditionInfo(cid, conditionType, <optional: default: 0> subId, <optional: default: CONDITIONID_DEFAULT> conditionId) and getTownId(townName).
-	Changed how shutdown works, the server should now properly exit instead of a forced exit.
-	House items are now properly transferred to depot inbox instead of the locker.
-	Rewrote the code to calculate time to next global server save, it's looks a lot better now and is probably faster too.
-	Optimized Player::addSkillAdvance and fixed so sendSkills won't be called twice.
-	Player storage loading will no longer check quest log and send quest log has been updated.
-	Some packets will now be dropped if they aren't processed fast enough.
-	Removed a few unnecessary "LIMIT 1" in queries where we only use the primary key.
-	Updated the unjustified kill message so that it appears in white instead of red.
-	Compiling is now -O3 by default instead of -O2.
-	Player follow should now use less CPU power.
-	Corrected gaincap for no vocation.
-	Corrected the name of Scorpion mount.
-	Fixed deathLosePercent in config.lua so that it works like it used to, to use Tibia formula set it to -1.
-	Fixed a few events in Game class not being stopped on shutdown.
-	Fixed a look description bug for shields.
-	Fixed so that Area of Effect damage will be the same on the entire area. Before this change you could hit two demon skeletons with different damage on the same avalanche rune, with this change you will deal the same damage to both on the same attack.
-	Fixed a crash that occurred when removing a ground tile.
-	Fixed so that spells with parameters don't require " for one word parameters (works like in Tibia now).
-	Fixed so the current mount will show up in the change outfit dialog even if not mounted.
-	Fixed possible crashes if players sent bad packets.
-	Fixed a bug where player could get red skull, or black skull or ban with one kill less than required for that if the player killed at least two players at once.
-	Fixed so sendStats won't be called if it isn't necessary in Player::addManaSpent.
-	Fixed a bug with items that had negative hit chance.
-	Fixed look description for snowballs.
-	Fixed a bug with the market, offers were still there with count 0 which caused problems with the offers limit.
-	Fixed element damage for distance weapons.
-	Fixed a bug with the optimized escape blob function for DatabaseSQLite, output should be identical to the old function but over 10 times faster.
-	Fixed a possible bug with copied actions.
-	Fixed so it's possible to compile with -O3 (although not recommended).
-	Fixed so summons that aren't summoned by players will poff instead of drop corpse.
-	Fixed a possible issue with decaying items that use decrease/increaseItemId function in actions.
-	Fixed so the list doesn't get cut off if there are too many entries listed with /mccheck.
+	Fixed container bugs.
 ]
