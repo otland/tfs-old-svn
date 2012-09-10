@@ -982,8 +982,29 @@ bool Game::placeCreature(Creature* creature, const Position& pos, bool extendedP
 
 	creature->setLastPosition(pos);
 	creature->getParent()->postAddNotification(NULL, creature, NULL, creature->getParent()->__getIndexOfThing(creature));
-	addCreatureCheck(creature);
 
+	Player* player = creature->getPlayer();
+	if(player)
+	{
+		int32_t offlineTime;
+		if(player->getLastLogout() != 0)
+			offlineTime = time(NULL) - player->getLastLogout();
+		else
+			offlineTime = 0;
+
+		int32_t offlineTrainingSkill = player->getOfflineTrainingSkill();
+		if(offlineTrainingSkill == -1)
+		{
+			uint16_t oldMinutes = player->getOfflineTrainingTime() / 60 / 1000;
+			player->addOfflineTrainingTime(offlineTime * 1000);
+
+			uint16_t newMinutes = player->getOfflineTrainingTime() / 60 / 1000;
+			if(oldMinutes != newMinutes)
+				player->sendStats();
+		}
+	}
+	
+	addCreatureCheck(creature);
 	creature->onPlacedCreature();
 	return true;
 }

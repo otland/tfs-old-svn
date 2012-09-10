@@ -1488,18 +1488,6 @@ void Player::onCreatureAppear(const Creature* creature)
 		}
 	}
 
-	int32_t offlineTrainingSkill = getOfflineTrainingSkill();
-	int32_t offlineTime = 0;
-	if(offlineTrainingSkill == -1 && offlineTime > 0)
-	{
-		uint16_t oldMinutes = getOfflineTrainingTime() / 60 / 1000;
-		addOfflineTrainingTime(offlineTime * 1000);
-
-		uint16_t newMinutes = getOfflineTrainingTime() / 60 / 1000;
-		if(oldMinutes != newMinutes)
-			sendStats();
-	}
-
 	g_game.checkPlayersRecord(this);
 	if(!isGhost())
 	{
@@ -4508,7 +4496,7 @@ bool Player::addUnjustifiedKill(const Player* attacked, bool countNow)
 	{
 		char buffer[90];
 		sprintf(buffer, "Warning! The murder of %s was not justified.", attacked->getName().c_str());
-		sendTextMessage(MSG_STATUS_WARNING, buffer);
+		sendTextMessage(MSG_EVENT_ADVANCE, buffer);
 	}
 
 	time_t now = time(NULL), first = (now - g_config.getNumber(ConfigManager::FRAG_LIMIT)),
