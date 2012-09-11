@@ -24,5 +24,6 @@
 ]
 
 [ Milestone
+	Waypoints support, with two new lua functions getWaypointPosition(name) and doWaypointAddTemporial(name, pos)
 	Fixed container bugs.
 ]

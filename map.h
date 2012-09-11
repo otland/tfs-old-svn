@@ -35,17 +35,17 @@ using boost::shared_ptr;
 
 #include "tools.h"
 #include "tile.h"
+#include "waypoints.h"
 
 class Creature;
 class Player;
 class Game;
-struct FindPathParams;
-
-#define MAP_MAX_LAYERS 16
-
 class Tile;
 class Map;
 
+#define MAP_MAX_LAYERS 16
+
+struct FindPathParams;
 struct AStarNode
 {
 	int32_t x, y;
@@ -256,6 +256,8 @@ class Map
 
 		bool getPathMatching(const Creature* creature, std::list<Direction>& dirList,
 			const FrozenPathingConditionCall& pathCondition, const FindPathParams& fpp);
+
+		Waypoints waypoints;
 
 	protected:
 		uint32_t mapWidth, mapHeight;

@@ -54,7 +54,10 @@ extern Game g_game;
 	|	|	|--- OTBM_MONSTER (not implemented)
 	|	|
 	|	|--- OTBM_TOWNS
-	|		|--- OTBM_TOWN
+	|	|	|--- OTBM_TOWN
+	|	|
+	|	|--- OTBM_WAYPOINTS
+	|		|--- OTBM_WAYPOINT
 	|
 	|--- OTBM_ITEM_DEF (not implemented)
 */
@@ -110,7 +113,8 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 		return false;
 	}
 
-	if(root_header->version <= 0)
+	uint32_t headerVersion = root_header->version;
+	if(headerVersion <= 0)
 	{
 		//In otbm version 1 the count variable after splashes/fluidcontainers and stackables
 		//are saved as attributes instead, this solves alot of problems with items
@@ -119,7 +123,7 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 		return false;
 	}
 
-	if(root_header->version > 2)
+	if(headerVersion > 2)
 	{
 		setLastErrorString("Unknown OTBM version detected.");
 		return false;
@@ -222,7 +226,7 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 				return false;
 			}
 
-			OTBM_Tile_area_coords* area_coord;
+			OTBM_Destination_coords* area_coord;
 			if(!propStream.GET_STRUCT(area_coord))
 			{
 				setLastErrorString("Invalid map node.");
@@ -496,7 +500,7 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 
 					town->setName(townName);
 
-					OTBM_TownTemple_coords *town_coords;
+					OTBM_Destination_coords *town_coords;
 					if(!propStream.GET_STRUCT(town_coords))
 					{
 						setLastErrorString("Could not read town coordinates.");
@@ -518,7 +522,46 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 				nodeTown = f.getNextNode(nodeTown, type);
 			}
 		}
-		else if(type != 15 && type != 16)
+		else if(type == OTBM_WAYPOINTS && headerVersion > 1)
+		{
+			NODE nodeWaypoint = f.getChildNode(nodeMapData, type);
+			while(nodeWaypoint != NO_NODE)
+			{
+				if(type == OTBM_WAYPOINT)
+				{
+					if(!f.getProps(nodeWaypoint, propStream))
+					{
+						setLastErrorString("Could not read waypoint data.");
+						return false;
+					}
+
+					std::string name;
+					if(!propStream.GET_STRING(name))
+					{
+						setLastErrorString("Could not read waypoint name.");
+						return false;
+					}
+
+					OTBM_Destination_coords* waypoint_coords;
+					if(!propStream.GET_STRUCT(waypoint_coords))
+					{
+						setLastErrorString("Could not read waypoint coordinates.");
+						return false;
+					}
+
+					map->waypoints.addWaypoint(WaypointPtr(new Waypoint(name,
+						Position(waypoint_coords->_x, waypoint_coords->_y, waypoint_coords->_z))));
+				}
+				else
+				{
+					setLastErrorString("Unknown waypoint node.");
+					return false;
+				}
+
+				nodeWaypoint = f.getNextNode(nodeWaypoint, type);
+			}
+		}
+		else
 		{
 			setLastErrorString("Unknown map node.");
 			return false;

@@ -1900,6 +1900,12 @@ void LuaScriptInterface::registerFunctions()
 	//doPlayerSetOfflineTrainingSkill(cid, skill)
 	lua_register(m_luaState, "doPlayerSetOfflineTrainingSkill", LuaScriptInterface::luaDoPlayerSetOfflineTrainingSkill);
 
+	//getWaypointPosition(name)
+	lua_register(m_luaState, "getWaypointPosition", LuaScriptInterface::luaGetWaypointPosition);
+
+	//doWaypointAddTemporial(name, pos)
+	lua_register(m_luaState, "doWaypointAddTemporial", LuaScriptInterface::luaDoWaypointAddTemporial);
+
 	//bit operations for Lua, based on bitlib project release 24
 	//bit.bnot, bit.band, bit.bor, bit.bxor, bit.lshift, bit.rshift
 	luaL_register(m_luaState, "bit", LuaScriptInterface::luaBitReg);
@@ -8054,6 +8060,28 @@ int32_t LuaScriptInterface::luaDoPlayerSetOfflineTrainingSkill(lua_State* L)
 		reportErrorFunc(getErrorDesc(LUA_ERROR_PLAYER_NOT_FOUND));
 		lua_pushboolean(L, false);
 	}
+	return 1;
+}
+
+int32_t LuaScriptInterface::luaGetWaypointPosition(lua_State* L)
+{
+	//getWaypointPosition(name)
+	if(WaypointPtr waypoint = g_game.getMap()->waypoints.getWaypointByName(popString(L)))
+		pushPosition(L, waypoint->pos, 0);
+	else
+		lua_pushboolean(L, false);
+
+	return 1;
+}
+
+int32_t LuaScriptInterface::luaDoWaypointAddTemporial(lua_State* L)
+{
+	//doWaypointAddTemporial(name, pos)
+	PositionEx pos;
+	popPosition(L, pos);
+
+	g_game.getMap()->waypoints.addWaypoint(WaypointPtr(new Waypoint(popString(L), pos)));
+	lua_pushboolean(L, true);
 	return 1;
 }
 

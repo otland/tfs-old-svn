@@ -536,6 +536,7 @@
 		getPlayerIp(cid)
 		getPlayerGuildLevel(cid)
 		getCreatureSummons(cid) - Returns: returns a table with all the summons of the creature
+		getWaypointPosition(name)
 	
 	//*DO
 	
@@ -618,6 +619,7 @@
 		doPlayerAddMoney(cid, money)
 		doPlayerChangeName(cid, newName) 
 		doSetCreatureDirection(cid, direction)
+		doWaypointAddTemporial(name, pos)
 	
 	//*SET
 	
