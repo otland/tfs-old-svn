@@ -356,11 +356,12 @@ Thing* Game::internalGetThing(Player* player, const Position& pos, int32_t index
 				{
 					//then down items
 					thing = tile->getTopDownItem();
-					if(thing == NULL)
+					if(!thing)
+					{
 						thing = tile->getTopTopItem(); //then last we check items with topOrder 3 (doors etc)
-
-					if(thing == NULL)
-						thing = tile->ground;
+						if(!thing)
+							thing = tile->ground;
+					}
 				}
 			}
 			else if(type == STACKPOS_USE)
@@ -685,7 +686,10 @@ bool Game::placeCreature(Creature* creature, const Position& pos, bool extendedP
 	{
 		int32_t offlineTime;
 		if(player->getLastLogout() != 0)
-			offlineTime = time(NULL) - player->getLastLogout();
+		{
+			// Not counting more than 21 days to prevent overflow when multiplying with 1000 (for milliseconds).
+			offlineTime = std::min((int32_t)(time(NULL) - player->getLastLogout()), 86400 * 21);
+		}
 		else
 			offlineTime = 0;
 
@@ -719,17 +723,6 @@ bool Game::placeCreature(Creature* creature, const Position& pos, bool extendedP
 				player->addCondition(conditionYell->clone());
 		}
 
-		int32_t offlineTrainingSkill = player->getOfflineTrainingSkill();
-		if(offlineTrainingSkill == -1)
-		{
-			uint16_t oldMinutes = player->getOfflineTrainingTime() / 60 / 1000;
-			player->addOfflineTrainingTime(offlineTime * 1000);
-
-			uint16_t newMinutes = player->getOfflineTrainingTime() / 60 / 1000;
-			if(oldMinutes != newMinutes)
-				player->sendStats();
-		}
-
 		if(player->isPremium())
 		{
 			int32_t value;
@@ -741,6 +734,91 @@ bool Game::placeCreature(Creature* creature, const Position& pos, bool extendedP
 		}
 		else if(player->isPromoted())
 			player->setVocation(player->vocation->getFromVocation());
+
+		int32_t offlineTrainingSkill = player->getOfflineTrainingSkill();
+		if(offlineTrainingSkill != -1)
+		{
+			player->setOfflineTrainingSkill(-1);
+			int32_t offlineTrainingTime = std::max(0, std::min(offlineTime, std::min(43200, player->getOfflineTrainingTime() / 1000)));
+			if(offlineTime >= 600)
+			{
+				player->removeOfflineTrainingTime(offlineTrainingTime * 1000);
+
+				int32_t remainder = offlineTime - offlineTrainingTime;
+				if(remainder > 0)
+					player->addOfflineTrainingTime(remainder * 1000);
+
+				if(offlineTrainingTime >= 60)
+				{
+					std::ostringstream ss;
+					ss << "During your absence you trained for ";
+					int32_t hours = offlineTrainingTime / 3600;
+					if(hours > 1)
+						ss << hours << " hours";
+					else if(hours == 1)
+						ss << "1 hour";
+
+					int32_t minutes = (offlineTrainingTime % 3600) / 60;
+					if(minutes != 0)
+					{
+						if(hours != 0)
+							ss << " and ";
+
+						if(minutes > 1)
+							ss << minutes << " minutes";
+						else
+							ss << "1 minute";
+					}
+					ss << ".";
+					player->sendTextMessage(MSG_EVENT_ADVANCE, ss.str());
+
+					Vocation* vocation;
+					if(player->isPromoted())
+						vocation = player->getVocation();
+					else
+					{
+						int32_t promotedVocationId = g_vocations.getPromotedVocation(player->getVocationId());
+						vocation = g_vocations.getVocation(promotedVocationId);
+					}
+
+					bool sendUpdateSkills = false;
+					if(offlineTrainingSkill == SKILL_CLUB || offlineTrainingSkill == SKILL_SWORD || offlineTrainingSkill == SKILL_AXE)
+					{
+						float modifier = vocation->getAttackSpeed() / 1000.f;
+						sendUpdateSkills = player->addOfflineTrainingTries((skills_t)offlineTrainingSkill, (offlineTrainingTime / modifier) / 2);
+					}
+					else if(offlineTrainingSkill == SKILL_DIST)
+					{
+						float modifier = vocation->getAttackSpeed() / 1000.f;
+						sendUpdateSkills = player->addOfflineTrainingTries((skills_t)offlineTrainingSkill, (offlineTrainingTime / modifier) / 4);
+					}
+					else if(offlineTrainingSkill == SKILL__MAGLEVEL)
+					{
+						int32_t gainTicks = vocation->getManaGainTicks() << 1;
+						if(gainTicks == 0)
+							gainTicks = 1;
+
+						player->addOfflineTrainingTries(SKILL__MAGLEVEL, offlineTrainingTime * (vocation->getManaGainAmount() / gainTicks));
+					}
+
+					if(player->addOfflineTrainingTries(SKILL_SHIELD, offlineTrainingTime / 4) || sendUpdateSkills)
+						player->sendSkills();
+
+				}
+				player->sendStats();
+			}
+			else
+				player->sendTextMessage(MSG_EVENT_ADVANCE, "You must be logged out for more than 10 minutes to start offline training.");
+		}
+		else
+		{
+			uint16_t oldMinutes = player->getOfflineTrainingTime() / 60 / 1000;
+			player->addOfflineTrainingTime(offlineTime * 1000);
+
+			uint16_t newMinutes = player->getOfflineTrainingTime() / 60 / 1000;
+			if(oldMinutes != newMinutes)
+				player->sendStats();
+		}
 	}
 
 	addCreatureCheck(creature);
@@ -2232,7 +2310,7 @@ bool Game::playerUseItemEx(uint32_t playerId, const Position& fromPos, uint8_t f
 	}
 
 	Item* item = thing->getItem();
-	if(!item || !item->isUseable())
+	if(!item || !item->isUseable() || item->getClientID() != fromSpriteId)
 	{
 		player->sendCancelMessage(RET_CANNOTUSETHISOBJECT);
 		return false;
@@ -2326,7 +2404,7 @@ bool Game::playerUseItem(uint32_t playerId, const Position& pos, uint8_t stackPo
 	}
 
 	Item* item = thing->getItem();
-	if(!item || item->isUseable())
+	if(!item || item->isUseable() || item->getClientID() != spriteId)
 	{
 		player->sendCancelMessage(RET_CANNOTUSETHISOBJECT);
 		return false;
@@ -2370,7 +2448,7 @@ bool Game::playerUseItem(uint32_t playerId, const Position& pos, uint8_t stackPo
 	return true;
 }
 
-bool Game::playerUseBattleWindow(uint32_t playerId, const Position& fromPos, uint8_t fromStackPos,
+bool Game::playerUseWithCreature(uint32_t playerId, const Position& fromPos, uint8_t fromStackPos,
 	uint32_t creatureId, uint16_t spriteId, bool isHotkey)
 {
 	Player* player = getPlayerByID(playerId);
@@ -2393,7 +2471,7 @@ bool Game::playerUseBattleWindow(uint32_t playerId, const Position& fromPos, uin
 		}
 	}
 
-	Thing* thing = internalGetThing(player, fromPos, fromStackPos, spriteId, STACKPOS_USE);
+	Thing* thing = internalGetThing(player, fromPos, fromStackPos, spriteId, STACKPOS_USEITEM);
 	if(!thing)
 	{
 		player->sendCancelMessage(RET_NOTPOSSIBLE);
@@ -2401,30 +2479,63 @@ bool Game::playerUseBattleWindow(uint32_t playerId, const Position& fromPos, uin
 	}
 
 	Item* item = thing->getItem();
-	if(!item || item->getClientID() != spriteId)
+	if(!item || !item->isUseable() || item->getClientID() != spriteId)
 	{
 		player->sendCancelMessage(RET_CANNOTUSETHISOBJECT);
 		return false;
 	}
 
+	Position toPos = creature->getPosition();
+	Position walkToPos = fromPos;
 	ReturnValue ret = g_actions->canUse(player, fromPos);
+	if(ret == RET_NOERROR)
+	{
+		ret = g_actions->canUse(player, toPos, item);
+		if(ret == RET_TOOFARAWAY)
+			walkToPos = toPos;
+	}
+
 	if(ret != RET_NOERROR)
 	{
 		if(ret == RET_TOOFARAWAY)
 		{
+			Position itemPos = fromPos;
+			uint8_t itemStackPos = fromStackPos;
+
+			if(fromPos.x != 0xFFFF && Position::areInRange<1,1,0>(fromPos, player->getPosition()) && !Position::areInRange<1,1,0>(fromPos, toPos))
+			{
+				Item* moveItem = NULL;
+
+				ReturnValue ret = internalMoveItem(item->getParent(), player, INDEX_WHEREEVER,
+					item, item->getItemCount(), &moveItem);
+				if(ret != RET_NOERROR)
+				{
+					player->sendCancelMessage(ret);
+					return false;
+				}
+
+				//changing the position since its now in the inventory of the player
+				internalGetPosition(moveItem, itemPos, itemStackPos);
+			}
+
 			std::list<Direction> listDir;
-			if(getPathToEx(player, item->getPosition(), listDir, 0, 1, true, true))
+			if(getPathToEx(player, walkToPos, listDir, 0, 1, true, true))
 			{
 				g_dispatcher.addTask(createTask(boost::bind(&Game::playerAutoWalk,
 					this, player->getID(), listDir)));
 
-				SchedulerTask* task = createSchedulerTask(400, boost::bind(&Game::playerUseBattleWindow, this,
-					playerId, fromPos, fromStackPos, creatureId, spriteId, isHotkey));
+				SchedulerTask* task = createSchedulerTask(400, boost::bind(&Game::playerUseWithCreature, this,
+					playerId, itemPos, itemStackPos, creatureId, spriteId, isHotkey));
 				player->setNextWalkActionTask(task);
 				return true;
 			}
-			ret = RET_THEREISNOWAY;
+			else
+			{
+				player->sendCancelMessage(RET_THEREISNOWAY);
+				return false;
+			}
 		}
+
 		player->sendCancelMessage(ret);
 		return false;
 	}
@@ -2432,14 +2543,14 @@ bool Game::playerUseBattleWindow(uint32_t playerId, const Position& fromPos, uin
 	if(!player->canDoAction())
 	{
 		uint32_t delay = player->getNextActionTime();
-		SchedulerTask* task = createSchedulerTask(delay, boost::bind(&Game::playerUseBattleWindow, this,
+		SchedulerTask* task = createSchedulerTask(delay, boost::bind(&Game::playerUseWithCreature, this,
 			playerId, fromPos, fromStackPos, creatureId, spriteId, isHotkey));
 		player->setNextActionTask(task);
 		return false;
 	}
 
-	player->setNextActionTask(NULL);
 	player->resetIdleTime();
+	player->setNextActionTask(NULL);
 
 	return g_actions->useItemEx(player, fromPos, creature->getPosition(), creature->getParent()->__getIndexOfThing(creature), item, isHotkey, creatureId);
 }

@@ -641,7 +641,7 @@ void Player::addSkillAdvance(skills_t skill, uint32_t count)
 
 	uint64_t currReqTries = vocation->getReqSkillTries(skill, skills[skill][SKILL_LEVEL]);
 	uint64_t nextReqTries = vocation->getReqSkillTries(skill, skills[skill][SKILL_LEVEL] + 1);
-	if(currReqTries > nextReqTries)
+	if(currReqTries >= nextReqTries)
 	{
 		//player has reached max skill
 		return;
@@ -663,9 +663,9 @@ void Player::addSkillAdvance(skills_t skill, uint32_t count)
 		g_creatureEvents->playerAdvance(this, skill, (skills[skill][SKILL_LEVEL] - 1), skills[skill][SKILL_LEVEL]);
 
 		sendUpdateSkills = true;
-		currReqTries = nextReqTries,
+		currReqTries = nextReqTries;
 		nextReqTries = vocation->getReqSkillTries(skill, skills[skill][SKILL_LEVEL] + 1);
-		if(currReqTries > nextReqTries)
+		if(currReqTries >= nextReqTries)
 		{
 			count = 0;
 			break;
@@ -728,7 +728,7 @@ int32_t Player::getDefaultStats(stats_t stat)
 		case STAT_SOULPOINTS:
 			return getPlayerInfo(PLAYERINFO_SOUL) - getVarStats(STAT_SOULPOINTS);
 		case STAT_MAGICPOINTS:
-			return getMagicLevel() - getVarStats(STAT_MAGICPOINTS);
+			return getBaseMagicLevel();
 		default:
 			return 0;
 	}
@@ -1333,7 +1333,7 @@ void Player::sendStats()
 void Player::sendPing()
 {
 	int64_t timeNow = OTSYS_TIME();
-	if(timeNow - lastPing >= 5000)
+	if((timeNow - lastPing) >= 5000)
 	{
 		lastPing = timeNow;
 		if(client)
@@ -1909,6 +1909,10 @@ void Player::onThink(uint32_t interval)
 
 	if(g_game.getWorldType() != WORLD_TYPE_PVP_ENFORCED)
 		checkSkullTicks(interval);
+
+	addOfflineTrainingTime(interval);
+	if(lastStatsTrainingTime != getOfflineTrainingTime() / 60 / 1000)
+		sendStats();
 }
 
 uint32_t Player::isMuted()
@@ -1974,7 +1978,7 @@ void Player::addManaSpent(uint64_t amount, bool withMultiplier /*= true*/)
 
 	uint64_t currReqMana = vocation->getReqMana(magLevel);
 	uint64_t nextReqMana = vocation->getReqMana(magLevel + 1);
-	if(currReqMana > nextReqMana)
+	if(currReqMana >= nextReqMana)
 	{
 		//player has reached max magic level
 		return;
@@ -2000,7 +2004,7 @@ void Player::addManaSpent(uint64_t amount, bool withMultiplier /*= true*/)
 		sendUpdateStats = true;
 		currReqMana = nextReqMana;
 		nextReqMana = vocation->getReqMana(magLevel + 1);
-		if(currReqMana > nextReqMana)
+		if(currReqMana >= nextReqMana)
 		{
 			amount = 0;
 			return;
@@ -2029,7 +2033,7 @@ void Player::addExperience(uint64_t exp, bool useMult/* = false*/, bool sendText
 	int32_t newLevel = level;
 
 	uint64_t nextLevelExp = Player::getExpForLevel(newLevel + 1);
-	if(Player::getExpForLevel(newLevel) > nextLevelExp)
+	if(Player::getExpForLevel(newLevel) >= nextLevelExp)
 	{
 		//player has reached max level
 		levelPercent = 0;
@@ -2073,7 +2077,7 @@ void Player::addExperience(uint64_t exp, bool useMult/* = false*/, bool sendText
 		mana += vocation->getManaGain();
 		capacity += vocation->getCapGain();
 		nextLevelExp = Player::getExpForLevel(newLevel + 1);
-		if(Player::getExpForLevel(newLevel) > nextLevelExp)
+		if(Player::getExpForLevel(newLevel) >= nextLevelExp)
 		{
 			//player has reached max level
 			break;
@@ -3769,10 +3773,10 @@ void Player::onEndCondition(ConditionType_t type)
 	{
 		onIdleStatus();
 		pzLocked = false;
+		clearAttacked();
 
 		if(getSkull() != SKULL_RED && getSkull() != SKULL_BLACK)
 		{
-			clearAttacked();
 			setSkull(SKULL_NONE);
 			g_game.updateCreatureSkull(this);
 		}
@@ -3819,37 +3823,35 @@ void Player::onAttackedCreature(Creature* target)
 {
 	Creature::onAttackedCreature(target);
 
-	if(!hasFlag(PlayerFlag_NotGainInFight))
+	if(hasFlag(PlayerFlag_NotGainInFight))
+		return;
+
+	if(target != this)
 	{
-		if(target != this)
+		Player* targetPlayer = target->getPlayer();
+		if(targetPlayer && !isPartner(targetPlayer) && !isGuildMate(targetPlayer) && !targetPlayer->hasAttacked(this))
 		{
-			if(Player* targetPlayer = target->getPlayer())
+			if(!pzLocked)
 			{
-				if(!isPartner(targetPlayer) && !targetPlayer->hasAttacked(this))
+				pzLocked = true;
+				sendIcons();
+			}
+
+			if(!Combat::isInPvpZone(this, targetPlayer) && !isInWar(targetPlayer))
+			{
+				addAttacked(targetPlayer);
+				if(targetPlayer->getSkull() == SKULL_NONE && getSkull() == SKULL_NONE)
 				{
-					if(!pzLocked)
-					{
-						pzLocked = true;
-						sendIcons();
-					}
-
-					if(!Combat::isInPvpZone(this, targetPlayer) && !isInWar(targetPlayer) && !isGuildMate(targetPlayer))
-					{
-						addAttacked(targetPlayer);
-						if(targetPlayer->getSkull() == SKULL_NONE && getSkull() == SKULL_NONE)
-						{
-							setSkull(SKULL_WHITE);
-							g_game.updateCreatureSkull(this);
-						}
-
-						if(getSkull() == SKULL_NONE)
-							targetPlayer->sendCreatureSkull(this);
-					}
+					setSkull(SKULL_WHITE);
+					g_game.updateCreatureSkull(this);
 				}
+
+				if(getSkull() == SKULL_NONE)
+					targetPlayer->sendCreatureSkull(this);
 			}
 		}
-		addInFightTicks();
 	}
+	addInFightTicks();
 }
 
 void Player::onAttacked()
@@ -3932,22 +3934,20 @@ bool Player::onKilledCreature(Creature* target, bool lastHit/* = true*/)
 		}
 		else if(!hasFlag(PlayerFlag_NotGainInFight) && !isPartner(targetPlayer))
 		{
-			if(!Combat::isInPvpZone(this, targetPlayer) &&
-				!targetPlayer->hasAttacked(this) &&
-				targetPlayer->getSkull() == SKULL_NONE &&
-				!isInWar(targetPlayer) &&
-				!isGuildMate(targetPlayer) &&
-				targetPlayer != this)
+			if(!Combat::isInPvpZone(this, targetPlayer) && !targetPlayer->hasAttacked(this) && !isGuildMate(targetPlayer) && targetPlayer != this)
 			{
-				addUnjustifiedDead(targetPlayer);
-				unjustified = true;
-			}
+				if(targetPlayer->getSkull() == SKULL_NONE && !isInWar(targetPlayer))
+				{
+					addUnjustifiedDead(targetPlayer);
+					unjustified = true;
+				}
 
-			if(lastHit && !Combat::isInPvpZone(this, targetPlayer) && hasCondition(CONDITION_INFIGHT))
-			{
-				pzLocked = true;
-				Condition* condition = Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_INFIGHT, g_config.getNumber(ConfigManager::WHITE_SKULL_TIME), 0);
-				addCondition(condition);
+				if(lastHit && hasCondition(CONDITION_INFIGHT))
+				{
+					pzLocked = true;
+					Condition* condition = Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_INFIGHT, g_config.getNumber(ConfigManager::WHITE_SKULL_TIME), 0);
+					addCondition(condition);
+				}
 			}
 		}
 	}
@@ -4146,20 +4146,11 @@ Skulls_t Player::getSkullClient(const Player* player) const
 	if(!player || g_game.getWorldType() != WORLD_TYPE_PVP)
 		return SKULL_NONE;
 
-	if(player->getSkull() != SKULL_RED && player->getSkull() != SKULL_BLACK)
-	{
-		if(isInWar(player))
-			return SKULL_YELLOW;
-
-		if(getSkull() != SKULL_NONE)
-		{
-			if(player->hasAttacked(this))
-				return SKULL_YELLOW;
-		}
-	}
-
 	if(player->getSkull() == SKULL_NONE)
 	{
+		if(isInWar(player) || player->hasAttacked(this))
+			return SKULL_YELLOW;
+
 		if(isPartner(player))
 			return SKULL_GREEN;
 	}
@@ -4216,15 +4207,18 @@ void Player::addUnjustifiedDead(const Player* attacked)
 		g_scheduler.addEvent(createSchedulerTask(500,
 			boost::bind(&Game::kickPlayer, &g_game, playerId, false)));
 	}
-	else if(getSkull() != SKULL_BLACK && g_config.getNumber(ConfigManager::KILLS_TO_BLACK) != 0 && skullTicks > (g_config.getNumber(ConfigManager::KILLS_TO_BLACK) - 1) * g_config.getNumber(ConfigManager::FRAG_TIME))
+	else if(getSkull() != SKULL_BLACK)
 	{
-		setSkull(SKULL_BLACK);
-		g_game.updateCreatureSkull(this);
-	}
-	else if(getSkull() != SKULL_RED && g_config.getNumber(ConfigManager::KILLS_TO_RED) != 0 && skullTicks > (g_config.getNumber(ConfigManager::KILLS_TO_RED) - 1) * g_config.getNumber(ConfigManager::FRAG_TIME))
-	{
-		setSkull(SKULL_RED);
-		g_game.updateCreatureSkull(this);
+		if(g_config.getNumber(ConfigManager::KILLS_TO_BLACK) != 0 && skullTicks > (g_config.getNumber(ConfigManager::KILLS_TO_BLACK) - 1) * g_config.getNumber(ConfigManager::FRAG_TIME))
+		{
+			setSkull(SKULL_BLACK);
+			g_game.updateCreatureSkull(this);
+		}
+		else if(getSkull() != SKULL_RED && g_config.getNumber(ConfigManager::KILLS_TO_RED) != 0 && skullTicks > (g_config.getNumber(ConfigManager::KILLS_TO_RED) - 1) * g_config.getNumber(ConfigManager::FRAG_TIME))
+		{
+			setSkull(SKULL_RED);
+			g_game.updateCreatureSkull(this);
+		}
 	}
 }
 
@@ -5091,4 +5085,123 @@ void Player::dismount()
 
 	defaultOutfit.lookMount = 0;
 	g_game.internalCreatureChangeOutfit(this, defaultOutfit);
+}
+
+bool Player::addOfflineTrainingTries(skills_t skill, int32_t tries)
+{
+	if(tries <= 0 || skill == SKILL__LEVEL)
+		return false;
+
+	bool sendUpdate = false;
+	uint32_t oldSkillValue, newSkillValue;
+	long double oldPercentToNextLevel, newPercentToNextLevel;
+
+	if(skill == SKILL__MAGLEVEL)
+	{
+		uint64_t currReqMana = vocation->getReqMana(magLevel);
+		uint64_t nextReqMana = vocation->getReqMana(magLevel + 1);
+		if(currReqMana >= nextReqMana)
+			return false;
+
+		oldSkillValue = magLevel;
+		oldPercentToNextLevel = (long double)(manaSpent * 100) / nextReqMana;
+
+		tries *= g_config.getNumber(ConfigManager::RATE_MAGIC);
+		while((manaSpent + tries) >= nextReqMana)
+		{
+			tries -= nextReqMana - manaSpent;
+
+			magLevel++;
+			manaSpent = 0;
+
+			g_creatureEvents->playerAdvance(this, SKILL__MAGLEVEL, magLevel - 1, magLevel);
+
+			sendUpdate = true;
+			currReqMana = nextReqMana;
+			nextReqMana = vocation->getReqMana(magLevel + 1);
+			if(currReqMana >= nextReqMana)
+			{
+				tries = 0;
+				break;
+			}
+		}
+		manaSpent += tries;
+
+		uint32_t newPercent;
+		if(nextReqMana > currReqMana)
+		{
+			newPercent = Player::getPercentLevel(manaSpent, nextReqMana);
+			newPercentToNextLevel = (long double)(manaSpent * 100) / nextReqMana;
+		}
+		else
+		{
+			newPercent = 0;
+			newPercentToNextLevel = 0;
+		}
+
+		if(newPercent != magLevelPercent)
+		{
+			magLevelPercent = newPercent;
+			sendUpdate = true;
+		}
+
+		newSkillValue = magLevel;
+	}
+	else
+	{
+		uint64_t currReqTries = vocation->getReqSkillTries(skill, skills[skill][SKILL_LEVEL]);
+		uint64_t nextReqTries = vocation->getReqSkillTries(skill, skills[skill][SKILL_LEVEL] + 1);
+		if(currReqTries >= nextReqTries)
+			return false;
+
+		oldSkillValue = skills[skill][SKILL_LEVEL];
+		oldPercentToNextLevel = (long double)(skills[skill][SKILL_TRIES] * 100) / nextReqTries;
+
+		tries *= g_config.getNumber(ConfigManager::RATE_SKILL);
+		while((skills[skill][SKILL_TRIES] + tries) >= nextReqTries)
+		{
+			tries -= nextReqTries - skills[skill][SKILL_TRIES];
+
+			skills[skill][SKILL_LEVEL]++;
+			skills[skill][SKILL_TRIES] = 0;
+			skills[skill][SKILL_PERCENT] = 0;
+
+			g_creatureEvents->playerAdvance(this, skill, (skills[skill][SKILL_LEVEL] - 1), skills[skill][SKILL_LEVEL]);
+
+			sendUpdate = true;
+			currReqTries = nextReqTries;
+			nextReqTries = vocation->getReqSkillTries(skill, skills[skill][SKILL_LEVEL] + 1);
+			if(currReqTries >= nextReqTries)
+			{
+				tries = 0;
+				break;
+			}
+		}
+		skills[skill][SKILL_TRIES] += tries;
+
+		uint32_t newPercent;
+		if(nextReqTries > currReqTries)
+		{
+			newPercent = Player::getPercentLevel(skills[skill][SKILL_TRIES], nextReqTries);
+			newPercentToNextLevel = (long double)(skills[skill][SKILL_TRIES] * 100) / nextReqTries;
+		}
+		else
+		{
+			newPercent = 0;
+			newPercentToNextLevel = 0;
+		}
+
+		if(skills[skill][SKILL_PERCENT] != newPercent)
+		{
+			skills[skill][SKILL_PERCENT] = newPercent;
+			sendUpdate = true;
+		}
+
+		newSkillValue = skills[skill][SKILL_LEVEL];
+	}
+
+	std::ostringstream ss;
+	ss << std::fixed << std::setprecision(2) << "Your " << ucwords(getSkillName(skill)) << " skill changed from level " << oldSkillValue << " (with " << oldPercentToNextLevel << "% progress towards level " << (oldSkillValue + 1) << ") to level " << newSkillValue << " (with " << newPercentToNextLevel << "% progress towards level " << (newSkillValue + 1) << ")";
+	sendTextMessage(MSG_EVENT_ADVANCE, ss.str());
+	return sendUpdate;
 }

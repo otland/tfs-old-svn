@@ -295,6 +295,7 @@ int32_t Items::loadFromOtb(std::string file)
 				delete iType;
 				return ERROR_INVALID_FORMAT;
 			}
+
 			switch(attrib)
 			{
 				case ITEM_ATTR_SERVERID:
@@ -312,6 +313,7 @@ int32_t Items::loadFromOtb(std::string file)
 					iType->id = serverid;
 					break;
 				}
+
 				case ITEM_ATTR_CLIENTID:
 				{
 					if(datalen != sizeof(uint16_t))
@@ -324,6 +326,7 @@ int32_t Items::loadFromOtb(std::string file)
 					iType->clientId = clientid;
 					break;
 				}
+
 				case ITEM_ATTR_SPEED:
 				{
 					if(datalen != sizeof(uint16_t))
@@ -336,6 +339,7 @@ int32_t Items::loadFromOtb(std::string file)
 					iType->speed = speed;
 					break;
 				}
+
 				case ITEM_ATTR_LIGHT2:
 				{
 					if(datalen != sizeof(lightBlock2))
@@ -349,6 +353,7 @@ int32_t Items::loadFromOtb(std::string file)
 					iType->lightColor = lb2->lightColor;
 					break;
 				}
+
 				case ITEM_ATTR_TOPORDER:
 				{
 					if(datalen != sizeof(uint8_t))
@@ -361,6 +366,7 @@ int32_t Items::loadFromOtb(std::string file)
 					iType->alwaysOnTopOrder = v;
 					break;
 				}
+
 				case ITEM_ATTR_WAREID:
 				{
 					if(!props.SKIP_N(datalen))
@@ -369,11 +375,25 @@ int32_t Items::loadFromOtb(std::string file)
 					iType->ware = true;
 					break;
 				}
+
+				/*
+				case ITEM_ATTR_NAME:
+				{
+					std::string name;
+					if(!props.GET_STRING(name, datalen))
+						return ERROR_INVALID_FORMAT;
+
+					iType->marketName = name;
+					break;
+				}
+				*/
+
 				default:
 				{
 					//skip unknown attributes
 					if(!props.SKIP_N(datalen))
 						return ERROR_INVALID_FORMAT;
+
 					break;
 				}
 			}

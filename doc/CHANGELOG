@@ -24,6 +24,14 @@
 ]
 
 [ Milestone
+	Offline training!
 	Waypoints support, with two new lua functions getWaypointPosition(name) and doWaypointAddTemporial(name, pos)
+	onDeath for a summon will now only be called if the summons master still exists (in which case we can still tell if it's a summon in the onDeath script).
+	Reworked the code for using items on creatures to address a few bugs with it.
+	\n can now be used for new line in the questlog.
+	Fixed the bug with /addskill <playername>, magic level where it would not accurately add exactly one magic level.
+	Fixed the overflow checks for level, skills and magic level formulas (0 > 0 is not true!).
+	Fixed a bug where a player with black skull could get red skull by killing players in pairs.
+	Fixed a bug with yellow skull.
 	Fixed container bugs.
 ]

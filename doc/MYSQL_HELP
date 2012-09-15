@@ -99,7 +99,7 @@
 
 		#1
 			Download XAMPP from:
-				http://heanet.dl.sourceforge.net/sourceforge/xampp/xampp-win32-1.7.4-VC6-installer.exe
+				http://heanet.dl.sourceforge.net/sourceforge/xampp/xampp-win32-1.8.0-VC9-installer.exe
 
 		#2
 			Go to http://localhost/security/xamppsecurity.php and change your root password.

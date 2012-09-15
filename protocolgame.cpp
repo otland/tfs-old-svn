@@ -290,6 +290,8 @@ bool ProtocolGame::login(const std::string& name, uint32_t accnumber, const std:
 		{
 			_player->disconnect();
 			_player->isConnecting = true;
+			_player->setOperatingSystem((OperatingSystem_t)operatingSystem);
+
 			addRef();
 			eventConnect = g_scheduler.addEvent(
 				createSchedulerTask(1000, boost::bind(&ProtocolGame::connect, this, _player->getID(), openChannels)));
@@ -677,7 +679,7 @@ void ProtocolGame::parsePacket(NetworkMessage &msg)
 			break;
 
 		case 0x84: // battle window
-			parseBattleWindow(msg);
+			parseUseWithCreature(msg);
 			break;
 
 		case 0x85: //rotate item
@@ -1242,14 +1244,14 @@ void ProtocolGame::parseUseItemEx(NetworkMessage& msg)
 	addGameTaskTimed(DISPATCHER_TASK_EXPIRATION, &Game::playerUseItemEx, player->getID(), fromPos, fromStackPos, fromSpriteId, toPos, toStackPos, toSpriteId, isHotkey);
 }
 
-void ProtocolGame::parseBattleWindow(NetworkMessage& msg)
+void ProtocolGame::parseUseWithCreature(NetworkMessage& msg)
 {
 	Position fromPos = msg.GetPosition();
 	uint16_t spriteId = msg.GetSpriteId();
 	uint8_t fromStackPos = msg.GetByte();
 	uint32_t creatureId = msg.GetU32();
 	bool isHotkey = (fromPos.x == 0xFFFF && fromPos.y == 0 && fromPos.z == 0);
-	addGameTaskTimed(DISPATCHER_TASK_EXPIRATION, &Game::playerUseBattleWindow, player->getID(), fromPos, fromStackPos, creatureId, spriteId, isHotkey);
+	addGameTaskTimed(DISPATCHER_TASK_EXPIRATION, &Game::playerUseWithCreature, player->getID(), fromPos, fromStackPos, creatureId, spriteId, isHotkey);
 }
 
 void ProtocolGame::parseCloseContainer(NetworkMessage& msg)
@@ -1356,14 +1358,14 @@ void ProtocolGame::parseFightModes(NetworkMessage& msg)
 void ProtocolGame::parseAttack(NetworkMessage& msg)
 {
 	uint32_t creatureId = msg.GetU32();
-	// msg.GetU32(); seq
+	// msg.GetU32(); creatureId (same as above)
 	addGameTask(&Game::playerSetAttackedCreature, player->getID(), creatureId);
 }
 
 void ProtocolGame::parseFollow(NetworkMessage& msg)
 {
 	uint32_t creatureId = msg.GetU32();
-	// msg.GetU32(); seq
+	// msg.GetU32(); creatureId (same as above)
 	addGameTask(&Game::playerFollowCreature, player->getID(), creatureId);
 }
 

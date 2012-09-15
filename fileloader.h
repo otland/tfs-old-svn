@@ -236,16 +236,19 @@ class PropStream
 
 		inline bool GET_STRING(std::string& ret)
 		{
-			char* str;
 			uint16_t str_len;
-
 			if(!GET_USHORT(str_len))
 				return false;
 
+			return GET_STRING(ret, str_len);
+		}
+
+		inline bool GET_STRING(std::string& ret, uint16_t str_len)
+		{
 			if(size() < (int32_t)str_len)
 				return false;
 
-			str = new char[str_len + 1];
+			char* str = new char[str_len + 1];
 			memcpy(str, p, str_len);
 			str[str_len] = 0;
 			ret.assign(str, str_len);

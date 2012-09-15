@@ -277,7 +277,7 @@ void Monster::onCreatureFound(Creature* creature, bool pushFront /*= false*/)
 
 void Monster::onCreatureEnter(Creature* creature)
 {
-	//std::cout << "onCreatureEnter - " << creature->getName() << std::endl;
+	// std::cout << "onCreatureEnter - " << creature->getName() << std::endl;
 
 	if(getMaster() == creature)
 	{
@@ -333,7 +333,7 @@ bool Monster::isOpponent(const Creature* creature)
 
 void Monster::onCreatureLeave(Creature* creature)
 {
-	//std::cout << "onCreatureLeave - " << creature->getName() << std::endl;
+	// std::cout << "onCreatureLeave - " << creature->getName() << std::endl;
 
 	if(getMaster() == creature)
 	{

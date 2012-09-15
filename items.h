@@ -257,6 +257,8 @@ class ItemType
 		CombatType_t combatType;
 		bool replaceable;
 		bool ware;
+
+//		std::string marketName;
 };
 
 template<typename A>

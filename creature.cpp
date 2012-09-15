@@ -819,13 +819,15 @@ void Creature::dropCorpse()
 {
 	if(!lootDrop && getMonster() && !(master && master->getPlayer()))
 	{
-		//scripting event - onDeath
-		CreatureEventList deathEvents = getCreatureEvents(CREATURE_EVENT_DEATH);
-		for(CreatureEventList::const_iterator it = deathEvents.begin(); it != deathEvents.end(); ++it)
-			(*it)->executeOnDeath(this, NULL, _lastHitCreature, _mostDamageCreature, lastHitUnjustified, mostDamageUnjustified);
+		if(master)
+		{
+			//scripting event - onDeath
+			CreatureEventList deathEvents = getCreatureEvents(CREATURE_EVENT_DEATH);
+			for(CreatureEventList::const_iterator it = deathEvents.begin(); it != deathEvents.end(); ++it)
+				(*it)->executeOnDeath(this, NULL, _lastHitCreature, _mostDamageCreature, lastHitUnjustified, mostDamageUnjustified);
+		}
 
 		g_game.addMagicEffect(getPosition(), NM_ME_POFF);
-
 		g_game.removeCreature(this, false);
 		return;
 	}

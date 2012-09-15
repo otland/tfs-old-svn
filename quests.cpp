@@ -59,6 +59,7 @@ std::string Mission::getDescription(Player* player)
 
 		std::string desc = mainState->getMissionDescription();
 		replaceString(desc, "|STATE|", s.str());
+		replaceString(desc, "\\n", "\n");
 		return desc;
 	}
 

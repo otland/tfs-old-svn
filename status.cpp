@@ -239,8 +239,8 @@ void Status::getInfo(uint32_t requestedInfo, OutputMessage_ptr output, NetworkMe
 	if(requestedInfo & REQUEST_BASIC_SERVER_INFO)
 	{
 		output->AddByte(0x10);
-		output->AddString(g_config.getString(ConfigManager::SERVER_NAME).c_str());
-		output->AddString(g_config.getString(ConfigManager::IP).c_str());
+		output->AddString(g_config.getString(ConfigManager::SERVER_NAME));
+		output->AddString(g_config.getString(ConfigManager::IP));
 
 		std::ostringstream ss;
 		ss << g_config.getNumber(ConfigManager::LOGIN_PORT);
@@ -250,17 +250,17 @@ void Status::getInfo(uint32_t requestedInfo, OutputMessage_ptr output, NetworkMe
 	if(requestedInfo & REQUEST_OWNER_SERVER_INFO)
 	{
 		output->AddByte(0x11);
-		output->AddString(g_config.getString(ConfigManager::OWNER_NAME).c_str());
-		output->AddString(g_config.getString(ConfigManager::OWNER_EMAIL).c_str());
+		output->AddString(g_config.getString(ConfigManager::OWNER_NAME));
+		output->AddString(g_config.getString(ConfigManager::OWNER_EMAIL));
 	}
 
 	if(requestedInfo & REQUEST_MISC_SERVER_INFO)
 	{
 		uint64_t running = getUptime();
 		output->AddByte(0x12);
-		output->AddString(g_config.getString(ConfigManager::MOTD).c_str());
-		output->AddString(g_config.getString(ConfigManager::LOCATION).c_str());
-		output->AddString(g_config.getString(ConfigManager::URL).c_str());
+		output->AddString(g_config.getString(ConfigManager::MOTD));
+		output->AddString(g_config.getString(ConfigManager::LOCATION));
+		output->AddString(g_config.getString(ConfigManager::URL));
 		output->AddU32((uint32_t)(running >> 32));
 		output->AddU32((uint32_t)(running));
 	}
@@ -276,8 +276,8 @@ void Status::getInfo(uint32_t requestedInfo, OutputMessage_ptr output, NetworkMe
 	if(requestedInfo & REQUEST_MAP_INFO)
 	{
 		output->AddByte(0x30);
-		output->AddString(m_mapName.c_str());
-		output->AddString(m_mapAuthor.c_str());
+		output->AddString(m_mapName);
+		output->AddString(m_mapAuthor);
 		uint32_t mapWidth, mapHeight;
 		g_game.getMapDimensions(mapWidth, mapHeight);
 		output->AddU16(mapWidth);

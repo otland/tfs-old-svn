@@ -823,12 +823,6 @@ void Commands::sellHouse(Player* player, const std::string& cmd, const std::stri
 		return;
 	}
 
-	if(Houses::getInstance().getHouseByPlayerId(tradePartner->guid))
-	{
-		player->sendCancel("Trade player already owns a house.");
-		return;
-	}
-
 	if(!Position::areInRange<2,2,0>(tradePartner->getPosition(), player->getPosition()))
 	{
 		player->sendCancel("Trade player is too far away.");
@@ -838,6 +832,12 @@ void Commands::sellHouse(Player* player, const std::string& cmd, const std::stri
 	if(!tradePartner->isPremium())
 	{
 		player->sendCancel("Trade player does not have a premium account.");
+		return;
+	}
+
+	if(Houses::getInstance().getHouseByPlayerId(tradePartner->guid))
+	{
+		player->sendCancel("Trade player already owns a house.");
 		return;
 	}
 
@@ -1169,7 +1169,7 @@ void Commands::addSkill(Player* player, const std::string& cmd, const std::strin
 	if(param2[0] == 'l' || param2[0] == 'e')
 		paramPlayer->addExperience(Player::getExpForLevel(paramPlayer->getLevel() + 1) - paramPlayer->experience);
 	else if(param2[0] == 'm')
-		paramPlayer->addManaSpent(player->vocation->getReqMana(paramPlayer->getMagicLevel() + 1) - paramPlayer->manaSpent, false);
+		paramPlayer->addManaSpent(paramPlayer->vocation->getReqMana(paramPlayer->getBaseMagicLevel() + 1) - paramPlayer->manaSpent, false);
 	else
 		paramPlayer->addSkillAdvance(getSkillId(param2), paramPlayer->vocation->getReqSkillTries(getSkillId(param2), paramPlayer->getSkill(getSkillId(param2), SKILL_LEVEL) + 1));
 }
