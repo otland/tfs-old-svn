@@ -33,7 +33,7 @@ extern ConfigManager g_config;
 extern Game g_game;
 
 House::House(uint32_t _houseid) :
-transfer_container(ITEM_LOCKER1)
+transfer_container(ITEM_LOCKER)
 {
 	isLoaded = false;
 	houseName = "Forgotten headquarter (Flat 1, Area 42)";

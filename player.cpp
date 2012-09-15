@@ -24,7 +24,7 @@
 #include <string>
 #include <iostream>
 #include <algorithm>
-
+#include <iomanip>
 #include <stdlib.h>
 
 #include "player.h"
@@ -998,7 +998,7 @@ Depot* Player::getDepot(uint32_t depotId, bool autoCreateDepot)
 	if(autoCreateDepot)
 	{
 		Depot* depot;
-		Item* tmpDepot = Item::CreateItem(ITEM_LOCKER1);
+		Item* tmpDepot = Item::CreateItem(ITEM_LOCKER);
 		if(tmpDepot->getContainer() && (depot = tmpDepot->getContainer()->getDepot()))
 		{
 			Item* market = Item::CreateItem(ITEM_MARKET);
