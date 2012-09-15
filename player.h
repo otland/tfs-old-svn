@@ -177,10 +177,14 @@ class Player : public Creature, public Cylinder
 			return exp;
 		}
 
+		bool addOfflineTrainingTries(skills_t skill, int32_t tries);
+
 		void addOfflineTrainingTime(int32_t addTime) {offlineTrainingTime = std::min(12 * 3600 * 1000, offlineTrainingTime + addTime);}
-		void setOfflineTrainingSkill(int32_t skill) {offlineTrainingSkill = skill;}
-		int32_t getOfflineTrainingSkill() {return offlineTrainingSkill;}
+		void removeOfflineTrainingTime(int32_t removeTime) {offlineTrainingTime = std::max(0, offlineTrainingTime - removeTime);}
 		int32_t getOfflineTrainingTime() {return offlineTrainingTime;}
+
+		int32_t getOfflineTrainingSkill() {return offlineTrainingSkill;}
+		void setOfflineTrainingSkill(int32_t skill) { offlineTrainingSkill = skill;}
 
 		uint32_t getPromotionLevel() const {return promotionLevel;}
 		void setPromotionLevel(uint32_t pLevel);

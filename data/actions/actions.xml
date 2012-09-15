@@ -208,6 +208,13 @@
 	<action itemid="13498" event="script" value="other/taming.lua"/> <!-- scorpion sceptre -->
 	<action itemid="15545" event="script" value="other/taming.lua"/> <!-- foxtail -->
 	<action itemid="15546" event="script" value="other/taming.lua"/> <!-- four-leaf clover -->
+	
+	<!-- Offline Training Items -->
+	<action itemid="18488" event="script" value="other/offlinetraining.lua"/> <!-- statue skill sword -->
+	<action itemid="18489" event="script" value="other/offlinetraining.lua"/> <!-- statue skill axe -->
+	<action itemid="18490" event="script" value="other/offlinetraining.lua"/> <!-- statue skill club -->
+	<action itemid="18491" event="script" value="other/offlinetraining.lua"/> <!-- statue skill distance -->
+	<action itemid="18492" event="script" value="other/offlinetraining.lua"/> <!-- statue skill magic level -->
 
 	<!-- Other -->
 	<action itemid="2566" event="script" value="other/pumpkinhead.lua"/>
