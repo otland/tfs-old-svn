@@ -2139,7 +2139,7 @@
     <attribute key="slotType" value="necklace" />
   </item>
   <item id="2134" article="a" name="silver brooch">
-    <attribute key="weight" value="110" />
+    <attribute key="weight" value="116" />
   </item>
   <item id="2135" article="a" name="scarab amulet">
     <attribute key="weight" value="770" />
@@ -2935,14 +2935,15 @@
     <attribute key="weight" value="210" />
   </item>
   <item id="2317" article="a" name="dead human" />
-  <item id="2318" article="a" name="brooch">
-    <attribute key="weight" value="101" />
+  <item id="2318" article="a" name="family brooch">
+    <attribute key="description" value="You see the familyname Windtrouser engraved on this brooch." />  
+    <attribute key="weight" value="110" />
   </item>
   <item id="2319" article="a" name="strange symbol">
     <attribute key="weight" value="200" />
     <attribute key="slotType" value="necklace" />
   </item>
-  <item id="2320" article="the" name="skull of ratha" plural="skull's of ratha">
+  <item id="2320" article="the" name="skull of ratha" plural="skulls of ratha">
     <attribute key="weight" value="2180" />
   </item>
   <item id="2321" article="a" name="giant smithhammer">
@@ -2983,11 +2984,12 @@
     <attribute key="description" value="This is a bill for an expensive magicians hat and several rabbits." />
     <attribute key="weight" value="150" />
   </item>
-  <item id="2330" article="a" name="bag">
-    <attribute key="weight" value="800" />
+  <item id="2330" article="a" name="letterbag">
+    <attribute key="weight" value="50000" />
   </item>
   <item id="2331" article="a" name="present">
     <attribute key="weight" value="600" />
+    <attribute key="transformUseTo" value="0" />	
   </item>
   <item id="2332" article="a" name="Waldo's post horn">
     <attribute key="description" value="It's property of the Postmaster's Guild and only rewarded to loyal members." />
@@ -8047,8 +8049,9 @@
   <item id="4843" article="a" name="giant ape's hair">
     <attribute key="weight" value="2000" />
   </item>
-  <item id="4845" article="a" name="silver brooch">
-    <attribute key="weight" value="100" />
+  <item id="4845" article="a" name="family brooch">
+    <attribute key="description" value="The emblem of a dwarven family is engraved on it." />  
+    <attribute key="weight" value="110" />
   </item>
   <item id="4846" article="an" name="iron hammer">
     <attribute key="weight" value="6600" />
@@ -19617,17 +19620,25 @@
   <item id="11257" article="a" name="heavy ball">
     <attribute key="weight" value="670" />
   </item>
-  <item id="11259" article="a" name="talisman of dark mysteries">
-    <attribute key="description" value="Is the Mystic Talisman." />
-    <attribute key="weight" value="2850" />
-    <attribute key="magiclevelpoints" value="10" />
-    <attribute key="ammoType" value="arrow" />
+  <item id="11258" article="a" name="phoenix charm">
+    <attribute key="description" value="The Spark of the Phoenix is contained in it." />
+    <attribute key="weight" value="10000" />
+  </item>  
+  <item id="11259" article="a" name="unity charm">
+    <attribute key="description" value="The Embrace of Tibia is contained in it." />
+    <attribute key="weight" value="10000" />
   </item>
-  <item id="11261" article="a" name="mystical potion">
-    <attribute key="weight" value="5" />
+  <item id="11260" article="a" name="spiritual charm">
+    <attribute key="description" value="The Spiritual Shielding is contained in it." />  
+    <attribute key="weight" value="1000" />
+  </item>  
+  <item id="11261" article="a" name="twin sun charm">
+    <attribute key="description" value="The Fire of the Suns is contained in it." />    
+    <attribute key="weight" value="1000" />
   </item>
   <item id="11262" article="a" name="solitude charm">
-    <attribute key="weight" value="10000" />
+    <attribute key="description" value="The Wisdom of Solitude is contained in it." />    
+    <attribute key="weight" value="1000" />
   </item>
   <item id="11263" article="a" name="fluffy santa backpack">
     <attribute key="weight" value="1650" />
