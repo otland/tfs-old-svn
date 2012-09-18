@@ -20,7 +20,7 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 	if(door.levelDoor > 0) then
 		if(item.aid == 189) then
 			if(not isPremium(cid)) then
-				doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, "Only the worthy may pass.")
+				doPlayerSendTextMessage(cid, MESSAGE_EVENT_ADVANCE, "Only the worthy may pass.")
 				return true
 			end
 
@@ -30,7 +30,7 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 		local gender = item.aid - 186
 		if(isInArray({PLAYERSEX_FEMALE,  PLAYERSEX_MALE}, gender)) then
 			if(gender ~= getPlayerSex(cid)) then
-				doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, "Only the worthy may pass.")
+				doPlayerSendTextMessage(cid, MESSAGE_EVENT_ADVANCE, "Only the worthy may pass.")
 				return true
 			end
 
@@ -40,7 +40,7 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 		local skull = item.aid - 180
 		if(skull >= SKULL_NONE and skull <= SKULL_BLACK) then
 			if(skull ~= getCreatureSkullType(cid)) then
-				doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, "Only the worthy may pass.")
+				doPlayerSendTextMessage(cid, MESSAGE_EVENT_ADVANCE, "Only the worthy may pass.")
 				return true
 			end
 
@@ -50,7 +50,7 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 		local group = item.aid - 150
 		if(group >= 0 and group < 30) then
 			if(group > getPlayerGroupId(cid)) then
-				doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, "Only the worthy may pass.")
+				doPlayerSendTextMessage(cid, MESSAGE_EVENT_ADVANCE, "Only the worthy may pass.")
 				return true
 			end
 
@@ -61,7 +61,7 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 		if(vocation >= 0 and vocation < 50) then
 			local vocationEx = getVocationInfo(getPlayerVocation(cid))
 			if(vocationEx.id ~= vocation and vocationEx.fromVocation ~= vocation) then
-				doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, "Only the worthy may pass.")
+				doPlayerSendTextMessage(cid, MESSAGE_EVENT_ADVANCE, "Only the worthy may pass.")
 				return true
 			end
 
@@ -72,7 +72,7 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 			return doorEnter(cid, item.uid, door.transformUseTo, toPosition)
 		end
 
-		doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, "Only the worthy may pass.")
+		doPlayerSendTextMessage(cid, MESSAGE_EVENT_ADVANCE, "Only the worthy may pass.")
 		return true
 	end
 
@@ -81,7 +81,7 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 			return doorEnter(cid, item.uid, door.transformUseTo, toPosition)
 		end
 
-		doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, "The door seems to be sealed against unwanted intruders.")
+		doPlayerSendTextMessage(cid, MESSAGE_EVENT_ADVANCE, "The door seems to be sealed against unwanted intruders.")
 		return true
 	end
 

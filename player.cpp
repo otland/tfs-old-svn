@@ -1145,11 +1145,11 @@ void Player::sendCancelMessage(ReturnValue message) const
 			break;
 
 		case RET_YOUAREALREADYTRADING:
-			sendCancel("You are already trading.");
+			sendCancel("You are already trading. Finish this trade first.");
 			break;
 
 		case RET_THISPLAYERISALREADYTRADING:
-			sendCancel("This player is already trading.");
+			sendCancel("This person is already trading.");
 			break;
 
 		case RET_YOUMAYNOTLOGOUTDURINGAFIGHT:
@@ -1291,6 +1291,14 @@ void Player::sendCancelMessage(ReturnValue message) const
 		case RET_YOUMAYNOTATTACKIMMEDIATELYAFTERLOGGINGIN:
 			sendCancel("You may not attack immediately after logging in.");
 			break;
+			
+		case RET_YOUCANONLYTRADEUPTOX:
+		{
+			std::stringstream s;
+			s << "You can only trade up to " << g_config.getNumber(ConfigManager::TRADE_LIMIT) << " items at a time.";
+			sendCancel(s.str());
+		}	
+			break;	
 
 		default:
 			break;

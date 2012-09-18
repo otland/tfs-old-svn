@@ -3111,16 +3111,14 @@ bool Game::playerRequestTrade(uint32_t playerId, const Position& pos, int16_t st
 
 	if(!Position::areInRange<2,2,0>(tradePartner->getPosition(), player->getPosition()))
 	{
-		std::stringstream ss;
-		ss << tradePartner->getName() << " tells you to move closer.";
-		player->sendTextMessage(MSG_EVENT_ADVANCE, ss.str());
+		player->sendCancelMessage(RET_DESTINATIONOUTOFREACH);
 		return false;
 	}
 
 	if(!canThrowObjectTo(tradePartner->getPosition(), player->getPosition())
 		&& !player->hasCustomFlag(PlayerCustomFlag_CanThrowAnywhere))
 	{
-		player->sendCancelMessage(RET_CREATUREISNOTREACHABLE);
+		player->sendCancelMessage(RET_CANNOTTHROW);
 		return false;
 	}
 
@@ -3183,7 +3181,7 @@ bool Game::playerRequestTrade(uint32_t playerId, const Position& pos, int16_t st
 			((container = dynamic_cast<const Container*>(tradeItem)) && container->isHoldingItem(it->first)) ||
 			((container = dynamic_cast<const Container*>(it->first)) && container->isHoldingItem(tradeItem)))
 		{
-			player->sendTextMessage(MSG_EVENT_ADVANCE, "This item is already being traded.");
+			player->sendCancelMessage(RET_YOUAREALREADYTRADING);
 			return false;
 		}
 	}
@@ -3191,9 +3189,7 @@ bool Game::playerRequestTrade(uint32_t playerId, const Position& pos, int16_t st
 	Container* tradeContainer = tradeItem->getContainer();
 	if(tradeContainer && tradeContainer->getItemHoldingCount() + 1 > (uint32_t)g_config.getNumber(ConfigManager::TRADE_LIMIT))
 	{
-		std::stringstream s;
-		s << "You cannot trade more than " << g_config.getNumber(ConfigManager::TRADE_LIMIT) << " items.";
-		player->sendTextMessage(MSG_EVENT_ADVANCE, s.str());
+		player->sendCancelMessage(RET_YOUCANONLYTRADEUPTOX);
 		return false;
 	}
 
