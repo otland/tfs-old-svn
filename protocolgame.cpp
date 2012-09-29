@@ -2982,7 +2982,7 @@ void ProtocolGame::sendTextWindow(uint32_t windowTextId, Item* item, uint16_t ma
 	TRACK_MESSAGE(msg);
 	msg->put<char>(0x96);
 	msg->put<uint32_t>(windowTextId);
-	msg->putItemId(item);
+	msg->putItem(item);
 	if(canWrite)
 	{
 		msg->put<uint16_t>(maxLen);
