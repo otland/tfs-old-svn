@@ -23788,6 +23788,17 @@
 	<item id="17432" article="a" name="purse">
 		<attribute key="containerSize" value="30" />
 	</item>
+	<item id="17436" article="a" name="basalt wall with crystals" />
+	<item fromid="17438" toid="17443" name="crystal floor" />
+	<item fromid="17444" toid="17446" name="basalt floor" />
+	<item id="17451" name="basalt floor" />
+	<item id="17469" article="a" name="basalt wall" />
+	<item fromid="17473" toid="17476" article="a" name="basalt wall" />
+	<item fromid="17484" toid="17486" article="a" name="basalt wall" />
+	<item fromid="17502" toid="17509" article="a" name="basalt wall with crystals" />
+	<item fromid="17514" toid="17515" article="a" name="basalt wall with crystals" />
+	<item id="17519" article="a" name="basalt wall" />
+	<item id="17525" name="crystal floor" />
 	<item id="17557" article="a" name="ramp">
 		<attribute key="floorchange" value="east" />
 	</item>
@@ -23804,6 +23815,16 @@
 		<attribute key="floorchange" value="north" />
 	</item>
 	<item id="17564" article="a" name="ramp" />
+	<item fromid="17565" toid="17566" article="a" name="green crystal stalagmite" />
+	<item fromid="17568" toid="17570" article="a" name="large fallen crystal" />
+	<item id="17575" name="green crystal rods" />
+	<item id="17576" name="green crystals" />
+	<item id="17577" name="small green crystals" />
+	<item id="17592" article="a" name="crystal geode" />
+	<item id="17595" article="a" name="crystal geode" />
+	<item fromid="17597" toid="17598" article="a" name="large blue crystal" />
+	<item fromid="17625" toid="17640" name="basalt floor" />
+	<item fromid="17665" toid="17684" name="mossy floor" />
 	<item id="17731" article="a" name="ramp">
 		<attribute key="floorchange" value="east" />
 	</item>
@@ -23820,7 +23841,13 @@
 		<attribute key="floorchange" value="north" />
 	</item>
 	<item id="17738" article="a" name="ramp" />
+	<item fromid="17854" toid="17858" name="basalt" />
+	<item id="17867" article="a" name="large blue crystal" />
 	<item id="17868" article="a" name="crystal teleporter" />
+	<item id="17974" article="a" name="basalt wall with crystals" />
+	<item id="17983" article="a" name="basalt crystal wall" />
+	<item id="17998" article="a" name="crystals" />
+	<item id="17999" article="a" name="blue crystal" />
 	<item id="18208" article="a" name="closed door">
 		<attribute key="type" value="door" />
 		<attribute key="blockprojectile" value="1" />
@@ -23841,6 +23868,9 @@
 		<attribute key="ammoAction" value="removecount" />
 		<attribute key="description" value="It can only be wielded properly by players of level 90 or higher." />
 	</item>
+	<item id="18358" name="scattered crystals" />
+	<item id="18365" name="basalt floor" />
+	<item id="18370" name="basalt floor" />
 	<item id="18388" article="a" name="crystal lamp">
 		<attribute key="weight" value="1000" />
 		<attribute key="transformUseTo" value="18389" />
@@ -24153,65 +24183,8 @@
 		<attribute key="showduration" value="1" />
 		<attribute key="showattributes" value="1" />
 	</item>
-	<item id="17515" article="a" name="basalt wall with crystals" />
-	<item id="17519" article="a" name="basalt wall" />
-	<item id="17595" article="a" name="crystal geode" />
-	<item id="17485" article="a" name="basalt wall" />
-	<item id="17507" article="a" name="basalt wall with crystals" />
-	<item id="17577" name="small green crystals" />
-	<item id="17576" name="green crystals" />
-	<item id="17998" name="crystals" />
-	<item id="17438" name="crystal floor" />
-	<item id="17441" name="crystal floor" />
-	<item id="17440" name="crystal floor" />
-	<item id="17442" name="crystal floor" />
-	<item id="17640" name="crystal floor" />
-	<item id="17575" name="green crystal rods" />
-	<item id="17628" name="basalt floor" />
-	<item id="17855" name="basalt" />
-	<item id="17856" name="basalt" />
-	<item id="17636" name="crystal floor" />
-	<item id="17632" name="crystal floor" />
-	<item id="17484" article="a" name="basalt wall" />
-	<item id="17476" article="a" name="basalt wall" />
-	<item id="17514" article="a" name="basalt wall with crystals" />
-	<item id="17954" article="a" name="basalt crystal wall" />
-	<item id="17469" article="a" name="basalt wall" />
-	<item id="17525" name="crystal floor" />
-	<item id="17854" name="basalt" />
-	<item id="17983" article="a" name="basalt crystal wall" />
-	<item id="17592" article="a" name="crystal geode" />
-	<item id="17446" name="basalt floor" />
-	<item id="17455" name="basalt floor" />
-	<item id="17444" name="basalt floor" />
-	<item id="17568" article="a" name="large fallen crystal" />
-	<item id="17436" article="a" name="basalt wall with crystals" />
-	<item id="17858" article="a" name="basalt wall" />
-	<item id="17569" article="a" name="large fallen crystal" />
-	<item id="17570" article="a" name="large fallen crystal" />
-	<item id="17566" article="a" name="green crystal stalagmite" />
-	<item id="17565" article="a" name="green crystal stalagmite" />
-	<item id="17502" article="a" name="basalt wall with crystals" />
-	<item id="18358" name="scattered crystals" />
-	<item id="18370" name="basalt floor" />
-	<item id="18365" name="basalt floor" />
-	<item id="17598" article="a" name="large blue crystal" />
-	<item id="17867" article="a" name="large blue crystal" />
-	<item id="17999" article="a" name="blue crystal" />
-	<item id="17597" article="a" name="large blue crystal" />
-	<item id="17974" article="a" name="basalt wall with crystals" />
-	<item id="17451" name="basalt floor" />
-	<item id="17678" name="basalt floor" />
-	<item id="17669" name="mossy floor" />
-	<item id="17667" name="mossy floor" />
-	<item id="17679" name="basalt floor" />
-	<item id="17665" name="mossy floor" />
-	<item id="17677" name="basalt floor" />
-	<item id="17936" name="mossy spots" />
-	<item id="17675" name="basalt floor" />
-	<item id="17681" name="basalt floor" />
-	<item id="17682" name="basalt floor" />
-	<item id="17668" name="mossy floor" />
+
+	<!-- Oranize the items below -->
 	<item id="17812" name="mushrooms" />
 	<item id="17819" name="mossy floor" />
 	<item id="17779" article="a" name="large decorative mushroom" />
@@ -24275,7 +24248,6 @@
 	<item id="17594" article="a" name="crystal geode" />
 	<item id="17593" article="a" name="crystal geode" />
 	<item id="17496" name="crystals" />
-	<item id="17506" article="a" name="basalt wall" />
 	<item id="17505" article="a" name="basalt wall" />
 	<item id="17448" name="rock soil" />
 	<item id="17596" article="a" name="crystal geode" />
@@ -24283,15 +24255,15 @@
 	<item id="17860" article="a" name="basalt wall" />
 	<item id="17859" article="a" name="basalt wall" />
 	<item id="17512" name="nestled crystals" />
-	<item id="18531" article="a" name="ramp">
-		<attribute key="floorchange" value="down" />
+	<item id="18432" name="crystalline spikes">
+		<attribute key="weight" value="340" />
 	</item>
 	<item id="18457" article="a" name="teleport crystal" plural="teleport crystals">
 		<attribute key="weight" value="45" />
 		<attribute key="description" value="Such crystals are used to charge the long range teleporters to the cities." />
 	</item>
-	<item id="18432" name="crystalline spikes">
-		<attribute key="weight" value="340" />
+	<item id="18531" article="a" name="ramp">
+		<attribute key="floorchange" value="down" />
 	</item>
 	<item id="18319" article="a" name="lonely crystal">
 		<attribute key="weight" value="100" />
@@ -24315,6 +24287,7 @@
 	<item id="13597" article="a" name="lit torch bearer" />
 	<item id="11548" name="sulphur" />
 	<item id="12056" name="iron case" />
+
 	<item id="20001" name="water" />
 	<item id="20002" name="blood" />
 	<item id="20003" name="beer" />
