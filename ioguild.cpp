@@ -432,7 +432,7 @@ void IOGuild::checkWars()
 
 	
 	query << "SELECT `g`.`name` as `guild_name`, `e`.`name` as `enemy_name`, `guild_wars`.`frags` as `frags`  FROM `guild_wars` LEFT JOIN `guilds` as `g` ON `guild_wars`.`guild_id` = `g`.`id` LEFT JOIN `guilds` as `e` ON `guild_wars`.`enemy_id` = `e`.`id` WHERE (`begin` > 0 AND (`begin` + " << tmpInterval << ") > UNIX_TIMESTAMP()) AND `status` IN (0, 6)";
-	if((bool) (result = db->storeQuery(query.str())) == true) {
+	if((result = db->storeQuery(query.str()))) {
 		do
 		{
 			s << result->getDataString("guild_name") << " has invited " << result->getDataString("enemy_name") << " to war till " << result->getDataInt("frags") << " frags.";
@@ -451,7 +451,7 @@ void IOGuild::checkWars()
 	query.str("");
 
 	query << "SELECT `g`.`name` as `guild_name`, `e`.`name` as `enemy_name`, `g`.`id` as `guild_id`, `e`.`id` as `enemy_id`, `guild_wars`.*  FROM `guild_wars` LEFT JOIN `guilds` as `g` ON `guild_wars`.`guild_id` = `g`.`id` LEFT JOIN `guilds` as `e` ON `guild_wars`.`enemy_id` = `e`.`id` WHERE (`begin` > 0 AND (`begin` + " << tmpInterval << ") > UNIX_TIMESTAMP()) AND `status` = 1)";
-	if((bool) (result = db->storeQuery(query.str())) == true) {
+	if((result = db->storeQuery(query.str()))) {
 		do
 		{
 			s << result->getDataString("enemy_name") << " accepted " << result->getDataString("guild_name") << " invitation to war.";
@@ -492,7 +492,7 @@ void IOGuild::checkWars()
 	query.str("");
 
 	query << "SELECT `g`.`name` as `guild_name`, `e`.`name` as `enemy_name`  FROM `guild_wars` LEFT JOIN `guilds` as `g` ON `guild_wars`.`guild_id` = `g`.`id` LEFT JOIN `guilds` as `e` ON `guild_wars`.`enemy_id` = `e`.`id` WHERE (`end` > 0 AND (`end` + " << tmpInterval << ") > UNIX_TIMESTAMP()) AND `status` = 2)";
-	if((bool) (result = db->storeQuery(query.str())) == true) {
+	if((result = db->storeQuery(query.str()))) {
 		do
 		{
 			s << result->getDataString("enemy_name") << " rejected " << result->getDataString("guild_name") << " invitation to war.";
@@ -506,7 +506,7 @@ void IOGuild::checkWars()
 	query.str("");
  
 	query << "SELECT `g`.`name` as `guild_name`, `e`.`name` as `enemy_name`  FROM `guild_wars` LEFT JOIN `guilds` as `g` ON `guild_wars`.`guild_id` = `g`.`id` LEFT JOIN `guilds` as `e` ON `guild_wars`.`enemy_id` = `e`.`id` WHERE (`end` > 0 AND (`end` + " << tmpInterval << ") > UNIX_TIMESTAMP()) AND `status` = 3)";
-	if((bool) (result = db->storeQuery(query.str())) == true) {
+	if((result = db->storeQuery(query.str()))) {
 		do
 		{
 			s << result->getDataString("guild_name") << " canceled invitation to a war with " << result->getDataString("enemy_name") << ".";
@@ -519,8 +519,8 @@ void IOGuild::checkWars()
 
 	query.str("");
 
-	query << "SELECT `g`.`name` as `guild_name`, `e`.`name` as `enemy_name`, `guild_wars`.`status` as `status`, `g`.`id` as `guild_id`, `e`.`id` as `enemy_id`, `guild_wars`.*   FROM `guild_wars` LEFT JOIN `guilds` as `g` ON `guild_wars`.`guild_id` = `g`.`id` LEFT JOIN `guilds` as `e` ON `guild_wars`.`enemy_id` = `e`.`id` WHERE (`end` > 0 AND (`end` + " << tmpInterval << ") > UNIX_TIMESTAMP()) AND `status` IN (7,8))";
-	if((bool) (result = db->storeQuery(query.str())) == true) {
+	query << "SELECT `g`.`name` as `guild_name`, `e`.`name` as `enemy_name`, `guild_wars`.`status` as `status`, `g`.`id` as `guild_id`, `e`.`id` as `enemy_id`, `guild_wars`.*   FROM `guild_wars` LEFT JOIN `guilds` as `g` ON `guild_wars`.`guild_id` = `g`.`id` LEFT JOIN `guilds` as `e` ON `guild_wars`.`enemy_id` = `e`.`id` WHERE (`end` > 0 AND (`end` + " << tmpInterval << ") > UNIX_TIMESTAMP()) AND `status` IN (7,8)";
+	if((result = db->storeQuery(query.str()))) {
 		do
 		{
 			if (result->getDataInt("status") == 7) {
