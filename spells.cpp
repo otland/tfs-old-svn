@@ -857,7 +857,7 @@ bool Spell::checkInstantSpell(Player* player, Creature* creature)
 		|| player->getSkullType(targetPlayer) != SKULL_NONE)
 		return true;
 
-	if(player->getSecureMode() == SECUREMODE_ON)
+	if(player->getSecureMode() == SECUREMODE_ON && !player->isEnemy(target->getPlayer(), false))
 	{
 		player->sendCancelMessage(RET_TURNSECUREMODETOATTACKUNMARKEDPLAYERS);
 		g_game.addMagicEffect(player->getPosition(), MAGIC_EFFECT_POFF);
@@ -1019,7 +1019,7 @@ bool Spell::checkRuneSpell(Player* player, const Position& toPos)
 		|| player->getSkullType(targetPlayer) != SKULL_NONE)
 		return true;
 
-	if(player->getSecureMode() == SECUREMODE_ON)
+	if(player->getSecureMode() == SECUREMODE_ON && !player->isEnemy(target->getPlayer(), false))
 	{
 		player->sendCancelMessage(RET_TURNSECUREMODETOATTACKUNMARKEDPLAYERS);
 		g_game.addMagicEffect(player->getPosition(), MAGIC_EFFECT_POFF);
