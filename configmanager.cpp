@@ -189,6 +189,7 @@ bool ConfigManager::load()
 	m_confBool[GENERATE_ACCOUNT_NUMBER]	= getGlobalBool("generateAccountNumber", false);
 	m_confBool[GENERATE_ACCOUNT_SALT] = getGlobalBool("generateAccountSalt", false);
 	m_confBool[INGAME_GUILD_MANAGEMENT]	= getGlobalBool("ingameGuildManagement", true);
+	m_confBool[EXTERNAL_GUILD_WARS_MANAGEMENT]	= getGlobalBool("externalGuildWarsManagement", false);
 	m_confNumber[LEVEL_TO_FORM_GUILD] = getGlobalNumber("levelToFormGuild", 8);
 	m_confNumber[MIN_GUILDNAME]	= getGlobalNumber("guildNameMinLength", 4);
 	m_confNumber[MAX_GUILDNAME]	= getGlobalNumber("guildNameMaxLength", 20);

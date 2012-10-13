@@ -132,7 +132,7 @@ typedef std::vector<std::string> StatusList;
 #define EVENT_DECAYINTERVAL 250
 #define EVENT_DECAYBUCKETS 4
 #define STATE_DELAY 1000
-#define EVENT_WARSINTERVAL 900000
+#define EVENT_WARSINTERVAL 450000
 
 /**
   * Main Game class.
@@ -696,6 +696,7 @@ class Game
 		uint32_t playersRecord;
 		uint32_t checkLightEvent, checkCreatureEvent, checkDecayEvent, saveEvent;
 		uint32_t checkWarsEvent;
+		bool checkEndingWars;
 
 		RefreshTiles refreshTiles;
 		Trash trash;

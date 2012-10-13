@@ -88,6 +88,7 @@ Game::Game()
 
 	lastBucket = checkCreatureLastIndex = checkLightEvent = checkCreatureEvent = checkDecayEvent = saveEvent = 0;
 	checkWarsEvent = 0;
+	checkEndingWars = false;
 }
 
 Game::~Game()
@@ -224,6 +225,7 @@ void Game::setGameState(GameState_t newState)
 					IOLoginData::getInstance()->updatePremiumDays();
 
 				IOGuild::getInstance()->checkWars();
+				IOGuild::getInstance()->checkEndingWars();
 
 				if(g_config.getBool(ConfigManager::MARKET_ENABLED))
 				{
@@ -5206,7 +5208,15 @@ void Game::checkLight()
 
 void Game::checkWars()
 {
+	//executes every EVENT_WARSINTERVAL
 	IOGuild::getInstance()->checkWars();
+	if (checkEndingWars) {
+		//executes every EVENT_WARSINTERVAL*2
+		checkEndingWars = false;
+		IOGuild::getInstance()->checkEndingWars();
+	} else
+		checkEndingWars = true;
+
 	checkWarsEvent = Scheduler::getInstance().addEvent(createSchedulerTask(EVENT_WARSINTERVAL,
 		boost::bind(&Game::checkWars, this)));
 }

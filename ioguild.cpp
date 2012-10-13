@@ -392,6 +392,7 @@ bool IOGuild::setMotd(uint32_t guild, const std::string& newMessage)
 	return db->query(query.str());
 }
 
+
 std::string IOGuild::getMotd(uint32_t guild)
 {
 	Database* db = Database::getInstance();
@@ -407,12 +408,175 @@ std::string IOGuild::getMotd(uint32_t guild)
 	return motd;
 }
 
+
 void IOGuild::checkWars()
+{
+	if (!g_config.getBool(ConfigManager::EXTERNAL_GUILD_WARS_MANAGEMENT))
+		return;
+
+	Database* db = Database::getInstance();
+	DBResult* result;
+
+	DBQuery query;
+
+	// I don't know if there any easier way to make it right.
+	// If exists other solution just let me know.
+	// NOTE:
+	// status states 6,7,8,9 are additional only for external management, do not anything in talkaction, those states make possible to manage wars for example from webpage
+	// status 6 means accepted invite, it's before proper start of war
+	// status 7 means 'mend fences', related to signed an armistice declaration by enemy
+	// status 8 means ended up, when guild ended up war without signed an armistice declaration by enemy
+	// status 9 means signed an armistice declaration by enemy
+	std::stringstream s;
+	uint32_t tmpInterval = (uint32_t) (EVENT_WARSINTERVAL/1000)+10; //+10 for sure
+
+	
+	query << "SELECT `g`.`name` as `guild_name`, `e`.`name` as `enemy_name`, `guild_wars`.`frags` as `frags`  FROM `guild_wars` LEFT JOIN `guilds` as `g` ON `guild_wars`.`guild_id` = `g`.`id` LEFT JOIN `guilds` as `e` ON `guild_wars`.`enemy_id` = `e`.`id` WHERE (`begin` > 0 AND (`begin` + " << tmpInterval << ") > UNIX_TIMESTAMP()) AND `status` IN (0, 6)";
+	if((bool) (result = db->storeQuery(query.str())) == true) {
+		do
+		{
+			s << result->getDataString("guild_name") << " has invited " << result->getDataString("enemy_name") << " to war till " << result->getDataInt("frags") << " frags.";
+			g_game.broadcastMessage(s.str().c_str(), MSG_EVENT_ADVANCE);
+			s.str("");
+		}
+		while(result->next());
+		result->free();
+	}
+
+	query.str("");
+
+	query << "UPDATE `guild_wars` SET `begin` = UNIX_TIMESTAMP(), `end` = ((`end` - `begin`) + UNIX_TIMESTAMP()), `status` = 1 WHERE `status` = 6";
+	db->query(query.str());
+
+	query.str("");
+
+	query << "SELECT `g`.`name` as `guild_name`, `e`.`name` as `enemy_name`, `g`.`id` as `guild_id`, `e`.`id` as `enemy_id`, `guild_wars`.*  FROM `guild_wars` LEFT JOIN `guilds` as `g` ON `guild_wars`.`guild_id` = `g`.`id` LEFT JOIN `guilds` as `e` ON `guild_wars`.`enemy_id` = `e`.`id` WHERE (`begin` > 0 AND (`begin` + " << tmpInterval << ") > UNIX_TIMESTAMP()) AND `status` = 1)";
+	if((bool) (result = db->storeQuery(query.str())) == true) {
+		do
+		{
+			s << result->getDataString("enemy_name") << " accepted " << result->getDataString("guild_name") << " invitation to war.";
+			g_game.broadcastMessage(s.str().c_str(), MSG_EVENT_ADVANCE);
+			s.str("");
+
+			War_t tmp;
+			tmp.war = result->getDataInt("id");
+			tmp.ids[WAR_GUILD] = result->getDataInt("guild_id");
+			tmp.ids[WAR_ENEMY] = result->getDataInt("enemy_id");
+			for(AutoList<Player>::iterator it = Player::autoList.begin(); it != Player::autoList.end(); ++it)
+			{
+				if(it->second->isRemoved())
+					continue;
+
+				bool update = false;
+				if(it->second->getGuildId() == tmp.ids[WAR_GUILD])
+				{
+					tmp.type = WAR_ENEMY;
+					it->second->addEnemy(tmp.ids[WAR_ENEMY], tmp);
+					update = true;
+				}
+				else if(it->second->getGuildId() == tmp.ids[WAR_ENEMY])
+				{
+					tmp.type = WAR_ENEMY;
+					it->second->addEnemy(tmp.ids[WAR_GUILD], tmp);
+					update = true;
+				}
+
+				if(update)
+					g_game.updateCreatureEmblem(it->second);
+			}
+		}
+		while(result->next());
+		result->free();
+	}
+
+	query.str("");
+
+	query << "SELECT `g`.`name` as `guild_name`, `e`.`name` as `enemy_name`  FROM `guild_wars` LEFT JOIN `guilds` as `g` ON `guild_wars`.`guild_id` = `g`.`id` LEFT JOIN `guilds` as `e` ON `guild_wars`.`enemy_id` = `e`.`id` WHERE (`end` > 0 AND (`end` + " << tmpInterval << ") > UNIX_TIMESTAMP()) AND `status` = 2)";
+	if((bool) (result = db->storeQuery(query.str())) == true) {
+		do
+		{
+			s << result->getDataString("enemy_name") << " rejected " << result->getDataString("guild_name") << " invitation to war.";
+			g_game.broadcastMessage(s.str().c_str(), MSG_EVENT_ADVANCE);
+			s.str("");
+		}
+		while(result->next());
+		result->free();
+	}
+
+	query.str("");
+ 
+	query << "SELECT `g`.`name` as `guild_name`, `e`.`name` as `enemy_name`  FROM `guild_wars` LEFT JOIN `guilds` as `g` ON `guild_wars`.`guild_id` = `g`.`id` LEFT JOIN `guilds` as `e` ON `guild_wars`.`enemy_id` = `e`.`id` WHERE (`end` > 0 AND (`end` + " << tmpInterval << ") > UNIX_TIMESTAMP()) AND `status` = 3)";
+	if((bool) (result = db->storeQuery(query.str())) == true) {
+		do
+		{
+			s << result->getDataString("guild_name") << " canceled invitation to a war with " << result->getDataString("enemy_name") << ".";
+			g_game.broadcastMessage(s.str().c_str(), MSG_EVENT_ADVANCE);
+			s.str("");
+		}
+		while(result->next());
+		result->free();
+	}
+
+	query.str("");
+
+	query << "SELECT `g`.`name` as `guild_name`, `e`.`name` as `enemy_name`, `guild_wars`.`status` as `status`, `g`.`id` as `guild_id`, `e`.`id` as `enemy_id`, `guild_wars`.*   FROM `guild_wars` LEFT JOIN `guilds` as `g` ON `guild_wars`.`guild_id` = `g`.`id` LEFT JOIN `guilds` as `e` ON `guild_wars`.`enemy_id` = `e`.`id` WHERE (`end` > 0 AND (`end` + " << tmpInterval << ") > UNIX_TIMESTAMP()) AND `status` IN (7,8))";
+	if((bool) (result = db->storeQuery(query.str())) == true) {
+		do
+		{
+			if (result->getDataInt("status") == 7) {
+				s << result->getDataString("guild_name") << " has mend fences with " << result->getDataString("enemy_name") << ".";
+			} else {
+				s << result->getDataString("guild_name") << " has ended up a war with " << result->getDataString("enemy_name") << ".";
+			}
+			
+			War_t tmp;
+			tmp.war = result->getDataInt("id");
+			tmp.ids[WAR_GUILD] = result->getDataInt("guild_id");
+			tmp.ids[WAR_ENEMY] = result->getDataInt("enemy_id");
+			for(AutoList<Player>::iterator it = Player::autoList.begin(); it != Player::autoList.end(); ++it)
+			{
+				if(it->second->isRemoved())
+					continue;
+
+				bool update = false;
+				if(it->second->getGuildId() == tmp.ids[WAR_GUILD])
+				{
+					it->second->removeEnemy(tmp.ids[WAR_ENEMY]);
+					update = true;
+				}
+				else if(it->second->getGuildId() == tmp.ids[WAR_ENEMY])
+				{
+					it->second->removeEnemy(tmp.ids[WAR_GUILD]);
+					update = true;
+				}
+
+				if(update)
+					g_game.updateCreatureEmblem(it->second);
+			}
+
+			g_game.broadcastMessage(s.str().c_str(), MSG_EVENT_ADVANCE);
+			s.str("");
+		}
+		while(result->next());
+		result->free();
+	}
+
+	query.str("");
+
+	query << "UPDATE `guild_wars` SET `end` = UNIX_TIMESTAMP(), `status` = 5 WHERE `status` IN (7,8)";
+	db->query(query.str());
+
+	query.str("");
+
+}
+
+void IOGuild::checkEndingWars()
 {
 	Database* db = Database::getInstance();
 	DBResult* result;
 
 	DBQuery query;
+	
 	query << "SELECT `id`, `guild_id`, `enemy_id` FROM `guild_wars` WHERE `status` IN (1,4) AND `end` > 0 AND `end` < " << time(NULL);
 	if(!(result = db->storeQuery(query.str())))
 		return;
