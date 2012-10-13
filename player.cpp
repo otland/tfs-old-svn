@@ -1564,11 +1564,11 @@ void Player::onCreatureAppear(const Creature* creature)
 				}
 				else if(offlineTrainingSkill == SKILL__MAGLEVEL)
 				{
-					int32_t gainTicks = vocation->getGain(GAIN_MANA) << 1;
+					int32_t gainTicks = vocation->getGainTicks(GAIN_MANA); //why the f... previously here was gainmana ...?
 					if(gainTicks == 0)
 						gainTicks = 1;
 
-					addOfflineTrainingTries(SKILL__MAGLEVEL, offlineTrainingTime * (vocation->getGainAmount(GAIN_MANA) / gainTicks));
+					addOfflineTrainingTries(SKILL__MAGLEVEL, (int32_t) ((float) offlineTrainingTime * ((float) vocation->getGainAmount(GAIN_MANA) / (float) gainTicks)));
 				}
 
 				if(addOfflineTrainingTries(SKILL_SHIELD, offlineTrainingTime / 4))
@@ -5728,6 +5728,8 @@ bool Player::addOfflineTrainingTries(skills_t skill, int32_t tries)
 			tries -= nextReqMana - manaSpent;
 			manaSpent = 0;
 
+			magLevel++;
+
 			CreatureEventList advanceEvents = getCreatureEvents(CREATURE_EVENT_ADVANCE);
 			for(CreatureEventList::iterator it = advanceEvents.begin(); it != advanceEvents.end(); ++it)
 				(*it)->executeAdvance(this, SKILL__MAGLEVEL, (magLevel - 1), magLevel);
@@ -5822,6 +5824,6 @@ bool Player::addOfflineTrainingTries(skills_t skill, int32_t tries)
 
 	std::ostringstream ss;
 	ss << std::fixed << std::setprecision(2) << "Your " << ucwords(getSkillName(skill)) << " skill changed from level " << oldSkillValue << " (with " << oldPercentToNextLevel << "% progress towards level " << (oldSkillValue + 1) << ") to level " << newSkillValue << " (with " << newPercentToNextLevel << "% progress towards level " << (newSkillValue + 1) << ")";
-	sendTextMessage(MSG_EVENT_ADVANCE, ss.str());
+	sendTextMessage(MSG_EVENT_ADVANCE, ss.str().c_str());
 	return true;
 }
