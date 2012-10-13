@@ -1564,7 +1564,7 @@ void Player::onCreatureAppear(const Creature* creature)
 				}
 				else if(offlineTrainingSkill == SKILL__MAGLEVEL)
 				{
-					int32_t gainTicks = vocation->getGainTicks(GAIN_MANA); //why the f... previously here was gainmana ...?
+					int32_t gainTicks = vocation->getGainTicks(GAIN_MANA) << 1; //why the f... previously here was gainmana ...?
 					if(gainTicks == 0)
 						gainTicks = 1;
 
