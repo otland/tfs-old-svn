@@ -450,7 +450,7 @@ void IOGuild::checkWars()
 
 	query.str("");
 
-	query << "SELECT `g`.`name` as `guild_name`, `e`.`name` as `enemy_name`, `g`.`id` as `guild_id`, `e`.`id` as `enemy_id`, `guild_wars`.*  FROM `guild_wars` LEFT JOIN `guilds` as `g` ON `guild_wars`.`guild_id` = `g`.`id` LEFT JOIN `guilds` as `e` ON `guild_wars`.`enemy_id` = `e`.`id` WHERE (`begin` > 0 AND (`begin` + " << tmpInterval << ") > UNIX_TIMESTAMP()) AND `status` = 1)";
+	query << "SELECT `g`.`name` as `guild_name`, `e`.`name` as `enemy_name`, `g`.`id` as `guild_id`, `e`.`id` as `enemy_id`, `guild_wars`.*  FROM `guild_wars` LEFT JOIN `guilds` as `g` ON `guild_wars`.`guild_id` = `g`.`id` LEFT JOIN `guilds` as `e` ON `guild_wars`.`enemy_id` = `e`.`id` WHERE (`begin` > 0 AND (`begin` + " << tmpInterval << ") > UNIX_TIMESTAMP()) AND `status` = 1";
 	if((result = db->storeQuery(query.str()))) {
 		do
 		{
@@ -491,7 +491,7 @@ void IOGuild::checkWars()
 
 	query.str("");
 
-	query << "SELECT `g`.`name` as `guild_name`, `e`.`name` as `enemy_name`  FROM `guild_wars` LEFT JOIN `guilds` as `g` ON `guild_wars`.`guild_id` = `g`.`id` LEFT JOIN `guilds` as `e` ON `guild_wars`.`enemy_id` = `e`.`id` WHERE (`end` > 0 AND (`end` + " << tmpInterval << ") > UNIX_TIMESTAMP()) AND `status` = 2)";
+	query << "SELECT `g`.`name` as `guild_name`, `e`.`name` as `enemy_name`  FROM `guild_wars` LEFT JOIN `guilds` as `g` ON `guild_wars`.`guild_id` = `g`.`id` LEFT JOIN `guilds` as `e` ON `guild_wars`.`enemy_id` = `e`.`id` WHERE (`end` > 0 AND (`end` + " << tmpInterval << ") > UNIX_TIMESTAMP()) AND `status` = 2";
 	if((result = db->storeQuery(query.str()))) {
 		do
 		{
@@ -505,7 +505,7 @@ void IOGuild::checkWars()
 
 	query.str("");
  
-	query << "SELECT `g`.`name` as `guild_name`, `e`.`name` as `enemy_name`  FROM `guild_wars` LEFT JOIN `guilds` as `g` ON `guild_wars`.`guild_id` = `g`.`id` LEFT JOIN `guilds` as `e` ON `guild_wars`.`enemy_id` = `e`.`id` WHERE (`end` > 0 AND (`end` + " << tmpInterval << ") > UNIX_TIMESTAMP()) AND `status` = 3)";
+	query << "SELECT `g`.`name` as `guild_name`, `e`.`name` as `enemy_name`  FROM `guild_wars` LEFT JOIN `guilds` as `g` ON `guild_wars`.`guild_id` = `g`.`id` LEFT JOIN `guilds` as `e` ON `guild_wars`.`enemy_id` = `e`.`id` WHERE (`end` > 0 AND (`end` + " << tmpInterval << ") > UNIX_TIMESTAMP()) AND `status` = 3";
 	if((result = db->storeQuery(query.str()))) {
 		do
 		{
