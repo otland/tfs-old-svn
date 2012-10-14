@@ -386,7 +386,7 @@ class Player : public Creature, public Cylinder
 		//modal dialog
 		void callbackModalDialog(uint32_t dialog, uint8_t button, uint8_t choice);
 		void checkOfflineTrainingDialogAnswer(uint8_t button, uint8_t choice);
-		void showOfflineTrainingDialog(BedItem* _bed);
+		void showOfflineTrainingDialog(Position pos);
 
 		//safe-trade functions
 		void setTradeState(tradestate_t state) {tradeState = state;}
@@ -1000,7 +1000,7 @@ class Player : public Creature, public Cylinder
 		OutfitMap outfits;
 		LearnedInstantSpellList learnedInstantSpellList;
 		WarMap warMap;
-		BedItem* bed;
+		Position bedPos;
 
 		friend class Game;
 		friend class LuaInterface;

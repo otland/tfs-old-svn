@@ -5869,22 +5869,25 @@ void Player::checkOfflineTrainingDialogAnswer(uint8_t button, uint8_t choice)
 			return;
 			break;
 	}
-	if (bed->canUse(this)) {
-		Position pos = bed->getPosition();
-		Position pos2 = this->getPosition();
-		if ((pos.x - pos2.x) > 1 || (pos.x - pos2.x) < -1)
+
+	if(Tile* tile = g_game.getMap()->getTile(bedPos)) {
+		BedItem* bed = tile->getBedItem();
+		if (bed->canUse(this)) {
+			Position pos = this->getPosition();
+			if ((pos.x - bedPos.x) > 1 || (pos.x - bedPos.x) < -1)
+				return;
+			if ((pos.y - bedPos.y) > 1 || (pos.y - bedPos.y) < -1)
+				return;
+			if (pos.z != bedPos.z)
+				return;
+			bed->sleep(this);
 			return;
-		if ((pos.y - pos2.y) > 1 || (pos.y - pos2.y) < -1)
-			return;
-		if (pos.z != pos2.z)
-			return;
-		bed->sleep(this);
-		return;
+		}
 	}
 	setOfflineTrainingSkill(-1);
 }
 
-void Player::showOfflineTrainingDialog(BedItem* _bed) {
+void Player::showOfflineTrainingDialog(Position pos) {
 	ModalDialog tmp;
 	tmp.id = OFFLINE_TRAINING_DIALOG_ID;
 	tmp.title = "Choose a skill";
@@ -5922,6 +5925,7 @@ void Player::showOfflineTrainingDialog(BedItem* _bed) {
 
 	tmp.buttonEnter = 1;
 	tmp.buttonEscape = 2;
-	bed = _bed;
+	
+	bedPos = pos;
 	sendModalDialog(tmp);
 }
