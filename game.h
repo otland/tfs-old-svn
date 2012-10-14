@@ -531,6 +531,7 @@ class Game
 		bool playerCreateMarketOffer(uint32_t playerId, uint8_t type, uint16_t spriteId, uint16_t amount, uint32_t price, bool anonymous);
 		bool playerCancelMarketOffer(uint32_t playerId, uint32_t timestamp, uint16_t counter);
 		bool playerAcceptMarketOffer(uint32_t playerId, uint32_t timestamp, uint16_t counter, uint16_t amount);
+		bool playerAnswerModalDialog(uint32_t playerId, uint32_t dialog, uint8_t button, uint8_t choice);
 		void checkExpiredMarketOffers();
 
 		void kickPlayer(uint32_t playerId, bool displayEffect);

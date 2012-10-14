@@ -859,6 +859,9 @@ void ProtocolGame::parsePacket(NetworkMessage &msg)
 				parseMarketAcceptOffer(msg);
 				break;
 
+			case 0xF9:
+				parseModalDialogAnswer(msg);
+				break;
 			default:
 			{
 				std::stringstream s;
@@ -3726,6 +3729,42 @@ void ProtocolGame::AddShopItem(NetworkMessage_ptr msg, const ShopInfo& item)
 	msg->put<uint32_t>(uint32_t(it.weight * 100));
 	msg->put<uint32_t>(item.buyPrice);
 	msg->put<uint32_t>(item.sellPrice);
+}
+
+void ProtocolGame::sendModalDialog(ModalDialog& dialog) {
+	NetworkMessage_ptr msg = getOutputBuffer();
+	if(!msg)
+		return;
+
+	TRACK_MESSAGE(msg);
+	msg->put<char>(0xFA);
+	msg->put<uint32_t>(dialog.id); //id
+	msg->putString(dialog.title); // title
+	msg->putString(dialog.message); //message
+	msg->put<uint8_t>(dialog.buttons.size()); //count of buttons
+
+	for (std::vector<ModalChoice>::iterator it = dialog.buttons.begin(); it != dialog.buttons.end(); it++) {
+		msg->putString(it->value); //button
+		msg->put<uint8_t>(it->id); //button id
+	}
+	
+	msg->put<uint8_t>(dialog.choices.size()); //count of choices
+
+	for (std::vector<ModalChoice>::iterator it = dialog.choices.begin(); it != dialog.choices.end(); it++) {
+		msg->putString(it->value); //choice
+		msg->put<uint8_t>(it->id); //choice id
+	}
+
+	msg->put<uint8_t>(dialog.buttonEnter); //default enter button
+	msg->put<uint8_t>(dialog.buttonEscape); //default escape button
+	msg->put<bool>(dialog.popup); //popup priority
+}
+
+void ProtocolGame::parseModalDialogAnswer(NetworkMessage& msg) {
+	uint32_t dialog = msg.get<uint32_t>();
+	uint8_t button = msg.get<uint8_t>();
+	uint8_t choice = msg.get<uint8_t>();
+	addGameTask(&Game::playerAnswerModalDialog, player->getID(), dialog, button, choice);
 }
 
 void ProtocolGame::parseExtendedOpcode(NetworkMessage& msg)

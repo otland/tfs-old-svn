@@ -5827,3 +5827,93 @@ bool Player::addOfflineTrainingTries(skills_t skill, int32_t tries)
 	sendTextMessage(MSG_EVENT_ADVANCE, ss.str().c_str());
 	return true;
 }
+
+void Player::callbackModalDialog(uint32_t dialog, uint8_t button, uint8_t choice)
+{
+	switch (dialog) {
+		case OFFLINE_TRAINING_DIALOG_ID:
+			checkOfflineTrainingDialogAnswer(button, choice);
+			break;
+		default:
+			break;
+	}
+}
+
+void Player::checkOfflineTrainingDialogAnswer(uint8_t button, uint8_t choice)
+{
+	switch (button) {
+		case 1:
+			break;
+		default: case 2:
+			return;
+			break;
+	}
+
+	switch (choice) {
+		case 1:
+			setOfflineTrainingSkill(SKILL_SWORD);
+			break;
+		case 2:
+			setOfflineTrainingSkill(SKILL_AXE);
+			break;
+		case 3:
+			setOfflineTrainingSkill(SKILL_CLUB);
+			break;
+		case 4:
+			setOfflineTrainingSkill(SKILL_DIST);
+			break;
+		case 5:
+			setOfflineTrainingSkill(SKILL__MAGLEVEL);
+			break;
+		default:
+			return;
+			break;
+	}
+	if (bed->canUse(this)) {
+		bed->sleep(this);
+		return;
+	}
+	setOfflineTrainingSkill(-1);
+}
+
+void Player::showOfflineTrainingDialog(BedItem* _bed) {
+	ModalDialog tmp;
+	tmp.id = OFFLINE_TRAINING_DIALOG_ID;
+	tmp.title = "Choose a skill";
+	tmp.message = "Please choose a skill:";
+	tmp.popup = true;
+
+	ModalChoice tmpChoice;
+	tmpChoice.id = 1;
+	tmpChoice.value = "Okay";
+	tmp.buttons.push_back(tmpChoice);
+
+	tmpChoice.id = 2;
+	tmpChoice.value = "Cancel";
+	tmp.buttons.push_back(tmpChoice);
+
+	tmpChoice.id = 1;
+	tmpChoice.value = "Sword Fighting and Shielding";
+	tmp.choices.push_back(tmpChoice);
+
+	tmpChoice.id = 2;
+	tmpChoice.value = "Axe Fighting and Shielding";
+	tmp.choices.push_back(tmpChoice);
+
+	tmpChoice.id = 3;
+	tmpChoice.value = "Club Fighting and Shielding";
+	tmp.choices.push_back(tmpChoice);
+
+	tmpChoice.id = 4;
+	tmpChoice.value = "Distance Fighting and Shielding";
+	tmp.choices.push_back(tmpChoice);
+
+	tmpChoice.id = 5;
+	tmpChoice.value = "Magic Level and Shielding";
+	tmp.choices.push_back(tmpChoice);
+
+	tmp.buttonEnter = 1;
+	tmp.buttonEscape = 2;
+	bed = _bed;
+	sendModalDialog(tmp);
+}

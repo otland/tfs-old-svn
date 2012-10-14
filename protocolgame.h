@@ -326,6 +326,10 @@ class ProtocolGame : public Protocol
 		//shop
 		void AddShopItem(NetworkMessage_ptr msg, const ShopInfo& item);
 
+		//modal dialog
+		void parseModalDialogAnswer(NetworkMessage& msg);
+		void sendModalDialog(ModalDialog& dialog);
+
 		void parseExtendedOpcode(NetworkMessage& msg);
 		void sendExtendedOpcode(uint8_t opcode, const std::string& buffer);
 

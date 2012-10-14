@@ -453,6 +453,38 @@ struct MarketStatistics
 	uint32_t lowestPrice;
 };
 
+struct ModalChoice
+{
+	ModalChoice() 
+	{
+		id = 0;
+		value = "";
+	}
+	uint32_t id;
+	std::string value;
+};
+
+struct ModalDialog {
+	ModalDialog() 
+	{
+		id = 0;
+		title = "";
+		message = "";
+		buttonEnter = 0;
+		buttonEscape = 0;
+		popup = false;
+	}
+	uint32_t id;
+	std::string title;
+	std::string message;
+	uint8_t buttonEnter;
+	uint8_t buttonEscape; 
+	std::vector<ModalChoice> buttons; 
+	std::vector<ModalChoice> choices;
+	bool popup;
+	//boost::function<void (uint8_t, uint8_t)> func;
+};
+
 typedef std::list<MarketOffer> MarketOfferList;
 typedef std::list<ExpiredMarketOffer> ExpiredMarketOfferList;
 typedef std::list<HistoryMarketOffer> HistoryMarketOfferList;

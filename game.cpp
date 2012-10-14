@@ -6879,6 +6879,16 @@ bool Game::playerAcceptMarketOffer(uint32_t playerId, uint32_t timestamp, uint16
 	return true;
 }
 
+bool Game::playerAnswerModalDialog(uint32_t playerId, uint32_t dialog, uint8_t button, uint8_t choice)
+{
+	Player* player = getPlayerByID(playerId);
+	if(!player || player->isRemoved())
+		return false;
+
+	player->callbackModalDialog(dialog, button, choice);
+	return true;
+}
+
 void Game::checkExpiredMarketOffers()
 {
 	IOMarket::getInstance()->clearOldHistory();

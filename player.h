@@ -126,6 +126,7 @@ typedef std::map<uint32_t, War_t> WarMap;
 #define SPEED_MIN 10
 #define STAMINA_MAX (42 * 60 * 60 * 1000)
 #define STAMINA_MULTIPLIER (60 * 1000)
+#define OFFLINE_TRAINING_DIALOG_ID 1
 
 class Player : public Creature, public Cylinder
 {
@@ -381,6 +382,11 @@ class Player : public Creature, public Cylinder
 		void setSentChat(bool sending) {sentChat = sending;}
 
 		virtual RaceType_t getRace() const {return RACE_BLOOD;}
+
+		//modal dialog
+		void callbackModalDialog(uint32_t dialog, uint8_t button, uint8_t choice);
+		void checkOfflineTrainingDialogAnswer(uint8_t button, uint8_t choice);
+		void showOfflineTrainingDialog(BedItem* _bed);
 
 		//safe-trade functions
 		void setTradeState(tradestate_t state) {tradeState = state;}
@@ -742,6 +748,8 @@ class Player : public Creature, public Cylinder
 			{if(client) client->sendTutorial(tutorialId);}
 		void sendAddMarker(const Position& pos, MapMarks_t markType, const std::string& desc)
 			{if(client) client->sendAddMarker(pos, markType, desc);}
+		void sendModalDialog(ModalDialog& dialog)
+			{if(client) client->sendModalDialog(dialog);}
 
 		void sendCritical() const;
 		void sendPlayerIcons(Player* player);
@@ -992,6 +1000,7 @@ class Player : public Creature, public Cylinder
 		OutfitMap outfits;
 		LearnedInstantSpellList learnedInstantSpellList;
 		WarMap warMap;
+		BedItem* bed;
 
 		friend class Game;
 		friend class LuaInterface;
