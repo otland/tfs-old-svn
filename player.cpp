@@ -5904,23 +5904,23 @@ void Player::showOfflineTrainingDialog(Position pos) {
 	tmp.buttons.push_back(tmpChoice);
 
 	tmpChoice.id = 1;
-	tmpChoice.value = "Sword Fighting and Shielding";
+	tmpChoice.value = ucwords(getSkillName(SKILL_SWORD));
 	tmp.choices.push_back(tmpChoice);
 
 	tmpChoice.id = 2;
-	tmpChoice.value = "Axe Fighting and Shielding";
+	tmpChoice.value = ucwords(getSkillName(SKILL_AXE));
 	tmp.choices.push_back(tmpChoice);
 
 	tmpChoice.id = 3;
-	tmpChoice.value = "Club Fighting and Shielding";
+	tmpChoice.value = ucwords(getSkillName(SKILL_CLUB));
 	tmp.choices.push_back(tmpChoice);
 
 	tmpChoice.id = 4;
-	tmpChoice.value = "Distance Fighting and Shielding";
+	tmpChoice.value = ucwords(getSkillName(SKILL_DIST));
 	tmp.choices.push_back(tmpChoice);
 
 	tmpChoice.id = 5;
-	tmpChoice.value = "Magic Level and Shielding";
+	tmpChoice.value = ucwords(getSkillName(SKILL__MAGLEVEL));
 	tmp.choices.push_back(tmpChoice);
 
 	tmp.buttonEnter = 1;
