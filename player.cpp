@@ -5870,6 +5870,14 @@ void Player::checkOfflineTrainingDialogAnswer(uint8_t button, uint8_t choice)
 			break;
 	}
 	if (bed->canUse(this)) {
+		Position pos = bed->getPosition();
+		Position pos2 = this->getPosition();
+		if ((pos.x - pos2.x) > 1 || (pos.x - pos2.x) < -1)
+			return;
+		if ((pos.y - pos2.y) > 1 || (pos.y - pos2.y) < -1)
+			return;
+		if (pos.z != pos2.z)
+			return;
 		bed->sleep(this);
 		return;
 	}
