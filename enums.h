@@ -314,6 +314,23 @@ enum WarType_t
 	WAR_LAST = WAR_ENEMY
 };
 
+enum VipIcon_t
+{
+	VIP_ICON_FIRST = 0,
+	VIP_ICON_NONE = VIP_ICON_FIRST,
+	VIP_ICON_HEART,
+	VIP_ICON_SKULL,
+	VIP_ICON_LIGHTNING,
+	VIP_ICON_CROSSHAIR,
+	VIP_ICON_STAR,
+	VIP_ICON_JINJANG,
+	VIP_ICON_TRIANGLE,
+	VIP_ICON_CROSS,
+	VIP_ICON_CASH,
+	VIP_ICON_MEDAL,
+	VIP_ICON_LAST = VIP_ICON_MEDAL
+};
+
 struct War_t
 {
 	War_t()
@@ -464,7 +481,8 @@ struct ModalChoice
 	std::string value;
 };
 
-struct ModalDialog {
+struct ModalDialog
+{
 	ModalDialog() 
 	{
 		id = 0;
@@ -483,6 +501,20 @@ struct ModalDialog {
 	std::vector<ModalChoice> choices;
 	bool popup;
 	//boost::function<void (uint8_t, uint8_t)> func;
+};
+
+struct VIP_t
+{
+	VIP_t()
+	{
+		icon = VIP_ICON_FIRST;
+		description = "";
+		notify = false;
+	};
+
+	uint32_t icon;
+	std::string description;
+	bool notify;
 };
 
 typedef std::list<MarketOffer> MarketOfferList;

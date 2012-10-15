@@ -782,17 +782,20 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool preLo
 	//load vip
 	query.str("");
 	if(!g_config.getBool(ConfigManager::VIPLIST_PER_PLAYER))
-		query << "SELECT `player_id` AS `vip` FROM `account_viplist` WHERE `account_id` = " << account.number << " AND `world_id` = " << g_config.getNumber(ConfigManager::WORLD_ID);
+		query << "SELECT `player_id` AS `vip`, `description`, `icon`, `notify` FROM `account_viplist` WHERE `account_id` = " << account.number << " AND `world_id` = " << g_config.getNumber(ConfigManager::WORLD_ID);
 	else
-		query << "SELECT `vip_id` AS `vip` FROM `player_viplist` WHERE `player_id` = " << player->getGUID();
+		query << "SELECT `vip_id` AS `vip`, `description`, `icon`, `notify` FROM `player_viplist` WHERE `player_id` = " << player->getGUID();
 
 	if((result = db->storeQuery(query.str())))
 	{
 		do
 		{
 			uint32_t vid = result->getDataInt("vip");
+			uint32_t icon = result->getDataInt("icon");
+			std::string description = result->getDataString("description");
+			bool notify = (bool) result->getDataInt("notify");
 			if(storeNameByGuid(vid))
-				player->addVIP(vid, "", false, true);
+				player->addVIP(vid, "", description, icon, notify, false, true);
 		}
 		while(result->next());
 		result->free();
@@ -1130,20 +1133,20 @@ bool IOLoginData::savePlayer(Player* player, bool preSave/* = true*/, bool shall
 		return false;
 
 	if(!g_config.getBool(ConfigManager::VIPLIST_PER_PLAYER))
-		stmt.setQuery("INSERT INTO `account_viplist` (`account_id`, `world_id`, `player_id`) VALUES ");
+		stmt.setQuery("INSERT INTO `account_viplist` (`account_id`, `world_id`, `player_id`, `description`, `icon`, `notify`) VALUES ");
 	else
-		stmt.setQuery("INSERT INTO `player_viplist` (`player_id`, `vip_id`) VALUES ");
+		stmt.setQuery("INSERT INTO `player_viplist` (`player_id`, `vip_id`, `description`, `icon`, `notify`) VALUES ");
 
 	query.str("");
-	for(VIPSet::iterator it = player->VIPList.begin(); it != player->VIPList.end(); ++it)
+	for(VIPMap::iterator it = player->VIPList.begin(); it != player->VIPList.end(); ++it)
 	{
-		if(!playerExists(*it, false, false))
+		if(!playerExists((*it).first, false, false))
 			continue;
 
 		if(!g_config.getBool(ConfigManager::VIPLIST_PER_PLAYER))
-			query << player->getAccount() << "," << g_config.getNumber(ConfigManager::WORLD_ID) << "," << (*it);
+			query << player->getAccount() << "," << g_config.getNumber(ConfigManager::WORLD_ID) << "," << (*it).first << "," << db->escapeString((*it).second.description) << "," << (*it).second.icon << "," << (*it).second.notify;
 		else
-			query << player->getGUID() << "," << (*it);
+			query << player->getGUID() << "," << (*it).first << "," << db->escapeString((*it).second.description) << "," << (*it).second.icon << "," << (*it).second.notify;
 
 		if(!stmt.addRow(query))
 			return false;
@@ -1709,7 +1712,7 @@ DeleteCharacter_t IOLoginData::deleteCharacter(uint32_t accountId, const std::st
 
 	for(AutoList<Player>::iterator it = Player::autoList.begin(); it != Player::autoList.end(); ++it)
 	{
-		VIPSet::iterator it_ = it->second->VIPList.find(id);
+		VIPMap::iterator it_ = it->second->VIPList.find(id);
 		if(it_ != it->second->VIPList.end())
 			it->second->VIPList.erase(it_);
 	}

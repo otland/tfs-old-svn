@@ -2797,7 +2797,7 @@ void Player::notifyLogIn(Player* loginPlayer)
 	if(!client)
 		return;
 
-	VIPSet::iterator it = VIPList.find(loginPlayer->getGUID());
+	VIPMap::iterator it = VIPList.find(loginPlayer->getGUID());
 	if(it != VIPList.end())
 		client->sendVIPLogIn(loginPlayer->getGUID());
 }
@@ -2807,14 +2807,14 @@ void Player::notifyLogOut(Player* logoutPlayer)
 	if(!client)
 		return;
 
-	VIPSet::iterator it = VIPList.find(logoutPlayer->getGUID());
+	VIPMap::iterator it = VIPList.find(logoutPlayer->getGUID());
 	if(it != VIPList.end())
 		client->sendVIPLogOut(logoutPlayer->getGUID());
 }
 
 bool Player::removeVIP(uint32_t _guid)
 {
-	VIPSet::iterator it = VIPList.find(_guid);
+	VIPMap::iterator it = VIPList.find(_guid);
 	if(it == VIPList.end())
 		return false;
 
@@ -2822,7 +2822,7 @@ bool Player::removeVIP(uint32_t _guid)
 	return true;
 }
 
-bool Player::addVIP(uint32_t _guid, const std::string& name, bool online, bool loading/* = false*/)
+bool Player::addVIP(uint32_t _guid, const std::string& name, const std::string& description, const uint32_t& icon, bool notify, bool online, bool loading/* = false*/)
 {
 	if(guid == _guid)
 	{
@@ -2838,7 +2838,7 @@ bool Player::addVIP(uint32_t _guid, const std::string& name, bool online, bool l
 		return false;
 	}
 
-	VIPSet::iterator it = VIPList.find(_guid);
+	VIPMap::iterator it = VIPList.find(_guid);
 	if(it != VIPList.end())
 	{
 		if(!loading)
@@ -2847,10 +2847,28 @@ bool Player::addVIP(uint32_t _guid, const std::string& name, bool online, bool l
 		return false;
 	}
 
-	VIPList.insert(_guid);
-	if(!loading && client)
-		client->sendVIP(_guid, name, online);
+	VIP_t tmp;
+	tmp.description = description;
+	tmp.icon = icon;
+	tmp.notify = notify;
 
+	VIPList.insert(VIPPair(_guid, tmp));
+
+	if(!loading && client)
+		client->sendVIP(_guid, name, tmp.description, tmp.icon, tmp.notify, online);
+
+	return true;
+}
+
+bool Player::editVIP(uint32_t _guid, const std::string& description, const uint32_t& icon, bool notify)
+{
+	VIPMap::iterator it = VIPList.find(_guid);
+	if(it == VIPList.end())
+		return false;
+
+	(*it).second.description = description;
+	(*it).second.icon = icon;
+	(*it).second.notify = notify;
 	return true;
 }
 

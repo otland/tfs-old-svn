@@ -862,6 +862,11 @@ void ProtocolGame::parsePacket(NetworkMessage &msg)
 			case 0xF9:
 				parseModalDialogAnswer(msg);
 				break;
+
+			case 0xDE:
+				parseEditVip(msg);
+				break;
+
 			default:
 			{
 				std::stringstream s;
@@ -1457,7 +1462,7 @@ void ProtocolGame::parseCloseTrade()
 void ProtocolGame::parseAddVip(NetworkMessage& msg)
 {
 	const std::string name = msg.getString();
-	if(name.size() > 32)
+	if(name.size() > 30) //I found that in flash client
 		return;
 
 	addGameTask(&Game::playerRequestAddVip, player->getID(), name);
@@ -1469,6 +1474,20 @@ void ProtocolGame::parseRemoveVip(NetworkMessage& msg)
 	addGameTask(&Game::playerRequestRemoveVip, player->getID(), guid);
 }
 
+void ProtocolGame::parseEditVip(NetworkMessage& msg)
+{
+	uint32_t guid = msg.get<uint32_t>();
+	std::string description = msg.getString();
+	uint32_t icon = msg.get<uint32_t>();
+	uint32_t notify = msg.get<bool>();
+
+	if (description.size() > 128)
+		return;
+	if (icon > (uint32_t) VIP_ICON_LAST) // || icon < (uint32_t) VIP_ICON_FIRST)
+		return;
+
+	addGameTask(&Game::playerRequestEditVip, player->getID(), guid, description, icon, notify);
+}
 void ProtocolGame::parseRotateItem(NetworkMessage& msg)
 {
 	Position pos = msg.getPosition();
@@ -2789,13 +2808,13 @@ void ProtocolGame::sendAddCreature(const Creature* creature, const Position& pos
 	AddCreatureLight(msg, creature);
 
 	player->sendIcons();
-	for(VIPSet::iterator it = player->VIPList.begin(); it != player->VIPList.end(); ++it)
+	for(VIPMap::iterator it = player->VIPList.begin(); it != player->VIPList.end(); ++it)
 	{
 		std::string vipName;
-		if(IOLoginData::getInstance()->getNameByGuid((*it), vipName))
+		if(IOLoginData::getInstance()->getNameByGuid((*it).first, vipName))
 		{
 			Player* tmpPlayer = g_game.getPlayerByName(vipName);
-			sendVIP((*it), vipName, (tmpPlayer && player->canSeeCreature(tmpPlayer)));
+			sendVIP((*it).first, vipName, (*it).second.description, (*it).second.icon, true, (tmpPlayer && player->canSeeCreature(tmpPlayer)));
 		}
 	}
 }
@@ -3156,7 +3175,7 @@ void ProtocolGame::sendVIPLogOut(uint32_t guid)
 	msg->put<uint32_t>(guid);
 }
 
-void ProtocolGame::sendVIP(uint32_t guid, const std::string& name, bool online)
+void ProtocolGame::sendVIP(uint32_t guid, const std::string& name, const std::string& desc, uint32_t& icon, bool notify, bool online)
 {
 	NetworkMessage_ptr msg = getOutputBuffer();
 	if(!msg)
@@ -3166,7 +3185,10 @@ void ProtocolGame::sendVIP(uint32_t guid, const std::string& name, bool online)
 	msg->put<char>(0xD2);
 	msg->put<uint32_t>(guid);
 	msg->putString(name);
-	msg->put<char>(online ? 1 : 0);
+	msg->putString(desc);//desc
+	msg->put<uint32_t>(icon);//icon
+	msg->put<bool>(notify);//notify
+	msg->put<bool>(online); //online
 }
 
 void ProtocolGame::sendSpellCooldown(Spells_t icon, uint32_t cooldown)

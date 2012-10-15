@@ -112,7 +112,8 @@ enum GamemasterCondition_t
 	GAMEMASTER_TELEPORT = 2
 };
 
-typedef std::set<uint32_t> VIPSet;
+typedef std::map<uint32_t, VIP_t> VIPMap;
+typedef std::pair<uint32_t, VIP_t> VIPPair;
 typedef std::list<std::pair<uint16_t, std::string> > ChannelsList;
 typedef std::vector<std::pair<uint32_t, Container*> > ContainerVector;
 typedef std::map<uint32_t, std::pair<Depot*, bool> > DepotMap;
@@ -424,7 +425,8 @@ class Player : public Creature, public Cylinder
 		void notifyLogIn(Player* loginPlayer);
 		void notifyLogOut(Player* logoutPlayer);
 		bool removeVIP(uint32_t guid);
-		bool addVIP(uint32_t guid, const std::string& name, bool online, bool loading = false);
+		bool addVIP(uint32_t _guid, const std::string& name, const std::string& description, const uint32_t& icon, bool notify, bool online, bool loading = false);
+		bool editVIP(uint32_t _guid, const std::string& description, const uint32_t& icon, bool notify);
 
 		//follow functions
 		virtual bool setFollowCreature(Creature* creature, bool fullPathSearch = false);
@@ -785,7 +787,7 @@ class Player : public Creature, public Cylinder
 		void unlearnInstantSpell(const std::string& name);
 		bool hasLearnedInstantSpell(const std::string& name) const;
 
-		VIPSet VIPList;
+		VIPMap VIPList;
 		ContainerVector containerVec;
 		InvitationsList invitationsList;
 		ConditionList storedConditionList;

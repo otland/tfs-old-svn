@@ -120,6 +120,9 @@ CREATE TABLE `account_viplist`
 	`account_id` INT NOT NULL,
 	`world_id` TINYINT(4) UNSIGNED NOT NULL DEFAULT 0,
 	`player_id` INT NOT NULL,
+	`description` VARCHAR( 128 ) NOT NULL,
+	`icon` INT( 11 ) UNSIGNED NOT NULL,
+	`notify` BOOLEAN NOT NULL,
 	KEY (`account_id`), KEY (`player_id`), KEY (`world_id`), UNIQUE (`account_id`, `player_id`),
 	FOREIGN KEY (`account_id`) REFERENCES `accounts`(`id`) ON DELETE CASCADE,
 	FOREIGN KEY (`player_id`) REFERENCES `players`(`id`) ON DELETE CASCADE
@@ -211,6 +214,9 @@ CREATE TABLE `player_viplist`
 (
 	`player_id` INT NOT NULL,
 	`vip_id` INT NOT NULL,
+	`description` VARCHAR( 128 ) NOT NULL,
+	`icon` INT( 11 ) UNSIGNED NOT NULL,
+	`notify` BOOLEAN NOT NULL,
 	KEY (`player_id`), KEY (`vip_id`), UNIQUE (`player_id`, `vip_id`),
 	FOREIGN KEY (`player_id`) REFERENCES `players`(`id`) ON DELETE CASCADE,
 	FOREIGN KEY (`vip_id`) REFERENCES `players`(`id`) ON DELETE CASCADE

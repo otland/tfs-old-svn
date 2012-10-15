@@ -512,6 +512,7 @@ class Game
 		bool playerQuestInfo(uint32_t playerId, uint16_t questId);
 		bool playerRequestAddVip(uint32_t playerId, const std::string& name);
 		bool playerRequestRemoveVip(uint32_t playerId, uint32_t guid);
+		bool playerRequestEditVip(uint32_t playerId, uint32_t guid, std::string description, uint32_t icon, bool notify);
 		bool playerTurn(uint32_t playerId, Direction dir);
 		bool playerRequestOutfit(uint32_t playerId);
 		bool playerSay(uint32_t playerId, uint16_t channelId, MessageClasses type,

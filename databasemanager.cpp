@@ -1434,6 +1434,16 @@ uint32_t DatabaseManager::updateDatabase()
 			return 36;
 		}
 
+		case 36:
+		{
+			std::clog << "> Updating database to version 37..." << std::endl;
+
+			db->query("ALTER TABLE `account_viplist` ADD `description` VARCHAR( 128 ) NOT NULL, ADD `icon` INT( 11 ) UNSIGNED NOT NULL, ADD `notify` BOOLEAN NOT NULL ;");
+			db->query("ALTER TABLE `player_viplist` ADD `description` VARCHAR( 128 ) NOT NULL, ADD `icon` INT( 11 ) UNSIGNED NOT NULL, ADD `notify` BOOLEAN NOT NULL ;");
+			registerDatabaseConfig("db_version", 37);
+			return 37;
+		}
+
 		default:
 			break;
 	}

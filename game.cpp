@@ -3864,7 +3864,10 @@ bool Game::playerRequestAddVip(uint32_t playerId, const std::string& vipName)
 	if(Player* target = getPlayerByName(name))
 		online = player->canSeeCreature(target);
 
-	return player->addVIP(guid, name, online);
+	std::string tmpDesc = "";
+	uint32_t tmpIcon = VIP_ICON_FIRST;
+
+	return player->addVIP(guid, name, tmpDesc, tmpIcon, false, online);
 }
 
 bool Game::playerRequestRemoveVip(uint32_t playerId, uint32_t guid)
@@ -3874,6 +3877,16 @@ bool Game::playerRequestRemoveVip(uint32_t playerId, uint32_t guid)
 		return false;
 
 	player->removeVIP(guid);
+	return true;
+}
+
+bool Game::playerRequestEditVip(uint32_t playerId, uint32_t guid, std::string description, uint32_t icon, bool notify)
+{
+	Player* player = getPlayerByID(playerId);
+	if(!player || player->isRemoved())
+		return false;
+
+	player->editVIP(guid, description, icon, notify);
 	return true;
 }
 
