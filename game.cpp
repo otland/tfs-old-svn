@@ -5210,11 +5210,13 @@ void Game::checkWars()
 {
 	//executes every EVENT_WARSINTERVAL
 	IOGuild::getInstance()->checkWars();
-	if (checkEndingWars) {
+	if(checkEndingWars)
+	{
 		//executes every EVENT_WARSINTERVAL*2
 		checkEndingWars = false;
 		IOGuild::getInstance()->checkEndingWars();
-	} else
+	}
+	else
 		checkEndingWars = true;
 
 	checkWarsEvent = Scheduler::getInstance().addEvent(createSchedulerTask(EVENT_WARSINTERVAL,

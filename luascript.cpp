@@ -9507,9 +9507,9 @@ int32_t LuaInterface::luaIsPlayerUsingOtclient(lua_State* L)
 {
 	//isPlayerUsingOtclient(cid)
 	ScriptEnviroment* env = getEnv();
-	if(Player* player = env->getPlayerByUID(popNumber(L))) {
+	if(Player* player = env->getPlayerByUID(popNumber(L)))
 		lua_pushboolean(L, player->isUsingOtclient());
-	}
+
 	lua_pushboolean(L, false);
 	return 1;
 }

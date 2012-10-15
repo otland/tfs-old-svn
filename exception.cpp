@@ -268,9 +268,11 @@ void _SigHandler(int signum, siginfo_t *info, void* secret)
 	// stack backtrace
 	addrs = backtrace(buffer, BACKTRACE_DEPTH);
 	symbols = backtrace_symbols(buffer, addrs);
-	if(symbols != NULL && addrs != 0) {
+	if(symbols != NULL && addrs != 0)
+	{
 		*outdriver << "---Stack Trace---" << std::endl;
-		if(esp != 0) {
+		if(esp != 0)
+		{
 			*outdriver << "From: " << (unsigned long)esp <<
 				" to: " << (unsigned long)(esp+addrs) << std::endl;
 		}
@@ -281,9 +283,8 @@ void _SigHandler(int signum, siginfo_t *info, void* secret)
 	}
 	outdriver->flush();
 
-	if(file) {
+	if(file)
 		((std::ofstream*)outdriver)->close();
-	}
 
 	_exit(1);
 }

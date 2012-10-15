@@ -3731,7 +3731,8 @@ void ProtocolGame::AddShopItem(NetworkMessage_ptr msg, const ShopInfo& item)
 	msg->put<uint32_t>(item.sellPrice);
 }
 
-void ProtocolGame::sendModalDialog(ModalDialog& dialog) {
+void ProtocolGame::sendModalDialog(ModalDialog& dialog)
+{
 	NetworkMessage_ptr msg = getOutputBuffer();
 	if(!msg)
 		return;
@@ -3743,14 +3744,16 @@ void ProtocolGame::sendModalDialog(ModalDialog& dialog) {
 	msg->putString(dialog.message); //message
 	msg->put<uint8_t>(dialog.buttons.size()); //count of buttons
 
-	for (std::vector<ModalChoice>::iterator it = dialog.buttons.begin(); it != dialog.buttons.end(); it++) {
+	for(std::vector<ModalChoice>::iterator it = dialog.buttons.begin(); it != dialog.buttons.end(); it++)
+	{
 		msg->putString(it->value); //button
 		msg->put<uint8_t>(it->id); //button id
 	}
 	
 	msg->put<uint8_t>(dialog.choices.size()); //count of choices
 
-	for (std::vector<ModalChoice>::iterator it = dialog.choices.begin(); it != dialog.choices.end(); it++) {
+	for(std::vector<ModalChoice>::iterator it = dialog.choices.begin(); it != dialog.choices.end(); it++)
+	{
 		msg->putString(it->value); //choice
 		msg->put<uint8_t>(it->id); //choice id
 	}
@@ -3760,7 +3763,8 @@ void ProtocolGame::sendModalDialog(ModalDialog& dialog) {
 	msg->put<bool>(dialog.popup); //popup priority
 }
 
-void ProtocolGame::parseModalDialogAnswer(NetworkMessage& msg) {
+void ProtocolGame::parseModalDialogAnswer(NetworkMessage& msg)
+{
 	uint32_t dialog = msg.get<uint32_t>();
 	uint8_t button = msg.get<uint8_t>();
 	uint8_t choice = msg.get<uint8_t>();

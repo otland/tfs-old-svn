@@ -5830,10 +5830,12 @@ bool Player::addOfflineTrainingTries(skills_t skill, int32_t tries)
 
 void Player::callbackModalDialog(uint32_t dialog, uint8_t button, uint8_t choice)
 {
-	switch (dialog) {
+	switch (dialog)
+	{
 		case OFFLINE_TRAINING_DIALOG_ID:
 			checkOfflineTrainingDialogAnswer(button, choice);
 			break;
+
 		default:
 			break;
 	}
@@ -5841,7 +5843,8 @@ void Player::callbackModalDialog(uint32_t dialog, uint8_t button, uint8_t choice
 
 void Player::checkOfflineTrainingDialogAnswer(uint8_t button, uint8_t choice)
 {
-	switch (button) {
+	switch (button)
+	{
 		case 1:
 			break;
 		default: case 2:
@@ -5849,7 +5852,8 @@ void Player::checkOfflineTrainingDialogAnswer(uint8_t button, uint8_t choice)
 			break;
 	}
 
-	switch (choice) {
+	switch (choice)
+	{
 		case 1:
 			setOfflineTrainingSkill(SKILL_SWORD);
 			break;
@@ -5870,24 +5874,29 @@ void Player::checkOfflineTrainingDialogAnswer(uint8_t button, uint8_t choice)
 			break;
 	}
 
-	if(Tile* tile = g_game.getMap()->getTile(bedPos)) {
+	if(Tile* tile = g_game.getMap()->getTile(bedPos))
+	{
 		BedItem* bed = tile->getBedItem();
-		if (bed->canUse(this)) {
+		if(bed->canUse(this))
+		{
 			Position pos = this->getPosition();
-			if ((pos.x - bedPos.x) > 1 || (pos.x - bedPos.x) < -1)
+			if((pos.x - bedPos.x) > 1 || (pos.x - bedPos.x) < -1)
 				return;
-			if ((pos.y - bedPos.y) > 1 || (pos.y - bedPos.y) < -1)
+			if((pos.y - bedPos.y) > 1 || (pos.y - bedPos.y) < -1)
 				return;
-			if (pos.z != bedPos.z)
+			if(pos.z != bedPos.z)
 				return;
+
 			bed->sleep(this);
 			return;
 		}
 	}
+
 	setOfflineTrainingSkill(-1);
 }
 
-void Player::showOfflineTrainingDialog(Position pos) {
+void Player::showOfflineTrainingDialog(Position pos)
+{
 	ModalDialog tmp;
 	tmp.id = OFFLINE_TRAINING_DIALOG_ID;
 	tmp.title = "Choose a skill";

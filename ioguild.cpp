@@ -411,7 +411,7 @@ std::string IOGuild::getMotd(uint32_t guild)
 
 void IOGuild::checkWars()
 {
-	if (!g_config.getBool(ConfigManager::EXTERNAL_GUILD_WARS_MANAGEMENT))
+	if(!g_config.getBool(ConfigManager::EXTERNAL_GUILD_WARS_MANAGEMENT))
 		return;
 
 	Database* db = Database::getInstance();
@@ -432,7 +432,8 @@ void IOGuild::checkWars()
 
 	
 	query << "SELECT `g`.`name` as `guild_name`, `e`.`name` as `enemy_name`, `guild_wars`.`frags` as `frags`  FROM `guild_wars` LEFT JOIN `guilds` as `g` ON `guild_wars`.`guild_id` = `g`.`id` LEFT JOIN `guilds` as `e` ON `guild_wars`.`enemy_id` = `e`.`id` WHERE (`begin` > 0 AND (`begin` + " << tmpInterval << ") > UNIX_TIMESTAMP()) AND `status` IN (0, 6)";
-	if((result = db->storeQuery(query.str()))) {
+	if((result = db->storeQuery(query.str())))
+	{
 		do
 		{
 			s << result->getDataString("guild_name") << " has invited " << result->getDataString("enemy_name") << " to war till " << result->getDataInt("frags") << " frags.";
@@ -444,14 +445,13 @@ void IOGuild::checkWars()
 	}
 
 	query.str("");
-
 	query << "UPDATE `guild_wars` SET `begin` = UNIX_TIMESTAMP(), `end` = ((`end` - `begin`) + UNIX_TIMESTAMP()), `status` = 1 WHERE `status` = 6";
 	db->query(query.str());
 
 	query.str("");
-
 	query << "SELECT `g`.`name` as `guild_name`, `e`.`name` as `enemy_name`, `g`.`id` as `guild_id`, `e`.`id` as `enemy_id`, `guild_wars`.*  FROM `guild_wars` LEFT JOIN `guilds` as `g` ON `guild_wars`.`guild_id` = `g`.`id` LEFT JOIN `guilds` as `e` ON `guild_wars`.`enemy_id` = `e`.`id` WHERE (`begin` > 0 AND (`begin` + " << tmpInterval << ") > UNIX_TIMESTAMP()) AND `status` = 1";
-	if((result = db->storeQuery(query.str()))) {
+	if((result = db->storeQuery(query.str())))
+	{
 		do
 		{
 			s << result->getDataString("enemy_name") << " accepted " << result->getDataString("guild_name") << " invitation to war.";
@@ -492,7 +492,8 @@ void IOGuild::checkWars()
 	query.str("");
 
 	query << "SELECT `g`.`name` as `guild_name`, `e`.`name` as `enemy_name`  FROM `guild_wars` LEFT JOIN `guilds` as `g` ON `guild_wars`.`guild_id` = `g`.`id` LEFT JOIN `guilds` as `e` ON `guild_wars`.`enemy_id` = `e`.`id` WHERE (`end` > 0 AND (`end` + " << tmpInterval << ") > UNIX_TIMESTAMP()) AND `status` = 2";
-	if((result = db->storeQuery(query.str()))) {
+	if((result = db->storeQuery(query.str())))
+	{
 		do
 		{
 			s << result->getDataString("enemy_name") << " rejected " << result->getDataString("guild_name") << " invitation to war.";
@@ -504,9 +505,9 @@ void IOGuild::checkWars()
 	}
 
 	query.str("");
- 
 	query << "SELECT `g`.`name` as `guild_name`, `e`.`name` as `enemy_name`  FROM `guild_wars` LEFT JOIN `guilds` as `g` ON `guild_wars`.`guild_id` = `g`.`id` LEFT JOIN `guilds` as `e` ON `guild_wars`.`enemy_id` = `e`.`id` WHERE (`end` > 0 AND (`end` + " << tmpInterval << ") > UNIX_TIMESTAMP()) AND `status` = 3";
-	if((result = db->storeQuery(query.str()))) {
+	if((result = db->storeQuery(query.str())))
+	{
 		do
 		{
 			s << result->getDataString("guild_name") << " canceled invitation to a war with " << result->getDataString("enemy_name") << ".";
@@ -518,16 +519,15 @@ void IOGuild::checkWars()
 	}
 
 	query.str("");
-
 	query << "SELECT `g`.`name` as `guild_name`, `e`.`name` as `enemy_name`, `guild_wars`.`status` as `status`, `g`.`id` as `guild_id`, `e`.`id` as `enemy_id`, `guild_wars`.*   FROM `guild_wars` LEFT JOIN `guilds` as `g` ON `guild_wars`.`guild_id` = `g`.`id` LEFT JOIN `guilds` as `e` ON `guild_wars`.`enemy_id` = `e`.`id` WHERE (`end` > 0 AND (`end` + " << tmpInterval << ") > UNIX_TIMESTAMP()) AND `status` IN (7,8)";
-	if((result = db->storeQuery(query.str()))) {
+	if((result = db->storeQuery(query.str())))
+	{
 		do
 		{
-			if (result->getDataInt("status") == 7) {
+			if (result->getDataInt("status") == 7)
 				s << result->getDataString("guild_name") << " has mend fences with " << result->getDataString("enemy_name") << ".";
-			} else {
+			else
 				s << result->getDataString("guild_name") << " has ended up a war with " << result->getDataString("enemy_name") << ".";
-			}
 			
 			War_t tmp;
 			tmp.war = result->getDataInt("id");
@@ -589,6 +589,7 @@ void IOGuild::checkEndingWars()
 		tmp.ids[WAR_ENEMY] = result->getDataInt("enemy_id");
 		finishWar(tmp, false);
 	}
+
 	while(result->next());
 	result->free();
 }
