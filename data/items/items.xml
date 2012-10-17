@@ -24000,11 +24000,71 @@
 		<attribute key="magiclevelpoints" value="1" />
 		<attribute key="range" value="4" />
 	</item>
+	<item id="18413" article="a" name="blue crystal shard">
+		<attribute key="weight" value="20"/>
+	</item>
+	<item id="18414" article="a" name="violet crystal shard">
+		<attribute key="weight" value="20"/>
+	</item>
+	<item id="18415" article="a" name="green crystal shard">
+		<attribute key="weight" value="20"/>
+	</item>
+	<item id="18416" article="a" name="green crystal splinter">
+		<attribute key="weight" value="10"/>
+	</item>
+	<item id="18417" article="a" name="brown crystal splinter">
+		<attribute key="weight" value="10"/>
+	</item>
+	<item id="18418" article="a" name="blue crystal splinter">
+		<attribute key="weight" value="10"/>
+	</item>
+	<item id="18419" article="a" name="cyan crystal fragment">
+		<attribute key="weight" value="15"/>
+	</item>
+	<item id="18420" article="a" name="red crystal fragment">
+		<attribute key="weight" value="15"/>
+	</item>
+	<item id="18421" article="a" name="green crystal fragment">
+		<attribute key="weight" value="15"/>
+	</item>
 	<item id="18422" article="a" name="minor crystalline token">
 		<attribute key="weight" value="250" />
 	</item>
 	<item id="18423" article="a" name="major crystalline token">
 		<attribute key="weight" value="350" />
+	</item>
+	<item id="18424" article="a" name="magma clump">
+		<attribute key="weight" value="310"/>
+	</item>
+	<item id="18425" article="a" name="blazing bone">
+		<attribute key="weight" value="220"/>
+	</item>
+	<item id="18426" article="a" name="eye of a weeper">
+		<attribute key="weight" value="90"/>
+	</item>
+	<item id="18427" article="a" name="pulverized ore">
+		<attribute key="weight" value="170"/>
+	</item>
+	<item id="18428" article="a" name="cliff strider claw">
+		<attribute key="weight" value="220"/>
+	</item>
+	<item id="18429" article="a" name="vein of ore">
+		<attribute key="weight" value="360"/>
+	</item>
+	<item id="18430" article="a" name="Deathstrike's snippet">
+		<attribute key="weight" value="380"/>
+	</item>
+	<item id="18431" article="a" name="stone nose">
+		<attribute key="weight" value="260"/>
+	</item>
+	<item id="18432" article="a" name="crystalline spikes">
+		<attribute key="weight" value="340"/>
+	</item>
+	<item id="18433" article="a" name="humongous chunk">
+		<attribute key="weight" value="190"/>
+	</item>
+	<item id="18434" article="a" name="hideous chunk">
+		<attribute key="weight" value="160"/>
 	</item>
 	<item id="18435" article="an" name="prismatic bolt" plural="prismatic bolts">
 		<attribute key="weight" value="85" />
@@ -24248,16 +24308,12 @@
 	<item id="17594" article="a" name="crystal geode" />
 	<item id="17593" article="a" name="crystal geode" />
 	<item id="17496" name="crystals" />
-	<item id="17505" article="a" name="basalt wall" />
 	<item id="17448" name="rock soil" />
 	<item id="17596" article="a" name="crystal geode" />
 	<item id="17468" article="a" name="basalt wall with crystals" />
 	<item id="17860" article="a" name="basalt wall" />
 	<item id="17859" article="a" name="basalt wall" />
 	<item id="17512" name="nestled crystals" />
-	<item id="18432" name="crystalline spikes">
-		<attribute key="weight" value="340" />
-	</item>
 	<item id="18457" article="a" name="teleport crystal" plural="teleport crystals">
 		<attribute key="weight" value="45" />
 		<attribute key="description" value="Such crystals are used to charge the long range teleporters to the cities." />
