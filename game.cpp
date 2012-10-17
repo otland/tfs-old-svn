@@ -3866,8 +3866,9 @@ bool Game::playerRequestAddVip(uint32_t playerId, const std::string& vipName)
 
 	std::string tmpDesc = "";
 	uint32_t tmpIcon = VIP_ICON_FIRST;
+	bool tmpNotify = false;
 
-	return player->addVIP(guid, name, tmpDesc, tmpIcon, false, online);
+	return player->addVIP(guid, name, tmpDesc, tmpIcon, tmpNotify, online);
 }
 
 bool Game::playerRequestRemoveVip(uint32_t playerId, uint32_t guid)
@@ -6900,7 +6901,23 @@ bool Game::playerAnswerModalDialog(uint32_t playerId, uint32_t dialog, uint8_t b
 	if(!player || player->isRemoved())
 		return false;
 
-	player->callbackModalDialog(dialog, button, choice);
+	Position pos = player->getPosition();
+	if (pos.x != player->dialogControl.pos.x || pos.y != player->dialogControl.pos.y || pos.z != player->dialogControl.pos.z || player->dialogControl.dialogId != dialog)
+				return false;
+
+	switch (dialog)
+	{
+		case OFFLINE_TRAINING_DIALOG_ID:
+			player->checkOfflineTrainingDialogAnswer(button, choice);
+			break;
+		default:
+			LuaDialogCallbackMap::iterator it = player->dialogCallbacks.find(dialog);
+			if (it == player->dialogCallbacks.end())
+				return false;
+			LuaDialogCallback tmp = it->second;
+			it->second.L->executeDialogCallback(tmp, player, button, choice);
+			break;
+	}
 	return true;
 }
 

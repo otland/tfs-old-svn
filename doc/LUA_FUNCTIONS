@@ -972,6 +972,7 @@
 	executeRaid(name)
 	addEvent(callback, delay, ...)
 	stopEvent(eventid)
+	addDialog(dialog, dialogId, cid, callback)
 	hasPlayerClient(cid)
 	hasItemProperty(uid, prop)
 

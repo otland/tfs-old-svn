@@ -75,6 +75,7 @@ class LuaInterface;
 
 class Creature;
 class Player;
+struct LuaDialogCallback;
 class Npc;
 
 class Item;
@@ -327,6 +328,7 @@ class LuaInterface
 
 		static void error(const char* function, const std::string& desc);
 
+		void executeDialogCallback(LuaDialogCallback& dialogCallback, Player* player, uint8_t button, uint8_t choice);
 	protected:
 		virtual bool closeState();
 
@@ -640,6 +642,7 @@ class LuaInterface
 		static int32_t luaIsSightClear(lua_State* L);
 		static int32_t luaAddEvent(lua_State* L);
 		static int32_t luaStopEvent(lua_State* L);
+		static int32_t luaAddDialog(lua_State* L);
 		static int32_t luaRegisterCreatureEvent(lua_State* L);
 		static int32_t luaUnregisterCreatureEvent(lua_State* L);
 		static int32_t luaUnregisterCreatureEventType(lua_State* L);

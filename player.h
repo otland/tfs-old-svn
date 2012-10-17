@@ -122,12 +122,21 @@ typedef std::list<std::string> LearnedInstantSpellList;
 typedef std::list<uint32_t> InvitationsList;
 typedef std::list<Party*> PartyList;
 typedef std::map<uint32_t, War_t> WarMap;
+typedef std::map<uint32_t, LuaDialogCallback> LuaDialogCallbackMap;
 
 #define SPEED_MAX 1500
 #define SPEED_MIN 10
 #define STAMINA_MAX (42 * 60 * 60 * 1000)
 #define STAMINA_MULTIPLIER (60 * 1000)
 #define OFFLINE_TRAINING_DIALOG_ID 1
+
+struct LuaDialogCallback //not right way however there's no way xd
+{
+	LuaInterface* L;
+	int32_t scriptId, function;
+	Npc* npc;
+	ModalDialog dialog;
+};
 
 class Player : public Creature, public Cylinder
 {
@@ -385,7 +394,6 @@ class Player : public Creature, public Cylinder
 		virtual RaceType_t getRace() const {return RACE_BLOOD;}
 
 		//modal dialog
-		void callbackModalDialog(uint32_t dialog, uint8_t button, uint8_t choice);
 		void checkOfflineTrainingDialogAnswer(uint8_t button, uint8_t choice);
 		void showOfflineTrainingDialog(Position pos);
 
@@ -798,6 +806,14 @@ class Player : public Creature, public Cylinder
 		uint32_t marriage;
 		uint64_t balance;
 		double rates[SKILL__LAST + 1];
+
+		struct 
+		{
+			uint32_t dialogId;
+			Position pos;
+		} dialogControl;
+
+		LuaDialogCallbackMap dialogCallbacks;
 
 	protected:
 		void checkTradeState(const Item* item);

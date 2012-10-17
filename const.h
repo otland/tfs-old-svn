@@ -798,6 +798,23 @@ enum PlayerCustomFlags
 	PlayerCustomFlag_LastFlag
 };
 
+enum VipIcons_t
+{
+	VIP_ICON_FIRST = 0,
+	VIP_ICON_NONE = VIP_ICON_FIRST,
+	VIP_ICON_HEART,
+	VIP_ICON_SKULL,
+	VIP_ICON_LIGHTNING,
+	VIP_ICON_CROSSHAIR,
+	VIP_ICON_STAR,
+	VIP_ICON_JINJANG,
+	VIP_ICON_TRIANGLE,
+	VIP_ICON_CROSS,
+	VIP_ICON_CASH,
+	VIP_ICON_MEDAL,
+	VIP_ICON_LAST = VIP_ICON_MEDAL
+};
+
 struct MessageDetails
 {
 	int32_t value;

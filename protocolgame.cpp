@@ -2814,7 +2814,7 @@ void ProtocolGame::sendAddCreature(const Creature* creature, const Position& pos
 		if(IOLoginData::getInstance()->getNameByGuid((*it).first, vipName))
 		{
 			Player* tmpPlayer = g_game.getPlayerByName(vipName);
-			sendVIP((*it).first, vipName, (*it).second.description, (*it).second.icon, true, (tmpPlayer && player->canSeeCreature(tmpPlayer)));
+			sendVIP((*it).first, vipName, (*it).second.description, (*it).second.icon, (*it).second.notify, (tmpPlayer && player->canSeeCreature(tmpPlayer)));
 		}
 	}
 }

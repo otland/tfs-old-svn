@@ -58,6 +58,11 @@ Player::Player(const std::string& _name, ProtocolGame* p):
 	if(client)
 		p->setPlayer(this);
 
+	dialogControl.dialogId = 0;
+	dialogControl.pos.x = 0;
+	dialogControl.pos.y = 0;
+	dialogControl.pos.z = 0;
+
 	pvpBlessing = pzLocked = isConnecting = addAttackSkillPoint = requestedOutfit = mounted = outfitAttributes = sentChat = false;
 	saving = true;
 
@@ -5846,19 +5851,6 @@ bool Player::addOfflineTrainingTries(skills_t skill, int32_t tries)
 	return true;
 }
 
-void Player::callbackModalDialog(uint32_t dialog, uint8_t button, uint8_t choice)
-{
-	switch (dialog)
-	{
-		case OFFLINE_TRAINING_DIALOG_ID:
-			checkOfflineTrainingDialogAnswer(button, choice);
-			break;
-
-		default:
-			break;
-	}
-}
-
 void Player::checkOfflineTrainingDialogAnswer(uint8_t button, uint8_t choice)
 {
 	switch (button)
@@ -5897,14 +5889,6 @@ void Player::checkOfflineTrainingDialogAnswer(uint8_t button, uint8_t choice)
 		BedItem* bed = tile->getBedItem();
 		if(bed->canUse(this))
 		{
-			Position pos = this->getPosition();
-			if((pos.x - bedPos.x) > 1 || (pos.x - bedPos.x) < -1)
-				return;
-			if((pos.y - bedPos.y) > 1 || (pos.y - bedPos.y) < -1)
-				return;
-			if(pos.z != bedPos.z)
-				return;
-
 			bed->sleep(this);
 			return;
 		}
@@ -5953,6 +5937,8 @@ void Player::showOfflineTrainingDialog(Position pos)
 	tmp.buttonEnter = 1;
 	tmp.buttonEscape = 2;
 	
+	dialogControl.dialogId = OFFLINE_TRAINING_DIALOG_ID;
+	dialogControl.pos = getPosition();
 	bedPos = pos;
 	sendModalDialog(tmp);
 }
