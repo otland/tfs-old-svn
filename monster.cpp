@@ -500,7 +500,7 @@ BlockType_t Monster::blockHit(Creature* attacker, CombatType_t combatType, int32
 bool Monster::isTarget(Creature* creature)
 {
 	return (!creature->isRemoved() && creature->isAttackable() && creature->getZone() != ZONE_PROTECTION
-		&& canSeeCreature(creature) && creature->getPosition().z == getPosition().z);
+		&& canSeeCreature(creature) && creature->getPosition().z == getPosition().z && (creature->getPlayer() && !creature->getPlayer()->checkLoginDelay()));
 }
 
 bool Monster::selectTarget(Creature* creature)
@@ -946,28 +946,23 @@ bool Monster::pushCreature(Creature* creature)
 
 void Monster::pushCreatures(Tile* tile)
 {
-	CreatureVector* creatures = tile->getCreatures();
-	if(!creatures)
-		return;
-
-	Monster* monster = NULL;
-	Creature* _master = NULL;
-
-	bool effect = false;
-	for(uint32_t i = 0; i < creatures->size(); ++i)
+	if(CreatureVector* creatures = tile->getCreatures())
 	{
-		if(!(monster = creatures->at(i)->getMonster()) || (monster->isPushable() && pushCreature(monster))
-			|| (!monster->isEliminable() && (!(_master = monster->getMaster()) || _master != this)))
-			continue;
+		uint32_t removeCount = 0;
+		for(uint32_t i = 0; i < creatures->size();)
+		{
+			Monster* monster = creatures->at(i)->getMonster();
+			if(monster && monster->isPushable())
+			{
+				monster->changeHealth(-monster->getHealth());
+				removeCount++;
+			}
+			++i;
+		}
 
-		monster->setDropLoot(LOOT_DROP_NONE);
-		monster->changeHealth(-monster->getHealth());
-		if(!effect)
-			effect = true;
+		if(removeCount > 0)
+			g_game.addMagicEffect(tile->getPosition(), MAGIC_EFFECT_POFF);
 	}
-
-	if(effect)
-		g_game.addMagicEffect(tile->getPosition(), MAGIC_EFFECT_BLOCKHIT);
 }
 
 bool Monster::getNextStep(Direction& dir, uint32_t& flags)

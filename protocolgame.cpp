@@ -1488,6 +1488,7 @@ void ProtocolGame::parseEditVip(NetworkMessage& msg)
 
 	addGameTask(&Game::playerRequestEditVip, player->getID(), guid, description, icon, notify);
 }
+
 void ProtocolGame::parseRotateItem(NetworkMessage& msg)
 {
 	Position pos = msg.getPosition();

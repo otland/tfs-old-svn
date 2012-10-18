@@ -516,6 +516,7 @@
 		<attribute key="attack" value="5" />
 		<attribute key="weaponType" value="distance" />
 		<attribute key="shootType" value="smallstone" />
+		<attribute key="maxHitChance" value="76" />		
 		<attribute key="range" value="4" />
 		<attribute key="breakChance" value="3" />
 		<attribute key="ammoAction" value="moveback" />
@@ -3260,6 +3261,7 @@
 		<attribute key="attack" value="25" />
 		<attribute key="weaponType" value="distance" />
 		<attribute key="shootType" value="spear" />
+		<attribute key="maxHitChance" value="76" />				
 		<attribute key="range" value="3" />
 		<attribute key="breakChance" value="3" />
 		<attribute key="ammoAction" value="moveback" />
@@ -3334,6 +3336,7 @@
 		<attribute key="attack" value="30" />
 		<attribute key="weaponType" value="distance" />
 		<attribute key="shootType" value="throwingstar" />
+		<attribute key="maxHitChance" value="76" />				
 		<attribute key="range" value="4" />
 		<attribute key="breakChance" value="10" />
 		<attribute key="ammoAction" value="moveback" />
@@ -3412,6 +3415,7 @@
 		<attribute key="attack" value="25" />
 		<attribute key="weaponType" value="distance" />
 		<attribute key="shootType" value="throwingknife" />
+		<attribute key="maxHitChance" value="76" />				
 		<attribute key="range" value="4" />
 		<attribute key="breakChance" value="7" />
 		<attribute key="ammoAction" value="moveback" />
@@ -4181,7 +4185,7 @@
 		<attribute key="weight" value="80" />
 		<attribute key="slotType" value="ammo" />
 		<attribute key="attack" value="30" />
-		<attribute key="maxHitChance" value="90" />
+		<attribute key="maxHitChance" value="87" />
 		<attribute key="weaponType" value="ammunition" />
 		<attribute key="ammoType" value="bolt" />
 		<attribute key="shootType" value="bolt" />
@@ -4191,7 +4195,7 @@
 		<attribute key="weight" value="70" />
 		<attribute key="slotType" value="ammo" />
 		<attribute key="attack" value="25" />
-		<attribute key="maxHitChance" value="90" />
+		<attribute key="maxHitChance" value="91" />
 		<attribute key="weaponType" value="ammunition" />
 		<attribute key="ammoType" value="arrow" />
 		<attribute key="shootType" value="arrow" />
@@ -4201,7 +4205,7 @@
 		<attribute key="weight" value="80" />
 		<attribute key="slotType" value="ammo" />
 		<attribute key="attack" value="22" />
-		<attribute key="maxHitChance" value="90" />
+		<attribute key="maxHitChance" value="91" />
 		<attribute key="weaponType" value="ammunition" />
 		<attribute key="ammoType" value="arrow" />
 		<attribute key="shootType" value="poisonarrow" />
@@ -4221,7 +4225,7 @@
 		<attribute key="weight" value="90" />
 		<attribute key="slotType" value="ammo" />
 		<attribute key="attack" value="40" />
-		<attribute key="maxHitChance" value="90" />
+		<attribute key="maxHitChance" value="91" />
 		<attribute key="weaponType" value="ammunition" />
 		<attribute key="ammoType" value="bolt" />
 		<attribute key="shootType" value="powerbolt" />
@@ -7088,155 +7092,155 @@
 	<item fromid="3898" toid="3899" article="a" name="tiger skin" />
 	<item id="3900" article="a" name="strange carving" />
 	<item id="3901" article="a" name="furniture package">
-		<attribute key="description" value="It is a kit for a wooden chair." />
+		<attribute key="description" value="Use it in your house to construct a wooden chair." />
 		<attribute key="weight" value="2500" />
 	</item>
 	<item id="3902" article="a" name="furniture package">
-		<attribute key="description" value="It is a kit for a sofa chair." />
+		<attribute key="description" value="Use it in your house to construct a sofa chair." />
 		<attribute key="weight" value="2500" />
 	</item>
 	<item id="3903" article="a" name="furniture package">
-		<attribute key="description" value="It is a kit for a red cushioned chair." />
+		<attribute key="description" value="Use it in your house to construct a red cushioned chair." />
 		<attribute key="weight" value="2500" />
 	</item>
 	<item id="3904" article="a" name="furniture package">
-		<attribute key="description" value="It is a kit for a green cushioned chair." />
+		<attribute key="description" value="Use it in your house to construct a green cushioned chair." />
 		<attribute key="weight" value="2500" />
 	</item>
 	<item id="3905" article="a" name="furniture package">
-		<attribute key="description" value="It is a kit for a tusk chair." />
+		<attribute key="description" value="Use it in your house to construct a tusk chair." />
 		<attribute key="weight" value="2500" />
 	</item>
 	<item id="3906" article="a" name="furniture package">
-		<attribute key="description" value="It is a kit for an ivory chair." />
+		<attribute key="description" value="Use it in your house to construct an ivory chair." />
 		<attribute key="weight" value="2500" />
 	</item>
 	<item id="3907" article="a" name="furniture package">
-		<attribute key="description" value="It is a kit for an small trunk." />
+		<attribute key="description" value="Use it in your house to construct an small trunk." />
 		<attribute key="weight" value="2500" />
 	</item>
 	<item id="3908" article="a" name="furniture package">
-		<attribute key="description" value="It is a kit for a small table." />
+		<attribute key="description" value="Use it in your house to construct a small table." />
 		<attribute key="weight" value="2500" />
 	</item>
 	<item id="3909" article="a" name="furniture package">
-		<attribute key="description" value="It is a kit for a big table." />
+		<attribute key="description" value="Use it in your house to construct a big table." />
 		<attribute key="weight" value="2500" />
 	</item>
 	<item id="3910" article="a" name="furniture package">
-		<attribute key="description" value="It is a kit for a square table." />
+		<attribute key="description" value="Use it in your house to construct a square table." />
 		<attribute key="weight" value="2500" />
 	</item>
 	<item id="3911" article="a" name="furniture package">
-		<attribute key="description" value="It is a kit for a round table." />
+		<attribute key="description" value="Use it in your house to construct a round table." />
 		<attribute key="weight" value="2500" />
 	</item>
 	<item id="3912" article="a" name="furniture package">
-		<attribute key="description" value="It is a kit for a coal basin." />
+		<attribute key="description" value="Use it in your house to construct a coal basin." />
 		<attribute key="weight" value="2500" />
 	</item>
 	<item id="3913" article="a" name="furniture package">
-		<attribute key="description" value="It is a kit for a carved stone table." />
+		<attribute key="description" value="Use it in your house to construct a carved stone table." />
 		<attribute key="weight" value="2500" />
 	</item>
 	<item id="3914" article="a" name="furniture package">
-		<attribute key="description" value="It is a kit for a tusk table." />
+		<attribute key="description" value="Use it in your house to construct a tusk table." />
 		<attribute key="weight" value="2500" />
 	</item>
 	<item id="3915" article="a" name="furniture package">
-		<attribute key="description" value="It is a kit for a drawer." />
+		<attribute key="description" value="Use it in your house to construct a drawer." />
 		<attribute key="weight" value="2500" />
 	</item>
 	<item id="3916" article="a" name="furniture package">
-		<attribute key="description" value="It is a kit for a dresser." />
+		<attribute key="description" value="Use it in your house to construct a dresser." />
 		<attribute key="weight" value="2500" />
 	</item>
 	<item id="3917" article="a" name="furniture package">
-		<attribute key="description" value="It is a kit for a pendulum clock." />
+		<attribute key="description" value="Use it in your house to construct a pendulum clock." />
 		<attribute key="weight" value="2500" />
 	</item>
 	<item id="3918" article="a" name="furniture package">
-		<attribute key="description" value="It is a kit for a locker." />
+		<attribute key="description" value="Use it in your house to construct a locker." />
 		<attribute key="weight" value="2500" />
 	</item>
 	<item id="3919" article="a" name="furniture package">
-		<attribute key="description" value="It is a kit for a bamboo table." />
+		<attribute key="description" value="Use it in your house to construct a bamboo table." />
 		<attribute key="weight" value="2500" />
 	</item>
 	<item id="3920" article="a" name="furniture package">
-		<attribute key="description" value="It is a kit for a thick trunk." />
+		<attribute key="description" value="Use it in your house to construct a thick trunk." />
 		<attribute key="weight" value="2500" />
 	</item>
 	<item id="3921" article="a" name="furniture package">
-		<attribute key="description" value="It is a kit for a harp." />
+		<attribute key="description" value="Use it in your house to construct a harp." />
 		<attribute key="weight" value="2500" />
 	</item>
 	<item id="3922" article="a" name="furniture package">
-		<attribute key="description" value="It is a kit for a birdcage." />
+		<attribute key="description" value="Use it in your house to construct a birdcage." />
 		<attribute key="weight" value="2500" />
 	</item>
 	<item id="3923" article="a" name="furniture package">
-		<attribute key="description" value="It is a kit for a globe." />
+		<attribute key="description" value="Use it in your house to construct a globe." />
 		<attribute key="weight" value="2500" />
 	</item>
 	<item id="3924" article="a" name="furniture package">
-		<attribute key="description" value="It is a kit for a table lamp." />
+		<attribute key="description" value="Use it in your house to construct a table lamp." />
 		<attribute key="weight" value="2500" />
 	</item>
 	<item id="3925" article="a" name="furniture package">
-		<attribute key="description" value="It is a kit for a rocking chair." />
+		<attribute key="description" value="Use it in your house to construct a rocking chair." />
 		<attribute key="weight" value="2500" />
 	</item>
 	<item id="3926" article="a" name="furniture package">
-		<attribute key="description" value="It is a kit for a piano." />
+		<attribute key="description" value="Use it in your house to construct a piano." />
 		<attribute key="weight" value="2500" />
 	</item>
 	<item id="3927" article="a" name="furniture package">
-		<attribute key="description" value="It is a kit for a knight statue." />
+		<attribute key="description" value="Use it in your house to construct a knight statue." />
 		<attribute key="weight" value="2500" />
 	</item>
 	<item id="3928" article="a" name="furniture package">
-		<attribute key="description" value="It is a kit for a minotaur statue." />
+		<attribute key="description" value="Use it in your house to construct a minotaur statue." />
 		<attribute key="weight" value="2500" />
 	</item>
 	<item id="3929" article="a" name="furniture package">
-		<attribute key="description" value="It is a kit for a large amphora." />
+		<attribute key="description" value="Use it in your house to construct a large amphora." />
 		<attribute key="weight" value="2500" />
 	</item>
 	<item id="3930" article="a" name="furniture package">
-		<attribute key="description" value="It is a kit for a goblin statue." />
+		<attribute key="description" value="Use it in your house to construct a goblin statue." />
 		<attribute key="weight" value="2500" />
 	</item>
 	<item id="3931" article="a" name="furniture package">
-		<attribute key="description" value="It is a kit for an indoor plant." />
+		<attribute key="description" value="Use it in your house to construct an indoor plant." />
 		<attribute key="weight" value="2500" />
 	</item>
 	<item id="3932" article="a" name="furniture package">
-		<attribute key="description" value="It is a kit for a barrel." />
+		<attribute key="description" value="Use it in your house to construct a barrel." />
 		<attribute key="weight" value="2500" />
 	</item>
 	<item id="3933" article="a" name="furniture package">
-		<attribute key="description" value="It is a kit for a christmas tree." />
+		<attribute key="description" value="Use it in your house to construct a christmas tree." />
 		<attribute key="weight" value="2500" />
 	</item>
 	<item id="3934" article="a" name="furniture package">
-		<attribute key="description" value="It is a kit for a rocking horse." />
+		<attribute key="description" value="Use it in your house to construct a rocking horse." />
 		<attribute key="weight" value="2500" />
 	</item>
 	<item id="3935" article="a" name="furniture package">
-		<attribute key="description" value="It is a kit for a telescope." />
+		<attribute key="description" value="Use it in your house to construct a telescope." />
 		<attribute key="weight" value="2500" />
 	</item>
 	<item id="3936" article="a" name="furniture package">
-		<attribute key="description" value="It is a kit for a bamboo drawer." />
+		<attribute key="description" value="Use it in your house to construct a bamboo drawer." />
 		<attribute key="weight" value="2500" />
 	</item>
 	<item id="3937" article="a" name="furniture package">
-		<attribute key="description" value="It is a kit for a trough." />
+		<attribute key="description" value="Use it in your house to construct a trough." />
 		<attribute key="weight" value="2500" />
 	</item>
 	<item id="3938" article="a" name="furniture package">
-		<attribute key="description" value="It is a kit for a large trunk." />
+		<attribute key="description" value="Use it in your house to construct a large trunk." />
 		<attribute key="weight" value="2500" />
 	</item>
 	<item id="3939" article="a" name="camouflage bag">
@@ -7330,6 +7334,7 @@
 		<attribute key="attack" value="32" />
 		<attribute key="weaponType" value="distance" />
 		<attribute key="shootType" value="huntingspear" />
+		<attribute key="maxHitChance" value="80" />				
 		<attribute key="range" value="3" />
 		<attribute key="breakChance" value="6" />
 		<attribute key="ammoAction" value="moveback" />
@@ -8272,15 +8277,15 @@
 		<attribute key="transformUseTo" value="5084" />
 	</item>
 	<item id="5086" article="a" name="furniture package">
-		<attribute key="description" value="It is a kit for a monkey statue." />
+		<attribute key="description" value="Use it in your house to construct a monkey statue." />
 		<attribute key="weight" value="2500" />
 	</item>
 	<item id="5087" article="a" name="furniture package">
-		<attribute key="description" value="It is a kit for a monkey statue." />
+		<attribute key="description" value="Use it in your house to construct a monkey statue." />
 		<attribute key="weight" value="2500" />
 	</item>
 	<item id="5088" article="a" name="furniture package">
-		<attribute key="description" value="It is a kit for a monkey statue." />
+		<attribute key="description" value="Use it in your house to construct a monkey statue." />
 		<attribute key="weight" value="2500" />
 	</item>
 	<item id="5089" article="a" name="butterfly conservation kit">
@@ -8658,7 +8663,7 @@
 	<item fromid="5400" toid="5401" article="a" name="window" />
 	<item fromid="5402" toid="5404" article="a" name="bamboo lamp" />
 	<item fromid="5405" toid="5410" name="shallow water" />
-	<item fromid="5411" toid="5412" name="rocks" />
+	<item fromid="5411" toid="5412" article="a" name="stone" />
 	<item fromid="5413" toid="5416" article="a" name="coral reef" />
 	<item id="5417" article="a" name="sea star" />
 	<item id="5418" name="coral" />
@@ -10578,11 +10583,11 @@
 		<attribute key="weight" value="50" />
 	</item>
 	<item id="6114" article="a" name="furniture package">
-		<attribute key="description" value="It is a kit for a weapon rack." />
+		<attribute key="description" value="Use it in your house to construct a weapon rack." />
 		<attribute key="weight" value="2500" />
 	</item>
 	<item id="6115" article="a" name="furniture package">
-		<attribute key="description" value="It is a kit for an armor rack." />
+		<attribute key="description" value="Use it in your house to construct an armor rack." />
 		<attribute key="weight" value="2500" />
 	</item>
 	<item fromid="6116" toid="6117" name="electric sparks" />
@@ -11248,11 +11253,11 @@
 		<attribute key="containerSize" value="10" />
 	</item>
 	<item id="6372" article="a" name="furniture package">
-		<attribute key="description" value="It is a kit for an oven." />
+		<attribute key="description" value="Use it in your house to construct an oven." />
 		<attribute key="weight" value="2500" />
 	</item>
 	<item id="6373" article="a" name="furniture package">
-		<attribute key="description" value="It is a kit for a bookcase." />
+		<attribute key="description" value="Use it in your house to construct a bookcase." />
 		<attribute key="weight" value="2500" />
 	</item>
 	<item fromid="6374" toid="6386" name="rock soil" />
@@ -11474,7 +11479,7 @@
 		<attribute key="slotType" value="two-handed" />
 	</item>
 	<item id="6529" article="an" name="infernal bolt" plural="infernal bolts">
-		<attribute key="weight" value="90" />
+		<attribute key="maxHitChance" value="91" />
 		<attribute key="slotType" value="ammo" />
 		<attribute key="attack" value="72" />
 		<attribute key="maxHitChance" value="90" />
@@ -12444,7 +12449,7 @@
 		<attribute key="weight" value="80" />
 		<attribute key="slotType" value="ammo" />
 		<attribute key="attack" value="33" />
-		<attribute key="maxHitChance" value="90" />
+		<attribute key="maxHitChance" value="87" />
 		<attribute key="weaponType" value="ammunition" />
 		<attribute key="ammoType" value="bolt" />
 		<attribute key="shootType" value="piercingbolt" />
@@ -12464,7 +12469,7 @@
 		<attribute key="weight" value="70" />
 		<attribute key="slotType" value="ammo" />
 		<attribute key="attack" value="38" />
-		<attribute key="maxHitChance" value="90" />
+		<attribute key="maxHitChance" value="94" />
 		<attribute key="weaponType" value="ammunition" />
 		<attribute key="ammoType" value="arrow" />
 		<attribute key="shootType" value="onyxarrow" />
@@ -12475,6 +12480,7 @@
 		<attribute key="attack" value="28" />
 		<attribute key="weaponType" value="distance" />
 		<attribute key="shootType" value="greenstar" />
+		<attribute key="maxHitChance" value="76" />				
 		<attribute key="range" value="4" />
 		<attribute key="breakChance" value="9" />
 		<attribute key="ammoAction" value="moveback" />
@@ -12484,6 +12490,7 @@
 		<attribute key="attack" value="38" />
 		<attribute key="weaponType" value="distance" />
 		<attribute key="shootType" value="enchantedspear" />
+		<attribute key="maxHitChance" value="80" />					
 		<attribute key="range" value="4" />
 		<attribute key="breakChance" value="1" />
 		<attribute key="ammoAction" value="moveback" />
@@ -12493,6 +12500,7 @@
 		<attribute key="attack" value="65" />
 		<attribute key="weaponType" value="distance" />
 		<attribute key="shootType" value="redstar" />
+		<attribute key="maxHitChance" value="96" />					
 		<attribute key="range" value="4" />
 		<attribute key="breakChance" value="33" />
 		<attribute key="ammoAction" value="moveback" />
@@ -12521,6 +12529,7 @@
 		<attribute key="attack" value="35" />
 		<attribute key="weaponType" value="distance" />
 		<attribute key="shootType" value="royalspear" />
+		<attribute key="maxHitChance" value="80" />					
 		<attribute key="range" value="3" />
 		<attribute key="breakChance" value="3" />
 		<attribute key="ammoAction" value="moveback" />
@@ -13128,7 +13137,7 @@
 		<attribute key="containerSize" value="10" />
 	</item>
 	<item id="7503" article="a" name="heavy package">
-		<attribute key="description" value="It is a kit for a large trunk." />
+		<attribute key="description" value="Use it in your house to construct a large trunk." />
 		<attribute key="weight" value="60000" />
 	</item>
 	<item fromid="7504" toid="7507" article="a" name="fire shrine" />
@@ -14226,7 +14235,7 @@
 		<attribute key="weight" value="70" />
 		<attribute key="slotType" value="ammo" />
 		<attribute key="attack" value="25" />
-		<attribute key="maxHitChance" value="90" />
+		<attribute key="maxHitChance" value="91" />
 		<attribute key="weaponType" value="ammunition" />
 		<attribute key="ammoType" value="arrow" />
 		<attribute key="ammoAction" value="removecount" />
@@ -14236,7 +14245,7 @@
 		<attribute key="weight" value="70" />
 		<attribute key="slotType" value="ammo" />
 		<attribute key="attack" value="25" />
-		<attribute key="maxHitChance" value="90" />
+		<attribute key="maxHitChance" value="91" />
 		<attribute key="weaponType" value="ammunition" />
 		<attribute key="ammoType" value="arrow" />
 		<attribute key="ammoAction" value="removecount" />
@@ -14246,7 +14255,7 @@
 		<attribute key="weight" value="70" />
 		<attribute key="slotType" value="ammo" />
 		<attribute key="attack" value="25" />
-		<attribute key="maxHitChance" value="90" />
+		<attribute key="maxHitChance" value="91" />
 		<attribute key="weaponType" value="ammunition" />
 		<attribute key="ammoType" value="arrow" />
 		<attribute key="ammoAction" value="removecount" />
@@ -14300,7 +14309,7 @@
 		<attribute key="weight" value="70" />
 		<attribute key="slotType" value="ammo" />
 		<attribute key="attack" value="25" />
-		<attribute key="maxHitChance" value="90" />
+		<attribute key="maxHitChance" value="91" />
 		<attribute key="weaponType" value="ammunition" />
 		<attribute key="ammoType" value="arrow" />
 		<attribute key="ammoAction" value="removecount" />
@@ -15507,7 +15516,7 @@
 		<attribute key="transformUseTo" value="8690" />
 	</item>
 	<item id="8692" article="a" name="furniture package">
-		<attribute key="description" value="It is a kit for a chimney." />
+		<attribute key="description" value="Use it in your house to construct a chimney." />
 		<attribute key="weight" value="60000" />
 	</item>
 	<item id="8693" article="a" name="disguise kit">
@@ -17626,7 +17635,7 @@
 		<attribute key="transformUseTo" value="9972" />
 	</item>
 	<item id="9974" article="a" name="furniture package">
-		<attribute key="description" value="It is a kit for a crystal table." />
+		<attribute key="description" value="Use it in your house to construct a crystal table." />
 		<attribute key="weight" value="2500" />
 	</item>
 	<item id="9975" article="a" name="crystal table">
@@ -19337,7 +19346,7 @@
 		<attribute key="description" value="Someone seems to have had a lot of fun decorating it." />
 	</item>
 	<item id="11126" article="a" name="lizard weapon rack kit">
-		<attribute key="description" value="It is a kit for a lizard weapon rack." />
+		<attribute key="description" value="Use it in your house to construct a lizard weapon rack." />
 		<attribute key="weight" value="2500" />
 	</item>
 	<item id="11127" toid="11128" article="a" name="lizard weapon rack">
@@ -19345,7 +19354,7 @@
 	</item>
 	<item fromid="11129" toid="11132" article="a" name="dragon statue" />
 	<item id="11133" article="a" name="dragon statue kit">
-		<attribute key="description" value="It is a kit for a dragon statue." />
+		<attribute key="description" value="Use it in your house to construct a dragon statue." />
 		<attribute key="weight" value="6500" />
 	</item>
 	<item id="11134" article="a" name="tome of knowledge">
@@ -19436,7 +19445,7 @@
 		<attribute key="rotateTo" value="11203" />
 	</item>
 	<item id="11205" article="a" name="dragon throne kit">
-		<attribute key="description" value="It is a kit for a dragon throne." />
+		<attribute key="description" value="Use it in your house to construct a dragon throne." />
 		<attribute key="weight" value="2500" />
 	</item>
 	<item id="11206" article="a" name="red lantern">
@@ -20228,7 +20237,8 @@
 	<item fromid="11534" toid="11543" article="a" name="stone" />
 	<item fromid="11544" toid="11547" article="a" name="stone wall" />
 	<item fromid="11549" toid="11560" name="acid" />
-	<!-- need to confirm name -->
+	<item id="11561" article="a" name="mud" />
+	<item id="11758" article="a" name="deep black gap" />	
 	<item fromid="11562" toid="11570" name="dead bamboo" />
 	<!-- need to confirm name -->
 	<item id="11700" article="a" name="stone wall" />
@@ -20267,6 +20277,14 @@
 	<item fromid="11785" toid="11792" name="muddy floor" />
 	<item fromid="11793" toid="11795" article="a" name="skull pillar" />
 	<item id="11797" article="a" name="skull pillar" />
+	<item id="11796" article="a" name="magic portal">
+		<attribute key="description" value="You can see the other side through it."/>
+		<attribute key="type" value="teleport"/>
+	</item>
+	<item id="11798" article="a" name="magic portal">
+		<attribute key="description" value="You can see the other side through it."/>
+		<attribute key="type" value="teleport"/>
+	</item>	
 	<item fromid="11827" toid="11831" name="fog" />
 	<item id="11832" article="a" name="skull" plural="skulls">
 		<attribute key="weight" value="2180" />
@@ -21464,8 +21482,8 @@
 	<item fromid="12880" toid="12883" article="a" name="stone wall" />
 	<item id="12884" article="a" name="skull pillar" />
 	<item fromid="12885" toid="12911" article="a" name="stone wall" />
-	<item fromid="12912" toid="12933" article="a" name="dark sand tile" />
-	<item fromid="12934" toid="12937" article="a" name="sand tile" />
+	<item fromid="12912" toid="12933" article="a" name="sand" />
+	<item fromid="12934" toid="12937" article="a" name="sand" />
 	<item fromid="12938" toid="12945" article="a" name="stone wall" />
 	<item fromid="12946" toid="12947" article="a" name="skull" />
 	<item fromid="12948" toid="12949" article="a" name="papyrus scroll" />
@@ -22182,6 +22200,7 @@
 		<attribute key="description" value="It is shining with positive energy and was awarded by FunTibia.com." />
 		<attribute key="weight" value="1100" />
 	</item>
+	<item id="13585" toid="13593" article="a" name="slime fungus" />
 	<item id="13584" article="a" name="dead crystal wolf">
 		<attribute key="containerSize" value="10" />
 		<attribute key="decayTo" value="13595" />
@@ -22207,6 +22226,7 @@
 		<attribute key="duration" value="600" />
 		<attribute key="corpseType" value="blood" />
 	</item>
+	<item id="13598" toid="13600" article="a" name="slime fungus" />		
 	<item id="13601" article="a" name="slime gobbler">
 		<attribute key="description" value="This little critter just loves slime fungus." />
 		<attribute key="weight" value="1000" />
@@ -22815,6 +22835,42 @@
 	<item id="14404" name="your inbox">
 		<attribute key="containerSize" value="30" />
 	</item>
+	<item fromid="14365" toid="14368" article="an" name="archway"/>		
+	<item fromid="14369" toid="14387" article="a" name="hive wall"/>	
+	<item fromid="14388" toid="14395" name="strange growth"/>	
+	<item fromid="14396" toid="14401" article="a" name="hive structure"/>	
+	<item fromid="14408" toid="14412" article="a" name="hive wall"/>
+	<item fromid="14413" toid="14425" article="a" name="hive structure"/>	
+	<item fromid="14426" toid="14430" article="a" name="hive pillar"/>	
+	<item fromid="14431" toid="14434" article="a" name="hive spike"/>		
+	<item id="14435" article="a" name="mud">
+		<attribute key="description" value="There is a hole in the ceiling." />
+	</item>	
+	<item id="14436" article="a" name="mud">
+		<attribute key="description" value="There is a hole in the ceiling." />
+	</item>	
+	<item fromid="14437" toid="14441" article="a" name="hive structure"/>	
+	<item fromid="14442" toid="14452" article="a" name="hive spike"/>	
+	<item id="14461" article="an" name="insectoid hive">
+		 <attribute key="floorchange" value="down" />
+	</item>
+	<item id="14462" article="an" name="insectoid hive" />
+	<item fromid="14463" toid="14489" article="a" name="hive wall"/>
+	<item fromid="14490" toid="14495" article="a" name="archway"/>	
+	<item fromid="14496" toid="14498" article="a" name="hive pillar"/>	
+	<item fromid="14499" toid="14515" article="a" name="hive structure"/>	
+	<item fromid="14537" toid="14572" article="a" name="hive structure"/>	
+	<item fromid="14573" toid="14580" article="a" name="hive hole"/>
+	<item fromid="14583" toid="14584" article="a" name="moist wall"/>	
+	<item fromid="14586" toid="14619" article="a" name="moist wall"/>		
+	<item fromid="14642" toid="14646" article="a" name="doorway"/>		
+	<item fromid="14716" toid="14749" article="a" name="hive structure"/>	
+	<item fromid="14853" toid="14856" name="small insectoid hairs"/>	
+	<item fromid="14858" toid="14871" article="an" name="insectoid meatball"/>		
+	<item fromid="14890" toid="14898" article="a" name="rockboy"/>	
+	<item fromid="14904" toid="14930" article="a" name="wet temple floor"/>		
+	<item fromid="14931" toid="14951" article="a" name="cracked temple floor"/>	
+	<item fromid="15006" toid="15011" article="a" name="sea floor"/>		
 	<item id="15029" article="a" name="ramp"/>
 	<item id="15030" article="a" name="ramp">
 		<attribute key="floorchange" value="north" />
@@ -22864,33 +22920,64 @@
 		<attribute key="floorchange" value="south" />
 	</item>
 	<item fromid="15063" toid="15064" article="a" name="ramp"/>
-	<item id="15175" article="a" name="dead deepling guard">
+	<item fromid="15065" toid="15115" article="a" name="grotto" />	
+	<item id="15140" article="a" name="alga" />		
+	<item id="15142" toid="15143" article="a" name="sponge" />	
+	<item id="15144" article="a" name="tree coral" />		
+	<item id="15145" article="a" name="white coral" />	
+	<item id="15148" article="a" name="small coral" />		
+	<item id="15151" article="a" name="laminaria" />	
+	<item id="15158" article="a" name="large coral" />		
+	<item id="15175" article="a" name="dead deepling warrior">
 		<attribute key="weight" value="6300" />
 		<attribute key="containerSize" value="5" />
 		<attribute key="decayTo" value="15176" />
-		<attribute key="duration" value="600" />
+		<attribute key="duration" value="10" />
 		<attribute key="corpseType" value="blood" />
 		<attribute key="fluidSource" value="blood" />
 	</item>
-	<item id="15176" article="a" name="dead deepling guard">
+	<item id="15176" article="a" name="dead deepling warrior">
 		<attribute key="weight" value="4400" />
 		<attribute key="containerSize" value="5" />
 		<attribute key="decayTo" value="15177" />
 		<attribute key="duration" value="600" />
 		<attribute key="corpseType" value="blood" />
 	</item>
-	<item id="15177" article="a" name="dead deepling guard">
+	<item id="15177" article="a" name="dead deepling warrior">
 		<attribute key="weight" value="3000" />
 		<attribute key="decayTo" value="15178" />
 		<attribute key="duration" value="600" />
 		<attribute key="corpseType" value="blood" />
 	</item>
-	<item id="15178" article="a" name="dead deepling guard">
+	<item id="15178" article="a" name="dead deepling warrior">
 		<attribute key="weight" value="2000" />
 		<attribute key="decayTo" value="0" />
 		<attribute key="duration" value="600" />
 		<attribute key="corpseType" value="blood" />
 	</item>
+	<item id="15179" article="a" name="ramp">
+		<attribute key="floorchange" value="east" />
+	</item>
+	<item id="15180" article="a" name="ramp" />
+	<item id="15181" article="a" name="ramp">
+		<attribute key="floorchange" value="west" />
+	</item>
+	<item id="15182" article="a" name="ramp" />
+	<item id="15183" article="a" name="ramp">
+		<attribute key="floorchange" value="south" />
+	</item>
+	<item id="15184" article="a" name="ramp" />
+	<item id="15185" article="a" name="ramp">
+		<attribute key="floorchange" value="north" />
+	</item>
+	<item id="15186" article="a" name="ramp" />	
+	<item id="15187" article="a" name="dead deepling guard">
+		<attribute key="weight" value="4400" />
+		<attribute key="containerSize" value="5" />
+		<attribute key="decayTo" value="15189" />
+		<attribute key="duration" value="10" />
+		<attribute key="corpseType" value="blood" />
+	</item>	
 	<item id="15188" article="a" name="dead deepling guard">
 		<attribute key="weight" value="4400" />
 		<attribute key="containerSize" value="5" />
@@ -22911,11 +22998,11 @@
 		<attribute key="corpseType" value="blood" />
 	</item>
 	<item fromid="15191" toid="15206" name="leaves" />
-	<item id="15208" article="a" name="dead deepling guard">
+	<item id="15208" article="a" name="dead deepling spellsinger">
 		<attribute key="weight" value="4400" />
 		<attribute key="containerSize" value="5" />
 		<attribute key="decayTo" value="15209" />
-		<attribute key="duration" value="600" />
+		<attribute key="duration" value="10" />
 		<attribute key="corpseType" value="blood" />
 	</item>
 	<item id="15209" article="a" name="dead deepling spellsinger">
@@ -23012,12 +23099,13 @@
 		<attribute key="duration" value="600" />
 		<attribute key="corpseType" value="blood" />
 	</item>
-	<item id="15232" article="a" name="dead Tanjis">
+	<item id="15231" article="a" name="dead Tanjis">
 		<attribute key="weight" value="4000" />
 		<attribute key="decayTo" value="0" />
 		<attribute key="duration" value="600" />
 		<attribute key="corpseType" value="blood" />
 	</item>
+	<item fromid="15232" toid="15237" article="a" name="brown sea floor"/>	
 	<item fromid="15250" toid="15267" article="an" name="enormous statue" />
 	<item id="15272" article="a" name="dead ladybug">
 		<attribute key="weight" value="26000" />
@@ -23165,6 +23253,7 @@
 	<item id="15344" article="a" name="party snake" />
 	<item id="15345" article="a" name="emblems" />
 	<item id="15346" article="an" name="emblem" />
+	<item fromid="15347" toid="15352" article="a" name="archway"/>			
 	<item id="15354" article="a" name="dead kollos">
 		<attribute key="weight" value="26000" />
 		<attribute key="containerSize" value="8" />
@@ -23560,6 +23649,16 @@
 	<item id="15515" article="a" name="bar of gold">
 		<attribute key="weight" value="2100" />
 	</item>
+	<item id="15536" article="a" name="ramp">
+		<attribute key="floorchange" value="south" />
+	</item>
+	<item id="15537" article="a" name="ramp">
+		<attribute key="floorchange" value="south" />
+	</item>
+	<item id="15538" article="a" name="ramp">
+		<attribute key="floorchange" value="south" />
+	</item>
+	<item id="155389" article="a" name="ramp" />	
 	<item id="15545" article="a" name="fox tail">
 		<attribute key="weight" value="200" />
 		<attribute key="description" value="A hermit near Carlin might be able to tell you more about it." />
@@ -23650,7 +23749,7 @@
 		<attribute key="weight" value="70" />
 		<attribute key="slotType" value="ammo" />
 		<attribute key="attack" value="33" />
-		<attribute key="maxHitChance" value="90" />
+		<attribute key="maxHitChance" value="91" />
 		<attribute key="weaponType" value="ammunition" />
 		<attribute key="ammoType" value="arrow" />
 		<attribute key="shootType" value="tarsalarrow" />
@@ -23660,7 +23759,7 @@
 		<attribute key="weight" value="80" />
 		<attribute key="slotType" value="ammo" />
 		<attribute key="attack" value="36" />
-		<attribute key="maxHitChance" value="90" />
+		<attribute key="maxHitChance" value="91" />
 		<attribute key="weaponType" value="ammunition" />
 		<attribute key="ammoType" value="bolt" />
 		<attribute key="shootType" value="vortexbolt" />
@@ -23785,17 +23884,38 @@
 		<attribute key="magicpoints" value="4" />
 		<attribute key="showattributes" value="1" />
 	</item>
+	<item id="17235" article="a" name="closed door">
+		<attribute key="type" value="door" />
+		<attribute key="blockprojectile" value="1" />
+		<attribute key="transformUseTo" value="17236" />
+	</item>
+	<item id="17236" article="an" name="open door">
+		<attribute key="type" value="door" />
+		<attribute key="transformUseTo" value="17235" />
+	</item>
+	<item id="17237" article="a" name="closed door">
+		<attribute key="type" value="door" />
+		<attribute key="blockprojectile" value="1" />
+		<attribute key="transformUseTo" value="17238" />
+	</item>
+	<item id="17238" article="an" name="open door">
+		<attribute key="type" value="door" />
+		<attribute key="transformUseTo" value="17237" />
+	</item>		
+	<item fromid="17239" article="a" name="strange idol"/>
+	<item fromid="17240" toid="17241" article="a" name="broken idol"/>
+	<item fromid="17242" article="a" name="strange idol"/>	
 	<item id="17432" article="a" name="purse">
 		<attribute key="containerSize" value="30" />
 	</item>
-	<item id="17436" article="a" name="basalt wall with crystals" />
-	<item fromid="17438" toid="17443" name="crystal floor" />
+	<item fromid="17436" toid="17443" name="crystal floor" />
 	<item fromid="17444" toid="17446" name="basalt floor" />
 	<item id="17451" name="basalt floor" />
 	<item id="17469" article="a" name="basalt wall" />
 	<item fromid="17473" toid="17476" article="a" name="basalt wall" />
 	<item fromid="17484" toid="17486" article="a" name="basalt wall" />
-	<item fromid="17502" toid="17509" article="a" name="basalt wall with crystals" />
+	<item fromid="17502" toid="17504" article="a" name="basalt wall with crystals" />
+	<item fromid="17506" toid="17509" article="a" name="basalt wall with crystals" />	
 	<item fromid="17514" toid="17515" article="a" name="basalt wall with crystals" />
 	<item id="17519" article="a" name="basalt wall" />
 	<item id="17525" name="crystal floor" />
@@ -23825,6 +23945,7 @@
 	<item fromid="17597" toid="17598" article="a" name="large blue crystal" />
 	<item fromid="17625" toid="17640" name="basalt floor" />
 	<item fromid="17665" toid="17684" name="mossy floor" />
+	<item fromid="17713" toid="17715" name="mushrooms" />	
 	<item id="17731" article="a" name="ramp">
 		<attribute key="floorchange" value="east" />
 	</item>
@@ -23841,13 +23962,44 @@
 		<attribute key="floorchange" value="north" />
 	</item>
 	<item id="17738" article="a" name="ramp" />
+	<item id="17745" name="small cortinarius mushrooms" />
+	<item id="17746" article="a"  name="small gomphidius mushroom" />	
+	<item id="17747" toid="17748" article="a"  name="paxillus mushroom" />	
+	<item id="17749" article="a"  name="dark blue mushroom" />
+	<item id="17757" article="a" name="large fungus stipe" />		
+	<item id="17758" article="a" name="large sticky mushroom" />	
+	<item fromid="17664" name="mushrooms growing on a pillar" />	
+	<item id="17766" name="corkscrew stairs">
+		<attribute key="floorchange" value="north" />
+	</item>
+	<item id="17767" name="mushroom corkscrew stairs">
+		<attribute key="floorchange" value="down" />
+	</item>
+	<item id="17768" name="mushroom corkscrew stairs">
+		<attribute key="floorchange" value="down" />
+	</item>
+	<item id="17773" toid="17776" article="a" name="toad stool" />	
+	<item id="17777" article="a" name="mushroom table" />	
+	<item id="17778" toid="17779" article="a" name="large decorative mushroom" />	
+	<item id="17787" toid="17810" article="a" name="huge red crystal" />	
+	<item id="17811" toid="17822" name="mushrooms" />	
+	<item id="17823" toid="17849" article="a" name="crystal wall" />	
 	<item fromid="17854" toid="17858" name="basalt" />
 	<item id="17867" article="a" name="large blue crystal" />
 	<item id="17868" article="a" name="crystal teleporter" />
-	<item id="17974" article="a" name="basalt wall with crystals" />
-	<item id="17983" article="a" name="basalt crystal wall" />
+	<item id="17952" toid="17985" article="a" name="basalt wall with crystals" />
+	<item id="17894" toid="17910" article="a" name="mossy wall" />	
+	<item id="17911" toid="17925" article="a" name="mountain" />
+	<item id="17926" toid="17951" article="a" name="mossy wall" />
+	<item id="17986" toid="17997" article="a" name="mossy wall" />	
 	<item id="17998" article="a" name="crystals" />
 	<item id="17999" article="a" name="blue crystal" />
+	<item id="18000" toid="18004" name="crystal glass floor" />	
+	<item fromid="18009" toid="18026" name="small stream" />
+	<item fromid="18053" toid="18055" name="mushroom sponge" />	
+	<item fromid="18056" toid="18104" article="a" name="titanic mushroom" />
+	<item fromid="18141" toid="18152" name="mossy floor" />	
+	<item fromid="18162" toid="18195" name="stone floor" />		
 	<item id="18208" article="a" name="closed door">
 		<attribute key="type" value="door" />
 		<attribute key="blockprojectile" value="1" />
@@ -23857,18 +24009,77 @@
 		<attribute key="type" value="door" />
 		<attribute key="transformUseTo" value="18208" />
 	</item>	
+	<item id="18213" article="a" name="gnomish extraction crystal">
+		<attribute key="weight" value="450" />
+	</item>		
+	<item id="18219" name="churned ground">
+		<attribute key="decayTo" value="18340" />
+		<attribute key="duration" value="40" />
+	</item>			
+	<item id="18219" article="a" name="gnomish repair crystal">
+		<attribute key="weight" value="450" />
+	</item>		
+	<item fromid="18235" toid="18262" name="icy bones" />	
+	<item fromid="18263" toid="18264" article="an" name="icy skull" />	
+	<item fromid="18265" toid="18268" name="icy bones" />	
+	<item fromid="18269" article="an" name="ice wall" />	
+	<item fromid="18270" toid="18281" name="icy bones" />	
+	<item fromid="18282" toid="18284" article="an" name="ice wall" />		
+	<item fromid="18285" toid="18288" article="an" name="icy mammoth tusk" />	
+	<item fromid="18289" toid="18290" article="an" name="icy mammoth ear" />	
+	<item fromid="18291" toid="18292" article="an" name="icy mammoth head" />	
+	<item fromid="18293" toid="18295" article="an" name="icy mammoth trunk" />		
 	<item id="18304" article="a" name="crystalline arrow" plural="crystalline arrows">
 		<attribute key="weight" value="75" />
 		<attribute key="slotType" value="ammo" />
 		<attribute key="attack" value="65" />
-		<attribute key="maxHitChance" value="90" />
+		<attribute key="maxHitChance" value="91" />
 		<attribute key="weaponType" value="ammunition" />
 		<attribute key="ammoType" value="arrow" />
 		<attribute key="shootType" value="crystallinearrow" />
 		<attribute key="ammoAction" value="removecount" />
 		<attribute key="description" value="It can only be wielded properly by players of level 90 or higher." />
 	</item>
-	<item id="18358" name="scattered crystals" />
+	<item id="18307" article="a" name="damaged crystal">
+		<attribute key="decayTo" value="18311" />
+		<attribute key="duration" value="30" />
+	</item>	
+	<item id="18308" article="a" name="large crystal">
+		<attribute key="decayTo" value="18307" />
+		<attribute key="duration" value="15" />
+	</item>
+	<item id="18309" article="a" name="large crystal">
+		<attribute key="decayTo" value="18308" />
+		<attribute key="duration" value="15" />
+	</item>	
+	<item id="18310" article="a" name="large crystal">
+		<attribute key="decayTo" value="18309" />
+		<attribute key="duration" value="15" />
+	</item>		
+	<item id="18311" article="a" name="large crystal">
+		<attribute key="decayTo" value="18310" />
+		<attribute key="duration" value="15" />
+	</item>	
+	<item id="18312" article="a" name="lonely crystal" />		
+	<item id="18313" article="a" name="gnomish crystal package" />			
+	<item id="18314" toid="18319" article="a" name="lonely crystal" />			
+	<item id="18320" toid="18326" article="a" name="large crystal" />	
+	<item id="18340" name="mold floor" />	
+	<item id="18241" name="some truffels">
+		<attribute key="decayTo" value="18340" />
+		<attribute key="duration" value="10" />
+	</item>			
+	<item id="18342" article="a" name="crystal cannon" />		
+	<item id="18343" article="a" name="bell">
+		<attribute key="weight" value="280" />
+	</item>	
+	<item id="18344" article="a" name="little pig">
+		<attribute key="description" value="The little pig needs to be returned to its keeper within an hour." />
+		<attribute key="weight" value="800" />
+		<attribute key="decayTo" value="0" />
+		<attribute key="duration" value="3600" />		
+	</item>	
+	<item id="18357" toid="18373" name="scattered crystals" />
 	<item id="18365" name="basalt floor" />
 	<item id="18370" name="basalt floor" />
 	<item id="18388" article="a" name="crystal lamp">
@@ -24070,7 +24281,7 @@
 		<attribute key="weight" value="85" />
 		<attribute key="slotType" value="ammo" />
 		<attribute key="attack" value="66" />
-		<attribute key="maxHitChance" value="90" />
+		<attribute key="maxHitChance" value="91" />
 		<attribute key="weaponType" value="ammunition" />
 		<attribute key="ammoType" value="bolt" />
 		<attribute key="shootType" value="prismaticbolt" />
@@ -24080,7 +24291,7 @@
 		<attribute key="weight" value="80" />
 		<attribute key="slotType" value="ammo" />
 		<attribute key="attack" value="56" />
-		<attribute key="maxHitChance" value="90" />
+		<attribute key="maxHitChance" value="91" />
 		<attribute key="weaponType" value="ammunition" />
 		<attribute key="ammoType" value="bolt" />
 		<attribute key="shootType" value="drillbolt" />
@@ -24091,7 +24302,7 @@
 		<attribute key="slotType" value="ammo" />
 		<attribute key="attack" value="27" />
 		<attribute key="elementEarth" value="27" />
-		<attribute key="maxHitChance" value="90" />
+		<attribute key="maxHitChance" value="91" />
 		<attribute key="weaponType" value="ammunition" />
 		<attribute key="ammoType" value="arrow" />
 		<attribute key="shootType" value="envenomedarrow" />
@@ -24197,6 +24408,7 @@
 		<attribute key="absorbPercentEnergy" value="15" />
 		<attribute key="showattributes" value="1" />	
 	</item>
+	<item id="18472" toid="18474" article="a" name="treasure chest" />	
 	<item id="18488" article="a" name="skill trainer">
 		<attribute key="description" value="Use this statue to train your sword fighting and shielding skill offline." />
 	</item>
@@ -24227,7 +24439,8 @@
 	<item id="18508" article="a" name="statue of gnomevil">
 		<attribute key="weight" value="500" />
 		<!-- weight not accurate -->
-	</item>
+	</item>	
+	<item id="18514" toid="18515" article="a" name="stalagmite" />	
 	<item id="18516" article="a" name="golem wrench">
 		<attribute key="description" value="A hermit near Carlin might be able to tell you more about it." />
 		<attribute key="weight" value="200" />
@@ -24245,62 +24458,24 @@
 	</item>
 
 	<!-- Oranize the items below -->
-	<item id="17812" name="mushrooms" />
-	<item id="17819" name="mossy floor" />
-	<item id="17779" article="a" name="large decorative mushroom" />
-	<item id="17777" article="a" name="mushroom table" />
-	<item id="17776" article="a" name="toad stool" />
-	<item id="17778" article="a" name="large decorative mushroom" />
-	<item id="17745" name="small cortinarius mushrooms" />
 	<item id="17751" article="a" name="yellow glowing mushroom" />
-	<item id="17841" article="a" name="crystal wall" />
-	<item id="17847" article="a" name="crystal wall" />
-	<item id="17848" article="a" name="crystal wall" />
-	<item id="18004" name="crystal glass floor" />
-	<item id="17834" article="a" name="crystal wall" />
-	<item id="17823" article="a" name="crystal wall" />
 	<item id="17571" article="a" name="large fallen crystal" />
-	<item id="17838" article="a" name="crystal wall" />
-	<item id="17839" article="a" name="crystal wall" />
 	<item id="17520" name="nestled crystals" />
-	<item id="17830" article="a" name="crystal wall" />
-	<item id="17824" article="a" name="crystal wall" />
-	<item id="17844" article="a" name="crystal wall" />
-	<item id="17573" article="a" name="large fallen crystal" />
-	<item id="17572" article="a" name="large fallen crystal" />
+	<item id="17572" toid="17573" article="a" name="large fallen crystal" />
 	<item id="17574" article="a" name="cluster of green crystals" />
-	<item id="17578" name="green crystals" />
-	<item id="17720" article="a" name="mossy wall" />
-	<item id="17992" article="a" name="mossy wall" />
+	<item id="17578" toid="17579" name="green crystals" />
 	<item id="17522" article="a" name="basalt wall" />
 	<item id="17755" article="an" name="orange dankshroom" />
 	<item id="17750" article="a" name="blue glowing mushroom" />
-	<item id="17725" article="a" name="mossy wall" />
 	<item id="17744" name="small white beech mushrooms" />
-	<item id="17814" name="mushrooms" />
-	<item id="17724" article="a" name="mossy wall" />
-	<item id="17721" article="a" name="mossy wall" />
 	<item id="18227" article="an" name="innocent target" />
 	<item id="18226" article="a" name="target dummy" />
 	<item id="17453" name="mossy floor" />
-	<item id="17898" article="a" name="mossy wall" />
-	<item id="17997" article="a" name="mossy wall" />
-	<item id="17986" article="a" name="mossy wall" />
-	<item id="17843" article="a" name="mossy wall" />
-	<item id="17727" article="a" name="mossy wall" />
 	<item id="18225" article="a" name="crystal cannon" />
 	<item id="17753" article="a" name="large boletus mushroom" />
-	<item id="17690" article="a" name="mossy wall" />
 	<item id="17765" name="stalagmites" />
 	<item id="17759" article="a" name="large spongy mushroom" />
 	<item id="17754" article="a" name="large boletus mushroom" />
-	<item id="17989" article="a" name="mossy wall" />
-	<item id="17811" name="mushrooms" />
-	<item id="17919" article="a" name="mountain" />
-	<item id="17994" article="a" name="mossy wall" />
-	<item id="17943" article="a" name="mossy wall" />
-	<item id="17987" article="a" name="mossy wall" />
-	<item id="17894" article="a" name="mossy wall" />
 	<item id="17937" name="mossy spots" />
 	<item id="17581" name="blue crystal rods" />
 	<item id="17583" name="small blue crystals" />
@@ -24336,9 +24511,6 @@
 	<item id="7937" article="a" name="potion stand">
 		<attribute key="description" value="It is empty." />
 	</item>
-	<item id="13587" article="a" name="slime fungus" />
-	<item id="13600" article="a" name="slime fungus" />
-	<item id="13599" article="a" name="slime fungus" />
 	<item id="11858" article="a" name="bridge" />
 	<item id="13597" article="a" name="lit torch bearer" />
 	<item id="11548" name="sulphur" />
