@@ -5735,6 +5735,8 @@ bool Player::addOfflineTrainingTries(skills_t skill, int32_t tries)
 	uint32_t oldSkillValue, newSkillValue;
 	long double oldPercentToNextLevel, newPercentToNextLevel;
 
+	std::ostringstream ss;
+
 	if(skill == SKILL__MAGLEVEL)
 	{
 		uint64_t currReqMana = vocation->getReqMana(magLevel);
@@ -5788,6 +5790,10 @@ bool Player::addOfflineTrainingTries(skills_t skill, int32_t tries)
 		}
 
 		newSkillValue = magLevel;
+		
+		ss << "You advanced to magic level " << magLevel << ".";
+		sendTextMessage(MSG_EVENT_ADVANCE, ss.str().c_str());
+		ss.str("");
 	}
 	else
 	{
@@ -5843,9 +5849,12 @@ bool Player::addOfflineTrainingTries(skills_t skill, int32_t tries)
 		}
 
 		newSkillValue = skills[skill][SKILL_LEVEL];
+
+		ss << "You advanced to " << getSkillName(skill) << " level " << skills[skill][SKILL_LEVEL] << ".";
+		sendTextMessage(MSG_EVENT_ADVANCE, ss.str().c_str());
+		ss.str("");
 	}
 
-	std::ostringstream ss;
 	ss << std::fixed << std::setprecision(2) << "Your " << ucwords(getSkillName(skill)) << " skill changed from level " << oldSkillValue << " (with " << oldPercentToNextLevel << "% progress towards level " << (oldSkillValue + 1) << ") to level " << newSkillValue << " (with " << newPercentToNextLevel << "% progress towards level " << (newSkillValue + 1) << ")";
 	sendTextMessage(MSG_EVENT_ADVANCE, ss.str().c_str());
 	return true;

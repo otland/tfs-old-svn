@@ -134,7 +134,6 @@ struct LuaDialogCallback //not right way however there's no way xd
 {
 	LuaInterface* L;
 	int32_t scriptId, function;
-	Npc* npc;
 	ModalDialog dialog;
 };
 

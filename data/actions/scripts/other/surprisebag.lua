@@ -76,7 +76,7 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 	local run = false
 	
 	for k,v in pairs(config) do
-		if (k == item.id) then
+		if (k == item.itemid) then
 			run = true
 			break
 		end
@@ -86,12 +86,12 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 		return false
 	end
 	
-	local gift = randomGift(item.id)
+	local gift = randomGift(item.itemid)
 
-	if (config[exactItem].count.const ~= nil) then
-		doPlayerAddItem(cid, config[item.id][gift].item, config[item.id][gift].count.const)
+	if (config[item.itemid][gift].count.const ~= nil) then
+		doPlayerAddItem(cid, config[item.itemid][gift].item, config[item.itemid][gift].count.const)
 	else
-		doPlayerAddItem(cid, config[item.id][gift].item, math.random(config[item.id][gift].count.min, config[item.id][gift].count.max))
+		doPlayerAddItem(cid, config[item.itemid][gift].item, math.random(config[item.itemid][gift].count.min, config[item.itemid][gift].count.max))
 	end
 	
 	doSendMagicEffect(fromPosition, CONST_ME_GIFT_WRAPS)
