@@ -9025,9 +9025,7 @@ int32_t LuaInterface::luaAddDialog(lua_State* L)
 	if (tmpIt == player->dialogCallbacks.end())
 	{
 
-		std::string _tmp;
-		char* title = (char*) "";
-		char* message = (char*) "";
+		std::string _tmp, title, message;
 		uint8_t buttonEnter, buttonEscape;
 		std::vector<ModalChoice> buttons, choices;
 		bool popup;
@@ -9040,13 +9038,15 @@ int32_t LuaInterface::luaAddDialog(lua_State* L)
 			_tmp = "title";
 			if (strkey.compare(_tmp) == 0)
 			{
-				title = (char*) lua_tostring(L, -1);
+				const char* _title = lua_tostring(L, -1);
+				title = _title;
 			}
 
 			_tmp = "message";
 			if (strkey.compare(_tmp) == 0)
 			{
-				message = (char*) lua_tostring(L, -1);
+				const char* _message = lua_tostring(L, -1);
+				message = _message;
 			}
 
 			_tmp = "buttons";
@@ -9054,26 +9054,25 @@ int32_t LuaInterface::luaAddDialog(lua_State* L)
 			{
 				lua_pushnil(L);
 				std::string _str_tmp;
+				ModalChoice _choice;
 				while( lua_next( L, -2) ) {
 					lua_pushnil(L);
-					int _id;
-					char* _value;
 					while( lua_next( L, -2) ) {
-						char* _c_tmp = (char*) lua_tostring(L, -2);
+						const char* _c_tmp = lua_tostring(L, -2);
 						_str_tmp = _c_tmp;
 
 						_tmp = "id";
-						if (_tmp.compare(_str_tmp) == 0)
-							_id = lua_tonumber(L,-1);
+						if (_tmp.compare(_str_tmp) == 0) {
+							_choice.id = lua_tonumber(L,-1);
+						}
 						_tmp = "value";
-						if (_tmp.compare(_str_tmp) == 0)
-							_value = (char*) lua_tostring(L,-1);
+						if (_tmp.compare(_str_tmp) == 0) {
+							const char* _value = lua_tostring(L,-1);
+							_choice.value = _value;
+						}
 						lua_pop( L, 1 );
 					}
 					lua_pop( L, 1 );
-					ModalChoice _choice;
-					_choice.id = _id;
-					_choice.value = _value;
 					buttons.push_back(_choice);
 				}
 			}
@@ -9093,26 +9092,25 @@ int32_t LuaInterface::luaAddDialog(lua_State* L)
 			{
 				lua_pushnil(L);
 				std::string _str_tmp;
+				ModalChoice _choice;
 				while( lua_next( L, -2) ) {
 					lua_pushnil(L);
-					int _id;
-					char* _value;
 					while( lua_next( L, -2) ) {
-						char* _c_tmp = (char*) lua_tostring(L, -2);
+						const char* _c_tmp = lua_tostring(L, -2);
 						_str_tmp = _c_tmp;
 
 						_tmp = "id";
-						if (_tmp.compare(_str_tmp) == 0)
-							_id = lua_tonumber(L,-1);
+						if (_tmp.compare(_str_tmp) == 0) {
+							_choice.id = lua_tonumber(L,-1);
+						}
 						_tmp = "value";
-						if (_tmp.compare(_str_tmp) == 0)
-							_value = (char*) lua_tostring(L,-1);
+						if (_tmp.compare(_str_tmp) == 0) {
+							const char* _value = lua_tostring(L,-1);
+							_choice.value = _value;
+						}
 						lua_pop( L, 1 );
 					}
 					lua_pop( L, 1 );
-					ModalChoice _choice;
-					_choice.id = _id;
-					_choice.value = _value;
 					choices.push_back(_choice);
 				}
 			}
@@ -11417,36 +11415,30 @@ int32_t LuaInterface::luaL_errors(lua_State* L)
 }
 
 #define EXPOSE_LOG(Name, Stream)\
-	int32_t LuaInterface::luaStd##Name(lua_State* L)\
-	{\
-		StringVec data;\
-		for(int32_t i = 0, params = lua_gettop(L); i < params; ++i)\
-		{\
-			if(lua_isnil(L, -1))\
-			{\
-				data.push_back("nil");\
-				lua_pop(L, 1);\
-			}\
-			else if(lua_isboolean(L, -1))\
-				data.push_back(popBoolean(L) ? "true" : "false");\
-			else if(lua_istable(L, -1)) {/* "table: address" */
-}\
-else if(lua_isfunction(L, -1)) {/* "function: address" */
-}\
-else\
-	data.push_back(popString(L));
+        int32_t LuaInterface::luaStd##Name(lua_State* L)\
+        {\
+                StringVec data;\
+                for(int32_t i = 0, params = lua_gettop(L); i < params; ++i)\
+                {\
+                        if(lua_isnil(L, -1))\
+                        {\
+                                data.push_back("nil");\
+                                lua_pop(L, 1);\
+                        }\
+                        else if(lua_isboolean(L, -1))\
+                                data.push_back(popBoolean(L) ? "true" : "false");\
+                        else if(lua_istable(L, -1)) {/* "table: address" */}\
+                        else if(lua_isfunction(L, -1)) {/* "function: address" */}\
+                        else\
+                                data.push_back(popString(L));\
+                }\
 \
-}\
+                for(StringVec::reverse_iterator it = data.rbegin(); it != data.rend(); ++it)\
+                        Stream << (*it) << std::endl;\
 \
-for(StringVec::reverse_iterator it = data.rbegin(); it != data.rend(); ++it)\
-	Stream << (*it) << std::endl;
-\
-\
-lua_pushnumber(L, data.size());
-\
-return 1;
-	   \
-	   }
+                lua_pushnumber(L, data.size());\
+                return 1;\
+        }
 
 	   EXPOSE_LOG(Cout, std::cout)
 	   EXPOSE_LOG(Clog, std::clog)
