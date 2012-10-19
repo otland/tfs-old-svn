@@ -116,6 +116,7 @@
 	forceSlowConnectionsToDisconnect = false
 	loginOnlyWithLoginServer = false
 	premiumPlayerSkipWaitList = false
+	packetsPerSecond = 50
 
 	-- RSA
 	-- NOTE: These should not be changed unless you know what your doing!
