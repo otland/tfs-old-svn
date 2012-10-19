@@ -971,6 +971,7 @@ void LuaInterface::executeDialogCallback(LuaDialogCallback& dialogCallback, Play
 		ScriptEnviroment* env = getEnv();
 
 		env->setScriptId(dialogCallback.scriptId, this);
+		env->setNpc(dialogCallback.npc);
 
 		lua_pushnumber(m_luaState, env->addThing(player));
 		lua_pushnumber(m_luaState, button);
@@ -8998,6 +8999,7 @@ int32_t LuaInterface::luaAddDialog(lua_State* L)
 	callback.L = interface;
 	callback.function = luaL_ref(L, LUA_REGISTRYINDEX);
 	callback.scriptId = env->getScriptId();
+	callback.npc = env->getNpc();
 
 	Player* player;
 
@@ -9122,9 +9124,6 @@ int32_t LuaInterface::luaAddDialog(lua_State* L)
 		}
 		lua_pop(L,1);
 
-		player->dialogControl.dialogId = dialogId;
-		player->dialogControl.pos = player->getPosition();
-
 		tmp.id = dialogId;
 		tmp.title = title;
 		tmp.message = message;
@@ -9143,6 +9142,9 @@ int32_t LuaInterface::luaAddDialog(lua_State* L)
 	else {
 		tmp = tmpIt->second.dialog;
 	}
+
+	player->dialogControl.dialogId = dialogId;
+	player->dialogControl.pos = player->getPosition();
 
 	player->sendModalDialog(tmp);
 	return 1;
