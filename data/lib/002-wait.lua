@@ -3,7 +3,7 @@ wait = coroutine.yield
 function runThread(co)
 	if(coroutine.status(co) ~= 'dead') then
 		local _, delay = coroutine.resume(co)
-		addEvent(continueThread, delay, co)
+		addEvent(runThread, delay, co)
 	end
 end
 
