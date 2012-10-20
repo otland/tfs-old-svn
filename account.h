@@ -22,19 +22,30 @@
 
 typedef std::list<std::string> Characters;
 #else
-#include "gameservers.h"
-typedef std::map<std::string, GameServer*> Characters;
+class GameServer;
+struct Character
+{
+	Character(): server(NULL), status(0) {}
+	Character(const std::string& _name, GameServer* _server, int8_t _status):
+		name(_name), server(_server), status(_status) {}
 
+	std::string name;
+	GameServer* server;
+	int8_t status;
+};
+
+typedef std::map<std::string, Character> Characters;
 #endif
+
 class Account
 {
 	public:
-		Account() {number = premiumDays = lastDay = warnings = 0;}
+		Account() {premiumDays = warnings = number = lastDay = 0;}
 		virtual ~Account() {charList.clear();}
 
-		uint32_t number, premiumDays, lastDay;
-		int32_t warnings;
-		std::string name, password, recoveryKey;
+		uint16_t premiumDays, warnings;
+		uint32_t number, lastDay;
+		std::string name, password, recoveryKey, salt;
 		Characters charList;
 };
 #endif

@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <monster name="Elf Scout" nameDescription="a elf scout" race="blood" experience="75" speed="225" manacost="360">
 	<health now="160" max="160"/>
 	<look type="64" corpse="6012"/>
@@ -18,7 +18,7 @@
 		<flag runonhealth="0"/>
 	</flags>
 	<attacks>
-		<attack name="melee" interval="2000" skill="25" attack="18"/>
+		<attack name="melee" interval="2000" skill="20" attack="20"/>
 		<attack name="physical" interval="1000" chance="25" range="7" min="-30" max="-60">
 			<attribute key="shootEffect" value="arrow"/>
 		</attack>
@@ -39,19 +39,17 @@
 		<voice sentence="Your existence will end here!"/>
 	</voices>
 	<loot>
-		<item id="3976" countmax="10" chance="50000"/><!-- worm -->
-		<item id="2148" countmax="10" chance="100000"/><!-- gold coin -->
-		<item id="2544" countmax="10" chance="50000"/><!-- arrow -->
-		<item id="2484" chance="10000"/><!-- studded armor -->
-		<item id="2456" chance="10000"/><!-- bow -->
-		<item id="2681" chance="20000"/><!-- grapes -->
-		<item id="1987" chance="6666"><!-- bag -->
-			<inside>
-				<item id="2148" countmax="5" chance="80000"/><!-- gold coin -->
-				<item id="2642" chance="5500"/><!-- sandals -->
-				<item id="2397" chance="4000"/><!-- longsword -->
-				<item id="5921" countmax="1" chance="5000"/><!-- heaven blossom -->
-			</inside>
-		</item>
+		<item id="2148" countmax="30" chance="31000"/><!-- gold coin -->
+		<item id="2544" countmax="15" chance="12500"/><!-- arrow -->
+		<item id="2545" countmax="6" chance="7000"/><!-- poison arrow -->
+		<item id="2681" chance="17750"/><!-- grape -->
+		<item id="2031" chance="14250"/><!-- waterskin -->
+		<item id="2484" chance="19750"/><!-- studded armor -->
+		<item id="2642" chance="9370"/><!-- sandals -->
+		<item id="2397" chance="6500"/><!-- longsword -->
+		<item id="2482" chance="7000"/><!-- studded helmet -->
+		<item id="2456" chance="4000"/><!-- bow -->
+		<item id="5921" chance="250"/><!-- heaven blossom -->
+		<item id="7438" chance="50"/><!-- elvish bow -->
 	</loot>
 </monster>

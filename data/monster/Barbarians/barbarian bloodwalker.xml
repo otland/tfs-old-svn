@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <monster name="Barbarian Bloodwalker" nameDescription="a barbarian bloodwalker" race="blood" experience="195" speed="205" manacost="590">
 	<health now="305" max="305"/>
 	<look type="255" head="114" body="132" legs="132" feet="132" corpse="6080"/>
@@ -19,7 +19,7 @@
 		<flag runonhealth="0"/>
 	</flags>
 	<attacks>
-		<attack name="melee" interval="2000" min="-60" max="-170"/>
+		<attack name="melee" interval="2000" skill="40" attack="80"/>
 	</attacks>
 	<defenses armor="15" defense="15">
 		<defense name="speed" interval="1000" chance="12" speedchange="260" duration="40000">
@@ -41,20 +41,17 @@
 		<voice sentence="You can run but you can't hide"/>
 	</voices>
 	<loot>
-		<item id="2148" countmax="71" chance="100000"/><!-- gold coin -->
-		<item id="2671" countmax="1" chance="33000"/><!-- ham -->
-		<item id="2381" chance="2777"/><!-- halberd -->
-		<item id="2378" chance="2888"/><!-- battle axe -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
-				<item id="2458" chance="7999"/><!-- chain helmet -->
-				<item id="2050" chance="11111"/><!-- torch -->
-				<item id="2464" chance="4444"/><!-- chain armor -->
-				<item id="7457" chance="1222"/><!-- fur boots -->
-				<item id="5911" countmax="1" chance="4555"/><!-- red piece of cloth -->
-				<item id="7290" countmax="1" chance="3222"/><!-- shard -->
-				<item id="3962" chance="1688"/><!-- beastslayer axe -->
-			</inside>
-		</item>
+		<item id="2148" countmax="15" chance="20000"/><!-- gold coin -->
+		<item id="2671" chance="14250"/><!-- ham -->
+		<item id="2044" chance="12500"/><!-- lamp -->
+		<item id="2381" chance="10750"/><!-- halberd -->
+		<item id="2458" chance="9000"/><!-- chain helmet -->
+		<item id="2378" chance="9000"/><!-- battle axe -->
+		<item id="2464" chance="5400"/><!-- chain armor -->
+		<item id="5911" chance="250"/><!-- red piece of cloth -->
+		<item id="7618" chance="2000"/><!-- health potion -->
+		<item id="3962" chance="500"/><!-- beastslayer axe -->
+		<item id="7457" chance="500"/><!-- fur boots -->
+		<item id="7290" chance="300"/><!-- shard -->
 	</loot>
 </monster>

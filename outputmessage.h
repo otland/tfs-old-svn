@@ -42,20 +42,20 @@ class OutputMessage : public NetworkMessage, boost::noncopyable
 		Protocol* getProtocol() const {return m_protocol;}
 		Connection_ptr getConnection() const {return m_connection;}
 
-		char* getOutputBuffer() {return (char*)&m_MsgBuf[m_outputBufferStart];}
+		char* getOutputBuffer() {return (char*)&m_buffer[m_outputBufferStart];}
 		uint64_t getFrame() const {return m_frame;}
 
-		void writeMessageLength() {addHeader((uint16_t)(m_MsgSize));}
+		void writeMessageLength() {addHeader((uint16_t)(m_size));}
 		void addCryptoHeader(bool addChecksum)
 		{
 			if(addChecksum)
-				addHeader((uint32_t)(adlerChecksum((uint8_t*)(m_MsgBuf + m_outputBufferStart), m_MsgSize)));
+				addHeader((adlerChecksum((uint8_t*)(m_buffer + m_outputBufferStart), m_size)));
 
-			addHeader((uint16_t)(m_MsgSize));
+			addHeader((uint16_t)(m_size));
 		}
 
 #ifdef __TRACK_NETWORK__
-		virtual void Track(std::string file, int64_t line, std::string func)
+		virtual void track(std::string file, int32_t line, std::string func)
 		{
 			if(lastUses.size() >= 25)
 				lastUses.pop_front();
@@ -70,11 +70,11 @@ class OutputMessage : public NetworkMessage, boost::noncopyable
 			lastUses.clear();
 		}
 
-		void PrintTrace()
+		void printTrace()
 		{
 			uint32_t n = 1;
 			for(std::list<std::string>::const_reverse_iterator it = lastUses.rbegin(); it != lastUses.rend(); ++it, ++n)
-				std::cout << "\t" << n << ".\t" << (*it) << std::endl;
+				std::clog << "\t" << n << ".\t" << (*it) << std::endl;
 		}
 #endif
 
@@ -92,13 +92,13 @@ class OutputMessage : public NetworkMessage, boost::noncopyable
 		{
 			if((int32_t)m_outputBufferStart - (int32_t)sizeof(T) < 0)
 			{
-				std::cout << "[Error - OutputMessage::addHeader] m_outputBufferStart(" << m_outputBufferStart << ") < " << sizeof(T) << std::endl;
+				std::clog << "[Error - OutputMessage::addHeader] m_outputBufferStart(" << m_outputBufferStart << ") < " << sizeof(T) << std::endl;
 				return;
 			}
 
 			m_outputBufferStart -= sizeof(T);
-			*(T*)(m_MsgBuf + m_outputBufferStart) = value;
-			m_MsgSize += sizeof(T);
+			*(T*)(m_buffer + m_outputBufferStart) = value;
+			m_size += sizeof(T);
 		}
 
 		void freeMessage()
@@ -135,8 +135,6 @@ class OutputMessage : public NetworkMessage, boost::noncopyable
 		uint64_t m_frame;
 		uint32_t m_outputBufferStart;
 };
-
-typedef boost::shared_ptr<OutputMessage> OutputMessage_ptr;
 
 class OutputMessagePool
 {
@@ -192,7 +190,7 @@ class OutputMessagePool
 };
 
 #ifdef __TRACK_NETWORK__
-	#define TRACK_MESSAGE(omsg) (omsg)->Track(__FILE__, __LINE__, __FUNCTION__)
+	#define TRACK_MESSAGE(omsg) (omsg)->track(__FILE__, __LINE__, __FUNCTION__)
 #else
 	#define TRACK_MESSAGE(omsg)
 #endif

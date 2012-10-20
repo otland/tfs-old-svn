@@ -17,7 +17,7 @@
 		<flag runonhealth="75"/>
 	</flags>
 	<attacks>
-		<attack name="melee" interval="2000" skill="52" attack="40"/>
+		<attack name="melee" interval="2000" skill="60" attack="30"/>
 		<attack name="physical" interval="1000" chance="10" range="7" min="-46" max="-74">
 			<attribute key="shootEffect" value="largerock"/>
 		</attack>
@@ -37,12 +37,15 @@
 		<voice sentence="Humy tasy! Hum hum!"/>
 	</voices>
 	<loot>
-		<item id="2513" chance="1500"/><!-- battle shield -->
-		<item id="2490" chance="200"/><!-- dark helmet -->
-		<item id="2148" countmax="24" chance="4000"/><!-- gold coin -->
-		<item id="2666" countmax="2" chance="5000"/><!-- meat -->
-		<item id="2510" chance="2000"/><!-- plate shield -->
-		<item id="2442" chance="2000"/><!-- heavy machete -->
-		<item id="7588" chance="2000"/><!-- strong health potion -->
+		<item id="2148" countmax="24" chance="32000"/><!-- gold coin -->
+		<item id="2666" countmax="2" chance="26750"/><!-- meat -->
+		<item id="2671" countmax="2" chance="11000"/><!-- ham -->
+		<item id="2406" chance="8000"/><!-- short sword -->
+		<item id="2510" chance="1600"/><!-- plate shield -->
+		<item id="2513" chance="1300"/><!-- battle shield -->
+		<item id="2381" chance="850"/><!-- halberd -->
+		<item id="7398" chance="150"/><!-- cyclops trophy -->
+		<item id="2490" chance="250"/><!-- dark helmet -->
+		<item id="7588" chance="600"/><!-- strong health potion -->
 	</loot>
 </monster>

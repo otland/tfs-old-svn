@@ -1,4 +1,4 @@
-function onSay(cid, words, param)
+function onSay(cid, words, param, channel)
 	local t = string.explode(param, ",")
 	if(not t[2]) then
 		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Invalid param specified.")
@@ -7,7 +7,7 @@ function onSay(cid, words, param)
 
 	local tid = getPlayerByNameWildcard(t[1])
 	if(not tid or (isPlayerGhost(tid) and getPlayerGhostAccess(tid) > getPlayerGhostAccess(cid))) then
-		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Player " .. param .. " not found.")
+		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Player " .. t[1] .. " not found.")
 		return true
 	end
 

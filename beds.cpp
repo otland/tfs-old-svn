@@ -35,7 +35,7 @@ Attr_ReadValue BedItem::readAttr(AttrTypes_t attr, PropStream& propStream)
 		case ATTR_SLEEPERGUID:
 		{
 			uint32_t _sleeper;
-			if(!propStream.GET_ULONG(_sleeper))
+			if(!propStream.getLong(_sleeper))
 				return ATTR_READ_ERROR;
 
 			if(_sleeper)
@@ -55,7 +55,7 @@ Attr_ReadValue BedItem::readAttr(AttrTypes_t attr, PropStream& propStream)
 		case ATTR_SLEEPSTART:
 		{
 			uint32_t sleepStart;
-			if(!propStream.GET_ULONG(sleepStart))
+			if(!propStream.getLong(sleepStart))
 				return ATTR_READ_ERROR;
 
 			setAttribute("sleepstart", (int32_t)sleepStart);
@@ -75,8 +75,8 @@ bool BedItem::serializeAttr(PropWriteStream& propWriteStream) const
 	if(!sleeper)
 		return ret;
 
-	propWriteStream.ADD_UCHAR(ATTR_SLEEPERGUID);
-	propWriteStream.ADD_ULONG(sleeper);
+	propWriteStream.addByte(ATTR_SLEEPERGUID);
+	propWriteStream.addLong(sleeper);
 	return ret;
 }
 
@@ -91,7 +91,7 @@ BedItem* BedItem::getNextBedItem()
 bool BedItem::canUse(Player* player)
 {
 	if(!house || !player || player->isRemoved() || (!player->isPremium() && g_config.getBool(
-		ConfigManager::BED_REQUIRE_PREMIUM)) || player->hasCondition(CONDITION_INFIGHT))
+		ConfigManager::BED_REQUIRE_PREMIUM)))
 		return false;
 
 	if(!sleeper || house->getHouseAccessLevel(player) == HOUSE_OWNER)
@@ -130,7 +130,7 @@ void BedItem::sleep(Player* player)
 		g_game.addMagicEffect(player->getPosition(), MAGIC_EFFECT_SLEEP);
 		Scheduler::getInstance().addEvent(createSchedulerTask(SCHEDULER_MINTICKS, boost::bind(&Game::kickPlayer, &g_game, player->getID(), false)));
 	}
-	else if(Item::items[getID()].transformToFree)
+	else if(Item::items[getID()].transformUseTo)
 	{
 		wakeUp();
 		g_game.addMagicEffect(player->getPosition(), MAGIC_EFFECT_POFF);
@@ -173,8 +173,9 @@ void BedItem::wakeUp()
 
 void BedItem::regeneratePlayer(Player* player) const
 {
-	const int32_t* sleepStart = getIntegerAttribute("sleepstart");
-	int32_t sleptTime = (int32_t)time(NULL) - (sleepStart ? *sleepStart : 0);
+	bool ok;
+	int32_t sleepStart = getIntegerAttribute("sleepstart", ok);
+	int32_t sleptTime = (int32_t)time(NULL) - sleepStart;
 	if(Condition* condition = player->getCondition(CONDITION_REGENERATION, CONDITIONID_DEFAULT))
 	{
 		int32_t amount = sleptTime / 30;
@@ -201,17 +202,17 @@ void BedItem::updateAppearance(const Player* player)
 	if(it.type != ITEM_TYPE_BED)
 		return;
 
-	if(player && it.transformUseTo[player->getSex(false)])
+	if(player && it.transformBed[player->getSex(false)])
 	{
-		const ItemType& newType = Item::items[it.transformUseTo[player->getSex(false)]];
+		const ItemType& newType = Item::items[it.transformBed[player->getSex(false)]];
 		if(newType.type == ITEM_TYPE_BED)
-			g_game.transformItem(this, it.transformUseTo[player->getSex(false)]);
+			g_game.transformItem(this, it.transformBed[player->getSex(false)]);
 	}
-	else if(it.transformToFree)
+	else if(it.transformUseTo)
 	{
-		const ItemType& newType = Item::items[it.transformToFree];
+		const ItemType& newType = Item::items[it.transformUseTo];
 		if(newType.type == ITEM_TYPE_BED)
-			g_game.transformItem(this, it.transformToFree);
+			g_game.transformItem(this, it.transformUseTo);
 	}
 }
 

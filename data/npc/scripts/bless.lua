@@ -2,11 +2,12 @@ local keywordHandler = KeywordHandler:new()
 local npcHandler = NpcHandler:new(keywordHandler)
 NpcSystem.parseParameters(npcHandler)
 
-
 function onCreatureAppear(cid)				npcHandler:onCreatureAppear(cid) 			end
 function onCreatureDisappear(cid) 			npcHandler:onCreatureDisappear(cid) 		end
 function onCreatureSay(cid, type, msg) 		npcHandler:onCreatureSay(cid, type, msg) 	end
 function onThink() 							npcHandler:onThink() 						end
+function onPlayerEndTrade(cid)				npcHandler:onPlayerEndTrade(cid)			end
+function onPlayerCloseChannel(cid)			npcHandler:onPlayerCloseChannel(cid)		end
 
 local node1 = keywordHandler:addKeyword({'first bless'}, StdModule.say, {npcHandler = npcHandler, onlyFocus = true, text = 'Do you want to buy the first blessing for 2000 (plus level depending amount) gold?'})
 	node1:addChildKeyword({'yes'}, StdModule.bless, {npcHandler = npcHandler, number = 1, premium = true, baseCost = 2000, levelCost = 200, startLevel = 30, endLevel = 120})
@@ -27,5 +28,9 @@ local node4 = keywordHandler:addKeyword({'fourth bless'}, StdModule.say, {npcHan
 local node5 = keywordHandler:addKeyword({'fifth bless'}, StdModule.say, {npcHandler = npcHandler, onlyFocus = true, text = 'Do you want to buy the fifth blessing for 2000 (plus level depending amount) gold?'})
 	node5:addChildKeyword({'yes'}, StdModule.bless, {npcHandler = npcHandler, number = 5, premium = true, baseCost = 2000, levelCost = 200, startLevel = 30, endLevel = 120})
 	node5:addChildKeyword({'no'}, StdModule.say, {npcHandler = npcHandler, onlyFocus = true, reset = true, text = 'Too expensive, eh?'})
+
+local node6 = keywordHandler:addKeyword({'pvp bless'}, StdModule.say, {npcHandler = npcHandler, onlyFocus = true, text = 'Do you want to buy the pvp blessing for 2000 (plus level depending amount) gold?'})
+	node6:addChildKeyword({'yes'}, StdModule.bless, {npcHandler = npcHandler, number = 0, premium = true, baseCost = 2000, levelCost = 200, startLevel = 30, endLevel = 270})
+	node6:addChildKeyword({'no'}, StdModule.say, {npcHandler = npcHandler, onlyFocus = true, reset = true, text = 'Too expensive, eh?'})
 
 npcHandler:addModule(FocusModule:new())

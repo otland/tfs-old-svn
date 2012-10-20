@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <monster name="Scarab" nameDescription="a scarab" race="venom" experience="120" speed="170" manacost="395">
 	<health now="320" max="320"/>
 	<look type="83" corpse="6024"/>
@@ -18,7 +18,7 @@
 		<flag runonhealth="80"/>
 	</flags>
 	<attacks>
-		<attack name="melee" interval="2000" min="-10" max="-70"/>
+		<attack name="melee" interval="2000" skill="65" attack="20"/>
 		<attack name="poisonfield" interval="800" chance="40" radius="1" target="0">
 			<attribute key="areaEffect" value="poff"/>
 		</attack>
@@ -39,18 +39,13 @@
 		<immunity paralyze="1"/>
 	</immunities>
 	<loot>
-		<item id="3976" countmax="10" chance="50000"/><!-- worm -->
-		<item id="2148" countmax="50" chance="80000"/><!-- gold coin -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
-				<item id="2666" countmax="3" chance="20000"/><!-- meat -->
-				<item id="2544" countmax="4" chance="20000"/><!-- arrow -->
-				<item id="2439" chance="2500"/><!-- daramanian mace -->
-				<item id="2442" chance="2500"/><!-- heavy machete -->
-				<item id="2159" countmax="1" chance="1000"/><!-- scarab coin -->
-				<item id="2149" countmax="2" chance="2000"/><!-- small emerald -->
-				<item id="2150" countmax="3" chance="2000"/><!-- small amethyst -->
-			</inside>
-		</item>
+		<item id="2148" countmax="55" chance="26000"/><!-- gold coin -->
+		<item id="2544" countmax="3" chance="4000"/><!-- arrow -->
+		<item id="2439" chance="500"/><!-- daramanian mace -->
+		<item id="2442" chance="375"/><!-- heavy machete -->
+		<item id="2666" countmax="2" chance="27500"/><!-- meat -->
+		<item id="2159" countmax="2" chance="900"/><!-- scarab coin -->
+		<item id="2149" chance="650"/><!-- small emerald -->
+		<item id="2150" countmax="2" chance="500"/><!-- small amethyst -->
 	</loot>
 </monster>

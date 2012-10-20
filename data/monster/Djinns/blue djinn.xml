@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <monster name="Blue Djinn" nameDescription="a blue djinn" race="blood" experience="215" speed="200" manacost="0">
 	<health now="330" max="330"/>
 	<look type="80" corpse="6020"/>
@@ -18,7 +18,7 @@
 		<flag runonhealth="0"/>
 	</flags>
 	<attacks>
-		<attack name="melee" interval="2000" min="-60" max="-120"/>
+		<attack name="melee" interval="2000" skill="45" attack="40"/>
 		<attack name="fire" interval="2000" chance="50" range="7" min="-45" max="-75">
 			<attribute key="shootEffect" value="fire"/>
 		</attack>
@@ -55,19 +55,16 @@
 		<voice sentence="Wishes can come true."/>
 	</voices>
 	<loot>
-		<item id="2148" countmax="20" chance="100000"/><!-- gold coin -->
-		<item id="7378" countmax="2" chance="2000"/><!-- royal spear -->
-		<item id="2146" countmax="4" chance="6666"/><!-- small sapphire -->
-		<item id="2663" chance="1111"/><!-- mystic turban -->
+		<item id="2148" countmax="70" chance="40000"/><!-- gold coin -->
+		<item id="2148" countmax="50" chance="40000"/><!-- gold coin -->
+		<item id="2684" chance="9250"/><!-- carrot -->
+		<item id="7378" countmax="2" chance="3500"/><!-- royal spear -->
+		<item id="2146" countmax="5" chance="1000"/><!-- small sapphire -->
+		<item id="2063" chance="6500"/><!-- small oil lamp -->
+		<item id="1971" chance="1750"/><!-- book -->
+		<item id="5912" chance="2000"/><!-- blue piece of cloth -->
+		<item id="7620" chance="1000"/><!-- mana potion -->
 		<item id="2745" chance="1000"/><!-- blue rose -->
-		<item id="2684" countmax="5" chance="50000"/><!-- carrot -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
-				<item id="1971" chance="10000"/><!-- book -->
-				<item id="2044" chance="20000"/><!-- lamp -->
-				<item id="2063" countmax="1" chance="7500"/><!-- small oil lamp -->
-				<item id="5912" countmax="1" chance="5000"/><!-- blue piece of cloth -->
-			</inside>
-		</item>
+		<item id="2663" chance="350"/><!-- mystic turban -->
 	</loot>
 </monster>

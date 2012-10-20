@@ -10,6 +10,9 @@ function onSay(cid, words, param, channel)
 					_ip = nil
 				else
 					_ip = getPlayerIp(tid)
+					if(_ip == 0) then
+						_ip = nil
+					end
 				end
 			else
 				_ip = doConvertIpToInteger(revertIp)
@@ -17,27 +20,30 @@ function onSay(cid, words, param, channel)
 		end
 	end
 
-	local list, ips = {}, {}
-	local players = getPlayersOnline()
+	local list, ips, players = {}, {}, getPlayersOnline()
 	for i, pid in ipairs(players) do
 		local ip = getPlayerIp(pid)
-		local tmp = table.find(ips, ip)
-		if(tmp ~= nil and (not _ip or _ip == ip)) then
-			if(table.countElements(list, ip) == 0) then
-				list[players[tmp]] = ip
+		if(ip ~= 0) then
+			local tmp = table.find(ips, ip)
+			if(tmp ~= nil and (not _ip or _ip == ip)) then
+				if(table.countElements(list, ip) == 0) then
+					list[players[tmp]] = ip
+				end
+
+				list[pid] = ip
 			end
 
-			list[pid] = ip
+			table.insert(ips, ip)
 		end
-
-		table.insert(ips, ip)
 	end
 
-	if(table.maxn(list) > 0) then
+	local total = table.maxn(list)
+	if(total > 0) then
 		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Currently online players with same IP address(es):")
 		for pid, ip in pairs(list) do
 			doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, getCreatureName(pid) .. " (" .. doConvertIntegerToIp(ip) .. ")")
 		end
+		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Total: " .. total .. " clients with more than one connection.")
 	else
 		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Currently there aren't any players with same IP address(es).")
 	end

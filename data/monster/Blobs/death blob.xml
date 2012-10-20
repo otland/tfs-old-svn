@@ -18,7 +18,7 @@
 		<flag runonhealth="0"/>
 	</flags>
 	<attacks>
-		<attack name="melee" interval="2000" skill="38" attack="43"/>
+		<attack name="melee" interval="2000" skill="30" attack="50"/>
 	</attacks>
 	<defenses armor="10" defense="10"/>
 	<elements>
@@ -32,6 +32,6 @@
 		<summon name="Death Blob" interval="3000" chance="10"/>
 	</summons>
 	<loot>
-		<item id="9968" chance="18000"/><!-- glob of tar -->
+		<item id="9968" chance="20000"/><!-- glob of tar -->
 	</loot>
 </monster>

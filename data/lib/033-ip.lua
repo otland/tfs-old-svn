@@ -79,7 +79,7 @@ function doConvertIpToInteger(str)
 	if(index ~= 32) then
 		return 0, 0
 	end
-			
+
 	index = 0
 	for b in maskString:gmatch("(%d+)%.?") do
 		local t = tonumber(b)
@@ -97,7 +97,7 @@ function doConvertIpToInteger(str)
 	if(index ~= 32) then
 		return 0, 0
 	end
-			
+
 	return ip, mask
 end
 

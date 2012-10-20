@@ -3,7 +3,7 @@
 		The Forgotten Server
 
 	Version
-		0.3.6
+		0.3.7
 
 	Codenamed
 		Crying Damson
@@ -26,7 +26,7 @@
 		Use only while server is OFFLINE!
 		Oh, and be careful while using them!
 
-	Credits for few queries, taken from otland
+	Credits for few queries, taken from OtLand
 		Jester, Jonern
 ]
 
@@ -38,6 +38,10 @@
 	In this example 7 days
 		UPDATE `accounts` SET `premdays` = `premdays` + 7;
 
+	Give premium days to players who have logged in last 24 hours
+	In this example, 3 days
+		UPDATE `accounts` SET `premdays` = `premdays` + 3 WHERE `id` IN (SELECT `account_id` FROM `players` WHERE `lastlogin` > (UNIX_TIMESTAMP() - 86400) GROUP BY `account_id`);
+
 	Change all players position
 		UPDATE `players` SET `posx` = 111, `posy` = 222, `posz` = 7;
 
@@ -45,7 +49,7 @@
 		UPDATE `players` SET `blessings` = 0;
 
 	Clean all players deaths
-		TRUNCATE TABLE `player_deaths`;
+		DELETE FROM `player_deaths`, `killers`, `player_killers`, `environment_killers`;
 
 	Delete inactive players
 	In this example below level 50, 20 days of inactivity

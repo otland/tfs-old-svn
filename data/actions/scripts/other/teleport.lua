@@ -1,4 +1,5 @@
-local UP_FLOORS = {1386, 3678, 5543, 8599, 10035}
+local UP_FLOORS = {1386, 3678, 5543, 8599, 10035, 13010}
+local FIELDS = {1497, 1499, 11095, 11096}
 local DRAW_WELL = 1369
 
 function onUse(cid, item, fromPosition, itemEx, toPosition)
@@ -6,19 +7,28 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 		return false
 	end
 
+	local check = false
 	fromPosition.stackpos = STACKPOS_GROUND
 	if(isInArray(UP_FLOORS, item.itemid)) then
 		fromPosition.z = fromPosition.z - 1
 		fromPosition.y = fromPosition.y + 1
-		if(doTileQueryAdd(cid, fromPosition, 4, false) ~= RETURNVALUE_NOERROR) then
-			fromPosition.y = fromPosition.y - 2
+		if(doTileQueryAdd(cid, fromPosition, 38) ~= RETURNVALUE_NOERROR) then
+			local field = getTileItemByType(fromPosition, ITEM_TYPE_MAGICFIELD)
+			if(field.uid == 0 or not isInArray(FIELDS, field.itemid)) then
+				fromPosition.y = fromPosition.y - 2
+			else
+				check = true
+			end
 		end
 	else
 		fromPosition.z = fromPosition.z + 1
 	end
 
-	if(doTileQueryAdd(cid, fromPosition, 4, false) ~= RETURNVALUE_NOERROR) then
-		return false
+	if(not check and doTileQueryAdd(cid, fromPosition, 38) ~= RETURNVALUE_NOERROR) then
+		local field = getTileItemByType(fromPosition, ITEM_TYPE_MAGICFIELD)
+		if(field.uid == 0 or not isInArray(FIELDS, field.itemid)) then
+			return false
+		end
 	end
 
 	local pos, dir = getCreaturePosition(cid), SOUTH

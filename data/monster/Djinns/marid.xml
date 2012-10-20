@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<monster name="Marid" nameDescription="a marid" race="blood" experience="325" speed="170" manacost="0">
+<monster name="Marid" nameDescription="a marid" race="blood" experience="410" speed="170" manacost="0">
 	<health now="550" max="550"/>
 	<look type="104" corpse="6033"/>
 	<targetchange interval="5000" chance="8"/>
@@ -18,7 +18,7 @@
 		<flag runonhealth="0"/>
 	</flags>
 	<attacks>
-		<attack name="melee" interval="2000" min="-60" max="-150"/>
+		<attack name="melee" interval="2000" skill="50" attack="30"/>
 		<attack name="fire" interval="1000" chance="50" range="7" min="-40" max="-110">
 			<attribute key="shootEffect" value="fire"/>
 		</attack>
@@ -69,22 +69,21 @@
 		<voice sentence="Djinns will soon again be the greatest!"/>
 	</voices>
 	<loot>
-		<item id="2158" countmax="1" chance="300"/><!-- blue gem -->
-		<item id="1872" chance="2500"/><!-- blue tapestry -->
-		<item id="2148" countmax="50" chance="100000"/><!-- gold coin -->
+		<item id="2148" countmax="70" chance="40000"/><!-- gold coin -->
+		<item id="2148" countmax="60" chance="40000"/><!-- gold coin -->
+		<item id="2677" countmax="25" chance="5000"/><!-- blueberry -->
+		<item id="7378" countmax="3" chance="3500"/><!-- royal spear -->
 		<item id="2442" chance="5000"/><!-- heavy machete -->
-		<item id="2183" chance="1000"/><!-- tempest rod -->
-		<item id="5912" countmax="2" chance="5000"/><!-- blue piece of cloth -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
-				<item id="2070" chance="300"/><!-- flute -->
-	 			<item id="7900" chance="500"/><!-- magma monocle -->
-				<item id="2148" countmax="14" chance="100000"/><!-- gold coin -->
-				<item id="2146" countmax="3" chance="7000"/><!-- small sapphire -->
-				<item id="2063" chance="3333"/><!-- small oil lamp -->
-				<item id="2677" countmax="4" chance="20000"/><!-- blueberry -->
-				<item id="2177" chance="10000"/><!-- life crystal -->
-			</inside>
-		</item>
+		<item id="2063" chance="20000"/><!-- small oil lamp -->
+		<item id="1872" chance="1000"/><!-- blue tapestry -->
+		<item id="2146" countmax="4" chance="1000"/><!-- small sapphire -->
+		<item id="7589" chance="3500"/><!-- strong mana potion -->
+		<item id="5912" chance="5000"/><!-- blue piece of cloth -->
+		<item id="2374" chance="5000"/><!-- wooden flute -->
+		<item id="7732" chance="100"/><!-- seeds -->
+		<item id="2183" chance="900"/><!-- hailstorm rod -->
+		<item id="2663" chance="750"/><!-- mystic turban -->
+	 	<item id="7900" chance="100"/><!-- magma monocle -->
+		<item id="2158" chance="200"/><!-- blue gem -->
 	</loot>
 </monster>

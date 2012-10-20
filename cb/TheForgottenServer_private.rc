@@ -1,0 +1,29 @@
+#include <windows.h>
+
+A ICON MOVEABLE PURE LOADONCALL DISCARDABLE "TheForgottenServer.ico"
+
+1 VERSIONINFO
+FILEVERSION 0,4,0,0
+PRODUCTVERSION 0,4,0,0
+FILETYPE VFT_APP
+{
+  BLOCK "StringFileInfo"
+	 {
+		 BLOCK "040904E2"
+		 {
+			 VALUE "CompanyName", "OtLand.net"
+			 VALUE "FileVersion", "0.4"
+			 VALUE "FileDescription", "The Forgotten Server"
+			 VALUE "InternalName", ""
+			 VALUE "LegalCopyright", ""
+			 VALUE "LegalTrademarks", ""
+			 VALUE "OriginalFilename", "The Forgotten Server.exe"
+			 VALUE "ProductName", "The Forgotten Server"
+			 VALUE "ProductVersion", "0.4"
+		 }
+	 }
+  BLOCK "VarFileInfo"
+	 {
+		 VALUE "Translation", 0x0409, 1250
+	 }
+}

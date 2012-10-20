@@ -33,7 +33,7 @@ string.expand = function (str)
 	return string.gsub(str, "$(%w+)", function(n) return _G[n] end)
 end
 
-string.timediff = function (diff)
+string.diff = function (diff)
 	local format = {
 		{"week", diff / 60 / 60 / 24 / 7},
 		{"day", diff / 60 / 60 / 24 % 7},
@@ -53,3 +53,19 @@ string.timediff = function (diff)
 
 	return t
 end
+string.timediff = string.diff
+
+string.boolean = function (input)
+	local tmp = type(input)
+	if(tmp == 'boolean') then
+		return input
+	end
+
+	if(tmp == 'number') then
+		return input > 0
+	end
+
+	local str = string.lower(tostring(input))
+	return (str == "yes" or str == "true" or (tonumber(str) ~= nil and tonumber(str) > 0))
+end
+getBooleanFromString = string.boolean

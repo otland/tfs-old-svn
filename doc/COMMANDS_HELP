@@ -3,7 +3,7 @@
 		The Forgotten Server
 
 	Version
-		0.3.6
+		0.3.7
 
 	Codenamed
 		Crying Damson
@@ -37,16 +37,49 @@
 	/attr
 		Changes thing properties.
 		Parameters
-			type, value
+			[command[, type, ]]attribute, value
 
 		Values
-			type
-				* Items
-					set
-					erase
+			command
+				* Items only
+					set/add/new
+					erase/remove/delete
 					action/actionid/aid
 					unique/uniqueid/uid
-					destination/position/pos/destpos
+					destination/position/location/pos/dest/loc
+			type
+				* Items only - set/add/new & erase/remove/delete
+					bool/boolean
+					int/integer/num/number
+					float/double
+					string/text/*
+			attribute
+				* Items - set/add/new & erase/remove/delete
+					duration - number
+					description - string
+					text - string
+					date - number
+					writer - string
+					charges - number
+					fluidtype - number
+					owner - number
+					corpseowner - number
+					decaying - number
+					name - string
+					pluralname - string
+					article - string
+					scriptprotected - bool
+					attack - number
+					extraattack - number
+					defense - number
+					extradefense - number
+					armor - number
+					attackspeed - number
+					hitchance - number
+					shootrange - number
+					dualwield - bool
+					depotid - number
+					sleepstart - number
 				* Creatures
 					health
 					maxhealth
@@ -57,27 +90,31 @@
 					lossskill
 					cannotmove
 					skull
+					shield
+					emblem
 					speaktype
 				* Players
 					fyi
 					tutorial
+					guildlevel
 					guildrank
 					guildnick
 					group
 					vocation
-					sex
-					stamina
-					town
+					sex/gender
+					town/temple
+					marriage/partner
 					balance
-					marriage
 					rates
-					resetidle
+					idle
+					stamina
+					capacity/cap
 					execute
-					saving
+					saving/save
 
 		Examples
 			/attr aid 300
-			/attr set text "Hello guys
+			/attr set string text "Hello guys"
 			/attr skull 2
 
 	/serverdiag
@@ -94,11 +131,11 @@
 	/shutdown
 		Saves & Shutdowns server.
 		Parameters
-			<optional>time/kill/stop
+			<optional>time/kill/cancel
 
 		Examples
 			/shutdown 3 (Shutdown after 3 minutes)
-			/shutdown stop (Stop shutdown event)
+			/shutdown cancel (Cancel shutdown event)
 			/shutdown kill (Exit without save)
 			/shutdown (Immediately)
 
@@ -106,10 +143,10 @@
 		Changes world's pvp type.
 		Parameters
 			pvpType
-				nopvp/pvp/pvpenforced
+				optional/open/hardcore
 
 		Example
-			/mode nopvp
+			/mode hardcode
 
 	/promote & /demote
 		Promote or demote specified player to higher/lower group.
@@ -157,7 +194,7 @@
 				actions/channels/config/creatureevents/gameservers/globalevents
 				groups/highscores/houseprices/items/monsters/moveevents/npcs
 				outfits/quests/raids/spells/stages/talkactions/vocations/weapons
-				all
+				mods, all
 
 		Examples
 			/reload spells
@@ -175,16 +212,17 @@
 	/newtype
 		Outfit changer.
 		Parameters
-			lookType, <optional>playerName
+			lookType/monster/item, <optional>playerName
 
 		Examples
 			/newtype 266
+			/newtype Demon
+			/newtype 2160 (Changes outfit to crystal coin)
 			/newtype 13, Eternal Oblivion
 
 	/r
 		Removes an item or a creature from a tile.
-		Notice: Player is a creature so you may use it
-		with players.
+		NOTE: Player is also a creature. (Monster, npc too!)
 		Parameters
 			<otional>amount/all
 
@@ -267,7 +305,7 @@
 
 		Examples
 			!y Hello
-			!y 50, Hi! Colored text ;-)
+			!y 50 Hi! Colored text ;-)
 
 	/bc
 		Broadcast message in color.
@@ -277,8 +315,8 @@
 			message
 
 		Examples:
-			/bc green;Hello!
-			/bc Hiho 
+			/bc Hiho
+			/bc green Hello! (This one will be green)
 
 	/mkick
 		Mass kick.
@@ -312,8 +350,7 @@
 
 	/c
 		Teleports a creature to you.
-		Notice: Player is a creature so you may use it
-		with players
+		NOTE: Player is also a creature. (Monster, npc too!)
 
 		Example
 			/c Demon
@@ -325,8 +362,8 @@
 
 		Examples
 			/goto 123,60,7
-			/goto eryn
-			/goto dragon
+			/goto Eryn
+			/goto Dragon
 			/goto GM Tester
 
 	/a
@@ -393,6 +430,12 @@
 
 	/save
 		Saves server.
+		Parameters
+			<optional>playerName
+
+		Examples
+			/save (saves whole server, including map)
+			/save GM Tester (saves only single character)
 
 	/clean
 		Cleans map or tile.
@@ -407,7 +450,7 @@
 			/clean tile (Clean tile you're standing on)
 
 	/reports
-		Displays server reports.
+		Displays server reports (these reported by CTRL + Z).
 		Parameters
 			<optional>reportId
 
@@ -424,6 +467,16 @@
 			/mc (Check for all MC-players)
 			/mc 127.0.0.1 (Display all players with IP = 127.0.0.1)
 			/mc Tester (Display all players with same IP as Tester)
+
+	/mute
+		Mute player.
+		Parameters
+			playerName
+			<optional>time (in seconds)
+
+		Examples
+			/mute Tester (mute forever)
+			/mute Tester, 30 (mute for 30 seconds)
 
 	/wp
 		Displays map waypoints.
@@ -446,7 +499,7 @@
 
 		Examples
 			/gethouse GM Tester (get house name)
-			/gethouse GM Tester, yes (get house name and teleport)
+			/gethouse GM Tester, yes (get house name and teleport there)
 
 	/b
 		Broadcast message in red color.
@@ -492,7 +545,7 @@
 
 	!q
 		Checks money value in your inventory.
-		Notice: It isn't counting the money in depots/houses.
+		NOTE: It isn't counting the money in depots/houses.
 
 	!serverinfo
 		Displays server information such as experience rate and loot rate.

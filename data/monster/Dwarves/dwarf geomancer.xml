@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <monster name="Dwarf Geomancer" nameDescription="a dwarf geomancer" race="blood" experience="245" speed="200" manacost="0">
 	<health now="380" max="380"/>
 	<look type="66" corpse="6015"/>
@@ -18,7 +18,7 @@
 		<flag runonhealth="150"/>
 	</flags>
 	<attacks>
-		<attack name="melee" interval="2000" skill="50" attack="30"/>
+		<attack name="melee" interval="2000" skill="30" attack="50"/>
 		<attack name="fire" interval="1000" chance="10" range="7" radius="4" target="1" min="-50" max="-120">
 			<attribute key="shootEffect" value="fire"/>
 			<attribute key="areaEffect" value="firearea"/>
@@ -50,16 +50,18 @@
 		<voice sentence="Dust to dust."/>
 	</voices>
 	<loot>
-		<item id="2148" countmax="20" chance="100000"/><!-- gold coin -->
-		<item id="2673" countmax="3" chance="6666"/><!-- pear -->
-		<item id="2260" chance="4000"/><!-- blank rune -->
-		<item id="2649" chance="10000"/><!-- leather legs -->
-		<item id="2643" chance="20000"/><!-- leather boots -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
-				<item id="2162" chance="2500"/><!-- magic lightwand -->
-				<item id="2787" countmax="3" chance="20000"/><!-- white mushroom -->
-			</inside>
-		</item>
+		<item id="2148" countmax="35" chance="50000"/><!-- gold coin -->
+		<item id="2260" chance="40000"/><!-- blank rune -->
+		<item id="2787" chance="60000"/><!-- white mushroom -->
+		<item id="2643" chance="47500"/><!-- leather boots -->
+		<item id="2673" countmax="7" chance="2000"/><!-- pear -->
+		<item id="2162" chance="13000"/><!-- magic lightwand -->
+		<item id="2468" chance="26000"/><!-- studded legs -->
+		<item id="2175" chance="2500"/><!-- Spellbook -->
+		<item id="2423" chance="750"/><!-- Clerical Mace -->
+		<item id="2213" chance="600"/><!-- Dwarven ring -->
+		<item id="2146" chance="500"/><!-- Small sapphire -->
+		<item id="5880" chance="400"/><!-- Iron Ore -->
+		<item id="7886" chance="300"/><!-- Terra Boots -->
 	</loot>
 </monster>

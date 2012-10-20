@@ -17,7 +17,7 @@
 		<flag runonhealth="80"/>
 	</flags>
 	<attacks>
-		<attack name="melee" interval="2000" skill="60" attack="40"/>
+		<attack name="melee" interval="2000" skill="70" attack="40"/>
 		<attack name="ice" interval="1000" chance="12" length="8" spread="3" min="-50" max="-160">
 			<attribute key="areaEffect" value="firearea"/>
 		</attack>
@@ -28,14 +28,13 @@
 	<defenses armor="25" defense="38">
 	</defenses>
 	<elements>
-		<element firePercent="100"/>
-		<element earthPercent="100"/>
-		<element icePercent="100"/>
 		<element energyPercent="-5"/>
 	</elements>
 	<immunities>
+		<immunity fire="1"/>
 		<immunity lifedrain="1"/>
-		<immunity paralyze="1"/>
+		<immunity ice="1"/>
+		<immunity earth="1"/>
 		<immunity invisible="1"/>
 	</immunities>
 	<voices interval="5000" chance="50">
@@ -43,13 +42,9 @@
 		<voice sentence="Fchu?" yell="0"/>
 	</voices>
 	<loot>
-		<item id="7618" countmax="1" chance="5000"/><!-- health potion -->
-		<item id="2672" countmax="1" chance="5000"/><!-- dragon ham -->
-		<item id="2148" countmax="26" chance="100000"/><!-- gold coin -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
-				<item id="2148" countmax="25" chance="100000"/><!-- gold coin -->
-			</inside>
-		</item>
+		<item id="2148" countmax="55" chance="33750"/><!-- gold coin -->
+		<item id="2672" chance="25000"/><!-- dragon ham -->
+		<item id="8900" chance="200"/><!-- spellbook of enlightenment -->
+		<item id="7618" chance="5000"/><!-- health potion -->
 	</loot>
 </monster>

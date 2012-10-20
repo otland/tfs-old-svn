@@ -31,13 +31,6 @@
 		<element deathPercent="-7"/>
 		<element physicalPercent="-6"/>
 	</elements>
-	<immunities>
-		<immunity lifedrain="0"/>
-		<immunity paralyze="0"/>
-		<immunity outfit="0"/>
-		<immunity drunk="0"/>
-		<immunity invisible="0"/>
-	</immunities>
 	<voices interval="5000" chance="10">
 		<voice sentence="Stand still!"/>
 		<voice sentence="One more head for me!"/>
@@ -50,16 +43,12 @@
 		<item id="2125" chance="2500"/><!-- crystal necklace -->
 		<item id="2387" chance="3333"/><!-- double axe -->
 		<item id="2458" chance="5000"/><!-- chain helmet -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
-				<item id="2674" countmax="4" chance="10000"/><!-- red apple -->
-				<item id="2420" chance="10000"/><!-- machete -->
-				<item id="2666" countmax="3" chance="20000"/><!-- meat -->
-				<item id="2147" countmax="2" chance="2500"/><!-- small ruby -->
-				<item id="2145" countmax="2" chance="2500"/><!-- small diamond -->
-				<item id="2200" chance="1000"/><!-- protection amulet -->
-				<item id="2463" chance="1333"/><!-- plate armor -->
-			</inside>
-		</item>
+		<item id="2674" countmax="4" chance="10000"/><!-- red apple -->
+		<item id="2420" chance="10000"/><!-- machete -->
+		<item id="2666" countmax="3" chance="20000"/><!-- meat -->
+		<item id="2147" countmax="2" chance="2500"/><!-- small ruby -->
+		<item id="2145" countmax="2" chance="2500"/><!-- small diamond -->
+		<item id="2200" chance="1000"/><!-- protection amulet -->
+		<item id="2463" chance="1333"/><!-- plate armor -->
 	</loot>
 </monster>

@@ -15,55 +15,93 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////
 #include "otpch.h"
+#include "tools.h"
+
 #include <iostream>
 #include <iomanip>
 
-#include "tools.h"
-#include "md5.h"
-#include "sha1.h"
+#include <openssl/sha.h>
+#include <openssl/md5.h>
 
 #include "vocation.h"
 #include "configmanager.h"
+
 extern ConfigManager g_config;
-
-std::string transformToSHA1(std::string plainText, bool upperCase)
-{
-	SHA1 sha1;
-	unsigned sha1Hash[5];
-	std::stringstream hexStream;
-
-	sha1.Input((const uint8_t*)plainText.c_str(), plainText.length());
-	sha1.Result(sha1Hash);
-
-	hexStream.flags(std::ios::hex | std::ios::uppercase);
-	for(uint32_t i = 0; i < 5; ++i)
-		hexStream << std::setw(8) << std::setfill('0') << (uint32_t)sha1Hash[i];
-
-	std::string hexStr = hexStream.str();
-	if(!upperCase)
-		toLowerCaseString(hexStr);
-
-	return hexStr;
-}
 
 std::string transformToMD5(std::string plainText, bool upperCase)
 {
-	MD5_CTX m_md5;
-	std::stringstream hexStream;
+	MD5_CTX c;
+	MD5_Init(&c);
+	MD5_Update(&c, plainText.c_str(), plainText.length());
 
-	MD5Init(&m_md5, 0);
-	MD5Update(&m_md5, (const uint8_t*)plainText.c_str(), plainText.length());
-	MD5Final(&m_md5);
+	uint8_t md[MD5_DIGEST_LENGTH];
+	MD5_Final(md, &c);
 
-	hexStream.flags(std::ios::hex | std::ios::uppercase);
-	for(uint32_t i = 0; i < 16; ++i)
-		hexStream << std::setw(2) << std::setfill('0') << (uint32_t)m_md5.digest[i];
+	char output[(MD5_DIGEST_LENGTH << 1) + 1];
+	for(int32_t i = 0; i < (int32_t)sizeof(md); ++i)
+		sprintf(output + (i << 1), "%.2X", md[i]);
 
-	std::string hexStr = hexStream.str();
-	if(!upperCase)
-		toLowerCaseString(hexStr);
+	if(upperCase)
+		return std::string(output);
 
-	return hexStr;
+	return asLowerCaseString(std::string(output));
+}
+
+std::string transformToSHA1(std::string plainText, bool upperCase)
+{
+	SHA_CTX c;
+	SHA1_Init(&c);
+	SHA1_Update(&c, plainText.c_str(), plainText.length());
+
+	uint8_t md[SHA_DIGEST_LENGTH];
+	SHA1_Final(md, &c);
+
+	char output[(SHA_DIGEST_LENGTH << 1) + 1];
+	for(int32_t i = 0; i < (int32_t)sizeof(md); ++i)
+		sprintf(output + (i << 1), "%.2X", md[i]);
+
+	if(upperCase)
+		return std::string(output);
+
+	return asLowerCaseString(std::string(output));
+}
+
+std::string transformToSHA256(std::string plainText, bool upperCase)
+{
+	SHA256_CTX c;
+	SHA256_Init(&c);
+	SHA256_Update(&c, plainText.c_str(), plainText.length());
+
+	uint8_t md[SHA256_DIGEST_LENGTH];
+	SHA256_Final(md, &c);
+
+	char output[(SHA256_DIGEST_LENGTH << 1) + 1];
+	for(int32_t i = 0; i < (int32_t)sizeof(md); ++i)
+		sprintf(output + (i << 1), "%.2X", md[i]);
+
+	if(upperCase)
+		return std::string(output);
+
+	return asLowerCaseString(std::string(output));
+}
+
+std::string transformToSHA512(std::string plainText, bool upperCase)
+{
+	SHA512_CTX c;
+	SHA512_Init(&c);
+	SHA512_Update(&c, plainText.c_str(), plainText.length());
+
+	uint8_t md[SHA512_DIGEST_LENGTH];
+	SHA512_Final(md, &c);
+
+	char output[(SHA512_DIGEST_LENGTH << 1) + 1];
+	for(int32_t i = 0; i < (int32_t)sizeof(md); ++i)
+		sprintf(output + (i << 1), "%.2X", md[i]);
+
+	if(upperCase)
+		return std::string(output);
+
+	return asLowerCaseString(std::string(output));
 }
 
 void _encrypt(std::string& str, bool upperCase)
@@ -75,6 +113,12 @@ void _encrypt(std::string& str, bool upperCase)
 			break;
 		case ENCRYPTION_SHA1:
 			str = transformToSHA1(str, upperCase);
+			break;
+		case ENCRYPTION_SHA256:
+			str = transformToSHA256(str, upperCase);
+			break;
+		case ENCRYPTION_SHA512:
+			str = transformToSHA512(str, upperCase);
 			break;
 		default:
 		{
@@ -93,23 +137,24 @@ bool encryptTest(std::string plain, std::string& hash)
 	return plain == hash;
 }
 
-void replaceString(std::string& text, const std::string key, const std::string value)
+bool replaceString(std::string& text, const std::string& key, const std::string& value)
 {
-	std::string::size_type start = text.find(key);
-	if(start == std::string::npos) //skip if there's no key in text
-		return;
+	if(text.find(key) == std::string::npos)
+		return false;
 
-	std::string::size_type pos = 0;
-	for(; start != std::string::npos; start = text.find(key, pos))
+	std::string::size_type start = 0, pos = 0;
+	while((start = text.find(key, pos)) != std::string::npos)
 	{
 		text.replace(start, key.size(), value);
-		pos = start + key.size();
+		pos = start + value.size();
 	}
+
+	return true;
 }
 
 void trim_right(std::string& source, const std::string& t)
 {
-	source.erase(source.find_last_not_of(t)+1);
+	source.erase(source.find_last_not_of(t) + 1);
 }
 
 void trim_left(std::string& source, const std::string& t)
@@ -147,18 +192,37 @@ bool booleanString(std::string source)
 	return (source == "yes" || source == "true" || atoi(source.c_str()) > 0);
 }
 
-bool readXMLInteger(xmlNodePtr node, const char* tag, int& value)
+std::string ucfirst(std::string source)
 {
-	char* nodeValue = (char*)xmlGetProp(node, (xmlChar*)tag);
-	if(!nodeValue)
-		return false;
+	for(uint16_t i = 0; i < (uint16_t)source.length(); ++i)
+	{
+		if(source[i] != ' ')
+		{
+			source[i] = upchar(source[i]);
+			break;
+		}
+	}
 
-	value = atoi(nodeValue);
-	xmlFree(nodeValue);
-	return true;
+	return source;
 }
 
-#if defined WINDOWS && !defined __GNUC__
+std::string ucwords(std::string source)
+{
+	bool tmp = true;
+	for(uint16_t i = 0; i < (uint16_t)source.length(); ++i)
+	{
+		if(source[i] == ' ')
+			tmp = true;
+		else if(tmp)
+		{
+			source[i] = upchar(source[i]);
+			tmp = false;
+		}
+	}
+
+	return source;
+}
+
 bool readXMLInteger(xmlNodePtr node, const char* tag, int32_t& value)
 {
 	char* nodeValue = (char*)xmlGetProp(node, (xmlChar*)tag);
@@ -169,7 +233,6 @@ bool readXMLInteger(xmlNodePtr node, const char* tag, int32_t& value)
 	xmlFree(nodeValue);
 	return true;
 }
-#endif
 
 bool readXMLInteger64(xmlNodePtr node, const char* tag, int64_t& value)
 {
@@ -264,41 +327,78 @@ std::string getLastXMLError()
 	return ss.str();
 }
 
-bool utf8ToLatin1(char* intext, std::string& outtext)
+bool utf8ToLatin1(char* inText, std::string& outText)
 {
-	outtext = "";
-	if(!intext)
+	outText = "";
+	if(!inText)
 		return false;
 
-	int32_t inlen = strlen(intext);
-	if(!inlen)
+	int32_t inLen = strlen(inText);
+	if(!inLen)
 		return false;
 
-	int32_t outlen = inlen * 2;
-	uint8_t* outbuf = new uint8_t[outlen];
+	int32_t outLen = inLen << 1;
+	uint8_t* outBuf = new uint8_t[outLen];
 
-	int32_t res = UTF8Toisolat1(outbuf, &outlen, (uint8_t*)intext, &inlen);
+	int32_t res = UTF8Toisolat1(outBuf, &outLen, (uint8_t*)inText, &inLen);
 	if(res < 0)
 	{
-		delete[] outbuf;
+		delete[] outBuf;
 		return false;
 	}
 
-	outbuf[outlen] = '\0';
-	outtext = (char*)outbuf;
+	outBuf[outLen] = '\0';
+	outText = (char*)outBuf;
 
-	delete[] outbuf;
+	delete[] outBuf;
 	return true;
 }
 
-StringVec explodeString(const std::string& string, const std::string& separator)
+bool latin1ToUtf8(char* inText, std::string& outText)
+{
+	outText = "";
+	if(!inText)
+		return false;
+
+	int32_t inLen = strlen(inText);
+	if(!inLen)
+		return false;
+
+	int32_t outLen = inLen << 1;
+	uint8_t* outBuf = new uint8_t[outLen];
+
+	int32_t res = isolat1ToUTF8(outBuf, &outLen, (uint8_t*)inText, &inLen);
+	if(res < 0)
+	{
+		delete[] outBuf;
+		return false;
+	}
+
+	outBuf[outLen] = '\0';
+	outText = (char*)outBuf;
+
+	delete[] outBuf;
+	return true;
+}
+
+StringVec explodeString(const std::string& string, const std::string& separator, bool trim/* = true*/, uint16_t limit/* = 0*/)
 {
 	StringVec returnVector;
 	size_t start = 0, end = 0;
+
+	uint16_t i = 1;
 	while((end = string.find(separator, start)) != std::string::npos)
 	{
-		returnVector.push_back(string.substr(start, end - start));
+		std::string t = string.substr(start, end - start);
+		if(trim)
+			trimString(t);
+
+		returnVector.push_back(t);
 		start = end + separator.size();
+
+		++i;
+		if(limit > 0 && i > limit)
+			break;
 	}
 
 	returnVector.push_back(string.substr(start));
@@ -309,7 +409,11 @@ IntegerVec vectorAtoi(StringVec stringVector)
 {
 	IntegerVec returnVector;
 	for(StringVec::iterator it = stringVector.begin(); it != stringVector.end(); ++it)
-		returnVector.push_back(atoi((*it).c_str()));
+	{
+		int32_t number = atoi((*it).c_str());
+		if(number || (*it) == "0")
+			returnVector.push_back(number);
+	}
 
 	return returnVector;
 }
@@ -330,7 +434,7 @@ int32_t round(float v)
 
 uint32_t rand24b()
 {
-	return ((rand() << 12) ^ (rand())) & (0xFFFFFF);
+	return ((rand() << 12) ^ rand()) & 0xFFFFFF;
 }
 
 float box_muller(float m, float s)
@@ -462,7 +566,6 @@ bool isValidName(std::string text, bool forceUppercaseOnFirstLetter/* = true*/)
 		if(text[size] != 32)
 		{
 			lenBeforeSpace++;
-
 			if(text[size] != 39)
 				lenBeforeQuote++;
 			else
@@ -528,7 +631,7 @@ bool checkText(std::string text, std::string str)
 	return asLowerCaseString(text) == str;
 }
 
-std::string generateRecoveryKey(int32_t fieldCount, int32_t fieldLenght)
+std::string generateRecoveryKey(int32_t fieldCount, int32_t fieldLenght, bool mixCase/* = false*/)
 {
 	std::stringstream key;
 	int32_t i = 0, j = 0, lastNumber = 99, number = 0;
@@ -540,7 +643,7 @@ std::string generateRecoveryKey(int32_t fieldCount, int32_t fieldLenght)
 		do
 		{
 			madeNumber = madeCharacter = false;
-			if((bool)random_range(0, 1))
+			if((mixCase && !random_range(0, 2)) || (!mixCase && !random_range(0, 1)))
 			{
 				number = random_range(2, 9);
 				if(number != lastNumber)
@@ -552,7 +655,11 @@ std::string generateRecoveryKey(int32_t fieldCount, int32_t fieldLenght)
 			}
 			else
 			{
-				character = (char)random_range(65, 90);
+				if(mixCase && !random_range(0, 1))
+					character = (char)random_range(97, 122);
+				else
+					character = (char)random_range(65, 90);
+
 				if(character != lastCharacter)
 				{
 					key << character;
@@ -603,50 +710,69 @@ std::string parseParams(tokenizer::iterator &it, tokenizer::iterator end)
 
 std::string formatDate(time_t _time/* = 0*/)
 {
-	char buffer[21];
 	if(!_time)
 		_time = time(NULL);
 
 	const tm* tms = localtime(&_time);
+	std::stringstream s;
 	if(tms)
-		sprintf(buffer, "%02d/%02d/%04d %02d:%02d:%02d", tms->tm_mday, tms->tm_mon + 1, tms->tm_year + 1900, tms->tm_hour, tms->tm_min, tms->tm_sec);
+		s << tms->tm_mday << "/" << (tms->tm_mon + 1) << "/" << (tms->tm_year + 1900) << " " << tms->tm_hour << ":" << tms->tm_min << ":" << tms->tm_sec;
+	else
+		s << "UNIX Time: " << (int32_t)_time;
+
+	return s.str();
+}
+
+std::string formatDateEx(time_t _time/* = 0*/, std::string format/* = "%d %b %Y, %H:%M:%S"*/)
+{
+	if(!_time)
+		_time = time(NULL);
+
+	const tm* tms = localtime(&_time);
+	char buffer[100];
+	if(tms)
+		strftime(buffer, 25, format.c_str(), tms);
 	else
 		sprintf(buffer, "UNIX Time: %d", (int32_t)_time);
 
 	return buffer;
 }
 
-std::string formatDateShort(time_t _time, bool detailed/* = false*/)
+std::string formatTime(time_t _time/* = 0*/, bool ms/* = false*/)
 {
-	char buffer[21];
 	if(!_time)
 		_time = time(NULL);
+	else if(ms)
+		ms = false;
 
 	const tm* tms = localtime(&_time);
+	std::stringstream s;
 	if(tms)
 	{
-		std::string format = "%d %b %Y";
-		if(detailed)
-			format += " %H:%M:%S";
+		s << tms->tm_hour << ":" << tms->tm_min << ":";
+		if(tms->tm_sec < 10)
+			s << "0";
 
-		strftime(buffer, 25, format.c_str(), tms);
+		s << tms->tm_sec;
+		if(ms)
+		{
+			timeb t;
+			ftime(&t);
+
+			s << "."; // make it format zzz
+			if(t.millitm < 10)
+				s << "0";
+
+			if(t.millitm < 100)
+				s << "0";
+
+			s << t.millitm;
+		}
 	}
 	else
-		sprintf(buffer, "UNIX Time: %d", (int32_t)_time);
+		s << "UNIX Time: " << (int32_t)_time;
 
-	return buffer;
-}
-
-std::string formatTime(int32_t hours, int32_t minutes)
-{
-	std::stringstream time;
-	if(hours)
-		time << hours << " " << (hours > 1 ? "hours" : "hour") << (minutes ? " and " : "");
-
-	if(minutes)
-		time << minutes << " " << (minutes > 1 ? "minutes" : "minute");
-
-	return time.str();
+	return s.str();
 }
 
 std::string convertIPAddress(uint32_t ip)
@@ -656,67 +782,105 @@ std::string convertIPAddress(uint32_t ip)
 	return buffer;
 }
 
-Skulls_t getSkull(std::string strValue)
+Skulls_t getSkulls(std::string strValue)
 {
 	std::string tmpStrValue = asLowerCaseString(strValue);
+	if(tmpStrValue == "orange" || tmpStrValue == "6")
+		return SKULL_ORANGE;
+
 	if(tmpStrValue == "black" || tmpStrValue == "5")
 		return SKULL_BLACK;
-	else if(tmpStrValue == "red" || tmpStrValue == "4")
+
+	if(tmpStrValue == "red" || tmpStrValue == "4")
 		return SKULL_RED;
-	else if(tmpStrValue == "white" || tmpStrValue == "3")
+
+	if(tmpStrValue == "white" || tmpStrValue == "3")
 		return SKULL_WHITE;
-	else if(tmpStrValue == "green" || tmpStrValue == "2")
+
+	if(tmpStrValue == "green" || tmpStrValue == "2")
 		return SKULL_GREEN;
-	else if(tmpStrValue == "yellow" || tmpStrValue == "1")
+
+	if(tmpStrValue == "yellow" || tmpStrValue == "1")
 		return SKULL_YELLOW;
 
 	return SKULL_NONE;
 }
 
-PartyShields_t getPartyShield(std::string strValue)
+PartyShields_t getShields(std::string strValue)
 {
 	std::string tmpStrValue = asLowerCaseString(strValue);
 	if(tmpStrValue == "whitenoshareoff" || tmpStrValue == "10")
 		return SHIELD_YELLOW_NOSHAREDEXP;
-	else if(tmpStrValue == "blueshareoff" || tmpStrValue == "9")
+
+	if(tmpStrValue == "blueshareoff" || tmpStrValue == "9")
 		return SHIELD_BLUE_NOSHAREDEXP;
-	else if(tmpStrValue == "yellowshareblink" || tmpStrValue == "8")
+
+	if(tmpStrValue == "yellowshareblink" || tmpStrValue == "8")
 		return SHIELD_YELLOW_NOSHAREDEXP_BLINK;
-	else if(tmpStrValue == "blueshareblink" || tmpStrValue == "7")
+
+	if(tmpStrValue == "blueshareblink" || tmpStrValue == "7")
 		return SHIELD_BLUE_NOSHAREDEXP_BLINK;
-	else if(tmpStrValue == "yellowshareon" || tmpStrValue == "6")
+
+	if(tmpStrValue == "yellowshareon" || tmpStrValue == "6")
 		return SHIELD_YELLOW_SHAREDEXP;
-	else if(tmpStrValue == "blueshareon" || tmpStrValue == "5")
+
+	if(tmpStrValue == "blueshareon" || tmpStrValue == "5")
 		return SHIELD_BLUE_SHAREDEXP;
-	else if(tmpStrValue == "yellow" || tmpStrValue == "4")
+
+	if(tmpStrValue == "yellow" || tmpStrValue == "4")
 		return SHIELD_YELLOW;
-	else if(tmpStrValue == "blue" || tmpStrValue == "3")
+
+	if(tmpStrValue == "blue" || tmpStrValue == "3")
 		return SHIELD_BLUE;
-	else if(tmpStrValue == "whiteyellow" || tmpStrValue == "2")
+
+	if(tmpStrValue == "whiteyellow" || tmpStrValue == "2")
 		return SHIELD_WHITEYELLOW;
-	else if(tmpStrValue == "whiteblue" || tmpStrValue == "1")
+
+	if(tmpStrValue == "whiteblue" || tmpStrValue == "1")
 		return SHIELD_WHITEBLUE;
 
 	return SHIELD_NONE;
+}
+
+GuildEmblems_t getEmblems(std::string strValue)
+{
+	std::string tmpStrValue = asLowerCaseString(strValue);
+	if(tmpStrValue == "blue" || tmpStrValue == "3")
+		return EMBLEM_BLUE;
+
+	if(tmpStrValue == "red" || tmpStrValue == "2")
+		return EMBLEM_RED;
+
+	if(tmpStrValue == "green" || tmpStrValue == "1")
+		return EMBLEM_GREEN;
+
+	return EMBLEM_NONE;
 }
 
 Direction getDirection(std::string string)
 {
 	if(string == "north" || string == "n" || string == "0")
 		return NORTH;
-	else if(string == "east" || string == "e" || string == "1")
+
+	if(string == "east" || string == "e" || string == "1")
 		return EAST;
-	else if(string == "south" || string == "s" || string == "2")
+
+	if(string == "south" || string == "s" || string == "2")
 		return SOUTH;
-	else if(string == "west" || string == "w" || string == "3")
+
+	if(string == "west" || string == "w" || string == "3")
 		return WEST;
-	else if(string == "southwest" || string == "south west" || string == "south-west" || string == "sw" || string == "4")
+
+	if(string == "southwest" || string == "south west" || string == "south-west" || string == "sw" || string == "4")
 		return SOUTHWEST;
-	else if(string == "southeast" || string == "south east" || string == "south-east" || string == "se" || string == "5")
+
+	if(string == "southeast" || string == "south east" || string == "south-east" || string == "se" || string == "5")
 		return SOUTHEAST;
-	else if(string == "northwest" || string == "north west" || string == "north-west" || string == "nw" || string == "6")
+
+	if(string == "northwest" || string == "north west" || string == "north-west" || string == "nw" || string == "6")
 		return NORTHWEST;
-	else if(string == "northeast" || string == "north east" || string == "north-east" || string == "ne" || string == "7")
+
+	if(string == "northeast" || string == "north east" || string == "north-east" || string == "ne" || string == "7")
 		return NORTHEAST;
 
 	return SOUTH;
@@ -862,100 +1026,113 @@ struct SkillIdNames
 	skills_t skillId;
 };
 
+struct WeaponTypeNames
+{
+	const char* name;
+	WeaponType_t weaponType;
+};
+
 MagicEffectNames magicEffectNames[] =
 {
-	{"redspark",		MAGIC_EFFECT_DRAW_BLOOD},
-	{"bluebubble",		MAGIC_EFFECT_LOSE_ENERGY},
-	{"poff",		MAGIC_EFFECT_POFF},
-	{"yellowspark",		MAGIC_EFFECT_BLOCKHIT},
-	{"explosionarea",	MAGIC_EFFECT_EXPLOSION_AREA},
-	{"explosion",		MAGIC_EFFECT_EXPLOSION_DAMAGE},
-	{"firearea",		MAGIC_EFFECT_FIRE_AREA},
-	{"yellowbubble",	MAGIC_EFFECT_YELLOW_RINGS},
-	{"greenbubble",		MAGIC_EFFECT_POISON_RINGS},
-	{"blackspark",		MAGIC_EFFECT_HIT_AREA},
-	{"teleport",		MAGIC_EFFECT_TELEPORT},
-	{"energy",		MAGIC_EFFECT_ENERGY_DAMAGE},
-	{"blueshimmer",		MAGIC_EFFECT_WRAPS_BLUE},
-	{"redshimmer",		MAGIC_EFFECT_WRAPS_RED},
-	{"greenshimmer",	MAGIC_EFFECT_WRAPS_GREEN},
-	{"fire",		MAGIC_EFFECT_HITBY_FIRE},
-	{"greenspark",		MAGIC_EFFECT_POISON},
-	{"mortarea",		MAGIC_EFFECT_MORT_AREA},
-	{"greennote",		MAGIC_EFFECT_SOUND_GREEN},
-	{"rednote",		MAGIC_EFFECT_SOUND_RED},
-	{"poison",		MAGIC_EFFECT_POISON_AREA},
-	{"yellownote",		MAGIC_EFFECT_SOUND_YELLOW},
-	{"purplenote",		MAGIC_EFFECT_SOUND_PURPLE},
-	{"bluenote",		MAGIC_EFFECT_SOUND_BLUE},
-	{"whitenote",		MAGIC_EFFECT_SOUND_WHITE},
-	{"bubbles",		MAGIC_EFFECT_BUBBLES},
-	{"dice",		MAGIC_EFFECT_CRAPS},
-	{"giftwraps",		MAGIC_EFFECT_GIFT_WRAPS},
-	{"yellowfirework",	MAGIC_EFFECT_FIREWORK_YELLOW},
-	{"redfirework",		MAGIC_EFFECT_FIREWORK_RED},
-	{"bluefirework",	MAGIC_EFFECT_FIREWORK_BLUE},
-	{"stun",		MAGIC_EFFECT_STUN},
-	{"sleep",		MAGIC_EFFECT_SLEEP},
-	{"watercreature",	MAGIC_EFFECT_WATERCREATURE},
-	{"groundshaker",	MAGIC_EFFECT_GROUNDSHAKER},
-	{"hearts",		MAGIC_EFFECT_HEARTS},
-	{"fireattack",		MAGIC_EFFECT_FIREATTACK},
-	{"energyarea",		MAGIC_EFFECT_ENERGY_AREA},
-	{"smallclouds",		MAGIC_EFFECT_SMALLCLOUDS},
-	{"holydamage",		MAGIC_EFFECT_HOLYDAMAGE},
-	{"bigclouds",		MAGIC_EFFECT_BIGCLOUDS},
-	{"icearea",		MAGIC_EFFECT_ICEAREA},
-	{"icetornado",		MAGIC_EFFECT_ICETORNADO},
-	{"iceattack",		MAGIC_EFFECT_ICEATTACK},
-	{"stones",		MAGIC_EFFECT_STONES},
-	{"smallplants",		MAGIC_EFFECT_SMALLPLANTS},
-	{"carniphila",		MAGIC_EFFECT_CARNIPHILA},
-	{"purpleenergy",	MAGIC_EFFECT_PURPLEENERGY},
-	{"yellowenergy",	MAGIC_EFFECT_YELLOWENERGY},
-	{"holyarea",		MAGIC_EFFECT_HOLYAREA},
-	{"bigplants",		MAGIC_EFFECT_BIGPLANTS},
-	{"cake",		MAGIC_EFFECT_CAKE},
-	{"giantice",		MAGIC_EFFECT_GIANTICE},
-	{"watersplash",		MAGIC_EFFECT_WATERSPLASH},
-	{"plantattack",		MAGIC_EFFECT_PLANTATTACK},
-	{"tutorialarrow",	MAGIC_EFFECT_TUTORIALARROW},
-	{"tutorialsquare",	MAGIC_EFFECT_TUTORIALSQUARE},
+	{"redspark",			MAGIC_EFFECT_DRAW_BLOOD},
+	{"bluebubble",			MAGIC_EFFECT_LOSE_ENERGY},
+	{"poff",				MAGIC_EFFECT_POFF},
+	{"yellowspark",			MAGIC_EFFECT_BLOCKHIT},
+	{"explosionarea",		MAGIC_EFFECT_EXPLOSION_AREA},
+	{"explosion",			MAGIC_EFFECT_EXPLOSION_DAMAGE},
+	{"firearea",			MAGIC_EFFECT_FIRE_AREA},
+	{"yellowbubble",		MAGIC_EFFECT_YELLOW_RINGS},
+	{"greenbubble",			MAGIC_EFFECT_POISON_RINGS},
+	{"blackspark",			MAGIC_EFFECT_HIT_AREA},
+	{"teleport",			MAGIC_EFFECT_TELEPORT},
+	{"energy",				MAGIC_EFFECT_ENERGY_DAMAGE},
+	{"blueshimmer",			MAGIC_EFFECT_WRAPS_BLUE},
+	{"redshimmer",			MAGIC_EFFECT_WRAPS_RED},
+	{"greenshimmer",		MAGIC_EFFECT_WRAPS_GREEN},
+	{"fire",				MAGIC_EFFECT_HITBY_FIRE},
+	{"greenspark",			MAGIC_EFFECT_POISON},
+	{"mortarea",			MAGIC_EFFECT_MORT_AREA},
+	{"greennote",			MAGIC_EFFECT_SOUND_GREEN},
+	{"rednote",				MAGIC_EFFECT_SOUND_RED},
+	{"poison",				MAGIC_EFFECT_POISON_AREA},
+	{"yellownote",			MAGIC_EFFECT_SOUND_YELLOW},
+	{"purplenote",			MAGIC_EFFECT_SOUND_PURPLE},
+	{"bluenote",			MAGIC_EFFECT_SOUND_BLUE},
+	{"whitenote",			MAGIC_EFFECT_SOUND_WHITE},
+	{"bubbles",				MAGIC_EFFECT_BUBBLES},
+	{"dice",				MAGIC_EFFECT_CRAPS},
+	{"giftwraps",			MAGIC_EFFECT_GIFT_WRAPS},
+	{"yellowfirework",		MAGIC_EFFECT_FIREWORK_YELLOW},
+	{"redfirework",			MAGIC_EFFECT_FIREWORK_RED},
+	{"bluefirework",		MAGIC_EFFECT_FIREWORK_BLUE},
+	{"stun",				MAGIC_EFFECT_STUN},
+	{"sleep",				MAGIC_EFFECT_SLEEP},
+	{"watercreature",		MAGIC_EFFECT_WATERCREATURE},
+	{"groundshaker",		MAGIC_EFFECT_GROUNDSHAKER},
+	{"hearts",				MAGIC_EFFECT_HEARTS},
+	{"fireattack",			MAGIC_EFFECT_FIREATTACK},
+	{"energyarea",			MAGIC_EFFECT_ENERGY_AREA},
+	{"smallclouds",			MAGIC_EFFECT_SMALLCLOUDS},
+	{"holydamage",			MAGIC_EFFECT_HOLYDAMAGE},
+	{"bigclouds",			MAGIC_EFFECT_BIGCLOUDS},
+	{"icearea",				MAGIC_EFFECT_ICEAREA},
+	{"icetornado",			MAGIC_EFFECT_ICETORNADO},
+	{"iceattack",			MAGIC_EFFECT_ICEATTACK},
+	{"stones",				MAGIC_EFFECT_STONES},
+	{"smallplants",			MAGIC_EFFECT_SMALLPLANTS},
+	{"carniphila",			MAGIC_EFFECT_CARNIPHILA},
+	{"purpleenergy",		MAGIC_EFFECT_PURPLEENERGY},
+	{"yellowenergy",		MAGIC_EFFECT_YELLOWENERGY},
+	{"holyarea",			MAGIC_EFFECT_HOLYAREA},
+	{"bigplants",			MAGIC_EFFECT_BIGPLANTS},
+	{"cake",				MAGIC_EFFECT_CAKE},
+	{"giantice",			MAGIC_EFFECT_GIANTICE},
+	{"watersplash",			MAGIC_EFFECT_WATERSPLASH},
+	{"plantattack",			MAGIC_EFFECT_PLANTATTACK},
+	{"tutorialarrow",		MAGIC_EFFECT_TUTORIALARROW},
+	{"tutorialsquare",		MAGIC_EFFECT_TUTORIALSQUARE},
 	{"mirrorhorizontal",	MAGIC_EFFECT_MIRRORHORIZONTAL},
-	{"mirrorvertical",	MAGIC_EFFECT_MIRRORVERTICAL},
-	{"skullhorizontal",	MAGIC_EFFECT_SKULLHORIZONTAL},
-	{"skullvertical",	MAGIC_EFFECT_SKULLVERTICAL},
-	{"assassin",		MAGIC_EFFECT_ASSASSIN},
-	{"stepshorizontal",	MAGIC_EFFECT_STEPSHORIZONTAL},
-	{"bloodysteps",		MAGIC_EFFECT_BLOODYSTEPS},
-	{"stepsvertical",	MAGIC_EFFECT_STEPSVERTICAL},
-	{"yalaharighost",	MAGIC_EFFECT_YALAHARIGHOST},
-	{"bats",		MAGIC_EFFECT_BATS},
-	{"smoke",		MAGIC_EFFECT_SMOKE},
-	{"insects",		MAGIC_EFFECT_INSECTS}
+	{"mirrorvertical",		MAGIC_EFFECT_MIRRORVERTICAL},
+	{"skullhorizontal",		MAGIC_EFFECT_SKULLHORIZONTAL},
+	{"skullvertical",		MAGIC_EFFECT_SKULLVERTICAL},
+	{"assassin",			MAGIC_EFFECT_ASSASSIN},
+	{"stepshorizontal",		MAGIC_EFFECT_STEPSHORIZONTAL},
+	{"bloodysteps",			MAGIC_EFFECT_BLOODYSTEPS},
+	{"stepsvertical",		MAGIC_EFFECT_STEPSVERTICAL},
+	{"yalaharighost",		MAGIC_EFFECT_YALAHARIGHOST},
+	{"bats",				MAGIC_EFFECT_BATS},
+	{"smoke",				MAGIC_EFFECT_SMOKE},
+	{"insects",				MAGIC_EFFECT_INSECTS},
+	{"dragonhead",			MAGIC_EFFECT_DRAGONHEAD},
+	{"orcshaman",			MAGIC_EFFECT_ORCSHAMAN},
+	{"orcshamanfire",		MAGIC_EFFECT_ORCSHAMAN_FIRE},
+	{"thunder",				MAGIC_EFFECT_THUNDER},
+	{"ferumbras",			MAGIC_EFFECT_FERUMBRAS},
+	{"confettihorizontal",	MAGIC_EFFECT_CONFETTIHORIZONTAL},
+	{"confettivertical",	MAGIC_EFFECT_CONFETTIVERTICAL}
 };
 
 ShootTypeNames shootTypeNames[] =
 {
-	{"spear",		SHOOT_EFFECT_SPEAR},
-	{"bolt",		SHOOT_EFFECT_BOLT},
-	{"arrow",		SHOOT_EFFECT_ARROW},
-	{"fire",		SHOOT_EFFECT_FIRE},
-	{"energy",		SHOOT_EFFECT_ENERGY},
+	{"spear",			SHOOT_EFFECT_SPEAR},
+	{"bolt",			SHOOT_EFFECT_BOLT},
+	{"arrow",			SHOOT_EFFECT_ARROW},
+	{"fire",			SHOOT_EFFECT_FIRE},
+	{"energy",			SHOOT_EFFECT_ENERGY},
 	{"poisonarrow",		SHOOT_EFFECT_POISONARROW},
 	{"burstarrow",		SHOOT_EFFECT_BURSTARROW},
 	{"throwingstar",	SHOOT_EFFECT_THROWINGSTAR},
 	{"throwingknife",	SHOOT_EFFECT_THROWINGKNIFE},
 	{"smallstone",		SHOOT_EFFECT_SMALLSTONE},
-	{"death",		SHOOT_EFFECT_DEATH},
+	{"death",			SHOOT_EFFECT_DEATH},
 	{"largerock",		SHOOT_EFFECT_LARGEROCK},
 	{"snowball",		SHOOT_EFFECT_SNOWBALL},
 	{"powerbolt",		SHOOT_EFFECT_POWERBOLT},
-	{"poison",		SHOOT_EFFECT_POISONFIELD},
+	{"poison",			SHOOT_EFFECT_POISONFIELD},
 	{"infernalbolt",	SHOOT_EFFECT_INFERNALBOLT},
 	{"huntingspear",	SHOOT_EFFECT_HUNTINGSPEAR},
 	{"enchantedspear",	SHOOT_EFFECT_ENCHANTEDSPEAR},
-	{"redstar",		SHOOT_EFFECT_REDSTAR},
+	{"redstar",			SHOOT_EFFECT_REDSTAR},
 	{"greenstar",		SHOOT_EFFECT_GREENSTAR},
 	{"royalspear",		SHOOT_EFFECT_ROYALSPEAR},
 	{"sniperarrow",		SHOOT_EFFECT_SNIPERARROW},
@@ -965,9 +1142,9 @@ ShootTypeNames shootTypeNames[] =
 	{"whirlwindaxe",	SHOOT_EFFECT_WHIRLWINDAXE},
 	{"whirlwindclub",	SHOOT_EFFECT_WHIRLWINDCLUB},
 	{"etherealspear",	SHOOT_EFFECT_ETHEREALSPEAR},
-	{"ice",			SHOOT_EFFECT_ICE},
-	{"earth",		SHOOT_EFFECT_EARTH},
-	{"holy",		SHOOT_EFFECT_HOLY},
+	{"ice",				SHOOT_EFFECT_ICE},
+	{"earth",			SHOOT_EFFECT_EARTH},
+	{"holy",			SHOOT_EFFECT_HOLY},
 	{"suddendeath",		SHOOT_EFFECT_SUDDENDEATH},
 	{"flasharrow",		SHOOT_EFFECT_FLASHARROW},
 	{"flammingarrow",	SHOOT_EFFECT_FLAMMINGARROW},
@@ -979,20 +1156,26 @@ ShootTypeNames shootTypeNames[] =
 	{"smallearth",		SHOOT_EFFECT_SMALLEARTH},
 	{"eartharrow",		SHOOT_EFFECT_EARTHARROW},
 	{"explosion",		SHOOT_EFFECT_EXPLOSION},
-	{"cake",		SHOOT_EFFECT_CAKE}
+	{"cake",			SHOOT_EFFECT_CAKE},
+	{"tarsalarrow",		SHOOT_EFFECT_TARSALARROW},
+	{"vortexbolt",		SHOOT_EFFECT_VORTEXBOLT},
+	{"prismaticbolt",	SHOOT_EFFECT_PRISMATICBOLT},
+	{"crystallinearrow",SHOOT_EFFECT_CRYSTALLINEARROW},
+	{"drillbolt",		SHOOT_EFFECT_DRILLBOLT},
+	{"envenomedarrow",	SHOOT_EFFECT_ENVENOMEDARROW}
 };
 
 CombatTypeNames combatTypeNames[] =
 {
-	{"physical",		COMBAT_PHYSICALDAMAGE},
+	{"physical",	COMBAT_PHYSICALDAMAGE},
 	{"energy",		COMBAT_ENERGYDAMAGE},
 	{"earth",		COMBAT_EARTHDAMAGE},
 	{"fire",		COMBAT_FIREDAMAGE},
-	{"undefined",		COMBAT_UNDEFINEDDAMAGE},
-	{"lifedrain",		COMBAT_LIFEDRAIN},
-	{"life drain",		COMBAT_LIFEDRAIN},
-	{"manadrain",		COMBAT_MANADRAIN},
-	{"mana drain",		COMBAT_MANADRAIN},
+	{"undefined",	COMBAT_UNDEFINEDDAMAGE},
+	{"lifedrain",	COMBAT_LIFEDRAIN},
+	{"life drain",	COMBAT_LIFEDRAIN},
+	{"manadrain",	COMBAT_MANADRAIN},
+	{"mana drain",	COMBAT_MANADRAIN},
 	{"healing",		COMBAT_HEALING},
 	{"drown",		COMBAT_DROWNDAMAGE},
 	{"ice",			COMBAT_ICEDAMAGE},
@@ -1002,11 +1185,11 @@ CombatTypeNames combatTypeNames[] =
 
 AmmoTypeNames ammoTypeNames[] =
 {
-	{"spear",		AMMO_SPEAR},
-	{"arrow",		AMMO_ARROW},
+	{"spear",			AMMO_SPEAR},
+	{"arrow",			AMMO_ARROW},
 	{"poisonarrow",		AMMO_ARROW},
 	{"burstarrow",		AMMO_ARROW},
-	{"bolt",		AMMO_BOLT},
+	{"bolt",			AMMO_BOLT},
 	{"powerbolt",		AMMO_BOLT},
 	{"smallstone",		AMMO_STONE},
 	{"largerock",		AMMO_STONE},
@@ -1030,7 +1213,7 @@ AmmoTypeNames ammoTypeNames[] =
 
 AmmoActionNames ammoActionNames[] =
 {
-	{"move",		AMMOACTION_MOVE},
+	{"move",			AMMOACTION_MOVE},
 	{"moveback",		AMMOACTION_MOVEBACK},
 	{"move back",		AMMOACTION_MOVEBACK},
 	{"removecharge",	AMMOACTION_REMOVECHARGE},
@@ -1046,21 +1229,23 @@ FluidTypeNames fluidTypeNames[] =
 	{"blood",		FLUID_BLOOD},
 	{"beer",		FLUID_BEER},
 	{"slime",		FLUID_SLIME},
-	{"lemonade",		FLUID_LEMONADE},
+	{"lemonade",	FLUID_LEMONADE},
 	{"milk",		FLUID_MILK},
 	{"mana",		FLUID_MANA},
 	{"life",		FLUID_LIFE},
 	{"oil",			FLUID_OIL},
 	{"urine",		FLUID_URINE},
-	{"coconutmilk",		FLUID_COCONUTMILK},
-	{"coconut milk",	FLUID_COCONUTMILK},
+	{"coconutmilk",	FLUID_COCONUTMILK},
+	{"coconut milk",FLUID_COCONUTMILK},
 	{"wine",		FLUID_WINE},
 	{"mud",			FLUID_MUD},
-	{"fruitjuice",		FLUID_FRUITJUICE},
-	{"fruit juice",		FLUID_FRUITJUICE},
+	{"fruitjuice",	FLUID_FRUITJUICE},
+	{"fruit juice",	FLUID_FRUITJUICE},
 	{"lava",		FLUID_LAVA},
 	{"rum",			FLUID_RUM},
-	{"swamp",		FLUID_SWAMP}
+	{"swamp",		FLUID_SWAMP},
+	{"tea",			FLUID_TEA},
+	{"mead",		FLUID_MEAD}
 };
 
 SkillIdNames skillIdNames[] =
@@ -1069,22 +1254,35 @@ SkillIdNames skillIdNames[] =
 	{"club",		SKILL_CLUB},
 	{"sword",		SKILL_SWORD},
 	{"axe",			SKILL_AXE},
-	{"distance",		SKILL_DIST},
+	{"distance",	SKILL_DIST},
 	{"dist",		SKILL_DIST},
-	{"shielding",		SKILL_SHIELD},
+	{"shielding",	SKILL_SHIELD},
 	{"shield",		SKILL_SHIELD},
 	{"fishing",		SKILL_FISH},
 	{"fish",		SKILL_FISH},
 	{"level",		SKILL__LEVEL},
-	{"magiclevel",		SKILL__MAGLEVEL},
-	{"magic level",		SKILL__MAGLEVEL}
+	{"magiclevel",	SKILL__MAGLEVEL},
+	{"magic level",	SKILL__MAGLEVEL},
+	{"experience",	SKILL__EXPERIENCE}
+};
+
+WeaponTypeNames weaponTypeNames[] = {
+	{"",			WEAPON_NONE},
+	{"sword",		WEAPON_SWORD},
+	{"club",		WEAPON_CLUB},
+	{"axe",			WEAPON_AXE},
+	{"distance",	WEAPON_DIST},
+	{"shield",		WEAPON_SHIELD},
+	{"fist",		WEAPON_FIST},
+	{"wand",		WEAPON_WAND},
+	{"ammunition",	WEAPON_AMMO}
 };
 
 MagicEffect_t getMagicEffect(const std::string& strValue)
 {
 	for(uint32_t i = 0; i < sizeof(magicEffectNames) / sizeof(MagicEffectNames); ++i)
 	{
-		if(!strcasecmp(strValue.c_str(), magicEffectNames[i].name))
+		if(boost::algorithm::iequals(strValue.c_str(), magicEffectNames[i].name))
 			return magicEffectNames[i].magicEffect;
 	}
 
@@ -1095,7 +1293,7 @@ ShootEffect_t getShootType(const std::string& strValue)
 {
 	for(uint32_t i = 0; i < sizeof(shootTypeNames) / sizeof(ShootTypeNames); ++i)
 	{
-		if(!strcasecmp(strValue.c_str(), shootTypeNames[i].name))
+		if(boost::algorithm::iequals(strValue.c_str(), shootTypeNames[i].name))
 			return shootTypeNames[i].shootType;
 	}
 
@@ -1106,7 +1304,7 @@ CombatType_t getCombatType(const std::string& strValue)
 {
 	for(uint32_t i = 0; i < sizeof(combatTypeNames) / sizeof(CombatTypeNames); ++i)
 	{
-		if(!strcasecmp(strValue.c_str(), combatTypeNames[i].name))
+		if(boost::algorithm::iequals(strValue.c_str(), combatTypeNames[i].name))
 			return combatTypeNames[i].combatType;
 	}
 
@@ -1117,7 +1315,7 @@ Ammo_t getAmmoType(const std::string& strValue)
 {
 	for(uint32_t i = 0; i < sizeof(ammoTypeNames) / sizeof(AmmoTypeNames); ++i)
 	{
-		if(!strcasecmp(strValue.c_str(), ammoTypeNames[i].name))
+		if(boost::algorithm::iequals(strValue.c_str(), ammoTypeNames[i].name))
 			return ammoTypeNames[i].ammoType;
 	}
 
@@ -1128,7 +1326,7 @@ AmmoAction_t getAmmoAction(const std::string& strValue)
 {
 	for(uint32_t i = 0; i < sizeof(ammoActionNames) / sizeof(AmmoActionNames); ++i)
 	{
-		if(!strcasecmp(strValue.c_str(), ammoActionNames[i].name))
+		if(boost::algorithm::iequals(strValue.c_str(), ammoActionNames[i].name))
 			return ammoActionNames[i].ammoAction;
 	}
 
@@ -1139,7 +1337,7 @@ FluidTypes_t getFluidType(const std::string& strValue)
 {
 	for(uint32_t i = 0; i < sizeof(fluidTypeNames) / sizeof(FluidTypeNames); ++i)
 	{
-		if(!strcasecmp(strValue.c_str(), fluidTypeNames[i].name))
+		if(boost::algorithm::iequals(strValue.c_str(), fluidTypeNames[i].name))
 			return fluidTypeNames[i].fluidType;
 	}
 
@@ -1150,11 +1348,100 @@ skills_t getSkillId(const std::string& strValue)
 {
 	for(uint32_t i = 0; i < sizeof(skillIdNames) / sizeof(SkillIdNames); ++i)
 	{
-		if(!strcasecmp(strValue.c_str(), skillIdNames[i].name))
+		if(boost::algorithm::iequals(strValue.c_str(), skillIdNames[i].name))
 			return skillIdNames[i].skillId;
 	}
 
 	return SKILL_FIST;
+}
+
+WeaponType_t getWeaponType(const std::string& strValue)
+{
+	for(uint32_t i = 0; i < sizeof(weaponTypeNames) / sizeof(WeaponTypeNames); ++i)
+	{
+		if(boost::algorithm::iequals(strValue.c_str(), weaponTypeNames[i].name))
+			return weaponTypeNames[i].weaponType;
+	}
+
+	return WEAPON_NONE;
+}
+
+void getCombatDetails(CombatType_t combatType, MagicEffect_t& magicEffect, Color_t& textColor)
+{
+	switch(combatType)
+	{
+		case COMBAT_PHYSICALDAMAGE:
+		{
+			textColor = COLOR_RED;
+			magicEffect = MAGIC_EFFECT_DRAW_BLOOD;
+			break;
+		}
+
+		case COMBAT_ENERGYDAMAGE:
+		{
+			textColor = COLOR_PURPLE;
+			magicEffect = MAGIC_EFFECT_ENERGY_DAMAGE;
+			break;
+		}
+
+		case COMBAT_EARTHDAMAGE:
+		{
+			textColor = COLOR_LIGHTGREEN;
+			magicEffect = MAGIC_EFFECT_POISON_RINGS;
+			break;
+		}
+
+		case COMBAT_DROWNDAMAGE:
+		{
+			textColor = COLOR_LIGHTBLUE;
+			magicEffect = MAGIC_EFFECT_LOSE_ENERGY;
+			break;
+		}
+
+		case COMBAT_FIREDAMAGE:
+		{
+			textColor = COLOR_ORANGE;
+			magicEffect = MAGIC_EFFECT_HITBY_FIRE;
+			break;
+		}
+
+		case COMBAT_ICEDAMAGE:
+		{
+			textColor = COLOR_TEAL;
+			magicEffect = MAGIC_EFFECT_ICEATTACK;
+			break;
+		}
+
+		case COMBAT_HOLYDAMAGE:
+		{
+			textColor = COLOR_YELLOW;
+			magicEffect = MAGIC_EFFECT_HOLYDAMAGE;
+			break;
+		}
+
+		case COMBAT_DEATHDAMAGE:
+		{
+			textColor = COLOR_DARKRED;
+			magicEffect = MAGIC_EFFECT_SMALLCLOUDS;
+			break;
+		}
+
+		case COMBAT_LIFEDRAIN:
+		{
+			textColor = COLOR_RED;
+			magicEffect = MAGIC_EFFECT_WRAPS_RED;
+			break;
+		}
+
+		case COMBAT_MANADRAIN:
+		{
+			textColor = COLOR_BLUE;
+			magicEffect = MAGIC_EFFECT_LOSE_ENERGY;
+		}
+
+		default:
+			break;
+	}
 }
 
 std::string getCombatName(CombatType_t combatType)
@@ -1251,106 +1538,29 @@ std::string getSkillName(uint16_t skillId, bool suffix/* = true*/)
 	return "unknown";
 }
 
-std::string getReason(int32_t reasonId)
+std::string getWeaponName(WeaponType_t weaponType)
 {
-	switch(reasonId)
+	switch(weaponType)
 	{
-		case 0:
-			return "Offensive Name";
-		case 1:
-			return "Invalid Name Format";
-		case 2:
-			return "Unsuitable Name";
-		case 3:
-			return "Name Inciting Rule Violation";
-		case 4:
-			return "Offensive Statement";
-		case 5:
-			return "Spamming";
-		case 6:
-			return "Illegal Advertising";
-		case 7:
-			return "Off-Topic Public Statement";
-		case 8:
-			return "Non-English Public Statement";
-		case 9:
-			return "Inciting Rule Violation";
-		case 10:
-			return "Bug Abuse";
-		case 11:
-			return "Game Weakness Abuse";
-		case 12:
-			return "Using Unofficial Software to Play";
-		case 13:
-			return "Hacking";
-		case 14:
-			return "Multi-Clienting";
-		case 15:
-			return "Account Trading or Sharing";
-		case 16:
-			return "Threatening Gamemaster";
-		case 17:
-			return "Pretending to Have Influence on Rule Enforcement";
-		case 18:
-			return "False Report to Gamemaster";
-		case 19:
-			return "Destructive Behaviour";
-		case 20:
-			return "Excessive Unjustified Player Killing";
+		case WEAPON_SWORD:
+			return "sword";
+		case WEAPON_CLUB:
+			return "club";
+		case WEAPON_AXE:
+			return "axe";
+		case WEAPON_DIST:
+			return "distance";
+		case WEAPON_WAND:
+			return "wand";
+		case WEAPON_FIST:
+			return "fist";
+		case WEAPON_AMMO:
+			return "ammunition";
 		default:
 			break;
 	}
 
-	return "Unknown Reason";
-}
-
-std::string getAction(ViolationAction_t actionId, bool ipBanishment)
-{
-	std::string action = "Unknown";
-	switch(actionId)
-	{
-		case ACTION_NOTATION:
-			action = "Notation";
-			break;
-		case ACTION_NAMEREPORT:
-			action = "Name Report";
-			break;
-		case ACTION_BANISHMENT:
-			action = "Banishment";
-			break;
-		case ACTION_BANREPORT:
-			action = "Name Report + Banishment";
-			break;
-		case ACTION_BANFINAL:
-			action = "Banishment + Final Warning";
-			break;
-		case ACTION_BANREPORTFINAL:
-			action = "Name Report + Banishment + Final Warning";
-			break;
-		case ACTION_STATEMENT:
-			action = "Statement Report";
-			break;
-		//internal use
-		case ACTION_DELETION:
-			action = "Deletion";
-			break;
-		case ACTION_NAMELOCK:
-			action = "Name Lock";
-			break;
-		case ACTION_BANLOCK:
-			action = "Name Lock + Banishment";
-			break;
-		case ACTION_BANLOCKFINAL:
-			action = "Name Lock + Banishment + Final Warning";
-			break;
-		default:
-			break;
-	}
-
-	if(ipBanishment)
-		action += " + IP Banishment";
-
-	return action;
+	return "";
 }
 
 std::string parseVocationString(StringVec vocStringVec)
@@ -1470,9 +1680,9 @@ bool fileExists(const char* filename)
 	return true;
 }
 
-uint32_t adlerChecksum(uint8_t *data, size_t length)
+uint32_t adlerChecksum(uint8_t* data, size_t length)
 {
-	if(length > NETWORKMESSAGE_MAXSIZE || length < 0)
+	if(length > NETWORK_MAX_SIZE || !length)
 		return 0;
 
 	const uint16_t adler = 65521;
@@ -1487,7 +1697,6 @@ uint32_t adlerChecksum(uint8_t *data, size_t length)
 			b += a;
 		}
 		while(--tmp);
-
 		a %= adler;
 		b %= adler;
 	}
@@ -1495,53 +1704,53 @@ uint32_t adlerChecksum(uint8_t *data, size_t length)
 	return (b << 16) | a;
 }
 
-std::string getFilePath(FileType_t filetype, std::string filename)
+std::string getFilePath(FileType_t type, std::string name/* = ""*/)
 {
 	#ifdef __FILESYSTEM_HIERARCHY_STANDARD__
-	std::string path = "/usr/share/tfs/";
-	#endif
+	std::string path = "/var/lib/tfs/";
+	#else
 	std::string path = g_config.getString(ConfigManager::DATA_DIRECTORY);
-	switch(filetype)
+	#endif
+	switch(type)
 	{
 		case FILE_TYPE_OTHER:
-			path += filename;
+			path += name;
 			break;
 		case FILE_TYPE_XML:
-			path += "XML/" + filename;
+			path += "XML/" + name;
 			break;
 		case FILE_TYPE_LOG:
 			#ifndef __FILESYSTEM_HIERARCHY_STANDARD__
-			path += "logs/" + filename;
+			path = g_config.getString(ConfigManager::LOGS_DIRECTORY) + name;
 			#else
-			path = "/var/log/tfs/" + filename;
+			path = "/var/log/tfs/" + name;
 			#endif
 			break;
 		case FILE_TYPE_MOD:
 		{
 			#ifndef __FILESYSTEM_HIERARCHY_STANDARD__
-			path = "mods/" + filename;
+			path = "mods/" + name;
 			#else
-			path = "/etc/tfs/mods/" + filename;
+			path = "/usr/share/tfs/" + name;
 			#endif
 			break;
 		}
 		case FILE_TYPE_CONFIG:
 		{
-			#if defined(__FILESYSTEM_HIERARCHY_STANDARD__) && defined(__HOMEDIR_CONF__)
-			if(fileExists("~/.tfs/" + filename))
-				path = "~/.tfs/" + filename;
+			#if defined(__HOMEDIR_CONF__)
+			if(fileExists("~/.tfs/" + name))
+				path = "~/.tfs/" + name;
 			else
-				path = "/etc/tfs/" + filename;
-
-			#elif defined(__FILESYSTEM_HIERARCHY_STANDARD__)
-			path = "/etc/tfs/" + filename;
+			#endif
+			#if defined(__FILESYSTEM_HIERARCHY_STANDARD__)
+				path = "/etc/tfs/" + name;
 			#else
-			path = filename;
+				path = name;
 			#endif
 			break;
 		}
 		default:
-			std::cout << "ERROR: Wrong file type!" << std::endl;
+			std::clog << "> ERROR: Wrong file type!" << std::endl;
 			break;
 	}
 	return path;

@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <monster name="Gargoyle" nameDescription="a gargoyle" race="blood" experience="150" speed="250" manacost="0">
 	<health now="450" max="450"/>
 	<look type="95" corpse="6027"/>
@@ -18,7 +18,7 @@
 		<flag runonhealth="30"/>
 	</flags>
 	<attacks>
-		<attack name="melee" interval="2000" skill="45" attack="24"/>
+		<attack name="melee" interval="2000" skill="55" attack="20"/>
 		<attack name="physical" interval="1000" chance="24" range="7" min="-50" max="-110">
 			<attribute key="shootEffect" value="largerock"/>
 		</attack>
@@ -45,18 +45,17 @@
 		<voice sentence="There is a stone in your shoe!"/>
 	</voices>
 	<loot>
-		<item id="2148" countmax="20" chance="100000"/><!-- gold coin -->
-		<item id="2671" countmax="2" chance="33333"/><!-- ham -->
-		<item id="2666" countmax="3" chance="33333"/><!-- meat -->
-		<item id="2457" chance="20000"/><!-- steel helmet -->
-		<item id="2513" chance="25000"/><!-- battle shield -->
-		<item id="2209" chance="3333"/><!-- club ring -->
-		<item id="2394" chance="5000"/><!-- morning star -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
-				<item id="2489" chance="2500"/><!-- dark armor -->
-				<item id="2148" countmax="5" chance="100000"/><!-- gold coin -->
-			</inside>
-		</item>
+		<item id="2148" countmax="30" chance="24000"/><!-- gold coin -->
+		<item id="2513" chance="1200"/><!-- battle shield -->
+		<item id="2671" chance="17500"/><!-- ham -->
+		<item id="2666" countmax="2" chance="27500"/><!-- meat -->
+		<item id="2394" chance="1750"/><!-- morning star -->
+		<item id="2449" chance="10000"/><!-- bone club -->
+		<item id="2194" countmax="10" chance="8000"/><!-- small stone -->
+		<item id="2457" chance="6000"/><!-- steel helmet -->
+		<item id="2448" chance="5300"/><!-- studdedd club -->
+		<item id="2489" chance="750"/><!-- dark armor -->
+		<item id="2129" chance="500"/><!-- wolf tooth chain -->
+		<item id="2209" chance="300"/><!-- club ring -->
 	</loot>
 </monster>

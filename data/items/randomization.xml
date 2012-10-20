@@ -14,7 +14,7 @@
 	<palette itemid="4422" randomize="4423;4438"/>
 	<palette fromid="4526" toid="4541" randomize="4527;4541"/>
 	<palette itemid="4756" randomize="4527;4541"/>
-	<palette fromid="4608" toid="4619" randomize="4609;4619"/>
+	<palette fromid="4608" toid="4619" randomize="4608;4619"/>
 	<palette fromid="4691" toid="4701" randomize="4692;4701"/>
 	<palette fromid="5405" toid="5410" randomize="5406;5410"/>
 	<palette fromid="6804" toid="6809" randomize="6805;6809"/>

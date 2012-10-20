@@ -1,27 +1,33 @@
-function onStepOut(cid, item, position, fromPosition)
-	local newPosition = {x = position.x, y = position.y, z = position.z}
-	if(isInArray(verticalOpenDoors, item.itemid)) then
-		newPosition.x = newPosition.x + 1
-	else
-		newPosition.y = newPosition.y + 1
+function onStepOut(cid, item, position, lastPosition)
+	if(getTileInfo(position).creatures > 0) then
+		return true
 	end
 
-	doRelocate(position, newPosition)
-	local tmpPos = {x = position.x, y = position.y, z = position.z, stackpos = -1}
-	local tileCount = getTileThingByPos(tmpPos)
+	local newPosition = {x = position.x + 1, y = position.y, z = position.z}
+	local query = doTileQueryAdd(cid, newPosition)
+	if(query == RETURNVALUE_NOTENOUGHROOM) then
+		newPosition.x = newPosition.x - 1
+		newPosition.y = newPosition.y + 1
+		query = doTileQueryAdd(cid, newPosition) -- repeat until found
+	end
 
-	local i = 1
-	local tmpItem = {uid = 1}
-	while(tmpItem.uid ~= 0 and i < tileCount) do
-		tmpPos.stackpos = i
-		tmpItem = getTileThingByPos(tmpPos)
-		if(tmpItem.uid ~= item.uid and tmpItem.uid ~= 0 and isMoveable(tmpItem.uid)) then
-			doRemoveItem(tmpItem.uid)
+	if(query == RETURNVALUE_NOERROR and query == RETURNVALUE_NOTENOUGHROOM) then
+		doRelocate(position, newPosition)
+	end
+
+	position.stackpos = -1
+	local i, tileItem, tileCount = 1, {uid = 1}, getTileThingByPos(position)
+	while(tileItem.uid ~= 0 and i < tileCount) do
+		position.stackpos = i
+		tileItem = getTileThingByPos(position)
+		if(tileItem.uid ~= 0 and tileItem.uid ~= item.uid and isMovable(tileItem.uid)) then
+			doRemoveItem(tileItem.uid)
 		else
 			i = i + 1
 		end
 	end
 
-	doTransformItem(item.uid, item.itemid - 1)
+	local itemInfo = getItemInfo(item.itemid)
+	doTransformItem(item.uid, itemInfo.transformUseTo)
 	return true
 end

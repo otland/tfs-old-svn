@@ -29,15 +29,9 @@
 		</defense>
 	</defenses>
 	<immunities>
-		<immunity physical="0"/>
 		<immunity energy="1"/>
 		<immunity fire="1"/>
-		<immunity poison="0"/>
-		<immunity lifedrain="0"/>
-		<immunity paralyze="0"/>
-		<immunity outfit="0"/>
 		<immunity drunk="1"/>
-		<immunity invisible="0"/>
 	</immunities>
 	<summons maxSummons="10">
 		<summon name="tibia bug" interval="1000" chance="15" max="10"/>

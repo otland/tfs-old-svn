@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <monster name="Pirate Marauder" nameDescription="a pirate marauder" race="blood" experience="125" speed="230" manacost="490">
 	<health now="210" max="210"/>
 	<look type="93" corpse="6080"/>
@@ -19,7 +19,7 @@
 		<flag runonhealth="25"/>
 	</flags>
 	<attacks>
-		<attack name="melee" interval="2000" min="-0" max="-140"/>
+		<attack name="melee" interval="2000" skill="60" attack="40"/>
 		<attack name="physical" interval="2000" chance="20" range="7" min="-0" max="-65">
 			<attribute key="shootEffect" value="spear"/>
 		</attack>
@@ -41,21 +41,20 @@
 		<voice sentence="Hiyaa!"/>
 	</voices>
 	<loot>
-		<item id="2148" countmax="80" chance="42000"/><!-- gold coin -->
-		<item id="2376" chance="15000"/><!-- sword -->
-		<item id="2050" chance="18000"/><!-- torch -->
-		<item id="5917" chance="916"/><!-- bandana -->
-		<item id="2464" chance="6666"/><!-- chain armor -->
-		<item id="6098" countmax="1" chance="5000"/><!-- eye patch -->
-		<item id="6095" chance="5000"/><!-- pirate shirt -->
-		<item id="5926" chance="100000"><!-- pirate backpack -->
-			<inside>
-				<item id="5091" chance="1666"/><!-- treasure map -->
-				<item id="5792" chance="3333"/><!-- dice -->
-				<item id="6126" countmax="1" chance="1428"/><!-- peg leg -->
-				<item id="6098" countmax="1" chance="1428"/><!-- eye patch -->
-				<item id="6097" countmax="1" chance="1428"/><!-- hook -->
-			</inside>
-		</item>
+		<item id="2148" countmax="60" chance="20000"/><!-- gold coin -->
+		<item id="2376" chance="9750"/><!-- sword -->
+		<item id="2050" chance="9250"/><!-- torch -->
+		<item id="2389" countmax="2" chance="4000"/><!-- spear -->
+		<item id="2510" chance="4800"/><!-- plate shield -->
+		<item id="2464" chance="2750"/><!-- chain armor -->
+		<item id="5091" chance="1125"/><!-- treasure map -->
+		<item id="5917" chance="1100"/><!-- bandana-->
+		<item id="6126" chance="600"/><!-- peg leg -->
+		<item id="6097" chance="600"/><!-- hook -->
+		<item id="6098" chance="600"/><!-- eye patch -->
+		<item id="5553" chance="100"/><!-- rum flask -->
+		<item id="5928" chance="200"/><!-- empty goldfish bowl -->
+		<item id="5792" chance="50"/><!-- dice -->
+		<item id="5927" chance="500"/><!-- pirate bag -->
 	</loot>
 </monster>

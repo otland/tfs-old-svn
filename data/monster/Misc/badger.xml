@@ -18,11 +18,12 @@
 		<flag runonhealth="10"/>
 	</flags>
 	<attacks>
-		<attack name="melee" interval="2000" skill="17" attack="10"/>
+		<attack name="melee" interval="2000" skill="10" attack="12"/>
 	</attacks>
 	<defenses armor="1" defense="3"/>
 	<loot>
-		<item id="3976" countmax="10" chance="50000"/><!-- worm -->
-		<item id="2671" chance="50000"/><!-- ham -->
+		<item id="3976" chance="20000"/><!-- worm -->
+		<item id="2671" chance="20000"/><!-- ham -->
+		<item id="11213" chance="7325"/> <!-- acorn -->
 	</loot>
 </monster>

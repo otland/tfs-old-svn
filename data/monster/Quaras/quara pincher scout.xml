@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <monster name="Quara Pincher Scout" nameDescription="a quara pincher scout" race="blood" experience="600" speed="250" manacost="0">
 	<health now="775" max="775"/>
 	<look type="77" corpse="6063"/>
@@ -18,15 +18,13 @@
 		<flag runonhealth="0"/>
 	</flags>
 	<attacks>
-		<attack name="melee" interval="1000" skill="88" attack="60"/>
+		<attack name="melee" interval="1000" skill="50" attack="80"/>
 		<attack name="speed" interval="1000" chance="12" range="7" speedchange="-850" duration="4000">
 			<attribute key="areaEffect" value="redshimmer"/>
 		</attack>
 	</attacks>
 	<defenses armor="30" defense="35"/>
 	<immunities>
-		<immunity physical="0"/>
-		<immunity energy="0"/>
 		<immunity fire="1"/>
 		<immunity poison="1"/>
 		<immunity lifedrain="1"/>
@@ -44,17 +42,13 @@
 		<voice sentence="Clap!"/>
 	</voices>
 	<loot>
-		<item id="2670" countmax="5" chance="20000"/><!-- shrimp -->
-		<item id="5895" countmax="1" chance="2000"/><!-- fish fin -->
-		<item id="2148" countmax="100" chance="100000"/><!-- gold coin -->
-		<item id="2475" chance="1333"/><!-- warrior helmet -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
-				<item id="2398" chance="5000"/><!-- mace -->
-				<item id="2381" chance="2222"/><!-- halberd -->
-				<item id="2487" chance="500"/><!-- crown armor -->
-				<item id="2147" countmax="3" chance="1538"/><!-- small ruby -->
-			</inside>
-		</item>
+		<item id="2148" countmax="49" chance="100000"/><!-- gold coin -->
+		<item id="2398" chance="5000"/><!-- mace -->
+		<item id="2463" chance="5000"/><!-- plate armor -->
+		<item id="2394" chance="5000"/><!-- morning star -->
+		<item id="2381" chance="2222"/><!-- halberd -->
+		<item id="2147" chance="1538"/><!-- small ruby -->
+		<item id="2177" chance="1538"/><!-- life crystal -->
+		<item id="5895" chance="2000"/><!-- fish fin -->
 	</loot>
 </monster>

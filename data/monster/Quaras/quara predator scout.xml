@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <monster name="Quara Predator Scout" nameDescription="a quara predator scout" race="blood" experience="400" speed="290" manacost="0">
 	<health now="890" max="890"/>
 	<look type="20" corpse="6067"/>
@@ -18,7 +18,7 @@
 		<flag runonhealth="0"/>
 	</flags>
 	<attacks>
-		<attack name="melee" interval="2000" skill="100" attack="95"/>
+		<attack name="melee" interval="2000" skill="30" attack="95"/>
 	</attacks>
 	<defenses armor="20" defense="29">
 		<defense name="healing" interval="1000" chance="15" min="113" max="180">
@@ -39,16 +39,13 @@
 		<voice sentence="Gnarrr!"/>
 	</voices>
 	<loot>
-		<item id="2670" countmax="5" chance="20000"/><!-- shrimp -->
-		<item id="5895" countmax="1" chance="2000"/><!-- fish fin -->
-		<item id="2148" countmax="100" chance="100000"/><!-- gold coin -->
+		<item id="2148" countmax="37" chance="100000"/><!-- gold coin -->
+		<item id="2226" chance="2000"/><!-- fishbone -->
+		<item id="2473" chance="3333"/><!-- viking helmet -->
 		<item id="2387" chance="2000"/><!-- double axe -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
-				<item id="2473" chance="3333"/><!-- viking helmet -->
-				<item id="2145" countmax="1" chance="1429"/><!-- small diamond -->
-				<item id="2483" chance="4000"/><!-- scale armor -->
-			</inside>
-		</item>
+		<item id="2483" chance="2000"/><!-- scale armor -->
+		<item id="2177" chance="1429"/><!-- life crystal -->
+		<item id="2145" chance="1429"/><!-- small diamond -->
+		<item id="5895" chance="2000"/><!-- fish fin -->
 	</loot>
 </monster>

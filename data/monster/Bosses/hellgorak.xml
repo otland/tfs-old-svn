@@ -67,11 +67,7 @@
 		<item id="2514" chance="1650"/><!-- mastermind shield -->
 		<item id="7590" chance="7000"/><!-- great mana potion -->
 		<item id="7591" chance="7000"/><!-- great health potion -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
-				<item id="2148" countmax="83" chance="60000"/><!-- gold coin -->
-				<item id="7368" countmax="25" chance="100000"/><!-- assassin star -->
-			</inside>
-		</item>
+		<item id="2148" countmax="83" chance="60000"/><!-- gold coin -->
+		<item id="7368" countmax="25" chance="100000"/><!-- assassin star -->
 	</loot>
 </monster>

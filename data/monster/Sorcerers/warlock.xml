@@ -18,7 +18,7 @@
 		<flag runonhealth="800"/>
 	</flags>
 	<attacks>
-		<attack name="melee" interval="2000" min="-60" max="-180"/>
+		<attack name="melee" interval="2000" skill="42" attack="50"/>
 		<attack name="physical" interval="1000" chance="35" range="7" min="-85" max="-185">
 			<attribute key="shootEffect" value="energy"/>
 		</attack>
@@ -69,30 +69,30 @@
 		<voice sentence="We don't like intruders!"/>
 	</voices>
 	<loot>
-		<item id="2148" countmax="100" chance="100000"/><!-- gold coin -->
-		<item id="1986" chance="400"/><!-- red tome -->
+		<item id="2148" countmax="80" chance="36500"/><!-- gold coin -->
+		<item id="2148" countmax="70" chance="3t6500"/><!-- gold coin -->
+		<item id="2679" countmax="5" chance="55000"/><!-- cherry -->
+		<item id="2689" chance="22500"/><!-- bread -->
+		<item id="2047" chance="15000"/><!-- candlestick -->
+		<item id="2124" chance="7000"/><!-- crystal ring -->
+		<item id="2792" countmax="5" chance="5000"/><!-- dark mushroom -->
+		<item id="2167" chance="3000"/><!-- energy ring -->
 		<item id="2600" chance="10000"/><!-- inkwell -->
-		<item id="2124" chance="1000"/><!-- crystal ring -->
-		<item id="2689" countmax="1" chance="11000"/><!-- bread -->
-		<item id="7368" countmax="4" chance="1200"/><!--  -->
-		<item id="2167" chance="3000"/><!-- assassin star -->
-		<item id="2114" chance="1400"/><!-- piggy bank -->
-		<item id="2151" countmax="2" chance="1100"/><!-- talon -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
-				<item id="2148" countmax="50" chance="80000"/><!-- gold coin -->
-				<item id="2146" countmax="2" chance="1400"/><!-- small sapphire -->
-				<item id="2178" countmax="1" chance="2500"/><!-- mind stone -->
-				<item id="2679" countmax="4" chance="20000"/><!-- cherry -->
-				<item id="2047" chance="15000"/><!-- candlestick -->
-				<item id="2411" chance="5000"/><!-- poison dagger -->
-				<item id="2792" countmax="5" chance="6666"/><!-- dark mushroom -->
-				<item id="2793" countmax="2" chance="6666"/><!-- mushrooms -->
-				<item id="2656" chance="2000"/><!-- blue robe -->
-				<item id="2466" chance="588"/><!-- golden armor -->
-				<item id="2436" chance="1428"/><!-- skull staff -->
-				<item id="2123" chance="500"/><!-- ring of the sky -->
-			</inside>
-		</item>
+		<item id="2178" chance="2500"/><!-- mind stone -->
+		<item id="2411" chance="3000"/><!-- poison dagger -->
+		<item id="2436" chance="3000"/><!-- skull staff -->
+		<item id="2151" chance="5500"/><!-- talon -->
+		<item id="7591" chance="12500"/><!-- great health potion -->
+		<item id="7590" chance="10000"/><!-- great mana potion -->
+		<item id="2656" chance="2000"/><!-- blue robe -->
+		<item id="7368" countmax="4" chance="1200"/><!-- assassin star -->
+		<item id="2146" chance="1400"/><!-- small sapphire -->
+		<item id="1986" chance="800"/><!-- red tome -->
+		<item id="2123" chance="850"/><!-- ring of the sky -->
+		<item id="2197" chance="750"/><!-- stone skin amulet -->
+		<item id="7898" chance="450"/><!-- lightning robe -->
+		<item id="7895" chance="450"/><!-- lightning legs -->
+		<item id="2466" chance="375"/><!-- golden armor -->
+		<item id="2114" chance="100"/><!-- piggy bank -->
 	</loot>
 </monster>

@@ -48,6 +48,7 @@ class IOLoginData
 		}
 
 		Account loadAccount(uint32_t accountId, bool preLoad = false);
+		bool loadAccount(Account& account, const std::string& name);
 		bool saveAccount(Account account);
 
 		bool getAccountId(const std::string& name, uint32_t& number);
@@ -61,20 +62,21 @@ class IOLoginData
 		bool accountIdExists(uint32_t accountId);
 		bool accountNameExists(const std::string& name);
 
-		bool getPassword(uint32_t accountId, std::string& password, std::string name = "");
+		bool getPassword(uint32_t accountId, std::string& password, std::string& salt, std::string name = "");
 		bool setPassword(uint32_t accountId, std::string newPassword);
 		bool validRecoveryKey(uint32_t accountId, std::string recoveryKey);
 		bool setRecoveryKey(uint32_t accountId, std::string newRecoveryKey);
 
 		uint64_t createAccount(std::string name, std::string password);
-		void removePremium(Account account);
+		void removePremium(Account& account);
 
 		const Group* getPlayerGroupByAccount(uint32_t accountId);
 
 		bool loadPlayer(Player* player, const std::string& name, bool preLoad = false);
 		bool savePlayer(Player* player, bool preSave = true, bool shallow = false);
 
-		bool playerDeath(Player* player, const DeathList& dl);
+		bool playerStatement(Player* _player, uint16_t channelId, const std::string& text, uint32_t& statementId);
+		bool playerDeath(Player* _player, const DeathList& dl);
 		bool playerMail(Creature* actor, std::string name, uint32_t townId, Item* item);
 
 		bool hasFlag(const std::string& name, PlayerFlags value);
@@ -92,7 +94,7 @@ class IOLoginData
 
 		bool changeName(uint32_t guid, std::string newName, std::string oldName);
 		bool createCharacter(uint32_t accountId, std::string characterName, int32_t vocationId, uint16_t sex);
-		DeleteCharacter_t deleteCharacter(uint32_t accountId, const std::string characterName);
+		DeleteCharacter_t deleteCharacter(uint32_t accountId, const std::string& characterName);
 
 		uint32_t getLevel(uint32_t guid) const;
 		uint32_t getLastIP(uint32_t guid) const;
@@ -107,14 +109,14 @@ class IOLoginData
 		bool updateOnlineStatus(uint32_t guid, bool login);
 		bool resetGuildInformation(uint32_t guid);
 
+		void increaseBankBalance(uint32_t guid, uint64_t bankBalance);
+
 	protected:
 		IOLoginData() {}
+
 		struct StringCompareCase
 		{
-			bool operator()(const std::string& l, const std::string& r) const
-			{
-				return strcasecmp(l.c_str(), r.c_str()) < 0;
-			}
+			bool operator()(const std::string& l, const std::string& r) const {return asLowerCaseString(l).compare(asLowerCaseString(r)) < 0;}
 		};
 
 		typedef std::map<std::string, uint32_t, StringCompareCase> GuidCacheMap;
@@ -128,6 +130,7 @@ class IOLoginData
 		bool saveItems(const Player* player, const ItemBlockList& itemList, DBInsert& query_insert);
 		void loadItems(ItemMap& itemMap, DBResult* result);
 
+		void loadCharacters(Account& account);
 		bool storeNameByGuid(uint32_t guid);
 };
 #endif

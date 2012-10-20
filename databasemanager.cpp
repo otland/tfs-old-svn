@@ -40,12 +40,12 @@ bool DatabaseManager::optimizeTables()
 			query.str("");
 			do
 			{
-				std::cout << "> Optimizing table: " << result->getDataString("TABLE_NAME") << "... ";
+				std::clog << "> Optimizing table: " << result->getDataString("TABLE_NAME") << "... ";
 				query << "OPTIMIZE TABLE `" << result->getDataString("TABLE_NAME") << "`;";
-				if(db->executeQuery(query.str()))
-					std::cout << "[success]" << std::endl;
+				if(db->query(query.str()))
+					std::clog << "[success]" << std::endl;
 				else
-					std::cout << "[failure]" << std::endl;
+					std::clog << "[failure]" << std::endl;
 
 				query.str("");
 			}
@@ -57,19 +57,19 @@ bool DatabaseManager::optimizeTables()
 
 		case DATABASE_ENGINE_SQLITE:
 		{
-			if(!db->executeQuery("VACUUM;"))
+			if(!db->query("VACUUM;"))
 				break;
 
-			std::cout << "> Optimized database." << std::endl;
+			std::clog << "> Optimized database." << std::endl;
 			return true;
 		}
 
 		case DATABASE_ENGINE_POSTGRESQL:
 		{
-			if(!db->executeQuery("VACUUM FULL;"))
+			if(!db->query("VACUUM FULL;"))
 				break;
 
-			std::cout << "> Optimized database." << std::endl;
+			std::clog << "> Optimized database." << std::endl;
 			return true;
 		}
 
@@ -182,19 +182,19 @@ int32_t DatabaseManager::getDatabaseVersion()
 	if(getDatabaseConfig("db_version", value))
 		return value;
 
-	return 1;
+	return -1;
 }
 
 uint32_t DatabaseManager::updateDatabase()
 {
 	Database* db = Database::getInstance();
-	uint32_t version = getDatabaseVersion();
-	if(db->getDatabaseEngine() == DATABASE_ENGINE_ODBC)
-		return version;
+	int32_t version = getDatabaseVersion();
+	if(version < 0)
+		return 0;
 
 	if(version < 6 && db->getDatabaseEngine() == DATABASE_ENGINE_POSTGRESQL)
 	{
-		std::cout << "> WARNING: Couldn't update database - PostgreSQL support available since version 6, please use latest pgsql.sql schema." << std::endl;
+		std::clog << "> WARNING: Couldn't update database - PostgreSQL support available since version 6, please use latest pgsql.sql schema." << std::endl;
 		registerDatabaseConfig("db_version", 6);
 		return 6;
 	}
@@ -204,13 +204,13 @@ uint32_t DatabaseManager::updateDatabase()
 	{
 		case 0:
 		{
-			std::cout << "> Updating database to version: 1..." << std::endl;
+			std::clog << "> Updating database to version: 1..." << std::endl;
 			if(db->getDatabaseEngine() == DATABASE_ENGINE_SQLITE)
-				db->executeQuery("CREATE TABLE IF NOT EXISTS `server_config` (`config` VARCHAR(35) NOT NULL DEFAULT '', `value` INTEGER NOT NULL);");
+				db->query("CREATE TABLE IF NOT EXISTS `server_config` (`config` VARCHAR(35) NOT NULL DEFAULT '', `value` INTEGER NOT NULL);");
 			else
-				db->executeQuery("CREATE TABLE IF NOT EXISTS `server_config` (`config` VARCHAR(35) NOT NULL DEFAULT '', `value` INT NOT NULL) ENGINE = InnoDB;");
+				db->query("CREATE TABLE IF NOT EXISTS `server_config` (`config` VARCHAR(35) NOT NULL DEFAULT '', `value` INT NOT NULL) ENGINE = InnoDB;");
 
-			db->executeQuery("INSERT INTO `server_config` VALUES ('db_version', 1);");
+			db->query("INSERT INTO `server_config` VALUES ('db_version', 1);");
 			if(db->getDatabaseEngine() == DATABASE_ENGINE_SQLITE)
 			{
 				//TODO: 0.2 migration SQLite support
@@ -221,9 +221,10 @@ uint32_t DatabaseManager::updateDatabase()
 			if(!tableExists("server_motd"))
 			{
 				//update bans table
-				if(db->executeQuery("CREATE TABLE IF NOT EXISTS `bans2` (`id` INT UNSIGNED NOT NULL auto_increment, `type` TINYINT(1) NOT NULL COMMENT 'this field defines if its ip, account, player, or any else ban', `value` INT UNSIGNED NOT NULL COMMENT 'ip, player guid, account number', `param` INT UNSIGNED NOT NULL DEFAULT 4294967295 COMMENT 'mask', `active` TINYINT(1) NOT NULL DEFAULT TRUE, `expires` INT UNSIGNED NOT NULL, `added` INT UNSIGNED NOT NULL, `admin_id` INT UNSIGNED NOT NULL DEFAULT 0, `comment` TEXT NOT NULL, `reason` INT UNSIGNED NOT NULL DEFAULT 0, `action` INT UNSIGNED NOT NULL DEFAULT 0, PRIMARY KEY (`id`), KEY `type` (`type`, `value`)) ENGINE = InnoDB;"))
+				if(db->query("CREATE TABLE IF NOT EXISTS `bans2` (`id` INT UNSIGNED NOT NULL auto_increment, `type` TINYINT(1) NOT NULL COMMENT 'this field defines if its ip, account, player, or any else ban', `value` INT UNSIGNED NOT NULL COMMENT 'ip, player guid, account number', `param` INT UNSIGNED NOT NULL DEFAULT 4294967295 COMMENT 'mask', `active` TINYINT(1) NOT NULL DEFAULT TRUE, `expires` INT UNSIGNED NOT NULL, `added` INT UNSIGNED NOT NULL, `admin_id` INT UNSIGNED NOT NULL DEFAULT 0, `comment` TEXT NOT NULL, `reason` INT UNSIGNED NOT NULL DEFAULT 0, `action` INT UNSIGNED NOT NULL DEFAULT 0, PRIMARY KEY (`id`), KEY `type` (`type`, `value`)) ENGINE = InnoDB;"))
 				{
-					if(DBResult* result = db->storeQuery("SELECT * FROM `bans`;"))
+					query << "SELECT * FROM `bans`;";
+					if(DBResult* result = db->storeQuery(query.str()))
 					{
 						do
 						{
@@ -252,7 +253,7 @@ uint32_t DatabaseManager::updateDatabase()
 
 							if(query.str() != "")
 							{
-								db->executeQuery(query.str());
+								db->query(query.str());
 								query.str("");
 							}
 						}
@@ -260,8 +261,8 @@ uint32_t DatabaseManager::updateDatabase()
 						result->free();
 					}
 
-					db->executeQuery("DROP TABLE `bans`;");
-					db->executeQuery("RENAME TABLE `bans2` TO `bans`;");
+					db->query("DROP TABLE `bans`;");
+					db->query("RENAME TABLE `bans2` TO `bans`;");
 				}
 
 				std::string queryList[] = {
@@ -296,8 +297,8 @@ uint32_t DatabaseManager::updateDatabase()
 					"CREATE TRIGGER `ondelete_accounts` BEFORE DELETE ON `accounts` FOR EACH ROW BEGIN DELETE FROM `bans` WHERE `type` != 1 AND `type` != 2 AND `value` = OLD.`id`; END;",
 					"CREATE TRIGGER `ondelete_players` BEFORE DELETE ON `players` FOR EACH ROW BEGIN DELETE FROM `bans` WHERE `type` = 2 AND `value` = OLD.`id`; UPDATE `houses` SET `owner` = 0 WHERE `owner` = OLD.`id`; END;"
 				};
-				for(uint32_t i = 0; i < sizeof(queryList) / sizeof(std::string); i++)
-					db->executeQuery(queryList[i]);
+				for(uint32_t i = 0; i < sizeof(queryList) / sizeof(std::string); ++i)
+					db->query(queryList[i]);
 			}
 
 			return 1;
@@ -305,33 +306,36 @@ uint32_t DatabaseManager::updateDatabase()
 
 		case 1:
 		{
-			std::cout << "> Updating database to version: 2..." << std::endl;
+			std::clog << "> Updating database to version: 2..." << std::endl;
 			if(db->getDatabaseEngine() == DATABASE_ENGINE_SQLITE)
-				db->executeQuery("ALTER TABLE `players` ADD `promotion` INTEGER NOT NULL DEFAULT 0;");
+				db->query("ALTER TABLE `players` ADD `promotion` INTEGER NOT NULL DEFAULT 0;");
 			else
-				db->executeQuery("ALTER TABLE `players` ADD `promotion` INT NOT NULL DEFAULT 0;");
+				db->query("ALTER TABLE `players` ADD `promotion` INT NOT NULL DEFAULT 0;");
 
 			DBResult* result;
-			if((result = db->storeQuery("SELECT `player_id`, `value` FROM `player_storage` WHERE `key` = 30018 AND `value` > 0")))
+			query << "SELECT `player_id`, `value` FROM `player_storage` WHERE `key` = 30018 AND `value` > 0";
+			if((result = db->storeQuery(query.str())))
 			{
 				do
 				{
 					query << "UPDATE `players` SET `promotion` = " << result->getDataLong("value") << " WHERE `id` = " << result->getDataInt("player_id") << ";";
-					db->executeQuery(query.str());
+					db->query(query.str());
 					query.str("");
 				}
 				while(result->next());
 				result->free();
 			}
 
-			db->executeQuery("DELETE FROM `player_storage` WHERE `key` = 30018;");
-			db->executeQuery("ALTER TABLE `accounts` ADD `name` VARCHAR(32) NOT NULL DEFAULT '';");
-			if((result = db->storeQuery("SELECT `id` FROM `accounts`;")))
+			db->query("DELETE FROM `player_storage` WHERE `key` = 30018;");
+			db->query("ALTER TABLE `accounts` ADD `name` VARCHAR(32) NOT NULL DEFAULT '';");
+
+			query << "SELECT `id` FROM `accounts`;";
+			if((result = db->storeQuery(query.str())))
 			{
 				do
 				{
 					query << "UPDATE `accounts` SET `name` = '" << result->getDataInt("id") << "' WHERE `id` = " << result->getDataInt("id") << ";";
-					db->executeQuery(query.str());
+					db->query(query.str());
 					query.str("");
 				}
 				while(result->next());
@@ -339,12 +343,12 @@ uint32_t DatabaseManager::updateDatabase()
 			}
 
 			if(db->getDatabaseEngine() == DATABASE_ENGINE_SQLITE)
-				db->executeQuery("ALTER TABLE `players` ADD `deleted` BOOLEAN NOT NULL DEFAULT 0;");
+				db->query("ALTER TABLE `players` ADD `deleted` INTEGER NOT NULL DEFAULT 0;");
 			else
-				db->executeQuery("ALTER TABLE `players` ADD `deleted` TINYINT(1) NOT NULL DEFAULT 0;");
+				db->query("ALTER TABLE `players` ADD `deleted` INT NOT NULL DEFAULT 0;");
 
 			if(db->getDatabaseEngine() == DATABASE_ENGINE_MYSQL)
-				db->executeQuery("ALTER TABLE `player_items` CHANGE `attributes` `attributes` BLOB NOT NULL;");
+				db->query("ALTER TABLE `player_items` CHANGE `attributes` `attributes` BLOB NOT NULL;");
 
 			registerDatabaseConfig("db_version", 2);
 			return 2;
@@ -352,14 +356,15 @@ uint32_t DatabaseManager::updateDatabase()
 
 		case 2:
 		{
-			std::cout << "> Updating database to version: 3..." << std::endl;
-			db->executeQuery("UPDATE `players` SET `vocation` = `vocation` - 4 WHERE `vocation` >= 5 AND `vocation` <= 8;");
+			std::clog << "> Updating database to version: 3..." << std::endl;
+			db->query("UPDATE `players` SET `vocation` = `vocation` - 4 WHERE `vocation` >= 5 AND `vocation` <= 8;");
 
 			DBResult* result;
-			if((result = db->storeQuery("SELECT COUNT(`id`) AS `count` FROM `players` WHERE `vocation` > 4;"))
+			query << "SELECT COUNT(`id`) AS `count` FROM `players` WHERE `vocation` > 4;";
+			if((result = db->storeQuery(query.str()))
 				&& result->getDataInt("count"))
 			{
-				std::cout << "[Warning] There are still " << result->getDataInt("count") << " players with vocation above 4, please mind to update them manually." << std::endl;
+				std::clog << "[Warning] There are still " << result->getDataInt("count") << " players with vocation above 4, please mind to update them manually." << std::endl;
 				result->free();
 			}
 
@@ -369,8 +374,8 @@ uint32_t DatabaseManager::updateDatabase()
 
 		case 3:
 		{
-			std::cout << "> Updating database to version: 4..." << std::endl;
-			db->executeQuery("ALTER TABLE `houses` ADD `name` VARCHAR(255) NOT NULL;");
+			std::clog << "> Updating database to version: 4..." << std::endl;
+			db->query("ALTER TABLE `houses` ADD `name` VARCHAR(255) NOT NULL;");
 			if(db->getDatabaseEngine() == DATABASE_ENGINE_SQLITE)
 			{
 				std::string queryList[] = {
@@ -379,8 +384,8 @@ uint32_t DatabaseManager::updateDatabase()
 					"ALTER TABLE `houses` ADD `price` INTEGER NOT NULL DEFAULT 0;",
 					"ALTER TABLE `houses` ADD `rent` INTEGER NOT NULL DEFAULT 0;"
 				};
-				for(uint32_t i = 0; i < sizeof(queryList) / sizeof(std::string); i++)
-					db->executeQuery(queryList[i]);
+				for(uint32_t i = 0; i < sizeof(queryList) / sizeof(std::string); ++i)
+					db->query(queryList[i]);
 			}
 			else
 			{
@@ -390,8 +395,8 @@ uint32_t DatabaseManager::updateDatabase()
 					"ALTER TABLE `houses` ADD `price` INT UNSIGNED NOT NULL DEFAULT 0;",
 					"ALTER TABLE `houses` ADD `rent` INT UNSIGNED NOT NULL DEFAULT 0;"
 				};
-				for(uint32_t i = 0; i < sizeof(queryList) / sizeof(std::string); i++)
-					db->executeQuery(queryList[i]);
+				for(uint32_t i = 0; i < sizeof(queryList) / sizeof(std::string); ++i)
+					db->query(queryList[i]);
 			}
 
 			registerDatabaseConfig("db_version", 4);
@@ -400,15 +405,15 @@ uint32_t DatabaseManager::updateDatabase()
 
 		case 4:
 		{
-			std::cout << "> Updating database to version: 5..." << std::endl;
-			db->executeQuery("ALTER TABLE `player_deaths` ADD `altkilled_by` VARCHAR(255) NOT NULL;");
+			std::clog << "> Updating database to version: 5..." << std::endl;
+			db->query("ALTER TABLE `player_deaths` ADD `altkilled_by` VARCHAR(255) NOT NULL;");
 			registerDatabaseConfig("db_version", 5);
 			return 5;
 		}
 
 		case 5:
 		{
-			std::cout << "> Updating database to version: 6..." << std::endl;
+			std::clog << "> Updating database to version: 6..." << std::endl;
 			switch(db->getDatabaseEngine())
 			{
 				case DATABASE_ENGINE_MYSQL:
@@ -420,8 +425,8 @@ uint32_t DatabaseManager::updateDatabase()
 						"ALTER TABLE `tiles` ADD INDEX (`x`, `y`, `z`);",
 						"ALTER TABLE `tile_items` ADD INDEX (`sid`);"
 					};
-					for(uint32_t i = 0; i < sizeof(queryList) / sizeof(std::string); i++)
-						db->executeQuery(queryList[i]);
+					for(uint32_t i = 0; i < sizeof(queryList) / sizeof(std::string); ++i)
+						db->query(queryList[i]);
 
 					break;
 				}
@@ -436,8 +441,8 @@ uint32_t DatabaseManager::updateDatabase()
 						"CREATE TABLE `player_storage` (`player_id` INTEGER NOT NULL, `key` INTEGER NOT NULL, `value` VARCHAR(255) NOT NULL DEFAULT '0', UNIQUE (`player_id`, `key`), FOREIGN KEY (`player_id`) REFERENCES `players` (`id`));",
 						"INSERT INTO `player_storage` SELECT * FROM `player_storage2`;"
 					};
-					for(uint32_t i = 0; i < sizeof(queryList) / sizeof(std::string); i++)
-						db->executeQuery(queryList[i]);
+					for(uint32_t i = 0; i < sizeof(queryList) / sizeof(std::string); ++i)
+						db->query(queryList[i]);
 
 					break;
 				}
@@ -452,15 +457,16 @@ uint32_t DatabaseManager::updateDatabase()
 
 		case 6:
 		{
-			std::cout << "> Updating database to version: 7..." << std::endl;
+			std::clog << "> Updating database to version: 7..." << std::endl;
 			if(g_config.getBool(ConfigManager::INGAME_GUILD_MANAGEMENT))
 			{
-				if(DBResult* result = db->storeQuery("SELECT `r`.`id`, `r`.`guild_id` FROM `guild_ranks` r LEFT JOIN `guilds` g ON `r`.`guild_id` = `g`.`id` WHERE `g`.`ownerid` = `g`.`id` AND `r`.`level` = 3;"))
+				query << "SELECT `r`.`id`, `r`.`guild_id` FROM `guild_ranks` r LEFT JOIN `guilds` g ON `r`.`guild_id` = `g`.`id` WHERE `g`.`ownerid` = `g`.`id` AND `r`.`level` = 3;";
+				if(DBResult* result = db->storeQuery(query.str()))
 				{
 					do
 					{
 						query << "UPDATE `guilds`, `players` SET `guilds`.`ownerid` = `players`.`id` WHERE `guilds`.`id` = " << result->getDataInt("guild_id") << " AND `players`.`rank_id` = " << result->getDataInt("id") << ";";
-						db->executeQuery(query.str());
+						db->query(query.str());
 						query.str("");
 					}
 					while(result->next());
@@ -474,7 +480,7 @@ uint32_t DatabaseManager::updateDatabase()
 
 		case 7:
 		{
-			std::cout << "> Updating database version to: 8..." << std::endl;
+			std::clog << "> Updating database version to: 8..." << std::endl;
 			switch(db->getDatabaseEngine())
 			{
 				case DATABASE_ENGINE_MYSQL:
@@ -507,8 +513,8 @@ uint32_t DatabaseManager::updateDatabase()
 						"ALTER TABLE `tile_items` ADD `world_id` TINYINT(2) UNSIGNED NOT NULL DEFAULT 0;",
 						"ALTER TABLE `tile_items` ADD UNIQUE (`tile_id`, `world_id`, `sid`);"
 					};
-					for(uint32_t i = 0; i < sizeof(queryList) / sizeof(std::string); i++)
-						db->executeQuery(queryList[i]);
+					for(uint32_t i = 0; i < sizeof(queryList) / sizeof(std::string); ++i)
+						db->query(queryList[i]);
 
 					break;
 				}
@@ -528,27 +534,27 @@ uint32_t DatabaseManager::updateDatabase()
 
 		case 8:
 		{
-			std::cout << "> Updating database to version: 9..." << std::endl;
-			db->executeQuery("ALTER TABLE `bans` ADD `statement` VARCHAR(255) NOT NULL;");
+			std::clog << "> Updating database to version: 9..." << std::endl;
+			db->query("ALTER TABLE `bans` ADD `statement` VARCHAR(255) NOT NULL;");
 			registerDatabaseConfig("db_version", 9);
 			return 9;
 		}
 
 		case 9:
 		{
-			std::cout << "> Updating database to version: 10..." << std::endl;
+			std::clog << "> Updating database to version: 10..." << std::endl;
 			registerDatabaseConfig("db_version", 10);
 			return 10;
 		}
 
 		case 10:
 		{
-			std::cout << "> Updating database to version: 11..." << std::endl;
-			db->executeQuery("ALTER TABLE `players` ADD `description` VARCHAR(255) NOT NULL DEFAULT '';");
+			std::clog << "> Updating database to version: 11..." << std::endl;
+			db->query("ALTER TABLE `players` ADD `description` VARCHAR(255) NOT NULL DEFAULT '';");
 			if(tableExists("map_storage"))
 			{
-				db->executeQuery("ALTER TABLE `map_storage` RENAME TO `house_data`;");
-				db->executeQuery("ALTER TABLE `house_data` ADD `world_id` TINYINT(2) UNSIGNED NOT NULL DEFAULT 0 AFTER `house_id`;");
+				db->query("ALTER TABLE `map_storage` RENAME TO `house_data`;");
+				db->query("ALTER TABLE `house_data` ADD `world_id` TINYINT(2) UNSIGNED NOT NULL DEFAULT 0 AFTER `house_id`;");
 			}
 			else if(!tableExists("house_storage"))
 			{
@@ -561,11 +567,11 @@ uint32_t DatabaseManager::updateDatabase()
 					query << " ENGINE = InnoDB";
 
 				query << ";";
-				db->executeQuery(query.str());
+				db->query(query.str());
 				query.str("");
 			}
 			else
-				db->executeQuery("ALTER TABLE `house_storage` RENAME TO `house_data`;");
+				db->query("ALTER TABLE `house_storage` RENAME TO `house_data`;");
 
 			registerDatabaseConfig("db_version", 11);
 			return 11;
@@ -573,9 +579,9 @@ uint32_t DatabaseManager::updateDatabase()
 
 		case 11:
 		{
-			std::cout << "> Updating database to version: 12..." << std::endl;
-			db->executeQuery("UPDATE `players` SET `stamina` = 151200000 WHERE `stamina` > 151200000;");
-			db->executeQuery("UPDATE `players` SET `loss_experience` = `loss_experience` * 10, `loss_mana` = `loss_mana` * 10, `loss_skills` = `loss_skills` * 10, `loss_items` = `loss_items` * 10;");
+			std::clog << "> Updating database to version: 12..." << std::endl;
+			db->query("UPDATE `players` SET `stamina` = 151200000 WHERE `stamina` > 151200000;");
+			db->query("UPDATE `players` SET `loss_experience` = `loss_experience` * 10, `loss_mana` = `loss_mana` * 10, `loss_skills` = `loss_skills` * 10, `loss_items` = `loss_items` * 10;");
 			switch(db->getDatabaseEngine())
 			{
 				case DATABASE_ENGINE_MYSQL:
@@ -588,8 +594,8 @@ uint32_t DatabaseManager::updateDatabase()
 						"ALTER TABLE `players` CHANGE `loss_items` `loss_items` INT NOT NULL DEFAULT 100;",
 						"ALTER TABLE `players` ADD `loss_containers` INT NOT NULL DEFAULT 100 AFTER `loss_skills`;"
 					};
-					for(uint32_t i = 0; i < sizeof(queryList) / sizeof(std::string); i++)
-						db->executeQuery(queryList[i]);
+					for(uint32_t i = 0; i < sizeof(queryList) / sizeof(std::string); ++i)
+						db->query(queryList[i]);
 
 					break;
 				}
@@ -609,15 +615,14 @@ uint32_t DatabaseManager::updateDatabase()
 
 		case 12:
 		{
-			std::cout << "> Updating database to version: 13..." << std::endl;
+			std::clog << "> Updating database to version: 13..." << std::endl;
 			std::string queryList[] = {
 				"ALTER TABLE `accounts` DROP KEY `group_id`;",
 				"ALTER TABLE `players` DROP KEY `group_id`;",
 				"DROP TABLE `groups`;"
 			};
-			for(uint32_t i = 0; i < sizeof(queryList) / sizeof(std::string); i++)
-				db->executeQuery(queryList[i]);
-
+			for(uint32_t i = 0; i < sizeof(queryList) / sizeof(std::string); ++i)
+				db->query(queryList[i]);
 
 			registerDatabaseConfig("db_version", 13);
 			return 13;
@@ -625,7 +630,7 @@ uint32_t DatabaseManager::updateDatabase()
 
 		case 13:
 		{
-			std::cout << "> Updating database to version: 14..." << std::endl;
+			std::clog << "> Updating database to version: 14..." << std::endl;
 			switch(db->getDatabaseEngine())
 			{
 				case DATABASE_ENGINE_MYSQL:
@@ -635,8 +640,8 @@ uint32_t DatabaseManager::updateDatabase()
 						"ALTER TABLE `houses` ADD `beds` INT UNSIGNED NOT NULL DEFAULT 0;",
 						"ALTER TABLE `houses` ADD `guild` TINYINT(1) UNSIGNED NOT NULL DEFAULT FALSE;"
 					};
-					for(uint32_t i = 0; i < sizeof(queryList) / sizeof(std::string); i++)
-						db->executeQuery(queryList[i]);
+					for(uint32_t i = 0; i < sizeof(queryList) / sizeof(std::string); ++i)
+						db->query(queryList[i]);
 
 					break;
 				}
@@ -648,8 +653,8 @@ uint32_t DatabaseManager::updateDatabase()
 						"ALTER TABLE `houses` ADD `beds` INTEGER NOT NULL DEFAULT 0;",
 						"ALTER TABLE `houses` ADD `guild` BOOLEAN NOT NULL DEFAULT FALSE;"
 					};
-					for(uint32_t i = 0; i < sizeof(queryList) / sizeof(std::string); i++)
-						db->executeQuery(queryList[i]);
+					for(uint32_t i = 0; i < sizeof(queryList) / sizeof(std::string); ++i)
+						db->query(queryList[i]);
 
 					break;
 				}
@@ -668,8 +673,8 @@ uint32_t DatabaseManager::updateDatabase()
 
 		case 14:
 		{
-			std::cout << "> Updating database to version: 15..." << std::endl;
-			db->executeQuery("DROP TABLE `player_deaths`;"); //no support for moving, sorry!
+			std::clog << "> Updating database to version: 15..." << std::endl;
+			db->query("DROP TABLE `player_deaths`;"); //no support for moving, sorry!
 			switch(db->getDatabaseEngine())
 			{
 				case DATABASE_ENGINE_MYSQL:
@@ -707,8 +712,8 @@ uint32_t DatabaseManager::updateDatabase()
 	FOREIGN KEY (`kill_id`) REFERENCES `killers` (`id`) ON DELETE CASCADE\
 ) ENGINE = InnoDB;"
 					};
-					for(uint32_t i = 0; i < sizeof(queryList) / sizeof(std::string); i++)
-						db->executeQuery(queryList[i]);
+					for(uint32_t i = 0; i < sizeof(queryList) / sizeof(std::string); ++i)
+						db->query(queryList[i]);
 
 					break;
 				}
@@ -741,8 +746,8 @@ uint32_t DatabaseManager::updateDatabase()
 	FOREIGN KEY (`kill_id`) REFERENCES `killers` (`id`)\
 );"
 					};
-					for(uint32_t i = 0; i < sizeof(queryList) / sizeof(std::string); i++)
-						db->executeQuery(queryList[i]);
+					for(uint32_t i = 0; i < sizeof(queryList) / sizeof(std::string); ++i)
+						db->query(queryList[i]);
 
 					break;
 				}
@@ -761,7 +766,7 @@ uint32_t DatabaseManager::updateDatabase()
 
 		case 15:
 		{
-			std::cout << "> Updating database to version: 16..." << std::endl;
+			std::clog << "> Updating database to version: 16..." << std::endl;
 			switch(db->getDatabaseEngine())
 			{
 				case DATABASE_ENGINE_MYSQL:
@@ -772,8 +777,8 @@ uint32_t DatabaseManager::updateDatabase()
 						"ALTER TABLE `killers` ADD `unjustified` TINYINT(1) UNSIGNED NOT NULL DEFAULT FALSE;",
 						"UPDATE `players` SET `redskulltime` = 0;"
 					};
-					for(uint32_t i = 0; i < sizeof(queryList) / sizeof(std::string); i++)
-						db->executeQuery(queryList[i]);
+					for(uint32_t i = 0; i < sizeof(queryList) / sizeof(std::string); ++i)
+						db->query(queryList[i]);
 
 					break;
 				}
@@ -785,8 +790,8 @@ uint32_t DatabaseManager::updateDatabase()
 						"ALTER TABLE `killers` ADD `unjustified` BOOLEAN NOT NULL DEFAULT FALSE;",
 						"UPDATE `players` SET `redskulltime` = 0;"
 					};
-					for(uint32_t i = 0; i < sizeof(queryList) / sizeof(std::string); i++)
-						db->executeQuery(queryList[i]);
+					for(uint32_t i = 0; i < sizeof(queryList) / sizeof(std::string); ++i)
+						db->query(queryList[i]);
 
 					break;
 				}
@@ -805,11 +810,11 @@ uint32_t DatabaseManager::updateDatabase()
 
 		case 16:
 		{
-			std::cout << "> Updating database to version: 17..." << std::endl;
+			std::clog << "> Updating database to version: 17..." << std::endl;
 			switch(db->getDatabaseEngine())
 			{
 				case DATABASE_ENGINE_MYSQL:
-					db->executeQuery("CREATE TABLE IF NOT EXISTS `player_namelocks`\
+					db->query("CREATE TABLE IF NOT EXISTS `player_namelocks`\
 (\
 	`player_id` INT NOT NULL DEFAULT 0,\
 	`name` VARCHAR(255) NOT NULL,\
@@ -821,7 +826,7 @@ uint32_t DatabaseManager::updateDatabase()
 
 					break;
 				case DATABASE_ENGINE_SQLITE:
-					db->executeQuery("CREATE TABLE IF NOT EXISTS `player_namelocks` (\
+					db->query("CREATE TABLE IF NOT EXISTS `player_namelocks` (\
 	`player_id` INTEGER NOT NULL,\
 	`name` VARCHAR(255) NOT NULL,\
 	`new_name` VARCHAR(255) NOT NULL,\
@@ -840,7 +845,7 @@ uint32_t DatabaseManager::updateDatabase()
 
 		case 17:
 		{
-			std::cout << "> Updating database to version: 18..." << std::endl;
+			std::clog << "> Updating database to version: 18..." << std::endl;
 			switch(db->getDatabaseEngine())
 			{
 				case DATABASE_ENGINE_MYSQL:
@@ -857,8 +862,8 @@ uint32_t DatabaseManager::updateDatabase()
 						"ALTER TABLE `tiles` ADD FOREIGN KEY (`house_id`, `world_id`) REFERENCES `houses`(`id`, `world_id`) ON DELETE CASCADE;",
 						"ALTER TABLE `houses` ADD `clear` TINYINT(1) UNSIGNED NOT NULL DEFAULT FALSE;"
 					};
-					for(uint32_t i = 0; i < sizeof(queryList) / sizeof(std::string); i++)
-						db->executeQuery(queryList[i]);
+					for(uint32_t i = 0; i < sizeof(queryList) / sizeof(std::string); ++i)
+						db->query(queryList[i]);
 
 					break;
 				}
@@ -874,8 +879,8 @@ uint32_t DatabaseManager::updateDatabase()
 						"ALTER TABLE `tiles` ADD FOREIGN KEY (`house_id`, `world_id`) REFERENCES `houses`(`id`, `world_id`);",
 						"ALTER TABLE `houses` ADD `clear` BOOLEAN NOT NULL DEFAULT FALSE;"
 					};
-					for(uint32_t i = 0; i < sizeof(queryList) / sizeof(std::string); i++)
-						db->executeQuery(queryList[i]);
+					for(uint32_t i = 0; i < sizeof(queryList) / sizeof(std::string); ++i)
+						db->query(queryList[i]);
 
 					break;
 				}
@@ -891,7 +896,7 @@ uint32_t DatabaseManager::updateDatabase()
 
 		case 18:
 		{
-			std::cout << "> Updating database to version: 19..." << std::endl;
+			std::clog << "> Updating database to version: 19..." << std::endl;
 			switch(db->getDatabaseEngine())
 			{
 				case DATABASE_ENGINE_MYSQL:
@@ -911,8 +916,8 @@ uint32_t DatabaseManager::updateDatabase()
 	FOREIGN KEY (`player_id`) REFERENCES `players` (`id`) ON DELETE CASCADE\
 ) ENGINE = InnoDB;"
 					};
-					for(uint32_t i = 0; i < sizeof(queryList) / sizeof(std::string); i++)
-						db->executeQuery(queryList[i]);
+					for(uint32_t i = 0; i < sizeof(queryList) / sizeof(std::string); ++i)
+						db->query(queryList[i]);
 
 					break;
 				}
@@ -933,8 +938,8 @@ uint32_t DatabaseManager::updateDatabase()
 	FOREIGN KEY (`player_id`) REFERENCES `players` (`id`)\
 );"
 					};
-					for(uint32_t i = 0; i < sizeof(queryList) / sizeof(std::string); i++)
-						db->executeQuery(queryList[i]);
+					for(uint32_t i = 0; i < sizeof(queryList) / sizeof(std::string); ++i)
+						db->query(queryList[i]);
 
 					break;
 				}
@@ -950,7 +955,7 @@ uint32_t DatabaseManager::updateDatabase()
 
 		case 19:
 		{
-			std::cout << "> Updating database to version: 20..." << std::endl;
+			std::clog << "> Updating database to version: 20..." << std::endl;
 			switch(db->getDatabaseEngine())
 			{
 				case DATABASE_ENGINE_MYSQL:
@@ -959,8 +964,8 @@ uint32_t DatabaseManager::updateDatabase()
 						"ALTER TABLE `players` CHANGE `redskulltime` `skulltime` INT NOT NULL DEFAULT 0;",
 						"ALTER TABLE `players` ADD `skull` TINYINT(1) UNSIGNED NOT NULL DEFAULT 0 AFTER `save`;"
 					};
-					for(uint32_t i = 0; i < sizeof(queryList) / sizeof(std::string); i++)
-						db->executeQuery(queryList[i]);
+					for(uint32_t i = 0; i < sizeof(queryList) / sizeof(std::string); ++i)
+						db->query(queryList[i]);
 
 					break;
 				}
@@ -972,8 +977,8 @@ uint32_t DatabaseManager::updateDatabase()
 						"ALTER TABLE `players` ADD `skull` INTEGER NOT NULL DEFAULT 0;",
 						"UPDATE `players` SET `skulltime` = `redskulltime`, `redskulltime` = 0;"
 					};
-					for(uint32_t i = 0; i < sizeof(queryList) / sizeof(std::string); i++)
-						db->executeQuery(queryList[i]);
+					for(uint32_t i = 0; i < sizeof(queryList) / sizeof(std::string); ++i)
+						db->query(queryList[i]);
 
 					break;
 				}
@@ -990,14 +995,14 @@ uint32_t DatabaseManager::updateDatabase()
 
 		case 20:
 		{
-			std::cout << "> Updating database to version: 21..." << std::endl;
+			std::clog << "> Updating database to version: 21..." << std::endl;
 			std::string queryList[] = {
 				"UPDATE `bans` SET `type` = 3 WHERE `type` = 5;",
 				"UPDATE `bans` SET `param` = 2 WHERE `type` = 2;",
 				"UPDATE `bans` SET `param` = 0 WHERE `type` IN (3,4);"
 			};
-			for(uint32_t i = 0; i < sizeof(queryList) / sizeof(std::string); i++)
-				db->executeQuery(queryList[i]);
+			for(uint32_t i = 0; i < sizeof(queryList) / sizeof(std::string); ++i)
+				db->query(queryList[i]);
 
 			registerDatabaseConfig("db_version", 21);
 			return 21;
@@ -1005,14 +1010,14 @@ uint32_t DatabaseManager::updateDatabase()
 
 		case 21:
 		{
-			std::cout << "> Updating database to version: 22..." << std::endl;
+			std::clog << "> Updating database to version: 22..." << std::endl;
 			switch(db->getDatabaseEngine())
 			{
 				case DATABASE_ENGINE_MYSQL:
-					db->executeQuery("CREATE TABLE `account_viplist` (`account_id` INT NOT NULL, `world_id` TINYINT(2) UNSIGNED NOT NULL DEFAULT 0, `player_id` INT NOT NULL, KEY (`account_id`), KEY (`player_id`), KEY (`world_id`), UNIQUE (`account_id`, `player_id`), FOREIGN KEY (`account_id`) REFERENCES `accounts`(`id`) ON DELETE CASCADE, FOREIGN KEY (`player_id`) REFERENCES `players`(`id`) ON DELETE CASCADE) ENGINE = InnoDB;");
+					db->query("CREATE TABLE `account_viplist` (`account_id` INT NOT NULL, `world_id` TINYINT(2) UNSIGNED NOT NULL DEFAULT 0, `player_id` INT NOT NULL, KEY (`account_id`), KEY (`player_id`), KEY (`world_id`), UNIQUE (`account_id`, `player_id`), FOREIGN KEY (`account_id`) REFERENCES `accounts`(`id`) ON DELETE CASCADE, FOREIGN KEY (`player_id`) REFERENCES `players`(`id`) ON DELETE CASCADE) ENGINE = InnoDB;");
 					break;
 				case DATABASE_ENGINE_SQLITE:
-					db->executeQuery("CREATE TABLE `account_viplist` (`account_id` INTEGER NOT NULL, `world_id` INTEGER NOT NULL DEFAULT 0, `player_id` INTEGER NOT NULL, UNIQUE (`account_id`, `player_id`), FOREIGN KEY `account_id` REFERENCES `accounts` (`id`), FOREIGN KEY `player_id` REFERENCES `players` (`id`));");
+					db->query("CREATE TABLE `account_viplist` (`account_id` INTEGER NOT NULL, `world_id` INTEGER NOT NULL DEFAULT 0, `player_id` INTEGER NOT NULL, UNIQUE (`account_id`, `player_id`), FOREIGN KEY `account_id` REFERENCES `accounts` (`id`), FOREIGN KEY `player_id` REFERENCES `players` (`id`));");
 					break;
 				default:
 					break;
@@ -1024,7 +1029,7 @@ uint32_t DatabaseManager::updateDatabase()
 
 		case 22:
 		{
-			std::cout << "> Updating database to version 23..." << std::endl;
+			std::clog << "> Updating database to version 23..." << std::endl;
 			if(g_config.getBool(ConfigManager::ACCOUNT_MANAGER))
 			{
 				query << "SELECT `id`, `key` FROM `accounts` WHERE `key` ";
@@ -1036,28 +1041,407 @@ uint32_t DatabaseManager::updateDatabase()
 				query << " '0';";
 				if(DBResult* result = db->storeQuery(query.str()))
 				{
-					query.str("");
 					do
 					{
 						std::string key = result->getDataString("key");
 						_encrypt(key, false);
 
-						query << "UPDATE `accounts` SET `key` = " << db->escapeString(key) << " WHERE `id` = " << result->getDataInt("id") << db->getUpdateLimiter();
-						db->executeQuery(query.str());
 						query.str("");
+						query << "UPDATE `accounts` SET `key` = " << db->escapeString(key) << " WHERE `id` = " << result->getDataInt("id") << db->getUpdateLimiter();
+						db->query(query.str());
 					}
 					while(result->next());
 					result->free();
 				}
 			}
 
-			query << "DELETE FROM `server_config` WHERE `config` " << db->getStringComparison() << "'password_type';";
-			db->executeQuery(query.str());
 			query.str("");
+			query << "DELETE FROM `server_config` WHERE `config` " << db->getStringComparer() << "'password_type';";
+			db->query(query.str());
 
 			registerDatabaseConfig("encryption", g_config.getNumber(ConfigManager::ENCRYPTION));
 			registerDatabaseConfig("db_version", 23);
 			return 23;
+		}
+
+		case 23:
+		{
+			std::clog << "> Updating database to version 24..." << std::endl;
+			query << "ALTER TABLE `guilds` ADD `checkdata` ";
+			if(db->getDatabaseEngine() == DATABASE_ENGINE_SQLITE)
+				query << "INTEGER NOT NULL;";
+			else
+				query << "INT NOT NULL AFTER `creationdata`;";
+
+			db->query(query.str());
+			query.str("");
+			registerDatabaseConfig("db_version", 24);
+			return 24;
+		}
+
+		case 24:
+		{
+			std::clog << "> Updating database to version 25..." << std::endl;
+			switch(db->getDatabaseEngine())
+			{
+				case DATABASE_ENGINE_SQLITE:
+				{
+					query << "DROP TABLE `server_config`;";
+					db->query(query.str());
+
+					query << "CREATE TABLE `server_config` (`config` VARCHAR(35) NOT NULL DEFAULT '', `value` VARCHAR(255) NOT NULL DEFAULT '', UNIQUE (`config`));";
+					registerDatabaseConfig("encryption", g_config.getNumber(ConfigManager::ENCRYPTION));
+					break;
+				}
+
+				case DATABASE_ENGINE_MYSQL:
+				{
+					query << "ALTER TABLE `server_config` CHANGE `value` `value` VARCHAR(255) NOT NULL DEFAULT '';";
+					break;
+				}
+
+				default:
+					break;
+			}
+
+			db->query(query.str());
+			query.str("");
+
+			registerDatabaseConfig("db_version", 25);
+			return 25;
+		}
+
+		case 25:
+		{
+			std::clog << "> Updating database to version 26..." << std::endl;
+			switch(db->getDatabaseEngine())
+			{
+				case DATABASE_ENGINE_SQLITE:
+				{
+					query << "ALTER TABLE `accounts` ADD `salt` VARCHAR(40) NOT NULL DEFAULT '';";
+					break;
+				}
+
+				case DATABASE_ENGINE_MYSQL:
+				{
+					query << "ALTER TABLE `accounts` ADD `salt` VARCHAR(40) NOT NULL DEFAULT '' AFTER `password`;";
+					break;
+				}
+
+				default:
+					break;
+			}
+
+			db->query(query.str());
+			query.str("");
+
+			registerDatabaseConfig("db_version", 26);
+			return 26;
+		}
+
+		case 26:
+		{
+			std::clog << "> Updating database to version 27..." << std::endl;
+			if(db->getDatabaseEngine() == DATABASE_ENGINE_MYSQL)
+			{
+				query << "ALTER TABLE `player_storage` CHANGE `key` `key` VARCHAR(32) NOT NULL DEFAULT '0'";
+				db->query(query.str());
+				query.str("");
+
+				query << "ALTER TABLE `global_storage` CHANGE `key` `key` VARCHAR(32) NOT NULL DEFAULT '0'";
+				db->query(query.str());
+				query.str("");
+			}
+
+			registerDatabaseConfig("db_version", 27);
+			return 27;
+		}
+
+		case 27:
+		{
+			std::clog << "> Updating database to version 28..." << std::endl;
+			if(db->getDatabaseEngine() == DATABASE_ENGINE_MYSQL)
+			{
+				query << "ALTER TABLE `players` ADD `currmount` INT NOT NULL DEFAULT 0 AFTER `lookaddons`;";
+				db->query(query.str());
+				query.str("");
+			}
+
+			registerDatabaseConfig("db_version", 28);
+			return 28;
+		}
+
+		case 28:
+		{
+			std::clog << "> Updating database to version 29..." << std::endl;
+			switch(db->getDatabaseEngine())
+			{
+				case DATABASE_ENGINE_SQLITE:
+				{
+					query << "ALTER TABLE `players` ADD `lookmount` INT NOT NULL DEFAULT 0;";
+					break;
+				}
+
+				case DATABASE_ENGINE_MYSQL:
+				{
+					query << "ALTER TABLE `players` CHANGE `currmount` `lookmount` INT NOT NULL DEFAULT 0";
+					break;
+				}
+
+				default:
+					break;
+			}
+
+			db->query(query.str());
+			query.str("");
+
+			registerDatabaseConfig("db_version", 29);
+			return 29;
+		}
+
+		case 29:
+		{
+			std::clog << "> Updating database to version 30..." << std::endl;
+			switch(db->getDatabaseEngine())
+			{
+				case DATABASE_ENGINE_SQLITE:
+				{
+					query << "CREATE TABLE `tile_store` ( `house_id` INTEGER NOT NULL, `world_id` INTEGER NOT NULL DEFAULT 0, `data` LONGBLOB NOT NULL, FOREIGN KEY (`house_id`) REFERENCES `houses` (`id`) );";
+					break;
+				}
+
+				case DATABASE_ENGINE_MYSQL:
+				{
+					query << "CREATE TABLE `tile_store` ( `house_id` INT UNSIGNED NOT NULL, `world_id` TINYINT(4) UNSIGNED NOT NULL DEFAULT 0, `data` LONGBLOB NOT NULL, FOREIGN KEY (`house_id`) REFERENCES `houses` (`id`) ON DELETE CASCADE ) ENGINE = InnoDB;";
+					break;
+				}
+
+				default:
+					break;
+			}
+
+			db->query(query.str());
+			query.str("");
+
+			registerDatabaseConfig("db_version", 30);
+			return 30;
+		}
+
+		case 30:
+		{
+			std::clog << "> Updating database to version 31..." << std::endl;
+			switch(db->getDatabaseEngine())
+			{
+				case DATABASE_ENGINE_SQLITE:
+				{
+					query << "ALTER TABLE `players` ADD `pvp_blessing` BOOLEAN NOT NULL DEFAULT FALSE;";
+					break;
+				}
+
+				case DATABASE_ENGINE_MYSQL:
+				{
+					query << "ALTER TABLE `players` ADD `pvp_blessing` TINYINT(1) NOT NULL DEFAULT 0 AFTER `blessings`;";
+					break;
+				}
+
+				default:
+					break;
+			}
+
+			db->query(query.str());
+			query.str("");
+
+			registerDatabaseConfig("db_version", 31);
+			return 31;
+		}
+
+		case 31:
+		{
+			std::clog << "> Updating database to version 32..." << std::endl;
+			if(db->getDatabaseEngine() == DATABASE_ENGINE_MYSQL)
+			{
+				query << "CREATE TABLE IF NOT EXISTS `player_statements`\
+(\
+	`id` INT NOT NULL AUTO_INCREMENT,\
+	`player_id` INT NOT NULL,\
+	`channel_id` INT NOT NULL DEFAULT 0,\
+	`text` VARCHAR (255) NOT NULL,\
+	`date` BIGINT NOT NULL DEFAULT 0,\
+	PRIMARY KEY (`id`), KEY (`player_id`), KEY (`channel_id`),\
+	FOREIGN KEY (`player_id`) REFERENCES `players`(`id`) ON DELETE CASCADE\
+) ENGINE = InnoDB;";
+
+				db->query(query.str());
+				query.str("");
+
+				query << "CREATE TABLE IF NOT EXISTS `guild_wars`\
+(\
+	`id` INT NOT NULL AUTO_INCREMENT,\
+	`guild_id` INT NOT NULL,\
+	`enemy_id` INT NOT NULL,\
+	`begin` BIGINT NOT NULL DEFAULT 0,\
+	`end` BIGINT NOT NULL DEFAULT 0,\
+	`frags` INT UNSIGNED NOT NULL DEFAULT 0,\
+	`payment` BIGINT UNSIGNED NOT NULL DEFAULT 0,\
+	`guild_kills` INT UNSIGNED NOT NULL DEFAULT 0,\
+	`enemy_kills` INT UNSIGNED NOT NULL DEFAULT 0,\
+	`status` TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,\
+	PRIMARY KEY (`id`), KEY `status` (`status`),\
+	KEY `guild_id` (`guild_id`), KEY `enemy_id` (`enemy_id`),\
+	FOREIGN KEY (`guild_id`) REFERENCES `guilds`(`id`) ON DELETE CASCADE,\
+	FOREIGN KEY (`enemy_id`) REFERENCES `guilds`(`id`) ON DELETE CASCADE\
+) ENGINE=InnoDB;";
+
+				db->query(query.str());
+				query.str("");
+
+				query << "CREATE TABLE IF NOT EXISTS `guild_kills`\
+(\
+	`id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,\
+	`guild_id` INT NOT NULL,\
+	`war_id` INT NOT NULL,\
+	`death_id` INT NOT NULL,\
+	FOREIGN KEY (`guild_id`) REFERENCES `guilds`(`id`) ON DELETE CASCADE,\
+	FOREIGN KEY (`war_id`) REFERENCES `guild_wars`(`id`) ON DELETE CASCADE,\
+	FOREIGN KEY (`death_id`) REFERENCES `player_deaths`(`id`) ON DELETE CASCADE\
+) ENGINE = InnoDB;";
+
+				db->query(query.str());
+				query.str("");
+
+				query << "ALTER TABLE `killers` ADD `war` INT NOT NULL DEFAULT 0;";
+				db->query(query.str());
+				query.str("");
+
+				query << "ALTER TABLE `guilds` ADD `balance` BIGINT UNSIGNED NOT NULL AFTER `motd`;";
+				db->query(query.str());
+				query.str("");
+			}
+
+			registerDatabaseConfig("db_version", 32);
+			return 32;
+		}
+
+		case 32:
+		{
+			std::clog << "> Updating database to version 33..." << std::endl;
+			if(db->getDatabaseEngine() == DATABASE_ENGINE_MYSQL)
+			{
+				query << "ALTER TABLE `bans` DROP `reason`;";
+				db->query(query.str());
+				query.str("");
+
+				query << "ALTER TABLE `bans` DROP `action`;";
+				db->query(query.str());
+				query.str("");
+
+				query << "ALTER TABLE `bans` DROP `statement`;";
+				db->query(query.str());
+				query.str("");
+			}
+
+			registerDatabaseConfig("db_version", 33);
+			return 33;
+		}
+
+		case 33:
+		{
+			std::clog << "> Updating database to version 34..." << std::endl;
+			switch(db->getDatabaseEngine())
+			{
+				case DATABASE_ENGINE_MYSQL:
+				{
+					db->query("CREATE TABLE `market_offers` (`id` INT UNSIGNED NOT NULL AUTO_INCREMENT, `player_id` INT NOT NULL, `sale` TINYINT(1) NOT NULL DEFAULT 0, `itemtype` INT UNSIGNED NOT NULL, `amount` SMALLINT UNSIGNED NOT NULL, `created` BIGINT UNSIGNED NOT NULL, `anonymous` TINYINT(1) NOT NULL DEFAULT 0, `price` INT UNSIGNED NOT NULL DEFAULT 0, PRIMARY KEY (`id`), KEY(`sale`, `itemtype`), KEY(`created`), FOREIGN KEY (`player_id`) REFERENCES `players`(`id`) ON DELETE CASCADE) ENGINE = InnoDB;");
+					db->query("CREATE TABLE `market_history` (`id` INT UNSIGNED NOT NULL AUTO_INCREMENT, `player_id` INT NOT NULL, `sale` TINYINT(1) NOT NULL DEFAULT 0, `itemtype` INT UNSIGNED NOT NULL, `amount` SMALLINT UNSIGNED NOT NULL, `price` INT UNSIGNED NOT NULL DEFAULT 0, `expires_at` BIGINT UNSIGNED NOT NULL, `inserted` BIGINT UNSIGNED NOT NULL, `state` TINYINT(1) UNSIGNED NOT NULL, PRIMARY KEY(`id`), KEY(`player_id`, `sale`), FOREIGN KEY (`player_id`) REFERENCES `players`(`id`) ON DELETE CASCADE) ENGINE = InnoDB;");
+					break;
+				}
+
+				case DATABASE_ENGINE_SQLITE:
+				{
+					db->query("CREATE TABLE `market_offers` (`id` INTEGER PRIMARY KEY NOT NULL, `player_id` INTEGER NOT NULL, `sale` BOOLEAN NOT NULL DEFAULT 0, `itemtype` UNSIGNED INTEGER NOT NULL, `amount` UNSIGNED INTEGER NOT NULL, `created` UNSIGNED INTEGER NOT NULL, `anonymous` BOOLEAN NOT NULL DEFAULT 0, `price` UNSIGNED INTEGER NOT NULL DEFAULT 0, FOREIGN KEY (`player_id`) REFERENCES `players` (`id`) ON DELETE CASCADE);");
+					db->query("CREATE INDEX market_offers_idx ON market_offers(created);");
+					db->query("CREATE INDEX market_offers_idx2 ON market_offers(sale, itemtype);");
+					db->query("CREATE TABLE `market_history` (`id` INTEGER PRIMARY KEY NOT NULL, `player_id` INTEGER NOT NULL, `sale` BOOLEAN NOT NULL DEFAULT 0, `itemtype` UNSIGNED INTEGER NOT NULL, `amount` UNSIGNED INTEGER NOT NULL, `price` UNSIGNED INTEGER NOT NULL DEFAULT 0, `expires_at` UNSIGNED INTEGER NOT NULL, `inserted` UNSIGNED INTEGER NOT NULL, `state` UNSIGNED INTEGER NOT NULL, FOREIGN KEY (`player_id`) REFERENCES `players` (`id`) ON DELETE CASCADE);");
+					db->query("CREATE INDEX market_history_idx ON market_history(player_id, sale);");
+					break;
+				}
+
+				default: break;
+			}
+
+			registerDatabaseConfig("db_version", 34);
+			return 34;
+		}
+		
+		case 34:
+		{
+			std::clog << "> Updating database to version 35..." << std::endl;
+			switch(db->getDatabaseEngine())
+			{
+				case DATABASE_ENGINE_SQLITE:
+				{
+					db->query("CREATE TABLE IF NOT EXISTS `guild_wars` (\
+						`id` INTEGER NOT NULL,\
+						`guild_id` INT NOT NULL,\
+						`enemy_id` INT NOT NULL,\
+						`begin` BIGINT NOT NULL DEFAULT '0',\
+						`end` BIGINT NOT NULL DEFAULT '0',\
+						`frags` INT NOT NULL DEFAULT '0',\
+						`payment` BIGINT NOT NULL DEFAULT '0',\
+						`guild_kills` INT NOT NULL DEFAULT '0',\
+						`enemy_kills` INT NOT NULL DEFAULT '0',\
+						`status` TINYINT(1) NOT NULL DEFAULT '0',\
+						PRIMARY KEY (`id`),\
+						FOREIGN KEY (`guild_id`) REFERENCES `guilds`(`id`),\
+						FOREIGN KEY (`enemy_id`) REFERENCES `guilds`(`id`)\
+						);");
+
+					db->query("CREATE TABLE IF NOT EXISTS `guild_kills` (\
+						`id` INT NOT NULL PRIMARY KEY,\
+						`guild_id` INT NOT NULL,\
+						`war_id` INT NOT NULL,\
+						`death_id` INT NOT NULL\
+					);");
+					
+					db->query("CREATE TABLE IF NOT EXISTS `player_statements` (\
+						`id` INTEGER PRIMARY KEY,\
+						`player_id` INTEGER NOT NULL,\
+						`channel_id` INTEGER NOT NULL DEFAULT `0`,\
+						`text` VARCHAR (255) NOT NULL,\
+						`date` INTEGER NOT NULL DEFAULT `0`,\
+						FOREIGN KEY (`player_id`) REFERENCES `players` (`id`)\
+						);");
+
+					db->query("ALTER TABLE `guilds` ADD `balance` BIGINT NOT NULL DEFAULT '0';");
+					db->query("ALTER TABLE `killers` ADD `war` BIGINT NOT NULL DEFAULT 0;");
+					break;
+				}
+
+				default: break;
+			}
+
+			registerDatabaseConfig("db_version", 35);
+			return 35;
+		}
+
+		case 35:
+		{
+			std::clog << "> Updating database to version 36..." << std::endl;
+
+			db->query("ALTER TABLE `players` ADD `offlinetraining_time` SMALLINT UNSIGNED NOT NULL DEFAULT 43200;");
+			db->query("ALTER TABLE `players` ADD `offlinetraining_skill` INT NOT NULL DEFAULT -1;");
+			registerDatabaseConfig("db_version", 36);
+			return 36;
+		}
+
+		case 36:
+		{
+			std::clog << "> Updating database to version 37..." << std::endl;
+
+			db->query("ALTER TABLE `account_viplist` ADD `description` VARCHAR( 128 ) NOT NULL, ADD `icon` INT( 11 ) UNSIGNED NOT NULL, ADD `notify` BOOLEAN NOT NULL ;");
+			db->query("ALTER TABLE `player_viplist` ADD `description` VARCHAR( 128 ) NOT NULL, ADD `icon` INT( 11 ) UNSIGNED NOT NULL, ADD `notify` BOOLEAN NOT NULL ;");
+			registerDatabaseConfig("db_version", 37);
+			return 37;
 		}
 
 		default:
@@ -1079,7 +1463,24 @@ bool DatabaseManager::getDatabaseConfig(std::string config, int32_t &value)
 	if(!(result = db->storeQuery(query.str())))
 		return false;
 
-	value = result->getDataInt("value");
+	value = atoi(result->getDataString("value").c_str());
+	result->free();
+	return true;
+}
+
+bool DatabaseManager::getDatabaseConfig(std::string config, std::string &value)
+{
+	value = "";
+
+	Database* db = Database::getInstance();
+	DBResult* result;
+
+	DBQuery query;
+	query << "SELECT `value` FROM `server_config` WHERE `config` = " << db->escapeString(config) << ";";
+	if(!(result = db->storeQuery(query.str())))
+		return false;
+
+	value = result->getDataString("value");
 	result->free();
 	return true;
 }
@@ -1091,11 +1492,25 @@ void DatabaseManager::registerDatabaseConfig(std::string config, int32_t value)
 
 	int32_t tmp = 0;
 	if(!getDatabaseConfig(config, tmp))
-		query << "INSERT INTO `server_config` VALUES (" << db->escapeString(config) << ", " << value << ");";
+		query << "INSERT INTO `server_config` VALUES (" << db->escapeString(config) << ", '" << value << "');";
 	else
-		query << "UPDATE `server_config` SET `value` = " << value << " WHERE `config` = " << db->escapeString(config) << ";";
+		query << "UPDATE `server_config` SET `value` = '" << value << "' WHERE `config` = " << db->escapeString(config) << ";";
 
-	db->executeQuery(query.str());
+	db->query(query.str());
+}
+
+void DatabaseManager::registerDatabaseConfig(std::string config, std::string value)
+{
+	Database* db = Database::getInstance();
+	DBQuery query;
+
+	std::string tmp;
+	if(!getDatabaseConfig(config, tmp))
+		query << "INSERT INTO `server_config` VALUES (" << db->escapeString(config) << ", " << db->escapeString(value) << ");";
+	else
+		query << "UPDATE `server_config` SET `value` = " << db->escapeString(value) << " WHERE `config` = " << db->escapeString(config) << ";";
+
+	db->query(query.str());
 }
 
 void DatabaseManager::checkEncryption()
@@ -1112,7 +1527,7 @@ void DatabaseManager::checkEncryption()
 				{
 					if((Encryption_t)value != ENCRYPTION_PLAIN)
 					{
-						std::cout << "> WARNING: You cannot change the encryption to MD5, change it back in config.lua to \"sha1\"." << std::endl;
+						std::clog << "> WARNING: You cannot change the encryption to MD5, change it back in config.lua." << std::endl;
 						return;
 					}
 
@@ -1120,22 +1535,23 @@ void DatabaseManager::checkEncryption()
 					DBQuery query;
 					if(db->getDatabaseEngine() != DATABASE_ENGINE_MYSQL && db->getDatabaseEngine() != DATABASE_ENGINE_POSTGRESQL)
 					{
-						if(DBResult* result = db->storeQuery("SELECT `id`, `password`, `key` FROM `accounts`;"))
+						query << "SELECT `id`, `password`, `key` FROM `accounts`;";
+						if(DBResult* result = db->storeQuery(query.str()))
 						{
 							do
 							{
 								query << "UPDATE `accounts` SET `password` = " << db->escapeString(transformToMD5(result->getDataString("password"), false)) << ", `key` = " << db->escapeString(transformToMD5(result->getDataString("key"), false)) << " WHERE `id` = " << result->getDataInt("id") << ";";
-								db->executeQuery(query.str());
+								db->query(query.str());
 							}
 							while(result->next());
 							result->free();
 						}
 					}
 					else
-						db->executeQuery("UPDATE `accounts` SET `password` = MD5(`password`), `key` = MD5(`key`);");
+						db->query("UPDATE `accounts` SET `password` = MD5(`password`), `key` = MD5(`key`);");
 
 					registerDatabaseConfig("encryption", (int32_t)newValue);
-					std::cout << "> Encryption updated to MD5." << std::endl;
+					std::clog << "> Encryption updated to MD5." << std::endl;
 					break;
 				}
 
@@ -1143,7 +1559,7 @@ void DatabaseManager::checkEncryption()
 				{
 					if((Encryption_t)value != ENCRYPTION_PLAIN)
 					{
-						std::cout << "> WARNING: You cannot change the encryption to SHA1, change it back in config.lua to \"md5\"." << std::endl;
+						std::clog << "> WARNING: You cannot change the encryption to SHA1, change it back in config.lua." << std::endl;
 						return;
 					}
 
@@ -1151,28 +1567,85 @@ void DatabaseManager::checkEncryption()
 					DBQuery query;
 					if(db->getDatabaseEngine() != DATABASE_ENGINE_MYSQL && db->getDatabaseEngine() != DATABASE_ENGINE_POSTGRESQL)
 					{
-						if(DBResult* result = db->storeQuery("SELECT `id`, `password`, `key` FROM `accounts`;"))
+						query << "SELECT `id`, `password`, `key` FROM `accounts`;";
+						if(DBResult* result = db->storeQuery(query.str()))
 						{
 							do
 							{
 								query << "UPDATE `accounts` SET `password` = " << db->escapeString(transformToSHA1(result->getDataString("password"), false)) << ", `key` = " << db->escapeString(transformToSHA1(result->getDataString("key"), false)) << " WHERE `id` = " << result->getDataInt("id") << ";";
-								db->executeQuery(query.str());
+								db->query(query.str());
 							}
 							while(result->next());
 							result->free();
 						}
 					}
 					else
-						db->executeQuery("UPDATE `accounts` SET `password` = SHA1(`password`), `key` = SHA1(`key`);");
+						db->query("UPDATE `accounts` SET `password` = SHA1(`password`), `key` = SHA1(`key`);");
 
 					registerDatabaseConfig("encryption", (int32_t)newValue);
-					std::cout << "> Encryption set to SHA1." << std::endl;
+					std::clog << "> Encryption set to SHA1." << std::endl;
+					break;
+				}
+
+				case ENCRYPTION_SHA256:
+				{
+					if((Encryption_t)value != ENCRYPTION_PLAIN)
+					{
+						std::clog << "> WARNING: You cannot change the encryption to SHA256, change it back in config.lua." << std::endl;
+						return;
+					}
+
+					Database* db = Database::getInstance();
+					DBQuery query;
+
+					query << "SELECT `id`, `password`, `key` FROM `accounts`;";
+					if(DBResult* result = db->storeQuery(query.str()))
+					{
+						do
+						{
+							query << "UPDATE `accounts` SET `password` = " << db->escapeString(transformToSHA256(result->getDataString("password"), false)) << ", `key` = " << db->escapeString(transformToSHA256(result->getDataString("key"), false)) << " WHERE `id` = " << result->getDataInt("id") << ";";
+							db->query(query.str());
+						}
+						while(result->next());
+						result->free();
+					}
+
+					registerDatabaseConfig("encryption", (int32_t)newValue);
+					std::clog << "> Encryption set to SHA256." << std::endl;
+					break;
+				}
+
+				case ENCRYPTION_SHA512:
+				{
+					if((Encryption_t)value != ENCRYPTION_PLAIN)
+					{
+						std::clog << "> WARNING: You cannot change the encryption to SHA512, change it back in config.lua." << std::endl;
+						return;
+					}
+
+					Database* db = Database::getInstance();
+					DBQuery query;
+
+					query << "SELECT `id`, `password`, `key` FROM `accounts`;";
+					if(DBResult* result = db->storeQuery(query.str()))
+					{
+						do
+						{
+							query << "UPDATE `accounts` SET `password` = " << db->escapeString(transformToSHA512(result->getDataString("password"), false)) << ", `key` = " << db->escapeString(transformToSHA512(result->getDataString("key"), false)) << " WHERE `id` = " << result->getDataInt("id") << ";";
+							db->query(query.str());
+						}
+						while(result->next());
+						result->free();
+					}
+
+					registerDatabaseConfig("encryption", (int32_t)newValue);
+					std::clog << "> Encryption set to SHA512." << std::endl;
 					break;
 				}
 
 				default:
 				{
-					std::cout << "> WARNING: You cannot switch from hashed passwords to plain text, change back the passwordType in config.lua to the passwordType you were previously using." << std::endl;
+					std::clog << "> WARNING: You cannot switch from hashed passwords to plain text, change back the passwordType in config.lua to the passwordType you were previously using." << std::endl;
 					break;
 				}
 			}
@@ -1190,7 +1663,7 @@ void DatabaseManager::checkEncryption()
 					Database* db = Database::getInstance();
 					DBQuery query;
 					query << "UPDATE `accounts` SET `password` = " << db->escapeString(transformToMD5("1", false)) << " WHERE `id` = 1 AND `password` = '1';";
-					db->executeQuery(query.str());
+					db->query(query.str());
 					break;
 				}
 
@@ -1199,7 +1672,25 @@ void DatabaseManager::checkEncryption()
 					Database* db = Database::getInstance();
 					DBQuery query;
 					query << "UPDATE `accounts` SET `password` = " << db->escapeString(transformToSHA1("1", false)) << " WHERE `id` = 1 AND `password` = '1';";
-					db->executeQuery(query.str());
+					db->query(query.str());
+					break;
+				}
+
+				case ENCRYPTION_SHA256:
+				{
+					Database* db = Database::getInstance();
+					DBQuery query;
+					query << "UPDATE `accounts` SET `password` = " << db->escapeString(transformToSHA256("1", false)) << " WHERE `id` = 1 AND `password` = '1';";
+					db->query(query.str());
+					break;
+				}
+
+				case ENCRYPTION_SHA512:
+				{
+					Database* db = Database::getInstance();
+					DBQuery query;
+					query << "UPDATE `accounts` SET `password` = " << db->escapeString(transformToSHA512("1", false)) << " WHERE `id` = 1 AND `password` = '1';";
+					db->query(query.str());
 					break;
 				}
 
@@ -1236,12 +1727,12 @@ void DatabaseManager::checkTriggers()
 			};
 
 			DBQuery query;
-			for(uint32_t i = 0; i < sizeof(triggerName) / sizeof(std::string); i++)
+			for(uint32_t i = 0; i < sizeof(triggerName) / sizeof(std::string); ++i)
 			{
 				if(!triggerExists(triggerName[i]))
 				{
-					std::cout << "> Trigger: " << triggerName[i] << " does not exist, creating it..." << std::endl;
-					db->executeQuery(triggerStatement[i]);
+					std::clog << "> Trigger: " << triggerName[i] << " does not exist, creating it..." << std::endl;
+					db->query(triggerStatement[i]);
 				}
 			}
 
@@ -1401,12 +1892,12 @@ END;",
 			};
 
 			DBQuery query;
-			for(uint32_t i = 0; i < sizeof(triggerName) / sizeof(std::string); i++)
+			for(uint32_t i = 0; i < sizeof(triggerName) / sizeof(std::string); ++i)
 			{
 				if(!triggerExists(triggerName[i]))
 				{
-					std::cout << "> Trigger: " << triggerName[i] << " does not exist, creating it..." << std::endl;
-					db->executeQuery(triggerStatement[i]);
+					std::clog << "> Trigger: " << triggerName[i] << " does not exist, creating it..." << std::endl;
+					db->query(triggerStatement[i]);
 				}
 			}
 

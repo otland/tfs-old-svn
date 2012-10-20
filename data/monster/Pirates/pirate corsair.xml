@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <monster name="Pirate Corsair" nameDescription="a pirate corsair" race="blood" experience="350" speed="230" manacost="775">
 	<health now="675" max="675"/>
 	<look type="98" corpse="6080"/>
@@ -18,7 +18,7 @@
 		<flag runonhealth="0"/>
 	</flags>
 	<attacks>
-		<attack name="melee" interval="2000" min="-0" max="-170"/>
+		<attack name="melee" interval="2000" skill="75" attack="40"/>
 		<attack name="physical" interval="3000" chance="17" range="7" min="-50" max="-70">
 			<attribute key="shootEffect" value="throwingstar"/>
 		</attack>
@@ -44,20 +44,20 @@
 	</voices>
 	<loot>
 		<item id="2148" countmax="74" chance="40000"/><!-- gold coin -->
-		<item id="2385" chance="10321"/><!-- sabre -->
-		<item id="2114" chance="833"/><!-- piggy bank -->
-		<item id="2489" chance="1333"/><!-- dark armor -->
-		<item id="2521" chance="1000"/><!-- dark shield -->
-		<item id="6096" chance="909"/><!-- pirate hat -->
-		<item id="6095" chance="5000"/><!-- pirate shirt -->
-		<item id="5926" chance="100000"><!-- pirate backpack -->
-			<inside>
-				<item id="5091" chance="1666"/><!-- treasure map -->
-				<item id="5462" chance="450"/><!-- pirate boots -->
-				<item id="5792" chance="3333"/><!-- dice -->
-				<item id="2376" chance="6666"/><!-- sword -->
-				<item id="6098" countmax="1" chance="5000"/><!-- eye patch -->
-			</inside>
-		</item>
+		<item id="2489" chance="3650"/><!-- dark armor -->
+		<item id="2385" chance="14500"/><!-- sabre -->
+		<item id="2376" chance="3000"/><!-- sword -->
+		<item id="2521" chance="2500"/><!-- dark shield -->
+		<item id="2399" countmax="12" chance="6000"/><!-- throwing star -->
+		<item id="5091" chance="1000"/><!-- treasure map -->
+		<item id="5926" chance="1000"/><!-- pirate backpack -->
+		<item id="6097" chance="600"/><!-- hook -->
+		<item id="6126" chance="600"/><!-- peg leg -->
+		<item id="6098" chance="600"/><!-- eye patch -->
+		<item id="7588" chance="500"/><!-- strong health potion -->
+		<item id="5813" chance="800"/><!-- skull candle -->
+		<item id="6096" chance="750"/><!-- pirate hat -->
+		<item id="5462" chance="250"/><!-- pirate boots -->
+		<item id="2114" chance="100"/><!-- piggy bank -->
 	</loot>
 </monster>

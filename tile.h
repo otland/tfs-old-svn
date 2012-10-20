@@ -30,24 +30,22 @@ class BedItem;
 
 class Player;
 class Creature;
+class House;
 class HouseTile;
 class QTreeLeafNode;
 
-typedef std::list<Player*> PlayerList;
 typedef std::list<Creature*> SpectatorVec;
-typedef std::map<Position, boost::shared_ptr<SpectatorVec> > SpectatorCache;
-
-typedef std::vector<Item*> ItemVector;
 typedef std::vector<Creature*> CreatureVector;
+typedef std::map<Position, boost::shared_ptr<SpectatorVec> > SpectatorCache;
 
 enum tileflags_t
 {
 	TILESTATE_NONE = 0,
 	TILESTATE_PROTECTIONZONE = 1 << 0,
 	TILESTATE_TRASHED = 1 << 1,
-	TILESTATE_NOPVPZONE = 1 << 2,
+	TILESTATE_OPTIONALZONE = 1 << 2,
 	TILESTATE_NOLOGOUT = 1 << 3,
-	TILESTATE_PVPZONE = 1 << 4,
+	TILESTATE_HARDCOREZONE = 1 << 4,
 	TILESTATE_REFRESH = 1 << 5,
 
 	//internal usage
@@ -80,10 +78,10 @@ enum tileflags_t
 enum ZoneType_t
 {
 	ZONE_PROTECTION,
-	ZONE_NOPVP,
-	ZONE_PVP,
+	ZONE_OPTIONAL,
+	ZONE_HARDCORE,
 	ZONE_NOLOGOUT,
-	ZONE_NORMAL
+	ZONE_OPEN
 };
 
 class TileItemVector
@@ -107,7 +105,8 @@ class TileItemVector
 		bool empty() {return items.empty();}
 		bool empty() const {return items.empty();}
 
-		void push_back(Item* item) {return items.push_back(item);}
+		void push_back(Item* item) {items.push_back(item);}
+		void push_front(Item* item) {items.insert(items.begin(), item);}
 		ItemVector::iterator insert(ItemVector::iterator _where, Item* item) {return items.insert(_where, item);}
 		ItemVector::iterator erase(ItemVector::iterator _pos) {return items.erase(_pos);}
 
@@ -126,15 +125,19 @@ class TileItemVector
 		ItemVector::iterator getEndTopItem() {return items.end();}
 		ItemVector::const_iterator getEndTopItem() const {return items.end();}
 
-		uint32_t getTopItemCount() const {return std::distance(getBeginTopItem(), getEndTopItem());}
-		uint32_t getDownItemCount() const {return std::distance(getBeginDownItem(), getEndDownItem());}
+		uint32_t getTopItemCount() const {return items.size() - downItemCount;}
+		uint32_t getDownItemCount() const {return downItemCount;}
 		Item* getTopTopItem();
 		Item* getTopDownItem();
 
+		void addDownItem() {++downItemCount;}
+		void removeDownItem() {--downItemCount;}
+
 	private:
+		friend class Tile;
+
 		ItemVector items;
 		uint16_t downItemCount;
-		friend class Tile;
 };
 
 class Tile : public Cylinder
@@ -152,9 +155,10 @@ class Tile : public Cylinder
 		const CreatureVector* getCreatures() const;
 		CreatureVector* makeCreatures();
 
-		HouseTile* getHouseTile();
-		const HouseTile* getHouseTile() const;
-		bool isHouseTile() const {return hasFlag(TILESTATE_HOUSE);}
+		virtual HouseTile* getHouseTile() {return NULL;}
+		virtual const HouseTile* getHouseTile() const {return NULL;}
+		virtual House* getHouse() {return NULL;}
+		virtual const House* getHouse() const {return NULL;}
 
 		MagicField* getFieldItem() const;
 		Teleport* getTeleportItem() const;
@@ -162,18 +166,21 @@ class Tile : public Cylinder
 		Mailbox* getMailbox() const;
 		BedItem* getBedItem() const;
 
-		Creature* getTopCreature();
 		Item* getTopTopItem();
 		Item* getTopDownItem();
-		bool isMoveableBlocking() const;
+		Item* getItemByTopOrder(uint32_t topOrder);
+
+		Creature* getTopCreature();
 		Thing* getTopVisibleThing(const Creature* creature);
 		Creature* getTopVisibleCreature(const Creature* creature);
 		const Creature* getTopVisibleCreature(const Creature* creature) const;
-		Item* getItemByTopOrder(uint32_t topOrder);
 
 		uint32_t getThingCount() const {return thingCount;}
+		void updateThingCount(int32_t amount) {thingCount += amount;}
+
 		uint32_t getCreatureCount() const;
 		uint32_t getItemCount() const;
+
 		uint32_t getTopItemCount() const;
 		uint32_t getDownItemCount() const;
 
@@ -221,17 +228,17 @@ class Tile : public Cylinder
 			if(hasFlag(TILESTATE_PROTECTIONZONE))
 				return ZONE_PROTECTION;
 
-			if(hasFlag(TILESTATE_NOPVPZONE))
-				return ZONE_NOPVP;
+			if(hasFlag(TILESTATE_OPTIONALZONE))
+				return ZONE_OPTIONAL;
 
-			if(hasFlag(TILESTATE_PVPZONE))
-				return ZONE_PVP;
+			if(hasFlag(TILESTATE_HARDCOREZONE))
+				return ZONE_HARDCORE;
 
-			return ZONE_NORMAL;
+			return ZONE_OPEN;
 		}
 
-		bool isSwimmingPool(bool checkPz = true) const;
 		bool hasHeight(uint32_t n) const;
+		bool isFull() const;
 
 		void moveCreature(Creature* actor, Creature* creature, Cylinder* toCylinder, bool forceTeleport = false);
 		int32_t getClientIndexOfThing(const Player* player, const Thing* thing) const;
@@ -249,10 +256,10 @@ class Tile : public Cylinder
 		virtual const Creature* getCreature() const {return NULL;}
 
 		virtual ReturnValue __queryAdd(int32_t index, const Thing* thing, uint32_t count,
-			uint32_t flags) const;
+			uint32_t flags, Creature* actor = NULL) const;
 		virtual ReturnValue __queryMaxCount(int32_t index, const Thing* thing, uint32_t count,
 			uint32_t& maxQueryCount, uint32_t flags) const;
-		virtual ReturnValue __queryRemove(const Thing* thing, uint32_t count, uint32_t flags) const;
+		virtual ReturnValue __queryRemove(const Thing* thing, uint32_t count, uint32_t flags, Creature* actor = NULL) const;
 		virtual Cylinder* __queryDestination(int32_t& index, const Thing* thing, Item** destItem,
 			uint32_t& flags);
 
@@ -267,27 +274,28 @@ class Tile : public Cylinder
 		virtual int32_t __getIndexOfThing(const Thing* thing) const;
 		virtual int32_t __getFirstIndex() const {return 0;}
 		virtual int32_t __getLastIndex() const {return thingCount;}
-		virtual uint32_t __getItemTypeCount(uint16_t itemId, int32_t subType = -1, bool itemCount = true) const;
+
 		virtual Thing* __getThing(uint32_t index) const;
+		virtual uint32_t __getItemTypeCount(uint16_t itemId, int32_t subType = -1) const;
 
 		virtual void postAddNotification(Creature* actor, Thing* thing, const Cylinder* oldParent,
-			int32_t index, cylinderlink_t link = LINK_OWNER);
+			int32_t index, CylinderLink_t link = LINK_OWNER);
 		virtual void postRemoveNotification(Creature* actor, Thing* thing, const Cylinder* newParent,
-			int32_t index, bool isCompleteRemoval, cylinderlink_t link = LINK_OWNER);
+			int32_t index, bool isCompleteRemoval, CylinderLink_t link = LINK_OWNER);
 
 		virtual void __internalAddThing(Thing* thing) {__internalAddThing(0, thing);}
 		virtual void __internalAddThing(uint32_t index, Thing* thing);
 
+		void onUpdateTile();
+		void updateTileFlags(Item* item, bool remove);
+
 	private:
 		void onAddTileItem(Item* item);
 		void onUpdateTileItem(Item* oldItem, const ItemType& oldType, Item* newItem, const ItemType& newType);
-		void onRemoveTileItem(const SpectatorVec& list, std::vector<uint32_t>& oldStackPosVector, Item* item);
-		void onUpdateTile();
-
-		void updateTileFlags(Item* item, bool removed);
+		void onRemoveTileItem(const SpectatorVec& list, std::vector<int32_t>& oldStackPosVector, Item* item);
 
 	protected:
-		bool isDynamic() const {return (m_flags & TILESTATE_DYNAMIC_TILE);}
+		bool isDynamic() const {return (m_flags & TILESTATE_DYNAMIC_TILE) != 0;}
 
 	public:
 		QTreeLeafNode* qt_node;

@@ -18,7 +18,7 @@
 		<flag runonhealth="0"/>
 	</flags>
 	<attacks>
-		<attack name="melee" interval="2000" min="-0" max="-230"/>
+		<attack name="melee" interval="2000" skill="50" attack="80"/>
 		<attack name="physical" interval="1000" chance="14" range="7" min="-0" max="-95">
 			<attribute key="shootEffect" value="explosion"/>
 		</attack>
@@ -49,27 +49,23 @@
 		<voice sentence="Secret objective complete."/>
 	</voices>
 	<loot>
-		<item id="8309" countmax="5" chance="1500"/><!-- nails -->
-		<item id="9690" countmax="2" chance="700"/><!-- gear wheele -->
-		<item id="2148" countmax="75" chance="100000"/><!-- gold coin -->
-		<item id="2148" countmax="75" chance="100000"/><!-- gold coin -->
-		<item id="5880" chance="1500"/><!-- iron ore -->
-		<item id="7591" chance="900"/><!-- great health potion -->
-		<item id="8472" chance="900"/><!-- great spirit potion -->
-		<item id="7452" chance="700"/><!-- spiked squelcher -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
-				<item id="2145" countmax="2" chance="1500"/><!-- small diamond -->
-				<item id="7439" chance="700"/><!-- berserk potion -->
-				<item id="2177" chance="800"/><!-- life crystal -->
-				<item id="9811" chance="700"/><!-- rusty legs -->
-				<item id="9808" chance="700"/><!-- rusty armor -->
-				<item id="2164" chance="750"/><!-- might ring -->
-				<item id="2391" chance="700"/><!-- war hammer -->
-				<item id="9976" chance="700"/><!-- crystal pedestal -->
-				<item id="7428" chance="200"/><!-- bonebreaker -->
-				<item id="2207" chance="300"/><!-- sword ring -->
-			</inside>
-		</item>
+		<item id="2148" countmax="70" chance="34000"/><!-- gold coin -->
+		<item id="2148" countmax="61" chance="34000"/><!-- gold coin -->
+		<item id="2145" countmax="3" chance="5000"/><!-- small diamond -->
+		<item id="8309" countmax="5" chance="2000"/><!-- nails -->
+		<item id="5880" chance="850"/><!-- iron ore -->
+		<item id="9690" countmax="2" chance="500"/><!-- gear wheel -->
+		<item id="9809" chance="4650"/><!-- rusty armor -->
+		<item id="9812" chance="2650"/><!-- rusty legs -->
+		<item id="8472" chance="1600"/><!-- great spirit potion -->
+		<item id="7591" chance="1900"/><!-- great health potion -->
+		<item id="7439" chance="1350"/><!-- berserk potion -->
+		<item id="9976" chance="1000"/><!-- crystal pedestal -->
+		<item id="7452" chance="1500"/><!-- spiked squelcher -->
+		<item id="2391" chance="1550"/><!-- war hammer -->
+		<item id="2177" chance="750"/><!-- life crystal -->
+		<item id="2164" chance="650"/><!-- might ring -->
+		<item id="7428" chance="200"/><!-- bonebreaker -->
+		<item id="7590" chance="1500"/><!-- great mana potion -->
 	</loot>
 </monster>

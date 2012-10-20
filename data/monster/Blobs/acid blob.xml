@@ -18,7 +18,7 @@
 		<flag runonhealth="0"/>
 	</flags>
 	<attacks>
-		<attack name="melee" interval="2000" min="-0" max="-80"/>
+		<attack name="melee" interval="2000" skill="30" attack="40"/>
 		<attack name="earth" interval="3000" chance="25" radius="4" min="-10" max="-22">
 			<attribute key="areaEffect" value="greenspark"/>
 		</attack>
@@ -41,6 +41,6 @@
 	</summons>
 	<voices interval="5000" chance="10"/>
 	<loot>
-		<item id="9967" chance="28000"/><!-- glob of acid -->
+		<item id="9967" chance="20000"/><!-- glob of acid -->
 	</loot>
 </monster>

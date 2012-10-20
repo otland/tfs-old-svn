@@ -13,7 +13,7 @@ setConditionParam(condition, CONDITION_PARAM_SKILL_DISTANCE, 3)
 
 local config = {
 	baseMana = 60,
-	pvpManaSpent = getConfigValue("addManaSpentInPvPZone")
+	hardcoreManaSpent = getConfigValue("addManaSpentInPvPZone")
 }
 
 function onCastSpell(cid, var)
@@ -52,7 +52,7 @@ function onCastSpell(cid, var)
 	end
 
 	doCreatureAddMana(cid, -(mana - config.baseMana), false)
-	if(not getPlayerFlagValue(cid, PlayerFlag_NotGainMana) and (not getTileInfo(getThingPosition(cid)).pvp or config.pvpManaSpent)) then
+	if(not getPlayerFlagValue(cid, PlayerFlag_NotGainMana) and (not getTileInfo(getThingPosition(cid)).hardcore or config.hardcoreManaSpent)) then
 		doPlayerAddSpentMana(cid, (mana - config.baseMana))
 	end
 

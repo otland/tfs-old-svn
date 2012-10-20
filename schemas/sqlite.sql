@@ -1,10 +1,10 @@
 CREATE TABLE "server_config" (
 	"config" VARCHAR(35) NOT NULL DEFAULT '',
-	"value" INTEGER NOT NULL,
+	"value" VARCHAR(255) NOT NULL DEFAULT '',
 	UNIQUE ("config")
 );
 
-INSERT INTO "server_config" VALUES ('db_version', 23);
+INSERT INTO "server_config" VALUES ('db_version', 31);
 
 CREATE TABLE "server_motd" (
 	"id" INTEGER NOT NULL,
@@ -40,17 +40,18 @@ CREATE TABLE "accounts" (
 	"id" INTEGER PRIMARY KEY NOT NULL,
 	"name" VARCHAR(255) NOT NULL,
 	"password" VARCHAR(255) NOT NULL,
+	"salt" VARCHAR(40) NOT NULL DEFAULT '',
 	"premdays" INTEGER NOT NULL DEFAULT 0,
 	"lastday" INTEGER NOT NULL DEFAULT 0,
 	"email" VARCHAR(255) NOT NULL DEFAULT '',
-	"key" VARCHAR(20) NOT NULL DEFAULT '0',
-	"blocked" BOOLEAN NOT NULL DEFAULT 0,
+	"key" VARCHAR(32) NOT NULL DEFAULT '0',
+	"blocked" BOOLEAN NOT NULL DEFAULT FALSE,
 	"warnings" INTEGER NOT NULL DEFAULT 0,
 	"group_id" INTEGER NOT NULL DEFAULT 1,
 	UNIQUE ("name")
 );
 
-INSERT INTO "accounts" VALUES (1, '1', '1', 65535, 0, '', '0', 0, 0, 1);
+INSERT INTO "accounts" VALUES (1, '1', '1', '', 65535, 0, '', '0', 0, 0, 1);
 
 CREATE TABLE "players" (
 	"id" INTEGER PRIMARY KEY NOT NULL,
@@ -69,6 +70,7 @@ CREATE TABLE "players" (
 	"looklegs" INTEGER NOT NULL DEFAULT 10,
 	"looktype" INTEGER NOT NULL DEFAULT 136,
 	"lookaddons" INTEGER NOT NULL DEFAULT 0,
+	"lookmount" INTEGER NOT NULL DEFAULT 0,
 	"maglevel" INTEGER NOT NULL DEFAULT 0,
 	"mana" INTEGER NOT NULL DEFAULT 100,
 	"manamax" INTEGER NOT NULL DEFAULT 100,
@@ -83,13 +85,14 @@ CREATE TABLE "players" (
 	"sex" INTEGER NOT NULL DEFAULT 0,
 	"lastlogin" INTEGER NOT NULL DEFAULT 0,
 	"lastip" INTEGER NOT NULL DEFAULT 0,
-	"save" BOOLEAN NOT NULL DEFAULT 1,
+	"save" BOOLEAN NOT NULL DEFAULT TRUE,
 	"skull" INTEGER NOT NULL DEFAULT 0,
 	"skulltime" INTEGER NOT NULL DEFAULT 0,
 	"rank_id" INTEGER NOT NULL,
 	"guildnick" VARCHAR(255) NOT NULL DEFAULT '',
 	"lastlogout" INTEGER NOT NULL DEFAULT 0,
 	"blessings" INTEGER NOT NULL DEFAULT 0,
+	"pvp_blessing" BOOLEAN NOT NULL DEFAULT FALSE,
 	"balance" INTEGER NOT NULL DEFAULT 0,
 	"stamina" INTEGER NOT NULL DEFAULT 151200000,
 	"direction" INTEGER NOT NULL DEFAULT 2,
@@ -99,16 +102,16 @@ CREATE TABLE "players" (
 	"loss_containers" INTEGER NOT NULL DEFAULT 100,
 	"loss_items" INTEGER NOT NULL DEFAULT 100,
 	"premend" INTEGER NOT NULL DEFAULT 0,
-	"online" TINYINT NOT NULL DEFAULT 0,
+	"online" INTEGER NOT NULL DEFAULT 0,
 	"marriage" INTEGER NOT NULL DEFAULT 0,
 	"promotion" INTEGER NOT NULL DEFAULT 0,
-	"deleted" BOOLEAN NOT NULL DEFAULT 0,
+	"deleted" INTEGER NOT NULL DEFAULT 0,
 	"description" VARCHAR(255) NOT NULL DEFAULT '',
 	UNIQUE ("name", "deleted"),
 	FOREIGN KEY ("account_id") REFERENCES "accounts" ("id")
 );
 
-INSERT INTO "players" VALUES (1, 'Account Manager', 0, 1, 1, 1, 0, 150, 150, 0, 0, 0, 0, 0, 110, 0, 0, 0, 0, 0, 0, 0, 50, 50, 7, '', 400, 0, 0, 0, 0, 0, 0, 0, '', 0, 0, 0, 201660000, 0, 100, 100, 100, 100, 100, 0, 0, 0, 0, 0, '');
+INSERT INTO "players" VALUES (1, 'Account Manager', 0, 1, 1, 1, 0, 150, 150, 0, 0, 0, 0, 0, 110, 0, 0, 0, 0, 0, 0, 0, 0, 853, 921, 7, '', 400, 0, 0, 0, 0, 0, 0, 0, '', 0, 0, 0, 0, 201660000, 0, 100, 100, 100, 100, 100, 0, 0, 0, 0, 0, '');
 
 CREATE TABLE "account_viplist" (
 	"account_id" INTEGER NOT NULL,
@@ -120,7 +123,7 @@ CREATE TABLE "account_viplist" (
 );
 
 CREATE TABLE "global_storage" (
-	"key" INTEGER NOT NULL,
+	"key" VARCHAR(32) NOT NULL,
 	"world_id" INTEGER NOT NULL DEFAULT 0,
 	"value" VARCHAR(255) NOT NULL DEFAULT '0',
 	UNIQUE ("key", "world_id")
@@ -132,9 +135,36 @@ CREATE TABLE "guilds" (
 	"name" VARCHAR(255) NOT NULL,
 	"ownerid" INTEGER NOT NULL,
 	"creationdata" INTEGER NOT NULL,
+	"checkdata" INTEGER NOT NULL,
 	"motd" VARCHAR(255) NOT NULL DEFAULT '',
+	"balance" INTEGER NOT NULL DEFAULT 0,
 	UNIQUE ("name", "world_id"),
 	FOREIGN KEY ("ownerid") REFERENCES "players" ("id")
+);
+
+CREATE TABLE "guild_wars" (
+	"id" INTEGER PRIMARY KEY,
+	"guild_id" INTEGER NOT NULL,
+	"enemy_id" INTEGER NOT NULL,
+	"begin" INTEGER NOT NULL DEFAULT 0,
+	"end" INTEGER NOT NULL DEFAULT 0,
+	"frags" INTEGER NOT NULL DEFAULT 0,
+	"payment" INTEGER NOT NULL DEFAULT 0,
+	"guild_kills" INTEGER NOT NULL DEFAULT 0,
+	"enemy_kills" INTEGER NOT NULL DEFAULT 0,
+	"status" TINYINT(1) NOT NULL DEFAULT 0,
+	FOREIGN KEY ("guild_id") REFERENCES "guilds"("id") ON DELETE CASCADE,
+	FOREIGN KEY ("enemy_id") REFERENCES "guilds"("id") ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS "guild_kills" (
+	"id" INTEGER PRIMARY KEY,
+	"guild_id" INTEGER NOT NULL,
+	"war_id" INTEGER NOT NULL,
+	"death_id" INTEGER NOT NULL.
+	FOREIGN KEY ("guild_id") REFERENCES "guilds"("id") ON DELETE CASCADE,
+	FOREIGN KEY ("war_id") REFERENCES "guild_wars"("id") ON DELETE CASCADE,
+	FOREIGN KEY ("death_id") REFERENCES "player_deaths"("id") ON DELETE CASCADE
 );
 
 CREATE TABLE "guild_invites" (
@@ -215,6 +245,7 @@ CREATE TABLE "killers" (
 	"death_id" INTEGER NOT NULL,
 	"final_hit" BOOLEAN NOT NULL DEFAULT FALSE,
 	"unjustified" BOOLEAN NOT NULL DEFAULT FALSE,
+	"war" INTEGER NOT NULL DEFAULT 0,
 	FOREIGN KEY ("death_id") REFERENCES "player_deaths" ("id")
 );
 
@@ -250,6 +281,15 @@ CREATE TABLE "player_namelocks" (
 	FOREIGN KEY ("player_id") REFERENCES "players" ("id")
 );
 
+CREATE TABLE "player_statements" (
+	"id" INTEGER PRIMARY KEY,
+	"player_id" INTEGER NOT NULL,
+	"channel_id" INTEGER NOT NULL DEFAULT 0,
+	"text" VARCHAR (255) NOT NULL,
+	"date" INTEGER NOT NULL DEFAULT 0,
+	FOREIGN KEY ("player_id") REFERENCES "players"("id")
+);
+
 CREATE TABLE "player_skills" (
 	"player_id" INTEGER NOT NULL,
 	"skillid" INTEGER NOT NULL,
@@ -261,7 +301,7 @@ CREATE TABLE "player_skills" (
 
 CREATE TABLE "player_storage" (
 	"player_id" INTEGER NOT NULL,
-	"key" INTEGER NOT NULL,
+	"key" VARCHAR(32) NOT NULL,
 	"value" VARCHAR(255) NOT NULL DEFAULT '0',
 	UNIQUE ("player_id", "key"),
 	FOREIGN KEY ("player_id") REFERENCES "players" ("id")
@@ -299,11 +339,11 @@ CREATE TABLE "tile_items" (
 );
 
 CREATE TABLE "player_items" (
-	"player_id" INT NOT NULL,
-	"sid" INT NOT NULL,
-	"pid" INT NOT NULL DEFAULT 0,
-	"itemtype" INT NOT NULL,
-	"count" INT NOT NULL DEFAULT 0,
+	"player_id" INTEGER NOT NULL,
+	"sid" INTEGER NOT NULL,
+	"pid" INTEGER NOT NULL DEFAULT 0,
+	"itemtype" INTEGER NOT NULL,
+	"count" INTEGER NOT NULL DEFAULT 0,
 	"attributes" BLOB NOT NULL,
 	UNIQUE ("player_id", "sid"),
 	FOREIGN KEY ("player_id") REFERENCES "players" ("id")
@@ -320,15 +360,20 @@ CREATE TABLE "bans" (
 	"id" INTEGER PRIMARY KEY NOT NULL,
 	"type" INTEGER NOT NULL,
 	"value" INTEGER NOT NULL,
-	"param" INTEGER NOT NULL DEFAULT 4294967295,
-	"active" BOOLEAN NOT NULL DEFAULT 1,
-	"expires" INTEGER NOT NULL,
+	"param" INTEGER NOT NULL,
+	"active" BOOLEAN NOT NULL DEFAULT TRUE,
+	"expires" INTEGER NOT NULL DEFAULT -1,
 	"added" INTEGER NOT NULL,
 	"admin_id" INTEGER NOT NULL DEFAULT 0,
 	"comment" TEXT NOT NULL,
-	"reason" INTEGER NOT NULL DEFAULT 0,
-	"action" INTEGER  NOT NULL DEFAULT 0,
-	"statement" VARCHAR(255) NOT NULL DEFAULT ''
+);
+
+CREATE TABLE "tile_store"
+(
+	"house_id" INTEGER NOT NULL,
+	"world_id" INTEGER NOT NULL DEFAULT 0,
+	"data" LONGBLOB NOT NULL,
+	FOREIGN KEY ("house_id") REFERENCES "houses" ("id")
 );
 
 CREATE TRIGGER "oncreate_guilds"
@@ -380,6 +425,8 @@ BEGIN
 	DELETE FROM "player_killers" WHERE "player_id" = OLD."id";
 	DELETE FROM "player_deaths" WHERE "player_id" = OLD."id";
 	DELETE FROM "guild_invites" WHERE "player_id" = OLD."id";
+	DELETE FROM "player_namelocks" WHERE "player_id" = OLD."id";
+	DELETE FROM "player_statements" WHERE "player_id" = OLD."id";
 	DELETE FROM "bans" WHERE "type" IN (2, 5) AND "value" = OLD."id";
 	UPDATE "houses" SET "owner" = 0 WHERE "owner" = OLD."id";
 END;

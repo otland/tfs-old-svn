@@ -18,7 +18,7 @@
 		<flag runonhealth="0"/>
 	</flags>
 	<attacks>
-		<attack name="melee" interval="1500" skill="18" attack="12" poison="2"/>
+		<attack name="melee" interval="1500" skill="30" attack="10" poison="2"/>
 	</attacks>
 	<defenses armor="4" defense="8"/>
 	<elements>
@@ -29,6 +29,6 @@
 		<voice sentence="Bssssss"/>
 	</voices>
 	<loot>
-		<item id="5902" countmax="1" chance="5000"/><!-- honeycomb -->
+		<item id="5902" chance="3650"/> <!-- honeycomb -->
 	</loot>
 </monster>

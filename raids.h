@@ -145,7 +145,7 @@ class RaidEvent
 		virtual ~RaidEvent() {}
 
 		virtual bool configureRaidEvent(xmlNodePtr eventNode);
-		virtual bool executeEvent() const {return false;}
+		virtual bool executeEvent(const std::string&) const {return false;}
 
 		uint32_t getDelay() const {return m_delay;}
 		static bool compareEvents(const RaidEvent* lhs, const RaidEvent* rhs)
@@ -169,7 +169,7 @@ class AnnounceEvent : public RaidEvent
 		virtual ~AnnounceEvent() {}
 
 		virtual bool configureRaidEvent(xmlNodePtr eventNode);
-		virtual bool executeEvent() const;
+		virtual bool executeEvent(const std::string& name) const;
 
 	private:
 		std::string m_message;
@@ -184,7 +184,7 @@ class EffectEvent : public RaidEvent
 		virtual ~EffectEvent() {}
 
 		virtual bool configureRaidEvent(xmlNodePtr eventNode);
-		virtual bool executeEvent() const;
+		virtual bool executeEvent(const std::string& name) const;
 
 	private:
 		MagicEffect_t m_effect;
@@ -199,7 +199,7 @@ class ItemSpawnEvent : public RaidEvent
 		virtual ~ItemSpawnEvent() {}
 
 		virtual bool configureRaidEvent(xmlNodePtr eventNode);
-		virtual bool executeEvent() const;
+		virtual bool executeEvent(const std::string& name) const;
 
 	private:
 		int16_t m_itemId;
@@ -216,7 +216,7 @@ class SingleSpawnEvent : public RaidEvent
 		virtual ~SingleSpawnEvent() {}
 
 		virtual bool configureRaidEvent(xmlNodePtr eventNode);
-		virtual bool executeEvent() const;
+		virtual bool executeEvent(const std::string& name) const;
 
 	private:
 		std::string m_monsterName;
@@ -230,7 +230,7 @@ class AreaSpawnEvent : public RaidEvent
 		virtual ~AreaSpawnEvent();
 
 		virtual bool configureRaidEvent(xmlNodePtr eventNode);
-		virtual bool executeEvent() const;
+		virtual bool executeEvent(const std::string& name) const;
 
 		void addMonster(MonsterSpawn* _spawn);
 		void addMonster(const std::string& name, uint32_t min, uint32_t max);
@@ -244,14 +244,14 @@ class ScriptEvent : public RaidEvent, public Event
 {
 	public:
 		ScriptEvent(Raid* raid, bool ref): RaidEvent(raid, ref),
-			Event(&m_interface) {m_interface.initState();}
+			Event(&m_interface) {}
 		virtual ~ScriptEvent() {}
 
 		virtual bool configureRaidEvent(xmlNodePtr eventNode);
-		virtual bool executeEvent() const;
+		virtual bool executeEvent(const std::string& name) const;
 
-		virtual bool configureEvent(xmlNodePtr p) {return false;}
-		static LuaScriptInterface m_interface;
+		virtual bool configureEvent(xmlNodePtr) {return false;}
+		static LuaInterface m_interface;
 
 	protected:
 		virtual std::string getScriptEventName() const {return "onRaid";}

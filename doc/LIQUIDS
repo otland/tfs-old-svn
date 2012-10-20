@@ -3,7 +3,7 @@
 		The Forgotten Server
 
 	Version
-		0.3.6
+		0.3.7
 
 	Codenamed
 		Crying Damson
@@ -15,7 +15,7 @@
 		http://otland.net/
 ]
 
-[ FLUIDTYPE		NAME			COLOR
+[ FLUIDTYPE		NAME	COLOR
 	2	blood			RED
 	10	lifefluid		RED
 	26	lava			RED
@@ -25,7 +25,6 @@
 	19	mud				BROWN
 	27	rum				BROWN
 	35	tea				BROWN
-	43	mead			BROWN
 
 	4	slime			GREEN
 	28	swamp			GREEN

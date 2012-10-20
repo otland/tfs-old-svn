@@ -4,28 +4,16 @@ local config = {
 }
 
 function onUse(cid, item, fromPosition, itemEx, toPosition)
-	local _time = ""
+	local str = ""
 	if(config.tibianTime) then
-		local varh = (os.date('%M') * 60 + os.date('%S')) / 150
-		local tibH = math.floor(varh)
-		local tibM = math.floor(60 * (varh - tibH))
-
-		if(tibH < 10) then
-			tibH = '0' .. tibH
-		end
-		if(tibM < 10) then
-			tibM = '0' .. tibM
-		end
-
-		_time = tibH .. ':' .. tibM
+		local var = getTibiaTime()
+		str = var.hours .. ':' .. var.minutes
+	elseif(config.twentyFour) then
+		str = os.date('%H:%M')
 	else
-		if(config.twentyFour) then
-			_time = os.date('%H:%M')
-		else
-			_time = os.date('%I:%M %p')
-		end
+		str = os.date('%I:%M %p')
 	end
 
-	doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, "The time is " .. _time .. ".")
+	doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, "The time is " .. str .. ".")
 	return true
 end

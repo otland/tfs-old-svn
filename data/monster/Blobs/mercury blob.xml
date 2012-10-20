@@ -18,7 +18,7 @@
 		<flag runonhealth="0"/>
 	</flags>
 	<attacks>
-		<attack name="melee" interval="2000" skill="28" attack="33"/>
+		<attack name="melee" interval="2000" skill="40" attack="30"/>
 		<attack name="drunk" interval="5000" chance="10" range="4" target="1" duration="15000">
 			<attribute key="areaEffect" value="stun"/>
 			<attribute key="shootEffect" value="holy"/>
@@ -46,6 +46,6 @@
 		<voice sentence="Crackle"/>
 	</voices>
 	<loot>
-		<item id="9966" chance="35000"/><!-- glob of mercury -->
+		<item id="9966" chance="20000"/><!-- glob of mercury -->
 	</loot>
 </monster>

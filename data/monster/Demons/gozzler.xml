@@ -18,7 +18,7 @@
 		<flag runonhealth="0"/>
 	</flags>
 	<attacks>
-		<attack name="melee" interval="2000" min="-0" max="-111"/>
+		<attack name="melee" interval="2000" skill="45" attack="40"/>
 		<attack name="lifedrain" interval="1000" chance="20" range="1" min="-32" max="-100">
 			<attribute key="areaEffect" value="redspark"/>
 		</attack>
@@ -46,20 +46,16 @@
 		<voice sentence="I'll bite you! Nyehehehehe!"/>
 	</voices>
 	<loot>
-		<item id="2015" chance="9000"/><!-- brown flask -->
-		<item id="2148" countmax="53" chance="100000"/><!-- gold coin -->
-		<item id="2394" chance="7000"/><!-- morning star -->
-		<item id="2385" chance="7000"/><!-- sabre -->
-		<item id="2051" chance="15000"/><!-- torch -->
-		<item id="2510" chance="9000"/><!-- plate shield -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
-				<item id="2378" chance="1500"/><!-- battle axe -->
-				<item id="2409" chance="1500"/><!-- serpent sword -->
-				<item id="2423" chance="1500"/><!-- clerical mace -->
-				<item id="2213" chance="400"/><!-- dwarven ring -->
-				<item id="2146" chance="300"/><!-- small sapphire -->
-			</inside>
-		</item>
+		<item id="2148" countmax="90" chance="22500"/><!-- gold coin -->
+		<item id="2378" chance="3100"/><!-- battle axe -->
+		<item id="2015" chance="8750"/><!-- brown flask -->
+		<item id="2423" chance="900"/><!-- clerical mace -->
+		<item id="2394" chance="5000"/><!-- morning star -->
+		<item id="2510" chance="10000"/><!-- plate shield -->
+		<item id="2385" chance="7250"/><!-- sabre -->
+		<item id="2051" chance="7500"/><!-- torch -->
+		<item id="2409" chance="1000"/><!-- serpent sword -->
+		<item id="2213" chance="400"/><!-- dwarven ring -->
+		<item id="2146" chance="300"/><!-- small sapphire -->
 	</loot>
 </monster>

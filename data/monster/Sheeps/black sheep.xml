@@ -21,22 +21,10 @@
 		<attack name="melee" interval="2000" skill="0" attack="0"/>
 	</attacks>
 	<defenses armor="1" defense="2"/>
-	<immunities>
-		<immunity physical="0"/>
-		<immunity energy="0"/>
-		<immunity fire="0"/>
-		<immunity poison="0"/>
-		<immunity lifedrain="0"/>
-		<immunity paralyze="0"/>
-		<immunity outfit="0"/>
-		<immunity drunk="0"/>
-		<immunity invisible="0"/>
-	</immunities>
 	<voices interval="5000" chance="10">
 		<voice sentence="Maeh"/>
 	</voices>
 	<loot>
-		<item id="3976" countmax="10" chance="50000"/><!-- worm -->
-		<item id="2666" countmax="5" chance="100000"/><!-- meat -->
+		<item id="2666" countmax="4" chance="22500"/><!-- meat -->
 	</loot>
 </monster>

@@ -16,12 +16,5 @@
 		<flag staticattack="90"/>
 		<flag runonhealth="25"/>
 	</flags>
-	<attacks>
-		<attack name="melee" interval="2000" skill="9" attack="4"/>
-	</attacks>
 	<defenses armor="1" defense="6"/>
-	<loot>
-		<item id="3976" countmax="10" chance="50000"/><!-- worm -->
-		<item id="3976" countmax="10" chance="50000"/><!-- worm -->
-	</loot>
 </monster>

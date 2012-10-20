@@ -49,6 +49,7 @@ class TalkActions : public BaseEvents
 		inline TalkActionsMap::const_iterator getLastTalk() const {return talksMap.end();}
 
 	protected:
+		TalkAction* defaultTalkAction;
 		TalkActionsMap talksMap;
 
 		virtual std::string getScriptBaseName() const {return "talkactions";}
@@ -57,8 +58,8 @@ class TalkActions : public BaseEvents
 		virtual Event* getEvent(const std::string& nodeName);
 		virtual bool registerEvent(Event* event, xmlNodePtr p, bool override);
 
-		virtual LuaScriptInterface& getInterface() {return m_interface;}
-		LuaScriptInterface m_interface;
+		virtual LuaInterface& getInterface() {return m_interface;}
+		LuaInterface m_interface;
 };
 
 typedef bool (TalkFunction)(Creature* creature, const std::string& words, const std::string& param);
@@ -66,7 +67,7 @@ class TalkAction : public Event
 {
 	public:
 		TalkAction(const TalkAction* copy);
-		TalkAction(LuaScriptInterface* _interface);
+		TalkAction(LuaInterface* _interface);
 		virtual ~TalkAction() {}
 
 		virtual bool configureEvent(xmlNodePtr p);
@@ -74,6 +75,7 @@ class TalkAction : public Event
 
 		int32_t executeSay(Creature* creature, const std::string& words, std::string param, uint16_t channel);
 
+		std::string getFunctionName() const {return m_functionName;}
 		std::string getWords() const {return m_words;}
 		void setWords(const std::string& words) {m_words = words;}
 
@@ -87,6 +89,12 @@ class TalkAction : public Event
 		bool isLogged() const {return m_logged;}
 		bool isHidden() const {return m_hidden;}
 		bool isSensitive() const {return m_sensitive;}
+
+		bool hasGroups() const {return !m_groups.empty();}
+		bool hasGroup(int32_t value) const {return std::find(m_groups.begin(), m_groups.end(), value) != m_groups.end();}
+
+		IntegerVec::const_iterator getGroupsBegin() const {return m_groups.begin();}
+		IntegerVec::const_iterator getGroupsEnd() const {return m_groups.end();}
 
 	protected:
 		virtual std::string getScriptEventName() const {return "onSay";}
@@ -103,15 +111,16 @@ class TalkAction : public Event
 		static TalkFunction thingProporties;
 		static TalkFunction banishmentInfo;
 		static TalkFunction diagnostics;
-		static TalkFunction addSkill;
 		static TalkFunction ghost;
+		static TalkFunction software;
 
-		std::string m_words;
+		std::string m_words, m_functionName;
 		TalkFunction* m_function;
 		TalkActionFilter m_filter;
 		uint32_t m_access;
 		int32_t m_channel;
 		bool m_logged, m_hidden, m_sensitive;
 		StringVec m_exceptions;
+		IntegerVec m_groups;
 };
 #endif

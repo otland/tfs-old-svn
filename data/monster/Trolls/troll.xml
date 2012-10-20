@@ -18,7 +18,7 @@
 		<flag runonhealth="15"/>
 	</flags>
 	<attacks>
-		<attack name="melee" interval="1500" skill="15" attack="10"/>
+		<attack name="melee" interval="1500" skill="20" attack="16"/>
 	</attacks>
 	<defenses armor="6" defense="8"/>
 	<elements>
@@ -35,21 +35,15 @@
 		<voice sentence="Hmmm, dogs."/>
 	</voices>
 	<loot>
-		<item id="3976" countmax="10" chance="50000"/><!-- worm -->
-		<item id="2148" countmax="10" chance="100000"/><!-- gold coin -->
-		<item id="2389" countmax="1" chance="33333"/><!-- spear -->
-		<item id="2643" chance="10000"/><!-- leather boots -->
-		<item id="2461" chance="20000"/><!-- leather helmet -->
-		<item id="2120" chance="23333"/><!-- rope -->
-		<item id="2172" chance="3333"/><!-- bronze amulet -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
-				<item id="2512" chance="6666"/><!-- wooden shield -->
-				<item id="2666" countmax="2" chance="30000"/><!-- meat -->
-				<item id="2380" chance="10000"/><!-- hand axe -->
-				<item id="2170" chance="1428"/><!-- silver amulet -->
-				<item id="2448" chance="10000"/><!-- studded club -->
-			</inside>
-		</item>
+		<item id="2148" countmax="12" chance="26750"/><!-- gold coin -->
+		<item id="2380" chance="18750"/><!-- hand axe -->
+		<item id="2643" chance="8750"/><!-- leather boots -->
+		<item id="2461" chance="9750"/><!-- leather helmet -->
+		<item id="2666" chance="11750"/><!-- meat -->
+		<item id="2120" chance="8750"/><!-- rope -->
+		<item id="2389" chance="12000"/><!-- spear -->
+		<item id="2512" chance="15000"/><!-- wooden shield -->
+		<item id="2448" chance="4500"/><!-- studded club -->
+		<item id="2170" chance="50"/><!-- silver amulet -->
 	</loot>
 </monster>

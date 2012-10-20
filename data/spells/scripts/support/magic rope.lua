@@ -1,21 +1,21 @@
-local spotsId = {384, 418, 8278, 8592}
+local SPOTS = {384, 418, 8278, 8592}
 
 function onCastSpell(cid, var)
-	local pos = getCreaturePosition(cid)
-	pos.stackpos = 0
+	local position = getThingPosition(cid)
+	position.stackpos = 0
 
-	local itemGround = getThingFromPos(pos)
-	if(isInArray(spotsId, itemGround.itemid)) then
-		local newPos = pos
-		newPos.y = newPos.y + 1
-		newPos.z = newPos.z - 1
+	local ground = getThingFromPos(position)
+	if(isInArray(SPOTS, ground.itemid)) then
+		local newPosition = position
+		newPosition.y = newPosition.y + 1
+		newPosition.z = newPosition.z - 1
 
-		doTeleportThing(cid, newPos, false)
-		doSendMagicEffect(pos, CONST_ME_TELEPORT)
+		doTeleportThing(cid, newPosition, false)
+		doSendMagicEffect(position, CONST_ME_TELEPORT)
 		return true
 	else
 		doPlayerSendDefaultCancel(cid, RETURNVALUE_NOTPOSSIBLE)
-		doSendMagicEffect(pos, CONST_ME_POFF)
+		doSendMagicEffect(position, CONST_ME_POFF)
 		return false
 	end
 end

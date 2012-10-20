@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <monster name="Lion" nameDescription="a lion" race="blood" experience="30" speed="180" manacost="320">
 	<health now="80" max="80"/>
 	<look type="41" corpse="5986"/>
@@ -18,7 +18,7 @@
 		<flag runonhealth="10"/>
 	</flags>
 	<attacks>
-		<attack name="melee" interval="2000" skill="32" attack="20"/>
+		<attack name="melee" interval="2000" skill="30" attack="20"/>
 	</attacks>
 	<defenses armor="6" defense="13"/>
 	<elements>
@@ -31,8 +31,8 @@
 		<voice sentence="Groarrr!"/>
 	</voices>
 	<loot>
-		<item id="3976" countmax="10" chance="50000"/><!-- worm -->
-		<item id="2671" countmax="3" chance="80000"/><!-- ham -->
-		<item id="2671" countmax="2" chance="80000"/><!-- ham -->
+		<item id="2671" countmax="2" chance="18000"/><!-- ham -->
+		<item id="2666" countmax="4" chance="17000"/><!-- meat -->
+		<item id="10608" chance="1075"/> <!-- lion's mane -->
 	</loot>
 </monster>

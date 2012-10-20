@@ -1,5 +1,5 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
-<monster name="Hand of Cursed Fate" nameDescription="a hand of cursed fate" race="blood" experience="3850" speed="250" manacost="0">
+<?xml version="1.0" encoding="UTF-8"?>
+<monster name="Hand of Cursed Fate" nameDescription="a hand of cursed fate" race="blood" experience="5000" speed="250" manacost="0">
 	<health now="10500" max="10500"/>
 	<look type="230" corpse="6312"/>
 	<targetchange interval="5000" chance="8"/>
@@ -18,7 +18,7 @@
 		<flag runonhealth="3100"/>
 	</flags>
 	<attacks>
-		<attack name="melee" interval="2000" min="-0" max="-800"/>
+		<attack name="melee" interval="2000" skill="70" attack="130"/>
 		<attack name="manadrain" interval="2000" chance="25" range="7" min="-150" max="-800">
 			<attribute key="areaEffect" value="blueshimmer"/>
 		</attack>
@@ -51,16 +51,23 @@
 		<immunity invisible="1"/>
 	</immunities>
 	<loot>
-		<item id="2148" countmax="100" chance="100000"/><!-- gold coin -->
+		<item id="2148" countmax="90" chance="15000"/><!-- gold coin -->
+		<item id="2148" countmax="60" chance="15000"/><!-- gold coin -->
+		<item id="2152" countmax="5" chance="5000"/><!-- platinum coin -->
+		<item id="2146" countmax="4" chance="3000"/><!-- small sapphires -->
 		<item id="2654" chance="35000"/><!-- cape -->
-		<item id="2152" countmax="1" chance="50000"/><!-- platinum coin -->
-		<item id="2187" chance="1111"/><!-- wand of inferno -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
-				<item id="2148" countmax="65" chance="100000"/><!-- gold coin -->
-				<item id="6500" countmax="1" chance="2500"/><!-- demonic essence -->
-				<item id="2153" chance="1666"/><!-- violet gem -->
-			</inside>
-		</item>
+		<item id="2178" chance="5000"/><!-- mind stone -->
+		<item id="2127" chance="6000"/><!-- emerald bangle -->
+		<item id="6558" countmax="4" chance="7500"/><!-- concentrated demonic blood -->
+		<item id="6500" chance="2500"/><!-- demonic essence -->
+		<item id="2171" chance="2350"/><!-- platinum amulet-->
+		<item id="2187" chance="2900"/><!-- wand of inferno -->
+		<item id="2476" chance="2200"/><!-- knight armor -->
+		<item id="2436" chance="2000"/><!-- skull staff -->
+		<item id="9971" chance="1000"/><!-- gold ingot -->
+		<item id="2487" chance="750"/><!-- crown armor -->
+		<item id="2153" chance="300"/><!-- violet gem -->
+		<item id="5799" chance="100"/><!-- golden figurine -->
+		<item id="7414" chance="100"/><!-- abyss hammer -->
 	</loot>
 </monster>

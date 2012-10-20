@@ -35,8 +35,10 @@ class ContainerIterator
 		ContainerIterator& operator=(const ContainerIterator& rhs);
 		bool operator==(const ContainerIterator& rhs);
 		bool operator!=(const ContainerIterator& rhs);
+
 		ContainerIterator& operator++();
 		ContainerIterator operator++(int32_t);
+
 		Item* operator*();
 		Item* operator->();
 
@@ -67,12 +69,18 @@ class Container : public Item, public Cylinder
 		bool unserializeItemNode(FileLoader& f, NODE node, PropStream& propStream);
 
 		std::string getContentDescription() const;
-		uint32_t getItemHoldingCount() const;
+		virtual uint32_t getItemHoldingCount() const;
 		virtual double getWeight() const;
 
-		uint32_t capacity() const {return maxSize;}
+		uint32_t capacity() const {return maxSize ? maxSize : std::min(255U, (uint32_t)itemlist.size() + 1);}
 		uint32_t size() const {return (uint32_t)itemlist.size();}
-		bool full() const {return itemlist.size() >= maxSize;}
+		bool full() const
+		{
+			if(maxSize)
+				return itemlist.size() >= maxSize;
+
+			return true;
+		}
 		bool empty() const {return itemlist.empty();}
 
 		void addItem(Item* item);
@@ -104,10 +112,10 @@ class Container : public Item, public Cylinder
 		virtual const Creature* getCreature() const {return NULL;}
 
 		virtual ReturnValue __queryAdd(int32_t index, const Thing* thing, uint32_t count,
-			uint32_t flags) const;
+			uint32_t flags, Creature* actor = NULL) const;
 		virtual ReturnValue __queryMaxCount(int32_t index, const Thing* thing, uint32_t count, uint32_t& maxQueryCount,
 			uint32_t flags) const;
-		virtual ReturnValue __queryRemove(const Thing* thing, uint32_t count, uint32_t flags) const;
+		virtual ReturnValue __queryRemove(const Thing* thing, uint32_t count, uint32_t flags, Creature* actor = NULL) const;
 		virtual Cylinder* __queryDestination(int32_t& index, const Thing* thing, Item** destItem,
 			uint32_t& flags);
 
@@ -125,15 +133,13 @@ class Container : public Item, public Cylinder
 		virtual int32_t __getFirstIndex() const;
 		virtual int32_t __getLastIndex() const;
 
-		virtual uint32_t __getItemTypeCount(uint16_t itemId, int32_t subType = -1,
-			bool itemCount = true) const;
-		virtual std::map<uint32_t, uint32_t>& __getAllItemTypeCount(std::map<uint32_t,
-			uint32_t>& countMap, bool itemCount = true) const;
+		virtual uint32_t __getItemTypeCount(uint16_t itemId, int32_t subType = -1) const;
+		virtual std::map<uint32_t, uint32_t>& __getAllItemTypeCount(std::map<uint32_t, uint32_t>& countMap) const;
 
 		virtual void postAddNotification(Creature* actor, Thing* thing, const Cylinder* oldParent,
-			int32_t index, cylinderlink_t link = LINK_OWNER);
+			int32_t index, CylinderLink_t link = LINK_OWNER);
 		virtual void postRemoveNotification(Creature* actor, Thing* thing, const Cylinder* newParent,
-			int32_t index, bool isCompleteRemoval, cylinderlink_t link = LINK_OWNER);
+			int32_t index, bool isCompleteRemoval, CylinderLink_t link = LINK_OWNER);
 
 		virtual void __internalAddThing(Thing* thing);
 		virtual void __internalAddThing(uint32_t index, Thing* thing);

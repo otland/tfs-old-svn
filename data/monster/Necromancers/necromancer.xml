@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <monster name="Necromancer" nameDescription="a necromancer" race="blood" experience="580" speed="200" manacost="0">
 	<health now="580" max="580"/>
 	<look type="9" corpse="6080"/>
@@ -54,24 +54,18 @@
 		<voice sentence="Taste the sweetness of death!"/>
 	</voices>
 	<loot>
-		<item id="2186" chance="110"/><!-- moonlight rod -->
-		<item id="2148" countmax="40" chance="100000"/><!-- gold coin -->
-		<item id="2032" chance="10000"/><!-- bowl -->
-		<item id="2804" countmax="2" chance="20000"/><!-- shadow herb -->
-		<item id="2182" chance="1333"/><!-- snakebite rod -->
-		<item id="2406" chance="15000"/><!-- short sword -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
-				<item id="2412" chance="10000"/><!-- katana -->
-				<item id="2483" chance="10000"/><!-- scale armor -->
-				<item id="2796" countmax="1" chance="1500"/><!-- green mushroom -->
-				<item id="2229" countmax="3" chance="20000"/><!-- skull -->
-				<item id="2747" chance="20000"/><!-- grave flower -->
-				<item id="2436" chance="833"/><!-- skull staff -->
-				<item id="2663" chance="909"/><!-- mystic turban -->
-				<item id="2195" chance="666"/><!-- boots of haste -->
-				<item id="2423" chance="5000"/><!-- clerical mace -->
-			</inside>
-		</item>
+		<item id="2148" countmax="60" chance="8250"/><!-- gold coin -->
+		<item id="2148" countmax="30" chance="8250"/><!-- gold coin -->
+		<item id="2545" countmax="5" chance="4000"/><!-- poison arrow -->
+		<item id="2406" chance="14000"/><!-- short sword -->
+		<item id="2483" chance="10500"/><!-- scale armor -->
+		<item id="2796" chance="3000"/><!-- green mushroom -->
+		<item id="2423" chance="1700"/><!-- clerical mace -->
+		<item id="7589" chance="1250"/><!-- strong mana potion -->
+		<item id="2663" chance="375"/><!-- mystic turban -->
+		<item id="2436" chance="125"/><!-- skull staff -->
+		<item id="7456" chance="50"/><!-- noble axe -->
+		<item id="8901" chance="125"/><!-- spellbook of warding -->
+		<item id="2195" chance="275"/><!-- boots of haste -->
 	</loot>
 </monster>

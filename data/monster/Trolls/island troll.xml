@@ -18,7 +18,7 @@
 		<flag runonhealth="15"/>
 	</flags>
 	<attacks>
-		<attack name="melee" interval="2000" skill="19" attack="12"/>
+		<attack name="melee" interval="2000" skill="10" attack="10"/>
 	</attacks>
 	<defenses armor="7" defense="9"/>
 	<voices interval="5000" chance="10">
@@ -29,22 +29,18 @@
 		<voice sentence="Gruntz!"/>
 	</voices>
 	<loot>
-		<item id="3976" countmax="10" chance="50000"/><!-- worm -->
-		<item id="2148" countmax="10" chance="100000"/><!-- gold coin -->
-		<item id="2389" countmax="1" chance="33333"/><!-- spear -->
-		<item id="2643" chance="10000"/><!-- leather boots -->
-		<item id="2461" chance="20000"/><!-- leather helmet -->
-		<item id="2120" chance="23333"/><!-- rope -->
-		<item id="2172" chance="3333"/><!-- bronze amulet -->
-		<item id="5901" countmax="1" chance="5000"/><!-- wood -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
-				<item id="2512" chance="6666"/><!-- wooden shield -->
-				<item id="2666" countmax="2" chance="30000"/><!-- meat -->
-				<item id="2380" chance="10000"/><!-- hand axe -->
-				<item id="2170" chance="1428"/><!-- silver amulet -->
-				<item id="2448" chance="10000"/><!-- studded club -->
-			</inside>
-		</item>
+		<item id="2148" countmax="10" chance="35000"/><!-- gold coin -->
+		<item id="5901" chance="15000"/><!-- wood -->
+		<item id="2389" chance="23000"/><!-- spear -->
+		<item id="2380" chance="17000"/><!-- hand axe -->
+		<item id="2512" chance="15000"/><!-- wooden shield -->
+		<item id="2666" chance="15000"/><!-- meat -->
+		<item id="5901" chance="15000"/><!-- wood -->
+		<item id="2643" chance="11500"/><!-- leather boots -->
+		<item id="2461" chance="10000"/><!-- leather helmet -->
+		<item id="2120" chance="7250"/><!-- rope -->
+		<item id="2448" chance="6000"/><!-- studded club -->
+		<item id="2170" chance="50"/><!-- silver amulet -->
+		<item id="7963" chance="150"/><!-- marlin -->
 	</loot>
 </monster>

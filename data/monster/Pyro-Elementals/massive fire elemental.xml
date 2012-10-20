@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<monster name="Massive Fire Elemental" nameDescription="a massive fire elemental" race="fire" experience="950" speed="260" manacost="0">
+<monster name="Massive Fire Elemental" nameDescription="a massive fire elemental" race="fire" experience="1400" speed="260" manacost="0">
 	<health now="1800" max="1800"/>
 	<look type="242" corpse="1492"/>
 	<targetchange interval="5000" chance="8"/>
@@ -18,7 +18,7 @@
 		<flag runonhealth="0"/>
 	</flags>
 	<attacks>
-		<attack name="melee" interval="2000" skill="70" attack="90" fire="200"/>
+		<attack name="melee" interval="2000" skill="40" attack="100" fire="200"/>
 		<attack name="firefield" interval="2000" chance="16" range="7" radius="3" target="1">
 			<attribute key="shootEffect" value="fire"/>
 		</attack>

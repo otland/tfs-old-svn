@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <monster name="Blightwalker" nameDescription="a blightwalker" race="undead" experience="3350" speed="240" manacost="0">
 	<health now="8900" max="8900"/>
 	<look type="246" corpse="6354"/>
@@ -18,7 +18,7 @@
 		<flag runonhealth="0"/>
 	</flags>
 	<attacks>
-		<attack name="melee" interval="2000" min="-0" max="-450"/>
+		<attack name="melee" interval="2000" skill="88" attack="100"/>
 		<attack name="physical" interval="1500" chance="34" range="7" min="-105" max="-155">
 			<attribute key="shootEffect" value="smallstone"/>
 		</attack>
@@ -48,21 +48,25 @@
 		<voice sentence="Let me taste your mortality!"/>
 	</voices>
 	<loot>
-		<item id="2148" countmax="20" chance="100000"/><!-- gold coin -->
-		<item id="2694" countmax="3" chance="5000"/><!-- bunch of wheat -->
-		<item id="2050" chance="10000"/><!-- torch -->
-		<item id="2230" chance="6666"/><!-- bone -->
-		<item id="2260" chance="2222"/><!-- blank rune -->
-		<item id="5902" chance="1100"/><!-- honeycomb -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
-				<item id="2386" chance="2000"/><!-- axe -->
-				<item id="2649" chance="2500"/><!-- leather legs -->
-				<item id="6500" countmax="2" chance="2222"/><!-- demonic essence -->
-				<item id="5944" countmax="1" chance="1667"/><!-- soul orb -->
-				<item id="2436" chance="909"/><!-- skull staff -->
-				<item id="2550" chance="5000"/><!-- scythe -->
-			</inside>
-		</item>
+		<item id="2148" countmax="80" chance="627500"/><!-- gold coin -->
+		<item id="2148" countmax="70" chance="627500"/><!-- gold coin -->
+		<item id="2260" chance="29750"/><!-- blank rune -->
+		<item id="2694" countmax="3" chance="33000"/><!-- bunch of wheat -->
+		<item id="6500"  chance="22000"/><!-- demonic essence -->
+		<item id="2179" chance="7800"/><!-- gold ring -->
+		<item id="2152" countmax="3" chance="7500"/><!-- platinum coin -->
+		<item id="2545" countmax="9" chance="627500"/><!-- poison arrow -->
+		<item id="7732" chance="1550"/><!-- seeds -->
+		<item id="5944" chance="15500"/><!-- soul orb -->
+		<item id="2550" chance="5000"/><!-- scythe -->
+		<item id="9810" chance="7800"/><!-- rusty armor -->
+		<item id="2183" chance="700"/><!-- hailstorm rod -->
+		<item id="7885" chance="1550"/><!-- terra legs -->
+		<item id="7884" chance="1750"/><!-- terra mantle -->
+		<item id="2199" chance="750"/><!-- garlic necklace -->
+		<item id="2173" chance="50"/><!-- amulet of loss -->
+		<item id="6300" chance="100"/><!-- death ring -->
+		<item id="9971" chance="150"/><!-- gold ingot -->
+		<item id="2436" chance="500"/><!-- skull staff -->
 	</loot>
 </monster>

@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <monster name="Larva" nameDescription="a larva" race="venom" experience="40" speed="135" manacost="355">
 	<health now="70" max="70"/>
 	<look type="82" corpse="6023"/>
@@ -18,7 +18,7 @@
 		<flag runonhealth="0"/>
 	</flags>
 	<attacks>
-		<attack name="melee" interval="2000" min="-10" max="-40" poison="15"/>
+		<attack name="melee" interval="2000" skill="25" attack="20" poison="15"/>
 	</attacks>
 	<defenses armor="5" defense="11"/>
 	<elements>
@@ -31,8 +31,7 @@
 		<immunity paralyze="1"/>
 	</immunities>
 	<loot>
-		<item id="3976" countmax="10" chance="50000"/><!-- worm -->
-		<item id="2148" countmax="8" chance="100000"/><!-- gold coin -->
-		<item id="2666" countmax="1" chance="80000"/><!-- meat -->
+		<item id="2148" countmax="15" chance="35000"/><!-- gold coin -->
+		<item id="2666" countmax="1" chance="33000"/><!-- meat -->
 	</loot>
 </monster>

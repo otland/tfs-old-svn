@@ -3,9 +3,11 @@ local npcHandler = NpcHandler:new(keywordHandler)
 NpcSystem.parseParameters(npcHandler)
 
 function onCreatureAppear(cid)				npcHandler:onCreatureAppear(cid) 			end
-function onCreatureDisappear(cid) 			npcHandler:onCreatureDisappear(cid) 			end
-function onCreatureSay(cid, type, msg) 			npcHandler:onCreatureSay(cid, type, msg) 		end
-function onThink() 					npcHandler:onThink() 					end
+function onCreatureDisappear(cid) 			npcHandler:onCreatureDisappear(cid) 		end
+function onCreatureSay(cid, type, msg) 		npcHandler:onCreatureSay(cid, type, msg) 	end
+function onThink() 							npcHandler:onThink() 						end
+function onPlayerEndTrade(cid)				npcHandler:onPlayerEndTrade(cid)			end
+function onPlayerCloseChannel(cid)			npcHandler:onPlayerCloseChannel(cid)		end
 
 -- Don't forget npcHandler = npcHandler in the parameters. It is required for all StdModule functions!
 keywordHandler:addKeyword({'helmets'}, StdModule.say, {npcHandler = npcHandler, onlyFocus = true, text = 'I buy royal (40k), warrior (6k), crusader (9k), crown (5k), devil (4k), chain (35gp) and iron helmets (30gp), also mystic turbans (500gp).'})

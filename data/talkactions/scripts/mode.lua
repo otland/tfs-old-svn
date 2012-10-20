@@ -1,7 +1,7 @@
 local config = {
-	nopvp = {"1", "nopvp", "nonpvp", "no-pvp", "non-pvp", "safe"},
-	pvp = {"2", "pvp", "normal"},
-	pvpenforced = {"3", "pvpe", "pvpenforced", "pvp-enforced", "war"}
+	optional = {"1", "optional", "optionalpvp"},
+	open = {"2", "open", "openpvp"},
+	hardcore = {"3", "hardcore", "hardcorepvp"}
 }
 
 function onSay(cid, words, param, channel)
@@ -12,15 +12,15 @@ function onSay(cid, words, param, channel)
 
 	local world = getWorldType()
 	param = param:lower()
-	if(table.isStrIn(param, config.nopvp)) then
-		setWorldType(WORLD_TYPE_NO_PVP)
-		world = "No-PVP"
-	elseif(table.isStrIn(param, config.pvp)) then
-		setWorldType(WORLD_TYPE_PVP)
-		world = "PVP"
-	elseif(table.isStrIn(param, config.pvpenforced)) then
-		setWorldType(WORLD_TYPE_PVP_ENFORCED)
-		world = "PVP-Enforced"
+	if(table.isStrIn(param, config.optional)) then
+		setWorldType(WORLDTYPE_OPTIONAL)
+		world = "Optional PvP"
+	elseif(table.isStrIn(param, config.open)) then
+		setWorldType(WORLDTYPE_OPEN)
+		world = "Open PvP"
+	elseif(table.isStrIn(param, config.hardcore)) then
+		setWorldType(WORLDTYPE_HARDCORE)
+		world = "Hardcore PvP"
 	else
 		doPlayerSendCancel(cid, "Bad gameworld type.")
 		return true

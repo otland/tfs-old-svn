@@ -15,6 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////
 #include "otpch.h"
+#ifdef __USE_SQLITE__
 #include <iostream>
 #include <boost/regex.hpp>
 
@@ -23,17 +24,16 @@
 
 #include "tools.h"
 #include "configmanager.h"
+
 extern ConfigManager g_config;
 
 #if SQLITE_VERSION_NUMBER < 3003009
-#define OTSYS_SQLITE3_PREPARE sqlite3_prepare
-#else
-#define OTSYS_SQLITE3_PREPARE sqlite3_prepare_v2
+#define sqlite3_prepare_v2 sqlite3_prepare
 #endif
 
-DatabaseSQLite::DatabaseSQLite()
+DatabaseSQLite::DatabaseSQLite() :
+	m_handle(NULL)
 {
-	m_connected = false;
 	// test for existence of database file;
 	// sqlite3_open will create a new one if it isn't there (what we don't want)
 	if(!fileExists(g_config.getString(ConfigManager::SQL_FILE).c_str()))
@@ -42,32 +42,20 @@ DatabaseSQLite::DatabaseSQLite()
 	// Initialize sqlite
 	if(sqlite3_open(g_config.getString(ConfigManager::SQL_FILE).c_str(), &m_handle) != SQLITE_OK)
 	{
-		std::cout << "Failed to initialize SQLite connection." << std::endl;
+		std::clog << "Failed to initialize SQLite connection: " << sqlite3_errmsg(m_handle) << " (" << sqlite3_errcode(m_handle) << ")" << std::endl;
 		sqlite3_close(m_handle);
 	}
 	else
 		m_connected = true;
 }
 
-bool DatabaseSQLite::getParam(DBParam_t param)
-{
-	switch(param)
-	{
-		case DBPARAM_MULTIINSERT:
-		default:
-			break;
-	}
-
-	return false;
-}
-
-std::string DatabaseSQLite::_parse(const std::string &s)
+std::string DatabaseSQLite::_parse(const std::string& s)
 {
 	std::string query = "";
 	query.reserve(s.size());
 
 	bool inString = false;
-	for(uint32_t i = 0; i < s.length(); i++)
+	for(uint32_t i = 0; i < s.length(); ++i)
 	{
 		uint8_t ch = s[i];
 		if(ch == '\'')
@@ -87,23 +75,22 @@ std::string DatabaseSQLite::_parse(const std::string &s)
 	return query;
 }
 
-bool DatabaseSQLite::executeQuery(const std::string &query)
+bool DatabaseSQLite::query(std::string query)
 {
 	boost::recursive_mutex::scoped_lock lockClass(sqliteLock);
 	if(!m_connected)
 		return false;
 
-	#ifdef __SQL_QUERY_DEBUG__
-	std::cout << "SQLITE QUERY: " << query << std::endl;
-	#endif
-
 	std::string buf = _parse(query);
+#ifdef __SQL_QUERY_DEBUG__
+	std::clog << "SQLLITE DEBUG, query: " << buf << std::endl;
+#endif
 	sqlite3_stmt* stmt;
 	// prepares statement
-	if(OTSYS_SQLITE3_PREPARE(m_handle, buf.c_str(), buf.length(), &stmt, NULL) != SQLITE_OK)
+	if(sqlite3_prepare_v2(m_handle, buf.c_str(), buf.length(), &stmt, NULL) != SQLITE_OK)
 	{
 		sqlite3_finalize(stmt);
-		std::cout << "OTSYS_SQLITE3_PREPARE(): SQLITE ERROR: " << sqlite3_errmsg(m_handle)  << " (" << buf << ")" << std::endl;
+		std::clog << "sqlite3_prepare_v2(): SQLITE ERROR: " << sqlite3_errmsg(m_handle)  << " (" << buf << ")" << std::endl;
 		return false;
 	}
 
@@ -112,7 +99,7 @@ bool DatabaseSQLite::executeQuery(const std::string &query)
 	if(ret != SQLITE_OK && ret != SQLITE_DONE && ret != SQLITE_ROW)
 	{
 		sqlite3_finalize(stmt);
-		std::cout << "sqlite3_step(): SQLITE ERROR: " << sqlite3_errmsg(m_handle) << std::endl;
+		std::clog << "sqlite3_step(): SQLITE ERROR: " << sqlite3_errmsg(m_handle) << std::endl;
 		return false;
 	}
 
@@ -122,23 +109,22 @@ bool DatabaseSQLite::executeQuery(const std::string &query)
 	return true;
 }
 
-DBResult* DatabaseSQLite::storeQuery(const std::string &query)
+DBResult* DatabaseSQLite::storeQuery(std::string query)
 {
 	boost::recursive_mutex::scoped_lock lockClass(sqliteLock);
 	if(!m_connected)
 		return NULL;
 
-	#ifdef __SQL_QUERY_DEBUG__
-	std::cout << "SQLITE QUERY: " << query << std::endl;
-	#endif
-
 	std::string buf = _parse(query);
+#ifdef __SQL_QUERY_DEBUG__
+	std::clog << "SQLLITE DEBUG, storeQuery: " << buf << std::endl;
+#endif
 	sqlite3_stmt* stmt;
 	// prepares statement
-	if(OTSYS_SQLITE3_PREPARE(m_handle, buf.c_str(), buf.length(), &stmt, NULL) != SQLITE_OK)
+	if(sqlite3_prepare_v2(m_handle, buf.c_str(), buf.length(), &stmt, NULL) != SQLITE_OK)
 	{
 		sqlite3_finalize(stmt);
-		std::cout << "OTSYS_SQLITE3_PREPARE(): SQLITE ERROR: " << sqlite3_errmsg(m_handle)  << " (" << buf << ")" << std::endl;
+		std::clog << "sqlite3_prepare_v2(): SQLITE ERROR: " << sqlite3_errmsg(m_handle)  << " (" << buf << ")" << std::endl;
 		return NULL;
 	}
 
@@ -146,16 +132,16 @@ DBResult* DatabaseSQLite::storeQuery(const std::string &query)
 	return verifyResult(result);
 }
 
-std::string DatabaseSQLite::escapeString(const std::string &s)
+std::string DatabaseSQLite::escapeString(std::string s)
 {
 	// remember about quoiting even an empty string!
 	if(!s.size())
 		return std::string("''");
 
 	// the worst case is 2n + 3
-	char* output = new char[s.length() * 2 + 3];
+	char* output = new char[(s.length() << 1) + 3];
 	// quotes escaped string and frees temporary buffer
-	sqlite3_snprintf(s.length() * 2 + 1, output, "%Q", s.c_str());
+	sqlite3_snprintf((s.length() << 1) + 1, output, "%Q", s.c_str());
 
 	std::string r(output);
 	delete[] output;
@@ -173,7 +159,7 @@ std::string DatabaseSQLite::escapeBlob(const char* s, uint32_t length)
 {
 	std::string buf = "x'";
 	char* hex = new char[2 + 1]; //need one extra byte for null-character
-	for(uint32_t i = 0; i < length; i++)
+	for(uint32_t i = 0; i < length; ++i)
 	{
 		sprintf(hex, "%02x", ((uint8_t)s[i]));
 		buf += hex;
@@ -184,27 +170,27 @@ std::string DatabaseSQLite::escapeBlob(const char* s, uint32_t length)
 	return buf;
 }
 
-int32_t SQLiteResult::getDataInt(const std::string &s)
+int32_t SQLiteResult::getDataInt(const std::string& s)
 {
 	listNames_t::iterator it = m_listNames.find(s);
 	if(it != m_listNames.end())
 		return sqlite3_column_int(m_handle, it->second);
 
-	std::cout << "Error during getDataInt(" << s << ")." << std::endl;
+	std::clog << "Error during getDataInt(" << s << ")." << std::endl;
 	return 0; // Failed
 }
 
-int64_t SQLiteResult::getDataLong(const std::string &s)
+int64_t SQLiteResult::getDataLong(const std::string& s)
 {
 	listNames_t::iterator it = m_listNames.find(s);
 	if(it != m_listNames.end())
 		return sqlite3_column_int64(m_handle, it->second);
 
-	std::cout << "Error during getDataLong(" << s << ")." << std::endl;
+	std::clog << "Error during getDataLong(" << s << ")." << std::endl;
 	return 0; // Failed
 }
 
-std::string SQLiteResult::getDataString(const std::string &s)
+std::string SQLiteResult::getDataString(const std::string& s)
 {
 	listNames_t::iterator it = m_listNames.find(s);
 	if(it != m_listNames.end() )
@@ -213,11 +199,11 @@ std::string SQLiteResult::getDataString(const std::string &s)
 		return value;
 	}
 
-	std::cout << "Error during getDataString(" << s << ")." << std::endl;
+	std::clog << "Error during getDataString(" << s << ")." << std::endl;
 	return std::string(""); // Failed
 }
 
-const char* SQLiteResult::getDataStream(const std::string &s, uint64_t &size)
+const char* SQLiteResult::getDataStream(const std::string& s, uint64_t& size)
 {
 	listNames_t::iterator it = m_listNames.find(s);
 	if(it != m_listNames.end())
@@ -227,33 +213,42 @@ const char* SQLiteResult::getDataStream(const std::string &s, uint64_t &size)
 		return value;
 	}
 
-	std::cout << "Error during getDataStream(" << s << ")." << std::endl;
+	std::clog << "Error during getDataStream(" << s << ")." << std::endl;
 	return NULL; // Failed
 }
 
 void SQLiteResult::free()
 {
-	if(m_handle)
+	if(!m_handle)
 	{
-		sqlite3_finalize(m_handle);
-		delete this;
+		std::clog << "[Critical - SQLiteResult::free] Trying to free already freed result!!!" << std::endl;
+		return;
 	}
-	else
-		std::cout << "[Warning - SQLiteResult::free] Trying to free already freed result." << std::endl;
+
+	sqlite3_finalize(m_handle);
+	m_handle = NULL;
+
+	m_listNames.clear();
+	delete this;
+}
+
+SQLiteResult::~SQLiteResult()
+{
+	if(!m_handle)
+		return;
+
+	sqlite3_finalize(m_handle);
+	m_listNames.clear();
 }
 
 SQLiteResult::SQLiteResult(sqlite3_stmt* stmt)
 {
 	if(!stmt)
-	{
-		delete this;
 		return;
-	}
 
 	m_handle = stmt;
-	m_listNames.clear();
-
 	int32_t fields = sqlite3_column_count(m_handle);
-	for(int32_t i = 0; i < fields; i++)
+	for(int32_t i = 0; i < fields; ++i)
 		m_listNames[sqlite3_column_name(m_handle, i)] = i;
 }
+#endif

@@ -15,9 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////
 #include "otpch.h"
-
 #include "iomap.h"
-#include "fileloader.h"
 
 #include "map.h"
 #include "town.h"
@@ -29,7 +27,11 @@
 #include "teleport.h"
 #include "beds.h"
 
+#include "fileloader.h"
+#include "configmanager.h"
 #include "game.h"
+
+extern ConfigManager g_config;
 extern Game g_game;
 
 typedef uint8_t attribute_t;
@@ -87,7 +89,7 @@ Tile* IOMap::createTile(Item*& ground, Item* item, uint16_t px, uint16_t py, uin
 bool IOMap::loadMap(Map* map, const std::string& identifier)
 {
 	FileLoader f;
-	if(!f.openFile(identifier.c_str(), false, true))
+	if(!f.openFile(identifier.c_str(), "OTBM", false, true))
 	{
 		std::stringstream ss;
 		ss << "Could not open the file " << identifier << ".";
@@ -106,7 +108,7 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 	}
 
 	OTBM_root_header* rootHeader;
-	if(!propStream.GET_STRUCT(rootHeader))
+	if(!propStream.getStruct(rootHeader))
 	{
 		setLastErrorString("Could not read header.");
 		return false;
@@ -122,7 +124,7 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 		return false;
 	}
 
-	if(headerVersion > 2)
+	if(headerVersion > 3)
 	{
 		setLastErrorString("Unknown OTBM version detected.");
 		return false;
@@ -151,7 +153,7 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 	if(headerMinorItems > (uint32_t)Items::dwMinorVersion)
 		setLastErrorString("This map needs an updated items.otb.");
 
-	std::cout << "> Map size: " << rootHeader->width << "x" << rootHeader->height << "." << std::endl;
+	std::clog << "> Map size: " << rootHeader->width << "x" << rootHeader->height << "." << std::endl;
 	map->mapWidth = rootHeader->width;
 	map->mapHeight = rootHeader->height;
 
@@ -170,13 +172,13 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 
 	std::string tmp;
 	uint8_t attribute;
-	while(propStream.GET_UCHAR(attribute))
+	while(propStream.getByte(attribute))
 	{
 		switch(attribute)
 		{
 			case OTBM_ATTR_DESCRIPTION:
 			{
-				if(!propStream.GET_STRING(tmp))
+				if(!propStream.getString(tmp))
 				{
 					setLastErrorString("Invalid description tag.");
 					return false;
@@ -187,7 +189,7 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 			}
 			case OTBM_ATTR_EXT_SPAWN_FILE:
 			{
-				if(!propStream.GET_STRING(tmp))
+				if(!propStream.getString(tmp))
 				{
 					setLastErrorString("Invalid spawnfile tag.");
 					return false;
@@ -199,7 +201,7 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 			}
 			case OTBM_ATTR_EXT_HOUSE_FILE:
 			{
-				if(!propStream.GET_STRING(tmp))
+				if(!propStream.getString(tmp))
 				{
 					setLastErrorString("Invalid housefile tag.");
 					return false;
@@ -217,10 +219,15 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 		}
 	}
 
-	std::cout << "> Map descriptions: " << std::endl;
+	std::clog << "> Map descriptions: " << std::endl;
 	for(StringVec::iterator it = map->descriptions.begin(); it != map->descriptions.end(); ++it)
-		std::cout << "\"" << (*it) << "\"" << std::endl;
+		std::clog << "\"" << (*it) << "\"" << std::endl;
 
+#ifdef __GROUND_CACHE__
+	typedef std::map<uint16_t, std::pair<Item*, int32_t> > CacheMap;
+	CacheMap groundCache;
+
+#endif
 	NODE nodeMapData = f.getChildNode(nodeMap, type);
 	while(nodeMapData != NO_NODE)
 	{
@@ -238,14 +245,14 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 				return false;
 			}
 
-			OTBM_Destination_coords* area_coord;
-			if(!propStream.GET_STRUCT(area_coord))
+			OTBM_Destination_coords* areaCoord;
+			if(!propStream.getStruct(areaCoord))
 			{
 				setLastErrorString("Invalid map node.");
 				return false;
 			}
 
-			int32_t base_x = area_coord->_x, base_y = area_coord->_y, base_z = area_coord->_z;
+			int32_t baseX = areaCoord->_x, baseY = areaCoord->_y, baseZ = areaCoord->_z;
 			NODE nodeTile = f.getChildNode(nodeMapData, type);
 			while(nodeTile != NO_NODE)
 			{
@@ -264,7 +271,7 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 					}
 
 					OTBM_Tile_coords* tileCoord;
-					if(!propStream.GET_STRUCT(tileCoord))
+					if(!propStream.getStruct(tileCoord))
 					{
 						setLastErrorString("Could not read tile position.");
 						return false;
@@ -272,14 +279,14 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 
 					Tile* tile = NULL;
 					Item* ground = NULL;
-					uint32_t tileflags = 0;
+					uint32_t flags = 0;
 
-					uint16_t px = base_x + tileCoord->_x, py = base_y + tileCoord->_y, pz = base_z;
+					uint16_t px = baseX + tileCoord->_x, py = baseY + tileCoord->_y, pz = baseZ;
 					House* house = NULL;
 					if(type == OTBM_HOUSETILE)
 					{
-						uint32_t _houseid;
-						if(!propStream.GET_ULONG(_houseid))
+						uint32_t houseId;
+						if(!propStream.getLong(houseId))
 						{
 							std::stringstream ss;
 							ss << "[x:" << px << ", y:" << py << ", z:" << pz << "] Could not read house id.";
@@ -288,11 +295,11 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 							return false;
 						}
 
-						house = Houses::getInstance()->getHouse(_houseid, true);
+						house = Houses::getInstance()->getHouse(houseId, true);
 						if(!house)
 						{
 							std::stringstream ss;
-							ss << "[x:" << px << ", y:" << py << ", z:" << pz << "] Could not create house id: " << _houseid;
+							ss << "[x:" << px << ", y:" << py << ", z:" << pz << "] Could not create house id: " << houseId;
 
 							setLastErrorString(ss.str());
 							return false;
@@ -303,15 +310,15 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 					}
 
 					//read tile attributes
-					uint8_t attribute;
-					while(propStream.GET_UCHAR(attribute))
+					uint8_t attribute = 0;
+					while(propStream.getByte(attribute))
 					{
 						switch(attribute)
 						{
 							case OTBM_ATTR_TILE_FLAGS:
 							{
-								uint32_t flags;
-								if(!propStream.GET_ULONG(flags))
+								uint32_t _flags;
+								if(!propStream.getLong(_flags))
 								{
 									std::stringstream ss;
 									ss << "[x:" << px << ", y:" << py << ", z:" << pz << "] Failed to read tile flags.";
@@ -320,22 +327,22 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 									return false;
 								}
 
-								if((flags & TILESTATE_PROTECTIONZONE) == TILESTATE_PROTECTIONZONE)
-									tileflags |= TILESTATE_PROTECTIONZONE;
-								else if((flags & TILESTATE_NOPVPZONE) == TILESTATE_NOPVPZONE)
-									tileflags |= TILESTATE_NOPVPZONE;
-								else if((flags & TILESTATE_PVPZONE) == TILESTATE_PVPZONE)
-									tileflags |= TILESTATE_PVPZONE;
+								if((_flags & TILESTATE_PROTECTIONZONE) == TILESTATE_PROTECTIONZONE)
+									flags |= TILESTATE_PROTECTIONZONE;
+								else if((_flags & TILESTATE_OPTIONALZONE) == TILESTATE_OPTIONALZONE)
+									flags |= TILESTATE_OPTIONALZONE;
+								else if((_flags & TILESTATE_HARDCOREZONE) == TILESTATE_HARDCOREZONE)
+									flags |= TILESTATE_HARDCOREZONE;
 
-								if((flags & TILESTATE_NOLOGOUT) == TILESTATE_NOLOGOUT)
-									tileflags |= TILESTATE_NOLOGOUT;
+								if((_flags & TILESTATE_NOLOGOUT) == TILESTATE_NOLOGOUT)
+									flags |= TILESTATE_NOLOGOUT;
 
-								if((flags & TILESTATE_REFRESH) == TILESTATE_REFRESH)
+								if((_flags & TILESTATE_REFRESH) == TILESTATE_REFRESH)
 								{
 									if(house)
-										std::cout << "[x:" << px << ", y:" << py << ", z:" << pz << "] House tile flagged as refreshing!";
+										std::clog << "[x:" << px << ", y:" << py << ", z:" << pz << "] House tile flagged as refreshing!";
 
-									tileflags |= TILESTATE_REFRESH;
+									flags |= TILESTATE_REFRESH;
 								}
 
 								break;
@@ -353,11 +360,14 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 									return false;
 								}
 
-								if(house && item->isMoveable())
+								if(item->getItemCount() <= 0)
+									item->setItemCount(1);
+
+								if(house && item->isMovable())
 								{
-									std::cout << "[Warning - IOMap::loadMap] Movable item in house: " << house->getId();
-									std::cout << ", item type: " << item->getID() << ", at position " << px << "/" << py << "/";
-									std::cout << pz << std::endl;
+									std::clog << "[Warning - IOMap::loadMap] Movable item in house: " << house->getId()
+										<< ", item type: " << item->getID() << ", at position " << px << "/" << py << "/"
+										<< pz << std::endl;
 
 									delete item;
 									item = NULL;
@@ -365,23 +375,60 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 								else if(tile)
 								{
 									tile->__internalAddThing(item);
-									item->__startDecaying();
-									item->setLoadedFromMap(true);
+									if(item->getDecaying() != DECAYING_TRUE)
+									{
+										item->__startDecaying();
+										item->setLoadedFromMap(true);
+									}
 								}
 								else if(item->isGroundTile())
 								{
 									if(ground)
-										delete ground;
+									{
+#ifdef __GROUND_CACHE__
+										CacheMap::iterator it = groundCache.find(ground->getID());
+										bool erase = it == groundCache.end();
+										if(!erase)
+										{
+											it->second.second--;
+											erase = it->second.second < 1;
+											if(erase)
+												groundCache.erase(it);
+										}
 
+										if(erase)
+#endif
+											delete ground;
+									}
+
+#ifdef __GROUND_CACHE__
+									const ItemType& tit = Item::items[item->getID()];
+									if(!(tit.magicEffect != MAGIC_EFFECT_NONE || !tit.walkStack || tit.transformUseTo != 0 || tit.cache ||
+										item->floorChange() || item->canDecay() || item->getActionId() > 0 || item->getUniqueId() > 0))
+									{
+										CacheMap::iterator it = groundCache.find(item->getID());
+										if(it != groundCache.end())
+										{
+											delete item;
+											item = it->second.first;
+											it->second.second++;
+										}
+										else
+											groundCache[item->getID()] = std::make_pair(item, 1);
+									}
+
+#endif
 									ground = item;
 								}
 								else
 								{
 									tile = createTile(ground, item, px, py, pz);
 									tile->__internalAddThing(item);
-
-									item->__startDecaying();
-									item->setLoadedFromMap(true);
+									if(item->getDecaying() != DECAYING_TRUE)
+									{
+										item->__startDecaying();
+										item->setLoadedFromMap(true);
+									}
 								}
 
 								break;
@@ -418,11 +465,14 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 
 							if(item->unserializeItemNode(f, nodeItem, propStream))
 							{
-								if(house && item->isMoveable())
+								if(item->getItemCount() <= 0)
+									item->setItemCount(1);
+
+								if(house && item->isMovable())
 								{
-									std::cout << "[Warning - IOMap::loadMap] Movable item in house: ";
-									std::cout << house->getId() << ", item type: " << item->getID();
-									std::cout << ", pos " << px << "/" << py << "/" << pz << std::endl;
+									std::clog << "[Warning - IOMap::loadMap] Movable item in house: "
+										<< house->getId() << ", item type: " << item->getID()
+										<< ", pos " << px << "/" << py << "/" << pz << std::endl;
 
 									delete item;
 									item = NULL;
@@ -430,23 +480,60 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 								else if(tile)
 								{
 									tile->__internalAddThing(item);
-									item->__startDecaying();
-									item->setLoadedFromMap(true);
+									if(item->getDecaying() != DECAYING_TRUE)
+									{
+										item->__startDecaying();
+										item->setLoadedFromMap(true);
+									}
 								}
 								else if(item->isGroundTile())
 								{
 									if(ground)
-										delete ground;
+									{
+#ifdef __GROUND_CACHE__
+										CacheMap::iterator it = groundCache.find(ground->getID());
+										bool erase = it == groundCache.end();
+										if(!erase)
+										{
+											it->second.second--;
+											erase = it->second.second < 1;
+											if(erase)
+												groundCache.erase(it);
+										}
 
+										if(erase)
+#endif
+											delete ground;
+									}
+
+#ifdef __GROUND_CACHE__
+									const ItemType& tit = Item::items[item->getID()];
+									if(!(tit.magicEffect != MAGIC_EFFECT_NONE || !tit.walkStack || tit.transformUseTo != 0 || tit.cache ||
+										item->floorChange() || item->canDecay() || item->getActionId() > 0 || item->getUniqueId() > 0))
+									{
+										CacheMap::iterator it = groundCache.find(item->getID());
+										if(it != groundCache.end())
+										{
+											delete item;
+											item = it->second.first;
+											it->second.second++;
+										}
+										else
+											groundCache[item->getID()] = std::make_pair(item, 1);
+									}
+
+#endif
 									ground = item;
 								}
 								else
 								{
 									tile = createTile(ground, item, px, py, pz);
 									tile->__internalAddThing(item);
-
-									item->__startDecaying();
-									item->setLoadedFromMap(true);
+									if(item->getDecaying() != DECAYING_TRUE)
+									{
+										item->__startDecaying();
+										item->setLoadedFromMap(true);
+									}
 								}
 							}
 							else
@@ -473,7 +560,7 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 					if(!tile)
 						tile = createTile(ground, NULL, px, py, pz);
 
-					tile->setFlag((tileflags_t)tileflags);
+					tile->setFlag((tileflags_t)flags);
 					map->setTile(px, py, pz, tile);
 				}
 				else
@@ -499,7 +586,7 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 					}
 
 					uint32_t townId = 0;
-					if(!propStream.GET_ULONG(townId))
+					if(!propStream.getLong(townId))
 					{
 						setLastErrorString("Could not read town id.");
 						return false;
@@ -513,7 +600,7 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 					}
 
 					std::string townName;
-					if(!propStream.GET_STRING(townName))
+					if(!propStream.getString(townName))
 					{
 						setLastErrorString("Could not read town name.");
 						return false;
@@ -521,7 +608,7 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 
 					town->setName(townName);
 					OTBM_Destination_coords *townCoords;
-					if(!propStream.GET_STRUCT(townCoords))
+					if(!propStream.getStruct(townCoords))
 					{
 						setLastErrorString("Could not read town coordinates.");
 						return false;
@@ -552,14 +639,14 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 					}
 
 					std::string name;
-					if(!propStream.GET_STRING(name))
+					if(!propStream.getString(name))
 					{
 						setLastErrorString("Could not read waypoint name.");
 						return false;
 					}
 
 					OTBM_Destination_coords* waypoint_coords;
-					if(!propStream.GET_STRUCT(waypoint_coords))
+					if(!propStream.getStruct(waypoint_coords))
 					{
 						setLastErrorString("Could not read waypoint coordinates.");
 						return false;
@@ -586,5 +673,30 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 		nodeMapData = f.getNextNode(nodeMapData, type);
 	}
 
+#ifdef __GROUND_CACHE__
+	for(CacheMap::iterator it = groundCache.begin(); it != groundCache.end(); ++it)
+	{
+		//it->second.first->setParent(NULL);
+		g_game.grounds[it->second.first] = it->second.second;
+	}
+
+	groundCache.clear();
+#endif
 	return true;
+}
+
+bool IOMap::loadSpawns(Map* map)
+{
+	if(map->spawnfile.empty())
+		map->spawnfile =  g_config.getString(ConfigManager::MAP_NAME) + "-spawn.xml";
+
+	return Spawns::getInstance()->loadFromXml(map->spawnfile);
+}
+
+bool IOMap::loadHouses(Map* map)
+{
+	if(map->housefile.empty())
+		map->housefile = g_config.getString(ConfigManager::MAP_NAME) + "-house.xml";
+
+	return Houses::getInstance()->loadFromXml(map->housefile);
 }

@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <monster name="Goblin Scavenger" nameDescription="a goblin scavenger" race="blood" experience="37" speed="220" manacost="310">
 	<health now="60" max="60"/>
 	<look type="297" corpse="6002"/>
@@ -18,7 +18,7 @@
 		<flag runonhealth="10"/>
 	</flags>
 	<attacks>
-		<attack name="melee" interval="2000" skill="15" attack="6"/>
+		<attack name="melee" interval="2000" skill="10" attack="15"/>
 		<attack name="physical" interval="1000" chance="9" range="7" min="-0" max="-29">
 			<attribute key="shootEffect" value="smallstone"/>
 		</attack>
@@ -41,20 +41,16 @@
 		<voice sentence="Uhh!"/>
 	</voices>
 	<loot>
-		<item id="3976" countmax="10" chance="50000"/><!-- worm -->
-		<item id="2148" countmax="9" chance="100000"/><!-- gold coin -->
-		<item id="2461" chance="10000"/><!-- leather helmet -->
-		<item id="2406" chance="10000"/><!-- short sword -->
-		<item id="2467" chance="10000"/><!-- leather armor -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
-				<item id="2559" chance="10000"/><!-- small axe -->
-				<item id="1294" countmax="3" chance="20000"/><!-- small stone -->
-				<item id="2667" countmax="2" chance="20000"/><!-- fish -->
-				<item id="2230" chance="10000"/><!-- bone -->
-				<item id="2235" chance="10000"/><!-- moldy cheese -->
-			</inside>
-		</item>
+		<item id="2148" countmax="9" chance="31500"/><!-- gold coin -->
+		<item id="1294" countmax="4" chance="9000"/><!-- small stone -->
+		<item id="2379" chance="22500"/><!-- dagger -->
+		<item id="2230" chance="15000"/><!-- bone -->
+		<item id="2559" chance="14250"/><!-- small axe -->
+		<item id="2667" chance="12500"/><!-- fish -->
+		<item id="2461" chance="12500"/><!-- leather helmet -->
+		<item id="2235" chance="6000"/><!-- moldy cheese -->
+		<item id="2406" chance="8200"/><!-- short sword -->
+		<item id="2467" chance="4000"/><!-- leather armor -->
+		<item id="2449" chance="8000"/><!-- bone club -->
 	</loot>
 </monster>
-

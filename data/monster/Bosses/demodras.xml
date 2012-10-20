@@ -62,17 +62,13 @@
 		<item id="2546" countmax="5" chance="2222"/><!-- burst arrow -->
 		<item id="2796" countmax="1" chance="6666"/><!-- green mushroom -->
 		<item id="3976" countmax="10" chance="50000"/><!-- worm -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
-				<item id="2148" countmax="100" chance="100000"/><!-- gold coin -->
-				<item id="2149" countmax="2" chance="833"/><!-- small emerald -->
-				<item id="2392" chance="1428"/><!-- fire sword -->
-				<item id="2146" countmax="2" chance="2222"/><!-- small sapphire -->
-				<item id="2528" chance="1333"/><!-- tower shield -->
-				<item id="5948" countmax="1" chance="5000"/><!-- red dragon leather -->
-				<item id="5882" countmax="1" chance="5000"/><!-- red dragon scale -->
-				<item id="5919" chance="100000"/><!-- dragon claw -->
-			</inside>
-		</item>
+		<item id="2148" countmax="100" chance="100000"/><!-- gold coin -->
+		<item id="2149" countmax="2" chance="833"/><!-- small emerald -->
+		<item id="2392" chance="1428"/><!-- fire sword -->
+		<item id="2146" countmax="2" chance="2222"/><!-- small sapphire -->
+		<item id="2528" chance="1333"/><!-- tower shield -->
+		<item id="5948" countmax="1" chance="5000"/><!-- red dragon leather -->
+		<item id="5882" countmax="1" chance="5000"/><!-- red dragon scale -->
+		<item id="5919" chance="100000"/><!-- dragon claw -->
 	</loot>
 </monster>

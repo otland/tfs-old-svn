@@ -1,5 +1,5 @@
 -- Advanced NPC System (Created by Jiddo),
--- Modified by Talaturen.
+-- Modified by TheForgottenServer Team.
 
 if(Queue == nil) then
 	Queue = {
@@ -12,6 +12,7 @@ if(Queue == nil) then
 		local obj = {}
 		obj.handler = handler
 		obj.customers = {}
+
 		setmetatable(obj, self)
 		self.__index = self
 		return obj
@@ -58,9 +59,9 @@ if(Queue == nil) then
 	function Queue:canGreet(cid)
 		if(isPlayer(cid)) then
 			return self.handler:isInRange(cid)
-		else
-			return false
 		end
+
+		return false
 	end
 
 	-- Greets the player with the given cid.
@@ -83,6 +84,7 @@ if(Queue == nil) then
 				end
 			end
 		end
+
 		return false
 	end
 end

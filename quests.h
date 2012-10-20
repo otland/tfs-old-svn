@@ -26,13 +26,14 @@ typedef std::map<uint32_t, std::string> StateMap;
 class Mission
 {
 	public:
-		Mission(std::string _name, std::string _state, uint32_t _storageId, int32_t _startValue, int32_t _endValue)
+		Mission(std::string _name, std::string _state, std::string _storageId, int32_t _startValue, int32_t _endValue, bool _notify)
 		{
 			name = _name;
 			state = _state;
-			endValue = _endValue;
 			startValue = _startValue;
+			endValue = _endValue;
 			storageId = _storageId;
+			notify = _notify;
 		}
 		virtual ~Mission() {states.clear();}
 
@@ -40,28 +41,37 @@ class Mission
 
 		bool isStarted(Player* player);
 		bool isCompleted(Player* player);
+		bool isNotifying() const {return notify;}
 
 		std::string getName(Player* player) {return (isCompleted(player) ? (name + " (completed)") : name);}
 		std::string getDescription(Player* player);
 
+		int32_t getStartValue() {return startValue;}
+		int32_t getEndValue() {return endValue;}
+
+		const std::string& getStorageId() const {return storageId;}
+
 	private:
+		std::string parseStorages(std::string state, std::string value, Player* player);
+
 		std::string name, state;
 		StateMap states;
 
+		bool notify;
 		int32_t startValue, endValue;
-		uint32_t storageId;
+		std::string storageId;
 };
 
 typedef std::list<Mission*> MissionList;
 class Quest
 {
 	public:
-		Quest(std::string _name, uint16_t _id, uint32_t _storageId, int32_t _storageValue)
+		Quest(std::string _name, uint16_t _id, std::string _storageId, int32_t _storageValue)
 		{
 			name = _name;
 			id = _id;
-			storageId = _storageId;
 			storageValue = _storageValue;
+			storageId = _storageId;
 		}
 		virtual ~Quest();
 
@@ -72,6 +82,8 @@ class Quest
 
 		uint16_t getId() const {return id;}
 		const std::string& getName() const {return name;}
+		const std::string& getStorageId() const {return storageId;}
+		int32_t getStorageValue() const {return storageValue;}
 		uint16_t getMissionCount(Player* player);
 
 		inline MissionList::const_iterator getFirstMission() const {return missions.begin();}
@@ -83,7 +95,7 @@ class Quest
 
 		uint16_t id;
 		int32_t storageValue;
-		uint32_t storageId;
+		std::string storageId;
 };
 
 typedef std::list<Quest*> QuestList;
@@ -103,6 +115,7 @@ class Quests
 		bool loadFromXml();
 		bool parseQuestNode(xmlNodePtr p, bool checkDuplicate);
 
+		bool isQuestStorage(const std::string& key, const std::string& value, bool notification) const;
 		uint16_t getQuestCount(Player* player);
 
 		inline QuestList::const_iterator getFirstQuest() const {return quests.begin();}

@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <monster name="Ghost" nameDescription="a ghost" race="undead" experience="120" speed="160" manacost="100">
 	<health now="150" max="150"/>
 	<look type="48" corpse="5993"/>
@@ -18,7 +18,7 @@
 		<flag runonhealth="0"/>
 	</flags>
 	<attacks>
-		<attack name="melee" interval="2000" skill="45" attack="28"/>
+		<attack name="melee" interval="2000" skill="30" attack="40"/>
 		<attack name="lifedrain" interval="1000" chance="15" range="1" min="-25" max="-45"/>
 	</attacks>
 	<defenses armor="10" defense="10"/>
@@ -28,6 +28,7 @@
 		<element deathPercent="100"/>
 	</elements>
 	<immunities>
+		<immunity physical="1"/>
 		<immunity lifedrain="1"/>
 		<immunity paralyze="1"/>
 	</immunities>
@@ -37,20 +38,14 @@
 		<voice sentence="Buuuuuh"/>
 	</voices>
 	<loot>
-		<item id="2148" countmax="15" chance="100000"/><!-- gold coin -->
-		<item id="2642" chance="10000"/><!-- sandals -->
-		<item id="2404" chance="10000"/><!-- combat knife -->
-		<item id="5909" countmax="1" chance="5000"/><!-- white piece of cloth -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
-				<item id="2394" chance="6666"/><!-- morning star -->
-				<item id="2804" countmax="2" chance="20000"/><!-- shadow herb -->
-				<item id="2532" chance="1666"/><!-- ancient shield -->
-				<item id="2182" chance="1333"/><!-- snakebite rod -->
-				<item id="2165" chance="1538"/><!-- stealth ring -->
-				<item id="2423" chance="10000"/><!-- clerical mace -->
-				<item id="1962" chance="5000"/><!-- book -->
-			</inside>
-		</item>
+		<item id="2642" chance="23750"/><!-- sandals -->
+		<item id="2394" chance="17000"/><!-- morning star -->
+		<item id="2404" chance="7000"/><!-- combat knife -->
+		<item id="2804" chance="5000"/><!-- shadow herb -->
+		<item id="2654" chance="5000"/><!-- cape -->
+		<item id="1962" chance="3600"/><!-- book -->
+		<item id="5909" chance="1800"/><!-- white piece of cloth -->
+		<item id="2532" chance="1700"/><!-- ancient shield -->
+		<item id="2165" chance="500"/><!-- stealth ring -->
 	</loot>
 </monster>

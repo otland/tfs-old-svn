@@ -42,7 +42,7 @@ class BaseEvents
 		virtual bool registerEvent(Event* event, xmlNodePtr p, bool override) = 0;
 		virtual Event* getEvent(const std::string& nodeName) = 0;
 
-		virtual LuaScriptInterface& getInterface() = 0;
+		virtual LuaInterface& getInterface() = 0;
 
 		bool m_loaded;
 };
@@ -57,31 +57,31 @@ enum EventScript_t
 class Event
 {
 	public:
-		Event(LuaScriptInterface* _interface): m_interface(_interface),
-			m_scripted(EVENT_SCRIPT_FALSE), m_scriptId(0) {}
+		Event(LuaInterface* _interface): m_interface(_interface),
+			m_scripted(EVENT_SCRIPT_FALSE), m_scriptId(0), m_scriptData(NULL) {}
 		Event(const Event* copy);
-		virtual ~Event() {}
+		virtual ~Event();
 
 		virtual bool configureEvent(xmlNodePtr p) = 0;
 		virtual bool isScripted() const {return m_scripted != EVENT_SCRIPT_FALSE;}
 
 		bool loadBuffer(const std::string& buffer);
-		bool checkBuffer(const std::string& buffer);
+		bool checkBuffer(const std::string& base, const std::string& buffer) const;
 
 		bool loadScript(const std::string& script, bool file);
-		bool checkScript(const std::string& script, bool file);
+		bool checkScript(const std::string& base, const std::string& script, bool file) const;
 
-		virtual bool loadFunction(const std::string& functionName) {return false;}
+		virtual bool loadFunction(const std::string&) {return false;}
 
 	protected:
 		virtual std::string getScriptEventName() const = 0;
 		virtual std::string getScriptEventParams() const = 0;
 
-		LuaScriptInterface* m_interface;
+		LuaInterface* m_interface;
 		EventScript_t m_scripted;
 
 		int32_t m_scriptId;
-		std::string m_scriptData;
+		std::string* m_scriptData;
 };
 
 class CallBack
@@ -90,11 +90,11 @@ class CallBack
 		CallBack();
 		virtual ~CallBack() {}
 
-		bool loadCallBack(LuaScriptInterface* _interface, std::string name);
+		bool loadCallBack(LuaInterface* _interface, std::string name);
 
 	protected:
 		int32_t m_scriptId;
-		LuaScriptInterface* m_interface;
+		LuaInterface* m_interface;
 
 		bool m_loaded;
 		std::string m_callbackName;

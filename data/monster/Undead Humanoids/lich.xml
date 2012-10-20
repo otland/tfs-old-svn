@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <monster name="Lich" nameDescription="a lich" race="undead" experience="900" speed="320" manacost="0">
 	<health now="880" max="880"/>
 	<look type="99" head="95" body="116" legs="119" feet="115" corpse="6028"/>
@@ -18,7 +18,7 @@
 		<flag runonhealth="0"/>
 	</flags>
 	<attacks>
-		<attack name="melee" interval="2000" min="-30" max="-100"/>
+		<attack name="melee" interval="2000" skill="40" attack="30"/>
 		<attack name="lifedrain" interval="3000" chance="4" range="1" min="-50" max="-250">
 			<attribute key="areaEffect" value="blueshimmer"/>
 		</attack>
@@ -61,22 +61,20 @@
 		<voice sentence="Death and Decay!"/>
 	</voices>
 	<loot>
-		<item id="2148" countmax="100" chance="100000"/><!-- gold coin -->
-		<item id="2401" chance="10000"/><!-- staff -->
-		<item id="2171" chance="1666"/><!-- platinium amulet -->
-		<item id="2656" chance="709"/><!-- blue robe -->
-		<item id="2144" countmax="6" chance="6666"/><!-- black pear -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
-				<item id="2535" chance="588"/><!-- castle shield -->
-				<item id="2165" chance="888"/><!-- stealth ring -->
-				<item id="2143" countmax="4" chance="4000"/><!-- white pear -->
-				<item id="2237" chance="10000"/><!-- dirty cape -->
-				<item id="2148" countmax="12" chance="80000"/><!-- gold coin -->
-				<item id="2175" chance="10000"/><!-- spell book -->
-				<item id="2179" chance="900"/><!-- gold ring -->
-				<item id="3961" chance="1000"/><!-- liche staff -->
-			</inside>
-		</item>
+		<item id="2148" countmax="70" chance="225000"/><!-- gold coin -->
+		<item id="2148" countmax="50" chance="225000"/><!-- gold coin -->
+		<item id="2401" chance="15000"/><!-- staff -->
+		<item id="2175" chance="10000"/><!-- spell book -->
+		<item id="2144" chance="6500"/><!-- black pearl -->
+		<item id="2143" chance="5500"/><!-- white pearl -->
+		<item id="2237" chance="45000"/><!-- dirty cape -->
+		<item id="2479" chance="6000"/><!-- strange helmet -->
+		<item id="2178" chance="5500"/><!-- mind stone -->
+		<item id="7589" chance="2500"/><!-- strong mana potion -->
+		<item id="2171" chance="300"/><!-- platinium amulet -->
+		<item id="2214" chance="750"/><!-- ring of healing -->
+		<item id="7893" chance="600"/><!-- lightning boots -->
+		<item id="2656" chance="200"/><!-- blue robe -->
+		<item id="2535" chance="100"/><!-- castle shield -->
 	</loot>
 </monster>

@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <monster name="Dwarf Guard" nameDescription="a dwarf guard" race="blood" experience="165" speed="200" manacost="650">
 	<health now="245" max="245"/>
 	<look type="70" corpse="6013"/>
@@ -18,7 +18,7 @@
 		<flag runonhealth="0"/>
 	</flags>
 	<attacks>
-		<attack name="melee" interval="2000" min="-60" max="-200"/>
+		<attack name="melee" interval="2000" skill="30" attack="70"/>
 	</attacks>
 	<defenses armor="15" defense="22"/>
 	<elements>
@@ -34,22 +34,18 @@
 		<voice sentence="Hail Durin!"/>
 	</voices>
 	<loot>
-		<item id="3976" countmax="10" chance="50000"/><!-- worm -->
-		<item id="2148" countmax="50" chance="100000"/><!-- gold coin -->
-		<item id="2483" chance="20000"/><!-- scale armor -->
-		<item id="2417" chance="33333"/><!-- battle hammer -->
-		<item id="2387" chance="25000"/><!-- double axe -->
-		<item id="2787" countmax="3" chance="33333"/><!-- white mushroom -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
-				<item id="5880" countmax="2" chance="2500"/><!-- iron ore -->
-				<item id="2148" countmax="15" chance="90000"/><!-- gold coin -->
-				<item id="2459" chance="10000"/><!-- iron helmet -->
-				<item id="2513" chance="6666"/><!-- battle shield -->
-				<item id="2150" countmax="2" chance="4000"/><!-- small amethyst -->
-				<item id="2378" chance="5000"/><!-- battle axe -->
-				<item id="2169" chance="2500"/><!-- time ring -->
-			</inside>
-		</item>
+		<item id="2148" countmax="30" chance="20000"/><!-- gold coin -->
+		<item id="7618" chance="350"/><!-- health potion -->
+		<item id="5880" chance="350"/><!-- iron ore -->
+		<item id="2643" chance="40000"/><!-- leather boots -->
+		<item id="2150" chance="100"/><!-- small amethyst -->
+		<item id="2457" chance="1333"/><!-- steel helmet -->
+		<item id="2513" chance="5000"/><!-- battle shield -->
+		<item id="2417" chance="4000"/><!-- battle hammer -->
+		<item id="2787" countmax="3" chance="28500"/><!-- white mushroom -->
+		<item id="2483" chance="7500"/><!-- scale armor -->
+		<item id="2387" chance="450"/><!-- double axe -->
+		<item id="2459" chance="250"/><!-- iron helmet -->
+		<item id="2208" chance="100"/><!-- axe ring -->
 	</loot>
 </monster>

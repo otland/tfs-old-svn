@@ -19,11 +19,8 @@
 #include "tools.h"
 
 Depot::Depot(uint16_t type):
-	Container(type)
-{
-	maxSize = 30;
-	depotLimit = 1000;
-}
+	Container(type), inbox(NULL), locker(NULL), depotLimit(1000)
+{}
 
 Attr_ReadValue Depot::readAttr(AttrTypes_t attr, PropStream& propStream)
 {
@@ -31,7 +28,7 @@ Attr_ReadValue Depot::readAttr(AttrTypes_t attr, PropStream& propStream)
 		return Item::readAttr(attr, propStream);
 
 	uint16_t depotId;
-	if(!propStream.GET_USHORT(depotId))
+	if(!propStream.getShort(depotId))
 		return ATTR_READ_ERROR;
 
 	setAttribute("depotid", depotId);
@@ -39,14 +36,14 @@ Attr_ReadValue Depot::readAttr(AttrTypes_t attr, PropStream& propStream)
 }
 
 ReturnValue Depot::__queryAdd(int32_t index, const Thing* thing, uint32_t count,
-	uint32_t flags) const
+	uint32_t flags, Creature* actor/* = NULL*/) const
 {
 	const Item* item = thing->getItem();
 	if(!item)
 		return RET_NOTPOSSIBLE;
 
 	if((flags & FLAG_NOLIMIT) == FLAG_NOLIMIT)
-		return Container::__queryAdd(index, thing, count, flags);
+		return Container::__queryAdd(index, thing, count, flags, actor);
 
 	int32_t addCount = 0;
 	if((item->isStackable() && item->getItemCount() != count))
@@ -63,7 +60,7 @@ ReturnValue Depot::__queryAdd(int32_t index, const Thing* thing, uint32_t count,
 	if(getItemHoldingCount() + addCount > depotLimit)
 		return RET_DEPOTISFULL;
 
-	return Container::__queryAdd(index, thing, count, flags);
+	return Container::__queryAdd(index, thing, count, flags, actor);
 }
 
 ReturnValue Depot::__queryMaxCount(int32_t index, const Thing* thing, uint32_t count,
@@ -72,17 +69,25 @@ ReturnValue Depot::__queryMaxCount(int32_t index, const Thing* thing, uint32_t c
 	return Container::__queryMaxCount(index, thing, count, maxQueryCount, flags);
 }
 
+std::map<uint32_t, uint32_t>& Depot::__getAllItemTypeCount(std::map<uint32_t,
+	uint32_t>& countMap) const
+{
+	for(ContainerIterator it = locker->begin(); it != locker->end(); ++it)
+		countMap[(*it)->getID()] += (*it)->getItemCount();
+
+	return countMap;
+}
+
 void Depot::postAddNotification(Creature* actor, Thing* thing, const Cylinder* oldParent,
-	int32_t index, cylinderlink_t link /*= LINK_OWNER*/)
+	int32_t index, CylinderLink_t /*link = LINK_OWNER*/)
 {
 	if(getParent())
 		getParent()->postAddNotification(actor, thing, oldParent, index, LINK_PARENT);
 }
 
 void Depot::postRemoveNotification(Creature* actor, Thing* thing, const Cylinder* newParent,
-	int32_t index, bool isCompleteRemoval, cylinderlink_t link /*= LINK_OWNER*/)
+	int32_t index, bool isCompleteRemoval, CylinderLink_t /*link = LINK_OWNER*/)
 {
 	if(getParent())
-		getParent()->postRemoveNotification(actor, thing, newParent,
-			index, isCompleteRemoval, LINK_PARENT);
+		getParent()->postRemoveNotification(actor, thing, newParent, index, isCompleteRemoval, LINK_PARENT);
 }

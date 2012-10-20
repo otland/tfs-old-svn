@@ -18,7 +18,7 @@
 		<flag runonhealth="0"/>
 	</flags>
 	<attacks>
-		<attack name="melee" interval="2000" chance="100" min="-0" max="-150" range="1"/>
+		<attack name="melee" interval="2000" skill="40" attack="60" range="1"/>
 		<attack name="manadrain" interval="2000" chance="13" min="-30" max="-90" range="7">
 			<attribute key="shootEffect" value="death"/>
 			<attribute key="areaEffect" value="redshimmer"/>
@@ -40,20 +40,16 @@
 		<immunity earth="1"/>
 	</immunities>
 	<loot>
-		<item id="2787" countmax="2" chance="50000"/><!-- white mushroom -->
-		<item id="4860" countmax="1" chance="50000"/><!-- wooden trash -->
-		<item id="2790" countmax="1" chance="50000"/><!-- orange mushroom -->
-		<item id="2148" countmax="89" chance="100000"/><!-- gold coin -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
-				<item id="2788" chance="10000"/><!-- red mushroom -->
-				<item id="7618" chance="3000"/><!-- health potion -->
-				<item id="7588" chance="1200"/><!-- strong health potion -->
-				<item id="2146" chance="1500"/><!-- small emerald -->
-				<item id="2213" chance="800"/><!-- dwarven ring -->
-				<item id="7443" chance="300"/><!-- bullseye potion -->
-				<item id="2515" chance="200"/><!-- guardian shield -->
-			</inside>
-		</item>
+		<item id="2213" chance="1000"/><!-- dwarven ring -->
+		<item id="2148" countmax="96" chance="35000"/><!-- gold coin -->
+		<item id="7618" chance="7200"/><!-- health potion -->
+		<item id="2790" chance="1000"/><!-- orange mushroom -->
+		<item id="2788" chance="8000"/><!-- red mushroom -->
+		<item id="4860" chance="50000"/><!-- wooden trash -->
+		<item id="2146" chance="1500"/><!-- small emerald -->
+		<item id="7588" chance="1000"/><!-- strong health potion -->
+		<item id="3821" chance="500"/><!-- trunk chair kit -->
+		<item id="2787" countmax="2" chance="2200"/><!-- white mushroom -->
+		<item id="7443" chance="300"/><!-- bullseye potion -->
 	</loot>
 </monster>

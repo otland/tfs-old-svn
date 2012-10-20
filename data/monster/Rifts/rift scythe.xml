@@ -27,8 +27,8 @@
 			<attribute key="areaEffect" value="redspark"/>
 		</attack>
 		<attack name="physical" interval="2000" chance="40" radius="4" target="0" min="0" max="-395">
-		      	<attribute key="areaEffect" value="redspark"/>
-	   	</attack>
+			<attribute key="areaEffect" value="redspark"/>
+		</attack>
 		<attack name="physical" interval="3000" chance="60" length="7" spread="3" min="0" max="-300">
 			<attribute key="areaEffect" value="explosionarea"/>
 		</attack>

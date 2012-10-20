@@ -58,11 +58,14 @@ class ProtocolStatus : public Protocol
 		enum {protocolId = 0xFF};
 		enum {isSingleSocket = false};
 		enum {hasChecksum = false};
+
 		static const char* protocolName() {return "status protocol";}
 
 	protected:
 		static IpConnectMap ipConnectMap;
+		#ifdef __DEBUG_NET_DETAIL__
 		virtual void deleteProtocolTask();
+		#endif
 };
 
 class Status
@@ -78,9 +81,6 @@ class Status
 		std::string getStatusString(bool sendPlayers) const;
 		void getInfo(uint32_t requestedInfo, OutputMessage_ptr output, NetworkMessage& msg) const;
 
-		const std::string& getMapName() const {return m_mapName;}
-		void setMapName(std::string mapName) {m_mapName = mapName;}
-
 		uint32_t getUptime() const {return (OTSYS_TIME() - m_start) / 1000;}
 		int64_t getStart() const {return m_start;}
 
@@ -92,6 +92,5 @@ class Status
 
 	private:
 		int64_t m_start;
-		std::string m_mapName;
 };
 #endif

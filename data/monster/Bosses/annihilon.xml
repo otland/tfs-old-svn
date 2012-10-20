@@ -58,12 +58,8 @@
 		<item id="2148" countmax="50" chance="100000"/><!-- gold coin -->
 		<item id="2150" countmax="20" chance="5515"/><!-- small amethyst -->
 		<item id="2520" chance="7000"/><!-- fire axe -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
-				<item id="2158" chance="4300"/><!-- blue gem -->
-				<item id="2520" chance="7600"/><!-- demon shield -->
-				<item id="2165" chance="10000"/><!-- stealth ring -->
-			</inside>
-		</item>
+		<item id="2158" chance="4300"/><!-- blue gem -->
+		<item id="2520" chance="7600"/><!-- demon shield -->
+		<item id="2165" chance="10000"/><!-- stealth ring -->
 	</loot>
 </monster>

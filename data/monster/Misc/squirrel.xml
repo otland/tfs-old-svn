@@ -24,7 +24,7 @@
 		<voice sentence="Chchch"/>
 	</voices>
 	<loot>
-		<item id="7909" countmax="1" chance="50"/><!-- walnut -->
-		<item id="7910" countmax="4" chance="2000"/><!-- peanut -->
+		<item id="7909" chance="2000"/><!-- walnut -->
+		<item id="7910" chance="2500"/><!-- peanut -->
 	</loot>
 </monster>

@@ -35,14 +35,14 @@ bool Outfits::parseOutfitNode(xmlNodePtr p)
 	int32_t intValue;
 	if(!readXMLInteger(p, "id", intValue))
 	{
-		std::cout << "[Error - Outfits::parseOutfitNode] Missing outfit id, skipping" << std::endl;
+		std::clog << "[Error - Outfits::parseOutfitNode] Missing outfit id, skipping" << std::endl;
 		return false;
 	}
 
 	Outfit newOutfit;
 	newOutfit.outfitId = intValue;
 
-	std::string name, strValue;
+	std::string strValue;
 	if(readXMLString(p, "default", strValue))
 		newOutfit.isDefault = booleanString(strValue);
 
@@ -50,10 +50,10 @@ bool Outfits::parseOutfitNode(xmlNodePtr p)
 	{
 		std::stringstream ss;
 		ss << "Outfit #" << newOutfit.outfitId;
-		ss >> name;
+		ss >> newOutfit.name;
 	}
 	else
-		name = strValue;
+		newOutfit.name = strValue;
 
 	bool override = false;
 	if(readXMLString(p, "override", strValue) && booleanString(strValue))
@@ -62,15 +62,22 @@ bool Outfits::parseOutfitNode(xmlNodePtr p)
 	if(readXMLInteger(p, "access", intValue))
 		newOutfit.accessLevel = intValue;
 
-	if(readXMLInteger(p, "quest", intValue))
+	if(readXMLString(p, "group", strValue) || readXMLString(p, "groups", strValue))
 	{
-		newOutfit.storageId = intValue;
+		newOutfit.groups.clear();
+		if(!parseIntegerVec(strValue, newOutfit.groups))
+			std::clog << "[Warning - Outfits::parseOutfitNode] Invalid group(s) for an outfit with id " << newOutfit.outfitId << std::endl;
+	}
+
+	if(readXMLString(p, "quest", strValue))
+	{
+		newOutfit.storageId = strValue;
 		newOutfit.storageValue = "1";
 	}
 	else
 	{
-		if(readXMLInteger(p, "storageId", intValue))
-			newOutfit.storageId = intValue;
+		if(readXMLString(p, "storageId", strValue))
+			newOutfit.storageId = strValue;
 
 		if(readXMLString(p, "storageValue", strValue))
 			newOutfit.storageValue = strValue;
@@ -87,14 +94,14 @@ bool Outfits::parseOutfitNode(xmlNodePtr p)
 		Outfit outfit = newOutfit;
 		if(!readXMLInteger(listNode, "looktype", intValue) && !readXMLInteger(listNode, "lookType", intValue))
 		{
-			std::cout << "[Error - Outfits::parseOutfitNode] Missing looktype for an outfit with id " << outfit.outfitId << std::endl;
+			std::clog << "[Error - Outfits::parseOutfitNode] Missing looktype for an outfit with id " << outfit.outfitId << std::endl;
 			continue;
 		}
 
 		outfit.lookType = intValue;
 		if(!readXMLString(listNode, "gender", strValue) && !readXMLString(listNode, "type", strValue) && !readXMLString(listNode, "sex", strValue))
 		{
-			std::cout << "[Error - Outfits::parseOutfitNode] Missing gender(s) for an outfit with id " << outfit.outfitId
+			std::clog << "[Error - Outfits::parseOutfitNode] Missing gender(s) for an outfit with id " << outfit.outfitId
 				<< " and looktype " << outfit.lookType << std::endl;
 			continue;
 		}
@@ -102,7 +109,7 @@ bool Outfits::parseOutfitNode(xmlNodePtr p)
 		IntegerVec intVector;
 		if(!parseIntegerVec(strValue, intVector))
 		{
-			std::cout << "[Error - Outfits::parseOutfitNode] Invalid gender(s) for an outfit with id " << outfit.outfitId
+			std::clog << "[Error - Outfits::parseOutfitNode] Invalid gender(s) for an outfit with id " << outfit.outfitId
 				<< " and looktype " << outfit.lookType << std::endl;
 			continue;
 		}
@@ -112,8 +119,9 @@ bool Outfits::parseOutfitNode(xmlNodePtr p)
 
 		if(readXMLString(listNode, "name", strValue))
 			outfit.name = strValue;
-		else
-			outfit.name = name;
+
+		if(readXMLString(listNode, "premium", strValue))
+			outfit.isPremium = booleanString(strValue);
 
 		if(readXMLString(listNode, "requirement", strValue))
 		{
@@ -127,7 +135,7 @@ bool Outfits::parseOutfitNode(xmlNodePtr p)
 			else if(tmpStrValue == "any")
 				outfit.requirement = REQUIREMENT_ANY;
 			else if(tmpStrValue != "both")
-				std::cout << "[Warning - Outfits::loadFromXml] Unknown requirement tag value, using default (both)" << std::endl;
+				std::clog << "[Warning - Outfits::loadFromXml] Unknown requirement tag value, using default (both)" << std::endl;
 		}
 
 		if(readXMLString(listNode, "manaShield", strValue))
@@ -163,14 +171,17 @@ bool Outfits::parseOutfitNode(xmlNodePtr p)
 		if(readXMLInteger(listNode, "speed", intValue))
 			outfit.speed = intValue;
 
+		if(readXMLInteger(listNode, "attackspeed", intValue) || readXMLInteger(listNode, "attackSpeed", intValue))
+			outfit.attackSpeed = intValue;
+
 		for(xmlNodePtr configNode = listNode->children; configNode != NULL; configNode = configNode->next)
 		{
 			if(!xmlStrcmp(configNode->name, (const xmlChar*)"reflect"))
 			{
 				if(readXMLInteger(configNode, "percentAll", intValue))
 				{
-					for(uint32_t i = COMBAT_FIRST; i <= COMBAT_LAST; i++)
-						outfit.reflect[REFLECT_PERCENT][(CombatType_t)i] += intValue;
+					for(uint32_t i = (COMBAT_FIRST + 1); i <= COMBAT_LAST; i <<= 1)
+						outfit.reflect[REFLECT_PERCENT][i] += intValue;
 				}
 
 				if(readXMLInteger(configNode, "percentElements", intValue))
@@ -229,8 +240,8 @@ bool Outfits::parseOutfitNode(xmlNodePtr p)
 
 				if(readXMLInteger(configNode, "chanceAll", intValue))
 				{
-					for(uint32_t i = COMBAT_FIRST; i <= COMBAT_LAST; i++)
-						outfit.reflect[REFLECT_CHANCE][(CombatType_t)i] += intValue;
+					for(uint32_t i = (COMBAT_FIRST + 1); i <= COMBAT_LAST; i <<= 1)
+						outfit.reflect[REFLECT_CHANCE][i] += intValue;
 				}
 
 				if(readXMLInteger(configNode, "chanceElements", intValue))
@@ -291,8 +302,8 @@ bool Outfits::parseOutfitNode(xmlNodePtr p)
 			{
 				if(readXMLInteger(configNode, "percentAll", intValue))
 				{
-					for(int32_t i = COMBAT_FIRST; i <= COMBAT_LAST; i++)
-						outfit.absorb[(CombatType_t)i] += intValue;
+					for(uint32_t i = (COMBAT_FIRST + 1); i <= COMBAT_LAST; i <<= 1)
+						outfit.absorb[i] += intValue;
 				}
 
 				if(readXMLInteger(configNode, "percentElements", intValue))
@@ -471,7 +482,7 @@ bool Outfits::parseOutfitNode(xmlNodePtr p)
 					outfit.conditionSuppressions |= CONDITION_ENERGY;
 
 				if(readXMLString(configNode, "physical", strValue) && booleanString(strValue))
-					outfit.conditionSuppressions |= CONDITION_PHYSICAL;
+					outfit.conditionSuppressions |= CONDITION_BLEEDING;
 
 				if(readXMLString(configNode, "haste", strValue) && booleanString(strValue))
 					outfit.conditionSuppressions |= CONDITION_HASTE;
@@ -546,7 +557,7 @@ bool Outfits::parseOutfitNode(xmlNodePtr p)
 						add = true;
 				}
 				else
-					std::cout << "[Warning - Outfits::parseOutfitNode] Duplicated outfit for gender " << (*it) << " with lookType " << outfit.outfitId << std::endl;
+					std::clog << "[Warning - Outfits::parseOutfitNode] Duplicated outfit for gender " << (*it) << " with lookType " << outfit.outfitId << std::endl;
 			}
 			else
 			{
@@ -568,25 +579,21 @@ bool Outfits::loadFromXml()
 	xmlDocPtr doc = xmlParseFile(getFilePath(FILE_TYPE_XML, "outfits.xml").c_str());
 	if(!doc)
 	{
-		std::cout << "[Warning - Outfits::loadFromXml] Cannot load outfits file, using defaults." << std::endl;
-		std::cout << getLastXMLError() << std::endl;
+		std::clog << "[Warning - Outfits::loadFromXml] Cannot load outfits file, using defaults." << std::endl;
+		std::clog << getLastXMLError() << std::endl;
 		return false;
 	}
 
-	xmlNodePtr p, root = xmlDocGetRootElement(doc);
+	xmlNodePtr root = xmlDocGetRootElement(doc);
 	if(xmlStrcmp(root->name,(const xmlChar*)"outfits"))
 	{
-		std::cout << "[Error - Outfits::loadFromXml] Malformed outfits file." << std::endl;
+		std::clog << "[Error - Outfits::loadFromXml] Malformed outfits file." << std::endl;
 		xmlFreeDoc(doc);
 		return false;
 	}
 
-	p = root->children;
-	while(p)
-	{
+	for(xmlNodePtr p = root->children; p; p = p->next)
 		parseOutfitNode(p);
-		p = p->next;
-	}
 
 	xmlFreeDoc(doc);
 	return true;
@@ -820,7 +827,7 @@ int16_t Outfits::getOutfitReflect(uint32_t lookType, uint16_t sex, CombatType_t 
 		if(it->second.lookType != lookType)
 			continue;
 
-		if(it->second.reflect[REFLECT_CHANCE][combat] < random_range(0, 100))
+		if(it->second.reflect[REFLECT_PERCENT][combat] && it->second.reflect[REFLECT_CHANCE][combat] >= random_range(1, 100))
 			return it->second.reflect[REFLECT_PERCENT][combat];
 	}
 

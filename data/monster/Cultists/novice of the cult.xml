@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <monster name="Novice of the Cult" nameDescription="a novice of the cult" race="blood" experience="100" speed="210" manacost="0">
 	<health now="285" max="285"/>
 	<look type="133" head="114" body="95" legs="114" feet="114" corpse="6080"/>
@@ -18,7 +18,7 @@
 		<flag runonhealth="40"/>
 	</flags>
 	<attacks>
-		<attack name="melee" interval="2000" skill="35" attack="35"/>
+		<attack name="melee" interval="2000" skill="55" attack="20"/>
 		<attack name="lifedrain" interval="2000" chance="17" range="7" radius="4" target="1" min="-30" max="-40">
 			<attribute key="areaEffect" value="redshimmer"/>
 		</attack>
@@ -50,19 +50,15 @@
 		<voice sentence="Your curiosity will be punished!"/>
 	</voices>
 	<loot>
-		<item id="2148" countmax="20" chance="100000"/><!-- gold coin -->
-		<item id="2661" chance="2000"/><!-- scarf -->
-		<item id="2145" countmax="3" chance="5000"/><!-- small diamond -->
+		<item id="2148" countmax="30" chance="16500"/><!-- gold coin -->
+		<item id="2398" chance="6000"/><!-- mace -->
+		<item id="2661" chance="3250"/><!-- scarf -->
+		<item id="2190" chance="600"/><!-- wand of vortex -->
+		<item id="1962" chance="500"/><!-- orange book -->
 		<item id="5810" chance="555"/><!-- pirate voodoo doll -->
-		<item id="2213" chance="1666"/><!-- dwarven ring -->
-		<item id="2478" chance="6666"/><!-- brass legs -->
-		<item id="2398" chance="18427"/><!-- mace -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
-				<item id="2199" chance="1818"/><!-- garlic necklace -->
-				<item id="2190" chance="1538"/><!-- wand of vortex -->
-				<item id="6087" chance="5000"/><!-- music sheet -->
-			</inside>
-		</item>
+		<item id="2213" chance="450"/><!-- dwarven ring -->
+		<item id="6087" chance="500"/><!-- music sheet 1st verse -->
+		<item id="2145" chance="350"/><!-- small diamond -->
+		<item id="2199" chance="250"/><!-- garlic necklace -->
 	</loot>
 </monster>

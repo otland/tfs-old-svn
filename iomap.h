@@ -101,46 +101,24 @@ struct OTBM_HouseTile_coords
 
 class IOMap
 {
-	static Tile* createTile(Item*& ground, Item* item, uint16_t px, uint16_t py, uint16_t pz);
 	public:
 		IOMap() {}
 		virtual ~IOMap() {}
 
+		static Tile* createTile(Item*& ground, Item* item, uint16_t px, uint16_t py, uint16_t pz);
 		bool loadMap(Map* map, const std::string& identifier);
 
 		/* Load the spawns
 		 * \param map pointer to the Map class
 		 * \returns Returns true if the spawns were loaded successfully
 		 */
-		bool loadSpawns(Map* map)
-		{
-			if(map->spawnfile.empty())
-			{
-				//OTBM file doesn't tell us about the spawnfile,
-				//lets guess it is mapname-spawn.xml.
-				map->spawnfile = Status::getInstance()->getMapName();
-				map->spawnfile += "-spawn.xml";
-			}
-
-			return Spawns::getInstance()->loadFromXml(map->spawnfile);
-		}
+		bool loadSpawns(Map* map);
 
 		/* Load the houses (not house tile-data)
 		 * \param map pointer to the Map class
 		 * \returns Returns true if the houses were loaded successfully
 		 */
-		bool loadHouses(Map* map)
-		{
-			if(map->housefile.empty())
-			{
-				//OTBM file doesn't tell us about the housefile,
-				//lets guess it is mapname-house.xml.
-				map->housefile = Status::getInstance()->getMapName();
-				map->housefile += "-house.xml";
-			}
-
-			return Houses::getInstance()->loadFromXml(map->housefile);
-		}
+		bool loadHouses(Map* map);
 
 		const std::string& getLastErrorString() const {return errorString;}
 		void setLastErrorString(const std::string& _errorString) {errorString = _errorString;}

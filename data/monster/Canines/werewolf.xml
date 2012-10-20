@@ -18,7 +18,7 @@
 		<flag runonhealth="100"/>
 	</flags>
 	<attacks>
-		<attack name="melee" interval="2000" chance="100" min="-0" max="-350" range="1"/>
+		<attack name="melee" interval="2000" chance="100" skill="90" attack="70"/>
 		<attack name="outfit" interval="1000" chance="9" range="7" monster="werewolf" duration="5000">
 			<attribute key="areaeffect" value="blueshimmer"/>
 		</attack>
@@ -45,20 +45,25 @@
 		<voice sentence="HRAAAAAAAAAARRRRRR!" yell="1"/>
 	</voices>
 	<loot>
-		<item id="2148" countmax="96" chance="100000"/><!-- gold coin -->
-		<item id="2148" countmax="74" chance="100000"/><!-- gold coin -->
-		<item id="5897" countmax="1" chance="5000"/><!-- wolf paw -->
-		<item id="2805" chance="4000"/><!-- troll green -->
-		<item id="2647" chance="3000"/><!-- plate legs -->
-		<item id="8473" chance="2000"/><!-- ultimate health potion -->
-		<item id="7591" chance="2000"/><!-- great health potion -->
-		<item id="7588" chance="2000"/><!-- strong health potion -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
-				<item id="9808" chance="3000"/><!-- rusty armor -->
-				<item id="7439" chance="2000"/><!-- berserk potion -->
-				<item id="7383" chance="1800"/><!-- relic sword -->
-			</inside>
-		</item>
+		<item id="2148" countmax="90" chance="35000"/><!-- gold coin -->
+		<item id="2148" countmax="90" chance="35000"/><!-- gold coin -->
+		<item id="2148" countmax="45" chance="35000"/><!-- gold coin -->
+		<item id="2381" chance="2700"/><!-- halberd -->
+		<item id="2398" chance="19000"/><!-- mace-->
+		<item id="2647" chance="6500"/><!-- plate legs -->
+		<item id="2510" chance="10000"/><!-- plate shield -->
+		<item id="2171" chance="600"/><!-- platinum amulet -->
+		<item id="7439" chance="1000"/><!-- berserk potion -->
+		<item id="7428" chance="300"/><!-- bonebreaker -->
+		<item id="2438" chance="600"/><!-- epee -->
+		<item id="7383" chance="420"/><!-- relic sword -->
+		<item id="9809" chance="7800"/><!-- rusty armor -->
+		<item id="2197" chance="800"/><!-- stone skin amulet -->
+		<item id="7588" chance="5500"/><!-- strong health potion -->
+		<item id="2169" chance="700"/><!-- time ring -->
+		<item id="2805" chance="5000"/><!-- troll green -->
+		<item id="5897" chance="5200"/><!-- wolf paw -->
+		<item id="8473" chance="2400"/><!-- ultimate health potion -->
+		<item id="7419" chance="200"/><!-- dreaded cleaver -->
 	</loot>
 </monster>

@@ -38,7 +38,4 @@
 		<immunity poison="1"/>
 		<immunity paralyze="1"/>
 	</immunities>
-	<loot>
-		<!-- TODO: loot -->
-	</loot>
 </monster>

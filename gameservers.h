@@ -18,17 +18,15 @@
 #ifndef __GAMESERVER__
 #define __GAMESERVER__
 #include "otsystem.h"
-
-#include "resources.h"
 #include "const.h"
 
 class GameServer
 {
 	public:
-		GameServer(): name("TheForgottenServer"), address(LOCALHOST), port(7172), 
+		GameServer(): name("TheForgottenServer"), address(LOCALHOST),
 			versionMin(CLIENT_VERSION_MIN), versionMax(CLIENT_VERSION_MAX) {}
-		GameServer(std::string _name, uint32_t _versionMin, uint32_t _versionMax, uint32_t _address, uint32_t _port):
-			name(_name), address(_address), port(_port), versionMin(_versionMin), versionMax(_versionMax) {}
+		GameServer(std::string _name, uint32_t _versionMin, uint32_t _versionMax, uint32_t _address, std::vector<int32_t> _ports):
+			name(_name), address(_address), versionMin(_versionMin), versionMax(_versionMax), ports(_ports) {}
 		virtual ~GameServer() {}
 
 		std::string getName() const {return name;}
@@ -36,11 +34,12 @@ class GameServer
 		uint32_t getVersionMax() const {return versionMax;}
 
 		uint32_t getAddress() const {return address;}
-		uint32_t getPort() const {return port;}
+		std::vector<int32_t> getPorts() const {return ports;}
 
 	protected:
 		std::string name;
-		uint32_t address, port, versionMin, versionMax;
+		uint32_t address, versionMin, versionMax;
+		std::vector<int32_t> ports;
 };
 
 typedef std::map<uint32_t, GameServer*> GameServersMap;
@@ -56,13 +55,13 @@ class GameServers
 			return &instance;
 		}
 
-		bool loadFromXml(bool showResult = false);
-		bool reload(bool showResult = false);
+		bool loadFromXml(bool result);
+		bool reload();
 
 		GameServer* getServerById(uint32_t id) const;
-		GameServer* getServerByName(std::string name) const;
-		GameServer* getServerByAddress(uint32_t address) const;
-		GameServer* getServerByPort(uint32_t port) const;
+
+		GameServersMap::const_iterator getFirstServer() const {return serverList.begin();}
+		GameServersMap::const_iterator getLastServer() const {return serverList.end();}
 
 	protected:
 		void clear();

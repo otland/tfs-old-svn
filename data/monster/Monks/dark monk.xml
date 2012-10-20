@@ -1,5 +1,5 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
-<monster name="Dark Monk" nameDescription="a dark monk" race="blood" experience="145" speed="210" manacost="480">
+<?xml version="1.0" encoding="UTF-8"?>
+<monster name="Dark Monk" nameDescription="a dark monk" race="blood" experience="145" speed="210" manacost="0">
 	<health now="190" max="190"/>
 	<look type="225" corpse="6080"/>
 	<targetchange interval="5000" chance="8"/>
@@ -18,7 +18,7 @@
 		<flag runonhealth="0"/>
 	</flags>
 	<attacks>
-		<attack name="melee" interval="2000" min="-10" max="-100"/>
+		<attack name="melee" interval="2000" skill="30" attack="50"/>
 		<attack name="lifedrain" interval="1000" chance="12" range="1" min="-55" max="-100">
 			<attribute key="areaEffect" value="redshimmer"/>
 		</attack>
@@ -45,23 +45,17 @@
 		<voice sentence="Your end has come!"/>
 	</voices>
 	<loot>
-		<item id="2148" countmax="20" chance="100000"/><!-- gold coin -->
-		<item id="2439" chance="400"/><!-- daramanian mace -->
-		<item id="1949" chance="10000"/><!-- scroll -->
-		<item id="2467" chance="10000"/><!-- leather armor -->
-		<item id="2642" chance="6666"/><!-- sandals -->
-		<item id="3976" countmax="10" chance="50000"/><!-- worm -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
-				<item id="2177" countmax="1" chance="1000"/><!-- life crystal -->
-				<item id="2044" chance="6666"/><!-- lamp -->
-				<item id="2689" countmax="3" chance="20000"/><!-- bread -->
-				<item id="2401" chance="3333"/><!-- staff -->
-				<item id="2440" chance="100"/><!-- daramanian waraxe -->
-				<item id="2166" chance="1428"/><!-- power ring -->
-				<item id="1949" chance="20000"/><!-- scroll -->
-				<item id="2193" chance="1200"/><!-- ankh -->
-			</inside>
-		</item>
+		<item id="2148" countmax="5" chance="34000"/><!-- gold coin -->
+		<item id="2193" chance="1400"/><!-- ankh -->
+		<item id="2689" chance="20000"/><!-- bread -->
+		<item id="2015" chance="10000"/><!-- brown flask -->
+		<item id="2044" chance="11750"/><!-- lamp -->
+		<item id="2467" chance="3500"/><!-- leather armor -->
+		<item id="2177" chance="2750"/><!-- life crystal -->
+		<item id="7620" chance="700"/><!-- mana potion -->
+		<item id="2166" chance="500"/><!-- power ring -->
+		<item id="1949" chance="18000"/><!-- scroll -->
+		<item id="2401" chance="20000"/><!-- staff -->
+		<item id="2642" chance="8250"/><!-- sandals -->
 	</loot>
 </monster>

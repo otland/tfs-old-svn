@@ -1,17 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<monster name="The Hag" nameDescription="the hag" race="blood" experience="510" speed="205">
+<monster name="The Hag" nameDescription="the hag" race="blood" experience="510" speed="205" manacost="0">
 	<health now="935" max="935"/>
 	<look type="264" head="78" body="97" legs="95" feet="95" corpse="7349"/>
-	<targetchange interval="2000" chance="5"/>
 	<strategy attack="100" defense="0"/>
 	<flags>
+		<flag summonable="0"/>
+		<flag attackable="1"/>
+		<flag hostile="1"/>
+		<flag illusionable="0"/>
+		<flag convinceable="0"/>
 		<flag pushable="0"/>
 		<flag canpushitems="1"/>
-		<flag staticattack="78"/>
 		<flag targetdistance="5"/>
 	</flags>
 	<attacks>
-		<attack name="melee" interval="2000" min="-53" max="-173"/>
+		<attack name="melee" interval="2000" skill="40" attack="40"/>
 		<attack name="drunk" interval="3000" chance="35" range="5" radius="1" target="1" duration="15000"/>
 		<attack name="speed" interval="4000" chance="55" radius="1" target="1" range="5" duration="12000" speed="-400">
 			<attribute key="areaEffect" value="redshimmer"/>
@@ -31,6 +34,8 @@
 		<element energyPercent="10"/>
 	</elements>
 	<immunities>
+		<immunity outfit="1"/>
+		<immunity drunk="1"/>
 		<immunity invisible="1"/>
 	</immunities>
 	<summons maxSummons="2">

@@ -18,7 +18,7 @@
 		<flag runonhealth="0"/>
 	</flags>
 	<attacks>
-		<attack name="melee" interval="2000" skill="70" attack="90" fire="650"/>
+		<attack name="melee" interval="2000" skill="80" attack="100" fire="650"/>
 		<attack name="firefield" interval="2000" chance="15" range="7" radius="4" target="1">
 			<attribute key="shootEffect" value="fire"/>
 		</attack>
@@ -48,10 +48,10 @@
 		<immunity invisible="1"/>
 	</immunities>
 	<loot>
-		<item id="2148" countmax="100" chance="100000"/><!-- gold coin -->
-		<item id="2152" countmax="4" chance="8888"/><!-- small ruby -->
-		<item id="8304" chance="2200"/><!-- soul orb -->
+		<item id="2148" countmax="100" chance="10000"/><!-- gold coin -->
+		<item id="2152" countmax="3" chance="1000"/><!-- platinum coin -->
 		<item id="8877" chance="900"/><!-- lavos armor -->
-		<item id="7899" chance="1210"/><!-- magma coat -->
+		<item id="7899" chance="1250"/><!-- magma coat -->
+		<item id="8304" chance="100000"/><!-- eternal flames -->
 	</loot>
 </monster>

@@ -36,7 +36,7 @@ class Waypoints
 {
 	public:
 		// Does not require either constructor nor destructor
-		void addWaypoint(WaypointPtr waypoint);
+		inline void addWaypoint(WaypointPtr waypoint);
 		WaypointPtr getWaypointByName(const std::string& name) const;
 		const WaypointMap& getWaypointsMap() const {return waypoints;}
 

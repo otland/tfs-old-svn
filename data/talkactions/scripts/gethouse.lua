@@ -12,12 +12,11 @@ function onSay(cid, words, param, channel)
 	local t = string.explode(param, ",")
 	if(t[2]) then
 		teleport = getBooleanFromString(t[2])
-		param = t[1]
 	end
 
-	local house = getHouseByPlayerGUID(getPlayerGUIDByName(param))
+	local house = getHouseByPlayerGUID(getPlayerGUIDByName(t[1]))
 	if(not house) then
-		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Player " .. param .. " does not own house or doesn't exists.")
+		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Player " .. t[1] .. " does not own house or doesn't exists.")
 		return true
 	end
 
@@ -26,6 +25,6 @@ function onSay(cid, words, param, channel)
 		doTeleportThing(cid, houseInfo.entry)
 	end
 
-	doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, param .. " owns house: " .. houseInfo.name .. ".")
+	doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, t[1] .. " owns house: " .. houseInfo.name .. ".")
 	return true
 end

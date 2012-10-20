@@ -1,3 +1,19 @@
+function isInArray(array, value, caseSensitive)
+	if (caseSensitive == nil or caseSensitive == false) and type(value) == "string" then
+		local lowerValue = value:lower()
+		for _, _value in ipairs(array) do
+			if type(_value) == "string" and lowerValue == _value:lower() then
+				return true
+			end
+		end
+	else
+		for _, _value in ipairs(array) do
+			if (value == _value) then return true end
+		end
+	end
+	return false
+end
+
 function doPlayerGiveItem(cid, itemid, amount, subType)
 	local item = 0
 	if(isItemStackable(itemid)) then
@@ -34,14 +50,6 @@ end
 
 function doPlayerTakeItem(cid, itemid, amount)
 	return getPlayerItemCount(cid, itemid) >= amount and doPlayerRemoveItem(cid, itemid, amount)
-end
-
-function doPlayerBuyItem(cid, itemid, count, cost, charges)
-	return doPlayerRemoveMoney(cid, cost) and doPlayerGiveItem(cid, itemid, count, charges)
-end
-
-function doPlayerBuyItemContainer(cid, containerid, itemid, count, cost, charges)
-	return doPlayerRemoveMoney(cid, cost) and doPlayerGiveItemContainer(cid, containerid, itemid, count, charges)
 end
 
 function doPlayerSellItem(cid, itemid, count, cost)
@@ -83,8 +91,12 @@ function doPlayerDepositMoney(cid, amount)
 	return true
 end
 
+function doPlayerAddStamina(cid, minutes)
+	return doPlayerSetStamina(cid, getPlayerStamina(cid) + minutes)
+end
+
 function isPremium(cid)
-	return (isPlayer(cid) and (getPlayerPremiumDays(cid) > 0 or getBooleanFromString(getConfigInfo('freePremium'))))
+	return (isPlayer(cid) and (getPlayerPremiumDays(cid) > 0 or getBooleanFromString(getConfigValue('freePremium'))))
 end
 
 function getMonthDayEnding(day)
@@ -107,8 +119,12 @@ function getArticle(str)
 	return str:find("[AaEeIiOoUuYy]") == 1 and "an" or "a"
 end
 
-function isNumber(str)
-	return tonumber(str) ~= nil
+function doNumberFormat(i)
+	local str, found = string.gsub(i, "(%d)(%d%d%d)$", "%1,%2", 1), 0
+	repeat
+		str, found = string.gsub(str, "(%d)(%d%d%d),", "%1,%2,", 1)
+	until found == 0
+	return str
 end
 
 function doPlayerAddAddons(cid, addon)
@@ -121,31 +137,18 @@ function doPlayerAddAddons(cid, addon)
 	end
 end
 
-function doPlayerWithdrawAllMoney(cid)
-	return doPlayerWithdrawMoney(cid, getPlayerBalance(cid))
-end
-
-function doPlayerDepositAllMoney(cid)
-	return doPlayerDepositMoney(cid, getPlayerMoney(cid))
-end
-
-function doPlayerTransferAllMoneyTo(cid, target)
-	return doPlayerTransferMoneyTo(cid, target, getPlayerBalance(cid))
-end
-
-function playerExists(name)
-	return getPlayerGUIDByName(name) ~= 0
-end
-
-function getTibiaTime()
-	local minutes = getWorldTime()
-	local hours = 0
+function getTibiaTime(num)
+	local minutes, hours = getWorldTime(), 0
 	while (minutes > 60) do
 		hours = hours + 1
 		minutes = minutes - 60
 	end
 
-	return {hours = hours, minutes = minutes}
+	if(num) then
+		return {hours = hours, minutes = minutes}
+	end
+
+	return {hours =  hours < 10 and '0' .. hours or '' .. hours, minutes = minutes < 10 and '0' .. minutes or '' .. minutes}
 end
 
 function doWriteLogFile(file, text)
@@ -165,133 +168,23 @@ function getExperienceForLevel(lv)
 end
 
 function doMutePlayer(cid, time)
-	local condition = createConditionObject(CONDITION_MUTED)
-	setConditionParam(condition, CONDITION_PARAM_TICKS, time * 1000)
-	return doAddCondition(cid, condition)
+	local condition = createConditionObject(CONDITION_MUTED, (time == -1 and time or time * 1000))
+	return doAddCondition(cid, condition, false)
+
 end
 
-function getPlayerGroupName(cid)
-	return getGroupInfo(getPlayerGroupId(cid)).name
-end
-
-function getPlayerVocationName(cid)
-	return getVocationInfo(getPlayerVocation(cid)).name
-end
-
-function getPromotedVocation(vid)
-	return getVocationInfo(vid).promotedVocation
-end
-
-function doPlayerRemovePremiumDays(cid, days)
-	return doPlayerAddPremiumDays(cid, -days)
-end
-
-function getPlayerMasterPos(cid)
-	return getTownTemplePosition(getPlayerTown(cid))
-end
-
-function getHouseOwner(houseId)
-	return getHouseInfo(houseId).owner
-end
-
-function getHouseName(houseId)
-	return getHouseInfo(houseId).name
-end
-
-function getHouseEntry(houseId)
-	return getHouseInfo(houseId).entry
-end
-
-function getHouseRent(houseId)
-	return getHouseInfo(houseId).rent
-end
-
-function getHousePrice(houseId)
-	return getHouseInfo(houseId).price
-end
-
-function getHouseTown(houseId)
-	return getHouseInfo(houseId).town
-end
-
-function getHouseTilesCount(houseId)
-	return getHouseInfo(houseId).tiles
-end
-
-function getItemNameById(itemid)
-	return getItemDescriptionsById(itemid).name
-end
-
-function getItemPluralNameById(itemid)
-	return getItemDescriptionsById(itemid).plural
-end
-
-function getItemArticleById(itemid)
-	return getItemDescriptionsById(itemid).article
-end
-
-function getItemName(uid)
-	return getItemDescriptions(uid).name
-end
-
-function getItemPluralName(uid)
-	return getItemDescriptions(uid).plural
-end
-
-function getItemArticle(uid)
-	return getItemDescriptions(uid).article
-end
-
-function getItemText(uid)
-	return getItemDescriptions(uid).text
-end
-
-function getItemSpecialDescription(uid)
-	return getItemDescriptions(uid).special
-end
-
-function getItemWriter(uid)
-	return getItemDescriptions(uid).writer
-end
-
-function getItemDate(uid)
-	return getItemDescriptions(uid).date
-end
-
-function getTilePzInfo(pos)
-	return getTileInfo(pos).protection
-end
-
-function getTileZoneInfo(pos)
-	local tmp = getTileInfo(pos)
-	if(tmp.pvp) then
-		return 2
-	end
-
-	if(tmp.nopvp) then
-		return 1
-	end
-
-	return 0
-end
-
-function doShutdown()
-	return doSetGameState(GAMESTATE_SHUTDOWN)
-end
-
-function doSummonCreature(name, pos, displayError)
-	local displayError, cid = displayError or true, doCreateMonster(name, pos, displayError)
+function doSummonCreature(name, pos)
+	local cid = doCreateMonster(name, pos, false, false)
 	if(not cid) then
-		cid = doCreateNpc(name, pos, displayError)
+		cid = doCreateNpc(name, pos)
 	end
 
 	return cid
 end
 
-function getOnlinePlayers()
-	local tmp = getPlayersOnline()
+function getPlayersOnlineEx()
 	local players = {}
-	for i, cid in ipairs(tmp) do
+	for i, cid in ipairs(getPlayersOnline()) do
 		table.insert(players, getCreatureName(cid))
 	end
 
@@ -308,11 +201,7 @@ function isPlayer(cid)
 end
 
 function isPlayerGhost(cid)
-	if(not isPlayer(cid)) then
-		return false
-	end
-
-	return getCreatureCondition(cid, CONDITION_GAMEMASTER, GAMEMASTER_INVISIBLE) or getPlayerFlagValue(cid, PLAYERFLAG_CANNOTBESEEN)
+	return isPlayer(cid) and (getCreatureCondition(cid, CONDITION_GAMEMASTER, GAMEMASTER_INVISIBLE, CONDITIONID_DEFAULT) or getPlayerFlagValue(cid, PLAYERFLAG_CANNOTBESEEN))
 end
 
 function isMonster(cid)
@@ -320,19 +209,17 @@ function isMonster(cid)
 end
 
 function isNpc(cid)
-	return isCreature(cid) and cid >= AUTOID_NPCS
+	-- Npc IDs are over int32_t range (which is default for lua_pushnumber),
+	-- therefore number is always a negative value.
+	return isCreature(cid) and (cid < 0 or cid >= AUTOID_NPCS)
 end
 
-function doPlayerSetExperienceRate(cid, value)
-	return doPlayerSetRate(cid, SKILL__LEVEL, value)
-end
-
-function doPlayerSetMagicRate(cid, value)
-	return doPlayerSetRate(cid, SKILL__MAGLEVEL, value)
+function isUnderWater(cid)
+	return isInArray(underWater, getTileInfo(getCreaturePosition(cid)).itemid)
 end
 
 function doPlayerAddLevel(cid, amount, round)
-	local experience, level = 0, getPlayerLevel(cid)
+	local experience, level, amount = 0, getPlayerLevel(cid), amount or 1
 	if(amount > 0) then
 		experience = getExperienceForLevel(level + amount) - (round and getPlayerExperience(cid) or getExperienceForLevel(level))
 	else
@@ -343,41 +230,31 @@ function doPlayerAddLevel(cid, amount, round)
 end
 
 function doPlayerAddMagLevel(cid, amount)
+	local amount = amount or 1
 	for i = 1, amount do
-		doPlayerAddSpentMana(cid, (getPlayerRequiredMana(cid, getPlayerMagLevel(cid, true) + 1) - getPlayerSpentMana(cid)) / getConfigInfo('rateMagic'))
+		doPlayerAddSpentMana(cid, getPlayerRequiredMana(cid, getPlayerMagLevel(cid, true) + 1) - getPlayerSpentMana(cid), false)
 	end
+
 	return true
-end  
+end
 
 function doPlayerAddSkill(cid, skill, amount, round)
+	local amount = amount or 1
 	if(skill == SKILL__LEVEL) then
 		return doPlayerAddLevel(cid, amount, round)
 	elseif(skill == SKILL__MAGLEVEL) then
 		return doPlayerAddMagLevel(cid, amount)
 	end
 
-	return doPlayerAddSkillTry(cid, skill, (getPlayerRequiredSkillTries(cid, skill, getPlayerSkillLevel(cid, skill) + 1) - getPlayerSkillTries(cid, skill)) / getConfigInfo('rateSkill'))
-end
-
-function getPartyLeader(cid)
-	local party = getPartyMembers(cid)
-	if(type(party) ~= 'table') then
-		return 0
+	for i = 1, amount do
+		doPlayerAddSkillTry(cid, skill, getPlayerRequiredSkillTries(cid, skill, getPlayerSkillLevel(cid, skill) + 1) - getPlayerSkillTries(cid, skill), false)
 	end
 
-	return party[1]
-end
-
-function isInParty(cid)
-	return type(getPartyMembers(cid)) == 'table'
+	return true
 end
 
 function isPrivateChannel(channelId)
 	return channelId >= CHANNEL_PRIVATE
-end
-
-function doPlayerResetIdleTime(cid)
-	return doPlayerSetIdleTime(cid, 0)
 end
 
 function doBroadcastMessage(text, class)
@@ -393,8 +270,7 @@ function doBroadcastMessage(text, class)
 		return false
 	end
 
-	local players = getPlayersOnline()
-	for _, pid in ipairs(players) do
+	for _, pid in ipairs(getPlayersOnline()) do
 		doPlayerSendTextMessage(pid, class, text)
 	end
 
@@ -419,8 +295,7 @@ function doPlayerBroadcastMessage(cid, text, class, checkFlag, ghost)
 		return false
 	end
 
-	local players = getPlayersOnline()
-	for _, pid in ipairs(players) do
+	for _, pid in ipairs(getPlayersOnline()) do
 		doCreatureSay(cid, text, class, ghost, pid)
 	end
 
@@ -428,27 +303,14 @@ function doPlayerBroadcastMessage(cid, text, class, checkFlag, ghost)
 	return true
 end
 
-function getBooleanFromString(input)
-	local tmp = type(input)
-	if(tmp == 'boolean') then
-		return input
-	end
-
-	if(tmp == 'number') then
-		return input > 0
-	end
-
-	local str = string.lower(tostring(input))
-	return (str == "yes" or str == "true" or (tonumber(str) ~= nil and tonumber(str) > 0))
-end
-
 function doCopyItem(item, attributes)
-	local attributes = attributes or false
+	local attributes = ((type(attributes) == 'table') and attributes or { "aid" })
 
 	local ret = doCreateItemEx(item.itemid, item.type)
-	if(attributes) then
-		if(item.actionid > 0) then
-			doItemSetAttribute(ret, "aid", item.actionid)
+	for _, key in ipairs(attributes) do
+		local value = getItemAttribute(item.uid, key)
+		if(value ~= nil) then
+			doItemSetAttribute(ret, key, value)
 		end
 	end
 
@@ -462,34 +324,6 @@ function doCopyItem(item, attributes)
 	end
 
 	return getThing(ret)
-end
-
-function doRemoveThing(uid)
-	if(isCreature(uid)) then
-		return doRemoveCreature(uid)
-	end
-
-	return doRemoveItem(uid)
-end
-
-function setAttackFormula(combat, type, minl, maxl, minm, maxm, min, max)
-	local min, max = min or 0, max or 0
-	return setCombatFormula(combat, type, -1, 0, -1, 0, minl, maxl, minm, maxm, min, max)
-end
-
-function setHealingFormula(combat, type, minl, maxl, minm, maxm, min, max)
-	local min, max = min or 0, max or 0
-	return setCombatFormula(combat, type, 1, 0, 1, 0, minl, maxl, minm, maxm, min, max)
-end
-
-function doChangeTypeItem(uid, subtype)
-	local thing = getThing(uid)
-	if(thing.itemid < 100) then
-		return false
-	end
-
-	local subtype = subtype or 1
-	return doTransformItem(thing.uid, thing.itemid, subtype)
 end
 
 function doSetItemText(uid, text, writer, date)
@@ -509,33 +343,6 @@ function doSetItemText(uid, text, writer, date)
 	return true
 end
 
-function getFluidSourceType(itemid)
-	local item = getItemInfo(itemid)
-	return item and item.fluidSource or false
-end
-
-function getDepotId(uid)
-	return getItemAttribute(uid, "depotid") or false
-end
-
-function getItemDescriptions(uid)
-	local thing = getThing(uid)
-	if(thing.itemid < 100) then
-		return false
-	end
-
-	local item = getItemInfo(thing.itemid)
-	return {
-		name = getItemAttribute(uid, "name") or item.name,
-		plural = getItemAttribute(uid, "pluralname") or item.plural,
-		article = getItemAttribute(uid, "article") or item.article,
-		special = getItemAttribute(uid, "description") or "",
-		text = getItemAttribute(uid, "text") or "",
-		writer = getItemAttribute(uid, "writer") or "",
-		date = getItemAttribute(uid, "date") or 0
-	}	
-end
-
 function getItemWeightById(itemid, count, precision)
 	local item, count, precision = getItemInfo(itemid), count or 1, precision or false
 	if(not item) then
@@ -548,115 +355,77 @@ function getItemWeightById(itemid, count, precision)
 	end
 
 	local weight = item.weight * count
-	--[[if(precision) then
-		return weight
-	end
-
-	local t = string.explode(tostring(weight), ".")
-	if(table.maxn(t) == 2) then
-		return tonumber(t[1] .. "." .. string.sub(t[2], 1, 2))
-	end]]--
-
-	return weight
+	return precission and weight or math.round(weight, 2)
 end
 
-function getItemWeaponType(uid)
-	local thing = getThing(uid)
-	if(thing.itemid < 100) then
+function choose(arg)
+	return arg[math.random(1, table.maxn(arg))]
+end
+
+function doPlayerAddExpEx(cid, amount)
+	if(not doPlayerAddExp(cid, amount)) then
 		return false
 	end
 
-	return getItemInfo(thing.itemid).weaponType
-end
+	local position = getThingPosition(cid)
+	doPlayerSendTextMessage(cid, MESSAGE_EXPERIENCE, "You gained " .. amount .. " experience.", amount, COLOR_WHITE, position)
 
-function getItemRWInfo(uid)
-	local thing = getThing(uid)
-	if(thing.itemid < 100) then
-		return false
+	local spectators, name = getSpectators(position, 7, 7), getCreatureName(cid)
+	for _, pid in ipairs(spectators) do
+		if(isPlayer(pid) and cid ~= pid) then
+			doPlayerSendTextMessage(pid, MESSAGE_EXPERIENCE_OTHERS, name .. " gained " .. amount .. " experience.", amount, COLOR_WHITE, position)
+		end
 	end
 
-	local item, flags = getItemInfo(thing.itemid), 0
-	if(item.readable) then
-		flags = 1
+	return true
+end
+
+function getItemTopParent(uid)
+	local parent = getItemParent(uid)
+	if(not parent or parent.uid == 0) then
+		return nil
 	end
 
-	if(item.writable) then
-		flags = flags + 2
+	while(true) do
+		local tmp = getItemParent(parent.uid)
+		if(tmp and tmp.uid ~= 0) then
+			parent = tmp
+		else
+			break
+		end
 	end
 
-	return flags
+	return parent
 end
 
-function getItemLevelDoor(itemid)
-	local item = getItemInfo(itemid)
-	return item and item.levelDoor or false
-end
-
-function isItemStackable(itemid)
-	local item = getItemInfo(itemid)
-	return item and item.stackable or false
-end
-
-function isItemRune(itemid)
-	local item = getItemInfo(itemid)
-	return item and item.clientCharges or false
-end
-
-function isItemDoor(itemid)
-	local item = getItemInfo(itemid)
-	return item and item.type == 5 or false
-end
-
-function isItemContainer(itemid)
-	local item = getItemInfo(itemid)
-	return item and item.group == 2 or false
-end
-
-function isItemFluidContainer(itemid)
-	local item = getItemInfo(itemid)
-	return item and item.group == 12 or false
-end
-
-function isItemMovable(itemid)
-	local item = getItemInfo(itemid)
-	return item and item.movable or false
-end
-
-function isCorpse(uid)
-	local thing = getThing(uid)
-	if(thing.itemid < 100) then
-		return false
+function getItemHolder(uid)
+	local parent = getItemParent(uid)
+	if(not parent or parent.uid == 0) then
+		return nil
 	end
 
-	local item = getItemInfo(thing.itemid)
-	return item and item.corpseType ~= 0 or false
-end
+	local holder = nil
+	while(true) do
+		local tmp = getItemParent(parent.uid)
+		if(tmp and tmp.uid ~= 0) then
+			if(tmp.itemid == 1) then -- a creature
+				holder = tmp
+				break
+			end
 
-function getContainerCapById(itemid)
-	local item = getItemInfo(itemid)
-	if(not item or item.group ~= 2) then
-		return false
+			parent = tmp
+		else
+			break
+		end
 	end
 
-	return item.maxItems
+	return holder
 end
 
-function getMonsterAttackSpells(name)
-	local monster = getMonsterInfo(name)
-	return monster and monster.attacks or false
-end
-
-function getMonsterHealingSpells(name)
-	local monster = getMonsterInfo(name)
-	return monster and monster.defenses or false
-end
-
-function getMonsterLootList(name)
-	local monster = getMonsterInfo(name)
-	return monster and monster.loot or false
-end
-
-function getMonsterSummonList(name)
-	local monster = getMonsterInfo(name)
-	return monster and monster.summons or false
+function valid(f)
+	return function(p, ...)
+		if(isCreature(p)) then
+			return f(p, ...)
+		end
+	end
 end

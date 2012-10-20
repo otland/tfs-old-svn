@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <monster name="Massive Water Elemental" nameDescription="a massive water elemental" race="undead" experience="800" speed="500" manacost="0">
 	<health now="1250" max="1250"/>
-	<look type="11" corpse="2025"/>
+	<look type="11" corpse="10499" corpseAid="102"/>
 	<targetchange interval="5000" chance="8"/>
 	<strategy attack="100" defense="0"/>
 	<flags>
@@ -18,7 +18,7 @@
 		<flag runonhealth="0"/>
 	</flags>
 	<attacks>
-		<attack name="melee" interval="2000" skill="85" attack="50"/>
+		<attack name="melee" interval="2000" skill="40" attack="80"/>
 		<attack name="poison" interval="2000" chance="50" range="7" radius="6" target="0" min="-255" max="-440">
 			<attribute key="areaEffect" value="bluebubble"/>
 		</attack>
@@ -47,5 +47,6 @@
 	<immunities>
 		<immunity paralyze="1"/>
 		<immunity invisible="1"/>
+		<immunity drown="1"/>
 	</immunities>
 </monster>

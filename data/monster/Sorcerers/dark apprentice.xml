@@ -18,7 +18,7 @@
 		<flag runonhealth="800"/>
 	</flags>
 	<attacks>
-		<attack name="melee" interval="2000" min="-60" max="-180"/>
+		<attack name="melee" interval="2000" skill="30" attack="30"/>
 		<attack name="fire" interval="1000" chance="35" range="7" min="-15" max="-26">
 			<attribute key="shootEffect" value="fire"/>
 		</attack>
@@ -47,10 +47,15 @@
 		<voice sentence="I must dispose of my masters enemies!"/>
 	</voices>
 	<loot>
-		<item id="2148" countmax="100" chance="100000"/><!-- gold coin -->
-		<item id="2260" chance="400"/><!-- blank rune -->
-		<item id="7620" chance="400"/><!-- mana potion -->
-		<item id="6079" chance="400"/><!-- dead frog -->
+		<item id="2148" countmax="50" chance="33500"/><!-- gold coin -->
+		<item id="2260" chance="4125"/><!-- blank rune -->
+		<item id="7620" chance="1500"/><!-- mana potion -->
+		<item id="2260" chance="4125"/><!-- blank rune -->
+		<item id="6079" chance="10500"/><!-- dead frog -->
+		<item id="2260" chance="4125"/><!-- blank rune -->
+		<item id="2191" chance="2200"/><!-- wand of dragonbreath -->
+		<item id="7620" chance="1500"/><!-- mana potion -->
+		<item id="7618" chance="3400"/><!-- health potion -->
 		<item id="2188" chance="100"/><!-- wand of decay -->
 	</loot>
 </monster>

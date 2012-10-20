@@ -15,11 +15,12 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////
 
-#ifndef __OTSERV_VOCATION__
-#define __OTSERV_VOCATION__
+#ifndef __VOCATION__
+#define __VOCATION__
 
 #include "otsystem.h"
 #include "enums.h"
+#include "const.h"
 
 enum multiplier_t
 {
@@ -58,13 +59,16 @@ class Vocation
 		uint32_t getId() const {return id;}
 		void setId(int32_t v) {id = v;}
 
+		uint16_t getClientId() const {return clientId;}
+		void setClientId(uint16_t v) {clientId = v;}
+
 		uint32_t getFromVocation() const {return fromVocation;}
 		void setFromVocation(int32_t v) {fromVocation = v;}
 
-		const std::string& getName() const {return name;}
+		std::string getName() const {return name;}
 		void setName(const std::string& v) {name = v;}
 
-		const std::string& getDescription() const {return description;}
+		std::string getDescription() const {return description;}
 		void setDescription(const std::string& v) {description = v;}
 
 		bool isAttackable() const {return attackable;}
@@ -72,6 +76,12 @@ class Vocation
 
 		bool isPremiumNeeded() const {return needPremium;}
 		void setNeedPremium(bool v) {needPremium = v;}
+
+		bool getDropLoot() const {return dropLoot;}
+		void setDropLoot(bool v) {dropLoot = v;}
+
+		bool getLossSkill() const {return skillLoss;}
+		void setLossSkill(bool v) {skillLoss = v;}
 
 		uint32_t getAttackSpeed() const {return attackSpeed;}
 		void setAttackSpeed(uint32_t v) {attackSpeed = v;}
@@ -107,15 +117,16 @@ class Vocation
 		void setSkillMultiplier(skills_t s, float v) {skillMultipliers[s] = v;}
 		void setSkillBase(skills_t s, uint32_t v) {skillBase[s] = v;}
 
-		uint32_t getReqSkillTries(int32_t skill, int32_t level);
+		uint64_t getReqSkillTries(int32_t skill, int32_t level);
 		uint64_t getReqMana(uint32_t magLevel);
 
 	private:
-		typedef std::map<uint32_t, uint32_t> cacheMap;
+		typedef std::map<uint32_t, uint64_t> cacheMap;
 		cacheMap cacheSkill[SKILL_LAST + 1];
 		cacheMap cacheMana;
 
-		bool attackable, needPremium;
+		bool attackable, needPremium, dropLoot, skillLoss;
+		uint16_t clientId;
 		int32_t lessLoss, capGain;
 		uint32_t id, fromVocation, baseSpeed, attackSpeed;
 		std::string name, description;

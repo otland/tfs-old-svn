@@ -31,16 +31,21 @@ class DatabaseManager
 			return &instance;
 		}
 
-		bool optimizeTables();
-
 		bool tableExists(std::string table);
 		bool triggerExists(std::string trigger);
 
 		int32_t getDatabaseVersion();
 		bool isDatabaseSetup();
+
+		bool optimizeTables();
 		uint32_t updateDatabase();
+
 		bool getDatabaseConfig(std::string config, int32_t &value);
 		void registerDatabaseConfig(std::string config, int32_t value);
+
+		bool getDatabaseConfig(std::string config, std::string &value);
+		void registerDatabaseConfig(std::string config, std::string value);
+
 		void checkEncryption();
 		void checkTriggers();
 };

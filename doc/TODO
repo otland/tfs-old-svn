@@ -3,7 +3,7 @@
 		The Forgotten Server
 
 	Version
-		0.3.6
+		0.3.7
 
 	Codenamed
 		Crying Damson
@@ -15,10 +15,10 @@
 		http://otland.net/
 ]
 
-[ BUGS
-	Ghosts stacking may cause debug to the stacker (8.53+)
-		Assigned to: Elf
+[ LIST
+	Auction (Market) System from Tibia 9.4
+		Assigned to: Talaturen, Elf
 
-	RVW control through the Comment not working
-		Assigned to: Elf
+	Tibia's position swapping:
+		Assigned to: ?
 ]

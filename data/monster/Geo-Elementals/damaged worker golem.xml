@@ -18,7 +18,7 @@
 		<flag runonhealth="0"/>
 	</flags>
 	<attacks>
-		<attack name="melee" interval="2000" min="-0" max="-50"/>		
+		<attack name="melee" interval="2000" skill="50" attack="15"/>
 	</attacks>
 	<defenses armor="40" defense="45">
 		<defense name="healing" interval="1000" chance="7" min="20" max="100">
@@ -45,14 +45,10 @@
 		<voice sentence="Target identified: Rat! Termination initiated!"/>
 	</voices>
 	<loot>
+		<item id="2148" countmax="86" chance="21000"/><!-- gold coin -->
+		<item id="9808" chance="13275"/><!-- rusty armor -->
+		<item id="5880" chance="650"/><!-- iron ore -->
+		<item id="2207" chance="650"/><!-- sword ring -->
 		<item id="8309" countmax="3" chance="500"/><!-- nails -->
-		<item id="2148" countmax="83" chance="100000"/><!-- gold coin -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
-				<item id="5880" chance="700"/><!-- iron ore -->
-				<item id="9808" chance="900"/><!-- rusty armor -->
-				<item id="2207" chance="1500"/><!-- sword ring -->
-			</inside>
-		</item>
 	</loot>
 </monster>

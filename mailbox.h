@@ -44,31 +44,35 @@ class Mailbox : public Item, public Cylinder
 		virtual const Creature* getCreature() const {return NULL;}
 
 		virtual ReturnValue __queryAdd(int32_t index, const Thing* thing, uint32_t count,
-			uint32_t flags) const;
+			uint32_t flags, Creature* actor = NULL) const;
 		virtual ReturnValue __queryMaxCount(int32_t index, const Thing* thing, uint32_t count,
 			uint32_t& maxQueryCount, uint32_t flags) const;
-		virtual ReturnValue __queryRemove(const Thing* thing, uint32_t count, uint32_t flags) const {return RET_NOTPOSSIBLE;}
-		virtual Cylinder* __queryDestination(int32_t& index, const Thing* thing, Item** destItem,
-			uint32_t& flags) {return this;}
+		virtual ReturnValue __queryRemove(const Thing*, uint32_t, uint32_t, Creature*) const {return RET_NOTPOSSIBLE;}
+		virtual Cylinder* __queryDestination(int32_t&, const Thing*, Item**,
+			uint32_t&) {return this;}
 
 		virtual void __addThing(Creature* actor, Thing* thing) {__addThing(actor, 0, thing);}
 		virtual void __addThing(Creature* actor, int32_t index, Thing* thing);
 
-		virtual void __updateThing(Thing* thing, uint16_t itemId, uint32_t count) {}
-		virtual void __replaceThing(uint32_t index, Thing* thing) {}
+		virtual void __updateThing(Thing*, uint16_t, uint32_t) {}
+		virtual void __replaceThing(uint32_t, Thing*) {}
 
-		virtual void __removeThing(Thing* thing, uint32_t count) {}
+		virtual void __removeThing(Thing*, uint32_t) {}
 
 		virtual void postAddNotification(Creature* actor, Thing* thing, const Cylinder* oldParent,
-			int32_t index, cylinderlink_t link = LINK_OWNER)
-			{if(getParent()) getParent()->postAddNotification(actor, thing,
-				oldParent, index, LINK_PARENT);}
+			int32_t index, CylinderLink_t = LINK_OWNER)
+		{
+			if(getParent())
+				getParent()->postAddNotification(actor, thing, oldParent, index, LINK_PARENT);
+		}
 		virtual void postRemoveNotification(Creature* actor, Thing* thing, const Cylinder* newParent,
-			int32_t index, bool isCompleteRemoval, cylinderlink_t link = LINK_OWNER)
-			{if(getParent()) getParent()->postRemoveNotification(actor, thing,
-				newParent, index, isCompleteRemoval, LINK_PARENT);}
+			int32_t index, bool isCompleteRemoval, CylinderLink_t = LINK_OWNER)
+		{
+			if(getParent())
+				getParent()->postRemoveNotification(actor, thing, newParent, index, isCompleteRemoval, LINK_PARENT);
+		}
 
-		bool canSend(const Item* item) const {return (item->getID() == ITEM_PARCEL || item->getID() == ITEM_LETTER);}
+		ReturnValue canSend(const Item* item, Creature* actor) const;
 		bool sendItem(Creature* actor, Item* item);
 
 		bool getDepotId(const std::string& townString, uint32_t& depotId);

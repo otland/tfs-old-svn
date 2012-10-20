@@ -12,19 +12,21 @@
 	]]></config>
 	<talkaction words="!changender" event="buffer"><![CDATA[
 		domodlib('changender_config')
-		if(getPlayerSex(cid) >= 2) then
+		if(getPlayerSex(cid) > 1) then
 			doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "You cannot change your gender.")
 			return
 		end
 
-		if(getPlayerPremiumDays(cid) < config.costPremiumDays) then
-			doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, "Sorry, not enough premium time - changing gender costs " .. config.costPremiumDays .. " premium days.")
-			doSendMagicEffect(getCreaturePosition(cid), CONST_ME_POFF)
-			return
-		end
+		if(not getConfigValue('freePremium')) then
+			if(getPlayerPremiumDays(cid) < config.costPremiumDays) then
+				doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, "Sorry, not enough premium time - changing gender costs " .. config.costPremiumDays .. " premium days.")
+				doSendMagicEffect(getCreaturePosition(cid), CONST_ME_POFF)
+				return
+			end
 
-		if(getPlayerPremiumDays(cid) < 65535) then
-			doPlayerAddPremiumDays(cid, -config.costPremiumDays)
+			if(getPlayerPremiumDays(cid) < 65535) then
+				doPlayerAddPremiumDays(cid, -config.costPremiumDays)
+			end
 		end
 
 		doPlayerSetSex(cid, getPlayerSex(cid) == PLAYERSEX_FEMALE and PLAYERSEX_MALE or PLAYERSEX_FEMALE)

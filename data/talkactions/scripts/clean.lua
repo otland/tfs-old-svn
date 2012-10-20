@@ -6,8 +6,9 @@ function onSay(cid, words, param, channel)
 		return true
 	end
 
-	if(param == 'tile') then
-		local removeLoaded, t = false, string.explode(param, ",")
+	local t = string.explode(param, ",")
+	if(t[1] == 'tile') then
+		local removeLoaded = false
 		if(t[2]) then
 			removeLoaded = getBooleanFromString(t[2])
 		end
@@ -17,7 +18,7 @@ function onSay(cid, words, param, channel)
 	end
 
 	if(not tonumber(param)) then
-		doPlayerSendCancel(cid, "Command requires numeric param.")
+		doPlayerSendCancel(cid, "Command numeric param required.")
 		return true
 	end
 

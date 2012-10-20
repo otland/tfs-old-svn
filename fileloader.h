@@ -35,7 +35,7 @@ struct NodeStruct
 	NodeStruct* next;
 	NodeStruct* child;
 
-	static void clearNet(NodeStruct* root) {if(root) clearChild(root); }
+	static void clearNet(NodeStruct* root) {if(root) clearChild(root);}
 	private:
 		static void clearNext(NodeStruct* node)
 		{
@@ -78,7 +78,7 @@ enum FILELOADER_ERRORS
 	ERROR_INVALID_FORMAT,
 	ERROR_TELL_ERROR,
 	ERROR_COULDNOTWRITE,
-	ERROR_CACHE_ERROR,
+	ERROR_CACHE_ERROR
 };
 
 class PropStream;
@@ -88,17 +88,17 @@ class FileLoader
 		FileLoader();
 		virtual ~FileLoader();
 
-		bool openFile(const char* filename, bool write, bool caching = false);
+		bool openFile(const char* name, const char* identifier, bool write, bool caching = false);
 		const uint8_t* getProps(const NODE, uint32_t &size);
 		bool getProps(const NODE, PropStream& props);
-		const NODE getChildNode(const NODE parent, uint32_t &type);
-		const NODE getNextNode(const NODE prev, uint32_t &type);
+		NODE getChildNode(const NODE& parent, uint32_t &type) const;
+		NODE getNextNode(const NODE& prev, uint32_t &type) const;
 
 		void startNode(uint8_t type);
 		void endNode();
 		int32_t setProps(void* data, uint16_t size);
 
-		int32_t getError() {return m_lastError;}
+		int32_t getError() const {return m_lastError;}
 		void clearError() {m_lastError = ERROR_NONE;}
 
 	protected:
@@ -112,7 +112,7 @@ class FileLoader
 
 		inline bool readByte(int32_t &value);
 		inline bool readBytes(unsigned char* buffer, int32_t size, int32_t pos);
-		inline bool checks(const NODE node);
+		inline bool checks(const NODE& node);
 		inline bool safeSeek(uint32_t pos);
 		inline bool safeTell(int32_t &pos);
 
@@ -124,8 +124,9 @@ class FileLoader
 				uint8_t c = *(((uint8_t*)data) + i);
 				if(unescape && (c == NODE_START || c == NODE_END || c == ESCAPE_CHAR))
 				{
-					uint8_t escape = ESCAPE_CHAR;
-					size_t value = fwrite(&escape, 1, 1, m_file);
+					uint8_t tmp = ESCAPE_CHAR;
+
+					size_t value = fwrite(&tmp, 1, 1, m_file);
 					if(value != 1)
 					{
 						m_lastError = ERROR_COULDNOTWRITE;
@@ -145,8 +146,10 @@ class FileLoader
 		}
 
 	protected:
-		FILE* m_file;
 		FILELOADER_ERRORS m_lastError;
+
+		FILE* m_file;
+
 		NODE m_root;
 		uint32_t m_buffer_size;
 		uint8_t* m_buffer;
@@ -162,8 +165,10 @@ class FileLoader
 		#define CACHE_BLOCKS 3
 		uint32_t m_cache_size;
 		_cache m_cached_data[CACHE_BLOCKS];
+
 		#define NO_VALID_CACHE 0xFFFFFFFF
 		uint32_t m_cache_index, m_cache_offset;
+
 		inline uint32_t getCacheBlock(uint32_t pos);
 		int32_t loadCacheBlock(uint32_t pos);
 };
@@ -182,7 +187,18 @@ class PropStream
 		int32_t size() const {return end - p;}
 
 		template <typename T>
-		inline bool GET_STRUCT(T* &ret)
+		inline bool getType(T& ret)
+		{
+			if(size() < (int32_t)sizeof(T))
+				return false;
+
+			ret = *((T*)p);
+			p += sizeof(T);
+			return true;
+		}
+
+		template <typename T>
+		inline bool getStruct(T* &ret)
 		{
 			if(size() < (int32_t)sizeof(T))
 			{
@@ -195,28 +211,33 @@ class PropStream
 			return true;
 		}
 
-		template <typename T>
-		inline bool GET_VALUE(T &ret)
+		inline bool getByte(uint8_t& ret) {return getType(ret);}
+		inline bool getShort(uint16_t& ret) {return getType(ret);}
+		inline bool getTime(time_t& ret) {return getType(ret);}
+		inline bool getLong(uint32_t& ret) {return getType(ret);}
+
+		inline bool getFloat(float& ret)
 		{
-			if(size() < (int32_t)sizeof(T))
+			// ugly hack, but it makes reading not depending on arch
+			if(size() < (int32_t)sizeof(uint32_t))
 				return false;
 
-			ret = *((T*)p);
-			p += sizeof(T);
+			float f;
+			memcpy(&f, (uint32_t*)p, sizeof(uint32_t));
+
+			ret = f;
+			p += sizeof(uint32_t);
 			return true;
 		}
 
-		inline bool GET_TIME(time_t &ret) {return GET_VALUE(ret);}
-		inline bool GET_ULONG(uint32_t &ret) {return GET_VALUE(ret);}
-		inline bool GET_USHORT(uint16_t &ret) {return GET_VALUE(ret);}
-		inline bool GET_UCHAR(uint8_t &ret) {return GET_VALUE(ret);}
-
-		inline bool GET_STRING(std::string& ret)
+		inline bool getString(std::string& ret)
 		{
 			uint16_t strLen;
-			if(!GET_USHORT(strLen))
-				return false;
+			return getShort(strLen) && getString(ret, strLen);
+		}
 
+		inline bool getString(std::string& ret, uint16_t strLen)
+		{
 			if(size() < (int32_t)strLen)
 				return false;
 
@@ -230,10 +251,10 @@ class PropStream
 			return true;
 		}
 
-		inline bool GET_LSTRING(std::string& ret)
+		inline bool getLongString(std::string& ret)
 		{
 			uint32_t strLen;
-			if(!GET_ULONG(strLen))
+			if(!getLong(strLen))
 				return false;
 
 			if(size() < (int32_t)strLen)
@@ -249,22 +270,7 @@ class PropStream
 			return true;
 		}
 
-		inline bool GET_NSTRING(uint16_t strLen, std::string& ret)
-		{
-			if(size() < (int32_t)strLen)
-				return false;
-
-			char* str = new char[strLen + 1];
-			memcpy(str, p, strLen);
-			str[strLen] = 0;
-
-			ret.assign(str, strLen);
-			delete[] str;
-			p += strLen;
-			return true;
-		}
-
-		inline bool SKIP_N(int16_t n)
+		inline bool skip(int16_t n)
 		{
 			if(size() < n)
 				return false;
@@ -296,59 +302,76 @@ class PropWriteStream
 			return buffer;
 		}
 
-		//TODO: might need temp buffer and zero fill the memory chunk allocated by realloc
 		template <typename T>
-		inline void ADD_TYPE(T* add)
+		inline void addType(T add)
 		{
 			if((bufferSize - size) < sizeof(T))
 			{
 				bufferSize += ((sizeof(T) + 0x1F) & 0xFFFFFFE0);
-				buffer = (char*)realloc(buffer, bufferSize);
-			}
-
-			memcpy(&buffer[size], (char*)add, sizeof(T));
-			size += sizeof(T);
-		}
-
-		template <typename T>
-		inline void ADD_VALUE(T add)
-		{
-			if((bufferSize - size) < sizeof(T))
-			{
-				bufferSize += ((sizeof(T) + 0x1F) & 0xFFFFFFE0);
-				buffer = (char*)realloc(buffer, bufferSize);
+				char* tmp = (char*)realloc(buffer, bufferSize);
+				if(tmp != NULL)
+					buffer = tmp;
+				else
+					std::clog << "[Error - PropWriteStream::addType] Failed to allocate memory" << std::endl;
 			}
 
 			memcpy(&buffer[size], &add, sizeof(T));
 			size += sizeof(T);
 		}
 
-		inline void ADD_ULONG(uint32_t ret) {ADD_VALUE(ret);}
-		inline void ADD_USHORT(uint16_t ret) {ADD_VALUE(ret);}
-		inline void ADD_UCHAR(uint8_t ret) {ADD_VALUE(ret);}
+		//TODO: might need tmp buffer and zero fill the memory chunk allocated by realloc
+		template <typename T>
+		inline void addStruct(T* add)
+		{
+			if((bufferSize - size) < sizeof(T))
+			{
+				bufferSize += ((sizeof(T) + 0x1F) & 0xFFFFFFE0);
+				char* tmp = (char*)realloc(buffer, bufferSize);
+				if(tmp != NULL)
+					buffer = tmp;
+				else
+					std::clog << "[Error - PropWriteStream::addStruct] Failed to allocate memory" << std::endl;
+			}
 
-		inline void ADD_STRING(const std::string& add)
+			memcpy(&buffer[size], (char*)add, sizeof(T));
+			size += sizeof(T);
+		}
+
+		inline void addByte(uint8_t ret) {addType(ret);}
+		inline void addShort(uint16_t ret) {addType(ret);}
+		inline void addTime(time_t ret) {addType(ret);}
+		inline void addLong(uint32_t ret) {addType(ret);}
+
+		inline void addString(const std::string& add)
 		{
 			uint16_t strLen = add.size();
-			ADD_USHORT(strLen);
+			addShort(strLen);
 			if((bufferSize - size) < strLen)
 			{
 				bufferSize += ((strLen + 0x1F) & 0xFFFFFFE0);
-				buffer = (char*)realloc(buffer, bufferSize);
+				char* tmp = (char*)realloc(buffer, bufferSize);
+				if(tmp != NULL)
+					buffer = tmp;
+				else
+					std::clog << "[Error - PropWriteStream::addString] Failed to allocate memory" << std::endl;
 			}
 
 			memcpy(&buffer[size], add.c_str(), strLen);
 			size += strLen;
 		}
 
-		inline void ADD_LSTRING(const std::string& add)
+		inline void addLongString(const std::string& add)
 		{
 			uint16_t strLen = add.size();
-			ADD_ULONG(strLen);
+			addLong(strLen);
 			if((bufferSize - size) < strLen)
 			{
 				bufferSize += ((strLen + 0x1F) & 0xFFFFFFE0);
-				buffer = (char*)realloc(buffer, bufferSize);
+				char* tmp = (char*)realloc(buffer, bufferSize);
+				if(tmp != NULL)
+					buffer = tmp;
+				else
+					std::clog << "[Error - PropWriteStream::addLongString] Failed to allocate memory" << std::endl;
 			}
 
 			memcpy(&buffer[size], add.c_str(), strLen);

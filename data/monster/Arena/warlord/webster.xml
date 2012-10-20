@@ -2,24 +2,19 @@
 <monster name="Webster" nameDescription="a webster" race="undead" experience="1200" speed="290" manacost="0">
 	<health now="1750" max="1750"/>
 	<look type="263" corpse="7349"/>
-	<!--<targetchange/>-->
 	<strategy attack="100" defense="0"/>
 	<flags>
 		<flag summonable="0"/>
 		<flag attackable="1"/>
 		<flag hostile="1"/>
-		<flag illusionable="1"/>
+		<flag illusionable="0"/>
 		<flag convinceable="0"/>
 		<flag pushable="0"/>
 		<flag canpushitems="1"/>
-		<flag staticattack="78"/>
-		<flag lightlevel="0"/>
-		<flag lightcolor="0"/>
 		<flag targetdistance="1"/>
-		<flag runonhealth="0"/>
 	</flags>
 	<attacks>
-		<attack name="melee" interval="2000" min="-103" max="-210"/>
+		<attack name="melee" interval="2000" skill="40" attack="100"/>
 		<attack name="speed" interval="3500" chance="65" radius="1" target="1" range="1" duration="40" speedchange="-500">
 			<attribute key="areaEffect" value="redshimmer"/>
 		</attack>
@@ -37,6 +32,8 @@
 		<element energyPercent="-13"/>
 	</elements>
 	<immunities>
+		<immunity outfit="1"/>
+		<immunity drunk="1"/>
 		<immunity invisible="1"/>
 	</immunities>
 	<voices interval="2000" chance="5">

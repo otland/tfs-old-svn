@@ -5,10 +5,48 @@ local config = {
 	holes = {7236},
 
 	corpses = {
-		-- [corpse] = {items}
-		[2025] = {
-			-- {itemid, countmax, chance}
-			-- TODO: Water elemental and Massive Water Elemental loot...
+		-- [corpse] = {[aid] = { {itemid, countmax, chance} }}
+		[10499] = {
+			[101] = {
+				{2226, 1, 16000}, --fish bone
+				{2238, 1, 15000}, --leather boots
+				{2148, 1, 15000}, --gold coin
+				{2376, 1, 14000}, --sword
+				{2152, 1, 13000}, --platinum
+				{7589, 1, 13000}, --strong mana potion
+				{7588, 1, 13000}, --strong health potion
+				{2168, 1, 11500}, --life ring
+				{2167, 1, 15000}, --energy ring
+				{9810, 1, 9500}, --rusty armor
+				{9813, 1, 9500}, --rusty legs
+				{7632, 1, 8600}, --giant shimmering pearl
+				{7633, 1, 8600}, --giant shimmering pearl
+				{7158, 1, 3100}, --rainbow trout
+				{7159, 1, 3100}, --green perch
+				{2146, 1, 11500}, --small sapphire
+				{2149, 2, 11500}, --small emerald
+				{10220, 1, 1500} --leviathan's amulet
+			},
+			[102] = {
+				{2226, 1, 16000}, --fish bone
+				{2238, 1, 15000}, --leather boots
+				{2148, 1, 15000}, --gold coin
+				{2376, 1, 14000}, --sword
+				{2152, 1, 14000}, --platinum
+				{7589, 1, 14000}, --strong mana potion
+				{7588, 1, 14000}, --strong health potion
+				{2168, 1, 15500}, --life ring
+				{2167, 1, 16000}, --energy ring
+				{9810, 1, 11500}, --rusty armor
+				{9813, 1, 11500}, --rusty legs
+				{7632, 1, 9600}, --giant shimmering pearl
+				{7633, 1, 9600}, --giant shimmering pearl
+				{7158, 1, 5100}, --rainbow trout
+				{7159, 1, 5100}, --green perch
+				{2146, 1, 13500}, --small sapphire
+				{2149, 2, 13500}, --small emerald
+				{10220, 1, 2500} --leviathan's amulet
+			}
 		}
 	},
 	checkCorpseOwner = getConfigValue("checkCorpseOwner"),
@@ -39,29 +77,42 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 	end
 
 	local corpse = config.corpses[itemEx.itemid]
-	if(corpse ~= nil) then
-		local owner = getItemAttribute(cid, "corpseowner")
-		if(owner ~= 0 and owner ~= getPlayerGUID(cid) and config.checkCorpseOwner) then
-			doPlayerSendDefaultCancel(cid, RETURNVALUE_YOUARENOTTHEOWNER)
+	if(corpse ~= nil and corpse ~= 0) then
+		corpse = corpse[itemEx.actionid]
+		if(corpse ~= nil and corpse ~= 0) then
+			if(config.checkCorpseOwner and not getPlayerCustomFlagValue(cid, PLAYERCUSTOMFLAG_GAMEMASTERPRIVILEGES)) then
+				local owner = getItemAttribute(itemEx.uid, "corpseowner")
+				if(owner ~= 0 and owner ~= nil and owner ~= getPlayerGUID(cid)) then
+					doPlayerSendDefaultCancel(cid, RETURNVALUE_YOUARENOTTHEOWNER)
+					return true
+				end
+			end
+
+			local chance, items, default, max = math.random(0, 100000) / config.rateLoot, {}, {}, 0
+			for _, data in ipairs(corpse) do
+				if(data[3] >= chance) then
+					local tmp = {data[1], math.random(1, data[2])}
+					table.insert(items, tmp)
+				end
+				if(data[3] > max) then
+					default = data
+					max = data[3]
+				end
+			end
+
+			local itemCount = table.maxn(items)
+			if(itemCount > 0) then
+				local loot = items[math.random(1, itemCount)]
+				doPlayerAddItem(cid, loot[1], loot[2])
+			else
+				doPlayerAddItem(cid, default[1], default[2])
+			end
+
+			doTransformItem(itemEx.uid, getItemInfo(itemEx.itemid).decayTo)
+			doSendMagicEffect(toPosition, CONST_ME_WATERSPLASH)
+			doDecayItem(itemEx.uid)
 			return true
 		end
-
-		local chance, items = math.random(0, 100000) / config.rateLoot, {}
-		for _, data in ipairs(corpse) do
-			if(data[3] >= chance) then
-				local tmp = {data[1], math.random(1, data[2])}
-				table.insert(items, tmp)
-			end
-		end
-
-		local itemCount = table.maxn(items)
-		if(itemCount > 0) then
-			local loot = items[math.random(1, itemCount)]
-			doPlayerAddItem(cid, loot[1], loot[2])
-		end
-
-		doTransformItem(itemEx.uid, itemEx.uid + 1)
-		return true
 	end
 
 	if(not isInArray(config.fishable, itemEx.itemid)) then

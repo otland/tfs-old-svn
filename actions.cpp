@@ -15,6 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////
 #include "otpch.h"
+
 #include "const.h"
 
 #include "actions.h"
@@ -48,6 +49,7 @@ Actions::Actions():
 m_interface("Action Interface")
 {
 	m_interface.initState();
+	defaultAction = NULL;
 }
 
 Actions::~Actions()
@@ -70,6 +72,8 @@ void Actions::clear()
 	clearMap(actionItemMap);
 
 	m_interface.reInitState();
+	delete defaultAction;
+	defaultAction = NULL;
 }
 
 Event* Actions::getEvent(const std::string& nodeName)
@@ -86,18 +90,31 @@ bool Actions::registerEvent(Event* event, xmlNodePtr p, bool override)
 	if(!action)
 		return false;
 
-	StringVec strVector;
-	IntegerVec intVector, endIntVector;
+	std::string strValue;
+	if(readXMLString(p, "default", strValue) && booleanString(strValue))
+	{
+		if(!defaultAction)
+			defaultAction = action;
+		else if(override)
+		{
+			delete defaultAction;
+			defaultAction = action;
+		}
+		else
+			std::clog << "[Warning - Actions::registerEvent] You cannot define more than one default action, if you want to do so "
+                << "Please define \"override\"." << std::endl;
 
-	std::string strValue, endStrValue;
-	int32_t tmp = 0;
+		return true;
+	}
 
 	bool success = true;
+	std::string endValue;
 	if(readXMLString(p, "itemid", strValue))
 	{
+		IntegerVec intVector;
 		if(!parseIntegerVec(strValue, intVector))
 		{
-			std::cout << "[Warning - Actions::registerEvent] Invalid itemid - '" << strValue << "'" << std::endl;
+			std::clog << "[Warning - Actions::registerEvent] Invalid itemid - '" << strValue << "'" << std::endl;
 			return false;
 		}
 
@@ -105,7 +122,7 @@ bool Actions::registerEvent(Event* event, xmlNodePtr p, bool override)
 		{
 			if(!override)
 			{
-				std::cout << "[Warning - Actions::registerEvent] Duplicate registered item id: " << intVector[0] << std::endl;
+				std::clog << "[Warning - Actions::registerEvent] Duplicate registered item id: " << intVector[0] << std::endl;
 				success = false;
 			}
 			else
@@ -121,7 +138,7 @@ bool Actions::registerEvent(Event* event, xmlNodePtr p, bool override)
 			{
 				if(!override)
 				{
-					std::cout << "[Warning - Actions::registerEvent] Duplicate registered item id: " << intVector[i] << std::endl;
+					std::clog << "[Warning - Actions::registerEvent] Duplicate registered item id: " << intVector[i] << std::endl;
 					continue;
 				}
 				else
@@ -131,24 +148,23 @@ bool Actions::registerEvent(Event* event, xmlNodePtr p, bool override)
 			useItemMap[intVector[i]] = new Action(action);
 		}
 	}
-
-	if(readXMLString(p, "fromid", strValue) && readXMLString(p, "toid", endStrValue))
+	else if(readXMLString(p, "fromid", strValue) && readXMLString(p, "toid", endValue))
 	{
-		intVector = vectorAtoi(explodeString(strValue, ";"));
-		endIntVector = vectorAtoi(explodeString(endStrValue, ";"));
-		if(intVector[0] && endIntVector[0] && intVector.size() == endIntVector.size())
+		IntegerVec intVector = vectorAtoi(explodeString(strValue, ";")), endVector = vectorAtoi(explodeString(endValue, ";"));
+		if(intVector[0] && endVector[0] && intVector.size() == endVector.size())
 		{
+			int32_t tmp = 0;
 			for(size_t i = 0, size = intVector.size(); i < size; ++i)
 			{
 				tmp = intVector[i];
-				while(intVector[i] <= endIntVector[i])
+				while(intVector[i] <= endVector[i])
 				{
 					if(useItemMap.find(intVector[i]) != useItemMap.end())
 					{
 						if(!override)
 						{
-							std::cout << "[Warning - Actions::registerEvent] Duplicate registered item with id: " << intVector[i] <<
-								", in fromid: " << tmp << " and toid: " << endIntVector[i] << std::endl;
+							std::clog << "[Warning - Actions::registerEvent] Duplicate registered item with id: " << intVector[i] <<
+								", in fromid: " << tmp << " and toid: " << endVector[i] << std::endl;
 							intVector[i]++;
 							continue;
 						}
@@ -161,15 +177,16 @@ bool Actions::registerEvent(Event* event, xmlNodePtr p, bool override)
 			}
 		}
 		else
-			std::cout << "[Warning - Actions::registerEvent] Malformed entry (from item: \"" << strValue <<
-				"\", to item: \"" << endStrValue << "\")" << std::endl;
+			std::clog << "[Warning - Actions::registerEvent] Malformed entry (from item: \"" << strValue <<
+				"\", to item: \"" << endValue << "\")" << std::endl;
 	}
 
 	if(readXMLString(p, "uniqueid", strValue))
 	{
+		IntegerVec intVector;
 		if(!parseIntegerVec(strValue, intVector))
 		{
-			std::cout << "[Warning - Actions::registerEvent] Invalid uniqueid - '" << strValue << "'" << std::endl;
+			std::clog << "[Warning - Actions::registerEvent] Invalid uniqueid - '" << strValue << "'" << std::endl;
 			return false;
 		}
 
@@ -177,7 +194,7 @@ bool Actions::registerEvent(Event* event, xmlNodePtr p, bool override)
 		{
 			if(!override)
 			{
-				std::cout << "[Warning - Actions::registerEvent] Duplicate registered item uid: " << intVector[0] << std::endl;
+				std::clog << "[Warning - Actions::registerEvent] Duplicate registered item uid: " << intVector[0] << std::endl;
 				success = false;
 			}
 			else
@@ -193,7 +210,7 @@ bool Actions::registerEvent(Event* event, xmlNodePtr p, bool override)
 			{
 				if(!override)
 				{
-					std::cout << "[Warning - Actions::registerEvent] Duplicate registered item uid: " << intVector[i] << std::endl;
+					std::clog << "[Warning - Actions::registerEvent] Duplicate registered item uid: " << intVector[i] << std::endl;
 					continue;
 				}
 				else
@@ -203,24 +220,23 @@ bool Actions::registerEvent(Event* event, xmlNodePtr p, bool override)
 			uniqueItemMap[intVector[i]] = new Action(action);
 		}
 	}
-
-	if(readXMLString(p, "fromuid", strValue) && readXMLString(p, "touid", endStrValue))
+	else if(readXMLString(p, "fromuid", strValue) && readXMLString(p, "touid", endValue))
 	{
-		intVector = vectorAtoi(explodeString(strValue, ";"));
-		endIntVector = vectorAtoi(explodeString(endStrValue, ";"));
-		if(intVector[0] && endIntVector[0] && intVector.size() == endIntVector.size())
+		IntegerVec intVector = vectorAtoi(explodeString(strValue, ";")), endVector = vectorAtoi(explodeString(endValue, ";"));
+		if(intVector[0] && endVector[0] && intVector.size() == endVector.size())
 		{
+			int32_t tmp = 0;
 			for(size_t i = 0, size = intVector.size(); i < size; ++i)
 			{
 				tmp = intVector[i];
-				while(intVector[i] <= endIntVector[i])
+				while(intVector[i] <= endVector[i])
 				{
 					if(uniqueItemMap.find(intVector[i]) != uniqueItemMap.end())
 					{
 						if(!override)
 						{
-							std::cout << "[Warning - Actions::registerEvent] Duplicate registered item with uid: " << intVector[i] <<
-								", in fromuid: " << tmp << " and touid: " << endIntVector[i] << std::endl;
+							std::clog << "[Warning - Actions::registerEvent] Duplicate registered item with uid: " << intVector[i] <<
+								", in fromuid: " << tmp << " and touid: " << endVector[i] << std::endl;
 							intVector[i]++;
 							continue;
 						}
@@ -233,15 +249,16 @@ bool Actions::registerEvent(Event* event, xmlNodePtr p, bool override)
 			}
 		}
 		else
-			std::cout << "[Warning - Actions::registerEvent] Malformed entry (from unique: \"" << strValue <<
-				"\", to unique: \"" << endStrValue << "\")" << std::endl;
+			std::clog << "[Warning - Actions::registerEvent] Malformed entry (from unique: \"" << strValue <<
+				"\", to unique: \"" << endValue << "\")" << std::endl;
 	}
 
-	if(readXMLString(p, "actionid", strValue))
+	if(readXMLString(p, "actionid", strValue) || readXMLString(p, "aid", strValue))
 	{
+		IntegerVec intVector;
 		if(!parseIntegerVec(strValue, intVector))
 		{
-			std::cout << "[Warning - Actions::registerEvent] Invalid actionid - '" << strValue << "'" << std::endl;
+			std::clog << "[Warning - Actions::registerEvent] Invalid actionid - '" << strValue << "'" << std::endl;
 			return false;
 		}
 
@@ -249,7 +266,7 @@ bool Actions::registerEvent(Event* event, xmlNodePtr p, bool override)
 		{
 			if(!override)
 			{
-				std::cout << "[Warning - Actions::registerEvent] Duplicate registered item aid: " << intVector[0] << std::endl;
+				std::clog << "[Warning - Actions::registerEvent] Duplicate registered item aid: " << intVector[0] << std::endl;
 				success = false;
 			}
 			else
@@ -265,7 +282,7 @@ bool Actions::registerEvent(Event* event, xmlNodePtr p, bool override)
 			{
 				if(!override)
 				{
-					std::cout << "[Warning - Actions::registerEvent] Duplicate registered item aid: " << intVector[i] << std::endl;
+					std::clog << "[Warning - Actions::registerEvent] Duplicate registered item aid: " << intVector[i] << std::endl;
 					continue;
 				}
 				else
@@ -275,24 +292,23 @@ bool Actions::registerEvent(Event* event, xmlNodePtr p, bool override)
 			actionItemMap[intVector[i]] = new Action(action);
 		}
 	}
-
-	if(readXMLString(p, "fromaid", strValue) && readXMLString(p, "toaid", endStrValue))
+	else if(readXMLString(p, "fromaid", strValue) && readXMLString(p, "toaid", endValue))
 	{
-		intVector = vectorAtoi(explodeString(strValue, ";"));
-		endIntVector = vectorAtoi(explodeString(endStrValue, ";"));
-		if(intVector[0] && endIntVector[0] && intVector.size() == endIntVector.size())
+		IntegerVec intVector = vectorAtoi(explodeString(strValue, ";")), endVector = vectorAtoi(explodeString(endValue, ";"));
+		if(intVector[0] && endVector[0] && intVector.size() == endVector.size())
 		{
+			int32_t tmp = 0;
 			for(size_t i = 0, size = intVector.size(); i < size; ++i)
 			{
 				tmp = intVector[i];
-				while(intVector[i] <= endIntVector[i])
+				while(intVector[i] <= endVector[i])
 				{
 					if(actionItemMap.find(intVector[i]) != actionItemMap.end())
 					{
 						if(!override)
 						{
-							std::cout << "[Warning - Actions::registerEvent] Duplicate registered item with aid: " << intVector[i] <<
-								", in fromaid: " << tmp << " and toaid: " << endIntVector[i] << std::endl;
+							std::clog << "[Warning - Actions::registerEvent] Duplicate registered item with aid: " << intVector[i] <<
+								", in fromaid: " << tmp << " and toaid: " << endVector[i] << std::endl;
 							intVector[i]++;
 							continue;
 						}
@@ -305,8 +321,8 @@ bool Actions::registerEvent(Event* event, xmlNodePtr p, bool override)
 			}
 		}
 		else
-			std::cout << "[Warning - Actions::registerEvent] Malformed entry (from action: \"" << strValue <<
-				"\", to action: \"" << endStrValue << "\")" << std::endl;
+			std::clog << "[Warning - Actions::registerEvent] Malformed entry (from action: \"" << strValue <<
+				"\", to action: \"" << endValue << "\")" << std::endl;
 	}
 
 	return success;
@@ -327,10 +343,17 @@ ReturnValue Actions::canUse(const Player* player, const Position& pos)
 	if(!Position::areInRange<1,1,0>(playerPos, pos))
 		return RET_TOOFARAWAY;
 
+	Tile* tile = g_game.getTile(pos);
+	if(tile)
+	{
+		HouseTile* houseTile = tile->getHouseTile();
+		if(houseTile && houseTile->getHouse() && !houseTile->getHouse()->isInvited(player))
+			return RET_PLAYERISNOTINVITED;
+	}
 	return RET_NOERROR;
 }
 
-ReturnValue Actions::canUse(const Player* player, const Position& pos, const Item* item)
+ReturnValue Actions::canUseEx(const Player* player, const Position& pos, const Item* item)
 {
 	Action* action = NULL;
 	if((action = getAction(item, ACTION_UNIQUEID)))
@@ -344,6 +367,9 @@ ReturnValue Actions::canUse(const Player* player, const Position& pos, const Ite
 
 	if((action = getAction(item, ACTION_RUNEID)))
 		return action->canExecuteAction(player, pos);
+
+	if(defaultAction)
+		return defaultAction->canExecuteAction(player, pos);
 
 	return RET_NOERROR;
 }
@@ -369,7 +395,7 @@ ReturnValue Actions::canUseFar(const Creature* creature, const Position& toPos, 
 	return RET_NOERROR;
 }
 
-Action* Actions::getAction(const Item* item, ActionType_t type/* = ACTION_ANY*/) const
+Action* Actions::getAction(const Item* item, ActionType_t type) const
 {
 	if(item->getUniqueId() && (type == ACTION_ANY || type == ACTION_UNIQUEID))
 	{
@@ -420,71 +446,35 @@ ReturnValue Actions::internalUseItem(Player* player, const Position& pos, uint8_
 		tmp = item->getParent()->__getIndexOfThing(item);
 
 	PositionEx posEx(pos, tmp);
-	bool executed = false;
-
 	Action* action = NULL;
 	if((action = getAction(item, ACTION_UNIQUEID)))
 	{
-		if(action->isScripted())
-		{
-			if(executeUse(action, player, item, posEx, creatureId))
-				return RET_NOERROR;
-		}
-		else if(action->function)
-		{
-			if(action->function(player, item, posEx, posEx, false, creatureId))
-				return RET_NOERROR;
-		}
-
-		executed = true;
+		if(executeUse(action, player, item, posEx, creatureId))
+			return RET_NOERROR;
 	}
 
 	if((action = getAction(item, ACTION_ACTIONID)))
 	{
-		if(action->isScripted())
-		{
-			if(executeUse(action, player, item, posEx, creatureId))
-				return RET_NOERROR;
-		}
-		else if(action->function)
-		{
-			if(action->function(player, item, posEx, posEx, false, creatureId))
-				return RET_NOERROR;
-		}
-
-		executed = true;
+		if(executeUse(action, player, item, posEx, creatureId))
+			return RET_NOERROR;
 	}
 
 	if((action = getAction(item, ACTION_ITEMID)))
 	{
-		if(action->isScripted())
-		{
-			if(executeUse(action, player, item, posEx, creatureId))
-				return RET_NOERROR;
-		}
-		else if(action->function)
-		{
-			if(action->function(player, item, posEx, posEx, false, creatureId))
-				return RET_NOERROR;
-		}
-
-		executed = true;
+		if(executeUse(action, player, item, posEx, creatureId))
+			return RET_NOERROR;
 	}
 
 	if((action = getAction(item, ACTION_RUNEID)))
 	{
-		if(action->isScripted())
-		{
-			if(executeUse(action, player, item, posEx, creatureId))
-				return RET_NOERROR;
-		}
-		else if(action->function)
-		{
-			if(action->function(player, item, posEx, posEx, false, creatureId))
-				return RET_NOERROR;
-		}
+		if(executeUse(action, player, item, posEx, creatureId))
+			return RET_NOERROR;
+	}
 
-		executed = true;
+	if(defaultAction)
+	{
+		if(executeUse(defaultAction, player, item, posEx, creatureId))
+			return RET_NOERROR;
 	}
 
 	if(BedItem* bed = item->getBed())
@@ -492,7 +482,8 @@ ReturnValue Actions::internalUseItem(Player* player, const Position& pos, uint8_
 		if(!bed->canUse(player))
 			return RET_CANNOTUSETHISOBJECT;
 
-		bed->sleep(player);
+		//bed->sleep(player);
+		player->showOfflineTrainingDialog(bed->getPosition());
 		return RET_NOERROR;
 	}
 
@@ -505,6 +496,9 @@ ReturnValue Actions::internalUseItem(Player* player, const Position& pos, uint8_
 		Container* tmpContainer = NULL;
 		if(Depot* depot = container->getDepot())
 		{
+			if(player->hasFlag(PlayerFlag_CannotPickupItem))
+				return RET_CANNOTUSETHISOBJECT;
+
 			if(Depot* playerDepot = player->getDepot(depot->getDepotId(), true))
 			{
 				player->useDepot(depot->getDepotId(), true);
@@ -547,10 +541,40 @@ ReturnValue Actions::internalUseItem(Player* player, const Position& pos, uint8_
 		return RET_NOERROR;
 	}
 
-	if(!executed)
-		return RET_CANNOTUSETHISOBJECT;
+	if(item->getID() == ITEM_MARKET)
+	{
+		if(!g_config.getBool(ConfigManager::MARKET_ENABLED))
+		{
+			player->sendTextMessage(MSG_INFO_DESCR, "The market is disabled.");
+			return RET_NOERROR;
+		}
 
-	return RET_NOERROR;
+		Depot* depot = NULL;
+		if(Cylinder* cylinder = item->getParent())
+		{
+			if(Item* parentItem = cylinder->getItem())
+			{
+				if(Container* parentContainer = parentItem->getContainer())
+					depot = parentContainer->getDepot();
+			}
+		}
+
+		if(!depot)
+			return RET_CANNOTUSETHISOBJECT;
+
+		player->sendMarketEnter(depot->getDepotId());
+		return RET_NOERROR;
+	}
+
+	const ItemType& it = Item::items[item->getID()];
+	if(it.transformUseTo)
+	{
+		g_game.transformItem(item, it.transformUseTo);
+		g_game.startDecay(item);
+		return RET_NOERROR;
+	}
+
+	return RET_CANNOTUSETHISOBJECT;
 }
 
 bool Actions::useItem(Player* player, const Position& pos, uint8_t index, Item* item)
@@ -560,7 +584,7 @@ bool Actions::useItem(Player* player, const Position& pos, uint8_t index, Item* 
 
 	player->setNextActionTask(NULL);
 	player->stopWalk();
-	player->setNextAction(OTSYS_TIME() + g_config.getNumber(ConfigManager::ACTIONS_DELAY_INTERVAL) - SCHEDULER_MINTICKS);
+	player->setNextAction(OTSYS_TIME() + g_config.getNumber(ConfigManager::ACTIONS_DELAY_INTERVAL) - 10);
 
 	ReturnValue ret = internalUseItem(player, pos, index, item, 0);
 	if(ret == RET_NOERROR)
@@ -601,6 +625,7 @@ ReturnValue Actions::internalUseItemEx(Player* player, const PositionEx& fromPos
 		//only continue with next action in the list if the previous returns false
 		if(executeUseEx(action, player, item, fromPosEx, toPosEx, isHotkey, creatureId))
 			return RET_NOERROR;
+
 	}
 
 	if((action = getAction(item, ACTION_ITEMID)))
@@ -625,6 +650,17 @@ ReturnValue Actions::internalUseItemEx(Player* player, const PositionEx& fromPos
 			return RET_NOERROR;
 	}
 
+	if(defaultAction)
+	{
+		ReturnValue ret = defaultAction->canExecuteAction(player, toPosEx);
+		if(ret != RET_NOERROR)
+			return ret;
+
+		//only continue with next action in the list if the previous returns false
+		if(executeUseEx(defaultAction, player, item, fromPosEx, toPosEx, isHotkey, creatureId))
+			return RET_NOERROR;
+	}
+
 	return RET_CANNOTUSETHISOBJECT;
 }
 
@@ -636,14 +672,7 @@ bool Actions::useItemEx(Player* player, const Position& fromPos, const Position&
 
 	player->setNextActionTask(NULL);
 	player->stopWalk();
-	player->setNextAction(OTSYS_TIME() + g_config.getNumber(ConfigManager::EX_ACTIONS_DELAY_INTERVAL) - SCHEDULER_MINTICKS);
-
-	Action* action = getAction(item);
-	if(!action)
-	{
-		player->sendCancelMessage(RET_CANNOTUSETHISOBJECT);
-		return false;
-	}
+	player->setNextAction(OTSYS_TIME() + g_config.getNumber(ConfigManager::EX_ACTIONS_DELAY_INTERVAL) - 10);
 
 	int32_t fromStackPos = 0;
 	if(item->getParent())
@@ -653,16 +682,14 @@ bool Actions::useItemEx(Player* player, const Position& fromPos, const Position&
 	PositionEx toPosEx(toPos, toStackPos);
 
 	ReturnValue ret = internalUseItemEx(player, fromPosEx, toPosEx, item, isHotkey, creatureId);
-	if(ret != RET_NOERROR)
-	{
-		player->sendCancelMessage(ret);
-		return false;
-	}
+	if(ret == RET_NOERROR)
+		return true;
 
-	return true;
+	player->sendCancelMessage(ret);
+	return false;
 }
 
-Action::Action(LuaScriptInterface* _interface):
+Action::Action(LuaInterface* _interface):
 Event(_interface)
 {
 	allowFarUse = false;
@@ -688,50 +715,18 @@ bool Action::configureEvent(xmlNodePtr p)
 	return true;
 }
 
-bool Action::loadFunction(const std::string& functionName)
+ReturnValue Action::canExecuteAction(const Player* player, const Position& pos)
 {
-	std::string tmpFunctionName = asLowerCaseString(functionName);
-	if(tmpFunctionName == "increaseitemid")
-		function = increaseItemId;
-	else if(tmpFunctionName == "decreaseitemid")
-		function = decreaseItemId;
-	else
-	{
-		std::cout << "[Warning - Action::loadFunction] Function \"" << functionName << "\" does not exist." << std::endl;
-		return false;
-	}
+	if(player->hasCustomFlag(PlayerCustomFlag_CanUseFar))
+		return RET_NOERROR;
 
-	m_scripted = EVENT_SCRIPT_FALSE;
-	return true;
-}
-
-bool Action::increaseItemId(Player* player, Item* item, const PositionEx& posFrom, const PositionEx& posTo, bool extendedUse, uint32_t creatureId)
-{
-	if(!player || !item)
-		return false;
-
-	g_game.transformItem(item, item->getID() + 1);
-	return true;
-}
-
-bool Action::decreaseItemId(Player* player, Item* item, const PositionEx& posFrom, const PositionEx& posTo, bool extendedUse, uint32_t creatureId)
-{
-	if(!player || !item)
-		return false;
-
-	g_game.transformItem(item, item->getID() - 1);
-	return true;
-}
-
-ReturnValue Action::canExecuteAction(const Player* player, const Position& toPos)
-{
 	if(!getAllowFarUse())
-		return g_actions->canUse(player, toPos);
+		return g_actions->canUse(player, pos);
 
-	return g_actions->canUseFar(player, toPos, getCheckLineOfSight());
+	return g_actions->canUseFar(player, pos, getCheckLineOfSight());
 }
 
-bool Action::executeUse(Player* player, Item* item, const PositionEx& fromPos, const PositionEx& toPos, bool extendedUse, uint32_t creatureId)
+bool Action::executeUse(Player* player, Item* item, const PositionEx& fromPos, const PositionEx& toPos, bool extendedUse, uint32_t)
 {
 	//onUse(cid, item, fromPosition, itemEx, toPosition)
 	if(m_interface->reserveEnv())
@@ -752,8 +747,15 @@ bool Action::executeUse(Player* player, Item* item, const PositionEx& fromPos, c
 				env->streamThing(scriptstream, "itemEx", thing, env->addThing(thing));
 				env->streamPosition(scriptstream, "toPosition", toPos, toPos.stackpos);
 			}
+			else
+			{
+				env->streamThing(scriptstream, "itemEx", NULL, 0);
+				env->streamPosition(scriptstream, "toPosition", PositionEx());
+			}
 
-			scriptstream << m_scriptData;
+			if(m_scriptData)
+				scriptstream << *m_scriptData;
+
 			bool result = true;
 			if(m_interface->loadBuffer(scriptstream.str()))
 			{
@@ -769,7 +771,7 @@ bool Action::executeUse(Player* player, Item* item, const PositionEx& fromPos, c
 			#ifdef __DEBUG_LUASCRIPTS__
 			std::stringstream desc;
 			desc << player->getName() << " - " << item->getID() << " " << fromPos << "|" << toPos;
-			env->setEventDesc(desc.str());
+			env->setEvent(desc.str());
 			#endif
 
 			env->setScriptId(m_scriptId, m_interface);
@@ -779,19 +781,19 @@ bool Action::executeUse(Player* player, Item* item, const PositionEx& fromPos, c
 			m_interface->pushFunction(m_scriptId);
 
 			lua_pushnumber(L, env->addThing(player));
-			LuaScriptInterface::pushThing(L, item, env->addThing(item));
-			LuaScriptInterface::pushPosition(L, fromPos, fromPos.stackpos);
+			LuaInterface::pushThing(L, item, env->addThing(item));
+			LuaInterface::pushPosition(L, fromPos, fromPos.stackpos);
 
 			Thing* thing = g_game.internalGetThing(player, toPos, toPos.stackpos);
 			if(thing && (thing != item || !extendedUse))
 			{
-				LuaScriptInterface::pushThing(L, thing, env->addThing(thing));
-				LuaScriptInterface::pushPosition(L, toPos, toPos.stackpos);
+				LuaInterface::pushThing(L, thing, env->addThing(thing));
+				LuaInterface::pushPosition(L, toPos, toPos.stackpos);
 			}
 			else
 			{
-				LuaScriptInterface::pushThing(L, NULL, 0);
-				LuaScriptInterface::pushPosition(L, fromPos, fromPos.stackpos);
+				LuaInterface::pushThing(L, NULL, 0);
+				LuaInterface::pushPosition(L, PositionEx());
 			}
 
 			bool result = m_interface->callFunction(5);
@@ -801,7 +803,7 @@ bool Action::executeUse(Player* player, Item* item, const PositionEx& fromPos, c
 	}
 	else
 	{
-		std::cout << "[Error - Action::executeUse]: Call stack overflow." << std::endl;
+		std::clog << "[Error - Action::executeUse]: Call stack overflow." << std::endl;
 		return false;
 	}
 }

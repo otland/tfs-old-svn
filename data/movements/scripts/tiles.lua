@@ -1,10 +1,8 @@
 local config = {
+	increasing = {[416] = 417, [426] = 425, [446] = 447, [3216] = 3217, [3202] = 3215, [11062] = 11063},
+	decreasing = {[417] = 416, [425] = 426, [447] = 446, [3217] = 3216, [3215] = 3202, [11063] = 11062},
 	maxLevel = getConfigInfo('maximumDoorLevel')
 }
-
-local increasingItems = {[416] = 417, [426] = 425, [446] = 447, [3216] = 3217, [3202] = 3215, [11059] = 11060}
-local decreasingItems = {[417] = 416, [425] = 426, [447] = 446, [3217] = 3216, [3215] = 3202, [11060] = 11059}
-local depots = {2589, 2590, 2591, 2592}
 
 local checkCreature = {isPlayer, isMonster, isNpc}
 local function pushBack(cid, position, fromPosition, displayMessage)
@@ -16,12 +14,12 @@ local function pushBack(cid, position, fromPosition, displayMessage)
 end
 
 function onStepIn(cid, item, position, fromPosition)
-	if(not increasingItems[item.itemid]) then
+	if(not config.increasing[item.itemid]) then
 		return false
 	end
 
 	if(not isPlayerGhost(cid)) then
-		doTransformItem(item.uid, increasingItems[item.itemid])
+		doTransformItem(item.uid, config.increasing[item.itemid])
 	end
 
 	if(item.actionid >= 194 and item.actionid <= 196) then
@@ -80,15 +78,15 @@ function onStepIn(cid, item, position, fromPosition)
 
 	local vocation = item.actionid - 100
 	if(vocation >= 0 and vocation < 50) then
-		local playerVocationInfo = getVocationInfo(getPlayerVocation(cid))
-		if(playerVocationInfo.id ~= vocation and playerVocationInfo.fromVocation ~= vocation) then
+		local playerVocation = getVocationInfo(getPlayerVocation(cid))
+		if(playerVocation.id ~= vocation and playerVocation.fromVocation ~= vocation) then
 			pushBack(cid, position, fromPosition, true)
 		end
 
 		return true
 	end
 
-	if(item.actionid >= 1000 and item.actionid <= config.maxLevel) then
+	if(item.actionid >= 1000 and item.actionid - 1000 <= config.maxLevel) then
 		if(getPlayerLevel(cid) < item.actionid - 1000) then
 			pushBack(cid, position, fromPosition, true)
 		end
@@ -96,45 +94,30 @@ function onStepIn(cid, item, position, fromPosition)
 		return true
 	end
 
-	if(item.actionid ~= 0 and getPlayerStorageValue(cid, item.actionid) <= 0) then
+	if(item.actionid ~= 0 and getCreatureStorage(cid, item.actionid) <= 0) then
 		pushBack(cid, position, fromPosition, true)
 		return true
 	end
 
 	if(getTileInfo(position).protection) then
-		local depotPos, depot = getCreatureLookPosition(cid), {}
-		depotPos.stackpos = STACKPOS_GROUND
-		while(true) do
-			if(not getTileInfo(depotPos).depot) then
-				break
-			end
-
-			depotPos.stackpos = depotPos.stackpos + 1
-			depot = getThingFromPos(depotPos)
-			if(depot.uid == 0) then
-				break
-			end
-
-			if(isInArray(depots, depot.itemid)) then
-				local depotItems = getPlayerDepotItems(cid, getDepotId(depot.uid))
-				doPlayerSendTextMessage(cid, MESSAGE_STATUS_DEFAULT, "Your depot contains " .. depotItems .. " item" .. (depotItems > 1 and "s" or "") .. ".")
-				break
-			end
+		local depotItem = getTileItemByType(getCreatureLookPosition(cid), ITEM_TYPE_DEPOT)
+		if(depotItem.itemid ~= 0) then
+			local depotItems = getPlayerDepotItems(cid, getDepotId(depotItem.uid))
+			doPlayerSendTextMessage(cid, MESSAGE_STATUS_DEFAULT, "Your depot contains " .. depotItems .. " item" .. (depotItems > 1 and "s" or "") .. ".")
+			return true
 		end
-
-		return true
 	end
 
 	return false
 end
 
 function onStepOut(cid, item, position, fromPosition)
-	if(not decreasingItems[item.itemid]) then
+	if(not config.decreasing[item.itemid]) then
 		return false
 	end
 
 	if(not isPlayerGhost(cid)) then
-		doTransformItem(item.uid, decreasingItems[item.itemid])
+		doTransformItem(item.uid, config.decreasing[item.itemid])
 		return true
 	end
 

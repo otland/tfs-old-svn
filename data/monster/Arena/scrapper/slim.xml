@@ -2,7 +2,6 @@
 <monster name="Slim" nameDescription="slim" race="undead" experience="580" speed="200" manacost="0">
 	<health now="1025" max="1025"/>
 	<look type="101" corpse="7349"/>
-	<targetchange interval="2000" chance="5"/>
 	<strategy attack="100" defense="0"/>
 	<flags>
 		<flag summonable="0"/>
@@ -12,14 +11,10 @@
 		<flag convinceable="0"/>
 		<flag pushable="0"/>
 		<flag canpushitems="1"/>
-		<flag staticattack="78"/>
-		<flag lightlevel="0"/>
-		<flag lightcolor="0"/>
 		<flag targetdistance="1"/>
-		<flag runonhealth="0"/>
 	</flags>
 	<attacks>
-		<attack name="melee" interval="2000" min="-54" max="-170"/>
+		<attack name="melee" interval="2000" skill="50" attack="50"/>
 		<attack name="poisonfield" interval="1000" chance="50">
 			<attribute key="shootEffect" value="poison"/>
 		</attack>
@@ -34,6 +29,8 @@
 		<element holyPercent="-6"/>
 	</elements>
 	<immunities>
+		<immunity outfit="1"/>
+		<immunity drunk="1"/>
 		<immunity invisible="1"/>
 	</immunities>
 	<voices interval="2000" chance="5">

@@ -15,70 +15,61 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////
 #include "otpch.h"
-#include "resources.h"
-
 #include "protocolold.h"
-#include "rsa.h"
 
 #include "outputmessage.h"
 #include "connection.h"
-#if defined(WINDOWS) && !defined(__CONSOLE__)
-#include "gui.h"
-#endif
-
 #include "game.h"
+
 extern Game g_game;
 
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
 uint32_t ProtocolOld::protocolOldCount = 0;
-#endif
 
+#endif
 #ifdef __DEBUG_NET_DETAIL__
 void ProtocolOld::deleteProtocolTask()
 {
-	std::cout << "Deleting ProtocolOld" << std::endl;
+	std::clog << "Deleting ProtocolOld" << std::endl;
 	Protocol::deleteProtocolTask();
 }
-#endif
 
+#endif
 void ProtocolOld::disconnectClient(uint8_t error, const char* message)
 {
 	if(OutputMessage_ptr output = OutputMessagePool::getInstance()->getOutputMessage(this, false))
 	{
 		TRACK_MESSAGE(output);
-		output->AddByte(error);
-		output->AddString(message);
+		output->put<char>(error);
+		output->putString(message);
 		OutputMessagePool::getInstance()->send(output);
 	}
 
 	getConnection()->close();
 }
 
-bool ProtocolOld::parseFirstPacket(NetworkMessage& msg)
+void ProtocolOld::onRecvFirstMessage(NetworkMessage& msg)
 {
-	if(
-#if defined(WINDOWS) && !defined(__CONSOLE__)
-		!GUI::getInstance()->m_connections ||
-#endif
-		g_game.getGameState() == GAME_STATE_SHUTDOWN)
+	if(g_game.getGameState() == GAMESTATE_SHUTDOWN)
 	{
 		getConnection()->close();
-		return false;
+		return;
 	}
 
-	/*uint16_t operatingSystem = */msg.GetU16();
-	uint16_t version = msg.GetU16();
-	msg.SkipBytes(12);
+	msg.skip(2);
+	uint16_t version = msg.get<uint16_t>();
+
+	msg.skip(12);
 	if(version <= 760)
 		disconnectClient(0x0A, CLIENT_VERSION_STRING);
 
 	if(!RSA_decrypt(msg))
 	{
 		getConnection()->close();
-		return false;
+		return;
 	}
 
-	uint32_t key[4] = {msg.GetU32(), msg.GetU32(), msg.GetU32(), msg.GetU32()};
+	uint32_t key[4] = {msg.get<uint32_t>(), msg.get<uint32_t>(), msg.get<uint32_t>(), msg.get<uint32_t>()};
 	enableXTEAEncryption();
 	setXTEAKey(key);
 
@@ -86,11 +77,4 @@ bool ProtocolOld::parseFirstPacket(NetworkMessage& msg)
 		disableChecksum();
 
 	disconnectClient(0x0A, CLIENT_VERSION_STRING);
-	return false;
 }
-
-void ProtocolOld::onRecvFirstMessage(NetworkMessage& msg)
-{
-	parseFirstPacket(msg);
-}
-

@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <monster name="Quara Mantassin" nameDescription="a quara mantassin" race="blood" experience="400" speed="520" manacost="480">
 	<health now="800" max="800"/>
 	<look type="72" corpse="6064"/>
@@ -18,7 +18,7 @@
 		<flag runonhealth="40"/>
 	</flags>
 	<attacks>
-		<attack name="melee" interval="1000" skill="60" attack="65"/>
+		<attack name="melee" interval="2000" skill="60" attack="40"/>
 	</attacks>
 	<defenses armor="15" defense="15">
 		<defense name="invisible" interval="1000" chance="30" duration="2000">
@@ -33,23 +33,25 @@
 	</elements>
 	<immunities>
 		<immunity lifedrain="1"/>
+		<immunity drown="1"/>
 	</immunities>
 	<voices interval="5000" chance="10">
 		<voice sentence="Zuerk Pachak!"/>
 		<voice sentence="Shrrrr"/>
 	</voices>
 	<loot>
-		<item id="2670" countmax="5" chance="20000"/><!-- shrimp -->
-		<item id="5895" countmax="1" chance="2000"/><!-- fish fin -->
-		<item id="2148" countmax="100" chance="100000"/><!-- gold coin -->
-		<item id="2377" chance="1818"/><!-- two handed sword -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
-				<item id="5895" countmax="1" chance="3333"/><!-- fish fin -->
-				<item id="2229" countmax="1" chance="4000"/><!-- skull -->
-				<item id="2165" chance="1250"/><!-- stealth ring -->
-				<item id="2656" chance="500"/><!-- blue robe -->
-			</inside>
-		</item>
+		<item id="2148" countmax="70" chance="27000"/><!-- gold coin -->
+		<item id="2148" countmax="60" chance="27000"/><!-- gold coin -->
+		<item id="2377" chance="12950"/><!-- two handed sword -->
+		<item id="2229" chance="11800"/><!-- skull -->
+		<item id="2654" chance="8750"/><!-- cape -->
+		<item id="2670" countmax="5" chance="1300"/><!-- shrimp -->
+		<item id="2381" chance="4800"/><!-- halberd -->
+		<item id="5895"  chance="1200"/><!-- fish fin -->
+		<item id="2165" chance="2000"/><!-- stealth ring -->
+		<item id="2146" chance="750"/><!-- small sapphire -->
+		<item id="2479" chance="300"/><!-- strange helmet -->
+		<item id="2656" chance="500"/><!-- blue robe -->
+		<item id="7892" chance="200"/><!-- glacier shoes -->
 	</loot>
 </monster>

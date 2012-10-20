@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <monster name="Chakoya Windcaller" nameDescription="a chakoya windcaller" race="blood" experience="48" speed="270" manacost="305">
 	<health now="84" max="84"/>
 	<look type="260" corpse="7320"/>
@@ -19,9 +19,7 @@
 		<flag runonhealth="0"/>
 	</flags>
 	<attacks>
-		<attack name="melee" interval="1000" chance="15" range="7" radius="3" target="0" min="-5" max="-15">
-			<attribute key="areaEffect" value="poff"/>
-		</attack>
+		<attack name="melee" interval="2000" skill="12" attack="20"/>
 		<attack name="energy" interval="1000" chance="20" range="7" min="-5" max="-35">
 			<attribute key="shootEffect" value="fire"/>
 			<attribute key="areaEffect" value="energy"/>
@@ -45,8 +43,13 @@
 		<voice sentence="Quatu nguraka!"/>
 	</voices>
 	<loot>
-		<item id="2148" countmax="25" chance="3333"/><!-- gold coin -->
-		<item id="7290" chance="2000"/><!-- shard -->
-		<item id="7158" countmax="1" chance="250"/><!-- rainbow trout -->
+		<item id="2148" countmax="36" chance="20000"/><!-- gold coin -->
+		<item id="2667" countmax="4" chance="9000"/><!-- fish -->
+		<item id="2666" chance="20000"/><!-- meat -->
+		<item id="2398" chance="7500"/><!-- mace-->
+		<item id="2541" chance="2000"/><!-- bone shield -->
+		<item id="7441" chance="1000"/><!-- ice cube -->
+		<item id="7158" chance="750"/><!-- rainbow trout -->
+		<item id="2669" chance="700"/><!-- northern pike -->
 	</loot>
 </monster>

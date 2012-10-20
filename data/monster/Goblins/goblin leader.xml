@@ -18,7 +18,7 @@
 		<flag runonhealth="10"/>
 	</flags>
 	<attacks>
-		<attack name="melee" interval="2000" skill="25" attack="30"/>
+		<attack name="melee" interval="2000" skill="40" attack="20"/>
 		<attack name="physical" interval="1000" chance="9" range="7" min="-0" max="-32">
 			<attribute key="shootEffect" value="smallstone"/>
 		</attack>
@@ -37,20 +37,16 @@
 		<voice sentence="Goblinkiller! Catch him !!"/>
 	</voices>
 	<loot>
-		<item id="3976" countmax="7" chance="50000"/><!-- worm -->
-		<item id="2148" countmax="14" chance="100000"/><!-- gold coin -->
-		<item id="2461" chance="10000"/><!-- leather helmet -->
-		<item id="2406" chance="10000"/><!-- short sword -->
-		<item id="2467" chance="10000"/><!-- leather armor -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
-				<item id="2559" chance="10000"/><!-- small axe -->
-				<item id="1294" countmax="4" chance="20000"/><!-- small stone -->
-				<item id="2667" countmax="2" chance="20000"/><!-- fish -->
-				<item id="2230" chance="10000"/><!-- bone -->
-				<item id="2235" chance="10000"/><!-- moldy cheese -->
-				<item id="2449" chance="10000"/><!-- bone club -->
-			</inside>
-		</item>
+		<item id="2148" countmax="10" chance="100000"/><!-- gold coin -->
+		<item id="2230" chance="15000"/><!-- bone -->
+		<item id="2461" chance="16000"/><!-- leather helmet -->
+		<item id="2467" chance="9000"/><!-- leather armor -->
+		<item id="2379" chance="17500"/><!-- dagger -->
+		<item id="2667" chance="20000"/><!-- fish -->
+		<item id="2235" chance="9000"/><!-- moldy cheese -->
+		<item id="1294" countmax="4" chance="10000"/><!-- small stone -->
+		<item id="2559" chance="10500"/><!-- small axe -->
+		<item id="2406" chance="12500"/><!-- short sword -->
+		<item id="2449" chance="6000"/><!-- bone club -->
 	</loot>
 </monster>

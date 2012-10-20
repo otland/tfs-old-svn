@@ -3,7 +3,7 @@
 		The Forgotten Server
 
 	Version
-		0.3.6
+		0.3.7
 
 	Codenamed
 		Crying Damson
@@ -23,10 +23,11 @@
 		http://sourceforge.net/project/memberlist.php?group_id=32523
 
 	.. also a thanks to the following people who has helped this
-	project by contributing something: Cayan, TheMask, slawkens
-		Rafael Hamdan, Fare-Fray, Kiwi Dan, Gentleman Riko,
-		Piotrek1447, Hermes, Gesior.pl, levandi, Bennet,
-		Casa, Winghawk, Nexoz, Godely, buzzbuzz2, koob.
+	project by contributing something:
+		Cayan, TheMask, King Komic, Rafael Hamdan, Fare, Kiwi Dan,
+		Piotrek1447, Hermes, Gesior.pl, levandi, Casa, Winghawk,
+		Nexoz, Chojrak, Pietia, Lithium, Jonern, KaczooH, slawkens,
+		BeniS, Shinmaru, Leftwing, Siramix.
 ]
 
 [ LICENSE
@@ -36,26 +37,36 @@
 
 [ DEVELOPERS
 	Project Manager(s)
-		Talaturen
 		Elf
+		Talaturen
 
 	Founder(s)
 		Talaturen
-		Kiper
 
 	C++ Programmer(s)
 		Elf
+		Dalkon
+		Fallen
 		Talaturen
 
-	LUA Scripter(s)
+	Lua Scripter(s)
+		Dalkon
 		Elf
+		BeniS
 
-	DATA Directory Manager(s)
-		Lithium
-		KaczooH
+	Data Directory Manager(s)
+		Elf
+		Dalkon
+		Fallen
+		BeniS
 
 	Documentation Manager(s)
-		KaczooH
+		Shinmaru
+		BeniS
+
+	Mapper(s)
+		Leftwing
+		Siramix
 ]
 
 [ FORUM
@@ -75,45 +86,46 @@
 ]
 
 [ COMPILING
-	GNU\Linux - Debian (...and forks, eg. Ubuntu)
-		A detailed and always up-to-date tutorial may be found here:
+	GNU\Linux
+		Automatically(Apt-get and Yum Based OS)
+			Launch terminal and type:
+				cd 0.3.7 && sudo ./compile.sh
+			It will ask you some simple questions along the compilation/intallation process, wait till it is done, then you may continue to CONFIGURING and EXECUTING.
+
+		Debian
 			http://otland.net/f137/linux-ultimate-compile-guide-debian-ubuntu-included-2868/
 
-		Root
-			You need to get on root user or use sudo for almost all below operations.
+		Ubuntu
+			http://otland.net/f479/ubuntu-nothing-complete-server-forgotten-server-modernaac-mysql-lighttpd-89001/
 
-		Download required packages
-			Launch a terminal, and paste in the following commands:
-				apt-get install libboost1.38-dev libboost-system1.38-dev libboost-filesystem1.38-dev libboost-date-time1.38-dev libboost-regex1.38-dev libboost-thread1.38-dev libgmp3-dev liblua5.1-0 liblua5.1-0-dev liblua50 liblua50-dev liblualib50 liblualib50-dev lua50 lua5.1 libsqlite0-dev libsqlite3-dev sqlite3 libmysql++-dev libmysqlclient15-dev mysql-client-5.0 mysql-server-5.0 mysql-common libxml2-dev libxml++2.6-dev cpp gcc g++ make automake autoconf pkg-config subversion liblua5.1-sql-mysql-dev liblua5.1-sql-sqlite3-dev zlib1g-dev zlib1g
+		In short...
+			Root
+				You need to get on root user or use sudo for almost all below operations.
 
-		Download sources
-			Launch a terminal, and paste in this command:
-				svn co http://svn.otland.net/public/forgottenserver/tags/0.3.6pl1
+			Download required packages
+				Launch a terminal, and paste in the following commands:
+					apt-get install libboost1.38-dev liblua5.1-0 liblua5.1-0-dev liblua50 liblua50-dev liblualib50 liblualib50-dev lua50 libsqlite0 libsqlite0-dev libsqlite3-0 libsqlite3-dev sqlite3 lua5.1 libmysql++-dev libgmp3-dev subversion make g++ libxml2 libxml2-dev libxml++2.6-dev libmysqlclient15-dev mysql-client-5.0 mysql-common mysql-server-5.0 gcc cpp automake autoconf pkg-config zlib1g-dev ccache libssl-dev
 
-		Compiling
-			Launch a terminal, and type this:
-				cd 0.3.6pl1 && ./autogen.sh && ./configure --enable-sqlite --enable-server-diag && make
+			Download sources
+				Launch a terminal, and paste in this command:
+					svn co http://svn.otland.net/public/forgottenserver/tags/0.3.7
 
-		Linker error
-			If you receive a linker error saying something with 'libboost', try pasting the following commands to terminal and then move back to compiling again:
-				wget http://garr.dl.sourceforge.net/sourceforge/asio/boost_asio_1_0_0.tar.gz
-				tar -xzf boost_asio_1_0_0.tar.gz
-				cp -ar boost_asio_1_0_0/boost/* /usr/include/boost/
-				g++ boost_asio_1_0_0/libs/system/src/error_code.cpp -c -o /usr/lib/libboost_system.a
-				ln /usr/lib/libboost_regex-mt.so /usr/lib/libboost_regex.so
-				ln /usr/lib/libboost_regex-mt.a /usr/lib/libboost_regex.a
-				ln /usr/lib/libboost_thread-mt.so /usr/lib/libboost_thread.so
-				ln /usr/lib/libboost_thread-mt.a /usr/lib/libboost_thread.a
-				ln /usr/lib/libboost_filesystem-mt.so /usr/lib/libboost_filesystem.so
-				ln /usr/lib/libboost_filesystem-mt.a /usr/lib/libboost_filesystem.a
-				ln /usr/lib/libboost_date_time-mt.so /usr/lib/libboost_date_time.so
-				ln /usr/lib/libboost_date_time-mt.a /usr/lib/libboost_date_time.a
-				rm -rf boost_asio_1_0_0 boost_asio_1_0_0.tar.gz
+			Compiling
+				Launch a terminal, and type this:
+					cd 0.3.7 && ./autogen.sh && ./configure --enable-sqlite --enable-server-diag && ./build.sh
 
 	Windows
+		Microsoft Visual C++ (MSVC)
+			http://otland.net/f479/compiling-msvc-compiling-forgotten-server-under-windows-easy-way-125178/
+
 		Dev-Cpp
-			Download TheForgottenDev-Cpp and the sources from:
-				http://otland.net/showthread.php?t=1024
+			[ NOTE
+				This tutorial part is marked as obsolete,
+				use at own risk
+			]
+
+			Download The Forgotten Dev-Cpp and the sources from:
+				http://otland.net/f19/stians-dev-cpp-repack-0-2-crypto-64bit-62455/
 
 			Extract them anywhere and then run devcpp.exe, press on the menuitem
 			"File -> Open Project or File" and choose C:\path\to\sources\dev-cpp\TheForgottenServer.dev.
@@ -127,9 +139,10 @@
 
 [ CONFIGURING
 	Launch config.lua with your favorite text editor (NOTE: Windows built-in Notepad
-	may not display line break!) and start configuring it (if you would need help or
-	you wouldn't understand something, please check doc/CONFIG_HELP), in case there
-	are other things you would like to configure- go over to the data directory.
+	may not display line break, use Wordpad instead!) and start configuring it
+	(if you would need help or you wouldn't understand something, please check
+	doc/CONFIG_HELP), in case there	are other things you would like to configure-
+	go over to the data directory.
 ]
 
 [ EXECUTING
@@ -138,16 +151,22 @@
 			Read MYSQL_HELP then launch a terminal, and paste this command:
 				cd ~/forgottenserver/forgottenserver/ && ./theforgottenserver
 
-		SqLite
+		SQLite
 			Launch a terminal, and paste this command:
 				cd ~/forgottenserver/forgottenserver/ && ./theforgottenserver
+
+		PostgreSQL
+			PgSQL is currently not available.
 
 	Windows
 		MySQL
 			Read MYSQL_HELP and then move the exe file to the directory where you have
 			config.lua and data directory and execute it.
 
-		SqLite
+		SQLite
 			Move the exe file to the directory where you have config.lua and data directory
 			and execute it.
+
+		PostgreSQL
+			PgSQL is currently not available.
 ]

@@ -18,6 +18,7 @@
 #ifndef __MONSTER__
 #define __MONSTER__
 
+#include "otsystem.h"
 #include "monsters.h"
 #include "raids.h"
 #include "tile.h"
@@ -51,8 +52,9 @@ class Monster : public Creature
 
 		virtual Monster* getMonster() {return this;}
 		virtual const Monster* getMonster() const {return this;}
+		virtual CreatureType_t getType() const {return CREATURETYPE_MONSTER;}
 
-		virtual uint32_t rangeId() {return 0x40000000;}
+		virtual uint32_t rangeId() {return MONSTER_ID_RANGE;}
 		static AutoList<Monster> autoList;
 
 		void addList() {autoList[id] = this;}
@@ -60,29 +62,31 @@ class Monster : public Creature
 
 		virtual const std::string& getName() const {return mType->name;}
 		virtual const std::string& getNameDescription() const {return mType->nameDescription;}
-		virtual std::string getDescription(int32_t lookDistance) const {return mType->nameDescription + ".";}
+		virtual std::string getDescription(int32_t) const {return mType->nameDescription + ".";}
 
 		virtual RaceType_t getRace() const {return mType->race;}
 		virtual int32_t getArmor() const {return mType->armor;}
 		virtual int32_t getDefense() const {return mType->defense;}
 		virtual MonsterType* getMonsterType() const {return mType;}
-		virtual bool isPushable() const {return mType->pushable && (baseSpeed > 0);}
-		virtual bool isAttackable() const {return mType->isAttackable;}
+		virtual bool isPushable() const;
+		virtual bool isAttackable() const;
 		virtual bool isImmune(CombatType_t type) const;
+		bool isEliminable() const {return mType->eliminable;}
 
 		bool canPushItems() const {return mType->canPushItems;}
 		bool canPushCreatures() const {return mType->canPushCreatures;}
-		bool isHostile() const {return mType->isHostile;}
-		virtual bool isWalkable() const {return mType->isWalkable;}
+		bool isHostile() const;
+		virtual bool isWalkable() const;
 		virtual bool canSeeInvisibility() const {return Creature::isImmune(CONDITION_INVISIBLE);}
 		uint32_t getManaCost() const {return mType->manaCost;}
+		bool hasRecentBattle() const {return lastDamage && (uint64_t)OTSYS_TIME() < (lastDamage + 30000);}
 
 		void setSpawn(Spawn* _spawn) {spawn = _spawn;}
 		void setRaid(Raid* _raid) {raid = _raid;}
 
-		virtual void onAttackedCreature(Creature* target);
-		virtual void onAttackedCreatureDisappear(bool isLogout);
-		virtual void onAttackedCreatureDrain(Creature* target, int32_t points);
+		virtual void onTarget(Creature* target);
+		virtual void onTargetDisappear(bool isLogout);
+		virtual void onTargetDrain(Creature* target, int32_t points);
 
 		virtual void onCreatureAppear(const Creature* creature);
 		virtual void onCreatureDisappear(const Creature* creature, bool isLogout);
@@ -99,9 +103,10 @@ class Monster : public Creature
 		virtual bool challengeCreature(Creature* creature);
 		virtual bool convinceCreature(Creature* creature);
 
-		virtual void setNormalCreatureLight();
+		virtual void resetLight();
 		virtual bool getCombatValues(int32_t& min, int32_t& max);
 
+		virtual void onAttacking(uint32_t interval);
 		virtual void doAttacking(uint32_t interval);
 		virtual bool hasExtraSwing() {return extraMeleeAttack;}
 
@@ -112,10 +117,12 @@ class Monster : public Creature
 		const CreatureList& getFriendList() {return friendList;}
 
 		bool isTarget(Creature* creature);
-		bool isFleeing() const {return getHealth() <= mType->runAwayHealth;}
+		bool getIdleStatus() const {return isIdle;}
+		bool isFleeing() const;
+		bool hasRaid() const {return raid != NULL;}
 
 		virtual BlockType_t blockHit(Creature* attacker, CombatType_t combatType, int32_t& damage,
-			bool checkDefense = false, bool checkArmor = false);
+			bool checkDefense = false, bool checkArmor = false, bool reflect = true, bool field = false, bool element = false);
 
 	private:
 		CreatureList targetList;
@@ -123,6 +130,7 @@ class Monster : public Creature
 
 		MonsterType* mType;
 
+		int32_t healthMin;
 		int32_t minCombatValue;
 		int32_t maxCombatValue;
 		uint32_t attackTicks;
@@ -131,6 +139,7 @@ class Monster : public Creature
 		uint32_t defenseTicks;
 		uint32_t yellTicks;
 		int32_t targetChangeCooldown;
+		uint64_t lastDamage;
 		bool resetTicks;
 		bool isIdle;
 		bool extraMeleeAttack;
@@ -159,7 +168,6 @@ class Monster : public Creature
 
 		void setIdle(bool _idle);
 		void updateIdleStatus();
-		bool getIdleStatus() const {return isIdle;}
 
 		virtual void onAddCondition(ConditionType_t type, bool hadCondition);
 		virtual void onEndCondition(ConditionType_t type);
@@ -181,7 +189,7 @@ class Monster : public Creature
 
 		void onThinkTarget(uint32_t interval);
 		void onThinkYell(uint32_t interval);
-		void onThinkDefense(uint32_t interval);
+		void doHealing(uint32_t interval);
 
 		bool isFriend(const Creature* creature);
 		bool isOpponent(const Creature* creature);

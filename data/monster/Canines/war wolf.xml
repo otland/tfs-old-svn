@@ -18,7 +18,7 @@
 		<flag runonhealth="0"/>
 	</flags>
 	<attacks>
-		<attack name="melee" interval="2000" skill="39" attack="24"/>
+		<attack name="melee" interval="2000" skill="40" attack="20"/>
 	</attacks>
 	<defenses armor="10" defense="16"/>
 	<elements>
@@ -32,8 +32,9 @@
 		<voice sentence="Yoooohhuuuu!" yell="1"/>
 	</voices>
 	<loot>
-		<item id="3976" countmax="10" chance="50000"/><!-- worm -->
-		<item id="2671" countmax="5" chance="33333"/><!-- ham -->
-		<item id="5897" countmax="1" chance="6666"/><!-- wolf paw -->
+		<item id="2666" countmax="4" chance="25000"/><!-- meat -->
+		<item id="2671" countmax="2" chance="20000"/><!-- ham -->
+		<item id="5897" chance="2000"/><!-- wolf paw -->
+		<item id="3976" chance="250"/><!-- wolf trophy -->
 	</loot>
 </monster>

@@ -28,10 +28,9 @@ extern Game g_game;
 WaitList::iterator WaitingList::find(const Player* player, uint32_t& slot)
 {
 	slot = 1;
-	std::string name = asLowerCaseString(player->getName());
 	for(WaitList::iterator it = waitList.begin(); it != waitList.end(); ++it)
 	{
-		if((*it)->ip == player->getIP() && asLowerCaseString((*it)->name) == name)
+		if((*it)->ip == player->getIP() && boost::algorithm::iequals((*it)->name, player->getName()))
 			return it;
 
 		++slot;

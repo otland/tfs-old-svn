@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <monster name="Nightmare" nameDescription="a nightmare" race="blood" experience="2150" speed="270" manacost="0">
 	<health now="2700" max="2700"/>
 	<look type="245" corpse="6340"/>
@@ -18,7 +18,7 @@
 		<flag runonhealth="0"/>
 	</flags>
 	<attacks>
-		<attack name="melee" interval="2000" min="-0" max="-150"/>
+		<attack name="melee" interval="2000" skill="50" attack="50"/>
 		<attack name="energy" interval="2000" chance="20" range="7" radius="1" target="1" min="-130" max="-170">
 			<attribute key="shootEffect" value="fire"/>
 			<attribute key="areaEffect" value="energy"/>
@@ -56,27 +56,23 @@
 		<voice sentence="Weeeheeheeeheee!"/>
 	</voices>
 	<loot>
-		<item id="2148" countmax="100" chance="100000"/><!-- gold coin -->
-		<item id="2152" countmax="3" chance="33333"/><!-- platinum coin -->
-		<item id="2666" countmax="3" chance="20000"/><!-- meat -->
-		<item id="2671" countmax="2" chance="50000"/><!-- ham -->
-		<item id="2230" chance="12500"/><!-- bone -->
-		<item id="7427" chance="3500"/><!-- chaos mace -->
-		<item id="2532" chance="4000"/><!-- ancient shield -->
-		<item id="6500" countmax="1" chance="2500"/><!-- demonic essence -->
-		<item id="2387" chance="3333"/><!-- double axe -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
-				<item id="7419" chance="1100"/><!-- dreaded cleaver -->
-				<item id="5944" countmax="1" chance="1818"/><!-- soul orb -->
-				<item id="2457" chance="2857"/><!-- steel helmet -->
-				<item id="6300" chance="1429"/><!-- death ring -->
-				<item id="2477" chance="3333"/><!-- knight legs -->
-				<item id="2195" chance="1800"/><!-- boots of haste -->
-				<item id="6529" countmax="5" chance="1000"/><!-- infernal bolt -->
-				<item id="6526" chance="1333"/><!-- skeleton decoration -->
-				<item id="5810" chance="667"/><!-- pirate voodoo doll -->
-			</inside>
-		</item>
+		<item id="2148" countmax="75" chance="50000"/><!-- gold coin -->
+		<item id="2148" countmax="45" chance="50000"/><!-- gold coin -->
+		<item id="2532" chance="800"/><!-- ancient shield -->
+		<item id="2195" chance="300"/><!-- boots of haste -->
+		<item id="6558" countmax="2" chance="13500"/><!-- concentrated demonic blood -->
+		<item id="6300" chance="1429"/><!-- death ring -->
+		<item id="6500" chance="10000"/><!-- demonic essence -->
+		<item id="2387" chance="15000"/><!-- double axe -->
+		<item id="2671" countmax="2" chance="15000"/><!-- ham -->
+		<item id="2477" chance="3333"/><!-- knight legs -->
+		<item id="2666" countmax="4" chance="17500"/><!-- meat -->
+		<item id="5669" chance="100"/><!-- mysterious voodoo skull -->
+		<item id="2152" countmax="4" chance="1000"/><!-- platinum coin -->
+		<item id="2547" countmax="4" chance="7000"/><!-- power bolt -->
+		<item id="6526" chance="500"/><!-- skeleton decoration -->
+		<item id="5944" chance="20000"/><!-- soul orb -->
+		<item id="2457" chance="500"/><!-- steel helmet -->
+		<item id="2454" chance="100"/><!-- war axe -->
 	</loot>
 </monster>

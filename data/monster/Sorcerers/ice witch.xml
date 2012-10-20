@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <monster name="Ice Witch" nameDescription="an ice witch" race="blood" experience="580" speed="188" manacost="0">
 	<health now="650" max="650"/>
 	<look type="149" head="0" body="47" legs="105" feet="105" addons="0" corpse="6081"/>
@@ -19,7 +19,7 @@
 		<flag runonhealth="0"/>
 	</flags>
 	<attacks>
-		<attack name="melee" interval="2000" skill="45" attack="30"/>
+		<attack name="melee" interval="2000" skill="30" attack="30"/>
 		<attack name="outfit" interval="1000" chance="10" range="7" item="7172" duration="8000">
 			<attribute key="areaEffect" value="blueshimmer"/>
 		</attack>
@@ -56,17 +56,17 @@
 		<voice sentence="Freeze!"/>
 	</voices>
 	<loot>
-		<item id="2148" countmax="80" chance="100000"/><!-- gold coin -->
-		<item id="7449" chance="1222"/><!-- crystal sword -->
-		<item id="7441" chance="5555"/><!-- ice cube -->
-		<item id="7387" chance="1444"/><!-- diamond sceptre -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
-				<item id="2423" chance="3333"/><!-- clerical mace -->
-				<item id="2796" countmax="1" chance="9999"/><!-- green mushroom -->
-				<item id="2663" chance="1111"/><!-- mystic turban -->
-				<item id="7459" chance="1000"/><!-- ear muffs -->
-			</inside>
-		</item>
+		<item id="2148" countmax="90" chance="6300"/><!-- gold coin -->
+		<item id="7441" chance="5000"/><!-- ice cube -->
+		<item id="2796" chance="1550"/><!-- green mushroom -->
+		<item id="7892" chance="500"/><!-- glacier shoes -->
+		<item id="7387" chance="225"/><!-- diamond sceptre -->
+		<item id="7449" chance="660"/><!-- crystal sword -->
+		<item id="7290" chance="225"/><!-- shard -->
+		<item id="2423" chance="3250"/><!-- clerical mace -->
+		<item id="7589" chance="2650"/><!-- strong mana potion -->
+		<item id="2663" chance="750"/><!-- mystic turban -->
+		<item id="7896" chance="300"/><!-- glacier kilt -->
+		<item id="7459" chance="100"/><!-- ear muffs -->
 	</loot>
 </monster>

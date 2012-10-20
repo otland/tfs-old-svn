@@ -43,7 +43,7 @@ Connection_ptr ConnectionManager::createConnection(boost::asio::ip::tcp::socket*
 	boost::asio::io_service& io_service, ServicePort_ptr servicer)
 {
 	#ifdef __DEBUG_NET_DETAIL__
-	std::cout << "Creating new Connection" << std::endl;
+	std::clog << "Creating new Connection" << std::endl;
 	#endif
 	boost::recursive_mutex::scoped_lock lockClass(m_connectionManagerLock);
 	Connection_ptr connection = boost::shared_ptr<Connection>(new Connection(socket, io_service, servicer));
@@ -55,21 +55,21 @@ Connection_ptr ConnectionManager::createConnection(boost::asio::ip::tcp::socket*
 void ConnectionManager::releaseConnection(Connection_ptr connection)
 {
 	#ifdef __DEBUG_NET_DETAIL__
-	std::cout << "Releasing connection" << std::endl;
+	std::clog << "Releasing connection" << std::endl;
 	#endif
 	boost::recursive_mutex::scoped_lock lockClass(m_connectionManagerLock);
 
-	std::list<Connection_ptr>::iterator it =std::find(m_connections.begin(), m_connections.end(), connection);
+	std::list<Connection_ptr>::iterator it = std::find(m_connections.begin(), m_connections.end(), connection);
 	if(it != m_connections.end())
 		m_connections.erase(it);
 	else
-		std::cout << "[Error - ConnectionManager::releaseConnection] Connection not found" << std::endl;
+		std::clog << "[Error - ConnectionManager::releaseConnection] Connection not found" << std::endl;
 }
 
 void ConnectionManager::shutdown()
 {
 	#ifdef __DEBUG_NET_DETAIL__
-	std::cout << "Closing all connections" << std::endl;
+	std::clog << "Closing all connections" << std::endl;
 	#endif
 	boost::recursive_mutex::scoped_lock lockClass(m_connectionManagerLock);
 	for(std::list<Connection_ptr>::iterator it = m_connections.begin(); it != m_connections.end(); ++it)
@@ -80,7 +80,7 @@ void ConnectionManager::shutdown()
 			(*it)->m_socket->shutdown(boost::asio::ip::tcp::socket::shutdown_both, error);
 			(*it)->m_socket->close(error);
 		}
-		catch(boost::system::system_error&) {}
+		catch(std::exception&) {}
 	}
 
 	m_connections.clear();
@@ -90,7 +90,7 @@ void Connection::close()
 {
 	//any thread
 	#ifdef __DEBUG_NET_DETAIL__
-	std::cout << "Connection::close" << std::endl;
+	std::clog << "Connection::close" << std::endl;
 	#endif
 	boost::recursive_mutex::scoped_lock lockClass(m_connectionLock);
 	if(m_connectionState == CONNECTION_STATE_CLOSED || m_connectionState == CONNECTION_STATE_REQUEST_CLOSE)
@@ -127,7 +127,7 @@ void ConnectionManager::addAttempt(uint32_t clientIp, int32_t protocolId, bool s
 
 		ipLoginMap[clientIp] = tmp;
 		it = ipLoginMap.find(clientIp);
-        }
+	}
 
 	if(it->second.loginsAmount > g_config.getNumber(ConfigManager::LOGIN_TRIES))
 		it->second.loginsAmount = 0;
@@ -160,7 +160,7 @@ bool ConnectionManager::acceptConnection(uint32_t clientIp)
 
 		ipConnectMap[clientIp] = tmp;
 		return true;
-        }
+	}
 
 	it->second.count++;
 	if(it->second.blockTime > currentTime)
@@ -186,12 +186,12 @@ void Connection::closeConnection()
 {
 	//dispatcher thread
 	#ifdef __DEBUG_NET_DETAIL__
-	std::cout << "Connection::closeConnection" << std::endl;
+	std::clog << "Connection::closeConnection" << std::endl;
 	#endif
 	m_connectionLock.lock();
 	if(m_connectionState != CONNECTION_STATE_REQUEST_CLOSE)
 	{
-		std::cout << "[Error - Connection::closeConnection] m_connectionState = " << m_connectionState << std::endl;
+		std::clog << "[Error - Connection::closeConnection] m_connectionState = " << m_connectionState << std::endl;
 		m_connectionLock.unlock();
 		return;
 	}
@@ -217,13 +217,13 @@ void Connection::closeConnection()
 void Connection::closeSocket()
 {
 	#ifdef __DEBUG_NET_DETAIL__
-	std::cout << "Connection::closeSocket" << std::endl;
+	std::clog << "Connection::closeSocket" << std::endl;
 	#endif
 	m_connectionLock.lock();
 	if(m_socket->is_open())
 	{
 		#ifdef __DEBUG_NET_DETAIL__
-		std::cout << "Closing socket" << std::endl;
+		std::clog << "Closing socket" << std::endl;
 		#endif
 		m_pendingRead = m_pendingWrite = 0;
 		try
@@ -233,14 +233,18 @@ void Connection::closeSocket()
 			if(error)
 			{
 				if(error != boost::asio::error::not_connected)
+				{
 					PRINT_ASIO_ERROR("Shutdown");
+				}
 			}
 
 			m_socket->close(error);
 			if(error)
+			{
 				PRINT_ASIO_ERROR("Close");
+			}
 		}
-		catch(boost::system::system_error& e)
+		catch(std::exception& e)
 		{
 			if(m_logError)
 			{
@@ -278,7 +282,7 @@ void Connection::onStop()
 			m_socket->close();
 		}
 	}
-	catch(boost::system::system_error&) {}
+	catch(std::exception&) {}
 	delete m_socket;
 	m_socket = NULL;
 
@@ -294,7 +298,7 @@ void Connection::deleteConnection()
 	{
 		m_service.dispatch(boost::bind(&Connection::onStop, this));
 	}
-	catch(boost::system::system_error& e)
+	catch(std::exception& e)
 	{
 		if(m_logError)
 		{
@@ -322,10 +326,10 @@ void Connection::accept()
 
 		// Read size of the first packet
 		boost::asio::async_read(getHandle(),
-			boost::asio::buffer(m_msg.getBuffer(), NetworkMessage::headerLength),
+			boost::asio::buffer(m_msg.buffer(), NETWORK_HEADER_SIZE),
 			boost::bind(&Connection::parseHeader, shared_from_this(), boost::asio::placeholders::error));
 	}
-	catch(boost::system::system_error& e)
+	catch(std::exception& e)
 	{
 		if(m_logError)
 		{
@@ -342,7 +346,7 @@ void Connection::parseHeader(const boost::system::error_code& error)
 	m_readTimer.cancel();
 
 	int32_t size = m_msg.decodeHeader();
-	if(error || size <= 0 || size >= NETWORKMESSAGE_MAXSIZE - 16)
+	if(error || size <= 0 || size >= NETWORK_MAX_SIZE - 16)
 		handleReadError(error);
 
 	if(m_connectionState != CONNECTION_STATE_OPEN || m_readError)
@@ -361,11 +365,11 @@ void Connection::parseHeader(const boost::system::error_code& error)
 			boost::weak_ptr<Connection>(shared_from_this()), boost::asio::placeholders::error));
 
 		// Read packet content
-		m_msg.setMessageLength(size + NetworkMessage::headerLength);
-		boost::asio::async_read(getHandle(), boost::asio::buffer(m_msg.getBodyBuffer(), size),
+		m_msg.setSize(size + NETWORK_HEADER_SIZE);
+		boost::asio::async_read(getHandle(), boost::asio::buffer(m_msg.bodyBuffer(), size),
 			boost::bind(&Connection::parsePacket, shared_from_this(), boost::asio::placeholders::error));
 	}
-	catch(boost::system::system_error& e)
+	catch(std::exception& e)
 	{
 		if(m_logError)
 		{
@@ -393,14 +397,14 @@ void Connection::parsePacket(const boost::system::error_code& error)
 	}
 
 	--m_pendingRead;
-	uint32_t length = m_msg.getMessageLength() - m_msg.getReadPos() - 4, checksumReceived = m_msg.PeekU32(), checksum = 0;
+	uint32_t length = m_msg.size() - m_msg.position() - 4, checksumReceived = m_msg.get<uint32_t>(true), checksum = 0;
 	if(length > 0)
-		checksum = adlerChecksum((uint8_t*)(m_msg.getBuffer() + m_msg.getReadPos() + 4), length);
+		checksum = adlerChecksum((uint8_t*)(m_msg.buffer() + m_msg.position() + 4), length);
 
 	bool checksumEnabled = false;
 	if(checksumReceived == checksum)
 	{
-		m_msg.SkipBytes(4);
+		m_msg.skip(4);
 		checksumEnabled = true;
 	}
 
@@ -422,7 +426,7 @@ void Connection::parsePacket(const boost::system::error_code& error)
 			m_protocol->setConnection(shared_from_this());
 		}
 		else
-			m_msg.SkipBytes(1); // Skip protocol
+			m_msg.skip(1); // Skip protocol
 
 		m_protocol->onRecvFirstMessage(m_msg);
 	}
@@ -438,10 +442,10 @@ void Connection::parsePacket(const boost::system::error_code& error)
 
 		// Wait to the next packet
 		boost::asio::async_read(getHandle(),
-			boost::asio::buffer(m_msg.getBuffer(), NetworkMessage::headerLength),
+			boost::asio::buffer(m_msg.buffer(), NETWORK_HEADER_SIZE),
 			boost::bind(&Connection::parseHeader, shared_from_this(), boost::asio::placeholders::error));
 	}
-	catch(boost::system::system_error& e)
+	catch(std::exception& e)
 	{
 		if(m_logError)
 		{
@@ -457,7 +461,7 @@ void Connection::parsePacket(const boost::system::error_code& error)
 bool Connection::send(OutputMessage_ptr msg)
 {
 	#ifdef __DEBUG_NET_DETAIL__
-	std::cout << "Connection::send init" << std::endl;
+	std::clog << "Connection::send init" << std::endl;
 	#endif
 	m_connectionLock.lock();
 	if(m_connectionState != CONNECTION_STATE_OPEN || m_writeError)
@@ -473,19 +477,19 @@ bool Connection::send(OutputMessage_ptr msg)
 			msg->getProtocol()->onSendMessage(msg);
 
 		#ifdef __DEBUG_NET_DETAIL__
-		std::cout << "Connection::send " << msg->getMessageLength() << std::endl;
+		std::clog << "Connection::send " << msg->size() << std::endl;
 		#endif
 		internalSend(msg);
 	}
 	else if(m_pendingWrite > 100 && g_config.getBool(ConfigManager::FORCE_CLOSE_SLOW_CONNECTION))
 	{
-		std::cout << "NOTICE: Forcing slow connection to disconnect!" << std::endl;
+		std::clog << "NOTICE: Forcing slow connection to disconnect!" << std::endl;
 		close();
 	}
 	else
-	{	
+	{
 		#ifdef __DEBUG_NET__
-		std::cout << "Connection::send Adding to queue " << msg->getMessageLength() << std::endl;
+		std::clog << "Connection::send Adding to queue " << msg->size() << std::endl;
 		#endif
 		OutputMessagePool::getInstance()->autoSend(msg);
 	}
@@ -505,10 +509,10 @@ void Connection::internalSend(OutputMessage_ptr msg)
 			boost::weak_ptr<Connection>(shared_from_this()), boost::asio::placeholders::error));
 
 		boost::asio::async_write(getHandle(),
-			boost::asio::buffer(msg->getOutputBuffer(), msg->getMessageLength()),
+			boost::asio::buffer(msg->getOutputBuffer(), msg->size()),
 			boost::bind(&Connection::onWrite, shared_from_this(), msg, boost::asio::placeholders::error));
 	}
-	catch(boost::system::system_error& e)
+	catch(std::exception& e)
 	{
 		if(m_logError)
 		{
@@ -530,10 +534,22 @@ uint32_t Connection::getIP() const
 	return 0;
 }
 
+uint32_t Connection::getEndpoint() const
+{
+	//ip is expressed in network byte order
+	boost::system::error_code error;
+	const boost::asio::ip::tcp::endpoint ip = m_socket->local_endpoint(error);
+	if(!error)
+		return htonl(ip.address().to_v4().to_ulong());
+
+	PRINT_ASIO_ERROR("Getting local ip");
+	return 0;
+}
+
 void Connection::onWrite(OutputMessage_ptr msg, const boost::system::error_code& error)
 {
 	#ifdef __DEBUG_NET_DETAIL__
-	std::cout << "onWrite" << std::endl;
+	std::clog << "onWrite" << std::endl;
 	#endif
 	m_connectionLock.lock();
 	m_writeTimer.cancel();
@@ -608,7 +624,7 @@ void Connection::handleReadTimeout(boost::weak_ptr<Connection> weak, const boost
 	if(shared_ptr<Connection> connection = weak.lock())
 	{
 		#ifdef __DEBUG_NET_DETAIL__
-		std::cout << "Connection::handleReadTimeout" << std::endl;
+		std::clog << "Connection::handleReadTimeout" << std::endl;
 		#endif
 		connection->onReadTimeout();
 	}
@@ -646,8 +662,9 @@ void Connection::handleWriteTimeout(boost::weak_ptr<Connection> weak, const boos
 	if(shared_ptr<Connection> connection = weak.lock())
 	{
 		#ifdef __DEBUG_NET_DETAIL__
-		std::cout << "Connection::handleWriteTimeout" << std::endl;
+		std::clog << "Connection::handleWriteTimeout" << std::endl;
 		#endif
 		connection->onWriteTimeout();
 	}
 }
+

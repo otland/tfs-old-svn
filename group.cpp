@@ -22,6 +22,9 @@
 
 #include "group.h"
 #include "tools.h"
+#include "configmanager.h"
+
+extern ConfigManager g_config;
 
 Group Groups::defGroup = Group();
 
@@ -44,25 +47,21 @@ bool Groups::loadFromXml()
 	xmlDocPtr doc = xmlParseFile(getFilePath(FILE_TYPE_XML, "groups.xml").c_str());
 	if(!doc)
 	{
-		std::cout << "[Warning - Groups::loadFromXml] Cannot load groups file." << std::endl;
-		std::cout << getLastXMLError() << std::endl;
+		std::clog << "[Warning - Groups::loadFromXml] Cannot load groups file." << std::endl;
+		std::clog << getLastXMLError() << std::endl;
 		return false;
 	}
 
-	xmlNodePtr p, root = xmlDocGetRootElement(doc);
+	xmlNodePtr root = xmlDocGetRootElement(doc);
 	if(xmlStrcmp(root->name,(const xmlChar*)"groups"))
 	{
-		std::cout << "[Error - Groups::loadFromXml] Malformed groups file." << std::endl;
+		std::clog << "[Error - Groups::loadFromXml] Malformed groups file." << std::endl;
 		xmlFreeDoc(doc);
 		return false;
 	}
 
-	p = root->children;
-	while(p)
-	{
+	for(xmlNodePtr p = root->children; p; p = p->next)
 		parseGroupNode(p);
-		p = p->next;
-	}
 
 	xmlFreeDoc(doc);
 	return true;
@@ -76,7 +75,7 @@ bool Groups::parseGroupNode(xmlNodePtr p)
 	int32_t intValue;
 	if(!readXMLInteger(p, "id", intValue))
 	{
-		std::cout << "[Warning - Groups::parseGroupNode] Missing group id." << std::endl;
+		std::clog << "[Warning - Groups::parseGroupNode] Missing group id." << std::endl;
 		return false;
 	}
 
@@ -104,15 +103,6 @@ bool Groups::parseGroupNode(xmlNodePtr p)
 	else
 		group->setGhostAccess(group->getAccess());
 
-	if(readXMLInteger(p, "violationReasons", intValue))
-		group->setViolationReasons(intValue);
-
-	if(readXMLInteger(p, "nameViolationFlags", intValue))
-		group->setNameViolationFlags(intValue);
-
-	if(readXMLInteger(p, "statementViolationFlags", intValue))
-		group->setStatementViolationFlags(intValue);
-
 	if(readXMLInteger(p, "depotLimit", intValue))
 		group->setDepotLimit(intValue);
 
@@ -132,7 +122,7 @@ Group* Groups::getGroup(uint32_t groupId)
 	if(it != groupsMap.end())
 		return it->second;
 
-	std::cout << "[Warning - Groups::getGroup] Group " << groupId << " not found." << std::endl;
+	std::clog << "[Warning - Groups::getGroup] Group " << groupId << " not found." << std::endl;
 	return &defGroup;
 }
 
@@ -140,7 +130,7 @@ int32_t Groups::getGroupId(const std::string& name)
 {
 	for(GroupsMap::iterator it = groupsMap.begin(); it != groupsMap.end(); ++it)
 	{
-		if(!strcasecmp(it->second->getName().c_str(), name.c_str()))
+		if(boost::algorithm::iequals(it->second->getName(), name))
 			return it->first;
 	}
 
@@ -152,7 +142,8 @@ uint32_t Group::getDepotLimit(bool premium) const
 	if(m_depotLimit > 0)
 		return m_depotLimit;
 
-	return (premium ? 2000 : 1000);
+	return (premium ? g_config.getNumber(ConfigManager::DEFAULT_DEPOT_SIZE_PREMIUM)
+		: g_config.getNumber(ConfigManager::DEFAULT_DEPOT_SIZE));
 }
 
 uint32_t Group::getMaxVips(bool premium) const
@@ -160,5 +151,5 @@ uint32_t Group::getMaxVips(bool premium) const
 	if(m_maxVips > 0)
 		return m_maxVips;
 
-	return (premium ? 100 : 20);
+	return (premium ? g_config.getNumber(ConfigManager::VIPLIST_DEFAULT_PREMIUM_LIMIT) : g_config.getNumber(ConfigManager::VIPLIST_DEFAULT_LIMIT));
 }

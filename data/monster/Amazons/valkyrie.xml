@@ -18,7 +18,7 @@
 		<flag runonhealth="10"/>
 	</flags>
 	<attacks>
-		<attack name="melee" interval="2000" skill="35" attack="20"/>
+		<attack name="melee" interval="2000" skill="25" attack="40"/>
 		<attack name="physical" interval="1000" chance="15" range="7" min="-5" max="-50">
 			<attribute key="shootEffect" value="spear"/>
 		</attack>
@@ -39,23 +39,21 @@
 		<voice sentence="One more head for me!"/>
 	</voices>
 	<loot>
-		<item id="2148" countmax="12" chance="100000"/><!-- gold coin -->
-		<item id="2464" chance="8000"/><!-- chain armor -->
-		<item id="2125" chance="2500"/><!-- crystal necklace -->
-		<item id="2387" chance="3333"/><!-- double axe -->
-		<item id="2389" countmax="3" chance="8333"/><!-- spear -->
-		<item id="3965" chance="1333"/><!-- hunting spear -->
+		<item id="2148" countmax="12" chance="20000"/><!-- gold coin -->
+		<item id="2666" countmax="3" chance="20000"/><!-- meat -->
+		<item id="2674" countmax="4" chance="10000"/><!-- apple -->
+		<item id="2229" countmax="2" chance="55500"/><!-- skull -->
+		<item id="2379" chance="15000"/><!-- dagger -->
 		<item id="2458" chance="7000"/><!-- chain helmet -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
-				<item id="2674" countmax="4" chance="10000"/><!-- red apple -->
-				<item id="2666" countmax="4" chance="20000"/><!-- meat -->
-				<item id="2147" countmax="2" chance="3500"/><!-- small ruby -->
-				<item id="2145" countmax="2" chance="3500"/><!-- small diamond -->
-				<item id="2200" chance="3000"/><!-- protection amulet -->
-				<item id="2463" chance="2333"/><!-- plate armor -->
-				<item id="7618" chance="2400"/><!-- health potion -->
-			</inside>
-		</item>
+		<item id="2464" chance="8000"/><!-- chain armor -->
+		<item id="2389" countmax="3" chance="10000"/><!-- spear -->
+		<item id="3965" chance="1000"/><!-- hunting spear -->
+		<item id="2463" chance="1500"/><!-- plate armor -->
+		<item id="2125" chance="850"/><!-- crystal necklace -->
+		<item id="2387" chance="800"/><!-- double axe -->
+		<item id="2200" chance="1000"/><!-- protection amulet -->
+		<item id="7618" chance="500"/><!-- health potion -->
+		<item id="2147" chance="200"/><!-- small ruby -->
+		<item id="2145" chance="200"/><!-- small diamond -->
 	</loot>
 </monster>

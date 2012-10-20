@@ -2,24 +2,19 @@
 <monster name="The Pit Lord" nameDescription="the pit lord" race="blood" experience="2500" speed="270" manacost="0">
 	<health now="4500" max="4500"/>
 	<look type="55" corpse="7349"/>
-	<targetchange interval="2000" chance="5"/>
 	<strategy attack="100" defense="0"/>
 	<flags>
 		<flag summonable="0"/>
 		<flag attackable="1"/>
 		<flag hostile="1"/>
-		<flag illusionable="1"/>
+		<flag illusionable="0"/>
 		<flag convinceable="0"/>
 		<flag pushable="0"/>
 		<flag canpushitems="1"/>
-		<flag staticattack="78"/>
-		<flag lightlevel="0"/>
-		<flag lightcolor="0"/>
 		<flag targetdistance="1"/>
-		<flag runonhealth="0"/>
 	</flags>
 	<attacks>
-		<attack name="melee" interval="2000" min="-180" max="-370"/>
+		<attack name="melee" interval="2000" skill="85" attack="80"/>
 		<attack name="physical" interval="7500" chance="100" min="-100" max="-250">
 			<attribute key="shootEffect" value="largerock"/>
 		</attack>
@@ -37,6 +32,8 @@
 		<element icePercent="-20"/>
 	</elements>
 	<immunities>
+		<immunity outfit="1"/>
+		<immunity drunk="1"/>
 		<immunity invisible="1"/>
 	</immunities>
 	<voices interval="2000" chance="5">

@@ -18,18 +18,19 @@
 #ifndef __SERVER__
 #define __SERVER__
 #include "otsystem.h"
+
+#include "connection.h"
 #include <boost/enable_shared_from_this.hpp>
 
 class ServiceBase;
-typedef boost::shared_ptr<ServiceBase> Service_ptr;
-
 class ServicePort;
-typedef boost::shared_ptr<ServicePort> ServicePort_ptr;
-
 class Connection;
-typedef boost::shared_ptr<Connection> Connection_ptr;
-
 class Protocol;
+class NetworkMessage;
+
+typedef boost::asio::ip::address IPAddress;
+typedef std::vector<IPAddress> IPAddressList;
+
 class ServiceBase : boost::noncopyable
 {
 	public:
@@ -54,21 +55,22 @@ class Service : public ServiceBase
 		const char* getProtocolName() const {return ProtocolType::protocolName();}
 };
 
-class NetworkMessage;
+typedef boost::shared_ptr<boost::asio::ip::tcp::acceptor> Acceptor_ptr;
 class ServicePort : boost::noncopyable, public boost::enable_shared_from_this<ServicePort>
 {
 	public:
 		ServicePort(boost::asio::io_service& io_service): m_io_service(io_service),
-			m_acceptor(NULL), m_serverPort(0), m_pendingStart(false) {}
+			m_serverPort(0), m_pendingStart(false) {}
 		virtual ~ServicePort() {close();}
 
-		bool add(Service_ptr);
-		static void onOpen(boost::weak_ptr<ServicePort> weakService, uint16_t port);
+		static void services(boost::weak_ptr<ServicePort> weakService, IPAddressList ips, uint16_t port);
+		static void service(boost::weak_ptr<ServicePort> weakService, IPAddress ip, uint16_t port);
 
-		void open(uint16_t port);
+		bool add(Service_ptr);
+		void open(IPAddressList ips, uint16_t port);
 		void close();
 
-		void handle(boost::asio::ip::tcp::socket* socket, const boost::system::error_code& error);
+		void handle(Acceptor_ptr acceptor, boost::asio::ip::tcp::socket* socket, const boost::system::error_code& error);
 
 		bool isSingleSocket() const {return m_services.size() && m_services.front()->isSingleSocket();}
 		std::string getProtocolNames() const;
@@ -76,21 +78,21 @@ class ServicePort : boost::noncopyable, public boost::enable_shared_from_this<Se
 		Protocol* makeProtocol(bool checksum, NetworkMessage& msg) const;
 
 	protected:
-		void accept();
+		void accept(Acceptor_ptr acceptor);
 
 		typedef std::vector<Service_ptr> ServiceVec;
 		ServiceVec m_services;
 
-		boost::asio::io_service& m_io_service;
-		boost::asio::ip::tcp::acceptor* m_acceptor;
+		typedef std::map<Acceptor_ptr, IPAddress> AcceptorVec;
+		AcceptorVec m_acceptors;
 
+		boost::asio::io_service& m_io_service;
 		uint16_t m_serverPort;
 		bool m_pendingStart;
 
 		static bool m_logError;
 };
 
-typedef boost::shared_ptr<ServicePort> ServicePort_ptr;
 class ServiceManager : boost::noncopyable
 {
 	ServiceManager(const ServiceManager&);
@@ -99,7 +101,7 @@ class ServiceManager : boost::noncopyable
 		virtual ~ServiceManager() {stop();}
 
 		template <typename ProtocolType>
-		bool add(uint16_t port);
+		bool add(uint16_t port, IPAddressList ips);
 
 		void run();
 		void stop();
@@ -119,11 +121,11 @@ class ServiceManager : boost::noncopyable
 };
 
 template <typename ProtocolType>
-bool ServiceManager::add(uint16_t port)
+bool ServiceManager::add(uint16_t port, IPAddressList ips)
 {
 	if(!port)
 	{
-		std::cout << "> ERROR: No port provided for service " << ProtocolType::protocolName() << ". Service disabled." << std::endl;
+		std::clog << "> ERROR: No port provided for service " << ProtocolType::protocolName() << ", service disabled." << std::endl;
 		return false;
 	}
 
@@ -132,7 +134,7 @@ bool ServiceManager::add(uint16_t port)
 	if(it == m_acceptors.end())
 	{
 		servicePort.reset(new ServicePort(m_io_service));
-		servicePort->open(port);
+		servicePort->open(ips, port);
 		m_acceptors[port] = servicePort;
 	}
 	else
@@ -140,8 +142,8 @@ bool ServiceManager::add(uint16_t port)
 		servicePort = it->second;
 		if(servicePort->isSingleSocket() || ProtocolType::isSingleSocket)
 		{
-			std::cout << "> ERROR: " << ProtocolType::protocolName() << " and " << servicePort->getProtocolNames();
-			std::cout << " cannot use the same port (" << port << ")." << std::endl;
+			std::clog << "> ERROR: " << ProtocolType::protocolName() << " and " << servicePort->getProtocolNames()
+				<< " cannot use the same port (" << port << ")." << std::endl;
 			return false;
 		}
 	}

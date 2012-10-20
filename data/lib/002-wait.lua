@@ -3,20 +3,20 @@ wait = coroutine.yield
 function runThread(co)
 	if(coroutine.status(co) ~= 'dead') then
 		local _, delay = coroutine.resume(co)
-		addEvent(continueThread, delay, co)
+		addEvent(runThread, delay, co)
 	end
 end
 
 function createThread(data)
-	local dataType, func = type(data), nil
+	local dataType, fn = type(data), nil
 	if(dataType == 'string') then
-		func = loadstring(data)
+		fn = loadstring(data)
 	elseif(dataType == 'function') then
-		func = data
+		fn = data
 	end
 
-	if(func ~= nil) then
-		local co = coroutine.create(func)
+	if(fn ~= nil) then
+		local co = coroutine.create(fn)
 		runThread(co)
 	else
 		print("[createThread]", "Invalid data specified.")

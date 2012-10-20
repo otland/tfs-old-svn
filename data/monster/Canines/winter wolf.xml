@@ -18,7 +18,7 @@
 		<flag runonhealth="0"/>
 	</flags>
 	<attacks>
-		<attack name="melee" interval="2000" skill="21" attack="13"/>
+		<attack name="melee" interval="2000" skill="10" attack="20"/>
 	</attacks>
 	<defenses armor="2" defense="6"/>
 	<elements>
@@ -29,7 +29,7 @@
 		<element deathPercent="-5"/>
 	</elements>
 	<loot>
-		<item id="3976" countmax="10" chance="50000"/><!-- worm -->
-		<item id="2666" countmax="4" chance="33333"/><!-- meat -->
+		<item id="2666" countmax="2" chance="15000"/><!-- meat -->
+		<item id="11212" chance="9425"/> <!-- winter wolf fur -->
 	</loot>
 </monster>

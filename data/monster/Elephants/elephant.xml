@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <monster name="Elephant" nameDescription="a elephant" race="blood" experience="160" speed="240" manacost="500">
 	<health now="320" max="320"/>
 	<look type="211" corpse="6052"/>
@@ -18,7 +18,7 @@
 		<flag runonhealth="0"/>
 	</flags>
 	<attacks>
-		<attack name="melee" interval="2000" skill="45" attack="41"/>
+		<attack name="melee" interval="2000" skill="30" attack="50"/>
 	</attacks>
 	<defenses armor="20" defense="16"/>
 	<elements>
@@ -33,13 +33,9 @@
 		<voice sentence="Troooooot!"/>
 	</voices>
 	<loot>
-		<item id="3973" chance="80"/><!-- tusk shield -->
-		<item id="3956" countmax="3" chance="40000"/><!-- elephant tusk -->
-		<item id="3976" countmax="10" chance="50000"/><!-- worm -->
-		<item id="3976" countmax="10" chance="50000"/><!-- worm -->
-		<item id="2148" countmax="25" chance="100000"/><!-- gold coin -->
-		<item id="2671" countmax="10" chance="33333"/><!-- ham -->
-		<item id="2666" countmax="15" chance="33333"/><!-- meat -->
-		<item id="2686" countmax="10" chance="10000"/><!-- corncob -->
+		<item id="2671" countmax="4" chance="15000"/><!-- ham -->
+		<item id="2666" countmax="3" chance="30000"/><!-- meat -->
+		<item id="3956" countmax="2" chance="3500"/><!-- elephant tusk -->
+		<item id="3973" chance="200"/><!-- tusk shield -->
 	</loot>
 </monster>

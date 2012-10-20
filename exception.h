@@ -18,30 +18,31 @@
 #ifdef __EXCEPTION_TRACER__
 #ifndef __EXCEPTION_H__
 #define __EXCEPTION_H__
+
 #include "otsystem.h"
+#ifdef WINDOWS
+	#include <winsock2.h>
+	#include <windows.h>
+	#include <dbghelp.h>
+#endif
 
 class ExceptionHandler
 {
 	public:
 		ExceptionHandler();
-		virtual ~ExceptionHandler();
+		~ExceptionHandler();
 
 		bool InstallHandler();
 		bool RemoveHandler();
 
-		static void dumpStack();
-
 	private:
-		bool LoadMap();
+		bool isInstalled;
+#ifdef WINDOWS
 
-		struct SEHChain
-		{
-			SEHChain *prev;
-			void *SEHfunction;
-		};
-
-		SEHChain chain;
-		bool installed;
+		static long WINAPI MiniDumpExceptionHandler(EXCEPTION_POINTERS* exceptionPointers = NULL);
+		static int ref_counter;
+#endif
 };
+
 #endif
 #endif

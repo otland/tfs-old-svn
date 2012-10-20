@@ -31,8 +31,8 @@ class ConfigManager
 			CONFIG_FILE,
 			MAP_NAME,
 			HOUSE_RENT_PERIOD,
+			HOUSE_STORAGE,
 			LOGIN_MSG,
-			FIRST_MSG,
 			SERVER_NAME,
 			OWNER_NAME,
 			OWNER_EMAIL,
@@ -51,26 +51,37 @@ class ConfigManager
 			#endif
 			SQL_FILE,
 			ENCRYPTION_TYPE,
+			RSA_PRIME1,
+			RSA_PRIME2,
+			RSA_PUBLIC,
+			RSA_MODULUS,
+			RSA_PRIVATE,
 			MAP_AUTHOR,
 			RUNFILE,
-			OUT_LOG,
-			ERROR_LOG,
+			OUTPUT_LOG,
 			DATA_DIRECTORY,
+			LOGS_DIRECTORY,
 			PREFIX_CHANNEL_LOGS,
 			CORES_USED,
 			MAILBOX_DISABLED_TOWNS,
+			MANAGER_PASSWORD,
+			ADMIN_PASSWORD,
+			ADMIN_ENCRYPTION,
+			ADMIN_ENCRYPTION_DATA,
+			GAME_PORT,
 			LAST_STRING_CONFIG /* this must be the last one */
 		};
 
 		enum number_config_t
 		{
 			LOGIN_TRIES = 0,
+			MYSQL_RECONNECTION_ATTEMPTS,
 			RETRY_TIMEOUT,
 			LOGIN_TIMEOUT,
 			LOGIN_PORT,
-			GAME_PORT,
 			ADMIN_PORT,
 			STATUS_PORT,
+			MANAGER_PORT,
 			SQL_PORT,
 			SQL_KEEPALIVE,
 			MAX_PLAYERS,
@@ -78,21 +89,22 @@ class ConfigManager
 			HUNTING_DURATION,
 			DEFAULT_DESPAWNRANGE,
 			DEFAULT_DESPAWNRADIUS,
-			RATE_SPAWN,
+			RATE_SPAWN_MIN,
+			RATE_SPAWN_MAX,
 			SPAWNPOS_X,
 			SPAWNPOS_Y,
 			SPAWNPOS_Z,
 			SPAWNTOWN_ID,
 			ALLOW_CLONES,
 			GLOBALSAVE_H,
+			GLOBALSAVE_M,
 			START_LEVEL,
 			START_MAGICLEVEL,
 			HOUSE_PRICE,
-			HIGHSCORES_TOP,
 			MAX_MESSAGEBUFFER,
-			HIGHSCORES_UPDATETIME,
 			ACTIONS_DELAY_INTERVAL,
 			EX_ACTIONS_DELAY_INTERVAL,
+			CUSTOM_ACTIONS_DELAY_INTERVAL,
 			CRITICAL_HIT_CHANCE,
 			PROTECTION_LEVEL,
 			ENCRYPTION,
@@ -105,14 +117,13 @@ class ConfigManager
 			WHITE_SKULL_TIME,
 			RED_SKULL_LENGTH,
 			BLACK_SKULL_LENGTH,
-			MAX_VIOLATIONCOMMENT_SIZE,
 			NOTATIONS_TO_BAN,
 			WARNINGS_TO_FINALBAN,
 			WARNINGS_TO_DELETION,
 			BAN_LENGTH,
 			KILLS_BAN_LENGTH,
 			FINALBAN_LENGTH,
-			IPBANISHMENT_LENGTH,
+			IPBAN_LENGTH,
 			MAX_PLAYER_SUMMONS,
 			FIELD_OWNERSHIP,
 			WORLD_ID,
@@ -130,7 +141,7 @@ class ConfigManager
 			STAMINA_LIMIT_TOP,
 			STAMINA_LIMIT_BOTTOM,
 			BLESS_REDUCTION_BASE,
-			BLESS_REDUCTION_DECREAMENT,
+			BLESS_REDUCTION_DECREMENT,
 			BLESS_REDUCTION,
 			NICE_LEVEL,
 			EXPERIENCE_COLOR,
@@ -139,26 +150,53 @@ class ConfigManager
 			DEATH_CONTAINER,
 			MAXIMUM_DOOR_LEVEL,
 			DEATH_ASSISTS,
-			RED_DAILY_LIMIT,
-			RED_WEEKLY_LIMIT,
-			RED_MONTHLY_LIMIT,
-			BLACK_DAILY_LIMIT,
-			BLACK_WEEKLY_LIMIT,
-			BLACK_MONTHLY_LIMIT,
-			BAN_DAILY_LIMIT,
-			BAN_WEEKLY_LIMIT,
-			BAN_MONTHLY_LIMIT,
+			FRAG_LIMIT,
+			FRAG_SECOND_LIMIT,
+			FRAG_THIRD_LIMIT,
+			RED_LIMIT,
+			RED_SECOND_LIMIT,
+			RED_THIRD_LIMIT,
+			BLACK_LIMIT,
+			BLACK_SECOND_LIMIT,
+			BLACK_THIRD_LIMIT,
+			BAN_LIMIT,
+			BAN_SECOND_LIMIT,
+			BAN_THIRD_LIMIT,
 			BLACK_SKULL_DEATH_HEALTH,
 			BLACK_SKULL_DEATH_MANA,
 			DEATHLIST_REQUIRED_TIME,
 			EXPERIENCE_SHARE_ACTIVITY,
-			ITEMLIMIT_PROTECTIONZONE,
-			ITEMLIMIT_HOUSETILE,
+			TILE_LIMIT,
+			PROTECTION_TILE_LIMIT,
+			HOUSE_TILE_LIMIT,
+			TRADE_LIMIT,
 			SQUARE_COLOR,
 			LOOT_MESSAGE,
 			LOOT_MESSAGE_TYPE,
-			NAME_REPORT_TYPE,
 			HOUSE_CLEAN_OLD,
+			MANAGER_CONNECTIONS_LIMIT,
+			ADMIN_CONNECTIONS_LIMIT,
+			VIPLIST_DEFAULT_LIMIT,
+			VIPLIST_DEFAULT_PREMIUM_LIMIT,
+			STAMINA_DESTROY_LOOT,
+			FIST_BASE_ATTACK,
+			PVP_BLESSING_THRESHOLD,
+			FAIRFIGHT_TIMERANGE,
+			DEFAULT_DEPOT_SIZE_PREMIUM,
+			DEFAULT_DEPOT_SIZE,
+			MAIL_ATTEMPTS_FADE,
+			MAIL_ATTEMPTS,
+			MAIL_BLOCK,
+			ALLOWED_MAX_PACKETS,
+			ROOK_TOWN,
+			ROOK_LEVELTO,
+			ROOK_TOLEVEL,
+			SERVICE_THREADS,
+			MARKET_OFFER_DURATION,
+			CHECK_EXPIRED_MARKET_OFFERS_EACH_MINUTES,
+			MAX_MARKET_OFFERS_AT_A_TIME_PER_PLAYER,
+			FOLLOW_EXHAUST,
+			PACKETS_PER_SECOND,
 			LAST_NUMBER_CONFIG /* this must be the last one */
 		};
 
@@ -189,6 +227,8 @@ class ConfigManager
 		enum bool_config_t
 		{
 			GLOBALSAVE_ENABLED = 0,
+			SCRIPT_SYSTEM,
+			START_CLOSED,
 			START_CHOOSEVOC,
 			ON_OR_OFF_CHARLIST,
 			ONE_PLAYER_ON_ACCOUNT,
@@ -198,25 +238,27 @@ class ConfigManager
 			RANDOMIZE_TILES,
 			SHUTDOWN_AT_GLOBALSAVE,
 			CLEAN_MAP_AT_GLOBALSAVE,
+			CLOSE_INSTANCE_ON_SHUTDOWN,
 			FREE_PREMIUM,
-			ADMIN_LOGS_ENABLED,
 			GENERATE_ACCOUNT_NUMBER,
+			GENERATE_ACCOUNT_SALT,
 			BANK_SYSTEM,
-			REMOVE_PREMIUM_ON_INIT,
+			INIT_PREMIUM_UPDATE,
 			TELEPORT_SUMMONS,
 			TELEPORT_PLAYER_SUMMONS,
 			PVP_TILE_IGNORE_PROTECTION,
 			DISPLAY_CRITICAL_HIT,
-			ADVANCING_SKILL_LEVEL,
 			CLEAN_PROTECTED_ZONES,
 			SPELL_NAME_INSTEAD_WORDS,
 			EMOTE_SPELLS,
 			REPLACE_KICK_ON_LOGIN,
 			PREMIUM_FOR_PROMOTION,
-			SHOW_HEALING_DAMAGE,
-			BROADCAST_BANISHMENTS,
+			SHOW_HEALTH_CHANGE,
+			SHOW_MANA_CHANGE,
 			SAVE_GLOBAL_STORAGE,
+			SAVE_PLAYER_DATA,
 			INGAME_GUILD_MANAGEMENT,
+			EXTERNAL_GUILD_WARS_MANAGEMENT,
 			HOUSE_BUY_AND_SELL,
 			HOUSE_NEED_PREMIUM,
 			HOUSE_RENTASPRICE,
@@ -228,39 +270,63 @@ class ConfigManager
 			AIMBOT_HOTKEY_ENABLED,
 			FORCE_CLOSE_SLOW_CONNECTION,
 			EXPERIENCE_STAGES,
+			BLESSINGS,
 			BLESSING_ONLY_PREMIUM,
 			BED_REQUIRE_PREMIUM,
 			ALLOW_CHANGECOLORS,
 			LOGIN_ONLY_LOGINSERVER,
 			STOP_ATTACK_AT_EXIT,
 			DISABLE_OUTFITS_PRIVILEGED,
-			OPTIMIZE_DB_AT_STARTUP,
-			OLD_CONDITION_ACCURACY,
+			OPTIMIZE_DATABASE,
 			STORE_TRASH,
-			HOUSE_STORAGE,
-			TRUNCATE_LOGS,
+			TRUNCATE_LOG,
 			TRACER_BOX,
 			STORE_DIRECTION,
 			DISPLAY_LOGGING,
 			STAMINA_BONUS_PREMIUM,
-			BAN_UNKNOWN_BYTES,
 			ALLOW_CHANGEADDONS,
 			GHOST_INVISIBLE_EFFECT,
-			SHOW_HEALING_DAMAGE_MONSTER,
+			SHOW_HEALTH_CHANGE_MONSTER,
+			SHOW_MANA_CHANGE_MONSTER,
 			CHECK_CORPSE_OWNER,
 			BUFFER_SPELL_FAILURE,
-			CONFIM_OUTDATED_VERSION,
+			CONFIRM_OUTDATED_VERSION,
 			PREMIUM_SKIP_WAIT,
 			GUILD_HALLS,
 			DEATH_LIST,
-			BIND_IP_ONLY,
 			GHOST_SPELL_EFFECTS,
 			PVPZONE_ADDMANASPENT,
+			PVPZONE_RECOVERMANA,
 			USE_BLACK_SKULL,
+			USE_FRAG_HANDLER,
 			ALLOW_FIGHTBACK,
 			VIPLIST_PER_PLAYER,
-			USE_FRAG_HANDLER,
+			MANAGER_LOCALHOST_ONLY,
+			MANAGER_LOGS,
+			ADMIN_LOGS,
+			ADMIN_LOCALHOST_ONLY,
+			ADMIN_REQUIRE_LOGIN,
 			ADDONS_PREMIUM,
+			OPTIONAL_WAR_ATTACK_ALLY,
+			BIND_ONLY_GLOBAL_ADDRESS,
+			UNIFIED_SPELLS,
+			ALLOW_MOUNTS,
+			UNMOUNT_PLAYER_IN_PZ,
+			ENABLE_COOLDOWNS,
+			MONSTER_SPAWN_WALKBACK,
+			USE_CAPACITY,
+			DAEMONIZE,
+			TIBIA_SLOTS,
+			SKIP_ITEMS_VERSION,
+			SILENT_LUA,
+			HOUSE_SKIP_INIT_RENT,
+			HOUSE_PROTECTION,
+			ROOK_SYSTEM,
+			FAIRFIGHT_REDUCTION,
+			MARKET_ENABLED,
+			MARKET_PREMIUM,
+			ALLOW_BLOCK_SPAWN,
+			MULTIPLE_NAME,
 			LAST_BOOL_CONFIG /* this must be the last one */
 		};
 
@@ -268,41 +334,46 @@ class ConfigManager
 		bool reload();
 		void startup() {m_startup = false;}
 
+		bool isRunning() const {return !m_startup;}
+		bool isLoaded() const {return m_loaded;}
+
 		const std::string& getString(uint32_t _what) const;
 		bool getBool(uint32_t _what) const;
-		int32_t getNumber(uint32_t _what) const;
+		int64_t getNumber(uint32_t _what) const;
 		double getDouble(uint32_t _what) const;
 
 		bool setString(uint32_t _what, const std::string& _value);
-		bool setNumber(uint32_t _what, int32_t _value);
+		bool setNumber(uint32_t _what, int64_t _value);
+		bool setBool(uint32_t _what, bool _value);
 
-		void getValue(const std::string& key, lua_State* _L) {LuaScriptInterface::getValue(key, L, _L);}
+		void getValue(const std::string& key, lua_State* _L) {LuaInterface::getValue(key, L, _L);}
 
 	private:
+		static void moveValue(lua_State* fromL, lua_State* toL);
+
 		std::string getGlobalString(const std::string& _identifier, const std::string& _default = "")
 		{
-			return LuaScriptInterface::getGlobalString(L, _identifier, _default);
+			return LuaInterface::getGlobalString(L, _identifier, _default);
 		}
 		bool getGlobalBool(const std::string& _identifier, bool _default = false)
 		{
-			return LuaScriptInterface::getGlobalBool(L, _identifier, _default);
+			return LuaInterface::getGlobalBool(L, _identifier, _default);
 		}
-		int32_t getGlobalNumber(const std::string& _identifier, const int32_t _default = 0)
+		int64_t getGlobalNumber(const std::string& _identifier, const int64_t _default = 0)
 		{
-			return LuaScriptInterface::getGlobalNumber(L, _identifier, _default);
+			return LuaInterface::getGlobalNumber(L, _identifier, _default);
 		}
 		double getGlobalDouble(const std::string& _identifier, const double _default = 0)
 		{
-			return LuaScriptInterface::getGlobalDouble(L, _identifier, _default);
+			return LuaInterface::getGlobalDouble(L, _identifier, _default);
 		}
 
 		bool m_loaded, m_startup;
 		lua_State* L;
-		static void moveValue(lua_State* fromL, lua_State* toL);
 
 		std::string m_confString[LAST_STRING_CONFIG];
 		bool m_confBool[LAST_BOOL_CONFIG];
-		int32_t m_confNumber[LAST_NUMBER_CONFIG];
+		int64_t m_confNumber[LAST_NUMBER_CONFIG];
 		double m_confDouble[LAST_DOUBLE_CONFIG];
 };
 #endif

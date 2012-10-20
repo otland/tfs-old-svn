@@ -17,18 +17,15 @@
 		<flag staticattack="90"/>
 		<flag runonhealth="15"/>
 	</flags>
-	<attacks>
-		<attack name="melee" interval="2000" skill="0" attack="0"/>
-	</attacks>
 	<defenses armor="1" defense="2"/>
 	<voices interval="5000" chance="10">
 		<voice sentence="gokgoooook"/>
 		<voice sentence="cluck cluck"/>
 	</voices>
 	<loot>
-		<item id="3976" countmax="10" chance="50000"/><!-- worm -->
-		<item id="2695" countmax="4" chance="20000"/><!-- egg -->
-		<item id="3976" countmax="18" chance="50000"/><!-- worm -->
-		<item id="5890" countmax="1" chance="5000"/><!-- chicken feather -->
+		<item id="3976" countmax="3" chance="22500"/><!-- worm -->
+		<item id="5890" countmax="1" chance="25000"/><!-- chicken feather -->
+		<item id="2695" chance="1700"/><!-- egg -->
+		<item id="2666" countmax="2" chance="3250"/><!-- meat -->
 	</loot>
 </monster>

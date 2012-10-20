@@ -78,16 +78,12 @@
 		<item id="2396" chance="19429"/><!-- ice rapier -->
 		<item id="2462" chance="20000"/><!-- devil helmet -->
 		<item id="2214" chance="16000"/><!-- ring of healing -->
-		<item id="2003" chance="100000"><!-- grey backpack -->
-			<inside>
-				<item id="2495" chance="6000"/><!-- demon legs -->
-				<item id="2387" chance="20000"/><!-- double axe -->
-				<item id="2393" chance="60000"/><!-- giant sword -->
-				<item id="2195" chance="16033"/><!-- boots of haste -->
-				<item id="2421" chance="7000"/><!-- thunder hammer -->
-				<item id="2522" chance="5600"/><!-- great shield -->
-				<item id="2192" chance="24000"/><!-- crystal ball -->
-			</inside>
-		</item>
+		<item id="2495" chance="6000"/><!-- demon legs -->
+		<item id="2387" chance="20000"/><!-- double axe -->
+		<item id="2393" chance="60000"/><!-- giant sword -->
+		<item id="2195" chance="16033"/><!-- boots of haste -->
+		<item id="2421" chance="7000"/><!-- thunder hammer -->
+		<item id="2522" chance="5600"/><!-- great shield -->
+		<item id="2192" chance="24000"/><!-- crystal ball -->
 	</loot>
 </monster>

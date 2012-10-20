@@ -18,7 +18,7 @@
 		<flag runonhealth="0"/>
 	</flags>
 	<attacks>
-		<attack name="melee" interval="2000" min="-60" max="-120"/>
+		<attack name="melee" interval="2000" skill="45" attack="40"/>
 		<attack name="fire" interval="1000" chance="50" range="7" min="-45" max="-75">
 			<attribute key="shootEffect" value="fire"/>
 		</attack>
@@ -56,19 +56,16 @@
 		<voice sentence="Good wishes are for fairytales"/>
 	</voices>
 	<loot>
-		<item id="2148" countmax="20" chance="100000"/><!-- gold coin -->
-		<item id="7378" countmax="2" chance="2000"/><!-- royal spear -->
-		<item id="2149" countmax="4" chance="6666"/><!-- small emerald -->
-		<item id="2187" chance="1111"/><!-- wand of inferno -->
-		<item id="2696" chance="10000"/><!-- cheese -->
+		<item id="2148" countmax="70" chance="31000"/><!-- gold coin -->
+		<item id="2148" countmax="45" chance="31000"/><!-- gold coin -->
+		<item id="2696" chance="27500"/><!-- cheese -->
 		<item id="2747" chance="10000"/><!-- grave flower -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
-				<item id="2062" chance="5000"/><!-- small oil lamp -->
-				<item id="2148" countmax="20" chance="100000"/><!-- gold coin -->
-				<item id="2176" chance="2000"/><!-- orb -->
-				<item id="5910" countmax="1" chance="5000"/><!-- green piece of cloth -->
-			</inside>
-		</item>
+		<item id="7378" countmax="2" chance="2750"/><!-- royal spear -->
+		<item id="2062" chance="6750"/><!-- small oil lamp -->
+		<item id="1965" chance="4250"/><!-- green book -->
+		<item id="2149" countmax="4" chance="750"/><!-- small emerald -->
+		<item id="7620" chance="1200"/><!-- mana potion -->
+		<item id="5910" chance="2000"/><!-- green piece of cloth -->
+		<item id="2663" chance="350"/><!-- mystic turban -->
 	</loot>
 </monster>

@@ -19,7 +19,7 @@
 #define __SCHEDULER__
 #include "otsystem.h"
 
-#include "tasks.h"
+#include "dispatcher.h"
 #define SCHEDULER_MINTICKS 50
 
 class SchedulerTask : public Task
@@ -43,7 +43,6 @@ class SchedulerTask : public Task
 
 inline SchedulerTask* createSchedulerTask(uint32_t delay, const boost::function<void (void)>& f)
 {
-	assert(delay);
 	if(delay < SCHEDULER_MINTICKS)
 		delay = SCHEDULER_MINTICKS;
 
@@ -72,8 +71,9 @@ class Scheduler
 
 		void stop();
 		void shutdown();
+		void exit() {m_thread.join();}
 
-		static void schedulerThread(void* p);
+		void schedulerThread();
 
 	protected:
 		Scheduler();
@@ -87,6 +87,7 @@ class Scheduler
 		uint32_t m_lastEvent;
 		EventIds m_eventIds;
 
+		boost::thread m_thread;
 		boost::mutex m_eventLock;
 		boost::condition_variable m_eventSignal;
 

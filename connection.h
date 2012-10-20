@@ -37,8 +37,7 @@ typedef boost::shared_ptr<ServicePort> ServicePort_ptr;
 
 #ifdef __DEBUG_NET__
 #define PRINT_ASIO_ERROR(description) \
-	std::cout << "[Error - " << __FUNCTION__ << "] " << description << " - " \
-		<< error.message() << " (" << error.message() << ")" << std::endl;
+	std::clog << "[Error - " << __FUNCTION__ << "] " << description << " - " << error.message() << " (" << error.message() << ")" << std::endl;
 #else
 #define PRINT_ASIO_ERROR(x)
 #endif
@@ -131,6 +130,7 @@ class Connection : public boost::enable_shared_from_this<Connection>, boost::non
 
 		boost::asio::ip::tcp::socket& getHandle() {return *m_socket;}
 		uint32_t getIP() const;
+		uint32_t getEndpoint() const;
 
 		void handle(Protocol* protocol);
 		void accept();

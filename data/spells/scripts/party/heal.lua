@@ -5,7 +5,7 @@ setCombatParam(combat, COMBAT_PARAM_EFFECT, CONST_ME_MAGIC_BLUE)
 setCombatParam(combat, COMBAT_PARAM_AGGRESSIVE, false)
 
 local condition = createConditionObject(CONDITION_REGENERATION)
-setConditionParam(condition, CONDITION_PARAM_SUBID, 1)
+setConditionParam(condition, CONDITION_PARAM_SUBID, 2)
 setConditionParam(condition, CONDITION_PARAM_BUFF, true)
 setConditionParam(condition, CONDITION_PARAM_TICKS, 2 * 60 * 1000)
 setConditionParam(condition, CONDITION_PARAM_HEALTHGAIN, 20)
@@ -13,7 +13,7 @@ setConditionParam(condition, CONDITION_PARAM_HEALTHTICKS, 2000)
 
 local config = {
 	baseMana = 120,
-	pvpManaSpent = getConfigValue("addManaSpentInPvPZone")
+	hardcoreManaSpent = getConfigValue("addManaSpentInPvPZone")
 }
 
 function onCastSpell(cid, var)
@@ -52,7 +52,7 @@ function onCastSpell(cid, var)
 	end
 
 	doCreatureAddMana(cid, -(mana - config.baseMana), false)
-	if(not getPlayerFlagValue(cid, PlayerFlag_NotGainMana) and (not getTileInfo(getThingPosition(cid)).pvp or config.pvpManaSpent)) then
+	if(not getPlayerFlagValue(cid, PlayerFlag_NotGainMana) and (not getTileInfo(getThingPosition(cid)).hardcore or config.hardcoreManaSpent)) then
 		doPlayerAddSpentMana(cid, (mana - config.baseMana))
 	end
 

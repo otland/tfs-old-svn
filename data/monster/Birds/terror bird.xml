@@ -18,7 +18,7 @@
 		<flag runonhealth="0"/>
 	</flags>
 	<attacks>
-		<attack name="melee" interval="2000" skill="46" attack="37"/>
+		<attack name="melee" interval="2000" skill="35" attack="40"/>
 	</attacks>
 	<defenses armor="13" defense="21"/>
 	<elements>
@@ -34,25 +34,11 @@
 		<voice sentence="Carrah Carrah!"/>
 	</voices>
 	<loot>
-		<item id="3976" countmax="10" chance="50000"/><!-- worm -->
-		<item id="2148" countmax="20" chance="100000"/><!-- gold coin -->
-		<item id="2406" chance="33333"/><!-- short sword -->
-		<item id="2209" chance="2000"/><!-- club ring -->
-		<item id="2463" chance="3000"/><!-- plate armor -->
-		<item id="2490" chance="4000"/><!-- dark helmet -->
-		<item id="2129" chance="6666"/><!-- wolf tooth chain -->
-		<item id="2666" countmax="3" chance="33333"/><!-- meat -->
-		<item id="3976" countmax="10" chance="50000"/><!-- worm -->
-		<item id="3976" countmax="10" chance="30000"/><!-- worm -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
-				<item id="2513" chance="2500"/><!-- battle shield -->
-				<item id="2511" chance="2857"/><!-- brass shield -->
-				<item id="2381" chance="5000"/><!-- halberd -->
-				<item id="3970" chance="500"/><!-- feather headdress -->
-				<item id="2148" countmax="10" chance="20000"/><!-- gold coin -->
-				<item id="2671" countmax="3" chance="33333"/><!-- ham -->
-			</inside>
-		</item>
+		<item id="2148" countmax="30" chance="22500"/><!-- gold coin -->
+		<item id="3976" countmax="3" chance="15000"/><!-- worm -->
+		<item id="2148" countmax="3" chance="11000"/><!-- meat -->
+		<item id="3970" chance="2000"/><!-- health potion -->
+		<item id="3970" chance="750"/><!-- feather headdress -->
+		<item id="3970" chance="2500"/><!-- seeds -->
 	</loot>
 </monster>

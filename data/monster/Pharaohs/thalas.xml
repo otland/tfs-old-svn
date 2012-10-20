@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <monster name="Thalas" nameDescription="a thalas" race="undead" experience="2950" speed="320" manacost="0">
 	<health now="4100" max="4100"/>
 	<look type="90" corpse="6025"/>
@@ -18,7 +18,7 @@
 		<flag runonhealth="0"/>
 	</flags>
 	<attacks>
-		<attack name="melee" interval="2000" min="-10" max="-650" poison="70"/>
+		<attack name="melee" interval="2000" min="-10" skill="140" attack="120"/>
 		<attack name="poison" interval="2000" chance="25" range="7" min="-150" max="-650">
 			<attribute key="shootEffect" value="poison"/>
 			<attribute key="areaEffect" value="poison"/>
@@ -56,33 +56,16 @@
 		<voice sentence="You will become a feast for my maggots."/>
 	</voices>
 	<loot>
-		<item id="2148" countmax="100" chance="100000"/><!-- gold coin -->
-		<item id="2176" chance="2000"/><!-- orb -->
-		<item id="2176" chance="2000"/><!-- orb -->
-		<item id="2444" chance="450"/><!-- hammer of wrath -->
-		<item id="2148" countmax="100" chance="100000"/><!-- gold coin -->
+		<item id="2148" countmax="80" chance="50000"/><!-- gold coin -->
+		<item id="2148" countmax="80" chance="50000"/><!-- gold coin -->
+		<item id="2149" countmax="3" chance="7000"/><!-- small emerald -->
+		<item id="2411" chance="7000"/><!-- poison dagger -->
+		<item id="2169" chance="7000"/><!-- time ring -->
+		<item id="2165" chance="1500"/><!-- stealth ring -->
+		<item id="7591" chance="1500"/><!-- great health potion-->
+		<item id="2409" chance="500"/><!-- serpent sword -->
+		<item id="2155" chance="500"/><!-- green gem-->
+		<item id="2451" chance="200"/><!-- djinn blade -->
 		<item id="2351" chance="100000"/><!-- cobrafang dagger -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
-				<item id="2148" countmax="70" chance="100000"/><!-- gold coin -->
-				<item id="2550" chance="10000"/><!-- scythe -->
-				<item id="2688" countmax="5" chance="4000"/><!-- candy cane -->
-				<item id="2540" chance="900"/><!-- scarab shield -->
-				<item id="2539" chance="200"/><!-- phoenix shield -->
-				<item id="2445" chance="400"/><!-- crystal mace -->
-				<item id="2486" chance="300"/><!-- noble armor -->
-				<item id="2658" chance="100"/><!-- white dress -->
-				<item id="2187" chance="800"/><!-- wand of inferno -->
-				<item id="2147" countmax="2" chance="4000"/><!-- small ruby -->
-				<item id="2678" countmax="4" chance="4000"/><!-- coconut -->
-				<item id="2148" countmax="100" chance="100000"/><!-- gold coin -->
-				<item id="2690" countmax="4" chance="4000"/><!-- roll -->
-				<item id="2002" chance="2857"><!-- blue backpack -->
-					<inside>
-						<item id="2148" countmax="100" chance="2857"/><!-- gold coin -->
-					</inside>
-				</item>
-			</inside>
-		</item>
 	</loot>
 </monster>

@@ -3,7 +3,7 @@
 		The Forgotten Server
 
 	Version
-		0.3.6
+		0.3.7
 
 	Codenamed
 		Crying Damson
@@ -94,7 +94,7 @@
 
 		#1
 			Download XAMPP from:
-				http://heanet.dl.sourceforge.net/sourceforge/xampp/xampp-win32-1.6.6a-installer.exe
+				http://heanet.dl.sourceforge.net/sourceforge/xampp/xampp-win32-1.7.4-VC6-installer.exe
 
 		#2
 			Go to http://localhost/security/xamppsecurity.php and change your root password.
@@ -122,6 +122,17 @@
 			Don't close config.lua yet, if you already did, open it
 			again find the '-- SQL' part and change sqlType to "mysql".
 			You may now save and close config.lua.
+
+		#9
+			VERY IMPORTANT! DON'T SKIP THIS PART!!!
+			Once you are done with that, view these threads
+			and make sure your XAMPP installation is not
+			vulnerable to security holes:
+				http://otland.net/f14/warning-everyone-whos-running-xampp-15321/
+				http://otland.net/f14/serious-vulnerability-xampp-everyone-using-xampp-please-read-140244/
+
+			If there is something you don't understand, don't hesitate
+			to reply in the threads and ask for help.
 
 	Trouble
 		Did you find a part confusing, or just failed somewhere?

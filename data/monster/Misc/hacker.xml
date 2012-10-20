@@ -29,15 +29,10 @@
 		</defense>
 	</defenses>
 	<immunities>
-		<immunity physical="0"/>
 		<immunity energy="1"/>
 		<immunity fire="1"/>
 		<immunity poison="1"/>
-		<immunity lifedrain="0"/>
-		<immunity paralyze="0"/>
-		<immunity outfit="0"/>
 		<immunity drunk="1"/>
-		<immunity invisible="0"/>
 	</immunities>
 	<voices interval="5000" chance="10">
 		<voice sentence="Feel the wrath of me dos attack!"/>
@@ -57,13 +52,9 @@
 		<item id="6570" chance="5538"/><!-- blue surprise bag -->
 		<item id="6571" chance="1538"/><!-- red surprise bag -->
 		<item id="2044" chance="6666"/><!-- lamp -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
-				<item id="2381" chance="10000"/><!-- halberd -->
-				<item id="2386" chance="10000"/><!-- axe -->
-				<item id="2391" chance="5000"/><!-- war hammer -->
-				<item id="2378" chance="5000"/><!-- battle axe -->
-			</inside>
-		</item>
+		<item id="2381" chance="10000"/><!-- halberd -->
+		<item id="2386" chance="10000"/><!-- axe -->
+		<item id="2391" chance="5000"/><!-- war hammer -->
+		<item id="2378" chance="5000"/><!-- battle axe -->
 	</loot>
 </monster>

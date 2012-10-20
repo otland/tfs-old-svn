@@ -29,16 +29,8 @@
 typedef std::vector<std::string> StringVec;
 typedef std::vector<int32_t> IntegerVec;
 
-typedef boost::tokenizer<boost::char_separator<char> > tokenizer;
+typedef boost::tokenizer<boost::char_separator<char> > tokenizer; // TODO: replace by StringVec...
 typedef std::map<int32_t, bool> VocationMap;
-
-enum DistributionType_t
-{
-	DISTRO_UNIFORM,
-	DISTRO_SQUARE,
-	DISTRO_NORMAL
-};
-
 enum FileType_t
 {
 	FILE_TYPE_XML,
@@ -48,71 +40,118 @@ enum FileType_t
 	FILE_TYPE_MOD
 };
 
+enum DistributionType_t
+{
+	DISTRO_UNIFORM,
+	DISTRO_SQUARE,
+	DISTRO_NORMAL
+};
+
+template <typename T>
+inline void asString(const T& object, std::string& s)
+{
+	std::ostringstream ss;
+	ss << object;
+	s = ss.str();
+}
+
+template <typename T>
+inline std::string asString(const T& object)
+{
+	std::ostringstream ss;
+	ss << object;
+	return ss.str();
+}
+
+template<class T>
+inline T fromString(const std::string& s)
+{
+	std::istringstream ss (s);
+	T t;
+	ss >> t;
+	return t;
+}
+
+void trim_right(std::string& source, const std::string& t);
+void trim_left(std::string& source, const std::string& t);
+std::string trimString(std::string& str);
+
+void toLowerCaseString(std::string& source);
+void toUpperCaseString(std::string& source);
+
+std::string asLowerCaseString(const std::string& source);
+std::string asUpperCaseString(const std::string& source);
+
+bool replaceString(std::string& text, const std::string& key, const std::string& value);
+bool booleanString(std::string source);
+
+char upchar(char character);
+std::string ucfirst(std::string source);
+std::string ucwords(std::string source);
+
+bool isNumber(char character);
+bool isNumbers(std::string text);
+
+bool isLowercaseLetter(char character);
+bool isUppercaseLetter(char character);
+
+bool isPasswordCharacter(char character);
+
+bool isValidAccountName(std::string text);
+bool isValidPassword(std::string text);
+bool isValidName(std::string text, bool forceUppercaseOnFirstLetter = true);
+
 std::string transformToMD5(std::string plainText, bool upperCase);
 std::string transformToSHA1(std::string plainText, bool upperCase);
+std::string transformToSHA256(std::string plainText, bool upperCase);
+std::string transformToSHA512(std::string plainText, bool upperCase);
 
 void _encrypt(std::string& str, bool upperCase);
 bool encryptTest(std::string plain, std::string& hash);
 
-void replaceString(std::string& text, const std::string key, const std::string value);
-void trim_right(std::string& source, const std::string& t);
-void trim_left(std::string& source, const std::string& t);
-void toLowerCaseString(std::string& source);
-void toUpperCaseString(std::string& source);
-std::string asLowerCaseString(const std::string& source);
-std::string asUpperCaseString(const std::string& source);
-bool booleanString(std::string source);
+StringVec explodeString(const std::string& string, const std::string& separator, bool trim = true, uint16_t limit = 0);
+IntegerVec vectorAtoi(StringVec stringVector);
+std::string parseParams(tokenizer::iterator &it, tokenizer::iterator end); // TODO: replace by StringVec...
 
-bool readXMLInteger(xmlNodePtr node, const char* tag, int& value);
-#if defined WINDOWS && !defined __GNUC__
+bool checkText(std::string text, std::string str);
+std::string convertIPAddress(uint32_t ip);
+std::string generateRecoveryKey(int32_t fieldCount, int32_t fieldLength, bool mixCase = false);
+
+std::string formatDate(time_t _time = 0);
+std::string formatDateEx(time_t _time = 0, std::string format = "%d %b %Y, %H:%M:%S");
+std::string formatTime(time_t _time = 0, bool miliseconds = false);
+
+uint32_t rand24b();
+float box_muller(float m, float s);
+int32_t random_range(int32_t lowestNumber, int32_t highestNumber, DistributionType_t type = DISTRO_UNIFORM);
+
+int32_t round(float v);
+bool hasBitSet(uint32_t flag, uint32_t flags);
+uint32_t adlerChecksum(uint8_t* data, size_t length);
+
+bool utf8ToLatin1(char* inText, std::string& outText);
+bool latin1ToUtf8(char* inText, std::string& outText);
+
 bool readXMLInteger(xmlNodePtr node, const char* tag, int32_t& value);
-#endif
 bool readXMLInteger64(xmlNodePtr node, const char* tag, int64_t& value);
 bool readXMLFloat(xmlNodePtr node, const char* tag, float& value);
 bool readXMLString(xmlNodePtr node, const char* tag, std::string& value);
 bool readXMLContentString(xmlNodePtr node, std::string& value);
 bool parseXMLContentString(xmlNodePtr node, std::string& value);
 std::string getLastXMLError();
-bool utf8ToLatin1(char* intext, std::string& outtext);
 
-StringVec explodeString(const std::string& string, const std::string& separator);
-IntegerVec vectorAtoi(StringVec stringVector);
-bool hasBitSet(uint32_t flag, uint32_t flags);
+std::string parseVocationString(StringVec vocStringVec);
+bool parseVocationNode(xmlNodePtr vocationNode, VocationMap& vocationMap, StringVec& vocStringMap, std::string& errorStr);
+bool parseIntegerVec(std::string str, IntegerVec& intVector);
 
-bool isNumber(char character);
-bool isLowercaseLetter(char character);
-bool isUppercaseLetter(char character);
-bool isPasswordCharacter(char character);
-
-bool isValidAccountName(std::string text);
-bool isValidPassword(std::string text);
-bool isValidName(std::string text, bool forceUppercaseOnFirstLetter = true);
-bool isNumbers(std::string text);
-
-char upchar(char character);
-bool checkText(std::string text, std::string str);
-std::string trimString(std::string& str);
-std::string parseParams(tokenizer::iterator &it, tokenizer::iterator end);
-
-std::string generateRecoveryKey(int32_t fieldCount, int32_t fieldLength);
-int32_t random_range(int32_t lowest_number, int32_t highest_number, DistributionType_t type = DISTRO_UNIFORM);
-
-int32_t round(float v);
-uint32_t rand24b();
-float box_muller(float m, float s);
-
-Skulls_t getSkull(std::string strValue);
-PartyShields_t getPartyShield(std::string strValue);
+Skulls_t getSkulls(std::string strValue);
+PartyShields_t getShields(std::string strValue);
+GuildEmblems_t getEmblems(std::string strValue);
 
 Direction getDirection(std::string string);
 Direction getDirectionTo(Position pos1, Position pos2, bool extended = true);
 Direction getReverseDirection(Direction dir);
 Position getNextPosition(Direction direction, Position pos);
-
-std::string formatDate(time_t _time = 0);
-std::string formatDateShort(time_t _time = 0, bool detailed = false);
-std::string formatTime(int32_t hours, int32_t minutes);
-std::string convertIPAddress(uint32_t ip);
 
 MagicEffect_t getMagicEffect(const std::string& strValue);
 ShootEffect_t getShootType(const std::string& strValue);
@@ -121,19 +160,13 @@ AmmoAction_t getAmmoAction(const std::string& strValue);
 CombatType_t getCombatType(const std::string& strValue);
 FluidTypes_t getFluidType(const std::string& strValue);
 skills_t getSkillId(const std::string& strValue);
+WeaponType_t getWeaponType(const std::string& strValue);
+void getCombatDetails(CombatType_t combatType, MagicEffect_t& magicEffect, Color_t& textColor);
 
 std::string getCombatName(CombatType_t combatType);
 std::string getSkillName(uint16_t skillId, bool suffix = true);
-
-std::string getReason(int32_t reasonId);
-std::string getAction(ViolationAction_t actionId, bool ipBanishment);
-
-std::string parseVocationString(StringVec vocStringVec);
-bool parseVocationNode(xmlNodePtr vocationNode, VocationMap& vocationMap, StringVec& vocStringMap, std::string& errorStr);
-bool parseIntegerVec(std::string str, IntegerVec& intVector);
+std::string getWeaponName(WeaponType_t weaponType);
 
 bool fileExists(const char* filename);
-uint32_t adlerChecksum(uint8_t *data, size_t length);
-
-std::string getFilePath(FileType_t filetype, std::string filename);
+std::string getFilePath(FileType_t type, std::string name = "");
 #endif

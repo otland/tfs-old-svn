@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <monster name="Fury" nameDescription="a fury" race="blood" experience="4000" speed="460" manacost="0">
 	<health now="4100" max="4100"/>
 	<look type="149" head="94" body="77" legs="96" feet="0" addons="3" corpse="6081"/>
@@ -18,7 +18,7 @@
 		<flag runonhealth="0"/>
 	</flags>
 	<attacks>
-		<attack name="melee" interval="2000" min="-100" max="-500"/>
+		<attack name="melee" interval="2000" skill="50" attack="170"/>
 		<attack name="physical" interval="2000" chance="17" range="7" min="-140" max="-200">
 			<attribute key="shootEffect" value="throwingstar"/>
 		</attack>
@@ -49,7 +49,7 @@
 	</elements>
 	<immunities>
 		<immunity paralyze="1"/>
-	<immunity invisible="1"/>
+		<immunity invisible="1"/>
 	</immunities>
 	<voices interval="3000" chance="30">
 		<voice sentence="Ahhhhrrrr!"/>
@@ -57,20 +57,27 @@
 		<voice sentence="Carnage!"/>
 	</voices>
 	<loot>
-		<item id="2148" countmax="83" chance="100000"/><!-- gold coin -->
-		<item id="2645" chance="400"/><!-- steel boots -->
-		<item id="6558" countmax="3" chance="5555"/><!-- concentrated demonic blood -->
-		<item id="2666" countmax="1" chance="25000"/><!-- meat -->
-		<item id="6500" countmax="1" chance="2500"/><!-- demonic essence -->
-		<item id="5944" chance="8888"/><!-- soul orb -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
-				<item id="2487" chance="600"/><!-- crown armor -->
-				<item id="2181" chance="1333"/><!-- terra rod -->
-				<item id="2143" countmax="1" chance="12000"/><!-- white pearl -->
-				<item id="2156" chance="1900"/><!-- red gem -->
-				<item id="5911" chance="1800"/><!-- red piece of cloth -->
-			</inside>
-		</item>
+		<item id="2148" countmax="90" chance="43000"/><!-- gold coin -->
+		<item id="2148" countmax="75" chance="43000"/><!-- gold coin -->
+		<item id="2148" countmax="65" chance="43000"/><!-- gold coin -->
+		<item id="6558" countmax="3" chance="25000"/><!-- concentrated demonic blood -->
+		<item id="6500" chance="22500"/><!-- demonic essence -->
+		<item id="2470" chance="450"/><!-- golden legs -->
+		<item id="7591" chance="10000"/><!-- great health potion-->
+		<item id="2666" chance="25000"/><!-- meat -->
+		<item id="7456" chance="1800"/><!-- noble axe -->
+		<item id="5022" countmax="3" chance="1300"/><!-- orichalcum pearl -->
+		<item id="2152" countmax="3" chance="2000"/><!-- platinum coin -->
+		<item id="5911" chance="3650"/><!-- red piece of cloth -->
+		<item id="9813" chance="11000"/><!-- rusty legs -->
+		<item id="2120" countmax="3" chance="6000"/><!-- small amethyst -->
+		<item id="5944" chance="21500"/><!-- soul orb -->
+		<item id="2645" chance="1000"/><!-- steel boots -->
+		<item id="2181" chance="20000"/><!-- terra rod -->
+		<item id="7404" chance="100"/><!-- assassin dagger -->
+		<item id="2487" chance="500"/><!-- crown armor -->
+		<item id="5944" chance="7368"/><!-- assassin star -->
+		<item id="2124" chance="750"/><!-- crystal ring-->
+		<item id="2156" chance="900"/><!-- red gem -->
 	</loot>
 </monster>

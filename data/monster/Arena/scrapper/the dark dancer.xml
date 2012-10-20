@@ -1,17 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<monster name="The Dark Dancer" nameDescription="the dark dancer" race="blood" experience="435" speed="170">
+<monster name="The Dark Dancer" nameDescription="the dark dancer" race="blood" experience="435" speed="170" manacost="0">
 	<health now="855" max="855"/>
 	<look type="58" corpse="7349"/>
-	<targetchange interval="60000" chance="0"/>
 	<strategy attack="100" defense="0"/>
 	<flags>
+		<flag summonable="0"/>
+		<flag attackable="1"/>
+		<flag hostile="1"/>
+		<flag illusionable="0"/>
+		<flag convinceable="0"/>
 		<flag pushable="0"/>
 		<flag canpushitems="1"/>
-		<flag staticattack="78"/>
-		<flag targetdistance="5"/>
+		<flag targetdistance="1"/>
 	</flags>
 	<attacks>
-		<attack name="poisoncondition" interval="2000" min="-55" max="-99" start="-11"/>
+		<attack name="poisoncondition" interval="2000" skill="20" attack="30"/>
 		<attack name="physical" interval="3000" chance="70" radius="1" target="1" range="5" min="-60" max="-95">
 			<attribute key="areaEffect" value="mortarea"/>
 			<attribute key="shootEffect" value="suddendeath"/>
@@ -40,6 +43,8 @@
 		<element deathPercent="22"/>
 	</elements>
 	<immunities>
+		<immunity outfit="1"/>
+		<immunity drunk="1"/>
 		<immunity invisible="1"/>
 	</immunities>
 	<summons maxSummons="3">

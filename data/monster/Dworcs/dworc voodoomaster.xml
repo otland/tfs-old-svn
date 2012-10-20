@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <monster name="Dworc Voodoomaster" namedescription="a dworc voodoomaster" race="blood" experience="50" speed="240" manacost="0">
 	<health now="80" max="80"/>
 	<look type="214" corpse="6055"/>
@@ -18,7 +18,7 @@
 		<flag runonhealth="15"/>
 	</flags>
 	<attacks>
-		<attack name="melee" interval="2000" skill="22" attack="13"/>
+		<attack name="melee" interval="2000" skill="10" attack="20"/>
 		<attack name="lifedrain" interval="1000" chance="6" range="1" min="-1" max="-39"/>
 		<attack name="speed" interval="1000" chance="8" range="7" speedchange="-800" duration="5000">
 			<attribute key="areaeffect" value="redshimmer"/>
@@ -61,23 +61,16 @@
 		<voice sentence="prek tars, dekklep zurk."/>
 	</voices>
 	<loot>
-		<item id="3976" countmax="10" chance="50000"/><!-- worm -->
-		<item id="2148" countmax="12" chance="100000"/><!-- gold coin -->
-		<item id="2666" countmax="2" chance="40000"/><!-- meat -->
-		<item id="2512" chance="10000"/><!-- wooden shield -->
-		<item id="2530" chance="4000"/><!-- copper shield -->
-		<item id="3973" chance="100"/><!-- tusk shield -->
-		<item id="3976" countmax="10" chance="50000"/><!-- worm -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
-				<item id="3967" chance="50"/><!-- tribal mask -->
-				<item id="3955" chance="80"/><!-- voodoo doll -->
-				<item id="2385" chance="6666"/><!-- sabre -->
-				<item id="2464" chance="5000"/><!-- chain armor -->
-				<item id="2420" chance="5000"/><!-- machete -->
-				<item id="2448" chance="5000"/><!-- studded club -->
-				<item id="2007" chance="20000"/><!-- blue bottle -->
-			</inside>
-		</item>
+		<item id="2148" countmax="20" chance="35000"/><!-- gold coin -->
+		<item id="2229" countmax="3" chance="1000"/><!-- skull -->
+		<item id="2050" chance="7000"/><!-- torch -->
+		<item id="2230" chance="12500"/><!-- bone -->
+		<item id="2467" chance="13000"/><!-- leather armor -->
+		<item id="2172" chance="200"/><!--  bronze amulet -->
+		<item id="2411" chance="1000"/><!-- poison dagger -->
+		<item id="3967" chance="550"/><!-- tribal mask -->
+		<item id="2174" chance="350"/><!-- strange symbol-->
+		<item id="7618" chance="700"/><!-- health potion -->
+		<item id="3955" chance="100"/><!-- voodoo doll-->
 	</loot>
 </monster>

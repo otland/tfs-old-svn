@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <monster name="Nomad" nameDescription="a nomad" race="blood" experience="60" speed="215" manacost="420">
 	<health now="160" max="160"/>
 	<look type="146" head="114" body="20" legs="22" feet="2" corpse="6080"/>
@@ -18,7 +18,7 @@
 		<flag runonhealth="18"/>
 	</flags>
 	<attacks>
-		<attack name="melee" interval="2000" min="-30" max="-80"/>
+		<attack name="melee" interval="2000" skill="30" attack="40"/>
 	</attacks>
 	<defenses armor="10" defense="13"/>
 	<elements>
@@ -34,25 +34,15 @@
 		<voice sentence="We are swift as the wind of the desert!"/>
 	</voices>
 	<loot>
-		<item id="2148" countmax="20" chance="100000"/><!-- gold coin -->
-		<item id="2465" chance="10000"/><!-- brass armor -->
-		<item id="2461" chance="10000"/><!-- leather helmet -->
-		<item id="2649" chance="10000"/><!-- leather legs -->
-		<item id="2671" countmax="2" chance="20000"/><!-- ham -->
-		<item id="3976" countmax="10" chance="50000"/><!-- worm -->
-		<item id="1987" chance="100000"><!-- bag -->
-			<inside>
-				<item id="2456" chance="6666"/><!-- bow -->
-				<item id="2544" countmax="15" chance="10000"/><!-- arrow -->
-				<item id="2546" countmax="5" chance="10000"/><!-- burst arrow -->
-				<item id="2147" countmax="2" chance="3333"/><!-- small ruby -->
-				<item id="2675" countmax="4" chance="6666"/><!-- orange -->
-				<item id="2690" countmax="4" chance="6666"/><!-- roll -->
-				<item id="2050" chance="20000"/><!-- torch -->
-				<item id="2478" chance="3333"/><!-- brass legs -->
-				<item id="2652" chance="2222"/><!-- green tunic -->
-				<item id="2201" chance="2500"/><!-- dragon necklace -->
-			</inside>
-		</item>
+		<item id="2148" countmax="51" chance="16250"/><!-- gold coin -->
+		<item id="2666" countmax="2" chance="22500"/><!-- meat -->
+		<item id="2386" chance="28000"/><!-- axe -->
+		<item id="2511" chance="20000"/><!-- brass shield -->
+		<item id="2649" chance="13750"/><!-- leather legs -->
+		<item id="2398" chance="12500"/><!-- mace -->
+		<item id="2458" chance="4500"/><!-- chain helmet -->
+		<item id="2465" chance="1500"/><!-- brass armor -->
+		<item id="2509" chance="750"/><!-- steel shield -->
+		<item id="2459" chance="450"/><!-- iron helmet -->
 	</loot>
 </monster>

@@ -18,10 +18,11 @@
 #ifndef __DATABASE_PGSQL__
 #define __DATABASE_PGSQL__
 
+#ifdef __USE_PGSQL__
 #ifndef __DATABASE__
 #error "database.h should be included first."
 #endif
-#include <postgresql/libpq-fe.h>
+#include "libpq-fe.h"
 
 class DatabasePgSQL : public _Database
 {
@@ -29,16 +30,16 @@ class DatabasePgSQL : public _Database
 		DatabasePgSQL();
 		DATABASE_VIRTUAL ~DatabasePgSQL() {PQfinish(m_handle);}
 
-		DATABASE_VIRTUAL bool getParam(DBParam_t param);
+		DATABASE_VIRTUAL bool multiLine() const {return true;}
 
-		DATABASE_VIRTUAL bool beginTransaction() {return executeQuery("BEGIN");}
-		DATABASE_VIRTUAL bool rollback() {return executeQuery("ROLLBACK");}
-		DATABASE_VIRTUAL bool commit() {return executeQuery("COMMIT");}
+		DATABASE_VIRTUAL bool beginTransaction() {return query("BEGIN");}
+		DATABASE_VIRTUAL bool rollback() {return query("ROLLBACK");}
+		DATABASE_VIRTUAL bool commit() {return query("COMMIT");}
 
-		DATABASE_VIRTUAL bool executeQuery(const std::string& query);
-		DATABASE_VIRTUAL DBResult* storeQuery(const std::string& query);
+		DATABASE_VIRTUAL bool query(std::string query);
+		DATABASE_VIRTUAL DBResult* storeQuery(std::string query);
 
-		DATABASE_VIRTUAL std::string escapeString(const std::string& s);
+		DATABASE_VIRTUAL std::string escapeString(std::string s);
 		DATABASE_VIRTUAL std::string escapeBlob(const char *s, uint32_t length);
 
 		DATABASE_VIRTUAL uint64_t getLastInsertId();
@@ -67,9 +68,10 @@ class PgSQLResult : public _DBResult
 
 	protected:
 		PgSQLResult(PGresult* results);
-		DATABASE_VIRTUAL ~PgSQLResult() {}
+		DATABASE_VIRTUAL ~PgSQLResult();
 
 		PGresult* m_handle;
 		int32_t m_rows, m_cursor;
 };
 #endif
+#endif 

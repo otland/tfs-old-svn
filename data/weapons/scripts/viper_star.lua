@@ -15,7 +15,7 @@ setCombatCondition(xCombat, condition)
 
 function onUseWeapon(cid, var)
 	local ret = doCombat(cid, combat, var)
-	if(ret == false) then
+	if(not ret) then
 		return false
 	end
 
@@ -27,5 +27,6 @@ function onUseWeapon(cid, var)
 			ret = doCombat(cid, xCombat, var)
 		end
 	end
+
 	return ret
 end

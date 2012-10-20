@@ -3,7 +3,7 @@
 		The Forgotten Server
 
 	Version
-		0.3.6
+		0.3.7
 
 	Codenamed
 		Crying Damson
@@ -23,26 +23,4 @@
 [ Custom Flags
 	All player custom flags with a generator may be found at address:
 		http://fightingelf.net/customflags/
-]
-
-[ Violation Reasons
-	* All name reasons (4)
-	* All name & statement reasons (6)
-	* All name, statement & cheating reasons (16)
-	* All name, statement, cheating & gamemaster (19)
-	* All name, statement, cheating
-	* All reasons (23)
-]
-
-[ Violation Flags
-	* None = 0
-	* Notation = 1
-	* Name Report = 2
-	* Banishment = 4
-	* Name Report + Banishment = 8
-	* Banishment + Final Warning = 16
-	* Name Report + Banishment + Final Warning = 32
-	* Statement Report = 64
-	* IP Banishment = 128
-	* Deletion = 256
 ]
