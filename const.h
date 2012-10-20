@@ -397,7 +397,7 @@ enum Icons_t
 	ICON_PZBLOCK	= 1 << 13,
 	ICON_PZ			= 1 << 14,
 	ICON_BLEED		= 1 << 15,
-	ICON_HUNGRY		= 1 << 16
+	ICON_HUNGRY		= 1 << 16 //should be 31 [found in flash client]
 };
 
 enum skills_t

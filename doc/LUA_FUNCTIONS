@@ -732,7 +732,6 @@
 	getWorldLight()
 	getWorldCreatures(type) //0 players, 1 monsters, 2 npcs, 3 all
 	getWorldUpTime()
-	getHighscoreString(skillId)
 	getVocationInfo(id)
 	getGuildId(guildName)
 	getGuildMotd(guildId)

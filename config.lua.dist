@@ -161,10 +161,6 @@
 	guildNameMinLength = 4
 	guildNameMaxLength = 20
 
-	-- Highscores
-	highscoreDisplayPlayers = 15
-	updateHighscoresAfterMinutes = 60
-
 	-- Houses
 	buyableAndSellableHouses = true
 	houseNeedPremium = true

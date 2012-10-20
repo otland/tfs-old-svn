@@ -501,6 +501,9 @@
 			Default: false
 
 	*GUILDS
+		externalGuildWarsManagement
+			Default: false
+			
 		ingameGuildManagement
 			Default: true
 
@@ -519,16 +522,6 @@
 		guildNameMaxLength
 			Maximum length of a guild name.
 			Default: 20
-
-	*HIGHSCORES
-		highscoreDisplayPlayers
-			How much players will be displayed in highscores.
-			Default: 15
-
-		updateHighscoresAfterMinutes
-			How often highscores list will be updated.
-			(In minutes.)
-			Default: 60
 
 	*HOUSES
 		buyableAndSellableHouses

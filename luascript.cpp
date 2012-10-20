@@ -2522,9 +2522,6 @@ void LuaInterface::registerFunctions()
 	//getModList()
 	lua_register(m_luaState, "getModList", LuaInterface::luaGetModList);
 
-	//getHighscoreString(skillId)
-	lua_register(m_luaState, "getHighscoreString", LuaInterface::luaGetHighscoreString);
-
 	//getWaypointPosition(name)
 	lua_register(m_luaState, "getWaypointPosition", LuaInterface::luaGetWaypointPosition);
 
@@ -10212,18 +10209,6 @@ int32_t LuaInterface::luaGetSpectators(lua_State* L)
 		lua_pushnumber(L, env->addThing(*it));
 		pushTable(L);
 	}
-
-	return 1;
-}
-
-int32_t LuaInterface::luaGetHighscoreString(lua_State* L)
-{
-	//getHighscoreString(skillId)
-	uint16_t skillId = popNumber(L);
-	if(skillId <= SKILL__LAST)
-		lua_pushstring(L, g_game.getHighscoreString(skillId).c_str());
-	else
-		lua_pushboolean(L, false);
 
 	return 1;
 }
