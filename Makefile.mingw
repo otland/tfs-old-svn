@@ -1,5 +1,5 @@
 # Makefile for Windows (MinGW)
-# Copyright (C) 2011 Fallen <janneangeselva@hotmail.com>
+# Copyright (C) 2011-2012 Fallen <f.fallen45@gmail.com>
 CXX = @echo Compiling $< && g++
 
 CXXFLAGS = -O2 -Wall -Wno-strict-aliasing -D_THREAD_SAFE -D_REENTRANT -D__ENABLE_SERVER_DIAGNOSTIC__ -D__NO_CRYPTOPP__
@@ -44,26 +44,23 @@ SRC = weapons.cpp waitlist.cpp vocation.cpp trashholder.cpp tools.cpp \
 	$(MAYBE_LOGIN) $(MAYBE_OTADMIN)
 
 INCPATH = -I"."
-
-LFLAGS = -enable-stdcall-fixup -enable-auto-import -enable-runtime-pseudo-reloc $(CXXFLAGS)
-
 DEL = del
-
 TARGET = theforgottenserver
-
 OBJDIR = obj
-
 OBJ = $(SRC:%.cpp=$(OBJDIR)/%.o)
 
 .PHONY: all clean
 
 all: $(TARGET)
 
-$(TARGET): $(OBJ)
-	$(CXX) $(LFLAGS) -o $@ $(OBJ) $(LIBS)
+$(TARGET): ${OBJDIR} $(OBJ)
+	$(CXX) $(CXXFLAGS) -o $@ $(OBJ) $(LIBS)
 
 $(OBJDIR)/%.o: %.cpp
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o $@ $<
 
 clean:
-	-$(DEL) $(OBJ) $(TARGET)
+	--$(DEL) $(OBJ) $(TARGET)
+
+${OBJDIR}:
+	@mkdir -p ${OBJDIR}
