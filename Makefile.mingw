@@ -60,7 +60,7 @@ $(OBJDIR)/%.o: %.cpp
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o $@ $<
 
 clean:
-	--$(DEL) $(OBJ) $(TARGET)
+	-$(DEL) $(OBJ) $(TARGET)
 
 ${OBJDIR}:
 	@mkdir -p ${OBJDIR}
