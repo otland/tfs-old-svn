@@ -1363,6 +1363,11 @@ bool Items::parseItemNode(xmlNodePtr itemNode, uint32_t id)
 					it.getAbilities()->elementType = COMBAT_ENERGYDAMAGE;
 				}
 			}
+			else if(tmpStrValue == "walkstack")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+					it.walkStack = (intValue != 0);
+			}
 			else
 				std::cout << "Warning: [Items::loadFromXml] Unknown key value " << strValue << std::endl;
 		}

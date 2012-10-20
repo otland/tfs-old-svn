@@ -377,6 +377,9 @@ class Player : public Creature, public Cylinder
 		virtual bool canSee(const Position& pos) const;
 		virtual bool canSeeCreature(const Creature* creature) const;
 
+		bool canWalkthrough(const Creature* creature) const;
+		bool canWalkthroughEx(const Creature* creature) const;
+
 		virtual RaceType_t getRace() const {return RACE_BLOOD;}
 
 		//safe-trade functions

@@ -321,7 +321,6 @@ ReturnValue Actions::internalUseItem(Player* player, const Position& pos,
 
 		if(container->getCorpseOwner() != 0 && !player->canOpenCorpse(container->getCorpseOwner()))
 			return RET_YOUARENOTTHEOWNER;
-		}
 
 		//open/close container
 		int32_t oldcid = player->getContainerID(openContainer);
