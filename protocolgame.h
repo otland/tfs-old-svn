@@ -342,7 +342,7 @@ class ProtocolGame : public Protocol
 		friend class Player;
 		Player* player;
 
-		uint32_t m_eventConnect, m_maxSizeCount;
+		uint32_t m_eventConnect, m_maxSizeCount, m_packetCount, m_packetTime;
 		bool m_debugAssertSent, m_acceptPackets;
 };
 #endif

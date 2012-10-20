@@ -538,7 +538,7 @@ void ProtocolGame::parsePacket(NetworkMessage &msg)
 	}
 
 	++m_packetCount;
-	if(m_packetCount > g_config.getNumber(ConfigManager::PACKETS_PER_SECOND))
+	if(m_packetCount > (uint32_t)g_config.getNumber(ConfigManager::PACKETS_PER_SECOND))
 		return;	
 
 	uint8_t recvbyte = msg.get<char>();
