@@ -988,8 +988,6 @@ bool Game::playerMoveCreature(uint32_t playerId, uint32_t movingCreatureId,
 	}
 
 	Tile* toTile = getTile(toPos);
-	const Position& movingCreaturePos = movingCreature->getPosition();
-
 	if(!toTile)
 	{
 		player->sendCancelMessage(RET_NOTPOSSIBLE);
@@ -1004,9 +1002,17 @@ bool Game::playerMoveCreature(uint32_t playerId, uint32_t movingCreatureId,
 	}
 
 	//check throw distance
+	const Position& movingCreaturePos = movingCreature->getPosition();
 	if((std::abs(movingCreaturePos.x - toPos.x) > movingCreature->getThrowRange()) || (std::abs(movingCreaturePos.y - toPos.y) > movingCreature->getThrowRange()) || (std::abs(movingCreaturePos.z - toPos.z) * 4 > movingCreature->getThrowRange()))
 	{
 		player->sendCancelMessage(RET_DESTINATIONOUTOFREACH);
+		return false;
+	}
+
+	Tile* movingCreatureTile = movingCreature->getTile();
+	if(!movingCreatureTile)
+	{
+		player->sendCancelMessage(RET_NOTMOVEABLE);
 		return false;
 	}
 
@@ -1021,8 +1027,7 @@ bool Game::playerMoveCreature(uint32_t playerId, uint32_t movingCreatureId,
 			player->sendCancelMessage(RET_NOTENOUGHROOM);
 			return false;
 		}
-		else if((movingCreature->getZone() == ZONE_PROTECTION || movingCreature->getZone() == ZONE_NOPVP)
-			&& !toTileIsSafe)
+		else if((movingCreature->getZone() == ZONE_PROTECTION || movingCreature->getZone() == ZONE_NOPVP) && !toTileIsSafe)
 		{
 			player->sendCancelMessage(RET_NOTPOSSIBLE);
 			return false;
@@ -1032,9 +1037,14 @@ bool Game::playerMoveCreature(uint32_t playerId, uint32_t movingCreatureId,
 			player->sendCancelMessage(RET_NOTENOUGHROOM);
 			return false;
 		}
+		else if(toTile->getCreatureCount() > 0)
+		{
+			player->sendCancelMessage(RET_NOTENOUGHROOM);
+			return false;
+		}
 	}
 
-	ReturnValue ret = internalMoveCreature(movingCreature, movingCreature->getTile(), toTile);
+	ReturnValue ret = internalMoveCreature(movingCreature, movingCreatureTile, toTile);
 	if(ret != RET_NOERROR)
 	{
 		player->sendCancelMessage(ret);
@@ -3452,6 +3462,16 @@ bool Game::playerRequestRemoveVip(uint32_t playerId, uint32_t guid)
 	return true;
 }
 
+bool Game::playerRequestEditVip(uint32_t playerId, uint32_t guid, const std::string& description, uint32_t icon, bool notify)
+{
+	Player* player = getPlayerByID(playerId);
+	if(!player || player->isRemoved())
+		return false;
+
+	player->editVIP(guid, description, icon, notify);
+	return true;
+}
+
 bool Game::playerTurn(uint32_t playerId, Direction dir)
 {
 	Player* player = getPlayerByID(playerId);
@@ -3576,7 +3596,8 @@ bool Game::playerSay(uint32_t playerId, uint16_t channelId, SpeakClasses type,
 	if(playerSaySpell(player, type, text))
 		return true;
 
-	player->removeMessageBuffer();
+	if(type != SPEAK_PRIVATE_PN)
+		player->removeMessageBuffer();
 
 	switch(type)
 	{
@@ -4648,7 +4669,7 @@ void Game::startDecay(Item* item)
 {
 	if(item && item->canDecay())
 	{
-		uint32_t decayState = item->getDecaying();
+		ItemDecayState_t decayState = item->getDecaying();
 		if(decayState == DECAYING_TRUE)
 			 return;
 
@@ -4853,38 +4874,6 @@ void Game::FreeThing(Thing* thing)
 	ToReleaseThings.push_back(thing);
 }
 
-bool Game::reloadHighscores()
-{
-	lastHSUpdate = time(NULL);
-	for(int16_t i = 0; i <= 8; i++)
-		highscoreStorage[i] = getHighscore(i);
-	return true;
-}
-
-void Game::timedHighscoreUpdate()
-{
-	int32_t highscoreUpdateTime = g_config.getNumber(ConfigManager::HIGHSCORES_UPDATETIME) * 60 * 1000;
-	if(highscoreUpdateTime <= 0)
-		return;
-
-	reloadHighscores();
-	g_scheduler.addEvent(createSchedulerTask(highscoreUpdateTime, boost::bind(&Game::timedHighscoreUpdate, this)));
-}
-
-std::string Game::getHighscoreString(uint16_t skill)
-{
-	Highscore hs = highscoreStorage[skill];
-	std::ostringstream ss;
-	ss << "Highscore for " << getSkillName(skill) << "\n\nRank Level - Player Name";
-	for(uint32_t i = 0; i < hs.size(); ++i)
-		ss << "\n" << (i + 1) << ".  " << hs[i].second << "  -  " << hs[i].first;
-
-	ss << "\n\nLast updated on:\n" << std::ctime(&lastHSUpdate);
-	std::string highscoresStr = ss.str();
-	highscoresStr.erase(highscoresStr.length() - 1);
-	return highscoresStr;
-}
-
 bool Game::broadcastMessage(const std::string& text, MessageClasses type)
 {
 	std::cout << "> Broadcasted message: \"" << text << "\"." << std::endl;
@@ -4893,71 +4882,17 @@ bool Game::broadcastMessage(const std::string& text, MessageClasses type)
 	return true;
 }
 
-Highscore Game::getHighscore(uint16_t skill)
+void Game::updateCreatureWalkthrough(Creature* creature)
 {
-	Highscore hs;
-	Database* db = Database::getInstance();
+	const SpectatorVec& list = getSpectators(creature->getPosition());
 
-	DBQuery query;
-	uint32_t highscoresTop = g_config.getNumber(ConfigManager::HIGHSCORES_TOP);
-	if(skill > SKILL_LAST)
+	//send to client
+	Player* tmpPlayer = NULL;
+	for(SpectatorVec::const_iterator it = list.begin(); it != list.end(); ++it)
 	{
-		if(skill == SKILL__MAGLEVEL)
-			query << "SELECT `name`, `maglevel` FROM `players` ORDER BY `maglevel` DESC, `manaspent` DESC LIMIT " << highscoresTop;
-		else if(skill == SKILL__LEVEL)
-			query << "SELECT `name`, `level` FROM `players` ORDER BY `level` DESC, `experience` DESC LIMIT " << highscoresTop;
-		else
-			return hs;
-
-		DBResult* result;
-		if((result = db->storeQuery(query.str())))
-		{
-			do
-			{
-				uint32_t level;
-				if(skill == SKILL__MAGLEVEL)
-					level = result->getDataInt("maglevel");
-				else
-					level = result->getDataInt("level");
-
-				hs.push_back(make_pair(result->getDataString("name"), level));
-
-				highscoresTop--;
-				if(highscoresTop == 0)
-					break;
-			}
-			while(result->next());
-			db->freeResult(result);
-		}
+		 if((tmpPlayer = (*it)->getPlayer()))
+			tmpPlayer->sendCreatureWalkthrough(creature, tmpPlayer->canWalkthroughEx(creature));
 	}
-	else
-	{
-		query << "SELECT * FROM `player_skills` WHERE `skillid`=" << skill << " ORDER BY `value` DESC, `count` DESC";
-
-		DBResult* result;
-		if((result = db->storeQuery(query.str())))
-		{
-			do
-			{
-				query.str("");
-				query << "SELECT `name` FROM `players` WHERE `id` = " << result->getDataInt("player_id") << ";";
-
-				DBResult* tmpResult;
-				if((tmpResult = db->storeQuery(query.str())))
-				{
-					hs.push_back(make_pair(tmpResult->getDataString("name"), result->getDataInt("value")));
-					db->freeResult(tmpResult);
-				}
-
-				highscoresTop--;
-				if(highscoresTop == 0)
-					break;
-			}
-			while(result->next());
-			db->freeResult(result);
-		}
-	}
-	return hs;
 }
 
 void Game::updateCreatureSkull(Player* player)
@@ -5066,9 +5001,6 @@ void Game::serverSave()
 		//clean map if configured to
 		if(g_config.getBoolean(ConfigManager::CLEAN_MAP_AT_SERVERSAVE))
 			map->clean();
-
-		//reload highscores
-		reloadHighscores();
 
 		//reset variables
 		for(int16_t i = 0; i < 3; i++)

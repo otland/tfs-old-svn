@@ -145,8 +145,6 @@ bool ConfigManager::loadFile(const std::string& _filename)
 	m_confInteger[KILLS_TO_BAN] = getGlobalNumber(L, "killsToBan", 5);
 	m_confInteger[BAN_DAYS] = getGlobalNumber(L, "banDays", 7);
 	m_confInteger[FINAL_BAN_DAYS] = getGlobalNumber(L, "finalBanDays", 30);
-	m_confInteger[HIGHSCORES_TOP] = getGlobalNumber(L, "highscoreDisplayPlayers", 10);
-	m_confInteger[HIGHSCORES_UPDATETIME] = getGlobalNumber(L, "updateHighscoresAfterMinutes", 60);
 	m_confInteger[ACTIONS_DELAY_INTERVAL] = getGlobalNumber(L, "timeBetweenActions", 200);
 	m_confInteger[EX_ACTIONS_DELAY_INTERVAL] = getGlobalNumber(L, "timeBetweenExActions", 1000);
 	m_confInteger[MAX_MESSAGEBUFFER] = getGlobalNumber(L, "maxMessageBuffer", 4);

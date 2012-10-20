@@ -319,10 +319,8 @@ ReturnValue Actions::internalUseItem(Player* player, const Position& pos,
 		else
 			openContainer = container;
 
-		if(container->getCorpseOwner() != 0)
-		{
-			if(!player->canOpenCorpse(container->getCorpseOwner()))
-				return RET_YOUARENOTTHEOWNER;
+		if(container->getCorpseOwner() != 0 && !player->canOpenCorpse(container->getCorpseOwner()))
+			return RET_YOUARENOTTHEOWNER;
 		}
 
 		//open/close container
@@ -337,7 +335,6 @@ ReturnValue Actions::internalUseItem(Player* player, const Position& pos,
 			player->addContainer(index, openContainer);
 			player->onSendContainer(openContainer);
 		}
-
 		return RET_NOERROR;
 	}
 
@@ -364,6 +361,7 @@ bool Actions::useItem(Player* player, const Position& pos, uint8_t index, Item* 
 		return false;
 
 	player->setNextActionTask(NULL);
+	player->setNextAction(OTSYS_TIME() + g_config.getNumber(ConfigManager::ACTIONS_DELAY_INTERVAL));
 	player->stopWalk();
 
 	if(isHotkey)
@@ -375,8 +373,6 @@ bool Actions::useItem(Player* player, const Position& pos, uint8_t index, Item* 
 		player->sendCancelMessage(ret);
 		return false;
 	}
-
-	player->setNextAction(OTSYS_TIME() + g_config.getNumber(ConfigManager::ACTIONS_DELAY_INTERVAL));
 	return true;
 }
 
@@ -387,6 +383,7 @@ bool Actions::useItemEx(Player* player, const Position& fromPos, const Position&
 		return false;
 
 	player->setNextActionTask(NULL);
+	player->setNextAction(OTSYS_TIME() + g_config.getNumber(ConfigManager::EX_ACTIONS_DELAY_INTERVAL));
 	player->stopWalk();
 
 	Action* action = getAction(item);
@@ -417,8 +414,6 @@ bool Actions::useItemEx(Player* player, const Position& fromPos, const Position&
 
 		return false;
 	}
-
-	player->setNextAction(OTSYS_TIME() + g_config.getNumber(ConfigManager::EX_ACTIONS_DELAY_INTERVAL));
 	return true;
 }
 
@@ -486,8 +481,6 @@ bool Action::loadFunction(const std::string& functionName)
 		function = increaseItemId;
 	else if(tmpFunctionName == "decreaseitemid")
 		function = decreaseItemId;
-	else if(tmpFunctionName == "highscorebook")
-		function = highscoreBook;
 	else if(tmpFunctionName == "market")
 		function = enterMarket;
 	else
@@ -497,17 +490,6 @@ bool Action::loadFunction(const std::string& functionName)
 	}
 
 	m_scripted = false;
-	return true;
-}
-
-bool Action::highscoreBook(Player* player, Item* item, const PositionEx& posFrom, const PositionEx& posTo, bool extendedUse, uint32_t creatureId)
-{
-	if(item->getActionId() < 150 || item->getActionId() > 158)
-		return false;
-
-	std::string highscoreString = g_game.getHighscoreString(item->getActionId() - 150);
-	item->setText(highscoreString);
-	player->sendTextWindow(item, highscoreString.size(), false);
 	return true;
 }
 

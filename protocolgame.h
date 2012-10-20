@@ -156,6 +156,7 @@ class ProtocolGame : public Protocol
 		//VIP methods
 		void parseAddVip(NetworkMessage& msg);
 		void parseRemoveVip(NetworkMessage& msg);
+		void parseEditVip(NetworkMessage& msg);
 
 		void parseRotateItem(NetworkMessage& msg);
 
@@ -208,8 +209,9 @@ class ProtocolGame : public Protocol
 		void sendTutorial(uint8_t tutorialId);
 		void sendAddMarker(const Position& pos, uint8_t markType, const std::string& desc);
 
-		void sendCreatureSkull(const Creature* creature);
+		void sendCreatureWalkthrough(const Creature* creature, bool walkthrough);
 		void sendCreatureShield(const Creature* creature);
+		void sendCreatureSkull(const Creature* creature);
 
 		void sendShop(Npc* npc, const ShopInfoList& itemList);
 		void sendCloseShop();
@@ -232,7 +234,7 @@ class ProtocolGame : public Protocol
 
 		void sendVIPLogIn(uint32_t guid);
 		void sendVIPLogOut(uint32_t guid);
-		void sendVIP(uint32_t guid, const std::string& name, bool isOnline);
+		void sendVIP(uint32_t guid, const std::string& name, const std::string& description, uint32_t icon, bool notify, bool isOnline);
 
 		void sendCreatureLight(const Creature* creature);
 		void sendWorldLight(const LightInfo& lightInfo);

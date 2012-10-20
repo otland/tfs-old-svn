@@ -54,6 +54,7 @@ ItemType::ItemType()
 	rotable = false;
 	rotateTo = 0;
 	hasHeight = false;
+	walkStack = true;
 
 	floorChangeDown = false;
 	floorChangeNorth = false;
@@ -284,6 +285,7 @@ int32_t Items::loadFromOtb(std::string file)
 		iType->canReadText = hasBitSet(FLAG_READABLE, flags);
 		iType->lookThrough = hasBitSet(FLAG_LOOKTHROUGH, flags);
 		iType->isAnimation = hasBitSet(FLAG_ANIMATION, flags);
+		// iType->walkStack = !hasBitSet(FLAG_FULLTILE, flags);
 
 		attribute_t attrib;
 		datasize_t datalen = 0;

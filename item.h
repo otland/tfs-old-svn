@@ -174,7 +174,7 @@ class ItemAttributes
 		uint32_t getDuration() const {return getIntAttr(ATTR_ITEM_DURATION);}
 
 		void setDecaying(ItemDecayState_t decayState) {setIntAttr(ATTR_ITEM_DECAYING, decayState);}
-		uint32_t getDecaying() const {return getIntAttr(ATTR_ITEM_DECAYING);}
+		ItemDecayState_t getDecaying() const {return (ItemDecayState_t)getIntAttr(ATTR_ITEM_DECAYING);}
 
 	protected:
 		enum itemAttrTypes
@@ -344,6 +344,7 @@ class Item : virtual public Thing, public ItemAttributes
 		bool isDoor() const {return items[id].isDoor();}
 		bool isBed() const {return items[id].isBed();}
 		bool hasCharges() const {return getCharges() > 0;}
+		bool hasWalkStack() const {return items[id].walkStack;}
 
 		bool floorChangeDown() const {return items[id].floorChangeDown;}
 		bool floorChangeNorth() const {return items[id].floorChangeNorth;}

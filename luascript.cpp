@@ -771,9 +771,6 @@ bool LuaScriptInterface::initState()
 		return false;
 
 	luaL_openlibs(m_luaState);
-	#ifdef __LUAJIT__
-	luaJIT_setmode(m_luaState, 0, LUAJIT_MODE_ENGINE | LUAJIT_MODE_ON);
-	#endif
 
 	registerFunctions();
 
@@ -1611,9 +1608,6 @@ void LuaScriptInterface::registerFunctions()
 
 	//getHouseTilesSize(houseid)
 	lua_register(m_luaState, "getHouseTilesSize", LuaScriptInterface::luaGetHouseTilesSize);
-
-	//getHighscoreString(skillId)
-	lua_register(m_luaState, "getHighscoreString", LuaScriptInterface::luaGetHighscoreString);
 
 	//setHouseAccessList(houseid, listid, listtext)
 	lua_register(m_luaState, "setHouseAccessList", LuaScriptInterface::luaSetHouseAccessList);
@@ -2992,7 +2986,9 @@ int32_t LuaScriptInterface::luaDoPlayerAddItem(lua_State* L)
 
 	while(itemCount > 0)
 	{
-		int32_t stackCount = std::min((int32_t)100, (int32_t)subType);
+		int32_t stackCount = subType;
+		if(it.stackable && stackCount > 100)
+			stackCount = 100;
 
 		Item* newItem = Item::CreateItem(itemId, stackCount);
 		if(!newItem)
@@ -4548,21 +4544,6 @@ int32_t LuaScriptInterface::luaGetHouseTilesSize(lua_State* L)
 		reportErrorFunc(getErrorDesc(LUA_ERROR_HOUSE_NOT_FOUND));
 		lua_pushboolean(L, false);
 	}
-	return 1;
-}
-
-int32_t LuaScriptInterface::luaGetHighscoreString(lua_State* L)
-{
-	//getHighscoreString(skillId)
-	uint16_t skillId = popNumber(L);
-	if(skillId > SKILL_LAST)
-	{
-		reportErrorFunc("Invalid skillId");
-		lua_pushboolean(L, false);
-		return 1;
-	}
-
-	lua_pushstring(L, g_game.getHighscoreString(skillId).c_str());
 	return 1;
 }
 

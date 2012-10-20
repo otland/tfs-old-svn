@@ -1104,7 +1104,7 @@ bool ConditionDamage::unserializeProp(ConditionAttr_t attr, PropStream& propStre
 		if(!propStream.GET_VALUE(value))
 			return false;
 
-		owner = value;
+		// owner = value;
 		return true;
 	}
 	else if(attr == CONDITIONATTR_INTERVALDATA)
@@ -1132,8 +1132,8 @@ bool ConditionDamage::serialize(PropWriteStream& propWriteStream)
 	propWriteStream.ADD_UCHAR(CONDITIONATTR_PERIODDAMAGE);
 	propWriteStream.ADD_VALUE(periodDamage);
 
-	propWriteStream.ADD_UCHAR(CONDITIONATTR_OWNER);
-	propWriteStream.ADD_VALUE(owner);
+	// propWriteStream.ADD_UCHAR(CONDITIONATTR_OWNER);
+	// propWriteStream.ADD_VALUE(owner);
 
 	for(DamageList::const_iterator it = damageList.begin(); it != damageList.end(); ++it)
 	{

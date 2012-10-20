@@ -489,6 +489,7 @@ Attr_ReadValue Item::readAttr(AttrTypes_t attr, PropStream& propStream)
 
 			if(state != DECAYING_FALSE)
 				setDecaying(DECAYING_PENDING);
+
 			break;
 		}
 
@@ -641,7 +642,7 @@ bool Item::serializeAttr(PropWriteStream& propWriteStream) const
 		propWriteStream.ADD_ULONG(duration);
 	}
 
-	uint32_t decayState = getDecaying();
+	ItemDecayState_t decayState = getDecaying();
 	if(decayState == DECAYING_TRUE || decayState == DECAYING_PENDING)
 	{
 		propWriteStream.ADD_UCHAR(ATTR_DECAYING_STATE);

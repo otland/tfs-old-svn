@@ -573,11 +573,6 @@ void Commands::reloadInfo(Player* player, const std::string& cmd, const std::str
 		g_creatureEvents->reload();
 		player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, "Reloaded creature scripts.");
 	}
-	else if(tmpParam == "highscore" || tmpParam == "highscores")
-	{
-		g_game.reloadHighscores();
-		player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, "Reloaded highscores.");
-	}
 	else if(tmpParam == "monster" || tmpParam == "monsters")
 	{
 		g_monsters.reload();
@@ -1097,7 +1092,7 @@ void Commands::removeThing(Player* player, const std::string& cmd, const std::st
 void Commands::newType(Player* player, const std::string& cmd, const std::string& param)
 {
 	int32_t lookType = atoi(param.c_str());
-	if(lookType >= 0 && lookType != 1 && lookType != 135 && lookType != 411 && lookType != 415 && lookType != 424 && (lookType <= 160 || lookType >= 192) && lookType != 439 && lookType != 440 && lookType != 468 && lookType != 469 && lookType <= 517 && (lookType < 474 || lookType > 485))
+	if(lookType >= 0 && lookType != 1 && lookType != 135 && lookType != 411 && lookType != 415 && lookType != 424 && (lookType <= 160 || lookType >= 192) && lookType != 439 && lookType != 440 && lookType != 468 && lookType != 469 && lookType <= 522 && (lookType < 474 || lookType > 485) && lookType != 518 && lookType != 519 && lookType != 520)
 	{
 		Outfit_t newOutfit = player->getDefaultOutfit();
 		newOutfit.lookType = lookType;

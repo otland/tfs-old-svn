@@ -305,7 +305,7 @@ void Creature::onWalk(Direction& dir)
 {
 	if(hasCondition(CONDITION_DRUNK))
 	{
-		uint32_t r = random_range(0, 16);
+		uint32_t r = random_range(0, 20);
 		if(r <= 4)
 		{
 			switch(r)

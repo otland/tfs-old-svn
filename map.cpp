@@ -520,13 +520,12 @@ bool Map::canThrowObjectTo(const Position& fromPos, const Position& toPos, bool 
 	if((fromPos.z >= 8 && toPos.z < 8) || (toPos.z >= 8 && fromPos.z < 8))
 		return false;
 
-	if(std::abs(fromPos.z - toPos.z) > 2)
+	int32_t deltaz = std::abs(fromPos.z - toPos.z);
+	if(deltaz > 2)
 		return false;
 
-	int deltax, deltay, deltaz;
-	deltax = std::abs(fromPos.x - toPos.x);
-	deltay = std::abs(fromPos.y - toPos.y);
-	deltaz = std::abs(fromPos.z - toPos.z);
+	int32_t deltax = std::abs(fromPos.x - toPos.x);
+	int32_t deltay = std::abs(fromPos.y - toPos.y);
 
 	//distance checks
 	if(deltax - deltaz > rangex || deltay - deltaz > rangey)
@@ -540,126 +539,44 @@ bool Map::canThrowObjectTo(const Position& fromPos, const Position& toPos, bool 
 
 bool Map::checkSightLine(const Position& fromPos, const Position& toPos) const
 {
-	Position start = fromPos;
-	Position end = toPos;
+	if(fromPos == toPos)
+		return true;
 
-	int32_t x, y, z;
-	int32_t dx, dy, dz;
-	int32_t sx, sy, sz;
-	int32_t ey, ez;
+	Position start(fromPos.z > toPos.z ? toPos : fromPos);
+	Position destination(fromPos.z > toPos.z ? fromPos : toPos);
 
-	dx = abs(start.x - end.x);
-	dy = abs(start.y - end.y);
-	dz = abs(start.z - end.z);
+	const int8_t mx = start.x < destination.x ? 1 : start.x == destination.x ? 0 : -1;
+	const int8_t my = start.y < destination.y ? 1 : start.y == destination.y ? 0 : -1;
 
-	int32_t max = dx, dir = 0;
-	if(dy > max)
+	int32_t A = destination.y - start.y;
+	int32_t B = start.x - destination.x;
+	int32_t C = -(A*destination.x + B*destination.y);
+
+	while(!Position::areInRange<0,0,15>(start, destination))
 	{
-		max = dy;
-		dir = 1;
+		int32_t move_hor = std::abs(A * (start.x + mx) + B * (start.y) + C);
+		int32_t move_ver = std::abs(A * (start.x) + B * (start.y + my) + C);
+		int32_t move_cross = std::abs(A * (start.x + mx) + B * (start.y + my) + C);
+
+		if(start.y != destination.y && (start.x == destination.x || move_hor > move_ver || move_hor > move_cross))
+			start.y += my;
+
+		if(start.x != destination.x && (start.y == destination.y || move_ver > move_hor || move_ver > move_cross))
+			start.x += mx;
+
+		const Tile* tile = const_cast<Map*>(this)->getTile(start.x, start.y, start.z);
+		if(tile && tile->hasProperty(BLOCKPROJECTILE))
+			return false;
 	}
 
-	if(dz > max)
+	// now we need to perform a jump between floors to see if everything is clear (literally)
+	while(start.z != destination.z)
 	{
-		max = dz;
-		dir = 2;
-	}
+		const Tile* tile = const_cast<Map*>(this)->getTile(start.x, start.y, start.z);
+		if(tile && tile->getThingCount() > 0)
+			return false;
 
-	switch(dir)
-	{
-		case 0:
-			//x -> x
-			//y -> y
-			//z -> z
-			break;
-
-		case 1:
-			//x -> y
-			//y -> x
-			//z -> z
-			std::swap(start.x, start.y);
-			std::swap(end.x, end.y);
-			std::swap(dx, dy);
-			break;
-
-		case 2:
-			//x -> z
-			//y -> y
-			//z -> x
-			std::swap(start.x, start.z);
-			std::swap(end.x, end.z);
-			std::swap(dx, dz);
-			break;
-	}
-
-	sx = ((start.x < end.x) ? 1 : -1);
-	sy = ((start.y < end.y) ? 1 : -1);
-	sz = ((start.z < end.z) ? 1 : -1);
-
-	ey = 0, ez = 0;
-	x = start.x;
-	y = start.y;
-	z = start.z;
-
-	int32_t lastrx = 0, lastry = 0, lastrz = 0;
-
-	for(; x != end.x + sx; x += sx)
-	{
-		int32_t rx, ry, rz;
-		switch(dir)
-		{
-			case 1:
-				rx = y; ry = x; rz = z;
-				break;
-
-			case 2:
-				rx = z; ry = y; rz = x;
-				break;
-
-			default:
-				rx = x; ry = y; rz = z;
-				break;
-		}
-
-		if(lastrx == 0 && lastry == 0 && lastrz == 0)
-		{
-			//first time initialization
-			lastrx = rx; lastry = ry; lastrz = rz;
-		}
-
-		if(lastrz != rz ||
-			(!(toPos.x == rx && toPos.y == ry && toPos.z == rz) &&
-			!(fromPos.x == rx && fromPos.y == ry && fromPos.z == rz)))
-		{
-			if(lastrz != rz)
-			{
-				if(const_cast<Map*>(this)->getTile(lastrx, lastry, std::min(lastrz, rz)))
-					return false;
-			}
-			lastrx = rx; lastry = ry; lastrz = rz;
-
-			const Tile* tile = const_cast<Map*>(this)->getTile(rx, ry, rz);
-			if(tile)
-			{
-				if(tile->hasProperty(BLOCKPROJECTILE))
-					return false;
-			}
-		}
-
-		ey += dy;
-		ez += dz;
-
-		if(2*ey >= dx)
-		{
-			y += sy;
-			ey -= dx;
-		}
-
-		if(2*ez >= dx)
-		{
-			z += sz;
-			ez -= dx;
-		}
+		start.z++;
 	}
 	return true;
 }

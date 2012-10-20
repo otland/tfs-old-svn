@@ -84,7 +84,6 @@ enum LightState_t
 #define STATE_TIME 1000
 
 typedef std::map<int32_t, int32_t> StageList;
-typedef std::vector< std::pair<std::string, unsigned int> > Highscore;
 typedef std::vector<std::string> StatusList;
 
 /**
@@ -102,11 +101,6 @@ class Game
 
 		void forceAddCondition(uint32_t creatureId, Condition* condition);
 		void forceRemoveCondition(uint32_t creatureId, ConditionType_t type);
-
-		Highscore getHighscore(uint16_t skill);
-		void timedHighscoreUpdate();
-		bool reloadHighscores();
-		std::string getHighscoreString(uint16_t skill);
 
 		void autoSave();
 		void prepareServerSave();
@@ -440,6 +434,7 @@ class Game
 		bool playerLookInBattleList(uint32_t playerId, uint32_t creatureId);
 		bool playerRequestAddVip(uint32_t playerId, const std::string& name);
 		bool playerRequestRemoveVip(uint32_t playerId, uint32_t guid);
+		bool playerRequestEditVip(uint32_t playerId, uint32_t guid, const std::string& description, uint32_t icon, bool notify);
 		bool playerTurn(uint32_t playerId, Direction dir);
 		bool playerRequestOutfit(uint32_t playerId);
 		bool playerShowQuestLog(uint32_t playerId);
@@ -488,6 +483,7 @@ class Game
 		void internalCreatureChangeVisible(Creature* creature, bool visible);
 		void changeLight(const Creature* creature);
 		void updateCreatureSkull(Player* player);
+		void updateCreatureWalkthrough(Creature* creature);
 
 		void sendPublicSquare(Player* sender, SquareColor_t color);
 
@@ -551,9 +547,6 @@ class Game
 		bool playerSpeakTo(Player* player, SpeakClasses type, const std::string& receiver, const std::string& text);
 		bool playerTalkToChannel(Player* player, SpeakClasses type, const std::string& text, uint16_t channelId);
 		bool playerSpeakToNpc(Player* player, const std::string& text);
-
-		Highscore highscoreStorage[9];
-		time_t lastHSUpdate;
 
 		bool serverSaveMessage[3];
 		int64_t stateTime;

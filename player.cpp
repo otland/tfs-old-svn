@@ -142,6 +142,9 @@ Creature()
 	actionTaskEvent = 0;
 	nextStepEvent = 0;
 
+	lastWalkthroughAttempt = 0;
+	lastToggleMount = 0;
+
 	for(int32_t i = 0; i < 11; i++)
 	{
 		inventory[i] = NULL;
@@ -945,6 +948,54 @@ bool Player::canSeeCreature(const Creature* creature) const
 	return true;
 }
 
+bool Player::canWalkthrough(const Creature* creature) const
+{
+	if(accessLevel || creature->isInGhostMode())
+		return true;
+
+	const Player* player = creature->getPlayer();
+	if(!player)
+		return false;
+
+	const Tile* playerTile = player->getTile();
+	if(playerTile && playerTile->hasFlag(TILESTATE_PROTECTIONZONE))
+	{
+		Item* playerTileGround = playerTile->ground;
+		if(playerTileGround && playerTileGround->hasWalkStack())
+		{
+			Player* thisPlayer = const_cast<Player*>(this);
+			if((OTSYS_TIME() - lastWalkthroughAttempt) > 1000)
+			{
+				thisPlayer->setLastWalkthroughAttempt(OTSYS_TIME());
+				return false;
+			}
+
+			if(creature->getPosition() != lastWalkthroughPosition)
+			{
+				thisPlayer->setLastWalkthroughPosition(creature->getPosition());
+				return false;
+			}
+
+			thisPlayer->setLastWalkthroughPosition(creature->getPosition());
+			return true;
+		}
+	}
+	return false;
+}
+
+bool Player::canWalkthroughEx(const Creature* creature) const
+{
+	if(accessLevel)
+		return true;
+
+	const Player* player = creature->getPlayer();
+	if(!player)
+		return false;
+
+	const Tile* playerTile = player->getTile();
+	return playerTile && playerTile->hasFlag(TILESTATE_PROTECTIONZONE);
+}
+
 void Player::onReceiveMail(uint32_t depotId)
 {
 	if(isNearDepotBox(depotId))
@@ -1550,6 +1601,8 @@ void Player::onChangeZone(ZoneType_t zone)
 		if(!accessLevel && isMounted())
 			dismount();
 	}
+
+	g_game.updateCreatureWalkthrough(this);
 	sendIcons();
 }
 
@@ -2536,43 +2589,65 @@ bool Player::removeVIP(uint32_t _guid)
 	if(it != VIPList.end())
 	{
 		VIPList.erase(it);
+		IOLoginData::getInstance()->removeVIPEntry(accountNumber, _guid);
 		return true;
 	}
 	return false;
 }
 
-bool Player::addVIP(uint32_t _guid, std::string& name, bool isOnline, bool internal /*=false*/)
+bool Player::addVIP(uint32_t _guid, std::string& name, bool isOnline)
 {
 	if(guid == _guid)
 	{
-		if(!internal)
-			sendTextMessage(MSG_STATUS_SMALL, "You cannot add yourself.");
-
+		sendTextMessage(MSG_STATUS_SMALL, "You cannot add yourself.");
 		return false;
 	}
 
 	if(VIPList.size() > maxVipLimit || VIPList.size() == 200) // max number of buddies is 200 in 9.53
 	{
-		if(!internal)
-			sendTextMessage(MSG_STATUS_SMALL, "You cannot add more buddies.");
-
+		sendTextMessage(MSG_STATUS_SMALL, "You cannot add more buddies.");
 		return false;
 	}
 
 	VIPListSet::iterator it = VIPList.find(_guid);
 	if(it != VIPList.end())
 	{
-		if(!internal)
-			sendTextMessage(MSG_STATUS_SMALL, "This player is already in your list.");
-
+		sendTextMessage(MSG_STATUS_SMALL, "This player is already in your list.");
 		return false;
 	}
 
 	VIPList.insert(_guid);
 
-	if(client && !internal)
-		client->sendVIP(_guid, name, isOnline);
+	IOLoginData::getInstance()->addVIPEntry(accountNumber, _guid, "", 0, false);
+	if(client)
+		client->sendVIP(_guid, name, "", 0, false, isOnline);
 
+	return true;
+}
+
+bool Player::addVIPInternal(uint32_t _guid)
+{
+	if(guid == _guid)
+		return false;
+
+	if(VIPList.size() > maxVipLimit || VIPList.size() == 200) // max number of buddies is 200 in 9.53
+		return false;
+
+	VIPListSet::iterator it = VIPList.find(_guid);
+	if(it != VIPList.end())
+		return false;
+
+	VIPList.insert(_guid);
+	return true;
+}
+
+bool Player::editVIP(uint32_t _guid, const std::string& description, uint32_t icon, bool notify)
+{
+	VIPListSet::iterator it = VIPList.find(_guid);
+	if(it == VIPList.end())
+		return false; // player is not in VIP
+
+	IOLoginData::getInstance()->editVIPEntry(accountNumber, _guid, description, icon, notify);
 	return true;
 }
 
@@ -4985,12 +5060,18 @@ void Player::setCurrentMount(uint8_t mount)
 
 bool Player::toggleMount(bool mount)
 {
+	if((OTSYS_TIME() - lastToggleMount) < 3000)
+	{
+		sendCancelMessage(RET_YOUAREEXHAUSTED);
+		return false;
+	}
+
 	if(mount)
 	{
 		if(isMounted())
 			return false;
 
-		if(_tile->hasFlag(TILESTATE_PROTECTIONZONE))
+		if(!accessLevel && _tile->hasFlag(TILESTATE_PROTECTIONZONE))
 		{
 			sendCancelMessage(RET_ACTIONNOTPERMITTEDINPROTECTIONZONE);
 			return false;
@@ -5033,6 +5114,8 @@ bool Player::toggleMount(bool mount)
 
 		dismount();
 	}
+
+	lastToggleMount = OTSYS_TIME();
 	return true;
 }
 

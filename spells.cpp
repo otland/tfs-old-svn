@@ -222,6 +222,9 @@ InstantSpell* Spells::getInstantSpell(const std::string& words)
 		const std::string& resultWords = result->getWords();
 		if(words.length() > resultWords.length())
 		{
+			if(!result->getHasParam())
+				return NULL;
+
 			size_t spellLen = resultWords.length();
 			size_t paramLen = words.length() - spellLen;
 			std::string paramText = words.substr(spellLen, paramLen);
@@ -681,7 +684,6 @@ bool Spell::playerSpellCheck(Player* player, bool ignoreExhaust/* = false*/) con
 	if(player->hasCondition(CONDITION_SPELLGROUPCOOLDOWN, group) || player->hasCondition(CONDITION_SPELLCOOLDOWN, spellId))
 	{
 		player->sendCancelMessage(RET_YOUAREEXHAUSTED);
-
 		if(isInstant())
 			g_game.addMagicEffect(player->getPosition(), NM_ME_POFF);
 

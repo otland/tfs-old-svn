@@ -529,8 +529,6 @@ void mainLoader(ServiceManager* services)
 	services->add<ProtocolOldLogin>(g_config.getNumber(ConfigManager::LOGIN_PORT));
 	services->add<ProtocolOldGame>(g_config.getNumber(ConfigManager::LOGIN_PORT));
 
-	g_game.timedHighscoreUpdate();
-
 	int32_t autoSaveEachMinutes = g_config.getNumber(ConfigManager::AUTO_SAVE_EACH_MINUTES);
 	if(autoSaveEachMinutes > 0)
 		g_scheduler.addEvent(createSchedulerTask(autoSaveEachMinutes * 1000 * 60, boost::bind(&Game::autoSave, &g_game)));
@@ -755,18 +753,6 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 					break;
 				}
 
-				case ID_MENU_GAME_RELOAD_HIGHSCORES:
-				{
-					if(g_game.getGameState() != GAME_STATE_STARTUP)
-					{
-						if(g_game.reloadHighscores())
-							std::cout << "Reloaded highscores." << std::endl;
-						else
-							std::cout << "Failed to reload highscores." << std::endl;
-					}
-					break;
-				}
-
 				case ID_MENU_GAME_RELOAD_MONSTERS:
 				{
 					if(g_game.getGameState() != GAME_STATE_STARTUP)
@@ -893,9 +879,6 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 					if(!Mounts::getInstance()->reload())
 						std::cout << "Failed to reload mounts." << std::endl;
 
-					if(!g_game.reloadHighscores())
-						std::cout << "Failed to reload highscores." << std::endl;
-
 					if(!g_actions->reload())
 						std::cout << "Failed to reload actions." << std::endl;
 
@@ -960,7 +943,20 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 						GUI::getInstance()->m_lineCount = 0;
 						std::cout << STATUS_SERVER_NAME << " - Version " << STATUS_SERVER_VERSION << " (" << STATUS_SERVER_CODENAME << ")." << std::endl;
 						std::cout << "A server developed by " << STATUS_SERVER_DEVELOPERS << "." << std::endl;
-						std::cout << "Visit our forum for updates, support and resources: http://otland.net/." << std::endl << std::endl;
+						std::cout << "Compilied on " << __DATE__ << " " << __TIME__ << " for arch ";
+
+						#if defined(__amd64__) || defined(_M_X64)
+						std::cout << "x64" << std::endl;
+						#elif defined(__i386__) || defined(_M_IX86) || defined(_X86_)
+						std::cout << "x86" << std::endl;
+						#else
+						std::cout << "unk" << std::endl;
+						#endif
+
+						std::cout << std::endl;
+
+						std::cout << "A server developed by " << STATUS_SERVER_DEVELOPERS << "." << std::endl;
+						std::cout << "Visit our forum for updates, support, and resources: http://otland.net/." << std::endl << std::endl;
 					}
 					break;
 				}

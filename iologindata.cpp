@@ -665,15 +665,12 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool prelo
 
 	//load vip
 	query.str("");
-	query << "SELECT `vip_id` FROM `player_viplist` WHERE `player_id` = " << player->getGUID() << ";";
+	query << "SELECT `player_id` FROM `account_viplist` WHERE `account_id` = " << player->getAccount() << ";";
 	if((result = db->storeQuery(query.str())))
 	{
 		do
 		{
-			uint32_t vip_id = result->getDataInt("vip_id");
-			std::string dummy_str;
-			if(storeNameByGuid(*db, vip_id))
-				player->addVIP(vip_id, dummy_str, false, true);
+			player->addVIPInternal(result->getDataInt("player_id"));
 		}
 		while(result->next());
 		db->freeResult(result);
@@ -966,27 +963,6 @@ bool IOLoginData::savePlayer(Player* player, bool preSave)
 		if(!stmt.execute())
 			return false;
 	}
-
-	//save vip list
-	query << "DELETE FROM `player_viplist` WHERE `player_id` = " << player->getGUID() << ";";
-	if(!db->executeQuery(query.str()))
-		return false;
-
-	query.str("");
-
-	stmt.setQuery("INSERT INTO `player_viplist` (`player_id`, `vip_id`) VALUES ");
-	for(VIPListSet::iterator it = player->VIPList.begin(), end = player->VIPList.end(); it != end; ++it)
-	{
-		if(playerExists(*it))
-		{
-			query << player->getGUID() << "," << *it;
-			if(!stmt.addRow(query))
-				return false;
-		}
-	}
-
-	if(!stmt.execute())
-		return false;
 
 	//End the transaction
 	return transaction.commit();
@@ -1341,12 +1317,6 @@ int16_t IOLoginData::deleteCharacter(uint32_t accountNumber, const std::string& 
 	query << "DELETE FROM `player_skills` WHERE `player_id` = " << id << ";";
 	db->executeQuery(query.str());
 	query.str("");
-	query << "DELETE FROM `player_viplist` WHERE `player_id` = " << id << ";";
-	db->executeQuery(query.str());
-	query.str("");
-	query << "DELETE FROM `player_viplist` WHERE `vip_id` = " << id << ";";
-	db->executeQuery(query.str());
-	query.str("");
 	query << "DELETE FROM `guild_invites` WHERE `player_id` = " << id << ";";
 	db->executeQuery(query.str());
 	return 1;
@@ -1393,4 +1363,55 @@ void IOLoginData::increaseBankBalance(uint32_t guid, uint64_t bankBalance)
 	DBQuery query;
 	query << "UPDATE `players` SET `balance` = `balance` + " << bankBalance << " WHERE `id` = " << guid << ";";
 	Database::getInstance()->executeQuery(query.str());
+}
+
+std::list<VIPEntry> IOLoginData::getVIPEntries(uint32_t accountId)
+{
+	std::list<VIPEntry> entries;
+
+	Database* db = Database::getInstance();
+
+	DBQuery query;
+	DBResult* result;
+	query << "SELECT `player_id`, (SELECT `name` FROM `players` WHERE `id` = `player_id`) AS `name`, `description`, `icon`, `notify` FROM `account_viplist` WHERE `account_id` = " << accountId << ";";
+	if((result = db->storeQuery(query.str())))
+	{
+		do
+		{
+			VIPEntry entry;
+			entry.guid = result->getDataInt("player_id");
+			entry.name = result->getDataString("name");
+			entry.description = result->getDataString("description");
+			entry.icon = result->getDataInt("icon");
+			entry.notify = result->getDataInt("notify") != 0;
+			entries.push_back(entry);
+		}
+		while(result->next());
+		db->freeResult(result);
+	}
+	return entries;
+}
+
+void IOLoginData::addVIPEntry(uint32_t accountId, uint32_t guid, const std::string& description, uint32_t icon, bool notify)
+{
+	Database* db = Database::getInstance();
+	DBQuery query;
+	query << "INSERT INTO `account_viplist` (`account_id`, `player_id`, `description`, `icon`, `notify`) VALUES (" << accountId << ", " << guid << ", " << db->escapeString(description) << ", " << icon << ", " << notify << ");";
+	db->executeQuery(query.str());
+}
+
+void IOLoginData::editVIPEntry(uint32_t accountId, uint32_t guid, const std::string& description, uint32_t icon, bool notify)
+{
+	Database* db = Database::getInstance();
+	DBQuery query;
+	query << "UPDATE `account_viplist` SET `description` = " << db->escapeString(description) << ", `icon` = " << icon << ", `notify` = " << notify << " WHERE `account_id` = " << accountId << " AND `player_id` = " << guid << ";";
+	db->executeQuery(query.str());
+}
+
+void IOLoginData::removeVIPEntry(uint32_t accountId, uint32_t guid)
+{
+	Database* db = Database::getInstance();
+	DBQuery query;
+	query << "DELETE FROM `account_viplist` WHERE `account_id` = " << accountId << " AND `player_id` = " << guid << ";";
+	db->executeQuery(query.str());
 }

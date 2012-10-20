@@ -231,6 +231,8 @@ class ItemType
 		bool floorChangeWest;
 		bool hasHeight;
 
+		bool walkStack;
+
 		bool blockSolid;
 		bool blockPickupable;
 		bool blockProjectile;

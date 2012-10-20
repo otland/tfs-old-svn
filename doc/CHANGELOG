@@ -21,10 +21,29 @@
 	A = Added.
 
 	M The Forgotten Server.exe
+	  data/
+	M 	actions/actions.xml
+	  	data/items/
+	M 		items.otb
+	M 		items.xml
 ]
 
 [ Milestone
+	Game protocol 9.70 support with new items.otb.
 	Offline training!
+	New VIP list code with VIP entries stored on the server side (SQLite part not done yet, but should work fine for MySQL users, the database will automatically be updated).
+	Added walkstack attribute to items.xml.
+	Added exhaustion to mounting.
+	Updated a lot of items in items.xml.
+	Players will no longer be muted for using NPC channel.
+	Players will now be exhausted when trying to use an item even if the item use failed.
+	Players with access level can now mount in protection zone.
+	Removed the hardcoded highscores code.
+	Optimized Creature::getPosition (significant for getSpectators which is one of the most called functions).
+	Owner on ConditionDamage will no longer be serialized/deserialized as there is no reason to keep it after a relog.
+	Updated Map::checkSightLine.
+	Patched a monster bug fix from trunk.
+	Reduced the Hicks! chance for drunk players.
 	Waypoints support, with two new lua functions getWaypointPosition(name) and doWaypointAddTemporial(name, pos)
 	onDeath for a summon will now only be called if the summons master still exists (in which case we can still tell if it's a summon in the onDeath script).
 	Reworked the code for using items on creatures to address a few bugs with it.
@@ -32,6 +51,7 @@
 	Fixed the bug with /addskill <playername>, magic level where it would not accurately add exactly one magic level.
 	Fixed the overflow checks for level, skills and magic level formulas (0 > 0 is not true!).
 	Fixed a bug where a player with black skull could get red skull by killing players in pairs.
+	Fixed a bug with doPlayerAddItem.
 	Fixed a bug with yellow skull.
 	Fixed container bugs.
 ]

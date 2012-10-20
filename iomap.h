@@ -74,6 +74,7 @@ enum OTBM_NodeTypes_t
 };
 
 #pragma pack(1)
+
 struct OTBM_root_header
 {
 	uint32_t version;

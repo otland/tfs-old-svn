@@ -293,6 +293,60 @@ uint32_t DatabaseManager::updateDatabase()
 			return 7;
 		}
 
+		case 7:
+		{
+			// TODO: SQLite queries
+			if(db->getDatabaseEngine() == DATABASE_ENGINE_MYSQL)
+			{
+				std::cout << "> Updating database to version 8 (account viplist with description, icon and notify server side)" << std::endl;
+				db->executeQuery("RENAME TABLE `player_viplist` TO `account_viplist`;");
+				db->executeQuery("ALTER TABLE `account_viplist` DROP FOREIGN KEY `account_viplist_ibfk_1`;");
+				db->executeQuery("UPDATE `account_viplist` SET `player_id` = (SELECT `account_id` FROM `players` WHERE `id` = `player_id`);");
+				db->executeQuery("ALTER TABLE `account_viplist` CHANGE `player_id` `account_id` INT( 11 ) NOT NULL COMMENT 'id of account whose viplist entry it is';");
+				db->executeQuery("ALTER TABLE `account_viplist` DROP FOREIGN KEY `account_viplist_ibfk_2`;");
+				db->executeQuery("ALTER TABLE `account_viplist` CHANGE `vip_id` `player_id` INT( 11 ) NOT NULL COMMENT 'id of target player of viplist entry';");
+				db->executeQuery("ALTER TABLE `account_viplist` DROP INDEX `player_id`, ADD INDEX `account_id` (`account_id`);");
+				db->executeQuery("ALTER TABLE `account_viplist` DROP INDEX `vip_id`, ADD INDEX `player_id` (`player_id`);");
+				db->executeQuery("ALTER TABLE `account_viplist` ADD FOREIGN KEY (`account_id`) REFERENCES `accounts` (`id`) ON DELETE CASCADE;");
+				db->executeQuery("ALTER TABLE `account_viplist` ADD FOREIGN KEY (`player_id`) REFERENCES `players` (`id`) ON DELETE CASCADE;");
+				db->executeQuery("ALTER TABLE `account_viplist` ADD `description` VARCHAR(128) NOT NULL DEFAULT '', ADD `icon` TINYINT( 2 ) UNSIGNED NOT NULL DEFAULT '0', ADD `notify` TINYINT( 1 ) NOT NULL DEFAULT '0';");
+
+				// Remove duplicates
+				DBResult* result = db->storeQuery("SELECT `account_id`, `player_id`, COUNT(*) AS `count` FROM `account_viplist` GROUP BY `account_id`, `player_id` HAVING COUNT(*) > 1;");
+				if(result)
+				{
+					do
+					{
+						query.str("");
+						query << "DELETE FROM `account_viplist` WHERE `account_id` = " << result->getDataInt("account_id") << " AND `player_id` = " << result->getDataInt("player_id") << " LIMIT " << (result->getDataInt("count") - 1) << ";";
+						db->executeQuery(query.str());
+					}
+					while(result->next());
+					db->freeResult(result);
+				}
+
+				// Remove if an account has over 200 entries
+				result = db->storeQuery("SELECT `account_id`, COUNT(*) AS `count` FROM `account_viplist` GROUP BY `account_id` HAVING COUNT(*) > 200;");
+				if(result)
+				{
+					do
+					{
+						query.str("");
+						query << "DELETE FROM `account_viplist` WHERE `account_id` = " << result->getDataInt("account_id") << " LIMIT " << (result->getDataInt("count") - 200) << ";";
+						db->executeQuery(query.str());
+					}
+					while(result->next());
+					db->freeResult(result);
+				}
+
+				db->executeQuery("ALTER TABLE `account_viplist` ADD UNIQUE `account_player_index` (`account_id`, `player_id`);");
+
+				registerDatabaseConfig("db_version", 8);
+				return 8;
+			}
+			break;
+		}
+
 		/*
 		case ?-1:
 		{

@@ -118,6 +118,15 @@ struct AccountManager
 	}
 };
 
+struct VIPEntry
+{
+	uint32_t guid;
+	std::string name;
+	std::string description;
+	uint32_t icon;
+	bool notify;
+};
+
 typedef std::pair<uint32_t, Container*> containervector_pair;
 typedef std::vector<containervector_pair> ContainerVector;
 typedef std::map<uint32_t, Depot*> DepotMap;
@@ -202,6 +211,9 @@ class Player : public Creature, public Cylinder
 		void setGuildLevel(GuildLevel_t newGuildLevel);
 
 		bool isGuildMate(const Player* player) const;
+
+		void setLastWalkthroughAttempt(int64_t walkthroughAttempt) { lastWalkthroughAttempt = walkthroughAttempt; }
+		void setLastWalkthroughPosition(Position walkthroughPosition) { lastWalkthroughPosition = walkthroughPosition; }
 
 		bool hasRequestedOutfit() const {return requestedOutfit;}
 		void hasRequestedOutfit(bool newValue) {requestedOutfit = newValue;}
@@ -398,7 +410,9 @@ class Player : public Creature, public Cylinder
 		void notifyLogIn(Player* player);
 		void notifyLogOut(Player* player);
 		bool removeVIP(uint32_t guid);
-		bool addVIP(uint32_t guid, std::string& name, bool isOnline, bool interal = false);
+		bool addVIP(uint32_t guid, std::string& name, bool isOnline);
+		bool addVIPInternal(uint32_t guid);
+		bool editVIP(uint32_t _guid, const std::string& description, uint32_t icon, bool notify);
 
 		//follow functions
 		virtual bool setFollowCreature(Creature* creature, bool fullPathSearch = false);
@@ -551,9 +565,10 @@ class Player : public Creature, public Cylinder
 		}
 		void sendCreatureLight(const Creature* creature)
 			{if(client) client->sendCreatureLight(creature);}
+		void sendCreatureWalkthrough(const Creature* creature, bool walkthrough)
+			{if(client) client->sendCreatureWalkthrough(creature, walkthrough);}
 		void sendCreatureShield(const Creature* creature)
 			{if(client) client->sendCreatureShield(creature);}
-
 		void sendSpellCooldown(uint8_t spellId, uint32_t time)
 			{if(client) client->sendSpellCooldown(spellId, time);}
 		void sendSpellGroupCooldown(SpellGroup_t groupId, uint32_t time)
@@ -897,6 +912,10 @@ class Player : public Creature, public Cylinder
 		uint64_t bankBalance;
 
 		uint16_t lastStatsTrainingTime;
+
+		Position lastWalkthroughPosition;
+		int64_t lastWalkthroughAttempt;
+		int64_t lastToggleMount;
 
 		//guild variables
 		uint32_t guildId;

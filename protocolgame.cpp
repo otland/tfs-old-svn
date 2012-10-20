@@ -814,6 +814,10 @@ void ProtocolGame::parsePacket(NetworkMessage &msg)
 			parseRemoveVip(msg);
 			break;
 
+		case 0xDE:
+			parseEditVip(msg);
+			break;
+
 		case 0xE6:
 			parseBugReport(msg);
 			break;
@@ -1452,6 +1456,15 @@ void ProtocolGame::parseRemoveVip(NetworkMessage& msg)
 	addGameTask(&Game::playerRequestRemoveVip, player->getID(), guid);
 }
 
+void ProtocolGame::parseEditVip(NetworkMessage& msg)
+{
+	uint32_t guid = msg.GetU32();
+	const std::string description = msg.GetString();
+	uint32_t icon = std::min((uint32_t)10, msg.GetU32()); // 10 is max icon in 9.63
+	bool notify = msg.GetByte() != 0;
+	addGameTask(&Game::playerRequestEditVip, player->getID(), guid, description, icon, notify);
+}
+
 void ProtocolGame::parseRotateItem(NetworkMessage& msg)
 {
 	Position pos = msg.GetPosition();
@@ -1674,6 +1687,21 @@ void ProtocolGame::sendWorldLight(const LightInfo& lightInfo)
 
 	TRACK_MESSAGE(msg);
 	AddWorldLight(msg, lightInfo);
+}
+
+void ProtocolGame::sendCreatureWalkthrough(const Creature* creature, bool walkthrough)
+{
+	if(!canSee(creature))
+		return;
+
+	NetworkMessage_ptr msg = getOutputBuffer();
+	if(!msg)
+		return;
+
+	TRACK_MESSAGE(msg);
+	msg->AddByte(0x92);
+	msg->AddU32(creature->getID());
+	msg->AddByte(walkthrough ? 0x00 : 0x01);
 }
 
 void ProtocolGame::sendCreatureShield(const Creature* creature)
@@ -2456,7 +2484,7 @@ void ProtocolGame::sendMarketDetail(uint16_t itemId)
 	}
 	else
 		msg->AddByte(0x00);
-	
+
 	statistics = IOMarket::getInstance()->getSaleStatistics(itemId);
 	if(statistics)
 	{
@@ -2602,7 +2630,7 @@ void ProtocolGame::sendCreatureTurn(const Creature* creature, uint32_t stackPos)
 	msg->AddU16(0x63); /*99*/
 	msg->AddU32(creature->getID());
 	msg->AddByte(creature->getDirection());
-	msg->AddByte(player->isAccessPlayer() ? 0x00 : 0x01);
+	msg->AddByte(player->canWalkthroughEx(creature) ? 0x00 : 0x01);
 }
 
 void ProtocolGame::sendCreatureSay(const Creature* creature, SpeakClasses type, const std::string& text, Position* pos/* = NULL*/)
@@ -2910,14 +2938,12 @@ void ProtocolGame::sendAddCreature(const Creature* creature, const Position& pos
 		}
 	}
 
-	for(VIPListSet::iterator it = player->VIPList.begin(), end = player->VIPList.end(); it != end; ++it)
+	const std::list<VIPEntry>& vipEntries = IOLoginData::getInstance()->getVIPEntries(player->getAccount());
+	for(std::list<VIPEntry>::const_iterator it = vipEntries.begin(), end = vipEntries.end(); it != end; ++it)
 	{
-		std::string vip_name;
-		if(IOLoginData::getInstance()->getNameByGuid((*it), vip_name))
-		{
-			Player* tmpPlayer = g_game.getPlayerByName(vip_name);
-			sendVIP((*it), vip_name, (tmpPlayer && (!tmpPlayer->isInGhostMode() || player->isAccessPlayer())));
-		}
+		const VIPEntry& entry = (*it);
+		Player* vipPlayer = g_game.getPlayerByGUID(entry.guid);
+		sendVIP(entry.guid, entry.name, entry.description, entry.icon, entry.notify, (vipPlayer && (!vipPlayer->isInGhostMode() || player->isAccessPlayer())));
 	}
 	player->sendIcons();
 }
@@ -2994,7 +3020,7 @@ void ProtocolGame::sendMoveCreature(const Creature* creature, const Tile* newTil
 		}
 	}
 	else if(canSee(oldPos) && canSee(creature->getPosition()))
-	{	
+	{
 		if(teleport || (oldPos.z == 7 && newPos.z >= 8) || oldStackPos >= 10)
 		{
 			sendRemoveCreature(creature, oldPos, oldStackPos, false);
@@ -3260,7 +3286,7 @@ void ProtocolGame::sendVIPLogOut(uint32_t guid)
 	msg->AddU32(guid);
 }
 
-void ProtocolGame::sendVIP(uint32_t guid, const std::string& name, bool isOnline)
+void ProtocolGame::sendVIP(uint32_t guid, const std::string& name, const std::string& description, uint32_t icon, bool notify, bool isOnline)
 {
 	NetworkMessage_ptr msg = getOutputBuffer();
 	if(!msg)
@@ -3270,6 +3296,9 @@ void ProtocolGame::sendVIP(uint32_t guid, const std::string& name, bool isOnline
 	msg->AddByte(0xD2);
 	msg->AddU32(guid);
 	msg->AddString(name);
+	msg->AddString(description);
+	msg->AddU32(std::min((uint32_t)10, icon));
+	msg->AddByte(notify ? 0x01 : 0x00);
 	msg->AddByte(isOnline ? 0x01 : 0x00);
 }
 
@@ -3431,7 +3460,7 @@ void ProtocolGame::AddCreature(NetworkMessage_ptr msg, const Creature* creature,
 	if(!known)
 		msg->AddByte(player->getGuildEmblem(creature->getPlayer()));
 
-	msg->AddByte(player->isAccessPlayer() ? 0x00 : 0x01);
+	msg->AddByte(player->canWalkthroughEx(creature) ? 0x00 : 0x01);
 }
 
 void ProtocolGame::AddPlayerStats(NetworkMessage_ptr msg)

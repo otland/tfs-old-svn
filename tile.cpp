@@ -618,8 +618,8 @@ ReturnValue Tile::__queryAdd(int32_t index, const Thing* thing, uint32_t count,
 			{
 				for(CreatureVector::const_iterator cit = creatures->begin(); cit != creatures->end(); ++cit)
 				{
-					if(!(*cit)->isInGhostMode())
-						return RET_NOTENOUGHROOM;
+					if(!player->canWalkthrough(*cit))
+						return RET_NOTPOSSIBLE;
 				}
 			}
 

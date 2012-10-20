@@ -86,6 +86,11 @@ class IOLoginData
 		bool hasGuild(uint32_t guid);
 		void increaseBankBalance(uint32_t guid, uint64_t bankBalance);
 
+		std::list<VIPEntry> getVIPEntries(uint32_t accountId);
+		void addVIPEntry(uint32_t accountId, uint32_t guid, const std::string& description, uint32_t icon, bool notify);
+		void editVIPEntry(uint32_t accountId, uint32_t guid, const std::string& description, uint32_t icon, bool notify);
+		void removeVIPEntry(uint32_t accountId, uint32_t guid);
+
 	protected:
 		bool storeNameByGuid(Database &mysql, uint32_t guid);
 

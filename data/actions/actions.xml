@@ -193,7 +193,6 @@
 	<action itemid="10032" script="other/doors.lua" />
 	<action fromid="10268" toid="10285" script="other/doors.lua" />
 	<action fromid="10468" toid="10486" script="other/doors.lua" />
-	<action itemid="1981" function="highscoreBook"/>
 
 	<action itemid="14405" function="market"/>
 </actions>

@@ -1126,9 +1126,9 @@ bool Monster::getDanceStep(const Position& creaturePos, Direction& dir,
 		}
 	}
 
-	if(!keepDistance || creaturePos.x - centerPos.x >= 0)
+	if(!keepDistance || creaturePos.x - centerPos.x <= 0)
 	{
-		tmpDist = std::max(std::abs((creaturePos.x + 1) - centerPos.x), std::abs((creaturePos.y) - centerPos.y));
+		tmpDist = std::max(std::abs((creaturePos.x + 1) - centerPos.x), std::abs(creaturePos.y - centerPos.y));
 		if(tmpDist == centerToDist && canWalkTo(creaturePos, EAST))
 		{
 			bool result = true;
@@ -1140,9 +1140,9 @@ bool Monster::getDanceStep(const Position& creaturePos, Direction& dir,
 		}
 	}
 
-	if(!keepDistance || creaturePos.x - centerPos.x <= 0)
+	if(!keepDistance || creaturePos.x - centerPos.x >= 0)
 	{
-		tmpDist = std::max(std::abs((creaturePos.x - 1) - centerPos.x), std::abs((creaturePos.y) - centerPos.y));
+		tmpDist = std::max(std::abs((creaturePos.x - 1) - centerPos.x), std::abs(creaturePos.y - centerPos.y));
 		if(tmpDist == centerToDist && canWalkTo(creaturePos, WEST))
 		{
 			bool result = true;

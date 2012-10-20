@@ -94,9 +94,9 @@ class FrozenPathingConditionCall
 {
 	public:
 		FrozenPathingConditionCall(const Position& _targetPos);
-		virtual ~FrozenPathingConditionCall() {}
+		~FrozenPathingConditionCall() {}
 
-		virtual bool operator()(const Position& startPos, const Position& testPos,
+		bool operator()(const Position& startPos, const Position& testPos,
 			const FindPathParams& fpp, int32_t& bestMatchDist) const;
 
 		bool isInRange(const Position& startPos, const Position& testPos,
@@ -343,12 +343,14 @@ class Creature : public AutoID, virtual public Thing
 		virtual void setParent(Cylinder* cylinder)
 		{
 			_tile = dynamic_cast<Tile*>(cylinder);
+			_position = _tile->getTilePosition();
 			Thing::setParent(cylinder);
 		}
 
-		virtual const Position& getPosition() const {return _tile->getTilePosition();}
-		virtual Tile* getTile() {return _tile;}
-		virtual const Tile* getTile() const {return _tile;}
+		const Position& getPosition() const {return _position;}
+
+		Tile* getTile() {return _tile;}
+		const Tile* getTile() const {return _tile;}
 		int32_t getWalkCache(const Position& pos) const;
 
 		const Position& getLastPosition() {return lastPosition;}
@@ -366,6 +368,7 @@ class Creature : public AutoID, virtual public Thing
 		virtual bool useCacheMap() const {return false;}
 
 		Tile* _tile;
+		Position _position;
 		uint32_t id;
 		bool isInternalRemoved;
 		bool isMapLoaded;
