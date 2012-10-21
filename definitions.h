@@ -37,7 +37,7 @@
 #define VERSION_PATCH 0
 #define VERSION_TIMESTAMP 0
 #define VERSION_BUILD 0
-#define VERSION_DATABASE 36
+#define VERSION_DATABASE 37
 
 // work around for boost < 1.42
 #if BOOST_VERSION / 100 % 1000 == 4 && BOOST_VERSION % 100 <= 2
