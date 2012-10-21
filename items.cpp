@@ -184,7 +184,7 @@ int32_t Items::loadFromOtb(std::string file)
 		std::clog << "[Error - Items::loadFromOtb] Incorrect version detected, please use official items.otb." << std::endl;
 		return ERROR_INVALID_FORMAT;
 	}
-	else if(!g_config.getBool(ConfigManager::SKIP_ITEMS_VERSION) && Items::dwMinorVersion != CLIENT_VERSION_961)
+	else if(!g_config.getBool(ConfigManager::SKIP_ITEMS_VERSION) && Items::dwMinorVersion != CLIENT_VERSION_970)
 	{
 		std::clog << "[Error - Items::loadFromOtb] Another client version of items.otb is required." << std::endl;
 		return ERROR_INVALID_FORMAT;
@@ -442,7 +442,7 @@ bool Items::loadFromXml()
 				std::clog << "[Warning - Items::loadFromXml] Malformed entry (from: \"" << strValue << "\", to: \"" << endValue << "\")" << std::endl;
 		}
 		else
-			std::clog << "[Warning - Items::loadFromXml] No itemid found" << std::endl;
+			std::clog << "[Warning - Items::loadFromXml] No itemid found at line " << node->line << std::endl;
 	}
 
 	const ItemType* it;
