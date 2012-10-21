@@ -4548,16 +4548,16 @@ Skulls_t Player::getSkull() const
 Skulls_t Player::getSkullType(const Creature* creature) const
 {
 	const Player* player = creature->getPlayer();
-	if(player && player->getSkull() == SKULL_NONE)
-	{
-		if(g_game.getWorldType() != WORLDTYPE_OPEN)
-			return SKULL_NONE;
+	if(!player || g_game.getWorldType() != WORLDTYPE_OPEN)
+		return SKULL_NONE;
 
+	if(player->getSkull() == SKULL_NONE)
+	{
 		if(canRevenge(player->getGUID()))
 			return SKULL_ORANGE;
 
-		if((skull != SKULL_NONE || player->canRevenge(guid)) &&
-			player->hasAttacked(this) && !player->isEnemy(this, false))
+		if(player->canRevenge(guid) && player->hasAttacked(this) &&
+			!player->isEnemy(this, false))
 			return SKULL_YELLOW;
 
 		if((isPartner(player) || isAlly(player) || isEnemy(player, false)) &&
