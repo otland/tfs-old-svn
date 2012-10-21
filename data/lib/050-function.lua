@@ -358,7 +358,8 @@ function getItemWeightById(itemid, count, precision)
 	return precission and weight or math.round(weight, 2)
 end
 
-function choose(arg)
+function choose(...)
+        local arg = {...}
 	return arg[math.random(1, table.maxn(arg))]
 end
 
