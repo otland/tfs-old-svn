@@ -1417,7 +1417,8 @@ uint32_t DatabaseManager::updateDatabase()
 					break;
 				}
 
-				default: break;
+				default:
+					break;
 			}
 
 			registerDatabaseConfig("db_version", 35);
@@ -1437,11 +1438,47 @@ uint32_t DatabaseManager::updateDatabase()
 		case 36:
 		{
 			std::clog << "> Updating database to version 37..." << std::endl;
+			switch(db->getDatabaseEngine())
+			{
+				case DATABASE_ENGINE_MYSQL:
+				{
+					db->query("ALTER TABLE `account_viplist` ADD `description` VARCHAR(128) NOT NULL, ADD `icon` INT(11) UNSIGNED NOT NULL, ADD `notify` BOOLEAN NOT NULL;");
+					db->query("ALTER TABLE `player_viplist` ADD `description` VARCHAR(128) NOT NULL, ADD `icon` INT(11) UNSIGNED NOT NULL, ADD `notify` BOOLEAN NOT NULL;");
+				}
 
-			db->query("ALTER TABLE `account_viplist` ADD `description` VARCHAR( 128 ) NOT NULL, ADD `icon` INT( 11 ) UNSIGNED NOT NULL, ADD `notify` BOOLEAN NOT NULL ;");
-			db->query("ALTER TABLE `player_viplist` ADD `description` VARCHAR( 128 ) NOT NULL, ADD `icon` INT( 11 ) UNSIGNED NOT NULL, ADD `notify` BOOLEAN NOT NULL ;");
+				default:
+					break;
+			}
+
 			registerDatabaseConfig("db_version", 37);
 			return 37;
+		}
+
+		case 37:
+		{
+			std::clog << "> Updating database to version 38..." << std::endl;
+			switch(db->getDatabaseEngine())
+			{
+				case DATABASE_ENGINE_SQLITE:
+				{
+					//account viplist
+					db->query("ALTER TABLE `account_viplist` ADD `description` VARCHAR(128) NOT NULL DEFAULT '';");
+					db->query("ALTER TABLE `account_viplist` ADD `icon` INTEGER NOT NULL DEFAULT '0';");
+					db->query("ALTER TABLE `account_viplist` ADD `notify` BOOLEAN NOT NULL DEFAULT '';");
+
+					//players viplist
+					db->query("ALTER TABLE `player_viplist` ADD `description` VARCHAR(128) NOT NULL DEFAULT '';");
+					db->query("ALTER TABLE `player_viplist` ADD `icon` INTEGER NOT NULL DEFAULT '0';");
+					db->query("ALTER TABLE `player_viplist` ADD `notify` BOOLEAN NOT NULL DEFAULT '';");
+					break;
+				}
+
+				default:
+					break;
+			}
+
+			registerDatabaseConfig("db_version", 38);
+			return 38;
 		}
 
 		default:
