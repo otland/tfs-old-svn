@@ -358,8 +358,16 @@ function getItemWeightById(itemid, count, precision)
 	return precission and weight or math.round(weight, 2)
 end
 
-function choose(arg)
-	return arg[math.random(1, table.maxn(arg))]
+function choose(...)
+	local arg, ret = {...}
+
+	if type(arg[1]) == 'table' then
+		ret = arg[1][math.random(#arg[1])]
+	else
+		ret = arg[math.random(#arg)]
+	end
+
+	return ret
 end
 
 function doPlayerAddExpEx(cid, amount)
