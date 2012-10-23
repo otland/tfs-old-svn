@@ -28,8 +28,8 @@
 //#define CLIENT_VERSION_DATA
 
 #define SOFTWARE_NAME "The Forgotten Server"
-#define SOFTWARE_VERSION "0.3.7_SVN"
-#define SOFTWARE_CODENAME "Crying Damson"
+#define SOFTWARE_VERSION "0.4_SVN"
+#define SOFTWARE_CODENAME "-"
 #define SOFTWARE_DEVELOPERS "Elf, Talaturen, Dalkon, BeniS, Tryller and Kornholijo"
 #define SOFTWARE_PROTOCOL "9.70"
 
@@ -37,7 +37,7 @@
 #define VERSION_PATCH 0
 #define VERSION_TIMESTAMP 0
 #define VERSION_BUILD 0
-#define VERSION_DATABASE 37
+#define VERSION_DATABASE 38
 
 #undef MULTI_SQL_DRIVERS
 #define SQL_DRIVERS __USE_SQLITE__+__USE_MYSQL__+__USE_PGSQL__
