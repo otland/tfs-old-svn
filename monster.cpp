@@ -1048,7 +1048,7 @@ bool Monster::getDanceStep(const Position& creaturePos, Direction& dir,
 	uint32_t centerToDist = std::max(std::abs(creaturePos.x - centerPos.x), std::abs(creaturePos.y - centerPos.y));
 	uint32_t tmpDist;
 
-	DirVector dirList;
+	DirVector dirVector;
 
 	if(!keepDistance || creaturePos.y - centerPos.y >= 0)
 	{
@@ -1060,7 +1060,7 @@ bool Monster::getDanceStep(const Position& creaturePos, Direction& dir,
 				result = (!canDoAttackNow || canUseAttack(Position(creaturePos.x, creaturePos.y - 1, creaturePos.z), attackedCreature));
 
 			if(result)
-				dirList.push_back(NORTH);
+				dirVector.push_back(NORTH);
 		}
 	}
 
@@ -1074,7 +1074,7 @@ bool Monster::getDanceStep(const Position& creaturePos, Direction& dir,
 				result = (!canDoAttackNow || canUseAttack(Position(creaturePos.x, creaturePos.y + 1, creaturePos.z), attackedCreature));
 
 			if(result)
-				dirList.push_back(SOUTH);
+				dirVector.push_back(SOUTH);
 		}
 	}
 
@@ -1088,7 +1088,7 @@ bool Monster::getDanceStep(const Position& creaturePos, Direction& dir,
 				result = (!canDoAttackNow || canUseAttack(Position(creaturePos.x + 1, creaturePos.y, creaturePos.z), attackedCreature));
 
 			if(result)
-				dirList.push_back(EAST);
+				dirVector.push_back(EAST);
 		}
 	}
 
@@ -1102,11 +1102,11 @@ bool Monster::getDanceStep(const Position& creaturePos, Direction& dir,
 				result = (!canDoAttackNow || canUseAttack(Position(creaturePos.x - 1, creaturePos.y, creaturePos.z), attackedCreature));
 
 			if(result)
-				dirList.push_back(WEST);
+				dirVector.push_back(WEST);
 		}
 	}
 
-	if(dirList.empty())
+	if(dirVector.empty())
 		return false;
 
 	std::random_shuffle(dirVector.begin(), dirVector.end());
