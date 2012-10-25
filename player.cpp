@@ -5775,10 +5775,7 @@ bool Player::addOfflineTrainingTries(skills_t skill, int32_t tries)
 			newPercentToNextLevel = (long double)(manaSpent * 100) / nextReqMana;
 		}
 		else
-		{
-			newPercent = 0;
-			newPercentToNextLevel = 0;
-		}
+			newPercent = newPercentToNextLevel = 0;
 
 		if(newPercent != magLevelPercent)
 		{
@@ -5804,9 +5801,9 @@ bool Player::addOfflineTrainingTries(skills_t skill, int32_t tries)
 		tries *= g_config.getDouble(ConfigManager::RATE_SKILL);
 		while((skills[skill][SKILL_TRIES] + tries) >= nextReqTries)
 		{
+			skills[skill][SKILL_TRIES] = skills[skill][SKILL_PERCENT] = 0;
 			tries -= nextReqTries - skills[skill][SKILL_TRIES];
 			skills[skill][SKILL_LEVEL]++;
-			skills[skill][SKILL_TRIES] = skills[skill][SKILL_PERCENT] = 0;
 
 			CreatureEventList advanceEvents = getCreatureEvents(CREATURE_EVENT_ADVANCE);
 			for(CreatureEventList::iterator it = advanceEvents.begin(); it != advanceEvents.end(); ++it)
