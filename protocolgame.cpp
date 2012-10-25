@@ -380,31 +380,33 @@ void ProtocolGame::disconnect()
 
 void ProtocolGame::disconnectClient(uint8_t error, const char* message)
 {
-	if(OutputMessage_ptr output = OutputMessagePool::getInstance()->getOutputMessage(this, false))
-	{
-		TRACK_MESSAGE(output);
-		output->put<char>(error);
-		output->putString(message);
-		OutputMessagePool::getInstance()->send(output);
-	}
+	OutputMessage_ptr output = OutputMessagePool::getInstance()->getOutputMessage(this, false);
+	if(!output)
+		return;
 
-	disconnect();
+	TRACK_MESSAGE(output);
+	output->put<char>(error);
+	output->putString(message);
+
+	OutputMessagePool::getInstance()->send(output);
+	if(Connection_ptr connection = getConnection())
+		connection->close();
 }
 
 void ProtocolGame::onConnect()
 {
-	if(OutputMessage_ptr output = OutputMessagePool::getInstance()->getOutputMessage(this, false))
-	{
-		TRACK_MESSAGE(output);
-		enableChecksum();
+	OutputMessage_ptr output = OutputMessagePool::getInstance()->getOutputMessage(this, false);
+	if(!output)
 
-		output->put<char>(0x1F);
-		output->put<uint16_t>(random_range(0, 0xFFFF));
-		output->put<uint16_t>(0x00);
-		output->put<char>(random_range(0, 0xFF));
+	TRACK_MESSAGE(output);
+	enableChecksum();
 
-		OutputMessagePool::getInstance()->send(output);
-	}
+	output->put<char>(0x1F);
+	output->put<uint16_t>(random_range(0, 0xFFFF));
+	output->put<uint16_t>(0x00);
+	output->put<char>(random_range(0, 0xFF));
+
+	OutputMessagePool::getInstance()->send(output);
 }
 
 void ProtocolGame::onRecvFirstMessage(NetworkMessage& msg)

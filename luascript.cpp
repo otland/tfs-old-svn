@@ -766,7 +766,7 @@ bool LuaInterface::loadDirectory(std::string dir, bool recursively, bool loadSys
 	StringVec files;
 	for(boost::filesystem::directory_iterator it(dir), end; it != end; ++it)
 	{
-		std::string s = it->path().filename().string(); //doesn't work properly with 1.42
+		std::string s = BOOST_DIR_ITER_FILENAME(it);
 		if(!loadSystems && s[0] == '_')
 			continue;
 
