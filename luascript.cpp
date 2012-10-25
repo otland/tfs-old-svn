@@ -9139,9 +9139,7 @@ int32_t LuaInterface::luaDoPlayerAddDialog(lua_State* L)
 
 			str = "popup";
 			if(!key.compare(str))
-			{
 				popup = lua_toboolean(L, -1);
-			}
 
 			lua_pop(L, 1);
 		}

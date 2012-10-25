@@ -41,7 +41,7 @@ class Npc;
 class Party;
 class SchedulerTask;
 class Quest;
-class Bed;
+class BedItem;
 
 enum skillsid_t
 {
@@ -395,7 +395,7 @@ class Player : public Creature, public Cylinder
 
 		//modal dialog
 		void executeSleep(uint8_t button, uint8_t choice);
-		void prepareSleep(Bed* _bed);
+		void prepareSleep(BedItem* _bed);
 
 		//safe-trade functions
 		void setTradeState(tradestate_t state) {tradeState = state;}
@@ -1007,7 +1007,7 @@ class Player : public Creature, public Cylinder
 		House* editHouse;
 		Npc* shopOwner;
 		Item* weapon;
-		Bed* bed;
+		BedItem* bed;
 
 		std::vector<uint32_t> forceWalkthrough;
 		std::vector<uint32_t> revengeList;

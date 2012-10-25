@@ -6897,16 +6897,15 @@ void Game::checkExpiredMarketOffers()
 	}
 
 	int32_t checkExpiredMarketOffersEachMinutes = g_config.getNumber(ConfigManager::CHECK_EXPIRED_MARKET_OFFERS_EACH_MINUTES);
-	if(checkExpiredMarketOffersEachMinutes <= 0)
-		return;
-
-	Scheduler::getInstance().addEvent(createSchedulerTask(checkExpiredMarketOffersEachMinutes * 60 * 1000, boost::bind(&Game::checkExpiredMarketOffers, this)));
+	if(checkExpiredMarketOffersEachMinutes > 0)
+		Scheduler::getInstance().addEvent(createSchedulerTask(checkExpiredMarketOffersEachMinutes * 60 * 1000, boost::bind(&Game::checkExpiredMarketOffers, this)));
 }
 
-void Game::parsePlayerExtendedOpcode(Player* player, uint8_t opcode, const std::string& buffer)
+void Game::playerExtendedOpcode(uint32_t playerId, uint8_t opcode, const std::string& buffer)
 {
-	if(!player)
-		return;
+	Player* player = getPlayerByID(playerId);
+	if(!player || player->isRemoved())
+		return false;
 
 	CreatureEventList extendedOpcodeEvents = player->getCreatureEvents(CREATURE_EVENT_EXTENDED_OPCODE);
 	for(CreatureEventList::iterator it = extendedOpcodeEvents.begin(); it != extendedOpcodeEvents.end(); ++it)

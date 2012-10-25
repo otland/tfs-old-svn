@@ -1464,8 +1464,8 @@ void Player::onCreatureAppear(const Creature* creature)
 	}
 
 	updateWeapon();
-	if(BedItem* bed = Beds::getInstance()->getBedBySleeper(guid))
-		bed->wakeUp();
+	if(BedItem* _bed = Beds::getInstance()->getBedBySleeper(guid))
+		_bed->wakeUp();
 
 	Outfit outfit;
 	if(Outfits::getInstance()->getOutfit(defaultOutfit.lookType, outfit))
@@ -5856,7 +5856,7 @@ void Player::executeSleep(uint8_t button, uint8_t choice)
 	if(!bed)
 		return;
 
-	if(button != 1 || !bed->canUse(this) || ((choice < SKILL_FIST || choice > SKILL_DIST) && choice != SKILL__MAGLEVEL))
+	if(button != 1 || !bed->canUse(this) || (choice > SKILL_DIST && choice != SKILL__MAGLEVEL))
 	{
 		bed = NULL;
 		return;
@@ -5867,7 +5867,7 @@ void Player::executeSleep(uint8_t button, uint8_t choice)
 	bed = NULL;
 }
 
-void Player::prepareSleep(Bed* _bed)
+void Player::prepareSleep(BedItem* _bed)
 {
 	ModalDialog tmp;
 	ModalChoice tmpChoice;

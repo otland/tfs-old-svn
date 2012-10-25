@@ -33,16 +33,19 @@ function onLogin(cid)
 		doSendMagicEffect(getCreaturePosition(cid), CONST_ME_TELEPORT)
 	end
 
-	registerCreatureEvent(cid, "Mail")
-	registerCreatureEvent(cid, "GuildEvents")
-
 	registerCreatureEvent(cid, "Idle")
-	if(config.useFragHandler) then
-		registerCreatureEvent(cid, "SkullCheck")
+	registerCreatureEvent(cid, "Mail")
+	if(getPlayerOperatingSystem(cid) >= CLIENTOS_OTCLIENT_LINUX) then
+		registerCreatureEvent(cid, "ExtendedOpcode")
 	end
 
 	registerCreatureEvent(cid, "ReportBug")
 	registerCreatureEvent(cid, "ThankYou")
+	if(config.useFragHandler) then
+		registerCreatureEvent(cid, "SkullCheck")
+	end
+
+	registerCreatureEvent(cid, "GuildEvents")
 	registerCreatureEvent(cid, "AdvanceSave")
 	return true
 end
