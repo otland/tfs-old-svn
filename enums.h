@@ -475,6 +475,7 @@ struct ModalDialog
 		buttonEscape = 0;
 		popup = false;
 	}
+
 	uint32_t id;
 	std::string title;
 	std::string message;

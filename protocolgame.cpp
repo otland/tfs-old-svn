@@ -3776,8 +3776,8 @@ void ProtocolGame::sendModalDialog(ModalDialog& dialog)
 	msg->put<uint32_t>(dialog.id); //id
 	msg->putString(dialog.title); // title
 	msg->putString(dialog.message); //message
-	msg->put<uint8_t>(dialog.buttons.size()); //count of buttons
 
+	msg->put<uint8_t>(dialog.buttons.size()); //count of buttons
 	for(std::vector<ModalChoice>::iterator it = dialog.buttons.begin(); it != dialog.buttons.end(); it++)
 	{
 		msg->putString(it->value); //button
@@ -3785,7 +3785,6 @@ void ProtocolGame::sendModalDialog(ModalDialog& dialog)
 	}
 	
 	msg->put<uint8_t>(dialog.choices.size()); //count of choices
-
 	for(std::vector<ModalChoice>::iterator it = dialog.choices.begin(); it != dialog.choices.end(); it++)
 	{
 		msg->putString(it->value); //choice
@@ -3809,15 +3808,12 @@ void ProtocolGame::parseExtendedOpcode(NetworkMessage& msg)
 {
 	uint8_t opcode = msg.get<char>();
 	std::string buffer = msg.getString();
-
-	// process additional opcodes via lua script event
 	addGameTask(&Game::parsePlayerExtendedOpcode, player, opcode, buffer);
 }
 
 void ProtocolGame::sendExtendedOpcode(uint8_t opcode, const std::string& buffer)
 {
-	// extended opcodes can only be send to players using otclient, cipsoft's tibia can't understand them
-	if(player && !player->isUsingOtclient())
+	if(!player || player->getOperatingSystem() < CLIENTOS_OTCLIENT_LINUX)
 		return;
 
 	NetworkMessage_ptr msg = getOutputBuffer();

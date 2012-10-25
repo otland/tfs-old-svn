@@ -482,8 +482,7 @@ ReturnValue Actions::internalUseItem(Player* player, const Position& pos, uint8_
 		if(!bed->canUse(player))
 			return RET_CANNOTUSETHISOBJECT;
 
-		//bed->sleep(player);
-		player->showOfflineTrainingDialog(bed);
+		player->prepareSleep(bed);
 		return RET_NOERROR;
 	}
 

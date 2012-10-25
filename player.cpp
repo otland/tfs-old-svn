@@ -97,6 +97,7 @@ Player::Player(const std::string& _name, ProtocolGame* p):
 	tradePartner = NULL;
 	walkTask = NULL;
 	weapon = NULL;
+	bed = NULL;
 
 	setVocation(0);
 	setParty(NULL);
@@ -1503,38 +1504,34 @@ void Player::onCreatureAppear(const Creature* creature)
 	}
 
 	int32_t offlineTime;
-	if(getLastLogout() != 0)
-	{
-		// Not counting more than 21 days to prevent overflow when multiplying with 1000 (for milliseconds).
+	if(getLastLogout())
 		offlineTime = std::min((int32_t)(time(NULL) - getLastLogout()), 86400 * 21);
-	}
 	else
 		offlineTime = 0;
 
-	int32_t offlineTrainingSkill = getOfflineTrainingSkill();
-	if(offlineTrainingSkill != -1)
+	if(offlineTrainingSkill != SKILL_NONE)
 	{
-		setOfflineTrainingSkill(-1);
-		int32_t offlineTrainingTime = std::max(0, std::min(offlineTime, std::min(43200, getOfflineTrainingTime() / 1000)));
+		offlineTrainingSkill = SKILL_NONE;
+		int32_t trainingTime = std::max(0, std::min(offlineTime, std::min(43200, getOfflineTrainingTime() / 1000)));
 		if(offlineTime >= 600)
 		{
-			removeOfflineTrainingTime(offlineTrainingTime * 1000);
-
-			int32_t remainder = offlineTime - offlineTrainingTime;
+			removeOfflineTrainingTime(trainingTime * 1000);
+			int32_t remainder = offlineTime - trainingTime;
 			if(remainder > 0)
 				addOfflineTrainingTime(remainder * 1000);
 
-			if(offlineTrainingTime >= 60)
+			if(trainingTime >= 60)
 			{
 				std::ostringstream ss;
 				ss << "During your absence you trained for ";
-				int32_t hours = offlineTrainingTime / 3600;
+	
+				int32_t hours = trainingTime / 3600;
 				if(hours > 1)
 					ss << hours << " hours";
 				else if(hours == 1)
 					ss << "1 hour";
 
-				int32_t minutes = (offlineTrainingTime % 3600) / 60;
+				int32_t minutes = (trainingTime % 3600) / 60;
 				if(minutes != 0)
 				{
 					if(hours != 0)
@@ -1545,40 +1542,44 @@ void Player::onCreatureAppear(const Creature* creature)
 					else
 						ss << "1 minute";
 				}
+	
 				ss << ".";
 				sendTextMessage(MSG_EVENT_ADVANCE, ss.str());
 
-				Vocation* vocation;
-				if(isPromoted())
-					vocation = getVocation();
-				else
+				Vocation* voc = getVocation();
+				if(!isPromoted(promotionLevel + 1)) // maybe a configurable?...
 				{
-					int32_t promotedVocationId = Vocations::getInstance()->getPromotedVocation(getVocationId());
-					vocation = Vocations::getInstance()->getVocation(promotedVocationId);
+					int32_t vocId = Vocations::getInstance()->getPromotedVocation(voc->getId());
+					if(vocId > 0)
+					{
+						if(Vocation* tmp = Vocations::getInstance()->getVocation(vocId))
+							voc = tmp;
+					}
 				}
 
 				if(offlineTrainingSkill == SKILL_CLUB || offlineTrainingSkill == SKILL_SWORD || offlineTrainingSkill == SKILL_AXE)
 				{
-					float modifier = vocation->getAttackSpeed() / 1000.f;
-					addOfflineTrainingTries((skills_t)offlineTrainingSkill, (offlineTrainingTime / modifier) / 2);
+					float modifier = voc->getAttackSpeed() / 1000.f;
+					addOfflineTrainingTries((skills_t)offlineTrainingSkill, (trainingTime / modifier) / 2);
 				}
 				else if(offlineTrainingSkill == SKILL_DIST)
 				{
-					float modifier = vocation->getAttackSpeed() / 1000.f;
-					addOfflineTrainingTries((skills_t)offlineTrainingSkill, (offlineTrainingTime / modifier) / 4);
+					float modifier = voc->getAttackSpeed() / 1000.f;
+					addOfflineTrainingTries((skills_t)offlineTrainingSkill, (trainingTime / modifier) / 4);
 				}
 				else if(offlineTrainingSkill == SKILL__MAGLEVEL)
 				{
-					int32_t gainTicks = vocation->getGainTicks(GAIN_MANA) << 1; //why the f... previously here was gainmana ...?
-					if(gainTicks == 0)
+					int32_t gainTicks = voc->getGainTicks(GAIN_MANA) << 1;
+					if(!gainTicks)
 						gainTicks = 1;
 
-					addOfflineTrainingTries(SKILL__MAGLEVEL, (int32_t) ((float) offlineTrainingTime * ((float) vocation->getGainAmount(GAIN_MANA) / (float) gainTicks)));
+					addOfflineTrainingTries(SKILL__MAGLEVEL, (int32_t)((float) trainingTime * ((float) voc->getGainAmount(GAIN_MANA) / (float) gainTicks)));
 				}
 
-				if(addOfflineTrainingTries(SKILL_SHIELD, offlineTrainingTime / 4))
+				if(addOfflineTrainingTries(SKILL_SHIELD, trainingTime / 4))
 					sendSkills();
 			}
+
 			sendStats();
 		}
 		else
@@ -4687,11 +4688,11 @@ void Player::setPromotionLevel(uint32_t pLevel)
 {
 	if(pLevel > promotionLevel)
 	{
-		uint32_t tmpLevel = 0, currentVoc = vocationId;
+		int32_t tmpLevel = 0, currentVoc = vocationId;
 		for(uint32_t i = promotionLevel; i < pLevel; ++i)
 		{
 			currentVoc = Vocations::getInstance()->getPromotedVocation(currentVoc);
-			if(!currentVoc)
+			if(currentVoc < 1)
 				break;
 
 			tmpLevel++;
@@ -5736,11 +5737,9 @@ bool Player::addOfflineTrainingTries(skills_t skill, int32_t tries)
 	long double oldPercentToNextLevel, newPercentToNextLevel;
 
 	std::ostringstream ss;
-
 	if(skill == SKILL__MAGLEVEL)
 	{
-		uint64_t currReqMana = vocation->getReqMana(magLevel);
-		uint64_t nextReqMana = vocation->getReqMana(magLevel + 1);
+		uint64_t currReqMana = vocation->getReqMana(magLevel), nextReqMana = vocation->getReqMana(magLevel + 1);
 		if(currReqMana >= nextReqMana)
 			return false;
 
@@ -5752,7 +5751,6 @@ bool Player::addOfflineTrainingTries(skills_t skill, int32_t tries)
 		{
 			tries -= nextReqMana - manaSpent;
 			manaSpent = 0;
-
 			magLevel++;
 
 			CreatureEventList advanceEvents = getCreatureEvents(CREATURE_EVENT_ADVANCE);
@@ -5790,15 +5788,14 @@ bool Player::addOfflineTrainingTries(skills_t skill, int32_t tries)
 		}
 
 		newSkillValue = magLevel;
-		
 		ss << "You advanced to magic level " << magLevel << ".";
 		sendTextMessage(MSG_EVENT_ADVANCE, ss.str().c_str());
 		ss.str("");
 	}
 	else
 	{
-		uint64_t currReqTries = vocation->getReqSkillTries(skill, skills[skill][SKILL_LEVEL]);
-		uint64_t nextReqTries = vocation->getReqSkillTries(skill, skills[skill][SKILL_LEVEL] + 1);
+		uint64_t currReqTries = vocation->getReqSkillTries(skill, skills[skill][SKILL_LEVEL]),
+			nextReqTries = vocation->getReqSkillTries(skill, skills[skill][SKILL_LEVEL] + 1);
 		if(currReqTries >= nextReqTries)
 			return false;
 
@@ -5809,10 +5806,8 @@ bool Player::addOfflineTrainingTries(skills_t skill, int32_t tries)
 		while((skills[skill][SKILL_TRIES] + tries) >= nextReqTries)
 		{
 			tries -= nextReqTries - skills[skill][SKILL_TRIES];
-
 			skills[skill][SKILL_LEVEL]++;
-			skills[skill][SKILL_TRIES] = 0;
-			skills[skill][SKILL_PERCENT] = 0;
+			skills[skill][SKILL_TRIES] = skills[skill][SKILL_PERCENT] = 0;
 
 			CreatureEventList advanceEvents = getCreatureEvents(CREATURE_EVENT_ADVANCE);
 			for(CreatureEventList::iterator it = advanceEvents.begin(); it != advanceEvents.end(); ++it)
@@ -5837,10 +5832,7 @@ bool Player::addOfflineTrainingTries(skills_t skill, int32_t tries)
 			newPercentToNextLevel = (long double)(skills[skill][SKILL_TRIES] * 100) / nextReqTries;
 		}
 		else
-		{
-			newPercent = 0;
-			newPercentToNextLevel = 0;
-		}
+			newPercent = newPercentToNextLevel = 0;
 
 		if(skills[skill][SKILL_PERCENT] != newPercent)
 		{
@@ -5849,7 +5841,6 @@ bool Player::addOfflineTrainingTries(skills_t skill, int32_t tries)
 		}
 
 		newSkillValue = skills[skill][SKILL_LEVEL];
-
 		ss << "You advanced to " << getSkillName(skill) << " level " << skills[skill][SKILL_LEVEL] << ".";
 		sendTextMessage(MSG_EVENT_ADVANCE, ss.str().c_str());
 		ss.str("");
@@ -5860,89 +5851,65 @@ bool Player::addOfflineTrainingTries(skills_t skill, int32_t tries)
 	return true;
 }
 
-void Player::checkOfflineTrainingDialogAnswer(uint8_t button, uint8_t choice)
+void Player::executeSleep(uint8_t button, uint8_t choice)
 {
-	switch (button)
-	{
-		case 1:
-			break;
-		default: case 2:
-			return;
-			break;
-	}
+	if(!bed)
+		return;
 
-	switch (choice)
+	if(button != 1 || !bed->canUse(this) || ((choice < SKILL_FIST || choice > SKILL_DIST) && choice != SKILL__MAGLEVEL))
 	{
-		case 1:
-			offlineTrainingSkill = SKILL_SWORD;
-			break;
-		case 2:
-			offlineTrainingSkill = SKILL_AXE;
-			break;
-		case 3:
-			offlineTrainingSkill = SKILL_CLUB;
-			break;
-		case 4:
-			offlineTrainingSkill = SKILL_DIST;
-			break;
-		case 5:
-			offlineTrainingSkill = SKILL__MAGLEVEL;
-			break;
-		default:
-			return;
-			break;
-	}
-
-	if(bed && bed->canUse(this))
-	{
-		bed->sleep(this);
+		bed = NULL;
 		return;
 	}
 
-	offlineTrainingSkill = -1;
+	offlineTrainingSkill = choice;
+	bed->sleep(this);
+	bed = NULL;
 }
 
-void Player::showOfflineTrainingDialog(BedItem* _bed)
+void Player::prepareSleep(Bed* _bed)
 {
 	ModalDialog tmp;
-	tmp.id = OFFLINE_TRAINING_DIALOG_ID;
+	ModalChoice tmpChoice;
+	tmp.id = OFFLINE_TRAINING_DIALOG;
+
 	tmp.title = "Choose a skill";
 	tmp.message = "Please choose a skill:";
 	tmp.popup = true;
 
-	ModalChoice tmpChoice;
-	tmpChoice.id = 1;
+	tmpChoice.id = tmp.buttonEnter = 1;
 	tmpChoice.value = "Okay";
 	tmp.buttons.push_back(tmpChoice);
 
-	tmpChoice.id = 2;
+	tmpChoice.id = tmp.buttonEscape = 2;
 	tmpChoice.value = "Cancel";
 	tmp.buttons.push_back(tmpChoice);
 
-	tmpChoice.id = 1;
+	tmpChoice.id = SKILL_SWORD;
 	tmpChoice.value = ucwords(getSkillName(SKILL_SWORD));
 	tmp.choices.push_back(tmpChoice);
 
-	tmpChoice.id = 2;
+	tmpChoice.id = SKILL_AXE;
 	tmpChoice.value = ucwords(getSkillName(SKILL_AXE));
 	tmp.choices.push_back(tmpChoice);
 
-	tmpChoice.id = 3;
+	tmpChoice.id = SKILL_CLUB;
 	tmpChoice.value = ucwords(getSkillName(SKILL_CLUB));
 	tmp.choices.push_back(tmpChoice);
 
-	tmpChoice.id = 4;
+	tmpChoice.id = SKILL_DIST;
 	tmpChoice.value = ucwords(getSkillName(SKILL_DIST));
 	tmp.choices.push_back(tmpChoice);
 
-	tmpChoice.id = 5;
+	tmpChoice.id = SKILL__MAGLEVEL;
 	tmpChoice.value = ucwords(getSkillName(SKILL__MAGLEVEL));
 	tmp.choices.push_back(tmpChoice);
 
-	tmp.buttonEnter = 1;
-	tmp.buttonEscape = 2;
-	
-	dialogControl.dialogId = OFFLINE_TRAINING_DIALOG_ID;
+	tmpChoice.id = SKILL_FIST;
+	tmpChoice.value = ucwords(getSkillName(SKILL_FIST));
+	tmp.choices.push_back(tmpChoice);
+
+	dialogControl.dialogId = OFFLINE_TRAINING_DIALOG;
 	dialogControl.pos = getPosition();
 	bed = _bed;
 	sendModalDialog(tmp);

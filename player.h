@@ -41,6 +41,7 @@ class Npc;
 class Party;
 class SchedulerTask;
 class Quest;
+class Bed;
 
 enum skillsid_t
 {
@@ -128,7 +129,7 @@ typedef std::map<uint32_t, LuaDialogCallback> LuaDialogCallbackMap;
 #define SPEED_MIN 10
 #define STAMINA_MAX (42 * 60 * 60 * 1000)
 #define STAMINA_MULTIPLIER (60 * 1000)
-#define OFFLINE_TRAINING_DIALOG_ID 1
+#define OFFLINE_TRAINING_DIALOG 1
 
 struct LuaDialogCallback //not right way however there's no way xd
 {
@@ -195,7 +196,7 @@ class Player : public Creature, public Cylinder
 		int32_t getOfflineTrainingTime() {return offlineTrainingTime;}
 
 		int32_t getOfflineTrainingSkill() {return offlineTrainingSkill;}
-		void setOfflineTrainingSkill(int32_t skill) { offlineTrainingSkill = skill;}
+		void setOfflineTrainingSkill(int32_t skill) {offlineTrainingSkill = skill;}
 
 		uint32_t getPromotionLevel() const {return promotionLevel;}
 		void setPromotionLevel(uint32_t pLevel);
@@ -248,7 +249,6 @@ class Player : public Creature, public Cylinder
 		bool hasPVPBlessing() const {return pvpBlessing;}
 		uint16_t getBlessings() const;
 
-		bool isUsingOtclient() const { return operatingSystem >= CLIENTOS_OTCLIENT_LINUX; }
 		OperatingSystem_t getOperatingSystem() const {return operatingSystem;}
 		void setOperatingSystem(OperatingSystem_t os) {operatingSystem = os;}
 		uint32_t getClientVersion() const {return clientVersion;}
@@ -394,8 +394,8 @@ class Player : public Creature, public Cylinder
 		virtual RaceType_t getRace() const {return RACE_BLOOD;}
 
 		//modal dialog
-		void checkOfflineTrainingDialogAnswer(uint8_t button, uint8_t choice);
-		void showOfflineTrainingDialog(BedItem* _bed);
+		void executeSleep(uint8_t button, uint8_t choice);
+		void prepareSleep(Bed* _bed);
 
 		//safe-trade functions
 		void setTradeState(tradestate_t state) {tradeState = state;}
@@ -1007,6 +1007,7 @@ class Player : public Creature, public Cylinder
 		House* editHouse;
 		Npc* shopOwner;
 		Item* weapon;
+		Bed* bed;
 
 		std::vector<uint32_t> forceWalkthrough;
 		std::vector<uint32_t> revengeList;
@@ -1018,7 +1019,6 @@ class Player : public Creature, public Cylinder
 		OutfitMap outfits;
 		LearnedInstantSpellList learnedInstantSpellList;
 		WarMap warMap;
-		BedItem* bed;
 
 		friend class Game;
 		friend class LuaInterface;
