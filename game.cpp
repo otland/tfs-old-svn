@@ -6905,7 +6905,7 @@ void Game::playerExtendedOpcode(uint32_t playerId, uint8_t opcode, const std::st
 {
 	Player* player = getPlayerByID(playerId);
 	if(!player || player->isRemoved())
-		return false;
+		return;
 
 	CreatureEventList extendedOpcodeEvents = player->getCreatureEvents(CREATURE_EVENT_EXTENDED_OPCODE);
 	for(CreatureEventList::iterator it = extendedOpcodeEvents.begin(); it != extendedOpcodeEvents.end(); ++it)
