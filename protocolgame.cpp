@@ -245,7 +245,7 @@ bool ProtocolGame::login(const std::string& name, uint32_t id, const std::string
 				OutputMessagePool::getInstance()->send(output);
 			}
 
-			getConnection()->close();
+			disconnect();
 			return false;
 		}
 
@@ -389,8 +389,7 @@ void ProtocolGame::disconnectClient(uint8_t error, const char* message)
 	output->putString(message);
 
 	OutputMessagePool::getInstance()->send(output);
-	if(Connection_ptr connection = getConnection())
-		connection->close();
+	disconnect();
 }
 
 void ProtocolGame::onConnect()
@@ -413,7 +412,7 @@ void ProtocolGame::onRecvFirstMessage(NetworkMessage& msg)
 {
 	if(g_game.getGameState() == GAMESTATE_SHUTDOWN)
 	{
-		getConnection()->close();
+		disconnect();
 		return;
 	}
 
@@ -421,7 +420,7 @@ void ProtocolGame::onRecvFirstMessage(NetworkMessage& msg)
 	uint16_t version = msg.get<uint16_t>();
 	if(!RSA_decrypt(msg))
 	{
-		getConnection()->close();
+		disconnect();
 		return;
 	}
 
