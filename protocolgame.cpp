@@ -396,6 +396,7 @@ void ProtocolGame::onConnect()
 {
 	OutputMessage_ptr output = OutputMessagePool::getInstance()->getOutputMessage(this, false);
 	if(!output)
+		return;
 
 	TRACK_MESSAGE(output);
 	enableChecksum();

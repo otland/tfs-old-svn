@@ -1511,7 +1511,6 @@ void Player::onCreatureAppear(const Creature* creature)
 
 	if(offlineTrainingSkill != SKILL_NONE)
 	{
-		offlineTrainingSkill = SKILL_NONE;
 		int32_t trainingTime = std::max(0, std::min(offlineTime, std::min(43200, getOfflineTrainingTime() / 1000)));
 		if(offlineTime >= 600)
 		{
@@ -1572,7 +1571,6 @@ void Player::onCreatureAppear(const Creature* creature)
 					int32_t gainTicks = voc->getGainTicks(GAIN_MANA) << 1;
 					if(!gainTicks)
 						gainTicks = 1;
-
 					addOfflineTrainingTries(SKILL__MAGLEVEL, (int32_t)((float) trainingTime * ((float) voc->getGainAmount(GAIN_MANA) / (float) gainTicks)));
 				}
 
@@ -1584,6 +1582,7 @@ void Player::onCreatureAppear(const Creature* creature)
 		}
 		else
 			sendTextMessage(MSG_EVENT_ADVANCE, "You must be logged out for more than 10 minutes to start offline training.");
+		offlineTrainingSkill = SKILL_NONE;
 	}
 	else
 	{
