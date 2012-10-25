@@ -329,6 +329,7 @@ class LuaInterface
 		static void error(const char* function, const std::string& desc);
 
 		void executeDialogCallback(LuaDialogCallback& dialogCallback, Player* player, uint8_t button, uint8_t choice);
+
 	protected:
 		virtual bool closeState();
 
@@ -536,6 +537,8 @@ class LuaInterface
 		static int32_t luaGetPlayerGuildNick(lua_State* L);
 		static int32_t luaGetPlayerSex(lua_State* L);
 		static int32_t luaGetPlayerGUID(lua_State* L);
+		static int32_t luaGetPlayerOperatingSystem(lua_State* L);
+		static int32_t luaGetPlayerClientVersion(lua_State* L);
 		static int32_t luaGetPlayerFlagValue(lua_State* L);
 		static int32_t luaGetPlayerCustomFlagValue(lua_State* L);
 		static int32_t luaHasCreatureCondition(lua_State* L);
@@ -641,7 +644,7 @@ class LuaInterface
 		static int32_t luaIsSightClear(lua_State* L);
 		static int32_t luaAddEvent(lua_State* L);
 		static int32_t luaStopEvent(lua_State* L);
-		static int32_t luaAddDialog(lua_State* L);
+		static int32_t luaDoPlayerAddDialog(lua_State* L);
 		static int32_t luaRegisterCreatureEvent(lua_State* L);
 		static int32_t luaUnregisterCreatureEvent(lua_State* L);
 		static int32_t luaUnregisterCreatureEventType(lua_State* L);
@@ -699,9 +702,7 @@ class LuaInterface
 		static int32_t luaCanPlayerRideMount(lua_State* L);
 		static int32_t luaDoPlayerSetMounted(lua_State* L);
 		static int32_t luaGetMountInfo(lua_State* L);
-
-		static int32_t luaIsPlayerUsingOtclient(lua_State* L);
-		static int32_t luaDoSendPlayerExtendedOpcode(lua_State* L);
+		static int32_t luaDoPlayerSendExtendedOpcode(lua_State* L);
 
 		static int32_t luaL_errors(lua_State* L);
 		static int32_t luaL_loadmodlib(lua_State* L);
@@ -805,7 +806,9 @@ class LuaInterface
 			PlayerInfoLastLoad,
 			PlayerInfoLastLogin,
 			PlayerInfoAccountManager,
-			PlayerInfoTradeState
+			PlayerInfoTradeState,
+			PlayerInfoOperatingSystem,
+			PlayerInfoClientVersion
 		};
 		static int32_t internalGetPlayerInfo(lua_State* L, PlayerInfo_t info);
 

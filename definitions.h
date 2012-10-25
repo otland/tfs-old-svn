@@ -39,13 +39,6 @@
 #define VERSION_BUILD 0
 #define VERSION_DATABASE 38
 
-// work around for boost < 1.42
-#if BOOST_VERSION / 100 % 1000 == 4 && BOOST_VERSION % 100 <= 2
-#define BOOST_DIR_ITER_FILENAME(iter) (iter)->path().filename()
-#else
-#define BOOST_DIR_ITER_FILENAME(iter) (iter)->path().filename().string()
-#endif
-
 #undef MULTI_SQL_DRIVERS
 #define SQL_DRIVERS __USE_SQLITE__+__USE_MYSQL__+__USE_PGSQL__
 

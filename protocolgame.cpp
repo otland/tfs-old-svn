@@ -263,11 +263,6 @@ bool ProtocolGame::login(const std::string& name, uint32_t id, const std::string
 			return false;
 		}
 
-		if(player->isUsingOtclient())
-		{
-			player->registerCreatureEvent("ExtendedOpcode");
-		}
-
 		player->lastIP = player->getIP();
 		player->lastLoad = OTSYS_TIME();
 		player->lastLogin = std::max(time(NULL), player->lastLogin + 1);
@@ -385,31 +380,33 @@ void ProtocolGame::disconnect()
 
 void ProtocolGame::disconnectClient(uint8_t error, const char* message)
 {
-	if(OutputMessage_ptr output = OutputMessagePool::getInstance()->getOutputMessage(this, false))
-	{
-		TRACK_MESSAGE(output);
-		output->put<char>(error);
-		output->putString(message);
-		OutputMessagePool::getInstance()->send(output);
-	}
+	OutputMessage_ptr output = OutputMessagePool::getInstance()->getOutputMessage(this, false);
+	if(!output)
+		return;
 
-	disconnect();
+	TRACK_MESSAGE(output);
+	output->put<char>(error);
+	output->putString(message);
+
+	OutputMessagePool::getInstance()->send(output);
+	if(Connection_ptr connection = getConnection())
+		connection->close();
 }
 
 void ProtocolGame::onConnect()
 {
-	if(OutputMessage_ptr output = OutputMessagePool::getInstance()->getOutputMessage(this, false))
-	{
-		TRACK_MESSAGE(output);
-		enableChecksum();
+	OutputMessage_ptr output = OutputMessagePool::getInstance()->getOutputMessage(this, false);
+	if(!output)
 
-		output->put<char>(0x1F);
-		output->put<uint16_t>(random_range(0, 0xFFFF));
-		output->put<uint16_t>(0x00);
-		output->put<char>(random_range(0, 0xFF));
+	TRACK_MESSAGE(output);
+	enableChecksum();
 
-		OutputMessagePool::getInstance()->send(output);
-	}
+	output->put<char>(0x1F);
+	output->put<uint16_t>(random_range(0, 0xFFFF));
+	output->put<uint16_t>(0x00);
+	output->put<char>(random_range(0, 0xFF));
+
+	OutputMessagePool::getInstance()->send(output);
 }
 
 void ProtocolGame::onRecvFirstMessage(NetworkMessage& msg)
@@ -430,9 +427,8 @@ void ProtocolGame::onRecvFirstMessage(NetworkMessage& msg)
 
 	uint32_t key[4] = {msg.get<uint32_t>(), msg.get<uint32_t>(), msg.get<uint32_t>(), msg.get<uint32_t>()};
 	enableXTEAEncryption();
-	setXTEAKey(key);
 
-	// notifies to otclient that this server can receive extended game protocol opcodes
+	setXTEAKey(key);
 	if(operatingSystem >= CLIENTOS_OTCLIENT_LINUX)
 		sendExtendedOpcode(0x00, std::string());
 
@@ -3773,28 +3769,27 @@ void ProtocolGame::sendModalDialog(ModalDialog& dialog)
 
 	TRACK_MESSAGE(msg);
 	msg->put<char>(0xFA);
-	msg->put<uint32_t>(dialog.id); //id
-	msg->putString(dialog.title); // title
-	msg->putString(dialog.message); //message
-	msg->put<uint8_t>(dialog.buttons.size()); //count of buttons
+	msg->put<uint32_t>(dialog.id);
+	msg->putString(dialog.title);
+	msg->putString(dialog.message);
 
+	msg->put<uint8_t>(dialog.buttons.size());
 	for(std::vector<ModalChoice>::iterator it = dialog.buttons.begin(); it != dialog.buttons.end(); it++)
 	{
-		msg->putString(it->value); //button
-		msg->put<uint8_t>(it->id); //button id
+		msg->putString(it->value);
+		msg->put<uint8_t>(it->id);
 	}
 	
-	msg->put<uint8_t>(dialog.choices.size()); //count of choices
-
+	msg->put<uint8_t>(dialog.choices.size());
 	for(std::vector<ModalChoice>::iterator it = dialog.choices.begin(); it != dialog.choices.end(); it++)
 	{
-		msg->putString(it->value); //choice
-		msg->put<uint8_t>(it->id); //choice id
+		msg->putString(it->value);
+		msg->put<uint8_t>(it->id);
 	}
 
-	msg->put<uint8_t>(dialog.buttonEnter); //default enter button
-	msg->put<uint8_t>(dialog.buttonEscape); //default escape button
-	msg->put<bool>(dialog.popup); //popup priority
+	msg->put<uint8_t>(dialog.buttonEnter);
+	msg->put<uint8_t>(dialog.buttonEscape);
+	msg->put<bool>(dialog.popup);
 }
 
 void ProtocolGame::parseModalDialogAnswer(NetworkMessage& msg)
@@ -3809,23 +3804,20 @@ void ProtocolGame::parseExtendedOpcode(NetworkMessage& msg)
 {
 	uint8_t opcode = msg.get<char>();
 	std::string buffer = msg.getString();
-
-	// process additional opcodes via lua script event
-	addGameTask(&Game::parsePlayerExtendedOpcode, player, opcode, buffer);
+	addGameTask(&Game::playerExtendedOpcode, player->getID(), opcode, buffer);
 }
 
 void ProtocolGame::sendExtendedOpcode(uint8_t opcode, const std::string& buffer)
 {
-	// extended opcodes can only be send to players using otclient, cipsoft's tibia can't understand them
-	if(player && !player->isUsingOtclient())
+	if(!player || player->getOperatingSystem() < CLIENTOS_OTCLIENT_LINUX)
 		return;
 
 	NetworkMessage_ptr msg = getOutputBuffer();
-	if(msg)
-	{
-		TRACK_MESSAGE(msg);
-		msg->put<char>(0x32);
-		msg->put<char>(opcode);
-		msg->putString(buffer);
-	}
+	if(!msg)
+		return;
+
+	TRACK_MESSAGE(msg);
+	msg->put<char>(0x32);
+	msg->put<char>(opcode);
+	msg->putString(buffer);
 }

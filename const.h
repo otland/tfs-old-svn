@@ -25,7 +25,6 @@ enum OperatingSystem_t
 	CLIENTOS_WINDOWS			= 0x02,
 	CLIENTOS_FLASH				= 0x03,
 
-	//OTClient stuff
 	CLIENTOS_OTCLIENT_LINUX		= 0x0A,
 	CLIENTOS_OTCLIENT_WINDOWS	= 0x0B,
 	CLIENTOS_OTCLIENT_MAC		= 0x0C,
@@ -402,6 +401,7 @@ enum Icons_t
 
 enum skills_t
 {
+	SKILL_NONE = -1,
 	SKILL_FIRST = 0,
 	SKILL_FIST = SKILL_FIRST,
 	SKILL_CLUB,

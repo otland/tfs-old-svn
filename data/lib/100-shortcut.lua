@@ -349,3 +349,7 @@ end
 function doPlayerBuyItemContainer(cid, containerid, itemid, count, cost, charges)
 	return doPlayerRemoveMoney(cid, cost) and doPlayerGiveItemContainer(cid, containerid, itemid, count, charges)
 end
+
+function isPlayerUsingOtclient(cid)
+	return getPlayerOperatingSystem(cid) >= CLIENTOS_OTCLIENT_LINUX
+end
