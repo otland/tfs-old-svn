@@ -5874,39 +5874,35 @@ void Player::checkOfflineTrainingDialogAnswer(uint8_t button, uint8_t choice)
 	switch (choice)
 	{
 		case 1:
-			setOfflineTrainingSkill(SKILL_SWORD);
+			offlineTrainingSkill = SKILL_SWORD;
 			break;
 		case 2:
-			setOfflineTrainingSkill(SKILL_AXE);
+			offlineTrainingSkill = SKILL_AXE;
 			break;
 		case 3:
-			setOfflineTrainingSkill(SKILL_CLUB);
+			offlineTrainingSkill = SKILL_CLUB;
 			break;
 		case 4:
-			setOfflineTrainingSkill(SKILL_DIST);
+			offlineTrainingSkill = SKILL_DIST;
 			break;
 		case 5:
-			setOfflineTrainingSkill(SKILL__MAGLEVEL);
+			offlineTrainingSkill = SKILL__MAGLEVEL;
 			break;
 		default:
 			return;
 			break;
 	}
 
-	if(Tile* tile = g_game.getMap()->getTile(bedPos))
+	if(bed && bed->canUse(this))
 	{
-		BedItem* bed = tile->getBedItem();
-		if(bed->canUse(this))
-		{
-			bed->sleep(this);
-			return;
-		}
+		bed->sleep(this);
+		return;
 	}
 
-	setOfflineTrainingSkill(-1);
+	offlineTrainingSkill = -1;
 }
 
-void Player::showOfflineTrainingDialog(Position pos)
+void Player::showOfflineTrainingDialog(BedItem* _bed)
 {
 	ModalDialog tmp;
 	tmp.id = OFFLINE_TRAINING_DIALOG_ID;
@@ -5948,6 +5944,6 @@ void Player::showOfflineTrainingDialog(Position pos)
 	
 	dialogControl.dialogId = OFFLINE_TRAINING_DIALOG_ID;
 	dialogControl.pos = getPosition();
-	bedPos = pos;
+	bed = _bed;
 	sendModalDialog(tmp);
 }
