@@ -1486,7 +1486,7 @@ void ProtocolGame::parseEditVip(NetworkMessage& msg)
 	uint32_t guid = msg.get<uint32_t>();
 	std::string description = msg.getString();
 	uint32_t icon = msg.get<uint32_t>();
-	uint32_t notify = msg.get<bool>();
+	bool notify = msg.get<bool>();
 
 	if (description.size() > 128)
 		return;

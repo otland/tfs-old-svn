@@ -793,7 +793,7 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool preLo
 			uint32_t vid = result->getDataInt("vip");
 			uint32_t icon = result->getDataInt("icon");
 			std::string description = result->getDataString("description");
-			bool notify = (bool) result->getDataInt("notify");
+			bool notify = !!result->getDataInt("notify");
 			if(storeNameByGuid(vid))
 				player->addVIP(vid, "", description, icon, notify, false, true);
 		}
