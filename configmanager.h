@@ -327,6 +327,7 @@ class ConfigManager
 			MARKET_PREMIUM,
 			ALLOW_BLOCK_SPAWN,
 			MULTIPLE_NAME,
+			SAVE_STATEMENT,
 			LAST_BOOL_CONFIG /* this must be the last one */
 		};
 
