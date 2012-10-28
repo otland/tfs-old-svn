@@ -247,6 +247,7 @@
 	promptExceptionTracerErrorBox = true
 	maximumDoorLevel = 500
 	maxMessageBuffer = 4
+	logPlayersStatements = true
 	tradeLimit = 100
 	useCapacity = true
 	-- set playerFollowExhaust to 1500 if someone causes lags and kicks

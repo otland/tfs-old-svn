@@ -4013,7 +4013,9 @@ bool Game::playerSay(uint32_t playerId, uint16_t channelId, MessageClasses type,
 		return true;
 
 	uint32_t statementId = 0;
-	IOLoginData::getInstance()->playerStatement(player, channelId, text, statementId);
+	if(g_config.getBool(ConfigManager::SAVE_STATEMENT))
+		IOLoginData::getInstance()->playerStatement(player, channelId, text, statementId);
+
 	switch(type)
 	{
 		case MSG_SPEAK_SAY:
