@@ -1674,11 +1674,9 @@ void Player::onCreatureDisappear(const Creature* creature, bool isLogout)
 		return;
 
 	if(isLogout)
-	{
 		loginPosition = getPosition();
-		lastLogout = time(NULL);
-	}
 
+	lastLogout = time(NULL);
 	Item* item = NULL;
 	for(int32_t slot = SLOT_FIRST; slot < SLOT_LAST; ++slot)
 	{
