@@ -1337,6 +1337,7 @@ ReturnValue Game::internalMoveCreature(Creature* actor, Creature* creature, Cyli
 	int32_t n = 0, tmp = 0;
 	while((subCylinder = toCylinder->__queryDestination(tmp, creature, &toItem, flags)) != toCylinder)
 	{
+		internalCreatureTurn(creature, getDirectionTo(toCylinder->getTile()->getPosition(), subCylinder->getTile()->getPosition(), false));
 		toCylinder->getTile()->moveCreature(actor, creature, subCylinder);
 		if(creature->getParent() != subCylinder) //could happen if a script move the creature
 			break;
