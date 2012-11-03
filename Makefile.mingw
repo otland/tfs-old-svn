@@ -1,5 +1,9 @@
+# Makefile for Windows (MinGW)
+# Copyleft (C) 2011-2012 Fallen <f.fallen45@gmail.com>
 CXX = @echo Compiling $< && g++
-CXXFLAGS = -O2 -Wall -Wno-strict-aliasing -D_THREAD_SAFE -D_REENTRANT -D__ENABLE_SERVER_DIAGNOSTIC__ -D__NO_CRYPTOPP__ -DBOOST_THREAD_USE_LIB
+
+INCPATH = -I"."
+CXXFLAGS = -O2 -Wall -Wno-strict-aliasing -D_THREAD_SAFE -D_REENTRANT -D__ENABLE_SERVER_DIAGNOSTIC__ -D__NO_CRYPTOPP__ -DBOOST_THREAD_USE_LIB ${INCPATH}
 LIBS = -llua5.1 -lboost_system -lboost_thread -lboost_regex -lboost_filesystem -leay32 -lxml2 -lws2_32 -lwsock32 -lz -liconv
 
 ifdef USE_MYSQL
@@ -27,44 +31,42 @@ ifdef OT_ADMIN
 endif
 
 SRC = weapons.cpp waitlist.cpp vocation.cpp trashholder.cpp tools.cpp \
-    tile.cpp thing.cpp textlogger.cpp teleport.cpp talkaction.cpp \
-    status.cpp spells.cpp spawn.cpp server.cpp scriptmanager.cpp \
-    scheduler.cpp raids.cpp quests.cpp protocolold.cpp protocollogin.cpp \
-    protocolhttp.cpp protocolgame.cpp protocol.cpp position.cpp player.cpp \
-    party.cpp outputmessage.cpp outfit.cpp otserv.cpp npc.cpp \
-    networkmessage.cpp movement.cpp mounts.cpp monsters.cpp monster.cpp \
-    map.cpp manager.cpp mailbox.cpp luascript.cpp items.cpp \
-    itemattributes.cpp item.cpp iomarket.cpp iomapserialize.cpp iomap.cpp \
-    iologindata.cpp ioguild.cpp ioban.cpp housetile.cpp house.cpp group.cpp \
-    globalevent.cpp gameservers.cpp game.cpp fileloader.cpp exception.cpp \
-    dispatcher.cpp depot.cpp databasemanager.cpp database.cpp cylinder.cpp \
-    creatureevent.cpp creature.cpp container.cpp connection.cpp configmanager.cpp \
-    condition.cpp combat.cpp chat.cpp beds.cpp baseevents.cpp allocator.cpp admin.cpp \
-    actions.cpp $(MAYBE_MYSQL) $(MAYBE_SQLITE) $(MAYBE_PGSQL)  \
-    $(MAYBE_LOGIN) $(MAYBE_OTADMIN)
+	tile.cpp thing.cpp textlogger.cpp teleport.cpp talkaction.cpp \
+	status.cpp spells.cpp spawn.cpp server.cpp scriptmanager.cpp \
+	scheduler.cpp raids.cpp quests.cpp protocolold.cpp protocollogin.cpp \
+	protocolhttp.cpp protocolgame.cpp protocol.cpp position.cpp player.cpp \
+	party.cpp outputmessage.cpp outfit.cpp otserv.cpp npc.cpp \
+	networkmessage.cpp movement.cpp mounts.cpp monsters.cpp monster.cpp \
+	map.cpp manager.cpp mailbox.cpp luascript.cpp items.cpp \
+	itemattributes.cpp item.cpp iomarket.cpp iomapserialize.cpp iomap.cpp \
+	iologindata.cpp ioguild.cpp ioban.cpp housetile.cpp house.cpp group.cpp \
+	globalevent.cpp gameservers.cpp game.cpp fileloader.cpp exception.cpp \
+	dispatcher.cpp depot.cpp databasemanager.cpp database.cpp cylinder.cpp \
+	creatureevent.cpp creature.cpp container.cpp connection.cpp configmanager.cpp \
+	condition.cpp combat.cpp chat.cpp beds.cpp baseevents.cpp allocator.cpp admin.cpp \
+	actions.cpp $(MAYBE_MYSQL) $(MAYBE_SQLITE) $(MAYBE_PGSQL)  \
+	$(MAYBE_LOGIN) $(MAYBE_OTADMIN)
 
 
-INCPATH = -I"."
 DEL = del
 TARGET = theforgottenserver
 OBJDIR = obj
 OBJ = $(SRC:%.cpp=$(OBJDIR)/%.o)
 DELOBJ = $(SRC:%.cpp=$(OBJDIR)\\%.o)
 
-
 .PHONY: all clean
 
 all: $(TARGET)
 
 $(TARGET): ${OBJDIR} $(OBJ)
-    $(CXX) $(CXXFLAGS) -o $@ $(OBJ) $(LIBS)
+	$(CXX) $(CXXFLAGS) -o $@ $(OBJ) $(LIBS)
 
 $(OBJDIR)/%.o: %.cpp
-    $(CXX) -c $(CXXFLAGS) $(INCPATH) -o $@ $<
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o $@ $<
 
 clean:
-    -$(DEL) $(DELOBJ) $(TARGET)
+	-$(DEL) $(DELOBJ) $(TARGET)
 
 ${OBJDIR}:
-    @mkdir -p ${OBJDIR}
+	@mkdir -p ${OBJDIR}
 
