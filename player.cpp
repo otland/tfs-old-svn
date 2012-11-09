@@ -5861,6 +5861,22 @@ void Player::executeSleep(uint8_t button, uint8_t choice)
 	bed = NULL;
 }
 
+void Player::executeSleep(uint8_t button, uint8_t choice)
+{
+	if(!bed)
+		return;
+		
+	if(button == 2 || !bed->canUse(this) || (choice > SKILL_DIST && choice != SKILL__MAGLEVEL))
+	{
+		bed = NULL;
+		return;
+	}
+
+	offlineTrainingSkill = choice;
+	bed->sleep(this);
+	bed = NULL;
+}
+
 void Player::prepareSleep(BedItem* _bed)
 {
 	ModalDialog tmp;
@@ -5871,11 +5887,14 @@ void Player::prepareSleep(BedItem* _bed)
 	tmp.message = "Please choose a skill:";
 	tmp.popup = true;
 
-	tmpChoice.id = tmp.buttonEnter = 1;
+	tmp.buttonEnter = 4;  //unknown
+	tmp.buttonEscape = 3; //double click on list
+	
+	tmpChoice.id = 1;
 	tmpChoice.value = "Okay";
 	tmp.buttons.push_back(tmpChoice);
 
-	tmpChoice.id = tmp.buttonEscape = 2;
+	tmpChoice.id = 2;
 	tmpChoice.value = "Cancel";
 	tmp.buttons.push_back(tmpChoice);
 
