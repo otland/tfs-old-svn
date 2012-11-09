@@ -5849,22 +5849,6 @@ void Player::executeSleep(uint8_t button, uint8_t choice)
 {
 	if(!bed)
 		return;
-
-	if(button != 1 || !bed->canUse(this) || (choice > SKILL_DIST && choice != SKILL__MAGLEVEL))
-	{
-		bed = NULL;
-		return;
-	}
-
-	offlineTrainingSkill = choice;
-	bed->sleep(this);
-	bed = NULL;
-}
-
-void Player::executeSleep(uint8_t button, uint8_t choice)
-{
-	if(!bed)
-		return;
 		
 	if(button == 2 || !bed->canUse(this) || (choice > SKILL_DIST && choice != SKILL__MAGLEVEL))
 	{
