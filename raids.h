@@ -37,7 +37,11 @@ enum RefType_t
 struct MonsterSpawn
 {
 	std::string name;
+	bool effect;
 	uint32_t min, max;
+
+	MonsterSpawn(const std::string& _name): name(_name), effect(true) {min = max = 0;}
+	MonsterSpawn(): effect(true) {min = max = 0;}
 };
 
 class Raid;
@@ -140,8 +144,8 @@ class Raid
 class RaidEvent
 {
 	public:
-		RaidEvent(Raid* raid, bool ref): m_delay(RAID_MINTICKS),
-			m_ref(ref), m_raid(raid) {}
+		RaidEvent(Raid* raid, bool ref):
+			m_delay(RAID_MINTICKS), m_ref(ref), m_raid(raid) {}
 		virtual ~RaidEvent() {}
 
 		virtual bool configureRaidEvent(xmlNodePtr eventNode);
@@ -212,15 +216,17 @@ class ItemSpawnEvent : public RaidEvent
 class SingleSpawnEvent : public RaidEvent
 {
 	public:
-		SingleSpawnEvent(Raid* raid, bool ref): RaidEvent(raid, ref) {}
+		SingleSpawnEvent(Raid* raid, bool ref): RaidEvent(raid, ref),
+			m_effect(true) {}
 		virtual ~SingleSpawnEvent() {}
 
 		virtual bool configureRaidEvent(xmlNodePtr eventNode);
 		virtual bool executeEvent(const std::string& name) const;
 
 	private:
-		std::string m_monsterName;
+		std::string m_monster;
 		Position m_position;
+		bool m_effect;
 };
 
 class AreaSpawnEvent : public RaidEvent
@@ -232,12 +238,9 @@ class AreaSpawnEvent : public RaidEvent
 		virtual bool configureRaidEvent(xmlNodePtr eventNode);
 		virtual bool executeEvent(const std::string& name) const;
 
-		void addMonster(MonsterSpawn* _spawn);
-		void addMonster(const std::string& name, uint32_t min, uint32_t max);
-
 	private:
 		MonsterSpawnList m_spawnList;
-		Position m_fromPos, m_toPos;
+		Position m_fromPosition, m_toPosition;
 };
 
 class ScriptEvent : public RaidEvent, public Event

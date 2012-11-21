@@ -24,6 +24,7 @@
 
 extern Game g_game;
 extern ConfigManager g_config;
+extern Monsters g_monsters;
 
 LuaInterface ScriptEvent::m_interface("Raid Interface");
 
@@ -621,7 +622,13 @@ bool SingleSpawnEvent::configureRaidEvent(xmlNodePtr eventNode)
 		return false;
 	}
 
-	m_monsterName = strValue;
+	if(!g_monsters.getIdByName(strValue))
+	{
+		std::clog << "[Error - SingleSpawnEvent::configureRaidEvent] monster \"" << strValue << "\" in singlespawn event does not exists." << std::endl;
+		return false;
+	}
+
+	m_monster = strValue;
 	if(!readXMLString(eventNode, "pos", strValue))
 	{
 		int32_t intValue;
@@ -659,24 +666,30 @@ bool SingleSpawnEvent::configureRaidEvent(xmlNodePtr eventNode)
 		m_position = Position(posList[0], posList[1], posList[2]);
 	}
 
+	if(readXMLString(eventNode, "effect", strValue))
+		m_effect = booleanString(strValue);
+
 	return true;
 }
 
 bool SingleSpawnEvent::executeEvent(const std::string&) const
 {
-	Monster* monster = Monster::createMonster(m_monsterName);
+	Monster* monster = Monster::createMonster(m_monster);
 	if(!monster)
 	{
-		std::clog << "[Error - SingleSpawnEvent::executeEvent] Cannot create monster " << m_monsterName << std::endl;
+		std::clog << "[Error - SingleSpawnEvent::executeEvent] Cannot create monster " << m_monster << std::endl;
 		return false;
 	}
 
 	if(!g_game.placeCreature(monster, m_position, false, true))
 	{
 		delete monster;
-		std::clog << "[Error - SingleSpawnEvent::executeEvent] Cannot spawn monster " << m_monsterName << std::endl;
+		std::clog << "[Error - SingleSpawnEvent::executeEvent] Cannot spawn monster " << m_monster << std::endl;
 		return false;
 	}
+
+	if(m_effect)
+		g_game.addMagicEffect(monster->getPosition(), MAGIC_EFFECT_TELEPORT);
 
 	if(m_raid->usesRef() && m_ref)
 	{
@@ -697,7 +710,7 @@ bool AreaSpawnEvent::configureRaidEvent(xmlNodePtr eventNode)
 	if(readXMLInteger(eventNode, "radius", intValue))
 	{
 		int32_t radius = intValue;
-		Position centerPos;
+		Position position;
 		if(readXMLString(eventNode, "centerPosition", strValue) || readXMLString(eventNode, "centerpos", strValue))
 		{
 			IntegerVec posList = vectorAtoi(explodeString(strValue, ";"));
@@ -707,7 +720,7 @@ bool AreaSpawnEvent::configureRaidEvent(xmlNodePtr eventNode)
 				return false;
 			}
 
-			centerPos = Position(posList[0], posList[1], posList[2]);
+			position = Position(posList[0], posList[1], posList[2]);
 		}
 		else
 		{
@@ -717,30 +730,30 @@ bool AreaSpawnEvent::configureRaidEvent(xmlNodePtr eventNode)
 				return false;
 			}
 
-			centerPos.x = intValue;
+			position.x = intValue;
 			if(!readXMLInteger(eventNode, "centery", intValue))
 			{
 				std::clog << "[Error - AreaSpawnEvent::configureRaidEvent] centery tag missing for areaspawn event." << std::endl;
 				return false;
 			}
 
-			centerPos.y = intValue;
+			position.y = intValue;
 			if(!readXMLInteger(eventNode, "centerz", intValue))
 			{
 				std::clog << "[Error - AreaSpawnEvent::configureRaidEvent] centerz tag missing for areaspawn event." << std::endl;
 				return false;
 			}
 
-			centerPos.z = intValue;
+			position.z = intValue;
 		}
 
-		m_fromPos.x = centerPos.x - radius;
-		m_fromPos.y = centerPos.y - radius;
-		m_fromPos.z = centerPos.z;
+		m_fromPosition.x = position.x - radius;
+		m_fromPosition.y = position.y - radius;
+		m_fromPosition.z = position.z;
 
-		m_toPos.x = centerPos.x + radius;
-		m_toPos.y = centerPos.y + radius;
-		m_toPos.z = centerPos.z;
+		m_toPosition.x = position.x + radius;
+		m_toPosition.y = position.y + radius;
+		m_toPosition.z = position.z;
 	}
 	else
 	{
@@ -753,7 +766,7 @@ bool AreaSpawnEvent::configureRaidEvent(xmlNodePtr eventNode)
 				return false;
 			}
 
-			m_fromPos = Position(posList[0], posList[1], posList[2]);
+			m_fromPosition = Position(posList[0], posList[1], posList[2]);
 		}
 		else
 		{
@@ -763,21 +776,21 @@ bool AreaSpawnEvent::configureRaidEvent(xmlNodePtr eventNode)
 				return false;
 			}
 
-			m_fromPos.x = intValue;
+			m_fromPosition.x = intValue;
 			if(!readXMLInteger(eventNode, "fromy", intValue))
 			{
 				std::clog << "[Error - AreaSpawnEvent::configureRaidEvent] fromy tag missing for areaspawn event." << std::endl;
 				return false;
 			}
 
-			m_fromPos.y = intValue;
+			m_fromPosition.y = intValue;
 			if(!readXMLInteger(eventNode, "fromz", intValue))
 			{
 				std::clog << "[Error - AreaSpawnEvent::configureRaidEvent] fromz tag missing for areaspawn event." << std::endl;
 				return false;
 			}
 
-			m_fromPos.z = intValue;
+			m_fromPosition.z = intValue;
 		}
 
 		if(readXMLString(eventNode, "toPosition", strValue) || readXMLString(eventNode, "topos", strValue))
@@ -789,7 +802,7 @@ bool AreaSpawnEvent::configureRaidEvent(xmlNodePtr eventNode)
 				return false;
 			}
 
-			m_toPos = Position(posList[0], posList[1], posList[2]);
+			m_toPosition = Position(posList[0], posList[1], posList[2]);
 		}
 		else
 		{
@@ -799,21 +812,21 @@ bool AreaSpawnEvent::configureRaidEvent(xmlNodePtr eventNode)
 				return false;
 			}
 
-			m_toPos.x = intValue;
+			m_toPosition.x = intValue;
 			if(!readXMLInteger(eventNode, "toy", intValue))
 			{
 				std::clog << "[Error - AreaSpawnEvent::configureRaidEvent] toy tag missing for areaspawn event." << std::endl;
 				return false;
 			}
 
-			m_toPos.y = intValue;
+			m_toPosition.y = intValue;
 			if(!readXMLInteger(eventNode, "toz", intValue))
 			{
 				std::clog << "[Error - AreaSpawnEvent::configureRaidEvent] toz tag missing for areaspawn event." << std::endl;
 				return false;
 			}
 
-			m_toPos.z = intValue;
+			m_toPosition.z = intValue;
 		}
 	}
 
@@ -824,30 +837,42 @@ bool AreaSpawnEvent::configureRaidEvent(xmlNodePtr eventNode)
 
 		if(!readXMLString(monsterNode, "name", strValue))
 		{
-			std::clog << "[Error - AreaSpawnEvent::configureRaidEvent] name tag missing for monster node." << std::endl;
-			return false;
+			std::clog << "[Warning - AreaSpawnEvent::configureRaidEvent] name tag missing in monster node of areaspawn event." << std::endl;
+			continue;
 		}
 
-		std::string name = strValue;
-		int32_t min = 0, max = 0;
+		if(!g_monsters.getIdByName(strValue))
+		{
+			std::clog << "[Warning - AreaSpawnEvent::configureRaidEvent] monster \"" << strValue << "\" in monster node of areaspawn event does not exists." << std::endl;
+			continue;
+		}
+
+		MonsterSpawn* monsterSpawn = new MonsterSpawn(strValue);
 		if(readXMLInteger(monsterNode, "min", intValue) || readXMLInteger(monsterNode, "minamount", intValue))
-			min = intValue;
+			monsterSpawn->min = intValue;
 
 		if(readXMLInteger(monsterNode, "max", intValue) || readXMLInteger(monsterNode, "maxamount", intValue))
-			max = intValue;
+			monsterSpawn->max = intValue;
 
-		if(!min && !max)
+		if(!monsterSpawn->min && !monsterSpawn->max)
 		{
 			if(!readXMLInteger(monsterNode, "amount", intValue))
 			{
-				std::clog << "[Error - AreaSpawnEvent::configureRaidEvent] amount tag missing for monster node." << std::endl;
-				return false;
+				std::clog << "[Warning - AreaSpawnEvent::configureRaidEvent] amount tag missing or uncomplete for \"" << monsterSpawn->name << "\" in monster node of areaspawn event." << std::endl;
+				delete monsterSpawn;
+				continue;
 			}
 
-			min = max = intValue;
+			monsterSpawn->min = monsterSpawn->max = intValue;
 		}
 
-		addMonster(name, min, max);
+		if(monsterSpawn->min > monsterSpawn->max)
+			std::swap(monsterSpawn->min, monsterSpawn->max);
+
+		if(readXMLString(monsterNode, "effect", strValue))
+			monsterSpawn->effect = booleanString(strValue);
+
+		m_spawnList.push_back(monsterSpawn);
 	}
 
 	return true;
@@ -859,21 +884,6 @@ AreaSpawnEvent::~AreaSpawnEvent()
 		delete *it;
 
 	m_spawnList.clear();
-}
-
-void AreaSpawnEvent::addMonster(MonsterSpawn* _spawn)
-{
-	m_spawnList.push_back(_spawn);
-}
-
-void AreaSpawnEvent::addMonster(const std::string& name, uint32_t min, uint32_t max)
-{
-	MonsterSpawn* monsterSpawn = new MonsterSpawn();
-	monsterSpawn->min = min;
-	monsterSpawn->max = max;
-
-	monsterSpawn->name = name;
-	addMonster(monsterSpawn);
 }
 
 bool AreaSpawnEvent::executeEvent(const std::string&) const
@@ -890,16 +900,19 @@ bool AreaSpawnEvent::executeEvent(const std::string&) const
 			Monster* monster = Monster::createMonster(spawn->name);
 			if(!monster)
 			{
-				std::clog << "[Error - AreaSpawnEvent::executeEvent] Cannot create monster " << spawn->name << std::endl;
-				return false;
+				std::clog << "[Warning - AreaSpawnEvent::executeEvent] Cannot create monster " << spawn->name << std::endl;
+				break;
 			}
 
 			bool success = false;
 			for(int32_t t = 0; t < MAXIMUM_TRIES_PER_MONSTER; ++t)
 			{
-				if(!g_game.placeCreature(monster, Position(random_range(m_fromPos.x, m_toPos.x),
-					random_range(m_fromPos.y, m_toPos.y), random_range(m_fromPos.z, m_toPos.z)), true))
+				if(!g_game.placeCreature(monster, Position(random_range(m_fromPosition.x, m_toPosition.x),
+					random_range(m_fromPosition.y, m_toPosition.y), random_range(m_fromPosition.z, m_toPosition.z)), true))
 					continue;
+
+				if(spawn->effect)
+					g_game.addMagicEffect(monster->getPosition(), MAGIC_EFFECT_TELEPORT);
 
 				if(m_raid->usesRef() && m_ref)
 				{

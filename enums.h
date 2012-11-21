@@ -399,105 +399,70 @@ struct ShopInfo
 
 struct MarketOffer
 {
-	uint32_t price;
-	uint32_t timestamp;
-	uint16_t amount;
-	uint16_t counter;
-	uint16_t itemId;
+	uint32_t price, timestamp;
+	uint16_t amount, counter, itemId;
 	std::string playerName;
 };
 
 struct MarketOfferEx
 {
-	uint32_t playerId;
-	uint32_t timestamp;
-	uint32_t price;
-	uint16_t amount;
-	uint16_t counter;
-	uint16_t itemId;
+	uint32_t playerId, timestamp, price;
+	uint16_t amount, counter, itemId;
 	MarketAction_t type;
 	std::string playerName;
 };
 
 struct ExpiredMarketOffer
 {
-	uint32_t id;
-	uint32_t price;
-	uint16_t amount;
-	uint16_t itemId;
-	uint32_t playerId;
+	uint32_t id, price, playerId;
+	uint16_t amount, itemId;
 };
 
 struct HistoryMarketOffer
 {
-	uint32_t timestamp;
-	uint32_t price;
-	uint16_t itemId;
-	uint16_t amount;
+	uint32_t timestamp, price;
+	uint16_t itemId, amount;
 	MarketOfferState_t state;
 };
 
 struct MarketStatistics
 {
-	MarketStatistics()
-	{
-		numTransactions = 0;
-		highestPrice = 0;
-		totalPrice = 0;
-		lowestPrice = 0;
-	}
-
-	uint32_t numTransactions;
-	uint32_t highestPrice;
+	uint32_t numTransactions, lowestPrice, highestPrice;
 	uint64_t totalPrice;
-	uint32_t lowestPrice;
+
+	MarketStatistics() {numTransactions = lowestPrice = highestPrice = totalPrice = 0;}
 };
 
 struct ModalChoice
 {
-	ModalChoice() 
-	{
-		id = 0;
-		value = "";
-	}
 	uint8_t id;
 	std::string value;
+
+	ModalChoice(): id(0) {}
 };
 
 struct ModalDialog
 {
-	ModalDialog() 
+	uint32_t id;
+	std::string title, message;
+	uint8_t buttonEnter, buttonEscape; 
+	std::vector<ModalChoice> buttons, choices
+	bool popup;
+
+	ModalDialog()
 	{
-		id = 0;
-		title = "";
-		message = "";
-		buttonEnter = 0;
-		buttonEscape = 0;
+		id = buttonEnter = buttonEscape = 0;
 		popup = false;
 	}
-
-	uint32_t id;
-	std::string title;
-	std::string message;
-	uint8_t buttonEnter;
-	uint8_t buttonEscape; 
-	std::vector<ModalChoice> buttons; 
-	std::vector<ModalChoice> choices;
-	bool popup;
 };
 
 struct VIP_t
 {
-	VIP_t()
-	{
-		icon = 0;
-		description = "";
-		notify = false;
-	};
-
 	uint32_t icon;
 	std::string description;
 	bool notify;
+
+	VIP_t(): icon(0), notify(false) {}
 };
 
 typedef std::list<MarketOffer> MarketOfferList;
