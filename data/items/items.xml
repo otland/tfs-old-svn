@@ -24618,7 +24618,7 @@
 		<attribute key="weaponType" value="ammunition" />
 		<attribute key="ammoType" value="arrow" />
 		<attribute key="shootType" value="crystallinearrow" />
-		<attribute key="maxHitChance" value="90" />
+		<attribute key="maxHitChance" value="95" />
 		<attribute key="ammoAction" value="removecount" />
 	</item>
 	<item id="18305" article="a" name="fresh mushroom beer">
@@ -24912,6 +24912,7 @@
 	</item>
 	<item id="18406" name="prismatic boots">
 		<attribute key="weight" value="1800" />
+		<attribute key="armor" value="3" />		
 		<attribute key="slotType" value="feet" />
 		<attribute key="speed" value="30" />
 		<attribute key="absorbPercentDeath" value="3" />
