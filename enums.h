@@ -446,7 +446,7 @@ struct ModalDialog
 	uint32_t id;
 	std::string title, message;
 	uint8_t buttonEnter, buttonEscape; 
-	std::vector<ModalChoice> buttons, choices
+	std::vector<ModalChoice> buttons, choices;
 	bool popup;
 
 	ModalDialog()

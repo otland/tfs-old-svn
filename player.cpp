@@ -4549,20 +4549,17 @@ Skulls_t Player::getSkullType(const Creature* creature) const
 	if(!player || g_game.getWorldType() != WORLDTYPE_OPEN)
 		return SKULL_NONE;
 
-	if(player->getSkull() == SKULL_NONE)
+	if(player && player->getSkull() == SKULL_NONE)
 	{
 		if(canRevenge(player->getGUID()))
 			return SKULL_ORANGE;
 
-		if(player->canRevenge(guid) && player->hasAttacked(this) &&
-			!player->isEnemy(this, false))
+		if((skull != SKULL_NONE || player->canRevenge(guid)) && player->hasAttacked(this))
 			return SKULL_YELLOW;
 
-		if((isPartner(player) || isAlly(player) || isEnemy(player, false)) &&
-			g_game.getWorldType() != WORLDTYPE_OPTIONAL)
+		if(isPartner(player) || isAlly(player) || isEnemy(player, false))
 			return SKULL_GREEN;
 	}
-
 	return Creature::getSkullType(creature);
 }
 
@@ -5799,9 +5796,9 @@ bool Player::addOfflineTrainingTries(skills_t skill, int32_t tries)
 		tries *= g_config.getDouble(ConfigManager::RATE_SKILL);
 		while((skills[skill][SKILL_TRIES] + tries) >= nextReqTries)
 		{
-			skills[skill][SKILL_TRIES] = skills[skill][SKILL_PERCENT] = 0;
 			tries -= nextReqTries - skills[skill][SKILL_TRIES];
 			skills[skill][SKILL_LEVEL]++;
+			skills[skill][SKILL_TRIES] = skills[skill][SKILL_PERCENT] = 0;			
 
 			CreatureEventList advanceEvents = getCreatureEvents(CREATURE_EVENT_ADVANCE);
 			for(CreatureEventList::iterator it = advanceEvents.begin(); it != advanceEvents.end(); ++it)

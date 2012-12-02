@@ -6182,17 +6182,17 @@ void Game::prepareGlobalSave(uint8_t minutes)
 	{
 		case 5:
 			setGameState(GAMESTATE_CLOSING);
-			broadcastMessage("Server is going down for a global save within 5 minutes. Please logout.", MSG_STATUS_WARNING);
+			broadcastMessage("Server is saving game within 5 minutes. Please logout.", MSG_STATUS_WARNING);
 			Scheduler::getInstance().addEvent(createSchedulerTask(2 * 60000, boost::bind(&Game::prepareGlobalSave, this, 3)));
 			break;
 
 		case 3:
-			broadcastMessage("Server is going down for a global save within 3 minutes. Please logout.", MSG_STATUS_WARNING);
+			broadcastMessage("Server is saving game within 3 minutes. Please logout.", MSG_STATUS_WARNING);
 			Scheduler::getInstance().addEvent(createSchedulerTask(2 * 60000, boost::bind(&Game::prepareGlobalSave, this, 1)));
 			break;
 
 		case 1:
-			broadcastMessage("Server is going down for a global save in one minute, please logout!", MSG_STATUS_WARNING);
+			broadcastMessage("Server is saving game in one minute, please logout!", MSG_STATUS_WARNING);
 			Scheduler::getInstance().addEvent(createSchedulerTask(60000, boost::bind(&Game::prepareGlobalSave, this, 0)));
 			break;
 
