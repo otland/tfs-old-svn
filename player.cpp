@@ -5644,6 +5644,18 @@ void Player::setMounted(bool mounting)
 	{
 		if(Mount* mount = Mounts::getInstance()->getMountByCid(defaultOutfit.lookMount))
 		{
+			bool deny = false;
+			
+			CreatureEventList mountEvents = this->getCreatureEvents(CREATURE_EVENT_MOUNT);
+			for(CreatureEventList::iterator it = mountEvents.begin(); it != mountEvents.end(); ++it)
+			{
+				if(!(*it)->executeMount(this, mount->getId()) && !deny)
+					deny = true;
+			}
+
+			if(deny)
+				return;
+				
 			mounted = true;
 			if(mount->getSpeed())
 				g_game.changeSpeed(this, mount->getSpeed());
@@ -5659,12 +5671,24 @@ void Player::dismount(bool update)
 	if(!mounted)
 		return;
 
-	mounted = false;
 	if(!defaultOutfit.lookMount)
 		return;
 
 	if(Mount* mount = Mounts::getInstance()->getMountByCid(defaultOutfit.lookMount))
 	{
+		bool deny = false;
+		
+		CreatureEventList dismountEvents = this->getCreatureEvents(CREATURE_EVENT_DISMOUNT);
+		for(CreatureEventList::iterator it = dismountEvents.begin(); it != dismountEvents.end(); ++it)
+		{
+			if(!(*it)->executeDismount(this, mount->getId()) && !deny)
+				deny = true;
+		}
+
+		if(deny)
+			return;
+		mounted = false;
+			
 		if(mount->getSpeed() > 0)
 			g_game.changeSpeed(this, -(int32_t)mount->getSpeed());
 
