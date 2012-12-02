@@ -7893,14 +7893,14 @@
 		<attribute key="corpseType" value="venom" />
 	</item>
 	<item id="4323" article="a" name="dead serpent spawn">
-		<attribute key="containerSize" value="600" />
+		<attribute key="containerSize" value="20" />
 		<attribute key="decayTo" value="4324" />
 		<attribute key="duration" value="900" />
 		<attribute key="corpseType" value="blood" />
 		<attribute key="fluidSource" value="blood" />
 	</item>
 	<item id="4324" article="a" name="dead serpent spawn">
-		<attribute key="containerSize" value="10" />
+		<attribute key="containerSize" value="20" />
 		<attribute key="decayTo" value="4325" />
 		<attribute key="duration" value="600" />
 		<attribute key="corpseType" value="blood" />
@@ -23848,7 +23848,8 @@
 	<item id="15466" article="a" name="flask of aggressive fluid">
 		<attribute key="weight" value="150" />
 		<attribute key="duration" value="120" />
-	</item>		
+	</item>	
+	<item id="15467" name="a hive pore"/>	
 	<item id="15479" article="a" name="swarmer antenna">
 		<attribute key="weight" value="100" />
 	</item>
