@@ -4355,8 +4355,9 @@
 	</item>
 	<item id="2595" article="a" name="parcel">
 		<attribute key="weight" value="1800" />
-		<attribute key="description" value="It is the parcel for the watchtower on the Femor Hills." />
-	</item>
+		<attribute key="type" value="container" />
+		<attribute key="containerSize" value="10" />
+	</item>	
 	<item id="2596" article="a" name="stamped parcel">
 		<attribute key="weight" value="1800" />
 		<attribute key="containerSize" value="10" />
@@ -13120,8 +13121,7 @@
 	</item>
 	<item id="7498" article="a" name="parcel">
 		<attribute key="weight" value="1800" />
-		<attribute key="type" value="container" />
-		<attribute key="containerSize" value="10" />
+		<attribute key="description" value="It is the parcel for the watchtower on the Femor Hills." />
 	</item>
 	<item id="7499" article="a" name="cigarette">
 		<attribute key="weight" value="200" />
