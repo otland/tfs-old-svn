@@ -419,6 +419,10 @@ void ProtocolGame::onRecvFirstMessage(NetworkMessage& msg)
 
 	OperatingSystem_t operatingSystem = (OperatingSystem_t)msg.get<uint16_t>();
 	uint16_t version = msg.get<uint16_t>();
+
+	if(version >= 971)
+		msg.skip(5); //wtf??
+
 	if(!RSA_decrypt(msg))
 	{
 		disconnect();
