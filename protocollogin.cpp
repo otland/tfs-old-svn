@@ -76,7 +76,7 @@ void ProtocolLogin::onRecvFirstMessage(NetworkMessage& msg)
 	msg.skip(2); // client platform
 	uint16_t version = msg.get<uint16_t>();
 
-	if(version > 970)
+	if(version >= 971)
 		msg.skip(5); // wtf???
 
 #ifdef CLIENT_VERSION_DATA
@@ -248,7 +248,7 @@ void ProtocolLogin::onRecvFirstMessage(NetworkMessage& msg)
 			IntegerVec games = vectorAtoi(explodeString(g_config.getString(ConfigManager::GAME_PORT), ","));
 			output->put<uint16_t>(games[random_range(0, games.size() - 1)]);
 
-			if (version > 970)
+			if(version >= 971)
 				output->put<char>(0x00);
 		}
 		else
@@ -272,7 +272,7 @@ void ProtocolLogin::onRecvFirstMessage(NetworkMessage& msg)
 			IntegerVec games = vectorAtoi(explodeString(g_config.getString(ConfigManager::GAME_PORT), ","));
 			output->put<uint16_t>(games[random_range(0, games.size() - 1)]);
 
-			if (version > 970)
+			if(version >= 971)
 				output->put<char>(0x00);
 		}
 		#else
