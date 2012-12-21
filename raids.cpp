@@ -255,8 +255,6 @@ bool Raid::loadFromXml(const std::string& _filename)
 			return false;
 		}
 
-		std::string strValue;
-
 		eventNode = root->children;
 		while(eventNode)
 		{

@@ -55,6 +55,7 @@
 #include "quests.h"
 #include "globalevent.h"
 #include "mounts.h"
+#include "beds.h"
 
 extern ConfigManager g_config;
 extern Actions* g_actions;
@@ -97,6 +98,18 @@ Game::Game()
 	lightHour = SUNRISE + (SUNSET - SUNRISE) / 2;
 	lightLevel = LIGHT_LEVEL_DAY;
 	lightState = LIGHT_STATE_DAY;
+
+	offlineTrainingWindow = new ModalWindow(0xFFFFFFFF, "Choose a Skill", "Please choose a skill:");
+	offlineTrainingWindow->addChoice(SKILL_SWORD, "Sword Fighting and Shielding");
+	offlineTrainingWindow->addChoice(SKILL_AXE, "Axe Fighting and Shielding");
+	offlineTrainingWindow->addChoice(SKILL_CLUB, "Club Fighting and Shielding");
+	offlineTrainingWindow->addChoice(SKILL_DIST, "Distance Fighting and Shielding");
+	offlineTrainingWindow->addChoice(SKILL__MAGLEVEL, "Magic Level and Shielding");
+	offlineTrainingWindow->addButton(1, "Okay");
+	offlineTrainingWindow->addButton(0, "Cancel");
+	offlineTrainingWindow->setDefaultEnterButton(1);
+	offlineTrainingWindow->setDefaultEscapeButton(0);
+	offlineTrainingWindow->setPriority(true);
 }
 
 Game::~Game()
@@ -105,6 +118,7 @@ Game::~Game()
 	whitelist.clear();
 
 	delete map;
+	delete offlineTrainingWindow;
 
 	g_scheduler.stopEvent(checkLightEvent);
 	g_scheduler.stopEvent(checkCreatureEvent);
@@ -1494,6 +1508,166 @@ ReturnValue Game::internalMoveItem(Cylinder* fromCylinder, Cylinder* toCylinder,
 	return ret;
 }
 
+ReturnValue Game::internalMoveTradeItem(Cylinder* fromCylinder, Cylinder* toCylinder, int32_t index,
+	Item* item, Item* tradeItem, uint32_t count, Item** _moveItem, uint32_t flags /*= 0*/, Creature* actor/* = NULL*/)
+{
+	if(!toCylinder)
+		return RET_NOTPOSSIBLE;
+
+	Item* toItem = NULL;
+
+	Cylinder* subCylinder;
+	int floorN = 0;
+	while((subCylinder = toCylinder->__queryDestination(index, item, &toItem, flags)) != toCylinder)
+	{
+		toCylinder = subCylinder;
+		flags = 0;
+
+		//to prevent infinite loop
+		if(++floorN >= MAP_MAX_LAYERS)
+			break;
+	}
+
+	//destination is the same as the source?
+	if(item == toItem)
+		return RET_NOERROR; //silently ignore move
+
+	//check if we can add this item
+	ReturnValue ret = toCylinder->__queryAdd(index, item, count, flags, actor);
+	if(ret == RET_NEEDEXCHANGE)
+	{
+		//check if we can add it to source cylinder
+		int32_t fromIndex = fromCylinder->__getIndexOfThing(item);
+
+		ret = fromCylinder->__queryAdd(fromIndex, toItem, toItem->getItemCount(), 0);
+		if(ret == RET_NOERROR)
+		{
+			//check how much we can move
+			uint32_t maxExchangeQueryCount = 0;
+			ReturnValue retExchangeMaxCount = fromCylinder->__queryMaxCount(INDEX_WHEREEVER, toItem, toItem->getItemCount(), maxExchangeQueryCount, 0);
+			if(retExchangeMaxCount != RET_NOERROR && maxExchangeQueryCount == 0)
+				return retExchangeMaxCount;
+
+			if(toCylinder->__queryRemove(toItem, toItem->getItemCount(), flags) == RET_NOERROR)
+			{
+				int32_t oldToItemIndex = toCylinder->__getIndexOfThing(toItem);
+				toCylinder->__removeThing(toItem, toItem->getItemCount());
+				fromCylinder->__addThing(toItem);
+
+				if(oldToItemIndex != -1)
+					toCylinder->postRemoveNotification(toItem, fromCylinder, oldToItemIndex, true);
+
+				int32_t newToItemIndex = fromCylinder->__getIndexOfThing(toItem);
+				if(newToItemIndex != -1)
+					fromCylinder->postAddNotification(toItem, toCylinder, newToItemIndex);
+
+				ret = toCylinder->__queryAdd(index, item, count, flags);
+				toItem = NULL;
+			}
+		}
+	}
+
+	if(ret != RET_NOERROR)
+		return ret;
+
+	//check how much we can move
+	uint32_t maxQueryCount = 0;
+	ReturnValue retMaxCount = toCylinder->__queryMaxCount(index, item, count, maxQueryCount, flags);
+
+	if(retMaxCount != RET_NOERROR && maxQueryCount == 0)
+		return retMaxCount;
+
+	uint32_t m = 0;
+
+	if(item->isStackable())
+		m = std::min((uint32_t)count, maxQueryCount);
+	else
+		m = maxQueryCount;
+
+	Item* moveItem = item;
+
+	//check if we can remove this item
+	ret = fromCylinder->__queryRemove(item, m, flags);
+	if(ret != RET_NOERROR)
+		return ret;
+
+	if(toCylinder->getItem() == tradeItem)
+		return RET_NOTENOUGHROOM;
+
+	Cylinder* tmpCylinder = toCylinder->getParent();
+	while(tmpCylinder)
+	{
+		if(tmpCylinder->getItem() == tradeItem)
+			return RET_NOTENOUGHROOM;
+
+		tmpCylinder = tmpCylinder->getParent();
+	}
+
+	//remove the item
+	int32_t itemIndex = fromCylinder->__getIndexOfThing(item);
+	Item* updateItem = NULL;
+	fromCylinder->__removeThing(item, m);
+	bool isCompleteRemoval = item->isRemoved();
+
+	//update item(s)
+	if(item->isStackable())
+	{
+		uint32_t n;
+		if(toItem && toItem->getID() == item->getID())
+		{
+			n = std::min((uint32_t)100 - toItem->getItemCount(), m);
+			toCylinder->__updateThing(toItem, toItem->getID(), toItem->getItemCount() + n);
+			updateItem = toItem;
+		}
+		else
+			n = 0;
+
+		int32_t count = m - n;
+		if(count > 0)
+			moveItem = Item::CreateItem(item->getID(), count);
+		else
+			moveItem = NULL;
+
+		if(item->isRemoved())
+			FreeThing(item);
+	}
+
+	//add item
+	if(moveItem /*m - n > 0*/)
+		toCylinder->__addThing(index, moveItem);
+
+	if(itemIndex != -1)
+		fromCylinder->postRemoveNotification(item, toCylinder, itemIndex, isCompleteRemoval);
+
+	if(moveItem)
+	{
+		int32_t moveItemIndex = toCylinder->__getIndexOfThing(moveItem);
+		if(moveItemIndex != -1)
+			toCylinder->postAddNotification(moveItem, fromCylinder, moveItemIndex);
+	}
+
+	if(updateItem)
+	{
+		int32_t updateItemIndex = toCylinder->__getIndexOfThing(updateItem);
+		if(updateItemIndex != -1)
+			toCylinder->postAddNotification(updateItem, fromCylinder, updateItemIndex);
+	}
+
+	if(_moveItem)
+	{
+		if(moveItem)
+			*_moveItem = moveItem;
+		else
+			*_moveItem = item;
+	}
+
+	//we could not move all, inform the player
+	if(item->isStackable() && maxQueryCount < count)
+		return retMaxCount;
+
+	return ret;
+}
+
 ReturnValue Game::internalAddItem(Cylinder* toCylinder, Item* item, int32_t index /*= INDEX_WHEREEVER*/,
 	uint32_t flags/* = 0*/, bool test/* = false*/)
 {
@@ -1773,7 +1947,7 @@ bool Game::removeItemOfType(Cylinder* cylinder, uint16_t itemId, int32_t count, 
 	return (count == 0);
 }
 
-uint32_t Game::getMoney(const Cylinder* cylinder)
+uint64_t Game::getMoney(const Cylinder* cylinder)
 {
 	if(cylinder == NULL)
 		return 0;
@@ -1785,7 +1959,7 @@ uint32_t Game::getMoney(const Cylinder* cylinder)
 	Thing* thing;
 	Item* item;
 
-	uint32_t moneyCount = 0;
+	uint64_t moneyCount = 0;
 	for(int32_t i = cylinder->__getFirstIndex(); i < cylinder->__getLastIndex(); ++i)
 	{
 		if(!(thing = cylinder->__getThing(i)))
@@ -1817,7 +1991,7 @@ uint32_t Game::getMoney(const Cylinder* cylinder)
 	return moneyCount;
 }
 
-bool Game::removeMoney(Cylinder* cylinder, int32_t money, uint32_t flags /*= 0*/)
+bool Game::removeMoney(Cylinder* cylinder, uint64_t money, uint32_t flags /*= 0*/)
 {
 	if(cylinder == NULL)
 		return false;
@@ -1828,12 +2002,12 @@ bool Game::removeMoney(Cylinder* cylinder, int32_t money, uint32_t flags /*= 0*/
 	std::list<Container*> listContainer;
 	Container* tmpContainer = NULL;
 
-	typedef std::multimap<int, Item*, std::less<int> > MoneyMap;
+	typedef std::multimap<uint64_t, Item*, std::less<uint64_t> > MoneyMap;
 	typedef MoneyMap::value_type moneymap_pair;
 	MoneyMap moneyMap;
 	Thing* thing;
 	Item* item;
-	int32_t moneyCount = 0;
+	uint64_t moneyCount = 0;
 
 	for(int32_t i = cylinder->__getFirstIndex(); i < cylinder->__getLastIndex(); ++i)
 	{
@@ -1882,37 +2056,33 @@ bool Game::removeMoney(Cylinder* cylinder, int32_t money, uint32_t flags /*= 0*/
 		if(mit->first > money)
 		{
 			/* Remove a monetary value from an item*/
-			int32_t remaind = item->getWorth() - money;
+			uint64_t remaind = item->getWorth() - money;
 			addMoney(cylinder, remaind, flags);
 			money = 0;
 		}
 		else
 			money -= mit->first;
 	}
-	return (money == 0);
+	return money == 0;
 }
 
-void Game::addMoney(Cylinder* cylinder, int32_t money, uint32_t flags /*= 0*/)
+void Game::addMoney(Cylinder* cylinder, uint64_t money, uint32_t flags /*= 0*/)
 {
 	int32_t crys = money / 10000;
 	money -= crys * 10000;
-	int32_t plat = money / 100;
+	int64_t plat = money / 100;
 	money -= plat * 100;
-	int32_t gold = money;
+	int64_t gold = money;
 
-	if(crys != 0)
+	while(crys > 0)
 	{
-		do
-		{
-			Item* remaindItem = Item::CreateItem(ITEM_COINS_CRYSTAL, std::min(100, crys));
+		Item* remaindItem = Item::CreateItem(ITEM_COINS_CRYSTAL, std::min(100, crys));
 
-			ReturnValue ret = internalAddItem(cylinder, remaindItem, INDEX_WHEREEVER, flags);
-			if(ret != RET_NOERROR)
-				internalAddItem(cylinder->getTile(), remaindItem, INDEX_WHEREEVER, FLAG_NOLIMIT);
+		ReturnValue ret = internalAddItem(cylinder, remaindItem, INDEX_WHEREEVER, flags);
+		if(ret != RET_NOERROR)
+			internalAddItem(cylinder->getTile(), remaindItem, INDEX_WHEREEVER, FLAG_NOLIMIT);
 
-			crys -= std::min(100, crys);
-		}
-		while(crys > 0);
+		crys -= std::min(100, crys);
 	}
 
 	if(plat != 0)
@@ -2857,8 +3027,8 @@ bool Game::internalStartTrade(Player* player, Player* tradePartner, Item* tradeI
 	if(tradePartner->tradeState == TRADE_NONE)
 	{
 		std::ostringstream ss;
-		ss << player->getName() << " wants to trade with you";
-		tradePartner->sendTextMessage(MSG_INFO_DESCR, ss.str());
+		ss << player->getName() << " wants to trade with you.";
+		tradePartner->sendTextMessage(MSG_EVENT_ADVANCE, ss.str());
 		tradePartner->tradeState = TRADE_ACKNOWLEDGE;
 		tradePartner->tradePartner = player;
 	}
@@ -2919,7 +3089,6 @@ bool Game::playerAcceptTrade(uint32_t playerId)
 
 		ReturnValue ret1 = internalAddItem(tradePartner, tradeItem1, INDEX_WHEREEVER, 0, true);
 		ReturnValue ret2 = internalAddItem(player, tradeItem2, INDEX_WHEREEVER, 0, true);
-
 		if(ret1 == RET_NOERROR && ret2 == RET_NOERROR)
 		{
 			ret1 = internalRemoveItem(tradeItem1, tradeItem1->getItemCount(), true);
@@ -2932,13 +3101,16 @@ bool Game::playerAcceptTrade(uint32_t playerId)
 				uint32_t count1 = tradeItem1->getItemCount();
 				uint32_t count2 = tradeItem2->getItemCount();
 
-				internalMoveItem(cylinder1, tradePartner, INDEX_WHEREEVER, tradeItem1, count1, NULL, FLAG_IGNOREAUTOSTACK);
-				internalMoveItem(cylinder2, player, INDEX_WHEREEVER, tradeItem2, count2, NULL, FLAG_IGNOREAUTOSTACK);
+				ret1 = internalMoveTradeItem(cylinder1, tradePartner, INDEX_WHEREEVER, tradeItem1, tradeItem2, count1, NULL, FLAG_IGNOREAUTOSTACK);
+				if(ret1 == RET_NOERROR)
+				{
+					internalMoveItem(cylinder2, player, INDEX_WHEREEVER, tradeItem2, count2, NULL, FLAG_IGNOREAUTOSTACK);
 
-				tradeItem1->onTradeEvent(ON_TRADE_TRANSFER, tradePartner);
-				tradeItem2->onTradeEvent(ON_TRADE_TRANSFER, player);
+					tradeItem1->onTradeEvent(ON_TRADE_TRANSFER, tradePartner);
+					tradeItem2->onTradeEvent(ON_TRADE_TRANSFER, player);
 
-				isSuccess = true;
+					isSuccess = true;
+				}
 			}
 		}
 
@@ -2948,14 +3120,14 @@ bool Game::playerAcceptTrade(uint32_t playerId)
 			if(tradePartner->tradeItem)
 			{
 				errorDescription = getTradeErrorDescription(ret1, tradeItem1);
-				tradePartner->sendTextMessage(MSG_INFO_DESCR, errorDescription);
+				tradePartner->sendTextMessage(MSG_EVENT_ADVANCE, errorDescription);
 				tradePartner->tradeItem->onTradeEvent(ON_TRADE_CANCEL, tradePartner);
 			}
 
 			if(player->tradeItem)
 			{
 				errorDescription = getTradeErrorDescription(ret2, tradeItem2);
-				player->sendTextMessage(MSG_INFO_DESCR, errorDescription);
+				player->sendTextMessage(MSG_EVENT_ADVANCE, errorDescription);
 				player->tradeItem->onTradeEvent(ON_TRADE_CANCEL, player);
 			}
 		}
@@ -2976,11 +3148,11 @@ bool Game::playerAcceptTrade(uint32_t playerId)
 
 std::string Game::getTradeErrorDescription(ReturnValue ret, Item* item)
 {
-	std::ostringstream ss;
 	if(item)
 	{
 		if(ret == RET_NOTENOUGHCAPACITY)
 		{
+			std::ostringstream ss;
 			ss << "You do not have enough capacity to carry";
 			if(item->isStackable() && item->getItemCount() > 1)
 				ss << " these objects.";
@@ -2988,20 +3160,21 @@ std::string Game::getTradeErrorDescription(ReturnValue ret, Item* item)
 				ss << " this object." ;
 
 			ss << std::endl << " " << item->getWeightDescription();
+			return ss.str();
 		}
 		else if(ret == RET_NOTENOUGHROOM || ret == RET_CONTAINERNOTENOUGHROOM)
 		{
+			std::ostringstream ss;
 			ss << "You do not have enough room to carry";
 			if(item->isStackable() && item->getItemCount() > 1)
 				ss << " these objects.";
 			else
 				ss << " this object.";
-		}
-		return ss.str();
-	}
 
-	ss << "Trade could not be completed.";
-	return ss.str().c_str();
+			return ss.str();
+		}
+	}
+	return "Trade could not be completed.";
 }
 
 bool Game::playerLookInTrade(uint32_t playerId, bool lookAtCounterOffer, int index)
@@ -3093,7 +3266,6 @@ bool Game::internalCloseTrade(Player* player)
 		return true;
 	}
 
-	std::vector<Item*>::iterator it;
 	if(player->getTradeItem())
 	{
 		std::map<Item*, uint32_t>::iterator it = tradeItems.find(player->getTradeItem());
@@ -3448,8 +3620,16 @@ bool Game::playerRequestAddVip(uint32_t playerId, const std::string& vip_name)
 		return false;
 	}
 
-	bool online = (getPlayerByName(real_name) != NULL);
-	return player->addVIP(guid, real_name, online);
+	VipStatus_t status;
+	Player* vipPlayer = getPlayerByName(real_name);
+	if(!vipPlayer)
+		status = VIPSTATUS_OFFLINE;
+	else if(player->isAccessPlayer() || !vipPlayer->isInGhostMode())
+		status = VIPSTATUS_ONLINE;
+	else
+		status = VIPSTATUS_OFFLINE;
+
+	return player->addVIP(guid, real_name, status);
 }
 
 bool Game::playerRequestRemoveVip(uint32_t playerId, uint32_t guid)
@@ -4847,7 +5027,7 @@ void Game::shutdown()
 	if(services)
 		services->stop();
 
-	std::cout << " done!";
+	std::cout << " done!" << std::endl;
 }
 
 void Game::cleanup()
@@ -5344,6 +5524,15 @@ void Game::kickPlayer(uint32_t playerId, bool displayEffect)
 	player->kickPlayer(displayEffect);
 }
 
+void Game::kickPlayerByName(std::string name)
+{
+	Player* player = getPlayerByName(name);
+	if(!player || player->isRemoved())
+		return;
+
+	player->kickPlayer(true);
+}
+
 bool Game::playerReportBug(uint32_t playerId, std::string bug)
 {
 	Player* player = getPlayerByID(playerId);
@@ -5495,14 +5684,15 @@ bool Game::playerCreateMarketOffer(uint32_t playerId, uint8_t type, uint16_t spr
 		if(fee > player->bankBalance)
 			return false;
 
-		Depot* depot = player->getDepot(player->getMarketDepotId(), false);
-		if(!depot)
+		DepotChest* depotChest = player->getDepotChest(player->getMarketDepotId(), false);
+		if(!depotChest)
 			return false;
 
 		ItemList itemList;
 		uint32_t count = 0;
 		std::list<Container*> containerList;
-		containerList.push_back(depot->getChest());
+		containerList.push_back(depotChest);
+		containerList.push_back(player->getInbox());
 		bool enough = false;
 		do
 		{
@@ -5611,7 +5801,6 @@ bool Game::playerCancelMarketOffer(uint32_t playerId, uint32_t timestamp, uint16
 		if(it.id == 0)
 			return false;
 
-		Depot* depot = player->getDepot(player->getMarketDepotId(), true);
 		if(it.stackable)
 		{
 			uint16_t tmpAmount = offer.amount;
@@ -5619,7 +5808,7 @@ bool Game::playerCancelMarketOffer(uint32_t playerId, uint32_t timestamp, uint16
 			{
 				int32_t stackCount = std::min((int32_t)100, (int32_t)tmpAmount);
 				Item* item = Item::CreateItem(it.id, stackCount);
-				if(internalAddItem(depot->getInbox(), item, INDEX_WHEREEVER, FLAG_NOLIMIT) != RET_NOERROR)
+				if(internalAddItem(player->getInbox(), item, INDEX_WHEREEVER, FLAG_NOLIMIT) != RET_NOERROR)
 				{
 					delete item;
 					break;
@@ -5637,7 +5826,7 @@ bool Game::playerCancelMarketOffer(uint32_t playerId, uint32_t timestamp, uint16
 			for(uint16_t i = 0; i < offer.amount; ++i)
 			{
 				Item* item = Item::CreateItem(it.id, subType);
-				if(internalAddItem(depot->getInbox(), item, INDEX_WHEREEVER, FLAG_NOLIMIT) != RET_NOERROR)
+				if(internalAddItem(player->getInbox(), item, INDEX_WHEREEVER, FLAG_NOLIMIT) != RET_NOERROR)
 				{
 					delete item;
 					break;
@@ -5680,14 +5869,15 @@ bool Game::playerAcceptMarketOffer(uint32_t playerId, uint32_t timestamp, uint16
 	uint64_t totalPrice = (uint64_t)offer.price * amount;
 	if(offer.type == MARKETACTION_BUY)
 	{
-		Depot* depot = player->getDepot(player->getMarketDepotId(), false);
-		if(!depot)
+		DepotChest* depotChest = player->getDepotChest(player->getMarketDepotId(), false);
+		if(!depotChest)
 			return false;
 
 		ItemList itemList;
 		uint32_t count = 0;
 		std::list<Container*> containerList;
-		containerList.push_back(depot->getChest());
+		containerList.push_back(depotChest);
+		containerList.push_back(player->getInbox());
 		bool enough = false;
 		do
 		{
@@ -5764,9 +5954,7 @@ bool Game::playerAcceptMarketOffer(uint32_t playerId, uint32_t timestamp, uint16
 				return false;
 			}
 		}
-		buyerPlayer->setDepotChange(true);
 
-		Depot* buyerDepot = buyerPlayer->getDepot(buyerPlayer->getTown(), true);
 		if(it.stackable)
 		{
 			uint16_t tmpAmount = amount;
@@ -5774,7 +5962,7 @@ bool Game::playerAcceptMarketOffer(uint32_t playerId, uint32_t timestamp, uint16
 			{
 				uint16_t stackCount = std::min((uint16_t)100, tmpAmount);
 				Item* item = Item::CreateItem(it.id, stackCount);
-				if(internalAddItem(buyerDepot->getInbox(), item, INDEX_WHEREEVER, FLAG_NOLIMIT) != RET_NOERROR)
+				if(internalAddItem(buyerPlayer->getInbox(), item, INDEX_WHEREEVER, FLAG_NOLIMIT) != RET_NOERROR)
 				{
 					delete item;
 					break;
@@ -5792,7 +5980,7 @@ bool Game::playerAcceptMarketOffer(uint32_t playerId, uint32_t timestamp, uint16
 			for(uint16_t i = 0; i < amount; ++i)
 			{
 				Item* item = Item::CreateItem(it.id, subType);
-				if(internalAddItem(buyerDepot->getInbox(), item, INDEX_WHEREEVER, FLAG_NOLIMIT) != RET_NOERROR)
+				if(internalAddItem(buyerPlayer->getInbox(), item, INDEX_WHEREEVER, FLAG_NOLIMIT) != RET_NOERROR)
 				{
 					delete item;
 					break;
@@ -5813,7 +6001,6 @@ bool Game::playerAcceptMarketOffer(uint32_t playerId, uint32_t timestamp, uint16
 
 		player->bankBalance -= totalPrice;
 
-		Depot* depot = player->getDepot(player->getMarketDepotId(), true);
 		if(it.stackable)
 		{
 			uint16_t tmpAmount = amount;
@@ -5821,7 +6008,7 @@ bool Game::playerAcceptMarketOffer(uint32_t playerId, uint32_t timestamp, uint16
 			{
 				uint16_t stackCount = std::min((uint16_t)100, tmpAmount);
 				Item* item = Item::CreateItem(it.id, stackCount);
-				if(internalAddItem(depot->getInbox(), item, INDEX_WHEREEVER, FLAG_NOLIMIT) != RET_NOERROR)
+				if(internalAddItem(player->getInbox(), item, INDEX_WHEREEVER, FLAG_NOLIMIT) != RET_NOERROR)
 				{
 					delete item;
 					break;
@@ -5839,7 +6026,7 @@ bool Game::playerAcceptMarketOffer(uint32_t playerId, uint32_t timestamp, uint16
 			for(uint16_t i = 0; i < amount; ++i)
 			{
 				Item* item = Item::CreateItem(it.id, subType);
-				if(internalAddItem(depot->getInbox(), item, INDEX_WHEREEVER, FLAG_NOLIMIT) != RET_NOERROR)
+				if(internalAddItem(player->getInbox(), item, INDEX_WHEREEVER, FLAG_NOLIMIT) != RET_NOERROR)
 				{
 					delete item;
 					break;
@@ -5908,13 +6095,11 @@ void Game::checkExpiredMarketOffers()
 				continue;
 			}
 		}
-		player->setDepotChange(true);
 
 		const ItemType& itemType = Item::items[offer.itemId];
 		if(itemType.id == 0)
 			continue;
 
-		Depot* depot = player->getDepot(player->getTown(), true);
 		if(itemType.stackable)
 		{
 			uint16_t tmpAmount = offer.amount;
@@ -5922,7 +6107,7 @@ void Game::checkExpiredMarketOffers()
 			{
 				uint16_t stackCount = std::min((uint16_t)100, tmpAmount);
 				Item* item = Item::CreateItem(itemType.id, stackCount);
-				if(internalAddItem(depot->getInbox(), item, INDEX_WHEREEVER, FLAG_NOLIMIT) != RET_NOERROR)
+				if(internalAddItem(player->getInbox(), item, INDEX_WHEREEVER, FLAG_NOLIMIT) != RET_NOERROR)
 				{
 					delete item;
 					break;
@@ -5940,7 +6125,7 @@ void Game::checkExpiredMarketOffers()
 			for(uint16_t i = 0; i < offer.amount; ++i)
 			{
 				Item* item = Item::CreateItem(itemType.id, subType);
-				if(internalAddItem(depot->getInbox(), item, INDEX_WHEREEVER, FLAG_NOLIMIT) != RET_NOERROR)
+				if(internalAddItem(player->getInbox(), item, INDEX_WHEREEVER, FLAG_NOLIMIT) != RET_NOERROR)
 				{
 					delete item;
 					break;
@@ -6187,6 +6372,50 @@ bool Game::violationWindow(Player* player, std::string targetPlayerName, int32_t
 		IOBan::getInstance()->removeAccountNotations(account.id);
 
 	IOLoginData::getInstance()->saveAccount(account);
+	return true;
+}
+
+void Game::sendOfflineTrainingDialog(Player* player)
+{
+	if(!player)
+		return;
+
+	if(!player->hasModalWindowOpen(offlineTrainingWindow->getID()))
+		player->sendModalWindow(*offlineTrainingWindow);
+}
+
+
+bool Game::playerAnswerModalWindow(uint32_t playerId, uint32_t modalWindowId, uint8_t button, uint8_t choice)
+{
+	Player* player = getPlayerByID(playerId);
+	if(!player || player->isRemoved())
+		return false;
+
+	if(!player->hasModalWindowOpen(modalWindowId))
+		return false;
+
+	player->onModalWindowHandled(modalWindowId);
+
+	// offline training, hardcoded
+	if(modalWindowId == 0xFFFFFFFF)
+	{
+		if(button == 1)
+		{
+			if(choice == SKILL_SWORD || choice == SKILL_AXE || choice == SKILL_CLUB || choice == SKILL_DIST || choice == SKILL__MAGLEVEL)
+			{
+				BedItem* bedItem = player->getBedItem();
+				if(bedItem && bedItem->sleep(player))
+				{
+					player->setOfflineTrainingSkill(choice);
+					return true;
+				}
+			}
+		}
+		else
+			player->sendTextMessage(MSG_EVENT_ADVANCE, "Offline training aborted.");
+
+		player->setBedItem(NULL);
+	}
 	return true;
 }
 

@@ -28,7 +28,8 @@
 #include "item.h"
 
 class Container;
-class Depot;
+class DepotChest;
+class DepotLocker;
 
 class ContainerIterator
 {
@@ -64,8 +65,12 @@ class Container : public Item, public Cylinder
 
 		virtual Container* getContainer() {return this;}
 		virtual const Container* getContainer() const {return this;}
-		virtual Depot* getDepot() {return NULL;}
-		virtual const Depot* getDepot() const {return NULL;}
+
+		virtual DepotChest* getDepotChest() {return NULL;}
+		virtual const DepotChest* getDepotChest() const {return NULL;}
+
+		virtual DepotLocker* getDepotLocker() {return NULL;}
+		virtual const DepotLocker* getDepotLocker() const {return NULL;}
 
 		Attr_ReadValue readAttr(AttrTypes_t attr, PropStream& propStream);
 		bool unserializeItemNode(FileLoader& f, NODE node, PropStream& propStream);
@@ -91,6 +96,8 @@ class Container : public Item, public Cylinder
 
 		uint32_t getItemHoldingCount() const;
 		virtual double getWeight() const;
+
+		void clear();
 
 		//cylinder implementations
 		virtual ReturnValue __queryAdd(int32_t index, const Thing* thing, uint32_t count,

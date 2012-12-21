@@ -91,6 +91,12 @@ void NetworkMessage::AddString(const char* value)
 	m_MsgSize += stringlen;
 }
 
+void NetworkMessage::AddDouble(double value, uint8_t precision/* = 2*/)
+{
+	AddByte(precision);
+	AddU32((value * std::pow((float)10, precision)) + INT_MAX);
+}
+
 void NetworkMessage::AddBytes(const char* bytes, uint32_t size)
 {
 	if(!canAdd(size) || size > 8192)

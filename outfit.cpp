@@ -42,7 +42,6 @@ OutfitList::~OutfitList()
 
 void OutfitList::addOutfit(const Outfit& outfit)
 {
-	OutfitListType::iterator it;
 	for(OutfitListType::iterator it = m_list.begin(), end = m_list.end(); it != end; ++it)
 	{
 		if((*it)->looktype == outfit.looktype)
@@ -157,7 +156,6 @@ bool Outfits::loadFromXml()
 
 		while(p)
 		{
-			std::string str;
 			int32_t intVal;
 			if(xmlStrcmp(p->name, (const xmlChar*)"outfit") == 0)
 			{

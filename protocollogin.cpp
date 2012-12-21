@@ -79,7 +79,10 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 
 	/*uint16_t clientos = */msg.GetU16();
 	uint16_t version = msg.GetU16();
-	msg.SkipBytes(12);
+	if(version >= 971)
+		msg.SkipBytes(17);
+	else
+		msg.SkipBytes(12);
 
 	if(version <= 760)
 	{
@@ -192,17 +195,17 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 			output->AddString(g_config.getString(ConfigManager::SERVER_NAME));
 			output->AddU32(serverip);
 			output->AddU16(g_config.getNumber(ConfigManager::GAME_PORT));
+			output->AddByte(0x00);
 		}
 		else
 			output->AddByte((uint8_t)account.charList.size());
 
-		std::list<std::string>::iterator it, end;
-		for(it = account.charList.begin(), end = account.charList.end(); it != end; ++it)
+		for(std::list<std::string>::iterator it = account.charList.begin(), end = account.charList.end(); it != end; ++it)
 		{
 			output->AddString(*it);
 			if(g_config.getBoolean(ConfigManager::ON_OR_OFF_CHARLIST))
 			{
-				if(g_game.getPlayerByName((*it)))
+				if(g_game.getPlayerByName(*it))
 					output->AddString("Online");
 				else
 					output->AddString("Offline");
@@ -212,6 +215,7 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 
 			output->AddU32(serverip);
 			output->AddU16(g_config.getNumber(ConfigManager::GAME_PORT));
+			output->AddByte(0x00);
 		}
 
 		//Add premium days

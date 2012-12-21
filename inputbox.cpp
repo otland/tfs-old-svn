@@ -62,8 +62,7 @@ CInputBox::CInputBox(HWND hWndParent)
 
 CInputBox::~CInputBox()
 {
-	if(Text)
-		delete[] Text;
+	delete[] Text;
 }
 
 LRESULT CALLBACK CInputBox::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)

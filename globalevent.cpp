@@ -148,10 +148,10 @@ void GlobalEvents::think()
 	for(GlobalEventMap::iterator it = thinkMap.begin(); it != thinkMap.end(); ++it)
 	{
 		GlobalEvent* globalEvent = it->second;
-		if((globalEvent->getLastExecution() + globalEvent->getInterval()) > now)
+		if(globalEvent->getNextExecution() > now)
 			continue;
 
-		globalEvent->setLastExecution(now);
+		globalEvent->setNextExecution(globalEvent->getNextExecution() + now);
 		if(!globalEvent->executeEvent())
 			std::cout << "[Error - GlobalEvents::think] Failed to execute event: " << globalEvent->getName() << std::endl;
 	}
@@ -204,7 +204,6 @@ GlobalEventMap GlobalEvents::getEventMap(GlobalEvent_t type)
 GlobalEvent::GlobalEvent(LuaScriptInterface* _interface):
 	Event(_interface)
 {
-	m_lastExecution = OTSYS_TIME();
 	m_nextExecution = 0;
 	m_interval = 0;
 }
@@ -289,6 +288,7 @@ bool GlobalEvent::configureEvent(xmlNodePtr p)
 	if(readXMLInteger(p, "interval", intValue))
 	{
 		m_interval = std::max((int32_t)SCHEDULER_MINTICKS, intValue);
+		m_nextExecution = time(NULL) + m_interval;
 		return true;
 	}
 

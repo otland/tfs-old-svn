@@ -63,7 +63,7 @@ class AStarNodes
 {
 	public:
 		AStarNodes();
-		~AStarNodes(){}
+		~AStarNodes() {}
 
 		AStarNode* createOpenNode();
 		AStarNode* getBestNode();

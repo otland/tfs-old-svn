@@ -244,7 +244,8 @@
     <ClCompile Include="..\databasemanager.cpp" />
     <ClCompile Include="..\databasemysql.cpp" />
     <ClCompile Include="..\databasesqlite.cpp" />
-    <ClCompile Include="..\depot.cpp" />
+    <ClCompile Include="..\depotchest.cpp" />
+    <ClCompile Include="..\depotlocker.cpp" />
     <ClCompile Include="..\exception.cpp" />
     <ClCompile Include="..\fileloader.cpp" />
     <ClCompile Include="..\game.cpp" />
@@ -252,6 +253,7 @@
     <ClCompile Include="..\gui.cpp" />
     <ClCompile Include="..\house.cpp" />
     <ClCompile Include="..\housetile.cpp" />
+    <ClCompile Include="..\inbox.cpp" />
     <ClCompile Include="..\inputbox.cpp" />
     <ClCompile Include="..\ioguild.cpp" />
     <ClCompile Include="..\iologindata.cpp" />
@@ -265,6 +267,7 @@
     <ClCompile Include="..\mailbox.cpp" />
     <ClCompile Include="..\map.cpp" />
     <ClCompile Include="..\md5.cpp" />
+    <ClCompile Include="..\modalwindow.cpp" />
     <ClCompile Include="..\monster.cpp" />
     <ClCompile Include="..\monsters.cpp" />
     <ClCompile Include="..\mounts.cpp" />
@@ -339,7 +342,8 @@
     <ClInclude Include="..\databasemysql.h" />
     <ClInclude Include="..\databasesqlite.h" />
     <ClInclude Include="..\definitions.h" />
-    <ClInclude Include="..\depot.h" />
+    <ClInclude Include="..\depotchest.h" />
+    <ClInclude Include="..\depotlocker.h" />
     <ClInclude Include="..\enums.h" />
     <ClInclude Include="..\exception.h" />
     <ClInclude Include="..\fileloader.h" />
@@ -348,6 +352,7 @@
     <ClInclude Include="..\gui.h" />
     <ClInclude Include="..\house.h" />
     <ClInclude Include="..\housetile.h" />
+    <ClInclude Include="..\inbox.h" />
     <ClInclude Include="..\inputbox.h" />
     <ClInclude Include="..\ioguild.h" />
     <ClInclude Include="..\iologindata.h" />
@@ -362,6 +367,7 @@
     <ClInclude Include="..\mailbox.h" />
     <ClInclude Include="..\map.h" />
     <ClInclude Include="..\md5.h" />
+    <ClInclude Include="..\modalwindow.h" />
     <ClInclude Include="..\monster.h" />
     <ClInclude Include="..\monsters.h" />
     <ClInclude Include="..\mounts.h" />

@@ -116,6 +116,8 @@ class Creature : public AutoID, virtual public Thing
 		Creature();
 
 	public:
+		static double speedA, speedB, speedC;
+
 		virtual ~Creature();
 
 		virtual Creature* getCreature() {return this;}
@@ -272,7 +274,7 @@ class Creature : public AutoID, virtual public Thing
 
 		virtual void onDeath();
 		virtual uint64_t getGainedExperience(Creature* attacker) const;
-		bool addDamagePoints(Creature* attacker, int32_t damagePoints);
+		void addDamagePoints(Creature* attacker, int32_t damagePoints);
 		void addHealPoints(Creature* caster, int32_t healthPoints);
 		bool hasBeenAttacked(uint32_t attackerId);
 

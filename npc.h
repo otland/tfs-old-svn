@@ -478,7 +478,7 @@ class Npc : public Creature
 		virtual Npc* getNpc() {return this;}
 		virtual const Npc* getNpc() const {return this;}
 
-		virtual bool isPushable() const { return true;}
+		virtual bool isPushable() const { return walkTicks > 0;}
 
 		virtual uint32_t idRange(){ return 0x80000000;}
 		static AutoList<Npc> listNpc;

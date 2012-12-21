@@ -24,7 +24,6 @@
 #include "otsystem.h"
 #include "creature.h"
 #include "container.h"
-#include "depot.h"
 #include "cylinder.h"
 #include "outfit.h"
 #include "enums.h"
@@ -32,6 +31,9 @@
 #include "protocolgame.h"
 #include "ioguild.h"
 #include "party.h"
+#include "inbox.h"
+#include "depotchest.h"
+#include "depotlocker.h"
 
 #include <vector>
 #include <ctime>
@@ -44,6 +46,7 @@ class ProtocolGame;
 class Npc;
 class Party;
 class SchedulerTask;
+class Bed;
 
 enum skillsid_t
 {
@@ -129,9 +132,10 @@ struct VIPEntry
 
 typedef std::pair<uint32_t, Container*> containervector_pair;
 typedef std::vector<containervector_pair> ContainerVector;
-typedef std::map<uint32_t, Depot*> DepotMap;
+typedef std::map<uint32_t, DepotChest*> DepotMap;
+typedef std::map<uint32_t, DepotLocker*> DepotLockerMap;
 typedef std::map<uint32_t, int32_t> StorageMap;
-typedef std::set<uint32_t> VIPListSet;
+typedef OTSERV_HASH_SET<uint32_t> VIPListSet;
 typedef std::map<uint32_t, uint32_t> MuteCountMap;
 typedef std::list<std::string> LearnedInstantSpellList;
 typedef std::list<uint32_t> InvitedToGuildsList;
@@ -218,7 +222,8 @@ class Player : public Creature, public Cylinder
 		bool hasRequestedOutfit() const {return requestedOutfit;}
 		void hasRequestedOutfit(bool newValue) {requestedOutfit = newValue;}
 
-		const DepotMap& getDepots() const { return depots; }
+		Inbox* getInbox() const { return inbox; }
+		const DepotMap& getDepotChests() const { return depotChests; }
 
 		GuildWarList getGuildWarList() const {return guildWarList;}
 		void setGuildWarList(GuildWarList _guildWarList) {guildWarList = _guildWarList;}
@@ -258,6 +263,9 @@ class Player : public Creature, public Cylinder
 		void setFlags(uint64_t flags){groupFlags = flags;}
 		bool hasFlag(PlayerFlags value) const {return (0 != (groupFlags & ((uint64_t)1 << value)));}
 
+		BedItem* getBedItem() { return bedItem; }
+		void setBedItem(BedItem* b) { bedItem = b; }
+
 		void addBlessing(int16_t blessing) {blessings += blessing;}
 		bool hasBlessing(int16_t value) const {return (0 != (blessings & ((int16_t)1 << value)));}
 
@@ -287,6 +295,9 @@ class Player : public Creature, public Cylinder
 
 		void setMarketDepotId(int16_t newId) { marketDepotId = newId; }
 		int16_t getMarketDepotId() const { return marketDepotId; }
+
+		void setLastDepotId(int16_t newId) { lastDepotId = newId; }
+		int16_t getLastDepotId() const { return lastDepotId; }
 
 		void resetIdleTime() {idleTime = 0;}
 		bool getNoMove() const {return mayNotMove;}
@@ -323,6 +334,10 @@ class Player : public Creature, public Cylinder
 		const Position& getTemplePosition() const {return masterPos;}
 		uint32_t getTown() const {return town;}
 		void setTown(uint32_t _town) {town = _town;}
+
+		void clearModalWindows();
+		bool hasModalWindowOpen(uint32_t modalWindowId) const;
+		void onModalWindowHandled(uint32_t modalWindowId);
 
 		virtual bool isPushable() const;
 		virtual int32_t getThrowRange() const {return 1;}
@@ -369,10 +384,10 @@ class Player : public Creature, public Cylinder
 
 		void setConditionSuppressions(uint32_t conditions, bool remove);
 
-		Depot* getDepot(uint32_t depotId, bool autoCreateDepot);
-		bool addDepot(Depot* depot, uint32_t depotId);
-		void onReceiveMail(uint32_t depotId);
-		bool isNearDepotBox(uint32_t depotId);
+		DepotChest* getDepotChest(uint32_t depotId, bool autoCreate);
+		DepotLocker* getDepotLocker(uint32_t depotId);
+		void onReceiveMail();
+		bool isNearDepotBox();
 
 		virtual bool canSee(const Position& pos) const;
 		virtual bool canSeeCreature(const Creature* creature) const;
@@ -410,10 +425,9 @@ class Player : public Creature, public Cylinder
 		}
 
 		//V.I.P. functions
-		void notifyLogIn(Player* player);
-		void notifyLogOut(Player* player);
+		void notifyStatusChange(Player* player, VipStatus_t status);
 		bool removeVIP(uint32_t guid);
-		bool addVIP(uint32_t guid, std::string& name, bool isOnline);
+		bool addVIP(uint32_t guid, std::string& name, VipStatus_t status);
 		bool addVIPInternal(uint32_t guid);
 		bool editVIP(uint32_t _guid, const std::string& description, uint32_t icon, bool notify);
 
@@ -585,6 +599,7 @@ class Player : public Creature, public Cylinder
 			{if(client) client->sendHealMessage(mclass, message, pos, heal, color);}
 		void sendExperienceMessage(MessageClasses mclass, const std::string& message, const Position& pos, uint32_t exp, TextColor_t color)
 			{if(client) client->sendExperienceMessage(mclass, message, pos, exp, color);}
+		void sendModalWindow(const ModalWindow& modalWindow);
 
 		//container
 		void sendAddContainerItem(const Container* container, const Item* item);
@@ -715,9 +730,11 @@ class Player : public Creature, public Cylinder
 		void sendAddMarker(const Position& pos, uint8_t markType, const std::string& desc)
 			{if(client) client->sendAddMarker(pos, markType, desc);}
 		void sendQuestLog()
-			{if(client) client->sendQuestLog(); }
+			{if(client) client->sendQuestLog();}
 		void sendQuestLine(const Quest* quest)
-			{if(client) client->sendQuestLine(quest); }
+			{if(client) client->sendQuestLine(quest);}
+		void sendEnterWorld()
+			{if(client) client->sendEnterWorld();}
 
 		void receivePing() {lastPong = OTSYS_TIME();}
 
@@ -751,7 +768,8 @@ class Player : public Creature, public Cylinder
 		void preSave();
 
 		//depots
-		DepotMap depots;
+		DepotMap depotChests;
+		DepotLockerMap depotLockerMap;
 		uint32_t maxDepotLimit;
 
 	protected:
@@ -837,12 +855,15 @@ class Player : public Creature, public Cylinder
 		bool ghostMode;
 		bool depotChange;
 
+		std::list<uint32_t> modalWindows;
+
 		int32_t offlineTrainingSkill;
 		int32_t offlineTrainingTime;
 
 		AccountManager* accountManager;
 
 		int16_t marketDepotId;
+		int16_t lastDepotId;
 
 		bool mayNotMove;
 		bool requestedOutfit;
@@ -906,6 +927,8 @@ class Player : public Creature, public Cylinder
 
 		std::map<uint32_t, uint32_t> goodsMap;
 
+		Inbox* inbox;
+
 		std::string name;
 		std::string nameDescription;
 		uint32_t guid;
@@ -932,6 +955,8 @@ class Player : public Creature, public Cylinder
 
 		OutfitList m_playerOutfits;
 
+		BedItem* bedItem;
+
 		//read/write storage data
 		uint32_t windowTextId;
 		Item* writeItem;
@@ -957,7 +982,7 @@ class Player : public Creature, public Cylinder
 		void updateBaseSpeed()
 		{
 			if(!hasFlag(PlayerFlag_SetMaxSpeed))
-				baseSpeed = vocation->getBaseSpeed() + (2* (level - 1));
+				baseSpeed = vocation->getBaseSpeed() + (2 * (level - 1));
 			else
 				baseSpeed = PLAYER_MAX_SPEED;
 		}

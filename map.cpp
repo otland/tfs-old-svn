@@ -338,6 +338,7 @@ void Map::getSpectatorsInternal(SpectatorVec& list, const Position& centerPos, b
 					{
 						Creature* creature = *node_iter;
 						const Position& cpos = creature->getPosition();
+
 						int32_t offsetZ = centerPos.z - cpos.z;
 						if(cpos.z < minRangeZ || cpos.z > maxRangeZ)
 							continue;
@@ -623,15 +624,19 @@ bool Map::getPathTo(const Creature* creature, const Position& destPos,
 	if(startPos.z != endPos.z)
 		return false;
 
+	OTSERV_HASH_MAP<uint32_t, AStarNode*> nodeTable;
+
 	AStarNodes nodes;
 	AStarNode* startNode = nodes.createOpenNode();
+
+	nodeTable[(startPos.x * 0xFFFF) + startPos.y] = startNode;
 
 	startNode->x = startPos.x;
 	startNode->y = startPos.y;
 
 	startNode->g = 0;
 	startNode->h = nodes.getEstimatedDistance(startPos.x, startPos.y, endPos.x, endPos.y);
-	startNode->f = startNode->g + startNode->h;
+	startNode->f = startNode->h;
 	startNode->parent = NULL;
 
 	Position pos;
@@ -688,18 +693,22 @@ bool Map::getPathTo(const Creature* creature, const Position& destPos,
 					int32_t cost = nodes.getMapWalkCost(creature, n, tile, pos);
 					int32_t extraCost = nodes.getTileWalkCost(creature, tile);
 					int32_t newg = n->g + cost + extraCost;
+					uint32_t tableIndex = (pos.x * 0xFFFF) + pos.y;
 
 					//Check if the node is already in the closed/open list
 					//If it exists and the nodes already on them has a lower cost (g) then we can ignore this neighbour node
 
-					AStarNode* neighbourNode = nodes.getNodeInList(pos.x, pos.y);
+					AStarNode* neighbourNode;
+					OTSERV_HASH_MAP<uint32_t, AStarNode*>::iterator it = nodeTable.find(tableIndex);
+					if(it != nodeTable.end())
+						neighbourNode = it->second;
+					else
+						neighbourNode = NULL;
+
 					if(neighbourNode)
 					{
 						if(neighbourNode->g <= newg)
-						{
-							//The node on the closed/open list is cheaper than this one
-							continue;
-						}
+							continue; //The node on the closed/open list is cheaper than this one
 
 						nodes.openNode(neighbourNode);
 					}
@@ -713,16 +722,18 @@ bool Map::getPathTo(const Creature* creature, const Position& destPos,
 							listDir.clear();
 							return false;
 						}
+
+						nodeTable[tableIndex] = neighbourNode;
+
+						neighbourNode->x = pos.x;
+						neighbourNode->y = pos.y;
 					}
 
 					//This node is the best node so far with this state
-					neighbourNode->x = pos.x;
-					neighbourNode->y = pos.y;
 					neighbourNode->parent = n;
 					neighbourNode->g = newg;
-					neighbourNode->h = nodes.getEstimatedDistance(neighbourNode->x, neighbourNode->y,
-						endPos.x, endPos.y);
-					neighbourNode->f = neighbourNode->g + neighbourNode->h;
+					neighbourNode->h = nodes.getEstimatedDistance(pos.x, pos.y, endPos.x, endPos.y);
+					neighbourNode->f = newg + neighbourNode->h;
 				}
 			}
 
@@ -776,8 +787,12 @@ bool Map::getPathMatching(const Creature* creature, std::list<Direction>& dirLis
 	Position startPos = creature->getPosition();
 	Position endPos;
 
+	OTSERV_HASH_MAP<uint32_t, AStarNode*> nodeTable;
+
 	AStarNodes nodes;
 	AStarNode* startNode = nodes.createOpenNode();
+
+	nodeTable[(startPos.x * 0xFFFF) + startPos.y] = startNode;
 
 	startNode->x = startPos.x;
 	startNode->y = startPos.y;
@@ -854,11 +869,19 @@ bool Map::getPathMatching(const Creature* creature, std::list<Direction>& dirLis
 				int32_t cost = nodes.getMapWalkCost(creature, n, tile, pos);
 				int32_t extraCost = nodes.getTileWalkCost(creature, tile);
 				int32_t newf = n->f + cost + extraCost;
+				uint32_t tableIndex = (pos.x * 0xFFFF) + pos.y;
 
 				//Check if the node is already in the closed/open list
 				//If it exists and the nodes already on them has a lower cost (g) then we can ignore this neighbour node
 
-				AStarNode* neighbourNode = nodes.getNodeInList(pos.x, pos.y);
+				AStarNode* neighbourNode;
+
+				OTSERV_HASH_MAP<uint32_t, AStarNode*>::iterator it = nodeTable.find(tableIndex);
+				if(it != nodeTable.end())
+					neighbourNode = it->second;
+				else
+					neighbourNode = NULL;
+
 				if(neighbourNode)
 				{
 					if(neighbourNode->f <= newf)
@@ -884,11 +907,14 @@ bool Map::getPathMatching(const Creature* creature, std::list<Direction>& dirLis
 						dirList.clear();
 						return false;
 					}
+
+					nodeTable[tableIndex] = neighbourNode;
+
+					neighbourNode->x = pos.x;
+					neighbourNode->y = pos.y;
 				}
 
 				//This node is the best node so far with this state
-				neighbourNode->x = pos.x;
-				neighbourNode->y = pos.y;
 				neighbourNode->parent = n;
 				neighbourNode->f = newf;
 			}
@@ -1027,26 +1053,6 @@ uint32_t AStarNodes::countOpenNodes()
 			counter++;
 	}
 	return counter;
-}
-
-bool AStarNodes::isInList(int32_t x, int32_t y)
-{
-	for(uint32_t i = 0; i < curNode; i++)
-	{
-		if(nodes[i].x == x && nodes[i].y == y)
-			return true;
-	}
-	return false;
-}
-
-AStarNode* AStarNodes::getNodeInList(int32_t x, int32_t y)
-{
-	for(uint32_t i = 0; i < curNode; i++)
-	{
-		if(nodes[i].x == x && nodes[i].y == y)
-			return &nodes[i];
-	}
-	return NULL;
 }
 
 int32_t AStarNodes::getMapWalkCost(const Creature* creature, AStarNode* node,
@@ -1210,8 +1216,7 @@ uint32_t Map::clean()
 	if(g_game.getGameState() == GAME_STATE_NORMAL)
 		g_game.setGameState(GAME_STATE_MAINTAIN);
 
-	Tile* tile = NULL;
-	ItemVector::iterator it;
+	Tile* tile;
 	for(int32_t z = 0; z < (int32_t)MAP_MAX_LAYERS; z++)
 	{
 		for(uint32_t y = 1; y <= mapHeight; y++)

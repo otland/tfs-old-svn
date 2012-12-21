@@ -25,6 +25,7 @@
 #include "protocol.h"
 #include "enums.h"
 #include "creature.h"
+#include "modalwindow.h"
 
 enum connectResult_t
 {
@@ -61,15 +62,15 @@ class ProtocolGame : public Protocol
 
 		virtual int32_t getProtocolId() {return 0x0A;}
 
-		bool login(const std::string& name, uint32_t accnumber, const std::string& password, uint16_t operatingSystem, uint8_t gamemasterLogin, std::list<uint8_t> openChannels);
+		bool login(const std::string& name, uint32_t accnumber, const std::string& password, uint16_t clientVersion, uint16_t operatingSystem, uint8_t gamemasterLogin);
 		bool logout(bool displayEffect, bool forced);
 
 		void setPlayer(Player* p);
 
 	private:
-		std::list<uint32_t> knownCreatureList;
+		OTSERV_HASH_SET<uint32_t> knownCreatureSet;
 
-		bool connect(uint32_t playerId, std::list<uint8_t> openChannels);
+		bool connect(uint32_t playerId);
 		void disconnect();
 		void disconnectClient(uint8_t error, const char* message);
 
@@ -139,6 +140,8 @@ class ProtocolGame : public Protocol
 		void parseToggleMount(NetworkMessage& msg);
 
 		void parseRuleViolationReport(NetworkMessage& msg);
+
+		void parseModalWindowAnswer(NetworkMessage& msg);
 
 		//trade methods
 		void parseRequestTrade(NetworkMessage& msg);
@@ -232,9 +235,11 @@ class ProtocolGame : public Protocol
 		void sendHouseWindow(uint32_t windowTextId, House* house, uint32_t listId, const std::string& text);
 		void sendOutfitWindow();
 
-		void sendVIPLogIn(uint32_t guid);
-		void sendVIPLogOut(uint32_t guid);
-		void sendVIP(uint32_t guid, const std::string& name, const std::string& description, uint32_t icon, bool notify, bool isOnline);
+		void sendUpdatedVIPStatus(uint32_t guid, VipStatus_t newStatus);
+		void sendVIP(uint32_t guid, const std::string& name, const std::string& description, uint32_t icon, bool notify, VipStatus_t status);
+
+		void sendPendingStateEntered();
+		void sendEnterWorld();
 
 		void sendCreatureLight(const Creature* creature);
 		void sendWorldLight(const LightInfo& lightInfo);
@@ -274,6 +279,7 @@ class ProtocolGame : public Protocol
 			uint32_t secondaryDamage = 0, TextColor_t secondaryColor = TEXTCOLOR_NONE);
 		void sendHealMessage(MessageClasses mclass, const std::string& message, const Position& pos, uint32_t heal, TextColor_t color);
 		void sendExperienceMessage(MessageClasses mclass, const std::string& message, const Position& pos, uint32_t exp, TextColor_t color);
+		void sendModalWindow(const ModalWindow& modalWindow);
 
 		//Help functions
 

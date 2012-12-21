@@ -821,7 +821,8 @@ MagicEffectNames magicEffectNames[] =
 	{"thunder",		NM_ME_THUNDER},
 	{"ferumbras",		NM_ME_FERUMBRAS},
 	{"confettihorizontal",	NM_ME_CONFETTI_HORIZONTAL},
-	{"confettivertical",	NM_ME_CONFETTI_VERTICAL}
+	{"confettivertical",	NM_ME_CONFETTI_VERTICAL},
+	{"blacksmoke",		NM_ME_BLACKSMOKE}
 };
 
 ShootTypeNames shootTypeNames[] =
@@ -1309,4 +1310,17 @@ uint8_t clientFluidToServer(uint8_t clientFluid)
 		return 0;
 
 	return clientToServerFluidMap[clientFluid];
+}
+
+std::string getFirstLine(std::string str)
+{
+	std::string firstLine = "";
+	for(uint32_t i = 0, strLength = str.length(); i < strLength; ++i)
+	{
+		if(str[i] == '\n')
+			break;
+
+		firstLine += str[i];
+	}
+	return firstLine;
 }

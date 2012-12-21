@@ -6332,9 +6332,9 @@ int32_t LuaScriptInterface::luaGetPlayerDepotItems(lua_State* L)
 	Player* player = env->getPlayerByUID(cid);
 	if(player)
 	{
-		const Depot* depot = player->getDepot(depotid, true);
-		if(depot)
-			lua_pushnumber(L, depot->getItemHoldingCount());
+		const DepotChest* depotChest = player->getDepotChest(depotid, true);
+		if(depotChest)
+			lua_pushnumber(L, depotChest->getItemHoldingCount());
 		else
 		{
 			reportErrorFunc("Depot not found");
@@ -6532,7 +6532,7 @@ int32_t LuaScriptInterface::luaIsDepot(lua_State* L)
 
 	ScriptEnvironment* env = getScriptEnv();
 	Container* container = env->getContainerByUID(uid);
-	if(container && container->getDepot())
+	if(container && container->getDepotLocker())
 	{
 		lua_pushboolean(L, true);
 		return 1;
@@ -6883,9 +6883,9 @@ int32_t LuaScriptInterface::luaGetDepotId(lua_State* L)
 	Container* container = env->getContainerByUID(uid);
 	if(container)
 	{
-		Depot* depot = container->getDepot();
-		if(depot)
-			lua_pushnumber(L, depot->getDepotId());
+		DepotLocker* depotLocker = container->getDepotLocker();
+		if(depotLocker)
+			lua_pushnumber(L, depotLocker->getDepotId());
 		else
 		{
 			reportErrorFunc("Depot not found");

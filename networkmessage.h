@@ -149,6 +149,8 @@ class NetworkMessage
 		void AddString(const std::string& value);
 		void AddString(const char* value);
 
+		void AddDouble(double value, uint8_t precision = 2);
+
 		// write functions for complex types
 		void AddPosition(const Position &pos);
 		void AddItem(uint16_t id, uint8_t count);
@@ -182,7 +184,7 @@ class NetworkMessage
 
 		inline bool canRead(int32_t size)
 		{
-			if(size >= (NETWORKMESSAGE_MAXSIZE - m_ReadPos))
+			if((m_ReadPos + size) > (m_MsgSize + 8) || size >= (NETWORKMESSAGE_MAXSIZE - m_ReadPos))
 			{
 				m_overrun = true;
 				return false;

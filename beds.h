@@ -56,7 +56,8 @@ class BedItem : public Item
 
 		bool canUse(Player* player);
 
-		void sleep(Player* player);
+		bool trySleep(Player* player);
+		bool sleep(Player* player);
 		void wakeUp(Player* player);
 
 		BedItem* getNextBedItem();

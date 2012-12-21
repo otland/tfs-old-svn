@@ -301,7 +301,11 @@ ReturnValue Actions::internalUseItem(Player* player, const Position& pos,
 		if(!bed->canUse(player))
 			return RET_CANNOTUSETHISOBJECT;
 
-		bed->sleep(player);
+		if(bed->trySleep(player))
+		{
+			player->setBedItem(bed);
+			g_game.sendOfflineTrainingDialog(player);
+		}
 		return RET_NOERROR;
 	}
 
@@ -309,12 +313,13 @@ ReturnValue Actions::internalUseItem(Player* player, const Position& pos,
 	{
 		Container* openContainer = NULL;
 		//depot container
-		if(Depot* depot = container->getDepot())
+		if(DepotLocker* depot = container->getDepotLocker())
 		{
-			Depot* myDepot = player->getDepot(depot->getDepotId(), true);
-			myDepot->setParent(depot->getParent());
-			openContainer = myDepot;
+			DepotLocker* myDepotLocker = player->getDepotLocker(depot->getDepotId());
+			myDepotLocker->setParent(depot->getParent());
+			openContainer = myDepotLocker;
 			player->setDepotChange(true);
+			player->setLastDepotId(depot->getDepotId());
 		}
 		else
 			openContainer = container;
@@ -514,20 +519,10 @@ bool Action::enterMarket(Player* player, Item* item, const PositionEx& posFrom, 
 		return false;
 	}
 
-	Depot* depot = NULL;
-	if(Thing* thing = item->getParent())
-	{
-		if(Item* parentItem = thing->getItem())
-		{
-			if(Container* parentContainer = parentItem->getContainer())
-				depot = parentContainer->getDepot();
-		}
-	}
-
-	if(depot == NULL)
+	if(player->getLastDepotId() == -1)
 		return false;
 
-	player->sendMarketEnter(depot->getDepotId());
+	player->sendMarketEnter(player->getLastDepotId());
 	return true;
 }
 

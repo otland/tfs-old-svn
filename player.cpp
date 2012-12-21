@@ -100,7 +100,7 @@ Creature()
 	lastLogout = 0;
  	lastIP = 0;
 	lastPing = OTSYS_TIME();
-	lastPong = OTSYS_TIME();
+	lastPong = lastPing;
 	MessageBufferTicks = 0;
 	MessageBufferCount = 0;
 	nextAction = 0;
@@ -129,9 +129,12 @@ Creature()
 	mayNotMove = false;
 
 	marketDepotId = -1;
+	lastDepotId = -1;
 
 	chaseMode = CHASEMODE_STANDSTILL;
 	fightMode = FIGHTMODE_ATTACK;
+
+	bedItem = NULL;
 
 	tradePartner = NULL;
 	tradeState = TRADE_NONE;
@@ -188,6 +191,9 @@ Creature()
 
 	bankBalance = 0;
 
+	inbox = new Inbox(ITEM_INBOX);
+	inbox->useThing2();
+
 	offlineTrainingSkill = -1;
 	offlineTrainingTime = 0;
 	lastStatsTrainingTime = 0;
@@ -212,8 +218,12 @@ Player::~Player()
 		}
 	}
 
-	for(DepotMap::iterator it = depots.begin(), end = depots.end(); it != end; ++it)
+	for(DepotLockerMap::iterator it = depotLockerMap.begin(), end = depotLockerMap.end(); it != end; ++it)
+	{
+		it->second->removeInbox(inbox);
 		it->second->releaseThing2();
+	}
+	inbox->releaseThing2();
 
 	//std::cout << "Player destructor " << this << std::endl;
 
@@ -568,8 +578,7 @@ void Player::sendIcons() const
 {
 	if(client)
 	{
-		int32_t icons = 0;
-
+		uint32_t icons = 0;
 		ConditionList::const_iterator it;
 		for(it = conditions.begin(); it != conditions.end(); ++it)
 		{
@@ -592,7 +601,18 @@ void Player::sendIcons() const
 		if(!getCondition(CONDITION_REGENERATION))
 			icons |= ICON_HUNGRY;
 
-		client->sendIcons(icons);
+		// Tibia client debugs with 10 or more icons
+		// so let's prevent that from happening.
+		std::bitset<20> icon_bitset((uint64_t)icons);
+		for(size_t i = 0, size = icon_bitset.size(); i < size; ++i)
+		{
+			if(icon_bitset.count() < 10)
+				break;
+
+			if(icon_bitset[i])
+				icon_bitset.reset(i);
+		}
+		client->sendIcons(icon_bitset.to_ulong());
 	}
 }
 
@@ -996,13 +1016,13 @@ bool Player::canWalkthroughEx(const Creature* creature) const
 	return playerTile && playerTile->hasFlag(TILESTATE_PROTECTIONZONE);
 }
 
-void Player::onReceiveMail(uint32_t depotId)
+void Player::onReceiveMail()
 {
-	if(isNearDepotBox(depotId))
+	if(isNearDepotBox())
 		sendTextMessage(MSG_INFO_DESCR, "New mail has arrived.");
 }
 
-bool Player::isNearDepotBox(uint32_t depotId)
+bool Player::isNearDepotBox()
 {
 	Position pos = getPosition();
 	for(int32_t cx = -1; cx <= 1; ++cx)
@@ -1011,117 +1031,47 @@ bool Player::isNearDepotBox(uint32_t depotId)
 		{
 			Tile* tile = g_game.getTile(pos.x + cx, pos.y + cy, pos.z);
 			if(!tile)
-				return false;
-
-			if(!tile->hasFlag(TILESTATE_DEPOT))
 				continue;
 
-			for(uint32_t i = 0; i < tile->getThingCount(); ++i)
-			{
-				if(Item* item = tile->__getThing(i)->getItem())
-				{
-					const ItemType& it = Item::items[item->getID()];
-					if(it.type == ITEM_TYPE_DEPOT)
-					{
-						Depot* depot = NULL;
-						if(item->getContainer() && (depot = item->getContainer()->getDepot()))
-						{
-							if(depot->getDepotId() == depotId)
-								return true;
-						}
-					}
-				}
-			}
+			if(tile->hasFlag(TILESTATE_DEPOT))
+				return true;
 		}
 	}
 	return false;
 }
 
-Depot* Player::getDepot(uint32_t depotId, bool autoCreateDepot)
+DepotChest* Player::getDepotChest(uint32_t depotId, bool autoCreate)
 {
-	DepotMap::iterator it = depots.find(depotId);
-	if(it != depots.end())
+	DepotMap::iterator it = depotChests.find(depotId);
+	if(it != depotChests.end())
 		return it->second;
 
-	//depot does not yet exist
+	if(!autoCreate)
+		return NULL;
 
-	//create a new depot?
-	if(autoCreateDepot)
-	{
-		Depot* depot;
-		Item* tmpDepot = Item::CreateItem(ITEM_LOCKER);
-		if(tmpDepot->getContainer() && (depot = tmpDepot->getContainer()->getDepot()))
-		{
-			Item* market = Item::CreateItem(ITEM_MARKET);
-			depot->__internalAddThing(market);
-
-			Item* inbox = Item::CreateItem(ITEM_INBOX);
-			depot->__internalAddThing(inbox);
-			depot->setInbox(inbox->getContainer());
-
-			Item* depotChest = Item::CreateItem(ITEM_DEPOT);
-			depot->__internalAddThing(depotChest);
-			depot->setChest(depotChest->getContainer());
-
-			addDepot(depot, depotId);
-			return depot;
-		}
-		else
-		{
-			g_game.FreeThing(tmpDepot);
-			std::cout << "Failure: Creating a new depot with id: " << depotId <<
-				", for player: " << getName() << std::endl;
-		}
-	}
-	return NULL;
+	DepotChest* depotChest = new DepotChest(ITEM_DEPOT);
+	depotChest->useThing2();
+	depotChest->setMaxDepotLimit(maxDepotLimit);
+	depotChests[depotId] = depotChest;
+	return depotChest;
 }
 
-bool Player::addDepot(Depot* depot, uint32_t depotId)
+DepotLocker* Player::getDepotLocker(uint32_t depotId)
 {
-	if(getDepot(depotId, false))
-		return false;
-
-	for(ItemList::const_iterator it = depot->getItems(), end = depot->getEnd(); it != end; ++it)
+	DepotLockerMap::iterator it = depotLockerMap.find(depotId);
+	if(it != depotLockerMap.end())
 	{
-		Item* item = *it;
-		if(item->getID() == ITEM_DEPOT)
-		{
-			depot->setChest(item->getContainer());
-			if(depot->getInbox())
-				break;
-		}
-		else if(item->getID() == ITEM_INBOX)
-		{
-			depot->setInbox(item->getContainer());
-			if(depot->getChest())
-				break;
-		}
+		inbox->setParent(it->second);
+		return it->second;
 	}
 
-	if(!depot->getChest())
-	{
-		Item* chest = Item::CreateItem(ITEM_DEPOT);
-		depot->__internalAddThing(chest);
-		depot->setChest(chest->getContainer());
-		depotChange = true;
-	}
-
-	if(!depot->getInbox())
-	{
-		depot->__internalAddThing(Item::CreateItem(ITEM_MARKET));
-
-		Item* inbox = Item::CreateItem(ITEM_INBOX);
-		depot->__internalAddThing(inbox);
-		depot->setInbox(inbox->getContainer());
-
-		depot->moveChestToFront();
-		depotChange = true;
-	}
-
-	depots[depotId] = depot;
-	depot->setDepotId(depotId);
-	depot->setMaxDepotLimit(maxDepotLimit);
-	return true;
+	DepotLocker* depotLocker = new DepotLocker(ITEM_LOCKER1);
+	depotLocker->setDepotId(depotId);
+	depotLocker->__internalAddThing(Item::CreateItem(ITEM_MARKET));
+	depotLocker->__internalAddThing(inbox);
+	depotLocker->__internalAddThing(getDepotChest(depotId, true));
+	depotLockerMap[depotId] = depotLocker;
+	return depotLocker;
 }
 
 void Player::sendCancelMessage(ReturnValue message) const
@@ -1754,6 +1704,13 @@ void Player::onCreatureMove(const Creature* creature, const Tile* newTile, const
 		}
 	}
 
+	// close modal windows
+	if(modalWindows.size() > 0)
+	{
+		sendTextMessage(MSG_EVENT_ADVANCE, "Offline training aborted.");
+		modalWindows.clear();
+	}
+
 	if(getParty())
 		getParty()->updateSharedExperience();
 
@@ -1943,7 +1900,10 @@ void Player::onThink(uint32_t interval)
 	{
 		idleTime += interval;
 		if(idleTime > 150000)
-			kickPlayer(true);
+		{
+			if(!hasCondition(CONDITION_INFIGHT))
+				kickPlayer(true);
+		}
 		else if(client && idleTime == 120000)
 			client->sendTextMessage(MSG_STATUS_WARNING, "You have been idle for two minutes, you will be disconnected in 30 seconds if you are still idle then.");
 	}
@@ -2266,7 +2226,6 @@ BlockType_t Player::blockHit(Creature* attacker, CombatType_t combatType, int32_
 
 	if(damage > 0)
 	{
-		int32_t blocked = 0;
 		for(int32_t slot = SLOT_FIRST; slot < SLOT_LAST; ++slot)
 		{
 			if(!isItemAbilityEnabled((slots_t)slot))
@@ -2282,21 +2241,19 @@ BlockType_t Player::blockHit(Creature* attacker, CombatType_t combatType, int32_
 				const int16_t& absorbPercent = it.abilities->absorbPercent[combatTypeToIndex(combatType)];
 				if(absorbPercent != 0)
 				{
-					blocked += (int32_t)std::ceil((float)damage * absorbPercent / 100);
+					damage -= std::ceil(damage * (absorbPercent / 100.));
 					if(item->hasCharges())
 						g_game.transformItem(item, item->getID(), std::max((int32_t)0, (int32_t)item->getCharges() - 1));
 				}
 			}
 		}
 
-		damage -= blocked;
 		if(damage <= 0)
 		{
 			damage = 0;
 			blockType = BLOCK_DEFENSE;
 		}
 	}
-
 	return blockType;
 }
 
@@ -2532,7 +2489,7 @@ void Player::removeList()
 {
 	listPlayer.removeList(getID());
 	for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
-		(*it).second->notifyLogOut(this);
+		(*it).second->notifyStatusChange(this, VIPSTATUS_OFFLINE);
 
 	Status::getInstance()->removePlayer();
 }
@@ -2540,7 +2497,7 @@ void Player::removeList()
 void Player::addList()
 {
 	for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
-		(*it).second->notifyLogIn(this);
+		(*it).second->notifyStatusChange(this, VIPSTATUS_ONLINE);
 	listPlayer.addList(this);
 
 	Status::getInstance()->addPlayer();
@@ -2557,30 +2514,20 @@ void Player::kickPlayer(bool displayEffect)
 	}
 }
 
-void Player::notifyLogIn(Player* login_player)
+void Player::notifyStatusChange(Player* loginPlayer, VipStatus_t status)
 {
-	if(client)
-	{
-		VIPListSet::iterator it = VIPList.find(login_player->getGUID());
-		if(it != VIPList.end())
-		{
-			client->sendVIPLogIn(login_player->getGUID());
-			client->sendTextMessage(MSG_STATUS_SMALL, (login_player->getName() + " has logged in."));
-		}
-	}
-}
+	if(!client)
+		return;
 
-void Player::notifyLogOut(Player* logout_player)
-{
-	if(client)
-	{
-		VIPListSet::iterator it = VIPList.find(logout_player->getGUID());
-		if(it != VIPList.end())
-		{
-			client->sendVIPLogOut(logout_player->getGUID());
-			client->sendTextMessage(MSG_STATUS_SMALL, (logout_player->getName() + " has logged out."));
-		}
-	}
+	VIPListSet::iterator it = VIPList.find(loginPlayer->getGUID());
+	if(it == VIPList.end())
+		return;
+
+	client->sendUpdatedVIPStatus(loginPlayer->getGUID(), status);
+	if(status == VIPSTATUS_ONLINE)
+		client->sendTextMessage(MSG_STATUS_SMALL, (loginPlayer->getName() + " has logged in."));
+	else if(status == VIPSTATUS_OFFLINE)
+		client->sendTextMessage(MSG_STATUS_SMALL, (loginPlayer->getName() + " has logged out."));
 }
 
 bool Player::removeVIP(uint32_t _guid)
@@ -2595,7 +2542,7 @@ bool Player::removeVIP(uint32_t _guid)
 	return false;
 }
 
-bool Player::addVIP(uint32_t _guid, std::string& name, bool isOnline)
+bool Player::addVIP(uint32_t _guid, std::string& name, VipStatus_t status)
 {
 	if(guid == _guid)
 	{
@@ -2620,7 +2567,7 @@ bool Player::addVIP(uint32_t _guid, std::string& name, bool isOnline)
 
 	IOLoginData::getInstance()->addVIPEntry(accountNumber, _guid, "", 0, false);
 	if(client)
-		client->sendVIP(_guid, name, "", 0, false, isOnline);
+		client->sendVIP(_guid, name, "", 0, false, status);
 
 	return true;
 }
@@ -2683,18 +2630,16 @@ bool Player::hasCapacity(const Item* item, uint32_t count) const
 	if(hasFlag(PlayerFlag_CannotPickupItem))
 		return false;
 
-	if(!hasFlag(PlayerFlag_HasInfiniteCapacity) && item->getTopParent() != this)
-	{
-		double itemWeight = 0;
-		if(item->isStackable())
-			itemWeight = Item::items[item->getID()].weight * count;
-		else
-			itemWeight = item->getWeight();
+	if(hasFlag(PlayerFlag_HasInfiniteCapacity) || item->getTopParent() == this)
+		return true;
 
-		return (itemWeight < getFreeCapacity());
-	}
+	double itemWeight = 0;
+	if(item->isStackable())
+		itemWeight = Item::items[item->getID()].weight * count;
+	else
+		itemWeight = item->getWeight();
 
-	return true;
+	return itemWeight <= getFreeCapacity();
 }
 
 ReturnValue Player::__queryAdd(int32_t index, const Thing* thing, uint32_t count, uint32_t flags, Creature* actor/* = NULL*/) const
@@ -3481,12 +3426,12 @@ void Player::postRemoveNotification(Thing* thing, const Cylinder* newParent, int
 				onSendContainer(container);
 			else if(const Container* topContainer = dynamic_cast<const Container*>(container->getTopParent()))
 			{
-				if(const Depot* depot = dynamic_cast<const Depot*>(topContainer))
+				if(const DepotChest* depotChest = dynamic_cast<const DepotChest*>(topContainer))
 				{
 					bool isOwner = false;
-					for(DepotMap::iterator it = depots.begin(); it != depots.end(); ++it)
+					for(DepotMap::iterator it = depotChests.begin(); it != depotChests.end(); ++it)
 					{
-						if(it->second == depot)
+						if(it->second == depotChest)
 						{
 							isOwner = true;
 							onSendContainer(container);
@@ -4223,7 +4168,13 @@ Skulls_t Player::getSkullClient(const Player* player) const
 
 	if(player->getSkull() == SKULL_NONE)
 	{
-		if(isInWar(player) || player->hasAttacked(this))
+		if(isInWar(player))
+			return SKULL_GREEN;
+
+		if(!player->getGuildWarList().empty() && guildId == player->getGuildId())
+			return SKULL_GREEN;
+
+		if(player->hasAttacked(this))
 			return SKULL_YELLOW;
 
 		if(isPartner(player))
@@ -4237,10 +4188,7 @@ bool Player::hasAttacked(const Player* attacked) const
 	if(hasFlag(PlayerFlag_NotGainInFight) || !attacked)
 		return false;
 
-	AttackedSet::const_iterator it;
-	uint32_t attackedId = attacked->getID();
-	it = attackedSet.find(attackedId);
-	return it != attackedSet.end();
+	return attackedSet.find(attacked->getGUID()) != attackedSet.end();
 }
 
 void Player::addAttacked(const Player* attacked)
@@ -4248,11 +4196,8 @@ void Player::addAttacked(const Player* attacked)
 	if(hasFlag(PlayerFlag_NotGainInFight) || !attacked || attacked == this)
 		return;
 
-	AttackedSet::iterator it;
-	uint32_t attackedId = attacked->getID();
-	it = attackedSet.find(attackedId);
-	if(it == attackedSet.end())
-		attackedSet.insert(attackedId);
+	if(attackedSet.find(attacked->getGUID()) == attackedSet.end())
+		attackedSet.insert(attacked->getGUID());
 }
 
 void Player::clearAttacked()
@@ -5287,4 +5232,28 @@ bool Player::addOfflineTrainingTries(skills_t skill, int32_t tries)
 	ss << std::fixed << std::setprecision(2) << "Your " << ucwords(getSkillName(skill)) << " skill changed from level " << oldSkillValue << " (with " << oldPercentToNextLevel << "% progress towards level " << (oldSkillValue + 1) << ") to level " << newSkillValue << " (with " << newPercentToNextLevel << "% progress towards level " << (newSkillValue + 1) << ")";
 	sendTextMessage(MSG_EVENT_ADVANCE, ss.str());
 	return sendUpdate;
+}
+
+bool Player::hasModalWindowOpen(uint32_t modalWindowId) const
+{
+	return find(modalWindows.begin(), modalWindows.end(), modalWindowId) != modalWindows.end();
+}
+
+void Player::onModalWindowHandled(uint32_t modalWindowId)
+{
+	modalWindows.remove(modalWindowId);
+}
+
+void Player::sendModalWindow(const ModalWindow& modalWindow)
+{
+	if(!client)
+		return;
+
+	modalWindows.push_back(modalWindow.getID());
+	client->sendModalWindow(modalWindow);
+}
+
+void Player::clearModalWindows()
+{
+	modalWindows.clear();
 }

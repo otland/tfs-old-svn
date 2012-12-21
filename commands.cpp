@@ -54,6 +54,7 @@
 #include "status.h"
 #include "protocollogin.h"
 #endif
+
 #include <libxml/xmlmemory.h>
 #include <libxml/parser.h>
 
@@ -925,17 +926,18 @@ void Commands::buyHouse(Player* player, const std::string& cmd, const std::strin
 		}
 	}
 
-	uint32_t price = 0;
+	uint64_t price = 0;
 	for(HouseTileList::iterator it = house->getHouseTileBegin(), end = house->getHouseTileEnd(); it != end; ++it)
 		price += g_config.getNumber(ConfigManager::HOUSE_PRICE);
 
-	if(g_game.getMoney(player) >= price && g_game.removeMoney(player, price))
+	if(!g_game.removeMoney(player, price))
 	{
-		house->setHouseOwner(player->guid);
-		player->sendTextMessage(MSG_INFO_DESCR, "You have successfully bought this house, be sure to have the money for the rent in your depot of this city.");
-	}
-	else
 		player->sendCancel("You do not have enough money.");
+		return;
+	}
+
+	house->setHouseOwner(player->guid);
+	player->sendTextMessage(MSG_INFO_DESCR, "You have successfully bought this house, be sure to have the money for the rent in your depot of this city.");
 }
 
 void Commands::whoIsOnline(Player* player, const std::string& cmd, const std::string& param)
@@ -1092,7 +1094,7 @@ void Commands::removeThing(Player* player, const std::string& cmd, const std::st
 void Commands::newType(Player* player, const std::string& cmd, const std::string& param)
 {
 	int32_t lookType = atoi(param.c_str());
-	if(lookType >= 0 && lookType != 1 && lookType != 135 && lookType != 411 && lookType != 415 && lookType != 424 && (lookType <= 160 || lookType >= 192) && lookType != 439 && lookType != 440 && lookType != 468 && lookType != 469 && lookType <= 522 && (lookType < 474 || lookType > 485) && lookType != 518 && lookType != 519 && lookType != 520)
+	if(lookType >= 0 && lookType != 1 && lookType != 135 && lookType != 411 && lookType != 415 && lookType != 424 && (lookType <= 160 || lookType >= 192) && lookType != 439 && lookType != 440 && lookType != 468 && lookType != 469 && lookType <= 542 && (lookType < 474 || lookType > 485) && lookType != 518 && lookType != 519 && lookType != 520 && lookType != 524 && lookType != 525 && lookType != 536 && lookType)
 	{
 		Outfit_t newOutfit = player->getDefaultOutfit();
 		newOutfit.lookType = lookType;
@@ -1462,7 +1464,7 @@ void Commands::ghost(Player* player, const std::string& cmd, const std::string& 
 		for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
 		{
 			if(!it->second->isAccessPlayer())
-				it->second->notifyLogOut(player);
+				it->second->notifyStatusChange(player, VIPSTATUS_OFFLINE);
 		}
 
 		IOLoginData::getInstance()->updateOnlineStatus(player->getGUID(), false);
@@ -1474,7 +1476,7 @@ void Commands::ghost(Player* player, const std::string& cmd, const std::string& 
 		for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
 		{
 			if(!it->second->isAccessPlayer())
-				it->second->notifyLogIn(player);
+				it->second->notifyStatusChange(player, VIPSTATUS_ONLINE);
 		}
 
 		IOLoginData::getInstance()->updateOnlineStatus(player->getGUID(), true);
@@ -1487,8 +1489,6 @@ void Commands::ghost(Player* player, const std::string& cmd, const std::string& 
 
 void Commands::multiClientCheck(Player* player, const std::string& cmd, const std::string& param)
 {
-	std::list<uint32_t> ipList;
-
 	player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, "Multiclient Check List:");
 	std::map< uint32_t, std::vector<Player*> > ipMap;
 	for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)

@@ -306,15 +306,8 @@ ReturnValue Container::__queryAdd(int32_t index, const Thing* thing, uint32_t co
 		cylinder = cylinder->getParent();
 	}
 
-	bool skipLimit = hasBitSet(FLAG_NOLIMIT, flags);
-	if(!skipLimit)
-	{
-		if(id == ITEM_INBOX)
-			return RET_CONTAINERNOTENOUGHROOM;
-
-		if(index == INDEX_WHEREEVER && size() >= capacity())
-			return RET_CONTAINERNOTENOUGHROOM;
-	}
+	if(index == INDEX_WHEREEVER && size() >= capacity() && !hasBitSet(FLAG_NOLIMIT, flags))
+		return RET_CONTAINERNOTENOUGHROOM;
 
 	const Cylinder* topParent = getTopParent();
 	if(topParent != this)

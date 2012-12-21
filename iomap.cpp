@@ -26,7 +26,6 @@
 #include "tile.h"
 #include "item.h"
 #include "container.h"
-#include "depot.h"
 #include "teleport.h"
 #include "fileloader.h"
 #include "town.h"

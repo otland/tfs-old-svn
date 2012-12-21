@@ -23,7 +23,7 @@
 
 #include "definitions.h"
 
-#define NETWORKMESSAGE_MAXSIZE 24576
+#define NETWORKMESSAGE_MAXSIZE 32767
 
 enum MagicEffectClasses
 {
@@ -104,7 +104,9 @@ enum MagicEffectClasses
 	NM_ME_FERUMBRAS			= 0x49, //73
 	NM_ME_CONFETTI_HORIZONTAL	= 0x4A, //74
 	NM_ME_CONFETTI_VERTICAL 	= 0x4B, //75
-	NM_ME_LAST			= NM_ME_CONFETTI_VERTICAL,
+	// 76-156 are empty
+	NM_ME_BLACKSMOKE		= 0x9D, //157
+	NM_ME_LAST			= NM_ME_BLACKSMOKE,
 
 	//for internal use, dont send to client
 	NM_ME_NONE             = 0xFF,
@@ -474,7 +476,7 @@ enum item_t
 	ITEM_COINS_CRYSTAL	= 2160,
 
 	ITEM_DEPOT		= 2594,
-	ITEM_LOCKER		= 2589,
+	ITEM_LOCKER1		= 2589,
 	ITEM_INBOX		= 14404,
 	ITEM_MARKET		= 14405,
 

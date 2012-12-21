@@ -27,7 +27,6 @@
 #include "thing.h"
 
 class Action;
-class Container;
 
 class Actions : public BaseEvents
 {

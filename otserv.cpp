@@ -700,7 +700,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 					if(g_game.getGameState() != GAME_STATE_STARTUP)
 					{
 						if(iBox.DoModal("Broadcast Message", "What would you like to broadcast?"))
-							g_game.broadcastMessage(iBox.Text, MSG_STATUS_WARNING);
+							g_dispatcher.addTask(createTask(boost::bind(&Game::broadcastMessage, &g_game, iBox.Text, MSG_STATUS_WARNING)));
 					}
 					break;
 				}
@@ -709,10 +709,8 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 				{
 					if(g_game.getGameState() != GAME_STATE_STARTUP)
 					{
-						if(g_actions->reload())
-							std::cout << "Reloaded actions." << std::endl;
-						else
-							std::cout << "Failed to reload actions." << std::endl;
+						std::cout << "Reloading actions." << std::endl;
+						g_dispatcher.addTask(createTask(boost::bind(&Actions::reload, g_actions)));
 					}
 					break;
 				}
@@ -721,10 +719,8 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 				{
 					if(g_game.getGameState() != GAME_STATE_STARTUP)
 					{
-						if(g_creatureEvents->reload())
-							std::cout << "Reloaded creature events." << std::endl;
-						else
-							std::cout << "Failed to reload creature events." << std::endl;
+						std::cout << "Reloading creature events." << std::endl;
+						g_dispatcher.addTask(createTask(boost::bind(&CreatureEvents::reload, g_creatureEvents)));
 					}
 					break;
 				}
@@ -733,10 +729,8 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 				{
 					if(g_game.getGameState() != GAME_STATE_STARTUP)
 					{
-						if(commands.reload())
-							std::cout << "Reloaded commands." << std::endl;
-						else
-							std::cout << "Failed to reload commands." << std::endl;
+						std::cout << "Reloading commands." << std::endl;
+						g_dispatcher.addTask(createTask(boost::bind(&Commands::reload, &commands)));
 					}
 					break;
 				}
@@ -745,10 +739,8 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 				{
 					if(g_game.getGameState() != GAME_STATE_STARTUP)
 					{
-						if(g_config.reload())
-							std::cout << "Reloaded config." << std::endl;
-						else
-							std::cout << "Failed to reload config." << std::endl;
+						std::cout << "Reloading config." << std::endl;
+						g_dispatcher.addTask(createTask(boost::bind(&ConfigManager::reload, &g_config)));
 					}
 					break;
 				}
@@ -757,10 +749,8 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 				{
 					if(g_game.getGameState() != GAME_STATE_STARTUP)
 					{
-						if(g_monsters.reload())
-							std::cout << "Reloaded monsters." << std::endl;
-						else
-							std::cout << "Failed to reload monsters." << std::endl;
+						std::cout << "Reloading monsters." << std::endl;
+						g_dispatcher.addTask(createTask(boost::bind(&Monsters::reload, &g_monsters)));
 					}
 					break;
 				}
@@ -769,10 +759,8 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 				{
 					if(g_game.getGameState() != GAME_STATE_STARTUP)
 					{
-						if(Mounts::getInstance()->reload())
-							std::cout << "Reloaded mounts." << std::endl;
-						else
-							std::cout << "Failed to reload mounts." << std::endl;
+						std::cout << "Reloading mounts." << std::endl;
+						g_dispatcher.addTask(createTask(boost::bind(&Mounts::reload, Mounts::getInstance())));
 					}
 					break;
 				}
@@ -781,10 +769,8 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 				{
 					if(g_game.getGameState() != GAME_STATE_STARTUP)
 					{
-						if(g_moveEvents->reload())
-							std::cout << "Reloaded movements." << std::endl;
-						else
-							std::cout << "Failed to reload movements." << std::endl;
+						std::cout << "Reloading movements." << std::endl;
+						g_dispatcher.addTask(createTask(boost::bind(&MoveEvents::reload, g_moveEvents)));
 					}
 					break;
 				}
@@ -793,8 +779,8 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 				{
 					if(g_game.getGameState() != GAME_STATE_STARTUP)
 					{
-						g_npcs.reload();
-						std::cout << "Reloaded npcs." << std::endl;
+						std::cout << "Reloading NPCs." << std::endl;
+						g_dispatcher.addTask(createTask(boost::bind(&Npcs::reload, &g_npcs)));
 					}
 					break;
 				}
@@ -803,10 +789,8 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 				{
 					if(g_game.getGameState() != GAME_STATE_STARTUP)
 					{
-						if(Quests::getInstance()->reload())
-							std::cout << "Reloaded quests." << std::endl;
-						else
-							std::cout << "Failed to reload quests." << std::endl;
+						std::cout << "Reloading quests." << std::endl;
+						g_dispatcher.addTask(createTask(boost::bind(&Quests::reload, Quests::getInstance())));
 					}
 					break;
 				}
@@ -815,10 +799,9 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 				{
 					if(g_game.getGameState() != GAME_STATE_STARTUP)
 					{
-						if(Raids::getInstance()->reload() && Raids::getInstance()->startup())
-							std::cout << "Reloaded raids." << std::endl;
-						else
-							std::cout << "Failed to reload raids." << std::endl;
+						std::cout << "Reloading raids." << std::endl;
+						g_dispatcher.addTask(createTask(boost::bind(&Raids::reload, Raids::getInstance())));
+						g_dispatcher.addTask(createTask(boost::bind(&Raids::startup, Raids::getInstance())));
 					}
 					break;
 				}
@@ -827,10 +810,9 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 				{
 					if(g_game.getGameState() != GAME_STATE_STARTUP)
 					{
-						if(g_spells->reload() && g_monsters.reload())
-							std::cout << "Reloaded spells." << std::endl;
-						else
-							std::cout << "Failed to reload spells." << std::endl;
+						std::cout << "Reloading spells." << std::endl;
+						g_dispatcher.addTask(createTask(boost::bind(&Spells::reload, g_spells)));
+						g_dispatcher.addTask(createTask(boost::bind(&Monsters::reload, &g_monsters)));
 					}
 					break;
 				}
@@ -839,10 +821,8 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 				{
 					if(g_game.getGameState() != GAME_STATE_STARTUP)
 					{
-						if(g_talkActions->reload())
-							std::cout << "Reloaded talkactions." << std::endl;
-						else
-							std::cout << "Failed to reload talkactions." << std::endl;
+						std::cout << "Reloading talkactions." << std::endl;
+						g_dispatcher.addTask(createTask(boost::bind(&TalkActions::reload, g_talkActions)));
 					}
 					break;
 				}
@@ -851,10 +831,8 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 				{
 					if(g_game.getGameState() != GAME_STATE_STARTUP)
 					{
-						if(g_globalEvents->reload())
-							std::cout << "Reloaded globalevents." << std::endl;
-						else
-							std::cout << "Failed to reload globalevents." << std::endl;
+						std::cout << "Reloading globalevents." << std::endl;
+						g_dispatcher.addTask(createTask(boost::bind(&GlobalEvents::reload, g_globalEvents)));
 					}
 					break;
 				}
@@ -864,44 +842,22 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 					if(g_game.getGameState() == GAME_STATE_STARTUP)
 						break;
 
-					if(!g_config.reload())
-						std::cout << "Failed to reload config." << std::endl;
+					std::cout << "Reloading all interfaces." << std::endl;
 
-					if(!g_monsters.reload())
-						std::cout << "Failed to reload monsters." << std::endl;
-
-					if(!commands.reload())
-						std::cout << "Failed to reload commands." << std::endl;
-
-					if(!Quests::getInstance()->reload())
-						std::cout << "Failed to reload quests." << std::endl;
-
-					if(!Mounts::getInstance()->reload())
-						std::cout << "Failed to reload mounts." << std::endl;
-
-					if(!g_actions->reload())
-						std::cout << "Failed to reload actions." << std::endl;
-
-					if(!g_moveEvents->reload())
-						std::cout << "Failed to reload movements." << std::endl;
-
-					if(!g_talkActions->reload())
-						std::cout << "Failed to reload talkactions." << std::endl;
-
-					if(!g_spells->reload())
-						std::cout << "Failed to reload spells." << std::endl;
-
-					if(!g_creatureEvents->reload())
-						std::cout << "Failed to reload creature events." << std::endl;
-
-					if(!Raids::getInstance()->reload() || !Raids::getInstance()->startup())
-						std::cout << "Failed to reload raids." << std::endl;
-
-					if(!g_globalEvents->reload())
-						std::cout << "Failed to reload global events." << std::endl;
-
-					g_npcs.reload();
-					std::cout << "Reloaded all." << std::endl;
+					g_dispatcher.addTask(createTask(boost::bind(&ConfigManager::reload, &g_config)));
+					g_dispatcher.addTask(createTask(boost::bind(&Spells::reload, g_spells)));
+					g_dispatcher.addTask(createTask(boost::bind(&Monsters::reload, &g_monsters)));
+					g_dispatcher.addTask(createTask(boost::bind(&Commands::reload, &commands)));
+					g_dispatcher.addTask(createTask(boost::bind(&Quests::reload, Quests::getInstance())));
+					g_dispatcher.addTask(createTask(boost::bind(&Mounts::reload, Mounts::getInstance())));
+					g_dispatcher.addTask(createTask(boost::bind(&Actions::reload, g_actions)));
+					g_dispatcher.addTask(createTask(boost::bind(&MoveEvents::reload, g_moveEvents)));
+					g_dispatcher.addTask(createTask(boost::bind(&TalkActions::reload, g_talkActions)));
+					g_dispatcher.addTask(createTask(boost::bind(&CreatureEvents::reload, g_creatureEvents)));
+					g_dispatcher.addTask(createTask(boost::bind(&Raids::reload, Raids::getInstance())));
+					g_dispatcher.addTask(createTask(boost::bind(&Raids::startup, Raids::getInstance())));
+					g_dispatcher.addTask(createTask(boost::bind(&GlobalEvents::reload, g_globalEvents)));
+					g_dispatcher.addTask(createTask(boost::bind(&Npcs::reload, &g_npcs)));
 					break;
 				}
 
@@ -909,8 +865,8 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 				{
 					if(g_game.getGameState() != GAME_STATE_STARTUP)
 					{
-						g_game.setWorldType(WORLD_TYPE_PVP);
-						std::cout << "WorldType set to 'PVP'." << std::endl;
+						std::cout << "Setting WorldType to 'PVP'." << std::endl;
+						g_dispatcher.addTask(createTask(boost::bind(&Game::setWorldType, &g_game, WORLD_TYPE_PVP)));
 					}
 					break;
 				}
@@ -919,8 +875,8 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 				{
 					if(g_game.getGameState() != GAME_STATE_STARTUP)
 					{
-						g_game.setWorldType(WORLD_TYPE_NO_PVP);
-						std::cout << "WorldType set to 'Non PVP'." << std::endl;
+						std::cout << "Setting WorldType to 'Non PVP'." << std::endl;
+						g_dispatcher.addTask(createTask(boost::bind(&Game::setWorldType, &g_game, WORLD_TYPE_NO_PVP)));
 					}
 					break;
 				}
@@ -929,8 +885,8 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 				{
 					if(g_game.getGameState() != GAME_STATE_STARTUP)
 					{
-						g_game.setWorldType(WORLD_TYPE_PVP_ENFORCED);
-						std::cout << "WorldType set to 'PVP Enforced'." << std::endl;
+						std::cout << "Setting WorldType to 'PVP Enforced'." << std::endl;
+						g_dispatcher.addTask(createTask(boost::bind(&Game::setWorldType, &g_game, WORLD_TYPE_PVP_ENFORCED)));
 					}
 					break;
 				}

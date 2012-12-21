@@ -91,8 +91,10 @@
 		<Unit filename="..\databasesqlite.cpp" />
 		<Unit filename="..\databasesqlite.h" />
 		<Unit filename="..\definitions.h" />
-		<Unit filename="..\depot.cpp" />
-		<Unit filename="..\depot.h" />
+		<Unit filename="..\depotchest.cpp" />
+		<Unit filename="..\depotchest.h" />
+		<Unit filename="..\depotlocker.cpp" />
+		<Unit filename="..\depotlocker.h" />
 		<Unit filename="..\enums.h" />
 		<Unit filename="..\exception.cpp" />
 		<Unit filename="..\exception.h" />
@@ -108,6 +110,8 @@
 		<Unit filename="..\house.h" />
 		<Unit filename="..\housetile.cpp" />
 		<Unit filename="..\housetile.h" />
+		<Unit filename="..\inbox.cpp" />
+		<Unit filename="..\inbox.h" />
 		<Unit filename="..\inputbox.cpp" />
 		<Unit filename="..\inputbox.h" />
 		<Unit filename="..\ioguild.cpp" />
@@ -135,6 +139,8 @@
 		<Unit filename="..\map.h" />
 		<Unit filename="..\md5.cpp" />
 		<Unit filename="..\md5.h" />
+		<Unit filename="..\modalwindow.cpp" />
+		<Unit filename="..\modalwindow.h" />
 		<Unit filename="..\monster.cpp" />
 		<Unit filename="..\monster.h" />
 		<Unit filename="..\monsters.cpp" />

@@ -195,7 +195,7 @@ bool Npc::loadFromXml(const std::string& filename)
 		if(readXMLInteger(root, "speed", intValue))
 			baseSpeed = intValue;
 		else
-			baseSpeed = 110;
+			baseSpeed = 100;
 
 		if(readXMLInteger(root, "attackable", intValue))
 			attackable = (intValue != 0);
@@ -432,7 +432,6 @@ ResponseList Npc::loadInteraction(xmlNodePtr node)
 				}
 				else
 				{
-					std::string listId = strValue;
 					xmlNodePtr tmpNode = node->children;
 					std::list<ListItem>& list = itemListMap[strValue];
 
@@ -1597,10 +1596,11 @@ void Npc::processResponse(Player* player, NpcState* npcState, const NpcResponse*
 
 				case ACTION_SETSPELL:
 				{
-					npcState->spellName = "";
 					InstantSpell* spell = g_spells->getInstantSpellByName((*it).strValue);
 					if(spell)
 						npcState->spellName = (*it).strValue;
+					else
+						npcState->spellName = "";
 
 					break;
 				}
@@ -1619,7 +1619,7 @@ void Npc::processResponse(Player* player, NpcState* npcState, const NpcResponse*
 
 				case ACTION_SETAMOUNT:
 				{
-					int32_t amount = 1;
+					int32_t amount;
 					if((*it).strValue == "|AMOUNT|")
 						amount = npcState->amount;
 					else
@@ -1634,7 +1634,7 @@ void Npc::processResponse(Player* player, NpcState* npcState, const NpcResponse*
 
 				case ACTION_TEACHSPELL:
 				{
-					std::string spellName = "";
+					std::string spellName;
 					if((*it).strValue == "|SPELL|")
 						spellName = npcState->spellName;
 					else
@@ -1665,7 +1665,7 @@ void Npc::processResponse(Player* player, NpcState* npcState, const NpcResponse*
 
 				case ACTION_SELLITEM:
 				{
-					uint32_t moneyCount = 0;
+					uint64_t moneyCount;
 					if((*it).strValue == "|PRICE|")
 						moneyCount = npcState->price * npcState->amount;
 					else
@@ -1674,9 +1674,11 @@ void Npc::processResponse(Player* player, NpcState* npcState, const NpcResponse*
 					const ItemType& it = Item::items[npcState->itemId];
 					if(it.id != 0)
 					{
-						int32_t subType = -1;
+						int32_t subType;
 						if(it.hasSubType())
 							subType = npcState->subType;
+						else
+							subType = -1;
 
 						int32_t itemCount = player->__getItemTypeCount(it.id, subType);
 						if(itemCount >= npcState->amount)
@@ -1690,7 +1692,7 @@ void Npc::processResponse(Player* player, NpcState* npcState, const NpcResponse*
 
 				case ACTION_BUYITEM:
 				{
-					uint32_t moneyCount = 0;
+					uint64_t moneyCount;
 					if((*it).strValue == "|PRICE|")
 						moneyCount = npcState->price * npcState->amount;
 					else
@@ -1699,11 +1701,13 @@ void Npc::processResponse(Player* player, NpcState* npcState, const NpcResponse*
 					const ItemType& it = Item::items[npcState->itemId];
 					if(it.id != 0)
 					{
-						int32_t subType = -1;
+						int32_t subType;
 						if(it.hasSubType())
 							subType = npcState->subType;
+						else
+							subType = -1;
 
-						if(g_game.getMoney(player) >= moneyCount)
+						if(g_game.removeMoney(player, moneyCount))
 						{
 							if(it.stackable)
 							{
@@ -1733,7 +1737,6 @@ void Npc::processResponse(Player* player, NpcState* npcState, const NpcResponse*
 									}
 								}
 							}
-							g_game.removeMoney(player, moneyCount);
 						}
 						else
 							std::cout << "Error [Npc::processResponse] Not enough money: " << player->getName() << "\tNpc: " << getName() << std::endl;
@@ -1743,7 +1746,7 @@ void Npc::processResponse(Player* player, NpcState* npcState, const NpcResponse*
 
 				case ACTION_TAKEITEM:
 				{
-					int32_t itemId = 0;
+					int32_t itemId;
 					if((*it).strValue == "|ITEM|")
 						itemId = npcState->itemId;
 					else
@@ -1752,9 +1755,11 @@ void Npc::processResponse(Player* player, NpcState* npcState, const NpcResponse*
 					const ItemType& it = Item::items[npcState->itemId];
 					if(it.id != 0)
 					{
-						int32_t subType = -1;
+						int32_t subType;
 						if(it.hasSubType())
 							subType = npcState->subType;
+						else
+							subType = -1;
 
 						int32_t itemCount = player->__getItemTypeCount(itemId, subType);
 						if(itemCount >= npcState->amount)
@@ -1765,7 +1770,7 @@ void Npc::processResponse(Player* player, NpcState* npcState, const NpcResponse*
 
 				case ACTION_GIVEITEM:
 				{
-					int32_t itemId = 0;
+					int32_t itemId;
 					if((*it).strValue == "|ITEM|")
 						itemId = npcState->itemId;
 					else
@@ -1774,9 +1779,11 @@ void Npc::processResponse(Player* player, NpcState* npcState, const NpcResponse*
 					const ItemType& it = Item::items[itemId];
 					if(it.id != 0)
 					{
-						int32_t subType = -1;
+						int32_t subType;
 						if(it.hasSubType())
 							subType = npcState->subType;
+						else
+							subType = -1;
 
 						for(int32_t i = 0; i < npcState->amount; ++i)
 						{
@@ -1790,7 +1797,7 @@ void Npc::processResponse(Player* player, NpcState* npcState, const NpcResponse*
 
 				case ACTION_TAKEMONEY:
 				{
-					uint32_t moneyCount = 0;
+					uint64_t moneyCount;
 					if((*it).strValue == "|PRICE|")
 						moneyCount = npcState->price * npcState->amount;
 					else
@@ -1802,7 +1809,7 @@ void Npc::processResponse(Player* player, NpcState* npcState, const NpcResponse*
 
 				case ACTION_GIVEMONEY:
 				{
-					uint32_t moneyCount = 0;
+					uint64_t moneyCount;
 					if((*it).strValue == "|PRICE|")
 						moneyCount = npcState->price * npcState->amount;
 					else
@@ -1889,8 +1896,8 @@ void Npc::processResponse(Player* player, NpcState* npcState, const NpcResponse*
 		if(resetTopic && response->getTopic() == npcState->topic)
 			npcState->topic = 0;
 
-		npcState->lastResponseTime = OTSYS_TIME();
 		lastResponseTime = OTSYS_TIME();
+		npcState->lastResponseTime = lastResponseTime;
 
 		if(delayResponse)
 			npcState->lastResponse = response;
@@ -2164,7 +2171,7 @@ void Npc::turnToCreature(Creature* creature)
 	float tan = 0;
 
 	if(dx != 0)
-		tan = dy / dx;
+		tan = (float)dy / dx;
 	else
 		tan = 10;
 
@@ -2210,7 +2217,7 @@ const NpcResponse* Npc::getResponse(const ResponseList& list, const Player* play
 	int32_t bestKeywordCount = 0;
 
 	// Cache some info
-	int32_t money = -1;
+	int64_t money = -1;
 
 	// First loop we try with current topic
 	int32_t currentTopic = npcState->topic;

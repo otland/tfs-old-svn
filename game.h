@@ -35,6 +35,7 @@
 #include "scheduler.h"
 #include "npc.h"
 #include "iologindata.h"
+#include "modalwindow.h"
 
 class ServiceManager;
 class Creature;
@@ -276,6 +277,9 @@ class Game
 		ReturnValue internalMoveItem(Cylinder* fromCylinder, Cylinder* toCylinder, int32_t index,
 			Item* item, uint32_t count, Item** _moveItem, uint32_t flags = 0, Creature* actor = NULL);
 
+		ReturnValue internalMoveTradeItem(Cylinder* fromCylinder, Cylinder* toCylinder, int32_t index,
+			Item* item, Item* tradeItem, uint32_t count, Item** _moveItem, uint32_t flags = 0, Creature* actor = NULL);
+
 		ReturnValue internalAddItem(Cylinder* toCylinder, Item* item, int32_t index = INDEX_WHEREEVER,
 			uint32_t flags = 0, bool test = false);
 		ReturnValue internalAddItem(Cylinder* toCylinder, Item* item, int32_t index,
@@ -311,7 +315,7 @@ class Game
 		  * Get the amount of money in a a cylinder
 		  * \returns the amount of money found
 		  */
-		uint32_t getMoney(const Cylinder* cylinder);
+		uint64_t getMoney(const Cylinder* cylinder);
 
 		/**
 		  * Remove/Add item(s) with a monetary value
@@ -320,7 +324,7 @@ class Game
 		  * \param flags optional flags to modifiy the default behaviour
 		  * \returns true if the removal was successful
 		  */
-		bool removeMoney(Cylinder* cylinder, int32_t money, uint32_t flags = 0);
+		bool removeMoney(Cylinder* cylinder, uint64_t money, uint32_t flags = 0);
 
 		/**
 		  * Add item(s) with monetary value
@@ -328,7 +332,7 @@ class Game
 		  * \param money the amount to give
 		  * \param flags optional flags to modify default behavior
 		  */
-		void addMoney(Cylinder* cylinder, int32_t money, uint32_t flags = 0);
+		void addMoney(Cylinder* cylinder, uint64_t money, uint32_t flags = 0);
 
 		/**
 		  * Transform one item to another type/count
@@ -374,8 +378,10 @@ class Game
 
 		void sendGuildMotd(uint32_t playerId, uint32_t guildId);
 		void kickPlayer(uint32_t playerId, bool displayEffect);
+		void kickPlayerByName(std::string name);
 		bool playerReportBug(uint32_t playerId, std::string bug);
 		bool playerDebugAssert(uint32_t playerId, std::string assertLine, std::string date, std::string description, std::string comment);
+		bool playerAnswerModalWindow(uint32_t playerId, uint32_t modalWindowId, uint8_t button, uint8_t choice);
 
 		bool internalStartTrade(Player* player, Player* partner, Item* tradeItem);
 		bool internalCloseTrade(Player* player);
@@ -534,6 +540,8 @@ class Game
 		void setServerSaveMessage(int16_t key, bool value) {serverSaveMessage[key] = value;}
 		bool getServerSaveMessage(int16_t key) const {return serverSaveMessage[key];}
 
+		void sendOfflineTrainingDialog(Player* player);
+
 		bool loadStatuslist();
 
 		bool isInBlacklist(std::string ip) const { for (StatusList::const_iterator it = blacklist.begin(); it != blacklist.end(); ++it) { if (*it == ip) return true; } return false; }
@@ -608,6 +616,8 @@ class Game
 		bool stagesEnabled;
 		uint32_t lastStageLevel;
 		bool useLastStageLevel;
+
+		ModalWindow* offlineTrainingWindow;
 
 		std::vector<std::string> commandTags;
 

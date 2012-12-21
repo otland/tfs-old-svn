@@ -589,7 +589,6 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool prelo
 
 	query.str("");
 	query << "SELECT `pid`, `sid`, `itemtype`, `count`, `attributes` FROM `player_depotitems` WHERE `player_id` = " << player->getGUID() << " ORDER BY `sid` DESC;";
-	DepotMap depotsMap;
 	if((result = db->storeQuery(query.str())))
 	{
 		loadItems(itemMap, result);
@@ -603,49 +602,52 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool prelo
 			int32_t pid = it->second.second;
 			if(pid >= 0 && pid < 100)
 			{
-				if(Container* c = item->getContainer())
-				{
-					if(Depot* depot = c->getDepot())
-						depotsMap[pid] = depot;
-					else
-						std::cout << "Error loading depot " << pid << " for player " << player->getGUID() << std::endl;
-				}
-				else
-					std::cout << "Error loading depot " << pid << " for player " << player->getGUID() << std::endl;
+				DepotChest* depotChest = player->getDepotChest(pid, true);
+				if(depotChest)
+					depotChest->__internalAddThing(item);
 			}
 			else
 			{
 				it2 = itemMap.find(pid);
-				if(it2 != itemMap.end())
-				{
-					if(Container* container = it2->second.first->getContainer())
-						container->__internalAddThing(item);
-				}
+				if(it2 == itemMap.end())
+					continue;
+
+				Container* container = it2->second.first->getContainer();
+				if(container)
+					container->__internalAddThing(item);
 			}
 		}
 	}
 
-	// Add depots and move items from locker to inbox
-	for(DepotMap::const_iterator it = depotsMap.begin(), end = depotsMap.end(); it != end; ++it)
-	{
-		Depot* depot = it->second;
-		player->addDepot(depot, it->first);
-		if(depot->size() > 3 && depot->getInbox())
-		{
-			player->depotChange = true;
-			ItemList::const_reverse_iterator _it = depot->getReversedItems(), end = depot->getReversedEnd();
-			while(_it != end)
-			{
-				Item* item = (*_it);
-				if(item->getID() != ITEM_INBOX && item->getID() != ITEM_MARKET && item->getID() != ITEM_DEPOT)
-				{
-					g_game.internalMoveItem(item->getParent(), depot->getInbox(), INDEX_WHEREEVER, item, item->getItemCount(), NULL, FLAG_NOLIMIT);
+	//load inbox items
+	itemMap.clear();
 
-					_it = depot->getReversedItems();
-					end = depot->getReversedEnd();
-				}
-				else
-					++_it;
+	query.str("");
+	query << "SELECT `pid`, `sid`, `itemtype`, `count`, `attributes` FROM `player_inboxitems` WHERE `player_id` = " << player->getGUID() << " ORDER BY `sid` DESC;";
+	if((result = db->storeQuery(query.str())))
+	{
+		loadItems(itemMap, result);
+		db->freeResult(result);
+
+		ItemMap::reverse_iterator it;
+		ItemMap::iterator it2;
+		for(it = itemMap.rbegin(); it != itemMap.rend(); ++it)
+		{
+			Item* item = it->second.first;
+			int32_t pid = it->second.second;
+			if(pid >= 0 && pid < 100)
+			{
+				player->getInbox()->__internalAddThing(item);
+			}
+			else
+			{
+				it2 = itemMap.find(pid);
+				if(it2 == itemMap.end())
+					continue;
+
+				Container* container = it2->second.first->getContainer();
+				if(container)
+					container->__internalAddThing(item);
 			}
 		}
 	}
@@ -684,7 +686,6 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool prelo
 
 bool IOLoginData::saveItems(const Player* player, const ItemBlockList& itemList, DBInsert& query_insert)
 {
-	std::list<Container*> listContainer;
 	std::ostringstream stream;
 
 	typedef std::pair<Container*, int32_t> containerBlock;
@@ -913,12 +914,30 @@ bool IOLoginData::savePlayer(Player* player, bool preSave)
 
 		stmt.setQuery("INSERT INTO `player_depotitems` (`player_id`, `pid`, `sid`, `itemtype`, `count`, `attributes`) VALUES ");
 		itemList.clear();
-		for(DepotMap::iterator it = player->depots.begin(); it !=player->depots.end() ;++it)
-			itemList.push_back(itemBlock(it->first, it->second));
+		for(DepotMap::iterator it = player->depotChests.begin(); it != player->depotChests.end() ;++it)
+		{
+			DepotChest* depotChest = it->second;
+			for(ItemList::const_iterator iit = depotChest->getItems(), end = depotChest->getEnd(); iit != end; ++iit)
+				itemList.push_back(itemBlock(it->first, *iit));
+		}
 
 		if(!saveItems(player, itemList, stmt))
 			return false;
 	}
+
+	//save inbox items
+	query.str("");
+	query << "DELETE FROM `player_inboxitems` WHERE `player_id` = " << player->getGUID() << ";";
+	if(!db->executeQuery(query.str()))
+		return false;
+
+	stmt.setQuery("INSERT INTO `player_inboxitems` (`player_id`, `pid`, `sid`, `itemtype`, `count`, `attributes`) VALUES ");
+	itemList.clear();
+	for(ItemList::const_iterator it = player->getInbox()->getItems(), end = player->getInbox()->getEnd(); it != end; ++it)
+		itemList.push_back(itemBlock(0, *it));
+
+	if(!saveItems(player, itemList, stmt))
+		return false;
 
 	query.str("");
 	query << "DELETE FROM `player_storage` WHERE `player_id` = " << player->getGUID() << ";";

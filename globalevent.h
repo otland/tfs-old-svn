@@ -81,9 +81,6 @@ class GlobalEvent : public Event
 
 		uint32_t getInterval() const {return m_interval;}
 
-		int64_t getLastExecution() const {return m_lastExecution;}
-		void setLastExecution(int64_t time) {m_lastExecution = time;}
-
 		time_t getNextExecution() const {return m_nextExecution;}
 		void setNextExecution(time_t time) {m_nextExecution = time;}
 
@@ -94,7 +91,6 @@ class GlobalEvent : public Event
 
 		std::string m_name;
 		time_t m_nextExecution;
-		int64_t m_lastExecution;
 		uint32_t m_interval;
 };
 

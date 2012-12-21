@@ -22,7 +22,6 @@
 #include "definitions.h"
 #include "item.h"
 #include "container.h"
-#include "depot.h"
 #include "teleport.h"
 #include "trashholder.h"
 #include "mailbox.h"
@@ -65,7 +64,7 @@ Item* Item::CreateItem(const uint16_t _type, uint16_t _count /*= 0*/)
 	if(it.id != 0)
 	{
 		if(it.isDepot())
-			newItem = new Depot(_type);
+			newItem = new DepotLocker(_type);
 		else if(it.isContainer())
 			newItem = new Container(_type);
 		else if(it.isTeleport())
@@ -779,7 +778,7 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance,
 
 			s << ")";
 		}
-		else if(it.weaponType != WEAPON_AMMO && it.weaponType != WEAPON_WAND)
+		else if(it.weaponType != WEAPON_AMMO)
 		{
 			bool begin = true;
 			if(it.attack != 0)

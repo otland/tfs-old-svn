@@ -227,7 +227,6 @@ InstantSpell* Spells::getInstantSpell(const std::string& words)
 
 			size_t spellLen = resultWords.length();
 			size_t paramLen = words.length() - spellLen;
-			std::string paramText = words.substr(spellLen, paramLen);
 			if(paramLen < 2 || words[spellLen] != ' ')
 				return NULL;
 		}
@@ -884,7 +883,7 @@ bool Spell::playerRuneSpellCheck(Player* player, const Position& toPos)
 			if(isAggressive && needTarget && player->getSecureMode() == SECUREMODE_ON && tile->getTopVisibleCreature(player))
 			{
 				Player* targetPlayer = tile->getTopVisibleCreature(player)->getPlayer();
-				if(targetPlayer && targetPlayer != player && targetPlayer->getSkull() == SKULL_NONE && !Combat::isInPvpZone(player, targetPlayer))
+				if(targetPlayer && targetPlayer != player && player->getSkullClient(targetPlayer) == SKULL_NONE && !Combat::isInPvpZone(player, targetPlayer))
 				{
 					player->sendCancelMessage(RET_TURNSECUREMODETOATTACKUNMARKEDPLAYERS);
 					g_game.addMagicEffect(player->getPosition(), NM_ME_POFF);

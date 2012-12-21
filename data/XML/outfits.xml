@@ -32,6 +32,7 @@
 	<outfit type="0" looktype="471" enabled="1" name="Entrepreneur" premium="1"/>
 	<outfit type="0" looktype="513" enabled="1" name="Crystal Warlord" premium="1"/>
 	<outfit type="0" looktype="514" enabled="1" name="Soil Guardian" premium="1"/>
+	<outfit type="0" looktype="542" enabled="1" name="Demon" premium="1"/>
 
 	<!-- Male outfits -->
 	<outfit type="1" looktype="128" enabled="1" name="Citizen" premium="0"/>
@@ -65,6 +66,7 @@
 	<outfit type="1" looktype="472" enabled="1" name="Entrepreneur" premium="1"/>
 	<outfit type="1" looktype="512" enabled="1" name="Crystal Warlord" premium="1"/>
 	<outfit type="1" looktype="516" enabled="1" name="Soil Guardian" premium="1"/>
+	<outfit type="1" looktype="541" enabled="1" name="Demon" premium="1"/>
 
 	<!-- Archdemon Outfit -->
 	<outfit type="2" looktype="12" enabled="1" name="Archdemon" premium="0"/>

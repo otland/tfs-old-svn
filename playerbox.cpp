@@ -131,14 +131,10 @@ LRESULT CALLBACK PlayerBox::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPAR
 						ss << "Are you sure you want to " << ((HWND)lParam == kick ? "kick" : "permanently ban") << " " << player->getName() << "?";
 						if(MessageBoxA(hWnd, ss.str().c_str(), "Player List", MB_YESNO) == IDYES)
 						{
-							player = g_game.getPlayerByName(name);
-							if(player)
-							{
-								if((HWND)lParam == permBan)
-									IOBan::getInstance()->addAccountBan(player->getAccount(), 0xFFFFFFFF, 33, 2, "Permanent banishment", 0);
+							if((HWND)lParam == permBan)
+								IOBan::getInstance()->addAccountBan(player->getAccount(), 0xFFFFFFFF, 33, 2, "Permanent banishment", 0);
 
-								player->kickPlayer(true);
-							}
+							g_dispatcher.addTask(createTask(boost::bind(&Game::kickPlayerByName, &g_game, name)));
 						}
 					}
 					else

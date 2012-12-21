@@ -26,12 +26,18 @@
 	  	data/items/
 	M 		items.otb
 	M 		items.xml
+		data/XML/
+	M		mounts.xml
+	M		outfits.xml
 ]
 
 [ Milestone
-	Game protocol 9.70 support with new items.otb.
+	Game protocol 9.81 support with new items.otb.
 	Offline training!
-	New VIP list code with VIP entries stored on the server side (SQLite part not done yet, but should work fine for MySQL users, the database will automatically be updated).
+	New VIP list code with VIP entries stored on the server side.
+	Added three new mounts and the Demon outfit.
+	Depot code has been rewritten, and the inbox is now global. MySQL databases will be automatically updated, while SQLite requires a reset of the database.
+	Modal window class has been added, although it lacks any connection to the Lua interface to allow customizability. The offline training modal is added using it though (hardcoded).
 	Added walkstack attribute to items.xml.
 	Added exhaustion to mounting.
 	Updated a lot of items in items.xml.
@@ -39,6 +45,9 @@
 	Players will now be exhausted when trying to use an item even if the item use failed.
 	Players with access level can now mount in protection zone.
 	Removed the hardcoded highscores code.
+	Only NPC's that have walkTicks above 0 can be pushed now.
+	"Temporary" fix for a serious bug with trade. Trade will now be aborted instead of one of the player receiving both items.
+	Money related functions now operate with 64-bit integers as bank balance in the protocol was changed from 32-bit to 64-bit.
 	Optimized Creature::getPosition (significant for getSpectators which is one of the most called functions).
 	Owner on ConditionDamage will no longer be serialized/deserialized as there is no reason to keep it after a relog.
 	Updated Map::checkSightLine.
@@ -48,10 +57,18 @@
 	onDeath for a summon will now only be called if the summons master still exists (in which case we can still tell if it's a summon in the onDeath script).
 	Reworked the code for using items on creatures to address a few bugs with it.
 	\n can now be used for new line in the questlog.
+	Corrected trade messages.
+	Corrected damage absorption.
+	Corrected the skull in war mode. It's now green instead of yellow.
 	Fixed the bug with /addskill <playername>, magic level where it would not accurately add exactly one magic level.
 	Fixed the overflow checks for level, skills and magic level formulas (0 > 0 is not true!).
 	Fixed a bug where a player with black skull could get red skull by killing players in pairs.
 	Fixed a bug with doPlayerAddItem.
 	Fixed a bug with yellow skull.
 	Fixed container bugs.
+	Fixed a possible client debug if player had too many items in market history.
+	Fixed a bug where players who were idle for 15 minutes would be kicked even though they were in a battle.
+	Fixed potential crashes when performing server actions from the GUI. They are now safely called through the dispatcher instead.
+	Fixed a bug with using runes on players with safe mode on. It will now properly check if the target is unmarked.
+	A lot of code cleanups and major optimizations (especially to pathfinding, known creatures and VIP lists).
 ]

@@ -258,7 +258,6 @@ bool IOMapSerialize::saveTile(Database* db, uint32_t tileId, const Tile* tile)
 
 	int32_t parentid = 0;
 	std::ostringstream streamitems;
-	std::string itemsstring;
 
 	DBQuery tileListQuery;
 

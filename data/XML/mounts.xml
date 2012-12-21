@@ -32,4 +32,7 @@
 	<mount id="30" clientid="503" name="Magma Crawler" speed="20" premium="yes" />
 	<mount id="31" clientid="506" name="Dragonling" speed="20" premium="yes" />
 	<mount id="32" clientid="515" name="Gnarlhound" speed="20" premium="yes" />
+	<mount id="33" clientid="521" name="Red Manta" speed="20" premium="yes" />
+	<mount id="34" clientid="522" name="Mechanical Bird" speed="20" premium="yes" />
+	<mount id="35" clientid="526" name="Water Buffalo" speed="20" premium="yes" />
 </mounts>

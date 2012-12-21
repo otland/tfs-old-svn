@@ -92,6 +92,8 @@ extern Position getNextPosition(Direction direction, Position pos);
 
 extern char upchar(char c);
 
+extern std::string getFirstLine(std::string str);
+
 extern std::string parseParams(tokenizer::iterator &it, tokenizer::iterator end);
 
 extern std::string formatDate(time_t time);
