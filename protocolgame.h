@@ -242,6 +242,9 @@ class ProtocolGame : public Protocol
 		void sendVIPLogOut(uint32_t guid);
 		void sendVIP(uint32_t guid, const std::string& name, const std::string& desc, uint32_t& icon, bool notify, bool online);
 
+		void sendPendingStateEntered();
+		void sendEnterWorld();
+		
 		void sendSpellCooldown(Spells_t icon, uint32_t cooldown);
 		void sendSpellGroupCooldown(SpellGroup_t groupId, uint32_t cooldown);
 

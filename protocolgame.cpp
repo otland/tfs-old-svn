@@ -257,15 +257,17 @@ bool ProtocolGame::login(const std::string& name, uint32_t id, const std::string
 
 		player->setClientVersion(version);
 		player->setOperatingSystem(operatingSystem);
+
+		player->lastIP = player->getIP();
+		player->lastLoad = OTSYS_TIME();
+		player->lastLogin = std::max(time(NULL), player->lastLogin + 1);
+			
+		sendPendingStateEntered();
 		if(!g_game.placeCreature(player, player->getLoginPosition()) && !g_game.placeCreature(player, player->getMasterPosition(), false, true))
 		{
 			disconnectClient(0x14, "Temple position is wrong. Contact with the administration.");
 			return false;
 		}
-
-		player->lastIP = player->getIP();
-		player->lastLoad = OTSYS_TIME();
-		player->lastLogin = std::max(time(NULL), player->lastLogin + 1);
 
 		m_acceptPackets = true;
 		return true;
@@ -359,6 +361,7 @@ bool ProtocolGame::connect(uint32_t playerId, OperatingSystem_t operatingSystem,
 	player->addRef();
 	player->client = this;
 	player->isConnecting = false;
+	sendPendingStateEntered();
 
 	player->sendCreatureAppear(player);
 	player->setOperatingSystem(operatingSystem);
@@ -2784,6 +2787,26 @@ void ProtocolGame::sendUpdateTile(const Tile* tile, const Position& pos)
 	}
 }
 
+void ProtocolGame::sendPendingStateEntered()
+{
+	NetworkMessage_ptr msg = getOutputBuffer();
+	if(!msg)
+		return;
+
+	TRACK_MESSAGE(msg);
+	msg->put<char>(0x0A);
+}
+
+void ProtocolGame::sendEnterWorld()
+{
+	NetworkMessage_ptr msg = getOutputBuffer();
+	if(!msg)
+		return;
+
+	TRACK_MESSAGE(msg);
+	msg->put<char>(0x0F);
+}
+
 void ProtocolGame::sendAddCreature(const Creature* creature, const Position& pos, uint32_t stackpos)
 {
 	if(!canSee(creature))
@@ -2805,6 +2828,8 @@ void ProtocolGame::sendAddCreature(const Creature* creature, const Position& pos
 	msg->put<uint16_t>(0x32);
 
 	msg->put<char>(player->hasFlag(PlayerFlag_CanReportBugs));
+	
+	sendEnterWorld();	
 
 	AddMapDescription(msg, pos);
 	for(int32_t i = SLOT_FIRST; i < SLOT_LAST; ++i)
