@@ -5113,14 +5113,14 @@
 		<attribute key="corpseType" value="undead" />
 	</item>
 	<item id="2857" article="a" name="dead giant spider">
-		<attribute key="containerSize" value="10" />
+		<attribute key="containerSize" value="14" />
 		<attribute key="decayTo" value="2858" />
 		<attribute key="duration" value="900" />
 		<attribute key="corpseType" value="venom" />
 		<attribute key="fluidSource" value="slime" />
 	</item>
 	<item id="2858" article="a" name="dead giant spider">
-		<attribute key="containerSize" value="10" />
+		<attribute key="containerSize" value="14" />
 		<attribute key="decayTo" value="2859" />
 		<attribute key="duration" value="900" />
 		<attribute key="corpseType" value="venom" />
@@ -9738,7 +9738,7 @@
 		<attribute key="corpseType" value="undead" />
 	</item>
 	<item id="5977" article="a" name="dead giant spider">
-		<attribute key="containerSize" value="10" />
+		<attribute key="containerSize" value="14" />
 		<attribute key="decayTo" value="2857" />
 		<attribute key="duration" value="10" />
 		<attribute key="corpseType" value="venom" />
@@ -10865,6 +10865,7 @@
 		<attribute key="transformDeEquipTo" value="6300" />
 		<attribute key="duration" value="480" />
 		<attribute key="armor" value="1" />
+		<attribute key="absorbPercentDeath" value="5" />
 		<attribute key="skillShield" value="-10" />
 		<attribute key="showduration" value="1" />
 	</item>
