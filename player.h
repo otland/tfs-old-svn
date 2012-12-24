@@ -430,10 +430,9 @@ class Player : public Creature, public Cylinder
 		void onUpdateQuest();
 
 		//V.I.P. functions
-		void notifyLogIn(Player* loginPlayer);
-		void notifyLogOut(Player* logoutPlayer);
+		void notifyStatusChange(Player* player, VipStatus_t status);
 		bool removeVIP(uint32_t guid);
-		bool addVIP(uint32_t _guid, const std::string& name, const std::string& description, const uint32_t& icon, bool notify, bool online, bool loading = false);
+		bool addVIP(uint32_t _guid, const std::string& name, const std::string& description, const uint32_t& icon, bool notify, VipStatus_t status, bool loading = false);
 		bool editVIP(uint32_t _guid, const std::string& description, const uint32_t& icon, bool notify);
 
 		//follow functions
@@ -691,6 +690,7 @@ class Player : public Creature, public Cylinder
 		void sendOutfitWindow() const {if(client) client->sendOutfitWindow();}
 		void sendQuests() const {if(client) client->sendQuests();}
 		void sendQuestInfo(Quest* quest) const {if(client) client->sendQuestInfo(quest);}
+		void sendEnterWorld() const {if(client) client->sendEnterWorld();}
 		void sendCreatureSkull(const Creature* creature) const
 			{if(client) client->sendCreatureSkull(creature);}
 		void sendFYIBox(std::string message)

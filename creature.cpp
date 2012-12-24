@@ -36,6 +36,10 @@ boost::recursive_mutex AutoId::lock;
 uint32_t AutoId::count = 1000;
 AutoId::List AutoId::list;
 
+double Creature::speedA = 857.36;
+double Creature::speedB = 261.29;
+double Creature::speedC = -4795.01;
+
 extern Game g_game;
 extern ConfigManager g_config;
 extern CreatureEvents* g_creatureEvents;
@@ -1654,25 +1658,42 @@ std::string Creature::getDescription(int32_t) const
 int32_t Creature::getStepDuration(Direction dir) const
 {
 	if(dir == NORTHWEST || dir == NORTHEAST || dir == SOUTHWEST || dir == SOUTHEAST)
-		return getStepDuration() << 1;
+		return getStepDuration() *3;
 
 	return getStepDuration();
 }
 
 int32_t Creature::getStepDuration() const
 {
-	if(removed)
+	if(isRemoved())
 		return 0;
 
-	uint32_t stepSpeed = getStepSpeed();
-	if(!stepSpeed)
-		return 0;
+	uint32_t calculatedStepSpeed;
+	uint32_t groundSpeed;
+
+	int32_t stepSpeed = getStepSpeed();
+	if(stepSpeed > -Creature::speedB)
+	{
+		calculatedStepSpeed = floor((Creature::speedA * log((stepSpeed / 2) + Creature::speedB) + Creature::speedC) + 0.5);
+		if(calculatedStepSpeed <= 0)
+			calculatedStepSpeed = 1;
+	}
+	else
+		calculatedStepSpeed = 1;
 
 	const Tile* tile = getTile();
-	if(!tile || !tile->ground)
-		return 0;
+	if(tile && tile->ground)
+	{
+		uint32_t groundId = tile->ground->getID();
+		groundSpeed = Item::items[groundId].speed;
+		if(groundSpeed == 0)
+			groundSpeed = 150;
+	}
+	else
+		groundSpeed = 150;
 
-	return ((1000 * Item::items[tile->ground->getID()].speed) / stepSpeed) * lastStepCost;
+	double duration = std::floor(1000 * groundSpeed / (double)calculatedStepSpeed);
+	return std::ceil(duration / 50) * 50;
 }
 
 int64_t Creature::getEventStepTicks(bool onlyDelay/* = false*/) const

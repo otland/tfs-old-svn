@@ -1599,14 +1599,14 @@ void Player::onCreatureAppear(const Creature* creature)
 	{
 		IOLoginData::getInstance()->updateOnlineStatus(guid, true);
 		for(AutoList<Player>::iterator it = autoList.begin(); it != autoList.end(); ++it)
-			it->second->notifyLogIn(this);
+			it->second->notifyStatusChange(this, VIPSTATUS_ONLINE);
 	}
 	else
 	{
 		for(AutoList<Player>::iterator it = autoList.begin(); it != autoList.end(); ++it)
 		{
 			if(it->second->canSeeCreature(this))
-				it->second->notifyLogIn(this);
+				it->second->notifyStatusChange(this, VIPSTATUS_ONLINE);
 		}
 	}
 
@@ -2766,14 +2766,14 @@ void Player::removeList()
 	if(!isGhost())
 	{
 		for(AutoList<Player>::iterator it = autoList.begin(); it != autoList.end(); ++it)
-			it->second->notifyLogOut(this);
+			it->second->notifyStatusChange(this, VIPSTATUS_OFFLINE);
 	}
 	else
 	{
 		for(AutoList<Player>::iterator it = autoList.begin(); it != autoList.end(); ++it)
 		{
 			if(it->second->canSeeCreature(this))
-				it->second->notifyLogOut(this);
+				it->second->notifyStatusChange(this, VIPSTATUS_OFFLINE);
 		}
 	}
 }
@@ -2795,24 +2795,15 @@ void Player::kick(bool displayEffect, bool forceLogout)
 		client->logout(displayEffect, forceLogout);
 }
 
-void Player::notifyLogIn(Player* loginPlayer)
+void Player::notifyStatusChange(Player* loginPlayer, VipStatus_t status)
 {
 	if(!client)
 		return;
 
+		
 	VIPMap::iterator it = VIPList.find(loginPlayer->getGUID());
 	if(it != VIPList.end())
-		client->sendVIPLogIn(loginPlayer->getGUID());
-}
-
-void Player::notifyLogOut(Player* logoutPlayer)
-{
-	if(!client)
-		return;
-
-	VIPMap::iterator it = VIPList.find(logoutPlayer->getGUID());
-	if(it != VIPList.end())
-		client->sendVIPLogOut(logoutPlayer->getGUID());
+		client->sendUpdatedVIPStatus(loginPlayer->getGUID(), status);
 }
 
 bool Player::removeVIP(uint32_t _guid)
@@ -2825,7 +2816,7 @@ bool Player::removeVIP(uint32_t _guid)
 	return true;
 }
 
-bool Player::addVIP(uint32_t _guid, const std::string& name, const std::string& description, const uint32_t& icon, bool notify, bool online, bool loading/* = false*/)
+bool Player::addVIP(uint32_t _guid, const std::string& name, const std::string& description, const uint32_t& icon, bool notify, VipStatus_t status, bool loading/* = false*/)
 {
 	if(guid == _guid)
 	{
@@ -2858,7 +2849,7 @@ bool Player::addVIP(uint32_t _guid, const std::string& name, const std::string& 
 	VIPList.insert(VIPPair(_guid, tmp));
 
 	if(!loading && client)
-		client->sendVIP(_guid, name, tmp.description, tmp.icon, tmp.notify, online);
+		client->sendVIP(_guid, name, tmp.description, tmp.icon, tmp.notify, status);
 
 	return true;
 }

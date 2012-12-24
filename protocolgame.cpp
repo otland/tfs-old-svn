@@ -1977,7 +1977,7 @@ void ProtocolGame::sendGoods(const ShopInfoList& shop)
 
 	TRACK_MESSAGE(msg);
 	msg->put<char>(0x7B);
-	msg->put<uint32_t>((uint32_t)g_game.getMoney(player));
+	msg->put<uint64_t>((uint64_t)g_game.getMoney(player));
 
 	std::map<uint32_t, uint32_t> goodsMap;
 	if(shop.size() >= 5)
@@ -2047,7 +2047,7 @@ void ProtocolGame::sendMarketEnter(uint32_t depotId)
 
 	TRACK_MESSAGE(msg);
 	msg->put<char>(0xF6);
-	msg->put<uint32_t>(std::min((uint64_t)0xFFFFFFFF, player->balance));
+	msg->put<uint64_t>(player->balance);
 	msg->put<char>(std::min((int32_t)0xFF, IOMarket::getInstance()->getPlayerOfferCount(player->getGUID())));
 
 	Depot* depot = player->getDepot(depotId, false);
@@ -2621,7 +2621,7 @@ void ProtocolGame::sendChangeSpeed(const Creature* creature, uint32_t speed)
 	TRACK_MESSAGE(msg);
 	msg->put<char>(0x8F);
 	msg->put<uint32_t>(creature->getID());
-	msg->put<uint16_t>(speed);
+	msg->put<uint16_t>(speed / 2);
 }
 
 void ProtocolGame::sendCancelWalk()
@@ -2823,9 +2823,13 @@ void ProtocolGame::sendAddCreature(const Creature* creature, const Position& pos
 		return;
 	}
 
-	msg->put<char>(0x0A);
+	msg->put<char>( 0x17);
 	msg->put<uint32_t>(player->getID());
-	msg->put<uint16_t>(0x32);
+	msg->put<uint16_t>(0x32); // beat duration (50)
+	
+	msg->putDouble(Creature::speedA, 3);
+	msg->putDouble(Creature::speedB, 3);
+	msg->putDouble(Creature::speedC, 3);
 
 	msg->put<char>(player->hasFlag(PlayerFlag_CanReportBugs));
 	
@@ -2845,13 +2849,17 @@ void ProtocolGame::sendAddCreature(const Creature* creature, const Position& pos
 	AddCreatureLight(msg, creature);
 
 	player->sendIcons();
+	//Need to fix this so normal players can't see ghosted staff
 	for(VIPMap::iterator it = player->VIPList.begin(); it != player->VIPList.end(); ++it)
 	{
 		std::string vipName;
 		if(IOLoginData::getInstance()->getNameByGuid((*it).first, vipName))
 		{
-			Player* tmpPlayer = g_game.getPlayerByName(vipName);
-			sendVIP((*it).first, vipName, (*it).second.description, (*it).second.icon, (*it).second.notify, (tmpPlayer && player->canSeeCreature(tmpPlayer)));
+			VipStatus_t vipStatus = VIPSTATUS_OFFLINE;
+			if(Player* tmpPlayer = g_game.getPlayerByName(vipName))
+				vipStatus = tmpPlayer->canSeeCreature(tmpPlayer) ? VIPSTATUS_ONLINE : VIPSTATUS_OFFLINE;
+
+			sendVIP((*it).first, vipName, (*it).second.description, (*it).second.icon, (*it).second.notify, vipStatus);
 		}
 	}
 }
@@ -3190,7 +3198,7 @@ void ProtocolGame::sendQuestInfo(Quest* quest)
 	}
 }
 
-void ProtocolGame::sendVIPLogIn(uint32_t guid)
+void ProtocolGame::sendUpdatedVIPStatus(uint32_t guid, VipStatus_t newStatus)
 {
 	NetworkMessage_ptr msg = getOutputBuffer();
 	if(!msg)
@@ -3199,20 +3207,10 @@ void ProtocolGame::sendVIPLogIn(uint32_t guid)
 	TRACK_MESSAGE(msg);
 	msg->put<char>(0xD3);
 	msg->put<uint32_t>(guid);
+	msg->put<char>(newStatus);
 }
 
-void ProtocolGame::sendVIPLogOut(uint32_t guid)
-{
-	NetworkMessage_ptr msg = getOutputBuffer();
-	if(!msg)
-		return;
-
-	TRACK_MESSAGE(msg);
-	msg->put<char>(0xD4);
-	msg->put<uint32_t>(guid);
-}
-
-void ProtocolGame::sendVIP(uint32_t guid, const std::string& name, const std::string& desc, uint32_t& icon, bool notify, bool online)
+void ProtocolGame::sendVIP(uint32_t guid, const std::string& name, const std::string& desc, uint32_t& icon, bool notify, VipStatus_t status)
 {
 	NetworkMessage_ptr msg = getOutputBuffer();
 	if(!msg)
@@ -3225,7 +3223,7 @@ void ProtocolGame::sendVIP(uint32_t guid, const std::string& name, const std::st
 	msg->putString(desc);//desc
 	msg->put<uint32_t>(icon);//icon
 	msg->put<bool>(notify);//notify
-	msg->put<bool>(online); //online
+	msg->put<char>(status);//online or offline
 }
 
 void ProtocolGame::sendSpellCooldown(Spells_t icon, uint32_t cooldown)
@@ -3406,7 +3404,7 @@ void ProtocolGame::AddCreature(NetworkMessage_ptr msg, const Creature* creature,
 	msg->put<char>(lightInfo.level);
 	msg->put<char>(lightInfo.color);
 
-	msg->put<uint16_t>(creature->getStepSpeed());
+	msg->put<uint16_t>(creature->getStepSpeed() / 2);
 	msg->put<char>(player->getSkullType(creature));
 	msg->put<char>(player->getPartyShield(creature));
 	if(!known)
@@ -3441,7 +3439,7 @@ void ProtocolGame::AddPlayerStats(NetworkMessage_ptr msg)
 
 	msg->put<uint16_t>(player->getStaminaMinutes());
 
-	msg->put<uint16_t>(player->getSpeed());
+	msg->put<uint16_t>(player->getSpeed() / 2);
 
 	Condition* condition = player->getCondition(CONDITION_REGENERATION, CONDITIONID_DEFAULT);
 	msg->put<uint16_t>(condition ? condition->getTicks() / 1000 : 0x00);

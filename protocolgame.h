@@ -238,9 +238,8 @@ class ProtocolGame : public Protocol
 		void sendQuests();
 		void sendQuestInfo(Quest* quest);
 
-		void sendVIPLogIn(uint32_t guid);
-		void sendVIPLogOut(uint32_t guid);
-		void sendVIP(uint32_t guid, const std::string& name, const std::string& desc, uint32_t& icon, bool notify, bool online);
+		void sendUpdatedVIPStatus(uint32_t guid, VipStatus_t newStatus);
+		void sendVIP(uint32_t guid, const std::string& name, const std::string& desc, uint32_t& icon, bool notify, VipStatus_t status);
 
 		void sendPendingStateEntered();
 		void sendEnterWorld();
