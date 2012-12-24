@@ -3860,7 +3860,7 @@ bool Game::playerRequestAddVip(uint32_t playerId, const std::string& vipName)
 		return false;
 	}
 
-	VipStatus_t status;
+	VipStatus_t status = VIPSTATUS_OFFLINE;
 	if(Player* target = getPlayerByName(name))
 		status = player->canSeeCreature(target) ? VIPSTATUS_ONLINE : VIPSTATUS_OFFLINE;
 		
