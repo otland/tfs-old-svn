@@ -21,7 +21,7 @@
 
 #include "modalwindow.h"
 
-ModalWindow::ModalWindow(uint32_t id, std::string title, std::string message)
+ModalWindow::ModalWindow(uint32_t id, const std::string& title, const std::string& message)
 	: defaultEnterButton(0xFF), defaultEscapeButton(0xFF), priority(false)
 {
 	this->id = id;
@@ -54,12 +54,12 @@ uint32_t ModalWindow::getChoiceCount() const
 	return choices.size();
 }
 
-void ModalWindow::addChoice(uint8_t choiceId, std::string text)
+void ModalWindow::addChoice(uint8_t choiceId, const std::string& text)
 {
 	choices.push_back(make_pair(text, choiceId));
 }
 
-void ModalWindow::addButton(uint8_t buttonId, std::string text)
+void ModalWindow::addButton(uint8_t buttonId, const std::string& text)
 {
 	buttons.push_back(make_pair(text, buttonId));
 }

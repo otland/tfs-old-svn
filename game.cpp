@@ -702,7 +702,7 @@ bool Game::placeCreature(Creature* creature, const Position& pos, bool extendedP
 		if(player->getLastLogout() != 0)
 		{
 			// Not counting more than 21 days to prevent overflow when multiplying with 1000 (for milliseconds).
-			offlineTime = std::min((int32_t)(time(NULL) - player->getLastLogout()), 86400 * 21);
+			offlineTime = std::min<int32_t>(time(NULL) - player->getLastLogout(), 86400 * 21);
 		}
 		else
 			offlineTime = 0;
@@ -1432,7 +1432,7 @@ ReturnValue Game::internalMoveItem(Cylinder* fromCylinder, Cylinder* toCylinder,
 	uint32_t m = 0;
 
 	if(item->isStackable())
-		m = std::min((uint32_t)count, maxQueryCount);
+		m = std::min<uint32_t>(count, maxQueryCount);
 	else
 		m = maxQueryCount;
 
@@ -1455,7 +1455,7 @@ ReturnValue Game::internalMoveItem(Cylinder* fromCylinder, Cylinder* toCylinder,
 		uint32_t n;
 		if(toItem && toItem->getID() == item->getID())
 		{
-			n = std::min((uint32_t)100 - toItem->getItemCount(), m);
+			n = std::min<uint32_t>(100 - toItem->getItemCount(), m);
 			toCylinder->__updateThing(toItem, toItem->getID(), toItem->getItemCount() + n);
 			updateItem = toItem;
 		}
@@ -1580,7 +1580,7 @@ ReturnValue Game::internalMoveTradeItem(Cylinder* fromCylinder, Cylinder* toCyli
 	uint32_t m = 0;
 
 	if(item->isStackable())
-		m = std::min((uint32_t)count, maxQueryCount);
+		m = std::min<uint32_t>(count, maxQueryCount);
 	else
 		m = maxQueryCount;
 
@@ -1615,7 +1615,7 @@ ReturnValue Game::internalMoveTradeItem(Cylinder* fromCylinder, Cylinder* toCyli
 		uint32_t n;
 		if(toItem && toItem->getID() == item->getID())
 		{
-			n = std::min((uint32_t)100 - toItem->getItemCount(), m);
+			n = std::min<uint32_t>(100 - toItem->getItemCount(), m);
 			toCylinder->__updateThing(toItem, toItem->getID(), toItem->getItemCount() + n);
 			updateItem = toItem;
 		}
@@ -1705,12 +1705,12 @@ ReturnValue Game::internalAddItem(Cylinder* toCylinder, Item* item, int32_t inde
 
 	if(item->isStackable() && toItem && toItem->getID() == item->getID())
 	{
-		uint32_t m = std::min((uint32_t)item->getItemCount(), maxQueryCount);
+		uint32_t m = std::min<uint32_t>(item->getItemCount(), maxQueryCount);
 		uint32_t n = 0;
 
 		if(toItem->getID() == item->getID())
 		{
-			n = std::min((uint32_t)100 - toItem->getItemCount(), m);
+			n = std::min<uint32_t>(100 - toItem->getItemCount(), m);
 			toCylinder->__updateThing(toItem, toItem->getID(), toItem->getItemCount() + n);
 		}
 
@@ -4468,7 +4468,7 @@ bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creat
 			if(target->hasCondition(CONDITION_MANASHIELD) && combatType != COMBAT_UNDEFINEDDAMAGE)
 			{
 				int32_t manaDamage = std::min(target->getMana(), damage);
-				damage = std::max((int32_t)0, damage - manaDamage);
+				damage = std::max<int32_t>(0, damage - manaDamage);
 				if(manaDamage != 0)
 				{
 					target->drainMana(attacker, manaDamage);
@@ -5806,7 +5806,7 @@ bool Game::playerCancelMarketOffer(uint32_t playerId, uint32_t timestamp, uint16
 			uint16_t tmpAmount = offer.amount;
 			while(tmpAmount > 0)
 			{
-				int32_t stackCount = std::min((int32_t)100, (int32_t)tmpAmount);
+				int32_t stackCount = std::min<int32_t>(100, tmpAmount);
 				Item* item = Item::CreateItem(it.id, stackCount);
 				if(internalAddItem(player->getInbox(), item, INDEX_WHEREEVER, FLAG_NOLIMIT) != RET_NOERROR)
 				{
@@ -5960,7 +5960,7 @@ bool Game::playerAcceptMarketOffer(uint32_t playerId, uint32_t timestamp, uint16
 			uint16_t tmpAmount = amount;
 			while(tmpAmount > 0)
 			{
-				uint16_t stackCount = std::min((uint16_t)100, tmpAmount);
+				uint16_t stackCount = std::min<uint16_t>(100, tmpAmount);
 				Item* item = Item::CreateItem(it.id, stackCount);
 				if(internalAddItem(buyerPlayer->getInbox(), item, INDEX_WHEREEVER, FLAG_NOLIMIT) != RET_NOERROR)
 				{
@@ -6006,7 +6006,7 @@ bool Game::playerAcceptMarketOffer(uint32_t playerId, uint32_t timestamp, uint16
 			uint16_t tmpAmount = amount;
 			while(tmpAmount > 0)
 			{
-				uint16_t stackCount = std::min((uint16_t)100, tmpAmount);
+				uint16_t stackCount = std::min<uint16_t>(100, tmpAmount);
 				Item* item = Item::CreateItem(it.id, stackCount);
 				if(internalAddItem(player->getInbox(), item, INDEX_WHEREEVER, FLAG_NOLIMIT) != RET_NOERROR)
 				{
@@ -6105,7 +6105,7 @@ void Game::checkExpiredMarketOffers()
 			uint16_t tmpAmount = offer.amount;
 			while(tmpAmount > 0)
 			{
-				uint16_t stackCount = std::min((uint16_t)100, tmpAmount);
+				uint16_t stackCount = std::min<uint16_t>(100, tmpAmount);
 				Item* item = Item::CreateItem(itemType.id, stackCount);
 				if(internalAddItem(player->getInbox(), item, INDEX_WHEREEVER, FLAG_NOLIMIT) != RET_NOERROR)
 				{

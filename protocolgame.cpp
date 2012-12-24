@@ -962,7 +962,7 @@ void ProtocolGame::GetMapDescription(int32_t x, int32_t y, int32_t z,
 	if(z > 7)
 	{
 		startz = z - 2;
-		endz = std::min((int32_t)MAP_MAX_LAYERS - 1, (int32_t)z + 2);
+		endz = std::min<int32_t>(MAP_MAX_LAYERS - 1, z + 2);
 		zstep = 1;
 	}
 	else
@@ -1491,7 +1491,7 @@ void ProtocolGame::parseEditVip(NetworkMessage& msg)
 {
 	uint32_t guid = msg.GetU32();
 	const std::string description = msg.GetString();
-	uint32_t icon = std::min((uint32_t)10, msg.GetU32()); // 10 is max icon in 9.63
+	uint32_t icon = std::min<uint32_t>(10, msg.GetU32()); // 10 is max icon in 9.63
 	bool notify = msg.GetByte() != 0;
 	addGameTask(&Game::playerRequestEditVip, player->getID(), guid, description, icon, notify);
 }
@@ -1985,7 +1985,7 @@ void ProtocolGame::sendContainer(uint32_t cid, const Container* container, bool 
 	msg->AddString(container->getName());
 	msg->AddByte(container->capacity());
 	msg->AddByte(hasParent ? 0x01 : 0x00);
-	msg->AddByte(std::min((uint32_t)0xFF, container->size()));
+	msg->AddByte(std::min<uint32_t>(0xFF, container->size()));
 
 	uint32_t i = 0;
 	for(ItemList::const_iterator cit = container->getItems(), end = container->getEnd(); i < 0xFF && cit != end; ++cit, ++i)
@@ -2001,7 +2001,7 @@ void ProtocolGame::sendShop(Npc* npc, const ShopInfoList& itemList)
 	TRACK_MESSAGE(msg);
 	msg->AddByte(0x7A);
 	msg->AddString(npc->getName());
-	msg->AddU16(std::min((size_t)0xFFFF, itemList.size()));
+	msg->AddU16(std::min<size_t>(0xFFFF, itemList.size()));
 
 	uint32_t i = 0;
 	for(ShopInfoList::const_iterator it = itemList.begin(), end = itemList.end(); i < 0xFFFF && it != end; ++it, ++i)
@@ -2087,13 +2087,13 @@ void ProtocolGame::sendSaleItemList(const std::list<ShopInfo>& shop)
 		}
 	}
 
-	msg->AddByte(std::min((size_t)0xFF, saleMap.size()));
+	msg->AddByte(std::min<size_t>(0xFF, saleMap.size()));
 
 	uint32_t i = 0;
 	for(std::map<uint32_t, uint32_t>::const_iterator it = saleMap.begin(), end = saleMap.end(); i < 0xFF && it != end; ++it, ++i)
 	{
 		msg->AddItemId(it->first);
-		msg->AddByte(std::min((uint32_t)0xFF, it->second));
+		msg->AddByte(std::min<uint32_t>(0xFF, it->second));
 	}
 }
 
@@ -2106,7 +2106,7 @@ void ProtocolGame::sendMarketEnter(uint32_t depotId)
 	TRACK_MESSAGE(msg);
 	msg->AddByte(0xF6);
 	msg->AddU64(player->getBankBalance());
-	msg->AddByte(std::min((int32_t)0xFF, IOMarket::getInstance()->getPlayerOfferCount(player->getGUID())));
+	msg->AddByte(std::min<int32_t>(0xFF, IOMarket::getInstance()->getPlayerOfferCount(player->getGUID())));
 
 	DepotChest* depotChest = player->getDepotChest(depotId, false);
 	if(!depotChest)
@@ -2151,13 +2151,13 @@ void ProtocolGame::sendMarketEnter(uint32_t depotId)
 	}
 	while(!containerList.empty());
 
-	msg->AddU16(std::min((size_t)0xFFFF, depotItems.size()));
+	msg->AddU16(std::min<size_t>(0xFFFF, depotItems.size()));
 
 	uint16_t i = 0;
 	for(std::map<uint16_t, uint32_t>::const_iterator it = depotItems.begin(), end = depotItems.end(); it != end && i < 0xFFFF; ++it, ++i)
 	{
 		msg->AddItemId(it->first);
-		msg->AddU16(std::min((uint32_t)0xFFFF, it->second));
+		msg->AddU16(std::min<uint32_t>(0xFFFF, it->second));
 	}
 }
 
@@ -2311,7 +2311,7 @@ void ProtocolGame::sendMarketBrowseOwnHistory(const HistoryMarketOfferList& buyO
 
 	uint32_t i = 0;
 
-	msg->AddU32(std::min(800, (int32_t)buyOffers.size()));
+	msg->AddU32(std::min<int32_t>(800, buyOffers.size()));
 	for(HistoryMarketOfferList::const_iterator it = buyOffers.begin(), end = buyOffers.end(); it != end && i < 800; ++it)
 	{
 		msg->AddU32(it->timestamp);
@@ -2326,7 +2326,7 @@ void ProtocolGame::sendMarketBrowseOwnHistory(const HistoryMarketOfferList& buyO
 	counterMap.clear();
 	i = 0;
 
-	msg->AddU32(std::min(800, (int32_t)sellOffers.size()));
+	msg->AddU32(std::min<int32_t>(800, sellOffers.size()));
 	for(HistoryMarketOfferList::const_iterator it = sellOffers.begin(), end = sellOffers.end(); it != end && i < 800; ++it)
 	{
 		msg->AddU32(it->timestamp);
@@ -2523,7 +2523,7 @@ void ProtocolGame::sendMarketDetail(uint16_t itemId)
 	{
 		msg->AddByte(0x01);
 		msg->AddU32(statistics->numTransactions);
-		msg->AddU32(std::min((uint64_t)0xFFFFFFFF, statistics->totalPrice));
+		msg->AddU32(std::min<uint64_t>(0xFFFFFFFF, statistics->totalPrice));
 		msg->AddU32(statistics->highestPrice);
 		msg->AddU32(statistics->lowestPrice);
 	}
@@ -2535,7 +2535,7 @@ void ProtocolGame::sendMarketDetail(uint16_t itemId)
 	{
 		msg->AddByte(0x01);
 		msg->AddU32(statistics->numTransactions);
-		msg->AddU32(std::min((uint64_t)0xFFFFFFFF, statistics->totalPrice));
+		msg->AddU32(std::min<uint64_t>(0xFFFFFFFF, statistics->totalPrice));
 		msg->AddU32(statistics->highestPrice);
 		msg->AddU32(statistics->lowestPrice);
 	}
@@ -3386,7 +3386,7 @@ void ProtocolGame::sendVIP(uint32_t guid, const std::string& name, const std::st
 	msg->AddU32(guid);
 	msg->AddString(name);
 	msg->AddString(description);
-	msg->AddU32(std::min((uint32_t)10, icon));
+	msg->AddU32(std::min<uint32_t>(10, icon));
 	msg->AddByte(notify ? 0x01 : 0x00);
 	msg->AddByte(status);
 }
@@ -3559,7 +3559,7 @@ void ProtocolGame::AddCreature(NetworkMessage_ptr msg, const Creature* creature,
 	if(creature->isHealthHidden())
 		msg->AddByte(0x00);
 	else
-		msg->AddByte((int32_t)std::ceil(((float)creature->getHealth()) * 100 / std::max(creature->getMaxHealth(), (int32_t)1)));
+		msg->AddByte((int32_t)std::ceil(((float)creature->getHealth()) * 100 / std::max<int32_t>(creature->getMaxHealth(), 1)));
 
 	msg->AddByte((uint8_t)creature->getDirection());
 
@@ -3718,7 +3718,7 @@ void ProtocolGame::AddCreatureHealth(NetworkMessage_ptr msg,const Creature* crea
 	if(creature->isHealthHidden())
 		msg->AddByte(0x00);
 	else
-		msg->AddByte((int32_t)std::ceil(((float)creature->getHealth()) * 100 / std::max(creature->getMaxHealth(), (int32_t)1)));
+		msg->AddByte((int32_t)std::ceil(((float)creature->getHealth()) * 100 / std::max<int32_t>(creature->getMaxHealth(), 1)));
 }
 
 void ProtocolGame::AddCreatureInvisible(NetworkMessage_ptr msg, const Creature* creature)

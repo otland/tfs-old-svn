@@ -211,7 +211,7 @@ void Creature::onThink(uint32_t interval)
 	blockTicks += interval;
 	if(blockTicks >= 1000)
 	{
-		blockCount = std::min((uint32_t)blockCount + 1, (uint32_t)2);
+		blockCount = std::min<uint32_t>(blockCount + 1, 2);
 		blockTicks = 0;
 	}
 
@@ -368,7 +368,7 @@ void Creature::addEventWalk(bool firstStep)
 		g_game.checkCreatureWalk(getID());
 
 	eventWalk = g_scheduler.addEvent(createSchedulerTask(
-		std::max((int64_t)SCHEDULER_MINTICKS, ticks), boost::bind(&Game::checkCreatureWalk, &g_game, getID())));
+		std::max<int64_t>(SCHEDULER_MINTICKS, ticks), boost::bind(&Game::checkCreatureWalk, &g_game, getID())));
 }
 
 void Creature::stopEventWalk()
@@ -905,7 +905,7 @@ void Creature::changeHealth(int32_t healthChange)
 	if(healthChange > 0)
 		health += std::min(healthChange, getMaxHealth() - health);
 	else
-		health = std::max((int32_t)0, health + healthChange);
+		health = std::max<int32_t>(0, health + healthChange);
 
 	g_game.addCreatureHealth(this);
 }
@@ -915,7 +915,7 @@ void Creature::changeMana(int32_t manaChange)
 	if(manaChange > 0)
 		mana += std::min(manaChange, getMaxMana() - mana);
 	else
-		mana = std::max((int32_t)0, mana + manaChange);
+		mana = std::max<int32_t>(0, mana + manaChange);
 }
 
 void Creature::drainHealth(Creature* attacker, CombatType_t combatType, int32_t damage)

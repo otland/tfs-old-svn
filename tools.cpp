@@ -1312,7 +1312,7 @@ uint8_t clientFluidToServer(uint8_t clientFluid)
 	return clientToServerFluidMap[clientFluid];
 }
 
-std::string getFirstLine(std::string str)
+std::string getFirstLine(const std::string& str)
 {
 	std::string firstLine = "";
 	for(uint32_t i = 0, strLength = str.length(); i < strLength; ++i)

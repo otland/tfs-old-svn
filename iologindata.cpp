@@ -368,7 +368,7 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool prelo
 	player->bankBalance = (uint64_t)result->getDataLong("balance");
 
 	player->setSex((PlayerSex_t)result->getDataInt("sex"));
-	player->level = std::max((uint32_t)1, (uint32_t)result->getDataInt("level"));
+	player->level = std::max<uint32_t>(1, result->getDataInt("level"));
 
 	uint64_t currExpCount = Player::getExpForLevel(player->level);
 	uint64_t nextExpCount = Player::getExpForLevel(player->level + 1);
@@ -1274,7 +1274,7 @@ bool IOLoginData::createCharacter(uint32_t accountNumber, std::string characterN
 	if(level > 1)
 		exp = Player::getExpForLevel(level);
 
-	uint32_t tmpLevel = std::min((uint32_t)7, level - 1);
+	uint32_t tmpLevel = (uint32_t)std::min<int32_t>(7, level - 1);
 	if(tmpLevel > 0)
 	{
 		healthMax += rookVoc->getHPGain() * tmpLevel;

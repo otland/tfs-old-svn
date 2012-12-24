@@ -1085,7 +1085,7 @@ void Commands::removeThing(Player* player, const std::string& cmd, const std::st
 				return;
 			}
 
-			g_game.internalRemoveItem(item, std::max(1, std::min(atoi(param.c_str()), (int32_t)item->getItemCount())));
+			g_game.internalRemoveItem(item, std::max(1, std::min<int32_t>(atoi(param.c_str()), item->getItemCount())));
 			g_game.addMagicEffect(pos, NM_ME_MAGIC_BLOOD);
 		}
 	}

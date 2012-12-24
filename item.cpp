@@ -726,7 +726,7 @@ bool Item::hasProperty(enum ITEMPROPERTY prop) const
 double Item::getWeight() const
 {
 	if(isStackable())
-		return items[id].weight * std::max((int32_t)1, (int32_t)getItemCount());
+		return items[id].weight * std::max<int32_t>(1, getItemCount());
 
 	return items[id].weight;
 }

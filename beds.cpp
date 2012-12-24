@@ -260,7 +260,7 @@ void BedItem::regeneratePlayer(Player* player) const
 		player->changeMana(regen);
 	}
 
-	int32_t soulRegen = (int32_t)std::max((float)0, ((float)sleptTime/(60*15)));
+	int32_t soulRegen = sleptTime / (60 * 15);
 	player->changeSoul(soulRegen);
 }
 

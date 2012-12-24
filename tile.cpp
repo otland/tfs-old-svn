@@ -786,7 +786,7 @@ ReturnValue Tile::__queryAdd(int32_t index, const Thing* thing, uint32_t count,
 ReturnValue Tile::__queryMaxCount(int32_t index, const Thing* thing, uint32_t count, uint32_t& maxQueryCount,
 	uint32_t flags) const
 {
-	maxQueryCount = std::max((uint32_t)1, count);
+	maxQueryCount = std::max<uint32_t>(1, count);
 	return RET_NOERROR;
 }
 
@@ -1300,7 +1300,8 @@ void Tile::__removeThing(Thing* thing, uint32_t count)
 					{
 						if(item->isStackable() && count != item->getItemCount())
 						{
-							uint8_t newCount = (uint8_t)std::max((int32_t)0, (int32_t)(item->getItemCount() - count));
+							uint8_t newCount = (uint8_t)std::max<int32_t>(0, (int32_t)(item->getItemCount() - count));
+
 							updateTileFlags(item, true);
 							item->setItemCount(newCount);
 							updateTileFlags(item, false);

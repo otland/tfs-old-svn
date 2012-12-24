@@ -303,12 +303,12 @@ void Map::getSpectatorsInternal(SpectatorVec& list, const Position& centerPos, b
 	int32_t minRangeZ, int32_t maxRangeZ)
 {
 	int32_t minoffset = centerPos.z - maxRangeZ;
-	int32_t x1 = std::min((int32_t)0xFFFF, std::max((int32_t)0, (centerPos.x + minRangeX + minoffset)));
-	int32_t y1 = std::min((int32_t)0xFFFF, std::max((int32_t)0, (centerPos.y + minRangeY + minoffset)));
+	int32_t x1 = std::min<int32_t>(0xFFFF, std::max<int32_t>(0, (centerPos.x + minRangeX + minoffset)));
+	int32_t y1 = std::min<int32_t>(0xFFFF, std::max<int32_t>(0, (centerPos.y + minRangeY + minoffset)));
 
 	int32_t maxoffset = centerPos.z - minRangeZ;
-	int32_t x2 = std::min((int32_t)0xFFFF, std::max((int32_t)0, (centerPos.x + maxRangeX + maxoffset)));
-	int32_t y2 = std::min((int32_t)0xFFFF, std::max((int32_t)0, (centerPos.y + maxRangeY + maxoffset)));
+	int32_t x2 = std::min<int32_t>(0xFFFF, std::max<int32_t>(0, (centerPos.x + maxRangeX + maxoffset)));
+	int32_t y2 = std::min<int32_t>(0xFFFF, std::max<int32_t>(0, (centerPos.y + maxRangeY + maxoffset)));
 
 	int32_t startx1 = x1 - (x1 % FLOOR_SIZE);
 	int32_t starty1 = y1 - (y1 % FLOOR_SIZE);
@@ -411,8 +411,8 @@ void Map::getSpectators(SpectatorVec& list, const Position& centerPos,
 				//underground
 
 				//8->15
-				minRangeZ = std::max(centerPos.z - 2, (int32_t)0);
-				maxRangeZ = std::min(centerPos.z + 2, (int32_t)MAP_MAX_LAYERS - 1);
+				minRangeZ = std::max<int32_t>(centerPos.z - 2, 0);
+				maxRangeZ = std::min<int32_t>(centerPos.z + 2, MAP_MAX_LAYERS - 1);
 			}
 			//above ground
 			else if(centerPos.z == 6)
@@ -478,8 +478,8 @@ const SpectatorVec& Map::getSpectators(const Position& centerPos)
 			//underground
 
 			//8->15
-			minRangeZ = std::max(centerPos.z - 2, (int32_t)0);
-			maxRangeZ = std::min(centerPos.z + 2, (int32_t)MAP_MAX_LAYERS - 1);
+			minRangeZ = std::max<int32_t>(centerPos.z - 2, 0);
+			maxRangeZ = std::min<int32_t>(centerPos.z + 2, MAP_MAX_LAYERS - 1);
 		}
 		//above ground
 		else if(centerPos.z == 6)

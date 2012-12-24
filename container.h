@@ -97,8 +97,6 @@ class Container : public Item, public Cylinder
 		uint32_t getItemHoldingCount() const;
 		virtual double getWeight() const;
 
-		void clear();
-
 		//cylinder implementations
 		virtual ReturnValue __queryAdd(int32_t index, const Thing* thing, uint32_t count,
 			uint32_t flags, Creature* actor = NULL) const;

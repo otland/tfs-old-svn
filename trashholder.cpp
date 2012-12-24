@@ -43,7 +43,7 @@ ReturnValue TrashHolder::__queryAdd(int32_t index, const Thing* thing, uint32_t 
 ReturnValue TrashHolder::__queryMaxCount(int32_t index, const Thing* thing, uint32_t count,
 	uint32_t& maxQueryCount, uint32_t flags) const
 {
-	maxQueryCount = std::max((uint32_t)1, count);
+	maxQueryCount = std::max<uint32_t>(1, count);
 	return RET_NOERROR;
 }
 

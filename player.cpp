@@ -636,13 +636,13 @@ int32_t Player::getPlayerInfo(playerinfo_t playerinfo) const
 	{
 		case PLAYERINFO_LEVEL: return level;
 		case PLAYERINFO_LEVELPERCENT: return levelPercent;
-		case PLAYERINFO_MAGICLEVEL: return std::max((int32_t)0, ((int32_t)magLevel + varStats[STAT_MAGICPOINTS]));
+		case PLAYERINFO_MAGICLEVEL: return std::max<int32_t>(0, magLevel + varStats[STAT_MAGICPOINTS]);
 		case PLAYERINFO_MAGICLEVELPERCENT: return magLevelPercent;
 		case PLAYERINFO_HEALTH: return health;
-		case PLAYERINFO_MAXHEALTH: return std::max((int32_t)1, ((int32_t)healthMax + varStats[STAT_MAXHITPOINTS]));
+		case PLAYERINFO_MAXHEALTH: return std::max<int32_t>(1, healthMax + varStats[STAT_MAXHITPOINTS]);
 		case PLAYERINFO_MANA: return mana;
-		case PLAYERINFO_MAXMANA: return std::max((int32_t)0, ((int32_t)manaMax + varStats[STAT_MAXMANAPOINTS]));
-		case PLAYERINFO_SOUL: return std::max((int32_t)0, ((int32_t)soul + varStats[STAT_SOULPOINTS]));
+		case PLAYERINFO_MAXMANA: return std::max<int32_t>(0, manaMax + varStats[STAT_MAXMANAPOINTS]);
+		case PLAYERINFO_SOUL: return std::max<int32_t>(0, soul + varStats[STAT_SOULPOINTS]);
 		default: return 0;
 	}
 	return 0;
@@ -654,7 +654,7 @@ int32_t Player::getSkill(skills_t skilltype, skillsid_t skillinfo) const
 	if(skillinfo == SKILL_LEVEL)
 		n += varSkills[skilltype];
 
-	return std::max((int32_t)0, (int32_t)n);
+	return std::max<int32_t>(0, n);
 }
 
 void Player::addSkillAdvance(skills_t skill, uint32_t count)
@@ -2243,7 +2243,7 @@ BlockType_t Player::blockHit(Creature* attacker, CombatType_t combatType, int32_
 				{
 					damage -= std::ceil(damage * (absorbPercent / 100.));
 					if(item->hasCharges())
-						g_game.transformItem(item, item->getID(), std::max((int32_t)0, (int32_t)item->getCharges() - 1));
+						g_game.transformItem(item, item->getID(), std::max<int32_t>(0, item->getCharges() - 1));
 				}
 			}
 		}
@@ -2305,7 +2305,7 @@ void Player::death()
 			magLevel--;
 		}
 
-		manaSpent -= std::max((int32_t)0, (int32_t)lostMana);
+		manaSpent -= lostMana;
 		uint64_t nextReqMana = vocation->getReqMana(magLevel + 1);
 		if(nextReqMana > vocation->getReqMana(magLevel))
 			magLevelPercent = Player::getPercentLevel(manaSpent, nextReqMana);
@@ -2325,18 +2325,18 @@ void Player::death()
 			while(lostSkillTries > skills[i][SKILL_TRIES])
 			{
 				lostSkillTries -= skills[i][SKILL_TRIES];
-				skills[i][SKILL_TRIES] = vocation->getReqSkillTries(i, skills[i][SKILL_LEVEL]);
-				if(skills[i][SKILL_LEVEL] > 10)
-					skills[i][SKILL_LEVEL]--;
-				else
+				if(skills[i][SKILL_LEVEL] <= 10)
 				{
 					skills[i][SKILL_LEVEL] = 10;
 					skills[i][SKILL_TRIES] = 0;
 					lostSkillTries = 0;
 					break;
 				}
+
+				skills[i][SKILL_TRIES] = vocation->getReqSkillTries(i, skills[i][SKILL_LEVEL]);
+				skills[i][SKILL_LEVEL]--;
 			}
-			skills[i][SKILL_TRIES] = std::max((int32_t)0, (int32_t)(skills[i][SKILL_TRIES] - lostSkillTries));
+			skills[i][SKILL_TRIES] = std::max<int32_t>(0, skills[i][SKILL_TRIES] - lostSkillTries);
 		}
 		//
 
@@ -2422,9 +2422,9 @@ void Player::preSave()
 			while(level > 1 && experience < Player::getExpForLevel(level))
 			{
 				--level;
-				healthMax = std::max((int32_t)0, (healthMax - (int32_t)vocation->getHPGain()));
-				manaMax = std::max((int32_t)0, (manaMax - (int32_t)vocation->getManaGain()));
-				capacity = std::max((double)0, (capacity - (double)vocation->getCapGain()));
+				healthMax = std::max<int32_t>(0, healthMax - vocation->getHPGain());
+				manaMax = std::max<int32_t>(0, manaMax - vocation->getManaGain());
+				capacity = std::max<double>(0.00, capacity - vocation->getCapGain());
 			}
 			blessings = 0;
 
@@ -3242,7 +3242,7 @@ void Player::__removeThing(Thing* thing, uint32_t count)
 		}
 		else
 		{
-			uint8_t newCount = (uint8_t)std::max((int32_t)0, (int32_t)(item->getItemCount() - count));
+			uint8_t newCount = (uint8_t)std::max<int32_t>(0, item->getItemCount() - count);
 			item->setItemCount(newCount);
 
 			const ItemType& it = Item::items[item->getID()];
@@ -3648,7 +3648,7 @@ uint64_t Player::getGainedExperience(Creature* attacker) const
 			uint32_t b = getLevel();
 			uint64_t c = getExperience();
 
-			uint64_t result = std::max((uint64_t)0, (uint64_t)std::floor(getDamageRatio(attacker) * std::max((double)0, ((double)(1 - (((double)a / b))))) * 0.05 * c));
+			uint64_t result = std::floor<uint64_t>(getDamageRatio(attacker) * std::max<double>(0, ((double)(1 - (((double)a / b))))) * 0.05 * c);
 			return (result * g_config.getNumber(ConfigManager::RATE_EXPERIENCE));
 		}
 	}
@@ -4054,7 +4054,8 @@ void Player::changeSoul(int32_t soulChange)
 	if(soulChange > 0)
 		soul += std::min(soulChange, soulMax - soul);
 	else
-		soul = std::max((int32_t)0, soul + soulChange);
+		soul = std::max<int32_t>(0, soul + soulChange);
+
 	sendStats();
 }
 
@@ -4275,7 +4276,7 @@ double Player::getLostPercent() const
 			lossPercent -= 3;
 
 		lossPercent -= (int32_t)bitset.count();
-		return (double)std::max(0, lossPercent) / 100;
+		return std::max<int32_t>(0, lossPercent) / (double)100;
 	}
 	else
 	{

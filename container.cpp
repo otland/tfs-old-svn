@@ -328,11 +328,11 @@ ReturnValue Container::__queryMaxCount(int32_t index, const Thing* thing, uint32
 
 	if(hasBitSet(FLAG_NOLIMIT, flags))
 	{
-		maxQueryCount = std::max((uint32_t)1, count);
+		maxQueryCount = std::max<uint32_t>(1, count);
 		return RET_NOERROR;
 	}
 
-	int32_t freeSlots = std::max((int32_t)(capacity() - size()), (int32_t)0);
+	int32_t freeSlots = std::max<int32_t>(capacity() - size(), 0);
 
 	if(item->isStackable())
 	{
@@ -647,7 +647,7 @@ void Container::__removeThing(Thing* thing, uint32_t count)
 
 	if(item->isStackable() && count != item->getItemCount())
 	{
-		uint8_t newCount = (uint8_t)std::max((int32_t)0, (int32_t)(item->getItemCount() - count));
+		uint8_t newCount = (uint8_t)std::max<int32_t>(0, item->getItemCount() - count);
 
 		const double oldWeight = -item->getWeight();
 		item->setItemCount(newCount);

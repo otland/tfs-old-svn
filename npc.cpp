@@ -1535,7 +1535,7 @@ void Npc::processResponse(Player* player, NpcState* npcState, const NpcResponse*
 			{
 				const ItemType& it = Item::items[npcState->itemId];
 				if(it.id != 0 && it.stackable == false)
-					npcState->amount = (int32_t)std::min((int32_t)response->getAmount(), (int32_t)100);
+					npcState->amount = std::min<int32_t>(response->getAmount(), 100);
 				else
 					npcState->amount = response->getAmount();
 			}
@@ -1547,7 +1547,7 @@ void Npc::processResponse(Player* player, NpcState* npcState, const NpcResponse*
 		{
 			switch((*it).actionType)
 			{
-				case ACTION_SETTOPIC: npcState->topic = std::max((*it).intValue, (int32_t)0); resetTopic = false; break;
+				case ACTION_SETTOPIC: npcState->topic = std::max<int32_t>((*it).intValue, 0); resetTopic = false; break;
 				case ACTION_SETSELLPRICE: npcState->sellPrice = (*it).intValue; break;
 				case ACTION_SETBUYPRICE: npcState->buyPrice = (*it).intValue; break;
 				case ACTION_SETITEM: npcState->itemId = (*it).intValue; break;
@@ -1714,7 +1714,7 @@ void Npc::processResponse(Player* player, NpcState* npcState, const NpcResponse*
 								int32_t amount = npcState->amount;
 								while(amount > 0)
 								{
-									int32_t stackCount = std::min((int32_t)100, (int32_t)amount);
+									int32_t stackCount = std::min<int32_t>(100, amount);
 									Item* item = Item::CreateItem(it.id, stackCount);
 									if(g_game.internalPlayerAddItem(player, item) != RET_NOERROR)
 									{
@@ -3469,7 +3469,7 @@ int32_t NpcScriptInterface::luaDoSellItem(lua_State* L)
 	{
 		while(amount > 0)
 		{
-			int32_t stackCount = std::min((int32_t)100, (int32_t)amount);
+			int32_t stackCount = std::min<int32_t>(100, amount);
 			Item* item = Item::CreateItem(it.id, stackCount);
 			if(item && actionId != 0)
 				item->setActionId(actionId);

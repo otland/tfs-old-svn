@@ -173,10 +173,10 @@ bool Condition::executeCondition(Creature* creature, int32_t interval)
 	if(ticks == -1)
 		return true;
 
-	int32_t newTicks = std::max(((int32_t)0), ((int32_t)getTicks() - interval));
+	int32_t newTicks = std::max<int32_t>(0, getTicks() - interval);
 	//Not using set ticks here since it would reset endTime
 	ticks = newTicks;
-	return (getEndTime() >= OTSYS_TIME());
+	return getEndTime() >= OTSYS_TIME();
 }
 
 Condition* Condition::createCondition(ConditionId_t _id, ConditionType_t _type, int32_t _ticks, int32_t param/* = 0*/, bool _buff/* = false*/, uint32_t _subId/* = 0*/)
@@ -1207,7 +1207,7 @@ bool ConditionDamage::init()
 			if(startDamage > maxDamage)
 				startDamage = maxDamage;
 			else if(startDamage == 0)
-				startDamage = std::max((int32_t)1, (int32_t)std::ceil(((float)amount / 20.0)));
+				startDamage = std::max<int32_t>(1, std::ceil(amount / 20.0));
 
 			std::list<int32_t> list;
 			ConditionDamage::generateDamageList(amount, startDamage, list);

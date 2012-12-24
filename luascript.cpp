@@ -2972,7 +2972,7 @@ int32_t LuaScriptInterface::luaDoPlayerAddItem(lua_State* L)
 	if(parameters > 4)
 	{
 		//subtype already supplied, count then is the amount
-		itemCount = std::max((int32_t)1, (int32_t)count);
+		itemCount = std::max<int32_t>(1, count);
 	}
 	else if(it.hasSubType())
 	{
@@ -2982,7 +2982,7 @@ int32_t LuaScriptInterface::luaDoPlayerAddItem(lua_State* L)
 		subType = count;
 	}
 	else
-		itemCount = std::max((int32_t)1, (int32_t)count);
+		itemCount = std::max<int32_t>(1, count);
 
 	while(itemCount > 0)
 	{
@@ -3806,11 +3806,11 @@ int32_t LuaScriptInterface::luaDoCreateItem(lua_State* L)
 		subType = count;
 	}
 	else
-		itemCount = std::max((int32_t)1, (int32_t)count);
+		itemCount = std::max<int32_t>(1, count);
 
 	while(itemCount > 0)
 	{
-		int32_t stackCount = std::min((int32_t)100, (int32_t)subType);
+		int32_t stackCount = std::min<int32_t>(100, subType);
 		Item* newItem = Item::CreateItem(itemId, stackCount);
 		if(!newItem)
 		{
@@ -6829,11 +6829,11 @@ int32_t LuaScriptInterface::luaDoAddContainerItem(lua_State* L)
 		subType = count;
 	}
 	else
-		itemCount = std::max((int32_t)1, (int32_t)count);
+		itemCount = std::max<int32_t>(1, count);
 
 	while(itemCount > 0)
 	{
-		int32_t stackCount = std::min((int32_t)100, (int32_t)subType);
+		int32_t stackCount = std::min<int32_t>(100, subType);
 		Item* newItem = Item::CreateItem(itemId, stackCount);
 		if(!newItem)
 		{
@@ -7209,7 +7209,7 @@ int32_t LuaScriptInterface::luaDoPlayerAddPremiumDays(lua_State* L)
 		if(player->premiumDays != 65535)
 		{
 			Account account = IOLoginData::getInstance()->loadAccount(player->getAccount());
-			account.premiumDays = std::min(0xFFFE, (int32_t)(account.premiumDays + days));
+			account.premiumDays = std::min<int32_t>(0xFFFE, account.premiumDays + days);
 			player->setPremiumDays(account.premiumDays);
 			IOLoginData::getInstance()->saveAccount(account);
 		}
@@ -7234,7 +7234,7 @@ int32_t LuaScriptInterface::luaDoPlayerRemovePremiumDays(lua_State* L)
 		if(player->premiumDays != 65535)
 		{
 			Account account = IOLoginData::getInstance()->loadAccount(player->getAccount());
-			account.premiumDays = std::max(0, (int32_t)(account.premiumDays - days));
+			account.premiumDays = std::max<int32_t>(0, account.premiumDays - days);
 			player->setPremiumDays(account.premiumDays);
 			IOLoginData::getInstance()->saveAccount(account);
 		}
@@ -7708,7 +7708,7 @@ int32_t LuaScriptInterface::luaAddEvent(lua_State* L)
 
 	eventDesc.parameters = params;
 
-	uint32_t delay = std::max((uint32_t)100, popNumber(L));
+	uint32_t delay = std::max<uint32_t>(100, popNumber(L));
 	eventDesc.function = luaL_ref(L, LUA_REGISTRYINDEX);
 
 	eventDesc.scriptId = env->getScriptId();

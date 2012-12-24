@@ -92,7 +92,7 @@ extern Position getNextPosition(Direction direction, Position pos);
 
 extern char upchar(char c);
 
-extern std::string getFirstLine(std::string str);
+extern std::string getFirstLine(const std::string& str);
 
 extern std::string parseParams(tokenizer::iterator &it, tokenizer::iterator end);
 

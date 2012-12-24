@@ -32,7 +32,7 @@ typedef std::list<ModalWindowChoice> ModalWindowChoiceList;
 class ModalWindow
 {
 	public:
-		ModalWindow(uint32_t id, std::string title, std::string message);
+		ModalWindow(uint32_t id, const std::string& title, const std::string& message);
 		~ModalWindow() {}
 
 		std::string getTitle() const;
@@ -41,8 +41,8 @@ class ModalWindow
 		uint32_t getID() const;
 		uint32_t getButtonCount() const;
 		uint32_t getChoiceCount() const;
-		void addChoice(uint8_t id, std::string text);
-		void addButton(uint8_t id, std::string text);
+		void addChoice(uint8_t id, const std::string& text);
+		void addButton(uint8_t id, const std::string& text);
 
 		void setDefaultEnterButton(uint8_t enterButtonId);
 		void setDefaultEscapeButton(uint8_t escapeButtonId);

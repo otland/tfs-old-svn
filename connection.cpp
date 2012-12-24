@@ -74,8 +74,7 @@ void ConnectionManager::closeAll()
 	std::cout << "Closing all connections" << std::endl;
 	#endif
 	boost::recursive_mutex::scoped_lock lockClass(m_connectionManagerLock);
-	std::list<Connection_ptr>::iterator it;
-	for(it = m_connections.begin(); it != m_connections.end();)
+	for(std::list<Connection_ptr>::iterator it = m_connections.begin(); it != m_connections.end(); ++it)
 	{
 		try
 		{
@@ -86,7 +85,6 @@ void ConnectionManager::closeAll()
 		catch(boost::system::system_error&)
 		{
 		}
-		++it;
 	}
 	m_connections.clear();
 }
