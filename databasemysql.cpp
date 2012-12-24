@@ -138,7 +138,7 @@ bool DatabaseMySQL::commit()
 	return true;
 }
 
-bool DatabaseMySQL::executeQuery(const std::string &query)
+bool DatabaseMySQL::executeQuery(const std::string& query)
 {
 	if(!m_connected)
 		return false;
@@ -169,7 +169,7 @@ bool DatabaseMySQL::executeQuery(const std::string &query)
 	return state;
 }
 
-DBResult* DatabaseMySQL::storeQuery(const std::string &query)
+DBResult* DatabaseMySQL::storeQuery(const std::string& query)
 {
 	if(!m_connected)
 		return NULL;
@@ -212,12 +212,12 @@ uint64_t DatabaseMySQL::getLastInsertedRowID()
 	return (uint64_t)mysql_insert_id(&m_handle);
 }
 
-std::string DatabaseMySQL::escapeString(const std::string &s)
+std::string DatabaseMySQL::escapeString(const std::string& s)
 {
 	return escapeBlob(s.c_str(), s.length());
 }
 
-std::string DatabaseMySQL::escapePatternString(const std::string &s)
+std::string DatabaseMySQL::escapePatternString(const std::string& s)
 {
 	std::string str = escapeString(s);
 	str = boost::regex_replace(str, boost::regex("%"), "\\%");
@@ -250,7 +250,7 @@ void DatabaseMySQL::freeResult(DBResult* res)
 
 /** MySQLResult definitions */
 
-int32_t MySQLResult::getDataInt(const std::string &s)
+int32_t MySQLResult::getDataInt(const std::string& s)
 {
 	listNames_t::iterator it = m_listNames.find(s);
 	if(it == m_listNames.end())
@@ -265,7 +265,7 @@ int32_t MySQLResult::getDataInt(const std::string &s)
 	return atoi(m_row[it->second]);
 }
 
-int64_t MySQLResult::getDataLong(const std::string &s)
+int64_t MySQLResult::getDataLong(const std::string& s)
 {
 	listNames_t::iterator it = m_listNames.find(s);
 	if(it == m_listNames.end())
@@ -280,7 +280,7 @@ int64_t MySQLResult::getDataLong(const std::string &s)
 	return ATOI64(m_row[it->second]);
 }
 
-std::string MySQLResult::getDataString(const std::string &s)
+std::string MySQLResult::getDataString(const std::string& s)
 {
 	listNames_t::iterator it = m_listNames.find(s);
 	if(it == m_listNames.end())
@@ -295,7 +295,7 @@ std::string MySQLResult::getDataString(const std::string &s)
 	return std::string(m_row[it->second]);
 }
 
-const char* MySQLResult::getDataStream(const std::string &s, unsigned long &size)
+const char* MySQLResult::getDataStream(const std::string& s, unsigned long &size)
 {
 	listNames_t::iterator it = m_listNames.find(s);
 	if(it == m_listNames.end())

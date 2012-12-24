@@ -176,9 +176,9 @@ class Player : public Creature, public Cylinder
 
 		void setDepotChange(bool b) {depotChange = b;}
 
-		void manageAccount(const std::string &text);
+		void manageAccount(const std::string& text);
 
-		void sendFYIBox(std::string message)
+		void sendFYIBox(const std::string& message)
 			{if(client) client->sendFYIBox(message);}
 
 		void setGUID(uint32_t _guid) {guid = _guid;}
@@ -550,7 +550,7 @@ class Player : public Creature, public Cylinder
 		void sendUpdateTile(const Tile* tile, const Position& pos)
 			{if(client) client->sendUpdateTile(tile, pos);}
 
-		void sendChannelMessage(std::string author, std::string text, SpeakClasses type, unsigned char channel)
+		void sendChannelMessage(const std::string& author, const std::string& text, SpeakClasses type, unsigned char channel)
 			{if(client) client->sendChannelMessage(author, text, type, channel);}
 		void sendChannelEvent(uint16_t channelId, const std::string& playerName, ChannelEvent_t channelEvent)
 			{if(client) client->sendChannelEvent(channelId, playerName, channelEvent);}

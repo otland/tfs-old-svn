@@ -172,7 +172,7 @@ class NetworkMessage
 		char* getBodyBuffer() { m_ReadPos = 2; return (char*)&m_MsgBuf[header_length]; }
 
 #ifdef __TRACK_NETWORK__
-		virtual void Track(std::string file, long line, std::string func) {}
+		virtual void Track(const std::string& file, long line, const std::string& func) {}
 		virtual void clearTrack() {}
 #endif
 

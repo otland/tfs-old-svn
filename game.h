@@ -112,7 +112,7 @@ class Game
 		  * \param filename Mapfile to load
 		  * \returns int32_t 0 built-in spawns, 1 needs xml spawns, 2 needs sql spawns, -1 if got error
 		  */
-		int32_t loadMap(std::string filename);
+		int32_t loadMap(const std::string& filename);
 
 		/**
 		  * Get the map size - info purpose only
@@ -136,7 +136,7 @@ class Game
 
 		std::string getTradeErrorDescription(ReturnValue ret, Item* item);
 
-		bool violationWindow(Player* player, std::string targetPlayerName, int32_t reason, int32_t action, std::string banComment, bool IPBanishment);
+		bool violationWindow(Player* player, std::string targetPlayerName, int32_t reason, int32_t action, const std::string& banComment, bool IPBanishment);
 
 		/**
 		  * Get a single tile of the map.
@@ -369,7 +369,7 @@ class Game
 		bool internalCreatureSay(Creature* creature, SpeakClasses type, const std::string& text,
 			bool ghostMode, SpectatorVec* listPtr = NULL, Position* pos = NULL);
 
-		Position getClosestFreeTile(Player* player, Creature* teleportedCreature, Position toPos, bool toCreature);
+		Position getClosestFreeTile(Player* player, Creature* teleportedCreature, const Position& toPos, bool toCreature);
 
 		int32_t getMotdNum();
 		void loadMotd();
@@ -378,9 +378,9 @@ class Game
 
 		void sendGuildMotd(uint32_t playerId, uint32_t guildId);
 		void kickPlayer(uint32_t playerId, bool displayEffect);
-		void kickPlayerByName(std::string name);
-		bool playerReportBug(uint32_t playerId, std::string bug);
-		bool playerDebugAssert(uint32_t playerId, std::string assertLine, std::string date, std::string description, std::string comment);
+		void kickPlayerByName(const std::string& name);
+		bool playerReportBug(uint32_t playerId, const std::string& bug);
+		bool playerDebugAssert(uint32_t playerId, const std::string& assertLine, const std::string& date, const std::string& description, const std::string& comment);
 		bool playerAnswerModalWindow(uint32_t playerId, uint32_t modalWindowId, uint8_t button, uint8_t choice);
 
 		bool internalStartTrade(Player* player, Player* partner, Item* tradeItem);
@@ -527,7 +527,7 @@ class Game
 		int64_t getStateTime() const {return stateTime;}
 		void setStateTime(int64_t _stateTime) {stateTime = _stateTime;}
 
-		void addCommandTag(std::string tag);
+		void addCommandTag(const std::string& tag);
 		void resetCommandTag();
 
 		void startDecay(Item* item);
@@ -544,8 +544,8 @@ class Game
 
 		bool loadStatuslist();
 
-		bool isInBlacklist(std::string ip) const { for (StatusList::const_iterator it = blacklist.begin(); it != blacklist.end(); ++it) { if (*it == ip) return true; } return false; }
-		bool isInWhitelist(std::string ip) const { for (StatusList::const_iterator it = whitelist.begin(); it != whitelist.end(); ++it) { if (*it == ip) return true; } return false; }
+		bool isInBlacklist(const std::string& ip) const { for (StatusList::const_iterator it = blacklist.begin(), end = blacklist.end(); it != end; ++it) { if (*it == ip) return true; } return false; }
+		bool isInWhitelist(const std::string& ip) const { for (StatusList::const_iterator it = whitelist.begin(), end = whitelist.end(); it != end; ++it) { if (*it == ip) return true; } return false; }
 
 	protected:
 		bool playerSayCommand(Player* player, SpeakClasses type, const std::string& text);

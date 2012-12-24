@@ -77,7 +77,7 @@ class CallBack
 		CallBack();
 		virtual ~CallBack();
 
-		bool loadCallBack(LuaScriptInterface* _interface, std::string name);
+		bool loadCallBack(LuaScriptInterface* _interface, const std::string& name);
 
 	protected:
 		int32_t m_scriptId;

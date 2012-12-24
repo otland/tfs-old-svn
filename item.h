@@ -147,7 +147,7 @@ class ItemAttributes
 		void resetDate() {removeAttribute(ATTR_ITEM_WRITTENDATE);}
 		time_t getDate() const {return (time_t)getIntAttr(ATTR_ITEM_WRITTENDATE);}
 
-		void setWriter(std::string _writer) {setStrAttr(ATTR_ITEM_WRITTENBY, _writer);}
+		void setWriter(const std::string& _writer) {setStrAttr(ATTR_ITEM_WRITTENBY, _writer);}
 		void resetWriter() {removeAttribute(ATTR_ITEM_WRITTENBY);}
 		const std::string& getWriter() const {return getStrAttr(ATTR_ITEM_WRITTENBY);}
 

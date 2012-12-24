@@ -25,13 +25,13 @@
 #include "quests.h"
 #include "tools.h"
 
-MissionState::MissionState(std::string _description, int32_t _missionID)
+MissionState::MissionState(const std::string& _description, int32_t _missionID)
 {
 	description = _description;
  	missionID = _missionID;
 }
 
-Mission::Mission(std::string _missionName, int32_t _storageID, int32_t _startValue, int32_t _endValue)
+Mission::Mission(const std::string& _missionName, int32_t _storageID, int32_t _startValue, int32_t _endValue)
 {
 	missionName = _missionName;
 	endValue = _endValue;
@@ -111,7 +111,7 @@ std::string Mission::getName(Player* player)
 	return missionName;
 }
 
-Quest::Quest(std::string _name, uint16_t _id, int32_t _startStorageID, int32_t _startStorageValue)
+Quest::Quest(const std::string& _name, uint16_t _id, int32_t _startStorageID, int32_t _startStorageValue)
 {
 	name = _name;
 	id = _id;

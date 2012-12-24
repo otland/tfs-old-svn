@@ -29,7 +29,7 @@ extern ConfigManager g_config;
 extern Game g_game;
 extern Chat g_chat;
 
-PrivateChatChannel::PrivateChatChannel(uint16_t channelId, std::string channelName) :
+PrivateChatChannel::PrivateChatChannel(uint16_t channelId, const std::string& channelName) :
 	ChatChannel(channelId, channelName)
 {
 	m_owner = 0;
@@ -124,7 +124,7 @@ void PrivateChatChannel::closeChannel()
 	}
 }
 
-ChatChannel::ChatChannel(uint16_t channelId, std::string channelName)
+ChatChannel::ChatChannel(uint16_t channelId, const std::string& channelName)
 {
 	m_id = channelId;
 	m_name = channelName;
@@ -179,9 +179,9 @@ bool ChatChannel::removeUser(Player* player)
 	return true;
 }
 
-void ChatChannel::sendToAll(std::string message, SpeakClasses type)
+void ChatChannel::sendToAll(const std::string& message, SpeakClasses type)
 {
-	for(UsersMap::iterator it = m_users.begin(); it != m_users.end(); ++it)
+	for(UsersMap::iterator it = m_users.begin(), end = m_users.end(); it != end; ++it)
 		it->second->sendChannelMessage("", message, type, m_id);
 }
 

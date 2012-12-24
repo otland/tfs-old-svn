@@ -33,7 +33,7 @@ typedef std::list<Mount*> MountsList;
 class Mount
 {
 	public:
-		Mount(uint8_t _id, uint16_t _clientId, std::string _name, int32_t _speed, bool _premium);
+		Mount(uint8_t _id, uint16_t _clientId, const std::string& _name, int32_t _speed, bool _premium);
 		~Mount() {}
 
 		bool isTamed(Player* player) const;

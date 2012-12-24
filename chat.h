@@ -37,14 +37,14 @@ typedef std::map<uint32_t, Player*> InvitedMap;
 class ChatChannel
 {
 	public:
-		ChatChannel(uint16_t channelId, std::string channelName);
+		ChatChannel(uint16_t channelId, const std::string& channelName);
 		virtual ~ChatChannel() {}
 
 		bool addUser(Player* player);
 		bool removeUser(Player* player);
 
 		bool talk(Player* fromPlayer, SpeakClasses type, const std::string& text);
-		void sendToAll(std::string message, SpeakClasses type);
+		void sendToAll(const std::string& message, SpeakClasses type);
 
 		const std::string& getName() const {return m_name;}
 		uint16_t getId() const {return m_id;}
@@ -61,8 +61,8 @@ class ChatChannel
 class PrivateChatChannel : public ChatChannel
 {
 	public:
-		PrivateChatChannel(uint16_t channelId, std::string channelName);
-		virtual ~PrivateChatChannel(){}
+		PrivateChatChannel(uint16_t channelId, const std::string& channelName);
+		virtual ~PrivateChatChannel() {}
 
 		virtual uint32_t getOwner() {return m_owner;}
 		void setOwner(uint32_t id) {m_owner = id;}

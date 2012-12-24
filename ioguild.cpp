@@ -107,7 +107,7 @@ std::string IOGuild::getRankName(int16_t guildLevel, uint32_t guildId)
 	return rankName;
 }
 
-bool IOGuild::rankNameExists(std::string rankName, uint32_t guildId)
+bool IOGuild::rankNameExists(const std::string& rankName, uint32_t guildId)
 {
 	Database* db = Database::getInstance();
 
@@ -122,7 +122,7 @@ bool IOGuild::rankNameExists(std::string rankName, uint32_t guildId)
 	return true;
 }
 
-bool IOGuild::changeRankName(std::string oldRankName, std::string newRankName, uint32_t guildId)
+bool IOGuild::changeRankName(const std::string& oldRankName, const std::string& newRankName, uint32_t guildId)
 {
 	Database* db = Database::getInstance();
 
@@ -140,10 +140,10 @@ bool IOGuild::changeRankName(std::string oldRankName, std::string newRankName, u
 	if(!db->executeQuery(query.str()))
 		return false;
 
-	toLowerCaseString(oldRankName);
+	std::string oldRankNameLower = asLowerCaseString(oldRankName);
 	for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
 	{
-		if((*it).second->getGuildId() == guildId && asLowerCaseString((*it).second->getGuildRank()) == oldRankName)
+		if((*it).second->getGuildId() == guildId && asLowerCaseString((*it).second->getGuildRank()) == oldRankNameLower)
 			(*it).second->setGuildRank(newRankName);
 	}
 	return true;
@@ -330,7 +330,7 @@ bool IOGuild::updateOwnerId(uint32_t guildId, uint32_t guid)
 	return db->executeQuery(query.str());
 }
 
-bool IOGuild::setGuildNick(uint32_t guid, std::string guildNick)
+bool IOGuild::setGuildNick(uint32_t guid, const std::string& guildNick)
 {
 	Database* db = Database::getInstance();
 
@@ -339,7 +339,7 @@ bool IOGuild::setGuildNick(uint32_t guid, std::string guildNick)
 	return db->executeQuery(query.str());
 }
 
-bool IOGuild::setMotd(uint32_t guildId, std::string newMotd)
+bool IOGuild::setMotd(uint32_t guildId, const std::string& newMotd)
 {
 	Database* db = Database::getInstance();
 

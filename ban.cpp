@@ -268,7 +268,7 @@ void IOBan::addIpBan(uint32_t ip, uint32_t mask, uint64_t time)
 	Database::getInstance()->executeQuery(query.str());
 }
 
-void IOBan::addPlayerNamelock(uint32_t playerId, uint32_t time, uint32_t reasonId, uint32_t actionId, std::string comment, uint32_t bannedBy)
+void IOBan::addPlayerNamelock(uint32_t playerId, uint32_t time, uint32_t reasonId, uint32_t actionId, const std::string& comment, uint32_t bannedBy)
 {
 	Database* db = Database::getInstance();
 
@@ -278,7 +278,7 @@ void IOBan::addPlayerNamelock(uint32_t playerId, uint32_t time, uint32_t reasonI
 	db->executeQuery(query.str());
 }
 
-void IOBan::addAccountNotation(uint32_t account, uint64_t time, uint32_t reasonId, uint32_t actionId, std::string comment, uint32_t bannedBy)
+void IOBan::addAccountNotation(uint32_t account, uint64_t time, uint32_t reasonId, uint32_t actionId, const std::string& comment, uint32_t bannedBy)
 {
 	Database* db = Database::getInstance();
 
@@ -288,7 +288,7 @@ void IOBan::addAccountNotation(uint32_t account, uint64_t time, uint32_t reasonI
 	db->executeQuery(query.str());
 }
 
-void IOBan::addAccountDeletion(uint32_t account, uint64_t time, int32_t reasonId, int32_t actionId, std::string comment, uint32_t bannedBy)
+void IOBan::addAccountDeletion(uint32_t account, uint64_t time, int32_t reasonId, int32_t actionId, const std::string& comment, uint32_t bannedBy)
 {
 	Database* db = Database::getInstance();
 
@@ -298,7 +298,7 @@ void IOBan::addAccountDeletion(uint32_t account, uint64_t time, int32_t reasonId
 	db->executeQuery(query.str());
 }
 
-void IOBan::addAccountBan(uint32_t account, uint64_t time, int32_t reasonId, int32_t actionId, std::string comment, uint32_t bannedBy)
+void IOBan::addAccountBan(uint32_t account, uint64_t time, int32_t reasonId, int32_t actionId, const std::string& comment, uint32_t bannedBy)
 {
 	Database* db = Database::getInstance();
 

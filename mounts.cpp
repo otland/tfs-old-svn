@@ -23,7 +23,7 @@
 #include "mounts.h"
 #include "tools.h"
 
-Mount::Mount(uint8_t _id, uint16_t _clientId, std::string _name, int32_t _speed, bool _premium)
+Mount::Mount(uint8_t _id, uint16_t _clientId, const std::string& _name, int32_t _speed, bool _premium)
 {
 	id = _id;
 	clientId = _clientId;

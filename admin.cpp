@@ -33,7 +33,7 @@
 
 #include "logger.h"
 
-static void addLogLine(ProtocolAdmin* conn, eLogType type, int level, std::string message);
+static void addLogLine(ProtocolAdmin* conn, eLogType type, int level, const std::string& message);
 
 extern Game g_game;
 extern ConfigManager g_config;
@@ -773,15 +773,15 @@ RSA* AdminProtocolConfig::getRSAKey(uint8_t type)
 
 /////////////////////////////////////////////
 
-static void addLogLine(ProtocolAdmin* conn, eLogType type, int level, std::string message)
+static void addLogLine(ProtocolAdmin* conn, eLogType type, int level, const std::string& message)
 {
-	if(g_config.getBoolean(ConfigManager::ADMIN_LOGS_ENABLED))
-	{
-		std::string logMsg;
-		if(conn)
-			logMsg = "[" + convertIPToString(conn->getIP()) + "] - ";
+	if(!g_config.getBoolean(ConfigManager::ADMIN_LOGS_ENABLED))
+		return;
 
-		logMsg += message;
-		LOG_MESSAGE("OTADMIN", type, level, logMsg);
-	}
+	std::string logMsg;
+	if(conn)
+		logMsg = "[" + convertIPToString(conn->getIP()) + "] - ";
+
+	logMsg += message;
+	LOG_MESSAGE("OTADMIN", type, level, logMsg);
 }

@@ -542,7 +542,7 @@ std::string LuaScriptInterface::getErrorDesc(ErrorCode_t code)
 ScriptEnvironment LuaScriptInterface::m_scriptEnv[16];
 int32_t LuaScriptInterface::m_scriptEnvIndex = -1;
 
-LuaScriptInterface::LuaScriptInterface(std::string interfaceName)
+LuaScriptInterface::LuaScriptInterface(const std::string& interfaceName)
 {
 	m_luaState = NULL;
 	m_interfaceName = interfaceName;

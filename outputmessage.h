@@ -74,7 +74,7 @@ class OutputMessage : public NetworkMessage, boost::noncopyable
 		//uint32_t getOutputBufferStart() const {return m_outputBufferStart;}
 
 	#ifdef __TRACK_NETWORK__
-		virtual void Track(std::string file, long line, std::string func)
+		virtual void Track(const std::string& file, long line, const std::string& func)
 		{
 			if(last_uses.size() >= 25)
 				last_uses.pop_front();

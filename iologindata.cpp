@@ -82,7 +82,7 @@ Account IOLoginData::loadAccount(uint32_t accno)
 	return acc;
 }
 
-Account IOLoginData::loadAccount(std::string name)
+Account IOLoginData::loadAccount(const std::string& name)
 {
 	Account acc;
 
@@ -122,7 +122,7 @@ Account IOLoginData::loadAccount(std::string name)
 	return acc;
 }
 
-bool IOLoginData::saveAccount(Account acc)
+bool IOLoginData::saveAccount(const Account& acc)
 {
 	DBQuery query;
 	query << "UPDATE `accounts` SET `premdays` = " << acc.premiumDays << ", `warnings` = " << acc.warnings << ", `lastday` = " << acc.lastDay << " WHERE `id` = " << acc.id << ";";
@@ -208,7 +208,7 @@ bool IOLoginData::accountNameExists(const std::string& name)
 	return true;
 }
 
-bool IOLoginData::setRecoveryKey(uint32_t accountNumber, std::string recoveryKey)
+bool IOLoginData::setRecoveryKey(uint32_t accountNumber, const std::string& recoveryKey)
 {
 	Database* db = Database::getInstance();
 
@@ -261,7 +261,7 @@ bool IOLoginData::setNewPassword(const std::string& accountName, std::string new
 	return db->executeQuery(query.str());
 }
 
-AccountType_t IOLoginData::getAccountType(std::string name)
+AccountType_t IOLoginData::getAccountType(const std::string& name)
 {
 	Database* db = Database::getInstance();
 
@@ -282,7 +282,7 @@ AccountType_t IOLoginData::getAccountType(std::string name)
 	return accountType;
 }
 
-uint32_t IOLoginData::getLastIPByName(std::string name)
+uint32_t IOLoginData::getLastIPByName(const std::string& name)
 {
 	Database* db = Database::getInstance();
 
@@ -1084,6 +1084,22 @@ bool IOLoginData::getGuidByNameEx(uint32_t &guid, bool &specialVip, std::string&
 	return true;
 }
 
+bool IOLoginData::playerExists(const std::string& name)
+{
+	Database* db = Database::getInstance();
+
+	DBQuery query;
+	DBResult* result;
+
+	query << "SELECT `id` FROM `players` WHERE `name` " << db->getStringComparer() << db->escapePatternString(name) << " LIMIT 1;";
+	if((result = db->storeQuery(query.str())))
+	{
+		db->freeResult(result);
+		return true;
+	}
+	return false;
+}
+
 bool IOLoginData::playerExists(std::string& name)
 {
 	Database* db = Database::getInstance();
@@ -1232,7 +1248,7 @@ bool IOLoginData::leaveGuild(uint32_t guid)
 	return Database::getInstance()->executeQuery(query.str());
 }
 
-bool IOLoginData::changeName(uint32_t guid, std::string newName)
+bool IOLoginData::changeName(uint32_t guid, const std::string& newName)
 {
 	Database* db = Database::getInstance();
 	DBQuery query;
@@ -1244,7 +1260,7 @@ bool IOLoginData::changeName(uint32_t guid, std::string newName)
 	return true;
 }
 
-uint32_t IOLoginData::getAccountNumberByName(std::string name)
+uint32_t IOLoginData::getAccountNumberByName(const std::string& name)
 {
 	Database* db = Database::getInstance();
 	DBQuery query;
@@ -1258,7 +1274,7 @@ uint32_t IOLoginData::getAccountNumberByName(std::string name)
 	return accountId;
 }
 
-bool IOLoginData::createCharacter(uint32_t accountNumber, std::string characterName, int32_t vocationId, PlayerSex_t sex)
+bool IOLoginData::createCharacter(uint32_t accountNumber, const std::string& characterName, int32_t vocationId, PlayerSex_t sex)
 {
 	if(playerExists(characterName))
 		return false;

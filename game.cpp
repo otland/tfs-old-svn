@@ -255,7 +255,7 @@ void Game::loadGameState()
 	ScriptEnvironment::loadGameState();
 }
 
-int32_t Game::loadMap(std::string filename)
+int32_t Game::loadMap(const std::string& filename)
 {
 	if(!map)
 		map = new Map;
@@ -4992,20 +4992,14 @@ void Game::getWorldLightInfo(LightInfo& lightInfo) const
 	lightInfo.color = 0xD7;
 }
 
-void Game::addCommandTag(std::string tag)
+void Game::addCommandTag(const std::string& tag)
 {
-	bool found = false;
-	for(uint32_t i=0; i< commandTags.size() ;i++)
+	for(uint32_t i = 0, size = commandTags.size(); i < size; ++i)
 	{
 		if(commandTags[i] == tag)
-		{
-			found = true;
-			break;
-		}
+			return;
 	}
-
-	if(!found)
-		commandTags.push_back(tag);
+	commandTags.push_back(tag);
 }
 
 void Game::resetCommandTag()
@@ -5194,9 +5188,8 @@ void Game::serverSave()
 	}
 }
 
-Position Game::getClosestFreeTile(Player* player, Creature* teleportedCreature, Position toPos, bool teleport)
+Position Game::getClosestFreeTile(Player* player, Creature* teleportedCreature, const Position& toPos, bool teleport)
 {
-	int i;
 	Tile* tile[9] =
 	{
 		getTile(toPos.x, toPos.y, toPos.z),
@@ -5209,7 +5202,7 @@ Position Game::getClosestFreeTile(Player* player, Creature* teleportedCreature, 
 	{
 		if(player)
 		{
-			for(i = 0; i < 9; i++)
+			for(int32_t i = 0; i < 9; i++)
 			{
 				if(tile[i] && ((!tile[i]->hasProperty(IMMOVABLEBLOCKSOLID) && tile[i]->getCreatureCount() == 0) || player->getAccountType() == ACCOUNT_TYPE_GOD))
 					return tile[i]->getPosition();
@@ -5221,7 +5214,7 @@ Position Game::getClosestFreeTile(Player* player, Creature* teleportedCreature, 
 		Player* teleportedPlayer = teleportedCreature->getPlayer();
 		if(teleportedPlayer)
 		{
-			for(i = 0; i < 9; i++)
+			for(int32_t i = 0; i < 9; i++)
 			{
 				if(tile[i] && ((!tile[i]->hasProperty(IMMOVABLEBLOCKSOLID) && tile[i]->getCreatureCount() == 0) || teleportedPlayer->getAccountType() == ACCOUNT_TYPE_GOD))
 					return tile[i]->getPosition();
@@ -5229,7 +5222,7 @@ Position Game::getClosestFreeTile(Player* player, Creature* teleportedCreature, 
 		}
 		else
 		{
-			for(i = 0; i < 9; i++)
+			for(int32_t i = 0; i < 9; i++)
 			{
 				if(tile[i] && tile[i]->getCreatureCount() == 0 && !tile[i]->hasProperty(IMMOVABLEBLOCKSOLID))
 					return tile[i]->getPosition();
@@ -5524,7 +5517,7 @@ void Game::kickPlayer(uint32_t playerId, bool displayEffect)
 	player->kickPlayer(displayEffect);
 }
 
-void Game::kickPlayerByName(std::string name)
+void Game::kickPlayerByName(const std::string& name)
 {
 	Player* player = getPlayerByName(name);
 	if(!player || player->isRemoved())
@@ -5533,7 +5526,7 @@ void Game::kickPlayerByName(std::string name)
 	player->kickPlayer(true);
 }
 
-bool Game::playerReportBug(uint32_t playerId, std::string bug)
+bool Game::playerReportBug(uint32_t playerId, const std::string& bug)
 {
 	Player* player = getPlayerByID(playerId);
 	if(!player || player->isRemoved())
@@ -5555,7 +5548,7 @@ bool Game::playerReportBug(uint32_t playerId, std::string bug)
 	return true;
 }
 
-bool Game::playerDebugAssert(uint32_t playerId, std::string assertLine, std::string date, std::string description, std::string comment)
+bool Game::playerDebugAssert(uint32_t playerId, const std::string& assertLine, const std::string& date, const std::string& description, const std::string& comment)
 {
 	Player* player = getPlayerByID(playerId);
 	if(!player || player->isRemoved())
@@ -6167,7 +6160,7 @@ void Game::forceRemoveCondition(uint32_t creatureId, ConditionType_t type)
 	creature->removeCondition(type, true);
 }
 
-bool Game::violationWindow(Player* player, std::string targetPlayerName, int32_t reason, int32_t action, std::string banComment, bool IPBanishment)
+bool Game::violationWindow(Player* player, std::string targetPlayerName, int32_t reason, int32_t action, const std::string& banComment, bool IPBanishment)
 {
 	if((0 == (violationActions[player->getAccountType()] & (1 << action)))
 		|| reason > violationReasons[player->getAccountType()]
@@ -6185,12 +6178,14 @@ bool Game::violationWindow(Player* player, std::string targetPlayerName, int32_t
 		return false;
 	}
 
-	bool playerExists = false;
-	if(IOLoginData::getInstance()->playerExists(targetPlayerName))
-		playerExists = true;
+	if(!IOLoginData::getInstance()->playerExists(targetPlayerName))
+	{
+		player->sendCancel("A player with this name does not exist.");
+		return false;
+	}
 
 	toLowerCaseString(targetPlayerName);
-	if(!playerExists || (g_config.getBoolean(ConfigManager::ACCOUNT_MANAGER) && targetPlayerName == "account manager"))
+	if(g_config.getBoolean(ConfigManager::ACCOUNT_MANAGER) && targetPlayerName == "account manager")
 	{
 		player->sendCancel("A player with this name does not exist.");
 		return false;

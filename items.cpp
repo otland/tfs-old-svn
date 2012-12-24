@@ -176,7 +176,7 @@ bool Items::reload()
 	return true;
 }
 
-int32_t Items::loadFromOtb(std::string file)
+int32_t Items::loadFromOtb(const std::string& file)
 {
 	FileLoader f;
 	if(!f.openFile(file.c_str(), "OTBI", false, true))

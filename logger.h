@@ -59,8 +59,8 @@ class Logger
 			return &instance;
 		}
 
-		void logMessage(const char* channel, eLogType type, int32_t level, std::string message, const char* func);
-	
+		void logMessage(const char* channel, eLogType type, int32_t level, const std::string& message, const char* func);
+
 	private:
 		FILE* m_file;
 		Logger();

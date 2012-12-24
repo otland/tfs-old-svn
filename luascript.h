@@ -257,7 +257,7 @@ enum ErrorCode_t
 class LuaScriptInterface
 {
 	public:
-		LuaScriptInterface(std::string interfaceName);
+		LuaScriptInterface(const std::string& interfaceName);
 		virtual ~LuaScriptInterface();
 
 		virtual bool initState();

@@ -31,8 +31,8 @@ class DatabaseManager
 			return &instance;
 		}
 
-		bool tableExists(std::string table);
-		bool triggerExists(std::string trigger);
+		bool tableExists(const std::string& table);
+		bool triggerExists(const std::string& trigger);
 
 		int32_t getDatabaseVersion();
 		bool isDatabaseSetup();
@@ -40,11 +40,11 @@ class DatabaseManager
 		bool optimizeTables();
 		uint32_t updateDatabase();
 
-		bool getDatabaseConfig(std::string config, int32_t &value);
-		void registerDatabaseConfig(std::string config, int32_t value);
+		bool getDatabaseConfig(const std::string& config, int32_t &value);
+		void registerDatabaseConfig(const std::string& config, int32_t value);
 
-		bool getDatabaseConfig(std::string config, std::string &value);
-		void registerDatabaseConfig(std::string config, std::string value);
+		bool getDatabaseConfig(const std::string& config, std::string& value);
+		void registerDatabaseConfig(const std::string& config, const std::string& value);
 
 		void checkEncryption();
 		void checkTriggers();

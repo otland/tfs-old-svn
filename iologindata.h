@@ -51,17 +51,17 @@ class IOLoginData
 		}
 
 		Account loadAccount(uint32_t accno);
-		Account loadAccount(std::string name);
-		bool saveAccount(Account acc);
+		Account loadAccount(const std::string& name);
+		bool saveAccount(const Account& acc);
 		bool createAccount(const std::string& accountNumber, std::string newPassword);
 		bool getPassword(const std::string& accname, const std::string& name, std::string& password, uint32_t& accNumber);
 		bool getPasswordEx(const std::string& accname, std::string& password, uint32_t& accNumber);
 		bool accountNameExists(const std::string& name);
-		bool setRecoveryKey(uint32_t accountNumber, std::string recoveryKey);
+		bool setRecoveryKey(uint32_t accountNumber, const std::string& recoveryKey);
 		bool validRecoveryKey(const std::string& accountName, const std::string& recoveryKey);
 		bool setNewPassword(uint32_t accountId, std::string newPassword);
 		bool setNewPassword(const std::string& accountName, std::string newPassword);
-		AccountType_t getAccountType(std::string name);
+		AccountType_t getAccountType(const std::string& name);
 
 		bool updateOnlineStatus(uint32_t guid, bool login);
 		bool resetOnlineStatus();
@@ -71,18 +71,19 @@ class IOLoginData
 		bool getGuidByName(uint32_t& guid, std::string& name);
 		bool getGuidByNameEx(uint32_t &guid, bool& specialVip, std::string& name);
 		bool getNameByGuid(uint32_t guid, std::string& name);
+		bool playerExists(const std::string& name);
 		bool playerExists(std::string& name);
 		bool playerExists(uint32_t guid);
 		int32_t getLevel(uint32_t guid);
 		bool isPremium(uint32_t guid);
 		bool leaveGuild(uint32_t guid);
-		bool changeName(uint32_t guid, std::string newName);
-		uint32_t getAccountNumberByName(std::string name);
-		bool createCharacter(uint32_t accountNumber, std::string characterName, int32_t vocationId, PlayerSex_t sex);
+		bool changeName(uint32_t guid, const std::string& newName);
+		uint32_t getAccountNumberByName(const std::string& name);
+		bool createCharacter(uint32_t accountNumber, const std::string& characterName, int32_t vocationId, PlayerSex_t sex);
 		int16_t deleteCharacter(uint32_t accountNumber, const std::string& characterName);
 		bool addStorageValue(uint32_t guid, uint32_t storageKey, uint32_t storageValue);
 		const PlayerGroup* getPlayerGroup(uint32_t groupid);
-		uint32_t getLastIPByName(std::string name);
+		uint32_t getLastIPByName(const std::string& name);
 		bool hasGuild(uint32_t guid);
 		void increaseBankBalance(uint32_t guid, uint64_t bankBalance);
 

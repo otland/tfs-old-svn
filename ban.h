@@ -33,7 +33,7 @@ struct idBan
 	int32_t actionId;
 	std::string comment;
 	uint32_t bannedBy;
-	idBan(uint32_t _id, uint32_t _time, int32_t _reasonId, int32_t _actionId, std::string _comment, uint32_t _bannedBy)
+	idBan(uint32_t _id, uint32_t _time, int32_t _reasonId, int32_t _actionId, const std::string& _comment, uint32_t _bannedBy)
 	{
 		id = _id;
 		time = _time;
@@ -62,7 +62,7 @@ struct idNotation
 	uint32_t time;
 	std::string comment;
 	uint32_t bannedBy;
-	idNotation(uint32_t _id, uint32_t _time, std::string _comment, uint32_t _bannedBy)
+	idNotation(uint32_t _id, uint32_t _time, const std::string& _comment, uint32_t _bannedBy)
 	{
 		id = _id;
 		time = _time;
@@ -152,10 +152,10 @@ class IOBan
 		bool isAccountBanned(uint32_t account);
 
 		void addIpBan(uint32_t ip, uint32_t mask, uint64_t time);
-		void addPlayerNamelock(uint32_t playerId, uint32_t time, uint32_t reasonId, uint32_t actionId, std::string comment, uint32_t bannedBy);
-		void addAccountBan(uint32_t account, uint64_t time, int32_t reasonId, int32_t actionId, std::string comment, uint32_t bannedBy);
-		void addAccountDeletion(uint32_t account, uint64_t time, int32_t reasonId, int32_t actionId, std::string comment, uint32_t bannedBy);
-		void addAccountNotation(uint32_t account, uint64_t time, uint32_t reasonId, uint32_t actionId, std::string comment, uint32_t bannedBy);
+		void addPlayerNamelock(uint32_t playerId, uint32_t time, uint32_t reasonId, uint32_t actionId, const std::string& comment, uint32_t bannedBy);
+		void addAccountBan(uint32_t account, uint64_t time, int32_t reasonId, int32_t actionId, const std::string& comment, uint32_t bannedBy);
+		void addAccountDeletion(uint32_t account, uint64_t time, int32_t reasonId, int32_t actionId, const std::string& comment, uint32_t bannedBy);
+		void addAccountNotation(uint32_t account, uint64_t time, uint32_t reasonId, uint32_t actionId, const std::string& comment, uint32_t bannedBy);
 
 		bool getBanInformation(uint32_t account, uint32_t& bannedBy, uint32_t& banTime, int32_t& reason, int32_t& action, std::string& comment, bool& deletion);
 		int32_t getNotationsCount(uint32_t account);

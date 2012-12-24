@@ -76,7 +76,7 @@ bool DatabaseManager::optimizeTables()
 	return true;
 }
 
-bool DatabaseManager::triggerExists(std::string triggerName)
+bool DatabaseManager::triggerExists(const std::string& triggerName)
 {
 	Database* db = Database::getInstance();
 	DBQuery query;
@@ -103,7 +103,7 @@ bool DatabaseManager::triggerExists(std::string triggerName)
 	return true;
 }
 
-bool DatabaseManager::tableExists(std::string tableName)
+bool DatabaseManager::tableExists(const std::string& tableName)
 {
 	Database* db = Database::getInstance();
 	DBQuery query;
@@ -508,7 +508,7 @@ uint32_t DatabaseManager::updateDatabase()
 	return 0;
 }
 
-bool DatabaseManager::getDatabaseConfig(std::string config, int32_t &value)
+bool DatabaseManager::getDatabaseConfig(const std::string& config, int32_t &value)
 {
 	Database* db = Database::getInstance();
 	DBQuery query;
@@ -522,7 +522,7 @@ bool DatabaseManager::getDatabaseConfig(std::string config, int32_t &value)
 	return true;
 }
 
-bool DatabaseManager::getDatabaseConfig(std::string config, std::string &value)
+bool DatabaseManager::getDatabaseConfig(const std::string& config, std::string& value)
 {
 	Database* db = Database::getInstance();
 	DBQuery query;
@@ -536,7 +536,7 @@ bool DatabaseManager::getDatabaseConfig(std::string config, std::string &value)
 	return true;
 }
 
-void DatabaseManager::registerDatabaseConfig(std::string config, int32_t value)
+void DatabaseManager::registerDatabaseConfig(const std::string& config, int32_t value)
 {
 	Database* db = Database::getInstance();
 	DBQuery query;
@@ -550,7 +550,7 @@ void DatabaseManager::registerDatabaseConfig(std::string config, int32_t value)
 	db->executeQuery(query.str());
 }
 
-void DatabaseManager::registerDatabaseConfig(std::string config, std::string value)
+void DatabaseManager::registerDatabaseConfig(const std::string& config, const std::string& value)
 {
 	Database* db = Database::getInstance();
 	DBQuery query;

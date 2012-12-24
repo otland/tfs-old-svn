@@ -266,7 +266,7 @@ class Houses
 
 		House* getHouseByPlayerId(uint32_t playerId);
 
-		bool loadHousesXML(std::string filename);
+		bool loadHousesXML(const std::string& filename);
 
 		bool payHouses();
 

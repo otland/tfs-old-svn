@@ -37,7 +37,7 @@ typedef std::list<Quest*> QuestsList;
 class MissionState
 {
 	public:
-		MissionState(std::string _description, int32_t _missionID);
+		MissionState(const std::string& _description, int32_t _missionID);
 
 		int32_t getMissionID() const { return missionID; }
 		std::string getMissionDescription() const { return description; }
@@ -50,7 +50,7 @@ class MissionState
 class Mission
 {
 	public:
-		Mission(std::string _missionName, int32_t _storageID, int32_t _startValue, int32_t _endValue);
+		Mission(const std::string& _missionName, int32_t _storageID, int32_t _startValue, int32_t _endValue);
 		~Mission();
 		bool isCompleted(Player* player) const;
 		bool isStarted(Player* player) const;
@@ -73,7 +73,7 @@ class Mission
 class Quest
 {
 	public:
-		Quest(std::string _name, uint16_t _id, int32_t _startStorageID, int32_t _startStorageValue);
+		Quest(const std::string& _name, uint16_t _id, int32_t _startStorageID, int32_t _startStorageValue);
 		~Quest();
 
 		bool isCompleted(Player* player);

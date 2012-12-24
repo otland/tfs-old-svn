@@ -130,18 +130,10 @@ OTSYS_THREAD_SIGNALVAR g_loaderSignal;
 #endif
 #include "networkmessage.h"
 
-void startupErrorMessage(std::string errorStr)
+void startupErrorMessage(const std::string& errorStr)
 {
-	if(errorStr.length() > 0)
-		std::cout << "> ERROR: " << errorStr << std::endl;
-
-	#ifdef WIN32
-	#ifndef _CONSOLE
-	system("pause");
-	#endif
-	#else
+	std::cout << "> ERROR: " << errorStr << std::endl;
 	getchar();
-	#endif
 	exit(-1);
 }
 
@@ -155,9 +147,8 @@ void mainLoader(
 void badAllocationHandler()
 {
 	// Use functions that only use stack allocation
-	puts("Allocation failed, server out of memory.\nDecrease the size of your map or compile in 64 bits mode.");
-	char buf[1024];
-	assert(fgets(buf, sizeof(buf), stdin) != 0);
+	puts("Allocation failed, server out of memory.\nDecrease the size of your map or compile in 64 bits mode.\n");
+	getchar();
 	exit(-1);
 }
 
@@ -433,7 +424,7 @@ void mainLoader(ServiceManager* services)
 	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Loading script systems");
 	#endif
 	if(!ScriptingManager::getInstance()->loadScriptSystems())
-		startupErrorMessage("");
+		startupErrorMessage("Failed to load script systems");
 
 	std::cout << ">> Loading monsters" << std::endl;
 	#ifndef _CONSOLE
@@ -497,8 +488,11 @@ void mainLoader(ServiceManager* services)
 		g_game.setWorldType(WORLD_TYPE_PVP_ENFORCED);
 	else
 	{
-		std::cout << std::endl << "> ERROR: Unknown world type: " << g_config.getString(ConfigManager::WORLD_TYPE) << std::endl;
-		startupErrorMessage("");
+		std::cout << std::endl;
+
+		std::ostringstream ss;
+		ss << "> ERROR: Unknown world type: " << g_config.getString(ConfigManager::WORLD_TYPE) << ", valid world types are: pvp, no-pvp and pvp-enforced.";
+		startupErrorMessage(ss.str());
 	}
 	std::cout << asUpperCaseString(worldType) << std::endl;
 
@@ -512,7 +506,7 @@ void mainLoader(ServiceManager* services)
 	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Loading map");
 	#endif
 	if(!g_game.loadMap(g_config.getString(ConfigManager::MAP_NAME)))
-		startupErrorMessage("");
+		startupErrorMessage("Failed to load map");
 
 	std::cout << ">> Initializing gamestate" << std::endl;
 	g_game.setGameState(GAME_STATE_INIT);
@@ -600,8 +594,9 @@ void mainLoader(ServiceManager* services)
 			resolvedIp = *(uint32_t*)he->h_addr;
 		else
 		{
-			std::cout << "ERROR: Cannot resolve " << ip << "!" << std::endl;
-			startupErrorMessage("");
+			std::ostringstream ss;
+			ss << "ERROR: Cannot resolve " << ip << "!" << std::endl;
+			startupErrorMessage(ss.str());
 		}
 	}
 

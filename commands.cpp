@@ -1155,6 +1155,7 @@ void Commands::addSkill(Player* player, const std::string& cmd, const std::strin
 	param2 = parseParams(cmdit, cmdtokens.end());
 	trimString(param1);
 	trimString(param2);
+	toLowerCaseString(param2);
 
 	Player* paramPlayer = g_game.getPlayerByName(param1);
 	if(!paramPlayer)
@@ -1168,7 +1169,10 @@ void Commands::addSkill(Player* player, const std::string& cmd, const std::strin
 	else if(param2[0] == 'm')
 		paramPlayer->addManaSpent(paramPlayer->vocation->getReqMana(paramPlayer->getBaseMagicLevel() + 1) - paramPlayer->manaSpent, false);
 	else
-		paramPlayer->addSkillAdvance(getSkillId(param2), paramPlayer->vocation->getReqSkillTries(getSkillId(param2), paramPlayer->getSkill(getSkillId(param2), SKILL_LEVEL) + 1));
+	{
+		skills_t skillId = getSkillId(param2);
+		paramPlayer->addSkillAdvance(skillId, paramPlayer->vocation->getReqSkillTries(skillId, paramPlayer->getSkill(skillId, SKILL_LEVEL) + 1));
+	}
 }
 
 void Commands::joinGuild(Player* player, const std::string& cmd, const std::string& param)

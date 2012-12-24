@@ -761,7 +761,7 @@ House* Houses::getHouseByPlayerId(uint32_t playerId)
 	return NULL;
 }
 
-bool Houses::loadHousesXML(std::string filename)
+bool Houses::loadHousesXML(const std::string& filename)
 {
 	xmlDocPtr doc = xmlParseFile(filename.c_str());
 	if(doc)

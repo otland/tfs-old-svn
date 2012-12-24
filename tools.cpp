@@ -37,7 +37,7 @@
 
 extern ConfigManager g_config;
 
-std::string transformToSHA1(std::string plainText, bool upperCase /*= false*/)
+std::string transformToSHA1(const std::string& plainText, bool upperCase /*= false*/)
 {
 	SHA1 sha1;
 	unsigned sha1Hash[5];
@@ -57,7 +57,7 @@ std::string transformToSHA1(std::string plainText, bool upperCase /*= false*/)
 	return hexStr;
 }
 
-std::string transformToMD5(std::string plainText, bool upperCase /*= false*/)
+std::string transformToMD5(const std::string& plainText, bool upperCase /*= false*/)
 {
 	MD5_CTX m_md5;
 	std::ostringstream hexStream;
@@ -77,7 +77,7 @@ std::string transformToMD5(std::string plainText, bool upperCase /*= false*/)
 	return hexStr;
 }
 
-bool passwordTest(const std::string &plain, std::string &hash)
+bool passwordTest(const std::string& plain, std::string& hash)
 {
 	switch(g_config.getNumber(ConfigManager::PASSWORD_TYPE))
 	{
@@ -92,7 +92,6 @@ bool passwordTest(const std::string &plain, std::string &hash)
 		default:
 			return plain == hash;
 	}
-	return false;
 }
 
 void replaceString(std::string& str, const std::string& sought, const std::string& replacement)
@@ -110,7 +109,7 @@ void replaceString(std::string& str, const std::string& sought, const std::strin
 
 void trim_right(std::string& source, const std::string& t)
 {
-	source.erase(source.find_last_not_of(t)+1);
+	source.erase(source.find_last_not_of(t) + 1);
 }
 
 void trim_left(std::string& source, const std::string& t)
@@ -391,7 +390,7 @@ bool isValidAccountName(std::string text)
 	return true;
 }
 
-bool isNumbers(std::string text)
+bool isNumbers(const std::string& text)
 {
 	for(uint32_t i = 0, size = text.length(); i < size; ++i)
 	{
@@ -401,7 +400,7 @@ bool isNumbers(std::string text)
 	return true;
 }
 
-bool isValidName(std::string text, bool forceUppercaseOnFirstLetter/* = true*/)
+bool isValidName(const std::string& text, bool forceUppercaseOnFirstLetter/* = true*/)
 {
 	uint32_t lenBeforeSpace = 1;
 	uint32_t lenBeforeSingleQuote = 1;
@@ -609,7 +608,7 @@ std::string formatDateShort(time_t time)
 	return buffer;
 }
 
-Direction getDirection(std::string string)
+Direction getDirection(const std::string& string)
 {
 	Direction direction = NORTH;
 
@@ -1024,7 +1023,7 @@ std::string getSkillName(uint16_t skillid)
 	}
 }
 
-skills_t getSkillId(std::string param)
+skills_t getSkillId(const std::string& param)
 {
 	if(param == "fist")
 		return SKILL_FIST;
@@ -1235,10 +1234,10 @@ std::string ucwords(std::string str)
 	return str;
 }
 
-bool booleanString(std::string str)
+bool booleanString(const std::string& str)
 {
-	toLowerCaseString(str);
-	return (str == "yes" || str == "true" || str == "y" || atoi(str.c_str()) > 0);
+	const std::string& lowerStr = asLowerCaseString(str);
+	return (lowerStr == "yes" || lowerStr == "true" || lowerStr == "y" || atoi(lowerStr.c_str()) > 0);
 }
 
 std::string getWeaponName(WeaponType_t weaponType)

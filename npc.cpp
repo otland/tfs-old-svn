@@ -2880,7 +2880,7 @@ bool NpcScriptInterface::closeState()
 	return LuaScriptInterface::closeState();
 }
 
-bool NpcScriptInterface::loadNpcLib(std::string file)
+bool NpcScriptInterface::loadNpcLib(const std::string& file)
 {
 	if(m_libLoaded)
 		return true;
@@ -3524,7 +3524,7 @@ bool NpcEventsHandler::isLoaded() const
 	return m_loaded;
 }
 
-NpcScript::NpcScript(std::string file, Npc* npc) :
+NpcScript::NpcScript(const std::string& file, Npc* npc) :
 	NpcEventsHandler(npc)
 {
 	m_scriptInterface = npc->getScriptInterface();

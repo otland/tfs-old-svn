@@ -45,7 +45,7 @@ class NpcScriptInterface : public LuaScriptInterface
 		NpcScriptInterface();
 		virtual ~NpcScriptInterface();
 
-		bool loadNpcLib(std::string file);
+		bool loadNpcLib(const std::string& file);
 
 		static void pushState(lua_State* L, NpcState* state);
 		static void popState(lua_State* L, NpcState* &state);
@@ -107,7 +107,7 @@ class NpcEventsHandler
 class NpcScript : public NpcEventsHandler
 {
 	public:
-		NpcScript(std::string file, Npc* npc);
+		NpcScript(const std::string& file, Npc* npc);
 		NpcScript(Npc* npc);
 		virtual ~NpcScript();
 

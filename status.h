@@ -83,8 +83,8 @@ class Status
 		void setMaxPlayersOnline(uint32_t max) {m_playersMax = max;}
 
 		const std::string& getMapName() const {return m_mapName;}
-		void setMapName(std::string mapName) {m_mapName = mapName;}
-		void setMapAuthor(std::string mapAuthor) {m_mapAuthor = mapAuthor;}
+		void setMapName(const std::string& mapName) {m_mapName = mapName;}
+		void setMapAuthor(const std::string& mapAuthor) {m_mapAuthor = mapAuthor;}
 
 		uint64_t getUptime() const;
 

@@ -89,7 +89,7 @@ bool DatabaseSQLite::commit()
 	return executeQuery("COMMIT");
 }
 
-std::string DatabaseSQLite::_parse(const std::string &s)
+std::string DatabaseSQLite::_parse(const std::string& s)
 {
 	std::string query = "";
 
@@ -109,7 +109,7 @@ std::string DatabaseSQLite::_parse(const std::string &s)
 	return query;
 }
 
-bool DatabaseSQLite::executeQuery(const std::string &query)
+bool DatabaseSQLite::executeQuery(const std::string& query)
 {
 	boost::recursive_mutex::scoped_lock lockClass(sqliteLock);
 	if(!m_connected)
@@ -144,7 +144,7 @@ bool DatabaseSQLite::executeQuery(const std::string &query)
 	return true;
 }
 
-DBResult* DatabaseSQLite::storeQuery(const std::string &query)
+DBResult* DatabaseSQLite::storeQuery(const std::string& query)
 {
 	boost::recursive_mutex::scoped_lock lockClass(sqliteLock);
 	if(!m_connected)
@@ -173,7 +173,7 @@ uint64_t DatabaseSQLite::getLastInsertedRowID()
 	return (uint64_t)sqlite3_last_insert_rowid(m_handle);
 }
 
-std::string DatabaseSQLite::escapeString(const std::string &s)
+std::string DatabaseSQLite::escapeString(const std::string& s)
 {
 	// remember about quoiting even an empty string!
 	if(!s.size())
@@ -189,7 +189,7 @@ std::string DatabaseSQLite::escapeString(const std::string &s)
 	return r;
 }
 
-std::string DatabaseSQLite::escapePatternString(const std::string &s)
+std::string DatabaseSQLite::escapePatternString(const std::string& s)
 {
 	std::string str = escapeString(s);
 	str = boost::regex_replace(str, boost::regex("%"), "\\%");
@@ -225,7 +225,7 @@ void DatabaseSQLite::freeResult(DBResult* res)
 
 /** SQLiteResult definitions */
 
-int32_t SQLiteResult::getDataInt(const std::string &s)
+int32_t SQLiteResult::getDataInt(const std::string& s)
 {
 	listNames_t::iterator it = m_listNames.find(s);
 	if(it == m_listNames.end())
@@ -236,7 +236,7 @@ int32_t SQLiteResult::getDataInt(const std::string &s)
 	return sqlite3_column_int(m_handle, it->second);
 }
 
-int64_t SQLiteResult::getDataLong(const std::string &s)
+int64_t SQLiteResult::getDataLong(const std::string& s)
 {
 	listNames_t::iterator it = m_listNames.find(s);
 	if(it == m_listNames.end())
@@ -247,7 +247,7 @@ int64_t SQLiteResult::getDataLong(const std::string &s)
 	return sqlite3_column_int64(m_handle, it->second);
 }
 
-std::string SQLiteResult::getDataString(const std::string &s)
+std::string SQLiteResult::getDataString(const std::string& s)
 {
 	listNames_t::iterator it = m_listNames.find(s);
 	if(it == m_listNames.end())
@@ -260,7 +260,7 @@ std::string SQLiteResult::getDataString(const std::string &s)
 	return value;
 }
 
-const char* SQLiteResult::getDataStream(const std::string &s, unsigned long &size)
+const char* SQLiteResult::getDataStream(const std::string& s, unsigned long &size)
 {
 	listNames_t::iterator it = m_listNames.find(s);
 	if(it == m_listNames.end())

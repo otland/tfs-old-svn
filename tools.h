@@ -41,9 +41,9 @@ enum DistributionType_t
 	DISTRO_NORMAL
 };
 
-extern std::string transformToMD5(std::string plainText, bool upperCase = false);
-extern std::string transformToSHA1(std::string plainText, bool upperCase = false);
-extern bool passwordTest(const std::string &plain, std::string &hash);
+extern std::string transformToMD5(const std::string& plainText, bool upperCase = false);
+extern std::string transformToSHA1(const std::string& plainText, bool upperCase = false);
+extern bool passwordTest(const std::string& plain, std::string& hash);
 
 extern void replaceString(std::string& str, const std::string& sought, const std::string& replacement);
 extern void trim_right(std::string& source, const std::string& t);
@@ -77,16 +77,16 @@ extern bool isUppercaseLetter(char character);
 extern bool isLowercaseLetter(char character);
 extern bool isPasswordCharacter(char character);
 
-extern bool isValidName(std::string text, bool forceUppercaseOnFirstLetter = true);
 extern bool isValidPassword(std::string text);
 extern bool isValidAccountName(std::string text);
-extern bool isNumbers(std::string text);
+extern bool isNumbers(const std::string& text);
+extern bool isValidName(const std::string& text, bool forceUppercaseOnFirstLetter = true);
 
 extern bool checkText(std::string text, const std::string& str);
 
 extern int random_range(int lowest_number, int highest_number, DistributionType_t type = DISTRO_UNIFORM);
 
-extern Direction getDirection(std::string string);
+extern Direction getDirection(const std::string& string);
 extern Direction getReverseDirection(Direction dir);
 extern Position getNextPosition(Direction direction, Position pos);
 
@@ -110,7 +110,7 @@ extern CombatType_t getCombatType(const std::string& strValue);
 extern std::string getCombatName(CombatType_t combatType);
 
 extern std::string getSkillName(uint16_t skillid);
-extern skills_t getSkillId(std::string param);
+extern skills_t getSkillId(const std::string& param);
 
 extern int32_t actionStringToInt(std::string action);
 extern int32_t reasonStringToInt(std::string reason);
@@ -129,9 +129,9 @@ template<typename _Tp>
 extern std::string toString(_Tp __p);
 #endif
 
-extern std::string ucfirst(std::string);
-extern std::string ucwords(std::string);
-extern bool booleanString(std::string);
+extern std::string ucfirst(std::string str);
+extern std::string ucwords(std::string str);
+extern bool booleanString(const std::string& str);
 
 extern std::string getWeaponName(WeaponType_t weaponType);
 
