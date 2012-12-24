@@ -2823,17 +2823,17 @@ void ProtocolGame::sendAddCreature(const Creature* creature, const Position& pos
 		return;
 	}
 
-	msg->put<char>( 0x17);
+	msg->put<char>(0x17);
 	msg->put<uint32_t>(player->getID());
 	msg->put<uint16_t>(0x32); // beat duration (50)
-	
+
 	msg->putDouble(Creature::speedA, 3);
 	msg->putDouble(Creature::speedB, 3);
 	msg->putDouble(Creature::speedC, 3);
 
 	msg->put<char>(player->hasFlag(PlayerFlag_CanReportBugs));
-	
-	sendEnterWorld();	
+
+	sendEnterWorld();
 
 	AddMapDescription(msg, pos);
 	for(int32_t i = SLOT_FIRST; i < SLOT_LAST; ++i)
@@ -2849,15 +2849,18 @@ void ProtocolGame::sendAddCreature(const Creature* creature, const Position& pos
 	AddCreatureLight(msg, creature);
 
 	player->sendIcons();
+
 	//Need to fix this so normal players can't see ghosted staff
 	for(VIPMap::iterator it = player->VIPList.begin(); it != player->VIPList.end(); ++it)
 	{
 		std::string vipName;
 		if(IOLoginData::getInstance()->getNameByGuid((*it).first, vipName))
 		{
-			VipStatus_t vipStatus = VIPSTATUS_OFFLINE;
+			VipStatus_t vipStatus;
 			if(Player* tmpPlayer = g_game.getPlayerByName(vipName))
-				vipStatus = tmpPlayer->canSeeCreature(tmpPlayer) ? VIPSTATUS_ONLINE : VIPSTATUS_OFFLINE;
+				vipStatus = player->canSeeCreature(tmpPlayer) ? VIPSTATUS_ONLINE : VIPSTATUS_OFFLINE;
+			else
+				vipStatus = VIPSTATUS_OFFLINE;
 
 			sendVIP((*it).first, vipName, (*it).second.description, (*it).second.icon, (*it).second.notify, vipStatus);
 		}
