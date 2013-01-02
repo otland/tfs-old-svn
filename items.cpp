@@ -81,7 +81,7 @@ ItemType::ItemType()
 	maxTextLength = 0;
 	canReadText = canWriteText = false;
 	date = 0;
-	writeOnceItemId = wareId = 0;
+	writeOnceItemId = wareId = premiumDays = 0;
 
 	transformEquipTo = transformDeEquipTo = transformUseTo = 0;
 	showDuration = showCharges = showAttributes = dualWield = false;
@@ -1904,6 +1904,11 @@ void Items::parseItemNode(xmlNodePtr itemNode, uint32_t id)
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue))
 				it.walkStack = (intValue != 0);
+		}
+		else if(tmpStrValue == "premiumdays")
+		{
+			if(readXMLInteger(itemAttributesNode, "value", intValue))
+				it.premiumDays = intValue;
 		}
 		else
 			std::clog << "[Warning - Items::loadFromXml] Unknown key value " << strValue << std::endl;

@@ -24219,6 +24219,7 @@
 		<attribute key="weight" value="7500" />
 	</item>	
 	<item id="16101" article="a" name="premium scroll">
+		<attribute key="premiumDays" value="30" />
 		<attribute key="weight" value="0" />
 		<attribute key="description" value="Using this scroll will add 30 days of premium time to your account once." />
 	</item>
