@@ -25632,7 +25632,164 @@
 	<item id="18529-18535" article="a" name="ramp">	
 		<attribute key="floorchange" value="down" />
 	</item>
-
+	<item id="18532" name="mushroom sponge"/>
+	<item fromid="18533" toid="18536" name="mossy floor"/>
+	<item fromid="18537" toid="18538" name="moist wall"/>
+	<item fromid="18539" toid="18546" name="stone wall"/>
+	<item id="18547" article="a" name="voodoo doll">
+		<attribute key="weight" value="650"/>
+	</item>
+	<item fromid="18550" toid="18551" name="noble sword">
+		<attribute key="description" value="This sword was forged with the enthusiasm and dreams of the Rookgaardians. Awarded by Rookie.pl."/>
+		<attribute key="weight" value="5000"/>
+	</item>
+	<item id="18554" name="crystal rubbish">
+		<attribute key="weight" value="980"/>
+	</item>
+	<item id="20217" name="wooden floor"/>
+	<item fromid="20218" toid="20227" name="elevator"/>
+	<item id="20230" name="swamp tile"/>
+	<item fromid="20243" toid="20246" name="cord"/>
+	<item id="20248" name="ice"/>
+	<item id="20252" article="a" name="canopy bed kit">
+		<attribute key="description" value="Use it on your bed to change the bed to a canopy bed."/>
+		<attribute key="weight" value="4000"/>
+	</item>
+	<item id="20254" article="a" name="venorean cabinet kit">
+		<attribute key="description" value="Use it in your house to construct a venorean cabinet."/>
+		<attribute key="weight" value="8000"/>
+	</item>
+	<item id="20255" article="a" name="venorean wardrobe kit">
+		<attribute key="description" value="Use it in your house to construct a wardrobe."/>
+		<attribute key="weight" value="2500"/>
+	</item>
+	<item id="20257" article="a" name="venorean drawer kit">
+		<attribute key="description" value="Use it in your house to construct a drawer."/>
+		<attribute key="weight" value="2000"/>
+	</item>
+	<item fromid="20258" toid="20260" name="strange symbols"/>
+	<item id="20261" name="elevator"/>
+	<item id="20262" name="wooden floor"/>
+	<item fromid="20263" toid="20264" name="grass"/>
+	<item id="20265" article="a" name="grimy wooden plank"/>
+	<item fromid="20266" toid="20271" name="ghastly eye"/>
+	<item id="20272" article="a" name="low stone wall"/>
+	<item id="20273" article="a" name="closed door">
+		<attribute key="type" value="door"/>
+		<attribute key="blockprojectile" value="1"/>
+		<attribute key="description" value="It is locked."/>
+	</item>
+	<item id="20274" article="a" name="closed door">
+		<attribute key="type" value="door"/>
+		<attribute key="blockprojectile" value="1"/>
+		<attribute key="transformUseTo" value="20275"/>
+	</item>
+	<item id="20275" article="an" name="open door">
+		<attribute key="type" value="door"/>
+		<attribute key="transformUseTo" value="20274"/>
+	</item>
+	<item id="20276" article="a" name="closed door">
+		<attribute key="type" value="door"/>
+		<attribute key="blockprojectile" value="1"/>
+		<attribute key="transformUseTo" value="20277"/>
+	</item>
+	<item id="20277" article="an" name="open door">
+		<attribute key="type" value="door"/>
+		<attribute key="transformUseTo" value="20276"/>
+	</item>
+	<item id="20278" article="a" name="gate of expertise">
+		<attribute key="type" value="door"/>
+		<attribute key="levelDoor" value="1000"/>
+		<attribute key="blockprojectile" value="1"/>
+		<attribute key="transformUseTo" value="20279"/>
+	</item>
+	<item id="20279" article="a" name="gate of expertise">
+		<attribute key="type" value="door"/>
+		<attribute key="closingDoor" value="1"/>
+		<attribute key="transformUseTo" value="20278"/>
+	</item>
+	<item id="20280" article="a" name="closed door">
+		<attribute key="type" value="door"/>
+		<attribute key="specialDoor" value="1"/>
+		<attribute key="blockprojectile" value="1"/>
+		<attribute key="transformUseTo" value="20281"/>
+	</item>
+	<item id="20281" article="an" name="open door">
+		<attribute key="type" value="door"/>
+		<attribute key="closingDoor" value="1"/>
+		<attribute key="transformUseTo" value="20280"/>
+	</item>
+	<item id="20282" article="a" name="closed door">
+		<attribute key="type" value="door"/>
+		<attribute key="blockprojectile" value="1"/>
+		<attribute key="description" value="It is locked."/>
+	</item>
+	<item id="20283" article="a" name="closed door">
+		<attribute key="type" value="door"/>
+		<attribute key="blockprojectile" value="1"/>
+		<attribute key="transformUseTo" value="20284"/>
+	</item>
+	<item id="20284" article="an" name="open door">
+		<attribute key="type" value="door"/>
+		<attribute key="transformUseTo" value="20283"/>
+	</item>
+	<item id="20285" article="a" name="closed door">
+		<attribute key="type" value="door"/>
+		<attribute key="blockprojectile" value="1"/>
+		<attribute key="transformUseTo" value="20286"/>
+	</item>
+	<item id="20286" article="an" name="open door">
+		<attribute key="type" value="door"/>
+		<attribute key="transformUseTo" value="20285"/>
+	</item>
+	<item id="20287" article="a" name="gate of expertise">
+		<attribute key="type" value="door"/>
+		<attribute key="levelDoor" value="1000"/>
+		<attribute key="blockprojectile" value="1"/>
+		<attribute key="transformUseTo" value="20288"/>
+	</item>
+	<item id="20288" article="a" name="gate of expertise">
+		<attribute key="type" value="door"/>
+		<attribute key="closingDoor" value="1"/>
+		<attribute key="transformUseTo" value="20287"/>
+	</item>
+	<item id="20289" article="a" name="closed door">
+		<attribute key="type" value="door"/>
+		<attribute key="specialDoor" value="1"/>
+		<attribute key="blockprojectile" value="1"/>
+		<attribute key="transformUseTo" value="20290"/>
+	</item>
+	<item id="20290" article="an" name="open door">
+		<attribute key="type" value="door"/>
+		<attribute key="closingDoor" value="1"/>
+		<attribute key="transformUseTo" value="20289"/>
+	</item>
+	<item fromid="20291" toid="20292" name="stone wall"/>
+	<item id="20293" name="stone tile"/>
+	<item id="20295" article="a" name="venorean cabinet">
+		<attribute key="rotateTo" value="20296"/>
+		<attribute key="containerSize" value="8"/>
+	</item>
+	<item id="20296" article="a" name="venorean cabinet">
+		<attribute key="rotateTo" value="20295"/>
+		<attribute key="containerSize" value="8"/>
+	</item>
+	<item id="20297" article="a" name="venorean drawer">
+		<attribute key="rotateTo" value="20298"/>
+		<attribute key="containerSize" value="8"/>
+	</item>
+	<item id="20298" article="a" name="venorean drawer">
+		<attribute key="rotateTo" value="20297"/>
+		<attribute key="containerSize" value="8"/>
+	</item>
+	<item id="20299" article="a" name="venorean wardrobe">
+		<attribute key="rotateTo" value="20298"/>
+		<attribute key="containerSize" value="10"/>
+	</item>
+	<item id="20300" article="a" name="venorean wardrobe">
+		<attribute key="rotateTo" value="20297"/>
+		<attribute key="containerSize" value="10"/>
+	</item>
 	<item id="20001" name="water" />
 	<item id="20002" name="blood" />
 	<item id="20003" name="beer" />
