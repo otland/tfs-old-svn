@@ -25631,23 +25631,368 @@
 		<attribute key="floorchange" value="down" />
 	</item>
 	<item id="18532" name="mushroom sponge"/>
-	<item fromid="18533" toid="18536" name="mossy floor"/>
-	<item fromid="18537" toid="18538" name="moist wall"/>
-	<item fromid="18539" toid="18546" name="stone wall"/>
+	<item id="18533-18536" name="mossy floor"/>
+	<item id="18537-18538" name="moist wall"/>
+	<item id="18539-18546" name="stone wall"/>
 	<item id="18547" article="a" name="voodoo doll">
 		<attribute key="weight" value="650"/>
 	</item>
-	<item fromid="18550" toid="18551" name="noble sword">
+	<item id="18550-18551" name="noble sword">
 		<attribute key="description" value="This sword was forged with the enthusiasm and dreams of the Rookgaardians. Awarded by Rookie.pl."/>
 		<attribute key="weight" value="5000"/>
 	</item>
 	<item id="18554" name="crystal rubbish">
 		<attribute key="weight" value="980"/>
 	</item>
+	
+	<item id="19957" article="a" name="trunk">
+		<attribute key="containerSize" value="20" />
+	</item>	
+	
+	<item id="19962" article="a" name="dead lost husher">
+		<attribute key="weight" value="2000" />
+		<attribute key="containerSize" value="20" />
+		<attribute key="decayTo" value="199964" />
+		<attribute key="duration" value="600" />
+		<attribute key="corpseType" value="blood" />
+		<attribute key="fluidSource" value="blood" />
+	</item>
+	<item id="19963" article="a" name="dead lost basher">
+		<attribute key="weight" value="2000" />
+		<attribute key="containerSize" value="20" />
+		<attribute key="decayTo" value="199967" />
+		<attribute key="duration" value="600" />
+		<attribute key="corpseType" value="blood" />
+		<attribute key="fluidSource" value="blood" />
+	</item>
+	<item id="19964" article="a" name="dead lost husher">
+		<attribute key="weight" value="2000" />
+		<attribute key="containerSize" value="20" />
+		<attribute key="decayTo" value="199965" />
+		<attribute key="duration" value="600" />
+		<attribute key="corpseType" value="blood" />
+		<attribute key="fluidSource" value="blood" />
+	</item>
+	<item id="19965" article="a" name="dead lost husher">
+		<attribute key="weight" value="20000" />
+		<attribute key="containerSize" value="20" />
+		<attribute key="decayTo" value="19966" />
+		<attribute key="duration" value="600" />
+		<attribute key="fluidSource" value="blood" />
+		<attribute key="corpseType" value="blood" />
+	</item>
+	<item id="19966" article="a" name="dead lost husher">
+		<attribute key="weight" value="5400" />
+		<attribute key="decayTo" value="0" />
+		<attribute key="duration" value="600" />
+		<attribute key="corpseType" value="blood" />
+	</item>	
+	<item id="19967" article="a" name="dead lost basher">
+		<attribute key="weight" value="2000" />
+		<attribute key="containerSize" value="20" />
+		<attribute key="decayTo" value="199968" />
+		<attribute key="duration" value="600" />
+		<attribute key="corpseType" value="blood" />
+		<attribute key="fluidSource" value="blood" />
+	</item>
+	<item id="19968" article="a" name="dead lost basher">
+		<attribute key="weight" value="20000" />
+		<attribute key="containerSize" value="20" />
+		<attribute key="decayTo" value="19969" />
+		<attribute key="duration" value="600" />
+		<attribute key="fluidSource" value="blood" />
+		<attribute key="corpseType" value="blood" />
+	</item>
+	<item id="19969" article="a" name="dead lost basher">
+		<attribute key="weight" value="5400" />
+		<attribute key="decayTo" value="0" />
+		<attribute key="duration" value="600" />
+		<attribute key="corpseType" value="blood" />
+	</item>	
+	<item id="19970" article="a" name="dead little corym charlan">
+		<attribute key="weight" value="2000" />
+		<attribute key="containerSize" value="20" />
+		<attribute key="decayTo" value="19971" />
+		<attribute key="duration" value="10" />
+		<attribute key="corpseType" value="blood" />
+		<attribute key="fluidSource" value="blood" />
+	</item>
+	<item id="19971" article="a" name="dead little corym charlan">
+		<attribute key="weight" value="2000" />
+		<attribute key="containerSize" value="20" />
+		<attribute key="decayTo" value="199972" />
+		<attribute key="duration" value="600" />
+		<attribute key="corpseType" value="blood" />
+		<attribute key="fluidSource" value="blood" />
+	</item>
+	<item id="199972" article="a" name="dead little corym charlan">
+		<attribute key="weight" value="20000" />
+		<attribute key="containerSize" value="20" />
+		<attribute key="decayTo" value="19973" />
+		<attribute key="duration" value="600" />
+		<attribute key="fluidSource" value="blood" />
+		<attribute key="corpseType" value="blood" />
+	</item>
+	<item id="19973" article="a" name="dead little corym charlan">
+		<attribute key="weight" value="5400" />
+		<attribute key="decayTo" value="0" />
+		<attribute key="duration" value="600" />
+		<attribute key="corpseType" value="blood" />
+	</item>
+	
+	
+	
+	
+	
+	<item id="19980" article="a" name="closed door">
+		<attribute key="type" value="door" />
+		<attribute key="blockprojectile" value="1" />
+		<attribute key="description" value="It is locked." />
+	</item>	
+	<item id="19981" article="a" name="closed door">
+		<attribute key="type" value="door"/>
+		<attribute key="blockprojectile" value="1"/>
+		<attribute key="transformUseTo" value="19982"/>
+	</item>
+	<item id="19982" article="an" name="open door">
+		<attribute key="type" value="door"/>
+		<attribute key="transformUseTo" value="19981"/>
+	</item>	
+	<item id="19983" article="a" name="closed door">
+		<attribute key="type" value="door"/>
+		<attribute key="blockprojectile" value="1"/>
+		<attribute key="transformUseTo" value="19984"/>
+	</item>
+	<item id="19984" article="an" name="open door">
+		<attribute key="type" value="door"/>
+		<attribute key="transformUseTo" value="19983"/>
+	</item>
+	<item id="19985" article="a" name="gate of expertise">
+		<attribute key="type" value="door"/>
+		<attribute key="levelDoor" value="1000"/>
+		<attribute key="blockprojectile" value="1"/>
+		<attribute key="transformUseTo" value="19986"/>
+	</item>
+	<item id="19986" article="a" name="gate of expertise">
+		<attribute key="type" value="door"/>
+		<attribute key="closingDoor" value="1"/>
+		<attribute key="transformUseTo" value="19985"/>
+	</item>	
+	<item id="19987" article="a" name="closed magical door">
+		<attribute key="type" value="door"/>
+		<attribute key="blockprojectile" value="1"/>
+		<attribute key="transformUseTo" value="19997"/>
+	</item>	
+	<item id="19989" article="a" name="closed door">
+		<attribute key="type" value="door" />
+		<attribute key="blockprojectile" value="1" />
+		<attribute key="description" value="It is locked." />
+	</item>	
+	<item id="19990" article="a" name="closed door">
+		<attribute key="type" value="door"/>
+		<attribute key="blockprojectile" value="1"/>
+		<attribute key="transformUseTo" value="19991"/>
+	</item>
+	<item id="19991" article="an" name="open door">
+		<attribute key="type" value="door"/>
+		<attribute key="transformUseTo" value="19990"/>
+	</item>	
+	<item id="19992" article="a" name="closed door">
+		<attribute key="type" value="door"/>
+		<attribute key="blockprojectile" value="1"/>
+		<attribute key="transformUseTo" value="19993"/>
+	</item>
+	<item id="19993" article="an" name="open door">
+		<attribute key="type" value="door"/>
+		<attribute key="transformUseTo" value="19992"/>
+	</item>
+	<item id="19994" article="a" name="gate of expertise">
+		<attribute key="type" value="door"/>
+		<attribute key="levelDoor" value="1000"/>
+		<attribute key="blockprojectile" value="1"/>
+		<attribute key="transformUseTo" value="19995"/>
+	</item>
+	<item id="19995" article="a" name="gate of expertise">
+		<attribute key="type" value="door"/>
+		<attribute key="closingDoor" value="1"/>
+		<attribute key="transformUseTo" value="19994"/>
+	</item>
+	<item id="19996" article="a" name="closed magical door">
+		<attribute key="type" value="door"/>
+		<attribute key="blockprojectile" value="1"/>
+		<attribute key="transformUseTo" value="19997"/>
+	</item>
+	<item id="19997" article="an" name="open magical door">
+		<attribute key="type" value="door"/>
+		<attribute key="transformUseTo" value="19996"/>
+	</item>
+	<item id="19998" article="a" name="dead lost thrower">
+		<attribute key="weight" value="20000" />
+		<attribute key="containerSize" value="20" />
+		<attribute key="decayTo" value="19999" />
+		<attribute key="duration" value="10" />
+		<attribute key="corpseType" value="blood" />
+		<attribute key="fluidSource" value="blood" />
+	</item>
+	<item id="19999" article="a" name="dead lost thrower">
+		<attribute key="weight" value="20000" />
+		<attribute key="containerSize" value="20" />
+		<attribute key="decayTo" value="20000" />
+		<attribute key="duration" value="600" />
+		<attribute key="corpseType" value="blood" />
+		<attribute key="fluidSource" value="blood" />
+	</item>
+	<item id="20000" article="a" name="dead lost thrower">
+		<attribute key="weight" value="20000" />
+		<attribute key="containerSize" value="20" />
+		<attribute key="decayTo" value="20001" />
+		<attribute key="duration" value="600" />
+		<attribute key="fluidSource" value="blood" />
+		<attribute key="corpseType" value="blood" />
+	</item>
+	<item id="20001" article="a" name="dead lost thrower">
+		<attribute key="weight" value="5400" />
+		<attribute key="decayTo" value="0" />
+		<attribute key="duration" value="600" />
+		<attribute key="corpseType" value="blood" />
+	</item>
+	<item id="20002" name="heavy hour glass"/>
+	<item id="20003-20004" name="statue of a female warrior."/>
+	<item id="20005"  name="tool shop sign">
+		<attribute key="description" value="It's pointing to the west."/>
+	</item>	
+	<item id="20006-20080"  name="sign" />
+	
+	<item id="20089" article="a" name="bola" plural="bolas">
+		<attribute key="weight" value="500" />
+	</item>	
+	<item id="20090" article="a" name="spike shield">
+		<attribute key="weight" value="5900" />
+		<attribute key="defense" value="28" />
+		<attribute key="weaponType" value="shield" />
+	</item>	
+	
+	<item id="20092" article="a" name="ratana">
+		<attribute key="weight" value="3300" />
+		<attribute key="defense" value="19" />
+		<attribute key="attack" value="27" />
+		<attribute key="extradef" value="1" />
+		<attribute key="weaponType" value="sword" />
+	</item>	
+	<item id="20093" article="a" name="life preserver">
+		<attribute key="weight" value="4600" />
+		<attribute key="defense" value="19" />
+		<attribute key="attack" value="27" />
+		<attribute key="extradef" value="2" />
+		<attribute key="weaponType" value="club" />
+	</item>						
+	
+	<item id="20097" article="a" name="cheese cutter" plural="cheese cutters">
+		<attribute key="weight" value="45" />
+	</item>		
+	<item id="20098" article="a" name="cheesy figurine" plural="cheesy figurines">
+		<attribute key="weight" value="75" />
+	</item>	
+	<item id="20099" article="a" name="earflap" plural="earflaps">
+		<attribute key="weight" value="75" />
+	</item>		
+	<item id="20100" article="a" name="piece of soft cheese" plural="pieces of soft cheese">
+		<attribute key="weight" value="500" />
+	</item>		
+	<item id="20101" article="a" name="piece of rat cheese" plural="pieces of rat cheese">
+		<attribute key="weight" value="300" />
+	</item>		
+	<item id="20102" article="a" name="swampling moss" plural="swampling moss">
+		<attribute key="weight" value="270" />
+	</item>	
+	<item id="20103" article="a" name="piece of swampling wood" plural="pieces of swampling wood">
+		<attribute key="weight" value="350" />
+	</item>	
+	<item id="20104" article="a" name="swampling club">
+		<attribute key="weight" value="3100" />
+		<attribute key="defense" value="12" />
+		<attribute key="attack" value="17" />
+		<attribute key="weaponType" value="club" />
+	</item>	
+	<item id="20105" article="a" name="rat god doll">
+		<attribute key="weight" value="750" />
+	</item>			
+	<item id="20106" article="a" name="lost basher's spike" plural="lost basher's spikes">
+		<attribute key="weight" value="220" />
+	</item>			
+	<item id="20107" article="a" name="bloody dwarven beard" plural="bloody dwarven beards">
+		<attribute key="weight" value="70" />
+	</item>			
+	<item id="20108" article="a" name="pair of iron fists">
+		<attribute key="weight" value="4500" />
+		<attribute key="defense" value="17" />
+		<attribute key="attack" value="45" />
+		<attribute key="weaponType" value="club" />
+		<attribute key="slotType" value="two-handed" />
+	</item>		
+	<item id="20109" article="a" name="buckle">
+		<attribute key="weight" value="7500" />
+		<attribute key="armor" value="12" />
+		<attribute key="slotType" value="body" />
+	</item>			
+	<item id="20110" article="a" name="bonecraving knife" plural="bonecarving knives">
+		<attribute key="weight" value="120" />
+	</item>		
+	<item id="20111" article="a" name="bone fetish" plural="bone fetishes">
+		<attribute key="weight" value="160" />
+	</item>			
+	
+	
+	<item id="20127" article="a" name="wimp tooth chain" plural="wimp tooth chains">
+		<attribute key="weight" value="240" />
+	</item>	
+	<item id="20128" article="a" name="lost husher's staff" plural="lost husher's staves">
+		<attribute key="weight" value="800" />
+	</item>		
+	<item id="20129" article="a" name="skull shatterer" plural="skull shatterers">
+		<attribute key="weight" value="380" />
+	</item>		
+	<item id="20130" article="bunch of" name="holy ash" plural="holy ashes">
+		<attribute key="weight" value="190" />
+	</item>		
+	<item id="20131" article="a" name="broken throwing axe" plural="mad broken throwing axes">
+		<attribute key="weight" value="1100" />
+	</item>		
+	<item id="20132" article="a" name="helmt of the lost">
+		<attribute key="weight" value="3500" />
+		<attribute key="armor" value="7" />
+		<attribute key="slotType" value="head" />
+	</item>	
+	<item id="20133" name="lost bracers" >
+		<attribute key="weight" value="290" />
+	</item>
+	<item id="20134" article="a" name="mad floth" plural="mad floths">
+		<attribute key="weight" value="160" />
+	</item>	
+	<item id="20135" article="a" name="bottle of red hair dye" plural="bottles of red hair dye">
+		<attribute key="weight" value="210" />
+	</item>
+	<item id="20136" article="a" name="basalt fetish" plural="basalt fetishes">
+		<attribute key="weight" value="210" />
+	</item>
+	<item id="20137" article="a" name="basalt figurine" plural="basalt figurines">
+		<attribute key="weight" value="210" />
+	</item>		
+	<item id="20138" article="a" name="leech">
+		<attribute key="weight" value="200" />
+		<attribute key="description" value="A hermit near Carlin might be able to tell you more about it."/>
+	</item>	
+	<item id="20139" article="a" name="spikey club">
+		<attribute key="weight" value="3900" />
+		<attribute key="defense" value="14" />
+		<attribute key="attack" value="31" />
+		<attribute key="weaponType" value="club" />
+	</item>	
+	
 	<item id="20217" name="wooden floor"/>
-	<item fromid="20218" toid="20227" name="elevator"/>
+	<item id="20218-20227" name="elevator"/>
 	<item id="20230" name="swamp tile"/>
-	<item fromid="20243" toid="20246" name="cord"/>
+	<item id="20243-20246" name="cord"/>
 	<item id="20248" name="ice"/>
 	<item id="20252" article="a" name="canopy bed kit">
 		<attribute key="description" value="Use it on your bed to change the bed to a canopy bed."/>
@@ -25665,12 +26010,12 @@
 		<attribute key="description" value="Use it in your house to construct a drawer."/>
 		<attribute key="weight" value="2000"/>
 	</item>
-	<item fromid="20258" toid="20260" name="strange symbols"/>
+	<item id="20258-20260" name="strange symbols"/>
 	<item id="20261" name="elevator"/>
 	<item id="20262" name="wooden floor"/>
-	<item fromid="20263" toid="20264" name="grass"/>
+	<item id="20263-20264" name="grass"/>
 	<item id="20265" article="a" name="grimy wooden plank"/>
-	<item fromid="20266" toid="20271" name="ghastly eye"/>
+	<item id="20266-20271" name="ghastly eye"/>
 	<item id="20272" article="a" name="low stone wall"/>
 	<item id="20273" article="a" name="closed door">
 		<attribute key="type" value="door"/>
@@ -25762,7 +26107,7 @@
 		<attribute key="closingDoor" value="1"/>
 		<attribute key="transformUseTo" value="20289"/>
 	</item>
-	<item fromid="20291" toid="20292" name="stone wall"/>
+	<item id="20291-20292" name="stone wall"/>
 	<item id="20293" name="stone tile"/>
 	<item id="20295" article="a" name="venorean cabinet">
 		<attribute key="rotateTo" value="20296"/>
