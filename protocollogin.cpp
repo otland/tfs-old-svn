@@ -289,6 +289,9 @@ void ProtocolLogin::onRecvFirstMessage(NetworkMessage& msg)
 			output->put<uint32_t>(it->second.server->getAddress());
 			IntegerVec games = it->second.server->getPorts();
 			output->put<uint16_t>(games[random_range(0, games.size() - 1)]);
+			
+			if(version >= 971)
+				output->put<char>(0x00);
 		}
 		#endif
 
