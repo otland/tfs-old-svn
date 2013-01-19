@@ -112,13 +112,7 @@ void IOLoginData::loadCharacters(Account& account)
 		account.charList.push_back(result->getDataString("name"));
 #else
 		std::string name = result->getDataString("name");
-		if(hasCustomFlag(PlayerCustomFlag_GamemasterPrivileges, result->getDataInt("id")))
-		{
-			uint16_t hax = 0;
-			for(GameServersMap::const_iterator it = GameServers::getInstance()->getFirstServer(); it != GameServers::getInstance()->getLastServer(); ++it, ++hax)
-				account.charList[name + asString(hax)] = Character(name, it->second, -1);
-		}
-		else if(GameServer* srv = GameServers::getInstance()->getServerById(result->getDataInt("world_id")))
+		if(GameServer* srv = GameServers::getInstance()->getServerById(result->getDataInt("world_id")))
 			account.charList[name] = Character(name, srv, result->getDataInt("online"));
 		else
 			std::clog << "[Warning - IOLoginData::loadAccount] Invalid server for player '" << name << "'." << std::endl;
