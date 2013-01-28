@@ -23978,7 +23978,7 @@
 	<item id="15538" article="a" name="ramp">
 		<attribute key="floorchange" value="south" />
 	</item>
-	<item id="155389" article="a" name="ramp" />	
+	<item id="15539" article="a" name="ramp" />	
 	<item id="15544" name="lava" />			
 	<item id="15545" article="a" name="fox tail">
 		<attribute key="weight" value="200" />
@@ -25652,7 +25652,7 @@
 	<item id="19962" article="a" name="dead lost husher">
 		<attribute key="weight" value="2000" />
 		<attribute key="containerSize" value="20" />
-		<attribute key="decayTo" value="199964" />
+		<attribute key="decayTo" value="19964" />
 		<attribute key="duration" value="600" />
 		<attribute key="corpseType" value="blood" />
 		<attribute key="fluidSource" value="blood" />
@@ -25660,7 +25660,7 @@
 	<item id="19963" article="a" name="dead lost basher">
 		<attribute key="weight" value="2000" />
 		<attribute key="containerSize" value="20" />
-		<attribute key="decayTo" value="199967" />
+		<attribute key="decayTo" value="19967" />
 		<attribute key="duration" value="600" />
 		<attribute key="corpseType" value="blood" />
 		<attribute key="fluidSource" value="blood" />
@@ -25668,7 +25668,7 @@
 	<item id="19964" article="a" name="dead lost husher">
 		<attribute key="weight" value="2000" />
 		<attribute key="containerSize" value="20" />
-		<attribute key="decayTo" value="199965" />
+		<attribute key="decayTo" value="19965" />
 		<attribute key="duration" value="600" />
 		<attribute key="corpseType" value="blood" />
 		<attribute key="fluidSource" value="blood" />
@@ -25690,7 +25690,7 @@
 	<item id="19967" article="a" name="dead lost basher">
 		<attribute key="weight" value="2000" />
 		<attribute key="containerSize" value="20" />
-		<attribute key="decayTo" value="199968" />
+		<attribute key="decayTo" value="19968" />
 		<attribute key="duration" value="600" />
 		<attribute key="corpseType" value="blood" />
 		<attribute key="fluidSource" value="blood" />
@@ -25720,12 +25720,12 @@
 	<item id="19971" article="a" name="dead little corym charlan">
 		<attribute key="weight" value="2000" />
 		<attribute key="containerSize" value="20" />
-		<attribute key="decayTo" value="199972" />
+		<attribute key="decayTo" value="19972" />
 		<attribute key="duration" value="600" />
 		<attribute key="corpseType" value="blood" />
 		<attribute key="fluidSource" value="blood" />
 	</item>
-	<item id="199972" article="a" name="dead little corym charlan">
+	<item id="19972" article="a" name="dead little corym charlan">
 		<attribute key="weight" value="20000" />
 		<attribute key="containerSize" value="20" />
 		<attribute key="decayTo" value="19973" />
