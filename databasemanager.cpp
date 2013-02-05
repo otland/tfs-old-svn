@@ -1585,6 +1585,29 @@ uint32_t DatabaseManager::updateDatabase()
 			}
 			break;
 		}
+		
+		case 39:
+		{
+			std::clog << "> Updating database to version 40..." << std::endl;
+			switch(db->getDatabaseEngine())
+			{
+				case DATABASE_ENGINE_MYSQL:
+					db->query("ALTER TABLE `market_history` ADD `world_id` TINYINT(4) UNSIGNED NOT NULL DEFAULT 0 AFTER `id`;");
+					db->query("ALTER TABLE `market_offers` ADD `world_id` TINYINT(4) UNSIGNED NOT NULL DEFAULT 0 AFTER `id`;");
+					break;
+			
+				case DATABASE_ENGINE_SQLITE:
+					db->query("ALTER TABLE `market_history` ADD `world_id` TINYINT(4) UNSIGNED NOT NULL DEFAULT 0 AFTER `id`;");
+					db->query("ALTER TABLE `market_offers` ADD `world_id` TINYINT(4) UNSIGNED NOT NULL DEFAULT 0 AFTER `id`;");
+					break;
+
+				default:
+					break;
+			}
+
+			registerDatabaseConfig("db_version", 40);
+			return 40;
+		}
 
 		default:
 			break;

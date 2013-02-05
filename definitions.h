@@ -20,7 +20,7 @@
 
 #define CLIENT_VERSION_MIN 972
 #define CLIENT_VERSION_MAX 973
-#define CLIENT_VERSION_STRING "Only clients with protocol 9.8x allowed!"
+#define CLIENT_VERSION_STRING "Only clients with protocol 9.81 allowed!"
 
 #define CLIENT_VERSION_DAT 0
 #define CLIENT_VERSION_SPR 0
@@ -31,13 +31,13 @@
 #define SOFTWARE_VERSION "0.3.7_SVN"
 #define SOFTWARE_CODENAME "Crying Damson"
 #define SOFTWARE_DEVELOPERS "Elf, Talaturen, Dalkon, BeniS, Tryller and Kornholijo"
-#define SOFTWARE_PROTOCOL "9.8x"
+#define SOFTWARE_PROTOCOL "9.81"
 
 #define VERSION_CHECK "http://forgottenserver.otland.net/version.xml"
 #define VERSION_PATCH 0
 #define VERSION_TIMESTAMP 0
 #define VERSION_BUILD 0
-#define VERSION_DATABASE 39
+#define VERSION_DATABASE 40
 
 #undef MULTI_SQL_DRIVERS
 #define SQL_DRIVERS __USE_SQLITE__+__USE_MYSQL__+__USE_PGSQL__
