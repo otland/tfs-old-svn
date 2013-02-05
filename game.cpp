@@ -6434,14 +6434,15 @@ bool Game::playerCreateMarketOffer(uint32_t playerId, uint8_t type, uint16_t spr
 		if(fee > player->balance)
 			return false;
 
-		Depot* depot = player->getDepot(player->getMarketDepotId(), false);
-		if(!depot)
+		DepotChest* depotChest = player->getDepotChest(player->getMarketDepotId(), false);
+		if(!depotChest)
 			return false;
 
 		ItemList itemList;
 		uint32_t count = 0;
 		std::list<Container*> containerList;
-		containerList.push_back(depot->getLocker());
+		containerList.push_back(depotChest);
+		containerList.push_back(player->getInbox());
 
 		bool enough = false;
 		do
@@ -6554,7 +6555,6 @@ bool Game::playerCancelMarketOffer(uint32_t playerId, uint32_t timestamp, uint16
 		if(!it.id)
 			return false;
 
-		Depot* depot = player->getDepot(player->getMarketDepotId(), true);
 		if(it.stackable)
 		{
 			uint16_t tmpAmount = offer.amount;
@@ -6562,7 +6562,7 @@ bool Game::playerCancelMarketOffer(uint32_t playerId, uint32_t timestamp, uint16
 			{
 				int32_t stackCount = std::min((int32_t)100, (int32_t)tmpAmount);
 				Item* item = Item::CreateItem(it.id, stackCount);
-				if(internalAddItem(NULL, depot->getInbox(), item, INDEX_WHEREEVER, FLAG_NOLIMIT) != RET_NOERROR)
+				if(internalAddItem(NULL, player->getInbox(), item, INDEX_WHEREEVER, FLAG_NOLIMIT) != RET_NOERROR)
 				{
 					delete item;
 					break;
@@ -6580,7 +6580,7 @@ bool Game::playerCancelMarketOffer(uint32_t playerId, uint32_t timestamp, uint16
 			for(uint16_t i = 0; i < offer.amount; ++i)
 			{
 				Item* item = Item::CreateItem(it.id, subType);
-				if(internalAddItem(NULL, depot->getInbox(), item, INDEX_WHEREEVER, FLAG_NOLIMIT) != RET_NOERROR)
+				if(internalAddItem(NULL, player->getInbox(), item, INDEX_WHEREEVER, FLAG_NOLIMIT) != RET_NOERROR)
 				{
 					delete item;
 					break;
@@ -6624,14 +6624,15 @@ bool Game::playerAcceptMarketOffer(uint32_t playerId, uint32_t timestamp, uint16
 	uint64_t totalPrice = (uint64_t)offer.price * amount;
 	if(offer.type == MARKETACTION_BUY)
 	{
-		Depot* depot = player->getDepot(player->getMarketDepotId(), false);
-		if(!depot)
+		DepotChest* depotChest = player->getDepotChest(player->getMarketDepotId(), false);
+		if(!depotChest)
 			return false;
 
 		ItemList itemList;
 		uint32_t count = 0;
 		std::list<Container*> containerList;
-		containerList.push_back(depot->getLocker());
+		containerList.push_back(depotChest);
+		containerList.push_back(player->getInbox());
 
 		bool enough = false;
 		do
@@ -6698,7 +6699,6 @@ bool Game::playerAcceptMarketOffer(uint32_t playerId, uint32_t timestamp, uint16
 		if(!buyerPlayer)
 			return false;
 
-		Depot* buyerDepot = buyerPlayer->getDepot(buyerPlayer->getTown(), true);
 		if(it.stackable)
 		{
 			uint16_t tmpAmount = amount;
@@ -6706,7 +6706,7 @@ bool Game::playerAcceptMarketOffer(uint32_t playerId, uint32_t timestamp, uint16
 			{
 				uint16_t stackCount = std::min((uint16_t)100, tmpAmount);
 				Item* item = Item::CreateItem(it.id, stackCount);
-				if(internalAddItem(NULL, buyerDepot->getInbox(), item, INDEX_WHEREEVER, FLAG_NOLIMIT) != RET_NOERROR)
+				if(internalAddItem(NULL, buyerPlayer->getInbox(), item, INDEX_WHEREEVER, FLAG_NOLIMIT) != RET_NOERROR)
 				{
 					delete item;
 					break;
@@ -6724,7 +6724,7 @@ bool Game::playerAcceptMarketOffer(uint32_t playerId, uint32_t timestamp, uint16
 			for(uint16_t i = 0; i < amount; ++i)
 			{
 				Item* item = Item::CreateItem(it.id, subType);
-				if(internalAddItem(NULL, buyerDepot->getInbox(), item, INDEX_WHEREEVER, FLAG_NOLIMIT) != RET_NOERROR)
+				if(internalAddItem(NULL, buyerPlayer->getInbox(), item, INDEX_WHEREEVER, FLAG_NOLIMIT) != RET_NOERROR)
 				{
 					delete item;
 					break;
@@ -6744,7 +6744,6 @@ bool Game::playerAcceptMarketOffer(uint32_t playerId, uint32_t timestamp, uint16
 			return false;
 
 		player->balance -= totalPrice;
-		Depot* depot = player->getDepot(player->getMarketDepotId(), true);
 		if(it.stackable)
 		{
 			uint16_t tmpAmount = amount;
@@ -6752,7 +6751,7 @@ bool Game::playerAcceptMarketOffer(uint32_t playerId, uint32_t timestamp, uint16
 			{
 				uint16_t stackCount = std::min((uint16_t)100, tmpAmount);
 				Item* item = Item::CreateItem(it.id, stackCount);
-				if(internalAddItem(NULL, depot->getInbox(), item, INDEX_WHEREEVER, FLAG_NOLIMIT) != RET_NOERROR)
+				if(internalAddItem(NULL, player->getInbox(), item, INDEX_WHEREEVER, FLAG_NOLIMIT) != RET_NOERROR)
 				{
 					delete item;
 					break;
@@ -6770,7 +6769,7 @@ bool Game::playerAcceptMarketOffer(uint32_t playerId, uint32_t timestamp, uint16
 			for(uint16_t i = 0; i < amount; ++i)
 			{
 				Item* item = Item::CreateItem(it.id, subType);
-				if(internalAddItem(NULL, depot->getInbox(), item, INDEX_WHEREEVER, FLAG_NOLIMIT) != RET_NOERROR)
+				if(internalAddItem(NULL, player->getInbox(), item, INDEX_WHEREEVER, FLAG_NOLIMIT) != RET_NOERROR)
 				{
 					delete item;
 					break;
@@ -6857,7 +6856,6 @@ void Game::checkExpiredMarketOffers()
 		if(!itemType.id)
 			continue;
 
-		Depot* depot = player->getDepot(player->getTown(), true);
 		if(itemType.stackable)
 		{
 			uint16_t tmpAmount = offer.amount;
@@ -6865,7 +6863,7 @@ void Game::checkExpiredMarketOffers()
 			{
 				uint16_t stackCount = std::min((uint16_t)100, tmpAmount);
 				Item* item = Item::CreateItem(itemType.id, stackCount);
-				if(internalAddItem(NULL, depot->getInbox(), item, INDEX_WHEREEVER, FLAG_NOLIMIT) != RET_NOERROR)
+				if(internalAddItem(NULL, player->getInbox(), item, INDEX_WHEREEVER, FLAG_NOLIMIT) != RET_NOERROR)
 				{
 					delete item;
 					break;
@@ -6883,7 +6881,7 @@ void Game::checkExpiredMarketOffers()
 			for(uint16_t i = 0; i < offer.amount; ++i)
 			{
 				Item* item = Item::CreateItem(itemType.id, subType);
-				if(internalAddItem(NULL, depot->getInbox(), item, INDEX_WHEREEVER, FLAG_NOLIMIT) != RET_NOERROR)
+				if(internalAddItem(NULL, player->getInbox(), item, INDEX_WHEREEVER, FLAG_NOLIMIT) != RET_NOERROR)
 				{
 					delete item;
 					break;

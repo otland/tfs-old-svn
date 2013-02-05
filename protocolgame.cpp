@@ -2050,8 +2050,8 @@ void ProtocolGame::sendMarketEnter(uint32_t depotId)
 	msg->put<uint64_t>(player->balance);
 	msg->put<char>(std::min((int32_t)0xFF, IOMarket::getInstance()->getPlayerOfferCount(player->getGUID())));
 
-	Depot* depot = player->getDepot(depotId, false);
-	if(!depot)
+	DepotChest* depotChest = player->getDepotChest(depotId, false);
+	if(!depotChest)
 	{
 		msg->put<uint16_t>(0x00);
 		return;
@@ -2059,8 +2059,8 @@ void ProtocolGame::sendMarketEnter(uint32_t depotId)
 
 	std::map<uint16_t, uint32_t> depotItems;
 	std::list<Container*> containerList;
-
-	containerList.push_back(depot->getLocker());
+	containerList.push_back(depotChest);
+	containerList.push_back(player->getInbox());
 	do
 	{
 		Container* container = containerList.front();

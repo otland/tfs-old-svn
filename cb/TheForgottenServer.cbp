@@ -123,8 +123,10 @@
 		<Unit filename="..\databasesqlite.cpp" />
 		<Unit filename="..\databasesqlite.h" />
 		<Unit filename="..\definitions.h" />
-		<Unit filename="..\depot.cpp" />
-		<Unit filename="..\depot.h" />
+		<Unit filename="..\depotchest.cpp" />
+		<Unit filename="..\depotchest.h" />
+		<Unit filename="..\depotlocker.cpp" />
+		<Unit filename="..\depotlocker.h" />
 		<Unit filename="..\dispatcher.cpp" />
 		<Unit filename="..\dispatcher.h" />
 		<Unit filename="..\enums.h" />
@@ -144,6 +146,8 @@
 		<Unit filename="..\house.h" />
 		<Unit filename="..\housetile.cpp" />
 		<Unit filename="..\housetile.h" />
+		<Unit filename="..\inbox.cpp" />
+		<Unit filename="..\inbox.h" />
 		<Unit filename="..\ioban.cpp" />
 		<Unit filename="..\ioban.h" />
 		<Unit filename="..\ioguild.cpp" />

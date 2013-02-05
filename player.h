@@ -24,7 +24,9 @@
 #include "cylinder.h"
 
 #include "container.h"
-#include "depot.h"
+#include "inbox.h"
+#include "depotchest.h"
+#include "depotlocker.h"
 
 #include "outfit.h"
 #include "vocation.h"
@@ -117,7 +119,8 @@ typedef std::map<uint32_t, VIP_t> VIPMap;
 typedef std::pair<uint32_t, VIP_t> VIPPair;
 typedef std::list<std::pair<uint16_t, std::string> > ChannelsList;
 typedef std::vector<std::pair<uint32_t, Container*> > ContainerVector;
-typedef std::map<uint32_t, std::pair<Depot*, bool> > DepotMap;
+typedef std::map<uint32_t, DepotChest*> DepotMap;
+typedef std::map<uint32_t, DepotLocker*> DepotLockerMap;
 typedef std::map<uint32_t, uint32_t> MuteCountMap;
 typedef std::list<std::string> LearnedInstantSpellList;
 typedef std::list<uint32_t> InvitationsList;
@@ -203,6 +206,9 @@ class Player : public Creature, public Cylinder
 
 		bool changeOutfit(Outfit_t outfit, bool checkList);
 		void hasRequestedOutfit(bool v) {requestedOutfit = v;}
+
+		Inbox* getInbox() const { return inbox; }
+		const DepotMap& getDepotChests() const { return depotChests; }
 
 		Vocation* getVocation() const {return vocation;}
 		int32_t getPlayerInfo(playerinfo_t playerinfo) const;
@@ -376,10 +382,8 @@ class Player : public Creature, public Cylinder
 		uint32_t getLossPercent(lossTypes_t lossType) const {return lossPercent[lossType];}
 		void setLossPercent(lossTypes_t lossType, uint32_t newPercent) {lossPercent[lossType] = newPercent;}
 
-		Depot* getDepot(uint32_t depotId, bool autoCreateDepot);
-		bool addDepot(Depot* depot, uint32_t depotId);
-		void updateDepots();
-		void useDepot(uint32_t depotId, bool value);
+		DepotChest* getDepotChest(uint32_t depotId, bool autoCreate);
+		DepotLocker* getDepotLocker(uint32_t depotId);
 
 		virtual bool canSee(const Position& pos) const;
 		virtual bool canSeeCreature(const Creature* creature) const;
@@ -631,6 +635,10 @@ class Player : public Creature, public Cylinder
 		bool tameMount(uint8_t mountId);
 		bool untameMount(uint8_t mountId);
 
+		void setDepotChange(bool b) {depotChange = b;}
+		void setLastDepotId(int16_t newId) { lastDepotId = newId; }
+		int16_t getLastDepotId() const { return lastDepotId; }
+
 		//event methods
 		virtual void onUpdateTileItem(const Tile* tile, const Position& pos, const Item* oldItem,
 			const ItemType& oldType, const Item* newItem, const ItemType& newType);
@@ -799,8 +807,12 @@ class Player : public Creature, public Cylinder
 		ContainerVector containerVec;
 		InvitationsList invitationsList;
 		ConditionList storedConditionList;
-		DepotMap depots;
 		Container transferContainer;
+
+		//depots
+		DepotMap depotChests; //depots
+		DepotLockerMap depotLockerMap;
+		uint32_t maxDepotLimit;
 
 		// TODO: make it private?
 		uint32_t marriage;
@@ -817,7 +829,6 @@ class Player : public Creature, public Cylinder
 
 	protected:
 		void checkTradeState(const Item* item);
-		void internalAddDepot(Depot* depot, uint32_t depotId);
 
 		bool gainExperience(double& gainExp, Creature* target);
 		bool rateExperience(double& gainExp, Creature* target);
@@ -908,6 +919,7 @@ class Player : public Creature, public Cylinder
 		bool mounted;
 		bool pvpBlessing;
 		bool sentChat;
+		bool depotChange;
 
 		OperatingSystem_t operatingSystem;
 		AccountManager_t accountManager;
@@ -921,6 +933,7 @@ class Player : public Creature, public Cylinder
 
 		int16_t blessings;
 		int16_t marketDepotId;
+		int16_t lastDepotId;
 		uint16_t maxWriteLen;
 		uint16_t sex;
 		uint16_t mailAttempts;
@@ -1019,6 +1032,7 @@ class Player : public Creature, public Cylinder
 		OutfitMap outfits;
 		LearnedInstantSpellList learnedInstantSpellList;
 		WarMap warMap;
+		Inbox* inbox;
 
 		friend class Game;
 		friend class LuaInterface;
