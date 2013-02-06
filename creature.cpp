@@ -167,18 +167,23 @@ int64_t Creature::getTimeSinceLastMove() const
 
 int32_t Creature::getWalkDelay(Direction dir) const
 {
-	if(lastStep)
-		return getStepDuration(dir) - (OTSYS_TIME() - lastStep);
+	if(lastStep == 0)
+		return 0;
 
-	return 0;
+	int64_t ct = OTSYS_TIME();
+	int64_t stepDuration = getStepDuration(dir);
+	return stepDuration - (ct - lastStep);
 }
 
 int32_t Creature::getWalkDelay() const
 {
-	if(lastStep)
-		return getStepDuration() - (OTSYS_TIME() - lastStep);
+	//Used for auto-walking
+	if(lastStep == 0)
+		return 0;
 
-	return 0;
+	int64_t ct = OTSYS_TIME();
+	int64_t stepDuration = getStepDuration() * lastStepCost;
+	return stepDuration - (ct - lastStep);
 }
 
 void Creature::onThink(uint32_t interval)
@@ -338,6 +343,13 @@ bool Creature::getNextStep(Direction& dir, uint32_t&)
 
 bool Creature::startAutoWalk(std::list<Direction>& listDir)
 {
+	const Player* thisPlayer = getPlayer();
+	if(thisPlayer && thisPlayer->getNoMove())
+	{
+		thisPlayer->sendCancelWalk();
+		return false;
+	}
+
 	listWalkDir = listDir;
 	addEventWalk(listDir.size() == 1);
 	return true;
@@ -346,13 +358,18 @@ bool Creature::startAutoWalk(std::list<Direction>& listDir)
 void Creature::addEventWalk(bool firstStep/* = false*/)
 {
 	cancelNextWalk = false;
-	if(getStepSpeed() < 1 || eventWalk)
+
+	if(getStepSpeed() <= 0)
+		return;
+
+	if(eventWalk != 0)
 		return;
 
 	int64_t ticks = getEventStepTicks(firstStep);
-	if(ticks < 1)
+	if(ticks <= 0)
 		return;
 
+	// Take first step right away, but still queue the next
 	if(ticks == 1)
 		g_game.checkCreatureWalk(getID());
 
@@ -1699,13 +1716,15 @@ int32_t Creature::getStepDuration() const
 int64_t Creature::getEventStepTicks(bool onlyDelay/* = false*/) const
 {
 	int64_t ret = getWalkDelay();
-	if(ret > 0)
-		return ret;
-
-	if(!onlyDelay)
-		return getStepDuration();
-
-	return 1;
+	if(ret <= 0)
+	{
+		int32_t stepDuration = getStepDuration();
+		if(onlyDelay && stepDuration > 0)
+			ret = 1;
+		else
+			ret = stepDuration * lastStepCost;
+	}
+	return ret;
 }
 
 void Creature::getCreatureLight(LightInfo& light) const
@@ -1805,9 +1824,13 @@ bool FrozenPathingConditionCall::operator()(const Position& startPos, const Posi
 
 	int32_t testDist = std::max(std::abs(targetPos.x - testPos.x), std::abs(targetPos.y - testPos.y));
 	if(fpp.maxTargetDist == 1)
-		return (testDist >= fpp.minTargetDist && testDist <= fpp.maxTargetDist);
+	{
+		if(testDist < fpp.minTargetDist || testDist > fpp.maxTargetDist)
+			return false;
 
-	if(testDist <= fpp.maxTargetDist)
+		return true;
+	}
+	else if(testDist <= fpp.maxTargetDist)
 	{
 		if(testDist < fpp.minTargetDist)
 			return false;
@@ -1824,6 +1847,5 @@ bool FrozenPathingConditionCall::operator()(const Position& startPos, const Posi
 			return true;
 		}
 	}
-
 	return false;
 }
