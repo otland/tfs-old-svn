@@ -347,7 +347,6 @@ uint32_t DatabaseManager::updateDatabase()
 			break;
 		}
 
-
 		case 8:
 		{
 			if(db->getDatabaseEngine() == DATABASE_ENGINE_MYSQL)
@@ -446,6 +445,14 @@ uint32_t DatabaseManager::updateDatabase()
 				return 9;
 			}
 			break;
+		}
+
+		case 9:
+		{
+			std::cout << "> Updating database to version 10 (stamina)" << std::endl;
+			db->executeQuery("ALTER TABLE `players` ADD `stamina` SMALLINT UNSIGNED NOT NULL DEFAULT 2520;");
+			registerDatabaseConfig("db_version", 10);
+			return 10;
 		}
 
 		/*

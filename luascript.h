@@ -31,9 +31,6 @@ extern "C"
 	#include <lua.h>
 	#include <lauxlib.h>
 	#include <lualib.h>
-	#ifdef __LUAJIT__
-	#include <luajit.h>
-	#endif
 }
 
 #include "position.h"
@@ -49,6 +46,7 @@ class AreaCombat;
 class Combat;
 class Condition;
 class Npc;
+class Monster;
 
 enum LuaVariantType_t
 {
@@ -135,6 +133,8 @@ class ScriptEnvironment
 		Container* getContainerByUID(uint32_t uid);
 		Creature* getCreatureByUID(uint32_t uid);
 		Player* getPlayerByUID(uint32_t uid);
+		Monster* getMonsterByUID(uint32_t uid);
+		Npc* getNpcByUID(uint32_t uid);
 		void removeItemByUID(uint32_t uid);
 
 		static uint32_t addCombatArea(AreaCombat* area);
@@ -149,12 +149,12 @@ class ScriptEnvironment
 		static uint32_t getLastCombatId() {return m_lastCombatId;}
 
 	private:
-		typedef std::map<uint64_t, Thing*> ThingMap;
+		typedef OTSERV_HASH_MAP<uint32_t, Thing*> ThingMap;
 		typedef std::vector<const LuaVariant*> VariantVector;
-		typedef std::map<uint32_t, int32_t> StorageMap;
 		typedef std::map<uint32_t, AreaCombat*> AreaMap;
 		typedef std::map<uint32_t, Combat*> CombatMap;
 		typedef std::map<uint32_t, Condition*> ConditionMap;
+		typedef std::map<uint32_t, int32_t> StorageMap;
 		typedef std::map<uint32_t, DBResult*> DBResultMap;
 		typedef std::list<Item*> ItemList;
 
@@ -231,7 +231,9 @@ enum PlayerInfo_t
 	PlayerInfoPzLock,
 	PlayerInfoGhostStatus,
 	PlayerInfoIp,
-	PlayerInfoBankBalance
+	PlayerInfoBankBalance,
+	PlayerInfoMoney,
+	PlayerInfoLastLoginSaved
 };
 
 #define reportErrorFunc(a)  reportError(__FUNCTION__, a, true)
@@ -252,7 +254,6 @@ enum ErrorCode_t
 	LUA_ERROR_VARIANT_UNKNOWN,
 	LUA_ERROR_SPELL_NOT_FOUND
 };
-
 
 class LuaScriptInterface
 {
@@ -323,6 +324,9 @@ class LuaScriptInterface
 		static std::string popString(lua_State* L);
 		static int32_t popCallback(lua_State* L);
 		static bool popBoolean(lua_State* L);
+
+		template<class T>
+		static T popNumber(lua_State* L);
 
 		static int32_t getField(lua_State* L, const char* key);
 		static uint32_t getFieldU32(lua_State* L, const char* key);
@@ -473,6 +477,8 @@ class LuaScriptInterface
 		static int32_t luaGetPlayerLossPercent(lua_State* L);
 		static int32_t luaGetPlayerSkullType(lua_State* L);
 		static int32_t luaGetPlayerBankBalance(lua_State* L);
+		static int32_t luaGetPlayerMoney(lua_State* L);
+		static int32_t luaGetPlayerLastLoginSaved(lua_State* L);
 
 		static int32_t luaGetPlayerDepotItems(lua_State* L);
 		static int32_t luaGetPlayerGuildId(lua_State* L);
@@ -532,6 +538,9 @@ class LuaScriptInterface
 		static int32_t luaIsCorpse(lua_State* L);
 		static int32_t luaIsMoveable(lua_State* L);
 		static int32_t luaIsValidUID(lua_State* L);
+		static int32_t luaIsMonster(lua_State* L);
+		static int32_t luaIsNpc(lua_State* L);
+		static int32_t luaIsItem(lua_State* L);
 
 		//container
 		static int32_t luaGetContainerSize(lua_State* L);
@@ -634,6 +643,8 @@ class LuaScriptInterface
 		static int32_t luaGetWaypointPosition(lua_State* L);
 		static int32_t luaDoWaypointAddTemporial(lua_State* L);
 
+		static int32_t luaSendGuildChannelMessage(lua_State* L);
+
 		static int32_t luaGetPlayerParty(lua_State* L);
 		static int32_t luaDoPlayerJoinParty(lua_State* L);
 		static int32_t luaGetPartyMembers(lua_State* L);
@@ -642,6 +653,7 @@ class LuaScriptInterface
 
 		static int32_t internalGetPlayerInfo(lua_State* L, PlayerInfo_t info);
 
+		#ifndef __LUAJIT__
 		static const luaL_Reg luaBitReg[13];
 		static int32_t luaBitNot(lua_State* L);
 		static int32_t luaBitAnd(lua_State* L);
@@ -655,6 +667,7 @@ class LuaScriptInterface
 		static int32_t luaBitUXor(lua_State* L);
 		static int32_t luaBitULeftShift(lua_State* L);
 		static int32_t luaBitURightShift(lua_State* L);
+		#endif
 
 		static const luaL_Reg luaDatabaseTable[10];
 		static int32_t luaDatabaseExecute(lua_State* L);

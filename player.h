@@ -196,6 +196,10 @@ class Player : public Creature, public Cylinder
 			return ((50ULL * level * level * level) - (150ULL * level * level) + (400ULL * level))/3ULL;
 		}
 
+		uint16_t getStaminaMinutes() const { return staminaMinutes; }
+		void regenerateStamina(int32_t offlineTime);
+		void useStamina();
+
 		bool addOfflineTrainingTries(skills_t skill, int32_t tries);
 
 		void addOfflineTrainingTime(int32_t addTime) { offlineTrainingTime = std::min(12 * 3600 * 1000, offlineTrainingTime + addTime); }
@@ -460,7 +464,7 @@ class Player : public Creature, public Cylinder
 		bool hasShield() const;
 		virtual bool isAttackable() const;
 
-		virtual void changeHealth(int32_t healthChange);
+		virtual void changeHealth(int32_t healthChange, bool sendHealthChange = true);
 		virtual void changeMana(int32_t manaChange);
 		void changeSoul(int32_t soulChange);
 
@@ -679,8 +683,8 @@ class Player : public Creature, public Cylinder
 			{if(client) client->sendSkills();}
 		void sendTextMessage(MessageClasses mclass, const std::string& message, Position* pos = NULL, uint32_t value = 0, TextColor_t color = TEXTCOLOR_NONE) const
 			{if(client) client->sendTextMessage(mclass, message, pos, value, color);}
-		void sendReLoginWindow() const
-			{if(client) client->sendReLoginWindow();}
+		void sendReLoginWindow(uint8_t unfairFightReduction) const
+			{if(client) client->sendReLoginWindow(unfairFightReduction);}
 		void sendTextWindow(Item* item, uint16_t maxlen, bool canWrite) const
 			{if(client) client->sendTextWindow(windowTextId, item, maxlen, canWrite);}
 		void sendTextWindow(uint32_t itemId, const std::string& text) const
@@ -772,12 +776,14 @@ class Player : public Creature, public Cylinder
 		DepotLockerMap depotLockerMap;
 		uint32_t maxDepotLimit;
 
+		double deathLossPercent;
+
 	protected:
 		void checkTradeState(const Item* item);
 		bool hasCapacity(const Item* item, uint32_t count) const;
 
 		void gainExperience(uint64_t exp);
-		void addExperience(uint64_t exp, bool useMult = false, bool sendText = false);
+		void addExperience(uint64_t exp, bool useMult = false, bool sendText = false, bool applyStaminaChange = false);
 
 		void updateInventoryWeight();
 		void postUpdateGoods(uint32_t itemId);
@@ -957,6 +963,10 @@ class Player : public Creature, public Cylinder
 
 		BedItem* bedItem;
 
+		//stamina
+		uint16_t staminaMinutes;
+		time_t nextUseStaminaTime;
+
 		//read/write storage data
 		uint32_t windowTextId;
 		Item* writeItem;
@@ -966,7 +976,7 @@ class Player : public Creature, public Cylinder
 
 		int64_t skullTicks;
 		Skulls_t skull;
-		typedef std::set<uint32_t> AttackedSet;
+		typedef OTSERV_HASH_SET<uint32_t> AttackedSet;
 		AttackedSet attackedSet;
 
 		void updateItemsLight(bool internal = false);
@@ -995,6 +1005,7 @@ class Player : public Creature, public Cylinder
 
 		static uint32_t getPercentLevel(uint64_t count, uint64_t nextLevelCount);
 		double getLostPercent() const;
+		virtual uint64_t getLostExperience(double lostPercent) const {return skillLoss ? uint64_t(experience * lostPercent) : 0;}
 		virtual uint64_t getLostExperience() const {return skillLoss ? uint64_t(experience * getLostPercent()) : 0;}
 		virtual void dropLoot(Container* corpse);
 		virtual uint32_t getDamageImmunities() const { return damageImmunities; }

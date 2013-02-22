@@ -534,7 +534,9 @@
 	<item id="1435" article="a" name="dragon flag" />
 	<item id="1436" article="a" name="castle flag" />
 	<item id="1437" article="a" name="flag of Tibia" />
-	<item fromid="1438" toid="1439" article="a" name="street sign" />
+	<item fromid="1438" toid="1439" article="a" name="street sign">
+		<attribute key="allowDistRead" value="true" />
+	</item>
 	<item fromid="1440" toid="1441" article="a" name="sign" />
 	<item id="1442" article="a" name="statue">
 		<attribute key="rotateTo" value="1476" />
@@ -1348,6 +1350,7 @@
 	</item>
 	<item id="1949" article="a" name="scroll">
 		<attribute key="weight" value="50" />
+		<attribute key="description" value="It is rewriteable." />
 		<attribute key="writeable" value="1" />
 		<attribute key="maxTextLen" value="1023" />
 	</item>
@@ -2574,7 +2577,7 @@
 	<item id="2248" name="human remains" />
 	<item id="2249" name="ashes" />
 	<item fromid="2250" toid="2255" name="wooden trash">
-		<attribute key="weight" value="100" />
+		<attribute key="weight" value="570" />
 	</item>
 	<item id="2256" name="metal trash">
 		<attribute key="weight" value="300" />
@@ -8122,7 +8125,8 @@
 	<item id="4974" article="an" name="anchor" />
 	<item fromid="4975" toid="4976" article="a" name="mast" />
 	<item id="4977" article="an" name="anchor" />
-	<item fromid="4978" toid="4989" article="a" name="hawser" />
+	<item fromid="4978" toid="4987" article="a" name="hawser" />
+	<item fromid="4988" toid="4989" article="a" name="cleat" />
 	<item id="4990" article="a" name="white flag" />
 	<item id="4991" article="a" name="pirate flag" />
 	<item id="4992" article="a" name="dead butterfly">
@@ -8521,7 +8525,9 @@
 	<item fromid="5309" toid="5314" article="a" name="white stone railing" />
 	<item fromid="5315" toid="5320" article="a" name="wooden railing" />
 	<item fromid="5321" toid="5331" article="a" name="wooden column" />
-	<item fromid="5332" toid="5389" article="a" name="sign" />
+	<item fromid="5332" toid="5389" article="a" name="sign">
+		<attribute key="allowDistRead" value="true" />
+	</item>
 	<item fromid="5390" toid="5391" article="a" name="pawpaw tree" />
 	<item id="5392" article="a" name="mangrove" />
 	<item id="5393" article="a" name="mangrove" />
@@ -11179,7 +11185,7 @@
 	<item fromid="6472" toid="6473" article="a" name="wooden window">
 		<attribute key="type" value="door" />
 	</item>
-	<item fromid="6474" toid="6475" name="planks" />
+	<item fromid="6474" toid="6475" name="wooden planks" />
 	<item fromid="6476" toid="6488" name="debris" />
 	<item fromid="6489" toid="6490" article="a" name="christmas branch">
 		<attribute key="slotType" value="ammo" />
@@ -11468,77 +11474,77 @@
 	<item id="6594" name="snow">
 		<attribute key="description" value="Someone must have walked here recently." />
 		<attribute key="decayTo" value="670" />
-		<attribute key="duration" value="120" />
+		<attribute key="duration" value="10" />
 	</item>
 	<item id="6595" name="snow">
 		<attribute key="description" value="Someone must have walked here recently." />
 		<attribute key="decayTo" value="6580" />
-		<attribute key="duration" value="120" />
+		<attribute key="duration" value="10" />
 	</item>
 	<item id="6596" name="snow">
 		<attribute key="description" value="Someone must have walked here recently." />
 		<attribute key="decayTo" value="6581" />
-		<attribute key="duration" value="120" />
+		<attribute key="duration" value="10" />
 	</item>
 	<item id="6597" name="snow">
 		<attribute key="description" value="Someone must have walked here recently." />
 		<attribute key="decayTo" value="6582" />
-		<attribute key="duration" value="120" />
+		<attribute key="duration" value="10" />
 	</item>
 	<item id="6598" name="snow">
 		<attribute key="description" value="Someone must have walked here recently." />
 		<attribute key="decayTo" value="6583" />
-		<attribute key="duration" value="120" />
+		<attribute key="duration" value="10" />
 	</item>
 	<item id="6599" name="snow">
 		<attribute key="description" value="Someone must have walked here recently." />
 		<attribute key="decayTo" value="6584" />
-		<attribute key="duration" value="120" />
+		<attribute key="duration" value="10" />
 	</item>
 	<item id="6600" name="snow">
 		<attribute key="description" value="Someone must have walked here recently." />
 		<attribute key="decayTo" value="6585" />
-		<attribute key="duration" value="120" />
+		<attribute key="duration" value="10" />
 	</item>
 	<item id="6601" name="snow">
 		<attribute key="description" value="Someone must have walked here recently." />
 		<attribute key="decayTo" value="6586" />
-		<attribute key="duration" value="120" />
+		<attribute key="duration" value="10" />
 	</item>
 	<item id="6602" name="snow">
 		<attribute key="description" value="Someone must have walked here recently." />
 		<attribute key="decayTo" value="6587" />
-		<attribute key="duration" value="120" />
+		<attribute key="duration" value="10" />
 	</item>
 	<item id="6603" name="snow">
 		<attribute key="description" value="Someone must have walked here recently." />
 		<attribute key="decayTo" value="6588" />
-		<attribute key="duration" value="120" />
+		<attribute key="duration" value="10" />
 	</item>
 	<item id="6604" name="snow">
 		<attribute key="description" value="Someone must have walked here recently." />
 		<attribute key="decayTo" value="6589" />
-		<attribute key="duration" value="120" />
+		<attribute key="duration" value="10" />
 	</item>
 	<item id="6605" name="snow">
 		<attribute key="description" value="Someone must have walked here recently." />
 		<attribute key="decayTo" value="6590" />
-		<attribute key="duration" value="120" />
+		<attribute key="duration" value="10" />
 	</item>
 	<item id="6606" name="snow">
 		<attribute key="description" value="Someone must have walked here recently." />
 		<attribute key="decayTo" value="6591" />
-		<attribute key="duration" value="120" />
+		<attribute key="duration" value="10" />
 	</item>
 	<item id="6607" name="snow">
 		<attribute key="description" value="Someone must have walked here recently." />
 		<attribute key="decayTo" value="6592" />
-		<attribute key="duration" value="120" />
+		<attribute key="duration" value="10" />
 	</item>
 	<item id="6608" name="snow">
 		<attribute key="description" value="Someone must have walked here recently." />
 		<attribute key="decayTo" value="6593" />
-		<attribute key="duration" value="120" />
+		<attribute key="duration" value="10" />
 	</item>
 	<item fromid="6609" toid="6626" name="snow" />
 	<item fromid="6627" toid="6682" name="shallow water" />
@@ -15036,17 +15042,17 @@
 	</item>
 	<item id="8307" article="a" name="dead sea serpent">
 		<attribute key="weight" value="60000" />
-		<attribute key="containerSize" value="15" />
+		<attribute key="containerSize" value="20" />
 		<attribute key="decayTo" value="8308" />
-		<attribute key="duration" value="60" />
+		<attribute key="duration" value="10" />
 		<attribute key="corpseType" value="blood" />
 		<attribute key="fluidSource" value="blood" />
 	</item>
 	<item id="8308" article="a" name="dead sea serpent">
 		<attribute key="weight" value="55000" />
-		<attribute key="containerSize" value="15" />
+		<attribute key="containerSize" value="20" />
 		<attribute key="decayTo" value="8311" />
-		<attribute key="duration" value="120" />
+		<attribute key="duration" value="600" />
 		<attribute key="corpseType" value="blood" />
 		<attribute key="fluidSource" value="blood" />
 	</item>
@@ -15059,14 +15065,14 @@
 	</item>
 	<item id="8311" article="a" name="dead sea serpent">
 		<attribute key="weight" value="45000" />
-		<attribute key="containerSize" value="15" />
+		<attribute key="containerSize" value="20" />
 		<attribute key="decayTo" value="8312" />
-		<attribute key="duration" value="180" />
+		<attribute key="duration" value="600" />
 		<attribute key="corpseType" value="blood" />
 	</item>
 	<item id="8312" article="a" name="dead sea serpent">
 		<attribute key="weight" value="30000" />
-		<attribute key="duration" value="240" />
+		<attribute key="duration" value="600" />
 		<attribute key="decayTo" value="0" />
 	</item>
 	<item id="8313" article="a" name="birch" />
@@ -16583,6 +16589,7 @@
 	<item id="9241" article="a" name="vampire lord statue" />
 	<item id="9242" article="a" name="vampire lord" />
 	<item fromid="9243" toid="9244" article="a" name="statue" />
+	<item fromid="9245" toid="9248" name="nails" />
 	<item fromid="9249" toid="9251" article="a" name="golden ornament" />
 	<item fromid="9252" toid="9262" name="copper pipes" />
 	<item fromid="9263" toid="9266" article="an" name="iron wall" />
@@ -16655,12 +16662,12 @@
 	<item id="9306" name="statue" />
 	<item fromid="9307" toid="9319" name="golden ornament" />
 	<item fromid="9320" toid="9326" article="an" name="archway" />
-	<item fromid="9327" toid="9330" article="an" name="copper pipes" />
-	<item fromid="9331" toid="9332" article="an" name="steam" />
+	<item fromid="9327" toid="9330" article="a" name="copper pipes" />
+	<item fromid="9331" toid="9332" article="a" name="steam" />
 	<item fromid="9333" toid="9334" name="slime" />
 	<item fromid="9335" toid="9336" article="an" name="archway" />
 	<item fromid="9337" toid="9340" article="a" name="golden ornament" />
-	<item fromid="9341" toid="9342" article="an" name="steam" />
+	<item fromid="9341" toid="9342" article="a" name="steam" />
 	<item fromid="9343" toid="9346" article="a" name="copper pipes" />
 	<item fromid="9347" toid="9348" article="a" name="copper wheel" />
 	<item fromid="9349" toid="9350" article="a" name="boiler" />
@@ -17146,20 +17153,20 @@
 	<item id="9879" article="a" name="dead young sea serpent">
 		<attribute key="containerSize" value="15" />
 		<attribute key="decayTo" value="9880" />
-		<attribute key="duration" value="120" />
+		<attribute key="duration" value="600" />
 		<attribute key="corpseType" value="blood" />
 		<attribute key="fluidSource" value="blood" />
 	</item>
 	<item id="9880" article="a" name="dead young sea serpent">
 		<attribute key="containerSize" value="15" />
 		<attribute key="decayTo" value="9881" />
-		<attribute key="duration" value="120" />
+		<attribute key="duration" value="600" />
 		<attribute key="corpseType" value="blood" />
 		<attribute key="fluidSource" value="blood" />
 	</item>
 	<item id="9881" article="a" name="dead young sea serpent">
 		<attribute key="decayTo" value="0" />
-		<attribute key="duration" value="60" />
+		<attribute key="duration" value="600" />
 		<attribute key="corpseType" value="blood" />
 	</item>
 	<item id="9882" article="a" name="dead young sea serpent">
@@ -18339,10 +18346,15 @@
 		<attribute key="corpseType" value="undead" />
 	</item>
 	<item fromid="10325" toid="10340" article="a" name="roof" />
+	<item fromid="10341" toid="10342" article="a" name="funnel" />
 	<item id="10344" article="a" name="stone ledge" />
 	<item fromid="10345" toid="10346" article="a" name="pillar" />
 	<item fromid="10349" toid="10354" article="a" name="statue" />
 	<item fromid="10355" toid="10356" article="a" name="statue of Fafnar" />
+	<item fromid="10357" toid="10358" name="spider webs" />
+	<item id="10359" name="dirt" />
+	<item fromid="10360" toid="10361" name="spider webs" />
+	<item id="10362" name="dirt" />
 	<item id="10363" name="the rain coat">
 		<attribute key="description" value="The wearer of this cape commands the forces of heaven." />
 		<attribute key="weight" value="3200" />
@@ -18472,6 +18484,7 @@
 		<attribute key="duration" value="45" />
 		<attribute key="corpseType" value="undead" />
 	</item>
+	<item id="10501" article="a" name="dead tree" />
 	<item id="10502" article="an" name="engraved wedding ring">
 		<attribute key="weight" value="40" />
 		<attribute key="slotType" value="ring" />
@@ -18480,7 +18493,7 @@
 		<attribute key="weight" value="2500" />
 	</item>
 	<item id="10504" name="tree" />
-	<item fromid="10505" toid="10506" name="death tree" />
+	<item fromid="10505" toid="10506" article="a" name="dead tree" />
 	<item id="10507" article="an" name="skull">
 		<attribute key="weight" value="40" />
 	</item>
@@ -18951,7 +18964,7 @@
 	<item fromid="10958" toid="10959" article="a" name="banner" />
 	<item fromid="10960" toid="10962" article="a" name="lance" />
 	<item fromid="10963" toid="10964" article="a" name="dragon banner" />
-	<item fromid="10965" toid="10966" article="a" name="banner" />
+	<item fromid="10965" toid="10966" article="a" name="red banner" />
 	<item fromid="10967" toid="10970" article="a" name="wagon" />
 	<item fromid="10971" toid="10974" name="wall lamp" />
 	<item fromid="10975" toid="10978" article="a" name="serpent decoration" />
@@ -18993,6 +19006,7 @@
 	<item fromid="11007" toid="11012" article="a" name="banner" />
 	<item id="11013" article="a" name="stacke" />
 	<item id="11014" article="a" name="pepper grass" />
+	<item id="11015" name="high grass" />
 	<item fromid="11016" toid="11027" name="mud sand" />
 	<item id="11028" article="a" name="pepper grass" />
 	<item id="11029" article="a" name="mud sand grass" />
@@ -19405,6 +19419,7 @@
 		<attribute key="duration" value="300" />
 		<attribute key="corpseType" value="blood" />
 	</item>
+	<item id="11253" article="a" name="large pile of bones" />
 	<item id="11254" article="a" name="dead orc marauder">
 		<attribute key="containerSize" value="10" />
 		<attribute key="decayTo" value="11251" />
@@ -19421,17 +19436,25 @@
 	<item id="11257" article="a" name="heavy ball">
 		<attribute key="weight" value="670" />
 	</item>
-	<item id="11259" article="a" name="talisman of dark mysteries">
-		<attribute key="description" value="Is the Mystic Talisman." />
-		<attribute key="weight" value="2850" />
-		<attribute key="magiclevelpoints" value="10" />
-		<attribute key="ammoType" value="arrow" />
+	<item id="11258" article="a" name="phoenix charm">
+		<attribute key="weight" value="1000" />
+		<attribute key="description" value="The Spark of the Phoenix is contained in it." />
 	</item>
-	<item id="11261" article="a" name="mystical potion">
-		<attribute key="weight" value="5" />
+	<item id="11259" article="a" name="unity charm">
+		<attribute key="weight" value="1000" />
+		<attribute key="description" value="The Embrace of Tibia is contained in it." />
+	</item>
+	<item id="11260" article="a" name="spiritual charm">
+		<attribute key="weight" value="1000" />
+		<attribute key="description" value="The Spiritual Shielding is contained in it." />
+	</item>
+	<item id="11261" article="a" name="twin sun charm">
+		<attribute key="weight" value="1000" />
+		<attribute key="description" value="The Fire of the Suns is contained in it." />
 	</item>
 	<item id="11262" article="a" name="solitude charm">
-		<attribute key="weight" value="10000" />
+		<attribute key="weight" value="1000" />
+		<attribute key="description" value="The Wisdom of Solitude is contained in it." />
 	</item>
 	<item id="11263" article="a" name="santa backpack">
 		<attribute key="weight" value="1650" />
@@ -19796,6 +19819,7 @@
 		<attribute key="duration" value="60" />
 		<attribute key="corpseType" value="venom" />
 	</item>
+	<item fromid="11351" toid="11354" article="a" name="large pile of bones" />
 	<item id="11355" article="a" name="spellweaver's robe">
 		<attribute key="armor" value="11" />
 		<attribute key="weight" value="2350" />
@@ -20030,7 +20054,7 @@
 	<item fromid="11478" toid="11503" name="dirt floor" />
 	<item fromid="11504" toid="11533" name="ground" />
 	<item fromid="11534" toid="11543" article="a" name="stone" />
-	<item fromid="11544" toid="11547" article="a" name="stone wall" />
+	<item fromid="11544" toid="11547" article="a" name="timber wall" />
 	<item fromid="11549" toid="11560" name="acid" />
 	<item id="11561" name="mud" />
 	<item fromid="11562" toid="11570" name="dead bamboo" />
@@ -20075,6 +20099,7 @@
 	<item id="11796" article="a" name="dimensional portal" />
 	<item id="11797" article="a" name="skull pillar" />
 	<item id="11798" article="a" name="dimensional portal" />
+	<item id="11812" article="a" name="pillar vine" />
 	<item fromid="11827" toid="11831" name="fog" />
 	<item id="11832" article="a" name="skull" plural="skulls">
 		<attribute key="weight" value="2180" />
@@ -20088,6 +20113,7 @@
 	<item fromid="11921" toid="11922" name="decorative spear's" />
 	<item fromid="11923" toid="11924" article="a" name="decorative shield" />
 	<item fromid="11931" toid="11932" article="a" name="statue" />
+	<item id="11933" article="a" name="sapphire stand" />
 	<item fromid="11937" toid="11946" article="a" name="corrupted wall" />
 	<item id="11948" article="a" name="window" />
 	<item fromid="11949" toid="11952" article="a" name="corrupted wall" />
@@ -20096,7 +20122,7 @@
 	<item id="11962" article="a" name="stone wall" />
 	<item fromid="11963" toid="11964" article="a" name="pillar" />
 	<item fromid="11965" toid="11969" article="a" name="chair" />
-	<item fromid="11970" toid="11971" article="a" name="stone wall" />
+	<item fromid="11970" toid="11971" article="a" name="timber wall" />
 	<item fromid="11972" toid="11982" name="jade ornaments" />
 	<item fromid="11983" toid="11993" name="floor" />
 	<item id="11994" article="a" name="jade ornament" />
@@ -20175,23 +20201,24 @@
 	<item id="12105" article="an" name="open door">
 		<attribute key="type" value="door" />
 	</item>
+	<item id="12113" name="timbers" />
 	<item fromid="12125" toid="12137" name="roof" />
 	<item fromid="12138" toid="12141" article="a" name="decorative spear" />
 	<item fromid="12142" toid="12143" article="an" name="alter" />
 	<item fromid="12144" toid="12148" name="bones" />
 	<item fromid="12156" toid="12157" name="throne" />
 	<item fromid="12158" toid="12164" article="a" name="corrupted wall" />
-	<item id="12165" article="a" name="stone pillar" />
+	<item id="12165" article="a" name="timber" />
 	<item id="12166" article="a" name="dragon statue" />
 	<item fromid="12177" toid="12187" name="roof" />
 	<item id="12188" article="a" name="closed door">
 		<attribute key="type" value="door" />
 		<attribute key="blockprojectile" value="1" />
-		<attribute key="description" value="It is locked." />
 	</item>
 	<item id="12189" article="a" name="closed door">
 		<attribute key="type" value="door" />
 		<attribute key="blockprojectile" value="1" />
+		<attribute key="description" value="It is locked." />
 	</item>
 	<item id="12190" article="an" name="open door">
 		<attribute key="type" value="door" />
@@ -20215,11 +20242,11 @@
 	<item id="12197" article="a" name="closed door">
 		<attribute key="type" value="door" />
 		<attribute key="blockprojectile" value="1" />
-		<attribute key="description" value="It is locked." />
 	</item>
 	<item id="12198" article="a" name="closed door">
 		<attribute key="type" value="door" />
 		<attribute key="blockprojectile" value="1" />
+		<attribute key="description" value="It is locked." />
 	</item>
 	<item id="12199" article="an" name="open door">
 		<attribute key="type" value="door" />
@@ -20255,12 +20282,12 @@
 		<attribute key="description" value="This clay has been dug from the temple grounds." />
 		<attribute key="weight" value="1000" />
 	</item>
-	<item id="12286" article="a" name="stone archway" />
+	<item id="12286" article="a" name="timber archway" />
 	<item id="12287" article="a" name="sacred bowl">
 		<attribute key="description" value="This bowl was made from sacred wood and is currently untreated." />
 		<attribute key="weight" value="1000" />
 	</item>
-	<item id="12288" article="a" name="stone archway" />
+	<item id="12288" article="a" name="timber archway" />
 	<item id="12289" article="a" name="bowl with sacred water">
 		<attribute key="description" value="The water in this bowl has been purified." />
 		<attribute key="weight" value="1000" />
@@ -20291,6 +20318,10 @@
 		<attribute key="weight" value="1000" />
 	</item>
 	<item fromid="12305" toid="12315" article="a" name="corrupted plantation" />
+	<item id="12317" name="the presence of the emperor">
+		<attribute key="decayTo" value="0" />
+		<attribute key="duration" value="60" />
+	</item>
 	<item id="12318" article="a" name="replica of the sceptre">
 		<attribute key="weight" value="1400" />
 	</item>
@@ -20331,7 +20362,7 @@
 	<item id="12384" article="a" name="crystal statue" />
 	<item id="12385" article="a" name="slain abomination">
 		<attribute key="decayTo" value="0" />
-		<attribute key="duration" value="5" />
+		<attribute key="duration" value="60" />
 	</item>
 	<item fromid="12386" toid="12387" article="a" name="closet" />
 	<item fromid="12396" toid="12398" article="a" name="large book" />
@@ -20525,7 +20556,7 @@
 		<attribute key="description" value="Distinctive shape and flavour." />
 		<attribute key="weight" value="140" />
 	</item>
-	<item id="12472" article="a" name="floating cask" />
+	<item id="12472" article="a" name="floating barrel" />
 	<item id="12473" article="a" name="floating table" />
 	<item id="12474" name="floating junk" />
 	<item id="12475" name="floating junk" />
@@ -20538,7 +20569,7 @@
 	<item id="12482" name="floating wood" />
 	<item id="12483" name="floating junk" />
 	<item id="12484" name="floating ship parts" />
-	<item id="12485" article="a" name="floating big cask" />
+	<item id="12485" article="a" name="floating cask" />
 	<item id="12486" article="a" name="floating bucket" />
 	<item id="12487" article="a" name="floating bottle" />
 	<item id="12488" name="floating glass" />
@@ -21105,14 +21136,18 @@
 	</item>
 	<item id="12672" article="a" name="telescope" />
 	<item id="12673" article="a" name="red chair" />
-	<item fromid="12678" toid="12679" article="a" name="wooden wall" />
+	<item fromid="12678" toid="12679" article="a" name="timber wall" />
 	<item id="12681" name="wooden planks" />
-	<item fromid="12682" toid="12691" article="a" name="wooden wall" />
+	<item fromid="12682" toid="12685" article="a" name="timber wall" />
+	<item id="12686" name="timbers" />
+	<item id="12687" name="timbers" />
+	<item id="12688" article="a" name="timber" />
+	<item fromid="12689" toid="12691" article="a" name="timber wall" />
 	<item id="12692" article="a" name="closed door">
 		<attribute key="type" value="door" />
 		<attribute key="blockprojectile" value="1" />
 	</item>
-	<item id="12693" article="a" name="wooden wall" />
+	<item id="12693" article="a" name="timber wall" />
 	<item id="12694" name="hand made stairs">
 		<attribute key="floorchange" value="north" />
 	</item>
@@ -21136,9 +21171,9 @@
 	<item fromid="12718" toid="12726" article="a" name="timber floor" />
 	<item fromid="12727" toid="12738" article="a" name="lush grass" />
 	<item fromid="12739" toid="12754" article="a" name="timber floor" />
-	<item fromid="12755" toid="12756" article="a" name="timber wall" />
+	<item fromid="12755" toid="12756" name="timbers" />
 	<item fromid="12757" toid="12772" article="a" name="leaves" />
-	<item fromid="12773" toid="12775" article="a" name="branch	" />
+	<item fromid="12773" toid="12775" article="a" name="branch" />
 	<item fromid="12776" toid="12777" article="a" name="deer antlers" />
 	<item fromid="12778" toid="12779" article="a" name="antlers" />
 	<item fromid="12780" toid="12783" article="a" name="lush grass" />
@@ -21169,9 +21204,10 @@
 	</item>
 	<item id="12795" article="a" name="taboret" />
 	<item fromid="12796" toid="12797" article="a" name="wooden trunk">
-		<attribute key="containerSize" value="20" />
+		<attribute key="containerSize" value="18" />
 	</item>
-	<item fromid="12799" toid="12780" article="a" name="cabinet">
+	<item id="12798" article="a" name="soup kettle" />
+	<item fromid="12799" toid="12800" article="a" name="cabinet">
 		<attribute key="containerSize" value="8" />
 	</item>
 	<item id="12801" article="a" name="barbecue" />
@@ -21182,7 +21218,7 @@
 	<item id="12813" article="a" name="rod" />
 	<item id="12814" article="a" name="rods" />
 	<item id="12815" article="a" name="rod" />
-	<item fromid="12817" toid="12816" article="a" name="beam" />
+	<item fromid="12816" toid="12817" article="a" name="beam" />
 	<item id="12818" article="a" name="hanging wolf" />
 	<item id="12819" article="a" name="hanging deer" />
 	<item id="12820" article="a" name="hanging wolf" />
@@ -21205,10 +21241,10 @@
 	<item fromid="12938" toid="12945" article="a" name="stone wall" />
 	<item fromid="12946" toid="12947" article="a" name="skull" />
 	<item fromid="12948" toid="12949" article="a" name="papyrus scroll" />
-	<item fromid="12950" toid="12951" article="a" name="ornate tombstone" />
+	<item fromid="12950" toid="12951" article="an" name="ornate tombstone" />
 	<item fromid="12952" toid="12953" article="a" name="skull" />
-	<item fromid="12954" toid="12955" article="a" name="dark papyrus scroll" />
-	<item fromid="12956" toid="12957" article="a" name="dark ornate tombstone" />
+	<item fromid="12954" toid="12955" article="a" name="papyrus scroll" />
+	<item fromid="12956" toid="12957" article="an" name="ornate tombstone" />
 	<item fromid="12958" toid="12968" name="stone" />
 	<item id="12969" article="a" name="dry piece of wood">
 		<attribute key="description" value="Use it on the cauldron slide to keep the fire burning." />
@@ -21923,7 +21959,7 @@
 		<attribute key="description" value="This fish, and rare ingredient, can only be found in the dirtiest, murkiest and muddiest of waters." />
 		<attribute key="weight" value="999" />
 	</item>
-	<item fromid="13547" toid="13552" article="a" name="dirty water" />
+	<item fromid="13547" toid="13552" name="dirty water" />
 	<item id="13559" name="dread doll">
 		<attribute key="description" value="It is shining with positive energy and was awarded by FunTibia.com." />
 		<attribute key="weight" value="1100" />
@@ -22115,12 +22151,28 @@
 		<attribute key="shootType" value="death" />
 		<attribute key="range" value="3" />
 	</item>
+	<item fromid="13761" toid="13773" name="rubbish" />
 	<item id="13774" name="torn teddy">
 		<attribute key="weight" value="100" />
 	</item>
-	<item fromid="13797" toid="13798" name="shelf" />
+	<item id="13775" article="an" name="open branch fence" />
+	<item fromid="13776" toid="13780" article="a" name="branch fence" />
+	<item fromid="13781" toid="13788" article="a" name="small shed" />
+	<item id="13790" name="leaves" />
+	<item id="13794" article="a" name="bench" />
+	<item fromid="13797" toid="13798" name="shelf">
+		<attribute key="containerSize" value="6" />
+	</item>
 	<item id="13801" article="a" name="back basket" />
-	<item id="13802" article="a" name="leaf basket" />
+	<item id="13802" article="a" name="leaf basket">
+		<attribute key="containerSize" value="3" />
+	</item>
+	<item fromid="13803" toid="13804" article="a" name="pallet" />
+	<item id="13807" name="branches" />
+	<item id="13808" name="branches" />
+	<item id="13809" article="a" name="troll mushroom" />
+	<item id="13810" article="a" name="branch" />
+	<item id="13811" article="a" name="branch" />
 	<item id="13812" article="a" name="corms" />
 	<item id="13813" name="root vegetable dish" />
 	<item id="13814" article="a" name="dead shaburak demon">
@@ -22335,9 +22387,6 @@
 		<attribute key="duration" value="604800" />
 		<attribute key="showduration" value="0" />
 	</item>
-	<item id="13874" article="a" name="shimmer ball">
-		<attribute key="weight" value="200" />
-	</item>	
 	<item id="13875" article="a" name="shimmer glower">
 		<attribute key="weight" value="1000" />
 	</item>
@@ -22369,10 +22418,9 @@
 	</item>
 	<item fromid="13886" toid="13901" name="large spider web" />
 	<item fromid="13904" toid="13920" name="large spider web" />
-	<item id="13921" article="a" name="warning sign">
-		<attribute key="description" value="Private property, KEEP OUT!" />
+	<item id="13921" toid="13922" article="a" name="warning sign">
+		<attribute key="allowDistRead" value="true" />
 	</item>
-	<item id="13922" article="a" name="warning sign" />
 	<item id="13923" article="a" name="flask of wasp poison">
 		<attribute key="description" value="It's very toxic. Do not ever drink green liquids." />
 		<attribute key="weight" value="180" />
@@ -22735,37 +22783,25 @@
 		<attribute key="description" value="A map showing recent troop movements and tatical instructions of parts of the Emperor's army." />
 		<attribute key="weight" value="200" />
 	</item>
-	<item fromid="14355" toid="14364" article="a" name="hive structure" />
-	<item fromid="14365" toid="14368" article="an" name="archway"/>		
-	<item fromid="14369" toid="14387" article="a" name="hive wall"/>	
-	<item fromid="14388" toid="14395" name="strange growth"/>	
-	<item fromid="14396" toid="14401" article="a" name="hive structure"/>		
+	<item fromid="14355" toid="14403" article="a" name="hive structure" />
 	<item id="14404" name="your inbox">
 		<attribute key="containerSize" value="30" />
 	</item>
 	<item id="14405" name="the market" />
-	<item fromid="14408" toid="14412" article="a" name="hive wall"/>
-	<item fromid="14413" toid="14425" article="a" name="hive structure"/>	
+	<item fromid="14406" toid="14425" article="a" name="hive structure" />
 	<item fromid="14426" toid="14430" article="a" name="hive pillar" />
-	<item fromid="14431" toid="14434" article="a" name="hive spike" />
+	<item fromid="14431" toid="14434" article="a" name="hive structure" />
 	<item fromid="14435" toid="14436" name="mud">
 		<attribute key="description" value="There is a hole in the ceiling." />
 	</item>
 	<item fromid="14437" toid="14438" article="an" name="insectoid cell" />
-	<item fromid="14439" toid="14441" article="a" name="hive structure"/>	
-	<item fromid="14442" toid="14452" article="a" name="hive spike"/>	
-	<item fromid="14453" toid="14460" article="a" name="hive structure" />	
+	<item fromid="14439" toid="14460" article="a" name="hive structure" />
 	<item id="14461" article="an" name="insectoid hive">
 		<attribute key="floorchange" value="down" />
 	</item>
-	<item id="14462" article="an" name="insectoid hive" />
-	<item fromid="14463" toid="14489" article="a" name="hive wall"/>
-	<item fromid="14490" toid="14495" article="a" name="archway"/>	
-	<item fromid="14496" toid="14498" article="a" name="hive pillar"/>	
-	<item fromid="14499" toid="14536" article="a" name="hive structure"/>	
+	<item fromid="14462" toid="14536" article="a" name="hive structure" />
 	<item fromid="14537" toid="14552" article="an" name="insectoid hive" />
-	<item fromid="14553" toid="14572" article="a" name="hive structure"/>	
-	<item fromid="14573" toid="14580" article="a" name="hive hole"/>
+	<item fromid="14553" toid="14580" article="a" name="hive structure" />
 	<item id="14581" article="a" name="moist wall" />
 	<item fromid="14583" toid="14619" article="a" name="moist wall" />
 	<item fromid="14620" toid="14622" article="a" name="stone pillar" />
@@ -22773,7 +22809,8 @@
 	<item fromid="14647" toid="14652" article="a" name="stone pillar" />
 	<item fromid="14655" toid="14658" name="moist stones" />
 	<item fromid="14659" toid="14665" name="small moist stones" />
-	<item fromid="14668" toid="14749" article="a" name="hive structure" />
+	<item fromid="14668" toid="14705" name="hive structure" />
+	<item fromid="14706" toid="14715" article="a" name="hive structure" />
 	<item fromid="14755" toid="14757" article="a" name="hive gate" />
 	<item fromid="14767" toid="14769" article="a" name="hive gate" />
 	<item id="14818" article="a" name="ramp">
@@ -22783,15 +22820,18 @@
 		<attribute key="floorchange" value="west" />
 	</item>
 	<item fromid="14829" toid="14844" article="an" name="insectoid pore" />
-	<item fromid="14853" toid="14856" name="small insectoid hairs" />
+	<item fromid="14853" toid="14854" name="small insectoid hairs" />
 	<item fromid="14858" toid="14871" article="an" name="insectoid meatball" />
+	<item id="14866" article="an" name="insectoid meatball" />
+	<item id="14867" article="an" name="insectoid meatball" />
+	<item id="14869" article="an" name="insectoid meatball" />
+	<item id="14870" article="an" name="insectoid meatball" />
 	<item fromid="14887" toid="14898" article="a" name="rockboy" />
 	<item fromid="14904" toid="14912" name="wet temple floor" />
 	<item fromid="14913" toid="14914" article="a" name="finely crafted ornament" />
 	<item fromid="14915" toid="14930" name="wet temple floor" />
-	<item fromid="14931" toid="14951" name="cracked temple floor" />
-	<item fromid="14973" toid="14986" article="a" name="hoard of gold"/>		
-	<item fromid="15006" toid="15023" name="sea floor" />
+	<item fromid="14931" toid="14939" name="cracked temple floor" />
+	<item fromid="15006" toid="15011" name="sea floor" />
 	<item id="15029" article="a" name="ramp" />
 	<item id="15030" article="a" name="ramp">
 		<attribute key="floorchange" value="north" />
@@ -22852,8 +22892,8 @@
 		<attribute key="description" value="This lamp is glowing very dimly." />
 	</item>
 	<item fromid="15129" toid="15132" article="a" name="lamp" />
+	<item fromid="15142" toid="15143" article="a" name="sponge" />
 	<item id="15140" article="an" name="alga" />
-	<item id="15142" toid="15143" article="a" name="sponge" />	
 	<item id="15144" article="a" name="tree coral" />
 	<item id="15145" article="a" name="white coral" />
 	<item id="15146" article="a" name="palm lettuce coral" />
@@ -22960,7 +23000,7 @@
 	</item>
 	<item id="15212" article="a" name="deep black gap" />
 	<item id="15213" article="a" name="moist pillar" />
-	<item fromid="15214" toid="15219" article="a" name="moist wall" />	
+	<item id="15215" article="a" name="ramp" />
 	<item id="15220" article="a" name="dead Jaul">
 		<attribute key="weight" value="26000" />
 		<attribute key="containerSize" value="24" />
@@ -23079,7 +23119,7 @@
 		<attribute key="weight" value="26000" />
 		<attribute key="containerSize" value="10" />
 		<attribute key="decayTo" value="15277" />
-		<attribute key="duration" value="600" />
+		<attribute key="duration" value="10" />
 		<attribute key="corpseType" value="blood" />
 	</item>
 	<item id="15277" article="a" name="dead manta">
@@ -23096,13 +23136,6 @@
 		<attribute key="duration" value="600" />
 		<attribute key="corpseType" value="blood" />
 	</item>
-	<item id="15279" article="a" name="dead manta">
-		<attribute key="weight" value="26000" />
-		<attribute key="containerSize" value="10" />
-		<attribute key="decayTo" value="15276" />
-		<attribute key="duration" value="10" />
-		<attribute key="corpseType" value="blood" />
-	</item>	
 	<item id="15280" article="a" name="dead calamary">
 		<attribute key="weight" value="6300" />
 		<attribute key="containerSize" value="18" />
@@ -23283,6 +23316,12 @@
 		<attribute key="duration" value="600" />
 		<attribute key="corpseType" value="venom" />
 	</item>
+	<item id="15389" article="a" name="strange powder">
+		<attribute key="weight" value="90" />
+	</item>
+	<item id="15390" article="a" name="blob bomb">
+		<attribute key="weight" value="110" />
+	</item>
 	<item id="15385" article="a" name="dead swarmer">
 		<attribute key="weight" value="20000" />
 		<attribute key="containerSize" value="10" />
@@ -23311,12 +23350,6 @@
 		<attribute key="corpseType" value="venom" />
 		<attribute key="fluidSource" value="slime" />
 	</item>
-	<item id="15389" article="a" name="strange powder">
-		<attribute key="weight" value="90" />
-	</item>
-	<item id="15390" article="a" name="blob bomb">
-		<attribute key="weight" value="110" />
-	</item>	
 	<item id="15392" article="a" name="dead spitter">
 		<attribute key="weight" value="26000" />
 		<attribute key="containerSize" value="10" />
@@ -23460,9 +23493,6 @@
 		<attribute key="defense" value="24" />
 		<attribute key="weaponType" value="club" />
 	</item>
-	<item fromid="15415" toid="15416" article="a" name="trophy of Obujos" />
-	<item fromid="15417" toid="15418" article="a" name="trophy of Tanjis" />
-	<item fromid="15419" toid="15420" article="a" name="trophy of Jaul" />
 	<item id="15421" article="a" name="spellsinger's seal">
 		<attribute key="weight" value="190" />
 		<attribute key="description" value="The seal used by the spellsingers of the deep." />
@@ -23522,28 +23552,11 @@
 		<attribute key="weight" value="1000" />
 	</item>
 	<item id="15441" article="a" name="flower pot">
-		<attribute key="weight" value="150" />
 		<attribute key="description" value="There is a fully grown winterblossom in it. This plant can't wither anymore." />
-		<attribute key="decayTo" value="15444" />
-		<attribute key="duration" value="432000" />
-	</item>
-	<item id="15442" article="a" name="flower pot">
 		<attribute key="weight" value="150" />
-		<attribute key="description" value="There is a fully grown winterblossom in it. This plant can't wither anymore." />
-		<attribute key="decayTo" value="15441" />
-		<attribute key="duration" value="86400" />
 	</item>
-	<item id="15443" article="a" name="flower pot">
+	<item fromid="15442" toid="15443" article="a" name="flower pot">
 		<attribute key="weight" value="150" />
-		<attribute key="description" value="There is a fully grown winterblossom in it. This plant can't wither anymore." />
-		<attribute key="decayTo" value="15442" />
-		<attribute key="duration" value="86400" />
-	</item>
-	<item id="15444" article="a" name="withered plant">
-		<attribute key="weight" value="150" />
-		<attribute key="description" value="This plant urgently needs some water, else it will wither away and disappear completely." />
-		<attribute key="decayTo" value="7679" />
-		<attribute key="duration" value="172800" />
 	</item>
 	<item id="15445" article="a" name="flower pot">
 		<attribute key="description" value="There is a fully grown lizard tongue plant in it. This plant can't wither anymore." />
@@ -23659,33 +23672,6 @@
 		<attribute key="defense" value="24" />
 		<attribute key="weaponType" value="axe" />
 	</item>
-	<item id="15493" article="a" name="dead poodle">
-		<attribute key="weight" value="1000" />
-		<attribute key="containerSize" value="5" />
-		<attribute key="decayTo" value="15494" />
-		<attribute key="duration" value="600" />
-		<attribute key="corpseType" value="blood" />
-		<attribute key="fluidSource" value="blood" />
-	</item>
-	<item id="15494" article="a" name="dead poodle">
-		<attribute key="weight" value="1000" />
-		<attribute key="decayTo" value="15495" />
-		<attribute key="duration" value="600" />
-		<attribute key="corpseType" value="blood" />
-	</item>
-	<item id="15495" article="a" name="dead poodle">
-		<attribute key="weight" value="700" />
-		<attribute key="decayTo" value="0" />
-		<attribute key="duration" value="600" />
-		<attribute key="corpseType" value="blood" />
-	</item>
-	<item id="15596" article="a" name="dead poodle">
-		<attribute key="containerSize" value="18" />
-		<attribute key="weight" value="6300" />
-		<attribute key="decayTo" value="15493" />
-		<attribute key="duration" value="10" />
-		<attribute key="corpseType" value="blood" />
-	</item>		
 	<item id="15497" article="a" name="dead deepling worker">
 		<attribute key="weight" value="6300" />
 		<attribute key="containerSize" value="18" />
@@ -23714,8 +23700,7 @@
 		<attribute key="duration" value="10" />
 		<attribute key="corpseType" value="blood" />
 	</item>
-	<item fromid="15501" toid="15502" article="a" name="dragon's nest" />	
-	<item fromid="15503" toid="15514" article="a" name="lava" />	
+	<item id="15501" article="a" name="dragon's nest" />
 	<item id="15515" article="a" name="bar of gold">
 		<attribute key="weight" value="2100" />
 	</item>
@@ -23729,7 +23714,6 @@
 	<item id="15538" name="stairs">
 		<attribute key="floorchange" value="down" />
 	</item>
-	<item id="15544" name="lava" />			
 	<item id="15545" article="a" name="foxtail">
 		<attribute key="weight" value="200" />
 		<attribute key="description" value="A hermit near Carlin might be able to tell you more about it." />
@@ -23738,24 +23722,20 @@
 		<attribute key="weight" value="200" />
 		<attribute key="description" value="A hermit near Carlin might be able to tell you more about it." />
 	</item>
-	<item fromid="15547" toid="15548" name="lava" />	
-	<item fromid="15549" toid="15554" article="a" name="lava stream" />		
 	<item id="15556" article="a" name="basket">
 		<attribute key="weight" value="5000" />
 		<attribute key="description" value="There are little puppies inside." />
 	</item>
+	<item fromid="15557" toid="15558" article="a" name="wanted note" />
 	<item id="15559" article="a" name="dog collar">
 		<attribute key="weight" value="110" />
 		<attribute key="description" value="It belongs to Noodles, the King's dog." />
 	</item>
-	<item id="15560" article="a" name="strong water vortex">
-		<attribute key="description" value="This continuous stream of water seems strong enough to cut even the hardest of materials." />
-	</item>	
 	<item fromid="15561" toid="15564" article="a" name="crystal wall" />
 	<item id="15565" article="a" name="rough red gem">
 		<attribute key="description" value="This blood red gem is still rough." />
 	</item>
-	<item id="15572" article="a" name="gooey mass">
+	<item id="15572" article="a" name="gooey mass" plural="gooey masses">
 		<attribute key="weight" value="5500" />
 		<attribute key="description" value="Perhaps it contains something useful." />
 	</item>
@@ -23771,7 +23751,7 @@
 		<attribute key="weight" value="1300" />
 		<attribute key="description" value="And they drove them mad and to the edge of extinction. Extinction of the world that surrounded them." />
 	</item>
-	<item id="15576" name="notes and coordinates">
+	<item id="15576" article="a" name="notes and coordinates">
 		<attribute key="weight" value="200" />
 		<attribute key="description" value="These scribblings are almost unreadable." />
 	</item>
@@ -23787,9 +23767,6 @@
 	<item id="15622" article="a" name="dung ball">
 		<attribute key="weight" value="190" />
 	</item>
-	<item id="15634" article="a" name="soft green chair">
-		<attribute key="description" value="The chair is tied to this strange machine. You could use this if you had appropriate instructions." />
-	</item>		
 	<item id="15635" name="mud">
 		<attribute key="description" value="There is a hole in the ceiling." />
 	</item>
@@ -23898,7 +23875,6 @@
 		<attribute key="containerSize" value="15" />
 		<attribute key="slotType" value="backpack" />
 	</item>
-	<item fromid="16008" toid="16013" article="an" name="tapestry of honour" />		
 	<item id="16014" article="an" name="anniversary cake">
 		<attribute key="weight" value="500" />
 		<attribute key="description" value="It was created by Tibia's finest bakers for the celebration of 15 years of Tibia." />
@@ -23953,12 +23929,6 @@
 	<item id="16096" article="a" name="dung ball">
 		<attribute key="weight" value="190" />
 	</item>
-	<item id="16097" article="a" name="cake cabinet">
-		<attribute key="rotateTo" value="16098" />
-	</item>
-	<item id="16098" article="a" name="cake cabinet">
-		<attribute key="rotateTo" value="16097" />
-	</item>	
 	<item id="16099" article="a" name="cake cabinet kit">
 		<attribute key="description" value="Use it in your house to construct a cake cabinet." />
 		<attribute key="weight" value="7500" />
@@ -24038,11 +24008,8 @@
 	</item>
 	<item id="17239" article="a" name="strange idol" />
 	<item fromid="17240" toid="17241" article="a" name="broken idol" />
-	<item id="17242" article="a" name="strange idol" />		
 	<item id="17244" article="a" name="strange pedestal" />
 
-	<item id="17246" article="a" name="strange pedestal" />		
-	
 	<item id="17251" article="a" name="dead weeper">
 		<attribute key="containerSize" value="25" />
 		<attribute key="decayTo" value="17252" />
@@ -24089,7 +24056,7 @@
 		<attribute key="duration" value="600" />
 		<attribute key="corpseType" value="undead" />
 	</item>
-	<item fromid="17259" toid="17301" article="a" name="stone wall" />
+
 	<item id="17332" article="a" name="dead lava golem">
 		<attribute key="containerSize" value="25" />
 		<attribute key="decayTo" value="17333" />
@@ -24311,8 +24278,7 @@
 	<item id="17514" article="a" name="basalt wall with crystals" />
 	<item id="17515" article="a" name="basalt wall with crystals" />
 	<item fromid="17519" toid="17522" article="a" name="basalt wall" />
-	
-	<item fromid="17539" toid="17556" article="a" name="small stream" />	
+
 	<item id="17557" article="a" name="ramp">
 		<attribute key="floorchange" value="east" />
 	</item>
@@ -24385,7 +24351,7 @@
 	<item fromid="17741" toid="17743" name="small glowing mushrooms" />
 	<item id="17744" name="small white beech mushrooms" />
 	<item id="17745" name="small cortinarius mushrooms" />
-	<item id="17746" article="a" name="small gomphidius mushroom" />
+	<item id="17746" name="small gomphidius mushroom" />
 	<item fromid="17747" toid="17748" article="a" name="paxillus mushroom" />
 	<item id="17749" article="a" name="dark blue mushroom" />
 	<item id="17750" article="a" name="blue glowing mushroom" />
@@ -24405,7 +24371,7 @@
 	<item fromid="17767" toid="17768" name="mushroom corkscrew stairs">
 		<attribute key="floorchange" value="down" />
 	</item>
-	<item fromid="17769" toid="17772" name="mushroom corkscrew stairs" />	
+
 	<item id="17773" article="a" name="toad stool">
 		<attribute key="rotateTo" value="17774" />
 	</item>
@@ -24420,7 +24386,7 @@
 	</item>
 	<item id="17777" article="a" name="mushroom table" />
 	<item fromid="17778" toid="17779" article="a" name="large decorative mushroom" />
-	<item fromid="17780" toid="17786" article="a" name="mossy floor" />
+
 	<item fromid="17787" toid="17810" article="a" name="huge red crystal" />
 	<item fromid="17811" toid="17822" name="mushrooms" />
 	<item fromid="17823" toid="17841" article="a" name="crystal wall" />
@@ -24515,13 +24481,12 @@
 	<item fromid="18049" toid="18052" article="a" name="lightsource" />
 	<item fromid="18053" toid="18055" name="mushroom sponge" />
 	<item fromid="18056" toid="18104" article="a" name="titanic mushroom" />
-	<item fromid="18105" toid="18116" name="mushroom sponge" />	
+
 	<item fromid="18117" toid="18121" name="wooden floor" />
 	<item fromid="18126" toid="18129" name="wooden floor" />
 	<item id="18132" article="a" name="stone pillar" />
 	<item fromid="18133" toid="18136" name="wooden floor" />
 	<item fromid="18137" toid="18140" article="a" name="small stream" />
-	<item fromid="18141" toid="18152" name="mossy floor" />		
 	<item id="18153" article="a" name="giant carrot">
 		<attribute key="description" value="Someone turned it upside down." />
 	</item>
@@ -24531,7 +24496,7 @@
 	</item>
 	<item id="18156" name="carrots" />
 	<item fromid="18157" toid="18159" article="a" name="carrot" />
-	<item id="18160" toid="18161" article="a" name="giant carrot" />
+	<item id="18160" article="a" name="giant carrot" />
 
 	<item fromid="18162" toid="18195" name="stone floor" />
 
@@ -24583,9 +24548,7 @@
 	<item id="18228" article="a" name="damaged crystal" />
 	<item fromid="18229" toid="18232" article="a" name="large crystal" />
 	<item id="18233" name="basalt floor" />
-	<item id="18234" name="stairs">
-		<attribute key="floorchange" value="north" />
-	</item>	
+	<item id="18234" name="stairs" />
 	<item fromid="18235" toid="18257" name="icy bones" />
 	<item fromid="18258" toid="18262" article="an" name="icy bone railing" />
 	<item fromid="18263" toid="18264" article="an" name="icy skull" />
@@ -24912,7 +24875,7 @@
 	</item>
 	<item id="18406" name="prismatic boots">
 		<attribute key="weight" value="1800" />
-		<attribute key="armor" value="3" />		
+		<attribute key="armor" value="3" />
 		<attribute key="slotType" value="feet" />
 		<attribute key="speed" value="30" />
 		<attribute key="absorbPercentDeath" value="3" />
@@ -24931,7 +24894,7 @@
 		<attribute key="weight" value="105" />
 		<attribute key="slotType" value="ring" />
 		<attribute key="absorbPercentPhysical" value="10" />
-		<attribute key="absorbPercentEarth" value="8" />
+		<attribute key="absorbPercentEnergy" value="8" />
 		<attribute key="transformEquipTo" value="18528" />
 		<attribute key="stopduration" value="1" />
 		<attribute key="showduration" value="1" />
@@ -25291,6 +25254,7 @@
 	<item id="18492" article="a" name="skill trainer">
 		<attribute key="description" value="Use this statue to train your magic level and shielding skill offline." />
 	</item>
+	<item id="18493" name="timber floor" />
 
 	<item id="18495" name="Gnomevil's hat">
 		<attribute key="weight" value="210" />
@@ -25391,8 +25355,1050 @@
 		<attribute key="showduration" value="1" />
 		<attribute key="showattributes" value="1" />
 	</item>
-	<item fromid="18529" toid="18535" article="a" name="ramp">	
+	<item id="18534" name="stairs">
 		<attribute key="floorchange" value="down" />
+	</item>
+
+	<item fromid="18560" toid="18579" name="muddy floor" />
+	<item fromid="18580" toid="18590" name="swamp">
+		<attribute key="type" value="trashholder" />
+		<attribute key="effect" value="greenbubble" />
+		<attribute key="allowpickupable" value="1" />
+	</item>
+	<item fromid="18591" toid="18592" article="a" name="bog wart" />
+
+	<item fromid="18605" toid="18612" article="a" name="bog wart" />
+
+	<item fromid="18630" toid="18640" article="a" name="muddy stone wall" />
+	<item fromid="18647" toid="18652" article="a" name="muddy stone wall" />
+
+	<item fromid="18657" toid="18658" article="a" name="whispering willow" />
+	<item fromid="18659" toid="18660" article="a" name="swamp gnarl" />
+	<item fromid="18661" toid="18662" article="a" name="choking swamp gnarl" />
+	<item id="18663" article="a" name="mire bough" />
+	<item id="18664" article="a" name="choking swamp gnarl" />
+	<item fromid="18665" toid="18666" article="a" name="swamp claw" />
+	<item fromid="18667" toid="18670" article="a" name="giant mud lump" />
+	<item fromid="18671" toid="18674" article="a" name="big mud lump" />
+	<item id="18675" article="a" name="mud clot" />
+
+	<item id="18677" article="a" name="big bone">
+		<attribute key="weight" value="1900" />
+	</item>
+
+	<item fromid="18682" toid="18683" article="a" name="mud ball" />
+	<item fromid="18684" toid="18686" name="swamp mud debris" />
+	<item fromid="18687" toid="18690" article="a" name="mud nugget" />
+	<item id="18691" name="stone stings" />
+	<item fromid="18692" toid="18695" name="stone lichen" />
+
+	<item fromid="18763" toid="18777" article="a" name="grimy wooden plank" />
+
+	<item id="18852" article="a" name="wooden treadmill" />
+	<item id="18853" article="a" name="wooden ramp" />
+
+	<item id="18858" name="nails" />
+	<item fromid="18859" toid="18860" name="wooden planks" />
+
+	<item id="18863" article="a" name="wooden strut" />
+	<item id="18864" name="wooden planks" />
+	<item id="18865" name="swamp lichen" />
+	<item id="18866" name="swamp lichen" />
+	<item id="18867" name="quagmire moss" />
+	<item fromid="18868" toid="18874" name="nails" />
+	<item fromid="18875" toid="18880" name="wooden planks" />
+	<item id="18881" article="a" name="wooden strut" />
+
+	<item fromid="18896" toid="18901" name="quagmire moss" />
+
+	<item fromid="18902" toid="18917" article="a" name="grimy wooden plank" />
+	<item fromid="18918" toid="18929" article="a" name="muddy mountain" />
+
+	<item fromid="18943" toid="18944" article="a" name="muddy mountain" />
+	<item fromid="18945" toid="18958" article="a" name="swamp clay mountain" />
+	<item id="18960" article="a" name="ramp">
+		<attribute key="floorchange" value="east" />
+	</item>
+	<item id="18961" article="a" name="ramp" />
+	<item id="18962" article="a" name="ramp">
+		<attribute key="floorchange" value="west" />
+	</item>
+	<item id="18963" article="a" name="ramp" />
+	<item id="18964" article="a" name="ramp">
+		<attribute key="floorchange" value="south" />
+	</item>
+	<item id="18965" article="a" name="ramp" />
+	<item id="18966" article="a" name="ramp">
+		<attribute key="floorchange" value="north" />
+	</item>
+	<item id="18967" article="a" name="ramp" />
+	<item id="18968" article="a" name="ramp">
+		<attribute key="floorchange" value="east" />
+	</item>
+	<item id="18969" article="a" name="ramp" />
+	<item id="18970" article="a" name="ramp">
+		<attribute key="floorchange" value="west" />
+	</item>
+	<item id="18971" article="a" name="ramp" />
+	<item id="18972" article="a" name="ramp">
+		<attribute key="floorchange" value="south" />
+	</item>
+	<item id="18973" article="a" name="ramp" />
+	<item id="18974" article="a" name="ramp">
+		<attribute key="floorchange" value="north" />
+	</item>
+	<item id="18975" article="a" name="ramp" />
+
+	<item fromid="19107" toid="19141" article="a" name="mountain" />
+	<item id="19143" article="a" name="mountain" />
+	<item id="19146" article="a" name="mountain" />
+
+	<item fromid="19610" toid="19615" article="an" name="ornament" />
+	<item fromid="19616" toid="19618" article="a" name="pencil tower" />
+	<item id="19619" article="a" name="copper roof" />
+
+	<item fromid="19376" toid="19388" article="a" name="stone wall" />
+
+	<item fromid="19395" toid="19420" article="a" name="stone wall" />
+
+	<item id="19431" name="freshly cut venorean spice">
+		<attribute key="description" value="It has just been cut." />
+		<attribute key="duration" value="21600" />
+		<attribute key="decayTo" value="19432" />
+	</item>
+	<item id="19432" name="growing venorean spice">
+		<attribute key="description" value="It's not mature yet." />
+		<attribute key="duration" value="21600" />
+		<attribute key="decayTo" value="19433" />
+	</item>
+	<item id="19433" name="venorean spice" />
+
+	<item fromid="19421" toid="19429" article="a" name="window" />
+
+	<item fromid="19434" toid="19446" article="a" name="window" />
+
+	<item fromid="19451" toid="19462" article="a" name="stone archway" />
+	<item fromid="19463" toid="19468" name="stone pillars" />
+	<item fromid="19469" toid="19474" article="a" name="stone pillar" />
+	<item fromid="19475" toid="19480" article="a" name="stone wall" />
+	<item fromid="19481" toid="19482" article="a" name="brick wall" />
+	<item fromid="19483" toid="19484" article="a" name="muddy brick wall" />
+	<item fromid="19485" toid="19486" article="a" name="brick wall" />
+	<item fromid="19487" toid="19488" article="a" name="muddy brick wall" />
+	<item fromid="19489" toid="19491" article="a" name="brick wall" />
+	<item id="19492" article="a" name="muddy brick wall" />
+	<item fromid="19493" toid="19496" article="a" name="brick wall" />
+	<item fromid="19497" toid="19501" article="a" name="muddy brick wall" />
+	<item id="19502" article="a" name="brick wall" />
+	<item fromid="19503" toid="19504" article="a" name="muddy brick wall" />
+
+	<item id="19506" article="a" name="mud pile" />
+	<item id="19507" article="a" name="mud pile" />
+	<item id="19508" article="a" name="wooden treadmill" />
+	<item id="19509" article="a" name="wooden cabin" />
+	<item id="19510" article="a" name="wooden ladder">
+		<attribute key="floorchange" value="west" />
+	</item>
+	<item id="19511" article="a" name="wooden scaffolding" />
+	<item fromid="19512" toid="19514" article="a" name="small wooden fence" />
+	<item fromid="19515" toid="19517" article="a" name="wooden ramp" />
+	<item id="19518" name="muddy floor">
+		<attribute key="description" value="There is a hole in the ceiling." />
+	</item>
+	<item id="19519" article="a" name="hole">
+		<attribute key="floorchange" value="down" />
+	</item>
+
+	<item id="19616" article="a" name="pencil tower" />
+
+	<item id="19620" article="a" name="socket" />
+	<item fromid="19621" toid="19624" article="a" name="golden statue" />
+	<item fromid="19626" toid="19632" article="an" name="ornate tapestry" />
+	<item id="19633" article="a" name="cabinet">
+		<attribute key="containerSize" value="8" />
+		<attribute key="rotateTo" value="19634" />
+	</item>
+	<item id="19634" article="a" name="cabinet">
+		<attribute key="containerSize" value="8" />
+		<attribute key="rotateTo" value="19633" />
+	</item>
+	<item id="19635" article="a" name="wardrobe">
+		<attribute key="containerSize" value="10" />
+		<attribute key="rotateTo" value="19636" />
+	</item>
+	<item id="19636" article="a" name="wardrobe">
+		<attribute key="containerSize" value="10" />
+		<attribute key="rotateTo" value="19635" />
+	</item>
+	<item id="19637" article="a" name="drawer">
+		<attribute key="containerSize" value="8" />
+		<attribute key="rotateTo" value="19638" />
+	</item>
+	<item id="19638" article="a" name="drawer">
+		<attribute key="containerSize" value="8" />
+		<attribute key="rotateTo" value="19637" />
+	</item>
+	<item id="19639" article="a" name="venorean chair">
+		<attribute key="rotateTo" value="19640" />
+	</item>
+	<item id="19640" article="a" name="venorean chair">
+		<attribute key="rotateTo" value="19641" />
+	</item>
+	<item id="19641" article="a" name="venorean chair">
+		<attribute key="rotateTo" value="19642" />
+	</item>
+	<item id="19642" article="a" name="venorean chair">
+		<attribute key="rotateTo" value="19639" />
+	</item>
+	<item id="19643" article="a" name="venorean chair">
+		<attribute key="rotateTo" value="19644" />
+	</item>
+	<item id="19644" article="a" name="venorean chair">
+		<attribute key="rotateTo" value="19645" />
+	</item>
+	<item id="19645" article="a" name="venorean chair">
+		<attribute key="rotateTo" value="19646" />
+	</item>
+	<item id="19646" article="a" name="venorean chair">
+		<attribute key="rotateTo" value="19643" />
+	</item>
+	<item id="19647" article="a" name="kidney table" />
+	<item fromid="19648" toid="19651" article="a" name="venorean bench" />
+	<item id="19652" article="a" name="ficus benjamina" />
+	<item id="19653" article="an" name="areca palm" />
+	<item fromid="19654" toid="19656" article="a" name="big venorean table" />
+	<item fromid="19657" toid="19659" article="a" name="counter" />
+	<item fromid="19660" toid="19662" article="a" name="big venorean table" />
+	<item id="19663" article="a" name="counter">
+		<attribute key="type" value="door" />
+	</item>
+	<item fromid="19664" toid="19665" article="a" name="counter" />
+	<item id="19666" article="a" name="counter">
+		<attribute key="type" value="door" />
+	</item>
+	<item fromid="19667" toid="19673" article="a" name="counter" />
+	<item id="19674" name="stairs">
+		<attribute key="floorchange" value="north" />
+	</item>
+	<item id="19675" name="stairs">
+		<attribute key="floorchange" value="west" />
+	</item>
+	<item fromid="19676" toid="19684" article="an" name="ornate carpet" />
+	<item fromid="19685" toid="19686" article="a" name="saw" />
+	<item fromid="19687" toid="19688" article="a" name="crane" />
+	<item id="19689" article="a" name="street lamp" />
+	<item id="19690" article="a" name="street lamp" />
+	<item id="19691" article="a" name="street lamp" />
+	<item id="19692" article="a" name="street lamp" />
+	<item id="19693" article="a" name="candelabra" />
+	<item id="19694" article="a" name="candelabra" />
+	<item id="19695" article="a" name="lit candle" />
+	<item id="19696" article="a" name="candle" />
+	<item id="19697" article="a" name="candle" />
+	<item id="19698" article="a" name="lit candle" />
+
+	<item id="19701" article="a" name="dead water buffalo">
+		<attribute key="containerSize" value="15" />
+		<attribute key="decayTo" value="19702" />
+		<attribute key="duration" value="10" />
+		<attribute key="corpseType" value="blood" />
+		<attribute key="fluidSource" value="blood" />
+	</item>
+	<item id="19702" article="a" name="dead water buffalo">
+		<attribute key="containerSize" value="15" />
+		<attribute key="decayTo" value="19703" />
+		<attribute key="duration" value="600" />
+		<attribute key="corpseType" value="blood" />
+	</item>
+	<item id="19703" article="a" name="dead water buffalo">
+		<attribute key="containerSize" value="15" />
+		<attribute key="decayTo" value="19704" />
+		<attribute key="duration" value="600" />
+		<attribute key="corpseType" value="blood" />
+	</item>
+	<item id="19704" article="a" name="dead water buffalo">
+		<attribute key="decayTo" value="0" />
+		<attribute key="duration" value="600" />
+		<attribute key="corpseType" value="blood" />
+	</item>
+	<item id="19705" article="a" name="dead drillworm">
+		<attribute key="containerSize" value="15" />
+		<attribute key="decayTo" value="19710" />
+		<attribute key="duration" value="10" />
+		<attribute key="corpseType" value="venom" />
+		<attribute key="fluidSource" value="slime" />
+	</item>
+	<item id="19706" article="a" name="dead emerald damselfly">
+		<attribute key="containerSize" value="15" />
+		<attribute key="decayTo" value="19713" />
+		<attribute key="duration" value="10" />
+		<attribute key="corpseType" value="venom" />
+		<attribute key="fluidSource" value="slime" />
+	</item>
+	<item id="19707" article="a" name="dead salamander">
+		<attribute key="containerSize" value="15" />
+		<attribute key="decayTo" value="19716" />
+		<attribute key="duration" value="10" />
+		<attribute key="corpseType" value="venom" />
+		<attribute key="fluidSource" value="slime" />
+	</item>
+	<item id="19708" article="a" name="dead marsh stalker">
+		<attribute key="containerSize" value="15" />
+		<attribute key="decayTo" value="19719" />
+		<attribute key="duration" value="10" />
+		<attribute key="corpseType" value="venom" />
+		<attribute key="fluidSource" value="slime" />
+	</item>
+	<item id="19709" article="a" name="dead pigeon">
+		<attribute key="containerSize" value="15" />
+		<attribute key="decayTo" value="19722" />
+		<attribute key="duration" value="10" />
+		<attribute key="corpseType" value="blood" />
+		<attribute key="fluidSource" value="blood" />
+	</item>
+	<item id="19710" article="a" name="dead drillworm">
+		<attribute key="containerSize" value="15" />
+		<attribute key="decayTo" value="19711" />
+		<attribute key="duration" value="600" />
+		<attribute key="corpseType" value="venom" />
+	</item>
+	<item id="19711" article="a" name="dead drillworm">
+		<attribute key="containerSize" value="15" />
+		<attribute key="decayTo" value="19712" />
+		<attribute key="duration" value="600" />
+		<attribute key="corpseType" value="venom" />
+	</item>
+	<item id="19712" article="a" name="dead drillworm">
+		<attribute key="decayTo" value="0" />
+		<attribute key="duration" value="600" />
+		<attribute key="corpseType" value="venom" />
+	</item>
+	<item id="19713" article="a" name="dead emerald damselfly">
+		<attribute key="containerSize" value="15" />
+		<attribute key="decayTo" value="19714" />
+		<attribute key="duration" value="600" />
+		<attribute key="corpseType" value="venom" />
+	</item>
+	<item id="19714" article="a" name="dead emerald damselfly">
+		<attribute key="containerSize" value="15" />
+		<attribute key="decayTo" value="19715" />
+		<attribute key="duration" value="600" />
+		<attribute key="corpseType" value="venom" />
+	</item>
+	<item id="19715" article="a" name="dead emerald damselfly">
+		<attribute key="decayTo" value="0" />
+		<attribute key="duration" value="600" />
+		<attribute key="corpseType" value="venom" />
+	</item>
+	<item id="19716" article="a" name="dead salamander">
+		<attribute key="containerSize" value="15" />
+		<attribute key="decayTo" value="19717" />
+		<attribute key="duration" value="600" />
+		<attribute key="corpseType" value="venom" />
+	</item>
+	<item id="19717" article="a" name="dead salamander">
+		<attribute key="containerSize" value="15" />
+		<attribute key="decayTo" value="19718" />
+		<attribute key="duration" value="600" />
+		<attribute key="corpseType" value="venom" />
+	</item>
+	<item id="19718" article="a" name="dead salamander">
+		<attribute key="decayTo" value="0" />
+		<attribute key="duration" value="600" />
+		<attribute key="corpseType" value="venom" />
+	</item>
+	<item id="19719" article="a" name="dead marsh stalker">
+		<attribute key="containerSize" value="15" />
+		<attribute key="decayTo" value="19720" />
+		<attribute key="duration" value="600" />
+		<attribute key="corpseType" value="venom" />
+	</item>
+	<item id="19720" article="a" name="dead marsh stalker">
+		<attribute key="containerSize" value="15" />
+		<attribute key="decayTo" value="19721" />
+		<attribute key="duration" value="600" />
+		<attribute key="corpseType" value="venom" />
+	</item>
+	<item id="19721" article="a" name="dead marsh stalker">
+		<attribute key="decayTo" value="0" />
+		<attribute key="duration" value="600" />
+		<attribute key="corpseType" value="venom" />
+	</item>
+	<item id="19722" article="a" name="dead pigeon">
+		<attribute key="containerSize" value="15" />
+		<attribute key="decayTo" value="19723" />
+		<attribute key="duration" value="600" />
+		<attribute key="corpseType" value="blood" />
+	</item>
+	<item id="19723" article="a" name="dead pigeon">
+		<attribute key="containerSize" value="15" />
+		<attribute key="decayTo" value="19724" />
+		<attribute key="duration" value="600" />
+		<attribute key="corpseType" value="blood" />
+	</item>
+	<item id="19724" article="a" name="dead pigeon">
+		<attribute key="decayTo" value="0" />
+		<attribute key="duration" value="600" />
+		<attribute key="corpseType" value="blood" />
+	</item>
+	<item id="19725" article="a" name="dead corym charlatan">
+		<attribute key="containerSize" value="15" />
+		<attribute key="decayTo" value="19728" />
+		<attribute key="duration" value="10" />
+		<attribute key="corpseType" value="blood" />
+		<attribute key="fluidSource" value="blood" />
+	</item>
+	<item id="19726" article="a" name="dead corym skirmisher">
+		<attribute key="containerSize" value="15" />
+		<attribute key="decayTo" value="19731" />
+		<attribute key="duration" value="10" />
+		<attribute key="corpseType" value="blood" />
+		<attribute key="fluidSource" value="blood" />
+	</item>
+	<item id="19727" article="a" name="dead corym vanguard">
+		<attribute key="containerSize" value="15" />
+		<attribute key="decayTo" value="19734" />
+		<attribute key="duration" value="10" />
+		<attribute key="corpseType" value="blood" />
+		<attribute key="fluidSource" value="blood" />
+	</item>
+	<item id="19728" article="a" name="dead corym charlatan">
+		<attribute key="containerSize" value="15" />
+		<attribute key="decayTo" value="19729" />
+		<attribute key="duration" value="600" />
+		<attribute key="corpseType" value="blood" />
+	</item>
+	<item id="19729" article="a" name="dead corym charlatan">
+		<attribute key="containerSize" value="15" />
+		<attribute key="decayTo" value="19730" />
+		<attribute key="duration" value="600" />
+		<attribute key="corpseType" value="blood" />
+	</item>
+	<item id="19730" article="a" name="dead corym charlatan">
+		<attribute key="decayTo" value="0" />
+		<attribute key="duration" value="600" />
+		<attribute key="corpseType" value="blood" />
+	</item>
+	<item id="19731" article="a" name="dead corym skirmisher">
+		<attribute key="containerSize" value="15" />
+		<attribute key="decayTo" value="19732" />
+		<attribute key="duration" value="600" />
+		<attribute key="corpseType" value="blood" />
+	</item>
+	<item id="19732" article="a" name="dead corym skirmisher">
+		<attribute key="containerSize" value="15" />
+		<attribute key="decayTo" value="19733" />
+		<attribute key="duration" value="600" />
+		<attribute key="corpseType" value="blood" />
+	</item>
+	<item id="19733" article="a" name="dead corym skirmisher">
+		<attribute key="decayTo" value="0" />
+		<attribute key="duration" value="600" />
+		<attribute key="corpseType" value="blood" />
+	</item>
+	<item id="19734" article="a" name="dead corym vanguard">
+		<attribute key="containerSize" value="15" />
+		<attribute key="decayTo" value="19735" />
+		<attribute key="duration" value="600" />
+		<attribute key="corpseType" value="blood" />
+	</item>
+	<item id="19735" article="a" name="dead corym vanguard">
+		<attribute key="containerSize" value="15" />
+		<attribute key="decayTo" value="19736" />
+		<attribute key="duration" value="600" />
+		<attribute key="corpseType" value="blood" />
+	</item>
+	<item id="19736" article="a" name="dead corym vanguard">
+		<attribute key="decayTo" value="0" />
+		<attribute key="duration" value="600" />
+		<attribute key="corpseType" value="blood" />
+	</item>
+	<item id="19737" name="insectoid eggs" plural="insectoid eggs">
+		<attribute key="weight" value="20" />
+	</item>
+	<item id="19738" article="a" name="damselfly wing">
+		<attribute key="weight" value="120" />
+	</item>
+	<item id="19741" article="a" name="marsh stalker beak">
+		<attribute key="weight" value="110" />
+	</item>
+	<item id="19742" article="a" name="marsh stalker feather">
+		<attribute key="weight" value="30" />
+	</item>
+	<item id="19743" article="a" name="damselfly eye">
+		<attribute key="weight" value="150" />
+	</item>
+
+	<item fromid="19744" toid="19772" name="cobblestone" />
+	<item fromid="19773" toid="19790" name="plaster" />
+
+	<item id="19795" article="a" name="wooden treadmill" />
+	<item fromid="19796" toid="19798" name="parquet floor" />
+
+	<item fromid="19808" toid="19811" article="a" name="small window" />
+
+	<item fromid="19824" toid="19839" name="terracotta" />
+	<item id="19840" article="a" name="closed door">
+		<attribute key="type" value="door" />
+		<attribute key="blockprojectile" value="1" />
+	</item>
+	<item id="19841" article="a" name="closed door">
+		<attribute key="type" value="door" />
+		<attribute key="blockprojectile" value="1" />
+		<attribute key="description" value="It is locked." />
+	</item>
+	<item id="19842" article="an" name="open door">
+		<attribute key="type" value="door" />
+	</item>
+	<item id="19843" article="a" name="closed door">
+		<attribute key="type" value="door" />
+		<attribute key="blockprojectile" value="1" />
+	</item>
+	<item id="19844" article="an" name="open door">
+		<attribute key="type" value="door" />
+	</item>
+	<item id="19845" article="a" name="gate of expertise">
+		<attribute key="type" value="door" />
+		<attribute key="leveldoor" value="1000" />
+		<attribute key="blockprojectile" value="1" />
+	</item>
+	<item id="19846" article="a" name="gate of expertise">
+		<attribute key="type" value="door" />
+	</item>
+	<item id="19847" article="a" name="closed door">
+		<attribute key="type" value="door" />
+		<attribute key="blockprojectile" value="1" />
+	</item>
+	<item id="19848" article="an" name="open door">
+		<attribute key="type" value="door" />
+	</item>
+	<item id="19849" article="a" name="closed door">
+		<attribute key="type" value="door" />
+		<attribute key="blockprojectile" value="1" />
+	</item>
+	<item id="19850" article="a" name="closed door">
+		<attribute key="type" value="door" />
+		<attribute key="blockprojectile" value="1" />
+		<attribute key="description" value="It is locked." />
+	</item>
+	<item id="19851" article="an" name="open door">
+		<attribute key="type" value="door" />
+	</item>
+	<item id="19852" article="a" name="closed door">
+		<attribute key="type" value="door" />
+		<attribute key="blockprojectile" value="1" />
+	</item>
+	<item id="19853" article="an" name="open door">
+		<attribute key="type" value="door" />
+	</item>
+	<item id="19854" article="a" name="gate of expertise">
+		<attribute key="type" value="door" />
+		<attribute key="leveldoor" value="1000" />
+		<attribute key="blockprojectile" value="1" />
+	</item>
+	<item id="19855" article="a" name="gate of expertise">
+		<attribute key="type" value="door" />
+	</item>
+	<item id="19856" article="a" name="closed door">
+		<attribute key="type" value="door" />
+		<attribute key="blockprojectile" value="1" />
+	</item>
+	<item id="19857" article="an" name="open door">
+		<attribute key="type" value="door" />
+	</item>
+	<item fromid="19858" toid="19877" article="a" name="roof" />
+
+	<item fromid="19881" toid="19896" name="swamp" />
+
+	<item id="19898" article="a" name="pillar railing" />
+	<item id="19899" article="a" name="pillar railing" />
+	<item id="19900" article="a" name="pillar railing" />
+	<item id="19901" article="a" name="pillar railing" />
+	<item id="19902" article="a" name="dead swampling">
+		<attribute key="containerSize" value="15" />
+		<attribute key="decayTo" value="19903" />
+		<attribute key="duration" value="10" />
+		<attribute key="corpseType" value="venom" />
+		<attribute key="fluidSource" value="slime" />
+	</item>
+	<item id="19903" article="a" name="dead swampling">
+		<attribute key="containerSize" value="15" />
+		<attribute key="decayTo" value="19904" />
+		<attribute key="duration" value="600" />
+		<attribute key="corpseType" value="venom" />
+	</item>
+	<item id="19904" article="a" name="dead swampling">
+		<attribute key="containerSize" value="15" />
+		<attribute key="decayTo" value="19905" />
+		<attribute key="duration" value="600" />
+		<attribute key="corpseType" value="venom" />
+	</item>
+	<item id="19905" article="a" name="dead swampling">
+		<attribute key="decayTo" value="0" />
+		<attribute key="duration" value="600" />
+		<attribute key="corpseType" value="venom" />
+	</item>
+
+	<item fromid="19910" toid="19931" article="a" name="roof" />
+	<item fromid="19932" toid="19937" name="beams" />
+	<item fromid="19938" toid="19945" article="a" name="roof" />
+
+	<item id="19948" article="an" name="advertisement sign">
+		<attribute key="weight" value="15" />
+	</item>
+	<item id="19949" article="a" name="guardcatcher">
+		<attribute key="weight" value="800" />
+	</item>
+	<item id="19950" article="a" name="perfume gatherer">
+		<attribute key="weight" value="350" />
+		<attribute key="description" value="It is empty. The first odour you're looking for is special snail slime." />
+	</item>
+	<item id="19951" article="a" name="bottle with rat urine">
+		<attribute key="weight" value="100" />
+	</item>
+	<item fromid="19952" toid="19955" article="a" name="perfume gatherer">
+		<attribute key="weight" value="350" />
+	</item>
+	<item id="19956" article="a" name="trunkhammer">
+		<attribute key="weight" value="6800" />
+	</item>
+	<item id="19957" article="a" name="junk trunk" />
+
+	<item id="19959" article="a" name="cracked stone" />
+
+	<item id="19962" article="a" name="dead lost husher">
+		<attribute key="containerSize" value="15" />
+		<attribute key="decayTo" value="19964" />
+		<attribute key="duration" value="10" />
+		<attribute key="corpseType" value="blood" />
+		<attribute key="fluidSource" value="blood" />
+	</item>
+	<item id="19963" article="a" name="dead lost basher">
+		<attribute key="containerSize" value="15" />
+		<attribute key="decayTo" value="19967" />
+		<attribute key="duration" value="10" />
+		<attribute key="corpseType" value="blood" />
+		<attribute key="fluidSource" value="blood" />
+	</item>
+	<item id="19964" article="a" name="dead lost husher">
+		<attribute key="containerSize" value="15" />
+		<attribute key="decayTo" value="19965" />
+		<attribute key="duration" value="600" />
+		<attribute key="corpseType" value="blood" />
+	</item>
+	<item id="19965" article="a" name="dead lost husher">
+		<attribute key="containerSize" value="15" />
+		<attribute key="decayTo" value="19966" />
+		<attribute key="duration" value="600" />
+		<attribute key="corpseType" value="blood" />
+	</item>
+	<item id="19966" article="a" name="dead lost husher">
+		<attribute key="decayTo" value="0" />
+		<attribute key="duration" value="600" />
+		<attribute key="corpseType" value="blood" />
+	</item>
+	<item id="19967" article="a" name="dead lost basher">
+		<attribute key="containerSize" value="15" />
+		<attribute key="decayTo" value="19965" />
+		<attribute key="duration" value="600" />
+		<attribute key="corpseType" value="blood" />
+	</item>
+	<item id="19968" article="a" name="dead lost basher">
+		<attribute key="containerSize" value="15" />
+		<attribute key="decayTo" value="19966" />
+		<attribute key="duration" value="600" />
+		<attribute key="corpseType" value="blood" />
+	</item>
+	<item id="19969" article="a" name="dead lost basher">
+		<attribute key="decayTo" value="0" />
+		<attribute key="duration" value="600" />
+		<attribute key="corpseType" value="blood" />
+	</item>
+
+
+	<item id="19974" article="a" name="window" />
+	<item id="19975" article="a" name="window" />
+
+	<item id="19980" article="a" name="closed door">
+		<attribute key="type" value="door" />
+		<attribute key="blockprojectile" value="1" />
+	</item>
+	<item id="19981" article="a" name="closed door">
+		<attribute key="type" value="door" />
+		<attribute key="blockprojectile" value="1" />
+		<attribute key="description" value="It is locked." />
+	</item>
+	<item id="19982" article="an" name="open door">
+		<attribute key="type" value="door" />
+	</item>
+	<item id="19983" article="a" name="closed door">
+		<attribute key="type" value="door" />
+		<attribute key="blockprojectile" value="1" />
+	</item>
+	<item id="19984" article="an" name="open door">
+		<attribute key="type" value="door" />
+	</item>
+	<item id="19985" article="a" name="gate of expertise">
+		<attribute key="type" value="door" />
+		<attribute key="leveldoor" value="1000" />
+		<attribute key="blockprojectile" value="1" />
+	</item>
+	<item id="19986" article="a" name="gate of expertise">
+		<attribute key="type" value="door" />
+	</item>
+	<item id="19987" article="a" name="closed door">
+		<attribute key="type" value="door" />
+		<attribute key="blockprojectile" value="1" />
+	</item>
+	<item id="19988" article="an" name="open door">
+		<attribute key="type" value="door" />
+	</item>
+	<item id="19989" article="a" name="closed door">
+		<attribute key="type" value="door" />
+		<attribute key="blockprojectile" value="1" />
+	</item>
+	<item id="19990" article="a" name="closed door">
+		<attribute key="type" value="door" />
+		<attribute key="blockprojectile" value="1" />
+		<attribute key="description" value="It is locked." />
+	</item>
+	<item id="19991" article="an" name="open door">
+		<attribute key="type" value="door" />
+	</item>
+	<item id="19992" article="a" name="closed door">
+		<attribute key="type" value="door" />
+		<attribute key="blockprojectile" value="1" />
+	</item>
+	<item id="19993" article="an" name="open door">
+		<attribute key="type" value="door" />
+	</item>
+	<item id="19994" article="a" name="gate of expertise">
+		<attribute key="type" value="door" />
+		<attribute key="leveldoor" value="1000" />
+		<attribute key="blockprojectile" value="1" />
+	</item>
+	<item id="19995" article="a" name="gate of expertise">
+		<attribute key="type" value="door" />
+	</item>
+	<item id="19996" article="a" name="closed door">
+		<attribute key="type" value="door" />
+		<attribute key="blockprojectile" value="1" />
+	</item>
+	<item id="19997" article="an" name="open door">
+		<attribute key="type" value="door" />
+	</item>
+	<item id="19998" article="a" name="dead lost thrower">
+		<attribute key="containerSize" value="15" />
+		<attribute key="decayTo" value="19999" />
+		<attribute key="duration" value="10" />
+		<attribute key="corpseType" value="blood" />
+		<attribute key="fluidSource" value="blood" />
+	</item>
+	<item id="19999" article="a" name="dead lost thrower">
+		<attribute key="containerSize" value="15" />
+		<attribute key="decayTo" value="20000" />
+		<attribute key="duration" value="600" />
+		<attribute key="corpseType" value="blood" />
+	</item>
+	<item id="20000" article="a" name="dead lost thrower">
+		<attribute key="containerSize" value="15" />
+		<attribute key="decayTo" value="20001" />
+		<attribute key="duration" value="600" />
+		<attribute key="corpseType" value="blood" />
+	</item>
+	<item id="20001" article="a" name="dead lost thrower">
+		<attribute key="decayTo" value="0" />
+		<attribute key="duration" value="600" />
+		<attribute key="corpseType" value="blood" />
+	</item>
+	<item id="20002" article="an" name="hourglass" />
+	<item fromid="20003" toid="20004" article="a" name="filigree statue" />
+	<item fromid="20005" toid="20080" article="a" name="sign">
+		<attribute key="allowDistRead" value="true" />
+	</item>
+
+	<item id="20089" article="a" name="bola">
+		<attribute key="weight" value="500" />
+	</item>
+	<item id="20090" article="a" name="spike shield">
+		<attribute key="weight" value="5900" />
+		<attribute key="defense" value="28" />
+		<attribute key="weaponType" value="shield" />
+	</item>
+	<item id="20092" article="a" name="ratana">
+		<attribute key="weight" value="3300" />
+		<attribute key="attack" value="27" />
+		<attribute key="defense" value="19" />
+		<attribute key="extradef" value="1" />
+		<attribute key="weaponType" value="sword" />
+	</item>
+	<item id="20093" article="a" name="life preserver">
+		<attribute key="weight" value="4600" />
+		<attribute key="attack" value="27" />
+		<attribute key="defense" value="19" />
+		<attribute key="extradef" value="2" />
+		<attribute key="weaponType" value="club" />
+	</item>
+	<item fromid="20094" toid="20096" name="swamp lichen" />
+	<item id="20097" article="a" name="cheese cutter">
+		<attribute key="weight" value="45" />
+	</item>
+	<item id="20098" article="a" name="cheesy figurine">
+		<attribute key="weight" value="75" />
+	</item>
+	<item id="20099" article="an" name="earflap">
+		<attribute key="weight" value="75" />
+	</item>
+	<item id="20100" article="a" name="soft cheese" plural="soft cheese">
+		<attribute key="weight" value="500" />
+	</item>
+	<item id="20101" article="a" name="rat cheese" plural="rat cheese">
+		<attribute key="weight" value="300" />
+	</item>
+	<item id="20102" name="swampling moss" plural="swampling moss">
+		<attribute key="weight" value="270" />
+	</item>
+	<item id="20103" article="a" name="piece of swampling wood" plural="pieces of swampling wood">
+		<attribute key="weight" value="350" />
+	</item>
+	<item id="20104" article="a" name="swampling club">
+		<attribute key="weight" value="3100" />
+		<attribute key="attack" value="17" />
+		<attribute key="defense" value="12" />
+		<attribute key="weaponType" value="club" />
+	</item>
+	<item id="20105" article="a" name="rat god doll">
+		<attribute key="weight" value="750" />
+	</item>
+	<item id="20106" article="a" name="lost basher's spike">
+		<attribute key="weight" value="220" />
+	</item>
+	<item id="20107" name="bloody dwarven beard" plural="bloody dwarven beard">
+		<attribute key="weight" value="70" />
+	</item>
+	<item id="20108" article="a" name="pair of iron fists">
+		<attribute key="weight" value="4500" />
+		<attribute key="attack" value="45" />
+		<attribute key="defense" value="17" />
+		<attribute key="weaponType" value="club" />
+		<attribute key="slotType" value="two-handed" />
+	</item>
+	<item id="20109" article="a" name="buckle">
+		<attribute key="weight" value="4500" />
+		<attribute key="armor" value="12" />
+	</item>
+	<item id="20110" article="a" name="bonecarving knife" plural="bonecarving knives">
+		<attribute key="weight" value="120" />
+		<attribute key="description" value="The blade of this knife already assumes the colour of the carved bones." />
+	</item>
+	<item id="20111" article="a" name="bone fetish" plural="bone fetishes">
+		<attribute key="weight" value="160" />
+	</item>
+
+	<item id="20126" article="a" name="leather harness">
+		<attribute key="weight" value="2900" />
+		<attribute key="armor" value="9" />
+	</item>
+	<item id="20127" article="a" name="wimp tooth chain">
+		<attribute key="weight" value="240" />
+		<attribute key="description" value="It contains the teeth of many easy victims." />
+	</item>
+	<item id="20128" article="a" name="lost husher's staff" plural="lost husher's staves">
+		<attribute key="weight" value="800" />
+		<attribute key="description" value="It contains the dark energy of the basalt spheres." />
+	</item>
+	<item id="20129" article="a" name="skull shatterer">
+		<attribute key="weight" value="380" />
+	</item>
+	<item id="20130" name="holy ash" plural="holy ashes">
+		<attribute key="weight" value="190" />
+	</item>
+	<item id="20131" article="a" name="broken throwing axe">
+		<attribute key="weight" value="1100" />
+	</item>
+	<item id="20132" article="a" name="helmet of the lost">
+		<attribute key="weight" value="3500" />
+		<attribute key="armor" value="7" />
+		<attribute key="slotType" value="head" />
+	</item>
+	<item id="20133" name="lost bracers" plural="lost bracers">
+		<attribute key="weight" value="290" />
+	</item>
+	<item id="20134" name="mad froth">
+		<attribute key="weight" value="160" />
+	</item>
+	<item id="20135" article="a" name="red hair dye">
+		<attribute key="weight" value="210" />
+	</item>
+	<item id="20136" article="a" name="basalt fetish" plural="basalt fetishes">
+		<attribute key="weight" value="210" />
+	</item>
+	<item id="20137" article="a" name="basalt figurine">
+		<attribute key="weight" value="210" />
+	</item>
+	<item id="20138" article="a" name="leech">
+		<attribute key="weight" value="200" />
+		<attribute key="description" value="A hermit near Carlin might be able to tell you more about it." />
+	</item>
+	<item id="20139" article="a" name="spiky club">
+		<attribute key="weight" value="3900" />
+		<attribute key="attack" value="31" />
+		<attribute key="defense" value="14" />
+		<attribute key="weaponType" value="club" />
+	</item>
+	<item fromid="20140" toid="20141" article="a" name="low stone wall" />
+	<item fromid="20142" toid="20147" article="a" name="sign">
+		<attribute key="allowDistRead" value="true" />
+	</item>
+	<item fromid="20148" toid="20149" article="a" name="pillar railing" />
+	<item fromid="20150" toid="20153" article="a" name="bookcase">
+		<attribute key="containerSize" value="6" />
+	</item>
+
+	<item id="20156" name="wet timber" />
+	<item id="20158" name="wet timber" />
+	<item fromid="20161" toid="20163" name="barnacles" />
+
+	<item id="20182" article="a" name="window" />
+	<item id="20183" article="a" name="window" />
+
+	<item fromid="20190" toid="20192" article="a" name="stone archway" />
+
+	<item id="20197" article="a" name="canopy bed">
+		<attribute key="type" value="bed" />
+		<attribute key="partnerDirection" value="south" />
+		<attribute key="maleSleeper" value="20201" />
+		<attribute key="femaleSleeper" value="20205" />
+	</item>
+	<item id="20198" article="a" name="canopy bed">
+		<attribute key="type" value="bed" />
+		<attribute key="partnerDirection" value="north" />
+		<attribute key="maleSleeper" value="20202" />
+		<attribute key="femaleSleeper" value="20206" />
+	</item>
+	<item id="20199" article="a" name="canopy bed">
+		<attribute key="type" value="bed" />
+		<attribute key="partnerDirection" value="east" />
+		<attribute key="maleSleeper" value="20203" />
+		<attribute key="femaleSleeper" value="20207" />
+	</item>
+	<item id="20200" article="a" name="canopy bed">
+		<attribute key="type" value="bed" />
+		<attribute key="partnerDirection" value="west" />
+		<attribute key="maleSleeper" value="20204" />
+		<attribute key="femaleSleeper" value="20208" />
+		<attribute key="alwaysOnTop" value="false" />
+		<attribute key="topOrder" value="0" />
+	</item>
+	<item id="20201" article="a" name="canopy bed">
+		<attribute key="type" value="bed" />
+		<attribute key="partnerDirection" value="south" />
+		<attribute key="maleSleeper" value="20197" />
+	</item>
+	<item id="20202" article="a" name="canopy bed">
+		<attribute key="type" value="bed" />
+		<attribute key="partnerDirection" value="north" />
+		<attribute key="maleSleeper" value="20198" />
+	</item>
+	<item id="20203" article="a" name="canopy bed">
+		<attribute key="type" value="bed" />
+		<attribute key="partnerDirection" value="east" />
+		<attribute key="maleSleeper" value="20199" />
+	</item>
+	<item id="20204" article="a" name="canopy bed">
+		<attribute key="type" value="bed" />
+		<attribute key="partnerDirection" value="west" />
+		<attribute key="maleSleeper" value="20200" />
+		<attribute key="alwaysOnTop" value="false" />
+		<attribute key="topOrder" value="0" />
+	</item>
+	<item id="20205" article="a" name="canopy bed">
+		<attribute key="type" value="bed" />
+		<attribute key="partnerDirection" value="south" />
+		<attribute key="femaleSleeper" value="20197" />
+	</item>
+	<item id="20206" article="a" name="canopy bed">
+		<attribute key="type" value="bed" />
+		<attribute key="partnerDirection" value="north" />
+		<attribute key="femaleSleeper" value="20198" />
+	</item>
+	<item id="20207" article="a" name="canopy bed">
+		<attribute key="type" value="bed" />
+		<attribute key="partnerDirection" value="east" />
+		<attribute key="femaleSleeper" value="20199" />
+	</item>
+	<item id="20208" article="a" name="canopy bed">
+		<attribute key="type" value="bed" />
+		<attribute key="partnerDirection" value="west" />
+		<attribute key="femaleSleeper" value="20200" />
+	</item>
+	<item fromid="20209" toid="20212" article="a" name="small wooden fence" />
+
+	<item fromid="20218" toid="20219" article="an" name="elevator" />
+	<item fromid="20220" toid="20221" article="a" name="winch" />
+	<item id="20222" article="an" name="elevator" />
+	<item fromid="20223" toid="20225" article="a" name="winch" />
+	<item fromid="20226" toid="20227" article="an" name="elevator" />
+
+	<item id="20230" name="swamp">
+		<attribute key="type" value="trashholder" />
+		<attribute key="effect" value="greenbubble" />
+		<attribute key="allowpickupable" value="1" />
+	</item>
+
+	<item fromid="20243" toid="20246" article="a" name="cord" />
+
+	<item id="20252" article="a" name="canopy bed kit">
+		<attribute key="weight" value="4000" />
+		<attribute key="description" value="Use it on your bed to change the bed to a canopy bed." />
+	</item>
+	<item id="20254" article="a" name="venorean cabinet kit">
+		<attribute key="weight" value="8000" />
+		<attribute key="description" value="Use it in your house to construct a venorean cabinet." />
+	</item>
+	<item id="20255" article="a" name="venorean wardrobe kit">
+		<attribute key="weight" value="2500" />
+		<attribute key="description" value="Use it in your house to construct a wardrobe." />
+	</item>
+	<item id="20257" article="a" name="venorean drawer kit">
+		<attribute key="weight" value="2000" />
+		<attribute key="description" value="Use it in your house to construct a drawer." />
+	</item>
+	<item fromid="20258" toid="20260" name="strange symbols" />
+
+	<item id="20262" article="a" name="wooden floor" />
+
+	<item fromid="20267" toid="20271" article="a" name="ghastly eye" />
+
+	<item fromid="20291" toid="20292" article="a" name="gate" />
+
+	<item id="20295" article="a" name="cabinet">
+		<attribute key="containerSize" value="8" />
+		<attribute key="rotateTo" value="20296" />
+	</item>
+	<item id="20296" article="a" name="cabinet">
+		<attribute key="containerSize" value="8" />
+		<attribute key="rotateTo" value="20295" />
+	</item>
+	<item id="20297" article="a" name="wardrobe">
+		<attribute key="containerSize" value="10" />
+		<attribute key="rotateTo" value="20298" />
+	</item>
+	<item id="20298" article="a" name="wardrobe">
+		<attribute key="containerSize" value="10" />
+		<attribute key="rotateTo" value="20297" />
+	</item>
+	<item id="20299" article="a" name="drawer">
+		<attribute key="containerSize" value="8" />
+		<attribute key="rotateTo" value="20300" />
+	</item>
+	<item id="20300" article="a" name="drawer">
+		<attribute key="containerSize" value="8" />
+		<attribute key="rotateTo" value="20299" />
+	</item>
+
+	<item fromid="20305" toid="20306" article="a" name="counter">
+		<attribute key="type" value="door" />
 	</item>
 
 	<item id="30001" name="water" />

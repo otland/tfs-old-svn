@@ -256,7 +256,7 @@ void BedItem::regeneratePlayer(Player* player) const
 		else
 			regen = sleptTime / 30;
 
-		player->changeHealth(regen);
+		player->changeHealth(regen, false);
 		player->changeMana(regen);
 	}
 

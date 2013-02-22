@@ -337,7 +337,7 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool prelo
 	DBQuery query;
 	DBResult* result;
 
-	query << "SELECT `id`, `account_id`, `group_id`, `sex`, `vocation`, `experience`, `level`, `maglevel`, `health`, `healthmax`, `blessings`, `mana`, `manamax`, `manaspent`, `soul`, `lookbody`, `lookfeet`, `lookhead`, `looklegs`, `looktype`, `lookaddons`, `posx`, `posy`, `posz`, `cap`, `lastlogin`, `lastlogout`, `lastip`, `conditions`, `skulltime`, `skull`, `guildnick`, `rank_id`, `town_id`, `balance`, `offlinetraining_time`, `offlinetraining_skill` FROM `players` WHERE `name` " << db->getStringComparer() << db->escapePatternString(name) << " LIMIT 1;";
+	query << "SELECT `id`, `account_id`, `group_id`, `sex`, `vocation`, `experience`, `level`, `maglevel`, `health`, `healthmax`, `blessings`, `mana`, `manamax`, `manaspent`, `soul`, `lookbody`, `lookfeet`, `lookhead`, `looklegs`, `looktype`, `lookaddons`, `posx`, `posy`, `posz`, `cap`, `lastlogin`, `lastlogout`, `lastip`, `conditions`, `skulltime`, `skull`, `guildnick`, `rank_id`, `town_id`, `balance`, `offlinetraining_time`, `offlinetraining_skill`, `stamina` FROM `players` WHERE `name` " << db->getStringComparer() << db->escapePatternString(name) << " LIMIT 1;";
 	if(!(result = db->storeQuery(query.str())))
 		return false;
 
@@ -463,9 +463,12 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool prelo
 	Town* town = Towns::getInstance().getTown(player->town);
 	if(town)
 		player->masterPos = town->getTemplePosition();
+
 	Position loginPos = player->loginPosition;
 	if(loginPos.x == 0 && loginPos.y == 0 && loginPos.z == 0)
 		player->loginPosition = player->masterPos;
+
+	player->staminaMinutes = result->getDataInt("stamina");
 
 	uint32_t rankid = result->getDataInt("rank_id");
 	if(rankid)
@@ -841,6 +844,7 @@ bool IOLoginData::savePlayer(Player* player, bool preSave)
 	query << "`balance` = " << player->bankBalance << ", ";
 	query << "`offlinetraining_time` = " << player->getOfflineTrainingTime() / 1000 << ", ";
 	query << "`offlinetraining_skill` = " << player->getOfflineTrainingSkill() << ", ";
+	query << "`stamina` = " << player->getStaminaMinutes() << ", ";
 	query << "`blessings` = " << player->blessings;
 	if(g_config.getBoolean(ConfigManager::INGAME_GUILD_SYSTEM))
 	{

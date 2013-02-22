@@ -199,28 +199,28 @@ void Monster::onCreatureMove(const Creature* creature, const Tile* newTile, cons
 
 void Monster::updateTargetList()
 {
-	CreatureList::iterator it = friendList.begin();
-	while(it != friendList.end())
+	CreatureHashSet::iterator friendIterator = friendList.begin();
+	while(friendIterator != friendList.end())
 	{
-		if((*it)->getHealth() <= 0 || !canSee((*it)->getPosition()))
+		if((*friendIterator)->getHealth() <= 0 || !canSee((*friendIterator)->getPosition()))
 		{
-			(*it)->releaseThing2();
-			it = friendList.erase(it);
+			(*friendIterator)->releaseThing2();
+			friendIterator = friendList.erase(friendIterator);
 		}
 		else
-			++it;
+			++friendIterator;
 	}
 
-	it = targetList.begin();
-	while(it != targetList.end())
+	CreatureList::iterator targetIterator = targetList.begin();
+	while(targetIterator != targetList.end())
 	{
-		if((*it)->getHealth() <= 0 || !canSee((*it)->getPosition()))
+		if((*targetIterator)->getHealth() <= 0 || !canSee((*targetIterator)->getPosition()))
 		{
-			(*it)->releaseThing2();
-			it = targetList.erase(it);
+			(*targetIterator)->releaseThing2();
+			targetIterator = targetList.erase(targetIterator);
 		}
 		else
-			++it;
+			++targetIterator;
 	}
 
 	const SpectatorVec& list = g_game.getSpectators(getPosition());
@@ -241,7 +241,7 @@ void Monster::clearTargetList()
 
 void Monster::clearFriendList()
 {
-	for(CreatureList::iterator it = friendList.begin(); it != friendList.end(); ++it)
+	for(CreatureHashSet::iterator it = friendList.begin(), end = friendList.end(); it != end; ++it)
 		(*it)->releaseThing2();
 
 	friendList.clear();
@@ -252,11 +252,9 @@ void Monster::onCreatureFound(Creature* creature, bool pushFront /*= false*/)
 	if(isFriend(creature))
 	{
 		assert(creature != this);
-		if(std::find(friendList.begin(), friendList.end(), creature) == friendList.end())
-		{
+		std::pair<CreatureHashSet::iterator, bool> res = friendList.insert(creature);
+		if(res.second)
 			creature->useThing2();
-			friendList.push_back(creature);
-		}
 	}
 
 	if(isOpponent(creature))
@@ -345,12 +343,8 @@ void Monster::onCreatureLeave(Creature* creature)
 	//update friendList
 	if(isFriend(creature))
 	{
-		CreatureList::iterator it = std::find(friendList.begin(), friendList.end(), creature);
-		if(it != friendList.end())
-		{
-			(*it)->releaseThing2();
-			friendList.erase(it);
-		}
+		if(friendList.erase(creature) != 0)
+			creature->releaseThing2();
 #ifdef __DEBUG__
 		else
 			std::cout << "Monster: " << creature->getName() << " not found in the friendList." << std::endl;
@@ -1355,11 +1349,11 @@ void Monster::drainHealth(Creature* attacker, CombatType_t combatType, int32_t d
 		removeCondition(CONDITION_INVISIBLE);
 }
 
-void Monster::changeHealth(int32_t healthChange)
+void Monster::changeHealth(int32_t healthChange, bool sendHealthChange/* = true*/)
 {
 	//In case a player with ignore flag set attacks the monster
 	setIdle(false);
-	Creature::changeHealth(healthChange);
+	Creature::changeHealth(healthChange, sendHealthChange);
 }
 
 bool Monster::challengeCreature(Creature* creature)
@@ -1417,8 +1411,8 @@ bool Monster::convinceCreature(Creature* creature)
 
 			//Notify surrounding about the change
 			SpectatorVec list;
-			g_game.getSpectators(list, getPosition(), false, true);
-			g_game.getSpectators(list, creature->getPosition(), true, true);
+			g_game.getSpectators(list, getPosition(), true);
+			g_game.getSpectators(list, creature->getPosition(), true);
 
 			for(SpectatorVec::iterator it = list.begin(); it != list.end(); ++it)
 				(*it)->onCreatureConvinced(creature, this);
@@ -1452,8 +1446,8 @@ bool Monster::convinceCreature(Creature* creature)
 
 		//Notify surrounding about the change
 		SpectatorVec list;
-		g_game.getSpectators(list, getPosition(), false, true);
-		g_game.getSpectators(list, creature->getPosition(), true, true);
+		g_game.getSpectators(list, getPosition(), true);
+		g_game.getSpectators(list, creature->getPosition(), true);
 
 		for(SpectatorVec::iterator it = list.begin(); it != list.end(); ++it)
 			(*it)->onCreatureConvinced(creature, this);

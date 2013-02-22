@@ -22,6 +22,7 @@
 
 	M The Forgotten Server.exe
 	  data/
+	M   global.lua
 	M 	actions/actions.xml
 	  	data/items/
 	M 		items.otb
@@ -36,6 +37,10 @@
 	Offline training!
 	New VIP list code with VIP entries stored on the server side.
 	Added three new mounts and the Demon outfit.
+	Stamina system (set staminaSystem to no in config.lua to disable).
+	Unfair Fight Reduction for deaths in PVP.
+	Lua function getPlayerMoney is now hardcoded in the engine, which should make it significantly faster.
+	New Lua functions: isItem(uid), isMonster(cid), isNpc(cid), getPlayerLastLoginSaved(cid), sendGuildChannelMessage(guildId, type, message).
 	Depot code has been rewritten, and the inbox is now global. MySQL databases will be automatically updated, while SQLite requires a reset of the database.
 	Modal window class has been added, although it lacks any connection to the Lua interface to allow customizability. The offline training modal is added using it though (hardcoded).
 	Added walkstack attribute to items.xml.
@@ -48,7 +53,11 @@
 	Only NPC's that have walkTicks above 0 can be pushed now.
 	"Temporary" fix for a serious bug with trade. Trade will now be aborted instead of one of the player receiving both items.
 	Money related functions now operate with 64-bit integers as bank balance in the protocol was changed from 32-bit to 64-bit.
+	Health points change packets will now only be sent if needed, and the creatures health points actually has changed.
 	Optimized Creature::getPosition (significant for getSpectators which is one of the most called functions).
+	Optimized getSpectators to utilize spectator cahce under more conditions.
+	Optimized OutputMessagePool::sendAll to scale with a lot of dispatched events (this makes a huge difference for any server with over 500 active players online).
+	Optimized monsters friendList.
 	Owner on ConditionDamage will no longer be serialized/deserialized as there is no reason to keep it after a relog.
 	Updated Map::checkSightLine.
 	Patched a monster bug fix from trunk.
@@ -56,10 +65,27 @@
 	Waypoints support, with two new lua functions getWaypointPosition(name) and doWaypointAddTemporial(name, pos)
 	onDeath for a summon will now only be called if the summons master still exists (in which case we can still tell if it's a summon in the onDeath script).
 	Reworked the code for using items on creatures to address a few bugs with it.
+	Reworked how experience is gained so that players who share experience in party won't take advantage of other players experience multipliers.
+	savePlayersRecord will now close the file even if it fails to write to it.
+	The message type of “New mail has arrived.” has been corrected and it will now also appear when buying something in the market.
+	sendCancelWalk is now dispatched as default packet handler for Account Manager, instead of being directly called from network thread.
+	Walking through a teleport now shows the teleport effect on the position the creature was teleported from too.
+	Our implementation of Lua bit operations is no longer compiled with LuaJIT as LuaJIT has its own implementation of the Lua bit library.
 	\n can now be used for new line in the questlog.
 	Corrected trade messages.
 	Corrected damage absorption.
 	Corrected the skull in war mode. It's now green instead of yellow.
+	Updated items.
+	Fixed a bug with using a single target rune on a stack with crosshairs. It will now only damage the creature on the top of the stack (first to enter the tile).
+	Fixed the “You advanced to skill level x.” message not appearing when advancing while offline training.
+	Fixed protection zone lock for Hardcore PVP/PVP-Enforced.
+	Fixed a few protocol issues (sendBasicData is no longer the first packet to be sent; and it's not being sent twice now either, ).
+	Fixed a bug where the path in pathfinding would be updated too often.
+	Fixed a bug with UTF-8 characters on signs.
+	Fixed a bug with the last visit time would always show up as the time you just logged in.
+	Fixed a bug where packets that failed to be XTEA-decrypted were parsed anyway.
+	Fixed client debug for players on different floors when a gamemaster used invisible command.
+	Fixed a rare shutdown crash.
 	Fixed the bug with /addskill <playername>, magic level where it would not accurately add exactly one magic level.
 	Fixed the overflow checks for level, skills and magic level formulas (0 > 0 is not true!).
 	Fixed a bug where a player with black skull could get red skull by killing players in pairs.

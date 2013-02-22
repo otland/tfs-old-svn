@@ -29,6 +29,7 @@ class Creature;
 class Game;
 class Spawn;
 
+typedef OTSERV_HASH_SET<Creature*> CreatureHashSet;
 typedef std::list<Creature*> CreatureList;
 
 enum TargetSearchType_t
@@ -91,7 +92,7 @@ class Monster : public Creature
 			const Tile* oldTile, const Position& oldPos, bool teleport);
 
 		virtual void drainHealth(Creature* attacker, CombatType_t combatType, int32_t damage);
-		virtual void changeHealth(int32_t healthChange);
+		virtual void changeHealth(int32_t healthChange, bool sendHealthChange = true);
 		virtual void onWalk();
 		virtual bool getNextStep(Direction& dir, uint32_t& flags);
 		virtual void onFollowCreatureComplete(const Creature* creature);
@@ -111,7 +112,7 @@ class Monster : public Creature
 		bool selectTarget(Creature* creature);
 
 		const CreatureList& getTargetList() {return targetList;}
-		const CreatureList& getFriendList() {return friendList;}
+		const CreatureHashSet& getFriendList() {return friendList;}
 
 		bool isTarget(Creature* creature);
 		bool isFleeing() const {return getHealth() <= mType->runAwayHealth;}
@@ -121,7 +122,7 @@ class Monster : public Creature
 
 	private:
 		CreatureList targetList;
-		CreatureList friendList;
+		CreatureHashSet friendList;
 
 		MonsterType* mType;
 

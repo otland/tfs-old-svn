@@ -50,7 +50,6 @@ void TalkActions::clear()
 		wordsMap.erase(it);
 		it = wordsMap.begin();
 	}
-
 	m_scriptInterface.reInitState();
 }
 
@@ -68,8 +67,8 @@ Event* TalkActions::getEvent(const std::string& nodeName)
 {
 	if(asLowerCaseString(nodeName) == "talkaction")
 		return new TalkAction(&m_scriptInterface);
-	else
-		return NULL;
+
+	return NULL;
 }
 
 bool TalkActions::registerEvent(Event* event, xmlNodePtr p)
@@ -177,7 +176,6 @@ int32_t TalkAction::executeSay(Creature* creature, const std::string& words, con
 
 		bool result = m_scriptInterface->callFunction(3);
 		m_scriptInterface->releaseScriptEnv();
-
 		return result;
 	}
 	else

@@ -105,6 +105,7 @@ class Chat
 
 		ChatChannel* getChannel(Player* player, uint16_t channelId);
 		ChatChannel* getChannelById(uint16_t channelId);
+		ChatChannel* getGuildChannelById(uint32_t guildId);
 		PrivateChatChannel* getPrivateChannel(Player* player);
 
 	private:

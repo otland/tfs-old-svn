@@ -43,13 +43,13 @@ bool PrivateChatChannel::isInvited(const Player* player)
 	if(player->getGUID() == getOwner())
 		return true;
 
-	InvitedMap::iterator it = m_invites.find(player->getGUID());
+	InvitedMap::const_iterator it = m_invites.find(player->getGUID());
 	return it != m_invites.end();
 }
 
 bool PrivateChatChannel::addInvited(Player* player)
 {
-	InvitedMap::iterator it = m_invites.find(player->getGUID());
+	InvitedMap::const_iterator it = m_invites.find(player->getGUID());
 	if(it != m_invites.end())
 		return false;
 
@@ -1347,6 +1347,15 @@ ChatChannel* Chat::getChannel(Player* player, uint16_t channelId)
 	PrivateChannelMap::iterator pit = m_privateChannels.find(channelId);
 	if(pit != m_privateChannels.end() && pit->second->isInvited(player))
 		return pit->second;
+
+	return NULL;
+}
+
+ChatChannel* Chat::getGuildChannelById(uint32_t guildId)
+{
+	GuildChannelMap::iterator git = m_guildChannels.find(guildId);
+	if(git != m_guildChannels.end())
+		return git->second;
 
 	return NULL;
 }

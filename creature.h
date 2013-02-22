@@ -263,7 +263,7 @@ class Creature : public AutoID, virtual public Thing
 		virtual uint32_t getConditionSuppressions() const {return 0;}
 		virtual bool isAttackable() const {return true;}
 
-		virtual void changeHealth(int32_t healthChange);
+		virtual void changeHealth(int32_t healthChange, bool sendHealthChange = true);
 		virtual void changeMana(int32_t manaChange);
 
 		virtual void drainHealth(Creature* attacker, CombatType_t combatType, int32_t damage);

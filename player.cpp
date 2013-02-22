@@ -200,6 +200,12 @@ Creature()
 
 	ghostMode = false;
 	requestedOutfit = false;
+
+	deathLossPercent = 1.0;
+
+	staminaMinutes = 2520;
+	nextUseStaminaTime = 0;
+
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
 	playerCount++;
 #endif
@@ -252,24 +258,19 @@ void Player::setVocation(uint32_t vocId)
 	}
 
 	soulMax = vocation->getSoulMax();
-
-	sendBasicData();
 }
 
 bool Player::isPushable() const
 {
-	bool ret = Creature::isPushable();
-
 	if(hasFlag(PlayerFlag_CannotBePushed))
 		return false;
 
-	return ret;
+	return Creature::isPushable();
 }
 
 std::string Player::getDescription(int32_t lookDistance) const
 {
 	std::ostringstream s;
-	std::string str;
 	if(lookDistance == -1)
 	{
 		s << "yourself.";
@@ -304,24 +305,23 @@ std::string Player::getDescription(int32_t lookDistance) const
 	{
 		if(lookDistance == -1)
 			s << " You are ";
+		else if(sex == PLAYERSEX_FEMALE)
+			s << " She is ";
 		else
-		{
-			if(sex == PLAYERSEX_FEMALE)
-				s << " She is ";
-			else
-				s << " He is ";
-		}
+			s << " He is ";
+
 		if(guildRank.length())
 			s << guildRank;
 		else
 			s << "a member";
+
 		s << " of the " << guildName;
 		if(guildNick.length())
 			s << " (" << guildNick << ")";
+
 		s << ".";
 	}
-	str = s.str();
-	return str;
+	return s.str();
 }
 
 Item* Player::getInventoryItem(slots_t slot) const
@@ -984,7 +984,7 @@ bool Player::canWalkthrough(const Creature* creature) const
 		if(playerTileGround && playerTileGround->hasWalkStack())
 		{
 			Player* thisPlayer = const_cast<Player*>(this);
-			if((OTSYS_TIME() - lastWalkthroughAttempt) > 1000)
+			if((OTSYS_TIME() - lastWalkthroughAttempt) > 2000)
 			{
 				thisPlayer->setLastWalkthroughAttempt(OTSYS_TIME());
 				return false;
@@ -1019,7 +1019,7 @@ bool Player::canWalkthroughEx(const Creature* creature) const
 void Player::onReceiveMail()
 {
 	if(isNearDepotBox())
-		sendTextMessage(MSG_INFO_DESCR, "New mail has arrived.");
+		sendTextMessage(MSG_EVENT_ADVANCE, "New mail has arrived.");
 }
 
 bool Player::isNearDepotBox()
@@ -1711,6 +1711,10 @@ void Player::onCreatureMove(const Creature* creature, const Tile* newTile, const
 		modalWindows.clear();
 	}
 
+	// leave market
+	if(marketDepotId != -1)
+		marketDepotId = -1;
+
 	if(getParty())
 		getParty()->updateSharedExperience();
 
@@ -2041,7 +2045,7 @@ void Player::addManaSpent(uint64_t amount, bool withMultiplier /*= true*/)
 		sendStats();
 }
 
-void Player::addExperience(uint64_t exp, bool useMult/* = false*/, bool sendText/* = false*/)
+void Player::addExperience(uint64_t exp, bool useMult/* = false*/, bool sendText/* = false*/, bool applyStaminaChange/* = false*/)
 {
 	int32_t newLevel = level;
 
@@ -2054,29 +2058,43 @@ void Player::addExperience(uint64_t exp, bool useMult/* = false*/, bool sendText
 		return;
 	}
 
-	uint64_t gainExp = exp * (useMult ? g_game.getExperienceStage(level) : 1);
-	experience += gainExp;
+	if(useMult)
+		exp *= g_game.getExperienceStage(level);
+
+	if(applyStaminaChange && g_config.getBoolean(ConfigManager::STAMINA_SYSTEM))
+	{
+		if(staminaMinutes > 2400)
+		{
+			if(isPremium())
+				exp *= 1.5;
+		}
+		else if(staminaMinutes <= 840)
+			exp *= 0.5;
+	}
+
+	experience += exp;
 	if(sendText)
 	{
 		const Position& targetPos = getPosition();
 
 		std::ostringstream ss;
-		ss << "You gained " << gainExp << " experience points.";
-		sendExperienceMessage(MSG_EXPERIENCE, ss.str(), targetPos, gainExp, TEXTCOLOR_WHITE_EXP);
+		ss << "You gained " << exp << " experience points.";
+		sendExperienceMessage(MSG_EXPERIENCE, ss.str(), targetPos, exp, TEXTCOLOR_WHITE_EXP);
 
 		std::ostringstream ssExp;
-		ssExp << getNameDescription() << " gained " << gainExp << " experience points.";
+		ssExp << getNameDescription() << " gained " << exp << " experience points.";
 		std::string strExp = ssExp.str();
 
 		SpectatorVec list;
 		g_game.getSpectators(list, targetPos);
-		Player* tmpPlayer = NULL;
+
+		Player* tmpPlayer;
 		for(SpectatorVec::const_iterator it = list.begin(), end = list.end(); it != end; ++it)
 		{
 			if((tmpPlayer = (*it)->getPlayer()))
 			{
 				if(tmpPlayer != this)
-					tmpPlayer->sendExperienceMessage(MSG_EXPERIENCE_OTHERS, strExp, targetPos, gainExp, TEXTCOLOR_WHITE_EXP);
+					tmpPlayer->sendExperienceMessage(MSG_EXPERIENCE_OTHERS, strExp, targetPos, exp, TEXTCOLOR_WHITE_EXP);
 			}
 		}
 	}
@@ -2285,6 +2303,39 @@ void Player::death()
 
 	if(skillLoss)
 	{
+		uint8_t unfairFightReduction = 100;
+		if(_lastHitCreature)
+		{
+			Player* lastHitPlayer = _lastHitCreature->getPlayer();
+			if(!lastHitPlayer)
+			{
+				Creature* lastHitMaster = _lastHitCreature->getMaster();
+				if(lastHitMaster)
+					lastHitPlayer = lastHitMaster->getPlayer();
+			}
+
+			if(lastHitPlayer)
+			{
+				uint32_t sumLevels = 0;
+				for(CountMap::const_iterator it = damageMap.begin(), end = damageMap.end(); it != end; ++it)
+				{
+					CountBlock_t cb = it->second;
+					if((OTSYS_TIME() - cb.ticks) <= g_game.getInFightTicks())
+					{
+						Player* damageDealer = g_game.getPlayerByID((*it).first);
+						if(damageDealer)
+							sumLevels += damageDealer->getLevel();
+					}
+				}
+
+				if(sumLevels > level)
+				{
+					double reduce = level / (double)sumLevels;
+					unfairFightReduction = std::max<uint8_t>(20, std::floor((reduce * 100) + 0.5));
+				}
+			}
+		}
+
 		//Magic level loss
 		uint64_t sumMana = 0;
 		uint64_t lostMana = 0;
@@ -2295,9 +2346,9 @@ void Player::death()
 
 		sumMana += manaSpent;
 
-		double lossPercent = getLostPercent();
+		deathLossPercent = getLostPercent() * (unfairFightReduction / 100.);
 
-		lostMana = (uint64_t)(sumMana * lossPercent);
+		lostMana = (uint64_t)(sumMana * deathLossPercent);
 		while(lostMana > manaSpent && magLevel > 0)
 		{
 			lostMana -= manaSpent;
@@ -2321,7 +2372,7 @@ void Player::death()
 
 			sumSkillTries += skills[i][SKILL_TRIES];
 
-			uint32_t lostSkillTries = (uint32_t)(sumSkillTries * lossPercent);
+			uint32_t lostSkillTries = (uint32_t)(sumSkillTries * deathLossPercent);
 			while(lostSkillTries > skills[i][SKILL_TRIES])
 			{
 				lostSkillTries -= skills[i][SKILL_TRIES];
@@ -2344,7 +2395,7 @@ void Player::death()
 		uint32_t newLevel = level;
 		uint64_t newExperience = experience;
 		if(vocationId == VOCATION_NONE || level > 7)
-			newExperience -= getLostExperience();
+			newExperience -= getLostExperience(deathLossPercent);
 
 		while(newExperience < Player::getExpForLevel(newLevel))
 		{
@@ -2364,11 +2415,11 @@ void Player::death()
 		uint64_t currLevelExp = Player::getExpForLevel(newLevel);
 		uint64_t nextLevelExp = Player::getExpForLevel(newLevel + 1);
 		if(nextLevelExp > currLevelExp)
-			levelPercent = Player::getPercentLevel(experience - currLevelExp - uint64_t(experience * lossPercent), nextLevelExp - currLevelExp);
+			levelPercent = Player::getPercentLevel(experience - currLevelExp - uint64_t(experience * deathLossPercent), nextLevelExp - currLevelExp);
 		else
 			levelPercent = 0;
 
-		sendReLoginWindow();
+		sendReLoginWindow(unfairFightReduction);
 	}
 
 	sendStats();
@@ -2417,7 +2468,7 @@ void Player::preSave()
 		if(skillLoss)
 		{
 			if(vocationId == VOCATION_NONE || level > 7)
-				experience -= getLostExperience();
+				experience -= getLostExperience(deathLossPercent);
 
 			while(level > 1 && experience < Player::getExpForLevel(level))
 			{
@@ -3832,7 +3883,10 @@ void Player::onCombatRemoveCondition(const Creature* attacker, Condition* condit
 		{
 			int32_t delay = getNextActionTime();
 			delay -= (delay % EVENT_CREATURE_THINK_INTERVAL);
-			condition->setTicks(delay);
+			if(delay < 0)
+				removeCondition(condition);
+			else
+				condition->setTicks(delay);
 		}
 		else
 			removeCondition(condition);
@@ -3846,12 +3900,29 @@ void Player::onAttackedCreature(Creature* target)
 	if(hasFlag(PlayerFlag_NotGainInFight))
 		return;
 
-	if(target != this)
+	if(target == this)
 	{
-		Player* targetPlayer = target->getPlayer();
-		if(targetPlayer && !isPartner(targetPlayer) && !isGuildMate(targetPlayer) && !targetPlayer->hasAttacked(this))
+		addInFightTicks();
+		return;
+	}
+
+	Player* targetPlayer = target->getPlayer();
+	if(targetPlayer && !isPartner(targetPlayer) && !isGuildMate(targetPlayer))
+	{
+		if(!pzLocked && g_game.getWorldType() == WORLD_TYPE_PVP_ENFORCED)
 		{
-			if(!pzLocked)
+			pzLocked = true;
+			sendIcons();
+		}
+
+		if(getSkull() == SKULL_NONE && getSkullClient(targetPlayer) == SKULL_YELLOW)
+		{
+			addAttacked(targetPlayer);
+			targetPlayer->sendCreatureSkull(this);
+		}
+		else if(!targetPlayer->hasAttacked(this))
+		{
+			if(!pzLocked && g_game.getWorldType() != WORLD_TYPE_PVP_ENFORCED)
 			{
 				pzLocked = true;
 				sendIcons();
@@ -3978,30 +4049,41 @@ void Player::gainExperience(uint64_t gainExp)
 {
 	if(!hasFlag(PlayerFlag_NotGainExperience) && gainExp > 0)
 	{
+		uint64_t oldExperience = experience;
+		if(staminaMinutes == 0)
+			return;
+
+		addExperience(gainExp, true, true, true);
+
 		//soul regeneration
-		if(gainExp >= getLevel())
+		int64_t gainedExperience = experience - oldExperience;
+		if(gainedExperience >= level)
 		{
 			Condition* condition = Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_SOUL, 4 * 60 * 1000, 0);
 			condition->setParam(CONDITIONPARAM_SOULGAIN, 1);
 			condition->setParam(CONDITIONPARAM_SOULTICKS, vocation->getSoulGainTicks() * 1000);
 			addCondition(condition);
 		}
-
-		addExperience(gainExp);
 	}
 }
 
 void Player::onGainExperience(uint64_t gainExp, Creature* target)
 {
 	if(hasFlag(PlayerFlag_NotGainExperience))
-		gainExp = 0;
+		return;
 
-	Party* party = getParty();
-	if(target && !target->getPlayer() && party && party->isSharedExperienceActive() && party->isSharedExperienceEnabled())
+	if(target)
 	{
-		party->shareExperience(gainExp);
-		//We will get a share of the experience through the sharing mechanism
-		gainExp = 0;
+		if(gainExp > 0 && target->getMonster())
+			useStamina();
+
+		Party* party = getParty();
+		if(!target->getPlayer() && party && party->isSharedExperienceActive() && party->isSharedExperienceEnabled())
+		{
+			party->shareExperience(gainExp);
+			//We will get a share of the experience through the sharing mechanism
+			return;
+		}
 	}
 
 	Creature::onGainExperience(gainExp, target);
@@ -4035,9 +4117,9 @@ bool Player::isAttackable() const
 	return !hasFlag(PlayerFlag_CannotBeAttacked);
 }
 
-void Player::changeHealth(int32_t healthChange)
+void Player::changeHealth(int32_t healthChange, bool sendHealthChange/* = true*/)
 {
-	Creature::changeHealth(healthChange);
+	Creature::changeHealth(healthChange, sendHealthChange);
 	sendStats();
 }
 
@@ -5136,6 +5218,7 @@ bool Player::addOfflineTrainingTries(skills_t skill, int32_t tries)
 		oldPercentToNextLevel = (long double)(manaSpent * 100) / nextReqMana;
 
 		tries *= g_config.getNumber(ConfigManager::RATE_MAGIC);
+		uint32_t currMagLevel = magLevel;
 		while((manaSpent + tries) >= nextReqMana)
 		{
 			tries -= nextReqMana - manaSpent;
@@ -5155,6 +5238,13 @@ bool Player::addOfflineTrainingTries(skills_t skill, int32_t tries)
 			}
 		}
 		manaSpent += tries;
+
+		if(magLevel != currMagLevel)
+		{
+			std::ostringstream ss;
+			ss << "You advanced to magic level " << magLevel << ".";
+			sendTextMessage(MSG_EVENT_ADVANCE, ss.str());
+		}
 
 		uint32_t newPercent;
 		if(nextReqMana > currReqMana)
@@ -5187,6 +5277,7 @@ bool Player::addOfflineTrainingTries(skills_t skill, int32_t tries)
 		oldPercentToNextLevel = (long double)(skills[skill][SKILL_TRIES] * 100) / nextReqTries;
 
 		tries *= g_config.getNumber(ConfigManager::RATE_SKILL);
+		uint32_t currSkillLevel = skills[skill][SKILL_LEVEL];
 		while((skills[skill][SKILL_TRIES] + tries) >= nextReqTries)
 		{
 			tries -= nextReqTries - skills[skill][SKILL_TRIES];
@@ -5207,6 +5298,13 @@ bool Player::addOfflineTrainingTries(skills_t skill, int32_t tries)
 			}
 		}
 		skills[skill][SKILL_TRIES] += tries;
+
+		if(currSkillLevel != skills[skill][SKILL_LEVEL])
+		{
+			std::ostringstream ss;
+			ss << "You advanced to " << getSkillName(skill) << " level " << skills[skill][SKILL_LEVEL] << ".";
+			sendTextMessage(MSG_EVENT_ADVANCE, ss.str());
+		}
 
 		uint32_t newPercent;
 		if(nextReqTries > currReqTries)
@@ -5257,4 +5355,51 @@ void Player::sendModalWindow(const ModalWindow& modalWindow)
 void Player::clearModalWindows()
 {
 	modalWindows.clear();
+}
+
+void Player::regenerateStamina(int32_t offlineTime)
+{
+	if(!g_config.getBoolean(ConfigManager::STAMINA_SYSTEM))
+		return;
+
+	offlineTime -= 600;
+	if(offlineTime < 180)
+		return;
+
+	int16_t regainStaminaMinutes = offlineTime / 180;
+	int16_t maxNormalStaminaRegen = 2400 - std::min<int16_t>(2400, staminaMinutes);
+	if(regainStaminaMinutes > maxNormalStaminaRegen)
+	{
+		int16_t happyHourStaminaRegen = (offlineTime - (maxNormalStaminaRegen * 180)) / 600;
+		staminaMinutes = std::min<int16_t>(2520, std::max<int16_t>(2400, staminaMinutes) + happyHourStaminaRegen);
+	}
+	else
+		staminaMinutes += regainStaminaMinutes;
+}
+
+void Player::useStamina()
+{
+	if(!g_config.getBoolean(ConfigManager::STAMINA_SYSTEM) || staminaMinutes == 0)
+		return;
+
+	time_t currentTime = time(NULL);
+	if(currentTime > nextUseStaminaTime)
+	{
+		time_t timePassed = currentTime - nextUseStaminaTime;
+		if(timePassed > 60)
+		{
+			if(staminaMinutes > 2)
+				staminaMinutes -= 2;
+			else
+				staminaMinutes = 0;
+
+			nextUseStaminaTime = currentTime + 120;
+		}
+		else
+		{
+			--staminaMinutes;
+			nextUseStaminaTime = currentTime + 60;
+		}
+		sendStats();
+	}
 }

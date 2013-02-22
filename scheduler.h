@@ -103,7 +103,7 @@ class Scheduler
 
 		uint32_t m_lastEventId;
 		std::priority_queue<SchedulerTask*, std::vector<SchedulerTask*>, lessSchedTask > m_eventList;
-		typedef std::set<uint32_t> EventIdSet;
+		typedef OTSERV_HASH_SET<uint32_t> EventIdSet;
 		EventIdSet m_eventIds;
 		SchedulerState m_threadState;
 };

@@ -138,6 +138,7 @@ uint32_t Scheduler::addEvent(SchedulerTask* task)
 			++m_lastEventId;
 			task->setEventId(m_lastEventId);
 		}
+
 		// insert the eventid in the list of active events
 		m_eventIds.insert(task->getEventId());
 

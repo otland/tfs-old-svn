@@ -297,7 +297,7 @@ bool Map::removeCreature(Creature* creature)
 	return false;
 }
 
-void Map::getSpectatorsInternal(SpectatorVec& list, const Position& centerPos, bool checkforduplicate,
+void Map::getSpectatorsInternal(SpectatorVec& list, const Position& centerPos,
 	int32_t minRangeX, int32_t maxRangeX,
 	int32_t minRangeY, int32_t maxRangeY,
 	int32_t minRangeZ, int32_t maxRangeZ)
@@ -349,13 +349,7 @@ void Map::getSpectatorsInternal(SpectatorVec& list, const Position& centerPos, b
 						if(cpos.x < (centerPos.x + minRangeX + offsetZ) || cpos.x > (centerPos.x + maxRangeX + offsetZ))
 							continue;
 
-						if(checkforduplicate)
-						{
-							if(std::find(list.begin(), list.end(), creature) == list.end())
-								list.push_back(creature);
-						}
-						else
-							list.push_back(creature);
+						list.insert(creature);
 					}
 					while(++node_iter != node_end);
 				}
@@ -372,8 +366,7 @@ void Map::getSpectatorsInternal(SpectatorVec& list, const Position& centerPos, b
 	}
 }
 
-void Map::getSpectators(SpectatorVec& list, const Position& centerPos,
-	bool checkforduplicate /*= false*/, bool multifloor /*= false*/,
+void Map::getSpectators(SpectatorVec& list, const Position& centerPos, bool multifloor /*= false*/,
 	int32_t minRangeX /*= 0*/, int32_t maxRangeX /*= 0*/,
 	int32_t minRangeY /*= 0*/, int32_t maxRangeY /*= 0*/)
 {
@@ -382,12 +375,25 @@ void Map::getSpectators(SpectatorVec& list, const Position& centerPos,
 
 	bool foundCache = false;
 	bool cacheResult = false;
-	if(minRangeX == 0 && maxRangeX == 0 && minRangeY == 0 && maxRangeY == 0 && multifloor == true && checkforduplicate == false)
+
+	minRangeX = (minRangeX == 0 ? -maxViewportX : -minRangeX);
+	maxRangeX = (maxRangeX == 0 ? maxViewportX : maxRangeX);
+	minRangeY = (minRangeY == 0 ? -maxViewportY : -minRangeY);
+	maxRangeY = (maxRangeY == 0 ? maxViewportY : maxRangeY);
+
+	if(minRangeX == -maxViewportX && maxRangeX == maxViewportX && minRangeY == -maxViewportY && maxRangeY == maxViewportY && multifloor)
 	{
 		SpectatorCache::iterator it = spectatorCache.find(centerPos);
 		if(it != spectatorCache.end())
 		{
-			list = *it->second;
+			if(!list.empty())
+			{
+				const SpectatorVec& cachedList = *it->second;
+				list.insert(cachedList.begin(), cachedList.end());
+			}
+			else
+				list = *it->second;
+
 			foundCache = true;
 		}
 		else
@@ -396,11 +402,6 @@ void Map::getSpectators(SpectatorVec& list, const Position& centerPos,
 
 	if(!foundCache)
 	{
-		minRangeX = (minRangeX == 0 ? -maxViewportX : -minRangeX);
-		maxRangeX = (maxRangeX == 0 ? maxViewportX : maxRangeX);
-		minRangeY = (minRangeY == 0 ? -maxViewportY : -minRangeY);
-		maxRangeY = (maxRangeY == 0 ? maxViewportY : maxRangeY);
-
 		int32_t minRangeZ;
 		int32_t maxRangeZ;
 
@@ -437,10 +438,7 @@ void Map::getSpectators(SpectatorVec& list, const Position& centerPos,
 			maxRangeZ = centerPos.z;
 		}
 
-		getSpectatorsInternal(list, centerPos, true,
-			minRangeX, maxRangeX,
-			minRangeY, maxRangeY,
-			minRangeZ, maxRangeZ);
+		getSpectatorsInternal(list, centerPos, minRangeX, maxRangeX, minRangeY, maxRangeY, minRangeZ, maxRangeZ);
 
 		if(cacheResult)
 			spectatorCache[centerPos].reset(new SpectatorVec(list));
@@ -459,52 +457,44 @@ const SpectatorVec& Map::getSpectators(const Position& centerPos)
 	SpectatorCache::iterator it = spectatorCache.find(centerPos);
 	if(it != spectatorCache.end())
 		return *it->second;
+
+	boost::shared_ptr<SpectatorVec> p(new SpectatorVec());
+	spectatorCache[centerPos] = p;
+	SpectatorVec& list = *p;
+
+	int32_t minRangeX = -maxViewportX;
+	int32_t maxRangeX = maxViewportX;
+	int32_t minRangeY = -maxViewportY;
+	int32_t maxRangeY = maxViewportY;
+	int32_t minRangeZ, maxRangeZ;
+
+	if(centerPos.z > 7)
+	{
+		//underground
+
+		//8->15
+		minRangeZ = std::max<int32_t>(centerPos.z - 2, 0);
+		maxRangeZ = std::min<int32_t>(centerPos.z + 2, MAP_MAX_LAYERS - 1);
+	}
+	//above ground
+	else if(centerPos.z == 6)
+	{
+		minRangeZ = 0;
+		maxRangeZ = 8;
+	}
+	else if(centerPos.z == 7)
+	{
+		minRangeZ = 0;
+		maxRangeZ = 9;
+	}
 	else
 	{
-		boost::shared_ptr<SpectatorVec> p(new SpectatorVec());
-		spectatorCache[centerPos] = p;
-		SpectatorVec& list = *p;
-
-		int32_t minRangeX = -maxViewportX;
-		int32_t maxRangeX = maxViewportX;
-		int32_t minRangeY = -maxViewportY;
-		int32_t maxRangeY = maxViewportY;
-
-		int32_t minRangeZ;
-		int32_t maxRangeZ;
-
-		if(centerPos.z > 7)
-		{
-			//underground
-
-			//8->15
-			minRangeZ = std::max<int32_t>(centerPos.z - 2, 0);
-			maxRangeZ = std::min<int32_t>(centerPos.z + 2, MAP_MAX_LAYERS - 1);
-		}
-		//above ground
-		else if(centerPos.z == 6)
-		{
-			minRangeZ = 0;
-			maxRangeZ = 8;
-		}
-		else if(centerPos.z == 7)
-		{
-			minRangeZ = 0;
-			maxRangeZ = 9;
-		}
-		else
-		{
-			minRangeZ = 0;
-			maxRangeZ = 7;
-		}
-
-		getSpectatorsInternal(list, centerPos, false,
-			minRangeX, maxRangeX,
-			minRangeY, maxRangeY,
-			minRangeZ, maxRangeZ);
-
-		return list;
+		minRangeZ = 0;
+		maxRangeZ = 7;
 	}
+
+	getSpectatorsInternal(list, centerPos, minRangeX, maxRangeX, minRangeY, maxRangeY, minRangeZ, maxRangeZ);
+	return list;
 }
 
 void Map::clearSpectatorCache()
@@ -593,12 +583,11 @@ bool Map::isSightClear(const Position& fromPos, const Position& toPos, bool floo
 
 const Tile* Map::canWalkTo(const Creature* creature, const Position& pos)
 {
-	switch(creature->getWalkCache(pos))
-	{
-		case 0: return NULL;
-		case 1: return getTile(pos);
-		break;
-	}
+	int32_t walkCache = creature->getWalkCache(pos);
+	if(walkCache == 0)
+		return NULL;
+	else if(walkCache == 1)
+		return getTile(pos);
 
 	//used for none-cached tiles
 	Tile* tile = getTile(pos);

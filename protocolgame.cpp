@@ -257,11 +257,8 @@ bool ProtocolGame::login(const std::string& name, uint32_t accnumber, const std:
 			return false;
 		}
 
-		player->lastIP = player->getIP();
-		player->lastLoginSaved = std::max(time(NULL), player->lastLoginSaved + 1);
 		player->setOperatingSystem((OperatingSystem_t)operatingSystem);
 
-		sendPendingStateEntered();
 		if(!g_game.placeCreature(player, player->getLoginPosition()))
 		{
 			if(!g_game.placeCreature(player, player->getTemplePosition(), false, true))
@@ -271,6 +268,8 @@ bool ProtocolGame::login(const std::string& name, uint32_t accnumber, const std:
 			}
 		}
 
+		player->lastIP = player->getIP();
+		player->lastLoginSaved = std::max(time(NULL), player->lastLoginSaved + 1);
 		m_acceptPackets = true;
 		return true;
 	}
@@ -319,7 +318,6 @@ bool ProtocolGame::connect(uint32_t playerId)
 	player->useThing2();
 	player->isConnecting = false;
 	player->client = this;
-	sendPendingStateEntered();
 	sendAddCreature(player, player->getPosition(), player->getTile()->__getIndexOfThing(player), false);
 	player->lastIP = player->getIP();
 	player->lastLoginSaved = std::max(time(NULL), player->lastLoginSaved + 1);
@@ -587,7 +585,7 @@ void ProtocolGame::parsePacket(NetworkMessage &msg)
 				break;
 
 			default:
-				sendCancelWalk();
+				addGameTaskTimed(DISPATCHER_TASK_EXPIRATION, &Game::playerCancelWalk, player->getID());
 				break;
 		}
 	}
@@ -1815,7 +1813,7 @@ void ProtocolGame::sendAddMarker(const Position& pos, uint8_t markType, const st
 	msg->AddString(desc);
 }
 
-void ProtocolGame::sendReLoginWindow()
+void ProtocolGame::sendReLoginWindow(uint8_t unfairFightReduction)
 {
 	NetworkMessage_ptr msg = getOutputBuffer();
 	if(!msg)
@@ -1823,7 +1821,7 @@ void ProtocolGame::sendReLoginWindow()
 
 	TRACK_MESSAGE(msg);
 	msg->AddByte(0x28);
-	msg->AddByte(0xFF);
+	msg->AddByte(unfairFightReduction);
 }
 
 void ProtocolGame::sendStats()
@@ -2774,12 +2772,6 @@ void ProtocolGame::sendPingBack()
 
 void ProtocolGame::sendDistanceShoot(const Position& from, const Position& to, uint8_t type)
 {
-	if(type > NM_SHOOT_LAST || type == NM_SHOOT_UNK1 || type == NM_SHOOT_UNK2 || type == NM_SHOOT_UNK3)
-		return;
-
-	if(!canSee(from) && !canSee(to))
-		return;
-
 	NetworkMessage_ptr msg = getOutputBuffer();
 	if(!msg)
 		return;
@@ -2790,9 +2782,6 @@ void ProtocolGame::sendDistanceShoot(const Position& from, const Position& to, u
 
 void ProtocolGame::sendMagicEffect(const Position& pos, uint8_t type)
 {
-	if(type > NM_ME_LAST)
-		return;
-
 	if(!canSee(pos))
 		return;
 
@@ -2944,6 +2933,7 @@ void ProtocolGame::sendAddCreature(const Creature* creature, const Position& pos
 	else
 		msg->AddByte(0x00);
 
+	sendPendingStateEntered();
 	sendEnterWorld();
 
 	AddMapDescription(msg, pos);
@@ -3044,6 +3034,7 @@ void ProtocolGame::sendAddCreature(const Creature* creature, const Position& pos
 			sendVIP(entry.guid, entry.name, entry.description, entry.icon, entry.notify, vipStatus);
 		}
 	}
+	sendBasicData();
 	player->sendIcons();
 }
 
@@ -3608,7 +3599,7 @@ void ProtocolGame::AddPlayerStats(NetworkMessage_ptr msg)
 
 	msg->AddByte(player->getPlayerInfo(PLAYERINFO_SOUL));
 
-	msg->AddU16(0x9D8); // stamina minutes
+	msg->AddU16(player->getStaminaMinutes());
 
 	msg->AddU16(player->getBaseSpeed() / 2);
 

@@ -830,7 +830,6 @@ bool Items::parseItemNode(xmlNodePtr itemNode, uint32_t id)
 				if(readXMLString(itemAttributesNode, "value", strValue))
 				{
 					it.ammoType = getAmmoType(strValue);
-
 					if(it.ammoType == AMMO_NONE)
 						std::cout << "Warning: [Items::loadFromXml] " << "Unknown ammoType " << strValue << std::endl;
 				}
@@ -945,32 +944,36 @@ bool Items::parseItemNode(xmlNodePtr itemNode, uint32_t id)
 			{
 				if(readXMLInteger(itemAttributesNode, "value", intValue))
 				{
-					it.getAbilities()->regeneration = true;
-					it.getAbilities()->healthGain = intValue;
+					Abilities* abilities = it.getAbilities();
+					abilities->regeneration = true;
+					abilities->healthGain = intValue;
 				}
 			}
 			else if(tmpStrValue == "healthticks")
 			{
 				if(readXMLInteger(itemAttributesNode, "value", intValue))
 				{
-					it.getAbilities()->regeneration = true;
-					it.getAbilities()->healthTicks = intValue;
+					Abilities* abilities = it.getAbilities();
+					abilities->regeneration = true;
+					abilities->healthTicks = intValue;
 				}
 			}
 			else if(tmpStrValue == "managain")
 			{
 				if(readXMLInteger(itemAttributesNode, "value", intValue))
 				{
-					it.getAbilities()->regeneration = true;
-					it.getAbilities()->manaGain = intValue;
+					Abilities* abilities = it.getAbilities();
+					abilities->regeneration = true;
+					abilities->manaGain = intValue;
 				}
 			}
 			else if(tmpStrValue == "manaticks")
 			{
 				if(readXMLInteger(itemAttributesNode, "value", intValue))
 				{
-					it.getAbilities()->regeneration = true;
-					it.getAbilities()->manaTicks = intValue;
+					Abilities* abilities = it.getAbilities();
+					abilities->regeneration = true;
+					abilities->manaTicks = intValue;
 				}
 			}
 			else if(tmpStrValue == "manashield")

@@ -177,7 +177,6 @@ void Raids::checkRaids()
 					break;
 				}
 			}
-
 		}
 	}
 	checkRaidsEvent = g_scheduler.addEvent(createSchedulerTask(CHECK_RAIDS_INTERVAL * 1000, boost::bind(&Raids::checkRaids, this)));

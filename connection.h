@@ -54,6 +54,7 @@ class ConnectionManager
 	public:
 		~ConnectionManager()
 		{
+			closeAll();
 		}
 
 		static ConnectionManager* getInstance()

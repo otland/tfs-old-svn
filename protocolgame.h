@@ -207,7 +207,7 @@ class ProtocolGame : public Protocol
 		void sendStats();
 		void sendBasicData();
 		void sendTextMessage(MessageClasses mclass, const std::string& message, Position* pos = NULL, uint32_t exp = 0, TextColor_t color = TEXTCOLOR_NONE);
-		void sendReLoginWindow();
+		void sendReLoginWindow(uint8_t unfairFightReduction);
 
 		void sendTutorial(uint8_t tutorialId);
 		void sendAddMarker(const Position& pos, uint8_t markType, const std::string& desc);

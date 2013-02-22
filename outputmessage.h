@@ -27,6 +27,7 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/bind.hpp>
 #include "tools.h"
+
 #include <list>
 
 #include <boost/utility.hpp>
@@ -68,12 +69,15 @@ class OutputMessage : public NetworkMessage, boost::noncopyable
 
 		Protocol* getProtocol() { return m_protocol;}
 		Connection_ptr getConnection() { return m_connection;}
-		uint64_t getFrame() const { return m_frame;}
+		int64_t getFrame() const { return m_frame;}
 
 		//void setOutputBufferStart(uint32_t pos) {m_outputBufferStart = pos;}
 		//uint32_t getOutputBufferStart() const {return m_outputBufferStart;}
 
-	#ifdef __TRACK_NETWORK__
+		void setSent(bool v) { sent = v; }
+		bool isSent() const { return sent; }
+
+#ifdef __TRACK_NETWORK__
 		virtual void Track(const std::string& file, long line, const std::string& func)
 		{
 			if(last_uses.size() >= 25)
@@ -103,7 +107,8 @@ class OutputMessage : public NetworkMessage, boost::noncopyable
 #endif
 
 		template <typename T>
-		inline void add_header(T add){
+		inline void add_header(T add)
+		{
 			if((int32_t)m_outputBufferStart - (int32_t)sizeof(T) < 0)
 			{
 				std::cout << "Error: [OutputMessage::add_header] m_outputBufferStart(" << m_outputBufferStart <<
@@ -134,19 +139,20 @@ class OutputMessage : public NetworkMessage, boost::noncopyable
 
 		friend class OutputMessagePool;
 
-		void setProtocol(Protocol* protocol){ m_protocol = protocol;}
-		void setConnection(Connection_ptr connection){ m_connection = connection;}
+		void setProtocol(Protocol* protocol) { m_protocol = protocol; }
+		void setConnection(Connection_ptr connection) { m_connection = connection; }
 
-		void setState(OutputMessageState state) { m_state = state;}
-		OutputMessageState getState() const { return m_state;}
+		void setState(OutputMessageState state) { m_state = state; }
+		OutputMessageState getState() const { return m_state; }
 
-		void setFrame(uint64_t frame) { m_frame = frame;}
+		void setFrame(int64_t frame) { m_frame = frame; }
 
 		Protocol* m_protocol;
 		Connection_ptr m_connection;
 
 		uint32_t m_outputBufferStart;
-		uint64_t m_frame;
+		int64_t m_frame;
+		bool sent;
 
 		OutputMessageState m_state;
 };
@@ -173,7 +179,7 @@ class OutputMessagePool
 
 		void send(OutputMessage_ptr msg);
 		void sendAll();
-		void stop() {m_isOpen = false;}
+		void stop() { m_isOpen = false; }
 		OutputMessage_ptr getOutputMessage(Protocol* protocol, bool autosend = true);
 		void startExecutionFrame();
 
@@ -185,6 +191,7 @@ class OutputMessagePool
 		size_t getAvailableMessageCount() const {return m_outputMessages.size();}
 		size_t getAutoMessageCount() const {return m_autoSendOutputMessages.size();}
 		void addToAutoSend(OutputMessage_ptr msg);
+		void markAsDirty(OutputMessage_ptr msg);
 
 	protected:
 		void configureOutputMessage(OutputMessage_ptr msg, Protocol* protocol, bool autosend);
@@ -198,8 +205,9 @@ class OutputMessagePool
 		InternalOutputMessageList m_allOutputMessages;
 		OutputMessageMessageList m_autoSendOutputMessages;
 		OutputMessageMessageList m_toAddQueue;
+		OutputMessageMessageList m_dirtyOutputMessages;
 		boost::recursive_mutex m_outputPoolLock;
-		uint64_t m_frameTime;
+		int64_t m_frameTime;
 		bool m_isOpen;
 };
 

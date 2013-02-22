@@ -53,7 +53,7 @@ extern void toUpperCaseString(std::string& source);
 extern std::string asLowerCaseString(const std::string& source);
 extern std::string asUpperCaseString(const std::string& source);
 
-extern bool utf8ToLatin1(char* intext, std::string& outtext);
+extern bool utf8ToLatin1(const char* intext, std::string& outtext);
 extern bool readXMLInteger(xmlNodePtr node, const char* tag, int& value);
 #if (defined __WINDOWS__ || defined WIN32) && !defined __GNUC__
 extern bool readXMLInteger(xmlNodePtr node, const char* tag, int32_t& value);

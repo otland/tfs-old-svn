@@ -19,7 +19,6 @@
 // Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 //////////////////////////////////////////////////////////////////////
 
-
 #ifndef __OTSERV_TILE_H__
 #define __OTSERV_TILE_H__
 
@@ -38,8 +37,7 @@ class QTreeLeafNode;
 class BedItem;
 
 typedef std::vector<Creature*> CreatureVector;
-typedef std::list<Creature*> SpectatorVec;
-typedef std::list<Player*> PlayerList;
+typedef OTSERV_HASH_SET<Creature*> SpectatorVec;
 typedef std::map<Position, boost::shared_ptr<SpectatorVec> > SpectatorCache;
 typedef std::vector<Item*> ItemVector;
 
@@ -162,8 +160,10 @@ class Tile : public Cylinder
 
 		Creature* getTopCreature();
 		const Creature* getTopCreature() const;
+		const Creature* getBottomCreature() const;
 		Creature* getTopVisibleCreature(const Creature* creature);
 		const Creature* getTopVisibleCreature(const Creature* creature) const;
+		const Creature* getBottomVisibleCreature(const Creature* creature) const;
 		Item* getTopTopItem();
 		Item* getTopDownItem();
 		bool isMoveableBlocking() const;

@@ -137,7 +137,10 @@
 	deSpawnRange = 2
 	deSpawnRadius = 50
 
-	-- SqLite
+	-- Stamina
+	staminaSystem = "yes"
+
+	-- SQLite
 	sqliteDatabase = "forgottenserver.s3db"
 
 	-- SQL

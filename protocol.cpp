@@ -67,7 +67,8 @@ void Protocol::onRecvMessage(NetworkMessage& msg)
 		#ifdef __DEBUG_NET_DETAIL__
 		std::cout << "Protocol::onRecvMessage - decrypt" << std::endl;
 		#endif
-		XTEA_decrypt(msg);
+		if(!XTEA_decrypt(msg))
+			return;
 	}
 	parsePacket(msg);
 }
@@ -90,7 +91,7 @@ void Protocol::releaseProtocol()
 	if(m_refCount > 0)
 	{
 		//Reschedule it and try again.
-		g_scheduler.addEvent( createSchedulerTask(SCHEDULER_MINTICKS,
+		g_scheduler.addEvent(createSchedulerTask(SCHEDULER_MINTICKS,
 			boost::bind(&Protocol::releaseProtocol, this)));
 	}
 	else
@@ -215,7 +216,9 @@ bool Protocol::RSA_decrypt(RSA* rsa, NetworkMessage& msg)
 
 	if(msg.GetByte() != 0)
 	{
+		#ifdef __DEBUG_NET__
 		std::cout << "[Warning - Protocol::RSA_decrypt] First byte != 0" << std::endl;
+		#endif
 		return false;
 	}
 	return true;

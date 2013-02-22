@@ -68,6 +68,7 @@ class ConfigManager
 			OPTIMIZE_DATABASE,
 			MARKET_ENABLED,
 			MARKET_PREMIUM,
+			STAMINA_SYSTEM,
 			LAST_BOOLEAN_CONFIG /* this must be the last one */
 		};
 

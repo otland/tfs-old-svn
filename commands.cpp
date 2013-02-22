@@ -1053,7 +1053,7 @@ void Commands::removeThing(Player* player, const std::string& cmd, const std::st
 {
 	Position pos = player->getPosition();
 	pos = getNextPosition(player->direction, pos);
-	Tile *removeTile = g_game.getMap()->getTile(pos);
+	Tile* removeTile = g_game.getMap()->getTile(pos);
 	if(!removeTile)
 	{
 		player->sendTextMessage(MSG_STATUS_SMALL, "Tile not found.");
@@ -1061,7 +1061,7 @@ void Commands::removeThing(Player* player, const std::string& cmd, const std::st
 		return;
 	}
 
-	Thing *thing = removeTile->getTopVisibleThing(player);
+	Thing* thing = removeTile->getTopVisibleThing(player);
 	if(!thing)
 	{
 		player->sendTextMessage(MSG_STATUS_SMALL, "Object not found.");
@@ -1069,13 +1069,13 @@ void Commands::removeThing(Player* player, const std::string& cmd, const std::st
 		return;
 	}
 
-	if(Creature *creature = thing->getCreature())
+	if(Creature* creature = thing->getCreature())
 	{
 		g_game.removeCreature(creature, true);
 	}
 	else
 	{
-		Item *item = thing->getItem();
+		Item* item = thing->getItem();
 		if(item)
 		{
 			if(item->isGroundTile())
@@ -1165,7 +1165,7 @@ void Commands::addSkill(Player* player, const std::string& cmd, const std::strin
 	}
 
 	if(param2[0] == 'l' || param2[0] == 'e')
-		paramPlayer->addExperience(Player::getExpForLevel(paramPlayer->getLevel() + 1) - paramPlayer->experience);
+		paramPlayer->addExperience(Player::getExpForLevel(paramPlayer->getLevel() + 1) - paramPlayer->experience, false, false);
 	else if(param2[0] == 'm')
 		paramPlayer->addManaSpent(paramPlayer->vocation->getReqMana(paramPlayer->getBaseMagicLevel() + 1) - paramPlayer->manaSpent, false);
 	else

@@ -48,8 +48,8 @@ template<class T> class AutoList
 		}
 
 		typedef std::map<uint32_t, T*> list_type;
-		list_type list;
 
+		list_type list;
 		typedef typename list_type::iterator listiterator;
 };
 
@@ -82,7 +82,7 @@ class AutoID
 				list.erase(it);
 		}
 
-		typedef std::set<uint32_t> list_type;
+		typedef OTSERV_HASH_SET<uint32_t> list_type;
 
 		uint32_t auto_id;
 		static OTSYS_THREAD_LOCKVAR autoIDLock;

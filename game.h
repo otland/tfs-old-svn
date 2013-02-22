@@ -256,11 +256,11 @@ class Game
 
 		void getWorldLightInfo(LightInfo& lightInfo) const;
 
-		void getSpectators(SpectatorVec& list, const Position& centerPos, bool checkforduplicate = false, bool multifloor = false,
+		void getSpectators(SpectatorVec& list, const Position& centerPos, bool multifloor = false,
 			int32_t minRangeX = 0, int32_t maxRangeX = 0,
 			int32_t minRangeY = 0, int32_t maxRangeY = 0)
 		{
-			map->getSpectators(list, centerPos, checkforduplicate, multifloor, minRangeX, maxRangeX, minRangeY, maxRangeY);
+			map->getSpectators(list, centerPos, multifloor, minRangeX, maxRangeX, minRangeY, maxRangeY);
 		}
 
 		const SpectatorVec& getSpectators(const Position& centerPos) {return map->getSpectators(centerPos);}
@@ -382,6 +382,7 @@ class Game
 		bool playerReportBug(uint32_t playerId, const std::string& bug);
 		bool playerDebugAssert(uint32_t playerId, const std::string& assertLine, const std::string& date, const std::string& description, const std::string& comment);
 		bool playerAnswerModalWindow(uint32_t playerId, uint32_t modalWindowId, uint8_t button, uint8_t choice);
+		bool playerCancelWalk(uint32_t playerId);
 
 		bool internalStartTrade(Player* player, Player* partner, Item* tradeItem);
 		bool internalCloseTrade(Player* player);
@@ -598,7 +599,6 @@ class Game
 		int32_t lightHour;
 		int32_t lightHourDelta;
 
-		uint32_t maxPlayers;
 		uint32_t inFightTicks;
 
 		GameState_t gameState;

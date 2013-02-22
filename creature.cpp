@@ -740,7 +740,7 @@ void Creature::onCreatureMove(const Creature* creature, const Tile* newTile, con
 	{
 		if(hasFollowPath)
 		{
-			isUpdatingPath = true;
+			isUpdatingPath = false;
 			g_dispatcher.addTask(createTask(
 				boost::bind(&Game::updateCreatureWalk, &g_game, getID())));
 		}
@@ -797,7 +797,7 @@ void Creature::onDeath()
 		}
 	}
 
-	for(CountMap::iterator it = damageMap.begin(); it != damageMap.end(); ++it)
+	for(CountMap::iterator it = damageMap.begin(), end = damageMap.end(); it != end; ++it)
 	{
 		if(Creature* attacker = g_game.getCreatureByID((*it).first))
 			attacker->onAttackedCreatureKilled(this);
@@ -872,10 +872,9 @@ bool Creature::getKillers(Creature** _lastHitCreature, Creature** _mostDamageCre
 	*_lastHitCreature = g_game.getCreatureByID(lastHitCreature);
 
 	int32_t mostDamage = 0;
-	CountBlock_t cb;
-	for(CountMap::iterator it = damageMap.begin(); it != damageMap.end(); ++it)
+	for(CountMap::const_iterator it = damageMap.begin(), end = damageMap.end(); it != end; ++it)
 	{
-		cb = it->second;
+		CountBlock_t cb = it->second;
 		if((cb.total > mostDamage && (OTSYS_TIME() - cb.ticks <= g_game.getInFightTicks())))
 		{
 			if((*_mostDamageCreature = g_game.getCreatureByID((*it).first)))
@@ -900,14 +899,16 @@ Item* Creature::getCorpse()
 	return corpse;
 }
 
-void Creature::changeHealth(int32_t healthChange)
+void Creature::changeHealth(int32_t healthChange, bool sendHealthChange/* = true*/)
 {
+	int32_t oldHealth = health;
 	if(healthChange > 0)
 		health += std::min(healthChange, getMaxHealth() - health);
 	else
 		health = std::max<int32_t>(0, health + healthChange);
 
-	g_game.addCreatureHealth(this);
+	if(sendHealthChange && oldHealth != health)
+		g_game.addCreatureHealth(this);
 }
 
 void Creature::changeMana(int32_t manaChange)
@@ -920,8 +921,7 @@ void Creature::changeMana(int32_t manaChange)
 
 void Creature::drainHealth(Creature* attacker, CombatType_t combatType, int32_t damage)
 {
-	changeHealth(-damage);
-
+	changeHealth(-damage, false);
 	if(attacker)
 		attacker->onAttackedCreatureDrainHealth(this, damage);
 }
@@ -1108,8 +1108,7 @@ double Creature::getDamageRatio(Creature* attacker) const
 
 uint64_t Creature::getGainedExperience(Creature* attacker) const
 {
-	uint64_t lostExperience = getLostExperience();
-	return attacker->getPlayer() ? ((uint64_t)std::floor(getDamageRatio(attacker) * lostExperience * g_game.getExperienceStage(attacker->getPlayer()->getLevel()))) : ((uint64_t)std::floor(getDamageRatio(attacker) * lostExperience * g_config.getNumber(ConfigManager::RATE_EXPERIENCE)));
+	return std::floor(getDamageRatio(attacker) * getLostExperience());
 }
 
 void Creature::addDamagePoints(Creature* attacker, int32_t damagePoints)
@@ -1257,36 +1256,24 @@ bool Creature::onKilledCreature(Creature* target, bool lastHit/* = true*/)
 
 void Creature::onGainExperience(uint64_t gainExp, Creature* target)
 {
-	if(gainExp == 0)
-		return;
-
-	if(getMaster())
+	if(gainExp != 0 && getMaster())
 	{
 		gainExp = gainExp / 2;
 		getMaster()->onGainExperience(gainExp, target);
-	}
 
-	const Position& targetPos = getPosition();
-	Player* thisPlayer = getPlayer();
-	if(thisPlayer)
-	{
-		std::ostringstream ss;
-		ss << "You gained " << gainExp << " experience points.";
-		thisPlayer->sendExperienceMessage(MSG_EXPERIENCE, ss.str(), targetPos, gainExp, TEXTCOLOR_WHITE_EXP);
-	}
+		const Position& targetPos = getPosition();
 
-	std::ostringstream ssExp;
-	ssExp << ucfirst(getNameDescription()) << " gained " << gainExp << " experience points.";
-	std::string strExp = ssExp.str();
+		std::ostringstream ssExp;
+		ssExp << ucfirst(getNameDescription()) << " gained " << gainExp << " experience points.";
+		std::string strExp = ssExp.str();
 
-	Player* tmpPlayer = NULL;
-	SpectatorVec list;
-	g_game.getSpectators(list, targetPos);
-	for(SpectatorVec::const_iterator it = list.begin(), end = list.end(); it != end; ++it)
-	{
-		if((tmpPlayer = (*it)->getPlayer()))
+		SpectatorVec list;
+		g_game.getSpectators(list, targetPos);
+
+		Player* tmpPlayer;
+		for(SpectatorVec::const_iterator it = list.begin(), end = list.end(); it != end; ++it)
 		{
-			if(tmpPlayer != thisPlayer)
+			if((tmpPlayer = (*it)->getPlayer()))
 				tmpPlayer->sendExperienceMessage(MSG_EXPERIENCE_OTHERS, strExp, targetPos, gainExp, TEXTCOLOR_WHITE_EXP);
 		}
 	}
@@ -1294,33 +1281,7 @@ void Creature::onGainExperience(uint64_t gainExp, Creature* target)
 
 void Creature::onGainSharedExperience(uint64_t gainExp)
 {
-	if(gainExp == 0)
-		return;
-
-	const Position& targetPos = getPosition();
-	Player* thisPlayer = getPlayer();
-	if(thisPlayer)
-	{
-		std::ostringstream ss;
-		ss << "You gained " << gainExp << " experience points.";
-		thisPlayer->sendExperienceMessage(MSG_EXPERIENCE, ss.str(), targetPos, gainExp, TEXTCOLOR_WHITE_EXP);
-	}
-
-	std::ostringstream ssExp;
-	ssExp << getNameDescription() << " gained " << gainExp << " experience points.";
-	std::string strExp = ssExp.str();
-
-	Player* tmpPlayer = NULL;
-	SpectatorVec list;
-	g_game.getSpectators(list, targetPos);
-	for(SpectatorVec::const_iterator it = list.begin(), end = list.end(); it != end; ++it)
-	{
-		if((tmpPlayer = (*it)->getPlayer()))
-		{
-			if(tmpPlayer != thisPlayer)
-				tmpPlayer->sendExperienceMessage(MSG_EXPERIENCE_OTHERS, strExp, targetPos, gainExp, TEXTCOLOR_WHITE_EXP);
-		}
-	}
+	//
 }
 
 void Creature::onAttackedCreatureBlockHit(Creature* target, BlockType_t blockType)

@@ -177,7 +177,7 @@ bool readXMLFloat(xmlNodePtr node, const char* tag, float& value)
 	return false;
 }
 
-bool utf8ToLatin1(char* intext, std::string& outtext)
+bool utf8ToLatin1(const char* intext, std::string& outtext)
 {
 	outtext = "";
 
@@ -190,7 +190,7 @@ bool utf8ToLatin1(char* intext, std::string& outtext)
 
 	int32_t outlen = (inlen << 1) + 1;
 	unsigned char* outbuf = new uint8_t[outlen];
-	int32_t res = UTF8Toisolat1(outbuf, &outlen, (unsigned char*)intext, &inlen);
+	int32_t res = UTF8Toisolat1(outbuf, &outlen, (const unsigned char*)intext, &inlen);
 	if(res < 0)
 	{
 		delete[] outbuf;

@@ -252,18 +252,42 @@ const Creature* Tile::getTopCreature() const
 	return NULL;
 }
 
+const Creature* Tile::getBottomCreature() const
+{
+	if(const CreatureVector* creatures = getCreatures())
+	{
+		if(!creatures->empty())
+			return *creatures->rbegin();
+	}
+	return NULL;
+}
+
 Creature* Tile::getTopVisibleCreature(const Creature* creature)
 {
 	if(CreatureVector* creatures = getCreatures())
 	{
-		if(creature && creature->getPlayer() && creature->getPlayer()->isAccessPlayer())
-			return getTopCreature();
+		if(creature)
+		{
+			const Player* player = creature->getPlayer();
+			if(player && player->isAccessPlayer())
+				return getTopCreature();
+
+			for(CreatureVector::const_iterator it = creatures->begin(), end = creatures->end(); it != end; ++it)
+			{
+				if(creature->canSeeCreature(*it))
+					return *it;
+			}
+		}
 		else
 		{
-			for(CreatureVector::const_iterator cit = creatures->begin(); cit != creatures->end(); ++cit)
+			for(CreatureVector::const_iterator it = creatures->begin(), end = creatures->end(); it != end; ++it)
 			{
-				if ((creature && creature->canSeeCreature(*cit)) || (!creature && !((*cit)->isInvisible() || ((*cit)->getPlayer() && (*cit)->getPlayer()->isInGhostMode()))))
-					return (*cit);
+				if(!(*it)->isInvisible())
+				{
+					const Player* player = (*it)->getPlayer();
+					if(!player || !player->isInGhostMode())
+						return *it;
+				}
 			}
 		}
 	}
@@ -274,14 +298,60 @@ const Creature* Tile::getTopVisibleCreature(const Creature* creature) const
 {
 	if(const CreatureVector* creatures = getCreatures())
 	{
-		if(creature && creature->getPlayer() && creature->getPlayer()->isAccessPlayer())
-			return getTopCreature();
+		if(creature)
+		{
+			const Player* player = creature->getPlayer();
+			if(player && player->isAccessPlayer())
+				return getTopCreature();
+
+			for(CreatureVector::const_iterator it = creatures->begin(), end = creatures->end(); it != end; ++it)
+			{
+				if(creature->canSeeCreature(*it))
+					return *it;
+			}
+		}
 		else
 		{
-			for(CreatureVector::const_iterator cit = creatures->begin(); cit != creatures->end(); ++cit)
+			for(CreatureVector::const_iterator it = creatures->begin(), end = creatures->end(); it != end; ++it)
 			{
-				if ((creature && creature->canSeeCreature(*cit)) || (!creature && !((*cit)->isInvisible() || ((*cit)->getPlayer() && (*cit)->getPlayer()->isInGhostMode()))))
-					return (*cit);
+				if(!(*it)->isInvisible())
+				{
+					const Player* player = (*it)->getPlayer();
+					if(!player || !player->isInGhostMode())
+						return *it;
+				}
+			}
+		}
+	}
+	return NULL;
+}
+
+const Creature* Tile::getBottomVisibleCreature(const Creature* creature) const
+{
+	if(const CreatureVector* creatures = getCreatures())
+	{
+		if(creature)
+		{
+			const Player* player = creature->getPlayer();
+			if(player && player->isAccessPlayer())
+				return getBottomCreature();
+
+			for(CreatureVector::const_reverse_iterator it = creatures->rbegin(), end = creatures->rend(); it != end; ++it)
+			{
+				if(creature->canSeeCreature(*it))
+					return *it;
+			}
+		}
+		else
+		{
+			for(CreatureVector::const_reverse_iterator it = creatures->rbegin(), end = creatures->rend(); it != end; ++it)
+			{
+				if(!(*it)->isInvisible())
+				{
+					const Player* player = (*it)->getPlayer();
+					if(!player || !player->isInGhostMode())
+						return *it;
+				}
 			}
 		}
 	}
@@ -329,9 +399,8 @@ Item* Tile::getItemByTopOrder(int32_t topOrder)
 
 Thing* Tile::getTopVisibleThing(const Creature* creature)
 {
-	Thing* thing = NULL;
-	thing = getTopVisibleCreature(creature);
-	if(thing != NULL)
+	Thing* thing = getTopVisibleCreature(creature);
+	if(thing)
 		return thing;
 
 	TileItemVector* items = getItemList();
@@ -463,8 +532,8 @@ void Tile::moveCreature(Creature* creature, Cylinder* toCylinder, bool forceTele
 	SpectatorVec list;
 	SpectatorVec::iterator it;
 
-	g_game.getSpectators(list, oldPos, false, true);
-	g_game.getSpectators(list, newPos, true, true);
+	g_game.getSpectators(list, oldPos, true);
+	g_game.getSpectators(list, newPos, true);
 
 	std::vector<uint32_t> oldStackPosVector;
 	for(it = list.begin(); it != list.end(); ++it)

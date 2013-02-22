@@ -91,8 +91,7 @@ template<class T> class lessPointer : public std::binary_function<T*, T*, bool>
 		bool operator()(T*& t1, T*& t2) { return *t1 < *t2; }
 };
 
-typedef std::list<Creature*> SpectatorVec;
-typedef std::list<Player*> PlayerList;
+typedef OTSERV_HASH_SET<Creature*> SpectatorVec;
 typedef std::map<Position, boost::shared_ptr<SpectatorVec> > SpectatorCache;
 
 #define FLOOR_BITS 3
@@ -266,14 +265,14 @@ class Map
 		SpectatorCache spectatorCache;
 
 		// Actually scans the map for spectators
-		void getSpectatorsInternal(SpectatorVec& list, const Position& centerPos, bool checkforduplicate,
+		void getSpectatorsInternal(SpectatorVec& list, const Position& centerPos,
 			int32_t minRangeX, int32_t maxRangeX,
 			int32_t minRangeY, int32_t maxRangeY,
 			int32_t minRangeZ, int32_t maxRangeZ);
 
 		// Use this when a custom spectator vector is needed, this support many
 		// more parameters than the heavily cached version below.
-		void getSpectators(SpectatorVec& list, const Position& centerPos, bool checkforduplicate = false, bool multifloor = false,
+		void getSpectators(SpectatorVec& list, const Position& centerPos, bool multifloor = false,
 			int32_t minRangeX = 0, int32_t maxRangeX = 0,
 			int32_t minRangeY = 0, int32_t maxRangeY = 0);
 		// The returned SpectatorVec is a temporary and should not be kept around

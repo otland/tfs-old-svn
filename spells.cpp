@@ -794,7 +794,7 @@ bool Spell::playerInstantSpellCheck(Player* player, const Position& toPos)
 				return false;
 			}
 
-			if(blockingCreature && tile->getTopVisibleCreature(player) != NULL)
+			if(blockingCreature && tile->getBottomVisibleCreature(player) != NULL)
 			{
 				player->sendCancelMessage(RET_NOTENOUGHROOM);
 				g_game.addMagicEffect(player->getPosition(), NM_ME_POFF);
@@ -860,7 +860,8 @@ bool Spell::playerRuneSpellCheck(Player* player, const Position& toPos)
 				return false;
 			}
 
-			if(blockingCreature && tile->getTopVisibleCreature(player) != NULL)
+			const Creature* topVisibleCreature = tile->getBottomVisibleCreature(player);
+			if(blockingCreature && topVisibleCreature)
 			{
 				player->sendCancelMessage(RET_NOTENOUGHROOM);
 				g_game.addMagicEffect(player->getPosition(), NM_ME_POFF);
@@ -873,16 +874,16 @@ bool Spell::playerRuneSpellCheck(Player* player, const Position& toPos)
 				return false;
 			}
 
-			if(needTarget && tile->getTopVisibleCreature(player) == NULL)
+			if(needTarget && !topVisibleCreature)
 			{
 				player->sendCancelMessage(RET_CANONLYUSETHISRUNEONCREATURES);
 				g_game.addMagicEffect(player->getPosition(), NM_ME_POFF);
 				return false;
 			}
 
-			if(isAggressive && needTarget && player->getSecureMode() == SECUREMODE_ON && tile->getTopVisibleCreature(player))
+			if(isAggressive && needTarget && player->getSecureMode() == SECUREMODE_ON && topVisibleCreature)
 			{
-				Player* targetPlayer = tile->getTopVisibleCreature(player)->getPlayer();
+				const Player* targetPlayer = topVisibleCreature->getPlayer();
 				if(targetPlayer && targetPlayer != player && player->getSkullClient(targetPlayer) == SKULL_NONE && !Combat::isInPvpZone(player, targetPlayer))
 				{
 					player->sendCancelMessage(RET_TURNSECUREMODETOATTACKUNMARKEDPLAYERS);
@@ -1764,7 +1765,6 @@ bool InstantSpell::canCast(const Player* player) const
 		if(vocSpellMap.empty() || vocSpellMap.find(player->getVocationId()) != vocSpellMap.end())
 			return true;
 	}
-
 	return false;
 }
 
@@ -2154,8 +2154,19 @@ bool RuneSpell::executeUse(Player* player, Item* item, const PositionEx& posFrom
 	if(m_scripted)
 	{
 		LuaVariant var;
-		if(creatureId != 0 && needTarget)
+		if(needTarget)
 		{
+			if(creatureId == 0)
+			{
+				Tile* tileTo = g_game.getTile(posTo);
+				if(tileTo)
+				{
+					const Creature* creature = tileTo->getBottomVisibleCreature(player);
+					if(creature)
+						creatureId = creature->getID();
+				}
+			}
+
 			var.type = VARIANT_NUMBER;
 			var.number = creatureId;
 		}
