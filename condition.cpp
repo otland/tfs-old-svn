@@ -866,22 +866,17 @@ bool ConditionRegeneration::executeCondition(Creature* creature, int32_t interva
 					ss << ucfirst(player->getNameDescription()) << " was healed for " << realHealthGain << " hitpoint" << (realHealthGain != 1 ? "s." : ".");
 					std::string message = ss.str();
 
-					Player* tmpPlayer = NULL;
+					std::ostringstream tmpSs;
+					tmpSs << "You were healed for " << realHealthGain << " hitpoint" << (realHealthGain != 1 ? "s." : ".");
+					player->sendHealMessage(MSG_HEALED, tmpSs.str(), player->getPosition(), realHealthGain, TEXTCOLOR_MAYABLUE);
+
 					SpectatorVec list;
-					g_game.getSpectators(list, player->getPosition());
+					g_game.getSpectators(list, player->getPosition(), false, true);
 					for(SpectatorVec::const_iterator it = list.begin(), end = list.end(); it != end; ++it)
 					{
-						if((tmpPlayer = (*it)->getPlayer()))
-						{
-							if(tmpPlayer == player)
-							{
-								std::ostringstream tmpSs;
-								tmpSs << "You were healed for " << realHealthGain << " hitpoint" << (realHealthGain != 1 ? "s." : ".");
-								tmpPlayer->sendHealMessage(MSG_HEALED, tmpSs.str(), player->getPosition(), realHealthGain, TEXTCOLOR_MAYABLUE);
-							}
-							else
-								tmpPlayer->sendHealMessage(MSG_HEALED_OTHERS, message, player->getPosition(), realHealthGain, TEXTCOLOR_MAYABLUE);
-						}
+						Player* tmpPlayer = (*it)->getPlayer();
+						if(tmpPlayer != player)
+							tmpPlayer->sendHealMessage(MSG_HEALED_OTHERS, message, player->getPosition(), realHealthGain, TEXTCOLOR_MAYABLUE);
 					}
 				}
 			}

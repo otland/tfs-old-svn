@@ -208,23 +208,17 @@ void Container::onAddContainerItem(Item* item)
 	const Position& cylinderMapPos = getPosition();
 
 	SpectatorVec list;
-	SpectatorVec::iterator it;
-	g_game.getSpectators(list, cylinderMapPos, false, 2, 2, 2, 2);
+	g_game.getSpectators(list, cylinderMapPos, false, true, 2, 2, 2, 2);
+
+	SpectatorVec::const_iterator end = list.end();
 
 	//send to client
-	Player* player;
-	for(it = list.begin(); it != list.end(); ++it)
-	{
-		if((player = (*it)->getPlayer()))
-			player->sendAddContainerItem(this, item);
-	}
+	for(SpectatorVec::const_iterator it = list.begin(); it != end; ++it)
+		(*it)->getPlayer()->sendAddContainerItem(this, item);
 
 	//event methods
-	for(it = list.begin(); it != list.end(); ++it)
-	{
-		if((player = (*it)->getPlayer()))
-			player->onAddContainerItem(this, item);
-	}
+	for(SpectatorVec::const_iterator it = list.begin(); it != end; ++it)
+		(*it)->getPlayer()->onAddContainerItem(this, item);
 }
 
 void Container::onUpdateContainerItem(uint32_t index, Item* oldItem, const ItemType& oldType,
@@ -233,23 +227,17 @@ void Container::onUpdateContainerItem(uint32_t index, Item* oldItem, const ItemT
 	const Position& cylinderMapPos = getPosition();
 
 	SpectatorVec list;
-	SpectatorVec::iterator it;
-	g_game.getSpectators(list, cylinderMapPos, false, 2, 2, 2, 2);
+	g_game.getSpectators(list, cylinderMapPos, false, true, 2, 2, 2, 2);
+
+	SpectatorVec::const_iterator end = list.end();
 
 	//send to client
-	Player* player;
-	for(it = list.begin(); it != list.end(); ++it)
-	{
-		if((player = (*it)->getPlayer()))
-			player->sendUpdateContainerItem(this, index, oldItem, newItem);
-	}
+	for(SpectatorVec::const_iterator it = list.begin(); it != end; ++it)
+		(*it)->getPlayer()->sendUpdateContainerItem(this, index, oldItem, newItem);
 
 	//event methods
-	for(it = list.begin(); it != list.end(); ++it)
-	{
-		if((player = (*it)->getPlayer()))
-			player->onUpdateContainerItem(this, index, oldItem, oldType, newItem, newType);
-	}
+	for(SpectatorVec::const_iterator it = list.begin(); it != end; ++it)
+		(*it)->getPlayer()->onUpdateContainerItem(this, index, oldItem, oldType, newItem, newType);
 }
 
 void Container::onRemoveContainerItem(uint32_t index, Item* item)
@@ -257,23 +245,17 @@ void Container::onRemoveContainerItem(uint32_t index, Item* item)
 	const Position& cylinderMapPos = getPosition();
 
 	SpectatorVec list;
-	SpectatorVec::iterator it;
-	g_game.getSpectators(list, cylinderMapPos, false, 2, 2, 2, 2);
+	g_game.getSpectators(list, cylinderMapPos, false, true, 2, 2, 2, 2);
+
+	SpectatorVec::const_iterator end = list.end();
 
 	//send change to client
-	Player* player;
-	for(it = list.begin(); it != list.end(); ++it)
-	{
-		if((player = (*it)->getPlayer()))
-			player->sendRemoveContainerItem(this, index, item);
-	}
+	for(SpectatorVec::const_iterator it = list.begin(); it != end; ++it)
+		(*it)->getPlayer()->sendRemoveContainerItem(this, index, item);
 
 	//event methods
-	for(it = list.begin(); it != list.end(); ++it)
-	{
-		if((player = (*it)->getPlayer()))
-			player->onRemoveContainerItem(this, index, item);
-	}
+	for(SpectatorVec::const_iterator it = list.begin(); it != end; ++it)
+		(*it)->getPlayer()->onRemoveContainerItem(this, index, item);
 }
 
 ReturnValue Container::__queryAdd(int32_t index, const Thing* thing, uint32_t count,

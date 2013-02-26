@@ -50,16 +50,7 @@
 
 [ STORAGE KEYS
 	StorageKeys are keys stored for each player together with a value.
-
 	-1 is the value of the key when it does not exist for the player.
-	* means that all values are reserved in this key.
-
-	30001
-		-1
-			Player has not received the first items.
-
-		1
-			Player has received the first items.
 
 	30015
 		-1
@@ -77,5 +68,5 @@
 
 	30031
 		-1, 0, 1, 2, 3, 4, 5, 6
-			Example quest.
+			Example quest in questlog.
 ]

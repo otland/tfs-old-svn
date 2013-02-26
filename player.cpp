@@ -883,7 +883,7 @@ void Player::dropLoot(Container* corpse)
 					if(getSkull() == SKULL_RED || getSkull() == SKULL_BLACK || random_range(1, (item->getContainer() ? 100 : 1000)) <= getDropPercent())
 					{
 						g_game.internalMoveItem(this, corpse, INDEX_WHEREEVER, item, item->getItemCount(), 0);
-						sendRemoveInventoryItem((slots_t)i, inventory[(slots_t)i]);
+						sendInventoryItem((slots_t)i, NULL);
 					}
 				}
 			}
@@ -1440,11 +1440,6 @@ void Player::sendRemoveContainerItem(const Container* container, uint8_t slot, c
 	}
 }
 
-void Player::onAddTileItem(const Tile* tile, const Position& pos, const Item* item)
-{
-	Creature::onAddTileItem(tile, pos, item);
-}
-
 void Player::onUpdateTileItem(const Tile* tile, const Position& pos, const Item* oldItem,
 	const ItemType& oldType, const Item* newItem, const ItemType& newType)
 {
@@ -1475,11 +1470,6 @@ void Player::onRemoveTileItem(const Tile* tile, const Position& pos, const ItemT
 				g_game.internalCloseTrade(this);
 		}
 	}
-}
-
-void Player::onUpdateTile(const Tile* tile, const Position& pos)
-{
-	Creature::onUpdateTile(tile, pos);
 }
 
 void Player::onCreatureAppear(const Creature* creature, bool isLogin)
@@ -2086,16 +2076,13 @@ void Player::addExperience(uint64_t exp, bool useMult/* = false*/, bool sendText
 		std::string strExp = ssExp.str();
 
 		SpectatorVec list;
-		g_game.getSpectators(list, targetPos);
+		g_game.getSpectators(list, targetPos, false, true);
 
-		Player* tmpPlayer;
 		for(SpectatorVec::const_iterator it = list.begin(), end = list.end(); it != end; ++it)
 		{
-			if((tmpPlayer = (*it)->getPlayer()))
-			{
-				if(tmpPlayer != this)
-					tmpPlayer->sendExperienceMessage(MSG_EXPERIENCE_OTHERS, strExp, targetPos, exp, TEXTCOLOR_WHITE_EXP);
-			}
+			Player* tmpPlayer = (*it)->getPlayer();
+			if(tmpPlayer != this)
+				tmpPlayer->sendExperienceMessage(MSG_EXPERIENCE_OTHERS, strExp, targetPos, exp, TEXTCOLOR_WHITE_EXP);
 		}
 	}
 
@@ -3171,7 +3158,7 @@ void Player::__addThing(int32_t index, Thing* thing)
 	inventory[index] = item;
 
 	//send to client
-	sendAddInventoryItem((slots_t)index, item);
+	sendInventoryItem((slots_t)index, item);
 
 	//event methods
 	onAddInventoryItem((slots_t)index, item);
@@ -3206,7 +3193,7 @@ void Player::__updateThing(Thing* thing, uint16_t itemId, uint32_t count)
 	item->setSubType(count);
 
 	//send to client
-	sendUpdateInventoryItem((slots_t)index, item, item);
+	sendInventoryItem((slots_t)index, item);
 
 	//event methods
 	onUpdateInventoryItem((slots_t)index, item, oldType, item, newType);
@@ -3247,7 +3234,7 @@ void Player::__replaceThing(uint32_t index, Thing* thing)
 	const ItemType& newType = Item::items[item->getID()];
 
 	//send to client
-	sendUpdateInventoryItem((slots_t)index, oldItem, item);
+	sendInventoryItem((slots_t)index, item);
 
 	//event methods
 	onUpdateInventoryItem((slots_t)index, oldItem, oldType, item, newType);
@@ -3283,7 +3270,7 @@ void Player::__removeThing(Thing* thing, uint32_t count)
 		if(count == item->getItemCount())
 		{
 			//send change to client
-			sendRemoveInventoryItem((slots_t)index, item);
+			sendInventoryItem((slots_t)index, NULL);
 
 			//event methods
 			onRemoveInventoryItem((slots_t)index, item);
@@ -3299,7 +3286,7 @@ void Player::__removeThing(Thing* thing, uint32_t count)
 			const ItemType& it = Item::items[item->getID()];
 
 			//send change to client
-			sendUpdateInventoryItem((slots_t)index, item, item);
+			sendInventoryItem((slots_t)index, item);
 
 			//event methods
 			onUpdateInventoryItem((slots_t)index, item, it, item, it);
@@ -3308,7 +3295,7 @@ void Player::__removeThing(Thing* thing, uint32_t count)
 	else
 	{
 		//send change to client
-		sendRemoveInventoryItem((slots_t)index, item);
+		sendInventoryItem((slots_t)index, NULL);
 
 		//event methods
 		onRemoveInventoryItem((slots_t)index, item);

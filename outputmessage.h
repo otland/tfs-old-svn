@@ -74,9 +74,6 @@ class OutputMessage : public NetworkMessage, boost::noncopyable
 		//void setOutputBufferStart(uint32_t pos) {m_outputBufferStart = pos;}
 		//uint32_t getOutputBufferStart() const {return m_outputBufferStart;}
 
-		void setSent(bool v) { sent = v; }
-		bool isSent() const { return sent; }
-
 #ifdef __TRACK_NETWORK__
 		virtual void Track(const std::string& file, long line, const std::string& func)
 		{
@@ -100,6 +97,14 @@ class OutputMessage : public NetworkMessage, boost::noncopyable
 				std::cout << "\t" << n << ".\t" << *iter << std::endl;
 		}
 #endif
+
+		inline void append(const NetworkMessage& msg)
+		{
+			int32_t msgLen = msg.getMessageLength();
+			memcpy(m_MsgBuf + m_ReadPos, msg.getBuffer() + 8, msgLen);
+			m_MsgSize += msgLen;
+			m_ReadPos += msgLen;
+		}
 
 	protected:
 #ifdef __TRACK_NETWORK__
@@ -152,7 +157,6 @@ class OutputMessage : public NetworkMessage, boost::noncopyable
 
 		uint32_t m_outputBufferStart;
 		int64_t m_frame;
-		bool sent;
 
 		OutputMessageState m_state;
 };
@@ -191,7 +195,6 @@ class OutputMessagePool
 		size_t getAvailableMessageCount() const {return m_outputMessages.size();}
 		size_t getAutoMessageCount() const {return m_autoSendOutputMessages.size();}
 		void addToAutoSend(OutputMessage_ptr msg);
-		void markAsDirty(OutputMessage_ptr msg);
 
 	protected:
 		void configureOutputMessage(OutputMessage_ptr msg, Protocol* protocol, bool autosend);
@@ -205,7 +208,6 @@ class OutputMessagePool
 		InternalOutputMessageList m_allOutputMessages;
 		OutputMessageMessageList m_autoSendOutputMessages;
 		OutputMessageMessageList m_toAddQueue;
-		OutputMessageMessageList m_dirtyOutputMessages;
 		boost::recursive_mutex m_outputPoolLock;
 		int64_t m_frameTime;
 		bool m_isOpen;

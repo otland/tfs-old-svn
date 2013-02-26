@@ -955,7 +955,7 @@ if(Modules == nil) then
 	end
 
 	-- Callback onSell() function. If you wish, you can change certain Npc to use your onSell().
-	function ShopModule:callbackOnSell(cid, itemid, subType, amount, ignoreCap, inBackpacks)
+	function ShopModule:callbackOnSell(cid, itemid, subType, amount, ignoreEquipped, _)
 		local shopItem = self:getShopItem(itemid, subType)
 		if shopItem == nil then
 			error("[ShopModule.onSell] items[itemid] == nil")
@@ -978,7 +978,7 @@ if(Modules == nil) then
 			subType = -1
 		end
 
-		if(doPlayerRemoveItem(cid, itemid, amount, subType) == TRUE) then
+		if doPlayerRemoveItem(cid, itemid, amount, subType, ignoreEquipped) then
 			local msg = self.npcHandler:getMessage(MESSAGE_SOLD)
 			msg = self.npcHandler:parseMessage(msg, parseInfo)
 			doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, msg)

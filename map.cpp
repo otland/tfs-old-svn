@@ -297,10 +297,7 @@ bool Map::removeCreature(Creature* creature)
 	return false;
 }
 
-void Map::getSpectatorsInternal(SpectatorVec& list, const Position& centerPos,
-	int32_t minRangeX, int32_t maxRangeX,
-	int32_t minRangeY, int32_t maxRangeY,
-	int32_t minRangeZ, int32_t maxRangeZ)
+void Map::getSpectatorsInternal(SpectatorVec& list, const Position& centerPos, int32_t minRangeX, int32_t maxRangeX, int32_t minRangeY, int32_t maxRangeY, int32_t minRangeZ, int32_t maxRangeZ, bool onlyPlayers)
 {
 	int32_t minoffset = centerPos.z - maxRangeZ;
 	int32_t x1 = std::min<int32_t>(0xFFFF, std::max<int32_t>(0, (centerPos.x + minRangeX + minoffset)));
@@ -329,7 +326,12 @@ void Map::getSpectatorsInternal(SpectatorVec& list, const Position& centerPos,
 		{
 			if(leafE)
 			{
-				CreatureVector& node_list = leafE->creature_list;
+				CreatureVector node_list;
+				if(onlyPlayers)
+					node_list = leafE->player_list;
+				else
+					node_list = leafE->creature_list;
+
 				CreatureVector::const_iterator node_iter = node_list.begin();
 				CreatureVector::const_iterator node_end = node_list.end();
 				if(node_iter != node_end)
@@ -366,7 +368,7 @@ void Map::getSpectatorsInternal(SpectatorVec& list, const Position& centerPos,
 	}
 }
 
-void Map::getSpectators(SpectatorVec& list, const Position& centerPos, bool multifloor /*= false*/,
+void Map::getSpectators(SpectatorVec& list, const Position& centerPos, bool multifloor /*= false*/, bool onlyPlayers /*= false*/,
 	int32_t minRangeX /*= 0*/, int32_t maxRangeX /*= 0*/,
 	int32_t minRangeY /*= 0*/, int32_t maxRangeY /*= 0*/)
 {
@@ -386,17 +388,28 @@ void Map::getSpectators(SpectatorVec& list, const Position& centerPos, bool mult
 		SpectatorCache::iterator it = spectatorCache.find(centerPos);
 		if(it != spectatorCache.end())
 		{
-			if(!list.empty())
+			if(!onlyPlayers)
 			{
-				const SpectatorVec& cachedList = *it->second;
-				list.insert(cachedList.begin(), cachedList.end());
+				if(!list.empty())
+				{
+					const SpectatorVec& cachedList = *it->second;
+					list.insert(cachedList.begin(), cachedList.end());
+				}
+				else
+					list = *it->second;
 			}
 			else
-				list = *it->second;
-
+			{
+				const SpectatorVec& cachedList = *it->second;
+				for(SpectatorVec::const_iterator iter = cachedList.begin(), end = cachedList.end(); iter != end; ++iter)
+				{
+					if((*iter)->getPlayer())
+						list.insert(*iter);
+				}
+			}
 			foundCache = true;
 		}
-		else
+		else if(!onlyPlayers)
 			cacheResult = true;
 	}
 
@@ -438,7 +451,7 @@ void Map::getSpectators(SpectatorVec& list, const Position& centerPos, bool mult
 			maxRangeZ = centerPos.z;
 		}
 
-		getSpectatorsInternal(list, centerPos, minRangeX, maxRangeX, minRangeY, maxRangeY, minRangeZ, maxRangeZ);
+		getSpectatorsInternal(list, centerPos, minRangeX, maxRangeX, minRangeY, maxRangeY, minRangeZ, maxRangeZ, onlyPlayers);
 
 		if(cacheResult)
 			spectatorCache[centerPos].reset(new SpectatorVec(list));
@@ -493,7 +506,7 @@ const SpectatorVec& Map::getSpectators(const Position& centerPos)
 		maxRangeZ = 7;
 	}
 
-	getSpectatorsInternal(list, centerPos, minRangeX, maxRangeX, minRangeY, maxRangeY, minRangeZ, maxRangeZ);
+	getSpectatorsInternal(list, centerPos, minRangeX, maxRangeX, minRangeY, maxRangeY, minRangeZ, maxRangeZ, false);
 	return list;
 }
 
@@ -1196,6 +1209,28 @@ Floor* QTreeLeafNode::createFloor(uint32_t z)
 		m_array[z] = new Floor();
 
 	return m_array[z];
+}
+
+void QTreeLeafNode::addCreature(Creature* c)
+{
+	creature_list.push_back(c);
+	if(c->getPlayer())
+		player_list.push_back(c);
+}
+
+void QTreeLeafNode::removeCreature(Creature* c)
+{
+	CreatureVector::iterator iter = std::find(creature_list.begin(), creature_list.end(), c);
+	assert(iter != creature_list.end());
+	std::swap(*iter, creature_list.back());
+	creature_list.pop_back();
+	if(c->getPlayer())
+	{
+		iter = std::find(player_list.begin(), player_list.end(), c);
+		assert(iter != player_list.end());
+		std::swap(*iter, player_list.back());
+		player_list.pop_back();
+	}
 }
 
 uint32_t Map::clean()

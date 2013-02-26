@@ -613,20 +613,14 @@ class Player : public Creature, public Cylinder
 			{if(client) client->sendContainer(cid, container, hasParent); }
 
 		//inventory
-		void sendAddInventoryItem(slots_t slot, const Item* item)
-			{if(client) client->sendAddInventoryItem(slot, item);}
-		void sendUpdateInventoryItem(slots_t slot, const Item* oldItem, const Item* newItem)
-			{if(client) client->sendUpdateInventoryItem(slot, newItem);}
-		void sendRemoveInventoryItem(slots_t slot, const Item* item)
-			{if(client) client->sendRemoveInventoryItem(slot);}
+		void sendInventoryItem(slots_t slot, const Item* item)
+			{if(client) client->sendInventoryItem(slot, item);}
 
 		//event methods
-		virtual void onAddTileItem(const Tile* tile, const Position& pos, const Item* item);
 		virtual void onUpdateTileItem(const Tile* tile, const Position& pos, const Item* oldItem,
 			const ItemType& oldType, const Item* newItem, const ItemType& newType);
 		virtual void onRemoveTileItem(const Tile* tile, const Position& pos, const ItemType& iType,
 			const Item* item);
-		virtual void onUpdateTile(const Tile* tile, const Position& pos);
 
 		virtual void onCreatureAppear(const Creature* creature, bool isLogin);
 		virtual void onCreatureDisappear(const Creature* creature, uint32_t stackpos, bool isLogout);

@@ -29,14 +29,14 @@
 			Data Directory Manager
 			Founder
 
+		Dalkon
+			C++ Programmer
+
 		Kornholijo
 			C++ Programmer
 
 		Elf
 			C++ Programmer
-
-		Tryller
-			Data Directory Manager
 ]
 
 [ LICENSE
@@ -100,7 +100,7 @@
 			this command:
 				./forgottenserver
 
-		SqLite
+		SQLite
 			Launch a terminal, and paste in this command:
 				./forgottenserver
 
@@ -109,7 +109,7 @@
 			Read MYSQL_HELP and then move the exe file to the directory
 			where you have config.lua and data directory and execute it.
 
-		SqLite
+		SQLite
 			Move the exe file to the directory where you have config.lua
 			and data directory and execute it.
 ]

@@ -30,7 +30,6 @@ using boost::shared_ptr;
 
 #include "position.h"
 #include "item.h"
-//#include "creature.h"
 #include "fileloader.h"
 
 #include "tools.h"
@@ -125,7 +124,6 @@ class QTreeNode
 		friend class Map;
 };
 
-
 class QTreeLeafNode : public QTreeNode
 {
 	public:
@@ -147,6 +145,7 @@ class QTreeLeafNode : public QTreeNode
 		QTreeLeafNode* m_leafE;
 		Floor* m_array[MAP_MAX_LAYERS];
 		CreatureVector creature_list;
+		CreatureVector player_list;
 
 		friend class Map;
 		friend class QTreeNode;
@@ -268,11 +267,11 @@ class Map
 		void getSpectatorsInternal(SpectatorVec& list, const Position& centerPos,
 			int32_t minRangeX, int32_t maxRangeX,
 			int32_t minRangeY, int32_t maxRangeY,
-			int32_t minRangeZ, int32_t maxRangeZ);
+			int32_t minRangeZ, int32_t maxRangeZ, bool onlyPlayers);
 
 		// Use this when a custom spectator vector is needed, this support many
 		// more parameters than the heavily cached version below.
-		void getSpectators(SpectatorVec& list, const Position& centerPos, bool multifloor = false,
+		void getSpectators(SpectatorVec& list, const Position& centerPos, bool multifloor = false, bool onlyPlayers = false,
 			int32_t minRangeX = 0, int32_t maxRangeX = 0,
 			int32_t minRangeY = 0, int32_t maxRangeY = 0);
 		// The returned SpectatorVec is a temporary and should not be kept around
@@ -297,18 +296,5 @@ class Map
 
 		friend class IOMap;
 };
-
-inline void QTreeLeafNode::addCreature(Creature* c)
-{
-	creature_list.push_back(c);
-}
-
-inline void QTreeLeafNode::removeCreature(Creature* c)
-{
-	CreatureVector::iterator iter = std::find(creature_list.begin(), creature_list.end(), c);
-	assert(iter != creature_list.end());
-	std::swap(*iter, creature_list.back());
-	creature_list.pop_back();
-}
 
 #endif

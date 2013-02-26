@@ -24,12 +24,15 @@
 	  data/
 	M   global.lua
 	M 	actions/actions.xml
-	  	data/items/
-	M 		items.otb
-	M 		items.xml
-		data/XML/
-	M		mounts.xml
-	M		outfits.xml
+	M   creaturescripts/scripts/firstitems.lua
+	    items/
+	M     items.otb
+	M     items.xml
+	M   movements/scripts/snow.lua
+	M   npc/lib/npcsystem/modules.lua
+	    XML/
+	M     mounts.xml
+	M     outfits.xml
 ]
 
 [ Milestone
@@ -46,6 +49,7 @@
 	Added walkstack attribute to items.xml.
 	Added exhaustion to mounting.
 	Updated a lot of items in items.xml.
+	Ignore Equipped option should now work in NPC Trade.
 	Players will no longer be muted for using NPC channel.
 	Players will now be exhausted when trying to use an item even if the item use failed.
 	Players with access level can now mount in protection zone.
@@ -56,6 +60,7 @@
 	Health points change packets will now only be sent if needed, and the creatures health points actually has changed.
 	Optimized Creature::getPosition (significant for getSpectators which is one of the most called functions).
 	Optimized getSpectators to utilize spectator cahce under more conditions.
+	Optimized getSpectators more (a bit more memory usage to store a player vector in all map nodes, but much faster getSpectatorsInternal calls when we only need players).
 	Optimized OutputMessagePool::sendAll to scale with a lot of dispatched events (this makes a huge difference for any server with over 500 active players online).
 	Optimized monsters friendList.
 	Owner on ConditionDamage will no longer be serialized/deserialized as there is no reason to keep it after a relog.
@@ -66,7 +71,10 @@
 	onDeath for a summon will now only be called if the summons master still exists (in which case we can still tell if it's a summon in the onDeath script).
 	Reworked the code for using items on creatures to address a few bugs with it.
 	Reworked how experience is gained so that players who share experience in party won't take advantage of other players experience multipliers.
+	Neworked how network packets are grouped and splitted before being sent to the client.
 	savePlayersRecord will now close the file even if it fails to write to it.
+	Storage key 30001 is no longer used by the firstitems script.
+	Snow footprint tiles now use the decay code in the engine instead of scheduled events.
 	The message type of “New mail has arrived.” has been corrected and it will now also appear when buying something in the market.
 	sendCancelWalk is now dispatched as default packet handler for Account Manager, instead of being directly called from network thread.
 	Walking through a teleport now shows the teleport effect on the position the creature was teleported from too.
@@ -91,6 +99,7 @@
 	Fixed a bug where a player with black skull could get red skull by killing players in pairs.
 	Fixed a bug with doPlayerAddItem.
 	Fixed a bug with yellow skull.
+	Fixed a potential infinite loop in Monster::pushCreatures.
 	Fixed container bugs.
 	Fixed a possible client debug if player had too many items in market history.
 	Fixed a bug where players who were idle for 15 minutes would be kicked even though they were in a battle.

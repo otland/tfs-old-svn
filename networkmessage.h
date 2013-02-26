@@ -21,8 +21,6 @@
 #ifndef __OTSERV_NETWORK_MESSAGE_H__
 #define __OTSERV_NETWORK_MESSAGE_H__
 
-#include <boost/shared_ptr.hpp>
-
 #include "definitions.h"
 #include "otsystem.h"
 #include "const.h"
@@ -168,7 +166,7 @@ class NetworkMessage
 
 		bool isOverrun() const { return m_overrun; }
 
-		char* getBuffer() { return (char*)&m_MsgBuf[0]; }
+		char* getBuffer() const { return (char*)&m_MsgBuf[0]; }
 		char* getBodyBuffer() { m_ReadPos = 2; return (char*)&m_MsgBuf[header_length]; }
 
 #ifdef __TRACK_NETWORK__
@@ -199,7 +197,5 @@ class NetworkMessage
 
 		uint8_t m_MsgBuf[NETWORKMESSAGE_MAXSIZE];
 };
-
-typedef boost::shared_ptr<NetworkMessage> NetworkMessage_ptr;
 
 #endif // #ifndef __NETWORK_MESSAGE_H__

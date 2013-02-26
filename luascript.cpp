@@ -224,6 +224,7 @@ void ScriptEnvironment::removeUniqueThing(Thing* thing)
 	if(item && item->getUniqueId() != 0)
 	{
 		int32_t uid = item->getUniqueId();
+
 		ThingMap::iterator it = m_globalMap.find(uid);
 		if(it != m_globalMap.end())
 			m_globalMap.erase(it);
@@ -1503,7 +1504,7 @@ void LuaScriptInterface::registerFunctions()
 	//doPlayerSetVocation(cid,voc)
 	lua_register(m_luaState, "doPlayerSetVocation", LuaScriptInterface::luaDoPlayerSetVocation);
 
-	//doPlayerRemoveItem(cid, itemid, count, <optional> subtype)
+	//doPlayerRemoveItem(cid, itemid, count, <optional> subtype, <optional> ignoreEquipped)
 	lua_register(m_luaState, "doPlayerRemoveItem", LuaScriptInterface::luaDoPlayerRemoveItem);
 
 	//doPlayerAddExp(cid, exp, <optional> usemultiplier, <optional> sendtext)
@@ -1559,7 +1560,7 @@ void LuaScriptInterface::registerFunctions()
 	//returns a table with all the summons of the creature
 	lua_register(m_luaState, "getCreatureSummons", LuaScriptInterface::luaGetCreatureSummons);
 
-	//getSpectators(centerPos, rangex, rangey, multifloor)
+	//getSpectators(centerPos, rangex, rangey, multifloor, <optional> onlyPlayers)
 	lua_register(m_luaState, "getSpectators", LuaScriptInterface::luaGetSpectators);
 
 	//getCreatureCondition(cid, condition)
@@ -2530,8 +2531,12 @@ int32_t LuaScriptInterface::luaDoRemoveItem(lua_State* L)
 
 int32_t LuaScriptInterface::luaDoPlayerRemoveItem(lua_State* L)
 {
-	//doPlayerRemoveItem(cid, itemid, count, <optional> subtype)
+	//doPlayerRemoveItem(cid, itemid, count, <optional> subtype, <optional> ignoreEquipped)
 	int32_t parameters = lua_gettop(L);
+
+	bool ignoreEquipped = false;
+	if(parameters > 4)
+		ignoreEquipped = popBoolean(L);
 
 	int32_t subType = -1;
 	if(parameters > 3)
@@ -2546,10 +2551,7 @@ int32_t LuaScriptInterface::luaDoPlayerRemoveItem(lua_State* L)
 	Player* player = env->getPlayerByUID(cid);
 	if(player)
 	{
-		if(g_game.removeItemOfType(player, itemId, count, subType))
-			lua_pushboolean(L, true);
-		else
-			lua_pushboolean(L, false);
+		lua_pushboolean(L, g_game.removeItemOfType(player, itemId, count, subType, ignoreEquipped));
 	}
 	else
 	{
@@ -7509,7 +7511,13 @@ int32_t LuaScriptInterface::luaGetCreatureSummons(lua_State* L)
 
 int32_t LuaScriptInterface::luaGetSpectators(lua_State* L)
 {
-	//getSpectators(centerPos, rangex, rangey, multifloor)
+	//getSpectators(centerPos, rangex, rangey, multifloor, <optional> onlyPlayers)
+	int32_t parameters = lua_gettop(L);
+
+	bool onlyPlayers = false;
+	if(parameters > 4)
+		onlyPlayers = popBoolean(L);
+
 	bool multifloor = popBoolean(L);
 	uint32_t rangey = popNumber(L);
 	uint32_t rangex = popNumber(L);
@@ -7518,7 +7526,7 @@ int32_t LuaScriptInterface::luaGetSpectators(lua_State* L)
 	popPosition(L, centerPos);
 
 	SpectatorVec list;
-	g_game.getSpectators(list, centerPos, multifloor, rangex, rangex, rangey, rangey);
+	g_game.getSpectators(list, centerPos, multifloor, onlyPlayers, rangex, rangex, rangey, rangey);
 	if(list.empty())
 	{
 		lua_pushnil(L);

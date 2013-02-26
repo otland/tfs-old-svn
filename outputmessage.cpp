@@ -115,11 +115,8 @@ void OutputMessagePool::sendAll()
 		if(msgFrame >= dropTime)
 		{
 			omsg->setState(OutputMessage::STATE_ALLOCATED);
-			omsg->setSent(false);
 			if(frameTime > msgFrame)
 				m_autoSendOutputMessages.push_front(omsg);
-			else if(omsg->getMessageLength() > 1024)
-				m_dirtyOutputMessages.push_back(omsg);
 			else
 				m_autoSendOutputMessages.push_back(omsg);
 		}
@@ -137,7 +134,7 @@ void OutputMessagePool::sendAll()
 		if(frameTime <= omsg->getFrame())
 			break;
 
-		if(omsg->getConnection() && !omsg->isSent())
+		if(omsg->getConnection())
 		{
 			#ifdef __DEBUG_NET_DETAIL__
 			std::cout << "Sending message - ALL" << std::endl;
@@ -149,29 +146,8 @@ void OutputMessagePool::sendAll()
 				// This call will free the message
 				omsg->getProtocol()->onSendMessage(omsg);
 			}
-			omsg->setSent(true);
 		}
 	}
-
-	for(OutputMessageMessageList::const_iterator it = m_dirtyOutputMessages.begin(), end = m_dirtyOutputMessages.end(); it != end; ++it)
-	{
-		OutputMessage_ptr omsg = *it;
-		if(omsg->getMessageLength() > 1024 && omsg->getConnection() && !omsg->isSent())
-		{
-			#ifdef __DEBUG_NET_DETAIL__
-			std::cout << "Sending message - ALL" << std::endl;
-			#endif
-
-			if(!omsg->getConnection()->send(omsg))
-			{
-				// Send only fails when connection is closing (or in error state)
-				// This call will free the message
-				omsg->getProtocol()->onSendMessage(omsg);
-			}
-			omsg->setSent(true);
-		}
-	}
-	m_dirtyOutputMessages.clear();
 }
 
 void OutputMessagePool::releaseMessage(OutputMessage* msg)
@@ -258,9 +234,7 @@ void OutputMessagePool::configureOutputMessage(OutputMessage_ptr msg, Protocol* 
 	if(autosend)
 	{
 		msg->setState(OutputMessage::STATE_ALLOCATED);
-		msg->setSent(false);
 		m_autoSendOutputMessages.push_back(msg);
-		m_dirtyOutputMessages.push_back(msg);
 	}
 	else
 		msg->setState(OutputMessage::STATE_ALLOCATED_NO_AUTOSEND);
@@ -286,9 +260,4 @@ void OutputMessagePool::addToAutoSend(OutputMessage_ptr msg)
 	m_outputPoolLock.lock();
 	m_toAddQueue.push_back(msg);
 	m_outputPoolLock.unlock();
-}
-
-void OutputMessagePool::markAsDirty(OutputMessage_ptr msg)
-{
-	m_dirtyOutputMessages.push_back(msg);
 }

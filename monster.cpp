@@ -981,19 +981,21 @@ void Monster::pushCreatures(Tile* tile)
 	if(CreatureVector* creatures = tile->getCreatures())
 	{
 		uint32_t removeCount = 0;
+		Monster* lastPushedMonster = NULL;
 		for(uint32_t i = 0; i < creatures->size();)
 		{
 			Monster* monster = creatures->at(i)->getMonster();
 			if(monster && monster->isPushable())
 			{
-				if(pushCreature(monster))
-					continue;
-				else
+				if(monster != lastPushedMonster && pushCreature(monster))
 				{
-					monster->changeHealth(-monster->getHealth());
-					monster->setDropLoot(false);
-					removeCount++;
+					lastPushedMonster = monster;
+					continue;
 				}
+
+				monster->changeHealth(-monster->getHealth());
+				monster->setDropLoot(false);
+				removeCount++;
 			}
 			++i;
 		}

@@ -516,11 +516,6 @@ void Creature::onRemoveTileItem(const Tile* tile, const Position& pos, const Ite
 	}
 }
 
-void Creature::onUpdateTile(const Tile* tile, const Position& pos)
-{
-	//
-}
-
 void Creature::onCreatureAppear(const Creature* creature, bool isLogin)
 {
 	if(creature == this)
@@ -766,11 +761,6 @@ void Creature::onCreatureMove(const Creature* creature, const Tile* newTile, con
 				onAttackedCreatureChangeZone(attackedCreature->getZone());
 		}
 	}
-}
-
-void Creature::onCreatureChangeVisible(const Creature* creature, bool visible)
-{
-	//
 }
 
 void Creature::onDeath()
@@ -1268,14 +1258,10 @@ void Creature::onGainExperience(uint64_t gainExp, Creature* target)
 		std::string strExp = ssExp.str();
 
 		SpectatorVec list;
-		g_game.getSpectators(list, targetPos);
+		g_game.getSpectators(list, targetPos, false, true);
 
-		Player* tmpPlayer;
 		for(SpectatorVec::const_iterator it = list.begin(), end = list.end(); it != end; ++it)
-		{
-			if((tmpPlayer = (*it)->getPlayer()))
-				tmpPlayer->sendExperienceMessage(MSG_EXPERIENCE_OTHERS, strExp, targetPos, gainExp, TEXTCOLOR_WHITE_EXP);
-		}
+			(*it)->getPlayer()->sendExperienceMessage(MSG_EXPERIENCE_OTHERS, strExp, targetPos, gainExp, TEXTCOLOR_WHITE_EXP);
 	}
 }
 

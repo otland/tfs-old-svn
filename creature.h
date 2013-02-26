@@ -312,7 +312,6 @@ class Creature : public AutoID, virtual public Thing
 			const ItemType& oldType, const Item* newItem, const ItemType& newType);
 		virtual void onRemoveTileItem(const Tile* tile, const Position& pos, const ItemType& iType,
 			const Item* item);
-		virtual void onUpdateTile(const Tile* tile, const Position& pos);
 
 		virtual void onCreatureAppear(const Creature* creature, bool isLogin);
 		virtual void onCreatureDisappear(const Creature* creature, uint32_t stackpos, bool isLogout);
@@ -322,13 +321,10 @@ class Creature : public AutoID, virtual public Thing
 		virtual void onAttackedCreatureDisappear(bool isLogout) {}
 		virtual void onFollowCreatureDisappear(bool isLogout) {}
 
-		virtual void onCreatureTurn(const Creature* creature, uint32_t stackPos) {}
 		virtual void onCreatureSay(const Creature* creature, SpeakClasses type, const std::string& text,
 			Position* pos = NULL) {}
 
-		virtual void onCreatureChangeOutfit(const Creature* creature, const Outfit_t& outfit) {}
 		virtual void onCreatureConvinced(const Creature* convincer, const Creature* creature) {}
-		virtual void onCreatureChangeVisible(const Creature* creature, bool visible);
 		virtual void onPlacedCreature() {}
 		virtual void onRemovedCreature() {}
 

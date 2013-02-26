@@ -943,7 +943,7 @@ void Commands::buyHouse(Player* player, const std::string& cmd, const std::strin
 void Commands::whoIsOnline(Player* player, const std::string& cmd, const std::string& param)
 {
 	std::ostringstream ss;
-	ss << Player::listPlayer.list.size() << " players online:" << std::endl;
+	ss << Player::listPlayer.list.size() << " players online:";
 	player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, ss.str());
 
 	ss.str("");
@@ -1437,31 +1437,23 @@ void Commands::serverDiag(Player* player, const std::string& cmd, const std::str
 void Commands::ghost(Player* player, const std::string& cmd, const std::string& param)
 {
 	player->switchGhostMode();
-	Player* tmpPlayer;
 
 	SpectatorVec list;
-	g_game.getSpectators(list, player->getPosition(), true);
-
-	SpectatorVec::const_iterator it;
-	for(it = list.begin(); it != list.end(); ++it)
+	g_game.getSpectators(list, player->getPosition(), true, true);
+	for(SpectatorVec::const_iterator it = list.begin(), end = list.end(); it != end; ++it)
 	{
-		if((tmpPlayer = (*it)->getPlayer()))
+		Player* tmpPlayer = (*it)->getPlayer();
+		tmpPlayer->sendCreatureChangeVisible(player, !player->isInGhostMode());
+		if(tmpPlayer != player && !tmpPlayer->isAccessPlayer())
 		{
-			tmpPlayer->sendCreatureChangeVisible(player, !player->isInGhostMode());
-			if(tmpPlayer != player && !tmpPlayer->isAccessPlayer())
-			{
-				if(player->isInGhostMode())
-					tmpPlayer->sendCreatureDisappear(player, player->getTile()->getClientIndexOfThing(tmpPlayer, player), true);
-				else
-					tmpPlayer->sendCreatureAppear(player, player->getPosition(), true);
+			if(player->isInGhostMode())
+				tmpPlayer->sendCreatureDisappear(player, player->getTile()->getClientIndexOfThing(tmpPlayer, player), true);
+			else
+				tmpPlayer->sendCreatureAppear(player, player->getPosition(), true);
 
-				tmpPlayer->sendUpdateTile(player->getTile(), player->getPosition());
-			}
+			tmpPlayer->sendUpdateTile(player->getTile(), player->getPosition());
 		}
 	}
-
-	for(it = list.begin(); it != list.end(); ++it)
-		(*it)->onUpdateTile(player->getTile(), player->getPosition());
 
 	if(player->isInGhostMode())
 	{
@@ -1487,7 +1479,7 @@ void Commands::ghost(Player* player, const std::string& cmd, const std::string& 
 		player->sendTextMessage(MSG_INFO_DESCR, "You are visible again.");
 		Position pos = player->getPosition();
 		pos.x += 1;
-		g_game.addMagicEffect(pos, NM_ME_SMOKE);
+		g_game.addMagicEffect(list, pos, NM_ME_SMOKE);
 	}
 }
 

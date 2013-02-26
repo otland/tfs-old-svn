@@ -781,8 +781,7 @@ void Combat::CombatFunc(Creature* caster, const Position& pos,
 			maxY = diff;
 	}
 
-	g_game.getSpectators(list, pos, true, maxX + Map::maxViewportX, maxX + Map::maxViewportX,
-		maxY + Map::maxViewportY, maxY + Map::maxViewportY);
+	g_game.getSpectators(list, pos, true, true, maxX + Map::maxViewportX, maxX + Map::maxViewportX, maxY + Map::maxViewportY, maxY + Map::maxViewportY);
 
 	for(std::list<Tile*>::iterator it = tileList.begin(); it != tileList.end(); ++it)
 	{
@@ -956,14 +955,17 @@ void Combat::doCombatDefault(Creature* caster, Creature* target, const CombatPar
 {
 	if(!params.isAggressive || (caster != target && Combat::canDoCombat(caster, target) == RET_NOERROR))
 	{
-		const SpectatorVec& list = g_game.getSpectators(target->getTile()->getPosition());
+		SpectatorVec list;
+		g_game.getSpectators(list, target->getPosition(), true, true);
+
 		CombatNullFunc(caster, target, params, NULL);
 		combatTileEffects(list, caster, target->getTile(), params);
+
 		if(params.targetCallback)
 			params.targetCallback->onTargetCombat(caster, target);
 
-		if(params.impactEffect != NM_ME_NONE)
-			g_game.addMagicEffect(target->getPosition(), params.impactEffect);
+		//if(params.impactEffect != NM_ME_NONE)
+		//	g_game.addMagicEffect(target->getPosition(), params.impactEffect);
 
 		if(caster && params.distanceEffect != NM_ME_NONE)
 			addDistanceEffect(caster, caster->getPosition(), target->getPosition(), params.distanceEffect);
