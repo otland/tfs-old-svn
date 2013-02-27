@@ -407,6 +407,7 @@ if(Modules == nil) then
 		shop_destination[cid] = parameters.destination
 		shop_cost[cid] = parameters.cost
 		shop_premium[cid] = parameters.premium
+		shop_npcuid[cid] = getNpcCid()
 
 		local cost = parameters.cost
 		local destination = parameters.destination
