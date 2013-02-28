@@ -3513,20 +3513,20 @@
 		<attribute key="attack" value="37" />
 		<attribute key="weaponType" value="sword" />
 	</item>
-	<item id="2439" article="a" name="daramanian mace">
+	<item id="2439" article="a" name="daramian mace">
 		<attribute key="weight" value="6800" />
 		<attribute key="defense" value="12" />
 		<attribute key="attack" value="21" />
 		<attribute key="weaponType" value="club" />
 	</item>
-	<item id="2440" article="a" name="daramanian waraxe">
+	<item id="2440" article="a" name="daramian waraxe">
 		<attribute key="weight" value="5250" />
 		<attribute key="defense" value="15" />
 		<attribute key="attack" value="39" />
 		<attribute key="weaponType" value="axe" />
 		<attribute key="slotType" value="two-handed" />
 	</item>
-	<item id="2441" article="a" name="daramanian axe">
+	<item id="2441" article="a" name="daramian axe">
 		<attribute key="weight" value="4100" />
 		<attribute key="defense" value="8" />
 		<attribute key="attack" value="17" />
