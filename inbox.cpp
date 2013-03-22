@@ -43,13 +43,13 @@ ReturnValue Inbox::__queryAdd(int32_t index, const Thing* thing, uint32_t count,
 	return Container::__queryAdd(index, thing, count, flags, actor);
 }
 
-void Inbox::postAddNotification(Creature* actor, Thing* thing, const Cylinder* oldParent, int32_t index, CylinderLink_t link /*= LINK_OWNER*/)
+void Inbox::postAddNotification(Creature* actor, Thing* thing, const Cylinder* oldParent, int32_t index, CylinderLink_t /*link = LINK_OWNER*/)
 {
 	if(getParent() != NULL)
 		getParent()->postAddNotification(actor, thing, oldParent, index, LINK_PARENT);
 }
 
-void Inbox::postRemoveNotification(Creature* actor, Thing* thing, const Cylinder* newParent, int32_t index, bool isCompleteRemoval, CylinderLink_t link /*= LINK_OWNER*/)
+void Inbox::postRemoveNotification(Creature* actor, Thing* thing, const Cylinder* newParent, int32_t index, bool isCompleteRemoval, CylinderLink_t /*link = LINK_OWNER*/)
 {
 	if(getParent() != NULL)
 		getParent()->postRemoveNotification(actor, thing, newParent, index, isCompleteRemoval, LINK_PARENT);

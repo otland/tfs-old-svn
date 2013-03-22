@@ -1594,6 +1594,15 @@ uint32_t DatabaseManager::updateDatabase()
 				case DATABASE_ENGINE_SQLITE:
 					db->query("ALTER TABLE `market_history` ADD `world_id` TINYINT(4) UNSIGNED NOT NULL DEFAULT 0 AFTER `id`;");
 					db->query("ALTER TABLE `market_offers` ADD `world_id` TINYINT(4) UNSIGNED NOT NULL DEFAULT 0 AFTER `id`;");
+					
+					db->query("CREATE TABLE 'player_inboxitems' (\
+						'player_id' INTEGER NOT NULL,\
+						'sid' INTEGER NOT NULL,\
+						'pid' INTEGER NOT NULL DEFAULT 0,\
+						'itemtype' INTEGER NOT NULL,\
+						'count' INTEGER NOT NULL DEFAULT 0,\
+						'attributes' BLOB NOT NULL,\
+						FOREIGN KEY ('player_id') REFERENCES 'players' ('id');");
 					break;
 
 				default:

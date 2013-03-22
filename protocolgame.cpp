@@ -1498,7 +1498,7 @@ void ProtocolGame::parseEditVip(NetworkMessage& msg)
 	if (description.size() > 128)
 		return;
 
-	if (icon < (uint32_t)VIP_ICON_FIRST || icon > (uint32_t)VIP_ICON_LAST)
+	if (/*icon < VIP_ICON_FIRST || */icon > VIP_ICON_LAST)
 		return;
 
 	addGameTask(&Game::playerRequestEditVip, player->getID(), guid, description, icon, notify);
