@@ -187,6 +187,8 @@ class OutputMessagePool
 		OutputMessage_ptr getOutputMessage(Protocol* protocol, bool autosend = true);
 		void startExecutionFrame();
 
+		int64_t getFrameTime() const { return m_frameTime; }
+
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
 		size_t getTotalMessageCount() const {return OutputMessagePoolCount;}
 #else

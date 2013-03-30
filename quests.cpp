@@ -52,7 +52,7 @@ std::string Mission::getDescription(Player* player)
 {
 	int32_t value;
 	player->getStorageValue(storageID, value);
-	if(mainState != NULL)
+	if(mainState)
 	{
 		std::ostringstream s;
 		s << value;
@@ -210,7 +210,7 @@ bool Quests::loadFromXml()
 					if(readXMLInteger(p, "startstoragevalue", intValue))
 						startStorageValue = intValue;
 
-					Quest *quest = new Quest(name, id, startStorageID, startStorageValue);
+					Quest* quest = new Quest(name, id, startStorageID, startStorageValue);
 					xmlNodePtr tmpNode = p->children;
 					while(tmpNode)
 					{
@@ -294,18 +294,27 @@ uint16_t Quests::getQuestsCount(Player* player)
 	return count;
 }
 
-bool Quests::isQuestStorage(const uint32_t key, const int32_t value)
+bool Quests::isQuestStorage(const uint32_t key, const int32_t value, const int32_t oldValue)
 {
 	for(QuestsList::const_iterator it = quests.begin(), end = quests.end(); it != end; ++it)
 	{
-		if((*it)->getStartStorageId() == key && (*it)->getStartStorageValue() == value)
+		Quest* quest = *it;
+		if(quest->getStartStorageId() == key && quest->getStartStorageValue() == value)
 			return true;
 
-		for(MissionsList::const_iterator m_it = (*it)->getFirstMission(), m_end = (*it)->getLastMission(); m_it != m_end; ++m_it)
+		for(MissionsList::const_iterator m_it = quest->getFirstMission(), m_end = quest->getLastMission(); m_it != m_end; ++m_it)
 		{
-			if((*m_it)->mainState != NULL) continue;
-			if((*m_it)->getStorageId() == key && value >= (*m_it)->getStartStorageValue() && value <= (*m_it)->getEndStorageValue())
-				return true;
+			Mission* mission = *m_it;
+			if(mission->mainState)
+			{
+				if(mission->getStorageId() == key && value >= mission->getStartStorageValue() && value <= mission->getEndStorageValue() && (oldValue < mission->getStartStorageValue() || oldValue > mission->getEndStorageValue()))
+					return true;
+			}
+			else
+			{
+				if(mission->getStorageId() == key && value >= mission->getStartStorageValue() && value <= mission->getEndStorageValue())
+					return true;
+			}
 		}
 	}
 	return false;

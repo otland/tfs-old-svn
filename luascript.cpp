@@ -683,7 +683,7 @@ int32_t LuaScriptInterface::getEvent(const std::string& eventName)
 	lua_getglobal(m_luaState, eventName.c_str());
 	if(lua_isfunction(m_luaState, -1) == 0)
 	{
-		lua_pop(m_luaState, 1);
+		lua_pop(m_luaState, 2);
 		return -1;
 	}
 

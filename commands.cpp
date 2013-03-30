@@ -1465,7 +1465,7 @@ void Commands::ghost(Player* player, const std::string& cmd, const std::string& 
 
 		IOLoginData::getInstance()->updateOnlineStatus(player->getGUID(), false);
 		player->sendTextMessage(MSG_INFO_DESCR, "You are now invisible.");
-		g_game.addMagicEffect(player->getPosition(), NM_ME_YALAHARIGHOST);
+		g_game.addMagicEffect(list, player->getPosition(), NM_ME_YALAHARIGHOST);
 	}
 	else
 	{

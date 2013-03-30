@@ -951,6 +951,8 @@ class Player : public Creature, public Cylinder
 		int8_t guildLevel;
 
 		StorageMap storageMap;
+		int64_t lastQuestlogUpdate;
+
 		LightInfo itemsLight;
 
 		OutfitList m_playerOutfits;

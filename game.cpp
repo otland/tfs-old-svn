@@ -4053,6 +4053,9 @@ bool Game::internalCreatureTurn(Creature* creature, Direction dir)
 bool Game::internalCreatureSay(Creature* creature, SpeakClasses type, const std::string& text,
 	bool ghostMode, SpectatorVec* listPtr/* = NULL*/, Position* pos/* = NULL*/)
 {
+	if(text.empty())
+		return false;
+
 	if(g_config.getBoolean(ConfigManager::ACCOUNT_MANAGER))
 	{
 		Player* player = creature->getPlayer();

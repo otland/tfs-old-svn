@@ -40,6 +40,7 @@
 	Offline training!
 	New VIP list code with VIP entries stored on the server side.
 	Added three new mounts and the Demon outfit.
+	Added support for PVP blessing (Twist of Fate). It uses the same function as for regular blessings, but is blessing number 6.
 	Stamina system (set staminaSystem to no in config.lua to disable).
 	Unfair Fight Reduction for deaths in PVP.
 	Lua function getPlayerMoney is now hardcoded in the engine, which should make it significantly faster.
@@ -80,10 +81,12 @@
 	Walking through a teleport now shows the teleport effect on the position the creature was teleported from too.
 	Our implementation of Lua bit operations is no longer compiled with LuaJIT as LuaJIT has its own implementation of the Lua bit library.
 	\n can now be used for new line in the questlog.
+	"Your questlog has been updated." can now only be sent once per frame.
 	Corrected trade messages.
 	Corrected damage absorption.
 	Corrected the skull in war mode. It's now green instead of yellow.
 	Updated items.
+	It is no longer possible to move items to containers inside the inbox.
 	Fixed a bug with using a single target rune on a stack with crosshairs. It will now only damage the creature on the top of the stack (first to enter the tile).
 	Fixed the “You advanced to skill level x.” message not appearing when advancing while offline training.
 	Fixed protection zone lock for Hardcore PVP/PVP-Enforced.
@@ -101,6 +104,10 @@
 	Fixed a bug with yellow skull.
 	Fixed a potential infinite loop in Monster::pushCreatures.
 	Fixed container bugs.
+	Fixed a bug where players could toggle your mount to remove an outfit condition. Players will now be dismounted when affected by an outfit condition, and will not be able to toggle their mount during this time.
+	Fixed so that the visual skill value no longer overflows, if your skill is boosted above 255 (i.e. shielding increased by 220% with protector) it will show as 255.
+	Fixed a bug with the Lua interface in scripted raids.
+	Fixed a Lua stack bug.
 	Fixed a possible client debug if player had too many items in market history.
 	Fixed a bug where players who were idle for 15 minutes would be kicked even though they were in a battle.
 	Fixed potential crashes when performing server actions from the GUI. They are now safely called through the dispatcher instead.

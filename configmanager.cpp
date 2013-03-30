@@ -177,7 +177,7 @@ bool ConfigManager::reload()
 	return loadFile(m_confString[CONFIG_FILE]);
 }
 
-const std::string& ConfigManager::getString(uint32_t _what) const
+const std::string& ConfigManager::getString(string_config_t _what) const
 {
 	if(m_isLoaded && _what < LAST_STRING_CONFIG)
 		return m_confString[_what];
@@ -188,7 +188,7 @@ const std::string& ConfigManager::getString(uint32_t _what) const
 	}
 }
 
-int32_t ConfigManager::getNumber(uint32_t _what) const
+int32_t ConfigManager::getNumber(integer_config_t _what) const
 {
 	if(m_isLoaded && _what < LAST_INTEGER_CONFIG)
 		return m_confInteger[_what];
@@ -199,7 +199,7 @@ int32_t ConfigManager::getNumber(uint32_t _what) const
 	}
 }
 
-bool ConfigManager::getBoolean(uint32_t _what) const
+bool ConfigManager::getBoolean(boolean_config_t _what) const
 {
 	if(m_isLoaded && _what < LAST_BOOLEAN_CONFIG)
 		return m_confBoolean[_what];
@@ -210,7 +210,7 @@ bool ConfigManager::getBoolean(uint32_t _what) const
 	}
 }
 
-bool ConfigManager::setNumber(uint32_t _what, int32_t _value)
+bool ConfigManager::setNumber(integer_config_t _what, int32_t _value)
 {
 	if(m_isLoaded && _what < LAST_INTEGER_CONFIG)
 	{

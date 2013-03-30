@@ -3406,31 +3406,31 @@ void ProtocolGame::AddPlayerSkills(NetworkMessage& msg)
 {
 	msg.AddByte(0xA1);
 
-	msg.AddByte(player->getSkill(SKILL_FIST, SKILL_LEVEL));
+	msg.AddByte(std::min<int32_t>(0xFF, player->getSkill(SKILL_FIST, SKILL_LEVEL)));
 	msg.AddByte(player->getBaseSkill(SKILL_FIST));
 	msg.AddByte(player->getSkill(SKILL_FIST, SKILL_PERCENT));
 
-	msg.AddByte(player->getSkill(SKILL_CLUB, SKILL_LEVEL));
+	msg.AddByte(std::min<int32_t>(0xFF, player->getSkill(SKILL_CLUB, SKILL_LEVEL)));
 	msg.AddByte(player->getBaseSkill(SKILL_CLUB));
 	msg.AddByte(player->getSkill(SKILL_CLUB, SKILL_PERCENT));
 
-	msg.AddByte(player->getSkill(SKILL_SWORD, SKILL_LEVEL));
+	msg.AddByte(std::min<int32_t>(0xFF, player->getSkill(SKILL_SWORD, SKILL_LEVEL)));
 	msg.AddByte(player->getBaseSkill(SKILL_SWORD));
 	msg.AddByte(player->getSkill(SKILL_SWORD, SKILL_PERCENT));
 
-	msg.AddByte(player->getSkill(SKILL_AXE, SKILL_LEVEL));
+	msg.AddByte(std::min<int32_t>(0xFF, player->getSkill(SKILL_AXE, SKILL_LEVEL)));
 	msg.AddByte(player->getBaseSkill(SKILL_AXE));
 	msg.AddByte(player->getSkill(SKILL_AXE, SKILL_PERCENT));
 
-	msg.AddByte(player->getSkill(SKILL_DIST, SKILL_LEVEL));
+	msg.AddByte(std::min<int32_t>(0xFF, player->getSkill(SKILL_DIST, SKILL_LEVEL)));
 	msg.AddByte(player->getBaseSkill(SKILL_DIST));
 	msg.AddByte(player->getSkill(SKILL_DIST, SKILL_PERCENT));
 
-	msg.AddByte(player->getSkill(SKILL_SHIELD, SKILL_LEVEL));
+	msg.AddByte(std::min<int32_t>(0xFF, player->getSkill(SKILL_SHIELD, SKILL_LEVEL)));
 	msg.AddByte(player->getBaseSkill(SKILL_SHIELD));
 	msg.AddByte(player->getSkill(SKILL_SHIELD, SKILL_PERCENT));
 
-	msg.AddByte(player->getSkill(SKILL_FISH, SKILL_LEVEL));
+	msg.AddByte(std::min<int32_t>(0xFF, player->getSkill(SKILL_FISH, SKILL_LEVEL)));
 	msg.AddByte(player->getBaseSkill(SKILL_FISH));
 	msg.AddByte(player->getSkill(SKILL_FISH, SKILL_PERCENT));
 }

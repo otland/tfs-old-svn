@@ -31,12 +31,15 @@ extern Game g_game;
 extern ConfigManager g_config;
 
 Raids::Raids()
+	: m_scriptInterface("Raid Interface")
 {
 	loaded = false;
 	started = false;
 	running = NULL;
 	lastRaidEnd = 0;
 	checkRaidsEvent = 0;
+
+	m_scriptInterface.initState();
 }
 
 Raids::~Raids()
@@ -187,15 +190,17 @@ void Raids::clear()
 	g_scheduler.stopEvent(checkRaidsEvent);
 	checkRaidsEvent = 0;
 
-	RaidList::iterator it;
-	for(it = raidList.begin(); it != raidList.end(); ++it)
-		delete (*it);
+	for(RaidList::const_iterator it = raidList.begin(), end = raidList.end(); it != end; ++it)
+		delete *it;
+
 	raidList.clear();
 
 	loaded = false;
 	started = false;
 	running = NULL;
 	lastRaidEnd = 0;
+
+	m_scriptInterface.reInitState();
 }
 
 bool Raids::reload()
@@ -265,7 +270,7 @@ bool Raid::loadFromXml(const std::string& _filename)
 			else if(xmlStrcmp(eventNode->name, (const xmlChar*)"areaspawn") == 0)
 				event = new AreaSpawnEvent();
 			else if(xmlStrcmp(eventNode->name, (const xmlChar*)"script") == 0)
-				event = new ScriptEvent();
+				event = new ScriptEvent(&Raids::getInstance()->getScriptInterface());
 			else
 			{
 				eventNode = eventNode->next;
@@ -688,12 +693,9 @@ bool AreaSpawnEvent::executeEvent()
 	return true;
 }
 
-LuaScriptInterface ScriptEvent::m_scriptInterface("Raid Interface");
-
-ScriptEvent::ScriptEvent() :
-	Event(&m_scriptInterface)
+ScriptEvent::ScriptEvent(LuaScriptInterface* _interface) :
+	Event(_interface)
 {
-	m_scriptInterface.initState();
 }
 
 bool ScriptEvent::configureRaidEvent(xmlNodePtr eventNode)
@@ -726,21 +728,20 @@ std::string ScriptEvent::getScriptEventName()
 bool ScriptEvent::executeEvent()
 {
 	//onRaid()
-	if(m_scriptInterface.reserveScriptEnv())
+	if(m_scriptInterface->reserveScriptEnv())
 	{
-		ScriptEnvironment* env = m_scriptInterface.getScriptEnv();
+		ScriptEnvironment* env = m_scriptInterface->getScriptEnv();
 
 		#ifdef __DEBUG_LUASCRIPTS__
 		env->setEventDesc("Raid event");
 		#endif
 
-		env->setScriptId(m_scriptId, &m_scriptInterface);
+		env->setScriptId(m_scriptId, m_scriptInterface);
 
-		m_scriptInterface.pushFunction(m_scriptId);
+		m_scriptInterface->pushFunction(m_scriptId);
 
-		bool result = m_scriptInterface.callFunction(0);
-		m_scriptInterface.releaseScriptEnv();
-
+		bool result = m_scriptInterface->callFunction(0);
+		m_scriptInterface->releaseScriptEnv();
 		return result;
 	}
 	else

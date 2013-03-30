@@ -42,6 +42,7 @@
 #include "beds.h"
 #include "mounts.h"
 #include "quests.h"
+#include "outputmessage.h"
 #ifndef _CONSOLE
 #include "gui.h"
 #endif
@@ -205,6 +206,8 @@ Creature()
 
 	staminaMinutes = 2520;
 	nextUseStaminaTime = 0;
+
+	lastQuestlogUpdate = 0;
 
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
 	playerCount++;
@@ -921,30 +924,35 @@ void Player::addStorageValue(const uint32_t key, const int32_t value, const bool
 		}
 	}
 
-	if(value == -1)
-		storageMap.erase(key);
-	else
+	if(value != -1)
 	{
+		int32_t oldValue;
+		getStorageValue(key, oldValue);
+
 		storageMap[key] = value;
-		if(!isLogin && Quests::getInstance()->isQuestStorage(key, value))
+
+		int64_t currentFrameTime = OutputMessagePool::getInstance()->getFrameTime();
+		if(!isLogin && lastQuestlogUpdate != currentFrameTime && Quests::getInstance()->isQuestStorage(key, value, oldValue))
+		{
+			lastQuestlogUpdate = currentFrameTime;
 			sendTextMessage(MSG_EVENT_ADVANCE, "Your questlog has been updated.");
+		}
 	}
+	else
+		storageMap.erase(key);
 }
 
 bool Player::getStorageValue(const uint32_t key, int32_t& value) const
 {
-	StorageMap::const_iterator it;
-	it = storageMap.find(key);
-	if(it != storageMap.end())
-	{
-		value = it->second;
-		return true;
-	}
-	else
+	StorageMap::const_iterator it = storageMap.find(key);
+	if(it == storageMap.end())
 	{
 		value = -1;
 		return false;
 	}
+
+	value = it->second;
+	return true;
 }
 
 bool Player::canSee(const Position& pos) const
@@ -1539,7 +1547,10 @@ void Player::onChangeZone(ZoneType_t zone)
 		}
 
 		if(!accessLevel && isMounted())
+		{
 			dismount();
+			g_game.internalCreatureChangeOutfit(this, defaultOutfit);
+		}
 	}
 
 	g_game.updateCreatureWalkthrough(this);
@@ -2464,7 +2475,34 @@ void Player::preSave()
 				manaMax = std::max<int32_t>(0, manaMax - vocation->getManaGain());
 				capacity = std::max<double>(0.00, capacity - vocation->getCapGain());
 			}
-			blessings = 0;
+
+			std::bitset<6> bitset(blessings);
+			if(bitset[5])
+			{
+				Player* lastHitPlayer;
+				if(_lastHitCreature)
+				{
+					lastHitPlayer = _lastHitCreature->getPlayer();
+					if(!lastHitPlayer)
+					{
+						Creature* lastHitMaster = _lastHitCreature->getMaster();
+						if(lastHitMaster)
+							lastHitPlayer = lastHitMaster->getPlayer();
+					}
+				}
+				else
+					lastHitPlayer = NULL;
+
+				if(lastHitPlayer)
+				{
+					bitset.reset(5);
+					blessings = bitset.to_ulong();
+				}
+				else
+					blessings = 32;
+			}
+			else
+				blessings = 0;
 
 			mana = manaMax;
 		}
@@ -3780,6 +3818,9 @@ void Player::updateItemsLight(bool internal /*=false*/)
 void Player::onAddCondition(ConditionType_t type)
 {
 	Creature::onAddCondition(type);
+	if(type == CONDITION_OUTFIT && isMounted())
+		dismount();
+
 	sendIcons();
 }
 
@@ -5116,11 +5157,15 @@ bool Player::toggleMount(bool mount)
 			return false;
 		}
 
+		if(hasCondition(CONDITION_OUTFIT))
+		{
+			sendCancelMessage(RET_NOTPOSSIBLE);
+			return false;
+		}
+
 		defaultOutfit.lookMount = currentMount->getClientID();
 		if(currentMount->getSpeed() != 0)
 			g_game.changeSpeed(this, currentMount->getSpeed());
-
-		g_game.internalCreatureChangeOutfit(this, defaultOutfit);
 	}
 	else
 	{
@@ -5130,6 +5175,7 @@ bool Player::toggleMount(bool mount)
 		dismount();
 	}
 
+	g_game.internalCreatureChangeOutfit(this, defaultOutfit);
 	lastToggleMount = OTSYS_TIME();
 	return true;
 }
@@ -5168,7 +5214,10 @@ bool Player::untameMount(uint8_t mountId)
 	if(getCurrentMount() == (mountId + 1))
 	{
 		if(isMounted())
+		{
 			dismount();
+			g_game.internalCreatureChangeOutfit(this, defaultOutfit);
+		}
 
 		setCurrentMount(0);
 	}
@@ -5182,7 +5231,6 @@ void Player::dismount()
 		g_game.changeSpeed(this, -mount->getSpeed());
 
 	defaultOutfit.lookMount = 0;
-	g_game.internalCreatureChangeOutfit(this, defaultOutfit);
 }
 
 bool Player::addOfflineTrainingTries(skills_t skill, int32_t tries)
