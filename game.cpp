@@ -3466,11 +3466,11 @@ bool Game::playerPurchaseItem(uint32_t playerId, uint16_t spriteId, uint8_t coun
 	if(!it.id)
 		return false;
 
-	uint8_t subType = count;
-	if(it.isFluidContainer() && count < uint8_t(sizeof(reverseFluidMap) / sizeof(int8_t)))
-		subType = reverseFluidMap[count];
-	else if(!it.hasSubType())
-		subType = 0;
+	uint8_t subType;
+	if(it.isSplash() || it.isFluidContainer())
+		subType = clientFluidToServer(count);
+	else
+		subType = count;
 
 	if(!player->canShopItem(it.id, subType, SHOPEVENT_BUY))
 		return false;
@@ -3494,11 +3494,11 @@ bool Game::playerSellItem(uint32_t playerId, uint16_t spriteId, uint8_t count, u
 	if(!it.id)
 		return false;
 
-	uint8_t subType = count;
-	if(it.isFluidContainer() && count < uint8_t(sizeof(reverseFluidMap) / sizeof(int8_t)))
-		subType = reverseFluidMap[count];
-	else if(!it.hasSubType())
-		subType = 0;
+	uint8_t subType;
+	if(it.isSplash() || it.isFluidContainer())
+		subType = clientFluidToServer(count);
+	else
+		subType = count;
 
 	if(!player->canShopItem(it.id, subType, SHOPEVENT_SELL))
 		return false;
@@ -3527,14 +3527,11 @@ bool Game::playerLookInShop(uint32_t playerId, uint16_t spriteId, uint8_t count)
 	if(!it.id)
 		return false;
 
-	int32_t subType = count;
-	if(it.isSplash() || it.isFluidContainer())
-	{
-		if(subType == 3) // FIXME: hack...
-			subType = 11;
-		else if(count < uint8_t(sizeof(reverseFluidMap) / sizeof(int8_t)))
-			subType = reverseFluidMap[count];
-	}
+	int32_t subType;
+	if(it.isFluidContainer() || it.isSplash())
+		subType = clientFluidToServer(count);
+	else
+		subType = count;
 
 	std::stringstream ss;
 	ss << "You see " << Item::getDescription(it, 1, NULL, subType);
