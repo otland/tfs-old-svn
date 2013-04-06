@@ -863,11 +863,6 @@ void Items::parseItemNode(xmlNodePtr itemNode, uint32_t id)
 			if(readXMLInteger(itemAttributesNode, "value", intValue))
 				it.writeOnceItemId = intValue;
 		}
-		else if(tmpStrValue == "wareid")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.wareId = intValue;
-		}
 		else if(tmpStrValue == "worth")
 		{
 			if(readXMLInteger(itemAttributesNode, "value", intValue))
