@@ -4056,9 +4056,9 @@ bool Game::playerWhisper(Player* player, const std::string& text, uint32_t state
 
 bool Game::playerYell(Player* player, const std::string& text, uint32_t statementId)
 {
-	if(player->getLevel() <= 1 && !player->hasFlag(PlayerFlag_CannotBeMuted))
+	if(player->getLevel() < 20 && !player->hasFlag(PlayerFlag_CannotBeMuted) && player->getPremiumDays() < 1)
 	{
-		player->sendTextMessage(MSG_STATUS_SMALL, "You may not yell as long as you are on level 1.");
+		player->sendTextMessage(MSG_STATUS_SMALL, "You may not yell unless you heave reached level 20 or your account has premium status.");
 		return true;
 	}
 
