@@ -188,7 +188,7 @@ void Game::setGameState(GameState_t newState)
 				AutoList<Player>::listiterator it = Player::listPlayer.list.begin();
 				while(it != Player::listPlayer.list.end())
 				{
-					(*it).second->kickPlayer(true);
+					it->second->kickPlayer(true);
 					it = Player::listPlayer.list.begin();
 				}
 
@@ -208,9 +208,9 @@ void Game::setGameState(GameState_t newState)
 				AutoList<Player>::listiterator it = Player::listPlayer.list.begin();
 				while(it != Player::listPlayer.list.end())
 				{
-					if(!(*it).second->hasFlag(PlayerFlag_CanAlwaysLogin))
+					if(!it->second->hasFlag(PlayerFlag_CanAlwaysLogin))
 					{
-						(*it).second->kickPlayer(true);
+						it->second->kickPlayer(true);
 						it = Player::listPlayer.list.begin();
 					}
 					else
@@ -238,8 +238,8 @@ void Game::saveGameState()
 	IOLoginData* ioLoginData = IOLoginData::getInstance();
 	for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
 	{
-		(*it).second->loginPosition = (*it).second->getPosition();
-		ioLoginData->savePlayer((*it).second, false);
+		it->second->loginPosition = it->second->getPosition();
+		ioLoginData->savePlayer(it->second);
 	}
 
 	map->saveMap();
@@ -501,10 +501,10 @@ Creature* Game::getCreatureByID(uint32_t id)
 	AutoList<Creature>::listiterator it = listCreature.list.find(id);
 	if(it != listCreature.list.end())
 	{
-		if(!(*it).second->isRemoved())
-			return (*it).second;
+		if(!it->second->isRemoved())
+			return it->second;
 	}
-	return NULL; //just in case the player doesnt exist
+	return NULL;
 }
 
 Player* Game::getPlayerByID(uint32_t id)
@@ -515,10 +515,10 @@ Player* Game::getPlayerByID(uint32_t id)
 	AutoList<Player>::listiterator it = Player::listPlayer.list.find(id);
 	if(it != Player::listPlayer.list.end())
 	{
-		if(!(*it).second->isRemoved())
-			return (*it).second;
+		if(!it->second->isRemoved())
+			return it->second;
 	}
-	return NULL; //just in case the player doesnt exist
+	return NULL;
 }
 
 Creature* Game::getCreatureByName(const std::string& s)
@@ -529,9 +529,9 @@ Creature* Game::getCreatureByName(const std::string& s)
 	std::string txt1 = asUpperCaseString(s);
 	for(AutoList<Creature>::listiterator it = listCreature.list.begin(); it != listCreature.list.end(); ++it)
 	{
-		if(!(*it).second->isRemoved())
+		if(!it->second->isRemoved())
 		{
-			std::string txt2 = asUpperCaseString((*it).second->getName());
+			std::string txt2 = asUpperCaseString(it->second->getName());
 			if(txt1 == txt2)
 				return it->second;
 		}
@@ -547,14 +547,14 @@ Player* Game::getPlayerByName(const std::string& s)
 	std::string txt1 = asUpperCaseString(s);
 	for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
 	{
-		if(!(*it).second->isRemoved())
+		if(!it->second->isRemoved())
 		{
-			std::string txt2 = asUpperCaseString((*it).second->getName());
+			std::string txt2 = asUpperCaseString(it->second->getName());
 			if(txt1 == txt2)
 				return it->second;
 		}
 	}
-	return NULL; //just in case the player doesnt exist
+	return NULL;
 }
 
 Player* Game::getPlayerByGUID(const uint32_t& guid)
@@ -564,7 +564,7 @@ Player* Game::getPlayerByGUID(const uint32_t& guid)
 
 	for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
 	{
-		Player* player = (*it).second;
+		Player* player = it->second;
 		if(!player->isRemoved())
 		{
 			if(guid == player->getGUID())
@@ -594,13 +594,13 @@ ReturnValue Game::getPlayerByNameWildcard(const std::string& s, Player*& player)
 	std::string txt1 = asUpperCaseString(s.substr(0, s.length() - 1));
 	for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
 	{
-		if(!(*it).second->isRemoved())
+		if(!it->second->isRemoved())
 		{
-			std::string txt2 = asUpperCaseString((*it).second->getName());
+			std::string txt2 = asUpperCaseString(it->second->getName());
 			if(txt2.substr(0, txt1.length()) == txt1)
 			{
 				if(lastFound == NULL)
-					lastFound = (*it).second;
+					lastFound = it->second;
 				else
 					return RET_NAMEISTOOAMBIGIOUS;
 			}
@@ -1852,7 +1852,7 @@ Item* Game::findItemOfType(Cylinder* cylinder, uint16_t itemId,
 	{
 		Container* container = listContainer.front();
 		listContainer.pop_front();
-		for(ItemList::const_iterator it = container->getItems(), end = container->getEnd(); it != end; ++it)
+		for(ItemDeque::const_iterator it = container->getItems(), end = container->getEnd(); it != end; ++it)
 		{
 			Item* item = *it;
 			if(item->getID() == itemId && (subType == -1 || subType == item->getSubType()))
@@ -1963,7 +1963,7 @@ uint64_t Game::getMoney(const Cylinder* cylinder)
 		return 0;
 
 	std::list<Container*> listContainer;
-	ItemList::const_iterator it;
+	ItemDeque::const_iterator it;
 	Container* tmpContainer;
 
 	Thing* thing;
@@ -2041,7 +2041,7 @@ bool Game::removeMoney(Cylinder* cylinder, uint64_t money, uint32_t flags /*= 0*
 		Container* container = listContainer.front();
 		listContainer.pop_front();
 
-		for(ItemList::const_iterator it = container->getItems(), end = container->getEnd(); it != end; ++it)
+		for(ItemDeque::const_iterator it = container->getItems(), end = container->getEnd(); it != end; ++it)
 		{
 			Item* item = *it;
 			if((tmpContainer = item->getContainer()))
@@ -2317,7 +2317,7 @@ bool Game::playerBroadcastMessage(Player* player, const std::string& text)
 
 	std::cout << "> " << player->getName() << " broadcasted: \"" << text << "\"." << std::endl;
 	for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
-		(*it).second->sendCreatureSay(player, SPEAK_BROADCAST, text);
+		it->second->sendCreatureSay(player, SPEAK_BROADCAST, text);
 
 	return true;
 }
@@ -3223,7 +3223,7 @@ bool Game::playerLookInTrade(uint32_t playerId, bool lookAtCounterOffer, int ind
 
 	bool foundItem = false;
 	std::list<const Container*> listContainer;
-	ItemList::const_iterator it;
+	ItemDeque::const_iterator it;
 	Container* tmpContainer = NULL;
 
 	listContainer.push_back(tradeContainer);
@@ -3630,7 +3630,14 @@ bool Game::playerRequestAddVip(uint32_t playerId, const std::string& vip_name)
 	if(!vipPlayer)
 		status = VIPSTATUS_OFFLINE;
 	else if(player->isAccessPlayer() || !vipPlayer->isInGhostMode())
-		status = VIPSTATUS_ONLINE;
+	{
+		/*
+		if(vipPlayer->isPending)
+			status = VIPSTATUS_PENDING;
+		else
+		*/
+			status = VIPSTATUS_ONLINE;
+	}
 	else
 		status = VIPSTATUS_OFFLINE;
 
@@ -4952,7 +4959,7 @@ void Game::checkLight()
 		LightInfo lightInfo;
 		getWorldLightInfo(lightInfo);
 		for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
-			(*it).second->sendWorldLight(lightInfo);
+			it->second->sendWorldLight(lightInfo);
 	}
 }
 
@@ -5022,7 +5029,7 @@ bool Game::broadcastMessage(const std::string& text, MessageClasses type)
 {
 	std::cout << "> Broadcasted message: \"" << text << "\"." << std::endl;
 	for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
-		(*it).second->sendTextMessage(type, text);
+		it->second->sendTextMessage(type, text);
 
 	return true;
 }
@@ -5654,7 +5661,7 @@ bool Game::playerCreateMarketOffer(uint32_t playerId, uint8_t type, uint16_t spr
 		{
 			Container* container = containerList.front();
 			containerList.pop_front();
-			for(ItemList::const_iterator iter = container->getItems(), end = container->getEnd(); iter != end; ++iter)
+			for(ItemDeque::const_iterator iter = container->getItems(), end = container->getEnd(); iter != end; ++iter)
 			{
 				Item* item = (*iter);
 				Container* c = item->getContainer();
@@ -5839,7 +5846,7 @@ bool Game::playerAcceptMarketOffer(uint32_t playerId, uint32_t timestamp, uint16
 		{
 			Container* container = containerList.front();
 			containerList.pop_front();
-			for(ItemList::const_iterator iter = container->getItems(), end = container->getEnd(); iter != end; ++iter)
+			for(ItemDeque::const_iterator iter = container->getItems(), end = container->getEnd(); iter != end; ++iter)
 			{
 				Item* item = (*iter);
 				Container* c = item->getContainer();
@@ -5946,7 +5953,7 @@ bool Game::playerAcceptMarketOffer(uint32_t playerId, uint32_t timestamp, uint16
 
 		if(buyerPlayer->isOffline())
 		{
-			IOLoginData::getInstance()->savePlayer(buyerPlayer, true);
+			IOLoginData::getInstance()->savePlayer(buyerPlayer);
 			delete buyerPlayer;
 		}
 		else
@@ -6095,7 +6102,7 @@ void Game::checkExpiredMarketOffers()
 
 		if(player->isOffline())
 		{
-			IOLoginData::getInstance()->savePlayer(player, true);
+			IOLoginData::getInstance()->savePlayer(player);
 			delete player;
 		}
 

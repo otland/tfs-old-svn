@@ -313,7 +313,7 @@ bool IOMapSerialize::saveTile(Database* db, uint32_t tileId, const Tile* tile)
 			parentid = csPair.second;
 			containerStackList.pop_front();
 
-			for(ItemList::const_iterator it = container->getItems(); it != container->getEnd(); ++it)
+			for(ItemDeque::const_iterator it = container->getItems(); it != container->getEnd(); ++it)
 			{
 				item = (*it);
 				++runningID;
@@ -647,7 +647,7 @@ void IOMapSerialize::saveItem(PropWriteStream& stream, const Item* item)
 		// Hack our way into the attributes
 		stream.ADD_UCHAR(ATTR_CONTAINER_ITEMS);
 		stream.ADD_ULONG(container->size());
-		for(ItemList::const_reverse_iterator i = container->getReversedItems(); i != container->getReversedEnd(); ++i)
+		for(ItemDeque::const_reverse_iterator i = container->getReversedItems(); i != container->getReversedEnd(); ++i)
 			saveItem(stream, *i);
 	}
 

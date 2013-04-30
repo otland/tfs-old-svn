@@ -89,6 +89,14 @@ TalkActionResult_t Spells::playerSaySpell(Player* player, SpeakClasses type, std
 				else
 					return TALKACTION_CONTINUE;
 			}
+
+			if(instantSpell->getHasPlayerNameParam() && !param.empty())
+			{
+				Player* playerTarget = NULL;
+				g_game.getPlayerByNameWildcard(param, playerTarget);
+				if(playerTarget)
+					param = playerTarget->getName();
+			}
 		}
 	}
 
@@ -1022,6 +1030,7 @@ TalkAction(_interface)
 {
 	needDirection = false;
 	hasParam = false;
+	hasPlayerNameParam = false;
 	checkLineOfSight = true;
 	casterTargetOrDirection = false;
 	function = NULL;
@@ -1051,6 +1060,9 @@ bool InstantSpell::configureEvent(xmlNodePtr p)
 		if(intValue == 1)
 	 		hasParam = true;
 	}
+
+	if(readXMLInteger(p, "playernameparam", intValue))
+		hasPlayerNameParam = (intValue > 0);
 
 	if(readXMLInteger(p, "direction", intValue))
 		needDirection = (intValue == 1);

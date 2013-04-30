@@ -190,6 +190,7 @@ class InstantSpell : public TalkAction, public Spell
 
 		virtual bool isInstant() const {return true;}
 		bool getHasParam() const {return hasParam;}
+		bool getHasPlayerNameParam() const {return hasPlayerNameParam;}
 		bool canCast(const Player* player) const;
 		bool canThrowSpell(const Creature* creature, const Creature* target) const;
 
@@ -211,6 +212,7 @@ class InstantSpell : public TalkAction, public Spell
 
 		bool needDirection;
 		bool hasParam;
+		bool hasPlayerNameParam;
 		bool checkLineOfSight;
 		bool casterTargetOrDirection;
 		InstantSpellFunction* function;

@@ -27,6 +27,7 @@
 
 #include <iostream>
 #include <list>
+#include <deque>
 #include <vector>
 
 class Creature;
@@ -212,7 +213,7 @@ class ItemAttributes
 					next = NULL;
 				}
 
-				Attribute(const Attribute &i)
+				Attribute(const Attribute& i)
 				{
 					type = i.type;
 					if(ItemAttributes::validateIntAttrType(type))
@@ -401,7 +402,8 @@ class Item : virtual public Thing, public ItemAttributes
 		//Don't add variables here, use the ItemAttribute class.
 };
 
-typedef std::list<Item *> ItemList;
+typedef std::list<Item*> ItemList;
+typedef std::deque<Item*> ItemDeque;
 
 inline uint32_t Item::countByType(const Item* i, int32_t subType)
 {

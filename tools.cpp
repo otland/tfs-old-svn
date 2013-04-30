@@ -247,7 +247,7 @@ IntegerVec vectorAtoi(StringVec stringVector)
 {
 	IntegerVec returnVector;
 	for(std::vector<std::string>::iterator it = stringVector.begin(); it != stringVector.end(); ++it)
-		returnVector.push_back(atoi((*it).c_str()));
+		returnVector.push_back(atoi(it->c_str()));
 
 	return returnVector;
 }

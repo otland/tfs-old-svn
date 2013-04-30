@@ -3606,9 +3606,6 @@ int32_t LuaScriptInterface::luaGetThingfromPos(lua_State* L)
 	}
 	else
 	{
-		std::ostringstream ss;
-		ss << pos << " " << getErrorDesc(LUA_ERROR_TILE_NOT_FOUND);
-		reportErrorFunc(ss.str().c_str());
 		pushThing(L, NULL, 0);
 		return 1;
 	}
@@ -4978,15 +4975,7 @@ int32_t LuaScriptInterface::luaCreateCombatObject(lua_State* L)
 		return 1;
 	}
 
-	Combat* combat = new Combat;
-	if(!combat)
-	{
-		reportErrorFunc(getErrorDesc(LUA_ERROR_COMBAT_NOT_FOUND));
-		lua_pushboolean(L, false);
-		return 1;
-	}
-
-	uint32_t newCombatId = env->addCombatObject(combat);
+	uint32_t newCombatId = env->addCombatObject(new Combat);
 	lua_pushnumber(L, newCombatId);
 	return 1;
 }
@@ -8016,7 +8005,7 @@ int32_t LuaScriptInterface::luaGetOnlinePlayers(lua_State* L)
 	for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
 	{
 		lua_pushnumber(L, ++i);
-		lua_pushstring(L, (*it).second->getName().c_str());
+		lua_pushstring(L, it->second->getName().c_str());
 		lua_settable(L, -3);
 	}
 	return 1;

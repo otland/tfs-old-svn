@@ -203,7 +203,7 @@ void BedItem::wakeUp(Player* player)
 				if(IOLoginData::getInstance()->loadPlayer(_player, name))
 				{
 					regeneratePlayer(_player);
-					IOLoginData::getInstance()->savePlayer(_player, true);
+					IOLoginData::getInstance()->savePlayer(_player);
 				}
 
 				delete _player;

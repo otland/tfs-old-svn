@@ -143,8 +143,8 @@ bool IOGuild::changeRankName(const std::string& oldRankName, const std::string& 
 	std::string oldRankNameLower = asLowerCaseString(oldRankName);
 	for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
 	{
-		if((*it).second->getGuildId() == guildId && asLowerCaseString((*it).second->getGuildRank()) == oldRankNameLower)
-			(*it).second->setGuildRank(newRankName);
+		if(it->second->getGuildId() == guildId && asLowerCaseString(it->second->getGuildRank()) == oldRankNameLower)
+			it->second->setGuildRank(newRankName);
 	}
 	return true;
 }
@@ -211,8 +211,8 @@ bool IOGuild::disbandGuild(uint32_t guildId)
 	db->executeQuery(query.str());
 	for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
 	{
-		if((*it).second->getGuildId() == guildId)
-			(*it).second->leaveGuild();
+		if(it->second->getGuildId() == guildId)
+			it->second->leaveGuild();
 	}
 	query.str("");
 

@@ -193,7 +193,7 @@ class Creature : public AutoID, virtual public Thing
 		}
 
 		void setBaseSpeed(uint32_t newBaseSpeed) {baseSpeed = newBaseSpeed;}
-		int32_t getBaseSpeed() {return baseSpeed;}
+		int32_t getBaseSpeed() const {return baseSpeed;}
 
 		virtual int32_t getHealth() const {return health;}
 		virtual int32_t getMaxHealth() const {return healthMax;}
@@ -455,7 +455,7 @@ class Creature : public AutoID, virtual public Thing
 		virtual uint16_t getLookCorpse() const { return 0; }
 		virtual void getPathSearchParams(const Creature* creature, FindPathParams& fpp) const;
 		virtual void death() {}
-		virtual void dropCorpse();
+		virtual bool dropCorpse();
 		virtual Item* getCorpse();
 
 		friend class Game;

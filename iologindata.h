@@ -67,7 +67,7 @@ class IOLoginData
 		bool resetOnlineStatus();
 
 		bool loadPlayer(Player* player, const std::string& name, bool preload = false);
-		bool savePlayer(Player* player, bool preSave);
+		bool savePlayer(Player* player);
 		bool getGuidByName(uint32_t& guid, std::string& name);
 		bool getGuidByNameEx(uint32_t &guid, bool& specialVip, std::string& name);
 		bool getNameByGuid(uint32_t guid, std::string& name);
@@ -93,7 +93,7 @@ class IOLoginData
 		void removeVIPEntry(uint32_t accountId, uint32_t guid);
 
 	protected:
-		bool storeNameByGuid(Database &mysql, uint32_t guid);
+		bool storeNameByGuid(Database& db, uint32_t guid);
 
 		const PlayerGroup* getPlayerGroupByAccount(uint32_t accno);
 		struct StringCompareCase

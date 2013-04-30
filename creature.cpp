@@ -789,18 +789,21 @@ void Creature::onDeath()
 
 	for(CountMap::iterator it = damageMap.begin(), end = damageMap.end(); it != end; ++it)
 	{
-		if(Creature* attacker = g_game.getCreatureByID((*it).first))
+		if(Creature* attacker = g_game.getCreatureByID(it->first))
 			attacker->onAttackedCreatureKilled(this);
 	}
 
+	bool droppedCorpse = dropCorpse();
 	death();
-	dropCorpse();
 
 	if(getMaster())
 		getMaster()->removeSummon(this);
+
+	if(droppedCorpse)
+		g_game.removeCreature(this, false);
 }
 
-void Creature::dropCorpse()
+bool Creature::dropCorpse()
 {
 	if(!lootDrop && getMonster() && !(master && master->getPlayer()))
 	{
@@ -813,48 +816,47 @@ void Creature::dropCorpse()
 		}
 
 		g_game.addMagicEffect(getPosition(), NM_ME_POFF);
-		g_game.removeCreature(this, false);
-		return;
 	}
-
-	Item* splash = NULL;
-	switch(getRace())
+	else
 	{
-		case RACE_VENOM:
-			splash = Item::CreateItem(ITEM_FULLSPLASH, FLUID_GREEN);
-			break;
+		Item* splash = NULL;
+		switch(getRace())
+		{
+			case RACE_VENOM:
+				splash = Item::CreateItem(ITEM_FULLSPLASH, FLUID_GREEN);
+				break;
 
-		case RACE_BLOOD:
-			splash = Item::CreateItem(ITEM_FULLSPLASH, FLUID_BLOOD);
-			break;
+			case RACE_BLOOD:
+				splash = Item::CreateItem(ITEM_FULLSPLASH, FLUID_BLOOD);
+				break;
 
-		default:
-			break;
+			default:
+				break;
+		}
+
+		Tile* tile = getTile();
+		if(splash)
+		{
+			g_game.internalAddItem(tile, splash, INDEX_WHEREEVER, FLAG_NOLIMIT);
+			g_game.startDecay(splash);
+		}
+
+		Item* corpse = getCorpse();
+		if(corpse)
+		{
+			g_game.internalAddItem(tile, corpse, INDEX_WHEREEVER, FLAG_NOLIMIT);
+			g_game.startDecay(corpse);
+		}
+
+		//scripting event - onDeath
+		CreatureEventList deathEvents = getCreatureEvents(CREATURE_EVENT_DEATH);
+		for(CreatureEventList::const_iterator it = deathEvents.begin(); it != deathEvents.end(); ++it)
+			(*it)->executeOnDeath(this, corpse, _lastHitCreature, _mostDamageCreature, lastHitUnjustified, mostDamageUnjustified);
+
+		if(corpse)
+			dropLoot(corpse->getContainer());
 	}
-
-	Tile* tile = getTile();
-	if(splash)
-	{
-		g_game.internalAddItem(tile, splash, INDEX_WHEREEVER, FLAG_NOLIMIT);
-		g_game.startDecay(splash);
-	}
-
-	Item* corpse = getCorpse();
-	if(corpse)
-	{
-		g_game.internalAddItem(tile, corpse, INDEX_WHEREEVER, FLAG_NOLIMIT);
-		g_game.startDecay(corpse);
-	}
-
-	//scripting event - onDeath
-	CreatureEventList deathEvents = getCreatureEvents(CREATURE_EVENT_DEATH);
-	for(CreatureEventList::const_iterator it = deathEvents.begin(); it != deathEvents.end(); ++it)
-		(*it)->executeOnDeath(this, corpse, _lastHitCreature, _mostDamageCreature, lastHitUnjustified, mostDamageUnjustified);
-
-	if(corpse)
-		dropLoot(corpse->getContainer());
-
-	g_game.removeCreature(this, false);
+	return true;
 }
 
 bool Creature::getKillers(Creature** _lastHitCreature, Creature** _mostDamageCreature)
@@ -867,7 +869,7 @@ bool Creature::getKillers(Creature** _lastHitCreature, Creature** _mostDamageCre
 		CountBlock_t cb = it->second;
 		if((cb.total > mostDamage && (OTSYS_TIME() - cb.ticks <= g_game.getInFightTicks())))
 		{
-			if((*_mostDamageCreature = g_game.getCreatureByID((*it).first)))
+			if((*_mostDamageCreature = g_game.getCreatureByID(it->first)))
 				mostDamage = cb.total;
 		}
 	}

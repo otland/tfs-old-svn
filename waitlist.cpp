@@ -43,11 +43,10 @@ WaitListIterator WaitingList::findClient(const Player* player, uint32_t& slot)
 	slot = 1;
 	for(WaitListIterator it = waitList.begin(); it != waitList.end(); ++it)
 	{
-		if((*it)->acc == player->getAccount() && (*it)->ip == player->getIP() &&
-			strcasecmp((*it)->name.c_str(), player->getName().c_str()) == 0)
-		{
+		Wait* wait = *it;
+		if(wait->acc == player->getAccount() && wait->ip == player->getIP() && strcasecmp(wait->name.c_str(), player->getName().c_str()) == 0)
 			return it;
-		}
+
 		++slot;
 	}
 	return waitList.end();

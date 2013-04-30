@@ -36,7 +36,7 @@
 ]
 
 [ Milestone
-	Game protocol 9.8/9.81/9.82 support with new items.otb.
+	Game protocol 9.80-9.86 support with new items.otb.
 	Offline training!
 	New VIP list code with VIP entries stored on the server side.
 	Added three new mounts and the Demon outfit.
@@ -44,12 +44,15 @@
 	Stamina system (set staminaSystem to no in config.lua to disable).
 	Unfair Fight Reduction for deaths in PVP.
 	Lua function getPlayerMoney is now hardcoded in the engine, which should make it significantly faster.
+	Lua function getThingfromPos no longer prints an error if the tile doesn't exist.
 	New Lua functions: isItem(uid), isMonster(cid), isNpc(cid), getPlayerLastLoginSaved(cid), sendGuildChannelMessage(guildId, type, message).
 	Depot code has been rewritten, and the inbox is now global. MySQL databases will be automatically updated, while SQLite requires a reset of the database.
 	Modal window class has been added, although it lacks any connection to the Lua interface to allow customizability. The offline training modal is added using it though (hardcoded).
 	Added walkstack attribute to items.xml.
 	Added exhaustion to mounting.
 	Updated a lot of items in items.xml.
+	Added ignoreendvalue attribute to quests.xml for quests that should stay in the quest log even if the player has a storage value above the endvalue, but instead it will just be marked as (Completed).
+	Added playernameparam attribute to spells.xml for improved behavior for spells with player name parameter (exiva, exura sio).
 	Ignore Equipped option should now work in NPC Trade.
 	Players will no longer be muted for using NPC channel.
 	Players will now be exhausted when trying to use an item even if the item use failed.
@@ -58,12 +61,14 @@
 	Only NPC's that have walkTicks above 0 can be pushed now.
 	"Temporary" fix for a serious bug with trade. Trade will now be aborted instead of one of the player receiving both items.
 	Money related functions now operate with 64-bit integers as bank balance in the protocol was changed from 32-bit to 64-bit.
+	Level, experience and skill percent change are now sent to the client on death.
 	Health points change packets will now only be sent if needed, and the creatures health points actually has changed.
 	Optimized Creature::getPosition (significant for getSpectators which is one of the most called functions).
 	Optimized getSpectators to utilize spectator cahce under more conditions.
 	Optimized getSpectators more (a bit more memory usage to store a player vector in all map nodes, but much faster getSpectatorsInternal calls when we only need players).
 	Optimized OutputMessagePool::sendAll to scale with a lot of dispatched events (this makes a huge difference for any server with over 500 active players online).
 	Optimized monsters friendList.
+	Container items are now stored in a deque instead of a linked list. This improves performance of accessing an item on a specific index in the container, and iterating, at the cost of increased memory usage for containers (up to 5 times as much memory usage in some STL implementations).
 	Owner on ConditionDamage will no longer be serialized/deserialized as there is no reason to keep it after a relog.
 	Updated Map::checkSightLine.
 	Patched a monster bug fix from trunk.
@@ -104,7 +109,7 @@
 	Fixed a bug with yellow skull.
 	Fixed a potential infinite loop in Monster::pushCreatures.
 	Fixed container bugs.
-	Fixed a bug where players could toggle your mount to remove an outfit condition. Players will now be dismounted when affected by an outfit condition, and will not be able to toggle their mount during this time.
+	Fixed a bug where players could toggle their mount to remove an outfit condition. Players will now be dismounted when affected by an outfit condition, and will not be able to toggle their mount during this time.
 	Fixed so that the visual skill value no longer overflows, if your skill is boosted above 255 (i.e. shielding increased by 220% with protector) it will show as 255.
 	Fixed a bug with the Lua interface in scripted raids.
 	Fixed a Lua stack bug.
@@ -112,5 +117,8 @@
 	Fixed a bug where players who were idle for 15 minutes would be kicked even though they were in a battle.
 	Fixed potential crashes when performing server actions from the GUI. They are now safely called through the dispatcher instead.
 	Fixed a bug with using runes on players with safe mode on. It will now properly check if the target is unmarked.
+	Fixed a bug where a players level would reset to 1 if they were in the death delay (0 hp) while the server was saving their character.
+	Fixed a bug with NPC Trade where players wouldn’t be able to sell some items to an NPC that sells over 255 items.
+	Fixed a bug with global events configured with interval.
 	A lot of code cleanups and major optimizations (especially to pathfinding, known creatures and VIP lists).
 ]

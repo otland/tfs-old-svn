@@ -50,7 +50,7 @@ class MissionState
 class Mission
 {
 	public:
-		Mission(const std::string& _missionName, int32_t _storageID, int32_t _startValue, int32_t _endValue);
+		Mission(const std::string& _missionName, int32_t _storageID, int32_t _startValue, int32_t _endValue, bool _ignoreEndValue);
 		~Mission();
 		bool isCompleted(Player* player) const;
 		bool isStarted(Player* player) const;
@@ -68,6 +68,7 @@ class Mission
 		std::string missionName;
 		uint32_t storageID;
 		int32_t startValue, endValue;
+		bool ignoreEndValue;
 };
 
 class Quest

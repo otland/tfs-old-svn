@@ -263,7 +263,7 @@ bool House::transferToDepot()
 
 	if(player->isOffline())
 	{
-		IOLoginData::getInstance()->savePlayer(player, true);
+		IOLoginData::getInstance()->savePlayer(player);
 		delete player;
 	}
 	return true;
@@ -274,7 +274,7 @@ bool House::transferToDepot(Player* player)
 	if(townid == 0 || houseOwner == 0)
 		return false;
 
-	std::list<Item*> moveItemList;
+	ItemList moveItemList;
 	Container* tmpContainer = NULL;
 	Item* item = NULL;
 
@@ -289,14 +289,14 @@ bool House::transferToDepot(Player* player)
 					moveItemList.push_back(item);
 				else if((tmpContainer = item->getContainer()))
 				{
-					for(ItemList::const_iterator cit = tmpContainer->getItems(); cit != tmpContainer->getEnd(); ++cit)
+					for(ItemDeque::const_iterator cit = tmpContainer->getItems(); cit != tmpContainer->getEnd(); ++cit)
 						moveItemList.push_back(*cit);
 				}
 			}
 		}
 	}
 
-	for(std::list<Item*>::iterator it = moveItemList.begin(); it != moveItemList.end(); ++it)
+	for(ItemList::iterator it = moveItemList.begin(); it != moveItemList.end(); ++it)
 	{
 		g_game.internalMoveItem((*it)->getParent(), player->getInbox(), INDEX_WHEREEVER,
 			(*it), (*it)->getItemCount(), NULL, FLAG_NOLIMIT);
@@ -957,7 +957,7 @@ bool Houses::payHouses()
 
 			if(player->isOffline())
 			{
-				IOLoginData::getInstance()->savePlayer(player, true);
+				IOLoginData::getInstance()->savePlayer(player);
 				delete player;
 			}
 		}

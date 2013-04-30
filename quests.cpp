@@ -31,10 +31,11 @@ MissionState::MissionState(const std::string& _description, int32_t _missionID)
  	missionID = _missionID;
 }
 
-Mission::Mission(const std::string& _missionName, int32_t _storageID, int32_t _startValue, int32_t _endValue)
+Mission::Mission(const std::string& _missionName, int32_t _storageID, int32_t _startValue, int32_t _endValue, bool _ignoreEndValue)
 {
 	missionName = _missionName;
 	endValue = _endValue;
+	ignoreEndValue = _ignoreEndValue;
 	startValue = _startValue;
 	storageID = _storageID;
 	mainState = NULL;
@@ -66,15 +67,31 @@ std::string Mission::getDescription(Player* player)
 	player->getStorageValue(storageID, value);
 
 	int32_t current = endValue;
-	while(current >= startValue)
+	if(ignoreEndValue)
 	{
-		if(value == current)
+		while(current >= startValue)
 		{
-			StateList::const_iterator sit = state.find(current);
-			if(sit != state.end())
-				return sit->second->getMissionDescription();
+			if(value >= current)
+			{
+				StateList::const_iterator sit = state.find(current);
+				if(sit != state.end())
+					return sit->second->getMissionDescription();
+			}
+			current--;
 		}
-		current--;
+	}
+	else
+	{
+		while(current >= startValue)
+		{
+			if(value == current)
+			{
+				StateList::const_iterator sit = state.find(current);
+				if(sit != state.end())
+					return sit->second->getMissionDescription();
+			}
+			current--;
+		}
 	}
 	return "An error has occurred, please contact a gamemaster.";
 }
@@ -85,7 +102,13 @@ bool Mission::isStarted(Player* player) const
 		return false;
 
 	int32_t value;
-	if(!player->getStorageValue(storageID, value) || value < startValue || value > endValue)
+	if(!player->getStorageValue(storageID, value))
+		return false;
+
+	if(value < startValue)
+		return false;
+
+	if(!ignoreEndValue && value > endValue)
 		return false;
 
 	return true;
@@ -97,10 +120,13 @@ bool Mission::isCompleted(Player* player) const
 		return false;
 
 	int32_t value;
-	if(!player->getStorageValue(storageID, value) || value != endValue)
+	if(!player->getStorageValue(storageID, value))
 		return false;
 
-	return true;
+	if(ignoreEndValue)
+		return value >= endValue;
+
+	return value == endValue;
 }
 
 std::string Mission::getName(Player* player)
@@ -218,6 +244,7 @@ bool Quests::loadFromXml()
 						{
 							std::string missionName, missionState;
 							int32_t storageID = 0, startValue = 0, endValue = 0;
+							bool ignoreEndValue;
 							if(readXMLString(tmpNode, "name", strValue))
 								missionName = strValue;
 
@@ -230,10 +257,15 @@ bool Quests::loadFromXml()
 							if(readXMLInteger(tmpNode, "endvalue", intValue))
 								endValue = intValue;
 
+							if(readXMLInteger(tmpNode, "ignoreendvalue", intValue))
+								ignoreEndValue = (intValue != 0);
+							else
+								ignoreEndValue = false;
+
 							if(readXMLString(tmpNode, "description", strValue))
 								missionState = strValue;
 
-							Mission* mission = new Mission(missionName, storageID, startValue, endValue);
+							Mission* mission = new Mission(missionName, storageID, startValue, endValue, ignoreEndValue);
 							if(missionState.empty())
 							{
 								xmlNodePtr tmpNode2 = tmpNode->children;

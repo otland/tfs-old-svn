@@ -90,7 +90,7 @@ class GlobalEvent : public Event
 		virtual std::string getScriptEventName();
 
 		std::string m_name;
-		time_t m_nextExecution;
+		int64_t m_nextExecution;
 		uint32_t m_interval;
 };
 

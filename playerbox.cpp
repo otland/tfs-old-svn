@@ -100,22 +100,24 @@ LRESULT CALLBACK PlayerBox::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPAR
 			std::ostringstream ss;
 			ss << playersOnline << " player" << (playersOnline != 1 ? "s" : "") << " online";
 			m_hInst = GetModuleHandle(NULL);
-			
+
 			permBan = CreateWindowEx(0, "button", "Permanently Ban", WS_VISIBLE | WS_CHILD | WS_TABSTOP, 5, 35, 115, 25, hWnd, NULL, m_hInst, NULL);
 			kick = CreateWindowEx(0, "button", "Kick", WS_VISIBLE | WS_CHILD | WS_TABSTOP, 125, 35, 90, 25, hWnd, NULL, m_hInst, NULL);
 			list = CreateWindowEx(0, "combobox", "", WS_CHILD | WS_VISIBLE | WS_VSCROLL/* | CBS_DROPDOWNLIST*/ | CBS_SORT, 5, 5, 210, 25, hWnd, NULL, m_hInst, NULL);
 			online = CreateWindowEx(WS_EX_STATICEDGE, "static", ss.str().c_str(), WS_VISIBLE | WS_CHILD | WS_TABSTOP, 5, 65, 210, 20, hWnd, NULL, m_hInst, NULL);
-			
+
 			SendMessage(permBan, WM_SETFONT, (WPARAM)GUI::getInstance()->m_font, 0);
 			SendMessage(kick, WM_SETFONT, (WPARAM)GUI::getInstance()->m_font, 0);
 			SendMessage(list, WM_SETFONT, (WPARAM)GUI::getInstance()->m_font, 0);
 			SendMessage(online, WM_SETFONT, (WPARAM)GUI::getInstance()->m_font, 0);
-			
+
 			AutoList<Player>::listiterator it;
 			for(it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
-				SendMessage(list, CB_ADDSTRING, 0, (LPARAM)(*it).second->getName().c_str());
+				SendMessage(list, CB_ADDSTRING, 0, (LPARAM)it->second->getName().c_str());
+
+			break;
 		}
-		break;
+
 		case WM_COMMAND:
 		{
 			switch(HIWORD(wParam))
@@ -144,6 +146,7 @@ LRESULT CALLBACK PlayerBox::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPAR
 			}
 			break;
 		}
+
 		case WM_DESTROY:
 		{
 			EnableWindow(parent, true);
@@ -152,6 +155,7 @@ LRESULT CALLBACK PlayerBox::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPAR
 			PostQuitMessage(0);
 			break;
 		}
+
 		default:
 			return DefWindowProc(hWnd, message, wParam, lParam);
 	}

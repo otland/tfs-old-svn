@@ -205,39 +205,15 @@ bool ChatChannel::talk(Player* fromPlayer, SpeakClasses type, const std::string&
 Chat::Chat()
 {
 	// Create the default channels
-	ChatChannel *newChannel;
+	m_normalChannels[CHANNEL_GAMEMASTER] = new ChatChannel(CHANNEL_GAMEMASTER, "Gamemaster");
+	m_normalChannels[CHANNEL_TUTOR] = new ChatChannel(CHANNEL_TUTOR, "Tutor");
+	m_normalChannels[CHANNEL_WORLDCHAT] = new ChatChannel(CHANNEL_WORLDCHAT, "World Chat");
+	m_normalChannels[CHANNEL_ENGLISHCHAT] = new ChatChannel(CHANNEL_ENGLISHCHAT, "English Chat");
+	m_normalChannels[CHANNEL_ADVERTISING] = new ChatChannel(CHANNEL_ADVERTISING, "Advertising");
+	m_normalChannels[CHANNEL_ADVERTISINGROOKGAARD] = new ChatChannel(CHANNEL_ADVERTISINGROOKGAARD, "Advertising-Rookgaard");
+	m_normalChannels[CHANNEL_HELP] = new ChatChannel(CHANNEL_HELP, "Help");
 
-	newChannel = new ChatChannel(CHANNEL_GAMEMASTER, "Gamemaster");
-	if(newChannel)
-		m_normalChannels[CHANNEL_GAMEMASTER] = newChannel;
-
-	newChannel = new ChatChannel(CHANNEL_TUTOR, "Tutor");
-	if(newChannel)
-		m_normalChannels[CHANNEL_TUTOR] = newChannel;
-
-	newChannel = new ChatChannel(CHANNEL_WORLDCHAT, "World Chat");
-	if(newChannel)
-		m_normalChannels[CHANNEL_WORLDCHAT] = newChannel;
-
-	newChannel = new ChatChannel(CHANNEL_ENGLISHCHAT, "English Chat");
-	if(newChannel)
-		m_normalChannels[CHANNEL_ENGLISHCHAT] = newChannel;
-
-	newChannel = new ChatChannel(CHANNEL_ADVERTISING, "Advertising");
-	if(newChannel)
-		m_normalChannels[CHANNEL_ADVERTISING] = newChannel;
-
-	newChannel = new ChatChannel(CHANNEL_ADVERTISINGROOKGAARD, "Advertising-Rookgaard");
-	if(newChannel)
-		m_normalChannels[CHANNEL_ADVERTISINGROOKGAARD] = newChannel;
-
-	newChannel = new ChatChannel(CHANNEL_HELP, "Help");
-	if(newChannel)
-		m_normalChannels[CHANNEL_HELP] = newChannel;
-
-	newChannel = new PrivateChatChannel(CHANNEL_PRIVATE, "Private Chat Channel");
-	if(newChannel)
-		dummyPrivate = newChannel;
+	dummyPrivate = new PrivateChatChannel(CHANNEL_PRIVATE, "Private Chat Channel");
 }
 
 Chat::~Chat()
@@ -473,9 +449,9 @@ bool Chat::talkToChannel(Player* player, SpeakClasses type, const std::string& t
 				AutoList<Player>::listiterator it = Player::listPlayer.list.begin();
 				while(it != Player::listPlayer.list.end())
 				{
-					if((*it).second->getGuildId() == player->getGuildId())
+					if(it->second->getGuildId() == player->getGuildId())
 					{
-						ss << (i > 0 ? ", " : "") << (*it).second->getName() << " [" << (*it).second->getLevel() << "]";
+						ss << (i > 0 ? ", " : "") << it->second->getName() << " [" << it->second->getLevel() << "]";
 						i++;
 					}
 					it++;

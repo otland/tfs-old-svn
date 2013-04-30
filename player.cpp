@@ -202,7 +202,7 @@ Creature()
 	ghostMode = false;
 	requestedOutfit = false;
 
-	deathLossPercent = 1.0;
+	protocolVersion = CLIENT_VERSION_MIN;
 
 	staminaMinutes = 2520;
 	nextUseStaminaTime = 0;
@@ -577,46 +577,43 @@ float Player::getDefenseFactor() const
 	}
 }
 
-void Player::sendIcons() const
+uint32_t Player::getClientIcons() const
 {
-	if(client)
+	uint32_t icons = 0;
+	ConditionList::const_iterator it;
+	for(it = conditions.begin(); it != conditions.end(); ++it)
 	{
-		uint32_t icons = 0;
-		ConditionList::const_iterator it;
-		for(it = conditions.begin(); it != conditions.end(); ++it)
-		{
-			if(!isSuppress((*it)->getType()))
-				icons |= (*it)->getIcons();
-		}
-
-		if(pzLocked)
-			icons |= ICON_REDSWORDS;
-
-		if(_tile->hasFlag(TILESTATE_PROTECTIONZONE))
-		{
-			icons |= ICON_PIGEON;
-
-			// Don't show ICON_SWORDS if player is in protection zone.
-			if(hasBitSet(ICON_SWORDS, icons))
-				icons &= ~ICON_SWORDS;
-		}
-
-		if(!getCondition(CONDITION_REGENERATION))
-			icons |= ICON_HUNGRY;
-
-		// Tibia client debugs with 10 or more icons
-		// so let's prevent that from happening.
-		std::bitset<20> icon_bitset((uint64_t)icons);
-		for(size_t i = 0, size = icon_bitset.size(); i < size; ++i)
-		{
-			if(icon_bitset.count() < 10)
-				break;
-
-			if(icon_bitset[i])
-				icon_bitset.reset(i);
-		}
-		client->sendIcons(icon_bitset.to_ulong());
+		if(!isSuppress((*it)->getType()))
+			icons |= (*it)->getIcons();
 	}
+
+	if(pzLocked)
+		icons |= ICON_REDSWORDS;
+
+	if(_tile->hasFlag(TILESTATE_PROTECTIONZONE))
+	{
+		icons |= ICON_PIGEON;
+
+		// Don't show ICON_SWORDS if player is in protection zone.
+		if(hasBitSet(ICON_SWORDS, icons))
+			icons &= ~ICON_SWORDS;
+	}
+
+	if(!getCondition(CONDITION_REGENERATION))
+		icons |= ICON_HUNGRY;
+
+	// Tibia client debugs with 10 or more icons
+	// so let's prevent that from happening.
+	std::bitset<20> icon_bitset((uint64_t)icons);
+	for(size_t i = 0, size = icon_bitset.size(); i < size; ++i)
+	{
+		if(icon_bitset.count() < 10)
+			break;
+
+		if(icon_bitset[i])
+			icon_bitset.reset(i);
+	}
+	return icon_bitset.to_ulong();
 }
 
 void Player::updateInventoryWeight()
@@ -648,7 +645,6 @@ int32_t Player::getPlayerInfo(playerinfo_t playerinfo) const
 		case PLAYERINFO_SOUL: return std::max<int32_t>(0, soul + varStats[STAT_SOULPOINTS]);
 		default: return 0;
 	}
-	return 0;
 }
 
 int32_t Player::getSkill(skills_t skilltype, skillsid_t skillinfo) const
@@ -1436,14 +1432,14 @@ void Player::sendUpdateContainerItem(const Container* container, uint8_t slot, c
 	}
 }
 
-void Player::sendRemoveContainerItem(const Container* container, uint8_t slot, const Item* item)
+void Player::sendRemoveContainerItem(const Container* container, uint8_t slot, const Item* lastItem)
 {
 	if(client)
 	{
 		for(ContainerVector::const_iterator cl = containerVec.begin(); cl != containerVec.end(); ++cl)
 		{
 			if(cl->second == container)
-				client->sendRemoveContainerItem(cl->first, slot);
+				client->sendRemoveContainerItem(cl->first, slot, lastItem);
 		}
 	}
 }
@@ -1626,7 +1622,7 @@ void Player::onCreatureDisappear(const Creature* creature, uint32_t stackpos, bo
 		bool saved = false;
 		for(uint32_t tries = 0; tries < 3; ++tries)
 		{
-			if(IOLoginData::getInstance()->savePlayer(this, true))
+			if(IOLoginData::getInstance()->savePlayer(this))
 			{
 				saved = true;
 				break;
@@ -2154,15 +2150,14 @@ void Player::addExperience(uint64_t exp, bool useMult/* = false*/, bool sendText
 
 uint32_t Player::getPercentLevel(uint64_t count, uint64_t nextLevelCount)
 {
-	if(nextLevelCount > 0)
-	{
-		uint32_t result = (count * 100) / nextLevelCount;
-		if(result > 100)
-			return 0;
+	if(nextLevelCount == 0)
+		return 0;
 
-		return result;
-	}
-	return 0;
+	uint32_t result = (count * 100) / nextLevelCount;
+	if(result > 100)
+		return 0;
+
+	return result;
 }
 
 void Player::onBlockHit(BlockType_t blockType)
@@ -2282,21 +2277,6 @@ uint32_t Player::getIP() const
 
 void Player::death()
 {
-	for(ConditionList::iterator it = conditions.begin(); it != conditions.end();)
-	{
-		if((*it)->isPersistent())
-		{
-			Condition* condition = *it;
-			it = conditions.erase(it);
-
-			condition->endCondition(this, CONDITIONEND_DEATH);
-			onEndCondition(condition->getType());
-			delete condition;
-		}
-		else
-			++it;
-	}
-
 	loginPosition = masterPos;
 
 	if(skillLoss)
@@ -2320,7 +2300,7 @@ void Player::death()
 					CountBlock_t cb = it->second;
 					if((OTSYS_TIME() - cb.ticks) <= g_game.getInFightTicks())
 					{
-						Player* damageDealer = g_game.getPlayerByID((*it).first);
+						Player* damageDealer = g_game.getPlayerByID(it->first);
 						if(damageDealer)
 							sumLevels += damageDealer->getLevel();
 					}
@@ -2344,7 +2324,7 @@ void Player::death()
 
 		sumMana += manaSpent;
 
-		deathLossPercent = getLostPercent() * (unfairFightReduction / 100.);
+		double deathLossPercent = getLostPercent() * (unfairFightReduction / 100.);
 
 		lostMana = (uint64_t)(sumMana * deathLossPercent);
 		while(lostMana > manaSpent && magLevel > 0)
@@ -2385,50 +2365,103 @@ void Player::death()
 				skills[i][SKILL_TRIES] = vocation->getReqSkillTries(i, skills[i][SKILL_LEVEL]);
 				skills[i][SKILL_LEVEL]--;
 			}
+
 			skills[i][SKILL_TRIES] = std::max<int32_t>(0, skills[i][SKILL_TRIES] - lostSkillTries);
+			skills[i][SKILL_PERCENT] = Player::getPercentLevel(skills[i][SKILL_TRIES], vocation->getReqSkillTries(i, skills[i][SKILL_LEVEL]));
 		}
 		//
 
 		//Level loss
-		uint32_t newLevel = level;
-		uint64_t newExperience = experience;
+		uint32_t oldLevel = level;
 		if(vocationId == VOCATION_NONE || level > 7)
-			newExperience -= getLostExperience(deathLossPercent);
+			experience -= (uint64_t)(experience * deathLossPercent);
 
-		while(newExperience < Player::getExpForLevel(newLevel))
+		while(level > 1 && experience < Player::getExpForLevel(level))
 		{
-			if(newLevel > 1)
-				newLevel--;
-			else
-				break;
+			--level;
+			healthMax = std::max<int32_t>(0, healthMax - vocation->getHPGain());
+			manaMax = std::max<int32_t>(0, manaMax - vocation->getManaGain());
+			capacity = std::max<double>(0.00, capacity - vocation->getCapGain());
 		}
 
-		if(newLevel != level)
+		if(oldLevel != level)
 		{
 			std::ostringstream ss;
-			ss << "You were downgraded from Level " << level << " to Level " << newLevel << ".";
+			ss << "You were downgraded from Level " << oldLevel << " to Level " << level << ".";
 			sendTextMessage(MSG_EVENT_ADVANCE, ss.str());
 		}
 
-		uint64_t currLevelExp = Player::getExpForLevel(newLevel);
-		uint64_t nextLevelExp = Player::getExpForLevel(newLevel + 1);
+		uint64_t currLevelExp = Player::getExpForLevel(level);
+		uint64_t nextLevelExp = Player::getExpForLevel(level + 1);
 		if(nextLevelExp > currLevelExp)
-			levelPercent = Player::getPercentLevel(experience - currLevelExp - uint64_t(experience * deathLossPercent), nextLevelExp - currLevelExp);
+			levelPercent = Player::getPercentLevel(experience - currLevelExp, nextLevelExp - currLevelExp);
 		else
 			levelPercent = 0;
 
+		std::bitset<6> bitset(blessings);
+		if(bitset[5])
+		{
+			Player* lastHitPlayer;
+			if(_lastHitCreature)
+			{
+				lastHitPlayer = _lastHitCreature->getPlayer();
+				if(!lastHitPlayer)
+				{
+					Creature* lastHitMaster = _lastHitCreature->getMaster();
+					if(lastHitMaster)
+						lastHitPlayer = lastHitMaster->getPlayer();
+				}
+			}
+			else
+				lastHitPlayer = NULL;
+
+			if(lastHitPlayer)
+			{
+				bitset.reset(5);
+				blessings = bitset.to_ulong();
+			}
+			else
+				blessings = 32;
+		}
+		else
+			blessings = 0;
+
+		sendStats();
+		sendSkills();
 		sendReLoginWindow(unfairFightReduction);
 	}
 
-	sendStats();
-	sendSkills();
+	if(getSkull() == SKULL_BLACK)
+	{
+		health = 40;
+		mana = 0;
+	}
+	else
+		health = healthMax;
+
+	if(skillLoss)
+		mana = manaMax;
+
+	for(ConditionList::iterator it = conditions.begin(); it != conditions.end();)
+	{
+		if((*it)->isPersistent())
+		{
+			Condition* condition = *it;
+			it = conditions.erase(it);
+
+			condition->endCondition(this, CONDITIONEND_DEATH);
+			onEndCondition(condition->getType());
+			delete condition;
+		}
+		else
+			++it;
+	}
 }
 
-void Player::dropCorpse()
+bool Player::dropCorpse()
 {
 	if(getZone() == ZONE_PVP)
 	{
-		preSave();
 		setDropLoot(true);
 		setLossSkill(true);
 		sendStats();
@@ -2436,9 +2469,9 @@ void Player::dropCorpse()
 		g_game.addCreatureHealth(this);
 		onThink(EVENT_CREATURE_THINK_INTERVAL);
 		onIdleStatus();
+		return false;
 	}
-	else
-		Creature::dropCorpse();
+	return Creature::dropCorpse();
 }
 
 Item* Player::getCorpse()
@@ -2457,64 +2490,6 @@ Item* Player::getCorpse()
 		corpse->setSpecialDescription(ss.str());
 	}
 	return corpse;
-}
-
-void Player::preSave()
-{
-	if(health <= 0)
-	{
-		if(skillLoss)
-		{
-			if(vocationId == VOCATION_NONE || level > 7)
-				experience -= getLostExperience(deathLossPercent);
-
-			while(level > 1 && experience < Player::getExpForLevel(level))
-			{
-				--level;
-				healthMax = std::max<int32_t>(0, healthMax - vocation->getHPGain());
-				manaMax = std::max<int32_t>(0, manaMax - vocation->getManaGain());
-				capacity = std::max<double>(0.00, capacity - vocation->getCapGain());
-			}
-
-			std::bitset<6> bitset(blessings);
-			if(bitset[5])
-			{
-				Player* lastHitPlayer;
-				if(_lastHitCreature)
-				{
-					lastHitPlayer = _lastHitCreature->getPlayer();
-					if(!lastHitPlayer)
-					{
-						Creature* lastHitMaster = _lastHitCreature->getMaster();
-						if(lastHitMaster)
-							lastHitPlayer = lastHitMaster->getPlayer();
-					}
-				}
-				else
-					lastHitPlayer = NULL;
-
-				if(lastHitPlayer)
-				{
-					bitset.reset(5);
-					blessings = bitset.to_ulong();
-				}
-				else
-					blessings = 32;
-			}
-			else
-				blessings = 0;
-
-			mana = manaMax;
-		}
-
-		health = healthMax;
-
-		if(getSkull() == SKULL_BLACK)
-		{
-			health = 40;
-			mana = 0;
-		}
-	}
 }
 
 void Player::addWeaponExhaust(uint32_t ticks)
@@ -2565,7 +2540,7 @@ void Player::removeList()
 {
 	listPlayer.removeList(getID());
 	for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
-		(*it).second->notifyStatusChange(this, VIPSTATUS_OFFLINE);
+		it->second->notifyStatusChange(this, VIPSTATUS_OFFLINE);
 
 	Status::getInstance()->removePlayer();
 }
@@ -2573,7 +2548,7 @@ void Player::removeList()
 void Player::addList()
 {
 	for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
-		(*it).second->notifyStatusChange(this, VIPSTATUS_ONLINE);
+		it->second->notifyStatusChange(this, VIPSTATUS_ONLINE);
 	listPlayer.addList(this);
 
 	Status::getInstance()->addPlayer();
@@ -3099,7 +3074,7 @@ Cylinder* Player::__queryDestination(int32_t& index, const Thing* thing, Item** 
 					n--;
 				}
 
-				for(ItemList::const_iterator it = tmpContainer->getItems(), end = tmpContainer->getEnd(); it != end; ++it)
+				for(ItemDeque::const_iterator it = tmpContainer->getItems(), end = tmpContainer->getEnd(); it != end; ++it)
 				{
 					if(Container* subContainer = (*it)->getContainer())
 						containerList.push_back(subContainer);
@@ -3108,7 +3083,7 @@ Cylinder* Player::__queryDestination(int32_t& index, const Thing* thing, Item** 
 			}
 
 			uint32_t n = 0;
-			for(ItemList::const_iterator it = tmpContainer->getItems(), end = tmpContainer->getEnd(); it != end; ++it)
+			for(ItemDeque::const_iterator it = tmpContainer->getItems(), end = tmpContainer->getEnd(); it != end; ++it)
 			{
 				Item* tmpItem = *it;
 				if(tmpItem == tradeItem)
@@ -3547,7 +3522,7 @@ bool Player::hasShopItemForSale(uint32_t itemId, uint8_t subType)
 {
 	for(std::list<ShopInfo>::const_iterator it = shopItemList.begin(); it != shopItemList.end(); ++it)
 	{
-		if(it->itemId == itemId && (*it).buyPrice > 0)
+		if(it->itemId == itemId && it->buyPrice > 0)
 		{
 			const ItemType& iit = Item::items[itemId];
 			if(iit.isFluidContainer() || iit.isSplash())
@@ -4422,7 +4397,7 @@ bool Player::hasLearnedInstantSpell(const std::string& name) const
 
 	for(LearnedInstantSpellList::const_iterator it = learnedInstantSpellList.begin(); it != learnedInstantSpellList.end(); ++it)
 	{
-		if(strcasecmp((*it).c_str(), name.c_str()) == 0)
+		if(strcasecmp(it->c_str(), name.c_str()) == 0)
 			return true;
 	}
 	return false;

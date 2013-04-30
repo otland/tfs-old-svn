@@ -190,10 +190,10 @@ class Player : public Creature, public Cylinder
 		void addList();
 		void kickPlayer(bool displayEffect);
 
-		static uint64_t getExpForLevel(int32_t level)
+		static uint64_t getExpForLevel(int32_t lv)
 		{
-			level--;
-			return ((50ULL * level * level * level) - (150ULL * level * level) + (400ULL * level))/3ULL;
+			lv--;
+			return ((50ULL * lv * lv * lv) - (150ULL * lv * lv) + (400ULL * lv)) / 3ULL;
 		}
 
 		uint16_t getStaminaMinutes() const { return staminaMinutes; }
@@ -204,9 +204,9 @@ class Player : public Creature, public Cylinder
 
 		void addOfflineTrainingTime(int32_t addTime) { offlineTrainingTime = std::min(12 * 3600 * 1000, offlineTrainingTime + addTime); }
 		void removeOfflineTrainingTime(int32_t removeTime) { offlineTrainingTime = std::max(0, offlineTrainingTime - removeTime); }
-		int32_t getOfflineTrainingTime() { return offlineTrainingTime; }
+		int32_t getOfflineTrainingTime() const { return offlineTrainingTime; }
 
-		int32_t getOfflineTrainingSkill() { return offlineTrainingSkill; }
+		int32_t getOfflineTrainingSkill() const { return offlineTrainingSkill; }
 		void setOfflineTrainingSkill(int32_t skill) { offlineTrainingSkill = skill; }
 
 		uint64_t getBankBalance() const {return bankBalance;}
@@ -229,6 +229,8 @@ class Player : public Creature, public Cylinder
 		Inbox* getInbox() const { return inbox; }
 		const DepotMap& getDepotChests() const { return depotChests; }
 
+		uint32_t getClientIcons() const;
+
 		GuildWarList getGuildWarList() const {return guildWarList;}
 		void setGuildWarList(GuildWarList _guildWarList) {guildWarList = _guildWarList;}
 
@@ -236,6 +238,9 @@ class Player : public Creature, public Cylinder
 
 		OperatingSystem_t getOperatingSystem() const {return operatingSystem;}
 		void setOperatingSystem(OperatingSystem_t clientos) {operatingSystem = clientos;}
+
+		uint16_t getProtocolVersion() const {return protocolVersion;}
+		void setProtocolVersion(uint16_t protocolversion) {protocolVersion = protocolversion;}
 
 		secureMode_t getSecureMode() const {return secureMode;}
 
@@ -554,7 +559,7 @@ class Player : public Creature, public Cylinder
 		void sendUpdateTile(const Tile* tile, const Position& pos)
 			{if(client) client->sendUpdateTile(tile, pos);}
 
-		void sendChannelMessage(const std::string& author, const std::string& text, SpeakClasses type, unsigned char channel)
+		void sendChannelMessage(const std::string& author, const std::string& text, SpeakClasses type, uint16_t channel)
 			{if(client) client->sendChannelMessage(author, text, type, channel);}
 		void sendChannelEvent(uint16_t channelId, const std::string& playerName, ChannelEvent_t channelEvent)
 			{if(client) client->sendChannelEvent(channelId, playerName, channelEvent);}
@@ -608,7 +613,7 @@ class Player : public Creature, public Cylinder
 		//container
 		void sendAddContainerItem(const Container* container, const Item* item);
 		void sendUpdateContainerItem(const Container* container, uint8_t slot, const Item* oldItem, const Item* newItem);
-		void sendRemoveContainerItem(const Container* container, uint8_t slot, const Item* item);
+		void sendRemoveContainerItem(const Container* container, uint8_t slot, const Item* lastItem);
 		void sendContainer(uint32_t cid, const Container* container, bool hasParent)
 			{if(client) client->sendContainer(cid, container, hasParent); }
 
@@ -664,7 +669,8 @@ class Player : public Creature, public Cylinder
 			{if(client) client->sendCreatePrivateChannel(channelId, channelName);}
 		void sendClosePrivate(uint16_t channelId) const
 			{if(client) client->sendClosePrivate(channelId);}
-		void sendIcons() const;
+		void sendIcons() const
+			{if(client) client->sendIcons(getClientIcons());}
 		void sendMagicEffect(const Position& pos, uint8_t type) const
 			{if(client) client->sendMagicEffect(pos, type);}
 		void sendPing();
@@ -763,14 +769,11 @@ class Player : public Creature, public Cylinder
 
 		//items
 		ContainerVector containerVec;
-		void preSave();
 
 		//depots
 		DepotMap depotChests;
 		DepotLockerMap depotLockerMap;
 		uint32_t maxDepotLimit;
-
-		double deathLossPercent;
 
 	protected:
 		void checkTradeState(const Item* item);
@@ -787,7 +790,7 @@ class Player : public Creature, public Cylinder
 		void setNextActionTask(SchedulerTask* task);
 
 		void death();
-		virtual void dropCorpse();
+		virtual bool dropCorpse();
 		virtual Item* getCorpse();
 
 		//cylinder implementations
@@ -852,6 +855,7 @@ class Player : public Creature, public Cylinder
 		int32_t idleTime;
 		int32_t groupId;
 		OperatingSystem_t operatingSystem;
+		uint16_t protocolVersion;
 		bool ghostMode;
 		bool depotChange;
 
@@ -1001,7 +1005,6 @@ class Player : public Creature, public Cylinder
 
 		static uint32_t getPercentLevel(uint64_t count, uint64_t nextLevelCount);
 		double getLostPercent() const;
-		virtual uint64_t getLostExperience(double lostPercent) const {return skillLoss ? uint64_t(experience * lostPercent) : 0;}
 		virtual uint64_t getLostExperience() const {return skillLoss ? uint64_t(experience * getLostPercent()) : 0;}
 		virtual void dropLoot(Container* corpse);
 		virtual uint32_t getDamageImmunities() const { return damageImmunities; }

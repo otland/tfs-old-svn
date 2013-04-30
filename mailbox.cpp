@@ -156,7 +156,7 @@ bool Mailbox::sendItem(Item* item)
 			item, item->getItemCount(), NULL, FLAG_NOLIMIT) == RET_NOERROR)
 		{
 			g_game.transformItem(item, item->getID() + 1);
-			IOLoginData::getInstance()->savePlayer(player, true);
+			IOLoginData::getInstance()->savePlayer(player);
 			delete player;
 			return true;
 		}
@@ -175,7 +175,7 @@ bool Mailbox::getReceiver(Item* item, std::string& name)
 		Container* parcel = item->getContainer();
 		if(parcel)
 		{
-			for(ItemList::const_iterator cit = parcel->getItems(), end = parcel->getEnd(); cit != end; ++cit)
+			for(ItemDeque::const_iterator cit = parcel->getItems(), end = parcel->getEnd(); cit != end; ++cit)
 			{
 				if((*cit)->getID() == ITEM_LABEL)
 				{

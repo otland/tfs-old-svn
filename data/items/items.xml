@@ -8131,7 +8131,7 @@
 	<item id="4991" article="a" name="pirate flag" />
 	<item id="4992" article="a" name="dead butterfly">
 		<attribute key="weight" value="20" />
-		<attribute key="decayTo" value="4992" />
+		<attribute key="decayTo" value="0" />
 		<attribute key="duration" value="60" />
 	</item>
 	<item fromid="4993" toid="4994" article="a" name="dead butterfly">

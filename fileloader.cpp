@@ -144,16 +144,14 @@ bool FileLoader::parseNode(NODE node)
 					if(!safeTell(pos))
 						return false;
 
-					if(NODE childNode = new NodeStruct())
-					{
-						childNode->start = pos;
-						currentNode->propsSize = pos - currentNode->start - 2;
-						currentNode->child = childNode;
+					NODE childNode = new NodeStruct();
+					childNode->start = pos;
+					currentNode->propsSize = pos - currentNode->start - 2;
+					currentNode->child = childNode;
 
-						setPropsSize = true;
-						if(!parseNode(childNode))
-							return false;
-					}
+					setPropsSize = true;
+					if(!parseNode(childNode))
+						return false;
 
 					break;
 				}
@@ -181,13 +179,10 @@ bool FileLoader::parseNode(NODE node)
 								return false;
 
 							skipNode = true;
-							if(NODE nextNode = new NodeStruct())
-							{
-								nextNode->start = pos;
-								currentNode->next = nextNode;
-								currentNode = nextNode;
-							}
-
+							NODE nextNode = new NodeStruct();
+							nextNode->start = pos;
+							currentNode->next = nextNode;
+							currentNode = nextNode;
 							break;
 						}
 
