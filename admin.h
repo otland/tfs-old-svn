@@ -1,27 +1,25 @@
-////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
 // OpenTibia - an opensource roleplaying game
-////////////////////////////////////////////////////////////////////////
-// This program is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+//////////////////////////////////////////////////////////////////////
+//
+//////////////////////////////////////////////////////////////////////
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public License
+// as published by the Free Software Foundation; either version 2
+// of the License, or (at your option) any later version.
 //
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with this program.  If not, see <http://www.gnu.org/licenses/>.
-////////////////////////////////////////////////////////////////////////
+// along with this program; if not, write to the Free Software Foundation,
+// Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+//////////////////////////////////////////////////////////////////////
 
-#ifndef __ADMIN__
-#define __ADMIN__
-#include "otsystem.h"
-#ifdef __OTADMIN__
-
-#include "protocol.h"
-#include "textlogger.h"
+#ifndef __OTSERV_ADMIN_H__
+#define __OTSERV_ADMIN_H__
 
 // -> server
 // command(1 byte) | size(2 bytes) | parameters(size bytes)
@@ -78,15 +76,22 @@
 //		message(string)
 //
 
+#include "player.h"
+#include "logger.h"
+#include <string>
+
+class NetworkMessage;
+class RSA;
+
 enum
 {
+	//
 	AP_MSG_LOGIN = 1,
 	AP_MSG_ENCRYPTION = 2,
 	AP_MSG_KEY_EXCHANGE = 3,
 	AP_MSG_COMMAND = 4,
 	AP_MSG_PING = 5,
-	AP_MSG_KEEP_ALIVE = 6,
-
+	//
 	AP_MSG_HELLO = 1,
 	AP_MSG_KEY_EXCHANGE_OK = 2,
 	AP_MSG_KEY_EXCHANGE_FAILED = 3,
@@ -98,7 +103,7 @@ enum
 	AP_MSG_ENCRYPTION_FAILED = 9,
 	AP_MSG_PING_OK = 10,
 	AP_MSG_MESSAGE = 11,
-	AP_MSG_ERROR = 12,
+	AP_MSG_ERROR = 12
 };
 
 enum
@@ -108,12 +113,16 @@ enum
 	CMD_PAY_HOUSES = 3,
 	CMD_OPEN_SERVER = 4,
 	CMD_SHUTDOWN_SERVER = 5,
-	CMD_RELOAD_SCRIPTS = 6,
+	//CMD_RELOAD_SCRIPTS = 6,
+	//CMD_PLAYER_INFO = 7,
+	//CMD_GETONLINE = 8,
 	CMD_KICK = 9,
-	CMD_SAVE_SERVER = 13,
-	CMD_SEND_MAIL = 14,
-	CMD_SHALLOW_SAVE_SERVER = 15
+	//CMD_BAN_MANAGER = 10,
+	//CMD_SERVER_INFO = 11,
+	//CMD_GETHOUSE = 12,
+	CMD_SETOWNER = 13
 };
+
 
 enum
 {
@@ -126,99 +135,93 @@ enum
 	ENCRYPTION_RSA1024XTEA = 1
 };
 
-class NetworkMessage;
-class Player;
-class RSA;
-
-class Admin
+class AdminProtocolConfig
 {
 	public:
-		virtual ~Admin();
-		static Admin* getInstance()
-		{
-			static Admin instance;
-			return &instance;
-		}
+		AdminProtocolConfig();
+		~AdminProtocolConfig();
+
+		bool loadXMLConfig();
+
+		bool isEnabled() const;
 
 		bool addConnection();
 		void removeConnection();
 
-		uint16_t getPolicy() const;
-		uint32_t getOptions() const;
+		bool requireLogin() const;
+		bool requireEncryption() const;
 
-		static Item* createMail(const std::string xmlData, std::string& name, uint32_t& depotId);
-		bool allow(uint32_t ip) const;
+		uint16_t getProtocolPolicy();
+		uint32_t getProtocolOptions();
 
-		bool isEncypted() const {return m_encrypted;}
+		bool allowIP(uint32_t ip);
+
+		bool passwordMatch(std::string& password);
+
 		RSA* getRSAKey(uint8_t type);
 
 	protected:
-		Admin();
+		bool m_enabled;
+		bool m_onlyLocalHost;
+		int32_t m_maxConnections;
+		int32_t m_currrentConnections;
 
-		int32_t m_currentConnections;
-		bool m_encrypted;
+		std::string m_password;
+
+		bool m_requireLogin;
+		bool m_requireEncryption;
 
 		RSA* m_key_RSA1024XTEA;
 };
 
+
 class ProtocolAdmin : public Protocol
 {
 	public:
+		// static protocol information
+		enum {server_sends_first = false};
+		enum {protocol_identifier = 0xFE}; // Not required as we send first
+		enum {use_checksum = false};
+		static const char* protocol_name() {return "admin protocol";}
+
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
 		static uint32_t protocolAdminCount;
 #endif
+		ProtocolAdmin(Connection_ptr connection);
+		virtual ~ProtocolAdmin();
+
+		virtual int32_t getProtocolId() {return 0xFE;}
+
+		virtual void parsePacket(NetworkMessage& msg);
+
 		virtual void onRecvFirstMessage(NetworkMessage& msg);
 
-		ProtocolAdmin(Connection_ptr connection): Protocol(connection)
-		{
-			m_state = NO_CONNECTED;
-			m_loginTries = m_lastCommand = 0;
-			m_startTime = time(NULL);
-#ifdef __ENABLE_SERVER_DIAGNOSTIC__
-			protocolAdminCount++;
-#endif
-		}
-		virtual ~ProtocolAdmin()
-		{
-#ifdef __ENABLE_SERVER_DIAGNOSTIC__
-			protocolAdminCount--;
-#endif
-		}
-
-		enum {protocolId = 0xFE};
-		enum {isSingleSocket = false};
-		enum {hasChecksum = false};
-		static const char* protocolName() {return "admin protocol";}
-
 	protected:
-		enum ProtocolState_t
+		virtual void deleteProtocolTask();
+
+		void adminCommandCloseServer();
+		void adminCommandPayHouses();
+		void adminCommandOpenServer();
+		void adminCommandShutdownServer();
+		void adminCommandKickPlayer(const std::string& name);
+		void adminCommandSetOwner(const std::string& param);
+
+		enum ConnectionState_t
 		{
 			NO_CONNECTED,
 			ENCRYPTION_NO_SET,
 			ENCRYPTION_OK,
 			NO_LOGGED_IN,
-			LOGGED_IN
+			LOGGED_IN,
 		};
 
-		virtual void parsePacket(NetworkMessage& msg);
-		virtual void releaseProtocol();
-#ifdef __DEBUG_NET_DETAIL__
-		virtual void deleteProtocolTask();
-#endif
 
-		// commands
-		void adminCommandPayHouses();
-		void adminCommandReload(int8_t reload);
-
-		void adminCommandKickPlayer(const std::string& name);
-		void adminCommandSendMail(const std::string& xmlData);
 
 	private:
-		void addLogLine(LogType_t type, std::string message);
-
 		int32_t m_loginTries;
-		ProtocolState_t m_state;
-		uint32_t m_lastCommand, m_startTime;
+		ConnectionState_t m_state;
+		time_t m_lastCommand;
+		time_t m_startTime;
 };
-#endif
+
 #endif

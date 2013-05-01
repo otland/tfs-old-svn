@@ -1,29 +1,31 @@
-////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
 // OpenTibia - an opensource roleplaying game
-////////////////////////////////////////////////////////////////////////
-// This program is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+//////////////////////////////////////////////////////////////////////
+// OTBM map loader
+//////////////////////////////////////////////////////////////////////
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public License
+// as published by the Free Software Foundation; either version 2
+// of the License, or (at your option) any later version.
 //
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with this program.  If not, see <http://www.gnu.org/licenses/>.
-////////////////////////////////////////////////////////////////////////
+// along with this program; if not, write to the Free Software Foundation,
+// Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+//////////////////////////////////////////////////////////////////////
 
-#ifndef __IOMAP__
-#define __IOMAP__
-#include "status.h"
+#ifndef __OTSERV_IOMAP_H__
+#define __OTSERV_IOMAP_H__
 
+#include "item.h"
 #include "map.h"
 #include "house.h"
-
 #include "spawn.h"
-#include "item.h"
+#include "status.h"
 
 enum OTBM_AttrTypes_t
 {
@@ -48,14 +50,12 @@ enum OTBM_AttrTypes_t
 	OTBM_ATTR_WRITTENBY = 19,
 	OTBM_ATTR_SLEEPERGUID = 20,
 	OTBM_ATTR_SLEEPSTART = 21,
-	OTBM_ATTR_CHARGES = 22,
-	OTBM_ATTR_CONTAINER_ITEMS = 23,
-	OTBM_ATTR_ATTRIBUTE_MAP = 128
+	OTBM_ATTR_CHARGES = 22
 };
 
 enum OTBM_NodeTypes_t
 {
-	OTBM_ROOTV2 = 1,
+	OTBM_ROOTV1 = 1,
 	OTBM_MAP_DATA = 2,
 	OTBM_ITEM_DEF = 3,
 	OTBM_TILE_AREA = 4,
@@ -74,56 +74,91 @@ enum OTBM_NodeTypes_t
 };
 
 #pragma pack(1)
+
 struct OTBM_root_header
 {
 	uint32_t version;
-	uint16_t width, height;
-	uint32_t majorVersionItems, minorVersionItems;
+	uint16_t width;
+	uint16_t height;
+	uint32_t majorVersionItems;
+	uint32_t minorVersionItems;
 };
 
 struct OTBM_Destination_coords
 {
-	uint16_t _x, _y;
+	uint16_t _x;
+	uint16_t _y;
 	uint8_t _z;
 };
 
 struct OTBM_Tile_coords
 {
-	uint8_t _x, _y;
+	uint8_t _x;
+	uint8_t _y;
 };
 
 struct OTBM_HouseTile_coords
 {
-	uint8_t _x, _y;
+	uint8_t _x;
+	uint8_t _y;
 	uint32_t _houseid;
 };
+
 #pragma pack()
 
 class IOMap
 {
+	static Tile* createTile(Item*& ground, Item* item, int px, int py, int pz);
 	public:
 		IOMap() {}
-		virtual ~IOMap() {}
+		~IOMap() {}
 
-		static Tile* createTile(Item*& ground, Item* item, uint16_t px, uint16_t py, uint16_t pz);
 		bool loadMap(Map* map, const std::string& identifier);
 
 		/* Load the spawns
 		 * \param map pointer to the Map class
 		 * \returns Returns true if the spawns were loaded successfully
 		 */
-		bool loadSpawns(Map* map);
+		bool loadSpawns(Map* map)
+		{
+			if(map->spawnfile.empty())
+			{
+				//OTBM file doesn't tell us about the spawnfile,
+				//lets guess it is mapname-spawn.xml.
+				map->spawnfile = Status::getInstance()->getMapName();
+				map->spawnfile += "-spawn.xml";
+			}
+			return Spawns::getInstance()->loadFromXml(map->spawnfile);
+		}
 
 		/* Load the houses (not house tile-data)
 		 * \param map pointer to the Map class
 		 * \returns Returns true if the houses were loaded successfully
 		 */
-		bool loadHouses(Map* map);
+		bool loadHouses(Map* map)
+		{
+			if(map->housefile.empty())
+			{
+				//OTBM file doesn't tell us about the housefile,
+				//lets guess it is mapname-house.xml.
+				map->housefile = Status::getInstance()->getMapName();
+				map->housefile += "-house.xml";
+			}
+			return Houses::getInstance().loadHousesXML(map->housefile);
+		}
 
-		const std::string& getLastErrorString() const {return errorString;}
-		void setLastErrorString(const std::string& _errorString) {errorString = _errorString;}
+		const std::string& getLastErrorString() const
+		{
+			return errorString;
+		}
+
+		void setLastErrorString(const std::string& _errorString)
+		{
+			errorString = _errorString;
+		}
 
 	protected:
 		std::string errorString;
 };
+
 #endif

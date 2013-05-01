@@ -1,18 +1,25 @@
+local conditionAttrib = createConditionObject(CONDITION_ATTRIBUTES)
+local conditionSlow = createConditionObject(CONDITION_HASTE)
+local conditionExhaustHeal = createConditionObject(CONDITION_EXHAUST_HEAL)
+
+setConditionParam(conditionAttrib, CONDITION_PARAM_TICKS, 10000)
+setConditionParam(conditionAttrib, CONDITION_PARAM_SKILL_DISTANCEPERCENT, 150)
+
+setConditionParam(conditionSlow, CONDITION_PARAM_TICKS, 10000)
+setConditionFormula(conditionSlow, -0.7, 0, -0.7, 0)
+
+setConditionParam(conditionExhaustHeal, CONDITION_PARAM_TICKS, 10000)
+
 local combat = createCombatObject()
 setCombatParam(combat, COMBAT_PARAM_EFFECT, CONST_ME_MAGIC_BLUE)
-setCombatParam(combat, COMBAT_PARAM_AGGRESSIVE, false)
-
-local condition = createConditionObject(CONDITION_ATTRIBUTES)
-setConditionParam(condition, CONDITION_PARAM_TICKS, 10000)
-setConditionParam(condition, CONDITION_PARAM_SKILL_DISTANCEPERCENT, 150)
-setConditionParam(condition, CONDITION_PARAM_BUFF, true)
-setCombatCondition(combat, condition)
-
-local speed = createConditionObject(CONDITION_PARALYZE)
-setConditionParam(speed, CONDITION_PARAM_TICKS, 10000)
-setConditionFormula(speed, -0.7, 56, -0.7, 56)
-setCombatCondition(combat, speed)
+setCombatParam(combat, COMBAT_PARAM_AGGRESSIVE, 0)
+setCombatCondition(combat, conditionAttrib)
+setCombatCondition(combat, conditionSlow)
+setCombatCondition(combat, conditionExhaustHeal)
 
 function onCastSpell(cid, var)
-	return doCombat(cid, combat, var)
+	if(doCombat(cid, combat, var) == LUA_NO_ERROR) then
+		return LUA_NO_ERROR
+	end
+	return LUA_ERROR
 end

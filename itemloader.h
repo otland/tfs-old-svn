@@ -1,23 +1,28 @@
-////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
 // OpenTibia - an opensource roleplaying game
-////////////////////////////////////////////////////////////////////////
-// This program is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+//////////////////////////////////////////////////////////////////////
+//
+//////////////////////////////////////////////////////////////////////
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public License
+// as published by the Free Software Foundation; either version 2
+// of the License, or (at your option) any later version.
 //
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with this program.  If not, see <http://www.gnu.org/licenses/>.
-////////////////////////////////////////////////////////////////////////
+// along with this program; if not, write to the Free Software Foundation,
+// Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+//////////////////////////////////////////////////////////////////////
 
-#ifndef __ITEMLOADER__
-#define __ITEMLOADER__
+#ifndef __OTSERV_ITEMLOADER_H__
+#define __OTSERV_ITEMLOADER_H__
+
 #include "fileloader.h"
+#include "definitions.h"
 
 typedef uint8_t attribute_t;
 typedef uint16_t datasize_t;
@@ -43,6 +48,7 @@ enum itemgroup_t
 	ITEM_GROUP_LAST
 };
 
+/////////OTB specific//////////////
 enum clientVersion_t
 {
 	CLIENT_VERSION_750 = 1,
@@ -61,7 +67,7 @@ enum clientVersion_t
 	CLIENT_VERSION_841 = 13,
 	CLIENT_VERSION_842 = 14,
 	CLIENT_VERSION_850 = 15,
-	CLIENT_VERSION_854_OLD = 16,
+	CLIENT_VERSION_854_BAD = 16,
 	CLIENT_VERSION_854 = 17,
 	CLIENT_VERSION_855 = 18,
 	CLIENT_VERSION_860_OLD = 19,
@@ -86,7 +92,15 @@ enum clientVersion_t
 	CLIENT_VERSION_953 = 38,
 	CLIENT_VERSION_954 = 39,
 	CLIENT_VERSION_960 = 40,
-	CLIENT_VERSION_961 = 41
+	CLIENT_VERSION_961 = 41,
+	CLIENT_VERSION_963 = 42,
+	CLIENT_VERSION_970 = 43,
+	CLIENT_VERSION_980 = 44,
+	CLIENT_VERSION_981 = 45,
+	CLIENT_VERSION_982 = 46,
+	CLIENT_VERSION_983 = 47,
+	CLIENT_VERSION_985 = 48,
+	CLIENT_VERSION_986 = 49
 };
 
 enum rootattrib_
@@ -118,49 +132,55 @@ enum itemattrib_t
 	ITEM_ATTR_07,
 	ITEM_ATTR_08,
 	ITEM_ATTR_LIGHT,
-	ITEM_ATTR_DECAY2,
-	ITEM_ATTR_WEAPON2,
-	ITEM_ATTR_AMU2,
-	ITEM_ATTR_ARMOR2,
-	ITEM_ATTR_WRITEABLE2,
+
+	//1-byte aligned
+	ITEM_ATTR_DECAY2, //deprecated
+	ITEM_ATTR_WEAPON2, //deprecated
+	ITEM_ATTR_AMU2, //deprecated
+	ITEM_ATTR_ARMOR2, //deprecated
+	ITEM_ATTR_WRITEABLE2, //deprecated
 	ITEM_ATTR_LIGHT2,
 	ITEM_ATTR_TOPORDER,
-	ITEM_ATTR_WRITEABLE3,
+	ITEM_ATTR_WRITEABLE3, //deprecated
+
 	ITEM_ATTR_WAREID,
+
 	ITEM_ATTR_LAST
 };
 
 enum itemflags_t
 {
-	FLAG_BLOCK_SOLID = 1 << 0,
-	FLAG_BLOCK_PROJECTILE = 1 << 1,
-	FLAG_BLOCK_PATHFIND = 1 << 2,
-	FLAG_HAS_HEIGHT = 1 << 3,
-	FLAG_USABLE = 1 << 4,
-	FLAG_PICKUPABLE = 1 << 5,
-	FLAG_MOVABLE = 1 << 6,
-	FLAG_STACKABLE = 1 << 7,
-	FLAG_FLOORCHANGEDOWN = 1 << 8,
-	FLAG_FLOORCHANGENORTH = 1 << 9,
-	FLAG_FLOORCHANGEEAST = 1 << 10,
-	FLAG_FLOORCHANGESOUTH = 1 << 11,
-	FLAG_FLOORCHANGEWEST = 1 << 12,
-	FLAG_ALWAYSONTOP = 1 << 13,
-	FLAG_READABLE = 1 << 14,
-	FLAG_ROTABLE = 1 << 15,
-	FLAG_HANGABLE = 1 << 16,
-	FLAG_VERTICAL = 1 << 17,
-	FLAG_HORIZONTAL = 1 << 18,
-	FLAG_CANNOTDECAY = 1 << 19,
-	FLAG_ALLOWDISTREAD = 1 << 20,
-	FLAG_UNUSED = 1 << 21,
-	FLAG_CLIENTCHARGES = 1 << 22, //deprecated
-	FLAG_LOOKTHROUGH = 1 << 23,
-	FLAG_ANIMATION = 1 << 24,
-	FLAG_WALKSTACK = 1 << 25
+	FLAG_BLOCK_SOLID = 1,
+	FLAG_BLOCK_PROJECTILE = 2,
+	FLAG_BLOCK_PATHFIND = 4,
+	FLAG_HAS_HEIGHT = 8,
+	FLAG_USEABLE = 16,
+	FLAG_PICKUPABLE = 32,
+	FLAG_MOVEABLE = 64,
+	FLAG_STACKABLE = 128,
+	FLAG_FLOORCHANGEDOWN = 256,
+	FLAG_FLOORCHANGENORTH = 512,
+	FLAG_FLOORCHANGEEAST = 1024,
+	FLAG_FLOORCHANGESOUTH = 2048,
+	FLAG_FLOORCHANGEWEST = 4096,
+	FLAG_ALWAYSONTOP = 8192,
+	FLAG_READABLE = 16384,
+	FLAG_ROTABLE = 32768,
+	FLAG_HANGABLE = 65536,
+	FLAG_VERTICAL = 131072,
+	FLAG_HORIZONTAL = 262144,
+	FLAG_CANNOTDECAY = 524288,
+	FLAG_ALLOWDISTREAD = 1048576,
+	FLAG_UNUSED = 2097152,
+	FLAG_CLIENTCHARGES = 4194304, /* deprecated */
+	FLAG_LOOKTHROUGH = 8388608,
+	FLAG_ANIMATION = 16777216,
+	FLAG_FULLTILE = 33554432
 };
 
+//1-byte aligned structs
 #pragma pack(1)
+
 struct VERSIONINFO
 {
 	uint32_t dwMajorVersion;
@@ -174,5 +194,7 @@ struct lightBlock2
 	uint16_t lightLevel;
 	uint16_t lightColor;
 };
+
 #pragma pack()
+/////////OTB specific//////////////
 #endif

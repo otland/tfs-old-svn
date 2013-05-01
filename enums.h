@@ -1,41 +1,33 @@
-////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
 // OpenTibia - an opensource roleplaying game
-////////////////////////////////////////////////////////////////////////
-// This program is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+//////////////////////////////////////////////////////////////////////
+//
+//////////////////////////////////////////////////////////////////////
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public License
+// as published by the Free Software Foundation; either version 2
+// of the License, or (at your option) any later version.
 //
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with this program.  If not, see <http://www.gnu.org/licenses/>.
-////////////////////////////////////////////////////////////////////////
+// along with this program; if not, write to the Free Software Foundation,
+// Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+//////////////////////////////////////////////////////////////////////
 
-#ifndef __ENUMS__
-#define __ENUMS__
-
+#ifndef __OTSERV_ENUMS_H__
+#define __OTSERV_ENUMS_H__
 #include <string>
 #include <list>
 
-#define PLAYER_ID_RANGE 0x10000000
-#define MONSTER_ID_RANGE 0x40000000
-#define NPC_ID_RANGE 0x80000000
-
-enum Vocation_t
+enum VipStatus_t
 {
-	VOCATION_NONE = 0,
-	VOCATION_SORCERER = 1,
-	VOCATION_DRUID = 2,
-	VOCATION_PALADIN = 3,
-	VOCATION_KNIGHT = 4,
-	VOCATION_MASTERSORCERER = 5,
-	VOCATION_ELDERDRUID = 6,
-	VOCATION_ROYALPALADIN = 7,
-	VOCATION_ELITEKNIGHT = 8
+	VIPSTATUS_OFFLINE = 0,
+	VIPSTATUS_ONLINE = 1,
+	VIPSTATUS_PENDING = 2
 };
 
 enum MarketAction_t
@@ -60,6 +52,21 @@ enum MarketOfferState_t
 	OFFERSTATE_ACCEPTEDEX = 255
 };
 
+enum ChannelEvent_t
+{
+	CHANNELEVENT_JOIN = 0,
+	CHANNELEVENT_LEAVE = 1,
+	CHANNELEVENT_INVITE = 2,
+	CHANNELEVENT_EXCLUDE = 3
+};
+
+enum ReportType_t
+{
+	REPORTTYPE_NAME = 0,
+	REPORTTYPE_STATEMENT = 1,
+	REPORTTYPE_BOT = 2
+};
+
 enum CreatureType_t
 {
 	CREATURETYPE_PLAYER = 0,
@@ -67,161 +74,149 @@ enum CreatureType_t
 	CREATURETYPE_NPC = 2
 };
 
-enum DatabaseEngine_t
+enum StorageValues_t
 {
-	DATABASE_ENGINE_NONE = 0,
-	DATABASE_ENGINE_MYSQL,
-	DATABASE_ENGINE_SQLITE,
-	DATABASE_ENGINE_POSTGRESQL
-};
-
-enum Encryption_t
-{
-	ENCRYPTION_PLAIN = 0,
-	ENCRYPTION_MD5,
-	ENCRYPTION_SHA1,
-	ENCRYPTION_SHA256,
-	ENCRYPTION_SHA512
+	STORAGEVALUE_PROMOTION = 30018
 };
 
 enum GuildLevel_t
 {
-	GUILDLEVEL_NONE = 0,
-	GUILDLEVEL_MEMBER,
-	GUILDLEVEL_VICE,
-	GUILDLEVEL_LEADER
+	GUILDLEVEL_MEMBER = 1,
+	GUILDLEVEL_VICE = 2,
+	GUILDLEVEL_LEADER = 3
 };
 
-enum Channels_t
+enum OperatingSystem_t
 {
-	CHANNEL_GUILD = 0x00,
-	CHANNEL_PARTY = 0x01,
-	CHANNEL_HELP = 0x07,
-	CHANNEL_DEFAULT = 0xFFFE, //internal usage only, there is no such channel
-	CHANNEL_PRIVATE = 0xFFFF
+	CLIENTOS_LINUX = 0x01,
+	CLIENTOS_WINDOWS = 0x02,
+	CLIENTOS_FLASH = 0x03
+};
+
+enum SpellGroup_t
+{
+	SPELLGROUP_NONE = 0,
+	SPELLGROUP_ATTACK = 1,
+	SPELLGROUP_HEALING = 2,
+	SPELLGROUP_SUPPORT = 3,
+	SPELLGROUP_SPECIAL = 4
+};
+
+enum DatabaseEngine_t
+{
+	DATABASE_ENGINE_NONE = 0,
+	DATABASE_ENGINE_MYSQL,
+	DATABASE_ENGINE_SQLITE
+};
+
+enum AccountType_t
+{
+	ACCOUNT_TYPE_NORMAL = 0x01,
+	ACCOUNT_TYPE_TUTOR = 0x02,
+	ACCOUNT_TYPE_SENIORTUTOR = 0x03,
+	ACCOUNT_TYPE_GAMEMASTER = 0x04,
+	ACCOUNT_TYPE_GOD = 0x05
 };
 
 enum RaceType_t
 {
-	RACE_NONE = 0,
-	RACE_VENOM,
-	RACE_BLOOD,
-	RACE_UNDEAD,
-	RACE_FIRE,
-	RACE_ENERGY
+	RACE_NONE	= 0,
+	RACE_VENOM 	= 1,
+	RACE_BLOOD	= 2,
+	RACE_UNDEAD	= 3,
+	RACE_FIRE	= 4,
+	RACE_ENERGY	= 5
 };
 
 enum CombatType_t
 {
-	COMBAT_NONE				= 0x00,
-	COMBAT_ALL				= COMBAT_NONE, /* for internal use only.*/
-
-	COMBAT_PHYSICALDAMAGE	= 1 << 0,
-	COMBAT_ENERGYDAMAGE		= 1 << 1,
-	COMBAT_EARTHDAMAGE		= 1 << 2,
-	COMBAT_FIREDAMAGE		= 1 << 3,
-	COMBAT_UNDEFINEDDAMAGE	= 1 << 4,
-	COMBAT_LIFEDRAIN		= 1 << 5,
-	COMBAT_MANADRAIN		= 1 << 6,
-	COMBAT_HEALING			= 1 << 7,
-	COMBAT_DROWNDAMAGE		= 1 << 8,
-	COMBAT_ICEDAMAGE		= 1 << 9,
-	COMBAT_HOLYDAMAGE		= 1 << 10,
-	COMBAT_DEATHDAMAGE		= 1 << 11,
-
-	COMBAT_FIRST			= COMBAT_NONE,
-	COMBAT_LAST				= COMBAT_DEATHDAMAGE
+	COMBAT_FIRST = 0,
+	COMBAT_NONE = COMBAT_FIRST,
+	COMBAT_PHYSICALDAMAGE = 1,
+	COMBAT_ENERGYDAMAGE = 2,
+	COMBAT_EARTHDAMAGE = 4,
+	COMBAT_FIREDAMAGE = 8,
+	COMBAT_UNDEFINEDDAMAGE = 16,
+	COMBAT_LIFEDRAIN = 32,
+	COMBAT_MANADRAIN = 64,
+	COMBAT_HEALING = 128,
+	COMBAT_DROWNDAMAGE = 256,
+	COMBAT_ICEDAMAGE = 512,
+	COMBAT_HOLYDAMAGE = 1024,
+	COMBAT_DEATHDAMAGE = 2048,
+	COMBAT_LAST = COMBAT_DEATHDAMAGE,
+	COMBAT_COUNT = 12
 };
 
 enum CombatParam_t
 {
-	COMBATPARAM_NONE = 0,
-	COMBATPARAM_COMBATTYPE,
-	COMBATPARAM_EFFECT,
-	COMBATPARAM_DISTANCEEFFECT,
-	COMBATPARAM_BLOCKEDBYSHIELD,
-	COMBATPARAM_BLOCKEDBYARMOR,
-	COMBATPARAM_TARGETCASTERORTOPMOST,
-	COMBATPARAM_CREATEITEM,
-	COMBATPARAM_AGGRESSIVE,
-	COMBATPARAM_DISPEL,
-	COMBATPARAM_USECHARGES,
-	COMBATPARAM_TARGETPLAYERSORSUMMONS,
-	COMBATPARAM_DIFFERENTAREADAMAGE,
-	COMBATPARAM_HITEFFECT,
-	COMBATPARAM_HITCOLOR,
-	COMBATPARAM_ELEMENTTYPE,
-	COMBATPARAM_ELEMENTDAMAGE
+	COMBATPARAM_COMBATTYPE = 1,
+	COMBATPARAM_EFFECT = 2,
+	COMBATPARAM_DISTANCEEFFECT = 3,
+	COMBATPARAM_BLOCKEDBYSHIELD = 4,
+	COMBATPARAM_BLOCKEDBYARMOR = 5,
+	COMBATPARAM_TARGETCASTERORTOPMOST = 6,
+	COMBATPARAM_CREATEITEM = 7,
+	COMBATPARAM_AGGRESSIVE = 8,
+	COMBATPARAM_DISPEL = 9,
+	COMBATPARAM_USECHARGES = 10
 };
 
 enum CallBackParam_t
 {
-	CALLBACKPARAM_NONE = 0,
-	CALLBACKPARAM_LEVELMAGICVALUE,
-	CALLBACKPARAM_SKILLVALUE,
-	CALLBACKPARAM_TARGETTILECALLBACK,
-	CALLBACKPARAM_TARGETCREATURECALLBACK
+	CALLBACKPARAM_LEVELMAGICVALUE = 1,
+	CALLBACKPARAM_SKILLVALUE = 2,
+	CALLBACKPARAM_TARGETTILECALLBACK = 3,
+	CALLBACKPARAM_TARGETCREATURECALLBACK = 4
 };
 
 enum ConditionParam_t
 {
 	CONDITIONPARAM_OWNER = 1,
-	CONDITIONPARAM_TICKS,
-	CONDITIONPARAM_OUTFIT,
-	CONDITIONPARAM_HEALTHGAIN,
-	CONDITIONPARAM_HEALTHTICKS,
-	CONDITIONPARAM_MANAGAIN,
-	CONDITIONPARAM_MANATICKS,
-	CONDITIONPARAM_DELAYED,
-	CONDITIONPARAM_SPEED,
-	CONDITIONPARAM_LIGHT_LEVEL,
-	CONDITIONPARAM_LIGHT_COLOR,
-	CONDITIONPARAM_SOULGAIN,
-	CONDITIONPARAM_SOULTICKS,
-	CONDITIONPARAM_MINVALUE,
-	CONDITIONPARAM_MAXVALUE,
-	CONDITIONPARAM_STARTVALUE,
-	CONDITIONPARAM_TICKINTERVAL,
-	CONDITIONPARAM_FORCEUPDATE,
-	CONDITIONPARAM_SKILL_MELEE,
-	CONDITIONPARAM_SKILL_FIST,
-	CONDITIONPARAM_SKILL_CLUB,
-	CONDITIONPARAM_SKILL_SWORD,
-	CONDITIONPARAM_SKILL_AXE,
-	CONDITIONPARAM_SKILL_DISTANCE,
-	CONDITIONPARAM_SKILL_SHIELD,
-	CONDITIONPARAM_SKILL_FISHING,
-	CONDITIONPARAM_STAT_MAXHEALTH,
-	CONDITIONPARAM_STAT_MAXMANA,
-	CONDITIONPARAM_STAT_SOUL,
-	CONDITIONPARAM_STAT_MAGICLEVEL,
-	CONDITIONPARAM_STAT_MAXHEALTHPERCENT,
-	CONDITIONPARAM_STAT_MAXMANAPERCENT,
-	CONDITIONPARAM_STAT_SOULPERCENT,
-	CONDITIONPARAM_STAT_MAGICLEVELPERCENT,
-	CONDITIONPARAM_SKILL_MELEEPERCENT,
-	CONDITIONPARAM_SKILL_FISTPERCENT,
-	CONDITIONPARAM_SKILL_CLUBPERCENT,
-	CONDITIONPARAM_SKILL_SWORDPERCENT,
-	CONDITIONPARAM_SKILL_AXEPERCENT,
-	CONDITIONPARAM_SKILL_DISTANCEPERCENT,
-	CONDITIONPARAM_SKILL_SHIELDPERCENT,
-	CONDITIONPARAM_SKILL_FISHINGPERCENT,
-	CONDITIONPARAM_PERIODICDAMAGE,
-	CONDITIONPARAM_BUFF,
-	CONDITIONPARAM_SUBID,
-	CONDITIONPARAM_FIELD
-};
-
-enum Exhaust_t
-{
-	EXHAUST_OTHER = 0,
-	EXHAUST_SPELLGROUP_NONE = 1,
-	EXHAUST_SPELLGROUP_ATTACK = 2,
-	EXHAUST_SPELLGROUP_HEALING = 3,
-	EXHAUST_SPELLGROUP_SUPPORT = 4,
-	EXHAUST_SPELLGROUP_SPECIAL = 5,
-	EXHAUST_MELEE = 6
+	CONDITIONPARAM_TICKS = 2,
+	//CONDITIONPARAM_OUTFIT = 3,
+	CONDITIONPARAM_HEALTHGAIN = 4,
+	CONDITIONPARAM_HEALTHTICKS = 5,
+	CONDITIONPARAM_MANAGAIN = 6,
+	CONDITIONPARAM_MANATICKS = 7,
+	CONDITIONPARAM_DELAYED = 8,
+	CONDITIONPARAM_SPEED = 9,
+	CONDITIONPARAM_LIGHT_LEVEL = 10,
+	CONDITIONPARAM_LIGHT_COLOR = 11,
+	CONDITIONPARAM_SOULGAIN = 12,
+	CONDITIONPARAM_SOULTICKS = 13,
+	CONDITIONPARAM_MINVALUE = 14,
+	CONDITIONPARAM_MAXVALUE = 15,
+	CONDITIONPARAM_STARTVALUE = 16,
+	CONDITIONPARAM_TICKINTERVAL = 17,
+	CONDITIONPARAM_FORCEUPDATE = 18,
+	CONDITIONPARAM_SKILL_MELEE = 19,
+	CONDITIONPARAM_SKILL_FIST = 20,
+	CONDITIONPARAM_SKILL_CLUB = 21,
+	CONDITIONPARAM_SKILL_SWORD = 22,
+	CONDITIONPARAM_SKILL_AXE = 23,
+	CONDITIONPARAM_SKILL_DISTANCE = 24,
+	CONDITIONPARAM_SKILL_SHIELD = 25,
+	CONDITIONPARAM_SKILL_FISHING = 26,
+	CONDITIONPARAM_STAT_MAXHITPOINTS = 27,
+	CONDITIONPARAM_STAT_MAXMANAPOINTS = 28,
+	CONDITIONPARAM_STAT_SOULPOINTS = 29,
+	CONDITIONPARAM_STAT_MAGICPOINTS = 30,
+	CONDITIONPARAM_STAT_MAXHITPOINTSPERCENT = 31,
+	CONDITIONPARAM_STAT_MAXMANAPOINTSPERCENT = 32,
+	CONDITIONPARAM_STAT_SOULPOINTSPERCENT = 33,
+	CONDITIONPARAM_STAT_MAGICPOINTSPERCENT = 34,
+	CONDITIONPARAM_PERIODICDAMAGE = 35,
+	CONDITIONPARAM_SKILL_MELEEPERCENT = 36,
+	CONDITIONPARAM_SKILL_FISTPERCENT = 37,
+	CONDITIONPARAM_SKILL_CLUBPERCENT = 38,
+	CONDITIONPARAM_SKILL_SWORDPERCENT = 39,
+	CONDITIONPARAM_SKILL_AXEPERCENT = 40,
+	CONDITIONPARAM_SKILL_DISTANCEPERCENT = 41,
+	CONDITIONPARAM_SKILL_SHIELDPERCENT = 42,
+	CONDITIONPARAM_SKILL_FISHINGPERCENT = 43,
+	CONDITIONPARAM_BUFF_SPELL = 44,
+	CONDITIONPARAM_SUBID = 45
 };
 
 enum BlockType_t
@@ -232,241 +227,221 @@ enum BlockType_t
 	BLOCK_IMMUNITY
 };
 
-enum Reflect_t
+enum skills_t
 {
-	REFLECT_FIRST = 0,
-	REFLECT_PERCENT = REFLECT_FIRST,
-	REFLECT_CHANCE,
-	REFLECT_LAST = REFLECT_CHANCE
-};
-
-enum Increment_t
-{
-	INCREMENT_FIRST = 0,
-	HEALING_VALUE = INCREMENT_FIRST,
-	HEALING_PERCENT,
-	MAGIC_VALUE,
-	MAGIC_PERCENT,
-	INCREMENT_LAST = MAGIC_PERCENT
+	SKILL_FIRST = 0,
+	SKILL_FIST = SKILL_FIRST,
+	SKILL_CLUB = 1,
+	SKILL_SWORD = 2,
+	SKILL_AXE = 3,
+	SKILL_DIST = 4,
+	SKILL_SHIELD = 5,
+	SKILL_FISH = 6,
+	SKILL__MAGLEVEL = 7,
+	SKILL__LEVEL = 8,
+	SKILL_LAST = SKILL_FISH,
+	SKILL__LAST = SKILL__LEVEL
 };
 
 enum stats_t
 {
 	STAT_FIRST = 0,
-	STAT_MAXHEALTH = STAT_FIRST,
-	STAT_MAXMANA,
-	STAT_SOUL,
-	STAT_LEVEL,
-	STAT_MAGICLEVEL,
-	STAT_LAST = STAT_MAGICLEVEL
-};
-
-enum lossTypes_t
-{
-	LOSS_FIRST = 0,
-	LOSS_EXPERIENCE = LOSS_FIRST,
-	LOSS_MANA,
-	LOSS_SKILLS,
-	LOSS_CONTAINERS,
-	LOSS_ITEMS,
-	LOSS_LAST = LOSS_ITEMS
+	STAT_MAXHITPOINTS = STAT_FIRST,
+	STAT_MAXMANAPOINTS,
+	STAT_SOULPOINTS,
+	STAT_MAGICPOINTS,
+	STAT_LAST = STAT_MAGICPOINTS
 };
 
 enum formulaType_t
 {
 	FORMULA_UNDEFINED = 0,
-	FORMULA_LEVELMAGIC,
-	FORMULA_SKILL,
-	FORMULA_VALUE
+	FORMULA_LEVELMAGIC = 1,
+	FORMULA_SKILL = 2,
+	FORMULA_VALUE = 3
 };
 
 enum ConditionId_t
 {
 	CONDITIONID_DEFAULT = -1,
 	CONDITIONID_COMBAT = 0,
-	CONDITIONID_HEAD,
-	CONDITIONID_NECKLACE,
-	CONDITIONID_BACKPACK,
-	CONDITIONID_ARMOR,
-	CONDITIONID_RIGHT,
-	CONDITIONID_LEFT,
-	CONDITIONID_LEGS,
-	CONDITIONID_FEET,
-	CONDITIONID_RING,
-	CONDITIONID_AMMO,
-	CONDITIONID_OUTFIT,
-	CONDITIONID_MOUNT
+	CONDITIONID_HEAD = 1,
+	CONDITIONID_NECKLACE = 2,
+	CONDITIONID_BACKPACK = 3,
+	CONDITIONID_ARMOR = 4,
+	CONDITIONID_RIGHT = 5,
+	CONDITIONID_LEFT = 6,
+	CONDITIONID_LEGS = 7,
+	CONDITIONID_FEET = 8,
+	CONDITIONID_RING = 9,
+	CONDITIONID_AMMO = 10
 };
 
 enum PlayerSex_t
 {
 	PLAYERSEX_FEMALE = 0,
-	PLAYERSEX_MALE
-	// DO NOT ADD HERE! Every higher sex is only for your
-	// own use- each female should be even and male odd.
+	PLAYERSEX_MALE = 1
 };
 
-enum WarType_t
+enum Vocation_t
 {
-	WAR_FIRST = 0,
-	WAR_GUILD = WAR_FIRST,
-	WAR_ENEMY,
-	WAR_LAST = WAR_ENEMY
+	VOCATION_NONE = 0,
+	VOCATION_SORCERER = 1,
+	VOCATION_DRUID = 2,
+	VOCATION_PALADIN = 3,
+	VOCATION_KNIGHT = 4,
+	VOCATION_MASTERSORCERER = 5,
+	VOCATION_ELDERDRUID = 6,
+	VOCATION_ROYALPALADIN = 7,
+	VOCATION_ELITEKNIGHT = 8
 };
 
-struct War_t
+enum CharacterTypes_t
 {
-	War_t()
-	{
-		war = 0;
-		type = WAR_FIRST;
-
-		memset(ids, 0, sizeof(ids));
-		memset(frags, 0, sizeof(frags));
-
-		limit = 0;
-		payment = 0;
-	}
-
-	uint32_t war;
-	WarType_t type;
-
-	uint32_t ids[WAR_LAST + 1];
-	std::string names[WAR_LAST + 1];
-	uint16_t frags[WAR_LAST + 1];
-
-	uint16_t limit;
-	uint64_t payment;
+	PLAYER_MALE_1 = 0x80,
+	PLAYER_MALE_2 = 0x81,
+	PLAYER_MALE_3 = 0x82,
+	PLAYER_MALE_4 = 0x83,
+	PLAYER_MALE_5 = 0x84,
+	PLAYER_MALE_6 = 0x85,
+	PLAYER_MALE_7 = 0x86,
+	PLAYER_FEMALE_1 = 0x88,
+	PLAYER_FEMALE_2 = 0x89,
+	PLAYER_FEMALE_3 = 0x8A,
+	PLAYER_FEMALE_4 = 0x8B,
+	PLAYER_FEMALE_5 = 0x8C,
+	PLAYER_FEMALE_6 = 0x8D,
+	PLAYER_FEMALE_7 = 0x8E
 };
 
 struct Outfit_t
 {
 	Outfit_t()
 	{
-		lookType = lookTypeEx = lookMount = 0;
-		lookHead = lookBody = lookLegs = lookFeet = lookAddons = 0;
-	}
-	Outfit_t(uint16_t _lookType)
-	{
-		lookType = _lookType;
-		lookTypeEx = lookMount = 0;
-		lookHead = lookBody = lookLegs = lookFeet = lookAddons = 0;
-	}
-
-	uint16_t lookType, lookMount, lookTypeEx;
-	uint8_t lookHead, lookBody, lookLegs, lookFeet, lookAddons;
-
-	bool operator==(const Outfit_t& o) const
-	{
-		return (o.lookAddons == lookAddons && o.lookMount == lookMount
-			&& o.lookType == lookType && o.lookTypeEx == lookTypeEx
-			&& o.lookHead == lookHead && o.lookBody == lookBody
-			&& o.lookLegs == lookLegs && o.lookFeet == lookFeet);
+		lookHead   = 0;
+		lookBody   = 0;
+		lookLegs   = 0;
+		lookFeet   = 0;
+		lookType   = 0;
+		lookTypeEx = 0;
+		lookAddons = 0;
+		lookMount  = 0;
 	}
 
-	bool operator!=(const Outfit_t& o) const
-	{
-		return !(*this == o);
-	}
+	uint16_t lookType;
+	uint16_t lookTypeEx;
+	uint8_t lookHead;
+	uint8_t lookBody;
+	uint8_t lookLegs;
+	uint8_t lookFeet;
+	uint8_t lookAddons;
+	uint16_t lookMount;
 };
 
 struct LightInfo
 {
-	uint32_t level, color;
-
-	LightInfo() {level = color = 0;}
-	LightInfo(uint32_t _level, uint32_t _color):
-		level(_level), color(_color) {}
+	uint32_t level;
+	uint32_t color;
+	LightInfo()
+	{
+		level = 0;
+		color = 0;
+	};
+	LightInfo(uint32_t _level, uint32_t _color)
+	{
+		level = _level;
+		color = _color;
+	}
 };
 
 struct ShopInfo
 {
 	uint32_t itemId;
-	int32_t subType, buyPrice, sellPrice;
-	std::string itemName;
+	int32_t subType;
+	uint32_t buyPrice;
+	uint32_t sellPrice;
+	std::string realName;
 
 	ShopInfo()
 	{
 		itemId = 0;
 		subType = 1;
-		buyPrice = sellPrice = -1;
-		itemName = "";
-	}
-	ShopInfo(uint32_t _itemId, int32_t _subType = 1, int32_t _buyPrice = -1, int32_t _sellPrice = -1,
-		const std::string& _itemName = ""): itemId(_itemId), subType(_subType), buyPrice(_buyPrice),
-		sellPrice(_sellPrice), itemName(_itemName) {}
+		buyPrice = 0;
+		sellPrice = 0;
+		realName = "";
+	};
+
+	ShopInfo(uint32_t _itemId, int32_t _subType = 0,
+		uint32_t _buyPrice = 0, uint32_t _sellPrice = 0,
+		std::string _realName = "")
+	{
+		itemId = _itemId;
+		subType = _subType;
+		buyPrice = _buyPrice;
+		sellPrice = _sellPrice;
+		realName = _realName;
+	};
 };
 
 struct MarketOffer
 {
-	uint32_t price, timestamp;
-	uint16_t amount, counter, itemId;
+	uint32_t price;
+	uint32_t timestamp;
+	uint16_t amount;
+	uint16_t counter;
+	uint16_t itemId;
 	std::string playerName;
 };
 
 struct MarketOfferEx
 {
-	uint32_t playerId, timestamp, price;
-	uint16_t amount, counter, itemId;
+	uint32_t playerId;
+	uint32_t timestamp;
+	uint32_t price;
+	uint16_t amount;
+	uint16_t counter;
+	uint16_t itemId;
 	MarketAction_t type;
 	std::string playerName;
 };
 
 struct ExpiredMarketOffer
 {
-	uint32_t id, price, playerId;
-	uint16_t amount, itemId;
+	uint32_t id;
+	uint32_t price;
+	uint16_t amount;
+	uint16_t itemId;
+	uint32_t playerId;
 };
 
 struct HistoryMarketOffer
 {
-	uint32_t timestamp, price;
-	uint16_t itemId, amount;
+	uint32_t timestamp;
+	uint32_t price;
+	uint16_t itemId;
+	uint16_t amount;
 	MarketOfferState_t state;
 };
 
 struct MarketStatistics
 {
-	uint32_t numTransactions, lowestPrice, highestPrice;
-	uint64_t totalPrice;
-
-	MarketStatistics() {numTransactions = lowestPrice = highestPrice = totalPrice = 0;}
-};
-
-struct ModalChoice
-{
-	uint8_t id;
-	std::string value;
-
-	ModalChoice(): id(0) {}
-};
-
-struct ModalDialog
-{
-	uint32_t id;
-	std::string title, message;
-	uint8_t buttonEnter, buttonEscape; 
-	std::vector<ModalChoice> buttons, choices;
-	bool popup;
-
-	ModalDialog()
+	MarketStatistics()
 	{
-		id = buttonEnter = buttonEscape = 0;
-		popup = false;
+		numTransactions = 0;
+		highestPrice = 0;
+		totalPrice = 0;
+		lowestPrice = 0;
 	}
-};
 
-struct VIP_t
-{
-	uint32_t icon;
-	std::string description;
-	bool notify;
-
-	VIP_t(): icon(0), notify(false) {}
+	uint32_t numTransactions;
+	uint32_t highestPrice;
+	uint64_t totalPrice;
+	uint32_t lowestPrice;
 };
 
 typedef std::list<MarketOffer> MarketOfferList;
 typedef std::list<ExpiredMarketOffer> ExpiredMarketOfferList;
 typedef std::list<HistoryMarketOffer> HistoryMarketOfferList;
 typedef std::list<ShopInfo> ShopInfoList;
+
 #endif

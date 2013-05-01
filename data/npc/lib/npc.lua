@@ -1,184 +1,127 @@
-function selfSayChannel(cid, message)
-	return selfSay(message, cid, false)
-end
+-- Including the Advanced NPC System
+dofile('data/npc/lib/npcsystem/npcsystem.lua')
 
-function selfMoveToThing(id)
-	errors(false)
-	local thing = getThing(id)
-
-	errors(true)
-	if(thing.uid == 0) then
-		return
+function getDistanceToCreature(id)
+	if id == 0 or id == nil then
+		selfGotoIdle()
 	end
 
-	local t = getThingPosition(id)
-	selfMoveTo(t.x, t.y, t.z)
-	return
+	local creaturePosition = getCreaturePosition(id)
+	cx = creaturePosition.x
+	cy = creaturePosition.y
+	cz = creaturePosition.z
+	if cx == nil then
+		return nil
+	end
+
+	sx, sy, sz = selfGetPosition()
+	return math.max(math.abs(sx - cx), math.abs(sy - cy))
 end
 
-function selfMoveTo(x, y, z)
-	local position = {x = 0, y = 0, z = 0}
-	if(type(x) ~= "table") then
-		position = Position(x, y, z)
+function moveToPosition(x,y,z)
+	selfMoveTo(x, y, z)
+end
+
+function moveToCreature(id)
+	if id == 0 or id == nil then
+		selfGotoIdle()
+	end
+
+	tx, ty, tz = getCreaturePosition(id)
+	if tx == nil then
+		selfGotoIdle()
 	else
-		position = x
-	end
-
-	if(isValidPosition(position)) then
-		doSteerCreature(getNpcId(), position)
+		moveToPosition(tx, ty, tz)
 	end
 end
 
-function selfMove(direction, flags)
-	local flags = flags or 0
-	doMoveCreature(getNpcId(), direction, flags)
+function selfGotoIdle()
+	following = false
+	attacking = false
+	selfAttackCreature(0)
+	target = 0
 end
 
-function selfTurn(direction)
-	doCreatureSetLookDirection(getNpcId(), direction)
+function isPlayerPremiumCallback(cid)
+	return isPremium(cid)
 end
 
-function getNpcDistanceTo(id)
-	errors(false)
-	local thing = getThing(id)
-
-	errors(true)
-	if(thing.uid == 0) then
-		return nil
+function msgcontains(message, keyword)
+	local message, keyword = message:lower(), keyword:lower()
+	if message == keyword then
+		return true
 	end
 
-	local c = getCreaturePosition(id)
-	if(not isValidPosition(c)) then
-		return nil
-	end
-
-	local s = getCreaturePosition(getNpcId())
-	if(not isValidPosition(s) or s.z ~= c.z) then
-		return nil
-	end
-
-	return math.max(math.abs(s.x - c.x), math.abs(s.y - c.y))
+	return message:find(keyword) and not message:find('(%w+)' .. keyword)
 end
 
-function doMessageCheck(message, keyword, exact)
-	local exact = exact or false
-	if(type(keyword) == "table") then
-		return isInArray(keyword, message, exact)
-	end
+function selfSayChannel(cid, message)
+	return selfSay(message, cid, FALSE)
+end
 
-	if(exact) then
-		return message == keyword
+function doPosRemoveItem(_itemid, n, position)
+	local thing = getThingfromPos({x = position.x, y = position.y, z = position.z, stackpos = 1})
+	if thing.itemid == _itemid then
+		doRemoveItem(thing.uid, n)
+	else
+		return false
 	end
-
-	local a, b = message:lower(), keyword:lower()
-	return a == b or (a:find(b) and not a:find('(%w+)' .. b))
+	return true
 end
 
 function doNpcSellItem(cid, itemid, amount, subType, ignoreCap, inBackpacks, backpack)
-	local amount, subType, ignoreCap, inBackpacks, backpack  = amount or 1, subType or 0, ignoreCap or false, inBackpacks or false, backpack or 1988
-
-	local item, a = nil, 0
-	if(inBackpacks) then
-		local custom, stackable = 1, isItemStackable(itemid)
-		if(stackable) then
-			custom = math.max(1, subType)
-			subType = amount
-			amount = math.max(1, math.floor(amount / 100))
+	local amount, subType, ignoreCap, item = amount or 1, subType or 0, ignoreCap and TRUE or FALSE, 0
+	ignoreCap = FALSE
+	if isItemStackable(itemid) then
+		if(inBackpacks) then
+			stuff = doCreateItemEx(backpack, 1)
+			item = doAddContainerItem(stuff, itemid, math.min(100, amount))
+		else
+			stuff = doCreateItemEx(itemid, math.min(100, amount))
 		end
+		return doPlayerAddItemEx(cid, stuff, ignoreCap) ~= RETURNVALUE_NOERROR and 0 or amount, 0
+	end
 
+	local a = 0
+	if(inBackpacks) then
 		local container, b = doCreateItemEx(backpack, 1), 1
-		for i = 1, amount * custom do
-			item = doAddContainerItem(container, itemid, subType)
-			if(itemid == ITEM_PARCEL) then
-				doAddContainerItem(item, ITEM_LABEL)
-			end
-
-			if(isInArray({(getContainerCapById(backpack) * b), amount}, i)) then
+		for i = 1, amount do
+			local item = doAddContainerItem(container, itemid, subType)
+			if(isInArray({(getContainerCapById(backpack) * b), amount}, i) == TRUE) then
 				if(doPlayerAddItemEx(cid, container, ignoreCap) ~= RETURNVALUE_NOERROR) then
-					b = b - 1
+					b = b - 1 --
 					break
 				end
-
-				a = i
+				a = i -- a = a + i
 				if(amount > i) then
 					container = doCreateItemEx(backpack, 1)
 					b = b + 1
 				end
 			end
 		end
-
-		if(not stackable) then
-			return a, b
-		end
-
-		return (a * subType / custom), b
+		return a, b
 	end
 
-	if(isItemStackable(itemid)) then
-		a = amount * math.max(1, subType)
-		repeat
-			local tmp = math.min(100, a)
-			item = doCreateItemEx(itemid, tmp)
-			if(doPlayerAddItemEx(cid, item, ignoreCap) ~= RETURNVALUE_NOERROR) then
-				return 0, 0
-			end
-
-			a = a - tmp
-		until a == 0
-		return amount, 0
-	end
-
-	for i = 1, amount do
-		item = doCreateItemEx(itemid, subType)
-		if(itemid == ITEM_PARCEL) then
-			doAddContainerItem(item, ITEM_LABEL)
-		end
-
+	for i = 1, amount do -- normal method for non-stackable items
+		local item = doCreateItemEx(itemid, subType)
 		if(doPlayerAddItemEx(cid, item, ignoreCap) ~= RETURNVALUE_NOERROR) then
 			break
 		end
-
 		a = i
 	end
-
 	return a, 0
 end
 
-function doRemoveItemIdFromPosition(id, n, position)
-	local thing = getTileItemById(position, id)
-	if(thing.itemid < 101) then
-		return false
+local func = function(pars)
+	if isPlayer(pars.pcid) == TRUE then
+		doCreatureSay(pars.cid, pars.text, pars.type, false, pars.pcid, getCreaturePosition(pars.cid))
+		pars.e.done = TRUE
 	end
-
-	doRemoveItem(thing.uid, n)
-	return true
 end
 
-function getNpcName()
-	return getCreatureName(getNpcId())
+function doCreatureSayWithDelay(cid, text, type, delay, e, pcid)
+	if isPlayer(pcid) == TRUE then
+		e.done = FALSE
+		e.event = addEvent(func, delay < 1 and 1000 or delay, {cid=cid, text=text, type=type, e=e, pcid=pcid})
+	end
 end
-
-function getNpcPosition()
-	return getThingPosition(getNpcId())
-end
-
-function selfGetPosition()
-	local t = getThingPosition(getNpcId())
-	return t.x, t.y, t.z
-end
-
-msgcontains = doMessageCheck
-moveToPosition = selfMoveTo
-moveToCreature = selfMoveToThing
-selfMoveToCreature = selfMoveToThing
-selfMoveToPosition = selfMoveTo
-isPlayerPremiumCallback = isPremium
-doPosRemoveItem = doRemoveItemIdFromPosition
-doRemoveItemIdFromPos = doRemoveItemIdFromPosition
-doNpcBuyItem = doPlayerRemoveItem
-doNpcSetCreatureFocus = selfFocus
-getNpcCid = getNpcId
-getDistanceTo = getNpcDistanceTo
-getDistanceToCreature = getNpcDistanceTo
-getNpcDistanceToCreature = getNpcDistanceTo
-getNpcPos = getNpcPosition

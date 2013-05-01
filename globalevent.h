@@ -1,6 +1,7 @@
 ////////////////////////////////////////////////////////////////////////
 // OpenTibia - an opensource roleplaying game
 ////////////////////////////////////////////////////////////////////////
+// Global events.
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
@@ -15,12 +16,11 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////
 
-#ifndef __GLOBALEVENT__
-#define __GLOBALEVENT__
+#ifndef __OTSERV_GLOBALEVENT_H__
+#define __OTSERV_GLOBALEVENT_H__
 #include "baseevents.h"
 
 #include "const.h"
-#include "scheduler.h"
 
 #define TIMER_INTERVAL 1000
 
@@ -31,7 +31,6 @@ enum GlobalEvent_t
 
 	GLOBALEVENT_STARTUP,
 	GLOBALEVENT_SHUTDOWN,
-	GLOBALEVENT_GLOBALSAVE,
 	GLOBALEVENT_RECORD
 };
 
@@ -53,45 +52,46 @@ class GlobalEvents : public BaseEvents
 		void clearMap(GlobalEventMap& map);
 
 	protected:
-		virtual std::string getScriptBaseName() const {return "globalevents";}
+		virtual std::string getScriptBaseName() {return "globalevents";}
 		virtual void clear();
 
 		virtual Event* getEvent(const std::string& nodeName);
-		virtual bool registerEvent(Event* event, xmlNodePtr p, bool override);
+		virtual bool registerEvent(Event* event, xmlNodePtr p);
 
-		virtual LuaInterface& getInterface() {return m_interface;}
-		LuaInterface m_interface;
+		virtual LuaScriptInterface& getScriptInterface() {return m_scriptInterface;}
+		LuaScriptInterface m_scriptInterface;
 
 		GlobalEventMap thinkMap, serverMap, timerMap;
+		int32_t thinkEventId, timerEventId;
 };
 
 class GlobalEvent : public Event
 {
 	public:
-		GlobalEvent(LuaInterface* _interface);
+		GlobalEvent(LuaScriptInterface* _interface);
 		virtual ~GlobalEvent() {}
 
 		virtual bool configureEvent(xmlNodePtr p);
 
-		int32_t executeRecord(uint32_t current, uint32_t old, Player* player);
-		int32_t executeEvent();
+		uint32_t executeRecord(uint32_t current, uint32_t old);
+		uint32_t executeEvent();
 
 		GlobalEvent_t getEventType() const {return m_eventType;}
 		std::string getName() const {return m_name;}
 
 		uint32_t getInterval() const {return m_interval;}
 
-		int64_t getLastExecution() const {return m_lastExecution;}
-		void setLastExecution(int64_t time) {m_lastExecution = time;}
+		time_t getNextExecution() const {return m_nextExecution;}
+		void setNextExecution(time_t time) {m_nextExecution = time;}
 
 	protected:
 		GlobalEvent_t m_eventType;
 
-		virtual std::string getScriptEventName() const;
-		virtual std::string getScriptEventParams() const;
+		virtual std::string getScriptEventName();
 
 		std::string m_name;
-		int64_t m_lastExecution;
+		int64_t m_nextExecution;
 		uint32_t m_interval;
 };
+
 #endif

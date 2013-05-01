@@ -1,3 +1,8 @@
 function onUse(cid, item, fromPosition, itemEx, toPosition)
-	return TOOLS.MACHETE(cid, item, fromPosition, itemEx, toPosition, true)
+	if itemEx.itemid == 2782 then
+		doTransformItem(itemEx.uid, 2781)
+		doDecayItem(itemEx.uid)
+		return TRUE
+	end
+	return destroyItem(cid, itemEx, toPosition)
 end

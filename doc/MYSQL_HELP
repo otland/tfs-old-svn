@@ -3,13 +3,10 @@
 		The Forgotten Server
 
 	Version
-		0.3.7
-
-	Codenamed
-		Crying Damson
+		1.0
 
 	License
-		GNU GPLv3
+		GNU GPLv2
 
 	Forum
 		http://otland.net/
@@ -33,12 +30,12 @@
 				apt-get
 				aptitude
 
-			In CentOS, hopefully in Red Hat too, it is:
+			In CentOS, and in Red Hat too, it is:
 				yum
 
 			Now type this command, and remember to replace rpd with
 			your repository package downloader.
-				rpd install mysql-server-5.0
+				rpd install mysql-server
 
 		#3
 			You should now have a MySQL Server installed, it is time
@@ -61,7 +58,7 @@
 			Now that we have a database created it is time to import
 			all tables and triggers, closedown the MySQL commandline
 			cd (change directory) to TheForgottenServer one, and type:
-				mysql -uroot -p theforgottenserver < schemas/mysql.sql
+				mysql -uroot -p theforgottenserver < forgottenserver.sql
 
 			If you changed database name then also remember to change
 			'theforgottenserver' to your database name there.
@@ -83,6 +80,11 @@
 			If you're new to Linux you just have to type:
 				./TheForgottenServer
 
+		#9
+			In most Linux MySQL installations, the control user is safe
+			already, but to be sure please have a look at this thread:
+				http://otland.net/f14/warning-everyone-whos-running-xampp-15321/
+
 	Windows
 		Introduction
 			In this guide you will learn how to setup a MySQL server
@@ -94,7 +96,7 @@
 
 		#1
 			Download XAMPP from:
-				http://heanet.dl.sourceforge.net/sourceforge/xampp/xampp-win32-1.7.4-VC6-installer.exe
+				http://heanet.dl.sourceforge.net/sourceforge/xampp/xampp-win32-1.8.0-VC9-installer.exe
 
 		#2
 			Go to http://localhost/security/xamppsecurity.php and change your root password.
@@ -109,7 +111,7 @@
 			Enter your database and press on 'Import'.
 
 		#6
-			Use the 'File to import' part, select mysql.sql and press on 'Go'.
+			Use the 'File to import' part, select forgottenserver.sql and press on 'Go'.
 
 		#7
 			Now you should have a MySQL server with TheForgottenServer

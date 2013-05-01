@@ -1,45 +1,60 @@
-////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
 // OpenTibia - an opensource roleplaying game
-////////////////////////////////////////////////////////////////////////
-// This program is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+//////////////////////////////////////////////////////////////////////
+//
+//////////////////////////////////////////////////////////////////////
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public License
+// as published by the Free Software Foundation; either version 2
+// of the License, or (at your option) any later version.
 //
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with this program.  If not, see <http://www.gnu.org/licenses/>.
-////////////////////////////////////////////////////////////////////////
+// along with this program; if not, write to the Free Software Foundation,
+// Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+//////////////////////////////////////////////////////////////////////
 #include "otpch.h"
-#include "thing.h"
 
+#include "thing.h"
 #include "cylinder.h"
 #include "tile.h"
-
-#include "item.h"
 #include "creature.h"
+#include "item.h"
 #include "player.h"
+
+Thing::Thing()
+{
+	parent = NULL;
+	useCount = 0;
+}
+
+
+Thing::~Thing()
+{
+	//
+	//std::cout << "thing destructor " << this << std::endl;
+}
 
 Cylinder* Thing::getTopParent()
 {
 	//tile
-	Cylinder* aux = getParent();
-	if(!aux)
+	if(getParent() == NULL)
 		return dynamic_cast<Cylinder*>(this);
 
-	Cylinder* prev = dynamic_cast<Cylinder*>(this);
-	while(aux->getParent())
+	Cylinder* aux = getParent();
+	Cylinder* prevaux = dynamic_cast<Cylinder*>(this);
+	while(aux->getParent() != NULL)
 	{
-		prev = aux;
+		prevaux = aux;
 		aux = aux->getParent();
 	}
 
-	if(dynamic_cast<Cylinder*>(prev))
-		return prev;
+	if(dynamic_cast<Cylinder*>(prevaux))
+		return prevaux;
 
 	return aux;
 }
@@ -47,19 +62,20 @@ Cylinder* Thing::getTopParent()
 const Cylinder* Thing::getTopParent() const
 {
 	//tile
-	const Cylinder* aux = getParent();
-	if(!aux)
+	if(getParent() == NULL)
 		return dynamic_cast<const Cylinder*>(this);
 
-	const Cylinder* prev = dynamic_cast<const Cylinder*>(this);
-	while(aux->getParent())
+	const Cylinder* aux = getParent();
+	const Cylinder* prevaux = dynamic_cast<const Cylinder*>(this);
+
+	while(aux->getParent() != NULL)
 	{
-		prev = aux;
+		prevaux = aux;
 		aux = aux->getParent();
 	}
 
-	if(dynamic_cast<const Cylinder*>(prev))
-		return prev;
+	if(dynamic_cast<const Cylinder*>(prevaux))
+		return prevaux;
 
 	return aux;
 }
@@ -67,14 +83,17 @@ const Cylinder* Thing::getTopParent() const
 Tile* Thing::getTile()
 {
 	Cylinder* cylinder = getTopParent();
-#ifdef __DEBUG_MOVESYS__
+
+	#ifdef __DEBUG__MOVESYS__
 	if(!cylinder)
 	{
-		std::clog << "[Failure - Thing::getTile] NULL tile" << std::endl;
-		return &(Tile::nullTile);
+		std::cout << "Failure: [Thing::getTile()], NULL tile" << std::endl;
+		DEBUG_REPORT
+		return &(Tile::null_tile);
 	}
-#endif
+	#endif
 
+	//get root cylinder
 	if(cylinder->getParent())
 		cylinder = cylinder->getParent();
 
@@ -84,36 +103,46 @@ Tile* Thing::getTile()
 const Tile* Thing::getTile() const
 {
 	const Cylinder* cylinder = getTopParent();
-#ifdef __DEBUG_MOVESYS__
+
+	#ifdef __DEBUG__MOVESYS__
 	if(!cylinder)
 	{
-		std::clog << "[Failure - Thing::getTile] NULL tile" << std::endl;
-		return &(Tile::nullTile);
+		std::cout << "Failure: [Thing::getTile() const], NULL tile" << std::endl;
+		DEBUG_REPORT
+		return &(Tile::null_tile);
 	}
-#endif
+	#endif
 
+	//get root cylinder
 	if(cylinder->getParent())
 		cylinder = cylinder->getParent();
 
 	return dynamic_cast<const Tile*>(cylinder);
 }
 
-Position Thing::getPosition() const
+const Position& Thing::getPosition() const
 {
-	if(const Tile* tile = getTile())
-		return tile->getPosition();
-
-#ifdef __DEBUG_MOVESYS__
-	std::clog << "[Failure - Thing::getTile] NULL tile" << std::endl;
-#endif
-	return Tile::nullTile.getPosition();
+	const Tile* tile = getTile();
+	if(tile)
+		return tile->getTilePosition();
+	else
+	{
+		#ifdef __DEBUG__MOVESYS__
+		std::cout << "Failure: [Thing::getPosition], NULL tile" << std::endl;
+		DEBUG_REPORT
+		#endif
+		return Tile::null_tile.getTilePosition();
+	}
 }
 
 bool Thing::isRemoved() const
 {
-	const Cylinder* aux = getParent();
-	if(!aux)
+	if(parent == NULL)
 		return true;
 
-	return aux->isRemoved();
+	const Cylinder* aux = getParent();
+	if(aux->isRemoved())
+		return true;
+
+	return false;
 }

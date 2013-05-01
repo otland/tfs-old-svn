@@ -1,7 +1,7 @@
 local combat = createCombatObject()
 setCombatParam(combat, COMBAT_PARAM_TYPE, COMBAT_FIREDAMAGE)
 setCombatParam(combat, COMBAT_PARAM_EFFECT, CONST_ME_FIREAREA)
-setAttackFormula(combat, COMBAT_FORMULA_LEVELMAGIC, 5, 5, 7, 14)
+setCombatFormula(combat, COMBAT_FORMULA_LEVELMAGIC, -1.0, 0, -1.6, 0)
 
 local area = createCombatArea(AREA_CROSS5X5)
 setCombatArea(combat, area)

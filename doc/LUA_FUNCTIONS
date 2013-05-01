@@ -3,566 +3,431 @@
 		The Forgotten Server
 
 	Version
-		0.3.7
-
-	Codenamed
-		Crying Damson
+		1.0
 
 	License
-		GNU GPLv3
+		GNU GPLv2
 
 	Forum
 		http://otland.net/
 ]
 
 [ ABOUT
-	List with all available Lua functions.
-	You can read a short instruction for all of them;
-		how to use them, what they return and see an usage examples.
-
-	If some function parameters are in bracket ([]) - it means that these are optional
-	E.g.
-		doPlayerAddItem(uid, itemid[, count/subtype[, canDropOnMap]])
-		Means that count/subtype + canDropOnMap parameters can but don't have to be specified
-		Example:
-			doPlayerAddItem(cid, 2160) --adds 1 crystal coin
-			doPlayerAddItem(cid, 2160, 10, TRUE) --adds 10 crystal coins and allow item to be dropped on map if player can't lift it
+	List with all Lua functions available.
+	You can read the short instructions for all the functions;
+		how to use, what it returns and an usage example.
 ]
 
 [ "get" functions
 	Introduction
 		These functions will return a requested string or value.
-		If specified thing is not found, function returns false. Example: getCreatureName(666) will return false, as creature with cid 666 doesn't exists.
 
 	LIST
-		*Creatures (means, that these are accessible for all players, monsters, npcs)
-			getCreatureName(cid)
-				Info
-					This function checks creature name.
+		getPlayerFood(cid)
+			Info
+				This function will check how many seconds a player is full.
 
-				Returns
-					Creature name.
+			Returns
+				Time in second for which player is full: 360.
+					Ham - 360, Meat - 180, Fish - 145
 
-			getCreatureHealth(cid)
-				Info
-					This function checks creature current health points.
+		getCreatureHealth(cid)
+			Info
+				This function will check for creatures health points.
 
-				Returns
-					Creature current health points.
+			Returns
+				Creatures current health points.
 
-			getCreatureMaxHealth(cid)
-				Info
-					This function checks creature max health points.
+		getCreatureMaxHealth(cid)
+			Info
+				This function will check for creatures max health points.
 
-				Returns
-					Creature max health points.
+			Returns
+				Creatures max health points.
 
-			getCreatureMana(cid)
-				Info
-					This function checks creature current mana points.
+		getPlayerMana(cid)
+			Info
+				This function will check for creatures mana points.
 
-				Returns
-					Creature current mana points.
+			Returns
+				Creatures current mana points.
 
-			getCreatureMaxMana(cid)
-				Info
-					This function checks creature max mana points.
+		getPlayerMaxMana
+			Info
+				This function will check for creatures max mana points.
 
-				Returns
-					Creature max mana points.
+			Returns
+				Creatures max mana points.
 
-			getCreaturePosition(cid)
-				Info
-					This function checks creature current position.
+		getPlayerLevel(cid)
+			Info
+				This function will check for players current level.
 
-				Returns
-					Creature position.
-					For example:
+			Returns
+				Players current level.
+
+		getPlayerMagLevel(cid)
+			Info
+				This function will check for players current magic level.
+
+			Returns
+				Players current magic level.
+
+		getPlayerName(cid)
+			Info
+				This function will check for players name.
+
+			Returns
+				Players name.
+
+		getPlayerAccess(cid)
+			Info
+				This function will check for players access.
+
+			Returns
+				Players access.
+
+		getPlayerPosition(cid)
+			Info
+				This function will check for players current position.
+
+			Returns
+				Position in array
+					Example
 						{x = 127, y = 7, z = 9, stackpos = 1}
-						{x = 396, y = 582, z = 13, stackpos = 2} (when creature is on an item)
+						{x = 396, y = 582, z = 13, stackpos = 2} (when player is on an item)
 
-				Example
-					local pos = getCreaturePosition(cid)
-					doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Your current position is [X: "..pos.x.." | Y: "..pos.y.." | Z: "..pos.z.."].")
+			Example
+				local playerPos = getPlayerPosition(cid)
+				doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Your current position is [X: "..playerPos.x.." | Y: "..playerPos.y.." | Z: "..playerPos.z.."].")
 
-			getCreatureLookDirection(cid)
-				Info
-					This function checks creature direction.
+		getPlayerSkill(cid, skillid)
+			Info
+				This function will check for player actually position.
+					Skillid can be:
+						0 = Fist Fighting
+						1 = Club Fighting
+						2 = Sword Fighting
+						3 = Axe Fighting
+						4 = Distance Fighting
+						5 = Shielding
+						5 = Fishing
 
-				Returns
-					Creature direction.
-					For example:
-						NORTH (0) - creature is looking up (north) (/\)
-						EAST (1) - creature is looking right (east) (>)
-						SOUTH (2) - creature is looking down (south) (\/)
-						WEST (3) - creature is looking left (west) (<)
-
-				Example
-					local direction = getCreatureLookDirection(cid)
-					if direction == NORTH then
-						doPlayerSendTextMessage(cid, MESSAGE_EVENT_DEFAULT, "You are looking to north.")
-					elseif direction == EAST then
-						doPlayerSendTextMessage(cid, MESSAGE_EVENT_DEFAULT, "You are looking to east.")
-					elseif direction == SOUTH then
-						doPlayerSendTextMessage(cid, MESSAGE_EVENT_DEFAULT, "You are looking to south.")
-					else --when west
-						doPlayerSendTextMessage(cid, MESSAGE_EVENT_DEFAULT, "You are looking to west.")
-					end
-
-			getCreatureSkullType(cid)
-				Info
-					This function checks creature current skull.
-
-				Returns
-					Creature skull.
-					For example:
-						SKULL_NONE (0) - means, no SKULL_GREEN
-						SKULL_YELLOW (1)
-						SKULL_GREEN (2)
-						SKULL_WHITE (3)
-						SKULL_RED (4)
-						SKULL_BLACK (5)
-
-				Example
-					local skullNames = {"Yellow", "Green", "White", "Red", "Black"}
-					local creatureSkull = getCreatureSkullType(cid)
-					if creatureSkull ~= SKULL_NONE then
-						doPlayerSendTextMessage(cid, "Your current skull color is " .. skullNames[creatureSkull] .. ".")
-					else
-						doPlayerSendTextMessage(cid, "You don't have any skull :(")
-					end
-
-			getCreatureMaster(cid)
-				Info
-					This function checks creature master. Its used for summoned creatures, to check who has summoned it.
-
-				Returns
-					Creature master cid if found, otherwise self cid.
-
-			getCreatureSummons(cid)
-				Info
-					This functions checks for creature summons list.
-
-				Returns
-					false if creature not found, otherwise table with creatures list (NOTE: Can be empty!)
-
-				Example
-					local summons = getCreatureSummons(cid)
-					if(table.maxn(summons) <= 0) then -- no summons
-						doPlayerSendCalcel(cid, "You don't have any summons..")
-						return false
-					end
-
-					-- remove all summons ;)
-					for _, pid in ipairs(summons) do
-						doRemoveCreature(pid)
-					end
-
-			getCreatureOutfit(cid)
-				Info
-					This function checks creature current outfit.
-
-				Returns
-					Creature outfit in array.
-					For example:
-						{lookType = 266, lookHead = 0, lookAddons = 0, lookLegs = 0, lookBody = 0, lookFeet = 0} --my current God outfit
-
-				Example
-					local myOutfit = getCreatureOutfit(cid)
-					doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, "Im currently wearing outfit with lookType = " .. myOutfit.lookType .. ".")
-
-			getCreatureByName(name)
-				Info
-					This function will search in current creatures list being in game for specified name.
-					NOTE: this function is not case-sensitive. So searching for 'GM MASTER' is same as searching for 'GM Master'.
-
-				Returns
-					Creature cid, if creature has been found, otherwise false.
-					For example:
-						false - Creature with name 'asdasdasdasdasd' has not been found :(
-						268475687 - my current cid
-
-				Example
-					local firstDragonFound = getCreatureByName('Dragon')
-					doSendMagicEffect(getCreaturePosition(firstDragonFound), CONST_ME_CAKE) --Lets display some effect on this creature :D
-
-		*Players
-			getPlayerExperience(cid)
-				Info
-					This function checks player experience points.
-
-				Returns
-					Player experience points.
-
-				Example
-					doPlayerSendTextMessage(cid, "You have " .. getPlayerExperience(cid) .. " experience points!")
-
-			getPlayerLevel(cid)
-				Info
-					This function checks player level.
-
-				Returns
-					Player level.
-
-			getPlayerMagLevel(cid)
-				Info
-					This function checks player magic level.
-
-				Returns
-					Player magic level.
-
-			getPlayerFood(cid)
-				Info
-					This function checks how many seconds a player is full.
-
-				Returns
-					Time in second for which player is full: 360.
-						Ham - 360, Meat - 180, Fish - 145
-
-			getPlayerAccess(cid)
-				Info
-					This function checks player access.
-
-				Returns
-					Player access.
-
-			getPlayerSkillLevel(cid, skillid)
-				Info
-					This function checks player skill level.
-						Skillid can be:
-							SKILL_FIST (0) = Fist Fighting
-							SKILL_CLUB (1) = Club Fighting
-							SKILL_SWORD (2) = Sword Fighting
-							SKILL_AXE (3) = Axe Fighting
-							SKILL_DISTANCE (4) = Distance Fighting
-							SKILL_SHIELD (5) = Shielding
-							SKILL_FISHING (6) = Fishing
-
-				Returns
-					Player skill level.
+			Returns
+				Player skill value.
 					For Example
 						37
 						10
 
-				Example
-					if getPlayerSkillLevel(cid, SKILL_SWORD) >= 20 then --checking for sword skill value
-						doPlayerAddItem(cid, 2376) --gives sword, when skill >= 20
-					else
-						doPlayerSendCancel(cid, "Sorry, your sword skill is not high enough.")
-					end
+			Example
+				if getPlayerSkill(cid, 2) >= 20 then --Checking for sword skill value
+					doPlayerAddItem(cid, 2376, 1) --give sword, when skill >= 20
+				else
+					doPlayerSendCancel(cid, "Sorry, your sword skill is not high enough.")
+				end
 
-			getPlayerTown(cid)
-				Info
-					This function checks player actually Town ID.
+		getPlayerTown(cid)
+			Info
+				This function will check player actually Town ID.
 
-				Returns
-					Player Town ID.
+			Returns
+				Player Town ID.
 					For Example:
 						1
 						3
 
-				Example
-					local playerTown = getPlayerTown(cid)
-					local playerPos = getCreaturePosition(cid)
-					if playerTown == 1 then
-						doSendAnimatedText(playerPos, 'I am living in a town with id 1 (Main City)! :)', TEXTCOLOR_GOLD)
-					elseif playerTown == 2 then
-						doSendAnimatedText(playerPos, 'I am living in a town with id 2 (Desert City)! :)', TEXTCOLOR_GOLD)
-					end
+			Example
+			local playerTown = getPlayerTown(cid)
+			if playerTown == 1 then
+				doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, 'I am leaving in town with id: 1 (Main City)! :)')
+			elseif playerTown == 2 then
+				doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, 'I am leaving in town with id: 2 (Desert City)! :)')
+			end
 
-			getPlayerVocation(cid)
-				Info
-					This function checks player Vocation ID.
+		getPlayerVocation(cid)
+			Info
+				This function will check player Vocation ID.
 
-				Returns
-					Player Vocation ID.
+			Returns
+				Player Vocation ID.
 					For Example:
 						1 - when player vocation is Sorcerer
 						7 - when player vocation is Royal Paladin
 
-				Example
-					local playerVoc = getPlayerVocation(cid)
-					if playerVoc == 1 then --If Vocation is Sorcerer or Master Sorcerer then weapon = Wand
-						weapon = 2190 --Wand of vortex
-					elseif playerVoc == 2 then --If Voc == Druid or Elder Druid then weapon = Rod
-						weapon = 2182 --Snakebite Rod
-					elseif playerVoc == 3 then --If Voc == Paladin or Royal Paladin then weapon = Spear
-						weapon== 2389 --Spear
-					elseif playerVoc == 4 then --If Voc == Knight or Elite Knight then weapon = Sword
-						weapon = 2412 --Katana
+			Example
+				local playerVoc = getPlayerVocation(cid)
+					if playerVoc == 1 or playerVoc == 5 then --If Vocation is Sorcerer or Master Sorcerer then weapon = Wand
+						weapon == 2190 --Wand of vortex
+					elseif playerVoc == 2 or playerVoc == 6 then --If Voc == Druid or Elder Druid then weapon = Rod
+						weapon == 2182 --Snakebite Rod
+					elseif playerVoc == 3 or playerVoc == 7 then --If Voc == Paladin or Royal Paladin then weapon = Spear
+						weapon == 2389 --Spear
+					elseif playerVoc == 4 or playerVoc == 8 then --If Voc == Knight or Elite Knight then weapon = Sword
+						weapon == 2412 --Katana
 					end
-					doPlayerAddItem(cid, weapon)
+				doPlayerAddItem(cid, weapon, 1)
 
-			getPlayerItemCount(cid, itemid)
-				Info
-					This function checks how much items with specified id is player holding.
+		getPlayerItemCount(cid,itemid)
+			Info
+				This function will check how much items with == itemid player actually have.
 
-				Returns
-					A count of itemid.
-						For Example:
-							2 - when player have 2x royal spear
-							73 - when player have 73 platinum coins
+			Returns
+				Count of itemid.
+					For Example:
+						2 - when player have 2x royal spear
+						189 - when player have 189 platinum coins
 
-				Example
-					local crystalCoins = getPlayerItemCount(cid, 2160)
-					local platinumCoins = getPlayerItemCount(cid, 2152)
-					local goldCoins = getPlayerItemCount(cid, 2148)
+			Example
+				local crystalCoins = getPlayerItemCount(cid, 2160)
+				local platinumCoins = getPlayerItemCount(cid, 2152)
+				local goldCoins = getPlayerItemCount(cid, 2148)
 					money = crystalCoins * 10000 + platinumCoins * 100 + goldCoins
-					doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, "Your money: " .. money .. "gp")
+				doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, "Your money: " ..money.. "gp")
 
-			getPlayerSoul(cid)
-				Info
-					This function checks how much soul points player actually have.
+		getPlayerSoul(cid)
+			Info
+				This function will check how much soul points player actually have.
 
-				Returns
-					Player actually soul points.
+			Returns
+				Player actually soul points.
 					For Example:
 						27 - when player have 27 soul points
 						134 - when player have 134 soul points
 
-				Example
-					doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, "Your soul points: " .. getPlayerSoul(cid))
+			Example
+				doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, "Your soul points: " ..getPlayerSoul(cid))
 
-			getPlayerFreeCap(cid)
-				Info
-					This function checks how much free cap points player actually have.
+		getPlayerFreeCap(cid)
+			Info
+				This function will check how much free cap points player actually have.
 
-				Returns
-					Player actually cap points.
-						For Example:
-							181 - when player have 181 capacity
-							1460 - when player have 1460 capacity
+			Returns
+				Player actually cap points.
+					For Example:
+						181 - when player have 181 capacity
+						1460 - when player have 1460 capacity
 
-				Example
-					local playerCap = getPlayerFreeCap(cid)
-					local item = 2393 --Giant Sword
-					local itemweight = getItemWeight(item, 1)
+			Example
+				local playerCap = getPlayerFreeCap(cid)
+				local item = 2393 --Giant Sword
+				local itemweight = getItemWeight(item, 1)
 					if playerCap >= itemweight then
-						doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, 'You have found a giant sword.')
-						doPlayerAddItem(cid,item)
+						doPlayerSendTextMessage(cid,22,'You have found a giant sword.')
+						doPlayerAddItem(cid,item,1)
 					else
-						doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, 'You have found a giant sword weighing ' ..itemweight.. ' oz it\'s too heavy.')
+						doPlayerSendTextMessage(cid, 22, 'You have found a giant sword weighing ' ..itemweight.. ' oz it\'s too heavy.')
 
-			getPlayerLight(cid)
-				Info
-					This function checks player actually light.
+		getPlayerLight(cid)
+			Info
+				This function will check for player actually light.
 
-				Returns
-					Player actually light.
+			Returns
+				Player actually light.
 					For Example:
 						215 - after using "utevo gran lux"
 
-			getPlayerSlotItem(cid, slot)
-				Info
-					This function checks what item player have actually in slot.
-					Slot can be:
-					CONST_SLOT_HEAD (1) = helmet
-					CONST_SLOT_NECKLACE (2) = necklace slot (amulet of loss etc.)
-					CONST_SLOT_BACKPACK (3) = backpack, bag
-					CONST_SLOT_ARMOR (4) = armor
-					CONST_SLOT_LEFT (5) = left hand (its really hand placed >> (right page on screen))
-					CONST_SLOT_RIGHT (6) = right hand (its really hand placed << (left page on screen))
-					CONST_SLOT_LEGS (7) = legs
-					CONST_SLOT_FEET (8) = boots
-					CONST_SLOT_RING (9) = ring slot
-					CONST_SLOT_AMMO (10) = ammo slot (arrows etc.)
+		getPlayerSlotItem(cid, slot)
+			Info
+				This function will check what item player have actually in slot.
+					Skillid can be:
+						1 = helmet
+						2 = necklace slot (amulet of loss etc.)
+						3 = backpack, bag
+						4 = armor
+						5 = left hand (its really hand placed >> (right page on screen))
+						6 = right hand (its really hand placed << (left page on screen))
+						7 = legs
+						8 = boots
+						9 = ring slot
+						10 = ammo slot (arrows etc.)
 
-				Returns
-					Array with item which is actually in slot. When slot is empty, then returns false
-						For Example:
-							{itemid = 2493, uid = 70001, actionid = 0} (demon helmet, slot = 1)
+			Returns
+				Array with item which is actually in slot. When slot is empty, then return = 0 (FALSE)
+					For Example:
+						{itemid = 2493, uid = 70001, actionid = 0} (demon helmet, slot = 1)
 
-				Example
-					if getPlayerSlotItem(cid, CONST_SLOT_NECKLACE).itemid == 2173 then  --checking if player have amulet of loss in necklace slot
-						doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, "Ok, you can go.")
-					else
-						doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, "Sorry, you need amulet of loss to go.")
-						doTeleportThing(cid, fromPosition, TRUE)
-					end
+			Example
+				if getPlayerSlotItem(cid, 2) == 2173 then  --checking for amulet of loss
+					doPlayerSendTextMessage(cid,22,'Ok, you can go.')
+				else
+					doPlayerSendTextMessage(cid,22,'Sorry, you need amulet of loss to go.')
+					doTeleportThing(cid, fromPosition, TRUE)
+				end
 
-			getPlayerDepotItems(cid, depotid)
-				Info
-					This function checks how much items (slots reserved, becouse 10cc = 1 slot) player have in depo.
-						Depotid = number, which depo we want to check.
+		getPlayerDepotItems(cid, depotid)
+			Info
+				This function will check how much items (slots reserved, becouse 10cc = 1 slot) player have in depo.
+					Depotid = number, which depo we want to check.
 
-				Returns
-					Busy slots in depot.
-						For example:
-							7 - when player have in depo:
-								- sword
-								- rope
-								- 100 uh
-								- parcel (inside: 10 crystal coins + label)
-								- depot chest (standard, all players have it)
-
-				Example
-					depotItems = getPlayerDepotItems(cid, 3)  -- 3 = Desert City
-					if depotItems < 2 then --When depo contains only 1 ITEM.
-						doPlayerSendTextMessage(cid, MESSAGE_EVENT_DEFAULT, "Your depot contains 1 item.")
-					else
-						doPlayerSendTextMessage(cid, MESSAGE_EVENT_DEFAULT, "Your depot contains " ..depotItems.. " items.")
-					end
-
-			getPlayerSex(cid)
-				Info
-					This function checks player sex.
-
-				Returns
-					Player sex.
+			Returns
+				Busy slots in depot.
 					For example:
-						PLAYERSEX_FEMALE (0) - when player is female
-						PLAYERSEX_MALE (1) - when player is male
-						PLAYERSEX_GAMEMASTER (2) - gamemaster (Means if player have changed their sex to type = 2)
+						7 - when player have in depo:
+							- sword
+							- rope
+							- 100 uh
+							- parcel (inside: 10 crystal coins + label)
+							- depot chest (standard, all players have it)
 
-				Example
-					local playerPos = getCreaturePosition(cid)
-					local playerSex = getPlayerSex(cid)
-					if playerSex == PLAYERSEX_FEMALE then --female
-						doSendAnimatedText(playerPos, 'GiRl :*:*', TEXTCOLOR_GOLD)
-					elseif playerSex == PLAYERSEX_MALE then --male
-						doSendAnimatedText(playerPos, 'Wtf? I aM BoY.', TEXTCOLOR_GOLD)
-					else --hermaphrodite
-						doSendAnimatedText(playerPos, 'Who am I? :(', TEXTCOLOR_GOLD)
-					end
+			Example
+				depotItems = getPlayerDepotItems(cid, 3)  -- 3 = Desert City
+				if depotItems < 2 then --When depo contains only 1 ITEM.
+					doPlayerSendTextMessage(cid, MESSAGE_EVENT_DEFAULT, "Your depot contains 1 item.")
+				else
+					doPlayerSendTextMessage(cid, MESSAGE_EVENT_DEFAULT, "Your depot contains " ..depotItems.. " items.")
+				end
 
-			getPlayerGUID(cid)
-				Info
-					This function checks player guid.
 
-				Returns
-					Player id. When checked creature isn't player then returns false.
+		getPlayerSex(cid)
+			Info
+				This function will check player sex.
+
+			Returns
+				Player sex.
+					For example:
+						0 - when player is female
+						1 - when player is male
+
+			Example
+				local playerSex = getPlayerSex(cid)
+				if playerSex == PLAYERSEX_FEMALE then
+					doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, 'Girl!')
+				elseif playerSex == PLAYERSEX_MALE then
+					doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, 'Boy!')
+				else
+					doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, 'WTF?!')
+				end
+
+		getPlayerLookDir(cid)
+			Info
+				This function will check player direction.
+
+			Returns
+				Player direction.
+					For example:
+						0 - player is looking up (north) (/\)
+						1 - player is looking right (east) (>)
+						2 - player is looking down (south) (\/)
+						3 - player is looking left (west) (<)
+
+			Example
+				local direction = getPlayerLookDir(cid)
+				if direction = 0 then --when north
+					doPlayerSendTextMessage(cid, MESSAGE_EVENT_DEFAULT, "You are looking to north")
+				elseif direction = 1 then --when east
+					doPlayerSendTextMessage(cid, MESSAGE_EVENT_DEFAULT, "You are looking to east")
+				elseif direction = 2 then --when south
+					doPlayerSendTextMessage(cid, MESSAGE_EVENT_DEFAULT, "You are looking to south")
+				else --when west
+					doPlayerSendTextMessage(cid, MESSAGE_EVENT_DEFAULT, "You are looking to west")
+				end
+
+		getPlayerGUID(cid)
+			Info
+				This function will check for player id.
+
+			Returns
+				Player id. When checked creature isn't player then return = -1
 					For example:
 						61 - when player id in database is 61
-						false - when checked creature is NPC
+						-1 - when checked creature is NPC
 
-				Example
-					doPlayerSendTextMessage(cid, MESSAGE_EVENT_DEFAULT, "You are player with id: " .. getPlayerGUID(cid))
+			Example
+				doPlayerSendTextMessage(cid, MESSAGE_EVENT_DEFAULT, "You are player with id: "..getPlayerGUID(cid))
 
-			getPlayerFlagValue(cid, flag)
-				Info
-					This function checks player flag value.
-
-				Returns
-					Return true if player have specified flag, otherwise false
+		getPlayerFlagValue(cid, flag)
+			Info
+				This function will check player flag value.
+			Returns
+				Return flag value. 1 = when true (player have this flag), 0 = when false (havent)
 					For example:
-						true - checking GM for PlayerFlag_CannotBeAttacked
-						false - checking player for PlayerFlag_CannotBeAttacked
+						1 - checking GM for flag 8 (Can not be attacked)
+						0 - checking player for flag 8 (Can not be attacked)
 
-				Example
-					if getPlayerFlagValue(cid, PlayerFlag_CanSummonAll) then --if can
-						doSummonCreature("Demon", fromPosition)
+			Example
+				flagValue = getPlayerFlagValue(cid, 32) --32 "Can summon all monsters"
+					if flagValue = 1 then --if can
+						doSummonCreature("Demon", fromPosition.x + 1)
 					else --if cant
-						doSummonCreature("Rat", fromPosition)
+						doSummonCreature("Rat", fromPosition.x + 1)
 					end
 
-			getPlayerCustomFlagValue(cid, flag)
-				Info
-					Same as getPlayerFlagValue, but there are checked custom flags, which was introduced in TFS 0.3
-					This function checks player custom flag value.
+		getPlayerGroupId(cid)
+			Info
+				This function will check player group ID.
 
-				Returns
-					Return true if player have specified custom flag, otherwise false
-					For example:
-						true - checking GM for PlayerCustomFlag_CanLoginMultipleCharacters
-						false - checking player for PlayerCustomFlag_CanLoginMultipleCharacters
-
-			getPlayerGroupId(cid)
-				Info
-					This function checks player group ID.
-
-				Returns
-					Player group id.
+			Returns
+				Player group id.
 					For example (using standard TFS groups):
 						1 - when checked player is player
 						2 - when checked player is gamemaster
 						3 - when checked player is god
 
-				Example
-					local group = getPlayerGroupId(cid)
-					if group == 3 then--when God
-						doPlayerAddItem(cid, 2160, 100) --100 crystal coins
-					elseif group == 2 then--when Gamemaster
-						doPlayerAddItem(cid, 2160, 50) --50 crystal coins
+			Example
+				local group = getPlayerGroupId(cid)
+					if group == 3 --when God
+						doPlayerAddItem(cid,2160,100) --100 crystal coins
+					elseif group == 2 --when Gamemaster
+						doPlayerAddItem(cid,2160,50) --50 crystal coins
 					else
 						doPlayerSendCancel(cid, "Sorry, cheats doesnt work for you."
 					end
 
-			getPlayerGuildId(cid)
-				Info
-					This function returns player's guild id.
+		getPlayerGuildId(cid)
+			Info
+				This function will return the players guild id.
 
-				Returns
-					Players guild id.
+			Returns
+				Players guild id.
 					For example
 						21 - The guild the player is in has the guild id 21, as stored in the database.
 
-				Example
-					local guildId = getPlayerGuildId(cid)
+			Example
+				local guildId = getPlayerGuildId(cid)
 					if guildId == 21 then
-						doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, "Welcome in our guild hunting place!")
+						doPlayerSendTextMessage(cid,MESSAGE_INFO_DESCR,"Welcome in!")
 					elseif guildId == 22 then
-						doPlayerSendCancel(cid, "This area is not for your guild!")
+						doPlayerSendCancel(cid,"This area is not for your guild")
 					end
 
-			getPlayerGuildName(cid)
-				Info
-					Used to get player's guild name.
+		getPlayerGuildName(cid)
+			Info
+				Used to get a players guild name.
 
-				Returns
-					Players guild name in a string.
+			Returns
+				Players guild name in a string.
 					For example
 						"Lost Dragons"
 
-				Example
-					local guildName = getPlayerGuildName(cid)
-					doSendAnimatedText(getCreaturePosition(cid),guildName, TEXTCOLOR_GOLD)
+			Example
+				local guildName = getPlayerGuildName(cid)
+				doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, 'Your guild name is: ' .. guildName)
 
-			getPlayerGuildRank(cid)
-				Info
-					Used to get player's rank name in a guild.
+		getPlayerGuildRank(cid)
+			Info
+				Used to get a players rank name in a guild.
 
-				Returns
-					The players current rank in his guild in a string
+			Returns
+				The players current rank in his guild in a string
 					For example
 						"Senator"
 
-				Example
-					local rank = getPlayerGuildRank(cid)
-					doPlayerSendTextMessage(cid,MESSAGE_INFO_DESCR,"You're a " .. rank .. " in your guild.")
+			Example
+				local rank = getPlayerGuildRank(cid)
+				doPlayerSendTextMessage(cid,MESSAGE_INFO_DESCR,"You're a " .. rank .. " in your guild.")
 
-			getPlayerGuildNick(cid)
-				Info
-					Used to get player's nick in his guild.
+		getPlayerGuildNick(cid)
+			Info
+				Used to get a players nick in his guild.
 
-				Returns
-					The players current nick in a string.
+			Returns
+				The players current nick in a string.
 					For example
 						"The protector"
 
-				Example
-					doPlayerSendTextMessage(cid,MESSAGE_INFO_DESCR,"Your guild nick is " .. getPlayerGuildNick(cid) .. ".")
-]
-
-[ "set" functions
-	Introduction
-		These functions usually changes thing properties.
-
-	List
-		*Creatures
-			setCreatureMaxHealth(cid, health)
-				Info
-					This function changes creature max health.
-
-				Returns
-					Returns true - if creature found and max health changed, otherwise return false
-
-			setCreatureMaxMana(cid, mana)
-				Info
-					This function changes creature max mana.
-
-				Returns
-					Returns true - if creature found and max mana changed, otherwise return false
-
+			Example
+				local guildNick = getPlayerGuildNick(cid)
+				doPlayerSendTextMessage(cid,MESSAGE_INFO_DESCR,"Your guild nick is " .. guildNick .. ".")
 ]
 
 [ "do" functions
@@ -570,638 +435,260 @@
 		These functions usually execute an action.
 
 	List
-		*Creatures
+		doPlayerSendCancel(cid, text)
+			Info
+				This function will send default cancel message do player (visible in bottom of
 
-		*Players
-			doPlayerSendCancel(cid, text)
-				Info
-					This function will send cancel message do player (visible in bottom of a screen)
+			Returns
+				Return 1 (TRUE) - when msg was sent, 0 - when it was impossible (FALSE)
 
-				Returns
-					Returns true - when msg was sent, false - when it was impossible.
-
-				Example
-					if getPlayerLevel(cid) >= 10 then --checking level
-						doSummonCreature("Chicken", fromPosition)
-					else
-						doPlayerSendCancel(cid, "Sorry, your level isnt enought to summon this monster.")
-					end
+			Example
+				if getPlayerLevel(cid) >= 10 then --checking level
+					doSummonCreature("Chicken", fromPosition.x + 1)
+				else
+					doPlayerSendCancel(cid, "Sorry, your level isnt enought to summon this monster."
+				end
 ]
 
-[ LIST
-	[ Note
-		There are few latest missing...
-	]
+[ TODO - Info, example use
 
-	//get*
-	getCreatureHealth(cid)
-	getCreatureMaxHealth(cid)
-	getCreatureHideHealth(cid)
-	getCreatureMana(cid)
-	getCreatureMaxMana(cid)
-	getCreatureSpeakType(cid)
-	getCreatureMaster(cid)
-	getCreatureSummons(cid)
-	getCreatureOutfit(cid)
-	getCreaturePosition(cid)
-	getCreatureLastPosition(cid)
-	getCreatureLookDirection(cid)
-	getCreatureName(cid)
-	getCreatureSpeed(cid)
-	getCreatureBaseSpeed(cid)
-	getCreatureTarget(cid)
-	getCreatureByName(name)
-	getCreatureSkullType(cid)
-	getCreatureCondition(cid, condition[, subId = 0])
-	getCreatureNoMove(cid)
-	getCreatureStorage(cid, key)
-	getMonsterInfo(name)
-	getMonsterSummonList(name)
-	getMonsterTargetList(cid)
-	getMonsterFriendList(cid)
-	getPlayerByNameWildcard(name~[, ret = false])
-	getPlayerLossSkill(cid)
-	getPlayerLossPercent(cid, lossType)
-	getPlayerGUIDByName(name[, multiworld = false])
-	getPlayerNameByGUID(guid[, multiworld = false])
-	getPlayerFood(cid)
-	getPlayerLevel(cid)
-	getPlayerExperience(cid)
-	getPlayerMagLevel(cid[, ignoreBuffs = false])
-	getPlayerSpentMana(cid)
-	getPlayerAccess(cid)
-	getPlayerGhostAccess(cid)
-	getPlayerSkillLevel(cid, skillId)
-	getPlayerSkillTries(cid, skillId)
-	getPlayerTown(cid)
-	getPlayerVocation(cid)
-	getPlayerRequiredMana(cid, magicLevel)
-	getPlayerRequiredSkillTries(cid, skillId, skillLevel)
-	getPlayerItemCount(cid, itemid[, subType = -1])
-	getPlayerSoul(cid)
-	getPlayerAccountId(cid)
-	getPlayerAccount(cid)
-	getPlayerIp(cid)
-	getPlayerFreeCap(cid)
-	getPlayerLight(cid)
-	getPlayerSlotItem(cid, slot)
-	getPlayerWeapon(cid[, ignoreAmmo = false])
-	getPlayerItemById(cid, deepSearch, itemId[, subType = -1])
-	getPlayerDepotItems(cid, depotid)
-	getPlayerGuildId(cid)
-	getPlayerGuildName(cid)
-	getPlayerGuildRank(cid)
-	getPlayerGuildNick(cid)
-	getPlayerGuildLevel(cid)
-	getPlayerSex(cid)
-	getPlayerGUID(cid)
-	getPlayerFlagValue(cid, flag)
-	getPlayerCustomFlagValue(cid, flag)
-	getPlayerPromotionLevel(cid)
-	getPlayerGroupId(cid)
-	getPlayerLearnedInstantSpell(cid, name)
-	getPlayerInstantSpellCount(cid)
-	getPlayerInstantSpellInfo(cid, index)
-	getPlayerBlessing(cid, blessing)
-	getPlayerStamina(cid)
-	getPlayerExtraExpRate(cid)
-	getPlayerPartner(cid)
-	getPlayerParty(cid)
-	getPlayerPremiumDays(cid)
-	getPlayerBalance(cid)
-	getPlayerMoney(cid)
-	getPlayerSkullTicks(cid, type)
-	getPlayerModes(cid)
-	getPlayerRates(cid)
-	getPlayerLastLogin(cid)
-	getPlayerLastLoginSaved(cid)
-	getPlayerAccountManager(cid)
-	getPlayerTradeState(cid)
-	getInstantSpellInfo(cid, name)
-	getPlayersByAccountId(accountNumber)
-	getPlayersByIp(ip[, mask = 0xFFFFFFFF])
-	getChannelUsers(channelId)
-	getPlayersOnline()
-	getPartyMembers(lid)
-	getAccountIdByName(name)
-	getAccountByName(name)
-	getAccountIdByAccount(accName)
-	getAccountByAccountId(accId)
-	getIpByName(name)
-	getItemRWInfo(uid)
-	getItemProtection(uid)
-	getItemDescriptionsById(itemid)
-	getItemWeightById(itemid, count[, precise])
-	getItemDescriptions(uid)
-	getItemWeight(uid[, precise])
-	getItemParent(uid)
-	getItemAttack(uid)
-	getItemExtraAttack(uid)
-	getItemDefense(uid)
-	getItemExtraDefense(uid)
-	getItemArmor(uid)
-	getItemAttackSpeed(uid)
-	getItemHitChance(uid)
-	getItemShootRange(uid)
-	getItemIdByName(name)
-	getItemLevelDoor(itemid)
-	getItemWeaponType(uid)
-	getFluidSourceType(type)
-	getContainerSize(uid)
-	getContainerCap(uid)
-	getContainerItem(uid, slot)
-	getTileItemById(pos, itemId[, subType = -1])
-	getTileItemsByType(pos, type)
-	getTileThingByPos(pos)
-	getTileInfo(pos)
-	getTopCreature(pos)
-	getClosestFreeTile(cid, targetpos[, extended = false[, ignoreHouse = true]])
-	getThingFromPos(pos)
-	getThing(uid)
-	getThingPosition(uid)
-	getHouseInfo(id)
-	getHouseAccessList(houseid, listid)
-	getHouseByPlayerGUID(playerGUID)
-	getHouseFromPos(pos)
-	getTownId(townName)
-	getTownName(townId)
-	getTownTemplePosition(townId)
-	getTownHouses(townId)
-	getWorldType()
-	getWorldTime()
-	getWorldLight()
-	getWorldCreatures(type) //0 players, 1 monsters, 2 npcs, 3 all
-	getWorldUpTime()
-	getVocationInfo(id)
-	getGuildId(guildName)
-	getGuildMotd(guildId)
-	getSpectators(centerPos, rangex, rangey[, multifloor = false])
-	getSearchString(fromPosition, toPosition[, fromIsCreature = false[, toIsCreature = false]])
-	getWaypointPosition(name)
-	getGameState()
-	getStorage(key)
-	getNotationsCount(accountId[, playerId])
-	getStatementsCount(name/guid[, channelId])
-	getBanData(value[, type[, param]])
-	getBanList(type[, value[, param]])
-	getBanReason(id)
-	getBanAction(id[, ipBanishment = false])
-	getExperienceStage(level)
-	getConfigFile()
-	getConfigValue(key)
-	getModList()
-	doUpdateHouseAuctions()
-	loadmodlib(lib)
-	domodlib(lib)
-	dodirectory(dir[, recursively = false])
-	errors(var)
-	getDataDir()
-	getLogsDir()
-	getVocationList()
-	getGroupList()
-	getChannelList()
-	getTownList()
-	getWaypointList()
-	getTalkActionList()
-	getExperienceStageList()
+	
+	//*GET
+	
+		getPlayerMasterPos(cid)
+		getPlayerLossPercent(cid)
+		getItemIdByName(name)
+		getTownName(townId)
+		getTownTemplePosition(townId)
+		getPlayersByAccountNumber(accountNumber)
+		getAccountNumberByPlayerName(name)
+		getIPByPlayerName(name)
+		getPlayersByIPAddress(ip[, mask = 0xFFFFFFFF])
+		getFluidSourceType(type)
+		getItemDescriptions(itemid)
+		getItemWeightByUID(uid)
+		getContainerCapById(itemid)
+		getDepotId(uid)
+		getHouseTilesSize(houseid)
+		getHighscoreString(skillId)
+		getPartyMembers(leaderId)
+		getCreatureMaster(cid) - Returns: returns the creature's master or itself if the creature isn't a summon
+		getMonsterTargetList(cid)
+		getMonsterFriendList(cid)
+		getPlayerByName(name)
+		getPlayerGUIDByName(name)	
+		getPlayerLearnedInstantSpell(cid, name)
+		getPlayerInstantSpellCount(cid)
+		getPlayerInstantSpellInfo(cid, index)
+		getPlayerMount(cid, mountid)
+		getWorldType()
+		getWorldTime()
+		getWorldLight()
+		getWorldCreatures(type) - Types: 0 players, 1 monsters, 2 npcs, 3 all Returns: Amount
+		getWorldUpTime()
+		getGuildId(guild_name)
+		getPlayerSex(cid)
+		getContainerSize(uid)
+		getContainerCap(uid)
+		getContainerItem(uid, slot)
+		getInstantSpellInfoByName(cid, name)
+		getInstantSpellWords(name)
+		getGlobalStorageValue(valueid)
+		getHouseOwner(houseid)
+		getHouseName(houseid)
+		getHouseEntry(houseid)
+		getHouseRent(houseid)
+		getHouseTown(houseid)
+		getHouseAccessList(houseid, listid)
+		getHouseByPlayerGUID(playerGUID)
+		getCreatureOutfit(cid)
+		getCreaturePosition(cid)
+		getCreatureName(cid)
+		getCreatureSpeed(cid)
+		getCreatureBaseSpeed(cid)
+		getCreatureTarget(cid)
+		getTilePzInfo(pos) - Returns: 1 is pz. 0 no pz.
+		getTileHouseInfo(pos) - Returns: 0 no house. != 0 house id
+		getItemRWInfo(uid)
+		getThingfromPos(pos)
+		getThing(uid)
+		getCreatureCondition(cid, condition)
+		getItemName(itemid)
+		getItemWeight(itemid, count)
+		getPlayerPremiumDays(cid)
+		getPlayerSkullType(cid)
+		getPromotedVocation(vocation)
+		getPlayerBlessing(cid, blessing)
+		getTileThingByTopOrder(pos, topOrder)
+		getTileItemByType(pos, type)
+		getTopCreature(pos)
+		getTileThingByPos(pos)
+		getTileItemById(pos, itemId, <optional> subType)
+		getOnlinePlayers()
+		getTileInfo(pos) 
+		getThingPos(uid)
+		getSpectators(centerPos, rangex, rangey, multifloor)
+		getPlayerStorageValue(uid, valueid)
+		getPlayerItemById(cid, deepSearch, itemId, <optional> subType)
+		getPlayerIp(cid)
+		getPlayerGuildLevel(cid)
+		getCreatureSummons(cid) - Returns: returns a table with all the summons of the creature
+		getWaypointPosition(name)
+	
+	//*DO
+	
+		doPlayerAddBlessing(cid, blessing)
+		doPlayerPopupFYI(cid, message)
+		doCombat(cid, combat, param)
+		doPlayerRemovePremiumDays(cid, days)
+		doPlayerAddPremiumDays(cid, days)
+		doPlayerSetSex(cid, newSex)
+		doSetCreatureOutfit(cid, outfit, time)
+		doSetItemOutfit(cid, item, time)
+		doSetMonsterOutfit(cid, name, time)
+		doChangeSpeed(cid, delta)
+		doAddContainerItem(uid, itemid, <optional> count/subtype)
+		doChallengeCreature(cid, target)
+		doTargetCombatDispel(cid, target, type, effect)
+		doAreaCombatDispel(cid, pos, area, type, effect)
+		doTargetCombatCondition(cid, target, condition, effect)
+		doAreaCombatCondition(cid, pos, area, condition, effect)
+		doTargetCombatMana(cid, target, min, max, effect)
+		doAreaCombatMana(cid, pos, area, min, max, effect)
+		doTargetCombatHealth(cid, target, type, min, max, effect)
+		doAreaCombatHealth(cid, type, pos, area, min, max, effect)
+		doSetCreatureDropLoot(cid, doDrop)
+		doSetCreatureLight(cid, lightLevel, lightColor, time)
+		doPlayerRemoveMount(cid, mountid)
+		doPlayerAddMount(cid, mountid)
+		doPlayerRemOutfit(cid,looktype,addons)
+		doPlayerAddOutfit(cid,looktype,addons)
+		doPlayerSetGuildNick(cid, nick)
+		doPlayerSetGuildRank(cid, rank)
+		doPlayerSetGuildId(cid, id)
+		doPlayerAddExp(cid,exp)
+		doPlayerRemoveItem(cid,itemid,count)
+		doPlayerSetVocation(cid,voc)
+		doPlayerSetTown(cid, townid)
+		doMoveCreature(cid, direction)
+		doRemoveCreature(cid)
+		doConvinceCreature(cid, target)
+		doSummonCreature(name, pos)
+		doCreateTeleport(itemid, topos, createpos)
+		doTileAddItemEx(pos, uid)
+		doCreateItemEx(itemid, <optional> count/subtype) - Returns: Returns uid of the created item, only works on tiles.
+		doCreateItem(itemid, type/count, pos) - Returns: Returns uid of the created item, only works on tiles.
+		doDecayItem(uid)
+		doShowTextDialog(cid, itemid, text)
+		doPlayerRemoveMoney(cid, money)
+		doPlayerSendTextMessage(cid, MessageClasses, message)
+		doPlayerAddItemEx(cid, uid, <optional: default: 0> useCidPosOnFail)
+		doPlayerAddItem(uid, itemid, <optional> count/subtype) - Returns: Returns uid of the created item
+		doPlayerAddSoul(cid, soul)
+		doPlayerAddManaSpent(cid, mana)
+		doPlayerAddMana(cid, mana)
+		doCreatureAddHealth(cid, health)
+		doPlayerAddSkillTry(cid, skillid, n)
+		doSendAnimatedText(pos, text, color)
+		doSetItemSpecialDescription(uid, desc)
+		doSetItemText(uid, text)
+		doSetItemActionId(uid, actionid)
+		doChangeTypeItem(uid, newtype)
+		doSendDistanceShoot(frompos, topos, type)
+		doSendMagicEffect(pos, type)
+		doCreatureSay(cid, text, type)
+		doTransformItem(uid, toitemid, <optional> count/subtype)
+		doTeleportThing(cid, newpos, <optional> pushmove)
+		doPlayerSendDefaultCancel(cid, ReturnValue)
+		doRemoveCondition(cid, type)
+		doAddCondition(cid, condition)
+		doMonsterChangeTarget(cid)
+		doSetMonsterTarget(cid, target)
+		doCreatureChangeOutfit(cid, outfit)
+		doCreateNpc(name, pos)
+		doRelocate(pos, posTo) - Returns: Moves all moveable objects from pos to posTo
+		doAddContainerItemEx(uid, virtuid)
+		doSendTutorial(cid, tutorialid)
+		doCreatureSetLookDir(cid, direction)		
+		doPlayerFeed(cid, food)
+		doRemoveItem(uid, <optional> n)
+		doAddMapMark(cid, pos, type, <optional> description)    
+		doPlayerAddMoney(cid, money)
+		doPlayerChangeName(cid, newName) 
+		doSetCreatureDirection(cid, direction)
+		doWaypointAddTemporial(name, pos)
+	
+	//*SET
+	
+		setHouseAccessList(houseid, listid, listtext)
+		setHouseOwner(houseid, ownerGUID)
+		setCombatArea(combat, area)
+		setCombatCondition(combat, condition)
+		setCombatParam(combat, key, value)
+		setConditionParam(condition, key, value)
+		setCombatCallBack(combat, key, function_name)
+		setCombatFormula(combat, type, mina, minb, maxa, maxb)
+		setConditionFormula(combat, mina, minb, maxa, maxb)
+		setGlobalStorageValue(valueid, newvalue)
+		setPlayerGroupId(cid, newGroupId)
+		setPlayerStorageValue(uid, valueid, newvalue)
 
-	//set*
-	setCreatureMaxHealth(cid, health)
-	setCreatureMaxMana(cid, mana)
-	setHouseOwner(houseid, ownerGUID)
-	setHouseAccessList(houseid, listid, listtext)
-	setItemName(uid)
-	setItemPluralName(uid)
-	setItemArticle(uid)
-	setItemAttack(uid, attack)
-	setItemExtraAttack(uid, extraattack)
-	setItemDefense(uid, defense)
-	setItemArmor(uid, armor)
-	setItemExtraDefense(uid, extradefense)
-	setItemAttackSpeed(uid, attackspeed)
-	setItemHitChance(uid, hitChance)
-	setItemShootRange(uid, shootRange)
-	setCombatArea(combat, area)
-	setCombatCondition(combat, condition)
-	setCombatParam(combat, key, value)
-	setConditionParam(condition, key, value)
-	setCombatCallBack(combat, key, function_name)
-	setCombatFormula(combat, type, mina, minb, maxa, maxb)
-	setConditionFormula(combat, mina, minb, maxa, maxb)
-	setWorldType(type)
-
-	//do*
-	doCreatureAddHealth(cid, health[, force])
-	doCreatureAddMana(cid, mana)
-	doCreatureSetDropLoot(cid, doDrop)
-	doCreatureSetSkullType(cid, skull)
-	doCreatureSetSpeakType
-	doCreatureSetLookDirection(cid, dir)
-	doPlayerSetMaxCapacity(cid, cap)
-	doCreatureChangeOutfit(cid, outfit)
-	doCreatureSay(uid, text, type[, ghost = false[, cid = 0[, pos]]])
-	doCreatureSetNoMove(cid, cannotMove)
-	doCreatureSetStorage(cid, key, value)
-	doSetCreatureLight(cid, lightLevel, lightColor, time)
-	doSetCreatureOutfit(cid, outfit[, time = -1])
-	doRemoveCreature(cid[, forceLogout = true])
-	doMoveCreature(cid, direction[, flag = FLAG_NOLIMIT])
-	doSteerCreature(cid, position)
-	doConvinceCreature(cid, target)
-	doChallengeCreature(cid, target)
-	doChangeSpeed(cid, delta)
-	doSummonMonster(name, pos)
-	doCreateMonster(name, pos[, extend = false[, force = false]])
-	doMonsterChangeTarget(cid)
-	doMonsterSetTarget(cid, target)
-	doCreateNpc(name, pos)
-	doSetMonsterOutfit(cid, name[, time = -1])
-	doPlayerBroadcastMessage(cid, message[, type])
-	doPlayerSetSex(cid, newSex)
-	doPlayerSetTown(cid, townid)
-	doPlayerSetVocation(cid, voc)
-	doPlayerSetGroupId(cid, newGroupId)
-	doPlayerSetPromotionLevel(cid, level)
-	doPlayerSetStamina(cid, minutes)
-	doPlayerSetBalance(cid, balance)
-	doPlayerSetExtraExpRate(cid, value)
-	doPlayerSetPartner(cid, guid)
-	doPlayerFollowCreature(cid, target)
-	doPlayerRemoveItem(cid, itemid, count[, subtype])
-	doPlayerAddExperience(cid, amount)
-	doPlayerSetGuildId(cid, id)
-	doPlayerSetGuildRank(cid, rank)
-	doPlayerSetGuildNick(cid, nick)
-	doPlayerAddOutfit(cid,looktype, addon)
-	doPlayerRemoveOutfit(cid,looktype[, addon = 0])
-	doPlayerAddOutfitId(cid, outfitId, addon)
-	doPlayerRemoveOutfitId(cid, outfitId[, addon = 0])
-	doPlayerSetRedSkullTicks(cid, amount)
-	doPlayerSetLossPercent(cid, lossType, newPercent)
-	doPlayerSetLossSkill(cid, doLose)
-	doPlayerAddSkillTry(cid, skillid, n)
-	doPlayerAddSpentMana(cid, amount)
-	doPlayerAddSoul(cid, soul)
-	doPlayerAddItem(uid, itemid[, count/subtype = 1[, canDropOnMap = true[, slot = 0]]])
-	doPlayerAddItemEx(cid, uid[, canDropOnMap = false[, slot = 0]])
-	doPlayerSendTextMessage(cid, MessageClasses, message[, animatedText[, color[, pos]]])
-	doPlayerSendChannelMessage(cid, author, message, SpeakClasses, channel)
-	doPlayerSendToChannel(cid, targetId, SpeakClasses, message, channel[, time])
-	doPlayerOpenChannel(cid, channelId)
-	doPlayerAddMoney(cid, money)
-	doPlayerRemoveMoney(cid, money)
-	doPlayerTransferMoneyTo(cid, target, money)
-	doPlayerPopupFYI(cid, message)
-	doPlayerSendTutorial(cid, id)
-	doPlayerAddMapMark(cid, pos, type[, description])
-	doPlayerAddPremiumDays(cid, days)
-	doPlayerAddBlessing(cid, blessing)
-	doPlayerResetIdleTime(cid)
-	doPlayerLearnInstantSpell(cid, name)
-	doPlayerUnlearnInstantSpell(cid, name)
-	doPlayerFeed(cid, food)
-	doPlayerSendCancel(cid, text)
-	doPlayerSendDefaultCancel(cid, ReturnValue)
-	doPlayerSetRate(cid, type, value)
-	doPlayerJoinParty(cid, lid)
-	doPlayerLeaveParty(cid[, forced = false])
-	doPlayerSendOutfitWindow(cid)
-	doPlayerSwitchSaving(cid)
-	doPlayerSave(cid[, shallow = false])
-	doCreateItem(itemid[, type/count = 1], pos)
-	doCreateItemEx(itemid[, count/subtype])
-	doAddContainerItemEx(uid, virtuid)
-	doAddContainerItem(uid, itemid[, count/subtype = 1])
-	doChangeTypeItem(uid, newtype)
-	doDecayItem(uid)
-	doRemoveItem(uid[, count = -1])
-	doTransformItem(uid, toitemid[, count/subtype])
-	doSetItemActionId(uid, actionid)
-	doSetItemText(uid, text[, writer[, date]])
-	doSetItemSpecialDescription(uid, desc)
-	doSetItemOutfit(cid, item[, time = -1])
-	doSetItemProtection(uid, value)
-	doTileAddItemEx(pos, uid)
-	doTileQueryAdd(uid, pos[, flags])
-	doItemRaidUnref(uid)
-	doAddCondition(cid, condition)
-	doRemoveCondition(cid, type[, subId])
-	doRemoveConditions(cid[, onlyPersistent])
-	doAreaCombatHealth(cid, type, pos, area, min, max, effect)
-	doTargetCombatHealth(cid, target, type, min, max, effect)
-	doAreaCombatMana(cid, pos, area, min, max, effect)
-	doTargetCombatMana(cid, target, min, max, effect)
-	doAreaCombatCondition(cid, pos, area, condition, effect)
-	doTargetCombatCondition(cid, target, condition, effect)
-	doAreaCombatDispel(cid, pos, area, type, effect)
-	doTargetCombatDispel(cid, target, type, effect)
-	doCombat(cid, combat, param)
-	doTeleportThing(cid, newpos[, pushmove = true])
-	doCreateTeleport(itemid, topos, createpos)
-	doSendCreatureSquare(cid, color[, player])
-	doSendMagicEffect(pos, type[, player])
-	doSendDistanceShoot(frompos, topos, type[, player])
-	doSendAnimatedText(pos, text, color[, player])
-	doShowTextDialog(cid, itemid, text)
-	doRelocate(pos, toPos[, creatures = true[, unmovable = true]])
-	doCleanTile(pos[, forceMapLoaded = false])
-	doBroadcastMessage(message, type)
-	doWaypointAddTemporial(name, pos)
-	doSetGameState(stateId)
-	doSetStorage(key, value)
-	doAddIpBanishment(ip[, mask[, length[, reason[, comment[, admin[, statement]]]]]])
-	doAddPlayerBanishment(name/guid[, type[, length[, reason[, action[, comment[, admin[, statement]]]]]]])
-	doAddAccountBanishment(accountId[, playerId[, length[, reason[, action[, comment[, admin[, statement]]]]]]])
-	doAddNotation(accountId[, playerId[, reason[, comment[, admin[, statement]]]]]])
-	doAddStatement(name/guid[, channelId[, reason[, comment[, admin[, statement]]]]]])
-	doRemoveIpBanishment(ip[, mask])
-	doRemovePlayerBanishment(name/guid, type)
-	doRemoveAccountBanishment(accountId[, playerId])
-	doRemoveNotations(accountId[, playerId])
-	doRemoveStatements(name/guid[, channelId])
-	doSaveServer([shallow = false])
-	doReloadInfo(id[, cid])
-	doCleanHouse(houseId)
-	doCleanMap()
-	doRefreshMap()
-
-	//is*
-	isCreature(cid)
-	isMonster(uid)
-	isNpc(uid)
-	isPlayer(cid)
-	isPlayerPzLocked(cid)
-	isPlayerSaving(cid)
-	isPlayerProtected(cid)
-	isItemStackable(itemid)
-	isItemRune(itemid)
-	isItemMovable(itemid)
-	isItemDoor(itemid)
-	isItemContainer(itemid)
-	isItemFluidContainer(itemid)
-	isContainer(uid)
-	isCorpse(uid)
-	isMovable(uid)
-	isSightClear(fromPos, toPos, floorCheck)
-	isIpBanished(ip[, mask])
-	isPlayerBanished(cid, type)
-	isPlayerNamelocked(name)
-	isAccountBanished(accountId[, playerId])
-	isInArray({array}, value[, lower = true])
-	isSummon(uid)
-	isUnderWater(uid)
-
-	//others
-	registerCreatureEvent(uid, eventName)
-	unregisterCreatureEvent(uid, eventName)
-	createCombatArea({area}[, {exArea}])
-	createConditionObject(type[, ticks[, buff[, subId]]])
-	addDamageCondition(condition, rounds, time, value)
-	addOutfitCondition(condition, lookTypeEx, lookType, lookHead, lookBody, lookLegs, lookFeet)
-	createCombatObject()
-	numberToVariant(number)
-	stringToVariant(string)
-	positionToVariant(pos)
-	targetPositionToVariant(pos)
-	variantToNumber(var)
-	variantToString(var)
-	variantToPosition(var)
-	canPlayerWearOutfit(cid, lookType[, addon = 0])
-	canPlayerWearOutfitId(cid, outfitId[, addon = 0])
-	executeRaid(name)
-	addEvent(callback, delay, ...)
-	stopEvent(eventid)
-	addDialog(dialog, dialogId, cid, callback)
-	hasPlayerClient(cid)
-	hasItemProperty(uid, prop)
-
-	//db table
-	db.query(query)
-	db.storeQuery(query)
-	db.escapeString(str)
-	db.escapeBlob(s, length)
-	db.lastInsertId()
-	db.stringComparison()
-	db.updateLimiter()
-	db.connected()
-
-	//result table
-	result.getDataInt(resId, s)
-	result.getDataLong(resId, s)
-	result.getDataString(resId, s)
-	result.getDataStream(resId, s, length)
-	result.next(resId)
-	result.free(resId)
-
-	//bit table
-	#bit.cast
-	bit.bnot(n)
-	bit.band(type, n)
-	bit.bor(type, n)
-	bit.bxor(type, n)
-	bit.lshift(type, n)
-	bit.rshift(type, n)
-	#bit.arshift
-	#bit.ucast
-	bit.ubnot(n)
-	bit.uband(type, n)
-	bit.ubor(type, n)
-	bit.ubxor(type, n)
-	bit.ulshift(type, n)
-	bit.urshift(type, n)
-	#bit.uarshift
-
-	//std table
-	std.cout(...)
-	std.clog(...)
-	std.cerr(...)
-	std.md5(string[, upperCase = false])
-	std.sha1(string[, upperCase = false])
-	std.sha256(string[, upperCase = false])
-	std.sha512(string[, upperCase = false])
-	std.vahash(string[, upperCase = false])
-
-	//os table
-	os.time()
-	os.mtime()
-
-	//compats
-	table.getPos = table.find
-	doSetCreatureDropLoot = doCreatureSetDropLoot
-	doPlayerSay = doCreatureSay
-	doPlayerAddMana = doCreatureAddMana
-	playerLearnInstantSpell = doPlayerLearnInstantSpell
-	doPlayerRemOutfit = doPlayerRemoveOutfit
-	pay = doPlayerRemoveMoney
-	broadcastMessage = doBroadcastMessage
-	getPlayerName = getCreatureName
-	getPlayerPosition = getCreaturePosition
-	getCreaturePos = getCreaturePosition
-	creatureGetPosition = getCreaturePosition
-	getPlayerMana = getCreatureMana
-	getPlayerMaxMana = getCreatureMaxMana
-	hasCondition = getCreatureCondition
-	isMoveable = isMovable
-	isItemMoveable = isItemMovable
-	saveData = saveServer
-	savePlayers = saveServer
-	getPlayerSkill = getPlayerSkillLevel
-	getPlayerSkullType = getCreatureSkullType
-	getCreatureSkull = getCreatureSkullType
-	getAccountNumberByName = getAccountIdByName
-	getIPByName = getIpByName
-	getPlayersByIP = getPlayersByIp
-	getThingfromPos = getThingFromPos
-	getPlayersByAccountNumber = getPlayersByAccountId
-	getIPByPlayerName = getIpByName
-	getPlayersByIPNumber = getPlayersByIp
-	getAccountNumberByPlayerName = getAccountIdByName
-	convertIntToIP = doConvertIntegerToIp
-	convertIPToInt = doConvertIpToInteger
-	queryTileAddThing = doTileQueryAdd
-	getTileHouseInfo = getHouseFromPos
-	executeRaid = doExecuteRaid
-	saveServer = doSaveServer
-	cleanHouse = doCleanHouse
-	cleanMap = doCleanMap
-	shutdown = doShutdown
-	mayNotMove = doCreatureSetNoMove
-	doPlayerSetNoMove = doCreatureSetNoMove
-	getPlayerNoMove = getCreatureNoMove
-	getConfigInfo = getConfigValue
-	doPlayerAddExp = doPlayerAddExperience
-	isInArea = isInRange
-	doPlayerSetSkillRate = doPlayerSetRate
-	getCreatureLookDir = getCreatureLookDirection
-	getPlayerLookDir = getCreatureLookDirection
-	getPlayerLookDirection = getCreatureLookDirection
-	doCreatureSetLookDir = doCreatureSetLookDirection
-	getPlayerLookPos = getCreatureLookPosition
-	setPlayerStamina = doPlayerSetStamina
-	setPlayerPromotionLevel = doPlayerSetPromotionLevel
-	setPlayerGroupId = doPlayerSetGroupId
-	setPlayerPartner = doPlayerSetPartner
-	doPlayerSetStorageValue = doCreatureSetStorage
-	setPlayerStorageValue = doPlayerSetStorageValue
-	getPlayerStorageValue = getCreatureStorage
-	getGlobalStorageValue = getStorage
-	setGlobalStorageValue = doSetStorage
-	setPlayerBalance = doPlayerSetBalance
-	doAddMapMark = doPlayerAddMapMark
-	doSendTutorial = doPlayerSendTutorial
-	getWaypointsList = getWaypointList
-	getPlayerLastLoginSaved = getPlayerLastLogin
-	getThingPos = getThingPosition
-	doAreaCombatHealth = doCombatAreaHealth
-	doAreaCombatMana = doCombatAreaMana
-	doAreaCombatCondition = doCombatAreaCondition
-	doAreaCombatDispel = doCombatAreaDispel
-	getItemDescriptionsById = getItemInfo
-	hasProperty = hasItemProperty
-	hasClient = hasPlayerClient
-	print = std.cout
-	getPosByDir = getPositionByDirection
-	db.updateQueryLimitOperator = db.updateLimiter
-	db.stringComparisonOperator = db.stringComparer
-	db.stringComparison = db.stringComparer
-	db.executeQuery = db.query
-	isNumber = isNumeric
-
-	//lua-made functions
-	doPlayerGiveItem(cid, itemid, amount, subType)
-	doPlayerGiveItemContainer(cid, containerid, itemid, amount, subType)
-	doPlayerTakeItem(cid, itemid, amount)
-	doPlayerBuyItem(cid, itemid, count, cost, charges)
-	doPlayerBuyItemContainer(cid, containerid, itemid, count, cost, charges)
-	doPlayerSellItem(cid, itemid, count, cost)
-	doPlayerWithdrawMoney(cid, amount)
-	doPlayerDepositMoney(cid, amount)
-	doPlayerAddStamina(cid, minutes)
-	doComparePositions(pos, posEx)
-	isInRange(position, fromPosition, toPosition)
-	getArea(pos, x, y)
-	isPremium(cid)
-	getMonthDayEnding(day)
-	getMonthString(m)
-	getArticle(str)
-	isNumeric(str)
-	getDistanceBetween(fromPosition, toPosition)
-	doPlayerAddAddons(cid, addon)
-	isSorcerer(cid)
-	isDruid(cid)
-	isPaladin(cid)
-	isKnight(cid)
-	isRookie(cid)
-	getDirectionTo(pos, posEx)
-	getCreatureLookPosition(cid)
-	getPositionByDirection(fromPosition, direction, size)
-	doPlayerWithdrawAllMoney(cid)
-	doPlayerDepositAllMoney(cid)
-	doPlayerTransferAllMoneyTo(cid, target)
-	doPlayerAddLevel(cid[, amount = 1[, round = false]])
-	doPlayerAddMagLevel(cid[, amount = 1])
-	doPlayerAddSkill(cid, skill[, amount = 1[, round = false]])
-	playerExists(name)
-	getTibiaTime()
-	doWriteLogFile(file, text)
-	isInArea(pos, fromPos, toPos)
-	getExperienceForLevel(lv)
-	doMutePlayer(cid, time)
-	getPlayerGroupName(cid)
-	getPlayerVocationName(cid)
-	getPromotedVocation(vid)
-	doPlayerRemovePremiumDays(cid, days)
-	getPlayerMasterPos(cid)
-	getHouseOwner(houseId)
-	getHouseName(houseId)
-	getHouseEntry(houseId)
-	getHouseRent(houseId)
-	getHousePrice(houseId)
-	getHouseTown(houseId)
-	getHouseTilesCount(houseId)
-	getItemNameById(itemid)
-	getItemPluralNameById(itemid)
-	getItemArticleById(itemid)
-	getItemName(uid)
-	getItemPluralName(uid)
-	getItemArticle(uid)
-	getItemText(uid)
-	getItemSpecialDescription(uid)
-	getItemWriter(uid)
-	getItemDate(uid)
-	getTilePzInfo(pos)
-	getTileZoneInfo(pos)
-	debugPrint(text)
-	doShutdown()
-	doSummonCreature(name, pos[, extend = false[, force = false]])
-	getOnlinePlayers()
-	getPlayerByName(name)
-	isPlayerGhost(cid)
-	getPlayerFrags(cid)
-	getPartyLeader(cid)
-	isInParty(cid)
-	isPrivateChannel(channelId)
-	doConvertIntegerToIp(int, mask)
-	doConvertIpToInteger(str)
-	doRevertIp(ip)
-	getBooleanFromString(str)
-	doCopyItem(item, attributes)
-	getContainerCapById(itemid)
-	getDepotId(uid)
-	getMonsterAttackSpells(name)
-	getMonsterHealingSpells(name)
-	getMonsterLootList(name)
-	getMonsterSummonList(name)
-	exhaustion.check(cid, storage)
-	exhaustion.get(cid, storage)
-	exhaustion.set(cid, storage, time)
-	exhaustion.make(cid, storage, time)
-	table.find(table, value)
-	table.isStrIn(txt, str)
-	table.countElements(table, item)
-	table.getCombinations(table, num)
-	string.split(str)
-	string.trim(str)
-	string.explode(str, sep)
-	choose(...)
+	
+	
+	
+		
+	//*IS
+		
+		isPlayer(cid)
+		isCreature(cid)
+		isContainer(uid)
+		isMoveable(uid)
+		isSightClear(fromPos, toPos, floorCheck)
+		isValidUID(uid)
+		isPlayerGhost(cid)
+		isPlayerPzLocked(cid)
+		isDepot(uid)
+		isCorpse(uid)
+		isMovable(uid)
+		isItemMovable(itemid)
+		isItemMoveable(itemid)
+		isItemStackable(itemid)
+		isItemRune(itemid)
+		isItemDoor(itemid)
+		isItemContainer(itemid)
+		isItemFluidContainer(itemid)
+		isInArray(array, value)
+		
+	//*MISC
+	
+		broadcastMessage(message, type)
+		createCombatArea( {area}, <optional> {extArea} )
+		canPlayerWearOutfit(cid, looktype, addons)
+		hasProperty(uid, prop)
+		refreshMap()
+		cleanMap()
+		createConditionObject(type)
+		addDamageCondition(condition, rounds, time, value)
+		addOutfitCondition(condition, lookTypeEx, lookType, lookHead, lookBody, lookLegs, lookFeet)
+		createCombatObject()
+		numberToVariant(number)
+		stringToVariant(string)
+		positionToVariant(pos)
+		targetPositionToVariant(pos)
+		variantToNumber(var)
+		variantToString(var)
+		variantToPosition(var)
+		debugPrint(text)
+		addEvent(callback, delay, parameter)
+		stopEvent(eventid)
+		mayNotLogout(cid, value)
+		mayNotMove(cid, value)
+		saveData()
+		saveServer(), does the same thing as saveData()
+		escapeString(str)
+		registerCreatureEvent(uid, eventName)
+		queryTileAddThing(uid, pos, <optional> flags)
+		playerLearnInstantSpell(cid, name)
+		canPlayerLearnInstantSpell(cid, name)
+		
 ]

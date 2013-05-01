@@ -28,8 +28,11 @@
 	<elements>
 		<element energyPercent="20"/>
 		<element deathPercent="7"/>
-		<element firePercent="-5"/>
 	</elements>
+	<voices interval="5000" chance="10">
+		<voice sentence="Sluuurz"/>
+		<voice sentence="Sluuuurp"/>
+	</voices>
 	<loot>
 		<item id="2148" countmax="45" chance="20750"/> <!-- gold coin -->
 		<item id="3976" countmax="5" chance="50000"/> <!-- worm -->

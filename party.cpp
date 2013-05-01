@@ -1,88 +1,98 @@
-////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
 // OpenTibia - an opensource roleplaying game
-////////////////////////////////////////////////////////////////////////
-// This program is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+//////////////////////////////////////////////////////////////////////
+// Party system
+//////////////////////////////////////////////////////////////////////
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public License
+// as published by the Free Software Foundation; either version 2
+// of the License, or (at your option) any later version.
 //
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with this program.  If not, see <http://www.gnu.org/licenses/>.
-////////////////////////////////////////////////////////////////////////
+// along with this program; if not, write to the Free Software Foundation,
+// Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+//////////////////////////////////////////////////////////////////////
 #include "otpch.h"
-#include "party.h"
 
+#include "party.h"
 #include "player.h"
-#include "chat.h"
 #include "game.h"
-#include "configmanager.h"
+#include "chat.h"
 
 extern Game g_game;
 extern Chat g_chat;
-extern ConfigManager g_config;
 
 Party::Party(Player* _leader)
 {
-	sharedExpActive = sharedExpEnabled = false;
+	sharedExpActive = false;
+	sharedExpEnabled = false;
+
 	if(_leader)
 	{
-		leader = _leader;
-		leader->setParty(this);
-		leader->sendPlayerIcons(leader);
+		setLeader(_leader);
+		_leader->setParty(this);
+		_leader->sendPlayerPartyIcons(_leader);
 	}
+}
+
+Party::~Party()
+{
+	//
 }
 
 void Party::disband()
 {
-	leader->sendClosePrivate(CHANNEL_PARTY);
-	leader->setParty(NULL);
-	leader->sendTextMessage(MSG_PARTY, "Your party has been disbanded.");
+	getLeader()->setParty(NULL);
+	getLeader()->sendClosePrivate(CHANNEL_PARTY);
+	getLeader()->sendPlayerPartyIcons(getLeader());
+	getLeader()->sendTextMessage(MSG_INFO_DESCR, "Your party has been disbanded.");
 
-	leader->sendPlayerIcons(leader);
 	for(PlayerVector::iterator it = inviteList.begin(); it != inviteList.end(); ++it)
 	{
 		(*it)->removePartyInvitation(this);
-		(*it)->sendPlayerIcons(leader);
-		(*it)->sendPlayerIcons(*it);
-		leader->sendPlayerIcons(*it);
+		(*it)->sendPlayerPartyIcons(getLeader());
+		(*it)->sendPlayerPartyIcons((*it));
+		getLeader()->sendPlayerPartyIcons((*it));
 	}
 
 	inviteList.clear();
 	for(PlayerVector::iterator it = memberList.begin(); it != memberList.end(); ++it)
 	{
-		(*it)->sendClosePrivate(CHANNEL_PARTY);
 		(*it)->setParty(NULL);
-		(*it)->sendTextMessage(MSG_PARTY, "Your party has been disbanded.");
-
-		(*it)->sendPlayerIcons(*it);
-		(*it)->sendPlayerIcons(leader);
-		leader->sendPlayerIcons(*it);
+		(*it)->sendClosePrivate(CHANNEL_PARTY);
+		(*it)->sendPlayerPartyIcons(getLeader());
+		(*it)->sendPlayerPartyIcons((*it));
+		(*it)->sendTextMessage(MSG_INFO_DESCR, "Your party has been disbanded.");
+		getLeader()->sendPlayerPartyIcons((*it));
 	}
 
 	memberList.clear();
-	leader = NULL;
+	setLeader(NULL);
 	delete this;
 }
 
-bool Party::leave(Player* player)
+bool Party::leaveParty(Player* player)
 {
-	if(!isPlayerMember(player) && player != leader)
+	if(!player)
+		return false;
+
+	if(!isPlayerMember(player) && getLeader() != player)
 		return false;
 
 	bool missingLeader = false;
-	if(leader == player)
+	if(getLeader() == player)
 	{
 		if(!memberList.empty())
 		{
 			if(memberList.size() == 1 && inviteList.empty())
 				missingLeader = true;
 			else
-				passLeadership(memberList.front());
+				passPartyLeadership(memberList.front());
 		}
 		else
 			missingLeader = true;
@@ -99,27 +109,26 @@ bool Party::leave(Player* player)
 
 	player->setParty(NULL);
 	player->sendClosePrivate(CHANNEL_PARTY);
-
-	player->sendTextMessage(MSG_PARTY, "You have left the party.");
-	player->sendPlayerIcons(player);
+	player->sendPlayerPartyIcons(player);
+	player->sendTextMessage(MSG_INFO_DESCR, "You have left the party.");
 
 	updateSharedExperience();
-	updateIcons(player);
+	updatePartyIcons(player);
 	clearPlayerPoints(player);
 
-	char buffer[105];
-	sprintf(buffer, "%s has left the party.", player->getName().c_str());
+	std::ostringstream ss;
+	ss << player->getName() << " has left the party.";
+	broadcastPartyMessage(MSG_INFO_DESCR, ss.str());
 
-	broadcastMessage(MSG_PARTY, buffer);
-	if(missingLeader || canDisband())
+	if(missingLeader || disbandParty())
 		disband();
 
 	return true;
 }
 
-bool Party::passLeadership(Player* player)
+bool Party::passPartyLeadership(Player* player)
 {
-	if(!isPlayerMember(player) || player == leader)
+	if(!player || getLeader() == player || !isPlayerMember(player))
 		return false;
 
 	//Remove it before to broadcast the message correctly
@@ -127,61 +136,66 @@ bool Party::passLeadership(Player* player)
 	if(it != memberList.end())
 		memberList.erase(it);
 
-	Player* oldLeader = leader;
-	leader = player;
+	std::ostringstream ss;
+	ss << player->getName() << " is now the leader of the party.";
+	broadcastPartyMessage(MSG_INFO_DESCR, ss.str(), true);
+
+	Player* oldLeader = getLeader();
+	setLeader(player);
+
 	memberList.insert(memberList.begin(), oldLeader);
 
-	char buffer[125];
-	sprintf(buffer, "%s is now the leader of the party.", player->getName().c_str());
-	broadcastMessage(MSG_PARTY, buffer, true);
-
-	player->sendTextMessage(MSG_PARTY, "You are now the leader of the party.");
 	updateSharedExperience();
+	updatePartyIcons(oldLeader);
+	updatePartyIcons(getLeader());
+	updatePartyIcons(player);
 
-	updateIcons(oldLeader);
-	updateIcons(player);
+	player->sendTextMessage(MSG_INFO_DESCR, "You are now the leader of the party.");
 	return true;
 }
 
-bool Party::join(Player* player)
+bool Party::joinParty(Player* player)
 {
-	if(isPlayerMember(player) || !isPlayerInvited(player))
+	if(!player || player->isRemoved())
 		return false;
+
+	std::ostringstream ss;
+	ss << player->getName() << " has joined the party.";
+	broadcastPartyMessage(MSG_INFO_DESCR, ss.str());
+	ss.str("");
 
 	memberList.push_back(player);
 	player->setParty(this);
 
-	player->removePartyInvitation(this);
 	PlayerVector::iterator it = std::find(inviteList.begin(), inviteList.end(), player);
 	if(it != inviteList.end())
 		inviteList.erase(it);
 
-	char buffer[200];
-	sprintf(buffer, "%s has joined the party.", player->getName().c_str());
-	broadcastMessage(MSG_PARTY, buffer);
-
-	sprintf(buffer, "You have joined %s'%s party. Open the party channel to communicate with your companions.", leader->getName().c_str(), (leader->getName()[leader->getName().length() - 1] == 's' ? "" : "s"));
-	player->sendTextMessage(MSG_PARTY, buffer);
-
+	player->removePartyInvitation(this);
 	updateSharedExperience();
-	updateIcons(player);
+	updatePartyIcons(player);
+
+	const std::string& leaderName = leader->getName();
+	ss << "You have joined " << leaderName << "'" << (leaderName[leaderName.length() - 1] == 's' ? "" : "s") <<
+		" party. Open the party channel to communicate with your companions.";
+	player->sendTextMessage(MSG_INFO_DESCR, ss.str());
 	return true;
 }
 
 bool Party::removeInvite(Player* player)
 {
-	if(!isPlayerInvited(player))
+	if(!player || player->isRemoved() || !isPlayerInvited(player))
 		return false;
 
 	PlayerVector::iterator it = std::find(inviteList.begin(), inviteList.end(), player);
 	if(it != inviteList.end())
 		inviteList.erase(it);
 
-	leader->sendPlayerIcons(player);
-	player->sendPlayerIcons(leader);
-
+	getLeader()->sendPlayerPartyIcons(player);
 	player->removePartyInvitation(this);
-	if(canDisband())
+	player->sendPlayerPartyIcons(getLeader());
+
+	if(disbandParty())
 		disband();
 
 	return true;
@@ -189,110 +203,134 @@ bool Party::removeInvite(Player* player)
 
 void Party::revokeInvitation(Player* player)
 {
-	if(!player || player->isRemoved())
-		return;
+	std::ostringstream ss;
+	ss << leader->getName() << " has revoked " << (leader->getSex() == PLAYERSEX_FEMALE ? "her" : "his") << " invitation.";
+	player->sendTextMessage(MSG_INFO_DESCR, ss.str());
 
-	char buffer[150];
-	sprintf(buffer, "%s has revoked %s invitation.", leader->getName().c_str(), (leader->getSex(false) ? "his" : "her"));
-	player->sendTextMessage(MSG_PARTY, buffer);
+	ss.str("");
+	ss << "Invitation for " << player->getName() << " has been revoked.";
+	getLeader()->sendTextMessage(MSG_INFO_DESCR, ss.str());
 
-	sprintf(buffer, "Invitation for %s has been revoked.", player->getName().c_str());
-	leader->sendTextMessage(MSG_PARTY, buffer);
 	removeInvite(player);
 }
 
 bool Party::invitePlayer(Player* player)
 {
-	if(isPlayerInvited(player, true))
+	if(!player || player->isRemoved())
+		return false;
+
+	if(std::find(inviteList.begin(), inviteList.end(), player) != inviteList.end())
 		return false;
 
 	inviteList.push_back(player);
+
+	getLeader()->sendPlayerPartyIcons(player);
+	player->sendPlayerPartyIcons(getLeader());
 	player->addPartyInvitation(this);
 
-	char buffer[150];
-	sprintf(buffer, "%s has been invited.%s", player->getName().c_str(), (!memberList.size() ? " Open the party channel to communicate with your members." : ""));
-	leader->sendTextMessage(MSG_PARTY, buffer);
+	std::ostringstream ss;
+	ss << player->getName() << " has been invited.";
+	if(!memberList.size())
+		ss << " Open the party channel to communicate with your members.";
 
-	sprintf(buffer, "%s has invited you to %s party.", leader->getName().c_str(), (leader->getSex(false) ? "his" : "her"));
-	player->sendTextMessage(MSG_PARTY, buffer);
+	leader->sendTextMessage(MSG_INFO_DESCR, ss.str());
 
-	leader->sendPlayerIcons(player);
-	player->sendPlayerIcons(leader);
+	ss.str("");
+	ss << leader->getName() << " has invited you to " << (leader->getSex() == PLAYERSEX_FEMALE ? "her" : "his") << " party.";
+	player->sendTextMessage(MSG_INFO_DESCR, ss.str());
 	return true;
 }
 
-void Party::updateIcons(Player* player)
+bool Party::isPlayerMember(const Player* player) const
 {
-	if(!player || player->isRemoved())
-		return;
-
-	PlayerVector::iterator it;
-	for(it = memberList.begin(); it != memberList.end(); ++it)
-	{
-		(*it)->sendPlayerIcons(player);
-		player->sendPlayerIcons((*it));
-	}
-
-	for(it = inviteList.begin(); it != inviteList.end(); ++it)
-	{
-		(*it)->sendPlayerIcons(player);
-		player->sendPlayerIcons((*it));
-	}
-
-	leader->sendPlayerIcons(player);
-	player->sendPlayerIcons(leader);
+	PlayerVector::const_iterator it = std::find(memberList.begin(), memberList.end(), player);
+	return it != memberList.end();
 }
 
-void Party::updateAllIcons()
+bool Party::isPlayerInvited(const Player* player) const
 {
-	PlayerVector::iterator it;
-	for(it = memberList.begin(); it != memberList.end(); ++it)
-	{
-		for(PlayerVector::iterator iit = memberList.begin(); iit != memberList.end(); ++iit)
-			(*it)->sendPlayerIcons((*iit));
-
-		(*it)->sendPlayerIcons(leader);
-		leader->sendPlayerIcons((*it));
-	}
-
-	leader->sendPlayerIcons(leader);
-	for(it = inviteList.begin(); it != inviteList.end(); ++it)
-		(*it)->sendPlayerIcons(leader);
+	PlayerVector::const_iterator it = std::find(inviteList.begin(), inviteList.end(), player);
+	return it != inviteList.end();
 }
 
-void Party::broadcastMessage(MessageClasses messageClass, const std::string& text, bool sendToInvitations/* = false*/)
+void Party::updatePartyIcons(Player* player)
+{
+	for(PlayerVector::iterator it = memberList.begin(); it != memberList.end(); ++it)
+	{
+		(*it)->sendPlayerPartyIcons(player);
+		player->sendPlayerPartyIcons((*it));
+	}
+
+	for(PlayerVector::iterator it = inviteList.begin(); it != inviteList.end(); ++it)
+	{
+		(*it)->sendPlayerPartyIcons(player);
+		player->sendPlayerPartyIcons((*it));
+	}
+
+	getLeader()->sendPlayerPartyIcons(player);
+	player->sendPlayerPartyIcons(getLeader());
+}
+
+void Party::updateAllPartyIcons()
+{
+	for(PlayerVector::iterator it = memberList.begin(); it != memberList.end(); ++it)
+	{
+		for(PlayerVector::iterator it2 = memberList.begin(); it2 != memberList.end(); ++it2)
+			(*it)->sendPlayerPartyIcons((*it2));
+
+		(*it)->sendPlayerPartyIcons(getLeader());
+		getLeader()->sendPlayerPartyIcons((*it));
+	}
+
+	for(PlayerVector::iterator it = inviteList.begin(); it != inviteList.end(); ++it)
+		(*it)->sendPlayerPartyIcons(getLeader());
+
+	getLeader()->sendPlayerPartyIcons(getLeader());
+}
+
+void Party::broadcastPartyMessage(MessageClasses msgClass, const std::string& msg, bool sendToInvitations /*= false*/)
 {
 	PlayerVector::iterator it;
 	if(!memberList.empty())
 	{
 		for(it = memberList.begin(); it != memberList.end(); ++it)
-			(*it)->sendTextMessage(messageClass, text);
+			(*it)->sendTextMessage(msgClass, msg);
 	}
 
-	leader->sendTextMessage(messageClass, text);
-	if(!sendToInvitations || inviteList.empty())
-		return;
+	getLeader()->sendTextMessage(msgClass, msg);
+	if(sendToInvitations && !inviteList.empty())
+	{
+		for(it = inviteList.begin(); it != inviteList.end(); ++it)
+			(*it)->sendTextMessage(msgClass, msg);
+	}
+}
 
-	for(it = inviteList.begin(); it != inviteList.end(); ++it)
-		(*it)->sendTextMessage(messageClass, text);
+void Party::broadcastPartyLoot(const std::string& loot)
+{
+	getLeader()->sendTextMessage(MSG_INFO_DESCR, loot);
+	if(!memberList.empty())
+	{
+		for(PlayerVector::iterator it = memberList.begin(); it != memberList.end(); ++it)
+			(*it)->sendTextMessage(MSG_INFO_DESCR, loot);
+	}
 }
 
 void Party::updateSharedExperience()
 {
-	if(!sharedExpActive)
-		return;
-
-	bool result = canEnableSharedExperience();
-	if(result == sharedExpEnabled)
-		return;
-
-	sharedExpEnabled = result;
-	updateAllIcons();
+	if(sharedExpActive)
+	{
+		bool result = canEnableSharedExperience();
+		if(result != sharedExpEnabled)
+		{
+			sharedExpEnabled = result;
+			updateAllPartyIcons();
+		}
+	}
 }
 
 bool Party::setSharedExperience(Player* player, bool _sharedExpActive)
 {
-	if(!player || player->isRemoved() || player != leader)
+	if(!player || getLeader() != player)
 		return false;
 
 	if(sharedExpActive == _sharedExpActive)
@@ -303,137 +341,142 @@ bool Party::setSharedExperience(Player* player, bool _sharedExpActive)
 	{
 		sharedExpEnabled = canEnableSharedExperience();
 		if(sharedExpEnabled)
-			leader->sendTextMessage(MSG_PARTY_MANAGEMENT, "Shared Experience is now active.");
+			getLeader()->sendTextMessage(MSG_INFO_DESCR, "Shared Experience is now active.");
 		else
-			leader->sendTextMessage(MSG_PARTY_MANAGEMENT, "Shared Experience has been activated, but some members of your party are inactive.");
+			getLeader()->sendTextMessage(MSG_INFO_DESCR, "Shared Experience has been activated, but some members of your party are inactive.");
 	}
 	else
-		leader->sendTextMessage(MSG_PARTY_MANAGEMENT, "Shared Experience has been deactivated.");
+		getLeader()->sendTextMessage(MSG_INFO_DESCR, "Shared Experience has been deactivated.");
 
-	updateAllIcons();
+	updateAllPartyIcons();
 	return true;
 }
 
-void Party::shareExperience(double experience, Creature* target, bool multiplied)
+void Party::shareExperience(uint64_t experience)
 {
-	double shareExperience = experience;
-	if(experience >= (double)g_config.getNumber(ConfigManager::EXTRA_PARTY_LIMIT))
-		shareExperience += (experience * ((double)g_config.getNumber(ConfigManager::EXTRA_PARTY_PERCENT) / 100));
-
-	shareExperience /= memberList.size() + 1;
-	double tmpExperience = shareExperience; //we need this, as onGainSharedExperience increases the value
-
-	leader->onGainSharedExperience(tmpExperience, target, multiplied);
+	uint32_t shareExperience = (uint64_t)std::ceil((((double)experience / (memberList.size() + 1)) + ((double)experience * 0.05)));
 	for(PlayerVector::iterator it = memberList.begin(); it != memberList.end(); ++it)
-	{
-		tmpExperience = shareExperience;
-		(*it)->onGainSharedExperience(tmpExperience, target, multiplied);
-	}
+		(*it)->onGainSharedExperience(shareExperience);
+
+	getLeader()->onGainSharedExperience(shareExperience);
 }
 
-bool Party::canUseSharedExperience(const Player* player, uint32_t highestLevel/* = 0*/) const
-{
-	if(!player || player->isRemoved() || !memberList.size())
-		return false;
-
-	if(!highestLevel)
-	{
-		highestLevel = leader->getLevel();
-		for(PlayerVector::const_iterator it = memberList.begin(); it != memberList.end(); ++it)
-		{
-			if((*it)->getLevel() > highestLevel)
-				highestLevel = (*it)->getLevel();
-		}
-	}
-
-	if(player->getLevel() < (uint32_t)std::ceil((double)highestLevel * g_config.getDouble(
-		ConfigManager::PARTY_DIFFERENCE)) || !Position::areInRange(Position(
-		g_config.getNumber(ConfigManager::PARTY_RADIUS_X), g_config.getNumber(
-		ConfigManager::PARTY_RADIUS_Y), g_config.getNumber(ConfigManager::PARTY_RADIUS_Z)),
-		leader->getPosition(), player->getPosition()))
-		return false;
-
-	CountMap::const_iterator it = pointMap.find(player->getID());
-	return it != pointMap.end() && (OTSYS_TIME() - it->second.ticks) <= g_config.getNumber(
-		ConfigManager::EXPERIENCE_SHARE_ACTIVITY);
-}
-
-bool Party::canEnableSharedExperience()
+bool Party::canUseSharedExperience(const Player* player) const
 {
 	if(!memberList.size())
 		return false;
 
-	uint32_t highestLevel = leader->getLevel();
-	for(PlayerVector::iterator it = memberList.begin(); it != memberList.end(); ++it)
+	uint32_t highestLevel = getLeader()->getLevel();
+	for(PlayerVector::const_iterator it = memberList.begin(); it != memberList.end(); ++it)
 	{
 		if((*it)->getLevel() > highestLevel)
 			highestLevel = (*it)->getLevel();
 	}
 
-	for(PlayerVector::iterator it = memberList.begin(); it != memberList.end(); ++it)
+	uint32_t minLevel = (int32_t)std::ceil(((float)(highestLevel) * 2) / 3);
+	if(player->getLevel() < minLevel)
+		return false;
+
+	const Position& leaderPos = getLeader()->getPosition();
+	const Position& memberPos = player->getPosition();
+	if(!Position::areInRange<30,30,1>(leaderPos, memberPos))
+		return false;
+
+	if(!player->hasFlag(PlayerFlag_NotGainInFight))
 	{
-		if(!canUseSharedExperience((*it), highestLevel))
+		//check if the player has healed/attacked anything recently
+		CountMap::const_iterator it = pointMap.find(player->getID());
+		if(it == pointMap.end())
+			return false;
+
+		uint64_t timeDiff = OTSYS_TIME() - it->second.ticks;
+		if(timeDiff > (uint64_t)g_game.getInFightTicks())
 			return false;
 	}
 
-	return canUseSharedExperience(leader, highestLevel);
+	return true;
+}
+
+bool Party::canEnableSharedExperience()
+{
+	if(!canUseSharedExperience(getLeader()))
+		return false;
+
+	for(PlayerVector::iterator it = memberList.begin(); it != memberList.end(); ++it)
+	{
+		if(!canUseSharedExperience(*it))
+			return false;
+	}
+
+	return true;
 }
 
 void Party::addPlayerHealedMember(Player* player, uint32_t points)
 {
-	CountMap::iterator it = pointMap.find(player->getID());
-	if(it != pointMap.end())
+	if(!player->hasFlag(PlayerFlag_NotGainInFight))
 	{
-		it->second.totalHeal += points;
-		it->second.ticks = OTSYS_TIME();
-	}
-	else
-		pointMap[player->getID()] = CountBlock_t(points, 0);
+		if(points > 0)
+		{
+			CountMap::iterator it = pointMap.find(player->getID());
+			if(it == pointMap.end())
+			{
+				CountBlock_t cb;
+				cb.ticks = OTSYS_TIME();
+				cb.totalHeal = points;
+				cb.totalDamage = 0;
+				pointMap[player->getID()] = cb;
+			}
+			else
+			{
+				it->second.totalHeal += points;
+				it->second.ticks = OTSYS_TIME();
+			}
 
-	updateSharedExperience();
+			updateSharedExperience();
+		}
+	}
 }
 
 void Party::addPlayerDamageMonster(Player* player, uint32_t points)
 {
-	CountMap::iterator it = pointMap.find(player->getID());
-	if(it != pointMap.end())
+	if(!player->hasFlag(PlayerFlag_NotGainInFight))
 	{
-		it->second.totalDamage += points;
-		it->second.ticks = OTSYS_TIME();
-	}
-	else
-		pointMap[player->getID()] = CountBlock_t(0, points);
+		if(points > 0)
+		{
+			CountMap::iterator it = pointMap.find(player->getID());
+			if(it == pointMap.end())
+			{
+				CountBlock_t cb;
+				cb.ticks = OTSYS_TIME();
+				cb.totalDamage = points;
+				cb.totalHeal = 0;
+				pointMap[player->getID()] = cb;
+			}
+			else
+			{
+				it->second.totalDamage += points;
+				it->second.ticks = OTSYS_TIME();
+			}
 
-	updateSharedExperience();
+			updateSharedExperience();
+		}
+	}
 }
 
 void Party::clearPlayerPoints(Player* player)
 {
 	CountMap::iterator it = pointMap.find(player->getID());
-	if(it == pointMap.end())
-		return;
-
-	pointMap.erase(it);
-	updateSharedExperience();
-}
-
-bool Party::isPlayerMember(const Player* player, bool result/* = false*/) const
-{
-	if(!player || player->isRemoved())
-		return result;
-
-	return std::find(memberList.begin(), memberList.end(), player) != memberList.end();
-}
-
-bool Party::isPlayerInvited(const Player* player, bool result/* = false*/) const
-{
-	if(!player || player->isRemoved())
-		return result;
-
-	return std::find(inviteList.begin(), inviteList.end(), player) != inviteList.end();
+	if(it != pointMap.end())
+	{
+		pointMap.erase(it);
+		updateSharedExperience();
+	}
 }
 
 bool Party::canOpenCorpse(uint32_t ownerId)
 {
-	return leader->getGUID() == ownerId || isPlayerMember(g_game.getPlayerByGuid(ownerId));
+	if(Player* player = g_game.getPlayerByID(ownerId))
+		return leader->getID() == ownerId || isPlayerMember(player);
+
+	return false;
 }

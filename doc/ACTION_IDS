@@ -3,93 +3,22 @@
 		The Forgotten Server
 
 	Version
-		0.3.7
-
-	Codenamed
-		Crying Damson
+		1.0
 
 	License
-		GNU GPLv3
+		GNU GPLv2
 
 	Forum
 		http://otland.net/
 ]
 
-[ maximumDoorLevel
-	maximumDoorLevel is a configurable value inside config.lua,
-	that's setting maximum level threshold in automated scripts.
-]
-
 [ IDS
-	[ Actionid 100
-		There are a few items which can have special usage.
-		For example, sand floor can be openable with a shovel if actionid 100 is set (without actionid it works in an ordinary way)
+	Depottile
+		100 + DepotID
 
-		Enchanting (Items IDs may be found in 'lib/constant.lua' file - 'enchantingAltars')
-			Set actionid on all of the altar parts to make the enchanting work
+	Leveltile
+		1000 + Required Level
 
-		Desert holes (Items: 231, 9059)
-			Openable with a shovel (like tombs in global Tibia)
-
-		Draw Well (Item: 1369)
-			It teleports player 1 floor down (like room to the Fibula Dungeon in global Tibia)
-	]
-
-	[ Doors & Tiles
-		Storage depending Special Door
-			ANY
-
-		Allpass Special Door
-			100
-
-		Vocation depending Level Door & Tile
-			100 -> 149
-				+ Vocation ID
-
-		Group depending Level Door & Tile
-			150 -> 179
-				+ Group ID
-
-		Skull depending Level Door & Tile
-			180 -> 185
-				+ Skull Type
-
-		Gender depending Level Door & Tile
-			186 -> 188
-				+ Gender
-
-		Premium depending Level Door & Tile
-			189
-
-		Allpass Level Door
-			190
-
-		Player Tile
-			191
-
-		Monster Tile
-			192
-
-		NPC Tile
-			193
-
-		NOT Player Tile
-			194
-
-		NOT Monster Tile
-			195
-
-		NOT NPC Tile
-			196
-
-		Level depending Level Door & Tile
-			1000 -> maximumDoorLevel
-				+ Required Level
-
-		Storage depending Tile
-			maximumDoorLevel -> INFINITE
-	]
-
-	Quest Reward
-		2000
+	Leveldoor
+		1000 + Required Level
 ]

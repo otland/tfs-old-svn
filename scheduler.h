@@ -1,43 +1,58 @@
-////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
 // OpenTibia - an opensource roleplaying game
-////////////////////////////////////////////////////////////////////////
-// This program is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+//////////////////////////////////////////////////////////////////////
+// Scheduler-Objects for OpenTibia
+//////////////////////////////////////////////////////////////////////
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public License
+// as published by the Free Software Foundation; either version 2
+// of the License, or (at your option) any later version.
 //
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with this program.  If not, see <http://www.gnu.org/licenses/>.
-////////////////////////////////////////////////////////////////////////
+// along with this program; if not, write to the Free Software Foundation,
+// Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+//////////////////////////////////////////////////////////////////////
 
-#ifndef __SCHEDULER__
-#define __SCHEDULER__
+#ifndef __OTSERV_SCHEDULER_H__
+#define __OTSERV_SCHEDULER_H__
+
 #include "otsystem.h"
+#include "tasks.h"
+#include <boost/bind.hpp>
+#include <vector>
+#include <queue>
+#include <set>
 
-#include "dispatcher.h"
 #define SCHEDULER_MINTICKS 50
 
 class SchedulerTask : public Task
 {
 	public:
-		virtual ~SchedulerTask() {}
+		~SchedulerTask() {}
 
-		void setEventId(uint32_t eventId) {m_eventId = eventId;}
-		uint32_t getEventId() const {return m_eventId;}
+		void setEventId(uint32_t eventid) {m_eventid = eventid;}
+		uint32_t getEventId() const {return m_eventid;}
 
 		boost::system_time getCycle() const {return m_expiration;}
-		bool operator<(const SchedulerTask& other) const {return getCycle() > other.getCycle();}
+
+		bool operator<(const SchedulerTask& other) const
+		{
+			return getCycle() > other.getCycle();
+		}
 
 	protected:
-		uint32_t m_eventId;
+		SchedulerTask(uint32_t delay, const boost::function<void (void)>& f) : Task(delay, f)
+		{
+			m_eventid = 0;
+		}
 
-		SchedulerTask(uint32_t delay, const boost::function<void (void)>& f):
-			Task(delay, f), m_eventId(0) {}
+		uint32_t m_eventid;
+
 		friend SchedulerTask* createSchedulerTask(uint32_t, const boost::function<void (void)>&);
 };
 
@@ -49,34 +64,29 @@ inline SchedulerTask* createSchedulerTask(uint32_t delay, const boost::function<
 	return new SchedulerTask(delay, f);
 }
 
-class lessTask : public std::binary_function<SchedulerTask*&, SchedulerTask*&, bool>
+class lessSchedTask : public std::binary_function<SchedulerTask*&, SchedulerTask*&, bool>
 {
 	public:
-		bool operator()(SchedulerTask*& t1, SchedulerTask*& t2) {return (*t1) < (*t2);}
+		bool operator()(SchedulerTask*& t1, SchedulerTask*& t2)
+		{
+			return (*t1) < (*t2);
+		}
 };
 
-typedef std::set<uint32_t> EventIds;
 class Scheduler
 {
 	public:
-		virtual ~Scheduler() {}
-		static Scheduler& getInstance()
-		{
-			static Scheduler scheduler;
-			return scheduler;
-		}
+		Scheduler();
+		~Scheduler() {}
 
 		uint32_t addEvent(SchedulerTask* task);
 		bool stopEvent(uint32_t eventId);
 
+		void start();
 		void stop();
 		void shutdown();
-		void exit() {m_thread.join();}
+		void join();
 
-		void schedulerThread();
-
-	protected:
-		Scheduler();
 		enum SchedulerState
 		{
 			STATE_RUNNING,
@@ -84,14 +94,20 @@ class Scheduler
 			STATE_TERMINATED
 		};
 
-		uint32_t m_lastEvent;
-		EventIds m_eventIds;
+	protected:
+		static void schedulerThread(void* p);
 
 		boost::thread m_thread;
 		boost::mutex m_eventLock;
 		boost::condition_variable m_eventSignal;
 
-		std::priority_queue<SchedulerTask*, std::vector<SchedulerTask*>, lessTask > m_eventList;
-		static SchedulerState m_threadState;
+		uint32_t m_lastEventId;
+		std::priority_queue<SchedulerTask*, std::vector<SchedulerTask*>, lessSchedTask > m_eventList;
+		typedef OTSERV_HASH_SET<uint32_t> EventIdSet;
+		EventIdSet m_eventIds;
+		SchedulerState m_threadState;
 };
+
+extern Scheduler g_scheduler;
+
 #endif

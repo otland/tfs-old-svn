@@ -49,6 +49,7 @@ inline void Waypoints::addWaypoint(WaypointPtr waypoint)
 {
 	waypoints[waypoint->name] = waypoint;
 }
+
 inline WaypointPtr Waypoints::getWaypointByName(const std::string& name) const
 {
 	WaypointMap::const_iterator it = waypoints.find(name);

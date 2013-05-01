@@ -1,72 +1,97 @@
-////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
 // OpenTibia - an opensource roleplaying game
-////////////////////////////////////////////////////////////////////////
-// This program is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+//////////////////////////////////////////////////////////////////////
+// The database of items.
+//////////////////////////////////////////////////////////////////////
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public License
+// as published by the Free Software Foundation; either version 2
+// of the License, or (at your option) any later version.
 //
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with this program.  If not, see <http://www.gnu.org/licenses/>.
-////////////////////////////////////////////////////////////////////////
+// along with this program; if not, write to the Free Software Foundation,
+// Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+//////////////////////////////////////////////////////////////////////
 #include "otpch.h"
-#include <iostream>
-#include <libxml/xmlmemory.h>
 
 #include "items.h"
+#include "spells.h"
 #include "condition.h"
-#include "configmanager.h"
-
 #include "movement.h"
 #include "weapons.h"
-#include "spells.h"
 
-extern Spells* g_spells;
-extern ConfigManager g_config;
-extern MoveEvents* g_moveEvents;
-extern Weapons* g_weapons;
+#include <libxml/xmlschemas.h>
+
+#include <iostream>
+#include <string>
+#include <vector>
 
 uint32_t Items::dwMajorVersion = 0;
 uint32_t Items::dwMinorVersion = 0;
 uint32_t Items::dwBuildNumber = 0;
 
+extern MoveEvents* g_moveEvents;
+extern Spells* g_spells;
+extern Weapons* g_weapons;
+
 ItemType::ItemType()
 {
 	abilities = NULL;
+	article = "";
 	group = ITEM_GROUP_NONE;
 	type = ITEM_TYPE_NONE;
-	stackable = usable = alwaysOnTop = lookThrough = pickupable = rotable = hasHeight = forceSerialize = false;
-	loaded = blockSolid = blockProjectile = blockPathFind = allowPickupable = isAnimation = cache = false;
-	movable = walkStack = true;
+	stackable = false;
+	useable	= false;
+	moveable = true;
+	alwaysOnTop = false;
 	alwaysOnTopOrder = 0;
+	pickupable = false;
+	rotable = false;
 	rotateTo = 0;
+	hasHeight = false;
+	walkStack = true;
+
+	floorChangeDown = false;
+	floorChangeNorth = false;
+	floorChangeSouth = false;
+	floorChangeSouthAlt = false;
+	floorChangeEast = false;
+	floorChangeEastAlt = false;
+	floorChangeWest = false;
+
+	blockSolid = false;
+	blockProjectile = false;
+	blockPathFind = false;
+
+	allowPickupable = false;
 
 	wieldInfo = 0;
 	minReqLevel = 0;
 	minReqMagicLevel = 0;
 
-	runeMagLevel = runeLevel = 0;
+	runeMagLevel = 0;
+	runeLevel = 0;
 
-	speed = id = 0;
+	speed = 0;
+	id = 0;
 	clientId = 100;
-	maxItems = 8; //maximum size if this is a container
-	weight = 0; //weight of the item, e.g. throwing distance depends on it
+	maxItems = 8;  // maximum size if this is a container
+	weight = 0;  // weight of the item, e.g. throwing distance depends on it
 	showCount = true;
 	weaponType = WEAPON_NONE;
 	slotPosition = SLOTP_HAND;
-	wieldPosition = SLOT_HAND;
 	ammoType = AMMO_NONE;
 	ammoAction = AMMOACTION_NONE;
-	shootType = (ShootEffect_t)0;
-	magicEffect = MAGIC_EFFECT_NONE;
-	attack = extraAttack = 0;
-	defense = extraDefense = 0;
-	attackSpeed = 0;
+	shootType = (ShootType_t)0;
+	magicEffect = NM_ME_NONE;
+	attack = 0;
+	defense = 0;
+	extraDefense = 0;
 	armor = 0;
 	decayTo = -1;
 	decayTime = 0;
@@ -75,58 +100,74 @@ ItemType::ItemType()
 	fluidSource = FLUID_NONE;
 	allowDistRead = false;
 
-	isVertical = isHorizontal = isHangable = false;
-	lightLevel = lightColor = 0;
+	isVertical = false;
+	isHorizontal = false;
+	isHangable = false;
 
-	maxTextLength = 0;
-	canReadText = canWriteText = false;
-	date = 0;
-	writeOnceItemId = wareId = premiumDays = 0;
+	lightLevel = 0;
+	lightColor = 0;
 
-	transformEquipTo = transformDeEquipTo = transformUseTo = 0;
-	showDuration = showCharges = showAttributes = dualWield = false;
+	maxTextLen = 0;
+	canReadText = false;
+	canWriteText = false;
+	writeOnceItemId = 0;
+
+	transformEquipTo = 0;
+	transformDeEquipTo = 0;
+	showDuration = false;
+	showCharges = false;
+	showAttributes = false;
 	charges	= 0;
-	hitChance = maxHitChance = breakChance = -1;
+	hitChance = 0;
+	maxHitChance = -1;
+	breakChance = -1;
 	shootRange = 1;
 
 	condition = NULL;
 	combatType = COMBAT_NONE;
 
-	replacable = true;
-	worth = 0;
+	replaceable = true;
 
 	bedPartnerDir = NORTH;
-	transformBed[PLAYERSEX_FEMALE] = transformBed[PLAYERSEX_MALE] = 0;
+	transformToOnUse[PLAYERSEX_MALE] = 0;
+	transformToOnUse[PLAYERSEX_FEMALE] = 0;
+	transformToFree = 0;
 
 	levelDoor = 0;
-	specialDoor = closingDoor = false;
 
-	memset(floorChange, 0, sizeof(floorChange));
+	ware = false;
 }
 
 ItemType::~ItemType()
 {
 	delete condition;
+	delete abilities;
+}
+
+Items::Items() // : items(35000)
+{
+	this->items = new Array<ItemType*>(20500);
+}
+
+Items::~Items()
+{
+	clear();
 }
 
 void Items::clear()
 {
-	moneyMap.clear();
-	randomizationMap.clear();
-
-	reverseItemMap.clear();
-	if(items.size())
-		items.clear();
+	if(this->items)
+		this->items->reset();
 }
 
 bool Items::reload()
 {
-	clear();
-	if(!items.size())
+	// TODO: make this atomic somehow.
+	if(!this->items)
 		return false;
 
-	items.reload(); //?
-	loadFromOtb(getFilePath(FILE_TYPE_OTHER, "items/items.otb"));
+	this->items->reset();
+	loadFromOtb("data/items/items.otb");
 	if(!loadFromXml())
 		return false;
 
@@ -135,7 +176,7 @@ bool Items::reload()
 	return true;
 }
 
-int32_t Items::loadFromOtb(std::string file)
+int32_t Items::loadFromOtb(const std::string& file)
 {
 	FileLoader f;
 	if(!f.openFile(file.c_str(), "OTBI", false, true))
@@ -145,32 +186,27 @@ int32_t Items::loadFromOtb(std::string file)
 	NODE node = f.getChildNode(NO_NODE, type);
 
 	PropStream props;
-	if(f.getProps(node, props))
+	if(f.getProps(node,props))
 	{
 		//4 byte flags
 		//attributes
 		//0x01 = version data
 		uint32_t flags;
-		if(!props.getLong(flags))
+		if(!props.GET_ULONG(flags))
 			return ERROR_INVALID_FORMAT;
-
 		attribute_t attr;
-		if(!props.getType(attr))
+		if(!props.GET_VALUE(attr))
 			return ERROR_INVALID_FORMAT;
-
 		if(attr == ROOT_ATTR_VERSION)
 		{
-			datasize_t length = 0;
-			if(!props.getType(length))
+			datasize_t datalen = 0;
+			if(!props.GET_VALUE(datalen))
 				return ERROR_INVALID_FORMAT;
-
-			if(length != sizeof(VERSIONINFO))
+			if(datalen != sizeof(VERSIONINFO))
 				return ERROR_INVALID_FORMAT;
-
 			VERSIONINFO *vi;
-			if(!props.getStruct(vi))
+			if(!props.GET_STRUCT(vi))
 				return ERROR_INVALID_FORMAT;
-
 			Items::dwMajorVersion = vi->dwMajorVersion; //items otb format file version
 			Items::dwMinorVersion = vi->dwMinorVersion; //client version
 			Items::dwBuildNumber = vi->dwBuildNumber; //revision
@@ -178,29 +214,27 @@ int32_t Items::loadFromOtb(std::string file)
 	}
 
 	if(Items::dwMajorVersion == 0xFFFFFFFF)
-		std::clog << "[Warning - Items::loadFromOtb] items.otb using generic client version." << std::endl;
+		std::cout << "[Warning] Items::loadFromOtb items.otb using generic client version." << std::endl;
 	else if(Items::dwMajorVersion != 3)
 	{
-		std::clog << "[Error - Items::loadFromOtb] Incorrect version detected, please use official items.otb." << std::endl;
+		std::cout << "Old version detected, a newer version of items.otb is required." << std::endl;
 		return ERROR_INVALID_FORMAT;
 	}
-	else if(!g_config.getBool(ConfigManager::SKIP_ITEMS_VERSION) && Items::dwMinorVersion != CLIENT_VERSION_961)
+	else if(Items::dwMinorVersion != CLIENT_VERSION_986)
 	{
-		std::clog << "[Error - Items::loadFromOtb] Another client version of items.otb is required." << std::endl;
+		std::cout << "A newer version of items.otb is required." << std::endl;
 		return ERROR_INVALID_FORMAT;
 	}
+	node = f.getChildNode(node, type);
 
-	uint16_t lastId = 99;
-	for(node = f.getChildNode(node, type); node != NO_NODE; node = f.getNextNode(node, type))
+	while(node != NO_NODE)
 	{
 		PropStream props;
-		if(!f.getProps(node, props))
+		if(!f.getProps(node,props))
 			return f.getError();
-
+		flags_t flags;
 		ItemType* iType = new ItemType();
 		iType->group = (itemgroup_t)type;
-
-		flags_t flags;
 		switch(type)
 		{
 			case ITEM_GROUP_CONTAINER:
@@ -227,19 +261,19 @@ int32_t Items::loadFromOtb(std::string file)
 				break;
 			default:
 				return ERROR_INVALID_FORMAT;
+				break;
 		}
-
 		//read 4 byte flags
-		if(!props.getType(flags))
+		if(!props.GET_VALUE(flags))
 			return ERROR_INVALID_FORMAT;
 
 		iType->blockSolid = hasBitSet(FLAG_BLOCK_SOLID, flags);
 		iType->blockProjectile = hasBitSet(FLAG_BLOCK_PROJECTILE, flags);
 		iType->blockPathFind = hasBitSet(FLAG_BLOCK_PATHFIND, flags);
 		iType->hasHeight = hasBitSet(FLAG_HAS_HEIGHT, flags);
-		iType->usable = hasBitSet(FLAG_USABLE, flags);
+		iType->useable = hasBitSet(FLAG_USEABLE, flags);
 		iType->pickupable = hasBitSet(FLAG_PICKUPABLE, flags);
-		iType->movable = hasBitSet(FLAG_MOVABLE, flags);
+		iType->moveable = hasBitSet(FLAG_MOVEABLE, flags);
 		iType->stackable = hasBitSet(FLAG_STACKABLE, flags);
 
 		iType->alwaysOnTop = hasBitSet(FLAG_ALWAYSONTOP, flags);
@@ -251,120 +285,115 @@ int32_t Items::loadFromOtb(std::string file)
 		iType->canReadText = hasBitSet(FLAG_READABLE, flags);
 		iType->lookThrough = hasBitSet(FLAG_LOOKTHROUGH, flags);
 		iType->isAnimation = hasBitSet(FLAG_ANIMATION, flags);
-		iType->walkStack = hasBitSet(FLAG_WALKSTACK, flags);
+		// iType->walkStack = !hasBitSet(FLAG_FULLTILE, flags);
 
-		attribute_t attr;
-		while(props.getType(attr))
+		attribute_t attrib;
+		datasize_t datalen = 0;
+		while(props.GET_VALUE(attrib))
 		{
 			//size of data
-			datasize_t length = 0;
-			if(!props.getType(length))
+			if(!props.GET_VALUE(datalen))
 			{
 				delete iType;
 				return ERROR_INVALID_FORMAT;
 			}
 
-			switch(attr)
+			switch(attrib)
 			{
 				case ITEM_ATTR_SERVERID:
 				{
-					if(length != sizeof(uint16_t))
+					if(datalen != sizeof(uint16_t))
 						return ERROR_INVALID_FORMAT;
 
-					uint16_t serverId;
-					if(!props.getShort(serverId))
+					uint16_t serverid;
+					if(!props.GET_USHORT(serverid))
 						return ERROR_INVALID_FORMAT;
 
-					if(serverId > 20000 && serverId < 20100)
-						serverId = serverId - 20000;
-					else if(lastId > 99 && lastId != serverId - 1)
-					{
-						static ItemType dummyItemType;
-						while(lastId != serverId - 1)
-						{
-							dummyItemType.id = ++lastId;
-							items.addElement(&dummyItemType, lastId);
-						}
-					}
+					if(serverid > 30000 && serverid < 30100)
+						serverid = serverid - 30000;
 
-					iType->id = serverId;
-					lastId = serverId;
+					iType->id = serverid;
 					break;
 				}
+
 				case ITEM_ATTR_CLIENTID:
 				{
-					if(length != sizeof(uint16_t))
+					if(datalen != sizeof(uint16_t))
 						return ERROR_INVALID_FORMAT;
 
-					uint16_t clientId;
-					if(!props.getShort(clientId))
+					uint16_t clientid;
+					if(!props.GET_USHORT(clientid))
 						return ERROR_INVALID_FORMAT;
 
-					iType->clientId = clientId;
+					iType->clientId = clientid;
 					break;
 				}
+
 				case ITEM_ATTR_SPEED:
 				{
-					if(length != sizeof(uint16_t))
+					if(datalen != sizeof(uint16_t))
 						return ERROR_INVALID_FORMAT;
 
 					uint16_t speed;
-					if(!props.getShort(speed))
+					if(!props.GET_USHORT(speed))
 						return ERROR_INVALID_FORMAT;
 
 					iType->speed = speed;
 					break;
 				}
+
 				case ITEM_ATTR_LIGHT2:
 				{
-					if(length != sizeof(lightBlock2))
+					if(datalen != sizeof(lightBlock2))
 						return ERROR_INVALID_FORMAT;
 
-					lightBlock2* block;
-					if(!props.getStruct(block))
+					lightBlock2* lb2;
+					if(!props.GET_STRUCT(lb2))
 						return ERROR_INVALID_FORMAT;
 
-					iType->lightLevel = block->lightLevel;
-					iType->lightColor = block->lightColor;
+					iType->lightLevel = lb2->lightLevel;
+					iType->lightColor = lb2->lightColor;
 					break;
 				}
+
 				case ITEM_ATTR_TOPORDER:
 				{
-					if(length != sizeof(uint8_t))
+					if(datalen != sizeof(uint8_t))
 						return ERROR_INVALID_FORMAT;
 
-					uint8_t topOrder;
-					if(!props.getByte(topOrder))
+					uint8_t v;
+					if(!props.GET_UCHAR(v))
 						return ERROR_INVALID_FORMAT;
 
-					iType->alwaysOnTopOrder = topOrder;
+					iType->alwaysOnTopOrder = v;
 					break;
 				}
+
 				case ITEM_ATTR_WAREID:
 				{
-					if(length != sizeof(uint16_t))
+					if(!props.SKIP_N(datalen))
 						return ERROR_INVALID_FORMAT;
 
-					uint16_t wareId;
-					if(!props.getShort(wareId))
-						return ERROR_INVALID_FORMAT;
-
-					iType->wareId = wareId;
+					iType->ware = true;
 					break;
 				}
+
+				/*
 				case ITEM_ATTR_NAME:
 				{
 					std::string name;
-					if(!props.getString(name, length))
+					if(!props.GET_STRING(name, datalen))
 						return ERROR_INVALID_FORMAT;
 
-					iType->name = name;
+					iType->marketName = name;
 					break;
 				}
+				*/
+
 				default:
 				{
 					//skip unknown attributes
-					if(!props.skip(length))
+					if(!props.SKIP_N(datalen))
 						return ERROR_INVALID_FORMAT;
 
 					break;
@@ -372,200 +401,134 @@ int32_t Items::loadFromOtb(std::string file)
 			}
 		}
 
-		// store the found item
-		items.addElement(iType, iType->id);
-		if(iType->clientId)
+		if(reverseItemMap.find(iType->clientId) == reverseItemMap.end())
 			reverseItemMap[iType->clientId] = iType->id;
-	}
 
+		// store the found item
+		items->addElement(iType, iType->id);
+
+		node = f.getNextNode(node, type);
+	}
 	return ERROR_NONE;
 }
 
 bool Items::loadFromXml()
 {
-	xmlDocPtr doc = xmlParseFile(getFilePath(FILE_TYPE_OTHER, "items/items.xml").c_str());
+	std::string filename = "data/items/items.xml";
+	std::string xmlSchema = "data/items/items.xsd";
+	xmlDocPtr doc = xmlParseFile(filename.c_str());
+
+	std::string strValue;
+	std::string endString;
+
+	std::vector<int> intVector;
+	std::vector<int> endVector;
+
 	if(!doc)
-	{
-		std::clog << "[Warning - Items::loadFromXml] Cannot load items file."
-			<< std::endl << getLastXMLError() << std::endl;
 		return false;
+
+	//validation against xml-schema
+	xmlDocPtr schemaDoc = xmlReadFile(xmlSchema.c_str(), NULL, XML_PARSE_NONET);
+	if(schemaDoc != NULL)
+	{
+		xmlSchemaParserCtxtPtr schemaParserContext = xmlSchemaNewDocParserCtxt(schemaDoc);
+		if(schemaParserContext != NULL)
+		{
+			xmlSchemaPtr schema = xmlSchemaParse(schemaParserContext);
+			if(schema != NULL)
+			{
+				xmlSchemaValidCtxtPtr validContext = xmlSchemaNewValidCtxt(schema);
+				if(validContext != NULL)
+				{
+					int returnVal = xmlSchemaValidateDoc(validContext, doc);
+					if(returnVal != 0)
+					{
+						if(returnVal > 0)
+							std::cout << std::endl << "Warning: [XMLSCHEMA] items.xml could not be validated against XSD" << std::endl;
+						else
+							std::cout << std::endl << "Warning: [XMLSCHEMA] validation generated an internal error." << std::endl;
+					}
+					xmlSchemaFreeValidCtxt(validContext);
+				}
+				xmlSchemaFree(schema);
+			}
+			xmlSchemaFreeParserCtxt(schemaParserContext);
+		}
+		xmlFreeDoc(schemaDoc);
 	}
 
 	xmlNodePtr root = xmlDocGetRootElement(doc);
-	if(xmlStrcmp(root->name,(const xmlChar*)"items"))
+	if(xmlStrcmp(root->name,(const xmlChar*)"items") != 0)
 	{
 		xmlFreeDoc(doc);
-		std::clog << "[Warning - Items::loadFromXml] Malformed items file." << std::endl;
 		return false;
 	}
 
-	IntegerVec intVector, endVector;
-	std::string strValue, endValue;
-	StringVec strVector;
-
-	int32_t intValue, id = 0, endId = 0, fromId = 0, toId = 0;
-	for(xmlNodePtr node = root->children; node; node = node->next)
+	xmlNodePtr itemNode = root->children;
+	while(itemNode)
 	{
-		if(xmlStrcmp(node->name,(const xmlChar*)"item"))
-			continue;
-
-		if(readXMLString(node, "id", strValue))
+		if(xmlStrcmp(itemNode->name,(const xmlChar*)"item") == 0)
 		{
-			strVector = explodeString(strValue, ";");
-			for(StringVec::iterator it = strVector.begin(); it != strVector.end(); ++it)
+			if(readXMLString(itemNode, "id", strValue))
 			{
-				intVector = vectorAtoi(explodeString(*it, "-"));
-				if(intVector.size() > 1)
-				{
-					int32_t i = intVector[0];
-					while(i <= intVector[1])
-						parseItemNode(node, i++);
-				}
-				else
-					parseItemNode(node, atoi((*it).c_str()));
+				intVector = vectorAtoi(explodeString(strValue, ";"));
+				size_t vec_size = intVector.size();
+				for(size_t i = 0; i < vec_size; i++)
+					this->parseItemNode(itemNode, intVector[i]);
 			}
-		}
-		else if(readXMLString(node, "fromid", strValue) && readXMLString(node, "toid", endValue))
-		{
-			intVector = vectorAtoi(explodeString(strValue, ";"));
-			endVector = vectorAtoi(explodeString(endValue, ";"));
-			if(intVector[0] && intVector.size() == endVector.size())
+			else if(readXMLString(itemNode, "fromid", strValue) && readXMLString(itemNode, "toid", endString))
 			{
-				size_t size = intVector.size();
-				for(size_t i = 0; i < size; ++i)
+				intVector = vectorAtoi(explodeString(strValue, ";"));
+				endVector = vectorAtoi(explodeString(endString, ";"));
+
+				if(!intVector.empty() && intVector.size() == endVector.size())
 				{
-					while(intVector[i] <= endVector[i])
-						parseItemNode(node, intVector[i]++);
+					size_t vec_size = intVector.size();
+					for(size_t i = 0; i < vec_size; i++)
+					{
+						while(intVector[i] <= endVector[i])
+							parseItemNode(itemNode, intVector[i]++);
+					}
 				}
 			}
 			else
-				std::clog << "[Warning - Items::loadFromXml] Malformed entry (from: \"" << strValue << "\", to: \"" << endValue << "\")" << std::endl;
+				std::cout << "Warning: [Items::loadFromXml] - No itemid found" << std::endl;
 		}
-		else
-			std::clog << "[Warning - Items::loadFromXml] No itemid found" << std::endl;
+		itemNode = itemNode->next;
 	}
+	xmlFreeDoc(doc);
 
-	const ItemType* it;
-	for(uint32_t i = 0; i < Item::items.size(); ++i) //lets do some checks...
+	//Lets do some checks...
+	for(uint32_t i = 0; i < items->size(); ++i)
 	{
-		if(!(it = Item::items.getElement(i)))
+		const ItemType* it = items->getElement(i);
+		if(!it)
 			continue;
 
 		//check bed items
-		if((it->transformBed[PLAYERSEX_FEMALE] || it->transformBed[PLAYERSEX_MALE]) && it->type != ITEM_TYPE_BED)
-			std::clog << "[Warning - Items::loadFromXml] Item " << it->id << " is not set as a bed-type." << std::endl;
-	}
-
-	xmlFreeDoc(doc);
-	if(!(doc = xmlParseFile(getFilePath(FILE_TYPE_OTHER, "items/randomization.xml").c_str())))
-	{
-		std::clog << "[Warning - Items::loadFromXml] Cannot load randomization file."
-			<< std::endl << getLastXMLError() << std::endl;
-		return false;
-	}
-
-	root = xmlDocGetRootElement(doc);
-	if(xmlStrcmp(root->name,(const xmlChar*)"randomization"))
-	{
-		xmlFreeDoc(doc);
-		std::clog << "[Warning - Items::loadFromXml] Malformed randomization file." << std::endl;
-		return false;
-	}
-
-	for(xmlNodePtr node = root->children; node; node = node->next)
-	{
-		if(!xmlStrcmp(node->name, (const xmlChar*)"config"))
+		if((it->transformToFree != 0 || it->transformToOnUse[PLAYERSEX_FEMALE] != 0 || it->transformToOnUse[PLAYERSEX_MALE] != 0) && it->type != ITEM_TYPE_BED)
 		{
-			if(readXMLInteger(node, "chance", intValue) || readXMLInteger(node, "defaultChance", intValue))
-			{
-				if(intValue > 100)
-				{
-					intValue = 100;
-					std::clog << "[Warning - Items::loadFromXml] Randomize chance cannot be higher than 100." << std::endl;
-				}
-
-				m_randomizationChance = intValue;
-			}
-		}
-		else if(!xmlStrcmp(node->name, (const xmlChar*)"palette"))
-		{
-			if(!readXMLString(node, "randomize", strValue))
-				continue;
-
-			IntegerVec itemList = vectorAtoi(explodeString(strValue, ";"));
-			if(itemList.size() < 2)
-				itemList = vectorAtoi(explodeString(strValue, "-"));
-
-			if(itemList.size() > 1)
-			{
-				if(itemList[0] < itemList[1])
-				{
-					fromId = itemList[0];
-					toId = itemList[1];
-				}
-				else
-					std::clog << "[Warning - Items::loadFromXml] Randomize min cannot be higher than max." << std::endl;
-			}
-
-			int32_t chance = getRandomizationChance();
-			if(readXMLInteger(node, "chance", intValue))
-			{
-				if(intValue > 100)
-				{
-					intValue = 100;
-					std::clog << "[Warning: Items::loadRandomization] Randomize chance cannot be higher than 100." << std::endl;
-				}
-
-				chance = intValue;
-			}
-
-			if(readXMLInteger(node, "itemid", id))
-				parseRandomizationBlock(id, fromId, toId, chance);
-			else if(readXMLInteger(node, "fromid", id) && readXMLInteger(node, "toid", endId))
-			{
-				while(id <= endId)
-					parseRandomizationBlock(id++, fromId, toId, chance);
-			}
+			std::cout << "Warning: [Items::loadFromXml] Item " << it->id << " is not set as a bed-type." << std::endl;
 		}
 	}
-
-	xmlFreeDoc(doc);
 	return true;
 }
 
-void Items::parseItemNode(xmlNodePtr itemNode, uint32_t id)
+bool Items::parseItemNode(xmlNodePtr itemNode, uint32_t id)
 {
 	int32_t intValue;
 	std::string strValue;
-	if(id > 20000 && id < 20100)
+
+	if(id > 30000 && id < 30100)
 	{
-		id -= 20000;
+		id -= 30000;
 		ItemType* iType = new ItemType();
-
 		iType->id = id;
-		items.addElement(iType, iType->id);
+
+		items->addElement(iType, id);
 	}
 
-	bool override = readXMLString(itemNode, "override", strValue) && booleanString(strValue);
-	ItemType& it = Item::items.getItemType(id);
-	if(it.loaded)
-	{
-		if(override)
-		{
-			// setup some defaults
-			if(it.hasAbilities())
-			{
-				memset(it.getAbilities()->fieldAbsorb, 0, sizeof(it.getAbilities()->fieldAbsorb));
-				memset(it.getAbilities()->absorb, 0, sizeof(it.getAbilities()->absorb));
-				for(uint32_t j = REFLECT_FIRST; j <= REFLECT_LAST; ++j)
-					memset(it.getAbilities()->reflect[j], 0, sizeof(it.getAbilities()->reflect[j]));
-			}
-		}
-		else
-			std::clog << "[Warning - Items::loadFromXml] Duplicate registered item with id " << id << std::endl;
-	}
-	else
-		it.loaded = true;
+	ItemType& it = getItemType(id);
 
 	if(readXMLString(itemNode, "name", strValue))
 		it.name = strValue;
@@ -576,1404 +539,873 @@ void Items::parseItemNode(xmlNodePtr itemNode, uint32_t id)
 	if(readXMLString(itemNode, "plural", strValue))
 		it.pluralName = strValue;
 
-	for(xmlNodePtr itemAttributesNode = itemNode->children; itemAttributesNode; itemAttributesNode = itemAttributesNode->next)
+	xmlNodePtr itemAttributesNode = itemNode->children;
+
+	while(itemAttributesNode)
 	{
-		if(!readXMLString(itemAttributesNode, "key", strValue))
-			continue;
-
-#ifdef _MSC_VER
-		bool notLoaded = false;
-#endif
-		std::string tmpStrValue = asLowerCaseString(strValue);
-		if(tmpStrValue == "type")
+		if(readXMLString(itemAttributesNode, "key", strValue))
 		{
-			if(readXMLString(itemAttributesNode, "value", strValue))
+			std::string tmpStrValue = asLowerCaseString(strValue);
+			if(tmpStrValue == "type")
 			{
-				tmpStrValue = asLowerCaseString(strValue);
-				if(tmpStrValue == "container")
+				if(readXMLString(itemAttributesNode, "value", strValue))
 				{
-					it.type = ITEM_TYPE_CONTAINER;
-					it.group = ITEM_GROUP_CONTAINER;
-				}
-				else if(tmpStrValue == "key")
-					it.type = ITEM_TYPE_KEY;
-				else if(tmpStrValue == "magicfield")
-					it.type = ITEM_TYPE_MAGICFIELD;
-				else if(tmpStrValue == "depot")
-					it.type = ITEM_TYPE_DEPOT;
-				else if(tmpStrValue == "mailbox")
-					it.type = ITEM_TYPE_MAILBOX;
-				else if(tmpStrValue == "trashholder")
-					it.type = ITEM_TYPE_TRASHHOLDER;
-				else if(tmpStrValue == "teleport")
-					it.type = ITEM_TYPE_TELEPORT;
-				else if(tmpStrValue == "door")
-					it.type = ITEM_TYPE_DOOR;
-				else if(tmpStrValue == "bed")
-					it.type = ITEM_TYPE_BED;
-				else if(tmpStrValue == "rune")
-					it.type = ITEM_TYPE_RUNE;
-				else
-					std::clog << "[Warning - Items::loadFromXml] Unknown type " << strValue << std::endl;
-			}
-		}
-		else if(tmpStrValue == "name")
-		{
-			if(readXMLString(itemAttributesNode, "value", strValue))
-				it.name = strValue;
-		}
-		else if(tmpStrValue == "article")
-		{
-			if(readXMLString(itemAttributesNode, "value", strValue))
-				it.article = strValue;
-		}
-		else if(tmpStrValue == "plural")
-		{
-			if(readXMLString(itemAttributesNode, "value", strValue))
-				it.pluralName = strValue;
-		}
-		else if(tmpStrValue == "clientid")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-			{
-				it.clientId = intValue;
-				if(it.group == ITEM_GROUP_DEPRECATED)
-					it.group = ITEM_GROUP_NONE;
-			}
-		}
-		else if(tmpStrValue == "cache")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.cache = (intValue != 0);
-		}
-		else if(tmpStrValue == "wareid")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.wareId = intValue;
-		}
-		else if(tmpStrValue == "blocksolid" || tmpStrValue == "blocking")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.blockSolid = (intValue != 0);
-		}
-		else if(tmpStrValue == "blockprojectile")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.blockProjectile = (intValue != 0);
-		}
-		else if(tmpStrValue == "blockpathfind" || tmpStrValue == "blockpathing" || tmpStrValue == "blockpath")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.blockPathFind = (intValue != 0);
-		}
-		else if(tmpStrValue == "lightlevel")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.lightLevel = intValue;
-		}
-		else if(tmpStrValue == "lightcolor")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.lightColor = intValue;
-		}
-		else if(tmpStrValue == "description")
-		{
-			if(readXMLString(itemAttributesNode, "value", strValue))
-				it.description = strValue;
-		}
-		else if(tmpStrValue == "runespellname")
-		{
-			if(readXMLString(itemAttributesNode, "value", strValue))
-				it.runeSpellName = strValue;
-		}
-		else if(tmpStrValue == "weight")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.weight = intValue / 100.f;
-		}
-		else if(tmpStrValue == "showcount")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.showCount = (intValue != 0);
-		}
-		else if(tmpStrValue == "armor")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.armor = intValue;
-		}
-		else if(tmpStrValue == "defense")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.defense = intValue;
-		}
-		else if(tmpStrValue == "extradefense" || tmpStrValue == "extradef")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.extraDefense = intValue;
-		}
-		else if(tmpStrValue == "attack")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.attack = intValue;
-		}
-		else if(tmpStrValue == "extraattack" || tmpStrValue == "extraatk")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.extraAttack = intValue;
-		}
-		else if(tmpStrValue == "attackspeed")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.attackSpeed = intValue;
-		}
-		else if(tmpStrValue == "rotateto")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.rotateTo = intValue;
-		}
-		else if(tmpStrValue == "movable" || tmpStrValue == "moveable")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.movable = (intValue != 0);
-		}
-		else if(tmpStrValue == "vertical" || tmpStrValue == "isvertical")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.isVertical = (intValue != 0);
-		}
-		else if(tmpStrValue == "horizontal" || tmpStrValue == "ishorizontal")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.isHorizontal = (intValue != 0);
-		}
-		else if(tmpStrValue == "pickupable")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.pickupable = (intValue != 0);
-		}
-		else if(tmpStrValue == "allowpickupable")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.allowPickupable = (intValue != 0);
-		}
-		else if(tmpStrValue == "floorchange")
-		{
-			if(readXMLString(itemAttributesNode, "value", strValue))
-			{
-				tmpStrValue = asLowerCaseString(strValue);
-				if(tmpStrValue == "down")
-					it.floorChange[CHANGE_DOWN] = true;
-				else if(tmpStrValue == "north")
-					it.floorChange[CHANGE_NORTH] = true;
-				else if(tmpStrValue == "south")
-					it.floorChange[CHANGE_SOUTH] = true;
-				else if(tmpStrValue == "west")
-					it.floorChange[CHANGE_WEST] = true;
-				else if(tmpStrValue == "east")
-					it.floorChange[CHANGE_EAST] = true;
-				else if(tmpStrValue == "northex")
-					it.floorChange[CHANGE_NORTH_EX] = true;
-				else if(tmpStrValue == "southex")
-					it.floorChange[CHANGE_SOUTH_EX] = true;
-				else if(tmpStrValue == "westex")
-					it.floorChange[CHANGE_WEST_EX] = true;
-				else if(tmpStrValue == "eastex")
-					it.floorChange[CHANGE_EAST_EX] = true;
-			}
-		}
-		else if(tmpStrValue == "corpsetype")
-		{
-			tmpStrValue = asLowerCaseString(strValue);
-			if(readXMLString(itemAttributesNode, "value", strValue))
-			{
-				tmpStrValue = asLowerCaseString(strValue);
-				if(tmpStrValue == "venom")
-					it.corpseType = RACE_VENOM;
-				else if(tmpStrValue == "blood")
-					it.corpseType = RACE_BLOOD;
-				else if(tmpStrValue == "undead")
-					it.corpseType = RACE_UNDEAD;
-				else if(tmpStrValue == "fire")
-					it.corpseType = RACE_FIRE;
-				else if(tmpStrValue == "energy")
-					it.corpseType = RACE_ENERGY;
-				else
-					std::clog << "[Warning - Items::loadFromXml] Unknown corpseType " << strValue << std::endl;
-			}
-		}
-		else if(tmpStrValue == "containersize")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-			{
-				it.maxItems = intValue;
-				if(it.group == ITEM_GROUP_NONE)
-				{
-					it.group = ITEM_GROUP_CONTAINER;
-					it.type = ITEM_TYPE_CONTAINER;
-				}
-			}
-		}
-		else if(tmpStrValue == "fluidsource")
-		{
-			if(readXMLString(itemAttributesNode, "value", strValue))
-			{
-				tmpStrValue = asLowerCaseString(strValue);
-				FluidTypes_t fluid = getFluidType(tmpStrValue);
-				if(fluid != FLUID_NONE)
-					it.fluidSource = fluid;
-				else
-					std::clog << "[Warning - Items::loadFromXml] Unknown fluidSource " << strValue << std::endl;
-			}
-		}
-		else if(tmpStrValue == "writeable" || tmpStrValue == "writable")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-			{
-				it.canWriteText = (intValue != 0);
-				it.canReadText = (intValue != 0);
-			}
-		}
-		else if(tmpStrValue == "readable")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.canReadText = (intValue != 0);
-		}
-		else if(tmpStrValue == "maxtextlen" || tmpStrValue == "maxtextlength")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.maxTextLength = intValue;
-		}
-		else if(tmpStrValue == "text")
-		{
-			if(readXMLString(itemAttributesNode, "value", strValue))
-				it.text = strValue;
-		}
-		else if(tmpStrValue == "author" || tmpStrValue == "writer")
-		{
-			if(readXMLString(itemAttributesNode, "value", strValue))
-				it.writer = strValue;
-		}
-		else if(tmpStrValue == "date")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.date = intValue;
-		}
-		else if(tmpStrValue == "writeonceitemid")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.writeOnceItemId = intValue;
-		}
-		else if(tmpStrValue == "wareid")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.wareId = intValue;
-		}
-		else if(tmpStrValue == "worth")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-			{
-				if(moneyMap.find(intValue) != moneyMap.end() && !override)
-					std::clog << "[Warning - Items::loadFromXml] Duplicated money item " << id << " with worth " << intValue << "!" << std::endl;
-				else
-				{
-					moneyMap[intValue] = id;
-					it.worth = intValue;
-				}
-			}
-		}
-		else if(tmpStrValue == "forceserialize" || tmpStrValue == "forceserialization" || tmpStrValue == "forcesave")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.forceSerialize = (intValue != 0);
-		}
-		else if(tmpStrValue == "leveldoor")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.levelDoor = intValue;
-		}
-		else if(tmpStrValue == "specialdoor")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.specialDoor = (intValue != 0);
-		}
-		else if(tmpStrValue == "closingdoor")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.closingDoor = (intValue != 0);
-		}
-		else if(tmpStrValue == "weapontype")
-		{
-			if(readXMLString(itemAttributesNode, "value", strValue))
-			{
-				tmpStrValue = asLowerCaseString(strValue);
-				if(tmpStrValue == "sword")
-					it.weaponType = WEAPON_SWORD;
-				else if(tmpStrValue == "club")
-					it.weaponType = WEAPON_CLUB;
-				else if(tmpStrValue == "axe")
-					it.weaponType = WEAPON_AXE;
-				else if(tmpStrValue == "shield")
-					it.weaponType = WEAPON_SHIELD;
-				else if(tmpStrValue == "distance" || tmpStrValue == "dist")
-					it.weaponType = WEAPON_DIST;
-				else if(tmpStrValue == "wand" || tmpStrValue == "rod")
-					it.weaponType = WEAPON_WAND;
-				else if(tmpStrValue == "ammunition" || tmpStrValue == "ammo")
-					it.weaponType = WEAPON_AMMO;
-				else if(tmpStrValue == "fist")
-					it.weaponType = WEAPON_FIST;
-				else
-					std::clog << "[Warning - Items::loadFromXml] Unknown weaponType " << strValue << std::endl;
-			}
-		}
-		else if(tmpStrValue == "slottype")
-		{
-			if(readXMLString(itemAttributesNode, "value", strValue))
-			{
-				tmpStrValue = asLowerCaseString(strValue);
-				if(tmpStrValue == "head")
-				{
-					it.slotPosition |= SLOTP_HEAD;
-					it.wieldPosition = SLOT_HEAD;
-				}
-				else if(tmpStrValue == "body")
-				{
-					it.slotPosition |= SLOTP_ARMOR;
-					it.wieldPosition = SLOT_ARMOR;
-				}
-				else if(tmpStrValue == "legs")
-				{
-					it.slotPosition |= SLOTP_LEGS;
-					it.wieldPosition = SLOT_LEGS;
-				}
-				else if(tmpStrValue == "feet")
-				{
-					it.slotPosition |= SLOTP_FEET;
-					it.wieldPosition = SLOT_FEET;
-				}
-				else if(tmpStrValue == "backpack")
-				{
-					it.slotPosition |= SLOTP_BACKPACK;
-					it.wieldPosition = SLOT_BACKPACK;
-				}
-				else if(tmpStrValue == "two-handed")
-				{
-					it.slotPosition |= SLOTP_TWO_HAND;
-					it.wieldPosition = SLOT_TWO_HAND;
-				}
-				else if(tmpStrValue == "right-hand")
-				{
-					it.slotPosition &= ~SLOTP_LEFT;
-					it.wieldPosition = SLOT_RIGHT;
-				}
-				else if(tmpStrValue == "left-hand")
-				{
-					it.slotPosition &= ~SLOTP_RIGHT;
-					it.wieldPosition = SLOT_LEFT;
-				}
-				else if(tmpStrValue == "necklace")
-				{
-					it.slotPosition |= SLOTP_NECKLACE;
-					it.wieldPosition = SLOT_NECKLACE;
-				}
-				else if(tmpStrValue == "ring")
-				{
-					it.slotPosition |= SLOTP_RING;
-					it.wieldPosition = SLOT_RING;
-				}
-				else if(tmpStrValue == "ammo")
-				{
-					it.slotPosition |= SLOTP_AMMO;
-					it.wieldPosition = SLOT_AMMO;
-				}
-				else if(tmpStrValue == "hand")
-					it.wieldPosition = SLOT_HAND;
-				else
-					std::clog << "[Warning - Items::loadFromXml] Unknown slotType " << strValue << std::endl;
-			}
-		}
-		else if(tmpStrValue == "ammotype")
-		{
-			if(readXMLString(itemAttributesNode, "value", strValue))
-			{
-				it.ammoType = getAmmoType(strValue);
-				if(it.ammoType == AMMO_NONE)
-					std::clog << "[Warning - Items::loadFromXml] Unknown ammoType " << strValue << std::endl;
-			}
-		}
-		else if(tmpStrValue == "shoottype")
-		{
-			if(readXMLString(itemAttributesNode, "value", strValue))
-			{
-				ShootEffect_t shoot = getShootType(strValue);
-				if(shoot != SHOOT_EFFECT_UNKNOWN)
-					it.shootType = shoot;
-				else
-					std::clog << "[Warning - Items::loadFromXml] Unknown shootType " << strValue << std::endl;
-			}
-		}
-		else if(tmpStrValue == "effect")
-		{
-			if(readXMLString(itemAttributesNode, "value", strValue))
-			{
-				MagicEffect_t effect = getMagicEffect(strValue);
-				if(effect != MAGIC_EFFECT_UNKNOWN)
-					it.magicEffect = effect;
-				else
-					std::clog << "[Warning - Items::loadFromXml] Unknown effect " << strValue << std::endl;
-			}
-		}
-		else if(tmpStrValue == "range")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.shootRange = intValue;
-		}
-		else if(tmpStrValue == "stopduration")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.stopTime = (intValue != 0);
-		}
-		else if(tmpStrValue == "decayto")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.decayTo = intValue;
-		}
-		else if(tmpStrValue == "transformequipto" || tmpStrValue == "onequipto")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.transformEquipTo = intValue;
-		}
-		else if(tmpStrValue == "transformdeequipto" || tmpStrValue == "ondeequipto")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.transformDeEquipTo = intValue;
-		}
-		else if(tmpStrValue == "duration")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.decayTime = std::max((int32_t)0, intValue);
-		}
-		else if(tmpStrValue == "showduration")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.showDuration = (intValue != 0);
-		}
-		else if(tmpStrValue == "charges")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.charges = intValue;
-		}
-		else if(tmpStrValue == "showcharges")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.showCharges = (intValue != 0);
-		}
-		else if(tmpStrValue == "showattributes")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.showAttributes = (intValue != 0);
-		}
-		else if(tmpStrValue == "breakchance")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.breakChance = std::max(0, std::min(100, intValue));
-		}
-		else if(tmpStrValue == "ammoaction")
-		{
-			if(readXMLString(itemAttributesNode, "value", strValue))
-			{
-				AmmoAction_t ammo = getAmmoAction(strValue);
-				if(ammo != AMMOACTION_NONE)
-					it.ammoAction = ammo;
-				else
-					std::clog << "[Warning - Items::loadFromXml] Unknown ammoAction " << strValue << std::endl;
-			}
-		}
-		else if(tmpStrValue == "hitchance")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.hitChance = std::max(-100, std::min(100, intValue));
-		}
-		else if(tmpStrValue == "maxhitchance")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.maxHitChance = std::max(0, std::min(100, intValue));
-		}
-		else if(tmpStrValue == "dualwield")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.dualWield = (intValue != 0);
-		}
-		else if(tmpStrValue == "preventloss")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.getAbilities()->preventLoss = (intValue != 0);
-		}
-		else if(tmpStrValue == "preventdrop")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.getAbilities()->preventDrop = (intValue != 0);
-		}
-		else if(tmpStrValue == "invisible")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.getAbilities()->invisible = (intValue != 0);
-		}
-		else if(tmpStrValue == "speed")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.getAbilities()->speed = intValue;
-		}
-		else if(tmpStrValue == "healthgain")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-			{
-				it.getAbilities()->regeneration = true;
-				it.getAbilities()->healthGain = intValue;
-			}
-		}
-		else if(tmpStrValue == "healthticks")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-			{
-				it.getAbilities()->regeneration = true;
-				it.getAbilities()->healthTicks = intValue;
-			}
-		}
-		else if(tmpStrValue == "managain")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-			{
-				it.getAbilities()->regeneration = true;
-				it.getAbilities()->manaGain = intValue;
-			}
-		}
-		else if(tmpStrValue == "manaticks")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-			{
-				it.getAbilities()->regeneration = true;
-				it.getAbilities()->manaTicks = intValue;
-			}
-		}
-		else if(tmpStrValue == "manashield")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.getAbilities()->manaShield = (intValue != 0);
-		}
-		else if(tmpStrValue == "skillsword")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.getAbilities()->skills[SKILL_SWORD] = intValue;
-		}
-		else if(tmpStrValue == "skillaxe")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.getAbilities()->skills[SKILL_AXE] = intValue;
-		}
-		else if(tmpStrValue == "skillclub")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.getAbilities()->skills[SKILL_CLUB] = intValue;
-		}
-		else if(tmpStrValue == "skilldist")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.getAbilities()->skills[SKILL_DIST] = intValue;
-		}
-		else if(tmpStrValue == "skillfish")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.getAbilities()->skills[SKILL_FISH] = intValue;
-		}
-		else if(tmpStrValue == "skillshield")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.getAbilities()->skills[SKILL_SHIELD] = intValue;
-		}
-		else if(tmpStrValue == "skillfist")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.getAbilities()->skills[SKILL_FIST] = intValue;
-		}
-		else if(tmpStrValue == "maxhealthpoints" || tmpStrValue == "maxhitpoints")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.getAbilities()->stats[STAT_MAXHEALTH] = intValue;
-		}
-		else if(tmpStrValue == "maxhealthpercent" || tmpStrValue == "maxhitpointspercent")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.getAbilities()->statsPercent[STAT_MAXHEALTH] = intValue;
-		}
-		else if(tmpStrValue == "maxmanapoints")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.getAbilities()->stats[STAT_MAXMANA] = intValue;
-		}
-		else if(tmpStrValue == "maxmanapercent" || tmpStrValue == "maxmanapointspercent")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.getAbilities()->statsPercent[STAT_MAXMANA] = intValue;
-		}
-		else if(tmpStrValue == "soulpoints")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.getAbilities()->stats[STAT_SOUL] = intValue;
-		}
-		else if(tmpStrValue == "soulpercent" || tmpStrValue == "soulpointspercent")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.getAbilities()->statsPercent[STAT_SOUL] = intValue;
-		}
-		else if(tmpStrValue == "magiclevelpoints" || tmpStrValue == "magicpoints")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.getAbilities()->stats[STAT_MAGICLEVEL] = intValue;
-		}
-		else if(tmpStrValue == "magiclevelpercent" || tmpStrValue == "magicpointspercent")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.getAbilities()->statsPercent[STAT_MAGICLEVEL] = intValue;
-		}
-		else if(tmpStrValue == "increasemagicvalue")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.getAbilities()->increment[MAGIC_VALUE] = intValue;
-		}
-		else if(tmpStrValue == "increasemagicpercent")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.getAbilities()->increment[MAGIC_PERCENT] = intValue;
-		}
-		else if(tmpStrValue == "increasehealingvalue")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.getAbilities()->increment[HEALING_VALUE] = intValue;
-		}
-		else if(tmpStrValue == "increasehealingpercent")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.getAbilities()->increment[HEALING_PERCENT] = intValue;
-		}
-		else if(tmpStrValue == "fieldabsorbpercentenergy")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.getAbilities()->fieldAbsorb[COMBAT_ENERGYDAMAGE] += intValue;
-		}
-		else if(tmpStrValue == "fieldabsorbpercentfire")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.getAbilities()->fieldAbsorb[COMBAT_FIREDAMAGE] += intValue;
-		}
-		else if(tmpStrValue == "fieldabsorbpercentpoison" || tmpStrValue == "fieldabsorbpercentearth")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.getAbilities()->fieldAbsorb[COMBAT_EARTHDAMAGE] += intValue;
-		}
-		else if(tmpStrValue == "absorbpercentall")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-			{
-				for(uint32_t i = (COMBAT_FIRST + 1); i <= COMBAT_LAST; i <<= 1)
-					it.getAbilities()->absorb[i] += intValue;
-			}
-		}
-		else if(tmpStrValue == "absorbpercentelements")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-			{
-				it.getAbilities()->absorb[COMBAT_ENERGYDAMAGE] += intValue;
-				it.getAbilities()->absorb[COMBAT_FIREDAMAGE] += intValue;
-				it.getAbilities()->absorb[COMBAT_EARTHDAMAGE] += intValue;
-				it.getAbilities()->absorb[COMBAT_ICEDAMAGE] += intValue;
-			}
-		}
-		else if(tmpStrValue == "absorbpercentmagic")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-			{
-				it.getAbilities()->absorb[COMBAT_ENERGYDAMAGE] += intValue;
-				it.getAbilities()->absorb[COMBAT_FIREDAMAGE] += intValue;
-				it.getAbilities()->absorb[COMBAT_EARTHDAMAGE] += intValue;
-				it.getAbilities()->absorb[COMBAT_ICEDAMAGE] += intValue;
-				it.getAbilities()->absorb[COMBAT_HOLYDAMAGE] += intValue;
-				it.getAbilities()->absorb[COMBAT_DEATHDAMAGE] += intValue;
-			}
-		}
-		else if(tmpStrValue == "absorbpercentenergy")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.getAbilities()->absorb[COMBAT_ENERGYDAMAGE] += intValue;
-		}
-		else if(tmpStrValue == "absorbpercentfire")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.getAbilities()->absorb[COMBAT_FIREDAMAGE] += intValue;
-		}
-		else if(tmpStrValue == "absorbpercentpoison" || tmpStrValue == "absorbpercentearth")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.getAbilities()->absorb[COMBAT_EARTHDAMAGE] += intValue;
-		}
-		else if(tmpStrValue == "absorbpercentice")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.getAbilities()->absorb[COMBAT_ICEDAMAGE] += intValue;
-		}
-		else if(tmpStrValue == "absorbpercentholy")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.getAbilities()->absorb[COMBAT_HOLYDAMAGE] += intValue;
-		}
-		else if(tmpStrValue == "absorbpercentdeath")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.getAbilities()->absorb[COMBAT_DEATHDAMAGE] += intValue;
-		}
-		else if(tmpStrValue == "absorbpercentlifedrain")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.getAbilities()->absorb[COMBAT_LIFEDRAIN] += intValue;
-		}
-		else if(tmpStrValue == "absorbpercentmanadrain")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.getAbilities()->absorb[COMBAT_MANADRAIN] += intValue;
-		}
-		else if(tmpStrValue == "absorbpercentdrown")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.getAbilities()->absorb[COMBAT_DROWNDAMAGE] += intValue;
-		}
-		else if(tmpStrValue == "absorbpercentphysical")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.getAbilities()->absorb[COMBAT_PHYSICALDAMAGE] += intValue;
-		}
-		else if(tmpStrValue == "absorbpercenthealing")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.getAbilities()->absorb[COMBAT_HEALING] += intValue;
-		}
-		else if(tmpStrValue == "absorbpercentundefined")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.getAbilities()->absorb[COMBAT_UNDEFINEDDAMAGE] += intValue;
-		}
-#ifndef _MSC_VER
-		else if(tmpStrValue == "reflectpercentall")
-#else
-		else
-			notLoaded = true;
-
-		if(!notLoaded)
-			continue;
-
-		if(tmpStrValue == "reflectpercentall")
-#endif
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-			{
-				for(uint32_t i = (COMBAT_FIRST + 1); i <= COMBAT_LAST; i <<= 1)
-					it.getAbilities()->reflect[REFLECT_PERCENT][i] += intValue;
-			}
-		}
-		else if(tmpStrValue == "reflectpercentelements")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-			{
-				it.getAbilities()->reflect[REFLECT_PERCENT][COMBAT_ENERGYDAMAGE] += intValue;
-				it.getAbilities()->reflect[REFLECT_PERCENT][COMBAT_FIREDAMAGE] += intValue;
-				it.getAbilities()->reflect[REFLECT_PERCENT][COMBAT_EARTHDAMAGE] += intValue;
-				it.getAbilities()->reflect[REFLECT_PERCENT][COMBAT_ICEDAMAGE] += intValue;
-			}
-		}
-		else if(tmpStrValue == "reflectpercentmagic")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-			{
-				it.getAbilities()->reflect[REFLECT_PERCENT][COMBAT_ENERGYDAMAGE] += intValue;
-				it.getAbilities()->reflect[REFLECT_PERCENT][COMBAT_FIREDAMAGE] += intValue;
-				it.getAbilities()->reflect[REFLECT_PERCENT][COMBAT_EARTHDAMAGE] += intValue;
-				it.getAbilities()->reflect[REFLECT_PERCENT][COMBAT_ICEDAMAGE] += intValue;
-				it.getAbilities()->reflect[REFLECT_PERCENT][COMBAT_HOLYDAMAGE] += intValue;
-				it.getAbilities()->reflect[REFLECT_PERCENT][COMBAT_DEATHDAMAGE] += intValue;
-			}
-		}
-		else if(tmpStrValue == "reflectpercentenergy")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.getAbilities()->reflect[REFLECT_PERCENT][COMBAT_ENERGYDAMAGE] += intValue;
-		}
-		else if(tmpStrValue == "reflectpercentfire")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.getAbilities()->reflect[REFLECT_PERCENT][COMBAT_FIREDAMAGE] += intValue;
-		}
-		else if(tmpStrValue == "reflectpercentpoison" ||	tmpStrValue == "reflectpercentearth")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.getAbilities()->reflect[REFLECT_PERCENT][COMBAT_EARTHDAMAGE] += intValue;
-		}
-		else if(tmpStrValue == "reflectpercentice")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.getAbilities()->reflect[REFLECT_PERCENT][COMBAT_ICEDAMAGE] += intValue;
-		}
-		else if(tmpStrValue == "reflectpercentholy")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.getAbilities()->reflect[REFLECT_PERCENT][COMBAT_HOLYDAMAGE] += intValue;
-		}
-		else if(tmpStrValue == "reflectpercentdeath")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.getAbilities()->reflect[REFLECT_PERCENT][COMBAT_DEATHDAMAGE] += intValue;
-		}
-		else if(tmpStrValue == "reflectpercentlifedrain")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.getAbilities()->reflect[REFLECT_PERCENT][COMBAT_LIFEDRAIN] += intValue;
-		}
-		else if(tmpStrValue == "reflectpercentmanadrain")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.getAbilities()->reflect[REFLECT_PERCENT][COMBAT_MANADRAIN] += intValue;
-		}
-		else if(tmpStrValue == "reflectpercentdrown")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.getAbilities()->reflect[REFLECT_PERCENT][COMBAT_DROWNDAMAGE] += intValue;
-		}
-		else if(tmpStrValue == "reflectpercentphysical")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.getAbilities()->reflect[REFLECT_PERCENT][COMBAT_PHYSICALDAMAGE] += intValue;
-		}
-		else if(tmpStrValue == "reflectpercenthealing")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.getAbilities()->reflect[REFLECT_PERCENT][COMBAT_HEALING] += intValue;
-		}
-		else if(tmpStrValue == "reflectpercentundefined")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.getAbilities()->reflect[REFLECT_PERCENT][COMBAT_UNDEFINEDDAMAGE] += intValue;
-		}
-		else if(tmpStrValue == "reflectchanceall")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-			{
-				for(uint32_t i = (COMBAT_FIRST + 1); i <= COMBAT_LAST; i <<= 1)
-					it.getAbilities()->reflect[REFLECT_CHANCE][i] += intValue;
-			}
-		}
-		else if(tmpStrValue == "reflectchanceelements")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-			{
-				it.getAbilities()->reflect[REFLECT_CHANCE][COMBAT_ENERGYDAMAGE] += intValue;
-				it.getAbilities()->reflect[REFLECT_CHANCE][COMBAT_FIREDAMAGE] += intValue;
-				it.getAbilities()->reflect[REFLECT_CHANCE][COMBAT_EARTHDAMAGE] += intValue;
-				it.getAbilities()->reflect[REFLECT_CHANCE][COMBAT_ICEDAMAGE] += intValue;
-			}
-		}
-		else if(tmpStrValue == "reflectchancemagic")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-			{
-				it.getAbilities()->reflect[REFLECT_CHANCE][COMBAT_ENERGYDAMAGE] += intValue;
-				it.getAbilities()->reflect[REFLECT_CHANCE][COMBAT_FIREDAMAGE] += intValue;
-				it.getAbilities()->reflect[REFLECT_CHANCE][COMBAT_EARTHDAMAGE] += intValue;
-				it.getAbilities()->reflect[REFLECT_CHANCE][COMBAT_ICEDAMAGE] += intValue;
-				it.getAbilities()->reflect[REFLECT_CHANCE][COMBAT_HOLYDAMAGE] += intValue;
-				it.getAbilities()->reflect[REFLECT_CHANCE][COMBAT_DEATHDAMAGE] += intValue;
-			}
-		}
-		else if(tmpStrValue == "reflectchanceenergy")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.getAbilities()->reflect[REFLECT_CHANCE][COMBAT_ENERGYDAMAGE] += intValue;
-		}
-		else if(tmpStrValue == "reflectchancefire")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.getAbilities()->reflect[REFLECT_CHANCE][COMBAT_FIREDAMAGE] += intValue;
-		}
-		else if(tmpStrValue == "reflectchancepoison" ||	tmpStrValue == "reflectchanceearth")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.getAbilities()->reflect[REFLECT_CHANCE][COMBAT_EARTHDAMAGE] += intValue;
-		}
-		else if(tmpStrValue == "reflectchanceice")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.getAbilities()->reflect[REFLECT_CHANCE][COMBAT_ICEDAMAGE] += intValue;
-		}
-		else if(tmpStrValue == "reflectchanceholy")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.getAbilities()->reflect[REFLECT_CHANCE][COMBAT_HOLYDAMAGE] += intValue;
-		}
-		else if(tmpStrValue == "reflectchancedeath")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.getAbilities()->reflect[REFLECT_CHANCE][COMBAT_DEATHDAMAGE] += intValue;
-		}
-		else if(tmpStrValue == "reflectchancelifedrain")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.getAbilities()->reflect[REFLECT_CHANCE][COMBAT_LIFEDRAIN] += intValue;
-		}
-		else if(tmpStrValue == "reflectchancemanadrain")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.getAbilities()->reflect[REFLECT_CHANCE][COMBAT_MANADRAIN] += intValue;
-		}
-		else if(tmpStrValue == "reflectchancedrown")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.getAbilities()->reflect[REFLECT_CHANCE][COMBAT_DROWNDAMAGE] += intValue;
-		}
-		else if(tmpStrValue == "reflectchancephysical")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.getAbilities()->reflect[REFLECT_CHANCE][COMBAT_PHYSICALDAMAGE] += intValue;
-		}
-		else if(tmpStrValue == "reflectchancehealing")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.getAbilities()->reflect[REFLECT_CHANCE][COMBAT_HEALING] += intValue;
-		}
-		else if(tmpStrValue == "reflectchanceundefined")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.getAbilities()->reflect[REFLECT_CHANCE][COMBAT_UNDEFINEDDAMAGE] += intValue;
-		}
-		else if(tmpStrValue == "suppressshock" || tmpStrValue == "suppressenergy")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue) && intValue != 0)
-				it.getAbilities()->conditionSuppressions |= CONDITION_ENERGY;
-		}
-		else if(tmpStrValue == "suppressburn" || tmpStrValue == "suppressfire")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue) && intValue != 0)
-				it.getAbilities()->conditionSuppressions |= CONDITION_FIRE;
-		}
-		else if(tmpStrValue == "suppresspoison" || tmpStrValue == "suppressearth")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue) && intValue != 0)
-				it.getAbilities()->conditionSuppressions |= CONDITION_POISON;
-		}
-		else if(tmpStrValue == "suppressfreeze" || tmpStrValue == "suppressice")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue) && intValue != 0)
-				it.getAbilities()->conditionSuppressions |= CONDITION_FREEZING;
-		}
-		else if(tmpStrValue == "suppressdazzle" || tmpStrValue == "suppressholy")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue) && intValue != 0)
-				it.getAbilities()->conditionSuppressions |= CONDITION_DAZZLED;
-		}
-		else if(tmpStrValue == "suppresscurse" || tmpStrValue == "suppressdeath")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue) && intValue != 0)
-				it.getAbilities()->conditionSuppressions |= CONDITION_CURSED;
-		}
-		else if(tmpStrValue == "suppressdrown")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue) && intValue != 0)
-				it.getAbilities()->conditionSuppressions |= CONDITION_DROWN;
-		}
-		else if(tmpStrValue == "suppressphysical")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue) && intValue != 0)
-				it.getAbilities()->conditionSuppressions |= CONDITION_BLEEDING;
-		}
-		else if(tmpStrValue == "suppresshaste")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue) && intValue != 0)
-				it.getAbilities()->conditionSuppressions |= CONDITION_HASTE;
-		}
-		else if(tmpStrValue == "suppressparalyze")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue) && intValue != 0)
-				it.getAbilities()->conditionSuppressions |= CONDITION_PARALYZE;
-		}
-		else if(tmpStrValue == "suppressdrunk")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue) && intValue != 0)
-				it.getAbilities()->conditionSuppressions |= CONDITION_DRUNK;
-		}
-		else if(tmpStrValue == "suppressregeneration")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue) && intValue != 0)
-				it.getAbilities()->conditionSuppressions |= CONDITION_REGENERATION;
-		}
-		else if(tmpStrValue == "suppresssoul")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue) && intValue != 0)
-				it.getAbilities()->conditionSuppressions |= CONDITION_SOUL;
-		}
-		else if(tmpStrValue == "suppressoutfit")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue) && intValue != 0)
-				it.getAbilities()->conditionSuppressions |= CONDITION_OUTFIT;
-		}
-		else if(tmpStrValue == "suppressinvisible")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue) && intValue != 0)
-				it.getAbilities()->conditionSuppressions |= CONDITION_INVISIBLE;
-		}
-		else if(tmpStrValue == "suppressinfight")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue) && intValue != 0)
-				it.getAbilities()->conditionSuppressions |= CONDITION_INFIGHT;
-		}
-		else if(tmpStrValue == "suppressexhaust")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue) && intValue != 0)
-				it.getAbilities()->conditionSuppressions |= CONDITION_EXHAUST;
-		}
-		else if(tmpStrValue == "suppressmuted")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue) && intValue != 0)
-				it.getAbilities()->conditionSuppressions |= CONDITION_MUTED;
-		}
-		else if(tmpStrValue == "suppresspacified")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue) && intValue != 0)
-				it.getAbilities()->conditionSuppressions |= CONDITION_PACIFIED;
-		}
-		else if(tmpStrValue == "suppresslight")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue) && intValue != 0)
-				it.getAbilities()->conditionSuppressions |= CONDITION_LIGHT;
-		}
-		else if(tmpStrValue == "suppressattributes")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue) && intValue != 0)
-				it.getAbilities()->conditionSuppressions |= CONDITION_ATTRIBUTES;
-		}
-		else if(tmpStrValue == "suppressmanashield")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue) && intValue != 0)
-				it.getAbilities()->conditionSuppressions |= CONDITION_MANASHIELD;
-		}
-		else if(tmpStrValue == "field")
-		{
-			it.group = ITEM_GROUP_MAGICFIELD;
-			it.type = ITEM_TYPE_MAGICFIELD;
-
-			CombatType_t combatType = COMBAT_NONE;
-			ConditionDamage* conditionDamage = NULL;
-			if(readXMLString(itemAttributesNode, "value", strValue))
-			{
-				tmpStrValue = asLowerCaseString(strValue);
-				if(tmpStrValue == "fire")
-				{
-					conditionDamage = new ConditionDamage(CONDITIONID_COMBAT, CONDITION_FIRE, false, 0);
-					combatType = COMBAT_FIREDAMAGE;
-				}
-				else if(tmpStrValue == "energy")
-				{
-					conditionDamage = new ConditionDamage(CONDITIONID_COMBAT, CONDITION_ENERGY, false, 0);
-					combatType = COMBAT_ENERGYDAMAGE;
-				}
-				else if(tmpStrValue == "earth" || tmpStrValue == "poison")
-				{
-					conditionDamage = new ConditionDamage(CONDITIONID_COMBAT, CONDITION_POISON, false, 0);
-					combatType = COMBAT_EARTHDAMAGE;
-				}
-				else if(tmpStrValue == "ice" || tmpStrValue == "freezing")
-				{
-					conditionDamage = new ConditionDamage(CONDITIONID_COMBAT, CONDITION_FREEZING, false, 0);
-					combatType = COMBAT_ICEDAMAGE;
-				}
-				else if(tmpStrValue == "holy" || tmpStrValue == "dazzled")
-				{
-					conditionDamage = new ConditionDamage(CONDITIONID_COMBAT, CONDITION_DAZZLED, false, 0);
-					combatType = COMBAT_HOLYDAMAGE;
-				}
-				else if(tmpStrValue == "death" || tmpStrValue == "cursed")
-				{
-					conditionDamage = new ConditionDamage(CONDITIONID_COMBAT, CONDITION_CURSED, false, 0);
-					combatType = COMBAT_DEATHDAMAGE;
-				}
-				else if(tmpStrValue == "drown")
-				{
-					conditionDamage = new ConditionDamage(CONDITIONID_COMBAT, CONDITION_DROWN, false, 0);
-					combatType = COMBAT_DROWNDAMAGE;
-				}
-				else if(tmpStrValue == "physical" || tmpStrValue == "bleed")
-				{
-					conditionDamage = new ConditionDamage(CONDITIONID_COMBAT, CONDITION_BLEEDING, false, 0);
-					combatType = COMBAT_PHYSICALDAMAGE;
-				}
-				else
-					std::clog << "[Warning - Items::loadFromXml] Unknown field value " << strValue << std::endl;
-
-				if(combatType != COMBAT_NONE)
-				{
-					it.combatType = combatType;
-					it.condition = conditionDamage;
-
-					uint32_t ticks = 0;
-					int32_t damage = 0, start = 0, count = 1;
-					for(xmlNodePtr fieldAttributesNode = itemAttributesNode->children; fieldAttributesNode; fieldAttributesNode = fieldAttributesNode->next)
+					tmpStrValue = asLowerCaseString(strValue);
+					if(tmpStrValue == "key")
+						it.type = ITEM_TYPE_KEY;
+					else if(tmpStrValue == "magicfield")
+						it.type = ITEM_TYPE_MAGICFIELD;
+					else if(tmpStrValue == "container")
 					{
-						if(!readXMLString(fieldAttributesNode, "key", strValue))
-							continue;
-
-						tmpStrValue = asLowerCaseString(strValue);
-						if(tmpStrValue == "ticks")
-						{
-							if(readXMLInteger(fieldAttributesNode, "value", intValue))
-								ticks = std::max(0, intValue);
-						}
-
-						if(tmpStrValue == "count")
-						{
-							if(readXMLInteger(fieldAttributesNode, "value", intValue))
-								count = std::max(1, intValue);
-						}
-
-						if(tmpStrValue == "start")
-						{
-							if(readXMLInteger(fieldAttributesNode, "value", intValue))
-								start = std::max(0, intValue);
-						}
-
-						if(tmpStrValue == "damage")
-						{
-							if(readXMLInteger(fieldAttributesNode, "value", intValue))
-							{
-								damage = -intValue;
-								if(start > 0)
-								{
-									std::list<int32_t> damageList;
-									ConditionDamage::generateDamageList(damage, start, damageList);
-									for(std::list<int32_t>::iterator it = damageList.begin(); it != damageList.end(); ++it)
-										conditionDamage->addDamage(1, ticks, -*it);
-
-									start = 0;
-								}
-								else
-									conditionDamage->addDamage(count, ticks, damage);
-							}
-						}
+						it.group = ITEM_GROUP_CONTAINER;
+						it.type = ITEM_TYPE_CONTAINER;
 					}
-
-					conditionDamage->setParam(CONDITIONPARAM_FIELD, true);
-					if(conditionDamage->getTotalDamage() > 0)
-						conditionDamage->setParam(CONDITIONPARAM_FORCEUPDATE, true);
+					else if(tmpStrValue == "depot")
+						it.type = ITEM_TYPE_DEPOT;
+					else if(tmpStrValue == "mailbox")
+						it.type = ITEM_TYPE_MAILBOX;
+					else if(tmpStrValue == "trashholder")
+						it.type = ITEM_TYPE_TRASHHOLDER;
+					else if(tmpStrValue == "teleport")
+						it.type = ITEM_TYPE_TELEPORT;
+					else if(tmpStrValue == "door")
+						it.type = ITEM_TYPE_DOOR;
+					else if(tmpStrValue == "bed")
+						it.type = ITEM_TYPE_BED;
+					else if(tmpStrValue == "rune")
+						it.type = ITEM_TYPE_RUNE;
+					else
+						std::cout << "Warning: [Items::loadFromXml] " << "Unknown type " << strValue << std::endl;
 				}
 			}
-		}
-		else if(tmpStrValue == "elementphysical")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
+			else if(tmpStrValue == "name")
 			{
-				it.getAbilities()->elementDamage = intValue;
-				it.getAbilities()->elementType = COMBAT_PHYSICALDAMAGE;
+				if(readXMLString(itemAttributesNode, "value", strValue))
+					it.name = strValue;
 			}
-		}
-		else if(tmpStrValue == "elementfire")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
+			else if(tmpStrValue == "article")
 			{
-				it.getAbilities()->elementDamage = intValue;
-				it.getAbilities()->elementType = COMBAT_FIREDAMAGE;
+				if(readXMLString(itemAttributesNode, "value", strValue))
+					it.article = strValue;
 			}
-		}
-		else if(tmpStrValue == "elementenergy")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
+			else if(tmpStrValue == "plural")
 			{
-				it.getAbilities()->elementDamage = intValue;
-				it.getAbilities()->elementType = COMBAT_ENERGYDAMAGE;
+				if(readXMLString(itemAttributesNode, "value", strValue))
+					it.pluralName = strValue;
 			}
-		}
-		else if(tmpStrValue == "elementearth")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
+			else if(tmpStrValue == "description")
 			{
-				it.getAbilities()->elementDamage = intValue;
-				it.getAbilities()->elementType = COMBAT_EARTHDAMAGE;
+				if(readXMLString(itemAttributesNode, "value", strValue))
+					it.description = strValue;
 			}
-		}
-		else if(tmpStrValue == "elementice")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
+			else if(tmpStrValue == "runespellname")
 			{
-				it.getAbilities()->elementDamage = intValue;
-				it.getAbilities()->elementType = COMBAT_ICEDAMAGE;
+				if(readXMLString(itemAttributesNode, "value", strValue))
+					it.runeSpellName = strValue;
 			}
-		}
-		else if(tmpStrValue == "elementholy")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
+			else if(tmpStrValue == "weight")
 			{
-				it.getAbilities()->elementDamage = intValue;
-				it.getAbilities()->elementType = COMBAT_HOLYDAMAGE;
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+					it.weight = intValue / 100.f;
 			}
-		}
-		else if(tmpStrValue == "elementdeath")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
+			else if(tmpStrValue == "showcount")
 			{
-				it.getAbilities()->elementDamage = intValue;
-				it.getAbilities()->elementType = COMBAT_DEATHDAMAGE;
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+					it.showCount = (intValue != 0);
 			}
-		}
-		else if(tmpStrValue == "elementlifedrain")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
+			else if(tmpStrValue == "armor")
 			{
-				it.getAbilities()->elementDamage = intValue;
-				it.getAbilities()->elementType = COMBAT_LIFEDRAIN;
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+					it.armor = intValue;
 			}
-		}
-		else if(tmpStrValue == "elementmanadrain")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
+			else if(tmpStrValue == "defense")
 			{
-				it.getAbilities()->elementDamage = intValue;
-				it.getAbilities()->elementType = COMBAT_MANADRAIN;
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+					it.defense = intValue;
 			}
-		}
-		else if(tmpStrValue == "elementhealing")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
+			else if(tmpStrValue == "extradef")
 			{
-				it.getAbilities()->elementDamage = intValue;
-				it.getAbilities()->elementType = COMBAT_HEALING;
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+					it.extraDefense = intValue;
 			}
-		}
-		else if(tmpStrValue == "elementundefined")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
+			else if(tmpStrValue == "attack")
 			{
-				it.getAbilities()->elementDamage = intValue;
-				it.getAbilities()->elementType = COMBAT_UNDEFINEDDAMAGE;
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+					it.attack = intValue;
 			}
-		}
-		else if(tmpStrValue == "replacable" || tmpStrValue == "replaceable")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.replacable = (intValue != 0);
-		}
-		else if(tmpStrValue == "partnerdirection")
-		{
-			if(readXMLString(itemAttributesNode, "value", strValue))
-				it.bedPartnerDir = getDirection(strValue);
-		}
-		else if(tmpStrValue == "maletransformto")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
+			else if(tmpStrValue == "rotateto")
 			{
-				it.transformBed[PLAYERSEX_MALE] = intValue;
-				ItemType& ot = getItemType(intValue);
-				if(!ot.transformUseTo)
-					ot.transformUseTo = it.id;
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+					it.rotateTo = intValue;
+			}
+			else if(tmpStrValue == "moveable" || tmpStrValue == "movable")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+					it.moveable = (intValue == 1);
+			}
+			else if(tmpStrValue == "blockprojectile")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+					it.blockProjectile = (intValue == 1);
+			}
+			else if(tmpStrValue == "allowpickupable" || tmpStrValue == "pickupable")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+					it.allowPickupable = (intValue != 0);
+			}
+			else if(tmpStrValue == "floorchange")
+			{
+				if(readXMLString(itemAttributesNode, "value", strValue))
+				{
+					tmpStrValue = asLowerCaseString(strValue);
+					if(tmpStrValue == "down")
+						it.floorChangeDown = true;
+					else if(tmpStrValue == "north")
+						it.floorChangeNorth = true;
+					else if(tmpStrValue == "south")
+						it.floorChangeSouth = true;
+					else if(tmpStrValue == "southalt" || tmpStrValue == "southex")
+						it.floorChangeSouthAlt = true;
+					else if(tmpStrValue == "west")
+						it.floorChangeWest = true;
+					else if(tmpStrValue == "east")
+						it.floorChangeEast = true;
+					else if(tmpStrValue == "eastalt" || tmpStrValue == "eastex")
+						it.floorChangeEastAlt = true;
+				}
+			}
+			else if(tmpStrValue == "corpsetype")
+			{
+				tmpStrValue = asLowerCaseString(strValue);
+				if(readXMLString(itemAttributesNode, "value", strValue))
+				{
+					tmpStrValue = asLowerCaseString(strValue);
+					if(tmpStrValue == "venom")
+						it.corpseType = RACE_VENOM;
+					else if(tmpStrValue == "blood")
+						it.corpseType = RACE_BLOOD;
+					else if(tmpStrValue == "undead")
+						it.corpseType = RACE_UNDEAD;
+					else if(tmpStrValue == "fire")
+						it.corpseType = RACE_FIRE;
+					else if(tmpStrValue == "energy")
+						it.corpseType = RACE_ENERGY;
+					else
+						std::cout << "Warning: [Items::loadFromXml] " << "Unknown corpseType " << strValue << std::endl;
+				}
+			}
+			else if(tmpStrValue == "containersize")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+					it.maxItems = intValue;
+			}
+			else if(tmpStrValue == "fluidsource")
+			{
+				if(readXMLString(itemAttributesNode, "value", strValue))
+				{
+					tmpStrValue = asLowerCaseString(strValue);
+					if(tmpStrValue == "water")
+						it.fluidSource = FLUID_WATER;
+					else if(tmpStrValue == "blood")
+						it.fluidSource = FLUID_BLOOD;
+					else if(tmpStrValue == "beer")
+						it.fluidSource = FLUID_BEER;
+					else if(tmpStrValue == "slime")
+						it.fluidSource = FLUID_SLIME;
+					else if(tmpStrValue == "lemonade")
+						it.fluidSource = FLUID_LEMONADE;
+					else if(tmpStrValue == "milk")
+						it.fluidSource = FLUID_MILK;
+					else if(tmpStrValue == "mana")
+						it.fluidSource = FLUID_MANA;
+					else if(tmpStrValue == "life")
+						it.fluidSource = FLUID_LIFE;
+					else if(tmpStrValue == "oil")
+						it.fluidSource = FLUID_OIL;
+					else if(tmpStrValue == "urine")
+						it.fluidSource = FLUID_URINE;
+					else if(tmpStrValue == "coconut")
+						it.fluidSource = FLUID_COCONUTMILK;
+					else if(tmpStrValue == "wine")
+						it.fluidSource = FLUID_WINE;
+					else if(tmpStrValue == "mud")
+						it.fluidSource = FLUID_MUD;
+					else if(tmpStrValue == "fruitjuice")
+						it.fluidSource = FLUID_FRUITJUICE;
+					else if(tmpStrValue == "lava")
+						it.fluidSource = FLUID_LAVA;
+					else if(tmpStrValue == "rum")
+						it.fluidSource = FLUID_RUM;
+					else if(tmpStrValue == "swamp")
+						it.fluidSource = FLUID_SWAMP;
+					else if(tmpStrValue == "tea")
+						it.fluidSource = FLUID_TEA;
+					else if(tmpStrValue == "mead")
+						it.fluidSource = FLUID_MEAD;
+					else
+						std::cout << "Warning: [Items::loadFromXml] " << "Unknown fluidSource " << strValue << std::endl;
+				}
+			}
+			else if(tmpStrValue == "readable")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+					it.canReadText = (intValue != 0);
+			}
+			else if(tmpStrValue == "writeable")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+				{
+					it.canWriteText = (intValue != 0);
+					it.canReadText = (intValue != 0);
+				}
+			}
+			else if(tmpStrValue == "maxtextlen")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+					it.maxTextLen = intValue;
+			}
+			else if(tmpStrValue == "writeonceitemid")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+					it.writeOnceItemId = intValue;
+			}
+			else if(tmpStrValue == "weapontype")
+			{
+				if(readXMLString(itemAttributesNode, "value", strValue))
+				{
+					tmpStrValue = asLowerCaseString(strValue);
+					if(tmpStrValue == "sword")
+						it.weaponType = WEAPON_SWORD;
+					else if(tmpStrValue == "club")
+						it.weaponType = WEAPON_CLUB;
+					else if(tmpStrValue == "axe")
+						it.weaponType = WEAPON_AXE;
+					else if(tmpStrValue == "shield")
+						it.weaponType = WEAPON_SHIELD;
+					else if(tmpStrValue == "distance")
+						it.weaponType = WEAPON_DIST;
+					else if(tmpStrValue == "wand")
+						it.weaponType = WEAPON_WAND;
+					else if(tmpStrValue == "ammunition")
+						it.weaponType = WEAPON_AMMO;
+					else
+						std::cout << "Warning: [Items::loadFromXml] " << "Unknown weaponType " << strValue << std::endl;
+				}
+			}
+			else if(tmpStrValue == "slottype")
+			{
+				if(readXMLString(itemAttributesNode, "value", strValue))
+				{
+					tmpStrValue = asLowerCaseString(strValue);
+					if(tmpStrValue == "head")
+						it.slotPosition |= SLOTP_HEAD;
+					else if(tmpStrValue == "body")
+						it.slotPosition |= SLOTP_ARMOR;
+					else if(tmpStrValue == "legs")
+						it.slotPosition |= SLOTP_LEGS;
+					else if(tmpStrValue == "feet")
+						it.slotPosition |= SLOTP_FEET;
+					else if(tmpStrValue == "backpack")
+						it.slotPosition |= SLOTP_BACKPACK;
+					else if(tmpStrValue == "two-handed")
+						it.slotPosition |= SLOTP_TWO_HAND;
+					else if(tmpStrValue == "right-hand")
+						it.slotPosition &= ~SLOTP_LEFT;
+					else if(tmpStrValue == "left-hand")
+						it.slotPosition &= ~SLOTP_RIGHT;
+					else if(tmpStrValue == "necklace")
+						it.slotPosition |= SLOTP_NECKLACE;
+					else if(tmpStrValue == "ring")
+						it.slotPosition |= SLOTP_RING;
+					else if(tmpStrValue == "ammo")
+						it.slotPosition |= SLOTP_AMMO;
+					else if(tmpStrValue == "hand")
+						it.slotPosition |= SLOTP_HAND;
+					else
+						std::cout << "Warning: [Items::loadFromXml] " << "Unknown slotType " << strValue << std::endl;
+				}
+			}
+			else if(tmpStrValue == "ammotype")
+			{
+				if(readXMLString(itemAttributesNode, "value", strValue))
+				{
+					it.ammoType = getAmmoType(strValue);
+					if(it.ammoType == AMMO_NONE)
+						std::cout << "Warning: [Items::loadFromXml] " << "Unknown ammoType " << strValue << std::endl;
+				}
+			}
+			else if(tmpStrValue == "shoottype")
+			{
+				if(readXMLString(itemAttributesNode, "value", strValue))
+				{
+					ShootType_t shoot = getShootType(strValue);
+					if(shoot != NM_SHOOT_UNK)
+						it.shootType = shoot;
+					else
+						std::cout << "Warning: [Items::loadFromXml] " << "Unknown shootType " << strValue << std::endl;
+				}
+			}
+			else if(tmpStrValue == "effect")
+			{
+				if(readXMLString(itemAttributesNode, "value", strValue))
+				{
+					MagicEffectClasses effect = getMagicEffect(strValue);
+					if(effect != NM_ME_UNK)
+						it.magicEffect = effect;
+					else
+						std::cout << "Warning: [Items::loadFromXml] " << "Unknown effect " << strValue << std::endl;
+				}
+			}
+			else if(tmpStrValue == "range")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+					it.shootRange = intValue;
+			}
+			else if(tmpStrValue == "stopduration")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+					it.stopTime = (intValue != 0);
+			}
+			else if(tmpStrValue == "decayto")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+					it.decayTo = intValue;
+			}
+			else if(tmpStrValue == "transformequipto")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+					it.transformEquipTo = intValue;
+			}
+			else if(tmpStrValue == "transformdeequipto")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+					it.transformDeEquipTo = intValue;
+			}
+			else if(tmpStrValue == "duration")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+					it.decayTime = std::max(0, intValue);
+			}
+			else if(tmpStrValue == "showduration")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+					it.showDuration = (intValue != 0);
+			}
+			else if(tmpStrValue == "charges")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+					it.charges = intValue;
+			}
+			else if(tmpStrValue == "showcharges")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+					it.showCharges = (intValue != 0);
+			}
+			else if(tmpStrValue == "showattributes")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+					it.showAttributes = (intValue != 0);
+			}
+			else if(tmpStrValue == "breakchance")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+					it.breakChance = std::min(100, std::max(0, intValue));
+			}
+			else if(tmpStrValue == "ammoaction")
+			{
+				if(readXMLString(itemAttributesNode, "value", strValue))
+				{
+					it.ammoAction = getAmmoAction(strValue);
+					if(it.ammoAction == AMMOACTION_NONE)
+						std::cout << "Warning: [Items::loadFromXml] " << "Unknown ammoAction " << strValue << std::endl;
+				}
+			}
+			else if(tmpStrValue == "hitchance")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+					it.hitChance = std::min(100, std::max(-100, intValue));
+			}
+			else if(tmpStrValue == "maxhitchance")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+					it.maxHitChance = std::min(100, std::max(0, intValue));
+			}
+			else if(tmpStrValue == "invisible")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+					it.getAbilities()->invisible = (intValue != 0);
+			}
+			else if(tmpStrValue == "speed")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+					it.getAbilities()->speed = intValue;
+			}
+			else if(tmpStrValue == "healthgain")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+				{
+					Abilities* abilities = it.getAbilities();
+					abilities->regeneration = true;
+					abilities->healthGain = intValue;
+				}
+			}
+			else if(tmpStrValue == "healthticks")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+				{
+					Abilities* abilities = it.getAbilities();
+					abilities->regeneration = true;
+					abilities->healthTicks = intValue;
+				}
+			}
+			else if(tmpStrValue == "managain")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+				{
+					Abilities* abilities = it.getAbilities();
+					abilities->regeneration = true;
+					abilities->manaGain = intValue;
+				}
+			}
+			else if(tmpStrValue == "manaticks")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+				{
+					Abilities* abilities = it.getAbilities();
+					abilities->regeneration = true;
+					abilities->manaTicks = intValue;
+				}
+			}
+			else if(tmpStrValue == "manashield")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+					it.getAbilities()->manaShield = (intValue != 0);
+			}
+			else if(tmpStrValue == "skillsword")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+					it.getAbilities()->skills[SKILL_SWORD] = intValue;
+			}
+			else if(tmpStrValue == "skillaxe")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+					it.getAbilities()->skills[SKILL_AXE] = intValue;
+			}
+			else if(tmpStrValue == "skillclub")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+					it.getAbilities()->skills[SKILL_CLUB] = intValue;
+			}
+			else if(tmpStrValue == "skilldist")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+					it.getAbilities()->skills[SKILL_DIST] = intValue;
+			}
+			else if(tmpStrValue == "skillfish")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+					it.getAbilities()->skills[SKILL_FISH] = intValue;
+			}
+			else if(tmpStrValue == "skillshield")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+					it.getAbilities()->skills[SKILL_SHIELD] = intValue;
+			}
+			else if(tmpStrValue == "skillfist")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+					it.getAbilities()->skills[SKILL_FIST] = intValue;
+			}
+			else if(tmpStrValue == "maxhitpoints")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+					it.getAbilities()->stats[STAT_MAXHITPOINTS] = intValue;
+			}
+			else if(tmpStrValue == "maxhitpointspercent")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+					it.getAbilities()->statsPercent[STAT_MAXHITPOINTS] = intValue;
+			}
+			else if(tmpStrValue == "maxmanapoints")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+					it.getAbilities()->stats[STAT_MAXMANAPOINTS] = intValue;
+			}
+			else if(tmpStrValue == "maxmanapointspercent")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+					it.getAbilities()->statsPercent[STAT_MAXMANAPOINTS] = intValue;
+			}
+			else if(tmpStrValue == "soulpoints")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+					it.getAbilities()->stats[STAT_SOULPOINTS] = intValue;
+			}
+			else if(tmpStrValue == "soulpointspercent")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+					it.getAbilities()->statsPercent[STAT_SOULPOINTS] = intValue;
+			}
+			else if(tmpStrValue == "magicpoints" || tmpStrValue == "magiclevelpoints")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+					it.getAbilities()->stats[STAT_MAGICPOINTS] = intValue;
+			}
+			else if(tmpStrValue == "magicpointspercent")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+					it.getAbilities()->statsPercent[STAT_MAGICPOINTS] = intValue;
+			}
+			else if(tmpStrValue == "absorbpercentall" || tmpStrValue == "absorbpercentallelements")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+				{
+					Abilities* abilities = it.getAbilities();
+					for(uint32_t i = COMBAT_FIRST; i <= COMBAT_COUNT; i++)
+						abilities->absorbPercent[i] += intValue;
+				}
+			}
+			else if(tmpStrValue == "absorbpercentelements")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+				{
+					Abilities* abilities = it.getAbilities();
+					abilities->absorbPercent[combatTypeToIndex(COMBAT_ENERGYDAMAGE)] += intValue;
+					abilities->absorbPercent[combatTypeToIndex(COMBAT_FIREDAMAGE)] += intValue;
+					abilities->absorbPercent[combatTypeToIndex(COMBAT_EARTHDAMAGE)] += intValue;
+					abilities->absorbPercent[combatTypeToIndex(COMBAT_ICEDAMAGE)] += intValue;
+				}
+			}
+			else if(tmpStrValue == "absorbpercentmagic")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+				{
+					Abilities* abilities = it.getAbilities();
+					abilities->absorbPercent[combatTypeToIndex(COMBAT_ENERGYDAMAGE)] += intValue;
+					abilities->absorbPercent[combatTypeToIndex(COMBAT_FIREDAMAGE)] += intValue;
+					abilities->absorbPercent[combatTypeToIndex(COMBAT_EARTHDAMAGE)] += intValue;
+					abilities->absorbPercent[combatTypeToIndex(COMBAT_ICEDAMAGE)] += intValue;
+					abilities->absorbPercent[combatTypeToIndex(COMBAT_HOLYDAMAGE)] += intValue;
+					abilities->absorbPercent[combatTypeToIndex(COMBAT_DEATHDAMAGE)] += intValue;
+				}
+			}
+			else if(tmpStrValue == "absorbpercentenergy")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+					it.getAbilities()->absorbPercent[combatTypeToIndex(COMBAT_ENERGYDAMAGE)] += intValue;
+			}
+			else if(tmpStrValue == "absorbpercentfire")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+					it.getAbilities()->absorbPercent[combatTypeToIndex(COMBAT_FIREDAMAGE)] += intValue;
+			}
+			else if(tmpStrValue == "absorbpercentpoison" ||	tmpStrValue == "absorbpercentearth")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+					it.getAbilities()->absorbPercent[combatTypeToIndex(COMBAT_EARTHDAMAGE)] += intValue;
+			}
+			else if(tmpStrValue == "absorbpercentice")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+					it.getAbilities()->absorbPercent[combatTypeToIndex(COMBAT_ICEDAMAGE)] += intValue;
+			}
+			else if(tmpStrValue == "absorbpercentholy")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+					it.getAbilities()->absorbPercent[combatTypeToIndex(COMBAT_HOLYDAMAGE)] += intValue;
+			}
+			else if(tmpStrValue == "absorbpercentdeath")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+					it.getAbilities()->absorbPercent[combatTypeToIndex(COMBAT_DEATHDAMAGE)] += intValue;
+			}
+			else if(tmpStrValue == "absorbpercentlifedrain")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+					it.getAbilities()->absorbPercent[combatTypeToIndex(COMBAT_LIFEDRAIN)] += intValue;
+			}
+			else if(tmpStrValue == "absorbpercentmanadrain")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+					it.getAbilities()->absorbPercent[combatTypeToIndex(COMBAT_MANADRAIN)] += intValue;
+			}
+			else if(tmpStrValue == "absorbpercentdrown")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+					it.getAbilities()->absorbPercent[combatTypeToIndex(COMBAT_DROWNDAMAGE)] += intValue;
+			}
+			else if(tmpStrValue == "absorbpercentphysical")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+					it.getAbilities()->absorbPercent[combatTypeToIndex(COMBAT_PHYSICALDAMAGE)] += intValue;
+			}
+			else if(tmpStrValue == "absorbpercenthealing")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+					it.getAbilities()->absorbPercent[combatTypeToIndex(COMBAT_HEALING)] += intValue;
+			}
+			else if(tmpStrValue == "absorbpercentundefined")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+					it.getAbilities()->absorbPercent[combatTypeToIndex(COMBAT_UNDEFINEDDAMAGE)] += intValue;
+			}
+			else if(tmpStrValue == "suppressdrunk")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+					it.getAbilities()->conditionSuppressions |= CONDITION_DRUNK;
+			}
+			else if(tmpStrValue == "suppressenergy")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+					it.getAbilities()->conditionSuppressions |= CONDITION_ENERGY;
+			}
+			else if(tmpStrValue == "suppressfire")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+					it.getAbilities()->conditionSuppressions |= CONDITION_FIRE;
+			}
+			else if(tmpStrValue == "suppresspoison")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+					it.getAbilities()->conditionSuppressions |= CONDITION_POISON;
+			}
+			else if(tmpStrValue == "suppressdrown")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+					it.getAbilities()->conditionSuppressions |= CONDITION_DROWN;
+			}
+			else if(tmpStrValue == "suppressphysical")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+					it.getAbilities()->conditionSuppressions |= CONDITION_BLEEDING;
+			}
+			else if(tmpStrValue == "suppressfreeze")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue) && intValue != 0)
+					it.getAbilities()->conditionSuppressions |= CONDITION_FREEZING;
+			}
+			else if(tmpStrValue == "suppressdazzle")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue) && intValue != 0)
+					it.getAbilities()->conditionSuppressions |= CONDITION_DAZZLED;
+			}
+			else if(tmpStrValue == "suppresscurse")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue) && intValue != 0)
+					it.getAbilities()->conditionSuppressions |= CONDITION_CURSED;
+			}
+			else if(tmpStrValue == "field")
+			{
+				it.group = ITEM_GROUP_MAGICFIELD;
+				it.type = ITEM_TYPE_MAGICFIELD;
+				if(readXMLString(itemAttributesNode, "value", strValue))
+				{
+					CombatType_t combatType = COMBAT_NONE;
+					ConditionDamage* conditionDamage = NULL;
 
-				if(!it.transformBed[PLAYERSEX_FEMALE])
-					it.transformBed[PLAYERSEX_FEMALE] = intValue;
-			}
-		}
-		else if(tmpStrValue == "femaletransformto")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-			{
-				it.transformBed[PLAYERSEX_FEMALE] = intValue;
-				ItemType& ot = getItemType(intValue);
-				if(!ot.transformUseTo)
-					ot.transformUseTo = it.id;
+					tmpStrValue = asLowerCaseString(strValue);
+					if(tmpStrValue == "fire")
+					{
+						conditionDamage = new ConditionDamage(CONDITIONID_COMBAT, CONDITION_FIRE);
+						combatType = COMBAT_FIREDAMAGE;
+					}
+					else if(tmpStrValue == "energy")
+					{
+						conditionDamage = new ConditionDamage(CONDITIONID_COMBAT, CONDITION_ENERGY);
+						combatType = COMBAT_ENERGYDAMAGE;
+					}
+					else if(tmpStrValue == "poison")
+					{
+						conditionDamage = new ConditionDamage(CONDITIONID_COMBAT, CONDITION_POISON);
+						combatType = COMBAT_EARTHDAMAGE;
+					}
+					else if(tmpStrValue == "drown")
+					{
+						conditionDamage = new ConditionDamage(CONDITIONID_COMBAT, CONDITION_DROWN);
+						combatType = COMBAT_DROWNDAMAGE;
+					}
+					else if(tmpStrValue == "physical")
+					{
+						conditionDamage = new ConditionDamage(CONDITIONID_COMBAT, CONDITION_BLEEDING);
+						combatType = COMBAT_PHYSICALDAMAGE;
+					}
+					else
+						std::cout << "Warning: [Items::loadFromXml] " << "Unknown field value " << strValue << std::endl;
 
-				if(!it.transformBed[PLAYERSEX_MALE])
-					it.transformBed[PLAYERSEX_MALE] = intValue;
+					if(combatType != COMBAT_NONE)
+					{
+						it.combatType = combatType;
+						it.condition = conditionDamage;
+						uint32_t ticks = 0;
+						int32_t damage = 0;
+						int32_t start = 0;
+						int32_t count = 1;
+
+						xmlNodePtr fieldAttributesNode = itemAttributesNode->children;
+						while(fieldAttributesNode)
+						{
+							if(readXMLString(fieldAttributesNode, "key", strValue))
+							{
+								tmpStrValue = asLowerCaseString(strValue);
+								if(tmpStrValue == "ticks")
+								{
+									if(readXMLInteger(fieldAttributesNode, "value", intValue))
+										ticks = std::max(0, intValue);
+								}
+
+								if(tmpStrValue == "count")
+								{
+									if(readXMLInteger(fieldAttributesNode, "value", intValue))
+										count = std::max(1, intValue);
+								}
+
+								if(tmpStrValue == "start")
+								{
+									if(readXMLInteger(fieldAttributesNode, "value", intValue))
+										start = std::max(0, intValue);
+								}
+
+								if(tmpStrValue == "damage")
+								{
+									if(readXMLInteger(fieldAttributesNode, "value", intValue))
+									{
+										damage = -intValue;
+										if(start > 0)
+										{
+											std::list<int32_t> damageList;
+											ConditionDamage::generateDamageList(damage, start, damageList);
+
+											for(std::list<int32_t>::iterator it = damageList.begin(); it != damageList.end(); ++it)
+												conditionDamage->addDamage(1, ticks, -*it);
+
+											start = 0;
+										}
+										else
+											conditionDamage->addDamage(count, ticks, damage);
+									}
+								}
+							}
+							fieldAttributesNode = fieldAttributesNode->next;
+						}
+
+						if(conditionDamage->getTotalDamage() > 0)
+							conditionDamage->setParam(CONDITIONPARAM_FORCEUPDATE, 1);
+					}
+				}
 			}
+			else if(tmpStrValue == "replaceable")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+					it.replaceable = (intValue != 0);
+			}
+			else if(tmpStrValue == "partnerdirection")
+			{
+				if(readXMLString(itemAttributesNode, "value", strValue))
+					it.bedPartnerDir = getDirection(strValue);
+			}
+			else if(tmpStrValue == "leveldoor")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+					it.levelDoor = intValue;
+			}
+			else if(tmpStrValue == "maletransformto" || tmpStrValue == "malesleeper")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+				{
+					it.transformToOnUse[PLAYERSEX_MALE] = intValue;
+					ItemType& other = getItemType(intValue);
+					if(other.transformToFree == 0)
+						other.transformToFree = it.id;
+
+					if(it.transformToOnUse[PLAYERSEX_FEMALE] == 0)
+						it.transformToOnUse[PLAYERSEX_FEMALE] = intValue;
+				}
+			}
+			else if(tmpStrValue == "femaletransformto" || tmpStrValue == "femalesleeper")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+					it.transformToOnUse[PLAYERSEX_FEMALE] = intValue;
+
+				ItemType& other = getItemType(intValue);
+				if(other.transformToFree == 0)
+					other.transformToFree = it.id;
+
+				if(it.transformToOnUse[PLAYERSEX_MALE] == 0)
+					it.transformToOnUse[PLAYERSEX_MALE] = intValue;
+			}
+			else if(tmpStrValue == "transformto")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+					it.transformToFree = intValue;
+			}
+			else if(tmpStrValue == "elementice")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+				{
+					it.getAbilities()->elementDamage = intValue;
+					it.getAbilities()->elementType = COMBAT_ICEDAMAGE;
+				}
+			}
+			else if(tmpStrValue == "elementearth")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+				{
+					it.getAbilities()->elementDamage = intValue;
+					it.getAbilities()->elementType = COMBAT_EARTHDAMAGE;
+				}
+			}
+			else if(tmpStrValue == "elementfire")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+				{
+					it.getAbilities()->elementDamage = intValue;
+					it.getAbilities()->elementType = COMBAT_FIREDAMAGE;
+				}
+			}
+			else if(tmpStrValue == "elementenergy")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+				{
+					it.getAbilities()->elementDamage = intValue;
+					it.getAbilities()->elementType = COMBAT_ENERGYDAMAGE;
+				}
+			}
+			else if(tmpStrValue == "walkstack")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+					it.walkStack = (intValue != 0);
+			}
+			else if(tmpStrValue == "alwaysontop")
+			{
+				if(readXMLString(itemAttributesNode, "value", strValue))
+					it.alwaysOnTop = booleanString(strValue);
+			}
+			else if(tmpStrValue == "toporder")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+					it.alwaysOnTopOrder = intValue;
+			}
+			else if(tmpStrValue == "allowdistread")
+			{
+				if(readXMLString(itemAttributesNode, "value", strValue))
+					it.allowDistRead = booleanString(strValue);
+			}
+			else
+				std::cout << "Warning: [Items::loadFromXml] Unknown key value " << strValue << std::endl;
 		}
-		else if(tmpStrValue == "transformto" || tmpStrValue == "transformuseto" || tmpStrValue == "onuseto")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.transformUseTo = intValue;
-		}
-		else if(tmpStrValue == "walkstack")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.walkStack = (intValue != 0);
-		}
-		else if(tmpStrValue == "premiumdays")
-		{
-			if(readXMLInteger(itemAttributesNode, "value", intValue))
-				it.premiumDays = intValue;
-		}
-		else
-			std::clog << "[Warning - Items::loadFromXml] Unknown key value " << strValue << std::endl;
+		itemAttributesNode = itemAttributesNode->next;
 	}
-
-	if(it.pluralName.empty() && !it.name.empty())
-	{
-		it.pluralName = it.name;
-		if(it.showCount)
-			it.pluralName += "s";
-	}
-
-	it.getAbilities()->absorb[COMBAT_ALL] = it.getAbilities()->absorb[COMBAT_FIRST + 1];
-	it.getAbilities()->reflect[REFLECT_PERCENT][COMBAT_ALL] = it.getAbilities()->reflect[REFLECT_PERCENT][COMBAT_FIRST + 1];
-	it.getAbilities()->reflect[REFLECT_CHANCE][COMBAT_ALL] = it.getAbilities()->reflect[REFLECT_CHANCE][COMBAT_FIRST + 1];
-	for(uint32_t i = (COMBAT_FIRST + 1) << 1; i <= COMBAT_LAST; i <<= 1)
-	{
-		if(it.getAbilities()->absorb[COMBAT_ALL] != it.getAbilities()->absorb[i])
-			it.getAbilities()->absorb[COMBAT_ALL] = 0;
-
-		if(it.getAbilities()->reflect[REFLECT_PERCENT][COMBAT_ALL] != it.getAbilities()->reflect[REFLECT_PERCENT][i])
-			it.getAbilities()->reflect[REFLECT_PERCENT][COMBAT_ALL] = 0;
-
-		if(it.getAbilities()->reflect[REFLECT_CHANCE][COMBAT_ALL] != it.getAbilities()->reflect[REFLECT_CHANCE][i])
-			it.getAbilities()->reflect[REFLECT_CHANCE][COMBAT_ALL] = 0;
-	}
-}
-
-void Items::parseRandomizationBlock(int32_t id, int32_t fromId, int32_t toId, int32_t chance)
-{
-	RandomizationMap::iterator it = randomizationMap.find(id);
-	if(it != randomizationMap.end())
-	{
-		std::clog << "[Warning - Items::parseRandomizationBlock] Duplicated item with id: " << id << std::endl;
-		return;
-	}
-
-	RandomizationBlock rand;
-	rand.fromRange = fromId;
-	rand.toRange = toId;
-
-	rand.chance = chance;
-	randomizationMap[id] = rand;
-}
-
-uint16_t Items::getRandomizedItem(uint16_t id)
-{
-	if(!g_config.getBool(ConfigManager::RANDOMIZE_TILES))
-		return id;
-
-	RandomizationBlock randomize = getRandomization(id);
-	if(randomize.chance >= random_range(1, 100))
-		id = random_range(randomize.fromRange, randomize.toRange);
-
-	return id;
+	return true;
 }
 
 ItemType& Items::getItemType(int32_t id)
 {
-	ItemType* iType = items.getElement(id);
+	ItemType* iType = items->getElement(id);
 	if(iType)
 		return *iType;
 
 	#ifdef __DEBUG__
-	std::clog << "[Warning - Items::getItemType] Unknown itemtype with id " << id << ", using defaults." << std::endl;
+	std::cout << "WARNING! unknown itemtypeid " << id << ". using defaults." << std::endl;
 	#endif
 	static ItemType dummyItemType; // use this for invalid ids
 	return dummyItemType;
@@ -1981,7 +1413,8 @@ ItemType& Items::getItemType(int32_t id)
 
 const ItemType& Items::getItemType(int32_t id) const
 {
-	if(ItemType* iType = items.getElement(id))
+	ItemType* iType = items->getElement(id);
+	if(iType)
 		return *iType;
 
 	static ItemType dummyItemType; // use this for invalid ids
@@ -1990,33 +1423,33 @@ const ItemType& Items::getItemType(int32_t id) const
 
 const ItemType& Items::getItemIdByClientId(int32_t spriteId) const
 {
-	uint32_t i = 100;
-	ItemType* iType;
-	do
+	ReverseItemMap::const_iterator it = reverseItemMap.find(spriteId);
+	if(it != reverseItemMap.end())
 	{
-		if((iType = items.getElement(i++)) && iType->clientId == spriteId)
+		ItemType* iType = items->getElement(it->second);
+		if(iType)
 			return *iType;
 	}
-	while(iType);
+
 	static ItemType dummyItemType; // use this for invalid ids
 	return dummyItemType;
 }
 
 int32_t Items::getItemIdByName(const std::string& name)
 {
-	if(!name.empty())
+	if(name.empty())
+		return -1;
+
+	const char* tmpName = name.c_str();
+
+	uint32_t i = 100;
+	ItemType* iType = items->getElement(i);
+	while(iType)
 	{
-		uint32_t i = 100;
-		ItemType* iType = NULL;
-		do
-		{
-			if((iType = items.getElement(i)) && boost::algorithm::iequals(name, iType->name))
-				return i;
+		if(strcasecmp(tmpName, iType->name.c_str()) == 0)
+			return i;
 
-			++i;
-		}
-		while(iType);
+		iType = items->getElement(++i);
 	}
-
 	return -1;
 }

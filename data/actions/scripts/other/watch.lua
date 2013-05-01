@@ -1,19 +1,20 @@
-local config = {
-	tibianTime = true,
-	twentyFour = true -- only if tibianTime = false
-}
-
 function onUse(cid, item, fromPosition, itemEx, toPosition)
-	local str = ""
-	if(config.tibianTime) then
-		local var = getTibiaTime()
-		str = var.hours .. ':' .. var.minutes
-	elseif(config.twentyFour) then
-		str = os.date('%H:%M')
+	local twentyfour = TRUE
+	local tibiantime = TRUE
+	if tibiantime == FALSE then
+		if twentyfour == TRUE then
+			time = os.date('%H:%M')
+		else
+			time = os.date('%I:%M %p')
+		end
 	else
-		str = os.date('%I:%M %p')
+		varh = (os.date('%M') * 60 + os.date('%S')) / 150
+		tibH = math.floor(varh)
+		tibM = math.floor(60 * (varh-tibH))
+		if tibH < 10 then tibH = '0'..tibH end
+		if tibM < 10 then tibM = '0'..tibM end
+		time = (tibH..':'..tibM)
 	end
-
-	doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, "The time is " .. str .. ".")
-	return true
+	doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, 'The time is ' ..time.. '.')
+	return TRUE
 end

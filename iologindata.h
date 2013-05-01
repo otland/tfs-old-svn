@@ -1,37 +1,38 @@
-////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
 // OpenTibia - an opensource roleplaying game
-////////////////////////////////////////////////////////////////////////
-// This program is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+//////////////////////////////////////////////////////////////////////
+// Base class for the LoginData loading/saving
+//////////////////////////////////////////////////////////////////////
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public License
+// as published by the Free Software Foundation; either version 2
+// of the License, or (at your option) any later version.
 //
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with this program.  If not, see <http://www.gnu.org/licenses/>.
-////////////////////////////////////////////////////////////////////////
+// along with this program; if not, write to the Free Software Foundation,
+// Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+//////////////////////////////////////////////////////////////////////
 
-#ifndef __IOLOGINDATA__
-#define __IOLOGINDATA__
-#include "otsystem.h"
+#ifndef __IOLOGINDATA_H
+#define __IOLOGINDATA_H
+
+#include <string>
+#include "account.h"
+#include "player.h"
 #include "database.h"
 
-#include "creature.h"
-#include "player.h"
-#include "account.h"
-#include "group.h"
-
-enum DeleteCharacter_t
+struct PlayerGroup
 {
-	DELETE_INTERNAL,
-	DELETE_LEADER,
-	DELETE_HOUSE,
-	DELETE_ONLINE,
-	DELETE_SUCCESS
+	std::string m_name;
+	uint64_t m_flags;
+	uint32_t m_access;
+	uint32_t m_maxdepotitems;
+	uint32_t m_maxviplist;
 };
 
 typedef std::pair<int32_t, Item*> itemBlock;
@@ -40,97 +41,81 @@ typedef std::list<itemBlock> ItemBlockList;
 class IOLoginData
 {
 	public:
-		virtual ~IOLoginData() {}
+		IOLoginData() {}
+		~IOLoginData() {}
+
 		static IOLoginData* getInstance()
 		{
 			static IOLoginData instance;
 			return &instance;
 		}
 
-		Account loadAccount(uint32_t accountId, bool preLoad = false);
-		bool loadAccount(Account& account, const std::string& name);
-		bool saveAccount(Account account);
-
-		bool getAccountId(const std::string& name, uint32_t& number);
-		bool getAccountName(uint32_t number, std::string& name);
-
-		bool hasFlag(uint32_t accountId, PlayerFlags value);
-		bool hasCustomFlag(uint32_t accountId, PlayerCustomFlags value);
-		bool hasFlag(PlayerFlags value, const std::string& accName);
-		bool hasCustomFlag(PlayerCustomFlags value, const std::string& accName);
-
-		bool accountIdExists(uint32_t accountId);
+		Account loadAccount(uint32_t accno);
+		Account loadAccount(const std::string& name);
+		bool saveAccount(const Account& acc);
+		bool createAccount(const std::string& accountNumber, std::string newPassword);
+		bool getPassword(const std::string& accname, const std::string& name, std::string& password, uint32_t& accNumber);
+		bool getPasswordEx(const std::string& accname, std::string& password, uint32_t& accNumber);
 		bool accountNameExists(const std::string& name);
+		bool setRecoveryKey(uint32_t accountNumber, const std::string& recoveryKey);
+		bool validRecoveryKey(const std::string& accountName, const std::string& recoveryKey);
+		bool setNewPassword(uint32_t accountId, std::string newPassword);
+		bool setNewPassword(const std::string& accountName, std::string newPassword);
+		AccountType_t getAccountType(const std::string& name);
 
-		bool getPassword(uint32_t accountId, std::string& password, std::string& salt, std::string name = "");
-		bool setPassword(uint32_t accountId, std::string newPassword);
-		bool validRecoveryKey(uint32_t accountId, std::string recoveryKey);
-		bool setRecoveryKey(uint32_t accountId, std::string newRecoveryKey);
-
-		uint64_t createAccount(std::string name, std::string password);
-		void removePremium(Account& account);
-
-		const Group* getPlayerGroupByAccount(uint32_t accountId);
-
-		bool loadPlayer(Player* player, const std::string& name, bool preLoad = false);
-		bool savePlayer(Player* player, bool preSave = true, bool shallow = false);
-
-		bool playerStatement(Player* _player, uint16_t channelId, const std::string& text, uint32_t& statementId);
-		bool playerDeath(Player* _player, const DeathList& dl);
-		bool playerMail(Creature* actor, std::string name, uint32_t townId, Item* item);
-
-		bool hasFlag(const std::string& name, PlayerFlags value);
-		bool hasCustomFlag(const std::string& name, PlayerCustomFlags value);
-		bool hasFlag(PlayerFlags value, uint32_t guid);
-		bool hasCustomFlag(PlayerCustomFlags value, uint32_t guid);
-
-		bool isPremium(uint32_t guid);
-
-		bool playerExists(uint32_t guid, bool multiworld = false, bool checkCache = true);
-		bool playerExists(std::string& name, bool multiworld = false, bool checkCache = true);
-		bool getNameByGuid(uint32_t guid, std::string& name, bool multiworld = false);
-		bool getGuidByName(uint32_t& guid, std::string& name, bool multiworld = false);
-		bool getGuidByNameEx(uint32_t& guid, bool& specialVip, std::string& name);
-
-		bool changeName(uint32_t guid, std::string newName, std::string oldName);
-		bool createCharacter(uint32_t accountId, std::string characterName, int32_t vocationId, uint16_t sex);
-		DeleteCharacter_t deleteCharacter(uint32_t accountId, const std::string& characterName);
-
-		uint32_t getLevel(uint32_t guid) const;
-		uint32_t getLastIP(uint32_t guid) const;
-
-		uint32_t getLastIPByName(const std::string& name) const;
-		uint32_t getAccountIdByName(const std::string& name) const;
-
-		bool getUnjustifiedDates(uint32_t guid, std::vector<time_t>& dateList, time_t _time);
-		bool getDefaultTownByName(const std::string& name, uint32_t& townId);
-
-		bool updatePremiumDays();
 		bool updateOnlineStatus(uint32_t guid, bool login);
-		bool resetGuildInformation(uint32_t guid);
+		bool resetOnlineStatus();
 
+		bool loadPlayer(Player* player, const std::string& name, bool preload = false);
+		bool savePlayer(Player* player);
+		bool getGuidByName(uint32_t& guid, std::string& name);
+		bool getGuidByNameEx(uint32_t &guid, bool& specialVip, std::string& name);
+		bool getNameByGuid(uint32_t guid, std::string& name);
+		bool playerExists(const std::string& name);
+		bool playerExists(std::string& name);
+		bool playerExists(uint32_t guid);
+		int32_t getLevel(uint32_t guid);
+		bool isPremium(uint32_t guid);
+		bool leaveGuild(uint32_t guid);
+		bool changeName(uint32_t guid, const std::string& newName);
+		uint32_t getAccountNumberByName(const std::string& name);
+		bool createCharacter(uint32_t accountNumber, const std::string& characterName, int32_t vocationId, PlayerSex_t sex);
+		int16_t deleteCharacter(uint32_t accountNumber, const std::string& characterName);
+		bool addStorageValue(uint32_t guid, uint32_t storageKey, uint32_t storageValue);
+		const PlayerGroup* getPlayerGroup(uint32_t groupid);
+		uint32_t getLastIPByName(const std::string& name);
+		bool hasGuild(uint32_t guid);
 		void increaseBankBalance(uint32_t guid, uint64_t bankBalance);
 
-	protected:
-		IOLoginData() {}
+		std::list<VIPEntry> getVIPEntries(uint32_t accountId);
+		void addVIPEntry(uint32_t accountId, uint32_t guid, const std::string& description, uint32_t icon, bool notify);
+		void editVIPEntry(uint32_t accountId, uint32_t guid, const std::string& description, uint32_t icon, bool notify);
+		void removeVIPEntry(uint32_t accountId, uint32_t guid);
 
+	protected:
+		bool storeNameByGuid(Database& db, uint32_t guid);
+
+		const PlayerGroup* getPlayerGroupByAccount(uint32_t accno);
 		struct StringCompareCase
 		{
-			bool operator()(const std::string& l, const std::string& r) const {return asLowerCaseString(l).compare(asLowerCaseString(r)) < 0;}
+			bool operator()(const std::string& l, const std::string& r) const
+			{
+				return strcasecmp(l.c_str(), r.c_str()) < 0;
+			}
 		};
 
-		typedef std::map<std::string, uint32_t, StringCompareCase> GuidCacheMap;
-		GuidCacheMap guidCacheMap;
+		typedef std::map<int32_t ,std::pair<Item*, int32_t> > ItemMap;
+
+		void loadItems(ItemMap& itemMap, DBResult* result);
+		bool saveItems(const Player* player, const ItemBlockList& itemList, DBInsert& query_insert);
 
 		typedef std::map<uint32_t, std::string> NameCacheMap;
+		typedef std::map<std::string, uint32_t, StringCompareCase> GuidCacheMap;
+		typedef std::map<uint32_t, PlayerGroup*> PlayerGroupMap;
+
+		PlayerGroupMap playerGroupMap;
 		NameCacheMap nameCacheMap;
-
-		typedef std::map<int32_t, std::pair<Item*, int32_t> > ItemMap;
-
-		bool saveItems(const Player* player, const ItemBlockList& itemList, DBInsert& query_insert);
-		void loadItems(ItemMap& itemMap, DBResult* result);
-
-		void loadCharacters(Account& account);
-		bool storeNameByGuid(uint32_t guid);
+		GuidCacheMap guidCacheMap;
 };
+
 #endif

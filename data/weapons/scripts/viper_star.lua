@@ -15,8 +15,8 @@ setCombatCondition(xCombat, condition)
 
 function onUseWeapon(cid, var)
 	local ret = doCombat(cid, combat, var)
-	if(not ret) then
-		return false
+	if(ret == LUA_ERROR) then
+		return LUA_ERROR
 	end
 
 	local target = variantToNumber(var)
@@ -27,6 +27,5 @@ function onUseWeapon(cid, var)
 			ret = doCombat(cid, xCombat, var)
 		end
 	end
-
 	return ret
 end

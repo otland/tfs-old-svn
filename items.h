@@ -1,48 +1,49 @@
-////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
 // OpenTibia - an opensource roleplaying game
-////////////////////////////////////////////////////////////////////////
-// This program is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+//////////////////////////////////////////////////////////////////////
+// The database of items.
+//////////////////////////////////////////////////////////////////////
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public License
+// as published by the Free Software Foundation; either version 2
+// of the License, or (at your option) any later version.
 //
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with this program.  If not, see <http://www.gnu.org/licenses/>.
-////////////////////////////////////////////////////////////////////////
+// along with this program; if not, write to the Free Software Foundation,
+// Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+//////////////////////////////////////////////////////////////////////
 
-#ifndef __ITEMS__
-#define __ITEMS__
-#include "otsystem.h"
-#include "itemloader.h"
+#ifndef __OTSERV_ITEMS_H__
+#define __OTSERV_ITEMS_H__
 
+#include "definitions.h"
 #include "const.h"
 #include "enums.h"
-
+#include "itemloader.h"
 #include "position.h"
+#include <map>
+
+#include <libxml/xmlmemory.h>
 #include <libxml/parser.h>
 
-#define ITEMS_SIZE 15000
-#define ITEMS_INCREMENT 500
-#define ITEMS_RANDOMIZATION 50
-
 #define SLOTP_WHEREEVER 0xFFFFFFFF
-#define SLOTP_HEAD (1 << 0)
-#define	SLOTP_NECKLACE (1 << 1)
-#define	SLOTP_BACKPACK (1 << 2)
-#define	SLOTP_ARMOR (1 << 3)
-#define	SLOTP_RIGHT (1 << 4)
-#define	SLOTP_LEFT (1 << 5)
-#define	SLOTP_LEGS (1 << 6)
-#define	SLOTP_FEET (1 << 7)
-#define	SLOTP_RING (1 << 8)
-#define	SLOTP_AMMO (1 << 9)
-#define	SLOTP_DEPOT (1 << 10)
-#define	SLOTP_TWO_HAND (1 << 11)
+#define SLOTP_HEAD 1
+#define	SLOTP_NECKLACE 2
+#define	SLOTP_BACKPACK 4
+#define	SLOTP_ARMOR 8
+#define	SLOTP_RIGHT 16
+#define	SLOTP_LEFT 32
+#define	SLOTP_LEGS 64
+#define	SLOTP_FEET 128
+#define	SLOTP_RING 256
+#define	SLOTP_AMMO 512
+#define	SLOTP_DEPOT 1024
+#define	SLOTP_TWO_HAND 2048
 #define SLOTP_HAND (SLOTP_LEFT | SLOTP_RIGHT)
 
 enum ItemTypes_t
@@ -61,64 +62,72 @@ enum ItemTypes_t
 	ITEM_TYPE_LAST
 };
 
-enum FloorChange_t
-{
-	CHANGE_PRE_FIRST = 0,
-	CHANGE_DOWN = CHANGE_PRE_FIRST,
-	CHANGE_FIRST = 1,
-	CHANGE_NORTH = CHANGE_FIRST,
-	CHANGE_EAST = 2,
-	CHANGE_SOUTH = 3,
-	CHANGE_WEST = 4,
-	CHANGE_FIRST_EX = 5,
-	CHANGE_NORTH_EX = CHANGE_FIRST_EX,
-	CHANGE_EAST_EX = 6,
-	CHANGE_SOUTH_EX = 7,
-	CHANGE_WEST_EX = 8,
-	CHANGE_NONE = 9,
-	CHANGE_PRE_LAST = 8,
-	CHANGE_LAST = CHANGE_NONE
-};
-
 struct Abilities
 {
 	Abilities()
 	{
+		elementType = COMBAT_NONE;
+		elementDamage = 0;
 		memset(skills, 0, sizeof(skills));
-		memset(skillsPercent, 0, sizeof(skillsPercent));
-		memset(stats, 0, sizeof(stats));
+		memset(absorbPercent, 0, sizeof(absorbPercent));
+		memset(stats, 0 , sizeof(stats));
 		memset(statsPercent, 0, sizeof(statsPercent));
 
-		memset(absorb, 0, sizeof(absorb));
-		memset(fieldAbsorb, 0, sizeof(fieldAbsorb));
-		memset(increment, 0, sizeof(increment));
-		memset(reflect[REFLECT_PERCENT], 0, sizeof(reflect[REFLECT_PERCENT]));
-		memset(reflect[REFLECT_CHANCE], 0, sizeof(reflect[REFLECT_CHANCE]));
+		speed = 0;
+		manaShield = false;
+		invisible = false;
+		regeneration = false;
 
-		elementType = COMBAT_NONE;
-		manaShield = invisible = regeneration = preventLoss = preventDrop = false;
-		speed = healthGain = healthTicks = manaGain = manaTicks = elementDamage = conditionSuppressions = 0;
+		healthGain = 0;
+		healthTicks = 0;
+		manaGain = 0;
+		manaTicks = 0;
+
+		conditionImmunities = 0;
+		conditionSuppressions = 0;
 	};
 
-	bool manaShield, invisible, regeneration, preventLoss, preventDrop;
+	//elemental damage
 	CombatType_t elementType;
+	int16_t elementDamage;
 
-	int16_t elementDamage, absorb[COMBAT_LAST + 1], increment[INCREMENT_LAST + 1],
-		reflect[REFLECT_LAST + 1][COMBAT_LAST + 1], fieldAbsorb[COMBAT_LAST + 1];
-	int32_t skills[SKILL_LAST + 1], skillsPercent[SKILL_LAST + 1], stats[STAT_LAST + 1], statsPercent[STAT_LAST + 1],
-		speed, healthGain, healthTicks, manaGain, manaTicks, conditionSuppressions;
+	//extra skill modifiers
+	int32_t skills[SKILL_LAST + 1];
+
+	//damage abilities modifiers
+	int16_t absorbPercent[COMBAT_COUNT + 1];
+
+	//stats modifiers
+	int32_t stats[STAT_LAST + 1];
+	int32_t statsPercent[STAT_LAST + 1];
+
+	int32_t speed;
+	bool manaShield;
+	bool invisible;
+	bool regeneration;
+
+	uint32_t healthGain;
+	uint32_t healthTicks;
+	uint32_t manaGain;
+	uint32_t manaTicks;
+
+	uint32_t conditionImmunities;
+	uint32_t conditionSuppressions;
 };
 
 class Condition;
+
 class ItemType
 {
 	private:
-		ItemType(const ItemType&) {} //TODO!
+		ItemType(const ItemType& it){}
 
 	public:
 		ItemType();
 		virtual ~ItemType();
-		Abilities* getAbilities() {if(!abilities) abilities = new Abilities; return abilities;}
+
+		itemgroup_t group;
+		ItemTypes_t type;
 
 		bool isGroundTile() const {return (group == ITEM_GROUP_GROUND);}
 		bool isContainer() const {return (group == ITEM_GROUP_CONTAINER);}
@@ -132,44 +141,126 @@ class ItemType
 		bool isDepot() const {return (type == ITEM_TYPE_DEPOT);}
 		bool isMailbox() const {return (type == ITEM_TYPE_MAILBOX);}
 		bool isTrashHolder() const {return (type == ITEM_TYPE_TRASHHOLDER);}
-		bool isRune() const {return (type == ITEM_TYPE_RUNE);}
 		bool isBed() const {return (type == ITEM_TYPE_BED);}
 
-		bool hasSubType() const {return (isFluidContainer() || isSplash() || stackable || charges);}
-		bool hasAbilities() const {return abilities != NULL;}
+		bool isRune() const {return type == ITEM_TYPE_RUNE;}
+		bool hasSubType() const {return (isFluidContainer() || isSplash() || stackable || charges != 0);}
 
-		bool loaded, stopTime, showCount, stackable, showDuration, showCharges, showAttributes, dualWield,
-			allowDistRead, canReadText, canWriteText, forceSerialize, isVertical, isHorizontal, isHangable,
-			usable, movable, pickupable, rotable, replacable, lookThrough, walkStack, hasHeight, blockSolid,
-			blockPickupable, blockProjectile, blockPathFind, allowPickupable, alwaysOnTop, floorChange[CHANGE_LAST],
-			isAnimation, specialDoor, closingDoor, cache;
+		Abilities* getAbilities() { if(abilities == NULL) { abilities = new Abilities(); } return abilities; }
 
-		MagicEffect_t magicEffect;
-		FluidTypes_t fluidSource;
-		WeaponType_t weaponType;
+		std::string getPluralName() const
+		{
+			std::string str = pluralName;
+			if(str.size() == 0 && name.size() != 0)
+			{
+				str = name;
+				if(showCount != 0)
+					str += "s";
+			}
+			return str;
+		}
+
 		Direction bedPartnerDir;
-		AmmoAction_t ammoAction;
-		CombatType_t combatType;
-		RaceType_t corpseType;
-		ShootEffect_t shootType;
+		uint16_t transformToOnUse[2];
+		uint16_t transformToFree;
+
+		uint16_t id;
+		uint16_t clientId;
+
+		std::string name;
+		std::string article;
+		std::string pluralName;
+		std::string description;
+		uint16_t maxItems;
+		float weight;
+		bool showCount;
+		WeaponType_t weaponType;
 		Ammo_t ammoType;
+		ShootType_t shootType;
+		MagicEffectClasses magicEffect;
+		int32_t attack;
+		int32_t defense;
+		int32_t extraDefense;
+		int32_t armor;
+		uint16_t slotPosition;
+		uint32_t levelDoor;
+		bool isVertical;
+		bool isHorizontal;
+		bool isHangable;
+		bool allowDistRead;
+		bool lookThrough;
+		bool isAnimation;
+		uint16_t speed;
+		int32_t decayTo;
+		uint32_t decayTime;
+		bool stopTime;
+		RaceType_t corpseType;
 
-		uint16_t transformBed[PLAYERSEX_MALE + 1], transformUseTo, transformEquipTo, transformDeEquipTo,
-			id, clientId, maxItems, slotPosition, wieldPosition, speed, maxTextLength, writeOnceItemId, wareId,
-			premiumDays;
+		bool canReadText;
+		bool canWriteText;
+		uint16_t maxTextLen;
+		uint16_t writeOnceItemId;
 
-		int32_t attack, extraAttack, defense, extraDefense, armor, breakChance, hitChance, maxHitChance,
-			runeLevel, runeMagLevel, lightLevel, lightColor, decayTo, rotateTo, alwaysOnTopOrder;
-		uint32_t shootRange, charges, decayTime, attackSpeed, wieldInfo, minReqLevel, minReqMagicLevel,
-			worth, levelDoor, date;
+		bool stackable;
+		bool useable;
+		bool moveable;
+		bool alwaysOnTop;
+		int32_t alwaysOnTopOrder;
+		bool pickupable;
+		bool rotable;
+		int32_t rotateTo;
 
-		std::string name, pluralName, article, description, text, writer, runeSpellName, vocationString;
+		int32_t runeMagLevel;
+		int32_t runeLevel;
+		std::string runeSpellName;
+
+		uint32_t wieldInfo;
+		std::string vocationString;
+		uint32_t minReqLevel;
+		uint32_t minReqMagicLevel;
+
+		int32_t lightLevel;
+		int32_t lightColor;
+
+		bool floorChangeDown;
+		bool floorChangeNorth;
+		bool floorChangeSouth;
+		bool floorChangeSouthAlt;
+		bool floorChangeEast;
+		bool floorChangeEastAlt;
+		bool floorChangeWest;
+		bool hasHeight;
+
+		bool walkStack;
+
+		bool blockSolid;
+		bool blockPickupable;
+		bool blockProjectile;
+		bool blockPathFind;
+
+		bool allowPickupable;
+
+		unsigned short transformEquipTo;
+		unsigned short transformDeEquipTo;
+		bool showDuration;
+		bool showCharges;
+		bool showAttributes;
+		uint32_t charges;
+		int32_t breakChance;
+		int32_t hitChance;
+		int32_t maxHitChance;
+		uint32_t shootRange;
+		AmmoAction_t ammoAction;
+		FluidTypes_t fluidSource;
+
+		Abilities* abilities;
 
 		Condition* condition;
-		Abilities* abilities;
-		itemgroup_t group;
-		ItemTypes_t type;
-		float weight;
+		CombatType_t combatType;
+		bool replaceable;
+		bool ware;
+
+//		std::string marketName;
 };
 
 template<typename A>
@@ -177,22 +268,14 @@ class Array
 {
 	public:
 		Array(uint32_t n);
-		virtual ~Array() {clear();}
-
-		void clear()
-		{
-			if(m_data && m_size)
-			{
-				free(m_data);
-				m_size = 0;
-			}
-		}
-		void reload();
+		~Array();
 
 		A getElement(uint32_t id);
 		const A getElement(uint32_t id) const;
-
 		void addElement(A a, uint32_t pos);
+
+		void reset();
+
 		uint32_t size() {return m_size;}
 
 	private:
@@ -200,19 +283,55 @@ class Array
 		uint32_t m_size;
 };
 
+class Items
+{
+	public:
+		Items();
+		~Items();
+
+		bool reload();
+		void clear();
+
+		int32_t loadFromOtb(const std::string& file);
+
+		const ItemType& operator[](int32_t id) const {return getItemType(id);}
+		const ItemType& getItemType(int32_t id) const;
+		ItemType& getItemType(int32_t id);
+		const ItemType& getItemIdByClientId(int32_t spriteId) const;
+
+		int32_t getItemIdByName(const std::string& name);
+
+		static uint32_t dwMajorVersion;
+		static uint32_t dwMinorVersion;
+		static uint32_t dwBuildNumber;
+
+		bool loadFromXml();
+		bool parseItemNode(xmlNodePtr itemNode, uint32_t id);
+
+		void addItemType(ItemType* iType);
+
+		const ItemType* getElement(uint32_t id) const {return items->getElement(id);}
+		uint32_t size() {return items->size();}
+
+	protected:
+		typedef std::map<int32_t, int32_t> ReverseItemMap;
+		ReverseItemMap reverseItemMap;
+
+		Array<ItemType*>* items;
+};
+
 template<typename A>
 Array<A>::Array(uint32_t n)
 {
-	m_data = (A*)malloc(sizeof(A) * n);
-	memset(m_data, 0, sizeof(A) * n);
+	m_data = (A*)malloc(sizeof(A)*n);
+	memset(m_data, 0, sizeof(A)*n);
 	m_size = n;
 }
 
 template<typename A>
-void Array<A>::reload()
+Array<A>::~Array()
 {
-	m_data = (A*)malloc(sizeof(A) * m_size);
-	memset(m_data, 0, sizeof(A) * m_size);
+	free(m_data);
 }
 
 template<typename A>
@@ -236,65 +355,24 @@ const A Array<A>::getElement(uint32_t id) const
 template<typename A>
 void Array<A>::addElement(A a, uint32_t pos)
 {
+	#define INCREMENT 5000
 	if(pos >= m_size)
 	{
-		m_data = (A*)realloc(m_data, sizeof(A) * (pos + ITEMS_INCREMENT));
-		memset(m_data + m_size, 0, sizeof(A) * (pos + ITEMS_INCREMENT - m_size));
-		m_size = pos + ITEMS_INCREMENT;
+		m_data = (A*)realloc(m_data, sizeof(A) * (pos + INCREMENT));
+		memset(m_data + m_size, 0, sizeof(A) * (pos + INCREMENT - m_size));
+		m_size = pos + INCREMENT;
 	}
-
 	m_data[pos] = a;
 }
 
-struct RandomizationBlock
+template<typename A>
+void Array<A>::reset()
 {
-	int32_t fromRange, toRange, chance;
-};
-
-typedef std::map<int16_t, RandomizationBlock> RandomizationMap;
-typedef std::map<int32_t, int32_t> IntegerMap;
-
-class Items
-{
-	public:
-		Items(): m_randomizationChance(ITEMS_RANDOMIZATION), items(ITEMS_SIZE) {}
-		virtual ~Items() {clear();}
-
-		bool reload();
-		int32_t loadFromOtb(std::string);
-		bool loadFromXml();
-		void parseItemNode(xmlNodePtr itemNode, uint32_t id);
-
-		void addItemType(ItemType* iType);
-		ItemType& getItemType(int32_t id);
-		const ItemType& getItemType(int32_t id) const;
-		const ItemType& operator[](int32_t id) const {return getItemType(id);}
-
-		int32_t getItemIdByName(const std::string& name);
-		const ItemType& getItemIdByClientId(int32_t spriteId) const;
-
-		uint16_t getRandomizedItem(uint16_t id);
-		uint8_t getRandomizationChance() const {return m_randomizationChance;}
-		const RandomizationBlock getRandomization(int16_t id) {return randomizationMap[id];}
-
-		uint32_t size() {return items.size();}
-		const IntegerMap getMoneyMap() const {return moneyMap;}
-		const ItemType* getElement(uint32_t id) const {return items.getElement(id);}
-
-		static uint32_t dwMajorVersion;
-		static uint32_t dwMinorVersion;
-		static uint32_t dwBuildNumber;
-
-	private:
-		uint8_t m_randomizationChance;
-		void clear();
-
-		void parseRandomizationBlock(int32_t id, int32_t fromId, int32_t toId, int32_t chance);
-
-		Array<ItemType*> items;
-		RandomizationMap randomizationMap;
-
-		IntegerMap moneyMap;
-		IntegerMap reverseItemMap;
-};
+	for(uint32_t i = 0; i < m_size; i++)
+	{
+		delete m_data[i];
+		m_data[i] = NULL;
+	}
+	memset(this->m_data, 0, sizeof(A) * this->m_size);
+}
 #endif

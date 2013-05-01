@@ -1,122 +1,152 @@
-////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
 // OpenTibia - an opensource roleplaying game
-////////////////////////////////////////////////////////////////////////
-// This program is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+//////////////////////////////////////////////////////////////////////
+//
+//////////////////////////////////////////////////////////////////////
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public License
+// as published by the Free Software Foundation; either version 2
+// of the License, or (at your option) any later version.
 //
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with this program.  If not, see <http://www.gnu.org/licenses/>.
-////////////////////////////////////////////////////////////////////////
+// along with this program; if not, write to the Free Software Foundation,
+// Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+//////////////////////////////////////////////////////////////////////
 
-#ifndef __OTSYSTEM__
-#define __OTSYSTEM__
-#include "definitions.h"
+#ifndef __OTSERV_OTTHREAD_H__
+#define __OTSERV_OTTHREAD_H__
 
-#include <string>
-#include <algorithm>
-#include <bitset>
-#include <queue>
-#include <set>
-#include <vector>
+#include "logger.h"
+
 #include <list>
-#include <map>
-#include <limits>
+#include <vector>
+#include <algorithm>
 
-#include <boost/utility.hpp>
-#include <boost/asio.hpp>
-#include <boost/thread.hpp>
-#include <boost/foreach.hpp>
-#include <boost/shared_ptr.hpp>
-#include <boost/algorithm/string/predicate.hpp>
+typedef std::vector< std::pair<uint32_t, uint32_t> > IPList;
 
-#include <cstddef>
-#include <cstdlib>
-#ifdef __GXX_EXPERIMENTAL_CXX0X__
-	#include <cstdint>
+#ifdef WIN32
+#ifdef __WIN_LOW_FRAG_HEAP__
+#define _WIN32_WINNT 0x0501
+#endif
+#include <stddef.h>
+#include <stdlib.h>
+#include <sys/timeb.h>
+#include <process.h>
+
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+
+#include <WinSock2.h>
+
+#define OTSYS_CREATE_THREAD(a, b) _beginthread(a, 0, b)
+
+#define OTSYS_THREAD_LOCKVAR		CRITICAL_SECTION
+
+#define OTSYS_THREAD_LOCKVARINIT(a)	InitializeCriticalSection(&a);
+#define OTSYS_THREAD_LOCK(a, b)		EnterCriticalSection(&a);
+#define OTSYS_THREAD_UNLOCK(a, b)	LeaveCriticalSection(&a);
+#define OTSYS_THREAD_UNLOCK_PTR(a, b)	LeaveCriticalSection(a);
+
+#define OTSYS_THREAD_TIMEOUT WAIT_TIMEOUT
+#define OTSYS_THREAD_SIGNALVARINIT(a) a = CreateEvent(NULL, FALSE, FALSE, NULL)
+#define OTSYS_THREAD_SIGNAL_SEND(a) SetEvent(a);
+
+typedef HANDLE OTSYS_THREAD_SIGNALVAR;
+
+inline int64_t OTSYS_TIME()
+{
+	_timeb t;
+	_ftime(&t);
+	return int64_t(t.millitm) + int64_t(t.time) * 1000;
+}
+
+inline int OTSYS_THREAD_WAITSIGNAL(OTSYS_THREAD_SIGNALVAR& signal, OTSYS_THREAD_LOCKVAR& lock)
+{
+	//LeaveCriticalSection(&lock);
+	OTSYS_THREAD_UNLOCK(lock, "OTSYS_THREAD_WAITSIGNAL");
+	WaitForSingleObject(signal, INFINITE);
+	//EnterCriticalSection(&lock);
+	OTSYS_THREAD_LOCK(lock, "OTSYS_THREAD_WAITSIGNAL");
+
+	return -0x4711;
+}
+
+inline void OTSYS_SLEEP(uint32_t t)
+{
+	Sleep(t);
+}
+
+inline int OTSYS_THREAD_WAITSIGNAL_TIMED(OTSYS_THREAD_SIGNALVAR& signal, OTSYS_THREAD_LOCKVAR& lock, int64_t cycle)
+{
+	int64_t tout64 = (cycle - OTSYS_TIME());
+
+	DWORD tout = 0;
+	if(tout64 > 0)
+		tout = (DWORD)(tout64);
+
+	OTSYS_THREAD_UNLOCK(lock, "OTSYS_THREAD_WAITSIGNAL_TIMED");
+	int ret = WaitForSingleObject(signal, tout);
+	OTSYS_THREAD_LOCK(lock, "OTSYS_THREAD_WAITSIGNAL_TIMED");
+
+	return ret;
+}
+
 #else
-	#include <stdint.h>
-#endif
 
-#ifndef __x86_64__
-	#ifdef _M_X64 // msvc
-		#define __x86_64__ 1
-	#else
-		#define __x86_64__ 0
-	#endif
-#endif
+#include <pthread.h>
+#include <semaphore.h>
+#include <time.h>
+#include <sys/types.h>
+#include <sys/timeb.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <netdb.h>
+#include <stdint.h>
+#include <errno.h>
 
-#include <ctime>
-#include <cassert>
-#ifdef WINDOWS
-	#include <windows.h>
-	#include <sys/timeb.h>
+#define PTHREAD_MUTEX_RECURSIVE_NP PTHREAD_MUTEX_RECURSIVE
 
-	#ifndef access
-	#define access _access
-	#endif
+inline void OTSYS_CREATE_THREAD(void *(*a)(void*), void *b)
+{
+	pthread_attr_t attr;
+	pthread_t id;
+	pthread_attr_init(&attr);
+	pthread_attr_setdetachstate(&attr,PTHREAD_CREATE_DETACHED);
+	pthread_create(&id, &attr, a, b);
+}
 
-	#ifndef timeb
-	#define timeb _timeb
-	#endif
+typedef pthread_mutex_t OTSYS_THREAD_LOCKVAR;
 
-	#ifndef ftime
-	#define ftime _ftime
-	#endif
+inline void OTSYS_THREAD_LOCKVARINIT(OTSYS_THREAD_LOCKVAR& l)
+{
+	pthread_mutexattr_t attr;
+	pthread_mutexattr_init(&attr);
+	pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE_NP);
+	pthread_mutex_init(&l, &attr);
+}
 
-	#ifndef EWOULDBLOCK
-	#define EWOULDBLOCK WSAEWOULDBLOCK
-	#endif
+#define OTSYS_THREAD_LOCK(a, b)          pthread_mutex_lock(&a);
+#define OTSYS_THREAD_UNLOCK(a, b)        pthread_mutex_unlock(&a);
+#define OTSYS_THREAD_UNLOCK_PTR(a, b)    pthread_mutex_unlock(a);
+#define OTSYS_THREAD_TIMEOUT			  ETIMEDOUT
+#define OTSYS_THREAD_SIGNALVARINIT(a) pthread_cond_init(&a, NULL);
+#define OTSYS_THREAD_SIGNAL_SEND(a)   pthread_cond_signal(&a);
 
-	#ifndef errno
-	#define errno WSAGetLastError()
-	#endif
+typedef pthread_cond_t OTSYS_THREAD_SIGNALVAR;
 
-	#ifndef OTSYS_SLEEP
-		#define OTSYS_SLEEP(n) Sleep(n)
-	#endif
-#else
-	#include <sys/timeb.h>
-	#include <sys/types.h>
-	#include <sys/socket.h>
-
-	#include <unistd.h>
-	#include <netdb.h>
-	#include <errno.h>
-
-	#include <arpa/inet.h>
-	#include <netinet/in.h>
-
-	#ifndef SOCKET
-	#define SOCKET int32_t
-	#endif
-
-	#ifndef closesocket
-	#define closesocket close
-	#endif
-
-	#ifndef SOCKADDR
-	#define SOCKADDR sockaddr
-	#endif
-
-	#ifndef SOCKET_ERROR
-	#define SOCKET_ERROR -1
-	#endif
-
-	inline void OTSYS_SLEEP(int32_t n)
-	{
-		timespec tv;
-		tv.tv_sec  = n / 1000;
-		tv.tv_nsec = (n % 1000) * 1000000;
-		nanosleep(&tv, NULL);
-	}
-#endif
+inline void OTSYS_SLEEP(int t)
+{
+	timespec tv;
+	tv.tv_sec  = t / 1000;
+	tv.tv_nsec = (t % 1000)*1000000;
+	nanosleep(&tv, NULL);
+}
 
 inline int64_t OTSYS_TIME()
 {
@@ -125,18 +155,37 @@ inline int64_t OTSYS_TIME()
 	return ((int64_t)t.millitm) + ((int64_t)t.time) * 1000;
 }
 
-inline uint32_t swap_uint32(uint32_t val)
+inline int OTSYS_THREAD_WAITSIGNAL(OTSYS_THREAD_SIGNALVAR& signal, OTSYS_THREAD_LOCKVAR& lock)
 {
-    val = ((val << 8) & 0xFF00FF00) | ((val >> 8) & 0xFF00FF);
-    return (val << 16) | (val >> 16);
+	return pthread_cond_wait(&signal, &lock);
 }
 
-#if BOOST_VERSION < 104400
-#define BOOST_DIR_ITER_FILENAME(iterator) (iterator)->path().filename()
-#else
-#define BOOST_DIR_ITER_FILENAME(iterator) (iterator)->path().filename().string()
+inline int OTSYS_THREAD_WAITSIGNAL_TIMED(OTSYS_THREAD_SIGNALVAR& signal, OTSYS_THREAD_LOCKVAR& lock, int64_t cycle)
+{
+	timespec tv;
+	tv.tv_sec = (int64_t)(cycle / 1000);
+	// tv_nsec is in nanoseconds while we only store microseconds...
+	tv.tv_nsec = (int64_t)(cycle % 1000) * 1000000;
+	return pthread_cond_timedwait(&signal, &lock, &tv);
+}
+
 #endif
 
-#define foreach BOOST_FOREACH
-#define reverse_foreach BOOST_REVERSE_FOREACH
-#endif
+class OTSYS_THREAD_LOCK_CLASS
+{
+	public:
+		inline OTSYS_THREAD_LOCK_CLASS(OTSYS_THREAD_LOCKVAR &a)
+		{
+			mutex = &a;
+			OTSYS_THREAD_LOCK(a, NULL)
+		}
+
+		inline ~OTSYS_THREAD_LOCK_CLASS()
+		{
+			OTSYS_THREAD_UNLOCK_PTR(mutex, NULL)
+		}
+
+		OTSYS_THREAD_LOCKVAR *mutex;
+};
+
+#endif // #ifndef __OTSYSTEM_H__

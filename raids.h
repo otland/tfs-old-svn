@@ -1,48 +1,52 @@
-////////////////////////////////////////////////////////////////////////
-// OpenTibia - an opensource roleplaying game
-////////////////////////////////////////////////////////////////////////
-// This program is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+//////////////////////////////////////////////////////////////////////
+//
+//////////////////////////////////////////////////////////////////////
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public License
+// as published by the Free Software Foundation; either version 2
+// of the License, or (at your option) any later version.
 //
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with this program.  If not, see <http://www.gnu.org/licenses/>.
-////////////////////////////////////////////////////////////////////////
+// along with this program; if not, write to the Free Software Foundation,
+// Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+//////////////////////////////////////////////////////////////////////
+#ifndef __OTSERV_RAIDS_H__
+#define __OTSERV_RAIDS_H__
 
-#ifndef __RAIDS__
-#define __RAIDS__
-#include "otsystem.h"
+#include <string>
+#include <vector>
+#include <list>
+
+#include "definitions.h"
 #include "const.h"
+#include "position.h"
+#include "baseevents.h"
 
 #include <libxml/xmlmemory.h>
 #include <libxml/parser.h>
 
-#include "baseevents.h"
-#include "position.h"
-#include "tools.h"
-
-enum RefType_t
+enum RaidState_t
 {
-	REF_NONE = 0,
-	REF_SINGLE,
-	REF_BLOCK
+	RAIDSTATE_IDLE = 0,
+	RAIDSTATE_EXECUTING
 };
 
 struct MonsterSpawn
 {
 	std::string name;
-	bool effect;
-	uint32_t min, max;
-
-	MonsterSpawn(const std::string& _name): name(_name), effect(true) {min = max = 0;}
-	MonsterSpawn(): effect(true) {min = max = 0;}
+	uint32_t minAmount;
+	uint32_t maxAmount;
 };
+
+//How many times it will try to find a tile to add the monster to before giving up
+#define MAXIMUM_TRIES_PER_MONSTER 10
+#define CHECK_RAIDS_INTERVAL 60
+#define RAID_MINTICKS 1000
 
 class Raid;
 class RaidEvent;
@@ -51,107 +55,97 @@ typedef std::list<Raid*> RaidList;
 typedef std::vector<RaidEvent*> RaidEventVector;
 typedef std::list<MonsterSpawn*> MonsterSpawnList;
 
-#define MAXIMUM_TRIES_PER_MONSTER 10
-#define CHECK_RAIDS_INTERVAL 60
-#define MAX_RAND_RANGE 10000000
-#define MAX_ITEM_CHANCE 100000
-#define RAID_MINTICKS 100
-
 class Raids
 {
 	public:
-		virtual ~Raids() {clear();}
 		static Raids* getInstance()
 		{
 			static Raids instance;
 			return &instance;
 		}
 
-		bool loadFromXml();
-		bool parseRaidNode(xmlNodePtr raidNode, bool checkDuplicate, FileType_t pathing);
+		~Raids();
 
+		bool loadFromXml();
 		bool startup();
-		void checkRaids();
 
 		void clear();
 		bool reload();
 
-		Raid* getRunning() const {return running;}
+		bool isLoaded() const {return loaded;}
+		bool isStarted() const {return started;}
+
+		Raid* getRunning() {return running;}
 		void setRunning(Raid* newRunning) {running = newRunning;}
+
+		Raid* getRaidByName(const std::string& name);
 
 		uint64_t getLastRaidEnd() const {return lastRaidEnd;}
 		void setLastRaidEnd(uint64_t newLastRaidEnd) {lastRaidEnd = newLastRaidEnd;}
 
-		bool isLoaded() const {return loaded;}
-		bool isStarted() const {return started;}
+		void checkRaids();
 
-		std::string getScriptBaseName() const {return "raids";}
-		Raid* getRaidByName(const std::string& name);
+		LuaScriptInterface& getScriptInterface() { return m_scriptInterface; }
 
 	private:
 		Raids();
-		bool loaded, started;
-
 		RaidList raidList;
+		bool loaded, started;
 		Raid* running;
-
-		uint32_t checkRaidsEvent;
 		uint64_t lastRaidEnd;
+		uint32_t checkRaidsEvent;
+
+		LuaScriptInterface m_scriptInterface;
 };
 
 class Raid
 {
 	public:
-		Raid(const std::string& _name, uint32_t _interval, uint64_t _margin,
-			RefType_t _refType, bool _ref, bool _enabled);
-		virtual ~Raid();
+		Raid(const std::string& _name, uint32_t _interval, uint32_t _marginTime);
+		~Raid();
 
 		bool loadFromXml(const std::string& _filename);
 
-		bool startRaid();
-		bool resetRaid(bool checkExecution);
+		void startRaid();
 
-		bool executeRaidEvent(RaidEvent* raidEvent);
-		void stopEvents();
+		void executeRaidEvent(RaidEvent* raidEvent);
+		void resetRaid();
 
 		RaidEvent* getNextRaidEvent();
+		void setState(RaidState_t newState) {state = newState;}
 		std::string getName() const {return name;}
 
+		void addEvent(RaidEvent* event);
+
+		bool isLoaded() const {return loaded;}
 		uint64_t getMargin() const {return margin;}
 		uint32_t getInterval() const {return interval;}
 
-		bool isLoaded() const {return loaded;}
-		bool isEnabled() const {return enabled;}
-
-		bool usesRef() const {return refType != REF_NONE;}
-		bool hasRef() const {return refCount > 0;}
-
-		void addRef() {++refCount;}
-		void unRef() {--refCount; if(refCount <= 0) resetRaid(true);}
+		void stopEvents();
 
 	private:
+		RaidEventVector raidEvents;
 		std::string name;
 		uint32_t interval;
+		uint32_t nextEvent;
 		uint64_t margin;
-		RefType_t refType;
-		bool ref, enabled;
-
+		RaidState_t state;
+		uint32_t nextEventEvent;
 		bool loaded;
-		uint32_t refCount, eventCount, nextEvent;
-		RaidEventVector raidEvents;
 };
 
 class RaidEvent
 {
 	public:
-		RaidEvent(Raid* raid, bool ref):
-			m_delay(RAID_MINTICKS), m_ref(ref), m_raid(raid) {}
+		RaidEvent() {}
 		virtual ~RaidEvent() {}
 
 		virtual bool configureRaidEvent(xmlNodePtr eventNode);
-		virtual bool executeEvent(const std::string&) const {return false;}
 
+		virtual bool executeEvent() {return false;}
 		uint32_t getDelay() const {return m_delay;}
+		void setDelay(uint32_t newDelay) {m_delay = newDelay;}
+
 		static bool compareEvents(const RaidEvent* lhs, const RaidEvent* rhs)
 		{
 			return lhs->getDelay() < rhs->getDelay();
@@ -159,105 +153,70 @@ class RaidEvent
 
 	private:
 		uint32_t m_delay;
-
-	protected:
-		bool m_ref;
-		Raid* m_raid;
 };
 
 class AnnounceEvent : public RaidEvent
 {
 	public:
-		AnnounceEvent(Raid* raid, bool ref): RaidEvent(raid, ref),
-			m_messageType(MSG_EVENT_ADVANCE) {}
+		AnnounceEvent() { m_messageType = MSG_EVENT_ADVANCE; }
 		virtual ~AnnounceEvent() {}
 
 		virtual bool configureRaidEvent(xmlNodePtr eventNode);
-		virtual bool executeEvent(const std::string& name) const;
+
+		virtual bool executeEvent();
 
 	private:
 		std::string m_message;
 		MessageClasses m_messageType;
 };
 
-class EffectEvent : public RaidEvent
-{
-	public:
-		EffectEvent(Raid* raid, bool ref): RaidEvent(raid, ref),
-			m_effect(MAGIC_EFFECT_NONE) {}
-		virtual ~EffectEvent() {}
-
-		virtual bool configureRaidEvent(xmlNodePtr eventNode);
-		virtual bool executeEvent(const std::string& name) const;
-
-	private:
-		MagicEffect_t m_effect;
-		Position m_position;
-};
-
-class ItemSpawnEvent : public RaidEvent
-{
-	public:
-		ItemSpawnEvent(Raid* raid, bool ref): RaidEvent(raid, ref),
-			m_itemId(0), m_subType(-1), m_chance(MAX_ITEM_CHANCE) {}
-		virtual ~ItemSpawnEvent() {}
-
-		virtual bool configureRaidEvent(xmlNodePtr eventNode);
-		virtual bool executeEvent(const std::string& name) const;
-
-	private:
-		int16_t m_itemId;
-		int32_t m_subType;
-
-		uint32_t m_chance;
-		Position m_position;
-};
-
 class SingleSpawnEvent : public RaidEvent
 {
 	public:
-		SingleSpawnEvent(Raid* raid, bool ref): RaidEvent(raid, ref),
-			m_effect(true) {}
+		SingleSpawnEvent() {}
 		virtual ~SingleSpawnEvent() {}
 
 		virtual bool configureRaidEvent(xmlNodePtr eventNode);
-		virtual bool executeEvent(const std::string& name) const;
+
+		virtual bool executeEvent();
 
 	private:
-		std::string m_monster;
+		std::string m_monsterName;
 		Position m_position;
-		bool m_effect;
 };
 
 class AreaSpawnEvent : public RaidEvent
 {
 	public:
-		AreaSpawnEvent(Raid* raid, bool ref): RaidEvent(raid, ref) {}
+		AreaSpawnEvent() {}
 		virtual ~AreaSpawnEvent();
 
 		virtual bool configureRaidEvent(xmlNodePtr eventNode);
-		virtual bool executeEvent(const std::string& name) const;
+
+		void addMonster(MonsterSpawn* monsterSpawn);
+		void addMonster(const std::string& monsterName, uint32_t minAmount, uint32_t maxAmount);
+
+		virtual bool executeEvent();
 
 	private:
 		MonsterSpawnList m_spawnList;
-		Position m_fromPosition, m_toPosition;
+		Position m_fromPos, m_toPos;
 };
 
 class ScriptEvent : public RaidEvent, public Event
 {
 	public:
-		ScriptEvent(Raid* raid, bool ref): RaidEvent(raid, ref),
-			Event(&m_interface) {}
-		virtual ~ScriptEvent() {}
+		ScriptEvent(LuaScriptInterface* _interface);
+		ScriptEvent(const ScriptEvent* copy);
+		~ScriptEvent() {}
 
 		virtual bool configureRaidEvent(xmlNodePtr eventNode);
-		virtual bool executeEvent(const std::string& name) const;
+		virtual bool configureEvent(xmlNodePtr p) {return false;}
 
-		virtual bool configureEvent(xmlNodePtr) {return false;}
-		static LuaInterface m_interface;
+		bool executeEvent();
 
 	protected:
-		virtual std::string getScriptEventName() const {return "onRaid";}
-		virtual std::string getScriptEventParams() const {return "";}
+		virtual std::string getScriptEventName();
 };
+
 #endif

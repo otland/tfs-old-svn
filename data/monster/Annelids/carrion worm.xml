@@ -22,8 +22,8 @@
 	</attacks>
 	<defenses armor="8" defense="11"/>
 	<elements>
-		<element earthPercent="5"/>
-		<element energyPercent="5"/>
+		<element earthPercent="20"/>
+		<element energyPercent="1"/>
 		<element firePercent="-5"/>
 		<element icePercent="-5"/>
 	</elements>

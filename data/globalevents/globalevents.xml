@@ -1,11 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <globalevents>
-	<globalevent name="save" interval="900000" event="script" value="save.lua"/>
-	<globalevent name="clean" interval="7200000" event="script" value="clean.lua"/>
-
-	<globalevent name="init" type="startup" event="script" value="init.lua"/>
-	<globalevent name="globalsave" type="globalsave" event="script" value="init.lua"/>
-	<globalevent name="record" type="record" event="script" value="record.lua"/>
-
-	<!-- <globalevent name="timer_example" time="21:35:11" event="script" value="my_script.lua"/> -->
+	<globalevent type="record" name="PlayerRecord" script="record.lua"/>
+	<!--
+	<globalevent name="timer_example" time="12:00:00" script="my_script.lua"/>
+	-->
 </globalevents>

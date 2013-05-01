@@ -3,22 +3,15 @@
 		The Forgotten Server
 
 	Version
-		0.3.7
-
-	Codenamed
-		Crying Damson
+		1.0
 
 	License
-		GNU GPLv3
+		GNU GPLv2
 
 	Forum
 		http://otland.net/
 ]
 
 [ LIST
-	Auction (Market) System from Tibia 9.4
-		Assigned to: Talaturen, Elf
-
-	Tibia's position swapping:
-		Assigned to: ?
+	Compatibility with 0.3 scripts
 ]

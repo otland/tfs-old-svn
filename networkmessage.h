@@ -1,129 +1,201 @@
-////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
 // OpenTibia - an opensource roleplaying game
-////////////////////////////////////////////////////////////////////////
-// This program is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+//////////////////////////////////////////////////////////////////////
+//
+//////////////////////////////////////////////////////////////////////
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public License
+// as published by the Free Software Foundation; either version 2
+// of the License, or (at your option) any later version.
 //
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with this program. If not, see <http://www.gnu.org/licenses/>.
-////////////////////////////////////////////////////////////////////////
+// along with this program; if not, write to the Free Software Foundation,
+// Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+//////////////////////////////////////////////////////////////////////
 
-#ifndef __NETWORKMESSAGE__
-#define __NETWORKMESSAGE__
+#ifndef __OTSERV_NETWORK_MESSAGE_H__
+#define __OTSERV_NETWORK_MESSAGE_H__
+
+#include "definitions.h"
 #include "otsystem.h"
 #include "const.h"
 
-enum SocketCode_t
-{
-	SOCKET_CODE_OK,
-	SOCKET_CODE_TIMEOUT,
-	SOCKET_CODE_ERROR,
-};
-
 class Item;
+class Creature;
+class Player;
 class Position;
+class RSA;
 
 class NetworkMessage
 {
 	public:
-		NetworkMessage() {reset();}
+		enum { header_length = 2 };
+		enum { crypto_length = 4 };
+		enum { xtea_multiple = 8 };
+		enum { max_body_length = NETWORKMESSAGE_MAXSIZE - header_length - crypto_length - xtea_multiple };
+
+		// constructor/destructor
+		NetworkMessage()
+		{
+			Reset();
+		}
 		virtual ~NetworkMessage() {}
 
 		// resets the internal buffer to an empty message
-		void reset(uint16_t size = NETWORK_CRYPTOHEADER_SIZE)
+
+	protected:
+		void Reset()
 		{
-			m_size = 0;
-			m_position = size;
+			m_overrun = false;
+			m_MsgSize = 0;
+			m_ReadPos = 8;
 		}
 
-		// socket functions
-		SocketCode_t read(SOCKET socket, bool ignoreLength, int32_t timeout = NETWORK_RETRY_TIMEOUT);
-		SocketCode_t write(SOCKET socket, int32_t timeout = NETWORK_RETRY_TIMEOUT);
-
-		// simple read functions for incoming message
-		template<typename T>
-		T get(bool peek = false)
+	public:
+		// simply read functions for incoming message
+		uint8_t  GetByte()
 		{
-			T value = *(T*)(m_buffer + m_position);
-			if(peek)
-				return value;
+			if(!canRead(1))
+				return 0;
 
-			m_position += sizeof(T);
-			return value;
+			return m_MsgBuf[m_ReadPos++];
 		}
+		uint16_t GetU16()
+		{
+			if(!canRead(2))
+				return 0;
 
-		std::string getString(bool peek = false, uint16_t size = 0);
-		std::string getRaw(bool peek = false) {return getString(peek, m_size - m_position);}
+			uint16_t v = *(uint16_t*)(m_MsgBuf + m_ReadPos);
+			m_ReadPos += 2;
+			return v;
+		}
+		uint16_t GetSpriteId() {return GetU16();}
+		uint32_t GetU32()
+		{
+			if(!canRead(4))
+				return 0;
 
-		// read for complex types
-		Position getPosition();
+			uint32_t v = *(uint32_t*)(m_MsgBuf + m_ReadPos);
+			m_ReadPos += 4;
+			return v;
+		}
+		uint32_t PeekU32()
+		{
+			if(!canRead(4))
+				return 0;
+
+			uint32_t v = *(uint32_t*)(m_MsgBuf + m_ReadPos);
+			return v;
+		}
+		uint64_t GetU64()
+		{
+			if(!canRead(8))
+				return 0;
+
+			uint64_t v = *(uint64_t*)(m_MsgBuf + m_ReadPos);
+			m_ReadPos += 8;
+			return v;
+		}
+		std::string GetString(uint16_t stringlen = 0);
+		std::string GetRaw() {return GetString(m_MsgSize - m_ReadPos);}
+		Position GetPosition();
 
 		// skips count unknown/unused bytes in an incoming message
-		void skip(int32_t count) {m_position += count;}
+		void SkipBytes(int count){m_ReadPos += count;}
 
-		// simple write functions for outgoing message
-		template<typename T>
-		void put(T value)
+		// simply write functions for outgoing message
+		void AddByte(uint8_t  value)
 		{
-			if(!hasSpace(sizeof(T)))
+			if(!canAdd(1))
 				return;
 
-			*(T*)(m_buffer + m_position) = value;
-			m_position += sizeof(T);
-			m_size += sizeof(T);
+			m_MsgBuf[m_ReadPos++] = value;
+			m_MsgSize++;
 		}
+		void AddU16(uint16_t value)
+		{
+			if(!canAdd(2))
+				return;
 
-		void putString(const std::string& value, bool addSize = true) {putString(value.c_str(), value.length(), addSize);}
-		void putString(const char* value, int length, bool addSize = true);
+			*(uint16_t*)(m_MsgBuf + m_ReadPos) = value;
+			m_ReadPos += 2; m_MsgSize += 2;
+		}
+		void AddU32(uint32_t value)
+		{
+			if(!canAdd(4))
+				return;
 
-		void putPadding(uint32_t amount);
+			*(uint32_t*)(m_MsgBuf + m_ReadPos) = value;
+			m_ReadPos += 4; m_MsgSize += 4;
+		}
+		void AddU64(uint64_t value)
+		{
+			if(!canAdd(8))
+				return;
 
-		// write for complex types
-		void putPosition(const Position& pos);
-		void putItem(uint16_t id, uint8_t count);
-		void putItem(const Item* item);
-		void putItemId(const Item* item);
-		void putItemId(uint16_t itemId);
+			*(uint64_t*)(m_MsgBuf + m_ReadPos) = value;
+			m_ReadPos += 8; m_MsgSize += 8;
+		}
+		void AddBytes(const char* bytes, uint32_t size);
+		void AddPaddingBytes(uint32_t n);
+
+		void AddString(const std::string& value);
+		void AddString(const char* value);
+
+		void AddDouble(double value, uint8_t precision = 2);
+
+		// write functions for complex types
+		void AddPosition(const Position &pos);
+		void AddItem(uint16_t id, uint8_t count);
+		void AddItem(const Item *item);
+		void AddItemId(const Item *item);
+		void AddItemId(uint16_t itemId);
+		void AddCreature(const Creature *creature, bool known, unsigned int remove);
+
+		int32_t getMessageLength() const { return m_MsgSize; }
+		void setMessageLength(int32_t newSize) { m_MsgSize = newSize; }
+		int32_t getReadPos() const { return m_ReadPos; }
+		void setReadPos(int32_t pos) {m_ReadPos = pos; }
 
 		int32_t decodeHeader();
 
-		// message propeties functions
-	  	uint16_t size() const {return m_size;}
-		void setSize(uint16_t size) {m_size = size;}
+		bool isOverrun() const { return m_overrun; }
 
-		uint16_t position() const {return m_position;}
-		void setPosition(uint16_t position) {m_position = position;}
-
-		char* buffer() {return (char*)&m_buffer[0];}
-		char* bodyBuffer()
-		{
-			m_position = NETWORK_HEADER_SIZE;
-			return (char*)&m_buffer[NETWORK_HEADER_SIZE];
-		}
+		char* getBuffer() const { return (char*)&m_MsgBuf[0]; }
+		char* getBodyBuffer() { m_ReadPos = 2; return (char*)&m_MsgBuf[header_length]; }
 
 #ifdef __TRACK_NETWORK__
-		virtual void track(std::string file, int32_t line, std::string func) {}
+		virtual void Track(const std::string& file, long line, const std::string& func) {}
 		virtual void clearTrack() {}
-
 #endif
+
 	protected:
-		// used to check available space while writing
-		inline bool hasSpace(int32_t size) const {return (size + m_position < NETWORK_MAX_SIZE - 16);}
+		inline bool canAdd(uint32_t size) const
+		{
+			return (size + m_ReadPos < max_body_length);
+		}
 
-		// message propeties
-		uint16_t m_size;
-		uint16_t m_position;
+		inline bool canRead(int32_t size)
+		{
+			if((m_ReadPos + size) > (m_MsgSize + 8) || size >= (NETWORKMESSAGE_MAXSIZE - m_ReadPos))
+			{
+				m_overrun = true;
+				return false;
+			}
+			return true;
+		}
 
-		// message data
-		uint8_t m_buffer[NETWORK_MAX_SIZE];
+		int32_t m_MsgSize;
+		int32_t m_ReadPos;
+
+		bool m_overrun;
+
+		uint8_t m_MsgBuf[NETWORKMESSAGE_MAXSIZE];
 };
 
-typedef boost::shared_ptr<NetworkMessage> NetworkMessage_ptr;
-#endif
+#endif // #ifndef __NETWORK_MESSAGE_H__

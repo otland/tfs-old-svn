@@ -1,132 +1,129 @@
-////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
 // OpenTibia - an opensource roleplaying game
-////////////////////////////////////////////////////////////////////////
-// This program is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+//////////////////////////////////////////////////////////////////////
+// Quests
+//////////////////////////////////////////////////////////////////////
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public License
+// as published by the Free Software Foundation; either version 2
+// of the License, or (at your option) any later version.
 //
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with this program.  If not, see <http://www.gnu.org/licenses/>.
-////////////////////////////////////////////////////////////////////////
+// along with this program; if not, write to the Free Software Foundation,
+// Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+//////////////////////////////////////////////////////////////////////
 
-#ifndef __QUESTS__
-#define __QUESTS__
-#include "otsystem.h"
+#ifndef _QUESTS_H_
+#define _QUESTS_H_
 
-#include "networkmessage.h"
+#include <list>
+#include <string>
 #include "player.h"
+#include "networkmessage.h"
 
-typedef std::map<uint32_t, std::string> StateMap;
+class MissionState;
+class Mission;
+class Quest;
+
+typedef std::map<int32_t, MissionState*> StateList;
+typedef std::list<Mission*> MissionsList;
+typedef std::list<Quest*> QuestsList;
+
+class MissionState
+{
+	public:
+		MissionState(const std::string& _description, int32_t _missionID);
+
+		int32_t getMissionID() const { return missionID; }
+		std::string getMissionDescription() const { return description; }
+
+	private:
+		std::string description;
+		int32_t missionID;
+};
+
 class Mission
 {
 	public:
-		Mission(std::string _name, std::string _state, std::string _storageId, int32_t _startValue, int32_t _endValue, bool _notify)
-		{
-			name = _name;
-			state = _state;
-			startValue = _startValue;
-			endValue = _endValue;
-			storageId = _storageId;
-			notify = _notify;
-		}
-		virtual ~Mission() {states.clear();}
-
-		void newState(uint32_t id, const std::string& description) {states[id] = description;}
-
-		bool isStarted(Player* player);
-		bool isCompleted(Player* player);
-		bool isNotifying() const {return notify;}
-
-		std::string getName(Player* player) {return (isCompleted(player) ? (name + " (completed)") : name);}
+		Mission(const std::string& _missionName, int32_t _storageID, int32_t _startValue, int32_t _endValue, bool _ignoreEndValue);
+		~Mission();
+		bool isCompleted(Player* player) const;
+		bool isStarted(Player* player) const;
+		std::string getName(Player* player);
 		std::string getDescription(Player* player);
 
-		int32_t getStartValue() {return startValue;}
-		int32_t getEndValue() {return endValue;}
+		uint32_t getStorageId() const { return storageID; }
+		int32_t getStartStorageValue() const { return startValue; }
+		int32_t getEndStorageValue() const { return endValue; }
 
-		const std::string& getStorageId() const {return storageId;}
+		MissionState* mainState;
+		StateList state;
 
 	private:
-		std::string parseStorages(std::string state, std::string value, Player* player);
-
-		std::string name, state;
-		StateMap states;
-
-		bool notify;
+		std::string missionName;
+		uint32_t storageID;
 		int32_t startValue, endValue;
-		std::string storageId;
+		bool ignoreEndValue;
 };
 
-typedef std::list<Mission*> MissionList;
 class Quest
 {
 	public:
-		Quest(std::string _name, uint16_t _id, std::string _storageId, int32_t _storageValue)
-		{
-			name = _name;
-			id = _id;
-			storageValue = _storageValue;
-			storageId = _storageId;
-		}
-		virtual ~Quest();
+		Quest(const std::string& _name, uint16_t _id, int32_t _startStorageID, int32_t _startStorageValue);
+		~Quest();
 
-		void newMission(Mission* mission) {missions.push_back(mission);}
+		bool isCompleted(Player* player);
+		bool isStarted(Player* player) const;
+		uint16_t getID() const {return id;}
+		std::string getName() const {return name;}
+		uint16_t getMissionsCount(Player* player) const;
 
-		bool isStarted(Player* player);
-		bool isCompleted(Player* player) const;
+		uint32_t getStartStorageId() const { return startStorageID; }
+		int32_t getStartStorageValue() const { return startStorageValue; }
 
-		uint16_t getId() const {return id;}
-		const std::string& getName() const {return name;}
-		const std::string& getStorageId() const {return storageId;}
-		int32_t getStorageValue() const {return storageValue;}
-		uint16_t getMissionCount(Player* player);
+		void addMission(Mission* mission) {missions.push_back(mission);}
 
-		inline MissionList::const_iterator getFirstMission() const {return missions.begin();}
-		inline MissionList::const_iterator getLastMission() const {return missions.end();}
+		MissionsList::const_iterator getFirstMission() const {return missions.begin();}
+		MissionsList::const_iterator getLastMission() const {return missions.end();}
 
 	private:
 		std::string name;
-		MissionList missions;
 
+		uint32_t startStorageID;
+		int32_t startStorageValue;
 		uint16_t id;
-		int32_t storageValue;
-		std::string storageId;
+
+		MissionsList missions;
 };
 
-typedef std::list<Quest*> QuestList;
 class Quests
 {
 	public:
-		virtual ~Quests() {clear();}
+		Quests();
+		~Quests();
+
 		static Quests* getInstance()
 		{
 			static Quests instance;
 			return &instance;
 		}
 
-		void clear();
-		bool reload();
+		QuestsList::const_iterator getFirstQuest() const {return quests.begin();}
+		QuestsList::const_iterator getLastQuest() const {return quests.end();}
 
 		bool loadFromXml();
-		bool parseQuestNode(xmlNodePtr p, bool checkDuplicate);
-
-		bool isQuestStorage(const std::string& key, const std::string& value, bool notification) const;
-		uint16_t getQuestCount(Player* player);
-
-		inline QuestList::const_iterator getFirstQuest() const {return quests.begin();}
-		inline QuestList::const_iterator getLastQuest() const {return quests.end();}
-
-		Quest* getQuestById(uint16_t id) const;
+		Quest* getQuestByID(uint16_t id);
+		bool isQuestStorage(const uint32_t key, const int32_t value, const int32_t oldValue);
+		uint16_t getQuestsCount(Player* player);
+		bool reload();
 
 	private:
-		Quests() {m_lastId = 1;}
-
-		QuestList quests;
-		uint16_t m_lastId;
+		QuestsList quests;
 };
+
 #endif

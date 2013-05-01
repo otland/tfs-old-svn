@@ -32,17 +32,18 @@
 		</defense>
 	</defenses>
 	<elements>
-		<element earthPercent="100"/>
-		<element energyPercent="50"/>
-		<element icePercent="40"/>
-		<element firePercent="-20"/>
+		<element energyPercent="10"/>
+		<element icePercent="20"/>
+		<element firePercent="-25"/>
 	</elements>
 	<immunities>
+		<immunity earth="1"/>
 		<immunity paralyze="1"/>
 		<immunity invisible="1"/>
 	</immunities>
 	<voices interval="5000" chance="10">
 		<voice sentence="Blubb"/>
+		<voice sentence="Blubb Blubb"/>
 	</voices>
 	<loot>
 		<item id="6500" chance="33000"/><!-- demonic essence -->

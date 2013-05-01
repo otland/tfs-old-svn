@@ -1,6 +1,8 @@
 //////////////////////////////////////////////////////////////////////
 // OpenTibia - an opensource roleplaying game
 //////////////////////////////////////////////////////////////////////
+// IOMarket
+//////////////////////////////////////////////////////////////////////
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
 // as published by the Free Software Foundation; either version 2
@@ -16,8 +18,8 @@
 // Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 //////////////////////////////////////////////////////////////////////
 
-#ifndef __IOMARKET__
-#define __IOMARKET__
+#ifndef __OTSERV_IOMARKET_H__
+#define __OTSERV_IOMARKET_H__
 
 #include <string>
 #include "account.h"
@@ -48,6 +50,7 @@ class IOMarket
 
 		void createOffer(uint32_t playerId, MarketAction_t action, uint32_t itemId, uint16_t amount, uint32_t price, bool anonymous);
 		void acceptOffer(uint32_t offerId, uint16_t amount);
+		void deleteOffer(uint32_t offerId);
 
 		void appendHistory(uint32_t playerId, MarketAction_t type, uint16_t itemId, uint16_t amount, uint32_t price, time_t timestamp, MarketOfferState_t state);
 		void moveOfferToHistory(uint32_t offerId, MarketOfferState_t state);

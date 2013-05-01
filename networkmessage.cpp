@@ -1,247 +1,172 @@
-////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
 // OpenTibia - an opensource roleplaying game
-////////////////////////////////////////////////////////////////////////
-// This program is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+//////////////////////////////////////////////////////////////////////
+//
+//////////////////////////////////////////////////////////////////////
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public License
+// as published by the Free Software Foundation; either version 2
+// of the License, or (at your option) any later version.
 //
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with this program. If not, see <http://www.gnu.org/licenses/>.
-////////////////////////////////////////////////////////////////////////
+// along with this program; if not, write to the Free Software Foundation,
+// Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+//////////////////////////////////////////////////////////////////////
 #include "otpch.h"
+
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif
+
+#include <string>
 #include <iostream>
+#include <sstream>
 
 #include "networkmessage.h"
+
+#include "container.h"
+#include "creature.h"
+#include "player.h"
+
 #include "position.h"
-#include "item.h"
-
-SocketCode_t NetworkMessage::read(SOCKET socket, bool ignoreLength, int32_t timeout/* = NETWORK_RETRY_TIME*/)
-{
-	int32_t waiting = 0, data = NETWORK_DEFAULT_SIZE;
-	if(!ignoreLength)
-	{
-		do
-		{
-			// just read the size to avoid reading 2 messages at once
-			int32_t ret = recv(socket, (char*)m_buffer, NETWORK_HEADER_SIZE, 0);
-			if(ret <= 0)
-			{
-				if(errno == EWOULDBLOCK)
-				{
-					ret = 0;
-					OTSYS_SLEEP(10);
-
-					waiting += 10;
-					if(waiting > timeout)
-					{
-						reset(NETWORK_HEADER_SIZE);
-						return SOCKET_CODE_TIMEOUT;
-					}
-				}
-				else
-				{
-					reset(NETWORK_HEADER_SIZE);
-					return SOCKET_CODE_ERROR;
-				}
-			}
-
-			m_size += ret;
-		}
-		while(m_size < NETWORK_HEADER_SIZE);
-
-		// for now we expect 2 bytes at once, it should not be splitted
-		data = (int32_t)(m_buffer[0] | m_buffer[1] << 8);
-		if(m_size != NETWORK_HEADER_SIZE || data > NETWORK_MAX_SIZE - NETWORK_HEADER_SIZE)
-		{
-			reset(NETWORK_HEADER_SIZE);
-			return SOCKET_CODE_ERROR;
-		}
-	}
-
-	int32_t recvd = 0;
-	do
-	{
-		// read the real data
-		int32_t ret = recv(socket, (char*)m_buffer + recvd + NETWORK_HEADER_SIZE, data - recvd, 0);
-		if(ret <= 0)
-		{
-			if(errno == EWOULDBLOCK)
-			{
-				ret = 0;
-				OTSYS_SLEEP(100);
-
-				waiting += 100;
-				if(waiting > timeout)
-				{
-					reset(NETWORK_HEADER_SIZE);
-					return SOCKET_CODE_TIMEOUT;
-				}
-			}
-			else if(data == NETWORK_DEFAULT_SIZE)
-				break;
-			else
-			{
-				reset(NETWORK_HEADER_SIZE);
-				return SOCKET_CODE_ERROR;
-			}
-		}
-
-		recvd += ret;
-	}
-	while(recvd < data);
-	m_size += recvd;
-
-	// we got something unexpected/incomplete
-	if(m_size <= NETWORK_HEADER_SIZE || (!ignoreLength && m_size - NETWORK_HEADER_SIZE != data))
-	{
-		reset(NETWORK_HEADER_SIZE);
-		return SOCKET_CODE_ERROR;
-	}
-
-	m_position = NETWORK_HEADER_SIZE;
-	return SOCKET_CODE_OK;
-}
-
-SocketCode_t NetworkMessage::write(SOCKET socket, int32_t timeout/* = NETWORK_RETRY_TIME*/)
-{
-	if(!m_size)
-		return SOCKET_CODE_OK;
-
-	m_buffer[2] = (uint8_t)(m_size);
-	m_buffer[3] = (uint8_t)(m_size >> 8);
-
-	int32_t sent = 0, waiting = 0;
-  	do
-	{
-		int32_t ret = send(socket, (char*)m_buffer + sent + NETWORK_HEADER_SIZE,
-			std::min(m_size - sent + NETWORK_HEADER_SIZE, 1000), 0);
-		if(ret <= 0)
-		{
-			if(errno == EWOULDBLOCK)
-			{
-				ret = 0;
-				OTSYS_SLEEP(100);
-
-				waiting += 100;
-				if(waiting > timeout)
-					return SOCKET_CODE_TIMEOUT;
-			}
-			else
-				return SOCKET_CODE_ERROR;
-		}
-
-	    	sent += ret;
-	}
-	while(sent < m_size + NETWORK_HEADER_SIZE);
-	return SOCKET_CODE_OK;
-}
-
-std::string NetworkMessage::getString(bool peek/* = false*/, uint16_t size/* = 0*/)
-{
-	if(!size)
-		size = get<uint16_t>(peek);
-
-	uint16_t position = m_position;
-	if(peek)
-		position += 2;
-
-	if(size >= (16384 - position))
-		return std :: string();
-
-	char* v = (char*)(m_buffer + position);
-	if(peek)
-		return std::string(v, size);
-
-	m_position += size;
-	return std::string(v, size);
-}
-
-Position NetworkMessage::getPosition()
-{
-	Position pos;
-	pos.x = get<uint16_t>();
-	pos.y = get<uint16_t>();
-	pos.z = get<char>();
-	return pos;
-}
-
-void NetworkMessage::putString(const char* value, int length, bool addSize/* = true*/)
-{
-	uint32_t size = (uint32_t)length;
-	if(!hasSpace(size + (addSize ? 2 : 0)) || size > 8192)
-		return;
-
-	if(addSize)
-		put<uint16_t>(size);
-
-	memcpy((char*)(m_buffer + m_position), value, length);
-	m_position += size;
-	m_size += size;
-}
-
-void NetworkMessage::putPadding(uint32_t amount)
-{
-	if(!hasSpace(amount))
-		return;
-
-	memset((void*)&m_buffer[m_position], 0x33, amount);
-	m_size += amount;
-}
-
-void NetworkMessage::putPosition(const Position& pos)
-{
-	put<uint16_t>(pos.x);
-	put<uint16_t>(pos.y);
-	put<char>(pos.z);
-}
-
-void NetworkMessage::putItem(uint16_t id, uint8_t count)
-{
-	const ItemType &it = Item::items[id];
-	put<uint16_t>(it.clientId);
-	if(it.stackable)
-		put<char>(count);
-	else if(it.isSplash() || it.isFluidContainer())
-		put<char>(fluidMap[count % 8]);
-
-	if(it.isAnimation)
-		put<char>(0xFE);
-}
-
-void NetworkMessage::putItem(const Item* item)
-{
-	const ItemType& it = Item::items[item->getID()];
-	put<uint16_t>(it.clientId);
-	if(it.stackable)
-		put<char>(item->getSubType());
-	else if(it.isSplash() || it.isFluidContainer())
-		put<char>(fluidMap[item->getSubType() % 8]);
-
-	if(it.isAnimation)
-		put<char>(0xFE);
-}
-
-void NetworkMessage::putItemId(const Item* item)
-{
-	const ItemType& it = Item::items[item->getID()];
-	put<uint16_t>(it.clientId);
-}
-
-void NetworkMessage::putItemId(uint16_t itemId)
-{
-	const ItemType& it = Item::items[itemId];
-	put<uint16_t>(it.clientId);
-}
+#include "rsa.h"
 
 int32_t NetworkMessage::decodeHeader()
 {
-	int32_t size = (int32_t)(m_buffer[0] | m_buffer[1] << 8);
-	m_size = size;
+	int32_t size = (int32_t)(m_MsgBuf[0] | m_MsgBuf[1] << 8);
+	m_MsgSize = size;
 	return size;
+}
+
+/******************************************************************************/
+std::string NetworkMessage::GetString(uint16_t stringlen/* = 0*/)
+{
+	if(stringlen == 0)
+		stringlen = GetU16();
+
+	if(!canRead(stringlen))
+		return std::string();
+
+	char* v = (char*)(m_MsgBuf + m_ReadPos);
+	m_ReadPos += stringlen;
+	return std::string(v, stringlen);
+}
+
+Position NetworkMessage::GetPosition()
+{
+	Position pos;
+	pos.x = GetU16();
+	pos.y = GetU16();
+	pos.z = GetByte();
+	return pos;
+}
+/******************************************************************************/
+
+void NetworkMessage::AddString(const std::string& value)
+{
+	uint32_t stringlen = (uint32_t)value.length();
+	if(!canAdd(stringlen + 2) || stringlen > 8192)
+		return;
+
+	AddU16(stringlen);
+	memcpy((char*)(m_MsgBuf + m_ReadPos), value.c_str(), stringlen);
+	m_ReadPos += stringlen;
+	m_MsgSize += stringlen;
+}
+
+void NetworkMessage::AddString(const char* value)
+{
+	uint32_t stringlen = (uint32_t)strlen(value);
+	if(!canAdd(stringlen + 2) || stringlen > 8192)
+		return;
+
+	AddU16(stringlen);
+	strcpy((char*)(m_MsgBuf + m_ReadPos), value);
+	m_ReadPos += stringlen;
+	m_MsgSize += stringlen;
+}
+
+void NetworkMessage::AddDouble(double value, uint8_t precision/* = 2*/)
+{
+	AddByte(precision);
+	AddU32((value * std::pow((float)10, precision)) + INT_MAX);
+}
+
+void NetworkMessage::AddBytes(const char* bytes, uint32_t size)
+{
+	if(!canAdd(size) || size > 8192)
+		return;
+
+	memcpy(m_MsgBuf + m_ReadPos, bytes, size);
+	m_ReadPos += size;
+	m_MsgSize += size;
+}
+
+void NetworkMessage::AddPaddingBytes(uint32_t n)
+{
+	if(!canAdd(n))
+		return;
+
+	memset((void*)&m_MsgBuf[m_ReadPos], 0x33, n);
+	m_MsgSize += n;
+}
+
+void NetworkMessage::AddPosition(const Position& pos)
+{
+	AddU16(pos.x);
+	AddU16(pos.y);
+	AddByte(pos.z);
+}
+
+void NetworkMessage::AddItem(uint16_t id, uint8_t count)
+{
+	const ItemType &it = Item::items[id];
+
+	AddU16(it.clientId);
+
+	if(it.stackable)
+		AddByte(count);
+	else if(it.isSplash() || it.isFluidContainer())
+	{
+		uint32_t fluidIndex = count % 8;
+		AddByte(fluidMap[fluidIndex]);
+	}
+
+	if(it.isAnimation)
+		AddByte(0xFE); // random phase (0xFF for async)
+}
+
+void NetworkMessage::AddItem(const Item* item)
+{
+	const ItemType &it = Item::items[item->getID()];
+
+	AddU16(it.clientId);
+
+	if(it.stackable)
+		AddByte(std::min<uint16_t>(0xFF, item->getSubType()));
+	else if(it.isSplash() || it.isFluidContainer())
+	{
+		uint32_t fluidIndex = item->getSubType() % 8;
+		AddByte(fluidMap[fluidIndex]);
+	}
+
+	if(it.isAnimation)
+		AddByte(0xFE); // random phase (0xFF for async)
+}
+
+void NetworkMessage::AddItemId(const Item *item)
+{
+	const ItemType &it = Item::items[item->getID()];
+	AddU16(it.clientId);
+}
+
+void NetworkMessage::AddItemId(uint16_t itemId)
+{
+	const ItemType &it = Item::items[itemId];
+	AddU16(it.clientId);
 }

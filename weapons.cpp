@@ -1,37 +1,47 @@
-////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
 // OpenTibia - an opensource roleplaying game
-////////////////////////////////////////////////////////////////////////
-// This program is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+//////////////////////////////////////////////////////////////////////
+//
+//////////////////////////////////////////////////////////////////////
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public License
+// as published by the Free Software Foundation; either version 2
+// of the License, or (at your option) any later version.
 //
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with this program.  If not, see <http://www.gnu.org/licenses/>.
-////////////////////////////////////////////////////////////////////////
+// along with this program; if not, write to the Free Software Foundation,
+// Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+//////////////////////////////////////////////////////////////////////
 #include "otpch.h"
+
+#include "definitions.h"
 #include "weapons.h"
+#include "combat.h"
+#include "tools.h"
+#include "configmanager.h"
 
 #include <libxml/xmlmemory.h>
 #include <libxml/parser.h>
 
-#include "game.h"
-#include "configmanager.h"
-#include "tools.h"
-
 extern Game g_game;
+extern Vocations g_vocations;
 extern ConfigManager g_config;
 extern Weapons* g_weapons;
 
 Weapons::Weapons():
-	m_interface("Weapon Interface")
+m_scriptInterface("Weapon Interface")
 {
-	m_interface.initState();
+	m_scriptInterface.initState();
+}
+
+Weapons::~Weapons()
+{
+	clear();
 }
 
 const Weapon* Weapons::getWeapon(const Item* item) const
@@ -48,18 +58,29 @@ const Weapon* Weapons::getWeapon(const Item* item) const
 
 void Weapons::clear()
 {
-	for(WeaponMap::iterator it = weapons.begin(); it != weapons.end(); ++it)
+	WeaponMap::iterator it;
+	for(it = weapons.begin(); it != weapons.end(); ++it)
 		delete it->second;
 
 	weapons.clear();
-	m_interface.reInitState();
+}
+
+LuaScriptInterface& Weapons::getScriptInterface()
+{
+	return m_scriptInterface;
+}
+
+std::string Weapons::getScriptBaseName()
+{
+	return "weapons";
 }
 
 bool Weapons::loadDefaults()
 {
-	for(uint32_t i = 0; i <= Item::items.size(); ++i)
+	for(uint32_t i = 0; i < Item::items.size(); ++i)
 	{
 		const ItemType* it = Item::items.getElement(i);
+
 		if(!it || weapons.find(it->id) != weapons.end())
 			continue;
 
@@ -70,32 +91,24 @@ bool Weapons::loadDefaults()
 				case WEAPON_AXE:
 				case WEAPON_SWORD:
 				case WEAPON_CLUB:
-				case WEAPON_FIST:
 				{
-					if(WeaponMelee* weapon = new WeaponMelee(&m_interface))
-					{
-						weapon->configureWeapon(*it);
-						weapons[it->id] = weapon;
-					}
-
+					WeaponMelee* weapon = new WeaponMelee(&m_scriptInterface);
+					weapon->configureWeapon(*it);
+					weapons[it->id] = weapon;
 					break;
 				}
-
-				case WEAPON_DIST:
-					if(it->ammoType != AMMO_NONE)
-						break;
 
 				case WEAPON_AMMO:
+				case WEAPON_DIST:
 				{
-					if(WeaponDistance* weapon = new WeaponDistance(&m_interface))
-					{
-						weapon->configureWeapon(*it);
-						weapons[it->id] = weapon;
-					}
+					if(it->weaponType == WEAPON_DIST && it->ammoType != AMMO_NONE)
+						continue;
 
+					WeaponDistance* weapon = new WeaponDistance(&m_scriptInterface);
+					weapon->configureWeapon(*it);
+					weapons[it->id] = weapon;
 					break;
 				}
-
 				default:
 					break;
 			}
@@ -109,54 +122,48 @@ Event* Weapons::getEvent(const std::string& nodeName)
 {
 	std::string tmpNodeName = asLowerCaseString(nodeName);
 	if(tmpNodeName == "melee")
-		return new WeaponMelee(&m_interface);
-
-	if(tmpNodeName == "distance" || tmpNodeName == "ammunition" || tmpNodeName == "ammo")
-		return new WeaponDistance(&m_interface);
-
-	if(tmpNodeName == "wand" || tmpNodeName == "rod")
-		return new WeaponWand(&m_interface);
+		return new WeaponMelee(&m_scriptInterface);
+	else if(tmpNodeName == "distance")
+		return new WeaponDistance(&m_scriptInterface);
+	else if(tmpNodeName == "wand" || tmpNodeName == "rod")
+		return new WeaponWand(&m_scriptInterface);
 
 	return NULL;
 }
 
-bool Weapons::registerEvent(Event* event, xmlNodePtr, bool override)
+bool Weapons::registerEvent(Event* event, xmlNodePtr p)
 {
 	Weapon* weapon = dynamic_cast<Weapon*>(event);
-	if(!weapon)
-		return false;
-
-	WeaponMap::iterator it = weapons.find(weapon->getID());
-	if(it == weapons.end())
+	if(weapon)
 	{
+		if(weapons.find(weapon->getID()) != weapons.end())
+		{
+			std::cout << "[Warning - Weapons::registerEvent] Duplicate registered item with id: " << weapon->getID() << std::endl;
+			return false;
+		}
+
 		weapons[weapon->getID()] = weapon;
 		return true;
 	}
-
-	if(override)
-	{
-		delete it->second;
-		it->second = weapon;
-		return true;
-	}
-
-	std::clog << "[Warning - Weapons::registerEvent] Duplicate registered item with id: " << weapon->getID() << std::endl;
 	return false;
 }
 
+//monsters
 int32_t Weapons::getMaxMeleeDamage(int32_t attackSkill, int32_t attackValue)
 {
-	return (int32_t)std::ceil((attackSkill * (attackValue * 0.05)) + (attackValue * 0.5));
+	return ((int32_t)ceil((attackSkill * (attackValue * 0.05)) + (attackValue * 0.5)));
 }
 
-int32_t Weapons::getMaxWeaponDamage(int32_t level, int32_t attackSkill, int32_t attackValue, float attackFactor)
+//players
+int32_t Weapons::getMaxWeaponDamage(uint32_t level, int32_t attackSkill, int32_t attackValue, float attackFactor)
 {
-	return (int32_t)std::ceil((2 * (attackValue * (attackSkill + 5.8) / 25 + (level - 1) / 10.)) / attackFactor);
+	return (int32_t)ceil((2 * (attackValue * (attackSkill + 5.8) / 25 + (level - 1) / 10.)) / attackFactor);
 }
 
-Weapon::Weapon(LuaInterface* _interface):
+Weapon::Weapon(LuaScriptInterface* _interface) :
 	Event(_interface)
 {
+	m_scripted = false;
 	id = 0;
 	level = 0;
 	magLevel = 0;
@@ -167,37 +174,38 @@ Weapon::Weapon(LuaInterface* _interface):
 	premium = false;
 	enabled = true;
 	wieldUnproperly = false;
-	swing = true;
+	range = 1;
 	ammoAction = AMMOACTION_NONE;
-	params.blockedByArmor = true;
-	params.blockedByShield = true;
-	params.combatType = COMBAT_PHYSICALDAMAGE;
+}
+
+Weapon::~Weapon()
+{
+	//
+}
+
+void Weapon::setCombatParam(const CombatParams& _params)
+{
+	params = _params;
 }
 
 bool Weapon::configureEvent(xmlNodePtr p)
 {
-	int32_t intValue, wieldInfo = 0;
+	int32_t intValue;
 	std::string strValue;
-	if(!readXMLInteger(p, "id", intValue))
+
+	if(readXMLInteger(p, "id", intValue))
+	 	id = intValue;
+	else
 	{
-		std::clog << "Error: [Weapon::configureEvent] Weapon without id." << std::endl;
+		std::cout << "Error: [Weapon::configureEvent] Weapon without id." << std::endl;
 		return false;
 	}
 
-	id = intValue;
-	if(readXMLInteger(p, "lv", intValue) || readXMLInteger(p, "lvl", intValue) || readXMLInteger(p, "level", intValue))
-	{
+	if(readXMLInteger(p, "lvl", intValue) || readXMLInteger(p, "level", intValue))
 	 	level = intValue;
-		if(level > 0)
-			wieldInfo |= WIELDINFO_LEVEL;
-	}
 
-	if(readXMLInteger(p, "maglv", intValue) || readXMLInteger(p, "maglvl", intValue) || readXMLInteger(p, "maglevel", intValue))
-	{
+	if(readXMLInteger(p, "maglv", intValue) || readXMLInteger(p, "maglevel", intValue))
 	 	magLevel = intValue;
-		if(magLevel > 0)
-			wieldInfo |= WIELDINFO_MAGLV;
-	}
 
 	if(readXMLInteger(p, "mana", intValue))
 	 	mana = intValue;
@@ -208,54 +216,95 @@ bool Weapon::configureEvent(xmlNodePtr p)
 	if(readXMLInteger(p, "soul", intValue))
 	 	soul = intValue;
 
-	if(readXMLInteger(p, "exhaust", intValue) || readXMLInteger(p, "exhaustion", intValue))
+	if(readXMLInteger(p, "exhaustion", intValue))
 		exhaustion = intValue;
 
-	if(readXMLString(p, "prem", strValue) || readXMLString(p, "premium", strValue))
-	{
-		premium = booleanString(strValue);
-		if(premium)
-			wieldInfo |= WIELDINFO_PREMIUM;
-	}
+	if(readXMLInteger(p, "prem", intValue))
+		premium = (intValue == 1);
 
-	if(readXMLString(p, "enabled", strValue))
-		enabled = booleanString(strValue);
+	if(readXMLInteger(p, "enabled", intValue))
+		enabled = (intValue == 1);
 
-	if(readXMLString(p, "unproperly", strValue))
-		wieldUnproperly = booleanString(strValue);
+	if(readXMLInteger(p, "unproperly", intValue))
+		wieldUnproperly = (intValue == 1);
 
-	if(readXMLString(p, "swing", strValue))
-		swing = booleanString(strValue);
+	if(readXMLString(p, "ammo", strValue))
+		std::cout << "Warning: ammo is not longer used in weapons.xml." << std::endl;
 
-	if(readXMLString(p, "type", strValue))
-		params.combatType = getCombatType(strValue);
-
-	std::string error;
-	StringVec vocStringVec;
-
+	typedef std::list<std::string> STRING_LIST;
+	STRING_LIST vocStringList;
 	xmlNodePtr vocationNode = p->children;
 	while(vocationNode)
 	{
-		if(!parseVocationNode(vocationNode, vocWeaponMap, vocStringVec, error))
-			std::clog << "[Warning - Weapon::configureEvent] " << error << std::endl;
+		if(xmlStrcmp(vocationNode->name,(const xmlChar*)"vocation") == 0)
+		{
+			if(readXMLString(vocationNode, "name", strValue))
+			{
+				int32_t vocationId = g_vocations.getVocationId(strValue);
+				if(vocationId != -1)
+				{
+					vocWeaponMap[vocationId] = true;
+					int32_t promotedVocation = g_vocations.getPromotedVocation(vocationId);
+					if(promotedVocation != 0)
+						vocWeaponMap[promotedVocation] = true;
 
+					readXMLInteger(vocationNode, "showInDescription", intValue);
+					if(intValue != 0)
+					{
+						toLowerCaseString(strValue);
+						vocStringList.push_back(strValue);
+					}
+				}
+			}
+		}
 		vocationNode = vocationNode->next;
 	}
 
-	if(!vocWeaponMap.empty())
-		wieldInfo |= WIELDINFO_VOCREQ;
+	range = Item::items[id].shootRange;
 
-	if(wieldInfo)
+	std::string vocationString;
+	if(!vocStringList.empty())
 	{
-		ItemType& it = Item::items.getItemType(id);
-		it.minReqMagicLevel = getReqMagLv();
-		it.minReqLevel = getReqLevel();
-
-		it.wieldInfo = wieldInfo;
-		it.vocationString = parseVocationString(vocStringVec);
+		for(STRING_LIST::iterator it = vocStringList.begin(); it != vocStringList.end(); ++it)
+		{
+			if(*it != vocStringList.front())
+			{
+				if(*it != vocStringList.back())
+					vocationString += ", ";
+				else
+					vocationString += " and ";
+			}
+			vocationString += *it;
+			vocationString += "s";
+		}
 	}
 
-	return configureWeapon(Item::items[getID()]);
+	uint32_t wieldInfo = 0;
+	if(getReqLevel() > 0)
+		wieldInfo |= WIELDINFO_LEVEL;
+
+	if(getReqMagLv() > 0)
+		wieldInfo |= WIELDINFO_MAGLV;
+
+	if(!vocationString.empty())
+		wieldInfo |= WIELDINFO_VOCREQ;
+
+	if(isPremium())
+		wieldInfo |= WIELDINFO_PREMIUM;
+
+	if(wieldInfo != 0)
+	{
+		ItemType& it = Item::items.getItemType(id);
+		it.wieldInfo = wieldInfo;
+		it.vocationString = vocationString;
+		it.minReqLevel = getReqLevel();
+		it.minReqMagicLevel = getReqMagLv();
+	}
+
+	if(configureWeapon(Item::items[getID()]))
+		return true;
+
+	return false;
 }
 
 bool Weapon::loadFunction(const std::string& functionName)
@@ -263,9 +312,11 @@ bool Weapon::loadFunction(const std::string& functionName)
 	std::string tmpFunctionName = asLowerCaseString(functionName);
 	if(tmpFunctionName == "internalloadweapon" || tmpFunctionName == "default")
 	{
-		m_scripted = EVENT_SCRIPT_FALSE;
-		return configureWeapon(Item::items[getID()]);
+		if(configureWeapon(Item::items[getID()]))
+			return true;
 	}
+	else if(tmpFunctionName == "script")
+		m_scripted = true;
 
 	return false;
 }
@@ -276,118 +327,103 @@ bool Weapon::configureWeapon(const ItemType& it)
 	return true;
 }
 
+std::string Weapon::getScriptEventName()
+{
+	return "onUseWeapon";
+}
+
 int32_t Weapon::playerWeaponCheck(Player* player, Creature* target) const
 {
 	const Position& playerPos = player->getPosition();
 	const Position& targetPos = target->getPosition();
+
 	if(playerPos.z != targetPos.z)
 		return 0;
 
-	const ItemType& it = Item::items[id];
-	int32_t range = it.shootRange;
+	int32_t trueRange;
+	const ItemType& it = Item::items[getID()];
 	if(it.weaponType == WEAPON_AMMO)
+		trueRange = player->getShootRange();
+	else
+		trueRange = range;
+
+	if(std::max(std::abs(playerPos.x - targetPos.x), std::abs(playerPos.y - targetPos.y)) > trueRange)
+		return 0;
+
+	if(!player->hasFlag(PlayerFlag_IgnoreWeaponCheck))
 	{
-		if(Item* item = player->getWeapon(true))
-			range = item->getShootRange();
-	}
-
-	if(std::max(std::abs(playerPos.x - targetPos.x), std::abs(playerPos.y - targetPos.y)) > range)
-		return 0;
-
-	if(player->hasFlag(PlayerFlag_IgnoreEquipCheck))
-		return 100;
-
-	if(!enabled)
-		return 0;
-
-	if(player->getMana() < getManaCost(player))
-		return 0;
-
-	if(player->getSoul() < soul)
-		return 0;
-
-	if(isPremium() && !player->isPremium())
-		return 0;
-
-	if(!vocWeaponMap.empty() && vocWeaponMap.find(player->getVocationId()) == vocWeaponMap.end())
-		return 0;
-
-	int32_t modifier = 100;
-	if(player->getLevel() < getReqLevel())
-	{
-		if(!isWieldedUnproperly())
+		if(!enabled)
 			return 0;
 
-		double penalty = (getReqLevel() - player->getLevel()) * 0.02;
-		if(penalty > 0.5)
-			penalty = 0.5;
-
-		modifier -= (int32_t)(modifier * penalty);
-	}
-
-	if(player->getMagicLevel() < getReqMagLv())
-	{
-		if(!isWieldedUnproperly())
+		if(player->getMana() < getManaCost(player))
 			return 0;
 
-		double penalty = (getReqMagLv() - player->getMagicLevel()) * 0.02;
-		if(penalty > 0.5)
-			penalty = 0.5;
+		if(player->getPlayerInfo(PLAYERINFO_SOUL) < soul)
+			return 0;
 
-		modifier -= (int32_t)(modifier * penalty);
+		if(isPremium() && !player->isPremium())
+			return 0;
+
+		if(!vocWeaponMap.empty())
+		{
+			if(vocWeaponMap.find(player->getVocationId()) == vocWeaponMap.end())
+				return 0;
+		}
+
+		int32_t damageModifier = 100;
+		if(player->getLevel() < getReqLevel())
+			damageModifier = (isWieldedUnproperly() ? damageModifier / 2 : 0);
+
+		if(player->getMagicLevel() < getReqMagLv())
+			damageModifier = (isWieldedUnproperly() ? damageModifier / 2 : 0);
+
+		return damageModifier;
 	}
-
-	return modifier;
+	return 100;
 }
 
 bool Weapon::useWeapon(Player* player, Item* item, Creature* target) const
 {
-	int32_t modifier = playerWeaponCheck(player, target);
-	if(!modifier)
+	int32_t damageModifier = playerWeaponCheck(player, target);
+	if(damageModifier == 0)
 		return false;
 
-	return internalUseWeapon(player, item, target, modifier);
+	return internalUseWeapon(player, item, target, damageModifier);
 }
 
 bool Weapon::useFist(Player* player, Creature* target)
 {
 	const Position& playerPos = player->getPosition();
 	const Position& targetPos = target->getPosition();
-	if(!Position::areInRange<1,1>(playerPos, targetPos))
-		return false;
-
-	float attackFactor = player->getAttackFactor();
-	int32_t attackSkill = player->getSkill(SKILL_FIST, SKILL_LEVEL), attackValue = g_config.getNumber(ConfigManager::FIST_BASE_ATTACK);
-
-	double maxDamage = Weapons::getMaxWeaponDamage(player->getLevel(), attackSkill, attackValue, attackFactor);
-	if(g_config.getNumber(ConfigManager::CRITICAL_HIT_CHANCE) >= random_range(1, 100))
+	if(Position::areInRange<1,1>(playerPos, targetPos))
 	{
-		maxDamage = std::pow(maxDamage, g_config.getDouble(ConfigManager::CRITICAL_HIT_MUL));
-		player->sendCritical();
+		float attackFactor = player->getAttackFactor();
+		int32_t attackSkill = player->getSkill(SKILL_FIST, SKILL_LEVEL);
+		int32_t attackValue = 7;
+
+		int32_t maxDamage = Weapons::getMaxWeaponDamage(player->getLevel(), attackSkill, attackValue, attackFactor);
+		if(random_range(1, 100) <= g_config.getNumber(ConfigManager::CRITICAL_HIT_CHANCE))
+			maxDamage <<= 1;
+		int32_t damage = -random_range(0, maxDamage, DISTRO_NORMAL);
+
+		CombatParams params;
+		params.combatType = COMBAT_PHYSICALDAMAGE;
+		params.blockedByArmor = true;
+		params.blockedByShield = true;
+		Combat::doCombatHealth(player, target, damage, damage, params);
+
+		if(!player->hasFlag(PlayerFlag_NotGainSkill) && player->getAddAttackSkill())
+			player->addSkillAdvance(SKILL_FIST, 1);
+
+		return true;
 	}
 
-	Vocation* vocation = player->getVocation();
-	if(vocation && vocation->getMultiplier(MULTIPLIER_MELEE) != 1.0)
-		maxDamage *= vocation->getMultiplier(MULTIPLIER_MELEE);
-
-	maxDamage = std::floor(maxDamage);
-	int32_t damage = -random_range(0, (int32_t)maxDamage, DISTRO_NORMAL);
-
-	CombatParams fist;
-	fist.blockedByArmor = true;
-	fist.blockedByShield = true;
-	fist.combatType = COMBAT_PHYSICALDAMAGE;
-
-	Combat::doCombatHealth(player, target, damage, damage, fist);
-	if(!player->hasFlag(PlayerFlag_NotGainSkill) && player->getAddAttackSkill())
-		player->addSkillAdvance(SKILL_FIST, 1);
-
-	return true;
+	return false;
 }
 
-bool Weapon::internalUseWeapon(Player* player, Item* item, Creature* target, int32_t modifier) const
+bool Weapon::internalUseWeapon(Player* player, Item* item, Creature* target, int32_t damageModifier) const
 {
-	if(isScripted())
+	if(m_scripted)
 	{
 		LuaVariant var;
 		var.type = VARIANT_NUMBER;
@@ -396,12 +432,8 @@ bool Weapon::internalUseWeapon(Player* player, Item* item, Creature* target, int
 	}
 	else
 	{
-		CombatParams _params = params;
-		_params.element.type = item->getElementType();
-		_params.element.damage = getWeaponElementDamage(player, item);
-
-		int32_t damage = (getWeaponDamage(player, target, item) * modifier) / 100;
-		Combat::doCombatHealth(player, target, damage, damage, _params);
+		int32_t damage = (getWeaponDamage(player, target, item) * damageModifier) / 100;
+		Combat::doCombatHealth(player, target, damage, damage, params);
 	}
 
 	onUsedAmmo(player, item, target->getTile());
@@ -411,7 +443,7 @@ bool Weapon::internalUseWeapon(Player* player, Item* item, Creature* target, int
 
 bool Weapon::internalUseWeapon(Player* player, Item* item, Tile* tile) const
 {
-	if(isScripted())
+	if(m_scripted)
 	{
 		LuaVariant var;
 		var.type = VARIANT_TARGETPOSITION;
@@ -421,7 +453,7 @@ bool Weapon::internalUseWeapon(Player* player, Item* item, Tile* tile) const
 	else
 	{
 		Combat::postCombatEffects(player, tile->getPosition(), params);
-		g_game.addMagicEffect(tile->getPosition(), MAGIC_EFFECT_POFF);
+		g_game.addMagicEffect(tile->getPosition(), NM_ME_POFF);
 	}
 
 	onUsedAmmo(player, item, tile);
@@ -429,26 +461,24 @@ bool Weapon::internalUseWeapon(Player* player, Item* item, Tile* tile) const
 	return true;
 }
 
-void Weapon::onUsedWeapon(Player* player, Item* item, Tile*) const
+void Weapon::onUsedWeapon(Player* player, Item* item, Tile* destTile) const
 {
 	if(!player->hasFlag(PlayerFlag_NotGainSkill))
 	{
 		skills_t skillType;
-		uint64_t skillPoint = 0;
+		uint32_t skillPoint = 0;
 		if(getSkillType(player, item, skillType, skillPoint))
 			player->addSkillAdvance(skillType, skillPoint);
 	}
 
 	if(!player->hasFlag(PlayerFlag_HasNoExhaustion) && exhaustion > 0)
-		player->addExhaust(exhaustion, EXHAUST_MELEE);
+		player->addWeaponExhaust(exhaustion);
 
 	int32_t manaCost = getManaCost(player);
 	if(manaCost > 0)
 	{
+		player->addManaSpent(manaCost);
 		player->changeMana(-manaCost);
-		if(!player->hasFlag(PlayerFlag_NotGainMana) && (player->getZone() != ZONE_HARDCORE
-			|| g_config.getBool(ConfigManager::PVPZONE_ADDMANASPENT)))
-			player->addManaSpent(manaCost);
 	}
 
 	if(!player->hasFlag(PlayerFlag_HasInfiniteSoul) && soul > 0)
@@ -457,130 +487,150 @@ void Weapon::onUsedWeapon(Player* player, Item* item, Tile*) const
 
 void Weapon::onUsedAmmo(Player* player, Item* item, Tile* destTile) const
 {
-	if(!g_config.getBool(ConfigManager::REMOVE_WEAPON_AMMO))
+	if(!g_config.getBoolean(ConfigManager::REMOVE_AMMO))
 		return;
 
-	switch(ammoAction)
+	if(ammoAction == AMMOACTION_REMOVECOUNT)
 	{
-		case AMMOACTION_REMOVECOUNT:
-			g_game.transformItem(item, item->getID(), std::max((int32_t)0, ((int32_t)item->getItemCount()) - 1));
-			break;
+		uint16_t newCount = item->getItemCount();
+		if(newCount > 0)
+			newCount--;
 
-		case AMMOACTION_REMOVECHARGE:
-			g_game.transformItem(item, item->getID(), std::max((int32_t)0, ((int32_t)item->getCharges()) - 1));
-			break;
+		g_game.transformItem(item, item->getID(), newCount);
+	}
+	else if(ammoAction == AMMOACTION_REMOVECHARGE)
+	{
+		uint16_t newCharge = item->getCharges();
+		if(newCharge > 0)
+			newCharge--;
 
-		case AMMOACTION_MOVE:
-			g_game.internalMoveItem(player, item->getParent(), destTile, INDEX_WHEREEVER, item, 1, NULL, FLAG_NOLIMIT);
-			break;
+		g_game.transformItem(item, item->getID(), newCharge);
+	}
+	else if(ammoAction == AMMOACTION_MOVE)
+		g_game.internalMoveItem(item->getParent(), destTile, INDEX_WHEREEVER, item, 1, NULL, FLAG_NOLIMIT);
+	else if(ammoAction == AMMOACTION_MOVEBACK) { /* do nothing */ }
+	else if(item->hasCharges())
+	{
+		uint16_t newCharge = item->getCharges();
+		if(newCharge > 0)
+			newCharge--;
 
-		case AMMOACTION_MOVEBACK:
-			break;
-
-		default:
-			if(item->hasCharges())
-				g_game.transformItem(item, item->getID(), std::max((int32_t)0, ((int32_t)item->getCharges()) - 1));
-
-			break;
+		g_game.transformItem(item, item->getID(), newCharge);
 	}
 }
 
 int32_t Weapon::getManaCost(const Player* player) const
 {
-	if(mana)
+	if(mana != 0)
 		return mana;
 
-	return manaPercent ? (player->getMaxMana() * manaPercent) / 100 : 0;
+	if(manaPercent == 0)
+		return 0;
+
+	return (player->getMaxMana() * manaPercent) / 100;
 }
 
 bool Weapon::executeUseWeapon(Player* player, const LuaVariant& var) const
 {
 	//onUseWeapon(cid, var)
-	if(m_interface->reserveEnv())
+	if(m_scriptInterface->reserveScriptEnv())
 	{
-		ScriptEnviroment* env = m_interface->getEnv();
-		if(m_scripted == EVENT_SCRIPT_BUFFER)
-		{
-			env->setRealPos(player->getPosition());
-			std::stringstream scriptstream;
+		ScriptEnvironment* env = m_scriptInterface->getScriptEnv();
 
-			scriptstream << "local cid = " << env->addThing(player) << std::endl;
-			env->streamVariant(scriptstream, "var", var);
+		#ifdef __DEBUG_LUASCRIPTS__
+		std::ostringstream ss;
+		ss << "onUseWeapon - " << player->getName();
+		env->setEventDesc(ss.str());
+		#endif
 
-			if(m_scriptData)
-				scriptstream << *m_scriptData;
+		env->setScriptId(m_scriptId, m_scriptInterface);
+		env->setRealPos(player->getPosition());
 
-			bool result = true;
-			if(m_interface->loadBuffer(scriptstream.str()))
-			{
-				lua_State* L = m_interface->getState();
-				result = m_interface->getGlobalBool(L, "_result", true);
-			}
+		lua_State* L = m_scriptInterface->getLuaState();
 
-			m_interface->releaseEnv();
-			return result;
-		}
-		else
-		{
-			#ifdef __DEBUG_LUASCRIPTS__
-			char desc[60];
-			sprintf(desc, "onUseWeapon - %s", player->getName().c_str());
-			env->setEvent(desc);
-			#endif
+		uint32_t cid = env->addThing(player);
 
-			env->setScriptId(m_scriptId, m_interface);
-			env->setRealPos(player->getPosition());
+		m_scriptInterface->pushFunction(m_scriptId);
+		lua_pushnumber(L, cid);
+		m_scriptInterface->pushVariant(L, var);
 
-			lua_State* L = m_interface->getState();
-			m_interface->pushFunction(m_scriptId);
+		bool result = m_scriptInterface->callFunction(2);
+		m_scriptInterface->releaseScriptEnv();
 
-			lua_pushnumber(L, env->addThing(player));
-			m_interface->pushVariant(L, var);
-
-			bool result = m_interface->callFunction(2);
-			m_interface->releaseEnv();
-			return result;
-		}
+		return result;
 	}
 	else
 	{
-		std::clog << "[Error - Weapon::executeUseWeapon] Call stack overflow" << std::endl;
+		std::cout << "[Error] Call stack overflow. Weapon::executeUseWeapon" << std::endl;
 		return false;
 	}
 }
 
-WeaponMelee::WeaponMelee(LuaInterface* _interface):
-	Weapon(_interface) {}
+WeaponMelee::WeaponMelee(LuaScriptInterface* _interface) :
+	Weapon(_interface)
+{
+	params.blockedByArmor = true;
+	params.blockedByShield = true;
+	params.combatType = COMBAT_PHYSICALDAMAGE;
+	elementType = COMBAT_NONE;
+	elementDamage = 0;
+}
+
+bool WeaponMelee::configureEvent(xmlNodePtr p)
+{
+	if(!Weapon::configureEvent(p))
+		return false;
+
+	return true;
+}
+
+bool WeaponMelee::configureWeapon(const ItemType& it)
+{
+	if(it.abilities)
+	{
+		elementType = it.abilities->elementType;
+		elementDamage = it.abilities->elementDamage;
+	}
+	return Weapon::configureWeapon(it);
+}
 
 bool WeaponMelee::useWeapon(Player* player, Item* item, Creature* target) const
 {
-	int32_t modifier = playerWeaponCheck(player, target);
-	if(!modifier)
+	int32_t damageModifier = playerWeaponCheck(player, target);
+	if(damageModifier == 0)
 		return false;
 
-	return internalUseWeapon(player, item, target, modifier);
+	if(elementDamage != 0)
+	{
+		int32_t damage = getElementDamage(player, item);
+		CombatParams eParams;
+		eParams.combatType = elementType;
+		eParams.isAggressive = true;
+		eParams.useCharges = true;
+		Combat::doCombatHealth(player, target, damage, damage, eParams);
+	}
+	return internalUseWeapon(player, item, target, damageModifier);
+}
+
+void WeaponMelee::onUsedWeapon(Player* player, Item* item, Tile* destTile) const
+{
+	Weapon::onUsedWeapon(player, item, destTile);
+}
+
+void WeaponMelee::onUsedAmmo(Player* player, Item* item, Tile* destTile) const
+{
+	Weapon::onUsedAmmo(player, item, destTile);
 }
 
 bool WeaponMelee::getSkillType(const Player* player, const Item* item,
-	skills_t& skill, uint64_t& skillPoint) const
+	skills_t& skill, uint32_t& skillpoint) const
 {
-	skillPoint = 0;
-	if(player->getAddAttackSkill())
-	{
-		switch(player->getLastAttackBlockType())
-		{
-			case BLOCK_ARMOR:
-			case BLOCK_NONE:
-				skillPoint = 1;
-				break;
+	skillpoint = 0;
+	if(player->getAddAttackSkill() && player->getLastAttackBlockType() != BLOCK_IMMUNITY)
+		skillpoint = 1;
 
-			case BLOCK_DEFENSE:
-			default:
-				break;
-		}
-	}
-
-	switch(item->getWeaponType())
+	WeaponType_t weaponType = item->getWeaponType();
+	switch(weaponType)
 	{
 		case WEAPON_SWORD:
 		{
@@ -600,77 +650,117 @@ bool WeaponMelee::getSkillType(const Player* player, const Item* item,
 			return true;
 		}
 
-		case WEAPON_FIST:
-		{
-			skill = SKILL_FIST;
-			return true;
-		}
-
 		default:
 			break;
 	}
-
 	return false;
 }
 
-int32_t WeaponMelee::getWeaponDamage(const Player* player, const Creature*, const Item* item, bool maxDamage /*= false*/) const
+int32_t WeaponMelee::getElementDamage(const Player* player, const Item* item) const
 {
-	int32_t attackSkill = player->getWeaponSkill(item), attackValue = std::max((int32_t)0,
-		(int32_t(item->getAttack() + item->getExtraAttack()) - item->getElementDamage()));
+	int32_t attackSkill = player->getWeaponSkill(item);
+	int32_t attackValue = std::max<int32_t>(0, elementDamage);
 	float attackFactor = player->getAttackFactor();
 
-	double maxValue = Weapons::getMaxWeaponDamage(player->getLevel(), attackSkill, attackValue, attackFactor);
-	if(g_config.getNumber(ConfigManager::CRITICAL_HIT_CHANCE) >= random_range(1, 100))
-	{
-		maxValue = std::pow(maxValue, g_config.getDouble(ConfigManager::CRITICAL_HIT_MUL));
-		player->sendCritical();
-	}
+	int32_t maxValue = Weapons::getMaxWeaponDamage(player->getLevel(), attackSkill, attackValue, attackFactor);
+	if(random_range(1, 100) <= g_config.getNumber(ConfigManager::CRITICAL_HIT_CHANCE))
+		maxValue <<= 1;
 
-	Vocation* vocation = player->getVocation();
-	if(vocation && vocation->getMultiplier(MULTIPLIER_MELEE) != 1.0)
-		maxValue *= vocation->getMultiplier(MULTIPLIER_MELEE);
-
-	int32_t ret = (int32_t)std::floor(maxValue);
-	if(maxDamage)
-		return -ret;
-
-	return -random_range(0, ret, DISTRO_NORMAL);
+	maxValue = int32_t(maxValue * player->getVocation()->meleeDamageMultipler);
+	return -random_range(0, maxValue, DISTRO_NORMAL);
 }
 
-int32_t WeaponMelee::getWeaponElementDamage(const Player* player, const Item* item, bool maxDamage/* = false*/) const
+int32_t WeaponMelee::getWeaponDamage(const Player* player, const Creature* target, const Item* item, bool maxDamage /*= false*/) const
 {
-	int32_t attackSkill = player->getWeaponSkill(item), attackValue = item->getElementDamage();
+	int32_t attackSkill = player->getWeaponSkill(item);
+	int32_t attackValue = std::max<int32_t>(0, item->getAttack());
 	float attackFactor = player->getAttackFactor();
 
-	double maxValue = Weapons::getMaxWeaponDamage(player->getLevel(), attackSkill, attackValue, attackFactor);
+	int32_t maxValue = Weapons::getMaxWeaponDamage(player->getLevel(), attackSkill, attackValue, attackFactor);
+	if(random_range(1, 100) <= g_config.getNumber(ConfigManager::CRITICAL_HIT_CHANCE))
+		maxValue <<= 1;
 
-	Vocation* vocation = player->getVocation();
-	if(vocation && vocation->getMultiplier(MULTIPLIER_MELEE) != 1.0)
-		maxValue *= vocation->getMultiplier(MULTIPLIER_MELEE);
+	maxValue = int32_t(maxValue * player->getVocation()->meleeDamageMultipler);
 
-	int32_t ret = (int32_t)std::floor(maxValue);
 	if(maxDamage)
-		return -ret;
+		return -maxValue;
 
-	return -random_range(0, ret, DISTRO_NORMAL);
+	return -random_range(0, maxValue, DISTRO_NORMAL);
 }
 
-WeaponDistance::WeaponDistance(LuaInterface* _interface):
+WeaponDistance::WeaponDistance(LuaScriptInterface* _interface) :
 	Weapon(_interface)
 {
-	hitChance = -1;
-	maxHitChance = breakChance = attack = 0;
-	swing = params.blockedByShield = false;
+	hitChance = 0;
+	maxHitChance = 0;
+	breakChance = 0;
+	ammuAttackValue = 0;
+	params.blockedByArmor = true;
+	params.combatType = COMBAT_PHYSICALDAMAGE;
+	elementType = COMBAT_NONE;
+	elementDamage = 0;
+}
+
+bool WeaponDistance::configureEvent(xmlNodePtr p)
+{
+	if(!Weapon::configureEvent(p))
+		return false;
+
+	const ItemType& it = Item::items[id];
+
+	//default values
+	if(it.ammoType != AMMO_NONE)
+	{
+		//hit chance on two-handed weapons is limited to 90%
+		maxHitChance = 90;
+	}
+	else
+	{
+		//one-handed is set to 75%
+		maxHitChance = 75;
+	}
+
+	if(it.hitChance != 0)
+		hitChance = it.hitChance;
+
+	if(it.maxHitChance != -1)
+		maxHitChance = it.maxHitChance;
+
+	if(it.breakChance != -1)
+		breakChance = it.breakChance;
+
+	if(it.ammoAction != AMMOACTION_NONE)
+		ammoAction = it.ammoAction;
+
+	int32_t intValue;
+	if(readXMLInteger(p, "hitChance", intValue))
+		std::cout << "Warning: hitChance is not longer used in weapons.xml." << std::endl;
+
+	if(readXMLInteger(p, "breakChance", intValue))
+		std::cout << "Warning: breakChance is not longer used in weapons.xml." << std::endl;
+
+	return true;
 }
 
 bool WeaponDistance::configureWeapon(const ItemType& it)
 {
-	if(it.ammoType != AMMO_NONE) //hit chance on two-handed weapons is limited to 90%
+	//default values
+	if(it.ammoType != AMMO_NONE)
+	{
+		//hit chance on two-handed weapons is limited to 90%
 		maxHitChance = 90;
-	else //one-handed is set to 75%
+	}
+	else
+	{
+		//one-handed is set to 75%
 		maxHitChance = 75;
+	}
 
-	if(it.hitChance > 0)
+	params.distanceEffect = it.shootType;
+	range = it.shootRange;
+	ammuAttackValue = it.attack;
+
+	if(it.hitChance != 0)
 		hitChance = it.hitChance;
 
 	if(it.maxHitChance > 0)
@@ -682,70 +772,54 @@ bool WeaponDistance::configureWeapon(const ItemType& it)
 	if(it.ammoAction != AMMOACTION_NONE)
 		ammoAction = it.ammoAction;
 
-	params.effects.distance = it.shootType;
-	attack = it.attack;
+	if(it.abilities)
+	{
+		elementType = it.abilities->elementType;
+		elementDamage = it.abilities->elementDamage;
+	}
 	return Weapon::configureWeapon(it);
 }
 
 int32_t WeaponDistance::playerWeaponCheck(Player* player, Creature* target) const
 {
-	const ItemType& it = Item::items[id];
-	if(it.weaponType == WEAPON_AMMO)
+	Item* bow = player->getWeapon(true);
+	if(bow && bow->getWeaponType() == WEAPON_DIST && bow->getID() != id)
 	{
-		if(Item* item = player->getWeapon(true))
-		{
-			if(const Weapon* weapon = g_weapons->getWeapon(item))
-				return weapon->playerWeaponCheck(player, target);
-		}
+		const Weapon* weap = g_weapons->getWeapon(bow);
+		if(weap)
+			return weap->playerWeaponCheck(player, target);
 	}
-
 	return Weapon::playerWeaponCheck(player, target);
 }
 
 bool WeaponDistance::useWeapon(Player* player, Item* item, Creature* target) const
 {
-	int32_t modifier = playerWeaponCheck(player, target);
-	if(!modifier)
+	int32_t damageModifier = playerWeaponCheck(player, target);
+	if(damageModifier == 0)
 		return false;
 
-	int32_t chance = hitChance;
-	if(chance == -1)
+	int32_t chance;
+	if(hitChance == 0)
 	{
 		//hit chance is based on distance to target and distance skill
+		uint32_t skill = player->getSkill(SKILL_DIST, SKILL_LEVEL);
 		const Position& playerPos = player->getPosition();
 		const Position& targetPos = target->getPosition();
+		uint32_t distance = std::max(std::abs(playerPos.x - targetPos.x), std::abs(playerPos.y - targetPos.y));
 
-		uint32_t distance = std::max(std::abs(playerPos.x - targetPos.x), std::abs(
-			playerPos.y - targetPos.y)), skill = player->getSkill(SKILL_DIST, SKILL_LEVEL);
 		if(maxHitChance == 75)
 		{
 			//chance for one-handed weapons
 			switch(distance)
 			{
-				case 1:
-					chance = (uint32_t)((float)std::min(skill, (uint32_t)74)) + 1;
-					break;
-				case 2:
-					chance = (uint32_t)((float)2.4 * std::min(skill, (uint32_t)28)) + 8;
-					break;
-				case 3:
-					chance = (uint32_t)((float)1.55 * std::min(skill, (uint32_t)45)) + 6;
-					break;
-				case 4:
-					chance = (uint32_t)((float)1.25 * std::min(skill, (uint32_t)58)) + 3;
-					break;
-				case 5:
-					chance = (uint32_t)((float)std::min(skill, (uint32_t)74)) + 1;
-					break;
-				case 6:
-					chance = (uint32_t)((float)0.8 * std::min(skill, (uint32_t)90)) + 3;
-					break;
-				case 7:
-					chance = (uint32_t)((float)0.7 * std::min(skill, (uint32_t)104)) + 2;
-					break;
-				default:
-					chance = hitChance;
-					break;
+				case 1: chance = std::min<uint32_t>(skill, 74) + 1; break;
+				case 2: chance = (uint32_t)((float)2.4 * std::min<uint32_t>(skill, 28)) + 8; break;
+				case 3: chance = (uint32_t)((float)1.55 * std::min<uint32_t>(skill, 45)) + 6; break;
+				case 4: chance = (uint32_t)((float)1.25 * std::min<uint32_t>(skill, 58)) + 3; break;
+				case 5: chance = (uint32_t)((float)std::min<uint32_t>(skill, 74)) + 1; break;
+				case 6: chance = (uint32_t)((float)0.8 * std::min<uint32_t>(skill, 90)) + 3; break;
+				case 7: chance = (uint32_t)((float)0.7 * std::min<uint32_t>(skill, 104)) + 2; break;
+				default: chance = hitChance; break;
 			}
 		}
 		else if(maxHitChance == 90)
@@ -753,80 +827,64 @@ bool WeaponDistance::useWeapon(Player* player, Item* item, Creature* target) con
 			//formula for two-handed weapons
 			switch(distance)
 			{
-				case 1:
-					chance = (uint32_t)((float)1.2 * std::min(skill, (uint32_t)74)) + 1;
-					break;
-				case 2:
-					chance = (uint32_t)((float)3.2 * std::min(skill, (uint32_t)28));
-					break;
-				case 3:
-					chance = (uint32_t)((float)2.0 * std::min(skill, (uint32_t)45));
-					break;
-				case 4:
-					chance = (uint32_t)((float)1.55 * std::min(skill, (uint32_t)58));
-					break;
-				case 5:
-					chance = (uint32_t)((float)1.2 * std::min(skill, (uint32_t)74)) + 1;
-					break;
-				case 6:
-					chance = (uint32_t)((float)1.0 * std::min(skill, (uint32_t)90));
-					break;
-				case 7:
-					chance = (uint32_t)((float)1.0 * std::min(skill, (uint32_t)90));
-					break;
-				default:
-					chance = hitChance;
-					break;
+				case 1: chance = (uint32_t)((float)1.2 * std::min<uint32_t>(skill, 74)) + 1; break;
+				case 2: chance = (uint32_t)((float)3.2 * std::min<uint32_t>(skill, 28)); break;
+				case 3: chance = (uint32_t)((float)2.0 * std::min<uint32_t>(skill, 45)); break;
+				case 4: chance = (uint32_t)((float)1.55 * std::min<uint32_t>(skill, 58)); break;
+				case 5: chance = (uint32_t)((float)1.2 * std::min<uint32_t>(skill, 74)) + 1; break;
+				case 6: chance = (uint32_t)((float)1.0 * std::min<uint32_t>(skill, 90)); break;
+				case 7: chance = (uint32_t)((float)1.0 * std::min<uint32_t>(skill, 90)); break;
+				default: chance = hitChance; break;
 			}
 		}
 		else if(maxHitChance == 100)
 		{
 			switch(distance)
 			{
-				case 1:
-					chance = (uint32_t)((float)1.35 * std::min(skill, (uint32_t)73)) + 1;
-					break;
-				case 2:
-					chance = (uint32_t)((float)3.2 * std::min(skill, (uint32_t)30)) + 4;
-					break;
-				case 3:
-					chance = (uint32_t)((float)2.05 * std::min(skill, (uint32_t)48)) + 2;
-					break;
-				case 4:
-					chance = (uint32_t)((float)1.5 * std::min(skill, (uint32_t)65)) + 2;
-					break;
-				case 5:
-					chance = (uint32_t)((float)1.35 * std::min(skill, (uint32_t)73)) + 1;
-					break;
-				case 6:
-					chance = (uint32_t)((float)1.2 * std::min(skill, (uint32_t)87)) - 4;
-					break;
-				case 7:
-					chance = (uint32_t)((float)1.1 * std::min(skill, (uint32_t)90)) + 1;
-					break;
-				default:
-					chance = hitChance;
-					break;
+				case 1: chance = (uint32_t)((float)1.35 * std::min<uint32_t>(skill, 73)) + 1; break;
+				case 2: chance = (uint32_t)((float)3.2 * std::min<uint32_t>(skill, 30)) + 4; break;
+				case 3: chance = (uint32_t)((float)2.05 * std::min<uint32_t>(skill, 48)) + 2; break;
+				case 4: chance = (uint32_t)((float)1.5 * std::min<uint32_t>(skill, 65)) + 2; break;
+				case 5: chance = (uint32_t)((float)1.35 * std::min<uint32_t>(skill, 73)) + 1; break;
+				case 6: chance = (uint32_t)((float)1.2 * std::min<uint32_t>(skill, 87)) - 4; break;
+				case 7: chance = (uint32_t)((float)1.1 * std::min<uint32_t>(skill, 90)) + 1; break;
+				default: chance = hitChance; break;
 			}
 		}
 		else
 			chance = maxHitChance;
 	}
+	else
+		chance = hitChance;
 
 	if(item->getWeaponType() == WEAPON_AMMO)
 	{
 		Item* bow = player->getWeapon(true);
-		if(bow && bow->getHitChance() != -1)
+		if(bow && bow->getHitChance() != 0)
 			chance += bow->getHitChance();
 	}
 
-	if(random_range(1, 100) > chance)
+	if(chance >= random_range(1, 100))
 	{
-		//we failed attack, miss!
+		if(elementDamage != 0)
+		{
+			int32_t damage = getElementDamage(player, target, item);
+			CombatParams eParams;
+			eParams.combatType = elementType;
+			eParams.isAggressive = true;
+			eParams.useCharges = true;
+			Combat::doCombatHealth(player, target, damage, damage, eParams);
+		}
+		Weapon::internalUseWeapon(player, item, target, damageModifier);
+	}
+	else
+	{
+		//miss target
 		Tile* destTile = target->getTile();
 		if(!Position::areInRange<1,1,0>(player->getPosition(), target->getPosition()))
 		{
-			std::vector<std::pair<int32_t, int32_t> > destList;
+			typedef std::vector<std::pair<int32_t, int32_t> > RelPosList;
+			RelPosList destList;
 			destList.push_back(std::make_pair(-1, -1));
 			destList.push_back(std::make_pair(-1, 0));
 			destList.push_back(std::make_pair(-1, 1));
@@ -838,65 +896,63 @@ bool WeaponDistance::useWeapon(Player* player, Item* item, Creature* target) con
 			destList.push_back(std::make_pair(1, 1));
 
 			std::random_shuffle(destList.begin(), destList.end());
+
 			Position destPos = target->getPosition();
-
 			Tile* tmpTile = NULL;
-			for(std::vector<std::pair<int32_t, int32_t> >::iterator it = destList.begin(); it != destList.end(); ++it)
-			{
-				if(!(tmpTile = g_game.getTile(destPos.x + it->first, destPos.y + it->second, destPos.z))
-					|| tmpTile->hasProperty(IMMOVABLEBLOCKSOLID) || !tmpTile->ground)
-					continue;
 
-				destTile = tmpTile;
-				break;
+			for(RelPosList::iterator it = destList.begin(); it != destList.end(); ++it)
+			{
+				tmpTile = g_game.getTile(destPos.x + it->first, destPos.y + it->second, destPos.z);
+				// Blocking tiles or tiles without ground ain't valid targets for spears
+				if(tmpTile && !tmpTile->hasProperty(IMMOVABLEBLOCKSOLID) && tmpTile->ground != NULL)
+				{
+					destTile = tmpTile;
+					break;
+				}
 			}
 		}
-
 		Weapon::internalUseWeapon(player, item, destTile);
 	}
-	else
-		Weapon::internalUseWeapon(player, item, target, modifier);
-
 	return true;
+}
+
+void WeaponDistance::onUsedWeapon(Player* player, Item* item, Tile* destTile) const
+{
+	Weapon::onUsedWeapon(player, item, destTile);
 }
 
 void WeaponDistance::onUsedAmmo(Player* player, Item* item, Tile* destTile) const
 {
-	if(!g_config.getBool(ConfigManager::REMOVE_WEAPON_AMMO))
-		return;
-
 	if(ammoAction == AMMOACTION_MOVEBACK && breakChance > 0 && random_range(1, 100) <= breakChance)
-		g_game.transformItem(item, item->getID(), std::max((int32_t)0, (int32_t)item->getItemCount() - 1));
+	{
+		uint16_t newCount = item->getItemCount();
+		if(newCount > 0)
+			newCount--;
+
+		g_game.transformItem(item, item->getID(), newCount);
+	}
 	else
 		Weapon::onUsedAmmo(player, item, destTile);
 }
 
-int32_t WeaponDistance::getWeaponDamage(const Player* player, const Creature* target, const Item* item, bool maxDamage /*= false*/) const
+int32_t WeaponDistance::getElementDamage(const Player* player, const Creature* target, const Item* item) const
 {
-	int32_t attackValue = attack;
+	int32_t attackValue = elementDamage;
 	if(item->getWeaponType() == WEAPON_AMMO)
 	{
-		if(Item* bow = const_cast<Player*>(player)->getWeapon(true))
-			attackValue += bow->getAttack() + bow->getExtraAttack();
+		Item* bow = const_cast<Player*>(player)->getWeapon(true);
+		if(bow)
+			attackValue += bow->getAttack();
 	}
 
 	int32_t attackSkill = player->getSkill(SKILL_DIST, SKILL_LEVEL);
 	float attackFactor = player->getAttackFactor();
 
-	double maxValue = Weapons::getMaxWeaponDamage(player->getLevel(), attackSkill, attackValue, attackFactor);
-	if(g_config.getNumber(ConfigManager::CRITICAL_HIT_CHANCE) >= random_range(1, 100))
-	{
-		maxValue *= g_config.getDouble(ConfigManager::CRITICAL_HIT_MUL);
-		player->sendCritical();
-	}
+	int32_t maxValue = Weapons::getMaxWeaponDamage(player->getLevel(), attackSkill, attackValue, attackFactor);
+	if(random_range(1, 100) <= g_config.getNumber(ConfigManager::CRITICAL_HIT_CHANCE))
+		maxValue <<= 1;
 
-	Vocation* vocation = player->getVocation();
-	if(vocation && vocation->getMultiplier(MULTIPLIER_DISTANCE) != 1.0)
-		maxValue *= vocation->getMultiplier(MULTIPLIER_DISTANCE);
-
-	int32_t ret = (int32_t)std::floor(maxValue);
-	if(maxDamage)
-		return -ret;
+	maxValue = int32_t(maxValue * player->getVocation()->distDamageMultipler);
 
 	int32_t minValue = 0;
 	if(target)
@@ -906,43 +962,78 @@ int32_t WeaponDistance::getWeaponDamage(const Player* player, const Creature* ta
 		else
 			minValue = (int32_t)std::ceil(player->getLevel() * 0.2);
 	}
-
-	return -random_range(minValue, ret, DISTRO_NORMAL);
+	return -random_range(minValue, maxValue, DISTRO_NORMAL);
 }
 
-bool WeaponDistance::getSkillType(const Player* player, const Item*,
-	skills_t& skill, uint64_t& skillPoint) const
+int32_t WeaponDistance::getWeaponDamage(const Player* player, const Creature* target, const Item* item, bool maxDamage /*= false*/) const
+{
+	int32_t attackValue = ammuAttackValue;
+	if(item->getWeaponType() == WEAPON_AMMO)
+	{
+		Item* bow = const_cast<Player*>(player)->getWeapon(true);
+		if(bow)
+			attackValue += bow->getAttack();
+	}
+
+	int32_t attackSkill = player->getSkill(SKILL_DIST, SKILL_LEVEL);
+	float attackFactor = player->getAttackFactor();
+
+	int32_t maxValue = Weapons::getMaxWeaponDamage(player->getLevel(), attackSkill, attackValue, attackFactor);
+	if(random_range(1, 100) <= g_config.getNumber(ConfigManager::CRITICAL_HIT_CHANCE))
+		maxValue <<= 1;
+
+	maxValue = int32_t(maxValue * player->getVocation()->distDamageMultipler);
+
+	if(maxDamage)
+		return -maxValue;
+
+	int32_t minValue = 0;
+	if(target)
+	{
+		if(target->getPlayer())
+			minValue = (int32_t)std::ceil(player->getLevel() * 0.1);
+		else
+			minValue = (int32_t)std::ceil(player->getLevel() * 0.2);
+	}
+	return -random_range(minValue, maxValue, DISTRO_NORMAL);
+}
+
+bool WeaponDistance::getSkillType(const Player* player, const Item* item,
+	skills_t& skill, uint32_t& skillpoint) const
 {
 	skill = SKILL_DIST;
-	skillPoint = 0;
+	skillpoint = 0;
+
 	if(player->getAddAttackSkill())
 	{
 		switch(player->getLastAttackBlockType())
 		{
 			case BLOCK_NONE:
-				skillPoint = 2;
+			{
+				skillpoint = 2;
 				break;
-
-			case BLOCK_ARMOR:
-				skillPoint = 1;
-				break;
+			}
 
 			case BLOCK_DEFENSE:
+			case BLOCK_ARMOR:
+			{
+				skillpoint = 1;
+				break;
+			}
+
 			default:
+				skillpoint = 0;
 				break;
 		}
 	}
-
 	return true;
 }
 
-WeaponWand::WeaponWand(LuaInterface* _interface):
+WeaponWand::WeaponWand(LuaScriptInterface* _interface) :
 	Weapon(_interface)
 {
 	minChange = 0;
 	maxChange = 0;
-	params.blockedByArmor = false;
-	params.blockedByShield = false;
 }
 
 bool WeaponWand::configureEvent(xmlNodePtr p)
@@ -951,34 +1042,47 @@ bool WeaponWand::configureEvent(xmlNodePtr p)
 		return false;
 
 	int32_t intValue;
+	std::string strValue;
+
 	if(readXMLInteger(p, "min", intValue))
 		minChange = intValue;
 
 	if(readXMLInteger(p, "max", intValue))
 		maxChange = intValue;
 
+	if(readXMLString(p, "type", strValue))
+	{
+		std::string tmpStrValue = asLowerCaseString(strValue);
+		if(tmpStrValue == "earth")
+			params.combatType = COMBAT_EARTHDAMAGE;
+		else if(tmpStrValue == "ice")
+			params.combatType = COMBAT_ICEDAMAGE;
+		else if(tmpStrValue == "energy")
+			params.combatType = COMBAT_ENERGYDAMAGE;
+		else if(tmpStrValue == "fire")
+			params.combatType = COMBAT_FIREDAMAGE;
+		else if(tmpStrValue == "death")
+			params.combatType = COMBAT_DEATHDAMAGE;
+		else if(tmpStrValue == "holy")
+			params.combatType = COMBAT_HOLYDAMAGE;
+		else
+			std::cout << "[Warning - WeaponWand::configureEvent] Type \"" << strValue << "\" does not exist." << std::endl;
+	}
 	return true;
 }
 
 bool WeaponWand::configureWeapon(const ItemType& it)
 {
-	params.effects.distance = it.shootType;
+	range = it.shootRange;
+	params.distanceEffect = it.shootType;
+
 	return Weapon::configureWeapon(it);
 }
 
-int32_t WeaponWand::getWeaponDamage(const Player* player, const Creature*, const Item*, bool maxDamage /* = false*/) const
+int32_t WeaponWand::getWeaponDamage(const Player* player, const Creature* target, const Item* item, bool maxDamage /*= false*/) const
 {
-	float multiplier = 1.0f;
-	if(Vocation* vocation = player->getVocation())
-		multiplier = vocation->getMultiplier(MULTIPLIER_WAND);
-
-	int32_t maxValue = (int32_t)(maxChange * multiplier);
 	if(maxDamage)
-	{
-		player->sendCritical();
-		return -maxValue;
-	}
+		return -maxChange;
 
-	int32_t minValue = (int32_t)(minChange * multiplier);
-	return random_range(-minValue, -maxValue, DISTRO_NORMAL);
+	return random_range(-minChange, -maxChange, DISTRO_NORMAL);
 }

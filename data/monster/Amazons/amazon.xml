@@ -25,12 +25,13 @@
 	</attacks>
 	<defenses armor="11" defense="11"/>
 	<elements>
-		<element physicalPercent="-8"/>
-		<element deathPercent="-7"/>
+		<element physicalPercent="-5"/>
+		<element deathPercent="-5"/>
 	</elements>
 	<voices interval="5000" chance="10">
 		<voice sentence="Yeeee ha!"/>
 		<voice sentence="Your head shall be mine!"/>
+		<voice sentence="Your head will be mine!"/>
 	</voices>
 	<loot>
 		<item id="2148" countmax="10" chance="23000"/><!-- gold coin -->
