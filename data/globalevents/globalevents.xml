@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<globalevents>
+	<globalevent type="record" name="PlayerRecord" script="record.lua"/>
+	<!--
+	<globalevent name="timer_example" time="12:00:00" script="my_script.lua"/>
+	-->
+</globalevents>

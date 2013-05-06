@@ -1,0 +1,115 @@
+[ README
+	Project Name
+		The Forgotten Server
+
+	Version
+		0.2.15
+
+	Codenamed
+		"Mystic Spirit"
+
+	License
+		GNU GPLv2
+
+	Forum
+		http://otland.net/
+]
+
+[ CREDITS
+	First of all, credits goes to the following OpenTibia developers for the server
+	code base (SourceForge.net usernames, in alphabetical order):
+		acidgame, jiddo, mips_act, nfries88, otserv_simone, primer13r,
+		remere, shivoc, smygflik, snack, tliffrag and wrzasq.
+
+	The rest of the credits goes to following The Forgotten Server (TFS) developers:
+		Talaturen
+			Project Manager
+			C++ Programmer
+			Lua Scripter
+			Data Directory Manager
+			Founder
+
+		Dalkon
+			C++ Programmer
+
+		Kornholijo
+			C++ Programmer
+
+		Elf
+			C++ Programmer
+]
+
+[ LICENSE
+	This project is licensed under GPLv2, you should have received a copy
+	of this license with this project.
+]
+
+[ FORUM
+	Mainly english; with native chatboards for some other languages:
+		http://otland.net/
+]
+
+[ SUPPORT
+	Having trouble with any of the instructions, or is there
+	anything you just want to ask?
+		Create a new thread and ask here:
+			http://otland.net/f55/
+]
+
+[ DONATIONS
+	We are not really accepting donations to the project,
+	but feel free to donate to the forum that's hosted at otland.net
+	for higher priority support and other benefits:
+		http://otland.net/payments.php
+]
+
+[ BUGS & FEATURE REQUESTS
+	http://otland.net/project.php?projectid=2
+]
+
+[ COMPILING
+	Linux: Debian/Ubuntu
+		Downloading required packages
+			Launch a terminal, and paste in this command:
+				apt-get install build-essential subversion libboost-dev libxml2-dev liblua5.1-0-dev libgmp3-dev libmysqlclient-dev libsqlite3-dev libboost-thread-dev libboost-regex-dev libboost-system-dev
+
+		Downloading the source code
+			Launch a terminal, and paste in this command:
+				svn co svn://svn.otland.net/public/forgottenserver/tags/0.2.15
+
+		Compiling
+			Launch a terminal, and type this command:
+				cd 0.2.15/ && make
+
+	Windows
+		Code::Blocks
+			Follow this tutorial:
+				http://otland.net/content/compiling-forgotten-server-0-2-code-blocks-windows-41/
+]
+
+[ CONFIGURING
+	Open config.lua with your favorite text editor and start configuring it,
+	incase there are other things you would like to configure then go over
+	to the data directory.
+]
+
+[ EXECUTING
+	Linux
+		MySQL
+			Read MYSQL_HELP, and then launch a terminal, and paste in
+			this command:
+				./forgottenserver
+
+		SQLite
+			Launch a terminal, and paste in this command:
+				./forgottenserver
+
+	Windows
+		MySQL
+			Read MYSQL_HELP and then move the exe file to the directory
+			where you have config.lua and data directory and execute it.
+
+		SQLite
+			Move the exe file to the directory where you have config.lua
+			and data directory and execute it.
+]
