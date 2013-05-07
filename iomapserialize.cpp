@@ -148,7 +148,7 @@ bool IOMapSerialize::loadTile(Database& db, Tile* tile)
 				//find this type in the tile
 				if(const TileItemVector* items = tile->getItemList())
 				{
-					for(ItemVector::const_reverse_iterator it = items->rbegin(), rend = items->rend(); it != rend; ++it)
+					for(ItemVector::const_iterator it = items->begin(), end = items->end(); it != end; ++it)
 					{
 						Item* findItem = (*it);
 						if(findItem->getID() == type)
@@ -265,7 +265,7 @@ bool IOMapSerialize::saveTile(Database* db, uint32_t tileId, const Tile* tile)
 	stmt.setQuery("INSERT INTO `tile_items` (`tile_id`, `sid` , `pid` , `itemtype` , `count`, `attributes` ) VALUES ");
 	if(const TileItemVector* items = tile->getItemList())
 	{
-		for(ItemVector::const_reverse_iterator it = items->rbegin(), rend = items->rend(); it != rend; ++it)
+		for(ItemVector::const_iterator it = items->begin(), end = items->end(); it != end; ++it)
 		{
 			item = (*it);
 			if(!(!item->isNotMoveable() ||
@@ -492,7 +492,7 @@ bool IOMapSerialize::loadItem(PropStream& propStream, Cylinder* parent)
 		// Stationary items like doors/beds/blackboards/bookcases
 		if(const TileItemVector* items = tile->getItemList())
 		{
-			for(ItemVector::const_reverse_iterator it = items->rbegin(), rend = items->rend(); it != rend; ++it)
+			for(ItemVector::const_iterator it = items->begin(), end = items->end(); it != end; ++it)
 			{
 				Item* findItem = (*it);
 				if(findItem->getID() == id)

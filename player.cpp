@@ -2430,6 +2430,8 @@ void Player::death()
 		sendSkills();
 		sendReLoginWindow(unfairFightReduction);
 	}
+	else
+		setLossSkill(true);
 
 	if(getSkull() == SKULL_BLACK)
 	{
@@ -2463,12 +2465,11 @@ bool Player::dropCorpse()
 	if(getZone() == ZONE_PVP)
 	{
 		setDropLoot(true);
-		setLossSkill(true);
-		sendStats();
 		g_game.internalTeleport(this, getTemplePosition(), true);
 		g_game.addCreatureHealth(this);
 		onThink(EVENT_CREATURE_THINK_INTERVAL);
 		onIdleStatus();
+		sendStats();
 		return false;
 	}
 	return Creature::dropCorpse();

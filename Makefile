@@ -1,17 +1,20 @@
 # Makefile for Linux (Ubuntu, Debian), Windows (mingw, probably supports MSVC too)
 TFS = forgottenserver
 
-INCLUDEDIRS = -I"." -I"/usr/include/libxml2" -I"/usr/include/lua5.1" -I"/usr/include/mysql"
-
-LIBDIRS =
+INCLUDEDIRS = -I"." -I"/usr/include/libxml2" -I"/usr/include/mysql"
+LIBS = -lxml2 -lpthread -lgmp
+ifdef LUAJIT
+	INCLUDEDIRS += -I"/usr/include/luajit-2.0"
+	LIBS += -lluajit-5.1
+else
+	INCLUDEDIRS += -I"/usr/include/lua5.1"
+	LIBS += -llua5.1
+endif
 
 FLAGS = -D_THREAD_SAFE -D_REENTRANT -D__NO_HOMEDIR_CONF__ -D__ENABLE_SERVER_DIAGNOSTIC__
 
 CXXFLAGS = $(INCLUDEDIRS) $(FLAGS) -Werror -Wall -O3 -fno-strict-aliasing
 CXX = g++
-
-#Those are common libraries
-LIBS = -lxml2 -lpthread -llua5.1 -lgmp
 
 #For windows:
 #	mingw32-make
@@ -64,7 +67,7 @@ ifdef DEBUG
 	FLAGS += -D__DEBUG__ -D__DEBUG_PLAYERS__
 endif
 
-LDFLAGS = $(LIBDIRS) $(LIBS)
+LDFLAGS = $(LIBS)
 
 ifdef WIN32
 	DEL = del
